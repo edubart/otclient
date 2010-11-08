@@ -1,0 +1,4 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+PROJECT(otclient)
+ADD_EXECUTABLE(otclient srcs/main.cpp)
+
