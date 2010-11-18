@@ -4,4 +4,7 @@ CMakeCache.txt
 cmake_install.cmake
 Makefile
 otclient
+
+otclient.kdev4
+CMakeLists.txt.user
 !.gitignore
