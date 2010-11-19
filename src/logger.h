@@ -13,10 +13,13 @@ enum ELogLevel {
 
 void _log(int level, const char *trace, const char *format, ...);
 
-#define fatal(...) _log(LFATAL, NULL, ## __VA_ARGS__)
-#define error(...) _log(LERROR, NULL, ## __VA_ARGS__)
-#define warning(...) _log(LWARNING, NULL, ## __VA_ARGS__)
-#define debug(...) _log(LDEBUG, NULL, ## __VA_ARGS__)
-#define notice(...) _log(LNOTICE, NULL, ## __VA_ARGS__)
+#define fatal(...) _log(LFATAL, NULL, __VA_ARGS__)
+#define error(...) _log(LERROR, NULL, __VA_ARGS__)
+#define warning(...) _log(LWARNING, NULL, __VA_ARGS__)
+#define debug(...) _log(LDEBUG, NULL, __VA_ARGS__)
+#define notice(...) _log(LNOTICE, NULL, __VA_ARGS__)
+
+#define trace() _log(LDEBUG, __PRETTY_FUNCTION__, "")
+#define tdebug(...) _log(LDEBUG, __PRETTY_FUNCTION__, __VA_ARGS__)
 
 #endif

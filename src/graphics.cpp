@@ -1,4 +1,5 @@
 #include "graphics.h"
+#include "logger.h"
 
 #include <GL/gl.h>
 #include <GL/glu.h>
@@ -22,6 +23,9 @@ void Graphics::init()
     glEnable(GL_ALPHA_TEST); // enable alpha
     glAlphaFunc(GL_GREATER, 0.0f); // default alpha mode
     glDisable(GL_DEPTH_TEST); // we are rendering 2D only, we don't need it
+
+    notice("GPU %s", (const char*)glGetString(GL_RENDERER));
+    notice("OpenGL %s", (const char*)glGetString(GL_VERSION));
 }
 
 void Graphics::terminate()

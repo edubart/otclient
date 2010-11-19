@@ -4,12 +4,12 @@
 #include "logger.h"
 
 #include <cstring>
-#include <ctime>
 
 #include <string>
 #include <algorithm>
 #include <map>
 
+#include <time.h>
 #include <sys/time.h>
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
