@@ -193,6 +193,13 @@ void Platform::init()
     x11.keyMap[XK_Super_R] = KC_RWIN;
     x11.keyMap[XK_Menu] = KC_APPS;
 
+    // try to set a latin1 locales otherwise fallback to standard C locale
+    static char locales[][32] = { "en_US.iso88591", "iso88591", "en_US", "C" };
+    for(int i=0;i<4;++i) {
+        if(setlocale(LC_ALL, locales[i]))
+            break;
+    }
+
     // open display
     x11.display = XOpenDisplay(0);
     if(!x11.display)
@@ -287,6 +294,7 @@ void Platform::poll()
                        keysym != XK_Delete &&
                        keysym != XK_Escape
                     ) {
+                        //debug("char: %c code: %d", buf[0], (unsigned char)buf[0]);
                         inputEvent.type = EV_TEXT_ENTER;
                         inputEvent.key.keychar = buf[0];
                         inputEvent.key.keycode = KC_UNKNOWN;
@@ -472,26 +480,21 @@ bool Platform::createWindow(int width, int height, int minWidth, int minHeight)
     if(!x11.window)
         fatal("Unable to create X window");
 
-    // setup locale to en_US.ISO-8859-1 characters
-    // and create input context (to get special characters from input)
-    if(setlocale(LC_ALL, "en_US.ISO-8859-1")) {
-        if(XSupportsLocale()) {
-            XSetLocaleModifiers("");
-            x11.xim = XOpenIM(x11.display, NULL, NULL, NULL);
-            if(x11.xim) {
-                x11.xic = XCreateIC(x11.xim,
-                                        XNInputStyle,
-                                        XIMPreeditNothing | XIMStatusNothing,
-                                        XNClientWindow, x11.window, NULL);
-                if(!x11.xic)
-                    error("Unable to create the input context");
-            } else
-                error("Failed to open an input method");
+    //  create input context (to have better key input handling)
+    if(XSupportsLocale()) {
+        XSetLocaleModifiers("");
+        x11.xim = XOpenIM(x11.display, NULL, NULL, NULL);
+        if(x11.xim) {
+            x11.xic = XCreateIC(x11.xim,
+                                    XNInputStyle,
+                                    XIMPreeditNothing | XIMStatusNothing,
+                                    XNClientWindow, x11.window, NULL);
+            if(!x11.xic)
+                error("Unable to create the input context");
         } else
-            error("X11 does not support the current locale");
-    }
-    else
-        error("Failed setting locale to latin1");
+            error("Failed to open an input method");
+    } else
+        error("X11 does not support the current locale");
 
     if(!x11.xic)
         warning("Input of special keys maybe messed up because we couldn't create an input context");
