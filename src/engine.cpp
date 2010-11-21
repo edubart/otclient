@@ -21,11 +21,14 @@
  * THE SOFTWARE.
  */
 
+
 #include "engine.h"
 #include "platform.h"
 #include "graphics.h"
 #include "const.h"
 #include "input.h"
+#include "configmanager.h"
+#include "logger.h"
 
 Engine g_engine;
 
@@ -44,8 +47,8 @@ void Engine::init()
 {
     Platform::init();
 
-    int width = 640;
-    int height = 480;
+    int width = g_config.getInteger("width");
+    int height = g_config.getInteger("height");
 
     // create the window
     Platform::createWindow(width, height, 550, 450);
@@ -63,6 +66,10 @@ void Engine::init()
 
 void Engine::terminate()
 {
+    // save configs
+    g_config.setValue("width", Platform::getWindowWidth());
+    g_config.setValue("height", Platform::getWindowHeight());
+
     Platform::showMouseCursor();
     Platform::terminate();
     g_graphics.terminate();

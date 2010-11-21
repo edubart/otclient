@@ -21,13 +21,34 @@
  * THE SOFTWARE.
  */
 
+
 #ifndef UTIL_H
 #define UTIL_H
 
 #include <string>
+#include <sstream>
 #include <cstdarg>
 
+/// Formatting like printf for std::string, va_list input version
 std::string vformat(const char *format, va_list args);
+
+/// Formatting like printf for std::string
 std::string format(const char *format, ...);
+
+/// Convert int/float like types to std::string
+template<typename T>
+inline std::string castToString(const T& x) {
+    std::ostringstream ss;
+    ss << x;
+    return ss.str();
+}
+
+template<typename T>
+inline T castFromString(const std::string& s) {
+    std::istringstream ss(s);
+    T x = 0;
+    ss >> x;
+    return x;
+}
 
 #endif

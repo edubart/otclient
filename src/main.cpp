@@ -21,11 +21,14 @@
  * THE SOFTWARE.
  */
 
+
 #include "engine.h"
 #include "const.h"
 #include "logger.h"
 
 #include <csignal>
+#include "configmanager.h"
+#include "util.h"
 
 // catches terminate signals to exit nicely
 void signal_handler(int sig)
@@ -45,6 +48,13 @@ void signal_handler(int sig)
     }
 }
 
+/// Default otclient configurations
+void setDefaultConfigs()
+{
+    g_config.setValue("width", 640);
+    g_config.setValue("height", 480);
+}
+
 int main(int argc, const char *argv[])
 {
     // install our signal handler
@@ -52,11 +62,17 @@ int main(int argc, const char *argv[])
     signal(SIGINT, signal_handler);
     signal(SIGQUIT, signal_handler);
 
+    setDefaultConfigs();
+    if(!g_config.load("config.yml"))
+        notice("Could not read configuration file, default configurations will be used.");
+
     notice(APP_LONGNAME);
 
     // setup the engine and run
     g_engine.init();
     g_engine.run();
     g_engine.terminate();
+
+    g_config.save();
     return 0;
 }

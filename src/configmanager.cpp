@@ -1,0 +1,153 @@
+/* The MIT License
+ *
+ * Copyright (c) 2010 OTClient, https://github.com/edubart/otclient
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+
+#include "configmanager.h"
+#include "logger.h"
+#include "util.h"
+
+#include <fstream>
+#include <yaml-cpp/yaml.h>
+
+ConfigManager g_config;
+
+ConfigManager::ConfigManager()
+{
+
+}
+
+ConfigManager::~ConfigManager()
+{
+
+}
+
+bool ConfigManager::load(const std::string& fileName)
+{
+    std::ifstream fin(fileName.c_str());
+    if(!fin.good())
+        return false;
+
+    m_fileName = fileName;
+
+    try {
+        YAML::Parser parser(fin);
+
+        YAML::Node doc;
+        parser.GetNextDocument(doc);
+
+        for(YAML::Iterator it=doc.begin(); it != doc.end(); ++it) {
+            std::string key, value;
+            it.first() >> key;
+            it.second() >> value;
+            m_confsMap[key] = value;
+        }
+    } catch (YAML::ParserException& e) {
+        error("Malformed configuration file!");
+        return false;
+    }
+
+    return true;
+}
+
+void ConfigManager::save()
+{
+    std::ofstream fout(m_fileName.c_str());
+    if(!fout.good()) {
+        error("Failed to save configuration file %s", m_fileName.c_str());
+        return;
+    }
+
+    YAML::Emitter out;
+    out << m_confsMap;
+
+    fout << out.c_str();
+}
+
+void ConfigManager::setValue(const std::string &key, const std::string &value)
+{
+    m_confsMap[key] = value;
+}
+
+void ConfigManager::setValue(const std::string &key, const char *value)
+{
+    m_confsMap[key] = value;
+}
+
+void ConfigManager::setValue(const std::string &key, int value)
+{
+    setValue(key, castToString<int>(value));
+}
+
+void ConfigManager::setValue(const std::string &key, float value)
+{
+    setValue(key, castToString<float>(value));
+}
+
+void ConfigManager::setValue(const std::string &key, bool value)
+{
+    if(value)
+        setValue(key,"true");
+    else
+        setValue(key,"false");
+}
+
+const std::string &ConfigManager::getString(const std::string &key)
+{
+    std::map<std::string, std::string>::iterator iter = m_confsMap.find(key);
+    if(iter == m_confsMap.end()) {
+        warning("Config value %s not found", key.c_str());
+        static std::string emptystr;
+        return emptystr;
+    }
+    return iter->second;
+}
+
+float ConfigManager::getFloat(const std::string &key)
+{
+    std::map<std::string, std::string>::iterator iter = m_confsMap.find(key);
+    if(iter == m_confsMap.end()) {
+        warning("Config value %s not found", key.c_str());
+        return 0;
+    }
+    return castFromString<float>(iter->second);
+}
+
+bool ConfigManager::getBoolean(const std::string &key)
+{
+    std::map<std::string, std::string>::iterator iter = m_confsMap.find(key);
+    if(iter == m_confsMap.end()) {
+        warning("Config value %s not found", key.c_str());
+        return 0;
+    }
+    return (iter->second == std::string("true"));
+}
+
+int ConfigManager::getInteger(const std::string &key)
+{
+    std::map<std::string, std::string>::iterator iter = m_confsMap.find(key);
+    if(iter == m_confsMap.end()) {
+        warning("Config value %s not found", key.c_str());
+        return 0;
+    }
+    return castFromString<int>(iter->second);
+}

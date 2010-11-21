@@ -21,17 +21,22 @@
  * THE SOFTWARE.
  */
 
+
 #ifndef PLATFORM_H
 #define PLATFORM_H
 
+// namespace with platform specific stuff
 namespace Platform
 {
     void init();
     void terminate();
 
+    /// Poll platform input/window events
     void poll();
 
+    /// Get current time in milliseconds since first frame render
     unsigned long getTicks();
+    /// Sleep in current thread
     void sleep(unsigned long miliseconds);
 
     bool createWindow(int width, int height, int minWidth, int minHeight);
@@ -40,8 +45,12 @@ namespace Platform
     void setWindowTitle(const char *title);
     bool isWindowFocused();
     bool isWindowVisible();
+    int getWindowWidth();
+    int getWindowHeight();
 
+    /// Get GL extension function address
     void *getExtensionProcAddress(const char *ext);
+    /// Check if GL extension is supported
     bool isExtensionSupported(const char *ext);
 
     const char *getTextFromClipboard();
@@ -50,8 +59,10 @@ namespace Platform
     void hideMouseCursor();
     void showMouseCursor();
 
+    /// Enable/disable vertical synchronization
     void setVsync(bool enable = true);
+    /// Swap GL buffers
     void swapBuffers();
-};
+}
 
 #endif // PLATFORM_H

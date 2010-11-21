@@ -21,6 +21,7 @@
  * THE SOFTWARE.
  */
 
+
 #ifndef ENGINE_H
 #define ENGINE_H
 
@@ -35,20 +36,24 @@ public:
     void init();
     void terminate();
 
+    /// Main loop
     void run();
     void stop();
 
     bool isRunning() const { return m_running; }
     bool isStopping() const { return m_stopping; }
-    unsigned long getLastFrameTicks() const { return m_lastFrameTicks; }
 
-    // events fired by platform
+    /// Fired by platform on window close
     void onClose();
+    /// Fired by platform on window resize
     void onResize(int width, int height);
+    /// Fired by platform on mouse/keyboard input
     void onInputEvent(InputEvent *event);
 
 private:
+    /// Called to render every frame
     void render();
+    /// Called between renders
     void update(int elapsedTicks);
 
     bool m_stopping;

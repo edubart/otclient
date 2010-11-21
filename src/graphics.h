@@ -21,6 +21,7 @@
  * THE SOFTWARE.
  */
 
+
 #ifndef GRAPHICS_H
 #define GRAPHICS_H
 
@@ -33,9 +34,13 @@ public:
     void init();
     void terminate();
 
+    ///Called after every window resize
     void resize(int width, int height);
 
+    ///Called before every render
     void beginRender();
+
+    ///Called after every render
     void endRender();
 };
 

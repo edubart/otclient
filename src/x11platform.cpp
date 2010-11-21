@@ -21,6 +21,7 @@
  * THE SOFTWARE.
  */
 
+
 #include "platform.h"
 #include "engine.h"
 #include "input.h"
@@ -707,4 +708,14 @@ bool Platform::isWindowFocused()
 bool Platform::isWindowVisible()
 {
     return x11.visible;
+}
+
+int Platform::getWindowWidth()
+{
+    return x11.width;
+}
+
+int Platform::getWindowHeight()
+{
+    return x11.height;
 }

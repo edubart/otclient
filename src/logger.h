@@ -21,10 +21,15 @@
  * THE SOFTWARE.
  */
 
+
 #ifndef LOGGER_H
 #define LOGGER_H
 
+#include <iostream>
+#include <sstream>
 #include <string>
+
+namespace Logger {
 
 enum ELogLevel {
     LFATAL = 0,
@@ -34,15 +39,28 @@ enum ELogLevel {
     LDEBUG
 };
 
-void _log(int level, const char *trace, const char *format, ...);
+void log(int level, const char *trace, const char *format, ...);
 
-#define fatal(...) _log(LFATAL, NULL, __VA_ARGS__)
-#define error(...) _log(LERROR, NULL, __VA_ARGS__)
-#define warning(...) _log(LWARNING, NULL, __VA_ARGS__)
-#define debug(...) _log(LDEBUG, NULL, __VA_ARGS__)
-#define notice(...) _log(LNOTICE, NULL, __VA_ARGS__)
+}
 
-#define trace() _log(LDEBUG, __PRETTY_FUNCTION__, "")
-#define tdebug(...) _log(LDEBUG, __PRETTY_FUNCTION__, __VA_ARGS__)
+#define fatal(...) Logger::log(Logger::LFATAL, NULL, __VA_ARGS__)
+#define error(...) Logger::log(Logger::LERROR, NULL, __VA_ARGS__)
+#define warning(...) Logger::log(Logger::LWARNING, NULL, __VA_ARGS__)
+#define debug(...) Logger::log(Logger::LDEBUG, NULL, __VA_ARGS__)
+#define notice(...) Logger::log(Logger::LNOTICE, NULL, __VA_ARGS__)
+
+#define trace() Logger::log(Logger::LDEBUG, __PRETTY_FUNCTION__, "")
+#define tdebug(...) Logger::log(Logger::LDEBUG, __PRETTY_FUNCTION__, __VA_ARGS__)
+
+struct Dump {
+public:
+    Dump() { }
+    ~Dump() { debug(m_buf.str().c_str()); }
+    template<class T>  Dump &operator<<(const T &x) { m_buf << x << " "; return *this; }
+private:
+    std::ostringstream m_buf;
+};
+
+#define dump() Dump()
 
 #endif
