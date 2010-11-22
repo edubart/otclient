@@ -28,6 +28,7 @@
 
 #include <fstream>
 #include <yaml-cpp/yaml.h>
+#include "resourcemanager.h"
 
 ConfigManager g_config;
 
@@ -43,11 +44,16 @@ ConfigManager::~ConfigManager()
 
 bool ConfigManager::load(const std::string& fileName)
 {
-    std::ifstream fin(fileName.c_str());
-    if(!fin.good())
+    m_fileName = fileName;
+
+    if(!g_resources.fileExists(fileName))
         return false;
 
-    m_fileName = fileName;
+    std::string fileContents = g_resources.loadTextFile(fileName);
+    if(fileContents.size() == 0)
+        return false;
+
+    std::istringstream fin(fileContents);
 
     try {
         YAML::Parser parser(fin);
@@ -71,16 +77,9 @@ bool ConfigManager::load(const std::string& fileName)
 
 void ConfigManager::save()
 {
-    std::ofstream fout(m_fileName.c_str());
-    if(!fout.good()) {
-        error("Failed to save configuration file %s", m_fileName.c_str());
-        return;
-    }
-
     YAML::Emitter out;
     out << m_confsMap;
-
-    fout << out.c_str();
+    g_resources.saveFile(m_fileName, (const unsigned char*)out.c_str(), out.size());
 }
 
 void ConfigManager::setValue(const std::string &key, const std::string &value)

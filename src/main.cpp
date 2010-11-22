@@ -25,12 +25,13 @@
 #include "engine.h"
 #include "const.h"
 #include "logger.h"
+#include "configmanager.h"
+#include "resourcemanager.h"
+#include "platform.h"
 
 #include <csignal>
-#include "configmanager.h"
-#include "util.h"
 
-// catches terminate signals to exit nicely
+/// Catches signals so we can exit nicely
 void signal_handler(int sig)
 {
     switch(sig) {
@@ -48,7 +49,7 @@ void signal_handler(int sig)
     }
 }
 
-/// Default otclient configurations
+/// Default configurations
 void setDefaultConfigs()
 {
     g_config.setValue("width", 640);
@@ -62,7 +63,15 @@ int main(int argc, const char *argv[])
     signal(SIGINT, signal_handler);
     signal(SIGQUIT, signal_handler);
 
+    // setup resources
+    g_resources.init(argv[0]);
+    if(g_resources.setWriteDir(Platform::getAppUserDir()))
+        g_resources.addToSearchPath(Platform::getAppUserDir());
+
+    // before loading configurations set the default ones
     setDefaultConfigs();
+
+    // load configurations
     if(!g_config.load("config.yml"))
         notice("Could not read configuration file, default configurations will be used.");
 
@@ -73,6 +82,10 @@ int main(int argc, const char *argv[])
     g_engine.run();
     g_engine.terminate();
 
+    // save configurations before exiting
     g_config.save();
+
+    // unload resources
+    g_resources.terminate();
     return 0;
 }

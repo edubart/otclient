@@ -63,6 +63,9 @@ namespace Platform
     void setVsync(bool enable = true);
     /// Swap GL buffers
     void swapBuffers();
+
+    /// Get the app user directory, the place to save files configurations files
+    const char *getAppUserDir();
 }
 
 #endif // PLATFORM_H

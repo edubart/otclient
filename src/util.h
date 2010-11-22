@@ -43,6 +43,7 @@ inline std::string castToString(const T& x) {
     return ss.str();
 }
 
+/// Convert std:;string to int/float like types
 template<typename T>
 inline T castFromString(const std::string& s) {
     std::istringstream ss(s);

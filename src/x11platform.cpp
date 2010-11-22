@@ -26,18 +26,23 @@
 #include "engine.h"
 #include "input.h"
 #include "logger.h"
-
-#include <cstring>
-
-#include <string>
-#include <algorithm>
-#include <map>
+#include "const.h"
 
 #include <time.h>
 #include <sys/time.h>
+#include <sys/stat.h>
+#include <errno.h>
+
+#include <cstring>
+#include <string>
+#include <sstream>
+#include <algorithm>
+#include <map>
+
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
 #include <GL/glx.h>
+#include <physfs.h>
 
 struct X11PlatformPrivate {
     Display *display;
@@ -718,4 +723,13 @@ int Platform::getWindowWidth()
 int Platform::getWindowHeight()
 {
     return x11.height;
+}
+
+const char *Platform::getAppUserDir()
+{
+    std::stringstream sdir;
+    sdir << PHYSFS_getUserDir() << "/." << APP_NAME << "/";
+    if((mkdir(sdir.str().c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) != 0) && (errno != EEXIST))
+        error("Couldn't create directory for saving configuration file. (%s)", sdir.str().c_str());
+    return sdir.str().c_str();
 }
