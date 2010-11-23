@@ -117,7 +117,7 @@ TexturePtr TextureLoader::loadPNG(const unsigned char *fileData, unsigned int fi
     fclose(pngFile);
     delete[] row_pointers;
 
-    texture = TexturePtr(new Texture(width, height, pixels, components));
+    texture = TexturePtr(new Texture(width, height, components, pixels));
 
     delete[] pixels;
 

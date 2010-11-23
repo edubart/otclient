@@ -34,14 +34,27 @@ public:
     void init();
     void terminate();
 
-    ///Called after every window resize
+    /// Called after every window resize
     void resize(int width, int height);
 
-    ///Called before every render
+    /// Called before every render
     void beginRender();
 
-    ///Called after every render
+    /// Called after every render
     void endRender();
+
+    /// Restore original viewport
+    void restoreViewport() { setViewport(m_width, m_height); }
+
+    /// Set viewport, used by FrameBuffer
+    void setViewport(int width, int height);
+
+    int getWidth() { return m_width; }
+    int getHeight() { return m_height; }
+
+private:
+    int m_width;
+    int m_height;
 };
 
 extern Graphics g_graphics;

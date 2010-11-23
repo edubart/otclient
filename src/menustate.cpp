@@ -22,56 +22,46 @@
  */
 
 
-#ifndef ENGINE_H
-#define ENGINE_H
+#include "menustate.h"
+#include "framebuffer.h"
+#include "graphics.h"
+#include "texturemanager.h"
 
-struct InputEvent;
-
-class GameState;
-
-class Engine
+MenuState::MenuState()
 {
-public:
-    Engine();
-    ~Engine();
+}
 
-    void init();
-    void terminate();
+MenuState::~MenuState()
+{
 
-    /// Main loop
-    void run();
+}
 
-    /// Stops main loop
-    void stop();
+void MenuState::onEnter()
+{
 
-    /// Change current game state
-    void changeState(GameState *newState);
+}
 
-    bool isRunning() const { return m_running; }
-    bool isStopping() const { return m_stopping; }
+void MenuState::onLeave()
+{
 
-    /// Fired by platform on window close
-    void onClose();
-    /// Fired by platform on window resize
-    void onResize(int width, int height);
-    /// Fired by platform on mouse/keyboard input
-    void onInputEvent(InputEvent *event);
+}
 
-private:
-    /// Called to render every frame
-    void render();
-    /// Called between renders
-    void update(int elapsedTicks);
+void MenuState::onClose()
+{
 
-    bool m_stopping;
-    bool m_running;
+}
 
-    unsigned long m_lastFrameTicks;
+void MenuState::onInputEvent(InputEvent* event)
+{
 
-    GameState *m_currentState;
-};
+}
 
-extern Engine g_engine;
+void MenuState::render()
+{
 
-#endif // ENGINE_H
+}
 
+void MenuState::update(int elapsedTicks)
+{
+
+}

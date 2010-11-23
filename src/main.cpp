@@ -28,8 +28,11 @@
 #include "configmanager.h"
 #include "resourcemanager.h"
 #include "platform.h"
+#include "menustate.h"
 
 #include <csignal>
+
+#include <boost/scoped_ptr.hpp>
 
 /// Catches signals so we can exit nicely
 void signal_handler(int sig)
@@ -77,9 +80,17 @@ int main(int argc, const char *argv[])
 
     notice(APP_LONGNAME);
 
-    // setup the engine and run
+    // setup the engine
     g_engine.init();
+
+    // create initial state
+    boost::scoped_ptr<MenuState> menuState(new MenuState);
+    g_engine.changeState(menuState.get());
+
+    // run
     g_engine.run();
+
+    // terminate stuff
     g_engine.terminate();
 
     // save configurations before exiting

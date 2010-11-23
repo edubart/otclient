@@ -22,56 +22,26 @@
  */
 
 
-#ifndef ENGINE_H
-#define ENGINE_H
+#ifndef MENUSTATE_H
+#define MENUSTATE_H
 
-struct InputEvent;
+#include "gamestate.h"
 
-class GameState;
-
-class Engine
+class MenuState : public GameState
 {
+
 public:
-    Engine();
-    ~Engine();
+    MenuState();
+    virtual ~MenuState();
 
-    void init();
-    void terminate();
+    void onEnter();
+    void onLeave();
 
-    /// Main loop
-    void run();
-
-    /// Stops main loop
-    void stop();
-
-    /// Change current game state
-    void changeState(GameState *newState);
-
-    bool isRunning() const { return m_running; }
-    bool isStopping() const { return m_stopping; }
-
-    /// Fired by platform on window close
     void onClose();
-    /// Fired by platform on window resize
-    void onResize(int width, int height);
-    /// Fired by platform on mouse/keyboard input
     void onInputEvent(InputEvent *event);
 
-private:
-    /// Called to render every frame
     void render();
-    /// Called between renders
     void update(int elapsedTicks);
-
-    bool m_stopping;
-    bool m_running;
-
-    unsigned long m_lastFrameTicks;
-
-    GameState *m_currentState;
 };
 
-extern Engine g_engine;
-
-#endif // ENGINE_H
-
+#endif // MENUSTATE_H

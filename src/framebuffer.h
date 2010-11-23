@@ -22,56 +22,31 @@
  */
 
 
-#ifndef ENGINE_H
-#define ENGINE_H
+#ifndef FRAMEBUFFER_H
+#define FRAMEBUFFER_H
 
-struct InputEvent;
+#include "texture.h"
 
-class GameState;
-
-class Engine
+class FrameBuffer
 {
-public:
-    Engine();
-    ~Engine();
+    FrameBuffer(int width, int height);
+    virtual ~FrameBuffer();
 
-    void init();
-    void terminate();
+    /// Return the texture where everything was drawn
+    TexturePtr getFramebufferTexture();
 
-    /// Main loop
-    void run();
+    /// Bind the framebuffer, everything rendered will be draw on it
+    void bind();
 
-    /// Stops main loop
-    void stop();
-
-    /// Change current game state
-    void changeState(GameState *newState);
-
-    bool isRunning() const { return m_running; }
-    bool isStopping() const { return m_stopping; }
-
-    /// Fired by platform on window close
-    void onClose();
-    /// Fired by platform on window resize
-    void onResize(int width, int height);
-    /// Fired by platform on mouse/keyboard input
-    void onInputEvent(InputEvent *event);
+    /// Unbind the framebuffer, render on back buffer again
+    void unbind();
 
 private:
-    /// Called to render every frame
-    void render();
-    /// Called between renders
-    void update(int elapsedTicks);
-
-    bool m_stopping;
-    bool m_running;
-
-    unsigned long m_lastFrameTicks;
-
-    GameState *m_currentState;
+    TexturePtr m_frameTexture;
+    GLuint m_fbo;
+    bool m_fallbackOldImp;
+    int m_width;
+    int m_height;
 };
 
-extern Engine g_engine;
-
-#endif // ENGINE_H
-
+#endif // FRAMEBUFFER_H

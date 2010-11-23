@@ -24,11 +24,9 @@
 
 #include "graphics.h"
 #include "logger.h"
-#include "texturemanager.h"
 
 #include <GL/gl.h>
 #include <GL/glu.h>
-#include "platform.h"
 
 Graphics g_graphics;
 
@@ -61,16 +59,23 @@ void Graphics::terminate()
 
 void Graphics::resize(int width, int height)
 {
+    m_width = width;
+    m_height = height;
+    restoreViewport();
+}
+
+void Graphics::setViewport(int width, int height)
+{
     // resize gl viewport
     glViewport(0, 0, width, height);
 
     /*
-      0,0---------0,w
-       |           |
-       |           |
-       |           |
-      h,0---------h,w
-    */
+     0 ,0---------0,w**
+     |           |
+     |           |
+     |           |
+     h,0---------h,w
+     */
     // setup view region like above
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();

@@ -33,7 +33,8 @@ class TextureManager;
 class Texture
 {
 public:
-    Texture(int width, int height, unsigned char *pixels, int components);
+    /// Create a texture, width and height must be a multiple of 2
+    Texture(int width, int height, int components, unsigned char *pixels = NULL);
     virtual ~Texture();
 
     /// Bind texture for drawing
@@ -42,8 +43,12 @@ public:
     /// Enable texture bilinear filter (smooth scaled textures)
     void enableBilinearFilter();
 
+    /// Copy screen pixels to texture
+    void copyFromScreen(int xoffset, int yoffset, int x, int y, int width, int height);
+
     int getWidth() const { return m_width; }
     int getHeight() const { return m_height; }
+    GLuint getTextureId() const { return m_textureId; }
 
 private:
     GLuint m_textureId;

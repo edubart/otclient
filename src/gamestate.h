@@ -22,56 +22,25 @@
  */
 
 
-#ifndef ENGINE_H
-#define ENGINE_H
+#ifndef GAMESTATE_H
+#define GAMESTATE_H
 
 struct InputEvent;
 
-class GameState;
-
-class Engine
+class GameState
 {
 public:
-    Engine();
-    ~Engine();
+    GameState() { }
+    virtual ~GameState() { }
 
-    void init();
-    void terminate();
+    virtual void onEnter() = 0;
+    virtual void onLeave() = 0;
 
-    /// Main loop
-    void run();
+    virtual void onClose() = 0;
+    virtual void onInputEvent(InputEvent *event) = 0;
 
-    /// Stops main loop
-    void stop();
-
-    /// Change current game state
-    void changeState(GameState *newState);
-
-    bool isRunning() const { return m_running; }
-    bool isStopping() const { return m_stopping; }
-
-    /// Fired by platform on window close
-    void onClose();
-    /// Fired by platform on window resize
-    void onResize(int width, int height);
-    /// Fired by platform on mouse/keyboard input
-    void onInputEvent(InputEvent *event);
-
-private:
-    /// Called to render every frame
-    void render();
-    /// Called between renders
-    void update(int elapsedTicks);
-
-    bool m_stopping;
-    bool m_running;
-
-    unsigned long m_lastFrameTicks;
-
-    GameState *m_currentState;
+    virtual void render() = 0;
+    virtual void update(int elapsedTicks) = 0;
 };
 
-extern Engine g_engine;
-
-#endif // ENGINE_H
-
+#endif // GAMESTATE_H

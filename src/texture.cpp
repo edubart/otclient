@@ -27,14 +27,13 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 
-Texture::Texture(int width, int height, unsigned char *pixels, int components)
+Texture::Texture(int width, int height, int components, unsigned char *pixels)
 {
     m_width = width;
     m_height = height;
 
     glGenTextures(1, &m_textureId);
     glBindTexture(GL_TEXTURE_2D, m_textureId);
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
     GLenum format = 0;
     switch(components) {
@@ -54,9 +53,6 @@ Texture::Texture(int width, int height, unsigned char *pixels, int components)
 
     glTexImage2D(GL_TEXTURE_2D, 0, components, width, height, 0, format, GL_UNSIGNED_BYTE, pixels);
 
-    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width);
-    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &height);
-
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
@@ -70,14 +66,21 @@ Texture::~Texture()
         glDeleteTextures(1, &m_textureId);
 }
 
-void Texture::enableBilinearFilter()
-{
-    glBindTexture(GL_TEXTURE_2D, m_textureId);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-}
-
 void Texture::bind()
 {
     glBindTexture(GL_TEXTURE_2D, m_textureId);
 }
+
+void Texture::enableBilinearFilter()
+{
+    bind();
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+}
+
+void Texture::copyFromScreen(int xoffset, int yoffset, int x, int y, int width, int height)
+{
+    bind();
+    glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, width, height);
+}
+

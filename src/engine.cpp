@@ -29,13 +29,15 @@
 #include "input.h"
 #include "configmanager.h"
 #include "logger.h"
+#include "gamestate.h"
 
 Engine g_engine;
 
 Engine::Engine() :
     m_stopping(false),
     m_running(false),
-    m_lastFrameTicks(0)
+    m_lastFrameTicks(0),
+    m_currentState(NULL)
 {
 }
 
@@ -108,20 +110,32 @@ void Engine::stop()
     m_stopping = true;
 }
 
+void Engine::changeState(GameState* newState)
+{
+    if(m_currentState)
+        m_currentState->onLeave();
+    m_currentState = newState;
+    m_currentState->onEnter();
+}
+
 void Engine::render()
 {
     g_graphics.beginRender();
+    if(m_currentState)
+        m_currentState->render();
     g_graphics.endRender();
 }
 
 void Engine::update(int elapsedTicks)
 {
-
+    if(m_currentState)
+        m_currentState->update(elapsedTicks);
 }
 
 void Engine::onClose()
 {
-    stop();
+    if(m_currentState)
+        m_currentState->onClose();
 }
 
 void Engine::onResize(int width, int height)
@@ -131,5 +145,6 @@ void Engine::onResize(int width, int height)
 
 void Engine::onInputEvent(InputEvent *event)
 {
-
+    if(m_currentState)
+        m_currentState->onInputEvent(event);
 }
