@@ -62,7 +62,7 @@ Texture::Texture(int width, int height, int components, unsigned char *pixels)
 
 Texture::~Texture()
 {
-    if(m_textureId > 0)
+    if(m_textureId)
         glDeleteTextures(1, &m_textureId);
 }
 
@@ -73,14 +73,23 @@ void Texture::bind()
 
 void Texture::enableBilinearFilter()
 {
-    bind();
+    glBindTexture(GL_TEXTURE_2D, m_textureId);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 }
 
-void Texture::copyFromScreen(int xoffset, int yoffset, int x, int y, int width, int height)
+void Texture::draw(int x, int y)
 {
-    bind();
-    glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, width, height);
+    draw(x, y, m_width, m_height);
 }
 
+void Texture::draw(int x, int y, int width, int height)
+{
+    glBindTexture(GL_TEXTURE_2D, m_textureId);
+    glBegin(GL_QUADS);
+    glTexCoord2i(0, 0); glVertex2i(x,       y);
+    glTexCoord2i(0, 1); glVertex2i(x,       y+height);
+    glTexCoord2i(1, 1); glVertex2i(x+width, y+height);
+    glTexCoord2i(1, 0); glVertex2i(x+width, y);
+    glEnd();
+}

@@ -25,6 +25,8 @@
 #ifndef GRAPHICS_H
 #define GRAPHICS_H
 
+class Texture;
+
 class Graphics
 {
 public:
@@ -37,17 +39,14 @@ public:
     /// Called after every window resize
     void resize(int width, int height);
 
+    /// Restore original viewport
+    void restoreViewport();
+
     /// Called before every render
     void beginRender();
 
     /// Called after every render
     void endRender();
-
-    /// Restore original viewport
-    void restoreViewport() { setViewport(m_width, m_height); }
-
-    /// Set viewport, used by FrameBuffer
-    void setViewport(int width, int height);
 
     int getWidth() { return m_width; }
     int getHeight() { return m_height; }

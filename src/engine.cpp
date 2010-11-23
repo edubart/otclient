@@ -68,6 +68,8 @@ void Engine::init()
 
 void Engine::terminate()
 {
+    changeState(NULL);
+
     // save configs
     g_config.setValue("width", Platform::getWindowWidth());
     g_config.setValue("height", Platform::getWindowHeight());

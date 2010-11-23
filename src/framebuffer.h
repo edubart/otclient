@@ -25,15 +25,13 @@
 #ifndef FRAMEBUFFER_H
 #define FRAMEBUFFER_H
 
-#include "texture.h"
+#include <GL/gl.h>
 
 class FrameBuffer
 {
+public:
     FrameBuffer(int width, int height);
     virtual ~FrameBuffer();
-
-    /// Return the texture where everything was drawn
-    TexturePtr getFramebufferTexture();
 
     /// Bind the framebuffer, everything rendered will be draw on it
     void bind();
@@ -41,8 +39,11 @@ class FrameBuffer
     /// Unbind the framebuffer, render on back buffer again
     void unbind();
 
+    /// Draw framebuffer
+    void draw(int x, int y, int width, int height);
+
 private:
-    TexturePtr m_frameTexture;
+    GLuint m_fboTexture;
     GLuint m_fbo;
     bool m_fallbackOldImp;
     int m_width;

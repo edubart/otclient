@@ -43,12 +43,11 @@ public:
     /// Enable texture bilinear filter (smooth scaled textures)
     void enableBilinearFilter();
 
-    /// Copy screen pixels to texture
-    void copyFromScreen(int xoffset, int yoffset, int x, int y, int width, int height);
+    void draw(int x, int y);
+    void draw(int x, int y, int width, int height);
 
     int getWidth() const { return m_width; }
     int getHeight() const { return m_height; }
-    GLuint getTextureId() const { return m_textureId; }
 
 private:
     GLuint m_textureId;

@@ -24,25 +24,31 @@
 #define GL_GLEXT_PROTOTYPES
 
 #include "framebuffer.h"
+#include "platform.h"
+#include "graphics.h"
+#include "logger.h"
 
 #include <GL/glext.h>
 #include <GL/glu.h>
-#include "platform.h"
-#include "graphics.h"
 
-FrameBuffer::FrameBuffer(int width, int height) :
-    m_fbo(0)
+FrameBuffer::FrameBuffer(int width, int height)
 {
+    m_fbo = 0;
     m_width = width;
     m_height = height;
 
-    // texture where the framebuffer will be store
-    m_frameTexture = TexturePtr(new Texture(width, height, 4));
+    // create FBO texture
+    glGenTextures(1, &m_fboTexture);
+    glBindTexture(GL_TEXTURE_2D, m_fboTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, 4, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-    // we want a smooth framebuffer
-    m_frameTexture->enableBilinearFilter();
+    // we want bilinear filtering (for a smooth framebuffer)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    // use FBO only if supported
+    // use FBO ext only if supported
     if(Platform::isExtensionSupported("EXT_framebuffer_object")) {
         m_fallbackOldImp = false;
 
@@ -51,18 +57,14 @@ FrameBuffer::FrameBuffer(int width, int height) :
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
 
         // attach 2D texture to this FBO
-        glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, m_frameTexture->getTextureId(), 0);
-
-        // must be called before checking
-        glDrawBuffer(GL_NONE);
-        glReadBuffer(GL_NONE);
+        glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, m_fboTexture, 0);
 
         GLenum status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
         switch(status) {
             case GL_FRAMEBUFFER_COMPLETE_EXT:
                 //ok
                 break;
-            default:
+            default: // fallback to old implementation
                 m_fallbackOldImp = true;
                 break;
         }
@@ -74,6 +76,7 @@ FrameBuffer::FrameBuffer(int width, int height) :
 
 FrameBuffer::~FrameBuffer()
 {
+    glDeleteTextures(1, &m_fboTexture);
     if(m_fbo)
         glDeleteFramebuffersEXT(1, &m_fbo);
 }
@@ -83,18 +86,21 @@ void FrameBuffer::bind()
     if(!m_fallbackOldImp) {
         // bind framebuffer
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
-
-        // must be called before rendering to framebuffer
-        glDrawBuffer(GL_NONE);
-        glReadBuffer(GL_NONE);
     }
+
+    // setup framebuffer viewport
+    glViewport(0, 0, m_width, m_height);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluOrtho2D(0.0f, m_width, 0, m_height);
+
+    // back to model view
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
 
     // clear framebuffer
     glClearColor(0.0, 0.0, 0.0, 0.0);
     glClear(GL_COLOR_BUFFER_BIT);
-
-    // setup framebuffer viewport
-    g_graphics.setViewport(m_width, m_height);
 }
 
 void FrameBuffer::unbind()
@@ -102,19 +108,32 @@ void FrameBuffer::unbind()
     if(!m_fallbackOldImp) {
         // bind back buffer again
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
-
-        // must be called to render to back buffer again
         glDrawBuffer(GL_BACK);
         glReadBuffer(GL_BACK);
+
+        // restore graphics viewport
+        g_graphics.restoreViewport();
     } else {
         // copy screen to texture
-        m_frameTexture->copyFromScreen(0, 0, 0, 0, m_width, m_height);
+        glBindTexture(GL_TEXTURE_2D, m_fboTexture);
+        glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, m_width, m_height);
+
+        // restore graphics viewport
+        g_graphics.restoreViewport();
 
         // clear screen
-        glClearColor(0.0, 0.0, 0.0, 0.0);
+        glClearColor(0.0, 0.0, 0.0, 1.0);
         glClear(GL_COLOR_BUFFER_BIT);
     }
+}
 
-    // restore graphics viewport
-    g_graphics.restoreViewport();
+void FrameBuffer::draw(int x, int y, int width, int height)
+{
+    glBindTexture(GL_TEXTURE_2D, m_fboTexture);
+    glBegin(GL_QUADS);
+    glTexCoord2i(0, 0); glVertex2i(x,       y);
+    glTexCoord2i(0, 1); glVertex2i(x,       y+height);
+    glTexCoord2i(1, 1); glVertex2i(x+width, y+height);
+    glTexCoord2i(1, 0); glVertex2i(x+width, y);
+    glEnd();
 }

@@ -70,6 +70,7 @@ int main(int argc, const char *argv[])
     g_resources.init(argv[0]);
     if(g_resources.setWriteDir(Platform::getAppUserDir()))
         g_resources.addToSearchPath(Platform::getAppUserDir());
+    g_resources.addToSearchPath("data");
 
     // before loading configurations set the default ones
     setDefaultConfigs();

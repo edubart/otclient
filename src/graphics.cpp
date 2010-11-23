@@ -27,6 +27,7 @@
 
 #include <GL/gl.h>
 #include <GL/glu.h>
+#include "texture.h"
 
 Graphics g_graphics;
 
@@ -43,10 +44,10 @@ Graphics::~Graphics()
 void Graphics::init()
 {
     // setup opengl
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // black background
-    glEnable(GL_ALPHA_TEST); // enable alpha
+    glEnable(GL_ALPHA_TEST); // enable alpha by default
     glAlphaFunc(GL_GREATER, 0.0f); // default alpha mode
     glDisable(GL_DEPTH_TEST); // we are rendering 2D only, we don't need it
+    glEnable(GL_TEXTURE_2D); // enable textures by default
 
     notice("GPU %s", (const char*)glGetString(GL_RENDERER));
     notice("OpenGL %s", (const char*)glGetString(GL_VERSION));
@@ -64,13 +65,13 @@ void Graphics::resize(int width, int height)
     restoreViewport();
 }
 
-void Graphics::setViewport(int width, int height)
+void Graphics::restoreViewport()
 {
     // resize gl viewport
-    glViewport(0, 0, width, height);
+    glViewport(0, 0, m_width, m_height);
 
     /*
-     0 ,0---------0,w**
+     0,0---------0,w
      |           |
      |           |
      |           |
@@ -79,7 +80,7 @@ void Graphics::setViewport(int width, int height)
     // setup view region like above
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluOrtho2D(0.0f, width, height, 0.0f);
+    gluOrtho2D(0.0f, m_width, m_height, 0.0f);
 
     // back to model view
     glMatrixMode(GL_MODELVIEW);
@@ -88,6 +89,7 @@ void Graphics::setViewport(int width, int height)
 
 void Graphics::beginRender()
 {
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     glLoadIdentity();
 }
