@@ -126,7 +126,7 @@ void Engine::onClose()
 
 void Engine::onResize(int width, int height)
 {
-
+    g_graphics.resize(width, height);
 }
 
 void Engine::onInputEvent(InputEvent *event)

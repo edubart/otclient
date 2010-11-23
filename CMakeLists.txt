@@ -50,6 +50,9 @@ ENDIF(CMAKE_BUILD_TYPE STREQUAL "Debug")
 
 # find sources
 SET(SOURCES
+    src/textureloader.cpp
+    src/texture.cpp
+    src/texturemanager.cpp
     src/configmanager.cpp
     src/resourcemanager.cpp
     src/main.cpp

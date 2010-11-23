@@ -22,72 +22,35 @@
  */
 
 
-#include "graphics.h"
-#include "logger.h"
-#include "texturemanager.h"
+#ifndef TEXTURE_H
+#define TEXTURE_H
 
 #include <GL/gl.h>
-#include <GL/glu.h>
-#include "platform.h"
+#include <boost/shared_ptr.hpp>
 
-Graphics g_graphics;
+class TextureManager;
 
-Graphics::Graphics()
+class Texture
 {
+public:
+    Texture(int width, int height, unsigned char *pixels, int components);
+    virtual ~Texture();
 
-}
+    /// Bind texture for drawing
+    void bind();
 
-Graphics::~Graphics()
-{
+    /// Enable texture bilinear filter (smooth scaled textures)
+    void enableBilinearFilter();
 
-}
+    int getWidth() const { return m_width; }
+    int getHeight() const { return m_height; }
 
-void Graphics::init()
-{
-    // setup opengl
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // black background
-    glEnable(GL_ALPHA_TEST); // enable alpha
-    glAlphaFunc(GL_GREATER, 0.0f); // default alpha mode
-    glDisable(GL_DEPTH_TEST); // we are rendering 2D only, we don't need it
+private:
+    GLuint m_textureId;
+    int m_width;
+    int m_height;
+};
 
-    notice("GPU %s", (const char*)glGetString(GL_RENDERER));
-    notice("OpenGL %s", (const char*)glGetString(GL_VERSION));
-}
+typedef boost::shared_ptr<Texture> TexturePtr;
 
-void Graphics::terminate()
-{
-
-}
-
-void Graphics::resize(int width, int height)
-{
-    // resize gl viewport
-    glViewport(0, 0, width, height);
-
-    /*
-      0,0---------0,w
-       |           |
-       |           |
-       |           |
-      h,0---------h,w
-    */
-    // setup view region like above
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluOrtho2D(0.0f, width, height, 0.0f);
-
-    // back to model view
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-}
-
-void Graphics::beginRender()
-{
-    glClear(GL_COLOR_BUFFER_BIT);
-    glLoadIdentity();
-}
-
-void Graphics::endRender()
-{
-
-}
+#endif // TEXTURE_H

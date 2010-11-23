@@ -22,72 +22,50 @@
  */
 
 
-#include "graphics.h"
-#include "logger.h"
 #include "texturemanager.h"
+#include "resourcemanager.h"
+#include "textureloader.h"
+#include "logger.h"
 
-#include <GL/gl.h>
-#include <GL/glu.h>
-#include "platform.h"
+#include <boost/algorithm/string.hpp>
 
-Graphics g_graphics;
+TextureManager g_textures;
 
-Graphics::Graphics()
+TextureManager::TextureManager()
 {
 
 }
 
-Graphics::~Graphics()
+TextureManager::~TextureManager()
 {
-
+    m_texturesMap.clear();
 }
 
-void Graphics::init()
+TexturePtr TextureManager::get(const std::string& textureFile)
 {
-    // setup opengl
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // black background
-    glEnable(GL_ALPHA_TEST); // enable alpha
-    glAlphaFunc(GL_GREATER, 0.0f); // default alpha mode
-    glDisable(GL_DEPTH_TEST); // we are rendering 2D only, we don't need it
+    TexturePtr texture;
 
-    notice("GPU %s", (const char*)glGetString(GL_RENDERER));
-    notice("OpenGL %s", (const char*)glGetString(GL_VERSION));
-}
+    // check if the texture is already loaded
+    TexturesMap::iterator it = m_texturesMap.find(textureFile);
+    if(it != m_texturesMap.end())
+        texture = it->second;
+    else { // load texture
+        // currently only png textures are supported
+        if(!boost::ends_with(textureFile, ".png")) {
+            error("Unable to load texture %s, file format no supported.", textureFile.c_str());
+            return texture;
+        }
 
-void Graphics::terminate()
-{
+        unsigned int fileSize;
+        unsigned char *textureFileData = g_resources.loadFile(textureFile, &fileSize);
+        if(!textureFileData)
+            return texture;
 
-}
+        texture = TextureLoader::loadPNG(textureFileData, fileSize);
+        if(!texture)
+            error("Unable to load texture %s, loading error.", textureFile.c_str());
+        delete[] textureFileData;
+    }
 
-void Graphics::resize(int width, int height)
-{
-    // resize gl viewport
-    glViewport(0, 0, width, height);
-
-    /*
-      0,0---------0,w
-       |           |
-       |           |
-       |           |
-      h,0---------h,w
-    */
-    // setup view region like above
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluOrtho2D(0.0f, width, height, 0.0f);
-
-    // back to model view
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-}
-
-void Graphics::beginRender()
-{
-    glClear(GL_COLOR_BUFFER_BIT);
-    glLoadIdentity();
-}
-
-void Graphics::endRender()
-{
-
+    return texture;
 }
