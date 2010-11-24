@@ -25,7 +25,9 @@
 #ifndef MENUSTATE_H
 #define MENUSTATE_H
 
+#include "prerequisites.h"
 #include "gamestate.h"
+#include "texture.h"
 
 class MenuState : public GameState
 {
@@ -42,6 +44,9 @@ public:
 
     void render();
     void update(int elapsedTicks);
+
+private:
+    TexturePtr m_background;
 };
 
 #endif // MENUSTATE_H

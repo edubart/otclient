@@ -25,7 +25,8 @@
 #ifndef TEXTURE_H
 #define TEXTURE_H
 
-#include <GL/gl.h>
+#include "prerequisites.h"
+#include "size.h"
 #include <boost/shared_ptr.hpp>
 
 class TextureManager;
@@ -37,22 +38,15 @@ public:
     Texture(int width, int height, int components, unsigned char *pixels = NULL);
     virtual ~Texture();
 
-    /// Bind texture for drawing
-    void bind();
-
     /// Enable texture bilinear filter (smooth scaled textures)
     void enableBilinearFilter();
 
-    void draw(int x, int y);
-    void draw(int x, int y, int width, int height);
-
-    int getWidth() const { return m_width; }
-    int getHeight() const { return m_height; }
+    const Size& getSize() const { return m_size; }
+    GLuint getTextureId() const { return m_textureId; }
 
 private:
     GLuint m_textureId;
-    int m_width;
-    int m_height;
+    Size m_size;
 };
 
 typedef boost::shared_ptr<Texture> TexturePtr;

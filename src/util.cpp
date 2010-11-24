@@ -24,8 +24,6 @@
 
 #include "util.h"
 
-#include <cstdio>
-
 std::string vformat(const char *format, va_list args)
 {
     if(!format)

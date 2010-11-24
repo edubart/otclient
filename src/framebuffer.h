@@ -25,7 +25,7 @@
 #ifndef FRAMEBUFFER_H
 #define FRAMEBUFFER_H
 
-#include <GL/gl.h>
+#include "prerequisites.h"
 
 class FrameBuffer
 {

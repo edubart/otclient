@@ -23,10 +23,6 @@
 
 
 #include "logger.h"
-#include "util.h"
-
-#include <cstdarg>
-#include <cstdlib>
 #include <boost/algorithm/string.hpp>
 
 void Logger::log(int level, const char *trace, const char *format, ...)

@@ -25,6 +25,8 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
+#include "prerequisites.h"
+
 struct InputEvent;
 
 class GameState;
@@ -65,8 +67,6 @@ private:
 
     bool m_stopping;
     bool m_running;
-
-    unsigned long m_lastFrameTicks;
 
     GameState *m_currentState;
 };

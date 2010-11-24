@@ -23,12 +23,9 @@
 
 
 #include "configmanager.h"
-#include "logger.h"
-#include "util.h"
-
-#include <fstream>
-#include <yaml-cpp/yaml.h>
 #include "resourcemanager.h"
+
+#include <yaml-cpp/yaml.h>
 
 ConfigManager g_config;
 
@@ -77,9 +74,11 @@ bool ConfigManager::load(const std::string& fileName)
 
 void ConfigManager::save()
 {
-    YAML::Emitter out;
-    out << m_confsMap;
-    g_resources.saveFile(m_fileName, (const unsigned char*)out.c_str(), out.size());
+    if(!m_fileName.empty()) {
+        YAML::Emitter out;
+        out << m_confsMap;
+        g_resources.saveFile(m_fileName, (const unsigned char*)out.c_str(), out.size());
+    }
 }
 
 void ConfigManager::setValue(const std::string &key, const std::string &value)

@@ -25,12 +25,14 @@
 #ifndef TEXTURELOADER_H
 #define TEXTURELOADER_H
 
-#include "texture.h"
+#include "prerequisites.h"
+
+class Texture;
 
 namespace TextureLoader
 {
     /// Load a png textures using libpng
-    TexturePtr loadPNG(const unsigned char *fileData, unsigned int fileSize);
+    Texture *loadPNG(const unsigned char *fileData, unsigned int fileSize);
 }
 
 #endif // TEXTURELOADER_H

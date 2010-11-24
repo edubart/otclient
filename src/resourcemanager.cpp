@@ -23,7 +23,6 @@
 
 
 #include "resourcemanager.h"
-#include "logger.h"
 
 #include <physfs.h>
 

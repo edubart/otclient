@@ -25,7 +25,7 @@
 #ifndef RESOURCEMANAGER_H
 #define RESOURCEMANAGER_H
 
-#include <string>
+#include "prerequisites.h"
 
 class ResourceManager
 {

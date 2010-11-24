@@ -21,15 +21,9 @@
  * THE SOFTWARE.
  */
 
-#define GL_GLEXT_PROTOTYPES
-
 #include "framebuffer.h"
 #include "platform.h"
 #include "graphics.h"
-#include "logger.h"
-
-#include <GL/glext.h>
-#include <GL/glu.h>
 
 FrameBuffer::FrameBuffer(int width, int height)
 {

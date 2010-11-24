@@ -25,9 +25,7 @@
 #ifndef UTIL_H
 #define UTIL_H
 
-#include <string>
-#include <sstream>
-#include <cstdarg>
+#include "prerequisites.h"
 
 /// Formatting like printf for std::string, va_list input version
 std::string vformat(const char *format, va_list args);

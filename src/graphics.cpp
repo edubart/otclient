@@ -24,9 +24,6 @@
 
 #include "graphics.h"
 #include "logger.h"
-
-#include <GL/gl.h>
-#include <GL/glu.h>
 #include "texture.h"
 
 Graphics g_graphics;
@@ -60,15 +57,18 @@ void Graphics::terminate()
 
 void Graphics::resize(int width, int height)
 {
-    m_width = width;
-    m_height = height;
+    m_screenSize.setWidth(width);
+    m_screenSize.setHeight(height);
     restoreViewport();
 }
 
 void Graphics::restoreViewport()
 {
+    const int& width = m_screenSize.width();
+    const int& height = m_screenSize.height();
+
     // resize gl viewport
-    glViewport(0, 0, m_width, m_height);
+    glViewport(0, 0, width, height);
 
     /*
      0,0---------0,w
@@ -80,7 +80,7 @@ void Graphics::restoreViewport()
     // setup view region like above
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluOrtho2D(0.0f, m_width, m_height, 0.0f);
+    gluOrtho2D(0.0f, width, height, 0.0f);
 
     // back to model view
     glMatrixMode(GL_MODELVIEW);
@@ -97,4 +97,108 @@ void Graphics::beginRender()
 void Graphics::endRender()
 {
 
+}
+
+void Graphics::drawTexturedRect(const Rect& screenCoords, const Texture *texture, const Rect& texCoords)
+{
+    // rect correction for opengl
+    int right = screenCoords.right()+1;
+    int bottom = screenCoords.bottom()+1;
+    int top = screenCoords.top();
+    int left = screenCoords.left();
+
+    float tright;
+    float tbottom;
+    float ttop;
+    float tleft;
+
+    if(!texCoords.isEmpty()) {
+        const Size& textureSize = texture->getSize();
+        tright = (float)(texCoords.right()+1)/textureSize.width();
+        tbottom = (float)(texCoords.bottom()+1)/textureSize.height();
+        ttop = (float)texCoords.top()/textureSize.height();
+        tleft = (float)texCoords.left()/textureSize.width();
+    } else {
+        tright = 0.0f;
+        tbottom = 1.0f;
+        ttop = 0.0f;
+        tleft = 1.0f;
+    }
+
+    glBindTexture(GL_TEXTURE_2D, texture->getTextureId());
+    glBegin(GL_QUADS);
+    glTexCoord2f(tleft,  ttop); glVertex2i(left,  top);
+    glTexCoord2f(tleft,  tbottom); glVertex2i(left,  bottom);
+    glTexCoord2f(tright, tbottom); glVertex2i(right, bottom);
+    glTexCoord2f(tright, ttop); glVertex2i(right, top);
+    glEnd();
+}
+
+void Graphics::drawColoredRect(const Rect& screenCoords, const Color& color)
+{
+    glDisable(GL_TEXTURE_2D);
+
+    glColor4ubv(color.rgbaPtr());
+
+    // rect correction for opengl
+    int right = screenCoords.right()+1;
+    int bottom = screenCoords.bottom()+1;
+    int top = screenCoords.top();
+    int left = screenCoords.left();
+
+    glBegin(GL_QUADS);
+    glVertex2i(left,  top);
+    glVertex2i(left,  bottom);
+    glVertex2i(right, bottom);
+    glVertex2i(right, top);
+    glEnd();
+
+    glEnable(GL_TEXTURE_2D);
+}
+
+
+void Graphics::drawBoundingRect(const Rect& screenCoords, const Color& color, int lineWidth)
+{
+    if(2*lineWidth > screenCoords.height())
+        return;
+
+    glDisable(GL_TEXTURE_2D);
+
+    glColor4ubv(color.rgbaPtr());
+
+    // rect correction for opengl
+    int right = screenCoords.right()+1;
+    int bottom = screenCoords.bottom()+1;
+    int top = screenCoords.top();
+    int left = screenCoords.left();
+
+    glBegin(GL_QUADS);
+
+    // top line
+    glVertex2i(left,  top);
+    glVertex2i(left,  top+lineWidth);
+    glVertex2i(right, top+lineWidth);
+    glVertex2i(right, top);
+
+    // left
+    glVertex2i(left, screenCoords.top()+lineWidth);
+    glVertex2i(left, bottom-lineWidth);
+    glVertex2i(left+lineWidth, bottom-lineWidth);
+    glVertex2i(left+lineWidth, screenCoords.top()+lineWidth);
+
+    // bottom line
+    glVertex2i(left,  bottom);
+    glVertex2i(left,  bottom-lineWidth);
+    glVertex2i(right, bottom-lineWidth);
+    glVertex2i(right, bottom);
+
+    // right line
+    glVertex2i(right,           top+lineWidth);
+    glVertex2i(right,           bottom-lineWidth);
+    glVertex2i(right-lineWidth, bottom-lineWidth);
+    glVertex2i(right-lineWidth, top+lineWidth);
+
+    glEnd();
+
+    glEnable(GL_TEXTURE_2D);
 }

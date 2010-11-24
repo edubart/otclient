@@ -25,7 +25,6 @@
 #include "texturemanager.h"
 #include "resourcemanager.h"
 #include "textureloader.h"
-#include "logger.h"
 
 #include <boost/algorithm/string.hpp>
 
@@ -61,7 +60,7 @@ TexturePtr TextureManager::get(const std::string& textureFile)
         if(!textureFileData)
             return texture;
 
-        texture = TextureLoader::loadPNG(textureFileData, fileSize);
+        texture = TexturePtr(TextureLoader::loadPNG(textureFileData, fileSize));
         if(!texture)
             error("Unable to load texture %s, loading error.", textureFile.c_str());
         delete[] textureFileData;

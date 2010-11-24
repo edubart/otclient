@@ -23,38 +23,37 @@
 
 
 #include "textureloader.h"
+#include "texture.h"
 
-#include <cstdio>
 #include <png.h>
 
-TexturePtr TextureLoader::loadPNG(const unsigned char *fileData, unsigned int fileSize)
+Texture *TextureLoader::loadPNG(const unsigned char *fileData, unsigned int fileSize)
 {
-    TexturePtr texture;
     FILE *pngFile = fmemopen((void*)fileData, fileSize, "rb");
 
     if(!pngFile)
-        return texture;
+        return NULL;
 
     png_byte sig[8];
     if(!fread(&sig, 8, 1, pngFile))
-        return texture;
+        return NULL;
 
     if(png_sig_cmp(sig, 0, 8))
-        return texture;
+        return NULL;
 
     png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
     if(!png_ptr)
-        return texture;
+        return NULL;
 
     png_infop info_ptr = png_create_info_struct(png_ptr);
     if(!info_ptr) {
         png_destroy_read_struct(&png_ptr, NULL, NULL);
-        return texture;
+        return NULL;
     }
 
     if(setjmp(png_jmpbuf(png_ptr))) {
         png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
-        return texture;
+        return NULL;
     }
 
     png_init_io(png_ptr, pngFile);
@@ -101,7 +100,7 @@ TexturePtr TextureLoader::loadPNG(const unsigned char *fileData, unsigned int fi
         default:
             if(png_ptr)
                 png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
-            return texture;
+            return NULL;
     };
 
     unsigned char *pixels = new unsigned char[width * height * components];
@@ -117,7 +116,7 @@ TexturePtr TextureLoader::loadPNG(const unsigned char *fileData, unsigned int fi
     fclose(pngFile);
     delete[] row_pointers;
 
-    texture = TexturePtr(new Texture(width, height, components, pixels));
+    Texture *texture = new Texture(width, height, components, pixels);
 
     delete[] pixels;
 

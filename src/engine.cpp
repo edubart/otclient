@@ -25,10 +25,8 @@
 #include "engine.h"
 #include "platform.h"
 #include "graphics.h"
-#include "const.h"
 #include "input.h"
 #include "configmanager.h"
-#include "logger.h"
 #include "gamestate.h"
 
 Engine g_engine;
@@ -36,7 +34,6 @@ Engine g_engine;
 Engine::Engine() :
     m_stopping(false),
     m_running(false),
-    m_lastFrameTicks(0),
     m_currentState(NULL)
 {
 }
@@ -82,18 +79,19 @@ void Engine::terminate()
 void Engine::run()
 {
     unsigned long ticks;
+    static unsigned long lastFrameTicks;
 
     m_running = true;
-    m_lastFrameTicks = Platform::getTicks();
 
+    lastFrameTicks = Platform::getTicks();
     while(!m_stopping) {
         // fire platform events
         Platform::poll();
 
         // update
         ticks = Platform::getTicks();
-        update(ticks - m_lastFrameTicks);
-        m_lastFrameTicks = ticks;
+        update(ticks - lastFrameTicks);
+        lastFrameTicks = ticks;
 
         // render
         render();
@@ -102,7 +100,7 @@ void Engine::run()
         Platform::swapBuffers();
     }
 
-    m_lastFrameTicks = 0;
+    lastFrameTicks = 0;
     m_stopping = false;
     m_running = false;
 }
@@ -117,7 +115,8 @@ void Engine::changeState(GameState* newState)
     if(m_currentState)
         m_currentState->onLeave();
     m_currentState = newState;
-    m_currentState->onEnter();
+    if(m_currentState)
+        m_currentState->onEnter();
 }
 
 void Engine::render()

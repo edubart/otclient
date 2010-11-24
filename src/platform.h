@@ -25,7 +25,8 @@
 #ifndef PLATFORM_H
 #define PLATFORM_H
 
-// namespace with platform specific stuff
+#include "prerequisites.h"
+
 namespace Platform
 {
     void init();

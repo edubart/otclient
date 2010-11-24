@@ -25,10 +25,8 @@
 #ifndef TEXTUREMANAGER_H
 #define TEXTUREMANAGER_H
 
+#include "prerequisites.h"
 #include "texture.h"
-
-#include <string>
-#include <map>
 
 class TextureManager
 {

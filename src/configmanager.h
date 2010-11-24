@@ -25,8 +25,7 @@
 #ifndef CONFIGMANAGER_H
 #define CONFIGMANAGER_H
 
-#include <string>
-#include <map>
+#include "prerequisites.h"
 
 class ConfigManager
 {

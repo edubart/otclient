@@ -22,13 +22,60 @@
  */
 
 
-#ifndef VERSION_H
-#define VERSION_H
+#ifndef PREREQUISITES_H
+#define PREREQUISITES_H
 
-#define APP_VERSION "0.1.0"
+// app name
 #define APP_NAME "OTClient"
 #define APP_LONGNAME APP_NAME " " APP_VERSION
-#define APP_ICON "data/otclient.bmp"
 
-#endif
+// app version
+#define APP_VERSION "0.1.0"
 
+// int types
+#include <stdint.h>
+
+typedef unsigned char uchar;
+typedef unsigned short ushort;
+typedef unsigned int uint;
+typedef unsigned long ulong;
+
+typedef uint32_t uint32;
+typedef uint16_t uint16;
+typedef uint8_t uint8;
+typedef int32_t int32;
+typedef int16_t int16;
+typedef int8_t int8;
+
+// c headers
+#include <cassert>
+#include <cstdio>
+#include <cstdlib>
+#include <ctime>
+#include <cstring>
+#include <cstdarg>
+#include <cmath>
+#include <algorithm>
+#include <fstream>
+#include <iostream>
+#include <sstream>
+
+// stl headers
+#include <string>
+#include <vector>
+#include <map>
+#include <string>
+#include <list>
+
+// GL stuff
+#define GL_GLEXT_PROTOTYPES
+
+#include <GL/gl.h>
+#include <GL/glu.h>
+#include <GL/glext.h>
+
+// utilities
+#include "logger.h"
+#include "util.h"
+
+#endif // PREREQUISITES_H

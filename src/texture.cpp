@@ -24,13 +24,10 @@
 
 #include "texture.h"
 
-#include <GL/gl.h>
-#include <GL/glu.h>
-
 Texture::Texture(int width, int height, int components, unsigned char *pixels)
 {
-    m_width = width;
-    m_height = height;
+    m_size.setWidth(width);
+    m_size.setHeight(height);
 
     glGenTextures(1, &m_textureId);
     glBindTexture(GL_TEXTURE_2D, m_textureId);
@@ -66,30 +63,9 @@ Texture::~Texture()
         glDeleteTextures(1, &m_textureId);
 }
 
-void Texture::bind()
-{
-    glBindTexture(GL_TEXTURE_2D, m_textureId);
-}
-
 void Texture::enableBilinearFilter()
 {
     glBindTexture(GL_TEXTURE_2D, m_textureId);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-}
-
-void Texture::draw(int x, int y)
-{
-    draw(x, y, m_width, m_height);
-}
-
-void Texture::draw(int x, int y, int width, int height)
-{
-    glBindTexture(GL_TEXTURE_2D, m_textureId);
-    glBegin(GL_QUADS);
-    glTexCoord2i(0, 0); glVertex2i(x,       y);
-    glTexCoord2i(0, 1); glVertex2i(x,       y+height);
-    glTexCoord2i(1, 1); glVertex2i(x+width, y+height);
-    glTexCoord2i(1, 0); glVertex2i(x+width, y);
-    glEnd();
 }

@@ -23,8 +23,6 @@
 
 
 #include "engine.h"
-#include "const.h"
-#include "logger.h"
 #include "configmanager.h"
 #include "resourcemanager.h"
 #include "platform.h"

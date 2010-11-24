@@ -26,18 +26,10 @@
 #include "engine.h"
 #include "input.h"
 #include "logger.h"
-#include "const.h"
 
-#include <time.h>
 #include <sys/time.h>
 #include <sys/stat.h>
 #include <errno.h>
-
-#include <cstring>
-#include <string>
-#include <sstream>
-#include <algorithm>
-#include <map>
 
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>

@@ -25,6 +25,11 @@
 #ifndef GRAPHICS_H
 #define GRAPHICS_H
 
+#include "prerequisites.h"
+#include "rect.h"
+#include "size.h"
+#include "color.h"
+
 class Texture;
 
 class Graphics
@@ -48,12 +53,13 @@ public:
     /// Called after every render
     void endRender();
 
-    int getWidth() { return m_width; }
-    int getHeight() { return m_height; }
+    const Size& getScreenSize() const { return m_screenSize; }
+    void drawTexturedRect(const Rect& screenCoords, const Texture *texture, const Rect& texCoords = Rect());
+    void drawColoredRect(const Rect& screenCoords, const Color& color);
+    void drawBoundingRect(const Rect& screenCoords, const Color& color, int lineWidth);
 
 private:
-    int m_width;
-    int m_height;
+    Size m_screenSize;
 };
 
 extern Graphics g_graphics;
