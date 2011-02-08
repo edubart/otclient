@@ -22,64 +22,26 @@
  */
 
 
-#include "menustate.h"
-#include "framework/framebuffer.h"
-#include "framework/graphics.h"
-#include "framework/texturemanager.h"
-#include "framework/logger.h"
-#include "framework/engine.h"
-#include "framework/rect.h"
+#ifndef TEXTUREMANAGER_H
+#define TEXTUREMANAGER_H
 
-TexturePtr background;
+#include "prerequisites.h"
+#include "texture.h"
 
-MenuState::MenuState()
+class TextureManager
 {
+public:
+    TextureManager();
+    ~TextureManager();
 
-}
+    /// Load a texture from file, if it was already loaded it will be retrieved from cache
+    TexturePtr get(const std::string& textureFile);
 
-MenuState::~MenuState()
-{
+private:
+    typedef std::map<std::string, TexturePtr> TexturesMap;
+    TexturesMap m_texturesMap;
+};
 
-}
+extern TextureManager g_textures;
 
-void MenuState::onEnter()
-{
-    m_background = g_textures.get("background.png");
-    m_background->enableBilinearFilter();
-}
-
-void MenuState::onLeave()
-{
-
-}
-
-void MenuState::onClose()
-{
-    g_engine.stop();
-}
-
-void MenuState::onInputEvent(InputEvent* event)
-{
-}
-
-void MenuState::render()
-{
-    static Size minTexCoordsSize(1240, 880);
-    const Size& screenSize = g_graphics.getScreenSize();
-    const Size& texSize = m_background->getSize();
-
-    Size texCoordsSize = screenSize;
-    if(texCoordsSize < minTexCoordsSize)
-        texCoordsSize.scale(minTexCoordsSize, KEEP_ASPECT_RATIO_BY_EXPANDING);
-    texCoordsSize = texCoordsSize.boundedTo(texSize);
-
-    Rect texCoords(0, 0, texCoordsSize);
-    texCoords.moveBottomRight(texSize.toPoint());
-
-    g_graphics.drawTexturedRect(Rect(0, 0, screenSize), m_background.get(), texCoords);
-}
-
-void MenuState::update(int elapsedTicks)
-{
-
-}
+#endif // TEXTUREMANAGER_H

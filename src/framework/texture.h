@@ -22,46 +22,32 @@
  */
 
 
-#ifndef GRAPHICS_H
-#define GRAPHICS_H
+#ifndef TEXTURE_H
+#define TEXTURE_H
 
 #include "prerequisites.h"
-#include "rect.h"
 #include "size.h"
-#include "color.h"
 
-class Texture;
+class TextureManager;
 
-class Graphics
+class Texture
 {
 public:
-    Graphics();
-    ~Graphics();
+    /// Create a texture, width and height must be a multiple of 2
+    Texture(int width, int height, int components, unsigned char *pixels = NULL);
+    virtual ~Texture();
 
-    void init();
-    void terminate();
+    /// Enable texture bilinear filter (smooth scaled textures)
+    void enableBilinearFilter();
 
-    /// Called after every window resize
-    void resize(int width, int height);
-
-    /// Restore original viewport
-    void restoreViewport();
-
-    /// Called before every render
-    void beginRender();
-
-    /// Called after every render
-    void endRender();
-
-    const Size& getScreenSize() const { return m_screenSize; }
-    void drawTexturedRect(const Rect& screenCoords, const Texture *texture, const Rect& texCoords = Rect());
-    void drawColoredRect(const Rect& screenCoords, const Color& color);
-    void drawBoundingRect(const Rect& screenCoords, const Color& color, int lineWidth);
+    const Size& getSize() const { return m_size; }
+    GLuint getTextureId() const { return m_textureId; }
 
 private:
-    Size m_screenSize;
+    GLuint m_textureId;
+    Size m_size;
 };
 
-extern Graphics g_graphics;
+typedef boost::shared_ptr<Texture> TexturePtr;
 
-#endif // GRAPHICS_H
+#endif // TEXTURE_H

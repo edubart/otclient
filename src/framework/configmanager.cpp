@@ -58,11 +58,12 @@ bool ConfigManager::load(const std::string& fileName)
         YAML::Node doc;
         parser.GetNextDocument(doc);
 
-        for(YAML::Iterator it=doc.begin(); it != doc.end(); ++it) {
+        for(YAML::Iterator it = doc.begin(); it != doc.end(); it++) {
             std::string key, value;
             it.first() >> key;
             it.second() >> value;
             m_confsMap[key] = value;
+            dump() << key << value;
         }
     } catch (YAML::ParserException& e) {
         error("Malformed configuration file!");
@@ -93,12 +94,12 @@ void ConfigManager::setValue(const std::string &key, const char *value)
 
 void ConfigManager::setValue(const std::string &key, int value)
 {
-    setValue(key, castToString<int>(value));
+    setValue(key, boost::lexical_cast<std::string>(value));
 }
 
 void ConfigManager::setValue(const std::string &key, float value)
 {
-    setValue(key, castToString<float>(value));
+    setValue(key, boost::lexical_cast<std::string>(value));
 }
 
 void ConfigManager::setValue(const std::string &key, bool value)
@@ -127,7 +128,7 @@ float ConfigManager::getFloat(const std::string &key)
         warning("Config value %s not found", key.c_str());
         return 0;
     }
-    return castFromString<float>(iter->second);
+    return boost::lexical_cast<float>(iter->second);
 }
 
 bool ConfigManager::getBoolean(const std::string &key)
@@ -137,7 +138,7 @@ bool ConfigManager::getBoolean(const std::string &key)
         warning("Config value %s not found", key.c_str());
         return 0;
     }
-    return (iter->second == std::string("true"));
+    return (iter->second == "true");
 }
 
 int ConfigManager::getInteger(const std::string &key)
@@ -147,5 +148,5 @@ int ConfigManager::getInteger(const std::string &key)
         warning("Config value %s not found", key.c_str());
         return 0;
     }
-    return castFromString<int>(iter->second);
+    return boost::lexical_cast<int>(iter->second);
 }

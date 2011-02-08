@@ -22,33 +22,45 @@
  */
 
 
-#ifndef TEXTURE_H
-#define TEXTURE_H
+#include "logger.h"
 
-#include "prerequisites.h"
-#include "size.h"
-#include <boost/shared_ptr.hpp>
-
-class TextureManager;
-
-class Texture
+void Logger::log(int level, const char *trace, const char *format, ...)
 {
-public:
-    /// Create a texture, width and height must be a multiple of 2
-    Texture(int width, int height, int components, unsigned char *pixels = NULL);
-    virtual ~Texture();
+    va_list args;
+    std::string strace;
 
-    /// Enable texture bilinear filter (smooth scaled textures)
-    void enableBilinearFilter();
+    va_start(args, format);
+    std::string text = vformat(format, args);
+    va_end(args);
 
-    const Size& getSize() const { return m_size; }
-    GLuint getTextureId() const { return m_textureId; }
+    if(trace) {
+        strace = trace;
+        strace = strace.substr(0, strace.find_first_of('('));
+        if(strace.find_last_of(' ') != std::string::npos)
+            strace = strace.substr(strace.find_last_of(' ') + 1);
+    }
 
-private:
-    GLuint m_textureId;
-    Size m_size;
-};
+#ifdef linux
+    static char const *colors[] = { "\033[01;31m ", "\033[01;31m", "\033[01;33m", "\033[0;32m", "\033[01;34m" };
+    static bool colored = getenv("COLORED_OUTPUT");
+    if(colored)
+        std::cout << colors[level];
+#endif
 
-typedef boost::shared_ptr<Texture> TexturePtr;
+    if(!strace.empty())
+        std::cout << "[" << strace << "] ";
 
-#endif // TEXTURE_H
+    static char const *prefixes[] = { "FATAL ERROR: ", "ERROR: ", "WARNING: ", "", "", "" };
+    std::cout << prefixes[level];
+    std::cout << text;
+
+#ifdef linux
+    if(colored)
+        std::cout << "\033[0m";
+#endif
+
+    std::cout << std::endl;
+
+    if(level == LFATAL)
+        exit(-1);
+}

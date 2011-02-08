@@ -22,46 +22,15 @@
  */
 
 
-#include "logger.h"
-#include <boost/algorithm/string.hpp>
+#ifndef UTIL_H
+#define UTIL_H
 
-void Logger::log(int level, const char *trace, const char *format, ...)
-{
-    va_list args;
-    std::string strace;
+#include "prerequisites.h"
 
-    va_start(args, format);
-    std::string text = vformat(format, args);
-    va_end(args);
+/// Formatting like printf for std::string, va_list input version
+std::string vformat(const char *format, va_list args);
 
-    if(trace) {
-        strace = trace;
-        strace = strace.substr(0, strace.find_first_of('('));
-        if(strace.find_last_of(' ') != std::string::npos)
-            strace = strace.substr(strace.find_last_of(' ') + 1);
-    }
+/// Formatting like printf for std::string
+std::string format(const char *format, ...);
 
-#ifdef linux
-    static char const *colors[] = { "\033[01;31m ", "\033[01;31m", "\033[01;33m", "\033[0;32m", "\033[01;34m" };
-    static bool colored = getenv("COLORED_OUTPUT");
-    if(colored)
-        std::cout << colors[level];
 #endif
-
-    if(!strace.empty())
-        std::cout << "[" << strace << "] ";
-
-    static char const *prefixes[] = { "FATAL ERROR: ", "ERROR: ", "WARNING: ", "", "", "" };
-    std::cout << prefixes[level];
-    std::cout << text;
-
-#ifdef linux
-    if(colored)
-        std::cout << "\033[0m";
-#endif
-
-    std::cout << std::endl;
-
-    if(level == LFATAL)
-        exit(-1);
-}

@@ -22,15 +22,11 @@
  */
 
 
-#include "engine.h"
-#include "configmanager.h"
-#include "resourcemanager.h"
-#include "platform.h"
+#include "framework/engine.h"
+#include "framework/configmanager.h"
+#include "framework/resourcemanager.h"
+#include "framework/platform.h"
 #include "menustate.h"
-
-#include <csignal>
-
-#include <boost/scoped_ptr.hpp>
 
 /// Catches signals so we can exit nicely
 void signal_handler(int sig)

@@ -22,26 +22,47 @@
  */
 
 
-#ifndef TEXTUREMANAGER_H
-#define TEXTUREMANAGER_H
+#include "texturemanager.h"
+#include "resourcemanager.h"
+#include "textureloader.h"
 
-#include "prerequisites.h"
-#include "texture.h"
+TextureManager g_textures;
 
-class TextureManager
+TextureManager::TextureManager()
 {
-public:
-    TextureManager();
-    ~TextureManager();
 
-    /// Load a texture from file, if it was already loaded a cached one will be retrieved
-    TexturePtr get(const std::string& textureFile);
+}
 
-private:
-    typedef std::map<std::string, TexturePtr> TexturesMap;
-    TexturesMap m_texturesMap;
-};
+TextureManager::~TextureManager()
+{
+    m_texturesMap.clear();
+}
 
-extern TextureManager g_textures;
+TexturePtr TextureManager::get(const std::string& textureFile)
+{
+    TexturePtr texture;
 
-#endif // TEXTUREMANAGER_H
+    // check if the texture is already loaded
+    TexturesMap::iterator it = m_texturesMap.find(textureFile);
+    if(it != m_texturesMap.end())
+        texture = it->second;
+    else { // load texture
+        // currently only png textures are supported
+        if(!boost::ends_with(textureFile, ".png")) {
+            error("Unable to load texture %s, file format no supported.", textureFile.c_str());
+            return texture;
+        }
+
+        unsigned int fileSize;
+        unsigned char *textureFileData = g_resources.loadFile(textureFile, &fileSize);
+        if(!textureFileData)
+            return texture;
+
+        texture = TexturePtr(TextureLoader::loadPNG(textureFileData, fileSize));
+        if(!texture)
+            error("Unable to load texture %s, loading error.", textureFile.c_str());
+        delete[] textureFileData;
+    }
+
+    return texture;
+}

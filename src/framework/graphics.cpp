@@ -45,6 +45,9 @@ void Graphics::init()
     glAlphaFunc(GL_GREATER, 0.0f); // default alpha mode
     glDisable(GL_DEPTH_TEST); // we are rendering 2D only, we don't need it
     glEnable(GL_TEXTURE_2D); // enable textures by default
+    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+    glShadeModel(GL_SMOOTH);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     notice("GPU %s", (const char*)glGetString(GL_RENDERER));
     notice("OpenGL %s", (const char*)glGetString(GL_VERSION));
@@ -157,9 +160,9 @@ void Graphics::drawColoredRect(const Rect& screenCoords, const Color& color)
 }
 
 
-void Graphics::drawBoundingRect(const Rect& screenCoords, const Color& color, int lineWidth)
+void Graphics::drawBoundingRect(const Rect& screenCoords, const Color& color, int innerLineWidth)
 {
-    if(2*lineWidth > screenCoords.height())
+    if(2*innerLineWidth > screenCoords.height())
         return;
 
     glDisable(GL_TEXTURE_2D);
@@ -176,27 +179,27 @@ void Graphics::drawBoundingRect(const Rect& screenCoords, const Color& color, in
 
     // top line
     glVertex2i(left,  top);
-    glVertex2i(left,  top+lineWidth);
-    glVertex2i(right, top+lineWidth);
+    glVertex2i(left,  top+innerLineWidth);
+    glVertex2i(right, top+innerLineWidth);
     glVertex2i(right, top);
 
     // left
-    glVertex2i(left, screenCoords.top()+lineWidth);
-    glVertex2i(left, bottom-lineWidth);
-    glVertex2i(left+lineWidth, bottom-lineWidth);
-    glVertex2i(left+lineWidth, screenCoords.top()+lineWidth);
+    glVertex2i(left, screenCoords.top()+innerLineWidth);
+    glVertex2i(left, bottom-innerLineWidth);
+    glVertex2i(left+innerLineWidth, bottom-innerLineWidth);
+    glVertex2i(left+innerLineWidth, screenCoords.top()+innerLineWidth);
 
     // bottom line
     glVertex2i(left,  bottom);
-    glVertex2i(left,  bottom-lineWidth);
-    glVertex2i(right, bottom-lineWidth);
+    glVertex2i(left,  bottom-innerLineWidth);
+    glVertex2i(right, bottom-innerLineWidth);
     glVertex2i(right, bottom);
 
     // right line
-    glVertex2i(right,           top+lineWidth);
-    glVertex2i(right,           bottom-lineWidth);
-    glVertex2i(right-lineWidth, bottom-lineWidth);
-    glVertex2i(right-lineWidth, top+lineWidth);
+    glVertex2i(right,           top+innerLineWidth);
+    glVertex2i(right,           bottom-innerLineWidth);
+    glVertex2i(right-innerLineWidth, bottom-innerLineWidth);
+    glVertex2i(right-innerLineWidth, top+innerLineWidth);
 
     glEnd();
 

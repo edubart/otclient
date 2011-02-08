@@ -65,6 +65,7 @@ public:
     inline bool operator!=(const TPoint<T>& other) const { return other.x!=x || other.y!=y; }
 
     inline float length() const { return sqrtf((float)(x*x + y*y)); }
+    inline T manhattanLength() const { return std::abs(x) + std::abs(y); }
 
     inline float distanceFrom(const TPoint<T>& other) const {
         return TPoint<T>(x - other.x, y - other.y).getLength();

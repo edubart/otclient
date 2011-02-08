@@ -25,14 +25,12 @@
 #ifndef PREREQUISITES_H
 #define PREREQUISITES_H
 
-// app name
+// app name and version
 #define APP_NAME "OTClient"
 #define APP_LONGNAME APP_NAME " " APP_VERSION
-
-// app version
 #define APP_VERSION "0.1.0"
 
-// int types
+// easy typing
 #include <stdint.h>
 
 typedef unsigned char uchar;
@@ -47,35 +45,51 @@ typedef int32_t int32;
 typedef int16_t int16;
 typedef int8_t int8;
 
-// c headers
-#include <cassert>
+// C headers
 #include <cstdio>
 #include <cstdlib>
-#include <ctime>
 #include <cstring>
 #include <cstdarg>
+#include <cassert>
+#include <ctime>
 #include <cmath>
-#include <algorithm>
-#include <fstream>
-#include <iostream>
-#include <sstream>
+#include <csignal>
 
-// stl headers
+// STL headers
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <algorithm>
 #include <string>
 #include <vector>
 #include <map>
 #include <string>
 #include <list>
+#include <tr1/cinttypes>
+
+// additional string algorithms
+#include <boost/algorithm/string.hpp>
+
+// easy casting
+#include <boost/lexical_cast.hpp>
+
+// smart pointers
+#include <boost/smart_ptr.hpp>
+
+// foreach
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
 
 // GL stuff
 #define GL_GLEXT_PROTOTYPES
-
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GL/glext.h>
 
-// utilities
+// internal logger
 #include "logger.h"
+
+// additional utilities
 #include "util.h"
 
 #endif // PREREQUISITES_H

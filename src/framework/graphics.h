@@ -22,32 +22,47 @@
  */
 
 
-#ifndef UTIL_H
-#define UTIL_H
+#ifndef GRAPHICS_H
+#define GRAPHICS_H
 
 #include "prerequisites.h"
+#include "rect.h"
+#include "size.h"
+#include "color.h"
 
-/// Formatting like printf for std::string, va_list input version
-std::string vformat(const char *format, va_list args);
+class Texture;
 
-/// Formatting like printf for std::string
-std::string format(const char *format, ...);
+class Graphics
+{
+public:
+    Graphics();
+    ~Graphics();
 
-/// Convert int/float like types to std::string
-template<typename T>
-inline std::string castToString(const T& x) {
-    std::ostringstream ss;
-    ss << x;
-    return ss.str();
-}
+    void init();
+    void terminate();
 
-/// Convert std:;string to int/float like types
-template<typename T>
-inline T castFromString(const std::string& s) {
-    std::istringstream ss(s);
-    T x = 0;
-    ss >> x;
-    return x;
-}
+    /// Called after every window resize
+    void resize(int width, int height);
 
-#endif
+    /// Restore original viewport
+    void restoreViewport();
+
+    /// Called before every render
+    void beginRender();
+
+    /// Called after every render
+    void endRender();
+
+    const Size& getScreenSize() const { return m_screenSize; }
+
+    void drawTexturedRect(const Rect& screenCoords, const Texture *texture, const Rect& texCoords = Rect());
+    void drawColoredRect(const Rect& screenCoords, const Color& color);
+    void drawBoundingRect(const Rect& screenCoords, const Color& color, int innerLineWidth);
+
+private:
+    Size m_screenSize;
+};
+
+extern Graphics g_graphics;
+
+#endif // GRAPHICS_H

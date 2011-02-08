@@ -51,22 +51,22 @@ ENDIF(CMAKE_BUILD_TYPE STREQUAL "Debug")
 # find sources
 SET(SOURCES
     src/menustate.cpp
-    src/framebuffer.cpp
-    src/textureloader.cpp
-    src/texture.cpp
-    src/texturemanager.cpp
-    src/configmanager.cpp
-    src/resourcemanager.cpp
+    src/framework/framebuffer.cpp
+    src/framework/textureloader.cpp
+    src/framework/texture.cpp
+    src/framework/texturemanager.cpp
+    src/framework/configmanager.cpp
+    src/framework/resourcemanager.cpp
     src/main.cpp
-    src/engine.cpp
-    src/graphics.cpp
-    src/logger.cpp
-    src/util.cpp)
+    src/framework/engine.cpp
+    src/framework/graphics.cpp
+    src/framework/logger.cpp
+    src/framework/util.cpp)
 
 IF(WIN32)
-    SET(SOURCES ${SOURCES} src/win32platform.cpp)
+    SET(SOURCES ${SOURCES} src/framework/win32platform.cpp)
 ELSE(WIN32)
-    SET(SOURCES ${SOURCES} src/x11platform.cpp)
+    SET(SOURCES ${SOURCES} src/framework/x11platform.cpp)
 ENDIF(WIN32)
 
 # target executable

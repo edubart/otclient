@@ -25,9 +25,8 @@
 #ifndef MENUSTATE_H
 #define MENUSTATE_H
 
-#include "prerequisites.h"
-#include "gamestate.h"
-#include "texture.h"
+#include "framework/gamestate.h"
+#include "framework/texture.h"
 
 class MenuState : public GameState
 {
