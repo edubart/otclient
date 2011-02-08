@@ -58,12 +58,11 @@ bool ConfigManager::load(const std::string& fileName)
         YAML::Node doc;
         parser.GetNextDocument(doc);
 
-        for(YAML::Iterator it = doc.begin(); it != doc.end(); it++) {
+        for(YAML::Iterator it = doc.begin(); it != doc.end(); ++it) {
             std::string key, value;
             it.first() >> key;
             it.second() >> value;
             m_confsMap[key] = value;
-            dump() << key << value;
         }
     } catch (YAML::ParserException& e) {
         error("Malformed configuration file!");

@@ -81,8 +81,9 @@ unsigned char *ResourceManager::loadFile(const std::string& fileName, unsigned i
     }
 
     *fileSize = PHYSFS_fileLength(file);
-    unsigned char *buffer = new unsigned char[*fileSize];
+    unsigned char *buffer = new unsigned char[*fileSize + 1];
     PHYSFS_read(file, (void*)buffer, 1, *fileSize);
+    buffer[*fileSize] = 0;
     PHYSFS_close(file);
     return buffer;
 }
