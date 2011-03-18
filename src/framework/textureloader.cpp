@@ -27,6 +27,16 @@
 
 #include <png.h>
 
+struct File
+{
+    File() {
+        offset = 0;
+    }
+
+    unsigned char *data;
+    unsigned int offset;
+};
+
 void png_read_from_mem(png_structp png_ptr, png_bytep data, png_size_t size)
 {
   File *file = (File*)png_get_io_ptr(png_ptr);
@@ -38,7 +48,7 @@ void png_read_from_mem(png_structp png_ptr, png_bytep data, png_size_t size)
   file->offset += size;
 }
 
-Texture *TextureLoader::loadPNG(unsigned char *fileData, unsigned int fileSize)
+Texture *TextureLoader::loadPNG(unsigned char *fileData)
 {
     File file;
     file.data = fileData;

@@ -29,20 +29,10 @@
 
 class Texture;
 
-struct File
-{
-    File() {
-        offset = 0;
-    }
-
-    unsigned char *data;
-    unsigned long offset;
-};
-
 namespace TextureLoader
 {
     /// Load a png textures using libpng
-    Texture *loadPNG(unsigned char *fileData, unsigned int fileSize);
+    Texture *loadPNG(unsigned char *fileData);
 }
 
 #endif // TEXTURELOADER_H

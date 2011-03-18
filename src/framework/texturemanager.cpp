@@ -58,7 +58,7 @@ TexturePtr TextureManager::get(const std::string& textureFile)
         if(!textureFileData)
             return texture;
 
-        texture = TexturePtr(TextureLoader::loadPNG(textureFileData, fileSize));
+        texture = TexturePtr(TextureLoader::loadPNG(textureFileData));
         if(!texture)
             error("Unable to load texture %s, loading error.", textureFile.c_str());
         delete[] textureFileData;
