@@ -60,7 +60,7 @@ void Engine::init()
     // finally show the window
     onResize(width, height);
     Platform::showWindow();
-    Platform::hideMouseCursor();
+    //Platform::hideMouseCursor();
 }
 
 void Engine::terminate()

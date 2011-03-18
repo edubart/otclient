@@ -27,18 +27,23 @@
 
 #include <png.h>
 
-Texture *TextureLoader::loadPNG(const unsigned char *fileData, unsigned int fileSize)
+void png_read_from_mem(png_structp png_ptr, png_bytep data, png_size_t size)
 {
-    FILE *pngFile = fmemopen((void*)fileData, fileSize, "rb");
+  File *file = (File*)png_get_io_ptr(png_ptr);
 
-    if(!pngFile)
-        return NULL;
+  /* Copy data from image buffer */
+  memcpy(data, file->data + file->offset, size);
 
-    png_byte sig[8];
-    if(!fread(&sig, 8, 1, pngFile))
-        return NULL;
+  /* Advance in the file */
+  file->offset += size;
+}
 
-    if(png_sig_cmp(sig, 0, 8))
+Texture *TextureLoader::loadPNG(unsigned char *fileData, unsigned int fileSize)
+{
+    File file;
+    file.data = fileData;
+
+    if(png_sig_cmp(file.data, 0, 8))
         return NULL;
 
     png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
@@ -56,8 +61,9 @@ Texture *TextureLoader::loadPNG(const unsigned char *fileData, unsigned int file
         return NULL;
     }
 
-    png_init_io(png_ptr, pngFile);
-    png_set_sig_bytes(png_ptr, 8);
+    // Set "png_read" callback function and give source of data
+    png_set_read_fn(png_ptr, (png_voidp *)&file, png_read_from_mem);
+
     png_read_info(png_ptr, info_ptr);
 
     int bitDepth = png_get_bit_depth(png_ptr, info_ptr);
@@ -113,7 +119,6 @@ Texture *TextureLoader::loadPNG(const unsigned char *fileData, unsigned int file
     png_read_end(png_ptr, NULL);
 
     png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
-    fclose(pngFile);
     delete[] row_pointers;
 
     Texture *texture = new Texture(width, height, components, pixels);
