@@ -48,16 +48,18 @@ IF(CMAKE_BUILD_TYPE STREQUAL "Debug")
     ADD_DEFINITIONS(-D_DEBUG)
 ENDIF(CMAKE_BUILD_TYPE STREQUAL "Debug")
 
-# find sources
 SET(SOURCES
+# game sources
+    src/main.cpp
     src/menustate.cpp
+    
+# framework sources
     src/framework/framebuffer.cpp
     src/framework/textureloader.cpp
     src/framework/texture.cpp
     src/framework/texturemanager.cpp
     src/framework/configmanager.cpp
     src/framework/resourcemanager.cpp
-    src/main.cpp
     src/framework/engine.cpp
     src/framework/graphics.cpp
     src/framework/logger.cpp

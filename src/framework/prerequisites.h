@@ -81,7 +81,6 @@ typedef int8_t int8;
 #define foreach BOOST_FOREACH
 
 // GL stuff
-#define GL_GLEXT_PROTOTYPES
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GL/glext.h>
