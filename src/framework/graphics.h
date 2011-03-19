@@ -41,6 +41,8 @@ public:
     void init();
     void terminate();
 
+    bool isExtensionSupported(const char *extension);
+
     /// Called after every window resize
     void resize(int width, int height);
 

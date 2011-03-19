@@ -25,11 +25,11 @@
 #include "platform.h"
 #include "graphics.h"
 
-PFNGLGENFRAMEBUFFERSEXTPROC         oglGenFramebuffersEXT = 0;
-PFNGLBINDFRAMEBUFFEREXTPROC         oglBindFramebufferEXT = 0;
-PFNGLFRAMEBUFFERTEXTURE2DEXTPROC    oglFramebufferTexture2DEXT = 0;
-PFNGLDELETEFRAMEBUFFERSEXTPROC      oglDeleteFramebuffersEXT = 0;
-PFNGLCHECKFRAMEBUFFERSTATUSEXTPROC  oglCheckFramebufferStatusEXT = 0;
+PFNGLGENFRAMEBUFFERSPROC         oglGenFramebuffers = 0;
+PFNGLBINDFRAMEBUFFERPROC         oglBindFramebuffer = 0;
+PFNGLFRAMEBUFFERTEXTURE2DPROC    oglFramebufferTexture2D = 0;
+PFNGLDELETEFRAMEBUFFERSPROC      oglDeleteFramebuffers = 0;
+PFNGLCHECKFRAMEBUFFERSTATUSPROC  oglCheckFramebufferStatus = 0;
 
 FrameBuffer::FrameBuffer(int width, int height)
 {
@@ -49,24 +49,24 @@ FrameBuffer::FrameBuffer(int width, int height)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     // use FBO ext only if supported
-    if(Platform::isExtensionSupported("EXT_framebuffer_object")) {
+    if(g_graphics.isExtensionSupported("ARB_framebuffer_object")) {
         m_fallbackOldImp = false;
-        if(!oglGenFramebuffersEXT) {
-            oglGenFramebuffersEXT = (PFNGLGENFRAMEBUFFERSEXTPROC)Platform::getExtensionProcAddress("glGenFramebuffersEXT");
-            oglBindFramebufferEXT = (PFNGLBINDFRAMEBUFFEREXTPROC)Platform::getExtensionProcAddress("glBindFramebufferEXT");
-            oglFramebufferTexture2DEXT = (PFNGLFRAMEBUFFERTEXTURE2DEXTPROC)Platform::getExtensionProcAddress("glFramebufferTexture2DEXT");
-            oglDeleteFramebuffersEXT = (PFNGLDELETEFRAMEBUFFERSEXTPROC)Platform::getExtensionProcAddress("glDeleteFramebuffersEXT");
-            oglCheckFramebufferStatusEXT = (PFNGLCHECKFRAMEBUFFERSTATUSEXTPROC)Platform::getExtensionProcAddress("glCheckFramebufferStatusEXT");
+        if(!oglGenFramebuffers) {
+            oglGenFramebuffers = (PFNGLGENFRAMEBUFFERSPROC)Platform::getExtensionProcAddress("glGenFramebuffers");
+            oglBindFramebuffer = (PFNGLBINDFRAMEBUFFERPROC)Platform::getExtensionProcAddress("glBindFramebuffer");
+            oglFramebufferTexture2D = (PFNGLFRAMEBUFFERTEXTURE2DPROC)Platform::getExtensionProcAddress("glFramebufferTexture2D");
+            oglDeleteFramebuffers = (PFNGLDELETEFRAMEBUFFERSPROC)Platform::getExtensionProcAddress("glDeleteFramebuffers");
+            oglCheckFramebufferStatus = (PFNGLCHECKFRAMEBUFFERSTATUSPROC)Platform::getExtensionProcAddress("glCheckFramebufferStatus");
         }
         
         // generate FBO
-        oglGenFramebuffersEXT(1, &m_fbo);
-        oglBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
+        oglGenFramebuffers(1, &m_fbo);
+        oglBindFramebuffer(GL_FRAMEBUFFER_EXT, m_fbo);
 
         // attach 2D texture to this FBO
-        oglFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, m_fboTexture, 0);
+        oglFramebufferTexture2D(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, m_fboTexture, 0);
 
-        GLenum status = oglCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
+        GLenum status = oglCheckFramebufferStatus(GL_FRAMEBUFFER_EXT);
         switch(status) {
             case GL_FRAMEBUFFER_COMPLETE_EXT:
                 //ok
@@ -85,14 +85,14 @@ FrameBuffer::~FrameBuffer()
 {
     glDeleteTextures(1, &m_fboTexture);
     if(m_fbo)
-        oglDeleteFramebuffersEXT(1, &m_fbo);
+        oglDeleteFramebuffers(1, &m_fbo);
 }
 
 void FrameBuffer::bind()
 {
     if(!m_fallbackOldImp) {
         // bind framebuffer
-        oglBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
+        oglBindFramebuffer(GL_FRAMEBUFFER_EXT, m_fbo);
     }
 
     // setup framebuffer viewport
@@ -114,7 +114,7 @@ void FrameBuffer::unbind()
 {
     if(!m_fallbackOldImp) {
         // bind back buffer again
-        oglBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+        oglBindFramebuffer(GL_FRAMEBUFFER_EXT, 0);
         glDrawBuffer(GL_BACK);
         glReadBuffer(GL_BACK);
 
