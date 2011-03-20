@@ -53,14 +53,16 @@ struct X11PlatformPrivate {
     Atom atomUTF8String;
     bool visible;
     bool focused;
+    const char *appName;
     int width;
     int height;
     std::string clipboardText;
     std::map<int, unsigned char> keyMap;
 } x11;
 
-void Platform::init()
+void Platform::init(const char *appName)
 {
+    x11.appName = appName;
     x11.display = NULL;
     x11.visual = NULL;
     x11.glxContext = NULL;
@@ -732,10 +734,10 @@ bool Platform::isWindowMaximized()
     return false;
 }
 
-const char *Platform::getAppUserDir(const char *appName)
+const char *Platform::getAppUserDir()
 {
     std::stringstream sdir;
-    sdir << PHYSFS_getUserDir() << "/." << appName << "/";
+    sdir << PHYSFS_getUserDir() << "/." << x11.appName << "/";
     if((mkdir(sdir.str().c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) != 0) && (errno != EEXIST))
         error("Couldn't create directory for saving configuration file. (%s)", sdir.str().c_str());
     return sdir.str().c_str();
