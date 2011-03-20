@@ -44,7 +44,7 @@ void Platform::init()
 {
     win32.instance = GetModuleHandle(NULL);
 
-    WNDCLASS wc;
+    WNDCLASSA wc;
     wc.style			= CS_HREDRAW | CS_VREDRAW | CS_OWNDC;	// Redraw On Size, And Own DC For Window.
     wc.lpfnWndProc		= (WNDPROC)WndProc;			// WndProc Handles Messages
     wc.cbClsExtra		= 0;					// No Extra Window Data
@@ -54,9 +54,9 @@ void Platform::init()
     wc.hCursor			= LoadCursor(NULL, IDC_ARROW);		// Load The Arrow Pointer
     wc.hbrBackground            = NULL;					// No Background Required For GL
     wc.lpszMenuName		= NULL;					// We Don't Want A Menu
-    wc.lpszClassName            = L"OTClient";		// Set The Class Name
+    wc.lpszClassName            = "OTClient";		// Set The Class Name
 
-    if(!RegisterClass(&wc))
+    if(!RegisterClassA(&wc))
         fatal("Failed to register the window class.");
 }
 
@@ -68,7 +68,7 @@ void Platform::terminate()
     }
 
     if(win32.instance) {
-        if(!UnregisterClass(L"OTClient", win32.instance))
+        if(!UnregisterClassA("OTClient", win32.instance))
             error("Unregister class failed.");
 
         win32.instance = NULL;
@@ -109,18 +109,18 @@ bool Platform::createWindow(int x, int y, int width, int height, int minWidth, i
 
     //AdjustWindowRectEx(&windowRect, dwStyle, FALSE, dwExStyle);
 
-    win32.window = CreateWindowEx(dwExStyle,		// Extended Style For The Window
-                                  L"OTClient",		// Class Name
-                                  L"OTClient",          // Window Title
-                                  dwStyle,		// Required Window Style
-                                  x,                    // Window X Position
-                                  y,                    // Window Y Position
-                                  width,                // Calculate Window Width
-                                  height,               // Calculate Window Height
-                                  NULL,			// No Parent Window
-                                  NULL,			// No Menu
-                                  win32.instance,	// Instance
-                                  NULL);
+    win32.window = CreateWindowExA(dwExStyle,		// Extended Style For The Window
+                                   "OTClient",		// Class Name
+                                   "OTClient",          // Window Title
+                                   dwStyle,		// Required Window Style
+                                   x,                    // Window X Position
+                                   y,                    // Window Y Position
+                                   width,                // Calculate Window Width
+                                   height,               // Calculate Window Height
+                                   NULL,			// No Parent Window
+                                   NULL,			// No Menu
+                                   win32.instance,	// Instance
+                                   NULL);
 
     if(!win32.window) {
         terminate();
@@ -221,8 +221,7 @@ void Platform::showWindow()
 
 void Platform::setWindowTitle(const char *title)
 {
-    // TODO
-    SetWindowText(win32.window, (LPCWSTR)title);
+    SetWindowTextA(win32.window, title);
 }
 
 void *Platform::getExtensionProcAddress(const char *ext)
@@ -232,7 +231,6 @@ void *Platform::getExtensionProcAddress(const char *ext)
 
 bool Platform::isExtensionSupported(const char *ext)
 {
-    // TODO
     const char *exts = NULL;//glXQueryExtensionsString(x11.display, DefaultScreen(x11.display));
     if(strstr(exts, ext))
         return true;
@@ -241,7 +239,6 @@ bool Platform::isExtensionSupported(const char *ext)
 
 void Platform::showMouseCursor()
 {
-    // TODO
     ShowCursor(false);
     /*XUndefineCursor(x11.display, x11.window);
     if(x11.cursor != None) {
@@ -281,7 +278,6 @@ int Platform::getWindowHeight()
 
 const char *Platform::getAppUserDir()
 {
-    // TODO
     /*std::stringstream sdir;
     sdir << PHYSFS_getUserDir() << "/." << APP_NAME << "/";
     if((mkdir(sdir.str().c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) != 0) && (errno != EEXIST))
