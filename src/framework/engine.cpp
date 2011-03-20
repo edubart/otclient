@@ -75,11 +75,13 @@ void Engine::run()
         update(ticks - lastFrameTicks);
         lastFrameTicks = ticks;
 
-        // render
-        render();
+        // render only when visible
+        if(Platform::isWindowVisible()) {
+            render();
 
-        // swap buffers
-        Platform::swapBuffers();
+            // swap buffers
+            Platform::swapBuffers();
+        }
     }
 
     lastFrameTicks = 0;
