@@ -596,7 +596,7 @@ bool Platform::isExtensionSupported(const char *ext)
     const char *exts = glXQueryExtensionsString(x11.display, DefaultScreen(x11.display));
     if(strstr(exts, ext))
         return true;
-    return true;
+    return false;
 }
 
 const char *Platform::getTextFromClipboard()
@@ -707,6 +707,16 @@ bool Platform::isWindowVisible()
     return x11.visible;
 }
 
+int Platform::getWindowX()
+{
+    return 0;
+}
+
+int Platform::getWindowY()
+{
+    return 0;
+}
+
 int Platform::getWindowWidth()
 {
     return x11.width;
@@ -715,6 +725,11 @@ int Platform::getWindowWidth()
 int Platform::getWindowHeight()
 {
     return x11.height;
+}
+
+bool Platform::isWindowMaximized()
+{
+    return false;
 }
 
 const char *Platform::getAppUserDir(const char *appName)

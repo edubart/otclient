@@ -46,8 +46,11 @@ namespace Platform
     void setWindowTitle(const char *title);
     bool isWindowFocused();
     bool isWindowVisible();
+    int getWindowX();
+    int getWindowY();
     int getWindowWidth();
     int getWindowHeight();
+    bool isWindowMaximized();
 
     /// Get GL extension function address
     void *getExtensionProcAddress(const char *ext);

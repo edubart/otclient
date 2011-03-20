@@ -24,6 +24,8 @@
 #include "platform.h"
 #include "engine.h"
 
+#include <dir.h>
+#include <physfs.h>
 #include <windows.h>
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -231,20 +233,23 @@ void *Platform::getExtensionProcAddress(const char *ext)
 
 bool Platform::isExtensionSupported(const char *ext)
 {
-    const char *exts = NULL;//glXQueryExtensionsString(x11.display, DefaultScreen(x11.display));
+    typedef const char* _wglGetExtensionsStringARB(HDC hdc);
+    _wglGetExtensionsStringARB *wglGetExtensionsStringARB = (_wglGetExtensionsStringARB*)getExtensionProcAddress("wglGetExtensionsStringARB");
+
+    const char *exts = wglGetExtensionsStringARB(win32.hdc);
     if(strstr(exts, ext))
         return true;
-    return true;
+    return false;
+}
+
+void Platform::hideMouseCursor()
+{
+    ShowCursor(false);
 }
 
 void Platform::showMouseCursor()
 {
-    ShowCursor(false);
-    /*XUndefineCursor(x11.display, x11.window);
-    if(x11.cursor != None) {
-        XFreeCursor(x11.display, x11.cursor);
-        x11.cursor = None;
-    }*/
+    ShowCursor(true);
 }
 
 void Platform::setVsync(bool enable)
@@ -252,10 +257,8 @@ void Platform::setVsync(bool enable)
     typedef GLint (*glSwapIntervalProc)(GLint);
     glSwapIntervalProc glSwapInterval = NULL;
 
-    if(isExtensionSupported("GLX_MESA_swap_control"))
-        glSwapInterval = (glSwapIntervalProc)getExtensionProcAddress("glXSwapIntervalMESA");
-    else if(isExtensionSupported("GLX_SGI_swap_control"))
-        glSwapInterval = (glSwapIntervalProc)getExtensionProcAddress("glXSwapIntervalSGI");
+    if(isExtensionSupported("WGL_EXT_swap_control"))
+        glSwapInterval = (glSwapIntervalProc)getExtensionProcAddress("wglSwapIntervalEXT");
 
     if(glSwapInterval)
         glSwapInterval(enable ? 1 : 0);
@@ -264,6 +267,16 @@ void Platform::setVsync(bool enable)
 void Platform::swapBuffers()
 {
     SwapBuffers(win32.hdc);
+}
+
+int Platform::getWindowX()
+{
+    return win32.x;
+}
+
+int Platform::getWindowY()
+{
+    return win32.y;
 }
 
 int Platform::getWindowWidth()
@@ -276,14 +289,18 @@ int Platform::getWindowHeight()
     return win32.height;
 }
 
+bool Platform::isWindowMaximized()
+{
+    return win32.maximized;
+}
+
 const char *Platform::getAppUserDir(const char *appName)
 {
-    /*std::stringstream sdir;
-    sdir << PHYSFS_getUserDir() << "/." << APP_NAME << "/";
-    if((mkdir(sdir.str().c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) != 0) && (errno != EEXIST))
+    std::stringstream sdir;
+    sdir << PHYSFS_getUserDir() << "/." << appName << "/";
+    if((mkdir(sdir.str().c_str()) != 0) && (errno != EEXIST))
         error("Couldn't create directory for saving configuration file. (%s)", sdir.str().c_str());
-    return sdir.str().c_str();*/
-    return "lol";
+    return sdir.str().c_str();
 }
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)

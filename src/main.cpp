@@ -48,14 +48,20 @@ void signal_handler(int sig)
 /// Default configurations
 void setDefaultConfigs()
 {
-    g_config.setValue("width", 640);
-    g_config.setValue("height", 480);
+    g_config.setValue("window x", 0);
+    g_config.setValue("window y", 0);
+    g_config.setValue("window width", 640);
+    g_config.setValue("window height", 480);
+    g_config.setValue("window maximized", false);
 }
 
 void saveConfigs()
 {
-    g_config.setValue("width", Platform::getWindowWidth());
-    g_config.setValue("height", Platform::getWindowHeight());
+    g_config.setValue("window x", Platform::getWindowX());
+    g_config.setValue("window y", Platform::getWindowY());
+    g_config.setValue("window width", Platform::getWindowWidth());
+    g_config.setValue("window height", Platform::getWindowHeight());
+    g_config.setValue("window maximized", Platform::isWindowMaximized());
     g_config.save();
 }
 
@@ -84,7 +90,10 @@ int main(int argc, const char *argv[])
     Platform::init();
 
     // create the window
-    Platform::createWindow(0, 0, g_config.getInteger("width"), g_config.getInteger("height"), 640, 480, false);
+    Platform::createWindow(g_config.getInteger("window x"), g_config.getInteger("window y"),
+                           g_config.getInteger("window width"), g_config.getInteger("window height"),
+                           640, 480,
+                           g_config.getBoolean("window maximized"));
     Platform::setWindowTitle("OTClient");
     Platform::setVsync();
 
