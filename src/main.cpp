@@ -48,10 +48,16 @@ void signal_handler(int sig)
 /// Default configurations
 void setDefaultConfigs()
 {
-    g_config.setValue("window x", 0);
-    g_config.setValue("window y", 0);
-    g_config.setValue("window width", 640);
-    g_config.setValue("window height", 480);
+    // default size
+    int defWidth = 640;
+    int defHeight = 480;
+
+    // init on screen center
+    g_config.setValue("window x", (Platform::getDisplayWidth() - defWidth)/2);
+    g_config.setValue("window y", (Platform::getDisplayHeight() - defHeight)/2);
+
+    g_config.setValue("window width", defWidth);
+    g_config.setValue("window height", defHeight);
     g_config.setValue("window maximized", false);
 }
 

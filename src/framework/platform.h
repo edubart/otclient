@@ -52,6 +52,9 @@ namespace Platform
     int getWindowHeight();
     bool isWindowMaximized();
 
+    int getDisplayHeight();
+    int getDisplayWidth();
+
     /// Get GL extension function address
     void *getExtensionProcAddress(const char *ext);
     /// Check if GL extension is supported

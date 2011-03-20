@@ -772,6 +772,16 @@ int Platform::getWindowHeight()
     return x11.height;
 }
 
+int Platform::getDisplayWidth()
+{
+    return XDisplayWidth(x11.display, DefaultScreen(x11.display));
+}
+
+int Platform::getDisplayHeight()
+{
+    return XDisplayHeight(x11.display, DefaultScreen(x11.display));
+}
+
 bool Platform::isWindowMaximized()
 {
     bool ret = false;

@@ -350,8 +350,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             RECT *rect = (RECT*)lParam;
             win32.x = rect->left;
             win32.y = rect->top;
-            win32.width = rect->right - rect->left;
-            win32.height = rect->bottom - rect->top;
             break;
         }
     case WM_SIZE:
@@ -366,6 +364,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
                 break;
             }
 
+            win32.width = LOWORD(lParam);
+            win32.height = HIWORD(lParam);
             g_engine.onResize(LOWORD(lParam), HIWORD(lParam));
             break;
         }
