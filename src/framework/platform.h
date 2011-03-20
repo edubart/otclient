@@ -66,7 +66,7 @@ namespace Platform
     void swapBuffers();
 
     /// Get the app user directory, the place to save files configurations files
-    const char *getAppUserDir();
+    const char *getAppUserDir(const char *appName);
 }
 
 #endif // PLATFORM_H

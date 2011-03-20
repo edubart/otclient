@@ -44,35 +44,17 @@ Engine::~Engine()
 
 void Engine::init()
 {
-    Platform::init();
-
-    int width = g_config.getInteger("width");
-    int height = g_config.getInteger("height");
-
-    // create the window
-    Platform::createWindow(0, 0, width, height, 550, 450, false);
-    Platform::setWindowTitle(APP_NAME);
-    Platform::setVsync();
-
     // initialize graphics stuff
     g_graphics.init();
 
     // finally show the window
-    onResize(width, height);
-    Platform::showWindow();
-    //Platform::hideMouseCursor();
+    onResize(Platform::getWindowWidth(), Platform::getWindowHeight());
 }
 
 void Engine::terminate()
 {
     changeState(NULL);
 
-    // save configs
-    g_config.setValue("width", Platform::getWindowWidth());
-    g_config.setValue("height", Platform::getWindowHeight());
-
-    Platform::showMouseCursor();
-    Platform::terminate();
     g_graphics.terminate();
 }
 

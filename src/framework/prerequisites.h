@@ -25,11 +25,6 @@
 #ifndef PREREQUISITES_H
 #define PREREQUISITES_H
 
-// app name and version
-#define APP_NAME "OTClient"
-#define APP_LONGNAME APP_NAME " " APP_VERSION
-#define APP_VERSION "0.1.0"
-
 // easy typing
 #include <stdint.h>
 

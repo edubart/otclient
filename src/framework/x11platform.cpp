@@ -717,10 +717,10 @@ int Platform::getWindowHeight()
     return x11.height;
 }
 
-const char *Platform::getAppUserDir()
+const char *Platform::getAppUserDir(const char *appName)
 {
     std::stringstream sdir;
-    sdir << PHYSFS_getUserDir() << "/." << APP_NAME << "/";
+    sdir << PHYSFS_getUserDir() << "/." << appName << "/";
     if((mkdir(sdir.str().c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) != 0) && (errno != EEXIST))
         error("Couldn't create directory for saving configuration file. (%s)", sdir.str().c_str());
     return sdir.str().c_str();

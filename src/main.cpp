@@ -52,16 +52,23 @@ void setDefaultConfigs()
     g_config.setValue("height", 480);
 }
 
+void saveConfigs()
+{
+    g_config.setValue("width", Platform::getWindowWidth());
+    g_config.setValue("height", Platform::getWindowHeight());
+    g_config.save();
+}
+
 int main(int argc, const char *argv[])
 {
     // install our signal handler
     signal(SIGTERM, signal_handler);
     signal(SIGINT, signal_handler);
 
-    // setup resources
+    // init resources
     g_resources.init(argv[0]);
-    if(g_resources.setWriteDir(Platform::getAppUserDir()))
-        g_resources.addToSearchPath(Platform::getAppUserDir());
+    if(g_resources.setWriteDir(Platform::getAppUserDir("OTClient")))
+        g_resources.addToSearchPath(Platform::getAppUserDir("OTClient"));
     g_resources.addToSearchPath("data");
 
     // before loading configurations set the default ones
@@ -71,23 +78,35 @@ int main(int argc, const char *argv[])
     if(!g_config.load("config.yml"))
         notice("Could not read configuration file, default configurations will be used.");
 
-    notice(APP_LONGNAME);
+    notice("OTClient 0.1.0");
 
-    // setup the engine
+    // init platform stuff
+    Platform::init();
+
+    // create the window
+    Platform::createWindow(0, 0, g_config.getInteger("width"), g_config.getInteger("height"), 640, 480, false);
+    Platform::setWindowTitle("OTClient");
+    Platform::setVsync();
+
+    // init engine
     g_engine.init();
-
-    // create initial state
     boost::scoped_ptr<MenuState> menuState(new MenuState);
     g_engine.changeState(menuState.get());
 
-    // run
+    Platform::showWindow();
+    //Platform::hideMouseCursor();
+
+    // main loop, run everything
     g_engine.run();
 
     // terminate stuff
     g_engine.terminate();
 
+    //Platform::showMouseCursor();
+    Platform::terminate();
+
     // save configurations before exiting
-    g_config.save();
+    saveConfigs();
 
     // unload resources
     g_resources.terminate();

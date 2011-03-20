@@ -276,7 +276,7 @@ int Platform::getWindowHeight()
     return win32.height;
 }
 
-const char *Platform::getAppUserDir()
+const char *Platform::getAppUserDir(const char *appName)
 {
     /*std::stringstream sdir;
     sdir << PHYSFS_getUserDir() << "/." << APP_NAME << "/";
