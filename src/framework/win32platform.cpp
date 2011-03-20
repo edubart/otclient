@@ -92,9 +92,9 @@ int Platform::getTicks()
 {
     static unsigned long firstTick = 0;
     if(!firstTick)
-        firstTick = GetTickCount64();
+        firstTick = GetTickCount();
     
-    return (uint32_t)(GetTickCount64() - firstTick);
+    return (uint32_t)(GetTickCount() - firstTick);
 }
 
 void Platform::sleep(unsigned long miliseconds)
