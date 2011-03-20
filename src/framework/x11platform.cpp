@@ -51,10 +51,16 @@ struct X11PlatformPrivate {
     Atom atomText;
     Atom atomCompoundText;
     Atom atomUTF8String;
+    Atom atomWindowState;
+    Atom atomWindowMaximizedVert;
+    Atom atomWindowMaximizedHorz;
     bool visible;
     bool focused;
+    bool maximizeOnFirstShow;
     int width;
     int height;
+    int x;
+    int y;
     std::string clipboardText;
     std::map<int, unsigned char> keyMap;
 } x11;
@@ -73,6 +79,7 @@ void Platform::init()
     x11.focused = false;
     x11.width = 0;
     x11.height = 0;
+    x11.maximizeOnFirstShow = false;
 
     // setup keymap
     x11.keyMap[XK_1] = KC_1;
@@ -243,6 +250,9 @@ void Platform::init()
     x11.atomUTF8String = XInternAtom(x11.display, "UTF8_STRING", False);
     x11.atomText = XInternAtom(x11.display, "TEXT", False);
     x11.atomCompoundText = XInternAtom(x11.display, "COMPOUND_TEXT", False);
+    x11.atomWindowState = XInternAtom(x11.display, "_NET_WM_STATE", False);
+    x11.atomWindowMaximizedVert = XInternAtom(x11.display, "_NET_WM_STATE_MAXIMIZED_VERT", False);
+    x11.atomWindowMaximizedHorz = XInternAtom(x11.display, "_NET_WM_STATE_MAXIMIZED_HORZ", False);
 }
 
 void Platform::terminate()
@@ -287,6 +297,15 @@ void Platform::poll()
                     x11.height = event.xconfigure.height;
                     g_engine.onResize(x11.width, x11.height);
                 }
+
+                // hack to fix x11 windows move gaps
+                static int gap_x = -1, gap_y = -1;
+                if(gap_x == -1 && gap_y == -1) {
+                    gap_x = event.xconfigure.x;
+                    gap_y = event.xconfigure.y;
+                }
+                x11.x = event.xconfigure.x - gap_x;
+                x11.y = event.xconfigure.y - gap_y;
                 break;
 
             case KeyPress:
@@ -482,14 +501,13 @@ bool Platform::createWindow(int x, int y, int width, int height, int minWidth, i
                          ExposureMask | VisibilityChangeMask |
                          StructureNotifyMask | FocusChangeMask;
 
-    // calculate center position
-    //x = (XDisplayWidth(x11.display, DefaultScreen(x11.display)) - width) / 2;
-    //y = (XDisplayHeight(x11.display, DefaultScreen(x11.display)) - height) / 2;
+    x11.x = x;
+    x11.y = y;
 
     // create the window
     x11.window = XCreateWindow(x11.display,
                              RootWindow(x11.display, x11.visual->screen),
-                             x, y,
+                             0, 0,
                              width, height,
                              0,
                              x11.visual->depth,
@@ -537,6 +555,7 @@ bool Platform::createWindow(int x, int y, int width, int height, int minWidth, i
 
     x11.width = width;
     x11.height = height;
+    x11.maximizeOnFirstShow = maximized;
     return true;
 }
 
@@ -578,6 +597,30 @@ void Platform::destroyWindow()
 void Platform::showWindow()
 {
     XMapWindow(x11.display, x11.window);
+
+    static bool firstShow = true;
+    if(firstShow) {
+        // move window
+        XMoveWindow(x11.display, x11.window, x11.x, x11.y);
+
+        // set window maximized if needed
+        if(x11.maximizeOnFirstShow) {
+            XEvent e;
+            bzero(&e, sizeof(XEvent));
+            e.xany.type = ClientMessage;
+            e.xclient.message_type = x11.atomWindowState;
+            e.xclient.format = 32;
+            e.xclient.window = x11.window;
+            e.xclient.data.l[0] = 1l;
+            e.xclient.data.l[1] = x11.atomWindowMaximizedVert;
+            e.xclient.data.l[2] = x11.atomWindowMaximizedHorz;
+            e.xclient.data.l[3] = 0l;
+
+            XSendEvent(x11.display, RootWindow(x11.display, x11.visual->screen), 0,
+                    SubstructureNotifyMask | SubstructureRedirectMask, &e);
+        }
+        firstShow = false;
+    }
 }
 
 void Platform::setWindowTitle(const char *title)
@@ -709,12 +752,12 @@ bool Platform::isWindowVisible()
 
 int Platform::getWindowX()
 {
-    return 0;
+    return x11.x;
 }
 
 int Platform::getWindowY()
 {
-    return 0;
+    return x11.y;
 }
 
 int Platform::getWindowWidth()
@@ -729,7 +772,31 @@ int Platform::getWindowHeight()
 
 bool Platform::isWindowMaximized()
 {
-    return false;
+    bool ret = false;
+    Atom actualType;
+    int actualFormat;
+    unsigned long i, numItems, bytesAfter;
+    unsigned char *propertyValue = NULL;
+    long maxLength = 1024;
+
+    if(XGetWindowProperty(x11.display, x11.window, x11.atomWindowState,
+                            0l, maxLength, False, XA_ATOM, &actualType,
+                            &actualFormat, &numItems, &bytesAfter,
+                            &propertyValue) == Success) {
+        Atom *atoms = (Atom *)propertyValue;
+        int maximized = 0;
+
+        for(i=0; i<numItems; ++i) {
+            if(atoms[i] == x11.atomWindowMaximizedVert)
+                maximized |= 1;
+            else if(atoms[i] == x11.atomWindowMaximizedHorz)
+                maximized |= 2;
+        }
+        if(maximized == 3)
+            ret = true;
+        XFree(propertyValue);
+    }
+    return ret;
 }
 
 const char *Platform::getAppUserDir(const char *appName)

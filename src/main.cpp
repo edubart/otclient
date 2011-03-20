@@ -111,11 +111,11 @@ int main(int argc, const char *argv[])
     // terminate stuff
     g_engine.terminate();
 
-    //Platform::showMouseCursor();
-    Platform::terminate();
-
     // save configurations before exiting
     saveConfigs();
+
+    //Platform::showMouseCursor();
+    Platform::terminate();
 
     // unload resources
     g_resources.terminate();
