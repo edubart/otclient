@@ -601,7 +601,7 @@ bool Platform::isExtensionSupported(const char *ext)
     return false;
 }
 
-const char *Platform::getTextFromClipboard()
+const char *Platform::getClipboardText()
 {
     Window ownerWindow = XGetSelectionOwner(x11.display, x11.atomClipboard);
     if(ownerWindow ==  x11.window)
@@ -650,7 +650,7 @@ const char *Platform::getTextFromClipboard()
     return clipboard.c_str();
 }
 
-void Platform::copyToClipboard(const char *text)
+void Platform::setClipboardText(const char *text)
 {
     x11.clipboardText = text;
     XSetSelectionOwner(x11.display, x11.atomClipboard, x11.window, CurrentTime);

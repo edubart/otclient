@@ -244,6 +244,29 @@ bool Platform::isExtensionSupported(const char *ext)
     return false;
 }
 
+const char *Platform::getClipboardText()
+{
+    const char *text = "";
+    if(OpenClipboard(NULL)) {
+        text = (const char*)GetClipboardData(CF_TEXT);
+        CloseClipboard();
+    }
+    return text;
+}
+
+void Platform::setClipboardText(const char *text)
+{
+    int textLenght = strlen(text);
+    HANDLE hData = new HANDLE[textLenght + 1];
+    memcpy(hData, text, textLenght + 1);
+
+    if(OpenClipboard(NULL)) {
+        EmptyClipboard();
+        SetClipboardData(CF_TEXT, hData);
+        CloseClipboard();
+    }
+}
+
 void Platform::hideMouseCursor()
 {
     ShowCursor(false);

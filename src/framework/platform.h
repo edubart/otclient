@@ -57,8 +57,8 @@ namespace Platform
     /// Check if GL extension is supported
     bool isExtensionSupported(const char *ext);
 
-    const char *getTextFromClipboard();
-    void copyToClipboard(const char *text);
+    const char *getClipboardText();
+    void setClipboardText(const char *text);
 
     void hideMouseCursor();
     void showMouseCursor();
