@@ -255,6 +255,9 @@ void Platform::init(const char *appName)
     x11.atomWindowState = XInternAtom(x11.display, "_NET_WM_STATE", False);
     x11.atomWindowMaximizedVert = XInternAtom(x11.display, "_NET_WM_STATE_MAXIMIZED_VERT", False);
     x11.atomWindowMaximizedHorz = XInternAtom(x11.display, "_NET_WM_STATE_MAXIMIZED_HORZ", False);
+
+    // force first tick
+    Platform::getTicks();
 }
 
 void Platform::terminate()
@@ -449,7 +452,7 @@ void Platform::poll()
     }
 }
 
-unsigned long Platform::getTicks()
+int Platform::getTicks()
 {
     static timeval tv;
     static unsigned long firstTick = 0;

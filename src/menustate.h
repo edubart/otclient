@@ -42,7 +42,7 @@ public:
     void onInputEvent(InputEvent *event);
 
     void render();
-    void update(int elapsedTicks);
+    void update(int ticks, int elapsedTicks);
 
 private:
     TexturePtr m_background;

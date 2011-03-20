@@ -35,8 +35,8 @@ namespace Platform
     /// Poll platform input/window events
     void poll();
 
-    /// Get current time in milliseconds since first frame render
-    unsigned long getTicks();
+    /// Get current time in milliseconds since init
+    int getTicks();
     /// Sleep in current thread
     void sleep(unsigned long miliseconds);
 

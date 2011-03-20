@@ -88,9 +88,13 @@ void Platform::poll()
     }
 }
 
-unsigned long Platform::getTicks()
+int Platform::getTicks()
 {
-    return GetTickCount();
+    static unsigned long firstTick = 0;
+    if(!firstTick)
+        firstTick = GetTickCount64();
+    
+    return (uint32_t)(GetTickCount64() - firstTick);
 }
 
 void Platform::sleep(unsigned long miliseconds)

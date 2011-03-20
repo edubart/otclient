@@ -72,7 +72,7 @@ void Engine::run()
 
         // update
         ticks = Platform::getTicks();
-        update(ticks - lastFrameTicks);
+        update(ticks, ticks - lastFrameTicks);
         lastFrameTicks = ticks;
 
         // render only when visible
@@ -111,10 +111,10 @@ void Engine::render()
     g_graphics.endRender();
 }
 
-void Engine::update(int elapsedTicks)
+void Engine::update(int ticks, int elapsedTicks)
 {
     if(m_currentState)
-        m_currentState->update(elapsedTicks);
+        m_currentState->update(ticks, elapsedTicks);
 }
 
 void Engine::onClose()

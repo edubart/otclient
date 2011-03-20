@@ -40,7 +40,7 @@ public:
     virtual void onInputEvent(InputEvent *event) = 0;
 
     virtual void render() = 0;
-    virtual void update(int elapsedTicks) = 0;
+    virtual void update(int ticks, int elapsedTicks) = 0;
 };
 
 #endif // GAMESTATE_H

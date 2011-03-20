@@ -79,7 +79,7 @@ void MenuState::render()
     g_graphics.drawTexturedRect(Rect(0, 0, screenSize), m_background.get(), texCoords);
 }
 
-void MenuState::update(int elapsedTicks)
+void MenuState::update(int ticks, int elapsedTicks)
 {
 
 }
