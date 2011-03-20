@@ -71,10 +71,13 @@ int main(int argc, const char *argv[])
     signal(SIGTERM, signal_handler);
     signal(SIGINT, signal_handler);
 
+    // init platform stuff
+    Platform::init("OTClient");
+
     // init resources
     g_resources.init(argv[0]);
-    if(g_resources.setWriteDir(Platform::getAppUserDir("OTClient")))
-        g_resources.addToSearchPath(Platform::getAppUserDir("OTClient"));
+    if(g_resources.setWriteDir(Platform::getAppUserDir()))
+        g_resources.addToSearchPath(Platform::getAppUserDir());
     g_resources.addToSearchPath("data");
 
     // before loading configurations set the default ones
@@ -85,9 +88,6 @@ int main(int argc, const char *argv[])
         notice("Could not read configuration file, default configurations will be used.");
 
     notice("OTClient 0.1.0");
-
-    // init platform stuff
-    Platform::init();
 
     // create the window
     Platform::createWindow(g_config.getInteger("window x"), g_config.getInteger("window y"),

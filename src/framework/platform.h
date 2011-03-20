@@ -29,7 +29,7 @@
 
 namespace Platform
 {
-    void init();
+    void init(const char *appName);
     void terminate();
 
     /// Poll platform input/window events
@@ -57,8 +57,8 @@ namespace Platform
     /// Check if GL extension is supported
     bool isExtensionSupported(const char *ext);
 
-    const char *getTextFromClipboard();
-    void copyToClipboard(const char *text);
+    const char *getClipboardText();
+    void setClipboardText(const char *text);
 
     void hideMouseCursor();
     void showMouseCursor();
@@ -69,7 +69,7 @@ namespace Platform
     void swapBuffers();
 
     /// Get the app user directory, the place to save files configurations files
-    const char *getAppUserDir(const char *appName);
+    const char *getAppUserDir();
 }
 
 #endif // PLATFORM_H

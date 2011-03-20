@@ -36,14 +36,16 @@ struct Win32PlatformPrivate {
     HDC hdc;
     HGLRC hrc;
 
+    std::string appName;
     int x, y;
     int width, height;
     int minWidth, minHeight;
     bool maximized;
 } win32;
 
-void Platform::init()
+void Platform::init(const char *appName)
 {
+    win32.appName = appName;
     win32.instance = GetModuleHandle(NULL);
 
     WNDCLASSA wc;
@@ -56,7 +58,7 @@ void Platform::init()
     wc.hCursor			= LoadCursor(NULL, IDC_ARROW);		// Load The Arrow Pointer
     wc.hbrBackground            = NULL;					// No Background Required For GL
     wc.lpszMenuName		= NULL;					// We Don't Want A Menu
-    wc.lpszClassName            = "OTClient";		// Set The Class Name
+    wc.lpszClassName            = win32.appName.c_str();                        // Set The Class Name
 
     if(!RegisterClassA(&wc))
         fatal("Failed to register the window class.");
@@ -70,7 +72,7 @@ void Platform::terminate()
     }
 
     if(win32.instance) {
-        if(!UnregisterClassA("OTClient", win32.instance))
+        if(!UnregisterClassA(win32.appName.c_str(), win32.instance))
             error("Unregister class failed.");
 
         win32.instance = NULL;
@@ -112,15 +114,15 @@ bool Platform::createWindow(int x, int y, int width, int height, int minWidth, i
     //AdjustWindowRectEx(&windowRect, dwStyle, FALSE, dwExStyle);
 
     win32.window = CreateWindowExA(dwExStyle,		// Extended Style For The Window
-                                   "OTClient",		// Class Name
-                                   "OTClient",          // Window Title
+                                   win32.appName.c_str(),       // Class Name
+                                   win32.appName.c_str(),       // Window Title
                                    dwStyle,		// Required Window Style
-                                   x,                    // Window X Position
-                                   y,                    // Window Y Position
-                                   width,                // Calculate Window Width
-                                   height,               // Calculate Window Height
-                                   NULL,			// No Parent Window
-                                   NULL,			// No Menu
+                                   x,                   // Window X Position
+                                   y,                   // Window Y Position
+                                   width,               // Calculate Window Width
+                                   height,              // Calculate Window Height
+                                   NULL,		// No Parent Window
+                                   NULL,		// No Menu
                                    win32.instance,	// Instance
                                    NULL);
 
@@ -242,6 +244,29 @@ bool Platform::isExtensionSupported(const char *ext)
     return false;
 }
 
+const char *Platform::getClipboardText()
+{
+    const char *text = "";
+    if(OpenClipboard(NULL)) {
+        text = (const char*)GetClipboardData(CF_TEXT);
+        CloseClipboard();
+    }
+    return text;
+}
+
+void Platform::setClipboardText(const char *text)
+{
+    int textLenght = strlen(text);
+    HANDLE hData = new HANDLE[textLenght + 1];
+    memcpy(hData, text, textLenght + 1);
+
+    if(OpenClipboard(NULL)) {
+        EmptyClipboard();
+        SetClipboardData(CF_TEXT, hData);
+        CloseClipboard();
+    }
+}
+
 void Platform::hideMouseCursor()
 {
     ShowCursor(false);
@@ -294,10 +319,10 @@ bool Platform::isWindowMaximized()
     return win32.maximized;
 }
 
-const char *Platform::getAppUserDir(const char *appName)
+const char *Platform::getAppUserDir()
 {
     std::stringstream sdir;
-    sdir << PHYSFS_getUserDir() << "/." << appName << "/";
+    sdir << PHYSFS_getUserDir() << "/." << win32.appName << "/";
     if((mkdir(sdir.str().c_str()) != 0) && (errno != EEXIST))
         error("Couldn't create directory for saving configuration file. (%s)", sdir.str().c_str());
     return sdir.str().c_str();

@@ -57,6 +57,7 @@ struct X11PlatformPrivate {
     bool visible;
     bool focused;
     bool maximizeOnFirstShow;
+    std::string appName;
     int width;
     int height;
     int x;
@@ -65,8 +66,9 @@ struct X11PlatformPrivate {
     std::map<int, unsigned char> keyMap;
 } x11;
 
-void Platform::init()
+void Platform::init(const char *appName)
 {
+    x11.appName = appName;
     x11.display = NULL;
     x11.visual = NULL;
     x11.glxContext = NULL;
@@ -642,7 +644,7 @@ bool Platform::isExtensionSupported(const char *ext)
     return false;
 }
 
-const char *Platform::getTextFromClipboard()
+const char *Platform::getClipboardText()
 {
     Window ownerWindow = XGetSelectionOwner(x11.display, x11.atomClipboard);
     if(ownerWindow ==  x11.window)
@@ -691,7 +693,7 @@ const char *Platform::getTextFromClipboard()
     return clipboard.c_str();
 }
 
-void Platform::copyToClipboard(const char *text)
+void Platform::setClipboardText(const char *text)
 {
     x11.clipboardText = text;
     XSetSelectionOwner(x11.display, x11.atomClipboard, x11.window, CurrentTime);
@@ -799,10 +801,10 @@ bool Platform::isWindowMaximized()
     return ret;
 }
 
-const char *Platform::getAppUserDir(const char *appName)
+const char *Platform::getAppUserDir()
 {
     std::stringstream sdir;
-    sdir << PHYSFS_getUserDir() << "/." << appName << "/";
+    sdir << PHYSFS_getUserDir() << "/." << x11.appName << "/";
     if((mkdir(sdir.str().c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) != 0) && (errno != EEXIST))
         error("Couldn't create directory for saving configuration file. (%s)", sdir.str().c_str());
     return sdir.str().c_str();
