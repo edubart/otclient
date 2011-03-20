@@ -40,7 +40,7 @@ namespace Platform
     /// Sleep in current thread
     void sleep(unsigned long miliseconds);
 
-    bool createWindow(int width, int height, int minWidth, int minHeight);
+    bool createWindow(int x, int y, int width, int height, int minWidth, int minHeight, bool maximized);
     void destroyWindow();
     void showWindow();
     void setWindowTitle(const char *title);

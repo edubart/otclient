@@ -448,7 +448,7 @@ void Platform::sleep(unsigned long miliseconds)
     nanosleep(&tv, NULL);
 }
 
-bool Platform::createWindow(int width, int height, int minWidth, int minHeight)
+bool Platform::createWindow(int x, int y, int width, int height, int minWidth, int minHeight, bool maximized)
 {
     static int attrList[] = {
         GLX_USE_GL,
@@ -483,8 +483,8 @@ bool Platform::createWindow(int width, int height, int minWidth, int minHeight)
                          StructureNotifyMask | FocusChangeMask;
 
     // calculate center position
-    int x = (XDisplayHeight(x11.display, DefaultScreen(x11.display)) - width) / 2;
-    int y = (XDisplayHeight(x11.display, DefaultScreen(x11.display)) - height) / 2;
+    //x = (XDisplayWidth(x11.display, DefaultScreen(x11.display)) - width) / 2;
+    //y = (XDisplayHeight(x11.display, DefaultScreen(x11.display)) - height) / 2;
 
     // create the window
     x11.window = XCreateWindow(x11.display,

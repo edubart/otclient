@@ -50,7 +50,7 @@ void Engine::init()
     int height = g_config.getInteger("height");
 
     // create the window
-    Platform::createWindow(width, height, 550, 450);
+    Platform::createWindow(0, 0, width, height, 550, 450, false);
     Platform::setWindowTitle(APP_NAME);
     Platform::setVsync();
 
