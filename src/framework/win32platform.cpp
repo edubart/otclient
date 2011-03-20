@@ -111,19 +111,20 @@ bool Platform::createWindow(int x, int y, int width, int height, int minWidth, i
     win32.minHeight = minHeight;
     win32.maximized = maximized;
 
-    //AdjustWindowRectEx(&windowRect, dwStyle, FALSE, dwExStyle);
+    RECT windowRect = {x, y, x + width, y + height};
+    AdjustWindowRectEx(&windowRect, dwStyle, FALSE, dwExStyle);
 
-    win32.window = CreateWindowExA(dwExStyle,		// Extended Style For The Window
-                                   win32.appName.c_str(),       // Class Name
-                                   win32.appName.c_str(),       // Window Title
-                                   dwStyle,		// Required Window Style
-                                   x,                   // Window X Position
-                                   y,                   // Window Y Position
-                                   width,               // Calculate Window Width
-                                   height,              // Calculate Window Height
-                                   NULL,		// No Parent Window
-                                   NULL,		// No Menu
-                                   win32.instance,	// Instance
+    win32.window = CreateWindowExA(dwExStyle,                           // Extended Style For The Window
+                                   win32.appName.c_str(),               // Class Name
+                                   win32.appName.c_str(),               // Window Title
+                                   dwStyle,                             // Required Window Style
+                                   windowRect.left,                     // Window X Position
+                                   windowRect.top,                      // Window Y Position
+                                   windowRect.right - windowRect.left,  // Calculate Window Width
+                                   windowRect.bottom - windowRect.top,  // Calculate Window Height
+                                   NULL,		                // No Parent Window
+                                   NULL,		                // No Menu
+                                   win32.instance,                      // Instance
                                    NULL);
 
     if(!win32.window) {
@@ -314,6 +315,16 @@ int Platform::getWindowHeight()
     return win32.height;
 }
 
+int Platform::getDisplayWidth()
+{
+    return GetSystemMetrics(SM_CXSCREEN);
+}
+
+int Platform::getDisplayHeight()
+{
+    return GetSystemMetrics(SM_CYSCREEN);
+}
+
 bool Platform::isWindowMaximized()
 {
     return win32.maximized;
@@ -344,12 +355,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             minMax->ptMinTrackSize.y = win32.minHeight;
             break;
         }
-    case WM_MOVING:
-    case WM_SIZING:
+    case WM_MOVE:
         {
-            RECT *rect = (RECT*)lParam;
-            win32.x = rect->left;
-            win32.y = rect->top;
+            win32.x = LOWORD(lParam);
+            win32.y = HIWORD(lParam);
             break;
         }
     case WM_SIZE:
