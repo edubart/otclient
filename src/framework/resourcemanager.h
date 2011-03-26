@@ -63,6 +63,9 @@ public:
 
     /// Save a text file into write directory
     bool saveTextFile(const std::string &fileName, std::string text);
+
+    /// Get a list with all files in a directory
+    std::list<std::string> getDirectoryFiles(const std::string& directory);
 };
 
 extern ResourceManager g_resources;
