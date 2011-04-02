@@ -111,7 +111,7 @@ void ConfigManager::setValue(const std::string &key, bool value)
 
 const std::string &ConfigManager::getString(const std::string &key)
 {
-    std::map<std::string, std::string>::iterator iter = m_confsMap.find(key);
+    auto iter = m_confsMap.find(key);
     if(iter == m_confsMap.end()) {
         warning("Config value %s not found", key.c_str());
         static std::string emptystr;
@@ -122,7 +122,7 @@ const std::string &ConfigManager::getString(const std::string &key)
 
 float ConfigManager::getFloat(const std::string &key)
 {
-    std::map<std::string, std::string>::iterator iter = m_confsMap.find(key);
+    auto iter = m_confsMap.find(key);
     if(iter == m_confsMap.end()) {
         warning("Config value %s not found", key.c_str());
         return 0;
@@ -132,7 +132,7 @@ float ConfigManager::getFloat(const std::string &key)
 
 bool ConfigManager::getBoolean(const std::string &key)
 {
-    std::map<std::string, std::string>::iterator iter = m_confsMap.find(key);
+    auto iter = m_confsMap.find(key);
     if(iter == m_confsMap.end()) {
         warning("Config value %s not found", key.c_str());
         return 0;
@@ -142,7 +142,7 @@ bool ConfigManager::getBoolean(const std::string &key)
 
 int ConfigManager::getInteger(const std::string &key)
 {
-    std::map<std::string, std::string>::iterator iter = m_confsMap.find(key);
+    auto iter = m_confsMap.find(key);
     if(iter == m_confsMap.end()) {
         warning("Config value %s not found", key.c_str());
         return 0;
