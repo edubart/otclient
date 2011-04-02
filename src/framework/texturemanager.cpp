@@ -50,7 +50,8 @@ TexturePtr TextureManager::get(const std::string& textureFile)
         else
             texture = it->second.lock();
     }
-    else { // load texture
+
+    if(!texture) { // load texture
         // currently only png textures are supported
         if(!boost::ends_with(textureFile, ".png")) {
             error("Unable to load texture %s, file format no supported.", textureFile.c_str());
