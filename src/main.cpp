@@ -108,7 +108,7 @@ int main(int argc, const char *argv[])
 
     // state scope
     {
-        std::unique_ptr<MenuState> menuState(new MenuState);
+        std::unique_ptr<MenuState> menuState(new MenuState());
         g_engine.changeState(menuState.get());
 
         Platform::showWindow();

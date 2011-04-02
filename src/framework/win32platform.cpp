@@ -288,7 +288,7 @@ void Platform::showMouseCursor()
     ShowCursor(true);
 }
 
-void Platform::setVsync(bool enable)
+void Platform::setVsync(bool enable /*= true*/)
 {
     typedef GLint (*glSwapIntervalProc)(GLint);
     glSwapIntervalProc glSwapInterval = NULL;

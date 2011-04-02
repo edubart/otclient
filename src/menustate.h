@@ -35,14 +35,14 @@ public:
     MenuState();
     virtual ~MenuState();
 
-    void onEnter();
-    void onLeave();
+    virtual void onEnter();
+    virtual void onLeave();
 
-    void onClose();
-    void onInputEvent(InputEvent *event);
+    virtual void onClose();
+    virtual void onInputEvent(InputEvent *event);
 
-    void render();
-    void update(int ticks, int elapsedTicks);
+    virtual void render();
+    virtual void update(int ticks, int elapsedTicks);
 
 private:
     TexturePtr m_background;
