@@ -33,4 +33,21 @@ std::string vformat(const char *format, va_list args);
 /// Formatting like printf for std::string
 std::string format(const char *format, ...);
 
+/// Convert any data type through boost::lexical_cast
+//TODO: move declatation to util.cpp
+template<class R, class T> 
+R convertType(T t)
+{
+    R r = R();
+    
+    try{
+	r = boost::lexical_cast<R>(t);
+    }
+    catch(boost::bad_lexical_cast bad){
+	//TODO: add an error message
+    }
+    
+    return r;
+}
+
 #endif

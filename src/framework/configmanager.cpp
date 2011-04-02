@@ -93,12 +93,12 @@ void ConfigManager::setValue(const std::string &key, const char *value)
 
 void ConfigManager::setValue(const std::string &key, int value)
 {
-    setValue(key, boost::lexical_cast<std::string>(value));
+    setValue(key, convertType<std::string, int>(value));
 }
 
 void ConfigManager::setValue(const std::string &key, float value)
 {
-    setValue(key, boost::lexical_cast<std::string>(value));
+    setValue(key, convertType<std::string, float>(value));
 }
 
 void ConfigManager::setValue(const std::string &key, bool value)
@@ -127,7 +127,7 @@ float ConfigManager::getFloat(const std::string &key)
         warning("Config value %s not found", key.c_str());
         return 0;
     }
-    return boost::lexical_cast<float>(iter->second);
+    return convertType<float, std::string>(iter->second);
 }
 
 bool ConfigManager::getBoolean(const std::string &key)
@@ -147,5 +147,5 @@ int ConfigManager::getInteger(const std::string &key)
         warning("Config value %s not found", key.c_str());
         return 0;
     }
-    return boost::lexical_cast<int>(iter->second);
+    return convertType<int, std::string>(iter->second);
 }

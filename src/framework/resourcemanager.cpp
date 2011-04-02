@@ -57,7 +57,7 @@ bool ResourceManager::setWriteDir(const std::string& path)
     return ret;
 }
 
-bool ResourceManager::addToSearchPath(const std::string& path, bool insertInFront)
+bool ResourceManager::addToSearchPath(const std::string& path, bool insertInFront /*= true*/)
 {
     if(!PHYSFS_addToSearchPath(path.c_str(), insertInFront ? 0 : 1)) {
         error("Error while adding \"%s\" to resources search path: %s", path.c_str(), PHYSFS_getLastError());
