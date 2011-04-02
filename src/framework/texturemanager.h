@@ -28,7 +28,7 @@
 #include "prerequisites.h"
 #include "texture.h"
 
-typedef boost::weak_ptr<Texture> TextureWeakPtr;
+typedef std::weak_ptr<Texture> TextureWeakPtr;
 
 class TextureManager
 {

@@ -28,6 +28,9 @@
 #include <physfs.h>
 #include <windows.h>
 
+#include <GL/gl.h>
+#include <GL/glext.h>
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 struct Win32PlatformPrivate {

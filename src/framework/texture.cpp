@@ -24,6 +24,9 @@
 
 #include "texture.h"
 
+#include <GL/gl.h>
+#include <GL/glext.h>
+
 Texture::Texture(int width, int height, int components, unsigned char *pixels)
 {
     m_size.setWidth(width);

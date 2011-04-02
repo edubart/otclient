@@ -41,13 +41,13 @@ public:
     void enableBilinearFilter();
 
     const Size& getSize() const { return m_size; }
-    GLuint getTextureId() const { return m_textureId; }
+    unsigned int getTextureId() const { return m_textureId; }
 
 private:
-    GLuint m_textureId;
+    unsigned int m_textureId;
     Size m_size;
 };
 
-typedef boost::shared_ptr<Texture> TexturePtr;
+typedef std::shared_ptr<Texture> TexturePtr;
 
 #endif // TEXTURE_H

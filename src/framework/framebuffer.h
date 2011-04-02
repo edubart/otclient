@@ -43,8 +43,8 @@ public:
     void draw(int x, int y, int width, int height);
 
 private:
-    GLuint m_fboTexture;
-    GLuint m_fbo;
+    unsigned int m_fboTexture;
+    unsigned int m_fbo;
     bool m_fallbackOldImp;
     int m_width;
     int m_height;

@@ -14,8 +14,8 @@ Fonts::~Fonts()
 bool Fonts::load()
 {
     std::list<std::string> files = g_resources.getDirectoryFiles("fonts");
-    foreach(const std::string& file, files) {
-        notice("File: %s", file.c_str());
+    for(auto it = files.begin(); it != files.end(); ++it) {
+        notice("File: %s", (*it).c_str());
     }
 
     return true;
