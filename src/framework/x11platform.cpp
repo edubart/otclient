@@ -297,20 +297,27 @@ void Platform::poll()
         switch(event.type) {
             case ConfigureNotify:
                 // window resize
-                if(x11.width != event.xconfigure.width || x11.height != event.xconfigure.height) {
-                    x11.width = event.xconfigure.width;
-                    x11.height = event.xconfigure.height;
-                    g_engine.onResize(x11.width, x11.height);
+                static int oldWidth = -1;
+                static int oldHeight = -1;
+                if(oldWidth != event.xconfigure.width || oldHeight != event.xconfigure.height) {
+                    g_engine.onResize(event.xconfigure.width, event.xconfigure.height);
+                    oldWidth = event.xconfigure.width;
+                    oldHeight = event.xconfigure.height;
                 }
 
-                // hack to fix x11 windows move gaps
-                static int gap_x = -1, gap_y = -1;
-                if(gap_x == -1 && gap_y == -1) {
-                    gap_x = event.xconfigure.x;
-                    gap_y = event.xconfigure.y;
+                if(!isWindowMaximized()) {
+                    x11.width = event.xconfigure.width;
+                    x11.height = event.xconfigure.height;
+
+                    // hack to fix x11 windows move gaps
+                    static int gap_x = -1, gap_y = -1;
+                    if(gap_x == -1 && gap_y == -1) {
+                        gap_x = event.xconfigure.x;
+                        gap_y = event.xconfigure.y;
+                    }
+                    x11.x = event.xconfigure.x - gap_x;
+                    x11.y = event.xconfigure.y - gap_y;
                 }
-                x11.x = event.xconfigure.x - gap_x;
-                x11.y = event.xconfigure.y - gap_y;
                 break;
 
             case KeyPress:

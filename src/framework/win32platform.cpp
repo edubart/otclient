@@ -40,7 +40,7 @@ struct Win32PlatformPrivate {
     int x, y;
     int width, height;
     int minWidth, minHeight;
-    bool maximized;
+    bool focused, visible, maximized;
 } win32;
 
 void Platform::init(const char *appName)
@@ -302,6 +302,16 @@ void Platform::swapBuffers()
     SwapBuffers(win32.hdc);
 }
 
+bool Platform::isWindowFocused()
+{
+    return win32.focused;
+}
+
+bool Platform::isWindowVisible()
+{
+    return win32.visible;
+}
+
 int Platform::getWindowX()
 {
     return win32.x;
@@ -348,8 +358,15 @@ const char *Platform::getAppUserDir()
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+    static int lastX, lastY;
+
     switch(uMsg)
     {
+    case WM_ACTIVATE:
+        {
+            win32.focused = !(wParam == WA_INACTIVE);
+            break;
+        }
     case WM_CLOSE:
         {
             g_engine.onClose();
@@ -364,6 +381,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         }
     case WM_MOVE:
         {
+            lastX = win32.x;
+            lastY = win32.y;
             win32.x = LOWORD(lParam);
             win32.y = HIWORD(lParam);
             break;
@@ -373,6 +392,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             switch(wParam)
             {
             case SIZE_MAXIMIZED:
+                win32.x = lastX;
+                win32.y = lastY;
                 win32.maximized = true;
                 break;
             case SIZE_RESTORED:
@@ -380,14 +401,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
                 break;
             }
 
-            win32.width = LOWORD(lParam);
-            win32.height = HIWORD(lParam);
+            win32.visible = !(wParam == SIZE_MINIMIZED);
+
+            if(!win32.maximized) {
+                win32.width = LOWORD(lParam);
+                win32.height = HIWORD(lParam);
+            }
+
             g_engine.onResize(LOWORD(lParam), HIWORD(lParam));
             break;
         }
     default:
         {
-            return DefWindowProc(hWnd,uMsg,wParam,lParam);
+            return DefWindowProc(hWnd, uMsg, wParam, lParam);
         }
     }
     return 0;

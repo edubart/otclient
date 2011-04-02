@@ -23,6 +23,7 @@
 
 
 #include "engine.h"
+#include "fonts.h"
 #include "platform.h"
 #include "graphics.h"
 #include "input.h"
@@ -46,6 +47,9 @@ void Engine::init()
 {
     // initialize graphics stuff
     g_graphics.init();
+
+    // load fonts
+    g_fonts.load();
 
     // finally show the window
     onResize(Platform::getWindowWidth(), Platform::getWindowHeight());

@@ -117,3 +117,15 @@ bool ResourceManager::saveTextFile(const std::string &fileName, std::string text
 {
     return saveFile(fileName, (const unsigned char*)text.c_str(), text.size());
 }
+
+std::list<std::string> ResourceManager::getDirectoryFiles(const std::string& directory)
+{
+    std::list<std::string> files;
+    char **rc = PHYSFS_enumerateFiles(directory.c_str());
+
+    for(char **i = rc; *i != NULL; i++)
+        files.push_back(*i);
+
+    PHYSFS_freeList(rc);
+    return files;
+}
