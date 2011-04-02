@@ -62,6 +62,9 @@ void Platform::init(const char *appName)
 
     if(!RegisterClassA(&wc))
         fatal("Failed to register the window class.");
+
+    // force first tick
+    Platform::getTicks();
 }
 
 void Platform::terminate()
