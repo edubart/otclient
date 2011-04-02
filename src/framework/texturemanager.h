@@ -28,6 +28,8 @@
 #include "prerequisites.h"
 #include "texture.h"
 
+typedef boost::weak_ptr<Texture> TextureWeakPtr;
+
 class TextureManager
 {
 public:
@@ -38,7 +40,7 @@ public:
     TexturePtr get(const std::string& textureFile);
 
 private:
-    typedef std::map<std::string, TexturePtr> TexturesMap;
+    typedef std::map<std::string, TextureWeakPtr > TexturesMap;
     TexturesMap m_texturesMap;
 };
 

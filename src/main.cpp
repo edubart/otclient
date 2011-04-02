@@ -105,17 +105,21 @@ int main(int argc, const char *argv[])
 
     // init engine
     g_engine.init();
-    boost::scoped_ptr<MenuState> menuState(new MenuState);
-    g_engine.changeState(menuState.get());
 
-    Platform::showWindow();
-    //Platform::hideMouseCursor();
+    // state scope
+    {
+        boost::scoped_ptr<MenuState> menuState(new MenuState);
+        g_engine.changeState(menuState.get());
 
-    // main loop, run everything
-    g_engine.run();
+        Platform::showWindow();
+        //Platform::hideMouseCursor();
 
-    // terminate stuff
-    g_engine.terminate();
+        // main loop, run everything
+        g_engine.run();
+
+        // terminate stuff
+        g_engine.terminate();
+    }
 
     // save configurations before exiting
     saveConfigs();

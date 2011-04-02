@@ -20,7 +20,7 @@ MESSAGE(STATUS "BUILD TYPE: " ${CMAKE_BUILD_TYPE})
 
 # setup compiler options
 IF(CMAKE_COMPILER_IS_GNUCXX)
-    SET(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror -Wno-unused-parameter")
+    SET(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror -Wno-unused-parameter -std=c++0x")
     SET(CMAKE_CXX_FLAGS_DEBUG "-O1 -g -ggdb -fno-inline")
     SET(CMAKE_CXX_FLAGS_RELEASE "-O2 -Wl,-s")
     SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g")
@@ -55,6 +55,7 @@ SET(SOURCES
     
 # framework sources
     src/framework/framebuffer.cpp
+    src/framework/fonts.cpp
     src/framework/textureloader.cpp
     src/framework/texture.cpp
     src/framework/texturemanager.cpp

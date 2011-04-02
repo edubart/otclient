@@ -44,8 +44,12 @@ TexturePtr TextureManager::get(const std::string& textureFile)
 
     // check if the texture is already loaded
     TexturesMap::iterator it = m_texturesMap.find(textureFile);
-    if(it != m_texturesMap.end())
-        texture = it->second;
+    if(it != m_texturesMap.end()) {
+        if(it->second.expired())
+            m_texturesMap.erase(it);
+        else
+            texture = it->second.lock();
+    }
     else { // load texture
         // currently only png textures are supported
         if(!boost::ends_with(textureFile, ".png")) {
