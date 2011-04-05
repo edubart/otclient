@@ -135,38 +135,34 @@ void Graphics::endRender()
 
 }
 
-void Graphics::drawTexturedRect(const Rect& screenCoords, const Texture *texture, const Rect& texCoords)
+void Graphics::drawTexturedRect(const Rect& screenCoords, const Texture *texture, const Rect& textureCoords)
 {
     // rect correction for opengl
-    int right = screenCoords.right()+1;
-    int bottom = screenCoords.bottom()+1;
+    int right = screenCoords.right() + 1;
+    int bottom = screenCoords.bottom() + 1;
     int top = screenCoords.top();
     int left = screenCoords.left();
 
-    float tright;
-    float tbottom;
-    float ttop;
-    float tleft;
+    float textureRight = 0.0f;
+    float textureBottom = 1.0f;
+    float textureTop = 0.0f;
+    float textureLeft = 1.0f;
 
-    if(!texCoords.isEmpty()) {
+    if(!textureCoords.isEmpty()) {
         const Size& textureSize = texture->getSize();
-        tright = (float)(texCoords.right()+1)/textureSize.width();
-        tbottom = (float)(texCoords.bottom()+1)/textureSize.height();
-        ttop = (float)texCoords.top()/textureSize.height();
-        tleft = (float)texCoords.left()/textureSize.width();
-    } else {
-        tright = 0.0f;
-        tbottom = 1.0f;
-        ttop = 0.0f;
-        tleft = 1.0f;
+	
+        textureRight = (float)(textureCoords.right() + 1) / textureSize.width();
+        textureBottom = (float)(textureCoords.bottom() + 1) / textureSize.height();
+        textureTop = (float)textureCoords.top() / textureSize.height();
+        textureLeft = (float)textureCoords.left() / textureSize.width();
     }
-
+    
     glBindTexture(GL_TEXTURE_2D, texture->getTextureId());
     glBegin(GL_QUADS);
-    glTexCoord2f(tleft,  ttop); glVertex2i(left,  top);
-    glTexCoord2f(tleft,  tbottom); glVertex2i(left,  bottom);
-    glTexCoord2f(tright, tbottom); glVertex2i(right, bottom);
-    glTexCoord2f(tright, ttop); glVertex2i(right, top);
+        glTexCoord2f(textureLeft,  textureTop);    glVertex2i(left,  top);
+        glTexCoord2f(textureLeft,  textureBottom); glVertex2i(left,  bottom);
+        glTexCoord2f(textureRight, textureBottom); glVertex2i(right, bottom);
+        glTexCoord2f(textureRight, textureTop);    glVertex2i(right, top);
     glEnd();
 }
 
@@ -177,8 +173,8 @@ void Graphics::drawColoredRect(const Rect& screenCoords, const Color& color)
     glColor4ubv(color.rgbaPtr());
 
     // rect correction for opengl
-    int right = screenCoords.right()+1;
-    int bottom = screenCoords.bottom()+1;
+    int right = screenCoords.right() + 1;
+    int bottom = screenCoords.bottom() + 1;
     int top = screenCoords.top();
     int left = screenCoords.left();
 
@@ -195,7 +191,7 @@ void Graphics::drawColoredRect(const Rect& screenCoords, const Color& color)
 
 void Graphics::drawBoundingRect(const Rect& screenCoords, const Color& color, int innerLineWidth)
 {
-    if(2*innerLineWidth > screenCoords.height())
+    if(2 * innerLineWidth > screenCoords.height())
         return;
 
     glDisable(GL_TEXTURE_2D);
@@ -209,31 +205,29 @@ void Graphics::drawBoundingRect(const Rect& screenCoords, const Color& color, in
     int left = screenCoords.left();
 
     glBegin(GL_QUADS);
+        // top line
+        glVertex2i(left,  top);
+        glVertex2i(left,  top + innerLineWidth);
+        glVertex2i(right, top + innerLineWidth);
+        glVertex2i(right, top);
 
-    // top line
-    glVertex2i(left,  top);
-    glVertex2i(left,  top+innerLineWidth);
-    glVertex2i(right, top+innerLineWidth);
-    glVertex2i(right, top);
+        // left
+        glVertex2i(left, screenCoords.top() + innerLineWidth);
+        glVertex2i(left, bottom - innerLineWidth);
+        glVertex2i(left + innerLineWidth, bottom - innerLineWidth);
+        glVertex2i(left + innerLineWidth, screenCoords.top() + innerLineWidth);
 
-    // left
-    glVertex2i(left, screenCoords.top()+innerLineWidth);
-    glVertex2i(left, bottom-innerLineWidth);
-    glVertex2i(left+innerLineWidth, bottom-innerLineWidth);
-    glVertex2i(left+innerLineWidth, screenCoords.top()+innerLineWidth);
+        // bottom line
+        glVertex2i(left,  bottom);
+        glVertex2i(left,  bottom - innerLineWidth);
+        glVertex2i(right, bottom - innerLineWidth);
+        glVertex2i(right, bottom);
 
-    // bottom line
-    glVertex2i(left,  bottom);
-    glVertex2i(left,  bottom-innerLineWidth);
-    glVertex2i(right, bottom-innerLineWidth);
-    glVertex2i(right, bottom);
-
-    // right line
-    glVertex2i(right,           top+innerLineWidth);
-    glVertex2i(right,           bottom-innerLineWidth);
-    glVertex2i(right-innerLineWidth, bottom-innerLineWidth);
-    glVertex2i(right-innerLineWidth, top+innerLineWidth);
-
+        // right line
+        glVertex2i(right                 , top + innerLineWidth);
+        glVertex2i(right                 , bottom - innerLineWidth);
+        glVertex2i(right - innerLineWidth, bottom - innerLineWidth);
+        glVertex2i(right - innerLineWidth, top + innerLineWidth);
     glEnd();
 
     glEnable(GL_TEXTURE_2D);
