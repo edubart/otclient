@@ -61,7 +61,7 @@ bool Resources::fileExists(const std::string& filePath)
     return PHYSFS_exists(filePath.c_str());
 }
 
-unsigned char *Resources::loadFile(const std::string& fileName, unsigned int *fileSize)
+uchar *Resources::loadFile(const std::string& fileName, uint *fileSize)
 {
     PHYSFS_file *file = PHYSFS_openRead(fileName.c_str());
     if(!file) {
@@ -71,7 +71,7 @@ unsigned char *Resources::loadFile(const std::string& fileName, unsigned int *fi
     }
 
     *fileSize = PHYSFS_fileLength(file);
-    unsigned char *buffer = new unsigned char[*fileSize + 1];
+    uchar *buffer = new uchar[*fileSize + 1];
     PHYSFS_read(file, (void*)buffer, 1, *fileSize);
     buffer[*fileSize] = 0;
     PHYSFS_close(file);
@@ -81,7 +81,7 @@ unsigned char *Resources::loadFile(const std::string& fileName, unsigned int *fi
 std::string Resources::loadTextFile(const std::string& fileName)
 {
     std::string text;
-    unsigned int fileSize;
+    uint fileSize;
     char *buffer = (char *)loadFile(fileName, &fileSize);
     if(buffer) {
         text.assign(buffer);
@@ -90,7 +90,7 @@ std::string Resources::loadTextFile(const std::string& fileName)
     return text;
 }
 
-bool Resources::saveFile(const std::string &fileName, const unsigned char *data, unsigned int size)
+bool Resources::saveFile(const std::string &fileName, const uchar *data, uint size)
 {
     PHYSFS_file *file = PHYSFS_openWrite(fileName.c_str());
     if(!file) {
@@ -105,7 +105,7 @@ bool Resources::saveFile(const std::string &fileName, const unsigned char *data,
 
 bool Resources::saveTextFile(const std::string &fileName, std::string text)
 {
-    return saveFile(fileName, (const unsigned char*)text.c_str(), text.size());
+    return saveFile(fileName, (const uchar*)text.c_str(), text.size());
 }
 
 std::list<std::string> Resources::getDirectoryFiles(const std::string& directory)

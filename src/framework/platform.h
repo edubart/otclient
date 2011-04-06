@@ -38,7 +38,7 @@ namespace Platform
     /// Get current time in milliseconds since init
     int getTicks();
     /// Sleep in current thread
-    void sleep(unsigned long miliseconds);
+    void sleep(ulong miliseconds);
 
     bool createWindow(int x, int y, int width, int height, int minWidth, int minHeight, bool maximized);
     void destroyWindow();

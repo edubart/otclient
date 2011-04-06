@@ -63,7 +63,7 @@ struct X11PlatformPrivate {
     int x;
     int y;
     std::string clipboardText;
-    std::map<int, unsigned char> keyMap;
+    std::map<int, uchar> keyMap;
 } x11;
 
 void Platform::init(const char *appName)
@@ -346,7 +346,7 @@ void Platform::poll()
                        keysym != XK_Delete &&
                        keysym != XK_Escape
                     ) {
-                        //debug("char: %c code: %d", buf[0], (unsigned char)buf[0]);
+                        //debug("char: %c code: %d", buf[0], (uchar)buf[0]);
                         inputEvent.type = EV_TEXT_ENTER;
                         inputEvent.key.keychar = buf[0];
                         inputEvent.key.keycode = KC_UNKNOWN;
@@ -424,7 +424,7 @@ void Platform::poll()
                     XChangeProperty(x11.display, req->requestor,
                                     req->property, req->target,
                                     8, PropModeReplace,
-                                    (unsigned char *) &typeList,
+                                    (uchar *) &typeList,
                                     sizeof(typeList));
                     respond.xselection.property = req->property;
                 } else {
@@ -433,7 +433,7 @@ void Platform::poll()
                                     req->property, req->target,
                                     8,
                                     PropModeReplace,
-                                    (unsigned char*) x11.clipboardText.c_str(),
+                                    (uchar*) x11.clipboardText.c_str(),
                                     x11.clipboardText.size());
                     respond.xselection.property = req->property;
                 }
@@ -462,7 +462,7 @@ void Platform::poll()
 int Platform::getTicks()
 {
     static timeval tv;
-    static unsigned long firstTick = 0;
+    static ulong firstTick = 0;
 
     gettimeofday(&tv, 0);
     if(!firstTick)
@@ -471,7 +471,7 @@ int Platform::getTicks()
     return ((tv.tv_sec - firstTick) * 1000) + (tv.tv_usec / 1000);
 }
 
-void Platform::sleep(unsigned long miliseconds)
+void Platform::sleep(ulong miliseconds)
 {
     timespec tv;
     tv.tv_sec  = miliseconds / 1000;
@@ -671,8 +671,8 @@ const char *Platform::getClipboardText()
         // check for data
         Atom type;
         int format;
-        unsigned long numItems, bytesLeft, dummy;
-        unsigned char *data;
+        ulong numItems, bytesLeft, dummy;
+        uchar *data;
         XGetWindowProperty(x11.display, ownerWindow,
                             XA_STRING,
                             0, 0, 0,
@@ -797,8 +797,8 @@ bool Platform::isWindowMaximized()
     bool ret = false;
     Atom actualType;
     int actualFormat;
-    unsigned long i, numItems, bytesAfter;
-    unsigned char *propertyValue = NULL;
+    ulong i, numItems, bytesAfter;
+    uchar *propertyValue = NULL;
     long maxLength = 1024;
 
     if(XGetWindowProperty(x11.display, x11.window, x11.atomWindowState,

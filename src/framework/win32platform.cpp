@@ -96,14 +96,14 @@ void Platform::poll()
 
 int Platform::getTicks()
 {
-    static unsigned long firstTick = 0;
+    static ulong firstTick = 0;
     if(!firstTick)
         firstTick = GetTickCount();
     
     return (uint32_t)(GetTickCount() - firstTick);
 }
 
-void Platform::sleep(unsigned long miliseconds)
+void Platform::sleep(ulong miliseconds)
 {
     Sleep(miliseconds);
 }

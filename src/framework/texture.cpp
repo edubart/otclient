@@ -27,7 +27,7 @@
 #include <GL/gl.h>
 #include <GL/glext.h>
 
-Texture::Texture(int width, int height, int components, unsigned char *pixels)
+Texture::Texture(int width, int height, int components, uchar *pixels)
 {
     m_size.setWidth(width);
     m_size.setHeight(height);

@@ -67,7 +67,7 @@ void Configs::save()
     if(!m_fileName.empty()) {
         YAML::Emitter out;
         out << m_confsMap;
-        g_resources.saveFile(m_fileName, (const unsigned char*)out.c_str(), out.size());
+        g_resources.saveFile(m_fileName, (const uchar*)out.c_str(), out.size());
     }
 }
 

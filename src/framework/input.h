@@ -190,7 +190,7 @@ enum EEvent {
 
 struct KeyEvent {
     char keychar;
-    unsigned char keycode;
+    uchar keycode;
     bool ctrl;
     bool shift;
     bool alt;

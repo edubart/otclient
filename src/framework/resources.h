@@ -52,13 +52,13 @@ public:
     /** Load a file by allocating a buffer and filling it with the file contents
      * where fileSize will be set to the file size.
      * The returned buffer must be freed with delete[]. */
-    unsigned char *loadFile(const std::string &fileName, unsigned int *fileSize);
+    uchar *loadFile(const std::string &fileName, uint *fileSize);
 
     /// Loads a text file into a std::string
     std::string loadTextFile(const std::string &fileName);
 
     /// Save a file into write directory
-    bool saveFile(const std::string &fileName, const unsigned char *data, unsigned int size);
+    bool saveFile(const std::string &fileName, const uchar *data, uint size);
 
     /// Save a text file into write directory
     bool saveTextFile(const std::string &fileName, std::string text);

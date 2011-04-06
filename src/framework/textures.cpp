@@ -48,8 +48,8 @@ TexturePtr Textures::get(const std::string& textureFile)
             return texture;
         }
 
-        unsigned int fileSize;
-        unsigned char *textureFileData = g_resources.loadFile(textureFile, &fileSize);
+        uint fileSize;
+        uchar *textureFileData = g_resources.loadFile(textureFile, &fileSize);
         if(!textureFileData)
             return texture;
 

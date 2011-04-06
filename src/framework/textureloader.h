@@ -32,7 +32,7 @@ class Texture;
 namespace TextureLoader
 {
     /// Load a png textures using libpng
-    Texture *loadPNG(unsigned char *fileData);
+    Texture *loadPNG(uchar *fileData);
 }
 
 #endif // TEXTURELOADER_H

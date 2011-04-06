@@ -33,8 +33,8 @@ struct File
         offset = 0;
     }
 
-    unsigned char *data;
-    unsigned int offset;
+    uchar *data;
+    uint offset;
 };
 
 void png_read_from_mem(png_structp png_ptr, png_bytep data, png_size_t size)
@@ -48,7 +48,7 @@ void png_read_from_mem(png_structp png_ptr, png_bytep data, png_size_t size)
   file->offset += size;
 }
 
-Texture *TextureLoader::loadPNG(unsigned char *fileData)
+Texture *TextureLoader::loadPNG(uchar *fileData)
 {
     File file;
     file.data = fileData;
@@ -119,10 +119,10 @@ Texture *TextureLoader::loadPNG(unsigned char *fileData)
             return NULL;
     };
 
-    unsigned char *pixels = new unsigned char[width * height * components];
+    uchar *pixels = new uchar[width * height * components];
 
     png_bytep *row_pointers = new png_bytep[height];
-    for(unsigned int i = 0; i < height; ++i)
+    for(uint i = 0; i < height; ++i)
         row_pointers[i] = (png_bytep)(pixels + (i * width * components));
 
     png_read_image(png_ptr, row_pointers);

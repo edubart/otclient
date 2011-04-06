@@ -54,8 +54,8 @@ void Engine::terminate()
 
 void Engine::run()
 {
-    unsigned long ticks;
-    static unsigned long lastFrameTicks;
+    ulong ticks;
+    static ulong lastFrameTicks;
 
     m_running = true;
 

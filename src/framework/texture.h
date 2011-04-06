@@ -34,17 +34,17 @@ class Texture
 {
 public:
     /// Create a texture, width and height must be a multiple of 2
-    Texture(int width, int height, int components, unsigned char *pixels = NULL);
+    Texture(int width, int height, int components, uchar *pixels = NULL);
     virtual ~Texture();
 
     /// Enable texture bilinear filter (smooth scaled textures)
     void enableBilinearFilter();
 
     const Size& getSize() const { return m_size; }
-    unsigned int getTextureId() const { return m_textureId; }
+    uint getTextureId() const { return m_textureId; }
 
 private:
-    unsigned int m_textureId;
+    uint m_textureId;
     Size m_size;
 };
 
