@@ -36,12 +36,10 @@ public:
     /// Load font from file
     bool load(const std::string &file);
 
-    std::string& getName() { return m_name; }
+    const std::string& getName() const { return m_name; }
 
 private:
     std::string m_name;
 };
-
-typedef std::shared_ptr<Font> FontPtr;
 
 #endif // FONT_H

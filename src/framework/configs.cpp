@@ -27,7 +27,7 @@
 
 #include <yaml-cpp/yaml.h>
 
-Configs g_config;
+Configs g_configs;
 
 bool Configs::load(const std::string& fileName)
 {
@@ -99,43 +99,43 @@ void Configs::setValue(const std::string &key, bool value)
         setValue(key,"false");
 }
 
-const std::string &Configs::getString(const std::string &key)
+const std::string &Configs::getString(const std::string &key) const
 {
-    auto iter = m_confsMap.find(key);
-    if(iter == m_confsMap.end()) {
+    auto it = m_confsMap.find(key);
+    if(it == m_confsMap.end()) {
         warning("Config value %s not found", key.c_str());
         static std::string emptystr;
         return emptystr;
     }
-    return iter->second;
+    return it->second;
 }
 
-float Configs::getFloat(const std::string &key)
+float Configs::getFloat(const std::string &key) const
 {
-    auto iter = m_confsMap.find(key);
-    if(iter == m_confsMap.end()) {
+    auto it = m_confsMap.find(key);
+    if(it == m_confsMap.end()) {
         warning("Config value %s not found", key.c_str());
         return 0;
     }
-    return convertType<float, std::string>(iter->second);
+    return convertType<float, std::string>(it->second);
 }
 
-bool Configs::getBoolean(const std::string &key)
+bool Configs::getBoolean(const std::string &key) const
 {
-    auto iter = m_confsMap.find(key);
-    if(iter == m_confsMap.end()) {
+    auto it = m_confsMap.find(key);
+    if(it == m_confsMap.end()) {
         warning("Config value %s not found", key.c_str());
         return 0;
     }
-    return (iter->second == "true");
+    return (it->second == "true");
 }
 
-int Configs::getInteger(const std::string &key)
+int Configs::getInteger(const std::string &key) const
 {
-    auto iter = m_confsMap.find(key);
-    if(iter == m_confsMap.end()) {
+    auto it = m_confsMap.find(key);
+    if(it == m_confsMap.end()) {
         warning("Config value %s not found", key.c_str());
         return 0;
     }
-    return convertType<int, std::string>(iter->second);
+    return convertType<int, std::string>(it->second);
 }

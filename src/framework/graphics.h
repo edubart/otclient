@@ -40,6 +40,7 @@ public:
     void init();
     void terminate();
 
+    /// Check if a GL extension is supported
     bool isExtensionSupported(const char *extension);
 
     /// Called after every window resize

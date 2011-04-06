@@ -53,22 +53,22 @@ void setDefaultConfigs()
     int defHeight = 480;
 
     // init on screen center
-    g_config.setValue("window x", (Platform::getDisplayWidth() - defWidth)/2);
-    g_config.setValue("window y", (Platform::getDisplayHeight() - defHeight)/2);
+    g_configs.setValue("window x", (Platform::getDisplayWidth() - defWidth)/2);
+    g_configs.setValue("window y", (Platform::getDisplayHeight() - defHeight)/2);
 
-    g_config.setValue("window width", defWidth);
-    g_config.setValue("window height", defHeight);
-    g_config.setValue("window maximized", false);
+    g_configs.setValue("window width", defWidth);
+    g_configs.setValue("window height", defHeight);
+    g_configs.setValue("window maximized", false);
 }
 
 void saveConfigs()
 {
-    g_config.setValue("window x", Platform::getWindowX());
-    g_config.setValue("window y", Platform::getWindowY());
-    g_config.setValue("window width", Platform::getWindowWidth());
-    g_config.setValue("window height", Platform::getWindowHeight());
-    g_config.setValue("window maximized", Platform::isWindowMaximized());
-    g_config.save();
+    g_configs.setValue("window x", Platform::getWindowX());
+    g_configs.setValue("window y", Platform::getWindowY());
+    g_configs.setValue("window width", Platform::getWindowWidth());
+    g_configs.setValue("window height", Platform::getWindowHeight());
+    g_configs.setValue("window maximized", Platform::isWindowMaximized());
+    g_configs.save();
 }
 
 int main(int argc, const char *argv[])
@@ -90,16 +90,16 @@ int main(int argc, const char *argv[])
     setDefaultConfigs();
 
     // load configurations
-    if(!g_config.load("config.yml"))
+    if(!g_configs.load("config.yml"))
         notice("Could not read configuration file, default configurations will be used.");
 
     notice("OTClient 0.1.0");
 
     // create the window
-    Platform::createWindow(g_config.getInteger("window x"), g_config.getInteger("window y"),
-                           g_config.getInteger("window width"), g_config.getInteger("window height"),
+    Platform::createWindow(g_configs.getInteger("window x"), g_configs.getInteger("window y"),
+                           g_configs.getInteger("window width"), g_configs.getInteger("window height"),
                            640, 480,
-                           g_config.getBoolean("window maximized"));
+                           g_configs.getBoolean("window maximized"));
     Platform::setWindowTitle("OTClient");
     Platform::setVsync();
 
@@ -108,7 +108,7 @@ int main(int argc, const char *argv[])
 
     // state scope
     {
-        std::shared_ptr<MenuState> menuState(new MenuState());
+        std::shared_ptr<MenuState> menuState(new MenuState);
         g_engine.changeState(menuState.get());
 
         Platform::showWindow();

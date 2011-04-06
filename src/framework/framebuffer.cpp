@@ -62,7 +62,7 @@ FrameBuffer::FrameBuffer(int width, int height)
             oglDeleteFramebuffers = (PFNGLDELETEFRAMEBUFFERSPROC)Platform::getExtensionProcAddress("glDeleteFramebuffers");
             oglCheckFramebufferStatus = (PFNGLCHECKFRAMEBUFFERSTATUSPROC)Platform::getExtensionProcAddress("glCheckFramebufferStatus");
         }
-        
+
         // generate FBO
         oglGenFramebuffers(1, &m_fbo);
         oglBindFramebuffer(GL_FRAMEBUFFER_EXT, m_fbo);

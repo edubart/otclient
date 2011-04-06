@@ -44,16 +44,16 @@ public:
     void setValue(const std::string &key, bool value);
     void setValue(const std::string &key, int value);
 
-    const std::string &getString(const std::string &key);
-    float getFloat(const std::string &key);
-    bool getBoolean(const std::string &key);
-    int getInteger(const std::string &key);
+    const std::string &getString(const std::string &key) const;
+    float getFloat(const std::string &key) const;
+    bool getBoolean(const std::string &key) const;
+    int getInteger(const std::string &key) const;
 
 private:
     std::string m_fileName;
     std::map<std::string, std::string> m_confsMap;
 };
 
-extern Configs g_config;
+extern Configs g_configs;
 
 #endif // CONFIGS_H
