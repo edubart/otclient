@@ -22,29 +22,26 @@
  */
 
 
-#ifndef MENUSTATE_H
-#define MENUSTATE_H
+#ifndef FONT_H
+#define FONT_H
 
-#include "framework/gamestate.h"
-#include "framework/texture.h"
+#include "prerequisites.h"
 
-class MenuState : public GameState
+class Font
 {
-
 public:
-    MenuState() { }
+    Font() { }
+    virtual ~Font() { }
 
-    virtual void onEnter();
-    virtual void onLeave();
+    /// Load font from file
+    bool load(const std::string &file);
 
-    virtual void onClose();
-    virtual void onInputEvent(InputEvent *event);
-
-    virtual void render();
-    virtual void update(int ticks, int elapsedTicks);
+    std::string& getName() { return m_name; }
 
 private:
-    TexturePtr m_background;
+    std::string m_name;
 };
 
-#endif // MENUSTATE_H
+typedef std::shared_ptr<Font> FontPtr;
+
+#endif // FONT_H

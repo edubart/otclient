@@ -22,23 +22,13 @@
  */
 
 
-#include "texturemanager.h"
-#include "resourcemanager.h"
+#include "textures.h"
+#include "resources.h"
 #include "textureloader.h"
 
-TextureManager g_textures;
+Textures g_textures;
 
-TextureManager::TextureManager()
-{
-
-}
-
-TextureManager::~TextureManager()
-{
-    m_texturesMap.clear();
-}
-
-TexturePtr TextureManager::get(const std::string& textureFile)
+TexturePtr Textures::get(const std::string& textureFile)
 {
     TexturePtr texture;
 

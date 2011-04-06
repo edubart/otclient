@@ -27,29 +27,16 @@
 #include "platform.h"
 #include "graphics.h"
 #include "input.h"
-#include "configmanager.h"
+#include "configs.h"
 #include "gamestate.h"
 
 Engine g_engine;
 
-Engine::Engine() :
-    m_stopping(false),
-    m_running(false),
-    m_currentState(NULL)
-{
-}
-
-Engine::~Engine()
-{
-}
-
 void Engine::init()
 {
-    // initialize graphics stuff
+    // initialize stuff
     g_graphics.init();
-
-    // load fonts
-    g_fonts.load();
+    g_fonts.init();
 
     // finally show the window
     onResize(Platform::getWindowWidth(), Platform::getWindowHeight());
@@ -57,8 +44,11 @@ void Engine::init()
 
 void Engine::terminate()
 {
+    // force last state exit
     changeState(NULL);
 
+    // terminate stuff
+    g_fonts.terminate();
     g_graphics.terminate();
 }
 

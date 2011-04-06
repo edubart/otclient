@@ -25,22 +25,12 @@
 #include "menustate.h"
 #include "framework/framebuffer.h"
 #include "framework/graphics.h"
-#include "framework/texturemanager.h"
+#include "framework/textures.h"
 #include "framework/logger.h"
 #include "framework/engine.h"
 #include "framework/rect.h"
 
 TexturePtr background;
-
-MenuState::MenuState()
-{
-
-}
-
-MenuState::~MenuState()
-{
-
-}
 
 void MenuState::onEnter()
 {

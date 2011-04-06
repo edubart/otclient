@@ -22,16 +22,15 @@
  */
 
 
-#ifndef RESOURCEMANAGER_H
-#define RESOURCEMANAGER_H
+#ifndef RESOURCES_H
+#define RESOURCES_H
 
 #include "prerequisites.h"
 
-class ResourceManager
+class Resources
 {
 public:
-    ResourceManager();
-    ~ResourceManager();
+    Resources() { }
 
     void init(const char *argv0);
     void terminate();
@@ -68,6 +67,6 @@ public:
     std::list<std::string> getDirectoryFiles(const std::string& directory);
 };
 
-extern ResourceManager g_resources;
+extern Resources g_resources;
 
-#endif // RESOURCEMANAGER_H
+#endif // RESOURCES_H

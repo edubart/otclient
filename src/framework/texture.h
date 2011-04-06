@@ -28,7 +28,7 @@
 #include "prerequisites.h"
 #include "size.h"
 
-class TextureManager;
+class Textures;
 
 class Texture
 {

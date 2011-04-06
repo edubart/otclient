@@ -23,8 +23,8 @@
 
 
 #include "framework/engine.h"
-#include "framework/configmanager.h"
-#include "framework/resourcemanager.h"
+#include "framework/configs.h"
+#include "framework/resources.h"
 #include "framework/platform.h"
 #include "menustate.h"
 
@@ -108,7 +108,7 @@ int main(int argc, const char *argv[])
 
     // state scope
     {
-        std::unique_ptr<MenuState> menuState(new MenuState());
+        std::shared_ptr<MenuState> menuState(new MenuState());
         g_engine.changeState(menuState.get());
 
         Platform::showWindow();

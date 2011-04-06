@@ -25,7 +25,7 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
-#include "prerequisites.h"
+#include <sstream>
 
 namespace Logger {
 

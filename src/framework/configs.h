@@ -22,29 +22,38 @@
  */
 
 
-#ifndef MENUSTATE_H
-#define MENUSTATE_H
+#ifndef CONFIGS_H
+#define CONFIGS_H
 
-#include "framework/gamestate.h"
-#include "framework/texture.h"
+#include "prerequisites.h"
 
-class MenuState : public GameState
+class Configs
 {
-
 public:
-    MenuState() { }
+    Configs() { }
 
-    virtual void onEnter();
-    virtual void onLeave();
+    /// Read configuration file and parse all settings to memory
+    bool load(const std::string& fileName);
 
-    virtual void onClose();
-    virtual void onInputEvent(InputEvent *event);
+    /// Dump all settings to configuration file
+    void save();
 
-    virtual void render();
-    virtual void update(int ticks, int elapsedTicks);
+    void setValue(const std::string &key, const std::string &value);
+    void setValue(const std::string &key, const char *value);
+    void setValue(const std::string &key, float value);
+    void setValue(const std::string &key, bool value);
+    void setValue(const std::string &key, int value);
+
+    const std::string &getString(const std::string &key);
+    float getFloat(const std::string &key);
+    bool getBoolean(const std::string &key);
+    int getInteger(const std::string &key);
 
 private:
-    TexturePtr m_background;
+    std::string m_fileName;
+    std::map<std::string, std::string> m_confsMap;
 };
 
-#endif // MENUSTATE_H
+extern Configs g_config;
+
+#endif // CONFIGS_H

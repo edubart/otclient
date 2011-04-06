@@ -42,7 +42,6 @@ typedef int8_t int8;
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <cstdarg>
 #include <cassert>
 #include <ctime>
 #include <cmath>
@@ -63,6 +62,8 @@ typedef int8_t int8;
 // boost utilities
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
 
 // internal logger
 #include "logger.h"

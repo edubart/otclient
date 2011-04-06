@@ -25,7 +25,8 @@
 #ifndef UTIL_H
 #define UTIL_H
 
-#include "prerequisites.h"
+#include "logger.h"
+#include <boost/lexical_cast.hpp>
 
 /// Formatting like printf for std::string, va_list input version
 std::string vformat(const char *format, va_list args);
@@ -34,20 +35,16 @@ std::string vformat(const char *format, va_list args);
 std::string format(const char *format, ...);
 
 /// Convert any data type through boost::lexical_cast
-//TODO: move declatation to util.cpp
 template<class R, class T> 
 R convertType(T t)
 {
-    R r = R();
-    
-    try{
-	r = boost::lexical_cast<R>(t);
+    R ret = R();
+    try {
+        ret = boost::lexical_cast<R>(t);
+    } catch(boost::bad_lexical_cast bad) {
+        error("Error converting type: %s", bad.what());
     }
-    catch(boost::bad_lexical_cast bad){
-	//TODO: add an error message
-    }
-    
-    return r;
+    return ret;
 }
 
 #endif

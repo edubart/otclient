@@ -32,16 +32,6 @@
 
 Graphics g_graphics;
 
-Graphics::Graphics()
-{
-
-}
-
-Graphics::~Graphics()
-{
-
-}
-
 void Graphics::init()
 {
     // setup opengl

@@ -22,24 +22,14 @@
  */
 
 
-#include "configmanager.h"
-#include "resourcemanager.h"
+#include "configs.h"
+#include "resources.h"
 
 #include <yaml-cpp/yaml.h>
 
-ConfigManager g_config;
+Configs g_config;
 
-ConfigManager::ConfigManager()
-{
-
-}
-
-ConfigManager::~ConfigManager()
-{
-
-}
-
-bool ConfigManager::load(const std::string& fileName)
+bool Configs::load(const std::string& fileName)
 {
     m_fileName = fileName;
 
@@ -72,7 +62,7 @@ bool ConfigManager::load(const std::string& fileName)
     return true;
 }
 
-void ConfigManager::save()
+void Configs::save()
 {
     if(!m_fileName.empty()) {
         YAML::Emitter out;
@@ -81,27 +71,27 @@ void ConfigManager::save()
     }
 }
 
-void ConfigManager::setValue(const std::string &key, const std::string &value)
+void Configs::setValue(const std::string &key, const std::string &value)
 {
     m_confsMap[key] = value;
 }
 
-void ConfigManager::setValue(const std::string &key, const char *value)
+void Configs::setValue(const std::string &key, const char *value)
 {
     m_confsMap[key] = value;
 }
 
-void ConfigManager::setValue(const std::string &key, int value)
+void Configs::setValue(const std::string &key, int value)
 {
     setValue(key, convertType<std::string, int>(value));
 }
 
-void ConfigManager::setValue(const std::string &key, float value)
+void Configs::setValue(const std::string &key, float value)
 {
     setValue(key, convertType<std::string, float>(value));
 }
 
-void ConfigManager::setValue(const std::string &key, bool value)
+void Configs::setValue(const std::string &key, bool value)
 {
     if(value)
         setValue(key,"true");
@@ -109,7 +99,7 @@ void ConfigManager::setValue(const std::string &key, bool value)
         setValue(key,"false");
 }
 
-const std::string &ConfigManager::getString(const std::string &key)
+const std::string &Configs::getString(const std::string &key)
 {
     auto iter = m_confsMap.find(key);
     if(iter == m_confsMap.end()) {
@@ -120,7 +110,7 @@ const std::string &ConfigManager::getString(const std::string &key)
     return iter->second;
 }
 
-float ConfigManager::getFloat(const std::string &key)
+float Configs::getFloat(const std::string &key)
 {
     auto iter = m_confsMap.find(key);
     if(iter == m_confsMap.end()) {
@@ -130,7 +120,7 @@ float ConfigManager::getFloat(const std::string &key)
     return convertType<float, std::string>(iter->second);
 }
 
-bool ConfigManager::getBoolean(const std::string &key)
+bool Configs::getBoolean(const std::string &key)
 {
     auto iter = m_confsMap.find(key);
     if(iter == m_confsMap.end()) {
@@ -140,7 +130,7 @@ bool ConfigManager::getBoolean(const std::string &key)
     return (iter->second == "true");
 }
 
-int ConfigManager::getInteger(const std::string &key)
+int Configs::getInteger(const std::string &key)
 {
     auto iter = m_confsMap.find(key);
     if(iter == m_confsMap.end()) {

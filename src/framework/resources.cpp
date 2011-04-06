@@ -22,33 +22,23 @@
  */
 
 
-#include "resourcemanager.h"
+#include "resources.h"
 
 #include <physfs.h>
 
-ResourceManager g_resources;
+Resources g_resources;
 
-ResourceManager::ResourceManager()
-{
-
-}
-
-ResourceManager::~ResourceManager()
-{
-
-}
-
-void ResourceManager::init(const char *argv0)
+void Resources::init(const char *argv0)
 {
     PHYSFS_init(argv0);
 }
 
-void ResourceManager::terminate()
+void Resources::terminate()
 {
     PHYSFS_deinit();
 }
 
-bool ResourceManager::setWriteDir(const std::string& path)
+bool Resources::setWriteDir(const std::string& path)
 {
     bool ret = (bool)PHYSFS_setWriteDir(path.c_str());
 
@@ -57,7 +47,7 @@ bool ResourceManager::setWriteDir(const std::string& path)
     return ret;
 }
 
-bool ResourceManager::addToSearchPath(const std::string& path, bool insertInFront /*= true*/)
+bool Resources::addToSearchPath(const std::string& path, bool insertInFront /*= true*/)
 {
     if(!PHYSFS_addToSearchPath(path.c_str(), insertInFront ? 0 : 1)) {
         error("Error while adding \"%s\" to resources search path: %s", path.c_str(), PHYSFS_getLastError());
@@ -66,12 +56,12 @@ bool ResourceManager::addToSearchPath(const std::string& path, bool insertInFron
     return true;
 }
 
-bool ResourceManager::fileExists(const std::string& filePath)
+bool Resources::fileExists(const std::string& filePath)
 {
     return PHYSFS_exists(filePath.c_str());
 }
 
-unsigned char *ResourceManager::loadFile(const std::string& fileName, unsigned int *fileSize)
+unsigned char *Resources::loadFile(const std::string& fileName, unsigned int *fileSize)
 {
     PHYSFS_file *file = PHYSFS_openRead(fileName.c_str());
     if(!file) {
@@ -88,7 +78,7 @@ unsigned char *ResourceManager::loadFile(const std::string& fileName, unsigned i
     return buffer;
 }
 
-std::string ResourceManager::loadTextFile(const std::string& fileName)
+std::string Resources::loadTextFile(const std::string& fileName)
 {
     std::string text;
     unsigned int fileSize;
@@ -100,7 +90,7 @@ std::string ResourceManager::loadTextFile(const std::string& fileName)
     return text;
 }
 
-bool ResourceManager::saveFile(const std::string &fileName, const unsigned char *data, unsigned int size)
+bool Resources::saveFile(const std::string &fileName, const unsigned char *data, unsigned int size)
 {
     PHYSFS_file *file = PHYSFS_openWrite(fileName.c_str());
     if(!file) {
@@ -113,12 +103,12 @@ bool ResourceManager::saveFile(const std::string &fileName, const unsigned char 
     return true;
 }
 
-bool ResourceManager::saveTextFile(const std::string &fileName, std::string text)
+bool Resources::saveTextFile(const std::string &fileName, std::string text)
 {
     return saveFile(fileName, (const unsigned char*)text.c_str(), text.size());
 }
 
-std::list<std::string> ResourceManager::getDirectoryFiles(const std::string& directory)
+std::list<std::string> Resources::getDirectoryFiles(const std::string& directory)
 {
     std::list<std::string> files;
     char **rc = PHYSFS_enumerateFiles(directory.c_str());

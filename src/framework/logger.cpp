@@ -23,6 +23,10 @@
 
 
 #include "logger.h"
+#include "util.h"
+
+#include <iostream>
+#include <stdarg.h>
 
 void Logger::log(int level, const char *trace, const char *format, ...)
 {

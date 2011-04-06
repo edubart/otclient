@@ -22,29 +22,27 @@
  */
 
 
-#ifndef MENUSTATE_H
-#define MENUSTATE_H
+#ifndef TEXTURES_H
+#define TEXTURES_H
 
-#include "framework/gamestate.h"
-#include "framework/texture.h"
+#include "prerequisites.h"
+#include "texture.h"
 
-class MenuState : public GameState
+typedef std::weak_ptr<Texture> TextureWeakPtr;
+
+class Textures
 {
-
 public:
-    MenuState() { }
+    Textures() { }
 
-    virtual void onEnter();
-    virtual void onLeave();
-
-    virtual void onClose();
-    virtual void onInputEvent(InputEvent *event);
-
-    virtual void render();
-    virtual void update(int ticks, int elapsedTicks);
+    /// Load a texture from file, if it was already loaded it will be retrieved from cache
+    TexturePtr get(const std::string& textureFile);
 
 private:
-    TexturePtr m_background;
+    typedef std::map<std::string, TextureWeakPtr > TexturesMap;
+    TexturesMap m_texturesMap;
 };
 
-#endif // MENUSTATE_H
+extern Textures g_textures;
+
+#endif // TEXTURES_H

@@ -34,8 +34,9 @@ class GameState;
 class Engine
 {
 public:
-    Engine();
-    ~Engine();
+    Engine() : m_stopping(false),
+               m_running(false),
+               m_currentState(NULL) { }
 
     void init();
     void terminate();

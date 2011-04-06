@@ -35,8 +35,7 @@ class Texture;
 class Graphics
 {
 public:
-    Graphics();
-    ~Graphics();
+    Graphics() { }
 
     void init();
     void terminate();

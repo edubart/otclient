@@ -55,12 +55,13 @@ SET(SOURCES
     
 # framework sources
     src/framework/framebuffer.cpp
+    src/framework/font.cpp
     src/framework/fonts.cpp
     src/framework/textureloader.cpp
     src/framework/texture.cpp
-    src/framework/texturemanager.cpp
-    src/framework/configmanager.cpp
-    src/framework/resourcemanager.cpp
+    src/framework/textures.cpp
+    src/framework/configs.cpp
+    src/framework/resources.cpp
     src/framework/engine.cpp
     src/framework/graphics.cpp
     src/framework/logger.cpp
