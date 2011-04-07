@@ -5,7 +5,7 @@ SET(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake;${CMAKE_MODULE_PATH}")
 
 # find needed packages
 SET(Boost_USE_STATIC_LIBS ON)
-FIND_PACKAGE(Boost REQUIRED)
+FIND_PACKAGE(Boost COMPONENTS system REQUIRED)
 FIND_PACKAGE(OpenGL REQUIRED)
 FIND_PACKAGE(Lua51 REQUIRED)
 FIND_PACKAGE(YamlCpp REQUIRED)
@@ -65,7 +65,10 @@ SET(SOURCES
     src/framework/engine.cpp
     src/framework/graphics.cpp
     src/framework/logger.cpp
-    src/framework/util.cpp)
+    src/framework/util.cpp
+
+    src/framework/net/connection.cpp
+    src/framework/net/connections.cpp)
 
 IF(WIN32)
     SET(SOURCES ${SOURCES} src/framework/win32platform.cpp)
