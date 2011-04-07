@@ -103,61 +103,118 @@ bool Font::load(const std::string& file)
 
 void Font::renderText(const Point& pos, const std::string& text)
 {
+    Size boxSize = g_graphics.getScreenSize() - pos.toSize();
+    Rect screenCoords(pos, boxSize);
+    Font::renderText(screenCoords, text);
+}
+
+void Font::renderText(const Rect& screenCoords, const std::string& text, const Point& startRenderPosition, bool debug)
+{
     // begin texture rendering
     g_graphics.setColor(m_color);
     g_graphics._beginTextureRender(m_texture.get());
 
-    Point currentPos = pos;
-    const Size& screenSize = g_graphics.getScreenSize();
     const Size& textureSize = m_texture->getSize();
     int textLenght = text.length();
+
+    // map glyphs positions
+    Point *glyphsPositions = mapGlyphsPositions(text);
 
     for(int i = 0; i < textLenght; ++i) {
         int glyph = (int)text[i];
 
-        // break rendering if the Y pos is below the screen
-        if(currentPos.y >= screenSize.height())
-            break;
+        // skip invalid glyphs
+        if(glyph < 32)
+            continue;
 
-        // new line
-        if(glyph == (uchar)'\n') {
-            currentPos.y += m_lineHeight;
-            currentPos.x = pos.x;
+        // calculate virtual glyph rect
+        Rect glyphScreenCoords(glyphsPositions[i], m_glyphsSize[glyph]);
+        Rect glyphTextureCoords = m_glyphsTextureCoords[glyph];
+
+        // only render glyphs that is visible after startRenderPosition
+        if(glyphScreenCoords.bottom() < startRenderPosition.y || glyphScreenCoords.right() < startRenderPosition.x)
+            continue;
+
+        // bound glyph topLeft to startRenderPosition
+        if(glyphScreenCoords.top() < startRenderPosition.y) {
+            glyphTextureCoords.setTop(glyphTextureCoords.top() + (startRenderPosition.y - glyphScreenCoords.top()));
+            glyphScreenCoords.setTop(startRenderPosition.y);
         }
-        // render only if the glyph is valid and visible
-        else if(glyph >= 32 && currentPos.x < screenSize.width()) {
-            g_graphics._drawTexturedRect(Rect(currentPos, m_glyphsSize[glyph]),
-                                            m_glyphsTextureCoords[glyph],
-                                            textureSize);
-            currentPos.x += m_glyphsSize[glyph].width();
+        if(glyphScreenCoords.left() < startRenderPosition.x) {
+            glyphTextureCoords.setLeft(glyphTextureCoords.left() + (startRenderPosition.x - glyphScreenCoords.left()));
+            glyphScreenCoords.setLeft(startRenderPosition.x);
         }
+
+        // translate glyph
+        glyphScreenCoords.translate(-startRenderPosition);
+        glyphScreenCoords.translate(screenCoords.topLeft());
+
+        // only render if glyph rect is visible on screenCoords
+        if(!screenCoords.intersects(glyphScreenCoords))
+            continue;
+
+        // bound glyph bottomRight to screenCoords bottomRight
+        if(glyphScreenCoords.bottom() > screenCoords.bottom()) {
+            glyphTextureCoords.setBottom(glyphTextureCoords.bottom() + (screenCoords.bottom() - glyphScreenCoords.bottom()));
+            glyphScreenCoords.setBottom(screenCoords.bottom());
+        }
+        if(glyphScreenCoords.right() > screenCoords.right()) {
+            glyphTextureCoords.setRight(glyphTextureCoords.right() + (screenCoords.right() - glyphScreenCoords.right()));
+            glyphScreenCoords.setRight(screenCoords.right());
+        }
+
+        // render glyph
+        g_graphics._drawTexturedRect(glyphScreenCoords, glyphTextureCoords, textureSize);
     }
 
     // end texture redering
     g_graphics._endTextureRender();
     g_graphics.resetColor();
 
-    // debug box
-    //g_graphics.drawBoundingRect(Rect(pos, calculateTextSize(text)).expanded(1), Color(0xFF00FF00), 1);
+    if(debug)
+        g_graphics.drawBoundingRect(screenCoords.expanded(1), Color(0xFF00FF00), 1);
 }
 
-Size Font::calculateTextSize(const std::string& text)
+Size Font::calculateTextSize(const std::string& text, Point *glyphsPositions)
 {
-    int textLenght = text.length();
+    if(!glyphsPositions) {
+        glyphsPositions = mapGlyphsPositions(text);
+    }
+
     Size size;
-    Point currentPos(0,m_lineHeight);
-
-    for(int i = 0; i < textLenght; ++i) {
-        int glyph = (int)text[i];
-
-        if(glyph == (uchar)'\n') {
-            currentPos.y += m_lineHeight;
-            currentPos.x = 0;
-        }
-        else if(glyph >= 32) {
-            currentPos.x += m_glyphsSize[glyph].width();
-        }
-        size = size.expandedTo(currentPos.toSize());
+    int numGlyphs = text.length();
+    for(int i = 0; i < numGlyphs; ++i) {
+        Point bottomLeft = glyphsPositions[i] + m_glyphsSize[(int)text[i]].toPoint();
+        size = size.expandedTo(bottomLeft.toSize());
     }
     return size;
+}
+
+Point* Font::mapGlyphsPositions(const std::string& text)
+{
+    static Point glyphsPositions[8192];
+    int numGlyphs = text.length();
+    Point virtualPos;
+
+    if(numGlyphs > 8192)
+        logFatal("A text was too long to render!");
+
+    for(int i = 0; i < numGlyphs; ++i) {
+        int glyph = (int)text[i];
+
+        // store current glyph topLeft
+        glyphsPositions[i] = virtualPos;
+
+        // new line
+        if(glyph == (uchar)'\n') {
+            virtualPos.y += m_lineHeight;
+            virtualPos.x = 0;
+        }
+        // render only if the glyph is valid
+        else if(glyph >= 32) {
+            virtualPos.x += m_glyphsSize[glyph].width();
+        }
+    }
+
+    return (Point *)glyphsPositions;
 }

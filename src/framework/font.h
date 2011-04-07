@@ -42,18 +42,16 @@ public:
     /// Simple text render starting at pos
     void renderText(const Point& pos, const std::string& text);
 
-    /// Render text delimited by screenCoords rect
-    void renderText(const Rect& screenCoords, const std::string& text);
-
     /** Advanced text render
      * screenCoords is the rect that will be filled on the screen
      * startRenderPosition is the postion to start rendering relative to the text rect
      */
-    void renderText(const Rect& screenCoords, const Point& startRenderPosition, const std::string& text);
+    void renderText(const Rect& screenCoords, const std::string& text, const Point& startRenderPosition = Point(), bool debug = false);
 
     /// Simulate render and calculate text size
-    Size calculateTextSize(const std::string& text);
+    Size calculateTextSize(const std::string& text, Point *glyphsPositions = NULL);
 
+    Point *mapGlyphsPositions(const std::string& text);
     /*
     enum EAlign {
         ALIGN_TOP = 1 << 0,

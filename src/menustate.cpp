@@ -30,6 +30,7 @@
 #include "framework/engine.h"
 #include "framework/rect.h"
 #include "framework/fonts.h"
+#include "framework/input.h"
 
 TexturePtr background;
 
@@ -49,8 +50,24 @@ void MenuState::onClose()
     g_engine.stop();
 }
 
+int x, y;
 void MenuState::onInputEvent(InputEvent* event)
 {
+    static bool moving = false;
+    static int lastX;
+    static int lastY;
+    if(event->type == EV_MOUSE_LDOWN) {
+        moving = true;
+        lastX = event->mouse.x;
+        lastY = event->mouse.y;
+    } else if(event->type == EV_MOUSE_LUP) {
+        moving = false;
+    } else if(event->type == EV_MOUSE_MOVE) {
+        if(moving) {
+            x = lastX - event->mouse.x;
+            y = lastY - event->mouse.y;
+        }
+    }
 }
 
 void MenuState::render()
@@ -67,9 +84,15 @@ void MenuState::render()
     Rect texCoords(0, 0, texCoordsSize);
     texCoords.moveBottomRight(texSize.toPoint());
     g_graphics.drawTexturedRect(Rect(0, 0, screenSize), m_background.get(), texCoords);
-    g_defaultFont->renderText(Point(10,screenSize.height() - 50), "Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n"
-                                                                         "Sed blandit justo in lectus ornare ultricies.\n"
-                                                                         "Integer faucibus magna quis metus fermentum suscipit.");
+
+    static const char *text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n"
+                              "Nulla pulvinar odio ac arcu tempor consequat.\n"
+                              "Praesent at enim sapien, at vestibulum ligula.\n"
+                              "Aliquam eleifend ante eu sapien vehicula consectetur.\n"
+                              "Nunc id ligula ligula, eget vestibulum magna.\n"
+                              "In mattis nisi non nisl semper ultricies.\n";
+    Size textSize = g_defaultFont->calculateTextSize(text);
+    g_defaultFont->renderText(Rect(100, 100, textSize.width() - 120, textSize.height() - 15), text, Point(x,y), true);
 }
 
 void MenuState::update(int ticks, int elapsedTicks)

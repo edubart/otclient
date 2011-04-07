@@ -96,15 +96,15 @@ public:
     inline void moveBottomLeft(const TPoint<T> &p) { moveLeft(p.x); moveBottom(p.y); }
 
     inline TRect<T> translated(int x, int y) const { return TRect<T>(TPoint<T>(x1 + x, y1 + y), TPoint<T>(x2 + x, y2 + y)); }
-    inline TRect<T> translated(const TPoint<T> &p) const { return TRect<T>(TPoint<T>(x1 + p.x(), y1 + p.y()), TPoint<T>(x2 + p.x(), y2 + p.y())); }
+    inline TRect<T> translated(const TPoint<T> &p) const { return TRect<T>(TPoint<T>(x1 + p.x, y1 + p.y), TPoint<T>(x2 + p.x, y2 + p.y)); }
 
-    inline TRect<T> expanded(T pixels) { return TRect<T>(TPoint<T>(x1 - pixels, y1 - pixels), TPoint<T>(x2 + pixels, y2 + pixels)); }
+    inline TRect<T> expanded(T pixels) const { return TRect<T>(TPoint<T>(x1 - pixels, y1 - pixels), TPoint<T>(x2 + pixels, y2 + pixels)); }
 
     inline void moveCenter(const TPoint<T> &p) {
         T w = x2 - x1;
         T h = y2 - y1;
-        x1 = p.x() - w/2;
-        y1 = p.y() - h/2;
+        x1 = p.x - w/2;
+        y1 = p.y - h/2;
         x2 = x1 + w;
         y2 = y1 + h;
     }
@@ -119,10 +119,10 @@ public:
             r = x2;
         }
         if(insideOnly) {
-            if(p.x() <= l || p.x() >= r)
+            if(p.x <= l || p.x >= r)
                 return false;
         } else {
-            if(p.x() < l || p.x() > r)
+            if(p.x < l || p.x > r)
                 return false;
         }
         int t, b;
@@ -134,10 +134,10 @@ public:
             b = y2;
         }
         if(insideOnly) {
-            if(p.y() <= t || p.y() >= b)
+            if(p.y <= t || p.y >= b)
                 return false;
         } else {
-            if(p.y() < t || p.y() > b)
+            if(p.y < t || p.y > b)
                 return false;
         }
         return true;
