@@ -98,6 +98,8 @@ public:
     inline TRect<T> translated(int x, int y) const { return TRect<T>(TPoint<T>(x1 + x, y1 + y), TPoint<T>(x2 + x, y2 + y)); }
     inline TRect<T> translated(const TPoint<T> &p) const { return TRect<T>(TPoint<T>(x1 + p.x(), y1 + p.y()), TPoint<T>(x2 + p.x(), y2 + p.y())); }
 
+    inline TRect<T> expanded(T pixels) { return TRect<T>(TPoint<T>(x1 - pixels, y1 - pixels), TPoint<T>(x2 + pixels, y2 + pixels)); }
+
     inline void moveCenter(const TPoint<T> &p) {
         T w = x2 - x1;
         T h = y2 - y1;

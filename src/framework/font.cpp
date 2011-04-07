@@ -136,25 +136,28 @@ void Font::renderText(const Point& pos, const std::string& text)
     // end texture redering
     g_graphics._endTextureRender();
     g_graphics.resetColor();
+
+    // debug box
+    //g_graphics.drawBoundingRect(Rect(pos, calculateTextSize(text)).expanded(1), Color(0xFF00FF00), 1);
 }
 
 Size Font::calculateTextSize(const std::string& text)
 {
     int textLenght = text.length();
     Size size;
-    Point currentPos;
+    Point currentPos(0,m_lineHeight);
 
     for(int i = 0; i < textLenght; ++i) {
         int glyph = (int)text[i];
 
         if(glyph == (uchar)'\n') {
             currentPos.y += m_lineHeight;
-            size.expandedTo(currentPos.toSize());
             currentPos.x = 0;
         }
-        else if(glyph > 32) {
+        else if(glyph >= 32) {
             currentPos.x += m_glyphsSize[glyph].width();
         }
+        size = size.expandedTo(currentPos.toSize());
     }
     return size;
 }

@@ -63,7 +63,7 @@ public:
     // high level rendering
     void drawTexturedRect(const Rect& screenCoords, const Texture *texture, const Rect& texCoords = Rect());
     void drawColoredRect(const Rect& screenCoords, const Color& color);
-    void drawBoundingRect(const Rect& screenCoords, const Color& color, int innerLineWidth);
+    void drawBoundingRect(const Rect& screenCoords, const Color& color, int innerLineWidth = 1);
 
     // lower level rendering
     void _beginTextureRender(const Texture *texture);

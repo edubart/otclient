@@ -69,7 +69,6 @@ void Engine::run()
     update(ticks, 0);
     lastUpdateTicks = ticks;
 
-    Font *font = g_fonts.getDefault();
     Point fpsPos(10,10);
 
     while(!m_stopping) {
@@ -90,7 +89,7 @@ void Engine::run()
         // render only when visible
         if(Platform::isWindowVisible()) {
             // calculate and fps
-            if(m_calculateFps && font) {
+            if(m_calculateFps) {
                 frameCount++;
                 if(ticks - lastFpsTicks >= 1000) {
                     lastFpsTicks = ticks;
@@ -102,8 +101,8 @@ void Engine::run()
             render();
 
             // render fps
-            if(m_calculateFps && font) {
-                font->renderText(fpsPos, format("FPS: %d", fps));
+            if(m_calculateFps) {
+                g_defaultFont->renderText(fpsPos, format("FPS: %d", fps));
             }
             
             // swap buffers

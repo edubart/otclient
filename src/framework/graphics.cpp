@@ -185,7 +185,7 @@ void Graphics::drawColoredRect(const Rect& screenCoords, const Color& color)
 {
     glDisable(GL_TEXTURE_2D);
 
-    glColor4ubv(color.rgbaPtr());
+    setColor(color);
 
     // rect correction for opengl
     int right = screenCoords.right() + 1;
@@ -201,6 +201,8 @@ void Graphics::drawColoredRect(const Rect& screenCoords, const Color& color)
     glEnd();
 
     glEnable(GL_TEXTURE_2D);
+
+    resetColor();
 }
 
 
@@ -211,7 +213,7 @@ void Graphics::drawBoundingRect(const Rect& screenCoords, const Color& color, in
 
     glDisable(GL_TEXTURE_2D);
 
-    glColor4ubv(color.rgbaPtr());
+    setColor(color);
 
     // rect correction for opengl
     int right = screenCoords.right()+1;
@@ -246,4 +248,6 @@ void Graphics::drawBoundingRect(const Rect& screenCoords, const Color& color, in
     glEnd();
 
     glEnable(GL_TEXTURE_2D);
+
+    resetColor();
 }

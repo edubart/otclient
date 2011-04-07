@@ -67,7 +67,9 @@ void MenuState::render()
     Rect texCoords(0, 0, texCoordsSize);
     texCoords.moveBottomRight(texSize.toPoint());
     g_graphics.drawTexturedRect(Rect(0, 0, screenSize), m_background.get(), texCoords);
-    g_fonts.getDefault()->renderText(Point(10,screenSize.height() - 20), "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam ac orci id quam condimentum semper.");
+    g_defaultFont->renderText(Point(10,screenSize.height() - 50), "Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n"
+                                                                         "Sed blandit justo in lectus ornare ultricies.\n"
+                                                                         "Integer faucibus magna quis metus fermentum suscipit.");
 }
 
 void MenuState::update(int ticks, int elapsedTicks)

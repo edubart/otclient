@@ -27,9 +27,11 @@
 #include "resources.h"
 
 Fonts g_fonts;
+Font *g_defaultFont = NULL;
 
 void Fonts::init()
 {
+    // load all fonts
     std::list<std::string> files = g_resources.getDirectoryFiles("fonts");
     foreach(const std::string& file, files) {
         if(boost::ends_with(file, ".yml")) {
@@ -40,24 +42,22 @@ void Fonts::init()
             m_fonts[name] = font;
         }
     }
+
+    // set default font
+    g_defaultFont = get("tibia-12px-rounded");
+    if(!g_defaultFont)
+        logFatal("Default font not found!");
 }
 
 Font* Fonts::get(const std::string& fontName)
 {
+    // find font by name
     auto it = m_fonts.find(fontName);
     if(it != m_fonts.end()) {
         return it->second.get();
     }
+
     logError("Font \"%s\" not found", fontName.c_str());
     return NULL;
 }
 
-Font *Fonts::getDefault()
-{
-    Font *font = get("tibia-10px-rounded");
-    if(font) {
-        return font;
-    }
-    logFatal("Default font not found!");
-    return NULL;
-}
