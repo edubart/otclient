@@ -29,6 +29,7 @@
 #include "framework/logger.h"
 #include "framework/engine.h"
 #include "framework/rect.h"
+#include "framework/fonts.h"
 
 TexturePtr background;
 
@@ -65,8 +66,11 @@ void MenuState::render()
 
     Rect texCoords(0, 0, texCoordsSize);
     texCoords.moveBottomRight(texSize.toPoint());
-
     g_graphics.drawTexturedRect(Rect(0, 0, screenSize), m_background.get(), texCoords);
+
+    Font *font = g_fonts.get("sans14");
+    if(font)
+        font->renderText(Point(10,10), "hello\nworld!");
 }
 
 void MenuState::update(int ticks, int elapsedTicks)

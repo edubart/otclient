@@ -34,7 +34,7 @@ void Fonts::init()
     foreach(const std::string& file, files) {
         if(boost::ends_with(file, ".yml")) {
             std::shared_ptr<Font> font(new Font);
-            font->load(file);
+            font->load("fonts/" + file);
             m_fonts[font->getName()] = font;
         }
     }
@@ -43,7 +43,9 @@ void Fonts::init()
 Font* Fonts::get(const std::string& fontName)
 {
     auto it = m_fonts.find(fontName);
-    if(it != m_fonts.end())
+    if(it != m_fonts.end()) {
         return it->second.get();
+    }
+    error("Font \"%s\" not found", fontName.c_str());
     return NULL;
 }

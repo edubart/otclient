@@ -59,6 +59,6 @@ private:
     std::ostringstream m_buf;
 };
 
-#define dump() Dump()
+#define dump Dump()
 
 #endif

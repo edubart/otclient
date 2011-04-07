@@ -32,31 +32,46 @@ typedef uint32 RGBA;
 class Color
 {
 public:
-    Color() : color(0) { }
-    Color(uint8 r, uint8 g, uint8 b, uint8 a = 0xFF) : color(((r & 0xff)<<24) | ((g & 0xff)<<16) | ((b & 0xff)<<8) | (a & 0xff)) { }
-    Color(const Color& other) : color(other.color) { }
-    Color(RGBA rgba) : color(rgba) { }
+    enum {
+        white = 0xFFFFFFFF,
+        pink = 0xFF00FFFF
+    };
 
-    uint8 red()   const { return (color >> 24) & 0xFF; }
-    uint8 green() const { return (color >> 16) & 0xFF; }
-    uint8 blue()  const { return (color >> 8) & 0xFF; }
-    uint8 alpha() const { return color & 0xFF; }
-    RGBA rgba() const { return color; }
-    const uint8* rgbaPtr() const { return (const uint8*)&color; }
+    inline Color() : color(0) { }
+    inline Color(uint8 r, uint8 g, uint8 b, uint8 a = 0xFF) : color(((r & 0xff)<<24) | ((g & 0xff)<<16) | ((b & 0xff)<<8) | (a & 0xff)) { }
+    inline Color(const Color& other) : color(other.color) { }
+    inline Color(RGBA rgba) : color(rgba) { }
 
-    void setRed(uint8 r) { color = ((r & 0xff)<<24) | (color & 0x00ffffff); }
-    void setGreen(uint8 g)   { color = ((g & 0xff)<<16) | (color & 0xff00ffff); }
-    void setBlue(uint8 b) { color = ((b & 0xff)<<8) | (color & 0xffff00ff); }
-    void setAlpha(uint8 a)  { color = (a & 0xff) | (color & 0xffffff00); }
-    void setRGBA(uint8 r, uint8 g, uint8 b, uint8 a = 0xFF) { color = ((r & 0xff)<<24) | ((g & 0xff)<<16) | ((b & 0xff)<<8) | (a & 0xff); }
-    void setRGBA(uint32 rgba) { color = rgba; }
+    inline uint8 red()   const { return (color >> 24) & 0xFF; }
+    inline uint8 green() const { return (color >> 16) & 0xFF; }
+    inline uint8 blue()  const { return (color >> 8) & 0xFF; }
+    inline uint8 alpha() const { return color & 0xFF; }
+    inline RGBA rgba() const { return color; }
+    inline const uint8* rgbaPtr() const { return (const uint8*)&color; }
 
-    Color& operator=(const Color& other) { color = other.color;  return *this; }
-    bool operator==(const Color& other) const { return other.color == color; }
-    bool operator!=(const Color& other) const { return other.color != color; }
+    inline void setRed(uint8 r) { color = ((r & 0xff)<<24) | (color & 0x00ffffff); }
+    inline void setGreen(uint8 g)   { color = ((g & 0xff)<<16) | (color & 0xff00ffff); }
+    inline void setBlue(uint8 b) { color = ((b & 0xff)<<8) | (color & 0xffff00ff); }
+    inline void setAlpha(uint8 a)  { color = (a & 0xff) | (color & 0xffffff00); }
+    inline void setRGBA(uint8 r, uint8 g, uint8 b, uint8 a = 0xFF) { color = ((r & 0xff)<<24) | ((g & 0xff)<<16) | ((b & 0xff)<<8) | (a & 0xff); }
+    inline void setRGBA(uint32 rgba) { color = rgba; }
+
+    inline Color& operator=(const Color& other) { color = other.color;  return *this; }
+    inline bool operator==(const Color& other) const { return other.color == color; }
+    inline bool operator!=(const Color& other) const { return other.color != color; }
 
 private:
     RGBA color;
 };
+
+inline void operator>>(const YAML::Node& node, Color& color)
+{
+    int r, g, b, a;
+    node[0] >> r;
+    node[1] >> g;
+    node[2] >> b;
+    node[3] >> a;
+    color.setRGBA(r,g,b,a);
+}
 
 #endif // COLOR_H

@@ -65,6 +65,9 @@ typedef int8_t int8;
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 
+// yaml
+#include <yaml-cpp/yaml.h>
+
 // internal logger
 #include "logger.h"
 

@@ -98,7 +98,7 @@ public:
     inline TRect<T> translated(int x, int y) const { return TRect<T>(TPoint<T>(x1 + x, y1 + y), TPoint<T>(x2 + x, y2 + y)); }
     inline TRect<T> translated(const TPoint<T> &p) const { return TRect<T>(TPoint<T>(x1 + p.x(), y1 + p.y()), TPoint<T>(x2 + p.x(), y2 + p.y())); }
 
-    void moveCenter(const TPoint<T> &p) {
+    inline void moveCenter(const TPoint<T> &p) {
         T w = x2 - x1;
         T h = y2 - y1;
         x1 = p.x() - w/2;
@@ -107,7 +107,7 @@ public:
         y2 = y1 + h;
     }
 
-    bool contains(const TPoint<T> &p, bool insideOnly = false) const {
+    inline bool contains(const TPoint<T> &p, bool insideOnly = false) const {
         T l, r;
         if(x2 < x1 - 1) {
             l = x2;
@@ -141,7 +141,7 @@ public:
         return true;
     }
 
-    bool intersects(const TRect<T> &r) const {
+    inline bool intersects(const TRect<T> &r) const {
         if(isNull() || r.isNull())
             return false;
 
@@ -182,7 +182,7 @@ public:
         return true;
     }
 
-    TRect<T> united(const TRect<T> &r) const {
+    inline TRect<T> united(const TRect<T> &r) const {
         if(isNull() || r.isNull())
             return TRect<T>();
 
@@ -228,7 +228,7 @@ public:
         return tmp;
     }
 
-    TRect<T> intersection(const TRect<T> &r) const {
+    inline TRect<T> intersection(const TRect<T> &r) const {
         if(isNull())
             return r;
         if(r.isNull())
@@ -280,5 +280,16 @@ private:
 
 typedef TRect<int> Rect;
 typedef TRect<float> RectF;
+
+template <class T>
+inline void operator>>(const YAML::Node& node, TRect<T>& rect)
+{
+    T x, y, width, height;
+    node[0] >> x;
+    node[1] >> y;
+    node[2] >> width;
+    node[3] >> height;
+    rect.setRect(x, y, width, height);
+}
 
 #endif // RECT_H

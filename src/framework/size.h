@@ -38,9 +38,9 @@ template <class T>
 class TSize
 {
 public:
-    TSize() : wd(-1), ht(-1) {};
-    TSize(T width, T height) : wd(width), ht(height) { };
-    TSize(const TSize<T>& other) : wd(other.wd), ht(other.ht) { };
+    inline TSize() : wd(-1), ht(-1) {};
+    inline TSize(T width, T height) : wd(width), ht(height) { };
+    inline TSize(const TSize<T>& other) : wd(other.wd), ht(other.ht) { };
 
     inline TPoint<T> toPoint() const { return TPoint<T>(wd, ht); }
 
@@ -51,6 +51,7 @@ public:
     inline int width() const { return wd; }
     inline int height() const { return ht; }
 
+    inline void setSize(T w, T h) { wd = w; ht = h; }
     inline void setWidth(T w) { wd = w; }
     inline void setHeight(T h) { ht = h; }
 
@@ -76,7 +77,7 @@ public:
     inline TSize<T> expandedTo(const TSize<T>& other) const { return TSize<T>(std::max(wd,other.wd), std::max(ht,other.ht)); }
     inline TSize<T> boundedTo(const TSize<T>& other) const { return TSize<T>(std::min(wd,other.wd), std::min(ht,other.ht)); }
 
-    void scale(const TSize<T>& s, ESizeScaleMode mode) {
+    inline void scale(const TSize<T>& s, ESizeScaleMode mode) {
         if(mode == IGNORE_ASPECT_RATIO || wd == 0 || ht == 0) {
             wd = s.wd;
             ht = s.ht;
@@ -98,7 +99,7 @@ public:
             }
         }
     }
-    void scale(int w, int h, ESizeScaleMode mode) { scale(TSize<T>(w, h)); }
+    inline void scale(int w, int h, ESizeScaleMode mode) { scale(TSize<T>(w, h)); }
 
     inline float ratio() const { return (float)wd/ht; }
     inline T area() const { return wd*ht; }
@@ -109,5 +110,14 @@ private:
 
 typedef TSize<int> Size;
 typedef TSize<float> SizeF;
+
+template <class T>
+inline void operator>>(const YAML::Node& node, TSize<T>& size)
+{
+    T w, h;
+    node[0] >> w;
+    node[1] >> h;
+    size.setSize(w, h);
+}
 
 #endif

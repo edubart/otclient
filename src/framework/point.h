@@ -77,4 +77,12 @@ public:
 typedef TPoint<int> Point;
 typedef TPoint<float> PointF;
 
+template <class T>
+inline void operator>>(const YAML::Node& node, TPoint<T>& point)
+{
+    T x, y;
+    node[0] >> point.x;
+    node[1] >> point.y;
+}
+
 #endif

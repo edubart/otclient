@@ -140,13 +140,12 @@ void Graphics::drawTexturedRect(const Rect& screenCoords, const Texture *texture
 
     if(!textureCoords.isEmpty()) {
         const Size& textureSize = texture->getSize();
-	
         textureRight = (float)(textureCoords.right() + 1) / textureSize.width();
         textureBottom = (float)(textureCoords.bottom() + 1) / textureSize.height();
         textureTop = (float)textureCoords.top() / textureSize.height();
         textureLeft = (float)textureCoords.left() / textureSize.width();
     }
-    
+
     glBindTexture(GL_TEXTURE_2D, texture->getTextureId());
     glBegin(GL_QUADS);
         glTexCoord2f(textureLeft,  textureTop);    glVertex2i(left,  top);

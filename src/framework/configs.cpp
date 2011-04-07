@@ -25,8 +25,6 @@
 #include "configs.h"
 #include "resources.h"
 
-#include <yaml-cpp/yaml.h>
-
 Configs g_configs;
 
 bool Configs::load(const std::string& fileName)
@@ -48,7 +46,7 @@ bool Configs::load(const std::string& fileName)
         YAML::Node doc;
         parser.GetNextDocument(doc);
 
-        for(YAML::Iterator it = doc.begin(); it != doc.end(); ++it) {
+        for(auto it = doc.begin(); it != doc.end(); ++it) {
             std::string key, value;
             it.first() >> key;
             it.second() >> value;
