@@ -44,7 +44,7 @@ public:
     inline TRect(const TPoint<T>& topLeft, const TPoint<T>& bottomRight) : x1(topLeft.x), y1(topLeft.y), x2(bottomRight.x), y2(bottomRight.y) { }
     inline TRect(const TRect<T>& other) : x1(other.x1), y1(other.y1), x2(other.x2), y2(other.y2) { }
     inline TRect(T x, T y, const TSize<T>& size) : x1(x), y1(y), x2(x+size.width()-1), y2(y+size.height()-1) { }
-    inline TRect(const TPoint<T>& topLeft, const TSize<T>& size) : x1(topLeft.x), y1(topLeft.y), x2(x+size.width()-1), y2(y+size.height()-1) { }
+    inline TRect(const TPoint<T>& topLeft, const TSize<T>& size) : x1(topLeft.x), y1(topLeft.y), x2(x1+size.width()-1), y2(y1+size.height()-1) { }
 
     inline bool isNull() const { return x2 == x1 - 1 && y2 == y1 - 1; }
     inline bool isEmpty() const { return x1 > x2 || y1 > y2; }

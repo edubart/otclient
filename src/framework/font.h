@@ -28,6 +28,7 @@
 #include "prerequisites.h"
 #include "color.h"
 #include "texture.h"
+#include "rect.h"
 
 class Font
 {
@@ -67,11 +68,8 @@ private:
     int m_cursorSize;
     Color m_color;
     TexturePtr m_texture;
-    Size m_textureSize;
-    Size m_glyphSize;
-    int m_firstGlyph;
-    int m_glyphWidths[256];
-    int m_numHorizontalGlyphs;
+    Rect m_glyphsTextureCoords[256];
+    Size m_glyphsSize[256];
 };
 
 #endif // FONT_H
