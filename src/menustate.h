@@ -27,6 +27,7 @@
 
 #include "framework/gamestate.h"
 #include "framework/texture.h"
+#include "framework/net/connection.h"
 
 class MenuState : public GameState
 {
@@ -45,6 +46,8 @@ public:
 
 private:
     TexturePtr m_background;
+    ConnectionPtr m_connection;
+    int m_connectionTicks;
 };
 
 #endif // MENUSTATE_H

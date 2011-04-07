@@ -30,6 +30,7 @@
 #include "framework/engine.h"
 #include "framework/rect.h"
 #include "framework/fonts.h"
+#include "framework/net/connections.h"
 
 TexturePtr background;
 
@@ -37,6 +38,9 @@ void MenuState::onEnter()
 {
     m_background = g_textures.get("background.png");
     m_background->enableBilinearFilter();
+    
+    m_connection = g_connections.createConnection();
+    m_connection->connect("www.google.com.br", 80);
 }
 
 void MenuState::onLeave()
@@ -74,5 +78,8 @@ void MenuState::render()
 
 void MenuState::update(int ticks, int elapsedTicks)
 {
-
+    if(m_connection->getLastError()){
+        logError("%s", m_connection->getLastError().message().c_str());
+        m_connection->resetLastError();
+    }
 }

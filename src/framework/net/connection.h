@@ -40,6 +40,8 @@ public:
     bool isConnected() const { return m_connected; } 
     
     const boost::system::error_code& getLastError() const { return m_lastError; }
+
+    void resetLastError() { m_lastError = boost::system::error_code(); }
     
 private:
     void onResolveDns(const boost::system::error_code& error, boost::asio::ip::tcp::resolver::iterator endpoint_iterator);

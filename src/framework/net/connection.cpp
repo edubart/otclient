@@ -57,16 +57,18 @@ void Connection::connect(const std::string& ip, uint16 port)
     logDebug("connecting...");
     
     //first resolve dns
-    boost::asio::ip::tcp::resolver::query query(ip, "80");
+    boost::asio::ip::tcp::resolver::query query(ip, convertType<std::string, uint16>(port));
     m_resolver.async_resolve(query, boost::bind(&Connection::onResolveDns, this, boost::asio::placeholders::error, boost::asio::placeholders::iterator));
 }
 
 void Connection::onResolveDns(const boost::system::error_code& error, boost::asio::ip::tcp::resolver::iterator endpoint_iterator)
 {
     logDebug("resolving dns..");
+    
+    m_lastError = error;
+    
     if(error){
         m_connecting = false;
-        m_lastError = error;
         return;
     }
 
@@ -76,9 +78,10 @@ void Connection::onResolveDns(const boost::system::error_code& error, boost::asi
 
 void Connection::onConnect(const boost::system::error_code& error)
 {
+    m_lastError = error;
+
     if(error){
         m_connecting = false;
-        m_lastError = error;
         return;
     }    
     
