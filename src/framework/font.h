@@ -39,8 +39,20 @@ public:
     /// Load font from file
     bool load(const std::string &file);
 
-    /// Simple text render
+    /// Simple text render starting at pos
     void renderText(const Point& pos, const std::string& text);
+
+    /// Render text delimited by screenCoords rect
+    void renderText(const Rect& screenCoords, const std::string& text);
+
+    /** Advanced text render
+     * screenCoords is the rect that will be filled on the screen
+     * startRenderPosition is the postion to start rendering relative to the text rect
+     */
+    void renderText(const Rect& screenCoords, const Point& startRenderPosition, const std::string& text);
+
+    /// Simulate render and calculate text size
+    Size calculateTextSize(const std::string& text);
 
     /*
     enum EAlign {
@@ -59,9 +71,6 @@ public:
     /// Render a text inside a rect
     void renderText(const Rect& screenCoords, EAlign align, const std::string& text);
     */
-
-    /// Render a text
-    int renderGlyph(const Point& pos, int glyph);
 
 private:
     int m_lineHeight;

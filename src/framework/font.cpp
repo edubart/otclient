@@ -109,25 +109,27 @@ void Font::renderText(const Point& pos, const std::string& text)
 
     Point currentPos = pos;
     const Size& screenSize = g_graphics.getScreenSize();
+    const Size& textureSize = m_texture->getSize();
     int textLenght = text.length();
 
     for(int i = 0; i < textLenght; ++i) {
-        int c = (int)text[i];
+        int glyph = (int)text[i];
 
         // break rendering if the Y pos is below the screen
         if(currentPos.y >= screenSize.height())
             break;
 
         // new line
-        if(c == '\n') {
+        if(glyph == (uchar)'\n') {
             currentPos.y += m_lineHeight;
             currentPos.x = pos.x;
         }
-        // render glyph
-        else {
-            // render online if is visible on screen
-            if(currentPos.x < screenSize.width())
-                currentPos.x += renderGlyph(currentPos, c);
+        // render only if the glyph is valid and visible
+        else if(glyph >= 32 && currentPos.x < screenSize.width()) {
+            g_graphics._drawTexturedRect(Rect(currentPos, m_glyphsSize[glyph]),
+                                            m_glyphsTextureCoords[glyph],
+                                            textureSize);
+            currentPos.x += m_glyphsSize[glyph].width();
         }
     }
 
@@ -136,15 +138,23 @@ void Font::renderText(const Point& pos, const std::string& text)
     g_graphics.resetColor();
 }
 
-int Font::renderGlyph(const Point& pos, int glyph)
+Size Font::calculateTextSize(const std::string& text)
 {
-    // don't render invalid glyphs
-    if(glyph < 32)
-        return 0;
+    int textLenght = text.length();
+    Size size;
+    Point currentPos;
 
-    // render glyph
-    Rect screenCoords(pos, m_glyphsSize[glyph]);
-    g_graphics._drawTexturedRect(screenCoords, m_glyphsTextureCoords[glyph], m_texture->getSize());
+    for(int i = 0; i < textLenght; ++i) {
+        int glyph = (int)text[i];
 
-    return m_glyphsSize[glyph].width();
+        if(glyph == (uchar)'\n') {
+            currentPos.y += m_lineHeight;
+            size.expandedTo(currentPos.toSize());
+            currentPos.x = 0;
+        }
+        else if(glyph > 32) {
+            currentPos.x += m_glyphsSize[glyph].width();
+        }
+    }
+    return size;
 }

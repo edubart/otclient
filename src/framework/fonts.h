@@ -39,6 +39,9 @@ public:
     /// Get a font by name
     Font *get(const std::string& fontName);
 
+    /// Get default font
+    Font *getDefault();
+
     /// Terminate all fonts
     void terminate() { }
 
