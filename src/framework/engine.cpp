@@ -29,6 +29,7 @@
 #include "input.h"
 #include "configs.h"
 #include "gamestate.h"
+#include "net/connections.h"
 
 #define MINIMUN_UPDATE_DELAY 50
 
@@ -74,6 +75,9 @@ void Engine::run()
     while(!m_stopping) {
         // fire platform events
         Platform::poll();
+        
+        //poll network events
+        //debug("%d", g_connections.poll());
 
         // update before redering
         ticks = Platform::getTicks();
@@ -104,6 +108,24 @@ void Engine::run()
             
             // swap buffers
             Platform::swapBuffers();
+           
+            /*
+            static ConnectionPtr connection = g_connections.createConnection();
+            
+            if(connection->getLastError()){
+                error("%s", connection->getLastError().message().c_str());
+            }
+            else{
+                if(!connection->isConnecting() && !connection->isConnected()){
+                    connection->connect("www.google.com.br", 80);
+                }
+                
+                if(!connection->isConnected()){
+                    debug("still not connected.");
+                }
+            }
+            */
+        //}
         }
     }
 

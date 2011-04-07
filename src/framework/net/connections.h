@@ -21,60 +21,27 @@
  * THE SOFTWARE.
  */
 
+#ifndef CONNECTIONS_H
+#define CONNECTIONS_H
 
-#ifndef PREREQUISITES_H
-#define PREREQUISITES_H
+#include "../prerequisites.h"
 
-// easy typing
-#include <stdint.h>
-typedef unsigned char uchar;
-typedef unsigned short ushort;
-typedef unsigned int uint;
-typedef unsigned long ulong;
-typedef uint32_t uint32;
-typedef uint16_t uint16;
-typedef uint8_t uint8;
-typedef int32_t int32;
-typedef int16_t int16;
-typedef int8_t int8;
+#include "connection.h"
 
-// C headers
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-#include <cassert>
-#include <ctime>
-#include <cmath>
-#include <csignal>
+class Connections
+{
+public:
+    size_t poll();
+    
+    ConnectionPtr createConnection();
+    
+private:
+    boost::asio::io_service m_ioService;
+    
+    typedef std::vector<ConnectionPtr> ConnectionVector;
+    ConnectionVector m_connections;
+};
 
-// STL headers
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <algorithm>
-#include <string>
-#include <vector>
-#include <map>
-#include <string>
-#include <list>
-#include <memory>
+extern Connections g_connections;
 
-// boost utilities
-#include <boost/algorithm/string.hpp>
-#include <boost/lexical_cast.hpp>
-#include <boost/foreach.hpp>
-#include <boost/asio.hpp>
-#include <boost/bind.hpp>
-
-#define foreach BOOST_FOREACH
-
-// yaml
-#include <yaml-cpp/yaml.h>
-
-// internal logger
-#include "logger.h"
-
-// additional utilities
-#include "util.h"
-
-#endif // PREREQUISITES_H
+#endif //CONNECTIONS_H
