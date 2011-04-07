@@ -48,7 +48,7 @@ Font* Fonts::get(const std::string& fontName)
     if(it != m_fonts.end()) {
         return it->second.get();
     }
-    error("Font \"%s\" not found", fontName.c_str());
+    logError("Font \"%s\" not found", fontName.c_str());
     return NULL;
 }
 
@@ -58,6 +58,6 @@ Font *Fonts::getDefault()
     if(font) {
         return font;
     }
-    fatal("Default font not found!");
+    logFatal("Default font not found!");
     return NULL;
 }

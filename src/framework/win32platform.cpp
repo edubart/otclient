@@ -64,7 +64,7 @@ void Platform::init(const char *appName)
     wc.lpszClassName            = win32.appName.c_str();                        // Set The Class Name
 
     if(!RegisterClassA(&wc))
-        fatal("Failed to register the window class.");
+        logFatal("Failed to register the window class.");
 
     // force first tick
     Platform::getTicks();
@@ -79,7 +79,7 @@ void Platform::terminate()
 
     if(win32.instance) {
         if(!UnregisterClassA(win32.appName.c_str(), win32.instance))
-            error("Unregister class failed.");
+            logError("Unregister class failed.");
 
         win32.instance = NULL;
     }
@@ -139,7 +139,7 @@ bool Platform::createWindow(int x, int y, int width, int height, int minWidth, i
 
     if(!win32.window) {
         terminate();
-        fatal("Window creation error.");
+        logFatal("Window creation error.");
         return false;
     }
 
@@ -168,31 +168,31 @@ bool Platform::createWindow(int x, int y, int width, int height, int minWidth, i
 
     if(!(win32.hdc = GetDC(win32.window))) {
         terminate();
-        fatal("Can't Create A GL Device Context.");
+        logFatal("Can't Create A GL Device Context.");
         return false;
     }
 
     if(!(pixelFormat = ChoosePixelFormat(win32.hdc, &pfd))) {
         terminate();
-        fatal("Can't Find A Suitable PixelFormat.");
+        logFatal("Can't Find A Suitable PixelFormat.");
         return false;
     }
 
     if(!SetPixelFormat(win32.hdc, pixelFormat, &pfd)) {
         terminate();
-        fatal("Can't Set The PixelFormat.");
+        logFatal("Can't Set The PixelFormat.");
         return false;
     }
 
     if(!(win32.hrc = wglCreateContext(win32.hdc))) {
         terminate();
-        fatal("Can't Create A GL Rendering Context.");
+        logFatal("Can't Create A GL Rendering Context.");
         return false;
     }
 
     if(!wglMakeCurrent(win32.hdc, win32.hrc)) {
         terminate();
-        fatal("Can't Activate The GL Rendering Context.");
+        logFatal("Can't Activate The GL Rendering Context.");
         return false;
     }
 
@@ -203,24 +203,24 @@ void Platform::destroyWindow()
 {
     if(win32.hrc) {
         if(!wglMakeCurrent(NULL, NULL))
-            error("Release Of DC And RC Failed.");
+            logError("Release Of DC And RC Failed.");
 
         if(!wglDeleteContext(win32.hrc))
-            error("Release Rendering Context Failed.");
+            logError("Release Rendering Context Failed.");
 
         win32.hrc = NULL;
     }
 
     if(win32.hdc) {
         if(!ReleaseDC(win32.window, win32.hdc))
-            error("Release Device Context Failed.");
+            logError("Release Device Context Failed.");
 
         win32.hdc = NULL;
     }
 
     if(win32.window) {
         if(!DestroyWindow(win32.window))
-            error("Destroy window failed.");
+            logError("Destroy window failed.");
 
         win32.window = NULL;
     }
@@ -355,7 +355,7 @@ const char *Platform::getAppUserDir()
     std::stringstream sdir;
     sdir << PHYSFS_getUserDir() << "/." << win32.appName << "/";
     if((mkdir(sdir.str().c_str()) != 0) && (errno != EEXIST))
-        error("Couldn't create directory for saving configuration file. (%s)", sdir.str().c_str());
+        logError("Couldn't create directory for saving configuration file. (%s)", sdir.str().c_str());
     return sdir.str().c_str();
 }
 

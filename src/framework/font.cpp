@@ -37,13 +37,13 @@ Font::Font() :
 bool Font::load(const std::string& file)
 {
     if(!g_resources.fileExists(file)) {
-        error("Font file %s does not exists", file.c_str());
+        logError("Font file %s does not exists", file.c_str());
         return false;
     }
 
     std::string fileContents = g_resources.loadTextFile(file);
     if(!fileContents.size()) {
-        error("Empty font file \"%s",  file.c_str());
+        logError("Empty font file \"%s",  file.c_str());
         return false;
     }
 
@@ -70,7 +70,7 @@ bool Font::load(const std::string& file)
 
         m_texture = g_textures.get("fonts/" + textureName);
         if(!m_texture) {
-            error("Failed to load image for font \"%s\"", file.c_str());
+            logError("Failed to load image for font \"%s\"", file.c_str());
             return false;
         }
 
@@ -94,7 +94,7 @@ bool Font::load(const std::string& file)
             m_glyphsSize[glyph].setWidth(glyphWidth);
         }
     } catch (YAML::ParserException& e) {
-        error("Malformed font file \"%s\"", file.c_str());
+        logError("Malformed font file \"%s\"", file.c_str());
         return false;
     }
 

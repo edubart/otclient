@@ -27,8 +27,9 @@
 
 #include <iostream>
 #include <cstdlib>
+#include <stdarg.h>
 
-void Logger::log(int level, const char *trace, const char *format, ...)
+void Logger::_log(int level, const char *trace, const char *format, ...)
 {
     va_list args;
     std::string strace;

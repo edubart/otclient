@@ -53,7 +53,7 @@ bool Configs::load(const std::string& fileName)
             m_confsMap[key] = value;
         }
     } catch (YAML::ParserException& e) {
-        error("Malformed configuration file!");
+        logError("Malformed configuration file!");
         return false;
     }
 
@@ -101,7 +101,7 @@ const std::string &Configs::getString(const std::string &key) const
 {
     auto it = m_confsMap.find(key);
     if(it == m_confsMap.end()) {
-        warning("Config value %s not found", key.c_str());
+        logWarning("Config value %s not found", key.c_str());
         static std::string emptystr;
         return emptystr;
     }
@@ -112,7 +112,7 @@ float Configs::getFloat(const std::string &key) const
 {
     auto it = m_confsMap.find(key);
     if(it == m_confsMap.end()) {
-        warning("Config value %s not found", key.c_str());
+        logWarning("Config value %s not found", key.c_str());
         return 0;
     }
     return convertType<float, std::string>(it->second);
@@ -122,7 +122,7 @@ bool Configs::getBoolean(const std::string &key) const
 {
     auto it = m_confsMap.find(key);
     if(it == m_confsMap.end()) {
-        warning("Config value %s not found", key.c_str());
+        logWarning("Config value %s not found", key.c_str());
         return 0;
     }
     return (it->second == "true");
@@ -132,7 +132,7 @@ int Configs::getInteger(const std::string &key) const
 {
     auto it = m_confsMap.find(key);
     if(it == m_confsMap.end()) {
-        warning("Config value %s not found", key.c_str());
+        logWarning("Config value %s not found", key.c_str());
         return 0;
     }
     return convertType<int, std::string>(it->second);

@@ -43,8 +43,8 @@ void Graphics::init()
     glShadeModel(GL_SMOOTH);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    notice("GPU %s", (const char*)glGetString(GL_RENDERER));
-    notice("OpenGL %s", (const char*)glGetString(GL_VERSION));
+    logInfo("GPU %s", (const char*)glGetString(GL_RENDERER));
+    logInfo("OpenGL %s", (const char*)glGetString(GL_VERSION));
 }
 
 void Graphics::terminate()

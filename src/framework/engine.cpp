@@ -77,7 +77,7 @@ void Engine::run()
         Platform::poll();
         
         //poll network events
-        //debug("%d", g_connections.poll());
+        //logDebug("%d", g_connections.poll());
 
         // update before redering
         ticks = Platform::getTicks();
@@ -113,7 +113,7 @@ void Engine::run()
             static ConnectionPtr connection = g_connections.createConnection();
             
             if(connection->getLastError()){
-                error("%s", connection->getLastError().message().c_str());
+                logError("%s", connection->getLastError().message().c_str());
             }
             else{
                 if(!connection->isConnecting() && !connection->isConnected()){
@@ -121,7 +121,7 @@ void Engine::run()
                 }
                 
                 if(!connection->isConnected()){
-                    debug("still not connected.");
+                    logDebug("still not connected.");
                 }
             }
             */

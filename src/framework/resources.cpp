@@ -43,14 +43,14 @@ bool Resources::setWriteDir(const std::string& path)
     bool ret = (bool)PHYSFS_setWriteDir(path.c_str());
 
     if(!ret)
-        error("Could not set the path \"%s\" as write directory, file write will not work.", path.c_str());
+        logError("Could not set the path \"%s\" as write directory, file write will not work.", path.c_str());
     return ret;
 }
 
 bool Resources::addToSearchPath(const std::string& path, bool insertInFront /*= true*/)
 {
     if(!PHYSFS_addToSearchPath(path.c_str(), insertInFront ? 0 : 1)) {
-        error("Error while adding \"%s\" to resources search path: %s", path.c_str(), PHYSFS_getLastError());
+        logError("Error while adding \"%s\" to resources search path: %s", path.c_str(), PHYSFS_getLastError());
         return false;
     }
     return true;
@@ -65,7 +65,7 @@ uchar *Resources::loadFile(const std::string& fileName, uint *fileSize)
 {
     PHYSFS_file *file = PHYSFS_openRead(fileName.c_str());
     if(!file) {
-        error("Failed to load file \"%s\": %s", fileName.c_str(), PHYSFS_getLastError());
+        logError("Failed to load file \"%s\": %s", fileName.c_str(), PHYSFS_getLastError());
         *fileSize = 0;
         return NULL;
     }
@@ -94,7 +94,7 @@ bool Resources::saveFile(const std::string &fileName, const uchar *data, uint si
 {
     PHYSFS_file *file = PHYSFS_openWrite(fileName.c_str());
     if(!file) {
-        error("Failed to save file \"%s\": %s", fileName.c_str(), PHYSFS_getLastError());
+        logError("Failed to save file \"%s\": %s", fileName.c_str(), PHYSFS_getLastError());
         return false;
     }
 

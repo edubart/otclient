@@ -233,18 +233,18 @@ void Platform::init(const char *appName)
     // open display
     x11.display = XOpenDisplay(0);
     if(!x11.display)
-        fatal("Failed to open X display");
+        logFatal("Failed to open X display");
 
     // check if GLX is supported on this display
     if(!glXQueryExtension(x11.display, 0, 0))
-        fatal("GLX not supported");
+        logFatal("GLX not supported");
 
     // retrieve GLX version
     int glxMajor;
     int glxMinor;
     if(!glXQueryVersion(x11.display, &glxMajor, &glxMinor))
-        fatal("Unable to query GLX version");
-    notice("GLX version %d.%d", glxMajor, glxMinor);
+        logFatal("Unable to query GLX version");
+    logInfo("GLX version %d.%d", glxMajor, glxMinor);
 
     // clipboard related atoms
     x11.atomClipboard = XInternAtom(x11.display, "CLIPBOARD", False);
@@ -346,7 +346,7 @@ void Platform::poll()
                        keysym != XK_Delete &&
                        keysym != XK_Escape
                     ) {
-                        //debug("char: %c code: %d", buf[0], (uchar)buf[0]);
+                        //logDebug("char: %c code: %d", buf[0], (uchar)buf[0]);
                         inputEvent.type = EV_TEXT_ENTER;
                         inputEvent.key.keychar = buf[0];
                         inputEvent.key.keycode = KC_UNKNOWN;
@@ -491,12 +491,12 @@ bool Platform::createWindow(int x, int y, int width, int height, int minWidth, i
     // choose OpenGL, RGBA, double buffered, visual
     x11.visual = glXChooseVisual(x11.display, DefaultScreen(x11.display), attrList);
     if(!x11.visual)
-        fatal("RGBA/Double buffered visual not supported");
+        logFatal("RGBA/Double buffered visual not supported");
 
     // create GLX context
     x11.glxContext = glXCreateContext(x11.display, x11.visual, 0, GL_TRUE);
     if(!x11.glxContext)
-        fatal("Unable to create GLX context");
+        logFatal("Unable to create GLX context");
 
     // color map
     x11.colormap  = XCreateColormap(x11.display,
@@ -529,7 +529,7 @@ bool Platform::createWindow(int x, int y, int width, int height, int minWidth, i
                              &wa);
 
     if(!x11.window)
-        fatal("Unable to create X window");
+        logFatal("Unable to create X window");
 
     //  create input context (to have better key input handling)
     if(XSupportsLocale()) {
@@ -541,14 +541,14 @@ bool Platform::createWindow(int x, int y, int width, int height, int minWidth, i
                                     XIMPreeditNothing | XIMStatusNothing,
                                     XNClientWindow, x11.window, NULL);
             if(!x11.xic)
-                error("Unable to create the input context");
+                logError("Unable to create the input context");
         } else
-            error("Failed to open an input method");
+            logError("Failed to open an input method");
     } else
-        error("X11 does not support the current locale");
+        logError("X11 does not support the current locale");
 
     if(!x11.xic)
-        warning("Input of special keys maybe messed up because we couldn't create an input context");
+        logWarning("Input of special keys maybe messed up because we couldn't create an input context");
 
 
     // set window minimum size
@@ -826,6 +826,6 @@ const char *Platform::getAppUserDir()
     std::stringstream sdir;
     sdir << PHYSFS_getUserDir() << "/." << x11.appName << "/";
     if((mkdir(sdir.str().c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) != 0) && (errno != EEXIST))
-        error("Couldn't create directory for saving configuration file. (%s)", sdir.str().c_str());
+        logError("Couldn't create directory for saving configuration file. (%s)", sdir.str().c_str());
     return sdir.str().c_str();
 }

@@ -63,9 +63,6 @@ typedef int8_t int8;
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/foreach.hpp>
-#include <boost/asio.hpp>
-#include <boost/bind.hpp>
-
 #define foreach BOOST_FOREACH
 
 // yaml

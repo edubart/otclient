@@ -5,7 +5,8 @@ SET(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake;${CMAKE_MODULE_PATH}")
 
 # find needed packages
 SET(Boost_USE_STATIC_LIBS ON)
-FIND_PACKAGE(Boost COMPONENTS system REQUIRED)
+SET(Boost_USE_MULTITHREADED ON)
+FIND_PACKAGE(Boost COMPONENTS system regex REQUIRED)
 FIND_PACKAGE(OpenGL REQUIRED)
 FIND_PACKAGE(Lua51 REQUIRED)
 FIND_PACKAGE(YamlCpp REQUIRED)
@@ -52,7 +53,7 @@ SET(SOURCES
 # game sources
     src/main.cpp
     src/menustate.cpp
-    
+
 # framework sources
     src/framework/framebuffer.cpp
     src/framework/font.cpp
@@ -72,8 +73,11 @@ SET(SOURCES
 
 IF(WIN32)
     SET(SOURCES ${SOURCES} src/framework/win32platform.cpp)
+    SET(ADDITIONAL_LIBRARIES ws2_32)
+    ADD_DEFINITIONS(-D_WIN32_WINNT=0x0501)
 ELSE(WIN32)
     SET(SOURCES ${SOURCES} src/framework/x11platform.cpp)
+    SET(ADDITIONAL_LIBRARIES pthread GLU)
 ENDIF(WIN32)
 
 # target executable
@@ -86,4 +90,5 @@ TARGET_LINK_LIBRARIES(otclient
     ${LUA51_LIBRARY}
     ${YAMLCPP_LIBRARY}
     ${PHYSFS_LIBRARY}
-    ${PNG_LIBRARY})
+    ${PNG_LIBRARY}
+    ${ADDITIONAL_LIBRARIES})

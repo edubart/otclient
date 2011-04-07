@@ -26,6 +26,8 @@
 
 #include "../prerequisites.h"
 
+#include <boost/asio.hpp>
+
 class Connection
 {
 public:

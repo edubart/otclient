@@ -43,7 +43,7 @@ R convertType(T t)
     try {
         ret = boost::lexical_cast<R>(t);
     } catch(boost::bad_lexical_cast bad) {
-        error("Error converting type: %s", bad.what());
+        logError("Error converting type: %s", bad.what());
     }
     return ret;
 }

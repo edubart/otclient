@@ -91,9 +91,9 @@ int main(int argc, const char *argv[])
 
     // load configurations
     if(!g_configs.load("config.yml"))
-        notice("Could not read configuration file, default configurations will be used.");
+        logInfo("Could not read configuration file, default configurations will be used.");
 
-    notice("OTClient 0.1.0");
+    logInfo("OTClient 0.1.0");
 
     // create the window
     Platform::createWindow(g_configs.getInteger("window x"), g_configs.getInteger("window y"),

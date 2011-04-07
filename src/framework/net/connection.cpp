@@ -23,6 +23,8 @@
 
 #include "connection.h"
 
+#include <boost/bind.hpp>
+
 Connection::Connection(boost::asio::io_service& ioService) 
     : m_socket(ioService), m_resolver(ioService)
 {
@@ -44,7 +46,7 @@ void Connection::stop()
 void Connection::connect(const std::string& ip, uint16 port)
 {
     if(m_connecting){
-        error("Already is connecting.");
+        logError("Already is connecting.");
         return;
     }
 
@@ -52,16 +54,16 @@ void Connection::connect(const std::string& ip, uint16 port)
     m_ip = ip;
     m_port = port;
     
-    debug("connecting...");
+    logDebug("connecting...");
     
     //first resolve dns
-    boost::asio::ip::tcp::resolver::query query(ip, 80);
+    boost::asio::ip::tcp::resolver::query query(ip, "80");
     m_resolver.async_resolve(query, boost::bind(&Connection::onResolveDns, this, boost::asio::placeholders::error, boost::asio::placeholders::iterator));
 }
 
 void Connection::onResolveDns(const boost::system::error_code& error, boost::asio::ip::tcp::resolver::iterator endpoint_iterator)
 {
-    debug("resolving dns..");
+    logDebug("resolving dns..");
     if(error){
         m_connecting = false;
         m_lastError = error;
@@ -82,5 +84,5 @@ void Connection::onConnect(const boost::system::error_code& error)
     
     m_connected = true;
     
-    notice("Connected on %s.", m_ip.c_str());
+    logInfo("Connected on %s.", m_ip.c_str());
 }
