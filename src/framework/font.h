@@ -60,12 +60,9 @@ public:
     */
 
     /// Render a text
-    const std::string& getName() const { return m_name; }
     int renderGlyph(const Point& pos, int glyph);
 
 private:
-
-    std::string m_name;
     int m_lineHeight;
     int m_cursorSize;
     Color m_color;
@@ -75,7 +72,6 @@ private:
     int m_firstGlyph;
     int m_glyphWidths[256];
     int m_numHorizontalGlyphs;
-    int m_numVerticalGlyphs;
 };
 
 #endif // FONT_H

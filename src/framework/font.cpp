@@ -34,7 +34,9 @@
 Font::Font() :
     m_lineHeight(14),
     m_cursorSize(14),
-    m_color(Color::white)
+    m_color(Color::white),
+    m_firstGlyph(32),
+    m_numHorizontalGlyphs(16)
 {
     bzero(m_glyphWidths, sizeof(m_glyphWidths));
 }
@@ -62,7 +64,6 @@ bool Font::load(const std::string& file)
         YAML::Node doc;
         parser.GetNextDocument(doc);
 
-        doc["name"] >> m_name;
         doc["line height"] >> m_lineHeight;
         doc["cursor size"] >> m_cursorSize;
         doc["color"] >> m_color;
@@ -70,7 +71,7 @@ bool Font::load(const std::string& file)
         doc["image"] >> textureName;
         doc["image glyph size"] >> m_glyphSize;
 
-        const YAML::Node& widthsNode = doc["widths"];
+        const YAML::Node& widthsNode = doc["glyph widths"];
         for(auto it = widthsNode.begin(); it != widthsNode.end(); ++it) {
             int id, width;
             it.first() >> id;
@@ -84,7 +85,6 @@ bool Font::load(const std::string& file)
 
     m_texture = g_textures.get("fonts/" + textureName);
     m_numHorizontalGlyphs = m_texture->getSize().width() / m_glyphSize.width();
-    m_numVerticalGlyphs = m_texture->getSize().height() / m_glyphSize.height();
 
     if(!m_texture) {
         error("Failed to load image for font \"%s\"", file.c_str());
@@ -128,7 +128,7 @@ void Font::renderText(const Point& pos, const std::string& text)
             break;
         }
         // normal glyph
-        else if(c >= 32 && c <= 255) {
+        else if(c >= m_firstGlyph) {
             currentPos.x += renderGlyph(currentPos, c);
         }
     }
@@ -145,7 +145,7 @@ int Font::renderGlyph(const Point& pos, int glyph)
     // calculate glyph coords on texture font
     const Size& textureSize = m_texture->getSize();
     int glyphTexCoordX = ((glyph - m_firstGlyph) % m_numHorizontalGlyphs) * m_glyphSize.width();
-    int glyphTexCoordY = ((glyph - m_firstGlyph) / m_numVerticalGlyphs) * m_glyphSize.height();
+    int glyphTexCoordY = ((glyph - m_firstGlyph) / m_numHorizontalGlyphs) * m_glyphSize.height();
     float textureRight = (float)(glyphTexCoordX + glyphWidth) / textureSize.width();
     float textureBottom = (float)(glyphTexCoordY + m_glyphSize.height()) / textureSize.height();
     float textureTop = (float)(glyphTexCoordY) / textureSize.height();

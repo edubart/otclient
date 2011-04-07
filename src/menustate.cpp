@@ -68,9 +68,13 @@ void MenuState::render()
     texCoords.moveBottomRight(texSize.toPoint());
     g_graphics.drawTexturedRect(Rect(0, 0, screenSize), m_background.get(), texCoords);
 
-    Font *font = g_fonts.get("sans14");
+    Font *font = g_fonts.get("sans-11px-antialised");
     if(font)
-        font->renderText(Point(10,10), "hello\nworld!");
+        font->renderText(Point(10,10), "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam ac orci id quam condimentum semper.");
+
+    font = g_fonts.get("tibia-10px-rounded");
+    if(font)
+        font->renderText(Point(10,30), "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam ac orci id quam condimentum semper.");
 }
 
 void MenuState::update(int ticks, int elapsedTicks)

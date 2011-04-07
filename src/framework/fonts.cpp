@@ -33,9 +33,11 @@ void Fonts::init()
     std::list<std::string> files = g_resources.getDirectoryFiles("fonts");
     foreach(const std::string& file, files) {
         if(boost::ends_with(file, ".yml")) {
+            std::string name = file;
+            boost::erase_first(name, ".yml");
             std::shared_ptr<Font> font(new Font);
             font->load("fonts/" + file);
-            m_fonts[font->getName()] = font;
+            m_fonts[name] = font;
         }
     }
 }
