@@ -94,9 +94,9 @@ void MenuState::render()
                               "Praesent at enim sapien, at vestibulum ligula.\n"
                               "Aliquam eleifend ante eu sapien vehicula consectetur.\n"
                               "Nunc id ligula ligula, eget vestibulum magna.\n"
-                              "In mattis nisi non nisl semper ultricies.\n";
-    Size textSize = g_defaultFont->calculateTextSize(text);
-    g_defaultFont->renderText(Rect(100, 100, textSize.width() - 120, textSize.height() - 15), text, Point(x,y), true);
+                              "In mattis nisi non nisl semper ultricies.";
+    Size textSize = g_defaultFont->calculateTextBoxSize(text);
+    g_defaultFont->renderText(text, Rect(100, 100, textSize.width()-30, textSize.height()-30), ALIGN_CENTER, Point(x,y), true);
 }
 
 void MenuState::update(int ticks, int elapsedTicks)

@@ -74,8 +74,8 @@ void Engine::run()
     while(!m_stopping) {
         // fire platform events
         Platform::poll();
-        
-        //poll network events
+
+        // poll network events
         g_connections.poll();
 
         // update before redering
@@ -102,12 +102,11 @@ void Engine::run()
 
             // render fps
             if(m_calculateFps) {
-                g_defaultFont->renderText(fpsPos, format("FPS: %d", fps));
+                g_defaultFont->renderText(format("FPS: %d", fps), fpsPos);
             }
-            
+
             // swap buffers
             Platform::swapBuffers();
-        //}
         }
     }
 

@@ -30,6 +30,20 @@
 #include "texture.h"
 #include "rect.h"
 
+enum EAlign {
+    ALIGN_TOP = 1 << 0,
+    ALIGN_BOTTOM = 1 << 1,
+    ALIGN_LEFT = 1 << 2,
+    ALIGN_RIGHT = 1 << 3,
+    ALIGN_HORIZONTAL_CENTER = 1 << 4,
+    ALIGN_VERTICAL_CENTER = 1 << 5,
+    ALIGN_CENTER = ALIGN_HORIZONTAL_CENTER | ALIGN_VERTICAL_CENTER,
+    ALIGN_TOP_RIGHT = ALIGN_TOP | ALIGN_RIGHT,
+    ALIGN_TOP_LEFT = ALIGN_TOP | ALIGN_LEFT,
+    ALIGN_BOTTOM_RIGHT = ALIGN_BOTTOM | ALIGN_RIGHT,
+    ALIGN_BOTTOM_LEFT = ALIGN_BOTTOM | ALIGN_LEFT
+};
+    
 class Font
 {
 public:
@@ -40,32 +54,26 @@ public:
     bool load(const std::string &file);
 
     /// Simple text render starting at pos
-    void renderText(const Point& pos, const std::string& text);
+    void renderText(const std::string& text,
+                    const Point& startPos);
 
     /** Advanced text render
      * screenCoords is the rect that will be filled on the screen
      * startRenderPosition is the postion to start rendering relative to the text rect
      */
-    void renderText(const Rect& screenCoords, const std::string& text, const Point& startRenderPosition = Point(), bool debug = false);
+    void renderText(const std::string& text,
+                    const Rect& screenCoords,
+                    int align = ALIGN_TOP_LEFT,
+                    const Point& startInternalPos = Point(),
+                    bool debug = false);
+
+    /// Calculate glyphs positions to use on render, also calculates textBoxSize if wanted
+    Point *calculateGlyphsPositions(const std::string& text, int align = ALIGN_TOP_LEFT, Size *textBoxSize = NULL);
 
     /// Simulate render and calculate text size
-    Size calculateTextSize(const std::string& text, Point *glyphsPositions = NULL);
+    Size calculateTextBoxSize(const std::string& text);
 
-    Point *mapGlyphsPositions(const std::string& text);
     /*
-    enum EAlign {
-        ALIGN_TOP = 1 << 0,
-        ALIGN_BOTTOM = 1 << 1,
-        ALIGN_LEFT = 1 << 2,
-        ALIGN_RIGHT = 1 << 3,
-        ALIGN_HORIZONTAL_CENTER = 1 << 4,
-        ALIGN_VERTICAL_CENTER = 1 << 5,
-        ALIGN_CENTER = ALIGN_HORIZONTAL_CENTER | ALIGN_VERTICAL_CENTER,
-        ALIGN_TOP_RIGHT = ALIGN_TOP | ALIGN_RIGHT,
-        ALIGN_TOP_LEFT = ALIGN_TOP | ALIGN_LEFT,
-        ALIGN_BOTTOM_RIGHT = ALIGN_BOTTOM | ALIGN_RIGHT,
-        ALIGN_BOTTOM_LEFT = ALIGN_BOTTOM | ALIGN_LEFT
-    };
     /// Render a text inside a rect
     void renderText(const Rect& screenCoords, EAlign align, const std::string& text);
     */

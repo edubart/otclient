@@ -101,7 +101,7 @@ int main(int argc, const char *argv[])
                            640, 480,
                            g_configs.getBoolean("window maximized"));
     Platform::setWindowTitle("OTClient");
-    Platform::setVsync();
+    //Platform::setVsync();
 
     // init engine
     g_engine.init();
