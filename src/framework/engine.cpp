@@ -108,8 +108,7 @@ void Engine::run()
             
             // swap buffers
             Platform::swapBuffers();
-<<<<<<< HEAD
-            
+           
             /*
             static ConnectionPtr connection = g_connections.createConnection();
             
@@ -127,9 +126,7 @@ void Engine::run()
             }
             */
         //}
-=======
         }
->>>>>>> f3eaf3f7262bf6ef35cee745d40088669526125a
     }
 
     m_stopping = false;
