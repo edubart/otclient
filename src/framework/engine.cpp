@@ -76,7 +76,7 @@ void Engine::run()
         Platform::poll();
         
         //poll network events
-        //logDebug("%d", g_connections.poll());
+        g_connections.poll();
 
         // update before redering
         ticks = Platform::getTicks();
@@ -107,23 +107,6 @@ void Engine::run()
             
             // swap buffers
             Platform::swapBuffers();
-           
-            /*
-            static ConnectionPtr connection = g_connections.createConnection();
-            
-            if(connection->getLastError()){
-                logError("%s", connection->getLastError().message().c_str());
-            }
-            else{
-                if(!connection->isConnecting() && !connection->isConnected()){
-                    connection->connect("www.google.com.br", 80);
-                }
-                
-                if(!connection->isConnected()){
-                    logDebug("still not connected.");
-                }
-            }
-            */
         //}
         }
     }
