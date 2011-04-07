@@ -32,11 +32,6 @@ typedef uint32 RGBA;
 class Color
 {
 public:
-    enum {
-        white = 0xFFFFFFFF,
-        pink = 0xFF00FFFF
-    };
-
     inline Color() : color(0) { }
     inline Color(uint8 r, uint8 g, uint8 b, uint8 a = 0xFF) : color(((r & 0xff)<<24) | ((g & 0xff)<<16) | ((b & 0xff)<<8) | (a & 0xff)) { }
     inline Color(const Color& other) : color(other.color) { }

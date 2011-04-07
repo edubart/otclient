@@ -31,6 +31,8 @@
 #include "gamestate.h"
 #include "net/connections.h"
 
+#define MINIMUN_UPDATE_DELAY 50
+
 Engine g_engine;
 
 void Engine::init()
@@ -55,30 +57,58 @@ void Engine::terminate()
 
 void Engine::run()
 {
-    ulong ticks;
-    static ulong lastFrameTicks;
-
+    int ticks = Platform::getTicks();
+    int lastUpdateTicks = ticks;
+    int lastFpsTicks = ticks;
+    int updateElapsedTicks = ticks;
+    int frameCount = 0;
+    int fps = 0;
     m_running = true;
 
-    lastFrameTicks = Platform::getTicks();
+    // before redering do the first update
+    update(ticks, 0);
+    lastUpdateTicks = ticks;
+
+    Font *font = g_fonts.getDefault();
+    Point fpsPos(10,10);
+
     while(!m_stopping) {
         // fire platform events
         Platform::poll();
         
         //poll network events
         //debug("%d", g_connections.poll());
-        
-        // update
+
+        // update before redering
         ticks = Platform::getTicks();
-        update(ticks, ticks - lastFrameTicks);
-        lastFrameTicks = ticks;
+        updateElapsedTicks = ticks - lastUpdateTicks;
+        if(updateElapsedTicks >= MINIMUN_UPDATE_DELAY) {
+            update(ticks, updateElapsedTicks);
+            lastUpdateTicks = ticks;
+        }
 
         // render only when visible
-        //if(Platform::isWindowVisible()) {
+        if(Platform::isWindowVisible()) {
+            // calculate and fps
+            if(m_calculateFps && font) {
+                frameCount++;
+                if(ticks - lastFpsTicks >= 1000) {
+                    lastFpsTicks = ticks;
+                    fps = frameCount;
+                    frameCount = 0;
+                }
+            }
+
             render();
 
+            // render fps
+            if(m_calculateFps && font) {
+                font->renderText(fpsPos, format("FPS: %d", fps));
+            }
+            
             // swap buffers
             Platform::swapBuffers();
+<<<<<<< HEAD
             
             /*
             static ConnectionPtr connection = g_connections.createConnection();
@@ -97,9 +127,11 @@ void Engine::run()
             }
             */
         //}
+=======
+        }
+>>>>>>> f3eaf3f7262bf6ef35cee745d40088669526125a
     }
 
-    lastFrameTicks = 0;
     m_stopping = false;
     m_running = false;
 }

@@ -125,7 +125,37 @@ void Graphics::endRender()
 
 }
 
+
+void Graphics::setColor(const Color& color)
+{
+    glColor4ubv(color.rgbaPtr());
+}
+
+void Graphics::resetColor()
+{
+    glColor4ub(0xFF, 0xFF, 0xFF, 0xFF);
+}
+
+void Graphics::_beginTextureRender(const Texture *texture)
+{
+    glBindTexture(GL_TEXTURE_2D, texture->getTextureId());
+    glBegin(GL_QUADS);
+}
+
+void Graphics::_endTextureRender()
+{
+    glEnd();
+}
+
 void Graphics::drawTexturedRect(const Rect& screenCoords, const Texture *texture, const Rect& textureCoords)
+{
+    glBindTexture(GL_TEXTURE_2D, texture->getTextureId());
+    glBegin(GL_QUADS);
+    _drawTexturedRect(screenCoords, textureCoords, texture->getSize());
+    glEnd();
+}
+
+void Graphics::_drawTexturedRect(const Rect& screenCoords, const Rect& textureCoords, const Size& textureSize)
 {
     // rect correction for opengl
     int right = screenCoords.right() + 1;
@@ -139,20 +169,16 @@ void Graphics::drawTexturedRect(const Rect& screenCoords, const Texture *texture
     float textureLeft = 1.0f;
 
     if(!textureCoords.isEmpty()) {
-        const Size& textureSize = texture->getSize();
         textureRight = (float)(textureCoords.right() + 1) / textureSize.width();
         textureBottom = (float)(textureCoords.bottom() + 1) / textureSize.height();
         textureTop = (float)textureCoords.top() / textureSize.height();
         textureLeft = (float)textureCoords.left() / textureSize.width();
     }
 
-    glBindTexture(GL_TEXTURE_2D, texture->getTextureId());
-    glBegin(GL_QUADS);
-        glTexCoord2f(textureLeft,  textureTop);    glVertex2i(left,  top);
-        glTexCoord2f(textureLeft,  textureBottom); glVertex2i(left,  bottom);
-        glTexCoord2f(textureRight, textureBottom); glVertex2i(right, bottom);
-        glTexCoord2f(textureRight, textureTop);    glVertex2i(right, top);
-    glEnd();
+    glTexCoord2f(textureLeft,  textureTop);    glVertex2i(left,  top);
+    glTexCoord2f(textureLeft,  textureBottom); glVertex2i(left,  bottom);
+    glTexCoord2f(textureRight, textureBottom); glVertex2i(right, bottom);
+    glTexCoord2f(textureRight, textureTop);    glVertex2i(right, top);
 }
 
 void Graphics::drawColoredRect(const Rect& screenCoords, const Color& color)

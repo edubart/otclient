@@ -36,6 +36,7 @@ class Engine
 public:
     Engine() : m_stopping(false),
                m_running(false),
+               m_calculateFps(false),
                m_currentState(NULL) { }
 
     void init();
@@ -60,6 +61,9 @@ public:
     /// Fired by platform on mouse/keyboard input
     void onInputEvent(InputEvent *event);
 
+    /// Enable FPS counter on screen
+    void enableFpsCounter(bool enable = true) { m_calculateFps = enable; };
+
 private:
     /// Called to render every frame
     void render();
@@ -68,6 +72,7 @@ private:
 
     bool m_stopping;
     bool m_running;
+    bool m_calculateFps;
 
     GameState *m_currentState;
 };

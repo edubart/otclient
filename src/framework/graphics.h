@@ -57,9 +57,18 @@ public:
 
     const Size& getScreenSize() const { return m_screenSize; }
 
+    void setColor(const Color& color);
+    void resetColor();
+
+    // high level rendering
     void drawTexturedRect(const Rect& screenCoords, const Texture *texture, const Rect& texCoords = Rect());
     void drawColoredRect(const Rect& screenCoords, const Color& color);
     void drawBoundingRect(const Rect& screenCoords, const Color& color, int innerLineWidth);
+
+    // lower level rendering
+    void _beginTextureRender(const Texture *texture);
+    void _drawTexturedRect(const Rect& screenCoords, const Rect& textureCoords, const Size& textureSize);
+    void _endTextureRender();
 
 private:
     Size m_screenSize;

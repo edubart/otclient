@@ -51,3 +51,13 @@ Font* Fonts::get(const std::string& fontName)
     error("Font \"%s\" not found", fontName.c_str());
     return NULL;
 }
+
+Font *Fonts::getDefault()
+{
+    Font *font = get("tibia-10px-rounded");
+    if(font) {
+        return font;
+    }
+    fatal("Default font not found!");
+    return NULL;
+}
