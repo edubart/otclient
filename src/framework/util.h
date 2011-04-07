@@ -26,6 +26,7 @@
 #define UTIL_H
 
 #include "logger.h"
+#include <stdarg.h>
 #include <boost/lexical_cast.hpp>
 
 /// Formatting like printf for std::string, va_list input version

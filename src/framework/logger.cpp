@@ -26,7 +26,7 @@
 #include "util.h"
 
 #include <iostream>
-#include <stdarg.h>
+#include <cstdlib>
 
 void Logger::log(int level, const char *trace, const char *format, ...)
 {
