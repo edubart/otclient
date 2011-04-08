@@ -26,6 +26,7 @@
 #include "engine.h"
 #include "input.h"
 #include "logger.h"
+#include "size.h"
 
 #include <sys/time.h>
 #include <sys/stat.h>
@@ -300,7 +301,7 @@ void Platform::poll()
                 static int oldWidth = -1;
                 static int oldHeight = -1;
                 if(oldWidth != event.xconfigure.width || oldHeight != event.xconfigure.height) {
-                    g_engine.onResize(event.xconfigure.width, event.xconfigure.height);
+                    g_engine.onResize(Size(event.xconfigure.width, event.xconfigure.height));
                     oldWidth = event.xconfigure.width;
                     oldHeight = event.xconfigure.height;
                 }

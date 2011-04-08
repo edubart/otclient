@@ -22,30 +22,5 @@
  */
 
 
-#ifndef MENUSTATE_H
-#define MENUSTATE_H
+#include "uibutton.h"
 
-#include "framework/gamestate.h"
-#include "framework/texture.h"
-#include "framework/net/connection.h"
-
-class MenuState : public GameState
-{
-
-public:
-    MenuState() { }
-
-    virtual void onEnter();
-    virtual void onLeave();
-
-    virtual void onClose();
-    virtual void onInputEvent(InputEvent *event);
-
-    virtual void render();
-    virtual void update(int ticks, int elapsedTicks);
-
-private:
-    TexturePtr m_background;
-};
-
-#endif // MENUSTATE_H

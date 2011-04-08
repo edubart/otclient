@@ -22,30 +22,30 @@
  */
 
 
-#ifndef MENUSTATE_H
-#define MENUSTATE_H
+#include "dispatcher.h"
+#include "platform.h"
 
-#include "framework/gamestate.h"
-#include "framework/texture.h"
-#include "framework/net/connection.h"
+Dispatcher g_dispatcher;
 
-class MenuState : public GameState
+void Dispatcher::poll(int ticks)
 {
+    while(!m_taskList.empty()) {
+        Task *task = m_taskList.top();
+        if(ticks < task->ticks)
+            break;
 
-public:
-    MenuState() { }
+        task->callback();
+        delete task;
+        m_taskList.pop();
+    }
+}
 
-    virtual void onEnter();
-    virtual void onLeave();
+void Dispatcher::scheduleTask(const Callback& callback, int delay)
+{
+    m_taskList.push(new Task(Platform::getTicks() + delay, callback));
+}
 
-    virtual void onClose();
-    virtual void onInputEvent(InputEvent *event);
-
-    virtual void render();
-    virtual void update(int ticks, int elapsedTicks);
-
-private:
-    TexturePtr m_background;
-};
-
-#endif // MENUSTATE_H
+void Dispatcher::addTask(const Callback& callback)
+{
+    m_taskList.push(new Task(callback));
+}

@@ -22,30 +22,15 @@
  */
 
 
-#ifndef MENUSTATE_H
-#define MENUSTATE_H
+#include "uielement.h"
+#include "uicontainer.h"
 
-#include "framework/gamestate.h"
-#include "framework/texture.h"
-#include "framework/net/connection.h"
-
-class MenuState : public GameState
+UIElement::UIElement(UIContainerPtr parent) :
+    m_visible(true),
+    m_active(true)
 {
+    if(parent)
+        parent->addChild(asUIElement());
+}
 
-public:
-    MenuState() { }
 
-    virtual void onEnter();
-    virtual void onLeave();
-
-    virtual void onClose();
-    virtual void onInputEvent(InputEvent *event);
-
-    virtual void render();
-    virtual void update(int ticks, int elapsedTicks);
-
-private:
-    TexturePtr m_background;
-};
-
-#endif // MENUSTATE_H

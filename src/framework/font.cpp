@@ -273,7 +273,7 @@ Point* Font::calculateGlyphsPositions(const std::string& text, int align, Size *
 }
 
 
-Size Font::calculateTextBoxSize(const std::string& text)
+Size Font::calculateTextRectSize(const std::string& text)
 {
     Size size;
     calculateGlyphsPositions(text, ALIGN_TOP_LEFT, &size);

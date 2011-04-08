@@ -22,30 +22,18 @@
  */
 
 
-#ifndef MENUSTATE_H
-#define MENUSTATE_H
+#ifndef UIBUTTON_H
+#define UIBUTTON_H
 
-#include "framework/gamestate.h"
-#include "framework/texture.h"
-#include "framework/net/connection.h"
+#include "../prerequisites.h"
+#include "uielement.h"
 
-class MenuState : public GameState
+class UIButton : public UIElement
 {
-
 public:
-    MenuState() { }
+    UIButton(UIContainerPtr parent) : UIElement(parent) { }
 
-    virtual void onEnter();
-    virtual void onLeave();
-
-    virtual void onClose();
-    virtual void onInputEvent(InputEvent *event);
-
-    virtual void render();
-    virtual void update(int ticks, int elapsedTicks);
-
-private:
-    TexturePtr m_background;
+    virtual UI::ControlType getControlType() const { return UI::Button; }
 };
 
-#endif // MENUSTATE_H
+#endif // UIBUTTON_H

@@ -81,10 +81,9 @@ bool Graphics::isExtensionSupported(const char *extension)
     return 0;
 }
 
-void Graphics::resize(int width, int height)
+void Graphics::resize(const Size& size)
 {
-    m_screenSize.setWidth(width);
-    m_screenSize.setHeight(height);
+    m_screenSize = size;
     restoreViewport();
 }
 

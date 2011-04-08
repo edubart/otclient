@@ -53,8 +53,10 @@ SET(SOURCES
 # game sources
     src/main.cpp
     src/menustate.cpp
+    src/teststate.cpp
 
 # framework sources
+    src/framework/dispatcher.cpp
     src/framework/framebuffer.cpp
     src/framework/font.cpp
     src/framework/fonts.cpp
@@ -68,6 +70,14 @@ SET(SOURCES
     src/framework/logger.cpp
     src/framework/util.cpp
 
+# ui
+    src/framework/ui/uielement.cpp
+    src/framework/ui/uicontainer.cpp
+    src/framework/ui/uipanel.cpp
+    src/framework/ui/uibutton.cpp
+    src/framework/ui/uilabel.cpp
+
+# network
     src/framework/net/connection.cpp
     src/framework/net/connections.cpp)
 

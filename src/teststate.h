@@ -22,18 +22,15 @@
  */
 
 
-#ifndef MENUSTATE_H
-#define MENUSTATE_H
+#ifndef TESTSTATE_H
+#define TESTSTATE_H
 
 #include "framework/gamestate.h"
-#include "framework/texture.h"
-#include "framework/net/connection.h"
 
-class MenuState : public GameState
+class TestState : public GameState
 {
-
 public:
-    MenuState() { }
+    TestState() { }
 
     virtual void onEnter();
     virtual void onLeave();
@@ -43,9 +40,6 @@ public:
 
     virtual void render();
     virtual void update(int ticks, int elapsedTicks);
-
-private:
-    TexturePtr m_background;
 };
 
-#endif // MENUSTATE_H
+#endif // TESTSTATE_H

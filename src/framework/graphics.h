@@ -44,7 +44,7 @@ public:
     bool isExtensionSupported(const char *extension);
 
     /// Called after every window resize
-    void resize(int width, int height);
+    void resize(const Size& size);
 
     /// Restore original viewport
     void restoreViewport();

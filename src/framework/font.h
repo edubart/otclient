@@ -43,7 +43,7 @@ enum EAlign {
     ALIGN_BOTTOM_RIGHT = ALIGN_BOTTOM | ALIGN_RIGHT,
     ALIGN_BOTTOM_LEFT = ALIGN_BOTTOM | ALIGN_LEFT
 };
-    
+
 class Font
 {
 public:
@@ -71,12 +71,7 @@ public:
     Point *calculateGlyphsPositions(const std::string& text, int align = ALIGN_TOP_LEFT, Size *textBoxSize = NULL);
 
     /// Simulate render and calculate text size
-    Size calculateTextBoxSize(const std::string& text);
-
-    /*
-    /// Render a text inside a rect
-    void renderText(const Rect& screenCoords, EAlign align, const std::string& text);
-    */
+    Size calculateTextRectSize(const std::string& text);
 
 private:
     int m_lineHeight;

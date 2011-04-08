@@ -22,30 +22,18 @@
  */
 
 
-#ifndef MENUSTATE_H
-#define MENUSTATE_H
+#ifndef UIPANEL_H
+#define UIPANEL_H
 
-#include "framework/gamestate.h"
-#include "framework/texture.h"
-#include "framework/net/connection.h"
+#include "../prerequisites.h"
+#include "uicontainer.h"
 
-class MenuState : public GameState
+class UIPanel : public UIContainer
 {
-
 public:
-    MenuState() { }
+    UIPanel(UIContainerPtr parent) : UIContainer(parent) { }
 
-    virtual void onEnter();
-    virtual void onLeave();
-
-    virtual void onClose();
-    virtual void onInputEvent(InputEvent *event);
-
-    virtual void render();
-    virtual void update(int ticks, int elapsedTicks);
-
-private:
-    TexturePtr m_background;
+    virtual UI::ControlType getControlType() const { return UI::Panel; }
 };
 
-#endif // MENUSTATE_H
+#endif // UIPANEL_H

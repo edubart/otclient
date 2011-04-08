@@ -26,6 +26,7 @@
 #define ENGINE_H
 
 #include "prerequisites.h"
+#include "size.h"
 
 struct InputEvent;
 
@@ -57,7 +58,7 @@ public:
     /// Fired by platform on window close
     void onClose();
     /// Fired by platform on window resize
-    void onResize(int width, int height);
+    void onResize(const Size& size);
     /// Fired by platform on mouse/keyboard input
     void onInputEvent(InputEvent *event);
 

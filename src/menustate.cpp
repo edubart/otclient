@@ -31,17 +31,28 @@
 #include "framework/rect.h"
 #include "framework/fonts.h"
 #include "framework/input.h"
+#include "framework/dispatcher.h"
+#include "framework/ui/ui.h"
 #include "framework/net/connections.h"
-
-TexturePtr background;
 
 void MenuState::onEnter()
 {
     m_background = g_textures.get("background.png");
     m_background->enableBilinearFilter();
-    
-    m_connection = g_connections.createConnection();
-    m_connection->connect("www.google.com.br", 80);
+
+    /*
+    UIPanelPtr panel(new UIPanel);
+    panel.setAnchorsLeft(g_gui.left());
+    panel.setAnchorsBottom(g_gui.right());
+    panel.setMarginBottom(10);
+    panel.setMarginLeft(10);
+    panel.setSize(Size(100, 100));
+
+    UIButtonPtr button(new UIButton);
+    button.setAnchorsHorizontalCenter(panel.horizontalCenter());
+    button.setTop
+    g_gui.addChild(panel);
+    */
 }
 
 void MenuState::onLeave()
@@ -54,55 +65,27 @@ void MenuState::onClose()
     g_engine.stop();
 }
 
-int x, y;
 void MenuState::onInputEvent(InputEvent* event)
 {
-    static bool moving = false;
-    static int lastX;
-    static int lastY;
-    if(event->type == EV_MOUSE_LDOWN) {
-        moving = true;
-        lastX = event->mouse.x;
-        lastY = event->mouse.y;
-    } else if(event->type == EV_MOUSE_LUP) {
-        moving = false;
-    } else if(event->type == EV_MOUSE_MOVE) {
-        if(moving) {
-            x = lastX - event->mouse.x;
-            y = lastY - event->mouse.y;
-        }
-    }
+
 }
 
 void MenuState::render()
 {
+    // render background
     static Size minTexCoordsSize(1240, 880);
     const Size& screenSize = g_graphics.getScreenSize();
     const Size& texSize = m_background->getSize();
-
     Size texCoordsSize = screenSize;
     if(texCoordsSize < minTexCoordsSize)
         texCoordsSize.scale(minTexCoordsSize, KEEP_ASPECT_RATIO_BY_EXPANDING);
     texCoordsSize = texCoordsSize.boundedTo(texSize);
-
     Rect texCoords(0, 0, texCoordsSize);
     texCoords.moveBottomRight(texSize.toPoint());
     g_graphics.drawTexturedRect(Rect(0, 0, screenSize), m_background.get(), texCoords);
-
-    static const char *text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n"
-                              "Nulla pulvinar odio ac arcu tempor consequat.\n"
-                              "Praesent at enim sapien, at vestibulum ligula.\n"
-                              "Aliquam eleifend ante eu sapien vehicula consectetur.\n"
-                              "Nunc id ligula ligula, eget vestibulum magna.\n"
-                              "In mattis nisi non nisl semper ultricies.";
-    Size textSize = g_defaultFont->calculateTextBoxSize(text);
-    g_defaultFont->renderText(text, Rect(100, 100, textSize.width()-30, textSize.height()-30), ALIGN_CENTER, Point(x,y), true);
 }
 
 void MenuState::update(int ticks, int elapsedTicks)
 {
-    if(m_connection->getLastError()){
-        logError("%s", m_connection->getLastError().message().c_str());
-        m_connection->resetLastError();
-    }
+
 }

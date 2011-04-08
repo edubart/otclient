@@ -29,7 +29,9 @@
 #include "input.h"
 #include "configs.h"
 #include "gamestate.h"
+#include "dispatcher.h"
 #include "net/connections.h"
+#include "ui/uicontainer.h"
 
 #define MINIMUN_UPDATE_DELAY 50
 
@@ -40,9 +42,6 @@ void Engine::init()
     // initialize stuff
     g_graphics.init();
     g_fonts.init();
-
-    // finally show the window
-    onResize(Platform::getWindowWidth(), Platform::getWindowHeight());
 }
 
 void Engine::terminate()
@@ -72,7 +71,7 @@ void Engine::run()
     Point fpsPos(10,10);
 
     while(!m_stopping) {
-        // fire platform events
+        // poll platform events
         Platform::poll();
 
         // poll network events
@@ -80,6 +79,10 @@ void Engine::run()
 
         // update before redering
         ticks = Platform::getTicks();
+
+        // poll diaptcher tasks
+        g_dispatcher.poll(ticks);
+
         updateElapsedTicks = ticks - lastUpdateTicks;
         if(updateElapsedTicks >= MINIMUN_UPDATE_DELAY) {
             update(ticks, updateElapsedTicks);
@@ -133,6 +136,7 @@ void Engine::render()
     g_graphics.beginRender();
     if(m_currentState)
         m_currentState->render();
+    g_gui.render();
     g_graphics.endRender();
 }
 
@@ -140,6 +144,7 @@ void Engine::update(int ticks, int elapsedTicks)
 {
     if(m_currentState)
         m_currentState->update(ticks, elapsedTicks);
+    g_gui.update(ticks, elapsedTicks);
 }
 
 void Engine::onClose()
@@ -148,13 +153,18 @@ void Engine::onClose()
         m_currentState->onClose();
 }
 
-void Engine::onResize(int width, int height)
+void Engine::onResize(const Size& size)
 {
-    g_graphics.resize(width, height);
+    g_graphics.resize(size);
+    g_gui.resize(size);
 }
 
 void Engine::onInputEvent(InputEvent *event)
 {
-    if(m_currentState)
-        m_currentState->onInputEvent(event);
+    // inputs goest to gui first
+    if(!g_gui.onInputEvent(event)) {
+        // if gui didnt capture the input then goes to the state
+        if(m_currentState)
+            m_currentState->onInputEvent(event);
+    }
 }

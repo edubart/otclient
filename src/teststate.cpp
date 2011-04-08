@@ -22,30 +22,39 @@
  */
 
 
-#ifndef MENUSTATE_H
-#define MENUSTATE_H
+#include "teststate.h"
+#include "framework/graphics.h"
+#include "framework/logger.h"
+#include "framework/engine.h"
+#include "framework/input.h"
 
-#include "framework/gamestate.h"
-#include "framework/texture.h"
-#include "framework/net/connection.h"
-
-class MenuState : public GameState
+void TestState::onEnter()
 {
 
-public:
-    MenuState() { }
+}
 
-    virtual void onEnter();
-    virtual void onLeave();
+void TestState::onLeave()
+{
 
-    virtual void onClose();
-    virtual void onInputEvent(InputEvent *event);
+}
 
-    virtual void render();
-    virtual void update(int ticks, int elapsedTicks);
+void TestState::onClose()
+{
+    g_engine.stop();
+}
 
-private:
-    TexturePtr m_background;
-};
+void TestState::onInputEvent(InputEvent* event)
+{
 
-#endif // MENUSTATE_H
+}
+
+void TestState::render()
+{
+
+}
+
+void TestState::update(int ticks, int elapsedTicks)
+{
+
+}
+

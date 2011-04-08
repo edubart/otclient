@@ -22,30 +22,43 @@
  */
 
 
-#ifndef MENUSTATE_H
-#define MENUSTATE_H
+#ifndef DISPATCHER_H
+#define DISPATCHER_H
 
-#include "framework/gamestate.h"
-#include "framework/texture.h"
-#include "framework/net/connection.h"
+#include "prerequisites.h"
 
-class MenuState : public GameState
-{
+#include <queue>
 
+typedef std::function<void (void)> Callback;
+
+class Task {
 public:
-    MenuState() { }
-
-    virtual void onEnter();
-    virtual void onLeave();
-
-    virtual void onClose();
-    virtual void onInputEvent(InputEvent *event);
-
-    virtual void render();
-    virtual void update(int ticks, int elapsedTicks);
-
-private:
-    TexturePtr m_background;
+    inline Task(const Callback& _callback) : ticks(0), callback(_callback) { }
+    inline Task(int _ticks, const Callback& _callback) : ticks(_ticks), callback(_callback)  { }
+    inline bool operator<(const Task& other) const { return ticks > other.ticks; }
+    int ticks;
+    Callback callback;
 };
 
-#endif // MENUSTATE_H
+class lessTask : public std::binary_function<Task*&, Task*&, bool> {
+public:
+    bool operator()(Task*& t1,Task*& t2) { return (*t1) < (*t2); }
+};
+
+class Dispatcher
+{
+public:
+    Dispatcher() { }
+
+    void poll(int ticks);
+
+    void addTask(const Callback& callback);
+    void scheduleTask(const Callback& callback, int delay);
+
+private:
+    std::priority_queue<Task*, std::vector<Task*>, lessTask> m_taskList;
+};
+
+extern Dispatcher g_dispatcher;
+
+#endif // DISPATCHER_H

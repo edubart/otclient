@@ -27,6 +27,7 @@
 #include "framework/resources.h"
 #include "framework/platform.h"
 #include "menustate.h"
+#include "teststate.h"
 
 /// Catches signals so we can exit nicely
 void signal_handler(int sig)
@@ -108,8 +109,9 @@ int main(int argc, const char *argv[])
 
     // state scope
     {
-        std::shared_ptr<MenuState> menuState(new MenuState);
-        g_engine.changeState(menuState.get());
+        std::shared_ptr<MenuState> initialState(new MenuState);
+        //std::shared_ptr<TestState> initialState(new TestState);
+        g_engine.changeState(initialState.get());
 
         Platform::showWindow();
         //Platform::hideMouseCursor();

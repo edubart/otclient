@@ -22,30 +22,46 @@
  */
 
 
-#ifndef MENUSTATE_H
-#define MENUSTATE_H
+#ifndef UICONSTANTS_H
+#define UICONSTANTS_H
 
-#include "framework/gamestate.h"
-#include "framework/texture.h"
-#include "framework/net/connection.h"
+namespace UI {
+    enum ButtonState
+    {
+        Up,
+        Down,
+        MouseOver
+    };
 
-class MenuState : public GameState
-{
+    enum ButtonEvent
+    {
+        PressUp,
+        PressDown,
+        EnterMouseOver,
+        LeaveMouseOver
+    };
 
-public:
-    MenuState() { }
+    enum MessageBoxFlags
+    {
+        Ok = 1 << 0,
+        Cancel = 1 << 1,
+        Yes = 1 << 2,
+        No = 1 << 3,
+        OkCancel = Ok | Cancel,
+        YesNo = Yes | No
+    };
 
-    virtual void onEnter();
-    virtual void onLeave();
+    enum ControlType
+    {
+        Element,
+        Container,
+        Panel,
+        Window,
+        Label,
+        TextBox,
+        Button,
+        CheckBox
+    };
+}
 
-    virtual void onClose();
-    virtual void onInputEvent(InputEvent *event);
-
-    virtual void render();
-    virtual void update(int ticks, int elapsedTicks);
-
-private:
-    TexturePtr m_background;
-};
-
-#endif // MENUSTATE_H
+#endif  // UICONSTANTS_H

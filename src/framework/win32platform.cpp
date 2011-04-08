@@ -23,6 +23,7 @@
 
 #include "platform.h"
 #include "engine.h"
+#include "size.h"
 
 #include <dir.h>
 #include <physfs.h>
@@ -411,7 +412,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
                 win32.height = HIWORD(lParam);
             }
 
-            g_engine.onResize(LOWORD(lParam), HIWORD(lParam));
+            g_engine.onResize(Size(LOWORD(lParam), HIWORD(lParam)));
             break;
         }
     default:
