@@ -34,6 +34,6 @@ ConnectionPtr Connections::createConnection()
 {
     ConnectionPtr connection(new Connection(m_ioService));
     m_connections.push_back(connection);
-    
+
     return connection;
 }

@@ -43,13 +43,19 @@ void Connection::stop()
     }
 }
 
-void Connection::connect(const std::string& ip, uint16 port)
+bool Connection::connect(const std::string& ip, uint16 port, ConnectionCallback onConnect)
 {
     if(m_connecting){
         logError("Already is connecting.");
-        return;
+        return false;
     }
 
+    if(m_connected){
+        logError("Already is connected.");
+        return false;
+    }
+
+    m_connectCallback = onConnect;
     m_connecting = true;
     m_ip = ip;
     m_port = port;
@@ -57,14 +63,15 @@ void Connection::connect(const std::string& ip, uint16 port)
     //first resolve dns
     boost::asio::ip::tcp::resolver::query query(ip, convertType<std::string, uint16>(port));
     m_resolver.async_resolve(query, boost::bind(&Connection::onResolveDns, this, boost::asio::placeholders::error, boost::asio::placeholders::iterator));
+
+    return true;
 }
 
 void Connection::onResolveDns(const boost::system::error_code& error, boost::asio::ip::tcp::resolver::iterator endpointIt)
 {
-    m_lastError = error;
-
     if(error){
         m_connecting = false;
+        m_connectCallback(error);
         return;
     }
 
@@ -74,19 +81,75 @@ void Connection::onResolveDns(const boost::system::error_code& error, boost::asi
 
 void Connection::onConnect(const boost::system::error_code& error)
 {
-    m_lastError = error;
+    if(!error){
+        m_connected = true;
+    }
 
-    if(error){
-        m_connecting = false;
-        return;
-    }    
-    
-    m_connected = true;
+    m_connecting = false;
 
-    if(!m_callback){
-        logError("onConnect::m_callback not set.");
+    m_connectCallback(error);
+}
+
+void Connection::handleError(const boost::system::error_code& error)
+{
+    if(isConnected()){
+        closeSocket();
+    }
+
+    stop();
+}
+
+void Connection::closeSocket()
+{
+    boost::system::error_code error;
+    m_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, error);
+
+    if(error) {
+        logError("Connection::closeSocket(): %s", error.message().c_str());
+    }
+
+    m_socket.close(error);
+
+    if(error) {
+        logError("Connection::closeSocket(): %s", error.message().c_str());
+    }
+}
+
+void Connection::send(NetworkMessagePtr networkMessage, ConnectionCallback onSend)
+{
+    m_socket.async_send(
+        boost::asio::buffer(networkMessage->getBuffer(), NetworkMessage::header_length),
+        boost::bind(&Connection::onSendHeader, shared_from_this(), networkMessage, onSend, boost::asio::placeholders::error)
+    );
+}
+
+void Connection::onSendHeader(ConnectionPtr connection, NetworkMessagePtr networkMessage, ConnectionCallback onSend, const boost::system::error_code& error)
+{
+    if(!connection->isConnected()){
         return;
     }
 
-    m_callback();
+    if(error){
+        connection->handleError(error);
+        onSend(error);
+        return;
+    }
+
+    connection->getSocket().async_send(
+        boost::asio::buffer(networkMessage->getBodyBuffer(), networkMessage->getMessageLength()),
+        boost::bind(&Connection::onSendBody, connection, networkMessage, onSend, boost::asio::placeholders::error)
+    );
+}
+
+void Connection::onSendBody(ConnectionPtr connection, NetworkMessagePtr networkMessage, ConnectionCallback onSend, const boost::system::error_code& error)
+{
+    if(!connection->isConnected()){
+        return;
+    }
+
+    if(error){
+        connection->handleError(error);
+    }
+
+    onSend(error);
 }

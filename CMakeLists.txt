@@ -55,6 +55,9 @@ SET(SOURCES
     src/menustate.cpp
     src/teststate.cpp
 
+# game net
+    src/net/protocoltibia87.cpp
+
 # framework sources
     src/framework/dispatcher.cpp
     src/framework/framebuffer.cpp
@@ -79,7 +82,9 @@ SET(SOURCES
 
 # network
     src/framework/net/connection.cpp
-    src/framework/net/connections.cpp)
+    src/framework/net/connections.cpp
+    src/framework/net/protocol.cpp
+    src/framework/net/networkmessage.cpp)
 
 IF(WIN32)
     SET(SOURCES ${SOURCES} src/framework/win32platform.cpp)

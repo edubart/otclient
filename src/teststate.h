@@ -26,8 +26,7 @@
 #define TESTSTATE_H
 
 #include "framework/gamestate.h"
-
-#include "framework/net/connection.h"
+#include "net/protocoltibia87.h"
 
 class TestState : public GameState
 {
@@ -44,10 +43,7 @@ public:
     virtual void update(int ticks, int elapsedTicks);
 
 private:
-    void onConnect();
-
-private:
-    ConnectionPtr m_connection;
+    ProtocolTibia87Ptr m_protocol;
 };
 
 #endif // TESTSTATE_H

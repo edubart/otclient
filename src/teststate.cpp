@@ -30,24 +30,12 @@
 
 #include "framework/net/connections.h"
 
+#include "net/protocoltibia87.h"
+
 void TestState::onEnter()
 {
-    m_connection = g_connections.createConnection();
-    m_connection->setCallback([this]() {
-        this->onConnect();
-    });
-
-    m_connection->connect("www.google.com.br", 80);
-}
-
-void TestState::onConnect()
-{
-    if(m_connection->isConnected()){
-        logInfo("Connected.");
-    }
-    else{
-        logError("Not connected: %d", m_connection->getLastError().message().c_str());
-    }
+    m_protocol = ProtocolTibia87Ptr(new ProtocolTibia87);
+    m_protocol->begin();
 }
 
 void TestState::onLeave()

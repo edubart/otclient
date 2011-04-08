@@ -28,33 +28,46 @@
 
 #include <boost/asio.hpp>
 
-class TestState;
+#include "networkmessage.h"
 
-class Connection
+class TestState;
+class Protocol;
+class Connections;
+
+class Connection : public std::enable_shared_from_this<Connection>
 {
 public:
+    typedef std::function<void(const boost::system::error_code&)> ConnectionCallback;
+    typedef std::shared_ptr<Connection> ConnectionPtr;
+
+private:
     Connection(boost::asio::io_service& ioService);
 
-    void connect(const std::string& ip, uint16 port);
+    bool connect(const std::string& ip, uint16 port, ConnectionCallback onConnect);
     void stop();
+    void send(NetworkMessagePtr networkMessage, ConnectionCallback onSend);
 
-    bool isConnecting() const { return m_connecting; } 
-    bool isConnected() const { return m_connected; } 
+    bool isConnecting() const { return m_connecting; }
+    bool isConnected() const { return m_connected; }
 
-    const boost::system::error_code& getLastError() const { return m_lastError; }
+    boost::asio::ip::tcp::socket& getSocket() { return m_socket; }
 
-    void resetLastError() { m_lastError = boost::system::error_code(); }
-
-    void setCallback(std::function<void()> f) { m_callback = f; }
+private:
+    static void onSendHeader(ConnectionPtr connection, NetworkMessagePtr networkMessage, ConnectionCallback onSend, const boost::system::error_code& error);
+    static void onSendBody(ConnectionPtr connection, NetworkMessagePtr networkMessage, ConnectionCallback onSend, const boost::system::error_code& error);
 
 private:
     void onResolveDns(const boost::system::error_code& error, boost::asio::ip::tcp::resolver::iterator endpointIt);
     void onConnect(const boost::system::error_code& error);
 
 private:
+    void closeSocket();
+
+private:
+    void handleError(const boost::system::error_code& error);
+
     boost::asio::ip::tcp::socket m_socket;
     boost::asio::ip::tcp::resolver m_resolver;
-    boost::system::error_code m_lastError;
 
     bool m_connecting;
     bool m_connected;
@@ -62,10 +75,12 @@ private:
     std::string m_ip;
     uint16_t m_port;
 
-    std::function<void()> m_callback;
+    ConnectionCallback m_connectCallback;
+
+    friend class Protocol;
+    friend class Connections;
 };
 
 typedef std::shared_ptr<Connection> ConnectionPtr;
-
 
 #endif //CONNECTION_h
