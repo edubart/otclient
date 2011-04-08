@@ -28,9 +28,32 @@
 
 #include <GL/gl.h>
 
-BorderedImage::BorderedImage(const std::string& textureName)
+BorderedImage::BorderedImage(TexturePtr texture,
+                             const Rect& left,
+                             const Rect& right,
+                             const Rect& top,
+                             const Rect& bottom,
+                             const Rect& topLeft,
+                             const Rect& topRight,
+                             const Rect& bottomLeft,
+                             const Rect& bottomRight,
+                             const Rect& center) : Image(texture)
 {
-    m_texture = g_textures.get(textureName);
+    setTexCoords(left, right, top, bottom, topLeft, topRight, bottomLeft, bottomRight, center);
+}
+
+BorderedImage::BorderedImage(const std::string& texture,
+                             const Rect& left,
+                             const Rect& right,
+                             const Rect& top,
+                             const Rect& bottom,
+                             const Rect& topLeft,
+                             const Rect& topRight,
+                             const Rect& bottomLeft,
+                             const Rect& bottomRight,
+                             const Rect& center) : Image(texture)
+{
+    setTexCoords(left, right, top, bottom, topLeft, topRight, bottomLeft, bottomRight, center);
 }
 
 void BorderedImage::setTexCoords(const Rect& left,

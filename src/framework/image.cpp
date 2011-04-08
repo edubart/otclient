@@ -22,29 +22,29 @@
  */
 
 
-#include "uibutton.h"
-#include "../fonts.h"
-#include "../font.h"
+#include "image.h"
+#include "graphics.h"
+#include "textures.h"
 
-UIButton::UIButton(const std::string& text) :
-    m_text(text),
-    m_state(UI::ButtonUp)
+Image::Image(const std::string& texture)
 {
-    m_imageButtonUp = ImagePtr(new BorderedImage("ui.png",
-                                                 Rect(45,139,1,18),
-                                                 Rect(130,139,1,18),
-                                                 Rect(46,138,84,1),
-                                                 Rect(46,157,84,1),
-                                                 Rect(45,138,1,1),
-                                                 Rect(130,138,1,1),
-                                                 Rect(45,157,1,1),
-                                                 Rect(130,157,1,1),
-                                                 Rect(46,139,84,18)));
+    m_texture = g_textures.get(texture);
 }
 
-void UIButton::render()
+Image::Image(const std::string& texture, Rect textureCoords) :
+    m_textureCoords(textureCoords)
 {
-    m_imageButtonUp->draw(m_rect);
-
-    g_fonts.get("tibia-8px-antialised")->renderText(m_text, m_rect, ALIGN_CENTER);
+    m_texture = g_textures.get(texture);
 }
+
+void Image::enableBilinearFilter()
+{
+    m_texture->enableBilinearFilter();
+}
+
+void Image::draw(const Rect& screenCoords)
+{
+    g_graphics.drawTexturedRect(screenCoords, m_texture.get(), m_textureCoords);
+}
+
+

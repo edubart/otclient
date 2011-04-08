@@ -26,32 +26,32 @@
 #define UICONSTANTS_H
 
 namespace UI {
-    enum ButtonState
+    enum EButtonState
     {
-        Up,
-        Down,
-        MouseOver
+        ButtonUp,
+        ButtonDown,
+        ButtonMouseOver
     };
 
-    enum ButtonEvent
+    enum EButtonEvent
     {
-        PressUp,
-        PressDown,
-        EnterMouseOver,
-        LeaveMouseOver
+        ButtonPressUp,
+        ButtonPressDown,
+        ButtonEnterMouseOver,
+        ButtonLeaveMouseOver
     };
 
-    enum MessageBoxFlags
+    enum EMessageBoxFlags
     {
-        Ok = 1 << 0,
-        Cancel = 1 << 1,
-        Yes = 1 << 2,
-        No = 1 << 3,
-        OkCancel = Ok | Cancel,
-        YesNo = Yes | No
+        MessageBoxOk = 1 << 0,
+        MessageBoxCancel = 1 << 1,
+        MessageBoxYes = 1 << 2,
+        MessageBoxNo = 1 << 3,
+        MessageBoxOkCancel = MessageBoxOk | MessageBoxCancel,
+        MessageBoxYesNo = MessageBoxYes | MessageBoxNo
     };
 
-    enum ControlType
+    enum EControlType
     {
         Element,
         Container,

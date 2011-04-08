@@ -26,15 +26,34 @@
 #define BORDEREDIMAGE_H
 
 #include "prerequisites.h"
-
+#include "image.h"
 #include "rect.h"
 #include "texture.h"
 
-class BorderedImage
+class BorderedImage : public Image
 {
 public:
-    BorderedImage(TexturePtr texture) : m_texture(texture) { }
-    BorderedImage(const std::string& textureName);
+    BorderedImage(TexturePtr texture,
+                  const Rect& left,
+                  const Rect& right,
+                  const Rect& top,
+                  const Rect& bottom,
+                  const Rect& topLeft,
+                  const Rect& topRight,
+                  const Rect& bottomLeft,
+                  const Rect& bottomRight,
+                  const Rect& center);
+
+    BorderedImage(const std::string& texture,
+                  const Rect& left,
+                  const Rect& right,
+                  const Rect& top,
+                  const Rect& bottom,
+                  const Rect& topLeft,
+                  const Rect& topRight,
+                  const Rect& bottomLeft,
+                  const Rect& bottomRight,
+                  const Rect& center);
 
     void setTexCoords(const Rect& left,
                       const Rect& right,
@@ -49,8 +68,6 @@ public:
     void draw(const Rect& screenCoords);
 
 private:
-    TexturePtr m_texture;
-
     Rect m_leftBorderTexCoords;
     Rect m_rightBorderTexCoords;
     Rect m_topBorderTexCoords;

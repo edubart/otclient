@@ -61,12 +61,12 @@ public:
     virtual void setVisible(bool visible) { m_visible = visible; }
     bool isVisible() const { return m_visible; }
 
-    virtual UI::ControlType getControlType() const { return UI::Element; }
+    virtual UI::EControlType getControlType() const { return UI::Element; }
 
     UIElementPtr asUIElement() { return shared_from_this(); }
 
 protected:
-    UI::ControlType  m_type;
+    UI::EControlType  m_type;
     UIContainerPtr m_parent;
     Rect m_rect;
     std::string m_name;

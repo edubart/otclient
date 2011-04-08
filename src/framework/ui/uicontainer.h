@@ -52,7 +52,7 @@ public:
     virtual void setActiveElement(UIElementPtr activeElement);
     UIElementPtr getActiveElement() const { return m_activeElement; }
 
-    virtual UI::ControlType getControlType() const { return UI::Container; }
+    virtual UI::EControlType getControlType() const { return UI::Container; }
 
     UIContainerPtr asUIContainer() { return std::static_pointer_cast<UIContainer>(shared_from_this()); }
 

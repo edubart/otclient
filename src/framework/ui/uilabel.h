@@ -33,7 +33,7 @@ class UILabel : public UIElement
 public:
     UILabel() { }
 
-    virtual UI::ControlType getControlType() const { return UI::Label; }
+    virtual UI::EControlType getControlType() const { return UI::Label; }
 };
 
 #endif // UILABEL_H

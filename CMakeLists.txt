@@ -56,6 +56,7 @@ SET(SOURCES
     src/teststate.cpp
 
 # framework sources
+    src/framework/image.cpp
     src/framework/borderedimage.cpp
     src/framework/dispatcher.cpp
     src/framework/framebuffer.cpp

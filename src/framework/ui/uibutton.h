@@ -36,11 +36,15 @@ public:
 
     void render();
 
-    virtual UI::ControlType getControlType() const { return UI::Button; }
+    virtual UI::EControlType getControlType() const { return UI::Button; }
 
 private:
     std::string m_text;
-    BorderedImagePtr m_boderedImage;
+    UI::EButtonState m_state;
+
+    ImagePtr m_imageButtonUp;
+    ImagePtr m_imageButtonDown;
+    ImagePtr m_imageButtonOver;
 };
 
 typedef std::shared_ptr<UIButton> UIButtonPtr;

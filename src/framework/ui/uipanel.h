@@ -36,7 +36,7 @@ public:
 
     void render();
 
-    virtual UI::ControlType getControlType() const { return UI::Panel; }
+    virtual UI::EControlType getControlType() const { return UI::Panel; }
 
 private:
     BorderedImagePtr m_boderedImage;

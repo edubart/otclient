@@ -27,16 +27,16 @@
 
 UIPanel::UIPanel()
 {
-    m_boderedImage = BorderedImagePtr(new BorderedImage("ui.png"));
-    m_boderedImage->setTexCoords(Rect(0,214,5,32),
-                                 Rect(6,214,5,32),
-                                 Rect(43,214,32,5),
-                                 Rect(43,220,32,5),
-                                 Rect(43,225,5,5),
-                                 Rect(49,225,5,5),
-                                 Rect(43,230,5,5),
-                                 Rect(48,231,5,5),
-                                 Rect(11,214,32,32));
+    m_boderedImage = BorderedImagePtr(new BorderedImage("ui.png",
+                                                        Rect(0,214,5,32),
+                                                        Rect(6,214,5,32),
+                                                        Rect(43,214,32,5),
+                                                        Rect(43,220,32,5),
+                                                        Rect(43,225,5,5),
+                                                        Rect(49,225,5,5),
+                                                        Rect(43,230,5,5),
+                                                        Rect(48,231,5,5),
+                                                        Rect(11,214,32,32)));
 }
 
 void UIPanel::render()

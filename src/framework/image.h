@@ -22,29 +22,29 @@
  */
 
 
-#include "uibutton.h"
-#include "../fonts.h"
-#include "../font.h"
+#ifndef IMAGE_H
+#define IMAGE_H
 
-UIButton::UIButton(const std::string& text) :
-    m_text(text),
-    m_state(UI::ButtonUp)
+#include "prerequisites.h"
+#include "texture.h"
+#include "rect.h"
+
+class Image
 {
-    m_imageButtonUp = ImagePtr(new BorderedImage("ui.png",
-                                                 Rect(45,139,1,18),
-                                                 Rect(130,139,1,18),
-                                                 Rect(46,138,84,1),
-                                                 Rect(46,157,84,1),
-                                                 Rect(45,138,1,1),
-                                                 Rect(130,138,1,1),
-                                                 Rect(45,157,1,1),
-                                                 Rect(130,157,1,1),
-                                                 Rect(46,139,84,18)));
-}
+public:
+    Image(TexturePtr texture) : m_texture(texture) { }
+    Image(TexturePtr texture, Rect textureCoords) : m_texture(texture), m_textureCoords(textureCoords) { }
+    Image(const std::string& texture);
+    Image(const std::string& texture, Rect textureCoords);
 
-void UIButton::render()
-{
-    m_imageButtonUp->draw(m_rect);
+    void enableBilinearFilter();
+    virtual void draw(const Rect& screenCoords);
 
-    g_fonts.get("tibia-8px-antialised")->renderText(m_text, m_rect, ALIGN_CENTER);
-}
+protected:
+    TexturePtr m_texture;
+    Rect m_textureCoords;
+};
+
+typedef std::shared_ptr<Image> ImagePtr;
+
+#endif // IMAGE_H
