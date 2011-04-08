@@ -91,6 +91,7 @@ void MenuState::createMainMenu()
     int y = 16;
 
     m_menuPanel = UIPanelPtr(new UIPanel);
+    m_menuPanel->setSkin("roundedGridPanel");
     recalculateMenuPanelPosition();
 
     button = UIButtonPtr(new UIButton("Enter Game"));
@@ -118,7 +119,7 @@ void MenuState::createMainMenu()
     m_menuPanel->addChild(button);
     y += 30;
 
-    g_gui->addChild(m_menuPanel);
+    g_ui->addChild(m_menuPanel);
 }
 
 void MenuState::recalculateMenuPanelPosition()

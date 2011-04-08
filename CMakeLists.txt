@@ -74,7 +74,9 @@ SET(SOURCES
 
 # ui
     src/framework/ui/uielement.cpp
+    src/framework/ui/uielementskin.cpp
     src/framework/ui/uicontainer.cpp
+    src/framework/ui/uiskins.cpp
     src/framework/ui/uipanel.cpp
     src/framework/ui/uibutton.cpp
     src/framework/ui/uilabel.cpp

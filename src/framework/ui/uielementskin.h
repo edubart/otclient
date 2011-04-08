@@ -22,34 +22,35 @@
  */
 
 
-#include "uielement.h"
-#include "uiskins.h"
+#ifndef UIELEMENTSKIN_H
+#define UIELEMENTSKIN_H
 
-UIElement::UIElement(UI::EElementType type) :
-    m_type(type)
+#include "../prerequisites.h"
+#include "uiconstants.h"
+#include "../image.h"
+#include "../rect.h"
+
+class UIElement;
+
+class UIElementSkin
 {
-    // set default skin
-    setSkin(g_uiSkins.getElementSkin(type));
-}
+public:
+    UIElementSkin(const std::string& name, UI::EElementType elementType) :
+        m_name(name),
+        m_elementType(elementType) { }
 
+    void load(const YAML::Node& node);
+    void draw(UIElement *element);
 
-bool UIElement::setSkin(const std::string& skinName)
-{
-    setSkin(g_uiSkins.getElementSkin(m_type, skinName));
-    return m_skin != NULL;
-}
+    const std::string& getName() const { return m_name; }
+    const Size& getDefaultSize() const { return m_defaultSize; }
+    UI::EElementType getElementType() const { return m_elementType; }
 
-void UIElement::setSkin(UIElementSkin* skin)
-{
-    if(skin && !m_rect.isValid()) {
-        m_rect.setSize(skin->getDefaultSize());
-    }
-    m_skin = skin;
-}
+private:
+    std::string m_name;
+    UI::EElementType m_elementType;
+    Size m_defaultSize;
+    std::vector<ImagePtr> m_stateImages;
+};
 
-void UIElement::render()
-{
-    if(m_skin)
-        m_skin->draw(this);
-}
-
+#endif // UIELEMENTSKIN_H

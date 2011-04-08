@@ -136,7 +136,7 @@ void Engine::render()
     g_graphics.beginRender();
     if(m_currentState)
         m_currentState->render();
-    g_gui->render();
+    g_ui->render();
     g_graphics.endRender();
 }
 
@@ -144,7 +144,7 @@ void Engine::update(int ticks, int elapsedTicks)
 {
     if(m_currentState)
         m_currentState->update(ticks, elapsedTicks);
-    g_gui->update(ticks, elapsedTicks);
+    g_ui->update(ticks, elapsedTicks);
 }
 
 void Engine::onClose()
@@ -156,7 +156,7 @@ void Engine::onClose()
 void Engine::onResize(const Size& size)
 {
     g_graphics.resize(size);
-    g_gui->resize(size);
+    g_ui->resize(size);
 
     if(m_currentState)
         m_currentState->onResize(size);
@@ -165,7 +165,7 @@ void Engine::onResize(const Size& size)
 void Engine::onInputEvent(InputEvent *event)
 {
     // inputs goest to gui first
-    if(!g_gui->onInputEvent(event)) {
+    if(!g_ui->onInputEvent(event)) {
         // if gui didnt capture the input then goes to the state
         if(m_currentState)
             m_currentState->onInputEvent(event);

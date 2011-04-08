@@ -29,6 +29,7 @@
 #include "../input.h"
 #include "../rect.h"
 #include "uiconstants.h"
+#include "uielementskin.h"
 
 class UIContainer;
 typedef std::shared_ptr<UIContainer> UIContainerPtr;
@@ -39,12 +40,16 @@ typedef std::shared_ptr<UIElement> UIElementPtr;
 class UIElement : public std::enable_shared_from_this<UIElement>
 {
 public:
-    UIElement() { }
+    UIElement(UI::EElementType type = UI::Element);
     virtual ~UIElement() { }
 
-    virtual void render() { }
+    virtual void render();
     virtual void update(int ticks, int elapsedTicks) { }
     virtual bool onInputEvent(InputEvent *event) { return false; }
+
+    bool setSkin(const std::string& skinName);
+    void setSkin(UIElementSkin *skin);
+    UIElementSkin *getSkin() { return m_skin; }
 
     virtual void setParent(UIContainerPtr parent) { m_parent = parent; }
     UIContainerPtr getParent() const { return m_parent; }
@@ -61,13 +66,14 @@ public:
     virtual void setVisible(bool visible) { m_visible = visible; }
     bool isVisible() const { return m_visible; }
 
-    virtual UI::EControlType getControlType() const { return UI::Element; }
+    UI::EElementType getElementType() const { return m_type; }
 
     UIElementPtr asUIElement() { return shared_from_this(); }
 
 protected:
-    UI::EControlType  m_type;
+    UI::EElementType m_type;
     UIContainerPtr m_parent;
+    UIElementSkin *m_skin;
     Rect m_rect;
     std::string m_name;
     bool m_visible;

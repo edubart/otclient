@@ -24,7 +24,7 @@
 
 #include "uicontainer.h"
 
-UIContainerPtr g_gui(new UIContainer);
+UIContainerPtr g_ui(new UIContainer);
 
 void UIContainer::addChild(UIElementPtr child)
 {
@@ -96,6 +96,7 @@ void UIContainer::moveTo(const Point& pos)
 
 void UIContainer::render()
 {
+    UIElement::render();
     for(auto it = m_children.begin(); it != m_children.end(); ++it) {
         const UIElementPtr& child = (*it);
         child->render();

@@ -33,7 +33,7 @@
 class UIContainer : public UIElement
 {
 public:
-    UIContainer() : UIElement() { }
+    UIContainer(UI::EElementType type = UI::Container) : UIElement(type) { }
     virtual ~UIContainer() { }
 
     virtual void addChild(UIElementPtr child);
@@ -52,7 +52,7 @@ public:
     virtual void setActiveElement(UIElementPtr activeElement);
     UIElementPtr getActiveElement() const { return m_activeElement; }
 
-    virtual UI::EControlType getControlType() const { return UI::Container; }
+    virtual UI::EElementType getElementType() const { return UI::Container; }
 
     UIContainerPtr asUIContainer() { return std::static_pointer_cast<UIContainer>(shared_from_this()); }
 
@@ -64,6 +64,6 @@ private:
     void onMove(const Point& pos);
 };
 
-extern UIContainerPtr g_gui;
+extern UIContainerPtr g_ui;
 
 #endif // UICONTAINER_H

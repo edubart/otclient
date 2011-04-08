@@ -32,19 +32,17 @@
 class UIButton : public UIElement
 {
 public:
-    UIButton(const std::string& text);
+    UIButton(const std::string& text) : UIElement(UI::Button),
+        m_text(text),
+        m_state(UI::ButtonUp) {
+            UIElement();
+        }
 
-    void render();
-
-    virtual UI::EControlType getControlType() const { return UI::Button; }
+    virtual void render();
 
 private:
     std::string m_text;
     UI::EButtonState m_state;
-
-    ImagePtr m_imageButtonUp;
-    ImagePtr m_imageButtonDown;
-    ImagePtr m_imageButtonOver;
 };
 
 typedef std::shared_ptr<UIButton> UIButtonPtr;

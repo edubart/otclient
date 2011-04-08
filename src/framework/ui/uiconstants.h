@@ -51,7 +51,7 @@ namespace UI {
         MessageBoxYesNo = MessageBoxYes | MessageBoxNo
     };
 
-    enum EControlType
+    enum EElementType
     {
         Element,
         Container,

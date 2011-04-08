@@ -22,34 +22,31 @@
  */
 
 
-#include "uielement.h"
-#include "uiskins.h"
+#ifndef UISKIN_H
+#define UISKIN_H
 
-UIElement::UIElement(UI::EElementType type) :
-    m_type(type)
+#include "../prerequisites.h"
+#include "uicontainer.h"
+#include "../texture.h"
+
+class UIElementSkin;
+
+class UISkins
 {
-    // set default skin
-    setSkin(g_uiSkins.getElementSkin(type));
-}
+public:
+    UISkins() { }
 
+    bool load(const std::string& file);
 
-bool UIElement::setSkin(const std::string& skinName)
-{
-    setSkin(g_uiSkins.getElementSkin(m_type, skinName));
-    return m_skin != NULL;
-}
+    UIElementSkin *getElementSkin(UI::EElementType elementType, const std::string& name = "default");
+    TexturePtr getDefaultTexture() { return m_defaultTexture; }
 
-void UIElement::setSkin(UIElementSkin* skin)
-{
-    if(skin && !m_rect.isValid()) {
-        m_rect.setSize(skin->getDefaultSize());
-    }
-    m_skin = skin;
-}
+private:
+    TexturePtr m_defaultTexture;
 
-void UIElement::render()
-{
-    if(m_skin)
-        m_skin->draw(this);
-}
+    std::vector<UIElementSkin *> m_elementSkins;
+};
 
+extern UISkins g_uiSkins;
+
+#endif // UISKIN_H

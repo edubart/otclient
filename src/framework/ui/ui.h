@@ -29,9 +29,11 @@
 
 #include "uiconstants.h"
 #include "uielement.h"
+#include "uielementskin.h"
 #include "uicontainer.h"
 #include "uipanel.h"
 #include "uibutton.h"
 #include "uilabel.h"
+#include "uiskins.h"
 
 #endif // UI_H

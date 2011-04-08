@@ -36,11 +36,6 @@ Font::Font() :
 
 bool Font::load(const std::string& file)
 {
-    if(!g_resources.fileExists(file)) {
-        logError("Font file %s does not exists", file.c_str());
-        return false;
-    }
-
     std::string fileContents = g_resources.loadTextFile(file);
     if(!fileContents.size()) {
         logError("Empty font file \"%s",  file.c_str());

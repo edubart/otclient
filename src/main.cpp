@@ -29,6 +29,7 @@
 #include "menustate.h"
 #include "teststate.h"
 #include "framework/dispatcher.h"
+#include "framework/ui/uiskins.h"
 
 /// Catches signals so we can exit nicely
 void signal_handler(int sig)
@@ -107,6 +108,9 @@ int main(int argc, const char *argv[])
 
     // init engine
     g_engine.init();
+
+    // load UI skin
+    g_uiSkins.load("skins/tibiaskin.yml");
 
     // state scope
     {
