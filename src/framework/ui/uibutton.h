@@ -27,13 +27,22 @@
 
 #include "../prerequisites.h"
 #include "uielement.h"
+#include "../borderedimage.h"
 
 class UIButton : public UIElement
 {
 public:
-    UIButton(UIContainerPtr parent) : UIElement(parent) { }
+    UIButton(const std::string& text);
+
+    void render();
 
     virtual UI::ControlType getControlType() const { return UI::Button; }
+
+private:
+    std::string m_text;
+    BorderedImagePtr m_boderedImage;
 };
+
+typedef std::shared_ptr<UIButton> UIButtonPtr;
 
 #endif // UIBUTTON_H

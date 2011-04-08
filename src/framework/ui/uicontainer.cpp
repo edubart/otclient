@@ -24,7 +24,7 @@
 
 #include "uicontainer.h"
 
-UIContainer g_gui;
+UIContainerPtr g_gui(new UIContainer);
 
 void UIContainer::addChild(UIElementPtr child)
 {
@@ -60,7 +60,7 @@ void UIContainer::setRect(const Rect& rect)
 {
     // update children rect
     for(auto it = m_children.begin(); it != m_children.end(); ++it) {
-        UIElementPtr child = (*it)->asUIElement();
+        const UIElementPtr& child = (*it);
 
         // transforme child rect
         Rect childRect = child->getRect();
@@ -92,6 +92,24 @@ void UIContainer::moveTo(const Point& pos)
     newRect.moveTo(pos);
     setRect(newRect);
 
+}
+
+void UIContainer::render()
+{
+    for(auto it = m_children.begin(); it != m_children.end(); ++it) {
+        const UIElementPtr& child = (*it);
+        child->render();
+    }
+}
+
+void UIContainer::update(int ticks, int elapsedTicks)
+{
+
+}
+
+bool UIContainer::onInputEvent(InputEvent* event)
+{
+    return false;
 }
 
 void UIContainer::setActiveElement(UIElementPtr activeElement)

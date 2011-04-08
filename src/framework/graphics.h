@@ -62,12 +62,15 @@ public:
 
     // high level rendering
     void drawTexturedRect(const Rect& screenCoords, const Texture *texture, const Rect& texCoords = Rect());
+    void drawRepeatedTexturedRect(const Rect& screenCoords, const Texture *texture, const Rect& texCoords);
     void drawColoredRect(const Rect& screenCoords, const Color& color);
     void drawBoundingRect(const Rect& screenCoords, const Color& color, int innerLineWidth = 1);
 
     // lower level rendering
     void _beginTextureRender(const Texture *texture);
     void _drawTexturedRect(const Rect& screenCoords, const Rect& textureCoords, const Size& textureSize);
+    void _drawRepeatedTexturedRect(const Rect& screenCoords, const Rect& textureCoords, const Size& textureSize);
+    void _drawBoundingRect(const Rect& screenCoords, const Color& color, int innerLineWidth = 1);
     void _endTextureRender();
 
 private:

@@ -68,8 +68,6 @@ void Engine::run()
     update(ticks, 0);
     lastUpdateTicks = ticks;
 
-    Point fpsPos(10,10);
-
     while(!m_stopping) {
         // poll platform events
         Platform::poll();
@@ -105,7 +103,9 @@ void Engine::run()
 
             // render fps
             if(m_calculateFps) {
-                g_defaultFont->renderText(format("FPS: %d", fps), fpsPos);
+                std::string fpsText = format("FPS: %d", fps);
+                Size textSize = g_defaultFont->calculateTextRectSize(fpsText);
+                g_defaultFont->renderText(fpsText, Point(g_graphics.getScreenSize().width() - textSize.width() - 10, 10));
             }
 
             // swap buffers
@@ -136,7 +136,7 @@ void Engine::render()
     g_graphics.beginRender();
     if(m_currentState)
         m_currentState->render();
-    g_gui.render();
+    g_gui->render();
     g_graphics.endRender();
 }
 
@@ -144,7 +144,7 @@ void Engine::update(int ticks, int elapsedTicks)
 {
     if(m_currentState)
         m_currentState->update(ticks, elapsedTicks);
-    g_gui.update(ticks, elapsedTicks);
+    g_gui->update(ticks, elapsedTicks);
 }
 
 void Engine::onClose()
@@ -156,13 +156,16 @@ void Engine::onClose()
 void Engine::onResize(const Size& size)
 {
     g_graphics.resize(size);
-    g_gui.resize(size);
+    g_gui->resize(size);
+
+    if(m_currentState)
+        m_currentState->onResize(size);
 }
 
 void Engine::onInputEvent(InputEvent *event)
 {
     // inputs goest to gui first
-    if(!g_gui.onInputEvent(event)) {
+    if(!g_gui->onInputEvent(event)) {
         // if gui didnt capture the input then goes to the state
         if(m_currentState)
             m_currentState->onInputEvent(event);

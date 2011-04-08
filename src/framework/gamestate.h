@@ -25,6 +25,8 @@
 #ifndef GAMESTATE_H
 #define GAMESTATE_H
 
+#include "size.h"
+
 struct InputEvent;
 
 class GameState
@@ -38,6 +40,7 @@ public:
 
     virtual void onClose() = 0;
     virtual void onInputEvent(InputEvent *event) = 0;
+    virtual void onResize(const Size& size) = 0;
 
     virtual void render() = 0;
     virtual void update(int ticks, int elapsedTicks) = 0;

@@ -569,6 +569,10 @@ bool Platform::createWindow(int x, int y, int width, int height, int minWidth, i
     x11.width = width;
     x11.height = height;
     x11.maximizeOnFirstShow = maximized;
+
+    // call first onResize
+    g_engine.onResize(Size(width, height));
+
     return true;
 }
 

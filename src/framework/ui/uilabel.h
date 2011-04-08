@@ -31,7 +31,7 @@
 class UILabel : public UIElement
 {
 public:
-    UILabel(UIContainerPtr parent) : UIElement(parent) { }
+    UILabel() { }
 
     virtual UI::ControlType getControlType() const { return UI::Label; }
 };

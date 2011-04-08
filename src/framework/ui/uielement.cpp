@@ -23,14 +23,3 @@
 
 
 #include "uielement.h"
-#include "uicontainer.h"
-
-UIElement::UIElement(UIContainerPtr parent) :
-    m_visible(true),
-    m_active(true)
-{
-    if(parent)
-        parent->addChild(asUIElement());
-}
-
-

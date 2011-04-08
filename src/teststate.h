@@ -32,14 +32,15 @@ class TestState : public GameState
 public:
     TestState() { }
 
-    virtual void onEnter();
-    virtual void onLeave();
+    void onEnter();
+    void onLeave();
 
-    virtual void onClose();
-    virtual void onInputEvent(InputEvent *event);
+    void onClose();
+    void onInputEvent(InputEvent *event);
+    void onResize(const Size& size);
 
-    virtual void render();
-    virtual void update(int ticks, int elapsedTicks);
+    void render();
+    void update(int ticks, int elapsedTicks);
 };
 
 #endif // TESTSTATE_H

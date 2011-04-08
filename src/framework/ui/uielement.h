@@ -36,10 +36,10 @@ typedef std::shared_ptr<UIContainer> UIContainerPtr;
 class UIElement;
 typedef std::shared_ptr<UIElement> UIElementPtr;
 
-class UIElement
+class UIElement : public std::enable_shared_from_this<UIElement>
 {
 public:
-    UIElement(UIContainerPtr parent);
+    UIElement() { }
     virtual ~UIElement() { }
 
     virtual void render() { }
@@ -63,7 +63,7 @@ public:
 
     virtual UI::ControlType getControlType() const { return UI::Element; }
 
-    UIElementPtr asUIElement() { return UIElementPtr(this); }
+    UIElementPtr asUIElement() { return shared_from_this(); }
 
 protected:
     UI::ControlType  m_type;

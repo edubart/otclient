@@ -34,25 +34,15 @@
 #include "framework/dispatcher.h"
 #include "framework/ui/ui.h"
 #include "framework/net/connections.h"
+#include "framework/borderedimage.h"
+
 
 void MenuState::onEnter()
 {
     m_background = g_textures.get("background.png");
     m_background->enableBilinearFilter();
 
-    /*
-    UIPanelPtr panel(new UIPanel);
-    panel.setAnchorsLeft(g_gui.left());
-    panel.setAnchorsBottom(g_gui.right());
-    panel.setMarginBottom(10);
-    panel.setMarginLeft(10);
-    panel.setSize(Size(100, 100));
-
-    UIButtonPtr button(new UIButton);
-    button.setAnchorsHorizontalCenter(panel.horizontalCenter());
-    button.setTop
-    g_gui.addChild(panel);
-    */
+    createMainMenu();
 }
 
 void MenuState::onLeave()
@@ -68,6 +58,11 @@ void MenuState::onClose()
 void MenuState::onInputEvent(InputEvent* event)
 {
 
+}
+
+void MenuState::onResize(const Size& size)
+{
+    recalculateMenuPanelPosition();
 }
 
 void MenuState::render()
@@ -88,4 +83,51 @@ void MenuState::render()
 void MenuState::update(int ticks, int elapsedTicks)
 {
 
+}
+
+void MenuState::createMainMenu()
+{
+    UIButtonPtr button;
+    int y = 16;
+
+    m_menuPanel = UIPanelPtr(new UIPanel);
+    recalculateMenuPanelPosition();
+
+    button = UIButtonPtr(new UIButton("Enter Game"));
+    button->setRect(Rect(16, y, 86, 20));
+    m_menuPanel->addChild(button);
+    y += 30;
+
+    button = UIButtonPtr(new UIButton("Access Account"));
+    button->setRect(Rect(16, y, 86, 20));
+    m_menuPanel->addChild(button);
+    y += 30;
+
+    button = UIButtonPtr(new UIButton("Options"));
+    button->setRect(Rect(16, y, 86, 20));
+    m_menuPanel->addChild(button);
+    y += 30;
+
+    button = UIButtonPtr(new UIButton("Info"));
+    button->setRect(Rect(16, y, 86, 20));
+    m_menuPanel->addChild(button);
+    y += 30;
+
+    button = UIButtonPtr(new UIButton("Exit Game"));
+    button->setRect(Rect(16, y, 86, 20));
+    m_menuPanel->addChild(button);
+    y += 30;
+
+    g_gui->addChild(m_menuPanel);
+}
+
+void MenuState::recalculateMenuPanelPosition()
+{
+    if(m_menuPanel) {
+        // calculate panel rect
+        Size panelSize = Size(117, 171);
+        Rect panelRect = Rect(0, 0, panelSize);
+        panelRect.moveBottomLeft(Point(60, g_graphics.getScreenSize().height() - 70));
+        m_menuPanel->setRect(panelRect);
+    }
 }

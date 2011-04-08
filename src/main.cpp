@@ -28,6 +28,7 @@
 #include "framework/platform.h"
 #include "menustate.h"
 #include "teststate.h"
+#include "framework/dispatcher.h"
 
 /// Catches signals so we can exit nicely
 void signal_handler(int sig)
@@ -111,7 +112,9 @@ int main(int argc, const char *argv[])
     {
         std::shared_ptr<MenuState> initialState(new MenuState);
         //std::shared_ptr<TestState> initialState(new TestState);
-        g_engine.changeState(initialState.get());
+        g_dispatcher.addTask([&initialState]{
+            g_engine.changeState(initialState.get());
+        });
 
         Platform::showWindow();
         //Platform::hideMouseCursor();

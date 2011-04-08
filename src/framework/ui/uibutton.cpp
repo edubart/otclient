@@ -23,4 +23,27 @@
 
 
 #include "uibutton.h"
+#include "../fonts.h"
+#include "../font.h"
 
+UIButton::UIButton(const std::string& text) :
+    m_text(text)
+{
+    m_boderedImage = BorderedImagePtr(new BorderedImage("ui.png"));
+    m_boderedImage->setTexCoords(Rect(45,139,1,18),
+                                 Rect(130,139,1,18),
+                                 Rect(46,138,84,1),
+                                 Rect(46,157,84,1),
+                                 Rect(45,138,1,1),
+                                 Rect(130,138,1,1),
+                                 Rect(45,157,1,1),
+                                 Rect(130,157,1,1),
+                                 Rect(46,139,84,18));
+}
+
+void UIButton::render()
+{
+    m_boderedImage->draw(m_rect);
+
+    g_fonts.get("tibia-8px-antialised")->renderText(m_text, m_rect, ALIGN_CENTER);
+}

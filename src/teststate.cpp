@@ -48,6 +48,11 @@ void TestState::onInputEvent(InputEvent* event)
 
 }
 
+void TestState::onResize(const Size& size)
+{
+
+}
+
 void TestState::render()
 {
 

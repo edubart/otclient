@@ -28,6 +28,7 @@
 #include "framework/gamestate.h"
 #include "framework/texture.h"
 #include "framework/net/connection.h"
+#include "framework/ui/uipanel.h"
 
 class MenuState : public GameState
 {
@@ -35,16 +36,21 @@ class MenuState : public GameState
 public:
     MenuState() { }
 
-    virtual void onEnter();
-    virtual void onLeave();
+    void onEnter();
+    void onLeave();
 
-    virtual void onClose();
-    virtual void onInputEvent(InputEvent *event);
+    void onClose();
+    void onInputEvent(InputEvent *event);
+    void onResize(const Size& size);
 
-    virtual void render();
-    virtual void update(int ticks, int elapsedTicks);
+    void render();
+    void update(int ticks, int elapsedTicks);
 
 private:
+    void createMainMenu();
+    void recalculateMenuPanelPosition();
+
+    UIPanelPtr m_menuPanel;
     TexturePtr m_background;
 };
 

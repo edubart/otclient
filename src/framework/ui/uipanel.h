@@ -27,13 +27,21 @@
 
 #include "../prerequisites.h"
 #include "uicontainer.h"
+#include "../borderedimage.h"
 
 class UIPanel : public UIContainer
 {
 public:
-    UIPanel(UIContainerPtr parent) : UIContainer(parent) { }
+    UIPanel();
+
+    void render();
 
     virtual UI::ControlType getControlType() const { return UI::Panel; }
+
+private:
+    BorderedImagePtr m_boderedImage;
 };
+
+typedef std::shared_ptr<UIPanel> UIPanelPtr;
 
 #endif // UIPANEL_H
