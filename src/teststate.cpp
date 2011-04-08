@@ -28,9 +28,26 @@
 #include "framework/engine.h"
 #include "framework/input.h"
 
+#include "framework/net/connections.h"
+
 void TestState::onEnter()
 {
+    m_connection = g_connections.createConnection();
+    m_connection->setCallback([this]() {
+        this->onConnect();
+    });
 
+    m_connection->connect("www.google.com.br", 80);
+}
+
+void TestState::onConnect()
+{
+    if(m_connection->isConnected()){
+        logInfo("Connected.");
+    }
+    else{
+        logError("Not connected: %d", m_connection->getLastError().message().c_str());
+    }
 }
 
 void TestState::onLeave()
@@ -57,4 +74,3 @@ void TestState::update(int ticks, int elapsedTicks)
 {
 
 }
-

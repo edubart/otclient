@@ -27,6 +27,8 @@
 
 #include "framework/gamestate.h"
 
+#include "framework/net/connection.h"
+
 class TestState : public GameState
 {
 public:
@@ -40,6 +42,12 @@ public:
 
     virtual void render();
     virtual void update(int ticks, int elapsedTicks);
+
+private:
+    void onConnect();
+
+private:
+    ConnectionPtr m_connection;
 };
 
 #endif // TESTSTATE_H

@@ -38,7 +38,7 @@ void Connection::stop()
     if(m_connecting){
         m_resolver.cancel();
         m_socket.cancel();
-        
+
         m_connecting = false;
     }
 }
@@ -53,27 +53,23 @@ void Connection::connect(const std::string& ip, uint16 port)
     m_connecting = true;
     m_ip = ip;
     m_port = port;
-    
-    logDebug("connecting...");
-    
+
     //first resolve dns
     boost::asio::ip::tcp::resolver::query query(ip, convertType<std::string, uint16>(port));
     m_resolver.async_resolve(query, boost::bind(&Connection::onResolveDns, this, boost::asio::placeholders::error, boost::asio::placeholders::iterator));
 }
 
-void Connection::onResolveDns(const boost::system::error_code& error, boost::asio::ip::tcp::resolver::iterator endpoint_iterator)
+void Connection::onResolveDns(const boost::system::error_code& error, boost::asio::ip::tcp::resolver::iterator endpointIt)
 {
-    logDebug("resolving dns..");
-    
     m_lastError = error;
-    
+
     if(error){
         m_connecting = false;
         return;
     }
 
-    //lets connect    
-    m_socket.async_connect(*endpoint_iterator, boost::bind(&Connection::onConnect, this, boost::asio::placeholders::error));
+    //lets connect
+    m_socket.async_connect(*endpointIt, boost::bind(&Connection::onConnect, this, boost::asio::placeholders::error));
 }
 
 void Connection::onConnect(const boost::system::error_code& error)
@@ -86,6 +82,11 @@ void Connection::onConnect(const boost::system::error_code& error)
     }    
     
     m_connected = true;
-    
-    logInfo("Connected on %s.", m_ip.c_str());
+
+    if(!m_callback){
+        logError("onConnect::m_callback not set.");
+        return;
+    }
+
+    m_callback();
 }

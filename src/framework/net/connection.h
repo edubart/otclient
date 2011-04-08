@@ -28,37 +28,44 @@
 
 #include <boost/asio.hpp>
 
+class TestState;
+
 class Connection
 {
 public:
     Connection(boost::asio::io_service& ioService);
-    
+
     void connect(const std::string& ip, uint16 port);
     void stop();
-    
+
     bool isConnecting() const { return m_connecting; } 
     bool isConnected() const { return m_connected; } 
-    
+
     const boost::system::error_code& getLastError() const { return m_lastError; }
 
     void resetLastError() { m_lastError = boost::system::error_code(); }
-    
+
+    void setCallback(std::function<void()> f) { m_callback = f; }
+
 private:
-    void onResolveDns(const boost::system::error_code& error, boost::asio::ip::tcp::resolver::iterator endpoint_iterator);
+    void onResolveDns(const boost::system::error_code& error, boost::asio::ip::tcp::resolver::iterator endpointIt);
     void onConnect(const boost::system::error_code& error);
-   
+
 private:
     boost::asio::ip::tcp::socket m_socket;
     boost::asio::ip::tcp::resolver m_resolver;
     boost::system::error_code m_lastError;
-    
+
     bool m_connecting;
     bool m_connected;
-    
+
     std::string m_ip;
     uint16_t m_port;
+
+    std::function<void()> m_callback;
 };
 
 typedef std::shared_ptr<Connection> ConnectionPtr;
+
 
 #endif //CONNECTION_h
