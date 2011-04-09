@@ -36,7 +36,7 @@ public:
     void onLeave();
 
     void onClose();
-    void onInputEvent(InputEvent *event);
+    void onInputEvent(const InputEvent& event);
     void onResize(const Size& size);
 
     void render();

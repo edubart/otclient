@@ -39,6 +39,9 @@ public:
         }
 
     virtual void render();
+    bool onInputEvent(const InputEvent& event);
+
+    UI::EButtonState getState() { return m_state; }
 
 private:
     std::string m_text;

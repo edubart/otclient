@@ -73,8 +73,10 @@ SET(SOURCES
     src/framework/util.cpp
 
 # ui
+    src/framework/ui/anchorlayout.cpp
     src/framework/ui/uielement.cpp
     src/framework/ui/uielementskin.cpp
+    src/framework/ui/uibuttonskin.cpp
     src/framework/ui/uicontainer.cpp
     src/framework/ui/uiskins.cpp
     src/framework/ui/uipanel.cpp

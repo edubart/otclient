@@ -60,7 +60,7 @@ public:
     /// Fired by platform on window resize
     void onResize(const Size& size);
     /// Fired by platform on mouse/keyboard input
-    void onInputEvent(InputEvent *event);
+    void onInputEvent(const InputEvent& event);
 
     /// Enable FPS counter on screen
     void enableFpsCounter(bool enable = true) { m_calculateFps = enable; };

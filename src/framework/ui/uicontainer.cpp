@@ -57,13 +57,20 @@ void UIContainer::render()
     UIElement::render();
     for(auto it = m_children.begin(); it != m_children.end(); ++it) {
         const UIElementPtr& child = (*it);
-        child->render();
+        if(child->isVisible())
+            child->render();
     }
 }
 
-bool UIContainer::onInputEvent(InputEvent* event)
+bool UIContainer::onInputEvent(const InputEvent& event)
 {
-    return false;
+    bool ret = false;
+    for(auto it = m_children.begin(); it != m_children.end(); ++it) {
+        const UIElementPtr& child = (*it);
+        if(child->isEnabled() && child->isVisible())
+            ret = child->onInputEvent(event) || ret;
+    }
+    return ret;
 }
 
 void UIContainer::setActiveElement(UIElementPtr activeElement)

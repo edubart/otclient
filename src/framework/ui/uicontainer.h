@@ -41,7 +41,7 @@ public:
     UIElementPtr getChildById(const std::string& id) const;
 
     virtual void render();
-    virtual bool onInputEvent(InputEvent *event);
+    virtual bool onInputEvent(const InputEvent& event);
 
     void setActiveElement(UIElementPtr activeElement);
     UIElementPtr getActiveElement() const { return m_activeElement; }

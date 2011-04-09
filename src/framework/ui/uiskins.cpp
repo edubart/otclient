@@ -26,6 +26,7 @@
 #include "../resources.h"
 #include "../textures.h"
 #include "uielementskin.h"
+#include "uibuttonskin.h"
 
 UISkins g_uiSkins;
 
@@ -61,9 +62,9 @@ bool UISkins::load(const std::string& file)
                 std::string name;
                 it.first() >> name;
 
-                UIElementSkin *elementSkin = new UIElementSkin(name, UI::Button);
-                elementSkin->load(it.second());
-                m_elementSkins.push_back(elementSkin);
+                UIButtonSkin *skin = new UIButtonSkin(name, UI::Button);
+                skin->load(it.second());
+                m_elementSkins.push_back(skin);
             }
         }
 
@@ -73,9 +74,9 @@ bool UISkins::load(const std::string& file)
                 std::string name;
                 it.first() >> name;
 
-                UIElementSkin *elementSkin = new UIElementSkin(name, UI::Panel);
-                elementSkin->load(it.second());
-                m_elementSkins.push_back(elementSkin);
+                UIElementSkin *skin = new UIElementSkin(name, UI::Panel);
+                skin->load(it.second());
+                m_elementSkins.push_back(skin);
             }
         }
     } catch (YAML::ParserException& e) {

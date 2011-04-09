@@ -30,5 +30,17 @@ void UIButton::render()
 {
     UIElement::render();
 
-    g_fonts.get("tibia-8px-antialised")->renderText(m_text, m_rect, ALIGN_CENTER);
+    g_fonts.get("tibia-8px-antialised")->renderText(m_text, getRect(), ALIGN_CENTER);
+}
+
+bool UIButton::onInputEvent(const InputEvent& event)
+{
+    if(event.type == EV_MOUSE_LDOWN &&
+        getRect().contains(Point(event.mouse.x, event.mouse.y))) {
+        m_state = UI::ButtonDown;
+    } else if(m_state == UI::ButtonDown &&
+              event.type == EV_MOUSE_LUP) {
+        m_state = UI::ButtonUp;
+    }
+    return false;
 }

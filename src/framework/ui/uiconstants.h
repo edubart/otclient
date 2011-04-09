@@ -53,7 +53,7 @@ namespace UI {
 
     enum EElementType
     {
-        Element,
+        Element = 0,
         Container,
         Panel,
         Window,

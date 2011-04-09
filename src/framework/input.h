@@ -25,6 +25,8 @@
 #ifndef INPUT_H
 #define INPUT_H
 
+#include "prerequisites.h"
+
 enum EKeyCode {
     KC_UNKNOWN     = 0x00,
     KC_ESCAPE      = 0x01,

@@ -140,7 +140,7 @@ void Engine::onResize(const Size& size)
         m_currentState->onResize(size);
 }
 
-void Engine::onInputEvent(InputEvent *event)
+void Engine::onInputEvent(const InputEvent& event)
 {
     // inputs goest to gui first
     if(!g_ui->onInputEvent(event)) {

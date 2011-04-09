@@ -55,7 +55,7 @@ void MenuState::onClose()
     g_engine.stop();
 }
 
-void MenuState::onInputEvent(InputEvent* event)
+void MenuState::onInputEvent(const InputEvent& event)
 {
 
 }
@@ -93,28 +93,24 @@ void MenuState::createMainMenu()
     m_menuPanel->setMargin(0, 60, 70, 0);
 
     button = UIButtonPtr(new UIButton("Enter Game"));
-    button->anchorLeft(m_menuPanel->left());
     button->anchorTop(m_menuPanel->top());
     button->anchorHorizontalCenter(m_menuPanel->horizontalCenter());
     button->setMargin(y += 16);
     m_menuPanel->addChild(button);
 
     button = UIButtonPtr(new UIButton("Access Account"));
-    button->anchorLeft(m_menuPanel->left());
     button->anchorTop(m_menuPanel->top());
     button->anchorHorizontalCenter(m_menuPanel->horizontalCenter());
     button->setMargin(y += 30);
     m_menuPanel->addChild(button);
 
     button = UIButtonPtr(new UIButton("Options"));
-    button->anchorLeft(m_menuPanel->left());
     button->anchorTop(m_menuPanel->top());
     button->anchorHorizontalCenter(m_menuPanel->horizontalCenter());
     button->setMargin(y += 30);
     m_menuPanel->addChild(button);
 
     button = UIButtonPtr(new UIButton("Info"));
-    button->anchorLeft(m_menuPanel->left());
     button->anchorTop(m_menuPanel->top());
     button->anchorHorizontalCenter(m_menuPanel->horizontalCenter());
     button->setMargin(y += 30);

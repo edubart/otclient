@@ -30,17 +30,20 @@
 
 void UIElementSkin::draw(UIElement *element)
 {
-    const ImagePtr& image = m_stateImages.front();
-    if(image) {
-        image->draw(element->getRect());
-    }
+    if(m_defaultImage)
+        m_defaultImage->draw(element->getRect());
 }
 
 void UIElementSkin::load(const YAML::Node& node)
 {
     if(node.FindValue("default size"))
         node["default size"] >> m_defaultSize;
+    m_defaultImage = loadImage(node);
+}
 
+ImagePtr UIElementSkin::loadImage(const YAML::Node& node)
+{
+    ImagePtr image;
     if(node.FindValue("bordered image")) {
         const YAML::Node& child = node["bordered image"];
         Rect left, right, top, bottom, topLeft, topRight, bottomLeft, bottomRight, center;
@@ -63,16 +66,17 @@ void UIElementSkin::load(const YAML::Node& node)
             texture = g_uiSkins.getDefaultTexture();
         }
 
-        ImagePtr image = ImagePtr(new BorderedImage(texture,
-                                           left,
-                                           right,
-                                           top,
-                                           bottom,
-                                           topLeft,
-                                           topRight,
-                                           bottomLeft,
-                                           bottomRight,
-                                           center));
-        m_stateImages.push_back(image);
+        image = ImagePtr(new BorderedImage(texture,
+                                                    left,
+                                                    right,
+                                                    top,
+                                                    bottom,
+                                                    topLeft,
+                                                    topRight,
+                                                    bottomLeft,
+                                                    bottomRight,
+                                                    center));
     }
+    return image;
 }
+
