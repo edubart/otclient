@@ -40,7 +40,6 @@ public:
     void onResize(const Size& size);
 
     void render();
-    void update(int ticks, int elapsedTicks);
 };
 
 #endif // TESTSTATE_H

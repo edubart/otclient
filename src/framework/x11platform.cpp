@@ -826,11 +826,11 @@ bool Platform::isWindowMaximized()
     return ret;
 }
 
-const char *Platform::getAppUserDir()
+std::string Platform::getAppUserDir()
 {
     std::stringstream sdir;
     sdir << PHYSFS_getUserDir() << "/." << x11.appName << "/";
     if((mkdir(sdir.str().c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) != 0) && (errno != EEXIST))
         logError("Couldn't create directory for saving configuration file. (%s)", sdir.str().c_str());
-    return sdir.str().c_str();
+    return sdir.str();
 }

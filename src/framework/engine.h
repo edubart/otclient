@@ -68,8 +68,6 @@ public:
 private:
     /// Called to render every frame
     void render();
-    /// Called between renders
-    void update(int ticks, int elapsedTicks);
 
     bool m_stopping;
     bool m_running;

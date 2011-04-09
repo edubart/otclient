@@ -62,7 +62,7 @@ void MenuState::onInputEvent(InputEvent* event)
 
 void MenuState::onResize(const Size& size)
 {
-    recalculateMenuPanelPosition();
+
 }
 
 void MenuState::render()
@@ -80,55 +80,52 @@ void MenuState::render()
     g_graphics.drawTexturedRect(Rect(0, 0, screenSize), m_background.get(), texCoords);
 }
 
-void MenuState::update(int ticks, int elapsedTicks)
-{
-
-}
-
 void MenuState::createMainMenu()
 {
     UIButtonPtr button;
-    int y = 16;
+    int y = 0;
 
     m_menuPanel = UIPanelPtr(new UIPanel);
     m_menuPanel->setSkin("roundedGridPanel");
-    recalculateMenuPanelPosition();
+    m_menuPanel->anchorLeft(g_ui->left());
+    m_menuPanel->anchorBottom(g_ui->bottom());
+    m_menuPanel->setSize(Size(118, 172));
+    m_menuPanel->setMargin(0, 60, 70, 0);
 
     button = UIButtonPtr(new UIButton("Enter Game"));
-    button->setRect(Rect(16, y, 86, 20));
+    button->anchorLeft(m_menuPanel->left());
+    button->anchorTop(m_menuPanel->top());
+    button->anchorHorizontalCenter(m_menuPanel->horizontalCenter());
+    button->setMargin(y += 16);
     m_menuPanel->addChild(button);
-    y += 30;
 
     button = UIButtonPtr(new UIButton("Access Account"));
-    button->setRect(Rect(16, y, 86, 20));
+    button->anchorLeft(m_menuPanel->left());
+    button->anchorTop(m_menuPanel->top());
+    button->anchorHorizontalCenter(m_menuPanel->horizontalCenter());
+    button->setMargin(y += 30);
     m_menuPanel->addChild(button);
-    y += 30;
 
     button = UIButtonPtr(new UIButton("Options"));
-    button->setRect(Rect(16, y, 86, 20));
+    button->anchorLeft(m_menuPanel->left());
+    button->anchorTop(m_menuPanel->top());
+    button->anchorHorizontalCenter(m_menuPanel->horizontalCenter());
+    button->setMargin(y += 30);
     m_menuPanel->addChild(button);
-    y += 30;
 
     button = UIButtonPtr(new UIButton("Info"));
-    button->setRect(Rect(16, y, 86, 20));
+    button->anchorLeft(m_menuPanel->left());
+    button->anchorTop(m_menuPanel->top());
+    button->anchorHorizontalCenter(m_menuPanel->horizontalCenter());
+    button->setMargin(y += 30);
     m_menuPanel->addChild(button);
-    y += 30;
 
     button = UIButtonPtr(new UIButton("Exit Game"));
-    button->setRect(Rect(16, y, 86, 20));
+    button->anchorLeft(m_menuPanel->left());
+    button->anchorTop(m_menuPanel->top());
+    button->anchorHorizontalCenter(m_menuPanel->horizontalCenter());
+    button->setMargin(y += 30);
     m_menuPanel->addChild(button);
-    y += 30;
 
     g_ui->addChild(m_menuPanel);
-}
-
-void MenuState::recalculateMenuPanelPosition()
-{
-    if(m_menuPanel) {
-        // calculate panel rect
-        Size panelSize = Size(117, 171);
-        Rect panelRect = Rect(0, 0, panelSize);
-        panelRect.moveBottomLeft(Point(60, g_graphics.getScreenSize().height() - 70));
-        m_menuPanel->setRect(panelRect);
-    }
 }

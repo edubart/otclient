@@ -57,9 +57,3 @@ void TestState::render()
 {
 
 }
-
-void TestState::update(int ticks, int elapsedTicks)
-{
-
-}
-

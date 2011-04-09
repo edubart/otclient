@@ -44,11 +44,9 @@ public:
     void onResize(const Size& size);
 
     void render();
-    void update(int ticks, int elapsedTicks);
 
 private:
     void createMainMenu();
-    void recalculateMenuPanelPosition();
 
     UIPanelPtr m_menuPanel;
     TexturePtr m_background;

@@ -29,6 +29,12 @@
 
 UISkins g_uiSkins;
 
+UISkins::~UISkins()
+{
+    for(auto it = m_elementSkins.begin(); it != m_elementSkins.end(); ++it)
+        delete (*it);
+}
+
 bool UISkins::load(const std::string& file)
 {
     std::string fileContents = g_resources.loadTextFile(file);
