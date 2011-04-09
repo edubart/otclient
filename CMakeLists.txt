@@ -82,6 +82,8 @@ SET(SOURCES
     src/framework/ui/uipanel.cpp
     src/framework/ui/uibutton.cpp
     src/framework/ui/uilabel.cpp
+    src/framework/ui/uiwindow.cpp
+    src/framework/ui/uiwindowskin.cpp
 
 # network
     src/framework/net/connection.cpp

@@ -21,30 +21,28 @@
  * THE SOFTWARE.
  */
 
+#ifndef UIWINDOWSKIN_H
+#define UIWINDOWSKIN_H
 
-#include "uibuttonskin.h"
-#include "uibutton.h"
+#include "../prerequisites.h"
+#include "uiconstants.h"
+#include "uielementskin.h"
+#include "../font.h"
 
-void UIButtonSkin::draw(UIElement *element)
+class UIWindowSkin : public UIElementSkin
 {
-    UIButton *button = static_cast<UIButton*>(element);
+public:
+    UIWindowSkin(const std::string& name, UI::EElementType elementType) :
+        UIElementSkin(name, elementType) { }
 
-    if(button->getState() == UI::ButtonDown && m_buttonDownImage) {
-        m_buttonDownImage->draw(element->getRect());
-    } else if(button->getState() == UI::ButtonMouseOver && m_buttonHoverImage) {
-        m_buttonHoverImage->draw(element->getRect());
-    } else {
-        UIElementSkin::draw(element);
-    }
-}
+    void load(const YAML::Node& node);
+    void draw(UIElement *element);
 
-void UIButtonSkin::load(const YAML::Node& node)
-{
-    UIElementSkin::load(node);
+private:
+    ImagePtr m_headImage;
+    ImagePtr m_bodyImage;
+    Font *m_titleFont;
+    int m_headHeight;
+};
 
-    if(node.FindValue("down state"))
-        m_buttonDownImage = loadImage(node["down state"]);
-
-    if(node.FindValue("mouse over state"))
-        m_buttonHoverImage = loadImage(node["mouse over state"]);
-}
+#endif // UIWINDOWSKIN_H

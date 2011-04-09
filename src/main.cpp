@@ -52,8 +52,8 @@ void signal_handler(int sig)
 void setDefaultConfigs()
 {
     // default size
-    int defWidth = 640;
-    int defHeight = 480;
+    int defWidth = 550;
+    int defHeight = 450;
 
     // init on screen center
     g_configs.setValue("window x", (Platform::getDisplayWidth() - defWidth)/2);
@@ -101,7 +101,7 @@ int main(int argc, const char *argv[])
     // create the window
     Platform::createWindow(g_configs.getInteger("window x"), g_configs.getInteger("window y"),
                            g_configs.getInteger("window width"), g_configs.getInteger("window height"),
-                           640, 480,
+                           550, 450,
                            g_configs.getBoolean("window maximized"));
     Platform::setWindowTitle("OTClient");
     //Platform::setVsync();

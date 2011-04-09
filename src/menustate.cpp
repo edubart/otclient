@@ -91,6 +91,7 @@ void MenuState::createMainMenu()
     m_menuPanel->anchorBottom(g_ui->bottom());
     m_menuPanel->setSize(Size(118, 172));
     m_menuPanel->setMargin(0, 60, 70, 0);
+    g_ui->addChild(m_menuPanel);
 
     button = UIButtonPtr(new UIButton("Enter Game"));
     button->anchorTop(m_menuPanel->top());
@@ -123,5 +124,9 @@ void MenuState::createMainMenu()
     button->setMargin(y += 30);
     m_menuPanel->addChild(button);
 
-    g_ui->addChild(m_menuPanel);
+    UIWindowPtr window(new UIWindow("Enter Game"));
+    window->setSize(Size(236, 178));
+    window->anchorHorizontalCenter(g_ui->horizontalCenter());
+    window->anchorVerticalCenter(g_ui->verticalCenter());
+    g_ui->addChild(window);
 }

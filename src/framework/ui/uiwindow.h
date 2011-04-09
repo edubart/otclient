@@ -22,29 +22,25 @@
  */
 
 
-#include "uibuttonskin.h"
-#include "uibutton.h"
+#ifndef UIWINDOW_H
+#define UIWINDOW_H
 
-void UIButtonSkin::draw(UIElement *element)
+#include "../prerequisites.h"
+#include "uicontainer.h"
+
+class UIWindow : public UIContainer
 {
-    UIButton *button = static_cast<UIButton*>(element);
+public:
+    UIWindow(const std::string& title) :
+        UIContainer(UI::Window),
+        m_title(title) { }
 
-    if(button->getState() == UI::ButtonDown && m_buttonDownImage) {
-        m_buttonDownImage->draw(element->getRect());
-    } else if(button->getState() == UI::ButtonMouseOver && m_buttonHoverImage) {
-        m_buttonHoverImage->draw(element->getRect());
-    } else {
-        UIElementSkin::draw(element);
-    }
-}
+    const std::string& getTitle() const { return m_title; }
 
-void UIButtonSkin::load(const YAML::Node& node)
-{
-    UIElementSkin::load(node);
+private:
+    std::string m_title;
+};
 
-    if(node.FindValue("down state"))
-        m_buttonDownImage = loadImage(node["down state"]);
+typedef std::shared_ptr<UIWindow> UIWindowPtr;
 
-    if(node.FindValue("mouse over state"))
-        m_buttonHoverImage = loadImage(node["mouse over state"]);
-}
+#endif // UIWINDOW_H

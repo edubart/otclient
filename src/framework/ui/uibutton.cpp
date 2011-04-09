@@ -30,7 +30,7 @@ void UIButton::render()
 {
     UIElement::render();
 
-    g_fonts.get("tibia-8px-antialised")->renderText(m_text, getRect(), ALIGN_CENTER);
+    g_fonts.get("tibia-8px-antialised")->renderText(m_text, getRect(), ALIGN_CENTER, Color(0xFFEEEEEE));
 }
 
 bool UIButton::onInputEvent(const InputEvent& event)

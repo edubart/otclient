@@ -64,6 +64,7 @@ public:
     void renderText(const std::string& text,
                     const Rect& screenCoords,
                     int align = ALIGN_TOP_LEFT,
+                    const Color& color = Color(0xFFFFFFFF),
                     const Point& startInternalPos = Point(),
                     bool debug = false);
 
@@ -74,9 +75,11 @@ public:
     Size calculateTextRectSize(const std::string& text);
 
 private:
-    int m_lineHeight;
-    int m_cursorSize;
-    Color m_color;
+    void calculateGlyphsWidthsAutomatically(const Size& glyphSize);
+
+    int m_glyphHeight;
+    int m_topMargin;
+    Size m_glyphSpacing;
     TexturePtr m_texture;
     Rect m_glyphsTextureCoords[256];
     Size m_glyphsSize[256];

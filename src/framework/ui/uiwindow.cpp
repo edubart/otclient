@@ -22,29 +22,5 @@
  */
 
 
-#include "uibuttonskin.h"
-#include "uibutton.h"
+#include "uiwindow.h"
 
-void UIButtonSkin::draw(UIElement *element)
-{
-    UIButton *button = static_cast<UIButton*>(element);
-
-    if(button->getState() == UI::ButtonDown && m_buttonDownImage) {
-        m_buttonDownImage->draw(element->getRect());
-    } else if(button->getState() == UI::ButtonMouseOver && m_buttonHoverImage) {
-        m_buttonHoverImage->draw(element->getRect());
-    } else {
-        UIElementSkin::draw(element);
-    }
-}
-
-void UIButtonSkin::load(const YAML::Node& node)
-{
-    UIElementSkin::load(node);
-
-    if(node.FindValue("down state"))
-        m_buttonDownImage = loadImage(node["down state"]);
-
-    if(node.FindValue("mouse over state"))
-        m_buttonHoverImage = loadImage(node["mouse over state"]);
-}

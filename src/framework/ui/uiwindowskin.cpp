@@ -21,30 +21,40 @@
  * THE SOFTWARE.
  */
 
+#include "uiwindowskin.h"
+#include "uiwindow.h"
+#include "../fonts.h"
 
-#include "uibuttonskin.h"
-#include "uibutton.h"
-
-void UIButtonSkin::draw(UIElement *element)
+void UIWindowSkin::draw(UIElement* element)
 {
-    UIButton *button = static_cast<UIButton*>(element);
+    UIElementSkin::draw(element);
 
-    if(button->getState() == UI::ButtonDown && m_buttonDownImage) {
-        m_buttonDownImage->draw(element->getRect());
-    } else if(button->getState() == UI::ButtonMouseOver && m_buttonHoverImage) {
-        m_buttonHoverImage->draw(element->getRect());
-    } else {
-        UIElementSkin::draw(element);
-    }
+    UIWindow *window = static_cast<UIWindow*>(element);
+
+    Rect headRect = window->getRect();
+    Rect bodyRect = window->getRect();
+
+    headRect.setHeight(m_headHeight);
+    bodyRect.setTop(headRect.bottom() + 1);
+
+    m_headImage->draw(headRect);
+    m_titleFont->renderText(window->getTitle(),
+                            headRect,
+                            ALIGN_CENTER,
+                            Color(0xFF8F8F8F));
+
+    m_bodyImage->draw(bodyRect);
 }
 
-void UIButtonSkin::load(const YAML::Node& node)
+void UIWindowSkin::load(const YAML::Node& node)
 {
     UIElementSkin::load(node);
 
-    if(node.FindValue("down state"))
-        m_buttonDownImage = loadImage(node["down state"]);
+    node["head"]["height"] >> m_headHeight;
+    m_headImage = loadImage(node["head"]);
+    m_bodyImage = loadImage(node["body"]);
 
-    if(node.FindValue("mouse over state"))
-        m_buttonHoverImage = loadImage(node["mouse over state"]);
+    std::string fontName;
+    node["head"]["font"] >> fontName;
+    m_titleFont = g_fonts.get(fontName);
 }

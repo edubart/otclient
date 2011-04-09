@@ -76,8 +76,8 @@ void BorderedImage::setTexCoords(const Rect& left,
     m_bottomRightCornerTexCoords = bottomRight;
     m_centerTexCoords = center;
 
-    m_cornersSize = Size(topLeft.width() + topRight.width(),
-                         topLeft.height() + bottomLeft.height());
+    m_cornersSize = Size(left.width() + right.width(),
+                         top.height() + bottom.height());
 }
 
 void BorderedImage::draw(const Rect& screenCoords)
@@ -93,7 +93,8 @@ void BorderedImage::draw(const Rect& screenCoords)
     g_graphics._beginTextureRender(m_texture.get());
 
     // first the center
-    rectCoords = Rect(screenCoords.topLeft() + m_topLeftCornerTexCoords.size().toPoint(),
+    rectCoords = Rect(screenCoords.left() + m_leftBorderTexCoords.width(),
+                      screenCoords.top() + m_topBorderTexCoords.height(),
                       centerSize);
     g_graphics._drawRepeatedTexturedRect(rectCoords,  m_centerTexCoords, textureSize);
 
@@ -124,7 +125,7 @@ void BorderedImage::draw(const Rect& screenCoords)
     g_graphics._drawRepeatedTexturedRect(rectCoords,  m_leftBorderTexCoords, textureSize);
 
     // right
-    rectCoords = Rect(screenCoords.left() + m_topLeftCornerTexCoords.width() + centerSize.width(),
+    rectCoords = Rect(screenCoords.left() + m_leftBorderTexCoords.width() + centerSize.width(),
                       screenCoords.top() + m_topRightCornerTexCoords.height(),
                       m_rightBorderTexCoords.width(),
                       centerSize.height());
@@ -132,7 +133,7 @@ void BorderedImage::draw(const Rect& screenCoords)
 
     // bottom left corner
     rectCoords = Rect(screenCoords.left(),
-                      screenCoords.top() + m_topLeftCornerTexCoords.height() + centerSize.height(),
+                      screenCoords.top() + m_topBorderTexCoords.height() + centerSize.height(),
                       m_bottomLeftCornerTexCoords.size());
     g_graphics._drawTexturedRect(rectCoords,  m_bottomLeftCornerTexCoords, textureSize);
 
@@ -149,5 +150,6 @@ void BorderedImage::draw(const Rect& screenCoords)
                       m_bottomRightCornerTexCoords.size());
     g_graphics._drawTexturedRect(rectCoords,  m_bottomRightCornerTexCoords, textureSize);
 
+    //g_graphics._drawBoundingRect(screenCoords, Color(0xFF00FF00), 1);
     g_graphics._endTextureRender();
 }

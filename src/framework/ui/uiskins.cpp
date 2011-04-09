@@ -27,6 +27,7 @@
 #include "../textures.h"
 #include "uielementskin.h"
 #include "uibuttonskin.h"
+#include "uiwindowskin.h"
 
 UISkins g_uiSkins;
 
@@ -75,6 +76,18 @@ bool UISkins::load(const std::string& file)
                 it.first() >> name;
 
                 UIElementSkin *skin = new UIElementSkin(name, UI::Panel);
+                skin->load(it.second());
+                m_elementSkins.push_back(skin);
+            }
+        }
+
+        {
+            const YAML::Node& node = doc["windows"];
+            for(auto it = node.begin(); it != node.end(); ++it) {
+                std::string name;
+                it.first() >> name;
+
+                UIWindowSkin *skin = new UIWindowSkin(name, UI::Window);
                 skin->load(it.second());
                 m_elementSkins.push_back(skin);
             }
