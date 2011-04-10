@@ -148,6 +148,9 @@ void Graphics::_endTextureRender()
 
 void Graphics::drawTexturedRect(const Rect& screenCoords, const Texture *texture, const Rect& textureCoords)
 {
+    if(screenCoords.size().isEmpty())
+        return;
+
     glBindTexture(GL_TEXTURE_2D, texture->getTextureId());
     glBegin(GL_QUADS);
     _drawTexturedRect(screenCoords, textureCoords, texture->getSize());
@@ -156,6 +159,9 @@ void Graphics::drawTexturedRect(const Rect& screenCoords, const Texture *texture
 
 void Graphics::_drawTexturedRect(const Rect& screenCoords, const Rect& textureCoords, const Size& textureSize)
 {
+    if(screenCoords.size().isEmpty())
+        return;
+
     // rect correction for opengl
     int right = screenCoords.right() + 1;
     int bottom = screenCoords.bottom() + 1;
@@ -182,6 +188,9 @@ void Graphics::_drawTexturedRect(const Rect& screenCoords, const Rect& textureCo
 
 void Graphics::drawRepeatedTexturedRect(const Rect& screenCoords, const Texture* texture, const Rect& texCoords)
 {
+    if(screenCoords.size().isEmpty())
+        return;
+
     glBindTexture(GL_TEXTURE_2D, texture->getTextureId());
     glBegin(GL_QUADS);
     _drawRepeatedTexturedRect(screenCoords, texCoords, texture->getSize());
@@ -190,6 +199,9 @@ void Graphics::drawRepeatedTexturedRect(const Rect& screenCoords, const Texture*
 
 void Graphics::_drawRepeatedTexturedRect(const Rect& screenCoords, const Rect& textureCoords, const Size& textureSize)
 {
+    if(screenCoords.size().isEmpty())
+        return;
+
     // render many repeated texture rects
     Rect virtualScreenCoords(0,0,screenCoords.size());
     for(int y = 0; y <= virtualScreenCoords.height(); y += textureCoords.height()) {
@@ -216,6 +228,9 @@ void Graphics::_drawRepeatedTexturedRect(const Rect& screenCoords, const Rect& t
 
 void Graphics::drawColoredRect(const Rect& screenCoords, const Color& color)
 {
+    if(screenCoords.size().isEmpty())
+        return;
+
     glDisable(GL_TEXTURE_2D);
 
     setColor(color);

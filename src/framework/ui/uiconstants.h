@@ -53,12 +53,12 @@ namespace UI {
 
     enum EElementType
     {
-        Element,
+        Element = 0,
         Container,
         Panel,
         Window,
         Label,
-        TextBox,
+        TextEdit,
         Button,
         CheckBox
     };

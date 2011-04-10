@@ -36,20 +36,14 @@ public:
     UIContainer(UI::EElementType type = UI::Container) : UIElement(type) { }
     virtual ~UIContainer() { }
 
-    virtual void addChild(UIElementPtr child);
-    virtual void removeChild(UIElementPtr child);
-    virtual UIElementPtr getChildByName(const std::string& name) const;
-
-    virtual void setRect(const Rect& rect);
-    virtual void resize(const Size& size);
-    virtual void move(const Point& trans);
-    virtual void moveTo(const Point& pos);
+    void addChild(UIElementPtr child);
+    void removeChild(UIElementPtr child);
+    UIElementPtr getChildById(const std::string& id) const;
 
     virtual void render();
-    virtual void update(int ticks, int elapsedTicks);
-    virtual bool onInputEvent(InputEvent *event);
+    virtual bool onInputEvent(const InputEvent& event);
 
-    virtual void setActiveElement(UIElementPtr activeElement);
+    void setActiveElement(UIElementPtr activeElement);
     UIElementPtr getActiveElement() const { return m_activeElement; }
 
     virtual UI::EElementType getElementType() const { return UI::Container; }

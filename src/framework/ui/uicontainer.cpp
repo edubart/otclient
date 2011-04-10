@@ -30,11 +30,6 @@ void UIContainer::addChild(UIElementPtr child)
 {
     m_children.push_back(child);
     child->setParent(asUIContainer());
-
-    // adjust child rect
-    Rect childRect = child->getRect();
-    childRect.translate(m_rect.topLeft());
-    child->setRect(childRect);
 }
 
 void UIContainer::removeChild(UIElementPtr child)
@@ -42,12 +37,14 @@ void UIContainer::removeChild(UIElementPtr child)
     if(m_activeElement == child)
         setActiveElement(UIElementPtr());
     m_children.remove(child);
+    if(child->getParent() == shared_from_this())
+        child->setParent(UIContainerPtr());
 }
 
-UIElementPtr UIContainer::getChildByName(const std::string& name) const
+UIElementPtr UIContainer::getChildById(const std::string& id) const
 {
     for(auto it = m_children.begin(); it != m_children.end(); ++it) {
-        if((*it)->getName() == name) {
+        if((*it)->getId() == id) {
             return (*it);
             break;
         }
@@ -55,62 +52,25 @@ UIElementPtr UIContainer::getChildByName(const std::string& name) const
     return UIElementPtr();
 }
 
-
-void UIContainer::setRect(const Rect& rect)
-{
-    // update children rect
-    for(auto it = m_children.begin(); it != m_children.end(); ++it) {
-        const UIElementPtr& child = (*it);
-
-        // transforme child rect
-        Rect childRect = child->getRect();
-        childRect.translate(-m_rect.topLeft());
-        childRect.translate(rect.topLeft());
-        child->setRect(childRect);
-    }
-
-    m_rect = rect;
-}
-
-void UIContainer::resize(const Size& size)
-{
-    Rect newRect = m_rect;
-    newRect.setSize(size);
-    setRect(newRect);
-}
-
-void UIContainer::move(const Point& trans)
-{
-    Rect newRect = m_rect;
-    newRect.translate(trans);
-    setRect(newRect);
-}
-
-void UIContainer::moveTo(const Point& pos)
-{
-    Rect newRect = m_rect;
-    newRect.moveTo(pos);
-    setRect(newRect);
-
-}
-
 void UIContainer::render()
 {
     UIElement::render();
     for(auto it = m_children.begin(); it != m_children.end(); ++it) {
         const UIElementPtr& child = (*it);
-        child->render();
+        if(child->isVisible())
+            child->render();
     }
 }
 
-void UIContainer::update(int ticks, int elapsedTicks)
+bool UIContainer::onInputEvent(const InputEvent& event)
 {
-
-}
-
-bool UIContainer::onInputEvent(InputEvent* event)
-{
-    return false;
+    bool ret = false;
+    for(auto it = m_children.begin(); it != m_children.end(); ++it) {
+        const UIElementPtr& child = (*it);
+        if(child->isEnabled() && child->isVisible())
+            ret = child->onInputEvent(event) || ret;
+    }
+    return ret;
 }
 
 void UIContainer::setActiveElement(UIElementPtr activeElement)

@@ -33,8 +33,6 @@
 #include "net/connections.h"
 #include "ui/uicontainer.h"
 
-#define MINIMUN_UPDATE_DELAY 50
-
 Engine g_engine;
 
 void Engine::init()
@@ -57,16 +55,10 @@ void Engine::terminate()
 void Engine::run()
 {
     int ticks = Platform::getTicks();
-    int lastUpdateTicks = ticks;
     int lastFpsTicks = ticks;
-    int updateElapsedTicks = ticks;
     int frameCount = 0;
     int fps = 0;
     m_running = true;
-
-    // before redering do the first update
-    update(ticks, 0);
-    lastUpdateTicks = ticks;
 
     while(!m_stopping) {
         // poll platform events
@@ -75,17 +67,10 @@ void Engine::run()
         // poll network events
         g_connections.poll();
 
-        // update before redering
         ticks = Platform::getTicks();
 
         // poll diaptcher tasks
         g_dispatcher.poll(ticks);
-
-        updateElapsedTicks = ticks - lastUpdateTicks;
-        if(updateElapsedTicks >= MINIMUN_UPDATE_DELAY) {
-            update(ticks, updateElapsedTicks);
-            lastUpdateTicks = ticks;
-        }
 
         // render only when visible
         if(Platform::isWindowVisible()) {
@@ -140,13 +125,6 @@ void Engine::render()
     g_graphics.endRender();
 }
 
-void Engine::update(int ticks, int elapsedTicks)
-{
-    if(m_currentState)
-        m_currentState->update(ticks, elapsedTicks);
-    g_ui->update(ticks, elapsedTicks);
-}
-
 void Engine::onClose()
 {
     if(m_currentState)
@@ -156,13 +134,13 @@ void Engine::onClose()
 void Engine::onResize(const Size& size)
 {
     g_graphics.resize(size);
-    g_ui->resize(size);
+    g_ui->setSize(size);
 
     if(m_currentState)
         m_currentState->onResize(size);
 }
 
-void Engine::onInputEvent(InputEvent *event)
+void Engine::onInputEvent(const InputEvent& event)
 {
     // inputs goest to gui first
     if(!g_ui->onInputEvent(event)) {

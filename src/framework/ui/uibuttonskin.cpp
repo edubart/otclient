@@ -22,39 +22,29 @@
  */
 
 
-#include "uielement.h"
-#include "uiskins.h"
-#include "uielementskin.h"
+#include "uibuttonskin.h"
+#include "uibutton.h"
 
-UIElement::UIElement(UI::EElementType type) :
-    AnchorLayout(),
-    m_type(type),
-    m_skin(NULL),
-    m_visible(true),
-    m_enabled(true)
+void UIButtonSkin::draw(UIElement *element)
 {
-    // set default skin
-    if(type > UI::Container)
-        setSkin(g_uiSkins.getElementSkin(type));
-}
+    UIButton *button = static_cast<UIButton*>(element);
 
-
-bool UIElement::setSkin(const std::string& skinName)
-{
-    setSkin(g_uiSkins.getElementSkin(m_type, skinName));
-    return m_skin != NULL;
-}
-
-void UIElement::setSkin(UIElementSkin* skin)
-{
-    if(skin && !getRect().isValid()) {
-        setSize(skin->getDefaultSize());
+    if(button->getState() == UI::ButtonDown && m_buttonDownImage) {
+        m_buttonDownImage->draw(element->getRect());
+    } else if(button->getState() == UI::ButtonMouseOver && m_buttonHoverImage) {
+        m_buttonHoverImage->draw(element->getRect());
+    } else {
+        UIElementSkin::draw(element);
     }
-    m_skin = skin;
 }
 
-void UIElement::render()
+void UIButtonSkin::load(const YAML::Node& node)
 {
-    if(m_skin)
-        m_skin->draw(this);
+    UIElementSkin::load(node);
+
+    if(node.FindValue("down state"))
+        m_buttonDownImage = loadImage(node["down state"]);
+
+    if(node.FindValue("mouse over state"))
+        m_buttonHoverImage = loadImage(node["mouse over state"]);
 }

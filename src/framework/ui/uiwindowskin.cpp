@@ -21,40 +21,40 @@
  * THE SOFTWARE.
  */
 
+#include "uiwindowskin.h"
+#include "uiwindow.h"
+#include "../fonts.h"
 
-#include "uielement.h"
-#include "uiskins.h"
-#include "uielementskin.h"
-
-UIElement::UIElement(UI::EElementType type) :
-    AnchorLayout(),
-    m_type(type),
-    m_skin(NULL),
-    m_visible(true),
-    m_enabled(true)
+void UIWindowSkin::draw(UIElement* element)
 {
-    // set default skin
-    if(type > UI::Container)
-        setSkin(g_uiSkins.getElementSkin(type));
+    UIElementSkin::draw(element);
+
+    UIWindow *window = static_cast<UIWindow*>(element);
+
+    Rect headRect = window->getRect();
+    Rect bodyRect = window->getRect();
+
+    headRect.setHeight(m_headHeight);
+    bodyRect.setTop(headRect.bottom() + 1);
+
+    m_headImage->draw(headRect);
+    m_titleFont->renderText(window->getTitle(),
+                            headRect,
+                            ALIGN_CENTER,
+                            Color(0xFF8F8F8F));
+
+    m_bodyImage->draw(bodyRect);
 }
 
-
-bool UIElement::setSkin(const std::string& skinName)
+void UIWindowSkin::load(const YAML::Node& node)
 {
-    setSkin(g_uiSkins.getElementSkin(m_type, skinName));
-    return m_skin != NULL;
-}
+    UIElementSkin::load(node);
 
-void UIElement::setSkin(UIElementSkin* skin)
-{
-    if(skin && !getRect().isValid()) {
-        setSize(skin->getDefaultSize());
-    }
-    m_skin = skin;
-}
+    node["head"]["height"] >> m_headHeight;
+    m_headImage = loadImage(node["head"]);
+    m_bodyImage = loadImage(node["body"]);
 
-void UIElement::render()
-{
-    if(m_skin)
-        m_skin->draw(this);
+    std::string fontName;
+    node["head"]["font"] >> fontName;
+    m_titleFont = g_fonts.get(fontName);
 }

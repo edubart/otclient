@@ -38,19 +38,24 @@ public:
     UIElementSkin(const std::string& name, UI::EElementType elementType) :
         m_name(name),
         m_elementType(elementType) { }
+    virtual ~UIElementSkin() { }
 
-    void load(const YAML::Node& node);
-    void draw(UIElement *element);
+    virtual void load(const YAML::Node& node);
+    virtual void draw(UIElement *element);
 
     const std::string& getName() const { return m_name; }
     const Size& getDefaultSize() const { return m_defaultSize; }
     UI::EElementType getElementType() const { return m_elementType; }
+    ImagePtr getDefaultImage() const { return m_defaultImage; }
+
+protected:
+    ImagePtr loadImage(const YAML::Node& node);
 
 private:
     std::string m_name;
     UI::EElementType m_elementType;
     Size m_defaultSize;
-    std::vector<ImagePtr> m_stateImages;
+    ImagePtr m_defaultImage;
 };
 
 #endif // UIELEMENTSKIN_H

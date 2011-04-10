@@ -30,29 +30,41 @@
 
 void UIElementSkin::draw(UIElement *element)
 {
-    const ImagePtr& image = m_stateImages.front();
-    if(image) {
-        image->draw(element->getRect());
-    }
+    if(m_defaultImage)
+        m_defaultImage->draw(element->getRect());
 }
 
 void UIElementSkin::load(const YAML::Node& node)
 {
     if(node.FindValue("default size"))
         node["default size"] >> m_defaultSize;
+    m_defaultImage = loadImage(node);
+}
 
+ImagePtr UIElementSkin::loadImage(const YAML::Node& node)
+{
+    ImagePtr image;
     if(node.FindValue("bordered image")) {
         const YAML::Node& child = node["bordered image"];
         Rect left, right, top, bottom, topLeft, topRight, bottomLeft, bottomRight, center;
-        child["left border"] >> left;
-        child["right border"] >> right;
-        child["top border"] >> top;
-        child["bottom border"] >> bottom;
-        child["top left corner"] >> topLeft;
-        child["top right corner"] >> topRight;
-        child["bottom left corner"] >> bottomLeft;
-        child["bottom right corner"] >> bottomRight;
-        child["center"] >> center;
+        if(child.FindValue("left border"))
+            child["left border"] >> left;
+        if(child.FindValue("right border"))
+            child["right border"] >> right;
+        if(child.FindValue("top border"))
+            child["top border"] >> top;
+        if(child.FindValue("bottom border"))
+            child["bottom border"] >> bottom;
+        if(child.FindValue("top left corner"))
+            child["top left corner"] >> topLeft;
+        if(child.FindValue("top right corner"))
+            child["top right corner"] >> topRight;
+        if(child.FindValue("bottom left corner"))
+            child["bottom left corner"] >> bottomLeft;
+        if(child.FindValue("bottom right corner"))
+            child["bottom right corner"] >> bottomRight;
+        if(child.FindValue("center"))
+            child["center"] >> center;
 
         TexturePtr texture;
         if(child.FindValue("image")) {
@@ -63,7 +75,7 @@ void UIElementSkin::load(const YAML::Node& node)
             texture = g_uiSkins.getDefaultTexture();
         }
 
-        ImagePtr image = ImagePtr(new BorderedImage(texture,
+        image = ImagePtr(new BorderedImage(texture,
                                            left,
                                            right,
                                            top,
@@ -73,6 +85,7 @@ void UIElementSkin::load(const YAML::Node& node)
                                            bottomLeft,
                                            bottomRight,
                                            center));
-        m_stateImages.push_back(image);
     }
+    return image;
 }
+

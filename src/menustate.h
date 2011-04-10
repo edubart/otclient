@@ -40,15 +40,13 @@ public:
     void onLeave();
 
     void onClose();
-    void onInputEvent(InputEvent *event);
+    void onInputEvent(const InputEvent& event);
     void onResize(const Size& size);
 
     void render();
-    void update(int ticks, int elapsedTicks);
 
 private:
     void createMainMenu();
-    void recalculateMenuPanelPosition();
 
     UIPanelPtr m_menuPanel;
     TexturePtr m_background;

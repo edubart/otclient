@@ -351,13 +351,13 @@ bool Platform::isWindowMaximized()
     return win32.maximized;
 }
 
-const char *Platform::getAppUserDir()
+std::string Platform::getAppUserDir()
 {
     std::stringstream sdir;
     sdir << PHYSFS_getUserDir() << "/." << win32.appName << "/";
     if((mkdir(sdir.str().c_str()) != 0) && (errno != EEXIST))
         logError("Couldn't create directory for saving configuration file. (%s)", sdir.str().c_str());
-    return sdir.str().c_str();
+    return sdir.str();
 }
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)

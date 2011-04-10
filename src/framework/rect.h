@@ -54,6 +54,8 @@ public:
     inline T top() const { return y1; }
     inline T right() const { return x2; }
     inline T bottom() const { return y2; }
+    inline T horizontalCenter() const { return x1 + (x2 - x1)/2; }
+    inline T verticalCenter() const { return y1 + (y2 - y1)/2; }
     inline T x() const { return x1; }
     inline T y() const { return y1; }
     inline TPoint<T> topLeft() const { return TPoint<T>(x1, y1); }
@@ -106,6 +108,16 @@ public:
         x1 = p.x - w/2;
         y1 = p.y - h/2;
         x2 = x1 + w;
+        y2 = y1 + h;
+    }
+    inline void moveHorizontalCenter(T x) {
+        T w = x2 - x1;
+        x1 = x - w/2;
+        x2 = x1 + w;
+    }
+    inline void moveVerticalCenter(T y) {
+        T h = y2 - y1;
+        y1 = y - h/2;
         y2 = y1 + h;
     }
 

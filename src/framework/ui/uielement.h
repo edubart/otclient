@@ -29,55 +29,54 @@
 #include "../input.h"
 #include "../rect.h"
 #include "uiconstants.h"
-#include "uielementskin.h"
+#include "anchorlayout.h"
+
+class UIElementSkin;
 
 class UIContainer;
 typedef std::shared_ptr<UIContainer> UIContainerPtr;
+typedef std::weak_ptr<UIContainer> UIContainerWeakPtr;
 
 class UIElement;
 typedef std::shared_ptr<UIElement> UIElementPtr;
+typedef std::weak_ptr<UIElement> UIElementWeakPtr;
 
-class UIElement : public std::enable_shared_from_this<UIElement>
+class UIElement : public AnchorLayout
 {
 public:
     UIElement(UI::EElementType type = UI::Element);
     virtual ~UIElement() { }
 
     virtual void render();
-    virtual void update(int ticks, int elapsedTicks) { }
-    virtual bool onInputEvent(InputEvent *event) { return false; }
+    virtual bool onInputEvent(const InputEvent& event) { return false; }
 
     bool setSkin(const std::string& skinName);
     void setSkin(UIElementSkin *skin);
     UIElementSkin *getSkin() { return m_skin; }
 
     virtual void setParent(UIContainerPtr parent) { m_parent = parent; }
-    UIContainerPtr getParent() const { return m_parent; }
+    UIContainerPtr getParent() const { return m_parent.lock(); }
 
-    virtual void setName(const std::string& name) { m_name = name; }
-    const std::string& getName() const { return m_name; }
+    void setId(const std::string& id) { m_id = id; }
+    const std::string& getId() const { return m_id; }
 
-    virtual void setRect(const Rect& rect) { m_rect = rect; }
-    const Rect& getRect() const{ return m_rect; }
+    void setEnabled(bool enabled) { m_enabled = enabled; }
+    bool isEnabled() const { return m_enabled; }
 
-    virtual void setActive(bool active) { m_active = active; }
-    bool isActive() const { return m_active; }
-
-    virtual void setVisible(bool visible) { m_visible = visible; }
+    void setVisible(bool visible) { m_visible = visible; }
     bool isVisible() const { return m_visible; }
 
     UI::EElementType getElementType() const { return m_type; }
 
-    UIElementPtr asUIElement() { return shared_from_this(); }
+    UIElementPtr asUIElement() { return std::static_pointer_cast<UIElement>(shared_from_this()); }
 
-protected:
+private:
     UI::EElementType m_type;
-    UIContainerPtr m_parent;
+    UIContainerWeakPtr m_parent;
     UIElementSkin *m_skin;
-    Rect m_rect;
-    std::string m_name;
+    std::string m_id;
     bool m_visible;
-    bool m_active;
+    bool m_enabled;
 };
 
 #endif // UIELEMENT_H

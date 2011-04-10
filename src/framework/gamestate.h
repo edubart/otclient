@@ -25,6 +25,7 @@
 #ifndef GAMESTATE_H
 #define GAMESTATE_H
 
+#include "input.h"
 #include "size.h"
 
 struct InputEvent;
@@ -39,11 +40,10 @@ public:
     virtual void onLeave() = 0;
 
     virtual void onClose() = 0;
-    virtual void onInputEvent(InputEvent *event) = 0;
+    virtual void onInputEvent(const InputEvent& event) = 0;
     virtual void onResize(const Size& size) = 0;
 
     virtual void render() = 0;
-    virtual void update(int ticks, int elapsedTicks) = 0;
 };
 
 #endif // GAMESTATE_H

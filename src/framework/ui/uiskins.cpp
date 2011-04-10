@@ -26,8 +26,25 @@
 #include "../resources.h"
 #include "../textures.h"
 #include "uielementskin.h"
+#include "uibuttonskin.h"
+#include "uiwindowskin.h"
+#include "uitexteditskin.h"
 
 UISkins g_uiSkins;
+
+void UISkins::init()
+{
+    // load default skin
+    g_uiSkins.load("skins/tibiaskin.yml");
+
+}
+
+void UISkins::terminate()
+{
+    for(auto it = m_elementSkins.begin(); it != m_elementSkins.end(); ++it)
+        delete (*it);
+    m_elementSkins.clear();
+}
 
 bool UISkins::load(const std::string& file)
 {
@@ -55,9 +72,9 @@ bool UISkins::load(const std::string& file)
                 std::string name;
                 it.first() >> name;
 
-                UIElementSkin *elementSkin = new UIElementSkin(name, UI::Button);
-                elementSkin->load(it.second());
-                m_elementSkins.push_back(elementSkin);
+                UIElementSkin *skin = new UIButtonSkin(name);
+                skin->load(it.second());
+                m_elementSkins.push_back(skin);
             }
         }
 
@@ -67,11 +84,49 @@ bool UISkins::load(const std::string& file)
                 std::string name;
                 it.first() >> name;
 
-                UIElementSkin *elementSkin = new UIElementSkin(name, UI::Panel);
-                elementSkin->load(it.second());
-                m_elementSkins.push_back(elementSkin);
+                UIElementSkin *skin = new UIElementSkin(name, UI::Panel);
+                skin->load(it.second());
+                m_elementSkins.push_back(skin);
             }
         }
+
+        {
+            const YAML::Node& node = doc["windows"];
+            for(auto it = node.begin(); it != node.end(); ++it) {
+                std::string name;
+                it.first() >> name;
+
+                UIElementSkin *skin = new UIWindowSkin(name);
+                skin->load(it.second());
+                m_elementSkins.push_back(skin);
+            }
+        }
+
+        {
+            const YAML::Node& node = doc["labels"];
+            for(auto it = node.begin(); it != node.end(); ++it) {
+                std::string name;
+                it.first() >> name;
+
+                UIElementSkin *skin = new UIElementSkin(name, UI::Label);
+                skin->load(it.second());
+                m_elementSkins.push_back(skin);
+            }
+        }
+
+        {
+            const YAML::Node& node = doc["text edits"];
+            for(auto it = node.begin(); it != node.end(); ++it) {
+                std::string name;
+                it.first() >> name;
+
+                UIElementSkin *skin = new UITextEditSkin(name);
+                skin->load(it.second());
+                m_elementSkins.push_back(skin);
+            }
+        }
+
+        
     } catch (YAML::ParserException& e) {
         logError("Malformed font file \"%s\"", file.c_str());
         return false;

@@ -48,7 +48,7 @@ void TestState::onClose()
     g_engine.stop();
 }
 
-void TestState::onInputEvent(InputEvent* event)
+void TestState::onInputEvent(const InputEvent& event)
 {
 
 }

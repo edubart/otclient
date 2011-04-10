@@ -22,39 +22,25 @@
  */
 
 
-#include "uielement.h"
-#include "uiskins.h"
+#ifndef UIBUTTONSKIN_H
+#define UIBUTTONSKIN_H
+
+#include "../prerequisites.h"
+#include "uiconstants.h"
 #include "uielementskin.h"
 
-UIElement::UIElement(UI::EElementType type) :
-    AnchorLayout(),
-    m_type(type),
-    m_skin(NULL),
-    m_visible(true),
-    m_enabled(true)
+class UIButtonSkin : public UIElementSkin
 {
-    // set default skin
-    if(type > UI::Container)
-        setSkin(g_uiSkins.getElementSkin(type));
-}
+public:
+    UIButtonSkin(const std::string& name) :
+        UIElementSkin(name, UI::Button) { }
 
+    void load(const YAML::Node& node);
+    void draw(UIElement *element);
 
-bool UIElement::setSkin(const std::string& skinName)
-{
-    setSkin(g_uiSkins.getElementSkin(m_type, skinName));
-    return m_skin != NULL;
-}
+private:
+    ImagePtr m_buttonDownImage;
+    ImagePtr m_buttonHoverImage;
+};
 
-void UIElement::setSkin(UIElementSkin* skin)
-{
-    if(skin && !getRect().isValid()) {
-        setSize(skin->getDefaultSize());
-    }
-    m_skin = skin;
-}
-
-void UIElement::render()
-{
-    if(m_skin)
-        m_skin->draw(this);
-}
+#endif // UIBUTTONSKIN_H

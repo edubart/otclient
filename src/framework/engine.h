@@ -60,7 +60,7 @@ public:
     /// Fired by platform on window resize
     void onResize(const Size& size);
     /// Fired by platform on mouse/keyboard input
-    void onInputEvent(InputEvent *event);
+    void onInputEvent(const InputEvent& event);
 
     /// Enable FPS counter on screen
     void enableFpsCounter(bool enable = true) { m_calculateFps = enable; };
@@ -68,8 +68,6 @@ public:
 private:
     /// Called to render every frame
     void render();
-    /// Called between renders
-    void update(int ticks, int elapsedTicks);
 
     bool m_stopping;
     bool m_running;

@@ -21,40 +21,28 @@
  * THE SOFTWARE.
  */
 
+#ifndef UIWINDOWSKIN_H
+#define UIWINDOWSKIN_H
 
-#include "uielement.h"
-#include "uiskins.h"
+#include "../prerequisites.h"
+#include "uiconstants.h"
 #include "uielementskin.h"
+#include "../font.h"
 
-UIElement::UIElement(UI::EElementType type) :
-    AnchorLayout(),
-    m_type(type),
-    m_skin(NULL),
-    m_visible(true),
-    m_enabled(true)
+class UIWindowSkin : public UIElementSkin
 {
-    // set default skin
-    if(type > UI::Container)
-        setSkin(g_uiSkins.getElementSkin(type));
-}
+public:
+    UIWindowSkin(const std::string& name) :
+        UIElementSkin(name, UI::Window) { }
 
+    void load(const YAML::Node& node);
+    void draw(UIElement *element);
 
-bool UIElement::setSkin(const std::string& skinName)
-{
-    setSkin(g_uiSkins.getElementSkin(m_type, skinName));
-    return m_skin != NULL;
-}
+private:
+    ImagePtr m_headImage;
+    ImagePtr m_bodyImage;
+    Font *m_titleFont;
+    int m_headHeight;
+};
 
-void UIElement::setSkin(UIElementSkin* skin)
-{
-    if(skin && !getRect().isValid()) {
-        setSize(skin->getDefaultSize());
-    }
-    m_skin = skin;
-}
-
-void UIElement::render()
-{
-    if(m_skin)
-        m_skin->draw(this);
-}
+#endif // UIWINDOWSKIN_H

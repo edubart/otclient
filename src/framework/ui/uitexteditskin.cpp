@@ -22,39 +22,5 @@
  */
 
 
-#include "uielement.h"
-#include "uiskins.h"
-#include "uielementskin.h"
+#include "uitexteditskin.h"
 
-UIElement::UIElement(UI::EElementType type) :
-    AnchorLayout(),
-    m_type(type),
-    m_skin(NULL),
-    m_visible(true),
-    m_enabled(true)
-{
-    // set default skin
-    if(type > UI::Container)
-        setSkin(g_uiSkins.getElementSkin(type));
-}
-
-
-bool UIElement::setSkin(const std::string& skinName)
-{
-    setSkin(g_uiSkins.getElementSkin(m_type, skinName));
-    return m_skin != NULL;
-}
-
-void UIElement::setSkin(UIElementSkin* skin)
-{
-    if(skin && !getRect().isValid()) {
-        setSize(skin->getDefaultSize());
-    }
-    m_skin = skin;
-}
-
-void UIElement::render()
-{
-    if(m_skin)
-        m_skin->draw(this);
-}

@@ -42,6 +42,7 @@ public:
 
     const Size& getSize() const { return m_size; }
     uint getTextureId() const { return m_textureId; }
+    uchar *getPixels();
 
 private:
     uint m_textureId;

@@ -22,39 +22,24 @@
  */
 
 
-#include "uielement.h"
-#include "uiskins.h"
-#include "uielementskin.h"
+#include "uitextedit.h"
+#include "../fonts.h"
 
-UIElement::UIElement(UI::EElementType type) :
-    AnchorLayout(),
-    m_type(type),
-    m_skin(NULL),
-    m_visible(true),
-    m_enabled(true)
+UITextEdit::UITextEdit(Font* font) :
+    UIElement(UI::TextEdit),
+    m_font(font)
 {
-    // set default skin
-    if(type > UI::Container)
-        setSkin(g_uiSkins.getElementSkin(type));
+    if(!font)
+        m_font = g_fonts.get("tibia-10px-antialised");
 }
 
-
-bool UIElement::setSkin(const std::string& skinName)
+void UITextEdit::render()
 {
-    setSkin(g_uiSkins.getElementSkin(m_type, skinName));
-    return m_skin != NULL;
+    UIElement::render();
+    m_font->renderText(m_text, getRect(), ALIGN_LEFT, Color(0xFFBFBFBF));
 }
 
-void UIElement::setSkin(UIElementSkin* skin)
+void UITextEdit::setText(const std::string& text)
 {
-    if(skin && !getRect().isValid()) {
-        setSize(skin->getDefaultSize());
-    }
-    m_skin = skin;
-}
-
-void UIElement::render()
-{
-    if(m_skin)
-        m_skin->draw(this);
+    m_text = text;
 }

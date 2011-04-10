@@ -29,6 +29,8 @@
 #include "uielement.h"
 #include "../borderedimage.h"
 
+typedef std::function<void()> Callback;
+
 class UIButton : public UIElement
 {
 public:
@@ -39,10 +41,16 @@ public:
         }
 
     virtual void render();
+    bool onInputEvent(const InputEvent& event);
+
+    UI::EButtonState getState() { return m_state; }
+
+    void onClick(const Callback& callback) { m_buttonClickCallback = callback; }
 
 private:
     std::string m_text;
     UI::EButtonState m_state;
+    Callback m_buttonClickCallback;
 };
 
 typedef std::shared_ptr<UIButton> UIButtonPtr;

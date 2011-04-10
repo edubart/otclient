@@ -36,6 +36,9 @@ class UISkins
 public:
     UISkins() { }
 
+    void init();
+    void terminate();
+
     bool load(const std::string& file);
 
     UIElementSkin *getElementSkin(UI::EElementType elementType, const std::string& name = "default");

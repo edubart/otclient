@@ -22,39 +22,29 @@
  */
 
 
+#ifndef UITEXTEDIT_H
+#define UITEXTEDIT_H
+
+#include "../prerequisites.h"
 #include "uielement.h"
-#include "uiskins.h"
-#include "uielementskin.h"
 
-UIElement::UIElement(UI::EElementType type) :
-    AnchorLayout(),
-    m_type(type),
-    m_skin(NULL),
-    m_visible(true),
-    m_enabled(true)
+class Font;
+
+class UITextEdit : public UIElement
 {
-    // set default skin
-    if(type > UI::Container)
-        setSkin(g_uiSkins.getElementSkin(type));
-}
+public:
+    UITextEdit(Font *font = NULL);
 
+    void render();
 
-bool UIElement::setSkin(const std::string& skinName)
-{
-    setSkin(g_uiSkins.getElementSkin(m_type, skinName));
-    return m_skin != NULL;
-}
+    void setText(const std::string& text);
+    const std::string& getText() const { return m_text; }
 
-void UIElement::setSkin(UIElementSkin* skin)
-{
-    if(skin && !getRect().isValid()) {
-        setSize(skin->getDefaultSize());
-    }
-    m_skin = skin;
-}
+private:
+    std::string m_text;
+    Font *m_font;
+};
 
-void UIElement::render()
-{
-    if(m_skin)
-        m_skin->draw(this);
-}
+typedef std::shared_ptr<UITextEdit> UITextEditPtr;
+
+#endif // UITEXTEDIT_H

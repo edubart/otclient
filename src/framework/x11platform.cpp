@@ -351,7 +351,7 @@ void Platform::poll()
                         inputEvent.type = EV_TEXT_ENTER;
                         inputEvent.key.keychar = buf[0];
                         inputEvent.key.keycode = KC_UNKNOWN;
-                        g_engine.onInputEvent(&inputEvent);
+                        g_engine.onInputEvent(inputEvent);
                     }
                 }
 
@@ -364,7 +364,7 @@ void Platform::poll()
                     inputEvent.key.keycode = x11.keyMap[keysym];
                     inputEvent.type = (event.type == KeyPress) ? EV_KEY_DOWN : EV_KEY_UP;
                     inputEvent.key.keychar = (len > 0) ? buf[0] : 0;
-                    g_engine.onInputEvent(&inputEvent);
+                    g_engine.onInputEvent(inputEvent);
                 }
                 break;
             }
@@ -387,14 +387,14 @@ void Platform::poll()
                         inputEvent.type = EV_MOUSE_WHEEL_DOWN;
                         break;
                 }
-                g_engine.onInputEvent(&inputEvent);
+                g_engine.onInputEvent(inputEvent);
                 break;
 
             case MotionNotify:
                 inputEvent.type = EV_MOUSE_MOVE;
                 inputEvent.mouse.x = event.xbutton.x;
                 inputEvent.mouse.y = event.xbutton.y;
-                g_engine.onInputEvent(&inputEvent);
+                g_engine.onInputEvent(inputEvent);
                 break;
 
             case MapNotify:
@@ -826,11 +826,11 @@ bool Platform::isWindowMaximized()
     return ret;
 }
 
-const char *Platform::getAppUserDir()
+std::string Platform::getAppUserDir()
 {
     std::stringstream sdir;
     sdir << PHYSFS_getUserDir() << "/." << x11.appName << "/";
     if((mkdir(sdir.str().c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) != 0) && (errno != EEXIST))
         logError("Couldn't create directory for saving configuration file. (%s)", sdir.str().c_str());
-    return sdir.str().c_str();
+    return sdir.str();
 }
