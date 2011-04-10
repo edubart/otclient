@@ -25,8 +25,7 @@
 #ifndef ANCHORLAYOUT_H
 #define ANCHORLAYOUT_H
 
-#include "../prerequisites.h"
-#include "../rect.h"
+#include "prerequisites.h"
 #include "uiconstants.h"
 
 enum EAnchorType {

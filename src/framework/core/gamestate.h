@@ -22,61 +22,28 @@
  */
 
 
-#ifndef ENGINE_H
-#define ENGINE_H
+#ifndef GAMESTATE_H
+#define GAMESTATE_H
 
 #include "prerequisites.h"
-#include "size.h"
+#include "input.h"
 
 struct InputEvent;
 
-class GameState;
-
-class Engine
+class GameState
 {
 public:
-    Engine() : m_stopping(false),
-               m_running(false),
-               m_calculateFps(false),
-               m_currentState(NULL) { }
+    GameState() { }
+    virtual ~GameState() { }
 
-    void init();
-    void terminate();
+    virtual void onEnter() = 0;
+    virtual void onLeave() = 0;
 
-    /// Main loop
-    void run();
+    virtual void onClose() = 0;
+    virtual void onInputEvent(const InputEvent& event) = 0;
+    virtual void onResize(const Size& size) = 0;
 
-    /// Stops main loop
-    void stop();
-
-    /// Change current game state
-    void changeState(GameState *newState);
-
-    bool isRunning() const { return m_running; }
-    bool isStopping() const { return m_stopping; }
-
-    /// Fired by platform on window close
-    void onClose();
-    /// Fired by platform on window resize
-    void onResize(const Size& size);
-    /// Fired by platform on mouse/keyboard input
-    void onInputEvent(const InputEvent& event);
-
-    /// Enable FPS counter on screen
-    void enableFpsCounter(bool enable = true) { m_calculateFps = enable; };
-
-private:
-    /// Called to render every frame
-    void render();
-
-    bool m_stopping;
-    bool m_running;
-    bool m_calculateFps;
-
-    GameState *m_currentState;
+    virtual void render() = 0;
 };
 
-extern Engine g_engine;
-
-#endif // ENGINE_H
-
+#endif // GAMESTATE_H

@@ -24,7 +24,7 @@
 #ifndef NETWORKMESSAGE_H
 #define NETWORKMESSAGE_H
 
-#include "../prerequisites.h"
+#include "prerequisites.h"
 
 class Rsa;
 

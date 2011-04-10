@@ -27,7 +27,6 @@
 
 #include "prerequisites.h"
 #include "image.h"
-#include "rect.h"
 #include "texture.h"
 
 class BorderedImage : public Image

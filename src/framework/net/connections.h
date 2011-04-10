@@ -24,7 +24,7 @@
 #ifndef CONNECTIONS_H
 #define CONNECTIONS_H
 
-#include "../prerequisites.h"
+#include "prerequisites.h"
 
 #include "connection.h"
 

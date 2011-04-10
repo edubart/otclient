@@ -69,10 +69,12 @@ typedef int8_t int8;
 // yaml
 #include <yaml-cpp/yaml.h>
 
-// internal logger
-#include "logger.h"
-
-// additional utilities
-#include "util.h"
+// common utilities
+#include "util/util.h"
+#include "util/logger.h"
+#include "util/color.h"
+#include "util/point.h"
+#include "util/size.h"
+#include "util/rect.h"
 
 #endif // PREREQUISITES_H

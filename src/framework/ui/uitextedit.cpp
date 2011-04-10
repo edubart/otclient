@@ -23,7 +23,7 @@
 
 
 #include "uitextedit.h"
-#include "../fonts.h"
+#include "graphics/fonts.h"
 
 UITextEdit::UITextEdit(Font* font) :
     UIElement(UI::TextEdit),

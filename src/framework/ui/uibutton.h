@@ -25,9 +25,9 @@
 #ifndef UIBUTTON_H
 #define UIBUTTON_H
 
-#include "../prerequisites.h"
+#include "prerequisites.h"
 #include "uielement.h"
-#include "../borderedimage.h"
+#include "graphics/borderedimage.h"
 
 typedef std::function<void()> Callback;
 

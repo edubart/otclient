@@ -23,8 +23,8 @@
 
 
 #include "uiskins.h"
-#include "../resources.h"
-#include "../textures.h"
+#include "core/resources.h"
+#include "graphics/textures.h"
 #include "uielementskin.h"
 #include "uibuttonskin.h"
 #include "uiwindowskin.h"

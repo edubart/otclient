@@ -23,7 +23,6 @@
 
 
 #include "graphics.h"
-#include "logger.h"
 #include "texture.h"
 
 #include <GL/gl.h>

@@ -26,9 +26,7 @@
 #define FONT_H
 
 #include "prerequisites.h"
-#include "color.h"
 #include "texture.h"
-#include "rect.h"
 
 enum EAlign {
     ALIGN_TOP = 1 << 0,

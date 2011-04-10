@@ -23,8 +23,8 @@
 
 
 #include "uibutton.h"
-#include "../fonts.h"
-#include "../font.h"
+#include "graphics/fonts.h"
+#include "graphics/font.h"
 
 void UIButton::load(const YAML::Node& node)
 {
@@ -42,11 +42,11 @@ void UIButton::render()
 bool UIButton::onInputEvent(const InputEvent& event)
 {
     if(event.type == EV_MOUSE_LDOWN &&
-        getRect().contains(Point(event.mouse.x, event.mouse.y))) {
+        getRect().contains(event.mousePos)) {
         m_state = UI::ButtonDown;
     } else if(m_state == UI::ButtonDown && event.type == EV_MOUSE_LUP) {
         m_state = UI::ButtonUp;
-        if(getRect().contains(Point(event.mouse.x, event.mouse.y))) {
+        if(getRect().contains(event.mousePos)) {
             if(m_buttonClickCallback)
                 m_buttonClickCallback();
         }

@@ -22,11 +22,8 @@
  */
 
 
-#include "platform.h"
-#include "engine.h"
-#include "input.h"
-#include "logger.h"
-#include "size.h"
+#include "core/platform.h"
+#include "core/engine.h"
 
 #include <sys/time.h>
 #include <sys/stat.h>
@@ -327,12 +324,12 @@ void Platform::poll()
                 char buf[32];
                 int len;
 
-                inputEvent.key.ctrl = (event.xkey.state & ControlMask);
-                inputEvent.key.shift = (event.xkey.state & ShiftMask);
-                inputEvent.key.alt = (event.xkey.state & Mod1Mask);
+                inputEvent.ctrl = (event.xkey.state & ControlMask);
+                inputEvent.shift = (event.xkey.state & ShiftMask);
+                inputEvent.alt = (event.xkey.state & Mod1Mask);
 
                 // fire enter text event
-                if(event.type == KeyPress && !inputEvent.key.ctrl && !inputEvent.key.alt) {
+                if(event.type == KeyPress && !inputEvent.ctrl && !inputEvent.alt) {
                     if(x11.xic) { // with xim we can get latin1 input correctly
                         Status status;
                         len = XmbLookupString(x11.xic, &event.xkey, buf, sizeof(buf), &keysym, &status);
@@ -349,8 +346,8 @@ void Platform::poll()
                     ) {
                         //logDebug("char: %c code: %d", buf[0], (uchar)buf[0]);
                         inputEvent.type = EV_TEXT_ENTER;
-                        inputEvent.key.keychar = buf[0];
-                        inputEvent.key.keycode = KC_UNKNOWN;
+                        inputEvent.keychar = buf[0];
+                        inputEvent.keycode = KC_UNKNOWN;
                         g_engine.onInputEvent(inputEvent);
                     }
                 }
@@ -361,9 +358,9 @@ void Platform::poll()
 
                 // fire key up/down event
                 if(x11.keyMap.find(keysym) != x11.keyMap.end()) {
-                    inputEvent.key.keycode = x11.keyMap[keysym];
+                    inputEvent.keycode = x11.keyMap[keysym];
                     inputEvent.type = (event.type == KeyPress) ? EV_KEY_DOWN : EV_KEY_UP;
-                    inputEvent.key.keychar = (len > 0) ? buf[0] : 0;
+                    inputEvent.keychar = (len > 0) ? buf[0] : 0;
                     g_engine.onInputEvent(inputEvent);
                 }
                 break;
@@ -392,8 +389,7 @@ void Platform::poll()
 
             case MotionNotify:
                 inputEvent.type = EV_MOUSE_MOVE;
-                inputEvent.mouse.x = event.xbutton.x;
-                inputEvent.mouse.y = event.xbutton.y;
+                inputEvent.mousePos = Point(event.xbutton.x, event.xbutton.y);
                 g_engine.onInputEvent(inputEvent);
                 break;
 

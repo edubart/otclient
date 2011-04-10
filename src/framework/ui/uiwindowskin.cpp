@@ -23,7 +23,7 @@
 
 #include "uiwindowskin.h"
 #include "uiwindow.h"
-#include "../fonts.h"
+#include "graphics/fonts.h"
 
 void UIWindowSkin::draw(UIElement* element)
 {

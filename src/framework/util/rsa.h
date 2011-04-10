@@ -24,7 +24,7 @@
 #ifndef RSA_H
 #define RSA_H
 
-#include "../prerequisites.h"
+#include "prerequisites.h"
 
 #include <gmp.h>
 

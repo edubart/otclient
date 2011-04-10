@@ -25,7 +25,7 @@
 #ifndef UITEXTEDITSKIN_H
 #define UITEXTEDITSKIN_H
 
-#include "../prerequisites.h"
+#include "prerequisites.h"
 #include "uiconstants.h"
 #include "uielementskin.h"
 

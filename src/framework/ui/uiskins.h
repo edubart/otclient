@@ -25,9 +25,9 @@
 #ifndef UISKIN_H
 #define UISKIN_H
 
-#include "../prerequisites.h"
+#include "prerequisites.h"
 #include "uicontainer.h"
-#include "../texture.h"
+#include "graphics/texture.h"
 
 class UIElementSkin;
 

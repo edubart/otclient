@@ -25,10 +25,10 @@
 #ifndef MENUSTATE_H
 #define MENUSTATE_H
 
-#include "framework/gamestate.h"
-#include "framework/texture.h"
-#include "framework/net/connection.h"
-#include "framework/ui/uipanel.h"
+#include "core/gamestate.h"
+#include "graphics/texture.h"
+#include "net/connection.h"
+#include "ui/uipanel.h"
 
 class MenuState : public GameState
 {

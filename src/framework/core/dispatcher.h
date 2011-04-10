@@ -50,9 +50,13 @@ class Dispatcher
 public:
     Dispatcher() { }
 
+    /// Execute scheduled events
     void poll(int ticks);
 
+    /// Add an event
     void addTask(const Callback& callback);
+
+    /// Schedula an event
     void scheduleTask(const Callback& callback, int delay);
 
 private:

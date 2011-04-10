@@ -22,33 +22,57 @@
  */
 
 
-#ifndef TEXTURE_H
-#define TEXTURE_H
+#ifndef ENGINE_H
+#define ENGINE_H
 
 #include "prerequisites.h"
-#include "size.h"
+#include "gamestate.h"
 
-class Textures;
-
-class Texture
+class Engine
 {
 public:
-    /// Create a texture, width and height must be a multiple of 2
-    Texture(int width, int height, int components, uchar *pixels = NULL);
-    virtual ~Texture();
+    Engine() : m_stopping(false),
+               m_running(false),
+               m_calculateFps(false),
+               m_currentState(NULL) { }
 
-    /// Enable texture bilinear filter (smooth scaled textures)
-    void enableBilinearFilter();
+    void init();
+    void terminate();
 
-    const Size& getSize() const { return m_size; }
-    uint getTextureId() const { return m_textureId; }
-    uchar *getPixels();
+    /// Main loop
+    void run();
+
+    /// Stops main loop
+    void stop();
+
+    /// Change current game state
+    void changeState(GameState *newState);
+
+    bool isRunning() const { return m_running; }
+    bool isStopping() const { return m_stopping; }
+
+    /// Fired by platform on window close
+    void onClose();
+    /// Fired by platform on window resize
+    void onResize(const Size& size);
+    /// Fired by platform on mouse/keyboard input
+    void onInputEvent(const InputEvent& event);
+
+    /// Enable FPS counter on screen
+    void enableFpsCounter(bool enable = true) { m_calculateFps = enable; };
 
 private:
-    uint m_textureId;
-    Size m_size;
+    /// Called to render every frame
+    void render();
+
+    bool m_stopping;
+    bool m_running;
+    bool m_calculateFps;
+
+    GameState *m_currentState;
 };
 
-typedef std::shared_ptr<Texture> TexturePtr;
+extern Engine g_engine;
 
-#endif // TEXTURE_H
+#endif // ENGINE_H
+

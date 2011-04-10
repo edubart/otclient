@@ -24,10 +24,10 @@
 #ifndef UIWINDOWSKIN_H
 #define UIWINDOWSKIN_H
 
-#include "../prerequisites.h"
+#include "prerequisites.h"
 #include "uiconstants.h"
 #include "uielementskin.h"
-#include "../font.h"
+#include "graphics/font.h"
 
 class UIWindowSkin : public UIElementSkin
 {

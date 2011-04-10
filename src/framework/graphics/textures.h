@@ -22,28 +22,27 @@
  */
 
 
-#ifndef GAMESTATE_H
-#define GAMESTATE_H
+#ifndef TEXTURES_H
+#define TEXTURES_H
 
-#include "input.h"
-#include "size.h"
+#include "prerequisites.h"
+#include "texture.h"
 
-struct InputEvent;
+typedef std::weak_ptr<Texture> TextureWeakPtr;
 
-class GameState
+class Textures
 {
 public:
-    GameState() { }
-    virtual ~GameState() { }
+    Textures() { }
 
-    virtual void onEnter() = 0;
-    virtual void onLeave() = 0;
+    /// Load a texture from file, if it was already loaded it will be retrieved from cache
+    TexturePtr get(const std::string& textureFile);
 
-    virtual void onClose() = 0;
-    virtual void onInputEvent(const InputEvent& event) = 0;
-    virtual void onResize(const Size& size) = 0;
-
-    virtual void render() = 0;
+private:
+    typedef std::map<std::string, TextureWeakPtr> TexturesMap;
+    TexturesMap m_texturesMap;
 };
 
-#endif // GAMESTATE_H
+extern Textures g_textures;
+
+#endif // TEXTURES_H

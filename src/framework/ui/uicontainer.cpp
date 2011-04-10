@@ -23,7 +23,7 @@
 
 
 #include "uicontainer.h"
-#include "../resources.h"
+#include "core/resources.h"
 #include "uibutton.h"
 #include "uipanel.h"
 #include "uilabel.h"

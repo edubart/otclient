@@ -23,7 +23,7 @@
 
 
 #include "uilabel.h"
-#include "../fonts.h"
+#include "graphics/fonts.h"
 
 UILabel::UILabel(const std::string& text, Font* font) :
     UIElement(UI::Label),

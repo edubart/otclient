@@ -23,7 +23,6 @@
 
 #include "platform.h"
 #include "engine.h"
-#include "size.h"
 
 #include <dir.h>
 #include <physfs.h>

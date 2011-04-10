@@ -23,18 +23,15 @@
 
 
 #include "menustate.h"
-#include "framework/framebuffer.h"
-#include "framework/graphics.h"
-#include "framework/textures.h"
-#include "framework/logger.h"
-#include "framework/engine.h"
-#include "framework/rect.h"
-#include "framework/fonts.h"
-#include "framework/input.h"
-#include "framework/dispatcher.h"
-#include "framework/ui/ui.h"
-#include "framework/net/connections.h"
-#include "framework/borderedimage.h"
+#include "graphics/framebuffer.h"
+#include "graphics/graphics.h"
+#include "graphics/textures.h"
+#include "core/engine.h"
+#include "graphics/fonts.h"
+#include "core/dispatcher.h"
+#include "ui/ui.h"
+#include "net/connections.h"
+#include "graphics/borderedimage.h"
 
 
 void MenuState::onEnter()

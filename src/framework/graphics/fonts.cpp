@@ -24,7 +24,7 @@
 
 #include "fonts.h"
 #include "font.h"
-#include "resources.h"
+#include "core/resources.h"
 
 Fonts g_fonts;
 Font *g_defaultFont = NULL;

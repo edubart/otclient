@@ -24,8 +24,8 @@
 
 #include "uielementskin.h"
 #include "uielement.h"
-#include "../borderedimage.h"
-#include "../textures.h"
+#include "graphics/borderedimage.h"
+#include "graphics/textures.h"
 #include "uiskins.h"
 
 void UIElementSkin::draw(UIElement *element)

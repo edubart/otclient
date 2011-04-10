@@ -35,7 +35,8 @@ INCLUDE_DIRECTORIES(
     ${YAMLCPP_INCLUDE_DIRS}
     ${PHYSFS_INCLUDE_DIRS}
     ${GMP_INCLUDE_DIR}
-    ${PNG_INCLUDE_DIRS})
+    ${PNG_INCLUDE_DIRS}
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/framework")
 
 LINK_DIRECTORIES(
     ${Boost_LIBRARY_DIRS}
@@ -55,30 +56,34 @@ SET(SOURCES
 # game sources
     src/main.cpp
     src/menustate.cpp
-    src/mainmenu.cpp
     src/teststate.cpp
 
 # game net
     src/net/protocoltibia87.cpp
 
-# framework sources
-    src/framework/image.cpp
-    src/framework/borderedimage.cpp
-    src/framework/dispatcher.cpp
-    src/framework/framebuffer.cpp
-    src/framework/font.cpp
-    src/framework/fonts.cpp
-    src/framework/textureloader.cpp
-    src/framework/texture.cpp
-    src/framework/textures.cpp
-    src/framework/configs.cpp
-    src/framework/resources.cpp
-    src/framework/engine.cpp
-    src/framework/graphics.cpp
-    src/framework/logger.cpp
-    src/framework/util.cpp
+# framework core
+    src/framework/core/dispatcher.cpp
+    src/framework/core/configs.cpp
+    src/framework/core/resources.cpp
+    src/framework/core/engine.cpp
 
-# ui
+# framework utilities
+    src/framework/util/util.cpp
+    src/framework/util/logger.cpp
+    src/framework/util/rsa.cpp
+
+# framework graphics
+    src/framework/graphics/image.cpp
+    src/framework/graphics/borderedimage.cpp
+    src/framework/graphics/framebuffer.cpp
+    src/framework/graphics/font.cpp
+    src/framework/graphics/fonts.cpp
+    src/framework/graphics/textureloader.cpp
+    src/framework/graphics/texture.cpp
+    src/framework/graphics/textures.cpp
+    src/framework/graphics/graphics.cpp
+
+# framework ui
     src/framework/ui/anchorlayout.cpp
     src/framework/ui/uielement.cpp
     src/framework/ui/uielementskin.cpp
@@ -93,21 +98,19 @@ SET(SOURCES
     src/framework/ui/uitextedit.cpp
     src/framework/ui/uitexteditskin.cpp
 
-# network
+# framework net
     src/framework/net/connection.cpp
     src/framework/net/connections.cpp
     src/framework/net/protocol.cpp
     src/framework/net/networkmessage.cpp
-
-# util
-    src/framework/util/rsa.cpp)
+)
 
 IF(WIN32)
-    SET(SOURCES ${SOURCES} src/framework/win32platform.cpp)
+    SET(SOURCES ${SOURCES} src/framework/platform/win32platform.cpp)
     SET(ADDITIONAL_LIBRARIES ws2_32)
     ADD_DEFINITIONS(-D_WIN32_WINNT=0x0501)
 ELSE(WIN32)
-    SET(SOURCES ${SOURCES} src/framework/x11platform.cpp)
+    SET(SOURCES ${SOURCES} src/framework/platform/x11platform.cpp)
     SET(ADDITIONAL_LIBRARIES pthread GLU)
 ENDIF(WIN32)
 

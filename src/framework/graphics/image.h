@@ -27,7 +27,6 @@
 
 #include "prerequisites.h"
 #include "texture.h"
-#include "rect.h"
 
 class Image
 {

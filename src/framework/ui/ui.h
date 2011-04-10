@@ -25,7 +25,7 @@
 #ifndef UI_H
 #define UI_H
 
-#include "../prerequisites.h"
+#include "prerequisites.h"
 
 #include "uiconstants.h"
 #include "uielement.h"

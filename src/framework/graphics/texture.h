@@ -22,27 +22,36 @@
  */
 
 
-#ifndef TEXTURES_H
-#define TEXTURES_H
+#ifndef TEXTURE_H
+#define TEXTURE_H
 
 #include "prerequisites.h"
-#include "texture.h"
 
-typedef std::weak_ptr<Texture> TextureWeakPtr;
+class Textures;
 
-class Textures
+class Texture
 {
 public:
-    Textures() { }
+    /// Create a texture, width and height must be a multiple of 2
+    Texture(int width, int height, int components, uchar *pixels = NULL);
+    virtual ~Texture();
 
-    /// Load a texture from file, if it was already loaded it will be retrieved from cache
-    TexturePtr get(const std::string& textureFile);
+    /// Enable texture bilinear filter (smooth scaled textures)
+    void enableBilinearFilter();
+
+    /// Get OpenGL texture id
+    uint getTextureId() const { return m_textureId; }
+
+    /// Copy pixels from OpenGL texture
+    uchar *getPixels();
+
+    const Size& getSize() const { return m_size; }
 
 private:
-    typedef std::map<std::string, TextureWeakPtr > TexturesMap;
-    TexturesMap m_texturesMap;
+    uint m_textureId;
+    Size m_size;
 };
 
-extern Textures g_textures;
+typedef std::shared_ptr<Texture> TexturePtr;
 
-#endif // TEXTURES_H
+#endif // TEXTURE_H

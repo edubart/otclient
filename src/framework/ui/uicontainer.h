@@ -25,11 +25,8 @@
 #ifndef UICONTAINER_H
 #define UICONTAINER_H
 
-//TODO: make includes paths, so this will be cleaner
-#include "../prerequisites.h"
+#include "prerequisites.h"
 #include "uielement.h"
-#include "../point.h"
-#include "../rect.h"
 
 class UIContainer : public UIElement
 {

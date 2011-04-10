@@ -26,9 +26,6 @@
 #define GRAPHICS_H
 
 #include "prerequisites.h"
-#include "rect.h"
-#include "size.h"
-#include "color.h"
 
 class Texture;
 

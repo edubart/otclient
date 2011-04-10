@@ -24,8 +24,8 @@
 #ifndef PROTOCOLTIBIA87_H
 #define PROTOCOLTIBIA87_H
 
-#include "../framework/prerequisites.h"
-#include "../framework/net/protocol.h"
+#include "prerequisites.h"
+#include "net/protocol.h"
 
 class ProtocolTibia87 : public Protocol
 {

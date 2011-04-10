@@ -23,7 +23,7 @@
 
 
 #include "textures.h"
-#include "resources.h"
+#include "core/resources.h"
 #include "textureloader.h"
 
 Textures g_textures;

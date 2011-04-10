@@ -23,12 +23,10 @@
 
 
 #include "engine.h"
-#include "fonts.h"
+#include "graphics/fonts.h"
 #include "platform.h"
-#include "graphics.h"
-#include "input.h"
+#include "graphics/graphics.h"
 #include "configs.h"
-#include "gamestate.h"
 #include "dispatcher.h"
 #include "net/connections.h"
 #include "ui/uicontainer.h"

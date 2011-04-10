@@ -25,9 +25,9 @@
 #ifndef UIPANEL_H
 #define UIPANEL_H
 
-#include "../prerequisites.h"
+#include "prerequisites.h"
 #include "uicontainer.h"
-#include "../borderedimage.h"
+#include "graphics/borderedimage.h"
 
 class UIPanel : public UIContainer
 {

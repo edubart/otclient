@@ -25,9 +25,8 @@
 #ifndef UIELEMENT_H
 #define UIELEMENT_H
 
-#include "../prerequisites.h"
-#include "../input.h"
-#include "../rect.h"
+#include "prerequisites.h"
+#include "core/input.h"
 #include "uiconstants.h"
 #include "anchorlayout.h"
 

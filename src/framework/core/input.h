@@ -190,24 +190,14 @@ enum EEvent {
     EV_MOUSE_MOVE
 };
 
-struct KeyEvent {
+struct InputEvent {
+    EEvent type;
+    Point mousePos;
     char keychar;
     uchar keycode;
     bool ctrl;
     bool shift;
     bool alt;
-};
-
-struct MouseEvent {
-    int x, y;
-};
-
-struct InputEvent {
-    EEvent type;
-    union {
-        KeyEvent key;
-        MouseEvent mouse;
-    };
 };
 
 #endif // INPUT_H

@@ -22,7 +22,7 @@
  */
 
 #include "framebuffer.h"
-#include "platform.h"
+#include "core/platform.h"
 #include "graphics.h"
 
 #include <GL/gl.h>

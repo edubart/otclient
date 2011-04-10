@@ -25,7 +25,7 @@
 #ifndef TESTSTATE_H
 #define TESTSTATE_H
 
-#include "framework/gamestate.h"
+#include "core/gamestate.h"
 #include "net/protocoltibia87.h"
 
 class TestState : public GameState

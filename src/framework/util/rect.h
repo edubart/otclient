@@ -26,8 +26,6 @@
 #define RECT_H
 
 #include "prerequisites.h"
-#include "point.h"
-#include "size.h"
 
 template <class T>
 class TPoint;

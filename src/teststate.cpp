@@ -23,13 +23,9 @@
 
 
 #include "teststate.h"
-#include "framework/graphics.h"
-#include "framework/logger.h"
-#include "framework/engine.h"
-#include "framework/input.h"
-
-#include "framework/net/connections.h"
-
+#include "graphics/graphics.h"
+#include "core/engine.h"
+#include "net/connections.h"
 #include "net/protocoltibia87.h"
 
 void TestState::onEnter()

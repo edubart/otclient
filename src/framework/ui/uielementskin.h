@@ -25,10 +25,9 @@
 #ifndef UIELEMENTSKIN_H
 #define UIELEMENTSKIN_H
 
-#include "../prerequisites.h"
+#include "prerequisites.h"
 #include "uiconstants.h"
-#include "../image.h"
-#include "../rect.h"
+#include "graphics/image.h"
 
 class UIElement;
 

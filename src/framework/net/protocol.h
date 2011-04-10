@@ -24,7 +24,7 @@
 #ifndef PROTOCOL_H
 #define PROTOCOL_H
 
-#include "../prerequisites.h"
+#include "prerequisites.h"
 #include "connection.h"
 
 class Protocol

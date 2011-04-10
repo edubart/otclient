@@ -23,7 +23,7 @@
 
 
 #include "font.h"
-#include "resources.h"
+#include "core/resources.h"
 #include "textures.h"
 #include "graphics.h"
 
