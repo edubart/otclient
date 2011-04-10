@@ -28,10 +28,23 @@
 #include "../prerequisites.h"
 #include "uielement.h"
 
+class Font;
+
 class UILabel : public UIElement
 {
 public:
-    UILabel() : UIElement(UI::Label) { }
+    UILabel(const std::string& text, Font *font = NULL);
+
+    void render();
+
+    void setText(const std::string& text);
+    const std::string& getText() const { return m_text; }
+
+private:
+    std::string m_text;
+    Font *m_font;
 };
+
+typedef std::shared_ptr<UILabel> UILabelPtr;
 
 #endif // UILABEL_H

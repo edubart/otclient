@@ -84,6 +84,8 @@ SET(SOURCES
     src/framework/ui/uilabel.cpp
     src/framework/ui/uiwindow.cpp
     src/framework/ui/uiwindowskin.cpp
+    src/framework/ui/uitextedit.cpp
+    src/framework/ui/uitexteditskin.cpp
 
 # network
     src/framework/net/connection.cpp

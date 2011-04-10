@@ -21,28 +21,30 @@
  * THE SOFTWARE.
  */
 
-#ifndef UIWINDOWSKIN_H
-#define UIWINDOWSKIN_H
+
+#ifndef UITEXTEDIT_H
+#define UITEXTEDIT_H
 
 #include "../prerequisites.h"
-#include "uiconstants.h"
-#include "uielementskin.h"
-#include "../font.h"
+#include "uielement.h"
 
-class UIWindowSkin : public UIElementSkin
+class Font;
+
+class UITextEdit : public UIElement
 {
 public:
-    UIWindowSkin(const std::string& name) :
-        UIElementSkin(name, UI::Window) { }
+    UITextEdit(Font *font = NULL);
 
-    void load(const YAML::Node& node);
-    void draw(UIElement *element);
+    void render();
+
+    void setText(const std::string& text);
+    const std::string& getText() const { return m_text; }
 
 private:
-    ImagePtr m_headImage;
-    ImagePtr m_bodyImage;
-    Font *m_titleFont;
-    int m_headHeight;
+    std::string m_text;
+    Font *m_font;
 };
 
-#endif // UIWINDOWSKIN_H
+typedef std::shared_ptr<UITextEdit> UITextEditPtr;
+
+#endif // UITEXTEDIT_H

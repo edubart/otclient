@@ -58,7 +58,7 @@ namespace UI {
         Panel,
         Window,
         Label,
-        TextBox,
+        TextEdit,
         Button,
         CheckBox
     };

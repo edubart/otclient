@@ -63,7 +63,7 @@ void Font::calculateGlyphsWidthsAutomatically(const Size& glyphSize)
             }
         }
         // store glyph size
-        m_glyphsSize[glyph].setWidth(width);
+        m_glyphsSize[glyph].setSize(width, m_glyphHeight);
     }
 
     delete[] texturePixels;
@@ -101,8 +101,7 @@ bool Font::load(const std::string& file)
         }
 
         // set glyphs height
-        for(int glyph = 32; glyph< 256; ++glyph) {
-             m_glyphsSize[glyph].setHeight(m_glyphHeight);
+        for(int glyph = 32; glyph < 256; ++glyph) {
         }
 
         calculateGlyphsWidthsAutomatically(glyphSize);
@@ -124,7 +123,7 @@ bool Font::load(const std::string& file)
             m_glyphsTextureCoords[glyph].setRect(((glyph - 32) % numHorizontalGlyphs) * glyphSize.width(),
                                                     ((glyph - 32) / numHorizontalGlyphs) * glyphSize.height(),
                                                     m_glyphsSize[glyph].width(),
-                                                    m_glyphsSize[glyph].height());
+                                                    m_glyphHeight);
         }
 
     } catch (YAML::ParserException& e) {
@@ -253,7 +252,7 @@ Point* Font::calculateGlyphsPositions(const std::string& text, int align, Size *
     // protect buffer overflow on glyphsPostions
     int numGlyphs = text.length();
     if(numGlyphs > 8192)
-        logFatal("A text was too long to render!");
+        logFatal("could not calculate glyphs positions, text length is > 8192!");
 
     // calculate lines width
     if((align & ALIGN_RIGHT || align & ALIGN_HORIZONTAL_CENTER) || textBoxSize) {
@@ -281,7 +280,7 @@ Point* Font::calculateGlyphsPositions(const std::string& text, int align, Size *
         // new line or first glyph
         if(glyph == (uchar)'\n' || i == 0) {
             if(glyph == (uchar)'\n') {
-                virtualPos.y += m_glyphsSize[glyph].height() + m_glyphSpacing.height();
+                virtualPos.y += m_glyphHeight + m_glyphSpacing.height();
                 lines++;
             }
 

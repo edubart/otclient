@@ -21,28 +21,25 @@
  * THE SOFTWARE.
  */
 
-#ifndef UIWINDOWSKIN_H
-#define UIWINDOWSKIN_H
 
-#include "../prerequisites.h"
-#include "uiconstants.h"
-#include "uielementskin.h"
-#include "../font.h"
+#include "uitextedit.h"
+#include "../fonts.h"
 
-class UIWindowSkin : public UIElementSkin
+UITextEdit::UITextEdit(Font* font) :
+    UIElement(UI::TextEdit),
+    m_font(font)
 {
-public:
-    UIWindowSkin(const std::string& name) :
-        UIElementSkin(name, UI::Window) { }
+    if(!font)
+        m_font = g_fonts.get("tibia-10px-antialised");
+}
 
-    void load(const YAML::Node& node);
-    void draw(UIElement *element);
+void UITextEdit::render()
+{
+    UIElement::render();
+    m_font->renderText(m_text, getRect(), ALIGN_LEFT, Color(0xFFBFBFBF));
+}
 
-private:
-    ImagePtr m_headImage;
-    ImagePtr m_bodyImage;
-    Font *m_titleFont;
-    int m_headHeight;
-};
-
-#endif // UIWINDOWSKIN_H
+void UITextEdit::setText(const std::string& text)
+{
+    m_text = text;
+}

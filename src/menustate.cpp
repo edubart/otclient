@@ -82,7 +82,6 @@ void MenuState::render()
 
 void MenuState::createMainMenu()
 {
-    UIButtonPtr button;
     int y = 0;
 
     m_menuPanel = UIPanelPtr(new UIPanel);
@@ -93,13 +92,14 @@ void MenuState::createMainMenu()
     m_menuPanel->setMargin(0, 60, 70, 0);
     g_ui->addChild(m_menuPanel);
 
-    button = UIButtonPtr(new UIButton("Enter Game"));
-    button->anchorTop(m_menuPanel->top());
-    button->anchorHorizontalCenter(m_menuPanel->horizontalCenter());
-    button->setMargin(y += 16);
-    m_menuPanel->addChild(button);
+    // main menu
+    UIButtonPtr enterGameButton = UIButtonPtr(new UIButton("Enter Game"));
+    enterGameButton->anchorTop(m_menuPanel->top());
+    enterGameButton->anchorHorizontalCenter(m_menuPanel->horizontalCenter());
+    enterGameButton->setMargin(y += 16);
+    m_menuPanel->addChild(enterGameButton);
 
-    button = UIButtonPtr(new UIButton("Access Account"));
+    UIButtonPtr button = UIButtonPtr(new UIButton("Access Account"));
     button->anchorTop(m_menuPanel->top());
     button->anchorHorizontalCenter(m_menuPanel->horizontalCenter());
     button->setMargin(y += 30);
@@ -122,11 +122,68 @@ void MenuState::createMainMenu()
     button->anchorTop(m_menuPanel->top());
     button->anchorHorizontalCenter(m_menuPanel->horizontalCenter());
     button->setMargin(y += 30);
+    button->onClick([]{ g_engine.stop(); });
     m_menuPanel->addChild(button);
 
+    // login window
     UIWindowPtr window(new UIWindow("Enter Game"));
     window->setSize(Size(236, 178));
     window->anchorHorizontalCenter(g_ui->horizontalCenter());
     window->anchorVerticalCenter(g_ui->verticalCenter());
+    window->setVisible(false);
     g_ui->addChild(window);
+
+    UILabelPtr label(new UILabel("Account name:"));
+    label->anchorLeft(window->left());
+    label->anchorTop(window->top());
+    label->setMargin(18, 33);
+    window->addChild(label);
+
+    label = UILabelPtr(new UILabel("Password:"));
+    label->anchorLeft(window->left());
+    label->anchorTop(window->top());
+    label->setMargin(18, 62);
+    window->addChild(label);
+
+    label = UILabelPtr(new UILabel("If you don't have\nan account yet:"));
+    label->anchorLeft(window->left());
+    label->anchorTop(window->top());
+    label->setMargin(18, 87);
+    window->addChild(label);
+
+    button = UIButtonPtr(new UIButton("Create Account"));
+    button->anchorLeft(window->left());
+    button->anchorTop(window->top());
+    button->setMargin(132, 94);
+    window->addChild(button);
+
+    button = UIButtonPtr(new UIButton("Ok"));
+    button->setSize(Size(43, 20));
+    button->anchorRight(window->right());
+    button->anchorBottom(window->bottom());
+    button->setMargin(0, 0, 10, 66);
+    button->onClick([window]{ window->setVisible(false); });
+    window->addChild(button);
+
+    button = UIButtonPtr(new UIButton("Cancel"));
+    button->setSize(Size(43, 20));
+    button->anchorRight(window->right());
+    button->anchorBottom(window->bottom());
+    button->setMargin(0, 0, 10, 13);
+    button->onClick([window]{ window->setVisible(false); });
+    window->addChild(button);
+
+    UITextEditPtr textEdit(new UITextEdit);
+    textEdit->anchorRight(window->right());
+    textEdit->anchorTop(window->top());
+    textEdit->setMargin(32, 0, 0, 18);
+    window->addChild(textEdit);
+
+    textEdit = UITextEditPtr(new UITextEdit);
+    textEdit->anchorRight(window->right());
+    textEdit->anchorTop(window->top());
+    textEdit->setMargin(61, 0, 0, 18);
+    window->addChild(textEdit);
+
+    enterGameButton->onClick([window] { window->setVisible(true); });
 }

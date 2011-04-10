@@ -32,7 +32,8 @@
 class UIButtonSkin : public UIElementSkin
 {
 public:
-    UIButtonSkin(const std::string& name, UI::EElementType elementType) :UIElementSkin(name, elementType) { }
+    UIButtonSkin(const std::string& name) :
+        UIElementSkin(name, UI::Button) { }
 
     void load(const YAML::Node& node);
     void draw(UIElement *element);
