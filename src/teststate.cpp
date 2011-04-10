@@ -28,9 +28,14 @@
 #include "framework/engine.h"
 #include "framework/input.h"
 
+#include "framework/net/connections.h"
+
+#include "net/protocoltibia87.h"
+
 void TestState::onEnter()
 {
-
+    m_protocol = ProtocolTibia87Ptr(new ProtocolTibia87);
+    m_protocol->begin();
 }
 
 void TestState::onLeave()
@@ -62,4 +67,3 @@ void TestState::update(int ticks, int elapsedTicks)
 {
 
 }
-

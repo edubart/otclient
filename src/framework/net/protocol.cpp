@@ -21,19 +21,30 @@
  * THE SOFTWARE.
  */
 
+#include "protocol.h"
 #include "connections.h"
 
-Connections g_connections;
-
-size_t Connections::poll()
+Protocol::Protocol()
 {
-    return m_ioService.poll();
+    m_connection = g_connections.createConnection();
+    m_connection->setErrorCallback(
+        [this](const boost::system::error_code& error, const std::string& msg){
+            this->onError(error, msg);
+        }
+    );
 }
 
-ConnectionPtr Connections::createConnection()
+void Protocol::send(NetworkMessagePtr networkMessage, Connection::ConnectionCallback onSend)
 {
-    ConnectionPtr connection(new Connection(m_ioService));
-    m_connections.push_back(connection);
+    m_connection->send(networkMessage, onSend);
+}
 
-    return connection;
+bool Protocol::connect(const std::string& ip, uint16 port, Connection::ConnectionCallback onConnect)
+{
+    return m_connection->connect(ip, port, onConnect);
+}
+
+void Protocol::recv(Connection::RecvCallback onRecv)
+{
+    m_connection->recv(onRecv);
 }

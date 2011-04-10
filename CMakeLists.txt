@@ -12,6 +12,7 @@ FIND_PACKAGE(Lua51 REQUIRED)
 FIND_PACKAGE(YamlCpp REQUIRED)
 FIND_PACKAGE(PhysFS REQUIRED)
 FIND_PACKAGE(PNG REQUIRED)
+FIND_PACKAGE(GMP REQUIRED)
 
 # choose a default build type if not specified
 IF(NOT CMAKE_BUILD_TYPE)
@@ -33,6 +34,7 @@ INCLUDE_DIRECTORIES(
     ${LUA_INCLUDE_DIRS}
     ${YAMLCPP_INCLUDE_DIRS}
     ${PHYSFS_INCLUDE_DIRS}
+    ${GMP_INCLUDE_DIR}
     ${PNG_INCLUDE_DIRS})
 
 LINK_DIRECTORIES(
@@ -54,6 +56,9 @@ SET(SOURCES
     src/main.cpp
     src/menustate.cpp
     src/teststate.cpp
+
+# game net
+    src/net/protocoltibia87.cpp
 
 # framework sources
     src/framework/image.cpp
@@ -83,7 +88,12 @@ SET(SOURCES
 
 # network
     src/framework/net/connection.cpp
-    src/framework/net/connections.cpp)
+    src/framework/net/connections.cpp
+    src/framework/net/protocol.cpp
+    src/framework/net/networkmessage.cpp
+
+# util
+    src/framework/util/rsa.cpp)
 
 IF(WIN32)
     SET(SOURCES ${SOURCES} src/framework/win32platform.cpp)
@@ -105,4 +115,5 @@ TARGET_LINK_LIBRARIES(otclient
     ${YAMLCPP_LIBRARY}
     ${PHYSFS_LIBRARY}
     ${PNG_LIBRARY}
+    ${GMP_LIBRARIES}
     ${ADDITIONAL_LIBRARIES})

@@ -26,6 +26,7 @@
 #define TESTSTATE_H
 
 #include "framework/gamestate.h"
+#include "net/protocoltibia87.h"
 
 class TestState : public GameState
 {
@@ -39,8 +40,11 @@ public:
     void onInputEvent(InputEvent *event);
     void onResize(const Size& size);
 
-    void render();
-    void update(int ticks, int elapsedTicks);
+    virtual void render();
+    virtual void update(int ticks, int elapsedTicks);
+
+private:
+    ProtocolTibia87Ptr m_protocol;
 };
 
 #endif // TESTSTATE_H

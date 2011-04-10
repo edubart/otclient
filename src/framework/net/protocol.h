@@ -21,19 +21,28 @@
  * THE SOFTWARE.
  */
 
-#include "connections.h"
+#ifndef PROTOCOL_H
+#define PROTOCOL_H
 
-Connections g_connections;
+#include "../prerequisites.h"
+#include "connection.h"
 
-size_t Connections::poll()
+class Protocol
 {
-    return m_ioService.poll();
-}
+public:
+    Protocol();
 
-ConnectionPtr Connections::createConnection()
-{
-    ConnectionPtr connection(new Connection(m_ioService));
-    m_connections.push_back(connection);
+    virtual void begin() = 0;
 
-    return connection;
-}
+protected:
+    void send(NetworkMessagePtr networkMessage, Connection::ConnectionCallback onSend);
+    void recv(Connection::RecvCallback onRecv);
+
+    bool connect(const std::string& ip, uint16 port, Connection::ConnectionCallback onConnect);
+
+    virtual void onError(const boost::system::error_code& error, const std::string& msg) = 0;
+
+    ConnectionPtr m_connection;
+};
+
+#endif //PROTOCOL_H
