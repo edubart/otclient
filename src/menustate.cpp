@@ -127,6 +127,7 @@ void MenuState::createMainMenu()
 
     // login window
     UIWindowPtr window(new UIWindow("Enter Game"));
+    UIElementWeakPtr weakWindow(window);
     window->setSize(Size(236, 178));
     window->anchorHorizontalCenter(g_ui->horizontalCenter());
     window->anchorVerticalCenter(g_ui->verticalCenter());
@@ -162,7 +163,11 @@ void MenuState::createMainMenu()
     button->anchorRight(window->right());
     button->anchorBottom(window->bottom());
     button->setMargin(0, 0, 10, 66);
-    button->onClick([window]{ window->setVisible(false); });
+    button->onClick([weakWindow]{
+        UIElementPtr window = weakWindow.lock();
+        if(window)
+            window->setVisible(false);
+    });
     window->addChild(button);
 
     button = UIButtonPtr(new UIButton("Cancel"));
@@ -170,7 +175,11 @@ void MenuState::createMainMenu()
     button->anchorRight(window->right());
     button->anchorBottom(window->bottom());
     button->setMargin(0, 0, 10, 13);
-    button->onClick([window]{ window->setVisible(false); });
+    button->onClick([weakWindow]{
+        UIElementPtr window = weakWindow.lock();
+        if(window)
+            window->setVisible(false);
+    });
     window->addChild(button);
 
     UITextEditPtr textEdit(new UITextEdit);
@@ -185,5 +194,9 @@ void MenuState::createMainMenu()
     textEdit->setMargin(61, 0, 0, 18);
     window->addChild(textEdit);
 
-    enterGameButton->onClick([window] { window->setVisible(true); });
+    enterGameButton->onClick([weakWindow]{
+        UIElementPtr window = weakWindow.lock();
+        if(window)
+            window->setVisible(true);
+    });
 }

@@ -76,15 +76,15 @@ ImagePtr UIElementSkin::loadImage(const YAML::Node& node)
         }
 
         image = ImagePtr(new BorderedImage(texture,
-                                                    left,
-                                                    right,
-                                                    top,
-                                                    bottom,
-                                                    topLeft,
-                                                    topRight,
-                                                    bottomLeft,
-                                                    bottomRight,
-                                                    center));
+                                           left,
+                                           right,
+                                           top,
+                                           bottom,
+                                           topLeft,
+                                           topRight,
+                                           bottomLeft,
+                                           bottomRight,
+                                           center));
     }
     return image;
 }

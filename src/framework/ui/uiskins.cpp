@@ -32,10 +32,18 @@
 
 UISkins g_uiSkins;
 
-UISkins::~UISkins()
+void UISkins::init()
+{
+    // load default skin
+    g_uiSkins.load("skins/tibiaskin.yml");
+
+}
+
+void UISkins::terminate()
 {
     for(auto it = m_elementSkins.begin(); it != m_elementSkins.end(); ++it)
         delete (*it);
+    m_elementSkins.clear();
 }
 
 bool UISkins::load(const std::string& file)

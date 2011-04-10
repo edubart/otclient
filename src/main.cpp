@@ -109,8 +109,7 @@ int main(int argc, const char *argv[])
     // init engine
     g_engine.init();
 
-    // load UI skin
-    g_uiSkins.load("skins/tibiaskin.yml");
+    g_uiSkins.init();
 
     // state scope
     {
@@ -129,6 +128,8 @@ int main(int argc, const char *argv[])
 
         // terminate stuff
         g_engine.terminate();
+
+        g_uiSkins.terminate();
     }
 
     // save configurations before exiting

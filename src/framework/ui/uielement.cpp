@@ -29,6 +29,7 @@
 UIElement::UIElement(UI::EElementType type) :
     AnchorLayout(),
     m_type(type),
+    m_skin(NULL),
     m_visible(true),
     m_enabled(true)
 {

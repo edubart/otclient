@@ -38,6 +38,7 @@ public:
     UIElementSkin(const std::string& name, UI::EElementType elementType) :
         m_name(name),
         m_elementType(elementType) { }
+    virtual ~UIElementSkin() { }
 
     virtual void load(const YAML::Node& node);
     virtual void draw(UIElement *element);

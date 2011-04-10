@@ -35,7 +35,9 @@ class UISkins
 {
 public:
     UISkins() { }
-    ~UISkins();
+
+    void init();
+    void terminate();
 
     bool load(const std::string& file);
 
