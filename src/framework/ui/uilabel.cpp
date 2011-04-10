@@ -35,15 +35,6 @@ UILabel::UILabel(const std::string& text, Font* font) :
     setSize(m_font->calculateTextRectSize(text));
 }
 
-void UILabel::load(const YAML::Node& node)
-{
-    UIElement::load(node);
-
-    std::string text;
-    node["text"] >> text;
-    setText(text);
-}
-
 void UILabel::render()
 {
     m_font->renderText(m_text, getRect(), ALIGN_LEFT, Color(0xFFBFBFBF));

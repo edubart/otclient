@@ -34,11 +34,6 @@ public:
     UIContainer(UI::EElementType type = UI::Container) : UIElement(type) { }
     virtual ~UIContainer() { }
 
-    virtual void load(const YAML::Node& node);
-
-    //TODO: move this shit
-    static UIContainerPtr load(const std::string& file);
-
     void addChild(UIElementPtr child);
     void removeChild(UIElementPtr child);
     UIElementPtr getChildById(const std::string& id);
@@ -56,11 +51,11 @@ public:
 
     UIContainerPtr asUIContainer() { return std::static_pointer_cast<UIContainer>(shared_from_this()); }
 
+    static UIContainerPtr& getRootContainer();
+
 protected:
     std::list<UIElementPtr> m_children;
     UIElementPtr m_activeElement;
 };
-
-extern UIContainerPtr g_ui;
 
 #endif // UICONTAINER_H

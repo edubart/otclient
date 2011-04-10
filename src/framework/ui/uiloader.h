@@ -22,40 +22,32 @@
  */
 
 
-#ifndef UIBUTTON_H
-#define UIBUTTON_H
+#ifndef UILOADER_H
+#define UILOADER_H
 
 #include "prerequisites.h"
-#include "uielement.h"
-#include "graphics/borderedimage.h"
+#include "uiconstants.h"
+#include "uicontainer.h"
 
-typedef std::function<void()> Callback;
-
-class UIButton : public UIElement
+namespace UILoader
 {
-public:
-    UIButton(const std::string& text = std::string()) : UIElement(UI::Button),
-        m_text(text),
-        m_state(UI::ButtonUp) {
-            UIElement();
-        }
+    /// Detect element type and create it
+    UIElementPtr createElementFromId(const std::string& id);
 
-    virtual void render();
-    bool onInputEvent(const InputEvent& event);
+    /// Loads an UIElement and it's children from a YAML file
+    UIElementPtr loadFile(const std::string& file, const UIContainerPtr& parent);
 
-    void setText(const std::string& text) { m_text = text; }
-    const std::string& getText() const { return m_text; }
+    /// Populate container children from a YAML node
+    void populateContainer(const UIContainerPtr& parent, const YAML::Node& node);
 
-    UI::EButtonState getState() { return m_state; }
+    /// Load element and its children from a YAML node
+    void loadElements(const UIElementPtr& parent, const YAML::Node& node);
 
-    void onClick(const Callback& callback) { m_buttonClickCallback = callback; }
+    /// Load element proprieties from a YAML node
+    void loadElement(const UIElementPtr& element, const YAML::Node& node);
 
-private:
-    std::string m_text;
-    UI::EButtonState m_state;
-    Callback m_buttonClickCallback;
+    /// Load anchor from a YAML node
+    void loadElementAnchor(const UIElementPtr& element, EAnchorType type, const YAML::Node& node);
 };
 
-typedef std::shared_ptr<UIButton> UIButtonPtr;
-
-#endif // UIBUTTON_H
+#endif // UILOADER_H

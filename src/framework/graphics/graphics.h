@@ -26,15 +26,17 @@
 #define GRAPHICS_H
 
 #include "prerequisites.h"
-
-class Texture;
+#include "texture.h"
 
 class Graphics
 {
 public:
     Graphics() { }
 
+    /// Initialize graphics
     void init();
+
+    /// Termiante graphics
     void terminate();
 
     /// Check if a GL extension is supported
@@ -54,21 +56,10 @@ public:
 
     const Size& getScreenSize() const { return m_screenSize; }
 
-    void setColor(const Color& color);
-    void resetColor();
-
-    // high level rendering
-    void drawTexturedRect(const Rect& screenCoords, const Texture *texture, const Rect& texCoords = Rect());
-    void drawRepeatedTexturedRect(const Rect& screenCoords, const Texture *texture, const Rect& texCoords);
-    void drawColoredRect(const Rect& screenCoords, const Color& color);
-    void drawBoundingRect(const Rect& screenCoords, const Color& color, int innerLineWidth = 1);
-
-    // lower level rendering
-    void _beginTextureRender(const Texture *texture);
-    void _drawTexturedRect(const Rect& screenCoords, const Rect& textureCoords, const Size& textureSize);
-    void _drawRepeatedTexturedRect(const Rect& screenCoords, const Rect& textureCoords, const Size& textureSize);
-    void _drawBoundingRect(const Rect& screenCoords, const Color& color, int innerLineWidth = 1);
-    void _endTextureRender();
+    void drawTexturedRect(const Rect& screenCoords, const TexturePtr& texture, const Rect& textureCoords = Rect(), const Color& color = Color::white);
+    void drawRepeatedTexturedRect(const Rect& screenCoords, const TexturePtr& texture, const Rect& textureCoords, const Color& color = Color::white);
+    void drawFilledRect(const Rect& screenCoords, const Color& color);
+    void drawBoundingRect(const Rect& screenCoords, const Color& color = Color::green, int innerLineWidth = 1);
 
 private:
     Size m_screenSize;

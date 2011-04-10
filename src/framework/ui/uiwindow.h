@@ -35,8 +35,7 @@ public:
         UIContainer(UI::Window),
         m_title(title) { }
 
-    void load(const YAML::Node& node);
-
+    void setTitle(const std::string& title) { m_title = title; }
     const std::string& getTitle() const { return m_title; }
 
 private:

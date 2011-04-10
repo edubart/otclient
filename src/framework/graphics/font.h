@@ -45,8 +45,10 @@ enum EAlign {
 class Font
 {
 public:
-    Font();
-    virtual ~Font() { }
+    Font(const std::string& name) :
+        m_name(name),
+        m_glyphHeight(10),
+        m_topMargin(0) { }
 
     /// Load font from file
     bool load(const std::string &file);
@@ -62,9 +64,8 @@ public:
     void renderText(const std::string& text,
                     const Rect& screenCoords,
                     int align = ALIGN_TOP_LEFT,
-                    const Color& color = Color(0xFFFFFFFF),
-                    const Point& startInternalPos = Point(),
-                    bool debug = false);
+                    const Color& color = Color::white,
+                    const Point& startInternalPos = Point());
 
     /// Calculate glyphs positions to use on render, also calculates textBoxSize if wanted
     Point *calculateGlyphsPositions(const std::string& text, int align = ALIGN_TOP_LEFT, Size *textBoxSize = NULL);
@@ -72,9 +73,12 @@ public:
     /// Simulate render and calculate text size
     Size calculateTextRectSize(const std::string& text);
 
+    const std::string& getName() const { return m_name; }
+
 private:
     void calculateGlyphsWidthsAutomatically(const Size& glyphSize);
 
+    std::string m_name;
     int m_glyphHeight;
     int m_topMargin;
     Size m_glyphSpacing;
@@ -82,5 +86,7 @@ private:
     Rect m_glyphsTextureCoords[256];
     Size m_glyphsSize[256];
 };
+
+typedef std::shared_ptr<Font> FontPtr;
 
 #endif // FONT_H

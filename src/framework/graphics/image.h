@@ -36,7 +36,7 @@ public:
     Image(const std::string& texture);
     Image(const std::string& texture, Rect textureCoords);
 
-    void enableBilinearFilter();
+    /// Draw image on screen
     virtual void draw(const Rect& screenCoords);
 
 protected:

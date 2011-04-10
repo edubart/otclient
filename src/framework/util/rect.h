@@ -304,4 +304,14 @@ inline void operator>>(const YAML::Node& node, TRect<T>& rect)
     rect.setRect(x, y, width, height);
 }
 
+template <class T>
+inline std::ostream& operator<<(std::ostream& out, const TRect<T>& rect)
+{
+    out << "Rect(" << rect.left() << ","
+                   << rect.top() << ","
+                   << rect.width() << ","
+                   << rect.height() << ")";
+    return out;
+}
+
 #endif // RECT_H

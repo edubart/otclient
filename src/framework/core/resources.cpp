@@ -43,7 +43,7 @@ bool Resources::setWriteDir(const std::string& path)
     bool ret = (bool)PHYSFS_setWriteDir(path.c_str());
 
     if(!ret)
-        logError("Could not set the path \"%s\" as write directory, file write will not work.", path.c_str());
+        logError("Could not set the path \"%s\" as write directory, file write will not work correctly.", path.c_str());
     return ret;
 }
 

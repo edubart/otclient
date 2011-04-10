@@ -123,49 +123,19 @@ void Graphics::endRender()
 
 }
 
-
-void Graphics::setColor(const Color& color)
+void Graphics::drawTexturedRect(const Rect& screenCoords, const TexturePtr& texture, const Rect& textureCoords, const Color& color)
 {
+    if(screenCoords.size().isEmpty())
+        return;
+
     glColor4ubv(color.rgbaPtr());
-}
-
-void Graphics::resetColor()
-{
-    glColor4ub(0xFF, 0xFF, 0xFF, 0xFF);
-}
-
-void Graphics::_beginTextureRender(const Texture *texture)
-{
-    glBindTexture(GL_TEXTURE_2D, texture->getTextureId());
-    glBegin(GL_QUADS);
-}
-
-void Graphics::_endTextureRender()
-{
-    glEnd();
-}
-
-void Graphics::drawTexturedRect(const Rect& screenCoords, const Texture *texture, const Rect& textureCoords)
-{
-    if(screenCoords.size().isEmpty())
-        return;
-
-    glBindTexture(GL_TEXTURE_2D, texture->getTextureId());
-    glBegin(GL_QUADS);
-    _drawTexturedRect(screenCoords, textureCoords, texture->getSize());
-    glEnd();
-}
-
-void Graphics::_drawTexturedRect(const Rect& screenCoords, const Rect& textureCoords, const Size& textureSize)
-{
-    if(screenCoords.size().isEmpty())
-        return;
 
     // rect correction for opengl
     int right = screenCoords.right() + 1;
     int bottom = screenCoords.bottom() + 1;
     int top = screenCoords.top();
     int left = screenCoords.left();
+    const Size& textureSize = texture->getSize();
 
     float textureRight = 0.0f;
     float textureBottom = 1.0f;
@@ -179,24 +149,18 @@ void Graphics::_drawTexturedRect(const Rect& screenCoords, const Rect& textureCo
         textureLeft = (float)textureCoords.left() / textureSize.width();
     }
 
+    glBindTexture(GL_TEXTURE_2D, texture->getTextureId());
+    glBegin(GL_QUADS);
+
     glTexCoord2f(textureLeft,  textureTop);    glVertex2i(left,  top);
     glTexCoord2f(textureLeft,  textureBottom); glVertex2i(left,  bottom);
     glTexCoord2f(textureRight, textureBottom); glVertex2i(right, bottom);
     glTexCoord2f(textureRight, textureTop);    glVertex2i(right, top);
-}
 
-void Graphics::drawRepeatedTexturedRect(const Rect& screenCoords, const Texture* texture, const Rect& texCoords)
-{
-    if(screenCoords.size().isEmpty())
-        return;
-
-    glBindTexture(GL_TEXTURE_2D, texture->getTextureId());
-    glBegin(GL_QUADS);
-    _drawRepeatedTexturedRect(screenCoords, texCoords, texture->getSize());
     glEnd();
 }
 
-void Graphics::_drawRepeatedTexturedRect(const Rect& screenCoords, const Rect& textureCoords, const Size& textureSize)
+void Graphics::drawRepeatedTexturedRect(const Rect& screenCoords, const TexturePtr& texture, const Rect& textureCoords, const Color& color)
 {
     if(screenCoords.size().isEmpty())
         return;
@@ -219,20 +183,19 @@ void Graphics::_drawRepeatedTexturedRect(const Rect& screenCoords, const Rect& t
             }
 
             partialCoords.translate(screenCoords.topLeft());
-            _drawTexturedRect(partialCoords, partialTextureCoords, textureSize);
+            drawTexturedRect(partialCoords, texture, partialTextureCoords, color);
         }
     }
 }
 
-
-void Graphics::drawColoredRect(const Rect& screenCoords, const Color& color)
+void Graphics::drawFilledRect(const Rect& screenCoords, const Color& color)
 {
     if(screenCoords.size().isEmpty())
         return;
 
     glDisable(GL_TEXTURE_2D);
 
-    setColor(color);
+    glColor4ubv(color.rgbaPtr());
 
     // rect correction for opengl
     int right = screenCoords.right() + 1;
@@ -248,8 +211,6 @@ void Graphics::drawColoredRect(const Rect& screenCoords, const Color& color)
     glEnd();
 
     glEnable(GL_TEXTURE_2D);
-
-    resetColor();
 }
 
 
@@ -260,7 +221,7 @@ void Graphics::drawBoundingRect(const Rect& screenCoords, const Color& color, in
 
     glDisable(GL_TEXTURE_2D);
 
-    setColor(color);
+    glColor4ubv(color.rgbaPtr());
 
     // rect correction for opengl
     int right = screenCoords.right()+1;
@@ -295,13 +256,4 @@ void Graphics::drawBoundingRect(const Rect& screenCoords, const Color& color, in
     glEnd();
 
     glEnable(GL_TEXTURE_2D);
-
-    resetColor();
-}
-
-void Graphics::_drawBoundingRect(const Rect& screenCoords, const Color& color, int innerLineWidth)
-{
-    glEnd();
-    drawBoundingRect(screenCoords, color, innerLineWidth);
-    glBegin(GL_QUADS);
 }

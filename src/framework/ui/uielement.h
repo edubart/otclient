@@ -28,7 +28,7 @@
 #include "prerequisites.h"
 #include "core/input.h"
 #include "uiconstants.h"
-#include "anchorlayout.h"
+#include "uilayout.h"
 
 class UIElementSkin;
 
@@ -40,7 +40,7 @@ class UIElement;
 typedef std::shared_ptr<UIElement> UIElementPtr;
 typedef std::weak_ptr<UIElement> UIElementWeakPtr;
 
-class UIElement : public AnchorLayout
+class UIElement : public UILayout
 {
 public:
     UIElement(UI::EElementType type = UI::Element);
@@ -48,9 +48,6 @@ public:
 
     virtual void render();
     virtual bool onInputEvent(const InputEvent& event) { return false; }
-
-    virtual void load(const YAML::Node& node);
-    void loadAnchor(EAnchorType type, const YAML::Node& node);
 
     bool setSkin(const std::string& skinName);
     void setSkin(UIElementSkin *skin);

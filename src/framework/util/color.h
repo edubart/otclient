@@ -37,10 +37,10 @@ public:
     inline Color(const Color& other) : color(other.color) { }
     inline Color(RGBA rgba) : color(rgba) { }
 
-    inline uint8 red()   const { return (color >> 24) & 0xFF; }
-    inline uint8 green() const { return (color >> 16) & 0xFF; }
-    inline uint8 blue()  const { return (color >> 8) & 0xFF; }
-    inline uint8 alpha() const { return color & 0xFF; }
+    inline uint8 r()   const { return (color >> 24) & 0xFF; }
+    inline uint8 g() const { return (color >> 16) & 0xFF; }
+    inline uint8 b()  const { return (color >> 8) & 0xFF; }
+    inline uint8 a() const { return color & 0xFF; }
     inline RGBA rgba() const { return color; }
     inline const uint8* rgbaPtr() const { return (const uint8*)&color; }
 
@@ -55,6 +55,14 @@ public:
     inline bool operator==(const Color& other) const { return other.color == color; }
     inline bool operator!=(const Color& other) const { return other.color != color; }
 
+    static Color white;
+    static Color black;
+    static Color alpha;
+    static Color red;
+    static Color green;
+    static Color blue;
+    static Color pink;
+
 private:
     RGBA color;
 };
@@ -67,6 +75,15 @@ inline void operator>>(const YAML::Node& node, Color& color)
     node[2] >> b;
     node[3] >> a;
     color.setRGBA(r,g,b,a);
+}
+
+inline std::ostream& operator<<(std::ostream& out, const Color& color)
+{
+    out << "Color(" << (int)color.r() << ","
+                    << (int)color.g() << ","
+                    << (int)color.b() << ","
+                    << (int)color.a() << ")";
+    return out;
 }
 
 #endif // COLOR_H

@@ -22,40 +22,12 @@
  */
 
 
-#ifndef UIBUTTON_H
-#define UIBUTTON_H
+#include "color.h"
 
-#include "prerequisites.h"
-#include "uielement.h"
-#include "graphics/borderedimage.h"
-
-typedef std::function<void()> Callback;
-
-class UIButton : public UIElement
-{
-public:
-    UIButton(const std::string& text = std::string()) : UIElement(UI::Button),
-        m_text(text),
-        m_state(UI::ButtonUp) {
-            UIElement();
-        }
-
-    virtual void render();
-    bool onInputEvent(const InputEvent& event);
-
-    void setText(const std::string& text) { m_text = text; }
-    const std::string& getText() const { return m_text; }
-
-    UI::EButtonState getState() { return m_state; }
-
-    void onClick(const Callback& callback) { m_buttonClickCallback = callback; }
-
-private:
-    std::string m_text;
-    UI::EButtonState m_state;
-    Callback m_buttonClickCallback;
-};
-
-typedef std::shared_ptr<UIButton> UIButtonPtr;
-
-#endif // UIBUTTON_H
+Color Color::white(0xFF, 0xFF, 0xFF, 0xFF);
+Color Color::black(0x00, 0x00, 0x00, 0xFF);
+Color Color::alpha(0x00, 0x00, 0x00, 0x00);
+Color Color::red  (0xFF, 0x00, 0x00, 0xFF);
+Color Color::green(0x00, 0xFF, 0x00, 0xFF);
+Color Color::blue (0x00, 0x00, 0xFF, 0xFF);
+Color Color::pink (0xFF, 0x00, 0xFF, 0xFF);

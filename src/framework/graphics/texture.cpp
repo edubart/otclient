@@ -29,9 +29,9 @@
 
 Texture::Texture(int width, int height, int components, uchar *pixels)
 {
-    m_size.setWidth(width);
-    m_size.setHeight(height);
+    m_size.setSize(width, height);
 
+    // generate opengl  texture
     glGenTextures(1, &m_textureId);
     glBindTexture(GL_TEXTURE_2D, m_textureId);
 
@@ -51,11 +51,14 @@ Texture::Texture(int width, int height, int components, uchar *pixels)
             break;
     }
 
+    // load the pixels into opengl memory
     glTexImage2D(GL_TEXTURE_2D, 0, components, width, height, 0, format, GL_UNSIGNED_BYTE, pixels);
 
+    // disable texture border
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
+    // nearest filtering
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 }
@@ -75,6 +78,7 @@ void Texture::enableBilinearFilter()
 
 uchar *Texture::getPixels()
 {
+    // copy pixels from opengl memory
     uchar *pixels = new uchar[m_size.area()*4];
     glBindTexture(GL_TEXTURE_2D, m_textureId);
     glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);

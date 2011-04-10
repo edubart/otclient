@@ -22,12 +22,12 @@
  */
 
 
-#include "anchorlayout.h"
+#include "uilayout.h"
 #include "uielement.h"
 
 int AnchorLine::getPos() const
 {
-    AnchorLayoutPtr element = m_relativeElement.lock();
+    UILayoutPtr element = m_relativeElement.lock();
     if(element) {
         switch(m_anchorType) {
             case ANCHOR_LEFT:
@@ -50,30 +50,30 @@ int AnchorLine::getPos() const
     return 0;
 }
 
-void AnchorLayout::setSize(const Size& size)
+void UILayout::setSize(const Size& size)
 {
     m_rect.setSize(size);
     recalculateAnchors();
 }
 
-void AnchorLayout::setRect(const Rect& rect)
+void UILayout::setRect(const Rect& rect)
 {
     m_rect = rect;
     recalculateAnchors();
 }
 
-void AnchorLayout::addAnchor(EAnchorType type, const AnchorLine& anchorLine)
+void UILayout::addAnchor(EAnchorType type, const AnchorLine& anchorLine)
 {
     if(!anchorLine.isValid()) {
         logError("anchoring for an element has failed, got an invalid anchor line");
         return;
     }
     m_anchors[type] = anchorLine;
-    anchorLine.getRelativeElement()->addAnchoredElement(asAnchorLayout());
+    anchorLine.getRelativeElement()->addAnchoredElement(asUILayout());
     recalculateAnchors();
 }
 
-void AnchorLayout::addAnchoredElement(AnchorLayoutPtr anchoredElement)
+void UILayout::addAnchoredElement(UILayoutPtr anchoredElement)
 {
     bool found = false;
     for(auto it = m_anchoredElements.begin(); it != m_anchoredElements.end(); ++it) {
@@ -86,7 +86,7 @@ void AnchorLayout::addAnchoredElement(AnchorLayoutPtr anchoredElement)
         m_anchoredElements.push_back(anchoredElement);
 }
 
-void AnchorLayout::recalculateAnchors()
+void UILayout::recalculateAnchors()
 {
     // horizontal
     if(m_anchors[ANCHOR_HORIZONTAL_CENTER].isValid()) {
@@ -117,7 +117,7 @@ void AnchorLayout::recalculateAnchors()
     }
 
     for(auto it = m_anchoredElements.begin(); it != m_anchoredElements.end(); ++it) {
-        AnchorLayoutPtr element = (*it).lock();
+        UILayoutPtr element = (*it).lock();
         if(element)
             element->recalculateAnchors();
     }

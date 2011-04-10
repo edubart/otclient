@@ -120,4 +120,12 @@ inline void operator>>(const YAML::Node& node, TSize<T>& size)
     size.setSize(w, h);
 }
 
+template <class T>
+inline std::ostream& operator<<(std::ostream& out, const TSize<T>& size)
+{
+    out << "Size(" << size.width() << ","
+                   << size.height() <<  ")";
+    return out;
+}
+
 #endif

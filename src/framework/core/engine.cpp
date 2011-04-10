@@ -37,7 +37,7 @@ void Engine::init()
 {
     // initialize stuff
     g_graphics.init();
-    g_fonts.init();
+    g_fonts.init("tibia-12px-rounded");
 }
 
 void Engine::terminate()
@@ -52,6 +52,7 @@ void Engine::terminate()
 
 void Engine::run()
 {
+    Font *defaultFont = g_fonts.getDefaultFont();
     int ticks = Platform::getTicks();
     int lastFpsTicks = ticks;
     int frameCount = 0;
@@ -87,8 +88,8 @@ void Engine::run()
             // render fps
             if(m_calculateFps) {
                 std::string fpsText = format("FPS: %d", fps);
-                Size textSize = g_defaultFont->calculateTextRectSize(fpsText);
-                g_defaultFont->renderText(fpsText, Point(g_graphics.getScreenSize().width() - textSize.width() - 10, 10));
+                Size textSize = defaultFont->calculateTextRectSize(fpsText);
+                defaultFont->renderText(fpsText, Point(g_graphics.getScreenSize().width() - textSize.width() - 10, 10));
             }
 
             // swap buffers
@@ -119,7 +120,7 @@ void Engine::render()
     g_graphics.beginRender();
     if(m_currentState)
         m_currentState->render();
-    g_ui->render();
+    UIContainer::getRootContainer()->render();
     g_graphics.endRender();
 }
 
@@ -132,7 +133,7 @@ void Engine::onClose()
 void Engine::onResize(const Size& size)
 {
     g_graphics.resize(size);
-    g_ui->setSize(size);
+    UIContainer::getRootContainer()->setSize(size);
 
     if(m_currentState)
         m_currentState->onResize(size);
@@ -141,7 +142,7 @@ void Engine::onResize(const Size& size)
 void Engine::onInputEvent(const InputEvent& event)
 {
     // inputs goest to gui first
-    if(!g_ui->onInputEvent(event)) {
+    if(!UIContainer::getRootContainer()->onInputEvent(event)) {
         // if gui didnt capture the input then goes to the state
         if(m_currentState)
             m_currentState->onInputEvent(event);

@@ -35,7 +35,7 @@ bool Configs::load(const std::string& fileName)
         return false;
 
     std::string fileContents = g_resources.loadTextFile(fileName);
-    if(fileContents.size() == 0)
+    if(fileContents.size())
         return false;
 
     std::istringstream fin(fileContents);
@@ -52,8 +52,8 @@ bool Configs::load(const std::string& fileName)
             it.second() >> value;
             m_confsMap[key] = value;
         }
-    } catch (YAML::ParserException& e) {
-        logError("Malformed configuration file!");
+    } catch (YAML::Exception& e) {
+        logError("Malformed config file: %s", e.what());
         return false;
     }
 

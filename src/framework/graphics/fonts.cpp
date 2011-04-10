@@ -23,13 +23,11 @@
 
 
 #include "fonts.h"
-#include "font.h"
 #include "core/resources.h"
 
 Fonts g_fonts;
-Font *g_defaultFont = NULL;
 
-void Fonts::init()
+void Fonts::init(const std::string& defaultFontName)
 {
     // load all fonts
     std::list<std::string> files = g_resources.getDirectoryFiles("fonts");
@@ -37,27 +35,28 @@ void Fonts::init()
         if(boost::ends_with(file, ".yml")) {
             std::string name = file;
             boost::erase_first(name, ".yml");
-            std::shared_ptr<Font> font(new Font);
-            font->load("fonts/" + file);
-            m_fonts[name] = font;
+            FontPtr font(new Font(name));
+            if(font->load("fonts/" + file)) {
+                m_fonts.push_back(font);
+
+                if(name == defaultFontName)
+                    m_defaultFont = font;
+            }
         }
     }
 
-    // set default font
-    g_defaultFont = get("tibia-12px-rounded");
-    if(!g_defaultFont)
-        logFatal("Default font not found!");
+    if(!m_defaultFont)
+        logFatal("Could not load the default font \"%s\"\n", defaultFontName.c_str());
 }
 
 Font* Fonts::get(const std::string& fontName)
 {
     // find font by name
-    auto it = m_fonts.find(fontName);
-    if(it != m_fonts.end()) {
-        return it->second.get();
+    for(auto it = m_fonts.begin(); it != m_fonts.end(); ++it) {
+        if((*it)->getName() == fontName)
+            return (*it).get();
     }
 
-    logError("Font \"%s\" not found", fontName.c_str());
-    return NULL;
+    logError("Font \"%s\" not found, returing the default one", fontName.c_str());
+    return m_defaultFont.get();
 }
-

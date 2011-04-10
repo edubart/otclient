@@ -35,8 +35,6 @@ class UILabel : public UIElement
 public:
     UILabel(const std::string& text = std::string(), Font *font = NULL);
 
-    void load(const YAML::Node& node);
-
     void render();
 
     void setText(const std::string& text);

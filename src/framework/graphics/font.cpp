@@ -27,11 +27,7 @@
 #include "textures.h"
 #include "graphics.h"
 
-Font::Font() :
-    m_glyphHeight(10),
-    m_topMargin(0)
-{
-}
+
 
 void Font::calculateGlyphsWidthsAutomatically(const Size& glyphSize)
 {
@@ -73,12 +69,11 @@ bool Font::load(const std::string& file)
 {
     std::string fileContents = g_resources.loadTextFile(file);
     if(!fileContents.size()) {
-        logError("Empty font file \"%s",  file.c_str());
+        logError("Coult not load font file \"%s",  file.c_str());
         return false;
     }
 
     std::istringstream fin(fileContents);
-
     std::string textureName;
     Size glyphSize;
 
@@ -88,22 +83,25 @@ bool Font::load(const std::string& file)
         YAML::Node doc;
         parser.GetNextDocument(doc);
 
+        // required values
         doc["glyph height"] >> m_glyphHeight;
-        doc["glyph spacing"] >> m_glyphSpacing;
-        doc["top margin"] >> m_topMargin;
         doc["image glyph size"] >> glyphSize;
         doc["image"] >> textureName;
 
+        // optional values
+        if(doc.FindValue("glyph spacing"))
+            doc["glyph spacing"] >> m_glyphSpacing;
+        if(doc.FindValue("top margin"))
+            doc["top margin"] >> m_topMargin;
+
+        // load texture
         m_texture = g_textures.get("fonts/" + textureName);
         if(!m_texture) {
-            logError("Failed to load image for font \"%s\"", file.c_str());
+            logError("Failed to load image for font file \"%s\"", file.c_str());
             return false;
         }
 
-        // set glyphs height
-        for(int glyph = 32; glyph < 256; ++glyph) {
-        }
-
+        // auto calculate widths
         calculateGlyphsWidthsAutomatically(glyphSize);
 
         // read custom widths
@@ -121,13 +119,12 @@ bool Font::load(const std::string& file)
         int numHorizontalGlyphs = m_texture->getSize().width() / glyphSize.width();
         for(int glyph = 32; glyph< 256; ++glyph) {
             m_glyphsTextureCoords[glyph].setRect(((glyph - 32) % numHorizontalGlyphs) * glyphSize.width(),
-                                                    ((glyph - 32) / numHorizontalGlyphs) * glyphSize.height(),
-                                                    m_glyphsSize[glyph].width(),
-                                                    m_glyphHeight);
+                                                 ((glyph - 32) / numHorizontalGlyphs) * glyphSize.height(),
+                                                 m_glyphsSize[glyph].width(),
+                                                 m_glyphHeight);
         }
-
-    } catch (YAML::ParserException& e) {
-        logError("Malformed font file \"%s\"", file.c_str());
+    } catch (YAML::Exception& e) {
+        logError("Malformed font file \"%s\":\n  %s", file.c_str(), e.what());
         return false;
     }
 
@@ -146,18 +143,12 @@ void Font::renderText(const std::string& text,
                     const Rect& screenCoords,
                     int align,
                     const Color& color,
-                    const Point& startInternalPos,
-                    bool debug)
+                    const Point& startInternalPos)
 {
     // prevent glitches from invalid rects
     if(!screenCoords.isValid())
         return;
 
-    // begin texture rendering
-    g_graphics.setColor(color);
-    g_graphics._beginTextureRender(m_texture.get());
-
-    const Size& textureSize = m_texture->getSize();
     int textLenght = text.length();
 
     // map glyphs positions
@@ -227,17 +218,8 @@ void Font::renderText(const std::string& text,
         }
 
         // render glyph
-        g_graphics._drawTexturedRect(glyphScreenCoords, glyphTextureCoords, textureSize);
-
-        //g_graphics._drawBoundingRect(glyphScreenCoords, Color(0xFF0000FF));
+        g_graphics.drawTexturedRect(glyphScreenCoords, m_texture, glyphTextureCoords, color);
     }
-
-    // end texture redering
-    g_graphics._endTextureRender();
-    g_graphics.resetColor();
-
-    if(debug)
-        g_graphics.drawBoundingRect(screenCoords.expanded(1), Color(0xFF00FF00));
 }
 
 Point* Font::calculateGlyphsPositions(const std::string& text, int align, Size *textBoxSize)

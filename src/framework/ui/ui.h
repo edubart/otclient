@@ -36,5 +36,6 @@
 #include "uiskins.h"
 #include "uiwindow.h"
 #include "uitextedit.h"
+#include "uiloader.h"
 
 #endif // UI_H

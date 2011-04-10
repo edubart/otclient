@@ -26,12 +26,6 @@
 #include "graphics/fonts.h"
 #include "graphics/font.h"
 
-void UIButton::load(const YAML::Node& node)
-{
-    UIElement::load(node);
-    node["text"] >> m_text;
-}
-
 void UIButton::render()
 {
     UIElement::render();

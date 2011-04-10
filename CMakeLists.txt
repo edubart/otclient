@@ -68,6 +68,7 @@ SET(SOURCES
     src/framework/core/engine.cpp
 
 # framework utilities
+    src/framework/util/color.cpp
     src/framework/util/util.cpp
     src/framework/util/logger.cpp
     src/framework/util/rsa.cpp
@@ -84,12 +85,13 @@ SET(SOURCES
     src/framework/graphics/graphics.cpp
 
 # framework ui
-    src/framework/ui/anchorlayout.cpp
+    src/framework/ui/uilayout.cpp
     src/framework/ui/uielement.cpp
     src/framework/ui/uielementskin.cpp
     src/framework/ui/uibuttonskin.cpp
     src/framework/ui/uicontainer.cpp
     src/framework/ui/uiskins.cpp
+    src/framework/ui/uiloader.cpp
     src/framework/ui/uipanel.cpp
     src/framework/ui/uibutton.cpp
     src/framework/ui/uilabel.cpp

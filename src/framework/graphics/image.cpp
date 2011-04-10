@@ -37,14 +37,9 @@ Image::Image(const std::string& texture, Rect textureCoords) :
     m_texture = g_textures.get(texture);
 }
 
-void Image::enableBilinearFilter()
-{
-    m_texture->enableBilinearFilter();
-}
-
 void Image::draw(const Rect& screenCoords)
 {
-    g_graphics.drawTexturedRect(screenCoords, m_texture.get(), m_textureCoords);
+    g_graphics.drawTexturedRect(screenCoords, m_texture, m_textureCoords);
 }
 
 
