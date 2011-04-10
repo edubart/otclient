@@ -1,0 +1,37 @@
+panel#mainMenu:
+  skin: roundedGridPanel
+  size: [118, 172]
+  anchors.left: parent.left
+  anchors.bottom: parent.bottom
+  margin.left: 60
+  margin.bottom: 70
+  
+  button#enterGame:
+    text: Enter Game
+    anchors.top: parent.top
+    anchors.horizontalCenter: parent.horizontalCenter
+    margin.top: 16
+
+  button#accessAccount:
+    text: Access Account
+    anchors.top: parent.top
+    anchors.horizontalCenter: parent.horizontalCenter
+    margin.top: 46
+
+  button#options:
+    text: Options
+    anchors.top: parent.top
+    anchors.horizontalCenter: parent.horizontalCenter
+    margin.top: 76
+
+  button#info:
+    text: Info
+    anchors.top: parent.top
+    anchors.horizontalCenter: parent.horizontalCenter
+    margin.top: 106
+
+  button#exitGame:
+    text: Exit
+    anchors.top: parent.top
+    anchors.horizontalCenter: parent.horizontalCenter
+    margin.top: 136

@@ -1,0 +1,88 @@
+default skin image: tibiaskin.png
+
+buttons:
+  default:
+    default size: [86, 20]
+
+    bordered image:
+      left border: [45,139,1,18]
+      right border: [130,139,1,18]
+      top border: [46,138,84,1]
+      bottom border: [46,157,84,1]
+      top left corner: [45,138,1,1]
+      top right corner: [130,138,1,1]
+      bottom left corner: [45,157,1,1]
+      bottom right corner: [130,157,1,1]
+      center: [46,139,84,18]
+    
+    down state:
+      bordered image:
+        left border: [45,159,1,18]
+        right border: [130,159,1,18]
+        top border: [46,158,84,1]
+        bottom border: [46,177,84,1]
+        top left corner: [45,158,1,1]
+        top right corner: [130,158,1,1]
+        bottom left corner: [45,177,1,1]
+        bottom right corner: [130,177,1,1]
+        center: [46,159,84,18]
+panels:
+  default:
+    # the default panel is empty
+
+  roundedGridPanel:
+    default size: [117, 171]
+    bordered image:
+      left border: [0,214,5,32]
+      right border: [6,214,5,32]
+      top border: [43,214,32,5]
+      bottom border: [43,220,32,5]
+      top left corner: [43,225,5,5]
+      top right corner: [49,225,5,5]
+      bottom left corner: [43,230,5,5]
+      bottom right corner: [48,231,5,5]
+      center: [11,214,32,32]
+      
+labels:
+  default:
+    # the default label is empty
+    
+windows:
+  default:
+    head:
+      height: 17
+      font: tibia-10px-antialised
+      bordered image:
+        left border: [106,187,4,9]
+        right border: [110,187,4,9]
+        top border: [114,183,92,4]
+        bottom border: [114,196,92,4]
+        top left corner: [106,183,4,4]
+        top right corner: [110,183,4,4]
+        bottom left corner: [106,196,4,4]
+        bottom right corner: [110,196,4,4]
+        center: [114,187,96,9]
+    body:
+      bordered image:
+        left border: [98,180,4,12]
+        right border: [99,180,4,12]
+        bottom border: [2,193,96,4]
+        bottom left corner: [98,193,4,4]
+        bottom right corner: [102,193,4,4]
+        center: [0, 0, 96, 96]
+        
+text edits:
+  default:
+    default size: [86, 16]
+    bordered image:
+      left border: [308,97,1,1]
+      right border: [319,97,1,10]
+      top border: [309,96,10,1]
+      bottom border: [309,107,10,1]
+      top left corner: [308,96,1,1]
+      top right corner: [319,96,1,1]
+      bottom left corner: [308,107,1,1]
+      bottom right corner: [319,107,1,1]
+      center: [309,97,10,10]
+  
+    
