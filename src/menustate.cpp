@@ -42,7 +42,15 @@ void MenuState::onEnter()
     m_background = g_textures.get("background.png");
     m_background->enableBilinearFilter();
 
-    createMainMenu();
+    UIContainerPtr mainMenuPanel = UIContainer::load("ui/mainMenu-panel.yml");
+
+    UIButtonPtr button = std::static_pointer_cast<UIButton>(mainMenuPanel->getChildById("exitGame-button"));
+    button->onClick([]{ g_engine.stop(); });
+    
+    button = std::static_pointer_cast<UIButton>(mainMenuPanel->getChildById("enterGame-button"));
+    button->onClick([]{
+        UIContainer::load("ui/enterGame-window.yml");
+    });
 }
 
 void MenuState::onLeave()
@@ -82,6 +90,7 @@ void MenuState::render()
 
 void MenuState::createMainMenu()
 {
+/*
     int y = 0;
 
     m_menuPanel = UIPanelPtr(new UIPanel);
@@ -199,4 +208,5 @@ void MenuState::createMainMenu()
         if(window)
             window->setVisible(true);
     });
+    */
 }

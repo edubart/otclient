@@ -97,6 +97,11 @@ public:
     void setMargin(int horizontal, int vertical) { m_marginLeft = m_marginRight = horizontal; m_marginTop = m_marginBottom = vertical; recalculateAnchors(); }
     void setMargin(int margin) { m_marginLeft = m_marginRight = m_marginTop = m_marginBottom = margin; recalculateAnchors(); }
 
+    void setMarginLeft(int margin) { m_marginLeft = margin; recalculateAnchors(); }
+    void setMarginRight(int margin) { m_marginRight = margin; recalculateAnchors(); }
+    void setMarginTop(int margin) { m_marginTop = margin; recalculateAnchors(); }
+    void setMarginBottom(int margin) { m_marginBottom = margin; recalculateAnchors(); }
+
     AnchorLayoutPtr asAnchorLayout() { return shared_from_this(); }
 
 private:

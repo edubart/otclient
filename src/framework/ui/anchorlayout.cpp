@@ -23,6 +23,7 @@
 
 
 #include "anchorlayout.h"
+#include "uielement.h"
 
 int AnchorLine::getPos() const
 {

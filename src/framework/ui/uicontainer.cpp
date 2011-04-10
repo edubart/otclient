@@ -23,8 +23,98 @@
 
 
 #include "uicontainer.h"
+#include "../resources.h"
+#include "uibutton.h"
+#include "uipanel.h"
+#include "uilabel.h"
+#include "uitextedit.h"
+#include "uiwindow.h"
 
 UIContainerPtr g_ui(new UIContainer);
+
+UIElementPtr createElementFromDescription(std::string elementId)
+{
+    UIElementPtr element;
+
+    std::vector<std::string> split;
+    boost::split(split, elementId, boost::is_any_of("-"));
+    if(split.size() != 2) {
+        logError("incorrect element id format: %s", elementId.c_str());
+        return element;
+    }
+
+    std::string elementType = split[1];
+    if(elementType == "panel") {
+        element = UIElementPtr(new UIPanel);
+    } else if(elementType == "button") {
+        element = UIElementPtr(new UIButton);
+    } else if(elementType == "label") {
+        element = UIElementPtr(new UILabel);
+    } else if(elementType == "window") {
+        element = UIElementPtr(new UIWindow);
+    } else if(elementType == "textEdit") {
+        element = UIElementPtr(new UITextEdit);
+    }
+
+    if(element)
+        element->setId(elementId);
+
+    return element;
+}
+
+void UIContainer::load(const YAML::Node& node)
+{
+    UIElement::load(node);
+
+    for(auto it = node.begin(); it != node.end(); ++it) {
+        std::string elementDesc;
+        it.first() >> elementDesc;
+
+        if(elementDesc.find("-") != std::string::npos) {
+            UIElementPtr element = createElementFromDescription(elementDesc);
+            if(element) {
+                addChild(element);
+                element->load(it.second());
+            }
+        }
+    }
+}
+
+UIContainerPtr UIContainer::load(const std::string& file)
+{
+    //TODO: handle errors
+    //TODO: display errors in which file and line
+    UIContainerPtr container;
+
+    std::string fileContents = g_resources.loadTextFile(file);
+    if(!fileContents.size()) {
+        logFatal("could not load ui file \"%s",  file.c_str());
+        return UIContainerPtr();
+    }
+
+    std::istringstream fin(fileContents);
+
+    try {
+        YAML::Parser parser(fin);
+
+        YAML::Node doc;
+        parser.GetNextDocument(doc);
+
+        std::string elementDesc;
+        doc.begin().first() >> elementDesc;
+        UIElementPtr element = createElementFromDescription(elementDesc);
+        if(element) {
+            g_ui->addChild(element);
+            element->load(doc.begin().second());
+            return element->asUIContainer();
+        }
+    } catch (YAML::ParserException& e) {
+        logError("Malformed ui file \"%s\": %s", file.c_str(), e.what());
+        return UIContainerPtr();
+    }
+
+    return container;
+}
 
 void UIContainer::addChild(UIElementPtr child)
 {
@@ -41,12 +131,35 @@ void UIContainer::removeChild(UIElementPtr child)
         child->setParent(UIContainerPtr());
 }
 
-UIElementPtr UIContainer::getChildById(const std::string& id) const
+UIElementPtr UIContainer::getChildById(const std::string& id)
 {
+    if(getId() == id)
+        return asUIElement();
     for(auto it = m_children.begin(); it != m_children.end(); ++it) {
         if((*it)->getId() == id) {
             return (*it);
-            break;
+        }
+    }
+    return UIElementPtr();
+}
+
+UIElementPtr UIContainer::recursiveGetChildById(const std::string& id)
+{
+    if(getId() == id)
+        return asUIElement();
+
+    UIElementPtr element;
+    for(auto it = m_children.begin(); it != m_children.end(); ++it) {
+        element = (*it);
+        if(element->getId() == id) {
+            return element;
+        } else {
+            UIContainerPtr container = element->asUIContainer();
+            if(container) {
+                element = container->recursiveGetChildById(id);
+                if(element)
+                    return element;
+            }
         }
     }
     return UIElementPtr();

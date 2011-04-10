@@ -25,6 +25,7 @@
 #ifndef UICONTAINER_H
 #define UICONTAINER_H
 
+//TODO: make includes paths, so this will be cleaner
 #include "../prerequisites.h"
 #include "uielement.h"
 #include "../point.h"
@@ -36,9 +37,17 @@ public:
     UIContainer(UI::EElementType type = UI::Container) : UIElement(type) { }
     virtual ~UIContainer() { }
 
+    virtual void load(const YAML::Node& node);
+
+    //TODO: move this shit
+    static UIContainerPtr load(const std::string& file);
+
     void addChild(UIElementPtr child);
     void removeChild(UIElementPtr child);
-    UIElementPtr getChildById(const std::string& id) const;
+    UIElementPtr getChildById(const std::string& id);
+
+    //TODO: make this backwards
+    UIElementPtr recursiveGetChildById(const std::string& id);
 
     virtual void render();
     virtual bool onInputEvent(const InputEvent& event);
@@ -53,9 +62,6 @@ public:
 protected:
     std::list<UIElementPtr> m_children;
     UIElementPtr m_activeElement;
-
-private:
-    void onMove(const Point& pos);
 };
 
 extern UIContainerPtr g_ui;

@@ -50,6 +50,9 @@ public:
     virtual void render();
     virtual bool onInputEvent(const InputEvent& event) { return false; }
 
+    virtual void load(const YAML::Node& node);
+    void loadAnchor(EAnchorType type, const YAML::Node& node);
+
     bool setSkin(const std::string& skinName);
     void setSkin(UIElementSkin *skin);
     UIElementSkin *getSkin() { return m_skin; }
@@ -69,6 +72,7 @@ public:
     UI::EElementType getElementType() const { return m_type; }
 
     UIElementPtr asUIElement() { return std::static_pointer_cast<UIElement>(shared_from_this()); }
+    virtual UIContainerPtr asUIContainer() { return UIContainerPtr(); }
 
 private:
     UI::EElementType m_type;

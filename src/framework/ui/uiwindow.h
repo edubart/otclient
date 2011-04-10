@@ -31,9 +31,11 @@
 class UIWindow : public UIContainer
 {
 public:
-    UIWindow(const std::string& title) :
+    UIWindow(const std::string& title = std::string()) :
         UIContainer(UI::Window),
         m_title(title) { }
+
+    void load(const YAML::Node& node);
 
     const std::string& getTitle() const { return m_title; }
 

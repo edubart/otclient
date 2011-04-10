@@ -33,7 +33,9 @@ class Font;
 class UILabel : public UIElement
 {
 public:
-    UILabel(const std::string& text, Font *font = NULL);
+    UILabel(const std::string& text = std::string(), Font *font = NULL);
+
+    void load(const YAML::Node& node);
 
     void render();
 

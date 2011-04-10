@@ -55,6 +55,7 @@ SET(SOURCES
 # game sources
     src/main.cpp
     src/menustate.cpp
+    src/mainmenu.cpp
     src/teststate.cpp
 
 # game net

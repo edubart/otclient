@@ -26,8 +26,6 @@
 #include "graphics.h"
 #include "textures.h"
 
-#include <GL/gl.h>
-
 BorderedImage::BorderedImage(TexturePtr texture,
                              const Rect& left,
                              const Rect& right,

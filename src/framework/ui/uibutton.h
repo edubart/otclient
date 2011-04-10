@@ -34,11 +34,13 @@ typedef std::function<void()> Callback;
 class UIButton : public UIElement
 {
 public:
-    UIButton(const std::string& text) : UIElement(UI::Button),
+    UIButton(const std::string& text = std::string()) : UIElement(UI::Button),
         m_text(text),
         m_state(UI::ButtonUp) {
             UIElement();
         }
+
+    void load(const YAML::Node& node);
 
     virtual void render();
     bool onInputEvent(const InputEvent& event);

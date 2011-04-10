@@ -24,3 +24,8 @@
 
 #include "uiwindow.h"
 
+void UIWindow::load(const YAML::Node& node)
+{
+    UIContainer::load(node);
+    node["title"] >> m_title;
+}
