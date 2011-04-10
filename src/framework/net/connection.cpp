@@ -71,7 +71,7 @@ void Connection::onResolveDns(const boost::system::error_code& error, boost::asi
 {
     if(error){
         m_connecting = false;
-        m_connectCallback(error);
+        m_errorCallback(error, __FUNCTION__);
         return;
     }
 
@@ -81,22 +81,24 @@ void Connection::onResolveDns(const boost::system::error_code& error, boost::asi
 
 void Connection::onConnect(const boost::system::error_code& error)
 {
-    if(!error){
-        m_connected = true;
+    if(error){
+        m_connecting = false;
+        m_errorCallback(error, __FUNCTION__);
+        return;
     }
 
-    m_connecting = false;
+    m_connected = true;
 
-    m_connectCallback(error);
+    m_connectCallback();
 }
 
 void Connection::handleError(const boost::system::error_code& error)
 {
+    stop();
+
     if(isConnected()){
         closeSocket();
     }
-
-    stop();
 }
 
 void Connection::closeSocket()
@@ -117,39 +119,64 @@ void Connection::closeSocket()
 
 void Connection::send(NetworkMessagePtr networkMessage, ConnectionCallback onSend)
 {
-    m_socket.async_send(
+    boost::asio::async_write(m_socket,
         boost::asio::buffer(networkMessage->getBuffer(), NetworkMessage::header_length),
-        boost::bind(&Connection::onSendHeader, shared_from_this(), networkMessage, onSend, boost::asio::placeholders::error)
-    );
+        boost::bind(&Connection::onSendHeader, shared_from_this(), networkMessage, onSend, boost::asio::placeholders::error));
+}
+
+void Connection::recv(RecvCallback onRecv)
+{
+    NetworkMessagePtr networkMessage(new NetworkMessage);
+
+    boost::asio::async_read(m_socket,
+        boost::asio::buffer(networkMessage->getBuffer(), NetworkMessage::header_length),
+        boost::bind(&Connection::onRecvHeader, shared_from_this(), networkMessage, onRecv, boost::asio::placeholders::error));
+}
+
+void Connection::onRecvHeader(ConnectionPtr connection, NetworkMessagePtr networkMessage, RecvCallback onRecv, const boost::system::error_code& error)
+{
+    if(error){
+        connection->handleError(error);
+        connection->onError(error, __FUNCTION__);
+        return;
+    }
+
+    boost::asio::async_read(connection->getSocket(),
+        boost::asio::buffer(networkMessage->getBodyBuffer(), networkMessage->getMessageLength()),
+        boost::bind(&Connection::onRecvBody, connection, networkMessage, onRecv, boost::asio::placeholders::error));
+}
+
+void Connection::onRecvBody(ConnectionPtr connection, NetworkMessagePtr networkMessage, RecvCallback onRecv, const boost::system::error_code& error)
+{
+    if(error){
+        connection->handleError(error);
+        connection->onError(error, __FUNCTION__);
+        return;
+    }
+
+    onRecv(networkMessage);
 }
 
 void Connection::onSendHeader(ConnectionPtr connection, NetworkMessagePtr networkMessage, ConnectionCallback onSend, const boost::system::error_code& error)
 {
-    if(!connection->isConnected()){
-        return;
-    }
-
     if(error){
         connection->handleError(error);
-        onSend(error);
+        connection->onError(error, __FUNCTION__);
         return;
     }
 
-    connection->getSocket().async_send(
+    boost::asio::async_write(connection->getSocket(),
         boost::asio::buffer(networkMessage->getBodyBuffer(), networkMessage->getMessageLength()),
-        boost::bind(&Connection::onSendBody, connection, networkMessage, onSend, boost::asio::placeholders::error)
-    );
+        boost::bind(&Connection::onSendBody, connection, networkMessage, onSend, boost::asio::placeholders::error));
 }
 
 void Connection::onSendBody(ConnectionPtr connection, NetworkMessagePtr networkMessage, ConnectionCallback onSend, const boost::system::error_code& error)
 {
-    if(!connection->isConnected()){
+    if(error){
+        connection->handleError(error);
+        connection->onError(error, __FUNCTION__);
         return;
     }
 
-    if(error){
-        connection->handleError(error);
-    }
-
-    onSend(error);
+    onSend();
 }
