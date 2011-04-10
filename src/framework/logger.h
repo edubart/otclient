@@ -33,7 +33,7 @@ enum ELogLevel {
     LFATAL = 0,
     LERROR,
     LWARNING,
-    LNOTICE,
+    LINFO,
     LDEBUG
 };
 
@@ -45,10 +45,14 @@ void _log(int level, const char *trace, const char *format, ...);
 #define logError(...) Logger::_log(Logger::LERROR, NULL, __VA_ARGS__)
 #define logWarning(...) Logger::_log(Logger::LWARNING, NULL, __VA_ARGS__)
 #define logDebug(...) Logger::_log(Logger::LDEBUG, NULL, __VA_ARGS__)
-#define logInfo(...) Logger::_log(Logger::LNOTICE, NULL, __VA_ARGS__)
+#define logInfo(...) Logger::_log(Logger::LINFO, NULL, __VA_ARGS__)
 
 #define logTrace() Logger::_log(Logger::LDEBUG, __PRETTY_FUNCTION__, "")
-#define logDebugTrace(...) Logger::_log(Logger::LDEBUG, __PRETTY_FUNCTION__, __VA_ARGS__)
+#define logTraceFatal(...) Logger::_log(Logger::LFATAL, __PRETTY_FUNCTION__, __VA_ARGS__)
+#define logTraceError(...) Logger::_log(Logger::LERROR, __PRETTY_FUNCTION__, __VA_ARGS__)
+#define logTraceWarning(...) Logger::_log(Logger::LWARNING, __PRETTY_FUNCTION__, __VA_ARGS__)
+#define logTraceDebug(...) Logger::_log(Logger::LDEBUG, __PRETTY_FUNCTION__, __VA_ARGS__)
+#define logTraceInfo(...) Logger::_log(Logger::LINFO, __PRETTY_FUNCTION__, __VA_ARGS__)
 
 struct Dump {
 public:
