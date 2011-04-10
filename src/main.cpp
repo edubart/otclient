@@ -109,8 +109,8 @@ int main(int argc, const char *argv[])
 
     // state scope
     {
-        //std::shared_ptr<MenuState> initialState(new MenuState);
-        std::shared_ptr<TestState> initialState(new TestState);
+        std::shared_ptr<MenuState> initialState(new MenuState);
+        //std::shared_ptr<TestState> initialState(new TestState);
         g_engine.changeState(initialState.get());
 
         Platform::showWindow();
