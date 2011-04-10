@@ -49,6 +49,8 @@ public:
     virtual void render();
     virtual bool onInputEvent(const InputEvent& event) { return false; }
 
+    UIElementPtr backwardsGetElementById(const std::string& id);
+
     bool setSkin(const std::string& skinName);
     void setSkin(UIElementSkin *skin);
     UIElementSkin *getSkin() { return m_skin; }

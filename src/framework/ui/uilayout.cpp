@@ -46,35 +46,55 @@ int AnchorLine::getPos() const
                 return 0;
         }
     }
-    logError("anchor line of an element have expired");
+    logError("anchor line of an element has expired, your UI is missconfigured");
     return 0;
 }
 
 void UILayout::setSize(const Size& size)
 {
     m_rect.setSize(size);
+
+    // rect updated, recalculate itself and anchored elements positions
     recalculateAnchors();
 }
 
 void UILayout::setRect(const Rect& rect)
 {
     m_rect = rect;
+
+    // rect updated, recalculate itself and anchored elements positions
     recalculateAnchors();
 }
 
-void UILayout::addAnchor(EAnchorType type, const AnchorLine& anchorLine)
+bool UILayout::addAnchor(EAnchorType type, const AnchorLine& anchorLine)
 {
-    if(!anchorLine.isValid()) {
-        logError("anchoring for an element has failed, got an invalid anchor line");
-        return;
+    // we can never anchor with itself
+    if(anchorLine.getRelativeElement() == asUILayout()) {
+        logError("anchoring with itself is not possible");
+        return false;
     }
+
+    // check if this layout is already anchored with the relative element
+    // this only happens in missconfigurations
+    for(auto it = m_anchoredElements.begin(); it != m_anchoredElements.end(); ++it) {
+        if((*it).lock() == anchorLine.getRelativeElement()) {
+            logError("anchoring elements with each other is not possible");
+            return false;
+        }
+    }
+
+    // setup the anchor
     m_anchors[type] = anchorLine;
     anchorLine.getRelativeElement()->addAnchoredElement(asUILayout());
+
+    // recalculate itself and anchored elements
     recalculateAnchors();
+    return true;
 }
 
 void UILayout::addAnchoredElement(UILayoutPtr anchoredElement)
 {
+    // check if is already anchored
     bool found = false;
     for(auto it = m_anchoredElements.begin(); it != m_anchoredElements.end(); ++it) {
         if((*it).lock() == anchoredElement) {
@@ -82,13 +102,15 @@ void UILayout::addAnchoredElement(UILayoutPtr anchoredElement)
             break;
         }
     }
+
+    // if not anchor it
     if(!found)
         m_anchoredElements.push_back(anchoredElement);
 }
 
 void UILayout::recalculateAnchors()
 {
-    // horizontal
+    // recalculate horizontal position
     if(m_anchors[ANCHOR_HORIZONTAL_CENTER].isValid()) {
         m_rect.moveHorizontalCenter(m_anchors[ANCHOR_HORIZONTAL_CENTER].getPos() + m_marginLeft - m_marginRight);
     } else {
@@ -102,7 +124,7 @@ void UILayout::recalculateAnchors()
         }
     }
 
-    // vertical
+    // recalculate vertical position
     if(m_anchors[ANCHOR_VERTICAL_CENTER].isValid()) {
         m_rect.moveVerticalCenter(m_anchors[ANCHOR_VERTICAL_CENTER].getPos() + m_marginTop - m_marginBottom);
     } else {
@@ -116,6 +138,7 @@ void UILayout::recalculateAnchors()
         }
     }
 
+    // recalculate anchored elements positions
     for(auto it = m_anchoredElements.begin(); it != m_anchoredElements.end(); ++it) {
         UILayoutPtr element = (*it).lock();
         if(element)

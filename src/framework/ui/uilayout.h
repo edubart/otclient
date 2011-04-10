@@ -52,6 +52,7 @@ public:
         m_relativeElement(relativeElement), m_anchorType(anchorType) { }
     bool isValid() const { return (m_anchorType != ANCHOR_NONE && !m_relativeElement.expired()); }
 
+    /// Get the position relative to this anchor line
     int getPos() const;
     EAnchorType getAnchorType() const { return m_anchorType; }
     UILayoutPtr getRelativeElement() const { return m_relativeElement.lock(); }
@@ -74,10 +75,13 @@ public:
     void setSize(const Size& size);
     Size getSize() { return m_rect.size(); }
 
+    /// Set the layout rect, always absolute position
     void setRect(const Rect& rect);
+    /// Get layout size, it always return the absolute position
     const Rect& getRect() const{ return m_rect; }
 
-    void addAnchor(EAnchorType type, const AnchorLine& anchorLine);
+    // anchors add methods
+    bool addAnchor(EAnchorType type, const AnchorLine& anchorLine);
     void anchorLeft(const AnchorLine& anchorLine) { addAnchor(ANCHOR_LEFT, anchorLine); }
     void anchorRight(const AnchorLine& anchorLine) { addAnchor(ANCHOR_RIGHT, anchorLine); }
     void anchorTop(const AnchorLine& anchorLine) { addAnchor(ANCHOR_TOP, anchorLine); }
@@ -85,6 +89,7 @@ public:
     void anchorHorizontalCenter(const AnchorLine& anchorLine) { addAnchor(ANCHOR_HORIZONTAL_CENTER, anchorLine); }
     void anchorVerticalCenter(const AnchorLine& anchorLine) { addAnchor(ANCHOR_VERTICAL_CENTER, anchorLine); }
 
+    // anchor lines
     AnchorLine left() { return AnchorLine(asUILayout(), ANCHOR_LEFT); }
     AnchorLine right() { return AnchorLine(asUILayout(), ANCHOR_RIGHT); }
     AnchorLine top() { return AnchorLine(asUILayout(), ANCHOR_TOP); }
@@ -92,10 +97,10 @@ public:
     AnchorLine horizontalCenter() { return AnchorLine(asUILayout(), ANCHOR_HORIZONTAL_CENTER); }
     AnchorLine verticalCenter() { return AnchorLine(asUILayout(), ANCHOR_VERTICAL_CENTER); }
 
+    // margins
     void setMargin(int top, int left, int bottom, int right) { m_marginLeft = left; m_marginRight = right; m_marginTop = top; m_marginBottom = bottom; recalculateAnchors(); }
     void setMargin(int horizontal, int vertical) { m_marginLeft = m_marginRight = horizontal; m_marginTop = m_marginBottom = vertical; recalculateAnchors(); }
     void setMargin(int margin) { m_marginLeft = m_marginRight = m_marginTop = m_marginBottom = margin; recalculateAnchors(); }
-
     void setMarginLeft(int margin) { m_marginLeft = margin; recalculateAnchors(); }
     void setMarginRight(int margin) { m_marginRight = margin; recalculateAnchors(); }
     void setMarginTop(int margin) { m_marginTop = margin; recalculateAnchors(); }
@@ -104,6 +109,7 @@ public:
     UILayoutPtr asUILayout() { return shared_from_this(); }
 
 private:
+    /// Recalculate itself and anchored elements positions
     void recalculateAnchors();
     void addAnchoredElement(UILayoutPtr anchoredElement);
 

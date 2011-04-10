@@ -241,13 +241,14 @@ void UILoader::loadElementAnchor(const UIElementPtr& element, EAnchorType type, 
     if(relativeElementId == "parent" && element->getParent()) {
         relativeElement = element->getParent()->asUILayout();
     } else {
-        UIElementPtr tmp = UIContainer::getRootContainer()->recursiveGetChildById(relativeElementId);
+        UIElementPtr tmp = element->backwardsGetElementById(relativeElementId);
         if(tmp)
             relativeElement = tmp->asUILayout();
     }
 
     if(relativeElement) {
-        element->addAnchor(type, AnchorLine(relativeElement, relativeAnchorType));
+        if(!element->addAnchor(type, AnchorLine(relativeElement, relativeAnchorType)))
+            throw YAML::Exception(node.GetMark(), "error while processing anchors");
     } else {
         throw YAML::Exception(node.GetMark(), "anchoring failed, does the relative element really exists?");
     }

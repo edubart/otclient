@@ -57,3 +57,22 @@ void UIElement::render()
     if(m_skin)
         m_skin->draw(this);
 }
+
+
+UIElementPtr UIElement::backwardsGetElementById(const std::string& id)
+{
+    if(getId() == id)
+        return asUIElement();
+
+    UIElementPtr element;
+
+    if(asUIContainer()) {
+        element = asUIContainer()->recursiveGetChildById(id);
+        if(element)
+            return element;
+    }
+
+    if(getParent())
+        element = getParent()->backwardsGetElementById(id);
+    return element;
+}

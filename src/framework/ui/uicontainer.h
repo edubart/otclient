@@ -38,7 +38,6 @@ public:
     void removeChild(UIElementPtr child);
     UIElementPtr getChildById(const std::string& id);
 
-    //TODO: make this backwards
     UIElementPtr recursiveGetChildById(const std::string& id);
 
     virtual void render();
