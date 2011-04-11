@@ -49,7 +49,7 @@ panels:
 labels:
   default:
     font: tibia-10px-antialised
-    text color: [238, 238, 238, 255]
+    text color: [191, 191, 191, 255]
 
 windows:
   default:

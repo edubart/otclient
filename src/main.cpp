@@ -108,8 +108,7 @@ int main(int argc, const char *argv[])
 
     // init engine
     g_engine.init();
-
-    g_uiSkins.init();
+    g_uiSkins.load("skins/tibiaskin.yml");
 
     // state scope
     {

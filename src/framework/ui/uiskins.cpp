@@ -33,27 +33,11 @@
 
 UISkins g_uiSkins;
 
-void UISkins::init()
+void UISkins::load(const std::string& skinsFile)
 {
-    // load default skin
-    g_uiSkins.load("skins/tibiaskin.yml");
-
-}
-
-void UISkins::terminate()
-{
-    for(auto it = m_elementSkins.begin(); it != m_elementSkins.end(); ++it)
-        delete (*it);
-    m_elementSkins.clear();
-}
-
-bool UISkins::load(const std::string& file)
-{
-    std::string fileContents = g_resources.loadTextFile(file);
-    if(!fileContents.size()) {
-        logFatal("Could not load skin file \"%s",  file.c_str());
-        return false;
-    }
+    std::string fileContents = g_resources.loadTextFile(skinsFile);
+    if(!fileContents.size())
+        logFatal("Could not load skin file \"%s",  skinsFile.c_str());
 
     std::istringstream fin(fileContents);
 
@@ -128,11 +112,17 @@ bool UISkins::load(const std::string& file)
             }
         }
     } catch (YAML::Exception& e) {
-        logError("Malformed skin file \"%s\":\n  %s", file.c_str(), e.what());
-        return false;
+        logFatal("Malformed skin file \"%s\":\n  %s", skinsFile.c_str(), e.what());
     }
-    return true;
 }
+
+void UISkins::terminate()
+{
+    for(auto it = m_elementSkins.begin(); it != m_elementSkins.end(); ++it)
+        delete (*it);
+    m_elementSkins.clear();
+}
+
 
 UIElementSkin* UISkins::getElementSkin(UI::EElementType elementType, const std::string& name)
 {

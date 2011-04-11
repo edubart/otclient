@@ -36,10 +36,8 @@ class UISkins
 public:
     UISkins() { }
 
-    void init();
+    void load(const std::string& skinsFile);
     void terminate();
-
-    bool load(const std::string& file);
 
     UIElementSkin *getElementSkin(UI::EElementType elementType, const std::string& name = "default");
     TexturePtr getDefaultTexture() { return m_defaultTexture; }

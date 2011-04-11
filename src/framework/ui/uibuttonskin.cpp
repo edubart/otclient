@@ -44,7 +44,6 @@ void UIButtonSkin::load(const YAML::Node& node)
     m_font = g_fonts.get(tmp);
 
     node["text color"] >> m_textColor;
-    m_textColor = Color::white;
 }
 
 void UIButtonSkin::draw(UIElement *element)
