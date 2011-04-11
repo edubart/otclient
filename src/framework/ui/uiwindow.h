@@ -41,6 +41,6 @@ private:
     std::string m_title;
 };
 
-typedef std::shared_ptr<UIWindow> UIWindowPtr;
+typedef boost::shared_ptr<UIWindow> UIWindowPtr;
 
 #endif // UIWINDOW_H

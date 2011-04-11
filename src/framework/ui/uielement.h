@@ -33,12 +33,12 @@
 class UIElementSkin;
 
 class UIContainer;
-typedef std::shared_ptr<UIContainer> UIContainerPtr;
-typedef std::weak_ptr<UIContainer> UIContainerWeakPtr;
+typedef boost::shared_ptr<UIContainer> UIContainerPtr;
+typedef boost::weak_ptr<UIContainer> UIContainerWeakPtr;
 
 class UIElement;
-typedef std::shared_ptr<UIElement> UIElementPtr;
-typedef std::weak_ptr<UIElement> UIElementWeakPtr;
+typedef boost::shared_ptr<UIElement> UIElementPtr;
+typedef boost::weak_ptr<UIElement> UIElementWeakPtr;
 
 class UIElement : public UILayout
 {
@@ -72,7 +72,7 @@ public:
 
     UI::EElementType getElementType() const { return m_type; }
 
-    UIElementPtr asUIElement() { return std::static_pointer_cast<UIElement>(shared_from_this()); }
+    UIElementPtr asUIElement() { return boost::static_pointer_cast<UIElement>(shared_from_this()); }
     virtual UIContainerPtr asUIContainer() { return UIContainerPtr(); }
 
     friend class UIContainer;

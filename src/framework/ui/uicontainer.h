@@ -48,7 +48,7 @@ public:
 
     virtual UI::EElementType getElementType() const { return UI::Container; }
 
-    UIContainerPtr asUIContainer() { return std::static_pointer_cast<UIContainer>(shared_from_this()); }
+    UIContainerPtr asUIContainer() { return boost::static_pointer_cast<UIContainer>(shared_from_this()); }
 
     static UIContainerPtr& getRootContainer();
 

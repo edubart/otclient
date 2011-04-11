@@ -58,16 +58,18 @@ typedef int8_t int8;
 #include <map>
 #include <string>
 #include <list>
-#include <memory>
 
 // boost utilities
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/foreach.hpp>
 #include <boost/bind.hpp>
+#include <boost/function.hpp>
+#include <boost/shared_ptr.hpp>
+#include <boost/enable_shared_from_this.hpp>
 #define foreach BOOST_FOREACH
 
-typedef std::function<void()> Callback;
+typedef boost::function<void()> Callback;
 
 // yaml
 #include <yaml-cpp/yaml.h>

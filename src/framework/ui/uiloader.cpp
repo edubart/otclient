@@ -194,17 +194,17 @@ void UILoader::loadElement(const UIElementPtr& element, const YAML::Node& node)
 
     // load specific element type
     if(element->getElementType() == UI::Button) {
-        UIButtonPtr button = std::static_pointer_cast<UIButton>(element);
+        UIButtonPtr button = boost::static_pointer_cast<UIButton>(element);
         node["text"] >> tmp;
         button->setText(tmp);
     }
     else if(element->getElementType() == UI::Window) {
-        UIWindowPtr window = std::static_pointer_cast<UIWindow>(element);
+        UIWindowPtr window = boost::static_pointer_cast<UIWindow>(element);
         node["title"] >> tmp;
         window->setTitle(tmp);
     }
     else if(element->getElementType() == UI::Label) {
-        UILabelPtr label = std::static_pointer_cast<UILabel>(element);
+        UILabelPtr label = boost::static_pointer_cast<UILabel>(element);
         node["text"] >> tmp;
         label->setText(tmp);
     }

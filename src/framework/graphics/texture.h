@@ -52,6 +52,6 @@ private:
     Size m_size;
 };
 
-typedef std::shared_ptr<Texture> TexturePtr;
+typedef boost::shared_ptr<Texture> TexturePtr;
 
 #endif // TEXTURE_H

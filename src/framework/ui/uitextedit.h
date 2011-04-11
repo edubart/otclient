@@ -57,6 +57,6 @@ private:
     std::string m_text;
 };
 
-typedef std::shared_ptr<UITextEdit> UITextEditPtr;
+typedef boost::shared_ptr<UITextEdit> UITextEditPtr;
 
 #endif // UITEXTEDIT_H

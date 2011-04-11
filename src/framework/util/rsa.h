@@ -43,6 +43,6 @@ protected:
     mpz_t m_p, m_q, m_u, m_d, m_dp, m_dq, m_mod;
 };
 
-typedef std::shared_ptr<Rsa> RsaPtr;
+typedef boost::shared_ptr<Rsa> RsaPtr;
 
 #endif //RSA_H

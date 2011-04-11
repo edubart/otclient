@@ -41,10 +41,10 @@ void MenuState::onEnter()
 
     UIContainerPtr mainMenuPanel = UILoader::loadFile("ui/mainMenu.yml")->asUIContainer();
 
-    UIButtonPtr button = std::static_pointer_cast<UIButton>(mainMenuPanel->getChildById("exitGameButton"));
+    UIButtonPtr button = boost::static_pointer_cast<UIButton>(mainMenuPanel->getChildById("exitGameButton"));
     button->setOnClick(boost::bind(&MenuState::onClose, this));
 
-    button = std::static_pointer_cast<UIButton>(mainMenuPanel->getChildById("enterGameButton"));
+    button = boost::static_pointer_cast<UIButton>(mainMenuPanel->getChildById("enterGameButton"));
     button->setOnClick(boost::bind(&MenuState::enterGameButton_clicked, this));
 }
 

@@ -43,6 +43,6 @@ private:
     std::string m_text;
 };
 
-typedef std::shared_ptr<UILabel> UILabelPtr;
+typedef boost::shared_ptr<UILabel> UILabelPtr;
 
 #endif // UILABEL_H

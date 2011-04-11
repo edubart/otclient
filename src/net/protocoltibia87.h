@@ -50,6 +50,6 @@ private:
     static const char* rsa;
 };
 
-typedef std::shared_ptr<ProtocolTibia87> ProtocolTibia87Ptr;
+typedef boost::shared_ptr<ProtocolTibia87> ProtocolTibia87Ptr;
 
 #endif //PROTOCOLTIBIA87_H

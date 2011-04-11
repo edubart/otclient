@@ -44,6 +44,6 @@ protected:
     Rect m_textureCoords;
 };
 
-typedef std::shared_ptr<Image> ImagePtr;
+typedef boost::shared_ptr<Image> ImagePtr;
 
 #endif // IMAGE_H

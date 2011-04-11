@@ -82,6 +82,6 @@ private:
     Size m_cornersSize;
 };
 
-typedef std::shared_ptr<BorderedImage> BorderedImagePtr;
+typedef boost::shared_ptr<BorderedImage> BorderedImagePtr;
 
 #endif // BORDEREDIMAGE_H

@@ -33,15 +33,16 @@
 class TestState;
 class Protocol;
 class Connections;
+class Connection;
 
-class Connection : public std::enable_shared_from_this<Connection>
+class Connection : public boost::enable_shared_from_this<Connection>
 {
 public:
-    typedef std::function<void()> ConnectionCallback;
-    typedef std::function<void(NetworkMessagePtr)> RecvCallback;
-    typedef std::function<void(const boost::system::error_code&, const std::string&)> ErrorCallback;
+    typedef boost::function<void()> ConnectionCallback;
+    typedef boost::function<void(NetworkMessagePtr)> RecvCallback;
+    typedef boost::function<void(const boost::system::error_code&, const std::string&)> ErrorCallback;
 
-    typedef std::shared_ptr<Connection> ConnectionPtr;
+    typedef boost::shared_ptr<Connection> ConnectionPtr;
 
 private:
     Connection(boost::asio::io_service& ioService);
@@ -94,6 +95,6 @@ private:
     friend class Connections;
 };
 
-typedef std::shared_ptr<Connection> ConnectionPtr;
+typedef boost::shared_ptr<Connection> ConnectionPtr;
 
 #endif //CONNECTION_h

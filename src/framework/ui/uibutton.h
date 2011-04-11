@@ -51,6 +51,6 @@ private:
     Callback m_buttonClickCallback;
 };
 
-typedef std::shared_ptr<UIButton> UIButtonPtr;
+typedef boost::shared_ptr<UIButton> UIButtonPtr;
 
 #endif // UIBUTTON_H

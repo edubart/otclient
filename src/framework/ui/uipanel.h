@@ -35,6 +35,6 @@ public:
     UIPanel() : UIContainer(UI::Panel) { }
 };
 
-typedef std::shared_ptr<UIPanel> UIPanelPtr;
+typedef boost::shared_ptr<UIPanel> UIPanelPtr;
 
 #endif // UIPANEL_H
