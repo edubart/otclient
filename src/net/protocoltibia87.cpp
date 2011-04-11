@@ -36,11 +36,13 @@ ProtocolTibia87::ProtocolTibia87()
 
 void ProtocolTibia87::begin()
 {
+    /*
     connect("icechaw.otland.net", 7171,
         [this](){
             this->afterConnect();
         }
     );
+    */
 }
 
 void ProtocolTibia87::login(const std::string& account, const std::string& password)
@@ -73,11 +75,13 @@ void ProtocolTibia87::sendAccount(const std::string& account, const std::string&
     networkMessage->setMessageLength(m_notEncriptedLen + 128);
     networkMessage->updateHeaderLength();
 
+    /*
     send(networkMessage,
         [this](){
             this->afterSendAccount();
         }
     );
+    */
 }
 
 void ProtocolTibia87::afterConnect()
@@ -87,11 +91,13 @@ void ProtocolTibia87::afterConnect()
 
 void ProtocolTibia87::afterSendAccount()
 {
+    /*
     recv(
         [this](NetworkMessagePtr networkMessage){
             this->parseCharacterList(networkMessage);
         }
     );
+    */
 }
 
 void ProtocolTibia87::onError(const boost::system::error_code& error, const std::string& msg)

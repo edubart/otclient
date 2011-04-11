@@ -45,6 +45,8 @@ void UILabelSkin::load(const YAML::Node& node)
 
 void UILabelSkin::draw(UIElement *element)
 {
+    UIElementSkin::draw(element);
+
     UILabel *label = static_cast<UILabel*>(element);
 
     m_font->renderText(label->getText(), label->getRect(), ALIGN_TOP_LEFT, m_textColor);

@@ -29,8 +29,6 @@
 #include "uielement.h"
 #include "graphics/borderedimage.h"
 
-typedef std::function<void()> Callback;
-
 class UIButton : public UIElement
 {
 public:
@@ -45,7 +43,7 @@ public:
 
     UI::EButtonState getState() { return m_state; }
 
-    void onClick(const Callback& callback) { m_buttonClickCallback = callback; }
+    void setOnClick(const Callback& callback) { m_buttonClickCallback = callback; }
 
 private:
     std::string m_text;

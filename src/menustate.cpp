@@ -42,17 +42,10 @@ void MenuState::onEnter()
     UIContainerPtr mainMenuPanel = UILoader::loadFile("ui/mainMenu.yml")->asUIContainer();
 
     UIButtonPtr button = std::static_pointer_cast<UIButton>(mainMenuPanel->getChildById("exitGameButton"));
-    button->onClick([this]{
-        this->onClose();
-    });
+    button->setOnClick(boost::bind(&MenuState::onClose, this));
 
     button = std::static_pointer_cast<UIButton>(mainMenuPanel->getChildById("enterGameButton"));
-    button->onClick([mainMenuPanel]{
-        UIElementPtr window = UIContainer::getRootContainer()->getChildById("enterGameWindow");
-        if(!window)
-            window = UILoader::loadFile("ui/enterGameWindow.yml");
-        mainMenuPanel->setEnabled(false);
-    });
+    button->setOnClick(boost::bind(&MenuState::enterGameButton_clicked, this));
 }
 
 void MenuState::onLeave()
@@ -89,3 +82,12 @@ void MenuState::render()
     texCoords.moveBottomRight(texSize.toPoint());
     g_graphics.drawTexturedRect(Rect(0, 0, screenSize), m_background, texCoords);
 }
+
+void MenuState::enterGameButton_clicked()
+{
+    UIElementPtr window = UIContainer::getRootContainer()->getChildById("enterGameWindow");
+    if(!window)
+        window = UILoader::loadFile("ui/enterGameWindow.yml");
+    window->getParent()->setEnabled(false);
+}
+

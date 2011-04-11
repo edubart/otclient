@@ -29,12 +29,24 @@
 #include "uiconstants.h"
 #include "uielementskin.h"
 
+class Font;
+
 class UITextEditSkin : public UIElementSkin
 {
 public:
     UITextEditSkin(const std::string& name) :
         UIElementSkin(name, UI::TextEdit) { }
 
+    void load(const YAML::Node& node);
+    void draw(UIElement *element);
+
+    Font *getFont() const { return m_font; }
+    int getTextMargin() const { return m_textMargin; }
+
+private:
+    Font *m_font;
+    int m_textMargin;
+    Color m_textColor;
 };
 
 #endif // UITEXTEDITSKIN_H

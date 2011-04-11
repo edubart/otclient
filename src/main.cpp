@@ -115,9 +115,7 @@ int main(int argc, const char *argv[])
     {
         std::shared_ptr<MenuState> initialState(new MenuState);
         //std::shared_ptr<TestState> initialState(new TestState);
-        g_dispatcher.addTask([&initialState]{
-            g_engine.changeState(initialState.get());
-        });
+        g_dispatcher.addTask(boost::bind(&Engine::changeState, &g_engine, initialState.get()));
 
         Platform::showWindow();
         //Platform::hideMouseCursor();

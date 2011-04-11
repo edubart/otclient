@@ -29,8 +29,6 @@
 
 #include <queue>
 
-typedef std::function<void (void)> Callback;
-
 class Task {
 public:
     inline Task(const Callback& _callback) : ticks(0), callback(_callback) { }

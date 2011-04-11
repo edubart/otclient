@@ -33,11 +33,9 @@ class Font;
 class UITextEdit : public UIElement
 {
 public:
-    UITextEdit(Font *font = NULL);
+    UITextEdit();
 
     void onInputEvent(const InputEvent& event);
-
-    void render();
 
     void clearText();
     void setText(const std::string& text);
@@ -57,7 +55,6 @@ private:
     uint m_cursorPos;
     int m_startRenderPos;
     std::string m_text;
-    Font *m_font;
 };
 
 typedef std::shared_ptr<UITextEdit> UITextEditPtr;

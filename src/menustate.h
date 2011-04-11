@@ -46,7 +46,7 @@ public:
     void render();
 
 private:
-    void createMainMenu();
+    void enterGameButton_clicked();
 
     UIPanelPtr m_menuPanel;
     TexturePtr m_background;

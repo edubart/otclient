@@ -25,26 +25,12 @@
 #include "uitextedit.h"
 #include "graphics/fonts.h"
 
-UITextEdit::UITextEdit(Font* font) :
+UITextEdit::UITextEdit() :
     UIElement(UI::TextEdit),
     m_cursorPos(0),
-    m_startRenderPos(0),
-    m_font(font)
+    m_startRenderPos(0)
 {
-    if(!font)
-        m_font = g_fonts.get("tibia-10px-antialised");
-}
 
-void UITextEdit::render()
-{
-    UIElement::render();
-
-    Rect textRect = getRect(); 
-    textRect.setLeft(textRect.left() + 2);
-    textRect.setRight(textRect.right() - 2);
-
-    // render text
-    m_font->renderText(m_text, textRect, ALIGN_LEFT, Color(0xFFBFBFBF), Point(m_startRenderPos, 0), m_cursorPos);
 }
 
 void UITextEdit::onInputEvent(const InputEvent& event)

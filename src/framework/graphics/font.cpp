@@ -27,8 +27,6 @@
 #include "textures.h"
 #include "graphics.h"
 
-
-
 void Font::calculateGlyphsWidthsAutomatically(const Size& glyphSize)
 {
     int numHorizontalGlyphs = m_texture->getSize().width() / glyphSize.width();
