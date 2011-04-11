@@ -34,14 +34,14 @@ public:
     UIContainer(UI::EElementType type = UI::Container) : UIElement(type) { }
     virtual ~UIContainer() { }
 
+    virtual void render();
+    virtual void onInputEvent(const InputEvent& event);
+
     void addChild(UIElementPtr child);
     void removeChild(UIElementPtr child);
     UIElementPtr getChildById(const std::string& id);
 
     UIElementPtr recursiveGetChildById(const std::string& id);
-
-    virtual void render();
-    virtual void onInputEvent(const InputEvent& event);
 
     void setFocusedElement(UIElementPtr focusedElement);
     UIElementPtr getFocusedElement() const { return m_focusedElement; }
@@ -52,7 +52,7 @@ public:
 
     static UIContainerPtr& getRootContainer();
 
-protected:
+private:
     std::list<UIElementPtr> m_children;
     UIElementPtr m_focusedElement;
 };

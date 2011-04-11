@@ -90,6 +90,7 @@ SET(SOURCES
     src/framework/ui/uielement.cpp
     src/framework/ui/uielementskin.cpp
     src/framework/ui/uibuttonskin.cpp
+    src/framework/ui/uilabelskin.cpp
     src/framework/ui/uicontainer.cpp
     src/framework/ui/uiskins.cpp
     src/framework/ui/uiloader.cpp

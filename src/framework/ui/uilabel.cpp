@@ -24,25 +24,12 @@
 
 #include "uilabel.h"
 #include "graphics/fonts.h"
-
-UILabel::UILabel(const std::string& text, Font* font) :
-    UIElement(UI::Label),
-    m_text(text),
-    m_font(font)
-{
-    if(!font)
-        m_font = g_fonts.get("tibia-10px-antialised");
-    setSize(m_font->calculateTextRectSize(text));
-}
-
-void UILabel::render()
-{
-    m_font->renderText(m_text, getRect(), ALIGN_LEFT, Color(0xFFBFBFBF));
-}
+#include "uilabelskin.h"
 
 void UILabel::setText(const std::string& text)
 {
-    setSize(m_font->calculateTextRectSize(text));
+    UILabelSkin *skin = static_cast<UILabelSkin*>(getSkin());
+    setSize(skin->getFont()->calculateTextRectSize(text));
     m_text = text;
 }
 

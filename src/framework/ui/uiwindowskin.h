@@ -43,6 +43,7 @@ private:
     ImagePtr m_bodyImage;
     Font *m_titleFont;
     int m_headHeight;
+    Color m_headTextColor;
 };
 
 #endif // UIWINDOWSKIN_H

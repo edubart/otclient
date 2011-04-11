@@ -55,7 +55,8 @@ public:
 
     /// Simple text render starting at pos
     void renderText(const std::string& text,
-                    const Point& startPos);
+                    const Point& startPos,
+                    const Color& color = Color::white);
 
     /** Advanced text render
      * screenCoords is the rect that will be filled on the screen

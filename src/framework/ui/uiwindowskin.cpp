@@ -25,6 +25,21 @@
 #include "uiwindow.h"
 #include "graphics/fonts.h"
 
+void UIWindowSkin::load(const YAML::Node& node)
+{
+    UIElementSkin::load(node);
+
+    node["head"]["height"] >> m_headHeight;
+    m_headImage = loadImage(node["head"]);
+    m_bodyImage = loadImage(node["body"]);
+
+    std::string fontName;
+    node["head"]["font"] >> fontName;
+    m_titleFont = g_fonts.get(fontName);
+
+    node["head"]["text color"] >> m_headTextColor;
+}
+
 void UIWindowSkin::draw(UIElement* element)
 {
     UIElementSkin::draw(element);
@@ -41,20 +56,7 @@ void UIWindowSkin::draw(UIElement* element)
     m_titleFont->renderText(window->getTitle(),
                             headRect,
                             ALIGN_CENTER,
-                            Color(0xFF8F8F8F));
+                            m_headTextColor);
 
     m_bodyImage->draw(bodyRect);
-}
-
-void UIWindowSkin::load(const YAML::Node& node)
-{
-    UIElementSkin::load(node);
-
-    node["head"]["height"] >> m_headHeight;
-    m_headImage = loadImage(node["head"]);
-    m_bodyImage = loadImage(node["body"]);
-
-    std::string fontName;
-    node["head"]["font"] >> fontName;
-    m_titleFont = g_fonts.get(fontName);
 }

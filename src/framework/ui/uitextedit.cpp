@@ -102,3 +102,9 @@ void UITextEdit::setCursorPos(uint pos)
         m_cursorPos = pos;
 }
 
+void UITextEdit::onLayoutRectChange(const Rect& rect)
+{
+    m_textRect = rect;
+}
+
+

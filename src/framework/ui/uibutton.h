@@ -34,11 +34,9 @@ typedef std::function<void()> Callback;
 class UIButton : public UIElement
 {
 public:
-    UIButton(const std::string& text = std::string()) : UIElement(UI::Button),
-        m_text(text),
-        m_state(UI::ButtonUp) {
-            UIElement();
-        }
+    UIButton() :
+        UIElement(UI::Button),
+        m_state(UI::ButtonUp) {  }
 
     void onInputEvent(const InputEvent& event);
 

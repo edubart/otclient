@@ -58,7 +58,7 @@ void UILayout::setSize(const Size& size)
         m_rect = Rect(0, 0, size);
 
     // rect updated, recalculate itself and anchored elements positions
-    recalculateAnchors();
+    recalculateLayout();
 }
 
 void UILayout::setRect(const Rect& rect)
@@ -66,7 +66,7 @@ void UILayout::setRect(const Rect& rect)
     m_rect = rect;
 
     // rect updated, recalculate itself and anchored elements positions
-    recalculateAnchors();
+    recalculateLayout();
 }
 
 bool UILayout::addAnchor(EAnchorType type, const AnchorLine& anchorLine)
@@ -91,7 +91,7 @@ bool UILayout::addAnchor(EAnchorType type, const AnchorLine& anchorLine)
     anchorLine.getRelativeElement()->addAnchoredElement(asUILayout());
 
     // recalculate itself and anchored elements
-    recalculateAnchors();
+    recalculateLayout();
     return true;
 }
 
@@ -111,7 +111,7 @@ void UILayout::addAnchoredElement(UILayoutPtr anchoredElement)
         m_anchoredElements.push_back(anchoredElement);
 }
 
-void UILayout::recalculateAnchors()
+void UILayout::recalculateLayout()
 {
     // recalculate horizontal position
     if(m_anchors[ANCHOR_HORIZONTAL_CENTER].isValid()) {
@@ -145,6 +145,10 @@ void UILayout::recalculateAnchors()
     for(auto it = m_anchoredElements.begin(); it != m_anchoredElements.end(); ++it) {
         UILayoutPtr element = (*it).lock();
         if(element)
-            element->recalculateAnchors();
+            element->recalculateLayout();
     }
+
+    // fire layotu update event
+    onLayoutRectChange(m_rect);
 }
+

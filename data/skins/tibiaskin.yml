@@ -2,6 +2,8 @@ default skin image: tibiaskin.png
 
 buttons:
   default:
+    font: tibia-8px-antialised
+    text color: [238, 238, 238, 255]
     default size: [86, 20]
 
     bordered image:
@@ -16,7 +18,7 @@ buttons:
       center: [46,139,84,18]
     
     down state:
-      translate: [1, 1]
+      text translate: [1, 1]
       bordered image:
         left border: [45,159,1,18]
         right border: [130,159,1,18]
@@ -46,11 +48,13 @@ panels:
       
 labels:
   default:
-    # the default label is empty
-    
+    font: tibia-10px-antialised
+    text color: [238, 238, 238, 255]
+
 windows:
   default:
     head:
+      text color: [143, 143, 143, 255]
       height: 17
       font: tibia-10px-antialised
       bordered image:

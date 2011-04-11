@@ -29,6 +29,7 @@
 #include "uibuttonskin.h"
 #include "uiwindowskin.h"
 #include "uitexteditskin.h"
+#include "uilabelskin.h"
 
 UISkins g_uiSkins;
 
@@ -108,11 +109,12 @@ bool UISkins::load(const std::string& file)
                 std::string name;
                 it.first() >> name;
 
-                UIElementSkin *skin = new UIElementSkin(name, UI::Label);
+                UIElementSkin *skin = new UILabelSkin(name);
                 skin->load(it.second());
                 m_elementSkins.push_back(skin);
             }
         }
+
 
         {
             const YAML::Node& node = doc["text edits"];
@@ -125,10 +127,8 @@ bool UISkins::load(const std::string& file)
                 m_elementSkins.push_back(skin);
             }
         }
-
-        
-    } catch (YAML::ParserException& e) {
-        logError("Malformed font file \"%s\"", file.c_str());
+    } catch (YAML::Exception& e) {
+        logError("Malformed skin file \"%s\":\n  %s", file.c_str(), e.what());
         return false;
     }
     return true;

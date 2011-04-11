@@ -22,27 +22,29 @@
  */
 
 
-#ifndef UILABEL_H
-#define UILABEL_H
+#ifndef UILABELSKIN_H
+#define UILABELSKIN_H
 
 #include "prerequisites.h"
-#include "uielement.h"
+#include "uiconstants.h"
+#include "uielementskin.h"
 
 class Font;
 
-class UILabel : public UIElement
+class UILabelSkin : public UIElementSkin
 {
 public:
-    UILabel() :
-        UIElement(UI::Label) { }
+    UILabelSkin(const std::string& name) :
+        UIElementSkin(name, UI::Label) { }
 
-    void setText(const std::string& text);
-    const std::string& getText() const { return m_text; }
+    void load(const YAML::Node& node);
+    void draw(UIElement *element);
+
+    Font *getFont() const { return m_font; }
 
 private:
-    std::string m_text;
+    Font *m_font;
+    Color m_textColor;
 };
 
-typedef std::shared_ptr<UILabel> UILabelPtr;
-
-#endif // UILABEL_H
+#endif // UILABELSKIN_H

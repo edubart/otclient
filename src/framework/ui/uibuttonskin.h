@@ -29,6 +29,8 @@
 #include "uiconstants.h"
 #include "uielementskin.h"
 
+class Font;
+
 class UIButtonSkin : public UIElementSkin
 {
 public:
@@ -42,6 +44,8 @@ private:
     ImagePtr m_buttonDownImage;
     ImagePtr m_buttonHoverImage;
     Point m_buttonDownTranslate;
+    Font *m_font;
+    Color m_textColor;
 };
 
 #endif // UIBUTTONSKIN_H

@@ -25,6 +25,7 @@
 #include "uielement.h"
 #include "uiskins.h"
 #include "uielementskin.h"
+#include <graphics/graphics.h>
 
 UIElement::UIElement(UI::EElementType type) :
     UILayout(),
@@ -57,6 +58,7 @@ void UIElement::render()
 {
     if(m_skin)
         m_skin->draw(this);
+    //g_graphics.drawBoundingRect(getRect());
 }
 
 UIElementPtr UIElement::backwardsGetElementById(const std::string& id)

@@ -132,11 +132,12 @@ bool Font::load(const std::string& file)
 }
 
 void Font::renderText(const std::string& text,
-                      const Point& startPos)
+                      const Point& startPos,
+                      const Color& color)
 {
     Size boxSize = g_graphics.getScreenSize() - startPos.toSize();
     Rect screenCoords(startPos, boxSize);
-    Font::renderText(text, screenCoords);
+    Font::renderText(text, screenCoords, ALIGN_TOP_LEFT, color);
 }
 
 void Font::renderText(const std::string& text,
@@ -158,7 +159,7 @@ void Font::renderText(const std::string& text,
     Point *glyphsPositions = calculateGlyphsPositions(text, align, &textBoxSize);
 
     for(int i = 0; i < textLenght; ++i) {
-        int glyph = (int)text[i];
+        int glyph = (uchar)text[i];
 
         // skip invalid glyphs
         if(glyph < 32)
@@ -253,7 +254,7 @@ Point* Font::calculateGlyphsPositions(const std::string& text, int align, Size *
     if((align & ALIGN_RIGHT || align & ALIGN_HORIZONTAL_CENTER) || textBoxSize) {
         lineWidths[0] = 0;
         for(i = 0; i< numGlyphs; ++i) {
-            glyph = (int)text[i];
+            glyph = (uchar)text[i];
 
             if(glyph == (uchar)'\n') {
                 lineWidths[++lines] = 0;
@@ -267,7 +268,7 @@ Point* Font::calculateGlyphsPositions(const std::string& text, int align, Size *
     Point virtualPos(0, m_topMargin);
     lines = 0;
     for(i = 0; i < numGlyphs; ++i) {
-        glyph = (int)text[i];
+        glyph = (uchar)text[i];
 
         // store current glyph topLeft
         glyphsPositions[i] = virtualPos;

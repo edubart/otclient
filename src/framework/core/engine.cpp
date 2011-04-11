@@ -133,7 +133,7 @@ void Engine::onClose()
 void Engine::onResize(const Size& size)
 {
     g_graphics.resize(size);
-    UIContainer::getRootContainer()->setSize(size);
+    UIContainer::getRootContainer()->setSize(Size(size.width()-1, size.height()-1));
 
     if(m_currentState)
         m_currentState->onResize(size);

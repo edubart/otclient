@@ -46,11 +46,14 @@ public:
     void setCursorPos(uint pos);
     uint getCursorPos() { return m_cursorPos; }
 
+    void onLayoutRectChange(const Rect& rect);
+
 private:
     void appendCharacter(char c);
     void removeCharacter(bool right);
     void recalculate();
 
+    Rect m_textRect;
     uint m_cursorPos;
     int m_startRenderPos;
     std::string m_text;

@@ -98,19 +98,22 @@ public:
     AnchorLine verticalCenter() { return AnchorLine(asUILayout(), ANCHOR_VERTICAL_CENTER); }
 
     // margins
-    void setMargin(int top, int left, int bottom, int right) { m_marginLeft = left; m_marginRight = right; m_marginTop = top; m_marginBottom = bottom; recalculateAnchors(); }
-    void setMargin(int horizontal, int vertical) { m_marginLeft = m_marginRight = horizontal; m_marginTop = m_marginBottom = vertical; recalculateAnchors(); }
-    void setMargin(int margin) { m_marginLeft = m_marginRight = m_marginTop = m_marginBottom = margin; recalculateAnchors(); }
-    void setMarginLeft(int margin) { m_marginLeft = margin; recalculateAnchors(); }
-    void setMarginRight(int margin) { m_marginRight = margin; recalculateAnchors(); }
-    void setMarginTop(int margin) { m_marginTop = margin; recalculateAnchors(); }
-    void setMarginBottom(int margin) { m_marginBottom = margin; recalculateAnchors(); }
+    void setMargin(int top, int left, int bottom, int right) { m_marginLeft = left; m_marginRight = right; m_marginTop = top; m_marginBottom = bottom; recalculateLayout(); }
+    void setMargin(int horizontal, int vertical) { m_marginLeft = m_marginRight = horizontal; m_marginTop = m_marginBottom = vertical; recalculateLayout(); }
+    void setMargin(int margin) { m_marginLeft = m_marginRight = m_marginTop = m_marginBottom = margin; recalculateLayout(); }
+    void setMarginLeft(int margin) { m_marginLeft = margin; recalculateLayout(); }
+    void setMarginRight(int margin) { m_marginRight = margin; recalculateLayout(); }
+    void setMarginTop(int margin) { m_marginTop = margin; recalculateLayout(); }
+    void setMarginBottom(int margin) { m_marginBottom = margin; recalculateLayout(); }
 
     UILayoutPtr asUILayout() { return shared_from_this(); }
 
+protected:
+    virtual void onLayoutRectChange(const Rect& newRect) { }
+
 private:
     /// Recalculate itself and anchored elements positions
-    void recalculateAnchors();
+    void recalculateLayout();
     void addAnchoredElement(UILayoutPtr anchoredElement);
 
     AnchorLine m_anchors[6];

@@ -55,7 +55,7 @@ public:
     void setSkin(UIElementSkin *skin);
     UIElementSkin *getSkin() { return m_skin; }
 
-    virtual void setParent(UIContainerPtr parent) { m_parent = parent; }
+    void setParent(UIContainerPtr parent) { m_parent = parent; }
     UIContainerPtr getParent() const { return m_parent.lock(); }
 
     void setId(const std::string& id) { m_id = id; }
@@ -74,6 +74,8 @@ public:
 
     UIElementPtr asUIElement() { return std::static_pointer_cast<UIElement>(shared_from_this()); }
     virtual UIContainerPtr asUIContainer() { return UIContainerPtr(); }
+
+    friend class UIContainer;
 
 private:
     UI::EElementType m_type;

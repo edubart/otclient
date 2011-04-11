@@ -22,27 +22,30 @@
  */
 
 
-#ifndef UILABEL_H
-#define UILABEL_H
+#include "uilabelskin.h"
+#include "uilabel.h"
+#include "graphics/fonts.h"
 
-#include "prerequisites.h"
-#include "uielement.h"
-
-class Font;
-
-class UILabel : public UIElement
+void UILabelSkin::load(const YAML::Node& node)
 {
-public:
-    UILabel() :
-        UIElement(UI::Label) { }
+    UIElementSkin::load(node);
+    std::string tmp;
 
-    void setText(const std::string& text);
-    const std::string& getText() const { return m_text; }
+    if(node.FindValue("font")) {
+        node["font"] >> tmp;
+        m_font = g_fonts.get(tmp);
+    } else
+        m_font = g_fonts.getDefaultFont();
 
-private:
-    std::string m_text;
-};
+    if(node.FindValue("text color"))
+        node["text color"] >> m_textColor;
+    else
+        m_textColor = Color::white;
+}
 
-typedef std::shared_ptr<UILabel> UILabelPtr;
+void UILabelSkin::draw(UIElement *element)
+{
+    UILabel *label = static_cast<UILabel*>(element);
 
-#endif // UILABEL_H
+    m_font->renderText(label->getText(), label->getRect(), ALIGN_TOP_LEFT, m_textColor);
+}

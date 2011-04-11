@@ -26,6 +26,27 @@
 #include "uibutton.h"
 #include "graphics/fonts.h"
 
+void UIButtonSkin::load(const YAML::Node& node)
+{
+    UIElementSkin::load(node);
+
+    std::string tmp;
+
+    m_buttonDownImage = loadImage(node["down state"]);
+
+    if(node["down state"].FindValue("text translate"))
+        node["down state"]["text translate"] >> m_buttonDownTranslate;
+
+    if(node.FindValue("mouse over state"))
+        m_buttonHoverImage = loadImage(node["mouse over state"]);
+
+    node["font"] >> tmp;
+    m_font = g_fonts.get(tmp);
+
+    node["text color"] >> m_textColor;
+    m_textColor = Color::white;
+}
+
 void UIButtonSkin::draw(UIElement *element)
 {
     UIButton *button = static_cast<UIButton*>(element);
@@ -41,21 +62,5 @@ void UIButtonSkin::draw(UIElement *element)
         UIElementSkin::draw(element);
     }
 
-    g_fonts.get("tibia-8px-antialised")->renderText(button->getText(), textRect, ALIGN_CENTER, Color(0xFFEEEEEE));
-}
-
-void UIButtonSkin::load(const YAML::Node& node)
-{
-    UIElementSkin::load(node);
-
-    if(node.FindValue("down state")) {
-        m_buttonDownImage = loadImage(node["down state"]);
-
-        if(node["down state"].FindValue("translate"))
-            node["down state"]["translate"] >> m_buttonDownTranslate;
-    }
-
-    if(node.FindValue("mouse over state"))
-        m_buttonHoverImage = loadImage(node["mouse over state"]);
-
+    m_font->renderText(button->getText(), textRect, ALIGN_CENTER, m_textColor);
 }
