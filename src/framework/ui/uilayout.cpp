@@ -52,7 +52,10 @@ int AnchorLine::getPos() const
 
 void UILayout::setSize(const Size& size)
 {
-    m_rect.setSize(size);
+    if(m_rect.isValid())
+        m_rect.setSize(size);
+    else
+        m_rect = Rect(0, 0, size);
 
     // rect updated, recalculate itself and anchored elements positions
     recalculateAnchors();

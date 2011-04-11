@@ -31,7 +31,8 @@ UIElement::UIElement(UI::EElementType type) :
     m_type(type),
     m_skin(NULL),
     m_visible(true),
-    m_enabled(true)
+    m_enabled(true),
+    m_focused(false)
 {
     // set default skin
     if(type > UI::Container)
@@ -57,7 +58,6 @@ void UIElement::render()
     if(m_skin)
         m_skin->draw(this);
 }
-
 
 UIElementPtr UIElement::backwardsGetElementById(const std::string& id)
 {

@@ -41,10 +41,10 @@ public:
     UIElementPtr recursiveGetChildById(const std::string& id);
 
     virtual void render();
-    virtual bool onInputEvent(const InputEvent& event);
+    virtual void onInputEvent(const InputEvent& event);
 
-    void setActiveElement(UIElementPtr activeElement);
-    UIElementPtr getActiveElement() const { return m_activeElement; }
+    void setFocusedElement(UIElementPtr focusedElement);
+    UIElementPtr getFocusedElement() const { return m_focusedElement; }
 
     virtual UI::EElementType getElementType() const { return UI::Container; }
 
@@ -54,7 +54,7 @@ public:
 
 protected:
     std::list<UIElementPtr> m_children;
-    UIElementPtr m_activeElement;
+    UIElementPtr m_focusedElement;
 };
 
 #endif // UICONTAINER_H

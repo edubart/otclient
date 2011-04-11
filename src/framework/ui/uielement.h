@@ -47,7 +47,7 @@ public:
     virtual ~UIElement() { }
 
     virtual void render();
-    virtual bool onInputEvent(const InputEvent& event) { return false; }
+    virtual void onInputEvent(const InputEvent& event) { }
 
     UIElementPtr backwardsGetElementById(const std::string& id);
 
@@ -64,6 +64,9 @@ public:
     void setEnabled(bool enabled) { m_enabled = enabled; }
     bool isEnabled() const { return m_enabled; }
 
+    void setFocused(bool focused) { m_focused = focused; }
+    bool isFocused() const { return m_focused; }
+
     void setVisible(bool visible) { m_visible = visible; }
     bool isVisible() const { return m_visible; }
 
@@ -79,6 +82,7 @@ private:
     std::string m_id;
     bool m_visible;
     bool m_enabled;
+    bool m_focused;
 };
 
 #endif // UIELEMENT_H

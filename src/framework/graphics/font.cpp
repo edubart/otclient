@@ -143,7 +143,9 @@ void Font::renderText(const std::string& text,
                     const Rect& screenCoords,
                     int align,
                     const Color& color,
-                    const Point& startInternalPos)
+                    const Point& startInternalPos,
+                    int cursorPos,
+                    const Color& cursorColor)
 {
     // prevent glitches from invalid rects
     if(!screenCoords.isValid())
@@ -219,6 +221,17 @@ void Font::renderText(const std::string& text,
 
         // render glyph
         g_graphics.drawTexturedRect(glyphScreenCoords, m_texture, glyphTextureCoords, color);
+
+        // render cursor
+        if(i == cursorPos) {
+            Rect cursorRect(glyphScreenCoords.left()-1, glyphScreenCoords.top(), 1, m_glyphHeight);
+            g_graphics.drawFilledRect(cursorRect, cursorColor);
+        }
+        // render cursor after last element
+        else if(cursorPos == textLenght && i == textLenght - 1) {
+            Rect cursorRect(glyphScreenCoords.right()+1, glyphScreenCoords.top(), 1, m_glyphHeight);
+            g_graphics.drawFilledRect(cursorRect, cursorColor);
+        }
     }
 }
 

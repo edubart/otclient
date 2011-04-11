@@ -22,34 +22,5 @@
  */
 
 
-#ifndef MENUSTATE_H
-#define MENUSTATE_H
+#include "fonttext.h"
 
-#include "core/gamestate.h"
-#include "graphics/texture.h"
-#include "net/connection.h"
-#include "ui/uipanel.h"
-
-class MenuState : public GameState
-{
-
-public:
-    MenuState() { }
-
-    void onEnter();
-    void onLeave();
-
-    void onClose();
-    bool onInputEvent(const InputEvent& event);
-    void onResize(const Size& size);
-
-    void render();
-
-private:
-    void createMainMenu();
-
-    UIPanelPtr m_menuPanel;
-    TexturePtr m_background;
-};
-
-#endif // MENUSTATE_H

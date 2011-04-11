@@ -91,6 +91,8 @@ UIElementPtr UILoader::loadFile(const std::string& file, const UIContainerPtr& p
 
         // now do the real load
         loadElements(element, doc.begin().second());
+
+        return element;
     } catch (YAML::Exception& e) {
         logFatal("Failed to load ui file \"%s\":\n  %s", file.c_str(), e.what());
     }

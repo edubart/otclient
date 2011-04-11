@@ -35,12 +35,24 @@ class UITextEdit : public UIElement
 public:
     UITextEdit(Font *font = NULL);
 
+    void onInputEvent(const InputEvent& event);
+
     void render();
 
+    void clearText();
     void setText(const std::string& text);
     const std::string& getText() const { return m_text; }
 
+    void setCursorPos(uint pos);
+    uint getCursorPos() { return m_cursorPos; }
+
 private:
+    void appendCharacter(char c);
+    void removeCharacter(bool right);
+    void recalculate();
+
+    uint m_cursorPos;
+    int m_startRenderPos;
     std::string m_text;
     Font *m_font;
 };

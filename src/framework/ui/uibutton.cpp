@@ -23,27 +23,16 @@
 
 
 #include "uibutton.h"
-#include "graphics/fonts.h"
-#include "graphics/font.h"
 
-void UIButton::render()
+void UIButton::onInputEvent(const InputEvent& event)
 {
-    UIElement::render();
-
-    g_fonts.get("tibia-8px-antialised")->renderText(m_text, getRect(), ALIGN_CENTER, Color(0xFFEEEEEE));
-}
-
-bool UIButton::onInputEvent(const InputEvent& event)
-{
-    if(event.type == EV_MOUSE_LDOWN &&
-        getRect().contains(event.mousePos)) {
+    if(event.type == EV_MOUSE_LDOWN && getRect().contains(event.mousePos)) {
         m_state = UI::ButtonDown;
-    } else if(m_state == UI::ButtonDown && event.type == EV_MOUSE_LUP) {
+    } else if(event.type == EV_MOUSE_LUP && m_state == UI::ButtonDown) {
         m_state = UI::ButtonUp;
         if(getRect().contains(event.mousePos)) {
             if(m_buttonClickCallback)
                 m_buttonClickCallback();
         }
     }
-    return false;
 }

@@ -22,34 +22,32 @@
  */
 
 
-#ifndef MENUSTATE_H
-#define MENUSTATE_H
+#ifndef FONTTEXT_H
+#define FONTTEXT_H
 
-#include "core/gamestate.h"
-#include "graphics/texture.h"
-#include "net/connection.h"
-#include "ui/uipanel.h"
+#include "prerequisites.h"
+#include "font.h"
 
-class MenuState : public GameState
+class FontText
 {
-
 public:
-    MenuState() { }
+    FontText() { }
 
-    void onEnter();
-    void onLeave();
+    void appendCharacter(char c);
+    void appendText(const std::string &text);
+    void erase(bool left);
 
-    void onClose();
-    bool onInputEvent(const InputEvent& event);
-    void onResize(const Size& size);
-
-    void render();
+    void setText(const std::string &text);
+    void setCursorPos(int pos);
+    void setSelection(int start, int end);
+    void setColor(const Color& color);
+    void setSize(const Size& size);
+    void setStartPos();
 
 private:
-    void createMainMenu();
-
-    UIPanelPtr m_menuPanel;
-    TexturePtr m_background;
+    int m_cursorPos;
+    std::string m_text;
+    Font *m_font;
 };
 
-#endif // MENUSTATE_H
+#endif // FONTTEXT_H

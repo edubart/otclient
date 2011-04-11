@@ -35,7 +35,7 @@ namespace UILoader
     UIElementPtr createElementFromId(const std::string& id);
 
     /// Loads an UIElement and it's children from a YAML file
-    UIElementPtr loadFile(const std::string& file, const UIContainerPtr& parent);
+    UIElementPtr loadFile(const std::string& file, const UIContainerPtr& parent = UIContainer::getRootContainer());
 
     /// Populate container children from a YAML node
     void populateContainer(const UIContainerPtr& parent, const YAML::Node& node);

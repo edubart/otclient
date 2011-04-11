@@ -141,10 +141,13 @@ void Engine::onResize(const Size& size)
 
 void Engine::onInputEvent(const InputEvent& event)
 {
-    // inputs goest to gui first
-    if(!UIContainer::getRootContainer()->onInputEvent(event)) {
-        // if gui didnt capture the input then goes to the state
-        if(m_currentState)
-            m_currentState->onInputEvent(event);
-    }
+    bool eventCaptured = false;
+
+    // events goes to the state first
+    if(m_currentState)
+        eventCaptured = m_currentState->onInputEvent(event);
+
+    // if the state didn't capture the input then goes to the gui
+    if(!eventCaptured)
+        UIContainer::getRootContainer()->onInputEvent(event);
 }

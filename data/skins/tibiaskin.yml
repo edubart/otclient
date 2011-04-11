@@ -16,6 +16,7 @@ buttons:
       center: [46,139,84,18]
     
     down state:
+      translate: [1, 1]
       bordered image:
         left border: [45,159,1,18]
         right border: [130,159,1,18]
@@ -74,6 +75,7 @@ windows:
 text edits:
   default:
     default size: [86, 16]
+    text margin: 2
     bordered image:
       left border: [308,97,1,1]
       right border: [319,97,1,10]

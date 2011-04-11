@@ -65,7 +65,10 @@ public:
                     const Rect& screenCoords,
                     int align = ALIGN_TOP_LEFT,
                     const Color& color = Color::white,
-                    const Point& startInternalPos = Point());
+                    const Point& startInternalPos = Point(),
+                    int cursorPos = -1,
+                    const Color& cursorColor = Color::white);
+
 
     /// Calculate glyphs positions to use on render, also calculates textBoxSize if wanted
     Point *calculateGlyphsPositions(const std::string& text, int align = ALIGN_TOP_LEFT, Size *textBoxSize = NULL);
@@ -74,7 +77,8 @@ public:
     Size calculateTextRectSize(const std::string& text);
 
     const std::string& getName() const { return m_name; }
-
+    int getGlyphHeight() const { return m_glyphHeight; }
+ 
 private:
     void calculateGlyphsWidthsAutomatically(const Size& glyphSize);
 

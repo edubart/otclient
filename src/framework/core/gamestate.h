@@ -40,7 +40,7 @@ public:
     virtual void onLeave() = 0;
 
     virtual void onClose() = 0;
-    virtual void onInputEvent(const InputEvent& event) = 0;
+    virtual bool onInputEvent(const InputEvent& event) = 0;
     virtual void onResize(const Size& size) = 0;
 
     virtual void render() = 0;

@@ -44,9 +44,9 @@ void TestState::onClose()
     g_engine.stop();
 }
 
-void TestState::onInputEvent(const InputEvent& event)
+bool TestState::onInputEvent(const InputEvent& event)
 {
-
+    return false;
 }
 
 void TestState::onResize(const Size& size)

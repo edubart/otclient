@@ -79,6 +79,7 @@ SET(SOURCES
     src/framework/graphics/framebuffer.cpp
     src/framework/graphics/font.cpp
     src/framework/graphics/fonts.cpp
+    src/framework/graphics/fonttext.cpp
     src/framework/graphics/textureloader.cpp
     src/framework/graphics/texture.cpp
     src/framework/graphics/textures.cpp

@@ -45,8 +45,8 @@ void UIContainer::addChild(UIElementPtr child)
 
 void UIContainer::removeChild(UIElementPtr child)
 {
-    if(m_activeElement == child)
-        setActiveElement(UIElementPtr());
+    if(m_focusedElement == child)
+        setFocusedElement(UIElementPtr());
     m_children.remove(child);
     if(child->getParent() == shared_from_this())
         child->setParent(UIContainerPtr());
@@ -96,18 +96,45 @@ void UIContainer::render()
     }
 }
 
-bool UIContainer::onInputEvent(const InputEvent& event)
+void UIContainer::onInputEvent(const InputEvent& event)
 {
-    bool ret = false;
     for(auto it = m_children.begin(); it != m_children.end(); ++it) {
         const UIElementPtr& child = (*it);
-        if(child->isEnabled() && child->isVisible())
-            ret = child->onInputEvent(event) || ret;
+        bool shouldFire = false;
+
+        // events should pass only when element is visible and enabled
+        if(child->isEnabled() && child->isVisible()) {
+            if(event.type & EV_KEYBOARD) {
+                // keyboard events only go to focused elements
+                if(child == getFocusedElement()) {
+                    shouldFire = true;
+                }
+            // mouse events
+            } else if(event.type & EV_MOUSE) {
+                // mouse down and weel events only go to elements that contains the mouse position
+                if(event.type & EV_DOWN || event.type & EV_MOUSE_WHEEL) {
+                    if(child->getRect().contains(event.mousePos)) {
+                        // focus it
+                        if(event.type == EV_MOUSE_LDOWN)
+                            setFocusedElement(child);
+                        shouldFire = true;
+                    }
+                }
+                // mouse move and mouse up events go to all elements
+                else {
+                    shouldFire = false;
+                }
+            }
+        }
+
+        if(shouldFire)
+            child->onInputEvent(event);
     }
-    return ret;
 }
 
-void UIContainer::setActiveElement(UIElementPtr activeElement)
+void UIContainer::setFocusedElement(UIElementPtr focusedElement)
 {
-
+    if(m_focusedElement)
+        m_focusedElement->setFocused(false);
+    m_focusedElement = focusedElement;
 }

@@ -6,31 +6,31 @@ panel#mainMenu:
   margin.left: 60
   margin.bottom: 70
   
-  button#enterGame:
+  button#enterGameButton:
     text: Enter Game
     anchors.top: parent.top
     anchors.horizontalCenter: parent.horizontalCenter
     margin.top: 16
 
-  button#accessAccount:
+  button#accessAccountButton:
     text: Access Account
     anchors.top: parent.top
     anchors.horizontalCenter: parent.horizontalCenter
     margin.top: 46
 
-  button#options:
+  button#optionsButton:
     text: Options
     anchors.top: parent.top
     anchors.horizontalCenter: parent.horizontalCenter
     margin.top: 76
 
-  button#info:
+  button#infoButton:
     text: Info
     anchors.top: parent.top
     anchors.horizontalCenter: parent.horizontalCenter
     margin.top: 106
 
-  button#exitGame:
+  button#exitGameButton:
     text: Exit
     anchors.top: parent.top
     anchors.horizontalCenter: parent.horizontalCenter

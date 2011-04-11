@@ -41,6 +41,7 @@ public:
 private:
     ImagePtr m_buttonDownImage;
     ImagePtr m_buttonHoverImage;
+    Point m_buttonDownTranslate;
 };
 
 #endif // UIBUTTONSKIN_H

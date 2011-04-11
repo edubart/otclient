@@ -40,8 +40,7 @@ public:
             UIElement();
         }
 
-    virtual void render();
-    bool onInputEvent(const InputEvent& event);
+    void onInputEvent(const InputEvent& event);
 
     void setText(const std::string& text) { m_text = text; }
     const std::string& getText() const { return m_text; }

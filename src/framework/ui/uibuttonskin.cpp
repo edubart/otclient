@@ -24,27 +24,38 @@
 
 #include "uibuttonskin.h"
 #include "uibutton.h"
+#include "graphics/fonts.h"
 
 void UIButtonSkin::draw(UIElement *element)
 {
     UIButton *button = static_cast<UIButton*>(element);
 
+    Rect textRect = button->getRect();
+
     if(button->getState() == UI::ButtonDown && m_buttonDownImage) {
         m_buttonDownImage->draw(element->getRect());
+        textRect.translate(m_buttonDownTranslate);
     } else if(button->getState() == UI::ButtonMouseOver && m_buttonHoverImage) {
         m_buttonHoverImage->draw(element->getRect());
     } else {
         UIElementSkin::draw(element);
     }
+
+    g_fonts.get("tibia-8px-antialised")->renderText(button->getText(), textRect, ALIGN_CENTER, Color(0xFFEEEEEE));
 }
 
 void UIButtonSkin::load(const YAML::Node& node)
 {
     UIElementSkin::load(node);
 
-    if(node.FindValue("down state"))
+    if(node.FindValue("down state")) {
         m_buttonDownImage = loadImage(node["down state"]);
+
+        if(node["down state"].FindValue("translate"))
+            node["down state"]["translate"] >> m_buttonDownTranslate;
+    }
 
     if(node.FindValue("mouse over state"))
         m_buttonHoverImage = loadImage(node["mouse over state"]);
+
 }
