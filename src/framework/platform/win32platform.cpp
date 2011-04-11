@@ -21,8 +21,8 @@
  * THE SOFTWARE.
  */
 
-#include "platform.h"
-#include "engine.h"
+#include "core/platform.h"
+#include "core/engine.h"
 
 #include <dir.h>
 #include <physfs.h>
