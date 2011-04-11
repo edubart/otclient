@@ -113,8 +113,8 @@ int main(int argc, const char *argv[])
 
     // state scope
     {
-        boost::shared_ptr<MenuState> initialState(new MenuState);
-        //boost::shared_ptr<TestState> initialState(new TestState);
+        boost::scoped_ptr<MenuState> initialState(new MenuState);
+        //boost::scoped_ptr<TestState> initialState(new TestState);
         g_dispatcher.addTask(boost::bind(&Engine::changeState, &g_engine, initialState.get()));
 
         Platform::showWindow();

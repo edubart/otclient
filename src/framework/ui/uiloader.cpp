@@ -31,7 +31,7 @@ UIElementPtr UILoader::createElementFromId(const std::string& id)
     UIElementPtr element;
 
     std::vector<std::string> split;
-    boost::split(split, id, boost::is_any_of("#"));
+    boost::split(split, id, boost::is_any_of(std::string("#")));
     if(split.size() != 2)
         return element;
 
@@ -133,7 +133,7 @@ void UILoader::loadElements(const UIElementPtr& parent, const YAML::Node& node)
             // check if it's and element id
             if(id.find("#") != std::string::npos) {
                 std::vector<std::string> split;
-                boost::split(split, id, boost::is_any_of("#"));
+                boost::split(split, id, boost::is_any_of(std::string("#")));
                 loadElements(container->getChildById(split[1]), it.second());
             }
         }
@@ -216,7 +216,7 @@ void UILoader::loadElementAnchor(const UIElementPtr& element, EAnchorType type, 
     node >> anchorDescription;
 
     std::vector<std::string> split;
-    boost::split(split, anchorDescription, boost::is_any_of("."));
+    boost::split(split, anchorDescription, boost::is_any_of(std::string(".")));
     if(split.size() != 2)
         throw YAML::Exception(node.GetMark(), "invalid anchors description");
 
