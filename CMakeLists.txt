@@ -52,7 +52,7 @@ IF(CMAKE_BUILD_TYPE STREQUAL "Debug")
     ADD_DEFINITIONS(-D_DEBUG)
 ENDIF(CMAKE_BUILD_TYPE STREQUAL "Debug")
 
-SET(SOURCES
+SET(SOURCES src/framework/ui/uilinedecorationskin.cpp src/framework/ui/uicheckboxskin.cpp src/framework/ui/uilinedecoration.cpp src/framework/ui/uicheckbox.cpp
 # game sources
     src/main.cpp
     src/menustate.cpp

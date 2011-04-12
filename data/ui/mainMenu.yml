@@ -1,6 +1,6 @@
 panel#mainMenu:
   skin: roundedGridPanel
-  size: [118, 172]
+  size: [117, 171]
   anchors.left: parent.left
   anchors.bottom: parent.bottom
   margin.left: 60
