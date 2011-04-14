@@ -44,6 +44,8 @@ struct Win32PlatformPrivate {
     int width, height;
     int minWidth, minHeight;
     bool focused, visible, maximized;
+
+    std::map<int, uchar> keyMap;
 } win32;
 
 void Platform::init(const char *appName)
@@ -51,6 +53,148 @@ void Platform::init(const char *appName)
     win32.appName = appName;
     win32.instance = GetModuleHandle(NULL);
 
+    // setup keys
+    win32.keyMap[0x30] = KC_1;
+    win32.keyMap[0x31] = KC_2;
+    win32.keyMap[0x32] = KC_3;
+    win32.keyMap[0x33] = KC_4;
+    win32.keyMap[0x34] = KC_5;
+    win32.keyMap[0x35] = KC_6;
+    win32.keyMap[0x36] = KC_7;
+    win32.keyMap[0x37] = KC_8;
+    win32.keyMap[0x38] = KC_9;
+    win32.keyMap[0x39] = KC_0;
+
+    win32.keyMap[VK_BACK] = KC_BACK;
+
+    win32.keyMap[VK_OEM_MINUS] = KC_MINUS;
+    win32.keyMap[VK_OEM_PLUS] = KC_EQUALS;
+    win32.keyMap[VK_SPACE] = KC_SPACE;
+    win32.keyMap[VK_OEM_COMMA] = KC_COMMA;
+    win32.keyMap[VK_OEM_PERIOD] = KC_PERIOD;
+
+    //win32.keyMap[VK_OEM_102] = KC_BACKSLASH;
+    //win32.keyMap[XK_slash] = KC_SLASH;
+    //win32.keyMap[XK_bracketleft] = KC_LBRACKET;
+    //win32.keyMap[XK_bracketright] = KC_RBRACKET;
+
+    win32.keyMap[VK_ESCAPE] = KC_ESCAPE;
+    win32.keyMap[VK_CAPITAL] = KC_CAPITAL;
+
+    win32.keyMap[VK_TAB] = KC_TAB;
+    win32.keyMap[VK_RETURN] = KC_RETURN;
+    win32.keyMap[VK_LCONTROL] = KC_LCONTROL;
+    win32.keyMap[VK_RCONTROL] = KC_RCONTROL;
+
+    //win32.keyMap[XK_colon] = KC_COLON;
+    //win32.keyMap[XK_semicolon] = KC_SEMICOLON;
+    //win32.keyMap[XK_apostrophe] = KC_APOSTROPHE;
+    //win32.keyMap[XK_grave] = KC_GRAVE;
+
+    win32.keyMap[0x41] = KC_A;
+    win32.keyMap[0x42] = KC_B;
+    win32.keyMap[0x43] = KC_C;
+    win32.keyMap[0x44] = KC_D;
+    win32.keyMap[0x45] = KC_E;
+    win32.keyMap[0x46] = KC_F;
+    win32.keyMap[0x47] = KC_G;
+    win32.keyMap[0x48] = KC_H;
+    win32.keyMap[0x49] = KC_I;
+    win32.keyMap[0x4A] = KC_J;
+    win32.keyMap[0x4B] = KC_K;
+    win32.keyMap[0x4C] = KC_L;
+    win32.keyMap[0x4D] = KC_M;
+    win32.keyMap[0x4E] = KC_N;
+    win32.keyMap[0x4F] = KC_O;
+    win32.keyMap[0x50] = KC_P;
+    win32.keyMap[0x51] = KC_Q;
+    win32.keyMap[0x52] = KC_R;
+    win32.keyMap[0x53] = KC_S;
+    win32.keyMap[0x54] = KC_T;
+    win32.keyMap[0x55] = KC_U;
+    win32.keyMap[0x56] = KC_V;
+    win32.keyMap[0x57] = KC_W;
+    win32.keyMap[0x58] = KC_X;
+    win32.keyMap[0x59] = KC_Y;
+    win32.keyMap[0x5A] = KC_Z;
+
+    win32.keyMap[VK_F1] = KC_F1;
+    win32.keyMap[VK_F2] = KC_F2;
+    win32.keyMap[VK_F3] = KC_F3;
+    win32.keyMap[VK_F4] = KC_F4;
+    win32.keyMap[VK_F5] = KC_F5;
+    win32.keyMap[VK_F6] = KC_F6;
+    win32.keyMap[VK_F7] = KC_F7;
+    win32.keyMap[VK_F8] = KC_F8;
+    win32.keyMap[VK_F9] = KC_F9;
+    win32.keyMap[VK_F10] = KC_F10;
+    win32.keyMap[VK_F11] = KC_F11;
+    win32.keyMap[VK_F12] = KC_F12;
+    win32.keyMap[VK_F13] = KC_F13;
+    win32.keyMap[VK_F14] = KC_F14;
+    win32.keyMap[VK_F15] = KC_F15;
+
+    // keypad
+    win32.keyMap[VK_NUMPAD0] = KC_NUMPAD0;
+    win32.keyMap[VK_NUMPAD1] = KC_NUMPAD1;
+    win32.keyMap[VK_NUMPAD2] = KC_NUMPAD2;
+    win32.keyMap[VK_NUMPAD3] = KC_NUMPAD3;
+    win32.keyMap[VK_NUMPAD4] = KC_NUMPAD4;
+    win32.keyMap[VK_NUMPAD5] = KC_NUMPAD5;
+    win32.keyMap[VK_NUMPAD6] = KC_NUMPAD6;
+    win32.keyMap[VK_NUMPAD7] = KC_NUMPAD7;
+    win32.keyMap[VK_NUMPAD8] = KC_NUMPAD8;
+    win32.keyMap[VK_NUMPAD9] = KC_NUMPAD9;
+    win32.keyMap[VK_ADD] = KC_ADD;
+    win32.keyMap[VK_SUBTRACT] = KC_SUBTRACT;
+    win32.keyMap[VK_DECIMAL] = KC_DECIMAL;
+    //win32.keyMap[XK_KP_Equal] = KC_NUMPADEQUALS;
+    win32.keyMap[VK_DIVIDE] = KC_DIVIDE;
+    win32.keyMap[VK_MULTIPLY] = KC_MULTIPLY;
+    win32.keyMap[VK_SEPARATOR] = KC_NUMPADENTER;
+
+    // keypad with numlock off
+    //win32.keyMap[XK_KP_Home] = KC_NUMPAD7;
+    //win32.keyMap[XK_KP_Up] = KC_NUMPAD8;
+    //win32.keyMap[XK_KP_Page_Up] = KC_NUMPAD9;
+    //win32.keyMap[XK_KP_Left] = KC_NUMPAD4;
+    //win32.keyMap[XK_KP_Begin] = KC_NUMPAD5;
+    //win32.keyMap[XK_KP_Right] = KC_NUMPAD6;
+    //win32.keyMap[XK_KP_End] = KC_NUMPAD1;
+    //win32.keyMap[XK_KP_Down] = KC_NUMPAD2;
+    //win32.keyMap[XK_KP_Page_Down] = KC_NUMPAD3;
+    //win32.keyMap[XK_KP_Insert] = KC_NUMPAD0;
+    //win32.keyMap[XK_KP_Delete] = KC_DECIMAL;
+
+    win32.keyMap[VK_UP] = KC_UP;
+    win32.keyMap[VK_DOWN] = KC_DOWN;
+    win32.keyMap[VK_LEFT] = KC_LEFT;
+    win32.keyMap[VK_RIGHT] = KC_RIGHT;
+
+    win32.keyMap[VK_PRIOR] = KC_PGUP;
+    win32.keyMap[VK_NEXT] = KC_PGDOWN;
+    win32.keyMap[VK_HOME] = KC_HOME;
+    win32.keyMap[VK_END] = KC_END;
+
+    win32.keyMap[VK_NUMLOCK] = KC_NUMLOCK;
+    win32.keyMap[VK_SNAPSHOT] = KC_SYSRQ;
+    win32.keyMap[VK_SCROLL] = KC_SCROLL;
+    win32.keyMap[VK_PAUSE] = KC_PAUSE;
+
+    win32.keyMap[VK_RSHIFT] = KC_RSHIFT;
+    win32.keyMap[VK_LSHIFT] = KC_LSHIFT;
+    win32.keyMap[VK_RMENU] = KC_RALT;
+    win32.keyMap[VK_LMENU] = KC_LALT;
+
+    win32.keyMap[VK_INSERT] = KC_INSERT;
+    win32.keyMap[VK_DELETE] = KC_DELETE;
+
+    win32.keyMap[VK_LWIN] = KC_LWIN;
+    win32.keyMap[VK_RWIN] = KC_RWIN;
+    win32.keyMap[VK_APPS] = KC_APPS;
+
+
+    // win class
     WNDCLASSA wc;
     wc.style			= CS_HREDRAW | CS_VREDRAW | CS_OWNDC;	// Redraw On Size, And Own DC For Window.
     wc.lpfnWndProc		= (WNDPROC)WndProc;			// WndProc Handles Messages
@@ -362,12 +506,21 @@ std::string Platform::getAppUserDir()
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     static int lastX, lastY;
+    static InputEvent inputEvent;
 
     switch(uMsg)
     {
     case WM_ACTIVATE:
         {
             win32.focused = !(wParam == WA_INACTIVE);
+            break;
+        }
+    case WM_CHAR:
+        {
+            inputEvent.type = EV_TEXT_ENTER;
+            inputEvent.keychar = wParam;
+            inputEvent.keycode = KC_UNKNOWN;
+            g_engine.onInputEvent(inputEvent);
             break;
         }
     case WM_CLOSE:
@@ -380,6 +533,75 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             MINMAXINFO *minMax = (MINMAXINFO*)lParam;
             minMax->ptMinTrackSize.x = win32.minWidth;
             minMax->ptMinTrackSize.y = win32.minHeight;
+            break;
+        }
+    case WM_KEYDOWN:
+        {
+            inputEvent.type = EV_KEY_DOWN;
+            inputEvent.ctrl = HIWORD(GetKeyState(VK_CONTROL)) == 0 ? false : true;
+            inputEvent.alt = HIWORD(GetKeyState(VK_MENU)) == 0 ? false : true;
+            inputEvent.shift = HIWORD(GetKeyState(VK_SHIFT)) == 0 ? false : true;
+            inputEvent.keycode = win32.keyMap[wParam];
+            g_engine.onInputEvent(inputEvent);
+            break;
+        }
+    case WM_KEYUP:
+        {
+            inputEvent.type = EV_KEY_UP;
+            inputEvent.ctrl = HIWORD(GetKeyState(VK_CONTROL)) == 0 ? false : true;
+            inputEvent.alt = HIWORD(GetKeyState(VK_MENU)) == 0 ? false : true;
+            inputEvent.shift = HIWORD(GetKeyState(VK_SHIFT)) == 0 ? false : true;
+            inputEvent.keycode = win32.keyMap[wParam];
+            g_engine.onInputEvent(inputEvent);
+            break;
+        }
+    case WM_LBUTTONDOWN:
+        {
+            inputEvent.type = EV_MOUSE_LDOWN;
+            g_engine.onInputEvent(inputEvent);
+            break;
+        }
+    case WM_LBUTTONUP:
+        {
+            inputEvent.type = EV_MOUSE_LUP;
+            g_engine.onInputEvent(inputEvent);
+            break;
+        }
+    case WM_MBUTTONDOWN:
+        {
+            inputEvent.type = EV_MOUSE_MDOWN;
+            g_engine.onInputEvent(inputEvent);
+            break;
+        }
+    case WM_MBUTTONUP:
+        {
+            inputEvent.type = EV_MOUSE_MUP;
+            g_engine.onInputEvent(inputEvent);
+            break;
+        }
+    case WM_RBUTTONDOWN:
+        {
+            inputEvent.type = EV_MOUSE_RDOWN;
+            g_engine.onInputEvent(inputEvent);
+            break;
+        }
+    case WM_RBUTTONUP:
+        {
+            inputEvent.type = EV_MOUSE_RUP;
+            g_engine.onInputEvent(inputEvent);
+            break;
+        }
+    case WM_MOUSEMOVE:
+        {
+            inputEvent.type = EV_MOUSE_MOVE;
+            inputEvent.mousePos = Point(LOWORD(lParam), HIWORD(lParam));
+            g_engine.onInputEvent(inputEvent);
+            break;
+        }
+    case WM_MOUSEWHEEL:
+        {
+            inputEvent.type = HIWORD(wParam) > 0 ? EV_MOUSE_WHEEL_UP : EV_MOUSE_WHEEL_DOWN;
+            g_engine.onInputEvent(inputEvent);
             break;
         }
     case WM_MOVE:
