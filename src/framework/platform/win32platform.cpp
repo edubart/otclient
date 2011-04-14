@@ -541,7 +541,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case WM_KEYUP:
         {
             if(win32.keyMap.find(wParam) != win32.keyMap.end()) {
-                inputEvent.type = uMsg == WM_KEYDOWN ? EV_KEY_DOWN : WM_KEYUP;
+                inputEvent.type = uMsg == WM_KEYDOWN ? EV_KEY_DOWN : EV_KEY_UP;
                 inputEvent.ctrl = HIWORD(GetKeyState(VK_CONTROL)) == 0 ? false : true;
                 inputEvent.alt = HIWORD(GetKeyState(VK_MENU)) == 0 ? false : true;
                 inputEvent.shift = HIWORD(GetKeyState(VK_SHIFT)) == 0 ? false : true;
