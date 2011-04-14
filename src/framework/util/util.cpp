@@ -21,7 +21,6 @@
  * THE SOFTWARE.
  */
 
-
 #include "util.h"
 #include <cstdio>
 

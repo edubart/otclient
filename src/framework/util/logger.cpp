@@ -21,7 +21,6 @@
  * THE SOFTWARE.
  */
 
-
 #include "logger.h"
 #include "util.h"
 
