@@ -1,0 +1,8 @@
+#ifndef UILINEDECORATIONSKIN_H
+#define UILINEDECORATIONSKIN_H
+
+class UILineDecorationSkin
+{
+};
+
+#endif // UILINEDECORATIONSKIN_H

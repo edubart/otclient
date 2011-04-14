@@ -1,0 +1,60 @@
+window#infoWindow:
+  title: Info
+  size: [244, 221]
+  anchors.horizontalCenter: parent.horizontalCenter
+  anchors.verticalCenter: parent.verticalCenter
+  
+  panel#infoPanel:
+    skin: flatPanel
+    size: [208, 129]
+    anchors.left: parent.left
+    anchors.top: parent.top
+    margin.top: 32
+    margin.left: 24
+    
+    label#infoLabel:
+      size: [218, 83]
+      align: center
+      text: |
+            OTClient
+            Version 0.2.0
+            Copyright (C) 2011
+            Developed by edubart
+            
+    separator#bottomSeparator:
+      orientation: horizontal
+      width: 190
+      anchors.left: parent.left
+      anchors.top: parent.top
+      margin.top: 83
+      margin.left: 9
+      
+    label#websiteLabel:
+      text: Official Website
+      anchors.left: parent.left
+      anchors.top: parent.top
+      margin.top: 105
+      margin.left: 8
+      
+    button#websiteButton:
+      text: github.com/otclient
+      anchors.left: parent.left
+      anchors.top: parent.top
+      margin.top: 99
+      margin.left: 131
+  
+  separator#bottomSeparator:
+    orientation: horizontal
+    width: 218
+    anchors.left: parent.left
+    anchors.top: parent.top
+    margin.top: 181
+    margin.left: 13
+      
+  button#okButton:
+    text: Ok
+    size: [43, 20]
+    anchors.left: parent.left
+    anchors.top: parent.top
+    margin.top: 191
+    margin.left: 188

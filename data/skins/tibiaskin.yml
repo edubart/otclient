@@ -45,6 +45,10 @@ panels:
       bottom left corner: [43,230,5,5]
       bottom right corner: [48,231,5,5]
       center: [11,214,32,32]
+  
+  flatPanel:
+    bordered image:
+    
       
 labels:
   default:

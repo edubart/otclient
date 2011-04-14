@@ -35,7 +35,7 @@ bool Configs::load(const std::string& fileName)
         return false;
 
     std::string fileContents = g_resources.loadTextFile(fileName);
-    if(fileContents.size())
+    if(!fileContents.size())
         return false;
 
     std::istringstream fin(fileContents);

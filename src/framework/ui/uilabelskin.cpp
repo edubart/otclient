@@ -29,12 +29,10 @@
 void UILabelSkin::load(const YAML::Node& node)
 {
     UIElementSkin::load(node);
-    std::string tmp;
 
-    if(node.FindValue("font")) {
-        node["font"] >> tmp;
-        m_font = g_fonts.get(tmp);
-    } else
+    if(node.FindValue("font"))
+        m_font = g_fonts.get(node["font"].Read<std::string>());
+    else
         m_font = g_fonts.getDefaultFont();
 
     if(node.FindValue("text color"))
