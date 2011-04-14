@@ -142,8 +142,6 @@ void UILoader::loadElements(const UIElementPtr& parent, const YAML::Node& node)
 
 void UILoader::loadElement(const UIElementPtr& element, const YAML::Node& node)
 {
-    std::string tmp;
-
     if(node.FindValue("skin"))
         element->setSkin(g_uiSkins.getElementSkin(element->getElementType(), node["skin"]));
 
@@ -195,18 +193,15 @@ void UILoader::loadElement(const UIElementPtr& element, const YAML::Node& node)
     // load specific element type
     if(element->getElementType() == UI::Button) {
         UIButtonPtr button = boost::static_pointer_cast<UIButton>(element);
-        node["text"] >> tmp;
-        button->setText(tmp);
+        button->setText(node["text"].Read<std::string>());
     }
     else if(element->getElementType() == UI::Window) {
         UIWindowPtr window = boost::static_pointer_cast<UIWindow>(element);
-        node["title"] >> tmp;
-        window->setTitle(tmp);
+        window->setTitle(node["title"].Read<std::string>());
     }
     else if(element->getElementType() == UI::Label) {
         UILabelPtr label = boost::static_pointer_cast<UILabel>(element);
-        node["text"] >> tmp;
-        label->setText(tmp);
+        label->setText(node["text"].Read<std::string>());
     }
 }
 

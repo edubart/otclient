@@ -30,8 +30,6 @@ void UIButtonSkin::load(const YAML::Node& node)
 {
     UIElementSkin::load(node);
 
-    std::string tmp;
-
     m_buttonDownImage = loadImage(node["down state"]);
 
     if(node["down state"].FindValue("text translate"))
@@ -40,8 +38,7 @@ void UIButtonSkin::load(const YAML::Node& node)
     if(node.FindValue("mouse over state"))
         m_buttonHoverImage = loadImage(node["mouse over state"]);
 
-    node["font"] >> tmp;
-    m_font = g_fonts.get(tmp);
+    m_font = g_fonts.get(node["font"].Read<std::string>());
 
     node["text color"] >> m_textColor;
 }
