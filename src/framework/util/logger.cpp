@@ -21,8 +21,6 @@
  * THE SOFTWARE.
  */
 
-#undef __STRICT_ANSI__
-
 #include "logger.h"
 #include "util.h"
 
