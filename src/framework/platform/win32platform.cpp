@@ -517,10 +517,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         }
     case WM_CHAR:
         {
-            inputEvent.type = EV_TEXT_ENTER;
-            inputEvent.keychar = wParam;
-            inputEvent.keycode = KC_UNKNOWN;
-            g_engine.onInputEvent(inputEvent);
+            if(wParam >= 32 && wParam <= 255) {
+                inputEvent.type = EV_TEXT_ENTER;
+                inputEvent.keychar = wParam;
+                inputEvent.keycode = KC_UNKNOWN;
+                g_engine.onInputEvent(inputEvent);
+            }
             break;
         }
     case WM_CLOSE:
@@ -536,22 +538,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             break;
         }
     case WM_KEYDOWN:
-        {
-            inputEvent.type = EV_KEY_DOWN;
-            inputEvent.ctrl = HIWORD(GetKeyState(VK_CONTROL)) == 0 ? false : true;
-            inputEvent.alt = HIWORD(GetKeyState(VK_MENU)) == 0 ? false : true;
-            inputEvent.shift = HIWORD(GetKeyState(VK_SHIFT)) == 0 ? false : true;
-            inputEvent.keycode = win32.keyMap[wParam];
-            g_engine.onInputEvent(inputEvent);
-            break;
-        }
     case WM_KEYUP:
         {
-            inputEvent.type = EV_KEY_UP;
-            inputEvent.ctrl = HIWORD(GetKeyState(VK_CONTROL)) == 0 ? false : true;
-            inputEvent.alt = HIWORD(GetKeyState(VK_MENU)) == 0 ? false : true;
-            inputEvent.shift = HIWORD(GetKeyState(VK_SHIFT)) == 0 ? false : true;
-            inputEvent.keycode = win32.keyMap[wParam];
+            if(win32.keyMap.find(wParam) != win32.keyMap.end()) {
+                inputEvent.type = uMsg == WM_KEYDOWN ? EV_KEY_DOWN : WM_KEYUP;
+                inputEvent.ctrl = HIWORD(GetKeyState(VK_CONTROL)) == 0 ? false : true;
+                inputEvent.alt = HIWORD(GetKeyState(VK_MENU)) == 0 ? false : true;
+                inputEvent.shift = HIWORD(GetKeyState(VK_SHIFT)) == 0 ? false : true;
+                inputEvent.keycode = win32.keyMap[wParam];
+            }
             g_engine.onInputEvent(inputEvent);
             break;
         }

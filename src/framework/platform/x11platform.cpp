@@ -337,12 +337,14 @@ void Platform::poll()
                         static XComposeStatus compose = {NULL, 0};
                         len = XLookupString(&event.xkey, buf, sizeof(buf), &keysym, &compose);
                     }
+
                     if(len > 0 &&
                        // for some reason these keys produces characters and we don't want that
                        keysym != XK_BackSpace &&
                        keysym != XK_Return &&
                        keysym != XK_Delete &&
-                       keysym != XK_Escape
+                       keysym != XK_Escape &&
+                       (uchar)(buf[0]) >= 32
                     ) {
                         //logDebug("char: %c code: %d", buf[0], (uchar)buf[0]);
                         inputEvent.type = EV_TEXT_ENTER;
