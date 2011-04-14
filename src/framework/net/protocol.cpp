@@ -27,11 +27,11 @@
 Protocol::Protocol()
 {
     m_connection = g_connections.createConnection();
-    m_connection->setErrorCallback(
+    /*m_connection->setErrorCallback(
         [this](const boost::system::error_code& error, const std::string& msg){
             this->onError(error, msg);
         }
-    );
+    );*/
 }
 
 void Protocol::send(NetworkMessagePtr networkMessage, Connection::ConnectionCallback onSend)

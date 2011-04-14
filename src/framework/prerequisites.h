@@ -39,6 +39,8 @@ typedef int32_t int32;
 typedef int16_t int16;
 typedef int8_t int8;
 
+#undef __STRICT_ANSI__
+
 // C headers
 #include <cstdio>
 #include <cstdlib>

@@ -21,6 +21,7 @@
  * THE SOFTWARE.
  */
 
+#undef __STRICT_ANSI__
 
 #include "util.h"
 #include <cstdio>
