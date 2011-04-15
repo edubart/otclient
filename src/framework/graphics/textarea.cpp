@@ -31,6 +31,7 @@ TextArea::TextArea() :
         m_align(ALIGN_TOP_LEFT),
         m_color(Color::white),
         m_cursorPos(-1),
+        m_startRenderPos(0),
         m_cursorVisible(false)
 {
 }
@@ -46,6 +47,7 @@ TextArea::TextArea(Font* font,
         m_align(align),
         m_color(color),
         m_cursorPos(-1),
+        m_startRenderPos(0),
         m_cursorVisible(false)
 {
     recalculate();
@@ -66,10 +68,9 @@ void TextArea::draw()
         // draw every 500ms
         if(ticks - m_cursorTicks <= delay) {
             Rect cursorRect;
-            if(m_cursorPos == 0)
+            // when cursor is at 0 or is the first visible element
+            if(m_cursorPos == 0 || (m_cursorPos < numGlyphs && m_glyphsCoords[m_cursorPos].topLeft() == m_drawArea.topLeft()))
                 cursorRect = Rect(m_drawArea.left()-1, m_drawArea.top(), 1, m_font->getGlyphHeight());
-            else if(m_cursorPos == numGlyphs)
-                cursorRect = Rect(m_glyphsCoords[m_cursorPos-1].right(), m_glyphsCoords[m_cursorPos-1].top(), 1, m_font->getGlyphHeight());
             else
                 cursorRect = Rect(m_glyphsCoords[m_cursorPos-1].right(), m_glyphsCoords[m_cursorPos-1].top(), 1, m_font->getGlyphHeight());
             g_graphics.drawFilledRect(cursorRect, m_color);
@@ -98,14 +99,39 @@ void TextArea::recalculate()
     std::vector<Point> glyphsPositions = m_font->calculateGlyphsPositions(m_text, m_align, &textBoxSize);
     const Rect *glyphsTextureCoords = m_font->getGlyphsTextureCoords();
     const Size *glyphsSize = m_font->getGlyphsSize();
-
+    
+    // adjust start view area when cursor is enabled and has text
+    if(m_cursorPos >= 0 && textLenght > 0) {
+        // adjust when cursor reachs left
+        if(m_startRenderPos > m_cursorPos) {
+            m_startInternalPos.x = glyphsPositions[m_cursorPos].x;
+            m_startInternalPos.y = glyphsPositions[m_cursorPos].y - m_font->getTopMargin();
+        // adjust when cursor reachs right
+        } else if(m_cursorPos > m_startRenderPos) {
+            Rect virtualRect(m_startInternalPos, m_screenCoords.size());
+            int pos = m_cursorPos - 1; // element before cursor
+            int glyph = (uchar)m_text[pos];
+            Rect glyphRect(glyphsPositions[pos], glyphsSize[glyph]);
+            
+            // if the cursor is after the start render pos, then the glyph before the cursor must visible
+            if(!virtualRect.contains(glyphRect.topLeft()) || !virtualRect.contains(glyphRect.bottomRight())) {
+                m_startInternalPos.y = std::max(glyphRect.bottom() - virtualRect.height(), 0);
+                m_startInternalPos.x = std::max(glyphRect.right() - virtualRect.width() + 1, 0);
+            }
+        }
+    } else {
+        m_startInternalPos = Point(0,0);
+    }
+    
     m_drawArea.setLeft(m_screenCoords.left());
     m_drawArea.setTop(m_screenCoords.top()+m_font->getTopMargin());
     m_drawArea.setRight(m_screenCoords.right());
     m_drawArea.setBottom(m_screenCoords.bottom());
 
+    m_startRenderPos = -1;
     for(int i = 0; i < textLenght; ++i) {
         int glyph = (uchar)m_text[i];
+        m_glyphsCoords[i] = Rect();
 
         // skip invalid glyphs
         if(glyph < 32)
@@ -169,6 +195,10 @@ void TextArea::recalculate()
         // render glyph
         m_glyphsCoords[i] = glyphScreenCoords;
         m_glyphsTexCoords[i] = glyphTextureCoords;
+        
+        // set who was the first complete glyph rendered
+        if(m_startRenderPos == -1 && glyphScreenCoords.size() == glyphsSize[glyph])
+            m_startRenderPos = i;
     }
 }
 
@@ -200,12 +230,6 @@ void TextArea::setAlign(int align)
     recalculate();
 }
 
-void TextArea::setStartInternalPos(Point startPos)
-{
-    m_startInternalPos = startPos;
-    recalculate();
-}
-
 void TextArea::enableCursor(bool enable)
 {
     if(enable) {
@@ -213,6 +237,7 @@ void TextArea::enableCursor(bool enable)
         m_cursorTicks = g_engine.getLastFrameTicks();
     } else
         m_cursorPos = -1;
+    recalculate();
 }
 
 void TextArea::appendCharacter(char c)
@@ -253,4 +278,7 @@ void TextArea::moveCursor(bool right)
             m_cursorTicks = g_engine.getLastFrameTicks();
         }
     }
+    recalculate();
 }
+
+

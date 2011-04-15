@@ -45,7 +45,6 @@ public:
     void setScreenCoords(Rect screenCoords);
     void setAlign(int align);
     void setColor(const Color& color) { m_color = color; }
-    void setStartInternalPos(Point startPos);
     void enableCursor(bool enable = true);
     void setCursorVisible(bool visible = true) { m_cursorVisible = visible; }
 
@@ -64,8 +63,9 @@ private:
     Rect m_drawArea;
     int m_align;
     Color m_color;
-    Point m_startInternalPos;
     int m_cursorPos;
+    Point m_startInternalPos;
+    int m_startRenderPos;
     int m_cursorTicks;
     bool m_cursorVisible;
 

@@ -125,7 +125,7 @@ void Graphics::endRender()
 
 void Graphics::drawTexturedRect(const Rect& screenCoords, const TexturePtr& texture, const Rect& textureCoords, const Color& color)
 {
-    if(screenCoords.size().isEmpty())
+    if(screenCoords.isEmpty())
         return;
 
     glColor4ubv(color.rgbaPtr());
@@ -162,7 +162,7 @@ void Graphics::drawTexturedRect(const Rect& screenCoords, const TexturePtr& text
 
 void Graphics::drawRepeatedTexturedRect(const Rect& screenCoords, const TexturePtr& texture, const Rect& textureCoords, const Color& color)
 {
-    if(screenCoords.size().isEmpty())
+    if(screenCoords.isEmpty())
         return;
 
     // render many repeated texture rects
@@ -190,7 +190,7 @@ void Graphics::drawRepeatedTexturedRect(const Rect& screenCoords, const TextureP
 
 void Graphics::drawFilledRect(const Rect& screenCoords, const Color& color)
 {
-    if(screenCoords.size().isEmpty())
+    if(screenCoords.isEmpty())
         return;
 
     glDisable(GL_TEXTURE_2D);
@@ -216,7 +216,7 @@ void Graphics::drawFilledRect(const Rect& screenCoords, const Color& color)
 
 void Graphics::drawBoundingRect(const Rect& screenCoords, const Color& color, int innerLineWidth)
 {
-    if(2 * innerLineWidth > screenCoords.height())
+    if(2 * innerLineWidth > screenCoords.height() || screenCoords.isEmpty())
         return;
 
     glDisable(GL_TEXTURE_2D);
