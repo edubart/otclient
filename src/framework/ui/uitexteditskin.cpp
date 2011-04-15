@@ -51,5 +51,5 @@ void UITextEditSkin::draw(UIElement* element)
     UIElementSkin::draw(element);
 
     UITextEdit *textEdit = static_cast<UITextEdit*>(element);
-    m_font->renderText(textEdit->getText(), textEdit->getRect(), ALIGN_TOP_LEFT, m_textColor);
+    textEdit->getTextArea().draw();
 }

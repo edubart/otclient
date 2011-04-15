@@ -23,74 +23,45 @@
 
 
 #include "uitextedit.h"
+#include "uitexteditskin.h"
 #include "graphics/fonts.h"
 
 UITextEdit::UITextEdit() :
-    UIElement(UI::TextEdit),
-    m_cursorPos(0),
-    m_startRenderPos(0)
+    UIElement(UI::TextEdit)
 {
-
+    UITextEditSkin *skin = static_cast<UITextEditSkin*>(getSkin());
+    m_textArea.setFont(skin->getFont());
+    m_textArea.enableCursor();
 }
 
 void UITextEdit::onInputEvent(const InputEvent& event)
 {
     if(event.type == EV_TEXT_ENTER) {
-        appendCharacter(event.keychar);
+        m_textArea.appendCharacter(event.keychar);
     } else if(event.type == EV_KEY_DOWN) {
         if(event.keycode == KC_DELETE)
-            removeCharacter(true);
+            m_textArea.removeCharacter(true);
         else if(event.keycode == KC_BACK)
-            removeCharacter(false);
-        else if(event.keycode == KC_RIGHT) {
-            if(m_cursorPos < m_text.length())
-                m_cursorPos++;
-        } else if(event.keycode == KC_LEFT) {
-            if(m_cursorPos > 0)
-                m_cursorPos--;
-        }
+            m_textArea.removeCharacter(false);
+        else if(event.keycode == KC_RIGHT)
+            m_textArea.moveCursor(true);
+        else if(event.keycode == KC_LEFT)
+            m_textArea.moveCursor(false);
     }
-}
-
-void UITextEdit::clearText()
-{
-    m_text = "";
-    m_cursorPos = 0;
-}
-
-void UITextEdit::setText(const std::string& text)
-{
-    m_text = text;
-    m_cursorPos = 0;
-}
-
-void UITextEdit::appendCharacter(char c)
-{
-    std::string tmp;
-    tmp = c;
-    m_text.insert(m_cursorPos, tmp);
-    m_cursorPos++;
-}
-
-void UITextEdit::removeCharacter(bool right)
-{
-    if(right && m_cursorPos < m_text.length())
-        m_text.erase(m_text.begin() + m_cursorPos);
-    else if(m_text.length() >= m_cursorPos && m_cursorPos > 0)
-        m_text.erase(m_text.begin() + (--m_cursorPos));
-}
-
-void UITextEdit::setCursorPos(uint pos)
-{
-    if(pos > m_text.length())
-        m_cursorPos = m_text.length();
-    else
-        m_cursorPos = pos;
 }
 
 void UITextEdit::onLayoutRectChange(const Rect& rect)
 {
-    m_textRect = rect;
+    UITextEditSkin *skin = static_cast<UITextEditSkin*>(getSkin());
+    Rect textRect = rect;
+    int margin = skin->getTextMargin();
+    textRect.setLeft(textRect.left()+margin);
+    textRect.setRight(textRect.right()-margin);
+    m_textArea.setScreenCoords(textRect);
 }
 
+void UITextEdit::onFocusChange()
+{
+    m_textArea.setCursorVisible(isFocused());
+}
 

@@ -22,32 +22,55 @@
  */
 
 
-#ifndef FONTTEXT_H
-#define FONTTEXT_H
+#ifndef TEXTAREA_H
+#define TEXTAREA_H
 
 #include "prerequisites.h"
 #include "font.h"
 
-class FontText
+class TextArea
 {
 public:
-    FontText() { }
+    TextArea();
+    TextArea(Font *font,
+             const std::string& text,
+             const Rect& screenCoords,
+             int align = ALIGN_TOP_LEFT,
+             const Color& color = Color::white);
 
+    void draw();
+
+    void setFont(Font *font);
+    void setText(const std::string& text);
+    void setScreenCoords(Rect screenCoords);
+    void setAlign(int align);
+    void setColor(const Color& color) { m_color = color; }
+    void setStartInternalPos(Point startPos);
+    void enableCursor(bool enable = true);
+    void setCursorVisible(bool visible = true) { m_cursorVisible = visible; }
+
+    void moveCursor(bool right);
     void appendCharacter(char c);
-    void appendText(const std::string &text);
-    void erase(bool left);
+    void removeCharacter(bool right);
 
-    void setText(const std::string &text);
-    void setCursorPos(int pos);
-    void setSelection(int start, int end);
-    void setColor(const Color& color);
-    void setSize(const Size& size);
-    void setStartPos();
+    const std::string& getText() const { return m_text; }
 
 private:
-    int m_cursorPos;
-    std::string m_text;
+    void recalculate();
+
     Font *m_font;
+    std::string m_text;
+    Rect m_screenCoords;
+    Rect m_drawArea;
+    int m_align;
+    Color m_color;
+    Point m_startInternalPos;
+    int m_cursorPos;
+    int m_cursorTicks;
+    bool m_cursorVisible;
+
+    std::vector<Rect> m_glyphsCoords;
+    std::vector<Rect> m_glyphsTexCoords;
 };
 
-#endif // FONTTEXT_H
+#endif // TEXTAREA_H

@@ -61,6 +61,8 @@ public:
     /// Enable FPS counter on screen
     void enableFpsCounter(bool enable = true) { m_calculateFps = enable; };
 
+    int getLastFrameTicks() const { return m_lastFrameTicks; }
+
 private:
     /// Called to render every frame
     void render();
@@ -70,6 +72,7 @@ private:
     bool m_calculateFps;
 
     GameState *m_currentState;
+    int m_lastFrameTicks;
 };
 
 extern Engine g_engine;

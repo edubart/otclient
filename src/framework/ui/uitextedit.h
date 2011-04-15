@@ -27,6 +27,7 @@
 
 #include "prerequisites.h"
 #include "uielement.h"
+#include "graphics/textarea.h"
 
 class Font;
 
@@ -37,24 +38,16 @@ public:
 
     void onInputEvent(const InputEvent& event);
 
-    void clearText();
     void setText(const std::string& text);
-    const std::string& getText() const { return m_text; }
+    const std::string& getText() const { return m_textArea.getText(); }
 
-    void setCursorPos(uint pos);
-    uint getCursorPos() { return m_cursorPos; }
+    TextArea& getTextArea() { return m_textArea; }
 
     void onLayoutRectChange(const Rect& rect);
+    void onFocusChange();
 
 private:
-    void appendCharacter(char c);
-    void removeCharacter(bool right);
-    void recalculate();
-
-    Rect m_textRect;
-    uint m_cursorPos;
-    int m_startRenderPos;
-    std::string m_text;
+    TextArea m_textArea;
 };
 
 typedef boost::shared_ptr<UITextEdit> UITextEditPtr;

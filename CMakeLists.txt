@@ -52,7 +52,7 @@ IF(CMAKE_BUILD_TYPE STREQUAL "Debug")
     ADD_DEFINITIONS(-D_DEBUG)
 ENDIF(CMAKE_BUILD_TYPE STREQUAL "Debug")
 
-SET(SOURCES src/framework/ui/uilinedecorationskin.cpp src/framework/ui/uicheckboxskin.cpp src/framework/ui/uilinedecoration.cpp src/framework/ui/uicheckbox.cpp
+SET(SOURCES
 # game sources
     src/main.cpp
     src/menustate.cpp
@@ -79,11 +79,11 @@ SET(SOURCES src/framework/ui/uilinedecorationskin.cpp src/framework/ui/uicheckbo
     src/framework/graphics/framebuffer.cpp
     src/framework/graphics/font.cpp
     src/framework/graphics/fonts.cpp
-    src/framework/graphics/fonttext.cpp
     src/framework/graphics/textureloader.cpp
     src/framework/graphics/texture.cpp
     src/framework/graphics/textures.cpp
     src/framework/graphics/graphics.cpp
+    src/framework/graphics/textarea.cpp
 
 # framework ui
     src/framework/ui/uilayout.cpp
@@ -101,6 +101,10 @@ SET(SOURCES src/framework/ui/uilinedecorationskin.cpp src/framework/ui/uicheckbo
     src/framework/ui/uiwindowskin.cpp
     src/framework/ui/uitextedit.cpp
     src/framework/ui/uitexteditskin.cpp
+    src/framework/ui/uilinedecorationskin.cpp
+    src/framework/ui/uicheckboxskin.cpp
+    src/framework/ui/uilinedecoration.cpp
+    src/framework/ui/uicheckbox.cpp
 
 # framework net
     src/framework/net/connection.cpp

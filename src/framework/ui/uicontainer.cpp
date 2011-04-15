@@ -111,7 +111,7 @@ void UIContainer::onInputEvent(const InputEvent& event)
                 }
             // mouse events
             } else if(event.type & EV_MOUSE) {
-                // mouse down and weel events only go to elements that contains the mouse position
+                // mouse down and wheel events only go to elements that contains the mouse position
                 if(event.type & EV_DOWN || event.type & EV_MOUSE_WHEEL) {
                     if(child->getRect().contains(event.mousePos)) {
                         // focus it
@@ -134,7 +134,11 @@ void UIContainer::onInputEvent(const InputEvent& event)
 
 void UIContainer::setFocusedElement(UIElementPtr focusedElement)
 {
-    if(m_focusedElement)
+    if(m_focusedElement) {
         m_focusedElement->setFocused(false);
+        m_focusedElement->onFocusChange();
+    }
     m_focusedElement = focusedElement;
+    m_focusedElement->setFocused(true);
+    m_focusedElement->onFocusChange();
 }

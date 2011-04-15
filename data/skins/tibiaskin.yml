@@ -84,7 +84,7 @@ text edits:
   default:
     default size: [86, 16]
     font: tibia-10px-antialised
-    text margin: 2
+    text margin: 3
     bordered image:
       left border: [308,97,1,1]
       right border: [319,97,1,10]

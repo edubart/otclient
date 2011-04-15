@@ -42,6 +42,8 @@ enum EAlign {
     ALIGN_BOTTOM_LEFT = ALIGN_BOTTOM | ALIGN_LEFT
 };
 
+class TextArea;
+
 class Font
 {
 public:
@@ -65,21 +67,21 @@ public:
     void renderText(const std::string& text,
                     const Rect& screenCoords,
                     int align = ALIGN_TOP_LEFT,
-                    const Color& color = Color::white,
-                    const Point& startInternalPos = Point(),
-                    int cursorPos = -1,
-                    const Color& cursorColor = Color::white);
-
+                    const Color& color = Color::white);
 
     /// Calculate glyphs positions to use on render, also calculates textBoxSize if wanted
-    Point *calculateGlyphsPositions(const std::string& text, int align = ALIGN_TOP_LEFT, Size *textBoxSize = NULL);
+    std::vector<Point> calculateGlyphsPositions(const std::string& text, int align = ALIGN_TOP_LEFT, Size *textBoxSize = NULL);
 
     /// Simulate render and calculate text size
     Size calculateTextRectSize(const std::string& text);
 
     const std::string& getName() const { return m_name; }
     int getGlyphHeight() const { return m_glyphHeight; }
- 
+    const Rect *getGlyphsTextureCoords() const { return m_glyphsTextureCoords; }
+    const Size *getGlyphsSize() const { return m_glyphsSize; }
+    const TexturePtr& getTexture() const { return m_texture; }
+    int getTopMargin() const { return m_topMargin; }
+
 private:
     void calculateGlyphsWidthsAutomatically(const Size& glyphSize);
 

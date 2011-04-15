@@ -49,7 +49,7 @@ public:
     Dispatcher() { }
 
     /// Execute scheduled events
-    void poll(int ticks);
+    void poll();
 
     /// Add an event
     void addTask(const Callback& callback);

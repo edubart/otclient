@@ -48,6 +48,7 @@ public:
 
     virtual void render();
     virtual void onInputEvent(const InputEvent& event) { }
+    virtual void onFocusChange() { }
 
     UIElementPtr backwardsGetElementById(const std::string& id);
 

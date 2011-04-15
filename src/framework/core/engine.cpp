@@ -53,8 +53,8 @@ void Engine::terminate()
 void Engine::run()
 {
     Font *defaultFont = g_fonts.getDefaultFont();
-    int ticks = Platform::getTicks();
-    int lastFpsTicks = ticks;
+    m_lastFrameTicks = Platform::getTicks();
+    int lastFpsTicks = m_lastFrameTicks;
     int frameCount = 0;
     int fps = 0;
     m_running = true;
@@ -66,18 +66,18 @@ void Engine::run()
         // poll network events
         g_connections.poll();
 
-        ticks = Platform::getTicks();
+        m_lastFrameTicks = Platform::getTicks();
 
         // poll diaptcher tasks
-        g_dispatcher.poll(ticks);
+        g_dispatcher.poll();
 
         // render only when visible
         if(Platform::isWindowVisible()) {
             // calculate and fps
             if(m_calculateFps) {
                 frameCount++;
-                if(ticks - lastFpsTicks >= 1000) {
-                    lastFpsTicks = ticks;
+                if(m_lastFrameTicks - lastFpsTicks >= 1000) {
+                    lastFpsTicks = m_lastFrameTicks;
                     fps = frameCount;
                     frameCount = 0;
                 }

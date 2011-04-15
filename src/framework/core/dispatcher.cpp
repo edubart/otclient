@@ -24,14 +24,15 @@
 
 #include "dispatcher.h"
 #include "platform.h"
+#include "engine.h"
 
 Dispatcher g_dispatcher;
 
-void Dispatcher::poll(int ticks)
+void Dispatcher::poll()
 {
     while(!m_taskList.empty()) {
         Task *task = m_taskList.top();
-        if(ticks < task->ticks)
+        if(g_engine.getLastFrameTicks() < task->ticks)
             break;
 
         task->callback();
