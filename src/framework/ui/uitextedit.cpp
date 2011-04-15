@@ -49,8 +49,8 @@ void UITextEdit::onInputEvent(const InputEvent& event)
             m_textArea.moveCursor(false);
     } else if(event.type == EV_MOUSE_LDOWN) {
         
-    } else if(event.type == EV_MOUSE_LUP) {
-        dump << m_textArea.getTextPos(event.mousePos);
+    } else if(event.type == EV_MOUSE_LUP && getRect().contains(event.mousePos)) {
+        m_textArea.setCursorPos(m_textArea.getTextPos(event.mousePos));
     }
 }
 

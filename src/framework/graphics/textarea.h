@@ -45,6 +45,7 @@ public:
     void setScreenCoords(Rect screenCoords);
     void setAlign(int align);
     void setColor(const Color& color) { m_color = color; }
+    void setCursorPos(int pos);
     void enableCursor(bool enable = true);
     void setCursorVisible(bool visible = true) { m_cursorVisible = visible; }
 
