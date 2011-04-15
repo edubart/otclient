@@ -82,6 +82,11 @@ public:
     inline void setRect(T x, T y, T width, T height) { x1 = x; y1 = y; x2 = (x + width - 1); y2 = (y + height - 1); }
     inline void setCoords(int left, int top, int right, int bottom) { x1 = left; y1 = top; x2 = right; y2 = bottom; }
 
+    inline void addLeft(T add) { x1 -= add; }
+    inline void addTop(T add) { y1 -= add; }
+    inline void addRight(T add) { x2 += add; }
+    inline void addBottom(T add) { y2 += add; }
+
     inline void translate(T x, T y) { x1 += x; y1 += y; x2 += x; y2 += y; }
     inline void translate(const TPoint<T> &p) { x1 += p.x; y1 += p.y; x2 += p.x; y2 += p.y; }
     inline void moveTo(T x, T y) { x2 += x - x1; y2 += y - y1; x1 = x; y1 = y; }
@@ -135,7 +140,7 @@ public:
             if(p.x < l || p.x > r)
                 return false;
         }
-        int t, b;
+        T t, b;
         if(y2 < y1 - 1) {
             t = y2;
             b = y1;

@@ -54,6 +54,8 @@ public:
 
     const std::string& getText() const { return m_text; }
 
+    int getTextPos(Point pos);
+    
 private:
     void recalculate();
 

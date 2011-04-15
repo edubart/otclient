@@ -81,6 +81,7 @@ public:
     const Size *getGlyphsSize() const { return m_glyphsSize; }
     const TexturePtr& getTexture() const { return m_texture; }
     int getTopMargin() const { return m_topMargin; }
+    const Size& getGlyphSpacing() const { return m_glyphSpacing; }
 
 private:
     void calculateGlyphsWidthsAutomatically(const Size& glyphSize);

@@ -47,6 +47,10 @@ void UITextEdit::onInputEvent(const InputEvent& event)
             m_textArea.moveCursor(true);
         else if(event.keycode == KC_LEFT)
             m_textArea.moveCursor(false);
+    } else if(event.type == EV_MOUSE_LDOWN) {
+        
+    } else if(event.type == EV_MOUSE_LUP) {
+        dump << m_textArea.getTextPos(event.mousePos);
     }
 }
 

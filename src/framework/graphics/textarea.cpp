@@ -281,4 +281,17 @@ void TextArea::moveCursor(bool right)
     recalculate();
 }
 
-
+int TextArea::getTextPos(Point pos)
+{
+    int textLength = m_text.length();
+    dump << " get pos: " << pos << m_drawArea;
+    for(int i=0;i<textLength;++i) {
+        Rect clickGlyphRect = m_glyphsCoords[i];
+        clickGlyphRect.addTop(m_font->getTopMargin() + m_font->getGlyphSpacing().height());
+        clickGlyphRect.addLeft(m_font->getGlyphSpacing().width()+1);
+        dump << clickGlyphRect; 
+        if(m_glyphsCoords[i].contains(pos))
+            return i;
+    }
+    return -1;
+}
