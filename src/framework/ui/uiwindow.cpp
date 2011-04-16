@@ -23,3 +23,25 @@
 
 
 #include "uiwindow.h"
+#include "uiwindowskin.h"
+
+void UIWindow::onInputEvent(const InputEvent& event)
+{
+    UIContainer::onInputEvent(event);
+    if(event.type == EV_MOUSE_LDOWN) {
+        UIWindowSkin *skin = static_cast<UIWindowSkin*>(getSkin());
+        Rect headRect = getRect();
+        headRect.setHeight(skin->getHeadHeight());
+        if(headRect.contains(event.mousePos)) {
+            m_moving = true;
+        }
+    } else if(event.type == EV_MOUSE_LUP) {
+        if(m_moving) {
+            m_moving = false;
+        }
+    } else if(event.type == EV_MOUSE_MOVE) {
+        if(m_moving) {
+            moveTo(getRect().topLeft() + event.mouseMoved);
+        }
+    }
+}

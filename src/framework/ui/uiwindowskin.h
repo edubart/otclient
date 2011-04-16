@@ -38,6 +38,8 @@ public:
     void load(const YAML::Node& node);
     void draw(UIElement *element);
 
+    int getHeadHeight() const { return m_headHeight; }
+
 private:
     ImagePtr m_headImage;
     ImagePtr m_bodyImage;

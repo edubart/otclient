@@ -105,24 +105,22 @@ void UIContainer::onInputEvent(const InputEvent& event)
         // events should pass only when element is visible and enabled
         if(child->isEnabled() && child->isVisible()) {
             if(event.type & EV_KEYBOARD) {
-                // keyboard events only go to focused elements
-                if(child == getFocusedElement()) {
+                // keyboard events only go to focused elements or containers
+                if(child->asUIContainer() || child == getFocusedElement()) {
                     shouldFire = true;
                 }
             // mouse events
             } else if(event.type & EV_MOUSE) {
-                // mouse down and wheel events only go to elements that contains the mouse position
-                if(event.type & EV_DOWN || event.type & EV_MOUSE_WHEEL) {
+                // mouse down and wheel events only go to elements that contains the mouse position and are not containers
+                if((event.type & EV_DOWN || event.type & EV_MOUSE_WHEEL) && !child->asUIContainer()) {
                     if(child->getRect().contains(event.mousePos)) {
                         // focus it
-                        if(event.type == EV_MOUSE_LDOWN)
+                        if(event.type == EV_MOUSE_LDOWN && child->isFocusable())
                             setFocusedElement(child);
                         shouldFire = true;
                     }
-                }
-                // mouse move and mouse up events go to all elements
-                else {
-                    shouldFire = false;
+                } else {
+                    shouldFire = true;
                 }
             }
         }

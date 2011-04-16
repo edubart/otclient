@@ -32,13 +32,17 @@ class UIWindow : public UIContainer
 {
 public:
     UIWindow() :
-        UIContainer(UI::Window) { }
+        UIContainer(UI::Window),
+        m_moving(false) { }
+
+    void onInputEvent(const InputEvent& event);
 
     void setTitle(const std::string& title) { m_title = title; }
     const std::string& getTitle() const { return m_title; }
 
 private:
     std::string m_title;
+    bool m_moving;
 };
 
 typedef boost::shared_ptr<UIWindow> UIWindowPtr;

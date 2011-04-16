@@ -52,6 +52,8 @@ public:
 
     UIElementPtr backwardsGetElementById(const std::string& id);
 
+    void moveTo(Point pos);
+
     bool setSkin(const std::string& skinName);
     void setSkin(UIElementSkin *skin);
     UIElementSkin *getSkin() { return m_skin; }
@@ -71,6 +73,7 @@ public:
     void setVisible(bool visible) { m_visible = visible; }
     bool isVisible() const { return m_visible; }
 
+    virtual bool isFocusable() const { return false; }
     UI::EElementType getElementType() const { return m_type; }
 
     UIElementPtr asUIElement() { return boost::static_pointer_cast<UIElement>(shared_from_this()); }

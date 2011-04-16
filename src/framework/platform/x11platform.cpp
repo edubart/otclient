@@ -390,10 +390,14 @@ void Platform::poll()
                 break;
 
             case MotionNotify:
+            {
                 inputEvent.type = EV_MOUSE_MOVE;
-                inputEvent.mousePos = Point(event.xbutton.x, event.xbutton.y);
+                Point newMousePos(event.xbutton.x, event.xbutton.y);
+                inputEvent.mouseMoved = newMousePos - inputEvent.mousePos;
+                inputEvent.mousePos = newMousePos;
                 g_engine.onInputEvent(inputEvent);
                 break;
+            }
 
             case MapNotify:
                 x11.visible = true;

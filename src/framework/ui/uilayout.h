@@ -114,6 +114,8 @@ protected:
 private:
     /// Recalculate itself and anchored elements positions
     void recalculateLayout();
+    /// Recalculate anchored elements positions
+    void recalculateAnchoredLayout();
     void addAnchoredElement(UILayoutPtr anchoredElement);
 
     AnchorLine m_anchors[6];

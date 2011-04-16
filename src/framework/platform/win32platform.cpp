@@ -589,7 +589,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case WM_MOUSEMOVE:
         {
             inputEvent.type = EV_MOUSE_MOVE;
-            inputEvent.mousePos = Point(LOWORD(lParam), HIWORD(lParam));
+            Point newMousePos(LOWORD(lParam), HIWORD(lParam));
+            inputEvent.mouseMoved = newMousePos - inputEvent.mousePos;
+            inputEvent.mousePos = newMousePos;
             g_engine.onInputEvent(inputEvent);
             break;
         }

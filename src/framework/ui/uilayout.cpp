@@ -66,7 +66,7 @@ void UILayout::setRect(const Rect& rect)
     m_rect = rect;
 
     // rect updated, recalculate itself and anchored elements positions
-    recalculateLayout();
+    recalculateAnchoredLayout();
 }
 
 bool UILayout::addAnchor(EAnchorType type, const AnchorLine& anchorLine)
@@ -141,14 +141,19 @@ void UILayout::recalculateLayout()
         }
     }
 
+    recalculateAnchoredLayout();
+
+    // fire layout update event
+    onLayoutRectChange(m_rect);
+}
+
+void UILayout::recalculateAnchoredLayout()
+{
     // recalculate anchored elements positions
     for(auto it = m_anchoredElements.begin(); it != m_anchoredElements.end(); ++it) {
         UILayoutPtr element = (*it).lock();
         if(element)
             element->recalculateLayout();
     }
-
-    // fire layotu update event
-    onLayoutRectChange(m_rect);
 }
 

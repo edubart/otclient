@@ -77,3 +77,24 @@ UIElementPtr UIElement::backwardsGetElementById(const std::string& id)
         element = getParent()->backwardsGetElementById(id);
     return element;
 }
+
+void UIElement::moveTo(Point pos)
+{
+    Rect newRect = getRect();
+    newRect.moveTo(pos);
+
+    // bound newRect to parent rect
+    UIContainerPtr parent = getParent();
+    if(parent) {
+        Rect parentRect = parent->getRect();
+        if(newRect.left() < parentRect.left())
+            newRect.moveLeft(parentRect.left());
+        if(newRect.top() < parentRect.top())
+            newRect.moveTop(parentRect.top());
+        if(newRect.bottom() > parentRect.bottom())
+            newRect.moveBottom(parentRect.bottom());
+        if(newRect.right() > parentRect.right())
+            newRect.moveRight(parentRect.right());
+    }
+    setRect(newRect);
+}

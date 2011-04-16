@@ -37,13 +37,14 @@ public:
     UITextEdit();
 
     void onInputEvent(const InputEvent& event);
+    void onLayoutRectChange(const Rect& rect);
+    void onFocusChange();
 
     void setText(const std::string& text);
     const std::string& getText() const { return m_textArea.getText(); }
     TextArea& getTextArea() { return m_textArea; }
 
-    void onLayoutRectChange(const Rect& rect);
-    void onFocusChange();
+    bool isFocusable() const { return true; }
 
 private:
     TextArea m_textArea;
