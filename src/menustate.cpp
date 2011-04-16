@@ -85,9 +85,14 @@ void MenuState::render()
 
 void MenuState::enterGameButton_clicked()
 {
-    UIElementPtr window = UIContainer::getRootContainer()->getChildById("enterGameWindow");
-    if(!window)
-        window = UILoader::loadFile("ui/enterGameWindow.yml");
-    window->getParent()->setEnabled(false);
-}
+    UIWindowPtr window = boost::static_pointer_cast<UIWindow>(UILoader::loadFile("ui/enterGameWindow.yml"));
+    UIContainerPtr windowParent = window->getParent();
+    windowParent->lockElement(window);
 
+    UIButtonPtr button = boost::static_pointer_cast<UIButton>(window->getChildById("cancelButton"));
+    button->setOnClick([] {
+        UIWindowPtr window = boost::static_pointer_cast<UIWindow>(UIContainer::getRootContainer()->getChildById("enterGameWindow"));
+        UIContainer::getRootContainer()->unlockElement();
+        window->destroy();
+    });
+}

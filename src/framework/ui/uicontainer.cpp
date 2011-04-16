@@ -45,11 +45,23 @@ void UIContainer::addChild(UIElementPtr child)
 
 void UIContainer::removeChild(UIElementPtr child)
 {
+    // first check if its really a child
+    bool removed = false;
+    for(auto it = m_children.begin(); it != m_children.end(); ++it) {
+        if((*it) == child) {
+            removed = true;
+            m_children.erase(it);
+            break;
+        }
+    }
+    assert(removed);
+
     if(m_focusedElement == child)
         setFocusedElement(UIElementPtr());
-    m_children.remove(child);
-    if(child->getParent() == shared_from_this())
-        child->setParent(UIContainerPtr());
+
+    // child must have this container as parent
+    assert(child->getParent() == asUIContainer());
+    child->setParent(UIContainerPtr());
 }
 
 UIElementPtr UIContainer::getChildById(const std::string& id)
@@ -57,9 +69,8 @@ UIElementPtr UIContainer::getChildById(const std::string& id)
     if(getId() == id)
         return asUIElement();
     for(auto it = m_children.begin(); it != m_children.end(); ++it) {
-        if((*it)->getId() == id) {
+        if((*it)->getId() == id)
             return (*it);
-        }
     }
     return UIElementPtr();
 }
@@ -98,6 +109,7 @@ void UIContainer::render()
 
 void UIContainer::onInputEvent(const InputEvent& event)
 {
+    UIElementPtr focusedElement = m_focusedElement;
     for(auto it = m_children.begin(); it != m_children.end(); ++it) {
         const UIElementPtr& child = (*it);
         bool shouldFire = false;
@@ -106,7 +118,7 @@ void UIContainer::onInputEvent(const InputEvent& event)
         if(child->isEnabled() && child->isVisible()) {
             if(event.type & EV_KEYBOARD) {
                 // keyboard events only go to focused elements or containers
-                if(child->asUIContainer() || child == getFocusedElement()) {
+                if(child->asUIContainer() || child == focusedElement) {
                     shouldFire = true;
                 }
             // mouse events
@@ -130,13 +142,69 @@ void UIContainer::onInputEvent(const InputEvent& event)
     }
 }
 
+void UIContainer::focusNextElement()
+{
+    UIElementPtr element;
+    auto focusedIt = std::find(m_children.begin(), m_children.end(), m_focusedElement);
+    if(focusedIt != m_children.end()) {
+        for(auto it = ++focusedIt; it != m_children.end(); ++it) {
+            const UIElementPtr& child = (*it);
+            if(child->isFocusable()) {
+                element = child;
+                break;
+            }
+        }
+    }
+    if(!element) {
+        for(auto it = m_children.begin(); it != m_children.end(); ++it) {
+            const UIElementPtr& child = (*it);
+            if(child->isFocusable()) {
+                element = child;
+                break;
+            }
+        }
+    }
+    if(element)
+        setFocusedElement(element);
+}
+
 void UIContainer::setFocusedElement(UIElementPtr focusedElement)
 {
-    if(m_focusedElement) {
-        m_focusedElement->setFocused(false);
+    if(focusedElement != m_focusedElement) {
+        if(m_focusedElement) {
+            m_focusedElement->setFocused(false);
+            m_focusedElement->onFocusChange();
+        }
+        m_focusedElement = focusedElement;
+        m_focusedElement->setFocused(true);
         m_focusedElement->onFocusChange();
     }
-    m_focusedElement = focusedElement;
-    m_focusedElement->setFocused(true);
-    m_focusedElement->onFocusChange();
+}
+
+bool UIContainer::lockElement(UIElementPtr element)
+{
+    bool found = false;
+    for(auto it = m_children.begin(); it != m_children.end(); ++it) {
+        if((*it) == element) {
+            (*it)->setEnabled(true);
+            found = true;
+            break;
+        }
+    }
+
+    if(found) {
+        for(auto it = m_children.begin(); it != m_children.end(); ++it) {
+            if((*it) != element)
+                (*it)->setEnabled(false);
+        }
+        return true;
+    }
+    return false;
+}
+
+void UIContainer::unlockElement()
+{
+    for(auto it = m_children.begin(); it != m_children.end(); ++it) {
+        (*it)->setEnabled(true);
+    }
 }

@@ -46,7 +46,13 @@ public:
     UIElement(UI::EElementType type = UI::Element);
     virtual ~UIElement() { }
 
+    /// Destroy this element by removing it from its parent
+    void destroy();
+
+    /// Draw element
     virtual void render();
+
+    // events
     virtual void onInputEvent(const InputEvent& event) { }
     virtual void onFocusChange() { }
 

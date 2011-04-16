@@ -38,7 +38,7 @@ public:
         UIElementSkin(name, UI::TextEdit) { }
 
     void load(const YAML::Node& node);
-    void onSkinApply(UIElement *element);
+    void apply(UIElement *element);
     void draw(UIElement *element);
 
     Font *getFont() const { return m_font; }

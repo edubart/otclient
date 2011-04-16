@@ -26,6 +26,7 @@
 #include "uiskins.h"
 #include "uielementskin.h"
 #include "graphics/graphics.h"
+#include <core/dispatcher.h>
 
 UIElement::UIElement(UI::EElementType type) :
     UILayout(),
@@ -36,6 +37,16 @@ UIElement::UIElement(UI::EElementType type) :
     m_focused(false)
 {
 
+}
+
+void UIElement::destroy()
+{
+    // we must always have a parent when destroying
+    assert(getParent());
+    // we cant delete now, as this call maybe in a event loop
+    g_dispatcher.addTask(boost::bind(&UIContainer::removeChild, getParent(), asUIContainer()));
+    // shared ptr must have 4 refs, (this + removeChild callback + parent + use_count call)
+    assert(asUIElement().use_count() == 4);
 }
 
 bool UIElement::setSkin(const std::string& skinName)
@@ -49,7 +60,7 @@ void UIElement::setSkin(UIElementSkin* skin)
     m_skin = skin;
     if(skin && !getRect().isValid()) {
         setSize(skin->getDefaultSize());
-        skin->onSkinApply(this);
+        skin->apply(this);
     }
 }
 

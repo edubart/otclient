@@ -106,7 +106,7 @@ void UILayout::addAnchoredElement(UILayoutPtr anchoredElement)
         }
     }
 
-    // if not anchor it
+    // if not, anchor it
     if(!found)
         m_anchoredElements.push_back(anchoredElement);
 }

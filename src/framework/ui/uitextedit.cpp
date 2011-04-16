@@ -25,6 +25,7 @@
 #include "uitextedit.h"
 #include "uitexteditskin.h"
 #include "graphics/fonts.h"
+#include "uicontainer.h"
 
 UITextEdit::UITextEdit() :
     UIElement(UI::TextEdit)
@@ -37,18 +38,20 @@ void UITextEdit::onInputEvent(const InputEvent& event)
     if(event.type == EV_TEXT_ENTER) {
         m_textArea.appendCharacter(event.keychar);
     } else if(event.type == EV_KEY_DOWN) {
-        if(event.keycode == KC_DELETE)
+        if(event.keycode == KC_DELETE) // erase right character
             m_textArea.removeCharacter(true);
-        else if(event.keycode == KC_BACK)
+        else if(event.keycode == KC_BACK) // erase left character
             m_textArea.removeCharacter(false);
-        else if(event.keycode == KC_RIGHT)
+        else if(event.keycode == KC_RIGHT) // move cursor right
             m_textArea.moveCursor(true);
-        else if(event.keycode == KC_LEFT)
+        else if(event.keycode == KC_LEFT) // move cursor left
             m_textArea.moveCursor(false);
-        else if(event.keycode == KC_HOME)
+        else if(event.keycode == KC_HOME) // move cursor to first character
             m_textArea.setCursorPos(0);
-        else if(event.keycode == KC_END)
+        else if(event.keycode == KC_END) // move cursor to last character
             m_textArea.setCursorPos(m_textArea.getText().length());
+        else if(event.keycode == KC_TAB) // focus next parent element
+            getParent()->focusNextElement();
     } else if(event.type == EV_MOUSE_LDOWN) {
 
     } else if(event.type == EV_MOUSE_LUP && getRect().contains(event.mousePos)) {

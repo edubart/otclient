@@ -31,25 +31,38 @@
 class UIContainer : public UIElement
 {
 public:
-    UIContainer(UI::EElementType type = UI::Container) : UIElement(type) { }
+    UIContainer(UI::EElementType type = UI::Container) :
+        UIElement(type) { }
     virtual ~UIContainer() { }
 
     virtual void render();
     virtual void onInputEvent(const InputEvent& event);
 
+    /// Add an element, this must never be called from events loops
     void addChild(UIElementPtr child);
+    /// Remove an element, this must never be called from events loops
     void removeChild(UIElementPtr child);
+    /// Find an element in this container by id
     UIElementPtr getChildById(const std::string& id);
-
+    /// Find an element in this container and in its children by id
     UIElementPtr recursiveGetChildById(const std::string& id);
 
+    /// Disable all children except the specified element
+    bool lockElement(UIElementPtr element);
+    /// Renable all children
+    void unlockElement();
+
+    /// Focus next element
+    void focusNextElement();
+    /// Focus element
     void setFocusedElement(UIElementPtr focusedElement);
+    /// Get focused element
     UIElementPtr getFocusedElement() const { return m_focusedElement; }
 
     virtual UI::EElementType getElementType() const { return UI::Container; }
-
     UIContainerPtr asUIContainer() { return boost::static_pointer_cast<UIContainer>(shared_from_this()); }
 
+    /// Get root container (the container that contains everything)
     static UIContainerPtr& getRootContainer();
 
 private:

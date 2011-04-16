@@ -55,14 +55,15 @@ TextArea::TextArea(Font* font,
 
 void TextArea::draw()
 {
-    int numGlyphs = m_text.length();
+    int textLength = m_text.length();
     const TexturePtr& texture = m_font->getTexture();
-    for(int i=0;i<numGlyphs;++i) {
+    for(int i=0;i<textLength;++i) {
         g_graphics.drawTexturedRect(m_glyphsCoords[i], texture, m_glyphsTexCoords[i], m_color);
     }
 
     // render cursor
-    if(m_cursorVisible && m_cursorPos >= 0 && m_cursorPos <= numGlyphs) {
+    if(m_cursorVisible && m_cursorPos >= 0) {
+        assert(m_cursorPos <= textLength);
         const int delay = 500;
         int ticks = g_engine.getLastFrameTicks();
         // draw every 500ms
@@ -82,7 +83,7 @@ void TextArea::draw()
 
 void TextArea::recalculate()
 {
-    int textLenght = m_text.length();
+    int textLength = m_text.length();
 
     // prevent glitches
     if(!m_screenCoords.isValid() || !m_font)
@@ -96,20 +97,21 @@ void TextArea::recalculate()
     int glyph;
 
     // resize just on demand
-    if(textLenght > (int)m_glyphsCoords.size()) {
-        m_glyphsCoords.resize(textLenght);
-        m_glyphsTexCoords.resize(textLenght);
+    if(textLength > (int)m_glyphsCoords.size()) {
+        m_glyphsCoords.resize(textLength);
+        m_glyphsTexCoords.resize(textLength);
     }
 
     // readjust start view area based on cursor position
-    if(m_cursorPos >= 0 && textLenght > 0) {
+    if(m_cursorPos >= 0 && textLength > 0) {
+        assert(m_cursorPos <= textLength);
         if(m_cursorPos < m_startRenderPos) // cursor is before the previuos first rendered glyph, so we need to update
         {
             m_startInternalPos.x = glyphsPositions[m_cursorPos].x;
             m_startInternalPos.y = glyphsPositions[m_cursorPos].y - m_font->getTopMargin();
             m_startRenderPos = m_cursorPos;
         } else if(m_cursorPos > m_startRenderPos || // cursor is after the previuos first rendered glyph
-                  (m_cursorPos == m_startRenderPos && textLenght == m_cursorPos)) // cursor is at the previuos rendered element, and is the last text element
+                  (m_cursorPos == m_startRenderPos && textLength == m_cursorPos)) // cursor is at the previuos rendered element, and is the last text element
         {
             Rect virtualRect(m_startInternalPos, m_screenCoords.size()); // previus rendered virtual rect
             int pos = m_cursorPos - 1; // element before cursor
@@ -124,7 +126,7 @@ void TextArea::recalculate()
                 startGlyphPos.x = std::max(glyphRect.right() - virtualRect.width(), 0);
 
                 // find that glyph
-                for(pos = 0; pos < textLenght; ++pos) {
+                for(pos = 0; pos < textLength; ++pos) {
                     glyph = (uchar)m_text[pos];
                     glyphRect = Rect(glyphsPositions[pos], glyphsSize[glyph]);
                     glyphRect.setTop(std::max(glyphRect.top() - m_font->getTopMargin() - m_font->getGlyphSpacing().height(), 0));
@@ -149,7 +151,7 @@ void TextArea::recalculate()
     m_drawArea.setRight(m_screenCoords.right());
     m_drawArea.setBottom(m_screenCoords.bottom());
 
-    for(int i = 0; i < textLenght; ++i) {
+    for(int i = 0; i < textLength; ++i) {
         glyph = (uchar)m_text[i];
         m_glyphsCoords[i].clear();
 
@@ -294,7 +296,7 @@ void TextArea::removeCharacter(bool right)
     if(m_cursorPos >= 0) {
         if(right && (uint)m_cursorPos < m_text.length())
             m_text.erase(m_text.begin() + m_cursorPos);
-        else if((uint)m_cursorPos <= m_text.length() && m_cursorPos > 0) {
+        else if((uint)m_cursorPos == m_text.length()) {
             m_text.erase(m_text.begin() + (--m_cursorPos));
             m_cursorTicks = g_engine.getLastFrameTicks();
         }
