@@ -28,8 +28,6 @@
 #include "prerequisites.h"
 #include "uielement.h"
 
-class Font;
-
 class UILabel : public UIElement
 {
 public:

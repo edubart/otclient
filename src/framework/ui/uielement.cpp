@@ -25,7 +25,7 @@
 #include "uielement.h"
 #include "uiskins.h"
 #include "uielementskin.h"
-#include <graphics/graphics.h>
+#include "graphics/graphics.h"
 
 UIElement::UIElement(UI::EElementType type) :
     UILayout(),
@@ -35,9 +35,7 @@ UIElement::UIElement(UI::EElementType type) :
     m_enabled(true),
     m_focused(false)
 {
-    // set default skin
-    if(type > UI::Container)
-        setSkin(g_uiSkins.getElementSkin(type));
+
 }
 
 bool UIElement::setSkin(const std::string& skinName)
@@ -48,10 +46,11 @@ bool UIElement::setSkin(const std::string& skinName)
 
 void UIElement::setSkin(UIElementSkin* skin)
 {
+    m_skin = skin;
     if(skin && !getRect().isValid()) {
         setSize(skin->getDefaultSize());
+        skin->onSkinApply(this);
     }
-    m_skin = skin;
 }
 
 void UIElement::render()

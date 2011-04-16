@@ -42,7 +42,7 @@ public:
 
     void setFont(Font *font);
     void setText(const std::string& text);
-    void setScreenCoords(Rect screenCoords);
+    void setScreenCoords(const Rect& screenCoords);
     void setAlign(int align);
     void setColor(const Color& color) { m_color = color; }
     void setCursorPos(int pos);
@@ -55,8 +55,9 @@ public:
 
     const std::string& getText() const { return m_text; }
 
+    Font *getFont() const { return m_font; }
     int getTextPos(Point pos);
-    
+
 private:
     void recalculate();
 
@@ -75,5 +76,7 @@ private:
     std::vector<Rect> m_glyphsCoords;
     std::vector<Rect> m_glyphsTexCoords;
 };
+
+typedef boost::shared_ptr<TextArea> TextAreaPtr;
 
 #endif // TEXTAREA_H

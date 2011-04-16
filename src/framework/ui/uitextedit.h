@@ -40,7 +40,6 @@ public:
 
     void setText(const std::string& text);
     const std::string& getText() const { return m_textArea.getText(); }
-
     TextArea& getTextArea() { return m_textArea; }
 
     void onLayoutRectChange(const Rect& rect);

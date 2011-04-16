@@ -64,6 +64,7 @@ public:
     inline T width() const { return  x2 - x1 + 1; }
     inline T height() const { return  y2 - y1 + 1; }
     inline TSize<T> size() const { return TSize<T>(width(), height()); }
+    inline void clear() { x1 = y1 = 0; x2 = y2 = -1; }
 
     inline void setLeft(T pos) { x1 = pos; }
     inline void setTop(T pos) { y1 = pos; }

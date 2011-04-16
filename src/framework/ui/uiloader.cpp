@@ -50,8 +50,12 @@ UIElementPtr UILoader::createElementFromId(const std::string& id)
         element = UIElementPtr(new UITextEdit);
     }
 
-    if(element)
+    if(element) {
         element->setId(elementId);
+
+        // apply default skin
+        element->setSkin(g_uiSkins.getElementSkin(element->getElementType()));
+    }
 
     return element;
 }

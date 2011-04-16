@@ -46,6 +46,12 @@ void UITextEditSkin::load(const YAML::Node& node)
         m_textMargin = 2;
 }
 
+void UITextEditSkin::onSkinApply(UIElement* element)
+{
+    UITextEdit *textEdit = static_cast<UITextEdit*>(element);
+    textEdit->getTextArea().setFont(m_font);
+}
+
 void UITextEditSkin::draw(UIElement* element)
 {
     UIElementSkin::draw(element);

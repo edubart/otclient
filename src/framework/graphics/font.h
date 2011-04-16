@@ -42,8 +42,6 @@ enum EAlign {
     ALIGN_BOTTOM_LEFT = ALIGN_BOTTOM | ALIGN_LEFT
 };
 
-class TextArea;
-
 class Font
 {
 public:
@@ -55,22 +53,19 @@ public:
     /// Load font from file
     bool load(const std::string &file);
 
-    /// Simple text render starting at pos
+    /// Simple text render starting at startPos
     void renderText(const std::string& text,
                     const Point& startPos,
                     const Color& color = Color::white);
 
-    /** Advanced text render
-     * screenCoords is the rect that will be filled on the screen
-     * startRenderPosition is the postion to start rendering relative to the text rect
-     */
+    /// Advanced text render
     void renderText(const std::string& text,
                     const Rect& screenCoords,
                     int align = ALIGN_TOP_LEFT,
                     const Color& color = Color::white);
 
     /// Calculate glyphs positions to use on render, also calculates textBoxSize if wanted
-    std::vector<Point> calculateGlyphsPositions(const std::string& text, int align = ALIGN_TOP_LEFT, Size *textBoxSize = NULL);
+    const std::vector<Point>& calculateGlyphsPositions(const std::string& text, int align = ALIGN_TOP_LEFT, Size *textBoxSize = NULL) const;
 
     /// Simulate render and calculate text size
     Size calculateTextRectSize(const std::string& text);

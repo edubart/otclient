@@ -30,8 +30,17 @@
 
 class Graphics
 {
+    enum EDrawMode {
+        DRAW_NONE = 0,
+        DRAW_QUADS = 1,
+        DRAW_TEXTURE = 2,
+        DRAW_COLORED = 4,
+        DRAW_COLOR_QUADS = DRAW_QUADS | DRAW_COLORED,
+        DRAW_TEXTURE_QUADS = DRAW_QUADS | DRAW_TEXTURE | DRAW_COLORED
+    };
+
 public:
-    Graphics() { }
+    Graphics() : m_drawMode(DRAW_NONE) { }
 
     /// Initialize graphics
     void init();
@@ -56,13 +65,23 @@ public:
 
     const Size& getScreenSize() const { return m_screenSize; }
 
+    void disableDrawing();
+    void enableDrawing();
+
     void drawTexturedRect(const Rect& screenCoords, const TexturePtr& texture, const Rect& textureCoords = Rect(), const Color& color = Color::white);
     void drawRepeatedTexturedRect(const Rect& screenCoords, const TexturePtr& texture, const Rect& textureCoords, const Color& color = Color::white);
     void drawFilledRect(const Rect& screenCoords, const Color& color);
     void drawBoundingRect(const Rect& screenCoords, const Color& color = Color::green, int innerLineWidth = 1);
 
 private:
+    void bindTexture(const TexturePtr& texture, const Color& color = Color::white);
+    void bindColor(const Color& color);
+
+    TexturePtr m_bindedTexture;
+    Color m_bindedColor;
     Size m_screenSize;
+    EDrawMode m_drawMode;
+    EDrawMode m_lastDrawMode;
 };
 
 extern Graphics g_graphics;

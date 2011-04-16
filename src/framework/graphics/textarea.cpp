@@ -82,22 +82,24 @@ void TextArea::draw()
 
 void TextArea::recalculate()
 {
-    // prevent glitches from invalid rects
-    if(!m_screenCoords.isValid())
-        return;
-
     int textLenght = m_text.length();
 
-    m_glyphsCoords.clear();
-    m_glyphsTexCoords.clear();
-    m_glyphsCoords.resize(textLenght);
-    m_glyphsTexCoords.resize(textLenght);
+    // prevent glitches
+    if(!m_screenCoords.isValid() || !m_font)
+        return;
 
     // map glyphs positions
     Size textBoxSize;
-    std::vector<Point> glyphsPositions = m_font->calculateGlyphsPositions(m_text, m_align, &textBoxSize);
+    const std::vector<Point>& glyphsPositions = m_font->calculateGlyphsPositions(m_text, m_align, &textBoxSize);
     const Rect *glyphsTextureCoords = m_font->getGlyphsTextureCoords();
     const Size *glyphsSize = m_font->getGlyphsSize();
+    int glyph;
+
+    // resize just on demand
+    if(textLenght > (int)m_glyphsCoords.size()) {
+        m_glyphsCoords.resize(textLenght);
+        m_glyphsTexCoords.resize(textLenght);
+    }
 
     // readjust start view area based on cursor position
     if(m_cursorPos >= 0 && textLenght > 0) {
@@ -111,7 +113,7 @@ void TextArea::recalculate()
         {
             Rect virtualRect(m_startInternalPos, m_screenCoords.size()); // previus rendered virtual rect
             int pos = m_cursorPos - 1; // element before cursor
-            int glyph = (uchar)m_text[pos]; // glyph of the element before cursor
+            glyph = (uchar)m_text[pos]; // glyph of the element before cursor
             Rect glyphRect(glyphsPositions[pos], glyphsSize[glyph]);
 
             // if the cursor is not on the previus rendered virtual rect we need to update it
@@ -148,8 +150,8 @@ void TextArea::recalculate()
     m_drawArea.setBottom(m_screenCoords.bottom());
 
     for(int i = 0; i < textLenght; ++i) {
-        int glyph = (uchar)m_text[i];
-        m_glyphsCoords[i] = Rect();
+        glyph = (uchar)m_text[i];
+        m_glyphsCoords[i].clear();
 
         // skip invalid glyphs
         if(glyph < 32)
@@ -218,41 +220,51 @@ void TextArea::recalculate()
 
 void TextArea::setFont(Font* font)
 {
-    m_font = font;
-    recalculate();
+    if(m_font != font) {
+        m_font = font;
+        recalculate();
+    }
 }
 
 void TextArea::setText(const std::string& text)
 {
-    m_text = text;
-    if(m_cursorPos >= 0) {
-        m_cursorPos = 0;
-        m_cursorTicks = g_engine.getLastFrameTicks();
+    if(m_text != text) {
+        m_text = text;
+        if(m_cursorPos >= 0) {
+            m_cursorPos = 0;
+            m_cursorTicks = g_engine.getLastFrameTicks();
+        }
+        recalculate();
     }
-    recalculate();
 }
 
-void TextArea::setScreenCoords(Rect screenCoords)
+void TextArea::setScreenCoords(const Rect& screenCoords)
 {
-    m_screenCoords = screenCoords;
-    recalculate();
+    if(screenCoords != m_screenCoords) {
+        m_screenCoords = screenCoords;
+        recalculate();
+    }
 }
 
 void TextArea::setAlign(int align)
 {
-    m_align = align;
-    recalculate();
+    if(m_align != align) {
+        m_align = align;
+        recalculate();
+    }
 }
 
 void TextArea::setCursorPos(int pos)
 {
-    if(pos < 0)
-        m_cursorPos = 0;
-    else if((uint)pos >= m_text.length())
-        m_cursorPos = m_text.length();
-    else
-        m_cursorPos = pos;
-    recalculate();
+    if(pos != m_cursorPos) {
+        if(pos < 0)
+            m_cursorPos = 0;
+        else if((uint)pos >= m_text.length())
+            m_cursorPos = m_text.length();
+        else
+            m_cursorPos = pos;
+        recalculate();
+    }
 }
 
 void TextArea::enableCursor(bool enable)

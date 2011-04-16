@@ -26,7 +26,6 @@
 #include "core/resources.h"
 #include "textures.h"
 #include "graphics.h"
-#include "textarea.h"
 
 void Font::calculateGlyphsWidthsAutomatically(const Size& glyphSize)
 {
@@ -136,7 +135,7 @@ void Font::renderText(const std::string& text,
 {
     Size boxSize = g_graphics.getScreenSize() - startPos.toSize();
     Rect screenCoords(startPos, boxSize);
-    Font::renderText(text, screenCoords, ALIGN_TOP_LEFT, color);
+    renderText(text, screenCoords, ALIGN_TOP_LEFT, color);
 }
 
 
@@ -145,34 +144,100 @@ void Font::renderText(const std::string& text,
                     int align,
                     const Color& color)
 {
-    TextArea textArea(this, text, screenCoords, align, color);
-    textArea.draw();
+    // prevent glitches from invalid rects
+    if(!screenCoords.isValid())
+        return;
+
+    int textLenght = text.length();
+
+    // map glyphs positions
+    Size textBoxSize;
+    const std::vector<Point>& glyphsPositions = calculateGlyphsPositions(text, align, &textBoxSize);
+
+    for(int i = 0; i < textLenght; ++i) {
+        int glyph = (uchar)text[i];
+
+        // skip invalid glyphs
+        if(glyph < 32)
+            continue;
+
+        // calculate initial glyph rect and texture coords
+        Rect glyphScreenCoords(glyphsPositions[i], m_glyphsSize[glyph]);
+        Rect glyphTextureCoords = m_glyphsTextureCoords[glyph];
+
+        // first translate to align position
+        if(align & ALIGN_BOTTOM) {
+            glyphScreenCoords.translate(0, screenCoords.height() - textBoxSize.height());
+        } else if(align & ALIGN_VERTICAL_CENTER) {
+            glyphScreenCoords.translate(0, (screenCoords.height() - textBoxSize.height()) / 2);
+        } else { // ALIGN_TOP
+            // nothing to do
+        }
+
+        if(align & ALIGN_RIGHT) {
+            glyphScreenCoords.translate(screenCoords.width() - textBoxSize.width(), 0);
+        } else if(align & ALIGN_HORIZONTAL_CENTER) {
+            glyphScreenCoords.translate((screenCoords.width() - textBoxSize.width()) / 2, 0);
+        } else { // ALIGN_TOP
+            // nothing to do
+        }
+
+        // translate rect to screen coords
+        glyphScreenCoords.translate(screenCoords.topLeft());
+
+        // only render if glyph rect is visible on screenCoords
+        if(!screenCoords.intersects(glyphScreenCoords))
+            continue;
+
+        // bound glyph bottomRight to screenCoords bottomRight
+        if(glyphScreenCoords.bottom() > screenCoords.bottom()) {
+            glyphTextureCoords.setBottom(glyphTextureCoords.bottom() + (screenCoords.bottom() - glyphScreenCoords.bottom()));
+            glyphScreenCoords.setBottom(screenCoords.bottom());
+        }
+        if(glyphScreenCoords.right() > screenCoords.right()) {
+            glyphTextureCoords.setRight(glyphTextureCoords.right() + (screenCoords.right() - glyphScreenCoords.right()));
+            glyphScreenCoords.setRight(screenCoords.right());
+        }
+
+        // render glyph
+        g_graphics.drawTexturedRect(glyphScreenCoords, m_texture, glyphTextureCoords, color);
+    }
 }
 
-std::vector<Point> Font::calculateGlyphsPositions(const std::string& text, int align, Size *textBoxSize)
+const std::vector<Point>& Font::calculateGlyphsPositions(const std::string& text, int align, Size *textBoxSize) const
 {
-    int numGlyphs = text.length();
-    std::vector<Point> glyphsPositions(numGlyphs);
-    if(numGlyphs == 0) {
-        if(textBoxSize)
-            textBoxSize->setSize(0,0);
-        return glyphsPositions;
-    }
+    // for performance reasons we use statics vectors that are allocated on demand
+    static std::vector<Point> glyphsPositions(1);
+    static std::vector<int> lineWidths(1);
 
-    std::vector<int> lineWidths(numGlyphs);
+    int textLength = text.length();
     int maxLineWidth = 0;
     int lines = 0;
     int glyph;
     int i;
 
+    // return if there is no text
+    if(textLength == 0) {
+        if(textBoxSize)
+            textBoxSize->setSize(0,0);
+        return glyphsPositions;
+    }
+
+    // resize glyphsPositions vector, if needed
+    if(textLength > (int)glyphsPositions.size())
+        glyphsPositions.resize(textLength);
+
     // calculate lines width
     if((align & ALIGN_RIGHT || align & ALIGN_HORIZONTAL_CENTER) || textBoxSize) {
         lineWidths[0] = 0;
-        for(i = 0; i< numGlyphs; ++i) {
+        for(i = 0; i< textLength; ++i) {
             glyph = (uchar)text[i];
 
             if(glyph == (uchar)'\n') {
-                lineWidths[++lines] = 0;
+                lines++;
+                if(lines+1 > (int)lineWidths.size())
+                    lineWidths.resize(lines+1);
+                lineWidths[lines] = 0;
             } else if(glyph >= 32) {
                 lineWidths[lines] += m_glyphsSize[glyph].width() + m_glyphSpacing.width();
                 maxLineWidth = std::max(maxLineWidth, lineWidths[lines]);
@@ -182,7 +247,7 @@ std::vector<Point> Font::calculateGlyphsPositions(const std::string& text, int a
 
     Point virtualPos(0, m_topMargin);
     lines = 0;
-    for(i = 0; i < numGlyphs; ++i) {
+    for(i = 0; i < textLength; ++i) {
         glyph = (uchar)text[i];
 
         // store current glyph topLeft

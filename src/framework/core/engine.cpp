@@ -30,6 +30,7 @@
 #include "dispatcher.h"
 #include "net/connections.h"
 #include "ui/uicontainer.h"
+#include "graphics/fonts.h"
 
 Engine g_engine;
 
@@ -52,7 +53,10 @@ void Engine::terminate()
 
 void Engine::run()
 {
+    std::string fpsText;
+    Size fpsTextSize;
     Font *defaultFont = g_fonts.getDefaultFont();
+
     m_lastFrameTicks = Platform::getTicks();
     int lastFpsTicks = m_lastFrameTicks;
     int frameCount = 0;
@@ -60,13 +64,13 @@ void Engine::run()
     m_running = true;
 
     while(!m_stopping) {
+        m_lastFrameTicks = Platform::getTicks();
+
         // poll platform events
         Platform::poll();
 
         // poll network events
         g_connections.poll();
-
-        m_lastFrameTicks = Platform::getTicks();
 
         // poll diaptcher tasks
         g_dispatcher.poll();
@@ -80,17 +84,18 @@ void Engine::run()
                     lastFpsTicks = m_lastFrameTicks;
                     fps = frameCount;
                     frameCount = 0;
+
+                    // update fps text
+                    fpsText = format("FPS: %d", fps);
+                    fpsTextSize = defaultFont->calculateTextRectSize(fpsText);
                 }
             }
 
             render();
 
             // render fps
-            if(m_calculateFps) {
-                std::string fpsText = format("FPS: %d", fps);
-                Size textSize = defaultFont->calculateTextRectSize(fpsText);
-                defaultFont->renderText(fpsText, Point(g_graphics.getScreenSize().width() - textSize.width() - 10, 10));
-            }
+            if(m_calculateFps)
+                defaultFont->renderText(fpsText, Point(g_graphics.getScreenSize().width() - fpsTextSize.width() - 10, 10));
 
             // swap buffers
             Platform::swapBuffers();

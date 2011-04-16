@@ -29,8 +29,6 @@
 UITextEdit::UITextEdit() :
     UIElement(UI::TextEdit)
 {
-    UITextEditSkin *skin = static_cast<UITextEditSkin*>(getSkin());
-    m_textArea.setFont(skin->getFont());
     m_textArea.enableCursor();
 }
 
@@ -48,7 +46,7 @@ void UITextEdit::onInputEvent(const InputEvent& event)
         else if(event.keycode == KC_LEFT)
             m_textArea.moveCursor(false);
     } else if(event.type == EV_MOUSE_LDOWN) {
-        
+
     } else if(event.type == EV_MOUSE_LUP && getRect().contains(event.mousePos)) {
         m_textArea.setCursorPos(m_textArea.getTextPos(event.mousePos));
     }
