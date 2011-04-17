@@ -41,11 +41,16 @@ void UILabelSkin::load(const YAML::Node& node)
         m_textColor = Color::white;
 }
 
+void UILabelSkin::apply(UIElement* element)
+{
+    UIElementSkin::apply(element);
+    UILabel *label = static_cast<UILabel*>(element);
+    label->setSize(m_font->calculateTextRectSize(label->getText()));
+}
+
 void UILabelSkin::draw(UIElement *element)
 {
     UIElementSkin::draw(element);
-
     UILabel *label = static_cast<UILabel*>(element);
-
-    m_font->renderText(label->getText(), label->getRect(), ALIGN_TOP_LEFT, m_textColor);
+    m_font->renderText(label->getText(), label->getRect(), label->getAlign(), m_textColor);
 }

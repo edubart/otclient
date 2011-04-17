@@ -23,13 +23,3 @@
 
 
 #include "uilabel.h"
-#include "graphics/fonts.h"
-#include "uilabelskin.h"
-
-void UILabel::setText(const std::string& text)
-{
-    UILabelSkin *skin = static_cast<UILabelSkin*>(getSkin());
-    setSize(skin->getFont()->calculateTextRectSize(text));
-    m_text = text;
-}
-

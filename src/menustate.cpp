@@ -46,6 +46,9 @@ void MenuState::onEnter()
 
     button = boost::static_pointer_cast<UIButton>(mainMenuPanel->getChildById("enterGameButton"));
     button->setOnClick(boost::bind(&MenuState::enterGameButton_clicked, this));
+
+    button = boost::static_pointer_cast<UIButton>(mainMenuPanel->getChildById("infoButton"));
+    button->setOnClick(boost::bind(&MenuState::infoButton_clicked, this));
 }
 
 void MenuState::onLeave()
@@ -86,13 +89,25 @@ void MenuState::render()
 void MenuState::enterGameButton_clicked()
 {
     UIWindowPtr window = boost::static_pointer_cast<UIWindow>(UILoader::loadFile("ui/enterGameWindow.yml"));
-    UIContainerPtr windowParent = window->getParent();
-    windowParent->lockElement(window);
+    window->getParent()->lockElement(window);
 
     UIButtonPtr button = boost::static_pointer_cast<UIButton>(window->getChildById("cancelButton"));
     button->setOnClick([] {
         UIWindowPtr window = boost::static_pointer_cast<UIWindow>(UIContainer::getRootContainer()->getChildById("enterGameWindow"));
-        UIContainer::getRootContainer()->unlockElement();
+        window->getParent()->unlockElement();
         window->destroy();
     });
 }
+
+void MenuState::infoButton_clicked()
+{
+    UIWindowPtr window = boost::static_pointer_cast<UIWindow>(UILoader::loadFile("ui/infoWindow.yml"));
+    window->getParent()->lockElement(window);
+    UIButtonPtr button = boost::static_pointer_cast<UIButton>(window->getChildById("okButton"));
+    button->setOnClick([] {
+        UIWindowPtr window = boost::static_pointer_cast<UIWindow>(UIContainer::getRootContainer()->getChildById("infoWindow"));
+        window->getParent()->unlockElement();
+        window->destroy();
+    });
+}
+

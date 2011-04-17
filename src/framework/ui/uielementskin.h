@@ -40,7 +40,7 @@ public:
     virtual ~UIElementSkin() { }
 
     virtual void load(const YAML::Node& node);
-    virtual void apply(UIElement *element) { }
+    virtual void apply(UIElement *element);
     virtual void draw(UIElement *element);
 
     const std::string& getName() const { return m_name; }

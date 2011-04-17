@@ -48,13 +48,14 @@ UIElementPtr UILoader::createElementFromId(const std::string& id)
         element = UIElementPtr(new UIWindow);
     } else if(elementType == "textEdit") {
         element = UIElementPtr(new UITextEdit);
+    } else if(elementType == "lineDecoration") {
+        element = UIElementPtr(new UILineDecoration);
+    } else if(elementType == "checkBox") {
+        element = UIElementPtr(new UICheckBox);
     }
 
     if(element) {
         element->setId(elementId);
-
-        // apply default skin
-        element->setSkin(g_uiSkins.getElementSkin(element->getElementType()));
     }
 
     return element;
@@ -146,9 +147,33 @@ void UILoader::loadElements(const UIElementPtr& parent, const YAML::Node& node)
 
 void UILoader::loadElement(const UIElementPtr& element, const YAML::Node& node)
 {
+    // load specific element type
+    if(element->getElementType() == UI::Button) {
+        UIButtonPtr button = boost::static_pointer_cast<UIButton>(element);
+        button->setText(node["text"].Read<std::string>());
+    }
+    else if(element->getElementType() == UI::Window) {
+        UIWindowPtr window = boost::static_pointer_cast<UIWindow>(element);
+        window->setTitle(node["title"].Read<std::string>());
+    }
+    else if(element->getElementType() == UI::Label) {
+        UILabelPtr label = boost::static_pointer_cast<UILabel>(element);
+        label->setText(node["text"].Read<std::string>());
+        if(node.FindValue("align")) {
+            std::string alignDesc;
+            node["align"] >> alignDesc;
+            if(alignDesc == "center")
+                label->setAlign(ALIGN_CENTER);
+        }
+    }
+
+    // set element skin
     if(node.FindValue("skin"))
         element->setSkin(g_uiSkins.getElementSkin(element->getElementType(), node["skin"]));
+    else // apply default skin
+        element->setSkin(g_uiSkins.getElementSkin(element->getElementType(), "default"));
 
+    // load elements common proprieties
     if(node.FindValue("size")) {
         Size size;
         node["size"] >> size;
@@ -193,20 +218,6 @@ void UILoader::loadElement(const UIElementPtr& element, const YAML::Node& node)
 
     if(node.FindValue("anchors.verticalCenter"))
         loadElementAnchor(element, ANCHOR_VERTICAL_CENTER, node["anchors.verticalCenter"]);
-
-    // load specific element type
-    if(element->getElementType() == UI::Button) {
-        UIButtonPtr button = boost::static_pointer_cast<UIButton>(element);
-        button->setText(node["text"].Read<std::string>());
-    }
-    else if(element->getElementType() == UI::Window) {
-        UIWindowPtr window = boost::static_pointer_cast<UIWindow>(element);
-        window->setTitle(node["title"].Read<std::string>());
-    }
-    else if(element->getElementType() == UI::Label) {
-        UILabelPtr label = boost::static_pointer_cast<UILabel>(element);
-        label->setText(node["text"].Read<std::string>());
-    }
 }
 
 void UILoader::loadElementAnchor(const UIElementPtr& element, EAnchorType type, const YAML::Node& node)

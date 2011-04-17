@@ -48,6 +48,7 @@ void UITextEditSkin::load(const YAML::Node& node)
 
 void UITextEditSkin::apply(UIElement* element)
 {
+    UIElementSkin::apply(element);
     UITextEdit *textEdit = static_cast<UITextEdit*>(element);
     textEdit->getTextArea().setFont(m_font);
 }

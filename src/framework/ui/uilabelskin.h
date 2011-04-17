@@ -26,24 +26,25 @@
 #define UILABELSKIN_H
 
 #include "prerequisites.h"
-#include "uiconstants.h"
 #include "uielementskin.h"
-
-class Font;
+#include "graphics/font.h"
 
 class UILabelSkin : public UIElementSkin
 {
 public:
     UILabelSkin(const std::string& name) :
-        UIElementSkin(name, UI::Label) { }
+        UIElementSkin(name, UI::Label),
+        m_align(ALIGN_TOP_LEFT) { }
 
     void load(const YAML::Node& node);
+    void apply(UIElement *element);
     void draw(UIElement *element);
 
     Font *getFont() const { return m_font; }
 
 private:
     Font *m_font;
+    int m_align;
     Color m_textColor;
 };
 

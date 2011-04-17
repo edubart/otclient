@@ -293,7 +293,7 @@ void TextArea::appendCharacter(char c)
 
 void TextArea::removeCharacter(bool right)
 {
-    if(m_cursorPos >= 0) {
+    if(m_cursorPos >= 0 && m_text.length() > 0) {
         if(right && (uint)m_cursorPos < m_text.length())
             m_text.erase(m_text.begin() + m_cursorPos);
         else if((uint)m_cursorPos == m_text.length()) {

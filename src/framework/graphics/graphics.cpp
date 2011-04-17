@@ -139,7 +139,7 @@ void Graphics::disableDrawing()
 
 void Graphics::drawTexturedRect(const Rect& screenCoords, const TexturePtr& texture, const Rect& textureCoords, const Color& color)
 {
-    if(screenCoords.isEmpty())
+    if(screenCoords.isEmpty() || textureCoords.isEmpty())
         return;
 
     // rect correction for opengl
@@ -170,7 +170,7 @@ void Graphics::drawTexturedRect(const Rect& screenCoords, const TexturePtr& text
 
 void Graphics::drawRepeatedTexturedRect(const Rect& screenCoords, const TexturePtr& texture, const Rect& textureCoords, const Color& color)
 {
-    if(screenCoords.isEmpty())
+    if(screenCoords.isEmpty() || textureCoords.isEmpty())
         return;
 
     // render many repeated texture rects

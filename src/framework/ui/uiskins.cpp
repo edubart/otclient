@@ -30,6 +30,7 @@
 #include "uiwindowskin.h"
 #include "uitexteditskin.h"
 #include "uilabelskin.h"
+#include "uilinedecorationskin.h"
 
 UISkins g_uiSkins;
 
@@ -107,6 +108,19 @@ void UISkins::load(const std::string& skinsFile)
                 it.first() >> name;
 
                 UIElementSkin *skin = new UITextEditSkin(name);
+                skin->load(it.second());
+                m_elementSkins.push_back(skin);
+            }
+        }
+
+
+        {
+            const YAML::Node& node = doc["line decorations"];
+            for(auto it = node.begin(); it != node.end(); ++it) {
+                std::string name;
+                it.first() >> name;
+
+                UIElementSkin *skin = new UILineDecorationSkin(name);
                 skin->load(it.second());
                 m_elementSkins.push_back(skin);
             }

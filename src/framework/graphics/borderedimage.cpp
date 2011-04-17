@@ -80,18 +80,16 @@ void BorderedImage::setTexCoords(const Rect& left,
 
 void BorderedImage::draw(const Rect& screenCoords)
 {
-    // check minumim size
-    if(screenCoords.size() <= m_cornersSize)
-        return;
-
     Rect rectCoords;
     Size centerSize = screenCoords.size() - m_cornersSize;
 
     // first the center
-    rectCoords = Rect(screenCoords.left() + m_leftBorderTexCoords.width(),
-                      screenCoords.top() + m_topBorderTexCoords.height(),
-                      centerSize);
-    g_graphics.drawRepeatedTexturedRect(rectCoords, m_texture, m_centerTexCoords);
+    if(centerSize.area() > 0) {
+        rectCoords = Rect(screenCoords.left() + m_leftBorderTexCoords.width(),
+                        screenCoords.top() + m_topBorderTexCoords.height(),
+                        centerSize);
+        g_graphics.drawRepeatedTexturedRect(rectCoords, m_texture, m_centerTexCoords);
+    }
 
     // top left corner
     rectCoords = Rect(screenCoords.topLeft(),

@@ -49,19 +49,11 @@ void UIElement::destroy()
     assert(asUIElement().use_count() == 4);
 }
 
-bool UIElement::setSkin(const std::string& skinName)
-{
-    setSkin(g_uiSkins.getElementSkin(m_type, skinName));
-    return m_skin != NULL;
-}
-
 void UIElement::setSkin(UIElementSkin* skin)
 {
     m_skin = skin;
-    if(skin && !getRect().isValid()) {
-        setSize(skin->getDefaultSize());
+    if(skin)
         skin->apply(this);
-    }
 }
 
 void UIElement::render()

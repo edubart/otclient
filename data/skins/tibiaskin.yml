@@ -48,8 +48,16 @@ panels:
   
   flatPanel:
     bordered image:
-    
-      
+      left border: [275,0,1,96]
+      right border: [276,0,1,96]
+      top border: [2,210,91,1]
+      bottom border: [2,211,91,1]
+      top left corner: [275,0,1,1]
+      top right corner: [276,0,1,1]
+      bottom left corner: [2,210,1,1]
+      bottom right corner: [276,95,1,1]
+      center: [0, 0, 96, 96]
+  
 labels:
   default:
     font: tibia-10px-antialised
@@ -96,4 +104,8 @@ text edits:
       bottom right corner: [319,107,1,1]
       center: [309,97,10,10]
   
+line decorations:
+  default:
+    bordered image:
+      top border: [2,210,96,2]
     

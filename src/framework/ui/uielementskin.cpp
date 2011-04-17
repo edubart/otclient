@@ -28,12 +28,6 @@
 #include "graphics/textures.h"
 #include "uiskins.h"
 
-void UIElementSkin::draw(UIElement *element)
-{
-    if(m_defaultImage)
-        m_defaultImage->draw(element->getRect());
-}
-
 void UIElementSkin::load(const YAML::Node& node)
 {
     if(node.FindValue("default size"))
@@ -41,6 +35,17 @@ void UIElementSkin::load(const YAML::Node& node)
     m_defaultImage = loadImage(node);
 }
 
+void UIElementSkin::apply(UIElement* element)
+{
+    if(!element->getRect().isValid() && m_defaultSize.isValid())
+        element->setSize(m_defaultSize);
+}
+
+void UIElementSkin::draw(UIElement *element)
+{
+    if(m_defaultImage)
+        m_defaultImage->draw(element->getRect());
+}
 ImagePtr UIElementSkin::loadImage(const YAML::Node& node)
 {
     ImagePtr image;

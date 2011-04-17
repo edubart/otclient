@@ -27,18 +27,26 @@
 
 #include "prerequisites.h"
 #include "uielement.h"
+#include "graphics/font.h"
 
 class UILabel : public UIElement
 {
 public:
     UILabel() :
-        UIElement(UI::Label) { }
+        UIElement(UI::Label),
+        m_align(ALIGN_TOP_LEFT),
+        m_color(Color::white) { }
 
-    void setText(const std::string& text);
+    void setText(const std::string& text) { m_text = text; }
     const std::string& getText() const { return m_text; }
+
+    void setAlign(int align) { m_align = align; }
+    int getAlign() const { return m_align; }
 
 private:
     std::string m_text;
+    int m_align;
+    Color m_color;
 };
 
 typedef boost::shared_ptr<UILabel> UILabelPtr;

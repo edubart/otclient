@@ -223,7 +223,7 @@ const std::vector<Point>& Font::calculateGlyphsPositions(const std::string& text
         return glyphsPositions;
     }
 
-    // resize glyphsPositions vector, if needed
+    // resize glyphsPositions vector when needed
     if(textLength > (int)glyphsPositions.size())
         glyphsPositions.resize(textLength);
 
@@ -250,9 +250,6 @@ const std::vector<Point>& Font::calculateGlyphsPositions(const std::string& text
     for(i = 0; i < textLength; ++i) {
         glyph = (uchar)text[i];
 
-        // store current glyph topLeft
-        glyphsPositions[i] = virtualPos;
-
         // new line or first glyph
         if(glyph == (uchar)'\n' || i == 0) {
             if(glyph == (uchar)'\n') {
@@ -270,6 +267,9 @@ const std::vector<Point>& Font::calculateGlyphsPositions(const std::string& text
             }
         }
 
+        // store current glyph topLeft
+        glyphsPositions[i] = virtualPos;
+
         // render only if the glyph is valid
         if(glyph >= 32 && glyph != (uchar)'\n') {
             virtualPos.x += m_glyphsSize[glyph].width() + m_glyphSpacing.width();
@@ -278,7 +278,7 @@ const std::vector<Point>& Font::calculateGlyphsPositions(const std::string& text
 
     if(textBoxSize) {
         textBoxSize->setWidth(maxLineWidth);
-        textBoxSize->setHeight(virtualPos.y + m_glyphHeight);
+        textBoxSize->setHeight(virtualPos.y + m_glyphHeight + m_glyphSpacing.height());
     }
 
     return glyphsPositions;

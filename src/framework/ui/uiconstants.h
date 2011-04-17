@@ -60,7 +60,8 @@ namespace UI {
         Label,
         TextEdit,
         Button,
-        CheckBox
+        CheckBox,
+        LineDecoration
     };
 }
 

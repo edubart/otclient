@@ -47,6 +47,7 @@ public:
 
 private:
     void enterGameButton_clicked();
+    void infoButton_clicked();
 
     UIPanelPtr m_menuPanel;
     TexturePtr m_background;

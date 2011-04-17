@@ -60,7 +60,6 @@ public:
 
     void moveTo(Point pos);
 
-    bool setSkin(const std::string& skinName);
     void setSkin(UIElementSkin *skin);
     UIElementSkin *getSkin() { return m_skin; }
 

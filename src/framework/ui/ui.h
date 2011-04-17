@@ -37,5 +37,7 @@
 #include "uiwindow.h"
 #include "uitextedit.h"
 #include "uiloader.h"
+#include "uilinedecoration.h"
+#include "uicheckbox.h"
 
 #endif // UI_H
