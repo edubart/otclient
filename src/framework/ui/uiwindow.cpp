@@ -35,6 +35,7 @@ void UIWindow::onInputEvent(const InputEvent& event)
         headRect.setHeight(skin->getHeadHeight());
         if(headRect.contains(event.mousePos)) {
             m_moving = true;
+            m_movingReference = event.mousePos - getRect().topLeft();
         }
     } else if(event.type == EV_MOUSE_LUP) {
         if(m_moving) {
@@ -42,7 +43,7 @@ void UIWindow::onInputEvent(const InputEvent& event)
         }
     } else if(event.type == EV_MOUSE_MOVE) {
         if(m_moving) {
-            moveTo(getRect().topLeft() + event.mouseMoved);
+            moveTo(event.mousePos - m_movingReference);
         }
     }
 }

@@ -43,6 +43,7 @@ public:
 private:
     std::string m_title;
     bool m_moving;
+    Point m_movingReference;
 };
 
 typedef boost::shared_ptr<UIWindow> UIWindowPtr;
