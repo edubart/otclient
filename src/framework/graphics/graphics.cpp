@@ -118,17 +118,11 @@ void Graphics::beginRender()
 {
     glClear(GL_COLOR_BUFFER_BIT);
     glLoadIdentity();
-
-    // quads is the default drawing mode
-    glBegin(GL_QUADS);
-    m_drawMode = DRAW_QUADS;
 }
 
 void Graphics::endRender()
 {
-    // end last drawing
-    glEnd();
-    m_drawMode = DRAW_NONE;
+    disableDrawing();
 }
 
 void Graphics::disableDrawing()

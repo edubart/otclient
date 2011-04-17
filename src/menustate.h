@@ -48,6 +48,7 @@ public:
 private:
     void enterGameButton_clicked();
     void infoButton_clicked();
+    void optionsButton_clicked();
 
     void enterGameWindowOkButton_clicked();
 

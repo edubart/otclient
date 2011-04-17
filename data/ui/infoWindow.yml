@@ -44,11 +44,12 @@ window#infoWindow:
       margin.right: 9
   
   lineDecoration#bottomSeparator:
-    size: [218,2]
     anchors.left: parent.left
-    anchors.top: parent.top
-    margin.top: 181
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    margin.bottom: 40
     margin.left: 13
+    margin.right: 13
       
   button#okButton:
     text: Ok

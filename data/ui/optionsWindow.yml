@@ -1,0 +1,111 @@
+window#optionsWindow:
+  title: Info
+  size: [286, 262]
+  anchors.horizontalCenter: parent.horizontalCenter
+  anchors.verticalCenter: parent.verticalCenter
+  
+  # general
+  button#generalButton:
+    text: General
+    anchors.left: parent.left
+    anchors.top: parent.top
+    margin.left: 18
+    margin.top: 32
+
+  label#generalLabel:
+    text: |-
+          Change general
+          game options
+    anchors.left: parent.left
+    anchors.top: parent.top
+    margin.left: 117
+    margin.top: 29
+  
+  # graphics
+  button#graphicsButton:
+    text: Graphics
+    anchors.left: parent.left
+    anchors.top: parent.top
+    margin.left: 18
+    margin.top: 65
+
+  label#graphicsLabel:
+    text: |-
+          Change graphics and
+          performance settings
+    anchors.left: parent.left
+    anchors.top: parent.top
+    margin.left: 117
+    margin.top: 62
+  
+  # console
+  button#consoleButton:
+    text: Console
+    anchors.left: parent.left
+    anchors.top: parent.top
+    margin.left: 18
+    margin.top: 98
+
+  label#consoleLabel:
+    text: Customise the console
+    anchors.left: parent.left
+    anchors.top: parent.top
+    margin.left: 117
+    margin.top: 95
+  
+  # hotkeys
+  button#hotkeysButton:
+    text: Hotkeys
+    anchors.left: parent.left
+    anchors.top: parent.top
+    margin.left: 18
+    margin.top: 131
+
+  label#hotkeysLabel:
+    text: Edit your hotkey texts
+    anchors.left: parent.left
+    anchors.top: parent.top
+    margin.left: 117
+    margin.top: 128
+  
+  lineDecoration#middleSeparator:
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    margin.bottom: 97
+    margin.left: 18
+    margin.right: 18
+  
+  # motd
+  button#motdButton:
+    text: Motd
+    anchors.left: parent.left
+    anchors.bottom: parent.bottom
+    margin.left: 18
+    margin.bottom: 60
+
+  label#motdLabel:
+    text: |-
+          Show the most recent
+          Message of the Day
+    anchors.left: parent.left
+    anchors.bottom: parent.bottom
+    margin.left: 117
+    margin.bottom: 56
+  
+  lineDecoration#bottomSeparator:
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    margin.bottom: 40
+    margin.left: 13
+    margin.right: 13
+  
+  # ok button
+  button#okButton:
+    text: Ok
+    size: [43, 20]
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    margin.right: 10
+    margin.bottom: 13

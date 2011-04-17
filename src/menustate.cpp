@@ -48,6 +48,9 @@ void MenuState::onEnter()
 
     button = boost::static_pointer_cast<UIButton>(mainMenuPanel->getChildById("infoButton"));
     button->setOnClick(boost::bind(&MenuState::infoButton_clicked, this));
+
+    button = boost::static_pointer_cast<UIButton>(mainMenuPanel->getChildById("optionsButton"));
+    button->setOnClick(boost::bind(&MenuState::optionsButton_clicked, this));
 }
 
 void MenuState::onLeave()
@@ -124,3 +127,14 @@ void MenuState::enterGameWindowOkButton_clicked()
     //m_protocolLogin->login(accountName, password);
 }
 
+void MenuState::optionsButton_clicked()
+{
+    UIWindowPtr window = boost::static_pointer_cast<UIWindow>(UILoader::loadFile("ui/optionsWindow.yml"));
+    window->getParent()->lockElement(window);
+    UIButtonPtr button = boost::static_pointer_cast<UIButton>(window->getChildById("okButton"));
+    button->setOnClick([] {
+        UIWindowPtr window = boost::static_pointer_cast<UIWindow>(UIContainer::getRootContainer()->getChildById("optionsWindow"));
+        window->getParent()->unlockElement();
+        window->destroy();
+    });
+}
