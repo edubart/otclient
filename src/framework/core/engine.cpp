@@ -90,11 +90,18 @@ void Engine::run()
                 }
             }
 
-            render();
+            // render
+            g_graphics.beginRender();
+
+            if(m_currentState)
+                m_currentState->render();
+            UIContainer::getRootContainer()->render();
 
             // render fps
             if(m_calculateFps)
                 defaultFont->renderText(fpsText, Point(g_graphics.getScreenSize().width() - fpsTextSize.width() - 10, 10));
+
+            g_graphics.endRender();
 
             // swap buffers
             Platform::swapBuffers();
@@ -117,15 +124,6 @@ void Engine::changeState(GameState* newState)
     m_currentState = newState;
     if(m_currentState)
         m_currentState->onEnter();
-}
-
-void Engine::render()
-{
-    g_graphics.beginRender();
-    if(m_currentState)
-        m_currentState->render();
-    UIContainer::getRootContainer()->render();
-    g_graphics.endRender();
 }
 
 void Engine::onClose()

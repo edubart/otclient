@@ -65,9 +65,6 @@ public:
     int getCurrentFrameTicks() const { return m_lastFrameTicks; }
 
 private:
-    /// Called to render every frame
-    void render();
-
     bool m_stopping;
     bool m_running;
     bool m_calculateFps;

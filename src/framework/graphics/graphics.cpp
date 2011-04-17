@@ -41,6 +41,7 @@ void Graphics::init()
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
     glShadeModel(GL_SMOOTH);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
     logInfo("GPU %s", (const char*)glGetString(GL_RENDERER));
     logInfo("OpenGL %s", (const char*)glGetString(GL_VERSION));
@@ -115,7 +116,6 @@ void Graphics::restoreViewport()
 
 void Graphics::beginRender()
 {
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     glLoadIdentity();
 
