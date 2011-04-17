@@ -23,6 +23,7 @@
 
 
 #include "uibutton.h"
+#include "core/dispatcher.h"
 
 void UIButton::onInputEvent(const InputEvent& event)
 {
@@ -31,8 +32,9 @@ void UIButton::onInputEvent(const InputEvent& event)
     } else if(event.type == EV_MOUSE_LUP && m_state == UI::ButtonDown) {
         m_state = UI::ButtonUp;
         if(getRect().contains(event.mousePos)) {
-            if(m_buttonClickCallback)
-                m_buttonClickCallback();
+            if(m_buttonClickCallback) {
+                g_dispatcher.addTask(m_buttonClickCallback);
+            }
         }
     }
 }
