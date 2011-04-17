@@ -59,7 +59,7 @@ SET(SOURCES
     src/teststate.cpp
 
 # game net
-    src/protocollogin.cpp
+    #src/protocollogin.cpp
 
 # framework core
     src/framework/core/dispatcher.cpp
@@ -94,22 +94,19 @@ SET(SOURCES
     src/framework/ui/uicontainer.cpp
     src/framework/ui/uiskins.cpp
     src/framework/ui/uiloader.cpp
-    src/framework/ui/uipanel.cpp
     src/framework/ui/uibutton.cpp
     src/framework/ui/uilabel.cpp
     src/framework/ui/uiwindow.cpp
     src/framework/ui/uiwindowskin.cpp
     src/framework/ui/uitextedit.cpp
     src/framework/ui/uitexteditskin.cpp
-    src/framework/ui/uilinedecorationskin.cpp
     src/framework/ui/uicheckboxskin.cpp
-    src/framework/ui/uilinedecoration.cpp
     src/framework/ui/uicheckbox.cpp
 
 # framework net
-    src/framework/net/connection.cpp
-    src/framework/net/protocol.cpp
-    src/framework/net/networkmessage.cpp
+    #src/framework/net/connection.cpp
+    #src/framework/net/protocol.cpp
+    #src/framework/net/networkmessage.cpp
 )
 
 IF(WIN32)
