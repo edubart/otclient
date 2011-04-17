@@ -42,8 +42,8 @@ Connection::~Connection()
 
 void Connection::poll()
 {
-    ioService.poll();
     ioService.reset();
+    ioService.poll();
 }
 
 void Connection::close()
