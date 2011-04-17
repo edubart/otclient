@@ -47,10 +47,10 @@ public:
 private:
     Connection(boost::asio::io_service& ioService);
 
-    bool connect(const std::string& ip, uint16 port, ConnectionCallback onConnect);
+    bool connect(const std::string& ip, uint16 port, const Callback& callback);
     void stop();
 
-    void setErrorCallback(ErrorCallback c) { m_errorCallback = c; }
+    void setErrorCallback(const ErrorCallback& callback) { m_errorCallback = callback; }
 
     void recv(RecvCallback onSend);
     void send(NetworkMessagePtr networkMessage, ConnectionCallback onRecv);
@@ -88,7 +88,7 @@ private:
     std::string m_ip;
     uint16_t m_port;
 
-    ConnectionCallback m_connectCallback;
+    Callback m_connectCallback;
     ErrorCallback m_errorCallback;
 
     friend class Protocol;

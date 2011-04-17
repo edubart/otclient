@@ -33,9 +33,10 @@ public:
     ProtocolTibia87();
 
     virtual void begin();
+    void login(const std::string& account, const std::string& password);
 
 protected:
-    void login(const std::string& account, const std::string& password);
+
     void sendAccount(const std::string& account, const std::string& password);
     void parseCharacterList(NetworkMessagePtr networkMessage);
 

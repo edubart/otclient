@@ -31,6 +31,7 @@
 #include "core/dispatcher.h"
 #include "ui/ui.h"
 #include "net/connections.h"
+#include "net/protocoltibia87.h"
 #include "graphics/borderedimage.h"
 
 
@@ -85,9 +86,23 @@ void MenuState::render()
 
 void MenuState::enterGameButton_clicked()
 {
-    UIElementPtr window = UIContainer::getRootContainer()->getChildById("enterGameWindow");
+    UIContainerPtr window = boost::static_pointer_cast<UIContainer>(UIContainer::getRootContainer()->getChildById("enterGameWindow"));
     if(!window)
-        window = UILoader::loadFile("ui/enterGameWindow.yml");
-    window->getParent()->setEnabled(false);
+        window = UILoader::loadFile("ui/enterGameWindow.yml")->asUIContainer();
+
+    UIButtonPtr button = boost::static_pointer_cast<UIButton>(window->getChildById("okButton"));
+    button->setOnClick(boost::bind(&MenuState::enterGameWindowOkButton_clicked, this));
+}
+
+void MenuState::enterGameWindowOkButton_clicked()
+{
+    UIContainerPtr enterGameWindow = boost::static_pointer_cast<UIContainer>(UIContainer::getRootContainer()->getChildById("enterGameWindow"));
+
+    std::string accountName = boost::static_pointer_cast<UITextEdit>(enterGameWindow->getChildById("accountNameTextEdit"))->getText();
+    std::string password = boost::static_pointer_cast<UITextEdit>(enterGameWindow->getChildById("passwordTextEdit"))->getText();
+
+    //ProtocolTibia87Ptr protocol = ProtocolTibia87Ptr(new ProtocolTibia87);
+    ProtocolTibia87 *protocol = new ProtocolTibia87;
+    protocol->login(accountName, password);
 }
 

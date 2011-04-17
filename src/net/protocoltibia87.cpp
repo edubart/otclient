@@ -37,17 +37,16 @@ ProtocolTibia87::ProtocolTibia87()
 void ProtocolTibia87::begin()
 {
     /*
-    connect("icechaw.otland.net", 7171,
-        [this](){
-            this->afterConnect();
-        }
-    );
+
     */
 }
 
 void ProtocolTibia87::login(const std::string& account, const std::string& password)
 {
-    sendAccount(account, password);
+    logInfo("Account: %s - Password: %s", account.c_str(), password.c_str());
+    connect("google.com", 80, boost::bind(&ProtocolTibia87::afterConnect, this));
+
+    //sendAccount(account, password);
 }
 
 void ProtocolTibia87::sendAccount(const std::string& account, const std::string& password)
@@ -86,6 +85,7 @@ void ProtocolTibia87::sendAccount(const std::string& account, const std::string&
 
 void ProtocolTibia87::afterConnect()
 {
+    logError("[ProtocolTibia87::afterConnect]: Connected!");
     login("9418347", "lollol");
 }
 

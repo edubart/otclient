@@ -48,6 +48,8 @@ public:
 private:
     void enterGameButton_clicked();
 
+    void enterGameWindowOkButton_clicked();
+
     UIPanelPtr m_menuPanel;
     TexturePtr m_background;
 };

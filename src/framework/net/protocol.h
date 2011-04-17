@@ -31,6 +31,7 @@ class Protocol
 {
 public:
     Protocol();
+    ~Protocol();
 
     virtual void begin() = 0;
 
@@ -38,7 +39,7 @@ protected:
     void send(NetworkMessagePtr networkMessage, Connection::ConnectionCallback onSend);
     void recv(Connection::RecvCallback onRecv);
 
-    bool connect(const std::string& ip, uint16 port, Connection::ConnectionCallback onConnect);
+    bool connect(const std::string& ip, uint16 port, const Callback& callback);
 
     virtual void onError(const boost::system::error_code& error, const std::string& msg) = 0;
 

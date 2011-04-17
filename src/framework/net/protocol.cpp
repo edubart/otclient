@@ -26,12 +26,14 @@
 
 Protocol::Protocol()
 {
+    logInfo("Protocol()");
     m_connection = g_connections.createConnection();
-    /*m_connection->setErrorCallback(
-        [this](const boost::system::error_code& error, const std::string& msg){
-            this->onError(error, msg);
-        }
-    );*/
+    m_connection->setErrorCallback(boost::bind(&Protocol::onError, this, boost::asio::placeholders::error, _2));
+}
+
+Protocol::~Protocol()
+{
+    logInfo("~Protocol()");
 }
 
 void Protocol::send(NetworkMessagePtr networkMessage, Connection::ConnectionCallback onSend)
@@ -39,9 +41,9 @@ void Protocol::send(NetworkMessagePtr networkMessage, Connection::ConnectionCall
     m_connection->send(networkMessage, onSend);
 }
 
-bool Protocol::connect(const std::string& ip, uint16 port, Connection::ConnectionCallback onConnect)
+bool Protocol::connect(const std::string& ip, uint16 port, const Callback& callback)
 {
-    return m_connection->connect(ip, port, onConnect);
+    return m_connection->connect(ip, port, callback);
 }
 
 void Protocol::recv(Connection::RecvCallback onRecv)

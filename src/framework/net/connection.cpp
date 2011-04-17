@@ -43,8 +43,11 @@ void Connection::stop()
     }
 }
 
-bool Connection::connect(const std::string& ip, uint16 port, ConnectionCallback onConnect)
+bool Connection::connect(const std::string& ip, uint16 port, const Callback& callback)
 {
+
+    logInfo("[Connection::connect]: Ip: %s - Port: %d", ip.c_str(), port);
+
     if(m_connecting){
         logError("Already is connecting.");
         return false;
@@ -55,7 +58,7 @@ bool Connection::connect(const std::string& ip, uint16 port, ConnectionCallback 
         return false;
     }
 
-    m_connectCallback = onConnect;
+    m_connectCallback = callback;
     m_connecting = true;
     m_ip = ip;
     m_port = port;
@@ -63,14 +66,15 @@ bool Connection::connect(const std::string& ip, uint16 port, ConnectionCallback 
     //first resolve dns
     boost::asio::ip::tcp::resolver::query query(ip, convertType<std::string, uint16>(port));
     m_resolver.async_resolve(query, boost::bind(&Connection::onResolveDns, this, boost::asio::placeholders::error, boost::asio::placeholders::iterator));
-
     return true;
 }
 
 void Connection::onResolveDns(const boost::system::error_code& error, boost::asio::ip::tcp::resolver::iterator endpointIt)
 {
+    logInfo("[Connection::onResolveDns]");
     if(error){
         m_connecting = false;
+        logInfo("Error");
         m_errorCallback(error, __FUNCTION__);
         return;
     }
@@ -82,6 +86,7 @@ void Connection::onResolveDns(const boost::system::error_code& error, boost::asi
 void Connection::onConnect(const boost::system::error_code& error)
 {
     if(error){
+        logInfo("Error");
         m_connecting = false;
         m_errorCallback(error, __FUNCTION__);
         return;
