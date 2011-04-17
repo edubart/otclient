@@ -29,10 +29,11 @@
 
 class Texture;
 
-namespace TextureLoader
+class TextureLoader
 {
+public:
     /// Load a png textures using libpng
-    Texture *loadPNG(uchar *fileData);
-}
+    static Texture *loadPNG(uchar *fileData);
+};
 
 #endif // TEXTURELOADER_H

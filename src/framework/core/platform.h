@@ -27,52 +27,53 @@
 
 #include <prerequisites.h>
 
-namespace Platform
+class Platform
 {
-    void init(const char *appName);
-    void terminate();
+public:
+    static void init(const char *appName);
+    static void terminate();
 
     /// Poll platform input/window events
-    void poll();
+    static void poll();
 
     /// Get current time in milliseconds since init
-    int getTicks();
+    static int getTicks();
     /// Sleep in current thread
-    void sleep(ulong miliseconds);
+    static void sleep(ulong miliseconds);
 
-    bool createWindow(int x, int y, int width, int height, int minWidth, int minHeight, bool maximized);
-    void destroyWindow();
-    void showWindow();
-    void setWindowTitle(const char *title);
-    bool isWindowFocused();
-    bool isWindowVisible();
-    int getWindowX();
-    int getWindowY();
-    int getWindowWidth();
-    int getWindowHeight();
-    bool isWindowMaximized();
+    static bool createWindow(int x, int y, int width, int height, int minWidth, int minHeight, bool maximized);
+    static void destroyWindow();
+    static void showWindow();
+    static void setWindowTitle(const char *title);
+    static bool isWindowFocused();
+    static bool isWindowVisible();
+    static int getWindowX();
+    static int getWindowY();
+    static int getWindowWidth();
+    static int getWindowHeight();
+    static bool isWindowMaximized();
 
-    int getDisplayHeight();
-    int getDisplayWidth();
+    static int getDisplayHeight();
+    static int getDisplayWidth();
 
     /// Get GL extension function address
-    void *getExtensionProcAddress(const char *ext);
+    static void *getExtensionProcAddress(const char *ext);
     /// Check if GL extension is supported
-    bool isExtensionSupported(const char *ext);
+    static bool isExtensionSupported(const char *ext);
 
-    const char *getClipboardText();
-    void setClipboardText(const char *text);
+    static const char *getClipboardText();
+    static void setClipboardText(const char *text);
 
-    void hideMouseCursor();
-    void showMouseCursor();
+    static void hideMouseCursor();
+    static void showMouseCursor();
 
     /// Enable/disable vertical synchronization
-    void setVsync(bool enable = true);
+    static void setVsync(bool enable = true);
     /// Swap GL buffers
-    void swapBuffers();
+    static void swapBuffers();
 
     /// Get the app user directory, the place to save files configurations files
-    std::string getAppUserDir();
-}
+    static std::string getAppUserDir();
+};
 
 #endif // PLATFORM_H

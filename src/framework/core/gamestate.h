@@ -36,13 +36,19 @@ public:
     GameState() { }
     virtual ~GameState() { }
 
+    /// Fired when enter the state
     virtual void onEnter() = 0;
+    /// Fired when leaves the state
     virtual void onLeave() = 0;
 
+    /// Fired when user tryes to close the window
     virtual void onClose() = 0;
+    /// Fired for every user input event, this is called before processing UI input and if it returns false the input is not passed to the UI
     virtual bool onInputEvent(const InputEvent& event) = 0;
+    /// Fired when main window is resized
     virtual void onResize(const Size& size) = 0;
 
+    /// Fired before redering the UI
     virtual void render() = 0;
 };
 

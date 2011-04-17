@@ -61,6 +61,7 @@ public:
     /// Enable FPS counter on screen
     void enableFpsCounter(bool enable = true) { m_calculateFps = enable; };
 
+    /// Return the current ticks on this frame
     int getCurrentFrameTicks() const { return m_lastFrameTicks; }
 
 private:

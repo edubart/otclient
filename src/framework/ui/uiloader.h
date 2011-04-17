@@ -29,25 +29,27 @@
 #include <ui/uiconstants.h>
 #include <ui/uicontainer.h>
 
-namespace UILoader
+class UILoader
 {
-    /// Detect element type and create it
-    UIElementPtr createElementFromId(const std::string& id);
-
+public:
     /// Loads an UIElement and it's children from a YAML file
-    UIElementPtr loadFile(const std::string& file, const UIContainerPtr& parent = UIContainer::getRootContainer());
+    static UIElementPtr loadFile(const std::string& file, const UIContainerPtr& parent = UIContainer::getRootContainer());
+
+private:
+    /// Detect element type and create it
+    static UIElementPtr createElementFromId(const std::string& id);
 
     /// Populate container children from a YAML node
-    void populateContainer(const UIContainerPtr& parent, const YAML::Node& node);
+    static void populateContainer(const UIContainerPtr& parent, const YAML::Node& node);
 
     /// Load element and its children from a YAML node
-    void loadElements(const UIElementPtr& parent, const YAML::Node& node);
+    static void loadElements(const UIElementPtr& parent, const YAML::Node& node);
 
     /// Load element proprieties from a YAML node
-    void loadElement(const UIElementPtr& element, const YAML::Node& node);
+    static void loadElement(const UIElementPtr& element, const YAML::Node& node);
 
     /// Load anchor from a YAML node
-    void loadElementAnchor(const UIElementPtr& element, EAnchorType type, const YAML::Node& node);
+    static void loadElementAnchor(const UIElementPtr& element, EAnchorType type, const YAML::Node& node);
 };
 
 #endif // UILOADER_H

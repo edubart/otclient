@@ -39,8 +39,11 @@ public:
         m_elementType(elementType) { }
     virtual ~UIElementSkin() { }
 
+    /// Load the skin from a YAML node
     virtual void load(const YAML::Node& node);
+    /// Apply the skin to an element
     virtual void apply(UIElement *element);
+    /// Draw the skinned element
     virtual void draw(UIElement *element);
 
     const std::string& getName() const { return m_name; }
