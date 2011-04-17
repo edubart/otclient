@@ -78,8 +78,8 @@ public:
     void setMessageLength(int32 newSize);
     int32 getReadPos() const;
     int32 getHeaderSize();
-    char* getBuffer();
-    char* getBodyBuffer();
+    char* getBuffer() const;
+    char* getBodyBuffer() const;
 
     void updateHeaderLength();
 
@@ -91,7 +91,5 @@ protected:
 
     uint8 m_msgBuf[NETWORKMESSAGE_MAXSIZE];
 };
-
-typedef boost::shared_ptr<NetworkMessage> NetworkMessagePtr;
 
 #endif //NETWORKMESSAGE_H 

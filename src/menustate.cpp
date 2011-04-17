@@ -30,10 +30,9 @@
 #include "graphics/fonts.h"
 #include "core/dispatcher.h"
 #include "ui/ui.h"
-#include "net/connections.h"
-#include "net/protocoltibia87.h"
+#include "net/connection.h"
 #include "graphics/borderedimage.h"
-
+#include "protocollogin.h"
 
 void MenuState::onEnter()
 {
@@ -101,8 +100,7 @@ void MenuState::enterGameWindowOkButton_clicked()
     std::string accountName = boost::static_pointer_cast<UITextEdit>(enterGameWindow->getChildById("accountNameTextEdit"))->getText();
     std::string password = boost::static_pointer_cast<UITextEdit>(enterGameWindow->getChildById("passwordTextEdit"))->getText();
 
-    //ProtocolTibia87Ptr protocol = ProtocolTibia87Ptr(new ProtocolTibia87);
-    ProtocolTibia87 *protocol = new ProtocolTibia87;
-    protocol->login(accountName, password);
+    m_protocolLogin = ProtocolLoginPtr(new ProtocolLogin);
+    m_protocolLogin->login(accountName, password);
 }
 

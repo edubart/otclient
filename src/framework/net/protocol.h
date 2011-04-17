@@ -31,17 +31,13 @@ class Protocol
 {
 public:
     Protocol();
-    ~Protocol();
-
-    virtual void begin() = 0;
+    virtual ~Protocol();
 
 protected:
-    void send(NetworkMessagePtr networkMessage, Connection::ConnectionCallback onSend);
-    void recv(Connection::RecvCallback onRecv);
-
+    void send(const NetworkMessage& networkMessage, const ConnectionCallback& onSend);
+    void recv(const RecvCallback& onRecv);
     bool connect(const std::string& ip, uint16 port, const Callback& callback);
-
-    virtual void onError(const boost::system::error_code& error, const std::string& msg) = 0;
+    virtual void onError(const boost::system::error_code& error) = 0;
 
     ConnectionPtr m_connection;
 };

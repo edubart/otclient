@@ -29,6 +29,7 @@
 #include "graphics/texture.h"
 #include "net/connection.h"
 #include "ui/uipanel.h"
+#include "protocollogin.h"
 
 class MenuState : public GameState
 {
@@ -52,6 +53,7 @@ private:
 
     UIPanelPtr m_menuPanel;
     TexturePtr m_background;
+    ProtocolLoginPtr m_protocolLogin;
 };
 
 #endif // MENUSTATE_H

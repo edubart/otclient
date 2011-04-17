@@ -21,27 +21,38 @@
  * THE SOFTWARE.
  */
 
-#ifndef CONNECTIONS_H
-#define CONNECTIONS_H
 
-#include "prerequisites.h"
+#include "protocollogin.h"
+#include "util/rsa.h"
 
-#include "connection.h"
-
-class Connections
+ProtocolLogin::ProtocolLogin()
 {
-public:
-    size_t poll();
-    
-    ConnectionPtr createConnection();
-    
-private:
-    boost::asio::io_service m_ioService;
-    
-    typedef std::vector<ConnectionPtr> ConnectionVector;
-    ConnectionVector m_connections;
-};
+    logTrace();
+}
 
-extern Connections g_connections;
+ProtocolLogin::~ProtocolLogin()
+{
+    logTrace();
+}
 
-#endif //CONNECTIONS_H
+void ProtocolLogin::login(const std::string& account, const std::string& password)
+{
+    logTrace();
+    m_connection = ConnectionPtr(new Connection);
+    m_connection->connect("www.google.com", 80, boost::bind(&ProtocolLogin::afterConnect, this));
+}
+
+void ProtocolLogin::afterConnect()
+{
+    logTrace();
+
+}
+
+void ProtocolLogin::onError(const boost::system::error_code& error, const std::string& msg)
+{
+    logTrace();
+    logError("Connection error: %s", error.message().c_str());
+}
+
+
+

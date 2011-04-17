@@ -22,21 +22,20 @@
  */
 
 #include "protocol.h"
-#include "connections.h"
 
-Protocol::Protocol()
+Protocol::Protocol() :
+    m_connection(new Connection)
 {
-    logInfo("Protocol()");
-    m_connection = g_connections.createConnection();
-    m_connection->setErrorCallback(boost::bind(&Protocol::onError, this, boost::asio::placeholders::error, _2));
+    logTrace();
+    m_connection->setOnError(boost::bind(&Protocol::onError, this, boost::asio::placeholders::error));
 }
 
 Protocol::~Protocol()
 {
-    logInfo("~Protocol()");
+    logTrace();
 }
 
-void Protocol::send(NetworkMessagePtr networkMessage, Connection::ConnectionCallback onSend)
+void Protocol::send(const NetworkMessage& networkMessage, const ConnectionCallback& onSend)
 {
     m_connection->send(networkMessage, onSend);
 }
@@ -46,7 +45,7 @@ bool Protocol::connect(const std::string& ip, uint16 port, const Callback& callb
     return m_connection->connect(ip, port, callback);
 }
 
-void Protocol::recv(Connection::RecvCallback onRecv)
+void Protocol::recv(const RecvCallback& onRecv)
 {
     m_connection->recv(onRecv);
 }

@@ -59,7 +59,7 @@ SET(SOURCES
     src/teststate.cpp
 
 # game net
-    src/net/protocoltibia87.cpp
+    src/protocollogin.cpp
 
 # framework core
     src/framework/core/dispatcher.cpp
@@ -108,7 +108,6 @@ SET(SOURCES
 
 # framework net
     src/framework/net/connection.cpp
-    src/framework/net/connections.cpp
     src/framework/net/protocol.cpp
     src/framework/net/networkmessage.cpp
 )

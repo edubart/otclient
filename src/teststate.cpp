@@ -25,13 +25,10 @@
 #include "teststate.h"
 #include "graphics/graphics.h"
 #include "core/engine.h"
-#include "net/connections.h"
-#include "net/protocoltibia87.h"
 
 void TestState::onEnter()
 {
-    m_protocol = ProtocolTibia87Ptr(new ProtocolTibia87);
-    m_protocol->begin();
+
 }
 
 void TestState::onLeave()

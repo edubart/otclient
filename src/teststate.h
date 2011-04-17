@@ -25,8 +25,8 @@
 #ifndef TESTSTATE_H
 #define TESTSTATE_H
 
+#include "prerequisites.h"
 #include "core/gamestate.h"
-#include "net/protocoltibia87.h"
 
 class TestState : public GameState
 {
@@ -42,9 +42,6 @@ public:
 
     virtual void render();
     virtual void update(int ticks, int elapsedTicks);
-
-private:
-    ProtocolTibia87Ptr m_protocol;
 };
 
 #endif // TESTSTATE_H

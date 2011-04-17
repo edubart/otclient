@@ -168,11 +168,10 @@ uint64 NetworkMessage::getU64()
     return v;
 }
 
-char* NetworkMessage::getBuffer() {
+char* NetworkMessage::getBuffer() const {
     return (char*)&m_msgBuf[0];
 }
 
-char* NetworkMessage::getBodyBuffer() {
-    m_readPos = 2;
+char* NetworkMessage::getBodyBuffer() const {
     return (char*)&m_msgBuf[header_length];
 }

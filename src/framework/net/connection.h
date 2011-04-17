@@ -25,58 +25,47 @@
 #define CONNECTION_H
 
 #include "prerequisites.h"
-
+#include "networkmessage.h"
 #include <boost/asio.hpp>
 
-#include "networkmessage.h"
-
-class TestState;
 class Protocol;
-class Connections;
 class Connection;
+typedef boost::shared_ptr<Connection> ConnectionPtr;
+
+typedef boost::function<void()> ConnectionCallback;
+typedef boost::function<void(const NetworkMessage&)> RecvCallback;
+typedef boost::function<void(const boost::system::error_code&)> ErrorCallback;
 
 class Connection : public boost::enable_shared_from_this<Connection>
 {
 public:
-    typedef boost::function<void()> ConnectionCallback;
-    typedef boost::function<void(NetworkMessagePtr)> RecvCallback;
-    typedef boost::function<void(const boost::system::error_code&, const std::string&)> ErrorCallback;
-
-    typedef boost::shared_ptr<Connection> ConnectionPtr;
-
-private:
-    Connection(boost::asio::io_service& ioService);
+    Connection();
+    ~Connection();
 
     bool connect(const std::string& ip, uint16 port, const Callback& callback);
-    void stop();
+    void close();
 
-    void setErrorCallback(const ErrorCallback& callback) { m_errorCallback = callback; }
+    void setOnError(const ErrorCallback& callback) { m_errorCallback = callback; }
 
-    void recv(RecvCallback onSend);
-    void send(NetworkMessagePtr networkMessage, ConnectionCallback onRecv);
+    void recv(const RecvCallback& onSend);
+    void send(const NetworkMessage& networkMessage, const ConnectionCallback& onRecv);
 
     bool isConnecting() const { return m_connecting; }
     bool isConnected() const { return m_connected; }
 
-    boost::asio::ip::tcp::socket& getSocket() { return m_socket; }
-
-    void onError(const boost::system::error_code& error, const std::string& msg) { m_errorCallback(error, msg); }
-    
-private:
-    static void onSendHeader(ConnectionPtr connection, NetworkMessagePtr networkMessage, ConnectionCallback onSend, const boost::system::error_code& error);
-    static void onSendBody(ConnectionPtr connection, NetworkMessagePtr networkMessage, ConnectionCallback onSend, const boost::system::error_code& error);
-
-    static void onRecvHeader(ConnectionPtr connection, NetworkMessagePtr networkMessage, RecvCallback onRecv, const boost::system::error_code& error);
-    static void onRecvBody(ConnectionPtr connection, NetworkMessagePtr networkMessage, RecvCallback onRecv, const boost::system::error_code& error);
+    static void poll();
 
 private:
+    void onSendHeader(const NetworkMessage& networkMessage, const ConnectionCallback& onSend, const boost::system::error_code& error);
+    void onSendBody(const NetworkMessage& networkMessage, const ConnectionCallback& onSend, const boost::system::error_code& error);
+
+    void onRecvHeader(const NetworkMessage& networkMessage, const RecvCallback& onRecv, const boost::system::error_code& error);
+    void onRecvBody(const NetworkMessage& networkMessage, const RecvCallback& onRecv, const boost::system::error_code& error);
+
     void onResolveDns(const boost::system::error_code& error, boost::asio::ip::tcp::resolver::iterator endpointIt);
     void onConnect(const boost::system::error_code& error);
 
-private:
     void closeSocket();
-
-private:
     void handleError(const boost::system::error_code& error);
 
     boost::asio::ip::tcp::socket m_socket;
@@ -90,11 +79,6 @@ private:
 
     Callback m_connectCallback;
     ErrorCallback m_errorCallback;
-
-    friend class Protocol;
-    friend class Connections;
 };
-
-typedef boost::shared_ptr<Connection> ConnectionPtr;
 
 #endif //CONNECTION_h
