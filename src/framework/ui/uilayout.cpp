@@ -22,8 +22,9 @@
  */
 
 
-#include "uilayout.h"
-#include "uielement.h"
+#include <prerequisites.h>
+#include <ui/uielement.h>
+#include <ui/uilayout.h>
 
 int AnchorLine::getPos() const
 {

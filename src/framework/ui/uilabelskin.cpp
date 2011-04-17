@@ -22,9 +22,10 @@
  */
 
 
-#include "uilabelskin.h"
-#include "uilabel.h"
-#include "graphics/fonts.h"
+#include <prerequisites.h>
+#include <graphics/fonts.h>
+#include <ui/uilabelskin.h>
+#include <ui/uilabel.h>
 
 void UILabelSkin::load(const YAML::Node& node)
 {

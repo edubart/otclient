@@ -22,7 +22,8 @@
  */
 
 
-#include "resources.h"
+#include <prerequisites.h>
+#include <core/resources.h>
 
 #include <physfs.h>
 

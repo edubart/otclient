@@ -22,8 +22,9 @@
  */
 
 
-#include "uibutton.h"
-#include "core/dispatcher.h"
+#include <prerequisites.h>
+#include <core/dispatcher.h>
+#include <ui/uibutton.h>
 
 void UIButton::onInputEvent(const InputEvent& event)
 {

@@ -21,160 +21,250 @@
  * THE SOFTWARE.
  */
 
-#include "connection.h"
 
-#include <boost/bind.hpp>
+#include <prerequisites.h>
+#include <core/dispatcher.h>
+#include <net/connection.h>
 
-Connection::Connection(boost::asio::io_service& ioService) 
-    : m_socket(ioService), m_resolver(ioService)
+static boost::asio::io_service ioService;
+
+Connection::Connection() :
+    m_socket(ioService),
+    m_resolver(ioService),
+    m_writeError(false),
+    m_readError(false),
+    m_readTimer(ioService),
+    m_writeTimer(ioService),
+    m_state(STATE_CLOSED)
 {
-    m_connected = false;
-    m_connecting = false;
-    m_port = 0;
+    logTrace();
 }
 
-void Connection::stop()
+Connection::~Connection()
 {
-    if(m_connecting){
+    logTrace();
+}
+
+void Connection::poll()
+{
+    ioService.poll();
+    ioService.reset();
+}
+
+void Connection::close()
+{
+    logTrace();
+    ioService.post(boost::bind(&Connection::internalCloseConnection, shared_from_this()));
+}
+
+void Connection::internalCloseConnection()
+{
+    if(m_state != STATE_CLOSED) {
+        m_pendingRead = 0;
+        m_pendingWrite = 0;
+
         m_resolver.cancel();
-        m_socket.cancel();
+        m_readTimer.cancel();
+        m_writeTimer.cancel();
 
-        m_connecting = false;
+        g_dispatcher.addTask(m_closeCallback);
+
+        if(m_socket.is_open()) {
+            boost::system::error_code error;
+            m_socket->shutdown(boost::asio::ip::tcp::socket::shutdown_both, error);
+
+            if(error) {
+                if(error == boost::asio::error::not_connected) {
+                    //Transport endpoint is not connected.
+                } else {
+                    logError("shutdown socket error = %s", error.message());
+                }
+            }
+
+            m_socket->close(error);
+
+            if(error) {
+                logError("close socket error = %s", error.message());
+            }
+        }
+        m_state = STATE_CLOSED;
     }
 }
 
-bool Connection::connect(const std::string& ip, uint16 port, ConnectionCallback onConnect)
+bool Connection::connect(const std::string& host, uint16 port, const Callback& callback)
 {
-    if(m_connecting){
-        logError("Already is connecting.");
+    logTrace();
+
+    if(m_state != STATE_CLOSED) {
+        logTraceError("connection not closed");
         return false;
     }
 
-    if(m_connected){
-        logError("Already is connected.");
-        return false;
-    }
-
-    m_connectCallback = onConnect;
-    m_connecting = true;
-    m_ip = ip;
-    m_port = port;
-
-    //first resolve dns
-    boost::asio::ip::tcp::resolver::query query(ip, convertType<std::string, uint16>(port));
-    m_resolver.async_resolve(query, boost::bind(&Connection::onResolveDns, this, boost::asio::placeholders::error, boost::asio::placeholders::iterator));
-
+    m_connectCallback = callback;
+    boost::asio::ip::tcp::resolver::query query(ip, convertType<std::string>(port));
+    m_resolver.async_resolve(query, boost::bind(&Connection::onResolveDns, shared_from_this(), boost::asio::placeholders::error, boost::asio::placeholders::iterator));
     return true;
 }
 
 void Connection::onResolveDns(const boost::system::error_code& error, boost::asio::ip::tcp::resolver::iterator endpointIt)
 {
-    if(error){
-        m_connecting = false;
-        m_errorCallback(error, __FUNCTION__);
+    logTrace();
+    if(error) {
+        handleError(error);
         return;
-    }
+    } else {
 
-    //lets connect
-    m_socket.async_connect(*endpointIt, boost::bind(&Connection::onConnect, this, boost::asio::placeholders::error));
+    m_socket.async_connect(*endpointIt, boost::bind(&Connection::onConnect, shared_from_this(), boost::asio::placeholders::error));
 }
 
 void Connection::onConnect(const boost::system::error_code& error)
 {
-    if(error){
-        m_connecting = false;
-        m_errorCallback(error, __FUNCTION__);
+    logTrace();
+    if(error) {
+        handleError(error);
         return;
     }
 
-    m_connected = true;
+    m_state = STATE_OPEN;
 
-    m_connectCallback();
+    if(m_connectCallback)
+        g_dispatcher.addTask(m_connectCallback);
+
+    recvNext();
+}
+
+void Connection::recvNext()
+{
+    logTrace();
+    ++m_pendingRead;
+    m_readTimer.expires_from_now(boost::posix_time::seconds(READ_TIMEOUT));
+    m_readTimer.async_wait(boost::bind(&Connection::handleReadTimeout,
+                                        boost::weak_ptr<Connection>(shared_from_this()),
+                                        boost::asio::placeholders::error));
+
+    static InputMessage inputMessage;
+    boost::asio::async_read(*m_socket,
+        boost::asio::buffer(inputMessage->getBuffer(), InputMessage::HEADER_LENGTH),
+        boost::bind(&Connection::parseHeader, shared_from_this(), inputMessage, boost::asio::placeholders::error));
+}
+
+void Connection::parseHeader(const InputMessage& inputMessage, const boost::system::error_code& error)
+{
+    logTrace();
+
+    --m_pendingRead;
+    m_readTimer.cancel();
+
+    if(error && !handleReadError(error))
+        return;
+
+    uint16_t size = inputMessage->decodeHeader();
+    if(size <= 0 || size + 2 > InputMessage::INPUTMESSAGE_MAXSIZE) {
+        internalCloseConnection();
+        return;
+    }
+
+    try {
+        ++m_pendingRead;
+        m_readTimer.expires_from_now(boost::posix_time::seconds(Connection::read_timeout));
+        m_readTimer.async_wait(boost::bind(&Connection::handleReadTimeout, boost::weak_ptr<Connection>(shared_from_this()),
+            boost::asio::placeholders::error));
+
+        inputMessage->setMessageLength(size + InputMessage::HEADER_LENGTH);
+        boost::asio::async_read(*m_socket, boost::asio::buffer(inputMessage->getBuffer() + InputMessage::HEADER_LENGTH, size),
+            boost::bind(&Connection::parsePacket, shared_from_this(), inputMessage, boost::asio::placeholders::error));
+    } catch(boost::system::system_error& e) {
+        logError("async read error = " << e.what());
+        internalCloseConnection();
+    }
+}
+
+void Connection::parsePacket(const InputMessage& inputMessage, const boost::system::error_code& error)
+{
+    logTrace();
+
+    --m_pendingRead;
+    m_readTimer.cancel();
+
+    if(error && !handleReadError(error))
+        return;
+
+    //g_dispatcher.addTask(boost);
 }
 
 void Connection::handleError(const boost::system::error_code& error)
 {
-    stop();
+    logTrace();
 
-    if(isConnected()){
-        closeSocket();
-    }
+    internalCloseConnection();
+    m_errorCallback(error);
 }
 
-void Connection::closeSocket()
+void Connection::send(const NetworkMessage& networkMessage, const ConnectionCallback& onSend)
 {
-    boost::system::error_code error;
-    m_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, error);
+    logTrace();
 
-    if(error) {
-        logError("Connection::closeSocket(): %s", error.message().c_str());
-    }
-
-    m_socket.close(error);
-
-    if(error) {
-        logError("Connection::closeSocket(): %s", error.message().c_str());
-    }
-}
-
-void Connection::send(NetworkMessagePtr networkMessage, ConnectionCallback onSend)
-{
     boost::asio::async_write(m_socket,
-        boost::asio::buffer(networkMessage->getBuffer(), NetworkMessage::header_length),
+        boost::asio::buffer(networkMessage.getBuffer(), NetworkMessage::header_length),
         boost::bind(&Connection::onSendHeader, shared_from_this(), networkMessage, onSend, boost::asio::placeholders::error));
 }
 
-void Connection::recv(RecvCallback onRecv)
+void Connection::recv(const RecvCallback& onRecv)
 {
-    NetworkMessagePtr networkMessage(new NetworkMessage);
+    logTrace();
 
+    static NetworkMessage networkMessage;
     boost::asio::async_read(m_socket,
-        boost::asio::buffer(networkMessage->getBuffer(), NetworkMessage::header_length),
+        boost::asio::buffer(networkMessage.getBuffer(), NetworkMessage::header_length),
         boost::bind(&Connection::onRecvHeader, shared_from_this(), networkMessage, onRecv, boost::asio::placeholders::error));
 }
 
-void Connection::onRecvHeader(ConnectionPtr connection, NetworkMessagePtr networkMessage, RecvCallback onRecv, const boost::system::error_code& error)
+void Connection::onRecvHeader(const NetworkMessage& networkMessage, const RecvCallback& onRecv, const boost::system::error_code& error)
 {
-    if(error){
-        connection->handleError(error);
-        connection->onError(error, __FUNCTION__);
+    logTrace();
+
+    if(error) {
+        handleError(error);
         return;
     }
 
-    boost::asio::async_read(connection->getSocket(),
-        boost::asio::buffer(networkMessage->getBodyBuffer(), networkMessage->getMessageLength()),
-        boost::bind(&Connection::onRecvBody, connection, networkMessage, onRecv, boost::asio::placeholders::error));
+    boost::asio::async_read(m_socket,
+        boost::asio::buffer(networkMessage.getBodyBuffer(), networkMessage.getMessageLength()),
+        boost::bind(&Connection::onRecvBody, shared_from_this(), networkMessage, onRecv, boost::asio::placeholders::error));
 }
 
-void Connection::onRecvBody(ConnectionPtr connection, NetworkMessagePtr networkMessage, RecvCallback onRecv, const boost::system::error_code& error)
+void Connection::onRecvBody(const NetworkMessage& networkMessage, const RecvCallback& onRecv, const boost::system::error_code& error)
 {
+    logTrace();
+
     if(error){
-        connection->handleError(error);
-        connection->onError(error, __FUNCTION__);
+        handleError(error);
         return;
     }
 
     onRecv(networkMessage);
 }
 
-void Connection::onSendHeader(ConnectionPtr connection, NetworkMessagePtr networkMessage, ConnectionCallback onSend, const boost::system::error_code& error)
+void Connection::onSendHeader(const NetworkMessage& networkMessage, const ConnectionCallback& onSend, const boost::system::error_code& error)
 {
+    logTrace();
+
     if(error){
-        connection->handleError(error);
-        connection->onError(error, __FUNCTION__);
+        handleError(error);
         return;
     }
 
-    boost::asio::async_write(connection->getSocket(),
-        boost::asio::buffer(networkMessage->getBodyBuffer(), networkMessage->getMessageLength()),
-        boost::bind(&Connection::onSendBody, connection, networkMessage, onSend, boost::asio::placeholders::error));
+    boost::asio::async_write(m_socket,
+        boost::asio::buffer(networkMessage.getBodyBuffer(), networkMessage.getMessageLength()),
+        boost::bind(&Connection::onSendBody, shared_from_this(), networkMessage, onSend, boost::asio::placeholders::error));
 }
 
-void Connection::onSendBody(ConnectionPtr connection, NetworkMessagePtr networkMessage, ConnectionCallback onSend, const boost::system::error_code& error)
+void Connection::onSendBody(const NetworkMessage& networkMessage, const ConnectionCallback& onSend, const boost::system::error_code& error)
 {
-    if(error){
-        connection->handleError(error);
-        connection->onError(error, __FUNCTION__);
+    logTrace();
+
+    if(error) {
+        handleError(error);
         return;
     }
 

@@ -25,10 +25,8 @@
 #ifndef TEXTURES_H
 #define TEXTURES_H
 
-#include "prerequisites.h"
-#include "texture.h"
-
-typedef boost::weak_ptr<Texture> TextureWeakPtr;
+#include <prerequisites.h>
+#include <graphics/texture.h>
 
 class Textures
 {

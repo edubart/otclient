@@ -22,7 +22,8 @@
  */
 
 
-#include "color.h"
+#include <prerequisites.h>
+#include <util/color.h>
 
 Color Color::white(0xFF, 0xFF, 0xFF, 0xFF);
 Color Color::black(0x00, 0x00, 0x00, 0xFF);

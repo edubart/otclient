@@ -22,9 +22,10 @@
  */
 
 
-#include "borderedimage.h"
-#include "graphics.h"
-#include "textures.h"
+#include <prerequisites.h>
+#include <graphics/borderedimage.h>
+#include <graphics/graphics.h>
+#include <graphics/textures.h>
 
 BorderedImage::BorderedImage(TexturePtr texture,
                              const Rect& left,

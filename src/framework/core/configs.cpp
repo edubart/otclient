@@ -22,8 +22,9 @@
  */
 
 
-#include "configs.h"
-#include "resources.h"
+#include <prerequisites.h>
+#include <core/configs.h>
+#include <core/resources.h>
 
 Configs g_configs;
 

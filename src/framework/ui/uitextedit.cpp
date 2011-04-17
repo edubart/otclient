@@ -22,10 +22,11 @@
  */
 
 
-#include "uitextedit.h"
-#include "uitexteditskin.h"
-#include "graphics/fonts.h"
-#include "uicontainer.h"
+#include <prerequisites.h>
+#include <graphics/fonts.h>
+#include <ui/uitextedit.h>
+#include <ui/uitexteditskin.h>
+#include <ui/uicontainer.h>
 
 UITextEdit::UITextEdit() :
     UIElement(UI::TextEdit)
@@ -61,7 +62,7 @@ void UITextEdit::onInputEvent(const InputEvent& event)
 
 void UITextEdit::onLayoutRectChange(const Rect& rect)
 {
-    UITextEditSkin *skin = static_cast<UITextEditSkin*>(getSkin());
+    UITextEditSkin *skin = static_cast<UITextEditSkin*>(getSkin().get());
     Rect textRect = rect;
     int margin = skin->getTextMargin();
     textRect.setLeft(textRect.left()+margin);

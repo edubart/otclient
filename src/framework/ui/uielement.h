@@ -25,10 +25,11 @@
 #ifndef UIELEMENT_H
 #define UIELEMENT_H
 
-#include "prerequisites.h"
-#include "core/input.h"
-#include "uiconstants.h"
-#include "uilayout.h"
+#include <prerequisites.h>
+#include <core/input.h>
+#include <ui/uiconstants.h>
+#include <ui/uilayout.h>
+#include <ui/uielementskin.h>
 
 class UIElementSkin;
 
@@ -60,8 +61,8 @@ public:
 
     void moveTo(Point pos);
 
-    void setSkin(UIElementSkin *skin);
-    UIElementSkin *getSkin() { return m_skin; }
+    void setSkin(const UIElementSkinPtr& skin);
+    const UIElementSkinPtr& getSkin() const { return m_skin; }
 
     void setParent(UIContainerPtr parent) { m_parent = parent; }
     UIContainerPtr getParent() const { return m_parent.lock(); }
@@ -89,7 +90,7 @@ public:
 private:
     UI::EElementType m_type;
     UIContainerWeakPtr m_parent;
-    UIElementSkin *m_skin;
+    UIElementSkinPtr m_skin;
     std::string m_id;
     bool m_visible;
     bool m_enabled;

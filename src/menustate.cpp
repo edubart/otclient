@@ -22,17 +22,16 @@
  */
 
 
+#include <prerequisites.h>
+#include <core/engine.h>
+#include <core/dispatcher.h>
+#include <graphics/framebuffer.h>
+#include <graphics/graphics.h>
+#include <graphics/textures.h>
+#include <graphics/borderedimage.h>
+#include <graphics/fonts.h>
+#include <ui/ui.h>
 #include "menustate.h"
-#include "graphics/framebuffer.h"
-#include "graphics/graphics.h"
-#include "graphics/textures.h"
-#include "core/engine.h"
-#include "graphics/fonts.h"
-#include "core/dispatcher.h"
-#include "ui/ui.h"
-#include "net/connections.h"
-#include "graphics/borderedimage.h"
-
 
 void MenuState::onEnter()
 {
@@ -97,6 +96,9 @@ void MenuState::enterGameButton_clicked()
         window->getParent()->unlockElement();
         window->destroy();
     });
+
+    button = boost::static_pointer_cast<UIButton>(window->getChildById("okButton"));
+    button->setOnClick(boost::bind(&MenuState::enterGameWindowOkButton_clicked, this));
 }
 
 void MenuState::infoButton_clicked()
@@ -109,5 +111,16 @@ void MenuState::infoButton_clicked()
         window->getParent()->unlockElement();
         window->destroy();
     });
+}
+
+void MenuState::enterGameWindowOkButton_clicked()
+{
+    UIContainerPtr enterGameWindow = boost::static_pointer_cast<UIContainer>(UIContainer::getRootContainer()->getChildById("enterGameWindow"));
+
+    std::string accountName = boost::static_pointer_cast<UITextEdit>(enterGameWindow->getChildById("accountNameTextEdit"))->getText();
+    std::string password = boost::static_pointer_cast<UITextEdit>(enterGameWindow->getChildById("passwordTextEdit"))->getText();
+
+    //m_protocolLogin = ProtocolLoginPtr(new ProtocolLogin);
+    //m_protocolLogin->login(accountName, password);
 }
 

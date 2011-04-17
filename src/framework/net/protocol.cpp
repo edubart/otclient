@@ -21,30 +21,33 @@
  * THE SOFTWARE.
  */
 
-#include "protocol.h"
-#include "connections.h"
 
-Protocol::Protocol()
+#include <prerequisites.h>
+#include <net/protocol.h>
+
+Protocol::Protocol() :
+    m_connection(new Connection)
 {
-    m_connection = g_connections.createConnection();
-    /*m_connection->setErrorCallback(
-        [this](const boost::system::error_code& error, const std::string& msg){
-            this->onError(error, msg);
-        }
-    );*/
+    logTrace();
+    m_connection->setOnError(boost::bind(&Protocol::onError, this, boost::asio::placeholders::error));
 }
 
-void Protocol::send(NetworkMessagePtr networkMessage, Connection::ConnectionCallback onSend)
+Protocol::~Protocol()
+{
+    logTrace();
+}
+
+void Protocol::send(const NetworkMessage& networkMessage, const ConnectionCallback& onSend)
 {
     m_connection->send(networkMessage, onSend);
 }
 
-bool Protocol::connect(const std::string& ip, uint16 port, Connection::ConnectionCallback onConnect)
+bool Protocol::connect(const std::string& ip, uint16 port, const Callback& callback)
 {
-    return m_connection->connect(ip, port, onConnect);
+    return m_connection->connect(ip, port, callback);
 }
 
-void Protocol::recv(Connection::RecvCallback onRecv)
+void Protocol::recv(const RecvCallback& onRecv)
 {
     m_connection->recv(onRecv);
 }

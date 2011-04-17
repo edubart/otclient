@@ -25,7 +25,7 @@
 #ifndef RESOURCES_H
 #define RESOURCES_H
 
-#include "prerequisites.h"
+#include <prerequisites.h>
 
 class Resources
 {

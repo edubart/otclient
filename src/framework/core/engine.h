@@ -25,8 +25,8 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
-#include "prerequisites.h"
-#include "gamestate.h"
+#include <prerequisites.h>
+#include <core/gamestate.h>
 
 class Engine
 {
@@ -61,7 +61,7 @@ public:
     /// Enable FPS counter on screen
     void enableFpsCounter(bool enable = true) { m_calculateFps = enable; };
 
-    int getLastFrameTicks() const { return m_lastFrameTicks; }
+    int getCurrentFrameTicks() const { return m_lastFrameTicks; }
 
 private:
     /// Called to render every frame

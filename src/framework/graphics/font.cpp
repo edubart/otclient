@@ -22,10 +22,11 @@
  */
 
 
-#include "font.h"
-#include "core/resources.h"
-#include "textures.h"
-#include "graphics.h"
+#include <prerequisites.h>
+#include <core/resources.h>
+#include <graphics/font.h>
+#include <graphics/textures.h>
+#include <graphics/graphics.h>
 
 void Font::calculateGlyphsWidthsAutomatically(const Size& glyphSize)
 {

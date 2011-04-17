@@ -22,14 +22,15 @@
  */
 
 
-#include "core/engine.h"
-#include "core/configs.h"
-#include "core/resources.h"
-#include "core/platform.h"
-#include "core/dispatcher.h"
+#include <prerequisites.h>
+#include <core/engine.h>
+#include <core/configs.h>
+#include <core/resources.h>
+#include <core/platform.h>
+#include <core/dispatcher.h>
+#include <ui/uiskins.h>
 #include "menustate.h"
 #include "teststate.h"
-#include "ui/uiskins.h"
 
 /// Catches signals so we can exit nicely
 void signal_handler(int sig)

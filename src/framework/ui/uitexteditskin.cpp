@@ -22,9 +22,10 @@
  */
 
 
-#include "uitexteditskin.h"
-#include "uitextedit.h"
-#include "graphics/fonts.h"
+#include <prerequisites.h>
+#include <graphics/fonts.h>
+#include <ui/uitexteditskin.h>
+#include <ui/uitextedit.h>
 
 void UITextEditSkin::load(const YAML::Node& node)
 {

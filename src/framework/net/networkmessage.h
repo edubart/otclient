@@ -21,77 +21,190 @@
  * THE SOFTWARE.
  */
 
+
 #ifndef NETWORKMESSAGE_H
 #define NETWORKMESSAGE_H
 
-#include "prerequisites.h"
+#include <prerequisites.h>
 
-class Rsa;
-
-class NetworkMessage
+class InputMessage
 {
 public:
     enum {
-        header_length = 2,
-        NETWORKMESSAGE_MAXSIZE = 1500
+        INPUTMESSAGE_MAXSIZE = 16834,
+        HEADER_LENGTH = 2
     };
 
-    enum {
-        max_body_length = NETWORKMESSAGE_MAXSIZE - header_length
-    };
+    InputMessage() : m_messageSize(0), m_readPos(HEADER_LENGTH) { }
+    ~InputMessage() { }
 
-    // constructor/destructor
-    NetworkMessage() {
-        reset();
+    inline void reset() {
+        m_messageSize = 0;
+        m_readPos = HEADER_LENGTH;
     }
 
-    // resets the internal buffer to an empty message
-protected:
-    void reset() {
-        m_msgSize = 0;
-        m_readPos = 2;
+    uint16_t decodeHeader() {
+        return (int32_t)(m_buffer[0] | m_buffer[1] << 8);
     }
-public:
-    // simply read functions for incoming message
-    uint8 getByte();
-    uint16 getU16();
-    uint32 getU32();
-    uint64 getU64();
 
-    std::string getString();
-    std::string getRaw();
+    uint8_t getByte() {
+        return m_buffer[m_readPos++];
+    }
 
-    // skips count unknown/unused bytes in an incoming message
-    void skipBytes(int count);
+    uint16_t getU16() {
+        uint16_t v = *(uint16_t*)(m_buffer + m_readPos);
+        m_readPos += 2;
+        return v;
+    }
 
-    // simply write functions for outgoing message
-    void addByte(uint8 value);
-    void addU16(uint16 value);
-    void addU32(uint32 value);
-    void addU64(uint64 value);
-    void addBytes(const char* bytes, uint32_t size);
-    void addPaddingBytes(uint32 n);
-    void addString(const std::string &value);
-    void addString(const char* value);
-    int32 getMessageLength() const;
+    uint32_t getU32() {
+        uint32_t v = *(uint32_t*)(m_buffer + m_readPos);
+        m_readPos += 4;
+        return v;
+    }
 
-    void setMessageLength(int32 newSize);
-    int32 getReadPos() const;
-    int32 getHeaderSize();
-    char* getBuffer();
-    char* getBodyBuffer();
+    uint64_t getU64() {
+        uint64_t v = *(uint64_t*)(m_buffer + m_readPos);
+        m_readPos += 8;
+        return v;
+    }
 
-    void updateHeaderLength();
+    std::string getString() {
+        uint16_t stringlen = getU16();
+        if(stringlen >= (INPUTMESSAGE_MAXSIZE - m_readPos))
+            return std::string();
 
-protected:
-    inline bool canAdd(int size);
+        char* v = (char*)(m_buffer + m_readPos);
+        m_readPos += stringlen;
+        return std::string(v, stringlen);
+    }
 
-    int32 m_msgSize;
-    int32 m_readPos;
+    void skipBytes(int count) { m_readPos += count; }
 
-    uint8 m_msgBuf[NETWORKMESSAGE_MAXSIZE];
+    int32_t getMessageLength() const {return m_messageSize; }
+    void setMessageLength(int32_t newSize) { m_messageSize = newSize; }
+
+    int32_t getReadPos() const { return m_readPos; }
+    const char *getBuffer() const { return (char*)&m_buffer[0]; }
+
+private:
+    uint16_t m_messageSize;
+    uint16_t m_readPos;
+    uint8_t m_buffer[INPUTMESSAGE_MAXSIZE];
 };
 
-typedef boost::shared_ptr<NetworkMessage> NetworkMessagePtr;
+class OutputMessage
+{
+public:
+    enum {
+        OUTPUTMESSAGE_MAXSIZE = 1460
+    };
+
+    OutputMessage() : m_outputBufferStart(4), m_messageSize(0), m_writePos(4) { }
+    ~OutputMessage() { }
+
+    void reset() {
+        m_messageSize = 0;
+        m_writePos = 4;
+        m_outputBufferStart = 4;
+    }
+
+    void addByte(uint8_t value)
+    {
+        if(!canAdd(1))
+            return;
+        m_buffer[m_writePos++] = value;
+        m_messageSize++;
+    }
+
+    void addU16(uint16_t value)
+    {
+        if(!canAdd(2))
+            return;
+        *(uint16_t*)(m_buffer + m_writePos) = value;
+        m_writePos += 2;
+        m_messageSize += 2;
+    }
+
+    void addU32(uint32_t value)
+    {
+        if(!canAdd(4))
+            return;
+        *(uint32_t*)(m_buffer + m_writePos) = value;
+        m_writePos += 4;
+        m_messageSize += 4;
+    }
+
+    void addU64(uint64_t value)
+    {
+        if(!canAdd(8))
+            return;
+        *(uint64_t*)(m_buffer + m_writePos) = value;
+        m_writePos += 8;
+        m_messageSize += 8;
+    }
+
+    void addBytes(const char* bytes, uint32_t size)
+    {
+        if(!canAdd(size) || size > 8192)
+            return;
+
+        memcpy(m_buffer + m_writePos, bytes, size);
+        m_writePos += size;
+        m_messageSize += size;
+    }
+
+    void addPaddingBytes(uint32_t n)    {
+        if(!canAdd(n))
+            return;
+
+        memset((void*)&m_buffer[m_writePos], 0x33, n);
+        m_messageSize = m_messageSize + n;
+    }
+
+    void addString(const char* value)
+    {
+        uint32_t stringlen = (uint32_t)strlen(value);
+        if(!canAdd(stringlen + 2) || stringlen > 8192)
+            return;
+
+        addU16(stringlen);
+        strcpy((char*)(m_buffer + m_writePos), value);
+        m_writePos += stringlen;
+        m_messageSize += stringlen;
+    }
+
+    void addString(const std::string &value) {
+        addString(value.c_str());
+    }
+
+    void writeMessageLength() {
+        *(uint16_t*)(m_buffer + 2) = m_messageSize;
+        m_messageSize += 2;
+        m_outputBufferStart = 2;
+    }
+
+    void writeCryptoHeader() {
+        *(uint16_t*)(m_buffer) = m_messageSize;
+        m_messageSize += 2;
+        m_outputBufferStart = 0;
+    }
+
+    int32_t getMessageLength() const { return m_messageSize; }
+    void setMessageLength(int32_t newSize) { m_messageSize = newSize; }
+
+    const char *getBuffer() const { return (char*)&m_buffer[0]; }
+    const char *getOutputBuffer() const { return (char*)&m_buffer[m_outputBufferStart]; }
+
+private:
+    inline bool canAdd(int size) {
+        return (size + m_writePos < OUTPUTMESSAGE_MAXSIZE);
+    }
+
+    uint16_t m_outputBufferStart;
+    uint16_t m_messageSize;
+    uint16_t m_writePos;
+    uint8_t m_buffer[OUTPUTMESSAGE_MAXSIZE];
+};
 
 #endif //NETWORKMESSAGE_H 

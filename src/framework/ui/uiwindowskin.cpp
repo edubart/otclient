@@ -21,9 +21,10 @@
  * THE SOFTWARE.
  */
 
-#include "uiwindowskin.h"
-#include "uiwindow.h"
-#include "graphics/fonts.h"
+#include <prerequisites.h>
+#include <graphics/fonts.h>
+#include <ui/uiwindowskin.h>
+#include <ui/uiwindow.h>
 
 void UIWindowSkin::load(const YAML::Node& node)
 {

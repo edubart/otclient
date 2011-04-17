@@ -25,7 +25,7 @@
 #ifndef RECT_H
 #define RECT_H
 
-#include "prerequisites.h"
+#include <prerequisites.h>
 
 template <class T>
 class TPoint;

@@ -25,8 +25,8 @@
 #ifndef UIWINDOW_H
 #define UIWINDOW_H
 
-#include "prerequisites.h"
-#include "uicontainer.h"
+#include <prerequisites.h>
+#include <ui/uicontainer.h>
 
 class UIWindow : public UIContainer
 {

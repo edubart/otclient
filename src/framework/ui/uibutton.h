@@ -25,9 +25,9 @@
 #ifndef UIBUTTON_H
 #define UIBUTTON_H
 
-#include "prerequisites.h"
-#include "uielement.h"
-#include "graphics/borderedimage.h"
+#include <prerequisites.h>
+#include <ui/uielement.h>
+#include <graphics/borderedimage.h>
 
 class UIButton : public UIElement
 {

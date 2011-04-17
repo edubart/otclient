@@ -25,9 +25,9 @@
 #ifndef UIBUTTONSKIN_H
 #define UIBUTTONSKIN_H
 
-#include "prerequisites.h"
-#include "uiconstants.h"
-#include "uielementskin.h"
+#include <prerequisites.h>
+#include <ui/uiconstants.h>
+#include <ui/uielementskin.h>
 
 class Font;
 

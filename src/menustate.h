@@ -25,10 +25,10 @@
 #ifndef MENUSTATE_H
 #define MENUSTATE_H
 
-#include "core/gamestate.h"
-#include "graphics/texture.h"
-#include "net/connection.h"
-#include "ui/uipanel.h"
+#include <prerequisites.h>
+#include <core/gamestate.h>
+#include <graphics/texture.h>
+//#include "protocollogin.h"
 
 class MenuState : public GameState
 {
@@ -49,8 +49,10 @@ private:
     void enterGameButton_clicked();
     void infoButton_clicked();
 
-    UIPanelPtr m_menuPanel;
+    void enterGameWindowOkButton_clicked();
+
     TexturePtr m_background;
+    //ProtocolLoginPtr m_protocolLogin;
 };
 
 #endif // MENUSTATE_H

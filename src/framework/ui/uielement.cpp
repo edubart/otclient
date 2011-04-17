@@ -22,16 +22,17 @@
  */
 
 
-#include "uielement.h"
-#include "uiskins.h"
-#include "uielementskin.h"
-#include "graphics/graphics.h"
+#include <prerequisites.h>
 #include <core/dispatcher.h>
+#include <graphics/graphics.h>
+#include <ui/uielement.h>
+#include <ui/uiskins.h>
+#include <ui/uielementskin.h>
+#include <ui/uicontainer.h>
 
 UIElement::UIElement(UI::EElementType type) :
     UILayout(),
     m_type(type),
-    m_skin(NULL),
     m_visible(true),
     m_enabled(true),
     m_focused(false)
@@ -49,7 +50,7 @@ void UIElement::destroy()
     assert(asUIElement().use_count() == 4);
 }
 
-void UIElement::setSkin(UIElementSkin* skin)
+void UIElement::setSkin(const UIElementSkinPtr& skin)
 {
     m_skin = skin;
     if(skin)

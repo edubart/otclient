@@ -22,14 +22,15 @@
  */
 
 
-#include "uiwindow.h"
-#include "uiwindowskin.h"
+#include <prerequisites.h>
+#include <ui/uiwindow.h>
+#include <ui/uiwindowskin.h>
 
 void UIWindow::onInputEvent(const InputEvent& event)
 {
     UIContainer::onInputEvent(event);
     if(event.type == EV_MOUSE_LDOWN) {
-        UIWindowSkin *skin = static_cast<UIWindowSkin*>(getSkin());
+        UIWindowSkin *skin = static_cast<UIWindowSkin*>(getSkin().get());
         Rect headRect = getRect();
         headRect.setHeight(skin->getHeadHeight());
         if(headRect.contains(event.mousePos)) {

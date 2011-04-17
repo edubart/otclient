@@ -58,6 +58,7 @@ typedef int8_t int8;
 #include <map>
 #include <string>
 #include <list>
+#include <queue>
 
 // boost utilities
 #include <boost/algorithm/string.hpp>
@@ -66,6 +67,7 @@ typedef int8_t int8;
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/scoped_ptr.hpp>
 #include <boost/enable_shared_from_this.hpp>
 #define foreach BOOST_FOREACH
 
@@ -75,11 +77,11 @@ typedef boost::function<void()> Callback;
 #include <yaml-cpp/yaml.h>
 
 // common utilities
-#include "util/util.h"
-#include "util/logger.h"
-#include "util/color.h"
-#include "util/point.h"
-#include "util/size.h"
-#include "util/rect.h"
+#include <util/util.h>
+#include <util/logger.h>
+#include <util/color.h>
+#include <util/point.h>
+#include <util/size.h>
+#include <util/rect.h>
 
 #endif // PREREQUISITES_H

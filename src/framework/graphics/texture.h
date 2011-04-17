@@ -25,9 +25,7 @@
 #ifndef TEXTURE_H
 #define TEXTURE_H
 
-#include "prerequisites.h"
-
-class Textures;
+#include <prerequisites.h>
 
 class Texture
 {
@@ -53,5 +51,6 @@ private:
 };
 
 typedef boost::shared_ptr<Texture> TexturePtr;
+typedef boost::weak_ptr<Texture> TextureWeakPtr;
 
 #endif // TEXTURE_H

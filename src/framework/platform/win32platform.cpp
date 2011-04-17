@@ -21,12 +21,15 @@
  * THE SOFTWARE.
  */
 
-#include "core/platform.h"
-#include "core/engine.h"
 
-#include <dir.h>
-#include <physfs.h>
+#include <prerequisites.h>
+#include <core/platform.h>
+#include <core/engine.h>
+
 #include <windows.h>
+#include <dir.h>
+
+#include <physfs.h>
 
 #include <GL/gl.h>
 #include <GL/glext.h>

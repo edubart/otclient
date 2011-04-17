@@ -25,8 +25,8 @@
 #ifndef SIZE_H
 #define SIZE_H
 
-#include "prerequisites.h"
-#include "point.h"
+#include <prerequisites.h>
+#include <util/point.h>
 
 enum ESizeScaleMode {
     IGNORE_ASPECT_RATIO,

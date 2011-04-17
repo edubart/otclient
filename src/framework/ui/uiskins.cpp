@@ -22,15 +22,15 @@
  */
 
 
-#include "uiskins.h"
-#include "core/resources.h"
-#include "graphics/textures.h"
-#include "uielementskin.h"
-#include "uibuttonskin.h"
-#include "uiwindowskin.h"
-#include "uitexteditskin.h"
-#include "uilabelskin.h"
-#include "uilinedecorationskin.h"
+#include <prerequisites.h>
+#include <core/resources.h>
+#include <graphics/textures.h>
+#include <ui/uiskins.h>
+#include <ui/uielementskin.h>
+#include <ui/uibuttonskin.h>
+#include <ui/uiwindowskin.h>
+#include <ui/uitexteditskin.h>
+#include <ui/uilabelskin.h>
 
 UISkins g_uiSkins;
 
@@ -58,7 +58,7 @@ void UISkins::load(const std::string& skinsFile)
                 std::string name;
                 it.first() >> name;
 
-                UIElementSkin *skin = new UIButtonSkin(name);
+                UIElementSkinPtr skin = UIElementSkinPtr(new UIButtonSkin(name));
                 skin->load(it.second());
                 m_elementSkins.push_back(skin);
             }
@@ -70,7 +70,7 @@ void UISkins::load(const std::string& skinsFile)
                 std::string name;
                 it.first() >> name;
 
-                UIElementSkin *skin = new UIElementSkin(name, UI::Panel);
+                UIElementSkinPtr skin = UIElementSkinPtr(new UIElementSkin(name, UI::Panel));
                 skin->load(it.second());
                 m_elementSkins.push_back(skin);
             }
@@ -82,7 +82,7 @@ void UISkins::load(const std::string& skinsFile)
                 std::string name;
                 it.first() >> name;
 
-                UIElementSkin *skin = new UIWindowSkin(name);
+                UIElementSkinPtr skin = UIElementSkinPtr(new UIWindowSkin(name));
                 skin->load(it.second());
                 m_elementSkins.push_back(skin);
             }
@@ -94,7 +94,7 @@ void UISkins::load(const std::string& skinsFile)
                 std::string name;
                 it.first() >> name;
 
-                UIElementSkin *skin = new UILabelSkin(name);
+                UIElementSkinPtr skin = UIElementSkinPtr(new UILabelSkin(name));
                 skin->load(it.second());
                 m_elementSkins.push_back(skin);
             }
@@ -107,7 +107,7 @@ void UISkins::load(const std::string& skinsFile)
                 std::string name;
                 it.first() >> name;
 
-                UIElementSkin *skin = new UITextEditSkin(name);
+                UIElementSkinPtr skin = UIElementSkinPtr(new UITextEditSkin(name));
                 skin->load(it.second());
                 m_elementSkins.push_back(skin);
             }
@@ -120,7 +120,7 @@ void UISkins::load(const std::string& skinsFile)
                 std::string name;
                 it.first() >> name;
 
-                UIElementSkin *skin = new UILineDecorationSkin(name);
+                UIElementSkinPtr skin = UIElementSkinPtr(new UIElementSkin(name, UI::LineDecoration));
                 skin->load(it.second());
                 m_elementSkins.push_back(skin);
             }
@@ -132,20 +132,17 @@ void UISkins::load(const std::string& skinsFile)
 
 void UISkins::terminate()
 {
-    for(auto it = m_elementSkins.begin(); it != m_elementSkins.end(); ++it)
-        delete (*it);
-    m_elementSkins.clear();
+
 }
 
 
-UIElementSkin* UISkins::getElementSkin(UI::EElementType elementType, const std::string& name)
+UIElementSkinPtr UISkins::getElementSkin(UI::EElementType elementType, const std::string& name)
 {
     for(auto it = m_elementSkins.begin(); it != m_elementSkins.end(); ++it) {
-        UIElementSkin *skin = (*it);
-        if(elementType == skin->getElementType() && name == skin->getName()) {
+        const UIElementSkinPtr& skin = (*it);
+        if(elementType == skin->getElementType() && name == skin->getName())
             return skin;
-        }
     }
     logWarning("Element skin '%s' not found", name.c_str());
-    return NULL;
+    return UIElementSkinPtr();
 }

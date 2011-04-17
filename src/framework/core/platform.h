@@ -25,7 +25,7 @@
 #ifndef PLATFORM_H
 #define PLATFORM_H
 
-#include "prerequisites.h"
+#include <prerequisites.h>
 
 namespace Platform
 {

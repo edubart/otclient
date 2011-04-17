@@ -25,8 +25,8 @@
 #ifndef UILAYOUT_H
 #define UILAYOUT_H
 
-#include "prerequisites.h"
-#include "uiconstants.h"
+#include <prerequisites.h>
+#include <ui/uiconstants.h>
 
 enum EAnchorType {
     ANCHOR_LEFT = 0,

@@ -22,17 +22,20 @@
  */
 
 
-#include "core/platform.h"
-#include "core/engine.h"
+#include <prerequisites.h>
+#include <core/platform.h>
+#include <core/engine.h>
 
 #include <sys/time.h>
 #include <sys/stat.h>
 #include <errno.h>
 
+#include <physfs.h>
+
+#include <GL/glx.h>
+
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
-#include <GL/glx.h>
-#include <physfs.h>
 
 struct X11PlatformPrivate {
     Display *display;

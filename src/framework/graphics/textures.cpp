@@ -22,9 +22,10 @@
  */
 
 
-#include "textures.h"
-#include "core/resources.h"
-#include "textureloader.h"
+#include <prerequisites.h>
+#include <core/resources.h>
+#include <graphics/textures.h>
+#include <graphics/textureloader.h>
 
 Textures g_textures;
 

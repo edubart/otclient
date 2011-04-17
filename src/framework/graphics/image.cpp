@@ -22,9 +22,10 @@
  */
 
 
-#include "image.h"
-#include "graphics.h"
-#include "textures.h"
+#include <prerequisites.h>
+#include <graphics/image.h>
+#include <graphics/graphics.h>
+#include <graphics/textures.h>
 
 Image::Image(const std::string& texture)
 {

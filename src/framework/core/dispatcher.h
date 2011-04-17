@@ -25,9 +25,7 @@
 #ifndef DISPATCHER_H
 #define DISPATCHER_H
 
-#include "prerequisites.h"
-
-#include <queue>
+#include <prerequisites.h>
 
 class Task {
 public:

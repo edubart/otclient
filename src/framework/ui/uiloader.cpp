@@ -22,9 +22,10 @@
  */
 
 
-#include "uiloader.h"
-#include "core/resources.h"
-#include "ui.h"
+#include <prerequisites.h>
+#include <core/resources.h>
+#include <ui/ui.h>
+#include <ui/uiloader.h>
 
 UIElementPtr UILoader::createElementFromId(const std::string& id)
 {
@@ -39,7 +40,7 @@ UIElementPtr UILoader::createElementFromId(const std::string& id)
     std::string elementId = split[1];
 
     if(elementType == "panel") {
-        element = UIElementPtr(new UIPanel);
+        element = UIElementPtr(new UIContainer(UI::Panel));
     } else if(elementType == "button") {
         element = UIElementPtr(new UIButton);
     } else if(elementType == "label") {
@@ -49,7 +50,7 @@ UIElementPtr UILoader::createElementFromId(const std::string& id)
     } else if(elementType == "textEdit") {
         element = UIElementPtr(new UITextEdit);
     } else if(elementType == "lineDecoration") {
-        element = UIElementPtr(new UILineDecoration);
+        element = UIElementPtr(new UIElement(UI::LineDecoration));
     } else if(elementType == "checkBox") {
         element = UIElementPtr(new UICheckBox);
     }

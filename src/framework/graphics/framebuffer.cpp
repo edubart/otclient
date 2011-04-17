@@ -21,9 +21,10 @@
  * THE SOFTWARE.
  */
 
-#include "framebuffer.h"
-#include "core/platform.h"
-#include "graphics.h"
+#include <prerequisites.h>
+#include <core/platform.h>
+#include <graphics/framebuffer.h>
+#include <graphics/graphics.h>
 
 #include <GL/gl.h>
 #include <GL/glu.h>

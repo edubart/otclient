@@ -22,13 +22,9 @@
  */
 
 
-#include "uicontainer.h"
-#include "core/resources.h"
-#include "uibutton.h"
-#include "uipanel.h"
-#include "uilabel.h"
-#include "uitextedit.h"
-#include "uiwindow.h"
+#include <prerequisites.h>
+#include <core/resources.h>
+#include <ui/uicontainer.h>
 
 UIContainerPtr rootContainer(new UIContainer);
 

@@ -25,9 +25,8 @@
 #ifndef UITEXTEDITSKIN_H
 #define UITEXTEDITSKIN_H
 
-#include "prerequisites.h"
-#include "uiconstants.h"
-#include "uielementskin.h"
+#include <prerequisites.h>
+#include <ui/uielementskin.h>
 
 class Font;
 

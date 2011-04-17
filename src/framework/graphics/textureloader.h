@@ -25,7 +25,7 @@
 #ifndef TEXTURELOADER_H
 #define TEXTURELOADER_H
 
-#include "prerequisites.h"
+#include <prerequisites.h>
 
 class Texture;
 

@@ -22,9 +22,9 @@
  */
 
 
-#include "dispatcher.h"
-#include "platform.h"
-#include "engine.h"
+#include <prerequisites.h>
+#include <core/dispatcher.h>
+#include <core/engine.h>
 
 Dispatcher g_dispatcher;
 
@@ -32,7 +32,7 @@ void Dispatcher::poll()
 {
     while(!m_taskList.empty()) {
         Task *task = m_taskList.top();
-        if(g_engine.getLastFrameTicks() < task->ticks)
+        if(g_engine.getCurrentFrameTicks() < task->ticks)
             break;
 
         task->callback();
@@ -43,7 +43,7 @@ void Dispatcher::poll()
 
 void Dispatcher::scheduleTask(const Callback& callback, int delay)
 {
-    m_taskList.push(new Task(Platform::getTicks() + delay, callback));
+    m_taskList.push(new Task(g_engine.getCurrentFrameTicks() + delay, callback));
 }
 
 void Dispatcher::addTask(const Callback& callback)

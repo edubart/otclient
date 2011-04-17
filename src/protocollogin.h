@@ -21,27 +21,28 @@
  * THE SOFTWARE.
  */
 
-#ifndef CONNECTIONS_H
-#define CONNECTIONS_H
 
-#include "prerequisites.h"
+#ifndef PROTOCOLLOGIN_H
+#define PROTOCOLLOGIN_H
 
-#include "connection.h"
+#include <prerequisites.h>
+#include <net/connection.h>
 
-class Connections
+class ProtocolLogin
 {
 public:
-    size_t poll();
-    
-    ConnectionPtr createConnection();
-    
+    ProtocolLogin();
+    ~ProtocolLogin();
+
+    void login(const std::string& account, const std::string& password);
+    void afterConnect();
+    void sendAccount();
+    void onError(const boost::system::error_code& error, const std::string& msg);
+
 private:
-    boost::asio::io_service m_ioService;
-    
-    typedef std::vector<ConnectionPtr> ConnectionVector;
-    ConnectionVector m_connections;
+    ConnectionPtr m_connection;
 };
 
-extern Connections g_connections;
+typedef boost::shared_ptr<ProtocolLogin> ProtocolLoginPtr;
 
-#endif //CONNECTIONS_H
+#endif // PROTOCOLLOGIN_H

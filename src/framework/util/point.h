@@ -25,7 +25,7 @@
 #ifndef POINT_H
 #define POINT_H
 
-#include "prerequisites.h"
+#include <prerequisites.h>
 
 template <class T>
 class TSize;

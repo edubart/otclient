@@ -25,8 +25,8 @@
 #ifndef IMAGE_H
 #define IMAGE_H
 
-#include "prerequisites.h"
-#include "texture.h"
+#include <prerequisites.h>
+#include <graphics/texture.h>
 
 class Image
 {

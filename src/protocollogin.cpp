@@ -21,19 +21,39 @@
  * THE SOFTWARE.
  */
 
-#include "connections.h"
 
-Connections g_connections;
+#include <prerequisites.h>
+#include <util/rsa.h>
+#include "protocollogin.h"
 
-size_t Connections::poll()
+ProtocolLogin::ProtocolLogin()
 {
-    return m_ioService.poll();
+    logTrace();
 }
 
-ConnectionPtr Connections::createConnection()
+ProtocolLogin::~ProtocolLogin()
 {
-    ConnectionPtr connection(new Connection(m_ioService));
-    m_connections.push_back(connection);
-
-    return connection;
+    logTrace();
 }
+
+void ProtocolLogin::login(const std::string& account, const std::string& password)
+{
+    logTrace();
+    m_connection = ConnectionPtr(new Connection);
+    m_connection->connect("www.google.com", 80, boost::bind(&ProtocolLogin::afterConnect, this));
+}
+
+void ProtocolLogin::afterConnect()
+{
+    logTrace();
+
+}
+
+void ProtocolLogin::onError(const boost::system::error_code& error, const std::string& msg)
+{
+    logTrace();
+    logError("Connection error: %s", error.message().c_str());
+}
+
+
+

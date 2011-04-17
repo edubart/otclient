@@ -22,8 +22,8 @@
  */
 
 
-#include "graphics.h"
-#include "texture.h"
+#include <prerequisites.h>
+#include <graphics/graphics.h>
 
 #include <GL/gl.h>
 #include <GL/glu.h>

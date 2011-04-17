@@ -25,7 +25,7 @@
 #ifndef COLOR_H
 #define COLOR_H
 
-#include "prerequisites.h"
+#include <prerequisites.h>
 
 typedef uint32 RGBA;
 

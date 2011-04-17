@@ -22,9 +22,10 @@
  */
 
 
-#include "uibuttonskin.h"
-#include "uibutton.h"
-#include "graphics/fonts.h"
+#include <prerequisites.h>
+#include <graphics/fonts.h>
+#include <ui/uibuttonskin.h>
+#include <ui/uibutton.h>
 
 void UIButtonSkin::load(const YAML::Node& node)
 {

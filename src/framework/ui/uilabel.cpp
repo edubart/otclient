@@ -22,4 +22,5 @@
  */
 
 
-#include "uilabel.h"
+#include <prerequisites.h>
+#include <ui/uilabel.h>

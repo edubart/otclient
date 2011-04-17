@@ -21,7 +21,8 @@
  * THE SOFTWARE.
  */
 
-#include "rsa.h"
+#include <prerequisites.h>
+#include <util/rsa.h>
 
 Rsa::Rsa()
 {

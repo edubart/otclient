@@ -25,11 +25,9 @@
 #ifndef UISKIN_H
 #define UISKIN_H
 
-#include "prerequisites.h"
-#include "uicontainer.h"
-#include "graphics/texture.h"
-
-class UIElementSkin;
+#include <prerequisites.h>
+#include <graphics/texture.h>
+#include <ui/uielementskin.h>
 
 class UISkins
 {
@@ -39,13 +37,13 @@ public:
     void load(const std::string& skinsFile);
     void terminate();
 
-    UIElementSkin *getElementSkin(UI::EElementType elementType, const std::string& name = "default");
+    UIElementSkinPtr getElementSkin(UI::EElementType elementType, const std::string& name = "default");
     TexturePtr getDefaultTexture() { return m_defaultTexture; }
 
 private:
     TexturePtr m_defaultTexture;
 
-    std::vector<UIElementSkin *> m_elementSkins;
+    std::vector<UIElementSkinPtr> m_elementSkins;
 };
 
 extern UISkins g_uiSkins;

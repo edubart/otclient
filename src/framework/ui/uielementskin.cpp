@@ -22,11 +22,12 @@
  */
 
 
-#include "uielementskin.h"
-#include "uielement.h"
-#include "graphics/borderedimage.h"
-#include "graphics/textures.h"
-#include "uiskins.h"
+#include <prerequisites.h>
+#include <ui/uiskins.h>
+#include <ui/uielement.h>
+#include <ui/uielementskin.h>
+#include <graphics/borderedimage.h>
+#include <graphics/textures.h>
 
 void UIElementSkin::load(const YAML::Node& node)
 {

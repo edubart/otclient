@@ -21,26 +21,24 @@
  * THE SOFTWARE.
  */
 
+
 #ifndef PROTOCOL_H
 #define PROTOCOL_H
 
-#include "prerequisites.h"
-#include "connection.h"
+#include <prerequisites.h>
+#include <net/connection.h>
 
 class Protocol
 {
 public:
     Protocol();
-
-    virtual void begin() = 0;
+    virtual ~Protocol();
 
 protected:
-    void send(NetworkMessagePtr networkMessage, Connection::ConnectionCallback onSend);
-    void recv(Connection::RecvCallback onRecv);
-
-    bool connect(const std::string& ip, uint16 port, Connection::ConnectionCallback onConnect);
-
-    virtual void onError(const boost::system::error_code& error, const std::string& msg) = 0;
+    void send(const NetworkMessage& networkMessage, const ConnectionCallback& onSend);
+    void recv(const RecvCallback& onRecv);
+    bool connect(const std::string& ip, uint16 port, const Callback& callback);
+    virtual void onError(const boost::system::error_code& error) = 0;
 
     ConnectionPtr m_connection;
 };

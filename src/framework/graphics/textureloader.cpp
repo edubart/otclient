@@ -22,8 +22,9 @@
  */
 
 
-#include "textureloader.h"
-#include "texture.h"
+#include <prerequisites.h>
+#include <graphics/textureloader.h>
+#include <graphics/texture.h>
 
 #include <png.h>
 

@@ -25,8 +25,8 @@
 #ifndef GRAPHICS_H
 #define GRAPHICS_H
 
-#include "prerequisites.h"
-#include "texture.h"
+#include <prerequisites.h>
+#include <graphics/texture.h>
 
 class Graphics
 {

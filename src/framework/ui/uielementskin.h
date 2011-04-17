@@ -25,9 +25,9 @@
 #ifndef UIELEMENTSKIN_H
 #define UIELEMENTSKIN_H
 
-#include "prerequisites.h"
-#include "uiconstants.h"
-#include "graphics/image.h"
+#include <prerequisites.h>
+#include <graphics/image.h>
+#include <ui/uiconstants.h>
 
 class UIElement;
 
@@ -57,5 +57,7 @@ private:
     Size m_defaultSize;
     ImagePtr m_defaultImage;
 };
+
+typedef boost::shared_ptr<UIElementSkin> UIElementSkinPtr;
 
 #endif // UIELEMENTSKIN_H

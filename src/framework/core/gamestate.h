@@ -25,8 +25,8 @@
 #ifndef GAMESTATE_H
 #define GAMESTATE_H
 
-#include "prerequisites.h"
-#include "input.h"
+#include <prerequisites.h>
+#include <core/input.h>
 
 struct InputEvent;
 

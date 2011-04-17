@@ -22,8 +22,9 @@
  */
 
 
-#include "fonts.h"
-#include "core/resources.h"
+#include <prerequisites.h>
+#include <core/resources.h>
+#include <graphics/fonts.h>
 
 Fonts g_fonts;
 

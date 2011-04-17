@@ -21,80 +21,85 @@
  * THE SOFTWARE.
  */
 
+
 #ifndef CONNECTION_H
 #define CONNECTION_H
 
-#include "prerequisites.h"
+#include <prerequisites.h>
+#include <net/networkmessage.h>
 
 #include <boost/asio.hpp>
 
-#include "networkmessage.h"
-
-class TestState;
 class Protocol;
-class Connections;
 class Connection;
+typedef boost::shared_ptr<Connection> ConnectionPtr;
+
+typedef boost::function<void()> ConnectionCallback;
+typedef boost::function<void(const NetworkMessage&)> RecvCallback;
+typedef boost::function<void(const boost::system::error_code&)> ErrorCallback;
 
 class Connection : public boost::enable_shared_from_this<Connection>
 {
 public:
-    typedef boost::function<void()> ConnectionCallback;
-    typedef boost::function<void(NetworkMessagePtr)> RecvCallback;
-    typedef boost::function<void(const boost::system::error_code&, const std::string&)> ErrorCallback;
+    enum {
+        WRITE_TIMEOUT = 10,
+        READ_TIMEOUT = 10
+    };
 
-    typedef boost::shared_ptr<Connection> ConnectionPtr;
+    enum EConnectionState {
+        STATE_CONNECTING,
+        STATE_OPEN,
+        STATE_CLOSED
+    }
 
-private:
-    Connection(boost::asio::io_service& ioService);
+    Connection();
+    ~Connection();
 
-    bool connect(const std::string& ip, uint16 port, ConnectionCallback onConnect);
-    void stop();
+    bool connect(const std::string& host, uint16 port, const Callback& callback);
+    void close();
 
-    void setErrorCallback(ErrorCallback c) { m_errorCallback = c; }
+    void setOnError(const ErrorCallback& callback) { m_errorCallback = callback; }
+    void setOnRecv(const RecvCallback& callback) { m_recvCallback = callback; }
 
-    void recv(RecvCallback onSend);
-    void send(NetworkMessagePtr networkMessage, ConnectionCallback onRecv);
+    void send(const OutputMessage& networkMessage);
 
-    bool isConnecting() const { return m_connecting; }
-    bool isConnected() const { return m_connected; }
+    bool isConnecting() const { return m_state == STATE_CONNECTING; }
+    bool isConnected() const { return m_state == STATE_OPEN; }
 
-    boost::asio::ip::tcp::socket& getSocket() { return m_socket; }
-
-    void onError(const boost::system::error_code& error, const std::string& msg) { m_errorCallback(error, msg); }
-    
-private:
-    static void onSendHeader(ConnectionPtr connection, NetworkMessagePtr networkMessage, ConnectionCallback onSend, const boost::system::error_code& error);
-    static void onSendBody(ConnectionPtr connection, NetworkMessagePtr networkMessage, ConnectionCallback onSend, const boost::system::error_code& error);
-
-    static void onRecvHeader(ConnectionPtr connection, NetworkMessagePtr networkMessage, RecvCallback onRecv, const boost::system::error_code& error);
-    static void onRecvBody(ConnectionPtr connection, NetworkMessagePtr networkMessage, RecvCallback onRecv, const boost::system::error_code& error);
+    static void poll();
 
 private:
     void onResolveDns(const boost::system::error_code& error, boost::asio::ip::tcp::resolver::iterator endpointIt);
     void onConnect(const boost::system::error_code& error);
 
-private:
-    void closeSocket();
+    void recvNext();
 
-private:
+    void onRecvBody(const NetworkMessage& networkMessage, const RecvCallback& onRecv, const boost::system::error_code& error);
+
+    void onSendHeader(const NetworkMessage& networkMessage, const ConnectionCallback& onSend, const boost::system::error_code& error);
+    void onSendBody(const NetworkMessage& networkMessage, const ConnectionCallback& onSend, const boost::system::error_code& error);
+
+    void onRecvHeader(const NetworkMessage& networkMessage, const RecvCallback& onRecv, const boost::system::error_code& error);
+
     void handleError(const boost::system::error_code& error);
+    void internalCloseConnection();
 
-    boost::asio::ip::tcp::socket m_socket;
     boost::asio::ip::tcp::resolver m_resolver;
+    boost::asio::ip::tcp::socket m_socket;
 
-    bool m_connecting;
-    bool m_connected;
+    int32_t m_pendingWrite;
+    int32_t m_pendingRead;
+    bool m_writeError;
+    bool m_readError;
+    boost::asio::deadline_timer m_readTimer;
+    boost::asio::deadline_timer m_writeTimer;
 
-    std::string m_ip;
-    uint16_t m_port;
+    EConnectionState m_state;
 
-    ConnectionCallback m_connectCallback;
+    Callback m_connectCallback;
+    Callback m_closeCallback;
     ErrorCallback m_errorCallback;
-
-    friend class Protocol;
-    friend class Connections;
+    RecvCallback m_recvCallback;
 };
-
-typedef boost::shared_ptr<Connection> ConnectionPtr;
 
 #endif //CONNECTION_h

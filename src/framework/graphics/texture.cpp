@@ -22,7 +22,8 @@
  */
 
 
-#include "texture.h"
+#include <prerequisites.h>
+#include <graphics/texture.h>
 
 #include <GL/gl.h>
 #include <GL/glext.h>

@@ -25,9 +25,9 @@
 #ifndef UILOADER_H
 #define UILOADER_H
 
-#include "prerequisites.h"
-#include "uiconstants.h"
-#include "uicontainer.h"
+#include <prerequisites.h>
+#include <ui/uiconstants.h>
+#include <ui/uicontainer.h>
 
 namespace UILoader
 {

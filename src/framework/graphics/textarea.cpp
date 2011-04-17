@@ -22,9 +22,10 @@
  */
 
 
-#include "textarea.h"
-#include "graphics.h"
-#include "core/engine.h"
+#include <prerequisites.h>
+#include <core/engine.h>
+#include <graphics/textarea.h>
+#include <graphics/graphics.h>
 
 TextArea::TextArea() :
         m_font(0),
@@ -65,7 +66,7 @@ void TextArea::draw()
     if(m_cursorVisible && m_cursorPos >= 0) {
         assert(m_cursorPos <= textLength);
         const int delay = 500;
-        int ticks = g_engine.getLastFrameTicks();
+        int ticks = g_engine.getCurrentFrameTicks();
         // draw every 500ms
         if(ticks - m_cursorTicks <= delay) {
             Rect cursorRect;
@@ -76,7 +77,7 @@ void TextArea::draw()
                 cursorRect = Rect(m_glyphsCoords[m_cursorPos-1].right(), m_glyphsCoords[m_cursorPos-1].top(), 1, m_font->getGlyphHeight());
             g_graphics.drawFilledRect(cursorRect, m_color);
         } else if(ticks - m_cursorTicks >= 2*delay) {
-            m_cursorTicks = g_engine.getLastFrameTicks();
+            m_cursorTicks = g_engine.getCurrentFrameTicks();
         }
     }
 }
@@ -234,7 +235,7 @@ void TextArea::setText(const std::string& text)
         m_text = text;
         if(m_cursorPos >= 0) {
             m_cursorPos = 0;
-            m_cursorTicks = g_engine.getLastFrameTicks();
+            m_cursorTicks = g_engine.getCurrentFrameTicks();
         }
         recalculate();
     }
@@ -273,7 +274,7 @@ void TextArea::enableCursor(bool enable)
 {
     if(enable) {
         m_cursorPos = 0;
-        m_cursorTicks = g_engine.getLastFrameTicks();
+        m_cursorTicks = g_engine.getCurrentFrameTicks();
     } else
         m_cursorPos = -1;
     recalculate();
@@ -286,7 +287,7 @@ void TextArea::appendCharacter(char c)
         tmp = c;
         m_text.insert(m_cursorPos, tmp);
         m_cursorPos++;
-        m_cursorTicks = g_engine.getLastFrameTicks();
+        m_cursorTicks = g_engine.getCurrentFrameTicks();
         recalculate();
     }
 }
@@ -298,7 +299,7 @@ void TextArea::removeCharacter(bool right)
             m_text.erase(m_text.begin() + m_cursorPos);
         else if((uint)m_cursorPos == m_text.length()) {
             m_text.erase(m_text.begin() + (--m_cursorPos));
-            m_cursorTicks = g_engine.getLastFrameTicks();
+            m_cursorTicks = g_engine.getCurrentFrameTicks();
         }
         recalculate();
     }
@@ -309,12 +310,12 @@ void TextArea::moveCursor(bool right)
     if(right) {
         if((uint)m_cursorPos+1 <= m_text.length()) {
             m_cursorPos++;
-            m_cursorTicks = g_engine.getLastFrameTicks();
+            m_cursorTicks = g_engine.getCurrentFrameTicks();
         }
     } else {
         if(m_cursorPos-1 >= 0) {
             m_cursorPos--;
-            m_cursorTicks = g_engine.getLastFrameTicks();
+            m_cursorTicks = g_engine.getCurrentFrameTicks();
         }
     }
     recalculate();

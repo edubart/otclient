@@ -25,9 +25,9 @@
 #ifndef UILABEL_H
 #define UILABEL_H
 
-#include "prerequisites.h"
-#include "uielement.h"
-#include "graphics/font.h"
+#include <prerequisites.h>
+#include <ui/uielement.h>
+#include <graphics/font.h>
 
 class UILabel : public UIElement
 {

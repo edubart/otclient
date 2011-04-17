@@ -25,7 +25,7 @@
 #ifndef TEXTAREA_H
 #define TEXTAREA_H
 
-#include "prerequisites.h"
+#include <prerequisites.h>
 #include "font.h"
 
 class TextArea
@@ -76,7 +76,5 @@ private:
     std::vector<Rect> m_glyphsCoords;
     std::vector<Rect> m_glyphsTexCoords;
 };
-
-typedef boost::shared_ptr<TextArea> TextAreaPtr;
 
 #endif // TEXTAREA_H

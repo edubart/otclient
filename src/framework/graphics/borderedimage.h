@@ -25,9 +25,9 @@
 #ifndef BORDEREDIMAGE_H
 #define BORDEREDIMAGE_H
 
-#include "prerequisites.h"
-#include "image.h"
-#include "texture.h"
+#include <prerequisites.h>
+#include <graphics/image.h>
+#include <graphics/texture.h>
 
 class BorderedImage : public Image
 {
