@@ -52,7 +52,7 @@ IF(CMAKE_BUILD_TYPE STREQUAL "Debug")
     ADD_DEFINITIONS(-D_DEBUG)
 ENDIF(CMAKE_BUILD_TYPE STREQUAL "Debug")
 
-SET(SOURCES
+SET(SOURCES src/framework/script/script.cpp
 # game sources
     src/main.cpp
     src/menustate.cpp
@@ -66,6 +66,10 @@ SET(SOURCES
     src/framework/core/configs.cpp
     src/framework/core/resources.cpp
     src/framework/core/engine.cpp
+
+# framework script
+    src/framework/script/script.cpp
+    src/framework/script/scriptfunctions.cpp
 
 # framework utilities
     src/framework/util/color.cpp
@@ -125,7 +129,7 @@ ADD_EXECUTABLE(otclient ${SOURCES})
 TARGET_LINK_LIBRARIES(otclient
     ${Boost_LIBRARIES}
     ${OPENGL_LIBRARY}
-    ${LUA51_LIBRARY}
+    ${LUA_LIBRARIES}
     ${YAMLCPP_LIBRARY}
     ${PHYSFS_LIBRARY}
     ${PNG_LIBRARY}

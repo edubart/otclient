@@ -279,7 +279,7 @@ const std::vector<Point>& Font::calculateGlyphsPositions(const std::string& text
 
     if(textBoxSize) {
         textBoxSize->setWidth(maxLineWidth);
-        textBoxSize->setHeight(virtualPos.y + m_glyphHeight + m_glyphSpacing.height());
+        textBoxSize->setHeight(virtualPos.y + m_glyphHeight);
     }
 
     return glyphsPositions;

@@ -32,12 +32,15 @@
 #include <graphics/fonts.h>
 #include <ui/ui.h>
 #include "menustate.h"
+#include <script/script.h>
 
 void MenuState::onEnter()
 {
     m_background = g_textures.get("background.png");
     m_background->enableBilinearFilter();
 
+    g_script.loadFile("modules/mainmenu/init.lua");
+    /*
     UIContainerPtr mainMenuPanel = UILoader::loadFile("ui/mainMenu.yml")->asUIContainer();
 
     UIButtonPtr button = boost::static_pointer_cast<UIButton>(mainMenuPanel->getChildById("exitGameButton"));
@@ -51,6 +54,7 @@ void MenuState::onEnter()
 
     button = boost::static_pointer_cast<UIButton>(mainMenuPanel->getChildById("optionsButton"));
     button->setOnClick(boost::bind(&MenuState::optionsButton_clicked, this));
+    */
 }
 
 void MenuState::onLeave()

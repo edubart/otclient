@@ -41,7 +41,7 @@ public:
     /// Fired when leaves the state
     virtual void onLeave() = 0;
 
-    /// Fired when user tryes to close the window
+    /// Fired when user tries to close the window
     virtual void onClose() = 0;
     /// Fired for every user input event, this is called before processing UI input and if it returns false the input is not passed to the UI
     virtual bool onInputEvent(const InputEvent& event) = 0;
