@@ -22,38 +22,46 @@
  */
 
 
-#ifndef MENUSTATE_H
-#define MENUSTATE_H
-
-#include <prerequisites.h>
-#include <core/gamestate.h>
-#include <graphics/texture.h>
 #include "protocollogin.h"
 
-class MenuState : public GameState
+ProtocolLogin::ProtocolLogin()
 {
 
-public:
-    MenuState() { }
+}
 
-    void onEnter();
-    void onLeave();
+void ProtocolLogin::login(const std::string& accountName, const std::string& password)
+{
+    // return error if acc or password is empty or any other condition
 
-    void onClose();
-    bool onInputEvent(const InputEvent& event);
-    void onResize(const Size& size);
+    m_accountName = accountName;
+    m_password = password;
 
-    void render();
+    static const char hosts[][32] = {
+        "login01.tibia.com",
+        "login02.tibia.com",
+        "login03.tibia.com",
+        "login04.tibia.com",
+        "login05.tibia.com",
+        "tibia01.cipsoft.com",
+        "tibia02.cipsoft.com",
+        "tibia03.cipsoft.com",
+        "tibia04.cipsoft.com",
+        "tibia05.cipsoft.com"
+    };
 
-private:
-    void enterGameButton_clicked();
-    void infoButton_clicked();
-    void optionsButton_clicked();
+    const std::string host = hosts[rand() % 10];
+    const uint16 port = 7171;
 
-    void enterGameWindowOkButton_clicked();
+    connect(host, port, boost::bind(&ProtocolLogin::onConnect, this));
+}
 
-    TexturePtr m_background;
-    ProtocolLoginPtr m_protocolLogin;
-};
+void ProtocolLogin::onConnect()
+{
+    logTrace();
+    sendPacket();
+}
 
-#endif // MENUSTATE_H
+void ProtocolLogin::sendPacket()
+{
+
+}

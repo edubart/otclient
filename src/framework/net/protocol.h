@@ -22,38 +22,22 @@
  */
 
 
-#ifndef MENUSTATE_H
-#define MENUSTATE_H
+#ifndef PROTOCOL_H
+#define PROTOCOL_H
 
-#include <prerequisites.h>
-#include <core/gamestate.h>
-#include <graphics/texture.h>
-#include "protocollogin.h"
+#include <net/connection.h>
 
-class MenuState : public GameState
+class Protocol
 {
-
 public:
-    MenuState() { }
+    Protocol();
 
-    void onEnter();
-    void onLeave();
+    void connect(const std::string& host, uint16 port, const Callback& callback);
 
-    void onClose();
-    bool onInputEvent(const InputEvent& event);
-    void onResize(const Size& size);
-
-    void render();
+    virtual void onError(const boost::system::error_code& error);
 
 private:
-    void enterGameButton_clicked();
-    void infoButton_clicked();
-    void optionsButton_clicked();
-
-    void enterGameWindowOkButton_clicked();
-
-    TexturePtr m_background;
-    ProtocolLoginPtr m_protocolLogin;
+    ConnectionPtr m_connection;
 };
 
-#endif // MENUSTATE_H
+#endif

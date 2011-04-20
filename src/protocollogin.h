@@ -22,38 +22,27 @@
  */
 
 
-#ifndef MENUSTATE_H
-#define MENUSTATE_H
+#ifndef PROTOCOLLOGIN_H
+#define PROTOCOLLOGIN_H
 
-#include <prerequisites.h>
-#include <core/gamestate.h>
-#include <graphics/texture.h>
-#include "protocollogin.h"
+#include <net/protocol.h>
 
-class MenuState : public GameState
+class ProtocolLogin : public Protocol
 {
-
 public:
-    MenuState() { }
+    ProtocolLogin();
 
-    void onEnter();
-    void onLeave();
+    void login(const std::string& accountName, const std::string& password);
 
-    void onClose();
-    bool onInputEvent(const InputEvent& event);
-    void onResize(const Size& size);
+    void onConnect();
 
-    void render();
+    void sendPacket();
 
 private:
-    void enterGameButton_clicked();
-    void infoButton_clicked();
-    void optionsButton_clicked();
+    std::string m_accountName, m_password;
 
-    void enterGameWindowOkButton_clicked();
-
-    TexturePtr m_background;
-    ProtocolLoginPtr m_protocolLogin;
 };
 
-#endif // MENUSTATE_H
+typedef boost::shared_ptr<ProtocolLogin> ProtocolLoginPtr;
+
+#endif

@@ -123,8 +123,8 @@ void MenuState::enterGameWindowOkButton_clicked()
     std::string accountName = boost::static_pointer_cast<UITextEdit>(enterGameWindow->getChildById("accountNameTextEdit"))->getText();
     std::string password = boost::static_pointer_cast<UITextEdit>(enterGameWindow->getChildById("passwordTextEdit"))->getText();
 
-    //m_protocolLogin = ProtocolLoginPtr(new ProtocolLogin);
-    //m_protocolLogin->login(accountName, password);
+    m_protocolLogin = ProtocolLoginPtr(new ProtocolLogin);
+    m_protocolLogin->login(accountName, password);
 }
 
 void MenuState::optionsButton_clicked()

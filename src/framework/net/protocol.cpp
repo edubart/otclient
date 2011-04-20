@@ -22,38 +22,25 @@
  */
 
 
-#ifndef MENUSTATE_H
-#define MENUSTATE_H
+#include <net/protocol.h>
 
-#include <prerequisites.h>
-#include <core/gamestate.h>
-#include <graphics/texture.h>
-#include "protocollogin.h"
-
-class MenuState : public GameState
+Protocol::Protocol() :
+        m_connection(new Connection)
 {
+    m_connection->setErrorCallback(boost::bind(&Protocol::onError, this, _1));
+}
 
-public:
-    MenuState() { }
+void Protocol::connect(const std::string& host, uint16 port, const Callback& callback)
+{
+    m_connection->connect(host, port, callback);
+}
 
-    void onEnter();
-    void onLeave();
+void Protocol::onError(const boost::system::error_code& error)
+{
+    logError(error.message().c_str());
 
-    void onClose();
-    bool onInputEvent(const InputEvent& event);
-    void onResize(const Size& size);
+    // invalid hostname
+    // connection timeouted
 
-    void render();
-
-private:
-    void enterGameButton_clicked();
-    void infoButton_clicked();
-    void optionsButton_clicked();
-
-    void enterGameWindowOkButton_clicked();
-
-    TexturePtr m_background;
-    ProtocolLoginPtr m_protocolLogin;
-};
-
-#endif // MENUSTATE_H
+    // displays a dialog, finish protocol
+}

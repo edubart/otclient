@@ -29,7 +29,7 @@
 #include <graphics/graphics.h>
 #include <graphics/fonts.h>
 #include <ui/uicontainer.h>
-//#include <net/connection.h>
+#include <net/connection.h>
 
 Engine g_engine;
 
@@ -69,7 +69,7 @@ void Engine::run()
         Platform::poll();
 
         // poll network events
-        //Connection::poll();
+        Connection::poll();
 
         // poll diaptcher tasks
         g_dispatcher.poll();
