@@ -59,7 +59,7 @@ SET(SOURCES
     src/teststate.cpp
 
 # game net
-    #src/protocollogin.cpp
+    src/protocollogin.cpp
 
 # framework core
     src/framework/core/dispatcher.cpp
@@ -108,9 +108,8 @@ SET(SOURCES
     src/framework/ui/uicheckbox.cpp
 
 # framework net
-    #src/framework/net/connection.cpp
-    #src/framework/net/protocol.cpp
-    #src/framework/net/networkmessage.cpp
+    src/framework/net/connection.cpp
+    src/framework/net/protocol.cpp
 )
 
 IF(WIN32)

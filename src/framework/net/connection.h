@@ -22,38 +22,46 @@
  */
 
 
-#ifndef MENUSTATE_H
-#define MENUSTATE_H
+#ifndef CONNECTION_H
+#define CONNECTION_H
 
 #include <prerequisites.h>
-#include <core/gamestate.h>
-#include <graphics/texture.h>
-#include "protocollogin.h"
+#include <boost/asio.hpp>
 
-class MenuState : public GameState
+typedef boost::function<void(boost::system::error_code&)> ErrorCallback;
+
+class Connection
 {
-
 public:
-    MenuState() { }
+    Connection();
 
-    void onEnter();
-    void onLeave();
+    static void poll();
 
-    void onClose();
-    bool onInputEvent(const InputEvent& event);
-    void onResize(const Size& size);
+    void connect(const std::string& host, uint16 port, const Callback& callback);
+    void setErrorCallback(const ErrorCallback& errorCallback) { m_errorCallback = errorCallback; }
 
-    void render();
+    void onTimeout(const boost::system::error_code& error);
+    void onResolve(const boost::system::error_code& error, boost::asio::ip::tcp::resolver::iterator endpointIterator);
+    void onConnect(const boost::system::error_code& error);
+
+    enum ConnectionState_t {
+        CONNECTION_STATE_IDLE = 0,
+        CONNECTION_STATE_RESOLVING,
+        CONNECTION_STATE_CONNECTING,
+        CONNECTION_STATE_CONNECTED
+    };
 
 private:
-    void enterGameButton_clicked();
-    void infoButton_clicked();
-    void optionsButton_clicked();
+    ErrorCallback m_errorCallback;
+    Callback m_connectCallback;
+    ConnectionState_t m_connectionState;
 
-    void enterGameWindowOkButton_clicked();
+    boost::asio::deadline_timer m_timer;
+    boost::asio::ip::tcp::resolver m_resolver;
+    boost::asio::ip::tcp::socket m_socket;
 
-    TexturePtr m_background;
-    ProtocolLoginPtr m_protocolLogin;
 };
 
-#endif // MENUSTATE_H
+typedef boost::shared_ptr<Connection> ConnectionPtr;
+
+#endif

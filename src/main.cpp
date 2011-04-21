@@ -85,6 +85,9 @@ int main(int argc, const char *argv[])
     // init platform stuff
     Platform::init("OTClient");
 
+    // init random numbers
+    srand(time(NULL));
+
     // init resources
     g_resources.init(argv[0]);
     if(g_resources.setWriteDir(Platform::getAppUserDir()))
