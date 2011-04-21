@@ -32,29 +32,14 @@
 #include <graphics/fonts.h>
 #include <ui/ui.h>
 #include "menustate.h"
-#include <script/script.h>
+#include <script/luascript.h>
 
 void MenuState::onEnter()
 {
     m_background = g_textures.get("background.png");
     m_background->enableBilinearFilter();
 
-    g_script.loadFile("modules/mainmenu/init.lua");
-    /*
-    UIContainerPtr mainMenuPanel = UILoader::loadFile("ui/mainMenu.yml")->asUIContainer();
-
-    UIButtonPtr button = boost::static_pointer_cast<UIButton>(mainMenuPanel->getChildById("exitGameButton"));
-    button->setOnClick(boost::bind(&MenuState::onClose, this));
-
-    button = boost::static_pointer_cast<UIButton>(mainMenuPanel->getChildById("enterGameButton"));
-    button->setOnClick(boost::bind(&MenuState::enterGameButton_clicked, this));
-
-    button = boost::static_pointer_cast<UIButton>(mainMenuPanel->getChildById("infoButton"));
-    button->setOnClick(boost::bind(&MenuState::infoButton_clicked, this));
-
-    button = boost::static_pointer_cast<UIButton>(mainMenuPanel->getChildById("optionsButton"));
-    button->setOnClick(boost::bind(&MenuState::optionsButton_clicked, this));
-    */
+    g_lua.loadFile("modules/mainmenu/mainmenu.lua");
 }
 
 void MenuState::onLeave()
@@ -92,53 +77,3 @@ void MenuState::render()
     g_graphics.drawTexturedRect(Rect(0, 0, screenSize), m_background, texCoords);
 }
 
-void MenuState::enterGameButton_clicked()
-{
-    UIWindowPtr window = boost::static_pointer_cast<UIWindow>(UILoader::loadFile("ui/enterGameWindow.yml"));
-    window->getParent()->lockElement(window);
-
-    UIButtonPtr button = boost::static_pointer_cast<UIButton>(window->getChildById("cancelButton"));
-    button->setOnClick([] {
-        UIWindowPtr window = boost::static_pointer_cast<UIWindow>(UIContainer::getRootContainer()->getChildById("enterGameWindow"));
-        window->getParent()->unlockElement();
-        window->destroy();
-    });
-
-    button = boost::static_pointer_cast<UIButton>(window->getChildById("okButton"));
-    button->setOnClick(boost::bind(&MenuState::enterGameWindowOkButton_clicked, this));
-}
-
-void MenuState::infoButton_clicked()
-{
-    UIWindowPtr window = boost::static_pointer_cast<UIWindow>(UILoader::loadFile("ui/infoWindow.yml"));
-    window->getParent()->lockElement(window);
-    UIButtonPtr button = boost::static_pointer_cast<UIButton>(window->getChildById("okButton"));
-    button->setOnClick([] {
-        UIWindowPtr window = boost::static_pointer_cast<UIWindow>(UIContainer::getRootContainer()->getChildById("infoWindow"));
-        window->getParent()->unlockElement();
-        window->destroy();
-    });
-}
-
-void MenuState::enterGameWindowOkButton_clicked()
-{
-    UIContainerPtr enterGameWindow = boost::static_pointer_cast<UIContainer>(UIContainer::getRootContainer()->getChildById("enterGameWindow"));
-
-    std::string accountName = boost::static_pointer_cast<UITextEdit>(enterGameWindow->getChildById("accountNameTextEdit"))->getText();
-    std::string password = boost::static_pointer_cast<UITextEdit>(enterGameWindow->getChildById("passwordTextEdit"))->getText();
-
-    //m_protocolLogin = ProtocolLoginPtr(new ProtocolLogin);
-    //m_protocolLogin->login(accountName, password);
-}
-
-void MenuState::optionsButton_clicked()
-{
-    UIWindowPtr window = boost::static_pointer_cast<UIWindow>(UILoader::loadFile("ui/optionsWindow.yml"));
-    window->getParent()->lockElement(window);
-    UIButtonPtr button = boost::static_pointer_cast<UIButton>(window->getChildById("okButton"));
-    button->setOnClick([] {
-        UIWindowPtr window = boost::static_pointer_cast<UIWindow>(UIContainer::getRootContainer()->getChildById("optionsWindow"));
-        window->getParent()->unlockElement();
-        window->destroy();
-    });
-}

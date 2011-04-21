@@ -30,9 +30,10 @@
 
 class UICheckBox : public UIElement
 {
-
 public:
-UICheckBox(UI::EElementType type = UI::Element);
+    UICheckBox(UI::EElementType type = UI::Element);
+
+    virtual const char *getScriptableName() const { return "UICheckBox"; }
 };
 
 #endif // UICHECKBOX_H

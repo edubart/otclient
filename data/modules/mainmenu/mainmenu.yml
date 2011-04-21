@@ -11,6 +11,7 @@ panel#mainMenu:
     anchors.top: parent.top
     anchors.horizontalCenter: parent.horizontalCenter
     margin.top: 16
+    onClick: MainMenu_enterGameClicked()
 
   button#accessAccountButton:
     text: Access Account
@@ -23,15 +24,18 @@ panel#mainMenu:
     anchors.top: parent.top
     anchors.horizontalCenter: parent.horizontalCenter
     margin.top: 76
+    onClick: MainMenu_optionsClicked()
 
   button#infoButton:
     text: Info
     anchors.top: parent.top
     anchors.horizontalCenter: parent.horizontalCenter
     margin.top: 106
+    onClick: MainMenu_infoClicked()
 
   button#exitGameButton:
     text: Exit
     anchors.top: parent.top
     anchors.horizontalCenter: parent.horizontalCenter
     margin.top: 136
+    onClick: MainMenu_exitClicked()

@@ -31,7 +31,7 @@
 #include <ui/uiskins.h>
 #include "menustate.h"
 #include "teststate.h"
-#include <script/script.h>
+#include <script/luascript.h>
 
 /// Catches signals so we can exit nicely
 void signal_handler(int sig)
@@ -110,8 +110,6 @@ int main(int argc, const char *argv[])
 
     // init engine
     g_engine.init();
-    g_script.init();
-    g_script.loadFile("lib/init.lua");
     g_uiSkins.load("skins/tibiaskin.yml");
 
     // state scope

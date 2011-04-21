@@ -26,6 +26,7 @@
 #include <core/resources.h>
 #include <ui/ui.h>
 #include <ui/uiloader.h>
+#include <script/luascript.h>
 
 UIElementPtr UILoader::createElementFromId(const std::string& id)
 {
@@ -149,10 +150,8 @@ void UILoader::loadElements(const UIElementPtr& parent, const YAML::Node& node)
 void UILoader::loadElement(const UIElementPtr& element, const YAML::Node& node)
 {
     // load specific element type
-    if(element->getElementType() == UI::Button) {
-        UIButtonPtr button = boost::static_pointer_cast<UIButton>(element);
-        button->setText(node["text"].Read<std::string>());
-    }
+    if(element->getElementType() == UI::Button)
+        loadButton(boost::static_pointer_cast<UIButton>(element), node);
     else if(element->getElementType() == UI::Window) {
         UIWindowPtr window = boost::static_pointer_cast<UIWindow>(element);
         window->setTitle(node["title"].Read<std::string>());
@@ -264,5 +263,20 @@ void UILoader::loadElementAnchor(const UIElementPtr& element, EAnchorType type, 
             throw YAML::Exception(node.GetMark(), "error while processing anchors");
     } else {
         throw YAML::Exception(node.GetMark(), "anchoring failed, does the relative element really exists?");
+    }
+}
+
+void UILoader::loadButton(const UIButtonPtr& button, const YAML::Node& node)
+{
+    button->setText(node["text"].Read<std::string>());
+
+    // set on click event
+    if(node.FindValue("onClick")) {
+        int funcRef = g_lua.loadBufferAsFunction(node["onClick"].Read<std::string>());
+        if(funcRef != LUA_REFNIL) {
+            g_lua.pushClassInstance(button);
+            g_lua.pushFunction(funcRef);
+            g_lua.lua_UIButton_setOnClick();
+        }
     }
 }

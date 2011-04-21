@@ -45,6 +45,8 @@ public:
 
     void setOnClick(const Callback& callback) { m_buttonClickCallback = callback; }
 
+    virtual const char *getScriptableName() const { return "UIButton"; }
+
 private:
     std::string m_text;
     UI::EButtonState m_state;

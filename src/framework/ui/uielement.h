@@ -84,6 +84,7 @@ public:
 
     UIElementPtr asUIElement() { return boost::static_pointer_cast<UIElement>(shared_from_this()); }
     virtual UIContainerPtr asUIContainer() { return UIContainerPtr(); }
+    virtual const char *getScriptableName() const { return "UIElement"; }
 
     friend class UIContainer;
 

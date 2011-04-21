@@ -109,3 +109,6 @@ window#optionsWindow:
     anchors.bottom: parent.bottom
     margin.right: 10
     margin.bottom: 13
+    onClick: |
+      optionsWindow:destroy()
+      optionsWindow = nil

@@ -62,6 +62,8 @@ public:
     virtual UI::EElementType getElementType() const { return UI::Container; }
     UIContainerPtr asUIContainer() { return boost::static_pointer_cast<UIContainer>(shared_from_this()); }
 
+    virtual const char *getScriptableName() const { return "UIContainer"; }
+
     /// Get root container (the container that contains everything)
     static UIContainerPtr& getRootContainer();
 

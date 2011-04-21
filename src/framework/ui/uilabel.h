@@ -43,6 +43,8 @@ public:
     void setAlign(int align) { m_align = align; }
     int getAlign() const { return m_align; }
 
+    virtual const char *getScriptableName() const { return "UILabel"; }
+
 private:
     std::string m_text;
     int m_align;

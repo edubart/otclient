@@ -6,7 +6,7 @@ SET(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake;${CMAKE_MODULE_PATH}")
 # find needed packages
 SET(Boost_USE_STATIC_LIBS ON)
 SET(Boost_USE_MULTITHREADED ON)
-FIND_PACKAGE(Boost COMPONENTS system regex REQUIRED)
+FIND_PACKAGE(Boost COMPONENTS system regex signals REQUIRED)
 FIND_PACKAGE(OpenGL REQUIRED)
 FIND_PACKAGE(Lua51 REQUIRED)
 FIND_PACKAGE(YamlCpp REQUIRED)
@@ -52,7 +52,7 @@ IF(CMAKE_BUILD_TYPE STREQUAL "Debug")
     ADD_DEFINITIONS(-D_DEBUG)
 ENDIF(CMAKE_BUILD_TYPE STREQUAL "Debug")
 
-SET(SOURCES src/framework/script/script.cpp
+SET(SOURCES
 # game sources
     src/main.cpp
     src/menustate.cpp
@@ -68,8 +68,8 @@ SET(SOURCES src/framework/script/script.cpp
     src/framework/core/engine.cpp
 
 # framework script
-    src/framework/script/script.cpp
-    src/framework/script/scriptfunctions.cpp
+    src/framework/script/luascript.cpp
+    src/framework/script/luafunctions.cpp
 
 # framework utilities
     src/framework/util/color.cpp

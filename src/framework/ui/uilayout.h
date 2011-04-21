@@ -27,6 +27,7 @@
 
 #include <prerequisites.h>
 #include <ui/uiconstants.h>
+#include <script/scriptable.h>
 
 enum EAnchorType {
     ANCHOR_LEFT = 0,
@@ -62,7 +63,7 @@ private:
     EAnchorType m_anchorType;
 };
 
-class UILayout : public boost::enable_shared_from_this<UILayout>
+class UILayout : public Scriptable
 {
 public:
     UILayout() :
@@ -106,7 +107,9 @@ public:
     void setMarginTop(int margin) { m_marginTop = margin; recalculateLayout(); }
     void setMarginBottom(int margin) { m_marginBottom = margin; recalculateLayout(); }
 
-    UILayoutPtr asUILayout() { return shared_from_this(); }
+    UILayoutPtr asUILayout() { return boost::static_pointer_cast<UILayout>(shared_from_this()); }
+
+    virtual const char *getScriptableName() const { return "UILayout"; }
 
 protected:
     virtual void onLayoutRectChange(const Rect& newRect) { }

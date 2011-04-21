@@ -69,6 +69,7 @@ typedef int8_t int8;
 #include <boost/shared_ptr.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/enable_shared_from_this.hpp>
+#include <boost/signals.hpp>
 #define foreach BOOST_FOREACH
 
 typedef boost::function<void()> Callback;

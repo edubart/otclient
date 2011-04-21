@@ -49,6 +49,9 @@ window#enterGameWindow:
     anchors.bottom: parent.bottom
     margin.bottom: 10
     margin.right: 13
+    onClick: |
+      enterGameWindow:destroy()
+      enterGameWindow = nil
     
   textEdit#accountNameTextEdit:
     anchors.right: parent.right

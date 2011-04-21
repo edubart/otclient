@@ -28,6 +28,7 @@
 #include <prerequisites.h>
 #include <ui/uiconstants.h>
 #include <ui/uicontainer.h>
+#include <ui/uibutton.h>
 
 class UILoader
 {
@@ -50,6 +51,9 @@ private:
 
     /// Load anchor from a YAML node
     static void loadElementAnchor(const UIElementPtr& element, EAnchorType type, const YAML::Node& node);
+
+    // specific elements loading
+    static void loadButton(const UIButtonPtr& button, const YAML::Node& node);
 };
 
 #endif // UILOADER_H

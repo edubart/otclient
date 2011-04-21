@@ -40,6 +40,8 @@ public:
     void setTitle(const std::string& title) { m_title = title; }
     const std::string& getTitle() const { return m_title; }
 
+    virtual const char *getScriptableName() const { return "UIWindow"; }
+
 private:
     std::string m_title;
     bool m_moving;

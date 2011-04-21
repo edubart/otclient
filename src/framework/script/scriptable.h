@@ -22,36 +22,18 @@
  */
 
 
-#ifndef UITEXTEDIT_H
-#define UITEXTEDIT_H
+#ifndef SCRIPTABLE_H
+#define SCRIPTABLE_H
 
 #include <prerequisites.h>
-#include <graphics/textarea.h>
-#include <ui/uielement.h>
 
-class Font;
-
-class UITextEdit : public UIElement
+class Scriptable : public boost::enable_shared_from_this<Scriptable>
 {
 public:
-    UITextEdit();
-
-    void onInputEvent(const InputEvent& event);
-    void onLayoutRectChange(const Rect& rect);
-    void onFocusChange();
-
-    void setText(const std::string& text);
-    const std::string& getText() const { return m_textArea.getText(); }
-    TextArea& getTextArea() { return m_textArea; }
-
-    bool isFocusable() const { return true; }
-
-    virtual const char *getScriptableName() const { return "UITextEdit"; }
-
-private:
-    TextArea m_textArea;
+    virtual const char *getScriptableName() const { return NULL; }
 };
 
-typedef boost::shared_ptr<UITextEdit> UITextEditPtr;
+typedef boost::shared_ptr<Scriptable> ScriptablePtr;
+typedef boost::weak_ptr<Scriptable> ScriptableWeakPtr;
 
-#endif // UITEXTEDIT_H
+#endif
