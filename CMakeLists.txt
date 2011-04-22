@@ -55,8 +55,6 @@ ENDIF(CMAKE_BUILD_TYPE STREQUAL "Debug")
 SET(SOURCES
 # game sources
     src/main.cpp
-    src/menustate.cpp
-    src/teststate.cpp
 
 # game net
     src/protocollogin.cpp
@@ -66,6 +64,7 @@ SET(SOURCES
     src/framework/core/configs.cpp
     src/framework/core/resources.cpp
     src/framework/core/engine.cpp
+    src/framework/core/modules.cpp
 
 # framework script
     src/framework/script/luascript.cpp

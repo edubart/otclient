@@ -42,12 +42,21 @@ void Engine::init()
 
 void Engine::terminate()
 {
-    // force last state exit
-    changeState(NULL);
-
     // terminate stuff
     g_fonts.terminate();
     g_graphics.terminate();
+}
+
+void Engine::poll()
+{
+    // poll platform events
+    Platform::poll();
+
+    // poll network events
+    Connection::poll();
+
+    // poll diaptcher tasks
+    g_dispatcher.poll();
 }
 
 void Engine::run()
@@ -65,14 +74,7 @@ void Engine::run()
     while(!m_stopping) {
         m_lastFrameTicks = Platform::getTicks();
 
-        // poll platform events
-        Platform::poll();
-
-        // poll network events
-        Connection::poll();
-
-        // poll diaptcher tasks
-        g_dispatcher.poll();
+        poll();
 
         // render only when visible
         if(Platform::isWindowVisible()) {
@@ -93,8 +95,6 @@ void Engine::run()
             // render
             g_graphics.beginRender();
 
-            if(m_currentState)
-                m_currentState->render();
             UIContainer::getRootContainer()->render();
 
             // render fps
@@ -117,39 +117,19 @@ void Engine::stop()
     m_stopping = true;
 }
 
-void Engine::changeState(GameState* newState)
-{
-    if(m_currentState)
-        m_currentState->onLeave();
-    m_currentState = newState;
-    if(m_currentState)
-        m_currentState->onEnter();
-}
-
 void Engine::onClose()
 {
-    if(m_currentState)
-        m_currentState->onClose();
+    if(m_onCloseCallback)
+        g_dispatcher.addTask(m_onCloseCallback);
 }
 
 void Engine::onResize(const Size& size)
 {
     g_graphics.resize(size);
     UIContainer::getRootContainer()->setSize(size);
-
-    if(m_currentState)
-        m_currentState->onResize(size);
 }
 
 void Engine::onInputEvent(const InputEvent& event)
 {
-    bool eventCaptured = false;
-
-    // events goes to the state first
-    if(m_currentState)
-        eventCaptured = m_currentState->onInputEvent(event);
-
-    // if the state didn't capture the input then goes to the gui
-    if(!eventCaptured)
-        UIContainer::getRootContainer()->onInputEvent(event);
+    UIContainer::getRootContainer()->onInputEvent(event);
 }

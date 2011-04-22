@@ -33,6 +33,7 @@ void LuaScript::registerFunctions()
     registerGlobalFunction("exitGame", &LuaScript::lua_exitGame);
     registerGlobalFunction("loadUI", &LuaScript::lua_loadUI);
     registerGlobalFunction("getUIRootContainer", &LuaScript::lua_getUIRootContainer);
+    registerGlobalFunction("setOnApplicationClose", &LuaScript::lua_setOnApplicationClose);
 
     registerClass("UILayout");
     registerClass("UIElement",   "UILayout");
@@ -42,8 +43,11 @@ void LuaScript::registerFunctions()
     registerClass("UIContainer", "UIElement");
     registerClass("UIWindow",    "UIContainer");
 
+    registerMemberFunction("UIElement", "getParent", &LuaScript::lua_UIElement_getParent);
     registerMemberFunction("UIElement", "destroy", &LuaScript::lua_UIElement_destroy);
     registerMemberFunction("UIContainer", "getChildByID", &LuaScript::lua_UIContainer_getChildByID);
+    registerMemberFunction("UIContainer", "lock", &LuaScript::lua_UIContainer_lock);
+    registerMemberFunction("UIContainer", "unlock", &LuaScript::lua_UIContainer_unlock);
     registerMemberFunction("UIButton", "setOnClick", &LuaScript::lua_UIButton_setOnClick);
 }
 
@@ -74,10 +78,34 @@ int LuaScript::lua_getUIRootContainer()
     return 1;
 }
 
+
+int LuaScript::lua_setOnApplicationClose()
+{
+    int funcRef = popFunction();
+    g_engine.setOnClose([this, funcRef] {
+        pushFunction(funcRef);
+        callFunction();
+    });
+    return 1;
+}
+
 int LuaScript::lua_UIElement_destroy()
 {
     UIElementPtr element = boost::static_pointer_cast<UIElement>(popClassInstance());
-    element->destroy();
+    if(element)
+        element->destroy();
+    else
+        pushNil();
+    return 1;
+}
+
+int LuaScript::lua_UIElement_getParent()
+{
+    UIElementPtr element = boost::static_pointer_cast<UIElement>(popClassInstance());
+    if(element)
+        pushClassInstance(element->getParent());
+    else
+        pushNil();
     return 1;
 }
 
@@ -87,8 +115,9 @@ int LuaScript::lua_UIButton_setOnClick()
     UIButtonPtr button = boost::static_pointer_cast<UIButton>(popClassInstance());
     if(button) {
         int funcRef = popFunction();
-        button->setOnClick([this, funcRef] {
+        button->setOnClick([this, funcRef](UIButtonPtr button) {
             pushFunction(funcRef);
+            setSelf(button);
             callFunction();
         });
     } else {
@@ -100,13 +129,29 @@ int LuaScript::lua_UIButton_setOnClick()
 int LuaScript::lua_UIContainer_getChildByID()
 {
     std::string id = popString();
-    ScriptablePtr object = popClassInstance();
-    if(object && strcmp("UIContainer", object->getScriptableName()) == 0) {
-        UIContainerPtr container = boost::static_pointer_cast<UIContainer>(object);
+    UIContainerPtr container = boost::static_pointer_cast<UIContainer>(popClassInstance());
+    if(container)
         pushClassInstance(container->getChildById(id));
-    } else {
+    else
         pushNil();
-    }
+    return 1;
+}
 
+int LuaScript::lua_UIContainer_lock()
+{
+    UIElementPtr element = boost::static_pointer_cast<UIElement>(popClassInstance());
+    UIContainerPtr container = boost::static_pointer_cast<UIContainer>(popClassInstance());
+    if(container && element) {
+        container->lockElement(element);
+    }
+    return 1;
+}
+
+int LuaScript::lua_UIContainer_unlock()
+{
+    UIContainerPtr container = boost::static_pointer_cast<UIContainer>(popClassInstance());
+    if(container) {
+        container->unlockElement();
+    }
     return 1;
 }

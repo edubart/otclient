@@ -89,6 +89,8 @@ public:
     friend class UIContainer;
 
 private:
+    void internalDestroy();
+
     UI::EElementType m_type;
     UIContainerWeakPtr m_parent;
     UIElementSkinPtr m_skin;

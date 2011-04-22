@@ -44,8 +44,14 @@ public:
     void removeChild(UIElementPtr child);
     /// Find an element in this container by id
     UIElementPtr getChildById(const std::string& id);
+    /// Find an element by position
+    UIElementPtr getChildByPos(const Point& pos);
     /// Find an element in this container and in its children by id
     UIElementPtr recursiveGetChildById(const std::string& id);
+    /// Pushs a child to the top
+    void pushChildToTop(const UIElementPtr& child);
+
+    int getChildCount() const { return m_children.size(); }
 
     /// Disable all children except the specified element
     bool lockElement(UIElementPtr element);

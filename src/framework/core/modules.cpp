@@ -22,26 +22,5 @@
  */
 
 
-#ifndef TESTSTATE_H
-#define TESTSTATE_H
+#include "modules.h"
 
-#include <prerequisites.h>
-#include <core/gamestate.h>
-
-class TestState : public GameState
-{
-public:
-    TestState() { }
-
-    void onEnter();
-    void onLeave();
-
-    void onClose();
-    bool onInputEvent(const InputEvent& event);
-    void onResize(const Size& size);
-
-    virtual void render();
-    virtual void update(int ticks, int elapsedTicks);
-};
-
-#endif // TESTSTATE_H

@@ -133,8 +133,8 @@ void UILayout::recalculateLayout()
         m_rect.moveVerticalCenter(m_anchors[ANCHOR_VERTICAL_CENTER].getPos() + m_marginTop - m_marginBottom);
     } else {
         if(m_anchors[ANCHOR_TOP].isValid() && m_anchors[ANCHOR_BOTTOM].isValid()) {
-            m_rect.setLeft(m_anchors[ANCHOR_TOP].getPos() + m_marginTop);
-            m_rect.setRight(m_anchors[ANCHOR_BOTTOM].getPos() - m_marginBottom);
+            m_rect.setTop(m_anchors[ANCHOR_TOP].getPos() + m_marginTop);
+            m_rect.setBottom(m_anchors[ANCHOR_BOTTOM].getPos() - m_marginBottom);
         } else if(m_anchors[ANCHOR_TOP].isValid()) {
             m_rect.moveTop(m_anchors[ANCHOR_TOP].getPos() + m_marginTop);
         } else if(m_anchors[ANCHOR_BOTTOM].isValid()) {

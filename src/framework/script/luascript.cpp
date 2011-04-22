@@ -49,10 +49,22 @@ LuaScript::~LuaScript()
     lua_close(L);
 }
 
+void LuaScript::loadAllModules()
+{
+    std::list<std::string> modules = g_resources.getDirectoryFiles("modules");
+    foreach(const std::string& module, modules) {
+        std::list<std::string> moduleFiles = g_resources.getDirectoryFiles(std::string("modules/") + module);
+        foreach(const std::string& moduleFile, moduleFiles) {
+            if(boost::ends_with(moduleFile, ".lua"))
+                loadFile(std::string("modules/") + module + "/" + moduleFile);
+        }
+    }
+}
+
 bool LuaScript::loadFile(const std::string& fileName)
 {
     if(!g_resources.fileExists(fileName)) {
-        logError("lua script file '%s' doesn't exist", fileName.c_str());
+        logError("script file '%s' doesn't exist", fileName.c_str());
         return false;
     }
     std::string fileContents = g_resources.loadTextFile(fileName);
@@ -64,20 +76,19 @@ bool LuaScript::loadBuffer(const std::string& text, const std::string& what)
     // load buffer
     int ret = luaL_loadbuffer(L, text.c_str(), text.length(), what.c_str());
     if(ret != 0){
-        logError((std::string("while parsing lua code: ") + popString()).c_str());
+        reportError(popString());
         return false;
     }
 
-    // check if that is loaded as a function
+    // check if is loaded as a function
     if(lua_isfunction(L, -1) == 0) {
-        logError("lua code not loaded as function");
         return false;
     }
 
     // execute it
     ret = lua_pcall(L, 0, 0, 0);
     if(ret != 0){
-        logError((std::string("while loading lua code: ") + popString()).c_str());
+        reportError(popString());
         return false;
     }
 
@@ -86,19 +97,28 @@ bool LuaScript::loadBuffer(const std::string& text, const std::string& what)
 
 int LuaScript::loadBufferAsFunction(const std::string& text, const std::string& what)
 {
-    int ret = luaL_loadstring(L, text.c_str());
+    int ret = luaL_loadbuffer(L, text.c_str(), text.length(), what.c_str());
     if(ret != 0){
-        logError((std::string("while parsing lua code: ") + popString()).c_str());
+        reportError(popString());
         return LUA_REFNIL;
     }
 
-    // check if that is loaded as a function
+    // check if is loaded as a function
     if(lua_isfunction(L, -1) == 0) {
-        logError("lua code not loaded as function");
         return LUA_REFNIL;
     }
 
     return popFunction();
+}
+
+void LuaScript::reportError(const std::string& errorDesc, const char *funcName)
+{
+    std::stringstream ss;
+    ss << "LUA script error";
+    if(funcName)
+        ss << " in " << funcName << "()";
+    ss << ": " << errorDesc << std::endl;
+    logError(ss.str().c_str());
 }
 
 int LuaScript::getStackSize()
@@ -120,23 +140,15 @@ bool LuaScript::popBoolean()
 
 int32_t LuaScript::popInteger()
 {
-    double d;
-    if(lua_istable(L, -1)) {
-        lua_getfield(L, -1, "__intValue");
-        d = lua_tonumber(L, -1);
-        pop(2);
-    }
-    else{
-        d = lua_tonumber(L, -1);
-        pop(1);
-    }
+    double d = lua_tonumber(L, -1);
+    pop(1);
     return (int)d;
 }
 
 std::string LuaScript::popString()
 {
     size_t len;
-    const char* cstr = lua_tolstring(L, -1, &len);
+    const char *cstr = lua_tolstring(L, -1, &len);
     std::string str(cstr, len);
     pop();
     return str;
@@ -169,29 +181,30 @@ void LuaScript::pushUserdata(void* ptr)
 
 void LuaScript::pushClassInstance(const ScriptablePtr& object)
 {
-    if(object->getScriptableName()) {
+    if(object && object->getScriptableName()) {
         new(lua_newuserdata(L, sizeof(ScriptableWeakPtr))) ScriptableWeakPtr(object);
         lua_getfield(L, LUA_REGISTRYINDEX, (std::string(object->getScriptableName()) + "_mt").c_str());
         lua_setmetatable(L, -2);
+    } else {
+        lua_pushnil(L);
     }
 }
 
 ScriptablePtr LuaScript::popClassInstance()
 {
     if(!lua_isuserdata(L, -1)) {
-        logError("Couldn't pop a class instance, top objet is not a valid type (%s)", luaL_typename(L, -1));
+        reportError(format("couldn't pop a class instance, top objet is not a valid type (%s)", luaL_typename(L, -1)));
         lua_pop(L, 1);
         return ScriptablePtr();
     }
 
     ScriptableWeakPtr *objectRef = (ScriptableWeakPtr *)lua_touserdata(L, -1);
     lua_pop(L, 1);
-    return objectRef->lock();
-}
 
-int LuaScript::popFunction()
-{
-    return luaL_ref(L, LUA_REGISTRYINDEX);
+    ScriptablePtr object = objectRef->lock();
+    if(!object)
+        reportError(format("attempt to retrive class instance from a object that is already expired"));
+    return object;
 }
 
 void LuaScript::pushFunction(int functionRef)
@@ -199,9 +212,40 @@ void LuaScript::pushFunction(int functionRef)
     lua_rawgeti(L, LUA_REGISTRYINDEX, functionRef);
 }
 
-void LuaScript::callFunction(int numArgs, bool itReturnsValue)
+int LuaScript::popFunction()
 {
-    lua_call(L, numArgs, itReturnsValue ? 1 : 0);
+    return luaL_ref(L, LUA_REGISTRYINDEX);
+}
+
+void LuaScript::releaseFunction(int functionRef)
+{
+    luaL_unref(L, LUA_REGISTRYINDEX, functionRef);
+}
+
+void LuaScript::callFunction(int numArgs)
+{
+    int size = lua_gettop(L);
+    int errorIndex = size - numArgs;
+    lua_pushcfunction(L, &LuaScript::luaErrorHandler);
+    lua_insert(L, errorIndex);
+
+    int ret = lua_pcall(L, numArgs, 0, errorIndex);
+    if(ret != 0) {
+        reportError(popString());
+    }
+
+    lua_remove(L, errorIndex);
+
+    if(lua_gettop(L) + numArgs + 1 != size)
+        reportError("stack size changed!");
+}
+
+void LuaScript::setSelf(const ScriptablePtr& scriptable, int envIndex)
+{
+    lua_getfenv(L, envIndex);
+    pushClassInstance(scriptable);
+    lua_setfield(L, -2, "self");
+    lua_pop(L, 1);
 }
 
 void LuaScript::setupPackageLoader()
@@ -342,3 +386,20 @@ int LuaScript::luaFunctionCallback(lua_State* L)
     return (g_lua.*(g_lua.m_functions[id]))();
 }
 
+int LuaScript::luaErrorHandler(lua_State *L)
+{
+    lua_getfield(L, LUA_GLOBALSINDEX, "debug");
+    if(!lua_istable(L, -1)) {
+        lua_pop(L, 1);
+        return 1;
+    }
+    lua_getfield(L, -1, "traceback");
+    if(!lua_isfunction(L, -1)) {
+        lua_pop(L, 2);
+        return 1;
+    }
+    lua_pushvalue(L, 1);
+    lua_pushinteger(L, 2);
+    lua_call(L, 2, 1);
+    return 1;
+}

@@ -42,12 +42,21 @@ UIElement::UIElement(UI::EElementType type) :
 
 void UIElement::destroy()
 {
-    // we must always have a parent when destroying
-    assert(getParent());
-    // we cant delete now, as this call maybe in a event loop
-    g_dispatcher.addTask(boost::bind(&UIContainer::removeChild, getParent(), asUIContainer()));
-    // shared ptr must have 4 refs, (this + removeChild callback + parent + use_count call)
-    assert(asUIElement().use_count() == 4);
+    setVisible(false);
+    setEnabled(false);
+
+    if(getParent()) {
+        // schedule removal from parent
+        g_dispatcher.addTask(boost::bind(&UIContainer::removeChild, getParent(), asUIElement()));
+    }
+    // schedule internal destroy (used to check for leaks)
+    g_dispatcher.addTask(boost::bind(&UIElement::internalDestroy, asUIElement()));
+}
+
+void UIElement::internalDestroy()
+{
+    // check for leaks, the number of references must be always 2 here
+    assert(asUIElement().use_count() == 2);
 }
 
 void UIElement::setSkin(const UIElementSkinPtr& skin)

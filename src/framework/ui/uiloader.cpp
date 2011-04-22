@@ -67,7 +67,7 @@ UIElementPtr UILoader::loadFile(const std::string& file, const UIContainerPtr& p
 {
     std::string fileContents = g_resources.loadTextFile(file);
     if(!fileContents.size()) {
-        logFatal("Could not load ui file \"%s",  file.c_str());
+        logError("Could not load ui file \"%s",  file.c_str());
         return UIElementPtr();
     }
 
@@ -101,7 +101,7 @@ UIElementPtr UILoader::loadFile(const std::string& file, const UIContainerPtr& p
 
         return element;
     } catch (YAML::Exception& e) {
-        logFatal("Failed to load ui file \"%s\":\n  %s", file.c_str(), e.what());
+        logError("Failed to load ui file \"%s\":\n  %s", file.c_str(), e.what());
     }
 
     return UIElementPtr();
@@ -168,9 +168,15 @@ void UILoader::loadElement(const UIElementPtr& element, const YAML::Node& node)
     }
 
     // set element skin
-    if(node.FindValue("skin"))
-        element->setSkin(g_uiSkins.getElementSkin(element->getElementType(), node["skin"]));
-    else // apply default skin
+    if(node.FindValue("skin")) {
+        if(node["skin"].GetType() == YAML::CT_SCALAR) {
+            element->setSkin(g_uiSkins.getElementSkin(element->getElementType(), node["skin"]));
+        } else {
+            UIElementSkinPtr skin = UIElementSkinPtr(new UIElementSkin());
+            skin->load(node["skin"]);
+            element->setSkin(skin);
+        }
+    } else // apply default skin
         element->setSkin(g_uiSkins.getElementSkin(element->getElementType(), "default"));
 
     // load elements common proprieties
@@ -252,6 +258,8 @@ void UILoader::loadElementAnchor(const UIElementPtr& element, EAnchorType type, 
     UILayoutPtr relativeElement;
     if(relativeElementId == "parent" && element->getParent()) {
         relativeElement = element->getParent()->asUILayout();
+    } else if(relativeElementId == "root") {
+        relativeElement = UIContainer::getRootContainer();
     } else {
         UIElementPtr tmp = element->backwardsGetElementById(relativeElementId);
         if(tmp)
@@ -277,6 +285,8 @@ void UILoader::loadButton(const UIButtonPtr& button, const YAML::Node& node)
             g_lua.pushClassInstance(button);
             g_lua.pushFunction(funcRef);
             g_lua.lua_UIButton_setOnClick();
+        } else {
+            throw YAML::Exception(node["onClick"].GetMark(), "failed to parse lua script");
         }
     }
 }

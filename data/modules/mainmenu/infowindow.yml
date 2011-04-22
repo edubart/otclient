@@ -58,3 +58,5 @@ window#infoWindow:
     anchors.top: parent.top
     margin.top: 191
     margin.left: 188
+    onClick: |
+      self:getParent():destroy()

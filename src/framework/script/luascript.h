@@ -29,15 +29,19 @@
 #include <script/scriptable.h>
 #include <lua.hpp>
 
+#define reportFuncError(a) reportError(a, __FUNCTION__)
+
 class LuaScript
 {
 public:
     LuaScript();
     virtual ~LuaScript();
 
+    void loadAllModules();
     bool loadFile(const std::string& fileName);
     bool loadBuffer(const std::string& text, const std::string& what = "luaBuffer");
     int loadBufferAsFunction(const std::string& text, const std::string& what = "luaBuffer");
+    void reportError(const std::string& errorDesc, const char *funcName = NULL);
 
     int getStackSize();
 
@@ -52,9 +56,12 @@ public:
     int32_t popInteger();
     std::string popString();
 
-    int popFunction();
     void pushFunction(int functionRef);
-    void callFunction(int numArgs = 0, bool itReturnsValue = false);
+    int popFunction();
+    void releaseFunction(int functionRef);
+    void callFunction(int numArgs = 0);
+
+    void setSelf(const ScriptablePtr& scriptable, int envIndex = -1);
 
     void pushClassInstance(const ScriptablePtr& object);
     ScriptablePtr popClassInstance();
@@ -70,20 +77,25 @@ public:
     static int luaPackageLoader(lua_State* L);
     static int luaCollectClassInstance(lua_State* L);
     static int luaCompareClassInstances(lua_State* L);
+    static int luaErrorHandler(lua_State *L);
 
     void registerFunctions();
 
     int lua_UIButton_setOnClick();
 
+    int lua_UIElement_getParent();
     int lua_UIElement_destroy();
 
     // container functions
     int lua_UIContainer_getChildByID();
+    int lua_UIContainer_lock();
+    int lua_UIContainer_unlock();
 
     // global functions
     int lua_exitGame();
     int lua_loadUI();
     int lua_getUIRootContainer();
+    int lua_setOnApplicationClose();
 
 private:
     std::vector<LuaCFunction> m_functions;

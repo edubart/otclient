@@ -25,6 +25,7 @@
 #include <prerequisites.h>
 #include <core/resources.h>
 #include <ui/uicontainer.h>
+#include <core/dispatcher.h>
 
 UIContainerPtr rootContainer(new UIContainer);
 
@@ -71,6 +72,15 @@ UIElementPtr UIContainer::getChildById(const std::string& id)
     return UIElementPtr();
 }
 
+UIElementPtr UIContainer::getChildByPos(const Point& pos)
+{
+    for(auto it = m_children.rbegin(); it != m_children.rend(); ++it) {
+        if((*it)->getRect().contains(pos))
+            return (*it);
+    }
+    return UIElementPtr();
+}
+
 UIElementPtr UIContainer::recursiveGetChildById(const std::string& id)
 {
     if(getId() == id)
@@ -91,6 +101,21 @@ UIElementPtr UIContainer::recursiveGetChildById(const std::string& id)
         }
     }
     return UIElementPtr();
+}
+
+void UIContainer::pushChildToTop(const UIElementPtr& child)
+{
+    bool removed = false;
+    for(auto it = m_children.begin(); it != m_children.end(); ++it) {
+        if((*it) == child) {
+            removed = true;
+            m_children.erase(it);
+            break;
+        }
+    }
+    if(removed) {
+        m_children.push_back(child);
+    }
 }
 
 void UIContainer::render()
@@ -119,9 +144,10 @@ void UIContainer::onInputEvent(const InputEvent& event)
                 }
             // mouse events
             } else if(event.type & EV_MOUSE) {
-                // mouse down and wheel events only go to elements that contains the mouse position and are not containers
-                if((event.type & EV_DOWN || event.type & EV_MOUSE_WHEEL) && !child->asUIContainer()) {
-                    if(child->getRect().contains(event.mousePos)) {
+                // mouse down and wheel events only go to elements that contains the mouse position
+                if(event.type & EV_DOWN || event.type & EV_MOUSE_WHEEL) {
+                    // the child must contains the mouse position and be on top
+                    if(child->getRect().contains(event.mousePos) && child == getChildByPos(event.mousePos)) {
                         // focus it
                         if(event.type == EV_MOUSE_LDOWN && child->isFocusable())
                             setFocusedElement(child);
@@ -171,9 +197,17 @@ void UIContainer::setFocusedElement(UIElementPtr focusedElement)
             m_focusedElement->setFocused(false);
             m_focusedElement->onFocusChange();
         }
+
         m_focusedElement = focusedElement;
-        m_focusedElement->setFocused(true);
-        m_focusedElement->onFocusChange();
+        if(m_focusedElement) {
+            m_focusedElement->setFocused(true);
+            m_focusedElement->onFocusChange();
+        }
+    }
+
+    // when containers are focused they go to the top
+    if(focusedElement && focusedElement->asUIContainer()) {
+        g_dispatcher.addTask(boost::bind(&UIContainer::pushChildToTop, asUIContainer(), m_focusedElement));
     }
 }
 

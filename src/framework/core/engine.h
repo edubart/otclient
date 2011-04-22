@@ -26,19 +26,20 @@
 #define ENGINE_H
 
 #include <prerequisites.h>
-#include <core/gamestate.h>
+#include <core/input.h>
 
 class Engine
 {
 public:
     Engine() : m_stopping(false),
                m_running(false),
-               m_calculateFps(false),
-               m_currentState(NULL) { }
+               m_calculateFps(false) { }
 
     void init();
     void terminate();
 
+    /// Poll events
+    void poll();
     /// Main loop
     void run();
 
@@ -46,8 +47,6 @@ public:
     void stop();
 
     /// Change current game state
-    void changeState(GameState *newState);
-
     bool isRunning() const { return m_running; }
     bool isStopping() const { return m_stopping; }
 
@@ -64,13 +63,16 @@ public:
     /// Return the current ticks on this frame
     int getCurrentFrameTicks() const { return m_lastFrameTicks; }
 
+    void setOnClose(Callback onCloseCallback) { m_onCloseCallback = onCloseCallback; }
+
 private:
     bool m_stopping;
     bool m_running;
     bool m_calculateFps;
 
-    GameState *m_currentState;
     int m_lastFrameTicks;
+
+    Callback m_onCloseCallback;
 };
 
 extern Engine g_engine;

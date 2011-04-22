@@ -29,8 +29,13 @@
 #include <ui/uielement.h>
 #include <graphics/borderedimage.h>
 
+class UIButton;
+typedef boost::shared_ptr<UIButton> UIButtonPtr;
+
 class UIButton : public UIElement
 {
+    typedef boost::function<void(UIButtonPtr)> OnClick;
+
 public:
     UIButton() :
         UIElement(UI::Button),
@@ -43,16 +48,14 @@ public:
 
     UI::EButtonState getState() { return m_state; }
 
-    void setOnClick(const Callback& callback) { m_buttonClickCallback = callback; }
+    void setOnClick(const OnClick& callback) { m_onClickCallback = callback; }
 
     virtual const char *getScriptableName() const { return "UIButton"; }
 
 private:
     std::string m_text;
     UI::EButtonState m_state;
-    Callback m_buttonClickCallback;
+    OnClick m_onClickCallback;
 };
-
-typedef boost::shared_ptr<UIButton> UIButtonPtr;
 
 #endif // UIBUTTON_H

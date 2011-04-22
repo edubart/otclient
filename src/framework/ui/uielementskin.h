@@ -37,6 +37,7 @@ public:
     UIElementSkin(const std::string& name, UI::EElementType elementType) :
         m_name(name),
         m_elementType(elementType) { }
+    UIElementSkin() : m_elementType(UI::Element) { }
     virtual ~UIElementSkin() { }
 
     /// Load the skin from a YAML node

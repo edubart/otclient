@@ -31,7 +31,7 @@
 class Image
 {
 public:
-    Image(TexturePtr texture) : m_texture(texture) { }
+    Image(TexturePtr texture);
     Image(TexturePtr texture, Rect textureCoords) : m_texture(texture), m_textureCoords(textureCoords) { }
     Image(const std::string& texture);
     Image(const std::string& texture, Rect textureCoords);

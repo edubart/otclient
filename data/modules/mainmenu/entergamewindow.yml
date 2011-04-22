@@ -50,8 +50,8 @@ window#enterGameWindow:
     margin.bottom: 10
     margin.right: 13
     onClick: |
-      enterGameWindow:destroy()
-      enterGameWindow = nil
+      self:getParent():destroy()
+      self:getParent():getParent():unlock()
     
   textEdit#accountNameTextEdit:
     anchors.right: parent.right

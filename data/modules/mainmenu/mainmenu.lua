@@ -1,6 +1,15 @@
--- events
+-- main menu methods
+function MainMenu_create()
+    mainMenu = loadUI("modules/mainmenu/mainmenu.yml")
+end
+
+function MainMenu_destroy()
+    mainMenu:destroy()
+end
+
 function MainMenu_enterGameClicked()
     enterGameWindow = loadUI("modules/mainmenu/entergamewindow.yml")
+    enterGameWindow:getParent():lock(enterGameWindow)
 end
 
 function MainMenu_optionsClicked()
@@ -12,12 +21,5 @@ function MainMenu_infoClicked()
 end
 
 function MainMenu_exitClicked()
-    exitGame()
+    onApplicationClose()
 end
-
--- create main menu
-function MainMenu_create()
-    menuPanel = loadUI("modules/mainmenu/mainmenu.yml")
-end
-
-MainMenu_create()

@@ -27,9 +27,16 @@
 #include <graphics/graphics.h>
 #include <graphics/textures.h>
 
+Image::Image(TexturePtr texture)
+    : m_texture(texture)
+{
+    m_textureCoords = Rect(0, 0, m_texture->getSize());
+}
+
 Image::Image(const std::string& texture)
 {
     m_texture = g_textures.get(texture);
+    m_textureCoords = Rect(0, 0, m_texture->getSize());
 }
 
 Image::Image(const std::string& texture, Rect textureCoords) :

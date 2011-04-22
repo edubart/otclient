@@ -42,6 +42,8 @@ public:
 
     virtual const char *getScriptableName() const { return "UIWindow"; }
 
+    virtual bool isFocusable() const { return true; }
+
 private:
     std::string m_title;
     bool m_moving;

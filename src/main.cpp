@@ -29,9 +29,8 @@
 #include <core/platform.h>
 #include <core/dispatcher.h>
 #include <ui/uiskins.h>
-#include "menustate.h"
-#include "teststate.h"
 #include <script/luascript.h>
+#include <ui/uicontainer.h>
 
 /// Catches signals so we can exit nicely
 void signal_handler(int sig)
@@ -43,7 +42,7 @@ void signal_handler(int sig)
             static bool stopping = false;
             if(!stopping) {
                 stopping = true;
-                g_engine.stop();
+                g_engine.onClose();
             }
             break;
         }
@@ -113,26 +112,30 @@ int main(int argc, const char *argv[])
 
     // init engine
     g_engine.init();
+    g_engine.enableFpsCounter();
+
+    // load ui skins
     g_uiSkins.load("skins/tibiaskin.yml");
 
-    // state scope
-    {
-        boost::scoped_ptr<MenuState> initialState(new MenuState);
-        //boost::scoped_ptr<TestState> initialState(new TestState);
-        g_dispatcher.addTask(boost::bind(&Engine::changeState, &g_engine, initialState.get()));
+    // load script modules
+    g_lua.loadAllModules();
 
-        Platform::showWindow();
-        //Platform::hideMouseCursor();
-        g_engine.enableFpsCounter();
+    if(!UIContainer::getRootContainer()->getChildCount())
+        logFatal("no ui loaded at all, no reason to continue running");
 
-        // main loop, run everything
-        g_engine.run();
+    Platform::showWindow();
+    //Platform::hideMouseCursor();
 
-        // terminate stuff
-        g_engine.terminate();
+    // main loop, run everything
+    g_engine.run();
 
-        g_uiSkins.terminate();
-    }
+    // poll remaning events
+    g_engine.poll();
+
+    // terminate stuff
+    g_engine.terminate();
+
+    g_uiSkins.terminate();
 
     // save configurations before exiting
     saveConfigs();

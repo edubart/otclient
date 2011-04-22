@@ -50,6 +50,8 @@ void UIElementSkin::draw(UIElement *element)
 ImagePtr UIElementSkin::loadImage(const YAML::Node& node)
 {
     ImagePtr image;
+    TexturePtr texture;
+
     if(node.FindValue("bordered image")) {
         const YAML::Node& child = node["bordered image"];
         Rect left, right, top, bottom, topLeft, topRight, bottomLeft, bottomRight, center;
@@ -72,7 +74,6 @@ ImagePtr UIElementSkin::loadImage(const YAML::Node& node)
         if(child.FindValue("center"))
             child["center"] >> center;
 
-        TexturePtr texture;
         if(child.FindValue("image")) {
             std::string textureName;
             child["image"] >> textureName;
@@ -81,17 +82,34 @@ ImagePtr UIElementSkin::loadImage(const YAML::Node& node)
             texture = g_uiSkins.getDefaultTexture();
         }
 
-        image = ImagePtr(new BorderedImage(texture,
-                                           left,
-                                           right,
-                                           top,
-                                           bottom,
-                                           topLeft,
-                                           topRight,
-                                           bottomLeft,
-                                           bottomRight,
-                                           center));
+        if(texture) {
+            image = ImagePtr(new BorderedImage(texture,
+                                            left,
+                                            right,
+                                            top,
+                                            bottom,
+                                            topLeft,
+                                            topRight,
+                                            bottomLeft,
+                                            bottomRight,
+                                            center));
+        }
+    } else if(node.FindValue("image")) {
+        std::string textureName;
+        node["image"] >> textureName;
+        texture = g_textures.get(textureName);
+        if(texture) {
+            image = ImagePtr(new Image(texture));
+        }
     }
+
+    if(texture && node.FindValue("antialised")){
+        bool antialised;
+        node["antialised"] >> antialised;
+        if(antialised)
+            texture->enableBilinearFilter();
+    }
+
     return image;
 }
 
