@@ -30,6 +30,7 @@
 #include <lua.hpp>
 
 #define reportFuncError(a) reportError(a, __FUNCTION__)
+#define reportFuncErrorWithTraceback(a) reportErrorWithTraceback(a, __FUNCTION__)
 
 class LuaScript
 {
@@ -42,8 +43,10 @@ public:
     bool loadBuffer(const std::string& text, const std::string& what = "luaBuffer");
     int loadBufferAsFunction(const std::string& text, const std::string& what = "luaBuffer");
     void reportError(const std::string& errorDesc, const char *funcName = NULL);
+    void reportErrorWithTraceback(const std::string& errorDesc, const char *funcName = NULL);
 
     int getStackSize();
+    void moveTop(int index);
 
     void pushNil();
     void pushBoolean(bool b);
@@ -61,7 +64,7 @@ public:
     void releaseFunction(int functionRef);
     void callFunction(int numArgs = 0);
 
-    void setSelf(const ScriptablePtr& scriptable, int envIndex = -1);
+    void setLocal(const ScriptablePtr& scriptable, const char *varName, int envIndex = -1);
 
     void pushClassInstance(const ScriptablePtr& object);
     ScriptablePtr popClassInstance();

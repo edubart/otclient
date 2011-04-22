@@ -9,7 +9,7 @@ end
 
 function MainMenu_enterGameClicked()
     enterGameWindow = loadUI("modules/mainmenu/entergamewindow.yml")
-    enterGameWindow:getParent():lock(enterGameWindow)
+    button = enterGameWindow:getChildByID("okButton")
 end
 
 function MainMenu_optionsClicked()

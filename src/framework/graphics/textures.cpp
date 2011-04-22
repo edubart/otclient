@@ -46,18 +46,18 @@ TexturePtr Textures::get(const std::string& textureFile)
     if(!texture) {
         // currently only png textures are supported
         if(!boost::ends_with(textureFile, ".png"))
-            logFatal("Unable to load texture %s, file format no supported.", textureFile.c_str());
+            flogFatal("FATAL ERROR: Unable to load texture %s, file format no supported.", textureFile.c_str());
 
         // load texture file data
         uint fileSize;
         uchar *textureFileData = g_resources.loadFile(textureFile, &fileSize);
         if(!textureFileData)
-            logFatal("Unable to load texture %s, file could not be read.", textureFile.c_str());
+            flogFatal("FATAL ERROR: Unable to load texture %s, file could not be read.", textureFile.c_str());
 
         // load the texture
         texture = TexturePtr(TextureLoader::loadPNG(textureFileData));
         if(!texture)
-            logFatal("Unable to load texture %s", textureFile.c_str());
+            flogFatal("FATAL ERROR: Unable to load texture %s", textureFile.c_str());
         delete[] textureFileData;
     }
 

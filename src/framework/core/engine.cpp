@@ -87,7 +87,7 @@ void Engine::run()
                     frameCount = 0;
 
                     // update fps text
-                    fpsText = format("FPS: %d", fps);
+                    fpsText = f("FPS: %d", fps);
                     fpsTextSize = defaultFont->calculateTextRectSize(fpsText);
                 }
             }

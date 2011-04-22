@@ -26,33 +26,39 @@
 #define LOGGER_H
 
 #include <sstream>
+#include <boost/format.hpp>
 
-namespace Logger {
+class Logger {
+public:
+    enum ELogLevel {
+        LFATAL = 0,
+        LERROR,
+        LWARNING,
+        LINFO,
+        LDEBUG
+    };
 
-enum ELogLevel {
-    LFATAL = 0,
-    LERROR,
-    LWARNING,
-    LINFO,
-    LDEBUG
+    static void log(int level, const std::string& text = "", const char *trace = NULL);
 };
 
-void _log(int level, const char *trace, const char *format, ...);
+#define logFatal(a) Logger::log(Logger::LFATAL, a)
+#define logError(a) Logger::log(Logger::LERROR, a)
+#define logWarning(a) Logger::log(Logger::LWARNING, a)
+#define logDebug(a) Logger::log(Logger::LDEBUG, a)
+#define logInfo(a) Logger::log(Logger::LINFO, a)
 
-}
+#define flogFatal(a,b) Logger::log(Logger::LFATAL, (boost::format(a) % b).str())
+#define flogError(a,b) Logger::log(Logger::LERROR, (boost::format(a) % b).str())
+#define flogWarning(a,b) Logger::log(Logger::LWARNING, (boost::format(a) % b).str())
+#define flogDebug(a,b) Logger::log(Logger::LDEBUG, (boost::format(a) % b).str())
+#define flogInfo(a,b) Logger::log(Logger::LINFO, (boost::format(a) % b).str())
 
-#define logFatal(...) Logger::_log(Logger::LFATAL, NULL, __VA_ARGS__)
-#define logError(...) Logger::_log(Logger::LERROR, NULL, __VA_ARGS__)
-#define logWarning(...) Logger::_log(Logger::LWARNING, NULL, __VA_ARGS__)
-#define logDebug(...) Logger::_log(Logger::LDEBUG, NULL, __VA_ARGS__)
-#define logInfo(...) Logger::_log(Logger::LINFO, NULL, __VA_ARGS__)
-
-#define logTrace() Logger::_log(Logger::LDEBUG, __PRETTY_FUNCTION__, "")
-#define logTraceFatal(...) Logger::_log(Logger::LFATAL, __PRETTY_FUNCTION__, __VA_ARGS__)
-#define logTraceError(...) Logger::_log(Logger::LERROR, __PRETTY_FUNCTION__, __VA_ARGS__)
-#define logTraceWarning(...) Logger::_log(Logger::LWARNING, __PRETTY_FUNCTION__, __VA_ARGS__)
-#define logTraceDebug(...) Logger::_log(Logger::LDEBUG, __PRETTY_FUNCTION__, __VA_ARGS__)
-#define logTraceInfo(...) Logger::_log(Logger::LINFO, __PRETTY_FUNCTION__, __VA_ARGS__)
+#define logTrace() Logger::log(Logger::LDEBUG, "", __PRETTY_FUNCTION__)
+#define logTraceFatal(a) Logger::log(Logger::LFATAL, a, __PRETTY_FUNCTION__)
+#define logTraceError(a) Logger::log(Logger::LERROR, a, __PRETTY_FUNCTION__)
+#define logTraceWarning(a) Logger::log(Logger::LWARNING, a, __PRETTY_FUNCTION__)
+#define logTraceDebug(a) Logger::log(Logger::LDEBUG, a, __PRETTY_FUNCTION__)
+#define logTraceInfo(a) Logger::log(Logger::LINFO, a, __PRETTY_FUNCTION__)
 
 struct Dump {
 public:
@@ -65,4 +71,4 @@ private:
 
 #define dump Dump()
 
-#endif
+#endif // LOGGER_H

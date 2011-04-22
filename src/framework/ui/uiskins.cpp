@@ -38,7 +38,7 @@ void UISkins::load(const std::string& skinsFile)
 {
     std::string fileContents = g_resources.loadTextFile(skinsFile);
     if(!fileContents.size())
-        logFatal("Could not load skin file \"%s",  skinsFile.c_str());
+        flogFatal("FATAL ERROR: Could not load skin file \"%s",  skinsFile.c_str());
 
     std::istringstream fin(fileContents);
 
@@ -126,7 +126,7 @@ void UISkins::load(const std::string& skinsFile)
             }
         }
     } catch (YAML::Exception& e) {
-        logFatal("Malformed skin file \"%s\":\n  %s", skinsFile.c_str(), e.what());
+        flogFatal("FATAL ERROR: Malformed skin file \"%s\":\n  %s", skinsFile.c_str() % e.what());
     }
 }
 
@@ -143,6 +143,6 @@ UIElementSkinPtr UISkins::getElementSkin(UI::EElementType elementType, const std
         if(elementType == skin->getElementType() && name == skin->getName())
             return skin;
     }
-    logWarning("Element skin '%s' not found", name.c_str());
+    flogWarning("Element skin '%s' not found", name.c_str());
     return UIElementSkinPtr();
 }

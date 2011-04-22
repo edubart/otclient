@@ -63,7 +63,7 @@ public:
     /// Return the current ticks on this frame
     int getCurrentFrameTicks() const { return m_lastFrameTicks; }
 
-    void setOnClose(Callback onCloseCallback) { m_onCloseCallback = onCloseCallback; }
+    void setOnClose(SimpleCallback onCloseCallback) { m_onCloseCallback = onCloseCallback; }
 
 private:
     bool m_stopping;
@@ -72,7 +72,7 @@ private:
 
     int m_lastFrameTicks;
 
-    Callback m_onCloseCallback;
+    SimpleCallback m_onCloseCallback;
 };
 
 extern Engine g_engine;

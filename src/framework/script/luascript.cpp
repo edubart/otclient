@@ -32,7 +32,7 @@ LuaScript::LuaScript()
 {
     L = luaL_newstate();
     if(!L)
-        logFatal("could not create lua context");
+        logFatal("FATAL ERROR: could not create lua context");
 
     // load lua standard libraries
     luaL_openlibs(L);
@@ -64,7 +64,7 @@ void LuaScript::loadAllModules()
 bool LuaScript::loadFile(const std::string& fileName)
 {
     if(!g_resources.fileExists(fileName)) {
-        logError("script file '%s' doesn't exist", fileName.c_str());
+        flogError("ERROR: script file '%s' doesn't exist", fileName.c_str());
         return false;
     }
     std::string fileContents = g_resources.loadTextFile(fileName);
@@ -114,16 +114,28 @@ int LuaScript::loadBufferAsFunction(const std::string& text, const std::string& 
 void LuaScript::reportError(const std::string& errorDesc, const char *funcName)
 {
     std::stringstream ss;
-    ss << "LUA script error";
+    ss << "LUA Script ERROR: ";
     if(funcName)
-        ss << " in " << funcName << "()";
-    ss << ": " << errorDesc << std::endl;
-    logError(ss.str().c_str());
+        ss << " in " << funcName << "(): ";
+    ss << errorDesc << std::endl;
+    logError(ss.str());
+}
+
+void LuaScript::reportErrorWithTraceback(const std::string& errorDesc, const char* funcName)
+{
+    pushString(errorDesc);
+    luaErrorHandler(L);
+    reportError(popString(), funcName);
 }
 
 int LuaScript::getStackSize()
 {
     return lua_gettop(L);
+}
+
+void LuaScript::moveTop(int index)
+{
+    lua_insert(L, index);
 }
 
 void LuaScript::pop(int n)
@@ -141,15 +153,15 @@ bool LuaScript::popBoolean()
 int32_t LuaScript::popInteger()
 {
     double d = lua_tonumber(L, -1);
-    pop(1);
+    pop();
     return (int)d;
 }
 
 std::string LuaScript::popString()
 {
-    size_t len;
-    const char *cstr = lua_tolstring(L, -1, &len);
-    std::string str(cstr, len);
+    std::string str;
+    if(lua_isstring(L, -1))
+        str = lua_tostring(L, -1);
     pop();
     return str;
 }
@@ -181,8 +193,10 @@ void LuaScript::pushUserdata(void* ptr)
 
 void LuaScript::pushClassInstance(const ScriptablePtr& object)
 {
-    if(object && object->getScriptableName()) {
+    if(object) {
+        // create weak_ptr to the scriptable object stored as userdata
         new(lua_newuserdata(L, sizeof(ScriptableWeakPtr))) ScriptableWeakPtr(object);
+        // set object metatable
         lua_getfield(L, LUA_REGISTRYINDEX, (std::string(object->getScriptableName()) + "_mt").c_str());
         lua_setmetatable(L, -2);
     } else {
@@ -192,18 +206,14 @@ void LuaScript::pushClassInstance(const ScriptablePtr& object)
 
 ScriptablePtr LuaScript::popClassInstance()
 {
-    if(!lua_isuserdata(L, -1)) {
-        reportError(format("couldn't pop a class instance, top objet is not a valid type (%s)", luaL_typename(L, -1)));
-        lua_pop(L, 1);
-        return ScriptablePtr();
-    }
-
-    ScriptableWeakPtr *objectRef = (ScriptableWeakPtr *)lua_touserdata(L, -1);
+    ScriptablePtr object;
+    if(lua_isuserdata(L, -1)) { // instances are store as userdata
+        object = ((ScriptableWeakPtr *)lua_touserdata(L, -1))->lock();
+        if(!object)
+            reportErrorWithTraceback("attempt to retrive class instance from a object that is already expired");
+    } else if(!lua_isnil(L, -1)) // we accept nil values
+        reportErrorWithTraceback("couldn't retrive class instance, the value is not a scriptable type");
     lua_pop(L, 1);
-
-    ScriptablePtr object = objectRef->lock();
-    if(!object)
-        reportError(format("attempt to retrive class instance from a object that is already expired"));
     return object;
 }
 
@@ -240,11 +250,11 @@ void LuaScript::callFunction(int numArgs)
         reportError("stack size changed!");
 }
 
-void LuaScript::setSelf(const ScriptablePtr& scriptable, int envIndex)
+void LuaScript::setLocal(const ScriptablePtr& scriptable, const char *varName, int envIndex)
 {
     lua_getfenv(L, envIndex);
     pushClassInstance(scriptable);
-    lua_setfield(L, -2, "self");
+    lua_setfield(L, -2, varName);
     lua_pop(L, 1);
 }
 
@@ -382,24 +392,36 @@ int LuaScript::luaCompareClassInstances(lua_State* L)
 
 int LuaScript::luaFunctionCallback(lua_State* L)
 {
+    // look for function id
     int id = lua_tonumber(L, lua_upvalueindex(1));
+    // call the function
     return (g_lua.*(g_lua.m_functions[id]))();
 }
 
 int LuaScript::luaErrorHandler(lua_State *L)
 {
+    // push debug
     lua_getfield(L, LUA_GLOBALSINDEX, "debug");
     if(!lua_istable(L, -1)) {
         lua_pop(L, 1);
         return 1;
     }
+    // push debug.traceback
     lua_getfield(L, -1, "traceback");
     if(!lua_isfunction(L, -1)) {
         lua_pop(L, 2);
         return 1;
     }
-    lua_pushvalue(L, 1);
+    // remove debug
+    lua_remove(L, -2);
+    // push additional error message
+    lua_pushvalue(L, -2);
+    // push level
     lua_pushinteger(L, 2);
+    // call debug.traceback
     lua_call(L, 2, 1);
+    // remove additional error message
+    lua_remove(L, -2);
+    // return, the complete error message is on the stack
     return 1;
 }

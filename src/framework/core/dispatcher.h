@@ -29,11 +29,11 @@
 
 class Task {
 public:
-    inline Task(const Callback& _callback) : ticks(0), callback(_callback) { }
-    inline Task(int _ticks, const Callback& _callback) : ticks(_ticks), callback(_callback)  { }
+    inline Task(const SimpleCallback& _callback) : ticks(0), callback(_callback) { }
+    inline Task(int _ticks, const SimpleCallback& _callback) : ticks(_ticks), callback(_callback)  { }
     inline bool operator<(const Task& other) const { return ticks > other.ticks; }
     int ticks;
-    Callback callback;
+    SimpleCallback callback;
 };
 
 class lessTask : public std::binary_function<Task*&, Task*&, bool> {
@@ -50,10 +50,10 @@ public:
     void poll();
 
     /// Add an event
-    void addTask(const Callback& callback);
+    void addTask(const SimpleCallback& callback);
 
     /// Schedula an event
-    void scheduleTask(const Callback& callback, int delay);
+    void scheduleTask(const SimpleCallback& callback, int delay);
 
 private:
     std::priority_queue<Task*, std::vector<Task*>, lessTask> m_taskList;

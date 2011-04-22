@@ -40,7 +40,7 @@ void Connection::poll()
     ioService.reset();
 }
 
-void Connection::connect(const std::string& host, uint16 port, const Callback& callback)
+void Connection::connect(const std::string& host, uint16 port, const SimpleCallback& callback)
 {
     m_connectCallback = callback;
     m_connectionState = CONNECTION_STATE_RESOLVING;

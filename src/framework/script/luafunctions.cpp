@@ -61,12 +61,19 @@ int LuaScript::lua_loadUI()
 {
     UIContainerPtr parent;
     if(getStackSize() > 1) {
-        parent = boost::static_pointer_cast<UIContainer>(popClassInstance());
+        parent = boost::dynamic_pointer_cast<UIContainer>(popClassInstance());
     } else {
         parent = UIContainer::getRootContainer();
     }
+
     std::string uiFile = popString();
-    UIElementPtr element = UILoader::loadFile(uiFile.c_str(), parent);
+
+    UIElementPtr element;
+    if(parent)
+        element = UILoader::loadFile(uiFile.c_str(), parent);
+    else
+        reportErrorWithTraceback("invalid parent container");
+
     pushClassInstance(element);
     return 1;
 }
@@ -77,7 +84,6 @@ int LuaScript::lua_getUIRootContainer()
     pushClassInstance(rootContainer);
     return 1;
 }
-
 
 int LuaScript::lua_setOnApplicationClose()
 {
@@ -91,7 +97,7 @@ int LuaScript::lua_setOnApplicationClose()
 
 int LuaScript::lua_UIElement_destroy()
 {
-    UIElementPtr element = boost::static_pointer_cast<UIElement>(popClassInstance());
+    UIElementPtr element = boost::dynamic_pointer_cast<UIElement>(popClassInstance());
     if(element)
         element->destroy();
     else
@@ -101,7 +107,7 @@ int LuaScript::lua_UIElement_destroy()
 
 int LuaScript::lua_UIElement_getParent()
 {
-    UIElementPtr element = boost::static_pointer_cast<UIElement>(popClassInstance());
+    UIElementPtr element = boost::dynamic_pointer_cast<UIElement>(popClassInstance());
     if(element)
         pushClassInstance(element->getParent());
     else
@@ -111,13 +117,13 @@ int LuaScript::lua_UIElement_getParent()
 
 int LuaScript::lua_UIButton_setOnClick()
 {
-    lua_insert(L, -2);
-    UIButtonPtr button = boost::static_pointer_cast<UIButton>(popClassInstance());
+    moveTop(-2);
+    UIButtonPtr button = boost::dynamic_pointer_cast<UIButton>(popClassInstance());
     if(button) {
         int funcRef = popFunction();
         button->setOnClick([this, funcRef](UIButtonPtr button) {
             pushFunction(funcRef);
-            setSelf(button);
+            setLocal(button, "self");
             callFunction();
         });
     } else {
@@ -129,7 +135,7 @@ int LuaScript::lua_UIButton_setOnClick()
 int LuaScript::lua_UIContainer_getChildByID()
 {
     std::string id = popString();
-    UIContainerPtr container = boost::static_pointer_cast<UIContainer>(popClassInstance());
+    UIContainerPtr container = boost::dynamic_pointer_cast<UIContainer>(popClassInstance());
     if(container)
         pushClassInstance(container->getChildById(id));
     else
@@ -139,9 +145,14 @@ int LuaScript::lua_UIContainer_getChildByID()
 
 int LuaScript::lua_UIContainer_lock()
 {
-    UIElementPtr element = boost::static_pointer_cast<UIElement>(popClassInstance());
-    UIContainerPtr container = boost::static_pointer_cast<UIContainer>(popClassInstance());
-    if(container && element) {
+    UIElementPtr element = boost::dynamic_pointer_cast<UIElement>(popClassInstance());
+    UIContainerPtr container = boost::dynamic_pointer_cast<UIContainer>(popClassInstance());
+    if(!element) {
+        reportFuncErrorWithTraceback("invalid lock element");
+        return 1;
+    }
+
+    if(container) {
         container->lockElement(element);
     }
     return 1;
@@ -149,7 +160,7 @@ int LuaScript::lua_UIContainer_lock()
 
 int LuaScript::lua_UIContainer_unlock()
 {
-    UIContainerPtr container = boost::static_pointer_cast<UIContainer>(popClassInstance());
+    UIContainerPtr container = boost::dynamic_pointer_cast<UIContainer>(popClassInstance());
     if(container) {
         container->unlockElement();
     }

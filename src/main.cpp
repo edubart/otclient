@@ -121,7 +121,7 @@ int main(int argc, const char *argv[])
     g_lua.loadAllModules();
 
     if(!UIContainer::getRootContainer()->getChildCount())
-        logFatal("no ui loaded at all, no reason to continue running");
+        logFatal("FATAL ERROR: no ui loaded at all, no reason to continue running");
 
     Platform::showWindow();
     //Platform::hideMouseCursor();

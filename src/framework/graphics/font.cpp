@@ -68,7 +68,7 @@ bool Font::load(const std::string& file)
 {
     std::string fileContents = g_resources.loadTextFile(file);
     if(!fileContents.size()) {
-        logError("Coult not load font file \"%s",  file.c_str());
+        flogError("ERROR: Coult not load font file \"%s",  file.c_str());
         return false;
     }
 
@@ -96,7 +96,7 @@ bool Font::load(const std::string& file)
         // load texture
         m_texture = g_textures.get("fonts/" + textureName);
         if(!m_texture) {
-            logError("Failed to load image for font file \"%s\"", file.c_str());
+            flogError("ERROR: Failed to load image for font file \"%s\"", file.c_str());
             return false;
         }
 
@@ -123,7 +123,7 @@ bool Font::load(const std::string& file)
                                                  m_glyphHeight);
         }
     } catch (YAML::Exception& e) {
-        logError("Malformed font file \"%s\":\n  %s", file.c_str(), e.what());
+        flogError("ERROR: Malformed font file \"%s\":\n  %s", file.c_str() % e.what());
         return false;
     }
 

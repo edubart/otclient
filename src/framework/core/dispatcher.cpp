@@ -41,12 +41,12 @@ void Dispatcher::poll()
     }
 }
 
-void Dispatcher::scheduleTask(const Callback& callback, int delay)
+void Dispatcher::scheduleTask(const SimpleCallback& callback, int delay)
 {
     m_taskList.push(new Task(g_engine.getCurrentFrameTicks() + delay, callback));
 }
 
-void Dispatcher::addTask(const Callback& callback)
+void Dispatcher::addTask(const SimpleCallback& callback)
 {
     m_taskList.push(new Task(callback));
 }

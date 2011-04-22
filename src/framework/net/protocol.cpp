@@ -30,14 +30,14 @@ Protocol::Protocol() :
     m_connection->setErrorCallback(boost::bind(&Protocol::onError, this, _1));
 }
 
-void Protocol::connect(const std::string& host, uint16 port, const Callback& callback)
+void Protocol::connect(const std::string& host, uint16 port, const SimpleCallback& callback)
 {
     m_connection->connect(host, port, callback);
 }
 
 void Protocol::onError(const boost::system::error_code& error)
 {
-    logError(error.message().c_str());
+    flogError("PROTOCOL ERROR: ", error.message());
 
     // invalid hostname
     // connection timeouted

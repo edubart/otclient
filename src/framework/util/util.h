@@ -26,14 +26,11 @@
 #define UTIL_H
 
 #include <util/logger.h>
-#include <stdarg.h>
 #include <boost/lexical_cast.hpp>
+#include <boost/format.hpp>
 
-/// Formatting like printf for std::string, va_list input version
-std::string vformat(const char *format, va_list args);
-
-/// Formatting like printf for std::string
-std::string format(const char *format, ...);
+/// Easy/fast writting formater
+#define f(a, b) (boost::format(a) % b).str()
 
 /// Convert any data type through boost::lexical_cast
 template<class R, class T> 
@@ -43,9 +40,9 @@ R convertType(T t)
     try {
         ret = boost::lexical_cast<R>(t);
     } catch(boost::bad_lexical_cast bad) {
-        logError("Error converting type: %s", bad.what());
+        flogError("Error converting type: %s", bad.what());
     }
     return ret;
 }
 
-#endif
+#endif // UTIL_H

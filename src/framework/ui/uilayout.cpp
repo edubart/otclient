@@ -47,7 +47,7 @@ int AnchorLine::getPos() const
                 return 0;
         }
     }
-    logError("anchor line of an element has expired, your UI is missconfigured");
+    logError("ERROR: anchor line of an element has expired, your UI is missconfigured");
     return 0;
 }
 
@@ -74,7 +74,7 @@ bool UILayout::addAnchor(EAnchorType type, const AnchorLine& anchorLine)
 {
     // we can never anchor with itself
     if(anchorLine.getRelativeElement() == asUILayout()) {
-        logError("anchoring with itself is not possible");
+        logError("ERROR: anchoring with itself is not possible");
         return false;
     }
 
@@ -82,7 +82,7 @@ bool UILayout::addAnchor(EAnchorType type, const AnchorLine& anchorLine)
     // this only happens in missconfigurations
     for(auto it = m_anchoredElements.begin(); it != m_anchoredElements.end(); ++it) {
         if((*it).lock() == anchorLine.getRelativeElement()) {
-            logError("anchoring elements with each other is not possible");
+            logError("ERROR: anchoring elements with each other is not possible");
             return false;
         }
     }

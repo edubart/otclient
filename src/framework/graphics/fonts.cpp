@@ -47,7 +47,7 @@ void Fonts::init(const std::string& defaultFontName)
     }
 
     if(!m_defaultFont)
-        logFatal("Could not load the default font \"%s\"\n", defaultFontName.c_str());
+        flogFatal("FATAL ERROR: Could not load the default font \"%s\"\n", defaultFontName.c_str());
 }
 
 Font* Fonts::get(const std::string& fontName)
@@ -58,6 +58,6 @@ Font* Fonts::get(const std::string& fontName)
             return (*it).get();
     }
 
-    logError("Font \"%s\" not found, returing the default one", fontName.c_str());
+    flogError("ERROR: Font \"%s\" not found, returing the default one", fontName.c_str());
     return m_defaultFont.get();
 }

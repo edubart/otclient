@@ -37,7 +37,7 @@ public:
 
     static void poll();
 
-    void connect(const std::string& host, uint16 port, const Callback& callback);
+    void connect(const std::string& host, uint16 port, const SimpleCallback& callback);
     void setErrorCallback(const ErrorCallback& errorCallback) { m_errorCallback = errorCallback; }
 
     void onTimeout(const boost::system::error_code& error);
@@ -53,7 +53,7 @@ public:
 
 private:
     ErrorCallback m_errorCallback;
-    Callback m_connectCallback;
+    SimpleCallback m_connectCallback;
     ConnectionState_t m_connectionState;
 
     boost::asio::deadline_timer m_timer;

@@ -26,17 +26,10 @@
 
 #include <iostream>
 #include <cstdlib>
-#include <stdarg.h>
 
-void Logger::_log(int level, const char *trace, const char *format, ...)
+void Logger::log(int level, const std::string& text, const char *trace)
 {
-    va_list args;
     std::string strace;
-
-    va_start(args, format);
-    std::string text = vformat(format, args);
-    va_end(args);
-
     if(trace) {
         strace = trace;
         strace = strace.substr(0, strace.find_first_of('('));
@@ -54,8 +47,6 @@ void Logger::_log(int level, const char *trace, const char *format, ...)
     if(!strace.empty())
         std::cout << "[" << strace << "] ";
 
-    static char const *prefixes[] = { "FATAL ERROR: ", "ERROR: ", "WARNING: ", "", "", "" };
-    std::cout << prefixes[level];
     std::cout << text;
 
 #ifdef linux
@@ -68,3 +59,4 @@ void Logger::_log(int level, const char *trace, const char *format, ...)
     if(level == LFATAL)
         exit(-1);
 }
+

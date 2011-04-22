@@ -32,7 +32,7 @@ class Protocol
 public:
     Protocol();
 
-    void connect(const std::string& host, uint16 port, const Callback& callback);
+    void connect(const std::string& host, uint16 port, const SimpleCallback& callback);
 
     virtual void onError(const boost::system::error_code& error);
 

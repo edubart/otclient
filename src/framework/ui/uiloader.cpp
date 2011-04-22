@@ -67,7 +67,7 @@ UIElementPtr UILoader::loadFile(const std::string& file, const UIContainerPtr& p
 {
     std::string fileContents = g_resources.loadTextFile(file);
     if(!fileContents.size()) {
-        logError("Could not load ui file \"%s",  file.c_str());
+        flogError("ERROR: Could not load ui file \"%s",  file.c_str());
         return UIElementPtr();
     }
 
@@ -101,7 +101,7 @@ UIElementPtr UILoader::loadFile(const std::string& file, const UIContainerPtr& p
 
         return element;
     } catch (YAML::Exception& e) {
-        logError("Failed to load ui file \"%s\":\n  %s", file.c_str(), e.what());
+        flogError("ERROR: Failed to load ui file \"%s\":\n  %s", file.c_str() % e.what());
     }
 
     return UIElementPtr();
