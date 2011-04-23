@@ -84,7 +84,7 @@ int main(int argc, const char *argv[])
     // init platform stuff
     Platform::init("OTClient");
 
-    // init random numbers
+    // seed random
     srand(time(NULL));
 
     // init resources
@@ -124,7 +124,6 @@ int main(int argc, const char *argv[])
         logFatal("FATAL ERROR: no ui loaded at all, no reason to continue running");
 
     Platform::showWindow();
-    //Platform::hideMouseCursor();
 
     // main loop, run everything
     g_engine.run();
@@ -143,7 +142,6 @@ int main(int argc, const char *argv[])
     // save configurations before exiting
     saveConfigs();
 
-    //Platform::showMouseCursor();
     Platform::terminate();
 
     // unload resources

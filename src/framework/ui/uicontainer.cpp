@@ -29,6 +29,7 @@
 
 void UIContainer::internalOnDestroy()
 {
+    setFocusedElement(UIElementPtr());
     // destroy children
     for(auto it = m_children.begin(); it != m_children.end(); ++it) {
         (*it)->setParent(UIContainerPtr());

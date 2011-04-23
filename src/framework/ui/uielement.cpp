@@ -56,6 +56,7 @@ void UIElement::internalOnDestroy()
 {
     setVisible(false);
     setEnabled(false);
+
     // check for leaks, the number of references must be always 2 here
     assert(asUIElement().use_count() == 2);
 }
