@@ -15,14 +15,14 @@ window#infoWindow:
     margin.left: 18
     
     label#infoLabel:
-      size: [208, 84]
       align: center
       text: |-
             OTClient
             Version 0.2.0
             Created by edubart
-      anchors.left: parent.left
+      anchors.horizontalCenter: parent.horizontalCenter
       anchors.top: parent.top
+      margin.top: 20
             
     lineDecoration#bottomSeparator:
       size: [190,2]

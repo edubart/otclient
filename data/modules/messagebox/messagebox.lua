@@ -1,0 +1,12 @@
+function messageBox(title, text)
+    local messageBoxWindow = loadUI("modules/messagebox/messagebox.yml")
+    local messageBoxLabel = messageBoxWindow:getChildByID("messageBoxLabel")
+    local messageBoxOkButton = messageBoxWindow:getChildByID("messageBoxOkButton")
+    local uiRoot = messageBoxWindow:getParent()
+    uiRoot:lock(messageBox)
+    messageBoxWindow:setTitle(text)
+    messageBoxLabel:setText(text)
+    messageBoxWindow:setSize(messageBoxLabel:getSize() + Size{20, 20})
+    messageBox:setOnDestroy(function() uiRoot:unlock() end)
+    messageBoxOkButton:setOnClick(function() messageBoxWindow:destroy() end)
+end

@@ -28,6 +28,7 @@ panel#background:
       anchors.top: parent.top
       anchors.horizontalCenter: parent.horizontalCenter
       margin.top: 46
+      onClick: messageBox("Error", "Not implemented yet")
 
     button#optionsButton:
       text: Options

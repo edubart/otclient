@@ -151,24 +151,6 @@ void UILoader::loadElements(const UIElementPtr& parent, const YAML::Node& node)
 
 void UILoader::loadElement(const UIElementPtr& element, const YAML::Node& node)
 {
-    // load specific element type
-    if(element->getElementType() == UI::Button)
-        loadButton(boost::static_pointer_cast<UIButton>(element), node);
-    else if(element->getElementType() == UI::Window) {
-        UIWindowPtr window = boost::static_pointer_cast<UIWindow>(element);
-        window->setTitle(node["title"].Read<std::string>());
-    }
-    else if(element->getElementType() == UI::Label) {
-        UILabelPtr label = boost::static_pointer_cast<UILabel>(element);
-        label->setText(node["text"].Read<std::string>());
-        if(node.FindValue("align")) {
-            std::string alignDesc;
-            node["align"] >> alignDesc;
-            if(alignDesc == "center")
-                label->setAlign(ALIGN_CENTER);
-        }
-    }
-
     // set element skin
     if(node.FindValue("skin")) {
         if(node["skin"].GetType() == YAML::CT_SCALAR) {
@@ -248,6 +230,26 @@ void UILoader::loadElement(const UIElementPtr& element, const YAML::Node& node)
             g_lua.lua_UIElement_setOnDestroy();
         } else
             throw YAML::Exception(cnode.GetMark(), "failed to parse lua script");
+    }
+
+    // load specific element type
+    if(element->getElementType() == UI::Button)
+        loadButton(boost::static_pointer_cast<UIButton>(element), node);
+    else if(element->getElementType() == UI::Window) {
+        UIWindowPtr window = boost::static_pointer_cast<UIWindow>(element);
+        if(node.FindValue("title"))
+            window->setTitle(node["title"].Read<std::string>());
+    }
+    else if(element->getElementType() == UI::Label) {
+        UILabelPtr label = boost::static_pointer_cast<UILabel>(element);
+        if(node.FindValue("text"))
+            label->setText(node["text"].Read<std::string>());
+        if(node.FindValue("align")) {
+            std::string alignDesc;
+            node["align"] >> alignDesc;
+            if(alignDesc == "center")
+                label->setAlign(ALIGN_CENTER);
+        }
     }
 }
 
