@@ -84,9 +84,12 @@ public:
 
     void registerFunctions();
 
-    int lua_UIButton_setOnClick();
+    int lua_UIElement_setOnLoad();
+    int lua_UIElement_setOnDestroy();
     int lua_UIElement_getParent();
     int lua_UIElement_destroy();
+
+    int lua_UIButton_setOnClick();
 
     // container functions
     int lua_UIContainer_getChildByID();

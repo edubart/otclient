@@ -99,6 +99,8 @@ UIElementPtr UILoader::loadFile(const std::string& file, const UIContainerPtr& p
         // now do the real load
         loadElements(element, doc.begin().second());
 
+        // report onLoad events
+        element->onLoad();
         return element;
     } catch (YAML::Exception& e) {
         flogError("ERROR: Failed to load ui file \"%s\":\n  %s", file.c_str() % e.what());
@@ -224,6 +226,29 @@ void UILoader::loadElement(const UIElementPtr& element, const YAML::Node& node)
 
     if(node.FindValue("anchors.verticalCenter"))
         loadElementAnchor(element, ANCHOR_VERTICAL_CENTER, node["anchors.verticalCenter"]);
+
+    // load events
+    if(node.FindValue("onLoad")) {
+        const YAML::Node& cnode = node["onLoad"];
+        int funcRef = g_lua.loadBufferAsFunction(cnode.Read<std::string>());
+        if(funcRef != LUA_REFNIL) {
+            g_lua.pushClassInstance(element);
+            g_lua.pushFunction(funcRef);
+            g_lua.lua_UIElement_setOnLoad();
+        } else
+            throw YAML::Exception(cnode.GetMark(), "failed to parse lua script");
+    }
+
+    if(node.FindValue("onDestroy")) {
+        const YAML::Node& cnode = node["onDestroy"];
+        int funcRef = g_lua.loadBufferAsFunction(cnode.Read<std::string>());
+        if(funcRef != LUA_REFNIL) {
+            g_lua.pushClassInstance(element);
+            g_lua.pushFunction(funcRef);
+            g_lua.lua_UIElement_setOnDestroy();
+        } else
+            throw YAML::Exception(cnode.GetMark(), "failed to parse lua script");
+    }
 }
 
 void UILoader::loadElementAnchor(const UIElementPtr& element, EAnchorType type, const YAML::Node& node)

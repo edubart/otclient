@@ -43,6 +43,8 @@ void LuaScript::registerFunctions()
     registerClass("UIContainer", "UIElement");
     registerClass("UIWindow",    "UIContainer");
 
+    registerMemberFunction("UIElement", "setOnLoad", &LuaScript::lua_UIElement_setOnLoad);
+    registerMemberFunction("UIElement", "setOnDestroy", &LuaScript::lua_UIElement_setOnDestroy);
     registerMemberFunction("UIElement", "getParent", &LuaScript::lua_UIElement_getParent);
     registerMemberFunction("UIElement", "destroy", &LuaScript::lua_UIElement_destroy);
     registerMemberFunction("UIContainer", "getChildByID", &LuaScript::lua_UIContainer_getChildByID);
@@ -95,6 +97,40 @@ int LuaScript::lua_setOnApplicationClose()
     return 1;
 }
 
+int LuaScript::lua_UIElement_setOnLoad()
+{
+    moveTop(-2);
+    UIElementPtr element = boost::dynamic_pointer_cast<UIElement>(popClassInstance());
+    if(element) {
+        int funcRef = popFunction();
+        element->setOnLoad([this, funcRef](UIElementPtr element) {
+            pushFunction(funcRef);
+            setLocal(element, "self");
+            callFunction();
+        });
+    } else {
+        pop();
+    }
+    return 1;
+}
+
+int LuaScript::lua_UIElement_setOnDestroy()
+{
+    moveTop(-2);
+    UIElementPtr element = boost::dynamic_pointer_cast<UIElement>(popClassInstance());
+    if(element) {
+        int funcRef = popFunction();
+        element->setOnDestroy([this, funcRef](UIElementPtr element) {
+            pushFunction(funcRef);
+            setLocal(element, "self");
+            callFunction();
+        });
+    } else {
+        pop();
+    }
+    return 1;
+}
+
 int LuaScript::lua_UIElement_destroy()
 {
     UIElementPtr element = boost::dynamic_pointer_cast<UIElement>(popClassInstance());
@@ -121,7 +157,7 @@ int LuaScript::lua_UIButton_setOnClick()
     UIButtonPtr button = boost::dynamic_pointer_cast<UIButton>(popClassInstance());
     if(button) {
         int funcRef = popFunction();
-        button->setOnClick([this, funcRef](UIButtonPtr button) {
+        button->setOnClick([this, funcRef](UIElementPtr button) {
             pushFunction(funcRef);
             setLocal(button, "self");
             callFunction();

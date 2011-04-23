@@ -52,11 +52,11 @@ void Engine::poll()
     // poll platform events
     Platform::poll();
 
-    // poll network events
-    Connection::poll();
-
     // poll diaptcher tasks
     g_dispatcher.poll();
+
+    // poll network events
+    Connection::poll();
 }
 
 void Engine::run()

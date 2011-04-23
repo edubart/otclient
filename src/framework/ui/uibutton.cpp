@@ -33,9 +33,8 @@ void UIButton::onInputEvent(const InputEvent& event)
     } else if(event.type == EV_MOUSE_LUP && m_state == UI::ButtonDown) {
         m_state = UI::ButtonUp;
         if(getRect().contains(event.mousePos)) {
-            if(m_onClickCallback) {
-                g_dispatcher.addTask(boost::bind(m_onClickCallback, boost::static_pointer_cast<UIButton>(shared_from_this())));
-            }
+            if(m_onClickCallback)
+                g_dispatcher.addTask(boost::bind(m_onClickCallback, asUIElement()));
         }
     }
 }

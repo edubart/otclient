@@ -34,10 +34,10 @@ void Dispatcher::poll()
         Task *task = m_taskList.top();
         if(g_engine.getCurrentFrameTicks() < task->ticks)
             break;
+        m_taskList.pop();
 
         task->callback();
         delete task;
-        m_taskList.pop();
     }
 }
 
@@ -50,3 +50,41 @@ void Dispatcher::addTask(const SimpleCallback& callback)
 {
     m_taskList.push(new Task(callback));
 }
+
+/*
+ * #include <prerequisites.h>
+#include <core/dispatcher.h>
+#include <core/engine.h>
+#include <stack>
+
+Dispatcher g_dispatcher;
+
+void Dispatcher::poll()
+{
+    if(!m_taskList.empty()) {
+        auto it = m_taskList.begin();
+        m_taskList.erase(it);
+        (*it)();
+    }
+
+    while(!m_scheduledTaskList.empty()) {
+        ScheduledTask *task = m_scheduledTaskList.top();
+        if(g_engine.getCurrentFrameTicks() < task->ticks)
+            break;
+        m_scheduledTaskList.pop();
+
+        task->callback();
+        delete task;
+    }
+}
+
+void Dispatcher::scheduleTask(const SimpleCallback& callback, int delay)
+{
+    m_scheduledTaskList.push(new ScheduledTask(g_engine.getCurrentFrameTicks() + delay, callback));
+}
+
+void Dispatcher::addTask(const SimpleCallback& callback)
+{
+    m_taskList.push_back(callback);
+}
+*/

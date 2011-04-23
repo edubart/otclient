@@ -27,10 +27,27 @@
 #include <ui/uicontainer.h>
 #include <core/dispatcher.h>
 
-UIContainerPtr rootContainer(new UIContainer);
+void UIContainer::internalOnDestroy()
+{
+    // destroy children
+    for(auto it = m_children.begin(); it != m_children.end(); ++it) {
+        (*it)->setParent(UIContainerPtr());
+        (*it)->destroy();
+    }
+    m_children.clear();
+
+    // root container must not call internalDestroy
+    if(asUIContainer() != getRootContainer())
+        UIElement::internalOnDestroy();
+}
 
 UIContainerPtr& UIContainer::getRootContainer()
 {
+    static UIContainerPtr rootContainer;
+    if(!rootContainer) {
+        rootContainer = UIContainerPtr(new UIContainer);
+        rootContainer->setId("root");
+    }
     return rootContainer;
 }
 
@@ -116,6 +133,13 @@ void UIContainer::pushChildToTop(const UIElementPtr& child)
     if(removed) {
         m_children.push_back(child);
     }
+}
+
+void UIContainer::onLoad()
+{
+    for(auto it = m_children.begin(); it != m_children.end(); ++it)
+        (*it)->onLoad();
+    UIElement::onLoad();
 }
 
 void UIContainer::render()

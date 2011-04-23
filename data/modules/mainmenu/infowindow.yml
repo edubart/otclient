@@ -3,8 +3,8 @@ window#infoWindow:
   size: [244, 221]
   anchors.horizontalCenter: parent.horizontalCenter
   anchors.verticalCenter: parent.verticalCenter
-  onLoad: mainMenu:lock(self)
-  onDestroy: mainMenu:unlock()
+  onLoad: self:getParent():lock(self)
+  onDestroy: self:getParent():unlock()
   
   panel#infoPanel:
     skin: flatPanel
@@ -60,3 +60,4 @@ window#infoWindow:
     anchors.top: parent.top
     margin.top: 191
     margin.left: 188
+    onClick: self:getParent():destroy()

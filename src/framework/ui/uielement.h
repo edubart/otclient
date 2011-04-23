@@ -41,6 +41,8 @@ class UIElement;
 typedef boost::shared_ptr<UIElement> UIElementPtr;
 typedef boost::weak_ptr<UIElement> UIElementWeakPtr;
 
+typedef boost::function<void(UIElementPtr)> UIElementCallback;
+
 class UIElement : public UILayout
 {
 public:
@@ -54,6 +56,7 @@ public:
     virtual void render();
 
     // events
+    virtual void onLoad();
     virtual void onInputEvent(const InputEvent& event) { }
     virtual void onFocusChange() { }
 
@@ -86,11 +89,13 @@ public:
     virtual UIContainerPtr asUIContainer() { return UIContainerPtr(); }
     virtual const char *getScriptableName() const { return "UIElement"; }
 
-    void setOnDestroy(
-    friend class UIContainer;
+    void setOnDestroy(const UIElementCallback& onDestroyCallback) { m_onDestroyCallback = onDestroyCallback; }
+    void setOnLoad(const UIElementCallback& onLoadCallback) { m_onLoadCallback = onLoadCallback; }
+
+protected:
+    virtual void internalOnDestroy();
 
 private:
-    void internalDestroy();
 
     UI::EElementType m_type;
     UIContainerWeakPtr m_parent;
@@ -99,6 +104,8 @@ private:
     bool m_visible;
     bool m_enabled;
     bool m_focused;
+    UIElementCallback m_onLoadCallback;
+    UIElementCallback m_onDestroyCallback;
 };
 
 #endif // UIELEMENT_H

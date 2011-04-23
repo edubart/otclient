@@ -42,20 +42,20 @@ UIElement::UIElement(UI::EElementType type) :
 
 void UIElement::destroy()
 {
-    setVisible(false);
-    setEnabled(false);
-
-    g_dispatcher.addTask(boost::bind(&UIContainer::removeChild, getParent(), asUIElement()));
+    if(m_onDestroyCallback)
+        g_dispatcher.addTask(boost::bind(m_onDestroyCallback, asUIElement()));
     if(getParent()) {
         // schedule removal from parent
         g_dispatcher.addTask(boost::bind(&UIContainer::removeChild, getParent(), asUIElement()));
     }
-    // schedule internal destroy (used to check for leaks)
-    g_dispatcher.addTask(boost::bind(&UIElement::internalDestroy, asUIElement()));
+    // schedule internal destroy
+    g_dispatcher.addTask(boost::bind(&UIElement::internalOnDestroy, asUIElement()));
 }
 
-void UIElement::internalDestroy()
+void UIElement::internalOnDestroy()
 {
+    setVisible(false);
+    setEnabled(false);
     // check for leaks, the number of references must be always 2 here
     assert(asUIElement().use_count() == 2);
 }
@@ -65,6 +65,12 @@ void UIElement::setSkin(const UIElementSkinPtr& skin)
     m_skin = skin;
     if(skin)
         skin->apply(this);
+}
+
+void UIElement::onLoad()
+{
+    if(m_onLoadCallback)
+        g_dispatcher.addTask(boost::bind(m_onLoadCallback, asUIElement()));
 }
 
 void UIElement::render()

@@ -129,6 +129,9 @@ int main(int argc, const char *argv[])
     // main loop, run everything
     g_engine.run();
 
+    // destroy root ui
+    UIContainer::getRootContainer()->destroy();
+
     // poll remaning events
     g_engine.poll();
 

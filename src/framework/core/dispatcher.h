@@ -61,4 +61,39 @@ private:
 
 extern Dispatcher g_dispatcher;
 
+/*
+ * class ScheduledTask {
+public:
+    inline ScheduledTask(const SimpleCallback& _callback) : ticks(0), callback(_callback) { }
+    inline ScheduledTask(int _ticks, const SimpleCallback& _callback) : ticks(_ticks), callback(_callback)  { }
+    inline bool operator<(const ScheduledTask& other) const { return ticks > other.ticks; }
+    int ticks;
+    SimpleCallback callback;
+};
+
+class lessScheduledTask : public std::binary_function<ScheduledTask*&, ScheduledTask*&, bool> {
+public:
+    bool operator()(ScheduledTask*& t1,ScheduledTask*& t2) { return (*t1) < (*t2); }
+};
+
+class Dispatcher
+{
+public:
+    Dispatcher() { }
+
+    /// Execute scheduled events
+    void poll();
+
+    /// Add an event
+    void addTask(const SimpleCallback& callback);
+
+    /// Schedula an event
+    void scheduleTask(const SimpleCallback& callback, int delay);
+
+private:
+    std::vector<SimpleCallback> m_taskList;
+    std::priority_queue<ScheduledTask*, std::vector<ScheduledTask*>, lessScheduledTask> m_scheduledTaskList;
+};
+
+extern Dispatcher g_dispatcher;*/
 #endif // DISPATCHER_H

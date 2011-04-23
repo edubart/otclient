@@ -3,8 +3,8 @@ window#enterGameWindow:
   size: [236, 178]
   anchors.horizontalCenter: parent.horizontalCenter
   anchors.verticalCenter: parent.verticalCenter
-  onLoad: mainMenu:lock(self)
-  onDestroy: mainMenu:unlock()
+  onLoad: self:getParent():lock(self)
+  onDestroy: self:getParent():unlock()
   
   label#accountNameLabel:
     text: Account name

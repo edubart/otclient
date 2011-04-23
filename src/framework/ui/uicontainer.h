@@ -35,6 +35,7 @@ public:
         UIElement(type) { }
     virtual ~UIContainer() { }
 
+    virtual void onLoad();
     virtual void render();
     virtual void onInputEvent(const InputEvent& event);
 
@@ -72,6 +73,9 @@ public:
 
     /// Get root container (the container that contains everything)
     static UIContainerPtr& getRootContainer();
+
+protected:
+    virtual void internalOnDestroy();
 
 private:
     std::list<UIElementPtr> m_children;
