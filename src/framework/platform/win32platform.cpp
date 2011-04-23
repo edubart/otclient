@@ -502,7 +502,7 @@ std::string Platform::getAppUserDir()
     std::stringstream sdir;
     sdir << PHYSFS_getUserDir() << "/." << win32.appName << "/";
     if((mkdir(sdir.str().c_str()) != 0) && (errno != EEXIST))
-        logError("ERROR: Couldn't create directory for saving configuration file. (%s)", sdir.str().c_str());
+        flogError("ERROR: Couldn't create directory for saving configuration file. (%s)", sdir.str().c_str());
     return sdir.str();
 }
 

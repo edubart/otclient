@@ -1,10 +1,10 @@
 -- menu state
 function onEnterMenuState()
-    MainMenu_create()
+    mainMenu = loadUI("modules/mainmenu/mainmenu.yml")
 end
 
 function onLeaveMenuState()
-    MainMenu_destroy()
+    mainMenu:destroy()
 end
 
 function onApplicationClose()

@@ -86,6 +86,7 @@ public:
     virtual UIContainerPtr asUIContainer() { return UIContainerPtr(); }
     virtual const char *getScriptableName() const { return "UIElement"; }
 
+    void setOnDestroy(
     friend class UIContainer;
 
 private:

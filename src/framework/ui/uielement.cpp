@@ -45,6 +45,7 @@ void UIElement::destroy()
     setVisible(false);
     setEnabled(false);
 
+    g_dispatcher.addTask(boost::bind(&UIContainer::removeChild, getParent(), asUIElement()));
     if(getParent()) {
         // schedule removal from parent
         g_dispatcher.addTask(boost::bind(&UIContainer::removeChild, getParent(), asUIElement()));

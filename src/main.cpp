@@ -100,7 +100,7 @@ int main(int argc, const char *argv[])
     if(!g_configs.load("config.yml"))
         logInfo("Could not read configuration file, default configurations will be used.");
 
-    logInfo("OTClient 0.1.0");
+    logInfo("OTClient 0.2.0");
 
     // create the window
     Platform::createWindow(g_configs.getInteger("window x"), g_configs.getInteger("window y"),

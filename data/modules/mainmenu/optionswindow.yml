@@ -3,6 +3,8 @@ window#optionsWindow:
   size: [286, 262]
   anchors.horizontalCenter: parent.horizontalCenter
   anchors.verticalCenter: parent.verticalCenter
+  onLoad: mainMenu:lock(self)
+  onDestroy: mainMenu:unlock()
   
   # general
   button#generalButton:
@@ -109,5 +111,4 @@ window#optionsWindow:
     anchors.bottom: parent.bottom
     margin.right: 10
     margin.bottom: 13
-    onClick: |
-      self:getParent():destroy()
+    onClick: self:getParent():destroy()
