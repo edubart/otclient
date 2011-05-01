@@ -4,8 +4,8 @@ window#infoWindow:
   anchors.horizontalCenter: parent.horizontalCenter
   anchors.verticalCenter: parent.verticalCenter
   onLoad: self:getParent():lock(self)
-  onDestroy: self:getParent():unlock()
-  
+  onDestroy: self:getParent():unlock(self)
+
   panel#infoPanel:
     skin: flatPanel
     size: [208, 129]
@@ -13,7 +13,7 @@ window#infoWindow:
     anchors.top: parent.top
     margin.top: 32
     margin.left: 18
-    
+
     label#infoLabel:
       align: center
       text: |-
@@ -30,21 +30,21 @@ window#infoWindow:
       anchors.top: parent.top
       margin.top: 83
       margin.left: 9
-      
+
     label#websiteLabel:
       text: Official Website
       anchors.left: parent.left
       anchors.bottom: parent.bottom
       margin.bottom: 14
       margin.left: 9
-      
+
     button#websiteButton:
       text: Github Page
       anchors.right: parent.right
       anchors.bottom: parent.bottom
       margin.bottom: 9
       margin.right: 9
-  
+
   lineDecoration#bottomSeparator:
     anchors.left: parent.left
     anchors.right: parent.right
@@ -52,7 +52,7 @@ window#infoWindow:
     margin.bottom: 40
     margin.left: 13
     margin.right: 13
-      
+
   button#okButton:
     text: Ok
     size: [43, 20]

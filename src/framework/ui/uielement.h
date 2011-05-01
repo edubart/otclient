@@ -47,10 +47,11 @@ class UIElement : public UILayout
 {
 public:
     UIElement(UI::EElementType type = UI::Element);
-    virtual ~UIElement() { }
+    virtual ~UIElement();
 
     /// Destroy this element by removing it from its parent
     void destroy();
+    virtual void internalOnDestroy();
 
     /// Draw element
     virtual void render();
@@ -92,11 +93,7 @@ public:
     void setOnDestroy(const UIElementCallback& onDestroyCallback) { m_onDestroyCallback = onDestroyCallback; }
     void setOnLoad(const UIElementCallback& onLoadCallback) { m_onLoadCallback = onLoadCallback; }
 
-protected:
-    virtual void internalOnDestroy();
-
 private:
-
     UI::EElementType m_type;
     UIContainerWeakPtr m_parent;
     UIElementSkinPtr m_skin;

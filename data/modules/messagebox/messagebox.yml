@@ -3,7 +3,7 @@ window#messageBoxWindow:
   anchors.horizontalCenter: parent.horizontalCenter
   anchors.verticalCenter: parent.verticalCenter
 
-  
+
   label#messageBoxLabel:
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.top: parent.top

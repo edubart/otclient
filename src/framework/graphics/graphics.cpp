@@ -49,7 +49,7 @@ void Graphics::init()
 
 void Graphics::terminate()
 {
-    m_bindedTexture = TexturePtr();
+    m_bindedTexture.reset();
 }
 
 bool Graphics::isExtensionSupported(const char *extension)

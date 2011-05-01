@@ -59,6 +59,7 @@ typedef int8_t int8;
 #include <string>
 #include <list>
 #include <queue>
+#include <iterator>
 
 // boost utilities
 #include <boost/algorithm/string.hpp>

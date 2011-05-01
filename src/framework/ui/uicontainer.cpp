@@ -29,19 +29,22 @@
 
 void UIContainer::internalOnDestroy()
 {
-    // destroy children
-    for(auto it = m_children.begin(); it != m_children.end(); ++it) {
-        (*it)->setParent(UIContainerPtr());
-        (*it)->destroy();
-    }
-    m_children.clear();
+    //logTraceDebug(getId());
 
-    // root container must not call internalDestroy
-    if(asUIContainer() != getRootContainer())
-        UIElement::internalOnDestroy();
+    // clear additional references
+    m_lockedElements.clear();
+    m_focusedElement.reset();
+
+    // destroy children
+    while(m_children.size() > 0) {
+        UIElementPtr element = m_children.back(); //hold reference
+        element->internalOnDestroy();
+    }
+
+    UIElement::internalOnDestroy();
 }
 
-UIContainerPtr& UIContainer::getRootContainer()
+UIContainerPtr& UIContainer::getRoot()
 {
     static UIContainerPtr rootContainer;
     if(!rootContainer) {
@@ -59,22 +62,14 @@ void UIContainer::addChild(UIElementPtr child)
 
 void UIContainer::removeChild(UIElementPtr child)
 {
-    // first check if its really a child
-    bool removed = false;
-    for(auto it = m_children.begin(); it != m_children.end(); ++it) {
-        if((*it) == child) {
-            removed = true;
-            m_children.erase(it);
-            break;
-        }
-    }
-    assert(removed);
-
+    // defocus if needed
     if(m_focusedElement == child)
         setFocusedElement(UIElementPtr());
 
+    // remove from children list
+    m_children.remove(child);
+
     // child must have this container as parent
-    assert(child->getParent() == asUIContainer());
     child->setParent(UIContainerPtr());
 }
 
@@ -82,19 +77,23 @@ UIElementPtr UIContainer::getChildById(const std::string& id)
 {
     if(getId() == id)
         return asUIElement();
-    for(auto it = m_children.begin(); it != m_children.end(); ++it) {
-        if((*it)->getId() == id)
-            return (*it);
+
+    foreach(const UIElementPtr& child, m_children) {
+        if(child->getId() == id)
+            return child;
     }
+
     return UIElementPtr();
 }
 
 UIElementPtr UIContainer::getChildByPos(const Point& pos)
 {
     for(auto it = m_children.rbegin(); it != m_children.rend(); ++it) {
-        if((*it)->getRect().contains(pos))
-            return (*it);
+        const UIElementPtr& element = (*it);
+        if(element->getRect().contains(pos))
+            return element;
     }
+
     return UIElementPtr();
 }
 
@@ -103,50 +102,42 @@ UIElementPtr UIContainer::recursiveGetChildById(const std::string& id)
     if(getId() == id)
         return asUIElement();
 
-    UIElementPtr element;
-    for(auto it = m_children.begin(); it != m_children.end(); ++it) {
-        element = (*it);
-        if(element->getId() == id) {
+    foreach(const UIElementPtr& element, m_children) {
+        if(element->getId() == id)
             return element;
-        } else {
+        else {
             UIContainerPtr container = element->asUIContainer();
             if(container) {
-                element = container->recursiveGetChildById(id);
-                if(element)
-                    return element;
+                UIElementPtr element2 = container->recursiveGetChildById(id);
+                if(element2)
+                    return element2;
             }
         }
     }
+
     return UIElementPtr();
 }
 
 void UIContainer::pushChildToTop(const UIElementPtr& child)
 {
-    bool removed = false;
-    for(auto it = m_children.begin(); it != m_children.end(); ++it) {
-        if((*it) == child) {
-            removed = true;
-            m_children.erase(it);
-            break;
-        }
-    }
-    if(removed) {
+    auto it = std::find(m_children.begin(), m_children.end(), child);
+    if(it != m_children.end()) {
+        m_children.erase(it);
         m_children.push_back(child);
     }
 }
 
 void UIContainer::onLoad()
 {
-    for(auto it = m_children.begin(); it != m_children.end(); ++it)
-        (*it)->onLoad();
+    foreach(const UIElementPtr& child, m_children)
+        child->onLoad();
     UIElement::onLoad();
 }
 
 void UIContainer::render()
 {
     UIElement::render();
-    for(auto it = m_children.begin(); it != m_children.end(); ++it) {
-        const UIElementPtr& child = (*it);
+    foreach(const UIElementPtr& child, m_children) {
         if(child->isVisible())
             child->render();
     }
@@ -155,8 +146,7 @@ void UIContainer::render()
 void UIContainer::onInputEvent(const InputEvent& event)
 {
     UIElementPtr focusedElement = m_focusedElement;
-    for(auto it = m_children.begin(); it != m_children.end(); ++it) {
-        const UIElementPtr& child = (*it);
+    foreach(const UIElementPtr& child, m_children) {
         bool shouldFire = false;
 
         // events should pass only when element is visible and enabled
@@ -191,25 +181,19 @@ void UIContainer::onInputEvent(const InputEvent& event)
 void UIContainer::focusNextElement()
 {
     UIElementPtr element;
-    auto focusedIt = std::find(m_children.begin(), m_children.end(), m_focusedElement);
-    if(focusedIt != m_children.end()) {
-        for(auto it = ++focusedIt; it != m_children.end(); ++it) {
-            const UIElementPtr& child = (*it);
+    std::list<UIElementPtr> rotatedChildren(m_children);
+    auto focusedIt = std::find(rotatedChildren.begin(), rotatedChildren.end(), m_focusedElement);
+    if(focusedIt != rotatedChildren.end()) {
+        std::rotate(rotatedChildren.begin(), focusedIt, rotatedChildren.end());
+        rotatedChildren.pop_front();
+        foreach(const UIElementPtr& child, rotatedChildren) {
             if(child->isFocusable()) {
                 element = child;
                 break;
             }
         }
     }
-    if(!element) {
-        for(auto it = m_children.begin(); it != m_children.end(); ++it) {
-            const UIElementPtr& child = (*it);
-            if(child->isFocusable()) {
-                element = child;
-                break;
-            }
-        }
-    }
+
     if(element)
         setFocusedElement(element);
 }
@@ -237,28 +221,38 @@ void UIContainer::setFocusedElement(UIElementPtr focusedElement)
 
 bool UIContainer::lockElement(UIElementPtr element)
 {
-    bool found = false;
-    for(auto it = m_children.begin(); it != m_children.end(); ++it) {
-        if((*it) == element) {
-            (*it)->setEnabled(true);
-            found = true;
-            break;
-        }
-    }
-
-    if(found) {
-        for(auto it = m_children.begin(); it != m_children.end(); ++it) {
-            if((*it) != element)
-                (*it)->setEnabled(false);
+    if(std::find(m_children.begin(), m_children.end(), element) != m_children.end()) {
+        m_lockedElements.remove(element);
+        m_lockedElements.push_front(element);
+        foreach(const UIElementPtr& child, m_children) {
+            if(child != element)
+                child->setEnabled(false);
+            else
+                child->setEnabled(true);
         }
         return true;
     }
     return false;
 }
 
-void UIContainer::unlockElement()
+bool UIContainer::unlockElement(UIElementPtr element)
 {
-    for(auto it = m_children.begin(); it != m_children.end(); ++it) {
-        (*it)->setEnabled(true);
+    auto it = std::find(m_lockedElements.begin(), m_lockedElements.end(), element);
+    if(it != m_lockedElements.end()) {
+        m_lockedElements.erase(it);
+        UIElementPtr newLockedElement;
+        if(m_lockedElements.size() > 0)
+            newLockedElement = m_lockedElements.front();
+        foreach(const UIElementPtr& child, m_children) {
+            if(newLockedElement) {
+                if(child == newLockedElement)
+                    child->setEnabled(true);
+                else
+                    child->setEnabled(false);
+            } else
+                child->setEnabled(true);
+        }
+        return true;
     }
+    return false;
 }

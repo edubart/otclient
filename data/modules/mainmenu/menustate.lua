@@ -1,6 +1,6 @@
 -- menu state
 function onEnterMenuState()
-    mainMenu = loadUI("modules/mainmenu/mainmenu.yml")
+    mainMenu = UI.load("modules/mainmenu/mainmenu.yml")
 end
 
 function onLeaveMenuState()
@@ -15,6 +15,6 @@ end
 -- here is where everything starts
 if not initialStateLoaded then
     onEnterMenuState()
-    setOnApplicationClose(onApplicationClose)
+    App.setOnClose(onApplicationClose)
     initialStateLoaded = true
 end

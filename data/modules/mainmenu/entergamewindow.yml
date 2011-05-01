@@ -4,22 +4,22 @@ window#enterGameWindow:
   anchors.horizontalCenter: parent.horizontalCenter
   anchors.verticalCenter: parent.verticalCenter
   onLoad: self:getParent():lock(self)
-  onDestroy: self:getParent():unlock()
-  
+  onDestroy: self:getParent():unlock(self)
+
   label#accountNameLabel:
     text: Account name
     anchors.left: parent.left
     anchors.top: parent.top
     margin.left: 18
     margin.top: 33
-    
+
   label#passwordLabel:
     text: "Password:"
     anchors.left: parent.left
     anchors.top: parent.top
     margin.left: 18
     margin.top: 62
-  
+
   label#createAccountLabel:
     text: |
           If you don't have
@@ -35,6 +35,7 @@ window#enterGameWindow:
     anchors.top: parent.top
     margin.top: 94
     margin.left: 132
+    onClick: messageBox("Error", "Not implemented yet")
 
   button#okButton:
     text: Ok
@@ -52,7 +53,7 @@ window#enterGameWindow:
     margin.bottom: 10
     margin.right: 13
     onClick: self:getParent():destroy()
-    
+
   textEdit#accountNameTextEdit:
     anchors.right: parent.right
     anchors.top: parent.top

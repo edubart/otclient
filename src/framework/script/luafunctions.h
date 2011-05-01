@@ -22,38 +22,41 @@
  */
 
 
-#ifndef UILOADER_H
-#define UILOADER_H
+#ifndef LUAFUNCTIONS_H
+#define LUAFUNCTIONS_H
 
 #include <prerequisites.h>
-#include <ui/uiconstants.h>
-#include <ui/uicontainer.h>
-#include <ui/uibutton.h>
+#include <script/scriptable.h>
 
-class UILoader
-{
-public:
-    /// Loads an UIElement and it's children from a YAML file
-    static UIElementPtr loadFile(const std::string& file, const UIContainerPtr& parent = UIContainer::getRoot());
+void registerLuaFunctions();
 
-private:
-    /// Detect element type and create it
-    static UIElementPtr createElementFromId(const std::string& id);
+// global functions
+int lua_App_exit();
+int lua_App_setOnClose();
 
-    /// Populate container children from a YAML node
-    static void populateContainer(const UIContainerPtr& parent, const YAML::Node& node);
+int lua_UI_load();
+int lua_UI_getRootContainer();
 
-    /// Load element and its children from a YAML node
-    static void loadElements(const UIElementPtr& parent, const YAML::Node& node);
+// UIElement
+int lua_UIElement_setOnLoad();
+int lua_UIElement_setOnDestroy();
+int lua_UIElement_getParent();
+int lua_UIElement_destroy();
 
-    /// Load element proprieties from a YAML node
-    static void loadElement(const UIElementPtr& element, const YAML::Node& node);
+// UIContainer
+int lua_UIContainer_getChildByID();
+int lua_UIContainer_lock();
+int lua_UIContainer_unlock();
 
-    /// Load anchor from a YAML node
-    static void loadElementAnchor(const UIElementPtr& element, EAnchorType type, const YAML::Node& node);
+// UILabel
+int lua_UILabel_setText();
+int lua_UILabel_getText();
 
-    // specific elements loading
-    static void loadButton(const UIButtonPtr& button, const YAML::Node& node);
-};
+// UIButton
+int lua_UIButton_setOnClick();
 
-#endif // UILOADER_H
+// UIWindow
+int lua_UIWindow_setTitle();
+int lua_UIWindow_getTitle();
+
+#endif // LUAFUNCTIONS_H

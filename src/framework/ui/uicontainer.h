@@ -57,7 +57,7 @@ public:
     /// Disable all children except the specified element
     bool lockElement(UIElementPtr element);
     /// Renable all children
-    void unlockElement();
+    bool unlockElement(UIElementPtr element);
 
     /// Focus next element
     void focusNextElement();
@@ -72,13 +72,14 @@ public:
     virtual const char *getScriptableName() const { return "UIContainer"; }
 
     /// Get root container (the container that contains everything)
-    static UIContainerPtr& getRootContainer();
+    static UIContainerPtr& getRoot();
 
 protected:
     virtual void internalOnDestroy();
 
 private:
     std::list<UIElementPtr> m_children;
+    std::list<UIElementPtr> m_lockedElements;
     UIElementPtr m_focusedElement;
 };
 

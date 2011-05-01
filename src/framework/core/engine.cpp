@@ -61,6 +61,11 @@ void Engine::poll()
 
 void Engine::run()
 {
+    // check if root container has elements
+    const UIContainerPtr& rootContainer = UIContainer::getRoot();
+    if(rootContainer->getChildCount() == 0)
+        logFatal("FATAL ERROR: no ui loaded at all, no reason to continue running");
+
     std::string fpsText;
     Size fpsTextSize;
     Font *defaultFont = g_fonts.getDefaultFont();
@@ -95,7 +100,7 @@ void Engine::run()
             // render
             g_graphics.beginRender();
 
-            UIContainer::getRootContainer()->render();
+            rootContainer->render();
 
             // render fps
             if(m_calculateFps)
@@ -110,6 +115,12 @@ void Engine::run()
 
     m_stopping = false;
     m_running = false;
+
+    // destroy root ui
+    rootContainer->destroy();
+
+    // poll remaning ui events
+    g_engine.poll();
 }
 
 void Engine::stop()
@@ -126,10 +137,10 @@ void Engine::onClose()
 void Engine::onResize(const Size& size)
 {
     g_graphics.resize(size);
-    UIContainer::getRootContainer()->setSize(size);
+    UIContainer::getRoot()->setSize(size);
 }
 
 void Engine::onInputEvent(const InputEvent& event)
 {
-    UIContainer::getRootContainer()->onInputEvent(event);
+    UIContainer::getRoot()->onInputEvent(event);
 }

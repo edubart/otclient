@@ -16,7 +16,7 @@ buttons:
       bottom left corner: [45,157,1,1]
       bottom right corner: [130,157,1,1]
       center: [46,139,84,18]
-    
+
     down state:
       text translate: [1, 1]
       bordered image:
@@ -45,7 +45,7 @@ panels:
       bottom left corner: [43,230,5,5]
       bottom right corner: [48,231,5,5]
       center: [11,214,32,32]
-  
+
   flatPanel:
     bordered image:
       left border: [275,0,1,96]
@@ -57,7 +57,7 @@ panels:
       bottom left corner: [2,210,1,1]
       bottom right corner: [276,95,1,1]
       center: [0, 0, 96, 96]
-  
+
 labels:
   default:
     font: tibia-10px-antialised
@@ -87,7 +87,7 @@ windows:
         bottom left corner: [98,193,4,4]
         bottom right corner: [102,193,4,4]
         center: [0, 0, 96, 96]
-        
+
 text edits:
   default:
     default size: [86, 16]
@@ -103,9 +103,8 @@ text edits:
       bottom left corner: [308,107,1,1]
       bottom right corner: [319,107,1,1]
       center: [309,97,10,10]
-  
+
 line decorations:
   default:
     bordered image:
       top border: [2,210,96,2]
-    

@@ -27,6 +27,7 @@
 #include <ui/ui.h>
 #include <ui/uiloader.h>
 #include <script/luascript.h>
+#include <script/luafunctions.h>
 
 UIElementPtr UILoader::createElementFromId(const std::string& id)
 {
@@ -216,7 +217,7 @@ void UILoader::loadElement(const UIElementPtr& element, const YAML::Node& node)
         if(funcRef != LUA_REFNIL) {
             g_lua.pushClassInstance(element);
             g_lua.pushFunction(funcRef);
-            g_lua.lua_UIElement_setOnLoad();
+            lua_UIElement_setOnLoad();
         } else
             throw YAML::Exception(cnode.GetMark(), "failed to parse lua script");
     }
@@ -227,7 +228,7 @@ void UILoader::loadElement(const UIElementPtr& element, const YAML::Node& node)
         if(funcRef != LUA_REFNIL) {
             g_lua.pushClassInstance(element);
             g_lua.pushFunction(funcRef);
-            g_lua.lua_UIElement_setOnDestroy();
+            lua_UIElement_setOnDestroy();
         } else
             throw YAML::Exception(cnode.GetMark(), "failed to parse lua script");
     }
@@ -286,7 +287,7 @@ void UILoader::loadElementAnchor(const UIElementPtr& element, EAnchorType type, 
     if(relativeElementId == "parent" && element->getParent()) {
         relativeElement = element->getParent()->asUILayout();
     } else if(relativeElementId == "root") {
-        relativeElement = UIContainer::getRootContainer();
+        relativeElement = UIContainer::getRoot();
     } else {
         UIElementPtr tmp = element->backwardsGetElementById(relativeElementId);
         if(tmp)
@@ -311,7 +312,7 @@ void UILoader::loadButton(const UIButtonPtr& button, const YAML::Node& node)
         if(funcRef != LUA_REFNIL) {
             g_lua.pushClassInstance(button);
             g_lua.pushFunction(funcRef);
-            g_lua.lua_UIButton_setOnClick();
+            lua_UIButton_setOnClick();
         } else {
             throw YAML::Exception(node["onClick"].GetMark(), "failed to parse lua script");
         }

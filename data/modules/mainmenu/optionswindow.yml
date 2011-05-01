@@ -4,8 +4,8 @@ window#optionsWindow:
   anchors.horizontalCenter: parent.horizontalCenter
   anchors.verticalCenter: parent.verticalCenter
   onLoad: self:getParent():lock(self)
-  onDestroy: self:getParent():unlock()
-  
+  onDestroy: self:getParent():unlock(self)
+
   # general
   button#generalButton:
     text: General
@@ -22,7 +22,7 @@ window#optionsWindow:
     anchors.top: parent.top
     margin.left: 117
     margin.top: 29
-  
+
   # graphics
   button#graphicsButton:
     text: Graphics
@@ -39,7 +39,7 @@ window#optionsWindow:
     anchors.top: parent.top
     margin.left: 117
     margin.top: 62
-  
+
   # console
   button#consoleButton:
     text: Console
@@ -54,7 +54,7 @@ window#optionsWindow:
     anchors.top: parent.top
     margin.left: 117
     margin.top: 95
-  
+
   # hotkeys
   button#hotkeysButton:
     text: Hotkeys
@@ -69,7 +69,7 @@ window#optionsWindow:
     anchors.top: parent.top
     margin.left: 117
     margin.top: 128
-  
+
   lineDecoration#middleSeparator:
     anchors.left: parent.left
     anchors.right: parent.right
@@ -77,7 +77,7 @@ window#optionsWindow:
     margin.bottom: 97
     margin.left: 18
     margin.right: 18
-  
+
   # motd
   button#motdButton:
     text: Motd
@@ -94,7 +94,7 @@ window#optionsWindow:
     anchors.bottom: parent.bottom
     margin.left: 117
     margin.bottom: 56
-  
+
   lineDecoration#bottomSeparator:
     anchors.left: parent.left
     anchors.right: parent.right
@@ -102,7 +102,7 @@ window#optionsWindow:
     margin.bottom: 40
     margin.left: 13
     margin.right: 13
-  
+
   # ok button
   button#okButton:
     text: Ok

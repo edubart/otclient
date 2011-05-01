@@ -23,182 +23,237 @@
 
 
 #include <prerequisites.h>
+#include <script/luafunctions.h>
 #include <script/luascript.h>
 #include <core/engine.h>
 #include <core/resources.h>
 #include <ui/ui.h>
 
-void LuaScript::registerFunctions()
+void registerLuaFunctions()
 {
-    registerGlobalFunction("exitGame", &LuaScript::lua_exitGame);
-    registerGlobalFunction("loadUI", &LuaScript::lua_loadUI);
-    registerGlobalFunction("getUIRootContainer", &LuaScript::lua_getUIRootContainer);
-    registerGlobalFunction("setOnApplicationClose", &LuaScript::lua_setOnApplicationClose);
+    // App
+    g_lua.registerModule("App");
+    g_lua.registerMemberFunction("App", "exit", &lua_App_exit);
+    g_lua.registerMemberFunction("App", "setOnClose", &lua_App_setOnClose);
 
-    registerClass("UILayout");
-    registerClass("UIElement",   "UILayout");
-    registerClass("UIButton",    "UIElement");
-    registerClass("UITextEdit",  "UIElement");
-    registerClass("UICheckBox",  "UIElement");
-    registerClass("UIContainer", "UIElement");
-    registerClass("UIWindow",    "UIContainer");
+    // UI
+    g_lua.registerModule("UI");
+    g_lua.registerMemberFunction("UI", "load", &lua_UI_load);
+    g_lua.registerMemberFunction("UI", "getRootContainer", &lua_UI_getRootContainer);
 
-    registerMemberFunction("UIElement", "setOnLoad", &LuaScript::lua_UIElement_setOnLoad);
-    registerMemberFunction("UIElement", "setOnDestroy", &LuaScript::lua_UIElement_setOnDestroy);
-    registerMemberFunction("UIElement", "getParent", &LuaScript::lua_UIElement_getParent);
-    registerMemberFunction("UIElement", "destroy", &LuaScript::lua_UIElement_destroy);
-    registerMemberFunction("UIContainer", "getChildByID", &LuaScript::lua_UIContainer_getChildByID);
-    registerMemberFunction("UIContainer", "lock", &LuaScript::lua_UIContainer_lock);
-    registerMemberFunction("UIContainer", "unlock", &LuaScript::lua_UIContainer_unlock);
-    registerMemberFunction("UIButton", "setOnClick", &LuaScript::lua_UIButton_setOnClick);
+    // UILayout
+    g_lua.registerClass("UILayout");
+
+    // UIElement
+    g_lua.registerClass("UIElement",   "UILayout");
+    g_lua.registerMemberFunction("UIElement", "setOnLoad", &lua_UIElement_setOnLoad);
+    g_lua.registerMemberFunction("UIElement", "setOnDestroy", &lua_UIElement_setOnDestroy);
+    g_lua.registerMemberFunction("UIElement", "getParent", &lua_UIElement_getParent);
+    g_lua.registerMemberFunction("UIElement", "destroy", &lua_UIElement_destroy);
+
+    // UIContainer
+    g_lua.registerClass("UIContainer", "UIElement");
+    g_lua.registerMemberFunction("UIContainer", "getChildByID", &lua_UIContainer_getChildByID);
+    g_lua.registerMemberFunction("UIContainer", "lock", &lua_UIContainer_lock);
+    g_lua.registerMemberFunction("UIContainer", "unlock", &lua_UIContainer_unlock);
+
+    // UILabel
+    g_lua.registerClass("UILabel",     "UIElement");
+    g_lua.registerMemberFunction("UILabel", "setText", &lua_UILabel_setText);
+    g_lua.registerMemberFunction("UILabel", "getText", &lua_UILabel_getText);
+
+    // UIButton
+    g_lua.registerClass("UIButton",    "UIElement");
+    g_lua.registerMemberFunction("UIButton", "setOnClick", &lua_UIButton_setOnClick);
+
+    // UIWindow
+    g_lua.registerClass("UIWindow",    "UIContainer");
+    g_lua.registerMemberFunction("UIWindow", "setTitle", &lua_UIWindow_setTitle);
+    g_lua.registerMemberFunction("UIWindow", "getTitle", &lua_UIWindow_getTitle);
 }
 
-int LuaScript::lua_exitGame()
+
+////////////////////////////////////////////////////////////////////////////////
+// App module
+
+int lua_App_exit()
 {
     g_engine.stop();
     return 1;
 }
 
-int LuaScript::lua_loadUI()
+int lua_App_setOnClose()
+{
+    g_engine.setOnClose(g_lua.createSimpleFuncCallback(g_lua.popFunction()));
+    return 1;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// UI module
+
+int lua_UI_load()
 {
     UIContainerPtr parent;
-    if(getStackSize() > 1) {
-        parent = boost::dynamic_pointer_cast<UIContainer>(popClassInstance());
+    if(g_lua.getStackSize() > 1) {
+        parent = boost::dynamic_pointer_cast<UIContainer>(g_lua.popClassInstance());
     } else {
-        parent = UIContainer::getRootContainer();
+        parent = UIContainer::getRoot();
     }
 
-    std::string uiFile = popString();
+    std::string uiFile = g_lua.popString();
 
     UIElementPtr element;
     if(parent)
         element = UILoader::loadFile(uiFile.c_str(), parent);
     else
-        reportErrorWithTraceback("invalid parent container");
+        g_lua.reportErrorWithTraceback("invalid parent container");
 
-    pushClassInstance(element);
+    g_lua.pushClassInstance(element);
     return 1;
 }
 
-int LuaScript::lua_getUIRootContainer()
+int lua_UI_getRootContainer()
 {
-    UIContainerPtr rootContainer = UIContainer::getRootContainer();
-    pushClassInstance(rootContainer);
+    UIContainerPtr rootContainer = UIContainer::getRoot();
+    g_lua.pushClassInstance(rootContainer);
     return 1;
 }
 
-int LuaScript::lua_setOnApplicationClose()
+
+////////////////////////////////////////////////////////////////////////////////
+// UIElement
+
+int lua_UIElement_setOnLoad()
 {
-    int funcRef = popFunction();
-    g_engine.setOnClose([this, funcRef] {
-        pushFunction(funcRef);
-        callFunction();
-    });
+    g_lua.moveTop(-2);
+    if(UIElementPtr element = boost::dynamic_pointer_cast<UIElement>(g_lua.popClassInstance()))
+        element->setOnLoad(g_lua.createScriptableSelfFuncCallback(g_lua.popFunction()));
+    else
+        g_lua.pop();
     return 1;
 }
 
-int LuaScript::lua_UIElement_setOnLoad()
+int lua_UIElement_setOnDestroy()
 {
-    moveTop(-2);
-    UIElementPtr element = boost::dynamic_pointer_cast<UIElement>(popClassInstance());
-    if(element) {
-        int funcRef = popFunction();
-        element->setOnLoad([this, funcRef](UIElementPtr element) {
-            pushFunction(funcRef);
-            setLocal(element, "self");
-            callFunction();
-        });
-    } else {
-        pop();
-    }
+    g_lua.moveTop(-2);
+    if(UIElementPtr element = boost::dynamic_pointer_cast<UIElement>(g_lua.popClassInstance()))
+        element->setOnDestroy(g_lua.createScriptableSelfFuncCallback(g_lua.popFunction()));
+    else
+        g_lua.pop();
     return 1;
 }
 
-int LuaScript::lua_UIElement_setOnDestroy()
+int lua_UIElement_getParent()
 {
-    moveTop(-2);
-    UIElementPtr element = boost::dynamic_pointer_cast<UIElement>(popClassInstance());
-    if(element) {
-        int funcRef = popFunction();
-        element->setOnDestroy([this, funcRef](UIElementPtr element) {
-            pushFunction(funcRef);
-            setLocal(element, "self");
-            callFunction();
-        });
-    } else {
-        pop();
-    }
+    if(UIElementPtr element = boost::dynamic_pointer_cast<UIElement>(g_lua.popClassInstance()))
+        g_lua.pushClassInstance(element->getParent());
+    else
+        g_lua.pushNil();
     return 1;
 }
 
-int LuaScript::lua_UIElement_destroy()
+int lua_UIElement_destroy()
 {
-    UIElementPtr element = boost::dynamic_pointer_cast<UIElement>(popClassInstance());
-    if(element)
+    if(UIElementPtr element = boost::dynamic_pointer_cast<UIElement>(g_lua.popClassInstance()))
         element->destroy();
-    else
-        pushNil();
     return 1;
 }
 
-int LuaScript::lua_UIElement_getParent()
+
+////////////////////////////////////////////////////////////////////////////////
+// UIContainer
+
+int lua_UIContainer_getChildByID()
 {
-    UIElementPtr element = boost::dynamic_pointer_cast<UIElement>(popClassInstance());
-    if(element)
-        pushClassInstance(element->getParent());
+    std::string id = g_lua.popString();
+    if(UIContainerPtr container = boost::dynamic_pointer_cast<UIContainer>(g_lua.popClassInstance()))
+        g_lua.pushClassInstance(container->getChildById(id));
     else
-        pushNil();
+        g_lua.pushNil();
     return 1;
 }
 
-int LuaScript::lua_UIButton_setOnClick()
+int lua_UIContainer_lock()
 {
-    moveTop(-2);
-    UIButtonPtr button = boost::dynamic_pointer_cast<UIButton>(popClassInstance());
-    if(button) {
-        int funcRef = popFunction();
-        button->setOnClick([this, funcRef](UIElementPtr button) {
-            pushFunction(funcRef);
-            setLocal(button, "self");
-            callFunction();
-        });
+    if(UIElementPtr element = boost::dynamic_pointer_cast<UIElement>(g_lua.popClassInstance())) {
+        if(UIContainerPtr container = boost::dynamic_pointer_cast<UIContainer>(g_lua.popClassInstance()))
+            g_lua.pushBoolean(container->lockElement(element));
+        else
+            g_lua.pushBoolean(false);
     } else {
-        pop();
+        g_lua.reportFuncErrorWithTraceback("invalid element");
+        g_lua.pushBoolean(false);
     }
     return 1;
 }
 
-int LuaScript::lua_UIContainer_getChildByID()
+int lua_UIContainer_unlock()
 {
-    std::string id = popString();
-    UIContainerPtr container = boost::dynamic_pointer_cast<UIContainer>(popClassInstance());
-    if(container)
-        pushClassInstance(container->getChildById(id));
+    if(UIElementPtr element = boost::dynamic_pointer_cast<UIElement>(g_lua.popClassInstance())) {
+        if(UIContainerPtr container = boost::dynamic_pointer_cast<UIContainer>(g_lua.popClassInstance()))
+            g_lua.pushBoolean(container->unlockElement(element));
+        else
+            g_lua.pushBoolean(false);
+    } else {
+        g_lua.reportFuncErrorWithTraceback("invalid element");
+        g_lua.pushBoolean(false);
+    }
+    return 1;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// UILabel
+
+int lua_UILabel_setText()
+{
+    std::string text = g_lua.popString();
+    if(UILabelPtr label = boost::dynamic_pointer_cast<UILabel>(g_lua.popClassInstance()))
+        label->setText(text);
+    return 1;
+}
+
+int lua_UILabel_getText()
+{
+    if(UILabelPtr label = boost::dynamic_pointer_cast<UILabel>(g_lua.popClassInstance()))
+        g_lua.pushString(label->getText());
     else
-        pushNil();
+        g_lua.pushNil();
     return 1;
 }
 
-int LuaScript::lua_UIContainer_lock()
-{
-    UIElementPtr element = boost::dynamic_pointer_cast<UIElement>(popClassInstance());
-    UIContainerPtr container = boost::dynamic_pointer_cast<UIContainer>(popClassInstance());
-    if(!element) {
-        reportFuncErrorWithTraceback("invalid lock element");
-        return 1;
-    }
 
-    if(container) {
-        container->lockElement(element);
-    }
+////////////////////////////////////////////////////////////////////////////////
+// UIButton
+
+int lua_UIButton_setOnClick()
+{
+    g_lua.moveTop(-2);
+    if(UIButtonPtr button = boost::dynamic_pointer_cast<UIButton>(g_lua.popClassInstance()))
+        button->setOnClick(g_lua.createScriptableSelfFuncCallback(g_lua.popFunction()));
+    else
+        g_lua.pop();
     return 1;
 }
 
-int LuaScript::lua_UIContainer_unlock()
+
+////////////////////////////////////////////////////////////////////////////////
+// UIWindow
+
+int lua_UIWindow_setTitle()
 {
-    UIContainerPtr container = boost::dynamic_pointer_cast<UIContainer>(popClassInstance());
-    if(container) {
-        container->unlockElement();
-    }
+    std::string title = g_lua.popString();
+    if(UIWindowPtr window = boost::dynamic_pointer_cast<UIWindow>(g_lua.popClassInstance()))
+        window->setTitle(title);
+    return 1;
+}
+
+int lua_UIWindow_getTitle()
+{
+    if(UIWindowPtr window = boost::dynamic_pointer_cast<UIWindow>(g_lua.popClassInstance()))
+        g_lua.pushString(window->getTitle());
+    else
+        g_lua.pushNil();
     return 1;
 }

@@ -85,7 +85,7 @@ int main(int argc, const char *argv[])
     Platform::init("OTClient");
 
     // init random numbers
-    srand(time(NULL));
+    std::srand(std::time(NULL));
 
     // init resources
     g_resources.init(argv[0]);
@@ -120,20 +120,11 @@ int main(int argc, const char *argv[])
     // load script modules
     g_lua.loadAllModules();
 
-    if(!UIContainer::getRootContainer()->getChildCount())
-        logFatal("FATAL ERROR: no ui loaded at all, no reason to continue running");
-
     Platform::showWindow();
     //Platform::hideMouseCursor();
 
     // main loop, run everything
     g_engine.run();
-
-    // destroy root ui
-    UIContainer::getRootContainer()->destroy();
-
-    // poll remaning events
-    g_engine.poll();
 
     // terminate stuff
     g_engine.terminate();

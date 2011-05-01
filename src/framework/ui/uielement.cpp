@@ -40,24 +40,34 @@ UIElement::UIElement(UI::EElementType type) :
 
 }
 
+UIElement::~UIElement()
+{
+    //logTraceDebug(getId());
+}
+
 void UIElement::destroy()
 {
-    if(m_onDestroyCallback)
-        g_dispatcher.addTask(boost::bind(m_onDestroyCallback, asUIElement()));
-    if(getParent()) {
-        // schedule removal from parent
-        g_dispatcher.addTask(boost::bind(&UIContainer::removeChild, getParent(), asUIElement()));
-    }
-    // schedule internal destroy
+    //logTraceDebug(getId());
     g_dispatcher.addTask(boost::bind(&UIElement::internalOnDestroy, asUIElement()));
 }
 
 void UIElement::internalOnDestroy()
 {
-    setVisible(false);
-    setEnabled(false);
+    //logTraceDebug(getId());
+
+    UIElementPtr me = asUIElement();
+    if(m_onDestroyCallback)
+        m_onDestroyCallback(me);
+
+    // remove from parent
+    if(getParent()) {
+        getParent()->removeChild(me);
+    }
+
     // check for leaks, the number of references must be always 2 here
-    assert(asUIElement().use_count() == 2);
+    if(me.use_count() != 2 && me != UIContainer::getRoot()) {
+        flogWarning("destroyed element with id '%s', but it still have %d references left", getId() % (me.use_count()-2));
+    }
 }
 
 void UIElement::setSkin(const UIElementSkinPtr& skin)

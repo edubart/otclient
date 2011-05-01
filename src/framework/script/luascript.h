@@ -64,43 +64,27 @@ public:
     void releaseFunction(int functionRef);
     void callFunction(int numArgs = 0);
 
+    SimpleCallback createSimpleFuncCallback(int funcRef);
+    boost::function<void(ScriptablePtr)> createScriptableSelfFuncCallback(int funcRef);
+
     void setLocal(const ScriptablePtr& scriptable, const char *varName, int envIndex = -1);
 
     void pushClassInstance(const ScriptablePtr& object);
     ScriptablePtr popClassInstance();
 
-    typedef int (LuaScript::*LuaCFunction)();
+    typedef int (*LuaCFunction)();
 
     void setupPackageLoader();
     void registerClass(const std::string& klass, const std::string& baseClass = "");
     void registerMemberFunction(const std::string& klass, const std::string& functionName, LuaCFunction function);
     void registerGlobalFunction(const std::string& functionName, LuaCFunction function);
+    void registerModule(const std::string& module);
 
     static int luaFunctionCallback(lua_State* L);
     static int luaPackageLoader(lua_State* L);
     static int luaCollectClassInstance(lua_State* L);
     static int luaCompareClassInstances(lua_State* L);
     static int luaErrorHandler(lua_State *L);
-
-    void registerFunctions();
-
-    int lua_UIElement_setOnLoad();
-    int lua_UIElement_setOnDestroy();
-    int lua_UIElement_getParent();
-    int lua_UIElement_destroy();
-
-    int lua_UIButton_setOnClick();
-
-    // container functions
-    int lua_UIContainer_getChildByID();
-    int lua_UIContainer_lock();
-    int lua_UIContainer_unlock();
-
-    // global functions
-    int lua_exitGame();
-    int lua_loadUI();
-    int lua_getUIRootContainer();
-    int lua_setOnApplicationClose();
 
 private:
     std::vector<LuaCFunction> m_functions;

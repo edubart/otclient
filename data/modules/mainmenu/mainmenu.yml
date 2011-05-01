@@ -7,7 +7,7 @@ panel#background:
   anchors.right: parent.right
   anchors.top: parent.top
   anchors.bottom: parent.bottom
-  
+
   panel#mainMenu:
     skin: roundedGridPanel
     size: [117, 171]
@@ -15,13 +15,13 @@ panel#background:
     anchors.bottom: parent.bottom
     margin.left: 60
     margin.bottom: 70
-    
+
     button#enterGameButton:
       text: Enter Game
       anchors.top: parent.top
       anchors.horizontalCenter: parent.horizontalCenter
       margin.top: 16
-      onClick: loadUI("modules/mainmenu/entergamewindow.yml")
+      onClick: UI.load("modules/mainmenu/entergamewindow.yml")
 
     button#accessAccountButton:
       text: Access Account
@@ -35,18 +35,18 @@ panel#background:
       anchors.top: parent.top
       anchors.horizontalCenter: parent.horizontalCenter
       margin.top: 76
-      onClick: loadUI("modules/mainmenu/optionswindow.yml")
+      onClick: UI.load("modules/mainmenu/optionswindow.yml")
 
     button#infoButton:
       text: Info
       anchors.top: parent.top
       anchors.horizontalCenter: parent.horizontalCenter
       margin.top: 106
-      onClick: loadUI("modules/mainmenu/infowindow.yml")
+      onClick: UI.load("modules/mainmenu/infowindow.yml")
 
     button#exitGameButton:
       text: Exit
       anchors.top: parent.top
       anchors.horizontalCenter: parent.horizontalCenter
       margin.top: 136
-      onClick: exitGame()
+      onClick: App.exit()

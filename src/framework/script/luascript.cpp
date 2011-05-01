@@ -24,6 +24,7 @@
 
 #include <prerequisites.h>
 #include <script/luascript.h>
+#include <script/luafunctions.h>
 #include <core/resources.h>
 
 LuaScript g_lua;
@@ -40,8 +41,7 @@ LuaScript::LuaScript()
     // setup custom package loader
     setupPackageLoader();
 
-    // register classes and functions
-    registerFunctions();
+    registerLuaFunctions();
 }
 
 LuaScript::~LuaScript()
@@ -250,6 +250,23 @@ void LuaScript::callFunction(int numArgs)
         reportError("stack size changed!");
 }
 
+SimpleCallback LuaScript::createSimpleFuncCallback(int funcRef)
+{
+    return [this, funcRef]() {
+        pushFunction(funcRef);
+        callFunction();
+    };
+}
+
+boost::function<void(ScriptablePtr)> LuaScript::createScriptableSelfFuncCallback(int funcRef)
+{
+    return [this, funcRef](ScriptablePtr scriptable) {
+        pushFunction(funcRef);
+        setLocal(scriptable, "self");
+        callFunction();
+    };
+}
+
 void LuaScript::setLocal(const ScriptablePtr& scriptable, const char *varName, int envIndex)
 {
     lua_getfenv(L, envIndex);
@@ -352,6 +369,13 @@ void LuaScript::registerGlobalFunction(const std::string& functionName, LuaCFunc
     lua_setfield(L, LUA_GLOBALSINDEX, functionName.c_str());
 }
 
+void LuaScript::registerModule(const std::string& module)
+{
+    // module = {}
+    lua_newtable(L); // module table
+    lua_setfield(L, LUA_GLOBALSINDEX, module.c_str()); // register at globals index
+}
+
 int LuaScript::luaPackageLoader(lua_State* L)
 {
     std::string fileName = lua_tostring(L, -1);
@@ -395,7 +419,7 @@ int LuaScript::luaFunctionCallback(lua_State* L)
     // look for function id
     int id = lua_tonumber(L, lua_upvalueindex(1));
     // call the function
-    return (g_lua.*(g_lua.m_functions[id]))();
+    return (*(g_lua.m_functions[id]))();
 }
 
 int LuaScript::luaErrorHandler(lua_State *L)
