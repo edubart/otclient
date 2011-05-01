@@ -121,7 +121,6 @@ int main(int argc, const char *argv[])
     g_lua.loadAllModules();
 
     Platform::showWindow();
-    //Platform::hideMouseCursor();
 
     // main loop, run everything
     g_engine.run();
@@ -134,7 +133,6 @@ int main(int argc, const char *argv[])
     // save configurations before exiting
     saveConfigs();
 
-    //Platform::showMouseCursor();
     Platform::terminate();
 
     // unload resources

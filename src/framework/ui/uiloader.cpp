@@ -119,8 +119,10 @@ void UILoader::populateContainer(const UIContainerPtr& parent, const YAML::Node&
         // check if it's and element id
         if(id.find("#") != std::string::npos) {
             UIElementPtr element = createElementFromId(id);
-            if(!element)
-                throw YAML::Exception(it.first().GetMark(), "invalid element type");
+            if(!element) {
+                logError(YAML::Exception(it.first().GetMark(), "invalid element type").what());
+                continue;
+            }
             parent->addChild(element);
 
             // also populate this element if it's a parent
@@ -219,7 +221,7 @@ void UILoader::loadElement(const UIElementPtr& element, const YAML::Node& node)
             g_lua.pushFunction(funcRef);
             lua_UIElement_setOnLoad();
         } else
-            throw YAML::Exception(cnode.GetMark(), "failed to parse lua script");
+            logError(YAML::Exception(cnode.GetMark(), "failed to parse inline lua script").what());
     }
 
     if(node.FindValue("onDestroy")) {
@@ -230,7 +232,7 @@ void UILoader::loadElement(const UIElementPtr& element, const YAML::Node& node)
             g_lua.pushFunction(funcRef);
             lua_UIElement_setOnDestroy();
         } else
-            throw YAML::Exception(cnode.GetMark(), "failed to parse lua script");
+            logError(YAML::Exception(cnode.GetMark(), "failed to parse inline lua script").what());
     }
 
     // load specific element type
@@ -261,8 +263,10 @@ void UILoader::loadElementAnchor(const UIElementPtr& element, EAnchorType type, 
 
     std::vector<std::string> split;
     boost::split(split, anchorDescription, boost::is_any_of(std::string(".")));
-    if(split.size() != 2)
-        throw YAML::Exception(node.GetMark(), "invalid anchors description");
+    if(split.size() != 2) {
+        logError(YAML::Exception(node.GetMark(), "invalid anchor").what());
+        return;
+    }
 
     std::string relativeElementId = split[0];
     std::string relativeAnchorTypeId = split[1];
@@ -280,8 +284,10 @@ void UILoader::loadElementAnchor(const UIElementPtr& element, EAnchorType type, 
         relativeAnchorType = ANCHOR_HORIZONTAL_CENTER;
     else if(relativeAnchorTypeId == "verticalCenter")
         relativeAnchorType = ANCHOR_VERTICAL_CENTER;
-    else
-        throw YAML::Exception(node.GetMark(), "invalid anchors description");
+    else {
+        logError(YAML::Exception(node.GetMark(), "invalid anchor type").what());
+        return;
+    }
 
     UILayoutPtr relativeElement;
     if(relativeElementId == "parent" && element->getParent()) {
@@ -296,9 +302,9 @@ void UILoader::loadElementAnchor(const UIElementPtr& element, EAnchorType type, 
 
     if(relativeElement) {
         if(!element->addAnchor(type, AnchorLine(relativeElement, relativeAnchorType)))
-            throw YAML::Exception(node.GetMark(), "error while processing anchors");
+            logError(YAML::Exception(node.GetMark(), "anchoring failed").what());
     } else {
-        throw YAML::Exception(node.GetMark(), "anchoring failed, does the relative element really exists?");
+        logError(YAML::Exception(node.GetMark(), "anchoring failed, does the relative element really exists?").what());
     }
 }
 
@@ -314,7 +320,7 @@ void UILoader::loadButton(const UIButtonPtr& button, const YAML::Node& node)
             g_lua.pushFunction(funcRef);
             lua_UIButton_setOnClick();
         } else {
-            throw YAML::Exception(node["onClick"].GetMark(), "failed to parse lua script");
+            logError(YAML::Exception(node["onClick"].GetMark(), "failed to parse inline lua script").what());
         }
     }
 }

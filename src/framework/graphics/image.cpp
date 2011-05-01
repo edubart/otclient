@@ -47,7 +47,8 @@ Image::Image(const std::string& texture, Rect textureCoords) :
 
 void Image::draw(const Rect& screenCoords)
 {
-    g_graphics.drawTexturedRect(screenCoords, m_texture, m_textureCoords);
+    if(m_texture)
+        g_graphics.drawTexturedRect(screenCoords, m_texture, m_textureCoords);
 }
 
 
