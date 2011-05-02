@@ -40,29 +40,33 @@ public:
     virtual void onInputEvent(const InputEvent& event);
 
     /// Add an element, this must never be called from events loops
-    void addChild(UIElementPtr child);
+    void addChild(const UIElementPtr& child);
     /// Remove an element, this must never be called from events loops
-    void removeChild(UIElementPtr child);
+    void removeChild(const UIElementPtr& child);
+    /// Check if has child
+    bool hasChild(const UIElementPtr& child);
     /// Find an element in this container by id
     UIElementPtr getChildById(const std::string& id);
     /// Find an element by position
     UIElementPtr getChildByPos(const Point& pos);
     /// Find an element in this container and in its children by id
     UIElementPtr recursiveGetChildById(const std::string& id);
+    /// Get children
+    const std::list<UIElementPtr>& getChildren() const { return m_children; }
     /// Pushs a child to the top
     void pushChildToTop(const UIElementPtr& child);
 
     int getChildCount() const { return m_children.size(); }
 
     /// Disable all children except the specified element
-    bool lockElement(UIElementPtr element);
+    bool lockElement(const UIElementPtr& element);
     /// Renable all children
-    bool unlockElement(UIElementPtr element);
+    bool unlockElement(const UIElementPtr& element);
 
     /// Focus next element
     void focusNextElement();
     /// Focus element
-    void setFocusedElement(UIElementPtr focusedElement);
+    void setFocusedElement(const UIElementPtr& focusedElement);
     /// Get focused element
     UIElementPtr getFocusedElement() const { return m_focusedElement; }
 

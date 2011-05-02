@@ -16,6 +16,6 @@ end
 -- here is where everything starts
 if not initialStateLoaded then
     onEnterMenuState()
-    App.setOnClose(onApplicationClose)
+    App.onClose = onApplicationClose
     initialStateLoaded = true
 end

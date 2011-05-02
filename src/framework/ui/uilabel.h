@@ -38,7 +38,7 @@ public:
         m_color(Color::white) { }
 
     void setText(const std::string& text);
-    const std::string& getText() const { return m_text; }
+     std::string getText() const { return m_text; }
 
     void setAlign(int align) { m_align = align; }
     int getAlign() const { return m_align; }

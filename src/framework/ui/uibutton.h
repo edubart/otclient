@@ -42,18 +42,15 @@ public:
     void onInputEvent(const InputEvent& event);
 
     void setText(const std::string& text) { m_text = text; }
-    const std::string& getText() const { return m_text; }
+    std::string getText() const { return m_text; }
 
     UI::EButtonState getState() { return m_state; }
-
-    void setOnClick(const UIElementCallback& callback) { m_onClickCallback = callback; }
 
     virtual const char *getScriptableName() const { return "UIButton"; }
 
 private:
     std::string m_text;
     UI::EButtonState m_state;
-    UIElementCallback m_onClickCallback;
 };
 
 #endif // UIBUTTON_H

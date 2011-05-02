@@ -41,7 +41,7 @@ public:
     void onFocusChange();
 
     void setText(const std::string& text);
-    const std::string& getText() const { return m_textArea.getText(); }
+    std::string getText() const { return m_textArea.getText(); }
     TextArea& getTextArea() { return m_textArea; }
 
     bool isFocusable() const { return true; }

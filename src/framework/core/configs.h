@@ -44,7 +44,7 @@ public:
     void setValue(const std::string &key, bool value);
     void setValue(const std::string &key, int value);
 
-    const std::string &getString(const std::string &key) const;
+    const std::string& getString(const std::string &key) const;
     float getFloat(const std::string &key) const;
     bool getBoolean(const std::string &key) const;
     int getInteger(const std::string &key) const;

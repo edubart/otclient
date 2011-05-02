@@ -30,6 +30,7 @@
 #include <graphics/fonts.h>
 #include <ui/uicontainer.h>
 #include <net/connection.h>
+#include <script/luascript.h>
 
 Engine g_engine;
 
@@ -116,10 +117,12 @@ void Engine::run()
     m_stopping = false;
     m_running = false;
 
+    g_lua.collectGarbage();
+
     // destroy root ui
     rootContainer->destroy();
 
-    // poll remaning ui events
+    // poll remaning events
     g_engine.poll();
 }
 
@@ -130,8 +133,7 @@ void Engine::stop()
 
 void Engine::onClose()
 {
-    if(m_onCloseCallback)
-        g_dispatcher.addTask(m_onCloseCallback);
+    g_dispatcher.addTask(boost::bind(&LuaScript::callModuleField, &g_lua, "App", "onClose"));
 }
 
 void Engine::onResize(const Size& size)

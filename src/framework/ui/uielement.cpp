@@ -34,8 +34,7 @@ UIElement::UIElement(UI::EElementType type) :
     UILayout(),
     m_type(type),
     m_visible(true),
-    m_enabled(true),
-    m_focused(false)
+    m_enabled(true)
 {
 
 }
@@ -56,8 +55,7 @@ void UIElement::internalOnDestroy()
     //logTraceDebug(getId());
 
     UIElementPtr me = asUIElement();
-    if(m_onDestroyCallback)
-        m_onDestroyCallback(me);
+    callLuaTableField("onDestroy");
 
     // remove from parent
     if(getParent()) {
@@ -65,7 +63,7 @@ void UIElement::internalOnDestroy()
     }
 
     // free script stuff
-    clearLuaRefs();
+    releaseLuaTableRef();
 
     g_dispatcher.addTask(boost::bind(&UIElement::internalDestroyCheck, asUIElement()));
 }
@@ -90,8 +88,7 @@ void UIElement::setSkin(const UIElementSkinPtr& skin)
 
 void UIElement::onLoad()
 {
-    if(m_onLoadCallback)
-        g_dispatcher.addTask(boost::bind(m_onLoadCallback, asUIElement()));
+    g_dispatcher.addTask(boost::bind(&Scriptable::callLuaTableField, shared_from_this(), "onLoad"));
 }
 
 void UIElement::render()
@@ -138,4 +135,37 @@ void UIElement::moveTo(Point pos)
             newRect.moveRight(parentRect.right());
     }
     setRect(newRect);
+}
+
+void UIElement::setParent(UIContainerPtr parent)
+{
+    UIElementPtr me = asUIElement();
+    UIContainerPtr oldParent = m_parent.lock();
+    m_parent.reset();
+    if(oldParent && oldParent->hasChild(me)) {
+        oldParent->removeChild(me);
+    }
+    if(parent) {
+        m_parent = UIContainerWeakPtr(parent);
+        if(!parent->hasChild(me))
+            parent->addChild(me);
+    }
+}
+
+bool UIElement::isFocused() const
+{
+    if(UIContainerPtr parent = m_parent.lock())
+        return (parent->getFocusedElement() == shared_from_this());
+    return false;
+}
+
+void UIElement::setFocused(bool focused)
+{
+    if(UIContainerPtr parent = m_parent.lock()) {
+        if(focused) {
+            parent->setFocusedElement(asUIElement());
+        } else if(parent->getFocusedElement() == asUIElement()) {
+            parent->setFocusedElement(UIElementPtr());
+        }
+    }
 }

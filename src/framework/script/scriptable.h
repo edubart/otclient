@@ -30,14 +30,16 @@
 class Scriptable : public boost::enable_shared_from_this<Scriptable>
 {
 public:
+    Scriptable() : m_luaTableRef(-1) { }
+
     virtual const char *getScriptableName() const { return NULL; }
 
-    void associateLuaRef(const std::string& refName, int refId);
-    int getLuaRef(const std::string& refName);
-    void clearLuaRefs();
+    int getLuaTableRef();
+    void releaseLuaTableRef();
+    void callLuaTableField(const std::string& field);
 
 private:
-    std::map<std::string, int> m_luaRefs;
+    int m_luaTableRef;
 };
 
 typedef boost::shared_ptr<Scriptable> ScriptablePtr;

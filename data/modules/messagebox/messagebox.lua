@@ -1,9 +1,11 @@
+function autoDestroyParent()
+    self.parent:destroy()
+end
+
 function messageBox(title, text)
-    local msgbox = UI.load("modules/messagebox/messagebox.yml")
-    local label = msgbox:getChildById("messageBoxLabel")
-    local okButton = msgbox:getChildById("messageBoxOkButton")
-    msgbox.locked = true
-    msgbox.title = title
-    label.text = text
-    okButton.onClick = function() msgbox:destroy() end
+    local msgBox = UI.load("modules/messagebox/messagebox.yml")
+    msgBox.locked = true
+    msgBox.title = title
+    msgBox:child("textLabel").text = text
+    msgBox:child("okButton").onClick = autoDestroyParent
 end

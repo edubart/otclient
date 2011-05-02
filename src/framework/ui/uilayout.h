@@ -66,7 +66,7 @@ private:
 class UILayout : public Scriptable
 {
 public:
-    UILayout() :
+    UILayout() : Scriptable(),
         m_marginLeft(0),
         m_marginRight(0),
         m_marginTop(0),
@@ -79,7 +79,7 @@ public:
     /// Set the layout rect, always absolute position
     void setRect(const Rect& rect);
     /// Get layout size, it always return the absolute position
-    const Rect& getRect() const{ return m_rect; }
+    Rect getRect() const { return m_rect; }
 
     // anchors add methods
     bool addAnchor(EAnchorType type, const AnchorLine& anchorLine);

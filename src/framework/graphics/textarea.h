@@ -53,7 +53,7 @@ public:
     void appendCharacter(char c);
     void removeCharacter(bool right);
 
-    const std::string& getText() const { return m_text; }
+    std::string getText() const { return m_text; }
 
     Font *getFont() const { return m_font; }
     int getTextPos(Point pos);

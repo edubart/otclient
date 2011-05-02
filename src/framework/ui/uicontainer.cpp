@@ -54,13 +54,14 @@ UIContainerPtr& UIContainer::getRoot()
     return rootContainer;
 }
 
-void UIContainer::addChild(UIElementPtr child)
+void UIContainer::addChild(const UIElementPtr& child)
 {
     m_children.push_back(child);
-    child->setParent(asUIContainer());
+    if(child->getParent() != asUIContainer())
+        child->setParent(asUIContainer());
 }
 
-void UIContainer::removeChild(UIElementPtr child)
+void UIContainer::removeChild(const UIElementPtr& child)
 {
     // defocus if needed
     if(m_focusedElement == child)
@@ -72,8 +73,16 @@ void UIContainer::removeChild(UIElementPtr child)
     // remove from children list
     m_children.remove(child);
 
-    // child must have this container as parent
-    child->setParent(UIContainerPtr());
+    if(child->getParent() == asUIContainer())
+        child->setParent(UIContainerPtr());
+}
+
+bool UIContainer::hasChild(const UIElementPtr& child)
+{
+    auto it = std::find(m_children.begin(), m_children.end(), child);
+    if(it != m_children.end())
+        return true;
+    return false;
 }
 
 UIElementPtr UIContainer::getChildById(const std::string& id)
@@ -201,19 +210,15 @@ void UIContainer::focusNextElement()
         setFocusedElement(element);
 }
 
-void UIContainer::setFocusedElement(UIElementPtr focusedElement)
+void UIContainer::setFocusedElement(const UIElementPtr& focusedElement)
 {
     if(focusedElement != m_focusedElement) {
-        if(m_focusedElement) {
-            m_focusedElement->setFocused(false);
+        if(m_focusedElement)
             m_focusedElement->onFocusChange();
-        }
 
         m_focusedElement = focusedElement;
-        if(m_focusedElement) {
-            m_focusedElement->setFocused(true);
+        if(m_focusedElement)
             m_focusedElement->onFocusChange();
-        }
     }
 
     // when containers are focused they go to the top
@@ -222,7 +227,7 @@ void UIContainer::setFocusedElement(UIElementPtr focusedElement)
     }
 }
 
-bool UIContainer::lockElement(UIElementPtr element)
+bool UIContainer::lockElement(const UIElementPtr& element)
 {
     if(std::find(m_children.begin(), m_children.end(), element) != m_children.end()) {
         m_lockedElements.remove(element);
@@ -238,7 +243,7 @@ bool UIContainer::lockElement(UIElementPtr element)
     return false;
 }
 
-bool UIContainer::unlockElement(UIElementPtr element)
+bool UIContainer::unlockElement(const UIElementPtr& element)
 {
     auto it = std::find(m_lockedElements.begin(), m_lockedElements.end(), element);
     if(it != m_lockedElements.end()) {

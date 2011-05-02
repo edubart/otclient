@@ -27,25 +27,34 @@
 #include <script/luascript.h>
 #include <core/dispatcher.h>
 
-void Scriptable::associateLuaRef(const std::string& refName, int refId)
+int Scriptable::getLuaTableRef()
 {
-    // check if there is already a ref with this name
-    if(m_luaRefs.find(refName) != m_luaRefs.end())
-        g_lua.unref(m_luaRefs[refName]);
-    m_luaRefs[refName] = refId;
-}
-
-int Scriptable::getLuaRef(const std::string& refName)
-{
-    if(m_luaRefs.find(refName) != m_luaRefs.end())
-        return m_luaRefs[refName];
-    return -1;
-}
-
-void Scriptable::clearLuaRefs()
-{
-    foreach(auto pair, m_luaRefs) {
-        g_lua.unref(pair.second);
+    if(m_luaTableRef == -1) {
+        g_lua.newTable();
+        m_luaTableRef = g_lua.popRef();
     }
-    m_luaRefs.clear();
+    return m_luaTableRef;
+}
+
+void Scriptable::releaseLuaTableRef()
+{
+    if(m_luaTableRef != -1) {
+        g_lua.releaseRef(m_luaTableRef);
+        m_luaTableRef = -1;
+    }
+}
+
+void Scriptable::callLuaTableField(const std::string& field)
+{
+    g_lua.pushClassInstance(shared_from_this());
+    g_lua.setGlobal("self");
+
+    g_lua.getScriptableField(shared_from_this(), field);
+    if(g_lua.isFunction())
+        g_lua.callFunction();
+    else
+        g_lua.pop();
+
+    g_lua.pushNil();
+    g_lua.setGlobal("self");
 }

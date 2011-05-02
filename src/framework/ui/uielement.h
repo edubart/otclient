@@ -67,9 +67,9 @@ public:
     void moveTo(Point pos);
 
     void setSkin(const UIElementSkinPtr& skin);
-    const UIElementSkinPtr& getSkin() const { return m_skin; }
+    UIElementSkinPtr getSkin() const { return m_skin; }
 
-    void setParent(UIContainerPtr parent) { m_parent = parent; }
+    void setParent(UIContainerPtr parent);
     UIContainerPtr getParent() const { return m_parent.lock(); }
 
     void setId(const std::string& id) { m_id = id; }
@@ -78,8 +78,8 @@ public:
     void setEnabled(bool enabled) { m_enabled = enabled; }
     bool isEnabled() const { return m_enabled; }
 
-    void setFocused(bool focused) { m_focused = focused; }
-    bool isFocused() const { return m_focused; }
+    void setFocused(bool focused);
+    bool isFocused() const;
 
     void setVisible(bool visible) { m_visible = visible; }
     bool isVisible() const { return m_visible; }
@@ -91,9 +91,6 @@ public:
     virtual UIContainerPtr asUIContainer() { return UIContainerPtr(); }
     virtual const char *getScriptableName() const { return "UIElement"; }
 
-    void setOnDestroy(const UIElementCallback& onDestroyCallback) { m_onDestroyCallback = onDestroyCallback; }
-    void setOnLoad(const UIElementCallback& onLoadCallback) { m_onLoadCallback = onLoadCallback; }
-
 private:
     UI::EElementType m_type;
     UIContainerWeakPtr m_parent;
@@ -101,9 +98,6 @@ private:
     std::string m_id;
     bool m_visible;
     bool m_enabled;
-    bool m_focused;
-    UIElementCallback m_onLoadCallback;
-    UIElementCallback m_onDestroyCallback;
 };
 
 #endif // UIELEMENT_H

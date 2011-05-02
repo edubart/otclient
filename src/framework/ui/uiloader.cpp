@@ -215,23 +215,17 @@ void UILoader::loadElement(const UIElementPtr& element, const YAML::Node& node)
     // load events
     if(node.FindValue("onLoad")) {
         const YAML::Node& cnode = node["onLoad"];
-        int funcRef = g_lua.loadBufferAsFunction(cnode.Read<std::string>(), element->getId() + ":onLoad");
-        if(funcRef != LUA_REFNIL) {
-            g_lua.pushClassInstance(element);
-            g_lua.pushFunction(funcRef);
-            lua_UIElement_setOnLoad();
-        } else
+        if(g_lua.loadBufferAsFunction(cnode.Read<std::string>(), element->getId() + ":onLoad"))
+            g_lua.setScriptableField(element, "onLoad");
+        else
             logError(YAML::Exception(cnode.GetMark(), "failed to parse inline lua script").what());
     }
 
     if(node.FindValue("onDestroy")) {
         const YAML::Node& cnode = node["onDestroy"];
-        int funcRef = g_lua.loadBufferAsFunction(cnode.Read<std::string>(), element->getId() + ":onDestroy");
-        if(funcRef != LUA_REFNIL) {
-            g_lua.pushClassInstance(element);
-            g_lua.pushFunction(funcRef);
-            lua_UIElement_setOnDestroy();
-        } else
+        if(g_lua.loadBufferAsFunction(cnode.Read<std::string>(), element->getId() + ":onDestroy"))
+            g_lua.setScriptableField(element, "onDestroy");
+        else
             logError(YAML::Exception(cnode.GetMark(), "failed to parse inline lua script").what());
     }
 
@@ -314,13 +308,9 @@ void UILoader::loadButton(const UIButtonPtr& button, const YAML::Node& node)
 
     // set on click event
     if(node.FindValue("onClick")) {
-        int funcRef = g_lua.loadBufferAsFunction(node["onClick"].Read<std::string>(), button->getId() + ":onClick");
-        if(funcRef != LUA_REFNIL) {
-            g_lua.pushClassInstance(button);
-            g_lua.pushFunction(funcRef);
-            lua_UIButton_setOnClick();
-        } else {
+        if(g_lua.loadBufferAsFunction(node["onClick"].Read<std::string>(), button->getId() + ":onClick"))
+            g_lua.setScriptableField(button, "onClick");
+        else
             logError(YAML::Exception(node["onClick"].GetMark(), "failed to parse inline lua script").what());
-        }
     }
 }
