@@ -127,7 +127,7 @@ int lua_UIElement_setOnLoad()
     g_lua.insert(-2);
     if(UIElementPtr element = boost::dynamic_pointer_cast<UIElement>(g_lua.popClassInstance())) {
         int funcRef = g_lua.popFunction();
-        element->associateLuaRef(__FUNCTION__, funcRef);
+        element->associateLuaRef("onLoad", funcRef);
         element->setOnLoad(g_lua.createScriptableSelfFuncCallback(funcRef));
     } else
         g_lua.pop();
@@ -139,7 +139,7 @@ int lua_UIElement_setOnDestroy()
     g_lua.insert(-2);
     if(UIElementPtr element = boost::dynamic_pointer_cast<UIElement>(g_lua.popClassInstance())) {
         int funcRef = g_lua.popFunction();
-        element->associateLuaRef(__FUNCTION__, funcRef);
+        element->associateLuaRef("onDestroy", funcRef);
         element->setOnDestroy(g_lua.createScriptableSelfFuncCallback(funcRef));
     }
     else
@@ -223,7 +223,7 @@ int lua_UIButton_setOnClick()
     g_lua.insert(-2);
     if(UIButtonPtr button = boost::dynamic_pointer_cast<UIButton>(g_lua.popClassInstance())) {
         int funcRef = g_lua.popFunction();
-        button->associateLuaRef(__FUNCTION__, funcRef);
+        button->associateLuaRef("onClick", funcRef);
         button->setOnClick(g_lua.createScriptableSelfFuncCallback(funcRef));
     } else
         g_lua.pop();

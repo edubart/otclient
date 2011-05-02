@@ -1,11 +1,9 @@
 function messageBox(title, text)
-    local messageBoxWindow = UI.load("modules/messagebox/messagebox.yml")
-    local messageBoxLabel = messageBoxWindow:getChildById("messageBoxLabel")
-    local messageBoxOkButton = messageBoxWindow:getChildById("messageBoxOkButton")
-    messageBoxWindow.locked = true
-    messageBoxWindow.title = title
-    messageBoxLabel.text = text
-    --messageBoxWindow:setSize(messageBoxLabel:getSize() + Size{20, 20})
-    messageBoxWindow.onDestroy = function() self.locked = false end
-    messageBoxOkButton.onClick = function() messageBoxWindow:destroy() end
+    local msgbox = UI.load("modules/messagebox/messagebox.yml")
+    local label = msgbox:getChildById("messageBoxLabel")
+    local okButton = msgbox:getChildById("messageBoxOkButton")
+    msgbox.locked = true
+    msgbox.title = title
+    label.text = text
+    okButton.onClick = function() msgbox:destroy() end
 end
