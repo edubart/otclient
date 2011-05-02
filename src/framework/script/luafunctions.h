@@ -44,9 +44,8 @@ int lua_UIElement_getParent();
 int lua_UIElement_destroy();
 
 // UIContainer
-int lua_UIContainer_getChildByID();
-int lua_UIContainer_lock();
-int lua_UIContainer_unlock();
+int lua_UIContainer_getChildById();
+int lua_UIContainer_setLocked();
 
 // UILabel
 int lua_UILabel_setText();

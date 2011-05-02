@@ -128,14 +128,35 @@ void LuaScript::reportErrorWithTraceback(const std::string& errorDesc, const cha
     reportError(popString(), funcName);
 }
 
+void LuaScript::collectGarbage()
+{
+    for(int i=0;i<2;i++)
+        lua_gc(L, LUA_GCCOLLECT, 0);
+}
+
 int LuaScript::getStackSize()
 {
     return lua_gettop(L);
 }
 
-void LuaScript::moveTop(int index)
+void LuaScript::insert(int index)
 {
     lua_insert(L, index);
+}
+
+int LuaScript::ref()
+{
+    return luaL_ref(L, LUA_REGISTRYINDEX);
+}
+
+void LuaScript::unref(int ref)
+{
+    luaL_unref(L, LUA_REGISTRYINDEX, ref);
+}
+
+void LuaScript::getRef(int ref)
+{
+    lua_rawgeti(L, LUA_REGISTRYINDEX, ref);
 }
 
 void LuaScript::pop(int n)
@@ -191,11 +212,16 @@ void LuaScript::pushUserdata(void* ptr)
     lua_pushlightuserdata(L, ptr);
 }
 
+void LuaScript::pushValue(int index)
+{
+    lua_pushvalue(L, index);
+}
+
 void LuaScript::pushClassInstance(const ScriptablePtr& object)
 {
     if(object) {
         // create weak_ptr to the scriptable object stored as userdata
-        new(lua_newuserdata(L, sizeof(ScriptableWeakPtr))) ScriptableWeakPtr(object);
+        new(lua_newuserdata(L, sizeof(ScriptablePtr))) ScriptablePtr(object);
         // set object metatable
         lua_getfield(L, LUA_REGISTRYINDEX, (std::string(object->getScriptableName()) + "_mt").c_str());
         lua_setmetatable(L, -2);
@@ -208,7 +234,7 @@ ScriptablePtr LuaScript::popClassInstance()
 {
     ScriptablePtr object;
     if(lua_isuserdata(L, -1)) { // instances are store as userdata
-        object = ((ScriptableWeakPtr *)lua_touserdata(L, -1))->lock();
+        object = *((ScriptablePtr *)lua_touserdata(L, -1));
         if(!object)
             reportErrorWithTraceback("attempt to retrive class instance from a object that is already expired");
     } else if(!lua_isnil(L, -1)) // we accept nil values
@@ -224,18 +250,18 @@ void LuaScript::pushFunction(int functionRef)
 
 int LuaScript::popFunction()
 {
-    return luaL_ref(L, LUA_REGISTRYINDEX);
+    return ref();
 }
 
 void LuaScript::releaseFunction(int functionRef)
 {
-    luaL_unref(L, LUA_REGISTRYINDEX, functionRef);
+    unref(functionRef);
 }
 
 void LuaScript::callFunction(int numArgs)
 {
     int size = lua_gettop(L);
-    int errorIndex = size - numArgs;
+    int errorIndex = -(numArgs + 2);
     lua_pushcfunction(L, &LuaScript::luaErrorHandler);
     lua_insert(L, errorIndex);
 
@@ -244,9 +270,10 @@ void LuaScript::callFunction(int numArgs)
         reportError(popString());
     }
 
-    lua_remove(L, errorIndex);
+    // pop error func
+    lua_pop(L, 1);
 
-    if(lua_gettop(L) + numArgs + 1 != size)
+    if(lua_gettop(L) != size - numArgs - 1)
         reportError("stack size changed!");
 }
 
@@ -261,18 +288,20 @@ SimpleCallback LuaScript::createSimpleFuncCallback(int funcRef)
 boost::function<void(ScriptablePtr)> LuaScript::createScriptableSelfFuncCallback(int funcRef)
 {
     return [this, funcRef](ScriptablePtr scriptable) {
+        pushClassInstance(scriptable);
+        setGlobal("self");
+
         pushFunction(funcRef);
-        setLocal(scriptable, "self");
         callFunction();
+
+        pushNil();
+        setGlobal("self");
     };
 }
 
-void LuaScript::setLocal(const ScriptablePtr& scriptable, const char *varName, int envIndex)
+void LuaScript::setGlobal(const char *varName)
 {
-    lua_getfenv(L, envIndex);
-    pushClassInstance(scriptable);
-    lua_setfield(L, -2, varName);
-    lua_pop(L, 1);
+    lua_setfield(L, LUA_GLOBALSINDEX, varName);
 }
 
 void LuaScript::setupPackageLoader()
@@ -295,46 +324,78 @@ void LuaScript::setupPackageLoader()
 void LuaScript::registerClass(const std::string& klass, const std::string& baseClass)
 {
     // klass_mt = {}
-    lua_newtable(L); // klass metatable
-    lua_pushvalue(L, -1); // another reference to the metatable
-    lua_setfield(L, LUA_REGISTRYINDEX, (klass + "_mt").c_str()); // register the metatable at registry index
+    lua_newtable(L);
+    lua_pushvalue(L, -1);
+    lua_setfield(L, LUA_REGISTRYINDEX, (klass + "_mt").c_str());
 
-    // set __gc metamethod, which collects userdata
-    lua_pushcfunction(L, &LuaScript::luaCollectClassInstance);
-    lua_setfield(L, -2, "__gc");
-
-    // set __eq metamethod
-    lua_pushcfunction(L, &LuaScript::luaCompareClassInstances);
-    lua_setfield(L, -2, "__eq");
-
-    // klass = {}
-    lua_newtable(L); // klass table
-    lua_pushvalue(L, -1); // another reference to the table
-    lua_setfield(L, LUA_GLOBALSINDEX, klass.c_str()); // register at globals index
-
-    // klass.className = "klass"
-    lua_pushstring(L, klass.c_str());
-    lua_setfield(L, -2, "className");
-
-    // klass_mt.__index = klass
+    // set __index metamethod
+    lua_pushcfunction(L, &LuaScript::luaIndexMetaMethod);
     lua_setfield(L, -2, "__index");
 
-    // pop the class metatable
+    // set __newindex metamethod
+    lua_pushcfunction(L, &LuaScript::luaNewIndexMetaMethod);
+    lua_setfield(L, -2, "__newindex");
+
+    // set __eq metamethod
+    lua_pushcfunction(L, &LuaScript::luaEqualMetaMethod);
+    lua_setfield(L, -2, "__eq");
+
+    // set __gc metamethod, which collects userdata
+    lua_pushcfunction(L, &LuaScript::luaGarbageCollectMetaMethod);
+    lua_setfield(L, -2, "__gc");
+
+    // klass_mt.methods = { }
+    lua_newtable(L);
+    lua_pushvalue(L, -1);
+    lua_setfield(L, LUA_GLOBALSINDEX, klass.c_str());
+    lua_setfield(L, -2, "methods");
+
+    // klass_mt.fieldmethods = { }
+    lua_newtable(L);
+    lua_pushvalue(L, -1);
+    lua_setfield(L, LUA_GLOBALSINDEX, (klass + "_fieldmethods").c_str());
+    lua_setfield(L, -2, "fieldmethods");
+
+    if(baseClass.length()) {
+        // klass_mt.base = baseClass_mt
+        lua_getfield(L, LUA_REGISTRYINDEX, (baseClass + "_mt").c_str());
+        lua_setfield(L, -2, "base");
+    }
+
     lua_pop(L, 1);
+}
 
-    if(baseClass.length() > 0) {
-        // add klass table to the top of the stack
-        lua_getfield(L, LUA_GLOBALSINDEX, klass.c_str());
+void LuaScript::registerMemberField(const std::string& klass, const std::string& field, LuaScript::LuaCFunction getFunction, LuaScript::LuaCFunction setFunction)
+{
+    if(getFunction) {
+        int functionId = m_functions.size();
+        m_functions.push_back(getFunction);
 
-        // redirect = { __index = baseClass }
-        lua_newtable(L);
-        lua_getfield(L, LUA_GLOBALSINDEX, baseClass.c_str());
-        lua_setfield(L, -2, "__index");
+        // push the class table
+        lua_getfield(L, LUA_GLOBALSINDEX, (klass + "_fieldmethods").c_str());
+        // push the function id
+        lua_pushnumber(L, functionId);
+        // store id in the closure
+        lua_pushcclosure(L, &LuaScript::luaFunctionCallback, 1);
+        // store the function at the class field functionName
+        lua_setfield(L, -2, ("get_" + field).c_str());
+        // pop the table
+        lua_pop(L, 1);
+    }
 
-        // setmetatable(klass, redirect)
-        lua_setmetatable(L, -2);
+    if(setFunction) {
+        int functionId = m_functions.size();
+        m_functions.push_back(setFunction);
 
-        // pop the derived class table
+        // push the class table
+        lua_getfield(L, LUA_GLOBALSINDEX, (klass + "_fieldmethods").c_str());
+        // push the function id
+        lua_pushnumber(L, functionId);
+        // store id in the closure
+        lua_pushcclosure(L, &LuaScript::luaFunctionCallback, 1);
+        // store the function at the class field functionName
+        lua_setfield(L, -2, ("set_" + field).c_str());
+        // pop the table
         lua_pop(L, 1);
     }
 }
@@ -389,28 +450,118 @@ int LuaScript::luaPackageLoader(lua_State* L)
     return 1;
 }
 
-int LuaScript::luaCollectClassInstance(lua_State* L)
+int LuaScript::luaIndexMetaMethod(lua_State* L)
 {
-    ScriptableWeakPtr *objectRef = (ScriptableWeakPtr *)lua_touserdata(L, -1);
-    objectRef->reset();
+    std::string key = lua_tostring(L, -1); // key, obj
+    lua_pop(L, 1); // obj
+    lua_getmetatable(L, -1); // mt, obj
+    while(!lua_isnil(L, -1)) {
+        lua_getfield(L, -1, "fieldmethods"); // mt.fieldmethods, mt, obj
+        lua_getfield(L, -1, ("get_" + key).c_str()); // mt.fieldmethods[get_key], mt.fieldmethods, mt, obj
+        lua_remove(L, -2); // mt.fieldmethods[get_key], mt, obj
+        if(!lua_isnil(L, -1)) {
+            lua_remove(L, -2); // mt.fieldmethods[get_key], obj
+            lua_insert(L, -2); // obj, mt.fieldmethods[get_key]
+            lua_pushcfunction(L, &LuaScript::luaErrorHandler); // errorfunc, obj, mt.fieldmethods[get_key]
+            lua_insert(L, -3); // obj, mt.fieldmethods[get_key], errorfunc
+            int ret = lua_pcall(L, 1, 1, -3); // ret, errorfunc
+            if(ret != 0) {
+                g_lua.reportError(g_lua.popString()); // errofunc
+                lua_pop(L, 1); // (empty)
+                lua_pushnil(L); // nil
+            } else {
+                lua_remove(L, -2); // ret
+            }
+            return 1;
+        } else {
+            lua_pop(L, 1); // mt, obj
+            lua_getfield(L, -1, "methods"); // mt.methods, mt, obj
+            lua_getfield(L, -1, key.c_str()); // mt.methods[key], mt.methods, mt, obj
+            lua_remove(L, -2); // mt.methods[key], mt, obj
+            if(!lua_isnil(L, -1)) {
+                lua_insert(L, -3);
+                lua_pop(L, 2);
+                return 1;
+            }
+            lua_pop(L, 1);
+        }
+        lua_getfield(L, -1, "base"); // mt.base, mt, obj
+        lua_remove(L, -2); // mt.base, obj
+    }
     lua_pop(L, 1);
+
+    ScriptablePtr scriptable = g_lua.popClassInstance();
+    int refId = scriptable->getLuaRef(key);
+    if(refId != -1)
+        g_lua.getRef(refId);
+    else
+        g_lua.pushNil();
+
     return 1;
 }
 
-int LuaScript::luaCompareClassInstances(lua_State* L)
+int LuaScript::luaNewIndexMetaMethod(lua_State* L)
+{
+    // stack: value, key, obj
+    lua_insert(L, -2);
+    std::string key = lua_tostring(L, -1);
+    lua_pop(L, 1);
+    lua_getmetatable(L, -2);
+    // stack: mt, value, obj
+    while(!lua_isnil(L, -1)) {
+        lua_getfield(L, -1, "fieldmethods");
+        lua_getfield(L, -1, ("set_" + key).c_str());
+        lua_remove(L, -2); // stack: set method, mt, value, obj
+        if(!lua_isnil(L, -1)) {
+            lua_remove(L, -2); // mt.fieldmethods[get_key], value, obj
+            lua_insert(L, -3); // value, obj, mt.fieldmethods[get_key]
+            lua_pushcfunction(L, &LuaScript::luaErrorHandler); // errorfunc, value, obj, mt.fieldmethods[get_key]
+            lua_insert(L, -4); // value, obj, mt.fieldmethods[get_key], errorfunc
+            int ret = lua_pcall(L, 2, 0, -4); // errorfunc
+            if(ret != 0)
+                g_lua.reportError(g_lua.popString()); // errofunc
+            lua_pop(L, 1);
+            return 1;
+        }
+        lua_pop(L, 1); // mt, value, obj
+        lua_getfield(L, -1, "base"); // mt.base, mt, value, obj
+        lua_remove(L, -2); // mt.base, value, obj
+    }
+
+    // stack:
+    g_lua.pop(); // value, obj
+    g_lua.insert(-2); // obj, value
+    ScriptablePtr scriptable = g_lua.popClassInstance();
+    g_lua.pushValue(); // value, value
+    int refId = g_lua.ref();
+    scriptable->associateLuaRef(key, refId);
+    g_lua.pop();
+
+    return 1;
+}
+
+int LuaScript::luaEqualMetaMethod(lua_State* L)
 {
     if(!lua_isuserdata(L, -1) || !lua_isuserdata(L, -2)) {
         lua_pop(L, 2);
         lua_pushboolean(L, 0);
     } else {
-        ScriptableWeakPtr *objectRef1 = (ScriptableWeakPtr *)lua_touserdata(L, -1);
-        ScriptableWeakPtr *objectRef2 = (ScriptableWeakPtr *)lua_touserdata(L, -2);
+        ScriptablePtr *objectRef1 = (ScriptablePtr *)lua_touserdata(L, -1);
+        ScriptablePtr *objectRef2 = (ScriptablePtr *)lua_touserdata(L, -2);
         lua_pop(L, 2);
-        if(objectRef1->lock() == objectRef2->lock())
+        if(objectRef1 == objectRef2)
             lua_pushboolean(L, 1);
         else
             lua_pushboolean(L, 0);
     }
+    return 1;
+}
+
+int LuaScript::luaGarbageCollectMetaMethod(lua_State* L)
+{
+    ScriptablePtr *objectRef = (ScriptablePtr *)lua_touserdata(L, -1);
+    objectRef->reset();
+    lua_pop(L, 1);
     return 1;
 }
 

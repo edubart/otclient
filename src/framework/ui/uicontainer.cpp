@@ -66,6 +66,9 @@ void UIContainer::removeChild(UIElementPtr child)
     if(m_focusedElement == child)
         setFocusedElement(UIElementPtr());
 
+    // try to unlock
+    unlockElement(child);
+
     // remove from children list
     m_children.remove(child);
 

@@ -52,6 +52,7 @@ public:
     /// Destroy this element by removing it from its parent
     void destroy();
     virtual void internalOnDestroy();
+    virtual void internalDestroyCheck();
 
     /// Draw element
     virtual void render();

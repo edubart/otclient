@@ -64,6 +64,17 @@ void UIElement::internalOnDestroy()
         getParent()->removeChild(me);
     }
 
+    // free script stuff
+    clearLuaRefs();
+
+    g_dispatcher.addTask(boost::bind(&UIElement::internalDestroyCheck, asUIElement()));
+}
+
+void UIElement::internalDestroyCheck()
+{
+    //logTraceDebug(getId());
+
+    UIElementPtr me = asUIElement();
     // check for leaks, the number of references must be always 2 here
     if(me.use_count() != 2 && me != UIContainer::getRoot()) {
         flogWarning("destroyed element with id '%s', but it still have %d references left", getId() % (me.use_count()-2));

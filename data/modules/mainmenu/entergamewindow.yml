@@ -3,8 +3,7 @@ window#enterGameWindow:
   size: [236, 178]
   anchors.horizontalCenter: parent.horizontalCenter
   anchors.verticalCenter: parent.verticalCenter
-  onLoad: self:getParent():lock(self)
-  onDestroy: self:getParent():unlock(self)
+  onLoad: self.locked = true
 
   label#accountNameLabel:
     text: Account name
@@ -52,7 +51,7 @@ window#enterGameWindow:
     anchors.bottom: parent.bottom
     margin.bottom: 10
     margin.right: 13
-    onClick: self:getParent():destroy()
+    onClick: self.parent:destroy()
 
   textEdit#accountNameTextEdit:
     anchors.right: parent.right

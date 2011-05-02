@@ -67,6 +67,7 @@ SET(SOURCES
     src/framework/core/modules.cpp
 
 # framework script
+    src/framework/script/scriptable.cpp
     src/framework/script/luascript.cpp
     src/framework/script/luafunctions.cpp
 

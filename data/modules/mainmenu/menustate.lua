@@ -5,11 +5,12 @@ end
 
 function onLeaveMenuState()
     mainMenu:destroy()
+    mainMenu = nil
 end
 
 function onApplicationClose()
     onLeaveMenuState()
-    exitGame()
+    App.exit()
 end
 
 -- here is where everything starts

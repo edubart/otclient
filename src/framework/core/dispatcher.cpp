@@ -31,11 +31,15 @@ Dispatcher g_dispatcher;
 void Dispatcher::poll()
 {
     while(!m_taskList.empty()) {
-        Task *task = m_taskList.top();
+        m_taskList.front()();
+        m_taskList.pop_front();
+    }
+
+    while(!m_scheduledTaskList.empty()) {
+        ScheduledTask *task = m_scheduledTaskList.top();
         if(g_engine.getCurrentFrameTicks() < task->ticks)
             break;
-        m_taskList.pop();
-
+        m_scheduledTaskList.pop();
         task->callback();
         delete task;
     }
@@ -43,10 +47,13 @@ void Dispatcher::poll()
 
 void Dispatcher::scheduleTask(const SimpleCallback& callback, int delay)
 {
-    m_taskList.push(new Task(g_engine.getCurrentFrameTicks() + delay, callback));
+    m_scheduledTaskList.push(new ScheduledTask(g_engine.getCurrentFrameTicks() + delay, callback));
 }
 
-void Dispatcher::addTask(const SimpleCallback& callback)
+void Dispatcher::addTask(const SimpleCallback& callback, bool pushFront)
 {
-    m_taskList.push(new Task(callback));
+    if(pushFront)
+        m_taskList.push_front(callback);
+    else
+        m_taskList.push_back(callback);
 }

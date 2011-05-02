@@ -49,4 +49,4 @@ panel#background:
       anchors.top: parent.top
       anchors.horizontalCenter: parent.horizontalCenter
       margin.top: 136
-      onClick: App.exit()
+      onClick: onApplicationClose()

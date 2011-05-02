@@ -22,24 +22,30 @@
  */
 
 
-#ifndef SCRIPTABLE_H
-#define SCRIPTABLE_H
-
 #include <prerequisites.h>
+#include <script/scriptable.h>
+#include <script/luascript.h>
+#include <core/dispatcher.h>
 
-class Scriptable : public boost::enable_shared_from_this<Scriptable>
+void Scriptable::associateLuaRef(const std::string& refName, int refId)
 {
-public:
-    virtual const char *getScriptableName() const { return NULL; }
+    // check if there is already a ref with this name
+    if(m_luaRefs.find(refName) != m_luaRefs.end())
+        g_lua.unref(m_luaRefs[refName]);
+    m_luaRefs[refName] = refId;
+}
 
-    void associateLuaRef(const std::string& refName, int refId);
-    int getLuaRef(const std::string& refName);
-    void clearLuaRefs();
+int Scriptable::getLuaRef(const std::string& refName)
+{
+    if(m_luaRefs.find(refName) != m_luaRefs.end())
+        return m_luaRefs[refName];
+    return -1;
+}
 
-private:
-    std::map<std::string, int> m_luaRefs;
-};
-
-typedef boost::shared_ptr<Scriptable> ScriptablePtr;
-
-#endif
+void Scriptable::clearLuaRefs()
+{
+    foreach(auto pair, m_luaRefs) {
+        g_lua.unref(pair.second);
+    }
+    m_luaRefs.clear();
+}

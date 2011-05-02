@@ -45,14 +45,20 @@ public:
     void reportError(const std::string& errorDesc, const char *funcName = NULL);
     void reportErrorWithTraceback(const std::string& errorDesc, const char *funcName = NULL);
 
+    void collectGarbage();
     int getStackSize();
-    void moveTop(int index);
+    void insert(int index);
+
+    int ref();
+    void unref(int ref);
+    void getRef(int ref);
 
     void pushNil();
     void pushBoolean(bool b);
     void pushInteger(int i);
     void pushString(const std::string& str);
     void pushUserdata(void* ptr);
+    void pushValue(int index = -1);
 
     void pop(int n = 1);
     bool popBoolean();
@@ -67,7 +73,7 @@ public:
     SimpleCallback createSimpleFuncCallback(int funcRef);
     boost::function<void(ScriptablePtr)> createScriptableSelfFuncCallback(int funcRef);
 
-    void setLocal(const ScriptablePtr& scriptable, const char *varName, int envIndex = -1);
+    void setGlobal(const char *varName);
 
     void pushClassInstance(const ScriptablePtr& object);
     ScriptablePtr popClassInstance();
@@ -76,14 +82,19 @@ public:
 
     void setupPackageLoader();
     void registerClass(const std::string& klass, const std::string& baseClass = "");
+    void registerMemberField(const std::string& klass, const std::string& field, LuaCFunction getFunction, LuaCFunction setFunction = NULL);
     void registerMemberFunction(const std::string& klass, const std::string& functionName, LuaCFunction function);
     void registerGlobalFunction(const std::string& functionName, LuaCFunction function);
     void registerModule(const std::string& module);
 
-    static int luaFunctionCallback(lua_State* L);
     static int luaPackageLoader(lua_State* L);
-    static int luaCollectClassInstance(lua_State* L);
-    static int luaCompareClassInstances(lua_State* L);
+
+    static int luaIndexMetaMethod(lua_State* L);
+    static int luaNewIndexMetaMethod(lua_State* L);
+    static int luaEqualMetaMethod(lua_State* L);
+    static int luaGarbageCollectMetaMethod(lua_State* L);
+
+    static int luaFunctionCallback(lua_State* L);
     static int luaErrorHandler(lua_State *L);
 
 private:

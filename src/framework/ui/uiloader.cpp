@@ -215,7 +215,7 @@ void UILoader::loadElement(const UIElementPtr& element, const YAML::Node& node)
     // load events
     if(node.FindValue("onLoad")) {
         const YAML::Node& cnode = node["onLoad"];
-        int funcRef = g_lua.loadBufferAsFunction(cnode.Read<std::string>());
+        int funcRef = g_lua.loadBufferAsFunction(cnode.Read<std::string>(), element->getId() + ":onLoad");
         if(funcRef != LUA_REFNIL) {
             g_lua.pushClassInstance(element);
             g_lua.pushFunction(funcRef);
@@ -226,7 +226,7 @@ void UILoader::loadElement(const UIElementPtr& element, const YAML::Node& node)
 
     if(node.FindValue("onDestroy")) {
         const YAML::Node& cnode = node["onDestroy"];
-        int funcRef = g_lua.loadBufferAsFunction(cnode.Read<std::string>());
+        int funcRef = g_lua.loadBufferAsFunction(cnode.Read<std::string>(), element->getId() + ":onDestroy");
         if(funcRef != LUA_REFNIL) {
             g_lua.pushClassInstance(element);
             g_lua.pushFunction(funcRef);
@@ -314,7 +314,7 @@ void UILoader::loadButton(const UIButtonPtr& button, const YAML::Node& node)
 
     // set on click event
     if(node.FindValue("onClick")) {
-        int funcRef = g_lua.loadBufferAsFunction(node["onClick"].Read<std::string>());
+        int funcRef = g_lua.loadBufferAsFunction(node["onClick"].Read<std::string>(), button->getId() + ":onClick");
         if(funcRef != LUA_REFNIL) {
             g_lua.pushClassInstance(button);
             g_lua.pushFunction(funcRef);

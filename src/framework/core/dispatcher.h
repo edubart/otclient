@@ -27,18 +27,18 @@
 
 #include <prerequisites.h>
 
-class Task {
+class ScheduledTask {
 public:
-    inline Task(const SimpleCallback& _callback) : ticks(0), callback(_callback) { }
-    inline Task(int _ticks, const SimpleCallback& _callback) : ticks(_ticks), callback(_callback)  { }
-    inline bool operator<(const Task& other) const { return ticks > other.ticks; }
+    inline ScheduledTask(const SimpleCallback& _callback) : ticks(0), callback(_callback) { }
+    inline ScheduledTask(int _ticks, const SimpleCallback& _callback) : ticks(_ticks), callback(_callback)  { }
+    inline bool operator<(const ScheduledTask& other) const { return ticks > other.ticks; }
     int ticks;
     SimpleCallback callback;
 };
 
-class lessTask : public std::binary_function<Task*&, Task*&, bool> {
+class lessScheduledTask : public std::binary_function<ScheduledTask*&, ScheduledTask*&, bool> {
 public:
-    bool operator()(Task*& t1,Task*& t2) { return (*t1) < (*t2); }
+    bool operator()(ScheduledTask*& t1,ScheduledTask*& t2) { return (*t1) < (*t2); }
 };
 
 class Dispatcher
@@ -50,13 +50,14 @@ public:
     void poll();
 
     /// Add an event
-    void addTask(const SimpleCallback& callback);
+    void addTask(const SimpleCallback& callback, bool pushFront = false);
 
     /// Schedula an event
     void scheduleTask(const SimpleCallback& callback, int delay);
 
 private:
-    std::priority_queue<Task*, std::vector<Task*>, lessTask> m_taskList;
+    std::list<SimpleCallback> m_taskList;
+    std::priority_queue<ScheduledTask*, std::vector<ScheduledTask*>, lessScheduledTask> m_scheduledTaskList;
 };
 
 extern Dispatcher g_dispatcher;
