@@ -51,6 +51,7 @@ public:
     int getStackSize();
     void insert(int index);
     void remove(int index);
+    bool next(int index = -2);
     void releaseRef(int ref);
 
     void newTable();

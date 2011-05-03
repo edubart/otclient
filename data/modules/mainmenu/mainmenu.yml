@@ -21,7 +21,7 @@ panel#background:
       anchors.top: parent.top
       anchors.horizontalCenter: parent.horizontalCenter
       margin.top: 16
-      onClick: UI.load("modules/mainmenu/entergamewindow.yml")
+      onClick: UI.load("mainmenu/entergamewindow.yml")
 
     button#accessAccountButton:
       text: Access Account
@@ -35,14 +35,14 @@ panel#background:
       anchors.top: parent.top
       anchors.horizontalCenter: parent.horizontalCenter
       margin.top: 76
-      onClick: UI.load("modules/mainmenu/optionswindow.yml")
+      onClick: UI.load("mainmenu/optionswindow.yml")
 
     button#infoButton:
       text: Info
       anchors.top: parent.top
       anchors.horizontalCenter: parent.horizontalCenter
       margin.top: 106
-      onClick: UI.load("modules/mainmenu/infowindow.yml")
+      onClick: UI.load("mainmenu/infowindow.yml")
 
     button#exitGameButton:
       text: Exit

@@ -46,15 +46,31 @@ void Scriptable::releaseLuaTableRef()
 
 void Scriptable::callLuaTableField(const std::string& field)
 {
+    // set self
     g_lua.pushClassInstance(shared_from_this());
     g_lua.setGlobal("self");
 
+    // push field
     g_lua.getScriptableField(shared_from_this(), field);
-    if(g_lua.isFunction())
-        g_lua.callFunction();
-    else
-        g_lua.pop();
 
+    // call it if its a function
+    if(g_lua.isFunction()) {
+        g_lua.callFunction();
+    // if its an array call each element
+    } else if(g_lua.isTable()) {
+        g_lua.pushNil();
+        while(g_lua.next()) {
+            // call it if its a function
+            if(g_lua.isFunction())
+                g_lua.callFunction();
+            g_lua.pop();
+        }
+    } else if(!g_lua.isNil()) {
+        g_lua.reportError(f("field '%s' for '%s' is not a valid function or array of functions", field %  getScriptableName()));
+    }
+
+    // release self
     g_lua.pushNil();
     g_lua.setGlobal("self");
 }
+

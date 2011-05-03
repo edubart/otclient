@@ -151,6 +151,11 @@ void LuaScript::remove(int index)
     lua_remove(L, index);
 }
 
+bool LuaScript::next(int index)
+{
+    return lua_next(L, index);
+}
+
 void LuaScript::releaseRef(int ref)
 {
     luaL_unref(L, LUA_REGISTRYINDEX, ref);

@@ -66,13 +66,18 @@ UIElementPtr UILoader::createElementFromId(const std::string& id)
 
 UIElementPtr UILoader::loadFile(const std::string& file, const UIContainerPtr& parent)
 {
-    std::string fileContents = g_resources.loadTextFile(file);
-    if(!fileContents.size()) {
+    // try to find the file
+    std::string filePath = "modules/" + file;
+    if(!g_resources.fileExists(filePath))
+        filePath = "addons/" + file;
+    if(!g_resources.fileExists(filePath))
+        filePath = file;
+    if(!g_resources.fileExists(filePath)) {
         flogError("ERROR: Could not load ui file \"%s",  file.c_str());
         return UIElementPtr();
     }
 
-    std::istringstream fin(fileContents);
+    std::istringstream fin(g_resources.loadTextFile(filePath));
 
     try {
         YAML::Parser parser(fin);
@@ -112,23 +117,32 @@ UIElementPtr UILoader::loadFile(const std::string& file, const UIContainerPtr& p
 
 void UILoader::populateContainer(const UIContainerPtr& parent, const YAML::Node& node)
 {
+    // order nodes
+    std::map<int, std::string> orderedNodes;
     for(auto it = node.begin(); it != node.end(); ++it) {
         std::string id;
         it.first() >> id;
 
-        // check if it's and element id
-        if(id.find("#") != std::string::npos) {
-            UIElementPtr element = createElementFromId(id);
-            if(!element) {
-                logError(YAML::Exception(it.first().GetMark(), "invalid element type").what());
-                continue;
-            }
-            parent->addChild(element);
+        // check if it's an element id
+        if(id.find("#") != std::string::npos)
+            orderedNodes[it.first().GetMark().pos] = id;
+    }
 
-            // also populate this element if it's a parent
-            if(element->asUIContainer())
-                populateContainer(element->asUIContainer(), it.second());
+    // populate ordered elements
+    foreach(auto pair, orderedNodes) {
+        std::string id = pair.second;
+        const YAML::Node& cnode = node[id];
+
+        UIElementPtr element = createElementFromId(id);
+        if(!element) {
+            logError(YAML::Exception(cnode.GetMark(), "invalid element type").what());
+            continue;
         }
+        parent->addChild(element);
+
+        // also populate this element if it's a parent
+        if(element->asUIContainer())
+            populateContainer(element->asUIContainer(), cnode);
     }
 }
 
@@ -136,17 +150,14 @@ void UILoader::loadElements(const UIElementPtr& parent, const YAML::Node& node)
 {
     loadElement(parent, node);
 
-    if(parent->asUIContainer()) {
-        UIContainerPtr container = parent->asUIContainer();
-        for(auto it = node.begin(); it != node.end(); ++it) {
-            std::string id;
-            it.first() >> id;
-
-            // check if it's and element id
-            if(id.find("#") != std::string::npos) {
-                std::vector<std::string> split;
-                boost::split(split, id, boost::is_any_of(std::string("#")));
-                loadElements(container->getChildById(split[1]), it.second());
+    if(UIContainerPtr container = parent->asUIContainer()) {
+        foreach(const UIElementPtr& element, container->getChildren()) {
+            for(auto it = node.begin(); it != node.end(); ++it) {
+                // node found, load it
+                if(boost::ends_with(it.first().Read<std::string>(), "#" + element->getId())) {
+                    loadElements(element, it.second());
+                    break;
+                }
             }
         }
     }
