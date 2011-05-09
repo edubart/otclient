@@ -38,7 +38,7 @@ template <class T>
 class TSize
 {
 public:
-    inline TSize() : wd(0), ht(0) {};
+    inline TSize() : wd(-1), ht(-1) {};
     inline TSize(T width, T height) : wd(width), ht(height) { };
     inline TSize(const TSize<T>& other) : wd(other.wd), ht(other.ht) { };
 

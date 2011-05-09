@@ -50,7 +50,7 @@ private:
     static void loadElement(const UIElementPtr& element, const YAML::Node& node);
 
     /// Load anchor from a YAML node
-    static void loadElementAnchor(const UIElementPtr& element, EAnchorType type, const YAML::Node& node);
+    static void loadElementAnchor(const UIElementPtr& anchoredElement, UI::AnchorPoint anchoredEdge, const YAML::Node& node);
 
     // specific elements loading
     static void loadButton(const UIButtonPtr& button, const YAML::Node& node);

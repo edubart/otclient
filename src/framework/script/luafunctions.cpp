@@ -41,11 +41,8 @@ void registerLuaFunctions()
     g_lua.registerMemberFunction("load", &lua_UI_load);
     g_lua.registerMemberFunction("getRootContainer", &lua_UI_getRootContainer);
 
-    // UILayout
-    g_lua.registerClass("UILayout");
-
     // UIElement
-    g_lua.registerClass("UIElement", "UILayout");
+    g_lua.registerClass("UIElement");
     g_lua.registerMemberField("id", &lua_UIElement_getId, &lua_UIElement_setId);
     g_lua.registerMemberField("enabled", &lua_UIElement_isEnabled, &lua_UIElement_setEnabled);
     g_lua.registerMemberField("visible", &lua_UIElement_isVisible, &lua_UIElement_setVisible);
@@ -224,7 +221,7 @@ int lua_UIElement_setLocked()
 int lua_UIElement_destroy()
 {
     if(UIElementPtr element = boost::dynamic_pointer_cast<UIElement>(g_lua.popClassInstance()))
-        element->destroy();
+        element->destroyLater();
     g_dispatcher.addTask(boost::bind(&LuaScript::collectGarbage, &g_lua));
     return 1;
 }

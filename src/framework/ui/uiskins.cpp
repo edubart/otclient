@@ -136,7 +136,7 @@ void UISkins::terminate()
 }
 
 
-UIElementSkinPtr UISkins::getElementSkin(UI::EElementType elementType, const std::string& name)
+UIElementSkinPtr UISkins::getElementSkin(UI::ElementType elementType, const std::string& name)
 {
     for(auto it = m_elementSkins.begin(); it != m_elementSkins.end(); ++it) {
         const UIElementSkinPtr& skin = (*it);

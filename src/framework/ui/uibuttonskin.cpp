@@ -50,10 +50,10 @@ void UIButtonSkin::draw(UIElement *element)
 
     Rect textRect = button->getRect();
 
-    if(button->getState() == UI::ButtonDown && m_buttonDownImage) {
+    if(button->getState() == UIButton::ButtonDown && m_buttonDownImage) {
         m_buttonDownImage->draw(element->getRect());
         textRect.translate(m_buttonDownTranslate);
-    } else if(button->getState() == UI::ButtonMouseOver && m_buttonHoverImage) {
+    } else if(button->getState() == UIButton::ButtonMouseOver && m_buttonHoverImage) {
         m_buttonHoverImage->draw(element->getRect());
     } else {
         UIElementSkin::draw(element);

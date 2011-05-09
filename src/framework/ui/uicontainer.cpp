@@ -25,9 +25,10 @@
 #include <prerequisites.h>
 #include <core/resources.h>
 #include <ui/uicontainer.h>
+#include <ui/uianchorlayout.h>
 #include <core/dispatcher.h>
 
-void UIContainer::internalOnDestroy()
+void UIContainer::destroy()
 {
     //logTraceDebug(getId());
 
@@ -37,11 +38,11 @@ void UIContainer::internalOnDestroy()
 
     // destroy children
     while(m_children.size() > 0) {
-        UIElementPtr element = m_children.back(); //hold reference
-        element->internalOnDestroy();
+        UIElementPtr element = m_children.front(); //hold reference
+        element->destroy();
     }
 
-    UIElement::internalOnDestroy();
+    UIElement::destroy();
 }
 
 UIContainerPtr& UIContainer::getRoot()
@@ -50,6 +51,7 @@ UIContainerPtr& UIContainer::getRoot()
     if(!rootContainer) {
         rootContainer = UIContainerPtr(new UIContainer);
         rootContainer->setId("root");
+        rootContainer->setLayout(UILayoutPtr(new UIAnchorLayout));
     }
     return rootContainer;
 }
@@ -87,8 +89,14 @@ bool UIContainer::hasChild(const UIElementPtr& child)
 
 UIElementPtr UIContainer::getChildById(const std::string& id)
 {
-    if(getId() == id)
+    if(getId() == id || id == "self")
         return asUIElement();
+
+    if(id == "parent")
+        return getParent();
+
+    if(id == "root")
+        return getRoot();
 
     foreach(const UIElementPtr& child, m_children) {
         if(child->getId() == id)
@@ -111,8 +119,14 @@ UIElementPtr UIContainer::getChildByPos(const Point& pos)
 
 UIElementPtr UIContainer::recursiveGetChildById(const std::string& id)
 {
-    if(getId() == id)
+    if(getId() == id || id == "self")
         return asUIElement();
+
+    if(id == "parent")
+        return getParent();
+
+    if(id == "root")
+        return getRoot();
 
     foreach(const UIElementPtr& element, m_children) {
         if(element->getId() == id)

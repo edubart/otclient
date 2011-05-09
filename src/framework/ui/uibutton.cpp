@@ -29,9 +29,9 @@
 void UIButton::onInputEvent(const InputEvent& event)
 {
     if(event.type == EV_MOUSE_LDOWN && getRect().contains(event.mousePos)) {
-        m_state = UI::ButtonDown;
-    } else if(event.type == EV_MOUSE_LUP && m_state == UI::ButtonDown) {
-        m_state = UI::ButtonUp;
+        m_state = ButtonDown;
+    } else if(event.type == EV_MOUSE_LUP && m_state == ButtonDown) {
+        m_state = ButtonUp;
         if(getRect().contains(event.mousePos)) {
             g_dispatcher.addTask(boost::bind(&Scriptable::callLuaTableField, shared_from_this(), "onClick"));
         }

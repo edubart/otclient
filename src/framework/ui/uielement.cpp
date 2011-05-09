@@ -30,11 +30,15 @@
 #include <ui/uielementskin.h>
 #include <ui/uicontainer.h>
 
-UIElement::UIElement(UI::EElementType type) :
-    UILayout(),
+UIElement::UIElement(UI::ElementType type) :
+    Scriptable(),
     m_type(type),
     m_visible(true),
-    m_enabled(true)
+    m_enabled(true),
+    m_marginLeft(0),
+    m_marginRight(0),
+    m_marginTop(0),
+    m_marginBottom(0)
 {
 
 }
@@ -44,13 +48,13 @@ UIElement::~UIElement()
     //logTraceDebug(getId());
 }
 
-void UIElement::destroy()
+void UIElement::destroyLater()
 {
     //logTraceDebug(getId());
-    g_dispatcher.addTask(boost::bind(&UIElement::internalOnDestroy, asUIElement()));
+    g_dispatcher.addTask(boost::bind(&UIElement::destroy, asUIElement()));
 }
 
-void UIElement::internalOnDestroy()
+void UIElement::destroy()
 {
     //logTraceDebug(getId());
 
@@ -58,17 +62,16 @@ void UIElement::internalOnDestroy()
     callLuaTableField("onDestroy");
 
     // remove from parent
-    if(getParent()) {
+    if(getParent())
         getParent()->removeChild(me);
-    }
 
     // free script stuff
     releaseLuaTableRef();
 
-    g_dispatcher.addTask(boost::bind(&UIElement::internalDestroyCheck, asUIElement()));
+    g_dispatcher.addTask(boost::bind(&UIElement::destroyCheck, me));
 }
 
-void UIElement::internalDestroyCheck()
+void UIElement::destroyCheck()
 {
     //logTraceDebug(getId());
 
@@ -76,6 +79,29 @@ void UIElement::internalDestroyCheck()
     // check for leaks, the number of references must be always 2 here
     if(me.use_count() != 2 && me != UIContainer::getRoot()) {
         flogWarning("destroyed element with id '%s', but it still have %d references left", getId() % (me.use_count()-2));
+    }
+}
+
+void UIElement::setSize(const Size& size)
+{
+    Rect rect = getRect();
+    if(rect.isValid())
+        rect.setSize(size);
+    else
+        rect = Rect(0, 0, size);
+    setRect(rect);
+    getLayout()->recalculateElementLayout(asUIElement());
+}
+
+void UIElement::setRect(const Rect& rect)
+{
+    if(rect != m_rect) {
+        m_rect = rect;
+
+        // rect updated, recalculate children layout
+        getLayout()->recalculateChildrenLayout(asUIElement());
+
+        onRectUpdate();
     }
 }
 
@@ -100,11 +126,16 @@ void UIElement::render()
 
 UIElementPtr UIElement::backwardsGetElementById(const std::string& id)
 {
-    if(getId() == id)
+    if(getId() == id || id == "self")
         return asUIElement();
 
-    UIElementPtr element;
+    if(id == "parent")
+        return getParent();
 
+    if(id == "root")
+        return UIContainer::getRoot();
+
+    UIElementPtr element;
     if(asUIContainer()) {
         element = asUIContainer()->recursiveGetChildById(id);
         if(element)
@@ -168,4 +199,13 @@ void UIElement::setFocused(bool focused)
             parent->setFocusedElement(UIElementPtr());
         }
     }
+}
+
+UILayoutPtr UIElement::getLayout() const
+{
+    if(m_layout)
+        return m_layout;
+    else if(getParent())
+        return getParent()->getLayout();
+    return UILayoutPtr();
 }

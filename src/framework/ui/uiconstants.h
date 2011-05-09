@@ -26,33 +26,7 @@
 #define UICONSTANTS_H
 
 namespace UI {
-    enum EButtonState
-    {
-        ButtonUp,
-        ButtonDown,
-        ButtonMouseOver
-    };
-
-    enum EButtonEvent
-    {
-        ButtonPressUp,
-        ButtonPressDown,
-        ButtonEnterMouseOver,
-        ButtonLeaveMouseOver
-    };
-
-    enum EMessageBoxFlags
-    {
-        MessageBoxOk = 1 << 0,
-        MessageBoxCancel = 1 << 1,
-        MessageBoxYes = 1 << 2,
-        MessageBoxNo = 1 << 3,
-        MessageBoxOkCancel = MessageBoxOk | MessageBoxCancel,
-        MessageBoxYesNo = MessageBoxYes | MessageBoxNo
-    };
-
-    enum EElementType
-    {
+    enum ElementType {
         Element = 0,
         Container,
         Panel,
@@ -62,6 +36,16 @@ namespace UI {
         Button,
         CheckBox,
         LineDecoration
+    };
+
+    enum AnchorPoint {
+        AnchorLeft = 0,
+        AnchorHorizontalCenter,
+        AnchorRight,
+        AnchorTop,
+        AnchorVerticalCenter,
+        AnchorBottom,
+        AnchorNone
     };
 }
 

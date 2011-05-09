@@ -30,7 +30,7 @@
 
 LuaScript g_lua;
 
-LuaScript::LuaScript()
+void LuaScript::init()
 {
     L = luaL_newstate();
     if(!L)
@@ -45,9 +45,11 @@ LuaScript::LuaScript()
     registerLuaFunctions();
 }
 
-LuaScript::~LuaScript()
+void LuaScript::terminate()
 {
+    collectGarbage();
     lua_close(L);
+    L = NULL;
 }
 
 void LuaScript::loadAllModules()

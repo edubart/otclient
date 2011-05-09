@@ -39,6 +39,7 @@ void Engine::init()
     // initialize stuff
     g_graphics.init();
     g_fonts.init("tibia-12px-rounded");
+    g_lua.init();
 }
 
 void Engine::terminate()
@@ -46,6 +47,14 @@ void Engine::terminate()
     // terminate stuff
     g_fonts.terminate();
     g_graphics.terminate();
+
+    // destroy root ui
+    UIContainer::getRoot()->destroy();
+
+    g_lua.terminate();
+
+    // poll remaning events
+    g_engine.poll();
 }
 
 void Engine::poll()
@@ -116,14 +125,6 @@ void Engine::run()
 
     m_stopping = false;
     m_running = false;
-
-    g_lua.collectGarbage();
-
-    // destroy root ui
-    rootContainer->destroy();
-
-    // poll remaning events
-    g_engine.poll();
 }
 
 void Engine::stop()

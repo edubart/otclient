@@ -60,10 +60,10 @@ void UITextEdit::onInputEvent(const InputEvent& event)
     }
 }
 
-void UITextEdit::onLayoutRectChange(const Rect& rect)
+void UITextEdit::onRectUpdate()
 {
     UITextEditSkin *skin = static_cast<UITextEditSkin*>(getSkin().get());
-    Rect textRect = rect;
+    Rect textRect = getRect();
     int margin = skin->getTextMargin();
     textRect.setLeft(textRect.left()+margin);
     textRect.setRight(textRect.right()-margin);

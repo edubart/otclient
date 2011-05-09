@@ -34,7 +34,6 @@ panels:
     # the default panel is empty
 
   roundedGridPanel:
-    default size: [117, 171]
     bordered image:
       left border: [0,214,5,32]
       right border: [6,214,5,32]

@@ -36,8 +36,10 @@ struct lua_State;
 class LuaScript
 {
 public:
-    LuaScript();
-    virtual ~LuaScript();
+    LuaScript() : L(NULL) { }
+
+    void init();
+    void terminate();
 
     void loadAllModules();
     bool loadFile(const std::string& fileName);

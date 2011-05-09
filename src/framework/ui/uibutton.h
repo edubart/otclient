@@ -35,22 +35,29 @@ typedef boost::shared_ptr<UIButton> UIButtonPtr;
 class UIButton : public UIElement
 {
 public:
+    enum ButtonState
+    {
+        ButtonUp,
+        ButtonDown,
+        ButtonMouseOver
+    };
+
     UIButton() :
         UIElement(UI::Button),
-        m_state(UI::ButtonUp) {  }
+        m_state(ButtonUp) {  }
 
     void onInputEvent(const InputEvent& event);
 
     void setText(const std::string& text) { m_text = text; }
     std::string getText() const { return m_text; }
 
-    UI::EButtonState getState() { return m_state; }
+    ButtonState getState() { return m_state; }
 
     virtual const char *getScriptableName() const { return "UIButton"; }
 
 private:
     std::string m_text;
-    UI::EButtonState m_state;
+    ButtonState m_state;
 };
 
 #endif // UIBUTTON_H

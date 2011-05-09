@@ -28,6 +28,7 @@
 #include <ui/uiloader.h>
 #include <script/luascript.h>
 #include <script/luafunctions.h>
+#include "uianchorlayout.h"
 
 UIElementPtr UILoader::createElementFromId(const std::string& id)
 {
@@ -206,22 +207,22 @@ void UILoader::loadElement(const UIElementPtr& element, const YAML::Node& node)
     }
 
     if(node.FindValue("anchors.left"))
-        loadElementAnchor(element, ANCHOR_LEFT, node["anchors.left"]);
+        loadElementAnchor(element, UI::AnchorLeft, node["anchors.left"]);
 
     if(node.FindValue("anchors.right"))
-        loadElementAnchor(element, ANCHOR_RIGHT, node["anchors.right"]);
+        loadElementAnchor(element, UI::AnchorRight, node["anchors.right"]);
 
     if(node.FindValue("anchors.top"))
-        loadElementAnchor(element, ANCHOR_TOP, node["anchors.top"]);
+        loadElementAnchor(element, UI::AnchorTop, node["anchors.top"]);
 
     if(node.FindValue("anchors.bottom"))
-        loadElementAnchor(element, ANCHOR_BOTTOM, node["anchors.bottom"]);
+        loadElementAnchor(element, UI::AnchorBottom, node["anchors.bottom"]);
 
     if(node.FindValue("anchors.horizontalCenter"))
-        loadElementAnchor(element, ANCHOR_HORIZONTAL_CENTER, node["anchors.horizontalCenter"]);
+        loadElementAnchor(element, UI::AnchorHorizontalCenter, node["anchors.horizontalCenter"]);
 
     if(node.FindValue("anchors.verticalCenter"))
-        loadElementAnchor(element, ANCHOR_VERTICAL_CENTER, node["anchors.verticalCenter"]);
+        loadElementAnchor(element, UI::AnchorVerticalCenter, node["anchors.verticalCenter"]);
 
     // load events
     if(node.FindValue("onLoad")) {
@@ -261,8 +262,14 @@ void UILoader::loadElement(const UIElementPtr& element, const YAML::Node& node)
     }
 }
 
-void UILoader::loadElementAnchor(const UIElementPtr& element, EAnchorType type, const YAML::Node& node)
+void UILoader::loadElementAnchor(const UIElementPtr& anchoredElement, UI::AnchorPoint anchoredEdge, const YAML::Node& node)
 {
+    UIAnchorLayoutPtr layout = boost::dynamic_pointer_cast<UIAnchorLayout>(anchoredElement->getLayout());
+    if(!layout) {
+        logError(YAML::Exception(node.GetMark(), "could not add anchor, because this element does not participate of an anchor layout").what());
+        return;
+    }
+
     std::string anchorDescription;
     node >> anchorDescription;
 
@@ -273,44 +280,16 @@ void UILoader::loadElementAnchor(const UIElementPtr& element, EAnchorType type, 
         return;
     }
 
-    std::string relativeElementId = split[0];
-    std::string relativeAnchorTypeId = split[1];
-    EAnchorType relativeAnchorType;
+    std::string anchorLineElementId = split[0];
+    UI::AnchorPoint anchorLineEdge = UIAnchorLayout::parseAnchorPoint(split[1]);
 
-    if(relativeAnchorTypeId == "left")
-        relativeAnchorType = ANCHOR_LEFT;
-    else if(relativeAnchorTypeId == "right")
-        relativeAnchorType = ANCHOR_RIGHT;
-    else if(relativeAnchorTypeId == "top")
-        relativeAnchorType = ANCHOR_TOP;
-    else if(relativeAnchorTypeId == "bottom")
-        relativeAnchorType = ANCHOR_BOTTOM;
-    else if(relativeAnchorTypeId == "horizontalCenter")
-        relativeAnchorType = ANCHOR_HORIZONTAL_CENTER;
-    else if(relativeAnchorTypeId == "verticalCenter")
-        relativeAnchorType = ANCHOR_VERTICAL_CENTER;
-    else {
+    if(anchorLineEdge == UI::AnchorNone) {
         logError(YAML::Exception(node.GetMark(), "invalid anchor type").what());
         return;
     }
 
-    UILayoutPtr relativeElement;
-    if(relativeElementId == "parent" && element->getParent()) {
-        relativeElement = element->getParent()->asUILayout();
-    } else if(relativeElementId == "root") {
-        relativeElement = UIContainer::getRoot();
-    } else {
-        UIElementPtr tmp = element->backwardsGetElementById(relativeElementId);
-        if(tmp)
-            relativeElement = tmp->asUILayout();
-    }
-
-    if(relativeElement) {
-        if(!element->addAnchor(type, AnchorLine(relativeElement, relativeAnchorType)))
-            logError(YAML::Exception(node.GetMark(), "anchoring failed").what());
-    } else {
-        logError(YAML::Exception(node.GetMark(), "anchoring failed, does the relative element really exists?").what());
-    }
+    if(!layout->addAnchor(anchoredElement, anchoredEdge, AnchorLine(anchorLineElementId, anchorLineEdge)))
+        logError(YAML::Exception(node.GetMark(), "anchoring failed").what());
 }
 
 void UILoader::loadButton(const UIButtonPtr& button, const YAML::Node& node)

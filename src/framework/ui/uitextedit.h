@@ -37,7 +37,7 @@ public:
     UITextEdit();
 
     void onInputEvent(const InputEvent& event);
-    void onLayoutRectChange(const Rect& rect);
+    void onRectUpdate();
     void onFocusChange();
 
     void setText(const std::string& text);

@@ -90,7 +90,7 @@ SET(SOURCES
     src/framework/graphics/textarea.cpp
 
 # framework ui
-    src/framework/ui/uilayout.cpp
+    src/framework/ui/uianchorlayout.cpp
     src/framework/ui/uielement.cpp
     src/framework/ui/uielementskin.cpp
     src/framework/ui/uibuttonskin.cpp

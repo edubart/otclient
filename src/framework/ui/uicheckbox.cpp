@@ -25,7 +25,7 @@
 #include <prerequisites.h>
 #include <ui/uicheckbox.h>
 
-UICheckBox::UICheckBox(UI::EElementType type): UIElement(type)
+UICheckBox::UICheckBox(UI::ElementType type): UIElement(type)
 {
 
 }

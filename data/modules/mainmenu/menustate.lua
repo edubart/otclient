@@ -4,8 +4,7 @@ function onEnterMenuState()
 end
 
 function onLeaveMenuState()
-    mainMenu:destroy()
-    mainMenu = nil
+
 end
 
 function onApplicationClose()

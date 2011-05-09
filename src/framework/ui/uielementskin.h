@@ -34,7 +34,7 @@ class UIElement;
 class UIElementSkin
 {
 public:
-    UIElementSkin(const std::string& name, UI::EElementType elementType) :
+    UIElementSkin(const std::string& name, UI::ElementType elementType) :
         m_name(name),
         m_elementType(elementType) { }
     UIElementSkin() : m_elementType(UI::Element) { }
@@ -49,7 +49,7 @@ public:
 
     const std::string& getName() const { return m_name; }
     const Size& getDefaultSize() const { return m_defaultSize; }
-    UI::EElementType getElementType() const { return m_elementType; }
+    UI::ElementType getElementType() const { return m_elementType; }
     ImagePtr getDefaultImage() const { return m_defaultImage; }
 
 protected:
@@ -57,7 +57,7 @@ protected:
 
 private:
     std::string m_name;
-    UI::EElementType m_elementType;
+    UI::ElementType m_elementType;
     Size m_defaultSize;
     ImagePtr m_defaultImage;
 };

@@ -31,10 +31,11 @@
 class UIContainer : public UIElement
 {
 public:
-    UIContainer(UI::EElementType type = UI::Container) :
+    UIContainer(UI::ElementType type = UI::Container) :
         UIElement(type) { }
     virtual ~UIContainer() { }
 
+    virtual void destroy();
     virtual void onLoad();
     virtual void render();
     virtual void onInputEvent(const InputEvent& event);
@@ -70,16 +71,13 @@ public:
     /// Get focused element
     UIElementPtr getFocusedElement() const { return m_focusedElement; }
 
-    virtual UI::EElementType getElementType() const { return UI::Container; }
+    virtual UI::ElementType getElementType() const { return UI::Container; }
     UIContainerPtr asUIContainer() { return boost::static_pointer_cast<UIContainer>(shared_from_this()); }
 
     virtual const char *getScriptableName() const { return "UIContainer"; }
 
     /// Get root container (the container that contains everything)
     static UIContainerPtr& getRoot();
-
-protected:
-    virtual void internalOnDestroy();
 
 private:
     std::list<UIElementPtr> m_children;
