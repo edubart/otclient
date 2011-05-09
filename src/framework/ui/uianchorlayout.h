@@ -66,6 +66,7 @@ public:
     void recalculateElementLayout(const UIElementPtr& element);
     void recalculateChildrenLayout(const UIElementPtr& parent);
 
+    bool hasElementInAnchorTree(const UIElementPtr& element, const UIElementPtr& treeAnchor);
     static UI::AnchorPoint parseAnchorPoint(const std::string& anchorPointStr);
 
 private:

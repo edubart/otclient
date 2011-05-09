@@ -55,11 +55,15 @@ int Anchor::getAnchorLinePoint() const
     }
     return -9999;
 }
-
 bool UIAnchorLayout::addAnchor(const UIElementPtr& anchoredElement, UI::AnchorPoint anchoredEdge, const AnchorLine& anchorLine)
 {
     Anchor anchor(anchoredElement, anchoredEdge, anchorLine);
     UIElementPtr anchorLineElement = anchor.getAnchorLineElement();
+
+    if(!anchorLineElement) {
+        logError("ERROR: could not find the element to anchor on, wrong id?");
+        return false;
+    }
 
     // we can never anchor with itself
     if(anchoredElement == anchorLineElement) {
@@ -67,7 +71,11 @@ bool UIAnchorLayout::addAnchor(const UIElementPtr& anchoredElement, UI::AnchorPo
         return false;
     }
 
-    // TODO: check if itself is already anchored on the anchor element
+    // we must never anchor to an anchor child
+    if(hasElementInAnchorTree(anchorLineElement, anchoredElement)) {
+        logError("ERROR: anchors is miss configurated, you must never make anchor chains in loops");
+        return false;
+    }
 
     // setup the anchor
     m_anchors.push_back(anchor);
@@ -142,6 +150,17 @@ void UIAnchorLayout::recalculateChildrenLayout(const UIElementPtr& parent)
                 recalculateElementLayout(child);
         }
     }
+}
+
+bool UIAnchorLayout::hasElementInAnchorTree(const UIElementPtr& element, const UIElementPtr& treeAnchor)
+{
+    foreach(const Anchor& anchor, m_anchors) {
+        if(anchor.getAnchorLineElement() == treeAnchor) {
+            if(anchor.getAnchoredElement() == element || hasElementInAnchorTree(element, anchor.getAnchoredElement()))
+                return true;
+        }
+    }
+    return false;
 }
 
 UI::AnchorPoint UIAnchorLayout::parseAnchorPoint(const std::string& anchorPointStr)
