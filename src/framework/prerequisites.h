@@ -74,8 +74,8 @@ typedef int8_t int8;
 
 typedef boost::function<void()> SimpleCallback;
 
-// yaml
-#include <yaml-cpp/yaml.h>
+// constants
+#include <constants.h>
 
 // common utilities
 #include <util/util.h>
@@ -84,5 +84,6 @@ typedef boost::function<void()> SimpleCallback;
 #include <util/point.h>
 #include <util/size.h>
 #include <util/rect.h>
+#include <util/yaml.h>
 
 #endif // PREREQUISITES_H

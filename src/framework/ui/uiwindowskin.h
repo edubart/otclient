@@ -27,6 +27,7 @@
 #include <prerequisites.h>
 #include <graphics/font.h>
 #include <ui/uielementskin.h>
+#include <graphics/borderedimage.h>
 
 class UIWindowSkin : public UIElementSkin
 {
@@ -40,11 +41,12 @@ public:
     int getHeadHeight() const { return m_headHeight; }
 
 private:
-    ImagePtr m_headImage;
+    BorderedImagePtr m_headImage;
     ImagePtr m_bodyImage;
-    Font *m_titleFont;
+    FontPtr m_titleFont;
     int m_headHeight;
-    Color m_headTextColor;
+    int m_headMargin;
+    AlignmentFlag m_titleAlign;
 };
 
 #endif // UIWINDOWSKIN_H

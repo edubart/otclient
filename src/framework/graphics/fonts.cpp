@@ -28,7 +28,7 @@
 
 Fonts g_fonts;
 
-void Fonts::init(const std::string& defaultFontName)
+void Fonts::init()
 {
     // load all fonts
     std::list<std::string> files = g_resources.getDirectoryFiles("fonts");
@@ -37,27 +37,21 @@ void Fonts::init(const std::string& defaultFontName)
             std::string name = file;
             boost::erase_first(name, ".yml");
             FontPtr font(new Font(name));
-            if(font->load("fonts/" + file)) {
+            if(font->load("fonts/" + file))
                 m_fonts.push_back(font);
-
-                if(name == defaultFontName)
-                    m_defaultFont = font;
-            }
         }
     }
-
-    if(!m_defaultFont)
-        flogFatal("FATAL ERROR: Could not load the default font \"%s\"\n", defaultFontName.c_str());
 }
 
-Font* Fonts::get(const std::string& fontName)
+FontPtr Fonts::get(const std::string& fontName)
 {
     // find font by name
-    for(auto it = m_fonts.begin(); it != m_fonts.end(); ++it) {
-        if((*it)->getName() == fontName)
-            return (*it).get();
+    foreach(const FontPtr& font, m_fonts) {
+        if(font->getName() == fontName)
+            return font;
     }
 
-    flogError("ERROR: Font \"%s\" not found, returing the default one", fontName.c_str());
-    return m_defaultFont.get();
+    flogFatal("ERROR: Font \"%s\" not found", fontName.c_str());
+    return FontPtr();
 }
+

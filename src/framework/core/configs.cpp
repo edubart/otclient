@@ -82,12 +82,12 @@ void Configs::setValue(const std::string &key, const char *value)
 
 void Configs::setValue(const std::string &key, int value)
 {
-    setValue(key, convertType<std::string, int>(value));
+    setValue(key, convert_cast<std::string>(value));
 }
 
 void Configs::setValue(const std::string &key, float value)
 {
-    setValue(key, convertType<std::string, float>(value));
+    setValue(key, convert_cast<std::string>(value));
 }
 
 void Configs::setValue(const std::string &key, bool value)
@@ -116,7 +116,7 @@ float Configs::getFloat(const std::string &key) const
         flogWarning("WARNING: Config value %s not found", key.c_str());
         return 0;
     }
-    return convertType<float, std::string>(it->second);
+    return convert_cast<float>(it->second);
 }
 
 bool Configs::getBoolean(const std::string &key) const
@@ -136,5 +136,5 @@ int Configs::getInteger(const std::string &key) const
         flogWarning("WARNING: Config value %s not found", key.c_str());
         return 0;
     }
-    return convertType<int, std::string>(it->second);
+    return convert_cast<int>(it->second);
 }

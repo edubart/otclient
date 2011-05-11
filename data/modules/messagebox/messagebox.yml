@@ -1,5 +1,5 @@
 window#messageBoxWindow:
-  size: [236, 78]
+  size: [192, 78]
   anchors.horizontalCenter: parent.horizontalCenter
   anchors.verticalCenter: parent.verticalCenter
 

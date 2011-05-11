@@ -30,34 +30,36 @@ void UIWindowSkin::load(const YAML::Node& node)
 {
     UIElementSkin::load(node);
 
-    node["head"]["height"] >> m_headHeight;
-    m_headImage = loadImage(node["head"]);
-    m_bodyImage = loadImage(node["body"]);
+    const YAML::Node& headNode = node["head"];
+    const YAML::Node& bodyNode = node["body"];
 
-    std::string fontName;
-    node["head"]["font"] >> fontName;
-    m_titleFont = g_fonts.get(fontName);
-
-    node["head"]["text color"] >> m_headTextColor;
+    m_headImage = boost::dynamic_pointer_cast<BorderedImage>(loadImage(headNode));
+    m_headHeight = yamlRead(headNode, "height", m_headImage->getDefaultSize().height());
+    m_headMargin = yamlRead(headNode, "margin", 0);
+    m_titleAlign = parseAlignment(yamlRead(headNode, "text align", std::string("center")));
+    m_bodyImage = loadImage(bodyNode);
 }
 
 void UIWindowSkin::draw(UIElement* element)
 {
     UIElementSkin::draw(element);
-
     UIWindow *window = static_cast<UIWindow*>(element);
 
+    // draw window head
     Rect headRect = window->getRect();
-    Rect bodyRect = window->getRect();
-
     headRect.setHeight(m_headHeight);
-    bodyRect.setTop(headRect.bottom() + 1);
-
     m_headImage->draw(headRect);
-    m_titleFont->renderText(window->getTitle(),
-                            headRect,
-                            ALIGN_CENTER,
-                            m_headTextColor);
 
+    // draw window head text
+    Rect headTextRect = headRect;
+    if(m_titleAlign & AlignLeft)
+        headTextRect.addLeft(-m_headMargin);
+    else if(m_titleAlign & AlignRight)
+        headTextRect.addRight(-m_headMargin);
+    getFont()->renderText(window->getTitle(), headTextRect, m_titleAlign, getFontColor());
+
+    // draw window body
+    Rect bodyRect = window->getRect();
+    bodyRect.setTop(headRect.bottom() + 1);
     m_bodyImage->draw(bodyRect);
 }

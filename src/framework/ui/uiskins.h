@@ -28,6 +28,7 @@
 #include <prerequisites.h>
 #include <graphics/texture.h>
 #include <ui/uielementskin.h>
+#include <graphics/font.h>
 
 class UISkins
 {
@@ -39,9 +40,13 @@ public:
 
     UIElementSkinPtr getElementSkin(UI::ElementType elementType, const std::string& name = "default");
     TexturePtr getDefaultTexture() { return m_defaultTexture; }
+    FontPtr getDefaultFont() { return m_defaultFont; }
+    Color getDefaultFontColor() { return m_defaultFontColor; }
 
 private:
     TexturePtr m_defaultTexture;
+    FontPtr m_defaultFont;
+    Color m_defaultFontColor;
 
     std::vector<UIElementSkinPtr> m_elementSkins;
 };

@@ -78,13 +78,6 @@ typedef TPoint<int> Point;
 typedef TPoint<float> PointF;
 
 template <class T>
-inline void operator>>(const YAML::Node& node, TPoint<T>& point)
-{
-    node[0] >> point.x;
-    node[1] >> point.y;
-}
-
-template <class T>
 inline std::ostream& operator<<(std::ostream& out, const TPoint<T>& point)
 {
     out << "Point(" << point.x << ","

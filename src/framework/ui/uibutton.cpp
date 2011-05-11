@@ -25,6 +25,7 @@
 #include <prerequisites.h>
 #include <core/dispatcher.h>
 #include <ui/uibutton.h>
+#include "uicontainer.h"
 
 void UIButton::onInputEvent(const InputEvent& event)
 {
@@ -35,5 +36,10 @@ void UIButton::onInputEvent(const InputEvent& event)
         if(getRect().contains(event.mousePos)) {
             g_dispatcher.addTask(boost::bind(&Scriptable::callLuaTableField, shared_from_this(), "onClick"));
         }
+    } else if(event.type == EV_MOUSE_MOVE && m_state != ButtonDown) {
+        if(getRect().contains(event.mousePos) && UIContainer::getRoot()->recursiveGetChildByPos(event.mousePos) == asUIElement())
+            m_state = ButtonMouseOver;
+        else
+            m_state = ButtonUp;
     }
 }

@@ -1,9 +1,11 @@
-default skin image: tibiaskin.png
+default font: tibia-10px-antialised
+default font color: [191, 191, 191, 255]
+default texture: tibiaskin/skin.png
 
 buttons:
   default:
     font: tibia-8px-antialised
-    text color: [238, 238, 238, 255]
+    font color: [238, 238, 238, 255]
     default size: [86, 20]
 
     bordered image:
@@ -33,6 +35,10 @@ panels:
   default:
     # the default panel is empty
 
+  mainMenuBackground:
+    image: tibiaskin/background.png
+    antialised: true
+
   roundedGridPanel:
     bordered image:
       left border: [0,214,5,32]
@@ -59,15 +65,12 @@ panels:
 
 labels:
   default:
-    font: tibia-10px-antialised
-    text color: [191, 191, 191, 255]
 
 windows:
   default:
+    font color: [143, 143, 143, 255]
     head:
-      text color: [143, 143, 143, 255]
       height: 17
-      font: tibia-10px-antialised
       bordered image:
         left border: [106,187,4,9]
         right border: [110,187,4,9]
@@ -90,7 +93,6 @@ windows:
 text edits:
   default:
     default size: [86, 16]
-    font: tibia-10px-antialised
     text margin: 3
     bordered image:
       left border: [308,97,1,1]

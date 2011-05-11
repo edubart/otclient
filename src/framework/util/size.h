@@ -112,15 +112,6 @@ typedef TSize<int> Size;
 typedef TSize<float> SizeF;
 
 template <class T>
-inline void operator>>(const YAML::Node& node, TSize<T>& size)
-{
-    T w, h;
-    node[0] >> w;
-    node[1] >> h;
-    size.setSize(w, h);
-}
-
-template <class T>
 inline std::ostream& operator<<(std::ostream& out, const TSize<T>& size)
 {
     out << "Size(" << size.width() << ","

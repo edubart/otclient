@@ -28,13 +28,14 @@
 #include <util/logger.h>
 #include <boost/lexical_cast.hpp>
 #include <boost/format.hpp>
+#include <constants.h>
 
-/// Easy/fast writting formater
-#define f(a, b) (boost::format(a) % b).str()
+// Easy/fast writing formater
+#define fmt(a, b) (boost::format(a) % b).str()
 
 /// Convert any data type through boost::lexical_cast
-template<class R, class T> 
-R convertType(T t)
+template<class R, class T>
+R convert_cast(T t)
 {
     R ret = R();
     try {
@@ -44,5 +45,8 @@ R convertType(T t)
     }
     return ret;
 }
+
+AlignmentFlag parseAlignment(std::string aligment);
+
 
 #endif // UTIL_H

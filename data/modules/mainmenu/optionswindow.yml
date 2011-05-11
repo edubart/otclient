@@ -1,5 +1,5 @@
 window#optionsWindow:
-  title: Info
+  title: Options
   size: [286, 262]
   anchors.horizontalCenter: parent.horizontalCenter
   anchors.verticalCenter: parent.verticalCenter

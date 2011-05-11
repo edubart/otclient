@@ -31,6 +31,7 @@
 #include <ui/uiwindowskin.h>
 #include <ui/uitexteditskin.h>
 #include <ui/uilabelskin.h>
+#include <graphics/fonts.h>
 
 UISkins g_uiSkins;
 
@@ -48,9 +49,15 @@ void UISkins::load(const std::string& skinsFile)
         YAML::Node doc;
         parser.GetNextDocument(doc);
 
-        std::string defaultTexture;
-        doc["default skin image"] >> defaultTexture;
-        m_defaultTexture = g_textures.get("skins/" + defaultTexture);
+        m_defaultFont = g_fonts.get(yamlRead<std::string>(doc, "default font"));
+        if(!m_defaultFont)
+            logFatal("FATAL ERROR: Could not load skin default font");
+
+        m_defaultFontColor = yamlRead(doc, "default font color", Color::white);
+
+        std::string defaultTextureName = yamlRead(doc, "default texture", std::string());
+        if(!defaultTextureName.empty())
+            m_defaultTexture = g_textures.get("skins/" + defaultTextureName);
 
         {
             const YAML::Node& node = doc["buttons"];

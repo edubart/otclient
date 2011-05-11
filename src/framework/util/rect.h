@@ -300,17 +300,6 @@ typedef TRect<int> Rect;
 typedef TRect<float> RectF;
 
 template <class T>
-inline void operator>>(const YAML::Node& node, TRect<T>& rect)
-{
-    T x, y, width, height;
-    node[0] >> x;
-    node[1] >> y;
-    node[2] >> width;
-    node[3] >> height;
-    rect.setRect(x, y, width, height);
-}
-
-template <class T>
 inline std::ostream& operator<<(std::ostream& out, const TRect<T>& rect)
 {
     out << "Rect(" << rect.left() << ","

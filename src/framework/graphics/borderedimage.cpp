@@ -75,14 +75,21 @@ void BorderedImage::setTexCoords(const Rect& left,
     m_bottomRightCornerTexCoords = bottomRight;
     m_centerTexCoords = center;
 
-    m_cornersSize = Size(left.width() + right.width(),
+    m_bordersSize = Size(left.width() + right.width(),
                          top.height() + bottom.height());
+
+    m_defaultSize = Size(std::max(std::max(topLeft.width(), bottomLeft.width()), left.width()) +
+                            std::max(std::max(topRight.width(), bottomRight.width()), right.width()) +
+                            center.width(),
+                         std::max(std::max(topLeft.height(), topRight.height()), top.height()) +
+                            std::max(std::max(bottomLeft.height(), bottomRight.height()), bottom.height()) +
+                            center.height());
 }
 
 void BorderedImage::draw(const Rect& screenCoords)
 {
     Rect rectCoords;
-    Size centerSize = screenCoords.size() - m_cornersSize;
+    Size centerSize = screenCoords.size() - m_bordersSize;
 
     // first the center
     if(centerSize.area() > 0) {
@@ -144,3 +151,4 @@ void BorderedImage::draw(const Rect& screenCoords)
                       m_bottomRightCornerTexCoords.size());
     g_graphics.drawTexturedRect(rectCoords, m_texture, m_bottomRightCornerTexCoords);
 }
+

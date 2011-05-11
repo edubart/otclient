@@ -3,6 +3,7 @@ glyph spacing: [1, 1]
 top margin: 3
 image: tibia-10px-monochrome.png
 image glyph size: [8, 16]
+first glyph: 32
 
 glyph widths:
   32: 2

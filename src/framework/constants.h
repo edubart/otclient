@@ -22,30 +22,25 @@
  */
 
 
-#ifndef UIBUTTONSKIN_H
-#define UIBUTTONSKIN_H
+#ifndef CONSTANTS_H
+#define CONSTANTS_H
 
-#include <prerequisites.h>
-#include <ui/uiconstants.h>
-#include <ui/uielementskin.h>
-
-class Font;
-
-class UIButtonSkin : public UIElementSkin
-{
-public:
-    UIButtonSkin(const std::string& name) :
-        UIElementSkin(name, UI::Button) { }
-
-    void load(const YAML::Node& node);
-    void draw(UIElement *element);
-
-private:
-    ImagePtr m_buttonDownImage;
-    ImagePtr m_buttonHoverImage;
-    Point m_buttonDownTranslate;
-    Color m_buttonDownTextColor;
-    Color m_buttonHoverTextColor;
+enum AlignmentFlag {
+    AlignLeft = 1,
+    AlignRight = 2,
+    AlignTop = 4,
+    AlignBottom = 8,
+    AlignHorizontalCenter = 16,
+    AlignVerticalCenter = 32,
+    AlignTopLeft = AlignTop | AlignLeft,
+    AlignTopRight = AlignTop | AlignRight,
+    AlignBottomLeft = AlignBottom | AlignLeft,
+    AlignBottomRight = AlignBottom | AlignRight,
+    AlignLeftCenter = AlignLeft | AlignVerticalCenter,
+    AlignRightCenter = AlignRight | AlignVerticalCenter,
+    AlignTopCenter = AlignTop | AlignHorizontalCenter,
+    AlignBottomCenter = AlignBottom | AlignHorizontalCenter,
+    AlignCenter = AlignVerticalCenter | AlignHorizontalCenter
 };
 
-#endif // UIBUTTONSKIN_H
+#endif // CONSTANTS_H

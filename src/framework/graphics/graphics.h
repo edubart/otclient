@@ -30,7 +30,7 @@
 
 class Graphics
 {
-    enum EDrawMode {
+    enum DrawMode {
         DRAW_NONE = 0,
         DRAW_QUADS = 1,
         DRAW_TEXTURE = 2,
@@ -80,8 +80,7 @@ private:
     TexturePtr m_bindedTexture;
     Color m_bindedColor;
     Size m_screenSize;
-    EDrawMode m_drawMode;
-    EDrawMode m_lastDrawMode;
+    DrawMode m_drawMode;
 };
 
 extern Graphics g_graphics;

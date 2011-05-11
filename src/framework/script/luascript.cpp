@@ -187,7 +187,7 @@ void LuaScript::setMetatable(const std::string& name, int index)
 {
     luaL_getmetatable(L, name.c_str());
     if(isNil())
-        reportError(f("could not retrive metatable %d", name));
+        reportError(fmt("could not retrive metatable %d", name));
     else
         lua_setmetatable(L, index < 0 ? index-1 : index);
 }

@@ -31,6 +31,7 @@
 #include <ui/uicontainer.h>
 #include <net/connection.h>
 #include <script/luascript.h>
+#include <ui/uiskins.h>
 
 Engine g_engine;
 
@@ -38,23 +39,24 @@ void Engine::init()
 {
     // initialize stuff
     g_graphics.init();
-    g_fonts.init("tibia-12px-rounded");
+    g_fonts.init();
     g_lua.init();
 }
 
 void Engine::terminate()
 {
-    // terminate stuff
-    g_fonts.terminate();
-    g_graphics.terminate();
-
     // destroy root ui
     UIContainer::getRoot()->destroy();
 
+    // cleanup script stuff
     g_lua.terminate();
 
     // poll remaning events
     g_engine.poll();
+
+    // terminate stuff
+    g_fonts.terminate();
+    g_graphics.terminate();
 }
 
 void Engine::poll()
@@ -78,7 +80,7 @@ void Engine::run()
 
     std::string fpsText;
     Size fpsTextSize;
-    Font *defaultFont = g_fonts.getDefaultFont();
+    FontPtr defaultFont = g_uiSkins.getDefaultFont();
 
     m_lastFrameTicks = Platform::getTicks();
     int lastFpsTicks = m_lastFrameTicks;
@@ -93,7 +95,7 @@ void Engine::run()
 
         // render only when visible
         if(Platform::isWindowVisible()) {
-            // calculate and fps
+            // calculate fps
             if(m_calculateFps) {
                 frameCount++;
                 if(m_lastFrameTicks - lastFpsTicks >= 1000) {
@@ -102,7 +104,7 @@ void Engine::run()
                     frameCount = 0;
 
                     // update fps text
-                    fpsText = f("FPS: %d", fps);
+                    fpsText = fmt("FPS: %d", fps);
                     fpsTextSize = defaultFont->calculateTextRectSize(fpsText);
                 }
             }

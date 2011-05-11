@@ -67,16 +67,6 @@ private:
     RGBA color;
 };
 
-inline void operator>>(const YAML::Node& node, Color& color)
-{
-    int r, g, b, a;
-    node[0] >> r;
-    node[1] >> g;
-    node[2] >> b;
-    node[3] >> a;
-    color.setRGBA(r,g,b,a);
-}
-
 inline std::ostream& operator<<(std::ostream& out, const Color& color)
 {
     out << "Color(" << (int)color.r() << ","

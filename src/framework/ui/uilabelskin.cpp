@@ -30,28 +30,18 @@
 void UILabelSkin::load(const YAML::Node& node)
 {
     UIElementSkin::load(node);
-
-    if(node.FindValue("font"))
-        m_font = g_fonts.get(node["font"].Read<std::string>());
-    else
-        m_font = g_fonts.getDefaultFont();
-
-    if(node.FindValue("text color"))
-        node["text color"] >> m_textColor;
-    else
-        m_textColor = Color::white;
 }
 
 void UILabelSkin::apply(UIElement* element)
 {
     UIElementSkin::apply(element);
     UILabel *label = static_cast<UILabel*>(element);
-    label->setSize(m_font->calculateTextRectSize(label->getText()));
+    label->setSize(getFont()->calculateTextRectSize(label->getText()));
 }
 
 void UILabelSkin::draw(UIElement *element)
 {
     UIElementSkin::draw(element);
     UILabel *label = static_cast<UILabel*>(element);
-    m_font->renderText(label->getText(), label->getRect(), label->getAlign(), m_textColor);
+    getFont()->renderText(label->getText(), label->getRect(), label->getAlign(), getFontColor());
 }

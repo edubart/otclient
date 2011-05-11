@@ -1,8 +1,5 @@
 panel#background:
-  skin: 
-    image: background.png
-    antialised: true
-  size: [500, 500]
+  skin: mainMenuBackground
   anchors.left: parent.left
   anchors.right: parent.right
   anchors.top: parent.top

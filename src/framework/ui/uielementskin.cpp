@@ -28,12 +28,14 @@
 #include <ui/uielementskin.h>
 #include <graphics/borderedimage.h>
 #include <graphics/textures.h>
+#include <graphics/fonts.h>
 
 void UIElementSkin::load(const YAML::Node& node)
 {
-    if(node.FindValue("default size"))
-        node["default size"] >> m_defaultSize;
+    m_defaultSize = yamlRead(node, "default size", Size());
     m_defaultImage = loadImage(node);
+    m_font = loadFont(node);
+    m_fontColor = yamlRead(node, "font color", g_uiSkins.getDefaultFontColor());
 }
 
 void UIElementSkin::apply(UIElement* element)
@@ -47,40 +49,29 @@ void UIElementSkin::draw(UIElement *element)
     if(m_defaultImage)
         m_defaultImage->draw(element->getRect());
 }
+
 ImagePtr UIElementSkin::loadImage(const YAML::Node& node)
 {
     ImagePtr image;
     TexturePtr texture;
 
-    if(node.FindValue("bordered image")) {
-        const YAML::Node& child = node["bordered image"];
-        Rect left, right, top, bottom, topLeft, topRight, bottomLeft, bottomRight, center;
-        if(child.FindValue("left border"))
-            child["left border"] >> left;
-        if(child.FindValue("right border"))
-            child["right border"] >> right;
-        if(child.FindValue("top border"))
-            child["top border"] >> top;
-        if(child.FindValue("bottom border"))
-            child["bottom border"] >> bottom;
-        if(child.FindValue("top left corner"))
-            child["top left corner"] >> topLeft;
-        if(child.FindValue("top right corner"))
-            child["top right corner"] >> topRight;
-        if(child.FindValue("bottom left corner"))
-            child["bottom left corner"] >> bottomLeft;
-        if(child.FindValue("bottom right corner"))
-            child["bottom right corner"] >> bottomRight;
-        if(child.FindValue("center"))
-            child["center"] >> center;
+    if(yamlHasValue(node, "bordered image")) {
+        const YAML::Node& cnode = node["bordered image"];
+        Rect left = yamlRead(cnode, "left border", Rect());
+        Rect right = yamlRead(cnode, "right border", Rect());
+        Rect top = yamlRead(cnode, "top border", Rect());
+        Rect bottom = yamlRead(cnode, "bottom border", Rect());
+        Rect topLeft = yamlRead(cnode, "top left corner", Rect());
+        Rect topRight = yamlRead(cnode, "top right corner", Rect());
+        Rect bottomLeft = yamlRead(cnode, "bottom left corner", Rect());
+        Rect bottomRight = yamlRead(cnode, "bottom right corner", Rect());
+        Rect center = yamlRead(cnode, "center", Rect());
+        std::string textureName = yamlRead(cnode, "source", std::string());
 
-        if(child.FindValue("image")) {
-            std::string textureName;
-            child["image"] >> textureName;
-            texture = g_textures.get(textureName);
-        } else {
+        if(!textureName.empty())
+            texture = g_textures.get("skins/" + textureName);
+        else
             texture = g_uiSkins.getDefaultTexture();
-        }
 
         if(texture) {
             image = ImagePtr(new BorderedImage(texture,
@@ -94,22 +85,35 @@ ImagePtr UIElementSkin::loadImage(const YAML::Node& node)
                                             bottomRight,
                                             center));
         }
-    } else if(node.FindValue("image")) {
-        std::string textureName;
-        node["image"] >> textureName;
-        texture = g_textures.get(textureName);
-        if(texture) {
+
+        if(!image)
+            logError(yamlErrorDesc(cnode, "failed to load bordered image"));
+    } else if(yamlHasValue(node, "image")) {
+        texture = g_textures.get("skins/" + yamlRead<std::string>(node, "image"));
+        if(texture)
             image = ImagePtr(new Image(texture));
-        }
+
+        if(!image)
+            logError(yamlErrorDesc(node["image"], "failed to load image"));
     }
 
-    if(texture && node.FindValue("antialised")){
-        bool antialised;
-        node["antialised"] >> antialised;
+    if(texture) {
+        bool antialised = yamlRead(node, "antialised", false);
         if(antialised)
             texture->enableBilinearFilter();
     }
 
     return image;
 }
+
+FontPtr UIElementSkin::loadFont(const YAML::Node& node)
+{
+    FontPtr font;
+    if(yamlHasValue(node, "font"))
+        font = g_fonts.get(yamlRead<std::string>(node, "font"));
+    if(!font)
+        font = g_uiSkins.getDefaultFont();
+    return font;
+}
+
 

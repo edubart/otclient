@@ -40,13 +40,10 @@ public:
     void apply(UIElement *element);
     void draw(UIElement *element);
 
-    Font *getFont() const { return m_font; }
     int getTextMargin() const { return m_textMargin; }
 
 private:
-    Font *m_font;
     int m_textMargin;
-    Color m_textColor;
 };
 
 #endif // UITEXTEDITSKIN_H

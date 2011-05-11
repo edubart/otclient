@@ -45,7 +45,7 @@ void Connection::connect(const std::string& host, uint16 port, const SimpleCallb
     m_connectCallback = callback;
     m_connectionState = CONNECTION_STATE_RESOLVING;
 
-    boost::asio::ip::tcp::resolver::query query(host, convertType<std::string, uint16>(port));
+    boost::asio::ip::tcp::resolver::query query(host, convert_cast<std::string>(port));
     m_resolver.async_resolve(query, boost::bind(&Connection::onResolve, this, boost::asio::placeholders::error, boost::asio::placeholders::iterator));
 
     m_timer.expires_from_now(boost::posix_time::seconds(2));

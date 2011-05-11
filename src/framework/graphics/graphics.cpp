@@ -40,6 +40,7 @@ void Graphics::init()
     glEnable(GL_TEXTURE_2D); // enable textures by default
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
     glShadeModel(GL_SMOOTH);
+    glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
@@ -266,7 +267,7 @@ void Graphics::bindColor(const Color& color)
 void Graphics::bindTexture(const TexturePtr& texture, const Color& color)
 {
     // switch drawing to textured quads
-    if(m_drawMode != DRAW_TEXTURE_QUADS || m_bindedTexture != texture) {
+    if(m_drawMode != DRAW_TEXTURE_QUADS || m_bindedTexture != texture || m_bindedColor != color) {
         if(m_drawMode != DRAW_NONE)
             glEnd();
         glEnable(GL_TEXTURE_2D);

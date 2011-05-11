@@ -28,8 +28,7 @@
 #include <graphics/graphics.h>
 
 TextArea::TextArea() :
-        m_font(0),
-        m_align(ALIGN_TOP_LEFT),
+        m_align(AlignLeftCenter),
         m_color(Color::white),
         m_cursorPos(-1),
         m_startRenderPos(0),
@@ -37,10 +36,10 @@ TextArea::TextArea() :
 {
 }
 
-TextArea::TextArea(Font* font,
+TextArea::TextArea(FontPtr font,
                    const std::string& text,
                    const Rect& screenCoords,
-                   int align,
+                   AlignmentFlag align,
                    const Color& color) :
         m_font(font),
         m_text(text),
@@ -165,19 +164,19 @@ void TextArea::recalculate()
         Rect glyphTextureCoords = glyphsTextureCoords[glyph];
 
         // first translate to align position
-        if(m_align & ALIGN_BOTTOM) {
+        if(m_align & AlignBottom) {
             glyphScreenCoords.translate(0, m_screenCoords.height() - textBoxSize.height());
-        } else if(m_align & ALIGN_VERTICAL_CENTER) {
+        } else if(m_align & AlignVerticalCenter) {
             glyphScreenCoords.translate(0, (m_screenCoords.height() - textBoxSize.height()) / 2);
-        } else { // ALIGN_TOP
+        } else { // AlignTop
             // nothing to do
         }
 
-        if(m_align & ALIGN_RIGHT) {
+        if(m_align & AlignRight) {
             glyphScreenCoords.translate(m_screenCoords.width() - textBoxSize.width(), 0);
-        } else if(m_align & ALIGN_HORIZONTAL_CENTER) {
+        } else if(m_align & AlignHorizontalCenter) {
             glyphScreenCoords.translate((m_screenCoords.width() - textBoxSize.width()) / 2, 0);
-        } else { // ALIGN_TOP
+        } else { // AlignLeft
             // nothing to do
         }
 
@@ -221,7 +220,7 @@ void TextArea::recalculate()
     }
 }
 
-void TextArea::setFont(Font* font)
+void TextArea::setFont(FontPtr font)
 {
     if(m_font != font) {
         m_font = font;
@@ -249,7 +248,7 @@ void TextArea::setScreenCoords(const Rect& screenCoords)
     }
 }
 
-void TextArea::setAlign(int align)
+void TextArea::setAlign(AlignmentFlag align)
 {
     if(m_align != align) {
         m_align = align;

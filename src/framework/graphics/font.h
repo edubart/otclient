@@ -28,27 +28,11 @@
 #include <prerequisites.h>
 #include <graphics/texture.h>
 
-enum EAlign {
-    ALIGN_TOP = 1 << 0,
-    ALIGN_BOTTOM = 1 << 1,
-    ALIGN_LEFT = 1 << 2,
-    ALIGN_RIGHT = 1 << 3,
-    ALIGN_HORIZONTAL_CENTER = 1 << 4,
-    ALIGN_VERTICAL_CENTER = 1 << 5,
-    ALIGN_CENTER = ALIGN_HORIZONTAL_CENTER | ALIGN_VERTICAL_CENTER,
-    ALIGN_TOP_RIGHT = ALIGN_TOP | ALIGN_RIGHT,
-    ALIGN_TOP_LEFT = ALIGN_TOP | ALIGN_LEFT,
-    ALIGN_BOTTOM_RIGHT = ALIGN_BOTTOM | ALIGN_RIGHT,
-    ALIGN_BOTTOM_LEFT = ALIGN_BOTTOM | ALIGN_LEFT
-};
-
 class Font
 {
 public:
     Font(const std::string& name) :
-        m_name(name),
-        m_glyphHeight(10),
-        m_topMargin(0) { }
+        m_name(name) { }
 
     /// Load font from file
     bool load(const std::string &file);
@@ -61,28 +45,29 @@ public:
     /// Advanced text render
     void renderText(const std::string& text,
                     const Rect& screenCoords,
-                    int align = ALIGN_TOP_LEFT,
+                    AlignmentFlag align = AlignTopLeft,
                     const Color& color = Color::white);
 
     /// Calculate glyphs positions to use on render, also calculates textBoxSize if wanted
-    const std::vector<Point>& calculateGlyphsPositions(const std::string& text, int align = ALIGN_TOP_LEFT, Size *textBoxSize = NULL) const;
+    const std::vector<Point>& calculateGlyphsPositions(const std::string& text, AlignmentFlag align = AlignTopLeft, Size *textBoxSize = NULL) const;
 
     /// Simulate render and calculate text size
     Size calculateTextRectSize(const std::string& text);
 
-    const std::string& getName() const { return m_name; }
+    std::string getName() const { return m_name; }
     int getGlyphHeight() const { return m_glyphHeight; }
     const Rect *getGlyphsTextureCoords() const { return m_glyphsTextureCoords; }
     const Size *getGlyphsSize() const { return m_glyphsSize; }
     const TexturePtr& getTexture() const { return m_texture; }
     int getTopMargin() const { return m_topMargin; }
-    const Size& getGlyphSpacing() const { return m_glyphSpacing; }
+    Size getGlyphSpacing() const { return m_glyphSpacing; }
 
 private:
     void calculateGlyphsWidthsAutomatically(const Size& glyphSize);
 
     std::string m_name;
     int m_glyphHeight;
+    int m_firstGlyph;
     int m_topMargin;
     Size m_glyphSpacing;
     TexturePtr m_texture;

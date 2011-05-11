@@ -96,7 +96,7 @@ UIElementPtr UILoader::loadFile(const std::string& file, const UIContainerPtr& p
         // create element interpreting it's id
         UIElementPtr element = createElementFromId(elementId);
         if(!element)
-            throw YAML::Exception(doc.begin().first().GetMark(), "invalid element type");
+            yamlThrowError(doc.begin().first(), "invalid element type");
         parent->addChild(element);
 
         // populete it
@@ -136,7 +136,7 @@ void UILoader::populateContainer(const UIContainerPtr& parent, const YAML::Node&
 
         UIElementPtr element = createElementFromId(id);
         if(!element) {
-            logError(YAML::Exception(cnode.GetMark(), "invalid element type").what());
+            logError(yamlErrorDesc(cnode, "invalid element type"));
             continue;
         }
         parent->addChild(element);
@@ -167,78 +167,59 @@ void UILoader::loadElements(const UIElementPtr& parent, const YAML::Node& node)
 void UILoader::loadElement(const UIElementPtr& element, const YAML::Node& node)
 {
     // set element skin
-    if(node.FindValue("skin")) {
-        if(node["skin"].GetType() == YAML::CT_SCALAR) {
-            element->setSkin(g_uiSkins.getElementSkin(element->getElementType(), node["skin"]));
+    if(yamlHasValue(node, "skin")) {
+        const YAML::Node& cnode = node["skin"];
+        if(cnode.GetType() == YAML::CT_SCALAR) {
+            element->setSkin(g_uiSkins.getElementSkin(element->getElementType(), cnode));
         } else {
             UIElementSkinPtr skin = UIElementSkinPtr(new UIElementSkin());
-            skin->load(node["skin"]);
+            skin->load(cnode);
             element->setSkin(skin);
         }
     } else // apply default skin
         element->setSkin(g_uiSkins.getElementSkin(element->getElementType(), "default"));
 
     // load elements common proprieties
-    if(node.FindValue("size")) {
-        Size size;
-        node["size"] >> size;
-        element->setSize(size);
-    }
+    if(yamlHasValue(node, "size"))
+        element->setSize(yamlRead<Size>(node, "size"));
+    element->setMarginLeft(yamlRead(node, "margin.left", 0));
+    element->setMarginRight(yamlRead(node, "margin.right", 0));
+    element->setMarginTop(yamlRead(node, "margin.top", 0));
+    element->setMarginBottom(yamlRead(node, "margin.bottom", 0));
 
-    int margin;
-    if(node.FindValue("margin.left")) {
-        node["margin.left"] >> margin;
-        element->setMarginLeft(margin);
-    }
-
-    if(node.FindValue("margin.right")) {
-        node["margin.right"] >> margin;
-        element->setMarginRight(margin);
-    }
-
-    if(node.FindValue("margin.top")) {
-        node["margin.top"] >> margin;
-        element->setMarginTop(margin);
-    }
-
-    if(node.FindValue("margin.bottom")) {
-        node["margin.bottom"] >> margin;
-        element->setMarginBottom(margin);
-    }
-
-    if(node.FindValue("anchors.left"))
+    if(yamlHasValue(node, "anchors.left"))
         loadElementAnchor(element, UI::AnchorLeft, node["anchors.left"]);
 
-    if(node.FindValue("anchors.right"))
+    if(yamlHasValue(node, "anchors.right"))
         loadElementAnchor(element, UI::AnchorRight, node["anchors.right"]);
 
-    if(node.FindValue("anchors.top"))
+    if(yamlHasValue(node, "anchors.top"))
         loadElementAnchor(element, UI::AnchorTop, node["anchors.top"]);
 
-    if(node.FindValue("anchors.bottom"))
+    if(yamlHasValue(node, "anchors.bottom"))
         loadElementAnchor(element, UI::AnchorBottom, node["anchors.bottom"]);
 
-    if(node.FindValue("anchors.horizontalCenter"))
+    if(yamlHasValue(node, "anchors.horizontalCenter"))
         loadElementAnchor(element, UI::AnchorHorizontalCenter, node["anchors.horizontalCenter"]);
 
-    if(node.FindValue("anchors.verticalCenter"))
+    if(yamlHasValue(node, "anchors.verticalCenter"))
         loadElementAnchor(element, UI::AnchorVerticalCenter, node["anchors.verticalCenter"]);
 
     // load events
-    if(node.FindValue("onLoad")) {
+    if(yamlHasValue(node, "onLoad")) {
         const YAML::Node& cnode = node["onLoad"];
-        if(g_lua.loadBufferAsFunction(cnode.Read<std::string>(), element->getId() + ":onLoad"))
+        if(g_lua.loadBufferAsFunction(yamlRead<std::string>(cnode), element->getId() + ":onLoad"))
             g_lua.setScriptableField(element, "onLoad");
         else
-            logError(YAML::Exception(cnode.GetMark(), "failed to parse inline lua script").what());
+            logError(yamlErrorDesc(cnode, "failed to parse inline lua script"));
     }
 
-    if(node.FindValue("onDestroy")) {
+    if(yamlHasValue(node, "onDestroy")) {
         const YAML::Node& cnode = node["onDestroy"];
-        if(g_lua.loadBufferAsFunction(cnode.Read<std::string>(), element->getId() + ":onDestroy"))
+        if(g_lua.loadBufferAsFunction(yamlRead<std::string>(cnode), element->getId() + ":onDestroy"))
             g_lua.setScriptableField(element, "onDestroy");
         else
-            logError(YAML::Exception(cnode.GetMark(), "failed to parse inline lua script").what());
+            logError(yamlErrorDesc(cnode, "failed to parse inline lua script"));
     }
 
     // load specific element type
@@ -246,19 +227,12 @@ void UILoader::loadElement(const UIElementPtr& element, const YAML::Node& node)
         loadButton(boost::static_pointer_cast<UIButton>(element), node);
     else if(element->getElementType() == UI::Window) {
         UIWindowPtr window = boost::static_pointer_cast<UIWindow>(element);
-        if(node.FindValue("title"))
-            window->setTitle(node["title"].Read<std::string>());
+        window->setTitle(yamlRead(node, "title", std::string()));
     }
     else if(element->getElementType() == UI::Label) {
         UILabelPtr label = boost::static_pointer_cast<UILabel>(element);
-        if(node.FindValue("text"))
-            label->setText(node["text"].Read<std::string>());
-        if(node.FindValue("align")) {
-            std::string alignDesc;
-            node["align"] >> alignDesc;
-            if(alignDesc == "center")
-                label->setAlign(ALIGN_CENTER);
-        }
+        label->setText(yamlRead(node, "text", std::string()));
+        label->setAlign(parseAlignment(yamlRead(node, "align", std::string())));
     }
 }
 
@@ -266,7 +240,7 @@ void UILoader::loadElementAnchor(const UIElementPtr& anchoredElement, UI::Anchor
 {
     UIAnchorLayoutPtr layout = boost::dynamic_pointer_cast<UIAnchorLayout>(anchoredElement->getLayout());
     if(!layout) {
-        logError(YAML::Exception(node.GetMark(), "could not add anchor, because this element does not participate of an anchor layout").what());
+        logError(yamlErrorDesc(node, "could not add anchor, because this element does not participate of an anchor layout"));
         return;
     }
 
@@ -276,7 +250,7 @@ void UILoader::loadElementAnchor(const UIElementPtr& anchoredElement, UI::Anchor
     std::vector<std::string> split;
     boost::split(split, anchorDescription, boost::is_any_of(std::string(".")));
     if(split.size() != 2) {
-        logError(YAML::Exception(node.GetMark(), "invalid anchor").what());
+        logError(yamlErrorDesc(node, "invalid anchor"));
         return;
     }
 
@@ -284,12 +258,12 @@ void UILoader::loadElementAnchor(const UIElementPtr& anchoredElement, UI::Anchor
     UI::AnchorPoint anchorLineEdge = UIAnchorLayout::parseAnchorPoint(split[1]);
 
     if(anchorLineEdge == UI::AnchorNone) {
-        logError(YAML::Exception(node.GetMark(), "invalid anchor type").what());
+        logError(yamlErrorDesc(node, "invalid anchor type"));
         return;
     }
 
     if(!layout->addAnchor(anchoredElement, anchoredEdge, AnchorLine(anchorLineElementId, anchorLineEdge)))
-        logError(YAML::Exception(node.GetMark(), "anchoring failed").what());
+        logError(yamlErrorDesc(node, "anchoring failed"));
 }
 
 void UILoader::loadButton(const UIButtonPtr& button, const YAML::Node& node)
@@ -297,10 +271,11 @@ void UILoader::loadButton(const UIButtonPtr& button, const YAML::Node& node)
     button->setText(node["text"].Read<std::string>());
 
     // set on click event
-    if(node.FindValue("onClick")) {
-        if(g_lua.loadBufferAsFunction(node["onClick"].Read<std::string>(), button->getId() + ":onClick"))
+    if(yamlHasValue(node, "onClick")) {
+        const YAML::Node& cnode = node["onClick"];
+        if(g_lua.loadBufferAsFunction(yamlRead<std::string>(cnode), button->getId() + ":onClick"))
             g_lua.setScriptableField(button, "onClick");
         else
-            logError(YAML::Exception(node["onClick"].GetMark(), "failed to parse inline lua script").what());
+            logError(yamlErrorDesc(cnode, "failed to parse inline lua script"));
     }
 }

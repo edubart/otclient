@@ -106,17 +106,6 @@ UIElementPtr UIContainer::getChildById(const std::string& id)
     return UIElementPtr();
 }
 
-UIElementPtr UIContainer::getChildByPos(const Point& pos)
-{
-    for(auto it = m_children.rbegin(); it != m_children.rend(); ++it) {
-        const UIElementPtr& element = (*it);
-        if(element->getRect().contains(pos))
-            return element;
-    }
-
-    return UIElementPtr();
-}
-
 UIElementPtr UIContainer::recursiveGetChildById(const std::string& id)
 {
     if(getId() == id || id == "self")
@@ -138,6 +127,35 @@ UIElementPtr UIContainer::recursiveGetChildById(const std::string& id)
                 if(element2)
                     return element2;
             }
+        }
+    }
+
+    return UIElementPtr();
+}
+
+UIElementPtr UIContainer::getChildByPos(const Point& pos)
+{
+    for(auto it = m_children.rbegin(); it != m_children.rend(); ++it) {
+        const UIElementPtr& element = (*it);
+        if(element->getRect().contains(pos))
+            return element;
+    }
+
+    return UIElementPtr();
+}
+
+UIElementPtr UIContainer::recursiveGetChildByPos(const Point& pos)
+{
+    for(auto it = m_children.rbegin(); it != m_children.rend(); ++it) {
+        const UIElementPtr& element = (*it);
+        if(element->getRect().contains(pos)) {
+            if(UIContainerPtr container = element->asUIContainer()) {
+                if(UIElementPtr containerChild = container->recursiveGetChildByPos(pos))
+                    return containerChild;
+                else
+                    return container;
+            }
+            return element;
         }
     }
 
@@ -227,12 +245,13 @@ void UIContainer::focusNextElement()
 void UIContainer::setFocusedElement(const UIElementPtr& focusedElement)
 {
     if(focusedElement != m_focusedElement) {
-        if(m_focusedElement)
-            m_focusedElement->onFocusChange();
-
+        UIElementPtr oldFocused = m_focusedElement;
         m_focusedElement = focusedElement;
-        if(m_focusedElement)
-            m_focusedElement->onFocusChange();
+
+        if(oldFocused)
+            oldFocused->onFocusChange();
+        if(focusedElement)
+            focusedElement->onFocusChange();
     }
 
     // when containers are focused they go to the top

@@ -28,6 +28,7 @@
 #include <prerequisites.h>
 #include <graphics/image.h>
 #include <ui/uiconstants.h>
+#include <graphics/font.h>
 
 class UIElement;
 
@@ -51,15 +52,20 @@ public:
     const Size& getDefaultSize() const { return m_defaultSize; }
     UI::ElementType getElementType() const { return m_elementType; }
     ImagePtr getDefaultImage() const { return m_defaultImage; }
+    FontPtr getFont() const { return m_font; }
+    Color getFontColor() const { return m_fontColor; }
 
 protected:
     ImagePtr loadImage(const YAML::Node& node);
+    FontPtr loadFont(const YAML::Node &node);
 
 private:
     std::string m_name;
     UI::ElementType m_elementType;
     Size m_defaultSize;
     ImagePtr m_defaultImage;
+    FontPtr m_font;
+    Color m_fontColor;
 };
 
 typedef boost::shared_ptr<UIElementSkin> UIElementSkinPtr;

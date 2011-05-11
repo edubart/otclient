@@ -66,6 +66,8 @@ public:
 
     void draw(const Rect& screenCoords);
 
+    Size getDefaultSize() const { return m_defaultSize; }
+
 private:
     Rect m_leftBorderTexCoords;
     Rect m_rightBorderTexCoords;
@@ -79,7 +81,8 @@ private:
 
     Rect m_centerTexCoords;
 
-    Size m_cornersSize;
+    Size m_bordersSize;
+    Size m_defaultSize;
 };
 
 typedef boost::shared_ptr<BorderedImage> BorderedImagePtr;

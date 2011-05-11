@@ -34,20 +34,20 @@ class UILabel : public UIElement
 public:
     UILabel() :
         UIElement(UI::Label),
-        m_align(ALIGN_TOP_LEFT),
+        m_align(AlignTopLeft),
         m_color(Color::white) { }
 
     void setText(const std::string& text);
      std::string getText() const { return m_text; }
 
-    void setAlign(int align) { m_align = align; }
-    int getAlign() const { return m_align; }
+    void setAlign(AlignmentFlag align) { m_align = align; }
+    AlignmentFlag getAlign() const { return m_align; }
 
     virtual const char *getScriptableName() const { return "UILabel"; }
 
 private:
     std::string m_text;
-    int m_align;
+    AlignmentFlag m_align;
     Color m_color;
 };
 

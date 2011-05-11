@@ -31,17 +31,21 @@ void UIButtonSkin::load(const YAML::Node& node)
 {
     UIElementSkin::load(node);
 
-    m_buttonDownImage = loadImage(node["down state"]);
+    m_buttonDownTextColor = getFontColor();
+    m_buttonHoverTextColor = getFontColor();
 
-    if(node["down state"].FindValue("text translate"))
-        node["down state"]["text translate"] >> m_buttonDownTranslate;
+    if(yamlHasValue(node, "down state")) {
+        const YAML::Node& cnode = node["down state"];
+        m_buttonDownImage = loadImage(cnode);
+        m_buttonDownTranslate = yamlRead(cnode, "text translate", Point());
+        m_buttonDownTextColor = yamlRead(cnode, "font color", getFontColor());
+    }
 
-    if(node.FindValue("mouse over state"))
-        m_buttonHoverImage = loadImage(node["mouse over state"]);
-
-    m_font = g_fonts.get(node["font"].Read<std::string>());
-
-    node["text color"] >> m_textColor;
+    if(yamlHasValue(node, "hover state")) {
+        const YAML::Node& cnode = node["hover state"];
+        m_buttonHoverImage = loadImage(cnode);
+        m_buttonHoverTextColor = yamlRead(cnode, "font color", getFontColor());
+    }
 }
 
 void UIButtonSkin::draw(UIElement *element)
@@ -59,5 +63,10 @@ void UIButtonSkin::draw(UIElement *element)
         UIElementSkin::draw(element);
     }
 
-    m_font->renderText(button->getText(), textRect, ALIGN_CENTER, m_textColor);
+    Color textColor = getFontColor();
+    if(button->getState() == UIButton::ButtonDown)
+        textColor = m_buttonDownTextColor;
+    else if(button->getState() == UIButton::ButtonMouseOver)
+        textColor = m_buttonHoverTextColor;
+    getFont()->renderText(button->getText(), textRect, AlignCenter, textColor);
 }

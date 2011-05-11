@@ -66,7 +66,7 @@ void Scriptable::callLuaTableField(const std::string& field)
             g_lua.pop();
         }
     } else if(!g_lua.isNil()) {
-        g_lua.reportError(f("field '%s' for '%s' is not a valid function or array of functions", field %  getScriptableName()));
+        g_lua.reportError(fmt("field '%s' for '%s' is not a valid function or array of functions", field %  getScriptableName()));
     }
 
     // release self

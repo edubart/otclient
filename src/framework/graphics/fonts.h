@@ -34,20 +34,16 @@ public:
     Fonts() { }
 
     /// Initialize all fonts
-    void init(const std::string& defaultFontName);
+    void init();
 
     /// Terminate all fonts
     void terminate() { }
 
     /// Get a font by name
-    Font *get(const std::string& fontName);
-
-    /// Get the default font
-    Font *getDefaultFont() { return m_defaultFont.get(); };
+    FontPtr get(const std::string& fontName);
 
 private:
     std::vector<FontPtr> m_fonts;
-    FontPtr m_defaultFont;
 };
 
 extern Fonts g_fonts;

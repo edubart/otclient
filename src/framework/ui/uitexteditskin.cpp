@@ -30,28 +30,15 @@
 void UITextEditSkin::load(const YAML::Node& node)
 {
     UIElementSkin::load(node);
-
-    if(node.FindValue("font")) {
-        m_font = g_fonts.get(node["font"].Read<std::string>());
-    } else
-        m_font = g_fonts.getDefaultFont();
-
-    if(node.FindValue("text color"))
-        node["text color"] >> m_textColor;
-    else
-        m_textColor = Color::white;
-
-    if(node.FindValue("text margin"))
-        node["text margin"] >> m_textMargin;
-    else
-        m_textMargin = 2;
+    m_textMargin = yamlRead(node, "text margin", 2);
 }
 
 void UITextEditSkin::apply(UIElement* element)
 {
     UIElementSkin::apply(element);
     UITextEdit *textEdit = static_cast<UITextEdit*>(element);
-    textEdit->getTextArea().setFont(m_font);
+    textEdit->getTextArea().setFont(getFont());
+    textEdit->getTextArea().setColor(getFontColor());
 }
 
 void UITextEditSkin::draw(UIElement* element)

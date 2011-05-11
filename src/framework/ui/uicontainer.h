@@ -48,10 +48,12 @@ public:
     bool hasChild(const UIElementPtr& child);
     /// Find an element in this container by id
     UIElementPtr getChildById(const std::string& id);
-    /// Find an element by position
-    UIElementPtr getChildByPos(const Point& pos);
     /// Find an element in this container and in its children by id
     UIElementPtr recursiveGetChildById(const std::string& id);
+    /// Find an element by position
+    UIElementPtr getChildByPos(const Point& pos);
+    /// Find an element in this container and in its children by position
+    UIElementPtr recursiveGetChildByPos(const Point& pos);
     /// Get children
     const std::list<UIElementPtr>& getChildren() const { return m_children; }
     /// Pushs a child to the top

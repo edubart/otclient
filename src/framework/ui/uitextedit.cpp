@@ -23,7 +23,6 @@
 
 
 #include <prerequisites.h>
-#include <graphics/fonts.h>
 #include <ui/uitextedit.h>
 #include <ui/uitexteditskin.h>
 #include <ui/uicontainer.h>
