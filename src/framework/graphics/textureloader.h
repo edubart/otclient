@@ -31,7 +31,7 @@
 class TextureLoader
 {
 public:
-    /// Load a png textures using libpng
+    /// Load a png textures
     static TexturePtr loadPNG(uchar *fileData, uint fileSize);
 };
 
