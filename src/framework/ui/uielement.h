@@ -83,6 +83,9 @@ public:
     void setFocused(bool focused);
     bool isFocused() const;
 
+    void setMouseOver(bool mouseOver) { m_mouseOver = mouseOver; }
+    bool isMouseOver() const { return m_mouseOver; }
+
     void setVisible(bool visible) { m_visible = visible; }
     bool isVisible() const { return m_visible; }
 
@@ -123,6 +126,7 @@ private:
     std::string m_id;
     bool m_visible;
     bool m_enabled;
+    bool m_mouseOver;
 
     Rect m_rect;
     int m_marginLeft;

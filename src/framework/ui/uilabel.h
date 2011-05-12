@@ -34,8 +34,7 @@ class UILabel : public UIElement
 public:
     UILabel() :
         UIElement(UI::Label),
-        m_align(AlignTopLeft),
-        m_color(Color::white) { }
+        m_align(AlignLeftCenter) { }
 
     void setText(const std::string& text);
      std::string getText() const { return m_text; }
@@ -48,7 +47,6 @@ public:
 private:
     std::string m_text;
     AlignmentFlag m_align;
-    Color m_color;
 };
 
 typedef boost::shared_ptr<UILabel> UILabelPtr;

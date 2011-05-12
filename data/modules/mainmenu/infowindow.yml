@@ -39,6 +39,7 @@ window#infoWindow:
 
     button#websiteButton:
       text: Github Page
+      size: [80,22]
       anchors.right: parent.right
       anchors.bottom: parent.bottom
       margin.bottom: 9

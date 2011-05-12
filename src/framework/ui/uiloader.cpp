@@ -232,7 +232,7 @@ void UILoader::loadElement(const UIElementPtr& element, const YAML::Node& node)
     else if(element->getElementType() == UI::Label) {
         UILabelPtr label = boost::static_pointer_cast<UILabel>(element);
         label->setText(yamlRead(node, "text", std::string()));
-        label->setAlign(parseAlignment(yamlRead(node, "align", std::string())));
+        label->setAlign(parseAlignment(yamlRead(node, "align", std::string("left"))));
     }
 }
 

@@ -27,7 +27,7 @@
 
 #include <prerequisites.h>
 
-class Texture
+class Texture : public boost::enable_shared_from_this<Texture>
 {
 public:
     /// Create a texture, width and height must be a multiple of 2
@@ -35,17 +35,18 @@ public:
     virtual ~Texture();
 
     /// Enable texture bilinear filter (smooth scaled textures)
-    void enableBilinearFilter();
+    virtual void enableBilinearFilter();
 
     /// Get OpenGL texture id
-    uint getTextureId() const { return m_textureId; }
+    virtual uint getTextureId() const { return m_textureId; }
 
     /// Copy pixels from OpenGL texture
     uchar *getPixels();
 
     const Size& getSize() const { return m_size; }
 
-private:
+protected:
+    Texture() {  }
     uint m_textureId;
     Size m_size;
 };

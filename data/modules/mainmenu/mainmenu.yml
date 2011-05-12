@@ -5,6 +5,13 @@ panel#background:
   anchors.top: parent.top
   anchors.bottom: parent.bottom
 
+  panel#icos4d:
+    skin: icos4d
+    anchors.left: parent.left
+    anchors.top: parent.top
+    margin.left: 60
+    margin.top: 70
+
   panel#mainMenu:
     skin: roundedGridPanel
     size: [117, 171]

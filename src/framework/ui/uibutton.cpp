@@ -37,7 +37,7 @@ void UIButton::onInputEvent(const InputEvent& event)
             g_dispatcher.addTask(boost::bind(&Scriptable::callLuaTableField, shared_from_this(), "onClick"));
         }
     } else if(event.type == EV_MOUSE_MOVE && m_state != ButtonDown) {
-        if(getRect().contains(event.mousePos) && UIContainer::getRoot()->recursiveGetChildByPos(event.mousePos) == asUIElement())
+        if(isMouseOver())
             m_state = ButtonMouseOver;
         else
             m_state = ButtonUp;

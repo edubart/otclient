@@ -27,6 +27,7 @@
 
 #include <prerequisites.h>
 #include <graphics/texture.h>
+#include <graphics/animatedtexture.h>
 
 class Textures
 {
@@ -37,8 +38,7 @@ public:
     TexturePtr get(const std::string& textureFile);
 
 private:
-    typedef std::map<std::string, TextureWeakPtr> TexturesMap;
-    TexturesMap m_texturesMap;
+    std::map<std::string, TextureWeakPtr> m_textures;
 };
 
 extern Textures g_textures;

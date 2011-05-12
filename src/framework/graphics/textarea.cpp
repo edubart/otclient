@@ -146,10 +146,22 @@ void TextArea::recalculate()
         m_startInternalPos = Point(0,0);
     }
 
-    m_drawArea.setLeft(m_screenCoords.left());
-    m_drawArea.setTop(m_screenCoords.top()+m_font->getTopMargin());
-    m_drawArea.setRight(m_screenCoords.right());
-    m_drawArea.setBottom(m_screenCoords.bottom());
+    m_drawArea = m_screenCoords;
+
+    if(m_align & AlignBottom) {
+        m_drawArea.translate(0, m_screenCoords.height() - textBoxSize.height());
+    } else if(m_align & AlignVerticalCenter) {
+        m_drawArea.translate(0, (m_screenCoords.height() - textBoxSize.height()) / 2);
+    } else { // AlignTop
+    }
+
+    if(m_align & AlignRight) {
+        m_drawArea.translate(m_screenCoords.width() - textBoxSize.width(), 0);
+    } else if(m_align & AlignHorizontalCenter) {
+        m_drawArea.translate((m_screenCoords.width() - textBoxSize.width()) / 2, 0);
+    } else { // AlignLeft
+
+    }
 
     for(int i = 0; i < textLength; ++i) {
         glyph = (uchar)m_text[i];

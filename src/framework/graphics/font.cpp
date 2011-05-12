@@ -40,22 +40,24 @@ void Font::calculateGlyphsWidthsAutomatically(const Size& glyphSize)
                             glyphSize.width(),
                             m_glyphHeight);
         int width = glyphSize.width();
-        for(int x = glyphCoords.left() + 2; x <= glyphCoords.right(); ++x) {
-            bool allAlpha = true;
+        int lastColumnFilledPixels = 0;
+        for(int x = glyphCoords.left() + 1; x <= glyphCoords.right(); ++x) {
+            int columnFilledPixels = 0;
 
             // check if all vertical pixels are alpha
             for(int y = glyphCoords.top(); y <= glyphCoords.bottom(); ++y) {
-                if(texturePixels[(y * m_texture->getSize().width() * 4) + (x*4) + 3] != 0) {
-                    allAlpha = false;
-                    break;
-                }
+                if(texturePixels[(y * m_texture->getSize().width() * 4) + (x*4) + 3] != 0)
+                    columnFilledPixels++;
             }
 
             // if all pixels were alpha we found the width
-            if(allAlpha) {
+            if(columnFilledPixels == 0) {
                 width = x - glyphCoords.left();
+                if(m_glyphHeight >= 16 && lastColumnFilledPixels >= m_glyphHeight/3)
+                    width += 1;
                 break;
             }
+            lastColumnFilledPixels = columnFilledPixels;
         }
         // store glyph size
         m_glyphsSize[glyph].setSize(width, m_glyphHeight);
@@ -175,6 +177,20 @@ void Font::renderText(const std::string& text,
             // nothing to do
         }
 
+        // only render glyphs that are after 0, 0
+        if(glyphScreenCoords.bottom() < 0 || glyphScreenCoords.right() < 0)
+            continue;
+
+        // bound glyph topLeft to 0,0 if needed
+        if(glyphScreenCoords.top() < 0) {
+            glyphTextureCoords.setTop(glyphTextureCoords.top() - glyphScreenCoords.top());
+            glyphScreenCoords.setTop(0);
+        }
+        if(glyphScreenCoords.left() < 0) {
+            glyphTextureCoords.setLeft(glyphTextureCoords.left() - glyphScreenCoords.left());
+            glyphScreenCoords.setLeft(0);
+        }
+
         // translate rect to screen coords
         glyphScreenCoords.translate(screenCoords.topLeft());
 
@@ -212,7 +228,7 @@ const std::vector<Point>& Font::calculateGlyphsPositions(const std::string& text
     // return if there is no text
     if(textLength == 0) {
         if(textBoxSize)
-            textBoxSize->setSize(0,0);
+            textBoxSize->setSize(0,m_glyphHeight);
         return glyphsPositions;
     }
 

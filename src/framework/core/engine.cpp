@@ -32,6 +32,7 @@
 #include <net/connection.h>
 #include <script/luascript.h>
 #include <ui/uiskins.h>
+#include <graphics/textures.h>
 
 Engine g_engine;
 

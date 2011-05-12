@@ -1,5 +1,5 @@
-default font: sans-11px
-default font color: [0, 115, 234, 255]
+default font: sans-11px-bold
+default font color: [51, 51, 51, 255]
     
 buttons:
   default:
@@ -53,6 +53,9 @@ panels:
     image: lightness/background.png
     antialised: true
 
+  icos4d:
+    image: lightness/icos4d.png
+
   roundedGridPanel:
     bordered image:
       source: lightness/menupanel.png
@@ -81,10 +84,11 @@ panels:
 
 labels:
   default:
-    font color: [0, 115, 234, 255]
+    font: sans-12px
 
 windows:
   default:
+    font: sans-12px-bold
     font color: [80, 80, 80, 255]
     head:
       text align: left

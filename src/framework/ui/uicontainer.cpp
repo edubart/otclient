@@ -213,6 +213,13 @@ void UIContainer::onInputEvent(const InputEvent& event)
                     }
                 } else {
                     shouldFire = true;
+
+                    if(event.type == EV_MOUSE_MOVE) {
+                        if(child->getRect().contains(event.mousePos) && UIContainer::getRoot()->recursiveGetChildByPos(event.mousePos) == child)
+                            child->setMouseOver(true);
+                        else
+                            child->setMouseOver(false);
+                    }
                 }
             }
         }

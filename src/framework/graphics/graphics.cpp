@@ -128,8 +128,10 @@ void Graphics::endRender()
 
 void Graphics::disableDrawing()
 {
-    glEnd();
-    m_drawMode = DRAW_NONE;
+    if(m_drawMode != DRAW_NONE) {
+        glEnd();
+        m_drawMode = DRAW_NONE;
+    }
 }
 
 void Graphics::drawTexturedRect(const Rect& screenCoords, const TexturePtr& texture, const Rect& textureCoords, const Color& color)

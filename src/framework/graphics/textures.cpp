@@ -26,6 +26,7 @@
 #include <core/resources.h>
 #include <graphics/textures.h>
 #include <graphics/textureloader.h>
+#include <core/dispatcher.h>
 
 Textures g_textures;
 
@@ -34,10 +35,10 @@ TexturePtr Textures::get(const std::string& textureFile)
     TexturePtr texture;
 
     // check if the texture is already loaded
-    auto it = m_texturesMap.find(textureFile);
-    if(it != m_texturesMap.end()) {
+    auto it = m_textures.find(textureFile);
+    if(it != m_textures.end()) {
         if(it->second.expired())
-            m_texturesMap.erase(it);
+            m_textures.erase(it);
         else
             texture = it->second.lock();
     }
@@ -60,11 +61,10 @@ TexturePtr Textures::get(const std::string& textureFile)
 
 
         // load the texture
-        texture = TexturePtr(TextureLoader::loadPNG(textureFileData));
+        texture = TexturePtr(TextureLoader::loadPNG(textureFileData, fileSize));
         if(!texture)
             flogError("ERROR: Unable to load texture %s", textureFile.c_str());
         delete[] textureFileData;
     }
-
     return texture;
 }

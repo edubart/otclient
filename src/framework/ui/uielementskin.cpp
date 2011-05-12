@@ -92,6 +92,8 @@ ImagePtr UIElementSkin::loadImage(const YAML::Node& node)
         texture = g_textures.get("skins/" + yamlRead<std::string>(node, "image"));
         if(texture)
             image = ImagePtr(new Image(texture));
+        if(!m_defaultSize.isValid())
+            m_defaultSize = texture->getSize();
 
         if(!image)
             logError(yamlErrorDesc(node["image"], "failed to load image"));

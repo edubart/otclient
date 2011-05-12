@@ -26,7 +26,6 @@
 #include <graphics/texture.h>
 
 #include <GL/gl.h>
-#include <GL/glext.h>
 
 Texture::Texture(int width, int height, int components, uchar *pixels)
 {
@@ -85,3 +84,4 @@ uchar *Texture::getPixels()
     glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
     return pixels;
 }
+

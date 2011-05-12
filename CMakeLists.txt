@@ -22,7 +22,7 @@ MESSAGE(STATUS "BUILD TYPE: " ${CMAKE_BUILD_TYPE})
 
 # setup compiler options
 IF(CMAKE_COMPILER_IS_GNUCXX)
-    SET(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror -Wno-unused-parameter -std=gnu++0x")
+    SET(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror -Wno-unused-parameter -Wno-unused-but-set-variable -std=gnu++0x")
     SET(CMAKE_CXX_FLAGS_DEBUG "-O1 -g -ggdb -fno-inline")
     SET(CMAKE_CXX_FLAGS_RELEASE "-O2 -Wl,-s")
     SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g")
@@ -76,6 +76,7 @@ SET(SOURCES
     src/framework/util/util.cpp
     src/framework/util/logger.cpp
     src/framework/util/rsa.cpp
+    src/framework/util/apngloader.cpp
 
 # framework graphics
     src/framework/graphics/image.cpp
@@ -85,6 +86,7 @@ SET(SOURCES
     src/framework/graphics/fonts.cpp
     src/framework/graphics/textureloader.cpp
     src/framework/graphics/texture.cpp
+    src/framework/graphics/animatedtexture.cpp
     src/framework/graphics/textures.cpp
     src/framework/graphics/graphics.cpp
     src/framework/graphics/textarea.cpp

@@ -26,14 +26,13 @@
 #define TEXTURELOADER_H
 
 #include <prerequisites.h>
-
-class Texture;
+#include <graphics/texture.h>
 
 class TextureLoader
 {
 public:
     /// Load a png textures using libpng
-    static Texture *loadPNG(uchar *fileData);
+    static TexturePtr loadPNG(uchar *fileData, uint fileSize);
 };
 
 #endif // TEXTURELOADER_H

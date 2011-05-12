@@ -35,6 +35,7 @@ UIElement::UIElement(UI::ElementType type) :
     m_type(type),
     m_visible(true),
     m_enabled(true),
+    m_mouseOver(false),
     m_marginLeft(0),
     m_marginRight(0),
     m_marginTop(0),

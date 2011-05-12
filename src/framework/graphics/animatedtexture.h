@@ -22,25 +22,30 @@
  */
 
 
+#ifndef ANIMATEDTEXTURE_H
+#define ANIMATEDTEXTURE_H
+
 #include <prerequisites.h>
-#include <graphics/textureloader.h>
 #include <graphics/texture.h>
-#include <util/apngloader.h>
-#include "animatedtexture.h"
 
-TexturePtr TextureLoader::loadPNG(uchar *fileData, uint fileSize)
+class AnimatedTexture : public Texture
 {
-    TexturePtr texture;
+public:
+    AnimatedTexture(int width, int height, int components, int numFrames, uchar *framesPixels, int *framesDelay);
+    virtual ~AnimatedTexture();
 
-    apng_data apng;
-    if(load_apng(fileData, fileSize, &apng) == 0) {
-        if(apng.num_frames > 1) { // animated texture
-            uchar *framesdata = apng.pdata + (apng.first_frame * apng.width * apng.height * apng.bpp);
-            texture = TexturePtr(new AnimatedTexture(apng.width, apng.height, apng.bpp, apng.num_frames, framesdata, (int*)apng.frames_delay));
-        } else
-            texture = TexturePtr(new Texture(apng.width, apng.height, apng.bpp, apng.pdata));
-        free_apng(&apng);
-    }
+    void enableBilinearFilter();
+    void processAnimation();
 
-    return texture;
-}
+private:
+    uint *m_framesTextureId;
+    int *m_framesDelay;
+    int m_numFrames;
+    int m_currentFrame;
+    int m_lastAnimCheckTicks;
+};
+
+typedef boost::shared_ptr<AnimatedTexture> AnimatedTexturePtr;
+typedef boost::weak_ptr<AnimatedTexture> AnimatedTextureWeakPtr;
+
+#endif // ANIMATEDTEXTURE_H
