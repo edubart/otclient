@@ -53,9 +53,6 @@ panels:
     image: lightness/background.png
     antialised: true
 
-  icos4d:
-    image: lightness/icos4d.png
-
   roundedGridPanel:
     bordered image:
       source: lightness/menupanel.png
