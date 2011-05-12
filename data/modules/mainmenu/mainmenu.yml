@@ -6,9 +6,18 @@ panel#background:
   anchors.bottom: parent.bottom
 
   panel#icos4d:
-    skin: icos4d
+    skin: 
+      image: lightness/mouse.png
     anchors.left: parent.left
     anchors.top: parent.top
+    margin.left: -2
+    margin.top: 70
+
+  panel#mouse:
+    skin: 
+      image: lightness/icos4d.png
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
     margin.left: 60
     margin.top: 70
 
