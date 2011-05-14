@@ -155,7 +155,7 @@ void UILoader::loadElements(const UIElementPtr& parent, const YAML::Node& node)
         foreach(const UIElementPtr& element, container->getChildren()) {
             for(auto it = node.begin(); it != node.end(); ++it) {
                 // node found, load it
-                if(boost::ends_with(it.first().Read<std::string>(), "#" + element->getId())) {
+                if(boost::ends_with(yamlRead<std::string>(it.first()), "#" + element->getId())) {
                     loadElements(element, it.second());
                     break;
                 }
@@ -169,8 +169,8 @@ void UILoader::loadElement(const UIElementPtr& element, const YAML::Node& node)
     // set element skin
     if(yamlHasValue(node, "skin")) {
         const YAML::Node& cnode = node["skin"];
-        if(cnode.GetType() == YAML::CT_SCALAR) {
-            element->setSkin(g_uiSkins.getElementSkin(element->getElementType(), cnode));
+        if(cnode.Type() == YAML::NodeType::Scalar) {
+            element->setSkin(g_uiSkins.getElementSkin(element->getElementType(), yamlRead<std::string>(cnode)));
         } else {
             UIElementSkinPtr skin = UIElementSkinPtr(new UIElementSkin());
             skin->load(cnode);
@@ -268,7 +268,7 @@ void UILoader::loadElementAnchor(const UIElementPtr& anchoredElement, UI::Anchor
 
 void UILoader::loadButton(const UIButtonPtr& button, const YAML::Node& node)
 {
-    button->setText(node["text"].Read<std::string>());
+    button->setText(yamlRead<std::string>(node["text"]));
 
     // set on click event
     if(yamlHasValue(node, "onClick")) {

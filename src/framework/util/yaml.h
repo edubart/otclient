@@ -68,7 +68,7 @@ inline void operator>>(const YAML::Node& node, TSize<T>& size)
 template<class T>
 inline T yamlRead(const YAML::Node& node)
 {
-    return node.Read<T>();
+    return node.to<T>();
 }
 
 template<class T>

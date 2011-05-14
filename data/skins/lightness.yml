@@ -1,6 +1,6 @@
 default font: sans-11px-bold
 default font color: [51, 51, 51, 255]
-    
+
 buttons:
   default:
     default size: [96, 22]
@@ -134,3 +134,4 @@ line decorations:
     bordered image:
       source: lightness/window.png
       top border: [2,254,252,2]
+

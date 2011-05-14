@@ -7,7 +7,6 @@
 
 FIND_PATH(YAMLCPP_INCLUDE_DIR yaml-cpp/yaml.h
 HINTS
-$ENV{PHYSFSDIR}
 PATH_SUFFIXES include/yaml-cpp include
 PATHS
 ~/Library/Frameworks
@@ -22,8 +21,6 @@ PATHS
 
 FIND_LIBRARY(YAMLCPP_LIBRARY
 NAMES yaml-cpp
-HINTS
-$ENV{PHYSFSDIR}
 PATH_SUFFIXES lib64 lib
 PATHS
 ~/Library/Frameworks

@@ -123,6 +123,8 @@ ENDIF(WIN32)
 ADD_EXECUTABLE(otclient ${SOURCES})
 
 # target link libraries
+MESSAGE(
+    ${YAMLCPP_LIBRARY})
 TARGET_LINK_LIBRARIES(otclient
     ${Boost_LIBRARIES}
     ${OPENGL_LIBRARIES}
