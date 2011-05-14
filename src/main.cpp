@@ -115,7 +115,7 @@ int main(int argc, const char *argv[])
     g_engine.enableFpsCounter();
 
     // load ui skins
-    g_uiSkins.load("skins/lightness.yml");
+    g_uiSkins.load("skins/tibiaskin.yml");
 
     // load script modules
     g_lua.loadAllModules();

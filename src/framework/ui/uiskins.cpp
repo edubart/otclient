@@ -66,8 +66,7 @@ void UISkins::load(const std::string& skinsFile)
                 it.first() >> name;
 
                 UIElementSkinPtr skin = UIElementSkinPtr(new UIButtonSkin(name));
-                if(it.second().Type() == YAML::NodeType::Map)
-                    skin->load(it.second());
+                skin->load(it.second());
                 m_elementSkins.push_back(skin);
             }
         }
@@ -79,8 +78,7 @@ void UISkins::load(const std::string& skinsFile)
                 it.first() >> name;
 
                 UIElementSkinPtr skin = UIElementSkinPtr(new UIElementSkin(name, UI::Panel));
-                if(it.second().Type() == YAML::NodeType::Map)
-                    skin->load(it.second());
+                skin->load(it.second());
                 m_elementSkins.push_back(skin);
             }
         }
@@ -92,8 +90,7 @@ void UISkins::load(const std::string& skinsFile)
                 it.first() >> name;
 
                 UIElementSkinPtr skin = UIElementSkinPtr(new UIWindowSkin(name));
-                if(it.second().Type() == YAML::NodeType::Map)
-                    skin->load(it.second());
+                skin->load(it.second());
                 m_elementSkins.push_back(skin);
             }
         }
@@ -105,8 +102,7 @@ void UISkins::load(const std::string& skinsFile)
                 it.first() >> name;
 
                 UIElementSkinPtr skin = UIElementSkinPtr(new UILabelSkin(name));
-                if(it.second().Type() == YAML::NodeType::Map)
-                    skin->load(it.second());
+                skin->load(it.second());
                 m_elementSkins.push_back(skin);
             }
         }
@@ -119,8 +115,7 @@ void UISkins::load(const std::string& skinsFile)
                 it.first() >> name;
 
                 UIElementSkinPtr skin = UIElementSkinPtr(new UITextEditSkin(name));
-                if(it.second().Type() == YAML::NodeType::Map)
-                    skin->load(it.second());
+                skin->load(it.second());
                 m_elementSkins.push_back(skin);
             }
         }
@@ -133,8 +128,7 @@ void UISkins::load(const std::string& skinsFile)
                 it.first() >> name;
 
                 UIElementSkinPtr skin = UIElementSkinPtr(new UIElementSkin(name, UI::LineDecoration));
-                if(it.second().Type() == YAML::NodeType::Map)
-                    skin->load(it.second());
+                skin->load(it.second());
                 m_elementSkins.push_back(skin);
             }
         }

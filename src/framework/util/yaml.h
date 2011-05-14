@@ -75,7 +75,8 @@ template<class T>
 inline T yamlRead(const YAML::Node& node, const char *name)
 {
     T value;
-    node[name] >> value;
+    if(node.Type() == YAML::NodeType::Map)
+        node[name] >> value;
     return value;
 }
 
@@ -83,14 +84,14 @@ template<class T>
 inline T yamlRead(const YAML::Node& node, const char *name, const T& defaultValue)
 {
     T value = defaultValue;
-    if(node.FindValue(name))
+    if(node.Type() == YAML::NodeType::Map && node.FindValue(name))
         node[name] >> value;
     return value;
 }
 
 inline bool yamlHasValue(const YAML::Node& node, const char *name)
 {
-    return node.FindValue(name) != NULL;
+    return (node.Type() == YAML::NodeType::Map && node.FindValue(name) != NULL);
 }
 
 inline std::string yamlErrorDesc(const YAML::Node& node, const std::string& error)
@@ -107,13 +108,15 @@ template<class A, class B>
 inline std::map<A,B> yamlReadMap(const YAML::Node& node, const char *name)
 {
     std::map<A,B> map;
-    if(const YAML::Node* mapNode = node.FindValue(name)) {
-        for(auto it = mapNode->begin(); it != mapNode->end(); ++it) {
-            A a;
-            B b;
-            it.first() >> a;
-            it.second() >> b;
-            map[a] = b;
+    if(node.Type() == YAML::NodeType::Map) {
+        if(const YAML::Node* mapNode = node.FindValue(name)) {
+            for(auto it = mapNode->begin(); it != mapNode->end(); ++it) {
+                A a;
+                B b;
+                it.first() >> a;
+                it.second() >> b;
+                map[a] = b;
+            }
         }
     }
     return map;
