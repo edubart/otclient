@@ -594,8 +594,6 @@ int load_apng(unsigned char *filedata, unsigned int filesize, struct apng_data *
                     channels = 2;
                 else if (coltype == 6)
                     channels = 4;
-                if(coltype == 3)
-                    printf("coltype %d w %d h %d\n", coltype, w, h);
 
                 pixeldepth = depth*channels;
                 bpp = (pixeldepth + 7) >> 3;
@@ -878,7 +876,6 @@ int load_apng(unsigned char *filedata, unsigned int filesize, struct apng_data *
     return 0;
 }
 
-
 void free_apng(struct apng_data *apng)
 {
     if(apng->pdata)
@@ -886,3 +883,4 @@ void free_apng(struct apng_data *apng)
     if(apng->frames_delay)
         free(apng->frames_delay);
 }
+
