@@ -25,8 +25,6 @@
 #include <prerequisites.h>
 #include <graphics/texture.h>
 
-#include <GL/gl.h>
-
 Texture::Texture(int width, int height, int components, uchar *pixels)
 {
     m_size.setSize(width, height);

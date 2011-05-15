@@ -61,6 +61,11 @@ typedef int8_t int8;
 #include <queue>
 #include <iterator>
 
+// OpenGL
+#include <GL/gl.h>
+#include <GL/glu.h>
+#include <GL/glext.h>
+
 // boost utilities
 #include <boost/algorithm/string.hpp>
 #include <boost/foreach.hpp>

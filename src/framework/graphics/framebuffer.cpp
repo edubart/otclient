@@ -26,10 +26,6 @@
 #include <graphics/framebuffer.h>
 #include <graphics/graphics.h>
 
-#include <GL/gl.h>
-#include <GL/glu.h>
-#include <GL/glext.h>
-
 PFNGLGENFRAMEBUFFERSPROC         oglGenFramebuffers = 0;
 PFNGLBINDFRAMEBUFFERPROC         oglBindFramebuffer = 0;
 PFNGLFRAMEBUFFERTEXTURE2DPROC    oglFramebufferTexture2D = 0;

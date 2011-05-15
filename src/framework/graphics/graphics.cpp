@@ -25,10 +25,6 @@
 #include <prerequisites.h>
 #include <graphics/graphics.h>
 
-#include <GL/gl.h>
-#include <GL/glu.h>
-#include <GL/glext.h>
-
 Graphics g_graphics;
 
 void Graphics::init()

@@ -31,9 +31,6 @@
 
 #include <physfs.h>
 
-#include <GL/gl.h>
-#include <GL/glext.h>
-
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 struct Win32PlatformPrivate {
@@ -246,7 +243,7 @@ int Platform::getTicks()
     static ulong firstTick = 0;
     if(!firstTick)
         firstTick = GetTickCount();
-    
+
     return (uint32_t)(GetTickCount() - firstTick);
 }
 

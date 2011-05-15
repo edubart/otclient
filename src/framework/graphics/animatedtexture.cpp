@@ -23,8 +23,6 @@
 
 
 #include <graphics/animatedtexture.h>
-
-#include <GL/gl.h>
 #include <core/engine.h>
 #include <core/dispatcher.h>
 
