@@ -27,16 +27,9 @@
 #include <memory.h>
 #include <zlib.h>
 #include "apngloader.h"
-
-// hack to create a portable fmemopen
-FILE *fmemopen (void *buf, size_t size, const char *opentype)
-{
-    FILE *f;
-    f = tmpfile();
-    fwrite(buf, 1, size, f);
-    rewind(f);
-    return f;
-}
+#include <iostream>
+#include <sstream>
+#include <fstream>
 
 #if defined(_MSC_VER) && _MSC_VER >= 1300
 #define swap16(data) _byteswap_ushort(data)
@@ -84,21 +77,21 @@ unsigned int    palsize, trnssize;
 unsigned int    hasTRNS;
 unsigned short  trns1, trns2, trns3;
 
-unsigned int read32(FILE * f1)
+unsigned int read32(std::istream& f1)
 {
     unsigned char a, b, c, d;
-    fread(&a, 1, 1, f1);
-    fread(&b, 1, 1, f1);
-    fread(&c, 1, 1, f1);
-    fread(&d, 1, 1, f1);
+    f1.read((char*)&a, 1);
+    f1.read((char*)&b, 1);
+    f1.read((char*)&c, 1);
+    f1.read((char*)&d, 1);
     return ((unsigned int)a<<24)+((unsigned int)b<<16)+((unsigned int)c<<8)+(unsigned int)d;
 }
 
-unsigned short read16(FILE * f1)
+unsigned short read16(std::istream& f1)
 {
     unsigned char a, b;
-    fread(&a, 1, 1, f1);
-    fread(&b, 1, 1, f1);
+    f1.read((char*)&a, 1);
+    f1.read((char*)&b, 1);
     return ((unsigned short)a<<8)+(unsigned short)b;
 }
 
@@ -516,7 +509,6 @@ void compose6(unsigned char * dst, unsigned int dstbytes, unsigned char * src, u
 
 int load_apng(unsigned char *filedata, unsigned int filesize, struct apng_data *apng)
 {
-    int             res;
     unsigned int    i, j;
     unsigned int    rowbytes;
     int             imagesize, zbuf_size, zsize, trns_idx;
@@ -530,9 +522,8 @@ int load_apng(unsigned char *filedata, unsigned int filesize, struct apng_data *
     unsigned char   coltype, compr, filter, interl;
     z_stream        zstream;
     memset(apng, 0, sizeof(struct apng_data));
-    FILE          * f1 = fmemopen(filedata, filesize, "rb");
-    if(!f1)
-        return -1;
+    std::istringstream    f1;
+    f1.rdbuf()->pubsetbuf((char*)filedata, filesize);
 
     for (i=0; i<256; i++)
     {
@@ -569,242 +560,152 @@ int load_apng(unsigned char *filedata, unsigned int filesize, struct apng_data *
     unsigned char * pDst2;
     unsigned int  * frames_delay;
 
-    if ((res = fread(sig, 1, 8, f1)) == 8)
-    {
-        if (memcmp(sig, png_sign, 8) == 0)
+    f1.read((char*)sig, 8);
+    if(f1.good() && memcmp(sig, png_sign, 8) == 0) {
+        len  = read32(f1);
+        chunk = read32(f1);
+
+        if ((len == 13) && (chunk == 0x49484452)) /* IHDR */
         {
-            len  = read32(f1);
-            chunk = read32(f1);
+            w = w0 = read32(f1);
+            h = h0 = read32(f1);
+            f1.read((char*)&depth, 1);
+            f1.read((char*)&coltype, 1);
+            f1.read((char*)&compr, 1);
+            f1.read((char*)&filter, 1);
+            f1.read((char*)&interl, 1);
+            crc = read32(f1);
 
-            if ((len == 13) && (chunk == 0x49484452)) /* IHDR */
+            channels = 1;
+            if (coltype == 2)
+                channels = 3;
+            else if (coltype == 4)
+                channels = 2;
+            else if (coltype == 6)
+                channels = 4;
+
+            pixeldepth = depth*channels;
+            bpp = (pixeldepth + 7) >> 3;
+            rowbytes = ROWBYTES(pixeldepth, w);
+
+            imagesize = (rowbytes + 1) * h;
+            zbuf_size = imagesize + ((imagesize + 7) >> 3) + ((imagesize + 63) >> 6) + 11;
+
+            /*
+                * We'll render into 2 output buffers, first in original coltype,
+                * second in RGBA.
+                *
+                * It's better to try to keep the original coltype, but if dispose/blend
+                * operations will make it impossible, then we'll save RGBA version instead.
+                */
+
+            outrow1 = w*channels; /* output coltype = input coltype */
+            outrow2 = w*4;        /* output coltype = RGBA          */
+            outimg1 = h*outrow1;
+            outimg2 = h*outrow2;
+
+            pOut1=(unsigned char *)malloc(outimg1);
+            pOut2=(unsigned char *)malloc(outimg2);
+            pTemp=(unsigned char *)malloc(imagesize);
+            pData=(unsigned char *)malloc(zbuf_size);
+            pImg1=pOut1;
+            pImg2=pOut2;
+            frames_delay = NULL;
+
+            /* apng decoding - begin */
+            memset(pOut1, 0, outimg1);
+            memset(pOut2, 0, outimg2);
+
+            while (!f1.eof())
             {
-                w = w0 = read32(f1);
-                h = h0 = read32(f1);
-                fread(&depth, 1, 1, f1);
-                fread(&coltype, 1, 1, f1);
-                fread(&compr, 1, 1, f1);
-                fread(&filter, 1, 1, f1);
-                fread(&interl, 1, 1, f1);
-                crc = read32(f1);
+                len  = read32(f1);
+                chunk = read32(f1);
 
-                channels = 1;
-                if (coltype == 2)
-                    channels = 3;
-                else if (coltype == 4)
-                    channels = 2;
-                else if (coltype == 6)
-                    channels = 4;
-
-                pixeldepth = depth*channels;
-                bpp = (pixeldepth + 7) >> 3;
-                rowbytes = ROWBYTES(pixeldepth, w);
-
-                imagesize = (rowbytes + 1) * h;
-                zbuf_size = imagesize + ((imagesize + 7) >> 3) + ((imagesize + 63) >> 6) + 11;
-
-                /*
-                    * We'll render into 2 output buffers, first in original coltype,
-                    * second in RGBA.
-                    *
-                    * It's better to try to keep the original coltype, but if dispose/blend
-                    * operations will make it impossible, then we'll save RGBA version instead.
-                    */
-
-                outrow1 = w*channels; /* output coltype = input coltype */
-                outrow2 = w*4;        /* output coltype = RGBA          */
-                outimg1 = h*outrow1;
-                outimg2 = h*outrow2;
-
-                pOut1=(unsigned char *)malloc(outimg1);
-                pOut2=(unsigned char *)malloc(outimg2);
-                pTemp=(unsigned char *)malloc(imagesize);
-                pData=(unsigned char *)malloc(zbuf_size);
-                pImg1=pOut1;
-                pImg2=pOut2;
-                frames_delay = NULL;
-
-                /* apng decoding - begin */
-                memset(pOut1, 0, outimg1);
-                memset(pOut2, 0, outimg2);
-
-                while ( !feof(f1) )
+                if (chunk == 0x504C5445) /* PLTE */
                 {
-                    len  = read32(f1);
-                    chunk = read32(f1);
-
-                    if (chunk == 0x504C5445) /* PLTE */
+                    unsigned int col;
+                    for (i=0; i<len; i++)
                     {
-                        unsigned int col;
-                        for (i=0; i<len; i++)
+                        f1.read((char*)&c, 1);
+                        col = i/3;
+                        if (col<256)
                         {
-                            fread(&c, 1, 1, f1);
-                            col = i/3;
-                            if (col<256)
-                            {
-                                pal[col][i%3] = c;
-                                palsize = col+1;
-                            }
+                            pal[col][i%3] = c;
+                            palsize = col+1;
                         }
-                        crc = read32(f1);
                     }
-                    else if (chunk == 0x74524E53) /* tRNS */
+                    crc = read32(f1);
+                }
+                else if (chunk == 0x74524E53) /* tRNS */
+                {
+                    hasTRNS = 1;
+                    for (i=0; i<len; i++)
                     {
-                        hasTRNS = 1;
-                        for (i=0; i<len; i++)
+                        f1.read((char*)&c, 1);
+                        if (i<256)
                         {
-                            fread(&c, 1, 1, f1);
-                            if (i<256)
-                            {
-                                trns[i] = c;
-                                trnssize = i+1;
-                                if (c == 0 && coltype == 3 && trns_idx == -1)
-                                    trns_idx = i;
-                            }
+                            trns[i] = c;
+                            trnssize = i+1;
+                            if (c == 0 && coltype == 3 && trns_idx == -1)
+                                trns_idx = i;
                         }
-                        if (coltype == 0)
+                    }
+                    if (coltype == 0)
+                    {
+                        trns1 = readshort(&trns[0]);
+                        if (depth == 16)
+                        {
+                            trns[1] = trns[0]; trns[0] = 0;
+                        }
+                    }
+                    else
+                        if (coltype == 2)
                         {
                             trns1 = readshort(&trns[0]);
+                            trns2 = readshort(&trns[2]);
+                            trns3 = readshort(&trns[4]);
                             if (depth == 16)
                             {
                                 trns[1] = trns[0]; trns[0] = 0;
+                                trns[3] = trns[2]; trns[2] = 0;
+                                trns[5] = trns[4]; trns[4] = 0;
                             }
                         }
-                        else
-                            if (coltype == 2)
-                            {
-                                trns1 = readshort(&trns[0]);
-                                trns2 = readshort(&trns[2]);
-                                trns3 = readshort(&trns[4]);
-                                if (depth == 16)
-                                {
-                                    trns[1] = trns[0]; trns[0] = 0;
-                                    trns[3] = trns[2]; trns[2] = 0;
-                                    trns[5] = trns[4]; trns[4] = 0;
-                                }
-                            }
-                            crc = read32(f1);
-                    }
-                    else if (chunk == 0x6163544C) /* acTL */
-                    {
-                        frames = read32(f1);
-                        if(frames_delay)
-                            free(frames_delay);
-                        frames_delay = (unsigned int*)malloc(frames*sizeof(int));
-                        loops  = read32(f1);
                         crc = read32(f1);
-                        if (pOut1)
-                            free(pOut1);
-                        if (pOut2)
-                            free(pOut2);
-                        pOut1 = (unsigned char *)malloc((frames+1)*outimg1);
-                        pOut2 = (unsigned char *)malloc((frames+1)*outimg2);
-                        pImg1 = pOut1;
-                        pImg2 = pOut2;
-                        memset(pOut1, 0, outimg1);
-                        memset(pOut2, 0, outimg2);
-                    }
-                    else if (chunk == 0x6663544C) /* fcTL */
+                }
+                else if (chunk == 0x6163544C) /* acTL */
+                {
+                    frames = read32(f1);
+                    if(frames_delay)
+                        free(frames_delay);
+                    frames_delay = (unsigned int*)malloc(frames*sizeof(int));
+                    loops  = read32(f1);
+                    crc = read32(f1);
+                    if (pOut1)
+                        free(pOut1);
+                    if (pOut2)
+                        free(pOut2);
+                    pOut1 = (unsigned char *)malloc((frames+1)*outimg1);
+                    pOut2 = (unsigned char *)malloc((frames+1)*outimg2);
+                    pImg1 = pOut1;
+                    pImg2 = pOut2;
+                    memset(pOut1, 0, outimg1);
+                    memset(pOut2, 0, outimg2);
+                }
+                else if (chunk == 0x6663544C) /* fcTL */
+                {
+                    if (zsize == 0)
+                        first_frame = 1;
+                    else
                     {
-                        if (zsize == 0)
-                            first_frame = 1;
-                        else
+                        if (dop == PNG_DISPOSE_OP_PREVIOUS)
                         {
-                            if (dop == PNG_DISPOSE_OP_PREVIOUS)
-                            {
-                                if (coltype != 6)
-                                    memcpy(pImg1 + outimg1, pImg1, outimg1);
-                                if (coltype != 4)
-                                    memcpy(pImg2 + outimg2, pImg2, outimg2);
-                            }
-
-                            pDst1 = pImg1 + y0*outrow1 + x0*channels;
-                            pDst2 = pImg2 + y0*outrow2 + x0*4;
-                            unpack(zstream, pTemp, imagesize, pData, zsize, h0, rowbytes, bpp);
-                            switch (coltype)
-                            {
-                                case 0: compose0(pDst1, outrow1, pDst2, outrow2, pTemp, rowbytes+1, w0, h0, bop, depth); break;
-                                case 2: compose2(pDst1, outrow1, pDst2, outrow2, pTemp, rowbytes+1, w0, h0, bop, depth); break;
-                                case 3: compose3(pDst1, outrow1, pDst2, outrow2, pTemp, rowbytes+1, w0, h0, bop, depth); break;
-                                case 4: compose4(pDst1, outrow1,                 pTemp, rowbytes+1, w0, h0, bop, depth); break;
-                                case 6: compose6(                pDst2, outrow2, pTemp, rowbytes+1, w0, h0, bop, depth); break;
-                            }
-                            zsize = 0;
-
-                            if (dop != PNG_DISPOSE_OP_PREVIOUS)
-                            {
-                                if (coltype != 6)
-                                    memcpy(pImg1 + outimg1, pImg1, outimg1);
-                                if (coltype != 4)
-                                    memcpy(pImg2 + outimg2, pImg2, outimg2);
-
-                                if (dop == PNG_DISPOSE_OP_BACKGROUND)
-                                {
-                                    pDst1 += outimg1;
-                                    pDst2 += outimg2;
-
-                                    for (j=0; j<h0; j++)
-                                    {
-                                        switch (coltype)
-                                        {
-                                            case 0:  memset(pDst2, 0, w0*4); if (hasTRNS) memset(pDst1, trns[1], w0); else keep_original = 0; break;
-                                            case 2:  memset(pDst2, 0, w0*4); if (hasTRNS) for (i=0; i<w0; i++) { pDst1[i*3] = trns[1]; pDst1[i*3+1] = trns[3]; pDst1[i*3+2] = trns[5]; } else keep_original = 0; break;
-                                            case 3:  memset(pDst2, 0, w0*4); if (trns_idx >= 0) memset(pDst1, trns_idx, w0); else keep_original = 0; break;
-                                            case 4:  memset(pDst1, 0, w0*2); break;
-                                            case 6:  memset(pDst2, 0, w0*4); break;
-                                        }
-                                        pDst1 += outrow1;
-                                        pDst2 += outrow2;
-                                    }
-                                }
-                            }
+                            if (coltype != 6)
+                                memcpy(pImg1 + outimg1, pImg1, outimg1);
+                            if (coltype != 4)
+                                memcpy(pImg2 + outimg2, pImg2, outimg2);
                         }
 
-                        seq = read32(f1);
-                        w0  = read32(f1);
-                        h0  = read32(f1);
-                        x0  = read32(f1);
-                        y0  = read32(f1);
-                        d1  = read16(f1);
-                        d2  = read16(f1);
-                        fread(&dop, 1, 1, f1);
-                        fread(&bop, 1, 1, f1);
-                        crc = read32(f1);
-
-                        if(d2 == 0)
-                            d2 = 100;
-                        frames_delay[cur_frame] = (d1 * 1000)/d2;
-
-                        if (cur_frame == 0)
-                        {
-                            bop = PNG_BLEND_OP_SOURCE;
-                            if (dop == PNG_DISPOSE_OP_PREVIOUS)
-                                dop = PNG_DISPOSE_OP_BACKGROUND;
-                        }
-
-                        if (!(coltype & 4) && !(hasTRNS))
-                            bop = PNG_BLEND_OP_SOURCE;
-
-                        rowbytes = ROWBYTES(pixeldepth, w0);
-                        cur_frame++;
-                        pImg1 += outimg1;
-                        pImg2 += outimg2;
-                    }
-                    else if (chunk == 0x49444154) /* IDAT */
-                    {
-                        fread(pData + zsize, 1, len, f1);
-                        zsize += len;
-                        crc = read32(f1);
-                    }
-                    else if (chunk == 0x66644154) /* fdAT */
-                    {
-                        seq = read32(f1);
-                        len -= 4;
-                        fread(pData + zsize, 1, len, f1);
-                        zsize += len;
-                        crc = read32(f1);
-                    }
-                    else if (chunk == 0x49454E44) /* IEND */
-                    {
                         pDst1 = pImg1 + y0*outrow1 + x0*channels;
                         pDst2 = pImg2 + y0*outrow2 + x0*4;
                         unpack(zstream, pTemp, imagesize, pData, zsize, h0, rowbytes, bpp);
@@ -816,58 +717,144 @@ int load_apng(unsigned char *filedata, unsigned int filesize, struct apng_data *
                             case 4: compose4(pDst1, outrow1,                 pTemp, rowbytes+1, w0, h0, bop, depth); break;
                             case 6: compose6(                pDst2, outrow2, pTemp, rowbytes+1, w0, h0, bop, depth); break;
                         }
-                        break;
+                        zsize = 0;
+
+                        if (dop != PNG_DISPOSE_OP_PREVIOUS)
+                        {
+                            if (coltype != 6)
+                                memcpy(pImg1 + outimg1, pImg1, outimg1);
+                            if (coltype != 4)
+                                memcpy(pImg2 + outimg2, pImg2, outimg2);
+
+                            if (dop == PNG_DISPOSE_OP_BACKGROUND)
+                            {
+                                pDst1 += outimg1;
+                                pDst2 += outimg2;
+
+                                for (j=0; j<h0; j++)
+                                {
+                                    switch (coltype)
+                                    {
+                                        case 0:  memset(pDst2, 0, w0*4); if (hasTRNS) memset(pDst1, trns[1], w0); else keep_original = 0; break;
+                                        case 2:  memset(pDst2, 0, w0*4); if (hasTRNS) for (i=0; i<w0; i++) { pDst1[i*3] = trns[1]; pDst1[i*3+1] = trns[3]; pDst1[i*3+2] = trns[5]; } else keep_original = 0; break;
+                                        case 3:  memset(pDst2, 0, w0*4); if (trns_idx >= 0) memset(pDst1, trns_idx, w0); else keep_original = 0; break;
+                                        case 4:  memset(pDst1, 0, w0*2); break;
+                                        case 6:  memset(pDst2, 0, w0*4); break;
+                                    }
+                                    pDst1 += outrow1;
+                                    pDst2 += outrow2;
+                                }
+                            }
+                        }
                     }
-                    else
+
+                    seq = read32(f1);
+                    w0  = read32(f1);
+                    h0  = read32(f1);
+                    x0  = read32(f1);
+                    y0  = read32(f1);
+                    d1  = read16(f1);
+                    d2  = read16(f1);
+                    f1.read((char*)&dop, 1);
+                    f1.read((char*)&bop, 1);
+                    crc = read32(f1);
+
+                    if(d2 == 0)
+                        d2 = 100;
+                    frames_delay[cur_frame] = (d1 * 1000)/d2;
+
+                    if (cur_frame == 0)
                     {
-                        c = (unsigned char)(chunk>>24);
-                        if (notabc(c)) break;
-                        c = (unsigned char)((chunk>>16) & 0xFF);
-                        if (notabc(c)) break;
-                        c = (unsigned char)((chunk>>8) & 0xFF);
-                        if (notabc(c)) break;
-                        c = (unsigned char)(chunk & 0xFF);
-                        if (notabc(c)) break;
-
-                        fseek( f1, len, SEEK_CUR );
-                        crc = read32(f1);
+                        bop = PNG_BLEND_OP_SOURCE;
+                        if (dop == PNG_DISPOSE_OP_PREVIOUS)
+                            dop = PNG_DISPOSE_OP_BACKGROUND;
                     }
-                }
-                /* apng decoding - end */
 
-                if (coltype == 0)
+                    if (!(coltype & 4) && !(hasTRNS))
+                        bop = PNG_BLEND_OP_SOURCE;
+
+                    rowbytes = ROWBYTES(pixeldepth, w0);
+                    cur_frame++;
+                    pImg1 += outimg1;
+                    pImg2 += outimg2;
+                }
+                else if (chunk == 0x49444154) /* IDAT */
                 {
-                    switch (depth)
-                    {
-                        case 4: trns[1] *= 0x11; break;
-                        case 2: trns[1] *= 0x55; break;
-                        case 1: trns[1] *= 0xFF; break;
-                    }
+                    f1.read((char*)(pData + zsize), len);
+                    zsize += len;
+                    crc = read32(f1);
                 }
+                else if (chunk == 0x66644154) /* fdAT */
+                {
+                    seq = read32(f1);
+                    len -= 4;
+                    f1.read((char*)(pData + zsize), len);
+                    zsize += len;
+                    crc = read32(f1);
+                }
+                else if (chunk == 0x49454E44) /* IEND */
+                {
+                    pDst1 = pImg1 + y0*outrow1 + x0*channels;
+                    pDst2 = pImg2 + y0*outrow2 + x0*4;
+                    unpack(zstream, pTemp, imagesize, pData, zsize, h0, rowbytes, bpp);
+                    switch (coltype)
+                    {
+                        case 0: compose0(pDst1, outrow1, pDst2, outrow2, pTemp, rowbytes+1, w0, h0, bop, depth); break;
+                        case 2: compose2(pDst1, outrow1, pDst2, outrow2, pTemp, rowbytes+1, w0, h0, bop, depth); break;
+                        case 3: compose3(pDst1, outrow1, pDst2, outrow2, pTemp, rowbytes+1, w0, h0, bop, depth); break;
+                        case 4: compose4(pDst1, outrow1,                 pTemp, rowbytes+1, w0, h0, bop, depth); break;
+                        case 6: compose6(                pDst2, outrow2, pTemp, rowbytes+1, w0, h0, bop, depth); break;
+                    }
+                    break;
+                }
+                else
+                {
+                    c = (unsigned char)(chunk>>24);
+                    if (notabc(c)) break;
+                    c = (unsigned char)((chunk>>16) & 0xFF);
+                    if (notabc(c)) break;
+                    c = (unsigned char)((chunk>>8) & 0xFF);
+                    if (notabc(c)) break;
+                    c = (unsigned char)(chunk & 0xFF);
+                    if (notabc(c)) break;
 
-                inflateEnd(&zstream);
+                    f1.seekg(len, std::ios_base::cur);
+                    crc = read32(f1);
+                }
+            }
+            /* apng decoding - end */
 
-                apng->bpp = channels;
-                apng->coltype = coltype;
-                apng->last_frame = cur_frame;
-                apng->first_frame = first_frame;
-                apng->height = h;
-                apng->width = w;
-                apng->num_frames = frames;
-                apng->num_plays = loops;
-                apng->frames_delay = frames_delay;
-                apng->pdata = pOut2;
-                apng->bpp = 4;
-                apng->coltype = 6;
+            if (coltype == 0)
+            {
+                switch (depth)
+                {
+                    case 4: trns[1] *= 0x11; break;
+                    case 2: trns[1] *= 0x55; break;
+                    case 1: trns[1] *= 0xFF; break;
+                }
+            }
 
-                if(pData)
-                    free(pData);
-                if(pTemp)
-                    free(pTemp);
-                if(pOut1)
-                    free(pOut1);
-            } else
-                return -1;
+            inflateEnd(&zstream);
+
+            apng->bpp = channels;
+            apng->coltype = coltype;
+            apng->last_frame = cur_frame;
+            apng->first_frame = first_frame;
+            apng->height = h;
+            apng->width = w;
+            apng->num_frames = frames;
+            apng->num_plays = loops;
+            apng->frames_delay = frames_delay;
+            apng->pdata = pOut2;
+            apng->bpp = 4;
+            apng->coltype = 6;
+
+            if(pData)
+                free(pData);
+            if(pTemp)
+                free(pTemp);
+            if(pOut1)
+                free(pOut1);
         } else
             return -1;
     } else
