@@ -24,42 +24,54 @@
 
 #include <prerequisites.h>
 #include <graphics/texture.h>
+#include "graphics.h"
 
-Texture::Texture(int width, int height, int channels, const uchar *pixels)
+Texture::Texture(int width, int height, int channels, uchar *pixels)
 {
     // generate opengl  texture
     m_textureId = internalLoadGLTexture(pixels, channels, width, height);
 }
 
-uint Texture::internalLoadGLTexture(const uchar *pixels, int channels, int width, int height)
+uint Texture::internalLoadGLTexture(uchar *pixels, int channels, int width, int height)
 {
+    GLint texSize;
+    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &texSize);
+    if(width > texSize || height > texSize) {
+        flogError("loading texture with size %dx%d failed, the maximum size is %dx%d", width % height % texSize % texSize);
+        return 0;
+    }
+
     // generate gl texture
     GLuint id;
     glGenTextures(1, &id);
     glBindTexture(GL_TEXTURE_2D, id);
-
-    // convert texture size to power of 2
-    int glWidth = 1;
-    while(glWidth < width)
-        glWidth = glWidth << 1;
-
-    int glHeight = 1;
-    while(glHeight < height)
-        glHeight = glHeight << 1;
-
     m_size.setSize(width, height);
-    m_glSize.setSize(glWidth, glHeight);
+    bool mustFree = false;
 
-    uchar *out = NULL;
-    if(m_size != m_glSize) {
-        out = new uchar[glHeight*glWidth*channels];
-        memset(out, 0, glHeight*glWidth*channels);
-        if(pixels)
-            for(int y=0;y<height;++y)
-                for(int x=0;x<width;++x)
-                    for(int i=0;i<channels;++i)
-                        out[y*glWidth*channels+x*channels+i] = pixels[y*width*channels+x*channels+i];
-    }
+    if(!g_graphics.isExtensionSupported("GL_ARB_texture_non_power_of_two") && pixels) {
+        int glWidth = 1;
+        while(glWidth < width)
+            glWidth = glWidth << 1;
+
+        int glHeight = 1;
+        while(glHeight < height)
+            glHeight = glHeight << 1;
+
+        if(m_size != m_glSize) {
+            uchar *tmp = new uchar[glHeight*glWidth*channels];
+            memset(tmp, 0, glHeight*glWidth*channels);
+            if(pixels)
+                for(int y=0;y<height;++y)
+                    for(int x=0;x<width;++x)
+                        for(int i=0;i<channels;++i)
+                            tmp[y*glWidth*channels+x*channels+i] = pixels[y*width*channels+x*channels+i];
+            pixels = tmp;
+            mustFree = true;
+        }
+
+        m_glSize.setSize(glWidth, glHeight);
+    } else
+        m_glSize = m_size;
 
     // detect pixels GL format
     GLenum format = 0;
@@ -79,7 +91,7 @@ uint Texture::internalLoadGLTexture(const uchar *pixels, int channels, int width
     }
 
     // load pixels into gl memory
-    glTexImage2D(GL_TEXTURE_2D, 0, channels, glWidth, glHeight, 0, format, GL_UNSIGNED_BYTE, out != NULL ? out : pixels);
+    glTexImage2D(GL_TEXTURE_2D, 0, channels, m_glSize.width(), m_glSize.height(), 0, format, GL_UNSIGNED_BYTE, pixels);
 
     // disable texture border
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -89,9 +101,10 @@ uint Texture::internalLoadGLTexture(const uchar *pixels, int channels, int width
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-    // free
-    if(out)
-        delete[] out;
+    // free if needed
+    if(mustFree)
+        delete[] pixels;
+
     return id;
 }
 
