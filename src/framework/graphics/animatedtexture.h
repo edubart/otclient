@@ -31,7 +31,7 @@
 class AnimatedTexture : public Texture
 {
 public:
-    AnimatedTexture(int width, int height, int components, int numFrames, uchar *framesPixels, int *framesDelay);
+    AnimatedTexture(int width, int height, int channels, int numFrames, uchar *framesPixels, int *framesDelay);
     virtual ~AnimatedTexture();
 
     void enableBilinearFilter();

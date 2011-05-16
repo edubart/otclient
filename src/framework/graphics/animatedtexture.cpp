@@ -26,7 +26,7 @@
 #include <core/engine.h>
 #include <core/dispatcher.h>
 
-AnimatedTexture::AnimatedTexture(int width, int height, int components, int numFrames, uchar *framesPixels, int *framesDelay) :
+AnimatedTexture::AnimatedTexture(int width, int height, int channels, int numFrames, uchar *framesPixels, int *framesDelay) :
     Texture(),
     m_numFrames(numFrames)
 {
@@ -35,39 +35,11 @@ AnimatedTexture::AnimatedTexture(int width, int height, int components, int numF
     m_framesTextureId = new uint[numFrames];
     m_framesDelay = new int[numFrames];
 
-    GLenum format = 0;
-    switch(components) {
-        case 4:
-            format = GL_RGBA;
-            break;
-        case 3:
-            format = GL_RGB;
-            break;
-        case 2:
-            format = GL_LUMINANCE_ALPHA;
-            break;
-        case 1:
-            format = GL_LUMINANCE;
-            break;
-    }
-
-    glGenTextures(numFrames, m_framesTextureId);
-
     for(int i=0;i<numFrames;++i) {
-        glBindTexture(GL_TEXTURE_2D, m_framesTextureId[i]);
+        uchar *framePixels = framesPixels + (i*height*width* channels);
+        uint id = internalLoadGLTexture(framePixels, channels, width, height);
 
-        // load the pixels into opengl memory
-        uchar *framePixels = framesPixels + (i*height*width*components);
-        glTexImage2D(GL_TEXTURE_2D, 0, components, width, height, 0, format, GL_UNSIGNED_BYTE, framePixels);
-
-        // disable texture border
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-        // nearest filtering
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
+        m_framesTextureId[i] = id;
         m_framesDelay[i] = framesDelay[i];
     }
 

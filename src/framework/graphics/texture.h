@@ -31,7 +31,7 @@ class Texture : public boost::enable_shared_from_this<Texture>
 {
 public:
     /// Create a texture, width and height must be a multiple of 2
-    Texture(int width, int height, int components, uchar *pixels = NULL);
+    Texture(int width, int height, int channels, const uchar *pixels = NULL);
     virtual ~Texture();
 
     /// Enable texture bilinear filter (smooth scaled textures)
@@ -44,11 +44,15 @@ public:
     uchar *getPixels();
 
     const Size& getSize() const { return m_size; }
+    const Size& getGlSize() const { return m_glSize; }
 
 protected:
     Texture() {  }
+    uint internalLoadGLTexture(const uchar *pixels, int channels, int w, int h);
+
     uint m_textureId;
     Size m_size;
+    Size m_glSize;
 };
 
 typedef boost::shared_ptr<Texture> TexturePtr;

@@ -140,7 +140,7 @@ void Graphics::drawTexturedRect(const Rect& screenCoords, const TexturePtr& text
     int bottom = screenCoords.bottom() + 1;
     int top = screenCoords.top();
     int left = screenCoords.left();
-    const Size& textureSize = texture->getSize();
+    const Size& textureSize = texture->getGlSize();
 
     float textureRight = 0.0f;
     float textureBottom = 1.0f;

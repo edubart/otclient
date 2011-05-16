@@ -25,16 +25,45 @@
 #include <prerequisites.h>
 #include <graphics/texture.h>
 
-Texture::Texture(int width, int height, int components, uchar *pixels)
+Texture::Texture(int width, int height, int channels, const uchar *pixels)
 {
-    m_size.setSize(width, height);
-
     // generate opengl  texture
-    glGenTextures(1, &m_textureId);
-    glBindTexture(GL_TEXTURE_2D, m_textureId);
+    m_textureId = internalLoadGLTexture(pixels, channels, width, height);
+}
 
+uint Texture::internalLoadGLTexture(const uchar *pixels, int channels, int width, int height)
+{
+    // generate gl texture
+    GLuint id;
+    glGenTextures(1, &id);
+    glBindTexture(GL_TEXTURE_2D, id);
+
+    // convert texture size to power of 2
+    int glWidth = 1;
+    while(glWidth < width)
+        glWidth = glWidth << 1;
+
+    int glHeight = 1;
+    while(glHeight < height)
+        glHeight = glHeight << 1;
+
+    m_size.setSize(width, height);
+    m_glSize.setSize(glWidth, glHeight);
+
+    uchar *out = NULL;
+    if(m_size != m_glSize) {
+        out = new uchar[glHeight*glWidth*channels];
+        bzero(out, glHeight*glWidth*channels);
+        if(pixels)
+            for(int y=0;y<height;++y)
+                for(int x=0;x<width;++x)
+                    for(int i=0;i<channels;++i)
+                        out[y*glWidth*channels+x*channels+i] = pixels[y*width*channels+x*channels+i];
+    }
+
+    // detect pixels GL format
     GLenum format = 0;
-    switch(components) {
+    switch(channels) {
         case 4:
             format = GL_RGBA;
             break;
@@ -49,8 +78,8 @@ Texture::Texture(int width, int height, int components, uchar *pixels)
             break;
     }
 
-    // load the pixels into opengl memory
-    glTexImage2D(GL_TEXTURE_2D, 0, components, width, height, 0, format, GL_UNSIGNED_BYTE, pixels);
+    // load pixels into gl memory
+    glTexImage2D(GL_TEXTURE_2D, 0, channels, glWidth, glHeight, 0, format, GL_UNSIGNED_BYTE, out != NULL ? out : pixels);
 
     // disable texture border
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -59,6 +88,11 @@ Texture::Texture(int width, int height, int components, uchar *pixels)
     // nearest filtering
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    // free
+    if(out)
+        delete[] out;
+    return id;
 }
 
 Texture::~Texture()
@@ -77,9 +111,16 @@ void Texture::enableBilinearFilter()
 uchar *Texture::getPixels()
 {
     // copy pixels from opengl memory
-    uchar *pixels = new uchar[m_size.area()*4];
+    uchar *pixels = new uchar[m_glSize.area()*4];
     glBindTexture(GL_TEXTURE_2D, m_textureId);
     glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+
+    // convert pixels to the real texture size
+    if(m_size != m_glSize)
+        for(int y=0;y<m_size.height();++y)
+            for(int x=0;x<m_size.width();++x)
+                for(int i=0;i<4;++i)
+                    pixels[y*m_size.width()*4+x*4+i] = pixels[y*m_glSize.width()*4+x*4+i];
     return pixels;
 }
 
