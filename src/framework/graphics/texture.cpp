@@ -53,7 +53,7 @@ uint Texture::internalLoadGLTexture(const uchar *pixels, int channels, int width
     uchar *out = NULL;
     if(m_size != m_glSize) {
         out = new uchar[glHeight*glWidth*channels];
-        bzero(out, glHeight*glWidth*channels);
+        memset(out, 0, glHeight*glWidth*channels);
         if(pixels)
             for(int y=0;y<height;++y)
                 for(int x=0;x<width;++x)
