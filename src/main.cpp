@@ -75,8 +75,20 @@ void saveConfigs()
     g_configs.save();
 }
 
+#ifdef WIN32_NO_CONSOLE
+#include <windows.h>
+int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpszArgument,int nCmdShow)
+{
+    std::vector<std::string> args;
+    boost::split(args, lpszArgument, boost::is_any_of(" "));
+#else
 int main(int argc, const char *argv[])
 {
+    std::vector<std::string> args;
+    for(int i=0;i<argc;++i)
+        args.push_back(argv[i]);
+#endif
+
     // install our signal handler
     signal(SIGTERM, signal_handler);
     signal(SIGINT, signal_handler);
@@ -88,7 +100,7 @@ int main(int argc, const char *argv[])
     std::srand(std::time(NULL));
 
     // init resources
-    g_resources.init(argv[0]);
+    g_resources.init(args[0].c_str());
     if(g_resources.setWriteDir(Platform::getAppUserDir()))
         g_resources.addToSearchPath(Platform::getAppUserDir());
     g_resources.addToSearchPath("data");
