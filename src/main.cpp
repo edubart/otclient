@@ -77,10 +77,10 @@ void saveConfigs()
 
 #ifdef WIN32_NO_CONSOLE
 #include <windows.h>
-int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpszArgument,int nCmdShow)
+int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpszArgument, int nCmdShow)
 {
     std::vector<std::string> args;
-    boost::split(args, lpszArgument, boost::is_any_of(" "));
+    boost::split(args, lpszArgument, boost::is_any_of(std::string(" ")));
 #else
 int main(int argc, const char *argv[])
 {
