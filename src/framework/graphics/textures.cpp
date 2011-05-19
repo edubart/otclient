@@ -52,19 +52,17 @@ TexturePtr Textures::get(const std::string& textureFile)
         }
 
         // load texture file data
-        uint fileSize;
-        uchar *textureFileData = g_resources.loadFile(textureFile, &fileSize);
-        if(!textureFileData) {
+        std::stringstream fin;
+        if(!g_resources.loadFile(textureFile, fin)) {
             flogError("ERROR: Unable to load texture %s, file could not be read.", textureFile.c_str());
             return texture;
         }
 
 
         // load the texture
-        texture = TexturePtr(TextureLoader::loadPNG(textureFileData, fileSize));
+        texture = TexturePtr(TextureLoader::loadPNG(fin));
         if(!texture)
             flogError("ERROR: Unable to load texture %s", textureFile.c_str());
-        delete[] textureFileData;
     }
     return texture;
 }

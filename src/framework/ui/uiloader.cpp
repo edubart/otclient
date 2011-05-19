@@ -30,6 +30,8 @@
 #include <script/luafunctions.h>
 #include "uianchorlayout.h"
 
+UILoader g_uiLoader;
+
 UIElementPtr UILoader::createElementFromId(const std::string& id)
 {
     UIElementPtr element;
@@ -65,20 +67,15 @@ UIElementPtr UILoader::createElementFromId(const std::string& id)
     return element;
 }
 
-UIElementPtr UILoader::loadFile(const std::string& file, const UIContainerPtr& parent)
+UIElementPtr UILoader::loadFromYAML(std::string filePath, const UIContainerPtr& parent)
 {
-    // try to find the file
-    std::string filePath = "modules/" + file;
-    if(!g_resources.fileExists(filePath))
-        filePath = "addons/" + file;
-    if(!g_resources.fileExists(filePath))
-        filePath = file;
-    if(!g_resources.fileExists(filePath)) {
-        flogError("ERROR: Could not load ui file \"%s",  file.c_str());
+    std::stringstream fin;
+    if(!g_resources.loadFile(filePath, fin)) {
+        flogError("ERROR: Could not load ui file \"%s",  filePath.c_str());
         return UIElementPtr();
     }
 
-    std::istringstream fin(g_resources.loadTextFile(filePath));
+    m_currentFile = filePath;
 
     try {
         YAML::Parser parser(fin);
@@ -110,7 +107,7 @@ UIElementPtr UILoader::loadFile(const std::string& file, const UIContainerPtr& p
         element->onLoad();
         return element;
     } catch (YAML::Exception& e) {
-        flogError("ERROR: Failed to load ui file \"%s\":\n  %s", file.c_str() % e.what());
+        flogError("ERROR: Failed to load ui file \"%s\":\n  %s", filePath.c_str() % e.what());
     }
 
     return UIElementPtr();
@@ -208,7 +205,7 @@ void UILoader::loadElement(const UIElementPtr& element, const YAML::Node& node)
     // load events
     if(yamlHasValue(node, "onLoad")) {
         const YAML::Node& cnode = node["onLoad"];
-        if(g_lua.loadBufferAsFunction(yamlRead<std::string>(cnode), element->getId() + ":onLoad"))
+        if(g_lua.loadBufferAsFunction(yamlRead<std::string>(cnode), getElementSourceDesc(element, "onLoad")))
             g_lua.setScriptableField(element, "onLoad");
         else
             logError(yamlErrorDesc(cnode, "failed to parse inline lua script"));
@@ -216,7 +213,7 @@ void UILoader::loadElement(const UIElementPtr& element, const YAML::Node& node)
 
     if(yamlHasValue(node, "onDestroy")) {
         const YAML::Node& cnode = node["onDestroy"];
-        if(g_lua.loadBufferAsFunction(yamlRead<std::string>(cnode), element->getId() + ":onDestroy"))
+        if(g_lua.loadBufferAsFunction(yamlRead<std::string>(cnode), getElementSourceDesc(element, "onDestroy")))
             g_lua.setScriptableField(element, "onDestroy");
         else
             logError(yamlErrorDesc(cnode, "failed to parse inline lua script"));
@@ -273,9 +270,19 @@ void UILoader::loadButton(const UIButtonPtr& button, const YAML::Node& node)
     // set on click event
     if(yamlHasValue(node, "onClick")) {
         const YAML::Node& cnode = node["onClick"];
-        if(g_lua.loadBufferAsFunction(yamlRead<std::string>(cnode), button->getId() + ":onClick"))
+        if(g_lua.loadBufferAsFunction(yamlRead<std::string>(cnode), getElementSourceDesc(button, "onClick")))
             g_lua.setScriptableField(button, "onClick");
         else
             logError(yamlErrorDesc(cnode, "failed to parse inline lua script"));
     }
 }
+
+std::string UILoader::getElementSourceDesc(const UIElementPtr& element, const std::string& key)
+{
+    std::string desc;
+    desc += g_resources.resolvePath(m_currentFile) + ":" + element->getId();
+    if(key.length() > 0)
+        desc += "[" + key + "]";
+    return desc;
+}
+

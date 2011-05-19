@@ -507,7 +507,7 @@ void compose6(unsigned char * dst, unsigned int dstbytes, unsigned char * src, u
     }
 }
 
-int load_apng(unsigned char *filedata, unsigned int filesize, struct apng_data *apng)
+int load_apng(std::stringstream& file, struct apng_data *apng)
 {
     unsigned int    i, j;
     unsigned int    rowbytes;
@@ -522,8 +522,6 @@ int load_apng(unsigned char *filedata, unsigned int filesize, struct apng_data *
     unsigned char   coltype, compr, filter, interl;
     z_stream        zstream;
     memset(apng, 0, sizeof(struct apng_data));
-    std::istringstream    f1;
-    f1.rdbuf()->pubsetbuf((char*)filedata, filesize);
 
     for (i=0; i<256; i++)
     {
@@ -560,21 +558,21 @@ int load_apng(unsigned char *filedata, unsigned int filesize, struct apng_data *
     unsigned char * pDst2;
     unsigned int  * frames_delay;
 
-    f1.read((char*)sig, 8);
-    if(f1.good() && memcmp(sig, png_sign, 8) == 0) {
-        len  = read32(f1);
-        chunk = read32(f1);
+    file.read((char*)sig, 8);
+    if(!file.eof() && memcmp(sig, png_sign, 8) == 0) {
+        len  = read32(file);
+        chunk = read32(file);
 
         if ((len == 13) && (chunk == 0x49484452)) /* IHDR */
         {
-            w = w0 = read32(f1);
-            h = h0 = read32(f1);
-            f1.read((char*)&depth, 1);
-            f1.read((char*)&coltype, 1);
-            f1.read((char*)&compr, 1);
-            f1.read((char*)&filter, 1);
-            f1.read((char*)&interl, 1);
-            crc = read32(f1);
+            w = w0 = read32(file);
+            h = h0 = read32(file);
+            file.read((char*)&depth, 1);
+            file.read((char*)&coltype, 1);
+            file.read((char*)&compr, 1);
+            file.read((char*)&filter, 1);
+            file.read((char*)&interl, 1);
+            crc = read32(file);
 
             channels = 1;
             if (coltype == 2)
@@ -616,17 +614,17 @@ int load_apng(unsigned char *filedata, unsigned int filesize, struct apng_data *
             memset(pOut1, 0, outimg1);
             memset(pOut2, 0, outimg2);
 
-            while (!f1.eof())
+            while (!file.eof())
             {
-                len  = read32(f1);
-                chunk = read32(f1);
+                len  = read32(file);
+                chunk = read32(file);
 
                 if (chunk == 0x504C5445) /* PLTE */
                 {
                     unsigned int col;
                     for (i=0; i<len; i++)
                     {
-                        f1.read((char*)&c, 1);
+                        file.read((char*)&c, 1);
                         col = i/3;
                         if (col<256)
                         {
@@ -634,14 +632,14 @@ int load_apng(unsigned char *filedata, unsigned int filesize, struct apng_data *
                             palsize = col+1;
                         }
                     }
-                    crc = read32(f1);
+                    crc = read32(file);
                 }
                 else if (chunk == 0x74524E53) /* tRNS */
                 {
                     hasTRNS = 1;
                     for (i=0; i<len; i++)
                     {
-                        f1.read((char*)&c, 1);
+                        file.read((char*)&c, 1);
                         if (i<256)
                         {
                             trns[i] = c;
@@ -671,16 +669,16 @@ int load_apng(unsigned char *filedata, unsigned int filesize, struct apng_data *
                                 trns[5] = trns[4]; trns[4] = 0;
                             }
                         }
-                        crc = read32(f1);
+                        crc = read32(file);
                 }
                 else if (chunk == 0x6163544C) /* acTL */
                 {
-                    frames = read32(f1);
+                    frames = read32(file);
                     if(frames_delay)
                         free(frames_delay);
                     frames_delay = (unsigned int*)malloc(frames*sizeof(int));
-                    loops  = read32(f1);
-                    crc = read32(f1);
+                    loops  = read32(file);
+                    crc = read32(file);
                     if (pOut1)
                         free(pOut1);
                     if (pOut2)
@@ -748,16 +746,16 @@ int load_apng(unsigned char *filedata, unsigned int filesize, struct apng_data *
                         }
                     }
 
-                    seq = read32(f1);
-                    w0  = read32(f1);
-                    h0  = read32(f1);
-                    x0  = read32(f1);
-                    y0  = read32(f1);
-                    d1  = read16(f1);
-                    d2  = read16(f1);
-                    f1.read((char*)&dop, 1);
-                    f1.read((char*)&bop, 1);
-                    crc = read32(f1);
+                    seq = read32(file);
+                    w0  = read32(file);
+                    h0  = read32(file);
+                    x0  = read32(file);
+                    y0  = read32(file);
+                    d1  = read16(file);
+                    d2  = read16(file);
+                    file.read((char*)&dop, 1);
+                    file.read((char*)&bop, 1);
+                    crc = read32(file);
 
                     if(d2 == 0)
                         d2 = 100;
@@ -780,17 +778,17 @@ int load_apng(unsigned char *filedata, unsigned int filesize, struct apng_data *
                 }
                 else if (chunk == 0x49444154) /* IDAT */
                 {
-                    f1.read((char*)(pData + zsize), len);
+                    file.read((char*)(pData + zsize), len);
                     zsize += len;
-                    crc = read32(f1);
+                    crc = read32(file);
                 }
                 else if (chunk == 0x66644154) /* fdAT */
                 {
-                    seq = read32(f1);
+                    seq = read32(file);
                     len -= 4;
-                    f1.read((char*)(pData + zsize), len);
+                    file.read((char*)(pData + zsize), len);
                     zsize += len;
-                    crc = read32(f1);
+                    crc = read32(file);
                 }
                 else if (chunk == 0x49454E44) /* IEND */
                 {
@@ -818,8 +816,8 @@ int load_apng(unsigned char *filedata, unsigned int filesize, struct apng_data *
                     c = (unsigned char)(chunk & 0xFF);
                     if (notabc(c)) break;
 
-                    f1.seekg(len, std::ios_base::cur);
-                    crc = read32(f1);
+                    file.seekg(len, std::ios_base::cur);
+                    crc = read32(file);
                 }
             }
             /* apng decoding - end */

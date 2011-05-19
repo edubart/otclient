@@ -6,16 +6,16 @@ panel#background:
   anchors.bottom: parent.bottom
 
   panel#icos4d:
-    skin: 
-      image: lightness/mouse.png
+    skin:
+      image: /skins/lightness/mouse.png
     anchors.left: parent.left
     anchors.top: parent.top
     margin.left: -2
     margin.top: 70
 
   panel#mouse:
-    skin: 
-      image: lightness/icos4d.png
+    skin:
+      image: /skins/lightness/icos4d.png
     anchors.right: parent.right
     anchors.bottom: parent.bottom
     margin.left: 60
@@ -34,7 +34,7 @@ panel#background:
       anchors.top: parent.top
       anchors.horizontalCenter: parent.horizontalCenter
       margin.top: 16
-      onClick: UI.load("mainmenu/entergamewindow.yml")
+      onClick: UI.load("entergamewindow.yml")
 
     button#accessAccountButton:
       text: Access Account
@@ -48,14 +48,14 @@ panel#background:
       anchors.top: parent.top
       anchors.horizontalCenter: parent.horizontalCenter
       margin.top: 76
-      onClick: UI.load("mainmenu/optionswindow.yml")
+      onClick: UI.load("optionswindow.yml")
 
     button#infoButton:
       text: Info
       anchors.top: parent.top
       anchors.horizontalCenter: parent.horizontalCenter
       margin.top: 106
-      onClick: UI.load("mainmenu/infowindow.yml")
+      onClick: UI.load("infowindow.yml")
 
     button#exitGameButton:
       text: Exit

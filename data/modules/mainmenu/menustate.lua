@@ -1,6 +1,6 @@
 -- menu state
 function onEnterMenuState()
-    mainMenu = UI.load("mainmenu/mainmenu.yml")
+    mainMenu = UI.load("mainmenu.yml")
 end
 
 function onLeaveMenuState()

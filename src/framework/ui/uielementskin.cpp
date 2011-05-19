@@ -69,7 +69,7 @@ ImagePtr UIElementSkin::loadImage(const YAML::Node& node)
         std::string textureName = yamlRead(cnode, "source", std::string());
 
         if(!textureName.empty())
-            texture = g_textures.get("skins/" + textureName);
+            texture = g_textures.get(textureName);
         else
             texture = g_uiSkins.getDefaultTexture();
 
@@ -89,7 +89,7 @@ ImagePtr UIElementSkin::loadImage(const YAML::Node& node)
         if(!image)
             logError(yamlErrorDesc(cnode, "failed to load bordered image"));
     } else if(yamlHasValue(node, "image")) {
-        texture = g_textures.get("skins/" + yamlRead<std::string>(node, "image"));
+        texture = g_textures.get(yamlRead<std::string>(node, "image"));
         if(texture)
             image = ImagePtr(new Image(texture));
         if(!m_defaultSize.isValid())

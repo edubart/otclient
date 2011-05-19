@@ -55,6 +55,7 @@ typedef int8_t int8;
 #include <algorithm>
 #include <string>
 #include <vector>
+#include <stack>
 #include <map>
 #include <string>
 #include <list>

@@ -35,36 +35,32 @@ public:
     void init(const char *argv0);
     void terminate();
 
-    /// Sets the write directory
+    /// Set output files dir
     bool setWriteDir(const std::string &path);
 
-    /// Adds a directory or zip archive to the search path
+    /// Add an package or directory to the search path
     bool addToSearchPath(const std::string& path, bool insertInFront = true);
+    /// Add all packages from a directory
+    void addPackagesToSearchPath(const std::string &packagesDirectory, const std::string &packageExtension, bool append);
 
-    /// Checks whether the given file exists in the search path
-    bool fileExists(const std::string& filePath);
+    bool fileExists(const std::string& fileName);
+    bool directoryExists(const std::string& directoryName);
 
-    /// Searches for zip files and adds them to the search path
-    void searchAndAddArchives(const std::string &path,
-                              const std::string &ext,
-                              const bool append);
+    bool loadFile(const std::string& fileName, std::iostream& out);
 
-    /** Load a file by allocating a buffer and filling it with the file contents
-     * where fileSize will be set to the file size.
-     * The returned buffer must be freed with delete[]. */
-    uchar *loadFile(const std::string &fileName, uint *fileSize);
+    bool saveFile(const std::string& fileName, const uchar *data, uint size);
+    bool saveFile(const std::string& fileName, std::istream& in);
 
-    /// Loads a text file into a std::string
-    std::string loadTextFile(const std::string &fileName);
+    bool deleteFile(const std::string& fileName);
 
-    /// Save a file into write directory
-    bool saveFile(const std::string &fileName, const uchar *data, uint size);
+    std::list<std::string> listDirectoryFiles(const std::string& directoryPath = "");
 
-    /// Save a text file into write directory
-    bool saveTextFile(const std::string &fileName, std::string text);
+    void pushCurrentPath(const std::string &currentPath);
+    void popCurrentPath();
+    std::string resolvePath(const std::string& path);
 
-    /// Get a list with all files in a directory
-    std::list<std::string> getDirectoryFiles(const std::string& directory);
+private:
+    std::stack<std::string> m_currentPaths;
 };
 
 extern Resources g_resources;

@@ -35,11 +35,9 @@ bool Configs::load(const std::string& fileName)
     if(!g_resources.fileExists(fileName))
         return false;
 
-    std::string fileContents = g_resources.loadTextFile(fileName);
-    if(!fileContents.size())
+    std::stringstream fin;
+    if(!g_resources.loadFile(fileName, fin))
         return false;
-
-    std::istringstream fin(fileContents);
 
     try {
         YAML::Parser parser(fin);

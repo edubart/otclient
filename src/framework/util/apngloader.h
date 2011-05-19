@@ -25,6 +25,8 @@
 #ifndef APNGLOADER_H
 #define APNGLOADER_H
 
+#include <sstream>
+
 struct apng_data {
     unsigned char *pdata;
     unsigned int width;
@@ -39,7 +41,7 @@ struct apng_data {
 };
 
 // returns -1 on error, 0 on success
-int load_apng(unsigned char *filedata, unsigned int filesize, struct apng_data *apng);
+int load_apng(std::stringstream& file, struct apng_data *apng);
 void free_apng(struct apng_data *apng);
 
 #endif // APNGLOADER_H

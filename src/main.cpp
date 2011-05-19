@@ -101,9 +101,6 @@ int main(int argc, const char *argv[])
 
     // init resources
     g_resources.init(args[0].c_str());
-    if(g_resources.setWriteDir(Platform::getAppUserDir()))
-        g_resources.addToSearchPath(Platform::getAppUserDir());
-    g_resources.addToSearchPath("data");
 
     // before loading configurations set the default ones
     setDefaultConfigs();
@@ -127,7 +124,7 @@ int main(int argc, const char *argv[])
     g_engine.enableFpsCounter();
 
     // load ui skins
-    g_uiSkins.load("skins/lightness.yml");
+    g_uiSkins.load("lightness");
 
     // load script modules
     g_lua.loadAllModules();

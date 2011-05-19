@@ -68,13 +68,12 @@ void Font::calculateGlyphsWidthsAutomatically(const Size& glyphSize)
 
 bool Font::load(const std::string& file)
 {
-    std::string fileContents = g_resources.loadTextFile(file);
-    if(!fileContents.size()) {
+    std::stringstream fin;
+    if(!g_resources.loadFile(file, fin)) {
         flogError("ERROR: Coult not load font file \"%s",  file.c_str());
         return false;
     }
 
-    std::istringstream fin(fileContents);
     std::string textureName;
     Size glyphSize;
 
@@ -94,7 +93,7 @@ bool Font::load(const std::string& file)
         m_glyphSpacing = yamlRead(doc, "glyph spacing", Size(0,0));
 
         // load texture
-        m_texture = g_textures.get("fonts/" + textureName);
+        m_texture = g_textures.get(textureName);
         if(!m_texture) {
             flogError("ERROR: Failed to load image for font file \"%s\"", file.c_str());
             return false;

@@ -54,9 +54,9 @@ void LuaScript::terminate()
 
 void LuaScript::loadAllModules()
 {
-    std::list<std::string> modules = g_resources.getDirectoryFiles("modules");
+    std::list<std::string> modules = g_resources.listDirectoryFiles("modules");
     foreach(const std::string& module, modules) {
-        std::list<std::string> moduleFiles = g_resources.getDirectoryFiles(std::string("modules/") + module);
+        std::list<std::string> moduleFiles = g_resources.listDirectoryFiles("modules/" + module);
         foreach(const std::string& moduleFile, moduleFiles) {
             if(boost::ends_with(moduleFile, ".lua"))
                 loadFile(std::string("modules/") + module + "/" + moduleFile);
@@ -66,42 +66,24 @@ void LuaScript::loadAllModules()
 
 bool LuaScript::loadFile(const std::string& fileName)
 {
-    if(!g_resources.fileExists(fileName)) {
+    std::stringstream fin;
+    if(g_resources.loadFile(fileName, fin))
+        return loadBuffer(fin.str(), fileName);
+    else
         flogError("ERROR: script file '%s' doesn't exist", fileName.c_str());
-        return false;
-    }
-    std::string fileContents = g_resources.loadTextFile(fileName);
-    return loadBuffer(fileContents, fileName);
+    return false;
 }
 
 bool LuaScript::loadBuffer(const std::string& text, const std::string& what)
 {
-    // load buffer
-    int ret = luaL_loadbuffer(L, text.c_str(), text.length(), what.c_str());
-    if(ret != 0){
-        reportError(popString());
-        return false;
-    }
-
-    // check if is loaded as a function
-    if(lua_isfunction(L, -1) == 0) {
-        pop();
-        return false;
-    }
-
-    // execute it
-    ret = lua_pcall(L, 0, 0, 0);
-    if(ret != 0){
-        reportError(popString());
-        return false;
-    }
-
-    return true;
+    if(loadBufferAsFunction(text, what) && callFunction())
+        return true;
+    return false;
 }
 
 bool LuaScript::loadBufferAsFunction(const std::string& text, const std::string& what)
 {
-    int ret = luaL_loadbuffer(L, text.c_str(), text.length(), what.c_str());
+    int ret = luaL_loadbuffer(L, text.c_str(), text.length(), ("@" + what).c_str());
     if(ret != 0){
         reportError(popString());
         return false;
@@ -111,7 +93,6 @@ bool LuaScript::loadBufferAsFunction(const std::string& text, const std::string&
         pop();
         return false;
     }
-
     return true;
 }
 
@@ -145,7 +126,15 @@ int LuaScript::getStackSize()
 
 void LuaScript::insert(int index)
 {
-    lua_insert(L, index);
+    if(index != -1)
+        lua_insert(L, index);
+}
+
+void LuaScript::swap(int index)
+{
+    insert(index);
+    pushValue(index+1);
+    remove(index);
 }
 
 void LuaScript::remove(int index)
@@ -390,23 +379,61 @@ void LuaScript::pushRef(int ref)
     lua_rawgeti(L, LUA_REGISTRYINDEX, ref);
 }
 
-void LuaScript::callFunction(int numArgs)
+std::string LuaScript::getFunctionSourcePath()
 {
-    int size = lua_gettop(L);
-    int errorIndex = -(numArgs + 2);
-    lua_pushcfunction(L, &LuaScript::luaErrorHandler);
-    lua_insert(L, errorIndex);
+    std::string path;
 
-    int ret = lua_pcall(L, numArgs, 0, errorIndex);
+    lua_Debug ar;
+    memset(&ar, 0, sizeof(ar));
+    lua_getinfo(L, ">Sn", &ar);
+
+    // c function, we must get information of level above
+    if(strcmp("C", ar.what) == 0) {
+        memset(&ar, 0, sizeof(ar));
+        if(lua_getstack(L, 1, &ar) == 1) {
+            lua_getinfo(L, "f", &ar);
+            return getFunctionSourcePath();
+        }
+
+    } else {
+        if(ar.source) {
+            std::string source = ar.source;
+            std::size_t pos = source.find_last_of('/');
+            if(source[0] == '@' && pos != std::string::npos)
+                path = source.substr(1, pos - 1);
+        } else {
+            logError("no source");
+        }
+    }
+    return path;
+}
+
+bool LuaScript::callFunction(int numArgs, int numRets)
+{
+    pushValue(-numArgs - 1);
+    g_resources.pushCurrentPath(getFunctionSourcePath());
+
+    int size = getStackSize();
+    int errorIndex = -numArgs - 2;
+    lua_pushcfunction(L, &LuaScript::luaErrorHandler);
+    insert(errorIndex);
+
+    int ret = lua_pcall(L, numArgs, numRets, errorIndex);
     if(ret != 0) {
         reportError(popString());
+        pop(); // pop error func
+        return false;
     }
 
-    // pop error func
-    lua_pop(L, 1);
+    remove(-numRets - 1); // pop error func
 
-    if(lua_gettop(L) != size - numArgs - 1)
+    if(getStackSize() != size - numArgs - 1 + numRets) {
         reportError("stack size changed!");
+        return false;
+    }
+
+    g_resources.popCurrentPath();
+    return true;
 }
 
 void LuaScript::callModuleField(const std::string& module, const std::string& field)
@@ -581,8 +608,9 @@ int LuaScript::luaPackageLoader(lua_State* L)
     std::string fileName = lua_tostring(L, -1);
     fileName += ".lua";
     if(g_resources.fileExists(fileName)) {
-        std::string fileContents = g_resources.loadTextFile(fileName);
-        luaL_loadbuffer(L, fileContents.c_str(), fileContents.length(), fileName.c_str());
+        std::stringstream fin;
+        if(g_resources.loadFile(fileName, fin))
+            luaL_loadbuffer(L, fin.str().c_str(), fin.str().length(), fileName.c_str());
     } else {
         lua_pushfstring(L, "\n\tcould not load lua script " LUA_QS, fileName.c_str());
     }
@@ -601,16 +629,8 @@ int LuaScript::luaIndexMetaMethod(lua_State* L)
     if(!lua_isnil(L, -1)) {
         lua_remove(L, -2); // get_method, obj
         lua_insert(L, -2); // obj, get_method
-        lua_pushcfunction(L, &LuaScript::luaErrorHandler); // errorfunc, obj,get_method
-        lua_insert(L, -3); // obj, get_method, errorfunc
-        int ret = lua_pcall(L, 1, 1, -3); // ret, errorfunc
-        if(ret != 0) {
-            g_lua.reportError(g_lua.popString()); // errofunc
-            lua_pop(L, 1); // (empty)
-            lua_pushnil(L); // nil
-        } else {
-            lua_remove(L, -2); // ret
-        }
+        if(!g_lua.callFunction(1, 1))
+            lua_pushnil(L);
         return 1;
     } else {
         lua_pop(L, 1); // mt, obj
@@ -618,7 +638,7 @@ int LuaScript::luaIndexMetaMethod(lua_State* L)
         lua_getfield(L, -1, key.c_str()); // method, methods, mt, obj
         lua_remove(L, -2); // method, mt, obj
         if(!lua_isnil(L, -1)) {
-            lua_insert(L, -3); // obj, mt, method
+            lua_insert(L, -3); // mt, obj, method
             lua_pop(L, 2); // method
             return 1;
         }
@@ -654,12 +674,7 @@ int LuaScript::luaNewIndexMetaMethod(lua_State* L)
     if(!lua_isnil(L, -1)) {
         lua_remove(L, -2); // set_method, value, obj
         lua_insert(L, -3); // value, obj, set_method
-        lua_pushcfunction(L, &LuaScript::luaErrorHandler); // errorfunc, value, obj, set_method
-        lua_insert(L, -4); // value, obj, set_method, errorfunc
-        int ret = lua_pcall(L, 2, 0, -4); // errorfunc
-        if(ret != 0)
-            g_lua.reportError(g_lua.popString()); // errofunc
-        lua_pop(L, 1); // (empty)
+        g_lua.callFunction(2);
         return 1;
     }
     lua_pop(L, 2); // mt, value, obj

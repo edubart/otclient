@@ -98,7 +98,7 @@ int lua_UI_load()
 
     UIElementPtr element;
     if(parent)
-        element = UILoader::loadFile(uiFile.c_str(), parent);
+        element = g_uiLoader.loadFromYAML(uiFile.c_str(), parent);
     else
         g_lua.reportErrorWithTraceback("invalid parent container");
 

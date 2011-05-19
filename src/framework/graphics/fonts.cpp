@@ -30,17 +30,21 @@ Fonts g_fonts;
 
 void Fonts::init()
 {
+    g_resources.pushCurrentPath("fonts");
+
     // load all fonts
-    std::list<std::string> files = g_resources.getDirectoryFiles("fonts");
+    std::list<std::string> files = g_resources.listDirectoryFiles();
     foreach(const std::string& file, files) {
         if(boost::ends_with(file, ".yml")) {
             std::string name = file;
             boost::erase_first(name, ".yml");
             FontPtr font(new Font(name));
-            if(font->load("fonts/" + file))
+            if(font->load(file))
                 m_fonts.push_back(font);
         }
     }
+
+    g_resources.popCurrentPath();
 }
 
 FontPtr Fonts::get(const std::string& fontName)

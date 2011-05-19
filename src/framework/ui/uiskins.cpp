@@ -35,13 +35,13 @@
 
 UISkins g_uiSkins;
 
-void UISkins::load(const std::string& skinsFile)
+void UISkins::load(const std::string& skinName)
 {
-    std::string fileContents = g_resources.loadTextFile(skinsFile);
-    if(!fileContents.size())
-        flogFatal("FATAL ERROR: Could not load skin file \"%s",  skinsFile.c_str());
+    g_resources.pushCurrentPath("skins");
 
-    std::istringstream fin(fileContents);
+    std::stringstream fin;
+    if(!g_resources.loadFile(skinName + ".yml", fin))
+        flogFatal("FATAL ERROR: Could not load skin \"%s",  skinName.c_str());
 
     try {
         YAML::Parser parser(fin);
@@ -57,7 +57,7 @@ void UISkins::load(const std::string& skinsFile)
 
         std::string defaultTextureName = yamlRead(doc, "default texture", std::string());
         if(!defaultTextureName.empty())
-            m_defaultTexture = g_textures.get("skins/" + defaultTextureName);
+            m_defaultTexture = g_textures.get(defaultTextureName);
 
         {
             const YAML::Node& node = doc["buttons"];
@@ -133,8 +133,10 @@ void UISkins::load(const std::string& skinsFile)
             }
         }
     } catch (YAML::Exception& e) {
-        flogFatal("FATAL ERROR: Malformed skin file \"%s\":\n  %s", skinsFile.c_str() % e.what());
+        flogFatal("FATAL ERROR: Malformed skin file \"%s\":\n  %s", skinName.c_str() % e.what());
     }
+
+    g_resources.popCurrentPath();
 }
 
 void UISkins::terminate()

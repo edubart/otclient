@@ -32,7 +32,7 @@ class TextureLoader
 {
 public:
     /// Load a png textures
-    static TexturePtr loadPNG(uchar *fileData, uint fileSize);
+    static TexturePtr loadPNG(std::stringstream& file);
 };
 
 #endif // TEXTURELOADER_H

@@ -28,12 +28,12 @@
 #include <util/apngloader.h>
 #include "animatedtexture.h"
 
-TexturePtr TextureLoader::loadPNG(uchar *fileData, uint fileSize)
+TexturePtr TextureLoader::loadPNG(std::stringstream& file)
 {
     TexturePtr texture;
 
     apng_data apng;
-    if(load_apng(fileData, fileSize, &apng) == 0) {
+    if(load_apng(file, &apng) == 0) {
         if(apng.num_frames > 1) { // animated texture
             uchar *framesdata = apng.pdata + (apng.first_frame * apng.width * apng.height * apng.bpp);
             texture = TexturePtr(new AnimatedTexture(apng.width, apng.height, apng.bpp, apng.num_frames, framesdata, (int*)apng.frames_delay));

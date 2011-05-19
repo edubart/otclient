@@ -24,6 +24,7 @@
 
 #include <prerequisites.h>
 #include <core/resources.h>
+#include <core/platform.h>
 
 #include <physfs.h>
 
@@ -32,6 +33,29 @@ Resources g_resources;
 void Resources::init(const char *argv0)
 {
     PHYSFS_init(argv0);
+
+    // try to find data directory
+    std::list<std::string> searchPaths;
+    std::string dir;
+    std::string baseDir = PHYSFS_getBaseDir();
+
+    std::list<std::string> possibleDirs;
+    possibleDirs.push_back("data");
+    possibleDirs.push_back(baseDir + "data");
+    possibleDirs.push_back(baseDir + "../data");
+    possibleDirs.push_back(baseDir + "../share/data");
+    possibleDirs.push_back("");
+
+    foreach(dir, possibleDirs)
+        if(g_resources.addToSearchPath(dir))
+            break;
+
+    // setup write directory
+    dir = Platform::getAppUserDir();
+    if(g_resources.setWriteDir(dir))
+        g_resources.addToSearchPath(dir);
+    else
+        logError("ERROR: could not setup write directory");
 }
 
 void Resources::terminate()
@@ -41,59 +65,63 @@ void Resources::terminate()
 
 bool Resources::setWriteDir(const std::string& path)
 {
-    bool ret = (bool)PHYSFS_setWriteDir(path.c_str());
-
-    if(!ret)
-        flogError("ERROR: Could not set the path \"%s\" as write directory, file write will not work correctly.", path.c_str());
-    return ret;
+    if(!PHYSFS_setWriteDir(path.c_str()))
+        return false;
+    return true;
 }
 
 bool Resources::addToSearchPath(const std::string& path, bool insertInFront /*= true*/)
 {
-    if(!PHYSFS_addToSearchPath(path.c_str(), insertInFront ? 0 : 1)) {
-        flogError("ERROR: Error while adding \"%s\" to resources search path: %s", path.c_str() % PHYSFS_getLastError());
+    if(!PHYSFS_addToSearchPath(path.c_str(), insertInFront ? 0 : 1))
         return false;
-    }
     return true;
 }
 
-bool Resources::fileExists(const std::string& filePath)
+void Resources::addPackagesToSearchPath(const std::string &packagesDirectory, const std::string &packageExtension, bool append)
 {
-    return PHYSFS_exists(filePath.c_str());
+    auto files = listDirectoryFiles(resolvePath(packagesDirectory));
+    foreach(const std::string& file, files) {
+        if(boost::ends_with(file, packageExtension))
+            addToSearchPath(packagesDirectory + "/" + file, !append);
+    }
 }
 
-uchar *Resources::loadFile(const std::string& fileName, uint *fileSize)
+bool Resources::fileExists(const std::string& fileName)
 {
-    PHYSFS_file *file = PHYSFS_openRead(fileName.c_str());
+    return (PHYSFS_exists(resolvePath(fileName).c_str()) && !PHYSFS_isDirectory(resolvePath(fileName).c_str()));
+}
+
+bool Resources::directoryExists(const std::string& directoryName)
+{
+    return (PHYSFS_exists(resolvePath(directoryName).c_str()) && PHYSFS_isDirectory(resolvePath(directoryName).c_str()));
+}
+
+bool Resources::loadFile(const std::string& fileName, std::iostream& out)
+{
+    out.clear(std::ios::goodbit);
+    PHYSFS_file *file = PHYSFS_openRead(resolvePath(fileName).c_str());
     if(!file) {
         flogError("ERROR: Failed to load file \"%s\": %s", fileName.c_str() % PHYSFS_getLastError());
-        *fileSize = 0;
-        return NULL;
+        out.clear(std::ios::failbit);
+        return false;
+    } else {
+        int fileSize = PHYSFS_fileLength(file);
+        if(fileSize > 0) {
+            char *buffer = new char[fileSize];
+            PHYSFS_read(file, (void*)buffer, 1, fileSize);
+            out.write(buffer, fileSize);
+            delete buffer;
+        } else
+            out.clear(std::ios::eofbit);
+        PHYSFS_close(file);
+        out.seekg(0, std::ios::beg);
+        return true;
     }
-
-    *fileSize = PHYSFS_fileLength(file);
-    uchar *buffer = new uchar[*fileSize + 1];
-    PHYSFS_read(file, (void*)buffer, 1, *fileSize);
-    buffer[*fileSize] = 0;
-    PHYSFS_close(file);
-    return buffer;
-}
-
-std::string Resources::loadTextFile(const std::string& fileName)
-{
-    std::string text;
-    uint fileSize;
-    char *buffer = (char *)loadFile(fileName, &fileSize);
-    if(buffer) {
-        text.assign(buffer);
-        delete[] buffer;
-    }
-    return text;
 }
 
 bool Resources::saveFile(const std::string &fileName, const uchar *data, uint size)
 {
-    PHYSFS_file *file = PHYSFS_openWrite(fileName.c_str());
+    PHYSFS_file *file = PHYSFS_openWrite(resolvePath(fileName).c_str());
     if(!file) {
         flogError("ERROR: Failed to save file \"%s\": %s", fileName.c_str() % PHYSFS_getLastError());
         return false;
@@ -104,15 +132,29 @@ bool Resources::saveFile(const std::string &fileName, const uchar *data, uint si
     return true;
 }
 
-bool Resources::saveTextFile(const std::string &fileName, std::string text)
+bool Resources::saveFile(const std::string &fileName, std::istream& in)
 {
-    return saveFile(fileName, (const uchar*)text.c_str(), text.size());
+    std::streampos oldPos = in.tellg();
+    in.seekg(0, std::ios::end);
+    std::streampos size = in.tellg();
+    in.seekg(0, std::ios::beg);
+    char *buffer = new char[size];
+    in.read(buffer, size);
+    bool ret = saveFile(fileName, (const uchar*)buffer, size);
+    delete[] buffer;
+    in.seekg(oldPos, std::ios::beg);
+    return ret;
 }
 
-std::list<std::string> Resources::getDirectoryFiles(const std::string& directory)
+bool Resources::deleteFile(const std::string& fileName)
+{
+    return PHYSFS_delete(resolvePath(fileName).c_str()) != 0;
+}
+
+std::list<std::string> Resources::listDirectoryFiles(const std::string& directoryPath)
 {
     std::list<std::string> files;
-    char **rc = PHYSFS_enumerateFiles(directory.c_str());
+    char **rc = PHYSFS_enumerateFiles(resolvePath(directoryPath).c_str());
 
     for(char **i = rc; *i != NULL; i++)
         files.push_back(*i);
@@ -120,3 +162,31 @@ std::list<std::string> Resources::getDirectoryFiles(const std::string& directory
     PHYSFS_freeList(rc);
     return files;
 }
+
+
+void Resources::pushCurrentPath(const std::string &currentPath)
+{
+    m_currentPaths.push(currentPath);
+}
+
+void Resources::popCurrentPath()
+{
+    m_currentPaths.pop();
+}
+
+std::string Resources::resolvePath(const std::string& path)
+{
+    std::string fullPath;
+    if(boost::starts_with(path, "/"))
+        fullPath = path.substr(1);
+    else {
+        if(m_currentPaths.size() > 0) {
+            std::string currentPath = m_currentPaths.top();
+            if(currentPath.length() > 0)
+                fullPath += currentPath + "/";
+        }
+        fullPath += path;
+    }
+    return fullPath;
+}
+

@@ -34,26 +34,32 @@ class UILoader
 {
 public:
     /// Loads an UIElement and it's children from a YAML file
-    static UIElementPtr loadFile(const std::string& file, const UIContainerPtr& parent = UIContainer::getRoot());
+    UIElementPtr loadFromYAML(std::string filePath, const UIContainerPtr& parent = UIContainer::getRoot());
 
 private:
     /// Detect element type and create it
-    static UIElementPtr createElementFromId(const std::string& id);
+    UIElementPtr createElementFromId(const std::string& id);
 
     /// Populate container children from a YAML node
-    static void populateContainer(const UIContainerPtr& parent, const YAML::Node& node);
+    void populateContainer(const UIContainerPtr& parent, const YAML::Node& node);
 
     /// Load element and its children from a YAML node
-    static void loadElements(const UIElementPtr& parent, const YAML::Node& node);
+    void loadElements(const UIElementPtr& parent, const YAML::Node& node);
 
     /// Load element proprieties from a YAML node
-    static void loadElement(const UIElementPtr& element, const YAML::Node& node);
+    void loadElement(const UIElementPtr& element, const YAML::Node& node);
 
     /// Load anchor from a YAML node
-    static void loadElementAnchor(const UIElementPtr& anchoredElement, UI::AnchorPoint anchoredEdge, const YAML::Node& node);
+    void loadElementAnchor(const UIElementPtr& anchoredElement, UI::AnchorPoint anchoredEdge, const YAML::Node& node);
 
     // specific elements loading
-    static void loadButton(const UIButtonPtr& button, const YAML::Node& node);
+    void loadButton(const UIButtonPtr& button, const YAML::Node& node);
+
+    std::string getElementSourceDesc(const UIElementPtr& element, const std::string& key = "");
+
+    std::string m_currentFile;
 };
+
+extern UILoader g_uiLoader;
 
 #endif // UILOADER_H

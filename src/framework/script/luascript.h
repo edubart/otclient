@@ -52,6 +52,7 @@ public:
 
     int getStackSize();
     void insert(int index);
+    void swap(int index);
     void remove(int index);
     bool next(int index = -2);
     void releaseRef(int ref);
@@ -103,7 +104,9 @@ public:
     void pushValue(int index = -1);
     void pushRef(int ref);
 
-    void callFunction(int numArgs = 0);
+    std::string getFunctionSourcePath();
+
+    bool callFunction(int numArgs = 0, int numRets = 0);
     void callModuleField(const std::string& module, const std::string& field);
 
     typedef int (*LuaCFunction)();
