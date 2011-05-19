@@ -27,6 +27,18 @@
 
 #include <prerequisites.h>
 
+class ConfigValueProxy {
+public:
+    ConfigValueProxy(const std::string& value) : value(value) { }
+    operator std::string() const { return convert_cast<std::string>(value); }
+    operator float() const { return convert_cast<float>(value); }
+    operator int() const { return convert_cast<int>(value); }
+    operator bool() const { return convert_cast<bool>(value); }
+
+private:
+    std::string value;
+};
+
 class Configs
 {
 public:
@@ -38,16 +50,10 @@ public:
     /// Dump all settings to configuration file
     void save();
 
-    void setValue(const std::string &key, const std::string &value);
-    void setValue(const std::string &key, const char *value);
-    void setValue(const std::string &key, float value);
-    void setValue(const std::string &key, bool value);
-    void setValue(const std::string &key, int value);
+    template<class T>
+    void setValue(const std::string& key, const T& value) { m_confsMap[key] = convert_cast<std::string>(value); }
 
-    const std::string& getString(const std::string &key) const;
-    float getFloat(const std::string &key) const;
-    bool getBoolean(const std::string &key) const;
-    int getInteger(const std::string &key) const;
+    ConfigValueProxy get(const std::string& key) { return ConfigValueProxy(m_confsMap[key]); }
 
 private:
     std::string m_fileName;

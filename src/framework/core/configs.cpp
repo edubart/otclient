@@ -40,17 +40,12 @@ bool Configs::load(const std::string& fileName)
         return false;
 
     try {
-        YAML::Parser parser(fin);
-
         YAML::Node doc;
+        YAML::Parser parser(fin);
         parser.GetNextDocument(doc);
 
-        for(auto it = doc.begin(); it != doc.end(); ++it) {
-            std::string key, value;
-            it.first() >> key;
-            it.second() >> value;
-            m_confsMap[key] = value;
-        }
+        for(auto it = doc.begin(); it != doc.end(); ++it)
+            m_confsMap[yamlRead<std::string>(it.first())] = yamlRead<std::string>(it.second());
     } catch (YAML::Exception& e) {
         flogError("ERROR: Malformed config file: %s", e.what());
         return false;
@@ -68,71 +63,3 @@ void Configs::save()
     }
 }
 
-void Configs::setValue(const std::string &key, const std::string &value)
-{
-    m_confsMap[key] = value;
-}
-
-void Configs::setValue(const std::string &key, const char *value)
-{
-    m_confsMap[key] = value;
-}
-
-void Configs::setValue(const std::string &key, int value)
-{
-    setValue(key, convert_cast<std::string>(value));
-}
-
-void Configs::setValue(const std::string &key, float value)
-{
-    setValue(key, convert_cast<std::string>(value));
-}
-
-void Configs::setValue(const std::string &key, bool value)
-{
-    if(value)
-        setValue(key,"true");
-    else
-        setValue(key,"false");
-}
-
-const std::string &Configs::getString(const std::string &key) const
-{
-    auto it = m_confsMap.find(key);
-    if(it == m_confsMap.end()) {
-        flogWarning("WARNING: Config value %s not found", key.c_str());
-        static std::string emptystr;
-        return emptystr;
-    }
-    return it->second;
-}
-
-float Configs::getFloat(const std::string &key) const
-{
-    auto it = m_confsMap.find(key);
-    if(it == m_confsMap.end()) {
-        flogWarning("WARNING: Config value %s not found", key.c_str());
-        return 0;
-    }
-    return convert_cast<float>(it->second);
-}
-
-bool Configs::getBoolean(const std::string &key) const
-{
-    auto it = m_confsMap.find(key);
-    if(it == m_confsMap.end()) {
-        flogWarning("WARNING: Config value %s not found", key.c_str());
-        return 0;
-    }
-    return (it->second == "true");
-}
-
-int Configs::getInteger(const std::string &key) const
-{
-    auto it = m_confsMap.find(key);
-    if(it == m_confsMap.end()) {
-        flogWarning("WARNING: Config value %s not found", key.c_str());
-        return 0;
-    }
-    return convert_cast<int>(it->second);
-}

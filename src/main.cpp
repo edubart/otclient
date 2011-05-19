@@ -112,10 +112,10 @@ int main(int argc, const char *argv[])
     logInfo("OTClient 0.2.0");
 
     // create the window
-    Platform::createWindow(g_configs.getInteger("window x"), g_configs.getInteger("window y"),
-                           g_configs.getInteger("window width"), g_configs.getInteger("window height"),
+    Platform::createWindow(g_configs.get("window x"), g_configs.get("window y"),
+                           g_configs.get("window width"), g_configs.get("window height"),
                            550, 450,
-                           g_configs.getBoolean("window maximized"));
+                           g_configs.get("window maximized"));
     Platform::setWindowTitle("OTClient");
     //Platform::setVsync();
 
