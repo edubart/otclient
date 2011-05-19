@@ -43,12 +43,19 @@ void Resources::init(const char *argv0)
     possibleDirs.push_back("data");
     possibleDirs.push_back(baseDir + "data");
     possibleDirs.push_back(baseDir + "../data");
-    possibleDirs.push_back(baseDir + "../share/data");
+    possibleDirs.push_back(baseDir + "../share/otclient/data");
     possibleDirs.push_back("");
 
-    foreach(dir, possibleDirs)
-        if(g_resources.addToSearchPath(dir))
+    bool found = false;
+    foreach(dir, possibleDirs) {
+        if(g_resources.addToSearchPath(dir)) {
+            flogInfo("Using data directory: %s", dir.c_str());
+            found = true;
             break;
+        }
+    }
+    if(!found)
+        logFatal("ERROR: could not find data directory");
 
     // setup write directory
     dir = Platform::getAppUserDir();
