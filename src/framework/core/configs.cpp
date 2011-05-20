@@ -32,9 +32,6 @@ bool Configs::load(const std::string& fileName)
 {
     m_fileName = fileName;
 
-    if(!g_resources.fileExists(fileName))
-        return false;
-
     std::stringstream fin;
     if(!g_resources.loadFile(fileName, fin))
         return false;
@@ -46,12 +43,12 @@ bool Configs::load(const std::string& fileName)
 
         for(auto it = doc.begin(); it != doc.end(); ++it)
             m_confsMap[yamlRead<std::string>(it.first())] = yamlRead<std::string>(it.second());
+
+        return true;
     } catch (YAML::Exception& e) {
         flogError("ERROR: Malformed config file: %s", e.what());
         return false;
     }
-
-    return true;
 }
 
 void Configs::save()

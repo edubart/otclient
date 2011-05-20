@@ -27,33 +27,22 @@
 
 #include <prerequisites.h>
 
-class ConfigValueProxy {
-public:
-    ConfigValueProxy(const std::string& value) : value(value) { }
+struct ConfigValueProxy {
     operator std::string() const { return convert_cast<std::string>(value); }
     operator float() const { return convert_cast<float>(value); }
     operator int() const { return convert_cast<int>(value); }
     operator bool() const { return convert_cast<bool>(value); }
-
-private:
     std::string value;
 };
 
 class Configs
 {
 public:
-    Configs() { }
-
-    /// Read configuration file and parse all settings to memory
     bool load(const std::string& fileName);
-
-    /// Dump all settings to configuration file
     void save();
 
-    template<class T>
-    void setValue(const std::string& key, const T& value) { m_confsMap[key] = convert_cast<std::string>(value); }
-
-    ConfigValueProxy get(const std::string& key) { return ConfigValueProxy(m_confsMap[key]); }
+    template<class T> void setValue(const std::string& key, const T& value) { m_confsMap[key] = convert_cast<std::string>(value); }
+    ConfigValueProxy get(const std::string& key) { return ConfigValueProxy{m_confsMap[key]}; }
 
 private:
     std::string m_fileName;
