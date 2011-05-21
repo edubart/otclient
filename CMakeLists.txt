@@ -105,6 +105,8 @@ SET(SOURCES
 # framework net
     src/framework/net/connection.cpp
     src/framework/net/protocol.cpp
+    src/framework/net/inputmessage.cpp
+    src/framework/net/outputmessage.cpp
 )
 
 IF(WIN32)
