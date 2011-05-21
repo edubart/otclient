@@ -27,7 +27,7 @@
 #include <ui/uilabelskin.h>
 #include <ui/uilabel.h>
 
-void UILabelSkin::load(const YAML::Node& node)
+void UILabelSkin::load(FML::Node* node)
 {
     UIElementSkin::load(node);
 }

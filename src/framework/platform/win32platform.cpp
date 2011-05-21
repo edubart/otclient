@@ -50,6 +50,9 @@ struct Win32PlatformPrivate {
 
 void Platform::init(const char *appName)
 {
+    // seend random numbers
+    std::srand(std::time(NULL));
+
     win32.appName = appName;
     win32.instance = GetModuleHandle(NULL);
 

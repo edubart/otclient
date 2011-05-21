@@ -76,4 +76,14 @@ inline std::ostream& operator<<(std::ostream& out, const Color& color)
     return out;
 }
 
+inline void operator>>(const FML::Node& node, Color& color)
+{
+    int r, g, b, a;
+    *node.at(0) >> r;
+    *node.at(1) >> g;
+    *node.at(2) >> b;
+    *node.at(3) >> a;
+    color.setRGBA(r,g,b,a);
+}
+
 #endif // COLOR_H

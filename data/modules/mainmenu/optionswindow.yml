@@ -1,4 +1,4 @@
-window#optionsWindow:
+window#optionsWindow
   title: Options
   size: [286, 262]
   anchors.horizontalCenter: parent.horizontalCenter
@@ -6,48 +6,48 @@ window#optionsWindow:
   onLoad: self.locked = true
 
   # general
-  button#generalButton:
+  button#generalButton
     text: General
     anchors.left: parent.left
     anchors.top: parent.top
     margin.left: 18
     margin.top: 32
 
-  label#generalLabel:
+  label#generalLabel
     text: |-
-          Change general
-          game options
+      Change general
+      game options
     anchors.left: parent.left
     anchors.top: parent.top
     margin.left: 117
     margin.top: 29
 
   # graphics
-  button#graphicsButton:
+  button#graphicsButton
     text: Graphics
     anchors.left: parent.left
     anchors.top: parent.top
     margin.left: 18
     margin.top: 65
 
-  label#graphicsLabel:
+  label#graphicsLabel
     text: |-
-          Change graphics and
-          performance settings
+      Change graphics and
+      performance settings
     anchors.left: parent.left
     anchors.top: parent.top
     margin.left: 117
     margin.top: 62
 
   # console
-  button#consoleButton:
+  button#consoleButton
     text: Console
     anchors.left: parent.left
     anchors.top: parent.top
     margin.left: 18
     margin.top: 98
 
-  label#consoleLabel:
+  label#consoleLabel
     text: Customise the console
     anchors.left: parent.left
     anchors.top: parent.top
@@ -55,21 +55,21 @@ window#optionsWindow:
     margin.top: 95
 
   # hotkeys
-  button#hotkeysButton:
+  button#hotkeysButton
     text: Hotkeys
     anchors.left: parent.left
     anchors.top: parent.top
     margin.left: 18
     margin.top: 131
 
-  label#hotkeysLabel:
+  label#hotkeysLabel
     text: Edit your hotkey texts
     anchors.left: parent.left
     anchors.top: parent.top
     margin.left: 117
     margin.top: 128
 
-  lineDecoration#middleSeparator:
+  lineDecoration#middleSeparator
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.bottom: parent.bottom
@@ -78,23 +78,23 @@ window#optionsWindow:
     margin.right: 18
 
   # motd
-  button#motdButton:
+  button#motdButton
     text: Motd
     anchors.left: parent.left
     anchors.bottom: parent.bottom
     margin.left: 18
     margin.bottom: 60
 
-  label#motdLabel:
+  label#motdLabel
     text: |-
-          Show the most recent
-          Message of the Day
+      Show the most recent
+      Message of the Day
     anchors.left: parent.left
     anchors.bottom: parent.bottom
     margin.left: 117
     margin.bottom: 56
 
-  lineDecoration#bottomSeparator:
+  lineDecoration#bottomSeparator
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.bottom: parent.bottom
@@ -103,7 +103,7 @@ window#optionsWindow:
     margin.right: 13
 
   # ok button
-  button#okButton:
+  button#okButton
     text: Ok
     size: [43, 20]
     anchors.right: parent.right

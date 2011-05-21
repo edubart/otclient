@@ -379,20 +379,25 @@ void LuaScript::pushRef(int ref)
     lua_rawgeti(L, LUA_REGISTRYINDEX, ref);
 }
 
-std::string LuaScript::getFunctionSourcePath()
+std::string LuaScript::getFunctionSourcePath(bool functionIsOnStack, int level)
 {
     std::string path;
 
     lua_Debug ar;
     memset(&ar, 0, sizeof(ar));
-    lua_getinfo(L, ">Sn", &ar);
+    if(functionIsOnStack)
+        lua_getinfo(L, ">Sn", &ar);
+    else {
+        if(lua_getstack(L, level-1, &ar) == 1)
+            lua_getinfo(L, "Sn", &ar);
+    }
 
-    // c function, we must get information of level above
+    // c function, we must get information of a level above
     if(strcmp("C", ar.what) == 0) {
         memset(&ar, 0, sizeof(ar));
-        if(lua_getstack(L, 1, &ar) == 1) {
+        if(lua_getstack(L, level, &ar) == 1) {
             lua_getinfo(L, "f", &ar);
-            return getFunctionSourcePath();
+            return getFunctionSourcePath(true, level+1);
         }
 
     } else {
@@ -411,7 +416,7 @@ std::string LuaScript::getFunctionSourcePath()
 bool LuaScript::callFunction(int numArgs, int numRets)
 {
     pushValue(-numArgs - 1);
-    g_resources.pushCurrentPath(getFunctionSourcePath());
+    g_resources.pushCurrentPath(getFunctionSourcePath(true));
 
     int size = getStackSize();
     int errorIndex = -numArgs - 2;
@@ -726,8 +731,14 @@ int LuaScript::luaFunctionCallback(lua_State* L)
 {
     // look for function id
     int id = lua_tonumber(L, lua_upvalueindex(1));
+
+    g_resources.pushCurrentPath(g_lua.getFunctionSourcePath(false));
+
     // call the function
-    return (*(g_lua.m_functions[id]))();
+    int ret = (*(g_lua.m_functions[id]))();
+
+    g_resources.popCurrentPath();
+    return ret;
 }
 
 int LuaScript::luaErrorHandler(lua_State *L)

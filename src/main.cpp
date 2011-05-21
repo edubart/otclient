@@ -32,46 +32,40 @@
 #include <script/luascript.h>
 #include <ui/uicontainer.h>
 
-/// Catches signals so we can exit nicely
 void signal_handler(int sig)
 {
+    static bool stopping = false;
     switch(sig) {
         case SIGTERM:
         case SIGINT:
-        {
-            static bool stopping = false;
             if(!stopping) {
                 stopping = true;
                 g_engine.onClose();
             }
             break;
-        }
     }
 }
 
-/// Default configurations
-void setDefaultConfigs()
+void loadDefaultConfigs()
 {
     // default size
     int defWidth = 550;
     int defHeight = 450;
 
-    // init on screen center
-    g_configs.setValue("window x", (Platform::getDisplayWidth() - defWidth)/2);
-    g_configs.setValue("window y", (Platform::getDisplayHeight() - defHeight)/2);
-
-    g_configs.setValue("window width", defWidth);
-    g_configs.setValue("window height", defHeight);
-    g_configs.setValue("window maximized", false);
+    g_configs.set("window x", (Platform::getDisplayWidth() - defWidth)/2);
+    g_configs.set("window y", (Platform::getDisplayHeight() - defHeight)/2);
+    g_configs.set("window width", defWidth);
+    g_configs.set("window height", defHeight);
+    g_configs.set("window maximized", false);
 }
 
 void saveConfigs()
 {
-    g_configs.setValue("window x", Platform::getWindowX());
-    g_configs.setValue("window y", Platform::getWindowY());
-    g_configs.setValue("window width", Platform::getWindowWidth());
-    g_configs.setValue("window height", Platform::getWindowHeight());
-    g_configs.setValue("window maximized", Platform::isWindowMaximized());
+    g_configs.set("window x", Platform::getWindowX());
+    g_configs.set("window y", Platform::getWindowY());
+    g_configs.set("window width", Platform::getWindowWidth());
+    g_configs.set("window height", Platform::getWindowHeight());
+    g_configs.set("window maximized", Platform::isWindowMaximized());
     g_configs.save();
 }
 
@@ -89,27 +83,22 @@ int main(int argc, const char *argv[])
         args.push_back(argv[i]);
 #endif
 
-    // install our signal handler
+    logInfo("OTClient 0.2.0");
+
+    // install exit signal handler
     signal(SIGTERM, signal_handler);
     signal(SIGINT, signal_handler);
 
     // init platform stuff
     Platform::init("OTClient");
 
-    // init random numbers
-    std::srand(std::time(NULL));
-
-    // init resources
+    // load resources paths
     g_resources.init(args[0].c_str());
 
-    // before loading configurations set the default ones
-    setDefaultConfigs();
-
     // load configurations
+    loadDefaultConfigs();
     if(!g_configs.load("config.yml"))
         logInfo("Could not read configuration file, default configurations will be used.");
-
-    logInfo("OTClient 0.2.0");
 
     // create the window
     Platform::createWindow(g_configs.get("window x"), g_configs.get("window y"),
@@ -136,15 +125,9 @@ int main(int argc, const char *argv[])
 
     // terminate stuff
     g_engine.terminate();
-
     g_uiSkins.terminate();
-
-    // save configurations before exiting
     saveConfigs();
-
     Platform::terminate();
-
-    // unload resources
     g_resources.terminate();
     return 0;
 }

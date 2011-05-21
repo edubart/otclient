@@ -10,7 +10,6 @@ SET(Boost_USE_MULTITHREADED OFF)
 FIND_PACKAGE(Boost COMPONENTS system signals REQUIRED)
 FIND_PACKAGE(OpenGL REQUIRED)
 FIND_PACKAGE(Lua REQUIRED)
-FIND_PACKAGE(YamlCpp REQUIRED)
 FIND_PACKAGE(PhysFS REQUIRED)
 FIND_PACKAGE(GMP REQUIRED)
 FIND_PACKAGE(ZLIB REQUIRED)
@@ -33,7 +32,6 @@ INCLUDE_DIRECTORIES(
     ${Boost_INCLUDE_DIRS}
     ${OPENGL_INCLUDE_DIR}
     ${LUA_INCLUDE_DIR}
-    ${YAMLCPP_INCLUDE_DIR}
     ${PHYSFS_INCLUDE_DIR}
     ${GMP_INCLUDE_DIR}
     ${ZLIB_INCLUDE_DIR}
@@ -71,6 +69,7 @@ SET(SOURCES
     src/framework/util/logger.cpp
     src/framework/util/rsa.cpp
     src/framework/util/apngloader.cpp
+    src/framework/util/fml.cpp
 
 # framework graphics
     src/framework/graphics/image.cpp
@@ -131,7 +130,6 @@ TARGET_LINK_LIBRARIES(otclient
     ${Boost_LIBRARIES}
     ${OPENGL_LIBRARIES}
     ${LUA_LIBRARIES}
-    ${YAMLCPP_LIBRARY}
     ${PHYSFS_LIBRARY}
     ${GMP_LIBRARY}
     ${ZLIB_LIBRARY}

@@ -69,6 +69,9 @@ struct X11PlatformPrivate {
 
 void Platform::init(const char *appName)
 {
+    // seend random numbers
+    std::srand(std::time(NULL));
+
     x11.appName = appName;
     x11.display = NULL;
     x11.visual = NULL;

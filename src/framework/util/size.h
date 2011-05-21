@@ -112,11 +112,12 @@ typedef TSize<int> Size;
 typedef TSize<float> SizeF;
 
 template <class T>
-inline std::ostream& operator<<(std::ostream& out, const TSize<T>& size)
+inline void operator>>(const FML::Node& node, TSize<T>& size)
 {
-    out << "Size(" << size.width() << ","
-                   << size.height() <<  ")";
-    return out;
+    T w, h;
+    *node.at(0) >> w;
+    *node.at(1) >> h;
+    size.setSize(w, h);
 }
 
 #endif

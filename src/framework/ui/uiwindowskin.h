@@ -35,7 +35,7 @@ public:
     UIWindowSkin(const std::string& name) :
         UIElementSkin(name, UI::Window) { }
 
-    void load(const YAML::Node& node);
+    void load(FML::Node* node);
     void draw(UIElement *element);
 
     int getHeadHeight() const { return m_headHeight; }

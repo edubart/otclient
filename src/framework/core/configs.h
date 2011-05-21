@@ -41,7 +41,7 @@ public:
     bool load(const std::string& fileName);
     void save();
 
-    template<class T> void setValue(const std::string& key, const T& value) { m_confsMap[key] = convert_cast<std::string>(value); }
+    template<class T> void set(const std::string& key, const T& value) { m_confsMap[key] = convert_cast<std::string>(value); }
     ConfigValueProxy get(const std::string& key) { return ConfigValueProxy{m_confsMap[key]}; }
 
 private:

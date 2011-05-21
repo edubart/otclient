@@ -1,11 +1,11 @@
-window#infoWindow:
+window#infoWindow
   title: Info
   size: [244, 221]
   anchors.horizontalCenter: parent.horizontalCenter
   anchors.verticalCenter: parent.verticalCenter
   onLoad: self.locked = true
 
-  panel#infoPanel:
+  panel#infoPanel
     skin: flatPanel
     size: [208, 129]
     anchors.left: parent.left
@@ -13,31 +13,31 @@ window#infoWindow:
     margin.top: 32
     margin.left: 18
 
-    label#infoLabel:
+    label#infoLabel
       align: center
       text: |-
-            OTClient
-            Version 0.2.0
-            Created by edubart
+        OTClient
+        Version 0.2.0
+        Created by edubart
       anchors.horizontalCenter: parent.horizontalCenter
       anchors.top: parent.top
       margin.top: 20
-            
-    lineDecoration#bottomSeparator:
-      size: [190,2]
+
+    lineDecoration#bottomSeparator
+      size: [190, 2]
       anchors.left: parent.left
       anchors.top: parent.top
       margin.top: 83
       margin.left: 9
 
-    label#websiteLabel:
+    label#websiteLabel
       text: Official Website
       anchors.left: parent.left
       anchors.bottom: parent.bottom
       margin.bottom: 14
       margin.left: 9
 
-    button#websiteButton:
+    button#websiteButton
       text: Github Page
       size: [80,22]
       anchors.right: parent.right
@@ -45,7 +45,7 @@ window#infoWindow:
       margin.bottom: 9
       margin.right: 9
 
-  lineDecoration#bottomSeparator:
+  lineDecoration#bottomSeparator
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.bottom: parent.bottom
@@ -53,7 +53,7 @@ window#infoWindow:
     margin.left: 13
     margin.right: 13
 
-  button#okButton:
+  button#okButton
     text: Ok
     size: [43, 20]
     anchors.left: parent.left

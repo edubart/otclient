@@ -37,7 +37,7 @@ public:
     UIButtonSkin(const std::string& name) :
         UIElementSkin(name, UI::Button) { }
 
-    void load(const YAML::Node& node);
+    void load(FML::Node* node);
     void draw(UIElement *element);
 
 private:

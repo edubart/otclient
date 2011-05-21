@@ -27,24 +27,22 @@
 #include <ui/uibuttonskin.h>
 #include <ui/uibutton.h>
 
-void UIButtonSkin::load(const YAML::Node& node)
+void UIButtonSkin::load(FML::Node* node)
 {
     UIElementSkin::load(node);
 
     m_buttonDownTextColor = getFontColor();
     m_buttonHoverTextColor = getFontColor();
 
-    if(yamlHasValue(node, "down state")) {
-        const YAML::Node& cnode = node["down state"];
+    if(FML::Node* cnode = node->at("down state")) {
         m_buttonDownImage = loadImage(cnode);
-        m_buttonDownTranslate = yamlRead(cnode, "text translate", Point());
-        m_buttonDownTextColor = yamlRead(cnode, "font color", getFontColor());
+        m_buttonDownTranslate = cnode->readAt("text translate", Point());
+        m_buttonDownTextColor = cnode->readAt("font color", getFontColor());
     }
 
-    if(yamlHasValue(node, "hover state")) {
-        const YAML::Node& cnode = node["hover state"];
+    if(FML::Node* cnode = node->at("hover state")) {
         m_buttonHoverImage = loadImage(cnode);
-        m_buttonHoverTextColor = yamlRead(cnode, "font color", getFontColor());
+        m_buttonHoverTextColor = cnode->readAt("font color", getFontColor());
     }
 }
 

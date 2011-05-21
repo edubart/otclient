@@ -36,27 +36,28 @@ bool Configs::load(const std::string& fileName)
     if(!g_resources.loadFile(fileName, fin))
         return false;
 
-    try {
-        YAML::Node doc;
-        YAML::Parser parser(fin);
-        parser.GetNextDocument(doc);
+    FML::Parser parser;
+    if(parser.load(fin)) {
+        FML::Node* doc = parser.getDocument();
 
-        for(auto it = doc.begin(); it != doc.end(); ++it)
-            m_confsMap[yamlRead<std::string>(it.first())] = yamlRead<std::string>(it.second());
-
-        return true;
-    } catch (YAML::Exception& e) {
-        flogError("ERROR: Malformed config file: %s", e.what());
+        foreach(FML::Node* node, *doc)
+            m_confsMap[node->tag()] = node->value();
+    } else {
+        flogError("ERROR: Malformed config file: %s", parser.getErrorMessage());
         return false;
     }
+
+    return true;
 }
 
 void Configs::save()
 {
     if(!m_fileName.empty()) {
-        YAML::Emitter out;
-        out << m_confsMap;
-        g_resources.saveFile(m_fileName, (const uchar*)out.c_str(), out.size());
+        std::stringstream out;
+        foreach(auto pair, m_confsMap) {
+            out << pair.first << ": " << pair.second << std::endl;
+        }
+        g_resources.saveFile(m_fileName, out);
     }
 }
 

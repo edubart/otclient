@@ -85,11 +85,11 @@ typedef boost::function<void()> SimpleCallback;
 
 // common utilities
 #include <util/util.h>
+#include <util/fml.h>
 #include <util/logger.h>
 #include <util/color.h>
 #include <util/point.h>
 #include <util/size.h>
 #include <util/rect.h>
-#include <util/yaml.h>
 
 #endif // PREREQUISITES_H
