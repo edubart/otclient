@@ -27,10 +27,10 @@
 #include <ui/uitexteditskin.h>
 #include <ui/uitextedit.h>
 
-void UITextEditSkin::load(const YAML::Node& node)
+void UITextEditSkin::load(FML::Node* node)
 {
     UIElementSkin::load(node);
-    m_textMargin = yamlRead(node, "text margin", 2);
+    m_textMargin = node->readAt("text margin", 2);
 }
 
 void UITextEditSkin::apply(UIElement* element)

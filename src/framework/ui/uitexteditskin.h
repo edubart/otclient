@@ -36,7 +36,7 @@ public:
     UITextEditSkin(const std::string& name) :
         UIElementSkin(name, UI::TextEdit) { }
 
-    void load(const YAML::Node& node);
+    void load(FML::Node* node);
     void apply(UIElement *element);
     void draw(UIElement *element);
 

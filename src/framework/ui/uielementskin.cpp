@@ -30,12 +30,12 @@
 #include <graphics/textures.h>
 #include <graphics/fonts.h>
 
-void UIElementSkin::load(const YAML::Node& node)
+void UIElementSkin::load(FML::Node* node)
 {
-    m_defaultSize = yamlRead(node, "default size", Size());
+    m_defaultSize = node->readAt("default size", Size());
     m_defaultImage = loadImage(node);
     m_font = loadFont(node);
-    m_fontColor = yamlRead(node, "font color", g_uiSkins.getDefaultFontColor());
+    m_fontColor = node->readAt("font color", g_uiSkins.getDefaultFontColor());
 }
 
 void UIElementSkin::apply(UIElement* element)
@@ -50,23 +50,22 @@ void UIElementSkin::draw(UIElement *element)
         m_defaultImage->draw(element->getRect());
 }
 
-ImagePtr UIElementSkin::loadImage(const YAML::Node& node)
+ImagePtr UIElementSkin::loadImage(FML::Node* node)
 {
     ImagePtr image;
     TexturePtr texture;
 
-    if(yamlHasValue(node, "bordered image")) {
-        const YAML::Node& cnode = node["bordered image"];
-        Rect left = yamlRead(cnode, "left border", Rect());
-        Rect right = yamlRead(cnode, "right border", Rect());
-        Rect top = yamlRead(cnode, "top border", Rect());
-        Rect bottom = yamlRead(cnode, "bottom border", Rect());
-        Rect topLeft = yamlRead(cnode, "top left corner", Rect());
-        Rect topRight = yamlRead(cnode, "top right corner", Rect());
-        Rect bottomLeft = yamlRead(cnode, "bottom left corner", Rect());
-        Rect bottomRight = yamlRead(cnode, "bottom right corner", Rect());
-        Rect center = yamlRead(cnode, "center", Rect());
-        std::string textureName = yamlRead(cnode, "source", std::string());
+    if(FML::Node* cnode = node->at("bordered image")) {
+        Rect left = cnode->readAt("left border", Rect());
+        Rect right = cnode->readAt("right border", Rect());
+        Rect top = cnode->readAt("top border", Rect());
+        Rect bottom = cnode->readAt("bottom border", Rect());
+        Rect topLeft = cnode->readAt("top left corner", Rect());
+        Rect topRight = cnode->readAt("top right corner", Rect());
+        Rect bottomLeft = cnode->readAt("bottom left corner", Rect());
+        Rect bottomRight = cnode->readAt("bottom right corner", Rect());
+        Rect center = cnode->readAt("center", Rect());
+        std::string textureName = cnode->readAt("source", std::string());
 
         if(!textureName.empty())
             texture = g_textures.get(textureName);
@@ -87,20 +86,20 @@ ImagePtr UIElementSkin::loadImage(const YAML::Node& node)
         }
 
         if(!image)
-            logError(yamlErrorDesc(cnode, "failed to load bordered image"));
-    } else if(yamlHasValue(node, "image")) {
-        texture = g_textures.get(yamlRead<std::string>(node, "image"));
+            logError(node->generateErrorMessage("failed to load bordered image"));
+    } else if(FML::Node* cnode = node->at("image")) {
+        texture = g_textures.get(cnode->value());
         if(texture)
             image = ImagePtr(new Image(texture));
         if(!m_defaultSize.isValid())
             m_defaultSize = texture->getSize();
 
         if(!image)
-            logError(yamlErrorDesc(node["image"], "failed to load image"));
+            logError(cnode->generateErrorMessage("failed to load image"));
     }
 
     if(texture) {
-        bool antialised = yamlRead(node, "antialised", false);
+        bool antialised = node->readAt("antialised", false);
         if(antialised)
             texture->enableBilinearFilter();
     }
@@ -108,11 +107,11 @@ ImagePtr UIElementSkin::loadImage(const YAML::Node& node)
     return image;
 }
 
-FontPtr UIElementSkin::loadFont(const YAML::Node& node)
+FontPtr UIElementSkin::loadFont(FML::Node* node)
 {
     FontPtr font;
-    if(yamlHasValue(node, "font"))
-        font = g_fonts.get(yamlRead<std::string>(node, "font"));
+    if(FML::Node* cnode = node->at("font"))
+        font = g_fonts.get(cnode->value());
     if(!font)
         font = g_uiSkins.getDefaultFont();
     return font;

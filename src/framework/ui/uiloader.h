@@ -33,27 +33,27 @@
 class UILoader
 {
 public:
-    /// Loads an UIElement and it's children from a YAML file
-    UIElementPtr loadFromYAML(std::string filePath, const UIContainerPtr& parent = UIContainer::getRoot());
+    /// Loads an UIElement and it's children from a FML file
+    UIElementPtr loadFromFile(std::string filePath, const UIContainerPtr& parent = UIContainer::getRoot());
 
 private:
     /// Detect element type and create it
     UIElementPtr createElementFromId(const std::string& id);
 
-    /// Populate container children from a YAML node
-    void populateContainer(const UIContainerPtr& parent, const YAML::Node& node);
+    /// Populate container children from a FML node
+    void populateContainer(const UIContainerPtr& parent, FML::Node* node);
 
-    /// Load element and its children from a YAML node
-    void loadElements(const UIElementPtr& parent, const YAML::Node& node);
+    /// Load element and its children from a FML node
+    void loadElements(const UIElementPtr& parent, FML::Node* node);
 
-    /// Load element proprieties from a YAML node
-    void loadElement(const UIElementPtr& element, const YAML::Node& node);
+    /// Load element proprieties from a FML node
+    void loadElement(const UIElementPtr& element, FML::Node* node);
 
-    /// Load anchor from a YAML node
-    void loadElementAnchor(const UIElementPtr& anchoredElement, UI::AnchorPoint anchoredEdge, const YAML::Node& node);
+    /// Load anchor from a FML node
+    void loadElementAnchor(const UIElementPtr& anchoredElement, UI::AnchorPoint anchoredEdge, FML::Node* node);
 
     // specific elements loading
-    void loadButton(const UIButtonPtr& button, const YAML::Node& node);
+    void loadButton(const UIButtonPtr& button, FML::Node* node);
 
     std::string getElementSourceDesc(const UIElementPtr& element, const std::string& key = "");
 

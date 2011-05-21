@@ -41,8 +41,8 @@ public:
     UIElementSkin() : m_elementType(UI::Element) { }
     virtual ~UIElementSkin() { }
 
-    /// Load the skin from a YAML node
-    virtual void load(const YAML::Node& node);
+    /// Load the skin from a FML node
+    virtual void load(FML::Node* node);
     /// Apply the skin to an element
     virtual void apply(UIElement *element);
     /// Draw the skinned element
@@ -56,8 +56,8 @@ public:
     Color getFontColor() const { return m_fontColor; }
 
 protected:
-    ImagePtr loadImage(const YAML::Node& node);
-    FontPtr loadFont(const YAML::Node &node);
+    ImagePtr loadImage(FML::Node* node);
+    FontPtr loadFont(FML::Node* node);
 
 private:
     std::string m_name;

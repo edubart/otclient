@@ -85,4 +85,11 @@ inline std::ostream& operator<<(std::ostream& out, const TPoint<T>& point)
     return out;
 }
 
+template <class T>
+inline void operator>>(const FML::Node& node, TPoint<T>& point)
+{
+    *node.at(0) >> point.x;
+    *node.at(1) >> point.y;
+}
+
 #endif

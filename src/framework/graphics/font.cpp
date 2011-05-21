@@ -77,20 +77,17 @@ bool Font::load(const std::string& file)
     std::string textureName;
     Size glyphSize;
 
-    try {
-        YAML::Parser parser(fin);
-
-        YAML::Node doc;
-        parser.GetNextDocument(doc);
+    FML::Parser parser(fin);
+    if(!parser.hasError()) {
+        FML::Node* doc = parser.getDocument();
 
         // required values
-        doc["glyph height"] >> m_glyphHeight;
-        doc["image glyph size"] >> glyphSize;
-        textureName = yamlRead<std::string>(doc, "image");
-        m_glyphHeight = yamlRead<int>(doc, "glyph height");
-        m_firstGlyph = yamlRead<int>(doc, "first glyph", 32);
-        m_topMargin = yamlRead<int>(doc, "top margin", 0);
-        m_glyphSpacing = yamlRead(doc, "glyph spacing", Size(0,0));
+        textureName = doc->valueAt("image");
+        glyphSize = doc->readAt("image glyph size", Size(16, 16));
+        m_glyphHeight = doc->readAt("glyph height", 11);
+        m_firstGlyph = doc->readAt("first glyph", 32);
+        m_topMargin = doc->readAt("top margin", 0);
+        m_glyphSpacing = doc->readAt("glyph spacing", Size(0,0));
 
         // load texture
         m_texture = g_textures.get(textureName);
@@ -103,9 +100,12 @@ bool Font::load(const std::string& file)
         calculateGlyphsWidthsAutomatically(glyphSize);
 
         // read custom widths
-        std::map<int, int> glyphWidths = yamlReadMap<int, int>(doc, "glyph widths");
-        foreach(const auto& pair, glyphWidths)
-            m_glyphsSize[pair.first].setWidth(pair.second);
+        if(doc->hasNode("glyph widths")) {
+            std::map<int, int> glyphWidths;
+            (*(doc->at("glyph widths"))) >> glyphWidths;
+            foreach(const auto& pair, glyphWidths)
+                m_glyphsSize[pair.first].setWidth(pair.second);
+        }
 
         // calculate glyphs texture coords
         int numHorizontalGlyphs = m_texture->getSize().width() / glyphSize.width();
@@ -115,8 +115,8 @@ bool Font::load(const std::string& file)
                                                  m_glyphsSize[glyph].width(),
                                                  m_glyphHeight);
         }
-    } catch (YAML::Exception& e) {
-        flogError("ERROR: Malformed font file \"%s\":\n  %s", file.c_str() % e.what());
+    } else {
+        flogError("ERROR: Malformed font file \"%s\":\n  %s", file.c_str() % parser.getErrorMessage());
         return false;
     }
 

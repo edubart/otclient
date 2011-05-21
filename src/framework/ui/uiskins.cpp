@@ -43,97 +43,62 @@ void UISkins::load(const std::string& skinName)
     if(!g_resources.loadFile(skinName + ".yml", fin))
         flogFatal("FATAL ERROR: Could not load skin \"%s",  skinName.c_str());
 
-    try {
-        YAML::Parser parser(fin);
+    FML::Parser parser(fin);
+    if(!parser.hasError()) {
+        FML::Node* doc = parser.getDocument();
 
-        YAML::Node doc;
-        parser.GetNextDocument(doc);
-
-        m_defaultFont = g_fonts.get(yamlRead<std::string>(doc, "default font"));
+        m_defaultFont = g_fonts.get(doc->readAt<std::string>("default font"));
         if(!m_defaultFont)
             logFatal("FATAL ERROR: Could not load skin default font");
 
-        m_defaultFontColor = yamlRead(doc, "default font color", Color::white);
+        m_defaultFontColor = doc->readAt("default font color", Color::white);
 
-        std::string defaultTextureName = yamlRead(doc, "default texture", std::string());
+        std::string defaultTextureName = doc->readAt("default texture", std::string());
         if(!defaultTextureName.empty())
             m_defaultTexture = g_textures.get(defaultTextureName);
 
-        {
-            const YAML::Node& node = doc["buttons"];
-            for(auto it = node.begin(); it != node.end(); ++it) {
-                std::string name;
-                it.first() >> name;
-
-                UIElementSkinPtr skin = UIElementSkinPtr(new UIButtonSkin(name));
-                skin->load(it.second());
+        if(FML::Node* node = doc->at("buttons")) {
+            foreach(FML::Node* cnode, *node) {
+                UIElementSkinPtr skin = UIElementSkinPtr(new UIButtonSkin(cnode->tag()));
+                skin->load(cnode);
                 m_elementSkins.push_back(skin);
             }
         }
 
-        {
-            const YAML::Node& node = doc["panels"];
-            for(auto it = node.begin(); it != node.end(); ++it) {
-                std::string name;
-                it.first() >> name;
-
-                UIElementSkinPtr skin = UIElementSkinPtr(new UIElementSkin(name, UI::Panel));
-                skin->load(it.second());
+        if(FML::Node* node = doc->at("panels")) {
+            foreach(FML::Node* cnode, *node) {
+                UIElementSkinPtr skin = UIElementSkinPtr(new UIElementSkin(cnode->tag(), UI::Panel));
+                skin->load(cnode);
                 m_elementSkins.push_back(skin);
             }
         }
 
-        {
-            const YAML::Node& node = doc["windows"];
-            for(auto it = node.begin(); it != node.end(); ++it) {
-                std::string name;
-                it.first() >> name;
-
-                UIElementSkinPtr skin = UIElementSkinPtr(new UIWindowSkin(name));
-                skin->load(it.second());
+        if(FML::Node* node = doc->at("windows")) {
+            foreach(FML::Node* cnode, *node) {
+                UIElementSkinPtr skin = UIElementSkinPtr(new UIWindowSkin(cnode->tag()));
+                skin->load(cnode);
                 m_elementSkins.push_back(skin);
             }
         }
 
-        {
-            const YAML::Node& node = doc["labels"];
-            for(auto it = node.begin(); it != node.end(); ++it) {
-                std::string name;
-                it.first() >> name;
-
-                UIElementSkinPtr skin = UIElementSkinPtr(new UILabelSkin(name));
-                skin->load(it.second());
+        if(FML::Node* node = doc->at("labels")) {
+            foreach(FML::Node* cnode, *node) {
+                UIElementSkinPtr skin = UIElementSkinPtr(new UILabelSkin(cnode->tag()));
+                skin->load(cnode);
                 m_elementSkins.push_back(skin);
             }
         }
 
 
-        {
-            const YAML::Node& node = doc["text edits"];
-            for(auto it = node.begin(); it != node.end(); ++it) {
-                std::string name;
-                it.first() >> name;
-
-                UIElementSkinPtr skin = UIElementSkinPtr(new UITextEditSkin(name));
-                skin->load(it.second());
+        if(FML::Node* node = doc->at("text edits")) {
+            foreach(FML::Node* cnode, *node) {
+                UIElementSkinPtr skin = UIElementSkinPtr(new UITextEditSkin(cnode->tag()));
+                skin->load(cnode);
                 m_elementSkins.push_back(skin);
             }
         }
-
-
-        {
-            const YAML::Node& node = doc["line decorations"];
-            for(auto it = node.begin(); it != node.end(); ++it) {
-                std::string name;
-                it.first() >> name;
-
-                UIElementSkinPtr skin = UIElementSkinPtr(new UIElementSkin(name, UI::LineDecoration));
-                skin->load(it.second());
-                m_elementSkins.push_back(skin);
-            }
-        }
-    } catch (YAML::Exception& e) {
-        flogFatal("FATAL ERROR: Malformed skin file \"%s\":\n  %s", skinName.c_str() % e.what());
+    } else {
+        flogFatal("FATAL ERROR: Malformed skin file \"%s\":\n  %s", skinName.c_str() % parser.getErrorMessage());
     }
 
     g_resources.popCurrentPath();

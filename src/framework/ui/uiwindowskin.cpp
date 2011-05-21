@@ -26,17 +26,17 @@
 #include <ui/uiwindowskin.h>
 #include <ui/uiwindow.h>
 
-void UIWindowSkin::load(const YAML::Node& node)
+void UIWindowSkin::load(FML::Node* node)
 {
     UIElementSkin::load(node);
 
-    const YAML::Node& headNode = node["head"];
-    const YAML::Node& bodyNode = node["body"];
+    FML::Node* headNode = node->at("head");
+    FML::Node* bodyNode = node->at("body");
 
     m_headImage = boost::dynamic_pointer_cast<BorderedImage>(loadImage(headNode));
-    m_headHeight = yamlRead(headNode, "height", m_headImage->getDefaultSize().height());
-    m_headMargin = yamlRead(headNode, "margin", 0);
-    m_titleAlign = parseAlignment(yamlRead(headNode, "text align", std::string("center")));
+    m_headHeight = headNode->readAt("height", m_headImage->getDefaultSize().height());
+    m_headMargin = headNode->readAt("margin", 0);
+    m_titleAlign = parseAlignment(headNode->readAt("text align", std::string("center")));
     m_bodyImage = loadImage(bodyNode);
 }
 

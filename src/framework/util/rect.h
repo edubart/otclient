@@ -309,4 +309,15 @@ inline std::ostream& operator<<(std::ostream& out, const TRect<T>& rect)
     return out;
 }
 
+template <class T>
+inline void operator>>(const FML::Node& node, TRect<T>& rect)
+{
+    T x, y, width, height;
+    *node.at(0) >> x;
+    *node.at(1) >> y;
+    *node.at(2) >> width;
+    *node.at(3) >> height;
+    rect.setRect(x, y, width, height);
+}
+
 #endif // RECT_H
