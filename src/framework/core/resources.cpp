@@ -105,10 +105,11 @@ bool Resources::directoryExists(const std::string& directoryName)
 
 bool Resources::loadFile(const std::string& fileName, std::iostream& out)
 {
+    std::string fullPath = resolvePath(fileName);
     out.clear(std::ios::goodbit);
-    PHYSFS_file *file = PHYSFS_openRead(resolvePath(fileName).c_str());
+    PHYSFS_file *file = PHYSFS_openRead(fullPath.c_str());
     if(!file) {
-        flogError("ERROR: Failed to load file \"%s\": %s", fileName.c_str() % PHYSFS_getLastError());
+        flogError("ERROR: Failed to load file \"%s\": %s", fullPath.c_str() % PHYSFS_getLastError());
         out.clear(std::ios::failbit);
         return false;
     } else {

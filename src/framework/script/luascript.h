@@ -104,7 +104,7 @@ public:
     void pushValue(int index = -1);
     void pushRef(int ref);
 
-    std::string getFunctionSourcePath();
+    std::string getFunctionSourcePath(bool functionIsOnStack, int level = 1);
 
     bool callFunction(int numArgs = 0, int numRets = 0);
     void callModuleField(const std::string& module, const std::string& field);

@@ -71,7 +71,7 @@ UIElementPtr UILoader::loadFromFile(std::string filePath, const UIContainerPtr& 
 {
     std::stringstream fin;
     if(!g_resources.loadFile(filePath, fin)) {
-        flogError("ERROR: Could not load ui file \"%s", filePath.c_str());
+        flogError("ERROR: Could not load ui %s", filePath.c_str());
         return UIElementPtr();
     }
 
@@ -106,7 +106,7 @@ UIElementPtr UILoader::loadFromFile(std::string filePath, const UIContainerPtr& 
         element->onLoad();
         return element;
     } else {
-        flogError("ERROR: Failed to load ui file \"%s\":\n  %s", filePath.c_str() % parser.getErrorMessage());
+        flogError("ERROR: Failed to load ui %s: %s", filePath.c_str() % parser.getErrorMessage());
     }
 
     return UIElementPtr();

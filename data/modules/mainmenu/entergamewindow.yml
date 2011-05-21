@@ -1,34 +1,34 @@
-window#enterGameWindow:
+window#enterGameWindow
   title: Enter Game
   size: [236, 178]
   anchors.horizontalCenter: parent.horizontalCenter
   anchors.verticalCenter: parent.verticalCenter
   onLoad: self.locked = true
 
-  label#accountNameLabel:
+  label#accountNameLabel
     text: Account name
     anchors.left: parent.left
     anchors.top: parent.top
     margin.left: 18
     margin.top: 33
 
-  label#passwordLabel:
+  label#passwordLabel
     text: "Password:"
     anchors.left: parent.left
     anchors.top: parent.top
     margin.left: 18
     margin.top: 62
 
-  label#createAccountLabel:
+  label#createAccountLabel
     text: |
-          If you don't have
-          an account yet
+      If you don't have
+      an account yet
     anchors.left: parent.left
     anchors.top: parent.top
     margin.left: 18
     margin.top: 87
 
-  button#createAccountButton:
+  button#createAccountButton
     text: Create Account
     anchors.left: parent.left
     anchors.top: parent.top
@@ -36,7 +36,7 @@ window#enterGameWindow:
     margin.left: 132
     onClick: messageBox("Error", "Not implemented yet")
 
-  button#okButton:
+  button#okButton
     text: Ok
     size: [43, 20]
     anchors.right: parent.right
@@ -44,7 +44,7 @@ window#enterGameWindow:
     margin.bottom: 10
     margin.right: 66
 
-  button#cancelButton:
+  button#cancelButton
     text: Cancel
     size: [43, 20]
     anchors.right: parent.right
@@ -53,13 +53,13 @@ window#enterGameWindow:
     margin.right: 13
     onClick: self.parent:destroy()
 
-  textEdit#accountNameTextEdit:
+  textEdit#accountNameTextEdit
     anchors.right: parent.right
     anchors.top: parent.top
     margin.top: 32
     margin.right: 18
 
-  textEdit#passwordTextEdit:
+  textEdit#passwordTextEdit
     anchors.right: parent.right
     anchors.top: parent.top
     margin.top: 61
