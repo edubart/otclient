@@ -72,7 +72,7 @@ public:
 
     // extracting values operator
     template <typename T>
-    friend void operator >> (const Node& node, T& value);
+    friend bool operator >> (const Node& node, T& value);
 
     // get nodes
     Node* at(const std::string& childTag) const;
@@ -85,13 +85,18 @@ public:
     // read values
     template <typename T>
     T read(T def = T()) const {
-        T value = def;
-        *this >> value;
-        return value;
+        T v = def;
+        *this >> v;
+        return v;
     }
 
     template <typename T>
-    T readAt(const std::string childTag, T def = T()) const {
+    bool read(T* v) const {
+        return (*this >> *v);
+    }
+
+    template <typename T>
+    T readAt(const std::string& childTag, T def = T()) const {
         T v = def;
         for(NodeList::const_iterator it = m_children.begin(); it != m_children.end(); ++it) {
             if((*it)->tag() == childTag) {
@@ -100,6 +105,15 @@ public:
             }
         }
         return v;
+    }
+
+    template <typename T>
+    bool readAt(const std::string& childTag, T* v) const {
+        for(NodeList::const_iterator it = m_children.begin(); it != m_children.end(); ++it) {
+            if((*it)->tag() == childTag)
+                return (*(*it) >> *v);
+        }
+        return false;
     }
 
     void addNode(Node* node);
@@ -118,23 +132,28 @@ private:
 // Node operators
 
 template <typename T>
-void operator >> (const Node& node, T& v)
+bool operator >> (const Node& node, T& v)
 {
-    fml_convert(node.value(), v);
+    return fml_convert(node.value(), v);
 }
 
 template <typename T>
-void operator >> (const Node& node, std::vector<T>& v)
+bool operator >> (const Node& node, std::vector<T>& v)
 {
+    bool ret = true;
     v.clear();
     v.resize(node.size());
-    for(unsigned i=0;i<node.size();++i)
-        *node.at(i) >> v[i];
+    for(unsigned i=0;i<node.size();++i) {
+        if(!(*node.at(i) >> v[i]))
+            ret = false;
+    }
+    return ret;
 }
 
 template <typename K, typename T>
-void operator >> (const Node& node, std::map<K, T>& m)
+bool operator >> (const Node& node, std::map<K, T>& m)
 {
+    bool ret = true;
     m.clear();
     for(Node::const_iterator it = node.begin(); it != node.end(); ++it) {
         Node* child = (*it);
@@ -143,8 +162,10 @@ void operator >> (const Node& node, std::map<K, T>& m)
         if(fml_convert<std::string, K>(child->tag(), k)) {
             *child >> v;
             m[k] = v;
+            ret = false;
         }
     }
+    return ret;
 }
 
 
@@ -198,20 +219,4 @@ private:
 
 } // namespace FML {
 
-// enable usage with foreach
-namespace boost
-{
-    // specialize range_mutable_iterator and range_const_iterator in namespace boost
-    template<>
-    struct range_mutable_iterator< FML::Node >
-    {
-        typedef FML::Node::iterator type;
-    };
-
-    template<>
-    struct range_const_iterator< FML::Node >
-    {
-        typedef FML::Node::const_iterator type;
-    };
-}
 #endif // FML_H

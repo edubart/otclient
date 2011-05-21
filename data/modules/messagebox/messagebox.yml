@@ -1,15 +1,15 @@
-window#messageBoxWindow:
+window#messageBoxWindow
   size: [192, 78]
   anchors.horizontalCenter: parent.horizontalCenter
   anchors.verticalCenter: parent.verticalCenter
 
 
-  label#textLabel:
+  label#textLabel
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.top: parent.top
     margin.top: 27
 
-  button#okButton:
+  button#okButton
     text: Ok
     size: [43, 20]
     anchors.right: parent.right
