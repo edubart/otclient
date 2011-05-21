@@ -310,14 +310,17 @@ inline std::ostream& operator<<(std::ostream& out, const TRect<T>& rect)
 }
 
 template <class T>
-inline void operator>>(const FML::Node& node, TRect<T>& rect)
+inline bool operator>>(const FML::Node& node, TRect<T>& rect)
 {
     T x, y, width, height;
-    *node.at(0) >> x;
-    *node.at(1) >> y;
-    *node.at(2) >> width;
-    *node.at(3) >> height;
-    rect.setRect(x, y, width, height);
+    if(node.readAt(0, &x) &&
+       node.readAt(1, &y) &&
+       node.readAt(2, &width) &&
+       node.readAt(3, &height)) {
+        rect.setRect(x, y, width, height);
+        return true;
+    }
+    return false;
 }
 
 #endif // RECT_H

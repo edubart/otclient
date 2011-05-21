@@ -36,14 +36,14 @@ bool Configs::load(const std::string& fileName)
     if(!g_resources.loadFile(fileName, fin))
         return false;
 
-    FML::Parser parser;
-    if(parser.load(fin)) {
+    try {
+        FML::Parser parser(fin, fileName);
         FML::Node* doc = parser.getDocument();
 
         foreach(FML::Node* node, *doc)
             m_confsMap[node->tag()] = node->value();
-    } else {
-        flogError("ERROR: Malformed config file: %s", parser.getErrorMessage());
+    } catch(FML::Exception e) {
+        flogError("ERROR: Malformed config file: %s", e.what());
         return false;
     }
 

@@ -112,12 +112,14 @@ typedef TSize<int> Size;
 typedef TSize<float> SizeF;
 
 template <class T>
-inline void operator>>(const FML::Node& node, TSize<T>& size)
+inline bool operator>>(const FML::Node& node, TSize<T>& size)
 {
     T w, h;
-    *node.at(0) >> w;
-    *node.at(1) >> h;
-    size.setSize(w, h);
+    if(node.readAt(0, &w) && node.readAt(1, &h)) {
+        size.setSize(w, h);
+        return true;
+    }
+    return false;
 }
 
 #endif

@@ -86,7 +86,7 @@ window#optionsWindow
     margin.bottom: 60
 
   label#motdLabel
-    text: |-
+    text: |
       Show the most recent
       Message of the Day
     anchors.left: parent.left

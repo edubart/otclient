@@ -75,10 +75,8 @@ UIElementPtr UILoader::loadFromFile(std::string filePath, const UIContainerPtr& 
         return UIElementPtr();
     }
 
-    m_currentFile = filePath;
-
-    FML::Parser parser(fin);
-    if(!parser.hasError()) {
+    try {
+        FML::Parser parser(fin, filePath);
         FML::Node* doc = parser.getDocument();
 
         // get element id
@@ -105,8 +103,8 @@ UIElementPtr UILoader::loadFromFile(std::string filePath, const UIContainerPtr& 
         // report onLoad events
         element->onLoad();
         return element;
-    } else {
-        flogError("ERROR: Failed to load ui %s: %s", filePath.c_str() % parser.getErrorMessage());
+    } catch(FML::Exception e) {
+        flogError("ERROR: Failed to load ui %s: %s", filePath.c_str() % e.what());
     }
 
     return UIElementPtr();
@@ -192,14 +190,14 @@ void UILoader::loadElement(const UIElementPtr& element, FML::Node* node)
 
     // load events
     if(FML::Node* cnode = node->at("onLoad")) {
-        if(g_lua.loadBufferAsFunction(cnode->value(), getElementSourceDesc(element, "onLoad")))
+        if(g_lua.loadBufferAsFunction(cnode->value(), getElementSourceDesc(element, cnode)))
             g_lua.setScriptableField(element, "onLoad");
         else
             logError(cnode->generateErrorMessage("failed to parse inline lua script"));
     }
 
     if(FML::Node* cnode = node->at("onDestroy")) {
-        if(g_lua.loadBufferAsFunction(cnode->value(), getElementSourceDesc(element, "onDestroy")))
+        if(g_lua.loadBufferAsFunction(cnode->value(), getElementSourceDesc(element, cnode)))
             g_lua.setScriptableField(element, "onDestroy");
         else
             logError(cnode->generateErrorMessage("failed to parse inline lua script"));
@@ -254,19 +252,19 @@ void UILoader::loadButton(const UIButtonPtr& button, FML::Node* node)
 
     // set on click event
     if(FML::Node* cnode = node->at("onClick")) {
-        if(g_lua.loadBufferAsFunction(cnode->value(), getElementSourceDesc(button, "onClick")))
+        if(g_lua.loadBufferAsFunction(cnode->value(), getElementSourceDesc(button, cnode)))
             g_lua.setScriptableField(button, "onClick");
         else
             logError(cnode->generateErrorMessage("failed to parse inline lua script"));
     }
 }
 
-std::string UILoader::getElementSourceDesc(const UIElementPtr& element, const std::string& key)
+std::string UILoader::getElementSourceDesc(const UIElementPtr& element, const FML::Node *node)
 {
     std::string desc;
-    desc += g_resources.resolvePath(m_currentFile) + ":" + element->getId();
-    if(key.length() > 0)
-        desc += "[" + key + "]";
+    desc += g_resources.resolvePath(node->what()) + ":" + element->getId();
+    if(!node->tag().empty())
+        desc += "[" + node->tag() + "]";
     return desc;
 }
 

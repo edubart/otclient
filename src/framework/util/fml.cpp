@@ -38,6 +38,12 @@ bool fml_convert(const std::string& input, std::string& output) {
     return true;
 }
 
+std::string fml_int2str(int v)
+{
+    std::stringstream ss;
+    ss << v;
+    return ss.str();
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // Node
@@ -46,6 +52,13 @@ Node::~Node()
 {
     for(NodeList::iterator it = m_children.begin(); it != m_children.end(); ++it)
         delete (*it);
+}
+
+std::string Node::what() const
+{
+    if(m_parser)
+        return m_parser->what();
+    return std::string();
 }
 
 Node* Node::at(const std::string& childTag) const
@@ -62,22 +75,6 @@ Node* Node::at(int pos) const
     if(pos < 0 || pos >= size())
         return NULL;
     return m_children[pos];
-}
-
-std::string Node::value(const std::string& def) const
-{
-    if(!m_value.empty())
-        return m_value;
-    return def;
-}
-
-std::string Node::valueAt(const std::string childTag, const std::string& def) const
-{
-    for(NodeList::const_iterator it = m_children.begin(); it != m_children.end(); ++it) {
-        if((*it)->tag() == childTag)
-            return (*it)->value();
-    }
-    return def;
 }
 
 void Node::addNode(Node *node)
@@ -99,15 +96,101 @@ void Node::addNode(Node *node)
 std::string Node::generateErrorMessage(const std::string& message) const
 {
     std::stringstream ss;
-    ss << "FML error ";
-    if(m_parser && !m_parser->getWhat().empty())
-        ss << "in " << m_parser->getWhat();
-    if(m_line > 0)
-        ss << "at line " << m_line;
+    ss << "FML error";
+    if(!(what().empty()))
+        ss << " in '" << what() << "'";
+    if(m_line > 0) {
+        ss << " at line " << m_line;
+        if(hasTag())
+            ss << ", in node '" << tag() << "'";
+    }
     ss << ": " << message;
     return ss.str();
 }
 
+std::string Node::emitValue()
+{
+    std::string tmpValue = value();
+
+    bool shouldQuote = false;
+    if(tmpValue.find_first_of("\\") != std::string::npos) {
+        boost::replace_all(tmpValue, "\\", "\\\\");
+        shouldQuote = true;
+    }
+    if(tmpValue.find_first_of("\"") != std::string::npos) {
+        boost::replace_all(tmpValue, "\"", "\\\"");
+        shouldQuote = true;
+    }
+    if(tmpValue.find_first_of("\n") != std::string::npos) {
+        boost::replace_all(tmpValue, "\n", "\\n");
+        shouldQuote = true;
+    }
+
+    if(shouldQuote) {
+        tmpValue.append("\"");
+        tmpValue.insert(0, "\"");
+    }
+
+    return tmpValue;
+}
+
+std::string Node::emit(int depth)
+{
+    std::stringstream ss;
+    std::stringstream inlinestr;
+    bool shouldInline = false;
+
+    for(int i=1;i<depth;++i)
+        ss << "  ";
+
+    if(depth > 0) {
+        shouldInline = true;
+
+        if(hasTag())
+            ss << tag();
+
+        if(hasValue()) {
+            if(hasTag())
+                ss << ": ";
+            else
+                ss << "- ";
+            ss << emitValue();
+            ss << std::endl;
+            shouldInline = false;
+        }
+
+        if(size() > 8 || size() == 0)
+            shouldInline = false;
+    }
+
+    if(shouldInline) {
+        inlinestr << "[";
+        for(NodeList::const_iterator it = m_children.begin(); it != m_children.end(); ++it) {
+            Node* child = (*it);
+            if(child->hasTag() || ss.str().length() > 31) {
+                shouldInline = false;
+                break;
+            } else {
+                if(it != m_children.begin())
+                    inlinestr << ", ";
+                inlinestr << child->emitValue();
+            }
+        }
+        inlinestr << "]";
+    }
+
+    if(shouldInline) {
+        ss << ": " << inlinestr.str() << std::endl;
+    } else {
+        if(!hasValue())
+            ss << std::endl;
+
+        for(NodeList::const_iterator it = m_children.begin(); it != m_children.end(); ++it)
+            ss << (*it)->emit(depth+1);
+    }
+
+    return ss.str();
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // Parser
@@ -118,7 +201,7 @@ Parser::~Parser()
         delete m_rootNode;
 }
 
-bool Parser::load(std::istream& in)
+void Parser::load(std::istream& in)
 {
     // initialize root node
     if(m_rootNode)
@@ -137,15 +220,11 @@ bool Parser::load(std::istream& in)
         std::string line;
         std::getline(in, line);
         parseLine(line);
-        if(hasError())
-            return false;
     }
 
     // stop multilining if enabled
     if(isMultilining())
         stopMultilining();
-
-    return !hasError();
 }
 
 void Parser::parseLine(std::string& line)
@@ -173,7 +252,7 @@ void Parser::parseLine(std::string& line)
         depth = numSpaces / 2;
         // check for syntax error
         if(numSpaces % 2 != 0) {
-            setErrorMessage("file must be idented every 2 whitespaces", m_currentLine);
+            throwError("file must be idented every 2 whitespaces", m_currentLine);
             return;
         }
     }
@@ -189,7 +268,7 @@ void Parser::parseLine(std::string& line)
             m_currentParent = m_currentParent->parent();
     // else if nots the same depth it's a syntax error
     } else if(depth != m_currentDepth) {
-        setErrorMessage("invalid indentation level", m_currentLine);
+        throwError("invalid indentation level", m_currentLine);
         return;
     }
 
@@ -246,16 +325,17 @@ Node *Parser::parseNode(std::string& line)
                 boost::trim(value);
                 boost::tokenizer<boost::escaped_list_separator<char> > tokens(value);
                 for(boost::tokenizer<boost::escaped_list_separator<char> >::iterator it = tokens.begin(); it != tokens.end(); ++it) {
-                    value = *it;
-                    boost::trim(value);
-
-                    Node *child = new Node(this);
-                    child->setLine(m_currentLine);
-                    child->setValue(value);
-                    node->addNode(child);
+                    std::string tmp = (*it);
+                    boost::trim(tmp);
+                    if(!tmp.empty()) {
+                        Node *child = new Node(this);
+                        child->setLine(m_currentLine);
+                        child->setValue(tmp);
+                        node->addNode(child);
+                    }
                 }
             } else
-                setErrorMessage("missing ']' in sequence", m_currentLine);
+                throwError("missing ']' in sequence", m_currentLine);
         }
         // text scalar
         else {
@@ -291,7 +371,7 @@ void Parser::startMultilining(const std::string& param)
                 m_multilineMode = MULTILINE_FOLD_FLOW;
                 break;
             default:
-                setErrorMessage("invalid multiline identifier", m_currentLine);
+                throwError("invalid multiline identifier", m_currentLine);
                 break;
         }
     }
@@ -343,16 +423,16 @@ bool Parser::parseMultiline(std::string line)
     return false;
 }
 
-void Parser::setErrorMessage(const std::string& message, int line)
+void Parser::throwError(const std::string& message, int line)
 {
     std::stringstream ss;
-    ss << "FML syntax error in ";
+    ss << "FML syntax error";
     if(!m_what.empty())
-        ss << m_what << " ";
+        ss  << " in '" << m_what << "'";
     if(line > 0)
-        ss << "at line " << line;
+        ss << " at line " << line;
     ss << ": "  << message;
-    m_error = ss.str();
+    throw Exception(ss.str());
 }
 
 } // namespace FML {

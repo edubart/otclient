@@ -6,6 +6,9 @@
 #include <vector>
 #include <iterator>
 #include <map>
+#include <iostream>
+#include <stdexcept>
+#include <typeinfo>
 
 #include <boost/utility.hpp>
 #include <boost/foreach.hpp>
@@ -25,6 +28,16 @@ bool fml_convert(const V& in, T& out) {
     ss >> out;
     return !!ss;
 }
+
+std::string fml_int2str(int v);
+
+///////////////////////////////////////////////////////////////////////////////
+// Exception
+
+class Exception : public std::runtime_error {
+public:
+    explicit Exception(const std::string& what) : std::runtime_error(what) {}
+};
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -54,6 +67,7 @@ public:
     int line() const { return m_line; }
     int size() const { return m_children.size(); }
     Node* parent() { return m_parent; }
+    std::string what() const;
 
     // iterators
     typedef NodeList::iterator iterator;
@@ -69,6 +83,7 @@ public:
 
     // util for generating error message
     std::string generateErrorMessage(const std::string& message) const;
+    void throwError(const std::string& message) const { throw Exception(generateErrorMessage(message)); }
 
     // extracting values operator
     template <typename T>
@@ -79,44 +94,94 @@ public:
     Node* at(int pos) const;
 
     // get values
-    std::string value(const std::string& def = std::string()) const;
-    std::string valueAt(const std::string childTag, const std::string& def = std::string()) const;
-
-    // read values
-    template <typename T>
-    T read(T def = T()) const {
-        T v = def;
-        *this >> v;
-        return v;
+    std::string value(const std::string& def = std::string()) const  {
+        if(!m_value.empty())
+            return m_value;
+        return def;
     }
 
-    template <typename T>
-    bool read(T* v) const {
-        return (*this >> *v);
+    std::string valueAt(const std::string childTag, const std::string& def = std::string()) const {
+        if(Node* node = at(childTag))
+            return node->value();
+        return def;
     }
 
+    std::string valueAt(int pos, const std::string& def = std::string()) const {
+        if(Node* node = at(pos))
+            return node->value();
+        return def;
+    }
+
+    // read values into memory
     template <typename T>
-    T readAt(const std::string& childTag, T def = T()) const {
-        T v = def;
-        for(NodeList::const_iterator it = m_children.begin(); it != m_children.end(); ++it) {
-            if((*it)->tag() == childTag) {
-                *(*it) >> v;
-                break;
-            }
-        }
-        return v;
+    void read(T* v) const {
+        if(!(*this >> *v))
+            throw Exception(generateErrorMessage("failed to cast node value to type " + std::string(typeid(T).name())));
     }
 
     template <typename T>
     bool readAt(const std::string& childTag, T* v) const {
-        for(NodeList::const_iterator it = m_children.begin(); it != m_children.end(); ++it) {
-            if((*it)->tag() == childTag)
-                return (*(*it) >> *v);
+        if(Node* node = at(childTag)) {
+            node->read<T>(v);
+            return true;
         }
         return false;
     }
 
+    template <typename T>
+    bool readAt(int pos, T* v) const {
+        if(Node* node = at(pos)) {
+            node->read<T>(v);
+            return true;
+        }
+        return false;
+    }
+
+    // read values
+    template <typename T>
+    T read() const {
+        T v;
+        read<T>(&v);
+        return v;
+    }
+
+    template <typename T>
+    T readAt(const std::string& childTag) const {
+        if(Node* node = at(childTag))
+            return node->read<T>();
+        throw Exception(generateErrorMessage("child node " + childTag + " not found"));
+        return T();
+    }
+
+    template <typename T>
+    T readAt(int pos) const {
+        if(Node* node = at(pos))
+            return node->read<T>();
+        throw Exception(generateErrorMessage("child node at pos " + fml_int2str(pos) + " not found"));
+        return T();
+    }
+
+    // read values with defaults
+    template <typename T>
+    T readAt(const std::string& childTag, const T& def) const {
+        if(Node* node = at(childTag))
+            return node->read<T>();
+        else
+            return def;
+    }
+
+    template <typename T>
+    T readAt(int pos, const T& def) const {
+        if(Node* node = at(pos))
+            return node->read<T>();
+        else
+            return def;
+    }
+
     void addNode(Node* node);
+
+    std::string emitValue();
+    std::string emit(int depth = 0);
 
 private:
     Parser* m_parser;
@@ -140,32 +205,29 @@ bool operator >> (const Node& node, T& v)
 template <typename T>
 bool operator >> (const Node& node, std::vector<T>& v)
 {
-    bool ret = true;
-    v.clear();
-    v.resize(node.size());
-    for(unsigned i=0;i<node.size();++i) {
-        if(!(*node.at(i) >> v[i]))
-            ret = false;
-    }
-    return ret;
+    std::vector<T>& tmp;
+    tmp.resize(node.size());
+    for(unsigned i=0;i<node.size();++i)
+        v[i] = node.readAt<T>(i);
+    v = tmp;
+    return true;
 }
 
 template <typename K, typename T>
 bool operator >> (const Node& node, std::map<K, T>& m)
 {
-    bool ret = true;
-    m.clear();
+    std::map<K, T> tmp;
     for(Node::const_iterator it = node.begin(); it != node.end(); ++it) {
-        Node* child = (*it);
         K k;
         T v;
-        if(fml_convert<std::string, K>(child->tag(), k)) {
-            *child >> v;
-            m[k] = v;
-            ret = false;
-        }
+        if(fml_convert<std::string, K>((*it)->tag(), k)) {
+            (*it)->read(&v);
+            tmp[k] = v;
+        } else
+            return false;
     }
-    return ret;
+    m = tmp;
+    return true;
 }
 
 
@@ -186,12 +248,10 @@ public:
     Parser(std::istream& in, std::string what = std::string()) : m_rootNode(0), m_what(what) { load(in); }
     ~Parser();
 
-    bool load(std::istream& in);
+    void load(std::istream& in);
 
     Node* getDocument() const { return m_rootNode; }
-    bool hasError() const { return !m_error.empty(); }
-    std::string getErrorMessage() { return m_error; }
-    std::string getWhat() { return m_what; }
+    std::string what() { return m_what; }
 
 protected:
     void parseLine(std::string& line);
@@ -203,7 +263,7 @@ protected:
     bool parseMultiline(std::string line);
     bool isMultilining() { return m_multilineMode != DONT_MULTILINE; }
 
-    void setErrorMessage(const std::string& message, int line = 0);
+    void throwError(const std::string& message, int line = 0);
 
 private:
     int m_currentDepth;
@@ -213,7 +273,6 @@ private:
     Node* m_rootNode;
     MultilineMode m_multilineMode;
     std::string m_multilineData;
-    std::string m_error;
     std::string m_what;
 };
 

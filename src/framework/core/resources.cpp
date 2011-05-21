@@ -118,7 +118,7 @@ bool Resources::loadFile(const std::string& fileName, std::iostream& out)
             char *buffer = new char[fileSize];
             PHYSFS_read(file, (void*)buffer, 1, fileSize);
             out.write(buffer, fileSize);
-            delete buffer;
+            delete[] buffer;
         } else
             out.clear(std::ios::eofbit);
         PHYSFS_close(file);

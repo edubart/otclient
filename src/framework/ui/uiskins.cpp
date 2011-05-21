@@ -43,11 +43,11 @@ void UISkins::load(const std::string& skinName)
     if(!g_resources.loadFile(skinName + ".yml", fin))
         flogFatal("FATAL ERROR: Could not load skin \"%s",  skinName.c_str());
 
-    FML::Parser parser(fin);
-    if(!parser.hasError()) {
+    try {
+        FML::Parser parser(fin, skinName);
         FML::Node* doc = parser.getDocument();
 
-        m_defaultFont = g_fonts.get(doc->readAt<std::string>("default font"));
+        m_defaultFont = g_fonts.get(doc->valueAt("default font"));
         if(!m_defaultFont)
             logFatal("FATAL ERROR: Could not load skin default font");
 
@@ -57,48 +57,30 @@ void UISkins::load(const std::string& skinName)
         if(!defaultTextureName.empty())
             m_defaultTexture = g_textures.get(defaultTextureName);
 
-        if(FML::Node* node = doc->at("buttons")) {
+        foreach(FML::Node* node, *doc) {
+            UIElementSkinPtr skin;
             foreach(FML::Node* cnode, *node) {
-                UIElementSkinPtr skin = UIElementSkinPtr(new UIButtonSkin(cnode->tag()));
+                if(node->tag() == "buttons")
+                    skin = UIElementSkinPtr(new UIButtonSkin(cnode->tag()));
+                else if(node->tag() == "panels")
+                    skin = UIElementSkinPtr(new UIElementSkin(cnode->tag(), UI::Panel));
+                else if(node->tag() == "windows")
+                    skin = UIElementSkinPtr(new UIWindowSkin(cnode->tag()));
+                else if(node->tag() == "labels")
+                    skin = UIElementSkinPtr(new UILabelSkin(cnode->tag()));
+                else if(node->tag() == "text edits")
+                    skin = UIElementSkinPtr(new UITextEditSkin(cnode->tag()));
+                else if(node->tag() == "line decorations")
+                    skin = UIElementSkinPtr(new UIElementSkin(cnode->tag(), UI::LineDecoration));
+                else {
+                    break;
+                }
                 skin->load(cnode);
                 m_elementSkins.push_back(skin);
             }
         }
-
-        if(FML::Node* node = doc->at("panels")) {
-            foreach(FML::Node* cnode, *node) {
-                UIElementSkinPtr skin = UIElementSkinPtr(new UIElementSkin(cnode->tag(), UI::Panel));
-                skin->load(cnode);
-                m_elementSkins.push_back(skin);
-            }
-        }
-
-        if(FML::Node* node = doc->at("windows")) {
-            foreach(FML::Node* cnode, *node) {
-                UIElementSkinPtr skin = UIElementSkinPtr(new UIWindowSkin(cnode->tag()));
-                skin->load(cnode);
-                m_elementSkins.push_back(skin);
-            }
-        }
-
-        if(FML::Node* node = doc->at("labels")) {
-            foreach(FML::Node* cnode, *node) {
-                UIElementSkinPtr skin = UIElementSkinPtr(new UILabelSkin(cnode->tag()));
-                skin->load(cnode);
-                m_elementSkins.push_back(skin);
-            }
-        }
-
-
-        if(FML::Node* node = doc->at("text edits")) {
-            foreach(FML::Node* cnode, *node) {
-                UIElementSkinPtr skin = UIElementSkinPtr(new UITextEditSkin(cnode->tag()));
-                skin->load(cnode);
-                m_elementSkins.push_back(skin);
-            }
-        }
-    } else {
-        flogFatal("FATAL ERROR: Malformed skin file \"%s\":\n  %s", skinName.c_str() % parser.getErrorMessage());
+    } catch(FML::Exception e) {
+        flogFatal("FATAL ERROR: Malformed skin file \"%s\":\n  %s", skinName.c_str() % e.what());
     }
 
     g_resources.popCurrentPath();

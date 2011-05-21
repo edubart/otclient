@@ -41,7 +41,7 @@ R convert_cast(T t)
     try {
         ret = boost::lexical_cast<R>(t);
     } catch(boost::bad_lexical_cast bad) {
-        flogError("Error converting type: %s", bad.what());
+        flogError("Error converting value: %s", bad.what());
     }
     return ret;
 }

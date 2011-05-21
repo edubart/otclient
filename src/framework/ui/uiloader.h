@@ -55,9 +55,7 @@ private:
     // specific elements loading
     void loadButton(const UIButtonPtr& button, FML::Node* node);
 
-    std::string getElementSourceDesc(const UIElementPtr& element, const std::string& key = "");
-
-    std::string m_currentFile;
+    std::string getElementSourceDesc(const UIElementPtr& element, const FML::Node *node);
 };
 
 extern UILoader g_uiLoader;

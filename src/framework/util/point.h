@@ -86,10 +86,15 @@ inline std::ostream& operator<<(std::ostream& out, const TPoint<T>& point)
 }
 
 template <class T>
-inline void operator>>(const FML::Node& node, TPoint<T>& point)
+inline bool operator>>(const FML::Node& node, TPoint<T>& point)
 {
-    *node.at(0) >> point.x;
-    *node.at(1) >> point.y;
+    T x, y;
+    if(node.readAt(0, &x) && node.readAt(1, &y)) {
+        point.x = x;
+        point.y = y;
+        return true;
+    }
+    return false;
 }
 
 #endif

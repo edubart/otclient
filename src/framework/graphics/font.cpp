@@ -77,8 +77,8 @@ bool Font::load(const std::string& file)
     std::string textureName;
     Size glyphSize;
 
-    FML::Parser parser(fin);
-    if(!parser.hasError()) {
+    try {
+        FML::Parser parser(fin, file);
         FML::Node* doc = parser.getDocument();
 
         // required values
@@ -115,8 +115,8 @@ bool Font::load(const std::string& file)
                                                  m_glyphsSize[glyph].width(),
                                                  m_glyphHeight);
         }
-    } else {
-        flogError("ERROR: Malformed font file \"%s\":\n  %s", file.c_str() % parser.getErrorMessage());
+    } catch(FML::Exception e) {
+        flogError("ERROR: Malformed font file \"%s\":\n  %s", file.c_str() % e.what());
         return false;
     }
 
