@@ -49,6 +49,7 @@ public:
     bool loadFile(const std::string& fileName, std::iostream& out);
 
     bool saveFile(const std::string& fileName, const uchar *data, uint size);
+    bool saveFile(const std::string& fileName, const std::string& data) { return saveFile(fileName, (const uchar*)data.c_str(), data.size()); }
     bool saveFile(const std::string& fileName, std::istream& in);
 
     bool deleteFile(const std::string& fileName);

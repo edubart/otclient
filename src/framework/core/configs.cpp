@@ -53,11 +53,10 @@ bool Configs::load(const std::string& fileName)
 void Configs::save()
 {
     if(!m_fileName.empty()) {
-        std::stringstream out;
-        foreach(auto pair, m_confsMap) {
-            out << pair.first << ": " << pair.second << std::endl;
-        }
-        g_resources.saveFile(m_fileName, out);
+        FML::Emitter emitter;
+        FML::Node *doc = emitter.createDocument();
+        doc->write(m_confsMap);
+        g_resources.saveFile(m_fileName, emitter.emitDocument());
     }
 }
 

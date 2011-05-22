@@ -1,217 +1,88 @@
 #include "fml.h"
 
-#include <boost/algorithm/string.hpp>
-#include <boost/tokenizer.hpp>
-
-namespace FML {
-
-
-///////////////////////////////////////////////////////////////////////////////
-// Utilities
-
-bool fml_convert(const std::string& input, bool& b)
+namespace FML
 {
-    std::string names[5][2] = { { "1", "0" },
-    { "y", "n" },
-    { "yes", "no" },
-    { "true", "false" },
-    { "on", "off" } };
-    std::string processedInput = input;
-    boost::trim(processedInput);
-    boost::to_lower(processedInput);
-    for(int i=0;i<5;i++) {
-        if(names[i][0] == processedInput) {
-            b = true;
-            return true;
-        }
 
-        if(names[i][1] == processedInput) {
+bool fml_convert(const std::string& input, bool& b) {
+    static std::string validNames[2][4] = {{"true","yes","on","1"}, {"false","no","off","0"}};
+    bool ret = false;
+    for(int i=0;i<4;++i) {
+        if(input == validNames[0][i]) {
+            b = true;
+            ret = true;
+            break;
+        } else if(input == validNames[1][i]) {
             b = false;
-            return true;
+            ret = true;
+            break;
         }
     }
-    return false;
+    return ret;
 }
 
-bool fml_convert(const std::string& input, std::string& output) {
+bool fml_convert(const std::string& input, std::string& output)
+{
     output = input;
     return true;
 }
 
-std::string fml_int2str(int v)
-{
-    std::stringstream ss;
-    ss << v;
-    return ss.str();
+Node* Node::at(const std::string& childTag) const  {
+    int i=0;
+    while(i<size() && at(i)->tag()!=childTag)
+        ++i;
+    return at(i);
 }
 
-///////////////////////////////////////////////////////////////////////////////
-// Node
-
-Node::~Node()
+Node* Node::createNode(std::string tag)
 {
-    for(NodeList::iterator it = m_children.begin(); it != m_children.end(); ++it)
-        delete (*it);
+    Node* node = new Node;
+    node->setTag(tag);
+    addNode(node);
+    return node;
 }
 
-std::string Node::what() const
-{
-    if(m_parser)
-        return m_parser->what();
-    return std::string();
-}
-
-Node* Node::at(const std::string& childTag) const
-{
-    for(NodeList::const_iterator it = m_children.begin(); it != m_children.end(); ++it) {
-        if((*it)->tag() == childTag)
-            return (*it);
-    }
-    return NULL;
-}
-
-Node* Node::at(int pos) const
-{
-    if(pos < 0 || pos >= size())
-        return NULL;
-    return m_children[pos];
-}
-
-void Node::addNode(Node *node)
-{
+void Node::addNode(Node* node) {
     if(node->hasTag() && node->hasValue()) {
-        // remove nodes wit the same tag
-        for(NodeList::iterator it = m_children.begin(); it != m_children.end(); ++it) {
-            if((*it)->tag() == node->tag()) {
-                delete (*it);
-                m_children.erase(it);
-                break;
-            }
+        if(Node* other = at(node->tag())) {
+            if(removeNode(other))
+                delete node;
         }
     }
     m_children.push_back(node);
     node->setParent(this);
 }
 
-std::string Node::generateErrorMessage(const std::string& message) const
-{
+bool Node::removeNode(Node* node) {
+    for(NodeList::iterator it = m_children.begin(); it != m_children.end(); ++it) {
+        if((*it) == node) {
+            m_children.erase(it);
+            return true;
+        }
+    }
+    return false;
+}
+
+std::string Node::generateErrorMessage(const std::string& message) const {
     std::stringstream ss;
     ss << "FML error";
-    if(!(what().empty()))
+    if(!what().empty())
         ss << " in '" << what() << "'";
-    if(m_line > 0) {
+    if(m_line > 0)
         ss << " at line " << m_line;
-        if(hasTag())
-            ss << ", in node '" << tag() << "'";
-    }
+    if(m_line > 0 && hasTag())
+        ss << ", in node '" << tag() << "'";
     ss << ": " << message;
     return ss.str();
 }
 
-std::string Node::emitValue()
-{
-    std::string tmpValue = value();
-
-    bool shouldQuote = false;
-    if(tmpValue.find_first_of("\\") != std::string::npos) {
-        boost::replace_all(tmpValue, "\\", "\\\\");
-        shouldQuote = true;
-    }
-    if(tmpValue.find_first_of("\"") != std::string::npos) {
-        boost::replace_all(tmpValue, "\"", "\\\"");
-        shouldQuote = true;
-    }
-    if(tmpValue.find_first_of("\n") != std::string::npos) {
-        boost::replace_all(tmpValue, "\n", "\\n");
-        shouldQuote = true;
-    }
-
-    if(shouldQuote) {
-        tmpValue.append("\"");
-        tmpValue.insert(0, "\"");
-    }
-
-    return tmpValue;
-}
-
-std::string Node::emit(int depth)
-{
-    std::stringstream ss;
-    std::stringstream inlinestr;
-    bool shouldInline = false;
-
-    for(int i=1;i<depth;++i)
-        ss << "  ";
-
-    if(depth > 0) {
-        shouldInline = true;
-
-        if(hasTag())
-            ss << tag();
-
-        if(hasValue()) {
-            if(hasTag())
-                ss << ": ";
-            else
-                ss << "- ";
-            ss << emitValue();
-            ss << std::endl;
-            shouldInline = false;
-        }
-
-        if(size() > 8 || size() == 0)
-            shouldInline = false;
-    }
-
-    if(shouldInline) {
-        inlinestr << "[";
-        for(NodeList::const_iterator it = m_children.begin(); it != m_children.end(); ++it) {
-            Node* child = (*it);
-            if(child->hasTag() || ss.str().length() > 31) {
-                shouldInline = false;
-                break;
-            } else {
-                if(it != m_children.begin())
-                    inlinestr << ", ";
-                inlinestr << child->emitValue();
-            }
-        }
-        inlinestr << "]";
-    }
-
-    if(shouldInline) {
-        ss << ": " << inlinestr.str() << std::endl;
-    } else {
-        if(!hasValue())
-            ss << std::endl;
-
-        for(NodeList::const_iterator it = m_children.begin(); it != m_children.end(); ++it)
-            ss << (*it)->emit(depth+1);
-    }
-
-    return ss.str();
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// Parser
-
-Parser::~Parser()
-{
-    if(m_rootNode)
-        delete m_rootNode;
-}
-
 void Parser::load(std::istream& in)
 {
-    // initialize root node
     if(m_rootNode)
         delete m_rootNode;
-    m_rootNode = new Node();
+    m_rootNode = new Node(what());
     m_rootNode->setTag("root");
-
     m_currentParent = m_rootNode;
-    m_currentDepth = 0;
-    m_currentLine = 0;
+    m_currentDepth = m_currentLine = 0;
     m_multilineMode = DONT_MULTILINE;
     m_multilineData.clear();
 
@@ -222,7 +93,6 @@ void Parser::load(std::istream& in)
         parseLine(line);
     }
 
-    // stop multilining if enabled
     if(isMultilining())
         stopMultilining();
 }
@@ -239,49 +109,43 @@ void Parser::parseLine(std::string& line)
     // trim left whitespaces
     boost::trim_left(line);
 
-    // skip comment lines
-    if(line[0] == '#')
+    // skip comment or empty lines
+    if(line[0] == '#' || line.empty())
         return;
 
-    // skip empty lines
-    if(line.empty())
-        return;
-
+    // calculate depth
     int depth = 0;
-    if(numSpaces != std::string::npos) {
+    if(numSpaces != std::string::npos)
         depth = numSpaces / 2;
-        // check for syntax error
-        if(numSpaces % 2 != 0) {
-            throwError("file must be idented every 2 whitespaces", m_currentLine);
-            return;
-        }
-    }
+
+    // check for syntax error
+    if(numSpaces != std::string::npos && numSpaces % 2 != 0)
+        throwError("file must be idented every 2 whitespaces", m_currentLine);
 
     // a depth above
     if(depth == m_currentDepth+1) {
         // change current parent to the previous added node
         m_currentParent = m_previousNode;
-    // a depth below, change parent to previus parent and add new node inside previuos parent
+        // a depth below, change parent to previus parent and add new node inside previuos parent
     } else if(depth < m_currentDepth) {
         // change current parent to the the new depth parent
         for(int i=0;i<m_currentDepth-depth;++i)
             m_currentParent = m_currentParent->parent();
-    // else if nots the same depth it's a syntax error
+        // else if nots the same depth it's a syntax error
     } else if(depth != m_currentDepth) {
         throwError("invalid indentation level", m_currentLine);
-        return;
     }
 
     // update current depth
     m_currentDepth = depth;
 
     // add node
-    Node *node = parseNode(line);
-    m_currentParent->addNode(node);
+    Node* node = m_currentParent->createNode();
+    parseNode(node, line);
     m_previousNode = node;
 }
 
-Node *Parser::parseNode(std::string& line)
+void Parser::parseNode(Node* node, std::string& line)
 {
     // determine node tag and value
     std::string tag;
@@ -292,61 +156,75 @@ Node *Parser::parseNode(std::string& line)
     if(dotsPos != std::string::npos) {
         tag = line.substr(0, dotsPos);
         value = line.substr(dotsPos+1);
-    }
-    // its a node that has a value but no tag
-    else if(line[0] == '-') {
+    } else if(line[0] == '-') // its a node that has a value but no tag
         value = line.substr(1);
-    }
-    // its a node that has only a tag
-    else {
+    else // its a node that has only a tag
         tag = line;
-    }
 
-    // trim the tag and value
+    // set node tag
     boost::trim(tag);
-    boost::trim(value);
-
-    // create the node
-    Node *node = new Node(this);
-    node->setLine(m_currentLine);
     node->setTag(tag);
 
-    // process node value
-    if(!value.empty()) {
-        // multiline text scalar
-        if(value[0] == '|') {
-            startMultilining(value);
-        }
-        // sequence
-        else if(value[0] == '[') {
-            if(boost::ends_with(value, "]")) {
-                value.erase(value.length()-1, 1);
-                value.erase(0, 1);
-                boost::trim(value);
-                boost::tokenizer<boost::escaped_list_separator<char> > tokens(value);
-                for(boost::tokenizer<boost::escaped_list_separator<char> >::iterator it = tokens.begin(); it != tokens.end(); ++it) {
-                    std::string tmp = (*it);
-                    boost::trim(tmp);
-                    if(!tmp.empty()) {
-                        Node *child = new Node(this);
-                        child->setLine(m_currentLine);
-                        child->setValue(tmp);
-                        node->addNode(child);
-                    }
-                }
-            } else
-                throwError("missing ']' in sequence", m_currentLine);
-        }
-        // text scalar
-        else {
-            node->setValue(parseTextScalar(value));
-        }
-    }
+    // set node line
+    node->setLine(m_currentLine);
 
-    return node;
+    // process node value
+    parseNodeValue(node, value);
 }
 
-std::string Parser::parseTextScalar(std::string value)
+void Parser::parseNodeValue(Node* node, std::string& value)
+{
+    boost::trim(value);
+    if(value.empty())
+        return;
+
+    // multiline text scalar
+    if(value[0] == '|') {
+        // determine multiline mode
+        m_multilineMode = MULTILINE_DONT_FOLD;
+        if(value.length() == 2) {
+            switch(value[1]) {
+                case '-':
+                    m_multilineMode = MULTILINE_FOLD_BLOCK;
+                    break;
+                case '+':
+                    m_multilineMode = MULTILINE_FOLD_FLOW;
+                    break;
+                default:
+                    throwError("invalid multiline identifier", m_currentLine);
+                    break;
+            }
+        }
+        m_currentDepth++;
+    }
+    // sequence
+    else if(value[0] == '[') {
+        if(!boost::ends_with(value, "]"))
+            throwError("missing ']' in sequence", m_currentLine);
+
+        // erase '[' and ']'
+        value.erase(value.length()-1, 1);
+        value.erase(0, 1);
+
+        // split commas
+        boost::tokenizer<boost::escaped_list_separator<char> > tokens(value);
+        for(boost::tokenizer<boost::escaped_list_separator<char> >::iterator it = tokens.begin(); it != tokens.end(); ++it) {
+            std::string tmp = (*it);
+            boost::trim(tmp);
+            if(!tmp.empty()) {
+                Node* child = node->createNode();
+                child->setLine(m_currentLine);
+                child->setValue(tmp);
+            }
+        }
+    }
+    // text scalar
+    else {
+        node->setValue(parseTextValue(value));
+    }
+}
+
+std::string Parser::parseTextValue(std::string value)
 {
     if(value[0] == '"' && value[value.length()-1] == '"') {
         value =  value.substr(1, value.length()-2);
@@ -358,35 +236,12 @@ std::string Parser::parseTextScalar(std::string value)
     return value;
 }
 
-void Parser::startMultilining(const std::string& param)
-{
-    m_multilineMode = MULTILINE_DONT_FOLD;
-    m_currentDepth++;
-    if(param.length() == 2) {
-        switch(param[1]) {
-            case '-':
-                m_multilineMode = MULTILINE_FOLD_BLOCK;
-                break;
-            case '+':
-                m_multilineMode = MULTILINE_FOLD_FLOW;
-                break;
-            default:
-                throwError("invalid multiline identifier", m_currentLine);
-                break;
-        }
-    }
-}
-
 void Parser::stopMultilining()
 {
     // remove all new lines at the end
     if(m_multilineMode == MULTILINE_DONT_FOLD || m_multilineMode == MULTILINE_FOLD_BLOCK) {
-        while(true) {
-            int lastPos = m_multilineData.length()-1;
-            if(m_multilineData[lastPos] != '\n')
-                break;
-            m_multilineData.erase(lastPos, 1);
-        }
+        while(*m_multilineData.rbegin() == '\n')
+            m_multilineData.erase(m_multilineData.length()-1, 1);
     }
 
     if(m_multilineMode == MULTILINE_FOLD_BLOCK)
@@ -405,7 +260,7 @@ bool Parser::parseMultiline(std::string line)
 
     // depth above or equal current depth, add the text to the multiline
     if(numSpaces != std::string::npos && (int)numSpaces >= m_currentDepth*2) {
-        m_multilineData += parseTextScalar(line.substr(m_currentDepth*2)) + "\n";
+        m_multilineData += parseTextValue(line.substr(m_currentDepth*2)) + "\n";
         return true;
         // depth below the current depth, check if it is a node
     } else if(numSpaces == std::string::npos || (int)numSpaces < m_currentDepth*2) {
@@ -435,4 +290,35 @@ void Parser::throwError(const std::string& message, int line)
     throw Exception(ss.str());
 }
 
-} // namespace FML {
+std::string Emitter::emitNodeValue(Node* node)
+{
+    std::string value = node->value();
+    if(value[0] == '"' || *value.rbegin() == '"' || value.find("\n") != std::string::npos) {
+        boost::replace_all(value, "\\", "\\\\");
+        boost::replace_all(value, "\"", "\\\"");
+        boost::replace_all(value, "\n", "\\n");
+        value.append("\"");
+        value.insert(0, "\"");
+    }
+    return value;
+}
+
+std::string Emitter::emitNode(Node* node, int currentDepth)
+{
+    std::stringstream ss;
+    for(int i=1;i<currentDepth;++i)
+        ss << "  ";
+    if(currentDepth > 0) {
+        if(node->hasTag())
+            ss << node->tag();
+        if(node->hasValue())
+            ss << (node->hasTag() ? ": " : "- ") << emitNodeValue(node) << std::endl;
+        else
+            ss << std::endl;
+    }
+    for(int i=0;i<node->size();++i)
+        ss << emitNode(node->at(i), currentDepth+1);
+    return ss.str();
+}
+
+}
