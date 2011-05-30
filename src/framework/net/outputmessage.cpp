@@ -31,7 +31,7 @@ OutputMessage::OutputMessage()
 
 void OutputMessage::reset()
 {
-    m_writePos = 0;
+    m_writePos = DATA_POS;
     m_messageSize = 0;
 }
 
@@ -90,6 +90,16 @@ void OutputMessage::addString(const char* value)
 void OutputMessage::addString(const std::string &value)
 {
     addString(value.c_str());
+}
+
+void OutputMessage::addPaddingBytes(int bytes, uint8 byte)
+{
+    if(!canWrite(bytes))
+        return;
+
+    memset((void*)&m_buffer[m_writePos], byte, bytes);
+    m_writePos += bytes;
+    m_messageSize += bytes;
 }
 
 bool OutputMessage::canWrite(int bytes)

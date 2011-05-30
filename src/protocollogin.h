@@ -32,14 +32,19 @@ class ProtocolLogin : public Protocol
 public:
     ProtocolLogin();
 
-    void login(const std::string& accountName, const std::string& password);
+    void login(const std::string& accountName, const std::string& accountPassword);
 
     void onConnect();
 
     void sendPacket();
+    void onRecv(InputMessage *inputMessage);
 
 private:
-    std::string m_accountName, m_password;
+    void parseError(InputMessage *inputMessage);
+    void parseMOTD(InputMessage *inputMessage);
+    void parseCharacterList(InputMessage *inputMessage);
+
+    std::string m_accountName, m_accountPassword;
 
 };
 

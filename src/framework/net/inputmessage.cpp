@@ -32,7 +32,7 @@ InputMessage::InputMessage()
 void InputMessage::reset()
 {
     m_readPos = 0;
-    m_messageSize = 0;
+    m_messageSize = 2;
 }
 
 uint8 InputMessage::getU8()

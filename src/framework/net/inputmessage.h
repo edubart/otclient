@@ -32,8 +32,12 @@ class InputMessage
 public:
     enum {
         BUFFER_MAXSIZE = 256,
+        HEADER_POS = 0,
         HEADER_LENGTH = 2,
-        CHECKSUM_LENGTH = 4
+        CHECKSUM_POS = 2,
+        CHECKSUM_LENGTH = 4,
+        DATA_POS = 6,
+        UNENCRYPTED_DATA_POS = 8
     };
 
     InputMessage();
@@ -46,13 +50,17 @@ public:
     uint64 getU64();
     std::string getString();
 
+    uint8 *getBuffer() { return m_buffer; }
+    uint16 getMessageSize() { return m_messageSize; }
+    void setMessageSize(uint16 messageSize) { m_messageSize = messageSize; }
+    bool end() { return m_readPos == m_messageSize; }
 
 private:
     bool canRead(int bytes);
 
-    uint16_t m_readPos;
-    uint16_t m_messageSize;
-    uint8_t m_buffer[BUFFER_MAXSIZE];
+    uint16 m_readPos;
+    uint16 m_messageSize;
+    uint8 m_buffer[BUFFER_MAXSIZE];
 };
 
 #endif

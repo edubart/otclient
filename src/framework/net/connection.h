@@ -25,24 +25,33 @@
 #ifndef CONNECTION_H
 #define CONNECTION_H
 
+#include <net/inputmessage.h>
+#include <net/outputmessage.h>
 #include <prerequisites.h>
 #include <boost/asio.hpp>
 
 typedef boost::function<void(boost::system::error_code&)> ErrorCallback;
+typedef boost::function<void(InputMessage*)> RecvCallback;
 
-class Connection
+class Connection : public boost::enable_shared_from_this<Connection>, boost::noncopyable
 {
 public:
     Connection();
 
     static void poll();
 
-    void connect(const std::string& host, uint16 port, const SimpleCallback& callback);
+    void connect(const std::string& host, uint16 port, const SimpleCallback& connectCallback);
+    void send(OutputMessage *outputMessage);
+
     void setErrorCallback(const ErrorCallback& errorCallback) { m_errorCallback = errorCallback; }
+    void setRecvCallback(const RecvCallback& recvCallback) { m_recvCallback = recvCallback; }
 
     void onTimeout(const boost::system::error_code& error);
     void onResolve(const boost::system::error_code& error, boost::asio::ip::tcp::resolver::iterator endpointIterator);
     void onConnect(const boost::system::error_code& error);
+    void onSend(const boost::system::error_code& error, size_t);
+    void onRecvHeader(const boost::system::error_code& error, InputMessage *inputMessage);
+    void onRecvData(const boost::system::error_code& error, InputMessage *inputMessage);
 
     enum ConnectionState_t {
         CONNECTION_STATE_IDLE = 0,
@@ -53,6 +62,7 @@ public:
 
 private:
     ErrorCallback m_errorCallback;
+    RecvCallback m_recvCallback;
     SimpleCallback m_connectCallback;
     ConnectionState_t m_connectionState;
 
