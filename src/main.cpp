@@ -32,8 +32,6 @@
 #include <script/luascript.h>
 #include <ui/uicontainer.h>
 
-#include "protocollogin.h"
-
 void signal_handler(int sig)
 {
     static bool stopping = false;
@@ -84,9 +82,6 @@ int main(int argc, const char *argv[])
     for(int i=0;i<argc;++i)
         args.push_back(argv[i]);
 #endif
-
-    ProtocolLogin login;
-    login.login("tibialua0", "lua123456");
 
     logInfo("OTClient 0.2.0");
 
