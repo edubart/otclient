@@ -31,7 +31,7 @@ class InputMessage
 {
 public:
     enum {
-        BUFFER_MAXSIZE = 256,
+        BUFFER_MAXSIZE = 4096,
         HEADER_POS = 0,
         HEADER_LENGTH = 2,
         CHECKSUM_POS = 2,

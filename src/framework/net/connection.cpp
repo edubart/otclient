@@ -101,10 +101,9 @@ void Connection::onConnect(const boost::system::error_code& error)
     g_dispatcher.addTask(m_connectCallback);
 
     // Start listening.
-    InputMessage *inputMessage = new InputMessage;
     boost::asio::async_read(m_socket,
-                            boost::asio::buffer(inputMessage->getBuffer(), InputMessage::HEADER_LENGTH),
-                            boost::bind(&Connection::onRecvHeader, shared_from_this(), boost::asio::placeholders::error, inputMessage));
+                            boost::asio::buffer(m_inputMessage.getBuffer(), InputMessage::HEADER_LENGTH),
+                            boost::bind(&Connection::onRecvHeader, shared_from_this(), boost::asio::placeholders::error));
 }
 
 void Connection::onSend(const boost::system::error_code& error, size_t)
@@ -120,7 +119,7 @@ void Connection::onSend(const boost::system::error_code& error, size_t)
     }
 }
 
-void Connection::onRecvHeader(const boost::system::error_code& error, InputMessage *inputMessage)
+void Connection::onRecvHeader(const boost::system::error_code& error)
 {
     logTrace();
 
@@ -130,15 +129,15 @@ void Connection::onRecvHeader(const boost::system::error_code& error, InputMessa
         return;
     }
 
-    uint16 messageSize = inputMessage->getU16();
-    inputMessage->setMessageSize(messageSize);
+    uint16 messageSize = m_inputMessage.getU16();
+    m_inputMessage.setMessageSize(messageSize);
 
     boost::asio::async_read(m_socket,
-                            boost::asio::buffer(inputMessage->getBuffer() + InputMessage::CHECKSUM_POS, messageSize),
-                            boost::bind(&Connection::onRecvData, shared_from_this(), boost::asio::placeholders::error, inputMessage));
+                            boost::asio::buffer(m_inputMessage.getBuffer() + InputMessage::CHECKSUM_POS, messageSize),
+                            boost::bind(&Connection::onRecvData, shared_from_this(), boost::asio::placeholders::error));
 }
 
-void Connection::onRecvData(const boost::system::error_code& error, InputMessage *inputMessage)
+void Connection::onRecvData(const boost::system::error_code& error)
 {
     logTrace();
 
@@ -149,17 +148,17 @@ void Connection::onRecvData(const boost::system::error_code& error, InputMessage
     }
 
     // call callback
+    // must be called outside dispatcher cause of inputmessage.
     if(m_recvCallback)
-        g_dispatcher.addTask(boost::bind(m_recvCallback, inputMessage));
+        m_recvCallback(&m_inputMessage);
+        //g_dispatcher.addTask(boost::bind(m_recvCallback, &m_inputMessage));
 
-    // FIXME:
-    // TODO declare inside class? call onRecvHeader.
-    // this needs a remake
-    /*delete inputMessage;
+    // keep reading
 
-    inputMessage = new InputMessage;
+    // TODO: lua code must be reworked.
+    /*m_inputMessage.reset();
     boost::asio::async_read(m_socket,
-                            boost::asio::buffer(inputMessage->getBuffer(), InputMessage::HEADER_LENGTH),
-                            boost::bind(&Connection::onRecvHeader, shared_from_this(), boost::asio::placeholders::error, inputMessage));*/
+                            boost::asio::buffer(m_inputMessage.getBuffer(), InputMessage::HEADER_LENGTH),
+                            boost::bind(&Connection::onRecvHeader, shared_from_this(), boost::asio::placeholders::error));*/
 
 }

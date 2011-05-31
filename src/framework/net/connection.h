@@ -50,8 +50,8 @@ public:
     void onResolve(const boost::system::error_code& error, boost::asio::ip::tcp::resolver::iterator endpointIterator);
     void onConnect(const boost::system::error_code& error);
     void onSend(const boost::system::error_code& error, size_t);
-    void onRecvHeader(const boost::system::error_code& error, InputMessage *inputMessage);
-    void onRecvData(const boost::system::error_code& error, InputMessage *inputMessage);
+    void onRecvHeader(const boost::system::error_code& error);
+    void onRecvData(const boost::system::error_code& error);
 
     enum ConnectionState_t {
         CONNECTION_STATE_IDLE = 0,
@@ -69,6 +69,7 @@ private:
     boost::asio::deadline_timer m_timer;
     boost::asio::ip::tcp::resolver m_resolver;
     boost::asio::ip::tcp::socket m_socket;
+    InputMessage m_inputMessage;
 
 };
 
