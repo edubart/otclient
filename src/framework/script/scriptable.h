@@ -31,7 +31,9 @@ class Scriptable : public boost::enable_shared_from_this<Scriptable>
 {
 public:
     Scriptable() : m_luaTableRef(-1) { }
+    virtual ~Scriptable() { releaseLuaTableRef(); }
 
+    //TODO: global destroy
     virtual const char *getScriptableName() const { return NULL; }
 
     int getLuaTableRef();
