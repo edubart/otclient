@@ -61,6 +61,10 @@ int lua_UIContainer_getChildren();
 int lua_UILabel_setText();
 int lua_UILabel_getText();
 
+// UITextEdit
+int lua_UITextEdit_setText();
+int lua_UITextEdit_getText();
+
 // UIButton
 void lua_UIButton_onClick();
 

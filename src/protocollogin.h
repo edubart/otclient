@@ -39,6 +39,8 @@ public:
     void sendPacket();
     void onRecv(InputMessage *inputMessage);
 
+    const char *getScriptableName() const { return "ProtocolLogin"; }
+
 private:
     void parseError(InputMessage *inputMessage);
     void parseMOTD(InputMessage *inputMessage);

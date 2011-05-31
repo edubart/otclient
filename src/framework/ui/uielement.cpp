@@ -115,7 +115,7 @@ void UIElement::setSkin(const UIElementSkinPtr& skin)
 
 void UIElement::onLoad()
 {
-    g_dispatcher.addTask(boost::bind(&Scriptable::callLuaTableField, shared_from_this(), "onLoad"));
+    g_dispatcher.addTask(boost::bind(&Scriptable::callLuaTableField, shared_from_this(), "onLoad", 0));
 }
 
 void UIElement::render()

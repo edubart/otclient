@@ -29,6 +29,7 @@
 #include <core/resources.h>
 #include <ui/ui.h>
 #include <core/dispatcher.h>
+#include "../../protocollogin.h"
 
 void registerLuaFunctions()
 {
@@ -65,10 +66,27 @@ void registerLuaFunctions()
 
     // UITextEdit
     g_lua.registerClass("UITextEdit", "UIElement");
+    g_lua.registerMemberField("text", &lua_UITextEdit_getText, &lua_UITextEdit_setText);
 
     // UIWindow
     g_lua.registerClass("UIWindow", "UIContainer");
     g_lua.registerMemberField("title", &lua_UIWindow_getTitle, &lua_UIWindow_setTitle);
+
+    // Protocol
+    g_lua.registerClass("ProtocolLogin");
+    g_lua.registerMemberFunction("new", []{
+        ProtocolLoginPtr protocolLogin(new ProtocolLogin);
+        g_lua.pushClassInstance(protocolLogin);
+        return 1;
+    });
+    g_lua.registerMemberFunction("login", []{
+        std::string accountPassword = g_lua.popString();
+        std::string accountName = g_lua.popString();
+        if(ProtocolLoginPtr protocolLogin = boost::dynamic_pointer_cast<ProtocolLogin>(g_lua.popClassInstance()))
+            protocolLogin->login(accountName, accountPassword);
+        return 0;
+    });
+
 }
 
 
@@ -269,6 +287,27 @@ int lua_UILabel_getText()
 {
     if(UILabelPtr label = boost::dynamic_pointer_cast<UILabel>(g_lua.popClassInstance()))
         g_lua.pushString(label->getText());
+    else
+        g_lua.pushNil();
+    return 1;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// UILabel
+
+int lua_UITextEdit_setText()
+{
+    std::string text = g_lua.popString();
+    if(UITextEditPtr textEdit = boost::dynamic_pointer_cast<UITextEdit>(g_lua.popClassInstance()))
+        textEdit->setText(text);
+    return 1;
+}
+
+int lua_UITextEdit_getText()
+{
+    if(UITextEditPtr textEdit = boost::dynamic_pointer_cast<UITextEdit>(g_lua.popClassInstance()))
+        g_lua.pushString(textEdit->getText());
     else
         g_lua.pushNil();
     return 1;

@@ -43,6 +43,7 @@ window#enterGameWindow
     anchors.bottom: parent.bottom
     margin.bottom: 10
     margin.right: 66
+    onClick: enterGame_onOkClicked()
 
   button#cancelButton
     text: Cancel

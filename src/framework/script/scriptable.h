@@ -36,7 +36,7 @@ public:
 
     int getLuaTableRef();
     void releaseLuaTableRef();
-    void callLuaTableField(const std::string& field);
+    void callLuaTableField(const std::string& field, int numArgs = 0);
 
 private:
     int m_luaTableRef;

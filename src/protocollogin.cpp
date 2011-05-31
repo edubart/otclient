@@ -24,6 +24,7 @@
 #include "protocollogin.h"
 #include <net/outputmessage.h>
 #include <util/rsa.h>
+#include <script/luascript.h>
 
 ProtocolLogin::ProtocolLogin()
 {
@@ -131,13 +132,15 @@ void ProtocolLogin::onRecv(InputMessage *inputMessage)
 void ProtocolLogin::parseError(InputMessage *inputMessage)
 {
     std::string error = inputMessage->getString();
-    logError(error.c_str());
+    g_lua.pushString(error);
+    callLuaTableField("onError", 1);
 }
 
 void ProtocolLogin::parseMOTD(InputMessage *inputMessage)
 {
     std::string motd = inputMessage->getString();
-    logError(motd.c_str());
+    g_lua.pushString(motd);
+    callLuaTableField("onMotd", 1);
 }
 
 void ProtocolLogin::parseCharacterList(InputMessage *inputMessage)

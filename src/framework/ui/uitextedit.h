@@ -40,7 +40,7 @@ public:
     void onRectUpdate();
     void onFocusChange();
 
-    void setText(const std::string& text);
+    void setText(const std::string& text) { m_textArea.setText(text); }
     std::string getText() const { return m_textArea.getText(); }
     TextArea& getTextArea() { return m_textArea; }
 
