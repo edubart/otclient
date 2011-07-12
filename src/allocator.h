@@ -1,31 +1,57 @@
 #ifndef __ALLOCATOR_H__
 #define __ALLOCATOR_H__
 
-#include <stdint.h>
-#include <stdlib.h>
-#include <list>
+#ifdef _DEBUG_MEMORY
+
+#include <unordered_set>
+
+#ifdef _REENTRANT
 #include <boost/thread.hpp>
+#endif
 
-class Allocator;
-
-struct  AllocationBlock
+struct AllocationBlock
 {
-    ~AllocationBlock() { free(backtraceBuffer); }
-
-    uint32_t bytes;
-    uint32_t records;
+    unsigned int bytes;
     void** backtraceBuffer;
-    uint8_t backtraceSize;
-
-    friend class Allocator;
+    unsigned char backtraceSize;
+    unsigned int records;
 };
 
-//TODO: allocattion tags
-/*
-struct AllocationTag
-{
-    std::_List_node_base *listNode;
-};*/
+struct block_hash : std::unary_function<AllocationBlock *, std::size_t> {
+    std::size_t operator()(const AllocationBlock *block) const {
+        struct HashKey {
+            unsigned int bytes;
+            void *backtraceTop[3];
+            unsigned char backtraceSize;
+        } hashKey;
+
+        hashKey.bytes = block->bytes;
+        for(int i=0;i<3;++i) {
+            if(i < block->backtraceSize)
+                hashKey.backtraceTop[i] = block->backtraceBuffer[i];
+            else
+                hashKey.backtraceTop[i] = NULL;
+        }
+        hashKey.backtraceSize = block->backtraceSize;
+
+        //std::hash<HashKey> hasher;
+        return 1;//hasher(hashKey);
+    }
+};
+
+struct block_equal_to : std::binary_function<AllocationBlock *, AllocationBlock *, bool> {
+    bool operator()(const AllocationBlock* a, const AllocationBlock *b) const
+    {
+        if(a->bytes != b->bytes || a->backtraceSize != b->backtraceSize)
+            return false;
+        for(int i=0;i<a->backtraceSize;++i)
+            if(a->backtraceBuffer[i] != b->backtraceBuffer[i])
+                return false;
+        return true;
+    }
+};
+
+//TODO: use mem tags
 
 class Allocator
 {
@@ -34,34 +60,28 @@ public:
     ~Allocator();
 
     void *allocate(size_t bytes);
-    void deallocate(void* p);
+    void deallocate(void *p);
 
     void dumpLeaks();
 
-    static Allocator* instance() {
-        return &m_instance;
-    }
-
 private:
-    AllocationBlock* findBlock(void **backtrace, int backtraceSize, uint32_t bytes);
+    AllocationBlock* findBlock(void** backtraceBuffer, int backtraceSize, unsigned int bytes);
 
-    typedef std::list<AllocationBlock*> AllocationBlocksList;
+    typedef std::unordered_set<AllocationBlock*, block_hash, block_equal_to> AllocationBlocksList;
     AllocationBlocksList m_allocationsBlocks;
 
-    typedef std::list<AllocationBlock*> AllocationsAddressesMap;
-    AllocationsAddressesMap m_allocationAddresses;
-
+#ifdef _REENTRANT
     boost::recursive_mutex m_allocatorLock;
-    bool m_inside;
-
-    static Allocator m_instance;
+#endif
 };
 
 void* operator new(size_t bytes, int dummy);
 void* operator new(size_t bytes);
 void* operator new[](size_t bytes);
 void operator delete(void *p);
-void operator delete[](void* p);
+void operator delete[](void *p);
+
+#endif // _DEBUG_MEMORY
 
 #endif
 

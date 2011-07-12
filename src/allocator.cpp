@@ -1,28 +1,39 @@
+#ifdef _DEBUG_MEMORY
+
 #include "allocator.h"
 
-#include <ucontext.h>
+#include <cstdio>
+#include <cstdlib>
 #include <execinfo.h>
 
-#if defined(REG_EIP)
-# define MACHINE_X86
-# define REGFORMAT "0x%08x"
-# define ADDRTYPE unsigned int
-#elif defined(REG_RIP)
-# define MACHINE_X86_64
-# define REGFORMAT "0x%016lx"
-# define ADDRTYPE long unsigned int
-#endif
+bool allocatorEnabled = false;
+Allocator *allocator = NULL;
 
-Allocator Allocator::m_instance __attribute__((init_priority(101)));
+void disableAllocator() { allocatorEnabled = false; }
+void enableAllocator() { allocatorEnabled = true; }
+bool isAllocatorEnabled() { return allocatorEnabled; }
 
-static void addr2line(ADDRTYPE address, const char* name, bool viewSource = false)
+class Initializer {
+public:
+    Initializer() {
+        allocator = new Allocator;
+        enableAllocator();
+    }
+    ~Initializer() {
+        disableAllocator();
+        Allocator *tmp = allocator;
+        allocator = NULL;
+        delete tmp;
+    }
+};
+Initializer initializer __attribute__((init_priority(101)));
+
+static void addr2line(void *address, const char* name, bool viewSource = false)
 {
     char tmpbuf[1024];
     char *pos;
 
-    printf(REGFORMAT": ", address);
-
-    snprintf(tmpbuf, sizeof(tmpbuf), "addr2line --functions --demangle -e %s "REGFORMAT, name, address);
+    snprintf(tmpbuf, sizeof(tmpbuf), "addr2line --functions --demangle -e %s %p", name, address);
 
     FILE *output = popen(tmpbuf, "r");
     if(output) {
@@ -95,63 +106,63 @@ static void addr2line(ADDRTYPE address, const char* name, bool viewSource = fals
     printf("\n");
 }
 
-Allocator::Allocator() : m_inside(false)
+Allocator::Allocator()
 {
-
 }
 
 Allocator::~Allocator()
 {
+#ifdef _REENTRANT
     boost::recursive_mutex::scoped_lock lock(m_allocatorLock);
+#endif
 
     dumpLeaks();
 
-    m_inside = true;
+    disableAllocator();
 
     for(AllocationBlocksList::iterator it = m_allocationsBlocks.begin(), end = m_allocationsBlocks.end(); it != end; ++it) {
         AllocationBlock* block = (*it);
-        block->~AllocationBlock();
+        free(block->backtraceBuffer);
         free(block);
     }
     m_allocationsBlocks.clear();
-    m_allocationAddresses.clear();
 
-    m_inside = false;
+    enableAllocator();
 }
 
-//TODO: dump leaks to a file
 void Allocator::dumpLeaks()
 {
+#ifdef _REENTRANT
     boost::recursive_mutex::scoped_lock lock(m_allocatorLock);
+#endif
 
-    m_inside = true;
+    disableAllocator();
 
-    if(m_allocationAddresses.size() > 0) {
-        uint32_t definitelyLostBytes = 0;
-        uint32_t blockNumber = 1;
-        uint32_t countRecords = 0;
-        uint32_t numberOfLeakedBlocks = 0;
-        uint32_t numberOfBlocks = m_allocationsBlocks.size();
+    unsigned int definitelyLostBytes = 0;
+    unsigned int blockNumber = 1;
+    unsigned int countRecords = 0;
+    unsigned int numberOfLeakedBlocks = 0;
+    unsigned int numberOfBlocks = m_allocationsBlocks.size();
 
-
-        for(AllocationBlocksList::iterator it = m_allocationsBlocks.begin(), end = m_allocationsBlocks.end(); it != end; ++it) {
-            AllocationBlock* block = (*it);
-            if(block->records != 0) {
-                numberOfLeakedBlocks++;
-            }
+    for(AllocationBlocksList::iterator it = m_allocationsBlocks.begin(), end = m_allocationsBlocks.end(); it != end; ++it) {
+        AllocationBlock* block = (*it);
+        if(block->records != 0) {
+            numberOfLeakedBlocks++;
         }
+    }
 
+    if(numberOfLeakedBlocks > 0) {
         printf("== LOST BLOCKS:\n");
         for(AllocationBlocksList::iterator it = m_allocationsBlocks.begin(), end = m_allocationsBlocks.end(); it != end; ++it) {
             AllocationBlock* block = (*it);
             if(block->records != 0) {
-                uint32_t lostBytes = block->bytes * block->records;
+                unsigned int lostBytes = block->bytes * block->records;
 
                 definitelyLostBytes += lostBytes;
                 countRecords += block->records;
 
                 printf("%d bytes in %d block\'s records are definitely lost in loss %d of %d\n",
-                       lostBytes, block->records, blockNumber, numberOfLeakedBlocks);
+                        lostBytes, block->records, blockNumber, numberOfLeakedBlocks);
 
                 char **strings = backtrace_symbols(block->backtraceBuffer, block->backtraceSize);
                 for(int i = 0; i < block->backtraceSize; i++) {
@@ -161,7 +172,7 @@ void Allocator::dumpLeaks()
                         printf("\tby ");
                     }
                     std::string str = strings[i];
-                    addr2line((ADDRTYPE)block->backtraceBuffer[i], str.substr(0, str.find('(')).c_str());
+                    addr2line(block->backtraceBuffer[i], str.substr(0, str.find('(')).c_str());
                 }
                 printf("\n");
                 free(strings);
@@ -176,7 +187,7 @@ void Allocator::dumpLeaks()
         printf("leaked blocks: %d in %d blocks\n", numberOfLeakedBlocks, numberOfBlocks);
     }
 
-    m_inside = false;
+    enableAllocator();
 }
 
 void printBacktrace()
@@ -191,137 +202,128 @@ void printBacktrace()
             printf("\tat ");
         }
         std::string str = strings[i];
-        addr2line((ADDRTYPE)buffer[i], str.substr(0, str.find('(')).c_str());
+        addr2line(buffer[i], str.substr(0, str.find('(')).c_str());
     }
     printf("\n");
     free(strings);
 }
 
-//TODO: dump allocator memory stats by blocks to a file
-
-AllocationBlock* Allocator::findBlock(void **backtraceBuffer, int backtraceSize, uint32_t bytes)
+AllocationBlock* Allocator::findBlock(void **backtraceBuffer, int backtraceSize, unsigned int bytes)
 {
-    for(AllocationBlocksList::iterator it = m_allocationsBlocks.begin(), end = m_allocationsBlocks.end(); it != end; ++it) {
-        AllocationBlock* block = (*it);
+    AllocationBlock blockToFind;
+    blockToFind.backtraceBuffer = backtraceBuffer;
+    blockToFind.backtraceSize = backtraceSize;
+    blockToFind.bytes = bytes;
 
-        if(block->bytes != bytes || block->backtraceSize != backtraceSize) {
-            continue;
-        }
-
-        bool isSame = true;
-        for(int i = 0; i < backtraceSize; i++) {
-            if(block->backtraceBuffer[i] != backtraceBuffer[i]) {
-                isSame = false;
-                break;
-            }
-        }
-
-        if(isSame) {
-            return block;
-        }
-    }
+    auto it = m_allocationsBlocks.find(&blockToFind);
+    if(it != m_allocationsBlocks.end())
+        return (*it);
     return NULL;
 }
 
 void *Allocator::allocate(size_t bytes)
 {
+#ifdef _REENTRANT
     boost::recursive_mutex::scoped_lock lock(m_allocatorLock);
+#endif
 
-    if(m_inside) {
+    if(!isAllocatorEnabled()) {
         return malloc(bytes);
     } else {
-        void* p = malloc(bytes + sizeof(ADDRTYPE));
-        void* p2 = (void*)((ADDRTYPE)p + sizeof(ADDRTYPE));
+        disableAllocator();
 
-        m_inside = true;
-
-        static void* buffer[128];
+        void* p = malloc(bytes + sizeof(void *));
+        void* usedPtr = (void *)((char *)p + sizeof(void *));
+        static void *buffer[128];
         int size = backtrace(buffer, 128);
+        AllocationBlock* block = findBlock(&buffer[1], size - 1, bytes);
 
-        AllocationBlock* block = findBlock(&buffer[1], size-1, bytes);
         if(!block) {
-            block = (AllocationBlock *) malloc(sizeof(AllocationBlock));
+            block = (AllocationBlock *)malloc(sizeof(AllocationBlock));
 
-            block->backtraceBuffer = (void**) malloc((sizeof(void*)) * (size - 1));
-            block->backtraceSize = size-1;
+            block->backtraceBuffer = (void **)malloc(sizeof(void*) * (size - 1));
+            block->backtraceSize = size - 1;
             block->bytes = bytes;
             block->records = 0;
 
-            for(int i=0;i<size-1;i++) {
+            for(int i=0;i<size-1;i++)
                 block->backtraceBuffer[i] = buffer[i+1];
-            }
 
-            m_allocationsBlocks.push_front(block);
+            m_allocationsBlocks.insert(block);
         }
         block->records += 1;
+        *((void **)p) = (void *)block;
 
-        m_allocationAddresses.push_front(block);
-        *(ADDRTYPE *)p = (ADDRTYPE)m_allocationAddresses.begin()._M_node;
-
-        m_inside = false;
-
-        return p2;
+        enableAllocator();
+        return usedPtr;
     }
 }
 
-void Allocator::deallocate(void* p)
+void Allocator::deallocate(void *p)
 {
+#ifdef _REENTRANT
     boost::recursive_mutex::scoped_lock lock(m_allocatorLock);
+#endif
 
-    if(m_inside) {
+    if(!isAllocatorEnabled()) {
         free(p);
     } else if(p == NULL) {
-        m_inside = true;
+        disableAllocator();
 
         printf("attempt to delete NULL address\n");
         printBacktrace();
 
-        m_inside = false;
-        return;
+        enableAllocator();
     } else {
-        void *p2 = (void*)((ADDRTYPE)p - sizeof(ADDRTYPE));
+        disableAllocator();
 
-        if(!m_inside) {
-            m_inside = true;
+        void *allocatedPtr = (void *)((char *)p - sizeof(void *));
+        AllocationBlock *block = (AllocationBlock *)(*((void **)allocatedPtr));
 
-            AllocationsAddressesMap::iterator it((std::__detail::_List_node_base*)(*(ADDRTYPE*)p2));
+        block->records--;
+        memset(allocatedPtr, 0, block->bytes + sizeof(void *));
 
-            AllocationBlock* block = (*it);
-            block->records -= 1;
-            memset(p2, 0x00, block->bytes);
+        free(allocatedPtr);
 
-            m_allocationAddresses.erase(it);
-
-            m_inside = false;
-
-            free(p2);
-        } else {
-            free(p);
-        }
+        enableAllocator();
     }
 }
 
-void* operator new(size_t bytes, int dummy)
+void *operator new(size_t bytes, int dummy)
 {
-    return Allocator::instance()->allocate(bytes);
+    if(allocator)
+        return allocator->allocate(bytes);
+    return malloc(bytes);
 }
 
-void* operator new(size_t bytes)
+void *operator new(size_t bytes)
 {
-    return Allocator::instance()->allocate(bytes);
+    if(allocator)
+        return allocator->allocate(bytes);
+    return malloc(bytes);
 }
 
-void* operator new[](size_t bytes)
+void *operator new[](size_t bytes)
 {
-    return Allocator::instance()->allocate(bytes);
+    if(allocator)
+        return allocator->allocate(bytes);
+    return malloc(bytes);
 }
 
 void operator delete(void *p)
 {
-    Allocator::instance()->deallocate(p);
+    if(allocator)
+        allocator->deallocate(p);
+    else
+        free(p);
 }
 
-void operator delete[](void* p)
+void operator delete[](void *p)
 {
-    Allocator::instance()->deallocate(p);
+    if(allocator)
+        allocator->deallocate(p);
+    else
+        free(p);
 }
+
+#endif // _DEBUG_MEMORY
