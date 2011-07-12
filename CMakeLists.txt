@@ -47,6 +47,7 @@ ENDIF(CMAKE_BUILD_TYPE STREQUAL "Debug")
 SET(SOURCES
 # game sources
     src/main.cpp
+    src/allocator.cpp
 
 # game net
     src/protocollogin.cpp

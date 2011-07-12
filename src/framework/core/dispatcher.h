@@ -46,6 +46,9 @@ class Dispatcher
 public:
     Dispatcher() { }
 
+    /// Cleanup scheduled events
+    void cleanup();
+
     /// Execute scheduled events
     void poll();
 

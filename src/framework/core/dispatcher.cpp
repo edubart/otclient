@@ -28,6 +28,15 @@
 
 Dispatcher g_dispatcher;
 
+void Dispatcher::cleanup()
+{
+    while(!m_scheduledTaskList.empty()) {
+        ScheduledTask *task = m_scheduledTaskList.top();
+        m_scheduledTaskList.pop();
+        delete task;
+    }
+}
+
 void Dispatcher::poll()
 {
     while(!m_taskList.empty()) {

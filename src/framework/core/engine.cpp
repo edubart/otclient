@@ -58,6 +58,7 @@ void Engine::terminate()
     // terminate stuff
     g_fonts.terminate();
     g_graphics.terminate();
+    g_dispatcher.cleanup();
 }
 
 void Engine::poll()
