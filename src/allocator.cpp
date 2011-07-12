@@ -106,6 +106,25 @@ static void addr2line(void *address, const char* name, bool viewSource = false)
     printf("\n");
 }
 
+void printBacktrace()
+{
+    void *buffer[128];
+    int size = backtrace(buffer, 128);
+    char **strings = backtrace_symbols(buffer, size);
+    for(int i = 1; i < size; i++) {
+        if(i == 1) {
+            printf("\tfrom ");
+        } else {
+            printf("\tat ");
+        }
+        std::string str = strings[i];
+        addr2line(buffer[i], str.substr(0, str.find('(')).c_str());
+    }
+    printf("\n");
+    free(strings);
+}
+
+
 Allocator::Allocator()
 {
 }
@@ -118,16 +137,12 @@ Allocator::~Allocator()
 
     dumpLeaks();
 
-    disableAllocator();
-
     for(AllocationBlocksList::iterator it = m_allocationsBlocks.begin(), end = m_allocationsBlocks.end(); it != end; ++it) {
         AllocationBlock* block = (*it);
         free(block->backtraceBuffer);
         free(block);
     }
     m_allocationsBlocks.clear();
-
-    enableAllocator();
 }
 
 void Allocator::dumpLeaks()
@@ -136,7 +151,11 @@ void Allocator::dumpLeaks()
     boost::recursive_mutex::scoped_lock lock(m_allocatorLock);
 #endif
 
-    disableAllocator();
+    bool shouldRenable = false;
+    if(isAllocatorEnabled()) {
+        disableAllocator();
+        shouldRenable = true;
+    }
 
     unsigned int definitelyLostBytes = 0;
     unsigned int blockNumber = 1;
@@ -187,25 +206,8 @@ void Allocator::dumpLeaks()
         printf("leaked blocks: %d in %d blocks\n", numberOfLeakedBlocks, numberOfBlocks);
     }
 
-    enableAllocator();
-}
-
-void printBacktrace()
-{
-    void *buffer[128];
-    int size = backtrace(buffer, 128);
-    char **strings = backtrace_symbols(buffer, size);
-    for(int i = 1; i < size; i++) {
-        if(i == 1) {
-            printf("\tfrom ");
-        } else {
-            printf("\tat ");
-        }
-        std::string str = strings[i];
-        addr2line(buffer[i], str.substr(0, str.find('(')).c_str());
-    }
-    printf("\n");
-    free(strings);
+    if(shouldRenable)
+        enableAllocator();
 }
 
 AllocationBlock* Allocator::findBlock(void **backtraceBuffer, int backtraceSize, unsigned int bytes)

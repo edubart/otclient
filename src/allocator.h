@@ -4,6 +4,7 @@
 #ifdef _DEBUG_MEMORY
 
 #include <unordered_set>
+#include <boost/functional/hash.hpp>
 
 #ifdef _REENTRANT
 #include <boost/thread.hpp>
@@ -19,23 +20,17 @@ struct AllocationBlock
 
 struct block_hash : std::unary_function<AllocationBlock *, std::size_t> {
     std::size_t operator()(const AllocationBlock *block) const {
-        struct HashKey {
-            unsigned int bytes;
-            void *backtraceTop[3];
-            unsigned char backtraceSize;
-        } hashKey;
+        std::size_t seed = 0;
 
-        hashKey.bytes = block->bytes;
+        boost::hash_combine(seed, block->bytes);
         for(int i=0;i<3;++i) {
             if(i < block->backtraceSize)
-                hashKey.backtraceTop[i] = block->backtraceBuffer[i];
+                boost::hash_combine(seed, block->backtraceBuffer[i]);
             else
-                hashKey.backtraceTop[i] = NULL;
+                boost::hash_combine(seed, 0);
         }
-        hashKey.backtraceSize = block->backtraceSize;
-
-        //std::hash<HashKey> hasher;
-        return 1;//hasher(hashKey);
+        boost::hash_combine(seed, block->backtraceSize);
+        return seed;
     }
 };
 
