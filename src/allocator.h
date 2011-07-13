@@ -10,12 +10,20 @@
 #include <boost/thread.hpp>
 #endif
 
+#define MAGIC_NUMBER 0xA1B2C3D4
+
 struct AllocationBlock
 {
     unsigned int bytes;
     void** backtraceBuffer;
     unsigned char backtraceSize;
     unsigned int records;
+};
+
+struct AllocationHead
+{
+    unsigned int magicNumber;
+    AllocationBlock *block;
 };
 
 struct block_hash : std::unary_function<AllocationBlock *, std::size_t> {
@@ -45,8 +53,6 @@ struct block_equal_to : std::binary_function<AllocationBlock *, AllocationBlock 
         return true;
     }
 };
-
-//TODO: use mem tags
 
 class Allocator
 {

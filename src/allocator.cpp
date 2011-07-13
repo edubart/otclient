@@ -234,8 +234,10 @@ void *Allocator::allocate(size_t bytes)
     } else {
         disableAllocator();
 
-        void* p = malloc(bytes + sizeof(void *));
-        void* usedPtr = (void *)((char *)p + sizeof(void *));
+        char *allocatedBuffer = (char *)malloc(sizeof(AllocationHead) + bytes);
+        AllocationHead *head = (AllocationHead *)allocatedBuffer;
+        void *p = (void *)(allocatedBuffer + sizeof(AllocationHead));
+
         static void *buffer[128];
         int size = backtrace(buffer, 128);
         AllocationBlock* block = findBlock(&buffer[1], size - 1, bytes);
@@ -253,11 +255,13 @@ void *Allocator::allocate(size_t bytes)
 
             m_allocationsBlocks.insert(block);
         }
-        block->records += 1;
-        *((void **)p) = (void *)block;
+        block->records++;
+
+        head->block = block;
+        head->magicNumber = MAGIC_NUMBER;
 
         enableAllocator();
-        return usedPtr;
+        return p;
     }
 }
 
@@ -279,13 +283,18 @@ void Allocator::deallocate(void *p)
     } else {
         disableAllocator();
 
-        void *allocatedPtr = (void *)((char *)p - sizeof(void *));
-        AllocationBlock *block = (AllocationBlock *)(*((void **)allocatedPtr));
+        p = (void*)((char *)p - sizeof(AllocationHead));
+        AllocationHead *head = (AllocationHead *)p;
 
-        block->records--;
-        memset(allocatedPtr, 0, block->bytes + sizeof(void *));
+        if(head->magicNumber == MAGIC_NUMBER) {
+            head->block->records--;
 
-        free(allocatedPtr);
+            memset(p, 0, head->block->bytes + sizeof(AllocationHead));
+            free(p);
+        } else {
+            printf("invalid delete address\n");
+            printBacktrace();
+        }
 
         enableAllocator();
     }
