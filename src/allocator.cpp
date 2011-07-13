@@ -106,13 +106,13 @@ static void addr2line(void *address, const char* name, bool viewSource = false)
     printf("\n");
 }
 
-void printBacktrace()
+void printBacktrace(int skips)
 {
     void *buffer[128];
     int size = backtrace(buffer, 128);
     char **strings = backtrace_symbols(buffer, size);
-    for(int i = 1; i < size; i++) {
-        if(i == 1) {
+    for(int i = 1 + skips; i < size; i++) {
+        if(i == 1 + skips) {
             printf("\tfrom ");
         } else {
             printf("\tat ");
@@ -277,7 +277,7 @@ void Allocator::deallocate(void *p)
         disableAllocator();
 
         printf("attempt to delete NULL address\n");
-        printBacktrace();
+        printBacktrace(1);
 
         enableAllocator();
     } else {
@@ -293,7 +293,7 @@ void Allocator::deallocate(void *p)
             free(p);
         } else {
             printf("invalid delete address\n");
-            printBacktrace();
+            printBacktrace(1);
         }
 
         enableAllocator();
