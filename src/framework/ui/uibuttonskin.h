@@ -25,7 +25,7 @@
 #ifndef UIBUTTONSKIN_H
 #define UIBUTTONSKIN_H
 
-#include <prerequisites.h>
+#include <global.h>
 #include <ui/uiconstants.h>
 #include <ui/uielementskin.h>
 
@@ -37,7 +37,7 @@ public:
     UIButtonSkin(const std::string& name) :
         UIElementSkin(name, UI::Button) { }
 
-    void load(FML::Node* node);
+    void load(OTMLNode* node);
     void draw(UIElement *element);
 
 private:

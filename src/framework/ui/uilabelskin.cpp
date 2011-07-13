@@ -22,12 +22,12 @@
  */
 
 
-#include <prerequisites.h>
+#include <global.h>
 #include <graphics/fonts.h>
 #include <ui/uilabelskin.h>
 #include <ui/uilabel.h>
 
-void UILabelSkin::load(FML::Node* node)
+void UILabelSkin::load(OTMLNode* node)
 {
     UIElementSkin::load(node);
 }

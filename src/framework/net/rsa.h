@@ -24,11 +24,12 @@
 #ifndef RSA_H
 #define RSA_H
 
-#include <prerequisites.h>
+#include <global.h>
 
 #include <gmp.h>
 
-class Rsa{
+class Rsa
+{
 public:
     Rsa();
     ~Rsa();

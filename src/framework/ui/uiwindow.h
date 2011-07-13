@@ -25,7 +25,7 @@
 #ifndef UIWINDOW_H
 #define UIWINDOW_H
 
-#include <prerequisites.h>
+#include <global.h>
 #include <ui/uicontainer.h>
 
 class UIWindow : public UIContainer

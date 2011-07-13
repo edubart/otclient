@@ -25,10 +25,11 @@
 #ifndef UIELEMENTSKIN_H
 #define UIELEMENTSKIN_H
 
-#include <prerequisites.h>
+#include <global.h>
 #include <graphics/image.h>
 #include <ui/uiconstants.h>
 #include <graphics/font.h>
+#include <otml/otmlnode.h>
 
 class UIElement;
 
@@ -42,7 +43,7 @@ public:
     virtual ~UIElementSkin() { }
 
     /// Load the skin from a FML node
-    virtual void load(FML::Node* node);
+    virtual void load(OTMLNode* node);
     /// Apply the skin to an element
     virtual void apply(UIElement *element);
     /// Draw the skinned element
@@ -56,8 +57,8 @@ public:
     Color getFontColor() const { return m_fontColor; }
 
 protected:
-    ImagePtr loadImage(FML::Node* node);
-    FontPtr loadFont(FML::Node* node);
+    ImagePtr loadImage(OTMLNode* node);
+    FontPtr loadFont(OTMLNode* node);
 
 private:
     std::string m_name;

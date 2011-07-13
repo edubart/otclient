@@ -25,7 +25,7 @@
 #ifndef UICHECKBOX_H
 #define UICHECKBOX_H
 
-#include <prerequisites.h>
+#include <global.h>
 #include <ui/uielement.h>
 
 class UICheckBox : public UIElement

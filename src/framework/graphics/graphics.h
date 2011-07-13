@@ -25,8 +25,12 @@
 #ifndef GRAPHICS_H
 #define GRAPHICS_H
 
-#include <prerequisites.h>
-#include <graphics/texture.h>
+#include <global.h>
+#include <graphics/textures.h>
+
+#include <GL/gl.h>
+#include <GL/glu.h>
+#include <GL/glext.h>
 
 class Graphics
 {

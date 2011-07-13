@@ -25,8 +25,8 @@
 #ifndef ANIMATEDTEXTURE_H
 #define ANIMATEDTEXTURE_H
 
-#include <prerequisites.h>
-#include <graphics/texture.h>
+#include <global.h>
+#include <graphics/graphics.h>
 
 class AnimatedTexture : public Texture
 {

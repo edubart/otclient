@@ -25,15 +25,19 @@
 #ifndef DISPATCHER_H
 #define DISPATCHER_H
 
-#include <prerequisites.h>
+#include <global.h>
+#include <queue>
+
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
 
 class ScheduledTask {
 public:
-    inline ScheduledTask(const SimpleCallback& _callback) : ticks(0), callback(_callback) { }
-    inline ScheduledTask(int _ticks, const SimpleCallback& _callback) : ticks(_ticks), callback(_callback)  { }
+    inline ScheduledTask(const boost::function<void()>& _callback) : ticks(0), callback(_callback) { }
+    inline ScheduledTask(int _ticks, const boost::function<void()>& _callback) : ticks(_ticks), callback(_callback)  { }
     inline bool operator<(const ScheduledTask& other) const { return ticks > other.ticks; }
     int ticks;
-    SimpleCallback callback;
+    boost::function<void()> callback;
 };
 
 class lessScheduledTask : public std::binary_function<ScheduledTask*&, ScheduledTask*&, bool> {
@@ -53,13 +57,13 @@ public:
     void poll();
 
     /// Add an event
-    void addTask(const SimpleCallback& callback, bool pushFront = false);
+    void addTask(const boost::function<void()>& callback, bool pushFront = false);
 
     /// Schedula an event
-    void scheduleTask(const SimpleCallback& callback, int delay);
+    void scheduleTask(const boost::function<void()>& callback, int delay);
 
 private:
-    std::list<SimpleCallback> m_taskList;
+    std::list<boost::function<void()>> m_taskList;
     std::priority_queue<ScheduledTask*, std::vector<ScheduledTask*>, lessScheduledTask> m_scheduledTaskList;
 };
 

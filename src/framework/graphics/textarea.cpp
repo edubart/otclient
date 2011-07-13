@@ -22,7 +22,7 @@
  */
 
 
-#include <prerequisites.h>
+#include <global.h>
 #include <core/engine.h>
 #include <graphics/textarea.h>
 #include <graphics/graphics.h>

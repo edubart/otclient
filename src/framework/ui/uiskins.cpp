@@ -22,7 +22,7 @@
  */
 
 
-#include <prerequisites.h>
+#include <global.h>
 #include <core/resources.h>
 #include <graphics/textures.h>
 #include <ui/uiskins.h>
@@ -32,6 +32,7 @@
 #include <ui/uitexteditskin.h>
 #include <ui/uilabelskin.h>
 #include <graphics/fonts.h>
+#include <otml/otml.h>
 
 UISkins g_uiSkins;
 
@@ -41,15 +42,15 @@ void UISkins::load(const std::string& skinName)
 
     std::stringstream fin;
     if(!g_resources.loadFile(skinName + ".yml", fin))
-        flogFatal("FATAL ERROR: Could not load skin \"%s",  skinName.c_str());
+        fatal("FATAL ERROR: Could not load skin '",skinName,"'");
 
     try {
-        FML::Parser parser(fin, skinName);
-        FML::Node* doc = parser.getDocument();
+        OTMLParser parser(fin, skinName);
+        OTMLNode* doc = parser.getDocument();
 
         m_defaultFont = g_fonts.get(doc->valueAt("default font"));
         if(!m_defaultFont)
-            logFatal("FATAL ERROR: Could not load skin default font");
+            fatal("FATAL ERROR: Could not load skin default font");
 
         m_defaultFontColor = doc->readAt("default font color", Color::white);
 
@@ -57,9 +58,9 @@ void UISkins::load(const std::string& skinName)
         if(!defaultTextureName.empty())
             m_defaultTexture = g_textures.get(defaultTextureName);
 
-        foreach(FML::Node* node, *doc) {
+        foreach(OTMLNode* node, *doc) {
             UIElementSkinPtr skin;
-            foreach(FML::Node* cnode, *node) {
+            foreach(OTMLNode* cnode, *node) {
                 if(node->tag() == "buttons")
                     skin = UIElementSkinPtr(new UIButtonSkin(cnode->tag()));
                 else if(node->tag() == "panels")
@@ -79,8 +80,8 @@ void UISkins::load(const std::string& skinName)
                 m_elementSkins.push_back(skin);
             }
         }
-    } catch(FML::Exception e) {
-        flogFatal("FATAL ERROR: Malformed skin file \"%s\":\n  %s", skinName.c_str() % e.what());
+    } catch(OTMLException e) {
+        fatal("FATAL ERROR: Malformed skin file '",skinName,"':\n  ",e.what());
     }
 
     g_resources.popCurrentPath();
@@ -99,6 +100,6 @@ UIElementSkinPtr UISkins::getElementSkin(UI::ElementType elementType, const std:
         if(elementType == skin->getElementType() && name == skin->getName())
             return skin;
     }
-    flogWarning("Element skin '%s' not found", name.c_str());
+    warning("Element skin '",name,"' not found");
     return UIElementSkinPtr();
 }

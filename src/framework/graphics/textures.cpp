@@ -22,11 +22,13 @@
  */
 
 
-#include <prerequisites.h>
+#include <global.h>
 #include <core/resources.h>
 #include <graphics/textures.h>
 #include <graphics/textureloader.h>
 #include <core/dispatcher.h>
+
+#include <boost/algorithm/string.hpp>
 
 Textures g_textures;
 
@@ -47,14 +49,14 @@ TexturePtr Textures::get(const std::string& textureFile)
     if(!texture) {
         // currently only png textures are supported
         if(!boost::ends_with(textureFile, ".png")) {
-            flogError("ERROR: Unable to load texture %s, file format no supported.", textureFile.c_str());
+            error("ERROR: Unable to load texture '",textureFile,"', file format no supported.");
             return texture;
         }
 
         // load texture file data
         std::stringstream fin;
         if(!g_resources.loadFile(textureFile, fin)) {
-            flogError("ERROR: Unable to load texture %s, file could not be read.", textureFile.c_str());
+            error("ERROR: Unable to load texture '",textureFile,"', file could not be read.");
             return texture;
         }
 
@@ -62,7 +64,7 @@ TexturePtr Textures::get(const std::string& textureFile)
         // load the texture
         texture = TexturePtr(TextureLoader::loadPNG(fin));
         if(!texture)
-            flogError("ERROR: Unable to load texture %s", textureFile.c_str());
+            error("ERROR: Unable to load texture '",textureFile,"'");
     }
     return texture;
 }

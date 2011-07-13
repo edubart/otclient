@@ -22,7 +22,7 @@
  */
 
 
-#include <prerequisites.h>
+#include <global.h>
 #include <graphics/borderedimage.h>
 #include <graphics/graphics.h>
 #include <graphics/textures.h>

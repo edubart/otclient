@@ -25,7 +25,7 @@
 #ifndef UITEXTEDIT_H
 #define UITEXTEDIT_H
 
-#include <prerequisites.h>
+#include <global.h>
 #include <graphics/textarea.h>
 #include <ui/uielement.h>
 

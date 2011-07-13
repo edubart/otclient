@@ -24,7 +24,7 @@
 #ifndef UIWINDOWSKIN_H
 #define UIWINDOWSKIN_H
 
-#include <prerequisites.h>
+#include <global.h>
 #include <graphics/font.h>
 #include <ui/uielementskin.h>
 #include <graphics/borderedimage.h>
@@ -35,7 +35,7 @@ public:
     UIWindowSkin(const std::string& name) :
         UIElementSkin(name, UI::Window) { }
 
-    void load(FML::Node* node);
+    void load(OTMLNode* node);
     void draw(UIElement *element);
 
     int getHeadHeight() const { return m_headHeight; }

@@ -22,7 +22,7 @@
  */
 
 
-#include <prerequisites.h>
+#include <global.h>
 #include <core/resources.h>
 #include <ui/uicontainer.h>
 #include <ui/uianchorlayout.h>

@@ -25,7 +25,7 @@
 #ifndef INPUTMESSAGE_H
 #define INPUTMESSAGE_H
 
-#include <prerequisites.h>
+#include <global.h>
 
 class InputMessage
 {

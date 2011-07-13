@@ -22,10 +22,11 @@
  */
 
 
-#include <prerequisites.h>
+#include <global.h>
 #include <core/resources.h>
 #include <core/platform.h>
 
+#include <boost/algorithm/string.hpp>
 #include <physfs.h>
 
 Resources g_resources;
@@ -35,34 +36,32 @@ void Resources::init(const char *argv0)
     PHYSFS_init(argv0);
 
     // try to find data directory
-    std::list<std::string> searchPaths;
     std::string dir;
     std::string baseDir = PHYSFS_getBaseDir();
 
-    std::list<std::string> possibleDirs;
-    possibleDirs.push_back("data");
-    possibleDirs.push_back(baseDir + "data");
-    possibleDirs.push_back(baseDir + "../data");
-    possibleDirs.push_back(baseDir + "../share/otclient/data");
-    possibleDirs.push_back("");
+    std::string possibleDirs[] = { "data",
+                                   baseDir + "data",
+                                   baseDir + "../data",
+                                   baseDir + "../share/otclient/data",
+                                   "" };
 
     bool found = false;
     foreach(dir, possibleDirs) {
         if(g_resources.addToSearchPath(dir)) {
-            flogInfo("Using data directory: %s", dir.c_str());
+            info("Using data directory: ", dir.c_str());
             found = true;
             break;
         }
     }
     if(!found)
-        logFatal("ERROR: could not find data directory");
+        fatal("ERROR: could not find data directory");
 
     // setup write directory
     dir = Platform::getAppUserDir();
     if(g_resources.setWriteDir(dir))
         g_resources.addToSearchPath(dir);
     else
-        logError("ERROR: could not setup write directory");
+        error("ERROR: could not setup write directory");
 }
 
 void Resources::terminate()
@@ -109,7 +108,7 @@ bool Resources::loadFile(const std::string& fileName, std::iostream& out)
     out.clear(std::ios::goodbit);
     PHYSFS_file *file = PHYSFS_openRead(fullPath.c_str());
     if(!file) {
-        flogError("ERROR: Failed to load file \"%s\": %s", fullPath.c_str() % PHYSFS_getLastError());
+        error("ERROR: Failed to load file '", fullPath.c_str(), "': ", PHYSFS_getLastError());
         out.clear(std::ios::failbit);
         return false;
     } else {
@@ -131,7 +130,7 @@ bool Resources::saveFile(const std::string &fileName, const uchar *data, uint si
 {
     PHYSFS_file *file = PHYSFS_openWrite(resolvePath(fileName).c_str());
     if(!file) {
-        flogError("ERROR: Failed to save file \"%s\": %s", fileName.c_str() % PHYSFS_getLastError());
+        error("ERROR: Failed to save file '",fileName,"': ",PHYSFS_getLastError());
         return false;
     }
 

@@ -25,7 +25,7 @@
 #ifndef UISKIN_H
 #define UISKIN_H
 
-#include <prerequisites.h>
+#include <global.h>
 #include <graphics/texture.h>
 #include <ui/uielementskin.h>
 #include <graphics/font.h>

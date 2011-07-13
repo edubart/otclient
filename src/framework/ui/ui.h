@@ -25,7 +25,7 @@
 #ifndef UI_H
 #define UI_H
 
-#include <prerequisites.h>
+#include <global.h>
 #include <ui/uiconstants.h>
 
 #include <ui/uiskins.h>

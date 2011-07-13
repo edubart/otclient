@@ -25,8 +25,8 @@
 #ifndef FONT_H
 #define FONT_H
 
-#include <prerequisites.h>
-#include <graphics/texture.h>
+#include <global.h>
+#include <graphics/graphics.h>
 
 class Font
 {

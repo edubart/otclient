@@ -22,7 +22,7 @@
  */
 
 
-#include <prerequisites.h>
+#include <global.h>
 #include <core/dispatcher.h>
 #include <graphics/graphics.h>
 #include <ui/uielement.h>
@@ -79,7 +79,7 @@ void UIElement::destroyCheck()
     UIElementPtr me = asUIElement();
     // check for leaks, the number of references must be always 2 here
     if(me.use_count() != 2 && me != UIContainer::getRoot()) {
-        flogWarning("destroyed element with id '%s', but it still have %d references left", getId() % (me.use_count()-2));
+        warning("destroyed element with id '",getId(),"', but it still have ",(me.use_count()-2)," references left");
     }
 }
 

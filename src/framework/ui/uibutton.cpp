@@ -22,7 +22,7 @@
  */
 
 
-#include <prerequisites.h>
+#include <global.h>
 #include <core/dispatcher.h>
 #include <ui/uibutton.h>
 #include "uicontainer.h"

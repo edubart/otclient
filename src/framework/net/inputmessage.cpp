@@ -87,6 +87,6 @@ std::string InputMessage::getString()
 bool InputMessage::canRead(int bytes)
 {
     if((m_readPos + bytes > m_messageSize) || (m_readPos + bytes > BUFFER_MAXSIZE))
-        logFatal("[InputMessage::canRead()]: Cant read. Message is finished or read position has reached buffer's maximum size.");
+        fatal("[InputMessage::canRead()]: Cant read. Message is finished or read position has reached buffer's maximum size.");
     return true;
 }

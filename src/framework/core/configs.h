@@ -25,13 +25,13 @@
 #ifndef CONFIGS_H
 #define CONFIGS_H
 
-#include <prerequisites.h>
+#include <global.h>
 
 struct ConfigValueProxy {
-    operator std::string() const { return convert_cast<std::string>(value); }
-    operator float() const { return convert_cast<float>(value); }
-    operator int() const { return convert_cast<int>(value); }
-    operator bool() const { return convert_cast<bool>(value); }
+    operator std::string() const { return convert<std::string>(value); }
+    operator float() const { return convert<float>(value); }
+    operator int() const { return convert<int>(value); }
+    operator bool() const { return convert<bool>(value); }
     std::string value;
 };
 
@@ -41,7 +41,9 @@ public:
     bool load(const std::string& fileName);
     void save();
 
-    template<class T> void set(const std::string& key, const T& value) { m_confsMap[key] = convert_cast<std::string>(value); }
+    template<class T>
+    void set(const std::string& key, const T& value) { m_confsMap[key] = convert<std::string>(value); }
+
     ConfigValueProxy get(const std::string& key) { return ConfigValueProxy{m_confsMap[key]}; }
 
 private:

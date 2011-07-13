@@ -25,7 +25,7 @@
 #ifndef TEXTURE_H
 #define TEXTURE_H
 
-#include <prerequisites.h>
+#include <global.h>
 
 class Texture : public boost::enable_shared_from_this<Texture>
 {

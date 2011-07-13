@@ -22,9 +22,10 @@
  */
 
 
-#include <prerequisites.h>
+#include <global.h>
 #include <core/configs.h>
 #include <core/resources.h>
+#include <otml/otml.h>
 
 Configs g_configs;
 
@@ -32,18 +33,18 @@ bool Configs::load(const std::string& fileName)
 {
     m_fileName = fileName;
 
+    if(!g_resources.fileExists(fileName))
+        return false;
+
     std::stringstream fin;
     if(!g_resources.loadFile(fileName, fin))
         return false;
 
     try {
-        FML::Parser parser(fin, fileName);
-        FML::Node* doc = parser.getDocument();
-
-        foreach(FML::Node* node, *doc)
-            m_confsMap[node->tag()] = node->value();
-    } catch(FML::Exception e) {
-        flogError("ERROR: Malformed config file: %s", e.what());
+        OTMLParser parser(fin, fileName);
+        parser.getDocument()->read(&m_confsMap);
+    } catch(OTMLException e) {
+        error("ERROR: Malformed config file: ", e.what());
         return false;
     }
 
@@ -53,9 +54,8 @@ bool Configs::load(const std::string& fileName)
 void Configs::save()
 {
     if(!m_fileName.empty()) {
-        FML::Emitter emitter;
-        FML::Node *doc = emitter.createDocument();
-        doc->write(m_confsMap);
+        OTMLEmitter emitter;
+        emitter.createDocument()->write(m_confsMap);
         g_resources.saveFile(m_fileName, emitter.emitDocument());
     }
 }

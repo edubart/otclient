@@ -25,7 +25,7 @@
 #ifndef UILABELSKIN_H
 #define UILABELSKIN_H
 
-#include <prerequisites.h>
+#include <global.h>
 #include <graphics/font.h>
 #include <ui/uielementskin.h>
 
@@ -35,7 +35,7 @@ public:
     UILabelSkin(const std::string& name) :
         UIElementSkin(name, UI::Label) { }
 
-    void load(FML::Node* node);
+    void load(OTMLNode* node);
     void apply(UIElement *element);
     void draw(UIElement *element);
 };

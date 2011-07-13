@@ -25,7 +25,7 @@
 #ifndef SCRIPTABLE_H
 #define SCRIPTABLE_H
 
-#include <prerequisites.h>
+#include <global.h>
 
 class Scriptable : public boost::enable_shared_from_this<Scriptable>
 {

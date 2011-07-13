@@ -25,7 +25,7 @@
 #ifndef LUAFUNCTIONS_H
 #define LUAFUNCTIONS_H
 
-#include <prerequisites.h>
+#include <global.h>
 #include <script/scriptable.h>
 
 void registerLuaFunctions();

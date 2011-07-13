@@ -25,7 +25,7 @@
 #ifndef TEXTAREA_H
 #define TEXTAREA_H
 
-#include <prerequisites.h>
+#include <global.h>
 #include "font.h"
 
 class TextArea

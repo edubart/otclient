@@ -25,7 +25,7 @@
 #ifndef LUASCRIPT_H
 #define LUASCRIPT_H
 
-#include <prerequisites.h>
+#include <global.h>
 #include <script/scriptable.h>
 
 #define reportFuncError(a) reportError(a, __FUNCTION__)

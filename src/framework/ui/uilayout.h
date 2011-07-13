@@ -25,7 +25,7 @@
 #ifndef UILAYOUT_H
 #define UILAYOUT_H
 
-#include <prerequisites.h>
+#include <global.h>
 
 class UIElement;
 typedef boost::shared_ptr<UIElement> UIElementPtr;

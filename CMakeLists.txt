@@ -47,17 +47,23 @@ ENDIF(CMAKE_BUILD_TYPE STREQUAL "Debug")
 SET(SOURCES
 # game sources
     src/main.cpp
-    src/allocator.cpp
 
 # game net
     src/protocollogin.cpp
 
 # framework core
+    src/framework/core/global.cpp
     src/framework/core/dispatcher.cpp
     src/framework/core/configs.cpp
     src/framework/core/resources.cpp
     src/framework/core/engine.cpp
     src/framework/core/modules.cpp
+    src/framework/core/allocator.cpp
+
+# framework otml
+    src/framework/otml/otmlemitter.cpp
+    src/framework/otml/otmlparser.cpp
+    src/framework/otml/otmlnode.cpp
 
 # framework script
     src/framework/script/scriptable.cpp
@@ -66,11 +72,10 @@ SET(SOURCES
 
 # framework utilities
     src/framework/util/color.cpp
-    src/framework/util/util.cpp
+    src/framework/util/translator.cpp
+    src/framework/util/convert.cpp
     src/framework/util/logger.cpp
-    src/framework/util/rsa.cpp
     src/framework/util/apngloader.cpp
-    src/framework/util/fml.cpp
 
 # framework graphics
     src/framework/graphics/image.cpp
@@ -108,6 +113,7 @@ SET(SOURCES
     src/framework/net/protocol.cpp
     src/framework/net/inputmessage.cpp
     src/framework/net/outputmessage.cpp
+    src/framework/net/rsa.cpp
 )
 
 IF(WIN32)

@@ -21,7 +21,7 @@
  * THE SOFTWARE.
  */
 
-#include <prerequisites.h>
+#include <global.h>
 #include <core/platform.h>
 #include <graphics/framebuffer.h>
 #include <graphics/graphics.h>

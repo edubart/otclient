@@ -25,7 +25,7 @@
 #ifndef UIANCHORLAYOUT_H
 #define UIANCHORLAYOUT_H
 
-#include <prerequisites.h>
+#include <global.h>
 #include <ui/uiconstants.h>
 #include <ui/uilayout.h>
 #include <ui/uielement.h>

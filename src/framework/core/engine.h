@@ -25,7 +25,7 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
-#include <prerequisites.h>
+#include <global.h>
 #include <core/input.h>
 
 class Engine

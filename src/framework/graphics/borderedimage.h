@@ -25,7 +25,7 @@
 #ifndef BORDEREDIMAGE_H
 #define BORDEREDIMAGE_H
 
-#include <prerequisites.h>
+#include <global.h>
 #include <graphics/image.h>
 #include <graphics/texture.h>
 

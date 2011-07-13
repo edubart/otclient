@@ -22,7 +22,7 @@
  */
 
 
-#include <prerequisites.h>
+#include <global.h>
 #include <ui/uiskins.h>
 #include <ui/uielement.h>
 #include <ui/uielementskin.h>
@@ -30,7 +30,7 @@
 #include <graphics/textures.h>
 #include <graphics/fonts.h>
 
-void UIElementSkin::load(FML::Node* node)
+void UIElementSkin::load(OTMLNode* node)
 {
     m_defaultSize = node->readAt("default size", Size());
     m_defaultImage = loadImage(node);
@@ -50,12 +50,12 @@ void UIElementSkin::draw(UIElement *element)
         m_defaultImage->draw(element->getRect());
 }
 
-ImagePtr UIElementSkin::loadImage(FML::Node* node)
+ImagePtr UIElementSkin::loadImage(OTMLNode* node)
 {
     ImagePtr image;
     TexturePtr texture;
 
-    if(FML::Node* cnode = node->at("bordered image")) {
+    if(OTMLNode* cnode = node->at("bordered image")) {
         Rect left = cnode->readAt("left border", Rect());
         Rect right = cnode->readAt("right border", Rect());
         Rect top = cnode->readAt("top border", Rect());
@@ -86,8 +86,8 @@ ImagePtr UIElementSkin::loadImage(FML::Node* node)
         }
 
         if(!image)
-            logError(node->generateErrorMessage("failed to load bordered image"));
-    } else if(FML::Node* cnode = node->at("image")) {
+            error(node->generateErrorMessage("failed to load bordered image"));
+    } else if(OTMLNode* cnode = node->at("image")) {
         texture = g_textures.get(cnode->value());
         if(texture)
             image = ImagePtr(new Image(texture));
@@ -95,7 +95,7 @@ ImagePtr UIElementSkin::loadImage(FML::Node* node)
             m_defaultSize = texture->getSize();
 
         if(!image)
-            logError(cnode->generateErrorMessage("failed to load image"));
+            error(cnode->generateErrorMessage("failed to load image"));
     }
 
     if(texture) {
@@ -107,10 +107,10 @@ ImagePtr UIElementSkin::loadImage(FML::Node* node)
     return image;
 }
 
-FontPtr UIElementSkin::loadFont(FML::Node* node)
+FontPtr UIElementSkin::loadFont(OTMLNode* node)
 {
     FontPtr font;
-    if(FML::Node* cnode = node->at("font"))
+    if(OTMLNode* cnode = node->at("font"))
         font = g_fonts.get(cnode->value());
     if(!font)
         font = g_uiSkins.getDefaultFont();

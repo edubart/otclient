@@ -25,7 +25,7 @@
 #ifndef UILABEL_H
 #define UILABEL_H
 
-#include <prerequisites.h>
+#include <global.h>
 #include <ui/uielement.h>
 #include <graphics/font.h>
 

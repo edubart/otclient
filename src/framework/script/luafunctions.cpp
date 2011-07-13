@@ -22,7 +22,7 @@
  */
 
 
-#include <prerequisites.h>
+#include <global.h>
 #include <script/luafunctions.h>
 #include <script/luascript.h>
 #include <core/engine.h>

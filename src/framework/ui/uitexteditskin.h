@@ -25,7 +25,7 @@
 #ifndef UITEXTEDITSKIN_H
 #define UITEXTEDITSKIN_H
 
-#include <prerequisites.h>
+#include <global.h>
 #include <ui/uielementskin.h>
 
 class Font;
@@ -36,7 +36,7 @@ public:
     UITextEditSkin(const std::string& name) :
         UIElementSkin(name, UI::TextEdit) { }
 
-    void load(FML::Node* node);
+    void load(OTMLNode* node);
     void apply(UIElement *element);
     void draw(UIElement *element);
 

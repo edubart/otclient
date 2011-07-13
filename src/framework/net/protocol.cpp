@@ -24,6 +24,8 @@
 
 #include <net/protocol.h>
 
+#include <boost/bind.hpp>
+
 Protocol::Protocol() :
         m_connection(new Connection)
 {
@@ -32,7 +34,7 @@ Protocol::Protocol() :
     m_xteaEncryptionEnabled = false;
 }
 
-void Protocol::connect(const std::string& host, uint16 port, const SimpleCallback& callback)
+void Protocol::connect(const std::string& host, uint16 port, const boost::function<void()>& callback)
 {
     m_connection->connect(host, port, callback);
 }
@@ -62,7 +64,7 @@ void Protocol::onRecv(InputMessage *inputMessage)
     uint32 checksum = getAdlerChecksum(inputMessage->getBuffer() + InputMessage::DATA_POS, inputMessage->getMessageSize() - InputMessage::CHECKSUM_LENGTH);
     if(inputMessage->getU32() != checksum) {
         // error
-        logError("Checksum is invalid.");
+        error("Checksum is invalid.");
         return;
     }
 
@@ -70,9 +72,9 @@ void Protocol::onRecv(InputMessage *inputMessage)
         xteaDecrypt(inputMessage);
 }
 
-void Protocol::onError(const boost::system::error_code& error)
+void Protocol::onError(const boost::system::error_code& err)
 {
-    flogError("PROTOCOL ERROR: %s", error.message());
+    error("PROTOCOL ERROR: ", err.message());
 
     // invalid hostname
     // connection timeouted

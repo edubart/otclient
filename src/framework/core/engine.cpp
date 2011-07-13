@@ -22,7 +22,7 @@
  */
 
 
-#include <prerequisites.h>
+#include <global.h>
 #include <core/engine.h>
 #include <core/platform.h>
 #include <core/dispatcher.h>
@@ -78,7 +78,7 @@ void Engine::run()
     // check if root container has elements
     const UIContainerPtr& rootContainer = UIContainer::getRoot();
     if(rootContainer->getChildCount() == 0)
-        logFatal("FATAL ERROR: no ui loaded at all, no reason to continue running");
+        fatal("FATAL ERROR: no ui loaded at all, no reason to continue running");
 
     std::string fpsText;
     Size fpsTextSize;
@@ -106,7 +106,7 @@ void Engine::run()
                     frameCount = 0;
 
                     // update fps text
-                    fpsText = fmt("FPS: %d", fps);
+                    fpsText = make_string("FPS: ", fps);
                     fpsTextSize = defaultFont->calculateTextRectSize(fpsText);
                 }
             }

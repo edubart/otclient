@@ -25,7 +25,7 @@
 #ifndef OUTPUTMESSAGE_H
 #define OUTPUTMESSAGE_H
 
-#include <prerequisites.h>
+#include <global.h>
 
 class OutputMessage
 {

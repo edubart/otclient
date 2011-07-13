@@ -23,8 +23,9 @@
 
 #include "protocollogin.h"
 #include <net/outputmessage.h>
-#include <util/rsa.h>
+#include <net/rsa.h>
 #include <script/luascript.h>
+#include <boost/bind.hpp>
 
 ProtocolLogin::ProtocolLogin()
 {
@@ -63,7 +64,7 @@ void ProtocolLogin::login(const std::string& accountName, const std::string& acc
 
 void ProtocolLogin::onConnect()
 {
-    logTrace();
+    trace();
     sendPacket();
 }
 
@@ -114,7 +115,7 @@ void ProtocolLogin::onRecv(InputMessage *inputMessage)
 
     while(!inputMessage->end()) {
         uint8 opt = inputMessage->getU8();
-        flogError("%d", (int)opt);
+        debug("opt:",(uint)opt);
         switch(opt) {
         case 0x0A:
             parseError(inputMessage);
@@ -152,8 +153,8 @@ void ProtocolLogin::parseCharacterList(InputMessage *inputMessage)
         uint32 ip = inputMessage->getU32();
         uint16 port = inputMessage->getU16();
 
-        flogError("%s %s %d %d", name.c_str() % world.c_str() % ip % port);
+        debug("character: ", name.c_str(), world.c_str(), ip, port);
     }
     uint16 premiumDays = inputMessage->getU16();
-    flogError("%d", premiumDays);
+    debug("prem days: ", premiumDays);
 }

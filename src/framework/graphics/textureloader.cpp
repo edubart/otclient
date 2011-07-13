@@ -22,7 +22,7 @@
  */
 
 
-#include <prerequisites.h>
+#include <global.h>
 #include <graphics/textureloader.h>
 #include <graphics/texture.h>
 #include <util/apngloader.h>

@@ -22,11 +22,13 @@
  */
 
 
-#include <prerequisites.h>
+#include <global.h>
 #include <script/luascript.h>
 #include <script/luafunctions.h>
 #include <core/resources.h>
 #include <lua.hpp>
+
+#include <boost/algorithm/string.hpp>
 
 LuaScript g_lua;
 
@@ -34,7 +36,7 @@ void LuaScript::init()
 {
     L = luaL_newstate();
     if(!L)
-        logFatal("FATAL ERROR: could not create lua context");
+        fatal("FATAL ERROR: could not create lua context");
 
     // load lua standard libraries
     luaL_openlibs(L);
@@ -70,7 +72,7 @@ bool LuaScript::loadFile(const std::string& fileName)
     if(g_resources.loadFile(fileName, fin))
         return loadBuffer(fin.str(), fileName);
     else
-        flogError("ERROR: script file '%s' doesn't exist", fileName.c_str());
+        error("ERROR: script file '", fileName, "' doesn't exist");
     return false;
 }
 
@@ -103,7 +105,7 @@ void LuaScript::reportError(const std::string& errorDesc, const char *funcName)
     if(funcName)
         ss << " in " << funcName << "(): ";
     ss << errorDesc;
-    logError(ss.str());
+    error(ss.str());
 }
 
 void LuaScript::reportErrorWithTraceback(const std::string& errorDesc, const char* funcName)
@@ -176,7 +178,7 @@ void LuaScript::setMetatable(const std::string& name, int index)
 {
     luaL_getmetatable(L, name.c_str());
     if(isNil())
-        reportError(fmt("could not retrive metatable %d", name));
+        reportError(make_string("could not retrive metatable", name));
     else
         lua_setmetatable(L, index < 0 ? index-1 : index);
 }
@@ -407,7 +409,7 @@ std::string LuaScript::getFunctionSourcePath(bool functionIsOnStack, int level)
             if(source[0] == '@' && pos != std::string::npos)
                 path = source.substr(1, pos - 1);
         } else {
-            logError("no source");
+            error("no source");
         }
     }
     return path;

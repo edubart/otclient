@@ -22,7 +22,7 @@
  */
 
 
-#include <prerequisites.h>
+#include <global.h>
 #include <ui/uiwindow.h>
 #include <ui/uiwindowskin.h>
 

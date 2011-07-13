@@ -22,7 +22,7 @@
  */
 
 
-#include <prerequisites.h>
+#include <global.h>
 #include <core/dispatcher.h>
 #include <core/engine.h>
 
@@ -54,12 +54,12 @@ void Dispatcher::poll()
     }
 }
 
-void Dispatcher::scheduleTask(const SimpleCallback& callback, int delay)
+void Dispatcher::scheduleTask(const boost::function<void()>& callback, int delay)
 {
     m_scheduledTaskList.push(new ScheduledTask(g_engine.getCurrentFrameTicks() + delay, callback));
 }
 
-void Dispatcher::addTask(const SimpleCallback& callback, bool pushFront)
+void Dispatcher::addTask(const boost::function<void()>& callback, bool pushFront)
 {
     if(pushFront)
         m_taskList.push_front(callback);

@@ -43,11 +43,11 @@ class Protocol : public Scriptable
 public:
     Protocol();
 
-    void connect(const std::string& host, uint16 port, const SimpleCallback& callback);
+    void connect(const std::string& host, uint16 port, const boost::function<void()>& callback);
     void send(OutputMessage *outputMessage);
 
     virtual void onRecv(InputMessage *inputMessage);
-    virtual void onError(const boost::system::error_code& error);
+    virtual void onError(const boost::system::error_code& err);
 
     virtual const char *getScriptableName() const { return "Protocol"; }
 

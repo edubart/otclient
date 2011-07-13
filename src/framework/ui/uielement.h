@@ -25,7 +25,7 @@
 #ifndef UIELEMENT_H
 #define UIELEMENT_H
 
-#include <prerequisites.h>
+#include <global.h>
 #include <core/input.h>
 #include <script/scriptable.h>
 #include <ui/uiconstants.h>

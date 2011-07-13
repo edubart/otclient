@@ -22,25 +22,25 @@
  */
 
 
-#include <prerequisites.h>
+#include <global.h>
 #include <graphics/fonts.h>
 #include <ui/uibuttonskin.h>
 #include <ui/uibutton.h>
 
-void UIButtonSkin::load(FML::Node* node)
+void UIButtonSkin::load(OTMLNode* node)
 {
     UIElementSkin::load(node);
 
     m_buttonDownTextColor = getFontColor();
     m_buttonHoverTextColor = getFontColor();
 
-    if(FML::Node* cnode = node->at("down state")) {
+    if(OTMLNode* cnode = node->at("down state")) {
         m_buttonDownImage = loadImage(cnode);
         m_buttonDownTranslate = cnode->readAt("text translate", Point());
         m_buttonDownTextColor = cnode->readAt("font color", getFontColor());
     }
 
-    if(FML::Node* cnode = node->at("hover state")) {
+    if(OTMLNode* cnode = node->at("hover state")) {
         m_buttonHoverImage = loadImage(cnode);
         m_buttonHoverTextColor = cnode->readAt("font color", getFontColor());
     }

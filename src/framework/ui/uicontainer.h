@@ -25,7 +25,7 @@
 #ifndef UICONTAINER_H
 #define UICONTAINER_H
 
-#include <prerequisites.h>
+#include <global.h>
 #include <ui/uielement.h>
 
 class UIContainer : public UIElement

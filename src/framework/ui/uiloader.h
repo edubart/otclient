@@ -25,10 +25,12 @@
 #ifndef UILOADER_H
 #define UILOADER_H
 
-#include <prerequisites.h>
+#include <global.h>
 #include <ui/uiconstants.h>
 #include <ui/uicontainer.h>
 #include <ui/uibutton.h>
+#include <ui/uiwindow.h>
+#include <ui/uilabel.h>
 
 class UILoader
 {
@@ -40,22 +42,25 @@ private:
     /// Detect element type and create it
     UIElementPtr createElementFromId(const std::string& id);
 
-    /// Populate container children from a FML node
-    void populateContainer(const UIContainerPtr& parent, FML::Node* node);
+    /// Populate container children from a OTML node
+    void populateContainer(const UIContainerPtr& parent, OTMLNode* node);
 
-    /// Load element and its children from a FML node
-    void loadElements(const UIElementPtr& parent, FML::Node* node);
+    /// Load element and its children from a OTML node
+    void loadElements(const UIElementPtr& parent, OTMLNode* node);
 
-    /// Load element proprieties from a FML node
-    void loadElement(const UIElementPtr& element, FML::Node* node);
+    /// Load element proprieties from a OTML node
+    void loadElement(const UIElementPtr& element, OTMLNode* node);
 
-    /// Load anchor from a FML node
-    void loadElementAnchor(const UIElementPtr& anchoredElement, UI::AnchorPoint anchoredEdge, FML::Node* node);
+    /// Load anchor from a OTML node
+    void loadElementAnchor(const UIElementPtr& anchoredElement, UI::AnchorPoint anchoredEdge, OTMLNode* node);
+
+    /// Load element lua function
+    void loadElementScriptFunction(const UIElementPtr& element, OTMLNode* node);
 
     // specific elements loading
-    void loadButton(const UIButtonPtr& button, FML::Node* node);
-
-    std::string getElementSourceDesc(const UIElementPtr& element, const FML::Node *node);
+    void loadButton(const UIButtonPtr& button, OTMLNode* node);
+    void loadWindow(const UIWindowPtr& window, OTMLNode* node);
+    void loadLabel(const UILabelPtr& label, OTMLNode* node);
 };
 
 extern UILoader g_uiLoader;

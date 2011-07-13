@@ -22,6 +22,6 @@
  */
 
 
-#include <prerequisites.h>
+#include <global.h>
 #include <ui/uicheckboxskin.h>
 

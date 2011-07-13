@@ -22,7 +22,7 @@
  */
 
 
-#include <prerequisites.h>
+#include <global.h>
 #include <script/scriptable.h>
 #include <script/luascript.h>
 #include <core/dispatcher.h>
@@ -68,7 +68,7 @@ void Scriptable::callLuaTableField(const std::string& field, int numArgs)
             g_lua.pop();
         }
     } else if(!g_lua.isNil()) {
-        g_lua.reportError(fmt("field '%s' for '%s' is not a valid function or array of functions", field %  getScriptableName()));
+        g_lua.reportError(make_string("field '", field, "' for '", getScriptableName(), "' is not a valid function or array of functions"));
     }
 
     // release self

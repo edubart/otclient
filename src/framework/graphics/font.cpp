@@ -22,11 +22,12 @@
  */
 
 
-#include <prerequisites.h>
+#include <global.h>
 #include <core/resources.h>
 #include <graphics/font.h>
 #include <graphics/textures.h>
 #include <graphics/graphics.h>
+#include <otml/otml.h>
 
 void Font::calculateGlyphsWidthsAutomatically(const Size& glyphSize)
 {
@@ -70,7 +71,7 @@ bool Font::load(const std::string& file)
 {
     std::stringstream fin;
     if(!g_resources.loadFile(file, fin)) {
-        flogError("ERROR: Coult not load font file \"%s",  file.c_str());
+        error("ERROR: Coult not load font file '",file,"'");
         return false;
     }
 
@@ -78,8 +79,8 @@ bool Font::load(const std::string& file)
     Size glyphSize;
 
     try {
-        FML::Parser parser(fin, file);
-        FML::Node* doc = parser.getDocument();
+        OTMLParser parser(fin, file);
+        OTMLNode* doc = parser.getDocument();
 
         // required values
         textureName = doc->valueAt("image");
@@ -92,7 +93,7 @@ bool Font::load(const std::string& file)
         // load texture
         m_texture = g_textures.get(textureName);
         if(!m_texture) {
-            flogError("ERROR: Failed to load image for font file \"%s\"", file.c_str());
+            error("ERROR: Failed to load image for font file '",file,"'");
             return false;
         }
 
@@ -115,8 +116,8 @@ bool Font::load(const std::string& file)
                                                  m_glyphsSize[glyph].width(),
                                                  m_glyphHeight);
         }
-    } catch(FML::Exception e) {
-        flogError("ERROR: Malformed font file \"%s\":\n  %s", file.c_str() % e.what());
+    } catch(OTMLException e) {
+        error("ERROR: Malformed font file \"", file.c_str(), "\":\n  ", e.what());
         return false;
     }
 

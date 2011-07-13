@@ -105,6 +105,6 @@ void OutputMessage::addPaddingBytes(int bytes, uint8 byte)
 bool OutputMessage::canWrite(int bytes)
 {
     if(m_writePos + bytes > BUFFER_MAXSIZE)
-        logFatal("[OutputMessage::canWrite()]: Can't write. Write position has reached buffer's maxium size.");
+        fatal("[OutputMessage::canWrite()]: Can't write. Write position has reached buffer's maxium size.");
     return true;
 }

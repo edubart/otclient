@@ -40,12 +40,12 @@ void Connection::poll()
     ioService.reset();
 }
 
-void Connection::connect(const std::string& host, uint16 port, const SimpleCallback& connectCallback)
+void Connection::connect(const std::string& host, uint16 port, const boost::function<void()>& connectCallback)
 {
     m_connectCallback = connectCallback;
     m_connectionState = CONNECTION_STATE_RESOLVING;
 
-    boost::asio::ip::tcp::resolver::query query(host, convert_cast<std::string>(port));
+    boost::asio::ip::tcp::resolver::query query(host, convert<std::string>(port));
     m_resolver.async_resolve(query, boost::bind(&Connection::onResolve, shared_from_this(), boost::asio::placeholders::error, boost::asio::placeholders::iterator));
 
     m_timer.expires_from_now(boost::posix_time::seconds(2));
@@ -70,7 +70,7 @@ void Connection::onTimeout(const boost::system::error_code& error)
 
 void Connection::onResolve(const boost::system::error_code& error, boost::asio::ip::tcp::resolver::iterator endpointIterator)
 {
-    logTrace();
+    trace();
 
     m_timer.cancel();
 
@@ -88,7 +88,7 @@ void Connection::onResolve(const boost::system::error_code& error, boost::asio::
 
 void Connection::onConnect(const boost::system::error_code& error)
 {
-    logTrace();
+    trace();
 
     m_timer.cancel();
 
@@ -108,7 +108,7 @@ void Connection::onConnect(const boost::system::error_code& error)
 
 void Connection::onSend(const boost::system::error_code& error, size_t)
 {
-    logTrace();
+    trace();
 
     m_timer.cancel();
 
@@ -121,7 +121,7 @@ void Connection::onSend(const boost::system::error_code& error, size_t)
 
 void Connection::onRecvHeader(const boost::system::error_code& error)
 {
-    logTrace();
+    trace();
 
     if(error) {
         if(m_errorCallback)
@@ -139,7 +139,7 @@ void Connection::onRecvHeader(const boost::system::error_code& error)
 
 void Connection::onRecvData(const boost::system::error_code& error)
 {
-    logTrace();
+    trace();
 
     if(error) {
         if(m_errorCallback)

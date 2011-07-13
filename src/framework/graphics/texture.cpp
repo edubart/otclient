@@ -22,7 +22,7 @@
  */
 
 
-#include <prerequisites.h>
+#include <global.h>
 #include <graphics/texture.h>
 #include "graphics.h"
 
@@ -37,7 +37,7 @@ uint Texture::internalLoadGLTexture(uchar *pixels, int channels, int width, int 
     GLint texSize;
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &texSize);
     if(width > texSize || height > texSize) {
-        flogError("loading texture with size %dx%d failed, the maximum size is %dx%d", width % height % texSize % texSize);
+        error("loading texture with size ",width,"x",height," failed, the maximum size is ",texSize,"x",texSize);
         return 0;
     }
 

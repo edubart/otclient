@@ -22,7 +22,7 @@
  */
 
 
-#include <prerequisites.h>
+#include <global.h>
 #include <graphics/graphics.h>
 
 Graphics g_graphics;
@@ -40,8 +40,8 @@ void Graphics::init()
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
-    flogInfo("GPU %s", (const char*)glGetString(GL_RENDERER));
-    flogInfo("OpenGL %s", (const char*)glGetString(GL_VERSION));
+    info("GPU ", glGetString(GL_RENDERER));
+    info("OpenGL ", glGetString(GL_VERSION));
 }
 
 void Graphics::terminate()

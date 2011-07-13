@@ -25,7 +25,7 @@
 #ifndef UICHECKBOXSKIN_H
 #define UICHECKBOXSKIN_H
 
-#include <prerequisites.h>
+#include <global.h>
 #include <ui/uielementskin.h>
 
 class UICheckBoxSkin : public UIElementSkin

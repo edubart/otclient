@@ -21,17 +21,18 @@
  * THE SOFTWARE.
  */
 
-#include <prerequisites.h>
+#include <global.h>
 #include <graphics/fonts.h>
 #include <ui/uiwindowskin.h>
 #include <ui/uiwindow.h>
+#include <util/translator.h>
 
-void UIWindowSkin::load(FML::Node* node)
+void UIWindowSkin::load(OTMLNode* node)
 {
     UIElementSkin::load(node);
 
-    FML::Node* headNode = node->at("head");
-    FML::Node* bodyNode = node->at("body");
+    OTMLNode* headNode = node->at("head");
+    OTMLNode* bodyNode = node->at("body");
 
     m_headImage = boost::dynamic_pointer_cast<BorderedImage>(loadImage(headNode));
     m_headHeight = headNode->readAt("height", m_headImage->getDefaultSize().height());

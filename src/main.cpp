@@ -22,7 +22,7 @@
  */
 
 
-#include <prerequisites.h>
+#include <global.h>
 #include <core/engine.h>
 #include <core/configs.h>
 #include <core/resources.h>
@@ -31,6 +31,8 @@
 #include <ui/uiskins.h>
 #include <script/luascript.h>
 #include <ui/uicontainer.h>
+
+#include <csignal>
 
 void signal_handler(int sig)
 {
@@ -83,7 +85,7 @@ int main(int argc, const char *argv[])
         args.push_back(argv[i]);
 #endif
 
-    logInfo("OTClient 0.2.0");
+    info("OTClient 0.2.0");
 
     // install exit signal handler
     signal(SIGTERM, signal_handler);
@@ -98,7 +100,7 @@ int main(int argc, const char *argv[])
     // load configurations
     loadDefaultConfigs();
     if(!g_configs.load("config.yml"))
-        logInfo("Could not read configuration file, default configurations will be used.");
+        info("Could not read configuration file, default configurations will be used.");
 
     // create the window
     Platform::createWindow(g_configs.get("window x"), g_configs.get("window y"),

@@ -22,7 +22,7 @@
  */
 
 
-#include <prerequisites.h>
+#include <global.h>
 #include <core/platform.h>
 #include <core/engine.h>
 
@@ -237,18 +237,18 @@ void Platform::init(const char *appName)
     // open display
     x11.display = XOpenDisplay(0);
     if(!x11.display)
-        logFatal("FATAL ERROR: Failed to open X display");
+        fatal("FATAL ERROR: Failed to open X display");
 
     // check if GLX is supported on this display
     if(!glXQueryExtension(x11.display, 0, 0))
-        logFatal("FATAL ERROR: GLX not supported");
+        fatal("FATAL ERROR: GLX not supported");
 
     // retrieve GLX version
     int glxMajor;
     int glxMinor;
     if(!glXQueryVersion(x11.display, &glxMajor, &glxMinor))
-        logFatal("FATAL ERROR: Unable to query GLX version");
-    flogInfo("GLX version %d.%d", glxMajor % glxMinor);
+        fatal("FATAL ERROR: Unable to query GLX version");
+    info("GLX version ",glxMajor,".",glxMinor);
 
     // clipboard related atoms
     x11.atomClipboard = XInternAtom(x11.display, "CLIPBOARD", False);
@@ -352,7 +352,7 @@ void Platform::poll()
                        keysym != XK_Escape &&
                        (uchar)(buf[0]) >= 32
                     ) {
-                        //logDebug("char: %c code: %d", buf[0], (uchar)buf[0]);
+                        //debug("char: ", buf[0], " code: ", (uint)buf[0]);
                         inputEvent.type = EV_TEXT_ENTER;
                         inputEvent.keychar = buf[0];
                         inputEvent.keycode = KC_UNKNOWN;
@@ -500,12 +500,12 @@ bool Platform::createWindow(int x, int y, int width, int height, int minWidth, i
     // choose OpenGL, RGBA, double buffered, visual
     x11.visual = glXChooseVisual(x11.display, DefaultScreen(x11.display), attrList);
     if(!x11.visual)
-        logFatal("FATAL ERROR: RGBA/Double buffered visual not supported");
+        fatal("FATAL ERROR: RGBA/Double buffered visual not supported");
 
     // create GLX context
     x11.glxContext = glXCreateContext(x11.display, x11.visual, 0, GL_TRUE);
     if(!x11.glxContext)
-        logFatal("FATAL ERROR: Unable to create GLX context");
+        fatal("FATAL ERROR: Unable to create GLX context");
 
     // color map
     x11.colormap  = XCreateColormap(x11.display,
@@ -538,7 +538,7 @@ bool Platform::createWindow(int x, int y, int width, int height, int minWidth, i
                              &wa);
 
     if(!x11.window)
-        logFatal("FATAL ERROR: Unable to create X window");
+        fatal("FATAL ERROR: Unable to create X window");
 
     //  create input context (to have better key input handling)
     if(XSupportsLocale()) {
@@ -550,14 +550,14 @@ bool Platform::createWindow(int x, int y, int width, int height, int minWidth, i
                                     XIMPreeditNothing | XIMStatusNothing,
                                     XNClientWindow, x11.window, NULL);
             if(!x11.xic)
-                logError("ERROR: Unable to create the input context");
+                error("ERROR: Unable to create the input context");
         } else
-            logError("ERROR: Failed to open an input method");
+            error("ERROR: Failed to open an input method");
     } else
-        logError("ERROR: X11 does not support the current locale");
+        error("ERROR: X11 does not support the current locale");
 
     if(!x11.xic)
-        logWarning("Input of special keys maybe messed up because we couldn't create an input context");
+        warning("Input of special keys maybe messed up because we couldn't create an input context");
 
 
     // set window minimum size
@@ -839,6 +839,6 @@ std::string Platform::getAppUserDir()
     std::stringstream sdir;
     sdir << PHYSFS_getUserDir() << "." << x11.appName;
     if((mkdir(sdir.str().c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) != 0) && (errno != EEXIST))
-        flogError("ERROR: Couldn't create directory for saving configuration file. (%s)", sdir.str().c_str());
+        error("ERROR: Couldn't create directory for saving configuration file. (",sdir.str(),")");
     return sdir.str();
 }

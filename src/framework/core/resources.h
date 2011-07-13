@@ -25,7 +25,8 @@
 #ifndef RESOURCES_H
 #define RESOURCES_H
 
-#include <prerequisites.h>
+#include <global.h>
+#include <stack>
 
 class Resources
 {

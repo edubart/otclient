@@ -22,7 +22,7 @@
  */
 
 
-#include <prerequisites.h>
+#include <global.h>
 #include <ui/uilabel.h>
 
 void UILabel::setText(const std::string& text)

@@ -22,9 +22,11 @@
  */
 
 
-#include <prerequisites.h>
+#include <global.h>
 #include <core/resources.h>
 #include <graphics/fonts.h>
+
+#include <boost/algorithm/string.hpp>
 
 Fonts g_fonts;
 
@@ -55,7 +57,7 @@ FontPtr Fonts::get(const std::string& fontName)
             return font;
     }
 
-    flogFatal("ERROR: Font \"%s\" not found", fontName.c_str());
+    fatal("ERROR: Font '",fontName,"' not found");
     return FontPtr();
 }
 

@@ -22,12 +22,12 @@
  */
 
 
-#include <prerequisites.h>
+#include <global.h>
 #include <graphics/fonts.h>
 #include <ui/uitexteditskin.h>
 #include <ui/uitextedit.h>
 
-void UITextEditSkin::load(FML::Node* node)
+void UITextEditSkin::load(OTMLNode* node)
 {
     UIElementSkin::load(node);
     m_textMargin = node->readAt("text margin", 2);
