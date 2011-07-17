@@ -38,19 +38,19 @@ bool UIAnchorLayout::addAnchor(const UIElementPtr& anchoredElement, AnchorPoint 
     UIElementPtr anchorLineElement = anchor.getAnchorLineElement();
 
     if(!anchorLineElement) {
-        error("ERROR: could not find the element to anchor on, wrong id?");
+        logError("ERROR: could not find the element to anchor on, wrong id?");
         return false;
     }
 
     // we can never anchor with itself
     if(anchoredElement == anchorLineElement) {
-        error("ERROR: anchoring with itself is not possible");
+        logError("ERROR: anchoring with itself is not possible");
         return false;
     }
 
     // we must never anchor to an anchor child
     if(hasElementInAnchorTree(anchorLineElement, anchoredElement)) {
-        error("ERROR: anchors is miss configurated, you must never make anchor chains in loops");
+        logError("ERROR: anchors is miss configurated, you must never make anchor chains in loops");
         return false;
     }
 

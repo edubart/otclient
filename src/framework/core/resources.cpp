@@ -24,20 +24,20 @@ void Resources::init(const char *argv0)
     bool found = false;
     foreach(dir, possibleDirs) {
         if(g_resources.addToSearchPath(dir)) {
-            info("Using data directory: ", dir.c_str());
+            logInfo("Using data directory: ", dir.c_str());
             found = true;
             break;
         }
     }
     if(!found)
-        fatal("ERROR: could not find data directory");
+        logFatal("ERROR: could not find data directory");
 
     // setup write directory
     dir = Platform::getAppUserDir();
     if(g_resources.setWriteDir(dir))
         g_resources.addToSearchPath(dir);
     else
-        error("ERROR: could not setup write directory");
+        logError("ERROR: could not setup write directory");
 }
 
 void Resources::terminate()
@@ -84,7 +84,7 @@ bool Resources::loadFile(const std::string& fileName, std::iostream& out)
     out.clear(std::ios::goodbit);
     PHYSFS_file *file = PHYSFS_openRead(fullPath.c_str());
     if(!file) {
-        error("ERROR: Failed to load file '", fullPath.c_str(), "': ", PHYSFS_getLastError());
+        logError("ERROR: Failed to load file '", fullPath.c_str(), "': ", PHYSFS_getLastError());
         out.clear(std::ios::failbit);
         return false;
     } else {
@@ -106,7 +106,7 @@ bool Resources::saveFile(const std::string &fileName, const uchar *data, uint si
 {
     PHYSFS_file *file = PHYSFS_openWrite(resolvePath(fileName).c_str());
     if(!file) {
-        error("ERROR: Failed to save file '",fileName,"': ",PHYSFS_getLastError());
+        logError("ERROR: Failed to save file '",fileName,"': ",PHYSFS_getLastError());
         return false;
     }
 

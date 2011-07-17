@@ -20,7 +20,7 @@ bool Configs::load(const std::string& fileName)
         OTMLParser parser(fin, fileName);
         parser.getDocument()->read(&m_confsMap);
     } catch(OTMLException e) {
-        error("ERROR: Malformed config file: ", e.what());
+        logError("ERROR: Malformed config file: ", e.what());
         return false;
     }
 

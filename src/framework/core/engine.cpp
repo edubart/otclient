@@ -53,7 +53,7 @@ void Engine::run()
     // check if root container has elements
     const UIContainerPtr& rootContainer = UIContainer::getRoot();
     if(rootContainer->getChildCount() == 0)
-        fatal("FATAL ERROR: no ui loaded at all, no reason to continue running");
+        logFatal("FATAL ERROR: no ui loaded at all, no reason to continue running");
 
     std::string fpsText;
     Size fpsTextSize;

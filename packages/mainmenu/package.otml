@@ -1,0 +1,9 @@
+title: Main menu
+description: Used to create the main menu
+author: otclient
+version: 1
+website: https://github.com/edubart/otclient
+enabled: true
+dependencies: [core]
+script: init.lua
+

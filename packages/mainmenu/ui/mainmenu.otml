@@ -1,0 +1,37 @@
+%panel#mainBackground
+  image: { source: background.png; antialised: true }
+  anchor.fill: parent
+    
+  %panel#mainMenuPanel.flat
+    size: 117 171
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+    margin: 70 60
+
+    button
+      anchors.top: prev.bottom
+      anchors.horizontalCenter: parent.horizontalCenter
+      margin.top: 6
+
+    %button.first
+      anchors.top: parent.top
+      anchors.horizontalCenter: parent.horizontalCenter
+      margin.top: 16
+      text: Enter Game
+      onClick: loadUI("entergamewindow")
+
+    %button.notImplemented
+      text: Access Account
+
+    %button
+      text: Options
+      onClick: loadUI("optionswindow")
+
+    %button
+      text: Info
+      onClick: loadUI("infowindow")
+
+    %button
+      text: Exit
+      onClick: terminateApplication()
+

@@ -1,0 +1,54 @@
+%window#infoWindow
+  title: Info
+  size: 244 221
+  anchor.centerIn: parent
+  lockOnLoad: true
+
+  %panel.flat
+    size: 208 129
+    anchors.top: parent.top
+    anchors.left: parent.left
+    margin: 32 18
+
+    %label
+      align: center
+      text: |-
+        OTClient
+        Version 0.2.0
+        Created by edubart
+      anchors.horizontalCenter: parent.horizontalCenter
+      anchors.top: parent.top
+      margin.top: 20
+
+    %element.bottomSeparator
+      size: 190 2
+      anchors.top: parent.top
+      anchors.left: parent.left
+      margin: 83 9
+
+    %label
+      text: Official Website
+      anchors.bottom: parent.bottom
+      anchors.left: parent.left
+      margin: 14 9
+
+    %button
+      text: Github Page
+      size: 80 22
+      anchors.bottom: parent.bottom
+      anchors.right: parent.right
+      margin: 9
+
+  %element.bottomSeparator
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    margin: 40 13
+
+  %button.closeParent
+    text: Ok
+    size: 43 20
+    anchors.top: parent.top
+    anchors.left: parent.left
+    margin: 191 188
+

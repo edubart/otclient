@@ -67,7 +67,7 @@ UIElementPtr UILoader::loadFromFile(std::string filePath, const UIContainerPtr& 
         // create element interpreting it's id
         element = createElementFromId(elementId);
         if(!element) {
-            error(doc->front()->generateErrorMessage("invalid root element type"));
+            logError(doc->front()->generateErrorMessage("invalid root element type"));
             return element;
         }
         parent->addChild(element);
@@ -82,7 +82,7 @@ UIElementPtr UILoader::loadFromFile(std::string filePath, const UIContainerPtr& 
         // report onLoad events
         element->onLoad();
     } catch(OTMLException e) {
-        error("ERROR: Failed to load ui ",filePath,": ", e.what());
+        logError("ERROR: Failed to load ui ",filePath,": ", e.what());
     }
 
     return element;
@@ -96,7 +96,7 @@ void UILoader::populateContainer(const UIContainerPtr& parent, OTMLNode* node)
         if(id[0] == '%') {
             UIElementPtr element = createElementFromId(id);
             if(!element) {
-                error(cnode->generateErrorMessage("invalid element type"));
+                logError(cnode->generateErrorMessage("invalid element type"));
                 continue;
             }
             parent->addChild(element);
@@ -184,20 +184,20 @@ void UILoader::loadElementAnchor(const UIElementPtr& anchoredElement, AnchorPoin
 
     std::string anchorDescription = node->value();
     if(anchorDescription.empty()) {
-        error(node->generateErrorMessage("anchor is empty, did you forget to fill it?"));
+        logError(node->generateErrorMessage("anchor is empty, did you forget to fill it?"));
         return;
     }
 
     UIAnchorLayoutPtr layout = boost::dynamic_pointer_cast<UIAnchorLayout>(anchoredElement->getLayout());
     if(!layout) {
-        error(node->generateErrorMessage("could not add anchor, because this element does not participate of an anchor layout"));
+        logError(node->generateErrorMessage("could not add anchor, because this element does not participate of an anchor layout"));
         return;
     }
 
     std::vector<std::string> split;
     boost::split(split, anchorDescription, boost::is_any_of(std::string(".")));
     if(split.size() != 2) {
-        error(node->generateErrorMessage("invalid anchor"));
+        logError(node->generateErrorMessage("invalid anchor"));
         return;
     }
 
@@ -205,12 +205,12 @@ void UILoader::loadElementAnchor(const UIElementPtr& anchoredElement, AnchorPoin
     AnchorPoint anchorLineEdge = UIAnchorLayout::parseAnchorPoint(split[1]);
 
     if(anchorLineEdge == AnchorNone) {
-        error(node->generateErrorMessage("invalid anchor type"));
+        logError(node->generateErrorMessage("invalid anchor type"));
         return;
     }
 
     if(!layout->addAnchor(anchoredElement, anchoredEdge, AnchorLine(anchorLineElementId, anchorLineEdge)))
-        error(node->generateErrorMessage("anchoring failed"));
+        logError(node->generateErrorMessage("anchoring failed"));
 }
 
 void UILoader::loadElementScriptFunction(const UIElementPtr& element, OTMLNode* node)
@@ -225,7 +225,7 @@ void UILoader::loadElementScriptFunction(const UIElementPtr& element, OTMLNode* 
     if(g_lua.loadBufferAsFunction(node->value(), functionDesc))
         g_lua.setScriptObjectField(element, node->tag());
     else
-        error(node->generateErrorMessage("failed to parse inline lua script"));
+        logError(node->generateErrorMessage("failed to parse inline lua script"));
 }
 
 void UILoader::loadButton(const UIButtonPtr& button, OTMLNode* node)

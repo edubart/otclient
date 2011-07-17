@@ -1,0 +1,9 @@
+title: Core
+description: Core utilities used by other modules
+author: otclient
+version: 1
+website: https://github.com/edubart/otclient
+enabled: true
+dependencies: [core_fonts, core_styles]
+script: core.lua
+

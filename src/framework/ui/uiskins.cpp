@@ -42,7 +42,7 @@ void UISkins::load(const std::string& skinName)
 
     std::stringstream fin;
     if(!g_resources.loadFile(skinName + ".otml", fin))
-        fatal("FATAL ERROR: Could not load skin '",skinName,"'");
+        logFatal("FATAL ERROR: Could not load skin '",skinName,"'");
 
     try {
         OTMLParser parser(fin, skinName);
@@ -50,7 +50,7 @@ void UISkins::load(const std::string& skinName)
 
         m_defaultFont = g_fonts.get(doc->valueAt("default font"));
         if(!m_defaultFont)
-            fatal("FATAL ERROR: Could not load skin default font");
+            logFatal("FATAL ERROR: Could not load skin default font");
 
         m_defaultFontColor = doc->readAt("default font color", Color::white);
 
@@ -81,7 +81,7 @@ void UISkins::load(const std::string& skinName)
             }
         }
     } catch(OTMLException e) {
-        fatal("FATAL ERROR: Malformed skin file '",skinName,"':\n  ",e.what());
+        logFatal("FATAL ERROR: Malformed skin file '",skinName,"':\n  ",e.what());
     }
 
     g_resources.popCurrentPath();
@@ -100,6 +100,6 @@ UIElementSkinPtr UISkins::getElementSkin(UI::ElementType elementType, const std:
         if(elementType == skin->getElementType() && name == skin->getName())
             return skin;
     }
-    warning("Element skin '",name,"' not found");
+    logWarning("Element skin '",name,"' not found");
     return UIElementSkinPtr();
 }

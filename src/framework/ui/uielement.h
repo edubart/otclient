@@ -101,7 +101,6 @@ public:
     /// Get layout size, it always return the absolute position
     Rect getRect() const { return m_rect; }
 
-    // margins
     void setMargin(int top, int right, int bottom, int left) { m_marginLeft = left; m_marginRight = right; m_marginTop = top; m_marginBottom = bottom; getLayout()->recalculateElementLayout(asUIElement()); }
     void setMargin(int vertical, int horizontal) { m_marginLeft = m_marginRight = horizontal; m_marginTop = m_marginBottom = vertical; getLayout()->recalculateElementLayout(asUIElement()); }
     void setMargin(int margin) { m_marginLeft = m_marginRight = m_marginTop = m_marginBottom = margin; getLayout()->recalculateElementLayout(asUIElement()); }
@@ -115,7 +114,6 @@ public:
     int getMarginTop() const { return m_marginTop; }
     int getMarginBottom() const { return m_marginBottom; }
 
-    // layout related
     void centerIn(const std::string& targetId);
     void addAnchor(AnchorPoint anchoredEdge, AnchorLine anchorEdge);
 

@@ -57,7 +57,7 @@ FontPtr Fonts::get(const std::string& fontName)
             return font;
     }
 
-    fatal("ERROR: Font '",fontName,"' not found");
+    logFatal("ERROR: Font '",fontName,"' not found");
     return FontPtr();
 }
 

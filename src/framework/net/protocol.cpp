@@ -64,7 +64,7 @@ void Protocol::onRecv(InputMessage *inputMessage)
     uint32 checksum = getAdlerChecksum(inputMessage->getBuffer() + InputMessage::DATA_POS, inputMessage->getMessageSize() - InputMessage::CHECKSUM_LENGTH);
     if(inputMessage->getU32() != checksum) {
         // error
-        error("Checksum is invalid.");
+        logError("Checksum is invalid.");
         return;
     }
 
@@ -74,7 +74,7 @@ void Protocol::onRecv(InputMessage *inputMessage)
 
 void Protocol::onError(const boost::system::error_code& err)
 {
-    error("PROTOCOL ERROR: ", err.message());
+    logError("PROTOCOL ERROR: ", err.message());
 
     // invalid hostname
     // connection timeouted

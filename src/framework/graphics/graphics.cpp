@@ -40,8 +40,8 @@ void Graphics::init()
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
-    info("GPU ", glGetString(GL_RENDERER));
-    info("OpenGL ", glGetString(GL_VERSION));
+    logInfo("GPU ", glGetString(GL_RENDERER));
+    logInfo("OpenGL ", glGetString(GL_VERSION));
 }
 
 void Graphics::terminate()

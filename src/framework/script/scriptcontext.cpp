@@ -12,7 +12,7 @@ void ScriptContext::init()
 {
     L = luaL_newstate();
     if(!L)
-        fatal("FATAL ERROR: could not create lua context");
+        logFatal("FATAL ERROR: could not create lua context");
 
     // load lua standard libraries
     luaL_openlibs(L);
@@ -48,7 +48,7 @@ bool ScriptContext::loadFile(const std::string& fileName)
     if(g_resources.loadFile(fileName, fin))
         return loadBuffer(fin.str(), fileName);
     else
-        error("ERROR: script file '", fileName, "' doesn't exist");
+        logError("ERROR: script file '", fileName, "' doesn't exist");
     return false;
 }
 
@@ -81,7 +81,7 @@ void ScriptContext::reportError(const std::string& errorDesc, const char *funcNa
     if(funcName)
         ss << " in " << funcName << "(): ";
     ss << errorDesc;
-    error(ss.str());
+    logError(ss.str());
 }
 
 void ScriptContext::reportErrorWithTraceback(const std::string& errorDesc, const char* funcName)
@@ -385,7 +385,7 @@ std::string ScriptContext::getFunctionSourcePath(bool functionIsOnStack, int lev
             if(source[0] == '@' && pos != std::string::npos)
                 path = source.substr(1, pos - 1);
         } else {
-            error("no source");
+            logError("no source");
         }
     }
     return path;

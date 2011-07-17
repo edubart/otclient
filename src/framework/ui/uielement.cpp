@@ -58,7 +58,7 @@ void UIElement::destroyCheck()
     UIElementPtr me = asUIElement();
     // check for leaks, the number of references must be always 2 here
     if(me.use_count() != 2 && me != UIContainer::getRoot()) {
-        warning("destroyed element with id '",getId(),"', but it still have ",(me.use_count()-2)," references left");
+        logWarning("destroyed element with id '",getId(),"', but it still have ",(me.use_count()-2)," references left");
     }
 }
 
@@ -205,7 +205,7 @@ void UIElement::addAnchor(AnchorPoint anchoredEdge, AnchorLine anchorEdge)
 {
     UIElementPtr target = backwardsGetElementById(anchorEdge.getElementId());
     if(!target)
-        warning("warning: element id '", anchorEdge.getElementId(), "' doesn't exist while anchoring element '", getId(), "'");
+        logWarning("warning: element id '", anchorEdge.getElementId(), "' doesn't exist while anchoring element '", getId(), "'");
 
     UIAnchorLayoutPtr layout = boost::dynamic_pointer_cast<UIAnchorLayout>(getLayout());
     if(layout)

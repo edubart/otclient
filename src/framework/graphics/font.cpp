@@ -71,7 +71,7 @@ bool Font::load(const std::string& file)
 {
     std::stringstream fin;
     if(!g_resources.loadFile(file, fin)) {
-        error("ERROR: Coult not load font file '",file,"'");
+        logError("ERROR: Coult not load font file '",file,"'");
         return false;
     }
 
@@ -93,7 +93,7 @@ bool Font::load(const std::string& file)
         // load texture
         m_texture = g_textures.get(textureName);
         if(!m_texture) {
-            error("ERROR: Failed to load image for font file '",file,"'");
+            logError("ERROR: Failed to load image for font file '",file,"'");
             return false;
         }
 
@@ -117,7 +117,7 @@ bool Font::load(const std::string& file)
                                                  m_glyphHeight);
         }
     } catch(OTMLException e) {
-        error("ERROR: Malformed font file \"", file.c_str(), "\":\n  ", e.what());
+        logError("ERROR: Malformed font file \"", file.c_str(), "\":\n  ", e.what());
         return false;
     }
 

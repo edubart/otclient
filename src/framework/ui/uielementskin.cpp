@@ -34,7 +34,7 @@ ImagePtr UIElementSkin::loadImage(OTMLNode* node)
     if(OTMLNode* cnode = node->at("bordered image")) {
         image = BorderedImage::loadFromOTMLNode(cnode, g_uiSkins.getDefaultTexture());
         if(!image)
-            error(node->generateErrorMessage("failed to load bordered image"));
+            logError(node->generateErrorMessage("failed to load bordered image"));
     } else if(OTMLNode* cnode = node->at("image")) {
         texture = g_textures.get(cnode->value());
         if(texture)
@@ -43,7 +43,7 @@ ImagePtr UIElementSkin::loadImage(OTMLNode* node)
             m_defaultSize = texture->getSize();
 
         if(!image)
-            error(cnode->generateErrorMessage("failed to load image"));
+            logError(cnode->generateErrorMessage("failed to load image"));
     }
 
     if(texture) {
