@@ -29,7 +29,7 @@
 #include <core/platform.h>
 #include <core/dispatcher.h>
 #include <ui/uiskins.h>
-#include <script/luascript.h>
+#include <script/scriptcontext.h>
 #include <ui/uicontainer.h>
 
 #include <csignal>
@@ -59,6 +59,7 @@ void loadDefaultConfigs()
     g_configs.set("window width", defWidth);
     g_configs.set("window height", defHeight);
     g_configs.set("window maximized", false);
+    g_configs.set("skin", "tibia");
 }
 
 void saveConfigs()
@@ -99,7 +100,7 @@ int main(int argc, const char *argv[])
 
     // load configurations
     loadDefaultConfigs();
-    if(!g_configs.load("config.yml"))
+    if(!g_configs.load("config.otml"))
         info("Could not read configuration file, default configurations will be used.");
 
     // create the window
@@ -115,7 +116,7 @@ int main(int argc, const char *argv[])
     g_engine.enableFpsCounter();
 
     // load ui skins
-    g_uiSkins.load("lightness");
+    g_uiSkins.load("tibia");
 
     // load script modules
     g_lua.loadAllModules();

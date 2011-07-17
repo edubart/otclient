@@ -1,5 +1,4 @@
 #include "translator.h"
-
 #include <boost/algorithm/string.hpp>
 
 AlignmentFlag parseAlignment(std::string aligment)

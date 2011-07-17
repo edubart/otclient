@@ -41,7 +41,7 @@ void UISkins::load(const std::string& skinName)
     g_resources.pushCurrentPath("skins");
 
     std::stringstream fin;
-    if(!g_resources.loadFile(skinName + ".yml", fin))
+    if(!g_resources.loadFile(skinName + ".otml", fin))
         fatal("FATAL ERROR: Could not load skin '",skinName,"'");
 
     try {

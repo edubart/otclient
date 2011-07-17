@@ -28,6 +28,10 @@
 #include <global.h>
 #include <graphics/image.h>
 #include <graphics/texture.h>
+#include <otml/otmlnode.h>
+
+class BorderedImage;
+typedef boost::shared_ptr<BorderedImage> BorderedImagePtr;
 
 class BorderedImage : public Image
 {
@@ -43,30 +47,11 @@ public:
                   const Rect& bottomRight,
                   const Rect& center);
 
-    BorderedImage(const std::string& texture,
-                  const Rect& left,
-                  const Rect& right,
-                  const Rect& top,
-                  const Rect& bottom,
-                  const Rect& topLeft,
-                  const Rect& topRight,
-                  const Rect& bottomLeft,
-                  const Rect& bottomRight,
-                  const Rect& center);
-
-    void setTexCoords(const Rect& left,
-                      const Rect& right,
-                      const Rect& top,
-                      const Rect& bottom,
-                      const Rect& topLeft,
-                      const Rect& topRight,
-                      const Rect& bottomLeft,
-                      const Rect& bottomRight,
-                      const Rect& center);
-
     void draw(const Rect& screenCoords);
 
     Size getDefaultSize() const { return m_defaultSize; }
+
+    static BorderedImagePtr loadFromOTMLNode(OTMLNode *node, TexturePtr defaultTexture = TexturePtr());
 
 private:
     Rect m_leftBorderTexCoords;
@@ -84,7 +69,5 @@ private:
     Size m_bordersSize;
     Size m_defaultSize;
 };
-
-typedef boost::shared_ptr<BorderedImage> BorderedImagePtr;
 
 #endif // BORDEREDIMAGE_H

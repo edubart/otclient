@@ -40,7 +40,7 @@ public:
     void setTitle(const std::string& title) { m_title = title; }
     std::string getTitle() const { return m_title; }
 
-    virtual const char *getScriptableName() const { return "UIWindow"; }
+    virtual const char *getScriptObjectType() const { return "UIWindow"; }
 
     virtual bool isFocusable() const { return true; }
 

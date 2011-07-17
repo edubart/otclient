@@ -39,7 +39,7 @@ public:
     void sendPacket();
     void onRecv(InputMessage *inputMessage);
 
-    const char *getScriptableName() const { return "ProtocolLogin"; }
+    const char *getScriptObjectType() const { return "ProtocolLogin"; }
 
 private:
     void parseError(InputMessage *inputMessage);

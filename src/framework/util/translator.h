@@ -2,7 +2,6 @@
 #define TRANSLATOR_H
 
 #include <const.h>
-
 #include <string>
 
 AlignmentFlag parseAlignment(std::string aligment);

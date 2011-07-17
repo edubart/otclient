@@ -1,7 +1,9 @@
 #ifndef OTMLPARSER_H
 #define OTMLPARSER_H
 
-#include <global.h>
+#include <string>
+#include <vector>
+#include <istream>
 
 class OTMLNode;
 

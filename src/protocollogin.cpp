@@ -24,7 +24,7 @@
 #include "protocollogin.h"
 #include <net/outputmessage.h>
 #include <net/rsa.h>
-#include <script/luascript.h>
+#include <script/scriptcontext.h>
 #include <boost/bind.hpp>
 
 ProtocolLogin::ProtocolLogin()
@@ -134,14 +134,14 @@ void ProtocolLogin::parseError(InputMessage *inputMessage)
 {
     std::string error = inputMessage->getString();
     g_lua.pushString(error);
-    callLuaTableField("onError", 1);
+    callScriptTableField("onError", 1);
 }
 
 void ProtocolLogin::parseMOTD(InputMessage *inputMessage)
 {
     std::string motd = inputMessage->getString();
     g_lua.pushString(motd);
-    callLuaTableField("onMotd", 1);
+    callScriptTableField("onMotd", 1);
 }
 
 void ProtocolLogin::parseCharacterList(InputMessage *inputMessage)

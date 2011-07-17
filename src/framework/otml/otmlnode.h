@@ -30,7 +30,7 @@ public:
     bool hasTag() const { return !m_tag.empty(); }
     bool hasChildren() const { return size() > 0; }
     bool hasValue() const { return !m_value.empty(); }
-    bool hasNode(const std::string ctag) const { return at(ctag) != 0; }
+    bool hasChild(const std::string ctag) const { return at(ctag) != 0; }
 
     void setTag(std::string tag) { m_tag = tag; }
     void setLine(int line) { m_line = line; }

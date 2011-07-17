@@ -52,13 +52,11 @@ SET(SOURCES
     src/protocollogin.cpp
 
 # framework core
-    src/framework/core/global.cpp
     src/framework/core/dispatcher.cpp
     src/framework/core/configs.cpp
     src/framework/core/resources.cpp
     src/framework/core/engine.cpp
     src/framework/core/modules.cpp
-    src/framework/core/allocator.cpp
 
 # framework otml
     src/framework/otml/otmlemitter.cpp
@@ -66,9 +64,9 @@ SET(SOURCES
     src/framework/otml/otmlnode.cpp
 
 # framework script
-    src/framework/script/scriptable.cpp
-    src/framework/script/luascript.cpp
-    src/framework/script/luafunctions.cpp
+    src/framework/script/scriptobject.cpp
+    src/framework/script/scriptcontext.cpp
+    src/framework/script/scriptfunctions.cpp
 
 # framework utilities
     src/framework/util/color.cpp
@@ -76,6 +74,7 @@ SET(SOURCES
     src/framework/util/convert.cpp
     src/framework/util/logger.cpp
     src/framework/util/apngloader.cpp
+    src/framework/util/allocator.cpp
 
 # framework graphics
     src/framework/graphics/image.cpp

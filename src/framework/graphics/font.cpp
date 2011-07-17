@@ -101,7 +101,7 @@ bool Font::load(const std::string& file)
         calculateGlyphsWidthsAutomatically(glyphSize);
 
         // read custom widths
-        if(doc->hasNode("glyph widths")) {
+        if(doc->hasChild("glyph widths")) {
             std::map<int, int> glyphWidths;
             doc->readAt("glyph widths", &glyphWidths);
             foreach(const auto& pair, glyphWidths)

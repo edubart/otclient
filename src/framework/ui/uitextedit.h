@@ -46,7 +46,7 @@ public:
 
     bool isFocusable() const { return true; }
 
-    virtual const char *getScriptableName() const { return "UITextEdit"; }
+    virtual const char *getScriptObjectType() const { return "UITextEdit"; }
 
 private:
     TextArea m_textArea;

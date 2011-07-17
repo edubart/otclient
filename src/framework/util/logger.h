@@ -10,7 +10,7 @@ enum LogLevel {
     LogError,
     LogFatal
 };
-void log(LogLevel level, const std::string& message, const char *trace = NULL);
+void log(LogLevel level, const std::string& message, std::string prettyFunction = "");
 
 // specialized logging
 template<class... T>
@@ -24,7 +24,7 @@ void error(const T&... args) { log(LogError, make_string(args...)); }
 template<class... T>
 void fatal(const T&... args) { log(LogFatal, make_string(args...)); }
 
-#define trace() debug(LogDebug, "", __PRETTY_FUNCTION__)
+#define trace() log(LogDebug, "", __PRETTY_FUNCTION__)
 
 // dump utility
 struct Dump {

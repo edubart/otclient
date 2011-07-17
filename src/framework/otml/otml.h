@@ -6,4 +6,3 @@
 #include "otmlparser.h"
 
 #endif // OTML_H
-

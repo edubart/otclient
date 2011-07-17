@@ -37,9 +37,9 @@ void Fonts::init()
     // load all fonts
     std::list<std::string> files = g_resources.listDirectoryFiles();
     foreach(const std::string& file, files) {
-        if(boost::ends_with(file, ".yml")) {
+        if(boost::ends_with(file, ".otml")) {
             std::string name = file;
-            boost::erase_first(name, ".yml");
+            boost::erase_first(name, ".otml");
             FontPtr font(new Font(name));
             if(font->load(file))
                 m_fonts.push_back(font);

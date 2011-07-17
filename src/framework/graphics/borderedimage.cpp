@@ -38,33 +38,6 @@ BorderedImage::BorderedImage(TexturePtr texture,
                              const Rect& bottomRight,
                              const Rect& center) : Image(texture)
 {
-    setTexCoords(left, right, top, bottom, topLeft, topRight, bottomLeft, bottomRight, center);
-}
-
-BorderedImage::BorderedImage(const std::string& texture,
-                             const Rect& left,
-                             const Rect& right,
-                             const Rect& top,
-                             const Rect& bottom,
-                             const Rect& topLeft,
-                             const Rect& topRight,
-                             const Rect& bottomLeft,
-                             const Rect& bottomRight,
-                             const Rect& center) : Image(texture)
-{
-    setTexCoords(left, right, top, bottom, topLeft, topRight, bottomLeft, bottomRight, center);
-}
-
-void BorderedImage::setTexCoords(const Rect& left,
-                                 const Rect& right,
-                                 const Rect& top,
-                                 const Rect& bottom,
-                                 const Rect& topLeft,
-                                 const Rect& topRight,
-                                 const Rect& bottomLeft,
-                                 const Rect& bottomRight,
-                                 const Rect& center)
-{
     m_leftBorderTexCoords = left;
     m_rightBorderTexCoords = right;
     m_topBorderTexCoords = top;
@@ -84,6 +57,73 @@ void BorderedImage::setTexCoords(const Rect& left,
                          std::max(std::max(topLeft.height(), topRight.height()), top.height()) +
                             std::max(std::max(bottomLeft.height(), bottomRight.height()), bottom.height()) +
                             center.height());
+}
+
+BorderedImagePtr BorderedImage::loadFromOTMLNode(OTMLNode* node, TexturePtr defaultTexture)
+{
+    Rect leftBorder;
+    Rect rightBorder;
+    Rect topBorder;
+    Rect bottomBorder;
+    Rect topLeftCorner;
+    Rect topRightCorner;
+    Rect bottomLeftCorner;
+    Rect bottomRightCorner;
+    Rect center;
+    Rect subRect;
+    int top, bottom, left, right, border;
+    Size size;
+    Point offset;
+
+    TexturePtr texture;
+    std::string textureSource = node->readAt("source", std::string());
+    if(!textureSource.empty())
+        texture = g_textures.get(textureSource);
+    else
+        texture = defaultTexture;
+
+    if(!texture)
+        return BorderedImagePtr();
+
+    size = texture->getSize();
+    size = node->readAt("size", size);
+    offset = node->readAt("offset", offset);
+    subRect = Rect(offset, size);
+    border = node->readAt("border", 0);
+    top = bottom = left = right = border;
+    top = node->readAt("top", top);
+    bottom = node->readAt("bottom", bottom);
+    left = node->readAt("left", left);
+    right = node->readAt("right", right);
+    leftBorder = Rect(subRect.left(), subRect.top() + top, left, subRect.height() - top - bottom);
+    rightBorder = Rect(subRect.right() - right, subRect.top() + top, right, subRect.height() - top - bottom);
+    topBorder = Rect(subRect.left() + left, subRect.top(), subRect.width() - right - left, top);
+    bottomBorder = Rect(subRect.left() + left, subRect.bottom() - bottom, subRect.width() - right - left, bottom);
+    topLeftCorner = Rect(subRect.left(), subRect.top(), left, top);
+    topRightCorner = Rect(subRect.right() - right, subRect.top(), right, top);
+    bottomLeftCorner = Rect(subRect.left(), subRect.bottom() - bottom, left, bottom);
+    bottomRightCorner = Rect(subRect.right() - right, subRect.bottom() - bottom, right, bottom);
+    center = Rect(subRect.left() + left, subRect.top() + top, subRect.width() - right - left, subRect.height() - top - bottom);
+    leftBorder = node->readAt("left border", leftBorder);
+    rightBorder = node->readAt("right border", rightBorder);
+    topBorder = node->readAt("top border", topBorder);
+    bottomBorder = node->readAt("bottom border", bottomBorder);
+    topLeftCorner = node->readAt("top left corner", topLeftCorner);
+    topRightCorner = node->readAt("top right corner", topRightCorner);
+    bottomLeftCorner = node->readAt("bottom left corner", bottomLeftCorner);
+    bottomRightCorner = node->readAt("bottom right corner", bottomRightCorner);
+    center = node->readAt("center", center);
+
+    return BorderedImagePtr(new BorderedImage(texture,
+                            leftBorder,
+                            rightBorder,
+                            topBorder,
+                            bottomBorder,
+                            topLeftCorner,
+                            topRightCorner,
+                            bottomLeftCorner,
+                            bottomRightCorner,
+                            center));
 }
 
 void BorderedImage::draw(const Rect& screenCoords)

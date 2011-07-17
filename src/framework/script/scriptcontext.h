@@ -1,42 +1,18 @@
-/* The MIT License
- *
- * Copyright (c) 2010 OTClient, https://github.com/edubart/otclient
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-
-
-#ifndef LUASCRIPT_H
-#define LUASCRIPT_H
+#ifndef SCRIPTCONTEXT_H
+#define SCRIPTCONTEXT_H
 
 #include <global.h>
-#include <script/scriptable.h>
+#include "scriptobject.h"
 
 #define reportFuncError(a) reportError(a, __FUNCTION__)
 #define reportFuncErrorWithTraceback(a) reportErrorWithTraceback(a, __FUNCTION__)
 
 struct lua_State;
 
-class LuaScript
+class ScriptContext
 {
 public:
-    LuaScript() : L(NULL) { }
+    ScriptContext() : L(NULL) { }
 
     void init();
     void terminate();
@@ -70,8 +46,8 @@ public:
     void getField(const std::string& key);
     void setField(const std::string& key);
 
-    void getScriptableField(const ScriptablePtr& scriptable, const std::string& field);
-    void setScriptableField(const ScriptablePtr& scriptable, const std::string& field);
+    void getScriptObjectField(const ScriptObjectPtr& scriptobject, const std::string& field);
+    void setScriptObjectField(const ScriptObjectPtr& scriptobject, const std::string& field);
 
     void rawGetGlobalTableField(const std::string& globalTable, const std::string& key);
     void rawSetGlobalTableField(const std::string& globalTable, const std::string& key);
@@ -93,14 +69,14 @@ public:
     bool popBoolean();
     int popInteger();
     std::string popString();
-    ScriptablePtr popClassInstance();
+    ScriptObjectPtr popClassInstance();
     int popRef();
 
     void pushNil();
     void pushBoolean(bool b);
     void pushInteger(int i);
     void pushString(const std::string& str);
-    void pushClassInstance(const ScriptablePtr& object);
+    void pushClassInstance(const ScriptObjectPtr& object);
     void pushValue(int index = -1);
     void pushRef(int ref);
 
@@ -134,6 +110,6 @@ private:
     lua_State *L;
 };
 
-extern LuaScript g_lua;
+extern ScriptContext g_lua;
 
-#endif // LUASCRIPT_H
+#endif // SCRIPTCONTEXT_H

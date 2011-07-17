@@ -25,7 +25,7 @@
 #include <boost/enable_shared_from_this.hpp>
 
 // constants
-#include "const.h"
+#include <const.h>
 
 // easy types
 #include <util/types.h>

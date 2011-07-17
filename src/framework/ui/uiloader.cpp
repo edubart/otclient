@@ -1,33 +1,9 @@
-/* The MIT License
- *
- * Copyright (c) 2010 OTClient, https://github.com/edubart/otclient
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-
-
 #include <global.h>
 #include <core/resources.h>
 #include <ui/ui.h>
 #include <ui/uiloader.h>
-#include <script/luascript.h>
-#include <script/luafunctions.h>
+#include <script/scriptcontext.h>
+#include <script/scriptfunctions.h>
 #include <otml/otml.h>
 #include <ui/uianchorlayout.h>
 #include <util/translator.h>
@@ -42,8 +18,9 @@ UIElementPtr UILoader::createElementFromId(const std::string& id)
 
     std::vector<std::string> split;
     boost::split(split, id, boost::is_any_of(std::string("#")));
-    if(split.size() != 2)
+    if(split.size() != 2) {
         return element;
+    }
 
     std::string elementType = split[0].substr(1);
     std::string elementId = split[1];
@@ -164,7 +141,7 @@ void UILoader::loadElement(const UIElementPtr& element, OTMLNode* node)
         element->setSkin(g_uiSkins.getElementSkin(element->getElementType(), "default"));
 
     // load elements common proprieties
-    if(node->hasNode("size"))
+    if(node->hasChild("size"))
         element->setSize(node->readAt<Size>("size"));
 
     // load margins
@@ -247,7 +224,7 @@ void UILoader::loadElementScriptFunction(const UIElementPtr& element, OTMLNode* 
     functionDesc += "[" + node->tag() + "]";
 
     if(g_lua.loadBufferAsFunction(node->value(), functionDesc))
-        g_lua.setScriptableField(element, node->tag());
+        g_lua.setScriptObjectField(element, node->tag());
     else
         error(node->generateErrorMessage("failed to parse inline lua script"));
 }
