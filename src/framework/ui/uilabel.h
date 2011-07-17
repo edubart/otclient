@@ -13,7 +13,7 @@ public:
         m_align(AlignLeftCenter) { }
 
     void setText(const std::string& text);
-     std::string getText() const { return m_text; }
+    std::string getText() const { return m_text; }
 
     void setAlign(AlignmentFlag align) { m_align = align; }
     AlignmentFlag getAlign() const { return m_align; }

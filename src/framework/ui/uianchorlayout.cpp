@@ -1,5 +1,6 @@
 #include <global.h>
 #include <ui/uianchorlayout.h>
+#include <ui/uielement.h>
 
 UIElementPtr Anchor::getAnchorLineElement() const
 {
@@ -13,17 +14,17 @@ int Anchor::getAnchorLinePoint() const
     UIElementPtr anchorLineElement = getAnchorLineElement();
     if(anchorLineElement) {
         switch(m_anchorLine.getEdge()) {
-            case UI::AnchorLeft:
+            case AnchorLeft:
                 return anchorLineElement->getRect().left();
-            case UI::AnchorRight:
+            case AnchorRight:
                 return anchorLineElement->getRect().right();
-            case UI::AnchorTop:
+            case AnchorTop:
                 return anchorLineElement->getRect().top();
-            case UI::AnchorBottom:
+            case AnchorBottom:
                 return anchorLineElement->getRect().bottom();
-            case UI::AnchorHorizontalCenter:
+            case AnchorHorizontalCenter:
                 return anchorLineElement->getRect().horizontalCenter();
-            case UI::AnchorVerticalCenter:
+            case AnchorVerticalCenter:
                 return anchorLineElement->getRect().verticalCenter();
             default:
                 break;
@@ -31,7 +32,7 @@ int Anchor::getAnchorLinePoint() const
     }
     return -9999;
 }
-bool UIAnchorLayout::addAnchor(const UIElementPtr& anchoredElement, UI::AnchorPoint anchoredEdge, const AnchorLine& anchorLine)
+bool UIAnchorLayout::addAnchor(const UIElementPtr& anchoredElement, AnchorPoint anchoredEdge, const AnchorLine& anchorLine)
 {
     Anchor anchor(anchoredElement, anchoredEdge, anchorLine);
     UIElementPtr anchorLineElement = anchor.getAnchorLineElement();
@@ -71,36 +72,36 @@ void UIAnchorLayout::recalculateElementLayout(const UIElementPtr& element)
         if(anchor.getAnchoredElement() == element && anchor.getAnchorLineElement()) {
             int point = anchor.getAnchorLinePoint();
             switch(anchor.getAnchoredEdge()) {
-                case UI::AnchorHorizontalCenter:
+                case AnchorHorizontalCenter:
                     rect.moveHorizontalCenter(point + element->getMarginLeft() - element->getMarginRight());
                     horizontalMoved = true;
                     break;
-                case UI::AnchorLeft:
+                case AnchorLeft:
                     if(!horizontalMoved) {
                         rect.moveLeft(point + element->getMarginLeft());
                         horizontalMoved = true;
                     } else
                         rect.setLeft(point + element->getMarginLeft());
                     break;
-                case UI::AnchorRight:
+                case AnchorRight:
                     if(!horizontalMoved) {
                         rect.moveRight(point - element->getMarginRight());
                         horizontalMoved = true;
                     } else
                         rect.setRight(point - element->getMarginRight());
                     break;
-                case UI::AnchorVerticalCenter:
+                case AnchorVerticalCenter:
                     rect.moveVerticalCenter(point + element->getMarginTop() - element->getMarginBottom());
                     verticalMoved = true;
                     break;
-                case UI::AnchorTop:
+                case AnchorTop:
                     if(!verticalMoved) {
                         rect.moveTop(point + element->getMarginTop());
                         verticalMoved = true;
                     } else
                         rect.setTop(point + element->getMarginTop());
                     break;
-                case UI::AnchorBottom:
+                case AnchorBottom:
                     if(!verticalMoved) {
                         rect.moveBottom(point - element->getMarginBottom());
                         verticalMoved = true;
@@ -139,19 +140,19 @@ bool UIAnchorLayout::hasElementInAnchorTree(const UIElementPtr& element, const U
     return false;
 }
 
-UI::AnchorPoint UIAnchorLayout::parseAnchorPoint(const std::string& anchorPointStr)
+AnchorPoint UIAnchorLayout::parseAnchorPoint(const std::string& anchorPointStr)
 {
     if(anchorPointStr == "left")
-        return UI::AnchorLeft;
+        return AnchorLeft;
     else if(anchorPointStr == "right")
-        return UI::AnchorRight;
+        return AnchorRight;
     else if(anchorPointStr == "top")
-        return UI::AnchorTop;
+        return AnchorTop;
     else if(anchorPointStr == "bottom")
-        return UI::AnchorBottom;
+        return AnchorBottom;
     else if(anchorPointStr == "horizontalCenter")
-        return UI::AnchorHorizontalCenter;
+        return AnchorHorizontalCenter;
     else if(anchorPointStr == "verticalCenter")
-        return UI::AnchorVerticalCenter;
-    return UI::AnchorNone;
+        return AnchorVerticalCenter;
+    return AnchorNone;
 }

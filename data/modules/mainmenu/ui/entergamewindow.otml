@@ -3,7 +3,7 @@
   size: [236, 178]
   anchors.horizontalCenter: parent.horizontalCenter
   anchors.verticalCenter: parent.verticalCenter
-  onLoad: self.locked = true
+  onLoad: self:setLocked()
 
   %label#accountNameLabel
     text: Account name
@@ -34,7 +34,7 @@
     anchors.top: parent.top
     margin.top: 94
     margin.left: 132
-    onClick: messageBox("Error", "Not implemented yet")
+    onClick: displayErrorBox("Error", "Not implemented yet")
 
   %button#okButton
     text: Ok
@@ -43,7 +43,7 @@
     anchors.bottom: parent.bottom
     margin.bottom: 10
     margin.right: 66
-    onClick: enterGame_onOkClicked()
+    onClick: EnterGame_connectToLoginServer()
 
   %button#cancelButton
     text: Cancel

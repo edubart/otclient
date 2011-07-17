@@ -1,11 +1,9 @@
 #ifndef OTMLPARSER_H
 #define OTMLPARSER_H
 
-#include <string>
-#include <vector>
-#include <istream>
+#include <otml/otmlnode.h>
 
-class OTMLNode;
+#include <istream>
 
 class OTMLParser
 {
@@ -14,7 +12,7 @@ public:
     ~OTMLParser();
 
     OTMLNode* getDocument() const { return m_rootNode; }
-    std::string what() { return m_what; }
+    std::string what() { return m_rootNode->what(); }
 
     void throwError(const std::string& message, int line);
 
@@ -33,7 +31,6 @@ private:
     OTMLNode* m_rootNode;
     OTMLNode* m_currentParent;
     OTMLNode* m_previousNode;
-    std::string m_what;
     std::istream& m_in;
 };
 

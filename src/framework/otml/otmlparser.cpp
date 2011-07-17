@@ -5,8 +5,8 @@
 
 OTMLParser::OTMLParser(std::istream& in, std::string what) :
     m_currentDepth(0), m_currentLine(0),
-    m_rootNode(new OTMLNode), m_currentParent(m_rootNode), m_previousNode(0),
-    m_what(what), m_in(in)
+    m_rootNode(new OTMLNode(what)), m_currentParent(m_rootNode), m_previousNode(0),
+    m_in(in)
 {
     parse();
 }
@@ -20,8 +20,8 @@ void OTMLParser::throwError(const std::string& message, int line)
 {
     std::stringstream ss;
     ss << "OTML syntax error";
-    if(!m_what.empty())
-        ss  << " in '" << m_what << "'";
+    if(!what().empty())
+        ss  << " in '" << what() << "'";
     if(line > 0)
         ss << " at line " << line;
     ss << ": "  << message;

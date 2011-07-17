@@ -4,11 +4,24 @@
 #include <global.h>
 #include <core/input.h>
 #include <script/scriptobject.h>
-#include <ui/uiconstants.h>
-#include <ui/uielementskin.h>
-#include <ui/uilayout.h>
+#include <ui/uianchorlayout.h>
+
+namespace UI {
+    enum ElementType {
+        Element = 0,
+        Container,
+        Panel,
+        Window,
+        Label,
+        TextEdit,
+        Button,
+        CheckBox,
+        LineDecoration
+    };
+}
 
 class UIElementSkin;
+typedef boost::shared_ptr<UIElementSkin> UIElementSkinPtr;
 
 class UIContainer;
 typedef boost::shared_ptr<UIContainer> UIContainerPtr;
@@ -44,6 +57,7 @@ public:
     void setLayout(const UILayoutPtr& layout) { m_layout = layout; }
     UILayoutPtr getLayout() const;
 
+    void applyDefaultSkin();
     void setSkin(const UIElementSkinPtr& skin);
     UIElementSkinPtr getSkin() const { return m_skin; }
 
@@ -73,7 +87,14 @@ public:
     virtual const char *getScriptObjectType() const { return "UIElement"; }
 
     void setSize(const Size& size);
-    Size getSize() { return m_rect.size(); }
+    void setSize(int width, int height) { setSize(Size(width, height)); }
+    Size getSize() const { return m_rect.size(); }
+
+    void setWidth(int width) { setSize(width, getSize().height()); }
+    int getWidth() const { return getSize().width(); }
+
+    void setHeight(int height) { setSize(getSize().width(), height); }
+    int getHeight() const { return getSize().height(); }
 
     /// Set the layout rect, always absolute position
     void setRect(const Rect& rect);
@@ -81,8 +102,8 @@ public:
     Rect getRect() const { return m_rect; }
 
     // margins
-    void setMargin(int top, int left, int bottom, int right) { m_marginLeft = left; m_marginRight = right; m_marginTop = top; m_marginBottom = bottom; getLayout()->recalculateElementLayout(asUIElement()); }
-    void setMargin(int horizontal, int vertical) { m_marginLeft = m_marginRight = horizontal; m_marginTop = m_marginBottom = vertical; getLayout()->recalculateElementLayout(asUIElement()); }
+    void setMargin(int top, int right, int bottom, int left) { m_marginLeft = left; m_marginRight = right; m_marginTop = top; m_marginBottom = bottom; getLayout()->recalculateElementLayout(asUIElement()); }
+    void setMargin(int vertical, int horizontal) { m_marginLeft = m_marginRight = horizontal; m_marginTop = m_marginBottom = vertical; getLayout()->recalculateElementLayout(asUIElement()); }
     void setMargin(int margin) { m_marginLeft = m_marginRight = m_marginTop = m_marginBottom = margin; getLayout()->recalculateElementLayout(asUIElement()); }
     void setMarginLeft(int margin) { m_marginLeft = margin; getLayout()->recalculateElementLayout(asUIElement()); }
     void setMarginRight(int margin) { m_marginRight = margin; getLayout()->recalculateElementLayout(asUIElement()); }
@@ -93,6 +114,10 @@ public:
     int getMarginRight() const { return m_marginRight; }
     int getMarginTop() const { return m_marginTop; }
     int getMarginBottom() const { return m_marginBottom; }
+
+    // layout related
+    void centerIn(const std::string& targetId);
+    void addAnchor(AnchorPoint anchoredEdge, AnchorLine anchorEdge);
 
 private:
     UI::ElementType m_type;

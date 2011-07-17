@@ -41,7 +41,8 @@ public:
     inline T width() const { return  x2 - x1 + 1; }
     inline T height() const { return  y2 - y1 + 1; }
     inline TSize<T> size() const { return TSize<T>(width(), height()); }
-    inline void clear() { x1 = y1 = 0; x2 = y2 = -1; }
+    inline void reset() { x1 = y1 = 0; x2 = y2 = -1; }
+    inline void clear() { x2 = x1 - 1; y2 = y1 - 1; }
 
     inline void setLeft(T pos) { x1 = pos; }
     inline void setTop(T pos) { y1 = pos; }
@@ -178,48 +179,11 @@ public:
     }
 
     inline TRect<T> united(const TRect<T> &r) const {
-        if(isNull() || r.isNull())
-            return TRect<T>();
-
-        int l1 = x1;
-        int r1 = x1;
-        if (x2 - x1 + 1 < 0)
-            l1 = x2;
-        else
-            r1 = x2;
-
-        int l2 = r.x1;
-        int r2 = r.x1;
-        if(r.x2 - r.x1 + 1 < 0)
-            l2 = r.x2;
-        else
-            r2 = r.x2;
-
-        if(l1 > r2 || l2 > r1)
-            return TRect<T>();
-
-        int t1 = y1;
-        int b1 = y1;
-        if(y2 - y1 + 1 < 0)
-            t1 = y2;
-        else
-            b1 = y2;
-
-        int t2 = r.y1;
-        int b2 = r.y1;
-        if(r.y2 - r.y1 + 1 < 0)
-            t2 = r.y2;
-        else
-            b2 = r.y2;
-
-        if(t1 > b2 || t2 > b1)
-            return TRect<T>();
-
         TRect<T> tmp;
-        tmp.x1 = std::max(l1, l2);
-        tmp.x2 = std::min(r1, r2);
-        tmp.y1 = std::max(t1, t2);
-        tmp.y2 = std::min(b1, b2);
+        tmp.x1 = std::min(x1, r.x1);
+        tmp.x2 = std::max(x2, r.x2);
+        tmp.y1 = std::min(y1, r.y1);
+        tmp.y2 = std::max(y2, r.y2);
         return tmp;
     }
 
@@ -268,6 +232,9 @@ public:
     inline TRect<T>& operator=(const TRect<T>& other) { x1 = other.x1; y1 = other.y1; x2 = other.x2; y2 = other.y2; return *this;  }
     inline bool operator==(const TRect<T>& other) const { return (x1 == other.x1 && y1 == other.y1 && x2 == other.x2 && y2 == other.y2); }
     inline bool operator!=(const TRect<T>& other) const { return (x1 != other.x1 || y1 != other.y1 || x2 != other.x2 || y2 != other.y2); }
+
+    inline  TRect<T>& operator|=(const TRect<T>& other) { *this = united(other); return *this; }
+    inline  TRect<T>& operator&=(const TRect<T>& other) { *this = intersection(other); return *this; }
 
 private:
     T x1, y1, x2, y2;

@@ -48,11 +48,11 @@ UIElementPtr UILoader::createElementFromId(const std::string& id)
 
 UIElementPtr UILoader::loadFromFile(std::string filePath, const UIContainerPtr& parent)
 {
+    UIElementPtr element;
+
     std::stringstream fin;
-    if(!g_resources.loadFile(filePath, fin)) {
-        error("ERROR: Could not load ui ", filePath);
-        return UIElementPtr();
-    }
+    if(!g_resources.loadFile(filePath, fin))
+        return element;
 
     try {
         OTMLParser parser(fin, filePath);
@@ -65,7 +65,7 @@ UIElementPtr UILoader::loadFromFile(std::string filePath, const UIContainerPtr& 
         // only after that we can load anchors
 
         // create element interpreting it's id
-        UIElementPtr element = createElementFromId(elementId);
+        element = createElementFromId(elementId);
         if(!element) {
             error(doc->front()->generateErrorMessage("invalid root element type"));
             return element;
@@ -81,12 +81,11 @@ UIElementPtr UILoader::loadFromFile(std::string filePath, const UIContainerPtr& 
 
         // report onLoad events
         element->onLoad();
-        return element;
     } catch(OTMLException e) {
         error("ERROR: Failed to load ui ",filePath,": ", e.what());
     }
 
-    return UIElementPtr();
+    return element;
 }
 
 void UILoader::populateContainer(const UIContainerPtr& parent, OTMLNode* node)
@@ -138,7 +137,7 @@ void UILoader::loadElement(const UIElementPtr& element, OTMLNode* node)
             element->setSkin(skin);
         }
     } else // apply default skin
-        element->setSkin(g_uiSkins.getElementSkin(element->getElementType(), "default"));
+        element->applyDefaultSkin();
 
     // load elements common proprieties
     if(node->hasChild("size"))
@@ -151,12 +150,12 @@ void UILoader::loadElement(const UIElementPtr& element, OTMLNode* node)
     element->setMarginBottom(node->readAtPath("margin/bottom", 0));
 
     // load anchors
-    loadElementAnchor(element, UI::AnchorLeft, node->atPath("anchors/left"));
-    loadElementAnchor(element, UI::AnchorRight, node->atPath("anchors/right"));
-    loadElementAnchor(element, UI::AnchorTop, node->atPath("anchors/top"));
-    loadElementAnchor(element, UI::AnchorBottom, node->atPath("anchors/bottom"));
-    loadElementAnchor(element, UI::AnchorHorizontalCenter, node->atPath("anchors/horizontalCenter"));
-    loadElementAnchor(element, UI::AnchorVerticalCenter, node->atPath("anchors/verticalCenter"));
+    loadElementAnchor(element, AnchorLeft, node->atPath("anchors/left"));
+    loadElementAnchor(element, AnchorRight, node->atPath("anchors/right"));
+    loadElementAnchor(element, AnchorTop, node->atPath("anchors/top"));
+    loadElementAnchor(element, AnchorBottom, node->atPath("anchors/bottom"));
+    loadElementAnchor(element, AnchorHorizontalCenter, node->atPath("anchors/horizontalCenter"));
+    loadElementAnchor(element, AnchorVerticalCenter, node->atPath("anchors/verticalCenter"));
 
     // load basic element events
     loadElementScriptFunction(element, node->at("onLoad"));
@@ -178,7 +177,7 @@ void UILoader::loadElement(const UIElementPtr& element, OTMLNode* node)
      }
 }
 
-void UILoader::loadElementAnchor(const UIElementPtr& anchoredElement, UI::AnchorPoint anchoredEdge, OTMLNode* node)
+void UILoader::loadElementAnchor(const UIElementPtr& anchoredElement, AnchorPoint anchoredEdge, OTMLNode* node)
 {
     if(!node)
         return;
@@ -203,9 +202,9 @@ void UILoader::loadElementAnchor(const UIElementPtr& anchoredElement, UI::Anchor
     }
 
     std::string anchorLineElementId = split[0];
-    UI::AnchorPoint anchorLineEdge = UIAnchorLayout::parseAnchorPoint(split[1]);
+    AnchorPoint anchorLineEdge = UIAnchorLayout::parseAnchorPoint(split[1]);
 
-    if(anchorLineEdge == UI::AnchorNone) {
+    if(anchorLineEdge == AnchorNone) {
         error(node->generateErrorMessage("invalid anchor type"));
         return;
     }

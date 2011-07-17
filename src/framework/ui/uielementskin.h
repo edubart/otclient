@@ -3,11 +3,9 @@
 
 #include <global.h>
 #include <graphics/image.h>
-#include <ui/uiconstants.h>
+#include <ui/uielement.h>
 #include <graphics/font.h>
 #include <otml/otmlnode.h>
-
-class UIElement;
 
 class UIElementSkin
 {

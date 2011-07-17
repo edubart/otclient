@@ -5,6 +5,7 @@
 #include <ui/uiskins.h>
 #include <ui/uielementskin.h>
 #include <ui/uicontainer.h>
+#include <ui/uianchorlayout.h>
 
 UIElement::UIElement(UI::ElementType type) :
     ScriptObject(),
@@ -17,7 +18,9 @@ UIElement::UIElement(UI::ElementType type) :
     m_marginTop(0),
     m_marginBottom(0)
 {
-
+    // generate an unique id, this is need because anchoed layouts find elements by id
+    static unsigned long id = 1;
+    m_id = make_string("element", id++);
 }
 
 UIElement::~UIElement()
@@ -62,12 +65,11 @@ void UIElement::destroyCheck()
 void UIElement::setSize(const Size& size)
 {
     Rect rect = getRect();
-    if(rect.isValid())
-        rect.setSize(size);
-    else
-        rect = Rect(0, 0, size);
+    rect.setSize(size);
     setRect(rect);
-    getLayout()->recalculateElementLayout(asUIElement());
+
+    if(UILayoutPtr layout = getLayout())
+        layout->recalculateElementLayout(asUIElement());
 }
 
 void UIElement::setRect(const Rect& rect)
@@ -76,10 +78,16 @@ void UIElement::setRect(const Rect& rect)
         m_rect = rect;
 
         // rect updated, recalculate children layout
-        getLayout()->recalculateChildrenLayout(asUIElement());
+        if(UILayoutPtr layout = getLayout())
+            layout->recalculateChildrenLayout(asUIElement());
 
         onRectUpdate();
     }
+}
+
+void UIElement::applyDefaultSkin()
+{
+    setSkin(g_uiSkins.getElementSkin(getElementType(), "default"));
 }
 
 void UIElement::setSkin(const UIElementSkinPtr& skin)
@@ -185,4 +193,21 @@ UILayoutPtr UIElement::getLayout() const
     else if(getParent())
         return getParent()->getLayout();
     return UILayoutPtr();
+}
+
+void UIElement::centerIn(const std::string& targetId)
+{
+    addAnchor(AnchorHorizontalCenter, AnchorLine(targetId, AnchorHorizontalCenter));
+    addAnchor(AnchorVerticalCenter, AnchorLine(targetId, AnchorVerticalCenter));
+}
+
+void UIElement::addAnchor(AnchorPoint anchoredEdge, AnchorLine anchorEdge)
+{
+    UIElementPtr target = backwardsGetElementById(anchorEdge.getElementId());
+    if(!target)
+        warning("warning: element id '", anchorEdge.getElementId(), "' doesn't exist while anchoring element '", getId(), "'");
+
+    UIAnchorLayoutPtr layout = boost::dynamic_pointer_cast<UIAnchorLayout>(getLayout());
+    if(layout)
+        layout->addAnchor(asUIElement(), anchoredEdge, anchorEdge);
 }

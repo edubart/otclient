@@ -5,22 +5,6 @@
   anchors.top: parent.top
   anchors.bottom: parent.bottom
 
-  %panel#icos4d
-    skin:
-      image: /skins/lightness/mouse.png
-    anchors.left: parent.left
-    anchors.top: parent.top
-    margin.left: -2
-    margin.top: 70
-
-  %panel#mouse
-    skin:
-      image: /skins/lightness/icos4d.png
-    anchors.right: parent.right
-    anchors.bottom: parent.bottom
-    margin.left: 60
-    margin.top: 70
-
   %panel#mainMenu
     skin: roundedGridPanel
     size: [117, 171]
@@ -34,32 +18,32 @@
       anchors.top: parent.top
       anchors.horizontalCenter: parent.horizontalCenter
       margin.top: 16
-      onClick: UI.load("entergamewindow.yml")
+      onClick: UI.load("entergamewindow")
 
     %button#accessAccountButton
       text: Access Account
       anchors.top: parent.top
       anchors.horizontalCenter: parent.horizontalCenter
       margin.top: 46
-      onClick: messageBox("Error", "Not implemented yet")
+      onClick: displayErrorBox("Error", "Not implemented yet")
 
     %button#optionsButton
       text: Options
       anchors.top: parent.top
       anchors.horizontalCenter: parent.horizontalCenter
       margin.top: 76
-      onClick: UI.load("optionswindow.yml")
+      onClick: UI.load("optionswindow")
 
     %button#infoButton
       text: Info
       anchors.top: parent.top
       anchors.horizontalCenter: parent.horizontalCenter
       margin.top: 106
-      onClick: UI.load("infowindow.yml")
+      onClick: UI.load("infowindow")
 
     %button#exitGameButton
       text: Exit
       anchors.top: parent.top
       anchors.horizontalCenter: parent.horizontalCenter
       margin.top: 136
-      onClick: onApplicationClose()
+      onClick: terminateApplication()

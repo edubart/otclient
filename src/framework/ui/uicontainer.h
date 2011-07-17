@@ -34,7 +34,7 @@ public:
     const std::list<UIElementPtr>& getChildren() const { return m_children; }
     /// Pushs a child to the top
     void pushChildToTop(const UIElementPtr& child);
-
+    /// Return number of children
     int getChildCount() const { return m_children.size(); }
 
     /// Disable all children except the specified element

@@ -26,11 +26,11 @@
 #define UILOADER_H
 
 #include <global.h>
-#include <ui/uiconstants.h>
 #include <ui/uicontainer.h>
 #include <ui/uibutton.h>
 #include <ui/uiwindow.h>
 #include <ui/uilabel.h>
+#include <ui/uianchorlayout.h>
 
 class UILoader
 {
@@ -52,7 +52,7 @@ private:
     void loadElement(const UIElementPtr& element, OTMLNode* node);
 
     /// Load anchor from a OTML node
-    void loadElementAnchor(const UIElementPtr& anchoredElement, UI::AnchorPoint anchoredEdge, OTMLNode* node);
+    void loadElementAnchor(const UIElementPtr& anchoredElement, AnchorPoint anchoredEdge, OTMLNode* node);
 
     /// Load element lua function
     void loadElementScriptFunction(const UIElementPtr& element, OTMLNode* node);

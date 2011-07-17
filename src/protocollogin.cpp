@@ -29,13 +29,20 @@
 
 ProtocolLogin::ProtocolLogin()
 {
+    trace();
+}
 
+ProtocolLogin::~ProtocolLogin()
+{
+    trace();
 }
 
 void ProtocolLogin::login(const std::string& accountName, const std::string& accountPassword)
 {
+    trace();
     if(accountName.empty() || accountPassword.empty()) {
-        // shows error dialog
+        g_lua.pushString("You must enter an account name and password.");
+        callScriptTableField("onError", 1);
         return;
     }
 
@@ -70,6 +77,7 @@ void ProtocolLogin::onConnect()
 
 void ProtocolLogin::sendPacket()
 {
+    trace();
     OutputMessage oMsg;
 
     oMsg.addU8(0x01); // Protocol id
@@ -111,6 +119,7 @@ void ProtocolLogin::sendPacket()
 
 void ProtocolLogin::onRecv(InputMessage *inputMessage)
 {
+    trace();
     Protocol::onRecv(inputMessage);
 
     while(!inputMessage->end()) {
@@ -132,6 +141,7 @@ void ProtocolLogin::onRecv(InputMessage *inputMessage)
 
 void ProtocolLogin::parseError(InputMessage *inputMessage)
 {
+    trace();
     std::string error = inputMessage->getString();
     g_lua.pushString(error);
     callScriptTableField("onError", 1);
@@ -139,6 +149,7 @@ void ProtocolLogin::parseError(InputMessage *inputMessage)
 
 void ProtocolLogin::parseMOTD(InputMessage *inputMessage)
 {
+    trace();
     std::string motd = inputMessage->getString();
     g_lua.pushString(motd);
     callScriptTableField("onMotd", 1);
@@ -146,6 +157,7 @@ void ProtocolLogin::parseMOTD(InputMessage *inputMessage)
 
 void ProtocolLogin::parseCharacterList(InputMessage *inputMessage)
 {
+    trace();
     uint8 characters = inputMessage->getU8();
     for(int i = 0; i < characters; ++i) {
         std::string name = inputMessage->getString();

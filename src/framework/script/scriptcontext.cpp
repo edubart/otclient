@@ -593,7 +593,7 @@ int ScriptContext::luaPackageLoader(lua_State* L)
     if(g_resources.fileExists(fileName)) {
         std::stringstream fin;
         if(g_resources.loadFile(fileName, fin))
-            luaL_loadbuffer(L, fin.str().c_str(), fin.str().length(), fileName.c_str());
+            luaL_loadbuffer(L, fin.str().c_str(), fin.str().length(), ("@" + g_resources.resolvePath(fileName)).c_str());
     } else {
         lua_pushfstring(L, "\n\tcould not load lua script " LUA_QS, fileName.c_str());
     }

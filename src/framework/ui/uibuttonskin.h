@@ -2,7 +2,6 @@
 #define UIBUTTONSKIN_H
 
 #include <global.h>
-#include <ui/uiconstants.h>
 #include <ui/uielementskin.h>
 
 class Font;
