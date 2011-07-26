@@ -10,7 +10,10 @@ void UIButton::onInputEvent(const InputEvent& event)
     } else if(event.type == EV_MOUSE_LUP && m_state == ButtonDown) {
         m_state = ButtonUp;
         if(getRect().contains(event.mousePos)) {
-            g_dispatcher.addTask(boost::bind(&ScriptObject::callScriptTableField, shared_from_this(), "onClick", 0));
+            LuaObjectPtr me = asLuaObject();
+            g_dispatcher.addTask([me] {
+                me->callField("onClick");
+            });
         }
     } else if(event.type == EV_MOUSE_MOVE && m_state != ButtonDown) {
         if(isMouseOver())

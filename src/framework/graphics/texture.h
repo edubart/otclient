@@ -27,7 +27,7 @@
 
 #include <global.h>
 
-class Texture : public boost::enable_shared_from_this<Texture>
+class Texture : public std::enable_shared_from_this<Texture>
 {
 public:
     /// Create a texture, width and height must be a multiple of 2
@@ -55,7 +55,7 @@ protected:
     Size m_glSize;
 };
 
-typedef boost::shared_ptr<Texture> TexturePtr;
-typedef boost::weak_ptr<Texture> TextureWeakPtr;
+typedef std::shared_ptr<Texture> TexturePtr;
+typedef std::weak_ptr<Texture> TextureWeakPtr;
 
 #endif // TEXTURE_H

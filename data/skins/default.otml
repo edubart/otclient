@@ -1,0 +1,80 @@
+default font: helvetica-12px
+default font color: [210, 210, 210, 255]
+
+buttons:
+  default:
+    font: helvetica-11px-bold
+    font color: [240, 173, 77, 255]
+    default size: [106, 24]
+
+    bordered image:
+      source: button.png
+      border: 5
+
+    hover state:
+      bordered image:
+        source: button_hover.png
+        border: 5
+
+    down state:
+      text translate: [1, 1]
+      bordered image:
+        source: button_down.png
+        border: 5
+panels:
+  default:
+    # the default panel is empty
+
+  mainMenuBackground:
+    image: background.png
+    antialised: true
+
+  roundedGridPanel:
+    bordered image:
+      source: panel_rounded.png
+      border: 4
+
+  flatPanel:
+    bordered image:
+      source: panel_flat.png
+      border: 1
+
+labels:
+  default:
+
+  large:
+    font: helvetica-12px-bold
+
+windows:
+  default:
+    font: helvetica-11px-bold
+    font color: [240, 173, 77, 255]
+    head:
+      height: 20
+      bordered image:
+        source: window.png
+        size: [256, 19]
+        border: 4
+        bottom: 3
+
+    body:
+      bordered image:
+        source: window.png
+        size: [256, 237]
+        offset: [0, 19]
+        border: 4
+        top: 0
+
+text edits:
+  default:
+    default size: [86, 20]
+    text margin: 3
+    bordered image:
+      source: panel_flat.png
+      border: 1
+
+line decorations:
+  default:
+    bordered image:
+      source: horizontal_separator.png
+      top: 2

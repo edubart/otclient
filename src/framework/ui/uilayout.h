@@ -4,12 +4,12 @@
 #include <global.h>
 
 class UIElement;
-typedef boost::shared_ptr<UIElement> UIElementPtr;
+typedef std::shared_ptr<UIElement> UIElementPtr;
 
 class UILayout;
-typedef boost::shared_ptr<UILayout> UILayoutPtr;
+typedef std::shared_ptr<UILayout> UILayoutPtr;
 
-class UILayout : public boost::enable_shared_from_this<UILayout>
+class UILayout : public std::enable_shared_from_this<UILayout>
 {
 public:
     UILayout() { }

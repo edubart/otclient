@@ -9,7 +9,7 @@ class UICheckBox : public UIElement
 public:
     UICheckBox(UI::ElementType type = UI::Element);
 
-    virtual const char *getScriptObjectType() const { return "UICheckBox"; }
+    virtual const char *getLuaTypeName() const { return "UICheckBox"; }
 };
 
 #endif // UICHECKBOX_H

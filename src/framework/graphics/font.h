@@ -75,6 +75,6 @@ private:
     Size m_glyphsSize[256];
 };
 
-typedef boost::shared_ptr<Font> FontPtr;
+typedef std::shared_ptr<Font> FontPtr;
 
 #endif // FONT_H

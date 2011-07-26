@@ -28,7 +28,7 @@
 #include <net/connection.h>
 #include <net/inputmessage.h>
 #include <net/outputmessage.h>
-#include <script/scriptobject.h>
+#include <script/luaobject.h>
 
 #define CIPSOFT_PUBLIC_RSA "1321277432058722840622950990822933849527763264961655079678763618" \
                            "4334395343554449668205332383339435179772895415509701210392836078" \
@@ -38,18 +38,18 @@
 
 //#define RSA "109120132967399429278860960508995541528237502902798129123468757937266291492576446330739696001110603907230888610072655818825358503429057592827629436413108566029093628212635953836686562675849720620786279431090218017681061521755056710823876476444260558147179707119674283982419152118103759076030616683978566631413"
 
-class Protocol : public ScriptObject
+class Protocol : public LuaObject
 {
 public:
     Protocol();
 
-    void connect(const std::string& host, uint16 port, const boost::function<void()>& callback);
+    void connect(const std::string& host, uint16 port, const std::function<void()>& callback);
     void send(OutputMessage *outputMessage);
 
     virtual void onRecv(InputMessage *inputMessage);
     virtual void onError(const boost::system::error_code& err);
 
-    virtual const char *getScriptObjectType() const { return "Protocol"; }
+    virtual const char* getLuaTypeName() const { return "Protocol"; }
 
 protected:
     uint32 m_xteaKey[4];
@@ -63,6 +63,6 @@ private:
     ConnectionPtr m_connection;
 };
 
-typedef boost::shared_ptr<Protocol> ProtocolPtr;
+typedef std::shared_ptr<Protocol> ProtocolPtr;
 
 #endif

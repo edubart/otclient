@@ -1,50 +1,60 @@
-window#enterGameWindow
+Window
+  id: enterGameWindow
   title: Enter Game
   size: 236 178
   anchor.centerIn: parent
   lockOnLoad: true
 
-  %label
+  Label
     text: Account name
     position: 18 33
 
-  %label
+  Label
     text: "Password:"
     position: 18 62
 
-  %label
-    text: |
-      If you don't have
-      an account yet
+  Label
+    text:
+      [[If you don't have
+      an account yet]]
+
     anchors.top: parent.top
     anchors.left: parent.left
     margin: 87 18
 
-  %button.notImplemented
+  Button
     text: Create Account
     anchors.top: parent.top
     anchors.right: parent.right
     margin: 94 18
+    onClick:
+      function(self)
+        displayErrorBox("Error", "Not implemented yet")
+        self.parent:destroy()
+      end
 
-  %button.small
+  SmallButton
     text: Ok
     anchors.bottomRight: parent.bottomRight
     margin: 10 66
     onClick: EnterGame_connectToLoginServer()
 
-  %button.small.closeParent
+  SmallButton
     text: Cancel
     anchors.bottom: parent.bottom
     anchors.right: parent.right
     margin: 10 13
+    onClick: displayErrorBox("Error", "Not implemented yet")
 
-  %textEdit#accountNameTextEdit
+  TextEdit
+    id: accountNameTextEdit
     text: tibialua0
     anchors.top: parent.top
     anchors.right: parent.right
     margin: 32 18
 
-  %textEdit#passwordTextEdit
+  TextEdit
+    id: passwordTextEdit
     text: lua123456
     text-hidden: true
     anchors.top: parent.top

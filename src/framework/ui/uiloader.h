@@ -30,13 +30,14 @@
 #include <ui/uibutton.h>
 #include <ui/uiwindow.h>
 #include <ui/uilabel.h>
+#include <ui/uitextedit.h>
 #include <ui/uianchorlayout.h>
 
 class UILoader
 {
 public:
     /// Loads an UIElement and it's children from a FML file
-    UIElementPtr loadFromFile(std::string filePath, const UIContainerPtr& parent = UIContainer::getRoot());
+    UIElementPtr loadFromFile(std::string fileName, const UIContainerPtr& parent = UIContainer::getRoot());
 
 private:
     /// Detect element type and create it
@@ -61,6 +62,7 @@ private:
     void loadButton(const UIButtonPtr& button, OTMLNode* node);
     void loadWindow(const UIWindowPtr& window, OTMLNode* node);
     void loadLabel(const UILabelPtr& label, OTMLNode* node);
+    void loadTextEdit(const UITextEditPtr& textEdit, OTMLNode* node);
 };
 
 extern UILoader g_uiLoader;

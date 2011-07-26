@@ -1,8 +1,0 @@
-glyph height: 16
-glyph spacing: [0, 1]
-top margin: 0
-image: sans-12px.png
-image glyph size: [20, 16]
-
-glyph widths:
-  32: 4

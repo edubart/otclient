@@ -1,27 +1,3 @@
-/* The MIT License
- *
- * Copyright (c) 2010 OTClient, https://github.com/edubart/otclient
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-
-
 #include <global.h>
 #include <core/resources.h>
 #include <graphics/font.h>
@@ -54,6 +30,7 @@ void Font::calculateGlyphsWidthsAutomatically(const Size& glyphSize)
             // if all pixels were alpha we found the width
             if(columnFilledPixels == 0) {
                 width = x - glyphCoords.left();
+                width += m_glyphSpacing.width();
                 if(m_glyphHeight >= 16 && lastColumnFilledPixels >= m_glyphHeight/3)
                     width += 1;
                 break;
@@ -84,11 +61,11 @@ bool Font::load(const std::string& file)
 
         // required values
         textureName = doc->valueAt("image");
-        glyphSize = doc->readAt("image glyph size", Size(16, 16));
-        m_glyphHeight = doc->readAt("glyph height", 11);
-        m_firstGlyph = doc->readAt("first glyph", 32);
-        m_topMargin = doc->readAt("top margin", 0);
-        m_glyphSpacing = doc->readAt("glyph spacing", Size(0,0));
+        glyphSize = doc->readAt("image-glyph-size", Size(16, 16));
+        m_glyphHeight = doc->readAt("glyph-height", 11);
+        m_firstGlyph = doc->readAt("first-glyph", 32);
+        m_topMargin = doc->readAt("top-margin", 0);
+        m_glyphSpacing = doc->readAt("glyph-spacing", Size(0,0));
 
         // load texture
         m_texture = g_textures.get(textureName);
@@ -101,16 +78,16 @@ bool Font::load(const std::string& file)
         calculateGlyphsWidthsAutomatically(glyphSize);
 
         // read custom widths
-        if(doc->hasChild("glyph widths")) {
+        if(doc->hasChild("glyph-widths")) {
             std::map<int, int> glyphWidths;
-            doc->readAt("glyph widths", &glyphWidths);
+            doc->readAt("glyph-widths", &glyphWidths);
             foreach(const auto& pair, glyphWidths)
                 m_glyphsSize[pair.first].setWidth(pair.second);
         }
 
         // calculate glyphs texture coords
         int numHorizontalGlyphs = m_texture->getSize().width() / glyphSize.width();
-        for(int glyph = m_firstGlyph; glyph< 256; ++glyph) {
+        for(int glyph = m_firstGlyph; glyph < 256; ++glyph) {
             m_glyphsTextureCoords[glyph].setRect(((glyph - m_firstGlyph) % numHorizontalGlyphs) * glyphSize.width(),
                                                  ((glyph - m_firstGlyph) / numHorizontalGlyphs) * glyphSize.height(),
                                                  m_glyphsSize[glyph].width(),
@@ -248,7 +225,7 @@ const std::vector<Point>& Font::calculateGlyphsPositions(const std::string& text
                     lineWidths.resize(lines+1);
                 lineWidths[lines] = 0;
             } else if(glyph >= 32) {
-                lineWidths[lines] += m_glyphsSize[glyph].width() + m_glyphSpacing.width();
+                lineWidths[lines] += m_glyphsSize[glyph].width();
                 maxLineWidth = std::max(maxLineWidth, lineWidths[lines]);
             }
         }
@@ -281,7 +258,7 @@ const std::vector<Point>& Font::calculateGlyphsPositions(const std::string& text
 
         // render only if the glyph is valid
         if(glyph >= 32 && glyph != (uchar)'\n') {
-            virtualPos.x += m_glyphsSize[glyph].width() + m_glyphSpacing.width();
+            virtualPos.x += m_glyphsSize[glyph].width();
         }
     }
 

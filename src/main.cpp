@@ -5,8 +5,9 @@
 #include <core/platform.h>
 #include <core/dispatcher.h>
 #include <ui/uiskins.h>
-#include <script/scriptcontext.h>
+#include <core/packages.h>
 #include <ui/uicontainer.h>
+#include <script/luainterface.h>
 
 #include <csignal>
 
@@ -68,6 +69,9 @@ int main(int argc, const char *argv[])
     signal(SIGTERM, signal_handler);
     signal(SIGINT, signal_handler);
 
+    // init script stuff
+    g_lua.init();
+
     // init platform stuff
     Platform::init("OTClient");
 
@@ -92,10 +96,10 @@ int main(int argc, const char *argv[])
     g_engine.enableFpsCounter();
 
     // load ui skins
-    g_uiSkins.load("tibiaskin");
+    g_uiSkins.load("default");
 
     // load script modules
-    g_lua.loadAllModules();
+    g_packages.loadPackages();
 
     Platform::showWindow();
 
@@ -108,5 +112,6 @@ int main(int argc, const char *argv[])
     saveConfigs();
     Platform::terminate();
     g_resources.terminate();
+    g_lua.terminate();
     return 0;
 }

@@ -1,16 +1,16 @@
 require 'entergame'
 
 function initializeApplication()
-  mainMenu = loadUI("ui/mainmenu")
+  mainMenu = loadUI("ui/mainmenu", rootUI)
 end
 
 function terminateApplication()
-  App.exit()
+  exit()
 end
 
 -- here is where everything starts
 if not initialized then
   initializeApplication()
-  App.onClose = terminateApplication
+  onClose = terminateApplication
   initialized = true
 end

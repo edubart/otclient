@@ -31,7 +31,7 @@
 #include <otml/otmlnode.h>
 
 class BorderedImage;
-typedef boost::shared_ptr<BorderedImage> BorderedImagePtr;
+typedef std::shared_ptr<BorderedImage> BorderedImagePtr;
 
 class BorderedImage : public Image
 {

@@ -28,8 +28,6 @@
 #include <graphics/textureloader.h>
 #include <core/dispatcher.h>
 
-#include <boost/algorithm/string.hpp>
-
 Textures g_textures;
 
 TexturePtr Textures::get(const std::string& textureFile)

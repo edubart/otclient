@@ -67,18 +67,48 @@ UIElementPtr UIContainer::getChildById(const std::string& id)
 {
     if(getId() == id || id == "self")
         return asUIElement();
-
-    if(id == "parent")
+    else if(id == "parent")
         return getParent();
-
-    if(id == "root")
+    else if(id == "root")
         return getRoot();
-
-    foreach(const UIElementPtr& child, m_children) {
-        if(child->getId() == id)
-            return child;
+    else if(id == "prev") {
+        if(UIContainerPtr parent = getParent())
+            return parent->getChildBefore(asUIElement());
+    } else if(id == "next") {
+        if(UIContainerPtr parent = getParent())
+            return parent->getChildAfter(asUIElement());
+    } else {
+        foreach(const UIElementPtr& child, m_children) {
+            if(child->getId() == id)
+                return child;
+        }
     }
+    return UIElementPtr();
+}
 
+UIElementPtr UIContainer::getChildBefore(const UIElementPtr& reference)
+{
+    for(auto it = m_children.rbegin(); it != m_children.rend(); ++it) {
+        const UIElementPtr& element = (*it);
+        if(element == reference) {
+            if(++it != m_children.rend())
+                return (*it);
+            break;
+        }
+    }
+    return UIElementPtr();
+}
+
+UIElementPtr UIContainer::getChildAfter(const UIElementPtr& reference)
+{
+    for(auto it = m_children.begin(); it != m_children.end(); ++it) {
+        const UIElementPtr& element = (*it);
+        if(element == reference) {
+            if(++it != m_children.end())
+                return (*it);
+            break;
+        }
+    }
     return UIElementPtr();
 }
 
@@ -86,26 +116,30 @@ UIElementPtr UIContainer::recursiveGetChildById(const std::string& id)
 {
     if(getId() == id || id == "self")
         return asUIElement();
-
-    if(id == "parent")
+    else if(id == "parent")
         return getParent();
-
-    if(id == "root")
+    else if(id == "root")
         return getRoot();
-
-    foreach(const UIElementPtr& element, m_children) {
-        if(element->getId() == id)
-            return element;
-        else {
-            UIContainerPtr container = element->asUIContainer();
-            if(container) {
-                UIElementPtr element2 = container->recursiveGetChildById(id);
-                if(element2)
-                    return element2;
+    else if(id == "prev") {
+        if(UIContainerPtr parent = getParent())
+            return parent->getChildBefore(asUIElement());
+    } else if(id == "next") {
+        if(UIContainerPtr parent = getParent())
+            return parent->getChildAfter(asUIElement());
+    } else {
+        foreach(const UIElementPtr& element, m_children) {
+            if(element->getId() == id)
+                return element;
+            else {
+                UIContainerPtr container = element->asUIContainer();
+                if(container) {
+                    UIElementPtr element2 = container->recursiveGetChildById(id);
+                    if(element2)
+                        return element2;
+                }
             }
         }
     }
-
     return UIElementPtr();
 }
 
@@ -239,7 +273,7 @@ void UIContainer::setFocusedElement(const UIElementPtr& focusedElement)
 
     // when containers are focused they go to the top
     if(focusedElement && focusedElement->asUIContainer()) {
-        g_dispatcher.addTask(boost::bind(&UIContainer::pushChildToTop, asUIContainer(), m_focusedElement));
+        g_dispatcher.addTask(std::bind(&UIContainer::pushChildToTop, asUIContainer(), m_focusedElement));
     }
 }
 

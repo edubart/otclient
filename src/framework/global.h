@@ -16,13 +16,17 @@
 #include <string>
 #include <vector>
 #include <list>
+#include <deque>
 #include <map>
 #include <algorithm>
+#include <exception>
+#include <memory>
+#include <type_traits>
+#include <functional>
+#include <regex>
 
-// smart pointers
-#include <boost/shared_ptr.hpp>
-#include <boost/scoped_ptr.hpp>
-#include <boost/enable_shared_from_this.hpp>
+// string algorithms
+#include <boost/algorithm/string.hpp>
 
 // constants
 #include <const.h>
@@ -41,5 +45,6 @@
 #include <util/foreach.h>
 #include <util/makestring.h>
 #include <util/logger.h>
+#include <util/algorithms.h>
 
 #endif // GLOBAL_H

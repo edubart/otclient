@@ -1,25 +1,23 @@
 #include "protocollogin.h"
 #include <net/outputmessage.h>
 #include <net/rsa.h>
-#include <script/scriptcontext.h>
+#include <script/luainterface.h>
 #include <boost/bind.hpp>
 
 ProtocolLogin::ProtocolLogin()
 {
-    trace();
+
 }
 
 ProtocolLogin::~ProtocolLogin()
 {
-    trace();
+
 }
 
 void ProtocolLogin::login(const std::string& accountName, const std::string& accountPassword)
 {
-    trace();
     if(accountName.empty() || accountPassword.empty()) {
-        g_lua.pushString("You must enter an account name and password.");
-        callScriptTableField("onError", 1);
+        callField("onError", "You must enter an account name and password.");
         return;
     }
 
@@ -43,18 +41,16 @@ void ProtocolLogin::login(const std::string& accountName, const std::string& acc
     //std::string host = "tecserver.zapto.org";
     uint16 port = 7171;
 
-    connect(host, port, boost::bind(&ProtocolLogin::onConnect, this));
+    connect(host, port, std::bind(&ProtocolLogin::onConnect, this));
 }
 
 void ProtocolLogin::onConnect()
 {
-    trace();
     sendPacket();
 }
 
 void ProtocolLogin::sendPacket()
 {
-    trace();
     OutputMessage oMsg;
 
     oMsg.addU8(0x01); // Protocol id
@@ -96,7 +92,6 @@ void ProtocolLogin::sendPacket()
 
 void ProtocolLogin::onRecv(InputMessage *inputMessage)
 {
-    trace();
     Protocol::onRecv(inputMessage);
 
     while(!inputMessage->end()) {
@@ -109,6 +104,14 @@ void ProtocolLogin::onRecv(InputMessage *inputMessage)
         case 0x14:
             parseMOTD(inputMessage);
             break;
+        case 0x1e:
+            inputMessage->getU8();
+            inputMessage->getU8();
+            inputMessage->getU8();
+            inputMessage->getU8();
+            inputMessage->getU8();
+            callField("onError", "Client needs update.");
+            break;
         case 0x64:
             parseCharacterList(inputMessage);
             break;
@@ -118,23 +121,18 @@ void ProtocolLogin::onRecv(InputMessage *inputMessage)
 
 void ProtocolLogin::parseError(InputMessage *inputMessage)
 {
-    trace();
     std::string error = inputMessage->getString();
-    g_lua.pushString(error);
-    callScriptTableField("onError", 1);
+    callField("onError", error);
 }
 
 void ProtocolLogin::parseMOTD(InputMessage *inputMessage)
 {
-    trace();
     std::string motd = inputMessage->getString();
-    g_lua.pushString(motd);
-    callScriptTableField("onMotd", 1);
+    callField("onMotd", motd);
 }
 
 void ProtocolLogin::parseCharacterList(InputMessage *inputMessage)
 {
-    trace();
     uint8 characters = inputMessage->getU8();
     for(int i = 0; i < characters; ++i) {
         std::string name = inputMessage->getString();

@@ -7,7 +7,7 @@ SET(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake;${CMAKE_MODULE_PATH}")
 # find needed packages
 SET(Boost_USE_STATIC_LIBS ON)
 SET(Boost_USE_MULTITHREADED OFF)
-FIND_PACKAGE(Boost COMPONENTS system signals REQUIRED)
+FIND_PACKAGE(Boost COMPONENTS system REQUIRED)
 FIND_PACKAGE(OpenGL REQUIRED)
 FIND_PACKAGE(Lua REQUIRED)
 FIND_PACKAGE(PhysFS REQUIRED)
@@ -56,7 +56,7 @@ SET(SOURCES
     src/framework/core/configs.cpp
     src/framework/core/resources.cpp
     src/framework/core/engine.cpp
-    src/framework/core/modules.cpp
+    src/framework/core/packages.cpp
 
 # framework otml
     src/framework/otml/otmlemitter.cpp
@@ -64,9 +64,13 @@ SET(SOURCES
     src/framework/otml/otmlnode.cpp
 
 # framework script
-    src/framework/script/scriptobject.cpp
-    src/framework/script/scriptcontext.cpp
-    src/framework/script/scriptfunctions.cpp
+    src/framework/script/luastate.cpp
+    src/framework/script/luavalue.cpp
+    src/framework/script/luaobject.cpp
+    src/framework/script/luainterface.cpp
+    src/framework/script/luafunctions.cpp
+    src/framework/script/luaexception.cpp
+    src/framework/script/luavaluecasts.cpp
 
 # framework utilities
     src/framework/util/color.cpp
@@ -125,7 +129,7 @@ IF(WIN32)
     ADD_DEFINITIONS(-DWIN32_NO_CONSOLE)
 ELSE(WIN32)
     SET(SOURCES ${SOURCES} src/framework/platform/x11platform.cpp)
-    ADD_DEFINITIONS(-D_DEBUG_MEMORY)
+    #ADD_DEFINITIONS(-D_DEBUG_MEMORY)
     SET(ADDITIONAL_LIBRARIES pthread GLU)
 ENDIF(WIN32)
 

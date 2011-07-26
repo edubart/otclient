@@ -1,6 +1,9 @@
 function EnterGame_connectToLoginServer()
   -- create login protocol
-  local protocolLogin = ProtocolLogin.new()
+  local protocolLogin = ProtocolLogin.create()
+  print(ProtocolLogin_mt)
+  print(Protocol_mt)
+  print(getmetatable(protocolLogin))
 
   -- used to recreate enter game window
   local recreateEnterGame = function()
@@ -11,14 +14,14 @@ function EnterGame_connectToLoginServer()
   local loadBox = displayCancelBox("Please wait", "Connecting..")
 
   -- cancel loading callback
-  loadBox.onCancel = function()
+  loadBox.onCancel = function(protocol)
     -- cancel protocol and reacreate enter game window
-    protocolLogin:cancel()
+    protocol:cancel()
     recreateEnterGame()
   end
 
   -- error callback
-  protocolLogin.onError = function(error)
+  protocolLogin.onError = function(protocol, error)
     -- destroy loading message box
     loadBox:destroy()
 
@@ -26,12 +29,12 @@ function EnterGame_connectToLoginServer()
     local errorBox = displayErrorBox("Login Error", error)
 
     -- cancel protocol and reacreate enter game window
-    self.cancel()
+    protocol.cancel()
     errorBox.onOk = recreateEnterGame
   end
 
   -- motd callback
-  protocolLogin.onMotd = function(motd)
+  protocolLogin.onMotd = function(protocol, motd)
     -- destroy loading message box
     loadBox:destroy()
 
@@ -41,14 +44,14 @@ function EnterGame_connectToLoginServer()
     local motdBox = displayInfoBox("Message of the day", motdText)
 
     -- cancel protocol and reacreate enter game window
-    self.cancel()
+    protocol.cancel()
     motdBox.onOk = recreateEnterGame
   end
 
   -- get account and password then login
-  local enterGameWindow = rootUI:child("enterGameWindow")
-  local account = enterGameWindow:child("accountNameTextEdit").text
-  local password = enterGameWindow:child("passwordTextEdit").text
+  local enterGameWindow = rootUI:getChild("enterGameWindow")
+  local account = enterGameWindow:getChild("accountNameTextEdit").text
+  local password = enterGameWindow:getChild("passwordTextEdit").text
   protocolLogin:login(account, password)
 
   -- destroy enter game window

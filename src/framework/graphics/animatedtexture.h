@@ -45,7 +45,7 @@ private:
     int m_lastAnimCheckTicks;
 };
 
-typedef boost::shared_ptr<AnimatedTexture> AnimatedTexturePtr;
-typedef boost::weak_ptr<AnimatedTexture> AnimatedTextureWeakPtr;
+typedef std::shared_ptr<AnimatedTexture> AnimatedTexturePtr;
+typedef std::weak_ptr<AnimatedTexture> AnimatedTextureWeakPtr;
 
 #endif // ANIMATEDTEXTURE_H

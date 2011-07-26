@@ -4,15 +4,12 @@
 #include <global.h>
 #include <queue>
 
-#include <boost/bind.hpp>
-#include <boost/function.hpp>
-
 struct ScheduledTask {
-    ScheduledTask(const boost::function<void()>& _callback) : ticks(0), callback(_callback) { }
-    ScheduledTask(int _ticks, const boost::function<void()>& _callback) : ticks(_ticks), callback(_callback)  { }
+    ScheduledTask(const std::function<void()>& _callback) : ticks(0), callback(_callback) { }
+    ScheduledTask(int _ticks, const std::function<void()>& _callback) : ticks(_ticks), callback(_callback)  { }
     bool operator<(const ScheduledTask& other) const { return ticks > other.ticks; }
     int ticks;
-    boost::function<void()> callback;
+    std::function<void()> callback;
 };
 
 struct lessScheduledTask : public std::binary_function<ScheduledTask*&, ScheduledTask*&, bool> {
@@ -31,13 +28,13 @@ public:
     void poll();
 
     /// Add an event
-    void addTask(const boost::function<void()>& callback, bool pushFront = false);
+    void addTask(const std::function<void()>& callback, bool pushFront = false);
 
     /// Schedula an event
-    void scheduleTask(const boost::function<void()>& callback, int delay);
+    void scheduleTask(const std::function<void()>& callback, int delay);
 
 private:
-    std::list<boost::function<void()>> m_taskList;
+    std::list<std::function<void()>> m_taskList;
     std::priority_queue<ScheduledTask*, std::vector<ScheduledTask*>, lessScheduledTask> m_scheduledTaskList;
 };
 

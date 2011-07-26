@@ -11,6 +11,7 @@ public:
         UIElement(type) { }
     virtual ~UIContainer() { }
 
+    static UIContainerPtr create() { return UIContainerPtr(new UIContainer); }
     virtual void destroy();
     virtual void onLoad();
     virtual void render();
@@ -28,6 +29,8 @@ public:
     UIElementPtr recursiveGetChildById(const std::string& id);
     /// Find an element by position
     UIElementPtr getChildByPos(const Point& pos);
+    UIElementPtr getChildBefore(const UIElementPtr& reference);
+    UIElementPtr getChildAfter(const UIElementPtr& reference);
     /// Find an element in this container and in its children by position
     UIElementPtr recursiveGetChildByPos(const Point& pos);
     /// Get children
@@ -36,6 +39,7 @@ public:
     void pushChildToTop(const UIElementPtr& child);
     /// Return number of children
     int getChildCount() const { return m_children.size(); }
+
 
     /// Disable all children except the specified element
     bool lockElement(const UIElementPtr& element);
@@ -50,9 +54,9 @@ public:
     UIElementPtr getFocusedElement() const { return m_focusedElement; }
 
     virtual UI::ElementType getElementType() const { return UI::Container; }
-    UIContainerPtr asUIContainer() { return boost::static_pointer_cast<UIContainer>(shared_from_this()); }
+    UIContainerPtr asUIContainer() { return std::static_pointer_cast<UIContainer>(shared_from_this()); }
 
-    virtual const char *getScriptObjectType() const { return "UIContainer"; }
+    virtual const char *getLuaTypeName() const { return "UIContainer"; }
 
     /// Get root container (the container that contains everything)
     static UIContainerPtr& getRoot();

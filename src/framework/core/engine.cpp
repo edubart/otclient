@@ -6,7 +6,7 @@
 #include <graphics/textures.h>
 #include <ui/uicontainer.h>
 #include <ui/uiskins.h>
-#include <script/scriptcontext.h>
+#include <script/luainterface.h>
 #include <net/connection.h>
 
 Engine g_engine;
@@ -113,7 +113,7 @@ void Engine::stop()
 
 void Engine::onClose()
 {
-    g_dispatcher.addTask(boost::bind(&ScriptContext::callModuleField, &g_lua, "App", "onClose"));
+    g_lua.getGlobal("onClose")->call("onClose");
 }
 
 void Engine::onResize(const Size& size)

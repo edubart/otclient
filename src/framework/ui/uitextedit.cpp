@@ -53,9 +53,10 @@ void UITextEdit::onInputEvent(const InputEvent& event)
         else if(event.keycode == KC_TAB) // focus next parent element
             getParent()->focusNextElement();
     } else if(event.type == EV_MOUSE_LDOWN) {
-
+        int pos = m_textArea.getTextPos(event.mousePos);
+        if(pos >= 0)
+            m_textArea.setCursorPos(m_textArea.getTextPos(event.mousePos));
     } else if(event.type == EV_MOUSE_LUP && getRect().contains(event.mousePos)) {
-        m_textArea.setCursorPos(m_textArea.getTextPos(event.mousePos));
     }
 }
 

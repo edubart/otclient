@@ -1,8 +1,0 @@
-title: Core
-notes: Core utilities used by other modules
-author: edubart
-version: 1
-website: https://github.com/edubart/otclient
-enabled: true
-script: core.lua
-

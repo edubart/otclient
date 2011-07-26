@@ -3,7 +3,7 @@
   size: [286, 262]
   anchors.horizontalCenter: parent.horizontalCenter
   anchors.verticalCenter: parent.verticalCenter
-  onLoad: self.locked = true
+  onLoad: function(self) self:setLocked(true) end
 
   # general
   %button#generalButton
@@ -17,10 +17,10 @@
     text: |-
       Change general
       game options
-    anchors.left: parent.left
-    anchors.top: parent.top
-    margin.left: 117
-    margin.top: 29
+    anchors.left: prev.right
+    anchors.top: prev.top
+    margin.left: 10
+    margin.top: -2
 
   # graphics
   %button#graphicsButton
@@ -34,10 +34,10 @@
     text: |-
       Change graphics and
       performance settings
-    anchors.left: parent.left
-    anchors.top: parent.top
-    margin.left: 117
-    margin.top: 62
+    anchors.left: prev.right
+    anchors.top: prev.top
+    margin.left: 10
+    margin.top: -2
 
   # console
   %button#consoleButton
@@ -49,10 +49,10 @@
 
   %label#consoleLabel
     text: Customise the console
-    anchors.left: parent.left
-    anchors.top: parent.top
-    margin.left: 117
-    margin.top: 95
+    anchors.left: prev.right
+    anchors.top: prev.top
+    margin.left: 10
+    margin.top: -2
 
   # hotkeys
   %button#hotkeysButton
@@ -64,10 +64,10 @@
 
   %label#hotkeysLabel
     text: Edit your hotkey texts
-    anchors.left: parent.left
-    anchors.top: parent.top
-    margin.left: 117
-    margin.top: 128
+    anchors.left: prev.right
+    anchors.top: prev.top
+    margin.left: 10
+    margin.top: -2
 
   %lineDecoration#middleSeparator
     anchors.left: parent.left
@@ -89,10 +89,10 @@
     text: |
       Show the most recent
       Message of the Day
-    anchors.left: parent.left
-    anchors.bottom: parent.bottom
-    margin.left: 117
-    margin.bottom: 56
+    anchors.left: prev.right
+    anchors.top: prev.top
+    margin.left: 10
+    margin.top: -2
 
   %lineDecoration#bottomSeparator
     anchors.left: parent.left
@@ -110,4 +110,4 @@
     anchors.bottom: parent.bottom
     margin.right: 10
     margin.bottom: 13
-    onClick: self.parent:destroy()
+    onClick: function(self) self.parent:destroy() end

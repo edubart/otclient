@@ -43,6 +43,6 @@ private:
     Color m_fontColor;
 };
 
-typedef boost::shared_ptr<UIElementSkin> UIElementSkinPtr;
+typedef std::shared_ptr<UIElementSkin> UIElementSkinPtr;
 
 #endif // UIELEMENTSKIN_H

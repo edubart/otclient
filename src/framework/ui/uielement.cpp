@@ -6,13 +6,15 @@
 #include <ui/uielementskin.h>
 #include <ui/uicontainer.h>
 #include <ui/uianchorlayout.h>
+#include <script/luainterface.h>
 
 UIElement::UIElement(UI::ElementType type) :
-    ScriptObject(),
+    LuaObject(),
     m_type(type),
     m_visible(true),
     m_enabled(true),
     m_mouseOver(false),
+    m_destroyed(false),
     m_marginLeft(0),
     m_marginRight(0),
     m_marginTop(0),
@@ -31,29 +33,32 @@ UIElement::~UIElement()
 void UIElement::destroyLater()
 {
     //logTraceDebug(getId());
-    g_dispatcher.addTask(boost::bind(&UIElement::destroy, asUIElement()));
+    if(!m_destroyed)
+        g_dispatcher.addTask(std::bind(&UIElement::destroy, asUIElement()));
 }
 
 void UIElement::destroy()
 {
     //logTraceDebug(getId());
+    if(!m_destroyed) {
+        UIElementPtr me = asUIElement();
 
-    UIElementPtr me = asUIElement();
-    callScriptTableField("onDestroy");
+        // remove from parent
+        if(getParent())
+            getParent()->removeChild(me);
 
-    // remove from parent
-    if(getParent())
-        getParent()->removeChild(me);
+        g_dispatcher.addTask(std::bind(&UIElement::destroyCheck, me));
 
-    // free script stuff
-    releaseScriptObject();
-
-    g_dispatcher.addTask(boost::bind(&UIElement::destroyCheck, me));
+        m_destroyed = true;
+    }
 }
 
 void UIElement::destroyCheck()
 {
     //logTraceDebug(getId());
+
+    for(int i=0;i<2;++i)
+        g_lua.collectGarbage();
 
     UIElementPtr me = asUIElement();
     // check for leaks, the number of references must be always 2 here
@@ -99,7 +104,10 @@ void UIElement::setSkin(const UIElementSkinPtr& skin)
 
 void UIElement::onLoad()
 {
-    g_dispatcher.addTask(boost::bind(&ScriptObject::callScriptTableField, shared_from_this(), "onLoad", 0));
+    UIElementPtr me = asUIElement();
+    g_dispatcher.addTask([me] {
+        me->callField("onLoad");
+    });
 }
 
 void UIElement::render()
@@ -111,24 +119,29 @@ void UIElement::render()
 
 UIElementPtr UIElement::backwardsGetElementById(const std::string& id)
 {
-    if(getId() == id || id == "self")
-        return asUIElement();
-
-    if(id == "parent")
-        return getParent();
-
-    if(id == "root")
-        return UIContainer::getRoot();
-
     UIElementPtr element;
-    if(asUIContainer()) {
-        element = asUIContainer()->recursiveGetChildById(id);
-        if(element)
-            return element;
-    }
+    if(getId() == id || id == "self")
+        element = asUIElement();
+    else if(id == "parent")
+        element = getParent();
+    else if(id == "root")
+        element = UIContainer::getRoot();
+    else if(id == "prev") {
+        if(UIContainerPtr parent = getParent())
+            element = parent->getChildBefore(asUIElement());
+    } else if(id == "next") {
+        if(UIContainerPtr parent = getParent())
+            element = parent->getChildAfter(asUIElement());
+    } else {
+        if(asUIContainer()) {
+            element = asUIContainer()->recursiveGetChildById(id);
+            if(element)
+                return element;
+        }
 
-    if(getParent())
-        element = getParent()->backwardsGetElementById(id);
+        if(getParent())
+            element = getParent()->backwardsGetElementById(id);
+    }
     return element;
 }
 
@@ -151,6 +164,17 @@ void UIElement::moveTo(Point pos)
             newRect.moveRight(parentRect.right());
     }
     setRect(newRect);
+}
+
+void UIElement::setLocked(bool locked)
+{
+    UIContainerPtr parent = getParent();
+    if(parent) {
+        if(locked)
+            parent->lockElement(asUIElement());
+        else
+            parent->unlockElement(asUIElement());
+    }
 }
 
 void UIElement::setParent(UIContainerPtr parent)
@@ -197,17 +221,13 @@ UILayoutPtr UIElement::getLayout() const
 
 void UIElement::centerIn(const std::string& targetId)
 {
-    addAnchor(AnchorHorizontalCenter, AnchorLine(targetId, AnchorHorizontalCenter));
-    addAnchor(AnchorVerticalCenter, AnchorLine(targetId, AnchorVerticalCenter));
+    addAnchor(AnchorHorizontalCenter, targetId, AnchorHorizontalCenter);
+    addAnchor(AnchorVerticalCenter, targetId, AnchorVerticalCenter);
 }
 
-void UIElement::addAnchor(AnchorPoint anchoredEdge, AnchorLine anchorEdge)
+void UIElement::addAnchor(AnchorPoint edge, const std::string& targetId, AnchorPoint targetEdge)
 {
-    UIElementPtr target = backwardsGetElementById(anchorEdge.getElementId());
-    if(!target)
-        logWarning("warning: element id '", anchorEdge.getElementId(), "' doesn't exist while anchoring element '", getId(), "'");
-
-    UIAnchorLayoutPtr layout = boost::dynamic_pointer_cast<UIAnchorLayout>(getLayout());
+    UIAnchorLayoutPtr layout = std::dynamic_pointer_cast<UIAnchorLayout>(getLayout());
     if(layout)
-        layout->addAnchor(asUIElement(), anchoredEdge, anchorEdge);
+        layout->addAnchor(asUIElement(), edge, AnchorLine(targetId, targetEdge));
 }

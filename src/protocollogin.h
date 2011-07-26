@@ -3,11 +3,16 @@
 
 #include <net/protocol.h>
 
+class ProtocolLogin;
+typedef std::shared_ptr<ProtocolLogin> ProtocolLoginPtr;
+
 class ProtocolLogin : public Protocol
 {
 public:
     ProtocolLogin();
     ~ProtocolLogin();
+
+    static ProtocolLoginPtr create() { return ProtocolLoginPtr(new ProtocolLogin); }
 
     void login(const std::string& accountName, const std::string& accountPassword);
 
@@ -16,7 +21,8 @@ public:
     void sendPacket();
     void onRecv(InputMessage *inputMessage);
 
-    const char *getScriptObjectType() const { return "ProtocolLogin"; }
+    void cancel() { /* TODO: this func */ }
+    virtual const char* getLuaTypeName() const { return "ProtocolLogin"; }
 
 private:
     void parseError(InputMessage *inputMessage);
@@ -26,7 +32,5 @@ private:
     std::string m_accountName, m_accountPassword;
 
 };
-
-typedef boost::shared_ptr<ProtocolLogin> ProtocolLoginPtr;
 
 #endif

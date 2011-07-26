@@ -1,67 +1,54 @@
 %window#enterGameWindow
   title: Enter Game
-  size: [236, 178]
+  size: [236, 160]
   anchors.horizontalCenter: parent.horizontalCenter
   anchors.verticalCenter: parent.verticalCenter
-  onLoad: self:setLocked()
 
   %label#accountNameLabel
+    skin: large
     text: Account name
     anchors.left: parent.left
     anchors.top: parent.top
     margin.left: 18
-    margin.top: 33
+    margin.top: 28
+
+  %textEdit#accountNameTextEdit
+    text: tibialua0
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: prev.bottom
+    margin.left: 18
+    margin.right: 18
 
   %label#passwordLabel
-    text: "Password:"
-    anchors.left: parent.left
-    anchors.top: parent.top
-    margin.left: 18
-    margin.top: 62
+    skin: large
+    text: Password
+    anchors.left: prev.left
+    anchors.top: prev.bottom
+    margin.top: 8
 
-  %label#createAccountLabel
-    text: |
-      If you don't have
-      an account yet
+  %textEdit#passwordTextEdit
+    text: lua123456
     anchors.left: parent.left
-    anchors.top: parent.top
+    anchors.right: parent.right
+    anchors.top: prev.bottom
     margin.left: 18
-    margin.top: 87
-
-  %button#createAccountButton
-    text: Create Account
-    anchors.left: parent.left
-    anchors.top: parent.top
-    margin.top: 94
-    margin.left: 132
-    onClick: displayErrorBox("Error", "Not implemented yet")
+    margin.right: 18
 
   %button#okButton
     text: Ok
-    size: [43, 20]
-    anchors.right: parent.right
+    width: 64
+    anchors.right: next.left
     anchors.bottom: parent.bottom
-    margin.bottom: 10
-    margin.right: 66
+    margin.bottom: 16
+    margin.right: 16
     onClick: EnterGame_connectToLoginServer()
 
   %button#cancelButton
     text: Cancel
-    size: [43, 20]
+    width: 64
     anchors.right: parent.right
     anchors.bottom: parent.bottom
-    margin.bottom: 10
-    margin.right: 13
-    onClick: self.parent:destroy()
-
-  %textEdit#accountNameTextEdit
-    anchors.right: parent.right
-    anchors.top: parent.top
-    margin.top: 32
-    margin.right: 18
-
-  %textEdit#passwordTextEdit
-    anchors.right: parent.right
-    anchors.top: parent.top
-    margin.top: 61
-    margin.right: 18
+    margin.bottom: 16
+    margin.right: 16
+    onClick: function(self) rootUI:getChild("enterGameWindow"):destroy() end

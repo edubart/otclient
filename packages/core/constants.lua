@@ -1,4 +1,4 @@
-rootUI = UI.getRootContainer()
+rootUI = App.getRootContainer()
 
 -- AnchorPoint
 AnchorNone = 0

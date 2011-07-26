@@ -34,7 +34,7 @@ void UIWindowSkin::load(OTMLNode* node)
     OTMLNode* headNode = node->at("head");
     OTMLNode* bodyNode = node->at("body");
 
-    m_headImage = boost::dynamic_pointer_cast<BorderedImage>(loadImage(headNode));
+    m_headImage = std::dynamic_pointer_cast<BorderedImage>(loadImage(headNode));
     m_headHeight = headNode->readAt("height", m_headImage->getDefaultSize().height());
     m_headMargin = headNode->readAt("margin", 0);
     m_titleAlign = parseAlignment(headNode->readAt("text align", std::string("center")));

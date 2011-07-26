@@ -5,8 +5,8 @@
 #include <ui/uilayout.h>
 
 class UIElement;
-typedef boost::shared_ptr<UIElement> UIElementPtr;
-typedef boost::weak_ptr<UIElement> UIElementWeakPtr;
+typedef std::shared_ptr<UIElement> UIElementPtr;
+typedef std::weak_ptr<UIElement> UIElementWeakPtr;
 
 enum AnchorPoint {
     AnchorNone = 0,
@@ -61,6 +61,6 @@ private:
     std::vector<Anchor> m_anchors;
 };
 
-typedef boost::shared_ptr<UIAnchorLayout> UIAnchorLayoutPtr;
+typedef std::shared_ptr<UIAnchorLayout> UIAnchorLayoutPtr;
 
 #endif // UIANCHORLAYOUT_H

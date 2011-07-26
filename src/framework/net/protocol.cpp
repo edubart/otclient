@@ -29,12 +29,12 @@
 Protocol::Protocol() :
         m_connection(new Connection)
 {
-    m_connection->setErrorCallback(boost::bind(&Protocol::onError, this, _1));
-    m_connection->setRecvCallback(boost::bind(&Protocol::onRecv, this, _1));
+    m_connection->setErrorCallback(std::bind(&Protocol::onError, this, std::placeholders::_1));
+    m_connection->setRecvCallback(std::bind(&Protocol::onRecv, this, std::placeholders::_1));
     m_xteaEncryptionEnabled = false;
 }
 
-void Protocol::connect(const std::string& host, uint16 port, const boost::function<void()>& callback)
+void Protocol::connect(const std::string& host, uint16 port, const std::function<void()>& callback)
 {
     m_connection->connect(host, port, callback);
 }

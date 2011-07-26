@@ -19,11 +19,11 @@ void log(LogLevel level, const std::string& message, std::string prettyFunction 
 #define logError(...) log(LogError, make_string(__VA_ARGS__))
 #define logFatal(...) log(LogFatal, make_string(__VA_ARGS__))
 
-#define trace() log(LogDebug, "", __PRETTY_FUNCTION__)
-#define traceDebug(...) log(LogDebug, make_string(__VA_ARGS__), __PRETTY_FUNCTION__)
-#define traceInfo(...) log(LogInfo, make_string(__VA_ARGS__), __PRETTY_FUNCTION__)
-#define traceWarning(...) log(LogWarning, make_string(__VA_ARGS__), __PRETTY_FUNCTION__)
-#define traceError(...) log(LogError, make_string(__VA_ARGS__), __PRETTY_FUNCTION__)
+#define logTrace() log(LogDebug, "", __PRETTY_FUNCTION__)
+#define logTraceDebug(...) log(LogDebug, make_string(__VA_ARGS__), __PRETTY_FUNCTION__)
+#define logTraceInfo(...) log(LogInfo, make_string(__VA_ARGS__), __PRETTY_FUNCTION__)
+#define logTraceWarning(...) log(LogWarning, make_string(__VA_ARGS__), __PRETTY_FUNCTION__)
+#define logTraceError(...) log(LogError, make_string(__VA_ARGS__), __PRETTY_FUNCTION__)
 
 // dump utility
 struct Dump {

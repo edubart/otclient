@@ -2,8 +2,7 @@
 #include <core/resources.h>
 #include <ui/ui.h>
 #include <ui/uiloader.h>
-#include <script/scriptcontext.h>
-#include <script/scriptfunctions.h>
+#include <script/luainterface.h>
 #include <otml/otml.h>
 #include <ui/uianchorlayout.h>
 #include <util/translator.h>
@@ -46,16 +45,19 @@ UIElementPtr UILoader::createElementFromId(const std::string& id)
     return element;
 }
 
-UIElementPtr UILoader::loadFromFile(std::string filePath, const UIContainerPtr& parent)
+UIElementPtr UILoader::loadFromFile(std::string fileName, const UIContainerPtr& parent)
 {
     UIElementPtr element;
 
+    if(!boost::ends_with(".otml", fileName))
+        fileName += ".otml";
+
     std::stringstream fin;
-    if(!g_resources.loadFile(filePath, fin))
+    if(!g_resources.loadFile(fileName, fin))
         return element;
 
     try {
-        OTMLParser parser(fin, filePath);
+        OTMLParser parser(fin, fileName);
         OTMLNode* doc = parser.getDocument();
 
         // get element id
@@ -82,7 +84,7 @@ UIElementPtr UILoader::loadFromFile(std::string filePath, const UIContainerPtr& 
         // report onLoad events
         element->onLoad();
     } catch(OTMLException e) {
-        logError("ERROR: Failed to load ui ",filePath,": ", e.what());
+        logError("ERROR: Failed to load ui ", g_resources.resolvePath(fileName) ,": ", e.what());
     }
 
     return element;
@@ -139,9 +141,13 @@ void UILoader::loadElement(const UIElementPtr& element, OTMLNode* node)
     } else // apply default skin
         element->applyDefaultSkin();
 
-    // load elements common proprieties
-    if(node->hasChild("size"))
-        element->setSize(node->readAt<Size>("size"));
+    // load size
+    Size size = element->getSize();
+    size = node->readAt("size", size);
+    size.setWidth(node->readAt("width", size.width()));
+    size.setHeight(node->readAt("height", size.height()));
+    if(size.isValid())
+        element->setSize(size);
 
     // load margins
     element->setMarginLeft(node->readAtPath("margin/left", 0));
@@ -159,18 +165,20 @@ void UILoader::loadElement(const UIElementPtr& element, OTMLNode* node)
 
     // load basic element events
     loadElementScriptFunction(element, node->at("onLoad"));
-    loadElementScriptFunction(element, node->at("onDestroy"));
 
     // load specific element type
     switch(element->getElementType()) {
         case UI::Button:
-            loadButton(boost::static_pointer_cast<UIButton>(element), node);
+            loadButton(std::static_pointer_cast<UIButton>(element), node);
             break;
         case UI::Window:
-            loadWindow(boost::static_pointer_cast<UIWindow>(element), node);
+            loadWindow(std::static_pointer_cast<UIWindow>(element), node);
             break;
         case UI::Label:
-            loadLabel(boost::static_pointer_cast<UILabel>(element), node);
+            loadLabel(std::static_pointer_cast<UILabel>(element), node);
+            break;
+        case UI::TextEdit:
+            loadTextEdit(std::static_pointer_cast<UITextEdit>(element), node);
             break;
         default:
             break;
@@ -188,7 +196,7 @@ void UILoader::loadElementAnchor(const UIElementPtr& anchoredElement, AnchorPoin
         return;
     }
 
-    UIAnchorLayoutPtr layout = boost::dynamic_pointer_cast<UIAnchorLayout>(anchoredElement->getLayout());
+    UIAnchorLayoutPtr layout = std::dynamic_pointer_cast<UIAnchorLayout>(anchoredElement->getLayout());
     if(!layout) {
         logError(node->generateErrorMessage("could not add anchor, because this element does not participate of an anchor layout"));
         return;
@@ -222,8 +230,9 @@ void UILoader::loadElementScriptFunction(const UIElementPtr& element, OTMLNode* 
     functionDesc += g_resources.resolvePath(node->what()) + ":" + element->getId();
     functionDesc += "[" + node->tag() + "]";
 
-    if(g_lua.loadBufferAsFunction(node->value(), functionDesc))
-        g_lua.setScriptObjectField(element, node->tag());
+    LuaValuePtr function = g_lua.loadFunction(node->value(), functionDesc);
+    if(function->isFunction())
+        element->setField(node->tag(), function);
     else
         logError(node->generateErrorMessage("failed to parse inline lua script"));
 }
@@ -243,4 +252,9 @@ void UILoader::loadLabel(const UILabelPtr& label, OTMLNode* node)
 {
     label->setText(node->readAt("text", std::string()));
     label->setAlign(parseAlignment(node->readAt("align", std::string("left"))));
+}
+
+void UILoader::loadTextEdit(const UITextEditPtr& textEdit, OTMLNode* node)
+{
+    textEdit->setText(node->readAt("text", std::string()));
 }

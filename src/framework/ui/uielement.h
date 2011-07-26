@@ -3,7 +3,7 @@
 
 #include <global.h>
 #include <core/input.h>
-#include <script/scriptobject.h>
+#include <script/luaobject.h>
 #include <ui/uianchorlayout.h>
 
 namespace UI {
@@ -21,22 +21,23 @@ namespace UI {
 }
 
 class UIElementSkin;
-typedef boost::shared_ptr<UIElementSkin> UIElementSkinPtr;
+typedef std::shared_ptr<UIElementSkin> UIElementSkinPtr;
 
 class UIContainer;
-typedef boost::shared_ptr<UIContainer> UIContainerPtr;
-typedef boost::weak_ptr<UIContainer> UIContainerWeakPtr;
+typedef std::shared_ptr<UIContainer> UIContainerPtr;
+typedef std::weak_ptr<UIContainer> UIContainerWeakPtr;
 
 class UIElement;
-typedef boost::shared_ptr<UIElement> UIElementPtr;
-typedef boost::weak_ptr<UIElement> UIElementWeakPtr;
+typedef std::shared_ptr<UIElement> UIElementPtr;
+typedef std::weak_ptr<UIElement> UIElementWeakPtr;
 
-class UIElement : public ScriptObject
+class UIElement : public LuaObject
 {
 public:
     UIElement(UI::ElementType type = UI::Element);
     virtual ~UIElement();
 
+    static UIElementPtr create() { return UIElementPtr(new UIElement); }
     void destroyLater();
     virtual void destroy();
     virtual void destroyCheck();
@@ -53,6 +54,8 @@ public:
     UIElementPtr backwardsGetElementById(const std::string& id);
 
     void moveTo(Point pos);
+
+    void setLocked(bool locked);
 
     void setLayout(const UILayoutPtr& layout) { m_layout = layout; }
     UILayoutPtr getLayout() const;
@@ -82,9 +85,9 @@ public:
     virtual bool isFocusable() const { return false; }
     UI::ElementType getElementType() const { return m_type; }
 
-    UIElementPtr asUIElement() { return boost::static_pointer_cast<UIElement>(shared_from_this()); }
+    UIElementPtr asUIElement() { return std::static_pointer_cast<UIElement>(shared_from_this()); }
     virtual UIContainerPtr asUIContainer() { return UIContainerPtr(); }
-    virtual const char *getScriptObjectType() const { return "UIElement"; }
+    virtual const char *getLuaTypeName() const { return "UIElement"; }
 
     void setSize(const Size& size);
     void setSize(int width, int height) { setSize(Size(width, height)); }
@@ -115,7 +118,7 @@ public:
     int getMarginBottom() const { return m_marginBottom; }
 
     void centerIn(const std::string& targetId);
-    void addAnchor(AnchorPoint anchoredEdge, AnchorLine anchorEdge);
+    void addAnchor(AnchorPoint edge, const std::string& targetId, AnchorPoint targetEdge);
 
 private:
     UI::ElementType m_type;
@@ -126,6 +129,7 @@ private:
     bool m_visible;
     bool m_enabled;
     bool m_mouseOver;
+    bool m_destroyed;
 
     Rect m_rect;
     int m_marginLeft;

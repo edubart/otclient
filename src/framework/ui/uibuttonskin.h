@@ -11,7 +11,7 @@ struct UIButtonStateSkin {
     Point textTranslate;
     Color textColor;
 };
-typedef boost::shared_ptr<UIButtonStateSkin> UIButtonStateSkinPtr;
+typedef std::shared_ptr<UIButtonStateSkin> UIButtonStateSkinPtr;
 
 class UIButtonSkin : public UIElementSkin
 {

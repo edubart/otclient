@@ -44,7 +44,7 @@ AnimatedTexture::AnimatedTexture(int width, int height, int channels, int numFra
     }
 
     m_currentFrame = -1;
-    g_dispatcher.scheduleTask(boost::bind(&AnimatedTexture::processAnimation, this), 0);
+    g_dispatcher.scheduleTask(std::bind(&AnimatedTexture::processAnimation, this), 0);
 }
 
 AnimatedTexture::~AnimatedTexture()
@@ -70,7 +70,7 @@ void AnimatedTexture::processAnimation()
     if(m_currentFrame >= m_numFrames)
         m_currentFrame = 0;
     m_textureId = m_framesTextureId[m_currentFrame];
-    AnimatedTexturePtr me = boost::static_pointer_cast<AnimatedTexture>(shared_from_this());
+    AnimatedTexturePtr me = std::static_pointer_cast<AnimatedTexture>(shared_from_this());
     if(me.use_count() > 1)
-        g_dispatcher.scheduleTask(boost::bind(&AnimatedTexture::processAnimation, me), m_framesDelay[m_currentFrame]);
+        g_dispatcher.scheduleTask(std::bind(&AnimatedTexture::processAnimation, me), m_framesDelay[m_currentFrame]);
 }

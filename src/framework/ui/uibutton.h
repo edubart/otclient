@@ -6,7 +6,7 @@
 #include <graphics/borderedimage.h>
 
 class UIButton;
-typedef boost::shared_ptr<UIButton> UIButtonPtr;
+typedef std::shared_ptr<UIButton> UIButtonPtr;
 
 class UIButton : public UIElement
 {
@@ -22,6 +22,8 @@ public:
         UIElement(UI::Button),
         m_state(ButtonUp) {  }
 
+    static UIButtonPtr create() { return UIButtonPtr(new UIButton); }
+
     void onInputEvent(const InputEvent& event);
 
     void setText(const std::string& text) { m_text = text; }
@@ -29,7 +31,7 @@ public:
 
     ButtonState getState() { return m_state; }
 
-    virtual const char *getScriptObjectType() const { return "UIButton"; }
+    virtual const char *getLuaTypeName() const { return "UIButton"; }
 
 private:
     std::string m_text;

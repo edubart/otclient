@@ -2,7 +2,6 @@
 #include "resources.h"
 #include "platform.h"
 
-#include <boost/algorithm/string.hpp>
 #include <physfs.h>
 
 Resources g_resources;
@@ -148,12 +147,15 @@ std::list<std::string> Resources::listDirectoryFiles(const std::string& director
 
 void Resources::pushCurrentPath(const std::string &currentPath)
 {
+    //logTraceDebug(currentPath);
     m_currentPaths.push(currentPath);
 }
 
 void Resources::popCurrentPath()
 {
     m_currentPaths.pop();
+    //if(!m_currentPaths.empty())
+    //    logTraceDebug(m_currentPaths.top());
 }
 
 std::string Resources::resolvePath(const std::string& path)

@@ -7,7 +7,7 @@
 
   %panel#mainMenu
     skin: roundedGridPanel
-    size: [117, 171]
+    size: [144, 162]
     anchors.left: parent.left
     anchors.bottom: parent.bottom
     margin.left: 60
@@ -17,33 +17,26 @@
       text: Enter Game
       anchors.top: parent.top
       anchors.horizontalCenter: parent.horizontalCenter
-      margin.top: 16
-      onClick: UI.load("entergamewindow")
-
-    %button#accessAccountButton
-      text: Access Account
-      anchors.top: parent.top
-      anchors.horizontalCenter: parent.horizontalCenter
-      margin.top: 46
-      onClick: displayErrorBox("Error", "Not implemented yet")
+      margin.top: 18
+      onClick: loadUI("entergamewindow", rootUI)
 
     %button#optionsButton
       text: Options
-      anchors.top: parent.top
+      anchors.top: prev.bottom
       anchors.horizontalCenter: parent.horizontalCenter
-      margin.top: 76
-      onClick: UI.load("optionswindow")
+      margin.top: 10
+      onClick: loadUI("optionswindow", rootUI)
 
     %button#infoButton
       text: Info
-      anchors.top: parent.top
+      anchors.top: prev.bottom
       anchors.horizontalCenter: parent.horizontalCenter
-      margin.top: 106
-      onClick: UI.load("infowindow")
+      margin.top: 10
+      onClick: loadUI("infowindow", rootUI)
 
     %button#exitGameButton
       text: Exit
-      anchors.top: parent.top
+      anchors.top: prev.bottom
       anchors.horizontalCenter: parent.horizontalCenter
-      margin.top: 136
+      margin.top: 10
       onClick: terminateApplication()

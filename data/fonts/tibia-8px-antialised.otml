@@ -1,9 +1,0 @@
-glyph height: 8
-glyph spacing: [0, 1]
-top margin: 1
-image: tibia-8px-antialised.png
-image glyph size: [8, 8]
-first glyph: 32
-
-glyph widths:
-  32: 2

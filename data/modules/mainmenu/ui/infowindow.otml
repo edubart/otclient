@@ -3,7 +3,7 @@
   size: [244, 221]
   anchors.horizontalCenter: parent.horizontalCenter
   anchors.verticalCenter: parent.verticalCenter
-  onLoad: self.locked = true
+  onLoad: function(self) self:setLocked() end
 
   %panel#infoPanel
     skin: flatPanel
@@ -39,7 +39,7 @@
 
     %button#websiteButton
       text: Github Page
-      size: [80,22]
+      size: [88, 24]
       anchors.right: parent.right
       anchors.bottom: parent.bottom
       margin.bottom: 9
@@ -55,9 +55,9 @@
 
   %button#okButton
     text: Ok
-    size: [43, 20]
+    size: [46, 24]
     anchors.left: parent.left
     anchors.top: parent.top
     margin.top: 191
     margin.left: 188
-    onClick: self.parent:destroy()
+    onClick: function(self) self.parent:destroy() end

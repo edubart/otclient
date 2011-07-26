@@ -96,13 +96,13 @@ BorderedImagePtr BorderedImage::loadFromOTMLNode(OTMLNode* node, TexturePtr defa
     left = node->readAt("left", left);
     right = node->readAt("right", right);
     leftBorder = Rect(subRect.left(), subRect.top() + top, left, subRect.height() - top - bottom);
-    rightBorder = Rect(subRect.right() - right, subRect.top() + top, right, subRect.height() - top - bottom);
+    rightBorder = Rect(subRect.right() - right + 1, subRect.top() + top, right, subRect.height() - top - bottom);
     topBorder = Rect(subRect.left() + left, subRect.top(), subRect.width() - right - left, top);
-    bottomBorder = Rect(subRect.left() + left, subRect.bottom() - bottom, subRect.width() - right - left, bottom);
+    bottomBorder = Rect(subRect.left() + left, subRect.bottom() - bottom + 1, subRect.width() - right - left, bottom);
     topLeftCorner = Rect(subRect.left(), subRect.top(), left, top);
-    topRightCorner = Rect(subRect.right() - right, subRect.top(), right, top);
+    topRightCorner = Rect(subRect.right() - right + 1, subRect.top(), right, top);
     bottomLeftCorner = Rect(subRect.left(), subRect.bottom() - bottom, left, bottom);
-    bottomRightCorner = Rect(subRect.right() - right, subRect.bottom() - bottom, right, bottom);
+    bottomRightCorner = Rect(subRect.right() - right + 1, subRect.bottom() - bottom + 1, right, bottom);
     center = Rect(subRect.left() + left, subRect.top() + top, subRect.width() - right - left, subRect.height() - top - bottom);
     leftBorder = node->readAt("left border", leftBorder);
     rightBorder = node->readAt("right border", rightBorder);
