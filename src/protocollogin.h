@@ -22,6 +22,9 @@ public:
     void onRecv(InputMessage *inputMessage);
 
     void cancel() { /* TODO: this func */ }
+
+    ProtocolLoginPtr asProtocolLogin() { return std::static_pointer_cast<ProtocolLogin>(shared_from_this()); }
+
     virtual const char* getLuaTypeName() const { return "ProtocolLogin"; }
 
 private:

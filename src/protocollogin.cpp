@@ -41,7 +41,7 @@ void ProtocolLogin::login(const std::string& accountName, const std::string& acc
     //std::string host = "tecserver.zapto.org";
     uint16 port = 7171;
 
-    connect(host, port, std::bind(&ProtocolLogin::onConnect, this));
+    connect(host, port, std::bind(&ProtocolLogin::onConnect, asProtocolLogin()));
 }
 
 void ProtocolLogin::onConnect()

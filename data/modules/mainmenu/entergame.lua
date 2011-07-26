@@ -1,9 +1,6 @@
 function EnterGame_connectToLoginServer()
   -- create login protocol
   local protocolLogin = ProtocolLogin.create()
-  print(ProtocolLogin_mt)
-  print(Protocol_mt)
-  print(getmetatable(protocolLogin))
 
   -- used to recreate enter game window
   local recreateEnterGame = function()
@@ -14,9 +11,9 @@ function EnterGame_connectToLoginServer()
   local loadBox = displayCancelBox("Please wait", "Connecting..")
 
   -- cancel loading callback
-  loadBox.onCancel = function(protocol)
+  loadBox.onCancel = function(msgbox)
     -- cancel protocol and reacreate enter game window
-    protocol:cancel()
+    protocolLogin:cancel()
     recreateEnterGame()
   end
 
@@ -29,7 +26,7 @@ function EnterGame_connectToLoginServer()
     local errorBox = displayErrorBox("Login Error", error)
 
     -- cancel protocol and reacreate enter game window
-    protocol.cancel()
+    protocol:cancel()
     errorBox.onOk = recreateEnterGame
   end
 
