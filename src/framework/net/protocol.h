@@ -38,22 +38,32 @@
 
 //#define RSA "109120132967399429278860960508995541528237502902798129123468757937266291492576446330739696001110603907230888610072655818825358503429057592827629436413108566029093628212635953836686562675849720620786279431090218017681061521755056710823876476444260558147179707119674283982419152118103759076030616683978566631413"
 
+class Protocol;
+typedef std::shared_ptr<Protocol> ProtocolPtr;
+
 class Protocol : public LuaObject
 {
 public:
     Protocol();
 
-    void connect(const std::string& host, uint16 port, const std::function<void()>& callback);
+    void connect(const std::string& host, uint16 port);
     void send(OutputMessage *outputMessage);
+    void recv();
+    void internalRecvHeader(uint8 *buffer, uint16 size);
+    void internalRecvData(uint8 *buffer, uint16 size);
 
-    virtual void onRecv(InputMessage *inputMessage);
+    virtual void onConnect() = 0;
+    virtual void onRecv(InputMessage *inputMessage) = 0;
     virtual void onError(const boost::system::error_code& err);
+
+    ProtocolPtr asProtocol() { return std::static_pointer_cast<Protocol>(shared_from_this()); }
 
     virtual const char* getLuaTypeName() const { return "Protocol"; }
 
 protected:
     uint32 m_xteaKey[4];
     bool m_xteaEncryptionEnabled;
+    InputMessage m_inputMessage;
 
 private:
     bool xteaDecrypt(InputMessage *inputMessage);
@@ -62,7 +72,5 @@ private:
 
     ConnectionPtr m_connection;
 };
-
-typedef std::shared_ptr<Protocol> ProtocolPtr;
 
 #endif

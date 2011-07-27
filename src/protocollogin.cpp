@@ -41,7 +41,7 @@ void ProtocolLogin::login(const std::string& accountName, const std::string& acc
     //std::string host = "tecserver.zapto.org";
     uint16 port = 7171;
 
-    connect(host, port, std::bind(&ProtocolLogin::onConnect, asProtocolLogin()));
+    connect(host, port);
 }
 
 void ProtocolLogin::onConnect()
@@ -55,11 +55,11 @@ void ProtocolLogin::sendPacket()
 
     oMsg.addU8(0x01); // Protocol id
     oMsg.addU16(0x02);  // OS
-    oMsg.addU16(874); // Client version
+    oMsg.addU16(910); // Client version
 
-    oMsg.addU32(0x4DBAA20B); // Data Signature
-    oMsg.addU32(0x4DAD1A32); // Sprite Signature
-    oMsg.addU32(0x4DA2D2B5); // Picture Signature
+    oMsg.addU32(0x4E12DAFF); // Data Signature
+    oMsg.addU32(0x4E12DB27); // Sprite Signature
+    oMsg.addU32(0x4E119CBF); // Picture Signature
 
     oMsg.addU8(0); // First RSA byte must be 0x00 // 1
 
@@ -88,12 +88,12 @@ void ProtocolLogin::sendPacket()
     send(&oMsg);
 
     m_xteaEncryptionEnabled = true;
+
+    recv();
 }
 
 void ProtocolLogin::onRecv(InputMessage *inputMessage)
 {
-    Protocol::onRecv(inputMessage);
-
     while(!inputMessage->end()) {
         uint8 opt = inputMessage->getU8();
         logDebug("opt:",(uint)opt);

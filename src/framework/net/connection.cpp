@@ -27,7 +27,6 @@
 static boost::asio::io_service ioService;
 
 Connection::Connection() :
-        m_connectionState(CONNECTION_STATE_IDLE),
         m_timer(ioService),
         m_resolver(ioService),
         m_socket(ioService)
@@ -43,7 +42,6 @@ void Connection::poll()
 void Connection::connect(const std::string& host, uint16 port, const std::function<void()>& connectCallback)
 {
     m_connectCallback = connectCallback;
-    m_connectionState = CONNECTION_STATE_RESOLVING;
 
     boost::asio::ip::tcp::resolver::query query(host, convert<std::string>(port));
     m_resolver.async_resolve(query, std::bind(&Connection::onResolve, shared_from_this(), std::placeholders::_1, std::placeholders::_2));
@@ -52,14 +50,29 @@ void Connection::connect(const std::string& host, uint16 port, const std::functi
     m_timer.async_wait(std::bind(&Connection::onTimeout, shared_from_this(), std::placeholders::_1));
 }
 
-void Connection::send(OutputMessage *outputMessage)
+void Connection::send(uint8 *buffer, uint16 size)
 {
     boost::asio::async_write(m_socket,
-                             boost::asio::buffer(outputMessage->getBuffer(), outputMessage->getMessageSize()),
+                             boost::asio::buffer(buffer, size),
                              std::bind(&Connection::onSend, shared_from_this(), std::placeholders::_1, std::placeholders::_2));
 
     m_timer.expires_from_now(boost::posix_time::seconds(2));
     m_timer.async_wait(std::bind(&Connection::onTimeout, shared_from_this(), std::placeholders::_1));
+}
+
+void Connection::recv(uint16 bytes, uint32 timeout, const RecvCallback& callback)
+{
+    m_recvCallback = callback;
+    m_recvSize = bytes;
+
+    boost::asio::async_read(m_socket,
+                            boost::asio::buffer(m_recvBuffer, bytes),
+                            std::bind(&Connection::onRecv, shared_from_this(), std::placeholders::_1));
+
+    if(timeout > 0) {
+        m_timer.expires_from_now(boost::posix_time::seconds(timeout));
+        m_timer.async_wait(std::bind(&Connection::onTimeout, shared_from_this(), std::placeholders::_1));
+    }
 }
 
 void Connection::onTimeout(const boost::system::error_code& error)
@@ -94,12 +107,8 @@ void Connection::onConnect(const boost::system::error_code& error)
         return;
     }
 
-    g_dispatcher.addTask(m_connectCallback);
-
-    // Start listening.
-    boost::asio::async_read(m_socket,
-                            boost::asio::buffer(m_inputMessage.getBuffer(), InputMessage::HEADER_LENGTH),
-                            std::bind(&Connection::onRecvHeader, shared_from_this(), std::placeholders::_1));
+    if(m_connectCallback)
+        g_dispatcher.addTask(m_connectCallback);
 }
 
 void Connection::onSend(const boost::system::error_code& error, size_t)
@@ -113,42 +122,16 @@ void Connection::onSend(const boost::system::error_code& error, size_t)
     }
 }
 
-void Connection::onRecvHeader(const boost::system::error_code& error)
+void Connection::onRecv(const boost::system::error_code& error)
 {
+    m_timer.cancel();
+
     if(error) {
         if(m_errorCallback)
             g_dispatcher.addTask(std::bind(m_errorCallback, error));
         return;
     }
 
-    uint16 messageSize = m_inputMessage.getU16();
-    m_inputMessage.setMessageSize(messageSize);
-
-    boost::asio::async_read(m_socket,
-                            boost::asio::buffer(m_inputMessage.getBuffer() + InputMessage::CHECKSUM_POS, messageSize),
-                            std::bind(&Connection::onRecvData, shared_from_this(), std::placeholders::_1));
-}
-
-void Connection::onRecvData(const boost::system::error_code& error)
-{
-    if(error) {
-        if(m_errorCallback)
-            g_dispatcher.addTask(std::bind(m_errorCallback, error));
-        return;
-    }
-
-    // call callback
-    // must be called outside dispatcher cause of inputmessage.
     if(m_recvCallback)
-        m_recvCallback(&m_inputMessage);
-        //g_dispatcher.addTask(std::bind(m_recvCallback, &m_inputMessage));
-
-    // keep reading
-
-    // TODO: lua code must be reworked.
-    /*m_inputMessage.reset();
-    boost::asio::async_read(m_socket,
-                            boost::asio::buffer(m_inputMessage.getBuffer(), InputMessage::HEADER_LENGTH),
-                            std::bind(&Connection::onRecvHeader, shared_from_this(), std::placeholders::_1));*/
-
+        g_dispatcher.addTask(std::bind(m_recvCallback, m_recvBuffer, m_recvSize));
 }

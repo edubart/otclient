@@ -41,7 +41,7 @@ function EnterGame_connectToLoginServer()
     local motdBox = displayInfoBox("Message of the day", motdText)
 
     -- cancel protocol and reacreate enter game window
-    protocol.cancel()
+    protocol:cancel()
     motdBox.onOk = recreateEnterGame
   end
 

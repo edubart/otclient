@@ -26,14 +26,10 @@
 #define CONNECTION_H
 
 #include <global.h>
-
-#include <net/inputmessage.h>
-#include <net/outputmessage.h>
-
 #include <boost/asio.hpp>
 
 typedef std::function<void(boost::system::error_code&)> ErrorCallback;
-typedef std::function<void(InputMessage*)> RecvCallback;
+typedef std::function<void(uint8*, uint16)> RecvCallback;
 
 class Connection : public std::enable_shared_from_this<Connection>, boost::noncopyable
 {
@@ -43,7 +39,9 @@ public:
     static void poll();
 
     void connect(const std::string& host, uint16 port, const std::function<void()>& connectCallback);
-    void send(OutputMessage *outputMessage);
+    void send(uint8 *buffer, uint16 size);
+    void recv(uint16 bytes, uint32 timeout, const RecvCallback& callback);
+    void recv(const std::string& data, uint32 timeout, const RecvCallback& callback);
 
     void setErrorCallback(const ErrorCallback& errorCallback) { m_errorCallback = errorCallback; }
     void setRecvCallback(const RecvCallback& recvCallback) { m_recvCallback = recvCallback; }
@@ -52,27 +50,19 @@ public:
     void onResolve(const boost::system::error_code& error, boost::asio::ip::tcp::resolver::iterator endpointIterator);
     void onConnect(const boost::system::error_code& error);
     void onSend(const boost::system::error_code& error, size_t);
-    void onRecvHeader(const boost::system::error_code& error);
-    void onRecvData(const boost::system::error_code& error);
-
-    enum ConnectionState_t {
-        CONNECTION_STATE_IDLE = 0,
-        CONNECTION_STATE_RESOLVING,
-        CONNECTION_STATE_CONNECTING,
-        CONNECTION_STATE_CONNECTED
-    };
+    void onRecv(const boost::system::error_code& error);
 
 private:
     ErrorCallback m_errorCallback;
-    RecvCallback m_recvCallback;
     std::function<void()> m_connectCallback;
-    ConnectionState_t m_connectionState;
 
     boost::asio::deadline_timer m_timer;
     boost::asio::ip::tcp::resolver m_resolver;
     boost::asio::ip::tcp::socket m_socket;
-    InputMessage m_inputMessage;
 
+    uint8 m_recvBuffer[65536];
+    uint16 m_recvSize;
+    RecvCallback m_recvCallback;
 };
 
 typedef std::shared_ptr<Connection> ConnectionPtr;

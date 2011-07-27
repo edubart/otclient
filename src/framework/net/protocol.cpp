@@ -30,13 +30,12 @@ Protocol::Protocol() :
         m_connection(new Connection)
 {
     m_connection->setErrorCallback(std::bind(&Protocol::onError, this, std::placeholders::_1));
-    m_connection->setRecvCallback(std::bind(&Protocol::onRecv, this, std::placeholders::_1));
     m_xteaEncryptionEnabled = false;
 }
 
-void Protocol::connect(const std::string& host, uint16 port, const std::function<void()>& callback)
+void Protocol::connect(const std::string& host, uint16 port)
 {
-    m_connection->connect(host, port, callback);
+    m_connection->connect(host, port, std::bind(&Protocol::onConnect, asProtocol()));
 }
 
 void Protocol::send(OutputMessage *outputMessage)
@@ -56,30 +55,56 @@ void Protocol::send(OutputMessage *outputMessage)
     outputMessage->addU16(messageSize);
 
     // Send
-    m_connection->send(outputMessage);
+    m_connection->send(outputMessage->getBuffer(), outputMessage->getMessageSize());
 }
 
-void Protocol::onRecv(InputMessage *inputMessage)
+void Protocol::recv()
 {
-    uint32 checksum = getAdlerChecksum(inputMessage->getBuffer() + InputMessage::DATA_POS, inputMessage->getMessageSize() - InputMessage::CHECKSUM_LENGTH);
-    if(inputMessage->getU32() != checksum) {
+    m_inputMessage.reset();
+
+    m_connection->recv(InputMessage::HEADER_LENGTH, 2, std::bind(&Protocol::internalRecvHeader, asProtocol(), std::placeholders::_1, std::placeholders::_2));
+}
+
+void Protocol::internalRecvHeader(uint8 *buffer, uint16 size)
+{
+    memcpy(m_inputMessage.getBuffer() + InputMessage::HEADER_POS, buffer, size);
+
+    uint16 dataSize = m_inputMessage.getU16();
+    m_inputMessage.setMessageSize(dataSize);
+
+    m_connection->recv(dataSize, 5, std::bind(&Protocol::internalRecvData, asProtocol(), std::placeholders::_1, std::placeholders::_2));
+}
+
+void Protocol::internalRecvData(uint8 *buffer, uint16 size)
+{
+    memcpy(m_inputMessage.getBuffer() + InputMessage::CHECKSUM_POS, buffer, size);
+
+    uint32 checksum = getAdlerChecksum(m_inputMessage.getBuffer() + InputMessage::DATA_POS, m_inputMessage.getMessageSize() - InputMessage::CHECKSUM_LENGTH);
+    if(m_inputMessage.getU32() != checksum) {
         // error
         logError("Checksum is invalid.");
         return;
     }
 
     if(m_xteaEncryptionEnabled)
-        xteaDecrypt(inputMessage);
+        xteaDecrypt(&m_inputMessage);
+
+    onRecv(&m_inputMessage);
 }
 
 void Protocol::onError(const boost::system::error_code& err)
 {
+    std::stringstream message;
+
     logError("PROTOCOL ERROR: ", err.message());
+    message << "Boost error: " << err.message();
 
     // invalid hostname
     // connection timeouted
 
     // displays a dialog, finish protocol
+
+    callField("onError", message.str());
 }
 
 bool Protocol::xteaDecrypt(InputMessage *inputMessage)
@@ -163,4 +188,3 @@ uint32 Protocol::getAdlerChecksum(uint8 *buffer, uint16 size)
 
     return (b << 16) | a;
 }
-
