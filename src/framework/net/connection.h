@@ -41,7 +41,6 @@ public:
     void connect(const std::string& host, uint16 port, const std::function<void()>& connectCallback);
     void send(uint8 *buffer, uint16 size);
     void recv(uint16 bytes, uint32 timeout, const RecvCallback& callback);
-    void recv(const std::string& data, uint32 timeout, const RecvCallback& callback);
 
     void setErrorCallback(const ErrorCallback& errorCallback) { m_errorCallback = errorCallback; }
     void setRecvCallback(const RecvCallback& recvCallback) { m_recvCallback = recvCallback; }
