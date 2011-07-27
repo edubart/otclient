@@ -19,7 +19,7 @@ public:
     void onConnect();
 
     void sendPacket();
-    void onRecv(InputMessage *inputMessage);
+    void onRecv(InputMessage* inputMessage);
 
     void cancel() { /* TODO: this func */ }
 
@@ -28,9 +28,9 @@ public:
     virtual const char* getLuaTypeName() const { return "ProtocolLogin"; }
 
 private:
-    void parseError(InputMessage *inputMessage);
-    void parseMOTD(InputMessage *inputMessage);
-    void parseCharacterList(InputMessage *inputMessage);
+    void parseError(InputMessage* inputMessage);
+    void parseMOTD(InputMessage* inputMessage);
+    void parseCharacterList(InputMessage* inputMessage);
 
     std::string m_accountName, m_accountPassword;
 

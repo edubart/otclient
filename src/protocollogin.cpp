@@ -92,7 +92,7 @@ void ProtocolLogin::sendPacket()
     recv();
 }
 
-void ProtocolLogin::onRecv(InputMessage *inputMessage)
+void ProtocolLogin::onRecv(InputMessage* inputMessage)
 {
     while(!inputMessage->end()) {
         uint8 opt = inputMessage->getU8();
@@ -119,19 +119,19 @@ void ProtocolLogin::onRecv(InputMessage *inputMessage)
     }
 }
 
-void ProtocolLogin::parseError(InputMessage *inputMessage)
+void ProtocolLogin::parseError(InputMessage* inputMessage)
 {
     std::string error = inputMessage->getString();
     callField("onError", error);
 }
 
-void ProtocolLogin::parseMOTD(InputMessage *inputMessage)
+void ProtocolLogin::parseMOTD(InputMessage* inputMessage)
 {
     std::string motd = inputMessage->getString();
     callField("onMotd", motd);
 }
 
-void ProtocolLogin::parseCharacterList(InputMessage *inputMessage)
+void ProtocolLogin::parseCharacterList(InputMessage* inputMessage)
 {
     uint8 characters = inputMessage->getU8();
     for(int i = 0; i < characters; ++i) {

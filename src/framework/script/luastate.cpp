@@ -194,7 +194,7 @@ void LuaState::pushValue(const LuaValuePtr& value)
     if(value->isNil())
         pushNil();
     else
-        pushRef(value->ref);
+        pushRef(value->m_ref);
 }
 
 void LuaState::pushValues(const LuaValueList& values)

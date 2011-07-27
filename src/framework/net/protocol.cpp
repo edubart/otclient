@@ -1,30 +1,5 @@
-/* The MIT License
- *
- * Copyright (c) 2010 OTClient, https://github.com/edubart/otclient
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-
-
-#include <net/protocol.h>
-
-#include <boost/bind.hpp>
+#include "protocol.h"
+#include "connection.h"
 
 Protocol::Protocol() :
         m_connection(new Connection)
@@ -38,7 +13,7 @@ void Protocol::connect(const std::string& host, uint16 port)
     m_connection->connect(host, port, std::bind(&Protocol::onConnect, asProtocol()));
 }
 
-void Protocol::send(OutputMessage *outputMessage)
+void Protocol::send(OutputMessage* outputMessage)
 {
     // Encrypt
     if(m_xteaEncryptionEnabled)
@@ -65,7 +40,7 @@ void Protocol::recv()
     m_connection->recv(InputMessage::HEADER_LENGTH, 2, std::bind(&Protocol::internalRecvHeader, asProtocol(), std::placeholders::_1, std::placeholders::_2));
 }
 
-void Protocol::internalRecvHeader(uint8 *buffer, uint16 size)
+void Protocol::internalRecvHeader(uint8* buffer, uint16 size)
 {
     memcpy(m_inputMessage.getBuffer() + InputMessage::HEADER_POS, buffer, size);
 
@@ -75,7 +50,7 @@ void Protocol::internalRecvHeader(uint8 *buffer, uint16 size)
     m_connection->recv(dataSize, 5, std::bind(&Protocol::internalRecvData, asProtocol(), std::placeholders::_1, std::placeholders::_2));
 }
 
-void Protocol::internalRecvData(uint8 *buffer, uint16 size)
+void Protocol::internalRecvData(uint8* buffer, uint16 size)
 {
     memcpy(m_inputMessage.getBuffer() + InputMessage::CHECKSUM_POS, buffer, size);
 
@@ -107,7 +82,7 @@ void Protocol::onError(const boost::system::error_code& err)
     callField("onError", message.str());
 }
 
-bool Protocol::xteaDecrypt(InputMessage *inputMessage)
+bool Protocol::xteaDecrypt(InputMessage* inputMessage)
 {
     // FIXME: this function has not been tested yet
     uint16 messageSize = inputMessage->getMessageSize() - InputMessage::CHECKSUM_LENGTH;
@@ -143,7 +118,7 @@ bool Protocol::xteaDecrypt(InputMessage *inputMessage)
     return true;
 }
 
-void Protocol::xteaEncrypt(OutputMessage *outputMessage)
+void Protocol::xteaEncrypt(OutputMessage* outputMessage)
 {
     uint16 messageLength = outputMessage->getMessageSize();
 
@@ -171,7 +146,7 @@ void Protocol::xteaEncrypt(OutputMessage *outputMessage)
     }
 }
 
-uint32 Protocol::getAdlerChecksum(uint8 *buffer, uint16 size)
+uint32 Protocol::getAdlerChecksum(uint8* buffer, uint16 size)
 {
     uint32 a = 1, b = 0;
     while (size > 0) {

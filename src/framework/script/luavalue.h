@@ -49,7 +49,7 @@ public:
     std::string getTypeName();
 
     // check types
-    bool isNil() { return ref < 0; }
+    bool isNil() { return m_ref < 0; }
     bool isBoolean();
     bool isString();
     bool isNumber();
@@ -70,7 +70,7 @@ private:
     /// Pushes this value into lua stack
     void push();
 
-    int ref;
+    int m_ref;
     friend class LuaState;
 };
 

@@ -4,14 +4,14 @@
 
 #include <core/resources.h>
 
-LuaValue::LuaValue(int ref) : ref(ref)
+LuaValue::LuaValue(int ref) : m_ref(ref)
 {
 }
 
 LuaValue::~LuaValue()
 {
     // releases the reference of this value from lua
-    g_lua.unref(ref);
+    g_lua.unref(m_ref);
 }
 
 LuaValueList LuaValue::call(const std::string& funcName, const LuaValueList& args)
