@@ -3,9 +3,6 @@
 
 #include "netdeclarations.h"
 
-// TODO remove this
-#include <../position.h>
-
 class InputMessage
 {
 public:
