@@ -3,6 +3,9 @@
 
 #include "netdeclarations.h"
 
+// TODO remove this
+#include <../position.h>
+
 class InputMessage
 {
 public:
@@ -20,12 +23,13 @@ public:
 
     void reset();
 
-    uint8 getU8();
-    uint16 getU16();
-    uint32 getU32();
-    uint64 getU64();
+    uint8 getU8(bool blockReadPos = false);
+    uint16 getU16(bool blockReadPos = false);
+    uint32 getU32(bool blockReadPos = false);
+    uint64 getU64(bool blockReadPos = false);
     std::string getString();
 
+    void skipBytes(uint16 bytes) { m_readPos += bytes; }
     uint8* getBuffer() { return m_buffer; }
     uint16 getMessageSize() { return m_messageSize; }
     void setMessageSize(uint16 messageSize) { m_messageSize = messageSize; }

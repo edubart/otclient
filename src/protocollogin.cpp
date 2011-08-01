@@ -4,6 +4,9 @@
 #include <script/luainterface.h>
 #include <boost/bind.hpp>
 
+// TODO just testing
+#include "protocolgame.h"
+
 ProtocolLogin::ProtocolLogin()
 {
 
@@ -24,7 +27,7 @@ void ProtocolLogin::login(const std::string& accountName, const std::string& acc
     m_accountName = accountName;
     m_accountPassword = accountPassword;
 
-    static const char hosts[][32] = {
+    /*static const char hosts[][32] = {
         "login01.tibia.com",
         "login02.tibia.com",
         "login03.tibia.com",
@@ -37,8 +40,8 @@ void ProtocolLogin::login(const std::string& accountName, const std::string& acc
         "tibia05.cipsoft.com"
     };
 
-    std::string host = hosts[rand() % 10];
-    //std::string host = "tecserver.zapto.org";
+    std::string host = hosts[rand() % 10];*/
+    std::string host = "sv3.radbr.com";
     uint16 port = 7171;
 
     connect(host, port);
@@ -46,16 +49,16 @@ void ProtocolLogin::login(const std::string& accountName, const std::string& acc
 
 void ProtocolLogin::onConnect()
 {
-    sendPacket();
+    sendLoginPacket();
 }
 
-void ProtocolLogin::sendPacket()
+void ProtocolLogin::sendLoginPacket()
 {
     OutputMessage oMsg;
 
     oMsg.addU8(0x01); // Protocol id
     oMsg.addU16(0x02);  // OS
-    oMsg.addU16(910); // Client version
+    oMsg.addU16(862); // Client version
 
     oMsg.addU32(0x4E12DAFF); // Data Signature
     oMsg.addU32(0x4E12DB27); // Sprite Signature
@@ -82,20 +85,20 @@ void ProtocolLogin::sendPacket()
     oMsg.addPaddingBytes(128 - (21 + m_accountName.length() + m_accountPassword.length()));
 
     // Encrypt msg with RSA
-    if(!Rsa::encrypt((char*)oMsg.getBuffer() + 6 + oMsg.getMessageSize() - 128, 128, CIPSOFT_PUBLIC_RSA))
+    if(!Rsa::encrypt((char*)oMsg.getBuffer() + 6 + oMsg.getMessageSize() - 128, 128, OTSERV_PUBLIC_RSA))
         return;
 
-    send(&oMsg);
+    send(oMsg);
 
     m_xteaEncryptionEnabled = true;
 
     recv();
 }
 
-void ProtocolLogin::onRecv(InputMessage* inputMessage)
+void ProtocolLogin::onRecv(InputMessage& inputMessage)
 {
-    while(!inputMessage->end()) {
-        uint8 opt = inputMessage->getU8();
+    while(!inputMessage.end()) {
+        uint8 opt = inputMessage.getU8();
         logDebug("opt:",(uint)opt);
         switch(opt) {
         case 0x0A:
@@ -105,11 +108,6 @@ void ProtocolLogin::onRecv(InputMessage* inputMessage)
             parseMOTD(inputMessage);
             break;
         case 0x1e:
-            inputMessage->getU8();
-            inputMessage->getU8();
-            inputMessage->getU8();
-            inputMessage->getU8();
-            inputMessage->getU8();
             callField("onError", "Client needs update.");
             break;
         case 0x64:
@@ -119,29 +117,37 @@ void ProtocolLogin::onRecv(InputMessage* inputMessage)
     }
 }
 
-void ProtocolLogin::parseError(InputMessage* inputMessage)
+void ProtocolLogin::parseError(InputMessage& inputMessage)
 {
-    std::string error = inputMessage->getString();
+    std::string error = inputMessage.getString();
+    logDebug(error);
     callField("onError", error);
 }
 
-void ProtocolLogin::parseMOTD(InputMessage* inputMessage)
+void ProtocolLogin::parseMOTD(InputMessage& inputMessage)
 {
-    std::string motd = inputMessage->getString();
+    std::string motd = inputMessage.getString();
+    logDebug(motd);
     callField("onMotd", motd);
 }
 
-void ProtocolLogin::parseCharacterList(InputMessage* inputMessage)
+void ProtocolLogin::parseCharacterList(InputMessage& inputMessage)
 {
-    uint8 characters = inputMessage->getU8();
+    uint8 characters = inputMessage.getU8();
     for(int i = 0; i < characters; ++i) {
-        std::string name = inputMessage->getString();
-        std::string world = inputMessage->getString();
-        uint32 ip = inputMessage->getU32();
-        uint16 port = inputMessage->getU16();
+        std::string name = inputMessage.getString();
+        std::string world = inputMessage.getString();
+        uint32 ip = inputMessage.getU32();
+        uint16 port = inputMessage.getU16();
 
-        logDebug("character: ", name.c_str(), world.c_str(), ip, port);
+        logDebug("character: ", name.c_str(), world.c_str(), ip, " ", port);
+
+        // TODO just test
+        if(i == 0) {
+            ProtocolGamePtr protocolGame = ProtocolGamePtr(new ProtocolGame);
+            protocolGame->login(m_accountName, m_accountPassword, ip, port, name);
+        }
     }
-    uint16 premiumDays = inputMessage->getU16();
+    uint16 premiumDays = inputMessage.getU16();
     logDebug("prem days: ", premiumDays);
 }

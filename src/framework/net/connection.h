@@ -36,7 +36,7 @@ private:
     asio::ip::tcp::resolver m_resolver;
     asio::ip::tcp::socket m_socket;
 
-    uint8 m_recvBuffer[65536];
+    uint8 m_recvBuffer[65538];
     uint16 m_recvSize;
     RecvCallback m_recvCallback;
 };

@@ -6,6 +6,7 @@ Protocol::Protocol() :
 {
     m_connection->setErrorCallback(std::bind(&Protocol::onError, this, std::placeholders::_1));
     m_xteaEncryptionEnabled = false;
+    m_checksumEnabled = true;
 }
 
 void Protocol::connect(const std::string& host, uint16 port)
@@ -13,24 +14,24 @@ void Protocol::connect(const std::string& host, uint16 port)
     m_connection->connect(host, port, std::bind(&Protocol::onConnect, asProtocol()));
 }
 
-void Protocol::send(OutputMessage* outputMessage)
+void Protocol::send(OutputMessage& outputMessage)
 {
     // Encrypt
     if(m_xteaEncryptionEnabled)
         xteaEncrypt(outputMessage);
 
     // Set checksum
-    uint32 checksum = getAdlerChecksum(outputMessage->getBuffer() + OutputMessage::DATA_POS, outputMessage->getMessageSize());
-    outputMessage->setWritePos(OutputMessage::CHECKSUM_POS);
-    outputMessage->addU32(checksum);
+    uint32 checksum = getAdlerChecksum(outputMessage.getBuffer() + OutputMessage::DATA_POS, outputMessage.getMessageSize());
+    outputMessage.setWritePos(OutputMessage::CHECKSUM_POS);
+    outputMessage.addU32(checksum);
 
     // Set size
-    uint16 messageSize = outputMessage->getMessageSize();
-    outputMessage->setWritePos(OutputMessage::HEADER_POS);
-    outputMessage->addU16(messageSize);
+    uint16 messageSize = outputMessage.getMessageSize();
+    outputMessage.setWritePos(OutputMessage::HEADER_POS);
+    outputMessage.addU16(messageSize);
 
     // Send
-    m_connection->send(outputMessage->getBuffer(), outputMessage->getMessageSize());
+    m_connection->send(outputMessage.getBuffer(), outputMessage.getMessageSize());
 }
 
 void Protocol::recv()
@@ -54,17 +55,19 @@ void Protocol::internalRecvData(uint8* buffer, uint16 size)
 {
     memcpy(m_inputMessage.getBuffer() + InputMessage::CHECKSUM_POS, buffer, size);
 
-    uint32 checksum = getAdlerChecksum(m_inputMessage.getBuffer() + InputMessage::DATA_POS, m_inputMessage.getMessageSize() - InputMessage::CHECKSUM_LENGTH);
-    if(m_inputMessage.getU32() != checksum) {
-        // error
-        logError("Checksum is invalid.");
-        return;
+    if(m_checksumEnabled) {
+        uint32 checksum = getAdlerChecksum(m_inputMessage.getBuffer() + InputMessage::DATA_POS, m_inputMessage.getMessageSize() - InputMessage::CHECKSUM_LENGTH);
+        if(m_inputMessage.getU32() != checksum) {
+            // error
+            logError("Checksum is invalid.");
+            return;
+        }
     }
 
     if(m_xteaEncryptionEnabled)
-        xteaDecrypt(&m_inputMessage);
+        xteaDecrypt(m_inputMessage);
 
-    onRecv(&m_inputMessage);
+    onRecv(m_inputMessage);
 }
 
 void Protocol::onError(const boost::system::error_code& err)
@@ -82,16 +85,16 @@ void Protocol::onError(const boost::system::error_code& err)
     callField("onError", message.str());
 }
 
-bool Protocol::xteaDecrypt(InputMessage* inputMessage)
+bool Protocol::xteaDecrypt(InputMessage& inputMessage)
 {
     // FIXME: this function has not been tested yet
-    uint16 messageSize = inputMessage->getMessageSize() - InputMessage::CHECKSUM_LENGTH;
+    uint16 messageSize = inputMessage.getMessageSize() - InputMessage::CHECKSUM_LENGTH;
     if(messageSize % 8 != 0) {
-        //LOG_TRACE_DEBUG("not valid encrypted message size")
+        logDebug("not valid encrypted message size");
         return false;
     }
 
-    uint32 *buffer = (uint32*)(inputMessage->getBuffer() + InputMessage::DATA_POS);
+    uint32 *buffer = (uint32*)(inputMessage.getBuffer() + InputMessage::DATA_POS);
     int readPos = 0;
 
     while(readPos < messageSize/4) {
@@ -108,29 +111,29 @@ bool Protocol::xteaDecrypt(InputMessage* inputMessage)
         readPos = readPos + 2;
     }
 
-    int tmp = inputMessage->getU16();
-    if(tmp > inputMessage->getMessageSize() - 4) {
-        //LOG_TRACE_DEBUG("not valid unencrypted message size")
+    int tmp = inputMessage.getU16();
+    if(tmp > inputMessage.getMessageSize() - 4) {
+        logDebug("not valid unencrypted message size");
         return false;
     }
 
-    inputMessage->setMessageSize(tmp + InputMessage::UNENCRYPTED_DATA_POS);
+    inputMessage.setMessageSize(tmp + InputMessage::UNENCRYPTED_DATA_POS);
     return true;
 }
 
-void Protocol::xteaEncrypt(OutputMessage* outputMessage)
+void Protocol::xteaEncrypt(OutputMessage& outputMessage)
 {
-    uint16 messageLength = outputMessage->getMessageSize();
+    uint16 messageLength = outputMessage.getMessageSize();
 
     //add bytes until reach 8 multiple
     if((messageLength % 8) != 0) {
         uint16 n = 8 - (messageLength % 8);
-        outputMessage->addPaddingBytes(n);
+        outputMessage.addPaddingBytes(n);
         messageLength += n;
     }
 
     int readPos = 0;
-    uint32 *buffer = (uint32*)outputMessage->getBuffer() + OutputMessage::DATA_POS;
+    uint32 *buffer = (uint32*)outputMessage.getBuffer() + OutputMessage::DATA_POS;
     while(readPos < messageLength / 4) {
         uint32 v0 = buffer[readPos], v1 = buffer[readPos + 1];
         uint32 delta = 0x61C88647;

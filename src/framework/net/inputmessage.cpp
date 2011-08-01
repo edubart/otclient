@@ -11,33 +11,47 @@ void InputMessage::reset()
     m_messageSize = 2;
 }
 
-uint8 InputMessage::getU8()
+uint8 InputMessage::getU8(bool blockReadPos)
 {
     assert(canRead(1));
-    return m_buffer[m_readPos++];
+    uint8 v = m_buffer[m_readPos];
+
+    if(!blockReadPos)
+        m_readPos += 1;
+
+    return v;
 }
 
-uint16 InputMessage::getU16()
+uint16 InputMessage::getU16(bool blockReadPos)
 {
     assert(canRead(2));
     uint16 v = *(uint16_t*)(m_buffer + m_readPos);
-    m_readPos += 2;
+
+    if(!blockReadPos)
+        m_readPos += 2;
+
     return v;
 }
 
-uint32 InputMessage::getU32()
+uint32 InputMessage::getU32(bool blockReadPos)
 {
     assert(canRead(4));
     uint32 v = *(uint32*)(m_buffer + m_readPos);
-    m_readPos += 4;
+
+    if(!blockReadPos)
+        m_readPos += 4;
+
     return v;
 }
 
-uint64 InputMessage::getU64()
+uint64 InputMessage::getU64(bool blockReadPos)
 {
     assert(canRead(8));
     uint64 v = *(uint64*)(m_buffer + m_readPos);
-    m_readPos += 8;
+
+    if(!blockReadPos)
+        m_readPos += 8;
+
     return v;
 }
 

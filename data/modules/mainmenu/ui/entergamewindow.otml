@@ -13,7 +13,7 @@
     margin.top: 28
 
   %textEdit#accountNameTextEdit
-    text: tibialua0
+    text: otclient0
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: prev.bottom
@@ -28,7 +28,7 @@
     margin.top: 8
 
   %textEdit#passwordTextEdit
-    text: lua123456
+    text: 123456
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: prev.bottom

@@ -50,6 +50,8 @@ SET(SOURCES
 
 # game net
     src/protocollogin.cpp
+    src/protocolgame.cpp
+    src/protocolgameparse.cpp
 
 # framework core
     src/framework/core/dispatcher.cpp
