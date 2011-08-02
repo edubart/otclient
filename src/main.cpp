@@ -8,6 +8,7 @@
 #include <core/packages.h>
 #include <ui/uicontainer.h>
 #include <script/luainterface.h>
+#include "tibiadat.h"
 
 #include <csignal>
 
@@ -77,6 +78,10 @@ int main(int argc, const char *argv[])
 
     // load resources paths
     g_resources.init(args[0].c_str());
+
+    // load Tibia.dat TODO this is temporary
+    if(!g_tibiaDat.load("Tibia.dat"))
+        return -1;
 
     // load configurations
     loadDefaultConfigs();

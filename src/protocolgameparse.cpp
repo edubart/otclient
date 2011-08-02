@@ -1,5 +1,6 @@
 #include "protocolgame.h"
 #include "player.h"
+#include "tibiadat.h"
 #include <iomanip>
 
 void ProtocolGame::parseMessage(InputMessage& msg)
@@ -881,8 +882,10 @@ void ProtocolGame::internalGetItem(InputMessage& msg, uint16 id)
 {
     if(id == 0xFFFF)
         id = msg.getU16();
-    //if(Data::instance()->hasCountOrSubType(id))
-        //msg.getU8();
+
+    Item *item = g_tibiaDat.getItem(id);
+    if(item->stackable || item->group == ITEM_GROUP_FLUID || item->group == ITEM_GROUP_SPLASH)
+        msg.getU8();
 }
 
 Position ProtocolGame::parsePosition(InputMessage& msg)

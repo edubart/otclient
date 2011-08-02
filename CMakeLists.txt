@@ -48,6 +48,9 @@ SET(SOURCES
 # game sources
     src/main.cpp
 
+# game files
+    src/tibiadat.cpp
+
 # game net
     src/protocollogin.cpp
     src/protocolgame.cpp
