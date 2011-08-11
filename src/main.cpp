@@ -9,6 +9,7 @@
 #include <ui/uicontainer.h>
 #include <script/luainterface.h>
 #include "tibiadat.h"
+#include "tibiaspr.h"
 
 #include <csignal>
 
@@ -79,10 +80,6 @@ int main(int argc, const char *argv[])
     // load resources paths
     g_resources.init(args[0].c_str());
 
-    // load Tibia.dat TODO this is temporary
-    if(!g_tibiaDat.load("Tibia.dat"))
-        return -1;
-
     // load configurations
     loadDefaultConfigs();
     if(!g_configs.load("config.otml"))
@@ -98,6 +95,15 @@ int main(int argc, const char *argv[])
 
     // init engine
     g_engine.init();
+
+    // load Tibia.spr TODO this is temporary
+    if(!g_tibiaSpr.load("tibiafiles/Tibia.spr"))
+        return -1;
+
+    // load Tibia.dat TODO this is temporary
+    if(!g_tibiaDat.load("tibiafiles/Tibia.dat"))
+        return -1;
+
     g_engine.enableFpsCounter();
 
     // load ui skins

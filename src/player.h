@@ -7,7 +7,7 @@ class Player
 {
 public:
 
-    void setPosition(Position position) { m_position = position; }
+    void setPosition(const Position& position) { m_position = position; }
     Position getPosition() { return m_position; }
 
 private:

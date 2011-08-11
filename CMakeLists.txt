@@ -50,11 +50,20 @@ SET(SOURCES
 
 # game files
     src/tibiadat.cpp
+    src/tibiaspr.cpp
+
+# game contents
+    src/game.cpp
+    src/map.cpp
+    src/tile.cpp
+    src/thing.cpp
+    src/item.cpp
 
 # game net
     src/protocollogin.cpp
     src/protocolgame.cpp
     src/protocolgameparse.cpp
+    src/protocolgamesend.cpp
 
 # framework core
     src/framework/core/dispatcher.cpp

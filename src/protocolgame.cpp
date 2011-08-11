@@ -1,4 +1,5 @@
 #include "protocolgame.h"
+#include "game.h"
 #include <net/rsa.h>
 
 ProtocolGame::ProtocolGame()

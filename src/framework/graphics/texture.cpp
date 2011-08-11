@@ -34,7 +34,9 @@ Texture::Texture(int width, int height, int channels, uchar *pixels)
 
 uint Texture::internalLoadGLTexture(uchar *pixels, int channels, int width, int height)
 {
-    GLint texSize;
+    g_graphics.disableDrawing();
+
+    GLint texSize = 0;
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &texSize);
     if(width > texSize || height > texSize) {
         logError("loading texture with size ",width,"x",height," failed, the maximum size is ",texSize,"x",texSize);

@@ -1,6 +1,8 @@
 #include "protocolgame.h"
 #include "player.h"
 #include "tibiadat.h"
+#include "game.h"
+#include "map.h"
 #include <iomanip>
 
 void ProtocolGame::parseMessage(InputMessage& msg)
@@ -260,9 +262,7 @@ void ProtocolGame::parseWaitList(InputMessage& msg)
 
 void ProtocolGame::parsePing(InputMessage&)
 {
-    //mSendmsg.reset();
-    //mSendmsg.addByte(0x1E);
-    //sendMessage(mSendMsg);
+    sendPing();
 }
 
 void ProtocolGame::parseDeath(InputMessage&)
@@ -277,32 +277,37 @@ void ProtocolGame::parseCanReportBugs(InputMessage& msg)
 
 void ProtocolGame::parseMapDescription(InputMessage& msg)
 {
-    m_player.setPosition(parsePosition(msg));
-    setMapDescription(msg, m_player.getPosition().getX() - 8, m_player.getPosition().getY() - 6, m_player.getPosition().getZ(), 18, 14);
+    Player *player = g_game.getPlayer();
+    player->setPosition(parsePosition(msg));
+    setMapDescription(msg, player->getPosition().getX() - 8, player->getPosition().getY() - 6, player->getPosition().getZ(), 18, 14);
 }
 
 void ProtocolGame::parseMoveNorth(InputMessage& msg)
 {
-    m_player.getPosition().setY(m_player.getPosition().getY() - 1);
-    setMapDescription(msg, m_player.getPosition().getX() - 8, m_player.getPosition().getY() - 6, m_player.getPosition().getZ(), 18, 1);
+    Player *player = g_game.getPlayer();
+    player->getPosition().setY(player->getPosition().getY() - 1);
+    setMapDescription(msg, player->getPosition().getX() - 8, player->getPosition().getY() - 6, player->getPosition().getZ(), 18, 1);
 }
 
 void ProtocolGame::parseMoveEast(InputMessage& msg)
 {
-    m_player.getPosition().setX(m_player.getPosition().getX() + 1);
-    setMapDescription(msg, m_player.getPosition().getX() + 9, m_player.getPosition().getY() - 6, m_player.getPosition().getZ(), 1, 14);
+    Player *player = g_game.getPlayer();
+    player->getPosition().setX(player->getPosition().getX() + 1);
+    setMapDescription(msg, player->getPosition().getX() + 9, player->getPosition().getY() - 6, player->getPosition().getZ(), 1, 14);
 }
 
 void ProtocolGame::parseMoveSouth(InputMessage& msg)
 {
-    m_player.getPosition().setY(m_player.getPosition().getY() + 1);
-    setMapDescription(msg, m_player.getPosition().getX() - 8, m_player.getPosition().getY() + 7, m_player.getPosition().getZ(), 18, 1);
+    Player *player = g_game.getPlayer();
+    player->getPosition().setY(player->getPosition().getY() + 1);
+    setMapDescription(msg, player->getPosition().getX() - 8, player->getPosition().getY() + 7, player->getPosition().getZ(), 18, 1);
 }
 
 void ProtocolGame::parseMoveWest(InputMessage& msg)
 {
-    m_player.getPosition().setX(m_player.getPosition().getX() - 1);
-    setMapDescription(msg, m_player.getPosition().getX() - 8, m_player.getPosition().getY() - 6, m_player.getPosition().getZ(), 1, 14);
+    Player *player = g_game.getPlayer();
+    player->getPosition().setX(player->getPosition().getX() - 1);
+    setMapDescription(msg, player->getPosition().getX() - 8, player->getPosition().getY() - 6, player->getPosition().getZ(), 1, 14);
 }
 
 void ProtocolGame::parseUpdateTile(InputMessage& msg)
@@ -677,34 +682,36 @@ void ProtocolGame::parseCancelWalk(InputMessage& msg)
 
 void ProtocolGame::parseFloorChangeUp(InputMessage& msg)
 {
-    m_player.getPosition().setZ(m_player.getPosition().getZ() - 1);
+    Player *player = g_game.getPlayer();
+    player->getPosition().setZ(player->getPosition().getZ() - 1);
 
     int32 skip = 0;
-    if(m_player.getPosition().getZ() == 7)
+    if(player->getPosition().getZ() == 7)
         for(int32 i = 5; i >= 0; i--)
-            setFloorDescription(msg, m_player.getPosition().getX() - 8, m_player.getPosition().getY() - 6, i, 18, 14, 8 - i, &skip);
-    else if(m_player.getPosition().getZ() > 7)
-        setFloorDescription(msg, m_player.getPosition().getX() - 8, m_player.getPosition().getY() - 6, m_player.getPosition().getZ() - 2, 18, 14, 3, &skip);
+            setFloorDescription(msg, player->getPosition().getX() - 8, player->getPosition().getY() - 6, i, 18, 14, 8 - i, &skip);
+    else if(player->getPosition().getZ() > 7)
+        setFloorDescription(msg, player->getPosition().getX() - 8, player->getPosition().getY() - 6, player->getPosition().getZ() - 2, 18, 14, 3, &skip);
 
-    m_player.getPosition().setX(m_player.getPosition().getX() + 1);
-    m_player.getPosition().setY(m_player.getPosition().getY() + 1);
+    player->getPosition().setX(player->getPosition().getX() + 1);
+    player->getPosition().setY(player->getPosition().getY() + 1);
 }
 
 void ProtocolGame::parseFloorChangeDown(InputMessage& msg)
 {
-    m_player.getPosition().setZ(m_player.getPosition().getZ() + 1);
+    Player *player = g_game.getPlayer();
+    player->getPosition().setZ(player->getPosition().getZ() + 1);
 
     int32 skip = 0;
-    if(m_player.getPosition().getZ() == 8) {
+    if(player->getPosition().getZ() == 8) {
         int32 j, i;
-        for(i = m_player.getPosition().getZ(), j = -1; i < (int32)m_player.getPosition().getZ() + 3; ++i, --j)
-            setFloorDescription(msg, m_player.getPosition().getX() - 8, m_player.getPosition().getY() - 6, i, 18, 14, j, &skip);
+        for(i = player->getPosition().getZ(), j = -1; i < (int32)player->getPosition().getZ() + 3; ++i, --j)
+            setFloorDescription(msg, player->getPosition().getX() - 8, player->getPosition().getY() - 6, i, 18, 14, j, &skip);
     }
-    else if(m_player.getPosition().getZ() > 8 && m_player.getPosition().getZ() < 14)
-        setFloorDescription(msg, m_player.getPosition().getX() - 8, m_player.getPosition().getY() - 6, m_player.getPosition().getZ() + 2, 18, 14, -3, &skip);
+    else if(player->getPosition().getZ() > 8 && player->getPosition().getZ() < 14)
+        setFloorDescription(msg, player->getPosition().getX() - 8, player->getPosition().getY() - 6, player->getPosition().getZ() + 2, 18, 14, -3, &skip);
 
-    m_player.getPosition().setX(m_player.getPosition().getX() - 1);
-    m_player.getPosition().setY(m_player.getPosition().getY() - 1);
+    player->getPosition().setX(player->getPosition().getX() - 1);
+    player->getPosition().setY(player->getPosition().getY() - 1);
 }
 
 void ProtocolGame::parseOutfitWindow(InputMessage& msg)
@@ -823,13 +830,16 @@ void ProtocolGame::setTileDescription(InputMessage& msg, Position position)
                 logDebug("[ProtocolGame::setTileDescription] Too many things!.");
                 return;
             }
-            internalGetThing(msg);
+
+            g_game.getMap()->addThing(internalGetThing(msg), position);
         }
     }
 }
 
-void ProtocolGame::internalGetThing(InputMessage& msg)
+Thing *ProtocolGame::internalGetThing(InputMessage& msg)
 {
+    Thing *thing = NULL;
+
     uint16 thingId = msg.getU16();
     if(thingId == 0x0061 || thingId == 0x0062) { // add new creature
         if(thingId == 0x0062) { //creature is known
@@ -860,7 +870,9 @@ void ProtocolGame::internalGetThing(InputMessage& msg)
         msg.getU8(); // direction
     }
     else // item
-        internalGetItem(msg, thingId);
+        thing = internalGetItem(msg, thingId);
+
+    return thing;
 }
 
 void ProtocolGame::internalCreatureOutfit(InputMessage& msg)
@@ -878,14 +890,19 @@ void ProtocolGame::internalCreatureOutfit(InputMessage& msg)
     }
 }
 
-void ProtocolGame::internalGetItem(InputMessage& msg, uint16 id)
+Item *ProtocolGame::internalGetItem(InputMessage& msg, uint16 id)
 {
+    Item *item = new Item();
+
     if(id == 0xFFFF)
         id = msg.getU16();
+    item->setId(id);
 
-    Item *item = g_tibiaDat.getItem(id);
-    if(item->stackable || item->group == ITEM_GROUP_FLUID || item->group == ITEM_GROUP_SPLASH)
-        msg.getU8();
+    ItemAttributes *itemAttributes = g_tibiaDat.getItemAttributes(id);
+    if(itemAttributes->stackable || itemAttributes->group == ITEM_GROUP_FLUID || itemAttributes->group == ITEM_GROUP_SPLASH)
+        item->setCount(msg.getU8());
+
+    return item;
 }
 
 Position ProtocolGame::parsePosition(InputMessage& msg)

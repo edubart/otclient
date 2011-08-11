@@ -3,6 +3,7 @@
 
 #include <net/protocol.h>
 #include "player.h"
+#include "thing.h"
 
 class ProtocolGame;
 typedef std::shared_ptr<ProtocolGame> ProtocolGamePtr;
@@ -95,19 +96,18 @@ private:
     void parseQuestList(InputMessage& msg);
     void parseQuestPartList(InputMessage& msg);
 
+    void sendPing();
+
     void setMapDescription(InputMessage& msg, int32 x, int32 y, int32 z, int32 width, int32 height);
     void setFloorDescription(InputMessage& msg, int32 x, int32 y, int32 z, int32 width, int32 height, int32 offset, int32* skipTiles);
     void setTileDescription(InputMessage& msg, Position position);
-    void internalGetThing(InputMessage& msg);
+    Thing *internalGetThing(InputMessage& msg);
     void internalCreatureOutfit(InputMessage& msg);
-    void internalGetItem(InputMessage& msg, uint16 id);
+    Item *internalGetItem(InputMessage& msg, uint16 id);
 
     Position parsePosition(InputMessage& msg);
 
     std::string m_accountName, m_accountPassword, m_characterName;
-
-    // TODO this is unknown
-    Player m_player;
 };
 
 // TODO: place it somewhere else
