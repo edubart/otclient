@@ -125,6 +125,13 @@ void Protocol::xteaEncrypt(OutputMessage& outputMessage)
 {
     uint16 messageLength = outputMessage.getMessageSize();
 
+    memmove(outputMessage.getBuffer() + OutputMessage::DATA_POS + 2, outputMessage.getBuffer() + OutputMessage::DATA_POS, messageLength);
+    *(uint16*)(outputMessage.getBuffer() + OutputMessage::DATA_POS) = messageLength;
+
+    messageLength += 2;
+    outputMessage.setMessageSize(messageLength);
+    outputMessage.setWritePos(messageLength + OutputMessage::DATA_POS);
+
     //add bytes until reach 8 multiple
     if((messageLength % 8) != 0) {
         uint16 n = 8 - (messageLength % 8);
@@ -133,7 +140,7 @@ void Protocol::xteaEncrypt(OutputMessage& outputMessage)
     }
 
     int readPos = 0;
-    uint32 *buffer = (uint32*)outputMessage.getBuffer() + OutputMessage::DATA_POS;
+    uint32 *buffer = (uint32*)(outputMessage.getBuffer() + OutputMessage::DATA_POS);
     while(readPos < messageLength / 4) {
         uint32 v0 = buffer[readPos], v1 = buffer[readPos + 1];
         uint32 delta = 0x61C88647;

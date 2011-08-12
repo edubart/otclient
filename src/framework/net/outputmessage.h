@@ -29,6 +29,7 @@ public:
 
     uint8* getBuffer() { return m_buffer; }
     uint16 getMessageSize() { return m_messageSize; }
+    void setMessageSize(uint16 messageSize) { m_messageSize = messageSize; }
     void setWritePos(uint16 writePos) { m_writePos = writePos; }
 
 private:

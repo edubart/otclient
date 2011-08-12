@@ -229,6 +229,8 @@ void ProtocolGame::parseMessage(InputMessage& msg)
                 break;
         }
     }
+
+    recv();
 }
 
 void ProtocolGame::parsePlayerLogin(InputMessage& msg)

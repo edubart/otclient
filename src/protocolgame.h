@@ -21,9 +21,17 @@ public:
     void onConnect();
     void onRecv(InputMessage& inputMessage);
 
+    // Send Messages
+    void sendPing();
+    void sendWalkNorth();
+    void sendWalkEast();
+    void sendWalkSouth();
+    void sendWalkWest();
+
 private:
     void sendLoginPacket(uint32 timestamp, uint8 unknown);
 
+    // Parse Messages
     void parseMessage(InputMessage& msg);
 
     void parsePlayerLogin(InputMessage& msg);
@@ -95,8 +103,6 @@ private:
     void parseAddMarker(InputMessage& msg);
     void parseQuestList(InputMessage& msg);
     void parseQuestPartList(InputMessage& msg);
-
-    void sendPing();
 
     void setMapDescription(InputMessage& msg, int32 x, int32 y, int32 z, int32 width, int32 height);
     void setFloorDescription(InputMessage& msg, int32 x, int32 y, int32 z, int32 width, int32 height, int32 offset, int32* skipTiles);

@@ -19,7 +19,7 @@ public:
     void setType(Type type) { m_type = type; }
     Type getType() const { return m_type; }
 
-    virtual void draw(int, int) {}
+    virtual void draw(int, int, int) {}
 
     virtual Item* getItem() { return NULL; }
     virtual const Item *getItem() const { return NULL; }

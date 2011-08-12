@@ -41,7 +41,7 @@ class Item : virtual public Thing
 public:
     Item();
 
-    void draw(int x, int y);
+    void draw(int x, int y, int z);
 
     void setId(uint16 id) { m_id = id; }
     uint16 getId() const { return m_id; }
