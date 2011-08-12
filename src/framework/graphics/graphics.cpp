@@ -33,7 +33,6 @@ void Graphics::init()
     glEnable(GL_ALPHA_TEST); // enable alpha by default
     glAlphaFunc(GL_GREATER, 0.0f); // default alpha mode
     glDisable(GL_DEPTH_TEST); // we are rendering 2D only, we don't need it
-    glEnable(GL_TEXTURE_2D); // enable textures by default
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
     glShadeModel(GL_SMOOTH);
     glEnable(GL_BLEND);
@@ -127,6 +126,9 @@ void Graphics::disableDrawing()
     if(m_drawMode != DRAW_NONE) {
         glEnd();
         m_drawMode = DRAW_NONE;
+
+        m_bindedTexture.reset();
+        glColor4ubv(Color::white.rgbaPtr());
     }
 }
 

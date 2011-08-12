@@ -78,6 +78,9 @@ FrameBuffer::FrameBuffer(int width, int height)
                 m_fallbackOldImp = true;
                 break;
         }
+
+        // restore back buffer
+        oglBindFramebuffer(GL_FRAMEBUFFER_EXT, 0);
     } else {
         // otherwise fallback to copy texture from screen implementation
         m_fallbackOldImp = true;
@@ -147,6 +150,8 @@ void FrameBuffer::draw(int x, int y, int width, int height)
 {
     g_graphics.disableDrawing();
 
+    glEnable(GL_TEXTURE_2D);
+    glColor4ubv(Color::white.rgbaPtr());
     glBindTexture(GL_TEXTURE_2D, m_fboTexture);
     glBegin(GL_QUADS);
     glTexCoord2i(0, 0); glVertex2i(x,       y);

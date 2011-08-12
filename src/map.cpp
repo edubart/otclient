@@ -1,5 +1,6 @@
 #include "map.h"
 #include "game.h"
+#include <graphics/graphics.h>
 
 void Map::draw(int x, int y)
 {
@@ -18,9 +19,9 @@ void Map::draw(int x, int y)
             }
         }
     }
-
     m_framebuffer->unbind();
-    m_framebuffer->draw(0, 0, width, heigth);
+
+    m_framebuffer->draw(0, 0, g_graphics.getScreenSize().width(), g_graphics.getScreenSize().height());
 }
 
 void Map::addThing(Thing *thing, const Position& pos)
