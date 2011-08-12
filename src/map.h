@@ -3,6 +3,7 @@
 
 #include "position.h"
 #include "tile.h"
+#include <graphics/framebuffer.h>
 
 class Map
 {
@@ -14,6 +15,8 @@ public:
 private:
     // Visible tiles are 15x11, but we have a +3 value. We have 15 floors.
     Tile m_map[19][15][15];
+
+    FrameBufferPtr m_framebuffer;
 };
 
 #endif // MAP_H

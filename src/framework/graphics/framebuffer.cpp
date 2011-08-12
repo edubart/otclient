@@ -34,6 +34,8 @@ PFNGLCHECKFRAMEBUFFERSTATUSPROC  oglCheckFramebufferStatus = 0;
 
 FrameBuffer::FrameBuffer(int width, int height)
 {
+    g_graphics.disableDrawing();
+
     m_fbo = 0;
     m_width = width;
     m_height = height;
@@ -50,7 +52,7 @@ FrameBuffer::FrameBuffer(int width, int height)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     // use FBO ext only if supported
-    if(g_graphics.isExtensionSupported("ARB_framebuffer_object")) {
+    if(g_graphics.isExtensionSupported("GL_ARB_framebuffer_object")) {
         m_fallbackOldImp = false;
         if(!oglGenFramebuffers) {
             oglGenFramebuffers = (PFNGLGENFRAMEBUFFERSPROC)Platform::getExtensionProcAddress("glGenFramebuffers");
@@ -84,6 +86,8 @@ FrameBuffer::FrameBuffer(int width, int height)
 
 FrameBuffer::~FrameBuffer()
 {
+    g_graphics.disableDrawing();
+
     glDeleteTextures(1, &m_fboTexture);
     if(m_fbo)
         oglDeleteFramebuffers(1, &m_fbo);
@@ -91,6 +95,8 @@ FrameBuffer::~FrameBuffer()
 
 void FrameBuffer::bind()
 {
+    g_graphics.disableDrawing();
+
     if(!m_fallbackOldImp) {
         // bind framebuffer
         oglBindFramebuffer(GL_FRAMEBUFFER_EXT, m_fbo);
@@ -113,6 +119,8 @@ void FrameBuffer::bind()
 
 void FrameBuffer::unbind()
 {
+    g_graphics.disableDrawing();
+
     if(!m_fallbackOldImp) {
         // bind back buffer again
         oglBindFramebuffer(GL_FRAMEBUFFER_EXT, 0);
@@ -137,6 +145,8 @@ void FrameBuffer::unbind()
 
 void FrameBuffer::draw(int x, int y, int width, int height)
 {
+    g_graphics.disableDrawing();
+
     glBindTexture(GL_TEXTURE_2D, m_fboTexture);
     glBegin(GL_QUADS);
     glTexCoord2i(0, 0); glVertex2i(x,       y);

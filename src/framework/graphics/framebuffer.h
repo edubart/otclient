@@ -27,6 +27,9 @@
 
 #include <global.h>
 
+class FrameBuffer;
+typedef std::shared_ptr<FrameBuffer> FrameBufferPtr;
+
 class FrameBuffer
 {
 public:

@@ -3,6 +3,11 @@
 
 void Map::draw(int x, int y, int width, int heigth)
 {
+    if(!m_framebuffer)
+        m_framebuffer = FrameBufferPtr(new FrameBuffer(19*32, 15*32));
+
+    m_framebuffer->bind();
+
     Position playerPos = g_game.getPlayer()->getPosition();
     for(int ix = 0; ix < 19; ++ix) {
         for(int iy = 0; iy < 15; ++iy) {
@@ -13,6 +18,9 @@ void Map::draw(int x, int y, int width, int heigth)
             }
         }
     }
+
+    m_framebuffer->unbind();
+    m_framebuffer->draw(0, 0, width, heigth);
 }
 
 void Map::addThing(Thing *thing, const Position& pos)
