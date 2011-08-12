@@ -93,10 +93,6 @@ void Engine::run()
 
             rootContainer->render();
 
-            // render fps
-            if(m_calculateFps)
-                defaultFont->renderText(fpsText, Point(g_graphics.getScreenSize().width() - fpsTextSize.width() - 10, 10));
-
             // todo remove. render map
             g_game.getMap()->draw(0, 0);
 
@@ -107,6 +103,10 @@ void Engine::run()
                 item->setId(8377);
             }
             //item->draw(1, 1, 7);
+
+            // render fps
+            if(m_calculateFps)
+                defaultFont->renderText(fpsText, Point(g_graphics.getScreenSize().width() - fpsTextSize.width() - 10, 10));
 
             g_graphics.endRender();
 

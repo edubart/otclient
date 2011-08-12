@@ -47,3 +47,21 @@ void Tile::draw(int x, int y, int z)
         (*it)->draw(x, y, z);
 
 }
+
+bool Tile::hasGround()
+{
+    return m_ground != 0;
+}
+
+int Tile::getStackSize()
+{
+    int ret = 0;
+    if(m_ground)
+        ret++;
+
+    ret += m_itemsBot.size();
+    ret += m_creatures.size();
+    ret += m_itemsTop.size();
+
+    return ret;
+}

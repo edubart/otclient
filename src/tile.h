@@ -12,6 +12,8 @@ public:
     void addThing(Thing *thing);
 
     void draw(int x, int y, int z);
+    bool hasGround();
+    int getStackSize();
 
 private:
     Item *m_ground;

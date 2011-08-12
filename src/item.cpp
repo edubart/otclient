@@ -86,8 +86,11 @@ void Item::draw(int x, int y, int z)
                 TexturePtr data = g_tibiaSpr.getSprite(itemId);
 
                 // todo verify this to draw in correct pos (screenX, screenY)
-                g_graphics.drawTexturedRect(Rect(x - xi*32 - z + 32, y - yi*32 - z + 32, 32, 32), data, Rect(0, 0, 32, 32));
-                g_graphics.drawBoundingRect(Rect(x - xi*32 - z + 32, y - yi*32 - z + 32, 32, 32));
+                g_graphics.drawTexturedRect(Rect(x - xi*32 - z, y - yi*32 - z, 32, 32), data, Rect(0, 0, 32, 32));
+
+                //g_graphics.drawBoundingRect(Rect(x - xi*32 - z, y - yi*32 - z, 32, 32), Color::green);
+                if(x/32 == 7 && y/32 == 5 && z/32+7 == 7)
+                    g_graphics.drawBoundingRect(Rect(x - xi*32 - z, y - yi*32 - z, 32, 32), Color::red);
             }
         }
     }
