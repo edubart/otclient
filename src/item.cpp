@@ -50,11 +50,25 @@ Item::Item()
     m_type = Thing::TYPE_ITEM;
 }
 
-void Item::draw(int x, int y)
+void Item::draw(int x, int y, int z)
 {
     ItemAttributes *itemAttributes = g_tibiaDat.getItemAttributes(m_id);
 
     int cDivX = 0, cDivY = 0, cDivZ = 0, cAnim = 0;
+
+    if(itemAttributes->group == ITEM_GROUP_SPLASH || itemAttributes->group == ITEM_GROUP_FLUID || itemAttributes->stackable) {
+        //cDivX = subType % itemAttributes->xdiv;
+        //cDivY = subType / itemAttributes->xdiv;
+    }
+    else if(!itemAttributes->moveable) {
+        cDivX = x % itemAttributes->xdiv;
+        cDivY = y % itemAttributes->ydiv;
+        cDivZ = z % itemAttributes->zdiv;
+    }
+
+    x *= 32;
+    y *= 32;
+    z = (7-z)*32;
 
     for(int b = 0; b < itemAttributes->blendframes; b++) {
         for(int yi = 0; yi < itemAttributes->height; yi++) {
@@ -72,7 +86,8 @@ void Item::draw(int x, int y)
                 TexturePtr data = g_tibiaSpr.getSprite(itemId);
 
                 // todo verify this to draw in correct pos (screenX, screenY)
-                g_graphics.drawTexturedRect(Rect(x - xi*32 - 32, y - yi*32 - 32, 32, 32), data, Rect(0, 0, 32, 32));
+                g_graphics.drawTexturedRect(Rect(x - xi*32 - z + 32, y - yi*32 - z + 32, 32, 32), data, Rect(0, 0, 32, 32));
+                g_graphics.drawBoundingRect(Rect(x - xi*32 - z + 32, y - yi*32 - z + 32, 32, 32));
             }
         }
     }

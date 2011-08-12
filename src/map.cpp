@@ -1,7 +1,7 @@
 #include "map.h"
 #include "game.h"
 
-void Map::draw(int x, int y, int width, int heigth)
+void Map::draw(int x, int y)
 {
     if(!m_framebuffer)
         m_framebuffer = FrameBufferPtr(new FrameBuffer(19*32, 15*32));
@@ -13,7 +13,7 @@ void Map::draw(int x, int y, int width, int heigth)
         for(int iy = 0; iy < 15; ++iy) {
             if(playerPos.getZ() >= 7) {
                 for(int iz = 7; iz > 0; --iz) {
-                    m_map[ix][iy][iz].draw(x+ix*32-(7-iz)*32, y+iy*32-(7-iz)*32);
+                    m_map[ix][iy][iz].draw(x+ix, y+iy, iz);
                 }
             }
         }
@@ -35,6 +35,6 @@ void Map::addThing(Thing *thing, const Position& pos)
     if(relativePos.getZ() >= 15)
         logDebug("relativePos is invalid.");
 
-    logDebug("x: ", (int)relativePos.getX(), " y: ", (int)relativePos.getY(), " z: ", (int)relativePos.getZ());
+    //logDebug("x: ", (int)relativePos.getX(), " y: ", (int)relativePos.getY(), " z: ", (int)relativePos.getZ());
     m_map[relativePos.getX()][relativePos.getY()][relativePos.getZ()].addThing(thing);
 }

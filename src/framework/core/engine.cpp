@@ -9,6 +9,7 @@
 #include <script/luainterface.h>
 #include <net/connection.h>
 #include <../game.h>
+#include <../item.h>
 
 Engine g_engine;
 
@@ -97,7 +98,15 @@ void Engine::run()
                 defaultFont->renderText(fpsText, Point(g_graphics.getScreenSize().width() - fpsTextSize.width() - 10, 10));
 
             // todo remove. render map
-            g_game.getMap()->draw(0, 0, g_graphics.getScreenSize().width(), g_graphics.getScreenSize().height());
+            g_game.getMap()->draw(0, 0);
+
+            // todo remove. view items
+            static Item *item = NULL;
+            if(!item) {
+                item = new Item();
+                item->setId(8377);
+            }
+            //item->draw(1, 1, 7);
 
             g_graphics.endRender();
 
@@ -129,4 +138,18 @@ void Engine::onResize(const Size& size)
 void Engine::onInputEvent(const InputEvent& event)
 {
     UIContainer::getRoot()->onInputEvent(event);
+
+    ProtocolGame *protocol = g_game.getProtocol();
+    if(protocol) {
+        if(event.type == EV_KEY_DOWN) {
+            if(event.keycode == KC_UP)
+                protocol->sendWalkNorth();
+            if(event.keycode == KC_RIGHT)
+                protocol->sendWalkEast();
+            if(event.keycode == KC_DOWN)
+                protocol->sendWalkSouth();
+            if(event.keycode == KC_LEFT)
+                protocol->sendWalkWest();
+        }
+    }
 }

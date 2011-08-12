@@ -5,10 +5,12 @@
 ProtocolGame::ProtocolGame()
 {
     m_checksumEnabled = false;
+    g_game.setProtocol(this);
 }
 
 ProtocolGame::~ProtocolGame()
 {
+    g_game.setProtocol(NULL);
 }
 
 void ProtocolGame::login(const std::string& accountName, const std::string& accountPassword, uint32 ip, uint16 port, const std::string& characterName)
