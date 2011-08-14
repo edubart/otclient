@@ -1,7 +1,7 @@
 #include "protocollogin.h"
 #include <net/outputmessage.h>
 #include <net/rsa.h>
-#include <script/luainterface.h>
+#include <luascript/luainterface.h>
 #include <boost/bind.hpp>
 
 // TODO just testing
@@ -20,7 +20,7 @@ ProtocolLogin::~ProtocolLogin()
 void ProtocolLogin::login(const std::string& accountName, const std::string& accountPassword)
 {
     if(accountName.empty() || accountPassword.empty()) {
-        callField("onError", "You must enter an account name and password.");
+        callLuaField("onError", "You must enter an account name and password.");
         return;
     }
 
@@ -108,7 +108,7 @@ void ProtocolLogin::onRecv(InputMessage& inputMessage)
             parseMOTD(inputMessage);
             break;
         case 0x1e:
-            callField("onError", "Client needs update.");
+            callLuaField("onError", "Client needs update.");
             break;
         case 0x64:
             parseCharacterList(inputMessage);
@@ -121,14 +121,14 @@ void ProtocolLogin::parseError(InputMessage& inputMessage)
 {
     std::string error = inputMessage.getString();
     logDebug(error);
-    callField("onError", error);
+    callLuaField("onError", error);
 }
 
 void ProtocolLogin::parseMOTD(InputMessage& inputMessage)
 {
     std::string motd = inputMessage.getString();
     logDebug(motd);
-    callField("onMotd", motd);
+    callLuaField("onMotd", motd);
 }
 
 void ProtocolLogin::parseCharacterList(InputMessage& inputMessage)

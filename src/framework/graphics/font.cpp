@@ -1,104 +1,40 @@
-#include <global.h>
-#include <core/resources.h>
-#include <graphics/font.h>
-#include <graphics/textures.h>
-#include <graphics/graphics.h>
+#include "font.h"
+#include "texturemanager.h"
+#include "graphics.h"
+
 #include <otml/otml.h>
 
-void Font::calculateGlyphsWidthsAutomatically(const Size& glyphSize)
+void Font::load(const OTMLNodePtr& fontNode)
 {
+    std::string textureName = fontNode->readAt<std::string>("texture");
+    Size glyphSize = fontNode->readAt<Size>("glyph size");
+    m_glyphHeight = fontNode->readAt<int>("height");
+    m_topMargin = fontNode->readAt("top margin", 0);
+    m_firstGlyph = fontNode->readAt("first glyph", 32);
+    m_glyphSpacing = fontNode->readAt("spacing", Size(0,0));
+
+    // load font texture
+    m_texture = g_textures.getTexture(textureName);
+    if(!m_texture)
+        throw OTMLException(fontNode, "failed to load texture for font");
+
+    // auto calculate widths
+    calculateGlyphsWidthsAutomatically(glyphSize);
+
+    // read custom widths
+    if(OTMLNodePtr node = fontNode->get("glyph widths")) {
+        for(const OTMLNodePtr& child : node->childNodes())
+            m_glyphsSize[aux::safe_cast<int>(child->tag())].setWidth(child->read<int>());
+    }
+
+    // calculate glyphs texture coords
     int numHorizontalGlyphs = m_texture->getSize().width() / glyphSize.width();
-    uchar *texturePixels = m_texture->getPixels();
-
-    // small AI to auto calculate pixels widths
-    for(int glyph = m_firstGlyph; glyph< 256; ++glyph) {
-        Rect glyphCoords(((glyph - m_firstGlyph) % numHorizontalGlyphs) * glyphSize.width(),
-                         ((glyph - m_firstGlyph) / numHorizontalGlyphs) * glyphSize.height(),
-                            glyphSize.width(),
-                            m_glyphHeight);
-        int width = glyphSize.width();
-        int lastColumnFilledPixels = 0;
-        for(int x = glyphCoords.left() + 1; x <= glyphCoords.right(); ++x) {
-            int columnFilledPixels = 0;
-
-            // check if all vertical pixels are alpha
-            for(int y = glyphCoords.top(); y <= glyphCoords.bottom(); ++y) {
-                if(texturePixels[(y * m_texture->getSize().width() * 4) + (x*4) + 3] != 0)
-                    columnFilledPixels++;
-            }
-
-            // if all pixels were alpha we found the width
-            if(columnFilledPixels == 0) {
-                width = x - glyphCoords.left();
-                width += m_glyphSpacing.width();
-                if(m_glyphHeight >= 16 && lastColumnFilledPixels >= m_glyphHeight/3)
-                    width += 1;
-                break;
-            }
-            lastColumnFilledPixels = columnFilledPixels;
-        }
-        // store glyph size
-        m_glyphsSize[glyph].setSize(width, m_glyphHeight);
+    for(int glyph = m_firstGlyph; glyph < 256; ++glyph) {
+        m_glyphsTextureCoords[glyph].setRect(((glyph - m_firstGlyph) % numHorizontalGlyphs) * glyphSize.width(),
+                                                ((glyph - m_firstGlyph) / numHorizontalGlyphs) * glyphSize.height(),
+                                                m_glyphsSize[glyph].width(),
+                                                m_glyphHeight);
     }
-
-    delete[] texturePixels;
-}
-
-bool Font::load(const std::string& file)
-{
-    std::stringstream fin;
-    if(!g_resources.loadFile(file, fin)) {
-        logError("ERROR: Coult not load font file '",file,"'");
-        return false;
-    }
-
-    std::string textureName;
-    Size glyphSize;
-
-    try {
-        OTMLParser parser(fin, file);
-        OTMLNode* doc = parser.getDocument();
-
-        // required values
-        textureName = doc->valueAt("image");
-        glyphSize = doc->readAt("image-glyph-size", Size(16, 16));
-        m_glyphHeight = doc->readAt("glyph-height", 11);
-        m_firstGlyph = doc->readAt("first-glyph", 32);
-        m_topMargin = doc->readAt("top-margin", 0);
-        m_glyphSpacing = doc->readAt("glyph-spacing", Size(0,0));
-
-        // load texture
-        m_texture = g_textures.get(textureName);
-        if(!m_texture) {
-            logError("ERROR: Failed to load image for font file '",file,"'");
-            return false;
-        }
-
-        // auto calculate widths
-        calculateGlyphsWidthsAutomatically(glyphSize);
-
-        // read custom widths
-        if(doc->hasChild("glyph-widths")) {
-            std::map<int, int> glyphWidths;
-            doc->readAt("glyph-widths", &glyphWidths);
-            foreach(const auto& pair, glyphWidths)
-                m_glyphsSize[pair.first].setWidth(pair.second);
-        }
-
-        // calculate glyphs texture coords
-        int numHorizontalGlyphs = m_texture->getSize().width() / glyphSize.width();
-        for(int glyph = m_firstGlyph; glyph < 256; ++glyph) {
-            m_glyphsTextureCoords[glyph].setRect(((glyph - m_firstGlyph) % numHorizontalGlyphs) * glyphSize.width(),
-                                                 ((glyph - m_firstGlyph) / numHorizontalGlyphs) * glyphSize.height(),
-                                                 m_glyphsSize[glyph].width(),
-                                                 m_glyphHeight);
-        }
-    } catch(OTMLException e) {
-        logError("ERROR: Malformed font file \"", file.c_str(), "\":\n  ", e.what());
-        return false;
-    }
-
-    return true;
 }
 
 void Font::renderText(const std::string& text,
@@ -112,9 +48,9 @@ void Font::renderText(const std::string& text,
 
 
 void Font::renderText(const std::string& text,
-                    const Rect& screenCoords,
-                    AlignmentFlag align,
-                    const Color& color)
+                      const Rect& screenCoords,
+                      AlignmentFlag align,
+                      const Color& color)
 {
     // prevent glitches from invalid rects
     if(!screenCoords.isValid())
@@ -190,7 +126,9 @@ void Font::renderText(const std::string& text,
     }
 }
 
-const std::vector<Point>& Font::calculateGlyphsPositions(const std::string& text, AlignmentFlag align, Size *textBoxSize) const
+const std::vector<Point>& Font::calculateGlyphsPositions(const std::string& text,
+                                                         AlignmentFlag align,
+                                                         Size *textBoxSize) const
 {
     // for performance reasons we use statics vectors that are allocated on demand
     static std::vector<Point> glyphsPositions(1);
@@ -277,3 +215,41 @@ Size Font::calculateTextRectSize(const std::string& text)
     return size;
 }
 
+void Font::calculateGlyphsWidthsAutomatically(const Size& glyphSize)
+{
+    int numHorizontalGlyphs = m_texture->getSize().width() / glyphSize.width();
+    uchar *texturePixels = m_texture->getPixels();
+
+    // small AI to auto calculate pixels widths
+    for(int glyph = m_firstGlyph; glyph< 256; ++glyph) {
+        Rect glyphCoords(((glyph - m_firstGlyph) % numHorizontalGlyphs) * glyphSize.width(),
+                         ((glyph - m_firstGlyph) / numHorizontalGlyphs) * glyphSize.height(),
+                            glyphSize.width(),
+                            m_glyphHeight);
+        int width = glyphSize.width();
+        int lastColumnFilledPixels = 0;
+        for(int x = glyphCoords.left() + 1; x <= glyphCoords.right(); ++x) {
+            int columnFilledPixels = 0;
+
+            // check if all vertical pixels are alpha
+            for(int y = glyphCoords.top(); y <= glyphCoords.bottom(); ++y) {
+                if(texturePixels[(y * m_texture->getSize().width() * 4) + (x*4) + 3] != 0)
+                    columnFilledPixels++;
+            }
+
+            // if all pixels were alpha we found the width
+            if(columnFilledPixels == 0) {
+                width = x - glyphCoords.left();
+                width += m_glyphSpacing.width();
+                if(m_glyphHeight >= 16 && lastColumnFilledPixels >= m_glyphHeight/3)
+                    width += 1;
+                break;
+            }
+            lastColumnFilledPixels = columnFilledPixels;
+        }
+        // store glyph size
+        m_glyphsSize[glyph].setSize(width, m_glyphHeight);
+    }
+
+    delete[] texturePixels;
+}

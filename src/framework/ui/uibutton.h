@@ -1,41 +1,43 @@
 #ifndef UIBUTTON_H
 #define UIBUTTON_H
 
-#include <global.h>
-#include <ui/uielement.h>
-#include <graphics/borderedimage.h>
+#include "uiwidget.h"
 
-class UIButton;
-typedef std::shared_ptr<UIButton> UIButtonPtr;
-
-class UIButton : public UIElement
+class UIButton : public UIWidget
 {
-public:
-    enum ButtonState
-    {
-        ButtonUp = 0,
-        ButtonDown,
-        ButtonMouseOver
+    struct ButtonStateStyle {
+        ImagePtr image;
+        Point textTranslate;
+        Color color;
     };
 
-    UIButton() :
-        UIElement(UI::Button),
-        m_state(ButtonUp) {  }
+public:
+    UIButton();
 
-    static UIButtonPtr create() { return UIButtonPtr(new UIButton); }
+    static UIButtonPtr create();
 
-    void onInputEvent(const InputEvent& event);
+    virtual void loadStyleFromOTML(const OTMLNodePtr& styleNode);
+    void loadStateStyle(ButtonStateStyle& stateStyle, const OTMLNodePtr& stateStyleNode);
+    virtual void render();
 
+    void setOnClick(const SimpleCallback& onClick) { m_onClick = onClick; }
     void setText(const std::string& text) { m_text = text; }
+
+    SimpleCallback getOnClick() const { return m_onClick; }
     std::string getText() const { return m_text; }
+    ButtonState getState() const { return m_state; }
 
-    ButtonState getState() { return m_state; }
+    UIButtonPtr asUIButton() { return std::static_pointer_cast<UIButton>(shared_from_this()); }
 
-    virtual const char *getLuaTypeName() const { return "UIButton"; }
+protected:
+    virtual void onHoverChange(bool hovered);
+    virtual void onMousePress(const UIMouseEvent& event);
+    virtual void onMouseRelease(const UIMouseEvent& event);
 
-private:
-    std::string m_text;
     ButtonState m_state;
+    ButtonStateStyle m_statesStyle[3];
+    SimpleCallback m_onClick;
+    std::string m_text;
 };
 
-#endif // UIBUTTON_H
+#endif

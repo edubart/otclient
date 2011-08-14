@@ -1,0 +1,4 @@
+HorizontalSeparator < UIWidget
+  border-image:
+    source: /core_ui/images/horizontal_separator.png
+    border.top: 2

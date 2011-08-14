@@ -1,0 +1,12 @@
+Font
+  name: helvetica-12px-bold
+  height: 16
+  spacing: 1 1
+  top margin: 2
+  texture: helvetica-12px-bold.png
+  glyph size: 18 18
+
+  glyph widths:
+    32: 4
+    65: 9
+

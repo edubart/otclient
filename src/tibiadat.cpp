@@ -1,14 +1,13 @@
 #include "tibiadat.h"
 #include "tibiaspr.h"
-#include <core/resources.h>
+#include <core/resourcemanager.h>
 
 TibiaDat g_tibiaDat;
 
 bool TibiaDat::load(const std::string& filename)
 {
     std::stringstream fin;
-    if(!g_resources.loadFile(filename, fin))
-        return false;
+    g_resources.loadFile(filename, fin);
 
     fin.read((char*)&m_signature, 4);
 

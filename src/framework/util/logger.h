@@ -1,37 +1,32 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
-#include "makestring.h"
+#include "auxiliary.h"
 
-enum LogLevel {
-    LogDebug = 0,
-    LogInfo,
-    LogWarning,
-    LogError,
-    LogFatal
+class Logger
+{
+public:
+    enum LogLevel {
+        LogDebug = 0,
+        LogInfo,
+        LogWarning,
+        LogError,
+        LogFatal
+    };
+    static void log(LogLevel level, const std::string& message, std::string prettyFunction = "");
 };
-void log(LogLevel level, const std::string& message, std::string prettyFunction = "");
 
 // specialized logging
-#define logDebug(...) log(LogDebug, make_string(__VA_ARGS__))
-#define logInfo(...) log(LogInfo, make_string(__VA_ARGS__))
-#define logWarning(...) log(LogWarning, make_string(__VA_ARGS__))
-#define logError(...) log(LogError, make_string(__VA_ARGS__))
-#define logFatal(...) log(LogFatal, make_string(__VA_ARGS__))
+#define logDebug(...) Logger::log(Logger::LogDebug, aux::make_string(__VA_ARGS__))
+#define logInfo(...) Logger::log(Logger::LogInfo, aux::make_string(__VA_ARGS__))
+#define logWarning(...) Logger::log(Logger::LogWarning, aux::make_string(__VA_ARGS__))
+#define logError(...) Logger::log(Logger::LogError, aux::make_string(__VA_ARGS__))
+#define logFatal(...) Logger::log(Logger::LogFatal, aux::make_string(__VA_ARGS__))
 
-#define logTrace() log(LogDebug, "", __PRETTY_FUNCTION__)
-#define logTraceDebug(...) log(LogDebug, make_string(__VA_ARGS__), __PRETTY_FUNCTION__)
-#define logTraceInfo(...) log(LogInfo, make_string(__VA_ARGS__), __PRETTY_FUNCTION__)
-#define logTraceWarning(...) log(LogWarning, make_string(__VA_ARGS__), __PRETTY_FUNCTION__)
-#define logTraceError(...) log(LogError, make_string(__VA_ARGS__), __PRETTY_FUNCTION__)
+#define logTrace() Logger::log(Logger::LogDebug, "", __PRETTY_FUNCTION__)
+#define logTraceDebug(...) Logger::log(Logger::LogDebug, aux::make_string(__VA_ARGS__), __PRETTY_FUNCTION__)
+#define logTraceInfo(...) Logger::log(Logger::LogInfo, aux::make_string(__VA_ARGS__), __PRETTY_FUNCTION__)
+#define logTraceWarning(...) log(Logger::LogWarning, aux::make_string(__VA_ARGS__), __PRETTY_FUNCTION__)
+#define logTraceError(...) Logger::log(Logger::LogError, aux::make_string(__VA_ARGS__), __PRETTY_FUNCTION__)
 
-// dump utility
-struct Dump {
-    ~Dump() { logDebug(s.str().c_str()); }
-    template<class T>
-    Dump& operator<<(const T& v) { s << v << " "; return *this; }
-    std::ostringstream s;
-};
-#define dump Dump()
-
-#endif // LOGGER_H
+#endif

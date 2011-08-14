@@ -1,0 +1,26 @@
+Module
+  name: mainmenu
+  description: Create the game mainmenu, where everything starts
+  author: OTClient team
+  website: https://github.com/edubart/otclient
+  version: 0.2
+  autoLoad: true
+  dependencies:
+    - core
+
+  onLoad: |
+    require('entergame')
+
+    if not initialized then
+      mainMenu = loadUI("/mainmenu/ui/mainmenu.otui")
+      getRootWidget():addChild(mainMenu)
+      initialized = true
+    end
+
+    return true
+
+  onUnload: |
+    mainMenu:destroy()
+    mainMenu = nil
+    initialized = false
+

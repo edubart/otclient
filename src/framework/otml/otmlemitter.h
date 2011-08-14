@@ -1,24 +1,13 @@
 #ifndef OTMLEMITTER_H
 #define OTMLEMITTER_H
 
-#include <string>
-
-class OTMLNode;
+#include "otmldeclarations.h"
 
 class OTMLEmitter
 {
 public:
-    OTMLEmitter();
-    ~OTMLEmitter();
-
-    OTMLNode* createDocument();
-    std::string emitDocument();
-
-    static std::string emitNodeValue(OTMLNode* node);
-    static std::string emitNode(OTMLNode* node, int currentDepth = 0);
-
-private:
-    OTMLNode* m_rootNode;
+    /// Emits a node and it's children to a std::string
+    static std::string emitNode(const OTMLNodePtr& node, int currentDepth = -1);
 };
 
-#endif // OTMLEMITTER_H
+#endif

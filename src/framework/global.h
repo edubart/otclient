@@ -16,24 +16,30 @@
 #include <string>
 #include <vector>
 #include <list>
+#include <queue>
 #include <deque>
+#include <stack>
 #include <map>
 #include <algorithm>
 #include <exception>
 #include <memory>
 #include <type_traits>
+#include <tuple>
 #include <functional>
-#include <regex>
-#include <unordered_map>
+#include <typeinfo>
+#include <array>
 
-// string algorithms
+// boost utilities
 #include <boost/algorithm/string.hpp>
 
 // constants
 #include <const.h>
 
-// easy types
+// additional utilities
 #include <util/types.h>
+#include <util/auxiliary.h>
+#include <util/logger.h>
+#include <util/translator.h>
 
 // custom types
 #include <util/point.h>
@@ -41,11 +47,4 @@
 #include <util/rect.h>
 #include <util/size.h>
 
-// additional utilities
-#include <util/convert.h>
-#include <util/foreach.h>
-#include <util/makestring.h>
-#include <util/logger.h>
-#include <util/algorithms.h>
-
-#endif // GLOBAL_H
+#endif

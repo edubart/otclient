@@ -1,35 +1,29 @@
 #ifndef UILABEL_H
 #define UILABEL_H
 
-#include <global.h>
-#include <ui/uielement.h>
-#include <graphics/font.h>
+#include "uiwidget.h"
 
-class UILabel;
-typedef std::shared_ptr<UILabel> UILabelPtr;
-
-class UILabel : public UIElement
+class UILabel : public UIWidget
 {
 public:
-    UILabel() :
-        UIElement(UI::Label),
-        m_align(AlignLeftCenter) { }
+    UILabel();
 
-    static UILabelPtr create() { return UILabelPtr(new UILabel); }
+    static UILabelPtr create();
 
-    void setText(const std::string& text);
-    std::string getText() const { return m_text; }
+    virtual void loadStyleFromOTML(const OTMLNodePtr& styleNode);
+    virtual void render();
 
+    void resizeToText();
+
+    void setText(const std::string& text) { m_text = text; }
     void setAlign(AlignmentFlag align) { m_align = align; }
-    AlignmentFlag getAlign() const { return m_align; }
 
-    virtual const char *getLuaTypeName() const { return "UILabel"; }
+    std::string getText() const { return m_text; }
+    AlignmentFlag getAlign() const { return m_align; }
 
 private:
     std::string m_text;
     AlignmentFlag m_align;
 };
 
-typedef std::shared_ptr<UILabel> UILabelPtr;
-
-#endif // UILABEL_H
+#endif

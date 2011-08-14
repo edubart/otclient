@@ -1,30 +1,9 @@
-/* The MIT License
- *
- * Copyright (c) 2010 OTClient, https://github.com/edubart/otclient
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-
-#include <global.h>
+#include "framebuffer.h"
+#include "graphics.h"
 #include <core/platform.h>
-#include <graphics/framebuffer.h>
-#include <graphics/graphics.h>
+#include <GL/gl.h>
+#include <GL/glu.h>
+#include <GL/glext.h>
 
 PFNGLGENFRAMEBUFFERSPROC         oglGenFramebuffers = 0;
 PFNGLBINDFRAMEBUFFERPROC         oglBindFramebuffer = 0;
@@ -55,11 +34,11 @@ FrameBuffer::FrameBuffer(int width, int height)
     if(g_graphics.isExtensionSupported("GL_ARB_framebuffer_object")) {
         m_fallbackOldImp = false;
         if(!oglGenFramebuffers) {
-            oglGenFramebuffers = (PFNGLGENFRAMEBUFFERSPROC)Platform::getExtensionProcAddress("glGenFramebuffers");
-            oglBindFramebuffer = (PFNGLBINDFRAMEBUFFERPROC)Platform::getExtensionProcAddress("glBindFramebuffer");
-            oglFramebufferTexture2D = (PFNGLFRAMEBUFFERTEXTURE2DPROC)Platform::getExtensionProcAddress("glFramebufferTexture2D");
-            oglDeleteFramebuffers = (PFNGLDELETEFRAMEBUFFERSPROC)Platform::getExtensionProcAddress("glDeleteFramebuffers");
-            oglCheckFramebufferStatus = (PFNGLCHECKFRAMEBUFFERSTATUSPROC)Platform::getExtensionProcAddress("glCheckFramebufferStatus");
+            oglGenFramebuffers = (PFNGLGENFRAMEBUFFERSPROC)g_platform.getExtensionProcAddress("glGenFramebuffers");
+            oglBindFramebuffer = (PFNGLBINDFRAMEBUFFERPROC)g_platform.getExtensionProcAddress("glBindFramebuffer");
+            oglFramebufferTexture2D = (PFNGLFRAMEBUFFERTEXTURE2DPROC)g_platform.getExtensionProcAddress("glFramebufferTexture2D");
+            oglDeleteFramebuffers = (PFNGLDELETEFRAMEBUFFERSPROC)g_platform.getExtensionProcAddress("glDeleteFramebuffers");
+            oglCheckFramebufferStatus = (PFNGLCHECKFRAMEBUFFERSTATUSPROC)g_platform.getExtensionProcAddress("glCheckFramebufferStatus");
         }
 
         // generate FBO

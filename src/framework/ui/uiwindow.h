@@ -1,34 +1,38 @@
 #ifndef UIWINDOW_H
 #define UIWINDOW_H
 
-#include <global.h>
-#include <ui/uicontainer.h>
+#include "uiwidget.h"
 
-class UIWindow;
-typedef std::shared_ptr<UIWindow> UIWindowPtr;
-
-class UIWindow : public UIContainer
+class UIWindow : public UIWidget
 {
 public:
-    UIWindow() :
-        UIContainer(UI::Window),
-        m_moving(false) { }
+    UIWindow();
 
-    static UIWindowPtr create() { return UIWindowPtr(new UIWindow); }
+    static UIWindowPtr create();
 
-    void onInputEvent(const InputEvent& event);
+    virtual void loadStyleFromOTML(const OTMLNodePtr& styleNode);
+    virtual void render();
 
     void setTitle(const std::string& title) { m_title = title; }
     std::string getTitle() const { return m_title; }
 
-    virtual const char *getLuaTypeName() const { return "UIWindow"; }
-
-    virtual bool isFocusable() const { return true; }
+protected:
+    virtual void onGeometryUpdate();
+    virtual void onMousePress(const UIMouseEvent& event);
+    virtual void onMouseRelease(const UIMouseEvent& event);
+    virtual void onMouseMove(const UIMouseEvent& event);
 
 private:
     std::string m_title;
     bool m_moving;
     Point m_movingReference;
+
+    // styling
+    BorderImagePtr m_headImage;
+    ImagePtr m_bodyImage;
+    int m_headHeight;
+    int m_headMargin;
+    AlignmentFlag m_titleAlign;
 };
 
-#endif // UIWINDOW_H
+#endif

@@ -1,0 +1,60 @@
+MainWindow
+  id: infoWindow
+  title: Info
+  size: 244 221
+
+  FlatPanel
+    size: 208 129
+    anchors.left: parent.left
+    anchors.top: parent.top
+    margin.top: 32
+    margin.left: 18
+
+    Label
+      align: center
+      text: |-
+        OTClient
+        Version 0.2.0
+        Created by edubart
+      anchors.horizontalCenter: parent.horizontalCenter
+      anchors.top: parent.top
+      margin.top: 20
+
+    HorizontalSeparator
+      size: 190 2
+      anchors.left: parent.left
+      anchors.top: parent.top
+      margin.top: 83
+      margin.left: 9
+
+    Label
+      text: Official Website
+      anchors.left: parent.left
+      anchors.bottom: parent.bottom
+      margin.bottom: 14
+      margin.left: 9
+
+    Button
+      text: Github Page
+      size: 88 24
+      anchors.right: parent.right
+      anchors.bottom: parent.bottom
+      margin.bottom: 9
+      margin.right: 9
+
+  HorizontalSeparator
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    margin.bottom: 40
+    margin.left: 13
+    margin.right: 13
+
+  Button
+    text: Ok
+    size: 46 24
+    anchors.left: parent.left
+    anchors.top: parent.top
+    margin.top: 191
+    margin.left: 188
+    onClick: function(self) self.parent:destroy() end

@@ -1,31 +1,8 @@
-/* The MIT License
- *
- * Copyright (c) 2010 OTClient, https://github.com/edubart/otclient
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
+#include "textarea.h"
+#include "font.h"
+#include "graphics.h"
 
-
-#include <global.h>
-#include <core/engine.h>
-#include <graphics/textarea.h>
-#include <graphics/graphics.h>
+#include <core/platform.h>
 
 TextArea::TextArea() :
         m_align(AlignLeftCenter),
@@ -55,6 +32,8 @@ TextArea::TextArea(FontPtr font,
 
 void TextArea::draw()
 {
+    //TODO: text rendering could be much optimized by using vertex buffer or caching the render into a texture
+
     int textLength = m_text.length();
     const TexturePtr& texture = m_font->getTexture();
     for(int i=0;i<textLength;++i) {
@@ -65,7 +44,7 @@ void TextArea::draw()
     if(m_cursorVisible && m_cursorPos >= 0) {
         assert(m_cursorPos <= textLength);
         const int delay = 500;
-        int ticks = g_engine.getCurrentFrameTicks();
+        int ticks = g_platform.getTicks();
         // draw every 500ms
         if(ticks - m_cursorTicks <= delay) {
             Rect cursorRect;
@@ -76,7 +55,7 @@ void TextArea::draw()
                 cursorRect = Rect(m_glyphsCoords[m_cursorPos-1].right(), m_glyphsCoords[m_cursorPos-1].top(), 1, m_font->getGlyphHeight());
             g_graphics.drawFilledRect(cursorRect, m_color);
         } else if(ticks - m_cursorTicks >= 2*delay) {
-            m_cursorTicks = g_engine.getCurrentFrameTicks();
+            m_cursorTicks = ticks;
         }
     }
 }
@@ -113,12 +92,12 @@ void TextArea::recalculate()
         } else if(m_cursorPos > m_startRenderPos || // cursor is after the previuos first rendered glyph
                   (m_cursorPos == m_startRenderPos && textLength == m_cursorPos)) // cursor is at the previuos rendered element, and is the last text element
         {
-            Rect virtualRect(m_startInternalPos, m_screenCoords.size()); // previus rendered virtual rect
+            Rect virtualRect(m_startInternalPos, m_screenCoords.size()); // previous rendered virtual rect
             int pos = m_cursorPos - 1; // element before cursor
             glyph = (uchar)m_text[pos]; // glyph of the element before cursor
             Rect glyphRect(glyphsPositions[pos], glyphsSize[glyph]);
 
-            // if the cursor is not on the previus rendered virtual rect we need to update it
+            // if the cursor is not on the previous rendered virtual rect we need to update it
             if(!virtualRect.contains(glyphRect.topLeft()) || !virtualRect.contains(glyphRect.bottomRight())) {
                 // calculate where is the first glyph visible
                 Point startGlyphPos;
@@ -246,7 +225,7 @@ void TextArea::setText(const std::string& text)
         m_text = text;
         if(m_cursorPos >= 0) {
             m_cursorPos = 0;
-            m_cursorTicks = g_engine.getCurrentFrameTicks();
+            m_cursorTicks = g_platform.getTicks();
         }
         recalculate();
     }
@@ -285,7 +264,7 @@ void TextArea::enableCursor(bool enable)
 {
     if(enable) {
         m_cursorPos = 0;
-        m_cursorTicks = g_engine.getCurrentFrameTicks();
+        m_cursorTicks = g_platform.getTicks();
     } else
         m_cursorPos = -1;
     recalculate();
@@ -298,7 +277,7 @@ void TextArea::appendCharacter(char c)
         tmp = c;
         m_text.insert(m_cursorPos, tmp);
         m_cursorPos++;
-        m_cursorTicks = g_engine.getCurrentFrameTicks();
+        m_cursorTicks = g_platform.getTicks();
         recalculate();
     }
 }
@@ -310,7 +289,7 @@ void TextArea::removeCharacter(bool right)
             m_text.erase(m_text.begin() + m_cursorPos);
         else if((uint)m_cursorPos == m_text.length()) {
             m_text.erase(m_text.begin() + (--m_cursorPos));
-            m_cursorTicks = g_engine.getCurrentFrameTicks();
+            m_cursorTicks = g_platform.getTicks();
         }
         recalculate();
     }
@@ -321,12 +300,12 @@ void TextArea::moveCursor(bool right)
     if(right) {
         if((uint)m_cursorPos+1 <= m_text.length()) {
             m_cursorPos++;
-            m_cursorTicks = g_engine.getCurrentFrameTicks();
+            m_cursorTicks = g_platform.getTicks();
         }
     } else {
         if(m_cursorPos-1 >= 0) {
             m_cursorPos--;
-            m_cursorTicks = g_engine.getCurrentFrameTicks();
+            m_cursorTicks = g_platform.getTicks();
         }
     }
     recalculate();

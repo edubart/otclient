@@ -1,0 +1,38 @@
+MenuButton < Button
+  anchors.top: prev.bottom
+  anchors.horizontalCenter: parent.horizontalCenter
+  margin.top: 10
+
+Panel
+  id: mainMenuBackground
+  image:
+    source: /mainmenu/ui/background.png
+    smooth: true
+  anchors.fill: parent
+
+  RoundedGridPanel
+    id: mainMenu
+    size: 144 162
+    anchors.left: parent.left
+    anchors.bottom: parent.bottom
+    margin.left: 60
+    margin.bottom: 70
+
+    MenuButton
+      text: Enter Game
+      anchors.top: parent.top
+      anchors.horizontalCenter: parent.horizontalCenter
+      margin.top: 18
+      onClick: rootWidget:addChild(loadUI("/mainmenu/ui/entergamewindow.otui"))
+
+    MenuButton
+      text: Options
+      onClick: rootWidget:addChild(loadUI("/mainmenu/ui/optionswindow.otui"))
+
+    MenuButton
+      text: Info
+      onClick: rootWidget:addChild(loadUI("/mainmenu/ui/infowindow.otui"))
+
+    MenuButton
+      text: Exit
+      onClick: exit()

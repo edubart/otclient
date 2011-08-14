@@ -1,0 +1,11 @@
+Panel < UIWidget
+
+FlatPanel < Panel
+  border-image:
+    source: /core_ui/images/panel_flat.png
+    border: 4
+
+RoundedGridPanel < Panel
+  border-image:
+    source: /core_ui/images/panel_rounded.png
+    border: 4

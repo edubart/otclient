@@ -1,34 +1,11 @@
-/* The MIT License
- *
- * Copyright (c) 2010 OTClient, https://github.com/edubart/otclient
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-
-
-#include <global.h>
-#include <graphics/texture.h>
+#include "texture.h"
 #include "graphics.h"
+
+#include <GL/gl.h>
 
 Texture::Texture(int width, int height, int channels, uchar *pixels)
 {
-    // generate opengl  texture
+    // generate opengl texture
     m_textureId = internalLoadGLTexture(pixels, channels, width, height);
 }
 
@@ -36,10 +13,16 @@ uint Texture::internalLoadGLTexture(uchar *pixels, int channels, int width, int 
 {
     g_graphics.disableDrawing();
 
-    GLint texSize = 0;
-    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &texSize);
-    if(width > texSize || height > texSize) {
-        logError("loading texture with size ",width,"x",height," failed, the maximum size is ",texSize,"x",texSize);
+    // get smax texture size supported by the driver
+    static GLint maxTexSize = -1;
+    if(maxTexSize == -1)
+        glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTexSize);
+
+    // checks texture max size
+    if(width > maxTexSize || height > maxTexSize) {
+        logError("ERROR: loading texture with size ", width, "x", height, " failed, "
+                 "the maximum size allowed by the graphics card is ", maxTexSize, "x", maxTexSize, ",",
+                 "to prevent crashes the texture will be displayed as a blank texture");
         return 0;
     }
 
@@ -50,6 +33,7 @@ uint Texture::internalLoadGLTexture(uchar *pixels, int channels, int width, int 
     m_size.setSize(width, height);
     bool mustFree = false;
 
+    // old opengl drivers only accept power of two dimensions
     if(!g_graphics.isExtensionSupported("GL_ARB_texture_non_power_of_two") && pixels) {
         int glWidth = 1;
         while(glWidth < width)
@@ -63,9 +47,9 @@ uint Texture::internalLoadGLTexture(uchar *pixels, int channels, int width, int 
             uchar *tmp = new uchar[glHeight*glWidth*channels];
             memset(tmp, 0, glHeight*glWidth*channels);
             if(pixels)
-                for(int y=0;y<height;++y)
-                    for(int x=0;x<width;++x)
-                        for(int i=0;i<channels;++i)
+                for(int y=0; y<height; ++y)
+                    for(int x=0; x<width; ++x)
+                        for(int i=0; i<channels; ++i)
                             tmp[y*glWidth*channels+x*channels+i] = pixels[y*width*channels+x*channels+i];
             pixels = tmp;
             mustFree = true;
@@ -99,11 +83,10 @@ uint Texture::internalLoadGLTexture(uchar *pixels, int channels, int width, int 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-    // nearest filtering
+    // nearest filtering (non smooth)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-    // free if needed
     if(mustFree)
         delete[] pixels;
 
@@ -112,30 +95,37 @@ uint Texture::internalLoadGLTexture(uchar *pixels, int channels, int width, int 
 
 Texture::~Texture()
 {
+    g_graphics.disableDrawing();
+
+    // free texture from gl memory
     if(m_textureId)
         glDeleteTextures(1, &m_textureId);
 }
 
 void Texture::enableBilinearFilter()
 {
+    g_graphics.disableDrawing();
+
+    // enable smooth texture
     glBindTexture(GL_TEXTURE_2D, m_textureId);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 }
 
-uchar *Texture::getPixels()
+uchar* Texture::getPixels()
 {
+    g_graphics.disableDrawing();
+
     // copy pixels from opengl memory
-    uchar *pixels = new uchar[m_glSize.area()*4];
+    uchar* pixels = new uchar[m_glSize.area()*4];
     glBindTexture(GL_TEXTURE_2D, m_textureId);
     glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
 
     // convert pixels to the real texture size
     if(m_size != m_glSize)
-        for(int y=0;y<m_size.height();++y)
-            for(int x=0;x<m_size.width();++x)
-                for(int i=0;i<4;++i)
+        for(int y=0; y<m_size.height(); ++y)
+            for(int x=0; x<m_size.width(); ++x)
+                for(int i=0; i<4; ++i)
                     pixels[y*m_size.width()*4+x*4+i] = pixels[y*m_glSize.width()*4+x*4+i];
     return pixels;
 }
-

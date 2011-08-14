@@ -1,0 +1,23 @@
+Module
+  name: core
+  description: Contains lua classes, functions and constants used by other modules
+  author: OTClient team
+  website: https://github.com/edubart/otclient
+  version: 0.2
+  autoLoad: true
+  dependencies:
+    - core_fonts
+    - core_ui
+
+  onLoad: |
+    require 'constants'
+    require 'util'
+    require 'widget'
+    require 'messagebox'
+
+    rootWidget = getRootWidget()
+    return true
+
+  onUnload: |
+    rootWidget = nil
+

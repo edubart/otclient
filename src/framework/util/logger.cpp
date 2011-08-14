@@ -1,9 +1,8 @@
 #include "logger.h"
 
-#include <iostream>
 #include <cstdlib>
 
-void log(LogLevel level, const std::string& message, std::string prettyFunction)
+void Logger::log(LogLevel level, const std::string& message, std::string prettyFunction)
 {
     if(!prettyFunction.empty()) {
         prettyFunction = prettyFunction.substr(0, prettyFunction.find_first_of('('));

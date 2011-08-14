@@ -1,38 +1,22 @@
-/* The MIT License
- *
- * Copyright (c) 2010 OTClient, https://github.com/edubart/otclient
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-
-
-#include <global.h>
 #include <graphics/graphics.h>
+#include <graphics/texture.h>
+#include "fontmanager.h"
+
+#include <GL/gl.h>
+#include <GL/glu.h>
+#include <GL/glext.h>
 
 Graphics g_graphics;
 
 void Graphics::init()
 {
+    m_drawMode = DRAW_NONE;
+
     // setup opengl
     glEnable(GL_ALPHA_TEST); // enable alpha by default
-    glAlphaFunc(GL_GREATER, 0.0f); // default alpha mode
-    glDisable(GL_DEPTH_TEST); // we are rendering 2D only, we don't need it
+    glAlphaFunc(GL_GREATER, 0.0f); // default alpha func
+    glDisable(GL_DEPTH_TEST); // we are rendering 2D only, we don't need depth buffer
+    //glEnable(GL_TEXTURE_2D); // enable textures by default
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
     glShadeModel(GL_SMOOTH);
     glEnable(GL_BLEND);
@@ -45,7 +29,7 @@ void Graphics::init()
 
 void Graphics::terminate()
 {
-    m_bindedTexture.reset();
+    g_fonts.releaseFonts();
 }
 
 bool Graphics::isExtensionSupported(const char *extension)
@@ -114,11 +98,18 @@ void Graphics::beginRender()
 {
     glClear(GL_COLOR_BUFFER_BIT);
     glLoadIdentity();
+
+    // bind white color by default
+    glColor4ubv(Color::white.rgbaPtr());
+    m_boundColor = Color::white;
 }
 
 void Graphics::endRender()
 {
     disableDrawing();
+
+    // clear any bound texture
+    m_boundTexture.reset();
 }
 
 void Graphics::disableDrawing()
@@ -127,12 +118,15 @@ void Graphics::disableDrawing()
         glEnd();
         m_drawMode = DRAW_NONE;
 
-        m_bindedTexture.reset();
+        m_boundTexture.reset();
         glColor4ubv(Color::white.rgbaPtr());
     }
 }
 
-void Graphics::drawTexturedRect(const Rect& screenCoords, const TexturePtr& texture, const Rect& textureCoords, const Color& color)
+void Graphics::drawTexturedRect(const Rect& screenCoords,
+                                const TexturePtr& texture,
+                                const Rect& textureCoords,
+                                const Color& color)
 {
     if(screenCoords.isEmpty() || textureCoords.isEmpty())
         return;
@@ -163,7 +157,10 @@ void Graphics::drawTexturedRect(const Rect& screenCoords, const TexturePtr& text
     glTexCoord2f(textureRight, textureTop);    glVertex2i(right, top);
 }
 
-void Graphics::drawRepeatedTexturedRect(const Rect& screenCoords, const TexturePtr& texture, const Rect& textureCoords, const Color& color)
+void Graphics::drawRepeatedTexturedRect(const Rect& screenCoords,
+                                        const TexturePtr& texture,
+                                        const Rect& textureCoords,
+                                        const Color& color)
 {
     if(screenCoords.isEmpty() || textureCoords.isEmpty())
         return;
@@ -177,11 +174,13 @@ void Graphics::drawRepeatedTexturedRect(const Rect& screenCoords, const TextureP
 
             // partialCoords to screenCoords bottomRight
             if(partialCoords.bottom() > virtualScreenCoords.bottom()) {
-                partialTextureCoords.setBottom(partialTextureCoords.bottom() + (virtualScreenCoords.bottom() - partialCoords.bottom()));
+                partialTextureCoords.setBottom(partialTextureCoords.bottom() +
+                                               (virtualScreenCoords.bottom() - partialCoords.bottom()));
                 partialCoords.setBottom(virtualScreenCoords.bottom());
             }
             if(partialCoords.right() > virtualScreenCoords.right()) {
-                partialTextureCoords.setRight(partialTextureCoords.right() + (virtualScreenCoords.right() - partialCoords.right()));
+                partialTextureCoords.setRight(partialTextureCoords.right() +
+                                              (virtualScreenCoords.right() - partialCoords.right()));
                 partialCoords.setRight(virtualScreenCoords.right());
             }
 
@@ -191,7 +190,8 @@ void Graphics::drawRepeatedTexturedRect(const Rect& screenCoords, const TextureP
     }
 }
 
-void Graphics::drawFilledRect(const Rect& screenCoords, const Color& color)
+void Graphics::drawFilledRect(const Rect& screenCoords,
+                              const Color& color)
 {
     if(screenCoords.isEmpty())
         return;
@@ -210,7 +210,9 @@ void Graphics::drawFilledRect(const Rect& screenCoords, const Color& color)
 }
 
 
-void Graphics::drawBoundingRect(const Rect& screenCoords, const Color& color, int innerLineWidth)
+void Graphics::drawBoundingRect(const Rect& screenCoords,
+                                const Color& color,
+                                int innerLineWidth)
 {
     if(2 * innerLineWidth > screenCoords.height() || screenCoords.isEmpty())
         return;
@@ -251,13 +253,13 @@ void Graphics::drawBoundingRect(const Rect& screenCoords, const Color& color, in
 void Graphics::bindColor(const Color& color)
 {
     // switch drawing to colored quads
-    if(m_drawMode != DRAW_COLOR_QUADS || m_bindedColor != color) {
+    if(m_drawMode != DRAW_COLOR_QUADS || m_boundColor != color) {
         if(m_drawMode != DRAW_NONE)
             glEnd();
         glDisable(GL_TEXTURE_2D);
-        if(m_bindedColor != color) {
+        if(m_boundColor != color) {
             glColor4ubv(color.rgbaPtr());
-            m_bindedColor = color;
+            m_boundColor = color;
         }
         glBegin(GL_QUADS);
         m_drawMode = DRAW_COLOR_QUADS;
@@ -267,17 +269,17 @@ void Graphics::bindColor(const Color& color)
 void Graphics::bindTexture(const TexturePtr& texture, const Color& color)
 {
     // switch drawing to textured quads
-    if(m_drawMode != DRAW_TEXTURE_QUADS || m_bindedTexture != texture || m_bindedColor != color) {
+    if(m_drawMode != DRAW_TEXTURE_QUADS || m_boundTexture != texture || m_boundColor != color) {
         if(m_drawMode != DRAW_NONE)
             glEnd();
         glEnable(GL_TEXTURE_2D);
-        if(m_bindedTexture != texture) {
+        if(m_boundTexture != texture) {
             glBindTexture(GL_TEXTURE_2D, texture->getTextureId());
-            m_bindedTexture = texture;
+            m_boundTexture = texture;
         }
-        if(m_bindedColor != color) {
+        if(m_boundColor != color) {
             glColor4ubv(color.rgbaPtr());
-            m_bindedColor = color;
+            m_boundColor = color;
         }
         glBegin(GL_QUADS);
         m_drawMode = DRAW_TEXTURE_QUADS;

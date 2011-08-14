@@ -1,6 +1,6 @@
 #include "connection.h"
 
-#include <core/dispatcher.h>
+#include <core/eventdispatcher.h>
 
 static asio::io_service ioService;
 
@@ -21,7 +21,7 @@ void Connection::connect(const std::string& host, uint16 port, const ConnectCall
 {
     m_connectCallback = connectCallback;
 
-    asio::ip::tcp::resolver::query query(host, convert<std::string>(port));
+    asio::ip::tcp::resolver::query query(host, aux::unsafe_cast<std::string>(port));
     m_resolver.async_resolve(query, std::bind(&Connection::onResolve, shared_from_this(), std::placeholders::_1, std::placeholders::_2));
 
     m_timer.expires_from_now(boost::posix_time::seconds(2));
@@ -56,7 +56,7 @@ void Connection::recv(uint16 bytes, uint32 timeout, const RecvCallback& callback
 void Connection::onTimeout(const boost::system::error_code& error)
 {
     if(error != asio::error::operation_aborted)
-        g_dispatcher.addTask(std::bind(m_errorCallback, error));
+        g_dispatcher.addEvent(std::bind(m_errorCallback, error));
 }
 
 void Connection::onResolve(const boost::system::error_code& error, asio::ip::tcp::resolver::iterator endpointIterator)
@@ -65,7 +65,7 @@ void Connection::onResolve(const boost::system::error_code& error, asio::ip::tcp
 
     if(error) {
         if(m_errorCallback)
-            g_dispatcher.addTask(std::bind(m_errorCallback, error));
+            g_dispatcher.addEvent(std::bind(m_errorCallback, error));
         return;
     }
 
@@ -81,12 +81,12 @@ void Connection::onConnect(const boost::system::error_code& error)
 
     if(error) {
         if(m_errorCallback)
-            g_dispatcher.addTask(std::bind(m_errorCallback, error));
+            g_dispatcher.addEvent(std::bind(m_errorCallback, error));
         return;
     }
 
     if(m_connectCallback)
-        g_dispatcher.addTask(m_connectCallback);
+        g_dispatcher.addEvent(m_connectCallback);
 }
 
 void Connection::onSend(const boost::system::error_code& error, size_t)
@@ -95,7 +95,7 @@ void Connection::onSend(const boost::system::error_code& error, size_t)
 
     if(error) {
         if(m_errorCallback)
-            g_dispatcher.addTask(std::bind(m_errorCallback, error));
+            g_dispatcher.addEvent(std::bind(m_errorCallback, error));
         return;
     }
 }
@@ -106,10 +106,10 @@ void Connection::onRecv(const boost::system::error_code& error)
 
     if(error) {
         if(m_errorCallback)
-            g_dispatcher.addTask(std::bind(m_errorCallback, error));
+            g_dispatcher.addEvent(std::bind(m_errorCallback, error));
         return;
     }
 
     if(m_recvCallback)
-        g_dispatcher.addTask(std::bind(m_recvCallback, m_recvBuffer, m_recvSize));
+        g_dispatcher.addEvent(std::bind(m_recvCallback, m_recvBuffer, m_recvSize));
 }

@@ -1,0 +1,17 @@
+Module
+  name: core_fonts
+  description: Contains fonts used by core
+  author: OTClient team
+  website: https://github.com/edubart/otclient
+  version: 0.2
+  autoLoad: true
+  onLoad: |
+    importFont('helvetica-11px-bold')
+    importFont('helvetica-11px')
+    importFont('helvetica-12px-bold')
+    importFont('helvetica-12px')
+    importFont('helvetica-14px-bold')
+
+    setDefaultFont('helvetica-12px')
+    return true
+

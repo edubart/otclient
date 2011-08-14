@@ -2,50 +2,50 @@
 #define POINT_H
 
 #include "types.h"
-#include <ostream>
+#include <sstream>
 #include <cmath>
 
-template <class T>
+template<class T>
 class TSize;
 
-template <class T>
+template<class T>
 class TPoint
 {
 public:
-    inline TPoint() : x(0), y(0) {};
-    inline TPoint(T x, T y) : x(x), y(y) { };
-    inline TPoint(const TPoint<T>& other) : x(other.x), y(other.y) { };
+    TPoint() : x(0), y(0) {};
+    TPoint(T x, T y) : x(x), y(y) { };
+    TPoint(const TPoint<T>& other) : x(other.x), y(other.y) { };
 
-    inline bool isNull() const { return x==0 && y==0; }
-    inline TSize<T> toSize() const { return TSize<T>(x, y); }
+    bool isNull() const { return x==0 && y==0; }
+    TSize<T> toSize() const { return TSize<T>(x, y); }
 
-    inline TPoint<T> operator-() const { return TPoint<T>(-x, -y); }
-    inline TPoint<T> operator+(const TPoint<T>& other) const { return TPoint<T>(x + other.x, y + other.y);   }
-    inline TPoint<T>& operator+=(const TPoint<T>& other) { x+=other.x; y+=other.y; return *this; }
-    inline TPoint<T> operator-(const TPoint<T>& other) const { return TPoint<T>(x - other.x, y - other.y);   }
-    inline TPoint<T>& operator-=(const TPoint<T>& other) { x-=other.x; y-=other.y; return *this; }
-    inline TPoint<T> operator*(const TPoint<T>& other) const { return TPoint<T>(x * other.x, y * other.y);   }
-    inline TPoint<T>& operator*=(const TPoint<T>& other) { x*=other.x; y*=other.y; return *this; }
-    inline TPoint<T> operator*(const T v) const { return TPoint<T>(x * v, y * v);  }
-    inline TPoint<T>& operator*=(const T v) { x*=v; y*=v; return *this; }
-    inline TPoint<T> operator/(const TPoint<T>& other) const { return TPoint<T>(x/other.x, y/other.y);   }
-    inline TPoint<T>& operator/=(const TPoint<T>& other)   { x/=other.x; y/=other.y; return *this; }
-    inline TPoint<T> operator/(const T v) const { return TPoint<T>(x/v, y/v);  }
-    inline TPoint<T>& operator/=(const T v) { x/=v; y/=v; return *this; }
+    TPoint<T> operator-() const { return TPoint<T>(-x, -y); }
+    TPoint<T> operator+(const TPoint<T>& other) const { return TPoint<T>(x + other.x, y + other.y);   }
+    TPoint<T>& operator+=(const TPoint<T>& other) { x+=other.x; y+=other.y; return *this; }
+    TPoint<T> operator-(const TPoint<T>& other) const { return TPoint<T>(x - other.x, y - other.y);   }
+    TPoint<T>& operator-=(const TPoint<T>& other) { x-=other.x; y-=other.y; return *this; }
+    TPoint<T> operator*(const TPoint<T>& other) const { return TPoint<T>(x * other.x, y * other.y);   }
+    TPoint<T>& operator*=(const TPoint<T>& other) { x*=other.x; y*=other.y; return *this; }
+    TPoint<T> operator*(const T v) const { return TPoint<T>(x * v, y * v);  }
+    TPoint<T>& operator*=(const T v) { x*=v; y*=v; return *this; }
+    TPoint<T> operator/(const TPoint<T>& other) const { return TPoint<T>(x/other.x, y/other.y);   }
+    TPoint<T>& operator/=(const TPoint<T>& other)   { x/=other.x; y/=other.y; return *this; }
+    TPoint<T> operator/(const T v) const { return TPoint<T>(x/v, y/v);  }
+    TPoint<T>& operator/=(const T v) { x/=v; y/=v; return *this; }
 
-    inline bool operator<=(const TPoint<T>&other) const { return x<=other.x && y<=other.y; }
-    inline bool operator>=(const TPoint<T>&other) const { return x>=other.x && y>=other.y; }
-    inline bool operator<(const TPoint<T>&other) const { return x<other.x && y<other.y; }
-    inline bool operator>(const TPoint<T>&other) const { return x>other.x && y>other.y; }
+    bool operator<=(const TPoint<T>&other) const { return x<=other.x && y<=other.y; }
+    bool operator>=(const TPoint<T>&other) const { return x>=other.x && y>=other.y; }
+    bool operator<(const TPoint<T>&other) const { return x<other.x && y<other.y; }
+    bool operator>(const TPoint<T>&other) const { return x>other.x && y>other.y; }
 
-    inline TPoint<T>& operator=(const TPoint<T>& other) { x = other.x; y = other.y; return *this; }
-    inline bool operator==(const TPoint<T>& other) const { return other.x==x && other.y==y; }
-    inline bool operator!=(const TPoint<T>& other) const { return other.x!=x || other.y!=y; }
+    TPoint<T>& operator=(const TPoint<T>& other) { x = other.x; y = other.y; return *this; }
+    bool operator==(const TPoint<T>& other) const { return other.x==x && other.y==y; }
+    bool operator!=(const TPoint<T>& other) const { return other.x!=x || other.y!=y; }
 
-    inline float length() const { return sqrt((float)(x*x + y*y)); }
-    inline T manhattanLength() const { return std::abs(x) + std::abs(y); }
+    float length() const { return sqrt((float)(x*x + y*y)); }
+    T manhattanLength() const { return std::abs(x) + std::abs(y); }
 
-    inline float distanceFrom(const TPoint<T>& other) const {
+    float distanceFrom(const TPoint<T>& other) const {
         return TPoint<T>(x - other.x, y - other.y).getLength();
     }
 
@@ -55,12 +55,20 @@ public:
 typedef TPoint<int> Point;
 typedef TPoint<float> PointF;
 
-template <class T>
-inline std::ostream& operator<<(std::ostream& out, const TPoint<T>& point)
+template<class T>
+std::ostream& operator<<(std::ostream& out, const TPoint<T>& point)
 {
     out << "Point(" << point.x << ","
                     << point.y <<  ")";
     return out;
+}
+
+template<class T>
+std::istream& operator>>(std::istream& in, TPoint<T>& point)
+{
+    in >> point.x;
+    in >> point.y;
+    return in;
 }
 
 #endif

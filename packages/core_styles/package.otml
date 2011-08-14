@@ -1,9 +1,0 @@
-title: Core styles
-description: Core styles used by other modules
-author: otclient
-version: 1
-website: https://github.com/edubart/otclient
-enabled: true
-dependencies: [core_fonts]
-script: styles.lua
-

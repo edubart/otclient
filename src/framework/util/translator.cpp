@@ -24,3 +24,20 @@ AlignmentFlag parseAlignment(std::string aligment)
     else
         return AlignCenter;
 }
+
+AnchorPoint parseAnchorPoint(const std::string& anchorPoint)
+{
+    if(anchorPoint == "left")
+        return AnchorLeft;
+    else if(anchorPoint == "right")
+        return AnchorRight;
+    else if(anchorPoint == "top")
+        return AnchorTop;
+    else if(anchorPoint == "bottom")
+        return AnchorBottom;
+    else if(anchorPoint == "horizontalCenter")
+        return AnchorHorizontalCenter;
+    else if(anchorPoint == "verticalCenter")
+        return AnchorVerticalCenter;
+    return AnchorNone;
+}

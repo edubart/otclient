@@ -1,112 +1,84 @@
-#include <global.h>
-#include <ui/uianchorlayout.h>
-#include <ui/uielement.h>
+#include "uianchorlayout.h"
+#include "uiwidget.h"
 
-UIElementPtr Anchor::getAnchorLineElement() const
+bool UIAnchorLayout::addAnchor(const UIWidgetPtr& anchoredWidget, AnchorPoint anchoredEdge, const AnchorLine& anchorLine)
 {
-    if(!m_anchoredElement.expired())
-        return m_anchoredElement.lock()->backwardsGetElementById(m_anchorLine.getElementId());
-    return UIElementPtr();
-}
+    UIAnchor anchor(anchoredWidget, anchoredEdge, anchorLine);
+    UIWidgetPtr anchorLineWidget = anchor.getAnchorLineWidget();
 
-int Anchor::getAnchorLinePoint() const
-{
-    UIElementPtr anchorLineElement = getAnchorLineElement();
-    if(anchorLineElement) {
-        switch(m_anchorLine.getEdge()) {
-            case AnchorLeft:
-                return anchorLineElement->getRect().left();
-            case AnchorRight:
-                return anchorLineElement->getRect().right();
-            case AnchorTop:
-                return anchorLineElement->getRect().top();
-            case AnchorBottom:
-                return anchorLineElement->getRect().bottom();
-            case AnchorHorizontalCenter:
-                return anchorLineElement->getRect().horizontalCenter();
-            case AnchorVerticalCenter:
-                return anchorLineElement->getRect().verticalCenter();
-            default:
-                break;
-        }
-    }
-    return -9999;
-}
-bool UIAnchorLayout::addAnchor(const UIElementPtr& anchoredElement, AnchorPoint anchoredEdge, const AnchorLine& anchorLine)
-{
-    Anchor anchor(anchoredElement, anchoredEdge, anchorLine);
-    UIElementPtr anchorLineElement = anchor.getAnchorLineElement();
-
-    if(!anchorLineElement) {
-        logError("ERROR: could not find the element to anchor on, wrong id?");
+    /*
+    if(!anchorLineWidget) {
+        logError("ERROR: could not find the widget to anchor on, wrong id?");
         return false;
     }
+    */
 
     // we can never anchor with itself
-    if(anchoredElement == anchorLineElement) {
+    if(anchoredWidget == anchorLineWidget) {
         logError("ERROR: anchoring with itself is not possible");
         return false;
     }
 
     // we must never anchor to an anchor child
-    if(hasElementInAnchorTree(anchorLineElement, anchoredElement)) {
-        logError("ERROR: anchors is miss configurated, you must never make anchor chains in loops");
+    if(anchoredWidget && hasWidgetInAnchorTree(anchorLineWidget, anchoredWidget)) {
+        logError("ERROR: anchors is miss configured, you must never make an anchor chains in loops");
         return false;
     }
 
     // setup the anchor
     m_anchors.push_back(anchor);
 
-    // recalculate anchored element layout
-    recalculateElementLayout(anchoredElement);
+    // recalculate anchored widget layout
+    updateWidget(anchoredWidget);
     return true;
 }
 
-void UIAnchorLayout::recalculateElementLayout(const UIElementPtr& element)
+void UIAnchorLayout::updateWidget(const UIWidgetPtr& widget)
 {
-    Rect rect = element->getRect();
+    Rect rect = widget->getGeometry();
     bool verticalMoved = false;
     bool horizontalMoved = false;
 
-    foreach(const Anchor& anchor, m_anchors) {
-        if(anchor.getAnchoredElement() == element && anchor.getAnchorLineElement()) {
+    // TODO: remove expired anchors
+    for(const UIAnchor& anchor : m_anchors) {
+        if(anchor.getAnchoredWidget() == widget && anchor.getAnchorLineWidget()) {
             int point = anchor.getAnchorLinePoint();
             switch(anchor.getAnchoredEdge()) {
                 case AnchorHorizontalCenter:
-                    rect.moveHorizontalCenter(point + element->getMarginLeft() - element->getMarginRight());
+                    rect.moveHorizontalCenter(point + widget->getMarginLeft() - widget->getMarginRight());
                     horizontalMoved = true;
                     break;
                 case AnchorLeft:
                     if(!horizontalMoved) {
-                        rect.moveLeft(point + element->getMarginLeft());
+                        rect.moveLeft(point + widget->getMarginLeft());
                         horizontalMoved = true;
                     } else
-                        rect.setLeft(point + element->getMarginLeft());
+                        rect.setLeft(point + widget->getMarginLeft());
                     break;
                 case AnchorRight:
                     if(!horizontalMoved) {
-                        rect.moveRight(point - element->getMarginRight());
+                        rect.moveRight(point - widget->getMarginRight());
                         horizontalMoved = true;
                     } else
-                        rect.setRight(point - element->getMarginRight());
+                        rect.setRight(point - widget->getMarginRight());
                     break;
                 case AnchorVerticalCenter:
-                    rect.moveVerticalCenter(point + element->getMarginTop() - element->getMarginBottom());
+                    rect.moveVerticalCenter(point + widget->getMarginTop() - widget->getMarginBottom());
                     verticalMoved = true;
                     break;
                 case AnchorTop:
                     if(!verticalMoved) {
-                        rect.moveTop(point + element->getMarginTop());
+                        rect.moveTop(point + widget->getMarginTop());
                         verticalMoved = true;
                     } else
-                        rect.setTop(point + element->getMarginTop());
+                        rect.setTop(point + widget->getMarginTop());
                     break;
                 case AnchorBottom:
                     if(!verticalMoved) {
-                        rect.moveBottom(point - element->getMarginBottom());
+                        rect.moveBottom(point - widget->getMarginBottom());
                         verticalMoved = true;
                     } else
-                        rect.setBottom(point - element->getMarginBottom());
+                        rect.setBottom(point - widget->getMarginBottom());
                     break;
                 default:
                     break;
@@ -114,45 +86,29 @@ void UIAnchorLayout::recalculateElementLayout(const UIElementPtr& element)
         }
     }
 
-    if(rect != element->getRect())
-        element->setRect(rect);
+    if(rect != widget->getGeometry())
+        widget->setGeometry(rect);
 }
 
-void UIAnchorLayout::recalculateChildrenLayout(const UIElementPtr& parent)
+void UIAnchorLayout::updateWidgetChildren(const UIWidgetPtr& parent)
 {
-    foreach(const Anchor& anchor, m_anchors) {
-        if(anchor.getAnchorLineElement() == parent) {
-            UIElementPtr child = anchor.getAnchoredElement();
+    for(const UIAnchor& anchor : m_anchors) {
+        if(anchor.getAnchorLineWidget() == parent) {
+            UIWidgetPtr child = anchor.getAnchoredWidget();
             if(child)
-                recalculateElementLayout(child);
+                updateWidget(child);
         }
     }
 }
 
-bool UIAnchorLayout::hasElementInAnchorTree(const UIElementPtr& element, const UIElementPtr& treeAnchor)
+bool UIAnchorLayout::hasWidgetInAnchorTree(const UIWidgetPtr& widget, const UIWidgetPtr& treeAnchor)
 {
-    foreach(const Anchor& anchor, m_anchors) {
-        if(anchor.getAnchorLineElement() == treeAnchor) {
-            if(anchor.getAnchoredElement() == element || hasElementInAnchorTree(element, anchor.getAnchoredElement()))
+    for(const UIAnchor& anchor : m_anchors) {
+        if(anchor.getAnchorLineWidget() == treeAnchor) {
+            if(anchor.getAnchoredWidget() == widget || hasWidgetInAnchorTree(widget, anchor.getAnchoredWidget()))
                 return true;
         }
     }
     return false;
 }
 
-AnchorPoint UIAnchorLayout::parseAnchorPoint(const std::string& anchorPointStr)
-{
-    if(anchorPointStr == "left")
-        return AnchorLeft;
-    else if(anchorPointStr == "right")
-        return AnchorRight;
-    else if(anchorPointStr == "top")
-        return AnchorTop;
-    else if(anchorPointStr == "bottom")
-        return AnchorBottom;
-    else if(anchorPointStr == "horizontalCenter")
-        return AnchorHorizontalCenter;
-    else if(anchorPointStr == "verticalCenter")
-        return AnchorVerticalCenter;
-    return AnchorNone;
-}

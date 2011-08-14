@@ -3,7 +3,8 @@
 
 #include "position.h"
 #include "tile.h"
-#include <graphics/framebuffer.h>
+#include <graphics/graphicsdeclarations.h>
+#include <unordered_map>
 
 class Map
 {
@@ -18,4 +19,4 @@ private:
     FrameBufferPtr m_framebuffer;
 };
 
-#endif // MAP_H
+#endif

@@ -1,5 +1,5 @@
 #include "tibiaspr.h"
-#include <core/resources.h>
+#include <core/resourcemanager.h>
 
 TibiaSpr g_tibiaSpr;
 
@@ -23,8 +23,7 @@ TibiaSpr::~TibiaSpr()
 
 bool TibiaSpr::load(const std::string &filename)
 {
-    if(!g_resources.loadFile(filename, m_fin))
-        return false;
+    g_resources.loadFile(filename, m_fin);
 
     m_fin.read((char*)&m_signature, 4);
     m_fin.read((char*)&m_spritesCount, 2);

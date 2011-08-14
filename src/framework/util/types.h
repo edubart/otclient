@@ -2,8 +2,9 @@
 #define TYPES_H
 
 #include <stdint.h>
+#include <functional>
 
-// easy types
+// easy handwriting types
 typedef unsigned char uchar;
 typedef unsigned short ushort;
 typedef unsigned int uint;
@@ -16,4 +17,7 @@ typedef int32_t int32;
 typedef int16_t int16;
 typedef int8_t int8;
 
-#endif // TYPES_H
+typedef std::function<void()> SimpleCallback;
+typedef std::function<bool()> BooleanCallback;
+
+#endif

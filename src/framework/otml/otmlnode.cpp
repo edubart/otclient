@@ -1,93 +1,225 @@
 #include "otmlnode.h"
+#include "otmlemitter.h"
+#include "otmldocument.h"
 
-#include <boost/algorithm/string.hpp>
-
-OTMLNode::OTMLNode(std::string what) :
-    m_parent(0), m_line(0), m_what(what)
+OTMLNode::OTMLNode()
 {
+    m_unique = false;
 }
 
-OTMLNode::~OTMLNode()
+std::string OTMLNode::tag() const
 {
-    for(int i=0;i<size();++i)
-        delete at(i);
+    return m_tag;
 }
 
-OTMLNode* OTMLNode::at(const std::string& childTag) const {
-    int i=0;
-    while(i<size() && at(i)->tag()!=childTag)
-        ++i;
-    return at(i);
+std::string OTMLNode::value() const
+{
+    // ~ is an alias for no value
+    if(m_value == "~")
+        return aux::empty_string;
+    return m_value;
 }
 
-OTMLNode* OTMLNode::at(int pos) const
+int OTMLNode::size() const
 {
-    if(pos < (int)m_children.size() && pos >= 0)
-        return m_children[pos];
-    return 0;
+    return m_childNodes.size();
 }
 
-OTMLNode* OTMLNode::atPath(const std::string& path) const
+OTMLNodePtr OTMLNode::parent() const
 {
-    std::vector<std::string> nodeTags;
-    OTMLNode* node = const_cast<OTMLNode*>(this);
-    std::string shortcutKey;
+    return m_parent.lock();
+}
 
-    boost::split(nodeTags, path, boost::is_any_of(std::string("/")));
-    foreach(std::string& stag, nodeTags) {
-        if(!shortcutKey.empty())
-            shortcutKey += '.';
-        shortcutKey += stag;
-        if(node)
-            node = node->at(stag);
+const OTMLNodeList& OTMLNode::childNodes() const
+{
+    return m_childNodes;
+}
+
+std::string OTMLNode::source() const
+{
+    return m_source;
+}
+
+bool OTMLNode::hasTag() const
+{
+    return !m_tag.empty();
+}
+
+bool OTMLNode::hasValue() const
+{
+    return (!m_value.empty() && m_value != "~");
+}
+
+bool OTMLNode::hasChildNodes() const
+{
+    return size() > 0;
+}
+
+bool OTMLNode::hasChild(const std::string& childTag) const
+{
+    return !!get(childTag);
+}
+
+bool OTMLNode::hasChild(int index) const
+{
+    return !!get(index);
+}
+
+bool OTMLNode::isUnique() const
+{
+    return m_unique;
+}
+
+void OTMLNode::setTag(std::string tag)
+{
+    m_tag = tag;
+
+    // valued nodes that has tags are always unique
+    if(!m_value.empty() && hasTag())
+        setUnique();
+}
+
+void OTMLNode::setValue(const std::string& value)
+{
+    m_value = value;
+
+    // valued nodes that has tags are always unique
+    if(!m_value.empty() && hasTag())
+        setUnique();
+}
+
+void OTMLNode::setParent(const OTMLNodePtr& parent)
+{
+    m_parent = parent;
+}
+
+void OTMLNode::setUnique(bool unique)
+{
+    m_unique = unique;
+}
+
+void OTMLNode::setSource(const std::string& source)
+{
+    m_source = source;
+}
+
+OTMLNodePtr OTMLNode::at(const std::string& childTag)
+{
+    for(const OTMLNodePtr& child : m_childNodes) {
+        if(child->tag() == childTag)
+            return child;
+    }
+    throw OTMLException(shared_from_this(), aux::make_string("child node with tag '", childTag, "' not found"));
+    return nullptr;
+}
+
+OTMLNodePtr OTMLNode::at(int childIndex)
+{
+    if(childIndex < size() && childIndex >= 0)
+        return m_childNodes[childIndex];
+    throw OTMLException(shared_from_this(), aux::make_string("child node at index '", childIndex, "' not found"));
+    return nullptr;
+}
+
+OTMLNodePtr OTMLNode::get(const std::string& childTag) const
+{
+    for(const OTMLNodePtr& child : m_childNodes) {
+        if(child->tag() == childTag)
+            return child;
+    }
+    return nullptr;
+}
+
+OTMLNodePtr OTMLNode::get(int childIndex) const
+{
+    if(childIndex < size() && childIndex >= 0)
+        return m_childNodes[childIndex];
+    return nullptr;
+}
+
+void OTMLNode::addChild(const OTMLNodePtr& newChild)
+{
+    // replace is needed when the tag is marked as unique
+    if(newChild->hasTag()) {
+        for(OTMLNodePtr node : m_childNodes) {
+            if(node->tag() == newChild->tag() && (node->isUnique() || newChild->isUnique())) {
+                newChild->setUnique();
+                replaceChild(node, newChild);
+
+                // remove any other child with the same tag
+                auto it = m_childNodes.begin();
+                while(it != m_childNodes.end()) {
+                    OTMLNodePtr node = (*it);
+                    if(node != newChild && node->tag() == newChild->tag()) {
+                        node->setParent(nullptr);
+                        it = m_childNodes.erase(it);
+                    } else
+                        ++it;
+                }
+                return;
+            }
+        }
     }
 
-    if(node)
-        return node;
-    else
-        return at(shortcutKey);
+    m_childNodes.push_back(newChild);
+    newChild->setParent(shared_from_this());
 }
 
-OTMLNode* OTMLNode::createNode(std::string tag)
+bool OTMLNode::removeChild(const OTMLNodePtr& oldChild)
 {
-    OTMLNode* node = new OTMLNode;
-    node->setTag(tag);
-    addNode(node);
-    return node;
-}
-
-void OTMLNode::addNode(OTMLNode* node) {
-    if(node->hasTag() && node->hasValue())
-        if(OTMLNode* other = at(node->tag()))
-            removeNode(other);
-        m_children.push_back(node);
-    node->setParent(this);
-}
-
-bool OTMLNode::removeNode(OTMLNode* node) {
-    for(NodeList::iterator it = m_children.begin(); it != m_children.end(); ++it) {
-        if((*it) == node) {
-            m_children.erase(it);
+    for(auto it = m_childNodes.begin(); it != m_childNodes.end(); ++it) {
+        if((*it) == oldChild) {
+            m_childNodes.erase(it);
+            oldChild->setParent(nullptr);
             return true;
         }
     }
     return false;
 }
 
-std::string OTMLNode::generateErrorMessage(const std::string& message) const {
-    std::stringstream ss;
-    ss << "OTML error";
-    if(!what().empty())
-        ss << " in '" << what() << "'";
-    if(m_line > 0)
-        ss << " at line " << m_line;
-    if(m_line > 0 && hasTag())
-        ss << ", in node '" << tag() << "'";
-    ss << ": " << message;
-    return ss.str();
+bool OTMLNode::replaceChild(const OTMLNodePtr& oldChild, const OTMLNodePtr& newChild)
+{
+    for(auto it = m_childNodes.begin(); it != m_childNodes.end(); ++it) {
+        if((*it) == oldChild) {
+            oldChild->setParent(nullptr);
+            newChild->setParent(shared_from_this());
+            it = m_childNodes.erase(it);
+            m_childNodes.insert(it, newChild);
+            return true;
+        }
+    }
+    return false;
 }
 
-void OTMLNode::throwError(const std::string& message) const
+void OTMLNode::clear()
 {
-    throw OTMLException(generateErrorMessage(message));
+    m_childNodes.clear();
+}
+
+void OTMLNode::merge(const OTMLNodePtr& node)
+{
+    for(const OTMLNodePtr& child : node->childNodes()) {
+        OTMLNodePtr newNode(new OTMLNode);
+        newNode->setUnique(child->isUnique());
+        newNode->setTag(child->tag());
+        newNode->setValue(child->value());
+        addChild(newNode);
+        newNode->merge(child);
+    }
+}
+
+OTMLNodePtr OTMLNode::clone() const
+{
+    OTMLNodePtr myClone(new OTMLNode);
+    myClone->setTag(tag());
+    myClone->setValue(value());
+    myClone->setUnique(isUnique());
+    for(OTMLNodePtr child : childNodes())
+        myClone->addChild(child->clone());
+    return myClone;
+}
+
+std::string OTMLNode::emit()
+{
+    return OTMLEmitter::emitNode(shared_from_this(), 0);
 }

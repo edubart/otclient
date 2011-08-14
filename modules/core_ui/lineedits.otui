@@ -1,0 +1,7 @@
+LineEdit < UILineEdit
+  size: 86 20
+  text-margin: 3
+  border-image:
+    source: /core_ui/images/panel_flat.png
+    border: 1
+

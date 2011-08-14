@@ -3,53 +3,63 @@
 
 #include <global.h>
 
+class PlatformListener;
+
 class Platform
 {
 public:
-    static void init(const char *appName);
-    static void terminate();
+    void init(PlatformListener* platformListener, const char* appName);
+    void terminate();
 
     /// Poll platform input/window events
-    static void poll();
+    void poll();
 
     /// Get current time in milliseconds since init
-    static int getTicks();
+    int getTicks();
     /// Sleep in current thread
-    static void sleep(ulong miliseconds);
+    void sleep(ulong ms);
 
-    static bool createWindow(int x, int y, int width, int height, int minWidth, int minHeight, bool maximized);
-    static void destroyWindow();
-    static void showWindow();
-    static void setWindowTitle(const char *title);
-    static bool isWindowFocused();
-    static bool isWindowVisible();
-    static int getWindowX();
-    static int getWindowY();
-    static int getWindowWidth();
-    static int getWindowHeight();
-    static bool isWindowMaximized();
+    bool createWindow(int x, int y, int width, int height, int minWidth, int minHeight, bool maximized);
+    void destroyWindow();
+    void showWindow();
+    void hideWindow();
+    void setWindowTitle(const char* title);
+    bool isWindowFocused();
+    bool isWindowVisible();
+    int getWindowX();
+    int getWindowY();
+    int getWindowWidth();
+    int getWindowHeight();
+    bool isWindowMaximized();
 
-    static int getDisplayHeight();
-    static int getDisplayWidth();
+    int getDisplayHeight();
+    int getDisplayWidth();
 
     /// Get GL extension function address
-    static void *getExtensionProcAddress(const char *ext);
-    /// Check if GL extension is supported
-    static bool isExtensionSupported(const char *ext);
+    void* getExtensionProcAddress(const char* ext);
+    /// Check if GLX/WGL extension is supported
+    bool isExtensionSupported(const char* ext);
 
-    static const char *getClipboardText();
-    static void setClipboardText(const char *text);
+    /// Get text from Ctrl+c
+    const char* getClipboardText();
+    /// Set text for Ctrl+v
+    void setClipboardText(const char* text);
 
-    static void hideMouseCursor();
-    static void showMouseCursor();
+    void hideMouseCursor();
+    void showMouseCursor();
 
-    /// Enable/disable vertical synchronization
-    static void setVsync(bool enable = true);
+    /// Enable or disable vertical synchronization
+    void setVerticalSync(bool enable);
     /// Swap GL buffers
-    static void swapBuffers();
+    void swapBuffers();
 
     /// Get the app user directory, the place to save files configurations files
-    static std::string getAppUserDir();
+    std::string getAppUserDir();
+
+private:
+    PlatformListener* m_listener;
 };
 
-#endif // PLATFORM_H
+extern Platform g_platform;
+
+#endif

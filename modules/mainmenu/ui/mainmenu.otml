@@ -1,0 +1,47 @@
+Panel
+  skin: mainMenuBackground
+  anchors.left: parent.left
+  anchors.right: parent.right
+  anchors.top: parent.top
+  anchors.bottom: parent.bottom
+
+  Panel
+    id: mainMenu
+    skin: roundedGridPanel
+    size: 144 162
+    anchors.left: parent.left
+    anchors.bottom: parent.bottom
+    margin.left: 60
+    margin.bottom: 70
+
+    Button
+      id: enterGameButton
+      text: Enter Game
+      anchors.top: parent.top
+      anchors.horizontalCenter: parent.horizontalCenter
+      margin.top: 18
+      onClick: rootWidget:addChild(loadUI("entergamewindow"))
+
+    Button
+      id: optionsButton
+      text: Options
+      anchors.top: prev.bottom
+      anchors.horizontalCenter: parent.horizontalCenter
+      margin.top: 10
+      onClick: rootWidget:addChild(loadUI("optionswindow"))
+
+    Button
+      id: infoButton
+      text: Info
+      anchors.top: prev.bottom
+      anchors.horizontalCenter: parent.horizontalCenter
+      margin.top: 10
+      onClick: rootWidget:addChild(loadUI("infowindow"))
+
+    Button
+      id: exitGameButton
+      text: Exit
+      anchors.top: prev.bottom
+      anchors.horizontalCenter: parent.horizontalCenter
+      margin.top: 10
+      onClick: exit()

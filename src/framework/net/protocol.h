@@ -5,7 +5,7 @@
 #include "inputmessage.h"
 #include "outputmessage.h"
 
-#include <script/luaobject.h>
+#include <luascript/luaobject.h>
 
 class Protocol : public LuaObject
 {
@@ -23,8 +23,6 @@ public:
     virtual void onError(const boost::system::error_code& err);
 
     ProtocolPtr asProtocol() { return std::static_pointer_cast<Protocol>(shared_from_this()); }
-
-    virtual const char* getLuaTypeName() const { return "Protocol"; }
 
 protected:
     uint32 m_xteaKey[4];

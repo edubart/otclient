@@ -1,0 +1,53 @@
+MainWindow
+  id: enterGameWindow
+  title: Enter Game
+  size: 236 160
+
+  LargerLabel
+    text: Account name
+    anchors.left: parent.left
+    anchors.top: parent.top
+    margin.left: 18
+    margin.top: 28
+
+  LineEdit
+    id: accountNameLineEdit
+    text: otclient0
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: prev.bottom
+    margin.left: 18
+    margin.right: 18
+
+  LargerLabel
+    text: Password
+    anchors.left: prev.left
+    anchors.top: prev.bottom
+    margin.top: 8
+
+  LineEdit
+    id: accountPasswordLineEdit
+    text: 123456
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: prev.bottom
+    margin.left: 18
+    margin.right: 18
+
+  Button
+    text: Ok
+    width: 64
+    anchors.right: next.left
+    anchors.bottom: parent.bottom
+    margin.bottom: 16
+    margin.right: 16
+    onClick: EnterGame_connectToLoginServer()
+
+  Button
+    text: Cancel
+    width: 64
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    margin.bottom: 16
+    margin.right: 16
+    onClick: function(self) self.parent:destroy() end

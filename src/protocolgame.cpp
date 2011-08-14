@@ -16,7 +16,7 @@ ProtocolGame::~ProtocolGame()
 void ProtocolGame::login(const std::string& accountName, const std::string& accountPassword, uint32 ip, uint16 port, const std::string& characterName)
 {
     if(accountName.empty() || accountPassword.empty()) {
-        callField("onError", "You must enter an account name and password.");
+        callLuaField("onError", "You must enter an account name and password.");
         return;
     }
 

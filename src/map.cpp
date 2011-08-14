@@ -1,6 +1,7 @@
 #include "map.h"
 #include "game.h"
 #include <graphics/graphics.h>
+#include <graphics/framebuffer.h>
 
 void Map::draw(int x, int y)
 {

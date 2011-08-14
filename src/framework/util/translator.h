@@ -5,5 +5,5 @@
 #include <string>
 
 AlignmentFlag parseAlignment(std::string aligment);
-
-#endif // TRANSLATOR_H
+AnchorPoint parseAnchorPoint(const std::string& anchorPoint);
+#endif

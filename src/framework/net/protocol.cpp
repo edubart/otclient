@@ -82,7 +82,7 @@ void Protocol::onError(const boost::system::error_code& err)
 
     // displays a dialog, finish protocol
 
-    callField("onError", message.str());
+    callLuaField("onError", message.str());
 }
 
 bool Protocol::xteaDecrypt(InputMessage& inputMessage)

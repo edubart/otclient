@@ -1,8 +1,8 @@
 #ifndef OTML_H
 #define OTML_H
 
+#include "otmldocument.h"
 #include "otmlnode.h"
-#include "otmlemitter.h"
-#include "otmlparser.h"
+#include "otmlnodeext.h"
 
-#endif // OTML_H
+#endif

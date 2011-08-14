@@ -1,30 +1,9 @@
-/* The MIT License
- *
- * Copyright (c) 2010 OTClient, https://github.com/edubart/otclient
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
+#include "animatedtexture.h"
+#include "graphics.h"
+#include <core/platform.h>
+#include <core/eventdispatcher.h>
 
-
-#include <graphics/animatedtexture.h>
-#include <core/engine.h>
-#include <core/dispatcher.h>
+#include <GL/gl.h>
 
 AnimatedTexture::AnimatedTexture(int width, int height, int channels, int numFrames, uchar *framesPixels, int *framesDelay) :
     Texture(),
@@ -44,11 +23,13 @@ AnimatedTexture::AnimatedTexture(int width, int height, int channels, int numFra
     }
 
     m_currentFrame = -1;
-    g_dispatcher.scheduleTask(std::bind(&AnimatedTexture::processAnimation, this), 0);
+    g_dispatcher.scheduleEvent(std::bind(&AnimatedTexture::processAnimation, this), 0);
 }
 
 AnimatedTexture::~AnimatedTexture()
 {
+    g_graphics.disableDrawing();
+
     glDeleteTextures(m_numFrames, m_framesTextureId);
     delete[] m_framesTextureId;
     delete[] m_framesDelay;
@@ -57,6 +38,8 @@ AnimatedTexture::~AnimatedTexture()
 
 void AnimatedTexture::enableBilinearFilter()
 {
+    g_graphics.disableDrawing();
+
     for(int i=0;i<m_numFrames;++i) {
         glBindTexture(GL_TEXTURE_2D, m_framesTextureId[i]);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -72,5 +55,5 @@ void AnimatedTexture::processAnimation()
     m_textureId = m_framesTextureId[m_currentFrame];
     AnimatedTexturePtr me = std::static_pointer_cast<AnimatedTexture>(shared_from_this());
     if(me.use_count() > 1)
-        g_dispatcher.scheduleTask(std::bind(&AnimatedTexture::processAnimation, me), m_framesDelay[m_currentFrame]);
+        g_dispatcher.addEvent(std::bind(&AnimatedTexture::processAnimation, me), m_framesDelay[m_currentFrame]);
 }
