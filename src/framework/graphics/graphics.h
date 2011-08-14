@@ -5,15 +5,6 @@
 
 class Graphics
 {
-    enum DrawMode {
-        DRAW_NONE = 0,
-        DRAW_QUADS = 1,
-        DRAW_TEXTURE = 2,
-        DRAW_COLORED = 4,
-        DRAW_COLOR_QUADS = DRAW_QUADS | DRAW_COLORED,
-        DRAW_TEXTURE_QUADS = DRAW_QUADS | DRAW_TEXTURE | DRAW_COLORED
-    };
-
 public:
     /// Initialize default OpenGL states
     void init();
@@ -35,18 +26,18 @@ public:
 
     /// Called after every render
     void endRender();
-    void disableDrawing();
+
+    void bindColor(const Color& color);
+    void bindTexture(const TexturePtr& texture);
 
     // drawing API
     void drawTexturedRect(const Rect& screenCoords,
                           const TexturePtr& texture,
-                          const Rect& textureCoords = Rect(),
-                          const Color& color = Color::white);
+                          const Rect& textureCoords = Rect());
 
     void drawRepeatedTexturedRect(const Rect& screenCoords,
                                   const TexturePtr& texture,
-                                  const Rect& textureCoords,
-                                  const Color& color = Color::white);
+                                  const Rect& textureCoords);
 
     void drawFilledRect(const Rect& screenCoords,
                         const Color& color);
@@ -57,14 +48,16 @@ public:
 
     const Size& getScreenSize() const { return m_screenSize; }
 
-private:
-    void bindTexture(const TexturePtr& texture, const Color& color = Color::white);
-    void bindColor(const Color& color);
+    void startDrawing();
+    void stopDrawing();
 
-    TexturePtr m_boundTexture;
-    Color m_boundColor;
+    int getOpacity() const { return m_opacity; }
+    void setOpacity(int opacity) { m_opacity = opacity; }
+
+private:
+    bool m_drawing;
+    int m_opacity;
     Size m_screenSize;
-    DrawMode m_drawMode;
 };
 
 extern Graphics g_graphics;

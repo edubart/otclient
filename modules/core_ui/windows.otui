@@ -1,5 +1,5 @@
 Window < UIWindow
-  size: 200 100
+  size: 200 200
   head:
     height: 20
     border-image:

@@ -10,7 +10,7 @@ Panel
     smooth: true
   anchors.fill: parent
 
-  RoundedGridPanel
+  RoundedPanel
     id: mainMenu
     size: 144 162
     anchors.left: parent.left
@@ -23,7 +23,10 @@ Panel
       anchors.top: parent.top
       anchors.horizontalCenter: parent.horizontalCenter
       margin.top: 18
-      onClick: rootWidget:addChild(loadUI("/mainmenu/ui/entergamewindow.otui"))
+      onClick: |
+        local enterGameWindow = loadUI("/mainmenu/ui/entergamewindow.otui")
+        rootWidget:addChild(enterGameWindow)
+        GFX.fadeIn(enterGameWindow)
 
     MenuButton
       text: Options

@@ -46,17 +46,16 @@ private:
 
 inline std::ostream& operator<<(std::ostream& out, const Color& color)
 {
-    out << "Color(" << (int)color.r() << ","
-                    << (int)color.g() << ","
-                    << (int)color.b() << ","
-                    << (int)color.a() << ")";
+    out << (int)color.r() << " "<< (int)color.g() << " "<< (int)color.b() << " " << (int)color.a();
     return out;
-} 
+}
 
 inline std::istream& operator>>(std::istream& in, Color& color)
 {
-    int r, g, b, a;
-    in >> r >> g >> b >> a;
+    int r, g, b, a = 255;
+    in >> r >> g >> b;
+    if(!in.eof())
+        in >> a;
     color.setRGBA(r, g, b, a);
     return in;
 }

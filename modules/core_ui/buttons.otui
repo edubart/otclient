@@ -1,6 +1,6 @@
 Button < UIButton
   font: helvetica-11px-bold
-  color: 240 173 77 255
+  font-color: 240 173 77
   size: 106 24
   border-image:
     source: /core_ui/images/button.png

@@ -62,6 +62,10 @@ void Font::renderText(const std::string& text,
     Size textBoxSize;
     const std::vector<Point>& glyphsPositions = calculateGlyphsPositions(text, align, &textBoxSize);
 
+    g_graphics.bindColor(color);
+    g_graphics.bindTexture(m_texture);
+    g_graphics.startDrawing();
+
     for(int i = 0; i < textLenght; ++i) {
         int glyph = (uchar)text[i];
 
@@ -122,8 +126,12 @@ void Font::renderText(const std::string& text,
         }
 
         // render glyph
-        g_graphics.drawTexturedRect(glyphScreenCoords, m_texture, glyphTextureCoords, color);
+        g_graphics.drawTexturedRect(glyphScreenCoords, m_texture, glyphTextureCoords);
     }
+
+    g_graphics.stopDrawing();
+
+    g_graphics.bindColor(Color::white);
 }
 
 const std::vector<Point>& Font::calculateGlyphsPositions(const std::string& text,

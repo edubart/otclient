@@ -192,4 +192,34 @@ luavalue_cast(int index, std::function<Ret(Args...)>& o) {
     return false;
 }
 
+// additional casts
+
+
+inline void push_luavalue(const Color& v) {
+    g_lua.newTable();
+    g_lua.pushInteger(v.r());
+    g_lua.setField("r");
+    g_lua.pushInteger(v.g());
+    g_lua.setField("g");
+    g_lua.pushInteger(v.b());
+    g_lua.setField("b");
+    g_lua.pushInteger(v.a());
+    g_lua.setField("a");
+}
+
+inline bool luavalue_cast(int index, Color& o) {
+    if(!g_lua.isTable(index))
+        return false;
+
+    g_lua.getField("r", index);
+    o.setRed(g_lua.popInteger());
+    g_lua.getField("g", index);
+    o.setGreen(g_lua.popInteger());
+    g_lua.getField("b", index);
+    o.setBlue(g_lua.popInteger());
+    g_lua.getField("a", index);
+    o.setAlpha(g_lua.popInteger());
+    return true;
+}
+
 #endif

@@ -50,4 +50,4 @@ MainWindow
     anchors.bottom: parent.bottom
     margin.bottom: 16
     margin.right: 16
-    onClick: function(self) self.parent:destroy() end
+    onClick: function(self) GFX.fadeOut(self.parent) end

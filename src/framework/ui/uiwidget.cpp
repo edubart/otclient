@@ -8,6 +8,7 @@
 #include <graphics/borderimage.h>
 #include <graphics/fontmanager.h>
 #include <otml/otmlnode.h>
+#include <graphics/graphics.h>
 
 UIWidget::UIWidget(UIWidgetType type)
 {
@@ -18,8 +19,10 @@ UIWidget::UIWidget(UIWidgetType type)
     m_focusable = false;
     m_destroyed = false;
     m_updateScheduled = false;
+    m_opacity = 255;
     m_marginLeft = m_marginRight = m_marginTop = m_marginBottom = 0;
     m_color = Color::white;
+    m_fontColor = Color::white;
 
     // generate an unique id, this is need because anchored layouts find widgets by id
     static unsigned long id = 1;
@@ -116,9 +119,17 @@ void UIWidget::loadStyleFromOTML(const OTMLNodePtr& styleNode)
         else if(node->tag() == "font") {
             setFont(g_fonts.getFont(node->value()));
         }
+        // font color
+        else if(node->tag() == "font-color") {
+            setFontColor(node->read<Color>());
+        }
         // color
         else if(node->tag() == "color") {
             setColor(node->read<Color>());
+        }
+        // opacity
+        else if(node->tag() == "opacity") {
+            setOpacity(node->read<int>());
         }
         // size
         else if(node->tag() == "size") {
@@ -199,8 +210,16 @@ void UIWidget::render()
         m_image->draw(getGeometry());
 
     for(const UIWidgetPtr& child : m_children) {
-        if(child->isVisible())
+        if(child->isVisible()) {
+            int oldOpacity = g_graphics.getOpacity();
+            if(child->getOpacity() < oldOpacity)
+                g_graphics.setOpacity(child->getOpacity());
+
+            g_graphics.bindColor(child->getColor());
             child->render();
+
+            g_graphics.setOpacity(oldOpacity);
+        }
     }
 }
 

@@ -24,8 +24,9 @@ void UIButton::loadStyleFromOTML(const OTMLNodePtr& styleNode)
     UIWidget::loadStyleFromOTML(styleNode);
 
     for(int i=0; i<3; ++i) {
-        m_statesStyle[i].image = getImage();
-        m_statesStyle[i].color = getColor();
+        m_statesStyle[i].image = m_image;
+        m_statesStyle[i].color = m_color;
+        m_statesStyle[i].fontColor = m_fontColor;
         m_statesStyle[i].textTranslate = Point(0,0);
     }
 
@@ -51,7 +52,8 @@ void UIButton::loadStateStyle(ButtonStateStyle& stateStyle, const OTMLNodePtr& s
     if(OTMLNodePtr node = stateStyleNode->get("image"))
         stateStyle.image = Image::loadFromOTML(node);
     stateStyle.textTranslate = stateStyleNode->readAt("text-translate", Point());
-    stateStyle.color = stateStyleNode->readAt("color", getColor());
+    stateStyle.color = stateStyleNode->readAt("font-color", m_fontColor);
+    stateStyle.color = stateStyleNode->readAt("color", m_color);
 }
 
 void UIButton::render()
@@ -63,7 +65,7 @@ void UIButton::render()
         currentStyle.image->draw(textRect);
 
     textRect.translate(currentStyle.textTranslate);
-    getFont()->renderText(m_text, textRect, AlignCenter, currentStyle.color);
+    getFont()->renderText(m_text, textRect, AlignCenter, currentStyle.fontColor);
 }
 
 void UIButton::onHoverChange(UIHoverEvent& event)

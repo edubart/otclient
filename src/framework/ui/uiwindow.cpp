@@ -55,7 +55,7 @@ void UIWindow::render()
             headTextRect.addLeft(-m_headMargin);
         else if(m_titleAlign & AlignRight)
             headTextRect.addRight(-m_headMargin);
-        getFont()->renderText(m_title, headTextRect, m_titleAlign, getColor());
+        m_font->renderText(m_title, headTextRect, m_titleAlign, m_fontColor);
     }
 
     // draw window body

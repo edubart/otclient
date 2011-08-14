@@ -28,8 +28,6 @@ AnimatedTexture::AnimatedTexture(int width, int height, int channels, int numFra
 
 AnimatedTexture::~AnimatedTexture()
 {
-    g_graphics.disableDrawing();
-
     glDeleteTextures(m_numFrames, m_framesTextureId);
     delete[] m_framesTextureId;
     delete[] m_framesDelay;
@@ -38,8 +36,6 @@ AnimatedTexture::~AnimatedTexture()
 
 void AnimatedTexture::enableBilinearFilter()
 {
-    g_graphics.disableDrawing();
-
     for(int i=0;i<m_numFrames;++i) {
         glBindTexture(GL_TEXTURE_2D, m_framesTextureId[i]);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);

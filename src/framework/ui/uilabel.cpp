@@ -30,7 +30,7 @@ void UILabel::loadStyleFromOTML(const OTMLNodePtr& styleNode)
 
 void UILabel::render()
 {
-    getFont()->renderText(m_text, getGeometry(), m_align, getColor());
+    getFont()->renderText(m_text, getGeometry(), m_align, m_fontColor);
 }
 
 void UILabel::resizeToText()

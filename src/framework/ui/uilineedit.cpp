@@ -37,7 +37,7 @@ void UILineEdit::render()
     int textLength = m_text.length();
     const TexturePtr& texture = m_font->getTexture();
     for(int i=0;i<textLength;++i) {
-        g_graphics.drawTexturedRect(m_glyphsCoords[i], texture, m_glyphsTexCoords[i], m_color);
+        g_graphics.drawTexturedRect(m_glyphsCoords[i], texture, m_glyphsTexCoords[i]);
     }
 
     // render cursor

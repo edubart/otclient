@@ -2,6 +2,7 @@
 #include <graphics/fontmanager.h>
 #include <ui/ui.h>
 #include <net/protocol.h>
+#include <core/eventdispatcher.h>
 
 void LuaInterface::registerFunctions()
 {
@@ -21,6 +22,8 @@ void LuaInterface::registerFunctions()
     g_lua.bindClassMemberField<UIWidget>("width", &UIWidget::getWidth, &UIWidget::setWidth);
     g_lua.bindClassMemberField<UIWidget>("height", &UIWidget::getHeight, &UIWidget::setHeight);
     g_lua.bindClassMemberField<UIWidget>("parent", &UIWidget::getParent, &UIWidget::setParent);
+    g_lua.bindClassMemberField<UIWidget>("color", &UIWidget::getColor, &UIWidget::setColor);
+    g_lua.bindClassMemberField<UIWidget>("opacity", &UIWidget::getOpacity, &UIWidget::setOpacity);
     g_lua.bindClassMemberField<UIWidget>("marginTop", &UIWidget::getMarginTop, &UIWidget::setMarginTop);
     g_lua.bindClassMemberField<UIWidget>("marginBottom", &UIWidget::getMarginBottom, &UIWidget::setMarginBottom);
     g_lua.bindClassMemberField<UIWidget>("marginLeft", &UIWidget::getMarginLeft, &UIWidget::setMarginLeft);
@@ -57,8 +60,10 @@ void LuaInterface::registerFunctions()
 
     // global functions
     g_lua.bindGlobalFunction("importFont", std::bind(&FontManager::importFont, &g_fonts, _1));
-    g_lua.bindGlobalFunction("setDefaultFont", std::bind(&FontManager::setDefaultFont, &g_fonts, _1));
     g_lua.bindGlobalFunction("importStyles", std::bind(&UIManager::importStyles, &g_ui, _1));
+    g_lua.bindGlobalFunction("setDefaultFont", std::bind(&FontManager::setDefaultFont, &g_fonts, _1));
     g_lua.bindGlobalFunction("loadUI", std::bind(&UIManager::loadUI, &g_ui, _1));
     g_lua.bindGlobalFunction("getRootWidget", std::bind(&UIManager::getRootWidget, &g_ui));
+    g_lua.bindGlobalFunction("addEvent", std::bind(&EventDispatcher::addEvent, &g_dispatcher, _1, false));
+    g_lua.bindGlobalFunction("scheduleEvent", std::bind(&EventDispatcher::scheduleEvent, &g_dispatcher, _1, _2));
 }

@@ -13,8 +13,6 @@ PFNGLCHECKFRAMEBUFFERSTATUSPROC  oglCheckFramebufferStatus = 0;
 
 FrameBuffer::FrameBuffer(int width, int height)
 {
-    g_graphics.disableDrawing();
-
     m_fbo = 0;
     m_width = width;
     m_height = height;
@@ -68,8 +66,6 @@ FrameBuffer::FrameBuffer(int width, int height)
 
 FrameBuffer::~FrameBuffer()
 {
-    g_graphics.disableDrawing();
-
     glDeleteTextures(1, &m_fboTexture);
     if(m_fbo)
         oglDeleteFramebuffers(1, &m_fbo);
@@ -77,8 +73,6 @@ FrameBuffer::~FrameBuffer()
 
 void FrameBuffer::bind()
 {
-    g_graphics.disableDrawing();
-
     if(!m_fallbackOldImp) {
         // bind framebuffer
         oglBindFramebuffer(GL_FRAMEBUFFER_EXT, m_fbo);
@@ -101,8 +95,6 @@ void FrameBuffer::bind()
 
 void FrameBuffer::unbind()
 {
-    g_graphics.disableDrawing();
-
     if(!m_fallbackOldImp) {
         // bind back buffer again
         oglBindFramebuffer(GL_FRAMEBUFFER_EXT, 0);
@@ -127,9 +119,6 @@ void FrameBuffer::unbind()
 
 void FrameBuffer::draw(int x, int y, int width, int height)
 {
-    g_graphics.disableDrawing();
-
-    glEnable(GL_TEXTURE_2D);
     glColor4ubv(Color::white.rgbaPtr());
     glBindTexture(GL_TEXTURE_2D, m_fboTexture);
     glBegin(GL_QUADS);

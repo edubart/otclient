@@ -116,6 +116,9 @@ void BorderImage::draw(const Rect& screenCoords)
     Rect rectCoords;
     Size centerSize = screenCoords.size() - m_bordersSize;
 
+    g_graphics.bindTexture(m_texture);
+    g_graphics.startDrawing();
+
     // first the center
     if(centerSize.area() > 0) {
         rectCoords = Rect(screenCoords.left() + m_leftBorderTexCoords.width(),
@@ -175,4 +178,6 @@ void BorderImage::draw(const Rect& screenCoords)
                       screenCoords.top() + m_topRightCornerTexCoords.height() + centerSize.height(),
                       m_bottomRightCornerTexCoords.size());
     g_graphics.drawTexturedRect(rectCoords, m_texture, m_bottomRightCornerTexCoords);
+
+    g_graphics.stopDrawing();
 }

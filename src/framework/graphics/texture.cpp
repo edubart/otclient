@@ -11,8 +11,6 @@ Texture::Texture(int width, int height, int channels, uchar *pixels)
 
 uint Texture::internalLoadGLTexture(uchar *pixels, int channels, int width, int height)
 {
-    g_graphics.disableDrawing();
-
     // get smax texture size supported by the driver
     static GLint maxTexSize = -1;
     if(maxTexSize == -1)
@@ -95,8 +93,6 @@ uint Texture::internalLoadGLTexture(uchar *pixels, int channels, int width, int 
 
 Texture::~Texture()
 {
-    g_graphics.disableDrawing();
-
     // free texture from gl memory
     if(m_textureId)
         glDeleteTextures(1, &m_textureId);
@@ -104,8 +100,6 @@ Texture::~Texture()
 
 void Texture::enableBilinearFilter()
 {
-    g_graphics.disableDrawing();
-
     // enable smooth texture
     glBindTexture(GL_TEXTURE_2D, m_textureId);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -114,8 +108,6 @@ void Texture::enableBilinearFilter()
 
 uchar* Texture::getPixels()
 {
-    g_graphics.disableDrawing();
-
     // copy pixels from opengl memory
     uchar* pixels = new uchar[m_glSize.area()*4];
     glBindTexture(GL_TEXTURE_2D, m_textureId);

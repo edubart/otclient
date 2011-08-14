@@ -10,13 +10,11 @@ Graphics g_graphics;
 
 void Graphics::init()
 {
-    m_drawMode = DRAW_NONE;
-
     // setup opengl
     glEnable(GL_ALPHA_TEST); // enable alpha by default
     glAlphaFunc(GL_GREATER, 0.0f); // default alpha func
     glDisable(GL_DEPTH_TEST); // we are rendering 2D only, we don't need depth buffer
-    //glEnable(GL_TEXTURE_2D); // enable textures by default
+    glEnable(GL_TEXTURE_2D); // enable textures by default
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
     glShadeModel(GL_SMOOTH);
     glEnable(GL_BLEND);
@@ -25,6 +23,10 @@ void Graphics::init()
 
     logInfo("GPU ", glGetString(GL_RENDERER));
     logInfo("OpenGL ", glGetString(GL_VERSION));
+
+    m_drawing = false;
+    bindColor(Color::white);
+    m_opacity = 255;
 }
 
 void Graphics::terminate()
@@ -69,8 +71,6 @@ void Graphics::resize(const Size& size)
 
 void Graphics::restoreViewport()
 {
-    disableDrawing();
-
     const int& width = m_screenSize.width();
     const int& height = m_screenSize.height();
 
@@ -98,35 +98,16 @@ void Graphics::beginRender()
 {
     glClear(GL_COLOR_BUFFER_BIT);
     glLoadIdentity();
-
-    // bind white color by default
-    glColor4ubv(Color::white.rgbaPtr());
-    m_boundColor = Color::white;
 }
 
 void Graphics::endRender()
 {
-    disableDrawing();
-
-    // clear any bound texture
-    m_boundTexture.reset();
-}
-
-void Graphics::disableDrawing()
-{
-    if(m_drawMode != DRAW_NONE) {
-        glEnd();
-        m_drawMode = DRAW_NONE;
-
-        m_boundTexture.reset();
-        glColor4ubv(Color::white.rgbaPtr());
-    }
+    assert(!m_drawing);
 }
 
 void Graphics::drawTexturedRect(const Rect& screenCoords,
                                 const TexturePtr& texture,
-                                const Rect& textureCoords,
-                                const Color& color)
+                                const Rect& textureCoords)
 {
     if(screenCoords.isEmpty() || textureCoords.isEmpty())
         return;
@@ -150,20 +131,32 @@ void Graphics::drawTexturedRect(const Rect& screenCoords,
         textureLeft = (float)textureCoords.left() / textureSize.width();
     }
 
-    bindTexture(texture, color);
+    if(!m_drawing) {
+        bindTexture(texture);
+        glBegin(GL_QUADS);
+    }
+
     glTexCoord2f(textureLeft,  textureTop);    glVertex2i(left,  top);
     glTexCoord2f(textureLeft,  textureBottom); glVertex2i(left,  bottom);
     glTexCoord2f(textureRight, textureBottom); glVertex2i(right, bottom);
     glTexCoord2f(textureRight, textureTop);    glVertex2i(right, top);
+
+    if(!m_drawing)
+        glEnd();
+
 }
 
 void Graphics::drawRepeatedTexturedRect(const Rect& screenCoords,
                                         const TexturePtr& texture,
-                                        const Rect& textureCoords,
-                                        const Color& color)
+                                        const Rect& textureCoords)
 {
     if(screenCoords.isEmpty() || textureCoords.isEmpty())
         return;
+
+    if(!m_drawing) {
+        bindTexture(texture);
+        startDrawing();
+    }
 
     // render many repeated texture rects
     Rect virtualScreenCoords(0,0,screenCoords.size());
@@ -185,14 +178,19 @@ void Graphics::drawRepeatedTexturedRect(const Rect& screenCoords,
             }
 
             partialCoords.translate(screenCoords.topLeft());
-            drawTexturedRect(partialCoords, texture, partialTextureCoords, color);
+            drawTexturedRect(partialCoords, texture, partialTextureCoords);
         }
     }
+
+    if(!m_drawing)
+        stopDrawing();
 }
 
 void Graphics::drawFilledRect(const Rect& screenCoords,
                               const Color& color)
 {
+    assert(!m_drawing);
+
     if(screenCoords.isEmpty())
         return;
 
@@ -202,11 +200,18 @@ void Graphics::drawFilledRect(const Rect& screenCoords,
     int top = screenCoords.top();
     int left = screenCoords.left();
 
-    bindColor(color);
+
+    glColor4ubv(color.rgbaPtr());
+    glDisable(GL_TEXTURE_2D);
+    glBegin(GL_QUADS);
+
     glVertex2i(left,  top);
     glVertex2i(left,  bottom);
     glVertex2i(right, bottom);
     glVertex2i(right, top);
+
+    glEnd();
+    glEnable(GL_TEXTURE_2D);
 }
 
 
@@ -214,6 +219,8 @@ void Graphics::drawBoundingRect(const Rect& screenCoords,
                                 const Color& color,
                                 int innerLineWidth)
 {
+    assert(!m_drawing);
+
     if(2 * innerLineWidth > screenCoords.height() || screenCoords.isEmpty())
         return;
 
@@ -223,7 +230,9 @@ void Graphics::drawBoundingRect(const Rect& screenCoords,
     int top = screenCoords.top();
     int left = screenCoords.left();
 
-    bindColor(color);
+    glColor4ubv(color.rgbaPtr());
+    glDisable(GL_TEXTURE_2D);
+    glBegin(GL_QUADS);
 
     // top line
     glVertex2i(left,  top);
@@ -248,40 +257,34 @@ void Graphics::drawBoundingRect(const Rect& screenCoords,
     glVertex2i(right                 , bottom - innerLineWidth);
     glVertex2i(right - innerLineWidth, bottom - innerLineWidth);
     glVertex2i(right - innerLineWidth, top + innerLineWidth);
+
+    glEnd();
 }
 
 void Graphics::bindColor(const Color& color)
 {
-    // switch drawing to colored quads
-    if(m_drawMode != DRAW_COLOR_QUADS || m_boundColor != color) {
-        if(m_drawMode != DRAW_NONE)
-            glEnd();
-        glDisable(GL_TEXTURE_2D);
-        if(m_boundColor != color) {
-            glColor4ubv(color.rgbaPtr());
-            m_boundColor = color;
-        }
-        glBegin(GL_QUADS);
-        m_drawMode = DRAW_COLOR_QUADS;
+    Color tmp = color;
+    tmp.setAlpha(std::min((uint8)m_opacity, color.a()));
+    glColor4ubv(tmp.rgbaPtr());
+}
+
+void Graphics::bindTexture(const TexturePtr& texture)
+{
+    glBindTexture(GL_TEXTURE_2D, texture->getTextureId());
+}
+
+void Graphics::startDrawing()
+{
+    assert(!m_drawing);
+    glBegin(GL_QUADS);
+    m_drawing = true;
+}
+
+void Graphics::stopDrawing()
+{
+    if(m_drawing) {
+        glEnd();
+        m_drawing = false;
     }
 }
 
-void Graphics::bindTexture(const TexturePtr& texture, const Color& color)
-{
-    // switch drawing to textured quads
-    if(m_drawMode != DRAW_TEXTURE_QUADS || m_boundTexture != texture || m_boundColor != color) {
-        if(m_drawMode != DRAW_NONE)
-            glEnd();
-        glEnable(GL_TEXTURE_2D);
-        if(m_boundTexture != texture) {
-            glBindTexture(GL_TEXTURE_2D, texture->getTextureId());
-            m_boundTexture = texture;
-        }
-        if(m_boundColor != color) {
-            glColor4ubv(color.rgbaPtr());
-            m_boundColor = color;
-        }
-        glBegin(GL_QUADS);
-        m_drawMode = DRAW_TEXTURE_QUADS;
-    }
-}

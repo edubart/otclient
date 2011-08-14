@@ -49,7 +49,9 @@ public:
 
     void setImage(const ImagePtr& image) { m_image = image; }
     virtual void setFont(const FontPtr& font) { m_font = font; }
+    void setOpacity(int opacity) { m_opacity = opacity; }
     void setColor(const Color& color) { m_color = color; }
+    void setFontColor(const Color& color) { m_fontColor = color; }
     void setMarginLeft(int margin) { m_marginLeft = margin; updateGeometry(); }
     void setMarginRight(int margin) { m_marginRight = margin; updateGeometry(); }
     void setMarginTop(int margin) { m_marginTop = margin; updateGeometry(); }
@@ -86,7 +88,9 @@ public:
 
     ImagePtr getImage() const { return m_image; }
     FontPtr getFont() const { return m_font; }
+    Color getFontColor() const { return m_fontColor; }
     Color getColor() const { return m_color; }
+    int getOpacity() const { return m_opacity; }
     int getMarginLeft() const { return m_marginLeft; }
     int getMarginRight() const { return m_marginRight; }
     int getMarginTop() const { return m_marginTop; }
@@ -164,7 +168,9 @@ protected:
     // basic style components used by all widgets
     ImagePtr m_image;
     FontPtr m_font;
+    int m_opacity;
     Color m_color;
+    Color m_fontColor;
     int m_marginLeft;
     int m_marginRight;
     int m_marginTop;
