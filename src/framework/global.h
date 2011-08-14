@@ -24,6 +24,7 @@
 #include <type_traits>
 #include <functional>
 #include <regex>
+#include <unordered_map>
 
 // string algorithms
 #include <boost/algorithm/string.hpp>

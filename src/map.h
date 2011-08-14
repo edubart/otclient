@@ -13,8 +13,7 @@ public:
     void draw(int x, int y);
 
 private:
-    // Visible tiles are 15x11, but we have a +7 value cause itens visible at other floors. We have 15 floors.
-    Tile m_map[25][21][15];
+    std::unordered_map<Position, TilePtr, PositionHash> m_tiles;
 
     FrameBufferPtr m_framebuffer;
 };

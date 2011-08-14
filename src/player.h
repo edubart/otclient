@@ -8,7 +8,7 @@ class Player
 public:
 
     void setPosition(const Position& position) { m_position = position; }
-    Position getPosition() { return m_position; }
+    Position *getPosition() { return &m_position; }
 
 private:
     Position m_position;

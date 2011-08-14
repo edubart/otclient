@@ -4,6 +4,9 @@
 #include <global.h>
 #include "thing.h"
 
+class Tile;
+typedef std::shared_ptr<Tile> TilePtr;
+
 class Tile
 {
 public:

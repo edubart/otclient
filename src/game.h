@@ -9,6 +9,7 @@
 class Game
 {
 public:
+
     void setProtocol(ProtocolGame *protocolGame) { m_protocolGame = protocolGame; }
     ProtocolGame *getProtocol() { return m_protocolGame; }
 
