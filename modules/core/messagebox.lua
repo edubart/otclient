@@ -14,8 +14,8 @@ function MessageBox.create(title, text, flags)
   window.id = "messageBoxWindow"
   window.title = title
   window:centerIn("parent")
-  --window:setLocked(true)
   rootWidget:addChild(window)
+  window:lock()
 
   -- create messagebox label
   local label = UILabel.create()

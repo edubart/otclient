@@ -97,7 +97,7 @@ void UIWindow::onMousePress(UIMouseEvent& event)
         m_moving = true;
         m_movingReference = event.pos() - getGeometry().topLeft();
     } else
-        event.ignore();
+        UIWidget::onMousePress(event);
 }
 
 void UIWindow::onMouseRelease(UIMouseEvent& event)
@@ -105,7 +105,7 @@ void UIWindow::onMouseRelease(UIMouseEvent& event)
     if(m_moving)
         m_moving = false;
     else
-        event.ignore();
+        UIWidget::onMouseRelease(event);
 }
 
 void UIWindow::onMouseMove(UIMouseEvent& event)
@@ -113,5 +113,5 @@ void UIWindow::onMouseMove(UIMouseEvent& event)
     if(m_moving)
         move(event.pos() - m_movingReference);
     else
-        event.ignore();
+        UIWidget::onMouseMove(event);
 }

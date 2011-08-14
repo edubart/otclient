@@ -364,6 +364,9 @@ void UILineEdit::onKeyPress(UIKeyEvent& event)
             event.ignore();
     } else
         event.ignore();
+
+    if(!event.isAccepted())
+        UIWidget::onKeyPress(event);
 }
 
 void UILineEdit::onMousePress(UIMouseEvent& event)

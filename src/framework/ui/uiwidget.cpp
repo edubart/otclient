@@ -687,8 +687,6 @@ void UIWidget::onKeyPress(UIKeyEvent& event)
 
         if(event.isAccepted())
             break;
-        else
-            child->UIWidget::onKeyPress(event);
     }
 }
 
@@ -712,8 +710,6 @@ void UIWidget::onKeyRelease(UIKeyEvent& event)
 
         if(event.isAccepted())
             break;
-        else
-            child->UIWidget::onKeyRelease(event);
     }
 }
 
@@ -741,8 +737,6 @@ void UIWidget::onMousePress(UIMouseEvent& event)
 
         if(event.isAccepted())
             break;
-        else
-            child->UIWidget::onMousePress(event);
     }
 }
 
@@ -764,8 +758,6 @@ void UIWidget::onMouseRelease(UIMouseEvent& event)
 
         if(event.isAccepted())
             break;
-        else
-            child->UIWidget::onMouseRelease(event);
     }
 }
 
@@ -798,8 +790,6 @@ void UIWidget::onMouseMove(UIMouseEvent& event)
 
         if(event.isAccepted())
             break;
-        else
-            child->UIWidget::onMouseMove(event);
     }
 }
 
@@ -823,7 +813,5 @@ void UIWidget::onMouseWheel(UIMouseEvent& event)
 
         if(event.isAccepted())
             break;
-        else
-            child->UIWidget::onMouseWheel(event);
     }
 }
