@@ -8,6 +8,7 @@ void Map::draw(int x, int y)
     if(!m_framebuffer)
         m_framebuffer = FrameBufferPtr(new FrameBuffer(15*32, 11*32));
 
+    g_graphics.bindColor(Color::white);
     m_framebuffer->bind();
 
     Position *playerPos = g_game.getPlayer()->getPosition();

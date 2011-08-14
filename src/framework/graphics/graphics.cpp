@@ -200,7 +200,7 @@ void Graphics::drawFilledRect(const Rect& screenCoords,
     int top = screenCoords.top();
     int left = screenCoords.left();
 
-
+    glPushAttrib(GL_CURRENT_BIT);
     glColor4ubv(color.rgbaPtr());
     glDisable(GL_TEXTURE_2D);
     glBegin(GL_QUADS);
@@ -212,6 +212,7 @@ void Graphics::drawFilledRect(const Rect& screenCoords,
 
     glEnd();
     glEnable(GL_TEXTURE_2D);
+    glPopAttrib();
 }
 
 
@@ -230,6 +231,7 @@ void Graphics::drawBoundingRect(const Rect& screenCoords,
     int top = screenCoords.top();
     int left = screenCoords.left();
 
+    glPushAttrib(GL_CURRENT_BIT);
     glColor4ubv(color.rgbaPtr());
     glDisable(GL_TEXTURE_2D);
     glBegin(GL_QUADS);
@@ -259,6 +261,8 @@ void Graphics::drawBoundingRect(const Rect& screenCoords,
     glVertex2i(right - innerLineWidth, top + innerLineWidth);
 
     glEnd();
+    glEnable(GL_TEXTURE_2D);
+    glPopAttrib();
 }
 
 void Graphics::bindColor(const Color& color)
@@ -282,9 +286,8 @@ void Graphics::startDrawing()
 
 void Graphics::stopDrawing()
 {
-    if(m_drawing) {
-        glEnd();
-        m_drawing = false;
-    }
+    assert(m_drawing);
+    glEnd();
+    m_drawing = false;
 }
 
