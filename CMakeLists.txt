@@ -97,7 +97,6 @@ SET(SOURCES
     src/framework/graphics/texturemanager.cpp
     src/framework/graphics/borderimage.cpp
     src/framework/graphics/image.cpp
-    src/framework/graphics/textarea.cpp
 
     # framework otml
     src/framework/otml/otmldocument.cpp
