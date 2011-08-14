@@ -66,25 +66,28 @@ void UIButton::render()
     getFont()->renderText(m_text, textRect, AlignCenter, currentStyle.color);
 }
 
-void UIButton::onHoverChange(bool hovered)
+void UIButton::onHoverChange(UIHoverEvent& event)
 {
-    if(hovered && m_state == ButtonUp)
+    if(event.mouseEnter() && m_state == ButtonUp)
         m_state = ButtonHover;
     else if(m_state == ButtonHover)
         m_state = ButtonUp;
 }
 
-void UIButton::onMousePress(const UIMouseEvent& event)
+void UIButton::onMousePress(UIMouseEvent& event)
 {
-    if(event.button == MouseLeftButton)
+    if(event.button() == MouseLeftButton) {
         m_state = ButtonDown;
+    } else
+        event.ignore();
 }
 
-void UIButton::onMouseRelease(const UIMouseEvent& event)
+void UIButton::onMouseRelease(UIMouseEvent& event)
 {
     if(m_state == ButtonDown) {
-        if(m_onClick && getGeometry().contains(event.mousePos))
+        if(m_onClick && getGeometry().contains(event.pos()))
             m_onClick();
-        m_state = isHovered() ? ButtonHover : ButtonUp;
-    }
+        m_state = (isHovered() && isEnabled()) ? ButtonHover : ButtonUp;
+    } else
+        event.ignore();
 }

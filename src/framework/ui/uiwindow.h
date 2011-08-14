@@ -17,10 +17,10 @@ public:
     std::string getTitle() const { return m_title; }
 
 protected:
-    virtual void onGeometryUpdate();
-    virtual void onMousePress(const UIMouseEvent& event);
-    virtual void onMouseRelease(const UIMouseEvent& event);
-    virtual void onMouseMove(const UIMouseEvent& event);
+    virtual void onGeometryUpdate(UIGeometryUpdateEvent& event);
+    virtual void onMousePress(UIMouseEvent& event);
+    virtual void onMouseRelease(UIMouseEvent& event);
+    virtual void onMouseMove(UIMouseEvent& event);
 
 private:
     std::string m_title;

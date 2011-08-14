@@ -18,6 +18,9 @@ public:
     /// Remove this widget from parent then destroy it and its children
     virtual void destroy();
 
+    /// Called after the widget is loaded from OTML file, to execute onLoad event
+    virtual void load();
+
     /// Load style from otml node
     virtual void loadStyleFromOTML(const OTMLNodePtr& styleNode);
 
@@ -36,15 +39,16 @@ public:
     void setParent(const UIWidgetPtr& parent);
     void setStyle(const std::string& styleName);
     void setGeometry(const Rect& rect);
+    void setLocked(bool locked);
     void setX(int x) { move(Point(x, getY())); }
     void setY(int y) { move(Point(getX(), y)); }
     void setWidth(int width) { resize(Size(width, getHeight())); }
     void setHeight(int height) { resize(Size(getWidth(), height)); }
-    void resize(const Size& size) { setGeometry(Rect(getPosition(), size)); }
+    void resize(const Size& size) { setGeometry(Rect(getPosition(), size)); updateGeometry(); }
     void move(const Point& pos) { setGeometry(Rect(pos, getSize())); }
 
     void setImage(const ImagePtr& image) { m_image = image; }
-    void setFont(const FontPtr& font) { m_font = font; }
+    virtual void setFont(const FontPtr& font) { m_font = font; }
     void setColor(const Color& color) { m_color = color; }
     void setMarginLeft(int margin) { m_marginLeft = margin; updateGeometry(); }
     void setMarginRight(int margin) { m_marginRight = margin; updateGeometry(); }
@@ -55,8 +59,10 @@ public:
     void show() { setVisible(true); }
     void disable() { setEnabled(false); }
     void enable() { setEnabled(true); }
+    void lock();
 
-    bool isEnabled() const { return m_enabled; }
+    bool isEnabled();
+    bool isExplicitlyEnabled() const { return m_enabled; }
     bool isVisible() const { return m_visible; }
     bool isHovered() const { return m_hovered; }
     bool isFocusable() const { return m_focusable; }
@@ -99,9 +105,11 @@ public:
 
     void addChild(const UIWidgetPtr& childToAdd);
     void removeChild(const UIWidgetPtr& childToRemove);
-    void focusChild(const UIWidgetPtr& childToFocus);
-    void focusNextChild();
+    void focusChild(const UIWidgetPtr& childToFocus, FocusReason reason);
+    void focusNextChild(FocusReason reason);
     void moveChildToTop(const UIWidgetPtr& childToMove);
+    void lockChild(const UIWidgetPtr& childToLock);
+    void unlockChild(const UIWidgetPtr& childToUnlock);
 
     // for using only with anchor layouts
     void addAnchor(AnchorPoint edge, const std::string& targetId, AnchorPoint targetEdge);
@@ -112,33 +120,32 @@ public:
 
 protected:
     /// Triggered when widget is moved or resized
-    virtual void onGeometryUpdate() { }
-    /// Triggered when widget is shown or hidden
-    //virtual void onVisibilityChange(bool visible);
+    virtual void onGeometryUpdate(UIGeometryUpdateEvent& event) { }
+    // Triggered when widget change visibility/enabled/style/children/parent/layout/...
+    //virtual void onChange(const UIEvent& event);
     /// Triggered when widget gets or loses focus
-    virtual void onFocusChange(bool focused) { }
+    virtual void onFocusChange(UIFocusEvent& event) { }
     /// Triggered when the mouse enters or leaves widget area
-    virtual void onHoverChange(bool hovered) { }
-    /// Triggered when user generates a text from keyboard
-    virtual void onKeyboardText(const std::string& text);
+    virtual void onHoverChange(UIHoverEvent& event) { }
     /// Triggered when user presses key while widget has focus
-    virtual void onKeyPress(const UIKeyEvent& event);
+    virtual void onKeyPress(UIKeyEvent& event);
     /// Triggered when user releases key while widget has focus
-    virtual void onKeyRelease(const UIKeyEvent& event);
+    virtual void onKeyRelease(UIKeyEvent& event);
     /// Triggered when a mouse button is pressed down while mouse pointer is inside widget area
-    virtual void onMousePress(const UIMouseEvent& event);
+    virtual void onMousePress(UIMouseEvent& event);
     /// Triggered when a mouse button is released
-    virtual void onMouseRelease(const UIMouseEvent& event);
+    virtual void onMouseRelease(UIMouseEvent& event);
     /// Triggered when mouse moves (even when the mouse is outside widget area)
-    virtual void onMouseMove(const UIMouseEvent& event);
+    virtual void onMouseMove(UIMouseEvent& event);
     /// Triggered when mouse middle button wheels inside widget area
-    virtual void onMouseWheel(const UIMouseEvent& event);
+    virtual void onMouseWheel(UIMouseEvent& event);
 
     friend class UIManager;
 
 private:
     void destroyCheck();
 
+protected:
     UIWidgetType m_type;
     bool m_enabled;
     bool m_visible;
@@ -150,6 +157,7 @@ private:
     UILayoutPtr m_layout;
     UIWidgetWeakPtr m_parent;
     UIWidgetList m_children;
+    UIWidgetList m_lockedWidgets;
     UIWidgetPtr m_focusedChild;
     std::string m_id;
 

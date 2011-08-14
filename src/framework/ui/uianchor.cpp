@@ -6,8 +6,9 @@ UIAnchor::UIAnchor(const UIWidgetPtr& anchoredWidget, AnchorPoint anchoredEdge, 
 }
 
 UIWidgetPtr UIAnchor::getAnchorLineWidget() const {
-    if(!m_anchoredWidget.expired() && !m_anchoredWidget.lock()->isDestroyed())
-        return m_anchoredWidget.lock()->backwardsGetWidgetById(m_anchorLine.widgetId);
+    UIWidgetPtr anchoredWidget = m_anchoredWidget.lock();
+    if(anchoredWidget && !anchoredWidget->isDestroyed())
+        return anchoredWidget->backwardsGetWidgetById(m_anchorLine.widgetId);
     return nullptr;
 }
 

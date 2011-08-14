@@ -263,7 +263,7 @@ void OTClient::onInputEvent(const InputEvent& event)
 
     ProtocolGame *protocol = g_game.getProtocol();
     if(protocol) {
-        if(event.type == EventKeyUp) {
+        if(event.type == EventKeyDown) {
             if(event.keycode == KC_UP)
                 protocol->sendWalkNorth();
             if(event.keycode == KC_RIGHT)

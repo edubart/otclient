@@ -15,9 +15,6 @@ public:
     void resize(const Size& size);
     void inputEvent(const InputEvent& event);
 
-    void lockWidget(const UIWidgetPtr& widgetToLock);
-    void unlockWidget(const UIWidgetPtr& widgetToUnlock);
-
     bool importStyles(const std::string& file);
     void importStyleFromOTML(const OTMLNodePtr& styleNode);
     OTMLNodePtr getStyle(const std::string& styleName);
@@ -29,7 +26,6 @@ public:
 
 private:
     UIWidgetPtr m_rootWidget;
-    UIWidgetList m_lockedWidgets;
     std::map<std::string, OTMLNodePtr> m_styles;
 };
 

@@ -12,6 +12,7 @@ void UIManager::init()
     // creates root widget
     m_rootWidget = UIWidgetPtr(new UIWidget);
     m_rootWidget->setId("root");
+    m_rootWidget->setHovered(true);
 
     UIAnchorLayoutPtr anchorLayout(new UIAnchorLayout);
     m_rootWidget->setLayout(anchorLayout);
@@ -27,8 +28,7 @@ void UIManager::terminate()
 
 void UIManager::render()
 {
-    if(m_rootWidget)
-        m_rootWidget->render();
+    m_rootWidget->render();
 }
 
 void UIManager::resize(const Size& size)
@@ -41,89 +41,49 @@ void UIManager::inputEvent(const InputEvent& event)
 {
     // translate input event to ui events
     if(m_rootWidget) {
-        if(event.type & EventTextEnter) {
-            m_rootWidget->onKeyboardText(std::string(1, event.keychar));
-        } else if(event.type & EventKeyboardAction) {
-            UIKeyEvent e;
-            e.keycode = event.keycode;
-            e.keyboardModifiers = KeyboardNoModifier;
+        if(event.type & EventKeyboardAction) {
+            int keyboardModifiers = KeyboardNoModifier;
             if(event.ctrl)
-                e.keyboardModifiers |= KeyboardCtrlModifier;
+                keyboardModifiers |= KeyboardCtrlModifier;
             if(event.shift)
-                e.keyboardModifiers |= KeyboardShiftModifier;
+                keyboardModifiers |= KeyboardShiftModifier;
             if(event.alt)
-                e.keyboardModifiers |= KeyboardAltModifier;
+                keyboardModifiers |= KeyboardAltModifier;
 
-            if(event.type & EventKeyDown)
+            UIKeyEvent e(event.keycode, event.keychar, keyboardModifiers);
+            if(event.type == EventKeyDown)
                 m_rootWidget->onKeyPress(e);
             else
                 m_rootWidget->onKeyRelease(e);
         } else if(event.type & EventMouseAction) {
-            UIMouseEvent e;
-            e.mouseMoved = event.mouseMoved;
-            e.mousePos = event.mousePos;
-            e.button = MouseNoButton;
-            e.wheelDirection = MouseNoWheel;
-
             if(event.type == EventMouseMove) {
+                UIMouseEvent e(event.mousePos, event.mousePos);
                 m_rootWidget->onMouseMove(e);
             }
             else if(event.type & EventMouseWheel) {
+                MouseWheelDirection dir;
                 if(event.type & EventDown)
-                    e.wheelDirection = MouseWheelDown;
+                    dir = MouseWheelDown;
                 else if(event.type & EventUp)
-                    e.wheelDirection = MouseWheelUp;
+                    dir = MouseWheelUp;
+
+                UIMouseEvent e(event.mousePos, dir);
                 m_rootWidget->onMouseWheel(e);
             } else  {
+                MouseButton button;
                 if(event.type & EventMouseLeftButton)
-                    e.button = MouseLeftButton;
+                    button = MouseLeftButton;
                 else if(event.type & EventMouseMidButton)
-                    e.button = MouseMidButton;
+                    button = MouseMidButton;
                 else if(event.type & EventMouseRightButton)
-                    e.button = MouseRightButton;
+                    button = MouseRightButton;
 
+                UIMouseEvent e(event.mousePos, button);
                 if(event.type & EventDown)
                     m_rootWidget->onMousePress(e);
                 else if(event.type & EventUp)
                     m_rootWidget->onMouseRelease(e);
             }
-        }
-    }
-}
-
-void UIManager::lockWidget(const UIWidgetPtr& widgetToLock)
-{
-    assert(m_rootWidget->hasChild(widgetToLock));
-
-    // disable all other widgets
-    for(const UIWidgetPtr& widget : m_rootWidget->getChildren()) {
-        if(widget == widgetToLock)
-            widget->setEnabled(true);
-        else
-            widget->setEnabled(false);
-    }
-
-    m_lockedWidgets.push_front(widgetToLock);
-}
-
-void UIManager::unlockWidget(const UIWidgetPtr& widgetToUnlock)
-{
-    assert(m_rootWidget->hasChild(widgetToUnlock));
-
-    auto it = std::find(m_lockedWidgets.begin(), m_lockedWidgets.end(), widgetToUnlock);
-    if(it != m_lockedWidgets.end()) {
-        m_lockedWidgets.erase(it);
-        UIWidgetPtr newLockedWidget;
-        if(m_lockedWidgets.size() > 0)
-            newLockedWidget = m_lockedWidgets.front();
-        for(const UIWidgetPtr& child : m_rootWidget->getChildren()) {
-            if(newLockedWidget) {
-                if(child == newLockedWidget)
-                    child->setEnabled(true);
-                else
-                    child->setEnabled(false);
-            } else
-                child->setEnabled(true);
         }
     }
 }
@@ -197,6 +157,9 @@ UIWidgetPtr UIManager::loadUI(const std::string& file)
                 widget = loadWidgetFromOTML(node);
             }
         }
+
+        // schedule onLoad events
+        widget->load();
         return widget;
     } catch(std::exception& e) {
         logError("ERROR: failed to load ui from '", file, "':\n", e.what());

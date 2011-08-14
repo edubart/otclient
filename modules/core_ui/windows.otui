@@ -18,3 +18,4 @@ Window < UIWindow
 
 MainWindow < Window
   anchors.centerIn: parent
+  onLoad: function(self) self:lock() end

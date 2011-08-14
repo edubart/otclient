@@ -30,9 +30,9 @@ public:
     UIButtonPtr asUIButton() { return std::static_pointer_cast<UIButton>(shared_from_this()); }
 
 protected:
-    virtual void onHoverChange(bool hovered);
-    virtual void onMousePress(const UIMouseEvent& event);
-    virtual void onMouseRelease(const UIMouseEvent& event);
+    virtual void onHoverChange(UIHoverEvent& event);
+    virtual void onMousePress(UIMouseEvent& event);
+    virtual void onMouseRelease(UIMouseEvent& event);
 
     ButtonState m_state;
     ButtonStateStyle m_statesStyle[3];

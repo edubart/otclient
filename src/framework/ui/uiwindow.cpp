@@ -68,12 +68,10 @@ void UIWindow::render()
     UIWidget::render();
 }
 
-void UIWindow::onGeometryUpdate()
+void UIWindow::onGeometryUpdate(UIGeometryUpdateEvent& event)
 {
-    UIWidget::onGeometryUpdate();
-
     // bind window rect to parent rect
-    Rect boundRect = getGeometry();
+    Rect boundRect = event.rect();
     UIWidgetPtr parent = getParent();
     if(parent) {
         Rect parentRect = parent->getGeometry();
@@ -86,31 +84,34 @@ void UIWindow::onGeometryUpdate()
         if(boundRect.right() > parentRect.right())
             boundRect.moveRight(parentRect.right());
     }
-    if(boundRect != getGeometry())
+
+    if(boundRect != event.rect())
         setGeometry(boundRect);
 }
 
-void UIWindow::onMousePress(const UIMouseEvent& event)
+void UIWindow::onMousePress(UIMouseEvent& event)
 {
-    UIWidget::onMousePress(event);
     Rect headRect = getGeometry();
     headRect.setHeight(m_headHeight);
-    if(headRect.contains(event.mousePos)) {
+    if(headRect.contains(event.pos())) {
         m_moving = true;
-        m_movingReference = event.mousePos - getGeometry().topLeft();
-    }
+        m_movingReference = event.pos() - getGeometry().topLeft();
+    } else
+        event.ignore();
 }
 
-void UIWindow::onMouseRelease(const UIMouseEvent& event)
+void UIWindow::onMouseRelease(UIMouseEvent& event)
 {
-    UIWidget::onMouseRelease(event);
     if(m_moving)
         m_moving = false;
+    else
+        event.ignore();
 }
 
-void UIWindow::onMouseMove(const UIMouseEvent& event)
+void UIWindow::onMouseMove(UIMouseEvent& event)
 {
-    UIWidget::onMouseMove(event);
     if(m_moving)
-        move(event.mousePos - m_movingReference);
+        move(event.pos() - m_movingReference);
+    else
+        event.ignore();
 }

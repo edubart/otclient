@@ -41,6 +41,7 @@ MainWindow
       anchors.bottom: parent.bottom
       margin.bottom: 9
       margin.right: 9
+      onClick: displayErrorBox("Error", "Not implemented yet")
 
   HorizontalSeparator
     anchors.left: parent.left

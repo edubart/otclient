@@ -46,6 +46,7 @@ void UIWidget::destroy()
     // destroy only once
     if(!m_destroyed) {
         // clear additional reference
+        m_lockedWidgets.clear();
         m_focusedChild.reset();
 
         // destroy children
@@ -78,6 +79,20 @@ void UIWidget::destroyCheck()
     // check for leaks upon widget destruction
     if(realUseCount > 0)
         logWarning("WARNING: destroyed widget with id '",m_id,"', but it still have ",realUseCount," references left");
+}
+
+void UIWidget::load()
+{
+    for(const UIWidgetPtr& child : m_children)
+        child->load();
+
+    // schedule onLoad
+    UIWidgetPtr self = asUIWidget();
+    g_dispatcher.addEvent([self]() {
+        // this widget could be destroyed before the event happens
+        if(!self->isDestroyed())
+            self->callLuaField("onLoad");
+    });
 }
 
 void UIWidget::loadStyleFromOTML(const OTMLNodePtr& styleNode)
@@ -166,6 +181,10 @@ void UIWidget::loadStyleFromOTML(const OTMLNodePtr& styleNode)
                 addAnchor(myEdge, target, targetEdge);
             }
         }
+        else if(node->tag() == "onLoad") {
+            g_lua.loadFunction(node->read<std::string>(), "@" + node->source() + "[" + node->tag() + "]");
+            luaSetField("onLoad");
+        }
     }
 
     if(!m_font)
@@ -238,43 +257,34 @@ void UIWidget::setGeometry(const Rect& rect)
     // avoid massive updates
     if(!m_updateScheduled) {
         UIWidgetPtr self = asUIWidget();
-        g_dispatcher.addEvent([self]() {
+        g_dispatcher.addEvent([self, oldRect]() {
             self->m_updateScheduled = false;
+            UIGeometryUpdateEvent e(oldRect, self->getGeometry());
             // this widget could be destroyed before the event happens
             if(!self->isDestroyed())
-                self->onGeometryUpdate();
+                self->onGeometryUpdate(e);
         });
         m_updateScheduled = true;
     }
 }
 
-void UIWidget::focusChild(const UIWidgetPtr& focusedChild)
+void UIWidget::lock()
 {
     assert(!m_destroyed);
 
-    if(focusedChild != m_focusedChild) {
-        UIWidgetPtr oldFocused = m_focusedChild;
-        m_focusedChild = focusedChild;
+    UIWidgetPtr parent = getParent();
+    if(parent)
+        parent->lockChild(asUIWidget());
+}
 
-        if(oldFocused) {
-            g_dispatcher.addEvent([oldFocused]() {
-                // the widget can be destroyed before the event happens
-                if(!oldFocused->isDestroyed())
-                    oldFocused->onFocusChange(false);
-            });
-        }
-        if(focusedChild) {
-            g_dispatcher.addEvent([focusedChild]() {
-                // the widget can be destroyed before the event happens
-                if(!focusedChild->isDestroyed())
-                    focusedChild->onFocusChange(true);
-            });
-        }
-    }
-
-    // when containers are focused they go to the top
-    if(focusedChild && focusedChild->hasChildren())
-        moveChildToTop(focusedChild);
+bool UIWidget::isEnabled()
+{
+    if(!m_enabled)
+        return false;
+    else if(UIWidgetPtr parent = getParent())
+        return parent->isEnabled();
+    else
+        return false;
 }
 
 bool UIWidget::hasFocus()
@@ -458,6 +468,37 @@ UIWidgetPtr UIWidget::backwardsGetWidgetById(const std::string& id)
     return widget;
 }
 
+void UIWidget::focusChild(const UIWidgetPtr& focusedChild, FocusReason reason)
+{
+    assert(!m_destroyed);
+
+    if(focusedChild != m_focusedChild) {
+        UIWidgetPtr oldFocused = m_focusedChild;
+        m_focusedChild = focusedChild;
+
+        if(oldFocused) {
+            g_dispatcher.addEvent([oldFocused,reason]() {
+                // the widget can be destroyed before the event happens
+                UIFocusEvent e(reason, false);
+                if(!oldFocused->isDestroyed())
+                    oldFocused->onFocusChange(e);
+            });
+        }
+        if(focusedChild) {
+            g_dispatcher.addEvent([focusedChild,reason]() {
+                // the widget can be destroyed before the event happens
+                UIFocusEvent e(reason, true);
+                if(!focusedChild->isDestroyed())
+                    focusedChild->onFocusChange(e);
+            });
+        }
+
+        // when containers are focused they go to the top
+        if(focusedChild && focusedChild->hasChildren())
+            moveChildToTop(focusedChild);
+    }
+}
+
 void UIWidget::addChild(const UIWidgetPtr& childToAdd)
 {
     assert(!m_destroyed);
@@ -471,7 +512,7 @@ void UIWidget::addChild(const UIWidgetPtr& childToAdd)
 
     // focus it if there is no focused child yet
     if(!m_focusedChild && childToAdd->isFocusable())
-        focusChild(childToAdd);
+        focusChild(childToAdd, ActiveFocusReason);
 }
 
 void UIWidget::removeChild(const UIWidgetPtr& childToRemove)
@@ -480,7 +521,10 @@ void UIWidget::removeChild(const UIWidgetPtr& childToRemove)
 
     // defocus if needed
     if(m_focusedChild == childToRemove)
-        focusChild(nullptr);
+        focusChild(nullptr, ActiveFocusReason);
+
+    // try to unlock
+    unlockChild(childToRemove);
 
     // remove from children list
     auto it = std::find(m_children.begin(), m_children.end(), childToRemove);
@@ -492,7 +536,7 @@ void UIWidget::removeChild(const UIWidgetPtr& childToRemove)
     childToRemove->setParent(nullptr);
 }
 
-void UIWidget::focusNextChild()
+void UIWidget::focusNextChild(FocusReason reason)
 {
     assert(!m_destroyed);
 
@@ -512,7 +556,7 @@ void UIWidget::focusNextChild()
         toFocus = m_children.back();
 
     if(toFocus)
-        focusChild(toFocus);
+        focusChild(toFocus, reason);
 }
 
 void UIWidget::moveChildToTop(const UIWidgetPtr& childToMove)
@@ -524,6 +568,44 @@ void UIWidget::moveChildToTop(const UIWidgetPtr& childToMove)
     assert(it != m_children.end());
     m_children.erase(it);
     m_children.push_back(childToMove);
+}
+
+void UIWidget::lockChild(const UIWidgetPtr& childToLock)
+{
+    assert(hasChild(childToLock));
+
+    // disable all other widgets
+    for(const UIWidgetPtr& widget : m_children) {
+        if(widget == childToLock)
+            widget->setEnabled(true);
+        else
+            widget->setEnabled(false);
+    }
+
+    m_lockedWidgets.push_front(childToLock);
+}
+
+void UIWidget::unlockChild(const UIWidgetPtr& childToUnlock)
+{
+    assert(hasChild(childToUnlock));
+
+    auto it = std::find(m_lockedWidgets.begin(), m_lockedWidgets.end(), childToUnlock);
+    if(it != m_lockedWidgets.end()) {
+        m_lockedWidgets.erase(it);
+        UIWidgetPtr newLockedWidget;
+        if(m_lockedWidgets.size() > 0)
+            newLockedWidget = m_lockedWidgets.front();
+
+        for(const UIWidgetPtr& child : m_children) {
+            if(newLockedWidget) {
+                if(child == newLockedWidget)
+                    child->setEnabled(true);
+                else
+                    child->setEnabled(false);
+            } else
+                child->setEnabled(true);
+        }
+    }
 }
 
 void UIWidget::addAnchor(AnchorPoint edge, const std::string& targetId, AnchorPoint targetEdge)
@@ -554,117 +636,175 @@ void UIWidget::fill(const std::string& targetId)
     addAnchor(AnchorBottom, targetId, AnchorBottom);
 }
 
-void UIWidget::onKeyboardText(const std::string& text)
+void UIWidget::onKeyPress(UIKeyEvent& event)
 {
     assert(!m_destroyed);
 
-    // do a backup of children list, because it may change while looping it
-    UIWidgetList children = m_children;
-    for(const UIWidgetPtr& child : children) {
-        if(!child->isEnabled() || !child->isVisible())
-            continue;
-        // key events go only to containers or focused child
-        if(child->hasChildren() || child->hasFocus())
-            child->onKeyboardText(text);
+    event.ignore();
+
+    // focus next child when pressing tab
+    if(isFocusable() && hasFocus() && !hasChildren() && event.keyCode() == KC_TAB) {
+        if(UIWidgetPtr parent = getParent()) {
+            g_dispatcher.addEvent([parent]{
+                if(!parent->isDestroyed())
+                    parent->focusNextChild(TabFocusReason);
+            });
+        }
+        event.accept();
+        return;
     }
-}
-
-void UIWidget::onKeyPress(const UIKeyEvent& event)
-{
-    assert(!m_destroyed);
 
     // do a backup of children list, because it may change while looping it
     UIWidgetList children = m_children;
     for(const UIWidgetPtr& child : children) {
-        if(!child->isEnabled() || !child->isVisible())
+        if(!child->isExplicitlyEnabled() || !child->isVisible())
             continue;
+
         // key events go only to containers or focused child
-        if(child->hasChildren() || child->hasFocus())
+        if(child->hasChildren() || child->hasFocus()) {
+            event.accept();
             child->onKeyPress(event);
+        }
+
+        if(event.isAccepted())
+            break;
+        else
+            child->UIWidget::onKeyPress(event);
     }
 }
 
-void UIWidget::onKeyRelease(const UIKeyEvent& event)
+void UIWidget::onKeyRelease(UIKeyEvent& event)
 {
     assert(!m_destroyed);
+
+    event.ignore();
 
     // do a backup of children list, because it may change while looping it
     UIWidgetList children = m_children;
     for(const UIWidgetPtr& child : children) {
-        if(!child->isEnabled() || !child->isVisible())
+        if(!child->isExplicitlyEnabled() || !child->isVisible())
             continue;
+
         // key events go only to containers or focused child
-        if(child->hasChildren() || child->hasFocus())
+        if(child->hasChildren() || child->hasFocus()) {
+            event.accept();
             child->onKeyRelease(event);
+        }
+
+        if(event.isAccepted())
+            break;
+        else
+            child->UIWidget::onKeyRelease(event);
     }
 }
 
-void UIWidget::onMousePress(const UIMouseEvent& event)
+void UIWidget::onMousePress(UIMouseEvent& event)
 {
     assert(!m_destroyed);
+
+    event.ignore();
 
     // do a backup of children list, because it may change while looping it
     UIWidgetList children = m_children;
     for(const UIWidgetPtr& child : children) {
-        if(!child->isEnabled() || !child->isVisible())
+        if(!child->isExplicitlyEnabled() || !child->isVisible())
             continue;
-        // mouse press events only go to children that contains the mouse position
-        if(child->getGeometry().contains(event.mousePos) && child == getChildByPos(event.mousePos)) {
-            child->onMousePress(event);
 
+        // mouse press events only go to children that contains the mouse position
+        if(child->getGeometry().contains(event.pos()) && child == getChildByPos(event.pos())) {
             // focus it
             if(child->isFocusable())
-                focusChild(child);
+                focusChild(child, MouseFocusReason);
+
+            event.accept();
+            child->onMousePress(event);
         }
+
+        if(event.isAccepted())
+            break;
+        else
+            child->UIWidget::onMousePress(event);
     }
 }
 
-void UIWidget::onMouseRelease(const UIMouseEvent& event)
+void UIWidget::onMouseRelease(UIMouseEvent& event)
 {
     assert(!m_destroyed);
+
+    event.ignore();
 
     // do a backup of children list, because it may change while looping it
     UIWidgetList children = m_children;
     for(const UIWidgetPtr& child : children) {
-        if(!child->isEnabled() || !child->isVisible())
+        if(!child->isExplicitlyEnabled() || !child->isVisible())
             continue;
+
         // mouse release events go to all children
+        event.accept();
         child->onMouseRelease(event);
+
+        if(event.isAccepted())
+            break;
+        else
+            child->UIWidget::onMouseRelease(event);
     }
 }
 
-void UIWidget::onMouseMove(const UIMouseEvent& event)
+void UIWidget::onMouseMove(UIMouseEvent& event)
 {
     assert(!m_destroyed);
+
+    event.ignore();
 
     // do a backup of children list, because it may change while looping it
     UIWidgetList children = m_children;
     for(const UIWidgetPtr& child : children) {
-        if(!child->isEnabled() || !child->isVisible())
+        if(!child->isExplicitlyEnabled() || !child->isVisible())
             continue;
 
-        // update child over status
-        bool overChild = (child->getGeometry().contains(event.mousePos) && child == getChildByPos(event.mousePos));
+        // check if the mouse is relally over this child
+        bool overChild = (isHovered() &&
+                          child->getGeometry().contains(event.pos()) &&
+                          child == getChildByPos(event.pos()));
         if(overChild != child->isHovered()) {
             child->setHovered(overChild);
-            child->onHoverChange(overChild);
+
+            UIHoverEvent e(overChild);
+            child->onHoverChange(e);
         }
+
         // mouse move events go to all children
+        event.accept();
         child->onMouseMove(event);
+
+        if(event.isAccepted())
+            break;
+        else
+            child->UIWidget::onMouseMove(event);
     }
 }
 
-void UIWidget::onMouseWheel(const UIMouseEvent& event)
+void UIWidget::onMouseWheel(UIMouseEvent& event)
 {
     assert(!m_destroyed);
+
+    event.ignore();
 
     // do a backup of children list, because it may change while looping it
     UIWidgetList children = m_children;
     for(const UIWidgetPtr& child : children) {
-        if(!child->isEnabled() || !child->isVisible())
+        if(!child->isExplicitlyEnabled() || !child->isVisible())
             continue;
+
         // mouse wheel events only go to children that contains the mouse position
-        if(child->getGeometry().contains(event.mousePos) && child == getChildByPos(event.mousePos))
+        if(child->getGeometry().contains(event.pos()) && child == getChildByPos(event.pos())) {
+            event.accept();
             child->onMouseWheel(event);
+        }
+
+        if(event.isAccepted())
+            break;
+        else
+            child->UIWidget::onMouseWheel(event);
     }
 }

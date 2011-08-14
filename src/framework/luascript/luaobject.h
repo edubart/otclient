@@ -53,17 +53,20 @@ private:
 
 template<typename... T>
 int LuaObject::callLuaField(const std::string& field, const T&... args) {
-    // note that the field must be retrieved from this object lua value
-    // to force using the __index metamethod of it's metatable
-    // so cannot use LuaObject::getField here
-    // push field
-    g_lua.pushObject(asLuaObject());
-    g_lua.getField(field);
+    if(m_fieldsTableRef != -1) {
+        // note that the field must be retrieved from this object lua value
+        // to force using the __index metamethod of it's metatable
+        // so cannot use LuaObject::getField here
+        // push field
+        g_lua.pushObject(asLuaObject());
+        g_lua.getField(field);
 
-    // the first argument is always this object (self)
-    g_lua.insert(-2);
-    g_lua.polymorphicPush(args...);
-    return g_lua.protectedCall(1 + sizeof...(args));
+        // the first argument is always this object (self)
+        g_lua.insert(-2);
+        g_lua.polymorphicPush(args...);
+        return g_lua.protectedCall(1 + sizeof...(args));
+    } else
+        return 0;
 }
 
 template<typename T>

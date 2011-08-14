@@ -39,7 +39,7 @@ void UIAnchorLayout::updateWidget(const UIWidgetPtr& widget)
     bool verticalMoved = false;
     bool horizontalMoved = false;
 
-    // TODO: remove expired anchors
+    // FIXME: release expired anchors
     for(const UIAnchor& anchor : m_anchors) {
         if(anchor.getAnchoredWidget() == widget && anchor.getAnchorLineWidget()) {
             int point = anchor.getAnchorLinePoint();

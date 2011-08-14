@@ -29,6 +29,7 @@ void LuaInterface::registerFunctions()
     g_lua.bindClassMemberFunction<UIWidget>("addAnchor", &UIWidget::addAnchor);
     g_lua.bindClassMemberFunction<UIWidget>("getChild", &UIWidget::getChildById);
     g_lua.bindClassMemberFunction<UIWidget>("addChild", &UIWidget::addChild);
+    g_lua.bindClassMemberFunction<UIWidget>("lock", &UIWidget::lock);
 
     // UILabel
     g_lua.registerClass<UILabel, UIWidget>();
