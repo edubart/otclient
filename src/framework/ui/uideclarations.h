@@ -30,7 +30,8 @@ enum UIWidgetType {
     UITypeLabel,
     UITypeButton,
     UITypeLineEdit,
-    UITypeWindow
+    UITypeWindow,
+    UITypeList
 };
 
 enum FocusReason {

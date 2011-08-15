@@ -10,3 +10,6 @@ RoundedPanel < Panel
   border-image:
     source: /core_ui/images/panel_rounded.png
     border: 4
+
+RectPanel < UIWidget
+  image: /core_ui/images/emptyrect.png
