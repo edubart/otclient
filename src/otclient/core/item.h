@@ -9,7 +9,7 @@ class Item : public Thing
 public:
     Item();
 
-    virtual ThingAttributes *getAttributes();
+    virtual const ThingAttributes& getAttributes();
     void draw(int x, int y);
 
     void setCount(uint8 count) { m_count = count; }

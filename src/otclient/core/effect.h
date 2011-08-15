@@ -10,7 +10,7 @@ class Effect : public Thing
 public:
     Effect();
 
-    virtual ThingAttributes *getAttributes();
+    virtual const ThingAttributes& getAttributes();
     void draw(int x, int y);
 
 private:

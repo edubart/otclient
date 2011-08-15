@@ -37,7 +37,7 @@ void UIManager::resize(const Size& size)
         m_rootWidget->resize(size);
 }
 
-void UIManager::inputEvent(const InputEvent& event)
+void UIManager::inputEvent(const PlatformEvent& event)
 {
     // translate input event to ui events
     if(m_rootWidget) {

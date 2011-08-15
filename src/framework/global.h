@@ -29,6 +29,7 @@
 #include <typeinfo>
 #include <array>
 #include <iomanip>
+#include <unordered_map>
 
 // boost utilities
 #include <boost/algorithm/string.hpp>

@@ -10,4 +10,5 @@ otclient.exe
 .kdev*
 otclient.kdev4
 CMakeLists.txt.user
+callgrind.out.*
 !.gitignore

@@ -7,21 +7,14 @@
 struct ThingAttributes
 {
     ThingAttributes();
-    ~ThingAttributes();
 
     bool stackable, alwaysOnTop, useable, readable, moveable, blockSolid, blockProjectile, blockPathFind, pickupable,
          isHangable, isHorizontal, isVertical, rotable, hasHeight, lookThrough, hasMiniMapColor;
     uint8 alwaysOnTopOrder, width, height, blendframes, xdiv, ydiv, zdiv, animcount, xOffset, yOffset;
-    uint16 id, speed, subParam07, subParam08, lightLevel, lightColor, miniMapColor;
-    uint16 *sprites;
+    uint16 speed, subParam07, subParam08, lightLevel, lightColor, miniMapColor;
+    std::vector<int> sprites;
     ThingAttributesGroup group;
 };
-
-class Creature;
-class Item;
-
-class Thing;
-typedef std::shared_ptr<Thing> ThingPtr;
 
 class Thing
 {
@@ -46,7 +39,7 @@ public:
     Position *getPosition() { return &m_position; }
 
     virtual void draw(int, int) {}
-    virtual ThingAttributes *getAttributes() { return NULL; }
+    virtual const ThingAttributes& getAttributes() = 0;
 
     virtual Item* getItem() { return NULL; }
     virtual const Item *getItem() const { return NULL; }
@@ -62,4 +55,4 @@ protected:
 
 };
 
-#endif // THING_H
+#endif

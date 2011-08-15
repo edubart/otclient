@@ -224,7 +224,7 @@ Size Font::calculateTextRectSize(const std::string& text)
 void Font::calculateGlyphsWidthsAutomatically(const Size& glyphSize)
 {
     int numHorizontalGlyphs = m_texture->getSize().width() / glyphSize.width();
-    uchar *texturePixels = m_texture->getPixels();
+    auto texturePixels = m_texture->getPixels();
 
     // small AI to auto calculate pixels widths
     for(int glyph = m_firstGlyph; glyph< 256; ++glyph) {
@@ -256,6 +256,4 @@ void Font::calculateGlyphsWidthsAutomatically(const Size& glyphSize)
         // store glyph size
         m_glyphsSize[glyph].setSize(width, m_glyphHeight);
     }
-
-    delete[] texturePixels;
 }

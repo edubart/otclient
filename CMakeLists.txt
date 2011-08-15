@@ -58,8 +58,8 @@ SET(SOURCES
     # otclient core
     src/otclient/core/game.cpp
     src/otclient/core/map.cpp
-    src/otclient/core/tibiadat.cpp
-    src/otclient/core/tibiaspr.cpp
+    src/otclient/core/datmanager.cpp
+    src/otclient/core/spritemanager.cpp
     src/otclient/core/item.cpp
     src/otclient/core/tile.cpp
     src/otclient/core/thing.cpp

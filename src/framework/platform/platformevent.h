@@ -151,7 +151,7 @@ enum InputKeyCode {
     KC_MEDIASELECT = 0xED     // Media Select
 };
 
-enum InputEventType {
+enum PlatformEventType {
     EventNone                    = 0,
     EventMouseAction             = 1,
     EventKeyboardAction          = 2,
@@ -175,7 +175,7 @@ enum InputEventType {
     EventMouseWheelDown          = EventMouseAction | EventMouseWheel | EventDown
 };
 
-struct InputEvent {
+struct PlatformEvent {
     int type;
     Point mousePos;
     Point mouseMoved;

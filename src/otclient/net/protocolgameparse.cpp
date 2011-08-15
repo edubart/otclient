@@ -1,7 +1,7 @@
 #include "protocolgame.h"
 
 #include <otclient/core/player.h>
-#include <otclient/core/tibiadat.h>
+#include <otclient/core/datmanager.h>
 #include <otclient/core/game.h>
 #include <otclient/core/map.h>
 #include <otclient/core/effect.h>
@@ -926,9 +926,10 @@ ItemPtr ProtocolGame::internalGetItem(InputMessage& msg, uint16 id)
         id = msg.getU16();
     item->setId(id);
 
-    ThingAttributes *itemAttributes = g_tibiaDat.getItemAttributes(id);
-    if(itemAttributes->stackable || itemAttributes->group == THING_GROUP_FLUID || itemAttributes->group == THING_GROUP_SPLASH)
+    const ThingAttributes& itemAttributes = g_dat.getItemAttributes(id);
+    if(itemAttributes.stackable || itemAttributes.group == THING_GROUP_FLUID || itemAttributes.group == THING_GROUP_SPLASH) {
         item->setCount(msg.getU8());
+    }
 
     return item;
 }

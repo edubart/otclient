@@ -1,5 +1,5 @@
 #include "thing.h"
-#include "tibiaspr.h"
+#include "spritemanager.h"
 #include <framework/graphics/graphics.h>
 
 ThingAttributes::ThingAttributes()
@@ -28,7 +28,6 @@ ThingAttributes::ThingAttributes()
     hasMiniMapColor = false;
     subParam07 = 0;
     subParam08 = 0;
-    sprites = NULL;
     width = 0;
     height = 0;
     blendframes = 0;
@@ -40,12 +39,6 @@ ThingAttributes::ThingAttributes()
     yOffset = 0;
 }
 
-ThingAttributes::~ThingAttributes()
-{
-    if(sprites)
-        delete []sprites;
-}
-
 Thing::Thing()
 {
     m_type = TYPE_NONE;
@@ -53,31 +46,33 @@ Thing::Thing()
 
 void Thing::internalDraw(int x, int y, int blendframes, int xdiv, int ydiv, int zdiv, int anim)
 {
-    ThingAttributes *thingAttributes = getAttributes();
-    if(!thingAttributes)
-        return;
+    const ThingAttributes& attributes = getAttributes();
 
-    for(int yi = 0; yi < thingAttributes->height; yi++) {
-        for(int xi = 0; xi < thingAttributes->width; xi++) {
-            uint16 sprIndex = xi +
-                    yi * thingAttributes->width +
-                    blendframes * thingAttributes->width * thingAttributes->height +
-                    xdiv * thingAttributes->width * thingAttributes->height * thingAttributes->blendframes +
-                    ydiv * thingAttributes->width * thingAttributes->height * thingAttributes->blendframes * thingAttributes->xdiv +
-                    zdiv * thingAttributes->width * thingAttributes->height * thingAttributes->blendframes * thingAttributes->xdiv * thingAttributes->ydiv +
-                    anim * thingAttributes->width * thingAttributes->height * thingAttributes->blendframes * thingAttributes->xdiv * thingAttributes->ydiv * thingAttributes->zdiv;
-            uint16 itemId = thingAttributes->sprites[sprIndex];
-            if(itemId == 0xFFFF)
+    for(int yi = 0; yi < attributes.height; yi++) {
+        for(int xi = 0; xi < attributes.width; xi++) {
+            int sprIndex = xi +
+                    yi * attributes.width +
+                    blendframes * attributes.width * attributes.height +
+                    xdiv * attributes.width * attributes.height * attributes.blendframes +
+                    ydiv * attributes.width * attributes.height * attributes.blendframes * attributes.xdiv +
+                    zdiv * attributes.width * attributes.height * attributes.blendframes * attributes.xdiv * attributes.ydiv +
+                    anim * attributes.width * attributes.height * attributes.blendframes * attributes.xdiv * attributes.ydiv * attributes.zdiv;
+
+            int spriteId = attributes.sprites[sprIndex];
+            if(!spriteId)
                 continue;
-            TexturePtr data = g_tibiaSpr.getSprite(itemId);
+
+            TexturePtr spriteTex = g_sprites.getSpriteTexture(spriteId);
+            if(spriteTex->isEmpty())
+                continue;
 
             int offsetX = 0, offsetY = 0;
-            if(thingAttributes->hasHeight) {
-                offsetX = thingAttributes->xOffset;
-                offsetY = thingAttributes->xOffset; // << look to xoffset
+            if(attributes.hasHeight) {
+                offsetX = attributes.xOffset;
+                offsetY = attributes.xOffset; // << look to xoffset
             }
 
-            g_graphics.drawTexturedRect(Rect((x - xi*32) - offsetX, (y - yi*32) - offsetY, 32, 32), data, Rect(0, 0, 32, 32));
+            g_graphics.drawTexturedRect(Rect((x - xi*32) - offsetX, (y - yi*32) - offsetY, 32, 32), spriteTex, Rect(0, 0, 32, 32));
         }
     }
 }

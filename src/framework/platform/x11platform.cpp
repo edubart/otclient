@@ -260,7 +260,7 @@ void Platform::terminate()
 void Platform::poll()
 {
     XEvent event, peekevent;
-    static InputEvent inputEvent;
+    static PlatformEvent inputEvent;
     while(XPending(x11.display) > 0) {
         XNextEvent(x11.display, &event);
 
@@ -335,7 +335,7 @@ void Platform::poll()
                         inputEvent.type = EventTextEnter;
                         inputEvent.keychar = buf[0];
                         inputEvent.keycode = KC_UNKNOWN;
-                        m_listener->onInputEvent(inputEvent);
+                        m_listener->onPlatformEvent(inputEvent);
                     }
                 }
 
@@ -348,7 +348,7 @@ void Platform::poll()
                     inputEvent.keycode = x11.keyMap[keysym];
                     inputEvent.type = (event.type == KeyPress) ? EventKeyDown : EventKeyUp;
                     inputEvent.keychar = (len > 0) ? buf[0] : 0;
-                    m_listener->onInputEvent(inputEvent);
+                    m_listener->onPlatformEvent(inputEvent);
                 }
                 break;
             }
@@ -371,7 +371,7 @@ void Platform::poll()
                         inputEvent.type = EventMouseWheelDown;
                         break;
                 }
-                m_listener->onInputEvent(inputEvent);
+                m_listener->onPlatformEvent(inputEvent);
                 break;
 
             case MotionNotify:
@@ -380,7 +380,7 @@ void Platform::poll()
                 Point newMousePos(event.xbutton.x, event.xbutton.y);
                 inputEvent.mouseMoved = newMousePos - inputEvent.mousePos;
                 inputEvent.mousePos = newMousePos;
-                m_listener->onInputEvent(inputEvent);
+                m_listener->onPlatformEvent(inputEvent);
                 break;
             }
 

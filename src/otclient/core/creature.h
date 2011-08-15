@@ -18,7 +18,7 @@ class Creature : public Thing
 public:
     Creature();
 
-    virtual ThingAttributes *getAttributes();
+    virtual const ThingAttributes& getAttributes();
     void draw(int x, int y);
 
     void setName(const std::string& name) { m_name = name; }

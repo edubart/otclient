@@ -50,14 +50,17 @@ public:
 
     void startDrawing();
     void stopDrawing();
+    bool isDrawing() const { return m_drawing; }
 
     int getOpacity() const { return m_opacity; }
     void setOpacity(int opacity) { m_opacity = opacity; }
+    TexturePtr getEmptyTexture() { return m_emptyTexture; }
 
 private:
     bool m_drawing;
     int m_opacity;
     Size m_screenSize;
+    TexturePtr m_emptyTexture;
 };
 
 extern Graphics g_graphics;

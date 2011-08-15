@@ -11,7 +11,7 @@ public:
     /// Fired when user resize the window
     virtual void onResize(const Size& size) = 0;
     /// Fired when user press a key or move the mouse
-    virtual void onInputEvent(const InputEvent& event) = 0;
+    virtual void onPlatformEvent(const PlatformEvent& event) = 0;
 };
 
 #endif

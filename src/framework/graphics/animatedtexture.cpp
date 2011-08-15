@@ -12,8 +12,8 @@ AnimatedTexture::AnimatedTexture(int width, int height, int channels, int numFra
 {
     m_size.setSize(width, height);
 
-    m_framesTextureId = new uint[numFrames];
-    m_framesDelay = new int[numFrames];
+    m_framesTextureId.resize(numFrames);
+    m_framesDelay.resize(numFrames);
 
     for(int i=0;i<numFrames;++i) {
         uchar *framePixels = framesPixels + (i*height*width* channels);
@@ -29,9 +29,8 @@ AnimatedTexture::AnimatedTexture(int width, int height, int channels, int numFra
 
 AnimatedTexture::~AnimatedTexture()
 {
-    glDeleteTextures(m_numFrames, m_framesTextureId);
-    delete[] m_framesTextureId;
-    delete[] m_framesDelay;
+    assert(!g_graphics.isDrawing());
+    glDeleteTextures(m_numFrames, &m_framesTextureId[0]);
     m_textureId = 0;
 }
 

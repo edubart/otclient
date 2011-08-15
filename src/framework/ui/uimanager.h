@@ -13,7 +13,7 @@ public:
 
     void render();
     void resize(const Size& size);
-    void inputEvent(const InputEvent& event);
+    void inputEvent(const PlatformEvent& event);
 
     bool importStyles(const std::string& file);
     void importStyleFromOTML(const OTMLNodePtr& styleNode);

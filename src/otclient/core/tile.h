@@ -11,14 +11,16 @@ public:
     void addThing(ThingPtr thing, uint8 stackpos);
 
     void draw(int x, int y);
-    bool hasGround();
+
+    bool hasGround() { return (!!m_ground); }
+
     int getStackSize();
 
 private:
     ThingPtr m_ground;
-    std::list<ThingPtr> m_itemsBot;
-    std::list<ThingPtr> m_creatures;
-    std::list<ThingPtr> m_itemsTop;
+    std::deque<ThingPtr> m_itemsBot;
+    std::deque<ThingPtr> m_creatures;
+    std::deque<ThingPtr> m_itemsTop;
 };
 
 #endif

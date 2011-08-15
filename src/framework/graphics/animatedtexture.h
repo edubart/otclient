@@ -7,14 +7,14 @@ class AnimatedTexture : public Texture
 {
 public:
     AnimatedTexture(int width, int height, int channels, int numFrames, uchar *framesPixels, int *framesDelay);
-    ~AnimatedTexture();
+    virtual ~AnimatedTexture();
 
     void enableBilinearFilter();
     void processAnimation();
 
 private:
-    uint *m_framesTextureId;
-    int *m_framesDelay;
+    std::vector<uint> m_framesTextureId;
+    std::vector<int> m_framesDelay;
     int m_numFrames;
     int m_currentFrame;
     int m_lastAnimCheckTicks;

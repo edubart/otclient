@@ -25,7 +25,7 @@ public:
     /// Fired when user resize the window
     void onResize(const Size& size);
     /// Fired on an user input event
-    void onInputEvent(const InputEvent& event);
+    void onPlatformEvent(const PlatformEvent& event);
 
     bool isRunning() const { return m_running; }
 

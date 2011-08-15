@@ -10,6 +10,25 @@
 
 namespace fw {
 
+// read utilities for istream
+inline uint8 getu8(std::istream& in) {
+    uint8 tmp;
+    in.read((char*)&tmp, 1);
+    return tmp;
+}
+
+inline uint16 getu16(std::istream& in) {
+    uint16 tmp;
+    in.read((char*)&tmp, 2);
+    return tmp;
+}
+
+inline uint32 getu32(std::istream& in) {
+    uint32 tmp;
+    in.read((char*)&tmp, 4);
+    return tmp;
+}
+
 /// Fill an ostream by concatenating args
 /// Usage:
 ///   fw::fill_ostream(stream, a1, a2, ..., aN);

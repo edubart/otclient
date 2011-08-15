@@ -1,6 +1,6 @@
 #include "item.h"
-#include "tibiadat.h"
-#include "tibiaspr.h"
+#include "datmanager.h"
+#include "spritemanager.h"
 #include <framework/graphics/graphics.h>
 #include "thing.h"
 
@@ -9,27 +9,27 @@ Item::Item()
     m_type = Thing::TYPE_ITEM;
 }
 
-ThingAttributes *Item::getAttributes()
+const ThingAttributes& Item::getAttributes()
 {
-    return g_tibiaDat.getItemAttributes(m_id);
+    return g_dat.getItemAttributes(m_id);
 }
 
 void Item::draw(int x, int y)
 {
-    ThingAttributes *itemAttributes = getAttributes();
+    auto attributes = g_dat.getItemAttributes(m_id);
 
     int xdiv = 0, ydiv = 0, zdiv = 0, anim = 0;
 
-    if(itemAttributes->group == THING_GROUP_SPLASH || itemAttributes->group == THING_GROUP_FLUID || itemAttributes->stackable) {
+    if(attributes.group == THING_GROUP_SPLASH || attributes.group == THING_GROUP_FLUID || attributes.stackable) {
         //cDivX = subType % itemAttributes->xdiv;
         //cDivY = subType / itemAttributes->xdiv;
     }
-    else if(!itemAttributes->moveable) {
-        xdiv = m_position.x % itemAttributes->xdiv;
-        ydiv = m_position.y % itemAttributes->ydiv;
-        zdiv = m_position.z % itemAttributes->zdiv;
+    else if(!attributes.moveable) {
+        xdiv = m_position.x % attributes.xdiv;
+        ydiv = m_position.y % attributes.ydiv;
+        zdiv = m_position.z % attributes.zdiv;
     }
 
-    for(int b = 0; b < itemAttributes->blendframes; b++)
+    for(int b = 0; b < attributes.blendframes; b++)
         internalDraw(x, y, b, xdiv, ydiv, zdiv, anim);
 }

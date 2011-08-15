@@ -6,7 +6,7 @@ FlatPanel < Panel
     border: 4
 
 RoundedPanel < Panel
-  color: 255 255 255 192
+  color: #ffffffc0
   border-image:
     source: /core_ui/images/panel_rounded.png
     border: 4

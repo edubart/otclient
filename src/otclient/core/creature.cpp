@@ -1,5 +1,5 @@
 #include "creature.h"
-#include "tibiadat.h"
+#include "datmanager.h"
 #include <framework/graphics/graphics.h>
 #include <framework/graphics/framebuffer.h>
 #include "game.h"
@@ -26,9 +26,9 @@ Creature::Creature()
     m_type = Thing::TYPE_CREATURE;
 }
 
-ThingAttributes *Creature::getAttributes()
+const ThingAttributes& Creature::getAttributes()
 {
-    return g_tibiaDat.getCreatureAttributes(m_outfit.type);
+    return g_dat.getCreatureAttributes(m_outfit.type);
 }
 
 void Creature::draw(int x, int y)

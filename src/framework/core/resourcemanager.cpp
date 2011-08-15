@@ -89,10 +89,9 @@ void ResourceManager::loadFile(const std::string& fileName, std::iostream& out)
     } else {
         int fileSize = PHYSFS_fileLength(file);
         if(fileSize > 0) {
-            char* buffer = new char[fileSize];
-            PHYSFS_read(file, (void*)buffer, 1, fileSize);
-            out.write(buffer, fileSize);
-            delete[] buffer;
+            std::vector<char> buffer(fileSize);
+            PHYSFS_read(file, (void*)&buffer[0], 1, fileSize);
+            out.write(&buffer[0], fileSize);
         } else
             out.clear(std::ios::eofbit);
         PHYSFS_close(file);
@@ -124,10 +123,9 @@ bool ResourceManager::saveFile(const std::string& fileName, std::istream& in)
     in.seekg(0, std::ios::end);
     std::streampos size = in.tellg();
     in.seekg(0, std::ios::beg);
-    char* buffer = new char[size];
-    in.read(buffer, size);
-    bool ret = saveFile(fileName, (const uchar*)buffer, size);
-    delete[] buffer;
+    std::vector<char> buffer(size);
+    in.read(&buffer[0], size);
+    bool ret = saveFile(fileName, (const uchar*)&buffer[0], size);
     in.seekg(oldPos, std::ios::beg);
     return ret;
 }
@@ -145,10 +143,10 @@ bool ResourceManager::deleteFile(const std::string& fileName)
 std::list<std::string> ResourceManager::listDirectoryFiles(const std::string& directoryPath)
 {
     std::list<std::string> files;
-    char** rc = PHYSFS_enumerateFiles(resolvePath(directoryPath).c_str());
+    auto rc = PHYSFS_enumerateFiles(resolvePath(directoryPath).c_str());
 
-    for(char** i = rc; *i != NULL; i++)
-        files.push_back(*i);
+    for(int i = 0; rc[i] != NULL; i++)
+        files.push_back(rc[i]);
 
     PHYSFS_freeList(rc);
     return files;

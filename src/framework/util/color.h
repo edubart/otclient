@@ -26,6 +26,7 @@ public:
     void setGreen(uint8 g) { color = ((g & 0xff)<<8) | (color & 0xffff00ff); }
     void setRed(uint8 r)  { color = (r & 0xff) | (color & 0xffffff00); }
     void setRGBA(uint8 r, uint8 g, uint8 b, uint8 a = 0xFF) { color = ((a & 0xff)<<24) | ((b & 0xff)<<16) | ((g & 0xff)<<8) | (r & 0xff); }
+    void setABGR(uint32 abgr) { color = ((abgr>>24) & 0xff) | ((abgr>>16) & 0xff) << 8 | ((abgr>>8) & 0xff) << 16 | (abgr & 0xff) << 24; }
     void setRGBA(uint32 rgba) { color = rgba; }
 
     Color& operator=(const Color& other) { color = other.color;  return *this; }
@@ -47,17 +48,26 @@ private:
 
 inline std::ostream& operator<<(std::ostream& out, const Color& color)
 {
-    out << (int)color.r() << " "<< (int)color.g() << " "<< (int)color.b() << " " << (int)color.a();
+    using namespace std;
+    out << "#" << hex << setfill('0')
+        << setw(2) << (int)color.r()
+        << setw(2) << (int)color.g()
+        << setw(2) << (int)color.b()
+        << setw(2) << (int)color.a();
+    out << dec << setfill(' ');
     return out;
 }
 
 inline std::istream& operator>>(std::istream& in, Color& color)
 {
-    int r, g, b, a = 255;
-    in >> r >> g >> b;
-    if(!in.eof())
-        in >> a;
-    color.setRGBA(r, g, b, a);
+    using namespace std;
+
+    if(in.get() == '#') {
+        uint32 tmp;
+        in >> hex >> tmp;
+        color.setABGR(tmp);
+        in >> dec;
+    }
     return in;
 }
 

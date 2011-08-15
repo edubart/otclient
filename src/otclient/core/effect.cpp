@@ -1,14 +1,14 @@
 #include "effect.h"
-#include "tibiadat.h"
+#include "datmanager.h"
 
 Effect::Effect()
 {
     m_type = Thing::TYPE_EFFECT;
 }
 
-ThingAttributes *Effect::getAttributes()
+const ThingAttributes& Effect::getAttributes()
 {
-    return g_tibiaDat.getEffectAttributes(m_id);
+    return g_dat.getEffectAttributes(m_id);
 }
 
 void Effect::draw(int x, int y)

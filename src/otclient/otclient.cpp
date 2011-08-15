@@ -199,6 +199,7 @@ void OTClient::poll()
 
 void OTClient::render()
 {
+    //TODO: UIMap for map drawing
     if(g_game.getOnline())
         g_game.getMap()->draw(0, 0);
 
@@ -258,7 +259,7 @@ void OTClient::onResize(const Size& size)
     g_ui.resize(size);
 }
 
-void OTClient::onInputEvent(const InputEvent& event)
+void OTClient::onPlatformEvent(const PlatformEvent& event)
 {
     g_ui.inputEvent(event);
 

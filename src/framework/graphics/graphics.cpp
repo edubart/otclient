@@ -26,13 +26,16 @@ void Graphics::init()
     logInfo("OpenGL ", glGetString(GL_VERSION));
 
     m_drawing = false;
-    bindColor(Color::white);
     m_opacity = 255;
+    m_emptyTexture = TexturePtr(new Texture);
+
+    bindColor(Color::white);
 }
 
 void Graphics::terminate()
 {
     g_fonts.releaseFonts();
+    m_emptyTexture.reset();
 }
 
 bool Graphics::isExtensionSupported(const char *extension)
@@ -110,7 +113,7 @@ void Graphics::drawTexturedRect(const Rect& screenCoords,
                                 const TexturePtr& texture,
                                 const Rect& textureCoords)
 {
-    if(screenCoords.isEmpty())
+    if(screenCoords.isEmpty() || texture->getId() == 0)
         return;
 
     // rect correction for opengl
@@ -156,7 +159,7 @@ void Graphics::drawRepeatedTexturedRect(const Rect& screenCoords,
                                         const TexturePtr& texture,
                                         const Rect& textureCoords)
 {
-    if(screenCoords.isEmpty() || textureCoords.isEmpty())
+    if(screenCoords.isEmpty() || texture->getId() == 0 || textureCoords.isEmpty())
         return;
 
     if(!m_drawing) {

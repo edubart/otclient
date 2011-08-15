@@ -3,14 +3,29 @@
 
 #include <GL/gl.h>
 
+Texture::Texture()
+{
+    m_textureId = 0;
+}
+
 Texture::Texture(int width, int height, int channels, uchar *pixels)
 {
     // generate opengl texture
     m_textureId = internalLoadGLTexture(pixels, channels, width, height);
 }
 
+Texture::~Texture()
+{
+    assert(!g_graphics.isDrawing());
+    // free texture from gl memory
+    if(m_textureId > 0)
+        glDeleteTextures(1, &m_textureId);
+}
+
 uint Texture::internalLoadGLTexture(uchar *pixels, int channels, int width, int height)
 {
+    assert(!g_graphics.isDrawing());
+
     m_size.setSize(width, height);
 
     // gets max texture size supported by the driver
@@ -30,7 +45,8 @@ uint Texture::internalLoadGLTexture(uchar *pixels, int channels, int width, int 
     GLuint id;
     glGenTextures(1, &id);
     glBindTexture(GL_TEXTURE_2D, id);
-    bool mustFree = false;
+
+    std::vector<uchar> tmp;
 
     // old opengl drivers only accept power of two dimensions
     if(!g_graphics.isExtensionSupported("GL_ARB_texture_non_power_of_two") && pixels) {
@@ -43,15 +59,13 @@ uint Texture::internalLoadGLTexture(uchar *pixels, int channels, int width, int 
             glHeight = glHeight << 1;
 
         if(m_size != m_glSize) {
-            uchar *tmp = new uchar[glHeight*glWidth*channels];
-            memset(tmp, 0, glHeight*glWidth*channels);
+            tmp.resize(glHeight*glWidth*channels, 0);
             if(pixels)
                 for(int y=0; y<height; ++y)
                     for(int x=0; x<width; ++x)
                         for(int i=0; i<channels; ++i)
                             tmp[y*glWidth*channels+x*channels+i] = pixels[y*width*channels+x*channels+i];
-            pixels = tmp;
-            mustFree = true;
+            pixels = &tmp[0];
         }
 
         m_glSize.setSize(glWidth, glHeight);
@@ -86,17 +100,7 @@ uint Texture::internalLoadGLTexture(uchar *pixels, int channels, int width, int 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-    if(mustFree)
-        delete[] pixels;
-
     return id;
-}
-
-Texture::~Texture()
-{
-    // free texture from gl memory
-    if(m_textureId)
-        glDeleteTextures(1, &m_textureId);
 }
 
 void Texture::enableBilinearFilter()
@@ -107,12 +111,12 @@ void Texture::enableBilinearFilter()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 }
 
-uchar* Texture::getPixels()
+std::vector<uint8> Texture::getPixels()
 {
     // copy pixels from opengl memory
-    uchar* pixels = new uchar[m_glSize.area()*4];
+    std::vector<uint8> pixels(m_glSize.area()*4, 0);
     glBindTexture(GL_TEXTURE_2D, m_textureId);
-    glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+    glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, &pixels[0]);
 
     // convert pixels to the real texture size
     if(m_size != m_glSize)

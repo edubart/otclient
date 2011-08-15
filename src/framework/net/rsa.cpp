@@ -23,25 +23,6 @@ Rsa::~Rsa()
     mpz_clear(m_mod);
 }
 
-bool Rsa::setKey(const std::string& file)
-{
-    //loads p,q and d from a file
-    FILE* f = fopen(file.c_str(), "r");
-    if(!f){
-            return false;
-    }
-
-    char p[512];
-    char q[512];
-    char d[512];
-    delete fgets(p, 512, f);
-    delete fgets(q, 512, f);
-    delete fgets(d, 512, f);
-
-    setKey(p, q, d);
-    return true;
-}
-
 void Rsa::setKey(const char* p, const char* q, const char* d)
 {
     mpz_set_str(m_p, p, 10);
