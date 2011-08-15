@@ -9,17 +9,22 @@
 class Game
 {
 public:
+    Game();
 
-    void setProtocol(ProtocolGame *protocolGame) { m_protocolGame = protocolGame; }
-    ProtocolGame *getProtocol() { return m_protocolGame; }
+    void setProtocol(ProtocolGamePtr protocolGame) { m_protocolGame = protocolGame; }
+    ProtocolGamePtr getProtocol() { return m_protocolGame; }
 
     Map *getMap() { return &m_map; }
     Player *getPlayer() { return &m_player; }
 
+    void setOnline(bool online) { m_online = online; }
+    bool getOnline() { return m_online; }
+
 private:
     Map m_map;
     Player m_player;
-    ProtocolGame *m_protocolGame;
+    ProtocolGamePtr m_protocolGame;
+    bool m_online;
 
 };
 

@@ -11,6 +11,11 @@ Connection::Connection() :
 {
 }
 
+Connection::~Connection()
+{
+    disconnect();
+}
+
 void Connection::poll()
 {
     ioService.poll();
@@ -26,6 +31,11 @@ void Connection::connect(const std::string& host, uint16 port, const ConnectCall
 
     m_timer.expires_from_now(boost::posix_time::seconds(2));
     m_timer.async_wait(std::bind(&Connection::onTimeout, shared_from_this(), std::placeholders::_1));
+}
+
+void Connection::disconnect()
+{
+    m_socket.close();
 }
 
 void Connection::send(uint8* buffer, uint16 size)

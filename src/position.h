@@ -3,6 +3,14 @@
 
 #include <global.h>
 
+enum Direction
+{
+    DIRECTION_NORTH,
+    DIRECTION_EAST,
+    DIRECTION_SOUTH,
+    DIRECTION_WEST
+};
+
 class Position
 {
 public:

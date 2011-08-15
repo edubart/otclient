@@ -3,7 +3,7 @@
 
 #include <net/protocol.h>
 #include "player.h"
-#include "thing.h"
+#include "item.h"
 
 class ProtocolGame;
 typedef std::shared_ptr<ProtocolGame> ProtocolGamePtr;
@@ -22,6 +22,7 @@ public:
     void onRecv(InputMessage& inputMessage);
 
     // Send Messages
+    void sendLogout();
     void sendPing();
     void sendWalkNorth();
     void sendWalkEast();
@@ -73,6 +74,7 @@ private:
     void parseCreatureSpeed(InputMessage& msg);
     void parseCreatureSkulls(InputMessage& msg);
     void parseCreatureShields(InputMessage& msg);
+    void parseCreatureTurn(InputMessage& msg);
     void parseItemTextWindow(InputMessage& msg);
     void parseHouseTextWindow(InputMessage& msg);
     void parsePlayerStats(InputMessage& msg);
@@ -107,9 +109,9 @@ private:
     void setMapDescription(InputMessage& msg, int32 x, int32 y, int32 z, int32 width, int32 height);
     void setFloorDescription(InputMessage& msg, int32 x, int32 y, int32 z, int32 width, int32 height, int32 offset, int32* skipTiles);
     void setTileDescription(InputMessage& msg, Position position);
-    Thing *internalGetThing(InputMessage& msg);
-    void internalCreatureOutfit(InputMessage& msg);
-    Item *internalGetItem(InputMessage& msg, uint16 id);
+    ThingPtr internalGetThing(InputMessage& msg);
+    Outfit internalCreatureOutfit(InputMessage& msg);
+    ItemPtr internalGetItem(InputMessage& msg, uint16 id);
 
     Position parsePosition(InputMessage& msg);
 
