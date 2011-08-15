@@ -1,7 +1,7 @@
 #ifndef FRAMEBUFFER_H
 #define FRAMEBUFFER_H
 
-#include "graphicsdeclarations.h"
+#include "declarations.h"
 
 class FrameBuffer
 {
@@ -9,21 +9,21 @@ public:
     FrameBuffer(int width, int height);
     virtual ~FrameBuffer();
 
-    /// Bind the framebuffer, everything rendered will be draw on it
+    /// Binds the framebuffer, by switching render buffer to itself, everything rendered will be draw on it
     void bind();
 
-    /// Unbind the framebuffer, render on back buffer again
+    /// Unbinds the framebuffer (switch render buffer to back buffer again)
     void unbind();
 
-    /// Draw framebuffer
-    void draw(int x, int y, int width, int height);
+    /// Draws framebuffer texture
+    void draw(const Rect& screenCoords, const Rect& framebufferCoords = Rect());
+
+    TexturePtr getTexture() { return m_texture; }
 
 private:
-    uint m_fboTexture;
+    TexturePtr m_texture;
     uint m_fbo;
     bool m_fallbackOldImp;
-    int m_width;
-    int m_height;
 };
 
 #endif

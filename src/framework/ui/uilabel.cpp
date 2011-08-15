@@ -1,6 +1,6 @@
 #include "uilabel.h"
-#include <graphics/font.h>
-#include <otml/otmlnode.h>
+#include <framework/graphics/font.h>
+#include <framework/otml/otmlnode.h>
 
 UILabel::UILabel() : UIWidget(UITypeLabel)
 {
@@ -21,7 +21,7 @@ void UILabel::loadStyleFromOTML(const OTMLNodePtr& styleNode)
     m_text = styleNode->readAt("text", m_text);
 
     if(styleNode->hasChild("align"))
-        m_align = parseAlignment(styleNode->readAt<std::string>("align"));
+        m_align = fw::translateAlignment(styleNode->readAt<std::string>("align"));
 
     // auto resize if no size supplied
     if(!m_text.empty() && !getGeometry().isValid())

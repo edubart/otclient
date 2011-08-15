@@ -1,8 +1,8 @@
 #include "uilineedit.h"
-#include <graphics/font.h>
-#include <graphics/graphics.h>
-#include <core/platform.h>
-#include <otml/otmlnode.h>
+#include <framework/graphics/font.h>
+#include <framework/graphics/graphics.h>
+#include <framework/platform/platform.h>
+#include <framework/otml/otmlnode.h>
 
 UILineEdit::UILineEdit() : UIWidget(UITypeLabel)
 {

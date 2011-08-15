@@ -1,7 +1,7 @@
 #ifndef UILAYOUT_H
 #define UILAYOUT_H
 
-#include "uideclarations.h"
+#include "declarations.h"
 
 class UILayout
 {

@@ -1,7 +1,7 @@
 #include "uiwindow.h"
-#include <graphics/borderimage.h>
-#include <graphics/font.h>
-#include <otml/otml.h>
+#include <framework/graphics/borderimage.h>
+#include <framework/graphics/font.h>
+#include <framework/otml/otml.h>
 
 UIWindow::UIWindow(): UIWidget(UITypeWindow)
 {
@@ -25,7 +25,7 @@ void UIWindow::loadStyleFromOTML(const OTMLNodePtr& styleNode)
             m_headImage = BorderImage::loadFromOTML(node);
         m_headHeight = headNode->readAt("height", m_headImage->getDefaultSize().height());
         m_headMargin = headNode->readAt("margin", 0);
-        m_titleAlign = parseAlignment(headNode->readAt("text align", std::string("center")));
+        m_titleAlign = fw::translateAlignment(headNode->readAt("text align", std::string("center")));
     } else {
         m_headHeight = 0;
         m_headMargin = 0;
@@ -37,7 +37,7 @@ void UIWindow::loadStyleFromOTML(const OTMLNodePtr& styleNode)
             m_bodyImage = BorderImage::loadFromOTML(node);
     }
 
-    m_title = styleNode->readAt("title", aux::empty_string);
+    m_title = styleNode->readAt("title", fw::empty_string);
 }
 
 void UIWindow::render()

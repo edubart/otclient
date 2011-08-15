@@ -1,7 +1,7 @@
 #include "resourcemanager.h"
 
-#include <core/platform.h>
-#include <luascript/luainterface.h>
+#include <framework/platform/platform.h>
+#include <framework/luascript/luainterface.h>
 
 #include <physfs.h>
 
@@ -85,7 +85,7 @@ void ResourceManager::loadFile(const std::string& fileName, std::iostream& out)
     PHYSFS_file* file = PHYSFS_openRead(fullPath.c_str());
     if(!file) {
         out.clear(std::ios::failbit);
-        throw std::runtime_error(aux::make_string("failed to load file '", fullPath.c_str(), "': ", PHYSFS_getLastError()));
+        throw std::runtime_error(fw::mkstr("failed to load file '", fullPath.c_str(), "': ", PHYSFS_getLastError()));
     } else {
         int fileSize = PHYSFS_fileLength(file);
         if(fileSize > 0) {

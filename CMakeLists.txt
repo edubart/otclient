@@ -40,7 +40,7 @@ INCLUDE_DIRECTORIES(
     ${PHYSFS_INCLUDE_DIR}
     ${GMP_INCLUDE_DIR}
     ${ZLIB_INCLUDE_DIR}
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/framework"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src"
 )
 
 IF(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -48,23 +48,29 @@ IF(CMAKE_BUILD_TYPE STREQUAL "Debug")
 ENDIF(CMAKE_BUILD_TYPE STREQUAL "Debug")
 
 SET(SOURCES
+    # main
     src/main.cpp
-    src/otclient.cpp
-    src/otclientluafunctions.cpp
 
-    src/game.cpp
-    src/map.cpp
-    src/protocollogin.cpp
-    src/protocolgame.cpp
-    src/protocolgamesend.cpp
-    src/protocolgameparse.cpp
-    src/tibiadat.cpp
-    src/tibiaspr.cpp
-    src/item.cpp
-    src/tile.cpp
-    src/thing.cpp
-    src/creature.cpp
-    src/effect.cpp
+    # otclient
+    src/otclient/otclient.cpp
+    src/otclient/otclientluafunctions.cpp
+
+    # otclient core
+    src/otclient/core/game.cpp
+    src/otclient/core/map.cpp
+    src/otclient/core/tibiadat.cpp
+    src/otclient/core/tibiaspr.cpp
+    src/otclient/core/item.cpp
+    src/otclient/core/tile.cpp
+    src/otclient/core/thing.cpp
+    src/otclient/core/creature.cpp
+    src/otclient/core/effect.cpp
+
+    # otclient net
+    src/otclient/net/protocollogin.cpp
+    src/otclient/net/protocolgame.cpp
+    src/otclient/net/protocolgamesend.cpp
+    src/otclient/net/protocolgameparse.cpp
 
     # framework third party
     src/framework/thirdparty/apngloader.cpp
@@ -126,7 +132,7 @@ SET(SOURCES
 )
 
 IF(WIN32)
-    SET(SOURCES ${SOURCES} src/framework/core/win32platform.cpp)
+    SET(SOURCES ${SOURCES} src/framework/platform/win32platform.cpp)
     SET(ADDITIONAL_LIBRARIES ws2_32)
     IF(CMAKE_COMPILER_IS_GNUCXX)
         SET(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -mwindows")
@@ -134,7 +140,7 @@ IF(WIN32)
     ENDIF(CMAKE_COMPILER_IS_GNUCXX)
     ADD_DEFINITIONS(-DWIN32_NO_CONSOLE)
 ELSE(WIN32)
-    SET(SOURCES ${SOURCES} src/framework/core/x11platform.cpp)
+    SET(SOURCES ${SOURCES} src/framework/platform/x11platform.cpp)
 ENDIF(WIN32)
 
 # target executable
@@ -153,7 +159,7 @@ TARGET_LINK_LIBRARIES(
 )
 
 IF(USE_PCH)
-    ADD_PRECOMPILED_HEADER(otclient ${CMAKE_CURRENT_SOURCE_DIR}/src/framework/pch.h)
+    ADD_PRECOMPILED_HEADER(otclient ${CMAKE_CURRENT_SOURCE_DIR}/src/pch.h)
 ENDIF(USE_PCH)
 
 # installation

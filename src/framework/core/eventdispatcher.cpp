@@ -1,5 +1,6 @@
 #include "eventdispatcher.h"
-#include <core/platform.h>
+
+#include <framework/platform/platform.h>
 
 EventDispatcher g_dispatcher;
 

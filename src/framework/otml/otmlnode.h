@@ -1,7 +1,7 @@
 #ifndef OTMLNODE_H
 #define OTMLNODE_H
 
-#include "otmldeclarations.h"
+#include "declarations.h"
 #include "otmlexception.h"
 
 class OTMLNode : public std::enable_shared_from_this<OTMLNode>
@@ -90,7 +90,7 @@ T OTMLNode::read() {
     T v;
     if(!from_otmlnode(shared_from_this(), v))
         throw OTMLException(shared_from_this(),
-                            aux::make_string("failed to cast node value to type '", aux::demangle_type<T>(), "'"));
+                            fw::mkstr("failed to cast node value to type '", fw::demangle_type<T>(), "'"));
     return v;
 }
 
@@ -147,7 +147,7 @@ void OTMLNode::writeIn(const T& v) {
 // templates for casting a node to another type
 template<typename T>
 bool from_otmlnode(OTMLNodePtr node, T& v) {
-    return aux::cast(node->value(), v);
+    return fw::cast(node->value(), v);
 }
 
 template<typename T>
@@ -169,7 +169,7 @@ template <typename K, typename T>
 bool from_otmlnode(OTMLNodePtr node, std::map<K, T>& m) {
     for(int i=0;i<node->size();++i) {
         K k;
-        if(!aux::cast(node->at(i)->tag(), k))
+        if(!fw::cast(node->at(i)->tag(), k))
             return false;
         m[k] = node->at(i)->read<T>();
     }
@@ -179,7 +179,7 @@ bool from_otmlnode(OTMLNodePtr node, std::map<K, T>& m) {
 // templates for casting a type to a node
 template<typename T>
 void to_otmlnode(OTMLNodePtr node, const T& v) {
-    node->setValue(aux::unsafe_cast<std::string>(v));
+    node->setValue(fw::unsafe_cast<std::string>(v));
 }
 
 template<typename T>
@@ -203,7 +203,7 @@ void to_otmlnode(OTMLNodePtr node, const std::list<T>& v) {
 template <typename K, typename T>
 void to_otmlnode(OTMLNodePtr node, const std::map<K, T>& m) {
     for(auto it = m.begin(); it != m.end(); ++it) {
-        std::string k = aux::unsafe_cast<std::string>(it->first);
+        std::string k = fw::unsafe_cast<std::string>(it->first);
         OTMLNodePtr newNode(new OTMLNode);
         newNode->setTag(k);
         newNode->setUnique();

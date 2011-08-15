@@ -1,7 +1,7 @@
 #include "translator.h"
 #include <boost/algorithm/string.hpp>
 
-AlignmentFlag parseAlignment(std::string aligment)
+AlignmentFlag fw::translateAlignment(std::string aligment)
 {
     boost::to_lower(aligment);
     boost::erase_all(aligment, " ");
@@ -25,7 +25,7 @@ AlignmentFlag parseAlignment(std::string aligment)
         return AlignCenter;
 }
 
-AnchorPoint parseAnchorPoint(const std::string& anchorPoint)
+AnchorPoint fw::translateAnchorPoint(const std::string& anchorPoint)
 {
     if(anchorPoint == "left")
         return AnchorLeft;

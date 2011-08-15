@@ -1,7 +1,7 @@
-#ifndef CONST_H
-#define CONST_H
+#ifndef FRAMEWORK_CONST_H
+#define FRAMEWORK_CONST_H
 
-//namespace Fw {
+//namespace fw {
 
 enum AlignmentFlag {
     AlignLeft = 1,

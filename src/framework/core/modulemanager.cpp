@@ -1,6 +1,7 @@
 #include "modulemanager.h"
 #include "resourcemanager.h"
-#include <otml/otml.h>
+
+#include <framework/otml/otml.h>
 
 ModuleManager g_modules;
 

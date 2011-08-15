@@ -1,7 +1,7 @@
 #ifndef INPUTMESSAGE_H
 #define INPUTMESSAGE_H
 
-#include "netdeclarations.h"
+#include "declarations.h"
 
 class InputMessage
 {

@@ -58,8 +58,7 @@ typedef TPoint<float> PointF;
 template<class T>
 std::ostream& operator<<(std::ostream& out, const TPoint<T>& point)
 {
-    out << "Point(" << point.x << ","
-                    << point.y <<  ")";
+    out << point.x << " " << point.y;
     return out;
 }
 

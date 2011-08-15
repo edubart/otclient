@@ -1,7 +1,7 @@
 #ifndef EVENTDISPATCHER_H
 #define EVENTDISPATCHER_H
 
-#include <global.h>
+#include "declarations.h"
 
 struct ScheduledEvent {
     ScheduledEvent(int ticks, const SimpleCallback& callback) : ticks(ticks), callback(callback) { }

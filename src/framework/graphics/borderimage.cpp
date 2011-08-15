@@ -3,7 +3,7 @@
 #include "texture.h"
 #include "texturemanager.h"
 
-#include <otml/otml.h>
+#include <framework/otml/otml.h>
 
 BorderImage::BorderImage(TexturePtr texture,
                              const Rect& left,

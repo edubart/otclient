@@ -1,8 +1,8 @@
 #include "module.h"
-
-#include <otml/otml.h>
-#include <luascript/luainterface.h>
 #include "modulemanager.h"
+
+#include <framework/otml/otml.h>
+#include <framework/luascript/luainterface.h>
 
 void Module::discover(const OTMLNodePtr& moduleNode)
 {

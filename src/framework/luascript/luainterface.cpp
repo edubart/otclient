@@ -1,7 +1,7 @@
 #include "luainterface.h"
 #include "luaobject.h"
 
-#include <core/resourcemanager.h>
+#include <framework/core/resourcemanager.h>
 #include <lua.hpp>
 
 LuaInterface g_lua;
@@ -20,7 +20,7 @@ void LuaInterface::init()
     createLuaState();
 
     // check if demangle_type is working as expected
-    assert(aux::demangle_type<LuaObject>() == "LuaObject");
+    assert(fw::demangle_type<LuaObject>() == "LuaObject");
 
     // register LuaObject, the base of all other objects
     registerClass<LuaObject>();
@@ -125,12 +125,12 @@ void LuaInterface::registerClassMemberField(const std::string& className,
 
     if(getFunction) {
         pushCppFunction(getFunction);
-        setField(aux::make_string("get_", field));
+        setField(fw::mkstr("get_", field));
     }
 
     if(setFunction) {
         pushCppFunction(setFunction);
-        setField(aux::make_string("set_", field));
+        setField(fw::mkstr("set_", field));
     }
 
     pop();
@@ -273,7 +273,7 @@ void LuaInterface::loadFunction(const std::string& buffer, const std::string& so
     // gets the function contained in that buffer
     if(boost::starts_with(buffer, "function")) {
         // evaluate the function
-        std::string buf = aux::make_string("__func = ", buffer);
+        std::string buf = fw::mkstr("__func = ", buffer);
         loadBuffer(buf, source);
         safeCall();
 
@@ -295,7 +295,7 @@ void LuaInterface::evaluateExpression(const std::string& expression, const std::
 {
     // evaluates the expression
     if(!expression.empty()) {
-        std::string buffer = aux::make_string("__exp = (", expression, ")");
+        std::string buffer = fw::mkstr("__exp = (", expression, ")");
         loadBuffer(buffer, source);
         safeCall();
 
@@ -898,7 +898,7 @@ void LuaInterface::pushObject(const LuaObjectPtr& obj)
     new(newUserdata(sizeof(LuaObjectPtr))) LuaObjectPtr(obj);
 
     // set the userdata metatable
-    getGlobal(aux::make_string(obj->getLuaObjectName(), "_mt"));
+    getGlobal(fw::mkstr(obj->getLuaObjectName(), "_mt"));
     assert(!isNil());
     setMetatable();
 }

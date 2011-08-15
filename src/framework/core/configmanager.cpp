@@ -1,7 +1,7 @@
 #include "configmanager.h"
 #include "resourcemanager.h"
 
-#include <otml/otml.h>
+#include <framework/otml/otml.h>
 
 ConfigManager g_configs;
 

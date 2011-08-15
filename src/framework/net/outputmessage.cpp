@@ -1,4 +1,4 @@
-#include <net/outputmessage.h>
+#include <framework/net/outputmessage.h>
 
 OutputMessage::OutputMessage()
 {

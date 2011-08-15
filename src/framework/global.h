@@ -1,5 +1,5 @@
-#ifndef GLOBAL_H
-#define GLOBAL_H
+#ifndef FRAMEWORK_GLOBAL_H
+#define FRAMEWORK_GLOBAL_H
 
 // common C headers
 #include <cstdio>
@@ -28,23 +28,22 @@
 #include <functional>
 #include <typeinfo>
 #include <array>
+#include <iomanip>
 
 // boost utilities
 #include <boost/algorithm/string.hpp>
 
-// constants
-#include <const.h>
+// global constants
+#include "const.h"
 
 // additional utilities
-#include <util/types.h>
-#include <util/auxiliary.h>
-#include <util/logger.h>
-#include <util/translator.h>
-
-// custom types
-#include <util/point.h>
-#include <util/color.h>
-#include <util/rect.h>
-#include <util/size.h>
+#include "util/types.h"
+#include "util/tools.h"
+#include "util/logger.h"
+#include "util/translator.h"
+#include "util/point.h"
+#include "util/color.h"
+#include "util/rect.h"
+#include "util/size.h"
 
 #endif

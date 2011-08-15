@@ -1,7 +1,7 @@
 #ifndef OTMLEMITTER_H
 #define OTMLEMITTER_H
 
-#include "otmldeclarations.h"
+#include "declarations.h"
 
 class OTMLEmitter
 {

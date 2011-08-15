@@ -1,8 +1,9 @@
 #ifndef IMAGE_H
 #define IMAGE_H
 
-#include "graphicsdeclarations.h"
-#include <otml/otmldeclarations.h>
+#include "declarations.h"
+
+#include <framework/otml/declarations.h>
 
 class Image
 {

@@ -154,7 +154,7 @@ void OTMLParser::parseNode(const std::string& data)
     node->setUnique(dotsPos != std::string::npos);
     node->setTag(tag);
     node->setValue(value);
-    node->setSource(doc->source() + ":" + aux::safe_cast<std::string>(currentLine));
+    node->setSource(doc->source() + ":" + fw::safe_cast<std::string>(currentLine));
     currentParent->addChild(node);
     previousNode = node;
 }

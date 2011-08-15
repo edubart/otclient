@@ -1,7 +1,7 @@
 #ifndef UIANCHOR_H
 #define UIANCHOR_H
 
-#include "uideclarations.h"
+#include "declarations.h"
 
 struct AnchorLine {
     AnchorLine(std::string widgetId, AnchorPoint edge) : widgetId(widgetId), edge(edge) { }

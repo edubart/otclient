@@ -1,8 +1,8 @@
 #include "uibutton.h"
-#include <graphics/borderimage.h>
-#include <graphics/font.h>
-#include <otml/otmlnode.h>
-#include <luascript/luainterface.h>
+#include <framework/graphics/borderimage.h>
+#include <framework/graphics/font.h>
+#include <framework/otml/otmlnode.h>
+#include <framework/luascript/luainterface.h>
 
 UIButton::UIButton(): UIWidget(UITypeButton)
 {
@@ -37,7 +37,7 @@ void UIButton::loadStyleFromOTML(const OTMLNodePtr& styleNode)
     if(OTMLNodePtr node = styleNode->get("state.down"))
         loadStateStyle(m_statesStyle[ButtonDown], node);
 
-    m_text = styleNode->readAt("text", aux::empty_string);
+    m_text = styleNode->readAt("text", fw::empty_string);
 
     if(OTMLNodePtr node = styleNode->get("onClick")) {
         g_lua.loadFunction(node->read<std::string>(), "@" + node->source() + "[" + node->tag() + "]");

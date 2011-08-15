@@ -1,10 +1,11 @@
-#ifndef LUADECLARATIONS_H
-#define LUADECLARATIONS_H
+#ifndef FRAMEWORK_LUA_DECLARATIONS_H
+#define FRAMEWORK_LUA_DECLARATIONS_H
 
-#include <global.h>
+#include <framework/global.h>
 
 class LuaInterface;
 class LuaObject;
+
 typedef std::function<int(LuaInterface*)> LuaCppFunction;
 typedef std::unique_ptr<LuaCppFunction> LuaCppFunctionPtr;
 typedef std::shared_ptr<LuaObject> LuaObjectPtr;

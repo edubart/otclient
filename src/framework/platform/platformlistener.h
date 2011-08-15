@@ -1,7 +1,7 @@
 #ifndef PLATFORMLISTENER_H
 #define PLATFORMLISTENER_H
 
-#include "inputevent.h"
+#include "platformevent.h"
 
 class PlatformListener
 {

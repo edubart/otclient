@@ -1,7 +1,7 @@
 #ifndef OTMLEXCEPTION_H
 #define OTMLEXCEPTION_H
 
-#include "otmldeclarations.h"
+#include "declarations.h"
 
 /// All OTML errors throw this exception
 class OTMLException : public std::exception

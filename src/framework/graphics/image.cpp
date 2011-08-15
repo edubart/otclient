@@ -3,7 +3,7 @@
 #include "graphics.h"
 #include "texturemanager.h"
 
-#include <otml/otml.h>
+#include <framework/otml/otml.h>
 
 Image::Image(TexturePtr texture, Rect textureCoords)
 {

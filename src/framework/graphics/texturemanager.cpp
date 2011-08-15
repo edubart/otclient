@@ -1,7 +1,8 @@
 #include "texturemanager.h"
 #include "animatedtexture.h"
-#include <core/resourcemanager.h>
-#include <thirdparty/apngloader.h>
+
+#include <framework/core/resourcemanager.h>
+#include <framework/thirdparty/apngloader.h>
 
 TextureManager g_textures;
 

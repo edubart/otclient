@@ -2,8 +2,8 @@
 #include "ui.h"
 #include "uianchorlayout.h"
 
-#include <otml/otml.h>
-#include <graphics/graphics.h>
+#include <framework/otml/otml.h>
+#include <framework/graphics/graphics.h>
 
 UIManager g_ui;
 
@@ -136,7 +136,7 @@ OTMLNodePtr UIManager::getStyle(const std::string& styleName)
 
     auto it = m_styles.find(styleName);
     if(it == m_styles.end())
-        throw std::logic_error(aux::make_string("style '", styleName, "' is not a defined style"));
+        throw std::logic_error(fw::mkstr("style '", styleName, "' is not a defined style"));
     return m_styles[styleName];
 }
 

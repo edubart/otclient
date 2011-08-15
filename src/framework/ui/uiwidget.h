@@ -1,11 +1,11 @@
 #ifndef UIWIDGET_H
 #define UIWIDGET_H
 
-#include "uideclarations.h"
+#include "declarations.h"
 #include "uievent.h"
-#include <luascript/luaobject.h>
-#include <graphics/graphicsdeclarations.h>
-#include <otml/otmldeclarations.h>
+#include <framework/luascript/luaobject.h>
+#include <framework/graphics/declarations.h>
+#include <framework/otml/declarations.h>
 
 class UIWidget : public LuaObject
 {

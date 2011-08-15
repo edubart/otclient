@@ -1,7 +1,7 @@
 #ifndef OUTPUTMESSAGE_H
 #define OUTPUTMESSAGE_H
 
-#include "netdeclarations.h"
+#include "declarations.h"
 
 class OutputMessage
 {

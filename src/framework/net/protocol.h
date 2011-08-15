@@ -1,11 +1,11 @@
 #ifndef PROTOCOL_H
 #define PROTOCOL_H
 
-#include "netdeclarations.h"
+#include "declarations.h"
 #include "inputmessage.h"
 #include "outputmessage.h"
 
-#include <luascript/luaobject.h>
+#include <framework/luascript/luaobject.h>
 
 class Protocol : public LuaObject
 {

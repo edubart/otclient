@@ -3,12 +3,12 @@
 #include "uilayout.h"
 #include "uianchorlayout.h"
 
-#include <core/eventdispatcher.h>
-#include <graphics/image.h>
-#include <graphics/borderimage.h>
-#include <graphics/fontmanager.h>
-#include <otml/otmlnode.h>
-#include <graphics/graphics.h>
+#include <framework/core/eventdispatcher.h>
+#include <framework/graphics/image.h>
+#include <framework/graphics/borderimage.h>
+#include <framework/graphics/fontmanager.h>
+#include <framework/otml/otmlnode.h>
+#include <framework/graphics/graphics.h>
 
 UIWidget::UIWidget(UIWidgetType type)
 {
@@ -26,7 +26,7 @@ UIWidget::UIWidget(UIWidgetType type)
 
     // generate an unique id, this is need because anchored layouts find widgets by id
     static unsigned long id = 1;
-    m_id = aux::make_string("widget", id++);
+    m_id = fw::mkstr("widget", id++);
 }
 
 UIWidget::~UIWidget()
@@ -172,7 +172,7 @@ void UIWidget::loadStyleFromOTML(const OTMLNodePtr& styleNode)
             } else if(what == "centerIn") {
                 centerIn(node->value());
             } else {
-                AnchorPoint myEdge = parseAnchorPoint(what);
+                AnchorPoint myEdge = fw::translateAnchorPoint(what);
 
                 std::string anchorDescription = node->value();
                 std::vector<std::string> split;
@@ -181,7 +181,7 @@ void UIWidget::loadStyleFromOTML(const OTMLNodePtr& styleNode)
                     throw OTMLException(node, "invalid anchor description");
 
                 std::string target = split[0];
-                AnchorPoint targetEdge = parseAnchorPoint(split[1]);
+                AnchorPoint targetEdge = fw::translateAnchorPoint(split[1]);
 
                 if(myEdge == AnchorNone)
                     throw OTMLException(node, "invalid anchor edge");

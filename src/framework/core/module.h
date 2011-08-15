@@ -1,10 +1,9 @@
 #ifndef MODULE_H
 #define MODULE_H
 
-#include <otml/otmldeclarations.h>
+#include "declarations.h"
 
-class Module;
-typedef std::shared_ptr<Module> ModulePtr;
+#include <framework/otml/declarations.h>
 
 class Module
 {

@@ -1,7 +1,7 @@
 #ifndef INPUTEVENT_H
 #define INPUTEVENT_H
 
-#include <global.h>
+#include <framework/global.h>
 
 enum InputKeyCode {
     KC_UNKNOWN     = 0x00,

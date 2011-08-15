@@ -2,7 +2,7 @@
 #include "texturemanager.h"
 #include "graphics.h"
 
-#include <otml/otml.h>
+#include <framework/otml/otml.h>
 
 void Font::load(const OTMLNodePtr& fontNode)
 {
@@ -24,7 +24,7 @@ void Font::load(const OTMLNodePtr& fontNode)
     // read custom widths
     if(OTMLNodePtr node = fontNode->get("glyph widths")) {
         for(const OTMLNodePtr& child : node->childNodes())
-            m_glyphsSize[aux::safe_cast<int>(child->tag())].setWidth(child->read<int>());
+            m_glyphsSize[fw::safe_cast<int>(child->tag())].setWidth(child->read<int>());
     }
 
     // calculate glyphs texture coords
@@ -130,8 +130,6 @@ void Font::renderText(const std::string& text,
     }
 
     g_graphics.stopDrawing();
-
-    g_graphics.bindColor(Color::white);
 }
 
 const std::vector<Point>& Font::calculateGlyphsPositions(const std::string& text,

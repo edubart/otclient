@@ -1,6 +1,6 @@
 #include "connection.h"
 
-#include <core/eventdispatcher.h>
+#include <framework/core/eventdispatcher.h>
 
 static asio::io_service ioService;
 
@@ -26,7 +26,7 @@ void Connection::connect(const std::string& host, uint16 port, const ConnectCall
 {
     m_connectCallback = connectCallback;
 
-    asio::ip::tcp::resolver::query query(host, aux::unsafe_cast<std::string>(port));
+    asio::ip::tcp::resolver::query query(host, fw::unsafe_cast<std::string>(port));
     m_resolver.async_resolve(query, std::bind(&Connection::onResolve, shared_from_this(), std::placeholders::_1, std::placeholders::_2));
 
     m_timer.expires_from_now(boost::posix_time::seconds(2));

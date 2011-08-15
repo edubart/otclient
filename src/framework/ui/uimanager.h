@@ -1,9 +1,9 @@
 #ifndef UIMANAGER_H
 #define UIMANAGER_H
 
-#include "uideclarations.h"
-#include <core/inputevent.h>
-#include <otml/otmldeclarations.h>
+#include "declarations.h"
+#include <framework/platform/platformevent.h>
+#include <framework/otml/declarations.h>
 
 class UIManager
 {

@@ -1,7 +1,7 @@
 #ifndef RESOURCES_H
 #define RESOURCES_H
 
-#include <global.h>
+#include "declarations.h"
 
 class ResourceManager
 {

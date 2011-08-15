@@ -1,8 +1,8 @@
 #ifndef UIEVENT_H
 #define UIEVENT_H
 
-#include <core/inputevent.h>
-#include "uideclarations.h"
+#include <framework/platform/platformevent.h>
+#include "declarations.h"
 
 class UIEvent
 {

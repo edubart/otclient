@@ -1,7 +1,7 @@
 #ifndef LUAEXCEPTION_H
 #define LUAEXCEPTION_H
 
-#include "luadeclarations.h"
+#include "declarations.h"
 
 class LuaException : public std::exception
 {

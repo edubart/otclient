@@ -1,8 +1,8 @@
 #include "luainterface.h"
-#include <graphics/fontmanager.h>
-#include <ui/ui.h>
-#include <net/protocol.h>
-#include <core/eventdispatcher.h>
+#include <framework/graphics/fontmanager.h>
+#include <framework/ui/ui.h>
+#include <framework/net/protocol.h>
+#include <framework/core/eventdispatcher.h>
 
 void LuaInterface::registerFunctions()
 {

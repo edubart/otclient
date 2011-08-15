@@ -1,7 +1,8 @@
 #include "animatedtexture.h"
 #include "graphics.h"
-#include <core/platform.h>
-#include <core/eventdispatcher.h>
+
+#include <framework/platform/platform.h>
+#include <framework/core/eventdispatcher.h>
 
 #include <GL/gl.h>
 

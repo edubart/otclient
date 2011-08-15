@@ -1,7 +1,7 @@
 #ifndef PLATFORM_H
 #define PLATFORM_H
 
-#include <global.h>
+#include <framework/global.h>
 
 class PlatformListener;
 

@@ -1,7 +1,7 @@
 #ifndef TEXTURE_H
 #define TEXTURE_H
 
-#include "graphicsdeclarations.h"
+#include "declarations.h"
 
 class Texture : public std::enable_shared_from_this<Texture>
 {
@@ -14,12 +14,14 @@ public:
     virtual void enableBilinearFilter();
 
     /// Get OpenGL texture id
-    virtual uint getTextureId() const { return m_textureId; }
+    virtual uint getId() const { return m_textureId; }
 
     /// Copy pixels from OpenGL texture
     uchar* getPixels();
 
-    const Size& getSize() const { return m_size; }
+    int getWidth() const { return m_size.width(); }
+    int getHeight() const { return m_size.height(); }
+    const Size getSize() const { return m_size; }
     const Size& getGlSize() const { return m_glSize; }
 
 protected:

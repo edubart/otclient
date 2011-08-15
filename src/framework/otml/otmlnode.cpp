@@ -16,7 +16,7 @@ std::string OTMLNode::value() const
 {
     // ~ is an alias for no value
     if(m_value == "~")
-        return aux::empty_string;
+        return fw::empty_string;
     return m_value;
 }
 
@@ -109,7 +109,7 @@ OTMLNodePtr OTMLNode::at(const std::string& childTag)
         if(child->tag() == childTag)
             return child;
     }
-    throw OTMLException(shared_from_this(), aux::make_string("child node with tag '", childTag, "' not found"));
+    throw OTMLException(shared_from_this(), fw::mkstr("child node with tag '", childTag, "' not found"));
     return nullptr;
 }
 
@@ -117,7 +117,7 @@ OTMLNodePtr OTMLNode::at(int childIndex)
 {
     if(childIndex < size() && childIndex >= 0)
         return m_childNodes[childIndex];
-    throw OTMLException(shared_from_this(), aux::make_string("child node at index '", childIndex, "' not found"));
+    throw OTMLException(shared_from_this(), fw::mkstr("child node at index '", childIndex, "' not found"));
     return nullptr;
 }
 

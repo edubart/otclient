@@ -11,7 +11,9 @@ Texture::Texture(int width, int height, int channels, uchar *pixels)
 
 uint Texture::internalLoadGLTexture(uchar *pixels, int channels, int width, int height)
 {
-    // get smax texture size supported by the driver
+    m_size.setSize(width, height);
+
+    // gets max texture size supported by the driver
     static GLint maxTexSize = -1;
     if(maxTexSize == -1)
         glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTexSize);
@@ -28,7 +30,6 @@ uint Texture::internalLoadGLTexture(uchar *pixels, int channels, int width, int 
     GLuint id;
     glGenTextures(1, &id);
     glBindTexture(GL_TEXTURE_2D, id);
-    m_size.setSize(width, height);
     bool mustFree = false;
 
     // old opengl drivers only accept power of two dimensions

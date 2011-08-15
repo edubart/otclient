@@ -1,6 +1,7 @@
-#include <graphics/graphics.h>
-#include <graphics/texture.h>
 #include "fontmanager.h"
+
+#include <framework/graphics/graphics.h>
+#include <framework/graphics/texture.h>
 
 #include <GL/gl.h>
 #include <GL/glu.h>
@@ -109,7 +110,7 @@ void Graphics::drawTexturedRect(const Rect& screenCoords,
                                 const TexturePtr& texture,
                                 const Rect& textureCoords)
 {
-    if(screenCoords.isEmpty() || textureCoords.isEmpty())
+    if(screenCoords.isEmpty())
         return;
 
     // rect correction for opengl
@@ -119,12 +120,17 @@ void Graphics::drawTexturedRect(const Rect& screenCoords,
     int left = screenCoords.left();
     const Size& textureSize = texture->getGlSize();
 
-    float textureRight = 0.0f;
-    float textureBottom = 1.0f;
-    float textureTop = 0.0f;
-    float textureLeft = 1.0f;
+    float textureRight;
+    float textureBottom;
+    float textureTop;
+    float textureLeft;
 
-    if(!textureCoords.isEmpty()) {
+    if(textureCoords.isEmpty()) {
+        textureRight = 1.0f;
+        textureBottom = 1.0f;
+        textureTop = 0.0f;
+        textureLeft = 0.0f;
+    } else {
         textureRight = (float)(textureCoords.right() + 1) / textureSize.width();
         textureBottom = (float)(textureCoords.bottom() + 1) / textureSize.height();
         textureTop = (float)textureCoords.top() / textureSize.height();
@@ -222,7 +228,7 @@ void Graphics::drawBoundingRect(const Rect& screenCoords,
 {
     assert(!m_drawing);
 
-    if(2 * innerLineWidth > screenCoords.height() || screenCoords.isEmpty())
+    if(screenCoords.isEmpty() || 2 * innerLineWidth > screenCoords.height())
         return;
 
     // rect correction for opengl
@@ -274,7 +280,7 @@ void Graphics::bindColor(const Color& color)
 
 void Graphics::bindTexture(const TexturePtr& texture)
 {
-    glBindTexture(GL_TEXTURE_2D, texture->getTextureId());
+    glBindTexture(GL_TEXTURE_2D, texture->getId());
 }
 
 void Graphics::startDrawing()

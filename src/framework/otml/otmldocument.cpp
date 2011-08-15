@@ -2,7 +2,7 @@
 #include "otmlparser.h"
 #include "otmlemitter.h"
 
-#include <core/resourcemanager.h>
+#include <framework/core/resourcemanager.h>
 
 OTMLDocumentPtr OTMLDocument::create()
 {

@@ -1,14 +1,14 @@
 #ifndef LUAOBJECT_H
 #define LUAOBJECT_H
 
-#include "luadeclarations.h"
+#include "declarations.h"
 
 /// LuaObject, all script-able classes have it as base
 class LuaObject : public std::enable_shared_from_this<LuaObject>
 {
 public:
     LuaObject();
-    virtual ~LuaObject() ;
+    virtual ~LuaObject();
 
     /// Calls a function or table of functions stored in a lua field, results are pushed onto the stack,
     /// if any lua error occurs, it will be reported to stdout and return 0 results
@@ -40,7 +40,7 @@ public:
     /// Returns the class name used in Lua
     virtual std::string getLuaObjectName() const {
         // this could later be cached for more performance
-        return aux::demangle_name(typeid(*this).name());
+        return fw::demangle_name(typeid(*this).name());
     }
 
     LuaObjectPtr asLuaObject() { return shared_from_this(); }

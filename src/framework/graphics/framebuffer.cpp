@@ -1,6 +1,9 @@
 #include "framebuffer.h"
 #include "graphics.h"
-#include <core/platform.h>
+#include "texture.h"
+
+#include <framework/platform/platform.h>
+
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GL/glext.h>
@@ -14,22 +17,13 @@ PFNGLCHECKFRAMEBUFFERSTATUSPROC  oglCheckFramebufferStatus = 0;
 FrameBuffer::FrameBuffer(int width, int height)
 {
     m_fbo = 0;
-    m_width = width;
-    m_height = height;
 
     // create FBO texture
-    glGenTextures(1, &m_fboTexture);
-    glBindTexture(GL_TEXTURE_2D, m_fboTexture);
-    glTexImage2D(GL_TEXTURE_2D, 0, 4, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-    // we want bilinear filtering (for a smooth framebuffer)
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    m_texture = TexturePtr(new Texture(width, height, 4));
+    m_texture->enableBilinearFilter();
 
     // use FBO ext only if supported
-    if(g_graphics.isExtensionSupported("GL_ARB_framebuffer_object")) {
+    if(false && g_graphics.isExtensionSupported("GL_ARB_framebuffer_object")) {
         m_fallbackOldImp = false;
         if(!oglGenFramebuffers) {
             oglGenFramebuffers = (PFNGLGENFRAMEBUFFERSPROC)g_platform.getExtensionProcAddress("glGenFramebuffers");
@@ -44,7 +38,7 @@ FrameBuffer::FrameBuffer(int width, int height)
         oglBindFramebuffer(GL_FRAMEBUFFER_EXT, m_fbo);
 
         // attach 2D texture to this FBO
-        oglFramebufferTexture2D(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, m_fboTexture, 0);
+        oglFramebufferTexture2D(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, m_texture->getId(), 0);
 
         GLenum status = oglCheckFramebufferStatus(GL_FRAMEBUFFER_EXT);
         switch(status) {
@@ -58,6 +52,8 @@ FrameBuffer::FrameBuffer(int width, int height)
 
         // restore back buffer
         oglBindFramebuffer(GL_FRAMEBUFFER_EXT, 0);
+        glDrawBuffer(GL_BACK);
+        glReadBuffer(GL_BACK);
     } else {
         // otherwise fallback to copy texture from screen implementation
         m_fallbackOldImp = true;
@@ -66,7 +62,6 @@ FrameBuffer::FrameBuffer(int width, int height)
 
 FrameBuffer::~FrameBuffer()
 {
-    glDeleteTextures(1, &m_fboTexture);
     if(m_fbo)
         oglDeleteFramebuffers(1, &m_fbo);
 }
@@ -79,10 +74,10 @@ void FrameBuffer::bind()
     }
 
     // setup framebuffer viewport
-    glViewport(0, 0, m_width, m_height);
+    glViewport(0, 0, m_texture->getWidth(), m_texture->getHeight());
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluOrtho2D(0.0f, m_width, 0, m_height);
+    gluOrtho2D(0.0f, m_texture->getWidth(), 0, m_texture->getHeight());
 
     // back to model view
     glMatrixMode(GL_MODELVIEW);
@@ -105,8 +100,8 @@ void FrameBuffer::unbind()
         g_graphics.restoreViewport();
     } else {
         // copy screen to texture
-        glBindTexture(GL_TEXTURE_2D, m_fboTexture);
-        glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, m_width, m_height);
+        glBindTexture(GL_TEXTURE_2D, m_texture->getId());
+        glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, m_texture->getWidth(), m_texture->getHeight());
 
         // restore graphics viewport
         g_graphics.restoreViewport();
@@ -117,14 +112,7 @@ void FrameBuffer::unbind()
     }
 }
 
-void FrameBuffer::draw(int x, int y, int width, int height)
+void FrameBuffer::draw(const Rect& screenCoords, const Rect& framebufferCoords)
 {
-    glColor4ubv(Color::white.rgbaPtr());
-    glBindTexture(GL_TEXTURE_2D, m_fboTexture);
-    glBegin(GL_QUADS);
-    glTexCoord2i(0, 0); glVertex2i(x,       y);
-    glTexCoord2i(0, 1); glVertex2i(x,       y+height);
-    glTexCoord2i(1, 1); glVertex2i(x+width, y+height);
-    glTexCoord2i(1, 0); glVertex2i(x+width, y);
-    glEnd();
+    g_graphics.drawTexturedRect(screenCoords, m_texture ,framebufferCoords);
 }

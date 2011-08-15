@@ -1,7 +1,7 @@
-#ifndef GRAPHICSDECLARATIONS_H
-#define GRAPHICSDECLARATIONS_H
+#ifndef FRAMEWORK_GRAPHICS_DECLARATIONS_H
+#define FRAMEWORK_GRAPHICS_DECLARATIONS_H
 
-#include <global.h>
+#include <framework/global.h>
 
 class Texture;
 class Font;

@@ -1,8 +1,9 @@
 #ifndef FONT_H
 #define FONT_H
 
-#include "graphicsdeclarations.h"
-#include <otml/otmldeclarations.h>
+#include "declarations.h"
+
+#include <framework/otml/declarations.h>
 
 class Font
 {

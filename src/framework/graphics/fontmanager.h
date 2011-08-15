@@ -6,9 +6,10 @@
 class FontManager
 {
 public:
-    // Release fonts references, thus making possible to destruct them
+    /// Release fonts references, thus making possible to destruct them
     void releaseFonts();
 
+    /// Import a font from .otfont file
     bool importFont(std::string fontFile);
 
     bool fontExists(const std::string& fontName);

@@ -1,7 +1,7 @@
 #ifndef LUAINTERFACE_H
 #define LUAINTERFACE_H
 
-#include "luadeclarations.h"
+#include "declarations.h"
 
 struct lua_State;
 typedef int (*LuaCFunction) (lua_State *L);
@@ -41,24 +41,24 @@ public:
     // register shortcuts using templates
     template<class C, class B = LuaObject>
     void registerClass() {
-        registerClass(aux::demangle_type<C>(), aux::demangle_type<B>());
+        registerClass(fw::demangle_type<C>(), fw::demangle_type<B>());
     }
 
     template<class C>
     void registerClassStaticFunction(const std::string& functionName, const LuaCppFunction& function) {
-        registerClassStaticFunction(aux::demangle_type<C>(), functionName, function);
+        registerClassStaticFunction(fw::demangle_type<C>(), functionName, function);
     }
 
     template<class C>
     void registerClassMemberFunction(const std::string& functionName, const LuaCppFunction& function) {
-        registerClassMemberFunction(aux::demangle_type<C>(), functionName, function);
+        registerClassMemberFunction(fw::demangle_type<C>(), functionName, function);
     }
 
     template<class C>
     void registerClassMemberField(const std::string& field,
                                   const LuaCppFunction& getFunction,
                                   const LuaCppFunction& setFunction) {
-        registerClassMemberField(aux::demangle_type<C>(), field, getFunction, setFunction);
+        registerClassMemberField(fw::demangle_type<C>(), field, getFunction, setFunction);
     }
 
     // methods for binding functions
@@ -322,7 +322,7 @@ template<class T>
 T LuaInterface::castValue(int index) {
     T o;
     if(!luavalue_cast(index, o))
-        throw LuaBadValueCastException(typeName(index), aux::demangle_type<T>());
+        throw LuaBadValueCastException(typeName(index), fw::demangle_type<T>());
     return o;
 }
 

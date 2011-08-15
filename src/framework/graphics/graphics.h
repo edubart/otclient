@@ -1,7 +1,7 @@
 #ifndef GRAPHICS_H
 #define GRAPHICS_H
 
-#include "graphicsdeclarations.h"
+#include "declarations.h"
 
 class Graphics
 {

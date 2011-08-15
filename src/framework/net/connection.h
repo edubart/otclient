@@ -1,7 +1,8 @@
 #ifndef CONNECTION_H
 #define CONNECTION_H
 
-#include "netdeclarations.h"
+#include "declarations.h"
+#include <boost/asio.hpp>
 
 class Connection : public std::enable_shared_from_this<Connection>, boost::noncopyable
 {
@@ -11,7 +12,7 @@ class Connection : public std::enable_shared_from_this<Connection>, boost::nonco
 
 public:
     Connection();
-    ~Connection();
+    virtual ~Connection();
 
     static void poll();
 

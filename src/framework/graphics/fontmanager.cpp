@@ -1,7 +1,7 @@
 #include "fontmanager.h"
 
-#include <core/resourcemanager.h>
-#include <otml/otml.h>
+#include <framework/core/resourcemanager.h>
+#include <framework/otml/otml.h>
 
 FontManager g_fonts;
 
@@ -64,6 +64,6 @@ FontPtr FontManager::getDefaultFont()
 {
     // default font should always exists, otherwise the app may crash
     if(!m_defaultFont)
-        throw std::runtime_error("no default font to display, cannot continue to run");
+        logFatal("FATAL ERROR: no default font to display, cannot continue to run");
     return m_defaultFont;
 }

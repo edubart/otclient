@@ -1,7 +1,7 @@
 #ifndef RSA_H
 #define RSA_H
 
-#include <global.h>
+#include <framework/global.h>
 #include <gmp.h>
 
 class Rsa

@@ -1,7 +1,7 @@
 #ifndef OTMLPARSER_H
 #define OTMLPARSER_H
 
-#include "otmldeclarations.h"
+#include "declarations.h"
 
 class OTMLParser
 {
