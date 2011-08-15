@@ -39,6 +39,7 @@ public:
     static Color green;
     static Color blue;
     static Color pink;
+    static Color yellow;
 
 private:
     RGBA color;

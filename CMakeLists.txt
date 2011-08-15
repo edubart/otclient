@@ -63,6 +63,8 @@ SET(SOURCES
     src/item.cpp
     src/tile.cpp
     src/thing.cpp
+    src/creature.cpp
+    src/effect.cpp
 
     # framework third party
     src/framework/thirdparty/apngloader.cpp

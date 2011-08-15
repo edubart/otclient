@@ -5,11 +5,12 @@
 ProtocolGame::ProtocolGame()
 {
     m_checksumEnabled = false;
-    g_game.setProtocol(this);
+    g_game.setProtocol(ProtocolGamePtr(this));
 }
 
 ProtocolGame::~ProtocolGame()
 {
+    sendLogout();
     g_game.setProtocol(NULL);
 }
 

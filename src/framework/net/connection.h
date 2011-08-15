@@ -11,10 +11,12 @@ class Connection : public std::enable_shared_from_this<Connection>, boost::nonco
 
 public:
     Connection();
+    ~Connection();
 
     static void poll();
 
     void connect(const std::string& host, uint16 port, const ConnectCallback& connectCallback);
+    void disconnect();
     void send(uint8* buffer, uint16 size);
     void recv(uint16 bytes, uint32 timeout, const RecvCallback& callback);
 

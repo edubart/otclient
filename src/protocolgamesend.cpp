@@ -1,5 +1,12 @@
 #include "protocolgame.h"
 
+void ProtocolGame::sendLogout()
+{
+    OutputMessage oMsg;
+    oMsg.addU8(0x14);
+    send(oMsg);
+}
+
 void ProtocolGame::sendPing()
 {
     OutputMessage oMsg;

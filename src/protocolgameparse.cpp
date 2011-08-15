@@ -3,6 +3,7 @@
 #include "tibiadat.h"
 #include "game.h"
 #include "map.h"
+#include "effect.h"
 #include <iomanip>
 
 void ProtocolGame::parseMessage(InputMessage& msg)
@@ -235,9 +236,12 @@ void ProtocolGame::parseMessage(InputMessage& msg)
 
 void ProtocolGame::parsePlayerLogin(InputMessage& msg)
 {
-    msg.getU32(); // player id
-    msg.getU16(); // drawing speed.
-    msg.getU8(); // can report bugs
+    Player *player = g_game.getPlayer();
+    player->setId(msg.getU32());
+    player->setDrawSpeed(msg.getU16());
+    player->setCanReportBugs(msg.getU8());
+
+    g_game.setOnline(true);
 }
 
 void ProtocolGame::parseGMActions(InputMessage& msg)
@@ -248,7 +252,8 @@ void ProtocolGame::parseGMActions(InputMessage& msg)
 
 void ProtocolGame::parseErrorMessage(InputMessage& msg)
 {
-    msg.getString(); // message
+    std::string error = msg.getString();
+    callLuaField("onError", error);
 }
 
 void ProtocolGame::parseFYIMessage(InputMessage& msg)
@@ -280,12 +285,7 @@ void ProtocolGame::parseCanReportBugs(InputMessage& msg)
 void ProtocolGame::parseMapDescription(InputMessage& msg)
 {
     Player *player = g_game.getPlayer();
-
-    Position playerPos = parsePosition(msg);
-
-    logDebug("x: ", playerPos.x, " y: ", playerPos.y, " z: ", (int)playerPos.z);
-    player->setPosition(playerPos);
-    logDebug("x: ", player->getPosition()->x, " y: ", player->getPosition()->y, " z: ", (int)player->getPosition()->z);
+    player->setPosition(parsePosition(msg));
     setMapDescription(msg, player->getPosition()->x - 8, player->getPosition()->y - 6, player->getPosition()->z, 18, 14);
 }
 
@@ -462,8 +462,11 @@ void ProtocolGame::parseWorldLight(InputMessage& msg)
 
 void ProtocolGame::parseMagicEffect(InputMessage& msg)
 {
-    parsePosition(msg); // effect pos
-    msg.getU8(); // effect
+    EffectPtr effect = EffectPtr(new Effect());
+    effect->setPosition(parsePosition(msg));
+    effect->setId(msg.getU8());
+
+    g_game.getMap()->addThing(effect);
 }
 
 void ProtocolGame::parseAnimatedText(InputMessage& msg)
@@ -521,6 +524,12 @@ void ProtocolGame::parseCreatureShields(InputMessage& msg)
 {
     msg.getU32(); // creature id
     msg.getU8(); // shield
+}
+
+void ProtocolGame::parseCreatureTurn(InputMessage& msg)
+{
+    msg.getU32(); // creature id
+    msg.getU8(); // direction
 }
 
 void ProtocolGame::parseItemTextWindow(InputMessage& msg)
@@ -828,43 +837,48 @@ void ProtocolGame::setFloorDescription(InputMessage& msg, int32 x, int32 y, int3
 
 void ProtocolGame::setTileDescription(InputMessage& msg, Position position)
 {
-    int n = 0;
+    int stackpos = 0;
     while(1){
-        n++;
+        stackpos++;
         uint16 inspectTileId = msg.getU16(true);
         if(inspectTileId >= 0xFF00)
             return;
         else {
-            if(n > 10) {
+            if(stackpos > 10) {
                 logDebug("[ProtocolGame::setTileDescription] Too many things!.");
                 return;
             }
 
-            g_game.getMap()->addThing(internalGetThing(msg), position);
+            ThingPtr thing = internalGetThing(msg);
+            if(thing)
+                thing->setPosition(position);
+            g_game.getMap()->addThing(thing, stackpos);
         }
     }
 }
 
-Thing *ProtocolGame::internalGetThing(InputMessage& msg)
+ThingPtr ProtocolGame::internalGetThing(InputMessage& msg)
 {
-    Thing *thing = NULL;
+    ThingPtr thing;
 
     uint16 thingId = msg.getU16();
     if(thingId == 0x0061 || thingId == 0x0062) { // add new creature
+        CreaturePtr creature = CreaturePtr(new Creature);
+
         if(thingId == 0x0062) { //creature is known
-            msg.getU32(); // creature id
+            creature->setId(msg.getU32());
         }
         else if(thingId == 0x0061) { //creature is not known
             msg.getU32(); // remove id
-            msg.getU32(); // creature id
-            msg.getString(); // creature name
+            creature->setId(msg.getU32());
+            creature->setName(msg.getString());
         }
 
-        msg.getU8(); // hp
-        msg.getU8(); // direction
-        internalCreatureOutfit(msg);
-        msg.getU8(); // level
-        msg.getU8(); // color
+        creature->setHealthPercent(msg.getU8());
+        creature->setDirection((Direction)msg.getU8());
+        creature->setOutfit(internalCreatureOutfit(msg));
+        msg.getU8(); // light level
+        msg.getU8(); // light color
         msg.getU16(); // speed
         msg.getU8(); // skull
         msg.getU8(); // shield
@@ -873,10 +887,11 @@ Thing *ProtocolGame::internalGetThing(InputMessage& msg)
             msg.getU8();
         msg.getU8(); // impassable
 
+        thing = creature;
+
     }
     else if(thingId == 0x0063) { // creature turn
-        msg.getU32(); // creature id
-        msg.getU8(); // direction
+        parseCreatureTurn(msg);
     }
     else // item
         thing = internalGetItem(msg, thingId);
@@ -884,31 +899,35 @@ Thing *ProtocolGame::internalGetThing(InputMessage& msg)
     return thing;
 }
 
-void ProtocolGame::internalCreatureOutfit(InputMessage& msg)
+Outfit ProtocolGame::internalCreatureOutfit(InputMessage& msg)
 {
-    uint16 lookType = msg.getU16(); // looktype
-    if(lookType != 0) {
-        msg.getU8(); // lookhead
-        msg.getU8(); // lookbody
-        msg.getU8(); // looklegs
-        msg.getU8(); // lookfeet
-        msg.getU8(); // lookaddons
+    Outfit outfit;
+
+    outfit.type = msg.getU16(); // looktype
+    if(outfit.type != 0) {
+        outfit.head = msg.getU8();
+        outfit.body = msg.getU8();
+        outfit.legs = msg.getU8();
+        outfit.feet = msg.getU8();
+        outfit.addons = msg.getU8();
     }
     else {
-        msg.getU16(); // looktype
+        outfit.type = msg.getU16();
     }
+
+    return outfit;
 }
 
-Item *ProtocolGame::internalGetItem(InputMessage& msg, uint16 id)
+ItemPtr ProtocolGame::internalGetItem(InputMessage& msg, uint16 id)
 {
-    Item *item = new Item();
+    ItemPtr item = ItemPtr(new Item());
 
     if(id == 0xFFFF)
         id = msg.getU16();
     item->setId(id);
 
-    ItemAttributes *itemAttributes = g_tibiaDat.getItemAttributes(id);
-    if(itemAttributes->stackable || itemAttributes->group == ITEM_GROUP_FLUID || itemAttributes->group == ITEM_GROUP_SPLASH)
+    ThingAttributes *itemAttributes = g_tibiaDat.getItemAttributes(id);
+    if(itemAttributes->stackable || itemAttributes->group == THING_GROUP_FLUID || itemAttributes->group == THING_GROUP_SPLASH)
         item->setCount(msg.getU8());
 
     return item;

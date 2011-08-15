@@ -17,41 +17,59 @@ void Map::draw(int x, int y)
     if(playerPos->z <= 7) {
 
         // player pos it 8-6. check if we can draw upper floors.
-        /*bool draw = true;
+        bool draw = true;
         for(int jz = 6; jz >= 0; --jz) {
-            if(m_tiles[Position(8+(6-jz), 6+(6-jz), jz)]->getStackSize() > 0) {
-                draw = false;
+            Position coverPos = Position(playerPos->x-(6-jz), playerPos->y-(6-jz), jz);
+            if(m_tiles[coverPos]) {
+                if(m_tiles[coverPos]->getStackSize() > 0 && jz < playerPos->z) {
+                    draw = false;
+                }
             }
-        }*/
+        }
 
         for(int iz = 7; iz > 0; --iz) {
 
             // +1 in draws cause 64x64 items may affect view.
-            for(int ix = - 8; ix < + 8; ++ix) {
-                for(int iy = - 6; iy < + 6; ++iy) {
-                    Position relativePos = Position(playerPos->x + ix, playerPos->y + iy, iz);
+            for(int ix = -7; ix < + 8+7; ++ix) {
+                for(int iy = -5; iy < + 6+7; ++iy) {
+                    Position itemPos = Position(playerPos->x + ix, playerPos->y + iy, iz);
                     //Position drawPos = Position(ix + 8, iy - playerPos->y + 6, iz);
                     //logDebug("x: ", relativePos.x, " y: ", relativePos.y, " z: ", (int)relativePos.z);
-                    if(m_tiles.find(relativePos) != m_tiles.end())
-                        m_tiles[relativePos]->draw(ix + 8, iy + 6, iz);
+                    if(m_tiles[itemPos])
+                        m_tiles[itemPos]->draw((ix + 7 - (7-iz))*32, (iy + 5 - (7-iz))*32);
                 }
             }
 
-            //if(!draw)
-                //break;
+            if(!draw)
+                break;
         }
 
     }
+
+    // draw effects
+    for(auto it = m_effects.begin(), end = m_effects.end(); it != end; ++it) {
+        Position *effectPos = (*it)->getPosition();
+        (*it)->draw((effectPos->x - playerPos->x + 7) * 32, (effectPos->y - playerPos->y + 5) * 32);
+    }
+
+    // debug draws
+    g_graphics.drawBoundingRect(Rect(7*32, 5*32, 32, 32), Color::red);
 
     m_framebuffer->unbind();
 
     m_framebuffer->draw(x, y, g_graphics.getScreenSize().width(), g_graphics.getScreenSize().height());
 }
 
-void Map::addThing(Thing *thing, const Position& pos)
+void Map::addThing(ThingPtr thing, uint8 stackpos)
 {
-    if(m_tiles.find(pos) == m_tiles.end()) {
-        m_tiles[pos] = TilePtr(new Tile());
+    if(thing->getType() == Thing::TYPE_ITEM || thing->getType() == Thing::TYPE_CREATURE) {
+        if(!m_tiles[*thing->getPosition()]) {
+            m_tiles[*thing->getPosition()] = TilePtr(new Tile());
+        }
+
+        m_tiles[*thing->getPosition()]->addThing(thing, stackpos);
     }
-    m_tiles[pos]->addThing(thing);
+    else if(thing->getType() == Thing::TYPE_EFFECT) {
+        m_effects.push_back(thing);
+    }
 }

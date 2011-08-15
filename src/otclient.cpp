@@ -199,7 +199,8 @@ void OTClient::poll()
 
 void OTClient::render()
 {
-    g_game.getMap()->draw(0, 0);
+    if(g_game.getOnline())
+        g_game.getMap()->draw(0, 0);
 
     // everything is rendered by UI components
     g_ui.render();
@@ -261,7 +262,7 @@ void OTClient::onInputEvent(const InputEvent& event)
 {
     g_ui.inputEvent(event);
 
-    ProtocolGame *protocol = g_game.getProtocol();
+    ProtocolGamePtr protocol = g_game.getProtocol();
     if(protocol) {
         if(event.type == EventKeyDown) {
             if(event.keycode == KC_UP)
