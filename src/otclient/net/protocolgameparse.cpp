@@ -1,6 +1,6 @@
 #include "protocolgame.h"
 
-#include <otclient/core/player.h>
+#include <otclient/core/localplayer.h>
 #include <otclient/core/datmanager.h>
 #include <otclient/core/game.h>
 #include <otclient/core/map.h>
@@ -10,9 +10,6 @@ void ProtocolGame::parseMessage(InputMessage& msg)
 {
     while(!msg.end()) {
         uint8 opt = msg.getU8();
-
-        dump << "Protocol opt: " << std::hex << (int)opt << std::dec;
-
         switch(opt) {
             case 0x0A:
                 parsePlayerLogin(msg);
@@ -225,23 +222,25 @@ void ProtocolGame::parseMessage(InputMessage& msg)
                 parseQuestPartList(msg);
                 break;
             default:
-                logDebug("UNKNOWN PACKET BYTE.", opt);
-                //skipPacket = true;
+                logError("UNKNOWN PACKET OPT BYTE: 0x", std::hex, opt);
                 break;
         }
     }
-
     recv();
 }
 
 void ProtocolGame::parsePlayerLogin(InputMessage& msg)
 {
-    Player *player = g_game.getPlayer();
-    player->setId(msg.getU32());
-    player->setDrawSpeed(msg.getU16());
-    player->setCanReportBugs(msg.getU8());
+    int playerId = msg.getU32();
+    int playerDrawSpeed = msg.getU16();
+    int playerCanReportBugs = msg.getU8();
 
-    g_game.setOnline(true);
+    g_game.onLogin();
+
+    m_localPlayer = g_game.getLocalPlayer();
+    m_localPlayer->setId(playerId);
+    m_localPlayer->setDrawSpeed(playerDrawSpeed);
+    m_localPlayer->setCanReportBugs(playerCanReportBugs);
 }
 
 void ProtocolGame::parseGMActions(InputMessage& msg)
@@ -284,37 +283,41 @@ void ProtocolGame::parseCanReportBugs(InputMessage& msg)
 
 void ProtocolGame::parseMapDescription(InputMessage& msg)
 {
-    Player *player = g_game.getPlayer();
-    player->setPosition(parsePosition(msg));
-    setMapDescription(msg, player->getPosition()->x - 8, player->getPosition()->y - 6, player->getPosition()->z, 18, 14);
+    Position pos = parsePosition(msg);
+    setMapDescription(msg, pos.x - 8, pos.y - 6, pos.z, 18, 14);
+    m_localPlayer->setPosition(pos);
 }
 
 void ProtocolGame::parseMoveNorth(InputMessage& msg)
 {
-    Player *player = g_game.getPlayer();
-    player->getPosition()->y--;
-    setMapDescription(msg, player->getPosition()->x - 8, player->getPosition()->y - 6, player->getPosition()->z, 18, 1);
+    Position pos = m_localPlayer->getPosition();
+    pos.y--;
+    setMapDescription(msg, pos.x - 8, pos.y - 6, pos.z, 18, 1);
+    m_localPlayer->setPosition(pos);
 }
 
 void ProtocolGame::parseMoveEast(InputMessage& msg)
 {
-    Player *player = g_game.getPlayer();
-    player->getPosition()->x++;
-    setMapDescription(msg, player->getPosition()->x + 9, player->getPosition()->y - 6, player->getPosition()->z, 1, 14);
+    Position pos = m_localPlayer->getPosition();
+    pos.x++;
+    setMapDescription(msg, pos.x + 9, pos.y - 6, pos.z, 1, 14);
+    m_localPlayer->setPosition(pos);
 }
 
 void ProtocolGame::parseMoveSouth(InputMessage& msg)
 {
-    Player *player = g_game.getPlayer();
-    player->getPosition()->y++;
-    setMapDescription(msg, player->getPosition()->x - 8, player->getPosition()->y + 7, player->getPosition()->z, 18, 1);
+    Position pos = m_localPlayer->getPosition();
+    pos.y++;
+    setMapDescription(msg, pos.x - 8, pos.y + 7, pos.z, 18, 1);
+    m_localPlayer->setPosition(pos);
 }
 
 void ProtocolGame::parseMoveWest(InputMessage& msg)
 {
-    Player *player = g_game.getPlayer();
-    player->getPosition()->x--;
-    setMapDescription(msg, player->getPosition()->x - 8, player->getPosition()->y - 6, player->getPosition()->z, 1, 14);
+    Position pos = m_localPlayer->getPosition();
+    pos.x--;
+    setMapDescription(msg, pos.x - 8, pos.y - 6, pos.z, 1, 14);
+    m_localPlayer->setPosition(pos);
 }
 
 void ProtocolGame::parseUpdateTile(InputMessage& msg)
@@ -466,7 +469,7 @@ void ProtocolGame::parseMagicEffect(InputMessage& msg)
     effect->setPosition(parsePosition(msg));
     effect->setId(msg.getU8());
 
-    g_game.getMap()->addThing(effect);
+    g_map.addThing(effect);
 }
 
 void ProtocolGame::parseAnimatedText(InputMessage& msg)
@@ -505,7 +508,7 @@ void ProtocolGame::parseCreatureLight(InputMessage& msg)
 void ProtocolGame::parseCreatureOutfit(InputMessage& msg)
 {
     msg.getU32(); // creature id
-    internalCreatureOutfit(msg);
+    internalGetOutfit(msg);
 }
 
 void ProtocolGame::parseCreatureSpeed(InputMessage& msg)
@@ -698,41 +701,45 @@ void ProtocolGame::parseCancelWalk(InputMessage& msg)
 
 void ProtocolGame::parseFloorChangeUp(InputMessage& msg)
 {
-    Player *player = g_game.getPlayer();
-    player->getPosition()->z--;
+    Position pos = m_localPlayer->getPosition();
+    pos.z--;
 
     int32 skip = 0;
-    if(player->getPosition()->z == 7)
+    if(m_localPlayer->getPosition().z == 7)
         for(int32 i = 5; i >= 0; i--)
-            setFloorDescription(msg, player->getPosition()->x - 8, player->getPosition()->y - 6, i, 18, 14, 8 - i, &skip);
-    else if(player->getPosition()->z > 7)
-        setFloorDescription(msg, player->getPosition()->x - 8, player->getPosition()->y - 6, player->getPosition()->z - 2, 18, 14, 3, &skip);
+            setFloorDescription(msg, pos.x - 8, pos.y - 6, i, 18, 14, 8 - i, &skip);
+    else if(m_localPlayer->getPosition().z > 7)
+        setFloorDescription(msg, pos.x - 8, pos.y - 6, pos.z - 2, 18, 14, 3, &skip);
 
-    player->getPosition()->x++;
-    player->getPosition()->y++;
+    pos.x++;
+    pos.y++;
+
+    m_localPlayer->setPosition(pos);
 }
 
 void ProtocolGame::parseFloorChangeDown(InputMessage& msg)
 {
-    Player *player = g_game.getPlayer();
-    player->getPosition()->z++;
+    Position pos = m_localPlayer->getPosition();
+    pos.z++;
 
-    int32 skip = 0;
-    if(player->getPosition()->z == 8) {
-        int32 j, i;
-        for(i = player->getPosition()->z, j = -1; i < (int32)player->getPosition()->z + 3; ++i, --j)
-            setFloorDescription(msg, player->getPosition()->x - 8, player->getPosition()->y - 6, i, 18, 14, j, &skip);
+    int skip = 0;
+    if(pos.z == 8) {
+        int j, i;
+        for(i = pos.z, j = -1; i < pos.z + 3; ++i, --j)
+            setFloorDescription(msg, pos.x - 8, pos.y - 6, i, 18, 14, j, &skip);
     }
-    else if(player->getPosition()->z > 8 && player->getPosition()->z < 14)
-        setFloorDescription(msg, player->getPosition()->x - 8, player->getPosition()->y - 6, player->getPosition()->z + 2, 18, 14, -3, &skip);
+    else if(pos.z > 8 && pos.z < 14)
+        setFloorDescription(msg, pos.x - 8, pos.y - 6, pos.z + 2, 18, 14, -3, &skip);
 
-    player->getPosition()->x--;
-    player->getPosition()->y--;
+    pos.x--;
+    pos.y--;
+
+    m_localPlayer->setPosition(pos);
 }
 
 void ProtocolGame::parseOutfitWindow(InputMessage& msg)
 {
-    internalCreatureOutfit(msg);
+    internalGetOutfit(msg);
     uint8 outfitCount = msg.getU8();
 
     for(int i = 0; i < outfitCount; i++) {
@@ -852,9 +859,28 @@ void ProtocolGame::setTileDescription(InputMessage& msg, Position position)
             ThingPtr thing = internalGetThing(msg);
             if(thing)
                 thing->setPosition(position);
-            g_game.getMap()->addThing(thing, stackpos);
+            g_map.addThing(thing, stackpos);
         }
     }
+}
+
+Outfit ProtocolGame::internalGetOutfit(InputMessage& msg)
+{
+    Outfit outfit;
+
+    outfit.type = msg.getU16(); // looktype
+    if(outfit.type != 0) {
+        outfit.head = msg.getU8();
+        outfit.body = msg.getU8();
+        outfit.legs = msg.getU8();
+        outfit.feet = msg.getU8();
+        outfit.addons = msg.getU8();
+    }
+    else {
+        outfit.type = msg.getU16();
+    }
+
+    return outfit;
 }
 
 ThingPtr ProtocolGame::internalGetThing(InputMessage& msg)
@@ -876,7 +902,7 @@ ThingPtr ProtocolGame::internalGetThing(InputMessage& msg)
 
         creature->setHealthPercent(msg.getU8());
         creature->setDirection((Direction)msg.getU8());
-        creature->setOutfit(internalCreatureOutfit(msg));
+        creature->setOutfit(internalGetOutfit(msg));
         msg.getU8(); // light level
         msg.getU8(); // light color
         msg.getU16(); // speed
@@ -897,25 +923,6 @@ ThingPtr ProtocolGame::internalGetThing(InputMessage& msg)
         thing = internalGetItem(msg, thingId);
 
     return thing;
-}
-
-Outfit ProtocolGame::internalCreatureOutfit(InputMessage& msg)
-{
-    Outfit outfit;
-
-    outfit.type = msg.getU16(); // looktype
-    if(outfit.type != 0) {
-        outfit.head = msg.getU8();
-        outfit.body = msg.getU8();
-        outfit.legs = msg.getU8();
-        outfit.feet = msg.getU8();
-        outfit.addons = msg.getU8();
-    }
-    else {
-        outfit.type = msg.getU16();
-    }
-
-    return outfit;
 }
 
 ItemPtr ProtocolGame::internalGetItem(InputMessage& msg, uint16 id)

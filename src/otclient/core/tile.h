@@ -1,9 +1,10 @@
 #ifndef TILE_H
 #define TILE_H
 
-#include "thing.h"
+#include "declarations.h"
+#include <framework/luascript/luaobject.h>
 
-class Tile
+class Tile : public LuaObject
 {
 public:
     Tile();

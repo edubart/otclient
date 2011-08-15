@@ -19,4 +19,11 @@ enum ThingAttributesGroup {
     THING_GROUP_LAST
 };
 
+enum ThingType {
+    THING_ITEM,
+    THING_CREATURE,
+    THING_EFFECT,
+    THING_SHOT
+};
+
 #endif

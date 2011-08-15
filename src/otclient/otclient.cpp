@@ -200,8 +200,8 @@ void OTClient::poll()
 void OTClient::render()
 {
     //TODO: UIMap for map drawing
-    if(g_game.getOnline())
-        g_game.getMap()->draw(0, 0);
+    if(g_game.isOnline())
+        g_map.draw(0, 0);
 
     // everything is rendered by UI components
     g_ui.render();

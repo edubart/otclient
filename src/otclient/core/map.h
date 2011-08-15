@@ -25,4 +25,6 @@ private:
     FrameBufferPtr m_framebuffer;
 };
 
+extern Map g_map;
+
 #endif

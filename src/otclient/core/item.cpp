@@ -4,19 +4,14 @@
 #include <framework/graphics/graphics.h>
 #include "thing.h"
 
-Item::Item()
+Item::Item() : Thing(THING_ITEM)
 {
-    m_type = Thing::TYPE_ITEM;
-}
-
-const ThingAttributes& Item::getAttributes()
-{
-    return g_dat.getItemAttributes(m_id);
+    m_count = 0;
 }
 
 void Item::draw(int x, int y)
 {
-    auto attributes = g_dat.getItemAttributes(m_id);
+    const ThingAttributes& attributes = g_dat.getItemAttributes(m_id);
 
     int xdiv = 0, ydiv = 0, zdiv = 0, anim = 0;
 
@@ -32,4 +27,9 @@ void Item::draw(int x, int y)
 
     for(int b = 0; b < attributes.blendframes; b++)
         internalDraw(x, y, b, xdiv, ydiv, zdiv, anim);
+}
+
+const ThingAttributes& Item::getAttributes()
+{
+    return g_dat.getItemAttributes(m_id);
 }

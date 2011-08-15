@@ -121,7 +121,6 @@ void Graphics::drawTexturedRect(const Rect& screenCoords,
     int bottom = screenCoords.bottom() + 1;
     int top = screenCoords.top();
     int left = screenCoords.left();
-    const Size& textureSize = texture->getGlSize();
 
     float textureRight;
     float textureBottom;
@@ -134,6 +133,7 @@ void Graphics::drawTexturedRect(const Rect& screenCoords,
         textureTop = 0.0f;
         textureLeft = 0.0f;
     } else {
+        const Size& textureSize = texture->getGlSize();
         textureRight = (float)(textureCoords.right() + 1) / textureSize.width();
         textureBottom = (float)(textureCoords.bottom() + 1) / textureSize.height();
         textureTop = (float)textureCoords.top() / textureSize.height();
@@ -152,7 +152,6 @@ void Graphics::drawTexturedRect(const Rect& screenCoords,
 
     if(!m_drawing)
         glEnd();
-
 }
 
 void Graphics::drawRepeatedTexturedRect(const Rect& screenCoords,

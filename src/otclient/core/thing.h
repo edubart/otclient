@@ -1,58 +1,39 @@
 #ifndef THING_H
 #define THING_H
 
-#include <otclient/global.h>
 #include "declarations.h"
+#include "thingattributes.h"
+#include <framework/luascript/luaobject.h>
 
-struct ThingAttributes
-{
-    ThingAttributes();
-
-    bool stackable, alwaysOnTop, useable, readable, moveable, blockSolid, blockProjectile, blockPathFind, pickupable,
-         isHangable, isHorizontal, isVertical, rotable, hasHeight, lookThrough, hasMiniMapColor;
-    uint8 alwaysOnTopOrder, width, height, blendframes, xdiv, ydiv, zdiv, animcount, xOffset, yOffset;
-    uint16 speed, subParam07, subParam08, lightLevel, lightColor, miniMapColor;
-    std::vector<int> sprites;
-    ThingAttributesGroup group;
-};
-
-class Thing
+class Thing : public LuaObject
 {
 public:
-    Thing();
+    Thing(ThingType type) : m_id(0), m_type(type) { }
+    virtual ~Thing() { }
 
-    enum Type {
-        TYPE_NONE,
-        TYPE_ITEM,
-        TYPE_CREATURE,
-        TYPE_EFFECT,
-        TYPE_SHOT
-    };
+    virtual void draw(int x, int y) = 0;
 
     void setId(uint32 id) { m_id = id; }
-    uint32 getId() { return m_id; }
-
-    void setType(Type type) { m_type = type; }
-    Type getType() const { return m_type; }
-
     void setPosition(const Position& position) { m_position = position; }
-    Position *getPosition() { return &m_position; }
 
-    virtual void draw(int, int) {}
+    uint32 getId() const { return m_id; }
+    ThingType getType() const { return m_type; }
+    Position getPosition() const { return m_position; }
     virtual const ThingAttributes& getAttributes() = 0;
 
-    virtual Item* getItem() { return NULL; }
-    virtual const Item *getItem() const { return NULL; }
-    virtual Creature *getCreature() { return NULL; }
-    virtual const Creature *getCreature() const { return NULL; }
+    ThingPtr asThing() { return std::static_pointer_cast<Thing>(shared_from_this()); }
+    virtual ItemPtr asItem() { return nullptr; }
+    virtual CreaturePtr asCreature() { return nullptr; }
+    virtual EffectPtr asEffect() { return nullptr; }
+    virtual PlayerPtr asPlayer() { return nullptr; }
+    virtual LocalPlayerPtr asLocalPlayer() { return nullptr; }
 
 protected:
     void internalDraw(int x, int y, int blendframes, int xdiv, int ydiv, int zdiv, int anim);
 
     uint32 m_id;
-    Type m_type;
+    ThingType m_type;
     Position m_position;
-
 };
 
 #endif

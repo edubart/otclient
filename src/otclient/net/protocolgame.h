@@ -20,7 +20,6 @@ public:
     void onConnect();
     void onRecv(InputMessage& inputMessage);
 
-    // Send Messages
     void sendLogout();
     void sendPing();
     void sendWalkNorth();
@@ -108,13 +107,18 @@ private:
     void setMapDescription(InputMessage& msg, int32 x, int32 y, int32 z, int32 width, int32 height);
     void setFloorDescription(InputMessage& msg, int32 x, int32 y, int32 z, int32 width, int32 height, int32 offset, int32* skipTiles);
     void setTileDescription(InputMessage& msg, Position position);
+
+    Outfit internalGetOutfit(InputMessage& msg);
     ThingPtr internalGetThing(InputMessage& msg);
-    Outfit internalCreatureOutfit(InputMessage& msg);
     ItemPtr internalGetItem(InputMessage& msg, uint16 id);
 
     Position parsePosition(InputMessage& msg);
 
-    std::string m_accountName, m_accountPassword, m_characterName;
+private:
+    std::string m_accountName;
+    std::string m_accountPassword;
+    std::string m_characterName;
+    LocalPlayerPtr m_localPlayer;
 };
 
-#endif // PROTOCOLGAME_H
+#endif

@@ -1,33 +1,30 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include <framework/global.h>
-#include "map.h"
-#include "player.h"
-#include <otclient/net/protocolgame.h>
+#include "declarations.h"
+#include <otclient/net/declarations.h>
 
 class Game
 {
 public:
     Game();
 
+    void onLogin();
+    void onLogout();
+
     void setProtocol(ProtocolGamePtr protocolGame) { m_protocolGame = protocolGame; }
+
+    bool isOnline() { return m_online; }
+
     ProtocolGamePtr getProtocol() { return m_protocolGame; }
-
-    Map *getMap() { return &m_map; }
-    Player *getPlayer() { return &m_player; }
-
-    void setOnline(bool online) { m_online = online; }
-    bool getOnline() { return m_online; }
+    LocalPlayerPtr getLocalPlayer() { return m_localPlayer; }
 
 private:
-    Map m_map;
-    Player m_player;
+    LocalPlayerPtr m_localPlayer;
     ProtocolGamePtr m_protocolGame;
     bool m_online;
-
 };
 
 extern Game g_game;
 
-#endif // GAME_H
+#endif

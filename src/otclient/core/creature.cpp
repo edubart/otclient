@@ -8,27 +8,10 @@
 #include <GL/glu.h>
 #include <GL/glext.h>
 
-
-
-
-
-
-// OW BART TEM COMO USAR 2 FRAMEBUFFER?
-// SERIA O IDEAL PARA DESENHAR A COR DOS BONEQUIN.
-
-
-
-
-
-
-Creature::Creature()
+Creature::Creature() : Thing(THING_CREATURE)
 {
-    m_type = Thing::TYPE_CREATURE;
-}
-
-const ThingAttributes& Creature::getAttributes()
-{
-    return g_dat.getCreatureAttributes(m_outfit.type);
+    m_healthPercent = 0;
+    m_direction = DIRECTION_SOUTH;
 }
 
 void Creature::draw(int x, int y)
@@ -61,4 +44,9 @@ void Creature::draw(int x, int y)
         //framebuffer.draw(x, y, creatureAttributes->width*32, creatureAttributes->height*32);
     //}
     //glPopAttrib();
+}
+
+const ThingAttributes& Creature::getAttributes()
+{
+    return g_dat.getCreatureAttributes(m_outfit.type);
 }

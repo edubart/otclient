@@ -6,17 +6,10 @@
 class Player : public Creature
 {
 public:
-    void setDrawSpeed(uint16 drawSpeed) { m_drawSpeed = drawSpeed; }
-    uint16 getDrawSpeed() { return m_drawSpeed; }
+    Player() { }
+    virtual ~Player() { }
 
-    void setCanReportBugs(uint8 canReportBugs) { m_canReportBugs = (canReportBugs != 0); }
-    bool getCanReportBugs() { return m_canReportBugs; }
-
-private:
-
-    uint16 m_drawSpeed;
-    bool m_canReportBugs;
-
+    PlayerPtr asPlayer() { return std::static_pointer_cast<Player>(shared_from_this()); }
 };
 
 #endif

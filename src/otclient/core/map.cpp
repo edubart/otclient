@@ -1,7 +1,10 @@
 #include "map.h"
 #include "game.h"
+#include "localplayer.h"
 #include <framework/graphics/graphics.h>
 #include <framework/graphics/framebuffer.h>
+
+Map g_map;
 
 void Map::draw(int x, int y)
 {
@@ -11,17 +14,17 @@ void Map::draw(int x, int y)
     g_graphics.bindColor(Color::white);
     m_framebuffer->bind();
 
-    Position *playerPos = g_game.getPlayer()->getPosition();
+    Position playerPos = g_game.getLocalPlayer()->getPosition();
 
     // player is above 7
-    if(playerPos->z <= 7) {
+    if(playerPos.z <= 7) {
 
         // player pos it 8-6. check if we can draw upper floors.
         bool draw = true;
         for(int jz = 6; jz >= 0; --jz) {
-            Position coverPos = Position(playerPos->x-(6-jz), playerPos->y-(6-jz), jz);
+            Position coverPos = Position(playerPos.x-(6-jz), playerPos.y-(6-jz), jz);
             if(m_tiles[coverPos]) {
-                if(m_tiles[coverPos]->getStackSize() > 0 && jz < playerPos->z) {
+                if(m_tiles[coverPos]->getStackSize() > 0 && jz < playerPos.z) {
                     draw = false;
                 }
             }
@@ -32,8 +35,8 @@ void Map::draw(int x, int y)
             // +1 in draws cause 64x64 items may affect view.
             for(int ix = -7; ix < + 8+7; ++ix) {
                 for(int iy = -5; iy < + 6+7; ++iy) {
-                    Position itemPos = Position(playerPos->x + ix, playerPos->y + iy, iz);
-                    //Position drawPos = Position(ix + 8, iy - playerPos->y + 6, iz);
+                    Position itemPos = Position(playerPos.x + ix, playerPos.y + iy, iz);
+                    //Position drawPos = Position(ix + 8, iy - playerPos.y + 6, iz);
                     //logDebug("x: ", relativePos.x, " y: ", relativePos.y, " z: ", (int)relativePos.z);
                     if(m_tiles[itemPos])
                         m_tiles[itemPos]->draw((ix + 7 - (7-iz))*32, (iy + 5 - (7-iz))*32);
@@ -48,8 +51,8 @@ void Map::draw(int x, int y)
 
     // draw effects
     for(auto it = m_effects.begin(), end = m_effects.end(); it != end; ++it) {
-        Position *effectPos = (*it)->getPosition();
-        (*it)->draw((effectPos->x - playerPos->x + 7) * 32, (effectPos->y - playerPos->y + 5) * 32);
+        Position effectPos = (*it)->getPosition();
+        (*it)->draw((effectPos.x - playerPos.x + 7) * 32, (effectPos.y - playerPos.y + 5) * 32);
     }
 
     // debug draws
@@ -61,14 +64,14 @@ void Map::draw(int x, int y)
 
 void Map::addThing(ThingPtr thing, uint8 stackpos)
 {
-    if(thing->getType() == Thing::TYPE_ITEM || thing->getType() == Thing::TYPE_CREATURE) {
-        if(!m_tiles[*thing->getPosition()]) {
-            m_tiles[*thing->getPosition()] = TilePtr(new Tile());
+    if(thing->asItem() || thing->asCreature()) {
+        if(!m_tiles[thing->getPosition()]) {
+            m_tiles[thing->getPosition()] = TilePtr(new Tile());
         }
 
-        m_tiles[*thing->getPosition()]->addThing(thing, stackpos);
+        m_tiles[thing->getPosition()]->addThing(thing, stackpos);
     }
-    else if(thing->getType() == Thing::TYPE_EFFECT) {
+    else if(thing->asEffect()) {
         m_effects.push_back(thing);
     }
 }

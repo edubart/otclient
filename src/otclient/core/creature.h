@@ -3,8 +3,7 @@
 
 #include "thing.h"
 
-struct Outfit
-{
+struct Outfit {
     uint16 type;
     uint8 head;
     uint8 body;
@@ -17,31 +16,28 @@ class Creature : public Thing
 {
 public:
     Creature();
+    virtual ~Creature() { }
 
-    virtual const ThingAttributes& getAttributes();
-    void draw(int x, int y);
+    virtual void draw(int x, int y);
 
     void setName(const std::string& name) { m_name = name; }
-    std::string getName() { return m_name; }
-
     void setHealthPercent(uint8 healthPercent) { m_healthPercent = healthPercent; }
-    uint8 getHealthPercent() { return m_healthPercent; }
-
     void setDirection(Direction direction) { m_direction = direction; }
+    void setOutfit(const Outfit& outfit) { m_outfit = outfit; }
     Direction getDirection() { return m_direction; }
 
-    void setOutfit(const Outfit& outfit) { m_outfit = outfit; }
     Outfit getOutfit() { return m_outfit; }
+    std::string getName() { return m_name; }
+    uint8 getHealthPercent() { return m_healthPercent; }
+    const ThingAttributes& getAttributes();
 
-    virtual Creature *getCreature() { return this; }
-    virtual const Creature *getCreature() const { return this; }
+    CreaturePtr asCreature() { return std::static_pointer_cast<Creature>(shared_from_this()); }
 
 private:
     std::string m_name;
     uint8 m_healthPercent;
     Direction m_direction;
     Outfit m_outfit;
-
 };
 
-#endif // CREATURE_H
+#endif

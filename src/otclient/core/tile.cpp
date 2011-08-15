@@ -4,7 +4,6 @@
 
 Tile::Tile()
 {
-
 }
 
 void Tile::addThing(ThingPtr thing, uint8 stackpos)
@@ -13,7 +12,7 @@ void Tile::addThing(ThingPtr thing, uint8 stackpos)
         return;
 
     const ThingAttributes& thingAttributes = thing->getAttributes();
-    if(thing->getType() == Thing::TYPE_ITEM) {
+    if(thing->asItem()) {
         if(thingAttributes.group == THING_GROUP_GROUND)
             m_ground = thing;
         else {
@@ -22,7 +21,7 @@ void Tile::addThing(ThingPtr thing, uint8 stackpos)
             else
                 m_itemsBot.push_back(thing);
         }
-    } else if(thing->getType() == Thing::TYPE_CREATURE) {
+    } else if(thing->asCreature()) {
         m_creatures.push_back(thing);
     }
 }

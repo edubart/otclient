@@ -4,16 +4,16 @@
 #include <framework/global.h>
 #include "thing.h"
 
-
 class Effect : public Thing
 {
 public:
     Effect();
 
-    virtual const ThingAttributes& getAttributes();
     void draw(int x, int y);
 
-private:
+    const ThingAttributes& getAttributes();
+
+    virtual EffectPtr asEffect() { return std::static_pointer_cast<Effect>(shared_from_this()); }
 };
 
-#endif // EFFECT_H
+#endif
