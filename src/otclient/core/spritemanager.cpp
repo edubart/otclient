@@ -93,7 +93,7 @@ TexturePtr SpriteManager::getSpriteTexture(int id)
     if(id == 0)
         return g_graphics.getEmptyTexture();
 
-    assert(id <= m_spritesCount);
+    assert(id > 0 && id <= m_spritesCount);
 
     // load sprites on demand
     TexturePtr texture = m_sprites[id-1];

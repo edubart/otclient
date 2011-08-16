@@ -16,11 +16,13 @@ void Effect::draw(int x, int y)
     if(!m_finished) {
         if(g_platform.getTicks() - m_lastTicks > 75) {
             const ThingAttributes& attributes = getAttributes();
-            m_animation++;
-            if(m_animation == attributes.animcount) {
+
+            if(m_animation+1 == attributes.animcount) {
                 g_dispatcher.addEvent(std::bind(&Map::removeThing, &g_map, asThing()));
                 m_finished = true;
             }
+            else
+                m_animation++;
             m_lastTicks = g_platform.getTicks();
         }
 
