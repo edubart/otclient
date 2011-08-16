@@ -11,45 +11,45 @@ void InputMessage::reset()
     m_messageSize = 2;
 }
 
-uint8 InputMessage::getU8(bool blockReadPos)
+uint8 InputMessage::getU8(bool peek)
 {
     assert(canRead(1));
     uint8 v = m_buffer[m_readPos];
 
-    if(!blockReadPos)
+    if(!peek)
         m_readPos += 1;
 
     return v;
 }
 
-uint16 InputMessage::getU16(bool blockReadPos)
+uint16 InputMessage::getU16(bool peek)
 {
     assert(canRead(2));
     uint16 v = *(uint16_t*)(m_buffer + m_readPos);
 
-    if(!blockReadPos)
+    if(!peek)
         m_readPos += 2;
 
     return v;
 }
 
-uint32 InputMessage::getU32(bool blockReadPos)
+uint32 InputMessage::getU32(bool peek)
 {
     assert(canRead(4));
     uint32 v = *(uint32*)(m_buffer + m_readPos);
 
-    if(!blockReadPos)
+    if(!peek)
         m_readPos += 4;
 
     return v;
 }
 
-uint64 InputMessage::getU64(bool blockReadPos)
+uint64 InputMessage::getU64(bool peek)
 {
     assert(canRead(8));
     uint64 v = *(uint64*)(m_buffer + m_readPos);
 
-    if(!blockReadPos)
+    if(!peek)
         m_readPos += 8;
 
     return v;

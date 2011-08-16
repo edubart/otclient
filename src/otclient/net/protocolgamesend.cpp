@@ -26,7 +26,7 @@ void ProtocolGame::sendLoginPacket(uint32 timestamp, uint8 unknown)
     oMsg.addU32(timestamp);
     oMsg.addU8(unknown);
 
-    // fill the rest with zeros
+    // complete the 128 bytes for rsa encryption with zeros
     oMsg.addPaddingBytes(128 - (29 + m_accountName.length() + m_characterName.length() + m_accountPassword.length()));
 
     // encrypt with RSA

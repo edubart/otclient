@@ -8,7 +8,7 @@
 
 void ProtocolGame::parseMessage(InputMessage& msg)
 {
-    while(!msg.end()) {
+    while(!msg.eof()) {
         uint8 opt = msg.getU8();
         switch(opt) {
             case 0x0A:
