@@ -12,3 +12,4 @@ otclient.kdev4
 CMakeLists.txt.user
 callgrind.out.*
 !.gitignore
+*.kate-swp
