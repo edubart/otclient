@@ -10,7 +10,6 @@ public:
     Effect();
 
     void draw(int x, int y);
-    void update(int elapsedTime);
 
     bool finished() { return m_finished; }
 
@@ -19,7 +18,7 @@ public:
     EffectPtr asEffect() { return std::static_pointer_cast<Effect>(shared_from_this()); }
 
 private:
-    int m_timer;
+    int m_lastTicks;
     int m_animation;
     bool m_finished;
 };

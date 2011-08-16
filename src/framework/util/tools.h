@@ -193,14 +193,23 @@ R safe_cast(const T& t) {
 /// Usage:
 ///   R r = fw::unsafe_cast<R>(t);
 template<typename R, typename T>
-R unsafe_cast(const T& t) {
-    R r;
+R unsafe_cast(const T& t, R def = R()) {
     try {
-        r = safe_cast<R,T>(t);
+        return safe_cast<R,T>(t);
     } catch(bad_cast& e) {
         println(e.what());
+        return def;
     }
-    return r;
+}
+
+template<typename T>
+std::string tostring(const T& t) {
+    return unsafe_cast<std::string, T>(t);
+}
+
+template<typename T>
+T fromstring(const std::string& str, T def = T()) {
+    return unsafe_cast<T, std::string>(str, def);
 }
 
 // an empty string to use anywhere needed

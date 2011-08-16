@@ -54,23 +54,6 @@ void Map::draw(int x, int y)
     m_framebuffer->draw(Rect(x, y, g_graphics.getScreenSize()));
 }
 
-void Map::update(int elapsedTime)
-{
-    // Items
-
-    // Effects
-    for(auto it = m_effects.begin(), end = m_effects.end(); it != end;) {
-        if((*it)->finished()) {
-            m_tiles[(*it)->getPosition()]->removeThing(*it, 0);
-            it = m_effects.erase(it);
-        }
-        else {
-            (*it)->update(elapsedTime);
-            ++it;
-        }
-    }
-}
-
 void Map::addThing(ThingPtr thing, uint8 stackpos)
 {
     if(!m_tiles[thing->getPosition()]) {
@@ -80,7 +63,15 @@ void Map::addThing(ThingPtr thing, uint8 stackpos)
     m_tiles[thing->getPosition()]->addThing(thing, stackpos);
 
     // List with effects and shots to update them.
-    if(thing->asEffect()) {
-        m_effects.push_back(thing->asEffect());
+    if(EffectPtr effect = thing->asEffect()) {
+        m_effects.push_back(effect);
     }
 }
+
+void Map::removeThing(ThingPtr thing)
+{
+    if(TilePtr& tile = m_tiles[thing->getPosition()]) {
+        tile->removeThing(thing, 0);
+    }
+}
+

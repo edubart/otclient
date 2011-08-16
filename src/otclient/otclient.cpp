@@ -1,7 +1,7 @@
 #include "otclient.h"
 
 #include <framework/core/modulemanager.h>
-#include <framework/core/configmanager.h>
+#include <framework/core/configs.h>
 #include <framework/core/resourcemanager.h>
 #include <framework/core/eventdispatcher.h>
 #include <framework/luascript/luainterface.h>
@@ -44,10 +44,14 @@ void OTClient::init(std::vector<std::string> args)
     loadConfigurations();
 
     // create the client window
-    g_platform.createWindow(g_configs.get("window x"), g_configs.get("window y"),
-                            g_configs.get("window width"), g_configs.get("window height"),
-                            550, 450,
-                            g_configs.get("window maximized"));
+    int minWidth = 550;
+    int minHeight = 450;
+    int windowX = fw::fromstring(g_configs.get("window x"), 0);
+    int windowY = fw::fromstring(g_configs.get("window y"), 0);
+    int windowWidth = fw::fromstring(g_configs.get("window width"), minWidth);
+    int windowHeight = fw::fromstring(g_configs.get("window height"), minHeight);
+    bool maximized = fw::fromstring(g_configs.get("window maximized"), false);
+    g_platform.createWindow(windowX, windowY, windowWidth, windowHeight, minWidth, minHeight, maximized);
     g_platform.setWindowTitle("OTClient");
 
     // initialize graphics
@@ -82,7 +86,6 @@ void OTClient::run()
     int frameTicks = g_platform.getTicks();
     int lastFpsTicks = frameTicks;
     int lastPollTicks = frameTicks;
-    int lastUpdateTicks = frameTicks;
     int frameCount = 0;
 
     m_stopping = false;
@@ -97,6 +100,7 @@ void OTClient::run()
     poll();
 
     while(!m_stopping) {
+        g_platform.updateTicks();
         frameTicks = g_platform.getTicks();
 
         // calculate fps
@@ -113,12 +117,6 @@ void OTClient::run()
         if(frameTicks - lastPollTicks >= POLL_CYCLE_DELAY) {
             poll();
             lastPollTicks = frameTicks;
-        }
-
-        // only update to a maximum of 60 fps
-        if(frameTicks - lastUpdateTicks >= 1) {
-            g_map.update(frameTicks - lastUpdateTicks);
-            lastUpdateTicks = frameTicks;
         }
 
         // only render when the windows is visible
@@ -224,12 +222,12 @@ void OTClient::loadConfigurations()
     int defHeight = 450;
 
     // sets default window configuration
-    g_configs.set("window x", (g_platform.getDisplayWidth() - defWidth)/2);
-    g_configs.set("window y", (g_platform.getDisplayHeight() - defHeight)/2);
-    g_configs.set("window width", defWidth);
-    g_configs.set("window height", defHeight);
-    g_configs.set("window maximized", false);
-    g_configs.set("vsync", true);
+    g_configs.set("window x", fw::tostring((g_platform.getDisplayWidth() - defWidth)/2));
+    g_configs.set("window y", fw::tostring((g_platform.getDisplayHeight() - defHeight)/2));
+    g_configs.set("window width", fw::tostring(defWidth));
+    g_configs.set("window height", fw::tostring(defHeight));
+    g_configs.set("window maximized", fw::tostring(false));
+    g_configs.set("vsync", fw::tostring(true));
 
     // loads user configuration
     if(!g_configs.load("config.otml"))
@@ -239,16 +237,17 @@ void OTClient::loadConfigurations()
 void OTClient::setupConfigurations()
 {
     // activate vertical synchronization?
-    g_platform.setVerticalSync(g_configs.get("vsync"));
+    bool vsync = fw::fromstring(g_configs.get("vsync"), true);
+    g_platform.setVerticalSync(vsync);
 }
 
 void OTClient::saveConfigurations()
 {
-    g_configs.set("window x", g_platform.getWindowX());
-    g_configs.set("window y", g_platform.getWindowY());
-    g_configs.set("window width", g_platform.getWindowWidth());
-    g_configs.set("window height", g_platform.getWindowHeight());
-    g_configs.set("window maximized", g_platform.isWindowMaximized());
+    g_configs.set("window x", fw::tostring(g_platform.getWindowX()));
+    g_configs.set("window y", fw::tostring(g_platform.getWindowY()));
+    g_configs.set("window width", fw::tostring(g_platform.getWindowWidth()));
+    g_configs.set("window height", fw::tostring(g_platform.getWindowHeight()));
+    g_configs.set("window maximized", fw::tostring(g_platform.isWindowMaximized()));
 
     // saves user configuration
     if(!g_configs.save())

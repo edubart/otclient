@@ -23,8 +23,11 @@ function EnterGame_connectToLoginServer()
     loadBox:destroy()
     local motdNumber = string.sub(motd, 0, string.find(motd, "\n"))
     local motdText = string.sub(motd, string.find(motd, "\n") + 1, string.len(motd))
-    displayInfoBox("Message of the day", motdText)
-    mainMenu.visible = false
+    if motdNumber ~= Configs.get("motd") then
+      displayInfoBox("Message of the day", motdText)
+      Configs.set("motd", motdNumber)
+    end
+    mainMenu:hide()
   end
 
   local enterGameWindow = rootWidget:getChild("enterGameWindow")

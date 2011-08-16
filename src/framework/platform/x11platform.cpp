@@ -38,6 +38,7 @@ struct X11PlatformPrivate {
     int height;
     int x;
     int y;
+    int lastTicks;
     std::string clipboardText;
     std::map<int, uchar> keyMap;
     PlatformListener* listener;
@@ -240,7 +241,7 @@ void Platform::init(PlatformListener* platformListener, const char *appName)
     x11.atomWindowMaximizedHorz = XInternAtom(x11.display, "_NET_WM_STATE_MAXIMIZED_HORZ", False);
 
     // force first tick
-    Platform::getTicks();
+    updateTicks();
 }
 
 void Platform::terminate()
@@ -447,7 +448,7 @@ void Platform::poll()
     }
 }
 
-int Platform::getTicks()
+void Platform::updateTicks()
 {
     static timeval tv;
     static ulong firstTick = 0;
@@ -456,7 +457,7 @@ int Platform::getTicks()
     if(!firstTick)
         firstTick = tv.tv_sec;
 
-    return ((tv.tv_sec - firstTick) * 1000) + (tv.tv_usec / 1000);
+    m_lastTicks = ((tv.tv_sec - firstTick) * 1000) + (tv.tv_usec / 1000);
 }
 
 void Platform::sleep(ulong miliseconds)

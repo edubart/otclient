@@ -1,34 +1,27 @@
 #include "effect.h"
 #include "datmanager.h"
+#include "map.h"
+#include <framework/platform/platform.h>
+#include <framework/core/eventdispatcher.h>
 
 Effect::Effect() : Thing(THING_EFFECT)
 {
-    m_timer = 0;
+    m_lastTicks = g_platform.getTicks();
     m_animation = 0;
     m_finished = false;
 }
 
 void Effect::draw(int x, int y)
 {
-    internalDraw(x, y, 0, 0, 0, 0, m_animation);
-}
-
-void Effect::update(int elapsedTime)
-{
-    if(m_finished)
-        return;
-
-    if(m_timer > 75) {
+    if(!m_finished && g_platform.getTicks() - m_lastTicks > 75) {
         const ThingAttributes& attributes = getAttributes();
-
-        if(m_animation+1 == attributes.animcount) {
-            m_finished = true;
-            return;
-        }
         m_animation++;
-        m_timer = 0;
+        if(m_animation == attributes.animcount)
+            g_dispatcher.addEvent(std::bind(&Map::removeThing, &g_map, asThing()));
+        m_lastTicks = g_platform.getTicks();
     }
-    m_timer += elapsedTime;
+
+    internalDraw(x, y, 0, 0, 0, 0, m_animation);
 }
 
 const ThingAttributes& Effect::getAttributes()

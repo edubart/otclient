@@ -33,13 +33,9 @@ void Tile::addThing(ThingPtr thing, uint8 stackpos)
 void Tile::removeThing(ThingPtr thing, uint8 stackpos)
 {
     if(thing->asEffect()) {
-        for(auto it = m_effects.begin(), end = m_effects.end(); it != end; ++it) {
-            if(thing == *it) {
-                (*it).reset();
-                m_effects.erase(it);
-                break;
-            }
-        }
+        auto it = std::find(m_effects.begin(), m_effects.end(), thing);
+        assert(it != m_effects.end());
+        m_effects.erase(it);
     }
 }
 

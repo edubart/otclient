@@ -89,7 +89,7 @@ SET(SOURCES
     src/framework/util/translator.cpp
 
     # framework core
-    src/framework/core/configmanager.cpp
+    src/framework/core/configs.cpp
     src/framework/core/resourcemanager.cpp
     src/framework/core/eventdispatcher.cpp
     src/framework/core/modulemanager.cpp

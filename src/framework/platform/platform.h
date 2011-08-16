@@ -14,8 +14,11 @@ public:
     /// Poll platform input/window events
     void poll();
 
-    /// Get current time in milliseconds since init
-    int getTicks();
+    void updateTicks();
+
+    /// Get current time in milliseconds since last application init
+    int getTicks() { return m_lastTicks; }
+
     /// Sleep in current thread
     void sleep(ulong ms);
 
@@ -58,6 +61,7 @@ public:
 
 private:
     PlatformListener* m_listener;
+    int m_lastTicks;
 };
 
 extern Platform g_platform;

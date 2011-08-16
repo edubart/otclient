@@ -3,6 +3,7 @@
 #include <framework/ui/ui.h>
 #include <framework/net/protocol.h>
 #include <framework/core/eventdispatcher.h>
+#include <framework/core/configs.h>
 
 void LuaInterface::registerFunctions()
 {
@@ -30,6 +31,9 @@ void LuaInterface::registerFunctions()
     g_lua.bindClassMemberFunction<UIWidget>("getChild", &UIWidget::getChildById);
     g_lua.bindClassMemberFunction<UIWidget>("addChild", &UIWidget::addChild);
     g_lua.bindClassMemberFunction<UIWidget>("lock", &UIWidget::lock);
+    g_lua.bindClassMemberFunction<UIWidget>("hide", &UIWidget::hide);
+    g_lua.bindClassMemberFunction<UIWidget>("show", &UIWidget::show);
+
 
     // UILabel
     g_lua.registerClass<UILabel, UIWidget>();
@@ -54,6 +58,11 @@ void LuaInterface::registerFunctions()
 
     // Protocol
     g_lua.registerClass<Protocol>();
+
+    // ConfigManager
+    g_lua.registerClass<Configs>();
+    g_lua.bindClassStaticFunction<Configs>("set", std::bind(&Configs::set, &g_configs, _1, _2));
+    g_lua.bindClassStaticFunction<Configs>("get", std::bind(&Configs::get, &g_configs, _1));
 
     // global functions
     g_lua.bindGlobalFunction("importFont", std::bind(&FontManager::importFont, &g_fonts, _1));

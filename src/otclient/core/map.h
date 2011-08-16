@@ -9,9 +9,9 @@ class Map
 {
 public:
     void draw(int x, int y);
-    void update(int elapsedTime);
 
     void addThing(ThingPtr thing, uint8 stackpos = 0);
+    void removeThing(ThingPtr thing);
 
 private:
     std::unordered_map<Position, TilePtr, PositionHasher> m_tiles;
