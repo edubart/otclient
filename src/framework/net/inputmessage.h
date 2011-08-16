@@ -20,17 +20,17 @@ public:
 
     void reset();
 
-    uint8 getU8(bool blockReadPos = false);
-    uint16 getU16(bool blockReadPos = false);
-    uint32 getU32(bool blockReadPos = false);
-    uint64 getU64(bool blockReadPos = false);
+    uint8 getU8(bool peek = false);
+    uint16 getU16(bool peek = false);
+    uint32 getU32(bool peek = false);
+    uint64 getU64(bool peek = false);
     std::string getString();
 
     void skipBytes(uint16 bytes) { m_readPos += bytes; }
     uint8* getBuffer() { return m_buffer; }
     uint16 getMessageSize() { return m_messageSize; }
     void setMessageSize(uint16 messageSize) { m_messageSize = messageSize; }
-    bool end() { return m_readPos == m_messageSize; }
+    bool eof() { return m_readPos == m_messageSize; }
 
 private:
     bool canRead(int bytes);

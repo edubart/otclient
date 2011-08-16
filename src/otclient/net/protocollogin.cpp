@@ -36,7 +36,7 @@ void ProtocolLogin::onConnect()
 
 void ProtocolLogin::onRecv(InputMessage& inputMessage)
 {
-    while(!inputMessage.end()) {
+    while(!inputMessage.eof()) {
         uint8 opt = inputMessage.getU8();
         switch(opt) {
         case 0x0A:
@@ -65,30 +65,29 @@ void ProtocolLogin::sendLoginPacket()
 {
     OutputMessage oMsg;
 
-    oMsg.addU8(0x01); // Protocol id
-    oMsg.addU16(0x02);  // OS
-    oMsg.addU16(862); // Client version
+    oMsg.addU8(0x01); // protocol id
+    oMsg.addU16(0x02); // os
+    oMsg.addU16(862); // client version
 
-    oMsg.addU32(0x4E12DAFF); // Data Signature
-    oMsg.addU32(0x4E12DB27); // Sprite Signature
-    oMsg.addU32(0x4E119CBF); // Picture Signature
+    oMsg.addU32(0x4E12DAFF); // data signature
+    oMsg.addU32(0x4E12DB27); // sprite signature
+    oMsg.addU32(0x4E119CBF); // pic signature
 
-    oMsg.addU8(0); // First RSA byte must be 0x00 // 1
+    oMsg.addU8(0); // first RSA byte must be 0
 
-    // Add xtea key
+    // xtea key
     generateXteaKey();
-    oMsg.addU32(m_xteaKey[0]); // 5
-    oMsg.addU32(m_xteaKey[1]); // 9
-    oMsg.addU32(m_xteaKey[2]); // 13
-    oMsg.addU32(m_xteaKey[3]); // 17
+    oMsg.addU32(m_xteaKey[0]);
+    oMsg.addU32(m_xteaKey[1]);
+    oMsg.addU32(m_xteaKey[2]);
+    oMsg.addU32(m_xteaKey[3]);
 
-    oMsg.addString(m_accountName); // Account Name // 19
-    oMsg.addString(m_accountPassword); // Password // 21
+    oMsg.addString(m_accountName);
+    oMsg.addString(m_accountPassword);
 
-    // Packet data must have since byte 0, start, 128 bytes
+    // complete the 128 bytes for rsa encryption with zeros
     oMsg.addPaddingBytes(128 - (21 + m_accountName.length() + m_accountPassword.length()));
 
-    // Encrypt msg with RSA
     if(!Rsa::encrypt((char*)oMsg.getBuffer() + 6 + oMsg.getMessageSize() - 128, 128, OTSERV_PUBLIC_RSA))
         return;
 
