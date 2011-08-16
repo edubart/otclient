@@ -1,11 +1,30 @@
 #include "game.h"
 #include "localplayer.h"
+#include <otclient/net/protocolgame.h>
 
 Game g_game;
 
-Game::Game()
+void Game::init()
 {
     m_online = false;
+}
+
+void Game::terminate()
+{
+    if(m_online)
+        logout();
+}
+
+void Game::loginWorld(const std::string& account, const std::string& password, uint32 worldIp, uint16 worldPort, const std::string& characterName)
+{
+    m_protocolGame = ProtocolGamePtr(new ProtocolGame);
+    m_protocolGame->login(account, password, worldIp, worldPort, characterName);
+}
+
+void Game::logout()
+{
+    m_protocolGame->sendLogout();
+    onLogout();
 }
 
 void Game::onLogin()
@@ -16,6 +35,7 @@ void Game::onLogin()
 
 void Game::onLogout()
 {
+    m_protocolGame.reset();
     m_localPlayer.reset();
     m_online = false;
 }

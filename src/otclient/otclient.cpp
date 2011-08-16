@@ -62,6 +62,8 @@ void OTClient::init(std::vector<std::string> args)
     // initialize the ui
     g_ui.init();
 
+    g_game.init();
+
     // discover and load modules
     g_modules.discoverAndLoadModules();
 
@@ -146,6 +148,8 @@ void OTClient::terminate()
     // run modules unload event
     g_modules.unloadModules();
 
+    g_game.terminate();
+
     // terminate ui
     g_ui.terminate();
 
@@ -156,6 +160,7 @@ void OTClient::terminate()
     poll();
 
     // terminate network
+    Connection::terminate();
     //g_network.terminate();
 
     // terminate dispatcher
@@ -263,7 +268,7 @@ void OTClient::onPlatformEvent(const PlatformEvent& event)
 {
     g_ui.inputEvent(event);
 
-    ProtocolGamePtr protocol = g_game.getProtocol();
+    ProtocolGamePtr protocol = g_game.getProtocolGame();
     if(protocol) {
         if(event.type == EventKeyDown) {
             if(event.keycode == KC_UP)

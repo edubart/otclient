@@ -26,4 +26,11 @@ enum ThingType {
     THING_SHOT
 };
 
+enum Direction {
+    DIRECTION_NORTH,
+    DIRECTION_EAST,
+    DIRECTION_SOUTH,
+    DIRECTION_WEST
+};
+
 #endif

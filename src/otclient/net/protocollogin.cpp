@@ -6,15 +6,10 @@
 
 // TODO just testing
 #include "protocolgame.h"
+#include <otclient/core/game.h>
 
 ProtocolLogin::ProtocolLogin()
 {
-
-}
-
-ProtocolLogin::~ProtocolLogin()
-{
-
 }
 
 void ProtocolLogin::login(const std::string& accountName, const std::string& accountPassword)
@@ -99,7 +94,6 @@ void ProtocolLogin::onRecv(InputMessage& inputMessage)
 {
     while(!inputMessage.end()) {
         uint8 opt = inputMessage.getU8();
-        logDebug("opt:",(uint)opt);
         switch(opt) {
         case 0x0A:
             parseError(inputMessage);
@@ -117,17 +111,22 @@ void ProtocolLogin::onRecv(InputMessage& inputMessage)
     }
 }
 
+void ProtocolLogin::onError(const boost::system::error_code& error)
+{
+    // already disconnected, just send onLogout
+    callLuaField("onError", error.message());
+}
+
 void ProtocolLogin::parseError(InputMessage& inputMessage)
 {
     std::string error = inputMessage.getString();
-    logDebug(error);
     callLuaField("onError", error);
+    disconnect();
 }
 
 void ProtocolLogin::parseMOTD(InputMessage& inputMessage)
 {
     std::string motd = inputMessage.getString();
-    logDebug(motd);
     callLuaField("onMotd", motd);
 }
 
@@ -140,14 +139,12 @@ void ProtocolLogin::parseCharacterList(InputMessage& inputMessage)
         uint32 ip = inputMessage.getU32();
         uint16 port = inputMessage.getU16();
 
-        logDebug("character: ", name.c_str(), world.c_str(), ip, " ", port);
-
         // TODO just test
         if(i == 0) {
-            ProtocolGamePtr protocolGame = ProtocolGamePtr(new ProtocolGame);
-            protocolGame->login(m_accountName, m_accountPassword, ip, port, name);
+            g_game.loginWorld(m_accountName, m_accountPassword, ip, port, name);
+            break;
         }
     }
-    uint16 premiumDays = inputMessage.getU16();
-    logDebug("prem days: ", premiumDays);
+    /*uint16 premiumDays =*/ inputMessage.getU16();
+    disconnect();
 }

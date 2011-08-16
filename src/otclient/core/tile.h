@@ -19,7 +19,7 @@ public:
 
 private:
     ThingPtr m_ground;
-    std::deque<ThingPtr> m_itemsBot;
+    std::deque<ThingPtr> m_itemsBottom;
     std::deque<ThingPtr> m_creatures;
     std::deque<ThingPtr> m_itemsTop;
 };

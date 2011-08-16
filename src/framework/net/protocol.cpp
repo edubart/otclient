@@ -1,10 +1,9 @@
 #include "protocol.h"
 #include "connection.h"
 
-Protocol::Protocol() :
-        m_connection(new Connection)
+Protocol::Protocol() : m_connection(new Connection)
 {
-    m_connection->setErrorCallback(std::bind(&Protocol::onError, this, std::placeholders::_1));
+    m_connection->setErrorCallback(std::bind(&Protocol::onError, this,  _1));
     m_xteaEncryptionEnabled = false;
     m_checksumEnabled = true;
 }
@@ -14,41 +13,48 @@ void Protocol::connect(const std::string& host, uint16 port)
     m_connection->connect(host, port, std::bind(&Protocol::onConnect, asProtocol()));
 }
 
+void Protocol::disconnect()
+{
+    m_connection->close();
+}
+
 void Protocol::send(OutputMessage& outputMessage)
 {
-    // Encrypt
+    // encrypt
     if(m_xteaEncryptionEnabled)
         xteaEncrypt(outputMessage);
 
-    // Set checksum
+    // set checksum
     uint32 checksum = getAdlerChecksum(outputMessage.getBuffer() + OutputMessage::DATA_POS, outputMessage.getMessageSize());
     outputMessage.setWritePos(OutputMessage::CHECKSUM_POS);
     outputMessage.addU32(checksum);
 
-    // Set size
+    // set size
     uint16 messageSize = outputMessage.getMessageSize();
     outputMessage.setWritePos(OutputMessage::HEADER_POS);
     outputMessage.addU16(messageSize);
 
-    // Send
-    m_connection->send(outputMessage.getBuffer(), outputMessage.getMessageSize());
+    // send
+    m_connection->write(outputMessage.getBuffer(), outputMessage.getMessageSize());
 }
 
 void Protocol::recv()
 {
     m_inputMessage.reset();
 
-    m_connection->recv(InputMessage::HEADER_LENGTH, 2, std::bind(&Protocol::internalRecvHeader, asProtocol(), std::placeholders::_1, std::placeholders::_2));
+    m_connection->read(InputMessage::HEADER_LENGTH, std::bind(&Protocol::internalRecvHeader, asProtocol(),  _1,  _2));
 }
 
 void Protocol::internalRecvHeader(uint8* buffer, uint16 size)
 {
     memcpy(m_inputMessage.getBuffer() + InputMessage::HEADER_POS, buffer, size);
 
+    // read message size
     uint16 dataSize = m_inputMessage.getU16();
     m_inputMessage.setMessageSize(dataSize);
 
-    m_connection->recv(dataSize, 5, std::bind(&Protocol::internalRecvData, asProtocol(), std::placeholders::_1, std::placeholders::_2));
+    // schedule read for message data
+    m_connection->read(dataSize, std::bind(&Protocol::internalRecvData, asProtocol(),  _1,  _2));
 }
 
 void Protocol::internalRecvData(uint8* buffer, uint16 size)
@@ -59,7 +65,7 @@ void Protocol::internalRecvData(uint8* buffer, uint16 size)
         uint32 checksum = getAdlerChecksum(m_inputMessage.getBuffer() + InputMessage::DATA_POS, m_inputMessage.getMessageSize() - InputMessage::CHECKSUM_LENGTH);
         if(m_inputMessage.getU32() != checksum) {
             // error
-            logError("Checksum is invalid.");
+            logError("ERROR: got a network message with invalid checksum");
             return;
         }
     }
@@ -70,27 +76,12 @@ void Protocol::internalRecvData(uint8* buffer, uint16 size)
     onRecv(m_inputMessage);
 }
 
-void Protocol::onError(const boost::system::error_code& err)
-{
-    std::stringstream message;
-
-    logError("PROTOCOL ERROR: ", err.message());
-    message << "Boost error: " << err.message();
-
-    // invalid hostname
-    // connection timeouted
-
-    // displays a dialog, finish protocol
-
-    callLuaField("onError", message.str());
-}
-
 bool Protocol::xteaDecrypt(InputMessage& inputMessage)
 {
     // FIXME: this function has not been tested yet
     uint16 messageSize = inputMessage.getMessageSize() - InputMessage::CHECKSUM_LENGTH;
     if(messageSize % 8 != 0) {
-        logDebug("not valid encrypted message size");
+        logError("ERROR: invalid encrypted network message");
         return false;
     }
 
@@ -113,7 +104,7 @@ bool Protocol::xteaDecrypt(InputMessage& inputMessage)
 
     int tmp = inputMessage.getU16();
     if(tmp > inputMessage.getMessageSize() - 4) {
-        logDebug("not valid unencrypted message size");
+        logDebug("ERROR: invalid decrypted a network message");
         return false;
     }
 

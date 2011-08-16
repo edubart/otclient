@@ -8,7 +8,7 @@
 class Thing : public LuaObject
 {
 public:
-    Thing(ThingType type) : m_id(0), m_type(type) { }
+    Thing(ThingType type);
     virtual ~Thing() { }
 
     virtual void draw(int x, int y) = 0;

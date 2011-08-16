@@ -5,12 +5,6 @@
 #include "effect.h"
 #include <framework/graphics/declarations.h>
 
-struct MapPositionHasher : std::unary_function<Position, std::size_t> {
-    std::size_t operator()(const Position& pos) const {
-        return ((((pos.x * 65536) + pos.y) * 15) + pos.z) % 1000000;
-    }
-};
-
 class Map
 {
 public:
@@ -19,7 +13,7 @@ public:
     void draw(int x, int y);
 
 private:
-    std::unordered_map<Position, TilePtr, MapPositionHasher> m_tiles;
+    std::unordered_map<Position, TilePtr, PositionHasher> m_tiles;
     std::list<ThingPtr> m_effects;
 
     FrameBufferPtr m_framebuffer;

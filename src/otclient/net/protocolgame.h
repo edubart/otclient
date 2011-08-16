@@ -9,16 +9,15 @@
 
 class ProtocolGame : public Protocol
 {
-
 public:
     ProtocolGame();
-    ~ProtocolGame();
 
 public:
     void login(const std::string& accountName, const std::string& accountPassword, uint32 ip, uint16 port, const std::string& characterName);
 
     void onConnect();
     void onRecv(InputMessage& inputMessage);
+    void onError(const boost::system::error_code& error);
 
     void sendLogout();
     void sendPing();
@@ -115,6 +114,7 @@ private:
     Position parsePosition(InputMessage& msg);
 
 private:
+    bool m_waitingLoginPacket;
     std::string m_accountName;
     std::string m_accountPassword;
     std::string m_characterName;

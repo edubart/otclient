@@ -226,7 +226,6 @@ void ProtocolGame::parseMessage(InputMessage& msg)
                 break;
         }
     }
-    recv();
 }
 
 void ProtocolGame::parsePlayerLogin(InputMessage& msg)
@@ -629,7 +628,6 @@ void ProtocolGame::parseCreatureSpeak(InputMessage& msg)
             msg.getU32(); // time
             break;
         default:
-            //qDebug() << "Unknown speak type. opt: 0xAA, type: " << type;
             break;
     }
 
@@ -691,7 +689,7 @@ void ProtocolGame::parseTextMessage(InputMessage& msg)
 {
     msg.getU8(); // messageType
     std::string message = msg.getString();
-    logDebug(message);
+    //logDebug(message);
 }
 
 void ProtocolGame::parseCancelWalk(InputMessage& msg)
@@ -812,8 +810,6 @@ void ProtocolGame::setMapDescription(InputMessage& msg, int32 x, int32 y, int32 
         endz = 0;
         zstep = -1;
     }
-
-    logDebug((int)startz);
 
     for(int nz = startz; nz != endz + zstep; nz += zstep)
         setFloorDescription(msg, x, y, nz, width, height, z - nz, &skip);

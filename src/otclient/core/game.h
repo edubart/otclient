@@ -7,17 +7,22 @@
 class Game
 {
 public:
-    Game();
+    void init();
+    void terminate();
+
+    void loginWorld(const std::string& account,
+                    const std::string& password,
+                    uint32 worldIp, uint16 worldPort,
+                    const std::string& characterName);
+    void logout();
 
     void onLogin();
     void onLogout();
 
-    void setProtocol(ProtocolGamePtr protocolGame) { m_protocolGame = protocolGame; }
-
     bool isOnline() { return m_online; }
 
-    ProtocolGamePtr getProtocol() { return m_protocolGame; }
     LocalPlayerPtr getLocalPlayer() { return m_localPlayer; }
+    ProtocolGamePtr getProtocolGame() { return m_protocolGame; }
 
 private:
     LocalPlayerPtr m_localPlayer;

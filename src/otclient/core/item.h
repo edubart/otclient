@@ -11,7 +11,7 @@ public:
 
     void draw(int x, int y);
 
-    void setCount(uint8 count) { m_count = count; }
+    void setCount(int count) { m_count = count; }
 
     int getCount() { return m_count; }
     const ThingAttributes& getAttributes();
@@ -19,7 +19,7 @@ public:
     ItemPtr asItem() { return std::static_pointer_cast<Item>(shared_from_this()); }
 
 private:
-    uint8 m_count;
+    int m_count;
 };
 
 #endif

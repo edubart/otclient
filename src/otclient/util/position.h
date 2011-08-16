@@ -3,14 +3,6 @@
 
 #include <framework/util/types.h>
 
-enum Direction
-{
-    DIRECTION_NORTH,
-    DIRECTION_EAST,
-    DIRECTION_SOUTH,
-    DIRECTION_WEST
-};
-
 class Position
 {
 public:
@@ -31,6 +23,12 @@ public:
     int x;
     int y;
     int z;
+};
+
+struct PositionHasher : std::unary_function<Position, std::size_t> {
+    std::size_t operator()(const Position& pos) const {
+        return ((((pos.x * 65536) + pos.y) * 15) + pos.z) % 1000000;
+    }
 };
 
 template<class T>

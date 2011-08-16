@@ -13,14 +13,17 @@ public:
     Protocol();
 
     void connect(const std::string& host, uint16 port);
+    void disconnect();
+
     void send(OutputMessage& outputMessage);
     void recv();
+
     void internalRecvHeader(uint8* buffer, uint16 size);
     void internalRecvData(uint8* buffer, uint16 size);
 
     virtual void onConnect() = 0;
     virtual void onRecv(InputMessage& inputMessage) = 0;
-    virtual void onError(const boost::system::error_code& err);
+    virtual void onError(const boost::system::error_code& err) = 0;
 
     ProtocolPtr asProtocol() { return std::static_pointer_cast<Protocol>(shared_from_this()); }
 

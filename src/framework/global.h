@@ -47,4 +47,7 @@
 #include "util/rect.h"
 #include "util/size.h"
 
+// easy typing for _1, _2, ...
+using namespace std::placeholders;
+
 #endif

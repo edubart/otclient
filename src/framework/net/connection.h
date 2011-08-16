@@ -8,40 +8,49 @@ class Connection : public std::enable_shared_from_this<Connection>, boost::nonco
 {
     typedef std::function<void(boost::system::error_code&)> ErrorCallback;
     typedef std::function<void(uint8*, uint16)> RecvCallback;
-    typedef std::function<void()> ConnectCallback;
+
+    enum {
+        READ_TIMEOUT = 10,
+        WRITE_TIMEOUT = 10
+    };
 
 public:
     Connection();
-    virtual ~Connection();
 
+    static void init();
     static void poll();
+    static void terminate();
 
-    void connect(const std::string& host, uint16 port, const ConnectCallback& connectCallback);
-    void disconnect();
-    void send(uint8* buffer, uint16 size);
-    void recv(uint16 bytes, uint32 timeout, const RecvCallback& callback);
+    void connect(const std::string& host, uint16 port, const SimpleCallback& connectCallback);
+    void close();
+
+    void write(uint8* buffer, uint16 size);
+    void read(uint16 bytes, const RecvCallback& callback);
 
     void setErrorCallback(const ErrorCallback& errorCallback) { m_errorCallback = errorCallback; }
-    void setRecvCallback(const RecvCallback& recvCallback) { m_recvCallback = recvCallback; }
+
+    bool isConnected() const { return m_connected; }
 
 private:
-    void onTimeout(const boost::system::error_code& error);
     void onResolve(const boost::system::error_code& error, asio::ip::tcp::resolver::iterator endpointIterator);
     void onConnect(const boost::system::error_code& error);
-    void onSend(const boost::system::error_code& error, size_t);
+    void onWrite(const boost::system::error_code& error, size_t);
     void onRecv(const boost::system::error_code& error);
+    void onTimeout(const boost::system::error_code& error);
+    void handleError(const boost::system::error_code& error);
 
-
+    SimpleCallback m_connectCallback;
     ErrorCallback m_errorCallback;
-    ConnectCallback m_connectCallback;
+    RecvCallback m_recvCallback;
 
-    asio::deadline_timer m_timer;
+    asio::deadline_timer m_readTimer;
+    asio::deadline_timer m_writeTimer;
     asio::ip::tcp::resolver m_resolver;
     asio::ip::tcp::socket m_socket;
 
     uint8 m_recvBuffer[65538];
     uint16 m_recvSize;
-    RecvCallback m_recvCallback;
+    bool m_connected;
 };
 
 #endif

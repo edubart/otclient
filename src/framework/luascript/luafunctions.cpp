@@ -6,9 +6,6 @@
 
 void LuaInterface::registerFunctions()
 {
-    // easy typing _1, _2, ...
-    using namespace std::placeholders;
-
     // UIWidget
     g_lua.registerClass<UIWidget>();
     g_lua.bindClassStaticFunction<UIWidget>("create", &UIWidget::create);

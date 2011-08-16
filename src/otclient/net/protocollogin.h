@@ -11,7 +11,6 @@ class ProtocolLogin : public Protocol
 {
 public:
     ProtocolLogin();
-    ~ProtocolLogin();
 
     static ProtocolLoginPtr create() { return ProtocolLoginPtr(new ProtocolLogin); }
 
@@ -19,6 +18,7 @@ public:
 
     void onConnect();
     void onRecv(InputMessage& inputMessage);
+    void onError(const boost::system::error_code& error);
 
     void cancel() { /* TODO: this func */ }
 

@@ -77,6 +77,7 @@ SET(SOURCES
     src/framework/thirdparty/apngloader.cpp
 
     # framework net
+    src/framework/net/networkmanager.cpp
     src/framework/net/connection.cpp
     src/framework/net/inputmessage.cpp
     src/framework/net/outputmessage.cpp
