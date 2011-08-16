@@ -10,6 +10,7 @@
 
 ProtocolLogin::ProtocolLogin()
 {
+    enableChecksum();
 }
 
 void ProtocolLogin::login(const std::string& accountName, const std::string& accountPassword)
@@ -22,20 +23,6 @@ void ProtocolLogin::login(const std::string& accountName, const std::string& acc
     m_accountName = accountName;
     m_accountPassword = accountPassword;
 
-    /*static const char hosts[][32] = {
-        "login01.tibia.com",
-        "login02.tibia.com",
-        "login03.tibia.com",
-        "login04.tibia.com",
-        "login05.tibia.com",
-        "tibia01.cipsoft.com",
-        "tibia02.cipsoft.com",
-        "tibia03.cipsoft.com",
-        "tibia04.cipsoft.com",
-        "tibia05.cipsoft.com"
-    };
-
-    std::string host = hosts[rand() % 10];*/
     std::string host = "sv3.radbr.com";
     uint16 port = 7171;
 
@@ -45,49 +32,6 @@ void ProtocolLogin::login(const std::string& accountName, const std::string& acc
 void ProtocolLogin::onConnect()
 {
     sendLoginPacket();
-}
-
-void ProtocolLogin::sendLoginPacket()
-{
-    OutputMessage oMsg;
-
-    oMsg.addU8(0x01); // Protocol id
-    oMsg.addU16(0x02);  // OS
-    oMsg.addU16(862); // Client version
-
-    oMsg.addU32(0x4E12DAFF); // Data Signature
-    oMsg.addU32(0x4E12DB27); // Sprite Signature
-    oMsg.addU32(0x4E119CBF); // Picture Signature
-
-    oMsg.addU8(0); // First RSA byte must be 0x00 // 1
-
-    // Generete xtea key.
-    m_xteaKey[0] = 432324;
-    m_xteaKey[1] = 24324;
-    m_xteaKey[2] = 423432;
-    m_xteaKey[3] = 234324;
-
-    // Add xtea key
-    oMsg.addU32(m_xteaKey[0]); // 5
-    oMsg.addU32(m_xteaKey[1]); // 9
-    oMsg.addU32(m_xteaKey[2]); // 13
-    oMsg.addU32(m_xteaKey[3]); // 17
-
-    oMsg.addString(m_accountName); // Account Name // 19
-    oMsg.addString(m_accountPassword); // Password // 21
-
-    // Packet data must have since byte 0, start, 128 bytes
-    oMsg.addPaddingBytes(128 - (21 + m_accountName.length() + m_accountPassword.length()));
-
-    // Encrypt msg with RSA
-    if(!Rsa::encrypt((char*)oMsg.getBuffer() + 6 + oMsg.getMessageSize() - 128, 128, OTSERV_PUBLIC_RSA))
-        return;
-
-    send(oMsg);
-
-    m_xteaEncryptionEnabled = true;
-
-    recv();
 }
 
 void ProtocolLogin::onRecv(InputMessage& inputMessage)
@@ -109,19 +53,56 @@ void ProtocolLogin::onRecv(InputMessage& inputMessage)
             break;
         }
     }
+    disconnect();
 }
 
 void ProtocolLogin::onError(const boost::system::error_code& error)
 {
-    // already disconnected, just send onLogout
     callLuaField("onError", error.message());
+}
+
+void ProtocolLogin::sendLoginPacket()
+{
+    OutputMessage oMsg;
+
+    oMsg.addU8(0x01); // Protocol id
+    oMsg.addU16(0x02);  // OS
+    oMsg.addU16(862); // Client version
+
+    oMsg.addU32(0x4E12DAFF); // Data Signature
+    oMsg.addU32(0x4E12DB27); // Sprite Signature
+    oMsg.addU32(0x4E119CBF); // Picture Signature
+
+    oMsg.addU8(0); // First RSA byte must be 0x00 // 1
+
+    // Add xtea key
+    generateXteaKey();
+    oMsg.addU32(m_xteaKey[0]); // 5
+    oMsg.addU32(m_xteaKey[1]); // 9
+    oMsg.addU32(m_xteaKey[2]); // 13
+    oMsg.addU32(m_xteaKey[3]); // 17
+
+    oMsg.addString(m_accountName); // Account Name // 19
+    oMsg.addString(m_accountPassword); // Password // 21
+
+    // Packet data must have since byte 0, start, 128 bytes
+    oMsg.addPaddingBytes(128 - (21 + m_accountName.length() + m_accountPassword.length()));
+
+    // Encrypt msg with RSA
+    if(!Rsa::encrypt((char*)oMsg.getBuffer() + 6 + oMsg.getMessageSize() - 128, 128, OTSERV_PUBLIC_RSA))
+        return;
+
+    send(oMsg);
+
+    enableXteaEncryption();
+
+    recv();
 }
 
 void ProtocolLogin::parseError(InputMessage& inputMessage)
 {
     std::string error = inputMessage.getString();
     callLuaField("onError", error);
-    disconnect();
 }
 
 void ProtocolLogin::parseMOTD(InputMessage& inputMessage)
@@ -146,5 +127,4 @@ void ProtocolLogin::parseCharacterList(InputMessage& inputMessage)
         }
     }
     /*uint16 premiumDays =*/ inputMessage.getU16();
-    disconnect();
 }

@@ -28,8 +28,11 @@ public:
     ProtocolPtr asProtocol() { return std::static_pointer_cast<Protocol>(shared_from_this()); }
 
 protected:
+    void enableChecksum() { m_checksumEnabled = true; }
+    void enableXteaEncryption() { m_xteaEncryptionEnabled = true; }
+    void generateXteaKey();
+
     uint32 m_xteaKey[4];
-    bool m_checksumEnabled, m_xteaEncryptionEnabled;
     InputMessage m_inputMessage;
 
 private:
@@ -37,6 +40,8 @@ private:
     void xteaEncrypt(OutputMessage& outputMessage);
     uint32 getAdlerChecksum(uint8* buffer, uint16 size);
 
+    bool m_checksumEnabled;
+    bool m_xteaEncryptionEnabled;
     ConnectionPtr m_connection;
 };
 

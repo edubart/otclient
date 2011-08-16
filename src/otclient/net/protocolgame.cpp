@@ -3,7 +3,6 @@
 
 ProtocolGame::ProtocolGame()
 {
-    m_checksumEnabled = false;
     m_waitingLoginPacket = false;
 }
 
@@ -38,7 +37,7 @@ void ProtocolGame::onRecv(InputMessage& inputMessage)
         uint8 unknown = inputMessage.getU8();
 
         m_waitingLoginPacket = false;
-        m_checksumEnabled = true;
+        enableChecksum();
         sendLoginPacket(timestamp, unknown);
         recv();
     }
@@ -50,7 +49,7 @@ void ProtocolGame::onRecv(InputMessage& inputMessage)
 
 void ProtocolGame::onError(const boost::system::error_code& error)
 {
-    // already disconnected, just send onLogout
+    // already disconnected, just fire onLogout
     g_game.onLogout();
 }
 

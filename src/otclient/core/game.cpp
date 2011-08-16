@@ -35,7 +35,10 @@ void Game::onLogin()
 
 void Game::onLogout()
 {
-    m_protocolGame.reset();
+    if(m_protocolGame) {
+        m_protocolGame->disconnect();
+        m_protocolGame.reset();
+    }
     m_localPlayer.reset();
     m_online = false;
 }

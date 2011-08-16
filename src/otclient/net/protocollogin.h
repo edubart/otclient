@@ -15,15 +15,13 @@ public:
     static ProtocolLoginPtr create() { return ProtocolLoginPtr(new ProtocolLogin); }
 
     void login(const std::string& accountName, const std::string& accountPassword);
+    void cancelLogin() { disconnect(); }
 
     void onConnect();
     void onRecv(InputMessage& inputMessage);
     void onError(const boost::system::error_code& error);
 
-    void cancel() { /* TODO: this func */ }
-
     ProtocolLoginPtr asProtocolLogin() { return std::static_pointer_cast<ProtocolLogin>(shared_from_this()); }
-    virtual const char* getLuaTypeName() const { return "ProtocolLogin"; }
 
 private:
     void sendLoginPacket();

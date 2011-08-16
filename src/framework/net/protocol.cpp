@@ -1,21 +1,23 @@
 #include "protocol.h"
 #include "connection.h"
 
-Protocol::Protocol() : m_connection(new Connection)
+Protocol::Protocol()
 {
-    m_connection->setErrorCallback(std::bind(&Protocol::onError, this,  _1));
     m_xteaEncryptionEnabled = false;
-    m_checksumEnabled = true;
+    m_checksumEnabled = false;
 }
 
 void Protocol::connect(const std::string& host, uint16 port)
 {
+    m_connection = ConnectionPtr(new Connection);
+    m_connection->setErrorCallback(std::bind(&Protocol::onError, asProtocol(),  _1));
     m_connection->connect(host, port, std::bind(&Protocol::onConnect, asProtocol()));
 }
 
 void Protocol::disconnect()
 {
     m_connection->close();
+    m_connection.reset();
 }
 
 void Protocol::send(OutputMessage& outputMessage)
@@ -74,6 +76,16 @@ void Protocol::internalRecvData(uint8* buffer, uint16 size)
         xteaDecrypt(m_inputMessage);
 
     onRecv(m_inputMessage);
+}
+
+void Protocol::generateXteaKey()
+{
+    std::mt19937 eng(std::time(NULL));
+    std::uniform_int_distribution<uint32> unif(0, 0xFFFFFFFF);
+    m_xteaKey[0] = unif(eng);
+    m_xteaKey[1] = unif(eng);
+    m_xteaKey[2] = unif(eng);
+    m_xteaKey[3] = unif(eng);
 }
 
 bool Protocol::xteaDecrypt(InputMessage& inputMessage)

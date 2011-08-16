@@ -161,7 +161,6 @@ void OTClient::terminate()
 
     // terminate network
     Connection::terminate();
-    //g_network.terminate();
 
     // terminate dispatcher
     g_dispatcher.terminate();
@@ -195,7 +194,6 @@ void OTClient::poll()
     g_platform.poll();
 
     // poll network events
-    //g_network.poll();
     Connection::poll();
 
     // poll dispatcher events

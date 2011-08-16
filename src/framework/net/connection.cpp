@@ -42,6 +42,8 @@ void Connection::close()
     if(!m_connected)
         return;
 
+    m_connected = false;
+
     m_readTimer.cancel();
     m_writeTimer.cancel();
 
@@ -50,15 +52,17 @@ void Connection::close()
         m_socket.close();
     }
 
-    m_connected = false;
+    m_connectCallback = nullptr;
+    m_errorCallback = nullptr;
+    m_recvCallback = nullptr;
 }
 
 void Connection::write(uint8* buffer, uint16 size)
 {
+    m_writeTimer.cancel();
+
     if(!m_connected)
         return;
-
-    m_writeTimer.cancel();
 
     asio::async_write(m_socket,
                       asio::buffer(buffer, size),
@@ -102,6 +106,7 @@ void Connection::onResolve(const boost::system::error_code& error, asio::ip::tcp
 void Connection::onConnect(const boost::system::error_code& error)
 {
     m_readTimer.cancel();
+
     m_connected = true;
 
     if(!error) {
@@ -115,6 +120,9 @@ void Connection::onWrite(const boost::system::error_code& error, size_t)
 {
     m_writeTimer.cancel();
 
+    if(!m_connected)
+        return;
+
     if(error)
         handleError(error);
 }
@@ -122,6 +130,9 @@ void Connection::onWrite(const boost::system::error_code& error, size_t)
 void Connection::onRecv(const boost::system::error_code& error)
 {
     m_readTimer.cancel();
+
+    if(!m_connected)
+        return;
 
     if(!error) {
         if(m_recvCallback)
@@ -133,14 +144,16 @@ void Connection::onRecv(const boost::system::error_code& error)
 void Connection::onTimeout(const boost::system::error_code& error)
 {
     if(error != asio::error::operation_aborted)
-        handleError(error);
+        handleError(asio::error::timed_out);
 }
 
 void Connection::handleError(const boost::system::error_code& error)
 {
-    logTraceDebug(error.message());
-    close();
-    if(m_errorCallback)
-        g_dispatcher.addEvent(std::bind(m_errorCallback, error));
+    if(error != asio::error::operation_aborted) {
+        if(m_errorCallback)
+            g_dispatcher.addEvent(std::bind(m_errorCallback, error));
+        if(m_connected)
+            close();
+    }
 }
 
