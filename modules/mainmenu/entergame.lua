@@ -38,7 +38,7 @@ function EnterGame_connectToLoginServer()
     -- display motd
     local motdNumber = string.sub(motd, 0, string.find(motd, "\n"))
     local motdText = string.sub(motd, string.find(motd, "\n") + 1, string.len(motd))
-    --local motdBox = displayInfoBox("Message of the day", motdText)
+    local motdBox = displayInfoBox("Message of the day", motdText)
 
     -- hide main menu
     mainMenu.visible = false
