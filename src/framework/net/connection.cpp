@@ -1,5 +1,4 @@
 #include "connection.h"
-#include "networkmanager.h"
 
 #include <framework/core/eventdispatcher.h>
 #include <boost/asio.hpp>
