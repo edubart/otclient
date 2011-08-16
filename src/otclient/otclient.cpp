@@ -82,6 +82,7 @@ void OTClient::run()
     int frameTicks = g_platform.getTicks();
     int lastFpsTicks = frameTicks;
     int lastPollTicks = frameTicks;
+    int lastUpdateTicks = frameTicks;
     int frameCount = 0;
 
     m_stopping = false;
@@ -112,6 +113,12 @@ void OTClient::run()
         if(frameTicks - lastPollTicks >= POLL_CYCLE_DELAY) {
             poll();
             lastPollTicks = frameTicks;
+        }
+
+        // only update to a maximum of 60 fps
+        if(frameTicks - lastUpdateTicks >= 1) {
+            g_map.update(frameTicks - lastUpdateTicks);
+            lastUpdateTicks = frameTicks;
         }
 
         // only render when the windows is visible

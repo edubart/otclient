@@ -17,20 +17,20 @@ bool DatManager::load(const std::string& filename)
         int numShots = fw::getu16(fin);
 
         m_itemsAttributes.resize(numItems);
-        for(int id = 100; id <= numItems; ++id)
+        for(int id = 100; id < numItems; ++id)
             parseThingAttributes(fin, m_itemsAttributes[id - 100]);
 
         m_creaturesAttributes.resize(numItems);
-        for(int id = 1; id < numCreatures; ++id)
-            parseThingAttributes(fin, m_creaturesAttributes[id - 1]);
+        for(int id = 0; id < numCreatures; ++id)
+            parseThingAttributes(fin, m_creaturesAttributes[id]);
 
         m_effectsAttributes.resize(numItems);
-        for(int id = 100; id < numEffects; ++id)
-            parseThingAttributes(fin, m_effectsAttributes[id - 100]);
+        for(int id = 0; id < numEffects; ++id)
+            parseThingAttributes(fin, m_effectsAttributes[id]);
 
         m_shotsAttributes.resize(numItems);
-        for(int id = 1; id < numShots; ++id)
-            parseThingAttributes(fin, m_shotsAttributes[id - 1]);
+        for(int id = 0; id < numShots; ++id)
+            parseThingAttributes(fin, m_shotsAttributes[id]);
 
         return true;
     } catch(std::exception& e) {
@@ -178,8 +178,9 @@ void DatManager::parseThingAttributesOpt(std::stringstream& fin, ThingAttributes
             break;
         case 0x19: // pixels characters height
 
-            fin.read((char*)&thingAttributes.xOffset, 1);
-            fin.read((char*)&thingAttributes.yOffset, 1);
+            //fin.read((char*)&thingAttributes.xOffset, 1);
+            //fin.read((char*)&thingAttributes.yOffset, 1);
+            fin.read((char*)&read_short, 2);
             //logDebug((int)thingAttributes.xOffset, " ", (int)thingAttributes.yOffset);
             break;
         case 0x1A:

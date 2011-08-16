@@ -21,8 +21,25 @@ void Tile::addThing(ThingPtr thing, uint8 stackpos)
             else
                 m_itemsBottom.push_back(thing);
         }
-    } else if(thing->asCreature()) {
+    }
+    else if(thing->asCreature()) {
         m_creatures.push_back(thing);
+    }
+    else if(thing->asEffect()) {
+        m_effects.push_back(thing);
+    }
+}
+
+void Tile::removeThing(ThingPtr thing, uint8 stackpos)
+{
+    if(thing->asEffect()) {
+        for(auto it = m_effects.begin(), end = m_effects.end(); it != end; ++it) {
+            if(thing == *it) {
+                (*it).reset();
+                m_effects.erase(it);
+                break;
+            }
+        }
     }
 }
 
@@ -31,13 +48,16 @@ void Tile::draw(int x, int y)
     if(m_ground)
         m_ground->draw(x, y);
 
-    for(const ThingPtr& thing : m_itemsBottom)
+    for(const ThingPtr& thing : m_itemsTop)
         thing->draw(x, y);
 
     for(const ThingPtr& thing : m_creatures)
         thing->draw(x, y);
 
-    for(const ThingPtr& thing : m_itemsTop)
+    for(const ThingPtr& thing : m_itemsBottom)
+        thing->draw(x, y);
+
+    for(const ThingPtr& thing : m_effects)
         thing->draw(x, y);
 }
 

@@ -14,9 +14,9 @@ public:
     void parseThingAttributesOpt(std::stringstream& fin, ThingAttributes& thingAttributes, uint8 opt);
 
     ThingAttributes& getItemAttributes(uint16 id) { return m_itemsAttributes[id - 100]; }
-    ThingAttributes& getCreatureAttributes(uint16 id)  { return m_creaturesAttributes[id - 1]; }
-    ThingAttributes& getEffectAttributes(uint16 id) { return m_effectsAttributes[id - 100]; }
-    ThingAttributes& getShotAttributes(uint16 id) { return m_shotsAttributes[id - 1]; }
+    ThingAttributes& getCreatureAttributes(uint16 id)  { return m_creaturesAttributes[id]; }
+    ThingAttributes& getEffectAttributes(uint16 id) { return m_effectsAttributes[id]; }
+    ThingAttributes& getShotAttributes(uint16 id) { return m_shotsAttributes[id]; }
 
     uint32 getSignature() { return m_signature; }
 

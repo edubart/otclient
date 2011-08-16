@@ -8,13 +8,14 @@
 class Map
 {
 public:
-    void addThing(ThingPtr thing, uint8 stackpos = 0);
-
     void draw(int x, int y);
+    void update(int elapsedTime);
+
+    void addThing(ThingPtr thing, uint8 stackpos = 0);
 
 private:
     std::unordered_map<Position, TilePtr, PositionHasher> m_tiles;
-    std::list<ThingPtr> m_effects;
+    std::list<EffectPtr> m_effects;
 
     FrameBufferPtr m_framebuffer;
 };

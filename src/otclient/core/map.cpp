@@ -20,39 +20,31 @@ void Map::draw(int x, int y)
     if(playerPos.z <= 7) {
 
         // player pos it 8-6. check if we can draw upper floors.
-        bool draw = true;
+        int drawFloorStop = 0;
         for(int jz = 6; jz >= 0; --jz) {
-            Position coverPos = Position(playerPos.x-(6-jz), playerPos.y-(6-jz), jz);
+            Position coverPos = Position(playerPos.x+(7-jz)-1, playerPos.y+(7-jz)-1, jz);
             if(m_tiles[coverPos]) {
                 if(m_tiles[coverPos]->getStackSize() > 0 && jz < playerPos.z) {
-                    draw = false;
+                    drawFloorStop = jz;
+                    break;
                 }
             }
         }
 
         for(int iz = 7; iz > 0; --iz) {
+            if(iz == drawFloorStop)
+                break;
 
             // +1 in draws cause 64x64 items may affect view.
-            for(int ix = -7; ix < + 8+7; ++ix) {
-                for(int iy = -5; iy < + 6+7; ++iy) {
+
+            for(int ix = -7+(playerPos.z-iz); ix < + 8+7; ++ix) {
+                for(int iy = -5+(playerPos.z-iz); iy < + 6+7; ++iy) {
                     Position itemPos = Position(playerPos.x + ix, playerPos.y + iy, iz);
-                    //Position drawPos = Position(ix + 8, iy - playerPos.y + 6, iz);
-                    //logDebug("x: ", relativePos.x, " y: ", relativePos.y, " z: ", (int)relativePos.z);
                     if(m_tiles[itemPos])
-                        m_tiles[itemPos]->draw((ix + 7 - (7-iz))*32, (iy + 5 - (7-iz))*32);
+                        m_tiles[itemPos]->draw((ix + 7 - (playerPos.z-iz))*32, (iy + 5 - (playerPos.z-iz))*32);
                 }
             }
-
-            if(!draw)
-                break;
         }
-
-    }
-
-    // draw effects
-    for(auto it = m_effects.begin(), end = m_effects.end(); it != end; ++it) {
-        Position effectPos = (*it)->getPosition();
-        (*it)->draw((effectPos.x - playerPos.x + 7) * 32, (effectPos.y - playerPos.y + 5) * 32);
     }
 
     // debug draws
@@ -62,16 +54,33 @@ void Map::draw(int x, int y)
     m_framebuffer->draw(Rect(x, y, g_graphics.getScreenSize()));
 }
 
+void Map::update(int elapsedTime)
+{
+    // Items
+
+    // Effects
+    for(auto it = m_effects.begin(), end = m_effects.end(); it != end;) {
+        if((*it)->finished()) {
+            m_tiles[(*it)->getPosition()]->removeThing(*it, 0);
+            it = m_effects.erase(it);
+        }
+        else {
+            (*it)->update(elapsedTime);
+            ++it;
+        }
+    }
+}
+
 void Map::addThing(ThingPtr thing, uint8 stackpos)
 {
-    if(thing->asItem() || thing->asCreature()) {
-        if(!m_tiles[thing->getPosition()]) {
-            m_tiles[thing->getPosition()] = TilePtr(new Tile());
-        }
-
-        m_tiles[thing->getPosition()]->addThing(thing, stackpos);
+    if(!m_tiles[thing->getPosition()]) {
+        m_tiles[thing->getPosition()] = TilePtr(new Tile());
     }
-    else if(thing->asEffect()) {
-        m_effects.push_back(thing);
+
+    m_tiles[thing->getPosition()]->addThing(thing, stackpos);
+
+    // List with effects and shots to update them.
+    if(thing->asEffect()) {
+        m_effects.push_back(thing->asEffect());
     }
 }

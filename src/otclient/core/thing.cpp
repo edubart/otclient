@@ -26,7 +26,7 @@ void Thing::internalDraw(int x, int y, int blendframes, int xdiv, int ydiv, int 
 
             TexturePtr spriteTex = g_sprites.getSpriteTexture(spriteId);
             Rect drawRect((x - xi*32) - attributes.xOffset,
-                          (y - yi*32) - attributes.yOffset,
+                          (y - yi*32) - attributes.xOffset,
                           32, 32);
 
             g_graphics.drawTexturedRect(drawRect, spriteTex);

@@ -10,6 +10,7 @@ public:
     Tile();
 
     void addThing(ThingPtr thing, uint8 stackpos);
+    void removeThing(ThingPtr thing, uint8 stackpos);
 
     void draw(int x, int y);
 
@@ -22,6 +23,7 @@ private:
     std::deque<ThingPtr> m_itemsBottom;
     std::deque<ThingPtr> m_creatures;
     std::deque<ThingPtr> m_itemsTop;
+    std::deque<ThingPtr> m_effects;
 };
 
 #endif
