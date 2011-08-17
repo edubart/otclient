@@ -99,6 +99,51 @@ void Tile::removeThing(uint8 stackpos)
     logDebug("Invalid stackpos.");
 }
 
+void Tile::removeThingByPtr(ThingPtr thing)
+{
+    // Items
+    if(thing->asItem()) {
+        const ThingAttributes& thingAttributes = thing->getAttributes();
+
+        if(!thingAttributes.alwaysOnTop) {
+            for(auto it = m_itemsBottom.begin(), end = m_itemsBottom.end(); it != end; ++it) {
+                if(*it == thing) {
+                    m_itemsBottom.erase(it);
+                    break;
+                }
+            }
+        }
+        else {
+            for(auto it = m_itemsTop.begin(), end = m_itemsTop.end(); it != end; ++it) {
+                if(*it == thing) {
+                    m_itemsTop.erase(it);
+                    break;
+                }
+            }
+        }
+    }
+
+    // Creatures
+    else if(thing->asCreature()) {
+        for(auto it = m_creatures.begin(), end = m_creatures.end(); it != end; ++it) {
+            if(*it == thing) {
+                m_creatures.erase(it);
+                break;
+            }
+        }
+    }
+
+    // Effects
+    else if(thing->asEffect()) {
+        for(auto it = m_effects.begin(), end = m_effects.end(); it != end; ++it) {
+            if(*it == thing) {
+                m_effects.erase(it);
+                break;
+            }
+        }
+    }
+}
+
 void Tile::clean()
 {
     for(const ThingPtr& thing : m_creatures)

@@ -13,6 +13,7 @@ public:
     void addThing(ThingPtr thing, uint8 stackpos = 0);
     ThingPtr getThing(const Position& pos, uint8 stackpos);
     void removeThing(const Position& pos, uint8 stackpos);
+    void removeThingByPtr(ThingPtr thing);
 
     void clean();
     void cleanTile(const Position& pos);

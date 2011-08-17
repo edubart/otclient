@@ -56,6 +56,9 @@ void Map::draw(int x, int y)
 
 void Map::addThing(ThingPtr thing, uint8 stackpos)
 {
+    if(!thing)
+        return;
+
     TilePtr& tile = m_tiles[thing->getPosition()];
     if(!tile) {
         tile = TilePtr(new Tile());
@@ -79,6 +82,16 @@ void Map::removeThing(const Position& pos, uint8 stackpos)
 {
     if(TilePtr& tile = m_tiles[pos]) {
         tile->removeThing(stackpos);
+    }
+}
+
+void Map::removeThingByPtr(ThingPtr thing)
+{
+    if(!thing)
+        return;
+
+    if(TilePtr& tile = m_tiles[thing->getPosition()]) {
+        tile->removeThingByPtr(thing);
     }
 }
 

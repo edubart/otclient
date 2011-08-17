@@ -14,6 +14,7 @@ public:
     void addThing(ThingPtr thing, uint8 stackpos);
     ThingPtr getThing(uint8 stackpos);
     void removeThing(uint8 stackpos);
+    void removeThingByPtr(ThingPtr thing);
 
     void clean();
 
