@@ -25,6 +25,10 @@ public:
     void sendWalkEast();
     void sendWalkSouth();
     void sendWalkWest();
+    void sendTurnNorth();
+    void sendTurnEast();
+    void sendTurnSouth();
+    void sendTurnWest();
 
 private:
     void sendLoginPacket(uint32 timestamp, uint8 unknown);

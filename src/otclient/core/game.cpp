@@ -42,3 +42,49 @@ void Game::onLogout()
     m_localPlayer.reset();
     m_online = false;
 }
+
+void Game::walk(Direction direction)
+{
+    if(!m_online)
+        return;
+
+    // TODO: check if we can walk.
+
+    m_localPlayer->setDirection(direction);
+
+    switch(direction) {
+    case DIRECTION_NORTH:
+        m_protocolGame->sendWalkNorth();
+        break;
+    case DIRECTION_EAST:
+        m_protocolGame->sendWalkEast();
+        break;
+    case DIRECTION_SOUTH:
+        m_protocolGame->sendWalkSouth();
+        break;
+    case DIRECTION_WEST:
+        m_protocolGame->sendWalkWest();
+        break;
+    }
+}
+
+void Game::turn(Direction direction)
+{
+    if(!m_online)
+        return;
+
+    switch(direction) {
+    case DIRECTION_NORTH:
+        m_protocolGame->sendTurnNorth();
+        break;
+    case DIRECTION_EAST:
+        m_protocolGame->sendTurnEast();
+        break;
+    case DIRECTION_SOUTH:
+        m_protocolGame->sendTurnSouth();
+        break;
+    case DIRECTION_WEST:
+        m_protocolGame->sendTurnWest();
+        break;
+    }
+}

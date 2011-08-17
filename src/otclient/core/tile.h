@@ -9,10 +9,13 @@ class Tile : public LuaObject
 public:
     Tile();
 
-    void addThing(ThingPtr thing, uint8 stackpos);
-    void removeThing(ThingPtr thing, uint8 stackpos);
-
     void draw(int x, int y);
+
+    void addThing(ThingPtr thing, uint8 stackpos);
+    ThingPtr getThing(uint8 stackpos);
+    void removeThing(uint8 stackpos);
+
+    void clean();
 
     bool hasGround() { return (!!m_ground); }
 

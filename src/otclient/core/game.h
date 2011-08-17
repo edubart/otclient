@@ -19,6 +19,9 @@ public:
     void onLogin();
     void onLogout();
 
+    void walk(Direction direction);
+    void turn(Direction direction);
+
     bool isOnline() { return m_online; }
 
     LocalPlayerPtr getLocalPlayer() { return m_localPlayer; }

@@ -23,8 +23,8 @@ void Map::draw(int x, int y)
         int drawFloorStop = 0;
         for(int jz = 6; jz >= 0; --jz) {
             Position coverPos = Position(playerPos.x+(7-jz)-1, playerPos.y+(7-jz)-1, jz);
-            if(m_tiles[coverPos]) {
-                if(m_tiles[coverPos]->getStackSize() > 0 && jz < playerPos.z) {
+            if(const TilePtr& tile = m_tiles[coverPos]) {
+                if(tile->getStackSize() > 0 && jz < playerPos.z) {
                     drawFloorStop = jz;
                     break;
                 }
@@ -40,8 +40,8 @@ void Map::draw(int x, int y)
             for(int ix = -7+(playerPos.z-iz); ix < + 8+7; ++ix) {
                 for(int iy = -5+(playerPos.z-iz); iy < + 6+7; ++iy) {
                     Position itemPos = Position(playerPos.x + ix, playerPos.y + iy, iz);
-                    if(m_tiles[itemPos])
-                        m_tiles[itemPos]->draw((ix + 7 - (playerPos.z-iz))*32, (iy + 5 - (playerPos.z-iz))*32);
+                    if(const TilePtr& tile = m_tiles[itemPos])
+                        tile->draw((ix + 7 - (playerPos.z-iz))*32, (iy + 5 - (playerPos.z-iz))*32);
                 }
             }
         }
@@ -56,22 +56,52 @@ void Map::draw(int x, int y)
 
 void Map::addThing(ThingPtr thing, uint8 stackpos)
 {
-    if(!m_tiles[thing->getPosition()]) {
-        m_tiles[thing->getPosition()] = TilePtr(new Tile());
+    TilePtr& tile = m_tiles[thing->getPosition()];
+    if(!tile) {
+        tile = TilePtr(new Tile());
     }
 
-    m_tiles[thing->getPosition()]->addThing(thing, stackpos);
+    tile->addThing(thing, stackpos);
 
-    // List with effects and shots to update them.
-    if(EffectPtr effect = thing->asEffect()) {
-        m_effects.push_back(effect);
-    }
+    if(const CreaturePtr& creature = thing->asCreature())
+        m_creatures[thing->getId()] = creature;
 }
 
-void Map::removeThing(ThingPtr thing)
+ThingPtr Map::getThing(const Position& pos, uint8 stackpos)
 {
-    if(TilePtr& tile = m_tiles[thing->getPosition()]) {
-        tile->removeThing(thing, 0);
+    if(const TilePtr& tile = m_tiles[pos]) {
+        return tile->getThing(stackpos);
+    }
+    return ThingPtr();
+}
+
+void Map::removeThing(const Position& pos, uint8 stackpos)
+{
+    if(TilePtr& tile = m_tiles[pos]) {
+        tile->removeThing(stackpos);
     }
 }
 
+void Map::clean()
+{
+    m_tiles.clear();
+    m_creatures.clear();
+}
+
+void Map::cleanTile(const Position& pos)
+{
+    if(TilePtr& tile = m_tiles[pos])
+        tile->clean();
+}
+
+CreaturePtr Map::getCreatureById(uint32 id)
+{
+    if(g_game.getLocalPlayer()->getId() == id)
+        return g_game.getLocalPlayer();
+    return m_creatures[id];
+}
+
+void Map::removeCreatureById(uint32 id)
+{
+    m_creatures.erase(id);
+}

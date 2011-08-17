@@ -272,17 +272,26 @@ void OTClient::onPlatformEvent(const PlatformEvent& event)
 {
     g_ui.inputEvent(event);
 
-    ProtocolGamePtr protocol = g_game.getProtocolGame();
-    if(protocol) {
-        if(event.type == EventKeyDown) {
+    if(event.type == EventKeyDown) {
+        if(!event.ctrl) {
             if(event.keycode == KC_UP)
-                protocol->sendWalkNorth();
+                g_game.walk(DIRECTION_NORTH);
             if(event.keycode == KC_RIGHT)
-                protocol->sendWalkEast();
+                g_game.walk(DIRECTION_EAST);
             if(event.keycode == KC_DOWN)
-                protocol->sendWalkSouth();
+                g_game.walk(DIRECTION_SOUTH);
             if(event.keycode == KC_LEFT)
-                protocol->sendWalkWest();
+                g_game.walk(DIRECTION_WEST);
+        }
+        else {
+            if(event.keycode == KC_UP)
+                g_game.turn(DIRECTION_NORTH);
+            if(event.keycode == KC_RIGHT)
+                g_game.turn(DIRECTION_EAST);
+            if(event.keycode == KC_DOWN)
+                g_game.turn(DIRECTION_SOUTH);
+            if(event.keycode == KC_LEFT)
+                g_game.turn(DIRECTION_WEST);
         }
     }
 }

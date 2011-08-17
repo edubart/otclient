@@ -80,3 +80,32 @@ void ProtocolGame::sendWalkWest()
     send(oMsg);
 }
 
+void ProtocolGame::sendTurnNorth()
+{
+    OutputMessage oMsg;
+    oMsg.addU8(0x6F);
+    send(oMsg);
+}
+
+void ProtocolGame::sendTurnEast()
+{
+    OutputMessage oMsg;
+    oMsg.addU8(0x70);
+    send(oMsg);
+}
+
+void ProtocolGame::sendTurnSouth()
+{
+    OutputMessage oMsg;
+    oMsg.addU8(0x71);
+    send(oMsg);
+}
+
+void ProtocolGame::sendTurnWest()
+{
+    OutputMessage oMsg;
+    oMsg.addU8(0x72);
+    send(oMsg);
+}
+
+

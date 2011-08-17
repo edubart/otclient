@@ -5,6 +5,12 @@
 #include "thingattributes.h"
 #include <framework/luascript/luaobject.h>
 
+struct Light
+{
+    uint8 intensity;
+    uint8 color;
+};
+
 class Thing : public LuaObject
 {
 public:
