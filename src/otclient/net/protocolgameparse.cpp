@@ -684,16 +684,18 @@ void ProtocolGame::parseCreatureSpeak(InputMessage& msg)
             parsePosition(msg); // creaturePos
             break;
         case SPEAK_CHANNEL_R1:
-        case SPEAK_CHANNEL_R2:
         case SPEAK_CHANNEL_O:
         case SPEAK_CHANNEL_Y:
         case SPEAK_CHANNEL_W:
             msg.getU16(); // channelId
             break;
-        case SPEAK_RVR_CHANNEL:
-            msg.getU32(); // time
+        case SPEAK_PRIVATE:
+        case SPEAK_PRIVATE_PN:
+        case SPEAK_BROADCAST:
+        case SPEAK_PRIVATE_RED:
             break;
         default:
+            logDebug("[ProtocolGame::parseCreatureSpeak]: Unknown speak type.", (int)type);
             break;
     }
 
