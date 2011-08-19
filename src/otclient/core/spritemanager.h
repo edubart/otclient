@@ -1,7 +1,7 @@
 #ifndef SPRITEMANAGER_H
 #define SPRITEMANAGER_H
 
-#include <framework/global.h>
+#include "declarations.h"
 #include <framework/graphics/texture.h>
 
 class SpriteManager
@@ -14,7 +14,9 @@ public:
 
     uint32 getSignature() { return m_signature; }
     int getSpritesCount() { return m_spritesCount; }
+
     TexturePtr getSpriteTexture(int id);
+    TexturePtr getSpriteMask(int id, SpriteMask mask);
 
 private:
     TexturePtr loadSprite(int id);

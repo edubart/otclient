@@ -45,6 +45,7 @@ struct ThingAttributes
          isHangable, isHorizontal, isVertical, rotable, hasHeight, lookThrough, hasMiniMapColor;
     uint8 alwaysOnTopOrder, width, height, blendframes, xdiv, ydiv, zdiv, animcount, xOffset, yOffset;
     uint16 speed, subParam07, subParam08, lightLevel, lightColor, miniMapColor;
+
     std::vector<int> sprites;
     ThingAttributesGroup group;
 };

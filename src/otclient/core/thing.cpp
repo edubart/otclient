@@ -6,7 +6,7 @@ Thing::Thing(ThingType type) : m_id(0), m_type(type)
 {
 }
 
-void Thing::internalDraw(int x, int y, int blendframes, int xdiv, int ydiv, int zdiv, int anim)
+void Thing::internalDraw(int x, int y, int blendframes, int xdiv, int ydiv, int zdiv, int anim, SpriteMask mask)
 {
     const ThingAttributes& attributes = getAttributes();
 
@@ -24,11 +24,16 @@ void Thing::internalDraw(int x, int y, int blendframes, int xdiv, int ydiv, int 
             if(!spriteId)
                 continue;
 
-            TexturePtr spriteTex = g_sprites.getSpriteTexture(spriteId);
+            TexturePtr spriteTex;
+            if(mask == SpriteMaskNone) {
+                spriteTex = g_sprites.getSpriteTexture(spriteId);
+                g_graphics.bindColor(Color::white);
+            } else
+                spriteTex = g_sprites.getSpriteMask(spriteId, mask);
+
             Rect drawRect((x - xi*32) - attributes.xOffset,
                           (y - yi*32) - attributes.xOffset,
                           32, 32);
-
             g_graphics.drawTexturedRect(drawRect, spriteTex);
         }
     }

@@ -33,4 +33,12 @@ enum Direction {
     DIRECTION_WEST
 };
 
+enum SpriteMask {
+    SpriteMaskRed = 0,
+    SpriteMaskGreen,
+    SpriteMaskBlue,
+    SpriteMaskYellow,
+    SpriteMaskNone = 255
+};
+
 #endif

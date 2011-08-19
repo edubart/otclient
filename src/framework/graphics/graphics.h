@@ -3,6 +3,11 @@
 
 #include "declarations.h"
 
+enum BlendFuncType {
+    BLEND_NORMAL,
+    BLEND_COLORIZING
+};
+
 class Graphics
 {
 public:
@@ -29,6 +34,7 @@ public:
 
     void bindColor(const Color& color);
     void bindTexture(const TexturePtr& texture);
+    void bindBlendFunc(BlendFuncType blendType);
 
     // drawing API
     void drawTexturedRect(const Rect& screenCoords,

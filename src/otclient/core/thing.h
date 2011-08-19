@@ -35,7 +35,7 @@ public:
     virtual LocalPlayerPtr asLocalPlayer() { return nullptr; }
 
 protected:
-    void internalDraw(int x, int y, int blendframes, int xdiv, int ydiv, int zdiv, int anim);
+    void internalDraw(int x, int y, int blendframes, int xdiv, int ydiv, int zdiv, int anim, SpriteMask mask = SpriteMaskNone);
 
     uint32 m_id;
     ThingType m_type;

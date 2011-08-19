@@ -19,7 +19,6 @@ void Graphics::init()
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
     glShadeModel(GL_SMOOTH);
     glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
     logInfo("GPU ", glGetString(GL_RENDERER));
@@ -30,6 +29,7 @@ void Graphics::init()
     m_emptyTexture = TexturePtr(new Texture);
 
     bindColor(Color::white);
+    bindBlendFunc(BLEND_NORMAL);
 }
 
 void Graphics::terminate()
@@ -283,6 +283,18 @@ void Graphics::bindColor(const Color& color)
 void Graphics::bindTexture(const TexturePtr& texture)
 {
     glBindTexture(GL_TEXTURE_2D, texture->getId());
+}
+
+void Graphics::bindBlendFunc(BlendFuncType blendType)
+{
+    switch(blendType) {
+        case BLEND_NORMAL:
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            break;
+        case BLEND_COLORIZING:
+            glBlendFunc(GL_DST_COLOR, GL_ONE_MINUS_SRC_ALPHA);
+            break;
+    }
 }
 
 void Graphics::startDrawing()

@@ -107,3 +107,28 @@ TexturePtr SpriteManager::getSpriteTexture(int id)
 
     return texture;
 }
+
+TexturePtr SpriteManager::getSpriteMask(int id, SpriteMask mask)
+{
+    TexturePtr tex = getSpriteTexture(id);
+    auto pixels = tex->getPixels();
+
+    static RGBA maskColors[4] = { Color::red.rgba(), Color::green.rgba(), Color::blue.rgba(), Color::yellow.rgba() };
+    RGBA maskColor = maskColors[mask];
+    RGBA whiteColor = Color::white.rgba();
+    RGBA alphaColor = Color::alpha.rgba();
+
+    // convert pixels
+    // masked color -> white color
+    // any other color -> alpha color
+    for(int i=0;i<4096;i+=4) {
+        RGBA& currentColor = *(RGBA*)&pixels[i];
+        if(currentColor == maskColor)
+            currentColor = whiteColor;
+        else
+            currentColor = alphaColor;
+    }
+
+    //TODO: cache sprites mask into a texture
+    return TexturePtr(new Texture(32, 32, 4, &pixels[0]));
+}
