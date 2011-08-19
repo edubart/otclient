@@ -88,6 +88,29 @@ TexturePtr SpriteManager::loadSpriteTexture(int id)
     return TexturePtr(new Texture(32, 32, 4, pixels));
 }
 
+TexturePtr SpriteManager::loadSpriteMask(TexturePtr spriteTex, SpriteMask mask)
+{
+    auto pixels = spriteTex->getPixels();
+
+    static RGBA maskColors[4] = { Color::red.rgba(), Color::green.rgba(), Color::blue.rgba(), Color::yellow.rgba() };
+    RGBA maskColor = maskColors[mask];
+    RGBA whiteColor = Color::white.rgba();
+    RGBA alphaColor = Color::alpha.rgba();
+
+    // convert pixels
+    // masked color -> white color
+    // any other color -> alpha color
+    for(int i=0;i<4096;i+=4) {
+        RGBA& currentColor = *(RGBA*)&pixels[i];
+        if(currentColor == maskColor)
+            currentColor = whiteColor;
+        else
+            currentColor = alphaColor;
+    }
+
+    return TexturePtr(new Texture(32, 32, 4, &pixels[0]));
+}
+
 TexturePtr SpriteManager::getSpriteTexture(int id, SpriteMask mask)
 {
     if(id == 0)
@@ -104,27 +127,8 @@ TexturePtr SpriteManager::getSpriteTexture(int id, SpriteMask mask)
     // to avoid massive texture allocations
 
     if(mask != SpriteMaskNone) {
-        if(!sprite.masks[mask]) {
-            auto pixels = sprite.texture->getPixels();
-
-            static RGBA maskColors[4] = { Color::red.rgba(), Color::green.rgba(), Color::blue.rgba(), Color::yellow.rgba() };
-            RGBA maskColor = maskColors[mask];
-            RGBA whiteColor = Color::white.rgba();
-            RGBA alphaColor = Color::alpha.rgba();
-
-            // convert pixels
-            // masked color -> white color
-            // any other color -> alpha color
-            for(int i=0;i<4096;i+=4) {
-                RGBA& currentColor = *(RGBA*)&pixels[i];
-                if(currentColor == maskColor)
-                    currentColor = whiteColor;
-                else
-                    currentColor = alphaColor;
-            }
-
-            sprite.masks[mask] = TexturePtr(new Texture(32, 32, 4, &pixels[0]));
-        }
+        if(!sprite.masks[mask])
+            sprite.masks[mask] = loadSpriteMask(sprite.texture, mask);
         return sprite.masks[mask];
     } else
         return sprite.texture;

@@ -24,6 +24,7 @@ public:
 
 private:
     TexturePtr loadSpriteTexture(int id);
+    TexturePtr loadSpriteMask(TexturePtr spriteTex, SpriteMask mask);
 
     uint32 m_signature;
     uint16 m_spritesCount;
