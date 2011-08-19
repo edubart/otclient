@@ -27,7 +27,6 @@ void Thing::internalDraw(int x, int y, int blendframes, int xdiv, int ydiv, int 
             TexturePtr spriteTex;
             if(mask == SpriteMaskNone) {
                 spriteTex = g_sprites.getSpriteTexture(spriteId);
-                g_graphics.bindColor(Color::white);
             } else
                 spriteTex = g_sprites.getSpriteMask(spriteId, mask);
 

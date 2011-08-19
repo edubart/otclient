@@ -185,10 +185,11 @@ void Creature::draw(int x, int y)
                 outfitColorId = m_outfit.feet;
 
             g_graphics.bindColor(outfitColors[outfitColorId]);
-            internalDraw(x, y, 1, m_direction, 0, 0, anim);
+            internalDraw(x, y, 1, m_direction, 0, 0, anim, (SpriteMask)mask);
         }
 
         g_graphics.bindBlendFunc(BLEND_NORMAL);
+        g_graphics.bindColor(Color::white);
     }
 }
 
