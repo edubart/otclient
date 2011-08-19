@@ -4,6 +4,11 @@
 #include "declarations.h"
 #include <framework/graphics/texture.h>
 
+struct Sprite {
+    TexturePtr texture;
+    TexturePtr masks[4];
+};
+
 class SpriteManager
 {
 public:
@@ -18,12 +23,12 @@ public:
     TexturePtr getSpriteTexture(int id, SpriteMask mask = SpriteMaskNone);
 
 private:
-    TexturePtr loadSprite(int id);
+    TexturePtr loadSpriteTexture(int id);
 
     uint32 m_signature;
     uint16 m_spritesCount;
     std::stringstream m_fin;
-    std::vector<TexturePtr> m_sprites;
+    std::vector<Sprite> m_sprites;
     TexturePtr m_transparentSprite;
 };
 

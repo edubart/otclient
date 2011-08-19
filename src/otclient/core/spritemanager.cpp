@@ -26,7 +26,7 @@ void SpriteManager::unload()
     m_signature = 0;
 }
 
-TexturePtr SpriteManager::loadSprite(int id)
+TexturePtr SpriteManager::loadSpriteTexture(int id)
 {
     m_fin.seekg(((id-1) * 4) + 6, std::ios_base::beg);
 
@@ -96,37 +96,36 @@ TexturePtr SpriteManager::getSpriteTexture(int id, SpriteMask mask)
     assert(id > 0 && id <= m_spritesCount);
 
     // load sprites on demand
-    TexturePtr texture = m_sprites[id-1];
-    if(!texture) {
-        texture = loadSprite(id);
-        m_sprites[id-1] = texture;
-    }
+    Sprite& sprite = m_sprites[id-1];
+    if(!sprite.texture)
+        sprite.texture = loadSpriteTexture(id);
 
     //TODO: release unused sprites textures after X seconds
     // to avoid massive texture allocations
 
     if(mask != SpriteMaskNone) {
-        auto pixels = texture->getPixels();
+        if(!sprite.masks[mask]) {
+            auto pixels = sprite.texture->getPixels();
 
-        static RGBA maskColors[4] = { Color::red.rgba(), Color::green.rgba(), Color::blue.rgba(), Color::yellow.rgba() };
-        RGBA maskColor = maskColors[mask];
-        RGBA whiteColor = Color::white.rgba();
-        RGBA alphaColor = Color::alpha.rgba();
+            static RGBA maskColors[4] = { Color::red.rgba(), Color::green.rgba(), Color::blue.rgba(), Color::yellow.rgba() };
+            RGBA maskColor = maskColors[mask];
+            RGBA whiteColor = Color::white.rgba();
+            RGBA alphaColor = Color::alpha.rgba();
 
-        // convert pixels
-        // masked color -> white color
-        // any other color -> alpha color
-        for(int i=0;i<4096;i+=4) {
-            RGBA& currentColor = *(RGBA*)&pixels[i];
-            if(currentColor == maskColor)
-                currentColor = whiteColor;
-            else
-                currentColor = alphaColor;
+            // convert pixels
+            // masked color -> white color
+            // any other color -> alpha color
+            for(int i=0;i<4096;i+=4) {
+                RGBA& currentColor = *(RGBA*)&pixels[i];
+                if(currentColor == maskColor)
+                    currentColor = whiteColor;
+                else
+                    currentColor = alphaColor;
+            }
+
+            sprite.masks[mask] = TexturePtr(new Texture(32, 32, 4, &pixels[0]));
         }
-
-        //TODO: cache sprites mask into a texture
-        return TexturePtr(new Texture(32, 32, 4, &pixels[0]));
-    }
-
-    return texture;
+        return sprite.masks[mask];
+    } else
+        return sprite.texture;
 }
