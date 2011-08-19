@@ -110,15 +110,16 @@ SET(SOURCES
     # framework otml
     src/framework/otml/otmldocument.cpp
     src/framework/otml/otmlemitter.cpp
-    src/framework/otml/otmlexception.cpp
     src/framework/otml/otmlnode.cpp
     src/framework/otml/otmlparser.cpp
+    src/framework/otml/otmlexception.cpp
 
     # framework luascript
     src/framework/luascript/luainterface.cpp
     src/framework/luascript/luaobject.cpp
     src/framework/luascript/luaexception.cpp
     src/framework/luascript/luafunctions.cpp
+    src/framework/luascript/luavaluecasts.cpp
 
     # framework ui
     src/framework/ui/uimanager.cpp

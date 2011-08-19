@@ -12,11 +12,16 @@ SpriteManager::SpriteManager()
 
 bool SpriteManager::load(const std::string &filename)
 {
-    g_resources.loadFile(filename, m_fin);
-    m_signature = fw::getu32(m_fin);
-    m_spritesCount = fw::getu16(m_fin);
-    m_sprites.resize(m_spritesCount);
-    return true;
+    try {
+        g_resources.loadFile(filename, m_fin);
+        m_signature = fw::getu32(m_fin);
+        m_spritesCount = fw::getu16(m_fin);
+        m_sprites.resize(m_spritesCount);
+        return true;
+    } catch(std::exception& e) {
+        logError(e.what());
+        return false;
+    }
 }
 
 void SpriteManager::unload()

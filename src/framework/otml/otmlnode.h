@@ -2,214 +2,138 @@
 #define OTMLNODE_H
 
 #include "declarations.h"
-#include "otmlexception.h"
 
 class OTMLNode : public std::enable_shared_from_this<OTMLNode>
 {
 public:
-    OTMLNode();
     virtual ~OTMLNode() { }
 
-    std::string value() const;
-    std::string tag() const;
-    int size() const;
-    OTMLNodePtr parent() const;
-    const OTMLNodeList& childNodes() const;
-    std::string source() const;
+    static OTMLNodePtr create(std::string tag = fw::empty_string, bool unique = false);
+    static OTMLNodePtr create(std::string tag, std::string value);
 
-    bool hasTag() const;
-    bool hasValue() const;
-    bool hasChildNodes() const;
-    bool hasChild(const std::string& childTag) const;
-    bool hasChild(int index) const;
-    bool isUnique() const;
+    std::string tag() const { return m_tag; }
+    int size() const { return m_children.size(); }
+    OTMLNodePtr parent() const { return m_parent.lock(); }
+    std::string source() const { return m_source; }
 
-    void setTag(std::string tag);
-    void setValue(const std::string& value);
-    void setParent(const OTMLNodePtr& parent);
-    void setUnique(bool unique = true);
-    void setSource(const std::string& source);
+    bool isUnique() const { return m_unique; }
+    bool isNull() const { return m_null; }
 
-    /// Same as get but if the child node doesn't exist throws an OTMLException
-    OTMLNodePtr at(const std::string& childTag);
-    OTMLNodePtr at(int childIndex);
+    bool hasTag() const { return !m_tag.empty(); }
+    bool hasValue() const { return !m_value.empty(); }
+    bool hasChildren() const;
+    bool hasChildAt(const std::string& childTag) { return !!get(childTag); }
+    bool hasChildAtIndex(int childIndex) { return !!getIndex(childIndex); }
 
-    /// Get a child node, if doesn't exists returns nullptr
+    void setTag(std::string tag) { m_tag = tag; }
+    void setValue(const std::string& value) { m_value = value; }
+    void setNull(bool null) { m_null = null; }
+    void setUnique(bool unique) { m_unique = unique; }
+    void setParent(const OTMLNodePtr& parent) { m_parent = parent; }
+    void setSource(const std::string& source) { m_source = source; }
+
     OTMLNodePtr get(const std::string& childTag) const;
-    OTMLNodePtr get(int childIndex) const;
+    OTMLNodePtr getIndex(int childIndex) const;
+
+    OTMLNodePtr at(const std::string& childTag);
+    OTMLNodePtr atIndex(int childIndex);
 
     void addChild(const OTMLNodePtr& newChild);
     bool removeChild(const OTMLNodePtr& oldChild);
     bool replaceChild(const OTMLNodePtr& oldChild, const OTMLNodePtr& newChild);
-
-    /// Remove all children
+    void merge(const OTMLNodePtr& node);
     void clear();
 
-    /// Recursively copy children from another node to this node
-    void merge(const OTMLNodePtr& node);
-
-    /// Recursively clone this node into a new one
+    OTMLNodeList children() const;
     OTMLNodePtr clone() const;
 
-    /// Emits this node to a std::string
-    virtual std::string emit();
-
-    template<typename T>
-    T read();
-
-    template<typename T>
-    T read(const T& def);
-
-    template<typename T, typename U>
-    T readAt(const U& childIdentifier);
-
-    template<typename T, typename U>
-    T readAt(const U& childIdentifier, const T& def);
+    template<typename T = std::string>
+    T value();
+    template<typename T = std::string>
+    T valueAt(const std::string& childTag);
+    template<typename T = std::string>
+    T valueAtIndex(int childIndex);
+    template<typename T = std::string>
+    T valueAt(const std::string& childTag, const T& def);
+    template<typename T = std::string>
+    T valueAtIndex(int childIndex, const T& def);
 
     template<typename T>
     void write(const T& v);
-
     template<typename T>
     void writeAt(const std::string& childTag, const T& v);
-
     template<typename T>
     void writeIn(const T& v);
 
-private:
+    virtual std::string emit();
+
+protected:
+    OTMLNode() : m_unique(false), m_null(false) { }
+
+    OTMLNodeList m_children;
+    OTMLNodeWeakPtr m_parent;
     std::string m_tag;
     std::string m_value;
     std::string m_source;
     bool m_unique;
-    OTMLNodeList m_childNodes;
-    OTMLNodeWeakPtr m_parent;
+    bool m_null;
 };
 
-// templates for reading values
+#include "otmlexception.h"
+
 template<typename T>
-T OTMLNode::read() {
-    T v;
-    if(!from_otmlnode(shared_from_this(), v))
-        throw OTMLException(shared_from_this(),
-                            fw::mkstr("failed to cast node value to type '", fw::demangle_type<T>(), "'"));
-    return v;
+T OTMLNode::value() {
+    T ret;
+    if(!fw::cast(m_value, ret))
+        throw OTMLException(shared_from_this(), fw::mkstr("failed to cast node value to type '", fw::demangle_type<T>(), "'"));
+    return ret;
 }
 
 template<typename T>
-T OTMLNode::read(const T& def) {
-    if(hasValue())
-        return read<T>();
+T OTMLNode::valueAt(const std::string& childTag) {
+    OTMLNodePtr node = at(childTag);
+    return node->value<T>();
+}
+
+template<typename T>
+T OTMLNode::valueAtIndex(int childIndex) {
+    OTMLNodePtr node = atIndex(childIndex);
+    return node->value<T>();
+}
+
+template<typename T>
+T OTMLNode::valueAt(const std::string& childTag, const T& def) {
+    if(OTMLNodePtr node = get(childTag))
+        if(!node->isNull())
+            return node->value<T>();
     return def;
 }
 
-template<typename T, typename U>
-T OTMLNode::readAt(const U& childIdentifier) {
-    OTMLNodePtr child = at(childIdentifier);
-    return child->read<T>();
+template<typename T>
+T OTMLNode::valueAtIndex(int childIndex, const T& def) {
+    if(OTMLNodePtr node = getIndex(childIndex))
+        return node->value<T>();
+    return def;
 }
 
-template<typename T, typename U>
-T OTMLNode::readAt(const U& childIdentifier, const T& def) {
-    OTMLNodePtr child = get(childIdentifier);
-    if(!child)
-        return def;
-    return child->read<T>(def);
-}
-
-
-// templates for writing values
 template<typename T>
 void OTMLNode::write(const T& v) {
-    to_otmlnode(shared_from_this(), v);
+    m_value = fw::safe_cast<std::string>(v);
 }
 
 template<typename T>
 void OTMLNode::writeAt(const std::string& childTag, const T& v) {
-    OTMLNodePtr child = get(childTag);
-    bool created = false;
-    if(!child) {
-        child = OTMLNodePtr(new OTMLNode);
-        child->setTag(childTag);
-        child->setUnique();
-        created = true;
-    }
-    child->write<T>(v);
-    if(created)
-        addChild(child);
-}
-
-template<typename T>
-void OTMLNode::writeIn(const T& v) {
-    OTMLNodePtr child = OTMLNodePtr(new OTMLNode);
+    OTMLNodePtr child = OTMLNode::create(childTag);
     child->write<T>(v);
     addChild(child);
 }
 
-// templates for casting a node to another type
 template<typename T>
-bool from_otmlnode(OTMLNodePtr node, T& v) {
-    return fw::cast(node->value(), v);
-}
-
-template<typename T>
-bool from_otmlnode(OTMLNodePtr node, std::vector<T>& v) {
-    v.resize(node->size());
-    for(unsigned i=0;i<node->size();++i)
-        v[i] = node->readAt<T>(i);
-    return true;
-}
-
-template<typename T>
-bool from_otmlnode(OTMLNodePtr node, std::list<T>& v) {
-    for(unsigned i=0;i<node->size();++i)
-        v.push_back(node->readAt<T>(i));
-    return true;
-}
-
-template <typename K, typename T>
-bool from_otmlnode(OTMLNodePtr node, std::map<K, T>& m) {
-    for(int i=0;i<node->size();++i) {
-        K k;
-        if(!fw::cast(node->at(i)->tag(), k))
-            return false;
-        m[k] = node->at(i)->read<T>();
-    }
-    return true;
-}
-
-// templates for casting a type to a node
-template<typename T>
-void to_otmlnode(OTMLNodePtr node, const T& v) {
-    node->setValue(fw::unsafe_cast<std::string>(v));
-}
-
-template<typename T>
-void to_otmlnode(OTMLNodePtr node, const std::vector<T>& v) {
-    for(unsigned i=0;i<v.size();++i) {
-        OTMLNodePtr newNode(new OTMLNode);
-        newNode->write(v[i]);
-        node->addChild(newNode);
-    }
-}
-
-template<typename T>
-void to_otmlnode(OTMLNodePtr node, const std::list<T>& v) {
-    for(unsigned i=0;i<v.size();++i) {
-        OTMLNodePtr newNode(new OTMLNode);
-        newNode->write(v[i]);
-        node->addChild(newNode);
-    }
-}
-
-template <typename K, typename T>
-void to_otmlnode(OTMLNodePtr node, const std::map<K, T>& m) {
-    for(auto it = m.begin(); it != m.end(); ++it) {
-        std::string k = fw::unsafe_cast<std::string>(it->first);
-        OTMLNodePtr newNode(new OTMLNode);
-        newNode->setTag(k);
-        newNode->setUnique();
-        newNode->write(it->second);
-        node->addChild(newNode);
-    }
+void OTMLNode::writeIn(const T& v) {
+    OTMLNodePtr child = OTMLNode::create();
+    child->write<T>(v);
+    addChild(child);
 }
 
 #endif
+

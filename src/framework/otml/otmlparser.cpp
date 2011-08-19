@@ -1,5 +1,6 @@
 #include "otmlparser.h"
 #include "otmldocument.h"
+#include "otmlexception.h"
 
 OTMLParser::OTMLParser(OTMLDocumentPtr doc, std::istream& in) :
     currentDepth(0), currentLine(0),
@@ -52,6 +53,9 @@ void OTMLParser::parseLine(std::string line)
 {
     int depth = getLineDepth(line);
 
+    if(depth == -1)
+        return;
+
     // remove line sides spaces
     boost::trim(line);
 
@@ -87,6 +91,7 @@ void OTMLParser::parseNode(const std::string& data)
     std::string tag;
     std::string value;
     std::size_t dotsPos = data.find_first_of(':');
+    int nodeLine = currentLine;
 
     // node that has no tag and may have a value
     if(!data.empty() && data[0] == '-') {
@@ -150,11 +155,18 @@ void OTMLParser::parseNode(const std::string& data)
     }
 
     // create the node
-    OTMLNodePtr node(new OTMLNode);
+    OTMLNodePtr node = OTMLNode::create(tag);
+
     node->setUnique(dotsPos != std::string::npos);
     node->setTag(tag);
-    node->setValue(value);
-    node->setSource(doc->source() + ":" + fw::safe_cast<std::string>(currentLine));
+    node->setSource(doc->source() + ":" + fw::unsafe_cast<std::string>(nodeLine));
+
+    // ~ is considered the null value
+    if(value == "~")
+        node->setNull(true);
+    else
+        node->setValue(value);
+
     currentParent->addChild(node);
     previousNode = node;
 }

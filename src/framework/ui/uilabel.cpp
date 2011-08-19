@@ -18,10 +18,10 @@ void UILabel::loadStyleFromOTML(const OTMLNodePtr& styleNode)
 {
     UIWidget::loadStyleFromOTML(styleNode);
 
-    m_text = styleNode->readAt("text", m_text);
+    m_text = styleNode->valueAt("text", m_text);
 
-    if(styleNode->hasChild("align"))
-        m_align = fw::translateAlignment(styleNode->readAt<std::string>("align"));
+    if(styleNode->hasChildAt("align"))
+        m_align = fw::translateAlignment(styleNode->valueAt("align"));
 
     // auto resize if no size supplied
     if(!m_text.empty() && !getGeometry().isValid())

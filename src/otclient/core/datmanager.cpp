@@ -4,11 +4,11 @@
 
 DatManager g_dat;
 
-bool DatManager::load(const std::string& filename)
+bool DatManager::load(const std::string& file)
 {
     try {
         std::stringstream fin;
-        g_resources.loadFile(filename, fin);
+        g_resources.loadFile(file, fin);
 
         m_signature = fw::getu32(fin);
         int numItems = fw::getu16(fin);
@@ -34,7 +34,7 @@ bool DatManager::load(const std::string& filename)
 
         return true;
     } catch(std::exception& e) {
-        logError(e.what());
+        logError("ERROR: failed to load dat from '", file, "': ", e.what());
         return false;
     }
 }
@@ -87,11 +87,9 @@ void DatManager::parseThingAttributes(std::stringstream& fin, ThingAttributes& t
 
 void DatManager::parseThingAttributesOpt(std::stringstream& fin, ThingAttributes& thingAttributes, uint8 opt)
 {
-    uint8 read_byte;
-    uint16 read_short;
     switch(opt) {
         case 0x00: // Ground tile
-            fin.read((char*)&thingAttributes.speed, 2);
+            thingAttributes.speed = fw::getu16(fin);
             thingAttributes.group = THING_GROUP_GROUND;
             break;
         case 0x01: // All OnTop
@@ -120,16 +118,16 @@ void DatManager::parseThingAttributesOpt(std::stringstream& fin, ThingAttributes
         case 0x08: // Writtable
             thingAttributes.group = THING_GROUP_WRITEABLE;
             thingAttributes.readable = true;
-            fin.read((char*)&thingAttributes.subParam07, 2);
+            thingAttributes.subParam08 = fw::getu16(fin);
             break;
         case 0x09: // Writtable once
             // Writtable objects that can't be edited by players
             thingAttributes.readable = true;
-            fin.read((char*)&thingAttributes.subParam08, 2);
+            thingAttributes.subParam08 = fw::getu16(fin);
             break;
         case 0x0A: // Fluid containers
-            fin.read((char*)&read_byte, 1);
             thingAttributes.group = THING_GROUP_FLUID;
+            fw::getu8(fin);
             break;
         case 0x0B: // Splashes
             thingAttributes.group = THING_GROUP_SPLASH;
@@ -162,8 +160,8 @@ void DatManager::parseThingAttributesOpt(std::stringstream& fin, ThingAttributes
             thingAttributes.rotable = true;
             break;
         case 0x15: // Light info
-            fin.read((char*)&thingAttributes.lightLevel, 2);
-            fin.read((char*)&thingAttributes.lightColor, 2);
+            thingAttributes.lightLevel = fw::getu16(fin);
+            thingAttributes.lightColor = fw::getu16(fin);
             break;
         case 0x16:
             break;
@@ -171,17 +169,12 @@ void DatManager::parseThingAttributesOpt(std::stringstream& fin, ThingAttributes
             break;
         case 0x18: // Thing must be drawed with offset
             thingAttributes.hasHeight = true;
-            fin.read((char*)&thingAttributes.xOffset, 1);
-            fin.read((char*)&thingAttributes.yOffset, 1);
-
-            fin.read((char*)&read_short, 2);
+            thingAttributes.xOffset = fw::getu8(fin);
+            thingAttributes.yOffset = fw::getu8(fin);
+            fw::getu16(fin);
             break;
         case 0x19: // pixels characters height
-
-            //fin.read((char*)&thingAttributes.xOffset, 1);
-            //fin.read((char*)&thingAttributes.yOffset, 1);
-            fin.read((char*)&read_short, 2);
-            //logDebug((int)thingAttributes.xOffset, " ", (int)thingAttributes.yOffset);
+            fw::getu16(fin);
             break;
         case 0x1A:
             //thingAttributes.hasHeight = true;
@@ -189,12 +182,11 @@ void DatManager::parseThingAttributesOpt(std::stringstream& fin, ThingAttributes
         case 0x1B:
             break;
         case 0x1C: // Minimap color
-            fin.read((char*)&thingAttributes.miniMapColor, 2);
+            thingAttributes.miniMapColor = fw::getu16(fin);
             thingAttributes.hasMiniMapColor = true;
             break;
         case 0x1D: // Unknown
-            fin.read((char*)&read_short, 2);
-            if(read_short == 1112)
+            if(fw::getu16(fin) == 1112)
                 thingAttributes.readable = true;
             break;
         case 0x1E:
@@ -205,6 +197,6 @@ void DatManager::parseThingAttributesOpt(std::stringstream& fin, ThingAttributes
         case 0x20:
             break;
         default:
-            throw std::logic_error(fw::mkstr("ERROR: unknown .dat byte code: 0x", std::hex, (int)opt));
+            throw std::runtime_error(fw::mkstr("unknown .dat byte code: 0x", std::hex, (int)opt));
     }
 }

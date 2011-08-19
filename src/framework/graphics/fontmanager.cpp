@@ -20,9 +20,9 @@ bool FontManager::importFont(std::string fontFile)
         OTMLDocumentPtr doc = OTMLDocument::parse(fontFile);
         OTMLNodePtr fontNode = doc->at("Font");
 
-        std::string name = fontNode->readAt<std::string>("name");
+        std::string name = fontNode->valueAt("name");
         if(fontExists(name))
-            throw OTMLException(fontNode, "a font with the same name is already imported, did you duplicate font names?");
+            throw std::runtime_error("a font with the same name is already imported, did you duplicate font names?");
 
         FontPtr font(new Font(name));
         font->load(fontNode);
@@ -34,7 +34,7 @@ bool FontManager::importFont(std::string fontFile)
 
         return true;
     } catch(std::exception& e) {
-        logError("ERROR: could not load font '", fontFile, "': ", e.what());
+        logError("ERROR: could not load font from '", fontFile, "': ", e.what());
         return false;
     }
 }

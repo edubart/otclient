@@ -6,25 +6,25 @@
 
 void Font::load(const OTMLNodePtr& fontNode)
 {
-    std::string textureName = fontNode->readAt<std::string>("texture");
-    Size glyphSize = fontNode->readAt<Size>("glyph size");
-    m_glyphHeight = fontNode->readAt<int>("height");
-    m_topMargin = fontNode->readAt("top margin", 0);
-    m_firstGlyph = fontNode->readAt("first glyph", 32);
-    m_glyphSpacing = fontNode->readAt("spacing", Size(0,0));
+    std::string textureName = fontNode->valueAt("texture");
+    Size glyphSize = fontNode->valueAt<Size>("glyph size");
+    m_glyphHeight = fontNode->valueAt<int>("height");
+    m_topMargin = fontNode->valueAt("top margin", 0);
+    m_firstGlyph = fontNode->valueAt("first glyph", 32);
+    m_glyphSpacing = fontNode->valueAt("spacing", Size(0,0));
 
     // load font texture
     m_texture = g_textures.getTexture(textureName);
     if(!m_texture)
-        throw OTMLException(fontNode, "failed to load texture for font");
+        throw std::runtime_error("failed to load texture for font");
 
     // auto calculate widths
     calculateGlyphsWidthsAutomatically(glyphSize);
 
     // read custom widths
     if(OTMLNodePtr node = fontNode->get("glyph widths")) {
-        for(const OTMLNodePtr& child : node->childNodes())
-            m_glyphsSize[fw::safe_cast<int>(child->tag())].setWidth(child->read<int>());
+        for(const OTMLNodePtr& child : node->children())
+            m_glyphsSize[fw::safe_cast<int>(child->tag())].setWidth(child->value<int>());
     }
 
     // calculate glyphs texture coords

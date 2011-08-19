@@ -6,61 +6,57 @@
 
 void Module::discover(const OTMLNodePtr& moduleNode)
 {
-    m_description = moduleNode->readAt<std::string>("description");
-    m_author = moduleNode->readAt<std::string>("author");
-    m_website = moduleNode->readAt<std::string>("website");
-    m_version = moduleNode->readAt<std::string>("version");
+    const static std::string none = "none";
+    m_description = moduleNode->valueAt("description", none);
+    m_author = moduleNode->valueAt("author", none);
+    m_website = moduleNode->valueAt("website", none);
+    m_version = moduleNode->valueAt("version", none);
+    m_autoLoad = moduleNode->valueAt<bool>("autoLoad", false);
 
     if(OTMLNodePtr node = moduleNode->get("dependencies")) {
-        for(const OTMLNodePtr& tmp : node->childNodes())
+        for(const OTMLNodePtr& tmp : node->children())
             m_dependencies.push_back(tmp->value());
     }
 
     // set onLoad callback
     if(OTMLNodePtr node = moduleNode->get("onLoad")) {
-        g_lua.loadFunction(node->read<std::string>(), "@" + node->source() + "[" + node->tag() + "]");
+        g_lua.loadFunction(node->value<std::string>(), "@" + node->source() + "[" + node->tag() + "]");
         g_lua.useValue();
         m_loadCallback = g_lua.polymorphicPop<BooleanCallback>();
     }
 
     // set onUnload callback
     if(OTMLNodePtr node = moduleNode->get("onUnload")) {
-        g_lua.loadFunction(node->read<std::string>(), "@" + node->source() + "[" + node->tag() + "]");
+        g_lua.loadFunction(node->value<std::string>(), "@" + node->source() + "[" + node->tag() + "]");
         g_lua.useValue();
         m_unloadCallback = g_lua.polymorphicPop<SimpleCallback>();
     }
-
-    // load if autoLoad is set
-    m_autoLoad = moduleNode->readAt<bool>("autoLoad", false);
 }
 
 bool Module::load()
 {
-    for(const std::string& depName : m_dependencies) {
-        ModulePtr dep = g_modules.getModule(depName);
-        if(!dep) {
-            logError("ERROR: failed to load module '",m_name,"': could not find module dependency '",depName,"'");
-            return false;
+    try {
+        for(const std::string& depName : m_dependencies) {
+            ModulePtr dep = g_modules.getModule(depName);
+            if(!dep)
+                throw std::runtime_error(fw::mkstr("could not find module dependency '", depName ,"'"));
+
+            if(!dep->isLoaded() && !dep->load())
+                throw std::runtime_error(fw::mkstr("dependency '", depName, "' has failed to load"));
         }
 
-        if(!dep->isLoaded()) {
-            if(!dep->load()) {
-                logError("ERROR: failed to load module '",m_name,"': a dependency has failed to load");
-                return false;
-            }
+        if(m_loadCallback) {
+            m_loaded = m_loadCallback();
+            if(!m_loaded)
+                throw std::runtime_error("module onLoad event returned false");
         }
+
+        logInfo("Loaded module '", m_name, "'");
+        return true;
+    } catch(std::exception& e) {
+        logError("ERROR: failed to load module '", m_name, "': ", e.what());
+        return false;
     }
-
-    if(m_loadCallback) {
-        m_loaded = m_loadCallback();
-        if(!m_loaded) {
-            logError("ERROR: failed to load module '",m_name, "': onLoad returned false");
-            return false;
-        }
-    }
-
-    logInfo("Loaded module '", m_name, "'");
-    return true;
 }
 
 void Module::unload()

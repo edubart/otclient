@@ -9,7 +9,7 @@ typedef uint32 RGBA;
 class Color
 {
 public:
-    Color() : color(0) { }
+    Color() : color(0xFFFFFFFF) { }
     Color(uint8 r, uint8 g, uint8 b, uint8 a = 0xFF) : color(((a & 0xff)<<24) | ((b & 0xff)<<16) | ((g & 0xff)<<8) | (r & 0xff)) { }
     Color(const Color& other) : color(other.color) { }
     Color(RGBA rgba) : color(rgba) { }

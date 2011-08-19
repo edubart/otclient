@@ -103,7 +103,7 @@ void UIWidget::loadStyleFromOTML(const OTMLNodePtr& styleNode)
     assert(!m_destroyed);
 
     // load styles used by all widgets
-    for(const OTMLNodePtr& node : styleNode->childNodes()) {
+    for(const OTMLNodePtr& node : styleNode->children()) {
         // id
         if(node->tag() == "id") {
             setId(node->value());
@@ -121,48 +121,48 @@ void UIWidget::loadStyleFromOTML(const OTMLNodePtr& styleNode)
         }
         // font color
         else if(node->tag() == "font-color") {
-            setFontColor(node->read<Color>());
+            setFontColor(node->value<Color>());
         }
         // color
         else if(node->tag() == "color") {
-            setColor(node->read<Color>());
+            setColor(node->value<Color>());
         }
         // opacity
         else if(node->tag() == "opacity") {
-            setOpacity(node->read<int>());
+            setOpacity(node->value<int>());
         }
         // size
         else if(node->tag() == "size") {
-            resize(node->read<Size>());
+            resize(node->value<Size>());
         }
         else if(node->tag() == "width") {
-            setWidth(node->read<int>());
+            setWidth(node->value<int>());
         }
         else if(node->tag() == "height") {
-            setHeight(node->read<int>());
+            setHeight(node->value<int>());
         }
         // position
         else if(node->tag() == "position") {
-            move(node->read<Point>());
+            move(node->value<Point>());
         }
         else if(node->tag() == "x") {
-            setX(node->read<int>());
+            setX(node->value<int>());
         }
         else if(node->tag() == "y") {
-            setY(node->read<int>());
+            setY(node->value<int>());
         }
         // margins
         else if(node->tag() == "margin.left") {
-            setMarginLeft(node->read<int>());
+            setMarginLeft(node->value<int>());
         }
         else if(node->tag() == "margin.right") {
-            setMarginRight(node->read<int>());
+            setMarginRight(node->value<int>());
         }
         else if(node->tag() == "margin.top") {
-            setMarginTop(node->read<int>());
+            setMarginTop(node->value<int>());
         }
         else if(node->tag() == "margin.bottom") {
-            setMarginBottom(node->read<int>());
+            setMarginBottom(node->value<int>());
         }
         // anchors
         else if(boost::starts_with(node->tag(), "anchors.")) {
@@ -193,7 +193,7 @@ void UIWidget::loadStyleFromOTML(const OTMLNodePtr& styleNode)
             }
         }
         else if(node->tag() == "onLoad") {
-            g_lua.loadFunction(node->read<std::string>(), "@" + node->source() + "[" + node->tag() + "]");
+            g_lua.loadFunction(node->value<std::string>(), "@" + node->source() + "[" + node->tag() + "]");
             luaSetField("onLoad");
         }
     }
@@ -437,8 +437,12 @@ UIWidgetPtr UIWidget::recursiveGetChildById(const std::string& childId)
         for(const UIWidgetPtr& child : m_children) {
             if(child->getId() == childId)
                 return child;
-            else
-                return child->recursiveGetChildById(childId);
+        }
+        for(const UIWidgetPtr& child : m_children) {
+            if(UIWidgetPtr subChild = child->recursiveGetChildById(childId)) {
+                if(subChild->getId() == childId)
+                    return subChild;
+            }
         }
     }
     return nullptr;
@@ -522,6 +526,9 @@ void UIWidget::addChild(const UIWidgetPtr& childToAdd)
 {
     assert(!m_destroyed);
 
+    if(!childToAdd)
+        return;
+
     assert(!hasChild(childToAdd));
     m_children.push_back(childToAdd);
     childToAdd->setParent(asUIWidget());
@@ -537,6 +544,9 @@ void UIWidget::addChild(const UIWidgetPtr& childToAdd)
 void UIWidget::removeChild(const UIWidgetPtr& childToRemove)
 {
     assert(!m_destroyed);
+
+    if(!childToRemove)
+        return;
 
     // defocus if needed
     if(m_focusedChild == childToRemove)

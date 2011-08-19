@@ -61,17 +61,17 @@ BorderImagePtr BorderImage::loadFromOTML(const OTMLNodePtr& borderImageNode)
 
     // load basic border confs
     size = texture->getSize();
-    size = borderImageNode->readAt("size", size);
-    offset = borderImageNode->readAt("offset", offset);
-    border = borderImageNode->readAt("border", 0);
+    size = borderImageNode->valueAt("size", size);
+    offset = borderImageNode->valueAt("offset", offset);
+    border = borderImageNode->valueAt("border", 0);
     subRect = Rect(offset, size);
 
     // load border margins
     top = bottom = left = right = border;
-    top = borderImageNode->readAt("border.top", top);
-    bottom = borderImageNode->readAt("border.bottom", bottom);
-    left = borderImageNode->readAt("border.left", left);
-    right = borderImageNode->readAt("border.right", right);
+    top = borderImageNode->valueAt("border.top", top);
+    bottom = borderImageNode->valueAt("border.bottom", bottom);
+    left = borderImageNode->valueAt("border.left", left);
+    right = borderImageNode->valueAt("border.right", right);
 
     // calculates border coords
     leftBorder = Rect(subRect.left(), subRect.top() + top, left, subRect.height() - top - bottom);
@@ -86,15 +86,15 @@ BorderImagePtr BorderImage::loadFromOTML(const OTMLNodePtr& borderImageNode)
 
     // load individual border conf if supplied
     /*
-    leftBorder = borderImageNode->readAt("left border", leftBorder);
-    rightBorder = borderImageNode->readAt("right border", rightBorder);
-    topBorder = borderImageNode->readAt("top border", topBorder);
-    bottomBorder = borderImageNode->readAt("bottom border", bottomBorder);
-    topLeftCorner = borderImageNode->readAt("top left corner", topLeftCorner);
-    topRightCorner = borderImageNode->readAt("top right corner", topRightCorner);
-    bottomLeftCorner = borderImageNode->readAt("bottom left corner", bottomLeftCorner);
-    bottomRightCorner = borderImageNode->readAt("bottom right corner", bottomRightCorner);
-    center = borderImageNode->readAt("center", center);
+    leftBorder = borderImageNode->valueAt("left border", leftBorder);
+    rightBorder = borderImageNode->valueAt("right border", rightBorder);
+    topBorder = borderImageNode->valueAt("top border", topBorder);
+    bottomBorder = borderImageNode->valueAt("bottom border", bottomBorder);
+    topLeftCorner = borderImageNode->valueAt("top left corner", topLeftCorner);
+    topRightCorner = borderImageNode->valueAt("top right corner", topRightCorner);
+    bottomLeftCorner = borderImageNode->valueAt("bottom left corner", bottomLeftCorner);
+    bottomRightCorner = borderImageNode->valueAt("bottom right corner", bottomRightCorner);
+    center = borderImageNode->valueAt("center", center);
     */
 
     return BorderImagePtr(new BorderImage(texture,

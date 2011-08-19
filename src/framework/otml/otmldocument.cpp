@@ -15,7 +15,7 @@ OTMLDocumentPtr OTMLDocument::parse(const std::string& fileName)
 {
     std::stringstream fin;
     g_resources.loadFile(fileName, fin);
-    return parse(fin, fileName);
+    return parse(fin, g_resources.resolvePath(fileName));
 }
 
 OTMLDocumentPtr OTMLDocument::parse(std::istream& in, const std::string& source)
@@ -34,8 +34,7 @@ std::string OTMLDocument::emit()
 
 bool OTMLDocument::save(const std::string& fileName)
 {
-    setSource(fileName);
-
+    m_source = fileName;
     return g_resources.saveFile(fileName, emit());
 }
 

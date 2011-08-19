@@ -14,9 +14,6 @@ public:
     virtual const char* what() const throw() { return m_what.c_str(); }
 
 protected:
-    OTMLException() { }
-    void generateErrorMessage(const OTMLDocumentPtr& doc, const std::string& error, int line);
-    void generateErrorMessage(const OTMLNodePtr& node, const std::string& error);
     std::string m_what;
 };
 

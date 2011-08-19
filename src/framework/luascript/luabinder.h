@@ -39,7 +39,7 @@ namespace luabinder
     /// C++ function caller that can push results to lua
     template<typename Ret, typename F, typename... Args>
     typename std::enable_if<!std::is_void<Ret>::value, int>::type
-    call_fun_and_push_result(const F& f, LuaInterface* lua, Args... args) {
+    call_fun_and_push_result(const F& f, LuaInterface* lua, const Args&... args) {
         Ret ret = f(args...);
         lua->polymorphicPush(ret);
         return 1;
@@ -48,7 +48,7 @@ namespace luabinder
     /// C++ void function caller
     template<typename Ret, typename F, typename... Args>
     typename std::enable_if<std::is_void<Ret>::value, int>::type
-    call_fun_and_push_result(const F& f, LuaInterface* lua, Args... args) {
+    call_fun_and_push_result(const F& f, LuaInterface* lua, const Args&... args) {
         f(args...);
         return 0;
     }
@@ -57,14 +57,14 @@ namespace luabinder
     template<int N, typename Ret>
     struct expand_fun_arguments {
         template<typename Tuple, typename F, typename... Args>
-        static int call(const Tuple& tuple, const F& f, LuaInterface* lua, Args... args) {
-            return expand_fun_arguments<N-1,Ret>::call(tuple, f, lua, std::cref(std::get<N-1>(tuple)), args...);
+        static int call(const Tuple& tuple, const F& f, LuaInterface* lua, const Args&... args) {
+            return expand_fun_arguments<N-1,Ret>::call(tuple, f, lua, std::get<N-1>(tuple), args...);
         }
     };
     template<typename Ret>
     struct expand_fun_arguments<0,Ret> {
         template<typename Tuple, typename F, typename... Args>
-        static int call(const Tuple& tuple, const F& f, LuaInterface* lua, Args... args) {
+        static int call(const Tuple& tuple, const F& f, LuaInterface* lua, const Args&... args) {
             return call_fun_and_push_result<Ret>(f, lua, args...);
         }
     };
@@ -178,7 +178,7 @@ namespace luabinder
     template<typename Ret, typename Obj, typename... Args>
     LuaCppFunction bind_mem_fun(Ret (Obj::*f)(Args...)) {
         auto mf = std::mem_fn(f);
-        typedef typename std::tuple<Obj*, typename remove_const_ref<Args>::type...> Tuple;
+        typedef typename std::tuple<std::shared_ptr<Obj>, typename remove_const_ref<Args>::type...> Tuple;
         return bind_fun_specializer<typename remove_const_ref<Ret>::type,
                                     decltype(mf),
                                     Tuple>(mf);
@@ -186,7 +186,7 @@ namespace luabinder
     template<typename Ret, typename Obj, typename... Args>
     LuaCppFunction bind_mem_fun(Ret (Obj::*f)(Args...) const) {
         auto mf = std::mem_fn(f);
-        typedef typename std::tuple<Obj*, typename remove_const_ref<Args>::type...> Tuple;
+        typedef typename std::tuple<std::shared_ptr<Obj>, typename remove_const_ref<Args>::type...> Tuple;
         return bind_fun_specializer<typename remove_const_ref<Ret>::type,
                                     decltype(mf),
                                     Tuple>(mf);
@@ -197,7 +197,7 @@ namespace luabinder
     LuaCppFunction bind_mem_fun(int (Obj::*f)(LuaInterface*)) {
         auto mf = std::mem_fn(f);
         return [=](LuaInterface* lua) {
-            auto obj = lua->castValue<Obj*>(1);
+            auto obj = lua->castValue<std::shared_ptr<Obj>>(1);
             lua->remove(1);
             return mf(obj, lua);
         };

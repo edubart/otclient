@@ -30,7 +30,7 @@ bool ModuleManager::discoverModule(const std::string& file)
         OTMLDocumentPtr doc = OTMLDocument::parse(file);
         OTMLNodePtr moduleNode = doc->at("Module");
 
-        std::string name = moduleNode->readAt<std::string>("name");
+        std::string name = moduleNode->valueAt("name");
         if(getModule(name))
             throw OTMLException(moduleNode, "a module with the same name is already discovered, did you duplicate module names?");
 
@@ -38,7 +38,7 @@ bool ModuleManager::discoverModule(const std::string& file)
         module->discover(moduleNode);
         m_modules.push_back(module);
     } catch(std::exception& e) {
-        logError("ERROR: failed to load module from '", file, "':\n", e.what());
+        logError("ERROR: failed to load module from '", file, "': ", e.what());
         return false;
     }
     return true;

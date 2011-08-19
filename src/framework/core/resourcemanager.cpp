@@ -30,14 +30,14 @@ void ResourceManager::init(const char* argv0)
     }
 
     if(!found)
-        throw std::runtime_error("could not find modules directory");
+        logFatal("FATAL ERROR: could not find modules directory");
 
     // setup write directory
     std::string dir = g_platform.getAppUserDir();
     if(g_resources.setWriteDir(dir))
         g_resources.addToSearchPath(dir);
     else
-        throw std::runtime_error("could not setup write directory");
+        logError("ERROR: could not setup write directory");
 }
 
 void ResourceManager::terminate()
@@ -156,12 +156,11 @@ std::string ResourceManager::resolvePath(const std::string& path)
 {
     std::string fullPath;
     if(boost::starts_with(path, "/"))
-        fullPath = path.substr(1);
+        fullPath = path;
     else {
-        std::string scriptPath = g_lua.currentSourcePath();
-        if(!scriptPath.empty()) {
+        std::string scriptPath = "/" + g_lua.currentSourcePath();
+        if(!scriptPath.empty())
             fullPath += scriptPath + "/";
-        }
         fullPath += path;
     }
     return fullPath;

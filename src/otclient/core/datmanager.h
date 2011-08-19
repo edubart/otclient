@@ -7,7 +7,7 @@
 class DatManager
 {
 public:
-    bool load(const std::string& filename);
+    bool load(const std::string& file);
     void unload();
 
     void parseThingAttributes(std::stringstream& fin, ThingAttributes& thingAttributes);

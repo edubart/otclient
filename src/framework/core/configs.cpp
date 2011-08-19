@@ -9,27 +9,23 @@ bool Configs::load(const std::string& fileName)
 {
     m_fileName = fileName;
 
-    if(!g_resources.fileExists(fileName))
-        return false;
-
     try {
         OTMLDocumentPtr doc = OTMLDocument::parse(fileName);
-        for(const OTMLNodePtr& child : doc->childNodes())
+        for(const OTMLNodePtr& child : doc->children())
             m_confsMap[child->tag()] = child->value();
+        return true;
     } catch(std::exception& e) {
         logError("ERROR: could not load configurations: ", e.what());
         return false;
     }
-
-    return true;
 }
 
 bool Configs::save()
 {
-    if(!m_fileName.empty()) {
-        OTMLDocumentPtr doc = OTMLDocument::create();
-        doc->write(m_confsMap);
-        return doc->save(m_fileName);
+    OTMLDocumentPtr doc = OTMLDocument::create();
+    for(auto it : m_confsMap) {
+        OTMLNodePtr node = OTMLNode::create(it.first, it.second);
+        doc->addChild(node);
     }
-    return false;
+    return doc->save(m_fileName);
 }

@@ -16,13 +16,15 @@ std::string OTMLEmitter::emitNode(const OTMLNodePtr& node, int currentDepth)
             ss << node->tag();
 
             // add ':' to if the node is unique or has value
-            if(node->hasValue() || node->isUnique())
+            if(node->hasValue() || node->isUnique() || node->isNull())
                 ss << ":";
         } else
             ss << "-";
 
         // emit node value
-        if(node->hasValue()) {
+        if(node->isNull())
+            ss << " ~";
+        else if(node->hasValue()) {
             ss << " ";
 
             std::string value = node->value();
@@ -61,7 +63,7 @@ std::string OTMLEmitter::emitNode(const OTMLNodePtr& node, int currentDepth)
     for(int i=0;i<node->size();++i) {
         if(currentDepth >= 0 || i != 0)
             ss << "\n";
-        ss << emitNode(node->at(i), currentDepth+1);
+        ss << emitNode(node->atIndex(i), currentDepth+1);
     }
 
     return ss.str();

@@ -25,7 +25,7 @@ void UILineEdit::loadStyleFromOTML(const OTMLNodePtr& styleNode)
 {
     UIWidget::loadStyleFromOTML(styleNode);
 
-    setText(styleNode->readAt("text", getText()));
+    setText(styleNode->valueAt("text", getText()));
 }
 
 void UILineEdit::render()

@@ -37,10 +37,10 @@ void UIButton::loadStyleFromOTML(const OTMLNodePtr& styleNode)
     if(OTMLNodePtr node = styleNode->get("state.down"))
         loadStateStyle(m_statesStyle[ButtonDown], node);
 
-    m_text = styleNode->readAt("text", fw::empty_string);
+    m_text = styleNode->valueAt("text", fw::empty_string);
 
     if(OTMLNodePtr node = styleNode->get("onClick")) {
-        g_lua.loadFunction(node->read<std::string>(), "@" + node->source() + "[" + node->tag() + "]");
+        g_lua.loadFunction(node->value<std::string>(), "@" + node->source() + "[" + node->tag() + "]");
         luaSetField("onClick");
     }
 }
@@ -51,9 +51,9 @@ void UIButton::loadStateStyle(ButtonStateStyle& stateStyle, const OTMLNodePtr& s
         stateStyle.image = BorderImage::loadFromOTML(node);
     if(OTMLNodePtr node = stateStyleNode->get("image"))
         stateStyle.image = Image::loadFromOTML(node);
-    stateStyle.textTranslate = stateStyleNode->readAt("text-translate", Point());
-    stateStyle.color = stateStyleNode->readAt("font-color", m_fontColor);
-    stateStyle.color = stateStyleNode->readAt("color", m_color);
+    stateStyle.textTranslate = stateStyleNode->valueAt("text-translate", Point());
+    stateStyle.color = stateStyleNode->valueAt("font-color", m_fontColor);
+    stateStyle.color = stateStyleNode->valueAt("color", m_color);
 }
 
 void UIButton::render()

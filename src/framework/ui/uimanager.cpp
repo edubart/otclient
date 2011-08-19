@@ -93,7 +93,7 @@ bool UIManager::importStyles(const std::string& file)
     try {
         OTMLDocumentPtr doc = OTMLDocument::parse(file);
 
-        for(const OTMLNodePtr& styleNode : doc->childNodes())
+        for(const OTMLNodePtr& styleNode : doc->children())
             importStyleFromOTML(styleNode);
         return true;
     } catch(std::exception& e) {
@@ -129,14 +129,14 @@ void UIManager::importStyleFromOTML(const OTMLNodePtr& styleNode)
 OTMLNodePtr UIManager::getStyle(const std::string& styleName)
 {
     if(boost::starts_with(styleName, "UI")) {
-        OTMLNodePtr node(new OTMLNode());
+        OTMLNodePtr node = OTMLNode::create();
         node->writeAt("__widgetType", styleName);
         return node;
     }
 
     auto it = m_styles.find(styleName);
     if(it == m_styles.end())
-        throw std::logic_error(fw::mkstr("style '", styleName, "' is not a defined style"));
+        throw std::runtime_error(fw::mkstr("style '", styleName, "' is not a defined style"));
     return m_styles[styleName];
 }
 
@@ -145,7 +145,7 @@ UIWidgetPtr UIManager::loadUI(const std::string& file)
     try {
         OTMLDocumentPtr doc = OTMLDocument::parse(file);
         UIWidgetPtr widget;
-        for(const OTMLNodePtr& node : doc->childNodes()) {
+        for(const OTMLNodePtr& node : doc->children()) {
             std::string tag = node->tag();
 
             // import styles in these files too
@@ -153,7 +153,7 @@ UIWidgetPtr UIManager::loadUI(const std::string& file)
                 importStyleFromOTML(node);
             else {
                 if(widget)
-                    throw OTMLException(node, "cannot have multiple main widgets in .otui files");
+                    throw std::runtime_error("cannot have multiple main widgets in .otui files");
                 widget = loadWidgetFromOTML(node);
             }
         }
@@ -172,7 +172,7 @@ UIWidgetPtr UIManager::loadWidgetFromOTML(const OTMLNodePtr& widgetNode)
     OTMLNodePtr styleNode = getStyle(widgetNode->tag())->clone();
     styleNode->merge(widgetNode);
 
-    std::string widgetType = styleNode->readAt<std::string>("__widgetType");
+    std::string widgetType = styleNode->valueAt("__widgetType");
 
     UIWidgetPtr widget;
     if(widgetType == "UIWidget")
@@ -191,7 +191,7 @@ UIWidgetPtr UIManager::loadWidgetFromOTML(const OTMLNodePtr& widgetNode)
     widget->loadStyleFromOTML(styleNode);
     widget->updateGeometry();
 
-    for(const OTMLNodePtr& childNode : widgetNode->childNodes()) {
+    for(const OTMLNodePtr& childNode : widgetNode->children()) {
         if(!childNode->isUnique())
             widget->addChild(loadWidgetFromOTML(childNode));
     }

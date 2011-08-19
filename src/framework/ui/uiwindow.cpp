@@ -23,9 +23,9 @@ void UIWindow::loadStyleFromOTML(const OTMLNodePtr& styleNode)
     if(OTMLNodePtr headNode = styleNode->get("head")) {
         if(OTMLNodePtr node = headNode->get("border-image"))
             m_headImage = BorderImage::loadFromOTML(node);
-        m_headHeight = headNode->readAt("height", m_headImage->getDefaultSize().height());
-        m_headMargin = headNode->readAt("margin", 0);
-        m_titleAlign = fw::translateAlignment(headNode->readAt("text align", std::string("center")));
+        m_headHeight = headNode->valueAt("height", m_headImage->getDefaultSize().height());
+        m_headMargin = headNode->valueAt("margin", 0);
+        m_titleAlign = fw::translateAlignment(headNode->valueAt("text align", std::string("center")));
     } else {
         m_headHeight = 0;
         m_headMargin = 0;
@@ -37,7 +37,7 @@ void UIWindow::loadStyleFromOTML(const OTMLNodePtr& styleNode)
             m_bodyImage = BorderImage::loadFromOTML(node);
     }
 
-    m_title = styleNode->readAt("title", fw::empty_string);
+    m_title = styleNode->valueAt("title", fw::empty_string);
 }
 
 void UIWindow::render()
