@@ -4,10 +4,6 @@
 #include <framework/graphics/framebuffer.h>
 #include "game.h"
 
-#include <GL/gl.h>
-#include <GL/glu.h>
-#include <GL/glext.h>
-
 Creature::Creature() : Thing(THING_CREATURE)
 {
     m_healthPercent = 0;
@@ -21,9 +17,6 @@ void Creature::draw(int x, int y)
 
     // draw outfit
     internalDraw(x, y, 0, m_direction, 0, 0, anim);
-
-    // draw outfit colors
-    glBlendFunc(GL_DST_COLOR, GL_ONE_MINUS_SRC_ALPHA);
 
     // TODO: move this shit hahaha
     static const Color outfitColors[] = {

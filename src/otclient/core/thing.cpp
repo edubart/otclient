@@ -24,11 +24,7 @@ void Thing::internalDraw(int x, int y, int blendframes, int xdiv, int ydiv, int 
             if(!spriteId)
                 continue;
 
-            TexturePtr spriteTex;
-            if(mask == SpriteMaskNone) {
-                spriteTex = g_sprites.getSpriteTexture(spriteId);
-            } else
-                spriteTex = g_sprites.getSpriteMask(spriteId, mask);
+            TexturePtr spriteTex = g_sprites.getSpriteTexture(spriteId, mask);
 
             Rect drawRect((x - xi*32) - attributes.xOffset,
                           (y - yi*32) - attributes.xOffset,
