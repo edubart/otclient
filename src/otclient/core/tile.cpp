@@ -2,34 +2,119 @@
 #include "item.h"
 #include "datmanager.h"
 #include "map.h"
+#include "game.h"
 #include "localplayer.h"
+#include <framework/graphics/fontmanager.h>
 
 Tile::Tile()
 {
+    m_drawNextOffset = 0;
 }
 
-void Tile::draw(int x, int y)
+void Tile::draw(int x, int y, int step)
 {
-    if(m_ground)
-        m_ground->draw(x, y);
+    // STEP 0 = draw ground, top 1
+    // STEP 1 = top 2
+    // STEP 2 = top 3
+    // STEP 3 = bottom, creatures, names, etc
 
-    for(const ThingPtr& thing : m_itemsTop)
-        thing->draw(x, y);
+    FontPtr font = g_fonts.getDefaultFont();
 
-    for(const ThingPtr& thing : m_itemsBottom)
-        thing->draw(x, y);
+    if(step == 0 && m_drawNextOffset != 0) {
+        logDebug("error with tile offset.");
+        return;
+    }
 
-    for(const ThingPtr& thing : m_creatures)
-        thing->draw(x, y);
+    if(step == 0) {
+        if(m_ground)
+            m_ground->draw(x, y);
 
-    for(const ThingPtr& thing : m_effects)
-        thing->draw(x, y);
+        for(const ThingPtr& thing : m_itemsTop) {
+            const ThingAttributes& thingAttributes = thing->getAttributes();
+
+            if(thingAttributes.alwaysOnTopOrder == 1) {
+                thing->draw(x - m_drawNextOffset, y - m_drawNextOffset);
+                //font->renderText("T1", Rect(x + 5, y+5, 100, 100));
+
+                m_drawNextOffset += thingAttributes.drawNextOffset;
+            }
+        }
+
+        for(const ThingPtr& thing : m_itemsTop) {
+            const ThingAttributes& thingAttributes = thing->getAttributes();
+
+            if(thingAttributes.alwaysOnTopOrder == 2) {
+                thing->draw(x - m_drawNextOffset, y - m_drawNextOffset);
+                //font->renderText("T2", Rect(x + 5, y+5, 100, 100));
+                m_drawNextOffset += thingAttributes.drawNextOffset;
+            }
+        }
+
+        for(const ThingPtr& thing : m_itemsBottom) {
+            const ThingAttributes& thingAttributes = thing->getAttributes();
+            thing->draw(x - m_drawNextOffset, y - m_drawNextOffset);
+            //font->renderText("B0", Rect(x + 5, y+5, 100, 100));
+            m_drawNextOffset += thingAttributes.drawNextOffset;
+        }
+
+        for(const ThingPtr& thing : m_creatures) {
+            const ThingAttributes& thingAttributes = thing->getAttributes();
+            thing->draw(x - m_drawNextOffset, y - m_drawNextOffset);
+
+            m_drawNextOffset += thingAttributes.drawNextOffset;
+        }
+
+        for(const ThingPtr& thing : m_itemsTop) {
+            const ThingAttributes& thingAttributes = thing->getAttributes();
+
+            if(thingAttributes.alwaysOnTopOrder == 3) {
+                thing->draw(x - m_drawNextOffset, y - m_drawNextOffset);
+                //font->renderText("T3", Rect(x + 5, y+5, 100, 100));
+                m_drawNextOffset += thingAttributes.drawNextOffset;
+            }
+        }
+
+        for(const ThingPtr& thing : m_effects) {
+            thing->draw(x - m_drawNextOffset, y - m_drawNextOffset);
+        }
+
+        m_drawNextOffset = 0;
+    }
+    else if(step == 1) {
+
+
+
+    }
+    else if(step == 2) {
+
+
+
+    }
+    else if(step == 3) {
+
+    }
 }
 
 void Tile::addThing(ThingPtr thing, uint8 stackpos)
 {
     if(!thing)
         return;
+
+    //8308
+    //2526
+    //5296
+
+    const ThingAttributes& item1 = g_dat.getItemAttributes(8308);
+    const ThingAttributes& item2 = g_dat.getItemAttributes(2526);
+    const ThingAttributes& item3 = g_dat.getItemAttributes(5296);
+
+    int j = item1.alwaysOnTopOrder + item2.alwaysOnTopOrder + item3.alwaysOnTopOrder;
+    j++;
+
+
+    if(thing->getPosition() == g_game.getLocalPlayer()->getPosition() + Position(-1, 0, 0) && thing->getAttributes().alwaysOnTop) {
+        logDebug((int)thing->getId());
+    }
 
     const ThingAttributes& thingAttributes = thing->getAttributes();
 
@@ -38,16 +123,16 @@ void Tile::addThing(ThingPtr thing, uint8 stackpos)
             m_ground = thing;
         else {
             if(thingAttributes.alwaysOnTop)
-                m_itemsTop.push_back(thing);
+                m_itemsTop.push_front(thing);
             else
-                m_itemsBottom.push_back(thing);
+                m_itemsBottom.push_front(thing);
         }
     }
     else if(thing->asCreature()) {
-        m_creatures.push_back(thing);
+        m_creatures.push_front(thing);
     }
     else if(thing->asEffect()) {
-        m_effects.push_back(thing);
+        m_effects.push_front(thing);
     }
 }
 
