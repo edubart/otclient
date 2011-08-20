@@ -175,7 +175,6 @@ public:
     void insert(int index);
     void remove(int index);
     bool next(int index = -2);
-    void copy(int index = -1);
 
     void getStackFunction(int level = 0);
 

@@ -31,7 +31,6 @@ UIWidget::UIWidget(UIWidgetType type)
 
 UIWidget::~UIWidget()
 {
-    //logTraceDebug(m_id);
     if(!m_destroyed)
         logWarning("widget '", m_id, "' was destructed without being explicit destroyed");
 }

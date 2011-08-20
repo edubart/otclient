@@ -661,12 +661,6 @@ bool LuaInterface::next(int index)
     return lua_next(L, index);
 }
 
-void LuaInterface::copy(int index)
-{
-    assert(hasIndex(index));
-    lua_pushvalue(L, index);
-}
-
 void LuaInterface::getStackFunction(int level)
 {
     lua_Debug ar;
@@ -679,6 +673,7 @@ void LuaInterface::getStackFunction(int level)
 void LuaInterface::getRef(int ref)
 {
     lua_rawgeti(L, LUA_REGISTRYINDEX, ref);
+    //logTraceDebug(ref);
 }
 
 void LuaInterface::getWeakRef(int weakRef)
@@ -718,12 +713,14 @@ void LuaInterface::getMetatable(int index)
 void LuaInterface::getField(const char* key, int index)
 {
     assert(hasIndex(index));
+    assert(isUserdata(index) || isTable(index));
     lua_getfield(L, index, key);
 }
 
 void LuaInterface::setField(const char* key, int index)
 {
     assert(hasIndex(index));
+    assert(isUserdata(index) || isTable(index));
     lua_setfield(L, index, key);
 }
 

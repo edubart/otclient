@@ -44,6 +44,7 @@ function Console.create()
 end
 
 function Console.destroy()
+  Logger.setOnLog(nil)
   console:destroy()
   console = nil
 end
