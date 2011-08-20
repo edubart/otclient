@@ -1,5 +1,8 @@
 Label < UILabel
+  font: helvetica-12px
+  color: #ffffff
 
 LargerLabel < Label
   font: helvetica-12px-bold
+  color: #ffffff
 

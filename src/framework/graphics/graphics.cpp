@@ -194,8 +194,7 @@ void Graphics::drawRepeatedTexturedRect(const Rect& screenCoords,
         stopDrawing();
 }
 
-void Graphics::drawFilledRect(const Rect& screenCoords,
-                              const Color& color)
+void Graphics::drawFilledRect(const Rect& screenCoords)
 {
     assert(!m_drawing);
 
@@ -208,8 +207,6 @@ void Graphics::drawFilledRect(const Rect& screenCoords,
     int top = screenCoords.top();
     int left = screenCoords.left();
 
-    glPushAttrib(GL_CURRENT_BIT);
-    glColor4ubv(color.rgbaPtr());
     glDisable(GL_TEXTURE_2D);
     glBegin(GL_QUADS);
 
@@ -220,12 +217,10 @@ void Graphics::drawFilledRect(const Rect& screenCoords,
 
     glEnd();
     glEnable(GL_TEXTURE_2D);
-    glPopAttrib();
 }
 
 
 void Graphics::drawBoundingRect(const Rect& screenCoords,
-                                const Color& color,
                                 int innerLineWidth)
 {
     assert(!m_drawing);
@@ -239,8 +234,6 @@ void Graphics::drawBoundingRect(const Rect& screenCoords,
     int top = screenCoords.top();
     int left = screenCoords.left();
 
-    glPushAttrib(GL_CURRENT_BIT);
-    glColor4ubv(color.rgbaPtr());
     glDisable(GL_TEXTURE_2D);
     glBegin(GL_QUADS);
 
@@ -270,7 +263,6 @@ void Graphics::drawBoundingRect(const Rect& screenCoords,
 
     glEnd();
     glEnable(GL_TEXTURE_2D);
-    glPopAttrib();
 }
 
 void Graphics::bindColor(const Color& color)

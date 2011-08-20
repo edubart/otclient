@@ -217,17 +217,17 @@ void Platform::init(PlatformListener* platformListener, const char *appName)
     // open display
     x11.display = XOpenDisplay(0);
     if(!x11.display)
-        logFatal("FATAL ERROR: Failed to open X display");
+        logFatal("Failed to open X display");
 
     // check if GLX is supported on this display
     if(!glXQueryExtension(x11.display, 0, 0))
-        logFatal("FATAL ERROR: GLX not supported");
+        logFatal("GLX not supported");
 
     // retrieve GLX version
     int glxMajor;
     int glxMinor;
     if(!glXQueryVersion(x11.display, &glxMajor, &glxMinor))
-        logFatal("FATAL ERROR: Unable to query GLX version");
+        logFatal("Unable to query GLX version");
     logInfo("GLX version ",glxMajor,".",glxMinor);
 
     // clipboard related atoms
@@ -313,6 +313,7 @@ void Platform::poll()
                 inputEvent.ctrl = (event.xkey.state & ControlMask);
                 inputEvent.shift = (event.xkey.state & ShiftMask);
                 inputEvent.alt = (event.xkey.state & Mod1Mask);
+                inputEvent.keychar = 0;
 
                 // fire enter text event
                 if(event.type == KeyPress && !inputEvent.ctrl && !inputEvent.alt) {
@@ -325,7 +326,7 @@ void Platform::poll()
                     }
 
                     if(len > 0 &&
-                       // for some reason these keys produces characters and we don't want that
+                       // these keys produces characters that we don't want to capture
                        keysym != XK_BackSpace &&
                        keysym != XK_Return &&
                        keysym != XK_Delete &&
@@ -333,10 +334,7 @@ void Platform::poll()
                        (uchar)(buf[0]) >= 32
                     ) {
                         //logDebug("char: ", buf[0], " code: ", (uint)buf[0]);
-                        inputEvent.type = EventTextEnter;
                         inputEvent.keychar = buf[0];
-                        inputEvent.keycode = KC_UNKNOWN;
-                        m_listener->onPlatformEvent(inputEvent);
                     }
                 }
 
@@ -344,13 +342,19 @@ void Platform::poll()
                 event.xkey.state &= ~(ShiftMask | LockMask);
                 len = XLookupString(&event.xkey, buf, sizeof(buf), &keysym, 0);
 
-                // fire key up/down event
-                if(x11.keyMap.find(keysym) != x11.keyMap.end()) {
-                    inputEvent.keycode = x11.keyMap[keysym];
-                    inputEvent.type = (event.type == KeyPress) ? EventKeyDown : EventKeyUp;
+                if(inputEvent.keychar == 0)
                     inputEvent.keychar = (len > 0) ? buf[0] : 0;
+
+                if(x11.keyMap.find(keysym) != x11.keyMap.end())
+                    inputEvent.keycode = x11.keyMap[keysym];
+                else
+                    inputEvent.keycode = KC_UNKNOWN;
+
+                inputEvent.keycode = x11.keyMap[keysym];
+                inputEvent.type = (event.type == KeyPress) ? EventKeyDown : EventKeyUp;
+
+                if(inputEvent.keycode != KC_UNKNOWN || inputEvent.keychar != 0)
                     m_listener->onPlatformEvent(inputEvent);
-                }
                 break;
             }
             case ButtonPress:
@@ -480,12 +484,12 @@ bool Platform::createWindow(int x, int y, int width, int height, int minWidth, i
     // choose OpenGL, RGBA, double buffered, visual
     x11.visual = glXChooseVisual(x11.display, DefaultScreen(x11.display), attrList);
     if(!x11.visual)
-        logFatal("FATAL ERROR: RGBA/Double buffered visual not supported");
+        logFatal("RGBA/Double buffered visual not supported");
 
     // create GLX context
     x11.glxContext = glXCreateContext(x11.display, x11.visual, 0, GL_TRUE);
     if(!x11.glxContext)
-        logFatal("FATAL ERROR: Unable to create GLX context");
+        logFatal("Unable to create GLX context");
 
     // color map
     x11.colormap  = XCreateColormap(x11.display,
@@ -518,7 +522,7 @@ bool Platform::createWindow(int x, int y, int width, int height, int minWidth, i
                              &wa);
 
     if(!x11.window)
-        logFatal("FATAL ERROR: Unable to create X window");
+        logFatal("Unable to create X window");
 
     //  create input context (to have better key input handling)
     if(XSupportsLocale()) {
@@ -530,11 +534,11 @@ bool Platform::createWindow(int x, int y, int width, int height, int minWidth, i
                                     XIMPreeditNothing | XIMStatusNothing,
                                     XNClientWindow, x11.window, NULL);
             if(!x11.xic)
-                logError("ERROR: Unable to create the input context");
+                logError("Unable to create the input context");
         } else
-            logError("ERROR: Failed to open an input method");
+            logError("Failed to open an input method");
     } else
-        logError("ERROR: X11 does not support the current locale");
+        logError("X11 does not support the current locale");
 
     if(!x11.xic)
         logWarning("Input of special keys maybe messed up because we couldn't create an input context");
@@ -823,6 +827,6 @@ std::string Platform::getAppUserDir()
     std::stringstream sdir;
     sdir << PHYSFS_getUserDir() << "." << x11.appName;
     if((mkdir(sdir.str().c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) != 0) && (errno != EEXIST))
-        logError("ERROR: Couldn't create directory for saving configuration file. (",sdir.str(),")");
+        logError("Couldn't create directory for saving configuration file. (",sdir.str(),")");
     return sdir.str();
 }

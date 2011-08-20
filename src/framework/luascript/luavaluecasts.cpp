@@ -42,6 +42,20 @@ bool luavalue_cast(int index, double& d)
     return true;
 }
 
+// size_t
+void push_luavalue(std::size_t s)
+{
+    push_luavalue((double)s);
+}
+
+bool luavalue_cast(int index, std::size_t& s)
+{
+    double d;
+    bool ret = luavalue_cast(index, d);
+    s = d;
+    return ret;
+}
+
 // string
 void push_luavalue(const char* cstr)
 {

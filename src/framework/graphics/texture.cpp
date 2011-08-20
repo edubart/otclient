@@ -35,7 +35,7 @@ uint Texture::internalLoadGLTexture(uchar *pixels, int channels, int width, int 
 
     // checks texture max size
     if(width > maxTexSize || height > maxTexSize) {
-        logError("ERROR: loading texture with size ", width, "x", height, " failed, "
+        logError("loading texture with size ", width, "x", height, " failed, "
                  "the maximum size allowed by the graphics card is ", maxTexSize, "x", maxTexSize, ",",
                  "to prevent crashes the texture will be displayed as a blank texture");
         return 0;

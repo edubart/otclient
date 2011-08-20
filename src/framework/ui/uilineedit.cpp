@@ -12,6 +12,8 @@ UILineEdit::UILineEdit() : UIWidget(UITypeLabel)
     m_textHorizontalMargin = 3;
     m_focusable = true;
     blinkCursor();
+
+    m_onAction = [this]() { this->callLuaField("onAction"); };
 }
 
 UILineEditPtr UILineEdit::create()
@@ -26,6 +28,11 @@ void UILineEdit::loadStyleFromOTML(const OTMLNodePtr& styleNode)
     UIWidget::loadStyleFromOTML(styleNode);
 
     setText(styleNode->valueAt("text", getText()));
+
+    if(OTMLNodePtr node = styleNode->get("onAction")) {
+        g_lua.loadFunction(node->value(), "@" + node->source() + "[" + node->tag() + "]");
+        luaSetField(node->tag());
+    }
 }
 
 void UILineEdit::render()
@@ -53,7 +60,7 @@ void UILineEdit::render()
                 cursorRect = Rect(m_drawArea.left()-1, m_drawArea.top(), 1, m_font->getGlyphHeight());
             else
                 cursorRect = Rect(m_glyphsCoords[m_cursorPos-1].right(), m_glyphsCoords[m_cursorPos-1].top(), 1, m_font->getGlyphHeight());
-            g_graphics.drawFilledRect(cursorRect, m_color);
+            g_graphics.drawFilledRect(cursorRect);
         } else if(ticks - m_cursorTicks >= 2*delay) {
             m_cursorTicks = ticks;
         }
@@ -255,7 +262,7 @@ void UILineEdit::setCursorPos(int pos)
     }
 }
 
-void UILineEdit::enableCursor(bool enable)
+void UILineEdit::setCursorEnabled(bool enable)
 {
     if(enable) {
         m_cursorPos = 0;
@@ -357,7 +364,10 @@ void UILineEdit::onKeyPress(UIKeyEvent& event)
         setCursorPos(0);
     else if(event.keyCode() == KC_END) // move cursor to last character
         setCursorPos(m_text.length());
-    else if(event.keyChar() != 0) {
+    else if(event.keyCode() == KC_RETURN) {
+        if(m_onAction)
+            m_onAction();
+    } else if(event.keyChar() != 0) {
         if(event.keyCode() != KC_TAB && event.keyCode() != KC_RETURN)
             appendCharacter(event.keyChar());
         else

@@ -10,16 +10,16 @@ SpriteManager::SpriteManager()
     m_signature = 0;
 }
 
-bool SpriteManager::load(const std::string &filename)
+bool SpriteManager::load(const std::string& file)
 {
     try {
-        g_resources.loadFile(filename, m_fin);
+        g_resources.loadFile(file, m_fin);
         m_signature = fw::getu32(m_fin);
         m_spritesCount = fw::getu16(m_fin);
         m_sprites.resize(m_spritesCount);
         return true;
     } catch(std::exception& e) {
-        logError(e.what());
+        logError("faile to load sprites from '", file, "': ", e.what());
         return false;
     }
 }

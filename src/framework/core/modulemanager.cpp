@@ -38,7 +38,7 @@ bool ModuleManager::discoverModule(const std::string& file)
         module->discover(moduleNode);
         m_modules.push_back(module);
     } catch(std::exception& e) {
-        logError("ERROR: failed to load module from '", file, "': ", e.what());
+        logError("failed to load module from '", file, "': ", e.what());
         return false;
     }
     return true;

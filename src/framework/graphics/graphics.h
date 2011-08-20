@@ -45,11 +45,9 @@ public:
                                   const TexturePtr& texture,
                                   const Rect& textureCoords);
 
-    void drawFilledRect(const Rect& screenCoords,
-                        const Color& color);
+    void drawFilledRect(const Rect& screenCoords);
 
     void drawBoundingRect(const Rect& screenCoords,
-                          const Color& color = Color::green,
                           int innerLineWidth = 1);
 
     const Size& getScreenSize() const { return m_screenSize; }

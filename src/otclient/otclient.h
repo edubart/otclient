@@ -1,6 +1,7 @@
 #ifndef OTCLIENT_H
 #define OTCLIENT_H
 
+#include <framework/ui/declarations.h>
 #include <framework/platform/platformlistener.h>
 
 class OTClient : public PlatformListener

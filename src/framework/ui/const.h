@@ -9,7 +9,8 @@ enum UIWidgetType {
     UITypeButton,
     UITypeLineEdit,
     UITypeWindow,
-    UITypeList
+    UITypeList,
+    UITypeConsole
 };
 
 enum FocusReason {

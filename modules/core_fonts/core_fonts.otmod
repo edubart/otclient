@@ -11,6 +11,7 @@ Module
     importFont('helvetica-12px-bold')
     importFont('helvetica-12px')
     importFont('helvetica-14px-bold')
+    importFont('terminus-14px-bold')
 
     setDefaultFont('helvetica-12px')
     return true

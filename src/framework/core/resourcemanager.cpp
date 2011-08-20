@@ -30,14 +30,14 @@ void ResourceManager::init(const char* argv0)
     }
 
     if(!found)
-        logFatal("FATAL ERROR: could not find modules directory");
+        logFatal("could not find modules directory");
 
     // setup write directory
     std::string dir = g_platform.getAppUserDir();
     if(g_resources.setWriteDir(dir))
         g_resources.addToSearchPath(dir);
     else
-        logError("ERROR: could not setup write directory");
+        logError("could not setup write directory");
 }
 
 void ResourceManager::terminate()

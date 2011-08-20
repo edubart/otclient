@@ -54,7 +54,7 @@ bool Module::load()
         logInfo("Loaded module '", m_name, "'");
         return true;
     } catch(std::exception& e) {
-        logError("ERROR: failed to load module '", m_name, "': ", e.what());
+        logError("failed to load module '", m_name, "': ", e.what());
         return false;
     }
 }

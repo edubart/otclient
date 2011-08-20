@@ -48,9 +48,12 @@ void Map::draw(int x, int y)
     }
 
     // debug draws
-    g_graphics.drawBoundingRect(Rect(7*32, 5*32, 32, 32), Color::red);
+    g_graphics.bindColor(Color::red);
+    g_graphics.drawBoundingRect(Rect(7*32, 5*32, 32, 32));
 
     m_framebuffer->unbind();
+
+    g_graphics.bindColor(Color::white);
     m_framebuffer->draw(Rect(x, y, g_graphics.getScreenSize()));
 }
 

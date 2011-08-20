@@ -12,4 +12,4 @@ RoundedPanel < Panel
     border: 4
 
 RectPanel < UIWidget
-  image: /core_ui/images/emptyrect.png
+  image: /core_ui/images/empty_rect.png

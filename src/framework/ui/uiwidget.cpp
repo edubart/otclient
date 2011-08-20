@@ -21,8 +21,8 @@ UIWidget::UIWidget(UIWidgetType type)
     m_updateScheduled = false;
     m_opacity = 255;
     m_marginLeft = m_marginRight = m_marginTop = m_marginBottom = 0;
-    m_color = Color::white;
-    m_fontColor = Color::white;
+    m_backgroundColor = Color::white;
+    m_foregroundColor = Color::white;
 
     // generate an unique id, this is need because anchored layouts find widgets by id
     static unsigned long id = 1;
@@ -33,13 +33,12 @@ UIWidget::~UIWidget()
 {
     //logTraceDebug(m_id);
     if(!m_destroyed)
-        logWarning("WARNING: widget '", m_id, "' was destructed without being explicit destroyed");
+        logWarning("widget '", m_id, "' was destructed without being explicit destroyed");
 }
 
 UIWidgetPtr UIWidget::create()
 {
     UIWidgetPtr widget(new UIWidget);
-    //widget->setStyle("Widget");
     return widget;
 }
 
@@ -48,6 +47,8 @@ void UIWidget::destroy()
     //TODO: onDestroy event
     // destroy only once
     if(!m_destroyed) {
+        releaseLuaFieldsTable();
+
         // clear additional reference
         m_lockedWidgets.clear();
         m_focusedChild.reset();
@@ -68,7 +69,7 @@ void UIWidget::destroy()
         m_enabled = false;
         m_visible = false;
     } else
-        logWarning("WARNING: attempt to destroy widget '", m_id, "' again");
+        logWarning("attempt to destroy widget '", m_id, "' again");
 }
 
 void UIWidget::destroyCheck()
@@ -81,21 +82,7 @@ void UIWidget::destroyCheck()
 
     // check for leaks upon widget destruction
     if(realUseCount > 0)
-        logWarning("WARNING: destroyed widget with id '",m_id,"', but it still have ",realUseCount," references left");
-}
-
-void UIWidget::load()
-{
-    for(const UIWidgetPtr& child : m_children)
-        child->load();
-
-    // schedule onLoad
-    UIWidgetPtr self = asUIWidget();
-    g_dispatcher.addEvent([self]() {
-        // this widget could be destroyed before the event happens
-        if(!self->isDestroyed())
-            self->callLuaField("onLoad");
-    });
+        logWarning("destroyed widget with id '",m_id,"', but it still have ",realUseCount," references left");
 }
 
 void UIWidget::loadStyleFromOTML(const OTMLNodePtr& styleNode)
@@ -120,12 +107,12 @@ void UIWidget::loadStyleFromOTML(const OTMLNodePtr& styleNode)
             setFont(g_fonts.getFont(node->value()));
         }
         // font color
-        else if(node->tag() == "font-color") {
-            setFontColor(node->value<Color>());
+        else if(node->tag() == "color") {
+            setForegroundColor(node->value<Color>());
         }
         // color
-        else if(node->tag() == "color") {
-            setColor(node->value<Color>());
+        else if(node->tag() == "background-color") {
+            setBackgroundColor(node->value<Color>());
         }
         // opacity
         else if(node->tag() == "opacity") {
@@ -197,9 +184,6 @@ void UIWidget::loadStyleFromOTML(const OTMLNodePtr& styleNode)
             luaSetField("onLoad");
         }
     }
-
-    if(!m_font)
-        m_font = g_fonts.getDefaultFont();
 }
 
 void UIWidget::render()
@@ -215,8 +199,12 @@ void UIWidget::render()
             if(child->getOpacity() < oldOpacity)
                 g_graphics.setOpacity(child->getOpacity());
 
-            g_graphics.bindColor(child->getColor());
+            g_graphics.bindColor(child->getBackgroundColor());
             child->render();
+
+            // debug draw box
+            //g_graphics.bindColor(Color::green);
+            //g_graphics.drawBoundingRect(child->getGeometry());
 
             g_graphics.setOpacity(oldOpacity);
         }
@@ -227,8 +215,10 @@ void UIWidget::updateGeometry()
 {
     assert(!m_destroyed);
 
-    if(UILayoutPtr layout = getLayout())
+    if(UILayoutPtr layout = getLayout()) {
         layout->updateWidget(asUIWidget());
+        layout->updateWidgetChildren(asUIWidget());
+    }
 }
 
 void UIWidget::setParent(const UIWidgetPtr& parent)
@@ -260,7 +250,7 @@ void UIWidget::setStyle(const std::string& styleName)
         // forces layout recalculation
         updateGeometry();
     } catch(std::exception& e) {
-        logError("ERROR: couldn't change widget '", m_id, "' style: ", e.what());
+        logError("couldn't change widget '", m_id, "' style: ", e.what());
     }
 }
 
@@ -285,15 +275,6 @@ void UIWidget::setGeometry(const Rect& rect)
         });
         m_updateScheduled = true;
     }
-}
-
-void UIWidget::lock()
-{
-    assert(!m_destroyed);
-
-    UIWidgetPtr parent = getParent();
-    if(parent)
-        parent->lockChild(asUIWidget());
 }
 
 bool UIWidget::isEnabled()
@@ -401,7 +382,7 @@ UIWidgetPtr UIWidget::getChildByPos(const Point& childPos)
 
     for(auto it = m_children.rbegin(); it != m_children.rend(); ++it) {
         const UIWidgetPtr& widget = (*it);
-        if(widget->getGeometry().contains(childPos))
+        if(widget->isVisible() && widget->getGeometry().contains(childPos))
             return widget;
     }
 
@@ -533,12 +514,38 @@ void UIWidget::addChild(const UIWidgetPtr& childToAdd)
     m_children.push_back(childToAdd);
     childToAdd->setParent(asUIWidget());
 
-    // updates child position
-    childToAdd->updateGeometry();
+    // updates geometry
+    updateGeometry();
 
     // focus it if there is no focused child yet
     if(!m_focusedChild && childToAdd->isFocusable())
         focusChild(childToAdd, ActiveFocusReason);
+}
+
+void UIWidget::insertChild(const UIWidgetPtr& childToInsert, int index)
+{
+    assert(!m_destroyed);
+
+    if(!childToInsert)
+        return;
+
+    assert(!hasChild(childToInsert));
+
+    if(index < 0)
+        index = m_children.size() + index -1;
+
+    assert((uint)index <= m_children.size());
+
+    auto it = m_children.begin() + index;
+    m_children.insert(it, childToInsert);
+    childToInsert->setParent(asUIWidget());
+
+    // updates geometry
+    updateGeometry();
+
+    // focus it if there is no focused child yet
+    if(!m_focusedChild && childToInsert->isFocusable())
+        focusChild(childToInsert, ActiveFocusReason);
 }
 
 void UIWidget::removeChild(const UIWidgetPtr& childToRemove)
@@ -612,6 +619,9 @@ void UIWidget::lockChild(const UIWidgetPtr& childToLock)
     }
 
     m_lockedWidgets.push_front(childToLock);
+
+    // move locked child to top
+    moveChildToTop(childToLock);
 }
 
 void UIWidget::unlockChild(const UIWidgetPtr& childToUnlock)
@@ -619,21 +629,21 @@ void UIWidget::unlockChild(const UIWidgetPtr& childToUnlock)
     assert(hasChild(childToUnlock));
 
     auto it = std::find(m_lockedWidgets.begin(), m_lockedWidgets.end(), childToUnlock);
-    if(it != m_lockedWidgets.end()) {
+    if(it != m_lockedWidgets.end())
         m_lockedWidgets.erase(it);
-        UIWidgetPtr newLockedWidget;
-        if(m_lockedWidgets.size() > 0)
-            newLockedWidget = m_lockedWidgets.front();
 
-        for(const UIWidgetPtr& child : m_children) {
-            if(newLockedWidget) {
-                if(child == newLockedWidget)
-                    child->setEnabled(true);
-                else
-                    child->setEnabled(false);
-            } else
+    UIWidgetPtr newLockedWidget;
+    if(m_lockedWidgets.size() > 0)
+        newLockedWidget = m_lockedWidgets.front();
+
+    for(const UIWidgetPtr& child : m_children) {
+        if(newLockedWidget) {
+            if(child == newLockedWidget)
                 child->setEnabled(true);
-        }
+            else
+                child->setEnabled(false);
+        } else
+            child->setEnabled(true);
     }
 }
 

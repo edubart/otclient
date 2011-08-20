@@ -3,6 +3,14 @@
 
 //namespace fw {
 
+enum LogLevel {
+    LogDebug = 0,
+    LogInfo,
+    LogWarning,
+    LogError,
+    LogFatal
+};
+
 enum AlignmentFlag {
     AlignLeft = 1,
     AlignRight = 2,

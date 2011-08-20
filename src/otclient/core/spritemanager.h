@@ -14,7 +14,7 @@ class SpriteManager
 public:
     SpriteManager();
 
-    bool load(const std::string& filename);
+    bool load(const std::string& file);
     void unload();
 
     uint32 getSignature() { return m_signature; }

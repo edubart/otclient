@@ -8,21 +8,30 @@ bool UIAnchorLayout::addAnchor(const UIWidgetPtr& anchoredWidget, AnchorPoint an
 
     /*
     if(!anchorLineWidget) {
-        logError("ERROR: could not find the widget to anchor on, wrong id?");
+        logError("could not find the widget to anchor on, wrong id?");
         return false;
     }
     */
 
     // we can never anchor with itself
     if(anchoredWidget == anchorLineWidget) {
-        logError("ERROR: anchoring with itself is not possible");
+        logError("anchoring with itself is not possible");
         return false;
     }
 
     // we must never anchor to an anchor child
     if(anchoredWidget && hasWidgetInAnchorTree(anchorLineWidget, anchoredWidget)) {
-        logError("ERROR: anchors is miss configured, you must never make an anchor chains in loops");
+        logError("anchors is miss configured, you must never make an anchor chains in loops");
         return false;
+    }
+
+    // avoid duplicated anchors
+    for(auto it = m_anchors.begin(); it != m_anchors.end(); ++it) {
+        const UIAnchor& otherAnchor = *it;
+        if(otherAnchor.getAnchoredWidget() == anchoredWidget && otherAnchor.getAnchoredEdge() == anchoredEdge) {
+            m_anchors.erase(it);
+            break;
+        }
     }
 
     // setup the anchor

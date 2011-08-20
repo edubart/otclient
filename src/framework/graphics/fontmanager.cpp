@@ -34,7 +34,7 @@ bool FontManager::importFont(std::string fontFile)
 
         return true;
     } catch(std::exception& e) {
-        logError("ERROR: could not load font from '", fontFile, "': ", e.what());
+        logError("could not load font from '", fontFile, "': ", e.what());
         return false;
     }
 }
@@ -64,6 +64,6 @@ FontPtr FontManager::getDefaultFont()
 {
     // default font should always exists, otherwise the app may crash
     if(!m_defaultFont)
-        logFatal("FATAL ERROR: no default font to display, cannot continue to run");
+        logFatal("no default font to display, cannot continue to run");
     return m_defaultFont;
 }

@@ -422,7 +422,7 @@ int LuaInterface::protectedCall(int numArgs, int requestedResults)
             throw LuaException("attempt to call a non function value", 0);
         }
     } catch(LuaException &e) {
-        logError(e.what());
+        logError("protected lua call failed: ", e.what());
     }
 
     // pushes nil values if needed
@@ -457,7 +457,7 @@ int LuaInterface::luaScriptLoader(lua_State* L)
         g_lua.loadScript(fileName);
         return 1;
     } catch(LuaException& e) {
-        logError("ERROR: failed to load script file '", fileName, "' :'", e.what());
+        logError("failed to load script file '", fileName, "' :'", e.what());
         return 0;
     }
 }
@@ -489,7 +489,7 @@ int LuaInterface::luaCppFunctionCallback(lua_State* L)
         numRets = (*(funcPtr->get()))(&g_lua);
         assert(numRets == g_lua.stackSize());
     } catch(LuaException &e) {
-        logError(e.what());
+        logError("lua cpp callback failed: ", e.what());
     }
 
     return numRets;

@@ -15,6 +15,8 @@ public:
     /// @return the number of results
     template<typename... T>
     int callLuaField(const std::string& field, const T&... args);
+    template<typename R, typename... T>
+    R callLuaField(const std::string& field, const T&... args);
 
     /// Sets a field in this lua object
     template<typename T>
@@ -25,7 +27,7 @@ public:
     T getLuaField(const std::string& key);
 
     /// Release fields table reference
-    void luaReleaseFieldsTable();
+    void releaseLuaFieldsTable();
 
     /// Sets a field from this lua object, the value must be on the stack
     void luaSetField(const std::string& key);
@@ -61,12 +63,28 @@ int LuaObject::callLuaField(const std::string& field, const T&... args) {
         g_lua.pushObject(asLuaObject());
         g_lua.getField(field);
 
-        // the first argument is always this object (self)
-        g_lua.insert(-2);
-        g_lua.polymorphicPush(args...);
-        return g_lua.protectedCall(1 + sizeof...(args));
+        if(!g_lua.isNil()) {
+            // the first argument is always this object (self)
+            g_lua.insert(-2);
+            g_lua.polymorphicPush(args...);
+            return g_lua.protectedCall(1 + sizeof...(args));
+        } else {
+            g_lua.pop(2);
+        }
+    }
+    return 0;
+}
+
+template<typename R, typename... T>
+R LuaObject::callLuaField(const std::string& field, const T&... args) {
+    R result;
+    int rets = callLuaField(field, args...);
+    if(rets > 0) {
+        assert(rets == 1);
+        result = g_lua.polymorphicPop<R>();
     } else
-        return 0;
+        result = R();
+    return result;
 }
 
 template<typename T>

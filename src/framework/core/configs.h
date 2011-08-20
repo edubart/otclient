@@ -6,7 +6,7 @@
 class Configs
 {
 public:
-    bool load(const std::string& fileName);
+    bool load(const std::string& file);
     bool save();
 
     void set(const std::string& key, const std::string& value) { m_confsMap[key] = value; }

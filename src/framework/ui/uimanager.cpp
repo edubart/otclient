@@ -97,7 +97,7 @@ bool UIManager::importStyles(const std::string& file)
             importStyleFromOTML(styleNode);
         return true;
     } catch(std::exception& e) {
-        logError("ERROR: failed to import ui styles from '", file, "':\n", e.what());
+        logError("failed to import ui styles from '", file, "':\n", e.what());
         return false;
     }
 }
@@ -118,7 +118,7 @@ void UIManager::importStyleFromOTML(const OTMLNodePtr& styleNode)
 
     auto it = m_styles.find(name);
     if(it != m_styles.end())
-        logWarning("WARNING: style '", name, "' is being redefined");
+        logWarning("style '", name, "' is being redefined");
 
     OTMLNodePtr style = getStyle(base)->clone();
     style->merge(styleNode);
@@ -158,11 +158,9 @@ UIWidgetPtr UIManager::loadUI(const std::string& file)
             }
         }
 
-        // schedule onLoad events
-        widget->load();
         return widget;
     } catch(std::exception& e) {
-        logError("ERROR: failed to load ui from '", file, "':\n", e.what());
+        logError("failed to load ui from '", file, "':\n", e.what());
         return nullptr;
     }
 }

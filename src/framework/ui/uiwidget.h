@@ -15,11 +15,11 @@ public:
 
     static UIWidgetPtr create();
 
+    /// Must be called just after the widget creation
+    virtual void setup() { }
+
     /// Remove this widget from parent then destroy it and its children
     virtual void destroy();
-
-    /// Called after the widget is loaded from OTML file, to execute onLoad event
-    virtual void load();
 
     /// Load style from otml node
     virtual void loadStyleFromOTML(const OTMLNodePtr& styleNode);
@@ -50,8 +50,8 @@ public:
     void setImage(const ImagePtr& image) { m_image = image; }
     virtual void setFont(const FontPtr& font) { m_font = font; }
     void setOpacity(int opacity) { m_opacity = opacity; }
-    void setColor(const Color& color) { m_color = color; }
-    void setFontColor(const Color& color) { m_fontColor = color; }
+    void setBackgroundColor(const Color& color) { m_backgroundColor = color; }
+    void setForegroundColor(const Color& color) { m_foregroundColor = color; }
     void setMarginLeft(int margin) { m_marginLeft = margin; updateGeometry(); }
     void setMarginRight(int margin) { m_marginRight = margin; updateGeometry(); }
     void setMarginTop(int margin) { m_marginTop = margin; updateGeometry(); }
@@ -61,7 +61,6 @@ public:
     void show() { setVisible(true); }
     void disable() { setEnabled(false); }
     void enable() { setEnabled(true); }
-    void lock();
 
     bool isEnabled();
     bool isExplicitlyEnabled() const { return m_enabled; }
@@ -88,8 +87,8 @@ public:
 
     ImagePtr getImage() const { return m_image; }
     FontPtr getFont() const { return m_font; }
-    Color getFontColor() const { return m_fontColor; }
-    Color getColor() const { return m_color; }
+    Color getForegroundColor() const { return m_foregroundColor; }
+    Color getBackgroundColor() const { return m_backgroundColor; }
     int getOpacity() const { return m_opacity; }
     int getMarginLeft() const { return m_marginLeft; }
     int getMarginRight() const { return m_marginRight; }
@@ -108,6 +107,7 @@ public:
     UIWidgetPtr backwardsGetWidgetById(const std::string& id);
 
     void addChild(const UIWidgetPtr& childToAdd);
+    void insertChild(const UIWidgetPtr& childToInsert, int index);
     void removeChild(const UIWidgetPtr& childToRemove);
     void focusChild(const UIWidgetPtr& childToFocus, FocusReason reason);
     void focusNextChild(FocusReason reason);
@@ -169,8 +169,8 @@ protected:
     ImagePtr m_image;
     FontPtr m_font;
     int m_opacity;
-    Color m_color;
-    Color m_fontColor;
+    Color m_backgroundColor;
+    Color m_foregroundColor;
     int m_marginLeft;
     int m_marginRight;
     int m_marginTop;

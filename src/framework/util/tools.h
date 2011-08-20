@@ -197,7 +197,7 @@ R unsafe_cast(const T& t, R def = R()) {
     try {
         return safe_cast<R,T>(t);
     } catch(bad_cast& e) {
-        println(e.what());
+        println("CAST ERROR: ", e.what());
         return def;
     }
 }
@@ -210,6 +210,21 @@ std::string tostring(const T& t) {
 template<typename T>
 T fromstring(const std::string& str, T def = T()) {
     return unsafe_cast<T, std::string>(str, def);
+}
+
+inline std::string dec2hex(unsigned int num) {
+    std::string str;
+    std::ostringstream o;
+    o << std::hex << num;
+    str = o.str();
+    return str;
+}
+
+inline unsigned int hex2dec(const std::string& str) {
+    unsigned int num;
+    std::istringstream i(str);
+    i >> std::hex >> num;
+    return num;
 }
 
 // an empty string to use anywhere needed

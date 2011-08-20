@@ -18,8 +18,9 @@ public:
     void setText(const std::string& text);
     void setAlign(AlignmentFlag align);
     void setCursorPos(int pos);
-    void enableCursor(bool enable = true);
+    void setCursorEnabled(bool enable = true);
 
+    void clearText() { setText(""); }
     void moveCursor(bool right);
     void appendCharacter(char c);
     void removeCharacter(bool right);
@@ -45,6 +46,7 @@ private:
     int m_startRenderPos;
     int m_cursorTicks;
     int m_textHorizontalMargin;
+    SimpleCallback m_onAction;
 
     std::vector<Rect> m_glyphsCoords;
     std::vector<Rect> m_glyphsTexCoords;

@@ -8,7 +8,7 @@ class UIButton : public UIWidget
     struct ButtonStateStyle {
         ImagePtr image;
         Point textTranslate;
-        Color fontColor;
+        Color foregroundColor;
         Color color;
     };
 

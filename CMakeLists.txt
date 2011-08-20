@@ -84,11 +84,11 @@ SET(SOURCES
     src/framework/net/rsa.cpp
 
     # framework util
-    src/framework/util/logger.cpp
     src/framework/util/color.cpp
     src/framework/util/translator.cpp
 
     # framework core
+    src/framework/core/logger.cpp
     src/framework/core/configs.cpp
     src/framework/core/resourcemanager.cpp
     src/framework/core/eventdispatcher.cpp

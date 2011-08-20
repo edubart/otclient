@@ -1,0 +1,17 @@
+Module
+  name: console
+  description: Console for executing lua functions
+  author: OTClient team
+  website: https://github.com/edubart/otclient
+  version: 0.2
+  autoLoad: true
+  dependencies:
+    - core
+
+  onLoad: |
+    require 'console'
+    Console.create()
+    return true
+
+  onUnload: |
+    Console.destroy()

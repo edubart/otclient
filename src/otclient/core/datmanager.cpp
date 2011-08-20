@@ -34,7 +34,7 @@ bool DatManager::load(const std::string& file)
 
         return true;
     } catch(std::exception& e) {
-        logError("ERROR: failed to load dat from '", file, "': ", e.what());
+        logError("failed to load dat from '", file, "': ", e.what());
         return false;
     }
 }

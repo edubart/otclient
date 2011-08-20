@@ -6,7 +6,6 @@
 class OTMLDocument : public OTMLNode
 {
 public:
-    OTMLDocument() { }
     virtual ~OTMLDocument() { }
 
     /// Create a new OTML document for filling it with nodes
@@ -24,6 +23,9 @@ public:
 
     /// Save this document to a file
     bool save(const std::string& fileName);
+
+private:
+    OTMLDocument() { }
 };
 
 #endif

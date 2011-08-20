@@ -3,6 +3,7 @@
 #include <framework/graphics/font.h>
 #include <framework/otml/otmlnode.h>
 #include <framework/luascript/luainterface.h>
+#include <framework/graphics/graphics.h>
 
 UIButton::UIButton(): UIWidget(UITypeButton)
 {
@@ -25,8 +26,8 @@ void UIButton::loadStyleFromOTML(const OTMLNodePtr& styleNode)
 
     for(int i=0; i<3; ++i) {
         m_statesStyle[i].image = m_image;
-        m_statesStyle[i].color = m_color;
-        m_statesStyle[i].fontColor = m_fontColor;
+        m_statesStyle[i].color = m_backgroundColor;
+        m_statesStyle[i].foregroundColor = m_foregroundColor;
         m_statesStyle[i].textTranslate = Point(0,0);
     }
 
@@ -40,8 +41,8 @@ void UIButton::loadStyleFromOTML(const OTMLNodePtr& styleNode)
     m_text = styleNode->valueAt("text", fw::empty_string);
 
     if(OTMLNodePtr node = styleNode->get("onClick")) {
-        g_lua.loadFunction(node->value<std::string>(), "@" + node->source() + "[" + node->tag() + "]");
-        luaSetField("onClick");
+        g_lua.loadFunction(node->value(), "@" + node->source() + "[" + node->tag() + "]");
+        luaSetField(node->tag());
     }
 }
 
@@ -52,20 +53,24 @@ void UIButton::loadStateStyle(ButtonStateStyle& stateStyle, const OTMLNodePtr& s
     if(OTMLNodePtr node = stateStyleNode->get("image"))
         stateStyle.image = Image::loadFromOTML(node);
     stateStyle.textTranslate = stateStyleNode->valueAt("text-translate", Point());
-    stateStyle.color = stateStyleNode->valueAt("font-color", m_fontColor);
-    stateStyle.color = stateStyleNode->valueAt("color", m_color);
+    stateStyle.color = stateStyleNode->valueAt("font-color", m_foregroundColor);
+    stateStyle.color = stateStyleNode->valueAt("color", m_backgroundColor);
 }
 
 void UIButton::render()
 {
+    UIWidget::render();
+
     const ButtonStateStyle& currentStyle = m_statesStyle[m_state];
     Rect textRect = getGeometry();
 
-    if(currentStyle.image)
+    if(currentStyle.image) {
+        g_graphics.bindColor(currentStyle.color);
         currentStyle.image->draw(textRect);
+    }
 
     textRect.translate(currentStyle.textTranslate);
-    getFont()->renderText(m_text, textRect, AlignCenter, currentStyle.fontColor);
+    m_font->renderText(m_text, textRect, AlignCenter, currentStyle.foregroundColor);
 }
 
 void UIButton::onHoverChange(UIHoverEvent& event)

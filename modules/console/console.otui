@@ -1,0 +1,35 @@
+ConsoleLabel < UILabel
+  font: terminus-14px-bold
+  height: 16
+  anchors.bottom: next.top
+  anchors.left: parent.left
+  anchors.right: parent.right
+  margin.left: 2
+
+RectPanel
+  id: consolePanel
+  background-color: #000000
+  opacity: 216
+  anchors.fill: parent
+
+  UILabel
+    size: 18 20
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+    margin.left: 2
+    font: terminus-14px-bold
+    text: >>
+
+  UILineEdit
+    id: commandBox
+    height: 20
+    anchors.bottom: parent.bottom
+    anchors.left: prev.right
+    anchors.right: parent.right
+    margin.left: 2
+    font: terminus-14px-bold
+    onAction: |
+      function(self)
+        Console.executeCommand(self:getText())
+        self:clearText()
+      end

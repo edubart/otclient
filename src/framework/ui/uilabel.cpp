@@ -10,7 +10,6 @@ UILabel::UILabel() : UIWidget(UITypeLabel)
 UILabelPtr UILabel::create()
 {
     UILabelPtr label(new UILabel);
-    label->setStyle("Label");
     return label;
 }
 
@@ -23,17 +22,23 @@ void UILabel::loadStyleFromOTML(const OTMLNodePtr& styleNode)
     if(styleNode->hasChildAt("align"))
         m_align = fw::translateAlignment(styleNode->valueAt("align"));
 
-    // auto resize if no size supplied
-    if(!m_text.empty() && !getGeometry().isValid())
-        resizeToText();
+    // auto resize if needed
+    if(!m_text.empty() && !m_rect.isValid()) {
+        Size textSize = m_font->calculateTextRectSize(m_text);
+        if(m_rect.width() <= 0)
+            m_rect.setWidth(textSize.width());
+        if(m_rect.height() <= 0)
+            m_rect.setHeight(textSize.height());
+    }
 }
 
 void UILabel::render()
 {
-    m_font->renderText(m_text, m_rect, m_align, m_fontColor);
+    UIWidget::render();
+    m_font->renderText(m_text, m_rect, m_align, m_foregroundColor);
 }
 
 void UILabel::resizeToText()
 {
-    resize(getFont()->calculateTextRectSize(m_text));
+    resize(m_font->calculateTextRectSize(m_text));
 }

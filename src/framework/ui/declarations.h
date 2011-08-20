@@ -13,6 +13,7 @@ class UILabel;
 class UIButton;
 class UILineEdit;
 class UIWindow;
+class UIConsole;
 
 typedef std::shared_ptr<UIWidget> UIWidgetPtr;
 typedef std::weak_ptr<UIWidget> UIWidgetWeakPtr;
@@ -25,5 +26,6 @@ typedef std::shared_ptr<UILabel> UILabelPtr;
 typedef std::shared_ptr<UIButton> UIButtonPtr;
 typedef std::shared_ptr<UILineEdit> UILineEditPtr;
 typedef std::shared_ptr<UIWindow> UIWindowPtr;
+typedef std::shared_ptr<UIConsole> UIConsolePtr;
 
 #endif

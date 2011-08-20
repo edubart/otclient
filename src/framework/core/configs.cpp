@@ -5,17 +5,20 @@
 
 Configs g_configs;
 
-bool Configs::load(const std::string& fileName)
+bool Configs::load(const std::string& file)
 {
-    m_fileName = fileName;
+    m_fileName = file;
+
+    if(!g_resources.fileExists(file))
+        return false;
 
     try {
-        OTMLDocumentPtr doc = OTMLDocument::parse(fileName);
+        OTMLDocumentPtr doc = OTMLDocument::parse(file);
         for(const OTMLNodePtr& child : doc->children())
             m_confsMap[child->tag()] = child->value();
         return true;
     } catch(std::exception& e) {
-        logError("ERROR: could not load configurations: ", e.what());
+        logError("could not load configurations: ", e.what());
         return false;
     }
 }

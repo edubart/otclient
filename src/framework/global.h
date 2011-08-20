@@ -41,12 +41,14 @@
 // additional utilities
 #include "util/types.h"
 #include "util/tools.h"
-#include "util/logger.h"
 #include "util/translator.h"
 #include "util/point.h"
 #include "util/color.h"
 #include "util/rect.h"
 #include "util/size.h"
+
+// logger
+#include "core/logger.h"
 
 // easy typing for _1, _2, ...
 using namespace std::placeholders;

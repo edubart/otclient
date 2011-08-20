@@ -18,6 +18,10 @@ bool luavalue_cast(int index, int& i);
 void push_luavalue(double d);
 bool luavalue_cast(int index, double& d);
 
+// size_t
+void push_luavalue(std::size_t s);
+bool luavalue_cast(int index, std::size_t& s);
+
 // string
 void push_luavalue(const char* cstr);
 void push_luavalue(const std::string& str);
@@ -131,7 +135,7 @@ bool luavalue_cast(int index, std::function<void(Args...)>& func) {
                                        "did you forget to hold a reference for that function?", 0);
                 }
             } catch(std::exception& e) {
-                logError(e.what());
+                logError("lua function callback failed: ", e.what());
             }
         };
         return true;
@@ -165,7 +169,7 @@ luavalue_cast(int index, std::function<Ret(Args...)>& func) {
                                        "did you forget to hold a reference for that function?", 0);
                 }
             } catch(std::exception& e) {
-                logError(e.what());
+                logError("lua function callback failed: ", e.what());
             }
             return Ret();
         };

@@ -7,10 +7,10 @@ LuaObject::LuaObject() : m_fieldsTableRef(-1)
 
 LuaObject::~LuaObject()
 {
-    luaReleaseFieldsTable();
+    releaseLuaFieldsTable();
 }
 
-void LuaObject::luaReleaseFieldsTable()
+void LuaObject::releaseLuaFieldsTable()
 {
     if(m_fieldsTableRef != -1)
         g_lua.unref(m_fieldsTableRef);

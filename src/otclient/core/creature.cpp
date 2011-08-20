@@ -60,8 +60,15 @@ void Creature::draw(int x, int y)
     }
 
     Rect healthRect = Rect(x - 14, y - 11, 27, 4);
-    g_graphics.drawBoundingRect(healthRect, Color::black);
-    g_graphics.drawFilledRect(healthRect.expanded(-1), healthColor);
+
+    g_graphics.bindColor(Color::black);
+    g_graphics.drawBoundingRect(healthRect);
+
+    g_graphics.bindColor(healthColor);
+    g_graphics.drawFilledRect(healthRect.expanded(-1));
+
+    // restore white color
+    g_graphics.bindColor(Color::white);
 }
 
 const ThingAttributes& Creature::getAttributes()

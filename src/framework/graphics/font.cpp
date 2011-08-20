@@ -18,8 +18,11 @@ void Font::load(const OTMLNodePtr& fontNode)
     if(!m_texture)
         throw std::runtime_error("failed to load texture for font");
 
-    // auto calculate widths
-    calculateGlyphsWidthsAutomatically(glyphSize);
+    if(OTMLNodePtr node = fontNode->get("fixed glyph width")) {
+        for(int glyph = m_firstGlyph; glyph < 256; ++glyph)
+            m_glyphsSize[glyph] = Size(node->value<int>(), m_glyphHeight);
+    } else
+        calculateGlyphsWidthsAutomatically(glyphSize);
 
     // read custom widths
     if(OTMLNodePtr node = fontNode->get("glyph widths")) {

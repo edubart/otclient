@@ -161,7 +161,6 @@ enum PlatformEventType {
     EventMouseLeftButton         = 32,
     EventMouseRightButton        = 64,
     EventMouseMidButton          = 128,
-    EventTextEnter               = 256,
     EventKeyDown                 = EventKeyboardAction | EventDown,
     EventKeyUp                   = EventKeyboardAction | EventUp,
     EventMouseMove               = EventMouseAction | 512,

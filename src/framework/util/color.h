@@ -2,7 +2,7 @@
 #define COLOR_H
 
 #include "types.h"
-#include <sstream>
+#include "tools.h"
 
 typedef uint32 RGBA;
 
@@ -69,10 +69,19 @@ inline std::istream& operator>>(std::istream& in, Color& color)
     using namespace std;
 
     if(in.get() == '#') {
-        uint32 tmp;
-        in >> hex >> tmp;
-        color.setABGR(tmp);
-        in >> dec;
+        std::string tmp;
+        in >> tmp;
+
+        if(tmp.length() == 6 || tmp.length() == 8) {
+            color.setRed((uint8)fw::hex2dec(tmp.substr(0, 2)));
+            color.setGreen((uint8)fw::hex2dec(tmp.substr(2, 2)));
+            color.setBlue((uint8)fw::hex2dec(tmp.substr(4, 2)));
+            if(tmp.length() == 8)
+                color.setAlpha((uint8)fw::hex2dec(tmp.substr(6, 2)));
+            else
+                color.setAlpha(255);
+        } else
+            in.seekg(-tmp.length()-1, ios_base::cur);
     }
     return in;
 }

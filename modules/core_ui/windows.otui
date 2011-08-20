@@ -1,4 +1,5 @@
 Window < UIWindow
+  font: helvetica-12px-bold
   size: 200 200
   head:
     height: 20
@@ -18,4 +19,3 @@ Window < UIWindow
 
 MainWindow < Window
   anchors.centerIn: parent
-  onLoad: function(self) self:lock() end
