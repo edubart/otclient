@@ -169,12 +169,13 @@ void DatManager::parseThingAttributesOpt(std::stringstream& fin, ThingAttributes
             break;
         case 0x18: // Thing must be drawed with offset
             thingAttributes.hasHeight = true;
-            thingAttributes.xOffset = fw::getu8(fin);
-            thingAttributes.yOffset = fw::getu8(fin);
+            thingAttributes.drawOffset = fw::getu8(fin);
+            fw::getu8(fin);
             fw::getu16(fin);
             break;
         case 0x19: // pixels characters height
-            fw::getu16(fin);
+            thingAttributes.drawNextOffset = fw::getu8(fin);
+            fw::getu8(fin);
             break;
         case 0x1A:
             //thingAttributes.hasHeight = true;

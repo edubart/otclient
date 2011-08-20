@@ -37,13 +37,13 @@ struct ThingAttributes
         ydiv = 0;
         zdiv = 0;
         animcount = 0;
-        xOffset = 0;
-        yOffset = 0;
+        drawOffset = 0;
+        drawNextOffset = 0;
     }
 
     bool stackable, alwaysOnTop, useable, readable, moveable, blockSolid, blockProjectile, blockPathFind, pickupable,
          isHangable, isHorizontal, isVertical, rotable, hasHeight, lookThrough, hasMiniMapColor;
-    uint8 alwaysOnTopOrder, width, height, blendframes, xdiv, ydiv, zdiv, animcount, xOffset, yOffset;
+    uint8 alwaysOnTopOrder, width, height, blendframes, xdiv, ydiv, zdiv, animcount, drawOffset, drawNextOffset;
     uint16 speed, subParam07, subParam08, lightLevel, lightColor, miniMapColor;
 
     std::vector<int> sprites;

@@ -17,10 +17,25 @@ void Map::draw(int x, int y)
     Position playerPos = g_game.getLocalPlayer()->getPosition();
 
     // player is above 7
+
     if(playerPos.z <= 7) {
 
         // player pos it 8-6. check if we can draw upper floors.
         int drawFloorStop = 0;
+
+        // if there is a window on north, east, south or west
+        //Position direction[4] = {Position(0, -1, 0), Position(1, 0, 0), Position(0, 1, 0), Position(-1, 0, 0)};
+        for(int d = 0; d < 4; ++d) {
+            /*if(const TilePtr& tile = m_tiles[playerPos+direction[d]]) {
+                const ThingAttributes& thingAttributes = thing->getAttributes();
+                if(thingAttributes.lookThrough) {
+                    drawFloorStop = playerPos.z - 1;
+                    break;
+                }
+            }*/
+        }
+
+        // if we have something covering us, dont show floors above.
         for(int jz = 6; jz >= 0; --jz) {
             Position coverPos = Position(playerPos.x+(7-jz)-1, playerPos.y+(7-jz)-1, jz);
             if(const TilePtr& tile = m_tiles[coverPos]) {
@@ -35,13 +50,17 @@ void Map::draw(int x, int y)
             if(iz == drawFloorStop)
                 break;
 
-            // +1 in draws cause 64x64 items may affect view.
+            for(int step = 0; step < 4; ++step) {
 
-            for(int ix = -7+(playerPos.z-iz); ix < + 8+7; ++ix) {
-                for(int iy = -5+(playerPos.z-iz); iy < + 6+7; ++iy) {
-                    Position itemPos = Position(playerPos.x + ix, playerPos.y + iy, iz);
-                    if(const TilePtr& tile = m_tiles[itemPos])
-                        tile->draw((ix + 7 - (playerPos.z-iz))*32, (iy + 5 - (playerPos.z-iz))*32);
+
+                // +1 in draws cause 64x64 items may affect view.
+
+                for(int ix = -7+(playerPos.z-iz); ix < + 8+7; ++ix) {
+                    for(int iy = -5+(playerPos.z-iz); iy < + 6+7; ++iy) {
+                        Position itemPos = Position(playerPos.x + ix, playerPos.y + iy, iz);
+                        if(const TilePtr& tile = m_tiles[itemPos])
+                            tile->draw((ix + 7 - (playerPos.z-iz))*32, (iy + 5 - (playerPos.z-iz))*32, step);
+                    }
                 }
             }
         }

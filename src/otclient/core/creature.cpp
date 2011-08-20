@@ -29,9 +29,9 @@ void Creature::draw(int x, int y)
                 outfitColorId = m_outfit.head;
             else if(mask == SpriteMaskRed)
                 outfitColorId = m_outfit.body;
-            else if(mask == SpriteMaskBlue)
+            else if(mask == SpriteMaskGreen)
                 outfitColorId = m_outfit.legs;
-            else if(mask ==  SpriteMaskGreen)
+            else if(mask ==  SpriteMaskBlue)
                 outfitColorId = m_outfit.feet;
 
             g_graphics.bindColor(OutfitColors[outfitColorId]);
