@@ -30,7 +30,7 @@ public:
     int getTextPos(Point pos);
 
 protected:
-    virtual void onGeometryUpdate(UIGeometryUpdateEvent& event);
+    virtual void onRectUpdate(UIRectUpdateEvent& event);
     virtual void onFocusChange(UIFocusEvent& event);
     virtual void onKeyPress(UIKeyEvent& event);
     virtual void onMousePress(UIMouseEvent& event);

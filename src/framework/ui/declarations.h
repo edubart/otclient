@@ -5,27 +5,23 @@
 #include "const.h"
 
 class UIManager;
-class UILayout;
-class UIAnchorLayout;
-class UIStyle;
+class UIAnchor;
 class UIWidget;
 class UILabel;
 class UIButton;
 class UILineEdit;
 class UIWindow;
-class UIConsole;
 
 typedef std::shared_ptr<UIWidget> UIWidgetPtr;
 typedef std::weak_ptr<UIWidget> UIWidgetWeakPtr;
-typedef std::deque<UIWidgetPtr> UIWidgetList;
 
-typedef std::shared_ptr<UILayout> UILayoutPtr;
-typedef std::shared_ptr<UIAnchorLayout> UIAnchorLayoutPtr;
-typedef std::shared_ptr<UIStyle> UIStylePtr;
 typedef std::shared_ptr<UILabel> UILabelPtr;
 typedef std::shared_ptr<UIButton> UIButtonPtr;
 typedef std::shared_ptr<UILineEdit> UILineEditPtr;
 typedef std::shared_ptr<UIWindow> UIWindowPtr;
-typedef std::shared_ptr<UIConsole> UIConsolePtr;
+
+typedef std::vector<UIAnchor> UIAnchorList;
+typedef std::deque<UIWidgetPtr> UIWidgetList;
+typedef std::deque<UIWidgetWeakPtr> UIWeakWidgetList;
 
 #endif

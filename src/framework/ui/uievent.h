@@ -88,10 +88,10 @@ private:
     bool m_hovered;
 };
 
-class UIGeometryUpdateEvent : public UIEvent
+class UIRectUpdateEvent : public UIEvent
 {
 public:
-    UIGeometryUpdateEvent(const Rect& oldRect, const Rect& rect)
+    UIRectUpdateEvent(const Rect& oldRect, const Rect& rect)
         : m_oldRect(oldRect), m_rect(rect) { }
 
     Point pos() const { return m_rect.topLeft(); }

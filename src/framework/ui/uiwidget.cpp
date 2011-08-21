@@ -1,7 +1,5 @@
 #include "uiwidget.h"
 #include "uimanager.h"
-#include "uilayout.h"
-#include "uianchorlayout.h"
 
 #include <framework/core/eventdispatcher.h>
 #include <framework/graphics/image.h>
@@ -9,6 +7,7 @@
 #include <framework/graphics/fontmanager.h>
 #include <framework/otml/otmlnode.h>
 #include <framework/graphics/graphics.h>
+#include "uianchor.h"
 
 UIWidget::UIWidget(UIWidgetType type)
 {
@@ -18,7 +17,10 @@ UIWidget::UIWidget(UIWidgetType type)
     m_hovered = false;
     m_focusable = true;
     m_destroyed = false;
-    m_updateScheduled = false;
+    m_layoutUpdated = true;
+    m_updateEventScheduled = false;
+    m_layoutUpdateScheduled = false;
+    m_childrenLayoutUpdateScheduled = false;
     m_opacity = 255;
     m_marginLeft = m_marginRight = m_marginTop = m_marginBottom = 0;
     m_backgroundColor = Color::white;
@@ -158,7 +160,7 @@ void UIWidget::loadStyleFromOTML(const OTMLNodePtr& styleNode)
             } else if(what == "centerIn") {
                 centerIn(node->value());
             } else {
-                AnchorPoint myEdge = fw::translateAnchorPoint(what);
+                AnchorEdge myEdge = fw::translateAnchorEdge(what);
 
                 std::string anchorDescription = node->value();
                 std::vector<std::string> split;
@@ -167,15 +169,15 @@ void UIWidget::loadStyleFromOTML(const OTMLNodePtr& styleNode)
                     throw OTMLException(node, "invalid anchor description");
 
                 std::string target = split[0];
-                AnchorPoint targetEdge = fw::translateAnchorPoint(split[1]);
+                AnchorEdge hookedEdge = fw::translateAnchorEdge(split[1]);
 
                 if(myEdge == AnchorNone)
                     throw OTMLException(node, "invalid anchor edge");
 
-                if(targetEdge == AnchorNone)
+                if(hookedEdge == AnchorNone)
                     throw OTMLException(node, "invalid anchor target edge");
 
-                addAnchor(myEdge, target, targetEdge);
+                addAnchor(myEdge, target, hookedEdge);
             }
         }
         else if(node->tag() == "onLoad") {
@@ -190,7 +192,7 @@ void UIWidget::render()
     assert(!m_destroyed);
 
     if(m_image)
-        m_image->draw(getGeometry());
+        m_image->draw(getRect());
 
     for(const UIWidgetPtr& child : m_children) {
         if(child->isExplicitlyVisible()) {
@@ -203,20 +205,10 @@ void UIWidget::render()
 
             // debug draw box
             //g_graphics.bindColor(Color::green);
-            //g_graphics.drawBoundingRect(child->getGeometry());
+            //g_graphics.drawBoundingRect(child->getRect());
 
             g_graphics.setOpacity(oldOpacity);
         }
-    }
-}
-
-void UIWidget::updateGeometry()
-{
-    assert(!m_destroyed);
-
-    if(UILayoutPtr layout = getLayout()) {
-        layout->updateWidget(asUIWidget());
-        layout->updateWidgetChildren(asUIWidget());
     }
 }
 
@@ -247,32 +239,33 @@ void UIWidget::setStyle(const std::string& styleName)
         loadStyleFromOTML(styleNode);
 
         // forces layout recalculation
-        updateGeometry();
+        updateLayout();
     } catch(std::exception& e) {
         logError("couldn't change widget '", m_id, "' style: ", e.what());
     }
 }
 
-void UIWidget::setGeometry(const Rect& rect)
+void UIWidget::setRect(const Rect& rect)
 {
     assert(!m_destroyed);
 
     Rect oldRect = m_rect;
     m_rect = rect;
-    if(UILayoutPtr layout = getLayout())
-        layout->updateWidgetChildren(asUIWidget());
 
-    // avoid massive updates
-    if(!m_updateScheduled) {
+    // updates children geometry
+    updateChildrenLayout();
+
+    // avoid massive update events
+    if(!m_updateEventScheduled) {
         UIWidgetPtr self = asUIWidget();
         g_dispatcher.addEvent([self, oldRect]() {
-            self->m_updateScheduled = false;
-            UIGeometryUpdateEvent e(oldRect, self->getGeometry());
+            self->m_updateEventScheduled = false;
+            UIRectUpdateEvent e(oldRect, self->getRect());
             // this widget could be destroyed before the event happens
             if(!self->isDestroyed())
-                self->onGeometryUpdate(e);
+                self->onRectUpdate(e);
         });
-        m_updateScheduled = true;
+        m_updateEventScheduled = true;
     }
 }
 
@@ -310,16 +303,12 @@ bool UIWidget::hasChild(const UIWidgetPtr& child)
     return false;
 }
 
-UILayoutPtr UIWidget::getLayout() const
+UIWidgetPtr UIWidget::getRootParent()
 {
-    assert(!m_destroyed);
-
-    if(m_layout)
-        return m_layout;
-    else if(getParent() && getParent()->getLayout())
-        return getParent()->getLayout();
-    // fallback to root layout
-    return g_ui.getRootWidget()->getLayout();
+    if(UIWidgetPtr parent = getParent())
+        return parent->getRootParent();
+    else
+        return asUIWidget();
 }
 
 UIWidgetPtr UIWidget::getChildAfter(const UIWidgetPtr& relativeChild)
@@ -383,7 +372,7 @@ UIWidgetPtr UIWidget::getChildByPos(const Point& childPos)
 
     for(auto it = m_children.rbegin(); it != m_children.rend(); ++it) {
         const UIWidgetPtr& widget = (*it);
-        if(widget->isExplicitlyVisible() && widget->getGeometry().contains(childPos))
+        if(widget->isExplicitlyVisible() && widget->getRect().contains(childPos))
             return widget;
     }
 
@@ -399,35 +388,19 @@ UIWidgetPtr UIWidget::getChildByIndex(int childIndex)
     return nullptr;
 }
 
-UIWidgetPtr UIWidget::recursiveGetChildById(const std::string& childId)
+UIWidgetPtr UIWidget::recursiveGetChildById(const std::string& id)
 {
     assert(!m_destroyed);
 
-    if(getId() == childId || childId == "self")
-        return asUIWidget();
-    else if(childId == "parent")
-        return getParent();
-    else if(childId == "root")
-        return g_ui.getRootWidget();
-    else if(childId == "prev") {
-        if(UIWidgetPtr parent = getParent())
-            return parent->getChildBefore(asUIWidget());
-    } else if(childId == "next") {
-        if(UIWidgetPtr parent = getParent())
-            return parent->getChildAfter(asUIWidget());
-    } else {
+    UIWidgetPtr widget = getChildById(id);
+    if(!widget) {
         for(const UIWidgetPtr& child : m_children) {
-            if(child->getId() == childId)
-                return child;
-        }
-        for(const UIWidgetPtr& child : m_children) {
-            if(UIWidgetPtr subChild = child->recursiveGetChildById(childId)) {
-                if(subChild->getId() == childId)
-                    return subChild;
-            }
+            widget = child->recursiveGetChildById(id);
+            if(widget)
+                break;
         }
     }
-    return nullptr;
+    return widget;
 }
 
 UIWidgetPtr UIWidget::recursiveGetChildByPos(const Point& childPos)
@@ -435,7 +408,7 @@ UIWidgetPtr UIWidget::recursiveGetChildByPos(const Point& childPos)
     assert(!m_destroyed);
 
     for(const UIWidgetPtr& child : m_children) {
-        if(child->getGeometry().contains(childPos)) {
+        if(child->getRect().contains(childPos)) {
             if(UIWidgetPtr subChild = child->recursiveGetChildByPos(childPos))
                 return subChild;
             return child;
@@ -449,27 +422,12 @@ UIWidgetPtr UIWidget::backwardsGetWidgetById(const std::string& id)
 {
     assert(!m_destroyed);
 
-    UIWidgetPtr widget;
-    if(getId() == id || id == "self")
-        widget = asUIWidget();
-    else if(id == "parent")
-        widget = getParent();
-    else if(id == "root")
-        widget = g_ui.getRootWidget();
-    else if(id == "prev") {
-        if(UIWidgetPtr parent = getParent())
-            widget = parent->getChildBefore(asUIWidget());
-    } else if(id == "next") {
-        if(UIWidgetPtr parent = getParent())
-            widget = parent->getChildAfter(asUIWidget());
-    } else {
-        widget = recursiveGetChildById(id);
-        if(widget)
-            return widget;
-
+    UIWidgetPtr widget = getChildById(id);
+    if(!widget) {
         if(UIWidgetPtr parent = getParent())
             widget = parent->backwardsGetWidgetById(id);
     }
+
     return widget;
 }
 
@@ -503,8 +461,11 @@ void UIWidget::addChild(const UIWidgetPtr& childToAdd)
     m_children.push_back(childToAdd);
     childToAdd->setParent(asUIWidget());
 
-    // updates geometry
-    updateGeometry();
+    // recalculate anchors
+    getRootParent()->recalculateAnchoredWidgets();
+
+    // may need to update children layout
+    updateChildrenLayout();
 
     // always focus new children
     if(childToAdd->isFocusable())
@@ -529,8 +490,11 @@ void UIWidget::insertChild(const UIWidgetPtr& childToInsert, int index)
     m_children.insert(it, childToInsert);
     childToInsert->setParent(asUIWidget());
 
-    // updates geometry
-    updateGeometry();
+    // recalculate anchors
+    getRootParent()->recalculateAnchoredWidgets();
+
+    // may need to update children layout
+    updateChildrenLayout();
 }
 
 void UIWidget::removeChild(const UIWidgetPtr& childToRemove)
@@ -555,6 +519,13 @@ void UIWidget::removeChild(const UIWidgetPtr& childToRemove)
     // reset child parent
     assert(childToRemove->getParent() == asUIWidget());
     childToRemove->setParent(nullptr);
+
+    // recalculate anchors
+    UIWidgetPtr parent = getRootParent();
+    parent->recalculateAnchoredWidgets();
+
+    // may need to update children layout
+    updateChildrenLayout();
 }
 
 void UIWidget::focusNextChild(FocusReason reason)
@@ -633,32 +604,227 @@ void UIWidget::unlockChild(const UIWidgetPtr& childToUnlock)
     }
 }
 
-void UIWidget::addAnchor(AnchorPoint edge, const std::string& targetId, AnchorPoint targetEdge)
+void UIWidget::updateLayout()
 {
     assert(!m_destroyed);
 
-    UIAnchorLayoutPtr layout = std::dynamic_pointer_cast<UIAnchorLayout>(getLayout());
-    assert(layout);
-    if(layout)
-        layout->addAnchor(asUIWidget(), edge, AnchorLine(targetId, targetEdge));
+    if(!m_layoutUpdateScheduled) {
+        m_layoutUpdateScheduled = true;
+        UIWidgetPtr self = asUIWidget();
+        g_dispatcher.addEvent([self] {
+            self->m_layoutUpdateScheduled = false;
+            if(!self->isDestroyed())
+                self->internalUpdateLayout();
+        });
+    }
 }
 
-void UIWidget::centerIn(const std::string& targetId)
+void UIWidget::updateChildrenLayout()
 {
     assert(!m_destroyed);
 
-    addAnchor(AnchorHorizontalCenter, targetId, AnchorHorizontalCenter);
-    addAnchor(AnchorVerticalCenter, targetId, AnchorVerticalCenter);
+    if(!m_childrenLayoutUpdateScheduled) {
+        m_childrenLayoutUpdateScheduled = true;
+        UIWidgetPtr self = asUIWidget();
+        g_dispatcher.addEvent([self] {
+            self->m_childrenLayoutUpdateScheduled = false;
+            if(!self->isDestroyed())
+                self->internalUpdateChildrenLayout();
+        });
+    }
 }
 
-void UIWidget::fill(const std::string& targetId)
+bool UIWidget::addAnchor(AnchorEdge edge, const std::string& hookedWidgetId, AnchorEdge hookedEdge)
 {
     assert(!m_destroyed);
 
-    addAnchor(AnchorLeft, targetId, AnchorLeft);
-    addAnchor(AnchorRight, targetId, AnchorRight);
-    addAnchor(AnchorTop, targetId, AnchorTop);
-    addAnchor(AnchorBottom, targetId, AnchorBottom);
+    UIAnchor anchor(edge, hookedWidgetId, hookedEdge);
+
+    UIWidgetPtr hookedWidget = backwardsGetWidgetById(hookedWidgetId);
+    anchor.setHookedWidget(hookedWidget);
+
+    // we can never anchor with itself
+    if(hookedWidget == asUIWidget()) {
+        logError("anchoring with itself is not possible");
+        return false;
+    }
+
+    // we must never anchor to an anchor child
+    //TODO: this check
+
+    // duplicated anchors must be replaced
+    for(auto it = m_anchors.begin(); it != m_anchors.end(); ++it) {
+        const UIAnchor& otherAnchor = *it;
+        if(otherAnchor.getAnchoredEdge() == edge) {
+            m_anchors.erase(it);
+            break;
+        }
+    }
+
+    m_anchors.push_back(anchor);
+
+    updateLayout();
+    return true;
+}
+
+void UIWidget::centerIn(const std::string& hookedWidgetId)
+{
+    assert(!m_destroyed);
+
+    addAnchor(AnchorHorizontalCenter, hookedWidgetId, AnchorHorizontalCenter);
+    addAnchor(AnchorVerticalCenter, hookedWidgetId, AnchorVerticalCenter);
+}
+
+void UIWidget::fill(const std::string& hookedWidgetId)
+{
+    assert(!m_destroyed);
+
+    addAnchor(AnchorLeft, hookedWidgetId, AnchorLeft);
+    addAnchor(AnchorRight, hookedWidgetId, AnchorRight);
+    addAnchor(AnchorTop, hookedWidgetId, AnchorTop);
+    addAnchor(AnchorBottom, hookedWidgetId, AnchorBottom);
+}
+
+void UIWidget::internalUpdateLayout()
+{
+    assert(!m_destroyed);
+
+    for(const UIAnchor& anchor : m_anchors) {
+        // ignore invalid anchors
+        if(!anchor.getHookedWidget())
+            continue;
+
+        // the update should only happens if the hooked widget is already updated
+        if(!anchor.getHookedWidget()->m_layoutUpdated)
+            return;
+    }
+
+    Rect newRect = m_rect;
+    bool verticalMoved = false;
+    bool horizontalMoved = false;
+
+    // calculate new rect based on anchors
+    for(const UIAnchor& anchor : m_anchors) {
+        int point = anchor.getHookedPoint();
+
+        // ignore invalid anchors
+        if(point == UIAnchor::INVALID_POINT)
+            continue;
+
+        switch(anchor.getAnchoredEdge()) {
+            case AnchorHorizontalCenter:
+                newRect.moveHorizontalCenter(point + getMarginLeft() - getMarginRight());
+                horizontalMoved = true;
+                break;
+            case AnchorLeft:
+                if(!horizontalMoved) {
+                    newRect.moveLeft(point + getMarginLeft());
+                    horizontalMoved = true;
+                } else
+                    newRect.setLeft(point + getMarginLeft());
+                break;
+            case AnchorRight:
+                if(!horizontalMoved) {
+                    newRect.moveRight(point - getMarginRight());
+                    horizontalMoved = true;
+                } else
+                    newRect.setRight(point - getMarginRight());
+                break;
+            case AnchorVerticalCenter:
+                newRect.moveVerticalCenter(point + getMarginTop() - getMarginBottom());
+                verticalMoved = true;
+                break;
+            case AnchorTop:
+                if(!verticalMoved) {
+                    newRect.moveTop(point + getMarginTop());
+                    verticalMoved = true;
+                } else
+                    newRect.setTop(point + getMarginTop());
+                break;
+            case AnchorBottom:
+                if(!verticalMoved) {
+                    newRect.moveBottom(point - getMarginBottom());
+                    verticalMoved = true;
+                } else
+                    newRect.setBottom(point - getMarginBottom());
+                break;
+            default:
+                break;
+        }
+    }
+
+    m_layoutUpdated = true;
+
+    // changes the rect only if really needed
+    if(newRect != m_rect) {
+        // setRect will update children layout too
+        setRect(newRect);
+    } else {
+        // update children
+        internalUpdateChildrenLayout();
+    }
+}
+
+void UIWidget::internalUpdateChildrenLayout()
+{
+    assert(!m_destroyed);
+
+    // reset all children anchors update state
+    resetLayoutUpdateState(false);
+
+    // update children layouts
+    for(const UIWidgetWeakPtr& anchoredWidgetWeak : m_anchoredWidgets) {
+        if(UIWidgetPtr anchoredWidget = anchoredWidgetWeak.lock())
+            anchoredWidget->updateLayout();
+    }
+}
+
+void UIWidget::resetLayoutUpdateState(bool resetOwn)
+{
+    if(resetOwn)
+        m_layoutUpdated = false;
+
+    // resets children layout update state too
+    for(const UIWidgetWeakPtr& anchoredWidgetWeak : m_anchoredWidgets) {
+        if(UIWidgetPtr anchoredWidget = anchoredWidgetWeak.lock())
+            anchoredWidget->resetLayoutUpdateState(true);
+    }
+}
+
+void UIWidget::addAnchoredWidget(const UIWidgetPtr& widget)
+{
+    // prevent duplicated anchored widgets
+    for(const UIWidgetWeakPtr& anchoredWidget : m_anchoredWidgets)
+        if(anchoredWidget.lock() == widget)
+            return;
+    m_anchoredWidgets.push_back(widget);
+}
+
+void UIWidget::recalculateAnchoredWidgets()
+{
+    clearAnchoredWidgets();
+    computeAnchoredWidgets();
+}
+
+void UIWidget::clearAnchoredWidgets()
+{
+    m_anchoredWidgets.clear();
+    for(const UIWidgetPtr& child : m_children)
+        child->clearAnchoredWidgets();
+}
+
+void UIWidget::computeAnchoredWidgets()
+{
+    // update anchors's hooked widget
+    for(UIAnchor& anchor : m_anchors) {
+        UIWidgetPtr hookedWidget = backwardsGetWidgetById(anchor.getHookedWidgetId());
+        anchor.setHookedWidget(hookedWidget);
+        if(hookedWidget)
+            hookedWidget->addAnchoredWidget(asUIWidget());
+    }
+
+    for(const UIWidgetPtr& child : m_children)
+        child->computeAnchoredWidgets();
 }
 
 void UIWidget::onFocusChange(UIFocusEvent& event)
@@ -726,7 +892,7 @@ void UIWidget::onMousePress(UIMouseEvent& event)
             continue;
 
         // mouse press events only go to children that contains the mouse position
-        if(child->getGeometry().contains(event.pos()) && child == getChildByPos(event.pos())) {
+        if(child->getRect().contains(event.pos()) && child == getChildByPos(event.pos())) {
             // focus it
             if(child->isFocusable())
                 focusChild(child, MouseFocusReason);
@@ -775,7 +941,7 @@ void UIWidget::onMouseMove(UIMouseEvent& event)
 
         // check if the mouse is relally over this child
         bool overChild = (isHovered() &&
-                          child->getGeometry().contains(event.pos()) &&
+                          child->getRect().contains(event.pos()) &&
                           child == getChildByPos(event.pos()));
         if(overChild != child->isHovered()) {
             child->setHovered(overChild);
@@ -806,7 +972,7 @@ void UIWidget::onMouseWheel(UIMouseEvent& event)
             continue;
 
         // mouse wheel events only go to children that contains the mouse position
-        if(child->getGeometry().contains(event.pos()) && child == getChildByPos(event.pos())) {
+        if(child->getRect().contains(event.pos()) && child == getChildByPos(event.pos())) {
             event.accept();
             child->onMouseWheel(event);
         }

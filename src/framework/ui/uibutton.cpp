@@ -63,7 +63,7 @@ void UIButton::render()
     UIWidget::render();
 
     const ButtonStateStyle& currentStyle = m_statesStyle[m_state];
-    Rect textRect = getGeometry();
+    Rect textRect = getRect();
 
     if(currentStyle.image) {
         g_graphics.bindColor(currentStyle.color);
@@ -93,7 +93,7 @@ void UIButton::onMousePress(UIMouseEvent& event)
 void UIButton::onMouseRelease(UIMouseEvent& event)
 {
     if(m_state == ButtonDown) {
-        if(m_onClick && getGeometry().contains(event.pos()))
+        if(m_onClick && getRect().contains(event.pos()))
             m_onClick();
         m_state = (isHovered() && isEnabled()) ? ButtonHover : ButtonUp;
     } else
