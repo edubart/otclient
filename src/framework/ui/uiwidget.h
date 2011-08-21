@@ -39,7 +39,6 @@ public:
     void setParent(const UIWidgetPtr& parent);
     void setStyle(const std::string& styleName);
     void setGeometry(const Rect& rect);
-    void setLocked(bool locked);
     void setX(int x) { move(Point(x, getY())); }
     void setY(int y) { move(Point(getX(), y)); }
     void setWidth(int width) { resize(Size(width, getHeight())); }
@@ -64,7 +63,7 @@ public:
 
     bool isEnabled();
     bool isExplicitlyEnabled() const { return m_enabled; }
-    bool isVisible() const { return m_visible; }
+    bool isExplicitlyVisible() const { return m_visible; }
     bool isHovered() const { return m_hovered; }
     bool isFocusable() const { return m_focusable; }
     bool isDestroyed() const { return m_destroyed; }
@@ -128,7 +127,7 @@ protected:
     // Triggered when widget change visibility/enabled/style/children/parent/layout/...
     //virtual void onChange(const UIEvent& event);
     /// Triggered when widget gets or loses focus
-    virtual void onFocusChange(UIFocusEvent& event) { }
+    virtual void onFocusChange(UIFocusEvent& event);
     /// Triggered when the mouse enters or leaves widget area
     virtual void onHoverChange(UIHoverEvent& event) { }
     /// Triggered when user presses key while widget has focus

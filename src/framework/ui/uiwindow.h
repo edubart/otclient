@@ -18,6 +18,7 @@ public:
 
 protected:
     virtual void onGeometryUpdate(UIGeometryUpdateEvent& event);
+    virtual void onFocusChange(UIFocusEvent& event);
     virtual void onMousePress(UIMouseEvent& event);
     virtual void onMouseRelease(UIMouseEvent& event);
     virtual void onMouseMove(UIMouseEvent& event);

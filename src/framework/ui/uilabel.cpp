@@ -5,6 +5,7 @@
 UILabel::UILabel() : UIWidget(UITypeLabel)
 {
     m_align = AlignLeft;
+    m_focusable = false;
 }
 
 UILabelPtr UILabel::create()

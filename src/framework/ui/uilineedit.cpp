@@ -10,7 +10,6 @@ UILineEdit::UILineEdit() : UIWidget(UITypeLabel)
     m_cursorPos = 0;
     m_startRenderPos = 0;
     m_textHorizontalMargin = 3;
-    m_focusable = true;
     blinkCursor();
 
     m_onAction = [this]() { this->callLuaField("onAction"); };
@@ -364,14 +363,14 @@ void UILineEdit::onKeyPress(UIKeyEvent& event)
         setCursorPos(0);
     else if(event.keyCode() == KC_END) // move cursor to last character
         setCursorPos(m_text.length());
-    else if(event.keyCode() == KC_RETURN) {
+    else if(event.keyCode() == KC_TAB) {
+        if(UIWidgetPtr parent = getParent())
+            parent->focusNextChild(TabFocusReason);
+    } else if(event.keyCode() == KC_RETURN) {
         if(m_onAction)
             m_onAction();
     } else if(event.keyChar() != 0) {
-        if(event.keyCode() != KC_TAB && event.keyCode() != KC_RETURN)
-            appendCharacter(event.keyChar());
-        else
-            event.ignore();
+        appendCharacter(event.keyChar());
     } else
         event.ignore();
 

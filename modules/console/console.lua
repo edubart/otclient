@@ -1,6 +1,8 @@
 Console = { }
+
 local console
 local logLocked = false
+local commandEnv = createEnvironment()
 
 function Console.onLog(level, message, time)
   -- avoid logging while reporting logs (would cause a infinite loop)
@@ -61,11 +63,14 @@ end
 
 function Console.executeCommand(command)
   Console.addLine(">> " .. command, "#ffffff")
-  local func, err = loadstring("return (" .. command .. ")", "@")
+  local func, err = loadstring(command, "@")
   if func then
+    setfenv(func, commandEnv)
     local ok, ret = pcall(func)
     if ok then
-      Logger.log(LogDebug, "=> " .. tostring(ret))
+      if ret then
+        print(ret)
+      end
     else
       Logger.log(LogError, 'command failed: ' .. ret)
     end

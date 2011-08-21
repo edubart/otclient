@@ -8,6 +8,7 @@
 UIButton::UIButton(): UIWidget(UITypeButton)
 {
     m_state = ButtonUp;
+    m_focusable = false;
 
     // by default, all callbacks call lua fields
     m_onClick = [this]() { this->callLuaField("onClick"); };
