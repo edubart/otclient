@@ -11,87 +11,64 @@ Tile::Tile()
     m_drawNextOffset = 0;
 }
 
-void Tile::draw(int x, int y, int step)
+void Tile::draw(int x, int y)
 {
-    // STEP 0 = draw ground, top 1
-    // STEP 1 = top 2
-    // STEP 2 = top 3
-    // STEP 3 = bottom, creatures, names, etc
-
     FontPtr font = g_fonts.getDefaultFont();
 
-    if(step == 0 && m_drawNextOffset != 0) {
-        logDebug("error with tile offset.");
-        return;
-    }
+    m_drawNextOffset = 0;
 
-    if(step == 0) {
-        if(m_ground)
-            m_ground->draw(x, y);
+    if(m_ground)
+        m_ground->draw(x, y);
 
-        for(const ThingPtr& thing : m_itemsTop) {
-            const ThingAttributes& thingAttributes = thing->getAttributes();
+    for(auto it = m_itemsTop.rbegin(), end = m_itemsTop.rend(); it != end; ++it) {
+        const ThingPtr& thing = *it;
+        const ThingAttributes& thingAttributes = thing->getAttributes();
 
-            if(thingAttributes.alwaysOnTopOrder == 1) {
-                thing->draw(x - m_drawNextOffset, y - m_drawNextOffset);
-                //font->renderText("T1", Rect(x + 5, y+5, 100, 100));
-
-                m_drawNextOffset += thingAttributes.drawNextOffset;
-            }
-        }
-
-        for(const ThingPtr& thing : m_itemsTop) {
-            const ThingAttributes& thingAttributes = thing->getAttributes();
-
-            if(thingAttributes.alwaysOnTopOrder == 2) {
-                thing->draw(x - m_drawNextOffset, y - m_drawNextOffset);
-                //font->renderText("T2", Rect(x + 5, y+5, 100, 100));
-                m_drawNextOffset += thingAttributes.drawNextOffset;
-            }
-        }
-
-        for(const ThingPtr& thing : m_itemsBottom) {
-            const ThingAttributes& thingAttributes = thing->getAttributes();
+        if(thingAttributes.alwaysOnTopOrder == 1) {
             thing->draw(x - m_drawNextOffset, y - m_drawNextOffset);
-            //font->renderText("B0", Rect(x + 5, y+5, 100, 100));
-            m_drawNextOffset += thingAttributes.drawNextOffset;
-        }
-
-        for(const ThingPtr& thing : m_creatures) {
-            const ThingAttributes& thingAttributes = thing->getAttributes();
-            thing->draw(x - m_drawNextOffset, y - m_drawNextOffset);
+            //font->renderText("T1", Rect(x + 5, y+5, 100, 100));
 
             m_drawNextOffset += thingAttributes.drawNextOffset;
         }
+    }
 
-        for(const ThingPtr& thing : m_itemsTop) {
-            const ThingAttributes& thingAttributes = thing->getAttributes();
+    for(auto it = m_itemsTop.rbegin(), end = m_itemsTop.rend(); it != end; ++it) {
+        const ThingPtr& thing = *it;
+        const ThingAttributes& thingAttributes = thing->getAttributes();
 
-            if(thingAttributes.alwaysOnTopOrder == 3) {
-                thing->draw(x - m_drawNextOffset, y - m_drawNextOffset);
-                //font->renderText("T3", Rect(x + 5, y+5, 100, 100));
-                m_drawNextOffset += thingAttributes.drawNextOffset;
-            }
-        }
-
-        for(const ThingPtr& thing : m_effects) {
+        if(thingAttributes.alwaysOnTopOrder == 2) {
             thing->draw(x - m_drawNextOffset, y - m_drawNextOffset);
+            //font->renderText("T2", Rect(x + 5, y+5, 100, 100));
+            m_drawNextOffset += thingAttributes.drawNextOffset;
         }
-
-        m_drawNextOffset = 0;
     }
-    else if(step == 1) {
 
-
-
+    for(auto it = m_itemsBottom.rbegin(), end = m_itemsBottom.rend(); it != end; ++it) {
+        const ThingPtr& thing = *it;
+        const ThingAttributes& thingAttributes = thing->getAttributes();
+        thing->draw(x - m_drawNextOffset, y - m_drawNextOffset);
+        //font->renderText("B0", Rect(x + 5, y+5, 100, 100));
+        m_drawNextOffset += thingAttributes.drawNextOffset;
     }
-    else if(step == 2) {
 
-
-
+    for(auto it = m_creatures.rbegin(), end = m_creatures.rend(); it != end; ++it) {
+        const ThingPtr& thing = *it;
+        thing->draw(x - m_drawNextOffset, y - m_drawNextOffset);
     }
-    else if(step == 3) {
 
+    for(auto it = m_itemsTop.rbegin(), end = m_itemsTop.rend(); it != end; ++it) {
+        const ThingPtr& thing = *it;
+        const ThingAttributes& thingAttributes = thing->getAttributes();
+
+        if(thingAttributes.alwaysOnTopOrder == 3) {
+            thing->draw(x, y);
+            //font->renderText("T3", Rect(x + 5, y+5, 100, 100));
+        }
+    }
+
+    for(auto it = m_effects.rbegin(), end = m_effects.rend(); it != end; ++it) {
+        const ThingPtr& thing = *it;
+        thing->draw(x - m_drawNextOffset, y - m_drawNextOffset);
     }
 }
 
@@ -99,18 +76,6 @@ void Tile::addThing(ThingPtr thing, uint8 stackpos)
 {
     if(!thing)
         return;
-
-    //8308
-    //2526
-    //5296
-
-    const ThingAttributes& item1 = g_dat.getItemAttributes(8308);
-    const ThingAttributes& item2 = g_dat.getItemAttributes(2526);
-    const ThingAttributes& item3 = g_dat.getItemAttributes(5296);
-
-    int j = item1.alwaysOnTopOrder + item2.alwaysOnTopOrder + item3.alwaysOnTopOrder;
-    j++;
-
 
     if(thing->getPosition() == g_game.getLocalPlayer()->getPosition() + Position(-1, 0, 0) && thing->getAttributes().alwaysOnTop) {
         logDebug((int)thing->getId());
@@ -123,16 +88,16 @@ void Tile::addThing(ThingPtr thing, uint8 stackpos)
             m_ground = thing;
         else {
             if(thingAttributes.alwaysOnTop)
-                m_itemsTop.push_front(thing);
+                m_itemsTop.push_back(thing);
             else
-                m_itemsBottom.push_front(thing);
+                m_itemsBottom.push_back(thing);
         }
     }
     else if(thing->asCreature()) {
-        m_creatures.push_front(thing);
+        m_creatures.push_back(thing);
     }
     else if(thing->asEffect()) {
-        m_effects.push_front(thing);
+        m_effects.push_back(thing);
     }
 }
 

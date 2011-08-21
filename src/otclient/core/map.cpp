@@ -6,7 +6,7 @@
 
 Map g_map;
 
-void Map::draw(int x, int y)
+void Map::draw(const Rect& rect)
 {
     if(!m_framebuffer)
         m_framebuffer = FrameBufferPtr(new FrameBuffer(15*32, 11*32));
@@ -18,10 +18,11 @@ void Map::draw(int x, int y)
 
     // player is above 7
 
+    int drawFloorStop = 0;
     if(playerPos.z <= 7) {
 
         // player pos it 8-6. check if we can draw upper floors.
-        int drawFloorStop = 0;
+
 
         // if there is a window on north, east, south or west
         //Position direction[4] = {Position(0, -1, 0), Position(1, 0, 0), Position(0, 1, 0), Position(-1, 0, 0)};
@@ -50,17 +51,13 @@ void Map::draw(int x, int y)
             if(iz == drawFloorStop)
                 break;
 
-            for(int step = 0; step < 4; ++step) {
+            // +1 in draws cause 64x64 items may affect view.
 
-
-                // +1 in draws cause 64x64 items may affect view.
-
-                for(int ix = -7+(playerPos.z-iz); ix < + 8+7; ++ix) {
-                    for(int iy = -5+(playerPos.z-iz); iy < + 6+7; ++iy) {
-                        Position itemPos = Position(playerPos.x + ix, playerPos.y + iy, iz);
-                        if(const TilePtr& tile = m_tiles[itemPos])
-                            tile->draw((ix + 7 - (playerPos.z-iz))*32, (iy + 5 - (playerPos.z-iz))*32, step);
-                    }
+            for(int ix = -7+(playerPos.z-iz); ix < + 8+7; ++ix) {
+                for(int iy = -5+(playerPos.z-iz); iy < + 6+7; ++iy) {
+                    Position itemPos = Position(playerPos.x + ix, playerPos.y + iy, iz);
+                    if(const TilePtr& tile = m_tiles[itemPos])
+                        tile->draw((ix + 7 - (playerPos.z-iz))*32, (iy + 5 - (playerPos.z-iz))*32);
                 }
             }
         }
@@ -73,7 +70,33 @@ void Map::draw(int x, int y)
     m_framebuffer->unbind();
 
     g_graphics.bindColor(Color::white);
-    m_framebuffer->draw(Rect(x, y, g_graphics.getScreenSize()));
+    m_framebuffer->draw(rect);
+
+    // calculate stretch factor
+    float horizontalStretchFactor = (rect.width() - rect.x()) / (float)(15*32);
+    float verticalStretchFactor = (rect.height() - rect.y()) / (float)(11*32);
+
+    // draw player names and health bars
+    for(int ix = -7; ix <= 7; ++ix) {
+        for(int iy = -5; iy <= 5; ++iy) {
+            Position itemPos = Position(playerPos.x + ix, playerPos.y + iy, playerPos.z);
+            if(const TilePtr& tile = m_tiles[itemPos]) {
+                std::deque<ThingPtr> creatures = tile->getCreatures();
+                for(auto it = creatures.rbegin(), end = creatures.rend(); it != end; ++it) {
+                    const ThingPtr& thing = *it;
+                    const CreaturePtr& creature = thing->asCreature();
+
+                    int x = (ix + 7)*32 + 5 - tile->getDrawNextOffset();
+                    int y = (iy + 5)*32 - 8 - tile->getDrawNextOffset();
+
+                    // TODO: create isCovered function.
+                    bool useGray = (drawFloorStop != playerPos.z-1);
+
+                    creature->drawInformation(x*horizontalStretchFactor, y*verticalStretchFactor, useGray);
+                }
+            }
+        }
+    }
 }
 
 void Map::addThing(ThingPtr thing, uint8 stackpos)

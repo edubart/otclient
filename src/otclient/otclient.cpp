@@ -209,7 +209,7 @@ void OTClient::render()
 {
     //TODO: UIMap for map drawing
     if(g_game.isOnline())
-        g_map.draw(0, 0);
+        g_map.draw(Rect(0, 0, g_graphics.getScreenSize()));
 
     // everything is rendered by UI components
     g_ui.render();

@@ -4,17 +4,12 @@
 #include "declarations.h"
 #include <framework/luascript/luaobject.h>
 
-enum RenderStep
-{
-
-};
-
 class Tile : public LuaObject
 {
 public:
     Tile();
 
-    void draw(int x, int y, int step);
+    void draw(int x, int y);
 
     void addThing(ThingPtr thing, uint8 stackpos);
     ThingPtr getThing(uint8 stackpos);
@@ -26,6 +21,9 @@ public:
     bool hasGround() { return (!!m_ground); }
 
     int getStackSize();
+
+    std::deque<ThingPtr> getCreatures() { return m_creatures; }
+    int getDrawNextOffset() { return m_drawNextOffset; }
 
 private:
     ThingPtr m_ground;
