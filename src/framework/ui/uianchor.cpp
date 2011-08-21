@@ -1,45 +1,31 @@
 #include "uianchor.h"
 #include "uiwidget.h"
 
-UIAnchor::UIAnchor(const UIWidgetPtr& anchoredWidget, AnchorPoint anchoredEdge, const AnchorLine& anchorLine)
-    : m_anchoredWidget(anchoredWidget), m_anchoredEdge(anchoredEdge), m_anchorLine(anchorLine) {
+UIAnchor::UIAnchor(AnchorEdge anchoredEdge, const std::string& hookedWidgetId, AnchorEdge hookedEdge) :
+    m_anchoredEdge(anchoredEdge), m_hookedWidgetId(hookedWidgetId), m_hookedEdge(hookedEdge) {
 }
 
-UIWidgetPtr UIAnchor::getAnchorLineWidget() const {
-    UIWidgetPtr anchoredWidget = m_anchoredWidget.lock();
-    if(anchoredWidget && !anchoredWidget->isDestroyed())
-        return anchoredWidget->backwardsGetWidgetById(m_anchorLine.widgetId);
-    return nullptr;
-}
+int UIAnchor::getHookedPoint() const {
+    UIWidgetPtr hookedWidget = getHookedWidget();
 
-
-UIWidgetPtr UIAnchor::getAnchoredWidget() const {
-    return m_anchoredWidget.lock();
-}
-
-AnchorPoint UIAnchor::getAnchoredEdge() const {
-    return m_anchoredEdge;
-}
-
-int UIAnchor::getAnchorLinePoint() const {
-    UIWidgetPtr anchorLineWidget = getAnchorLineWidget();
-    if(anchorLineWidget) {
-        switch(m_anchorLine.edge) {
+    if(hookedWidget) {
+        switch(m_hookedEdge) {
             case AnchorLeft:
-                return anchorLineWidget->getGeometry().left();
+                return hookedWidget->getRect().left();
             case AnchorRight:
-                return anchorLineWidget->getGeometry().right();
+                return hookedWidget->getRect().right();
             case AnchorTop:
-                return anchorLineWidget->getGeometry().top();
+                return hookedWidget->getRect().top();
             case AnchorBottom:
-                return anchorLineWidget->getGeometry().bottom();
+                return hookedWidget->getRect().bottom();
             case AnchorHorizontalCenter:
-                return anchorLineWidget->getGeometry().horizontalCenter();
+                return hookedWidget->getRect().horizontalCenter();
             case AnchorVerticalCenter:
-                return anchorLineWidget->getGeometry().verticalCenter();
+                return hookedWidget->getRect().verticalCenter();
             default:
                 break;
         }
     }
-    return -9999;
+
+    return INVALID_POINT;
 }

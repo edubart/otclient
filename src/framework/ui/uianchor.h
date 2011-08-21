@@ -3,25 +3,27 @@
 
 #include "declarations.h"
 
-struct AnchorLine {
-    AnchorLine(std::string widgetId, AnchorPoint edge) : widgetId(widgetId), edge(edge) { }
-    std::string widgetId;
-    AnchorPoint edge;
-};
-
 class UIAnchor
 {
 public:
-    UIAnchor(const UIWidgetPtr& anchoredWidget, AnchorPoint anchoredEdge, const AnchorLine& anchorLine);
-    UIWidgetPtr getAnchorLineWidget() const;
-    UIWidgetPtr getAnchoredWidget() const;
-    AnchorPoint getAnchoredEdge() const;
-    int getAnchorLinePoint() const;
+    enum {
+        INVALID_POINT = -999999
+    };
+
+    UIAnchor(AnchorEdge anchoredEdge, const std::string& hookedWidgetId, AnchorEdge hookedEdge);
+
+    AnchorEdge getAnchoredEdge() const { return m_anchoredEdge; }
+    UIWidgetPtr getHookedWidget() const { return m_hookedWidget.lock(); }
+    std::string getHookedWidgetId() const { return m_hookedWidgetId; }
+    int getHookedPoint() const;
+
+    void setHookedWidget(const UIWidgetPtr hookedWidget) { m_hookedWidget = hookedWidget; }
 
 private:
-    UIWidgetWeakPtr m_anchoredWidget;
-    AnchorPoint m_anchoredEdge;
-    AnchorLine m_anchorLine;
+    AnchorEdge m_anchoredEdge;
+    UIWidgetWeakPtr m_hookedWidget;
+    std::string m_hookedWidgetId;
+    AnchorEdge m_hookedEdge;
 };
 
 #endif

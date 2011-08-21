@@ -7,7 +7,7 @@
 namespace fw {
 
 AlignmentFlag translateAlignment(std::string aligment);
-AnchorPoint translateAnchorPoint(const std::string& anchorPoint);
+AnchorEdge translateAnchorEdge(const std::string& anchorPoint);
 
 };
 

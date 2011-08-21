@@ -18,7 +18,6 @@ UILineEdit::UILineEdit() : UIWidget(UITypeLabel)
 UILineEditPtr UILineEdit::create()
 {
     UILineEditPtr lineEdit(new UILineEdit);
-    lineEdit->setStyle("LineEdit");
     return lineEdit;
 }
 
@@ -38,13 +37,16 @@ void UILineEdit::render()
 {
     UIWidget::render();
 
+    if(!m_rect.isValid())
+        return;
+
     //TODO: text rendering could be much optimized by using vertex buffer or caching the render into a texture
 
     int textLength = m_text.length();
     const TexturePtr& texture = m_font->getTexture();
-    for(int i=0;i<textLength;++i) {
+
+    for(int i=0;i<textLength;++i)
         g_graphics.drawTexturedRect(m_glyphsCoords[i], texture, m_glyphsTexCoords[i]);
-    }
 
     // render cursor
     if(isExplicitlyEnabled() && hasFocus() && m_cursorPos >= 0) {
@@ -334,7 +336,7 @@ int UILineEdit::getTextPos(Point pos)
     return candidatePos;
 }
 
-void UILineEdit::onGeometryUpdate(UIGeometryUpdateEvent& event)
+void UILineEdit::onRectUpdate(UIRectUpdateEvent& event)
 {
     update();
 }

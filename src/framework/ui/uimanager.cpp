@@ -1,6 +1,5 @@
 #include "uimanager.h"
 #include "ui.h"
-#include "uianchorlayout.h"
 
 #include <framework/otml/otml.h>
 #include <framework/graphics/graphics.h>
@@ -13,9 +12,6 @@ void UIManager::init()
     m_rootWidget = UIWidgetPtr(new UIWidget);
     m_rootWidget->setId("root");
     m_rootWidget->setHovered(true);
-
-    UIAnchorLayoutPtr anchorLayout(new UIAnchorLayout);
-    m_rootWidget->setLayout(anchorLayout);
     m_rootWidget->resize(g_graphics.getScreenSize());
 }
 
@@ -187,7 +183,7 @@ UIWidgetPtr UIManager::loadWidgetFromOTML(const OTMLNodePtr& widgetNode)
         throw OTMLException(styleNode, "cannot determine widget type");
 
     widget->loadStyleFromOTML(styleNode);
-    widget->updateGeometry();
+    widget->updateLayout();
 
     for(const OTMLNodePtr& childNode : widgetNode->children()) {
         if(!childNode->isUnique())

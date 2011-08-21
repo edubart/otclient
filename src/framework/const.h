@@ -29,7 +29,7 @@ enum AlignmentFlag {
     AlignCenter = AlignVerticalCenter | AlignHorizontalCenter
 };
 
-enum AnchorPoint {
+enum AnchorEdge {
     AnchorNone = 0,
     AnchorTop,
     AnchorBottom,

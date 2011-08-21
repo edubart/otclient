@@ -27,34 +27,30 @@ public:
     /// Draw widget on screen
     virtual void render();
 
-    /// Notifies the layout system that this widget has changed and may need to change geometry
-    void updateGeometry();
-
     void setEnabled(bool enable) { m_enabled = enable; }
-    void setLayout(const UILayoutPtr& layout) { m_layout = layout; }
     void setId(const std::string& id) { m_id = id; }
     void setFocusable(bool focusable) { m_focusable = focusable; }
     void setHovered(bool hovered) { m_hovered = hovered; }
     void setVisible(bool visible) { m_visible = visible; }
     void setParent(const UIWidgetPtr& parent);
     void setStyle(const std::string& styleName);
-    void setGeometry(const Rect& rect);
+    void setRect(const Rect& rect);
     void setX(int x) { move(Point(x, getY())); }
     void setY(int y) { move(Point(getX(), y)); }
     void setWidth(int width) { resize(Size(width, getHeight())); }
     void setHeight(int height) { resize(Size(getWidth(), height)); }
-    void resize(const Size& size) { setGeometry(Rect(getPosition(), size)); updateGeometry(); }
-    void move(const Point& pos) { setGeometry(Rect(pos, getSize())); }
+    void resize(const Size& size) { setRect(Rect(getPosition(), size)); }
+    void move(const Point& pos) { setRect(Rect(pos, getSize())); }
 
     void setImage(const ImagePtr& image) { m_image = image; }
     virtual void setFont(const FontPtr& font) { m_font = font; }
     void setOpacity(int opacity) { m_opacity = opacity; }
     void setBackgroundColor(const Color& color) { m_backgroundColor = color; }
     void setForegroundColor(const Color& color) { m_foregroundColor = color; }
-    void setMarginLeft(int margin) { m_marginLeft = margin; updateGeometry(); }
-    void setMarginRight(int margin) { m_marginRight = margin; updateGeometry(); }
-    void setMarginTop(int margin) { m_marginTop = margin; updateGeometry(); }
-    void setMarginBottom(int margin) { m_marginBottom = margin; updateGeometry(); }
+    void setMarginLeft(int margin) { m_marginLeft = margin; updateLayout(); }
+    void setMarginRight(int margin) { m_marginRight = margin; updateLayout(); }
+    void setMarginTop(int margin) { m_marginTop = margin; updateLayout(); }
+    void setMarginBottom(int margin) { m_marginBottom = margin; updateLayout(); }
 
     void hide() { setVisible(false); }
     void show() { setVisible(true); }
@@ -72,13 +68,13 @@ public:
     bool hasChild(const UIWidgetPtr& child);
 
     UIWidgetType getWidgetType() const { return m_type; }
-    UILayoutPtr getLayout() const;
     std::string getId() const { return m_id; }
     int getChildCount() const { return m_children.size(); }
     UIWidgetPtr getParent() const { return m_parent.lock(); }
+    UIWidgetPtr getRootParent();
     Point getPosition() const { return m_rect.topLeft(); }
     Size getSize() const { return m_rect.size(); }
-    Rect getGeometry() const { return m_rect; }
+    Rect getRect() const { return m_rect; }
     int getX() const { return m_rect.x(); }
     int getY() const { return m_rect.y(); }
     int getWidth() const { return m_rect.width(); }
@@ -101,7 +97,7 @@ public:
     UIWidgetPtr getChildById(const std::string& childId);
     UIWidgetPtr getChildByPos(const Point& childPos);
     UIWidgetPtr getChildByIndex(int childIndex);
-    UIWidgetPtr recursiveGetChildById(const std::string& childId);
+    UIWidgetPtr recursiveGetChildById(const std::string& id);
     UIWidgetPtr recursiveGetChildByPos(const Point& childPos);
     UIWidgetPtr backwardsGetWidgetById(const std::string& id);
 
@@ -114,16 +110,33 @@ public:
     void lockChild(const UIWidgetPtr& childToLock);
     void unlockChild(const UIWidgetPtr& childToUnlock);
 
-    // for using only with anchor layouts
-    void addAnchor(AnchorPoint edge, const std::string& targetId, AnchorPoint targetEdge);
-    void centerIn(const std::string& targetId);
-    void fill(const std::string& targetId);
+    void updateLayout();
+    void updateChildrenLayout();
+
+    bool addAnchor(AnchorEdge edge, const std::string& hookedWidgetId, AnchorEdge hookedEdge);
+    void centerIn(const std::string& hookedWidgetId);
+    void fill(const std::string& hookedWidgetId);
 
     UIWidgetPtr asUIWidget() { return std::static_pointer_cast<UIWidget>(shared_from_this()); }
 
+private:
+    void internalUpdateLayout();
+    void internalUpdateChildrenLayout();
+
+    void addAnchoredWidget(const UIWidgetPtr& widget);
+    void recalculateAnchoredWidgets();
+    void clearAnchoredWidgets();
+    void computeAnchoredWidgets();
+    void resetLayoutUpdateState(bool resetOwn);
+
+    bool m_layoutUpdated;
+    bool m_updateEventScheduled;
+    bool m_layoutUpdateScheduled;
+    bool m_childrenLayoutUpdateScheduled;
+
 protected:
     /// Triggered when widget is moved or resized
-    virtual void onGeometryUpdate(UIGeometryUpdateEvent& event) { }
+    virtual void onRectUpdate(UIRectUpdateEvent& event) { }
     // Triggered when widget change visibility/enabled/style/children/parent/layout/...
     //virtual void onChange(const UIEvent& event);
     /// Triggered when widget gets or loses focus
@@ -155,9 +168,9 @@ protected:
     bool m_hovered;
     bool m_focusable;
     bool m_destroyed;
-    bool m_updateScheduled;
     Rect m_rect;
-    UILayoutPtr m_layout;
+    UIAnchorList m_anchors;
+    UIWeakWidgetList m_anchoredWidgets;
     UIWidgetWeakPtr m_parent;
     UIWidgetList m_children;
     UIWidgetList m_lockedWidgets;

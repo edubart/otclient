@@ -17,7 +17,7 @@ public:
     std::string getTitle() const { return m_title; }
 
 protected:
-    virtual void onGeometryUpdate(UIGeometryUpdateEvent& event);
+    virtual void onRectUpdate(UIRectUpdateEvent& event);
     virtual void onFocusChange(UIFocusEvent& event);
     virtual void onMousePress(UIMouseEvent& event);
     virtual void onMouseRelease(UIMouseEvent& event);

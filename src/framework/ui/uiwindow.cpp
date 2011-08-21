@@ -42,7 +42,7 @@ void UIWindow::loadStyleFromOTML(const OTMLNodePtr& styleNode)
 void UIWindow::render()
 {
     // draw window head
-    Rect headRect = getGeometry();
+    Rect headRect = getRect();
     headRect.setHeight(m_headHeight);
 
     if(m_headImage && m_headHeight > 0) {
@@ -58,7 +58,7 @@ void UIWindow::render()
     }
 
     // draw window body
-    Rect bodyRect = getGeometry();
+    Rect bodyRect = getRect();
     bodyRect.setTop(headRect.bottom() + 1);
     if(m_bodyImage)
         m_bodyImage->draw(bodyRect);
@@ -67,13 +67,13 @@ void UIWindow::render()
     UIWidget::render();
 }
 
-void UIWindow::onGeometryUpdate(UIGeometryUpdateEvent& event)
+void UIWindow::onRectUpdate(UIRectUpdateEvent& event)
 {
     // bind window rect to parent rect
     Rect boundRect = event.rect();
     UIWidgetPtr parent = getParent();
     if(parent) {
-        Rect parentRect = parent->getGeometry();
+        Rect parentRect = parent->getRect();
         if(boundRect.left() < parentRect.left())
             boundRect.moveLeft(parentRect.left());
         if(boundRect.top() < parentRect.top())
@@ -85,7 +85,7 @@ void UIWindow::onGeometryUpdate(UIGeometryUpdateEvent& event)
     }
 
     if(boundRect != event.rect())
-        setGeometry(boundRect);
+        setRect(boundRect);
 }
 
 void UIWindow::onFocusChange(UIFocusEvent& event)
@@ -97,11 +97,11 @@ void UIWindow::onFocusChange(UIFocusEvent& event)
 
 void UIWindow::onMousePress(UIMouseEvent& event)
 {
-    Rect headRect = getGeometry();
+    Rect headRect = getRect();
     headRect.setHeight(m_headHeight);
     if(headRect.contains(event.pos())) {
         m_moving = true;
-        m_movingReference = event.pos() - getGeometry().topLeft();
+        m_movingReference = event.pos() - getRect().topLeft();
     } else
         UIWidget::onMousePress(event);
 }

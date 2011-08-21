@@ -25,7 +25,7 @@ AlignmentFlag fw::translateAlignment(std::string aligment)
         return AlignCenter;
 }
 
-AnchorPoint fw::translateAnchorPoint(const std::string& anchorPoint)
+AnchorEdge fw::translateAnchorEdge(const std::string& anchorPoint)
 {
     if(anchorPoint == "left")
         return AnchorLeft;

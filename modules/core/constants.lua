@@ -1,4 +1,4 @@
--- AnchorPoint
+-- AnchorEdge
 AnchorNone = 0
 AnchorTop = 1
 AnchorBottom = 2
