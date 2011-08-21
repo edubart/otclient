@@ -1,8 +1,9 @@
-#include "creature.h"
+ #include "creature.h"
 #include "datmanager.h"
 #include <framework/graphics/graphics.h>
 #include <framework/graphics/framebuffer.h>
 #include "game.h"
+#include <framework/graphics/fontmanager.h>
 
 Creature::Creature() : Thing(THING_CREATURE)
 {
@@ -41,9 +42,11 @@ void Creature::draw(int x, int y)
         g_graphics.bindBlendFunc(BLEND_NORMAL);
         g_graphics.bindColor(Color::white);
     }
+}
 
+void Creature::drawName(int x, int y)
+{
     // health bar
-    // TODO: draw outside framebuffer
     Color healthColor = Color::black;
     if(m_healthPercent > 60 && m_healthPercent <= 100) {
         healthColor.setRed(0.0f);
@@ -59,7 +62,7 @@ void Creature::draw(int x, int y)
         healthColor.setGreen(0.00f);
     }
 
-    Rect healthRect = Rect(x - 14, y - 11, 27, 4);
+    Rect healthRect = Rect(x-(14.5), y-2, 27, 4);
 
     g_graphics.bindColor(Color::black);
     g_graphics.drawBoundingRect(healthRect);
@@ -69,6 +72,10 @@ void Creature::draw(int x, int y)
 
     // restore white color
     g_graphics.bindColor(Color::white);
+
+    // name
+    FontPtr font = g_fonts.getDefaultFont();
+    font->renderText(m_name, Rect(x-50, y-16, 100, 16), AlignTopCenter);
 }
 
 const ThingAttributes& Creature::getAttributes()

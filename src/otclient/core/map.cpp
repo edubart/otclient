@@ -6,7 +6,7 @@
 
 Map g_map;
 
-void Map::draw(int x, int y)
+void Map::draw(const Rect& rect)
 {
     if(!m_framebuffer)
         m_framebuffer = FrameBufferPtr(new FrameBuffer(15*32, 11*32));
@@ -50,17 +50,13 @@ void Map::draw(int x, int y)
             if(iz == drawFloorStop)
                 break;
 
-            for(int step = 0; step < 4; ++step) {
+            // +1 in draws cause 64x64 items may affect view.
 
-
-                // +1 in draws cause 64x64 items may affect view.
-
-                for(int ix = -7+(playerPos.z-iz); ix < + 8+7; ++ix) {
-                    for(int iy = -5+(playerPos.z-iz); iy < + 6+7; ++iy) {
-                        Position itemPos = Position(playerPos.x + ix, playerPos.y + iy, iz);
-                        if(const TilePtr& tile = m_tiles[itemPos])
-                            tile->draw((ix + 7 - (playerPos.z-iz))*32, (iy + 5 - (playerPos.z-iz))*32, step);
-                    }
+            for(int ix = -7+(playerPos.z-iz); ix < + 8+7; ++ix) {
+                for(int iy = -5+(playerPos.z-iz); iy < + 6+7; ++iy) {
+                    Position itemPos = Position(playerPos.x + ix, playerPos.y + iy, iz);
+                    if(const TilePtr& tile = m_tiles[itemPos])
+                        tile->draw((ix + 7 - (playerPos.z-iz))*32, (iy + 5 - (playerPos.z-iz))*32, 0);
                 }
             }
         }
@@ -73,7 +69,20 @@ void Map::draw(int x, int y)
     m_framebuffer->unbind();
 
     g_graphics.bindColor(Color::white);
-    m_framebuffer->draw(Rect(x, y, g_graphics.getScreenSize()));
+    m_framebuffer->draw(rect);
+
+    // calculate stretch factor
+    float horizontalStretchFactor = (rect.width() - rect.x()) / (float)(15*32);
+    float verticalStretchFactor = (rect.height() - rect.y()) / (float)(11*32);
+
+    // draw player names and health bars
+    for(int ix = -7; ix <= 7; ++ix) {
+        for(int iy = -5; iy <= 5; ++iy) {
+            Position itemPos = Position(playerPos.x + ix, playerPos.y + iy, playerPos.z);
+            if(const TilePtr& tile = m_tiles[itemPos])
+                tile->draw(((ix + 7)*32+5)*horizontalStretchFactor, ((iy + 5)*32 - 8)*verticalStretchFactor, 1);
+        }
+    }
 }
 
 void Map::addThing(ThingPtr thing, uint8 stackpos)

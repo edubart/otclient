@@ -8,7 +8,7 @@
 class Map
 {
 public:
-    void draw(int x, int y);
+    void draw(const Rect& rect);
 
     void addThing(ThingPtr thing, uint8 stackpos = 0);
     ThingPtr getThing(const Position& pos, uint8 stackpos);
