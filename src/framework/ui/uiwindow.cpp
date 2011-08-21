@@ -11,7 +11,6 @@ UIWindow::UIWindow(): UIWidget(UITypeWindow)
 UIWindowPtr UIWindow::create()
 {
     UIWindowPtr window(new UIWindow);
-    window->setStyle("Window");
     return window;
 }
 

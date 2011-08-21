@@ -288,12 +288,15 @@ void UILineEdit::appendCharacter(char c)
 void UILineEdit::removeCharacter(bool right)
 {
     if(m_cursorPos >= 0 && m_text.length() > 0) {
-        if(right && (uint)m_cursorPos < m_text.length())
-            m_text.erase(m_text.begin() + m_cursorPos);
-        else if((uint)m_cursorPos == m_text.length()) {
+        if((uint)m_cursorPos >= m_text.length()) {
             m_text.erase(m_text.begin() + (--m_cursorPos));
-            blinkCursor();
+        } else {
+            if(right)
+                m_text.erase(m_text.begin() + m_cursorPos);
+            else if(m_cursorPos > 0)
+                m_text.erase(m_text.begin() + --m_cursorPos);
         }
+        blinkCursor();
         update();
     }
 }
@@ -355,7 +358,7 @@ void UILineEdit::onKeyPress(UIKeyEvent& event)
 {
     if(event.keyCode() == KC_DELETE) // erase right character
         removeCharacter(true);
-    else if(event.keyCode() == KC_BACK) // erase left character
+    else if(event.keyCode() == KC_BACK) // erase left character {
         removeCharacter(false);
     else if(event.keyCode() == KC_RIGHT) // move cursor right
         moveCursor(true);

@@ -16,8 +16,10 @@ void Protocol::connect(const std::string& host, uint16 port)
 
 void Protocol::disconnect()
 {
-    m_connection->close();
-    m_connection.reset();
+    if(m_connection) {
+        m_connection->close();
+        m_connection.reset();
+    }
 }
 
 void Protocol::send(OutputMessage& outputMessage)

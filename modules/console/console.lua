@@ -3,6 +3,8 @@ Console = { }
 local console
 local logLocked = false
 local commandEnv = createEnvironment()
+local maxLines = 80
+local numLines = 0
 
 function Console.onLog(level, message, time)
   -- avoid logging while reporting logs (would cause a infinite loop)
@@ -28,12 +30,18 @@ end
 
 function Console.addLine(text, color)
   -- create new label
+
   local label = UILabel.create()
   label:setStyle('ConsoleLabel')
   label:setText(text)
   label:setForegroundColor(color)
-
   console:insertChild(label, -1)
+
+  numLines = numLines + 1
+  if numLines > maxLines then
+    local firstLine = console:getChildByIndex(0)
+    firstLine:destroy()
+  end
 end
 
 function Console.create()

@@ -30,9 +30,9 @@ function EnterGame_connectToLoginServer()
     mainMenu:hide()
   end
 
-  local enterGameWindow = rootWidget:getChild("enterGameWindow")
-  local account = enterGameWindow:getChild("accountNameLineEdit"):getText()
-  local password = enterGameWindow:getChild("accountPasswordLineEdit"):getText()
+  local enterGameWindow = rootWidget:getChildById("enterGameWindow")
+  local account = enterGameWindow:getChildById("accountNameLineEdit"):getText()
+  local password = enterGameWindow:getChildById("accountPasswordLineEdit"):getText()
   protocolLogin:login(account, password)
 
   enterGameWindow:destroy()

@@ -80,8 +80,8 @@ void Creature::drawInformation(int x, int y, bool useGray)
     g_graphics.bindColor(Color::white);
 
     // name
-    FontPtr font = g_fonts.getFont("tibia-12px-rounded");
-    font->renderText(m_name, Rect(x-50, y-16, 100, 16), AlignTopCenter, fillColor);
+    FontPtr font = g_fonts.getFont("helvetica-14px-bold");
+    font->renderText(m_name, Rect(x-100, y-16, 200, 16), AlignTopCenter, fillColor);
 }
 
 const ThingAttributes& Creature::getAttributes()

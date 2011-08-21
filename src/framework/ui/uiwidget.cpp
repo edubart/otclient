@@ -287,8 +287,8 @@ bool UIWidget::hasFocus()
         if(parent->hasFocus() && parent->getFocusedChild() == shared_from_this())
             return true;
     }
-    // root widget always has focus
-    else if(asUIWidget() == g_ui.getRootWidget())
+    // root parent always has focus
+    else if(asUIWidget() == getRootParent())
         return true;
     return false;
 }
@@ -350,7 +350,7 @@ UIWidgetPtr UIWidget::getChildById(const std::string& childId)
     else if(childId == "parent")
         return getParent();
     else if(childId == "root")
-        return g_ui.getRootWidget();
+        return getRootParent();
     else if(childId == "prev") {
         if(UIWidgetPtr parent = getParent())
             return parent->getChildBefore(asUIWidget());
@@ -468,7 +468,7 @@ void UIWidget::addChild(const UIWidgetPtr& childToAdd)
     updateChildrenLayout();
 
     // always focus new children
-    if(childToAdd->isFocusable())
+    if(childToAdd->isFocusable() && childToAdd->isExplicitlyVisible() && childToAdd->isExplicitlyEnabled())
         focusChild(childToAdd, ActiveFocusReason);
 }
 
