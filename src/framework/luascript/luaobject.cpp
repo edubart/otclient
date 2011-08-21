@@ -12,8 +12,10 @@ LuaObject::~LuaObject()
 
 void LuaObject::releaseLuaFieldsTable()
 {
-    if(m_fieldsTableRef != -1)
+    if(m_fieldsTableRef != -1) {
         g_lua.unref(m_fieldsTableRef);
+        m_fieldsTableRef = -1;
+    }
 }
 
 void LuaObject::luaSetField(const std::string& key)

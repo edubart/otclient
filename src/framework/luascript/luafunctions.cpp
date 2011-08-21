@@ -14,7 +14,7 @@ void LuaInterface::registerFunctions()
     g_lua.bindClassMemberFunction<UIWidget>("setId", &UIWidget::setId);
     g_lua.bindClassMemberFunction<UIWidget>("isEnabled", &UIWidget::isEnabled);
     g_lua.bindClassMemberFunction<UIWidget>("setEnabled", &UIWidget::setEnabled);
-    g_lua.bindClassMemberFunction<UIWidget>("isVisible", &UIWidget::isVisible);
+    g_lua.bindClassMemberFunction<UIWidget>("isExplicitlyVisible", &UIWidget::isExplicitlyVisible);
     g_lua.bindClassMemberFunction<UIWidget>("setVisible", &UIWidget::setVisible);
     g_lua.bindClassMemberFunction<UIWidget>("getWidth", &UIWidget::getWidth);
     g_lua.bindClassMemberFunction<UIWidget>("setWidth", &UIWidget::setWidth);

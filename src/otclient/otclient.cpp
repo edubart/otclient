@@ -295,11 +295,11 @@ void OTClient::onPlatformEvent(const PlatformEvent& event)
             else if(event.keycode == KC_APOSTROPHE) {
                 // TODO: move these events to lua
                 UIWidgetPtr console = g_ui.getRootWidget()->getChildById("consolePanel");
-                if(!console->isVisible()) {
-                    g_ui.getRootWidget()->lockChild(console);
+                if(!console->isExplicitlyVisible()) {
+                    g_ui.getRootWidget()->focusChild(console, ActiveFocusReason);
+                    g_ui.getRootWidget()->moveChildToTop(console);
                     console->setVisible(true);
                 } else {
-                    g_ui.getRootWidget()->unlockChild(console);
                     console->setVisible(false);
                 }
                 fireUi = false;

@@ -31,7 +31,7 @@ void Tile::draw(int x, int y, int step)
 
             if(thingAttributes.alwaysOnTopOrder == 1) {
                 thing->draw(x - m_drawNextOffset, y - m_drawNextOffset);
-                //font->renderText("T1", Rect(x + 5, y+5, 100, 100));
+                font->renderText("T1", Rect(x + 5, y+5, 100, 100));
 
                 m_drawNextOffset += thingAttributes.drawNextOffset;
             }
@@ -43,7 +43,7 @@ void Tile::draw(int x, int y, int step)
 
             if(thingAttributes.alwaysOnTopOrder == 2) {
                 thing->draw(x - m_drawNextOffset, y - m_drawNextOffset);
-                //font->renderText("T2", Rect(x + 5, y+5, 100, 100));
+                font->renderText("T2", Rect(x + 5, y+5, 100, 100));
                 m_drawNextOffset += thingAttributes.drawNextOffset;
             }
         }
@@ -52,7 +52,7 @@ void Tile::draw(int x, int y, int step)
             const ThingPtr& thing = *it;
             const ThingAttributes& thingAttributes = thing->getAttributes();
             thing->draw(x - m_drawNextOffset, y - m_drawNextOffset);
-            //font->renderText("B0", Rect(x + 5, y+5, 100, 100));
+            font->renderText("B0", Rect(x + 5, y+5, 100, 100));
             m_drawNextOffset += thingAttributes.drawNextOffset;
         }
 
@@ -67,7 +67,7 @@ void Tile::draw(int x, int y, int step)
 
             if(thingAttributes.alwaysOnTopOrder == 3) {
                 thing->draw(x - m_drawNextOffset, y - m_drawNextOffset);
-                //font->renderText("T3", Rect(x + 5, y+5, 100, 100));
+                font->renderText("T3", Rect(x + 5, y+5, 100, 100));
                 m_drawNextOffset += thingAttributes.drawNextOffset;
             }
         }

@@ -6,7 +6,6 @@
 UIWindow::UIWindow(): UIWidget(UITypeWindow)
 {
     m_moving = false;
-    setFocusable(true);
 }
 
 UIWindowPtr UIWindow::create()
@@ -87,6 +86,13 @@ void UIWindow::onGeometryUpdate(UIGeometryUpdateEvent& event)
 
     if(boundRect != event.rect())
         setGeometry(boundRect);
+}
+
+void UIWindow::onFocusChange(UIFocusEvent& event)
+{
+    // when a window is focused it goes to the top
+    if(UIWidgetPtr parent = getParent())
+        parent->moveChildToTop(asUIWidget());
 }
 
 void UIWindow::onMousePress(UIMouseEvent& event)

@@ -5,3 +5,9 @@ function print(...)
   end
   Logger.log(LogInfo, msg)
 end
+
+function createEnvironment()
+  local env = { }
+  setmetatable(env, { __index = _G} )
+  return env
+end
