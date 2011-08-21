@@ -11,80 +11,64 @@ Tile::Tile()
     m_drawNextOffset = 0;
 }
 
-void Tile::draw(int x, int y, int step)
+void Tile::draw(int x, int y)
 {
-    // STEP 0 = draw map
-    // STEP 1 = draw creature names
-    // STEP 2 = draw speak
-
     FontPtr font = g_fonts.getDefaultFont();
 
-    if(step == 0) {
-        m_drawNextOffset = 0;
+    m_drawNextOffset = 0;
 
-        if(m_ground)
-            m_ground->draw(x, y);
+    if(m_ground)
+        m_ground->draw(x, y);
 
-        for(auto it = m_itemsTop.rbegin(), end = m_itemsTop.rend(); it != end; ++it) {
-            const ThingPtr& thing = *it;
-            const ThingAttributes& thingAttributes = thing->getAttributes();
+    for(auto it = m_itemsTop.rbegin(), end = m_itemsTop.rend(); it != end; ++it) {
+        const ThingPtr& thing = *it;
+        const ThingAttributes& thingAttributes = thing->getAttributes();
 
-            if(thingAttributes.alwaysOnTopOrder == 1) {
-                thing->draw(x - m_drawNextOffset, y - m_drawNextOffset);
-                //font->renderText("T1", Rect(x + 5, y+5, 100, 100));
-
-                m_drawNextOffset += thingAttributes.drawNextOffset;
-            }
-        }
-
-        for(auto it = m_itemsTop.rbegin(), end = m_itemsTop.rend(); it != end; ++it) {
-            const ThingPtr& thing = *it;
-            const ThingAttributes& thingAttributes = thing->getAttributes();
-
-            if(thingAttributes.alwaysOnTopOrder == 2) {
-                thing->draw(x - m_drawNextOffset, y - m_drawNextOffset);
-                //font->renderText("T2", Rect(x + 5, y+5, 100, 100));
-                m_drawNextOffset += thingAttributes.drawNextOffset;
-            }
-        }
-
-        for(auto it = m_itemsBottom.rbegin(), end = m_itemsBottom.rend(); it != end; ++it) {
-            const ThingPtr& thing = *it;
-            const ThingAttributes& thingAttributes = thing->getAttributes();
+        if(thingAttributes.alwaysOnTopOrder == 1) {
             thing->draw(x - m_drawNextOffset, y - m_drawNextOffset);
-            //font->renderText("B0", Rect(x + 5, y+5, 100, 100));
+            //font->renderText("T1", Rect(x + 5, y+5, 100, 100));
+
             m_drawNextOffset += thingAttributes.drawNextOffset;
         }
+    }
 
-        for(auto it = m_creatures.rbegin(), end = m_creatures.rend(); it != end; ++it) {
-            const ThingPtr& thing = *it;
+    for(auto it = m_itemsTop.rbegin(), end = m_itemsTop.rend(); it != end; ++it) {
+        const ThingPtr& thing = *it;
+        const ThingAttributes& thingAttributes = thing->getAttributes();
+
+        if(thingAttributes.alwaysOnTopOrder == 2) {
             thing->draw(x - m_drawNextOffset, y - m_drawNextOffset);
-        }
-
-        for(auto it = m_itemsTop.rbegin(), end = m_itemsTop.rend(); it != end; ++it) {
-            const ThingPtr& thing = *it;
-            const ThingAttributes& thingAttributes = thing->getAttributes();
-
-            if(thingAttributes.alwaysOnTopOrder == 3) {
-                thing->draw(x - m_drawNextOffset, y - m_drawNextOffset);
-                //font->renderText("T3", Rect(x + 5, y+5, 100, 100));
-                m_drawNextOffset += thingAttributes.drawNextOffset;
-            }
-        }
-
-        for(auto it = m_effects.rbegin(), end = m_effects.rend(); it != end; ++it) {
-            const ThingPtr& thing = *it;
-            thing->draw(x - m_drawNextOffset, y - m_drawNextOffset);
+            //font->renderText("T2", Rect(x + 5, y+5, 100, 100));
+            m_drawNextOffset += thingAttributes.drawNextOffset;
         }
     }
-    else if(step == 1) {
-        for(auto it = m_creatures.rbegin(), end = m_creatures.rend(); it != end; ++it) {
-            const ThingPtr& thing = *it;
-            const CreaturePtr& creature = thing->asCreature();
-            creature->drawName(x - m_drawNextOffset, y - m_drawNextOffset);
+
+    for(auto it = m_itemsBottom.rbegin(), end = m_itemsBottom.rend(); it != end; ++it) {
+        const ThingPtr& thing = *it;
+        const ThingAttributes& thingAttributes = thing->getAttributes();
+        thing->draw(x - m_drawNextOffset, y - m_drawNextOffset);
+        //font->renderText("B0", Rect(x + 5, y+5, 100, 100));
+        m_drawNextOffset += thingAttributes.drawNextOffset;
+    }
+
+    for(auto it = m_creatures.rbegin(), end = m_creatures.rend(); it != end; ++it) {
+        const ThingPtr& thing = *it;
+        thing->draw(x - m_drawNextOffset, y - m_drawNextOffset);
+    }
+
+    for(auto it = m_itemsTop.rbegin(), end = m_itemsTop.rend(); it != end; ++it) {
+        const ThingPtr& thing = *it;
+        const ThingAttributes& thingAttributes = thing->getAttributes();
+
+        if(thingAttributes.alwaysOnTopOrder == 3) {
+            thing->draw(x, y);
+            //font->renderText("T3", Rect(x + 5, y+5, 100, 100));
         }
+    }
 
-
+    for(auto it = m_effects.rbegin(), end = m_effects.rend(); it != end; ++it) {
+        const ThingPtr& thing = *it;
+        thing->draw(x - m_drawNextOffset, y - m_drawNextOffset);
     }
 }
 

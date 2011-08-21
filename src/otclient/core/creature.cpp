@@ -44,38 +44,44 @@ void Creature::draw(int x, int y)
     }
 }
 
-void Creature::drawName(int x, int y)
+void Creature::drawInformation(int x, int y, bool useGray)
 {
-    // health bar
-    Color healthColor = Color::black;
-    if(m_healthPercent > 60 && m_healthPercent <= 100) {
-        healthColor.setRed(0.0f);
-        healthColor.setGreen(0.75f);
-    } else if(m_healthPercent > 30 && m_healthPercent <= 60) {
-        healthColor.setRed(0.75f);
-        healthColor.setGreen(0.75f);
-    } else if(m_healthPercent > 10 && m_healthPercent <= 30) {
-        healthColor.setRed(0.75f);
-        healthColor.setGreen(0.00f);
-    } else if(m_healthPercent > 0 && m_healthPercent <= 10) {
-        healthColor.setRed(0.25f);
-        healthColor.setGreen(0.00f);
+    Color fillColor = Color(96, 96, 96);
+
+    if(!useGray) {
+        // health bar
+        fillColor = Color::black;
+        if(m_healthPercent > 60 && m_healthPercent <= 100) {
+            fillColor.setRed(0.0f);
+            fillColor.setGreen(0.75f);
+        } else if(m_healthPercent > 30 && m_healthPercent <= 60) {
+            fillColor.setRed(0.75f);
+            fillColor.setGreen(0.75f);
+        } else if(m_healthPercent > 10 && m_healthPercent <= 30) {
+            fillColor.setRed(0.75f);
+            fillColor.setGreen(0.00f);
+        } else if(m_healthPercent > 0 && m_healthPercent <= 10) {
+            fillColor.setRed(0.25f);
+            fillColor.setGreen(0.00f);
+        }
     }
 
-    Rect healthRect = Rect(x-(14.5), y-2, 27, 4);
+    Rect backgroundRect = Rect(x-(14.5), y-2, 27, 4);
+    Rect healthRect = backgroundRect.expanded(-1);
+    healthRect.setWidth((m_healthPercent/100.0)*25);
 
     g_graphics.bindColor(Color::black);
-    g_graphics.drawBoundingRect(healthRect);
+    g_graphics.drawFilledRect(backgroundRect);
 
-    g_graphics.bindColor(healthColor);
-    g_graphics.drawFilledRect(healthRect.expanded(-1));
+    g_graphics.bindColor(fillColor);
+    g_graphics.drawFilledRect(healthRect);
 
     // restore white color
     g_graphics.bindColor(Color::white);
 
     // name
-    FontPtr font = g_fonts.getDefaultFont();
-    font->renderText(m_name, Rect(x-50, y-16, 100, 16), AlignTopCenter);
+    FontPtr font = g_fonts.getFont("tibia-12px-rounded");
+    font->renderText(m_name, Rect(x-50, y-16, 100, 16), AlignTopCenter, fillColor);
 }
 
 const ThingAttributes& Creature::getAttributes()

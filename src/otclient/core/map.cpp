@@ -18,10 +18,11 @@ void Map::draw(const Rect& rect)
 
     // player is above 7
 
+    int drawFloorStop = 0;
     if(playerPos.z <= 7) {
 
         // player pos it 8-6. check if we can draw upper floors.
-        int drawFloorStop = 0;
+
 
         // if there is a window on north, east, south or west
         //Position direction[4] = {Position(0, -1, 0), Position(1, 0, 0), Position(0, 1, 0), Position(-1, 0, 0)};
@@ -56,7 +57,7 @@ void Map::draw(const Rect& rect)
                 for(int iy = -5+(playerPos.z-iz); iy < + 6+7; ++iy) {
                     Position itemPos = Position(playerPos.x + ix, playerPos.y + iy, iz);
                     if(const TilePtr& tile = m_tiles[itemPos])
-                        tile->draw((ix + 7 - (playerPos.z-iz))*32, (iy + 5 - (playerPos.z-iz))*32, 0);
+                        tile->draw((ix + 7 - (playerPos.z-iz))*32, (iy + 5 - (playerPos.z-iz))*32);
                 }
             }
         }
@@ -79,8 +80,21 @@ void Map::draw(const Rect& rect)
     for(int ix = -7; ix <= 7; ++ix) {
         for(int iy = -5; iy <= 5; ++iy) {
             Position itemPos = Position(playerPos.x + ix, playerPos.y + iy, playerPos.z);
-            if(const TilePtr& tile = m_tiles[itemPos])
-                tile->draw(((ix + 7)*32+5)*horizontalStretchFactor, ((iy + 5)*32 - 8)*verticalStretchFactor, 1);
+            if(const TilePtr& tile = m_tiles[itemPos]) {
+                std::deque<ThingPtr> creatures = tile->getCreatures();
+                for(auto it = creatures.rbegin(), end = creatures.rend(); it != end; ++it) {
+                    const ThingPtr& thing = *it;
+                    const CreaturePtr& creature = thing->asCreature();
+
+                    int x = (ix + 7)*32 + 5 - tile->getDrawNextOffset();
+                    int y = (iy + 5)*32 - 8 - tile->getDrawNextOffset();
+
+                    // TODO: create isCovered function.
+                    bool useGray = (drawFloorStop != playerPos.z-1);
+
+                    creature->drawInformation(x*horizontalStretchFactor, y*verticalStretchFactor, useGray);
+                }
+            }
         }
     }
 }
