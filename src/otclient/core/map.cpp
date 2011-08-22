@@ -86,8 +86,8 @@ void Map::draw(const Rect& rect)
                     const ThingPtr& thing = *it;
                     const CreaturePtr& creature = thing->asCreature();
 
-                    int x = (ix + 7)*32 + 5 - tile->getDrawNextOffset();
-                    int y = (iy + 5)*32 - 8 - tile->getDrawNextOffset();
+                    int x = (ix + 7)*32 + 10 - tile->getDrawNextOffset();
+                    int y = (iy + 5)*32 - 10 - tile->getDrawNextOffset();
 
                     // TODO: create isCovered function.
                     bool useGray = (drawFloorStop != playerPos.z-1);
