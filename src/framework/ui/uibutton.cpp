@@ -5,7 +5,7 @@
 #include <framework/luascript/luainterface.h>
 #include <framework/graphics/graphics.h>
 
-UIButton::UIButton(): UIWidget(UITypeButton)
+UIButton::UIButton()
 {
     m_state = ButtonUp;
     m_focusable = false;
@@ -20,9 +20,9 @@ UIButtonPtr UIButton::create()
     return button;
 }
 
-void UIButton::loadStyleFromOTML(const OTMLNodePtr& styleNode)
+void UIButton::onStyleApply(const OTMLNodePtr& styleNode)
 {
-    UIWidget::loadStyleFromOTML(styleNode);
+    UIWidget::onStyleApply(styleNode);
 
     for(int i=0; i<3; ++i) {
         m_statesStyle[i].image = m_image;
@@ -73,28 +73,29 @@ void UIButton::render()
     m_font->renderText(m_text, textRect, AlignCenter, currentStyle.foregroundColor);
 }
 
-void UIButton::onHoverChange(UIHoverEvent& event)
+void UIButton::onHoverChange(bool hovered)
 {
-    if(event.mouseEnter() && m_state == ButtonUp)
+    if(hovered && m_state == ButtonUp)
         m_state = ButtonHover;
     else if(m_state == ButtonHover)
         m_state = ButtonUp;
 }
 
-void UIButton::onMousePress(UIMouseEvent& event)
+bool UIButton::onMousePress(const Point& mousePos, UI::MouseButton button)
 {
-    if(event.button() == MouseLeftButton) {
+    if(button == UI::MouseLeftButton) {
         m_state = ButtonDown;
-    } else
-        event.ignore();
+    }
+    return true;
 }
 
-void UIButton::onMouseRelease(UIMouseEvent& event)
+bool UIButton::onMouseRelease(const Point& mousePos, UI::MouseButton button)
 {
     if(m_state == ButtonDown) {
-        if(m_onClick && getRect().contains(event.pos()))
+        if(m_onClick && getRect().contains(mousePos))
             m_onClick();
         m_state = (isHovered() && isEnabled()) ? ButtonHover : ButtonUp;
-    } else
-        event.ignore();
+        return true;
+    }
+    return false;
 }

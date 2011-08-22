@@ -38,47 +38,43 @@ void UIManager::inputEvent(const PlatformEvent& event)
     // translate input event to ui events
     if(m_rootWidget) {
         if(event.type & EventKeyboardAction) {
-            int keyboardModifiers = KeyboardNoModifier;
+            int keyboardModifiers = UI::KeyboardNoModifier;
             if(event.ctrl)
-                keyboardModifiers |= KeyboardCtrlModifier;
+                keyboardModifiers |= UI::KeyboardCtrlModifier;
             if(event.shift)
-                keyboardModifiers |= KeyboardShiftModifier;
+                keyboardModifiers |= UI::KeyboardShiftModifier;
             if(event.alt)
-                keyboardModifiers |= KeyboardAltModifier;
+                keyboardModifiers |= UI::KeyboardAltModifier;
 
-            UIKeyEvent e(event.keycode, event.keychar, keyboardModifiers);
             if(event.type == EventKeyDown)
-                m_rootWidget->onKeyPress(e);
+                m_rootWidget->onKeyPress(event.keycode, event.keychar, keyboardModifiers);
             else
-                m_rootWidget->onKeyRelease(e);
+                m_rootWidget->onKeyRelease(event.keycode, event.keychar, keyboardModifiers);
         } else if(event.type & EventMouseAction) {
             if(event.type == EventMouseMove) {
-                UIMouseEvent e(event.mousePos, event.mousePos);
-                m_rootWidget->onMouseMove(e);
+                m_rootWidget->onMouseMove(event.mousePos, event.mouseMoved);
             }
             else if(event.type & EventMouseWheel) {
-                MouseWheelDirection dir;
+                UI::MouseWheelDirection dir = UI::MouseNoWheel;
                 if(event.type & EventDown)
-                    dir = MouseWheelDown;
+                    dir = UI::MouseWheelDown;
                 else if(event.type & EventUp)
-                    dir = MouseWheelUp;
+                    dir = UI::MouseWheelUp;
 
-                UIMouseEvent e(event.mousePos, dir);
-                m_rootWidget->onMouseWheel(e);
+                m_rootWidget->onMouseWheel(event.mousePos, dir);
             } else  {
-                MouseButton button;
+                UI::MouseButton button = UI::MouseNoButton;
                 if(event.type & EventMouseLeftButton)
-                    button = MouseLeftButton;
+                    button = UI::MouseLeftButton;
                 else if(event.type & EventMouseMidButton)
-                    button = MouseMidButton;
+                    button = UI::MouseMidButton;
                 else if(event.type & EventMouseRightButton)
-                    button = MouseRightButton;
+                    button = UI::MouseRightButton;
 
-                UIMouseEvent e(event.mousePos, button);
                 if(event.type & EventDown)
-                    m_rootWidget->onMousePress(e);
+                    m_rootWidget->onMousePress(event.mousePos, button);
                 else if(event.type & EventUp)
-                    m_rootWidget->onMouseRelease(e);
+                    m_rootWidget->onMouseRelease(event.mousePos, button);
             }
         }
     }
@@ -182,7 +178,7 @@ UIWidgetPtr UIManager::loadWidgetFromOTML(const OTMLNodePtr& widgetNode)
     else
         throw OTMLException(styleNode, "cannot determine widget type");
 
-    widget->loadStyleFromOTML(styleNode);
+    widget->onStyleApply(styleNode);
     widget->updateLayout();
 
     for(const OTMLNodePtr& childNode : widgetNode->children()) {

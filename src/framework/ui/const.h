@@ -3,15 +3,7 @@
 
 // namespace ui {
 
-enum UIWidgetType {
-    UITypeWidget = 0,
-    UITypeLabel,
-    UITypeButton,
-    UITypeLineEdit,
-    UITypeWindow,
-    UITypeList,
-    UITypeConsole
-};
+namespace UI {
 
 enum FocusReason {
     MouseFocusReason = 0,
@@ -40,11 +32,7 @@ enum KeyboardModifier {
     KeyboardShiftModifier = 4
 };
 
-enum ButtonState {
-    ButtonUp = 0,
-    ButtonDown,
-    ButtonHover
-};
+}
 
 // }
 

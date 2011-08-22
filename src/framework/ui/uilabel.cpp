@@ -2,7 +2,7 @@
 #include <framework/graphics/font.h>
 #include <framework/otml/otmlnode.h>
 
-UILabel::UILabel() : UIWidget(UITypeLabel)
+UILabel::UILabel()
 {
     m_align = AlignLeft;
     m_focusable = false;
@@ -14,9 +14,9 @@ UILabelPtr UILabel::create()
     return label;
 }
 
-void UILabel::loadStyleFromOTML(const OTMLNodePtr& styleNode)
+void UILabel::onStyleApply(const OTMLNodePtr& styleNode)
 {
-    UIWidget::loadStyleFromOTML(styleNode);
+    UIWidget::onStyleApply(styleNode);
 
     m_text = styleNode->valueAt("text", m_text);
 

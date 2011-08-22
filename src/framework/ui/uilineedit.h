@@ -10,7 +10,6 @@ public:
 
     static UILineEditPtr create();
 
-    virtual void loadStyleFromOTML(const OTMLNodePtr& styleNode);
     virtual void render();
 
     void update();
@@ -30,10 +29,11 @@ public:
     int getTextPos(Point pos);
 
 protected:
-    virtual void onRectUpdate(UIRectUpdateEvent& event);
-    virtual void onFocusChange(UIFocusEvent& event);
-    virtual void onKeyPress(UIKeyEvent& event);
-    virtual void onMousePress(UIMouseEvent& event);
+    virtual void onStyleApply(const OTMLNodePtr& styleNode);
+    virtual void onGeometryUpdate(const Rect& oldRect, const Rect& newRect);
+    virtual void onFocusChange(bool focused, UI::FocusReason reason);
+    virtual bool onKeyPress(uchar keyCode, char keyChar, int keyboardModifiers);
+    virtual bool onMousePress(const Point& mousePos, UI::MouseButton button);
 
 private:
     void blinkCursor();

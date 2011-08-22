@@ -3,6 +3,7 @@
 
 #include <framework/global.h>
 #include "const.h"
+#include <framework/platform/platformevent.h>
 
 class UIManager;
 class UIAnchor;

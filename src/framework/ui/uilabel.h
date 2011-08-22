@@ -10,7 +10,7 @@ public:
 
     static UILabelPtr create();
 
-    virtual void loadStyleFromOTML(const OTMLNodePtr& styleNode);
+    virtual void onStyleApply(const OTMLNodePtr& styleNode);
     virtual void render();
 
     void resizeToText();

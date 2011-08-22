@@ -4,7 +4,7 @@
 #include <framework/platform/platform.h>
 #include <framework/otml/otmlnode.h>
 
-UILineEdit::UILineEdit() : UIWidget(UITypeLabel)
+UILineEdit::UILineEdit()
 {
     m_align = AlignLeftCenter;
     m_cursorPos = 0;
@@ -19,18 +19,6 @@ UILineEditPtr UILineEdit::create()
 {
     UILineEditPtr lineEdit(new UILineEdit);
     return lineEdit;
-}
-
-void UILineEdit::loadStyleFromOTML(const OTMLNodePtr& styleNode)
-{
-    UIWidget::loadStyleFromOTML(styleNode);
-
-    setText(styleNode->valueAt("text", getText()));
-
-    if(OTMLNodePtr node = styleNode->get("onAction")) {
-        g_lua.loadFunction(node->value(), "@" + node->source() + "[" + node->tag() + "]");
-        luaSetField(node->tag());
-    }
 }
 
 void UILineEdit::render()
@@ -339,57 +327,69 @@ int UILineEdit::getTextPos(Point pos)
     return candidatePos;
 }
 
-void UILineEdit::onRectUpdate(UIRectUpdateEvent& event)
+void UILineEdit::onStyleApply(const OTMLNodePtr& styleNode)
+{
+    UIWidget::onStyleApply(styleNode);
+
+    setText(styleNode->valueAt("text", getText()));
+
+    if(OTMLNodePtr node = styleNode->get("onAction")) {
+        g_lua.loadFunction(node->value(), "@" + node->source() + "[" + node->tag() + "]");
+        luaSetField(node->tag());
+    }
+}
+
+void UILineEdit::onGeometryUpdate(const Rect& oldRect, const Rect& newRect)
 {
     update();
 }
 
-void UILineEdit::onFocusChange(UIFocusEvent& event)
+void UILineEdit::onFocusChange(bool focused, UI::FocusReason reason)
 {
-    if(event.gotFocus()) {
-        if(event.reason() == TabFocusReason)
+    if(focused) {
+        if(reason == UI::TabFocusReason)
             setCursorPos(0);
         else
             blinkCursor();
     }
 }
 
-void UILineEdit::onKeyPress(UIKeyEvent& event)
+bool UILineEdit::onKeyPress(uchar keyCode, char keyChar, int keyboardModifiers)
 {
-    if(event.keyCode() == KC_DELETE) // erase right character
+    if(keyCode == KC_DELETE) // erase right character
         removeCharacter(true);
-    else if(event.keyCode() == KC_BACK) // erase left character {
+    else if(keyCode == KC_BACK) // erase left character {
         removeCharacter(false);
-    else if(event.keyCode() == KC_RIGHT) // move cursor right
+    else if(keyCode == KC_RIGHT) // move cursor right
         moveCursor(true);
-    else if(event.keyCode() == KC_LEFT) // move cursor left
+    else if(keyCode == KC_LEFT) // move cursor left
         moveCursor(false);
-    else if(event.keyCode() == KC_HOME) // move cursor to first character
+    else if(keyCode == KC_HOME) // move cursor to first character
         setCursorPos(0);
-    else if(event.keyCode() == KC_END) // move cursor to last character
+    else if(keyCode == KC_END) // move cursor to last character
         setCursorPos(m_text.length());
-    else if(event.keyCode() == KC_TAB) {
+    else if(keyCode == KC_TAB) {
         if(UIWidgetPtr parent = getParent())
-            parent->focusNextChild(TabFocusReason);
-    } else if(event.keyCode() == KC_RETURN) {
+            parent->focusNextChild(UI::TabFocusReason);
+    } else if(keyCode == KC_RETURN) {
         if(m_onAction)
             m_onAction();
-    } else if(event.keyChar() != 0) {
-        appendCharacter(event.keyChar());
+    } else if(keyCode != 0) {
+        appendCharacter(keyChar);
     } else
-        event.ignore();
+        return false;
 
-    if(!event.isAccepted())
-        UIWidget::onKeyPress(event);
+    return true;
 }
 
-void UILineEdit::onMousePress(UIMouseEvent& event)
+bool UILineEdit::onMousePress(const Point& mousePos, UI::MouseButton button)
 {
-    if(event.button() == MouseLeftButton) {
-        int pos = getTextPos(event.pos());
+    if(button == UI::MouseLeftButton) {
+        int pos = getTextPos(mousePos);
         if(pos >= 0)
             setCursorPos(pos);
     }
+    return true;
 }
 
 void UILineEdit::blinkCursor()

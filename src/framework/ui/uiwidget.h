@@ -2,7 +2,6 @@
 #define UIWIDGET_H
 
 #include "declarations.h"
-#include "uievent.h"
 #include <framework/luascript/luaobject.h>
 #include <framework/graphics/declarations.h>
 #include <framework/otml/declarations.h>
@@ -10,19 +9,16 @@
 class UIWidget : public LuaObject
 {
 public:
-    UIWidget(UIWidgetType type = UITypeWidget);
+    UIWidget();
     virtual ~UIWidget();
 
-    static UIWidgetPtr create();
+    static UIWidgetPtr create() { return UIWidgetPtr(new UIWidget); }
 
     /// Must be called just after the widget creation
     virtual void setup() { }
 
     /// Remove this widget from parent then destroy it and its children
     virtual void destroy();
-
-    /// Load style from otml node
-    virtual void loadStyleFromOTML(const OTMLNodePtr& styleNode);
 
     /// Draw widget on screen
     virtual void render();
@@ -67,7 +63,6 @@ public:
     bool hasFocus();
     bool hasChild(const UIWidgetPtr& child);
 
-    UIWidgetType getWidgetType() const { return m_type; }
     std::string getId() const { return m_id; }
     int getChildCount() const { return m_children.size(); }
     UIWidgetPtr getParent() const { return m_parent.lock(); }
@@ -104,8 +99,8 @@ public:
     void addChild(const UIWidgetPtr& childToAdd);
     void insertChild(const UIWidgetPtr& childToInsert, int index);
     void removeChild(const UIWidgetPtr& childToRemove);
-    void focusChild(const UIWidgetPtr& childToFocus, FocusReason reason);
-    void focusNextChild(FocusReason reason);
+    void focusChild(const UIWidgetPtr& childToFocus, UI::FocusReason reason);
+    void focusNextChild(UI::FocusReason reason);
     void moveChildToTop(const UIWidgetPtr& childToMove);
     void lockChild(const UIWidgetPtr& childToLock);
     void unlockChild(const UIWidgetPtr& childToUnlock);
@@ -135,26 +130,26 @@ private:
     bool m_childrenLayoutUpdateScheduled;
 
 protected:
+    /// Triggered when widget style is changed
+    virtual void onStyleApply(const OTMLNodePtr& styleNode);
     /// Triggered when widget is moved or resized
-    virtual void onRectUpdate(UIRectUpdateEvent& event) { }
-    // Triggered when widget change visibility/enabled/style/children/parent/layout/...
-    //virtual void onChange(const UIEvent& event);
+    virtual void onGeometryUpdate(const Rect& oldRect, const Rect& newRect);
     /// Triggered when widget gets or loses focus
-    virtual void onFocusChange(UIFocusEvent& event);
+    virtual void onFocusChange(bool focused, UI::FocusReason reason);
     /// Triggered when the mouse enters or leaves widget area
-    virtual void onHoverChange(UIHoverEvent& event) { }
+    virtual void onHoverChange(bool hovered);
     /// Triggered when user presses key while widget has focus
-    virtual void onKeyPress(UIKeyEvent& event);
+    virtual bool onKeyPress(uchar keyCode, char keyChar, int keyboardModifiers);
     /// Triggered when user releases key while widget has focus
-    virtual void onKeyRelease(UIKeyEvent& event);
+    virtual bool onKeyRelease(uchar keyCode, char keyChar, int keyboardModifiers);
     /// Triggered when a mouse button is pressed down while mouse pointer is inside widget area
-    virtual void onMousePress(UIMouseEvent& event);
+    virtual bool onMousePress(const Point& mousePos, UI::MouseButton button);
     /// Triggered when a mouse button is released
-    virtual void onMouseRelease(UIMouseEvent& event);
+    virtual bool onMouseRelease(const Point& mousePos, UI::MouseButton button);
     /// Triggered when mouse moves (even when the mouse is outside widget area)
-    virtual void onMouseMove(UIMouseEvent& event);
+    virtual bool onMouseMove(const Point& mousePos, const Point& mouseMoved);
     /// Triggered when mouse middle button wheels inside widget area
-    virtual void onMouseWheel(UIMouseEvent& event);
+    virtual bool onMouseWheel(const Point& mousePos, UI::MouseWheelDirection direction);
 
     friend class UIManager;
 
@@ -162,7 +157,6 @@ private:
     void destroyCheck();
 
 protected:
-    UIWidgetType m_type;
     bool m_enabled;
     bool m_visible;
     bool m_hovered;

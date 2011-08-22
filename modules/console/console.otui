@@ -26,7 +26,7 @@ RectPanel
     anchors.bottom: parent.bottom
     anchors.left: prev.right
     anchors.right: parent.right
-    margin.left: 2
+    margin.left: 4
     font: terminus-14px-bold
     onAction: |
       function(self)

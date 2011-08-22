@@ -3,7 +3,7 @@
 #include <framework/graphics/font.h>
 #include <framework/otml/otml.h>
 
-UIWindow::UIWindow(): UIWidget(UITypeWindow)
+UIWindow::UIWindow()
 {
     m_moving = false;
 }
@@ -14,9 +14,9 @@ UIWindowPtr UIWindow::create()
     return window;
 }
 
-void UIWindow::loadStyleFromOTML(const OTMLNodePtr& styleNode)
+void UIWindow::onStyleApply(const OTMLNodePtr& styleNode)
 {
-    UIWidget::loadStyleFromOTML(styleNode);
+    UIWidget::onStyleApply(styleNode);
 
     if(OTMLNodePtr headNode = styleNode->get("head")) {
         if(OTMLNodePtr node = headNode->get("border-image"))
@@ -66,10 +66,10 @@ void UIWindow::render()
     UIWidget::render();
 }
 
-void UIWindow::onRectUpdate(UIRectUpdateEvent& event)
+void UIWindow::onGeometryUpdate(const Rect& oldRect, const Rect& newRect)
 {
     // bind window rect to parent rect
-    Rect boundRect = event.rect();
+    Rect boundRect = newRect;
     UIWidgetPtr parent = getParent();
     if(parent) {
         Rect parentRect = parent->getRect();
@@ -83,40 +83,43 @@ void UIWindow::onRectUpdate(UIRectUpdateEvent& event)
             boundRect.moveRight(parentRect.right());
     }
 
-    if(boundRect != event.rect())
+    if(boundRect != newRect)
         setRect(boundRect);
 }
 
-void UIWindow::onFocusChange(UIFocusEvent& event)
+void UIWindow::onFocusChange(bool focused, UI::FocusReason reason)
 {
     // when a window is focused it goes to the top
     if(UIWidgetPtr parent = getParent())
         parent->moveChildToTop(asUIWidget());
 }
 
-void UIWindow::onMousePress(UIMouseEvent& event)
+bool UIWindow::onMousePress(const Point& mousePos, UI::MouseButton button)
 {
     Rect headRect = getRect();
     headRect.setHeight(m_headHeight);
-    if(headRect.contains(event.pos())) {
+    if(headRect.contains(mousePos)) {
         m_moving = true;
-        m_movingReference = event.pos() - getRect().topLeft();
-    } else
-        UIWidget::onMousePress(event);
+        m_movingReference = mousePos - getRect().topLeft();
+        return true;
+    }
+    return UIWidget::onMousePress(mousePos, button);
 }
 
-void UIWindow::onMouseRelease(UIMouseEvent& event)
+bool UIWindow::onMouseRelease(const Point& mousePos, UI::MouseButton button)
 {
-    if(m_moving)
+    if(m_moving) {
         m_moving = false;
-    else
-        UIWidget::onMouseRelease(event);
+        return true;
+    }
+    return UIWidget::onMouseRelease(mousePos, button);
 }
 
-void UIWindow::onMouseMove(UIMouseEvent& event)
+bool UIWindow::onMouseMove(const Point& mousePos, const Point& mouseMoved)
 {
-    if(m_moving)
-        move(event.pos() - m_movingReference);
-    else
-        UIWidget::onMouseMove(event);
+    if(m_moving) {
+        move(mousePos - m_movingReference);
+        return true;
+    }
+    return UIWidget::onMouseMove(mousePos, mouseMoved);
 }

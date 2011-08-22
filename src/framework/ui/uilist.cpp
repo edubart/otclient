@@ -1,11 +1,11 @@
 #include "uilist.h"
 
-UIList::UIList() : UIWidget(UITypeList)
+UIList::UIList()
 {
 
 }
 
-void UIList::loadStyleFromOTML(const OTMLNodePtr& styleNode)
+void UIList::onStyleApply(const OTMLNodePtr& styleNode)
 {
 
 }
@@ -15,18 +15,18 @@ void UIList::render()
 
 }
 
-void UIList::onKeyPress(UIKeyEvent& event)
+bool UIList::onKeyPress(uchar keyCode, char keyChar, int keyboardModifiers)
 {
-
+    return false;
 }
 
-void UIList::onMousePress(UIMouseEvent& event)
+bool UIList::onMousePress(const Point& mousePos, UI::MouseButton button)
 {
-
+    return false;
 }
 
-void UIList::onMouseMove(UIMouseEvent& event)
+bool UIList::onMouseMove(const Point& mousePos, const Point& mouseMoved)
 {
-
+    return false;
 }
 

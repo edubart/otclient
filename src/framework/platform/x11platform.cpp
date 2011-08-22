@@ -165,7 +165,7 @@ void Platform::init(PlatformListener* platformListener, const char *appName)
     x11.keyMap[XK_KP_Equal] = KC_NUMPADEQUALS;
     x11.keyMap[XK_KP_Divide] = KC_DIVIDE;
     x11.keyMap[XK_KP_Multiply] = KC_MULTIPLY;
-    x11.keyMap[XK_KP_Enter] = KC_NUMPADENTER;
+    x11.keyMap[XK_KP_Enter] = KC_RETURN;
 
     // keypad with numlock off
     x11.keyMap[XK_KP_Home] = KC_NUMPAD7;

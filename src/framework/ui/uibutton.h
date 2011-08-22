@@ -12,12 +12,18 @@ class UIButton : public UIWidget
         Color color;
     };
 
+    enum ButtonState {
+        ButtonUp = 0,
+        ButtonDown,
+        ButtonHover
+    };
+
 public:
     UIButton();
 
     static UIButtonPtr create();
 
-    virtual void loadStyleFromOTML(const OTMLNodePtr& styleNode);
+    virtual void onStyleApply(const OTMLNodePtr& styleNode);
     void loadStateStyle(ButtonStateStyle& stateStyle, const OTMLNodePtr& stateStyleNode);
     virtual void render();
 
@@ -31,9 +37,9 @@ public:
     UIButtonPtr asUIButton() { return std::static_pointer_cast<UIButton>(shared_from_this()); }
 
 protected:
-    virtual void onHoverChange(UIHoverEvent& event);
-    virtual void onMousePress(UIMouseEvent& event);
-    virtual void onMouseRelease(UIMouseEvent& event);
+    virtual void onHoverChange(bool hovered);
+    virtual bool onMousePress(const Point& mousePos, UI::MouseButton button);
+    virtual bool onMouseRelease(const Point& mousePos, UI::MouseButton button);
 
     ButtonState m_state;
     ButtonStateStyle m_statesStyle[3];
