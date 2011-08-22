@@ -81,7 +81,7 @@ void Creature::drawInformation(int x, int y, bool useGray)
 
     // name
     FontPtr font = g_fonts.getFont("tibia-12px-rounded");
-    font->renderText(m_name, Rect(x-50, y-15, 100, 15), AlignTopCenter, fillColor);
+    font->renderText(m_name, Rect(x-100, y-15, 200, 15), AlignTopCenter, fillColor);
 }
 
 const ThingAttributes& Creature::getAttributes()

@@ -17,7 +17,6 @@ UIButton::UIButton(): UIWidget(UITypeButton)
 UIButtonPtr UIButton::create()
 {
     UIButtonPtr button(new UIButton);
-    button->setStyle("Button");
     return button;
 }
 
