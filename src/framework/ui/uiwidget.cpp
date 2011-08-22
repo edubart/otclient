@@ -32,43 +32,49 @@ UIWidget::UIWidget()
 
 UIWidget::~UIWidget()
 {
-    if(!m_destroyed)
+    if(!m_destroyed) {
         logWarning("widget '", m_id, "' was destructed without being explicit destroyed");
+        internalDestroy();
+    }
 }
 
 void UIWidget::destroy()
 {
     // destroy only once
     if(!m_destroyed) {
-        // first release lua table, because it may contains references to children
-        releaseLuaFieldsTable();
-
-        // clear additional child references
-        m_lockedChildren.clear();
-        m_focusedChild.reset();
-        m_anchors.clear();
-        m_anchoredWidgets.clear();
-
-        // destroy children
-        while(m_children.size() > 0) {
-            UIWidgetPtr child = m_children.front(); //hold reference
-            child->destroy();
-        }
-
-        // remove itself from parent
-        if(UIWidgetPtr parent = getParent())
-            parent->removeChild(asUIWidget());
-
-        // by now this widget is destroyed
-        m_destroyed = true;
+        internalDestroy();
 
         // add destroy check event
-        g_dispatcher.addEvent(std::bind(&UIWidget::destroyCheck, asUIWidget()));
+        g_dispatcher.addEvent(std::bind(&UIWidget::internalDestroyCheck, asUIWidget()));
     } else
         logWarning("attempt to destroy widget '", m_id, "' again");
 }
 
-void UIWidget::destroyCheck()
+void UIWidget::internalDestroy()
+{
+    // first release lua table, because it may contains references to children
+    releaseLuaFieldsTable();
+
+    // clear other references
+    m_lockedChildren.clear();
+    m_anchors.clear();
+    m_anchoredWidgets.clear();
+    m_focusedChild.reset();
+
+    // destroy children
+    while(m_children.size() > 0) {
+        UIWidgetPtr child = m_children.front(); //hold reference
+        child->destroy();
+    }
+
+    // remove itself from parent
+    if(UIWidgetPtr parent = getParent())
+        parent->removeChild(asUIWidget());
+
+    m_destroyed = true;
+}
+
+void UIWidget::internalDestroyCheck()
 {
     // collect lua garbage before checking
     g_lua.collectGarbage();
@@ -128,7 +134,7 @@ void UIWidget::setParent(const UIWidgetPtr& parent)
 
     // set new parent
     if(parent) {
-        m_parent = UIWidgetWeakPtr(parent);
+        m_parent = parent;
 
         // add to parent if needed
         if(!parent->hasChild(self))
@@ -141,9 +147,6 @@ void UIWidget::applyStyle(const std::string& styleName)
     try {
         OTMLNodePtr styleNode = g_ui.getStyle(styleName);
         onStyleApply(styleNode);
-
-        // forces layout recalculation
-        updateLayout();
     } catch(std::exception& e) {
         logError("couldn't change widget '", m_id, "' style: ", e.what());
     }
@@ -336,10 +339,8 @@ void UIWidget::focusChild(const UIWidgetPtr& child, UI::FocusReason reason)
 {
     assert(!m_destroyed);
 
-    if(!child)
-        return;
-
-    assert(hasChild(child));
+    if(child)
+        assert(hasChild(child));
 
     if(child != m_focusedChild) {
         UIWidgetPtr oldFocused = m_focusedChild;
@@ -704,7 +705,7 @@ void UIWidget::internalUpdateChildrenLayout()
     // update children layouts
     for(const UIWidgetWeakPtr& anchoredWidgetWeak : m_anchoredWidgets) {
         if(UIWidgetPtr anchoredWidget = anchoredWidgetWeak.lock())
-            anchoredWidget->updateLayout();
+            anchoredWidget->internalUpdateLayout();
     }
 }
 
@@ -850,10 +851,10 @@ void UIWidget::onStyleApply(const OTMLNodePtr& styleNode)
                 addAnchor(edge, hookedWidgetId, hookedEdge);
             }
         }
-        else if(node->tag() == "onLoad") {
+        /*else if(node->tag() == "onLoad") {
             g_lua.loadFunction(node->value<std::string>(), "@" + node->source() + "[" + node->tag() + "]");
             luaSetField("onLoad");
-        }
+        }*/
     }
 }
 

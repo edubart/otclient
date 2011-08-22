@@ -116,6 +116,9 @@ public:
     UIWidgetPtr asUIWidget() { return std::static_pointer_cast<UIWidget>(shared_from_this()); }
 
 private:
+    void internalDestroy();
+    void internalDestroyCheck();
+
     void internalUpdateLayout();
     void internalUpdateChildrenLayout();
 
@@ -153,9 +156,6 @@ protected:
     virtual bool onMouseWheel(const Point& mousePos, UI::MouseWheelDirection direction);
 
     friend class UIManager;
-
-private:
-    void destroyCheck();
 
 protected:
     bool m_enabled;
