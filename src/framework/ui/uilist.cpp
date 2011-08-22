@@ -5,12 +5,12 @@ UIList::UIList()
 
 }
 
-void UIList::onStyleApply(const OTMLNodePtr& styleNode)
+void UIList::render()
 {
 
 }
 
-void UIList::render()
+void UIList::onStyleApply(const OTMLNodePtr& styleNode)
 {
 
 }

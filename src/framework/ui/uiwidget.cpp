@@ -38,14 +38,16 @@ UIWidget::~UIWidget()
 
 void UIWidget::destroy()
 {
-    //TODO: onDestroy event
     // destroy only once
     if(!m_destroyed) {
+        // first release lua table, because it may contains references to children
         releaseLuaFieldsTable();
 
-        // clear additional reference
-        m_lockedWidgets.clear();
+        // clear additional child references
+        m_lockedChildren.clear();
         m_focusedChild.reset();
+        m_anchors.clear();
+        m_anchoredWidgets.clear();
 
         // destroy children
         while(m_children.size() > 0) {
@@ -57,11 +59,11 @@ void UIWidget::destroy()
         if(UIWidgetPtr parent = getParent())
             parent->removeChild(asUIWidget());
 
+        // by now this widget is destroyed
+        m_destroyed = true;
+
         // add destroy check event
         g_dispatcher.addEvent(std::bind(&UIWidget::destroyCheck, asUIWidget()));
-        m_destroyed = true;
-        m_enabled = false;
-        m_visible = false;
     } else
         logWarning("attempt to destroy widget '", m_id, "' again");
 }
@@ -79,121 +81,26 @@ void UIWidget::destroyCheck()
         logWarning("destroyed widget with id '",m_id,"', but it still have ",realUseCount," references left");
 }
 
-void UIWidget::onStyleApply(const OTMLNodePtr& styleNode)
-{
-    assert(!m_destroyed);
-
-    // load styles used by all widgets
-    for(const OTMLNodePtr& node : styleNode->children()) {
-        // id
-        if(node->tag() == "id") {
-            setId(node->value());
-        }
-        // image
-        else if(node->tag() == "image") {
-            setImage(Image::loadFromOTML(node));
-        }
-        else if(node->tag() == "border-image") {
-            setImage(BorderImage::loadFromOTML(node));
-        }
-        // font
-        else if(node->tag() == "font") {
-            setFont(g_fonts.getFont(node->value()));
-        }
-        // font color
-        else if(node->tag() == "color") {
-            setForegroundColor(node->value<Color>());
-        }
-        // color
-        else if(node->tag() == "background-color") {
-            setBackgroundColor(node->value<Color>());
-        }
-        // opacity
-        else if(node->tag() == "opacity") {
-            setOpacity(node->value<int>());
-        }
-        // size
-        else if(node->tag() == "size") {
-            resize(node->value<Size>());
-        }
-        else if(node->tag() == "width") {
-            setWidth(node->value<int>());
-        }
-        else if(node->tag() == "height") {
-            setHeight(node->value<int>());
-        }
-        // position
-        else if(node->tag() == "position") {
-            move(node->value<Point>());
-        }
-        else if(node->tag() == "x") {
-            setX(node->value<int>());
-        }
-        else if(node->tag() == "y") {
-            setY(node->value<int>());
-        }
-        // margins
-        else if(node->tag() == "margin.left") {
-            setMarginLeft(node->value<int>());
-        }
-        else if(node->tag() == "margin.right") {
-            setMarginRight(node->value<int>());
-        }
-        else if(node->tag() == "margin.top") {
-            setMarginTop(node->value<int>());
-        }
-        else if(node->tag() == "margin.bottom") {
-            setMarginBottom(node->value<int>());
-        }
-        // anchors
-        else if(boost::starts_with(node->tag(), "anchors.")) {
-            std::string what = node->tag().substr(8);
-            if(what == "fill") {
-                fill(node->value());
-            } else if(what == "centerIn") {
-                centerIn(node->value());
-            } else {
-                AnchorEdge myEdge = fw::translateAnchorEdge(what);
-
-                std::string anchorDescription = node->value();
-                std::vector<std::string> split;
-                boost::split(split, anchorDescription, boost::is_any_of(std::string(".")));
-                if(split.size() != 2)
-                    throw OTMLException(node, "invalid anchor description");
-
-                std::string target = split[0];
-                AnchorEdge hookedEdge = fw::translateAnchorEdge(split[1]);
-
-                if(myEdge == AnchorNone)
-                    throw OTMLException(node, "invalid anchor edge");
-
-                if(hookedEdge == AnchorNone)
-                    throw OTMLException(node, "invalid anchor target edge");
-
-                addAnchor(myEdge, target, hookedEdge);
-            }
-        }
-        else if(node->tag() == "onLoad") {
-            g_lua.loadFunction(node->value<std::string>(), "@" + node->source() + "[" + node->tag() + "]");
-            luaSetField("onLoad");
-        }
-    }
-}
-
 void UIWidget::render()
 {
     assert(!m_destroyed);
 
+    // draw background image
+    g_graphics.bindColor(m_backgroundColor);
     if(m_image)
         m_image->draw(getRect());
 
+    // draw children
     for(const UIWidgetPtr& child : m_children) {
         if(child->isExplicitlyVisible()) {
+            // store current graphics opacity
             int oldOpacity = g_graphics.getOpacity();
+
+            // decrease to self opacity
             if(child->getOpacity() < oldOpacity)
                 g_graphics.setOpacity(child->getOpacity());
 
-            g_graphics.bindColor(child->getBackgroundColor());
+            // bind child color
             child->render();
 
             // debug draw box
@@ -209,23 +116,27 @@ void UIWidget::setParent(const UIWidgetPtr& parent)
 {
     assert(!m_destroyed);
 
-    UIWidgetPtr me = asUIWidget();
+    UIWidgetPtr self = asUIWidget();
 
     // remove from old parent
     UIWidgetPtr oldParent = m_parent.lock();
-    if(oldParent && oldParent->hasChild(me)) {
-        oldParent->removeChild(me);
-    }
+    if(oldParent && oldParent->hasChild(self))
+        oldParent->removeChild(self);
+
+    // reset parent
     m_parent.reset();
 
+    // set new parent
     if(parent) {
         m_parent = UIWidgetWeakPtr(parent);
-        if(!parent->hasChild(me))
-            parent->addChild(me);
+
+        // add to parent if needed
+        if(!parent->hasChild(self))
+            parent->addChild(self);
     }
 }
 
-void UIWidget::setStyle(const std::string& styleName)
+void UIWidget::applyStyle(const std::string& styleName)
 {
     try {
         OTMLNodePtr styleNode = g_ui.getStyle(styleName);
@@ -271,6 +182,16 @@ bool UIWidget::isEnabled()
         return false;
 }
 
+bool UIWidget::isVisible()
+{
+    if(!m_visible)
+        return false;
+    else if(UIWidgetPtr parent = getParent())
+        return parent->isVisible();
+    else
+        return false;
+}
+
 bool UIWidget::hasFocus()
 {
     assert(!m_destroyed);
@@ -307,14 +228,9 @@ UIWidgetPtr UIWidget::getChildAfter(const UIWidgetPtr& relativeChild)
 {
     assert(!m_destroyed);
 
-    for(auto it = m_children.begin(); it != m_children.end(); ++it) {
-        const UIWidgetPtr& child = (*it);
-        if(child == relativeChild) {
-            if(++it != m_children.end())
-                return (*it);
-            break;
-        }
-    }
+    auto it = std::find(m_children.begin(), m_children.end(), relativeChild);
+    if(it != m_children.end() && ++it != m_children.end())
+        return *it;
     return nullptr;
 }
 
@@ -322,14 +238,9 @@ UIWidgetPtr UIWidget::getChildBefore(const UIWidgetPtr& relativeChild)
 {
     assert(!m_destroyed);
 
-    for(auto it = m_children.rbegin(); it != m_children.rend(); ++it) {
-        const UIWidgetPtr& child = (*it);
-        if(child == relativeChild) {
-            if(++it != m_children.rend())
-                return (*it);
-            break;
-        }
-    }
+    auto it = std::find(m_children.rbegin(), m_children.rend(), relativeChild);
+    if(it != m_children.rend() && ++it != m_children.rend())
+        return *it;
     return nullptr;
 }
 
@@ -406,7 +317,6 @@ UIWidgetPtr UIWidget::recursiveGetChildByPos(const Point& childPos)
             return child;
         }
     }
-
     return nullptr;
 }
 
@@ -419,35 +329,41 @@ UIWidgetPtr UIWidget::backwardsGetWidgetById(const std::string& id)
         if(UIWidgetPtr parent = getParent())
             widget = parent->backwardsGetWidgetById(id);
     }
-
     return widget;
 }
 
-void UIWidget::focusChild(const UIWidgetPtr& focusedChild, UI::FocusReason reason)
+void UIWidget::focusChild(const UIWidgetPtr& child, UI::FocusReason reason)
 {
     assert(!m_destroyed);
 
-    if(focusedChild != m_focusedChild) {
+    if(!child)
+        return;
+
+    assert(hasChild(child));
+
+    if(child != m_focusedChild) {
         UIWidgetPtr oldFocused = m_focusedChild;
-        m_focusedChild = focusedChild;
+        m_focusedChild = child;
 
         if(oldFocused)
             oldFocused->onFocusChange(false, reason);
-        if(focusedChild)
-            focusedChild->onFocusChange(focusedChild->hasFocus(), reason);
+
+        if(child)
+            child->onFocusChange(child->hasFocus(), reason);
     }
 }
 
-void UIWidget::addChild(const UIWidgetPtr& childToAdd)
+void UIWidget::addChild(const UIWidgetPtr& child)
 {
     assert(!m_destroyed);
 
-    if(!childToAdd)
+    if(!child)
         return;
 
-    assert(!hasChild(childToAdd));
-    m_children.push_back(childToAdd);
-    childToAdd->setParent(asUIWidget());
+    assert(!hasChild(child));
+
+    m_children.push_back(child);
+    child->setParent(asUIWidget());
 
     // recalculate anchors
     getRootParent()->recalculateAnchoredWidgets();
@@ -456,27 +372,29 @@ void UIWidget::addChild(const UIWidgetPtr& childToAdd)
     updateChildrenLayout();
 
     // always focus new children
-    if(childToAdd->isFocusable() && childToAdd->isExplicitlyVisible() && childToAdd->isExplicitlyEnabled())
-        focusChild(childToAdd, UI::ActiveFocusReason);
+    if(child->isFocusable() && child->isExplicitlyVisible() && child->isExplicitlyEnabled())
+        focusChild(child, UI::ActiveFocusReason);
 }
 
-void UIWidget::insertChild(const UIWidgetPtr& childToInsert, int index)
+void UIWidget::insertChild(const UIWidgetPtr& child, int index)
 {
     assert(!m_destroyed);
 
-    if(!childToInsert)
+    // skip null children
+    if(!child)
         return;
 
-    assert(!hasChild(childToInsert));
+    assert(!hasChild(child));
 
     if(index < 0)
         index = m_children.size() + index -1;
 
     assert((uint)index <= m_children.size());
 
+    // retrieve child by index
     auto it = m_children.begin() + index;
-    m_children.insert(it, childToInsert);
-    childToInsert->setParent(asUIWidget());
+    m_children.insert(it, child);
+    child->setParent(asUIWidget());
 
     // recalculate anchors
     getRootParent()->recalculateAnchoredWidgets();
@@ -485,28 +403,29 @@ void UIWidget::insertChild(const UIWidgetPtr& childToInsert, int index)
     updateChildrenLayout();
 }
 
-void UIWidget::removeChild(const UIWidgetPtr& childToRemove)
+void UIWidget::removeChild(const UIWidgetPtr& child)
 {
     assert(!m_destroyed);
 
-    if(!childToRemove)
+    // skip null children
+    if(!child)
         return;
 
     // defocus if needed
-    if(m_focusedChild == childToRemove)
+    if(m_focusedChild == child)
         focusChild(nullptr, UI::ActiveFocusReason);
 
-    // try to unlock
-    unlockChild(childToRemove);
+    // unlock child if it was locked
+    unlockChild(child);
 
     // remove from children list
-    auto it = std::find(m_children.begin(), m_children.end(), childToRemove);
+    auto it = std::find(m_children.begin(), m_children.end(), child);
     assert(it != m_children.end());
     m_children.erase(it);
 
     // reset child parent
-    assert(childToRemove->getParent() == asUIWidget());
-    childToRemove->setParent(nullptr);
+    assert(child->getParent() == asUIWidget());
+    child->setParent(nullptr);
 
     // recalculate anchors
     getRootParent()->recalculateAnchoredWidgets();
@@ -521,73 +440,96 @@ void UIWidget::focusNextChild(UI::FocusReason reason)
 
     UIWidgetPtr toFocus;
     UIWidgetList rotatedChildren(m_children);
-    auto focusedIt = std::find(rotatedChildren.begin(), rotatedChildren.end(), m_focusedChild);
-    if(focusedIt != rotatedChildren.end()) {
-        std::rotate(rotatedChildren.begin(), focusedIt, rotatedChildren.end());
-        rotatedChildren.pop_front();
-        for(const UIWidgetPtr& child : rotatedChildren) {
-            if(child->isFocusable()) {
-                toFocus = child;
-                break;
-            }
+
+    if(m_focusedChild) {
+        auto focusedIt = std::find(rotatedChildren.begin(), rotatedChildren.end(), m_focusedChild);
+        if(focusedIt != rotatedChildren.end()) {
+            std::rotate(rotatedChildren.begin(), focusedIt, rotatedChildren.end());
+            rotatedChildren.pop_front();
         }
-    } else if(m_children.size() > 0)
-        toFocus = m_children.back();
+    }
+
+    // finds next child to focus
+    for(const UIWidgetPtr& child : rotatedChildren) {
+        if(child->isFocusable()) {
+            toFocus = child;
+            break;
+        }
+    }
 
     if(toFocus)
         focusChild(toFocus, reason);
 }
 
-void UIWidget::moveChildToTop(const UIWidgetPtr& childToMove)
+void UIWidget::moveChildToTop(const UIWidgetPtr& child)
 {
     assert(!m_destroyed);
 
+    if(!child)
+        return;
+
     // remove and push child again
-    auto it = std::find(m_children.begin(), m_children.end(), childToMove);
+    auto it = std::find(m_children.begin(), m_children.end(), child);
     assert(it != m_children.end());
     m_children.erase(it);
-    m_children.push_back(childToMove);
+    m_children.push_back(child);
 }
 
-void UIWidget::lockChild(const UIWidgetPtr& childToLock)
+void UIWidget::lockChild(const UIWidgetPtr& child)
 {
-    assert(hasChild(childToLock));
+    assert(!m_destroyed);
 
-    // disable all other widgets
-    for(const UIWidgetPtr& widget : m_children) {
-        if(widget == childToLock)
-            widget->setEnabled(true);
+    if(!child)
+        return;
+
+    assert(hasChild(child));
+
+    // disable all other children
+    for(const UIWidgetPtr& otherChild : m_children) {
+        if(otherChild == child)
+            child->setEnabled(true);
         else
-            widget->setEnabled(false);
+            otherChild->setEnabled(false);
     }
 
-    m_lockedWidgets.push_front(childToLock);
+    m_lockedChildren.push_front(child);
 
     // lock child focus
-    if(childToLock->isFocusable())
-      focusChild(childToLock, UI::ActiveFocusReason);
+    if(child->isFocusable())
+      focusChild(child, UI::ActiveFocusReason);
 }
 
-void UIWidget::unlockChild(const UIWidgetPtr& childToUnlock)
+void UIWidget::unlockChild(const UIWidgetPtr& child)
 {
-    assert(hasChild(childToUnlock));
+    assert(!m_destroyed);
 
-    auto it = std::find(m_lockedWidgets.begin(), m_lockedWidgets.end(), childToUnlock);
-    if(it != m_lockedWidgets.end())
-        m_lockedWidgets.erase(it);
+    if(!child)
+        return;
 
-    UIWidgetPtr newLockedWidget;
-    if(m_lockedWidgets.size() > 0)
-        newLockedWidget = m_lockedWidgets.front();
+    assert(hasChild(child));
 
-    for(const UIWidgetPtr& child : m_children) {
-        if(newLockedWidget) {
-            if(child == newLockedWidget)
-                child->setEnabled(true);
+    auto it = std::find(m_lockedChildren.begin(), m_lockedChildren.end(), child);
+    if(it == m_lockedChildren.end())
+        return;
+
+    m_lockedChildren.erase(it);
+
+    // find new chick to lock
+    UIWidgetPtr lockedChild;
+    if(m_lockedChildren.size() > 0)
+        lockedChild = m_lockedChildren.front();
+
+    for(const UIWidgetPtr& otherChild : m_children) {
+        // lock new child
+        if(lockedChild) {
+            if(otherChild == lockedChild)
+                lockedChild->setEnabled(true);
             else
-                child->setEnabled(false);
-        } else
-            child->setEnabled(true);
+                otherChild->setEnabled(false);
+        }
+        // else unlock all
+        else
+            otherChild->setEnabled(true);
     }
 }
 
@@ -814,6 +756,107 @@ void UIWidget::computeAnchoredWidgets()
         child->computeAnchoredWidgets();
 }
 
+void UIWidget::onStyleApply(const OTMLNodePtr& styleNode)
+{
+    assert(!m_destroyed);
+
+    // load styles used by all widgets
+    for(const OTMLNodePtr& node : styleNode->children()) {
+        // id
+        if(node->tag() == "id") {
+            setId(node->value());
+        }
+        // background image
+        else if(node->tag() == "image") {
+            setImage(Image::loadFromOTML(node));
+        }
+        else if(node->tag() == "border-image") {
+            setImage(BorderImage::loadFromOTML(node));
+        }
+        // font
+        else if(node->tag() == "font") {
+            setFont(g_fonts.getFont(node->value()));
+        }
+        // foreground color
+        else if(node->tag() == "color") {
+            setForegroundColor(node->value<Color>());
+        }
+        // background color
+        else if(node->tag() == "background-color") {
+            setBackgroundColor(node->value<Color>());
+        }
+        // opacity
+        else if(node->tag() == "opacity") {
+            setOpacity(node->value<int>());
+        }
+        // size
+        else if(node->tag() == "size") {
+            resize(node->value<Size>());
+        }
+        else if(node->tag() == "width") {
+            setWidth(node->value<int>());
+        }
+        else if(node->tag() == "height") {
+            setHeight(node->value<int>());
+        }
+        // absolute position
+        else if(node->tag() == "position") {
+            moveTo(node->value<Point>());
+        }
+        else if(node->tag() == "x") {
+            setX(node->value<int>());
+        }
+        else if(node->tag() == "y") {
+            setY(node->value<int>());
+        }
+        // margins
+        else if(node->tag() == "margin.left") {
+            setMarginLeft(node->value<int>());
+        }
+        else if(node->tag() == "margin.right") {
+            setMarginRight(node->value<int>());
+        }
+        else if(node->tag() == "margin.top") {
+            setMarginTop(node->value<int>());
+        }
+        else if(node->tag() == "margin.bottom") {
+            setMarginBottom(node->value<int>());
+        }
+        // anchors
+        else if(boost::starts_with(node->tag(), "anchors.")) {
+            std::string what = node->tag().substr(8);
+            if(what == "fill") {
+                fill(node->value());
+            } else if(what == "centerIn") {
+                centerIn(node->value());
+            } else {
+                AnchorEdge edge = fw::translateAnchorEdge(what);
+
+                std::string anchorDescription = node->value();
+                std::vector<std::string> split;
+                boost::split(split, anchorDescription, boost::is_any_of(std::string(".")));
+                if(split.size() != 2)
+                    throw OTMLException(node, "invalid anchor description");
+
+                std::string hookedWidgetId = split[0];
+                AnchorEdge hookedEdge = fw::translateAnchorEdge(split[1]);
+
+                if(edge == AnchorNone)
+                    throw OTMLException(node, "invalid anchor edge");
+
+                if(hookedEdge == AnchorNone)
+                    throw OTMLException(node, "invalid anchor target edge");
+
+                addAnchor(edge, hookedWidgetId, hookedEdge);
+            }
+        }
+        else if(node->tag() == "onLoad") {
+            g_lua.loadFunction(node->value<std::string>(), "@" + node->source() + "[" + node->tag() + "]");
+            luaSetField("onLoad");
+        }
+    }
+}
+
 void UIWidget::onGeometryUpdate(const Rect& oldRect, const Rect& newRect)
 {
 
@@ -821,6 +864,7 @@ void UIWidget::onGeometryUpdate(const Rect& oldRect, const Rect& newRect)
 
 void UIWidget::onFocusChange(bool focused, UI::FocusReason reason)
 {
+    // when containers lose or get focus it's focused child do the same
     if(m_focusedChild)
         m_focusedChild->onFocusChange(focused, reason);
 }
@@ -837,6 +881,7 @@ bool UIWidget::onKeyPress(uchar keyCode, char keyChar, int keyboardModifiers)
     // do a backup of children list, because it may change while looping it
     UIWidgetList children = m_children;
     for(const UIWidgetPtr& child : children) {
+        // events on hidden or disabled widgets are discarded
         if(!child->isExplicitlyEnabled() || !child->isExplicitlyVisible())
             continue;
 
@@ -857,6 +902,7 @@ bool UIWidget::onKeyRelease(uchar keyCode, char keyChar, int keyboardModifiers)
     // do a backup of children list, because it may change while looping it
     UIWidgetList children = m_children;
     for(const UIWidgetPtr& child : children) {
+        // events on hidden or disabled widgets are discarded
         if(!child->isExplicitlyEnabled() || !child->isExplicitlyVisible())
             continue;
 
@@ -877,12 +923,13 @@ bool UIWidget::onMousePress(const Point& mousePos, UI::MouseButton button)
     // do a backup of children list, because it may change while looping it
     UIWidgetList children = m_children;
     for(const UIWidgetPtr& child : children) {
+        // events on hidden or disabled widgets are discarded
         if(!child->isExplicitlyEnabled() || !child->isExplicitlyVisible())
             continue;
 
         // mouse press events only go to children that contains the mouse position
         if(child->getRect().contains(mousePos) && child == getChildByPos(mousePos)) {
-            // focus it
+            // when a focusable item is focused it must gain focus
             if(child->isFocusable())
                 focusChild(child, UI::MouseFocusReason);
 
@@ -901,6 +948,7 @@ bool UIWidget::onMouseRelease(const Point& mousePos, UI::MouseButton button)
     // do a backup of children list, because it may change while looping it
     UIWidgetList children = m_children;
     for(const UIWidgetPtr& child : children) {
+        // events on hidden or disabled widgets are discarded
         if(!child->isExplicitlyEnabled() || !child->isExplicitlyVisible())
             continue;
 
@@ -919,6 +967,7 @@ bool UIWidget::onMouseMove(const Point& mousePos, const Point& mouseMoved)
     // do a backup of children list, because it may change while looping it
     UIWidgetList children = m_children;
     for(const UIWidgetPtr& child : children) {
+        // events on hidden or disabled widgets are discarded
         if(!child->isExplicitlyEnabled() || !child->isExplicitlyVisible())
             continue;
 
@@ -948,6 +997,7 @@ bool UIWidget::onMouseWheel(const Point& mousePos, UI::MouseWheelDirection direc
     // do a backup of children list, because it may change while looping it
     UIWidgetList children = m_children;
     for(const UIWidgetPtr& child : children) {
+        // events on hidden or disabled widgets are discarded
         if(!child->isExplicitlyEnabled() || !child->isExplicitlyVisible())
             continue;
 

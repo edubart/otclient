@@ -29,14 +29,14 @@ public:
     void setHovered(bool hovered) { m_hovered = hovered; }
     void setVisible(bool visible) { m_visible = visible; }
     void setParent(const UIWidgetPtr& parent);
-    void setStyle(const std::string& styleName);
+    void applyStyle(const std::string& styleName);
     void setRect(const Rect& rect);
-    void setX(int x) { move(Point(x, getY())); }
-    void setY(int y) { move(Point(getX(), y)); }
+    void setX(int x) { moveTo(Point(x, getY())); }
+    void setY(int y) { moveTo(Point(getX(), y)); }
     void setWidth(int width) { resize(Size(width, getHeight())); }
     void setHeight(int height) { resize(Size(getWidth(), height)); }
     void resize(const Size& size) { setRect(Rect(getPosition(), size)); }
-    void move(const Point& pos) { setRect(Rect(pos, getSize())); }
+    void moveTo(const Point& pos) { setRect(Rect(pos, getSize())); }
 
     void setImage(const ImagePtr& image) { m_image = image; }
     virtual void setFont(const FontPtr& font) { m_font = font; }
@@ -54,6 +54,7 @@ public:
     void enable() { setEnabled(true); }
 
     bool isEnabled();
+    bool isVisible();
     bool isExplicitlyEnabled() const { return m_enabled; }
     bool isExplicitlyVisible() const { return m_visible; }
     bool isHovered() const { return m_hovered; }
@@ -96,14 +97,14 @@ public:
     UIWidgetPtr recursiveGetChildByPos(const Point& childPos);
     UIWidgetPtr backwardsGetWidgetById(const std::string& id);
 
-    void addChild(const UIWidgetPtr& childToAdd);
-    void insertChild(const UIWidgetPtr& childToInsert, int index);
-    void removeChild(const UIWidgetPtr& childToRemove);
-    void focusChild(const UIWidgetPtr& childToFocus, UI::FocusReason reason);
+    void addChild(const UIWidgetPtr& child);
+    void insertChild(const UIWidgetPtr& child, int index);
+    void removeChild(const UIWidgetPtr& child);
+    void focusChild(const UIWidgetPtr& child, UI::FocusReason reason);
     void focusNextChild(UI::FocusReason reason);
-    void moveChildToTop(const UIWidgetPtr& childToMove);
-    void lockChild(const UIWidgetPtr& childToLock);
-    void unlockChild(const UIWidgetPtr& childToUnlock);
+    void moveChildToTop(const UIWidgetPtr& child);
+    void lockChild(const UIWidgetPtr& child);
+    void unlockChild(const UIWidgetPtr& child);
 
     void updateLayout();
     void updateChildrenLayout();
@@ -167,7 +168,7 @@ protected:
     UIWeakWidgetList m_anchoredWidgets;
     UIWidgetWeakPtr m_parent;
     UIWidgetList m_children;
-    UIWidgetList m_lockedWidgets;
+    UIWidgetList m_lockedChildren;
     UIWidgetPtr m_focusedChild;
     std::string m_id;
 

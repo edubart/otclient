@@ -1,6 +1,7 @@
 #include "uiwindow.h"
 #include <framework/graphics/borderimage.h>
 #include <framework/graphics/font.h>
+#include <framework/graphics/graphics.h>
 #include <framework/otml/otml.h>
 
 UIWindow::UIWindow()
@@ -45,6 +46,7 @@ void UIWindow::render()
     headRect.setHeight(m_headHeight);
 
     if(m_headImage && m_headHeight > 0) {
+        g_graphics.bindColor(m_backgroundColor);
         m_headImage->draw(headRect);
 
         // draw window head text
@@ -118,7 +120,7 @@ bool UIWindow::onMouseRelease(const Point& mousePos, UI::MouseButton button)
 bool UIWindow::onMouseMove(const Point& mousePos, const Point& mouseMoved)
 {
     if(m_moving) {
-        move(mousePos - m_movingReference);
+        moveTo(mousePos - m_movingReference);
         return true;
     }
     return UIWidget::onMouseMove(mousePos, mouseMoved);

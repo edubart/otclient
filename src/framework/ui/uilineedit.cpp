@@ -374,9 +374,9 @@ bool UILineEdit::onKeyPress(uchar keyCode, char keyChar, int keyboardModifiers)
     } else if(keyCode == KC_RETURN) {
         if(m_onAction)
             m_onAction();
-    } else if(keyCode != 0) {
+    } else if(keyChar != 0)
         appendCharacter(keyChar);
-    } else
+    else
         return false;
 
     return true;

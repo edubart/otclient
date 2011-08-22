@@ -28,7 +28,7 @@ void LuaInterface::registerFunctions()
     g_lua.bindClassMemberFunction<UIWidget>("setForegroundColor", &UIWidget::setForegroundColor);
     g_lua.bindClassMemberFunction<UIWidget>("getOpacity", &UIWidget::getOpacity);
     g_lua.bindClassMemberFunction<UIWidget>("setOpacity", &UIWidget::setOpacity);
-    g_lua.bindClassMemberFunction<UIWidget>("setStyle", &UIWidget::setStyle);
+    g_lua.bindClassMemberFunction<UIWidget>("setStyle", &UIWidget::applyStyle);
     g_lua.bindClassMemberFunction<UIWidget>("getMarginTop", &UIWidget::getMarginTop);
     g_lua.bindClassMemberFunction<UIWidget>("setMarginTop", &UIWidget::setMarginTop);
     g_lua.bindClassMemberFunction<UIWidget>("getMarginBottom", &UIWidget::getMarginBottom);

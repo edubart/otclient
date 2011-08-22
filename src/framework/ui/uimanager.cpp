@@ -164,19 +164,13 @@ UIWidgetPtr UIManager::loadWidgetFromOTML(const OTMLNodePtr& widgetNode)
 
     std::string widgetType = styleNode->valueAt("__widgetType");
 
-    UIWidgetPtr widget;
-    if(widgetType == "UIWidget")
-        widget = UIWidgetPtr(new UIWidget);
-    else if(widgetType == "UILabel")
-        widget = UIWidgetPtr(new UILabel);
-    else if(widgetType == "UIButton")
-        widget = UIWidgetPtr(new UIButton);
-    else if(widgetType == "UILineEdit")
-        widget = UIWidgetPtr(new UILineEdit);
-    else if(widgetType == "UIWindow")
-        widget = UIWidgetPtr(new UIWindow);
-    else
-        throw OTMLException(styleNode, "cannot determine widget type");
+    // call widget creation from lua
+    //g_lua.getGlobalField(widgetType, "create");
+    g_lua.getGlobal(widgetType);
+    g_lua.getField("create");
+    g_lua.remove(-2);
+    g_lua.protectedCall(0, 1);
+    UIWidgetPtr widget = g_lua.polymorphicPop<UIWidgetPtr>();
 
     widget->onStyleApply(styleNode);
     widget->updateLayout();
