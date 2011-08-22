@@ -66,7 +66,7 @@ void Creature::drawInformation(int x, int y, bool useGray)
         }
     }
 
-    Rect backgroundRect = Rect(x-(14.5), y-2, 27, 4);
+    Rect backgroundRect = Rect(x-(14.5), y, 27, 4);
     Rect healthRect = backgroundRect.expanded(-1);
     healthRect.setWidth((m_healthPercent/100.0)*25);
 
@@ -81,7 +81,7 @@ void Creature::drawInformation(int x, int y, bool useGray)
 
     // name
     FontPtr font = g_fonts.getFont("tibia-12px-rounded");
-    font->renderText(m_name, Rect(x-100, y-16, 200, 16), AlignTopCenter, fillColor);
+    font->renderText(m_name, Rect(x-100, y-15, 200, 15), AlignTopCenter, fillColor);
 }
 
 const ThingAttributes& Creature::getAttributes()
