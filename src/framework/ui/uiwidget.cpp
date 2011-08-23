@@ -32,6 +32,7 @@ UIWidget::UIWidget()
 
 UIWidget::~UIWidget()
 {
+    //logTraceDebug(m_id);
     if(!m_destroyed) {
         logWarning("widget '", m_id, "' was destructed without being explicit destroyed");
         internalDestroy();
@@ -40,6 +41,7 @@ UIWidget::~UIWidget()
 
 void UIWidget::destroy()
 {
+    //logTraceDebug(m_id);
     // destroy only once
     if(!m_destroyed) {
         internalDestroy();
@@ -52,10 +54,12 @@ void UIWidget::destroy()
 
 void UIWidget::internalDestroy()
 {
+    //logTraceDebug(m_id);
     // first release lua table, because it may contains references to children
     releaseLuaFieldsTable();
 
     // clear other references
+    clearHookedWidgets();
     m_lockedChildren.clear();
     m_anchors.clear();
     m_anchoredWidgets.clear();
@@ -79,12 +83,14 @@ void UIWidget::internalDestroyCheck()
     // collect lua garbage before checking
     g_lua.collectGarbage();
 
+    //logTraceDebug(m_id);
     // get real use count
     int realUseCount = shared_from_this().use_count() - 2;
 
     // check for leaks upon widget destruction
     if(realUseCount > 0)
-        logWarning("destroyed widget with id '",m_id,"', but it still have ",realUseCount," references left");
+    {}
+        //logWarning("destroyed widget with id '",m_id,"', but it still have ",realUseCount," references left");
 }
 
 void UIWidget::render()
@@ -122,6 +128,7 @@ void UIWidget::setParent(const UIWidgetPtr& parent)
 {
     assert(!m_destroyed);
 
+    //logTraceDebug(m_id);
     UIWidgetPtr self = asUIWidget();
 
     // remove from old parent
@@ -144,6 +151,7 @@ void UIWidget::setParent(const UIWidgetPtr& parent)
 
 void UIWidget::applyStyle(const std::string& styleName)
 {
+    //logTraceDebug(m_id);
     try {
         OTMLNodePtr styleNode = g_ui.getStyle(styleName);
         onStyleApply(styleNode);
@@ -160,7 +168,7 @@ void UIWidget::setRect(const Rect& rect)
     m_rect = rect;
 
     // updates children geometry
-    updateChildrenLayout();
+    internalUpdateChildrenLayout();
 
     // avoid massive update events
     if(!m_updateEventScheduled) {
@@ -285,12 +293,13 @@ UIWidgetPtr UIWidget::getChildByPos(const Point& childPos)
     return nullptr;
 }
 
-UIWidgetPtr UIWidget::getChildByIndex(int childIndex)
+UIWidgetPtr UIWidget::getChildByIndex(int index)
 {
     assert(!m_destroyed);
 
-    if(childIndex >= 0 && childIndex < getChildCount())
-        return m_children.at(childIndex);
+    index = index <= 0 ? (m_children.size() + index) : index-1;
+    if(index >= 0 && (uint)index < m_children.size())
+        return m_children.at(index);
     return nullptr;
 }
 
@@ -358,6 +367,7 @@ void UIWidget::addChild(const UIWidgetPtr& child)
 {
     assert(!m_destroyed);
 
+    //logTraceDebug(m_id);
     if(!child)
         return;
 
@@ -367,30 +377,29 @@ void UIWidget::addChild(const UIWidgetPtr& child)
     child->setParent(asUIWidget());
 
     // recalculate anchors
-    getRootParent()->recalculateAnchoredWidgets();
-
-    // may need to update children layout
-    updateChildrenLayout();
+    child->clearHookedWidgets();
+    child->computeHookedWidgets();
+    child->updateLayout();
 
     // always focus new children
     if(child->isFocusable() && child->isExplicitlyVisible() && child->isExplicitlyEnabled())
         focusChild(child, UI::ActiveFocusReason);
 }
 
-void UIWidget::insertChild(const UIWidgetPtr& child, int index)
+void UIWidget::insertChild(int index, const UIWidgetPtr& child)
 {
     assert(!m_destroyed);
 
+    //logTraceDebug(m_id);
     // skip null children
     if(!child)
         return;
 
     assert(!hasChild(child));
 
-    if(index < 0)
-        index = m_children.size() + index -1;
+    index = index <= 0 ? (m_children.size() + index) : index-1;
 
-    assert((uint)index <= m_children.size());
+    assert(index >= 0 && (uint)index <= m_children.size());
 
     // retrieve child by index
     auto it = m_children.begin() + index;
@@ -398,16 +407,16 @@ void UIWidget::insertChild(const UIWidgetPtr& child, int index)
     child->setParent(asUIWidget());
 
     // recalculate anchors
-    getRootParent()->recalculateAnchoredWidgets();
-
-    // may need to update children layout
-    updateChildrenLayout();
+    child->clearHookedWidgets();
+    child->computeHookedWidgets();
+    child->updateLayout();
 }
 
 void UIWidget::removeChild(const UIWidgetPtr& child)
 {
     assert(!m_destroyed);
 
+    //logTraceDebug(m_id);
     // skip null children
     if(!child)
         return;
@@ -429,10 +438,7 @@ void UIWidget::removeChild(const UIWidgetPtr& child)
     child->setParent(nullptr);
 
     // recalculate anchors
-    getRootParent()->recalculateAnchoredWidgets();
-
-    // may need to update children layout
-    updateChildrenLayout();
+    child->clearHookedWidgets();
 }
 
 void UIWidget::focusNextChild(UI::FocusReason reason)
@@ -534,10 +540,12 @@ void UIWidget::unlockChild(const UIWidgetPtr& child)
     }
 }
 
+
 void UIWidget::updateLayout()
 {
     assert(!m_destroyed);
 
+    //logTraceDebug(m_id);
     if(!m_layoutUpdateScheduled) {
         m_layoutUpdateScheduled = true;
         UIWidgetPtr self = asUIWidget();
@@ -553,8 +561,11 @@ void UIWidget::updateChildrenLayout()
 {
     assert(!m_destroyed);
 
+    //logTraceDebug(m_id);
     if(!m_childrenLayoutUpdateScheduled) {
         m_childrenLayoutUpdateScheduled = true;
+        // reset all children anchors update state
+        resetLayoutUpdateState(false);
         UIWidgetPtr self = asUIWidget();
         g_dispatcher.addEvent([self] {
             self->m_childrenLayoutUpdateScheduled = false;
@@ -568,27 +579,40 @@ bool UIWidget::addAnchor(AnchorEdge edge, const std::string& hookedWidgetId, Anc
 {
     assert(!m_destroyed);
 
+    //logTraceDebug(m_id);
     UIAnchor anchor(edge, hookedWidgetId, hookedEdge);
 
     UIWidgetPtr hookedWidget = backwardsGetWidgetById(hookedWidgetId);
-    anchor.setHookedWidget(hookedWidget);
 
-    // we can never anchor with itself
-    if(hookedWidget == asUIWidget()) {
-        logError("anchoring with itself is not possible");
-        return false;
+    if(hookedWidget) {
+        anchor.setHookedWidget(hookedWidget);
+
+        // we can never anchor with itself
+        if(hookedWidget == asUIWidget()) {
+            logError("anchoring with itself is not possible");
+            return false;
+        }
+
+        // we must never anchor to an anchor child
+        //TODO: this check
+
+        if(hookedWidget)
+            hookedWidget->addAnchoredWidget(asUIWidget());
     }
 
-    // we must never anchor to an anchor child
-    //TODO: this check
-
     // duplicated anchors must be replaced
-    for(auto it = m_anchors.begin(); it != m_anchors.end(); ++it) {
-        const UIAnchor& otherAnchor = *it;
-        if(otherAnchor.getAnchoredEdge() == edge) {
-            m_anchors.erase(it);
-            break;
+    auto it = std::find_if(m_anchors.begin(), m_anchors.end(),
+                           [&](const UIAnchor& other) {
+                               return (other.getAnchoredEdge() == edge);
+                           });
+
+    if(it != m_anchors.end()) {
+        UIAnchor& other = *it;
+        if(other.getHookedWidget()) {
+            other.getHookedWidget()->removeAnchoredWidget(asUIWidget());
+            other.setHookedWidget(nullptr);
         }
+        m_anchors.erase(it);
     }
 
     m_anchors.push_back(anchor);
@@ -619,6 +643,7 @@ void UIWidget::internalUpdateLayout()
 {
     assert(!m_destroyed);
 
+    //logTraceDebug(m_id);
     for(const UIAnchor& anchor : m_anchors) {
         // ignore invalid anchors
         if(!anchor.getHookedWidget())
@@ -699,52 +724,71 @@ void UIWidget::internalUpdateChildrenLayout()
 {
     assert(!m_destroyed);
 
-    // reset all children anchors update state
-    resetLayoutUpdateState(false);
+    //logTraceDebug(m_id);
 
     // update children layouts
-    for(const UIWidgetWeakPtr& anchoredWidgetWeak : m_anchoredWidgets) {
-        if(UIWidgetPtr anchoredWidget = anchoredWidgetWeak.lock())
-            anchoredWidget->internalUpdateLayout();
-    }
+    for(const UIWidgetPtr& anchoredWidget : m_anchoredWidgets)
+        anchoredWidget->internalUpdateLayout();
 }
 
 void UIWidget::resetLayoutUpdateState(bool resetOwn)
 {
+    assert(!m_destroyed);
+
+    //logTraceDebug(m_id);
     if(resetOwn)
         m_layoutUpdated = false;
 
     // resets children layout update state too
-    for(const UIWidgetWeakPtr& anchoredWidgetWeak : m_anchoredWidgets) {
-        if(UIWidgetPtr anchoredWidget = anchoredWidgetWeak.lock())
-            anchoredWidget->resetLayoutUpdateState(true);
-    }
+    for(const UIWidgetPtr& anchoredWidget : m_anchoredWidgets)
+        anchoredWidget->resetLayoutUpdateState(true);
 }
 
 void UIWidget::addAnchoredWidget(const UIWidgetPtr& widget)
 {
+    assert(!m_destroyed);
+
+    //logTraceDebug(m_id);
     // prevent duplicated anchored widgets
-    for(const UIWidgetWeakPtr& anchoredWidget : m_anchoredWidgets)
-        if(anchoredWidget.lock() == widget)
+    for(const UIWidgetPtr& anchoredWidget : m_anchoredWidgets)
+        if(anchoredWidget == widget)
             return;
     m_anchoredWidgets.push_back(widget);
 }
 
-void UIWidget::recalculateAnchoredWidgets()
+void UIWidget::removeAnchoredWidget(const UIWidgetPtr& widget)
 {
-    clearAnchoredWidgets();
-    computeAnchoredWidgets();
+    assert(!m_destroyed);
+
+    //logTraceDebug(m_id);
+    auto it = std::find(m_anchoredWidgets.begin(), m_anchoredWidgets.end(), widget);
+    if(it != m_anchoredWidgets.end())
+        m_anchoredWidgets.erase(it);
 }
 
-void UIWidget::clearAnchoredWidgets()
+void UIWidget::clearHookedWidgets()
 {
-    m_anchoredWidgets.clear();
+    assert(!m_destroyed);
+
+    //logTraceDebug(m_id);
+    for(UIAnchor& anchor : m_anchors) {
+        UIWidgetPtr hookedWidget = anchor.getHookedWidget();
+        if(hookedWidget) {
+            hookedWidget->removeAnchoredWidget(asUIWidget());
+            anchor.setHookedWidget(nullptr);
+        }
+    }
+
     for(const UIWidgetPtr& child : m_children)
-        child->clearAnchoredWidgets();
+        child->clearHookedWidgets();
 }
 
-void UIWidget::computeAnchoredWidgets()
+void UIWidget::computeHookedWidgets()
 {
+    assert(!m_destroyed);
+
+    //logTraceDebug(m_id);
+
     // update anchors's hooked widget
     for(UIAnchor& anchor : m_anchors) {
         UIWidgetPtr hookedWidget = backwardsGetWidgetById(anchor.getHookedWidgetId());
@@ -754,7 +798,7 @@ void UIWidget::computeAnchoredWidgets()
     }
 
     for(const UIWidgetPtr& child : m_children)
-        child->computeAnchoredWidgets();
+        child->computeHookedWidgets();
 }
 
 void UIWidget::onStyleApply(const OTMLNodePtr& styleNode)
@@ -766,6 +810,7 @@ void UIWidget::onStyleApply(const OTMLNodePtr& styleNode)
         // id
         if(node->tag() == "id") {
             setId(node->value());
+    //logTraceDebug(m_id);
         }
         // background image
         else if(node->tag() == "image") {

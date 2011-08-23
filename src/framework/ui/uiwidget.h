@@ -92,13 +92,13 @@ public:
     UIWidgetPtr getChildBefore(const UIWidgetPtr& relativeChild);
     UIWidgetPtr getChildById(const std::string& childId);
     UIWidgetPtr getChildByPos(const Point& childPos);
-    UIWidgetPtr getChildByIndex(int childIndex);
+    UIWidgetPtr getChildByIndex(int index);
     UIWidgetPtr recursiveGetChildById(const std::string& id);
     UIWidgetPtr recursiveGetChildByPos(const Point& childPos);
     UIWidgetPtr backwardsGetWidgetById(const std::string& id);
 
     void addChild(const UIWidgetPtr& child);
-    void insertChild(const UIWidgetPtr& child, int index);
+    void insertChild(int index, const UIWidgetPtr& child);
     void removeChild(const UIWidgetPtr& child);
     void focusChild(const UIWidgetPtr& child, UI::FocusReason reason);
     void focusNextChild(UI::FocusReason reason);
@@ -123,9 +123,9 @@ private:
     void internalUpdateChildrenLayout();
 
     void addAnchoredWidget(const UIWidgetPtr& widget);
-    void recalculateAnchoredWidgets();
-    void clearAnchoredWidgets();
-    void computeAnchoredWidgets();
+    void removeAnchoredWidget(const UIWidgetPtr& widget);
+    void computeHookedWidgets();
+    void clearHookedWidgets();
     void resetLayoutUpdateState(bool resetOwn);
 
     bool m_layoutUpdated;
@@ -165,7 +165,7 @@ protected:
     bool m_destroyed;
     Rect m_rect;
     UIAnchorList m_anchors;
-    UIWeakWidgetList m_anchoredWidgets;
+    UIWidgetList m_anchoredWidgets;
     UIWidgetWeakPtr m_parent;
     UIWidgetList m_children;
     UIWidgetList m_lockedChildren;
