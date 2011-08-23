@@ -130,6 +130,7 @@ SET(SOURCES
     src/framework/ui/uiwindow.cpp
     src/framework/ui/uianchor.cpp
     src/framework/ui/uilist.cpp
+    #src/framework/ui/uianchorable.cpp
 )
 
 IF(WIN32)

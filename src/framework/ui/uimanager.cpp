@@ -30,7 +30,7 @@ void UIManager::render()
 void UIManager::resize(const Size& size)
 {
     if(m_rootWidget)
-        m_rootWidget->resize(size);
+        m_rootWidget->resize(g_graphics.getScreenSize());
 }
 
 void UIManager::inputEvent(const PlatformEvent& event)

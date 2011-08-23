@@ -104,7 +104,8 @@ void UIWidget::render()
 
     // draw children
     for(const UIWidgetPtr& child : m_children) {
-        if(child->isExplicitlyVisible()) {
+        // render only visible children with a valid rect
+        if(child->isExplicitlyVisible() && child->getRect().isValid()) {
             // store current graphics opacity
             int oldOpacity = g_graphics.getOpacity();
 
@@ -112,7 +113,6 @@ void UIWidget::render()
             if(child->getOpacity() < oldOpacity)
                 g_graphics.setOpacity(child->getOpacity());
 
-            // bind child color
             child->render();
 
             // debug draw box
@@ -810,7 +810,6 @@ void UIWidget::onStyleApply(const OTMLNodePtr& styleNode)
         // id
         if(node->tag() == "id") {
             setId(node->value());
-    //logTraceDebug(m_id);
         }
         // background image
         else if(node->tag() == "image") {

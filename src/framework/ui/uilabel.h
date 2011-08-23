@@ -8,14 +8,14 @@ class UILabel : public UIWidget
 public:
     UILabel();
 
-    static UILabelPtr create();
+    static UILabelPtr create() { return UILabelPtr(new UILabel); }
 
     virtual void onStyleApply(const OTMLNodePtr& styleNode);
     virtual void render();
 
     void resizeToText();
 
-    void setText(const std::string& text) { m_text = text; }
+    void setText(const std::string& text);
     void setAlign(AlignmentFlag align) { m_align = align; }
 
     std::string getText() const { return m_text; }

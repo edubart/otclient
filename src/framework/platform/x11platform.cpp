@@ -335,15 +335,15 @@ void Platform::poll()
                     ) {
                         //logDebug("char: ", buf[0], " code: ", (uint)buf[0]);
                         inputEvent.keychar = buf[0];
+                        dump << int((uchar)buf[0]);
                     }
+                } else {
+                    //event.xkey.state &= ~(ShiftMask | LockMask);
+                    len = XLookupString(&event.xkey, buf, sizeof(buf), &keysym, 0);
+
+                    if(len > 0 && (uchar)inputEvent.keychar >= 32)
+                        inputEvent.keychar = (len > 0) ? buf[0] : 0;
                 }
-
-                // unmask Shift/Lock to get expected results
-                event.xkey.state &= ~(ShiftMask | LockMask);
-                len = XLookupString(&event.xkey, buf, sizeof(buf), &keysym, 0);
-
-                if(inputEvent.keychar == 0)
-                    inputEvent.keychar = (len > 0) ? buf[0] : 0;
 
                 if(x11.keyMap.find(keysym) != x11.keyMap.end())
                     inputEvent.keycode = x11.keyMap[keysym];

@@ -15,18 +15,9 @@ UILineEdit::UILineEdit()
     m_onAction = [this]() { this->callLuaField("onAction"); };
 }
 
-UILineEditPtr UILineEdit::create()
-{
-    UILineEditPtr lineEdit(new UILineEdit);
-    return lineEdit;
-}
-
 void UILineEdit::render()
 {
     UIWidget::render();
-
-    if(!m_rect.isValid())
-        return;
 
     //TODO: text rendering could be much optimized by using vertex buffer or caching the render into a texture
 
@@ -39,8 +30,8 @@ void UILineEdit::render()
     // render cursor
     if(isExplicitlyEnabled() && hasFocus() && m_cursorPos >= 0) {
         assert(m_cursorPos <= textLength);
-        // draw every 330ms
-        const int delay = 330;
+        // draw every 333ms
+        const int delay = 333;
         int ticks = g_platform.getTicks();
         if(ticks - m_cursorTicks <= delay) {
             Rect cursorRect;
@@ -61,7 +52,7 @@ void UILineEdit::update()
     int textLength = m_text.length();
 
     // prevent glitches
-    if(!m_rect.isValid())
+    if(m_rect.isEmpty())
         return;
 
     // map glyphs positions

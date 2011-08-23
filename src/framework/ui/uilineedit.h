@@ -8,7 +8,7 @@ class UILineEdit : public UIWidget
 public:
     UILineEdit();
 
-    static UILineEditPtr create();
+    static UILineEditPtr create() { return  UILineEditPtr(new UILineEdit); }
 
     virtual void render();
 

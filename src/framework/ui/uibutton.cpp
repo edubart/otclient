@@ -14,12 +14,6 @@ UIButton::UIButton()
     m_onClick = [this]() { this->callLuaField("onClick"); };
 }
 
-UIButtonPtr UIButton::create()
-{
-    UIButtonPtr button(new UIButton);
-    return button;
-}
-
 void UIButton::onStyleApply(const OTMLNodePtr& styleNode)
 {
     UIWidget::onStyleApply(styleNode);

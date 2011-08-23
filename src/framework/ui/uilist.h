@@ -20,6 +20,12 @@ public:
 private:
     std::string m_text;
     boost::any m_data;
+    int height;
+    /*
+    Image m_image;
+    Color m_backgroundColor;
+    Color m_foregroundColor;
+    */
 };
 
 class UIList : public UIWidget
@@ -62,7 +68,7 @@ protected:
     //onCurrentTextChange
     //onItemClicked
 
-    std::list<UIListItem> m_items;
+    std::deque<UIListItem> m_items;
 };
 
 #endif

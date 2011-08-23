@@ -14,5 +14,6 @@ Module
     importStyles('separators.otui')
     importStyles('lineedits.otui')
     importStyles('windows.otui')
+    importStyles('listboxes.otui')
     return true
 

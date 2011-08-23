@@ -21,7 +21,7 @@ class UIButton : public UIWidget
 public:
     UIButton();
 
-    static UIButtonPtr create();
+    static UIButtonPtr create() { return UIButtonPtr(new UIButton); }
 
     virtual void onStyleApply(const OTMLNodePtr& styleNode);
     void loadStateStyle(ButtonStateStyle& stateStyle, const OTMLNodePtr& stateStyleNode);
