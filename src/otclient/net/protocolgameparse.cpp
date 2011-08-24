@@ -923,7 +923,7 @@ void ProtocolGame::setTileDescription(InputMessage& msg, Position position)
             ThingPtr thing = internalGetThing(msg);
             if(thing)
                 thing->setPosition(position);
-            g_map.addThing(thing, stackpos);
+            g_map.addThing(thing);
         }
         stackpos++;
     }

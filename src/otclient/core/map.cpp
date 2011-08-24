@@ -40,7 +40,7 @@ void Map::draw(const Rect& rect)
         for(int jz = 6; jz >= 0; --jz) {
             Position coverPos = Position(playerPos.x+(7-jz)-1, playerPos.y+(7-jz)-1, jz);
             if(const TilePtr& tile = m_tiles[coverPos]) {
-                if(tile->getStackSize() > 0 && jz < playerPos.z) {
+                if(tile->getStackSize(3) > 0 && jz < playerPos.z) {
                     drawFloorStop = jz;
                     break;
                 }
@@ -99,7 +99,7 @@ void Map::draw(const Rect& rect)
     }
 }
 
-void Map::addThing(ThingPtr thing, uint8 stackpos)
+void Map::addThing(ThingPtr thing, int stackpos)
 {
     if(!thing)
         return;
@@ -115,7 +115,7 @@ void Map::addThing(ThingPtr thing, uint8 stackpos)
         m_creatures[thing->getId()] = creature;
 }
 
-ThingPtr Map::getThing(const Position& pos, uint8 stackpos)
+ThingPtr Map::getThing(const Position& pos, int stackpos)
 {
     if(const TilePtr& tile = m_tiles[pos]) {
         return tile->getThing(stackpos);
@@ -123,7 +123,7 @@ ThingPtr Map::getThing(const Position& pos, uint8 stackpos)
     return ThingPtr();
 }
 
-void Map::removeThing(const Position& pos, uint8 stackpos)
+void Map::removeThing(const Position& pos, int stackpos)
 {
     if(TilePtr& tile = m_tiles[pos]) {
         tile->removeThing(stackpos);

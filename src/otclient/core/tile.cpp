@@ -72,8 +72,9 @@ void Tile::draw(int x, int y)
     }
 }
 
-void Tile::addThing(ThingPtr thing, uint8 stackpos)
+void Tile::addThing(ThingPtr thing, int stackpos)
 {
+    // TODO: rework this. that -1 sucks
     if(!thing)
         return;
 
@@ -89,8 +90,13 @@ void Tile::addThing(ThingPtr thing, uint8 stackpos)
         else {
             if(thingAttributes.alwaysOnTop)
                 m_itemsTop.push_back(thing);
-            else
-                m_itemsBottom.push_back(thing);
+            else {
+                if(stackpos == -1)
+                    m_itemsBottom.push_back(thing);
+                else {
+                    m_itemsBottom.insert(m_itemsBottom.begin()+(stackpos-getStackSize(2)), thing);
+                }
+            }
         }
     }
     else if(thing->asCreature()) {
@@ -101,7 +107,7 @@ void Tile::addThing(ThingPtr thing, uint8 stackpos)
     }
 }
 
-ThingPtr Tile::getThing(uint8 stackpos)
+ThingPtr Tile::getThing(unsigned int stackpos)
 {
     if(stackpos == 0)
         return m_ground;
@@ -121,7 +127,7 @@ ThingPtr Tile::getThing(uint8 stackpos)
     return ThingPtr();
 }
 
-void Tile::removeThing(uint8 stackpos)
+void Tile::removeThing(unsigned int stackpos)
 {
     if(stackpos == 0) {
         m_ground.reset();
@@ -205,13 +211,20 @@ void Tile::clean()
     m_effects.clear();
 }
 
-int Tile::getStackSize()
+int Tile::getStackSize(int stop)
 {
-    int ret = 0;
-    if(m_ground)
-        ret++;
-    ret += m_itemsBottom.size();
-    ret += m_creatures.size();
+    int ret = m_ground ? 1 : 0;
+    if(stop == 0)
+        return ret;
+
     ret += m_itemsTop.size();
+    if(stop == 1)
+        return ret;
+
+    ret += m_creatures.size();
+    if(stop == 2)
+        return ret;
+
+    ret += m_itemsBottom.size();
     return ret;
 }

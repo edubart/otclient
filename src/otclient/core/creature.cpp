@@ -1,8 +1,6 @@
- #include "creature.h"
+#include "creature.h"
 #include "datmanager.h"
 #include <framework/graphics/graphics.h>
-#include <framework/graphics/framebuffer.h>
-#include "game.h"
 #include <framework/graphics/fontmanager.h>
 
 Creature::Creature() : Thing(THING_CREATURE)
@@ -13,34 +11,41 @@ Creature::Creature() : Thing(THING_CREATURE)
 
 void Creature::draw(int x, int y)
 {
-    //ThingAttributes *creatureAttributes = getAttributes();
     int anim = 0;
 
-    // draw outfit
-    internalDraw(x, y, 0, m_direction, 0, 0, anim);
-
     const ThingAttributes& attributes = getAttributes();
-    if(attributes.blendframes > 1) {
-        g_graphics.bindBlendFunc(BLEND_COLORIZING);
+    for(int ydiv = 0; ydiv < attributes.ydiv; ydiv++) {
 
-        for(int mask = 0; mask < 4; ++mask) {
+        // continue if we dont have this addon.
+        if(ydiv > 0 && !(m_outfit.addons & (1 << (ydiv-1))))
+            continue;
 
-            int outfitColorId = 0;
-            if(mask == SpriteMaskYellow)
-                outfitColorId = m_outfit.head;
-            else if(mask == SpriteMaskRed)
-                outfitColorId = m_outfit.body;
-            else if(mask == SpriteMaskGreen)
-                outfitColorId = m_outfit.legs;
-            else if(mask ==  SpriteMaskBlue)
-                outfitColorId = m_outfit.feet;
+        // draw white item
+        internalDraw(x, y, 0, m_direction, ydiv, 0, anim);
 
-            g_graphics.bindColor(OutfitColors[outfitColorId]);
-            internalDraw(x, y, 1, m_direction, 0, 0, anim, (SpriteMask)mask);
+        // draw mask if exists
+        if(attributes.blendframes > 1) {
+            g_graphics.bindBlendFunc(BLEND_COLORIZING);
+
+            for(int mask = 0; mask < 4; ++mask) {
+
+                int outfitColorId = 0;
+                if(mask == SpriteMaskYellow)
+                    outfitColorId = m_outfit.head;
+                else if(mask == SpriteMaskRed)
+                    outfitColorId = m_outfit.body;
+                else if(mask == SpriteMaskGreen)
+                    outfitColorId = m_outfit.legs;
+                else if(mask ==  SpriteMaskBlue)
+                    outfitColorId = m_outfit.feet;
+
+                g_graphics.bindColor(OutfitColors[outfitColorId]);
+                internalDraw(x, y, 1, m_direction, ydiv, 0, anim, (SpriteMask)mask);
+            }
+
+            g_graphics.bindBlendFunc(BLEND_NORMAL);
+            g_graphics.bindColor(Color::white);
         }
-
-        g_graphics.bindBlendFunc(BLEND_NORMAL);
-        g_graphics.bindColor(Color::white);
     }
 }
 
