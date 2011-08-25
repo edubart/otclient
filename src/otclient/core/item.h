@@ -20,6 +20,8 @@ public:
 
 private:
     int m_count;
+    int m_lastTicks;
+    int m_animation;
 };
 
 #endif
