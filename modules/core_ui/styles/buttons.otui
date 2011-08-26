@@ -1,5 +1,6 @@
 Button < UIButton
   font: helvetica-11px-bold
+  background-color: #ffffff
   color: #f0ad4dff
   size: 106 24
   border-image:
@@ -17,3 +18,6 @@ Button < UIButton
       source: /core_ui/images/button_down.png
       border: 5
 
+  state.disabled:
+    color: #999999
+    background-color: #ffffff88

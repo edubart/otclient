@@ -503,7 +503,7 @@ void UIWidget::updateState(WidgetState state)
         UIWidgetPtr parent;
         do {
             parent = widget->getParent();
-            if(!widget->getRect().contains(mousePos) ||
+            if(!widget->isExplicitlyEnabled() || !widget->getRect().contains(mousePos) ||
                (parent && widget != parent->getChildByPos(mousePos))) {
                 newStatus = false;
                 break;
@@ -514,14 +514,16 @@ void UIWidget::updateState(WidgetState state)
         newStatus = m_pressed;
     }
     else if(state == DisabledState) {
+        bool enabled = true;
         updateChildren = true;
         UIWidgetPtr widget = asUIWidget();
         do {
             if(!widget->isExplicitlyEnabled()) {
-                newStatus = false;
+                enabled = false;
                 break;
             }
         } while(widget = widget->getParent());
+        newStatus = !enabled;
     }
     else {
         return;

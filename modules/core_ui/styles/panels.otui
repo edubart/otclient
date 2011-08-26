@@ -5,11 +5,13 @@ FlatPanel < Panel
     source: /core_ui/images/panel_flat.png
     border: 4
 
+
 RoundedPanel < Panel
-  color: #ffffffc0
+  background-color: #ffffffdd
   border-image:
     source: /core_ui/images/panel_rounded.png
     border: 4
+
 
 RectPanel < UIWidget
   image: /core_ui/images/empty_rect.png
