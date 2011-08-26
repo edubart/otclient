@@ -42,6 +42,7 @@ void Creature::draw(int x, int y)
     // TODO 1: FIX RENDER STEP 2
     // TODO 2: FIX SHAKY EFFECT
     // TODO 3: ADD ANIMATION
+    // TODO 4: ADD DIAGONAL WALKING
 
     const ThingAttributes& attributes = getAttributes();
 
