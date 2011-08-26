@@ -1,6 +1,8 @@
 Window < UIWindow
   font: helvetica-12px-bold
   size: 200 200
+  opacity: 255
+  background-color: #ffffff
   head:
     height: 20
     border-image:
@@ -16,6 +18,9 @@ Window < UIWindow
       offset: 0 19
       border: 4
       border.top: 0
+
+  state.pressed:
+    opacity: 192
 
 MainWindow < Window
   anchors.centerIn: parent

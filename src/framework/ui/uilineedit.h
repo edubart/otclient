@@ -8,8 +8,6 @@ class UILineEdit : public UIWidget
 public:
     UILineEdit();
 
-    static UILineEditPtr create() { return  UILineEditPtr(new UILineEdit); }
-
     virtual void render();
 
     void update();
@@ -31,9 +29,9 @@ public:
 protected:
     virtual void onStyleApply(const OTMLNodePtr& styleNode);
     virtual void onGeometryUpdate(const Rect& oldRect, const Rect& newRect);
-    virtual void onFocusChange(bool focused, UI::FocusReason reason);
+    virtual void onFocusChange(bool focused, FocusReason reason);
     virtual bool onKeyPress(uchar keyCode, char keyChar, int keyboardModifiers);
-    virtual bool onMousePress(const Point& mousePos, UI::MouseButton button);
+    virtual bool onMousePress(const Point& mousePos, MouseButton button);
 
 private:
     void blinkCursor();

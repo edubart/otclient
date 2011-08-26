@@ -11,7 +11,7 @@ Button < UIButton
       source: /core_ui/images/button_hover.png
       border: 5
 
-  state.down:
+  state.pressed:
     text-translate: 1 1
     border-image:
       source: /core_ui/images/button_down.png

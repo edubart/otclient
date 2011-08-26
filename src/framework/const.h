@@ -12,6 +12,7 @@ enum LogLevel {
 };
 
 enum AlignmentFlag {
+    AlignNone = 0,
     AlignLeft = 1,
     AlignRight = 2,
     AlignTop = 4,
@@ -39,6 +40,45 @@ enum AnchorEdge {
     AnchorHorizontalCenter,
 };
 
+enum FocusReason {
+    MouseFocusReason = 0,
+    TabFocusReason,
+    ActiveFocusReason,
+    OtherFocusReason
+};
+
+enum MouseButton {
+    MouseNoButton = 0,
+    MouseLeftButton,
+    MouseRightButton,
+    MouseMidButton
+};
+
+enum MouseWheelDirection {
+    MouseNoWheel = 0,
+    MouseWheelUp,
+    MouseWheelDown
+};
+
+enum KeyboardModifier {
+    KeyboardNoModifier = 0,
+    KeyboardCtrlModifier = 1,
+    KeyboardAltModifier = 2,
+    KeyboardShiftModifier = 4
+};
+
+enum WidgetState {
+    DefaultState = 0,
+    ActiveState = 1,
+    FocusState = 2,
+    HoverState = 4,
+    PressedState = 8,
+    DisabledState = 16
+    //FirstState,
+    //MiddleState,
+    //LastState,
+    //AlternateState
+};
 
 //}
 

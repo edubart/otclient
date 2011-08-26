@@ -9,9 +9,9 @@ UIManager g_ui;
 void UIManager::init()
 {
     // creates root widget
-    m_rootWidget = UIWidgetPtr(new UIWidget);
+    m_rootWidget = UIWidget::create<UIWidget>();
+    m_rootWidget->setup();
     m_rootWidget->setId("root");
-    m_rootWidget->setHovered(true);
     m_rootWidget->resize(g_graphics.getScreenSize());
 }
 
@@ -38,13 +38,13 @@ void UIManager::inputEvent(const PlatformEvent& event)
     // translate input event to ui events
     if(m_rootWidget) {
         if(event.type & EventKeyboardAction) {
-            int keyboardModifiers = UI::KeyboardNoModifier;
+            int keyboardModifiers = KeyboardNoModifier;
             if(event.ctrl)
-                keyboardModifiers |= UI::KeyboardCtrlModifier;
+                keyboardModifiers |= KeyboardCtrlModifier;
             if(event.shift)
-                keyboardModifiers |= UI::KeyboardShiftModifier;
+                keyboardModifiers |= KeyboardShiftModifier;
             if(event.alt)
-                keyboardModifiers |= UI::KeyboardAltModifier;
+                keyboardModifiers |= KeyboardAltModifier;
 
             if(event.type == EventKeyDown)
                 m_rootWidget->onKeyPress(event.keycode, event.keychar, keyboardModifiers);
@@ -52,24 +52,25 @@ void UIManager::inputEvent(const PlatformEvent& event)
                 m_rootWidget->onKeyRelease(event.keycode, event.keychar, keyboardModifiers);
         } else if(event.type & EventMouseAction) {
             if(event.type == EventMouseMove) {
+                m_rootWidget->updateState(HoverState);
                 m_rootWidget->onMouseMove(event.mousePos, event.mouseMoved);
             }
             else if(event.type & EventMouseWheel) {
-                UI::MouseWheelDirection dir = UI::MouseNoWheel;
+                MouseWheelDirection dir = MouseNoWheel;
                 if(event.type & EventDown)
-                    dir = UI::MouseWheelDown;
+                    dir = MouseWheelDown;
                 else if(event.type & EventUp)
-                    dir = UI::MouseWheelUp;
+                    dir = MouseWheelUp;
 
                 m_rootWidget->onMouseWheel(event.mousePos, dir);
             } else  {
-                UI::MouseButton button = UI::MouseNoButton;
+                MouseButton button = MouseNoButton;
                 if(event.type & EventMouseLeftButton)
-                    button = UI::MouseLeftButton;
+                    button = MouseLeftButton;
                 else if(event.type & EventMouseMidButton)
-                    button = UI::MouseMidButton;
+                    button = MouseMidButton;
                 else if(event.type & EventMouseRightButton)
-                    button = UI::MouseRightButton;
+                    button = MouseRightButton;
 
                 if(event.type & EventDown)
                     m_rootWidget->onMousePress(event.mousePos, button);
@@ -132,7 +133,7 @@ OTMLNodePtr UIManager::getStyle(const std::string& styleName)
     return m_styles[styleName];
 }
 
-UIWidgetPtr UIManager::loadUI(const std::string& file)
+UIWidgetPtr UIManager::loadUI(const std::string& file, const UIWidgetPtr& parent)
 {
     try {
         OTMLDocumentPtr doc = OTMLDocument::parse(file);
@@ -146,7 +147,7 @@ UIWidgetPtr UIManager::loadUI(const std::string& file)
             else {
                 if(widget)
                     throw std::runtime_error("cannot have multiple main widgets in .otui files");
-                widget = loadWidgetFromOTML(node);
+                widget = loadWidgetFromOTML(node, parent);
             }
         }
 
@@ -157,7 +158,7 @@ UIWidgetPtr UIManager::loadUI(const std::string& file)
     }
 }
 
-UIWidgetPtr UIManager::loadWidgetFromOTML(const OTMLNodePtr& widgetNode)
+UIWidgetPtr UIManager::loadWidgetFromOTML(const OTMLNodePtr& widgetNode, const UIWidgetPtr& parent)
 {
     OTMLNodePtr styleNode = getStyle(widgetNode->tag())->clone();
     styleNode->merge(widgetNode);
@@ -170,14 +171,16 @@ UIWidgetPtr UIManager::loadWidgetFromOTML(const OTMLNodePtr& widgetNode)
     g_lua.getField("create");
     g_lua.remove(-2);
     g_lua.protectedCall(0, 1);
-    UIWidgetPtr widget = g_lua.polymorphicPop<UIWidgetPtr>();
 
-    widget->onStyleApply(styleNode);
-    widget->updateLayout();
+    UIWidgetPtr widget = g_lua.polymorphicPop<UIWidgetPtr>();
+    if(parent)
+        parent->addChild(widget);
+
+    widget->setStyleFromNode(styleNode);
 
     for(const OTMLNodePtr& childNode : widgetNode->children()) {
         if(!childNode->isUnique())
-            widget->addChild(loadWidgetFromOTML(childNode));
+            loadWidgetFromOTML(childNode, widget);
     }
 
     return widget;

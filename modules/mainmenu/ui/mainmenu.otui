@@ -1,7 +1,8 @@
 MenuButton < Button
-  anchors.top: prev.bottom
-  anchors.horizontalCenter: parent.horizontalCenter
-  margin.top: 10
+  margin.bottom: 11
+  margin.left: 20
+  margin.right: 20
+
 
 Panel
   id: mainMenuBackground
@@ -9,6 +10,7 @@ Panel
     source: /mainmenu/ui/background.png
     smooth: true
   anchors.fill: parent
+  focusable: false
 
   RoundedPanel
     id: mainMenu
@@ -17,24 +19,20 @@ Panel
     anchors.bottom: parent.bottom
     margin.left: 60
     margin.bottom: 70
+    layout: verticalBox
 
     MenuButton
       text: Enter Game
-      anchors.top: parent.top
-      anchors.horizontalCenter: parent.horizontalCenter
       margin.top: 18
-      onClick: |
-        local enterGameWindow = loadUI("/mainmenu/ui/entergamewindow.otui")
-        rootWidget:addChild(enterGameWindow)
-        GFX.fadeIn(enterGameWindow)
+      onClick: UI.loadAndDisplayLocked("/mainmenu/ui/entergamewindow.otui")
 
     MenuButton
       text: Options
-      onClick: rootWidget:addChild(loadUI("/mainmenu/ui/optionswindow.otui"))
+      onClick: UI.loadAndDisplayLocked("/mainmenu/ui/optionswindow.otui")
 
     MenuButton
       text: Info
-      onClick: rootWidget:addChild(loadUI("/mainmenu/ui/infowindow.otui"))
+      onClick: UI.loadAndDisplayLocked("/mainmenu/ui/infowindow.otui")
 
     MenuButton
       text: Exit

@@ -5,26 +5,8 @@
 
 class UIButton : public UIWidget
 {
-    struct ButtonStateStyle {
-        ImagePtr image;
-        Point textTranslate;
-        Color foregroundColor;
-        Color color;
-    };
-
-    enum ButtonState {
-        ButtonUp = 0,
-        ButtonDown,
-        ButtonHover
-    };
-
 public:
-    UIButton();
-
-    static UIButtonPtr create() { return UIButtonPtr(new UIButton); }
-
-    virtual void onStyleApply(const OTMLNodePtr& styleNode);
-    void loadStateStyle(ButtonStateStyle& stateStyle, const OTMLNodePtr& stateStyleNode);
+    virtual void setup();
     virtual void render();
 
     void setOnClick(const SimpleCallback& onClick) { m_onClick = onClick; }
@@ -32,18 +14,15 @@ public:
 
     SimpleCallback getOnClick() const { return m_onClick; }
     std::string getText() const { return m_text; }
-    ButtonState getState() const { return m_state; }
 
     UIButtonPtr asUIButton() { return std::static_pointer_cast<UIButton>(shared_from_this()); }
 
 protected:
-    virtual void onHoverChange(bool hovered);
-    virtual bool onMousePress(const Point& mousePos, UI::MouseButton button);
-    virtual bool onMouseRelease(const Point& mousePos, UI::MouseButton button);
+    virtual void onStyleApply(const OTMLNodePtr& styleNode);
+    virtual bool onMouseRelease(const Point& mousePos, MouseButton button);
 
-    ButtonState m_state;
-    ButtonStateStyle m_statesStyle[3];
     SimpleCallback m_onClick;
+    Point m_textTranslate;
     std::string m_text;
 };
 

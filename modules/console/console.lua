@@ -34,26 +34,21 @@ function Console.addLine(text, color)
   -- create new label
 
   local label = UILabel.create()
-  label:setStyle('ConsoleLabel')
+  console:insertChild(-2, label)
+  label:setId('consoleLabel' .. numLines)
   label:setText(text)
   label:setForegroundColor(color)
-  console:insertChild(3, label)
-
-  local lastLabel = console:getChildByIndex(4)
-  if lastLabel then
-    lastLabel:addAnchor(AnchorBottom, "prev", AnchorTop)
-  end
+  label:setStyle('ConsoleLabel')
 
   numLines = numLines + 1
   if numLines > maxLines then
-    local firstLabel = console:getChildByIndex(-1)
+    local firstLabel = console:getChildByIndex(1)
     firstLabel:destroy()
   end
 end
 
 function Console.create()
-  console = loadUI("/console/console.otui")
-  rootWidget:addChild(console)
+  console = UI.loadAndDisplay("/console/console.otui")
   console:hide()
 
   Logger.setOnLog(Console.onLog)

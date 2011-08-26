@@ -8,12 +8,6 @@ Module
   dependencies:
     - core_fonts
   onLoad: |
-    importStyles('buttons.otui')
-    importStyles('labels.otui')
-    importStyles('panels.otui')
-    importStyles('separators.otui')
-    importStyles('lineedits.otui')
-    importStyles('windows.otui')
-    importStyles('listboxes.otui')
+    require 'ui'
     return true
 

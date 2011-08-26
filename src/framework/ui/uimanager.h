@@ -19,8 +19,8 @@ public:
     void importStyleFromOTML(const OTMLNodePtr& styleNode);
     OTMLNodePtr getStyle(const std::string& styleName);
 
-    UIWidgetPtr loadUI(const std::string& file);
-    UIWidgetPtr loadWidgetFromOTML(const OTMLNodePtr& widgetNode);
+    UIWidgetPtr loadUI(const std::string& file, const UIWidgetPtr& parent = nullptr);
+    UIWidgetPtr loadWidgetFromOTML(const OTMLNodePtr& widgetNode, const UIWidgetPtr& parent);
 
     UIWidgetPtr getRootWidget() { return m_rootWidget; }
 

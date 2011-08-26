@@ -4,39 +4,13 @@
 #include <framework/graphics/graphics.h>
 #include <framework/otml/otml.h>
 
-UIWindow::UIWindow()
+void UIWindow::setup()
 {
+    UIWidget::setup();
     m_moving = false;
-}
-
-UIWindowPtr UIWindow::create()
-{
-    UIWindowPtr window(new UIWindow);
-    return window;
-}
-
-void UIWindow::onStyleApply(const OTMLNodePtr& styleNode)
-{
-    UIWidget::onStyleApply(styleNode);
-
-    if(OTMLNodePtr headNode = styleNode->get("head")) {
-        if(OTMLNodePtr node = headNode->get("border-image"))
-            m_headImage = BorderImage::loadFromOTML(node);
-        m_headHeight = headNode->valueAt("height", m_headImage->getDefaultSize().height());
-        m_headMargin = headNode->valueAt("margin", 0);
-        m_titleAlign = fw::translateAlignment(headNode->valueAt("text align", std::string("center")));
-    } else {
-        m_headHeight = 0;
-        m_headMargin = 0;
-        m_titleAlign = AlignCenter;
-    }
-
-    if(OTMLNodePtr bodyNode = styleNode->get("body")) {
-        if(OTMLNodePtr node = bodyNode->get("border-image"))
-            m_bodyImage = BorderImage::loadFromOTML(node);
-    }
-
-    m_title = styleNode->valueAt("title", fw::empty_string);
+    m_headHeight = 0;
+    m_headMargin = 0;
+    m_titleAlign = AlignCenter;
 }
 
 void UIWindow::render()
@@ -61,11 +35,35 @@ void UIWindow::render()
     // draw window body
     Rect bodyRect = getRect();
     bodyRect.setTop(headRect.bottom() + 1);
-    if(m_bodyImage)
+    if(m_bodyImage) {
+        g_graphics.bindColor(m_backgroundColor);
         m_bodyImage->draw(bodyRect);
+    }
 
     // render children
     UIWidget::render();
+}
+
+void UIWindow::onStyleApply(const OTMLNodePtr& styleNode)
+{
+    UIWidget::onStyleApply(styleNode);
+
+    for(OTMLNodePtr node : styleNode->children()) {
+        if(node->tag() == "head") {
+            if(OTMLNodePtr cnode = node->get("border-image"))
+                m_headImage = BorderImage::loadFromOTML(cnode);
+            m_headHeight = node->valueAt("height", m_headImage->getDefaultSize().height());
+            m_headMargin = node->valueAt("margin", 0);
+            m_titleAlign = fw::translateAlignment(node->valueAt("text align", std::string("center")));
+        }
+        else if(node->tag() == "body") {
+            if(OTMLNodePtr cnode = node->get("border-image"))
+                m_bodyImage = BorderImage::loadFromOTML(cnode);
+        }
+        else if(node->tag() == "title") {
+            setTitle(node->value());
+        }
+    }
 }
 
 void UIWindow::onGeometryUpdate(const Rect& oldRect, const Rect& newRect)
@@ -89,18 +87,18 @@ void UIWindow::onGeometryUpdate(const Rect& oldRect, const Rect& newRect)
         setRect(boundRect);
 }
 
-void UIWindow::onFocusChange(bool focused, UI::FocusReason reason)
+void UIWindow::onFocusChange(bool focused, FocusReason reason)
 {
     // when a window is focused it goes to the top
-    if(UIWidgetPtr parent = getParent())
-        parent->moveChildToTop(asUIWidget());
+    if(focused) {
+        if(UIWidgetPtr parent = getParent())
+            parent->moveChildToTop(asUIWidget());
+    }
 }
 
-bool UIWindow::onMousePress(const Point& mousePos, UI::MouseButton button)
+bool UIWindow::onMousePress(const Point& mousePos, MouseButton button)
 {
-    Rect headRect = getRect();
-    headRect.setHeight(m_headHeight);
-    if(headRect.contains(mousePos)) {
+    if(!getChildByPos(mousePos)) {
         m_moving = true;
         m_movingReference = mousePos - getRect().topLeft();
         return true;
@@ -108,7 +106,7 @@ bool UIWindow::onMousePress(const Point& mousePos, UI::MouseButton button)
     return UIWidget::onMousePress(mousePos, button);
 }
 
-bool UIWindow::onMouseRelease(const Point& mousePos, UI::MouseButton button)
+bool UIWindow::onMouseRelease(const Point& mousePos, MouseButton button)
 {
     if(m_moving) {
         m_moving = false;

@@ -41,7 +41,7 @@ struct X11PlatformPrivate {
     int lastTicks;
     std::string clipboardText;
     std::map<int, uchar> keyMap;
-    PlatformListener* listener;
+    PlatformEvent inputEvent;
 } x11;
 
 Platform g_platform;
@@ -261,7 +261,7 @@ void Platform::terminate()
 void Platform::poll()
 {
     XEvent event, peekevent;
-    static PlatformEvent inputEvent;
+    PlatformEvent& inputEvent = x11.inputEvent;
     while(XPending(x11.display) > 0) {
         XNextEvent(x11.display, &event);
 
@@ -335,7 +335,6 @@ void Platform::poll()
                     ) {
                         //logDebug("char: ", buf[0], " code: ", (uint)buf[0]);
                         inputEvent.keychar = buf[0];
-                        dump << int((uchar)buf[0]);
                     }
                 } else {
                     //event.xkey.state &= ~(ShiftMask | LockMask);
@@ -732,6 +731,11 @@ void Platform::showMouseCursor()
         XFreeCursor(x11.display, x11.cursor);
         x11.cursor = None;
     }
+}
+
+Point Platform::getMouseCursorPos()
+{
+    return x11.inputEvent.mousePos;
 }
 
 void Platform::setVerticalSync(bool enable)

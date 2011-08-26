@@ -2,7 +2,7 @@ function EnterGame_connectToLoginServer()
   local protocolLogin = ProtocolLogin.create()
 
   local recreateEnterGame = function()
-    rootWidget:addChild(loadUI("/mainmenu/ui/entergamewindow.otui"))
+    UI.loadAndDisplayLocked("/mainmenu/ui/entergamewindow.otui")
   end
 
   local loadBox = displayCancelBox("Please wait", "Connecting..")
@@ -30,7 +30,7 @@ function EnterGame_connectToLoginServer()
     mainMenu:hide()
   end
 
-  local enterGameWindow = rootWidget:getChildById("enterGameWindow")
+  local enterGameWindow =  UI.root:getChildById("enterGameWindow")
   local account = enterGameWindow:getChildById("accountNameLineEdit"):getText()
   local password = enterGameWindow:getChildById("accountPasswordLineEdit"):getText()
   protocolLogin:login(account, password)

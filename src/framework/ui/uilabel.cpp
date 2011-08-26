@@ -2,22 +2,11 @@
 #include <framework/graphics/font.h>
 #include <framework/otml/otmlnode.h>
 
-UILabel::UILabel()
+void UILabel::setup()
 {
-    m_align = AlignLeft;
-    m_focusable = false;
-}
-
-void UILabel::onStyleApply(const OTMLNodePtr& styleNode)
-{
-    UIWidget::onStyleApply(styleNode);
-
-    for(const OTMLNodePtr& node : styleNode->children()) {
-        if(node->tag() == "text")
-            setText(node->value());
-        else if(node->tag() == "align")
-            setAlign(fw::translateAlignment(styleNode->value()));
-    }
+    UIWidget::setup();
+    setFocusable(false);
+    setAlign(AlignLeft);
 }
 
 void UILabel::render()
@@ -30,8 +19,10 @@ void UILabel::setText(const std::string& text)
 {
     m_text = text;
 
-    // auto resize if the current rect is invalid
-    if(!m_rect.isValid()) {
+    // auto resize
+    if(!m_fixedSize)
+        resizeToText();
+    else if(!m_rect.isValid()) {
         Size textSize = m_font->calculateTextRectSize(m_text);
         if(m_rect.width() <= 0)
             m_rect.setWidth(textSize.width());
@@ -43,4 +34,16 @@ void UILabel::setText(const std::string& text)
 void UILabel::resizeToText()
 {
     resize(m_font->calculateTextRectSize(m_text));
+}
+
+void UILabel::onStyleApply(const OTMLNodePtr& styleNode)
+{
+    UIWidget::onStyleApply(styleNode);
+
+    for(const OTMLNodePtr& node : styleNode->children()) {
+        if(node->tag() == "text")
+            setText(node->value());
+        else if(node->tag() == "align")
+            setAlign(fw::translateAlignment(node->value()));
+    }
 }

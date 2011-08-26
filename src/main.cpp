@@ -1,6 +1,7 @@
 #include <otclient/otclient.h>
-#include <csignal>
 #include <framework/core/eventdispatcher.h>
+
+#include <csignal>
 
 void signal_handler(int sig)
 {

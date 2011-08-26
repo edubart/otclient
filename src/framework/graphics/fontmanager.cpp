@@ -60,10 +60,3 @@ FontPtr FontManager::getFont(const std::string& fontName)
     return getDefaultFont();
 }
 
-FontPtr FontManager::getDefaultFont()
-{
-    // default font should always exists, otherwise the app may crash
-    if(!m_defaultFont)
-        logFatal("no default font to display, cannot continue to run");
-    return m_defaultFont;
-}
