@@ -201,9 +201,6 @@ void Tile::removeThingByPtr(ThingPtr thing)
 
 void Tile::clean()
 {
-    for(const ThingPtr& thing : m_creatures)
-        g_map.removeCreatureById(thing->getId());
-
     m_itemsTop.clear();
     m_creatures.clear();
     m_itemsBottom.clear();
