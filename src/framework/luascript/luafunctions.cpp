@@ -46,6 +46,7 @@ void LuaInterface::registerFunctions()
     g_lua.bindClassMemberFunction<UIWidget>("insertChild", &UIWidget::insertChild);
     g_lua.bindClassMemberFunction<UIWidget>("removeChild", &UIWidget::removeChild);
     g_lua.bindClassMemberFunction<UIWidget>("addChild", &UIWidget::addChild);
+    g_lua.bindClassMemberFunction<UIWidget>("focusChild", &UIWidget::focusChild);
     g_lua.bindClassMemberFunction<UIWidget>("lockChild", &UIWidget::lockChild);
     g_lua.bindClassMemberFunction<UIWidget>("updateLayout", &UIWidget::updateLayout);
     g_lua.bindClassMemberFunction<UIWidget>("updateParentLayout", &UIWidget::updateParentLayout);

@@ -13,4 +13,6 @@ LogWarning = 2
 LogError = 3
 LogFatal = 4
 
+ActiveFocusReason = 2
+
 EmptyFunction = function() end
