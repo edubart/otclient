@@ -9,7 +9,7 @@ class Tile : public LuaObject
 public:
     Tile();
 
-    void draw(int x, int y);
+    void draw(int x, int y, int step);
 
     void addThing(ThingPtr thing, int stackpos);
     ThingPtr getThing(unsigned int stackpos);

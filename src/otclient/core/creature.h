@@ -44,6 +44,8 @@ public:
     bool getImpassable() { return m_impassable; }
 
     void walk(const Position& position);
+    double getWalkOffsetX() { return m_walkOffsetX; }
+    double getWalkOffsetY() { return m_walkOffsetY; }
 
     const ThingAttributes& getAttributes();
 
@@ -63,8 +65,9 @@ private:
 
     int m_lastTicks;
     bool m_walking;
-    Position m_walkingPosition;
-    float m_walkOffsetX, m_walkOffsetY;
+    double m_walkTime;
+    Position m_walkingFromPosition;
+    double m_walkOffsetX, m_walkOffsetY;
     int m_animation;
 };
 

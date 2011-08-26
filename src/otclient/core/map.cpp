@@ -14,7 +14,10 @@ void Map::draw(const Rect& rect)
     g_graphics.bindColor(Color::white);
     m_framebuffer->bind();
 
-    Position playerPos = g_game.getLocalPlayer()->getPosition();
+    LocalPlayerPtr player = g_game.getLocalPlayer();
+    Position playerPos = player->getPosition();
+    double walkOffsetX = player->getWalkOffsetX();
+    double walkOffsetY = player->getWalkOffsetY();
 
     // player is above 7
 
@@ -53,11 +56,13 @@ void Map::draw(const Rect& rect)
 
             // +1 in draws cause 64x64 items may affect view.
 
-            for(int ix = -7+(playerPos.z-iz); ix < + 8+7; ++ix) {
-                for(int iy = -5+(playerPos.z-iz); iy < + 6+7; ++iy) {
-                    Position itemPos = Position(playerPos.x + ix, playerPos.y + iy, iz);
-                    if(const TilePtr& tile = m_tiles[itemPos])
-                        tile->draw((ix + 7 - (playerPos.z-iz))*32, (iy + 5 - (playerPos.z-iz))*32);
+            for(int step = 0; step < 2; ++step) {
+                for(int ix = -8+(playerPos.z-iz); ix < + 8+7; ++ix) {
+                    for(int iy = -6+(playerPos.z-iz); iy < + 6+7; ++iy) {
+                        Position itemPos = Position(playerPos.x + ix, playerPos.y + iy, iz);
+                        if(const TilePtr& tile = m_tiles[itemPos])
+                            tile->draw((ix + 7 - (playerPos.z-iz))*32 - walkOffsetX, (iy + 5 - (playerPos.z-iz))*32 - walkOffsetY, step);
+                    }
                 }
             }
         }
@@ -88,6 +93,13 @@ void Map::draw(const Rect& rect)
 
                     int x = (ix + 7)*32 + 10 - tile->getDrawNextOffset();
                     int y = (iy + 5)*32 - 10 - tile->getDrawNextOffset();
+
+                    if(creature != player) {
+                        x += creature->getWalkOffsetX() - walkOffsetX;
+                        y += creature->getWalkOffsetY() - walkOffsetY;
+                    }
+
+
 
                     // TODO: create isCovered function.
                     bool useGray = (drawFloorStop != playerPos.z-1);

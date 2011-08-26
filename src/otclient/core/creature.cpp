@@ -39,34 +39,24 @@ void Creature::draw(int x, int y)
 
     // 1000 * groundSpeed / playerSpeed
 
-    // TODO 1: ADD 2 NEW RENDER STEPS, CREATURE AND TOP 3
-    // TODO 2: CONSIDER STRETCH FACTOR ON drawInformation
-    // TODO 3: FIX MAP BUGGY TILES ??
+    // TODO 1: FIX RENDER STEP 2
+    // TODO 2: FIX SHAKY EFFECT
+    // TODO 3: ADD ANIMATION
 
     const ThingAttributes& attributes = getAttributes();
 
     // we must walk 32 pixels in m_speed miliseconds
     if(m_walking && attributes.animcount > 1) {
-
-
-        int groundSpeed = 0;
-
-        ThingPtr ground = g_map.getThing(m_walkingPosition, 0);
-        if(ground)
-            groundSpeed = ground->getAttributes().speed;
-
-        float walkTime = 1000.0 * (float)groundSpeed / m_speed;
-
-        //dump << walkTime << (g_platform.getTicks() - m_lastTicks+1);
+        double offset = (32.0 / m_walkTime) * (g_platform.getTicks() - m_lastTicks);
 
         if(m_direction == DIRECTION_NORTH)
-            m_walkOffsetY -= (32.0 / walkTime) * (g_platform.getTicks() - m_lastTicks+1);
+            m_walkOffsetY = std::max(m_walkOffsetY - offset, 0.0);
         else if(m_direction == DIRECTION_EAST)
-            m_walkOffsetX += (32.0 / walkTime) * (g_platform.getTicks() - m_lastTicks+1);
+            m_walkOffsetX = std::min(m_walkOffsetX + offset, 0.0);
         else if(m_direction == DIRECTION_SOUTH)
-            m_walkOffsetY += (32.0 / walkTime) * (g_platform.getTicks() - m_lastTicks+1);
+            m_walkOffsetY = std::min(m_walkOffsetY + offset, 0.0);
         else if(m_direction == DIRECTION_WEST)
-            m_walkOffsetX -= (32.0 / walkTime) * (g_platform.getTicks() - m_lastTicks+1);
+            m_walkOffsetX = std::max(m_walkOffsetX - offset, 0.0);
 
         /*if(g_platform.getTicks() - m_lastTicks > m_speed / 4) {
             if(m_animation+1 == attributes.animcount)
@@ -77,16 +67,10 @@ void Creature::draw(int x, int y)
             m_lastTicks = g_platform.getTicks();
         }*/
 
-        dump << m_walkOffsetY;
-
-        if(fabs(m_walkOffsetY) >= 32) {
-            g_map.removeThingByPtr(asThing());
-
-            // calc newpos
-            m_position = m_walkingPosition;
-
-            g_map.addThing(asThing());
+        if(((m_walkOffsetX == 0 && m_walkOffsetY == 0) && m_walkOffsetX != m_walkOffsetY) ||
+           ((m_walkOffsetX == 0 || m_walkOffsetY == 0) && m_walkOffsetX == m_walkOffsetY)) {
             m_walking = false;
+            m_walkOffsetX = 0;
             m_walkOffsetY = 0;
         }
 
@@ -136,9 +120,6 @@ void Creature::draw(int x, int y)
 
 void Creature::drawInformation(int x, int y, bool useGray)
 {
-    x += m_walkOffsetX;
-    y += m_walkOffsetY;
-
     Color fillColor = Color(96, 96, 96);
 
     if(!useGray) {
@@ -189,26 +170,48 @@ void Creature::drawInformation(int x, int y, bool useGray)
 
 void Creature::walk(const Position& position)
 {
+    // set walking state
     m_walking = true;
     m_walkOffsetX = 0;
     m_walkOffsetY = 0;
-    m_walkingPosition = position;
+    m_walkingFromPosition = m_position;
 
-    if(m_position + Position(0, -1, 0) == m_walkingPosition)
+    // update map tiles
+    g_map.removeThingByPtr(asThing());
+    m_position = position;
+    g_map.addThing(asThing());
+
+    // set new direction
+    if(m_walkingFromPosition + Position(0, -1, 0) == m_position) {
         m_direction = DIRECTION_NORTH;
-    else if(m_position + Position(1, 0, 0) == m_walkingPosition)
+        m_walkOffsetY = 32;
+    }
+    else if(m_walkingFromPosition + Position(1, 0, 0) == m_position) {
         m_direction = DIRECTION_EAST;
-    else if(m_position + Position(0, 1, 0) == m_walkingPosition)
+        m_walkOffsetX = -32;
+    }
+    else if(m_walkingFromPosition + Position(0, 1, 0) == m_position) {
         m_direction = DIRECTION_SOUTH;
-    else if(m_position + Position(-1, 0, 0) == m_walkingPosition)
+        m_walkOffsetY = -32;
+    }
+    else if(m_walkingFromPosition + Position(-1, 0, 0) == m_position) {
         m_direction = DIRECTION_WEST;
+        m_walkOffsetX = 32;
+    }
     else { // Teleport
-        g_map.removeThingByPtr(asThing());
-        m_position = m_walkingPosition;
-        g_map.addThing(asThing());
-
+        // we teleported, dont walk or change direction
         m_walking = false;
     }
+
+    // get walk speed
+    int groundSpeed = 0;
+
+    ThingPtr ground = g_map.getThing(m_position, 0);
+    if(ground)
+        groundSpeed = ground->getAttributes().speed;
+
+    m_walkTime = 1000.0 * (float)groundSpeed / m_speed;
+    m_walkTime = m_walkTime == 0 ? 1000 : m_walkTime;
 }
 
 const ThingAttributes& Creature::getAttributes()
