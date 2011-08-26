@@ -19,7 +19,7 @@ function MessageBox.create(title, text, flags)
   label:resizeToText()
 
   -- set window size based on label size
-  window:setWidth(label:getWidth() + 60)
+  window:setWidth(label:getWidth() + 48)
   window:setHeight(label:getHeight() + 64)
   window:updateParentLayout()
 

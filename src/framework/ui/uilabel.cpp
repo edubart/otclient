@@ -12,7 +12,9 @@ void UILabel::setup()
 void UILabel::render()
 {
     UIWidget::render();
-    m_font->renderText(m_text, m_rect, m_align, m_foregroundColor);
+    Rect textRect = m_rect;
+    textRect.setTopLeft(textRect.topLeft() + m_offset);
+    m_font->renderText(m_text, textRect, m_align, m_foregroundColor);
 }
 
 void UILabel::setText(const std::string& text)
@@ -43,5 +45,8 @@ void UILabel::onStyleApply(const OTMLNodePtr& styleNode)
             setText(node->value());
         else if(node->tag() == "align")
             setAlign(fw::translateAlignment(node->value()));
+        else if(node->tag() == "offset") {
+            setOffset(node->value<Point>());
+        }
     }
 }
