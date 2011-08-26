@@ -17,8 +17,13 @@ bool DatManager::load(const std::string& file)
         int numShots = fw::getu16(fin);
 
         m_itemsAttributes.resize(numItems);
-        for(int id = 100; id < numItems; ++id)
+        for(int id = 100; id < numItems; ++id) {
             parseThingAttributes(fin, m_itemsAttributes[id - 100]);
+
+            if(id == 436 || id == 870 || id == 4522) {
+                dump << id << (int)m_itemsAttributes[id-100].speed;
+            }
+        }
 
         m_creaturesAttributes.resize(numItems);
         for(int id = 0; id < numCreatures; ++id)

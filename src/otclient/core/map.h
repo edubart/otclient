@@ -10,9 +10,9 @@ class Map
 public:
     void draw(const Rect& rect);
 
-    void addThing(ThingPtr thing, uint8 stackpos = 0);
-    ThingPtr getThing(const Position& pos, uint8 stackpos);
-    void removeThing(const Position& pos, uint8 stackpos);
+    void addThing(ThingPtr thing, int stackpos = -1);
+    ThingPtr getThing(const Position& pos, int stackpos);
+    void removeThing(const Position& pos, int stackpos);
     void removeThingByPtr(ThingPtr thing);
 
     void clean();

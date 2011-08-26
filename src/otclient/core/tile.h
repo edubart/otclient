@@ -11,16 +11,16 @@ public:
 
     void draw(int x, int y);
 
-    void addThing(ThingPtr thing, uint8 stackpos);
-    ThingPtr getThing(uint8 stackpos);
-    void removeThing(uint8 stackpos);
+    void addThing(ThingPtr thing, int stackpos);
+    ThingPtr getThing(unsigned int stackpos);
+    void removeThing(unsigned int stackpos);
     void removeThingByPtr(ThingPtr thing);
 
     void clean();
 
     bool hasGround() { return (!!m_ground); }
 
-    int getStackSize();
+    int getStackSize(int stop);
 
     std::deque<ThingPtr> getCreatures() { return m_creatures; }
     int getDrawNextOffset() { return m_drawNextOffset; }
