@@ -6,20 +6,19 @@
 class UILabel : public UIWidget
 {
 public:
-    UILabel();
-
-    static UILabelPtr create();
-
-    virtual void onStyleApply(const OTMLNodePtr& styleNode);
+    virtual void setup();
     virtual void render();
 
     void resizeToText();
 
-    void setText(const std::string& text) { m_text = text; }
+    void setText(const std::string& text);
     void setAlign(AlignmentFlag align) { m_align = align; }
 
     std::string getText() const { return m_text; }
     AlignmentFlag getAlign() const { return m_align; }
+
+protected:
+    virtual void onStyleApply(const OTMLNodePtr& styleNode);
 
 private:
     std::string m_text;

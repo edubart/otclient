@@ -50,6 +50,7 @@ public:
 
     void hideMouseCursor();
     void showMouseCursor();
+    Point getMouseCursorPos();
 
     /// Enable or disable vertical synchronization
     void setVerticalSync(bool enable);

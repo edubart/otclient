@@ -1,0 +1,1 @@
+--UI.loadAndDisplayLocked('/mainmenu/ui/charlist.otui')

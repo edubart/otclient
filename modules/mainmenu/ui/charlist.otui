@@ -1,0 +1,34 @@
+MainWindow
+  id: charactersWindow
+  title: Charlist
+  size: 200 250
+
+  TextList
+    id: charactersList
+    anchors.fill: parent
+    margin.top: 30
+    margin.bottom: 50
+    margin.left: 16
+    margin.right: 16
+
+  Button
+    id: buttonOk
+    text: Ok
+    width: 64
+    anchors.right: next.left
+    anchors.bottom: parent.bottom
+    margin.bottom: 16
+    margin.right: 16
+
+  Button
+    id: buttonCancel
+    text: Cancel
+    width: 64
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    margin.bottom: 16
+    margin.right: 16
+    onClick: |
+      function(self)
+        self:getParent():destroy()
+      end

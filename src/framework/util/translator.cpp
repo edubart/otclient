@@ -21,23 +21,26 @@ AlignmentFlag fw::translateAlignment(std::string aligment)
         return AlignTopCenter;
     else if(aligment == "bottom")
         return AlignBottomCenter;
-    else
+    else if(aligment == "center")
         return AlignCenter;
+    return AlignNone;
 }
 
-AnchorEdge fw::translateAnchorEdge(const std::string& anchorPoint)
+AnchorEdge fw::translateAnchorEdge(std::string anchorEdge)
 {
-    if(anchorPoint == "left")
+    boost::to_lower(anchorEdge);
+    boost::erase_all(anchorEdge, " ");
+    if(anchorEdge == "left")
         return AnchorLeft;
-    else if(anchorPoint == "right")
+    else if(anchorEdge == "right")
         return AnchorRight;
-    else if(anchorPoint == "top")
+    else if(anchorEdge == "top")
         return AnchorTop;
-    else if(anchorPoint == "bottom")
+    else if(anchorEdge == "bottom")
         return AnchorBottom;
-    else if(anchorPoint == "horizontalCenter")
+    else if(anchorEdge == "horizontalcenter")
         return AnchorHorizontalCenter;
-    else if(anchorPoint == "verticalCenter")
+    else if(anchorEdge == "verticalcenter")
         return AnchorVerticalCenter;
     return AnchorNone;
 }

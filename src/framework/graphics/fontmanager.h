@@ -14,7 +14,7 @@ public:
 
     bool fontExists(const std::string& fontName);
     FontPtr getFont(const std::string& fontName);
-    FontPtr getDefaultFont();
+    FontPtr getDefaultFont() { return m_defaultFont; }
 
     void setDefaultFont(const std::string& fontName) { m_defaultFont = getFont(fontName); }
 

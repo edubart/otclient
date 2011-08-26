@@ -15,18 +15,9 @@ UILineEdit::UILineEdit()
     m_onAction = [this]() { this->callLuaField("onAction"); };
 }
 
-UILineEditPtr UILineEdit::create()
-{
-    UILineEditPtr lineEdit(new UILineEdit);
-    return lineEdit;
-}
-
 void UILineEdit::render()
 {
     UIWidget::render();
-
-    if(!m_rect.isValid())
-        return;
 
     //TODO: text rendering could be much optimized by using vertex buffer or caching the render into a texture
 
@@ -37,10 +28,10 @@ void UILineEdit::render()
         g_graphics.drawTexturedRect(m_glyphsCoords[i], texture, m_glyphsTexCoords[i]);
 
     // render cursor
-    if(isExplicitlyEnabled() && hasFocus() && m_cursorPos >= 0) {
+    if(isExplicitlyEnabled() && isActive() && m_cursorPos >= 0) {
         assert(m_cursorPos <= textLength);
-        // draw every 330ms
-        const int delay = 330;
+        // draw every 333ms
+        const int delay = 333;
         int ticks = g_platform.getTicks();
         if(ticks - m_cursorTicks <= delay) {
             Rect cursorRect;
@@ -61,7 +52,7 @@ void UILineEdit::update()
     int textLength = m_text.length();
 
     // prevent glitches
-    if(!m_rect.isValid())
+    if(m_rect.isEmpty())
         return;
 
     // map glyphs positions
@@ -331,11 +322,14 @@ void UILineEdit::onStyleApply(const OTMLNodePtr& styleNode)
 {
     UIWidget::onStyleApply(styleNode);
 
-    setText(styleNode->valueAt("text", getText()));
-
-    if(OTMLNodePtr node = styleNode->get("onAction")) {
-        g_lua.loadFunction(node->value(), "@" + node->source() + "[" + node->tag() + "]");
-        luaSetField(node->tag());
+    for(const OTMLNodePtr& node : styleNode->children()) {
+        if(node->tag() == "text") {
+            setText(node->value());
+            setCursorPos(m_text.length());
+        } else if(node->tag() == "onAction") {
+            g_lua.loadFunction(node->value(), "@" + node->source() + "[" + node->tag() + "]");
+            luaSetField(node->tag());
+        }
     }
 }
 
@@ -344,11 +338,11 @@ void UILineEdit::onGeometryUpdate(const Rect& oldRect, const Rect& newRect)
     update();
 }
 
-void UILineEdit::onFocusChange(bool focused, UI::FocusReason reason)
+void UILineEdit::onFocusChange(bool focused, FocusReason reason)
 {
     if(focused) {
-        if(reason == UI::TabFocusReason)
-            setCursorPos(0);
+        if(reason == TabFocusReason)
+            setCursorPos(m_text.length());
         else
             blinkCursor();
     }
@@ -370,21 +364,21 @@ bool UILineEdit::onKeyPress(uchar keyCode, char keyChar, int keyboardModifiers)
         setCursorPos(m_text.length());
     else if(keyCode == KC_TAB) {
         if(UIWidgetPtr parent = getParent())
-            parent->focusNextChild(UI::TabFocusReason);
+            parent->focusNextChild(TabFocusReason);
     } else if(keyCode == KC_RETURN) {
         if(m_onAction)
             m_onAction();
-    } else if(keyCode != 0) {
+    } else if(keyChar != 0)
         appendCharacter(keyChar);
-    } else
+    else
         return false;
 
     return true;
 }
 
-bool UILineEdit::onMousePress(const Point& mousePos, UI::MouseButton button)
+bool UILineEdit::onMousePress(const Point& mousePos, MouseButton button)
 {
-    if(button == UI::MouseLeftButton) {
+    if(button == MouseLeftButton) {
         int pos = getTextPos(mousePos);
         if(pos >= 0)
             setCursorPos(pos);

@@ -34,6 +34,7 @@
 
 // boost utilities
 #include <boost/algorithm/string.hpp>
+#include <boost/any.hpp>
 
 // global constants
 #include "const.h"

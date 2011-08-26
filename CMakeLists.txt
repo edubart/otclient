@@ -128,8 +128,9 @@ SET(SOURCES
     src/framework/ui/uibutton.cpp
     src/framework/ui/uilineedit.cpp
     src/framework/ui/uiwindow.cpp
-    src/framework/ui/uianchor.cpp
-    src/framework/ui/uilist.cpp
+    src/framework/ui/uianchorlayout.cpp
+    src/framework/ui/uiverticallayout.cpp
+    src/framework/ui/uilayout.cpp
 )
 
 IF(WIN32)

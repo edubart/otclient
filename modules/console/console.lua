@@ -15,14 +15,16 @@ function Console.onLog(level, message, time)
     if level == LogDebug then
       color = '#5555ff'
     elseif level == LogInfo then
-      color = '#55ff55'
+      color = '#5555ff'
     elseif level == LogWarning then
       color = '#ffff00'
     else
       color = '#ff0000'
     end
 
-    Console.addLine(message, color)
+    if level ~= LogDebug then
+      Console.addLine(message, color)
+    end
 
     logLocked = false
   end
@@ -32,21 +34,21 @@ function Console.addLine(text, color)
   -- create new label
 
   local label = UILabel.create()
-  label:setStyle('ConsoleLabel')
+  console:insertChild(-2, label)
+  label:setId('consoleLabel' .. numLines)
   label:setText(text)
   label:setForegroundColor(color)
-  console:insertChild(label, -1)
+  label:setStyle('ConsoleLabel')
 
   numLines = numLines + 1
   if numLines > maxLines then
-    local firstLine = console:getChildByIndex(0)
-    firstLine:destroy()
+    local firstLabel = console:getChildByIndex(1)
+    firstLabel:destroy()
   end
 end
 
 function Console.create()
-  console = loadUI("/console/console.otui")
-  rootWidget:addChild(console)
+  console = UI.loadAndDisplay("/console/console.otui")
   console:hide()
 
   Logger.setOnLog(Console.onLog)

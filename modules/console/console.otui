@@ -13,7 +13,9 @@ RectPanel
   anchors.fill: parent
 
   UILabel
-    size: 18 20
+    id: commandSymbolLabel
+    size: 20 16
+    size fixed: true
     anchors.bottom: parent.bottom
     anchors.left: parent.left
     margin.left: 2
@@ -22,11 +24,10 @@ RectPanel
 
   UILineEdit
     id: commandBox
-    height: 20
+    height: 16
     anchors.bottom: parent.bottom
-    anchors.left: prev.right
+    anchors.left: commandSymbolLabel.right
     anchors.right: parent.right
-    margin.left: 4
     font: terminus-14px-bold
     onAction: |
       function(self)

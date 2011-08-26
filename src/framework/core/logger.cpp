@@ -20,7 +20,7 @@ void Logger::log(LogLevel level, std::string message)
         m_logMessages.push_back(LogMessage(level, message, now));
 
         if(m_onLog)
-            g_dispatcher.addEvent(std::bind(m_onLog, level, message, now));
+            m_onLog(level, message, now);
     }
 
     if(level == LogFatal) {
@@ -46,7 +46,8 @@ void Logger::logFunc(LogLevel level, const std::string& message, std::string pre
 void Logger::fireOldMessages()
 {
     if(m_onLog) {
-        for(const LogMessage& logMessage : m_logMessages)
-            g_dispatcher.addEvent(std::bind(m_onLog, logMessage.level, logMessage.message, logMessage.when));
+        auto backup = m_logMessages;
+        for(const LogMessage& logMessage : backup)
+            m_onLog(logMessage.level, logMessage.message, logMessage.when);
     }
 }

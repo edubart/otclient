@@ -1,0 +1,10 @@
+Module
+  name: playground
+  autoLoad: true
+  dependencies:
+    - core
+
+  onLoad: |
+    require 'playground'
+    return true
+

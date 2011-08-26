@@ -13,10 +13,10 @@ Module
     require 'constants'
     require 'util'
     require 'widget'
-    require 'messagebox'
+    require 'ui'
+    require 'messagebox/messagebox'
     require 'dispatcher'
 
-    rootWidget = getRootWidget()
     return true
 
   onUnload: |

@@ -1,0 +1,5 @@
+TextList < UIWidget
+  size: 200 200
+  border-image:
+    source: /core_ui/images/panel_flat.png
+    border: 4

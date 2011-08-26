@@ -9,7 +9,7 @@ void LuaInterface::registerFunctions()
 {
     // UIWidget
     g_lua.registerClass<UIWidget>();
-    g_lua.bindClassStaticFunction<UIWidget>("create", &UIWidget::create);
+    g_lua.bindClassStaticFunction<UIWidget>("create", &UIWidget::create<UIWidget>);
     g_lua.bindClassMemberFunction<UIWidget>("getId", &UIWidget::getId);
     g_lua.bindClassMemberFunction<UIWidget>("setId", &UIWidget::setId);
     g_lua.bindClassMemberFunction<UIWidget>("isEnabled", &UIWidget::isEnabled);
@@ -39,41 +39,41 @@ void LuaInterface::registerFunctions()
     g_lua.bindClassMemberFunction<UIWidget>("setMarginRight", &UIWidget::setMarginRight);
     g_lua.bindClassMemberFunction<UIWidget>("hide", &UIWidget::hide);
     g_lua.bindClassMemberFunction<UIWidget>("show", &UIWidget::show);
-    g_lua.bindClassMemberFunction<UIWidget>("fill", &UIWidget::fill);
-    g_lua.bindClassMemberFunction<UIWidget>("centerIn", &UIWidget::centerIn);
-    g_lua.bindClassMemberFunction<UIWidget>("addAnchor", &UIWidget::addAnchor);
     g_lua.bindClassMemberFunction<UIWidget>("getChildById", &UIWidget::getChildById);
     g_lua.bindClassMemberFunction<UIWidget>("getChildByIndex", &UIWidget::getChildByIndex);
+    g_lua.bindClassMemberFunction<UIWidget>("getChildCount", &UIWidget::getChildCount);
     g_lua.bindClassMemberFunction<UIWidget>("insertChild", &UIWidget::insertChild);
     g_lua.bindClassMemberFunction<UIWidget>("removeChild", &UIWidget::removeChild);
     g_lua.bindClassMemberFunction<UIWidget>("addChild", &UIWidget::addChild);
     g_lua.bindClassMemberFunction<UIWidget>("lockChild", &UIWidget::lockChild);
+    g_lua.bindClassMemberFunction<UIWidget>("updateLayout", &UIWidget::updateLayout);
+    g_lua.bindClassMemberFunction<UIWidget>("updateParentLayout", &UIWidget::updateParentLayout);
     g_lua.bindClassMemberFunction<UIWidget>("destroy", &UIWidget::destroy);
 
 
     // UILabel
     g_lua.registerClass<UILabel, UIWidget>();
-    g_lua.bindClassStaticFunction<UILabel>("create", &UILabel::create);
+    g_lua.bindClassStaticFunction<UILabel>("create", &UIWidget::create<UILabel>);
     g_lua.bindClassMemberFunction<UILabel>("getText", &UILabel::getText);
     g_lua.bindClassMemberFunction<UILabel>("setText", &UILabel::setText);
     g_lua.bindClassMemberFunction("resizeToText", &UILabel::resizeToText);
 
     // UIButton
     g_lua.registerClass<UIButton, UIWidget>();
-    g_lua.bindClassStaticFunction<UIButton>("create", &UIButton::create);
+    g_lua.bindClassStaticFunction<UIButton>("create", &UIWidget::create<UIButton>);
     g_lua.bindClassMemberFunction<UIButton>("getText", &UIButton::getText);
     g_lua.bindClassMemberFunction<UIButton>("setText", &UIButton::setText);
 
     // UILineEdit
     g_lua.registerClass<UILineEdit, UIWidget>();
-    g_lua.bindClassStaticFunction<UILineEdit>("create", &UILineEdit::create);
+    g_lua.bindClassStaticFunction<UILineEdit>("create", &UIWidget::create<UILineEdit>);
     g_lua.bindClassMemberFunction<UILineEdit>("getText", &UILineEdit::getText);
     g_lua.bindClassMemberFunction<UILineEdit>("setText", &UILineEdit::setText);
     g_lua.bindClassMemberFunction<UILineEdit>("clearText", &UILineEdit::clearText);
 
     // UIWindow
     g_lua.registerClass<UIWindow, UIWidget>();
-    g_lua.bindClassStaticFunction<UIWindow>("create", &UIWindow::create);
+    g_lua.bindClassStaticFunction<UIWindow>("create", &UIWidget::create<UIWindow>);
     g_lua.bindClassMemberFunction<UIWindow>("getTitle", &UIWindow::getTitle);
     g_lua.bindClassMemberFunction<UIWindow>("setTitle", &UIWindow::setTitle);
 
@@ -95,7 +95,7 @@ void LuaInterface::registerFunctions()
     g_lua.bindGlobalFunction("importFont", std::bind(&FontManager::importFont, &g_fonts, _1));
     g_lua.bindGlobalFunction("importStyles", std::bind(&UIManager::importStyles, &g_ui, _1));
     g_lua.bindGlobalFunction("setDefaultFont", std::bind(&FontManager::setDefaultFont, &g_fonts, _1));
-    g_lua.bindGlobalFunction("loadUI", std::bind(&UIManager::loadUI, &g_ui, _1));
+    g_lua.bindGlobalFunction("loadUI", std::bind(&UIManager::loadUI, &g_ui, _1, _2));
     g_lua.bindGlobalFunction("getRootWidget", std::bind(&UIManager::getRootWidget, &g_ui));
     g_lua.bindGlobalFunction("addEvent", std::bind(&EventDispatcher::addEvent, &g_dispatcher, _1, false));
     g_lua.bindGlobalFunction("scheduleEvent", std::bind(&EventDispatcher::scheduleEvent, &g_dispatcher, _1, _2));

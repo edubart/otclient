@@ -89,7 +89,7 @@ MainWindow
     onClick: displayErrorBox("Error", "Not implemented yet")
 
   Label
-    text: |
+    text: |-
       Show the most recent
       Message of the Day
     anchors.left: prev.right
