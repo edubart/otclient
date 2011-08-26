@@ -43,6 +43,8 @@ public:
     uint8 getEmblem() { return m_emblem; }
     bool getImpassable() { return m_impassable; }
 
+    void walk(const Position& position);
+
     const ThingAttributes& getAttributes();
 
     CreaturePtr asCreature() { return std::static_pointer_cast<Creature>(shared_from_this()); }
@@ -58,6 +60,12 @@ private:
     uint8 m_shield;
     uint8 m_emblem;
     bool m_impassable;
+
+    int m_lastTicks;
+    bool m_walking;
+    Position m_walkingPosition;
+    float m_walkOffsetX, m_walkOffsetY;
+    int m_animation;
 };
 
 #endif

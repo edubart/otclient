@@ -382,21 +382,9 @@ void ProtocolGame::parseCreatureMove(InputMessage& msg)
 
     ThingPtr thing = g_map.getThing(oldPos, oldStackpos);
     if(thing) {
-        g_map.removeThing(oldPos, oldStackpos);
-        thing->setPosition(newPos);
-        g_map.addThing(thing);
-    }
-
-    CreaturePtr creature = thing->asCreature();
-    if(creature) {
-        if(oldPos + Position(0, -1, 0) == newPos)
-            creature->setDirection(DIRECTION_NORTH);
-        else if(oldPos + Position(1, 0, 0) == newPos)
-            creature->setDirection(DIRECTION_EAST);
-        else if(oldPos + Position(0, 1, 0) == newPos)
-            creature->setDirection(DIRECTION_SOUTH);
-        else if(oldPos + Position(-1, 0, 0) == newPos)
-            creature->setDirection(DIRECTION_WEST);
+        CreaturePtr creature = thing->asCreature();
+        if(creature)
+            creature->walk(newPos);
     }
 }
 

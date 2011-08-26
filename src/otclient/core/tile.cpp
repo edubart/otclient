@@ -78,11 +78,13 @@ void Tile::addThing(ThingPtr thing, int stackpos)
     if(!thing)
         return;
 
-    if(thing->getPosition() == g_game.getLocalPlayer()->getPosition() + Position(-1, 0, 0) && thing->getAttributes().alwaysOnTop) {
+    const ThingAttributes& thingAttributes = thing->getAttributes();
+
+    if(thing->getPosition() == g_game.getLocalPlayer()->getPosition() + Position(-1, 0, 0) && thingAttributes.group == THING_GROUP_GROUND) {
         logDebug((int)thing->getId());
     }
 
-    const ThingAttributes& thingAttributes = thing->getAttributes();
+
 
     if(thing->asItem()) {
         if(thingAttributes.group == THING_GROUP_GROUND)
