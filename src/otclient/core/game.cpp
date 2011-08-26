@@ -15,10 +15,10 @@ void Game::terminate()
         logout();
 }
 
-void Game::loginWorld(const std::string& account, const std::string& password, uint32 worldIp, uint16 worldPort, const std::string& characterName)
+void Game::loginWorld(const std::string& account, const std::string& password, const std::string& worldHost, int worldPort, const std::string& characterName)
 {
     m_protocolGame = ProtocolGamePtr(new ProtocolGame);
-    m_protocolGame->login(account, password, worldIp, worldPort, characterName);
+    m_protocolGame->login(account, password, worldHost, (uint16)worldPort, characterName);
 }
 
 void Game::logout()

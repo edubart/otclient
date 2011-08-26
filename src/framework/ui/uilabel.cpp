@@ -20,9 +20,7 @@ void UILabel::setText(const std::string& text)
     m_text = text;
 
     // auto resize
-    if(!m_fixedSize)
-        resizeToText();
-    else if(!m_rect.isValid()) {
+    if(!m_fixedSize && !m_rect.isValid()) {
         Size textSize = m_font->calculateTextRectSize(m_text);
         if(m_rect.width() <= 0)
             m_rect.setWidth(textSize.width());

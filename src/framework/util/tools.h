@@ -7,6 +7,7 @@
 #include <sstream>
 #include <exception>
 #include <cxxabi.h>
+#include "types.h"
 
 namespace fw {
 
@@ -225,6 +226,12 @@ inline unsigned int hex2dec(const std::string& str) {
     std::istringstream i(str);
     i >> std::hex >> num;
     return num;
+}
+
+inline std::string ip2str(uint32 ip) {
+    char host[16];
+    sprintf(host, "%d.%d.%d.%d", (uint8)ip, (uint8)(ip >> 8), (uint8)(ip >> 16), (uint8)(ip >> 24));
+    return std::string(host);
 }
 
 // an empty string to use anywhere needed

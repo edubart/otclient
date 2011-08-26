@@ -12,7 +12,7 @@ public:
 
     void loginWorld(const std::string& account,
                     const std::string& password,
-                    uint32 worldIp, uint16 worldPort,
+                    const std::string& worldHost, int worldPort,
                     const std::string& characterName);
     void logout();
 

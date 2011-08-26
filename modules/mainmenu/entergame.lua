@@ -1,3 +1,17 @@
+local account
+local password
+
+function EnterGame_characterWindow_okClicked()
+  local charactersWindow = UI.root:getChildById('charactersWindow')
+  local selected = charactersWindow:getChildById('charactersList'):getFocusedChild()
+  if selected then
+    Game.loginWorld(account, password, selected.worldHost, selected.worldPort, selected.characterName)
+    charactersWindow:destroy()
+    mainMenu:hide()
+  end
+end
+
+
 function EnterGame_connectToLoginServer()
   local protocolLogin = ProtocolLogin.create()
 
@@ -27,12 +41,31 @@ function EnterGame_connectToLoginServer()
       displayInfoBox("Message of the day", motdText)
       Configs.set("motd", motdNumber)
     end
-    mainMenu:hide()
+  end
+
+  protocolLogin.onCharacterList = function(protocol, characters, premDays)
+    loadBox:destroy()
+    local charactersWindow = UI.loadAndDisplayLocked('/mainmenu/ui/charlist.otui')
+    local charactersList = charactersWindow:getChildById('charactersList')
+    for i,characterInfo in ipairs(characters) do
+      local characterName = characterInfo[1]
+      local worldName = characterInfo[2]
+      local worldHost = characterInfo[3]
+      local worldIp = characterInfo[4]
+
+      local label = UILabel.create()
+      charactersList:addChild(label)
+      label:setText(characterName .. ' (' .. worldName .. ')')
+      label:setStyle('CharactersListLabel')
+      label.characterName = characterName
+      label.worldHost = worldHost
+      label.worldPort = worldIp
+    end
   end
 
   local enterGameWindow =  UI.root:getChildById("enterGameWindow")
-  local account = enterGameWindow:getChildById("accountNameLineEdit"):getText()
-  local password = enterGameWindow:getChildById("accountPasswordLineEdit"):getText()
+  account = enterGameWindow:getChildById("accountNameLineEdit"):getText()
+  password = enterGameWindow:getChildById("accountPasswordLineEdit"):getText()
   protocolLogin:login(account, password)
 
   enterGameWindow:destroy()

@@ -1,6 +1,7 @@
 #include "otclient.h"
 
 #include <framework/luascript/luainterface.h>
+#include <otclient/core/game.h>
 #include <otclient/core/datmanager.h>
 #include <otclient/core/spritemanager.h>
 #include <otclient/net/protocollogin.h>
@@ -19,4 +20,7 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassMemberFunction("cancelLogin", &ProtocolLogin::cancelLogin);
 
     g_lua.registerClass<ProtocolGame, Protocol>();
+
+    g_lua.registerClass<Game>();
+    g_lua.bindClassStaticFunction<Game>("loginWorld", std::bind(&Game::loginWorld, &g_game, _1, _2, _3, _4, _5));
 }

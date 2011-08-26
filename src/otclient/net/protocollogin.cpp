@@ -112,18 +112,19 @@ void ProtocolLogin::parseMOTD(InputMessage& inputMessage)
 
 void ProtocolLogin::parseCharacterList(InputMessage& inputMessage)
 {
-    uint8 characters = inputMessage.getU8();
-    for(int i = 0; i < characters; ++i) {
+    typedef std::tuple<std::string, std::string, std::string, int> CharacterInfo;
+    typedef std::vector<CharacterInfo> CharaterList;
+    CharaterList charList;
+
+    int numCharacters = inputMessage.getU8();
+    for(int i = 0; i < numCharacters; ++i) {
         std::string name = inputMessage.getString();
         std::string world = inputMessage.getString();
         uint32 ip = inputMessage.getU32();
         uint16 port = inputMessage.getU16();
-
-        // TODO just test
-        if(i == 0) {
-            g_game.loginWorld(m_accountName, m_accountPassword, ip, port, name);
-            break;
-        }
+        charList.push_back(CharacterInfo(name, world, fw::ip2str(ip), port));
     }
-    /*uint16 premiumDays =*/ inputMessage.getU16();
+    int premDays = inputMessage.getU16();
+
+    callLuaField("onCharacterList", charList, premDays);
 }

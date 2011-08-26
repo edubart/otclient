@@ -6,7 +6,7 @@ ProtocolGame::ProtocolGame()
     m_waitingLoginPacket = false;
 }
 
-void ProtocolGame::login(const std::string& accountName, const std::string& accountPassword, uint32 ip, uint16 port, const std::string& characterName)
+void ProtocolGame::login(const std::string& accountName, const std::string& accountPassword, const std::string& host, uint16 port, const std::string& characterName)
 {
     if(accountName.empty() || accountPassword.empty()) {
         callLuaField("onError", "You must enter an account name and password.");
@@ -17,9 +17,6 @@ void ProtocolGame::login(const std::string& accountName, const std::string& acco
     m_accountName = accountName;
     m_accountPassword = accountPassword;
     m_characterName = characterName;
-
-    char host[16];
-    sprintf(host, "%d.%d.%d.%d", (uint8)ip, (uint8)(ip >> 8), (uint8)(ip >> 16), (uint8)(ip >> 24));
 
     connect(host, port);
 }

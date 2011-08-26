@@ -1,3 +1,16 @@
+CharactersListLabel < Label
+  image: /core_ui/images/empty_rect.png
+  font: helvetica-12px-bold
+  background-color: #00000000
+  focusable: true
+  margin.left: 1
+  margin.right: 1
+  margin.top: 1
+
+  state.focus:
+    background-color: #ffffff22
+    color: #ffffff
+
 MainWindow
   id: charactersWindow
   title: Charlist
@@ -19,6 +32,7 @@ MainWindow
     anchors.bottom: parent.bottom
     margin.bottom: 16
     margin.right: 16
+    onClick: EnterGame_characterWindow_okClicked()
 
   Button
     id: buttonCancel

@@ -76,6 +76,13 @@ template<typename Ret, typename... Args>
 typename std::enable_if<!std::is_void<Ret>::value, bool>::type
 luavalue_cast(int index, std::function<Ret(Args...)>& func);
 
+// vector
+template<typename T>
+void push_luavalue(const std::vector<T>& vec);
+
+// tuple
+template<typename... Args>
+void push_luavalue(const std::tuple<Args...>& tuple);
 
 // start definitions
 
@@ -179,6 +186,40 @@ luavalue_cast(int index, std::function<Ret(Args...)>& func) {
         return true;
     }
     return false;
+}
+
+
+template<typename T>
+void push_luavalue(const std::vector<T>& vec) {
+    g_lua.newTable();
+    int i = 1;
+    for(const T& v : vec) {
+        push_luavalue(v);
+        g_lua.rawSeti(i);
+        i++;
+    }
+}
+
+template<int N>
+struct push_tuple_luavalue {
+    template<typename Tuple>
+    static void call(const Tuple& tuple) {
+        push_luavalue(std::get<N-1>(tuple));
+        g_lua.rawSeti(N);
+        push_tuple_luavalue<N-1>::call(tuple);
+    }
+};
+
+template<>
+struct push_tuple_luavalue<0> {
+    template<typename Tuple>
+    static void call(const Tuple& tuple) { }
+};
+
+template<typename... Args>
+void push_luavalue(const std::tuple<Args...>& tuple) {
+    g_lua.newTable();
+    push_tuple_luavalue<sizeof...(Args)>::call(tuple);
 }
 
 #endif
