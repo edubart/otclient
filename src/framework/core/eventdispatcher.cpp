@@ -37,7 +37,7 @@ void EventDispatcher::scheduleEvent(const SimpleCallback& callback, int delay)
     m_scheduledEventList.push(ScheduledEvent(g_platform.getTicks() + delay, callback));
 }
 
-void EventDispatcher::addEvent(const SimpleCallback& callback, bool pushFront)
+void EventDispatcher::addEvent(const SimpleCallback& callback, bool pushFront /* = false */)
 {
     if(pushFront)
         m_eventList.push_front(callback);
