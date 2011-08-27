@@ -286,11 +286,6 @@ void ProtocolGame::parseMapDescription(InputMessage& msg)
 {
     Position pos = parsePosition(msg);
     m_localPlayer->setPosition(pos);
-
-    // we must clean, creatures and all.
-    g_map.clean();
-
-    // now we get new map.
     setMapDescription(msg, pos.x - 8, pos.y - 6, pos.z, 18, 14);
 }
 
@@ -952,9 +947,11 @@ ThingPtr ProtocolGame::internalGetThing(InputMessage& msg)
                 creature = knownCreature;
         }
         else if(thingId == 0x0061) { //creature is not known
-            /*uint32 removeId = */msg.getU32();
+            uint32 removeId = msg.getU32();
             uint32 id = msg.getU32();
             std::string name = msg.getString();
+
+            g_map.removeCreatureById(removeId);
 
             LocalPlayerPtr localPlayer = g_game.getLocalPlayer();
             if(localPlayer->getId() == id)

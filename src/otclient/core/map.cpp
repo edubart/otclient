@@ -155,7 +155,6 @@ void Map::removeThingByPtr(ThingPtr thing)
 void Map::clean()
 {
     m_tiles.clear();
-    m_creatures.clear();
 }
 
 void Map::cleanTile(const Position& pos)
