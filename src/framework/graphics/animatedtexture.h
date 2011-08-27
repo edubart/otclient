@@ -12,6 +12,8 @@ public:
     void enableBilinearFilter();
     void processAnimation();
 
+    AnimatedTexturePtr asAnimatedTexture() { return std::static_pointer_cast<AnimatedTexture>(shared_from_this()); }
+
 private:
     std::vector<uint> m_framesTextureId;
     std::vector<int> m_framesDelay;
@@ -19,8 +21,5 @@ private:
     int m_currentFrame;
     int m_lastAnimCheckTicks;
 };
-
-typedef std::shared_ptr<AnimatedTexture> AnimatedTexturePtr;
-typedef std::weak_ptr<AnimatedTexture> AnimatedTextureWeakPtr;
 
 #endif
