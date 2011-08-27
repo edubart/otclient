@@ -2,6 +2,7 @@
 #define LOGGER_H
 
 #include "../util/tools.h"
+#include "../const.h"
 #include <vector>
 #include <functional>
 

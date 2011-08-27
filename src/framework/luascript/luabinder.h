@@ -5,11 +5,11 @@
 #include "luainterface.h"
 #include "luaexception.h"
 
-/// This namespace contains some dirty metaprogamming with C++0x features
+/// This namespace contains some dirty metaprogamming that uses a lot of C++0x features
 /// The purpose here is to create templates that can bind any function from C++
 /// and expose in lua environment. This is done combining variadic templates,
 /// lambdas, tuples and some type traits features from the new C++0x standard to create
-/// templates that can detect functions arguments to generate a lambdas. These lambdas
+/// templates that can detect functions's arguments and then generate lambdas. These lambdas
 /// pops arguments from lua stack, call the bound C++ function and then
 /// pushes the result to lua.
 namespace luabinder

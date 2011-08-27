@@ -6,6 +6,7 @@ function EnterGame_characterWindow_okClicked()
   local selected = charactersWindow:getChildById('charactersList'):getFocusedChild()
   if selected then
     Game.loginWorld(account, password, selected.worldHost, selected.worldPort, selected.characterName)
+    Configs.set('lastUsedCharacter', selected.characterName)
     charactersWindow:destroy()
     mainMenu:hide()
   else
@@ -24,6 +25,7 @@ local function createCharactersWindow(characters, premDays)
   local charactersWindow = UI.loadAndDisplayLocked('/mainmenu/ui/charlist.otui')
   local charactersList = charactersWindow:getChildById('charactersList')
   local accountStatusLabel = charactersWindow:getChildById('accountStatusLabel')
+
   for i,characterInfo in ipairs(characters) do
     local characterName = characterInfo[1]
     local worldName = characterInfo[2]
@@ -37,6 +39,10 @@ local function createCharactersWindow(characters, premDays)
     label.characterName = characterName
     label.worldHost = worldHost
     label.worldPort = worldIp
+
+    if i == 0 or Configs.get('lastUsedCharacter') == characterName then
+      charactersList:focusChild(label, ActiveFocusReason)
+    end
   end
   if premDays > 0 then
     accountStatusLabel:setText("Account Status:\nPremium Account (" .. premDays .. ' days left)')
