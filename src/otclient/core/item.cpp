@@ -32,11 +32,40 @@ Item::Item() : Thing(Otc::Item)
     m_lastTicks = g_platform.getTicks();
 }
 
+void Item::draw(int x, int y)
+{
+    const ThingAttributes& attributes = g_dat.getItemAttributes(m_id);
+
+    if(attributes.animcount > 1) {
+        if(g_platform.getTicks() - m_lastTicks > 500) {
+            if(m_animation+1 == attributes.animcount)
+                m_animation = 0;
+            else
+                m_animation++;
+
+            m_lastTicks = g_platform.getTicks();
+        }
+    }
+
+    /*if(attributes.group == Otc::ThingSplashGroup || attributes.group == Otc::ThingFluidGroup) {
+        //xdiv = m_count % attributes.xdiv;
+        //ydiv = m_count / attributes.ydiv;
+    }*/
+
+    for(int b = 0; b < attributes.blendframes; b++)
+        internalDraw(x, y, b);
+}
+
 void Item::setCount(int count)
 {
     int oldCount = m_count;
     m_count = count;
     onCountChange(oldCount);
+}
+
+const ThingAttributes& Item::getAttributes()
+{
+    return g_dat.getItemAttributes(m_id);
 }
 
 void Item::onPositionChange(const Position&)
@@ -76,33 +105,4 @@ void Item::onCountChange(int)
             m_yDiv = 1;
         }
     }
-}
-
-void Item::draw(int x, int y)
-{
-    const ThingAttributes& attributes = g_dat.getItemAttributes(m_id);
-
-    if(attributes.animcount > 1) {
-        if(g_platform.getTicks() - m_lastTicks > 500) {
-            if(m_animation+1 == attributes.animcount)
-                m_animation = 0;
-            else
-                m_animation++;
-
-            m_lastTicks = g_platform.getTicks();
-        }
-    }
-
-    /*if(attributes.group == Otc::ThingSplashGroup || attributes.group == Otc::ThingFluidGroup) {
-        //xdiv = m_count % attributes.xdiv;
-        //ydiv = m_count / attributes.ydiv;
-    }*/
-
-    for(int b = 0; b < attributes.blendframes; b++)
-        internalDraw(x, y, b);
-}
-
-const ThingAttributes& Item::getAttributes()
-{
-    return g_dat.getItemAttributes(m_id);
 }
