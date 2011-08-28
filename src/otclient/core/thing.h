@@ -42,12 +42,14 @@ public:
     virtual void draw(int x, int y) = 0;
 
     void setId(uint32 id) { m_id = id; }
-    void setPosition(const Position& position) { m_position = position; }
+    void setPosition(const Position& position);
 
     uint32 getId() const { return m_id; }
     Otc::ThingType getType() const { return m_type; }
     Position getPosition() const { return m_position; }
     virtual const ThingAttributes& getAttributes() = 0;
+
+    virtual void onPositionChange(const Position&) {}
 
     ThingPtr asThing() { return std::static_pointer_cast<Thing>(shared_from_this()); }
     virtual ItemPtr asItem() { return nullptr; }
@@ -57,11 +59,13 @@ public:
     virtual LocalPlayerPtr asLocalPlayer() { return nullptr; }
 
 protected:
-    void internalDraw(int x, int y, int blendframes, int xdiv, int ydiv, int zdiv, int anim, Otc::SpriteMask mask = Otc::SpriteNoMask);
+    void internalDraw(int x, int y, int blendframes, Otc::SpriteMask mask = Otc::SpriteNoMask);
 
     uint32 m_id;
     Otc::ThingType m_type;
     Position m_position;
+
+    int m_xDiv, m_yDiv, m_zDiv, m_animation;
 };
 
 #endif

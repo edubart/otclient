@@ -29,7 +29,6 @@
 Effect::Effect() : Thing(Otc::Effect)
 {
     m_lastTicks = g_platform.getTicks();
-    m_animation = 0;
     m_finished = false;
 }
 
@@ -47,7 +46,7 @@ void Effect::draw(int x, int y)
             m_lastTicks = g_platform.getTicks();
         }
 
-        internalDraw(x, y, 0, 0, 0, 0, m_animation);
+        internalDraw(x, y, 0);
     }
 }
 

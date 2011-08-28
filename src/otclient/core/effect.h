@@ -41,7 +41,6 @@ public:
 
 private:
     int m_lastTicks;
-    int m_animation;
     bool m_finished;
 };
 

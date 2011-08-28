@@ -26,9 +26,21 @@
 
 Thing::Thing(Otc::ThingType type) : m_id(0), m_type(type)
 {
+    m_xDiv = 0;
+    m_yDiv = 0;
+    m_zDiv = 0;
+    m_animation = 0;
 }
 
-void Thing::internalDraw(int x, int y, int blendframes, int xdiv, int ydiv, int zdiv, int anim, Otc::SpriteMask mask)
+void Thing::setPosition(const Position& position)
+{
+    Position oldPosition = m_position;
+    m_position = position;
+
+    onPositionChange(oldPosition);
+}
+
+void Thing::internalDraw(int x, int y, int blendframes, Otc::SpriteMask mask)
 {
     const ThingAttributes& attributes = getAttributes();
 
@@ -37,10 +49,10 @@ void Thing::internalDraw(int x, int y, int blendframes, int xdiv, int ydiv, int 
             int sprIndex = xi +
                     yi * attributes.width +
                     blendframes * attributes.width * attributes.height +
-                    xdiv * attributes.width * attributes.height * attributes.blendframes +
-                    ydiv * attributes.width * attributes.height * attributes.blendframes * attributes.xdiv +
-                    zdiv * attributes.width * attributes.height * attributes.blendframes * attributes.xdiv * attributes.ydiv +
-                    anim * attributes.width * attributes.height * attributes.blendframes * attributes.xdiv * attributes.ydiv * attributes.zdiv;
+                    m_xDiv * attributes.width * attributes.height * attributes.blendframes +
+                    m_yDiv * attributes.width * attributes.height * attributes.blendframes * attributes.xdiv +
+                    m_zDiv * attributes.width * attributes.height * attributes.blendframes * attributes.xdiv * attributes.ydiv +
+                    m_animation * attributes.width * attributes.height * attributes.blendframes * attributes.xdiv * attributes.ydiv * attributes.zdiv;
 
             int spriteId = attributes.sprites[sprIndex];
             if(!spriteId)

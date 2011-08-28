@@ -90,7 +90,6 @@ private:
     double m_walkTime;
     Position m_walkingFromPosition;
     double m_walkOffsetX, m_walkOffsetY;
-    int m_animation;
 };
 
 #endif

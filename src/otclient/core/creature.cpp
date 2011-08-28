@@ -32,7 +32,6 @@ Creature::Creature() : Thing(Otc::Creature)
 {
     m_healthPercent = 0;
     m_direction = Otc::South;
-    m_animation = 0;
 
     m_walking = false;
     m_walkOffsetX = 0;
@@ -106,14 +105,15 @@ void Creature::draw(int x, int y)
     y += m_walkOffsetY;
 
 
-    for(int ydiv = 0; ydiv < attributes.ydiv; ydiv++) {
+    m_xDiv = m_direction;
+    for(m_yDiv = 0; m_yDiv < attributes.ydiv; m_yDiv++) {
 
         // continue if we dont have this addon.
-        if(ydiv > 0 && !(m_outfit.addons & (1 << (ydiv-1))))
+        if(m_yDiv > 0 && !(m_outfit.addons & (1 << (m_yDiv-1))))
             continue;
 
         // draw white item
-        internalDraw(x, y, 0, m_direction, ydiv, 0, m_animation);
+        internalDraw(x, y, 0);
 
         // draw mask if exists
         if(attributes.blendframes > 1) {
@@ -122,19 +122,19 @@ void Creature::draw(int x, int y)
 
             // head
             g_graphics.bindColor(Otc::OutfitColors[m_outfit.head]);
-            internalDraw(x, y, 1, m_direction, ydiv, 0, m_animation, Otc::SpriteYellowMask);
+            internalDraw(x, y, 1, Otc::SpriteYellowMask);
 
             // body
             g_graphics.bindColor(Otc::OutfitColors[m_outfit.body]);
-            internalDraw(x, y, 1, m_direction, ydiv, 0, m_animation, Otc::SpriteRedMask);
+            internalDraw(x, y, 1, Otc::SpriteRedMask);
 
             // legs
             g_graphics.bindColor(Otc::OutfitColors[m_outfit.legs]);
-            internalDraw(x, y, 1, m_direction, ydiv, 0, m_animation, Otc::SpriteGreenMask);
+            internalDraw(x, y, 1, Otc::SpriteGreenMask);
 
             // feet
             g_graphics.bindColor(Otc::OutfitColors[m_outfit.feet]);
-            internalDraw(x, y, 1, m_direction, ydiv, 0, m_animation, Otc::SpriteBlueMask);
+            internalDraw(x, y, 1, Otc::SpriteBlueMask);
 
             // restore default blend func
             g_graphics.bindBlendFunc(Fw::BlendDefault);

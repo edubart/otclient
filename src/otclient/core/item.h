@@ -33,17 +33,19 @@ public:
 
     void draw(int x, int y);
 
-    void setCount(int count) { m_count = count; }
+    void setCount(int count);
 
     int getCount() { return m_count; }
     const ThingAttributes& getAttributes();
+
+    void onPositionChange(const Position&);
+    void onCountChange(int);
 
     ItemPtr asItem() { return std::static_pointer_cast<Item>(shared_from_this()); }
 
 private:
     int m_count;
     int m_lastTicks;
-    int m_animation;
 };
 
 #endif
