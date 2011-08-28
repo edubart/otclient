@@ -10,8 +10,8 @@ Module
 
   onLoad: |
     require 'console'
-    Console.create()
+    Console.init()
     return true
 
   onUnload: |
-    Console.destroy()
+    Console.terminate()

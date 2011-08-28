@@ -1,59 +1,25 @@
-Console = { }
+Console = createEnvironment()
+setfenv(1, Console)
 
-local console
+-- public variables
+LogColors = { [LogInfo] = 'white',
+              [LogWarning] = 'yellow',
+              [LogError] = 'red' }
+MaxLogLines = 80
+
+-- private variables
+local consoleWidget
 local logLocked = false
 local commandEnv = createEnvironment()
-local maxLines = 80
-local numLines = 0
+local commandLineEdit
 local commandHistory = { }
 local currentHistoryIndex = 0
 
-function Console.onLog(level, message, time)
-  -- avoid logging while reporting logs (would cause a infinite loop)
-  if not logLocked then
-    logLocked = true
-
-    local color
-    if level == LogDebug then
-      color = '#5555ff'
-    elseif level == LogInfo then
-      color = '#5555ff'
-    elseif level == LogWarning then
-      color = '#ffff00'
-    else
-      color = '#ff0000'
-    end
-
-    if level ~= LogDebug then
-      Console.addLine(message, color)
-    end
-
-    logLocked = false
-  end
-end
-
-function Console.addLine(text, color)
-  -- create new label
-
-  local label = UILabel.create()
-  console:insertChild(-2, label)
-  label:setId('consoleLabel' .. numLines)
-  label:setText(text)
-  label:setForegroundColor(color)
-  label:setStyle('ConsoleLabel')
-
-  numLines = numLines + 1
-  if numLines > maxLines then
-    local firstLabel = console:getChildByIndex(1)
-    firstLabel:destroy()
-  end
-end
-
-function Console.navigateCommand(step)
+-- private functions
+local function navigateCommand(step)
   local numCommands = #commandHistory
   if numCommands > 0 then
     currentHistoryIndex = math.min(math.max(currentHistoryIndex + step, 0), numCommands)
-    local commandLineEdit = console:getChildById('commandLineEdit')
     if currentHistoryIndex > 0 then
       local command = commandHistory[numCommands - currentHistoryIndex + 1]
       commandLineEdit:setText(command)
@@ -63,64 +29,102 @@ function Console.navigateCommand(step)
   end
 end
 
-function Console.create()
-  console = UI.loadAndDisplay("/console/console.otui")
-  console:hide()
-  console.onKeyPress = function(self, keyCode, keyChar, keyboardModifiers)
-    if keyboardModifiers == KeyboardNoModifier then
-      if keyCode == KeyReturn or keyCode == keyEnter then
-        local commandLineEdit = console:getChildById('commandLineEdit')
-        local command = commandLineEdit:getText()
-        Console.executeCommand(command)
-        commandLineEdit:clearText()
-        return true
-      elseif keyCode == KeyUp then
-        Console.navigateCommand(1)
-        return true
-      elseif keyCode == KeyDown then
-        Console.navigateCommand(-1)
-        return true
-      end
+local function onKeyPress(widget, keyCode, keyChar, keyboardModifiers)
+  if keyboardModifiers == KeyboardNoModifier then
+    -- execute current command
+    if keyCode == KeyReturn or keyCode == keyEnter then
+      local currentCommand = commandLineEdit:getText()
+      executeCommand(currentCommand)
+      commandLineEdit:clearText()
+      return true
+    -- navigate history up
+    elseif keyCode == KeyUp then
+      navigateCommand(1)
+      return true
+    -- navigate history down
+    elseif keyCode == KeyDown then
+      navigateCommand(-1)
+      return true
     end
-    return false
   end
+  return false
+end
 
-  Logger.setOnLog(Console.onLog)
+local function onLog(level, message, time)
+  -- debug messages are ignored
+  if level == LogDebug then return end
+
+  -- avoid logging while reporting logs (would cause a infinite loop)
+  if logLocked then return end
+
+  logLocked = true
+  addLine(message, LogColors[level])
+  logLocked = false
+end
+
+-- public functions
+function init()
+  consoleWidget = UI.loadAndDisplay("/console/console.otui")
+  consoleWidget:hide()
+  consoleWidget.onKeyPress = onKeyPress
+
+  commandLineEdit = consoleWidget:getChildById('commandLineEdit')
+  Logger.setOnLog(onLog)
   Logger.fireOldMessages()
 end
 
-function Console.destroy()
+function terminate()
   Logger.setOnLog(nil)
-  console:destroy()
-  console = nil
+  consoleWidget:destroy()
+  commandLineEdit = nil
+  consoleWidget = nil
 end
 
-function Console.show()
-  console.parent:lockChild(console)
-  console.visible = true
-end
+function addLine(text, color)
+  -- create new line label
+  local numLines = consoleWidget:getChildCount() - 2
+  local label = UILabel.create()
+  consoleWidget:insertChild(-2, label)
+  label:setId('consoleLabel' .. numLines)
+  label:setStyle('ConsoleLabel')
+  label:setText(text)
+  label:setForegroundColor(color)
 
-function Console.hide()
-  console.parent:unlockChild(console)
-  console.visible = false
-end
-
-function Console.executeCommand(command)
-  currentHistoryIndex = 0
-  table.insert(commandHistory, command)
-  Console.addLine(">> " .. command, "#ffffff")
-  local func, err = loadstring(command, "@")
-  if func then
-    setfenv(func, commandEnv)
-    local ok, ret = pcall(func)
-    if ok then
-      if ret then
-        print(ret)
-      end
-    else
-      Logger.log(LogError, 'command failed: ' .. ret)
-    end
-  else
-    Logger.log(LogError, 'incorrect lua syntax: ' .. err:sub(5))
+  -- delete old lines if needed
+  if numLines > MaxLogLines then
+    consoleWidget:getChildByIndex(1):destroy()
   end
 end
+
+function executeCommand(command)
+  -- reset current history index
+  currentHistoryIndex = 0
+
+  -- add new command to history
+  table.insert(commandHistory, command)
+
+  -- add command line
+  addLine(">> " .. command, "#ffffff")
+
+  -- load command buffer
+  local func, err = loadstring(command, "@")
+
+  -- check for syntax errors
+  if not func then
+    Logger.log(LogError, 'incorrect lua syntax: ' .. err:sub(5))
+    return
+  end
+
+  -- setup func env to commandEnv
+  setfenv(func, commandEnv)
+
+  -- execute the command
+  local ok, ret = pcall(func)
+  if ok then
+    -- if the command returned a value, print it
+    if ret then print(ret) end
+  else
+    Logger.log(LogError, 'command failed: ' .. ret)
+  end
+end
+
