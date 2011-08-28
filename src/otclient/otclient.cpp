@@ -294,25 +294,25 @@ void OTClient::onPlatformEvent(const PlatformEvent& event)
 
     if(event.type == EventKeyDown) {
         if(!event.ctrl && !event.alt && !event.shift) {
-            if(event.keycode == KC_UP)
+            if(event.keycode == Fw::KeyUp)
                 g_game.walk(Otc::North);
-            else if(event.keycode == KC_RIGHT)
+            else if(event.keycode == Fw::KeyRight)
                 g_game.walk(Otc::East);
-            else if(event.keycode == KC_DOWN)
+            else if(event.keycode == Fw::KeyDown)
                 g_game.walk(Otc::South);
-            else if(event.keycode == KC_LEFT)
+            else if(event.keycode == Fw::KeyLeft)
                 g_game.walk(Otc::West);
         }
         else if(event.ctrl && !event.alt && !event.shift) {
-            if(event.keycode == KC_UP)
+            if(event.keycode == Fw::KeyUp)
                 g_game.turn(Otc::North);
-            else if(event.keycode == KC_RIGHT)
+            else if(event.keycode == Fw::KeyRight)
                 g_game.turn(Otc::East);
-            else if(event.keycode == KC_DOWN)
+            else if(event.keycode == Fw::KeyDown)
                 g_game.turn(Otc::South);
-            else if(event.keycode == KC_LEFT)
+            else if(event.keycode == Fw::KeyLeft)
                 g_game.turn(Otc::West);
-            else if(event.keycode == KC_APOSTROPHE) {
+            else if(event.keycode == Fw::KeyApostrophe) {
                 // TODO: move these events to lua
                 UIWidgetPtr console = g_ui.getRootWidget()->getChildById("consolePanel");
                 if(!console->isExplicitlyVisible()) {

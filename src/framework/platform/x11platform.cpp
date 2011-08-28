@@ -62,7 +62,7 @@ struct X11PlatformPrivate {
     int y;
     int lastTicks;
     std::string clipboardText;
-    std::map<int, uchar> keyMap;
+    std::map<int, Fw::Key> keyMap;
     PlatformEvent inputEvent;
 } x11;
 
@@ -89,145 +89,154 @@ void Platform::init(PlatformListener* platformListener, const char *appName)
     x11.maximizeOnFirstShow = false;
     m_listener = platformListener;
 
-    // setup keymap
-    x11.keyMap[XK_1] = KC_1;
-    x11.keyMap[XK_2] = KC_2;
-    x11.keyMap[XK_3] = KC_3;
-    x11.keyMap[XK_4] = KC_4;
-    x11.keyMap[XK_5] = KC_5;
-    x11.keyMap[XK_6] = KC_6;
-    x11.keyMap[XK_7] = KC_7;
-    x11.keyMap[XK_8] = KC_8;
-    x11.keyMap[XK_9] = KC_9;
-    x11.keyMap[XK_0] = KC_0;
+    x11.keyMap[XK_Escape] = Fw::KeyEscape;
+    x11.keyMap[XK_Tab] = Fw::KeyTab;
+    x11.keyMap[XK_Return] = Fw::KeyReturn;
+    x11.keyMap[XK_BackSpace] = Fw::KeyBackspace;
 
-    x11.keyMap[XK_BackSpace] = KC_BACK;
+    x11.keyMap[XK_Page_Up] = Fw::KeyPageUp;
+    x11.keyMap[XK_Page_Down] = Fw::KeyPageDown;
+    x11.keyMap[XK_Home] = Fw::KeyHome;
+    x11.keyMap[XK_End] = Fw::KeyEnd;
+    x11.keyMap[XK_Insert] = Fw::KeyInsert;
+    x11.keyMap[XK_Delete] = Fw::KeyDelete;
 
-    x11.keyMap[XK_minus] = KC_MINUS;
-    x11.keyMap[XK_equal] = KC_EQUALS;
-    x11.keyMap[XK_space] = KC_SPACE;
-    x11.keyMap[XK_comma] = KC_COMMA;
-    x11.keyMap[XK_period] = KC_PERIOD;
+    x11.keyMap[XK_Up] = Fw::KeyUp;
+    x11.keyMap[XK_Down] = Fw::KeyDown;
+    x11.keyMap[XK_Left] = Fw::KeyLeft;
+    x11.keyMap[XK_Right] = Fw::KeyRight;
 
-    x11.keyMap[XK_backslash] = KC_BACKSLASH;
-    x11.keyMap[XK_slash] = KC_SLASH;
-    x11.keyMap[XK_bracketleft] = KC_LBRACKET;
-    x11.keyMap[XK_bracketright] = KC_RBRACKET;
+    x11.keyMap[XK_Num_Lock] = Fw::KeyNumLock;
+    x11.keyMap[XK_Scroll_Lock] = Fw::KeyScrollLock;
+    x11.keyMap[XK_Caps_Lock] = Fw::KeyCapsLock;
+    x11.keyMap[XK_Print] = Fw::KeyPrintScreen;
+    x11.keyMap[XK_Pause] = Fw::KeyPause;
 
-    x11.keyMap[XK_Escape] = KC_ESCAPE;
-    x11.keyMap[XK_Caps_Lock] = KC_CAPITAL;
+    x11.keyMap[XK_Control_L] = Fw::KeyCtrl;
+    x11.keyMap[XK_Control_R] = Fw::KeyCtrl;
+    x11.keyMap[XK_Shift_R] = Fw::KeyShift;
+    x11.keyMap[XK_Shift_L] = Fw::KeyShift;
+    x11.keyMap[XK_Alt_R] = Fw::KeyAlt;
+    x11.keyMap[XK_Alt_L] = Fw::KeyAltGr;
+    x11.keyMap[XK_Meta_L] = Fw::KeyMeta;
+    x11.keyMap[XK_Meta_R] = Fw::KeyMeta;
+    x11.keyMap[XK_Menu] = Fw::KeyMenu;
 
-    x11.keyMap[XK_Tab] = KC_TAB;
-    x11.keyMap[XK_Return] = KC_RETURN;
-    x11.keyMap[XK_Control_L] = KC_LCONTROL;
-    x11.keyMap[XK_Control_R] = KC_RCONTROL;
-
-    x11.keyMap[XK_colon] = KC_COLON;
-    x11.keyMap[XK_semicolon] = KC_SEMICOLON;
-    x11.keyMap[XK_apostrophe] = KC_APOSTROPHE;
-    x11.keyMap[XK_grave] = KC_GRAVE;
-
-    x11.keyMap[XK_b] = KC_B;
-    x11.keyMap[XK_a] = KC_A;
-    x11.keyMap[XK_c] = KC_C;
-    x11.keyMap[XK_d] = KC_D;
-    x11.keyMap[XK_e] = KC_E;
-    x11.keyMap[XK_f] = KC_F;
-    x11.keyMap[XK_g] = KC_G;
-    x11.keyMap[XK_h] = KC_H;
-    x11.keyMap[XK_i] = KC_I;
-    x11.keyMap[XK_j] = KC_J;
-    x11.keyMap[XK_k] = KC_K;
-    x11.keyMap[XK_l] = KC_L;
-    x11.keyMap[XK_m] = KC_M;
-    x11.keyMap[XK_n] = KC_N;
-    x11.keyMap[XK_o] = KC_O;
-    x11.keyMap[XK_p] = KC_P;
-    x11.keyMap[XK_q] = KC_Q;
-    x11.keyMap[XK_r] = KC_R;
-    x11.keyMap[XK_s] = KC_S;
-    x11.keyMap[XK_t] = KC_T;
-    x11.keyMap[XK_u] = KC_U;
-    x11.keyMap[XK_v] = KC_V;
-    x11.keyMap[XK_w] = KC_W;
-    x11.keyMap[XK_x] = KC_X;
-    x11.keyMap[XK_y] = KC_Y;
-    x11.keyMap[XK_z] = KC_Z;
-
-    x11.keyMap[XK_F1] = KC_F1;
-    x11.keyMap[XK_F2] = KC_F2;
-    x11.keyMap[XK_F3] = KC_F3;
-    x11.keyMap[XK_F4] = KC_F4;
-    x11.keyMap[XK_F5] = KC_F5;
-    x11.keyMap[XK_F6] = KC_F6;
-    x11.keyMap[XK_F7] = KC_F7;
-    x11.keyMap[XK_F8] = KC_F8;
-    x11.keyMap[XK_F9] = KC_F9;
-    x11.keyMap[XK_F10] = KC_F10;
-    x11.keyMap[XK_F11] = KC_F11;
-    x11.keyMap[XK_F12] = KC_F12;
-    x11.keyMap[XK_F13] = KC_F13;
-    x11.keyMap[XK_F14] = KC_F14;
-    x11.keyMap[XK_F15] = KC_F15;
+    // ascii characters
+    x11.keyMap[XK_space] = Fw::KeySpace;
+    x11.keyMap[XK_exclam] = Fw::KeyExclamation;
+    x11.keyMap[XK_quotedbl] = Fw::KeyQuote;
+    x11.keyMap[XK_numbersign] = Fw::KeyNumberSign;
+    x11.keyMap[XK_dollar] = Fw::KeyDollar;
+    x11.keyMap[XK_percent] = Fw::KeyPercent;
+    x11.keyMap[XK_ampersand] = Fw::KeyAmpersand;
+    x11.keyMap[XK_apostrophe] = Fw::KeyApostrophe;
+    x11.keyMap[XK_parenleft] = Fw::KeyLeftParen;
+    x11.keyMap[XK_parenright] = Fw::KeyRightParen;
+    x11.keyMap[XK_asterisk] = Fw::KeyAsterisk;
+    x11.keyMap[XK_plus] = Fw::KeyPlus;
+    x11.keyMap[XK_comma] = Fw::KeyComma;
+    x11.keyMap[XK_minus] = Fw::KeyMinus;
+    x11.keyMap[XK_period] = Fw::KeyPeriod;
+    x11.keyMap[XK_slash] = Fw::KeySlash;
+    x11.keyMap[XK_1] = Fw::Key1;
+    x11.keyMap[XK_2] = Fw::Key2;
+    x11.keyMap[XK_3] = Fw::Key3;
+    x11.keyMap[XK_4] = Fw::Key4;
+    x11.keyMap[XK_5] = Fw::Key5;
+    x11.keyMap[XK_6] = Fw::Key6;
+    x11.keyMap[XK_7] = Fw::Key7;
+    x11.keyMap[XK_8] = Fw::Key8;
+    x11.keyMap[XK_9] = Fw::Key9;
+    x11.keyMap[XK_0] = Fw::Key0;
+    x11.keyMap[XK_colon] = Fw::KeyColon;
+    x11.keyMap[XK_semicolon] = Fw::KeySemicolon;
+    x11.keyMap[XK_less] = Fw::KeyLess;
+    x11.keyMap[XK_equal] = Fw::KeyEqual;
+    x11.keyMap[XK_greater] = Fw::KeyGreater;
+    x11.keyMap[XK_question] = Fw::KeyQuestion;
+    x11.keyMap[XK_at] = Fw::KeyAtSign;
+    x11.keyMap[XK_a] = Fw::KeyA;
+    x11.keyMap[XK_b] = Fw::KeyB;
+    x11.keyMap[XK_c] = Fw::KeyC;
+    x11.keyMap[XK_d] = Fw::KeyD;
+    x11.keyMap[XK_e] = Fw::KeyE;
+    x11.keyMap[XK_f] = Fw::KeyF;
+    x11.keyMap[XK_g] = Fw::KeyG;
+    x11.keyMap[XK_h] = Fw::KeyH;
+    x11.keyMap[XK_i] = Fw::KeyI;
+    x11.keyMap[XK_j] = Fw::KeyJ;
+    x11.keyMap[XK_k] = Fw::KeyK;
+    x11.keyMap[XK_l] = Fw::KeyL;
+    x11.keyMap[XK_m] = Fw::KeyM;
+    x11.keyMap[XK_n] = Fw::KeyN;
+    x11.keyMap[XK_o] = Fw::KeyO;
+    x11.keyMap[XK_p] = Fw::KeyP;
+    x11.keyMap[XK_q] = Fw::KeyQ;
+    x11.keyMap[XK_r] = Fw::KeyR;
+    x11.keyMap[XK_s] = Fw::KeyS;
+    x11.keyMap[XK_t] = Fw::KeyT;
+    x11.keyMap[XK_u] = Fw::KeyU;
+    x11.keyMap[XK_v] = Fw::KeyV;
+    x11.keyMap[XK_w] = Fw::KeyW;
+    x11.keyMap[XK_x] = Fw::KeyX;
+    x11.keyMap[XK_y] = Fw::KeyY;
+    x11.keyMap[XK_z] = Fw::KeyZ;
+    x11.keyMap[XK_bracketleft] = Fw::KeyLeftBracket;
+    x11.keyMap[XK_backslash] = Fw::KeyBackslash;
+    x11.keyMap[XK_bracketright] = Fw::KeyRightBracket;
+    x11.keyMap[XK_asciicircum] = Fw::KeyCaret;
+    x11.keyMap[XK_underscore] = Fw::KeyUnderscore;
+    x11.keyMap[XK_grave] = Fw::KeyGrave;
+    x11.keyMap[XK_braceleft] = Fw::KeyLeftCurly;
+    x11.keyMap[XK_bar] = Fw::KeyBar;
+    x11.keyMap[XK_braceright] = Fw::KeyRightCurly;
+    x11.keyMap[XK_asciitilde] = Fw::KeyTilde;
 
     // keypad
-    x11.keyMap[XK_KP_0] = KC_NUMPAD0;
-    x11.keyMap[XK_KP_1] = KC_NUMPAD1;
-    x11.keyMap[XK_KP_2] = KC_NUMPAD2;
-    x11.keyMap[XK_KP_3] = KC_NUMPAD3;
-    x11.keyMap[XK_KP_4] = KC_NUMPAD4;
-    x11.keyMap[XK_KP_5] = KC_NUMPAD5;
-    x11.keyMap[XK_KP_6] = KC_NUMPAD6;
-    x11.keyMap[XK_KP_7] = KC_NUMPAD7;
-    x11.keyMap[XK_KP_8] = KC_NUMPAD8;
-    x11.keyMap[XK_KP_9] = KC_NUMPAD9;
-    x11.keyMap[XK_KP_Add] = KC_ADD;
-    x11.keyMap[XK_KP_Subtract] = KC_SUBTRACT;
-    x11.keyMap[XK_KP_Decimal] = KC_DECIMAL;
-    x11.keyMap[XK_KP_Equal] = KC_NUMPADEQUALS;
-    x11.keyMap[XK_KP_Divide] = KC_DIVIDE;
-    x11.keyMap[XK_KP_Multiply] = KC_MULTIPLY;
-    x11.keyMap[XK_KP_Enter] = KC_RETURN;
+    x11.keyMap[XK_KP_Add] = Fw::KeyPlus;
+    x11.keyMap[XK_KP_Subtract] = Fw::KeyMinus;
+    x11.keyMap[XK_KP_Decimal] = Fw::KeyPeriod;
+    x11.keyMap[XK_KP_Divide] = Fw::KeySlash;
+    x11.keyMap[XK_KP_Multiply] = Fw::KeyAsterisk;
+    x11.keyMap[XK_KP_Enter] = Fw::KeyEnter;
 
     // keypad with numlock off
-    x11.keyMap[XK_KP_Home] = KC_NUMPAD7;
-    x11.keyMap[XK_KP_Up] = KC_NUMPAD8;
-    x11.keyMap[XK_KP_Page_Up] = KC_NUMPAD9;
-    x11.keyMap[XK_KP_Left] = KC_NUMPAD4;
-    x11.keyMap[XK_KP_Begin] = KC_NUMPAD5;
-    x11.keyMap[XK_KP_Right] = KC_NUMPAD6;
-    x11.keyMap[XK_KP_End] = KC_NUMPAD1;
-    x11.keyMap[XK_KP_Down] = KC_NUMPAD2;
-    x11.keyMap[XK_KP_Page_Down] = KC_NUMPAD3;
-    x11.keyMap[XK_KP_Insert] = KC_NUMPAD0;
-    x11.keyMap[XK_KP_Delete] = KC_DECIMAL;
+    x11.keyMap[XK_KP_Up] = Fw::KeyUp;
+    x11.keyMap[XK_KP_Down] = Fw::KeyDown;
+    x11.keyMap[XK_KP_Left] = Fw::KeyLeft;
+    x11.keyMap[XK_KP_Right] = Fw::KeyRight;
+    x11.keyMap[XK_KP_Page_Up] = Fw::KeyPageUp;
+    x11.keyMap[XK_KP_Page_Down] = Fw::KeyPageDown;
+    x11.keyMap[XK_KP_Home] = Fw::KeyHome;
+    x11.keyMap[XK_KP_End] = Fw::KeyEnd;
+    x11.keyMap[XK_KP_Insert] = Fw::KeyInsert;
+    x11.keyMap[XK_KP_Delete] = Fw::KeyDelete;
 
-    x11.keyMap[XK_Up] = KC_UP;
-    x11.keyMap[XK_Down] = KC_DOWN;
-    x11.keyMap[XK_Left] = KC_LEFT;
-    x11.keyMap[XK_Right] = KC_RIGHT;
+    // keypad with numlock on
+    x11.keyMap[XK_KP_0] = Fw::Key0;
+    x11.keyMap[XK_KP_1] = Fw::Key1;
+    x11.keyMap[XK_KP_2] = Fw::Key2;
+    x11.keyMap[XK_KP_3] = Fw::Key3;
+    x11.keyMap[XK_KP_4] = Fw::Key4;
+    x11.keyMap[XK_KP_5] = Fw::Key5;
+    x11.keyMap[XK_KP_6] = Fw::Key6;
+    x11.keyMap[XK_KP_7] = Fw::Key7;
+    x11.keyMap[XK_KP_8] = Fw::Key8;
+    x11.keyMap[XK_KP_9] = Fw::Key9;
 
-    x11.keyMap[XK_Page_Up] = KC_PGUP;
-    x11.keyMap[XK_Page_Down] = KC_PGDOWN;
-    x11.keyMap[XK_Home] = KC_HOME;
-    x11.keyMap[XK_End] = KC_END;
-
-    x11.keyMap[XK_Num_Lock] = KC_NUMLOCK;
-    x11.keyMap[XK_Print] = KC_SYSRQ;
-    x11.keyMap[XK_Scroll_Lock] = KC_SCROLL;
-    x11.keyMap[XK_Pause] = KC_PAUSE;
-
-    x11.keyMap[XK_Shift_R] = KC_RSHIFT;
-    x11.keyMap[XK_Shift_L] = KC_LSHIFT;
-    x11.keyMap[XK_Alt_R] = KC_RALT;
-    x11.keyMap[XK_Alt_L] = KC_LALT;
-
-    x11.keyMap[XK_Insert] = KC_INSERT;
-    x11.keyMap[XK_Delete] = KC_DELETE;
-
-    x11.keyMap[XK_Super_L] = KC_LWIN;
-    x11.keyMap[XK_Super_R] = KC_RWIN;
-    x11.keyMap[XK_Menu] = KC_APPS;
+    x11.keyMap[XK_F1] = Fw::KeyF1;
+    x11.keyMap[XK_F2] = Fw::KeyF2;
+    x11.keyMap[XK_F3] = Fw::KeyF3;
+    x11.keyMap[XK_F4] = Fw::KeyF4;
+    x11.keyMap[XK_F5] = Fw::KeyF5;
+    x11.keyMap[XK_F6] = Fw::KeyF6;
+    x11.keyMap[XK_F7] = Fw::KeyF7;
+    x11.keyMap[XK_F8] = Fw::KeyF8;
+    x11.keyMap[XK_F9] = Fw::KeyF9;
+    x11.keyMap[XK_F10] = Fw::KeyF10;
+    x11.keyMap[XK_F11] = Fw::KeyF11;
+    x11.keyMap[XK_F12] = Fw::KeyF12;
 
     // try to set a latin1 locales otherwise fallback to standard C locale
     static char locales[][32] = { "en_US.iso88591", "iso88591", "en_US", "C" };
@@ -369,12 +378,12 @@ void Platform::poll()
                 if(x11.keyMap.find(keysym) != x11.keyMap.end())
                     inputEvent.keycode = x11.keyMap[keysym];
                 else
-                    inputEvent.keycode = KC_UNKNOWN;
+                    inputEvent.keycode = Fw::KeyUnknown;
 
                 inputEvent.keycode = x11.keyMap[keysym];
                 inputEvent.type = (event.type == KeyPress) ? EventKeyDown : EventKeyUp;
 
-                if(inputEvent.keycode != KC_UNKNOWN || inputEvent.keychar != 0)
+                if(inputEvent.keycode != Fw::KeyUnknown || inputEvent.keychar != 0)
                     m_listener->onPlatformEvent(inputEvent);
                 break;
             }

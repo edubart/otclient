@@ -235,10 +235,8 @@ void UILineEdit::setText(const std::string& text)
 {
     if(m_text != text) {
         m_text = text;
-        if(m_cursorPos >= 0) {
-            m_cursorPos = 0;
-            blinkCursor();
-        }
+        m_cursorPos = text.length();
+        blinkCursor();
         update();
     }
 }
@@ -391,24 +389,24 @@ void UILineEdit::onFocusChange(bool focused, Fw::FocusReason reason)
 
 bool UILineEdit::onKeyPress(uchar keyCode, char keyChar, int keyboardModifiers)
 {
-    if(keyCode == KC_DELETE) // erase right character
+    if(keyCode == Fw::KeyDelete) // erase right character
         removeCharacter(true);
-    else if(keyCode == KC_BACK) // erase left character {
+    else if(keyCode == Fw::KeyBackspace) // erase left character {
         removeCharacter(false);
-    else if(keyCode == KC_RIGHT) // move cursor right
+    else if(keyCode == Fw::KeyRight) // move cursor right
         moveCursor(true);
-    else if(keyCode == KC_LEFT) // move cursor left
+    else if(keyCode == Fw::KeyLeft) // move cursor left
         moveCursor(false);
-    else if(keyCode == KC_HOME) // move cursor to first character
+    else if(keyCode == Fw::KeyHome) // move cursor to first character
         setCursorPos(0);
-    else if(keyCode == KC_END) // move cursor to last character
+    else if(keyCode == Fw::KeyEnd) // move cursor to last character
         setCursorPos(m_text.length());
-    else if(keyCode == KC_V && keyboardModifiers == Fw::KeyboardCtrlModifier)
+    else if(keyCode == Fw::KeyV && keyboardModifiers == Fw::KeyboardCtrlModifier)
         appendText(g_platform.getClipboardText());
-    else if(keyCode == KC_TAB) {
+    else if(keyCode == Fw::KeyTab) {
         if(UIWidgetPtr parent = getParent())
             parent->focusNextChild(Fw::TabFocusReason);
-    } else if(keyCode == KC_RETURN) {
+    } else if(keyCode == Fw::KeyReturn || keyCode == Fw::KeyEnter) {
         if(m_onAction)
             m_onAction();
     } else if(keyChar != 0)

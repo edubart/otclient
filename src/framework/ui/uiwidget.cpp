@@ -750,21 +750,24 @@ void UIWidget::onStyleApply(const OTMLNodePtr& styleNode)
 
 void UIWidget::onGeometryUpdate(const Rect& oldRect, const Rect& newRect)
 {
-
+    callLuaField("onGeometryUpdate", oldRect, newRect);
 }
 
 void UIWidget::onFocusChange(bool focused, Fw::FocusReason reason)
 {
-
+    callLuaField("onHoverChange", focused, reason);
 }
 
 void UIWidget::onHoverChange(bool hovered)
 {
-
+    callLuaField("onHoverChange", hovered);
 }
 
 bool UIWidget::onKeyPress(uchar keyCode, char keyChar, int keyboardModifiers)
 {
+    if(callLuaField<bool>("onKeyPress", keyCode, keyChar, keyboardModifiers))
+        return true;
+
     // do a backup of children list, because it may change while looping it
     UIWidgetList children;
     for(const UIWidgetPtr& child : m_children) {
@@ -787,6 +790,9 @@ bool UIWidget::onKeyPress(uchar keyCode, char keyChar, int keyboardModifiers)
 
 bool UIWidget::onKeyRelease(uchar keyCode, char keyChar, int keyboardModifiers)
 {
+    if(callLuaField<bool>("onKeyRelease", keyCode, keyChar, keyboardModifiers))
+        return true;
+
     // do a backup of children list, because it may change while looping it
     UIWidgetList children;
     for(const UIWidgetPtr& child : m_children) {
@@ -809,6 +815,9 @@ bool UIWidget::onKeyRelease(uchar keyCode, char keyChar, int keyboardModifiers)
 
 bool UIWidget::onMousePress(const Point& mousePos, Fw::MouseButton button)
 {
+    if(callLuaField<bool>("onMousePress", mousePos, button))
+        return true;
+
     // do a backup of children list, because it may change while looping it
     UIWidgetList children;
     for(const UIWidgetPtr& child : m_children) {
@@ -840,6 +849,9 @@ bool UIWidget::onMousePress(const Point& mousePos, Fw::MouseButton button)
 
 bool UIWidget::onMouseRelease(const Point& mousePos, Fw::MouseButton button)
 {
+    if(callLuaField<bool>("onMouseRelease", mousePos, button))
+        return true;
+
     // do a backup of children list, because it may change while looping it
     UIWidgetList children;
     for(const UIWidgetPtr& child : m_children) {
@@ -866,6 +878,9 @@ bool UIWidget::onMouseRelease(const Point& mousePos, Fw::MouseButton button)
 
 bool UIWidget::onMouseMove(const Point& mousePos, const Point& mouseMoved)
 {
+    if(callLuaField<bool>("onMouseMove", mousePos, mouseMoved))
+        return true;
+
     // do a backup of children list, because it may change while looping it
     UIWidgetList children;
     for(const UIWidgetPtr& child : m_children) {
@@ -887,6 +902,9 @@ bool UIWidget::onMouseMove(const Point& mousePos, const Point& mouseMoved)
 
 bool UIWidget::onMouseWheel(const Point& mousePos, Fw::MouseWheelDirection direction)
 {
+    if(callLuaField<bool>("onMouseWheel", mousePos, direction))
+        return true;
+
     // do a backup of children list, because it may change while looping it
     UIWidgetList children;
     for(const UIWidgetPtr& child : m_children) {

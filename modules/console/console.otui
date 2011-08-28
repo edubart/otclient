@@ -23,14 +23,9 @@ RectPanel
     text: >>
 
   UILineEdit
-    id: commandBox
+    id: commandLineEdit
     height: 16
     anchors.bottom: parent.bottom
     anchors.left: commandSymbolLabel.right
     anchors.right: parent.right
     font: terminus-14px-bold
-    onAction: |
-      function(self)
-        Console.executeCommand(self:getText())
-        self:clearText()
-      end
