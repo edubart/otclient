@@ -22,15 +22,15 @@ public:
 
     int getStackSize(int stop);
 
-    std::deque<ThingPtr> getCreatures() { return m_creatures; }
+    std::vector<ThingPtr> getCreatures() { return m_creatures; }
     int getDrawNextOffset() { return m_drawNextOffset; }
 
 private:
     ThingPtr m_ground;
-    std::deque<ThingPtr> m_itemsBottom;
-    std::deque<ThingPtr> m_creatures;
-    std::deque<ThingPtr> m_itemsTop;
-    std::deque<ThingPtr> m_effects;
+    std::vector<ThingPtr> m_itemsBottom;
+    std::vector<ThingPtr> m_creatures;
+    std::vector<ThingPtr> m_itemsTop;
+    std::vector<ThingPtr> m_effects;
 
     int m_drawNextOffset;
 };

@@ -26,6 +26,5 @@ typedef std::shared_ptr<UIVerticalLayout> UIVerticalLayoutPtr;
 typedef std::shared_ptr<UIAnchorLayout> UIAnchorLayoutPtr;
 
 typedef std::deque<UIWidgetPtr> UIWidgetList;
-typedef std::deque<UIWidgetWeakPtr> UIWeakWidgetList;
 
 #endif
