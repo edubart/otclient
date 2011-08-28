@@ -58,7 +58,7 @@ namespace Fw
     };
 
     enum BlendFunc {
-        BlendNormal,
+        BlendDefault,
         BlendColorzing
     };
 

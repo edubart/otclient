@@ -117,25 +117,27 @@ void Creature::draw(int x, int y)
 
         // draw mask if exists
         if(attributes.blendframes > 1) {
+            // switch to blend color mode
             g_graphics.bindBlendFunc(Fw::BlendColorzing);
 
-            for(int mask = 0; mask < 4; ++mask) {
+            // head
+            g_graphics.bindColor(Otc::OutfitColors[m_outfit.head]);
+            internalDraw(x, y, 1, m_direction, ydiv, 0, m_animation, Otc::SpriteYellowMask);
 
-                int outfitColorId = 0;
-                if(mask == Otc::SpriteYellowMask)
-                    outfitColorId = m_outfit.head;
-                else if(mask == Otc::SpriteRedMask)
-                    outfitColorId = m_outfit.body;
-                else if(mask == Otc::SpriteGreenMask)
-                    outfitColorId = m_outfit.legs;
-                else if(mask ==  Otc::SpriteBlueMask)
-                    outfitColorId = m_outfit.feet;
+            // body
+            g_graphics.bindColor(Otc::OutfitColors[m_outfit.body]);
+            internalDraw(x, y, 1, m_direction, ydiv, 0, m_animation, Otc::SpriteRedMask);
 
-                g_graphics.bindColor(Otc::OutfitColors[outfitColorId]);
-                internalDraw(x, y, 1, m_direction, ydiv, 0, m_animation, (Otc::SpriteMask)mask);
-            }
+            // legs
+            g_graphics.bindColor(Otc::OutfitColors[m_outfit.legs]);
+            internalDraw(x, y, 1, m_direction, ydiv, 0, m_animation, Otc::SpriteGreenMask);
 
-            g_graphics.bindBlendFunc(Fw::BlendNormal);
+            // feet
+            g_graphics.bindColor(Otc::OutfitColors[m_outfit.feet]);
+            internalDraw(x, y, 1, m_direction, ydiv, 0, m_animation, Otc::SpriteBlueMask);
+
+            // restore default blend func
+            g_graphics.bindBlendFunc(Fw::BlendDefault);
             g_graphics.bindColor(Fw::white);
         }
     }

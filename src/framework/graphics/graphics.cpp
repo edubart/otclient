@@ -51,7 +51,7 @@ void Graphics::init()
     m_emptyTexture = TexturePtr(new Texture);
 
     bindColor(Fw::white);
-    bindBlendFunc(Fw::BlendNormal);
+    bindBlendFunc(Fw::BlendDefault);
 }
 
 void Graphics::terminate()
@@ -302,7 +302,7 @@ void Graphics::bindTexture(const TexturePtr& texture)
 void Graphics::bindBlendFunc(Fw::BlendFunc blendType)
 {
     switch(blendType) {
-        case Fw::BlendNormal:
+        case Fw::BlendDefault:
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
             break;
         case Fw::BlendColorzing:
