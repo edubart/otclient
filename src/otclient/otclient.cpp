@@ -46,10 +46,10 @@ void OTClient::init(std::vector<std::string> args)
     m_stopping = false;
 
     // print client information
-    logInfo("OTClient 0.2.0");
+    logInfo(Otc::AppName, " ", Otc::AppVersion);
 
     // initialize platform related stuff
-    g_platform.init(this, "OTClient");
+    g_platform.init(this, Otc::AppName);
 
     // initialize script environment
     g_lua.init();
@@ -72,7 +72,7 @@ void OTClient::init(std::vector<std::string> args)
     int windowHeight = Fw::fromstring(g_configs.get("window height"), minHeight);
     bool maximized = Fw::fromstring(g_configs.get("window maximized"), false);
     g_platform.createWindow(windowX, windowY, windowWidth, windowHeight, minWidth, minHeight, maximized);
-    g_platform.setWindowTitle("OTClient");
+    g_platform.setWindowTitle(Otc::AppName);
 
     // initialize graphics
     g_graphics.init();

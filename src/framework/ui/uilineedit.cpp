@@ -274,8 +274,27 @@ void UILineEdit::setCursorEnabled(bool enable)
     update();
 }
 
+void UILineEdit::appendText(std::string text)
+{
+    if(m_cursorPos >= 0) {
+        // replace characters that are now allowed
+        boost::replace_all(text, "\n", "");
+        boost::replace_all(text, "\r", "    ");
+
+        if(text.length() > 0) {
+            m_text.insert(m_cursorPos, text);
+            m_cursorPos += text.length();
+            blinkCursor();
+            update();
+        }
+    }
+}
+
 void UILineEdit::appendCharacter(char c)
 {
+    if(c == '\n' || c == '\r')
+        return;
+
     if(m_cursorPos >= 0) {
         std::string tmp;
         tmp = c;
@@ -384,6 +403,8 @@ bool UILineEdit::onKeyPress(uchar keyCode, char keyChar, int keyboardModifiers)
         setCursorPos(0);
     else if(keyCode == KC_END) // move cursor to last character
         setCursorPos(m_text.length());
+    else if(keyCode == KC_V && keyboardModifiers == Fw::KeyboardCtrlModifier)
+        appendText(g_platform.getClipboardText());
     else if(keyCode == KC_TAB) {
         if(UIWidgetPtr parent = getParent())
             parent->focusNextChild(Fw::TabFocusReason);

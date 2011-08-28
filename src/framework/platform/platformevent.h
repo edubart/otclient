@@ -25,6 +25,7 @@
 
 #include <framework/global.h>
 
+//TODO: move the next enums to const.h
 enum InputKeyCode {
     KC_UNKNOWN     = 0x00,
     KC_ESCAPE      = 0x01,
@@ -196,6 +197,7 @@ enum PlatformEventType {
     EventMouseWheelDown          = EventMouseAction | EventMouseWheel | EventDown
 };
 
+//TODO: rework platform events, make more compatible with UI events
 struct PlatformEvent {
     int type;
     Point mousePos;

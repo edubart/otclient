@@ -41,6 +41,7 @@ public:
 
     void clearText() { setText(""); }
     void moveCursor(bool right);
+    void appendText(std::string text);
     void appendCharacter(char c);
     void removeCharacter(bool right);
 
