@@ -1,17 +1,18 @@
-Console = createEnvironment()
-setfenv(1, Console)
+Console = { }
 
--- public variables
-LogColors = { [LogInfo] = 'white',
-              [LogWarning] = 'yellow',
-              [LogError] = 'red' }
-MaxLogLines = 80
+-- configs
+local LogColors = { [LogInfo] = 'white',
+                    [LogWarning] = 'yellow',
+                    [LogError] = 'red' }
+local MaxLogLines = 80
+local LabelHeight = 16
 
 -- private variables
 local consoleWidget
 local logLocked = false
 local commandEnv = createEnvironment()
 local commandLineEdit
+local consoleBuffer
 local commandHistory = { }
 local currentHistoryIndex = 0
 
@@ -34,7 +35,7 @@ local function onKeyPress(widget, keyCode, keyChar, keyboardModifiers)
     -- execute current command
     if keyCode == KeyReturn or keyCode == keyEnter then
       local currentCommand = commandLineEdit:getText()
-      executeCommand(currentCommand)
+      Console.executeCommand(currentCommand)
       commandLineEdit:clearText()
       return true
     -- navigate history up
@@ -58,33 +59,34 @@ local function onLog(level, message, time)
   if logLocked then return end
 
   logLocked = true
-  addLine(message, LogColors[level])
+  Console.addLine(message, LogColors[level])
   logLocked = false
 end
 
 -- public functions
-function init()
+function Console.init()
   consoleWidget = UI.loadAndDisplay("/console/console.otui")
   consoleWidget:hide()
   consoleWidget.onKeyPress = onKeyPress
 
   commandLineEdit = consoleWidget:getChildById('commandLineEdit')
+  consoleBuffer = consoleWidget:getChildById('consoleBuffer')
   Logger.setOnLog(onLog)
   Logger.fireOldMessages()
 end
 
-function terminate()
+function Console.terminate()
   Logger.setOnLog(nil)
   consoleWidget:destroy()
   commandLineEdit = nil
   consoleWidget = nil
 end
 
-function addLine(text, color)
+function Console.addLine(text, color)
   -- create new line label
-  local numLines = consoleWidget:getChildCount() - 2
+  local numLines = consoleBuffer:getChildCount() + 1
   local label = UILabel.create()
-  consoleWidget:insertChild(-2, label)
+  consoleBuffer:addChild(label)
   label:setId('consoleLabel' .. numLines)
   label:setStyle('ConsoleLabel')
   label:setText(text)
@@ -92,11 +94,14 @@ function addLine(text, color)
 
   -- delete old lines if needed
   if numLines > MaxLogLines then
-    consoleWidget:getChildByIndex(1):destroy()
+    consoleBuffer:getChildByIndex(1):destroy()
+  else
+    consoleBuffer:setHeight(consoleBuffer:getHeight() + LabelHeight)
+    consoleBuffer:updateParentLayout()
   end
 end
 
-function executeCommand(command)
+function Console.executeCommand(command)
   -- reset current history index
   currentHistoryIndex = 0
 
@@ -104,7 +109,7 @@ function executeCommand(command)
   table.insert(commandHistory, command)
 
   -- add command line
-  addLine(">> " .. command, "#ffffff")
+  Console.addLine(">> " .. command, "#ffffff")
 
   -- load command buffer
   local func, err = loadstring(command, "@")

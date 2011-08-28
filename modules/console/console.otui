@@ -1,16 +1,20 @@
 ConsoleLabel < UILabel
   font: terminus-14px-bold
   height: 16
-  anchors.bottom: next.top
-  anchors.left: parent.left
-  anchors.right: parent.right
-  margin.left: 2
 
 RectPanel
   id: consolePanel
   background-color: #000000
   opacity: 216
   anchors.fill: parent
+
+  UIWidget
+    id: consoleBuffer
+    layout: verticalBox
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: commandSymbolLabel.top
+    margin.left: 2
 
   UILabel
     id: commandSymbolLabel
