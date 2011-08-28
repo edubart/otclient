@@ -34,11 +34,11 @@ public:
     void resizeToText();
 
     void setText(const std::string& text);
-    void setAlign(AlignmentFlag align) { m_align = align; }
+    void setAlign(Fw::AlignmentFlag align) { m_align = align; }
     void setOffset(const Point& offset) { m_offset = offset; }
 
     std::string getText() const { return m_text; }
-    AlignmentFlag getAlign() const { return m_align; }
+    Fw::AlignmentFlag getAlign() const { return m_align; }
     Point getOffset() const { return m_offset; }
 
 protected:
@@ -47,7 +47,7 @@ protected:
 private:
     std::string m_text;
     Point m_offset;
-    AlignmentFlag m_align;
+    Fw::AlignmentFlag m_align;
 };
 
 #endif

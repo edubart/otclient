@@ -60,13 +60,13 @@ void UIManager::inputEvent(const PlatformEvent& event)
     // translate input event to ui events
     if(m_rootWidget) {
         if(event.type & EventKeyboardAction) {
-            int keyboardModifiers = KeyboardNoModifier;
+            int keyboardModifiers = Fw::KeyboardNoModifier;
             if(event.ctrl)
-                keyboardModifiers |= KeyboardCtrlModifier;
+                keyboardModifiers |= Fw::KeyboardCtrlModifier;
             if(event.shift)
-                keyboardModifiers |= KeyboardShiftModifier;
+                keyboardModifiers |= Fw::KeyboardShiftModifier;
             if(event.alt)
-                keyboardModifiers |= KeyboardAltModifier;
+                keyboardModifiers |= Fw::KeyboardAltModifier;
 
             if(event.type == EventKeyDown)
                 m_rootWidget->onKeyPress(event.keycode, event.keychar, keyboardModifiers);
@@ -74,25 +74,25 @@ void UIManager::inputEvent(const PlatformEvent& event)
                 m_rootWidget->onKeyRelease(event.keycode, event.keychar, keyboardModifiers);
         } else if(event.type & EventMouseAction) {
             if(event.type == EventMouseMove) {
-                m_rootWidget->updateState(HoverState);
+                m_rootWidget->updateState(Fw::HoverState);
                 m_rootWidget->onMouseMove(event.mousePos, event.mouseMoved);
             }
             else if(event.type & EventMouseWheel) {
-                MouseWheelDirection dir = MouseNoWheel;
+                Fw::MouseWheelDirection dir = Fw::MouseNoWheel;
                 if(event.type & EventDown)
-                    dir = MouseWheelDown;
+                    dir = Fw::MouseWheelDown;
                 else if(event.type & EventUp)
-                    dir = MouseWheelUp;
+                    dir = Fw::MouseWheelUp;
 
                 m_rootWidget->onMouseWheel(event.mousePos, dir);
             } else  {
-                MouseButton button = MouseNoButton;
+                Fw::MouseButton button = Fw::MouseNoButton;
                 if(event.type & EventMouseLeftButton)
-                    button = MouseLeftButton;
+                    button = Fw::MouseLeftButton;
                 else if(event.type & EventMouseMidButton)
-                    button = MouseMidButton;
+                    button = Fw::MouseMidButton;
                 else if(event.type & EventMouseRightButton)
-                    button = MouseRightButton;
+                    button = Fw::MouseRightButton;
 
                 if(event.type & EventDown)
                     m_rootWidget->onMousePress(event.mousePos, button);
@@ -151,7 +151,7 @@ OTMLNodePtr UIManager::getStyle(const std::string& styleName)
 
     auto it = m_styles.find(styleName);
     if(it == m_styles.end())
-        throw std::runtime_error(fw::mkstr("style '", styleName, "' is not a defined style"));
+        throw std::runtime_error(Fw::mkstr("style '", styleName, "' is not a defined style"));
     return m_styles[styleName];
 }
 

@@ -61,10 +61,10 @@ bool Module::load()
         for(const std::string& depName : m_dependencies) {
             ModulePtr dep = g_modules.getModule(depName);
             if(!dep)
-                throw std::runtime_error(fw::mkstr("could not find module dependency '", depName ,"'"));
+                throw std::runtime_error(Fw::mkstr("could not find module dependency '", depName ,"'"));
 
             if(!dep->isLoaded() && !dep->load())
-                throw std::runtime_error(fw::mkstr("dependency '", depName, "' has failed to load"));
+                throw std::runtime_error(Fw::mkstr("dependency '", depName, "' has failed to load"));
         }
 
         if(m_loadCallback) {

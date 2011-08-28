@@ -42,11 +42,11 @@ public:
     uint32 getSignature() { return m_signature; }
     int getSpritesCount() { return m_spritesCount; }
 
-    TexturePtr getSpriteTexture(int id, SpriteMask mask = SpriteMaskNone);
+    TexturePtr getSpriteTexture(int id, Otc::SpriteMask mask = Otc::SpriteNoMask);
 
 private:
     TexturePtr loadSpriteTexture(int id);
-    TexturePtr loadSpriteMask(TexturePtr spriteTex, SpriteMask mask);
+    TexturePtr loadSpriteMask(TexturePtr spriteTex, Otc::SpriteMask mask);
 
     uint32 m_signature;
     uint16 m_spritesCount;

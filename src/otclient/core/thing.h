@@ -36,7 +36,7 @@ struct Light
 class Thing : public LuaObject
 {
 public:
-    Thing(ThingType type);
+    Thing(Otc::ThingType type);
     virtual ~Thing() { }
 
     virtual void draw(int x, int y) = 0;
@@ -45,7 +45,7 @@ public:
     void setPosition(const Position& position) { m_position = position; }
 
     uint32 getId() const { return m_id; }
-    ThingType getType() const { return m_type; }
+    Otc::ThingType getType() const { return m_type; }
     Position getPosition() const { return m_position; }
     virtual const ThingAttributes& getAttributes() = 0;
 
@@ -57,10 +57,10 @@ public:
     virtual LocalPlayerPtr asLocalPlayer() { return nullptr; }
 
 protected:
-    void internalDraw(int x, int y, int blendframes, int xdiv, int ydiv, int zdiv, int anim, SpriteMask mask = SpriteMaskNone);
+    void internalDraw(int x, int y, int blendframes, int xdiv, int ydiv, int zdiv, int anim, Otc::SpriteMask mask = Otc::SpriteNoMask);
 
     uint32 m_id;
-    ThingType m_type;
+    Otc::ThingType m_type;
     Position m_position;
 };
 

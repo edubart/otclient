@@ -30,7 +30,7 @@ class OTMLNode : public std::enable_shared_from_this<OTMLNode>
 public:
     virtual ~OTMLNode() { }
 
-    static OTMLNodePtr create(std::string tag = fw::empty_string, bool unique = false);
+    static OTMLNodePtr create(std::string tag = Fw::empty_string, bool unique = false);
     static OTMLNodePtr create(std::string tag, std::string value);
 
     std::string tag() const { return m_tag; }
@@ -106,8 +106,8 @@ protected:
 template<typename T>
 T OTMLNode::value() {
     T ret;
-    if(!fw::cast(m_value, ret))
-        throw OTMLException(shared_from_this(), fw::mkstr("failed to cast node value to type '", fw::demangle_type<T>(), "'"));
+    if(!Fw::cast(m_value, ret))
+        throw OTMLException(shared_from_this(), Fw::mkstr("failed to cast node value to type '", Fw::demangleType<T>(), "'"));
     return ret;
 }
 
@@ -140,7 +140,7 @@ T OTMLNode::valueAtIndex(int childIndex, const T& def) {
 
 template<typename T>
 void OTMLNode::write(const T& v) {
-    m_value = fw::safe_cast<std::string>(v);
+    m_value = Fw::safeCast<std::string>(v);
 }
 
 template<typename T>

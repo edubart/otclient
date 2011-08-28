@@ -24,12 +24,7 @@
 #define SIZE_H
 
 #include "point.h"
-
-enum ESizeScaleMode {
-    IGNORE_ASPECT_RATIO,
-    KEEP_ASPECT_RATIO,
-    KEEP_ASPECT_RATIO_BY_EXPANDING
-};
+#include "../const.h"
 
 template<class T>
 class TSize
@@ -74,17 +69,17 @@ public:
     TSize<T> expandedTo(const TSize<T>& other) const { return TSize<T>(std::max(wd,other.wd), std::max(ht,other.ht)); }
     TSize<T> boundedTo(const TSize<T>& other) const { return TSize<T>(std::min(wd,other.wd), std::min(ht,other.ht)); }
 
-    void scale(const TSize<T>& s, ESizeScaleMode mode) {
-        if(mode == IGNORE_ASPECT_RATIO || wd == 0 || ht == 0) {
+    void scale(const TSize<T>& s, Fw::AspectRatioMode mode) {
+        if(mode == Fw::IgnoreAspectRatio || wd == 0 || ht == 0) {
             wd = s.wd;
             ht = s.ht;
         } else {
             bool useHeight;
             T rw = (s.ht * wd) / ht;
 
-            if(mode == KEEP_ASPECT_RATIO)
+            if(mode == Fw::KeepAspectRatio)
                 useHeight = (rw <= s.wd);
-            else // mode == KEEP_ASPECT_RATIO_BY_EXPANDING
+            else // mode == Fw::KeepAspectRatioByExpanding
                 useHeight = (rw >= s.wd);
 
             if(useHeight) {
@@ -96,7 +91,7 @@ public:
             }
         }
     }
-    void scale(int w, int h, ESizeScaleMode mode) { scale(TSize<T>(w, h)); }
+    void scale(int w, int h, Fw::AspectRatioMode mode) { scale(TSize<T>(w, h)); }
 
     float ratio() const { return (float)wd/ht; }
     T area() const { return wd*ht; }

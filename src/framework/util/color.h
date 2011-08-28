@@ -77,15 +77,6 @@ public:
     bool operator==(const Color& other) const { return other.color.rgba == color.rgba; }
     bool operator!=(const Color& other) const { return other.color.rgba != color.rgba; }
 
-    static Color white;
-    static Color black;
-    static Color alpha;
-    static Color red;
-    static Color green;
-    static Color blue;
-    static Color pink;
-    static Color yellow;
-
 private:
     RGBA color;
 };
@@ -111,11 +102,11 @@ inline std::istream& operator>>(std::istream& in, Color& color)
         in >> tmp;
 
         if(tmp.length() == 6 || tmp.length() == 8) {
-            color.setRed((uint8)fw::hex2dec(tmp.substr(0, 2)));
-            color.setGreen((uint8)fw::hex2dec(tmp.substr(2, 2)));
-            color.setBlue((uint8)fw::hex2dec(tmp.substr(4, 2)));
+            color.setRed((uint8)Fw::hex2dec(tmp.substr(0, 2)));
+            color.setGreen((uint8)Fw::hex2dec(tmp.substr(2, 2)));
+            color.setBlue((uint8)Fw::hex2dec(tmp.substr(4, 2)));
             if(tmp.length() == 8)
-                color.setAlpha((uint8)fw::hex2dec(tmp.substr(6, 2)));
+                color.setAlpha((uint8)Fw::hex2dec(tmp.substr(6, 2)));
             else
                 color.setAlpha(255);
         } else

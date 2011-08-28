@@ -106,7 +106,7 @@ void ProtocolLogin::sendLoginPacket()
     // complete the 128 bytes for rsa encryption with zeros
     oMsg.addPaddingBytes(128 - (21 + m_accountName.length() + m_accountPassword.length()));
 
-    if(!Rsa::encrypt((char*)oMsg.getBuffer() + 6 + oMsg.getMessageSize() - 128, 128, OTSERV_PUBLIC_RSA))
+    if(!Rsa::encrypt((char*)oMsg.getBuffer() + 6 + oMsg.getMessageSize() - 128, 128, Otc::OtservPublicRSA))
         return;
 
     send(oMsg);
@@ -140,7 +140,7 @@ void ProtocolLogin::parseCharacterList(InputMessage& inputMessage)
         std::string world = inputMessage.getString();
         uint32 ip = inputMessage.getU32();
         uint16 port = inputMessage.getU16();
-        charList.push_back(CharacterInfo(name, world, fw::ip2str(ip), port));
+        charList.push_back(CharacterInfo(name, world, Fw::ip2str(ip), port));
     }
     int premDays = inputMessage.getU16();
 

@@ -52,7 +52,7 @@ void Connection::connect(const std::string& host, uint16 port, const SimpleCallb
     m_connected = false;
     m_connectCallback = connectCallback;
 
-    asio::ip::tcp::resolver::query query(host, fw::unsafe_cast<std::string>(port));
+    asio::ip::tcp::resolver::query query(host, Fw::unsafeCast<std::string>(port));
     m_resolver.async_resolve(query, std::bind(&Connection::onResolve, shared_from_this(), _1, _2));
 
     m_readTimer.expires_from_now(boost::posix_time::seconds(READ_TIMEOUT));

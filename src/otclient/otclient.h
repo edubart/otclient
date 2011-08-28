@@ -28,6 +28,10 @@
 
 class OTClient : public PlatformListener
 {
+    enum {
+        POLL_CYCLE_DELAY = 10
+    };
+
 public:
     /// Where everything begins...
     void init(std::vector<std::string> args);

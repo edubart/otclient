@@ -30,7 +30,7 @@ Logger::Logger() : m_terminated(false)
 
 }
 
-void Logger::log(LogLevel level, std::string message)
+void Logger::log(Fw::LogLevel level, std::string message)
 {
     const static std::string logPrefixes[] = { "", "", "WARNING: ", "ERROR: ", "FATAL ERROR: " };
 
@@ -45,13 +45,13 @@ void Logger::log(LogLevel level, std::string message)
             m_onLog(level, message, now);
     }
 
-    if(level == LogFatal) {
+    if(level == Fw::LogFatal) {
         m_terminated = true;
         exit(-1);
     }
 }
 
-void Logger::logFunc(LogLevel level, const std::string& message, std::string prettyFunction)
+void Logger::logFunc(Fw::LogLevel level, const std::string& message, std::string prettyFunction)
 {
     std::stringstream ss;
     prettyFunction = prettyFunction.substr(0, prettyFunction.find_first_of('('));

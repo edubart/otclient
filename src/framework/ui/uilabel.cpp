@@ -28,7 +28,7 @@ void UILabel::setup()
 {
     UIWidget::setup();
     setFocusable(false);
-    setAlign(AlignLeft);
+    setAlign(Fw::AlignLeft);
 }
 
 void UILabel::render()
@@ -66,7 +66,7 @@ void UILabel::onStyleApply(const OTMLNodePtr& styleNode)
         if(node->tag() == "text")
             setText(node->value());
         else if(node->tag() == "align")
-            setAlign(fw::translateAlignment(node->value()));
+            setAlign(Fw::translateAlignment(node->value()));
         else if(node->tag() == "offset") {
             setOffset(node->value<Point>());
         }

@@ -36,11 +36,11 @@
 UIWidget::UIWidget()
 {
     m_updateEventScheduled = false;
-    m_states = DefaultState;
+    m_states = Fw::DefaultState;
 
     // generate an unique id, this is need because anchored layouts find widgets by id
     static unsigned long id = 1;
-    m_id = fw::mkstr("widget", id++);
+    m_id = Fw::mkstr("widget", id++);
 }
 
 UIWidget::~UIWidget()
@@ -62,8 +62,8 @@ void UIWidget::setup()
     setPressed(false);
     setSizeFixed(false);
     setFont(g_fonts.getDefaultFont());
-    setBackgroundColor(Color::white);
-    setForegroundColor(Color::white);
+    setBackgroundColor(Fw::white);
+    setForegroundColor(Fw::white);
     setOpacity(255);
     setMarginTop(0);
     setMarginRight(0);
@@ -272,7 +272,7 @@ UIWidgetPtr UIWidget::backwardsGetWidgetById(const std::string& id)
     return widget;
 }
 
-void UIWidget::focusChild(const UIWidgetPtr& child, FocusReason reason)
+void UIWidget::focusChild(const UIWidgetPtr& child, Fw::FocusReason reason)
 {
     if(child && !hasChild(child)) {
         logError("attempt to focus an unknown child in a UIWidget");
@@ -285,14 +285,14 @@ void UIWidget::focusChild(const UIWidgetPtr& child, FocusReason reason)
 
         if(child) {
             child->setLastFocusReason(reason);
-            child->updateState(FocusState);
-            child->updateState(ActiveState);
+            child->updateState(Fw::FocusState);
+            child->updateState(Fw::ActiveState);
         }
 
         if(oldFocused) {
             oldFocused->setLastFocusReason(reason);
-            oldFocused->updateState(FocusState);
-            oldFocused->updateState(ActiveState);
+            oldFocused->updateState(Fw::FocusState);
+            oldFocused->updateState(Fw::ActiveState);
         }
     }
 }
@@ -314,7 +314,7 @@ void UIWidget::addChild(const UIWidgetPtr& child)
 
     // always focus new child
     if(child->isFocusable() && child->isExplicitlyVisible() && child->isExplicitlyEnabled())
-        focusChild(child, ActiveFocusReason);
+        focusChild(child, Fw::ActiveFocusReason);
 
     // create default layout
     if(!m_layout)
@@ -366,7 +366,7 @@ void UIWidget::removeChild(const UIWidgetPtr& child)
     if(it != m_children.end()) {
         // defocus if needed
         if(m_focusedChild == child)
-            focusChild(nullptr, ActiveFocusReason);
+            focusChild(nullptr, Fw::ActiveFocusReason);
 
         // unlock child if it was locked
         unlockChild(child);
@@ -385,7 +385,7 @@ void UIWidget::removeChild(const UIWidgetPtr& child)
         logError("attempt to remove an unknown child from a UIWidget");
 }
 
-void UIWidget::focusNextChild(FocusReason reason)
+void UIWidget::focusNextChild(Fw::FocusReason reason)
 {
     UIWidgetPtr toFocus;
     UIWidgetList rotatedChildren(m_children);
@@ -444,7 +444,7 @@ void UIWidget::lockChild(const UIWidgetPtr& child)
 
     // lock child focus
     if(child->isFocusable())
-      focusChild(child, ActiveFocusReason);
+      focusChild(child, Fw::ActiveFocusReason);
 
     moveChildToTop(child);
 }
@@ -495,13 +495,13 @@ void UIWidget::updateLayout()
         m_layout->update();
 }
 
-void UIWidget::updateState(WidgetState state)
+void UIWidget::updateState(Fw::WidgetState state)
 {
     bool newStatus = true;
     bool oldStatus = hasState(state);
     bool updateChildren = false;
 
-    if(state == ActiveState) {
+    if(state == Fw::ActiveState) {
         UIWidgetPtr widget = asUIWidget();
         UIWidgetPtr parent;
         do {
@@ -515,10 +515,10 @@ void UIWidget::updateState(WidgetState state)
 
         updateChildren = true;
     }
-    else if(state == FocusState) {
+    else if(state == Fw::FocusState) {
         newStatus = (getParent() && getParent()->getFocusedChild() == asUIWidget());
     }
-    else if(state == HoverState) {
+    else if(state == Fw::HoverState) {
         updateChildren = true;
         Point mousePos = g_platform.getMouseCursorPos();
         UIWidgetPtr widget = asUIWidget();
@@ -532,10 +532,10 @@ void UIWidget::updateState(WidgetState state)
             }
         } while(widget = parent);
     }
-    else if(state == PressedState) {
+    else if(state == Fw::PressedState) {
         newStatus = m_pressed;
     }
-    else if(state == DisabledState) {
+    else if(state == Fw::DisabledState) {
         bool enabled = true;
         updateChildren = true;
         UIWidgetPtr widget = asUIWidget();
@@ -564,19 +564,19 @@ void UIWidget::updateState(WidgetState state)
 
         updateStyle();
 
-        if(state == FocusState)
+        if(state == Fw::FocusState)
             onFocusChange(newStatus, m_lastFocusReason);
-        else if(state == HoverState)
+        else if(state == Fw::HoverState)
             onHoverChange(newStatus);
     }
 }
 
 void UIWidget::updateStates()
 {
-    updateState(ActiveState);
-    updateState(FocusState);
-    updateState(DisabledState);
-    updateState(HoverState);
+    updateState(Fw::ActiveState);
+    updateState(Fw::FocusState);
+    updateState(Fw::DisabledState);
+    updateState(Fw::HoverState);
 }
 
 void UIWidget::updateStyle()
@@ -596,23 +596,23 @@ void UIWidget::updateStyle()
 
     // merge states styles, NOTE: order does matter
     OTMLNodePtr style = m_style->get("state.active");
-    if(style && hasState(ActiveState))
+    if(style && hasState(Fw::ActiveState))
         newStateStyle->merge(style);
 
     style = m_style->get("state.focus");
-    if(style && hasState(FocusState))
+    if(style && hasState(Fw::FocusState))
         newStateStyle->merge(style);
 
     style = m_style->get("state.hover");
-    if(style && hasState(HoverState))
+    if(style && hasState(Fw::HoverState))
         newStateStyle->merge(style);
 
     style = m_style->get("state.pressed");
-    if(style && hasState(PressedState))
+    if(style && hasState(Fw::PressedState))
         newStateStyle->merge(style);
 
     style = m_style->get("state.disabled");
-    if(style && hasState(DisabledState))
+    if(style && hasState(Fw::DisabledState))
         newStateStyle->merge(style);
 
     applyStyle(newStateStyle);
@@ -725,7 +725,7 @@ void UIWidget::onStyleApply(const OTMLNodePtr& styleNode)
             } else if(what == "centerIn") {
                 anchorLayout->centerIn(asUIWidget(), node->value());
             } else {
-                AnchorEdge anchoredEdge = fw::translateAnchorEdge(what);
+                Fw::AnchorEdge anchoredEdge = Fw::translateAnchorEdge(what);
 
                 std::string anchorDescription = node->value();
                 std::vector<std::string> split;
@@ -734,12 +734,12 @@ void UIWidget::onStyleApply(const OTMLNodePtr& styleNode)
                     throw OTMLException(node, "invalid anchor description");
 
                 std::string hookedWidgetId = split[0];
-                AnchorEdge hookedEdge = fw::translateAnchorEdge(split[1]);
+                Fw::AnchorEdge hookedEdge = Fw::translateAnchorEdge(split[1]);
 
-                if(anchoredEdge == AnchorNone)
+                if(anchoredEdge == Fw::AnchorNone)
                     throw OTMLException(node, "invalid anchor edge");
 
-                if(hookedEdge == AnchorNone)
+                if(hookedEdge == Fw::AnchorNone)
                     throw OTMLException(node, "invalid anchor target edge");
 
                 anchorLayout->addAnchor(asUIWidget(), anchoredEdge, hookedWidgetId, hookedEdge);
@@ -753,7 +753,7 @@ void UIWidget::onGeometryUpdate(const Rect& oldRect, const Rect& newRect)
 
 }
 
-void UIWidget::onFocusChange(bool focused, FocusReason reason)
+void UIWidget::onFocusChange(bool focused, Fw::FocusReason reason)
 {
 
 }
@@ -807,7 +807,7 @@ bool UIWidget::onKeyRelease(uchar keyCode, char keyChar, int keyboardModifiers)
     return false;
 }
 
-bool UIWidget::onMousePress(const Point& mousePos, MouseButton button)
+bool UIWidget::onMousePress(const Point& mousePos, Fw::MouseButton button)
 {
     // do a backup of children list, because it may change while looping it
     UIWidgetList children;
@@ -824,7 +824,7 @@ bool UIWidget::onMousePress(const Point& mousePos, MouseButton button)
     for(const UIWidgetPtr& child : children) {
         // when a focusable item is focused it must gain focus
         if(child->isFocusable())
-            focusChild(child, MouseFocusReason);
+            focusChild(child, Fw::MouseFocusReason);
 
         bool mustEnd = child->onMousePress(mousePos, button);
 
@@ -838,7 +838,7 @@ bool UIWidget::onMousePress(const Point& mousePos, MouseButton button)
     return false;
 }
 
-bool UIWidget::onMouseRelease(const Point& mousePos, MouseButton button)
+bool UIWidget::onMouseRelease(const Point& mousePos, Fw::MouseButton button)
 {
     // do a backup of children list, because it may change while looping it
     UIWidgetList children;
@@ -885,7 +885,7 @@ bool UIWidget::onMouseMove(const Point& mousePos, const Point& mouseMoved)
     return false;
 }
 
-bool UIWidget::onMouseWheel(const Point& mousePos, MouseWheelDirection direction)
+bool UIWidget::onMouseWheel(const Point& mousePos, Fw::MouseWheelDirection direction)
 {
     // do a backup of children list, because it may change while looping it
     UIWidgetList children;

@@ -64,7 +64,7 @@ public:
     /// Returns the class name used in Lua
     virtual std::string getLuaObjectName() const {
         // this could later be cached for more performance
-        return fw::demangle_name(typeid(*this).name());
+        return Fw::demangleName(typeid(*this).name());
     }
 
     LuaObjectPtr asLuaObject() { return shared_from_this(); }

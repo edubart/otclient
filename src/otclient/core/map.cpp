@@ -33,7 +33,7 @@ void Map::draw(const Rect& rect)
     if(!m_framebuffer)
         m_framebuffer = FrameBufferPtr(new FrameBuffer(15*32, 11*32));
 
-    g_graphics.bindColor(Color::white);
+    g_graphics.bindColor(Fw::white);
     m_framebuffer->bind();
 
     LocalPlayerPtr player = g_game.getLocalPlayer();
@@ -91,12 +91,12 @@ void Map::draw(const Rect& rect)
     }
 
     // debug draws
-    g_graphics.bindColor(Color::red);
+    g_graphics.bindColor(Fw::red);
     g_graphics.drawBoundingRect(Rect(7*32, 5*32, 32, 32));
 
     m_framebuffer->unbind();
 
-    g_graphics.bindColor(Color::white);
+    g_graphics.bindColor(Fw::white);
     m_framebuffer->draw(rect);
 
     // calculate stretch factor

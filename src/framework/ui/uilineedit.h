@@ -35,7 +35,7 @@ public:
     void update();
 
     void setText(const std::string& text);
-    void setAlign(AlignmentFlag align);
+    void setAlign(Fw::AlignmentFlag align);
     void setCursorPos(int pos);
     void setCursorEnabled(bool enable = true);
 
@@ -51,16 +51,16 @@ public:
 protected:
     virtual void onStyleApply(const OTMLNodePtr& styleNode);
     virtual void onGeometryUpdate(const Rect& oldRect, const Rect& newRect);
-    virtual void onFocusChange(bool focused, FocusReason reason);
+    virtual void onFocusChange(bool focused, Fw::FocusReason reason);
     virtual bool onKeyPress(uchar keyCode, char keyChar, int keyboardModifiers);
-    virtual bool onMousePress(const Point& mousePos, MouseButton button);
+    virtual bool onMousePress(const Point& mousePos, Fw::MouseButton button);
 
 private:
     void blinkCursor();
 
     std::string m_text;
     Rect m_drawArea;
-    AlignmentFlag m_align;
+    Fw::AlignmentFlag m_align;
     int m_cursorPos;
     Point m_startInternalPos;
     int m_startRenderPos;

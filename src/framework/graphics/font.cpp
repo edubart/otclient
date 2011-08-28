@@ -49,7 +49,7 @@ void Font::load(const OTMLNodePtr& fontNode)
     // read custom widths
     if(OTMLNodePtr node = fontNode->get("glyph widths")) {
         for(const OTMLNodePtr& child : node->children())
-            m_glyphsSize[fw::safe_cast<int>(child->tag())].setWidth(child->value<int>());
+            m_glyphsSize[Fw::safeCast<int>(child->tag())].setWidth(child->value<int>());
     }
 
     // calculate glyphs texture coords
@@ -68,13 +68,13 @@ void Font::renderText(const std::string& text,
 {
     Size boxSize = g_graphics.getScreenSize() - startPos.toSize();
     Rect screenCoords(startPos, boxSize);
-    renderText(text, screenCoords, AlignTopLeft, color);
+    renderText(text, screenCoords, Fw::AlignTopLeft, color);
 }
 
 
 void Font::renderText(const std::string& text,
                       const Rect& screenCoords,
-                      AlignmentFlag align,
+                      Fw::AlignmentFlag align,
                       const Color& color)
 {
     // prevent glitches from invalid rects
@@ -103,17 +103,17 @@ void Font::renderText(const std::string& text,
         Rect glyphTextureCoords = m_glyphsTextureCoords[glyph];
 
         // first translate to align position
-        if(align & AlignBottom) {
+        if(align & Fw::AlignBottom) {
             glyphScreenCoords.translate(0, screenCoords.height() - textBoxSize.height());
-        } else if(align & AlignVerticalCenter) {
+        } else if(align & Fw::AlignVerticalCenter) {
             glyphScreenCoords.translate(0, (screenCoords.height() - textBoxSize.height()) / 2);
         } else { // AlignTop
             // nothing to do
         }
 
-        if(align & AlignRight) {
+        if(align & Fw::AlignRight) {
             glyphScreenCoords.translate(screenCoords.width() - textBoxSize.width(), 0);
-        } else if(align & AlignHorizontalCenter) {
+        } else if(align & Fw::AlignHorizontalCenter) {
             glyphScreenCoords.translate((screenCoords.width() - textBoxSize.width()) / 2, 0);
         } else { // AlignLeft
             // nothing to do
@@ -158,7 +158,7 @@ void Font::renderText(const std::string& text,
 }
 
 const std::vector<Point>& Font::calculateGlyphsPositions(const std::string& text,
-                                                         AlignmentFlag align,
+                                                         Fw::AlignmentFlag align,
                                                          Size *textBoxSize) const
 {
     // for performance reasons we use statics vectors that are allocated on demand
@@ -183,7 +183,7 @@ const std::vector<Point>& Font::calculateGlyphsPositions(const std::string& text
         glyphsPositions.resize(textLength);
 
     // calculate lines width
-    if((align & AlignRight || align & AlignHorizontalCenter) || textBoxSize) {
+    if((align & Fw::AlignRight || align & Fw::AlignHorizontalCenter) || textBoxSize) {
         lineWidths[0] = 0;
         for(i = 0; i< textLength; ++i) {
             glyph = (uchar)text[i];
@@ -213,9 +213,9 @@ const std::vector<Point>& Font::calculateGlyphsPositions(const std::string& text
             }
 
             // calculate start x pos
-            if(align & AlignRight) {
+            if(align & Fw::AlignRight) {
                 virtualPos.x = (maxLineWidth - lineWidths[lines]);
-            } else if(align & AlignHorizontalCenter) {
+            } else if(align & Fw::AlignHorizontalCenter) {
                 virtualPos.x = (maxLineWidth - lineWidths[lines]) / 2;
             } else { // AlignLeft
                 virtualPos.x = 0;
@@ -242,7 +242,7 @@ const std::vector<Point>& Font::calculateGlyphsPositions(const std::string& text
 Size Font::calculateTextRectSize(const std::string& text)
 {
     Size size;
-    calculateGlyphsPositions(text, AlignTopLeft, &size);
+    calculateGlyphsPositions(text, Fw::AlignTopLeft, &size);
     return size;
 }
 

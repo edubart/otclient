@@ -37,9 +37,9 @@ public:
 protected:
     virtual void onStyleApply(const OTMLNodePtr& styleNode);
     virtual void onGeometryUpdate(const Rect& oldRect, const Rect& newRect);
-    virtual void onFocusChange(bool focused, FocusReason reason);
-    virtual bool onMousePress(const Point& mousePos, MouseButton button);
-    virtual bool onMouseRelease(const Point& mousePos, MouseButton button);
+    virtual void onFocusChange(bool focused, Fw::FocusReason reason);
+    virtual bool onMousePress(const Point& mousePos, Fw::MouseButton button);
+    virtual bool onMouseRelease(const Point& mousePos, Fw::MouseButton button);
     virtual bool onMouseMove(const Point& mousePos, const Point& mouseMoved);
 
 private:
@@ -52,7 +52,7 @@ private:
     ImagePtr m_bodyImage;
     int m_headHeight;
     int m_headMargin;
-    AlignmentFlag m_titleAlign;
+    Fw::AlignmentFlag m_titleAlign;
 };
 
 #endif

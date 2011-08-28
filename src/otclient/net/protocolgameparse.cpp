@@ -598,7 +598,7 @@ void ProtocolGame::parseCreatureShields(InputMessage& msg)
 void ProtocolGame::parseCreatureTurn(InputMessage& msg)
 {
     uint32 id = msg.getU32();
-    Direction direction = (Direction)msg.getU8();
+    Otc::Direction direction = (Otc::Direction)msg.getU8();
 
     CreaturePtr creature = g_map.getCreatureById(id);
     if(creature)
@@ -680,27 +680,27 @@ void ProtocolGame::parseCreatureSpeak(InputMessage& msg)
     uint8 type = msg.getU8();
 
     switch(type) {
-        case SPEAK_SAY:
-        case SPEAK_WHISPER:
-        case SPEAK_YELL:
-        case SPEAK_MONSTER_SAY:
-        case SPEAK_MONSTER_YELL:
-        case SPEAK_PRIVATE_NP:
+        case Otc::SpeakSay:
+        case Otc::SpeakWhisper:
+        case Otc::SpeakYell:
+        case Otc::SpeakMonsterSay:
+        case Otc::SpeakMonsterYell:
+        case Otc::SpeakPrivateNpcToPlayer:
             parsePosition(msg); // creaturePos
             break;
-        case SPEAK_CHANNEL_R1:
-        case SPEAK_CHANNEL_O:
-        case SPEAK_CHANNEL_Y:
-        case SPEAK_CHANNEL_W:
+        case Otc::SpeakChannelRed:
+        case Otc::SpeakChannelOrange:
+        case Otc::SpeakChannelYellow:
+        case Otc::SpeakChannelWhite:
             msg.getU16(); // channelId
             break;
-        case SPEAK_PRIVATE:
-        case SPEAK_PRIVATE_PN:
-        case SPEAK_BROADCAST:
-        case SPEAK_PRIVATE_RED:
+        case Otc::SpeakPrivate:
+        case Otc::SpeakPrivatePlayerToNpc:
+        case Otc::SpeakBroadcast:
+        case Otc::SpeakPrivateRed:
             break;
         default:
-            logDebug("[ProtocolGame::parseCreatureSpeak]: Unknown speak type.", (int)type);
+            logTraceDebug("Unknown speak type.", (int)type);
             break;
     }
 
@@ -767,7 +767,7 @@ void ProtocolGame::parseTextMessage(InputMessage& msg)
 
 void ProtocolGame::parseCancelWalk(InputMessage& msg)
 {
-    Direction direction = (Direction)msg.getU8();
+    Otc::Direction direction = (Otc::Direction)msg.getU8();
     g_game.getLocalPlayer()->setDirection(direction);
 }
 
@@ -921,7 +921,7 @@ void ProtocolGame::setTileDescription(InputMessage& msg, Position position)
             return;
         else {
             if(stackpos >= 10) {
-                logDebug("[ProtocolGame::setTileDescription] Too many things!.");
+                logTraceDebug("Too many things!.");
                 return;
             }
 
@@ -984,7 +984,7 @@ ThingPtr ProtocolGame::internalGetThing(InputMessage& msg)
         }
 
         uint8 healthPercent = msg.getU8();
-        Direction direction = (Direction)msg.getU8();
+        Otc::Direction direction = (Otc::Direction)msg.getU8();
         Outfit outfit = internalGetOutfit(msg);
 
         Light light;
@@ -1032,7 +1032,7 @@ ItemPtr ProtocolGame::internalGetItem(InputMessage& msg, uint16 id)
     item->setId(id);
 
     const ThingAttributes& itemAttributes = g_dat.getItemAttributes(id);
-    if(itemAttributes.stackable || itemAttributes.group == THING_GROUP_FLUID || itemAttributes.group == THING_GROUP_SPLASH)
+    if(itemAttributes.stackable || itemAttributes.group == Otc::ThingFluidGroup || itemAttributes.group == Otc::ThingSplashGroup)
         item->setCount(msg.getU8());
 
     return item;

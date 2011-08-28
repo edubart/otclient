@@ -28,10 +28,10 @@
 #include <framework/graphics/graphics.h>
 #include <framework/graphics/fontmanager.h>
 
-Creature::Creature() : Thing(THING_CREATURE)
+Creature::Creature() : Thing(Otc::Creature)
 {
     m_healthPercent = 0;
-    m_direction = DIRECTION_SOUTH;
+    m_direction = Otc::South;
     m_animation = 0;
 
     m_walking = false;
@@ -72,13 +72,13 @@ void Creature::draw(int x, int y)
     if(m_walking && attributes.animcount > 1) {
         double offset = (32.0 / m_walkTime) * (g_platform.getTicks() - m_lastTicks);
 
-        if(m_direction == DIRECTION_NORTH)
+        if(m_direction == Otc::North)
             m_walkOffsetY = std::max(m_walkOffsetY - offset, 0.0);
-        else if(m_direction == DIRECTION_EAST)
+        else if(m_direction == Otc::East)
             m_walkOffsetX = std::min(m_walkOffsetX + offset, 0.0);
-        else if(m_direction == DIRECTION_SOUTH)
+        else if(m_direction == Otc::South)
             m_walkOffsetY = std::min(m_walkOffsetY + offset, 0.0);
-        else if(m_direction == DIRECTION_WEST)
+        else if(m_direction == Otc::West)
             m_walkOffsetX = std::max(m_walkOffsetX - offset, 0.0);
 
         /*if(g_platform.getTicks() - m_lastTicks > m_speed / 4) {
@@ -117,26 +117,26 @@ void Creature::draw(int x, int y)
 
         // draw mask if exists
         if(attributes.blendframes > 1) {
-            g_graphics.bindBlendFunc(BLEND_COLORIZING);
+            g_graphics.bindBlendFunc(Fw::BlendColorzing);
 
             for(int mask = 0; mask < 4; ++mask) {
 
                 int outfitColorId = 0;
-                if(mask == SpriteMaskYellow)
+                if(mask == Otc::SpriteYellowMask)
                     outfitColorId = m_outfit.head;
-                else if(mask == SpriteMaskRed)
+                else if(mask == Otc::SpriteRedMask)
                     outfitColorId = m_outfit.body;
-                else if(mask == SpriteMaskGreen)
+                else if(mask == Otc::SpriteGreenMask)
                     outfitColorId = m_outfit.legs;
-                else if(mask ==  SpriteMaskBlue)
+                else if(mask ==  Otc::SpriteBlueMask)
                     outfitColorId = m_outfit.feet;
 
-                g_graphics.bindColor(OutfitColors[outfitColorId]);
-                internalDraw(x, y, 1, m_direction, ydiv, 0, m_animation, (SpriteMask)mask);
+                g_graphics.bindColor(Otc::OutfitColors[outfitColorId]);
+                internalDraw(x, y, 1, m_direction, ydiv, 0, m_animation, (Otc::SpriteMask)mask);
             }
 
-            g_graphics.bindBlendFunc(BLEND_NORMAL);
-            g_graphics.bindColor(Color::white);
+            g_graphics.bindBlendFunc(Fw::BlendNormal);
+            g_graphics.bindColor(Fw::white);
         }
     }
 }
@@ -147,7 +147,7 @@ void Creature::drawInformation(int x, int y, bool useGray)
 
     if(!useGray) {
         // health bar according to yatc
-        fillColor = Color::black;
+        fillColor = Fw::black;
         if(m_healthPercent > 92) {
             fillColor.setGreen(188);
         }
@@ -177,18 +177,18 @@ void Creature::drawInformation(int x, int y, bool useGray)
     Rect healthRect = backgroundRect.expanded(-1);
     healthRect.setWidth((m_healthPercent/100.0)*25);
 
-    g_graphics.bindColor(Color::black);
+    g_graphics.bindColor(Fw::black);
     g_graphics.drawFilledRect(backgroundRect);
 
     g_graphics.bindColor(fillColor);
     g_graphics.drawFilledRect(healthRect);
 
     // restore white color
-    g_graphics.bindColor(Color::white);
+    g_graphics.bindColor(Fw::white);
 
     // name
     FontPtr font = g_fonts.getFont("tibia-12px-rounded");
-    font->renderText(m_name, Rect(x-100, y-15, 200, 15), AlignTopCenter, fillColor);
+    font->renderText(m_name, Rect(x-100, y-15, 200, 15), Fw::AlignTopCenter, fillColor);
 }
 
 void Creature::walk(const Position& position)
@@ -206,19 +206,19 @@ void Creature::walk(const Position& position)
 
     // set new direction
     if(m_walkingFromPosition + Position(0, -1, 0) == m_position) {
-        m_direction = DIRECTION_NORTH;
+        m_direction = Otc::North;
         m_walkOffsetY = 32;
     }
     else if(m_walkingFromPosition + Position(1, 0, 0) == m_position) {
-        m_direction = DIRECTION_EAST;
+        m_direction = Otc::East;
         m_walkOffsetX = -32;
     }
     else if(m_walkingFromPosition + Position(0, 1, 0) == m_position) {
-        m_direction = DIRECTION_SOUTH;
+        m_direction = Otc::South;
         m_walkOffsetY = -32;
     }
     else if(m_walkingFromPosition + Position(-1, 0, 0) == m_position) {
-        m_direction = DIRECTION_WEST;
+        m_direction = Otc::West;
         m_walkOffsetX = 32;
     }
     else { // Teleport

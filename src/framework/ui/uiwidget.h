@@ -41,9 +41,9 @@ public:
     virtual void setup();
     virtual void render();
 
-    void setEnabled(bool enabled) { m_enabled = enabled; updateState(DisabledState); }
+    void setEnabled(bool enabled) { m_enabled = enabled; updateState(Fw::DisabledState); }
     void setVisible(bool visible) { m_visible = visible; }
-    void setPressed(bool pressed) { m_pressed = pressed; updateState(PressedState); }
+    void setPressed(bool pressed) { m_pressed = pressed; updateState(Fw::PressedState); }
     void setId(const std::string& id) { m_id = id; }
     void setFocusable(bool focusable) { m_focusable = focusable; }
     void setStyle(const std::string& styleName);
@@ -65,7 +65,7 @@ public:
     void setMarginTop(int margin) { m_marginTop = margin; updateParentLayout(); }
     void setMarginBottom(int margin) { m_marginBottom = margin; updateParentLayout(); }
     void setSizeFixed(bool fixed) { m_fixedSize = fixed; updateParentLayout(); }
-    void setLastFocusReason(FocusReason reason) { m_lastFocusReason = reason; }
+    void setLastFocusReason(Fw::FocusReason reason) { m_lastFocusReason = reason; }
 
     void resize(const Size& size) { setRect(Rect(getPosition(), size)); }
     void moveTo(const Point& pos) { setRect(Rect(pos, getSize())); }
@@ -74,12 +74,12 @@ public:
     void disable() { setEnabled(false); }
     void enable() { setEnabled(true); }
 
-    bool isActive() const { return hasState(ActiveState); }
-    bool isEnabled() const { return !hasState(DisabledState); }
-    bool isDisabled() const { return hasState(DisabledState); }
-    bool isFocused() const { return hasState(FocusState); }
-    bool isHovered() const { return hasState(HoverState); }
-    bool isPressed() const { return hasState(PressedState); }
+    bool isActive() const { return hasState(Fw::ActiveState); }
+    bool isEnabled() const { return !hasState(Fw::DisabledState); }
+    bool isDisabled() const { return hasState(Fw::DisabledState); }
+    bool isFocused() const { return hasState(Fw::FocusState); }
+    bool isHovered() const { return hasState(Fw::HoverState); }
+    bool isPressed() const { return hasState(Fw::PressedState); }
     bool isVisible();
     bool isExplicitlyEnabled() const { return m_enabled; }
     bool isExplicitlyVisible() const { return m_visible; }
@@ -87,7 +87,7 @@ public:
     bool isSizeFixed() const { return m_fixedSize; }
     bool hasChildren() const { return m_children.size() > 0; }
     bool hasChild(const UIWidgetPtr& child);
-    bool hasState(WidgetState state) const { return m_states & state; }
+    bool hasState(Fw::WidgetState state) const { return m_states & state; }
 
     std::string getId() const { return m_id; }
     int getChildCount() const { return m_children.size(); }
@@ -110,7 +110,7 @@ public:
     int getMarginRight() const { return m_marginRight; }
     int getMarginTop() const { return m_marginTop; }
     int getMarginBottom() const { return m_marginBottom; }
-    FocusReason getLastFocusReason() const { return m_lastFocusReason; }
+    Fw::FocusReason getLastFocusReason() const { return m_lastFocusReason; }
 
     UIWidgetList getChildren() const { return m_children; }
     UIWidgetPtr getFocusedChild() const { return m_focusedChild; }
@@ -126,15 +126,15 @@ public:
     void addChild(const UIWidgetPtr& child);
     void insertChild(int index, const UIWidgetPtr& child);
     void removeChild(const UIWidgetPtr& child);
-    void focusChild(const UIWidgetPtr& child, FocusReason reason);
-    void focusNextChild(FocusReason reason);
+    void focusChild(const UIWidgetPtr& child, Fw::FocusReason reason);
+    void focusNextChild(Fw::FocusReason reason);
     void moveChildToTop(const UIWidgetPtr& child);
     void lockChild(const UIWidgetPtr& child);
     void unlockChild(const UIWidgetPtr& child);
 
     void updateParentLayout();
     void updateLayout();
-    virtual void updateState(WidgetState state);
+    virtual void updateState(Fw::WidgetState state);
     void updateStates();
     virtual void updateStyle();
     void applyStyle(const OTMLNodePtr& styleNode);
@@ -153,7 +153,7 @@ protected:
     /// Triggered when widget is moved or resized
     virtual void onGeometryUpdate(const Rect& oldRect, const Rect& newRect);
     /// Triggered when widget gets or loses focus
-    virtual void onFocusChange(bool focused, FocusReason reason);
+    virtual void onFocusChange(bool focused, Fw::FocusReason reason);
     /// Triggered when the mouse enters or leaves widget area
     virtual void onHoverChange(bool hovered);
     /// Triggered when user presses key while widget has focus
@@ -161,19 +161,19 @@ protected:
     /// Triggered when user releases key while widget has focus
     virtual bool onKeyRelease(uchar keyCode, char keyChar, int keyboardModifiers);
     /// Triggered when a mouse button is pressed down while mouse pointer is inside widget area
-    virtual bool onMousePress(const Point& mousePos, MouseButton button);
+    virtual bool onMousePress(const Point& mousePos, Fw::MouseButton button);
     /// Triggered when a mouse button is released
-    virtual bool onMouseRelease(const Point& mousePos, MouseButton button);
+    virtual bool onMouseRelease(const Point& mousePos, Fw::MouseButton button);
     /// Triggered when mouse moves (even when the mouse is outside widget area)
     virtual bool onMouseMove(const Point& mousePos, const Point& mouseMoved);
     /// Triggered when mouse middle button wheels inside widget area
-    virtual bool onMouseWheel(const Point& mousePos, MouseWheelDirection direction);
+    virtual bool onMouseWheel(const Point& mousePos, Fw::MouseWheelDirection direction);
 
     friend class UIManager;
 
 protected:
     std::string m_id;
-    FocusReason m_lastFocusReason;
+    Fw::FocusReason m_lastFocusReason;
     bool m_enabled;
     bool m_visible;
     bool m_focusable;

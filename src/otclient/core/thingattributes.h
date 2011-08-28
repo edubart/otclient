@@ -28,7 +28,7 @@
 struct ThingAttributes
 {
     ThingAttributes() {
-        group = THING_GROUP_NONE;
+        group = Otc::ThingNoGroup;
         blockSolid = false;
         hasHeight = false;
         blockPathFind = false;
@@ -69,7 +69,7 @@ struct ThingAttributes
     uint16 speed, subParam07, subParam08, lightLevel, lightColor, miniMapColor;
 
     std::vector<int> sprites;
-    ThingAttributesGroup group;
+    Otc::ThingAttributesGroup group;
 };
 
 #endif

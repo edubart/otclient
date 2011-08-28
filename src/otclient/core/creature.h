@@ -45,7 +45,7 @@ public:
 
     void setName(const std::string& name) { m_name = name; }
     void setHealthPercent(uint8 healthPercent) { m_healthPercent = healthPercent; }
-    void setDirection(Direction direction) { m_direction = direction; }
+    void setDirection(Otc::Direction direction) { m_direction = direction; }
     void setOutfit(const Outfit& outfit) { m_outfit = outfit; }
     void setLight(const Light& light) { m_light = light; }
     void setSpeed(uint16 speed) { m_speed = speed; }
@@ -56,7 +56,7 @@ public:
 
     std::string getName() { return m_name; }
     uint8 getHealthPercent() { return m_healthPercent; }
-    Direction getDirection() { return m_direction; }
+    Otc::Direction getDirection() { return m_direction; }
     Outfit getOutfit() { return m_outfit; }
     Light getLight() { return m_light; }
     uint16 getSpeed() { return m_speed; }
@@ -76,7 +76,7 @@ public:
 private:
     std::string m_name;
     uint8 m_healthPercent;
-    Direction m_direction;
+    Otc::Direction m_direction;
     Outfit m_outfit;
     Light m_light;
     uint16 m_speed;

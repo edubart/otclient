@@ -26,7 +26,7 @@
 #include <framework/platform/platform.h>
 #include <framework/core/eventdispatcher.h>
 
-Effect::Effect() : Thing(THING_EFFECT)
+Effect::Effect() : Thing(Otc::Effect)
 {
     m_lastTicks = g_platform.getTicks();
     m_animation = 0;

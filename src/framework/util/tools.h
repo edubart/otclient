@@ -31,22 +31,22 @@
 #include <cxxabi.h>
 #include "types.h"
 
-namespace fw {
+namespace Fw {
 
 // read utilities for istream
-inline uint8 getu8(std::istream& in) {
+inline uint8 getU8(std::istream& in) {
     uint8 tmp;
     in.read((char*)&tmp, 1);
     return tmp;
 }
 
-inline uint16 getu16(std::istream& in) {
+inline uint16 getU16(std::istream& in) {
     uint16 tmp;
     in.read((char*)&tmp, 2);
     return tmp;
 }
 
-inline uint32 getu32(std::istream& in) {
+inline uint32 getU32(std::istream& in) {
     uint32 tmp;
     in.read((char*)&tmp, 4);
     return tmp;
@@ -54,21 +54,21 @@ inline uint32 getu32(std::istream& in) {
 
 /// Fill an ostream by concatenating args
 /// Usage:
-///   fw::fill_ostream(stream, a1, a2, ..., aN);
-inline void fill_ostream(std::ostringstream&) { }
+///   Fw::fill_ostream(stream, a1, a2, ..., aN);
+inline void fillOstream(std::ostringstream&) { }
 template<class T, class... Args>
-void fill_ostream(std::ostringstream& stream, const T& first, const Args&... rest) {
+void fillOstream(std::ostringstream& stream, const T& first, const Args&... rest) {
     stream << first;
-    fill_ostream(stream, rest...);
+    fillOstream(stream, rest...);
 }
 
 /// Makes a std::string by concatenating args
 /// Usage:
-///   std::string str = fw::mkstr(a1, a2, ..., aN);
+///   std::string str = Fw::mkstr(a1, a2, ..., aN);
 template<class... T>
 std::string mkstr(const T&... args) {
     std::ostringstream buf;
-    fill_ostream(buf, args...);
+    fillOstream(buf, args...);
     return buf.str();
 }
 
@@ -84,7 +84,7 @@ struct dump_util {
 
 /// Utility for dumping variables
 /// Usage:
-///   fw::dump << v1, v2, ..., vN;
+///   Fw::dump << v1, v2, ..., vN;
 struct dumper {
     dumper() { }
     template<class T>
@@ -97,15 +97,15 @@ struct dumper {
 
 /// Utility for printing messages into stdout
 /// Usage:
-///  fw::print(v1, v2, ..., vN);
+///  Fw::print(v1, v2, ..., vN);
 template<class... T>
 void print(const T&... args) {
     std::ostringstream buf;
-    fill_ostream(buf, args...);
+    fillOstream(buf, args...);
     std::cout << buf.str();
 }
 
-/// Same as fw::print but adds a new line at the end
+/// Same as Fw::print but adds a new line at the end
 template<class... T>
 void println(const T&... args) {
     print(args...);
@@ -113,7 +113,7 @@ void println(const T&... args) {
 }
 
 /// Demangle names for GNU g++ compiler
-inline std::string demangle_name(const char* name) {
+inline std::string demangleName(const char* name) {
     size_t len;
     int status;
     std::string ret;
@@ -126,10 +126,10 @@ inline std::string demangle_name(const char* name) {
 }
 
 /// Returns the name of a type
-/// e.g. fw::demangle_type<Foo*>() returns a string containing 'Foo*'
+/// e.g. Fw::demangle_type<Foo*>() returns a string containing 'Foo*'
 template<typename T>
-std::string demangle_type() {
-    return demangle_name(typeid(T).name());
+std::string demangleType() {
+    return demangleName(typeid(T).name());
 }
 
 /// Cast a type to another type
@@ -185,27 +185,27 @@ inline bool cast(const bool& in, std::string& out) {
 }
 
 // used by safe_cast
-class bad_cast : public std::bad_cast {
+class BadCast : public std::bad_cast {
 public:
-    virtual ~bad_cast() throw() { }
+    virtual ~BadCast() throw() { }
     template<class T, class R>
     void setWhat() {
-        m_what = mkstr("failed to cast value of type '", demangle_type<T>(),
-                                "' to type '", demangle_type<R>(), "'");
+        m_what = mkstr("failed to cast value of type '", demangleType<T>(),
+                                "' to type '", demangleType<R>(), "'");
     }
     virtual const char* what() { return m_what.c_str(); }
 private:
     std::string m_what;
 };
 
-/// Cast a type to another type, any error throws a fw::bad_cast_exception
+/// Cast a type to another type, any error throws a Fw::bad_cast_exception
 /// Usage:
-///   R r = fw::safe_cast<R>(t);
+///   R r = Fw::safe_cast<R>(t);
 template<typename R, typename T>
-R safe_cast(const T& t) {
+R safeCast(const T& t) {
     R r;
     if(!cast(t, r)) {
-        bad_cast e;
+        BadCast e;
         e.setWhat<T,R>();
         throw e;
     }
@@ -214,12 +214,12 @@ R safe_cast(const T& t) {
 
 /// Cast a type to another type, cast errors are ignored
 /// Usage:
-///   R r = fw::unsafe_cast<R>(t);
+///   R r = Fw::unsafe_cast<R>(t);
 template<typename R, typename T>
-R unsafe_cast(const T& t, R def = R()) {
+R unsafeCast(const T& t, R def = R()) {
     try {
-        return safe_cast<R,T>(t);
-    } catch(bad_cast& e) {
+        return safeCast<R,T>(t);
+    } catch(BadCast& e) {
         println("CAST ERROR: ", e.what());
         return def;
     }
@@ -227,12 +227,12 @@ R unsafe_cast(const T& t, R def = R()) {
 
 template<typename T>
 std::string tostring(const T& t) {
-    return unsafe_cast<std::string, T>(t);
+    return unsafeCast<std::string, T>(t);
 }
 
 template<typename T>
 T fromstring(const std::string& str, T def = T()) {
-    return unsafe_cast<T, std::string>(str, def);
+    return unsafeCast<T, std::string>(str, def);
 }
 
 inline std::string dec2hex(unsigned int num) {
@@ -261,7 +261,7 @@ const static std::string empty_string;
 
 }
 
-// shortcut for fw::dump
-const static fw::dumper dump;
+// shortcut for Fw::dump
+const static Fw::dumper dump;
 
 #endif

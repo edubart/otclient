@@ -50,8 +50,8 @@ void Graphics::init()
     m_opacity = 255;
     m_emptyTexture = TexturePtr(new Texture);
 
-    bindColor(Color::white);
-    bindBlendFunc(BLEND_NORMAL);
+    bindColor(Fw::white);
+    bindBlendFunc(Fw::BlendNormal);
 }
 
 void Graphics::terminate()
@@ -299,13 +299,13 @@ void Graphics::bindTexture(const TexturePtr& texture)
     glBindTexture(GL_TEXTURE_2D, texture->getId());
 }
 
-void Graphics::bindBlendFunc(BlendFuncType blendType)
+void Graphics::bindBlendFunc(Fw::BlendFunc blendType)
 {
     switch(blendType) {
-        case BLEND_NORMAL:
+        case Fw::BlendNormal:
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
             break;
-        case BLEND_COLORIZING:
+        case Fw::BlendColorzing:
             glBlendFunc(GL_DST_COLOR, GL_ONE_MINUS_SRC_ALPHA);
             break;
     }

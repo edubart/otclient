@@ -28,7 +28,7 @@
 
 UILineEdit::UILineEdit()
 {
-    m_align = AlignLeftCenter;
+    m_align = Fw::AlignLeftCenter;
     m_cursorPos = 0;
     m_startRenderPos = 0;
     m_textHorizontalMargin = 3;
@@ -139,16 +139,16 @@ void UILineEdit::update()
     textScreenCoords.addRight(-m_textHorizontalMargin);
     m_drawArea = textScreenCoords;
 
-    if(m_align & AlignBottom) {
+    if(m_align & Fw::AlignBottom) {
         m_drawArea.translate(0, textScreenCoords.height() - textBoxSize.height());
-    } else if(m_align & AlignVerticalCenter) {
+    } else if(m_align & Fw::AlignVerticalCenter) {
         m_drawArea.translate(0, (textScreenCoords.height() - textBoxSize.height()) / 2);
     } else { // AlignTop
     }
 
-    if(m_align & AlignRight) {
+    if(m_align & Fw::AlignRight) {
         m_drawArea.translate(textScreenCoords.width() - textBoxSize.width(), 0);
-    } else if(m_align & AlignHorizontalCenter) {
+    } else if(m_align & Fw::AlignHorizontalCenter) {
         m_drawArea.translate((textScreenCoords.width() - textBoxSize.width()) / 2, 0);
     } else { // AlignLeft
 
@@ -167,17 +167,17 @@ void UILineEdit::update()
         Rect glyphTextureCoords = glyphsTextureCoords[glyph];
 
         // first translate to align position
-        if(m_align & AlignBottom) {
+        if(m_align & Fw::AlignBottom) {
             glyphScreenCoords.translate(0, textScreenCoords.height() - textBoxSize.height());
-        } else if(m_align & AlignVerticalCenter) {
+        } else if(m_align & Fw::AlignVerticalCenter) {
             glyphScreenCoords.translate(0, (textScreenCoords.height() - textBoxSize.height()) / 2);
         } else { // AlignTop
             // nothing to do
         }
 
-        if(m_align & AlignRight) {
+        if(m_align & Fw::AlignRight) {
             glyphScreenCoords.translate(textScreenCoords.width() - textBoxSize.width(), 0);
-        } else if(m_align & AlignHorizontalCenter) {
+        } else if(m_align & Fw::AlignHorizontalCenter) {
             glyphScreenCoords.translate((textScreenCoords.width() - textBoxSize.width()) / 2, 0);
         } else { // AlignLeft
             // nothing to do
@@ -243,7 +243,7 @@ void UILineEdit::setText(const std::string& text)
     }
 }
 
-void UILineEdit::setAlign(AlignmentFlag align)
+void UILineEdit::setAlign(Fw::AlignmentFlag align)
 {
     if(m_align != align) {
         m_align = align;
@@ -360,10 +360,10 @@ void UILineEdit::onGeometryUpdate(const Rect& oldRect, const Rect& newRect)
     update();
 }
 
-void UILineEdit::onFocusChange(bool focused, FocusReason reason)
+void UILineEdit::onFocusChange(bool focused, Fw::FocusReason reason)
 {
     if(focused) {
-        if(reason == TabFocusReason)
+        if(reason == Fw::TabFocusReason)
             setCursorPos(m_text.length());
         else
             blinkCursor();
@@ -386,7 +386,7 @@ bool UILineEdit::onKeyPress(uchar keyCode, char keyChar, int keyboardModifiers)
         setCursorPos(m_text.length());
     else if(keyCode == KC_TAB) {
         if(UIWidgetPtr parent = getParent())
-            parent->focusNextChild(TabFocusReason);
+            parent->focusNextChild(Fw::TabFocusReason);
     } else if(keyCode == KC_RETURN) {
         if(m_onAction)
             m_onAction();
@@ -398,9 +398,9 @@ bool UILineEdit::onKeyPress(uchar keyCode, char keyChar, int keyboardModifiers)
     return true;
 }
 
-bool UILineEdit::onMousePress(const Point& mousePos, MouseButton button)
+bool UILineEdit::onMousePress(const Point& mousePos, Fw::MouseButton button)
 {
-    if(button == MouseLeftButton) {
+    if(button == Fw::MouseLeftButton) {
         int pos = getTextPos(mousePos);
         if(pos >= 0)
             setCursorPos(pos);

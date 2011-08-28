@@ -77,14 +77,14 @@ OTMLNodePtr OTMLNode::at(const std::string& childTag)
         }
     }
     if(!res)
-        throw OTMLException(shared_from_this(), fw::mkstr("child node with tag '", childTag, "' not found"));
+        throw OTMLException(shared_from_this(), Fw::mkstr("child node with tag '", childTag, "' not found"));
     return res;
 }
 
 OTMLNodePtr OTMLNode::atIndex(int childIndex)
 {
     if(childIndex >= size() || childIndex < 0)
-        throw OTMLException(shared_from_this(), fw::mkstr("child node with index '", childIndex, "' not found"));
+        throw OTMLException(shared_from_this(), Fw::mkstr("child node with index '", childIndex, "' not found"));
     return m_children[childIndex];
 }
 

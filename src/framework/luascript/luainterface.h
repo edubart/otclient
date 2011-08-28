@@ -63,24 +63,24 @@ public:
     // register shortcuts using templates
     template<class C, class B = LuaObject>
     void registerClass() {
-        registerClass(fw::demangle_type<C>(), fw::demangle_type<B>());
+        registerClass(Fw::demangleType<C>(), Fw::demangleType<B>());
     }
 
     template<class C>
     void registerClassStaticFunction(const std::string& functionName, const LuaCppFunction& function) {
-        registerClassStaticFunction(fw::demangle_type<C>(), functionName, function);
+        registerClassStaticFunction(Fw::demangleType<C>(), functionName, function);
     }
 
     template<class C>
     void registerClassMemberFunction(const std::string& functionName, const LuaCppFunction& function) {
-        registerClassMemberFunction(fw::demangle_type<C>(), functionName, function);
+        registerClassMemberFunction(Fw::demangleType<C>(), functionName, function);
     }
 
     template<class C>
     void registerClassMemberField(const std::string& field,
                                   const LuaCppFunction& getFunction,
                                   const LuaCppFunction& setFunction) {
-        registerClassMemberField(fw::demangle_type<C>(), field, getFunction, setFunction);
+        registerClassMemberField(Fw::demangleType<C>(), field, getFunction, setFunction);
     }
 
     // methods for binding functions
@@ -343,7 +343,7 @@ template<class T>
 T LuaInterface::castValue(int index) {
     T o;
     if(!luavalue_cast(index, o))
-        throw LuaBadValueCastException(typeName(index), fw::demangle_type<T>());
+        throw LuaBadValueCastException(typeName(index), Fw::demangleType<T>());
     return o;
 }
 

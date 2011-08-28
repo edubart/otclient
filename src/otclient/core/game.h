@@ -41,8 +41,8 @@ public:
     void onLogin();
     void onLogout();
 
-    void walk(Direction direction);
-    void turn(Direction direction);
+    void walk(Otc::Direction direction);
+    void turn(Otc::Direction direction);
 
     bool isOnline() { return m_online; }
 

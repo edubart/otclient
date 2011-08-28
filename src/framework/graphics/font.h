@@ -38,17 +38,17 @@ public:
     /// Simple text render starting at startPos
     void renderText(const std::string& text,
                     const Point& startPos,
-                    const Color& color = Color::white);
+                    const Color& color = Fw::white);
 
     /// Advanced text render delimited by a screen region and alignment
     void renderText(const std::string& text,
                     const Rect& screenCoords,
-                    AlignmentFlag align = AlignTopLeft,
-                    const Color& color = Color::white);
+                    Fw::AlignmentFlag align = Fw::AlignTopLeft,
+                    const Color& color = Fw::white);
 
     /// Calculate glyphs positions to use on render, also calculates textBoxSize if wanted
     const std::vector<Point>& calculateGlyphsPositions(const std::string& text,
-                                                       AlignmentFlag align = AlignTopLeft,
+                                                       Fw::AlignmentFlag align = Fw::AlignTopLeft,
                                                        Size* textBoxSize = NULL) const;
 
     /// Simulate render and calculate text size

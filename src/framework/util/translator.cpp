@@ -23,46 +23,46 @@
 #include "translator.h"
 #include <boost/algorithm/string.hpp>
 
-AlignmentFlag fw::translateAlignment(std::string aligment)
+Fw::AlignmentFlag Fw::translateAlignment(std::string aligment)
 {
     boost::to_lower(aligment);
     boost::erase_all(aligment, " ");
     if(aligment == "topleft")
-        return AlignTopLeft;
+        return Fw::AlignTopLeft;
     else if(aligment == "topright")
-        return AlignTopRight;
+        return Fw::AlignTopRight;
     else if(aligment == "bottomleft")
-        return AlignBottomLeft;
+        return Fw::AlignBottomLeft;
     else if(aligment == "bottomright")
-        return AlignBottomRight;
+        return Fw::AlignBottomRight;
     else if(aligment == "left")
-        return AlignLeftCenter;
+        return Fw::AlignLeftCenter;
     else if(aligment == "right")
-        return AlignRightCenter;
+        return Fw::AlignRightCenter;
     else if(aligment == "top")
-        return AlignTopCenter;
+        return Fw::AlignTopCenter;
     else if(aligment == "bottom")
-        return AlignBottomCenter;
+        return Fw::AlignBottomCenter;
     else if(aligment == "center")
-        return AlignCenter;
-    return AlignNone;
+        return Fw::AlignCenter;
+    return Fw::AlignNone;
 }
 
-AnchorEdge fw::translateAnchorEdge(std::string anchorEdge)
+Fw::AnchorEdge Fw::translateAnchorEdge(std::string anchorEdge)
 {
     boost::to_lower(anchorEdge);
     boost::erase_all(anchorEdge, " ");
     if(anchorEdge == "left")
-        return AnchorLeft;
+        return Fw::AnchorLeft;
     else if(anchorEdge == "right")
-        return AnchorRight;
+        return Fw::AnchorRight;
     else if(anchorEdge == "top")
-        return AnchorTop;
+        return Fw::AnchorTop;
     else if(anchorEdge == "bottom")
-        return AnchorBottom;
+        return Fw::AnchorBottom;
     else if(anchorEdge == "horizontalcenter")
-        return AnchorHorizontalCenter;
+        return Fw::AnchorHorizontalCenter;
     else if(anchorEdge == "verticalcenter")
-        return AnchorVerticalCenter;
-    return AnchorNone;
+        return Fw::AnchorVerticalCenter;
+    return Fw::AnchorNone;
 }

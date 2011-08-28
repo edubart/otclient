@@ -24,11 +24,11 @@
 #include "spritemanager.h"
 #include <framework/graphics/graphics.h>
 
-Thing::Thing(ThingType type) : m_id(0), m_type(type)
+Thing::Thing(Otc::ThingType type) : m_id(0), m_type(type)
 {
 }
 
-void Thing::internalDraw(int x, int y, int blendframes, int xdiv, int ydiv, int zdiv, int anim, SpriteMask mask)
+void Thing::internalDraw(int x, int y, int blendframes, int xdiv, int ydiv, int zdiv, int anim, Otc::SpriteMask mask)
 {
     const ThingAttributes& attributes = getAttributes();
 

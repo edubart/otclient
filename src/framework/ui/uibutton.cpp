@@ -41,7 +41,7 @@ void UIButton::render()
     UIWidget::render();
     Rect textRect = m_rect;
     textRect.translate(m_textTranslate);
-    m_font->renderText(m_text, textRect, AlignCenter, m_foregroundColor);
+    m_font->renderText(m_text, textRect, Fw::AlignCenter, m_foregroundColor);
 }
 
 void UIButton::onStyleApply(const OTMLNodePtr& styleNode)
@@ -60,7 +60,7 @@ void UIButton::onStyleApply(const OTMLNodePtr& styleNode)
     }
 }
 
-bool UIButton::onMouseRelease(const Point& mousePos, MouseButton button)
+bool UIButton::onMouseRelease(const Point& mousePos, Fw::MouseButton button)
 {
     if(isPressed()) {
         if(m_onClick && getRect().contains(mousePos))

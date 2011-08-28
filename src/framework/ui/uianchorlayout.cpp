@@ -35,8 +35,8 @@ void UIAnchorGroup::addAnchor(const UIAnchor& anchor)
     m_anchors.push_back(anchor);
 }
 
-void UIAnchorLayout::addAnchor(const UIWidgetPtr& anchoredWidget, AnchorEdge anchoredEdge,
-                               const std::string& hookedWidgetId, AnchorEdge hookedEdge)
+void UIAnchorLayout::addAnchor(const UIWidgetPtr& anchoredWidget, Fw::AnchorEdge anchoredEdge,
+                               const std::string& hookedWidgetId, Fw::AnchorEdge hookedEdge)
 {
     if(!anchoredWidget)
         return;
@@ -59,16 +59,16 @@ void UIAnchorLayout::removeAnchors(const UIWidgetPtr& anchoredWidget)
 
 void UIAnchorLayout::centerIn(const UIWidgetPtr& anchoredWidget, const std::string& hookedWidgetId)
 {
-    addAnchor(anchoredWidget, AnchorHorizontalCenter, hookedWidgetId, AnchorHorizontalCenter);
-    addAnchor(anchoredWidget, AnchorVerticalCenter, hookedWidgetId, AnchorVerticalCenter);
+    addAnchor(anchoredWidget, Fw::AnchorHorizontalCenter, hookedWidgetId, Fw::AnchorHorizontalCenter);
+    addAnchor(anchoredWidget, Fw::AnchorVerticalCenter, hookedWidgetId, Fw::AnchorVerticalCenter);
 }
 
 void UIAnchorLayout::fill(const UIWidgetPtr& anchoredWidget, const std::string& hookedWidgetId)
 {
-    addAnchor(anchoredWidget, AnchorLeft, hookedWidgetId, AnchorLeft);
-    addAnchor(anchoredWidget, AnchorRight, hookedWidgetId, AnchorRight);
-    addAnchor(anchoredWidget, AnchorTop, hookedWidgetId, AnchorTop);
-    addAnchor(anchoredWidget, AnchorBottom, hookedWidgetId, AnchorBottom);
+    addAnchor(anchoredWidget, Fw::AnchorLeft, hookedWidgetId, Fw::AnchorLeft);
+    addAnchor(anchoredWidget, Fw::AnchorRight, hookedWidgetId, Fw::AnchorRight);
+    addAnchor(anchoredWidget, Fw::AnchorTop, hookedWidgetId, Fw::AnchorTop);
+    addAnchor(anchoredWidget, Fw::AnchorBottom, hookedWidgetId, Fw::AnchorBottom);
 }
 
 void UIAnchorLayout::update()
@@ -108,7 +108,7 @@ void UIAnchorLayout::updateWidget(const UIWidgetPtr& widget, UIAnchorGroup& anch
     // calculates new rect based on anchors
     for(const UIAnchor& anchor : anchorGroup.getAnchors()) {
         // skip invalid anchors
-        if(anchor.getHookedEdge() == AnchorNone)
+        if(anchor.getHookedEdge() == Fw::AnchorNone)
             continue;
 
         // determine hooked widget
@@ -141,22 +141,22 @@ void UIAnchorLayout::updateWidget(const UIWidgetPtr& widget, UIAnchorGroup& anch
         // determine hooked widget edge point
         int point = 0;
         switch(anchor.getHookedEdge()) {
-            case AnchorLeft:
+            case Fw::AnchorLeft:
                 point = hookedWidget->getRect().left();
                 break;
-            case AnchorRight:
+            case Fw::AnchorRight:
                 point = hookedWidget->getRect().right();
                 break;
-            case AnchorTop:
+            case Fw::AnchorTop:
                 point = hookedWidget->getRect().top();
                 break;
-            case AnchorBottom:
+            case Fw::AnchorBottom:
                 point = hookedWidget->getRect().bottom();
                 break;
-            case AnchorHorizontalCenter:
+            case Fw::AnchorHorizontalCenter:
                 point = hookedWidget->getRect().horizontalCenter();
                 break;
-            case AnchorVerticalCenter:
+            case Fw::AnchorVerticalCenter:
                 point = hookedWidget->getRect().verticalCenter();
                 break;
             default:
@@ -166,36 +166,36 @@ void UIAnchorLayout::updateWidget(const UIWidgetPtr& widget, UIAnchorGroup& anch
         }
 
         switch(anchor.getAnchoredEdge()) {
-            case AnchorHorizontalCenter:
+            case Fw::AnchorHorizontalCenter:
                 newRect.moveHorizontalCenter(point + widget->getMarginLeft() - widget->getMarginRight());
                 horizontalMoved = true;
                 break;
-            case AnchorLeft:
+            case Fw::AnchorLeft:
                 if(!horizontalMoved) {
                     newRect.moveLeft(point + widget->getMarginLeft());
                     horizontalMoved = true;
                 } else
                     newRect.setLeft(point + widget->getMarginLeft());
                 break;
-            case AnchorRight:
+            case Fw::AnchorRight:
                 if(!horizontalMoved) {
                     newRect.moveRight(point - widget->getMarginRight());
                     horizontalMoved = true;
                 } else
                     newRect.setRight(point - widget->getMarginRight());
                 break;
-            case AnchorVerticalCenter:
+            case Fw::AnchorVerticalCenter:
                 newRect.moveVerticalCenter(point + widget->getMarginTop() - widget->getMarginBottom());
                 verticalMoved = true;
                 break;
-            case AnchorTop:
+            case Fw::AnchorTop:
                 if(!verticalMoved) {
                     newRect.moveTop(point + widget->getMarginTop());
                     verticalMoved = true;
                 } else
                     newRect.setTop(point + widget->getMarginTop());
                 break;
-            case AnchorBottom:
+            case Fw::AnchorBottom:
                 if(!verticalMoved) {
                     newRect.moveBottom(point - widget->getMarginBottom());
                     verticalMoved = true;

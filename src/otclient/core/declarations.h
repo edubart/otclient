@@ -24,7 +24,6 @@
 #define OTCLIENT_CORE_DECLARATIONS_H
 
 #include <otclient/global.h>
-#include "const.h"
 
 class Tile;
 class Thing;

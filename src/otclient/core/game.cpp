@@ -65,7 +65,7 @@ void Game::onLogout()
     m_online = false;
 }
 
-void Game::walk(Direction direction)
+void Game::walk(Otc::Direction direction)
 {
     if(!m_online)
         return;
@@ -75,37 +75,37 @@ void Game::walk(Direction direction)
     m_localPlayer->setDirection(direction);
 
     switch(direction) {
-    case DIRECTION_NORTH:
+    case Otc::North:
         m_protocolGame->sendWalkNorth();
         break;
-    case DIRECTION_EAST:
+    case Otc::East:
         m_protocolGame->sendWalkEast();
         break;
-    case DIRECTION_SOUTH:
+    case Otc::South:
         m_protocolGame->sendWalkSouth();
         break;
-    case DIRECTION_WEST:
+    case Otc::West:
         m_protocolGame->sendWalkWest();
         break;
     }
 }
 
-void Game::turn(Direction direction)
+void Game::turn(Otc::Direction direction)
 {
     if(!m_online)
         return;
 
     switch(direction) {
-    case DIRECTION_NORTH:
+    case Otc::North:
         m_protocolGame->sendTurnNorth();
         break;
-    case DIRECTION_EAST:
+    case Otc::East:
         m_protocolGame->sendTurnEast();
         break;
-    case DIRECTION_SOUTH:
+    case Otc::South:
         m_protocolGame->sendTurnSouth();
         break;
-    case DIRECTION_WEST:
+    case Otc::West:
         m_protocolGame->sendTurnWest();
         break;
     }

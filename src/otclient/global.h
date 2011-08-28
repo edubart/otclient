@@ -26,6 +26,7 @@
 #include <framework/global.h>
 
 // widely used headers
-#include <otclient/util/position.h>
+#include "const.h"
+#include "util/position.h"
 
 #endif

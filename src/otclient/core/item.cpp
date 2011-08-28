@@ -26,7 +26,7 @@
 #include "thing.h"
 #include <framework/platform/platform.h>
 
-Item::Item() : Thing(THING_ITEM)
+Item::Item() : Thing(Otc::Item)
 {
     m_count = 0;
     m_lastTicks = g_platform.getTicks();
@@ -50,7 +50,7 @@ void Item::draw(int x, int y)
         }
     }
 
-    if(attributes.group == THING_GROUP_SPLASH || attributes.group == THING_GROUP_FLUID) {
+    if(attributes.group == Otc::ThingSplashGroup || attributes.group == Otc::ThingFluidGroup) {
         //xdiv = m_count % attributes.xdiv;
         //ydiv = m_count / attributes.ydiv;
 

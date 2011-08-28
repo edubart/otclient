@@ -130,9 +130,9 @@ bool luavalue_cast(int index, Color& color)
         color.setAlpha(g_lua.popInteger());
         return true;
     } else if(g_lua.isString()) {
-        return fw::cast(g_lua.toString(index), color);
+        return Fw::cast(g_lua.toString(index), color);
     } else if(g_lua.isNil()) {
-        color = Color::white;
+        color = Fw::white;
         return true;
     }
     return false;
@@ -164,7 +164,7 @@ bool luavalue_cast(int index, Rect& rect)
         g_lua.getField("height", index);
         rect.setHeight(g_lua.popInteger());
     } else if(g_lua.isString()) {
-        return fw::cast(g_lua.toString(index), rect);
+        return Fw::cast(g_lua.toString(index), rect);
     } else if(g_lua.isNil()) {
         rect = Rect();
         return true;
@@ -191,7 +191,7 @@ bool luavalue_cast(int index, Point& point)
         point.y = g_lua.popInteger();
         return true;
     } else if(g_lua.isString()) {
-        return fw::cast(g_lua.toString(index), point);
+        return Fw::cast(g_lua.toString(index), point);
     } else if(g_lua.isNil()) {
         point = Point();
         return true;

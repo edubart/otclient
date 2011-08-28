@@ -32,7 +32,7 @@ void UIWindow::setup()
     m_moving = false;
     m_headHeight = 0;
     m_headMargin = 0;
-    m_titleAlign = AlignCenter;
+    m_titleAlign = Fw::AlignCenter;
 }
 
 void UIWindow::render()
@@ -47,9 +47,9 @@ void UIWindow::render()
 
         // draw window head text
         Rect headTextRect = headRect;
-        if(m_titleAlign & AlignLeft)
+        if(m_titleAlign & Fw::AlignLeft)
             headTextRect.addLeft(-m_headMargin);
-        else if(m_titleAlign & AlignRight)
+        else if(m_titleAlign & Fw::AlignRight)
             headTextRect.addRight(-m_headMargin);
         m_font->renderText(m_title, headTextRect, m_titleAlign, m_foregroundColor);
     }
@@ -76,7 +76,7 @@ void UIWindow::onStyleApply(const OTMLNodePtr& styleNode)
                 m_headImage = BorderImage::loadFromOTML(cnode);
             m_headHeight = node->valueAt("height", m_headImage->getDefaultSize().height());
             m_headMargin = node->valueAt("margin", 0);
-            m_titleAlign = fw::translateAlignment(node->valueAt("text align", std::string("center")));
+            m_titleAlign = Fw::translateAlignment(node->valueAt("text align", std::string("center")));
         }
         else if(node->tag() == "body") {
             if(OTMLNodePtr cnode = node->get("border-image"))
@@ -109,7 +109,7 @@ void UIWindow::onGeometryUpdate(const Rect& oldRect, const Rect& newRect)
         setRect(boundRect);
 }
 
-void UIWindow::onFocusChange(bool focused, FocusReason reason)
+void UIWindow::onFocusChange(bool focused, Fw::FocusReason reason)
 {
     // when a window is focused it goes to the top
     if(focused) {
@@ -118,7 +118,7 @@ void UIWindow::onFocusChange(bool focused, FocusReason reason)
     }
 }
 
-bool UIWindow::onMousePress(const Point& mousePos, MouseButton button)
+bool UIWindow::onMousePress(const Point& mousePos, Fw::MouseButton button)
 {
     if(!getChildByPos(mousePos)) {
         m_moving = true;
@@ -128,7 +128,7 @@ bool UIWindow::onMousePress(const Point& mousePos, MouseButton button)
     return UIWidget::onMousePress(mousePos, button);
 }
 
-bool UIWindow::onMouseRelease(const Point& mousePos, MouseButton button)
+bool UIWindow::onMouseRelease(const Point& mousePos, Fw::MouseButton button)
 {
     if(m_moving) {
         m_moving = false;

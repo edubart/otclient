@@ -38,8 +38,6 @@
 #include <otclient/core/game.h>
 #include <otclient/core/map.h>
 
-#define POLL_CYCLE_DELAY 10
-
 OTClient g_client;
 
 void OTClient::init(std::vector<std::string> args)
@@ -68,11 +66,11 @@ void OTClient::init(std::vector<std::string> args)
     // create the client window
     int minWidth = 550;
     int minHeight = 450;
-    int windowX = fw::fromstring(g_configs.get("window x"), 0);
-    int windowY = fw::fromstring(g_configs.get("window y"), 0);
-    int windowWidth = fw::fromstring(g_configs.get("window width"), minWidth);
-    int windowHeight = fw::fromstring(g_configs.get("window height"), minHeight);
-    bool maximized = fw::fromstring(g_configs.get("window maximized"), false);
+    int windowX = Fw::fromstring(g_configs.get("window x"), 0);
+    int windowY = Fw::fromstring(g_configs.get("window y"), 0);
+    int windowWidth = Fw::fromstring(g_configs.get("window width"), minWidth);
+    int windowHeight = Fw::fromstring(g_configs.get("window height"), minHeight);
+    bool maximized = Fw::fromstring(g_configs.get("window maximized"), false);
     g_platform.createWindow(windowX, windowY, windowWidth, windowHeight, minWidth, minHeight, maximized);
     g_platform.setWindowTitle("OTClient");
 
@@ -128,7 +126,7 @@ void OTClient::run()
         // calculate fps
         frameCount++;
         if(frameTicks - lastFpsTicks >= 1000) {
-            fpsText = fw::mkstr("FPS: ", frameCount);
+            fpsText = Fw::mkstr("FPS: ", frameCount);
             fpsTextSize = defaultFont->calculateTextRectSize(fpsText);
             frameCount = 0;
             lastFpsTicks = frameTicks;
@@ -244,12 +242,12 @@ void OTClient::loadConfigurations()
     int defHeight = 450;
 
     // sets default window configuration
-    g_configs.set("window x", fw::tostring((g_platform.getDisplayWidth() - defWidth)/2));
-    g_configs.set("window y", fw::tostring((g_platform.getDisplayHeight() - defHeight)/2));
-    g_configs.set("window width", fw::tostring(defWidth));
-    g_configs.set("window height", fw::tostring(defHeight));
-    g_configs.set("window maximized", fw::tostring(false));
-    g_configs.set("vsync", fw::tostring(true));
+    g_configs.set("window x", Fw::tostring((g_platform.getDisplayWidth() - defWidth)/2));
+    g_configs.set("window y", Fw::tostring((g_platform.getDisplayHeight() - defHeight)/2));
+    g_configs.set("window width", Fw::tostring(defWidth));
+    g_configs.set("window height", Fw::tostring(defHeight));
+    g_configs.set("window maximized", Fw::tostring(false));
+    g_configs.set("vsync", Fw::tostring(true));
 
     // loads user configuration
     if(!g_configs.load("config.otml"))
@@ -259,17 +257,17 @@ void OTClient::loadConfigurations()
 void OTClient::setupConfigurations()
 {
     // activate vertical synchronization?
-    bool vsync = fw::fromstring(g_configs.get("vsync"), true);
+    bool vsync = Fw::fromstring(g_configs.get("vsync"), true);
     g_platform.setVerticalSync(vsync);
 }
 
 void OTClient::saveConfigurations()
 {
-    g_configs.set("window x", fw::tostring(g_platform.getWindowX()));
-    g_configs.set("window y", fw::tostring(g_platform.getWindowY()));
-    g_configs.set("window width", fw::tostring(g_platform.getWindowWidth()));
-    g_configs.set("window height", fw::tostring(g_platform.getWindowHeight()));
-    g_configs.set("window maximized", fw::tostring(g_platform.isWindowMaximized()));
+    g_configs.set("window x", Fw::tostring(g_platform.getWindowX()));
+    g_configs.set("window y", Fw::tostring(g_platform.getWindowY()));
+    g_configs.set("window width", Fw::tostring(g_platform.getWindowWidth()));
+    g_configs.set("window height", Fw::tostring(g_platform.getWindowHeight()));
+    g_configs.set("window maximized", Fw::tostring(g_platform.isWindowMaximized()));
 
     // saves user configuration
     if(!g_configs.save())
@@ -297,23 +295,23 @@ void OTClient::onPlatformEvent(const PlatformEvent& event)
     if(event.type == EventKeyDown) {
         if(!event.ctrl && !event.alt && !event.shift) {
             if(event.keycode == KC_UP)
-                g_game.walk(DIRECTION_NORTH);
+                g_game.walk(Otc::North);
             else if(event.keycode == KC_RIGHT)
-                g_game.walk(DIRECTION_EAST);
+                g_game.walk(Otc::East);
             else if(event.keycode == KC_DOWN)
-                g_game.walk(DIRECTION_SOUTH);
+                g_game.walk(Otc::South);
             else if(event.keycode == KC_LEFT)
-                g_game.walk(DIRECTION_WEST);
+                g_game.walk(Otc::West);
         }
         else if(event.ctrl && !event.alt && !event.shift) {
             if(event.keycode == KC_UP)
-                g_game.turn(DIRECTION_NORTH);
+                g_game.turn(Otc::North);
             else if(event.keycode == KC_RIGHT)
-                g_game.turn(DIRECTION_EAST);
+                g_game.turn(Otc::East);
             else if(event.keycode == KC_DOWN)
-                g_game.turn(DIRECTION_SOUTH);
+                g_game.turn(Otc::South);
             else if(event.keycode == KC_LEFT)
-                g_game.turn(DIRECTION_WEST);
+                g_game.turn(Otc::West);
             else if(event.keycode == KC_APOSTROPHE) {
                 // TODO: move these events to lua
                 UIWidgetPtr console = g_ui.getRootWidget()->getChildById("consolePanel");

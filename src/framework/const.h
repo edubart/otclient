@@ -23,85 +23,106 @@
 #ifndef FRAMEWORK_CONST_H
 #define FRAMEWORK_CONST_H
 
-//namespace fw {
+#include "util/color.h"
 
-enum LogLevel {
-    LogDebug = 0,
-    LogInfo,
-    LogWarning,
-    LogError,
-    LogFatal
-};
+namespace Fw
+{
+    const Color white (0xFF, 0xFF, 0xFF, 0xFF);
+    const Color black (0x00, 0x00, 0x00, 0xFF);
+    const Color alpha (0x00, 0x00, 0x00, 0x00);
+    const Color red   (0xFF, 0x00, 0x00, 0xFF);
+    const Color green (0x00, 0xFF, 0x00, 0xFF);
+    const Color blue  (0x00, 0x00, 0xFF, 0xFF);
+    const Color pink  (0xFF, 0x00, 0xFF, 0xFF);
+    const Color yellow(0xFF, 0xFF, 0x00, 0xFF);
 
-enum AlignmentFlag {
-    AlignNone = 0,
-    AlignLeft = 1,
-    AlignRight = 2,
-    AlignTop = 4,
-    AlignBottom = 8,
-    AlignHorizontalCenter = 16,
-    AlignVerticalCenter = 32,
-    AlignTopLeft = AlignTop | AlignLeft,
-    AlignTopRight = AlignTop | AlignRight,
-    AlignBottomLeft = AlignBottom | AlignLeft,
-    AlignBottomRight = AlignBottom | AlignRight,
-    AlignLeftCenter = AlignLeft | AlignVerticalCenter,
-    AlignRightCenter = AlignRight | AlignVerticalCenter,
-    AlignTopCenter = AlignTop | AlignHorizontalCenter,
-    AlignBottomCenter = AlignBottom | AlignHorizontalCenter,
-    AlignCenter = AlignVerticalCenter | AlignHorizontalCenter
-};
+    enum LogLevel {
+        LogDebug = 0,
+        LogInfo,
+        LogWarning,
+        LogError,
+        LogFatal
+    };
 
-enum AnchorEdge {
-    AnchorNone = 0,
-    AnchorTop,
-    AnchorBottom,
-    AnchorLeft,
-    AnchorRight,
-    AnchorVerticalCenter,
-    AnchorHorizontalCenter,
-};
+    enum BlendFunc {
+        BlendNormal,
+        BlendColorzing
+    };
 
-enum FocusReason {
-    MouseFocusReason = 0,
-    TabFocusReason,
-    ActiveFocusReason,
-    OtherFocusReason
-};
+    enum AspectRatioMode {
+        IgnoreAspectRatio,
+        KeepAspectRatio,
+        KeepAspectRatioByExpanding
+    };
 
-enum MouseButton {
-    MouseNoButton = 0,
-    MouseLeftButton,
-    MouseRightButton,
-    MouseMidButton
-};
+    enum AlignmentFlag {
+        AlignNone = 0,
+        AlignLeft = 1,
+        AlignRight = 2,
+        AlignTop = 4,
+        AlignBottom = 8,
+        AlignHorizontalCenter = 16,
+        AlignVerticalCenter = 32,
+        AlignTopLeft = AlignTop | AlignLeft,
+        AlignTopRight = AlignTop | AlignRight,
+        AlignBottomLeft = AlignBottom | AlignLeft,
+        AlignBottomRight = AlignBottom | AlignRight,
+        AlignLeftCenter = AlignLeft | AlignVerticalCenter,
+        AlignRightCenter = AlignRight | AlignVerticalCenter,
+        AlignTopCenter = AlignTop | AlignHorizontalCenter,
+        AlignBottomCenter = AlignBottom | AlignHorizontalCenter,
+        AlignCenter = AlignVerticalCenter | AlignHorizontalCenter
+    };
 
-enum MouseWheelDirection {
-    MouseNoWheel = 0,
-    MouseWheelUp,
-    MouseWheelDown
-};
+    enum AnchorEdge {
+        AnchorNone = 0,
+        AnchorTop,
+        AnchorBottom,
+        AnchorLeft,
+        AnchorRight,
+        AnchorVerticalCenter,
+        AnchorHorizontalCenter,
+    };
 
-enum KeyboardModifier {
-    KeyboardNoModifier = 0,
-    KeyboardCtrlModifier = 1,
-    KeyboardAltModifier = 2,
-    KeyboardShiftModifier = 4
-};
+    enum FocusReason {
+        MouseFocusReason = 0,
+        TabFocusReason,
+        ActiveFocusReason,
+        OtherFocusReason
+    };
 
-enum WidgetState {
-    DefaultState = 0,
-    ActiveState = 1,
-    FocusState = 2,
-    HoverState = 4,
-    PressedState = 8,
-    DisabledState = 16
-    //FirstState,
-    //MiddleState,
-    //LastState,
-    //AlternateState
-};
+    enum MouseButton {
+        MouseNoButton = 0,
+        MouseLeftButton,
+        MouseRightButton,
+        MouseMidButton
+    };
 
-//}
+    enum MouseWheelDirection {
+        MouseNoWheel = 0,
+        MouseWheelUp,
+        MouseWheelDown
+    };
+
+    enum KeyboardModifier {
+        KeyboardNoModifier = 0,
+        KeyboardCtrlModifier = 1,
+        KeyboardAltModifier = 2,
+        KeyboardShiftModifier = 4
+    };
+
+    enum WidgetState {
+        DefaultState = 0,
+        ActiveState = 1,
+        FocusState = 2,
+        HoverState = 4,
+        PressedState = 8,
+        DisabledState = 16
+        //FirstState,
+        //MiddleState,
+        //LastState,
+        //AlternateState
+    };
+}
 
 #endif

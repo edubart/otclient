@@ -52,7 +52,7 @@ void ProtocolGame::sendLoginPacket(uint32 timestamp, uint8 unknown)
     oMsg.addPaddingBytes(128 - (29 + m_accountName.length() + m_characterName.length() + m_accountPassword.length()));
 
     // encrypt with RSA
-    if(!Rsa::encrypt((char*)oMsg.getBuffer() + 6 + oMsg.getMessageSize() - 128, 128, OTSERV_PUBLIC_RSA))
+    if(!Rsa::encrypt((char*)oMsg.getBuffer() + 6 + oMsg.getMessageSize() - 128, 128, Otc::OtservPublicRSA))
         return;
 
     send(oMsg);

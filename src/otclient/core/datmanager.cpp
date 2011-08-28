@@ -32,11 +32,11 @@ bool DatManager::load(const std::string& file)
         std::stringstream fin;
         g_resources.loadFile(file, fin);
 
-        m_signature = fw::getu32(fin);
-        int numItems = fw::getu16(fin);
-        int numCreatures = fw::getu16(fin);
-        int numEffects = fw::getu16(fin);
-        int numShots = fw::getu16(fin);
+        m_signature = Fw::getU32(fin);
+        int numItems = Fw::getU16(fin);
+        int numCreatures = Fw::getU16(fin);
+        int numEffects = Fw::getU16(fin);
+        int numShots = Fw::getU16(fin);
 
         m_itemsAttributes.resize(numItems);
         for(int id = 100; id < numItems; ++id)
@@ -83,16 +83,16 @@ void DatManager::parseThingAttributes(std::stringstream& fin, ThingAttributes& t
         parseThingAttributesOpt(fin, thingAttributes, opt);
     }
 
-    thingAttributes.width = fw::getu8(fin);
-    thingAttributes.height = fw::getu8(fin);
+    thingAttributes.width = Fw::getU8(fin);
+    thingAttributes.height = Fw::getU8(fin);
     if(thingAttributes.width > 1 || thingAttributes.height > 1)
-        fw::getu8(fin); // ??
+        Fw::getU8(fin); // ??
 
-    thingAttributes.blendframes = fw::getu8(fin);
-    thingAttributes.xdiv = fw::getu8(fin);
-    thingAttributes.ydiv = fw::getu8(fin);
-    thingAttributes.zdiv = fw::getu8(fin);
-    thingAttributes.animcount = fw::getu8(fin);
+    thingAttributes.blendframes = Fw::getU8(fin);
+    thingAttributes.xdiv = Fw::getU8(fin);
+    thingAttributes.ydiv = Fw::getU8(fin);
+    thingAttributes.zdiv = Fw::getU8(fin);
+    thingAttributes.animcount = Fw::getU8(fin);
 
     int totalSprites = thingAttributes.width
                        * thingAttributes.height
@@ -104,15 +104,15 @@ void DatManager::parseThingAttributes(std::stringstream& fin, ThingAttributes& t
 
     thingAttributes.sprites.resize(totalSprites);
     for(uint16 i = 0; i < totalSprites; i++)
-        thingAttributes.sprites[i] = fw::getu16(fin);
+        thingAttributes.sprites[i] = Fw::getU16(fin);
 }
 
 void DatManager::parseThingAttributesOpt(std::stringstream& fin, ThingAttributes& thingAttributes, uint8 opt)
 {
     switch(opt) {
         case 0x00: // Ground tile
-            thingAttributes.speed = fw::getu16(fin);
-            thingAttributes.group = THING_GROUP_GROUND;
+            thingAttributes.speed = Fw::getU16(fin);
+            thingAttributes.group = Otc::ThingGroundGroup;
             break;
         case 0x01: // All OnTop
             thingAttributes.alwaysOnTop = true;
@@ -127,7 +127,7 @@ void DatManager::parseThingAttributesOpt(std::stringstream& fin, ThingAttributes
             thingAttributes.alwaysOnTopOrder = 3;
             break;
         case 0x04: // Container
-            thingAttributes.group = THING_GROUP_CONTAINER;
+            thingAttributes.group = Otc::ThingContainerGroup;
             break;
         case 0x05: // Stackable
             thingAttributes.stackable = true;
@@ -138,21 +138,21 @@ void DatManager::parseThingAttributesOpt(std::stringstream& fin, ThingAttributes
             thingAttributes.useable = true;
             break;
         case 0x08: // Writtable
-            thingAttributes.group = THING_GROUP_WRITEABLE;
+            thingAttributes.group = Otc::ThingWriteableGroup;
             thingAttributes.readable = true;
-            thingAttributes.subParam08 = fw::getu16(fin);
+            thingAttributes.subParam08 = Fw::getU16(fin);
             break;
         case 0x09: // Writtable once
             // Writtable objects that can't be edited by players
             thingAttributes.readable = true;
-            thingAttributes.subParam08 = fw::getu16(fin);
+            thingAttributes.subParam08 = Fw::getU16(fin);
             break;
         case 0x0A: // Fluid containers
-            thingAttributes.group = THING_GROUP_FLUID;
-            fw::getu8(fin);
+            thingAttributes.group = Otc::ThingFluidGroup;
+            Fw::getU8(fin);
             break;
         case 0x0B: // Splashes
-            thingAttributes.group = THING_GROUP_SPLASH;
+            thingAttributes.group = Otc::ThingSplashGroup;
             break;
         case 0x0C: // Blocks solid objects (creatures, walls etc)
             thingAttributes.blockSolid = true;
@@ -182,8 +182,8 @@ void DatManager::parseThingAttributesOpt(std::stringstream& fin, ThingAttributes
             thingAttributes.rotable = true;
             break;
         case 0x15: // Light info
-            thingAttributes.lightLevel = fw::getu16(fin);
-            thingAttributes.lightColor = fw::getu16(fin);
+            thingAttributes.lightLevel = Fw::getU16(fin);
+            thingAttributes.lightColor = Fw::getU16(fin);
             break;
         case 0x16:
             break;
@@ -191,13 +191,13 @@ void DatManager::parseThingAttributesOpt(std::stringstream& fin, ThingAttributes
             break;
         case 0x18: // Thing must be drawed with offset
             thingAttributes.hasHeight = true;
-            thingAttributes.drawOffset = fw::getu8(fin);
-            fw::getu8(fin);
-            fw::getu16(fin);
+            thingAttributes.drawOffset = Fw::getU8(fin);
+            Fw::getU8(fin);
+            Fw::getU16(fin);
             break;
         case 0x19: // pixels characters height
-            thingAttributes.drawNextOffset = fw::getu8(fin);
-            fw::getu8(fin);
+            thingAttributes.drawNextOffset = Fw::getU8(fin);
+            Fw::getU8(fin);
             break;
         case 0x1A:
             //thingAttributes.hasHeight = true;
@@ -205,11 +205,11 @@ void DatManager::parseThingAttributesOpt(std::stringstream& fin, ThingAttributes
         case 0x1B:
             break;
         case 0x1C: // Minimap color
-            thingAttributes.miniMapColor = fw::getu16(fin);
+            thingAttributes.miniMapColor = Fw::getU16(fin);
             thingAttributes.hasMiniMapColor = true;
             break;
         case 0x1D: // Unknown
-            if(fw::getu16(fin) == 1112)
+            if(Fw::getU16(fin) == 1112)
                 thingAttributes.readable = true;
             break;
         case 0x1E:
@@ -220,6 +220,6 @@ void DatManager::parseThingAttributesOpt(std::stringstream& fin, ThingAttributes
         case 0x20:
             break;
         default:
-            throw std::runtime_error(fw::mkstr("unknown .dat byte code: 0x", std::hex, (int)opt));
+            throw std::runtime_error(Fw::mkstr("unknown .dat byte code: 0x", std::hex, (int)opt));
     }
 }

@@ -36,8 +36,8 @@ bool SpriteManager::load(const std::string& file)
 {
     try {
         g_resources.loadFile(file, m_fin);
-        m_signature = fw::getu32(m_fin);
-        m_spritesCount = fw::getu16(m_fin);
+        m_signature = Fw::getU32(m_fin);
+        m_spritesCount = Fw::getU16(m_fin);
         m_sprites.resize(m_spritesCount);
         return true;
     } catch(std::exception& e) {
@@ -57,7 +57,7 @@ TexturePtr SpriteManager::loadSpriteTexture(int id)
 {
     m_fin.seekg(((id-1) * 4) + 6, std::ios_base::beg);
 
-    uint32 spriteAddress = fw::getu32(m_fin);
+    uint32 spriteAddress = Fw::getU32(m_fin);
 
     // no sprite? return an empty texture
     if(spriteAddress == 0)
@@ -67,11 +67,11 @@ TexturePtr SpriteManager::loadSpriteTexture(int id)
     assert(m_fin.good());
 
     // skip color key
-    fw::getu8(m_fin);
-    fw::getu8(m_fin);
-    fw::getu8(m_fin);
+    Fw::getU8(m_fin);
+    Fw::getU8(m_fin);
+    Fw::getU8(m_fin);
 
-    uint16 pixelDataSize = fw::getu16(m_fin);
+    uint16 pixelDataSize = Fw::getU16(m_fin);
 
     uchar pixels[4096];
     int writePos = 0;
@@ -92,9 +92,9 @@ TexturePtr SpriteManager::loadSpriteTexture(int id)
         }
 
         for(int i = 0; i < coloredPixels; i++) {
-            pixels[writePos + 0] = fw::getu8(m_fin);
-            pixels[writePos + 1] = fw::getu8(m_fin);
-            pixels[writePos + 2] = fw::getu8(m_fin);
+            pixels[writePos + 0] = Fw::getU8(m_fin);
+            pixels[writePos + 1] = Fw::getU8(m_fin);
+            pixels[writePos + 2] = Fw::getU8(m_fin);
             pixels[writePos + 3] = 0xFF;
 
             writePos += 4;
@@ -115,14 +115,14 @@ TexturePtr SpriteManager::loadSpriteTexture(int id)
     return TexturePtr(new Texture(32, 32, 4, pixels));
 }
 
-TexturePtr SpriteManager::loadSpriteMask(TexturePtr spriteTex, SpriteMask mask)
+TexturePtr SpriteManager::loadSpriteMask(TexturePtr spriteTex, Otc::SpriteMask mask)
 {
     auto pixels = spriteTex->getPixels();
 
-    static RGBA maskColors[4] = { Color::red.rgba(), Color::green.rgba(), Color::blue.rgba(), Color::yellow.rgba() };
+    static RGBA maskColors[4] = { Fw::red.rgba(), Fw::green.rgba(), Fw::blue.rgba(), Fw::yellow.rgba() };
     RGBA maskColor = maskColors[mask];
-    RGBA whiteColor = Color::white.rgba();
-    RGBA alphaColor = Color::alpha.rgba();
+    RGBA whiteColor = Fw::white.rgba();
+    RGBA alphaColor = Fw::alpha.rgba();
 
     // convert pixels
     // masked color -> white color
@@ -138,7 +138,7 @@ TexturePtr SpriteManager::loadSpriteMask(TexturePtr spriteTex, SpriteMask mask)
     return TexturePtr(new Texture(32, 32, 4, &pixels[0]));
 }
 
-TexturePtr SpriteManager::getSpriteTexture(int id, SpriteMask mask)
+TexturePtr SpriteManager::getSpriteTexture(int id, Otc::SpriteMask mask)
 {
     if(id == 0)
         return g_graphics.getEmptyTexture();
@@ -153,7 +153,7 @@ TexturePtr SpriteManager::getSpriteTexture(int id, SpriteMask mask)
     //TODO: release unused sprites textures after X seconds
     // to avoid massive texture allocations
 
-    if(mask != SpriteMaskNone) {
+    if(mask != Otc::SpriteNoMask) {
         if(!sprite.masks[mask])
             sprite.masks[mask] = loadSpriteMask(sprite.texture, mask);
         return sprite.masks[mask];
