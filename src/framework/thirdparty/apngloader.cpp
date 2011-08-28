@@ -1,4 +1,5 @@
-/* based on APNG Disassembler 2.3
+/*
+ * Based on APNG Disassembler 2.3
  *
  * Copyright (c) 2009 Max Stepin
  * maxst at users.sourceforge.net
