@@ -25,60 +25,52 @@
 
 #include "types.h"
 #include "tools.h"
-
-union RGBA
-{
-    bool operator==(const RGBA& otherRgba) const { return rgba == otherRgba.rgba; }
-
-    uint32 rgba;
-
-    struct{
-        uint8 r;
-        uint8 g;
-        uint8 b;
-        uint8 a;
-    };
-};
+#include "../const.h"
 
 class Color
 {
 public:
-    Color() { color.rgba = 0; }
-    Color(uint8 r, uint8 g, uint8 b, uint8 a = 0xFF) {
-        setRGBA(r, g, b, a);
-    }
+    Color() : m_rgba(0) { }
+    Color(uint8 r, uint8 g, uint8 b, uint8 a = 0xFF) : m_r(r), m_g(g), m_b(b), m_a(a) { }
+    Color(const Color& other) : m_rgba(other.m_rgba) { }
+    Color(uint32 rgba) : m_rgba(rgba) { }
 
-    Color(const Color& other) : color(other.color) { }
-    Color(RGBA rgba) : color(rgba) { }
+    uint8 a() const { return m_a; }
+    uint8 b() const { return m_b; }
+    uint8 g() const { return m_g; }
+    uint8 r() const { return m_r; }
 
-    uint8 a() const { return color.a; }
-    uint8 b() const { return color.b; }
-    uint8 g() const { return color.g; }
-    uint8 r() const { return color.r; }
+    uint32 rgba() const { return m_rgba; }
 
-    RGBA rgba() const { return color; }
+    const uint8* rgbaPtr() const { return (const uint8*)&m_rgba; }
 
-    const uint8* rgbaPtr() const { return (const uint8*)&color; }
-
-    void setRed(int r)  { color.r = r; }
-    void setGreen(int g) { color.g = g; }
-    void setBlue(int b) { color.b = b; }
-    void setAlpha(int a) { color.a = a; }
+    void setRed(int r)  { m_r = r; }
+    void setGreen(int g) { m_g = g; }
+    void setBlue(int b) { m_b = b; }
+    void setAlpha(int a) { m_a = a; }
 
     void setRed(float r) { setRed(int(r*255.0f)); }
     void setGreen(float g) { setGreen(int(g*255.0f)); }
     void setBlue(float b) { setBlue(int(b*255.0f)); }
     void setAlpha(float a) { setAlpha(int(a*255.0f)); }
 
-    void setRGBA(uint8 r, uint8 g, uint8 b, uint8 a = 0xFF) { color.r = r; color.g = g; color.b = b; color.a = a; }
-    void setRGBA(uint32 rgba) { color.rgba = rgba; }
+    void setRGBA(int r, int g, int b, int a = 0xFF) { m_r = r; m_g = g; m_b = b; m_a = a; }
+    void setRGBA(uint32 rgba) { rgba = rgba; }
 
-    Color& operator=(const Color& other) { color = other.color;  return *this; }
-    bool operator==(const Color& other) const { return other.color.rgba == color.rgba; }
-    bool operator!=(const Color& other) const { return other.color.rgba != color.rgba; }
+    Color& operator=(const Color& other) { m_rgba = other.m_rgba; return *this; }
+    bool operator==(const Color& other) const { return other.m_rgba == m_rgba; }
+    bool operator!=(const Color& other) const { return other.m_rgba != m_rgba; }
 
 private:
-    RGBA color;
+    union {
+        uint32 m_rgba;
+        struct {
+            uint8 m_r;
+            uint8 m_g;
+            uint8 m_b;
+            uint8 m_a;
+        };
+    };
 };
 
 inline std::ostream& operator<<(std::ostream& out, const Color& color)
@@ -96,9 +88,9 @@ inline std::ostream& operator<<(std::ostream& out, const Color& color)
 inline std::istream& operator>>(std::istream& in, Color& color)
 {
     using namespace std;
+    std::string tmp;
 
     if(in.get() == '#') {
-        std::string tmp;
         in >> tmp;
 
         if(tmp.length() == 6 || tmp.length() == 8) {
@@ -111,6 +103,49 @@ inline std::istream& operator>>(std::istream& in, Color& color)
                 color.setAlpha(255);
         } else
             in.seekg(-tmp.length()-1, ios_base::cur);
+    } else {
+        in.unget();
+        in >> tmp;
+
+        if(tmp == "alpha") {
+            color = Fw::alpha;
+        } else if(tmp == "black") {
+            color = Fw::black;
+        } else if(tmp == "white") {
+            color = Fw::white;
+        } else if(tmp == "red") {
+            color = Fw::red;
+        } else if(tmp == "darkRed") {
+            color = Fw::darkRed;
+        } else if(tmp == "green") {
+            color = Fw::green;
+        } else if(tmp == "darkGreen") {
+            color = Fw::darkGreen;
+        } else if(tmp == "blue") {
+            color = Fw::blue;
+        } else if(tmp == "darkBlue") {
+            color = Fw::darkBlue;
+        } else if(tmp == "pink") {
+            color = Fw::pink;
+        } else if(tmp == "darkPink") {
+            color = Fw::darkPink;
+        } else if(tmp == "yellow") {
+            color = Fw::yellow;
+        } else if(tmp == "darkYellow") {
+            color = Fw::darkYellow;
+        } else if(tmp == "teal") {
+            color = Fw::teal;
+        } else if(tmp == "darkTeal") {
+            color = Fw::darkTeal;
+        } else if(tmp == "gray") {
+            color = Fw::gray;
+        } else if(tmp == "darkGray") {
+            color = Fw::darkGray;
+        } else if(tmp == "lightGray") {
+            color = Fw::lightGray;
+        } else {
+            in.seekg(-tmp.length(), ios_base::cur);
+        }
     }
     return in;
 }

@@ -23,18 +23,31 @@
 #ifndef FRAMEWORK_CONST_H
 #define FRAMEWORK_CONST_H
 
-#include "util/color.h"
+#include "util/types.h"
 
 namespace Fw
 {
-    const Color white (0xFF, 0xFF, 0xFF, 0xFF);
-    const Color black (0x00, 0x00, 0x00, 0xFF);
-    const Color alpha (0x00, 0x00, 0x00, 0x00);
-    const Color red   (0xFF, 0x00, 0x00, 0xFF);
-    const Color green (0x00, 0xFF, 0x00, 0xFF);
-    const Color blue  (0x00, 0x00, 0xFF, 0xFF);
-    const Color pink  (0xFF, 0x00, 0xFF, 0xFF);
-    const Color yellow(0xFF, 0xFF, 0x00, 0xFF);
+    // NOTE: AABBGGRR order
+    enum GlobalColor : uint32 {
+        alpha      = 0x00000000,
+        white      = 0xffffffff,
+        black      = 0xff000000,
+        red        = 0xff0000ff,
+        darkRed    = 0xff000080,
+        green      = 0xff00ff00,
+        darkGreen  = 0xff008000,
+        blue       = 0xffff0000,
+        darkBlue   = 0xff800000,
+        pink       = 0xffff00ff,
+        darkPink   = 0xff800080,
+        yellow     = 0xff00ffff,
+        darkYellow = 0xff008080,
+        teal       = 0xffffff00,
+        darkTeal   = 0xff808000,
+        gray       = 0xffa0a0a0,
+        darkGray   = 0xff808080,
+        lightGray  = 0xffc0c0c0
+    };
 
     enum LogLevel {
         LogDebug = 0,

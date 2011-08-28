@@ -183,9 +183,6 @@ void Creature::drawInformation(int x, int y, bool useGray)
     g_graphics.bindColor(fillColor);
     g_graphics.drawFilledRect(healthRect);
 
-    // restore white color
-    g_graphics.bindColor(Fw::white);
-
     // name
     FontPtr font = g_fonts.getFont("tibia-12px-rounded");
     font->renderText(m_name, Rect(x-100, y-15, 200, 15), Fw::AlignTopCenter, fillColor);

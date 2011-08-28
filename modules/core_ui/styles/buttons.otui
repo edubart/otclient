@@ -1,6 +1,6 @@
 Button < UIButton
   font: helvetica-11px-bold
-  background-color: #ffffff
+  background-color: white
   color: #f0ad4dff
   size: 106 24
   border-image:

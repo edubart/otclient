@@ -119,16 +119,16 @@ TexturePtr SpriteManager::loadSpriteMask(TexturePtr spriteTex, Otc::SpriteMask m
 {
     auto pixels = spriteTex->getPixels();
 
-    static RGBA maskColors[4] = { Fw::red.rgba(), Fw::green.rgba(), Fw::blue.rgba(), Fw::yellow.rgba() };
-    RGBA maskColor = maskColors[mask];
-    RGBA whiteColor = Fw::white.rgba();
-    RGBA alphaColor = Fw::alpha.rgba();
+    static uint32 maskColors[4] = { Fw::red, Fw::green, Fw::blue, Fw::yellow };
+    uint32 maskColor = maskColors[mask];
+    uint32 whiteColor = Fw::white;
+    uint32 alphaColor = Fw::alpha;
 
     // convert pixels
     // masked color -> white color
     // any other color -> alpha color
     for(int i=0;i<4096;i+=4) {
-        RGBA& currentColor = *(RGBA*)&pixels[i];
+        uint32& currentColor = *(uint32*)&pixels[i];
         if(currentColor == maskColor)
             currentColor = whiteColor;
         else
