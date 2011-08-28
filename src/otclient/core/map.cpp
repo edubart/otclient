@@ -108,7 +108,7 @@ void Map::draw(const Rect& rect)
         for(int iy = -5; iy <= 5; ++iy) {
             Position itemPos = Position(playerPos.x + ix, playerPos.y + iy, playerPos.z);
             if(const TilePtr& tile = m_tiles[itemPos]) {
-                std::vector<ThingPtr> creatures = tile->getCreatures();
+                auto& creatures = tile->getCreatures();
                 for(auto it = creatures.rbegin(), end = creatures.rend(); it != end; ++it) {
                     const ThingPtr& thing = *it;
                     const CreaturePtr& creature = thing->asCreature();

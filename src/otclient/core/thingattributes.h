@@ -72,4 +72,6 @@ struct ThingAttributes
     Otc::ThingAttributesGroup group;
 };
 
+typedef std::vector<ThingAttributes> ThingAttributesList;
+
 #endif

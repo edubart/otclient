@@ -45,10 +45,10 @@ public:
 private:
     uint32 m_signature;
 
-    std::vector<ThingAttributes> m_itemsAttributes;
-    std::vector<ThingAttributes> m_creaturesAttributes;
-    std::vector<ThingAttributes> m_effectsAttributes;
-    std::vector<ThingAttributes> m_shotsAttributes;
+    ThingAttributesList m_itemsAttributes;
+    ThingAttributesList m_creaturesAttributes;
+    ThingAttributesList m_effectsAttributes;
+    ThingAttributesList m_shotsAttributes;
 };
 
 extern DatManager g_dat;

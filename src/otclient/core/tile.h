@@ -44,15 +44,15 @@ public:
 
     int getStackSize(int stop);
 
-    std::vector<ThingPtr> getCreatures() { return m_creatures; }
+    const ThingList& getCreatures() { return m_creatures; }
     int getDrawNextOffset() { return m_drawNextOffset; }
 
 private:
     ThingPtr m_ground;
-    std::vector<ThingPtr> m_itemsBottom;
-    std::vector<ThingPtr> m_creatures;
-    std::vector<ThingPtr> m_itemsTop;
-    std::vector<ThingPtr> m_effects;
+    ThingList m_itemsBottom;
+    ThingList m_creatures;
+    ThingList m_itemsTop;
+    ThingList m_effects;
 
     int m_drawNextOffset;
 };

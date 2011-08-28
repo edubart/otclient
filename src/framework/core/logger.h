@@ -49,7 +49,7 @@ public:
     void setOnLog(const OnLogCallback& onLog) { m_onLog = onLog; }
 
 private:
-    std::vector<LogMessage> m_logMessages;
+    std::list<LogMessage> m_logMessages;
     OnLogCallback m_onLog;
     bool m_terminated;
 };

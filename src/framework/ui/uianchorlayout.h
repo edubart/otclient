@@ -41,18 +41,20 @@ private:
     std::string m_hookedWidgetId;
 };
 
+typedef std::vector<UIAnchor> UIAnchorList;
+
 class UIAnchorGroup
 {
 public:
     UIAnchorGroup() : m_updated(true) { }
 
     void addAnchor(const UIAnchor& anchor);
-    const std::vector<UIAnchor>& getAnchors() const { return m_anchors; }
+    const UIAnchorList& getAnchors() const { return m_anchors; }
     bool isUpdated() const { return m_updated; }
     void setUpdated(bool updated) { m_updated = updated; }
 
 private:
-    std::vector<UIAnchor> m_anchors;
+    UIAnchorList m_anchors;
     bool m_updated;
 };
 

@@ -68,7 +68,7 @@ uint Texture::internalLoadGLTexture(uchar *pixels, int channels, int width, int 
     glGenTextures(1, &id);
     glBindTexture(GL_TEXTURE_2D, id);
 
-    std::vector<uchar> tmp;
+    std::vector<uint8> tmp;
 
     // old opengl drivers only accept power of two dimensions
     if(!g_graphics.isExtensionSupported("GL_ARB_texture_non_power_of_two") && pixels) {

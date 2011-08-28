@@ -41,4 +41,6 @@ typedef std::shared_ptr<Effect> EffectPtr;
 typedef std::shared_ptr<Player> PlayerPtr;
 typedef std::shared_ptr<LocalPlayer> LocalPlayerPtr;
 
+typedef std::vector<ThingPtr> ThingList;
+
 #endif
