@@ -114,7 +114,6 @@ void Protocol::generateXteaKey()
 
 bool Protocol::xteaDecrypt(InputMessage& inputMessage)
 {
-    // FIXME: this function has not been tested yet
     uint16 messageSize = inputMessage.getMessageSize() - InputMessage::CHECKSUM_LENGTH;
     if(messageSize % 8 != 0) {
         logError("invalid encrypted network message");

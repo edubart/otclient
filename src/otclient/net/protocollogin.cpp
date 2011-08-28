@@ -26,10 +26,6 @@
 #include <framework/luascript/luainterface.h>
 #include <boost/bind.hpp>
 
-// TODO just testing
-#include "protocolgame.h"
-#include <otclient/core/game.h>
-
 ProtocolLogin::ProtocolLogin()
 {
     enableChecksum();
