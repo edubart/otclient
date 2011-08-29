@@ -410,6 +410,32 @@ void UIWidget::focusNextChild(Fw::FocusReason reason)
         focusChild(toFocus, reason);
 }
 
+void UIWidget::focusPreviousChild(Fw::FocusReason reason)
+{
+    UIWidgetPtr toFocus;
+    UIWidgetList rotatedChildren(m_children);
+    std::reverse(m_children.begin(), m_children.end());
+
+    if(m_focusedChild) {
+        auto focusedIt = std::find(rotatedChildren.begin(), rotatedChildren.end(), m_focusedChild);
+        if(focusedIt != rotatedChildren.end()) {
+            std::rotate(rotatedChildren.begin(), focusedIt, rotatedChildren.end());
+            rotatedChildren.pop_front();
+        }
+    }
+
+    // finds next child to focus
+    for(const UIWidgetPtr& child : rotatedChildren) {
+        if(child->isFocusable()) {
+            toFocus = child;
+            break;
+        }
+    }
+
+    if(toFocus)
+        focusChild(toFocus, reason);
+}
+
 void UIWidget::moveChildToTop(const UIWidgetPtr& child)
 {
     if(!child)

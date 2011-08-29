@@ -26,6 +26,17 @@ local function createCharactersWindow(characters, premDays)
   local charactersList = charactersWindow:getChildById('charactersList')
   local accountStatusLabel = charactersWindow:getChildById('accountStatusLabel')
 
+  function charactersWindow:onKeyPress(keyCode, keyChar, keyboardModifiers)
+    if keyboardModifiers == KeyboardNoModifier then
+      if keyCode == KeyUp or keyCode == KeyTab then
+        charactersList:focusPreviousChild(ActiveFocusReason)
+      elseif keyCode == KeyDown then
+        charactersList:focusNextChild(ActiveFocusReason)
+      end
+    end
+    return false
+  end
+
   for i,characterInfo in ipairs(characters) do
     local characterName = characterInfo[1]
     local worldName = characterInfo[2]

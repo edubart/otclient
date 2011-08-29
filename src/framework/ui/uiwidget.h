@@ -128,6 +128,7 @@ public:
     void removeChild(const UIWidgetPtr& child);
     void focusChild(const UIWidgetPtr& child, Fw::FocusReason reason);
     void focusNextChild(Fw::FocusReason reason);
+    void focusPreviousChild(Fw::FocusReason reason);
     void moveChildToTop(const UIWidgetPtr& child);
     void lockChild(const UIWidgetPtr& child);
     void unlockChild(const UIWidgetPtr& child);
