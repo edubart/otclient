@@ -17,6 +17,27 @@ local function onCharactersWindowKeyPress(self, keyCode, keyChar, keyboardModifi
   return false
 end
 
+local function tryLogin(charInfo)
+  CharacterList.hide()
+
+  if Game.isOnline() then
+    Game.logout()
+    scheduleEvent(function() tryLogin(charInfo) end, 250)
+    return
+  end
+
+  Game.loginWorld(EnterGame.account, EnterGame.password, charInfo.worldHost, charInfo.worldPort, charInfo.characterName)
+
+  loadBox = displayCancelBox('Please wait', 'Connecting to game server...')
+  function loadBox.onCancel()
+    Game.cancelLogin()
+    CharacterList.show()
+  end
+
+  -- save last used character
+  Configs.set('lastUsedCharacter', charInfo.characterName)
+end
+
 -- public functions
 function CharacterList.create(characters, premDays)
   if charactersWindow then
@@ -65,21 +86,10 @@ end
 function CharacterList.doLogin()
   local selected = charactersWindow:getChildById('characterList'):getFocusedChild()
   if selected then
-    --if Game.isOnline() then
-    --  Game.logout()
-    --end
-
-    Game.loginWorld(EnterGame.account, EnterGame.password, selected.worldHost, selected.worldPort, selected.characterName)
-    CharacterList.hide()
-
-    loadBox = displayCancelBox('Please wait', 'Connecting to game server...')
-    function loadBox.onCancel()
-      Game.logout()
-      CharacterList.show()
-    end
-
-    -- save last used character
-    Configs.set('lastUsedCharacter', selected.characterName)
+    local charInfo = { worldHost = selected.worldHost,
+                       worldPort = selected.worldPort,
+                       characterName = selected.characterName }
+    tryLogin(charInfo)
   else
     displayErrorBox('Error', 'You must select a character to login!')
   end

@@ -37,6 +37,9 @@ public:
     void connect(const std::string& host, uint16 port);
     void disconnect();
 
+    bool isConnected();
+    bool isConnecting();
+
     void send(OutputMessage& outputMessage);
     void recv();
 

@@ -44,6 +44,20 @@ void Protocol::disconnect()
     }
 }
 
+bool Protocol::isConnected()
+{
+    if(m_connection && m_connection->isConnected())
+        return true;
+    return false;
+}
+
+bool Protocol::isConnecting()
+{
+    if(m_connection && m_connection->isConnecting())
+        return true;
+    return false;
+}
+
 void Protocol::send(OutputMessage& outputMessage)
 {
     // encrypt

@@ -39,6 +39,7 @@ public:
     void cancelLogin();
     void logout();
 
+    void processConnectionError(const boost::system::error_code& error);
     void processLogin(const LocalPlayerPtr& localPlayer);
     void processLogout();
 

@@ -70,7 +70,6 @@ void ProtocolGame::onRecv(InputMessage& inputMessage)
 
 void ProtocolGame::onError(const boost::system::error_code& error)
 {
-    // already disconnected, just fire onLogout
-    g_game.processLogout();
+    g_game.processConnectionError(error);
 }
 

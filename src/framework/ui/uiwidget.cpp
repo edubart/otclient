@@ -374,8 +374,7 @@ void UIWidget::insertChild(int index, const UIWidgetPtr& child)
 void UIWidget::removeChild(const UIWidgetPtr& child)
 {
     // remove from children list
-    auto it = std::find(m_children.begin(), m_children.end(), child);
-    if(it != m_children.end()) {
+    if(hasChild(child)) {
         // defocus if needed
         bool focusAnother = false;
         if(m_focusedChild == child) {
@@ -383,9 +382,10 @@ void UIWidget::removeChild(const UIWidgetPtr& child)
             focusAnother = true;
         }
 
-        // unlock child if it was locked
-        unlockChild(child);
+        if(isChildLocked(child))
+            unlockChild(child);
 
+        auto it = std::find(m_children.begin(), m_children.end(), child);
         m_children.erase(it);
 
         // reset child parent
@@ -397,7 +397,7 @@ void UIWidget::removeChild(const UIWidgetPtr& child)
         // update child states
         child->updateStates();
 
-        if(focusAnother)
+        if(focusAnother && !m_focusedChild)
             focusPreviousChild(Fw::ActiveFocusReason);
     } else
         logError("attempt to remove an unknown child from a UIWidget");
@@ -474,7 +474,8 @@ void UIWidget::lockChild(const UIWidgetPtr& child)
     assert(hasChild(child));
 
     // prevent double locks
-    unlockChild(child);
+    if(isChildLocked(child))
+        unlockChild(child);
 
     // disable all other children
     for(const UIWidgetPtr& otherChild : m_children) {
@@ -488,7 +489,7 @@ void UIWidget::lockChild(const UIWidgetPtr& child)
 
     // lock child focus
     if(child->isFocusable())
-      focusChild(child, Fw::ActiveFocusReason);
+        focusChild(child, Fw::ActiveFocusReason);
 
     moveChildToTop(child);
 }
@@ -506,10 +507,12 @@ void UIWidget::unlockChild(const UIWidgetPtr& child)
 
     m_lockedChildren.erase(it);
 
-    // find new chick to lock
+    // find new child to lock
     UIWidgetPtr lockedChild;
-    if(m_lockedChildren.size() > 0)
+    if(m_lockedChildren.size() > 0) {
         lockedChild = m_lockedChildren.front();
+        assert(hasChild(lockedChild));
+    }
 
     for(const UIWidgetPtr& otherChild : m_children) {
         // lock new child
@@ -523,6 +526,19 @@ void UIWidget::unlockChild(const UIWidgetPtr& child)
         else
             otherChild->setEnabled(true);
     }
+
+    if(lockedChild) {
+        if(lockedChild->isFocusable())
+            focusChild(lockedChild, Fw::ActiveFocusReason);
+
+        moveChildToTop(lockedChild);
+    }
+}
+
+bool UIWidget::isChildLocked(const UIWidgetPtr& child)
+{
+    auto it = std::find(m_lockedChildren.begin(), m_lockedChildren.end(), child);
+    return it != m_lockedChildren.end();
 }
 
 void UIWidget::updateParentLayout()

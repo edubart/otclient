@@ -135,6 +135,7 @@ public:
     void moveChildToTop(const UIWidgetPtr& child);
     void lockChild(const UIWidgetPtr& child);
     void unlockChild(const UIWidgetPtr& child);
+    bool isChildLocked(const UIWidgetPtr& child);
 
     void updateParentLayout();
     void updateLayout();

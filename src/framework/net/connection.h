@@ -51,6 +51,7 @@ public:
 
     void setErrorCallback(const ErrorCallback& errorCallback) { m_errorCallback = errorCallback; }
 
+    bool isConnecting() const { return m_connecting; }
     bool isConnected() const { return m_connected; }
 
 private:
@@ -73,6 +74,7 @@ private:
     uint8 m_recvBuffer[65538];
     uint16 m_recvSize;
     bool m_connected;
+    bool m_connecting;
 };
 
 #endif

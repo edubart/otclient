@@ -43,26 +43,52 @@ void Game::loginWorld(const std::string& account, const std::string& password, c
     m_protocolGame->login(account, password, worldHost, (uint16)worldPort, characterName);
 }
 
+void Game::cancelLogin()
+{
+    if(m_protocolGame->isConnected()) {
+        logout();
+    } else if(m_protocolGame->isConnecting()) {
+        m_protocolGame->disconnect();
+        m_protocolGame.reset();
+    }
+}
+
 void Game::logout()
 {
     m_protocolGame->sendLogout();
-    processLogout();
+}
+
+void Game::processConnectionError(const boost::system::error_code& error)
+{
+    // connection errors only have meaning if we still have a protocol
+    if(m_protocolGame) {
+        g_lua.callGlobalField("Game", "onConnectionError", error.message());
+
+        if(m_online)
+            processLogout();
+
+        // disconnect isn't needed, we are already disconnected
+        m_protocolGame.reset();
+    }
 }
 
 void Game::processLogin(const LocalPlayerPtr& localPlayer)
 {
     m_localPlayer = localPlayer;
     m_online = true;
+
     g_lua.callGlobalField("Game", "onLogin", m_localPlayer);
 }
 
 void Game::processLogout()
 {
     g_lua.callGlobalField("Game", "onLogout", m_localPlayer);
+
     if(m_protocolGame) {
         m_protocolGame->disconnect();
         m_protocolGame.reset();
     }
+
     m_localPlayer.reset();
     m_online = false;
 }

@@ -34,6 +34,7 @@ Connection::Connection() :
         m_socket(g_ioService)
 {
     m_connected = false;
+    m_connecting = false;
 }
 
 void Connection::poll()
@@ -50,6 +51,7 @@ void Connection::terminate()
 void Connection::connect(const std::string& host, uint16 port, const SimpleCallback& connectCallback)
 {
     m_connected = false;
+    m_connecting = true;
     m_connectCallback = connectCallback;
 
     asio::ip::tcp::resolver::query query(host, Fw::unsafeCast<std::string>(port));
@@ -61,22 +63,23 @@ void Connection::connect(const std::string& host, uint16 port, const SimpleCallb
 
 void Connection::close()
 {
-    if(!m_connected)
+    if(!m_connected && !m_connecting)
         return;
 
+    m_connecting = false;
     m_connected = false;
+    m_connectCallback = nullptr;
+    m_errorCallback = nullptr;
+    m_recvCallback = nullptr;
 
     m_readTimer.cancel();
     m_writeTimer.cancel();
 
     if(m_socket.is_open()) {
-        m_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both);
+        boost::system::error_code ec;
+        m_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
         m_socket.close();
     }
-
-    m_connectCallback = nullptr;
-    m_errorCallback = nullptr;
-    m_recvCallback = nullptr;
 }
 
 void Connection::write(uint8* buffer, uint16 size)
@@ -129,9 +132,10 @@ void Connection::onConnect(const boost::system::error_code& error)
 {
     m_readTimer.cancel();
 
-    m_connected = true;
+    m_connecting = false;
 
     if(!error) {
+        m_connected = true;
         if(m_connectCallback)
             g_dispatcher.addEvent(m_connectCallback);
     } else
@@ -174,7 +178,7 @@ void Connection::handleError(const boost::system::error_code& error)
     if(error != asio::error::operation_aborted) {
         if(m_errorCallback)
             g_dispatcher.addEvent(std::bind(m_errorCallback, error));
-        if(m_connected)
+        if(m_connected || m_connecting)
             close();
     }
 }
