@@ -1,0 +1,17 @@
+Module
+  name: game
+  description: Create the game interface, where the ingame stuff starts
+  author: OTClient team
+  website: https://github.com/edubart/otclient
+  version: 0.2
+  autoLoad: true
+  dependencies:
+    - core
+    - tibiafiles
+
+  onLoad: |
+    require 'game'
+    return true
+
+  onUnload: |
+    -- nothing yet

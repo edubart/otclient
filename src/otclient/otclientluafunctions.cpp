@@ -28,6 +28,7 @@
 #include <otclient/core/spritemanager.h>
 #include <otclient/net/protocollogin.h>
 #include <otclient/net/protocolgame.h>
+#include <otclient/ui/uimap.h>
 
 void OTClient::registerLuaFunctions()
 {
@@ -45,4 +46,7 @@ void OTClient::registerLuaFunctions()
 
     g_lua.registerClass<Game>();
     g_lua.bindClassStaticFunction<Game>("loginWorld", std::bind(&Game::loginWorld, &g_game, _1, _2, _3, _4, _5));
+
+    g_lua.registerClass<UIMap, UIWidget>();
+    g_lua.bindClassStaticFunction<UIMap>("create", &UIWidget::create<UIMap>);
 }

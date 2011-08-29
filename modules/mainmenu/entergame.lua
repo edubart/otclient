@@ -9,6 +9,7 @@ function EnterGame_characterWindow_okClicked()
     Configs.set('lastUsedCharacter', selected.characterName)
     charactersWindow:destroy()
     mainMenu:hide()
+    Game.createMainInterface()
   else
     displayErrorBox('Error', 'You must select a character to login!')
   end

@@ -1,0 +1,12 @@
+UIWidget
+  anchors.fill: parent
+
+  UIMap
+    id: gameMap
+    anchors.fill:parent
+    margin.right: 200
+
+  Button
+    anchors.left: gameMap.right
+    anchors.top: parent.top
+    text: Logout

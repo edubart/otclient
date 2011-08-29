@@ -227,10 +227,6 @@ void OTClient::poll()
 
 void OTClient::render()
 {
-    //TODO: UIMap for map drawing
-    if(g_game.isOnline())
-        g_map.draw(Rect(0, 0, g_graphics.getScreenSize()));
-
     // everything is rendered by UI components
     g_ui.render();
 }
@@ -276,6 +272,7 @@ void OTClient::saveConfigurations()
 
 void OTClient::onClose()
 {
+    //TODO: make and use g_lua.callGlobalField
     if(m_onCloseCallback)
        m_onCloseCallback();
     else
@@ -292,39 +289,17 @@ void OTClient::onPlatformEvent(const PlatformEvent& event)
 {
     bool fireUi = true;
 
-    if(event.type == EventKeyDown) {
-        if(!event.ctrl && !event.alt && !event.shift) {
-            if(event.keycode == Fw::KeyUp)
-                g_game.walk(Otc::North);
-            else if(event.keycode == Fw::KeyRight)
-                g_game.walk(Otc::East);
-            else if(event.keycode == Fw::KeyDown)
-                g_game.walk(Otc::South);
-            else if(event.keycode == Fw::KeyLeft)
-                g_game.walk(Otc::West);
+    if(event.type == EventKeyDown && event.ctrl && !event.alt && !event.shift && event.keycode == Fw::KeyApostrophe) {
+        // TODO: move this events to lua
+        UIWidgetPtr console = g_ui.getRootWidget()->getChildById("consolePanel");
+        if(!console->isExplicitlyVisible()) {
+            g_ui.getRootWidget()->lockChild(console);
+            console->setVisible(true);
+        } else {
+            g_ui.getRootWidget()->unlockChild(console);
+            console->setVisible(false);
         }
-        else if(event.ctrl && !event.alt && !event.shift) {
-            if(event.keycode == Fw::KeyUp)
-                g_game.turn(Otc::North);
-            else if(event.keycode == Fw::KeyRight)
-                g_game.turn(Otc::East);
-            else if(event.keycode == Fw::KeyDown)
-                g_game.turn(Otc::South);
-            else if(event.keycode == Fw::KeyLeft)
-                g_game.turn(Otc::West);
-            else if(event.keycode == Fw::KeyApostrophe) {
-                // TODO: move these events to lua
-                UIWidgetPtr console = g_ui.getRootWidget()->getChildById("consolePanel");
-                if(!console->isExplicitlyVisible()) {
-                    g_ui.getRootWidget()->lockChild(console);
-                    console->setVisible(true);
-                } else {
-                    g_ui.getRootWidget()->unlockChild(console);
-                    console->setVisible(false);
-                }
-                fireUi = false;
-            }
-        }
+        fireUi = false;
     }
 
     if(fireUi)

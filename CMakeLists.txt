@@ -67,6 +67,9 @@ SET(SOURCES
     src/otclient/core/effect.cpp
     src/otclient/core/localplayer.cpp
 
+    # otclient ui
+    src/otclient/ui/uimap.cpp
+
     # otclient net
     src/otclient/net/protocollogin.cpp
     src/otclient/net/protocolgame.cpp
