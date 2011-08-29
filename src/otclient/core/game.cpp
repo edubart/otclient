@@ -34,7 +34,7 @@ void Game::init()
 void Game::terminate()
 {
     if(m_online)
-        logout();
+        logout(true);
 }
 
 void Game::loginWorld(const std::string& account, const std::string& password, const std::string& worldHost, int worldPort, const std::string& characterName)
@@ -45,19 +45,22 @@ void Game::loginWorld(const std::string& account, const std::string& password, c
 
 void Game::cancelLogin()
 {
+    processLogout();
+}
+
+void Game::logout(bool force)
+{
     if(m_protocolGame) {
-        if(m_protocolGame->isConnected()) {
-            logout();
-        } else if(m_protocolGame->isConnecting()) {
-            m_protocolGame->disconnect();
-            m_protocolGame.reset();
-        }
+        m_protocolGame->sendLogout();
+
+        if(force)
+            processLogout();
     }
 }
 
-void Game::logout()
+void Game::processLoginError(const std::string& error)
 {
-    m_protocolGame->sendLogout();
+    g_lua.callGlobalField("Game", "onLoginError", error);
 }
 
 void Game::processConnectionError(const boost::system::error_code& error)
@@ -67,12 +70,7 @@ void Game::processConnectionError(const boost::system::error_code& error)
         if(error != asio::error::eof)
             g_lua.callGlobalField("Game", "onConnectionError", error.message());
 
-        if(m_online) {
-            processLogout();
-        } else {
-            m_protocolGame->disconnect();
-            m_protocolGame.reset();
-        }
+        processLogout();
     }
 }
 
@@ -86,21 +84,21 @@ void Game::processLogin(const LocalPlayerPtr& localPlayer)
 
 void Game::processLogout()
 {
-    g_lua.callGlobalField("Game", "onLogout", m_localPlayer);
+    if(m_online) {
+        g_lua.callGlobalField("Game", "onLogout", m_localPlayer);
+
+        m_localPlayer.reset();
+        m_online = false;
+    }
 
     if(m_protocolGame) {
         m_protocolGame->disconnect();
         m_protocolGame.reset();
     }
-
-    m_localPlayer.reset();
-    m_online = false;
 }
 
 void Game::walk(Otc::Direction direction)
 {
-    if(!m_online)
-        return;
 
     // TODO: check if we can walk.
 

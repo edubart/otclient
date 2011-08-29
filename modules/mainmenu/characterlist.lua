@@ -17,14 +17,25 @@ local function onCharactersWindowKeyPress(self, keyCode, keyChar, keyboardModifi
   return false
 end
 
-local function tryLogin(charInfo)
-  CharacterList.hide()
+local function tryLogin(charInfo, tries)
+  tries = tries or 1
 
-  if Game.isOnline() then
-    Game.logout()
-    scheduleEvent(function() tryLogin(charInfo) end, 250)
+  if tries > 4 then
+    CharacterList.destroyLoadBox()
+    displayErrorBox('Error', 'Could not logout.')
     return
   end
+
+  if Game.isOnline() then
+    Game.logout(false)
+    if tries == 1 then
+      loadBox = displayCancelBox('Please wait', 'Loggin out...')
+    end
+    scheduleEvent(function() tryLogin(charInfo, tries+1) end, 250)
+    return
+  end
+
+  CharacterList.destroyLoadBox()
 
   Game.loginWorld(EnterGame.account, EnterGame.password, charInfo.worldHost, charInfo.worldPort, charInfo.characterName)
 
@@ -79,8 +90,10 @@ function CharacterList.hide()
 end
 
 function CharacterList.show()
-  charactersWindow:show()
-  charactersWindow:lock()
+  if not loadBox then
+    charactersWindow:show()
+    charactersWindow:lock()
+  end
 end
 
 function CharacterList.doLogin()
@@ -89,6 +102,7 @@ function CharacterList.doLogin()
     local charInfo = { worldHost = selected.worldHost,
                        worldPort = selected.worldPort,
                        characterName = selected.characterName }
+    CharacterList.hide()
     tryLogin(charInfo)
   else
     displayErrorBox('Error', 'You must select a character to login!')

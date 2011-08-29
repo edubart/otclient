@@ -170,10 +170,10 @@ void OTClient::terminate()
     // hide the window because there is no render anymore
     g_platform.hideWindow();
 
+    g_game.terminate();
+
     // run modules unload event
     g_modules.unloadModules();
-
-    g_game.terminate();
 
     // terminate ui
     g_ui.terminate();

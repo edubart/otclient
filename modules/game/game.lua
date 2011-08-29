@@ -1,6 +1,3 @@
--- private variables
-local showCharacterListOnLogout = true
-
 -- private functions
 local function onGameKeyPress(self, keyCode, keyChar, keyboardModifiers)
   if keyboardModifiers == KeyboardCtrlModifier then
@@ -8,7 +5,7 @@ local function onGameKeyPress(self, keyCode, keyChar, keyboardModifiers)
       CharacterList.show()
       return true
     elseif keyCode == KeyQ then
-      Game.logout()
+      Game.logout(false)
       return true
     end
   end
@@ -35,21 +32,20 @@ function Game.onLogin()
   createMainInterface()
 end
 
+function Game.onLoginError(message)
+  CharacterList.destroyLoadBox()
+  local errorBox = displayErrorBox("Login Error", "Login error: " .. message)
+  errorBox.onOk = CharacterList.show
+end
+
 function Game.onConnectionError(message)
   CharacterList.destroyLoadBox()
   local errorBox = displayErrorBox("Login Error", "Connection error: " .. message)
   errorBox.onOk = CharacterList.show
-  showCharacterListOnLogout = false
 end
 
 function Game.onLogout()
   MainMenu.show()
-
-  if showCharacterListOnLogout then
-    CharacterList.show()
-  else
-    showCharacterListOnLogout = true
-  end
-
+  CharacterList.show()
   destroyMainInterface()
 end

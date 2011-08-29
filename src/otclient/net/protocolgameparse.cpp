@@ -275,7 +275,7 @@ void ProtocolGame::parseGMActions(InputMessage& msg)
 void ProtocolGame::parseErrorMessage(InputMessage& msg)
 {
     std::string error = msg.getString();
-    callLuaField("onError", error);
+    g_game.processLoginError(error);
 }
 
 void ProtocolGame::parseFYIMessage(InputMessage& msg)
