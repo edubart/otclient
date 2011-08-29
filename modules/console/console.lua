@@ -67,7 +67,7 @@ end
 function Console.init()
   consoleWidget = UI.loadAndDisplay("/console/console.otui")
   consoleWidget:hide()
-  consoleWidget.onKeyPress = onKeyPress
+  connect(consoleWidget, { onKeyPress = onKeyPress })
 
   commandLineEdit = consoleWidget:getChildById('commandLineEdit')
   consoleBuffer = consoleWidget:getChildById('consoleBuffer')

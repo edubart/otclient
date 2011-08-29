@@ -419,21 +419,32 @@ int LuaInterface::protectedCall(int numArgs, int requestedResults)
         else if(isTable(funcIndex)) {
             // loop through table values
             pushNil();
+            bool done = false;
             while(next(funcIndex-1)) {
                 if(isFunction()) {
                     // repush arguments
                     for(int i=0;i<numArgs;++i)
-                        pushValue(-(numArgs-i)-2);
+                        pushValue(-numArgs-2);
 
                     int rets = safeCall(numArgs);
-                    pop(rets);
-                }
-                // just ignore
-                else {
-                    pop();
+                    if(rets == 1) {
+                        done = popBoolean();
+                        if(done) {
+                            pop();
+                            break;
+                        }
+                    } else if(rets != 0)
+                        throw LuaException("function call didn't return the expected number of results", 0);
+                } else {
+                    throw LuaException("attempt to call a non function", 0);
                 }
             }
             pop(numArgs + 1); // pops the table of function and arguments
+
+            if(requestedResults == -1 || requestedResults == 1) {
+                numRets = 1;
+                pushBoolean(done);
+            }
         }
         // nil values are ignored
         else if(isNil(funcIndex)) {

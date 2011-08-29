@@ -62,13 +62,15 @@ void Game::processConnectionError(const boost::system::error_code& error)
 {
     // connection errors only have meaning if we still have a protocol
     if(m_protocolGame) {
-        g_lua.callGlobalField("Game", "onConnectionError", error.message());
+        if(error != asio::error::eof)
+            g_lua.callGlobalField("Game", "onConnectionError", error.message());
 
-        if(m_online)
+        if(m_online) {
             processLogout();
-
-        // disconnect isn't needed, we are already disconnected
-        m_protocolGame.reset();
+        } else {
+            m_protocolGame->disconnect();
+            m_protocolGame.reset();
+        }
     }
 }
 

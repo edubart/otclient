@@ -7,6 +7,9 @@ local function onGameKeyPress(self, keyCode, keyChar, keyboardModifiers)
     if keyCode == KeyG then
       CharacterList.show()
       return true
+    elseif keyCode == KeyQ then
+      Game.logout()
+      return true
     end
   end
   return false
