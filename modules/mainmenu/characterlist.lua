@@ -41,6 +41,7 @@ local function tryLogin(charInfo, tries)
 
   loadBox = displayCancelBox('Please wait', 'Connecting to game server...')
   function loadBox.onCancel()
+    loadBox = nil
     Game.cancelLogin()
     CharacterList.show()
   end

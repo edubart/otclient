@@ -109,6 +109,15 @@ void UIWidget::render()
     }
 }
 
+void UIWidget::setVisible(bool visible)
+{
+    m_visible = visible;
+    if(!visible && isFocused()) {
+        if(UIWidgetPtr parent = getParent())
+            parent->focusNextChild(Fw::ActiveFocusReason);
+    }
+}
+
 void UIWidget::setStyle(const std::string& styleName)
 {
     OTMLNodePtr styleNode = g_ui.getStyle(styleName);
@@ -418,7 +427,7 @@ void UIWidget::focusNextChild(Fw::FocusReason reason)
 
     // finds next child to focus
     for(const UIWidgetPtr& child : rotatedChildren) {
-        if(child->isFocusable()) {
+        if(child->isFocusable() && child->isExplicitlyEnabled() && child->isVisible()) {
             toFocus = child;
             break;
         }
@@ -444,7 +453,7 @@ void UIWidget::focusPreviousChild(Fw::FocusReason reason)
 
     // finds next child to focus
     for(const UIWidgetPtr& child : rotatedChildren) {
-        if(child->isFocusable()) {
+        if(child->isFocusable() && child->isExplicitlyEnabled() && child->isVisible()) {
             toFocus = child;
             break;
         }

@@ -293,11 +293,11 @@ void OTClient::onPlatformEvent(const PlatformEvent& event)
         // TODO: move this events to lua
         UIWidgetPtr console = g_ui.getRootWidget()->getChildById("consolePanel");
         if(!console->isExplicitlyVisible()) {
-            g_ui.getRootWidget()->lockChild(console);
-            console->setVisible(true);
+            console->lock();
+            console->show();
         } else {
-            g_ui.getRootWidget()->unlockChild(console);
-            console->setVisible(false);
+            console->unlock();
+            console->hide();
         }
         fireUi = false;
     }

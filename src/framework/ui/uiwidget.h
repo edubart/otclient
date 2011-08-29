@@ -41,8 +41,8 @@ public:
     virtual void setup();
     virtual void render();
 
+    void setVisible(bool visible);
     void setEnabled(bool enabled) { m_enabled = enabled; updateState(Fw::DisabledState); }
-    void setVisible(bool visible) { m_visible = visible; }
     void setPressed(bool pressed) { m_pressed = pressed; updateState(Fw::PressedState); }
     void setId(const std::string& id) { m_id = id; }
     void setFocusable(bool focusable) { m_focusable = focusable; }

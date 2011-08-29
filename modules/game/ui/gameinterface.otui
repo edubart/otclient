@@ -1,4 +1,5 @@
 UIWidget
+  id: gameRootInterface
   anchors.fill: parent
 
   UIMap
