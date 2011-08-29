@@ -10,4 +10,6 @@ UIWidget
     anchors.left: gameMap.right
     anchors.top: parent.top
     text: Logout
-    onClick: Game.logout()
+    onClick: |
+      Game.logout()
+      Game.onLogout()

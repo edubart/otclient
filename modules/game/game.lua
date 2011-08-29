@@ -7,5 +7,7 @@ function Game.onLogin()
 end
 
 function Game.onLogout()
-
+  gameUi:destroy()
+  gameUi = nil
+  mainMenu:show()
 end
