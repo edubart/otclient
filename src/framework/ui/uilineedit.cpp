@@ -33,8 +33,6 @@ UILineEdit::UILineEdit()
     m_startRenderPos = 0;
     m_textHorizontalMargin = 3;
     blinkCursor();
-
-    m_onAction = [this]() { this->callLuaField("onAction"); };
 }
 
 void UILineEdit::render()
@@ -365,9 +363,6 @@ void UILineEdit::onStyleApply(const OTMLNodePtr& styleNode)
         if(node->tag() == "text") {
             setText(node->value());
             setCursorPos(m_text.length());
-        } else if(node->tag() == "onAction") {
-            g_lua.loadFunction(node->value(), "@" + node->source() + "[" + node->tag() + "]");
-            luaSetField(node->tag());
         }
     }
 }
@@ -406,9 +401,6 @@ bool UILineEdit::onKeyPress(uchar keyCode, char keyChar, int keyboardModifiers)
     else if(keyCode == Fw::KeyTab) {
         if(UIWidgetPtr parent = getParent())
             parent->focusNextChild(Fw::TabFocusReason);
-    } else if(keyCode == Fw::KeyReturn || keyCode == Fw::KeyEnter) {
-        if(m_onAction)
-            m_onAction();
     } else if(keyChar != 0)
         appendCharacter(keyChar);
     else

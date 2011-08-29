@@ -2,6 +2,8 @@ MainWindow
   id: enterGameWindow
   title: Enter Game
   size: 236 160
+  onEnter: EnterGame_connectToLoginServer()
+  onEscape: function(self) self:destroy() end
 
   LargerLabel
     text: Account name

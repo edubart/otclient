@@ -85,6 +85,14 @@ void UIWindow::onStyleApply(const OTMLNodePtr& styleNode)
         else if(node->tag() == "title") {
             setTitle(node->value());
         }
+        else if(node->tag() == "onEnter") {
+            g_lua.loadFunction(node->value(), "@" + node->source() + "[" + node->tag() + "]");
+            luaSetField(node->tag());
+        }
+        else if(node->tag() == "onEscape") {
+            g_lua.loadFunction(node->value(), "@" + node->source() + "[" + node->tag() + "]");
+            luaSetField(node->tag());
+        }
     }
 }
 
@@ -144,4 +152,18 @@ bool UIWindow::onMouseMove(const Point& mousePos, const Point& mouseMoved)
         return true;
     }
     return UIWidget::onMouseMove(mousePos, mouseMoved);
+}
+
+bool UIWindow::onKeyPress(uchar keyCode, char keyChar, int keyboardModifiers)
+{
+    if(keyboardModifiers == Fw::KeyboardNoModifier) {
+        if(keyCode == Fw::KeyReturn || keyCode == Fw::KeyEnter) {
+            if(callLuaField<bool>("onEnter"))
+                return true;
+        } else if(keyCode == Fw::KeyEscape) {
+            if(callLuaField<bool>("onEscape"))
+                return true;
+        }
+    }
+    return UIWidget::onKeyPress(keyCode, keyChar, keyboardModifiers);
 }
