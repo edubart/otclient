@@ -26,7 +26,9 @@
 #include <otclient/core/datmanager.h>
 #include <otclient/core/game.h>
 #include <otclient/core/map.h>
+#include <otclient/core/item.h>
 #include <otclient/core/effect.h>
+#include <framework/core/eventdispatcher.h>
 
 void ProtocolGame::parseMessage(InputMessage& msg)
 {
@@ -258,9 +260,7 @@ void ProtocolGame::parsePlayerLogin(InputMessage& msg)
     int playerDrawSpeed = msg.getU16();
     int playerCanReportBugs = msg.getU8();
 
-    g_game.onLogin();
-
-    m_localPlayer = g_game.getLocalPlayer();
+    m_localPlayer = LocalPlayerPtr(new LocalPlayer);
     m_localPlayer->setId(playerId);
     m_localPlayer->setDrawSpeed(playerDrawSpeed);
     m_localPlayer->setCanReportBugs(playerCanReportBugs);
@@ -975,9 +975,8 @@ ThingPtr ProtocolGame::internalGetThing(InputMessage& msg)
 
             g_map.removeCreatureById(removeId);
 
-            LocalPlayerPtr localPlayer = g_game.getLocalPlayer();
-            if(localPlayer->getId() == id)
-                creature = localPlayer->asCreature();
+            if(m_localPlayer->getId() == id)
+                creature = m_localPlayer->asCreature();
 
             creature->setId(id);
             creature->setName(name);
@@ -1013,6 +1012,11 @@ ThingPtr ProtocolGame::internalGetThing(InputMessage& msg)
 
         thing = creature;
 
+        // login event is generated the first time that local player gets known
+        if(!g_game.isOnline() && creature == m_localPlayer) {
+            // this event must be scheduled because the entire map description is not known yet
+            g_dispatcher.addEvent(std::bind(&Game::processLogin, &g_game, m_localPlayer));
+        }
     }
     else if(thingId == 0x0063) { // creature turn
         parseCreatureTurn(msg);

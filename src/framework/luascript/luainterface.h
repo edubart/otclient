@@ -164,6 +164,12 @@ public:
     /// prevents new variables in this new environment to be set on the global environment
     void newEnvironment();
 
+    template<typename... T>
+    int callGlobalField(const std::string& global, const std::string& field, const T&... args);
+
+    template<typename R, typename... T>
+    R callGlobalField(const std::string& global, const std::string& field, const T&... args);
+
 private:
     /// Load scripts requested by lua 'require'
     static int luaScriptLoader(lua_State* L);
@@ -221,6 +227,7 @@ public:
     void setEnv(int index = -2);
 
     void getGlobal(const std::string& key);
+    void getGlobalField(const std::string& globalKey, const std::string& fieldKey);
     void setGlobal(const std::string& key);
 
     void rawGet(int index = -1);
@@ -345,6 +352,29 @@ T LuaInterface::castValue(int index) {
     if(!luavalue_cast(index, o))
         throw LuaBadValueCastException(typeName(index), Fw::demangleType<T>());
     return o;
+}
+
+template<typename... T>
+int LuaInterface::callGlobalField(const std::string& global, const std::string& field, const T&... args) {
+    g_lua.getGlobalField(global, field);
+    if(!g_lua.isNil()) {
+        g_lua.polymorphicPush(args...);
+        return g_lua.protectedCall(sizeof...(args));
+    } else
+        g_lua.pop(1);
+    return 0;
+}
+
+template<typename R, typename... T>
+R LuaInterface::callGlobalField(const std::string& global, const std::string& field, const T&... args) {
+    R result;
+    int rets = callGlobalField(global, field, args...);
+    if(rets > 0) {
+        assert(rets == 1);
+        result = g_lua.polymorphicPop<R>();
+    } else
+        result = R();
+    return result;
 }
 
 #endif

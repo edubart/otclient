@@ -188,13 +188,7 @@ UIWidgetPtr UIManager::loadWidgetFromOTML(const OTMLNodePtr& widgetNode, const U
     std::string widgetType = styleNode->valueAt("__widgetType");
 
     // call widget creation from lua
-    //g_lua.getGlobalField(widgetType, "create");
-    g_lua.getGlobal(widgetType);
-    g_lua.getField("create");
-    g_lua.remove(-2);
-    g_lua.protectedCall(0, 1);
-
-    UIWidgetPtr widget = g_lua.polymorphicPop<UIWidgetPtr>();
+    UIWidgetPtr widget = g_lua.callGlobalField<UIWidgetPtr>(widgetType, "create");
     if(parent)
         parent->addChild(widget);
 

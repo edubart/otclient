@@ -23,7 +23,6 @@
 #ifndef MAP_H
 #define MAP_H
 
-#include "tile.h"
 #include "creature.h"
 #include <framework/graphics/declarations.h>
 

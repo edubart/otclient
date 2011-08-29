@@ -167,6 +167,18 @@ void UIWidget::setRect(const Rect& rect)
     m_updateEventScheduled = true;
 }
 
+void UIWidget::lock()
+{
+    if(UIWidgetPtr parent = getParent())
+        parent->lockChild(asUIWidget());
+}
+
+void UIWidget::unlock()
+{
+    if(UIWidgetPtr parent = getParent())
+        parent->unlockChild(asUIWidget());
+}
+
 bool UIWidget::isVisible()
 {
     if(!m_visible)
@@ -365,8 +377,11 @@ void UIWidget::removeChild(const UIWidgetPtr& child)
     auto it = std::find(m_children.begin(), m_children.end(), child);
     if(it != m_children.end()) {
         // defocus if needed
-        if(m_focusedChild == child)
+        bool focusAnother = false;
+        if(m_focusedChild == child) {
             focusChild(nullptr, Fw::ActiveFocusReason);
+            focusAnother = true;
+        }
 
         // unlock child if it was locked
         unlockChild(child);
@@ -381,6 +396,9 @@ void UIWidget::removeChild(const UIWidgetPtr& child)
 
         // update child states
         child->updateStates();
+
+        if(focusAnother)
+            focusPreviousChild(Fw::ActiveFocusReason);
     } else
         logError("attempt to remove an unknown child from a UIWidget");
 }

@@ -23,6 +23,7 @@
 #include "map.h"
 #include "game.h"
 #include "localplayer.h"
+#include "tile.h"
 #include <framework/graphics/graphics.h>
 #include <framework/graphics/framebuffer.h>
 
@@ -187,7 +188,7 @@ void Map::cleanTile(const Position& pos)
 
 CreaturePtr Map::getCreatureById(uint32 id)
 {
-    if(g_game.getLocalPlayer()->getId() == id)
+    if(g_game.getLocalPlayer() && g_game.getLocalPlayer()->getId() == id)
         return g_game.getLocalPlayer();
     return m_creatures[id];
 }

@@ -59,8 +59,18 @@ void LuaInterface::registerFunctions()
     g_lua.bindClassMemberFunction<UIWidget>("setMarginLeft", &UIWidget::setMarginLeft);
     g_lua.bindClassMemberFunction<UIWidget>("getMarginRight", &UIWidget::getMarginRight);
     g_lua.bindClassMemberFunction<UIWidget>("setMarginRight", &UIWidget::setMarginRight);
+    g_lua.bindClassMemberFunction<UIWidget>("isVisible", &UIWidget::isVisible);
+    g_lua.bindClassMemberFunction<UIWidget>("isHidden", &UIWidget::isHidden);
+    g_lua.bindClassMemberFunction<UIWidget>("isHovered", &UIWidget::isHovered);
+    g_lua.bindClassMemberFunction<UIWidget>("isFocused", &UIWidget::isFocused);
+    g_lua.bindClassMemberFunction<UIWidget>("isPressed", &UIWidget::isPressed);
+    g_lua.bindClassMemberFunction<UIWidget>("isEnabled", &UIWidget::isEnabled);
+    g_lua.bindClassMemberFunction<UIWidget>("isDisabled", &UIWidget::isDisabled);
+    g_lua.bindClassMemberFunction<UIWidget>("isActive", &UIWidget::isActive);
     g_lua.bindClassMemberFunction<UIWidget>("hide", &UIWidget::hide);
     g_lua.bindClassMemberFunction<UIWidget>("show", &UIWidget::show);
+    g_lua.bindClassMemberFunction<UIWidget>("lock", &UIWidget::lock);
+    g_lua.bindClassMemberFunction<UIWidget>("unlock", &UIWidget::unlock);
     g_lua.bindClassMemberFunction<UIWidget>("getChildById", &UIWidget::getChildById);
     g_lua.bindClassMemberFunction<UIWidget>("getChildByIndex", &UIWidget::getChildByIndex);
     g_lua.bindClassMemberFunction<UIWidget>("getChildCount", &UIWidget::getChildCount);
@@ -72,6 +82,7 @@ void LuaInterface::registerFunctions()
     g_lua.bindClassMemberFunction<UIWidget>("focusNextChild", &UIWidget::focusNextChild);
     g_lua.bindClassMemberFunction<UIWidget>("focusPreviousChild", &UIWidget::focusPreviousChild);
     g_lua.bindClassMemberFunction<UIWidget>("lockChild", &UIWidget::lockChild);
+    g_lua.bindClassMemberFunction<UIWidget>("unlockChild", &UIWidget::unlockChild);
     g_lua.bindClassMemberFunction<UIWidget>("updateLayout", &UIWidget::updateLayout);
     g_lua.bindClassMemberFunction<UIWidget>("updateParentLayout", &UIWidget::updateParentLayout);
     g_lua.bindClassMemberFunction<UIWidget>("destroy", &UIWidget::destroy);

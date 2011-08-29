@@ -2,7 +2,7 @@ MainWindow
   id: enterGameWindow
   title: Enter Game
   size: 236 160
-  onEnter: EnterGame_connectToLoginServer()
+  onEnter: EnterGame.doLogin()
   onEscape: function(self) self:destroy() end
 
   LargerLabel
@@ -43,7 +43,7 @@ MainWindow
     anchors.bottom: parent.bottom
     margin.bottom: 16
     margin.right: 16
-    onClick: EnterGame_connectToLoginServer()
+    onClick: EnterGame.doLogin()
 
   Button
     text: Cancel

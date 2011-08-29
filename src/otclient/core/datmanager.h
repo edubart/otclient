@@ -24,7 +24,7 @@
 #define DATMANAGER_H
 
 #include <framework/global.h>
-#include "thing.h"
+#include "thingattributes.h"
 
 class DatManager
 {

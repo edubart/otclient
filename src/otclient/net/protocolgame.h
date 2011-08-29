@@ -24,10 +24,9 @@
 #define PROTOCOLGAME_H
 
 #include "declarations.h"
+#include <otclient/core/declarations.h>
 #include <framework/net/protocol.h>
-
-#include <otclient/core/player.h>
-#include <otclient/core/item.h>
+#include <otclient/core/creature.h>
 
 class ProtocolGame : public Protocol
 {

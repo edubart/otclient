@@ -73,6 +73,8 @@ public:
     void show() { setVisible(true); }
     void disable() { setEnabled(false); }
     void enable() { setEnabled(true); }
+    void lock();
+    void unlock();
 
     bool isActive() const { return hasState(Fw::ActiveState); }
     bool isEnabled() const { return !hasState(Fw::DisabledState); }
@@ -81,6 +83,7 @@ public:
     bool isHovered() const { return hasState(Fw::HoverState); }
     bool isPressed() const { return hasState(Fw::PressedState); }
     bool isVisible();
+    bool isHidden() { return !isVisible(); }
     bool isExplicitlyEnabled() const { return m_enabled; }
     bool isExplicitlyVisible() const { return m_visible; }
     bool isFocusable() const { return m_focusable; }
@@ -143,9 +146,6 @@ public:
     UIWidgetPtr asUIWidget() { return std::static_pointer_cast<UIWidget>(shared_from_this()); }
 
 private:
-    void internalDestroy();
-    void internalDestroyCheck();
-
     bool m_updateEventScheduled;
 
 protected:

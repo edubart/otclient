@@ -24,6 +24,12 @@
 
 #include <framework/luascript/luainterface.h>
 #include <otclient/core/game.h>
+#include <otclient/core/tile.h>
+#include <otclient/core/item.h>
+#include <otclient/core/creature.h>
+#include <otclient/core/player.h>
+#include <otclient/core/localplayer.h>
+#include <otclient/core/map.h>
 #include <otclient/core/datmanager.h>
 #include <otclient/core/spritemanager.h>
 #include <otclient/net/protocollogin.h>
@@ -43,6 +49,14 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassMemberFunction("cancelLogin", &ProtocolLogin::cancelLogin);
 
     g_lua.registerClass<ProtocolGame, Protocol>();
+
+    g_lua.registerClass<Thing>();
+    g_lua.registerClass<Creature>();
+    g_lua.registerClass<Player, Creature>();
+    g_lua.registerClass<LocalPlayer, Player>();
+    g_lua.registerClass<Item>();
+    g_lua.registerClass<Tile>();
+    g_lua.registerClass<Map>();
 
     g_lua.registerClass<Game>();
     g_lua.bindClassStaticFunction<Game>("loginWorld", std::bind(&Game::loginWorld, &g_game, _1, _2, _3, _4, _5));

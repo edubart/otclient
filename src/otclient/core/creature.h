@@ -26,6 +26,7 @@
 #include "thing.h"
 #include <framework/graphics/fontmanager.h>
 
+//TODO: create Outfit class and move to a separate file
 struct Outfit {
     uint16 type;
     uint8 head;

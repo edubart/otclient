@@ -1,103 +1,56 @@
-local account
-local password
+EnterGame = { }
 
-function EnterGame_characterWindow_okClicked()
-  local charactersWindow = UI.root:getChildById('charactersWindow')
-  local selected = charactersWindow:getChildById('charactersList'):getFocusedChild()
-  if selected then
-    Game.loginWorld(account, password, selected.worldHost, selected.worldPort, selected.characterName)
-    Configs.set('lastUsedCharacter', selected.characterName)
-    charactersWindow:destroy()
-    mainMenu:hide()
-    Game.createMainInterface()
-  else
-    displayErrorBox('Error', 'You must select a character to login!')
-  end
+-- private variables
+local password
+local loadBox
+local enterGameWindow
+
+-- private functions
+local function onError(protocol, error)
+  loadBox:destroy()
+  local errorBox = displayErrorBox('Login Error', error)
+  errorBox.onOk = EnterGame.create()
 end
 
-local function showMotd(motdNumber, motdMessage)
+local function onMotd(protocol, motd)
+  loadBox:destroy()
+  local motdNumber = string.sub(motd, 0, string.find(motd, "\n"))
+  local motdMessage = string.sub(motd, string.find(motd, "\n") + 1, string.len(motd))
   if motdNumber ~= Configs.get("motd") then
     displayInfoBox("Message of the day", motdMessage)
     Configs.set("motd", motdNumber)
   end
 end
 
-local function createCharactersWindow(characters, premDays)
-  local charactersWindow = UI.loadAndDisplayLocked('/mainmenu/ui/charlist.otui')
-  local charactersList = charactersWindow:getChildById('charactersList')
-  local accountStatusLabel = charactersWindow:getChildById('accountStatusLabel')
-
-  function charactersWindow:onKeyPress(keyCode, keyChar, keyboardModifiers)
-    if keyboardModifiers == KeyboardNoModifier then
-      if keyCode == KeyUp or keyCode == KeyTab then
-        charactersList:focusPreviousChild(ActiveFocusReason)
-      elseif keyCode == KeyDown then
-        charactersList:focusNextChild(ActiveFocusReason)
-      end
-    end
-    return false
-  end
-
-  for i,characterInfo in ipairs(characters) do
-    local characterName = characterInfo[1]
-    local worldName = characterInfo[2]
-    local worldHost = characterInfo[3]
-    local worldIp = characterInfo[4]
-
-    local label = UILabel.create()
-    charactersList:addChild(label)
-    label:setText(characterName .. '  (' .. worldName .. ')')
-    label:setStyle('CharactersListLabel')
-    label.characterName = characterName
-    label.worldHost = worldHost
-    label.worldPort = worldIp
-
-    if i == 0 or Configs.get('lastUsedCharacter') == characterName then
-      charactersList:focusChild(label, ActiveFocusReason)
-    end
-  end
-  if premDays > 0 then
-    accountStatusLabel:setText("Account Status:\nPremium Account (" .. premDays .. ' days left)')
-  end
+local function onCharacterList(protocol, characters, premDays)
+  CharacterList.create(characters, premDays)
 end
 
-function EnterGame_connectToLoginServer()
-  local protocolLogin = ProtocolLogin.create()
+-- public functions
+function EnterGame.create()
+  enterGameWindow = UI.loadAndDisplayLocked('/mainmenu/ui/entergamewindow.otui')
+end
 
-  local recreateEnterGame = function()
-    UI.loadAndDisplayLocked('/mainmenu/ui/entergamewindow.otui')
-  end
-
-  local loadBox = displayCancelBox('Please wait', 'Connecting to login server...')
-
-  loadBox.onCancel = function(msgbox)
-    -- cancel protocol and reacreate enter game window
-    protocolLogin:cancelLogin()
-    recreateEnterGame()
-  end
-
-  protocolLogin.onError = function(protocol, error)
-    loadBox:destroy()
-    local errorBox = displayErrorBox('Login Error', error)
-    errorBox.onOk = recreateEnterGame
-  end
-
-  protocolLogin.onMotd = function(protocol, motd)
-    loadBox:destroy()
-    local motdNumber = string.sub(motd, 0, string.find(motd, "\n"))
-    local motdMessage = string.sub(motd, string.find(motd, "\n") + 1, string.len(motd))
-    showMotd(motdNumber, motdMessage)
-  end
-
-  protocolLogin.onCharacterList = function(protocol, characters, premDays)
-    loadBox:destroy()
-    createCharactersWindow(characters, premDays)
-  end
-
-  local enterGameWindow =  UI.root:getChildById('enterGameWindow')
-  account = enterGameWindow:getChildById('accountNameLineEdit'):getText()
-  password = enterGameWindow:getChildById('accountPasswordLineEdit'):getText()
-  protocolLogin:login(account, password)
-
+function EnterGame.destroy()
   enterGameWindow:destroy()
+  enterGameWindow = nil
+end
+
+function EnterGame.doLogin()
+  EnterGame.account = enterGameWindow:getChildById('accountNameLineEdit'):getText()
+  EnterGame.password = enterGameWindow:getChildById('accountPasswordLineEdit'):getText()
+  EnterGame.destroy()
+
+  local protocolLogin = ProtocolLogin.create()
+  protocolLogin.onError = onError
+  protocolLogin.onMotd = onMotd
+  protocolLogin.onCharacterList = onCharacterList
+
+  loadBox = displayCancelBox('Please wait', 'Connecting to login server...')
+  loadBox.onCancel = function(msgbox)
+    protocolLogin:cancelLogin()
+    EnterGame.create()
+  end
+
+  protocolLogin:login(EnterGame.account, EnterGame.password)
 end

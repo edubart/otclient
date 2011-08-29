@@ -24,7 +24,7 @@ Panel
     MenuButton
       text: Enter Game
       margin.top: 18
-      onClick: UI.loadAndDisplayLocked("/mainmenu/ui/entergamewindow.otui")
+      onClick: EnterGame.create()
 
     MenuButton
       text: Options

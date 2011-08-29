@@ -775,6 +775,16 @@ void LuaInterface::getGlobal(const std::string& key)
     lua_getglobal(L, key.c_str());
 }
 
+void LuaInterface::getGlobalField(const std::string& globalKey, const std::string& fieldKey)
+{
+    getGlobal(globalKey);
+    if(!isNil()) {
+        assert(isTable() || isUserdata());
+        getField(fieldKey);
+        remove(-2);
+    }
+}
+
 void LuaInterface::setGlobal(const std::string& key)
 {
     assert(hasIndex(-1));

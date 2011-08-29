@@ -46,17 +46,19 @@ void Game::loginWorld(const std::string& account, const std::string& password, c
 void Game::logout()
 {
     m_protocolGame->sendLogout();
-    onLogout();
+    processLogout();
 }
 
-void Game::onLogin()
+void Game::processLogin(const LocalPlayerPtr& localPlayer)
 {
-    m_localPlayer = LocalPlayerPtr(new LocalPlayer);
+    m_localPlayer = localPlayer;
     m_online = true;
+    g_lua.callGlobalField("Game", "onLogin", m_localPlayer);
 }
 
-void Game::onLogout()
+void Game::processLogout()
 {
+    g_lua.callGlobalField("Game", "onLogout", m_localPlayer);
     if(m_protocolGame) {
         m_protocolGame->disconnect();
         m_protocolGame.reset();
@@ -72,7 +74,7 @@ void Game::walk(Otc::Direction direction)
 
     // TODO: check if we can walk.
 
-    m_localPlayer->setDirection(direction);
+    //m_localPlayer->setDirection(direction);
 
     switch(direction) {
     case Otc::North:

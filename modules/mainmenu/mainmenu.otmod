@@ -9,17 +9,17 @@ Module
     - core
 
   onLoad: |
-    require('entergame')
+    require 'mainmenu'
+    require 'entergame'
+    require 'characterlist'
 
     if not initialized then
-      mainMenu = UI.loadAndDisplay("/mainmenu/ui/mainmenu.otui")
+      MainMenu.create()
       initialized = true
     end
-
     return true
 
   onUnload: |
-    mainMenu:destroy()
-    mainMenu = nil
+    MainMenu.destroy()
     initialized = false
 

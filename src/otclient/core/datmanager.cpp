@@ -22,6 +22,7 @@
 
 #include "datmanager.h"
 #include "spritemanager.h"
+#include "thing.h"
 #include <framework/core/resourcemanager.h>
 
 DatManager g_dat;

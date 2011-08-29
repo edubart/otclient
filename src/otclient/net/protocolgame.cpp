@@ -22,6 +22,8 @@
 
 #include <otclient/net/protocolgame.h>
 #include <otclient/core/game.h>
+#include <otclient/core/player.h>
+#include <otclient/core/item.h>
 
 ProtocolGame::ProtocolGame()
 {
@@ -69,6 +71,6 @@ void ProtocolGame::onRecv(InputMessage& inputMessage)
 void ProtocolGame::onError(const boost::system::error_code& error)
 {
     // already disconnected, just fire onLogout
-    g_game.onLogout();
+    g_game.processLogout();
 }
 

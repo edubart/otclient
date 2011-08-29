@@ -99,12 +99,6 @@ void Tile::addThing(ThingPtr thing, int stackpos)
 
     const ThingAttributes& thingAttributes = thing->getAttributes();
 
-    if(thing->getPosition() == g_game.getLocalPlayer()->getPosition() + Position(-1, 0, 0) && thingAttributes.group == Otc::ThingGroundGroup) {
-        logDebug((int)thing->getId());
-    }
-
-
-
     if(thing->asItem()) {
         if(thingAttributes.group == Otc::ThingGroundGroup)
             m_ground = thing;

@@ -36,10 +36,11 @@ public:
                     const std::string& password,
                     const std::string& worldHost, int worldPort,
                     const std::string& characterName);
+    void cancelLogin();
     void logout();
 
-    void onLogin();
-    void onLogout();
+    void processLogin(const LocalPlayerPtr& localPlayer);
+    void processLogout();
 
     void walk(Otc::Direction direction);
     void turn(Otc::Direction direction);

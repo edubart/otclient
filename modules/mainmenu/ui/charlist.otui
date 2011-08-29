@@ -1,4 +1,4 @@
-CharactersListLabel < Label
+CharacterListLabel < Label
   image: /core_ui/images/empty_rect.png
   font: tibia-10px-monochrome
   background-color: #00000000
@@ -16,11 +16,11 @@ MainWindow
   id: charactersWindow
   title: Charlist
   size: 250 250
-  onEnter: EnterGame_characterWindow_okClicked()
+  onEnter: CharacterList.doLogin()
   onEscape: function(self) self:destroy() end
 
   TextList
-    id: charactersList
+    id: characterList
     anchors.fill: parent
     anchors.bottom: next.top
     margin.top: 30
@@ -29,10 +29,12 @@ MainWindow
     margin.right: 16
 
   Label
+    id: accountStatusLabel
     text: |-
       Account Status:
       Free Account
-    id: accountStatusLabel
+    font: helvetica-11px-bold
+    color: #33cc66
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.bottom: next.top
@@ -55,7 +57,7 @@ MainWindow
     anchors.bottom: parent.bottom
     margin.bottom: 16
     margin.right: 16
-    onClick: EnterGame_characterWindow_okClicked()
+    onClick: CharacterList.doLogin()
 
   Button
     id: buttonCancel
@@ -65,4 +67,8 @@ MainWindow
     anchors.bottom: parent.bottom
     margin.bottom: 16
     margin.right: 16
-    onClick: function(self) self:getParent():destroy() end
+    onClick: |
+      function(self)
+        self:getParent():unlock()
+        self:getParent():hide()
+      end
