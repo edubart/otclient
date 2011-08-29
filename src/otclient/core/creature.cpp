@@ -26,7 +26,7 @@
 #include "map.h"
 #include <framework/platform/platform.h>
 #include <framework/graphics/graphics.h>
-#include <framework/graphics/fontmanager.h>
+
 
 Creature::Creature() : Thing(Otc::Creature)
 {
@@ -37,6 +37,7 @@ Creature::Creature() : Thing(Otc::Creature)
     m_walkOffsetX = 0;
     m_walkOffsetY = 0;
 
+    m_informationFont = g_fonts.getFont("tibia-12px-rounded");
 }
 
 void Creature::draw(int x, int y)
@@ -153,33 +154,8 @@ void Creature::drawInformation(int x, int y, bool useGray)
 {
     Color fillColor = Color(96, 96, 96);
 
-    if(!useGray) {
-        // health bar according to yatc
-        fillColor = Fw::black;
-        if(m_healthPercent > 92) {
-            fillColor.setGreen(188);
-        }
-        else if(m_healthPercent > 60) {
-            fillColor.setRed(80);
-            fillColor.setGreen(161);
-            fillColor.setBlue(80);
-        }
-        else if(m_healthPercent > 30) {
-            fillColor.setRed(161);
-            fillColor.setGreen(161);
-        }
-        else if(m_healthPercent > 8) {
-            fillColor.setRed(160);
-            fillColor.setGreen(39);
-            fillColor.setBlue(39);
-        }
-        else if(m_healthPercent > 3) {
-            fillColor.setRed(160);
-        }
-        else {
-            fillColor.setRed(79);
-        }
-    }
+    if(!useGray)
+        fillColor = m_informationColor;
 
     Rect backgroundRect = Rect(x-(14.5), y, 27, 4);
     Rect healthRect = backgroundRect.expanded(-1);
@@ -192,8 +168,7 @@ void Creature::drawInformation(int x, int y, bool useGray)
     g_graphics.drawFilledRect(healthRect);
 
     // name
-    FontPtr font = g_fonts.getFont("tibia-12px-rounded");
-    font->renderText(m_name, Rect(x-100, y-15, 200, 15), Fw::AlignTopCenter, fillColor);
+    m_informationFont->renderText(m_name, Rect(x-100, y-15, 200, 15), Fw::AlignTopCenter, fillColor);
 }
 
 void Creature::walk(const Position& position)
@@ -246,7 +221,43 @@ void Creature::walk(const Position& position)
     m_lastTicks = g_platform.getTicks();
 }
 
+void Creature::setHealthPercent(uint8 healthPercent)
+{
+    int oldHealthPercent = m_healthPercent;
+    m_healthPercent = healthPercent;
+    onHealthPercentChange(oldHealthPercent);
+}
+
 const ThingAttributes& Creature::getAttributes()
 {
     return g_dat.getCreatureAttributes(m_outfit.type);
+}
+
+void Creature::onHealthPercentChange(int)
+{
+    m_informationColor = Fw::black;
+
+    if(m_healthPercent > 92) {
+        m_informationColor.setGreen(188);
+    }
+    else if(m_healthPercent > 60) {
+        m_informationColor.setRed(80);
+        m_informationColor.setGreen(161);
+        m_informationColor.setBlue(80);
+    }
+    else if(m_healthPercent > 30) {
+        m_informationColor.setRed(161);
+        m_informationColor.setGreen(161);
+    }
+    else if(m_healthPercent > 8) {
+        m_informationColor.setRed(160);
+        m_informationColor.setGreen(39);
+        m_informationColor.setBlue(39);
+    }
+    else if(m_healthPercent > 3) {
+        m_informationColor.setRed(160);
+    }
+    else {
+        m_informationColor.setRed(79);
+    }
 }

@@ -24,6 +24,7 @@
 #define CREATURE_H
 
 #include "thing.h"
+#include <framework/graphics/fontmanager.h>
 
 struct Outfit {
     uint16 type;
@@ -44,7 +45,7 @@ public:
     void drawInformation(int x, int y, bool useGray);
 
     void setName(const std::string& name) { m_name = name; }
-    void setHealthPercent(uint8 healthPercent) { m_healthPercent = healthPercent; }
+    void setHealthPercent(uint8 healthPercent);
     void setDirection(Otc::Direction direction) { m_direction = direction; }
     void setOutfit(const Outfit& outfit) { m_outfit = outfit; }
     void setLight(const Light& light) { m_light = light; }
@@ -64,12 +65,13 @@ public:
     uint8 getShield() { return m_shield; }
     uint8 getEmblem() { return m_emblem; }
     bool getImpassable() { return m_impassable; }
+    const ThingAttributes& getAttributes();
+
+    void onHealthPercentChange(int);
 
     void walk(const Position& position);
     int getWalkOffsetX() { return m_walkOffsetX; }
     int getWalkOffsetY() { return m_walkOffsetY; }
-
-    const ThingAttributes& getAttributes();
 
     CreaturePtr asCreature() { return std::static_pointer_cast<Creature>(shared_from_this()); }
 
@@ -84,6 +86,9 @@ private:
     uint8 m_shield;
     uint8 m_emblem;
     bool m_impassable;
+
+    FontPtr m_informationFont;
+    Color m_informationColor;
 
     int m_lastTicks;
     bool m_walking;
