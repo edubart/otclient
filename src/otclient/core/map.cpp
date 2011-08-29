@@ -38,8 +38,8 @@ void Map::draw(const Rect& rect)
 
     LocalPlayerPtr player = g_game.getLocalPlayer();
     Position playerPos = player->getPosition();
-    double walkOffsetX = player->getWalkOffsetX();
-    double walkOffsetY = player->getWalkOffsetY();
+    int walkOffsetX = player->getWalkOffsetX();
+    int walkOffsetY = player->getWalkOffsetY();
 
     // player is above 7
 

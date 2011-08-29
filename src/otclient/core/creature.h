@@ -66,8 +66,8 @@ public:
     bool getImpassable() { return m_impassable; }
 
     void walk(const Position& position);
-    double getWalkOffsetX() { return m_walkOffsetX; }
-    double getWalkOffsetY() { return m_walkOffsetY; }
+    int getWalkOffsetX() { return m_walkOffsetX; }
+    int getWalkOffsetY() { return m_walkOffsetY; }
 
     const ThingAttributes& getAttributes();
 
@@ -87,9 +87,9 @@ private:
 
     int m_lastTicks;
     bool m_walking;
-    double m_walkTime;
+    float m_walkTimePerPixel;
     Position m_walkingFromPosition;
-    double m_walkOffsetX, m_walkOffsetY;
+    int m_walkOffsetX, m_walkOffsetY;
 };
 
 #endif

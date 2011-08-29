@@ -36,7 +36,7 @@ Creature::Creature() : Thing(Otc::Creature)
     m_walking = false;
     m_walkOffsetX = 0;
     m_walkOffsetY = 0;
-    m_lastTicks = g_platform.getTicks();
+
 }
 
 void Creature::draw(int x, int y)
@@ -65,46 +65,13 @@ void Creature::draw(int x, int y)
     // TODO 3: ADD ANIMATION
     // TODO 4: ADD DIAGONAL WALKING
 
-    const ThingAttributes& attributes = getAttributes();
-
-    // we must walk 32 pixels in m_speed miliseconds
-    if(m_walking && attributes.animcount > 1) {
-        double offset = (32.0 / m_walkTime) * (g_platform.getTicks() - m_lastTicks);
-
-        if(m_direction == Otc::North)
-            m_walkOffsetY = std::max(m_walkOffsetY - offset, 0.0);
-        else if(m_direction == Otc::East)
-            m_walkOffsetX = std::min(m_walkOffsetX + offset, 0.0);
-        else if(m_direction == Otc::South)
-            m_walkOffsetY = std::min(m_walkOffsetY + offset, 0.0);
-        else if(m_direction == Otc::West)
-            m_walkOffsetX = std::max(m_walkOffsetX - offset, 0.0);
-
-        /*if(g_platform.getTicks() - m_lastTicks > m_speed / 4) {
-            if(m_animation+1 == attributes.animcount)
-                m_animation = 1;
-            else
-                m_animation++;
-
-            m_lastTicks = g_platform.getTicks();
-        }*/
-
-        if(((m_walkOffsetX == 0 && m_walkOffsetY == 0) && m_walkOffsetX != m_walkOffsetY) ||
-           ((m_walkOffsetX == 0 || m_walkOffsetY == 0) && m_walkOffsetX == m_walkOffsetY)) {
-            m_walking = false;
-            m_walkOffsetX = 0;
-            m_walkOffsetY = 0;
-        }
-
-        //m_lastTicks = g_platform.getTicks();
-    }
-
-    m_lastTicks = g_platform.getTicks();
-
     x += m_walkOffsetX;
     y += m_walkOffsetY;
 
+    const ThingAttributes& attributes = getAttributes();
 
+
+    // Render creature
     m_xDiv = m_direction;
     for(m_yDiv = 0; m_yDiv < attributes.ydiv; m_yDiv++) {
 
@@ -139,6 +106,45 @@ void Creature::draw(int x, int y)
             // restore default blend func
             g_graphics.bindBlendFunc(Fw::BlendDefault);
             g_graphics.bindColor(Fw::white);
+        }
+    }
+
+    // Update animation and position
+    if(m_walking && attributes.animcount > 1) {
+
+        if(g_platform.getTicks() - m_lastTicks >= m_walkTimePerPixel) {
+            int pixelsWalked = (g_platform.getTicks() - m_lastTicks) / m_walkTimePerPixel;
+            int remainingTime = (g_platform.getTicks() - m_lastTicks) % (int)m_walkTimePerPixel;
+
+            if(m_direction == Otc::North)
+                m_walkOffsetY = std::max(m_walkOffsetY - pixelsWalked, 0);
+            else if(m_direction == Otc::East)
+                m_walkOffsetX = std::min(m_walkOffsetX + pixelsWalked, 0);
+            else if(m_direction == Otc::South)
+                m_walkOffsetY = std::min(m_walkOffsetY + pixelsWalked, 0);
+            else if(m_direction == Otc::West)
+                m_walkOffsetX = std::max(m_walkOffsetX - pixelsWalked, 0);
+
+            //double walkOffset = std::max(m_walkOffsetX, m_walkOffsetY);
+
+            /*if((32 - fabs(walkOffset)) / 8 % 2 == 0) {
+                if(m_animation+1 == attributes.animcount)
+                    m_animation = 1;
+                else
+                    m_animation++;
+
+                //m_lastTicks = g_platform.getTicks();
+            }*/
+
+            if(((m_walkOffsetX == 0 && m_walkOffsetY == 0) && m_walkOffsetX != m_walkOffsetY) ||
+               ((m_walkOffsetX == 0 || m_walkOffsetY == 0) && m_walkOffsetX == m_walkOffsetY)) {
+                m_walking = false;
+                m_walkOffsetX = 0;
+                m_walkOffsetY = 0;
+                m_animation = 0;
+            }
+
+            m_lastTicks = g_platform.getTicks() - remainingTime;
         }
     }
 }
@@ -232,8 +238,12 @@ void Creature::walk(const Position& position)
     if(ground)
         groundSpeed = ground->getAttributes().speed;
 
-    m_walkTime = 1000.0 * (float)groundSpeed / m_speed;
-    m_walkTime = m_walkTime == 0 ? 1000 : m_walkTime;
+    float walkTime = 1000.0 * (float)groundSpeed / m_speed;
+    walkTime = walkTime == 0 ? 1000 : walkTime;
+
+    m_walkTimePerPixel = walkTime / 32.0;
+
+    m_lastTicks = g_platform.getTicks();
 }
 
 const ThingAttributes& Creature::getAttributes()
