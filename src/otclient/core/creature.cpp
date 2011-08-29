@@ -113,7 +113,7 @@ void Creature::draw(int x, int y)
     if(m_walking && attributes.animcount > 1) {
 
         if(g_platform.getTicks() - m_lastTicks >= m_walkTimePerPixel) {
-            int pixelsWalked = (g_platform.getTicks() - m_lastTicks) / m_walkTimePerPixel;
+            int pixelsWalked = std::floor((g_platform.getTicks() - m_lastTicks) / m_walkTimePerPixel);
             int remainingTime = (g_platform.getTicks() - m_lastTicks) % (int)m_walkTimePerPixel;
 
             if(m_direction == Otc::North)
