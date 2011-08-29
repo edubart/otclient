@@ -214,19 +214,6 @@ void Platform::init(PlatformListener* platformListener, const char *appName)
     x11.keyMap[XK_KP_Page_Up] = Fw::KeyNumpad9;
     x11.keyMap[XK_KP_Delete] = Fw::KeyDelete;
 
-    /*
-    x11.keyMap[XK_KP_Up] = Fw::KeyUp;
-    x11.keyMap[XK_KP_Down] = Fw::KeyDown;
-    x11.keyMap[XK_KP_Left] = Fw::KeyLeft;
-    x11.keyMap[XK_KP_Right] = Fw::KeyRight;
-    x11.keyMap[XK_KP_Page_Up] = Fw::KeyPageUp;
-    x11.keyMap[XK_KP_Page_Down] = Fw::KeyPageDown;
-    x11.keyMap[XK_KP_Home] = Fw::KeyHome;
-    x11.keyMap[XK_KP_End] = Fw::KeyEnd;
-    x11.keyMap[XK_KP_Insert] = Fw::KeyInsert;
-    x11.keyMap[XK_KP_Delete] = Fw::KeyDelete;
-    */
-
     // keypad with numlock on
     x11.keyMap[XK_KP_0] = Fw::Key0;
     x11.keyMap[XK_KP_1] = Fw::Key1;

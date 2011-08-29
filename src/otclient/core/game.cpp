@@ -45,11 +45,13 @@ void Game::loginWorld(const std::string& account, const std::string& password, c
 
 void Game::cancelLogin()
 {
-    if(m_protocolGame->isConnected()) {
-        logout();
-    } else if(m_protocolGame->isConnecting()) {
-        m_protocolGame->disconnect();
-        m_protocolGame.reset();
+    if(m_protocolGame) {
+        if(m_protocolGame->isConnected()) {
+            logout();
+        } else if(m_protocolGame->isConnecting()) {
+            m_protocolGame->disconnect();
+            m_protocolGame.reset();
+        }
     }
 }
 

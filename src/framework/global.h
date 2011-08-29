@@ -58,6 +58,10 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/any.hpp>
 
+#ifndef nullptr
+#define nullptr NULL
+#endif
+
 // global constants
 #include "const.h"
 
