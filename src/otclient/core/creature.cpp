@@ -124,16 +124,14 @@ void Creature::draw(int x, int y)
             else if(m_direction == Otc::West || m_direction == Otc::NorthWest || m_direction == Otc::SouthWest)
                 m_walkOffsetX = std::max(m_walkOffsetX - pixelsWalked, 0);
 
-            //double walkOffset = std::max(m_walkOffsetX, m_walkOffsetY);
+            int walkOffset = std::max(fabs(m_walkOffsetX), fabs(m_walkOffsetY));
 
-            /*if((32 - fabs(walkOffset)) / 8 % 2 == 0) {
+            if(walkOffset % 8 == 0) {
                 if(m_animation+1 == attributes.animcount)
                     m_animation = 1;
                 else
                     m_animation++;
-
-                //m_lastTicks = g_platform.getTicks();
-            }*/
+            }
 
             if(((m_walkOffsetX == 0 && m_walkOffsetY == 0) && m_walkOffsetX != m_walkOffsetY) ||
                ((m_walkOffsetX == 0 || m_walkOffsetY == 0) && m_walkOffsetX == m_walkOffsetY)) {
