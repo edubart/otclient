@@ -40,30 +40,30 @@ void UIMap::render()
 bool UIMap::onKeyPress(uchar keyCode, char keyChar, int keyboardModifiers)
 {
     if(keyboardModifiers == Fw::KeyboardNoModifier) {
-        if(keyCode == Fw::KeyUp) {
+        if(keyCode == Fw::KeyUp || keyCode == Fw::KeyNumpad8) {
             g_game.walk(Otc::North);
             return true;
-        } else if(keyCode == Fw::KeyRight) {
+        } else if(keyCode == Fw::KeyRight || keyCode == Fw::KeyNumpad6) {
             g_game.walk(Otc::East);
             return true;
-        } else if(keyCode == Fw::KeyDown) {
+        } else if(keyCode == Fw::KeyDown || keyCode == Fw::KeyNumpad2) {
             g_game.walk(Otc::South);
             return true;
-        } else if(keyCode == Fw::KeyLeft) {
+        } else if(keyCode == Fw::KeyLeft || keyCode == Fw::KeyNumpad4) {
             g_game.walk(Otc::West);
             return true;
         }
     } else if(keyboardModifiers == Fw::KeyboardCtrlModifier) {
-        if(keyCode == Fw::KeyUp) {
+        if(keyCode == Fw::KeyUp || keyCode == Fw::KeyNumpad8) {
             g_game.turn(Otc::North);
             return true;
-        } else if(keyCode == Fw::KeyRight) {
+        } else if(keyCode == Fw::KeyRight || keyCode == Fw::KeyNumpad6) {
             g_game.turn(Otc::East);
             return true;
-        } else if(keyCode == Fw::KeyDown) {
+        } else if(keyCode == Fw::KeyDown || keyCode == Fw::KeyNumpad2) {
             g_game.turn(Otc::South);
             return true;
-        } else if(keyCode == Fw::KeyLeft) {
+        } else if(keyCode == Fw::KeyLeft || keyCode == Fw::KeyNumpad4) {
             g_game.turn(Otc::West);
             return true;
         }

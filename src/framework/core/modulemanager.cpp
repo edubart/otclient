@@ -40,8 +40,10 @@ void ModuleManager::discoverAndLoadModules()
 
     // auto load modules
     for(const ModulePtr& module : m_modules) {
-        if(!module->isLoaded() && module->autoLoad())
-            module->load();
+        if(!module->isLoaded() && module->autoLoad()) {
+            if(!module->load())
+                logFatal("cannot continue to run");
+        }
     }
 }
 

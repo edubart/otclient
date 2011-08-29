@@ -157,7 +157,17 @@ namespace Fw
         KeyF9 = 137,
         KeyF10 = 138,
         KeyF11 = 139,
-        KeyF12 = 140
+        KeyF12 = 140,
+        KeyNumpad0 = 141,
+        KeyNumpad1 = 142,
+        KeyNumpad2 = 143,
+        KeyNumpad3 = 144,
+        KeyNumpad4 = 145,
+        KeyNumpad5 = 146,
+        KeyNumpad6 = 147,
+        KeyNumpad7 = 148,
+        KeyNumpad8 = 149,
+        KeyNumpad9 = 150
     };
 
     enum LogLevel {
