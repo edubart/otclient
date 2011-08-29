@@ -9,7 +9,7 @@ local enterGameWindow
 local function onError(protocol, error)
   loadBox:destroy()
   local errorBox = displayErrorBox('Login Error', error)
-  errorBox.onOk = EnterGame.create()
+  errorBox.onOk = EnterGame.create
 end
 
 local function onMotd(protocol, motd)
