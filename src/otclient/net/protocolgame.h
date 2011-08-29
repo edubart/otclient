@@ -47,6 +47,10 @@ public:
     void sendWalkEast();
     void sendWalkSouth();
     void sendWalkWest();
+    void sendWalkNorthEast();
+    void sendWalkSouthEast();
+    void sendWalkSouthWest();
+    void sendWalkNorthWest();
     void sendTurnNorth();
     void sendTurnEast();
     void sendTurnSouth();

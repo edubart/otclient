@@ -52,6 +52,18 @@ bool UIMap::onKeyPress(uchar keyCode, char keyChar, int keyboardModifiers)
         } else if(keyCode == Fw::KeyLeft || keyCode == Fw::KeyNumpad4) {
             g_game.walk(Otc::West);
             return true;
+        } else if(keyCode == Fw::KeyNumpad9) {
+            g_game.walk(Otc::NorthEast);
+            return true;
+        } else if(keyCode == Fw::KeyNumpad3) {
+            g_game.walk(Otc::SouthEast);
+            return true;
+        } else if(keyCode == Fw::KeyNumpad1) {
+            g_game.walk(Otc::SouthWest);
+            return true;
+        } else if(keyCode == Fw::KeyNumpad7) {
+            g_game.walk(Otc::NorthWest);
+            return true;
         }
     } else if(keyboardModifiers == Fw::KeyboardCtrlModifier) {
         if(keyCode == Fw::KeyUp || keyCode == Fw::KeyNumpad8) {

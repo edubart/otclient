@@ -87,6 +87,18 @@ void Game::walk(Otc::Direction direction)
     case Otc::West:
         m_protocolGame->sendWalkWest();
         break;
+    case Otc::NorthEast:
+        m_protocolGame->sendWalkNorthEast();
+        break;
+    case Otc::SouthEast:
+        m_protocolGame->sendWalkSouthEast();
+        break;
+    case Otc::SouthWest:
+        m_protocolGame->sendWalkSouthWest();
+        break;
+    case Otc::NorthWest:
+        m_protocolGame->sendWalkNorthWest();
+        break;
     }
 }
 

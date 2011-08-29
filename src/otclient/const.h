@@ -79,7 +79,11 @@ namespace Otc
         North = 0,
         East,
         South,
-        West
+        West,
+        NorthEast,
+        SouthEast,
+        SouthWest,
+        NorthWest
     };
 
     enum SpeakClasses {

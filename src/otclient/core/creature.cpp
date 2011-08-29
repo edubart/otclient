@@ -62,18 +62,15 @@ void Creature::draw(int x, int y)
     // 1000 * groundSpeed / playerSpeed
 
     // TODO 1: FIX RENDER STEP 2
-    // TODO 2: FIX SHAKY EFFECT
+    // TODO 2: FIX DIAGONAL WALKING, BUGS MAP
     // TODO 3: ADD ANIMATION
-    // TODO 4: ADD DIAGONAL WALKING
 
     x += m_walkOffsetX;
     y += m_walkOffsetY;
 
     const ThingAttributes& attributes = getAttributes();
 
-
     // Render creature
-    m_xDiv = m_direction;
     for(m_yDiv = 0; m_yDiv < attributes.ydiv; m_yDiv++) {
 
         // continue if we dont have this addon.
@@ -117,13 +114,14 @@ void Creature::draw(int x, int y)
             int pixelsWalked = std::floor((g_platform.getTicks() - m_lastTicks) / m_walkTimePerPixel);
             int remainingTime = (g_platform.getTicks() - m_lastTicks) % (int)m_walkTimePerPixel;
 
-            if(m_direction == Otc::North)
+            if(m_direction == Otc::North || m_direction == Otc::NorthEast || m_direction == Otc::NorthWest)
                 m_walkOffsetY = std::max(m_walkOffsetY - pixelsWalked, 0);
-            else if(m_direction == Otc::East)
-                m_walkOffsetX = std::min(m_walkOffsetX + pixelsWalked, 0);
-            else if(m_direction == Otc::South)
+            else if(m_direction == Otc::South || m_direction == Otc::SouthEast || m_direction == Otc::SouthWest)
                 m_walkOffsetY = std::min(m_walkOffsetY + pixelsWalked, 0);
-            else if(m_direction == Otc::West)
+
+            if(m_direction == Otc::East || m_direction == Otc::NorthEast || m_direction == Otc::SouthEast)
+                m_walkOffsetX = std::min(m_walkOffsetX + pixelsWalked, 0);
+            else if(m_direction == Otc::West || m_direction == Otc::NorthWest || m_direction == Otc::SouthWest)
                 m_walkOffsetX = std::max(m_walkOffsetX - pixelsWalked, 0);
 
             //double walkOffset = std::max(m_walkOffsetX, m_walkOffsetY);
@@ -178,6 +176,7 @@ void Creature::walk(const Position& position)
     m_walkOffsetX = 0;
     m_walkOffsetY = 0;
     m_walkingFromPosition = m_position;
+    int walkTimeFactor = 1;
 
     // update map tiles
     g_map.removeThingByPtr(asThing());
@@ -201,9 +200,44 @@ void Creature::walk(const Position& position)
         m_direction = Otc::West;
         m_walkOffsetX = 32;
     }
+    else if(m_walkingFromPosition + Position(1, -1, 0) == m_position) {
+        m_direction = Otc::NorthEast;
+        m_walkOffsetX = -32;
+        m_walkOffsetY = 32;
+        walkTimeFactor = 2;
+    }
+    else if(m_walkingFromPosition + Position(1, 1, 0) == m_position) {
+        m_direction = Otc::SouthEast;
+        m_walkOffsetX = -32;
+        m_walkOffsetY = -32;
+        walkTimeFactor = 2;
+    }
+    else if(m_walkingFromPosition + Position(-1, 1, 0) == m_position) {
+        m_direction = Otc::SouthWest;
+        m_walkOffsetX = 32;
+        m_walkOffsetY = -32;
+        walkTimeFactor = 2;
+    }
+    else if(m_walkingFromPosition + Position(-1, -1, 0) == m_position) {
+        m_direction = Otc::NorthWest;
+        m_walkOffsetX = 32;
+        m_walkOffsetY = 32;
+        walkTimeFactor = 2;
+    }
     else { // Teleport
         // we teleported, dont walk or change direction
         m_walking = false;
+    }
+
+    // Calculate xDiv
+    if(m_direction >= 4) {
+        if(m_direction == Otc::NorthEast || m_direction == Otc::SouthEast)
+            m_xDiv = Otc::East;
+        else if(m_direction == Otc::NorthWest || m_direction == Otc::SouthWest)
+            m_xDiv = Otc::West;
+    }
+    else {
+        m_xDiv = m_direction;
     }
 
     // get walk speed
@@ -213,7 +247,7 @@ void Creature::walk(const Position& position)
     if(ground)
         groundSpeed = ground->getAttributes().speed;
 
-    float walkTime = 1000.0 * (float)groundSpeed / m_speed;
+    float walkTime = walkTimeFactor * 1000.0 * (float)groundSpeed / m_speed;
     walkTime = walkTime == 0 ? 1000 : walkTime;
 
     m_walkTimePerPixel = walkTime / 32.0;

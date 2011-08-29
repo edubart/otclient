@@ -25,7 +25,7 @@ MESSAGE(STATUS "BUILD TYPE: " ${CMAKE_BUILD_TYPE})
 
 # setup compiler options
 IF(CMAKE_COMPILER_IS_GNUCXX)
-    SET(CXX_WARNS "-Wall -Wextra -Werror -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-unused-variable")
+    SET(CXX_WARNS "-Wall -Wextra -Werror -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-unused-variable -Wno-switch")
     SET(CMAKE_CXX_FLAGS "-std=c++0x -pipe ${CXX_WARNS}")
     SET(CMAKE_CXX_FLAGS_DEBUG "-O0 -g3 -ggdb3 -fno-inline")
     SET(CMAKE_CXX_FLAGS_RELEASE "-O2")

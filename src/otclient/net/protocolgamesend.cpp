@@ -102,6 +102,34 @@ void ProtocolGame::sendWalkWest()
     send(oMsg);
 }
 
+void ProtocolGame::sendWalkNorthEast()
+{
+    OutputMessage oMsg;
+    oMsg.addU8(0x6A);
+    send(oMsg);
+}
+
+void ProtocolGame::sendWalkSouthEast()
+{
+    OutputMessage oMsg;
+    oMsg.addU8(0x6B);
+    send(oMsg);
+}
+
+void ProtocolGame::sendWalkSouthWest()
+{
+    OutputMessage oMsg;
+    oMsg.addU8(0x6C);
+    send(oMsg);
+}
+
+void ProtocolGame::sendWalkNorthWest()
+{
+    OutputMessage oMsg;
+    oMsg.addU8(0x6D);
+    send(oMsg);
+}
+
 void ProtocolGame::sendTurnNorth()
 {
     OutputMessage oMsg;
@@ -129,5 +157,3 @@ void ProtocolGame::sendTurnWest()
     oMsg.addU8(0x72);
     send(oMsg);
 }
-
-
