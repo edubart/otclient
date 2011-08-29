@@ -5,3 +5,4 @@ make password text edit hidden
 load modules from zip packages
 ip/host/rsa configuration
 review directories search
+move tibia fonts to tibiafiles module
