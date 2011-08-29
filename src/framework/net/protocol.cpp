@@ -61,14 +61,16 @@ void Protocol::send(OutputMessage& outputMessage)
     outputMessage.addU16(messageSize);
 
     // send
-    m_connection->write(outputMessage.getBuffer(), outputMessage.getMessageSize());
+    if(m_connection)
+        m_connection->write(outputMessage.getBuffer(), outputMessage.getMessageSize());
 }
 
 void Protocol::recv()
 {
     m_inputMessage.reset();
 
-    m_connection->read(InputMessage::HEADER_LENGTH, std::bind(&Protocol::internalRecvHeader, asProtocol(),  _1,  _2));
+    if(m_connection)
+        m_connection->read(InputMessage::HEADER_LENGTH, std::bind(&Protocol::internalRecvHeader, asProtocol(),  _1,  _2));
 }
 
 void Protocol::internalRecvHeader(uint8* buffer, uint16 size)
@@ -80,7 +82,8 @@ void Protocol::internalRecvHeader(uint8* buffer, uint16 size)
     m_inputMessage.setMessageSize(dataSize);
 
     // schedule read for message data
-    m_connection->read(dataSize, std::bind(&Protocol::internalRecvData, asProtocol(),  _1,  _2));
+    if(m_connection)
+        m_connection->read(dataSize, std::bind(&Protocol::internalRecvData, asProtocol(),  _1,  _2));
 }
 
 void Protocol::internalRecvData(uint8* buffer, uint16 size)
