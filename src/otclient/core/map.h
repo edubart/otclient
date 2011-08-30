@@ -42,6 +42,9 @@ public:
     void setLight(const Light& light) { m_light = light; }
     Light getLight() { return m_light; }
 
+    void setCentralPosition(const Position& centralPosition) { m_centralPosition = centralPosition; }
+    Position getCentralPosition() { return m_centralPosition; }
+
     CreaturePtr getCreatureById(uint32 id);
     void removeCreatureById(uint32 id);
 
@@ -50,6 +53,7 @@ private:
     std::map<uint32, CreaturePtr> m_creatures;
 
     Light m_light;
+    Position m_centralPosition;
 
 
     FrameBufferPtr m_framebuffer;

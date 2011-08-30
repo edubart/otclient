@@ -75,6 +75,23 @@ namespace Otc
         SpriteNoMask = 255
     };
 
+    enum Skill {
+        Fist = 0,
+        Club,
+        Sword,
+        Axe,
+        Distance,
+        Shielding,
+        Fishing,
+        LastSkill
+    };
+
+    enum SkillType {
+        SkillLevel,
+        SkillPercent,
+        LastSkillType
+    };
+
     enum Direction {
         North = 0,
         East,

@@ -307,32 +307,44 @@ void ProtocolGame::parseCanReportBugs(InputMessage& msg)
 void ProtocolGame::parseMapDescription(InputMessage& msg)
 {
     Position pos = parsePosition(msg);
-    m_localPlayer->setPosition(pos);
+    g_map.setCentralPosition(pos);
     setMapDescription(msg, pos.x - 8, pos.y - 6, pos.z, 18, 14);
 }
 
 void ProtocolGame::parseMoveNorth(InputMessage& msg)
 {
-    Position pos = m_localPlayer->getPosition();
+    Position pos = g_map.getCentralPosition();
+    pos.y--;
+
     setMapDescription(msg, pos.x - 8, pos.y - 6, pos.z, 18, 1);
+    g_map.setCentralPosition(pos);
 }
 
 void ProtocolGame::parseMoveEast(InputMessage& msg)
 {
-    Position pos = m_localPlayer->getPosition();
+    Position pos = g_map.getCentralPosition();
+    pos.x++;
+
     setMapDescription(msg, pos.x + 9, pos.y - 6, pos.z, 1, 14);
+    g_map.setCentralPosition(pos);
 }
 
 void ProtocolGame::parseMoveSouth(InputMessage& msg)
 {
-    Position pos = m_localPlayer->getPosition();
+    Position pos = g_map.getCentralPosition();
+    pos.y++;
+
     setMapDescription(msg, pos.x - 8, pos.y + 7, pos.z, 18, 1);
+    g_map.setCentralPosition(pos);
 }
 
 void ProtocolGame::parseMoveWest(InputMessage& msg)
 {
-    Position pos = m_localPlayer->getPosition();
+    Position pos = g_map.getCentralPosition();
+    pos.x--;
+
     setMapDescription(msg, pos.x - 8, pos.y - 6, pos.z, 1, 14);
+    g_map.setCentralPosition(pos);
 }
 
 void ProtocolGame::parseUpdateTile(InputMessage& msg)
@@ -640,26 +652,9 @@ void ProtocolGame::parsePlayerStats(InputMessage& msg)
 
 void ProtocolGame::parsePlayerSkills(InputMessage& msg)
 {
-    msg.getU8(); // fist skill
-    msg.getU8(); // fist percent
-
-    msg.getU8(); // club skill
-    msg.getU8(); // club percent
-
-    msg.getU8(); // sword skill
-    msg.getU8(); // sword percent
-
-    msg.getU8(); // axe skill
-    msg.getU8(); // axe percent
-
-    msg.getU8(); // distance skill
-    msg.getU8(); // distance percent
-
-    msg.getU8(); // shielding skill
-    msg.getU8(); // shielding percent
-
-    msg.getU8(); // fishing skill
-    msg.getU8(); // fishing percent
+    for(int skill = 0; skill < Otc::LastSkill; skill++)
+        for(int skillType = 0; skillType < Otc::LastSkillType; skillType++)
+            m_localPlayer->setSkill((Otc::Skill)skill, (Otc::SkillType)skillType, msg.getU8());
 }
 
 void ProtocolGame::parsePlayerIcons(InputMessage& msg)
@@ -773,25 +768,29 @@ void ProtocolGame::parseCancelWalk(InputMessage& msg)
 
 void ProtocolGame::parseFloorChangeUp(InputMessage& msg)
 {
-    Position pos = m_localPlayer->getPosition();
+    logDebug("[ProtocolGame::parseFloorChangeUp]: This function has never been tested.");
+
+    Position pos = g_map.getCentralPosition();
     pos.z--;
 
     int32 skip = 0;
-    if(m_localPlayer->getPosition().z == 7)
+    if(pos.z == 7)
         for(int32 i = 5; i >= 0; i--)
             setFloorDescription(msg, pos.x - 8, pos.y - 6, i, 18, 14, 8 - i, &skip);
-    else if(m_localPlayer->getPosition().z > 7)
+    else if(pos.z > 7)
         setFloorDescription(msg, pos.x - 8, pos.y - 6, pos.z - 2, 18, 14, 3, &skip);
 
-    //pos.x++;
-    //pos.y++;
-    //m_localPlayer->setPosition(pos);
+    pos.x++;
+    pos.y++;
+    g_map.setCentralPosition(pos);
 }
 
 void ProtocolGame::parseFloorChangeDown(InputMessage& msg)
 {
-    Position pos = m_localPlayer->getPosition();
-    //pos.z++;
+    logDebug("[ProtocolGame::parseFloorChangeDown]: This function has never been tested.");
+
+    Position pos = g_map.getCentralPosition();
+    pos.z++;
 
     int skip = 0;
     if(pos.z == 8) {
@@ -802,9 +801,9 @@ void ProtocolGame::parseFloorChangeDown(InputMessage& msg)
     else if(pos.z > 8 && pos.z < 14)
         setFloorDescription(msg, pos.x - 8, pos.y - 6, pos.z + 2, 18, 14, -3, &skip);
 
-    //pos.x--;
-    //pos.y--;
-    //m_localPlayer->setPosition(pos);
+    pos.x--;
+    pos.y--;
+    g_map.setCentralPosition(pos);
 }
 
 void ProtocolGame::parseOutfitWindow(InputMessage& msg)

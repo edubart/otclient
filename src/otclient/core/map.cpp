@@ -38,14 +38,13 @@ void Map::draw(const Rect& rect)
     m_framebuffer->bind();
 
     LocalPlayerPtr player = g_game.getLocalPlayer();
-    Position playerPos = player->getPosition();
     int walkOffsetX = player->getWalkOffsetX();
     int walkOffsetY = player->getWalkOffsetY();
 
     // player is above 7
 
     int drawFloorStop = 0;
-    if(playerPos.z <= 7) {
+    if(m_centralPosition.z <= 7) {
 
         // player pos it 8-6. check if we can draw upper floors.
 
@@ -64,9 +63,9 @@ void Map::draw(const Rect& rect)
 
         // if we have something covering us, dont show floors above.
         for(int jz = 6; jz >= 0; --jz) {
-            Position coverPos = Position(playerPos.x+(7-jz)-1, playerPos.y+(7-jz)-1, jz);
+            Position coverPos = Position(m_centralPosition.x+(7-jz)-1, m_centralPosition.y+(7-jz)-1, jz);
             if(const TilePtr& tile = m_tiles[coverPos]) {
-                if(tile->getStackSize(3) > 0 && jz < playerPos.z) {
+                if(tile->getStackSize(3) > 0 && jz < m_centralPosition.z) {
                     drawFloorStop = jz;
                     break;
                 }
@@ -80,11 +79,11 @@ void Map::draw(const Rect& rect)
             // +1 in draws cause 64x64 items may affect view.
 
             for(int step = 0; step < 2; ++step) {
-                for(int ix = -8+(playerPos.z-iz); ix < + 8+7; ++ix) {
-                    for(int iy = -6+(playerPos.z-iz); iy < + 6+7; ++iy) {
-                        Position itemPos = Position(playerPos.x + ix, playerPos.y + iy, iz);
+                for(int ix = -8+(m_centralPosition.z-iz); ix < + 8+7; ++ix) {
+                    for(int iy = -6+(m_centralPosition.z-iz); iy < + 6+7; ++iy) {
+                        Position itemPos = Position(m_centralPosition.x + ix, m_centralPosition.y + iy, iz);
                         if(const TilePtr& tile = m_tiles[itemPos])
-                            tile->draw((ix + 7 - (playerPos.z-iz))*32 - walkOffsetX, (iy + 5 - (playerPos.z-iz))*32 - walkOffsetY, step);
+                            tile->draw((ix + 7 - (m_centralPosition.z-iz))*32 - walkOffsetX, (iy + 5 - (m_centralPosition.z-iz))*32 - walkOffsetY, step);
                     }
                 }
             }
@@ -107,7 +106,7 @@ void Map::draw(const Rect& rect)
     // draw player names and health bars
     for(int ix = -7; ix <= 7; ++ix) {
         for(int iy = -5; iy <= 5; ++iy) {
-            Position itemPos = Position(playerPos.x + ix, playerPos.y + iy, playerPos.z);
+            Position itemPos = Position(m_centralPosition.x + ix, m_centralPosition.y + iy, m_centralPosition.z);
             if(const TilePtr& tile = m_tiles[itemPos]) {
                 auto& creatures = tile->getCreatures();
                 for(auto it = creatures.rbegin(), end = creatures.rend(); it != end; ++it) {
@@ -125,7 +124,7 @@ void Map::draw(const Rect& rect)
 
 
                     // TODO: create isCovered function.
-                    bool useGray = (drawFloorStop != playerPos.z-1);
+                    bool useGray = (drawFloorStop != m_centralPosition.z-1);
 
                     creature->drawInformation(x*horizontalStretchFactor, y*verticalStretchFactor, useGray);
                 }

@@ -36,11 +36,16 @@ public:
     void setCanReportBugs(uint8 canReportBugs) { m_canReportBugs = (canReportBugs != 0); }
     bool getCanReportBugs() { return m_canReportBugs; }
 
+    void setSkill(Otc::Skill skill, Otc::SkillType skillType, int value) { m_skills[skill][skillType] = value; }
+    int getSkill(Otc::Skill skill, Otc::SkillType skillType) { return m_skills[skill][skillType]; }
+
     LocalPlayerPtr asLocalPlayer() { return std::static_pointer_cast<LocalPlayer>(shared_from_this()); }
 
 private:
     uint16 m_drawSpeed;
     bool m_canReportBugs;
+
+    int m_skills[Otc::LastSkill][Otc::LastSkillType];
 };
 
 #endif
