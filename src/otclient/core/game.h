@@ -32,17 +32,19 @@ public:
     void init();
     void terminate();
 
+    // login/logout related
     void loginWorld(const std::string& account,
                     const std::string& password,
                     const std::string& worldHost, int worldPort,
                     const std::string& characterName);
     void cancelLogin();
     void logout(bool force);
-
     void processLoginError(const std::string& error);
     void processConnectionError(const boost::system::error_code& error);
     void processLogin(const LocalPlayerPtr& localPlayer);
     void processLogout();
+
+    void processTextMessage(const std::string& message);
 
     void walk(Otc::Direction direction);
     void turn(Otc::Direction direction);

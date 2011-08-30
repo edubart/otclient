@@ -1,0 +1,8 @@
+Label
+  font: tibia-12px-rounded
+  color: white
+  height: 16
+  align: center
+  anchors.bottom: parent.bottom
+  anchors.left: parent.left
+  anchors.right: parent.right

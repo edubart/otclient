@@ -31,13 +31,8 @@ void UIMap::setup()
 
 void UIMap::render()
 {
-    if(g_game.isOnline()) {
-        Rect mapRect = m_rect;
-        Size mapSize(15*32, 11*32);
-        mapSize.scale(mapRect.size(), Fw::KeepAspectRatio);
-        mapRect.setSize(mapSize);
-        g_map.draw(mapRect);
-    }
+    if(g_game.isOnline())
+        g_map.draw(m_rect);
 
     UIWidget::render();
 }
@@ -91,4 +86,14 @@ bool UIMap::onKeyPress(uchar keyCode, char keyChar, int keyboardModifiers)
 bool UIMap::onMousePress(const Point& mousePos, Fw::MouseButton button)
 {
     return UIWidget::onMousePress(mousePos, button);
+}
+
+void UIMap::onGeometryUpdate(const Rect& oldRect, const Rect& newRect)
+{
+    Rect mapRect = newRect;
+    Size mapSize(15*32, 11*32);
+    mapSize.scale(mapRect.size(), Fw::KeepAspectRatio);
+    mapRect.setSize(mapSize);
+    if(mapRect != newRect)
+        setRect(mapRect);
 }

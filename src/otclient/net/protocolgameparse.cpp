@@ -34,7 +34,7 @@ void ProtocolGame::parseMessage(InputMessage& msg)
 {
     while(!msg.eof()) {
         uint8 opt = msg.getU8();
-        dump << "protocol id:" << std::hex << (int)opt;
+        //dump << "protocol id:" << std::hex << (int)opt;
 
         switch(opt) {
             case 0x0A:
@@ -757,7 +757,9 @@ void ProtocolGame::parseTextMessage(InputMessage& msg)
 {
     msg.getU8(); // messageType
     std::string message = msg.getString();
-    //logDebug(message);
+
+    // must be scheduled because the map may not exist yet
+    g_dispatcher.addEvent(std::bind(&Game::processTextMessage, &g_game, message));
 }
 
 void ProtocolGame::parseCancelWalk(InputMessage& msg)

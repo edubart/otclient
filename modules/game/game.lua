@@ -1,3 +1,5 @@
+require 'textmessage'
+
 -- private functions
 local function onGameKeyPress(self, keyCode, keyChar, keyboardModifiers)
   if keyboardModifiers == KeyboardCtrlModifier then
@@ -13,15 +15,16 @@ local function onGameKeyPress(self, keyCode, keyChar, keyboardModifiers)
 end
 
 local function createMainInterface()
-  gameUi = loadUI('/game/ui/gameinterface.otui', UI.root)
-  gameUi.onKeyPress = onGameKeyPress
+  Game.gameUi = loadUI('/game/ui/gameinterface.otui', UI.root)
+  Game.gameMapUi = Game.gameUi:getChildById('gameMap')
+  Game.gameUi.onKeyPress = onGameKeyPress
 end
 
 
 local function destroyMainInterface()
   if gameUi then
-    gameUi:destroy()
-    gameUi = nil
+    Game.gameUi:destroy()
+    Game.gameUi = nil
   end
 end
 

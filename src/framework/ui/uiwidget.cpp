@@ -76,6 +76,8 @@ void UIWidget::destroy()
     // remove itself from parent
     if(UIWidgetPtr parent = getParent())
         parent->removeChild(asUIWidget());
+    setVisible(false);
+    setEnabled(false);
 }
 
 void UIWidget::render()
