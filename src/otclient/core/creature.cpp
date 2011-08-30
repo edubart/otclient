@@ -36,7 +36,7 @@ Creature::Creature() : Thing(Otc::Creature)
     m_walking = false;
     m_walkOffsetX = 0;
     m_walkOffsetY = 0;
-    m_walkCount = 0;
+    m_lastWalkAnim = 1;
 
     m_informationFont = g_fonts.getFont("tibia-12px-rounded");
 }
@@ -126,12 +126,13 @@ void Creature::draw(int x, int y)
                 m_walkOffsetX = std::max(m_walkOffsetX - pixelsWalked, 0);
 
             int walkOffset = std::max(std::abs(m_walkOffsetX), std::abs(m_walkOffsetY));
-            if(walkOffset % 8 == 0) {
-                if(m_animation+1 == attributes.animcount)
-                    m_animation = 1;
+            if(walkOffset % (int)std::ceil(32 / (float)attributes.animcount) == 0) {
+                if(m_lastWalkAnim+1 == attributes.animcount)
+                    m_lastWalkAnim = 1;
                 else
-                    m_animation++;
+                    m_lastWalkAnim++;
             }
+            m_animation = m_lastWalkAnim;
 
             if(((m_walkOffsetX == 0 && m_walkOffsetY == 0) && m_walkOffsetX != m_walkOffsetY) ||
                ((m_walkOffsetX == 0 || m_walkOffsetY == 0) && m_walkOffsetX == m_walkOffsetY)) {
@@ -251,8 +252,6 @@ void Creature::walk(const Position& position)
     m_walkTimePerPixel = walkTime / 32.0;
 
     m_lastTicks = g_platform.getTicks();
-    m_walkCount++;
-    m_animation = (m_walkCount % 2) + 1;
 }
 
 void Creature::setHealthPercent(uint8 healthPercent)

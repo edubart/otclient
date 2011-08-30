@@ -92,7 +92,7 @@ private:
     Color m_informationColor;
 
     int m_lastTicks;
-    int m_walkCount;
+    int m_lastWalkAnim;
     bool m_walking;
     float m_walkTimePerPixel;
     Position m_walkingFromPosition;
