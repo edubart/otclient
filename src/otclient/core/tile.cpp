@@ -28,9 +28,10 @@
 #include "localplayer.h"
 #include <framework/graphics/fontmanager.h>
 
-Tile::Tile()
+Tile::Tile(const Position& position)
 {
     m_drawNextOffset = 0;
+    m_position = position;
 }
 
 void Tile::draw(int x, int y, int step)
@@ -67,10 +68,13 @@ void Tile::draw(int x, int y, int step)
             thing->draw(x - m_drawNextOffset, y - m_drawNextOffset);
             m_drawNextOffset += thingAttributes.drawNextOffset;
         }
-    }
-    else if(step == 1) {
 
         for(auto it = m_creatures.rbegin(), end = m_creatures.rend(); it != end; ++it) {
+            const ThingPtr& thing = *it;
+            thing->draw(x - m_drawNextOffset, y - m_drawNextOffset);
+        }
+
+        for(auto it = m_effects.rbegin(), end = m_effects.rend(); it != end; ++it) {
             const ThingPtr& thing = *it;
             thing->draw(x - m_drawNextOffset, y - m_drawNextOffset);
         }
@@ -83,11 +87,8 @@ void Tile::draw(int x, int y, int step)
                 thing->draw(x, y);
             }
         }
-
-        for(auto it = m_effects.rbegin(), end = m_effects.rend(); it != end; ++it) {
-            const ThingPtr& thing = *it;
-            thing->draw(x - m_drawNextOffset, y - m_drawNextOffset);
-        }
+    }
+    else if(step == 1) {
     }
 }
 
@@ -239,4 +240,11 @@ int Tile::getStackSize(int stop)
 
     ret += m_itemsBottom.size();
     return ret;
+}
+
+bool Tile::isOpaque()
+{
+    if(m_ground && !m_ground->getAttributes().changesFloor)
+        return true;
+    return false;
 }

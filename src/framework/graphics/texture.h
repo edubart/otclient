@@ -37,7 +37,7 @@ public:
     virtual void enableBilinearFilter();
 
     /// Get OpenGL texture id
-    virtual uint getId() const { return m_textureId; }
+    uint getId() const { return m_textureId; }
 
     /// Copy pixels from OpenGL texture
     std::vector<uint8> getPixels();

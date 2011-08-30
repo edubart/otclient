@@ -29,7 +29,7 @@
 class Tile : public LuaObject
 {
 public:
-    Tile();
+    Tile(const Position& position);
 
     void draw(int x, int y, int step);
 
@@ -47,12 +47,17 @@ public:
     const ThingList& getCreatures() { return m_creatures; }
     int getDrawNextOffset() { return m_drawNextOffset; }
 
+    const Position& getPosition() { return m_position; }
+
+    bool isOpaque();
+
 private:
     ThingPtr m_ground;
     ThingList m_itemsBottom;
     ThingList m_creatures;
     ThingList m_itemsTop;
     ThingList m_effects;
+    Position m_position;
 
     int m_drawNextOffset;
 };

@@ -22,7 +22,7 @@ end
 
 
 local function destroyMainInterface()
-  if gameUi then
+  if Game.gameUi then
     Game.gameUi:destroy()
     Game.gameUi = nil
   end

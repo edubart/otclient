@@ -115,15 +115,15 @@ void DatManager::parseThingAttributesOpt(std::stringstream& fin, ThingAttributes
             thingAttributes.speed = Fw::getU16(fin);
             thingAttributes.group = Otc::ThingGroundGroup;
             break;
-        case 0x01: // All OnTop
+        case 0x01: // Must be drawn behind creatures foot, e.g.: ground, carpets, borders...
             thingAttributes.alwaysOnTop = true;
             thingAttributes.alwaysOnTopOrder = 1;
             break;
-        case 0x02: // Can walk trough (open doors, arces, bug pen fence)
+        case 0x02: // Must be drawn over tile items, e.g.: trees, walls, stairs, rocks, statues...
             thingAttributes.alwaysOnTop = true;
             thingAttributes.alwaysOnTopOrder = 2;
             break;
-        case 0x03: // Can walk trough (arces)
+        case 0x03: // Can walk trough and must be drawn over creatures, e.g: open doors, arces, bug pen fence
             thingAttributes.alwaysOnTop = true;
             thingAttributes.alwaysOnTopOrder = 3;
             break;
@@ -133,7 +133,7 @@ void DatManager::parseThingAttributesOpt(std::stringstream& fin, ThingAttributes
         case 0x05: // Stackable
             thingAttributes.stackable = true;
             break;
-        case 0x06: // Unknown
+        case 0x06: // Unknown, some corpses, stairs, even ground ????
             break;
         case 0x07: // Useable
             thingAttributes.useable = true;
@@ -167,7 +167,7 @@ void DatManager::parseThingAttributesOpt(std::stringstream& fin, ThingAttributes
         case 0x0F: // Blocks pathfind algorithms (monsters)
             thingAttributes.blockPathFind = true;
             break;
-        case 0x10: // Blocks monster movement (flowers, parcels etc)
+        case 0x10: // Pickupable
             thingAttributes.pickupable = true;
             break;
         case 0x11: // Hangable objects (wallpaper etc)
@@ -186,9 +186,10 @@ void DatManager::parseThingAttributesOpt(std::stringstream& fin, ThingAttributes
             thingAttributes.lightLevel = Fw::getU16(fin);
             thingAttributes.lightColor = Fw::getU16(fin);
             break;
-        case 0x16:
+        case 0x16: // Unknown, just a few monuments
             break;
-        case 0x17: // Changes floor
+        case 0x17: // Changes floor, e.g: holes
+            thingAttributes.changesFloor = true;
             break;
         case 0x18: // Thing must be drawed with offset
             thingAttributes.hasHeight = true;
@@ -200,7 +201,7 @@ void DatManager::parseThingAttributesOpt(std::stringstream& fin, ThingAttributes
             thingAttributes.drawNextOffset = Fw::getU8(fin);
             Fw::getU8(fin);
             break;
-        case 0x1A:
+        case 0x1A: // Unknown, some corpses
             //thingAttributes.hasHeight = true;
             break;
         case 0x1B:
@@ -213,12 +214,12 @@ void DatManager::parseThingAttributesOpt(std::stringstream& fin, ThingAttributes
             if(Fw::getU16(fin) == 1112)
                 thingAttributes.readable = true;
             break;
-        case 0x1E:
+        case 0x1E: // Unknown, only grounds
             break;
-        case 0x1F:
+        case 0x1F: // Unknown, borders that cant walk into?
             thingAttributes.lookThrough = true;
             break;
-        case 0x20:
+        case 0x20: // Unknown
             break;
         default:
             throw std::runtime_error(Fw::mkstr("unknown .dat byte code: 0x", std::hex, (int)opt));

@@ -37,62 +37,23 @@ void Map::draw(const Rect& rect)
     g_graphics.bindColor(Fw::white);
     m_framebuffer->bind();
 
-    LocalPlayerPtr player = g_game.getLocalPlayer();
-    int walkOffsetX = player->getWalkOffsetX();
-    int walkOffsetY = player->getWalkOffsetY();
+    LocalPlayerPtr localPlayer = g_game.getLocalPlayer();
+    int walkOffsetX = localPlayer->getWalkOffsetX();
+    int walkOffsetY = localPlayer->getWalkOffsetY();
 
-    // player is above 7
+    for(int z = NUM_Z_TILES - 1; z >= 0; --z) {
+        if(m_visibleTiles.size() == 0)
+            continue;
 
-    int drawFloorStop = 0;
-    if(m_centralPosition.z <= 7) {
-
-        // player pos it 8-6. check if we can draw upper floors.
-
-
-        // if there is a window on north, east, south or west
-        //Position direction[4] = {Position(0, -1, 0), Position(1, 0, 0), Position(0, 1, 0), Position(-1, 0, 0)};
-        for(int d = 0; d < 4; ++d) {
-            /*if(const TilePtr& tile = m_tiles[playerPos+direction[d]]) {
-                const ThingAttributes& thingAttributes = thing->getAttributes();
-                if(thingAttributes.lookThrough) {
-                    drawFloorStop = playerPos.z - 1;
-                    break;
-                }
-            }*/
-        }
-
-        // if we have something covering us, dont show floors above.
-        for(int jz = 6; jz >= 0; --jz) {
-            Position coverPos = Position(m_centralPosition.x+(7-jz)-1, m_centralPosition.y+(7-jz)-1, jz);
-            if(const TilePtr& tile = m_tiles[coverPos]) {
-                if(tile->getStackSize(3) > 0 && jz < m_centralPosition.z) {
-                    drawFloorStop = jz;
-                    break;
-                }
-            }
-        }
-
-        for(int iz = 7; iz > 0; --iz) {
-            if(iz == drawFloorStop)
-                break;
-
-            // +1 in draws cause 64x64 items may affect view.
-
-            for(int step = 0; step < 2; ++step) {
-                for(int ix = -8+(m_centralPosition.z-iz); ix < + 8+7; ++ix) {
-                    for(int iy = -6+(m_centralPosition.z-iz); iy < + 6+7; ++iy) {
-                        Position itemPos = Position(m_centralPosition.x + ix, m_centralPosition.y + iy, iz);
-                        if(const TilePtr& tile = m_tiles[itemPos])
-                            tile->draw((ix + 7 - (m_centralPosition.z-iz))*32 - walkOffsetX, (iy + 5 - (m_centralPosition.z-iz))*32 - walkOffsetY, step);
-                    }
-                }
+        int zdif = m_centralPosition.z - z;
+        for(int step = 0; step < 2; ++step) {
+            for(const TilePtr& tile : m_visibleTiles[z]) {
+                int x = (7 + (tile->getPosition().x - m_centralPosition.x) - zdif) * NUM_TILE_PIXELS;
+                int y = (5 + (tile->getPosition().y - m_centralPosition.y) - zdif) * NUM_TILE_PIXELS;
+                tile->draw(x - walkOffsetX, y - walkOffsetY, step);
             }
         }
     }
-
-    // debug draws
-    g_graphics.bindColor(Fw::red);
-    g_graphics.drawBoundingRect(Rect(7*32, 5*32, 32, 32));
 
     m_framebuffer->unbind();
 
@@ -100,37 +61,115 @@ void Map::draw(const Rect& rect)
     m_framebuffer->draw(rect);
 
     // calculate stretch factor
-    float horizontalStretchFactor = (rect.width() - rect.x()) / (float)(15*32);
-    float verticalStretchFactor = (rect.height() - rect.y()) / (float)(11*32);
+    float horizontalStretchFactor = rect.width() / (float)(NUM_VISIBLE_X_TILES * NUM_TILE_PIXELS);
+    float verticalStretchFactor = rect.height() / (float)(NUM_VISIBLE_Y_TILES * NUM_TILE_PIXELS);
 
     // draw player names and health bars
-    for(int ix = -7; ix <= 7; ++ix) {
-        for(int iy = -5; iy <= 5; ++iy) {
-            Position itemPos = Position(m_centralPosition.x + ix, m_centralPosition.y + iy, m_centralPosition.z);
-            if(const TilePtr& tile = m_tiles[itemPos]) {
+    for(int x = 0; x < NUM_VISIBLE_Y_TILES; ++x) {
+        for(int y = 0; y <= NUM_VISIBLE_X_TILES; ++y) {
+            Position tilePos = Position(m_centralPosition.x + (x - 7), m_centralPosition.y + (y - 5), m_centralPosition.z);
+            if(const TilePtr& tile = m_tiles[tilePos]) {
                 auto& creatures = tile->getCreatures();
+
+                if(creatures.size() == 0)
+                    continue;
+
                 for(auto it = creatures.rbegin(), end = creatures.rend(); it != end; ++it) {
-                    const ThingPtr& thing = *it;
-                    const CreaturePtr& creature = thing->asCreature();
+                    CreaturePtr creature = (*it)->asCreature();
 
-                    int x = (ix + 7)*32 + 10 - tile->getDrawNextOffset();
-                    int y = (iy + 5)*32 - 10 - tile->getDrawNextOffset();
+                    int x = (7 + (tilePos.x - m_centralPosition.x))*NUM_TILE_PIXELS + 10 - tile->getDrawNextOffset();
+                    int y = (5 + (tilePos.y - m_centralPosition.y))*NUM_TILE_PIXELS - 10 - tile->getDrawNextOffset();
 
-                    if(creature != player) {
+                    if(creature != localPlayer) {
                         x += creature->getWalkOffsetX() - walkOffsetX;
                         y += creature->getWalkOffsetY() - walkOffsetY;
                     }
 
-
-
-                    // TODO: create isCovered function.
-                    bool useGray = (drawFloorStop != m_centralPosition.z-1);
-
-                    creature->drawInformation(x*horizontalStretchFactor, y*verticalStretchFactor, useGray);
+                    creature->drawInformation(rect.x() + x*horizontalStretchFactor, rect.y() + y*verticalStretchFactor, isCovered(tilePos, m_zstart));
                 }
             }
         }
     }
+}
+
+void Map::update()
+{
+    m_zstart = getMaxVisibleFloor();
+    for(int z = 0; z < NUM_Z_TILES; ++z) {
+        auto& floorTiles = m_visibleTiles[z];
+        floorTiles.clear();
+
+        if(z < m_zstart)
+            continue;
+
+        for(int y = 0; y < NUM_Y_TILES; ++y) {
+            for(int x = 0; x < NUM_X_TILES; ++x) {
+                Position tilePos(m_centralPosition.x + (x - 8), m_centralPosition.y + (y - 6), m_centralPosition.z);
+                tilePos.coveredUp(m_centralPosition.z - z);
+                if(const TilePtr& tile = m_tiles[tilePos]) {
+                    // skip tiles that are behind another tile
+                    if(z > m_zstart && isCompletlyCovered(tilePos, m_zstart))
+                        continue;
+
+                    floorTiles.push_back(tile);
+                }
+            }
+        }
+    }
+}
+
+int Map::getMaxVisibleFloor()
+{
+    Position tilePos = m_centralPosition;
+    tilePos.up();
+    TilePtr tile = m_tiles[tilePos];
+    if(tile)
+        return m_centralPosition.z;
+
+    tilePos = Position(m_centralPosition);
+    while(tilePos.z >= 0) {
+        tilePos.coveredUp();
+        tile = m_tiles[tilePos];
+        if(tile)
+            return tilePos.z + 1;
+    }
+
+    return 0;
+}
+
+bool Map::isCovered(const Position& pos, int maxFloor)
+{
+    Position tilePos = pos;
+    tilePos.coveredUp();
+    while(tilePos.z >= maxFloor) {
+        TilePtr tile = m_tiles[tilePos];
+        if(tile)
+            return true;
+        tilePos.coveredUp();
+    }
+    return false;
+}
+
+bool Map::isCompletlyCovered(const Position& pos, int maxFloor)
+{
+    Position tilePos = pos;
+    tilePos.coveredUp();
+    while(tilePos.z >= maxFloor) {
+        bool covered = true;
+        for(int x=0;x<2;++x) {
+            for(int y=0;y<2;++y) {
+                TilePtr tile = m_tiles[tilePos + Position(-x, -y, 0)];
+                if(!tile || !tile->isOpaque()) {
+                    covered = false;
+                    break;
+                }
+            }
+        }
+        if(covered)
+            return true;
+        tilePos.coveredUp();
+    }
+    return false;
 }
 
 void Map::addThing(ThingPtr thing, int stackpos)
@@ -140,7 +179,8 @@ void Map::addThing(ThingPtr thing, int stackpos)
 
     TilePtr& tile = m_tiles[thing->getPosition()];
     if(!tile) {
-        tile = TilePtr(new Tile());
+        tile = TilePtr(new Tile(thing->getPosition()));
+        update();
     }
 
     tile->addThing(thing, stackpos);
@@ -195,4 +235,10 @@ CreaturePtr Map::getCreatureById(uint32 id)
 void Map::removeCreatureById(uint32 id)
 {
     m_creatures.erase(id);
+}
+
+void Map::setCentralPosition(const Position& centralPosition)
+{
+    m_centralPosition = centralPosition;
+    update();
 }

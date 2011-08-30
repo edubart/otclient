@@ -28,8 +28,22 @@
 
 class Map
 {
+    enum {
+        NUM_X_TILES = 19,
+        NUM_Y_TILES = 15,
+        NUM_Z_TILES = 15,
+        NUM_VISIBLE_X_TILES = 15,
+        NUM_VISIBLE_Y_TILES = 11,
+        NUM_TILE_PIXELS = 32
+    };
+
 public:
     void draw(const Rect& rect);
+    void update();
+
+    int getMaxVisibleFloor();
+    bool isCovered(const Position& pos, int maxFloor);
+    bool isCompletlyCovered(const Position& pos, int maxFloor);
 
     void addThing(ThingPtr thing, int stackpos = -1);
     ThingPtr getThing(const Position& pos, int stackpos);
@@ -42,7 +56,7 @@ public:
     void setLight(const Light& light) { m_light = light; }
     Light getLight() { return m_light; }
 
-    void setCentralPosition(const Position& centralPosition) { m_centralPosition = centralPosition; }
+    void setCentralPosition(const Position& centralPosition);
     Position getCentralPosition() { return m_centralPosition; }
 
     CreaturePtr getCreatureById(uint32 id);
@@ -51,6 +65,8 @@ public:
 private:
     std::unordered_map<Position, TilePtr, PositionHasher> m_tiles;
     std::map<uint32, CreaturePtr> m_creatures;
+    std::array<std::vector<TilePtr>, NUM_Z_TILES> m_visibleTiles;
+    int m_zstart;
 
     Light m_light;
     Position m_centralPosition;

@@ -42,4 +42,8 @@ typedef int8_t int8;
 typedef std::function<void()> SimpleCallback;
 typedef std::function<bool()> BooleanCallback;
 
+#ifndef nullptr
+#define nullptr NULL
+#endif
+
 #endif

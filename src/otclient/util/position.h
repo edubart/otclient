@@ -66,6 +66,16 @@ public:
     bool operator==(const Position& other) const { return other.x == x && other.y == y && other.z == z; }
     bool operator!=(const Position& other) const { return other.x!=x || other.y!=y || other.z!=z; }
 
+    bool isInRange(const Position& pos, int xdif, int ydif, int zdif = 1) {
+        return std::abs(x-pos.x) <= xdif && std::abs(y-pos.y) <= ydif && std::abs(pos.z-z) <= zdif;
+    }
+
+    void up(int n = 1) { z-=n; }
+    void down(int n = 1) { z+=n; }
+
+    void coveredUp(int n = 1) { x+=n; y+=n; z-=n; }
+    void coveredDown(int n = 1) { x-=n; y-=n; z+=n; }
+
     int x;
     int y;
     int z;
@@ -77,15 +87,13 @@ struct PositionHasher : std::unary_function<Position, std::size_t> {
     }
 };
 
-template<class T>
-std::ostream& operator<<(std::ostream& out, const Position& pos)
+inline std::ostream& operator<<(std::ostream& out, const Position& pos)
 {
     out << pos.x << " " << pos.y << " " << pos.z;
     return out;
 }
 
-template<class T>
-std::istream& operator>>(std::istream& in, Position& pos)
+inline std::istream& operator>>(std::istream& in, Position& pos)
 {
     in >> pos.x >> pos.y >> pos.z;
     return in;
