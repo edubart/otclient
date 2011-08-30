@@ -34,7 +34,7 @@ void ProtocolGame::parseMessage(InputMessage& msg)
 {
     while(!msg.eof()) {
         uint8 opt = msg.getU8();
-        //dump << "protocol id:" << std::hex << (int)opt;
+        dump << "protocol id:" << std::hex << (int)opt;
 
         switch(opt) {
             case 0x0A:
@@ -763,7 +763,7 @@ void ProtocolGame::parseTextMessage(InputMessage& msg)
 void ProtocolGame::parseCancelWalk(InputMessage& msg)
 {
     Otc::Direction direction = (Otc::Direction)msg.getU8();
-    g_game.getLocalPlayer()->setDirection(direction);
+    m_localPlayer->cancelWalk(direction);
 }
 
 void ProtocolGame::parseFloorChangeUp(InputMessage& msg)
@@ -1008,6 +1008,7 @@ ThingPtr ProtocolGame::internalGetThing(InputMessage& msg)
         creature->setShield(shield);
         creature->setEmblem(emblem);
         creature->setImpassable(impassable);
+        creature->cancelWalk(direction);
 
         thing = creature;
 

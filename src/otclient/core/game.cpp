@@ -102,7 +102,7 @@ void Game::walk(Otc::Direction direction)
 
     // TODO: check if we can walk.
 
-    //m_localPlayer->setDirection(direction);
+    m_localPlayer->walk(direction);
 
     switch(direction) {
     case Otc::North:

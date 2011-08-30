@@ -22,3 +22,9 @@
 
 #include "localplayer.h"
 
+void LocalPlayer::walk(Otc::Direction direction)
+{
+    //Position newPos = m_position + Position::getPositionFromDirection(direction);
+
+    //asCreature()->walk(newPos);
+}

@@ -23,6 +23,7 @@
 #ifndef POSITION_H
 #define POSITION_H
 
+#include <otclient/const.h>
 #include <framework/util/types.h>
 
 class Position
@@ -30,6 +31,29 @@ class Position
 public:
     Position() : x(-1), y(-1), z(-1) { }
     Position(int x, int y, int z) : x(x), y(y), z(z) { }
+
+    static Position getPositionFromDirection(Otc::Direction direction) {
+        switch(direction) {
+        case Otc::North:
+            return Position( 0, -1, 0);
+        case Otc::East:
+            return Position( 1,  0, 0);
+        case Otc::South:
+            return Position( 0,  1, 0);
+        case Otc::West:
+            return Position(-1,  0, 0);
+        case Otc::NorthEast:
+            return Position( 1, -1, 0);
+        case Otc::SouthEast:
+            return Position( 1,  1, 0);
+        case Otc::SouthWest:
+            return Position(-1,  1, 0);
+        case Otc::NorthWest:
+            return Position(-1, -1, 0);
+        default:
+            return Position();
+        }
+    }
 
     bool isValid() const { return x >= 0 && y >= 0 && z >= 0 && x < 65536 && y < 65536 && z < 15; }
 

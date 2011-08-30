@@ -71,6 +71,7 @@ public:
     void onHealthPercentChange(int);
 
     void walk(const Position& position);
+    void cancelWalk(Otc::Direction direction);
     int getWalkOffsetX() { return m_walkOffsetX; }
     int getWalkOffsetY() { return m_walkOffsetY; }
 
