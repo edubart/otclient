@@ -31,8 +31,13 @@ void UIMap::setup()
 
 void UIMap::render()
 {
-    if(g_game.isOnline())
-        g_map.draw(m_rect);
+    if(g_game.isOnline()) {
+        Rect mapRect = m_rect;
+        Size mapSize(15*32, 11*32);
+        mapSize.scale(mapRect.size(), Fw::KeepAspectRatio);
+        mapRect.setSize(mapSize);
+        g_map.draw(mapRect);
+    }
 
     UIWidget::render();
 }
