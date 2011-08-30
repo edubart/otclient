@@ -32,6 +32,7 @@ UILineEdit::UILineEdit()
     m_cursorPos = 0;
     m_startRenderPos = 0;
     m_textHorizontalMargin = 3;
+    m_textHidden = false;
     blinkCursor();
 }
 
@@ -69,7 +70,8 @@ void UILineEdit::render()
 
 void UILineEdit::update()
 {
-    int textLength = m_text.length();
+    std::string text = getDisplayedText();
+    int textLength = text.length();
 
     // prevent glitches
     if(m_rect.isEmpty())
@@ -77,7 +79,7 @@ void UILineEdit::update()
 
     // map glyphs positions
     Size textBoxSize;
-    const std::vector<Point>& glyphsPositions = m_font->calculateGlyphsPositions(m_text, m_align, &textBoxSize);
+    const std::vector<Point>& glyphsPositions = m_font->calculateGlyphsPositions(text, m_align, &textBoxSize);
     const Rect *glyphsTextureCoords = m_font->getGlyphsTextureCoords();
     const Size *glyphsSize = m_font->getGlyphsSize();
     int glyph;
@@ -101,7 +103,7 @@ void UILineEdit::update()
         {
             Rect virtualRect(m_startInternalPos, m_rect.size() - Size(2*m_textHorizontalMargin, 0) ); // previous rendered virtual rect
             int pos = m_cursorPos - 1; // element before cursor
-            glyph = (uchar)m_text[pos]; // glyph of the element before cursor
+            glyph = (uchar)text[pos]; // glyph of the element before cursor
             Rect glyphRect(glyphsPositions[pos], glyphsSize[glyph]);
 
             // if the cursor is not on the previous rendered virtual rect we need to update it
@@ -113,7 +115,7 @@ void UILineEdit::update()
 
                 // find that glyph
                 for(pos = 0; pos < textLength; ++pos) {
-                    glyph = (uchar)m_text[pos];
+                    glyph = (uchar)text[pos];
                     glyphRect = Rect(glyphsPositions[pos], glyphsSize[glyph]);
                     glyphRect.setTop(std::max(glyphRect.top() - m_font->getTopMargin() - m_font->getGlyphSpacing().height(), 0));
                     glyphRect.setLeft(std::max(glyphRect.left() - m_font->getGlyphSpacing().width(), 0));
@@ -153,7 +155,7 @@ void UILineEdit::update()
     }
 
     for(int i = 0; i < textLength; ++i) {
-        glyph = (uchar)m_text[i];
+        glyph = (uchar)text[i];
         m_glyphsCoords[i].clear();
 
         // skip invalid glyphs
@@ -237,6 +239,12 @@ void UILineEdit::setText(const std::string& text)
         blinkCursor();
         update();
     }
+}
+
+void UILineEdit::setTextHidden(bool hidden)
+{
+    m_textHidden = true;
+    update();
 }
 
 void UILineEdit::setAlign(Fw::AlignmentFlag align)
@@ -355,6 +363,14 @@ int UILineEdit::getTextPos(Point pos)
     return candidatePos;
 }
 
+std::string UILineEdit::getDisplayedText()
+{
+    if(m_textHidden)
+        return std::string(m_text.length(), '*');
+    else
+        return m_text;
+}
+
 void UILineEdit::onStyleApply(const OTMLNodePtr& styleNode)
 {
     UIWidget::onStyleApply(styleNode);
@@ -363,6 +379,8 @@ void UILineEdit::onStyleApply(const OTMLNodePtr& styleNode)
         if(node->tag() == "text") {
             setText(node->value());
             setCursorPos(m_text.length());
+        } else if(node->tag() == "text hidden") {
+            setTextHidden(node->value<bool>());
         }
     }
 }

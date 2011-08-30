@@ -6,3 +6,5 @@ LineEdit < UILineEdit
     source: /core_ui/images/panel_flat.png
     border: 1
 
+PasswordLineEdit < LineEdit
+  text hidden: true

@@ -27,7 +27,7 @@ MainWindow
     anchors.top: prev.bottom
     margin.top: 8
 
-  LineEdit
+  PasswordLineEdit
     id: accountPasswordLineEdit
     text: 123456
     anchors.left: parent.left

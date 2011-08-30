@@ -35,6 +35,7 @@ public:
     void update();
 
     void setText(const std::string& text);
+    void setTextHidden(bool hidden);
     void setAlign(Fw::AlignmentFlag align);
     void setCursorPos(int pos);
     void setCursorEnabled(bool enable = true);
@@ -47,6 +48,7 @@ public:
 
     void setFont(const FontPtr& font);
     std::string getText() const { return m_text; }
+    std::string getDisplayedText();
     int getTextPos(Point pos);
 
 protected:
@@ -67,6 +69,7 @@ private:
     int m_startRenderPos;
     int m_cursorTicks;
     int m_textHorizontalMargin;
+    bool m_textHidden;
 
     std::vector<Rect> m_glyphsCoords;
     std::vector<Rect> m_glyphsTexCoords;
