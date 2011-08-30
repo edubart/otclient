@@ -65,8 +65,8 @@ void Map::draw(const Rect& rect)
     float verticalStretchFactor = rect.height() / (float)(NUM_VISIBLE_Y_TILES * NUM_TILE_PIXELS);
 
     // draw player names and health bars
-    for(int x = 0; x < NUM_VISIBLE_Y_TILES; ++x) {
-        for(int y = 0; y <= NUM_VISIBLE_X_TILES; ++y) {
+    for(int x = 0; x < NUM_VISIBLE_X_TILES; ++x) {
+        for(int y = 0; y < NUM_VISIBLE_Y_TILES; ++y) {
             Position tilePos = Position(m_centralPosition.x + (x - 7), m_centralPosition.y + (y - 5), m_centralPosition.z);
             if(const TilePtr& tile = m_tiles[tilePos]) {
                 auto& creatures = tile->getCreatures();
