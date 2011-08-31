@@ -63,9 +63,18 @@ void Tile::draw(int x, int y)
     }
 
     // creatures
-    for(const ThingPtr& thing : m_things) {
-        if(thing->asCreature())
-            thing->draw(x - m_drawElevation, y - m_drawElevation);
+    for(int xi = -1; xi <= 0; ++xi) {
+        for(int yi = -1; yi <= 0; ++yi) {
+            for(CreaturePtr creature : g_map.getTile(m_position + Position(xi, yi, 0))->getCreatures()) {
+                // own creatures that are walking east/south
+                if(xi == 0 && yi == 0 && creature->getWalkOffsetX() <= 0 && creature->getWalkOffsetY() <= 0) {
+                    creature->draw(x - m_drawElevation, y - m_drawElevation);
+                // creatures from other tiles that are walking to north/west
+                } else if(xi != 0 && yi != 0 && (creature->getWalkOffsetX() > 0 || creature->getWalkOffsetY() > 0)) {
+                    creature->draw(x - m_drawElevation + xi*32, y - m_drawElevation + yi*32);
+                }
+            }
+        }
     }
 
     // effects
