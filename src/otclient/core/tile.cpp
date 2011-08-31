@@ -26,221 +26,146 @@
 #include "map.h"
 #include "game.h"
 #include "localplayer.h"
+#include "effect.h"
 #include <framework/graphics/fontmanager.h>
 
 Tile::Tile(const Position& position)
 {
-    m_drawNextOffset = 0;
+    m_drawElevation = 0;
     m_position = position;
 }
 
 void Tile::draw(int x, int y)
 {
-    m_drawNextOffset = 0;
+    m_drawElevation = 0;
 
-    if(m_ground)
-        m_ground->draw(x, y);
-
-    for(auto it = m_itemsTop.rbegin(), end = m_itemsTop.rend(); it != end; ++it) {
-        const ThingPtr& thing = *it;
-        const ThingType& thingType = thing->getType();
-
-        if(thingType.isGroundClip) {
-            thing->draw(x - m_drawNextOffset, y - m_drawNextOffset);
-            m_drawNextOffset += thingType.elevation;
-        }
+    // first bottom items
+    for(const ThingPtr& thing : m_things) {
+        const ThingType& type = thing->getType();
+        if(thing->asCreature() || type.isOnTop)
+            continue;
+        thing->draw(x - m_drawElevation, y - m_drawElevation);
+        m_drawElevation += type.elevation;
     }
 
-    for(auto it = m_itemsTop.rbegin(), end = m_itemsTop.rend(); it != end; ++it) {
-        const ThingPtr& thing = *it;
-        const ThingType& thingType = thing->getType();
-
-        if(thingType.isOnBottom) {
-            thing->draw(x - m_drawNextOffset, y - m_drawNextOffset);
-            m_drawNextOffset += thingType.elevation;
-        }
+    // creatures
+    for(const ThingPtr& thing : m_things) {
+        if(thing->asCreature())
+            thing->draw(x - m_drawElevation, y - m_drawElevation);
     }
 
-    for(auto it = m_itemsBottom.rbegin(), end = m_itemsBottom.rend(); it != end; ++it) {
-        const ThingPtr& thing = *it;
-        const ThingType& thingType = thing->getType();
-        thing->draw(x - m_drawNextOffset, y - m_drawNextOffset);
-        m_drawNextOffset += thingType.elevation;
-    }
+    // effects
+    for(const EffectPtr& effect : m_effects)
+        effect->draw(x - m_drawElevation, y - m_drawElevation);
 
-    for(auto it = m_creatures.rbegin(), end = m_creatures.rend(); it != end; ++it) {
-        const ThingPtr& thing = *it;
-        thing->draw(x - m_drawNextOffset, y - m_drawNextOffset);
-    }
-
-    for(auto it = m_effects.rbegin(), end = m_effects.rend(); it != end; ++it) {
-        const ThingPtr& thing = *it;
-        thing->draw(x - m_drawNextOffset, y - m_drawNextOffset);
-    }
-
-    for(auto it = m_itemsTop.rbegin(), end = m_itemsTop.rend(); it != end; ++it) {
-        const ThingPtr& thing = *it;
-        const ThingType& thingType = thing->getType();
-
-        if(thingType.isOnTop) {
-            thing->draw(x, y);
-        }
-    }
-}
-
-void Tile::addThing(ThingPtr thing, int stackpos)
-{
-    // TODO: rework this. that -1 sucks
-    if(!thing)
-        return;
-
-    const ThingType& thingType = thing->getType();
-
-    if(thing->asItem()) {
-        if(thingType.isGround)
-            m_ground = thing;
-        else {
-            if(thingType.isGroundClip || thingType.isOnBottom || thingType.isOnTop)
-                m_itemsTop.push_back(thing);
-            else {
-                if(stackpos == -1)
-                    m_itemsBottom.push_back(thing);
-                else {
-                    m_itemsBottom.insert(m_itemsBottom.begin()+(stackpos-getStackSize(2)), thing);
-                }
-            }
-        }
-    }
-    else if(thing->asCreature()) {
-        m_creatures.push_back(thing);
-    }
-    else if(thing->asEffect()) {
-        m_effects.push_back(thing);
-    }
-}
-
-ThingPtr Tile::getThing(unsigned int stackpos)
-{
-    if(stackpos == 0)
-        return m_ground;
-    --stackpos;
-
-    if(stackpos < m_itemsTop.size())
-        return m_itemsTop[stackpos];
-    stackpos -= m_itemsTop.size();
-
-    if(stackpos < m_creatures.size())
-        return m_creatures[stackpos];
-    stackpos -= m_creatures.size();
-
-    if(stackpos < m_itemsBottom.size())
-        return m_itemsBottom[stackpos];
-
-    return ThingPtr();
-}
-
-void Tile::removeThing(unsigned int stackpos)
-{
-    if(stackpos == 0) {
-        m_ground.reset();
-        return;
-    }
-    --stackpos;
-
-    if(stackpos < m_itemsTop.size()) {
-        m_itemsTop.erase(m_itemsTop.begin() + stackpos);
-        return;
-    }
-    stackpos -= m_itemsTop.size();
-
-    if(stackpos < m_creatures.size()) {
-        m_creatures.erase(m_creatures.begin() + stackpos);
-        return;
-    }
-    stackpos -= m_creatures.size();
-
-    if(stackpos < m_itemsBottom.size()) {
-        m_itemsBottom.erase(m_itemsBottom.begin() + stackpos);
-        return;
-    }
-
-    logDebug("Invalid stackpos.");
-}
-
-void Tile::removeThingByPtr(ThingPtr thing)
-{
-    // Items
-    if(thing->asItem()) {
-        const ThingType& thingType = thing->getType();
-
-        if(!(thingType.isGroundClip || thingType.isOnBottom || thingType.isOnTop)) {
-            for(auto it = m_itemsBottom.begin(), end = m_itemsBottom.end(); it != end; ++it) {
-                if(*it == thing) {
-                    m_itemsBottom.erase(it);
-                    break;
-                }
-            }
-        }
-        else {
-            for(auto it = m_itemsTop.begin(), end = m_itemsTop.end(); it != end; ++it) {
-                if(*it == thing) {
-                    m_itemsTop.erase(it);
-                    break;
-                }
-            }
-        }
-    }
-
-    // Creatures
-    else if(thing->asCreature()) {
-        for(auto it = m_creatures.begin(), end = m_creatures.end(); it != end; ++it) {
-            if(*it == thing) {
-                m_creatures.erase(it);
-                break;
-            }
-        }
-    }
-
-    // Effects
-    else if(thing->asEffect()) {
-        for(auto it = m_effects.begin(), end = m_effects.end(); it != end; ++it) {
-            if(*it == thing) {
-                m_effects.erase(it);
-                break;
-            }
-        }
+    // top items
+    for(const ThingPtr& thing : m_things) {
+        const ThingType& type = thing->getType();
+        if(type.isOnTop)
+            thing->draw(x - m_drawElevation, y - m_drawElevation);
     }
 }
 
 void Tile::clean()
 {
-    m_itemsTop.clear();
-    m_creatures.clear();
-    m_itemsBottom.clear();
+    m_things.clear();
     m_effects.clear();
 }
 
-int Tile::getStackSize(int stop)
+void Tile::addEffect(const EffectPtr& effect)
 {
-    int ret = m_ground ? 1 : 0;
-    if(stop == 0)
-        return ret;
-
-    ret += m_itemsTop.size();
-    if(stop == 1)
-        return ret;
-
-    ret += m_creatures.size();
-    if(stop == 2)
-        return ret;
-
-    ret += m_itemsBottom.size();
-    return ret;
+    m_effects.push_back(effect);
+    effect->setPosition(m_position);
 }
 
-bool Tile::isOpaque()
+void Tile::removeEffect(const EffectPtr& effect)
 {
-    if(m_ground && !m_ground->getType().isTranslucent)
-        return true;
+    auto it = std::find(m_effects.begin(), m_effects.end(), effect);
+    if(it != m_effects.end()) {
+        m_effects.erase(it);
+    }
+}
+
+ThingPtr Tile::addThing(const ThingPtr& thing, int stackPos)
+{
+    if(!thing)
+        return nullptr;
+
+    if(stackPos < 0) {
+        stackPos = 0;
+        int priority = thing->getStackPriority();
+        for(stackPos = 0; stackPos < (int)m_things.size(); ++stackPos) {
+            int otherPriority = m_things[stackPos]->getStackPriority();
+            if(otherPriority > priority || (otherPriority == priority && otherPriority == 5))
+                break;
+        }
+    } else if(stackPos > (int)m_things.size())
+        stackPos = m_things.size();
+
+    ThingPtr oldObject;
+    if(stackPos < (int)m_things.size())
+        oldObject = m_things[stackPos];
+    m_things.insert(m_things.begin() + stackPos, thing);
+    thing->setPosition(m_position);
+    return oldObject;
+}
+
+ThingPtr Tile::getThing(int stackPos)
+{
+    if(stackPos >= 0 && stackPos < (int)m_things.size())
+        return m_things[stackPos];
+    return nullptr;
+}
+
+ThingPtr Tile::removeThing(int stackPos)
+{
+    ThingPtr oldObject;
+    if(stackPos >= 0 && stackPos < (int)m_things.size()) {
+        oldObject = m_things[stackPos];
+        m_things.erase(m_things.begin() + stackPos);
+    }
+    return oldObject;
+}
+
+ThingPtr Tile::removeThing(const ThingPtr& thing)
+{
+    ThingPtr oldObject;
+    auto it = std::find(m_things.begin(), m_things.end(), thing);
+    if(it != m_things.end()) {
+        oldObject = *it;
+        m_things.erase(it);
+    }
+    return oldObject;
+}
+
+std::vector<CreaturePtr> Tile::getCreatures()
+{
+    std::vector<CreaturePtr> creatures;
+    for(const ThingPtr& thing : m_things) {
+        if(CreaturePtr creature = thing->asCreature())
+            creatures.push_back(creature);
+    }
+    return creatures;
+}
+
+ItemPtr Tile::getGround()
+{
+    ThingPtr firstObject = getThing(0);
+    if(!firstObject)
+        return nullptr;
+    const ThingType& type = firstObject->getType();
+    if(type.isGround)
+        return firstObject->asItem();
+    return nullptr;
+}
+
+bool Tile::isFullyOpaque()
+{
+    ThingPtr firstObject = getThing(0);
+    if(firstObject) {
+        const ThingType& type = firstObject->getType();
+        if(type.isGround && !type.isTranslucent)
+            return true;
+    }
     return false;
 }

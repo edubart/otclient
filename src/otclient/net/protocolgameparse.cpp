@@ -28,6 +28,7 @@
 #include <otclient/core/map.h>
 #include <otclient/core/item.h>
 #include <otclient/core/effect.h>
+#include <otclient/core/tile.h>
 #include <framework/core/eventdispatcher.h>
 
 void ProtocolGame::parseMessage(InputMessage& msg)
@@ -364,18 +365,16 @@ void ProtocolGame::parseUpdateTile(InputMessage& msg)
 void ProtocolGame::parseTileAddThing(InputMessage& msg)
 {
     Position pos = parsePosition(msg);
-    uint8 stackpos = msg.getU8();
+    uint8 stackPos = msg.getU8();
 
     ThingPtr thing = internalGetThing(msg);
-    thing->setPosition(pos);
-
-    g_map.addThing(thing, stackpos);
+    g_map.addThing(thing, pos, stackPos);
 }
 
 void ProtocolGame::parseTileTransformThing(InputMessage& msg)
 {
     Position pos = parsePosition(msg);
-    uint8 stackpos = msg.getU8();
+    uint8 stackPos = msg.getU8();
 
     uint16 thingId = msg.getU16();
     if(thingId == 0x0061 || thingId == 0x0062 || thingId == 0x0063) {
@@ -383,19 +382,17 @@ void ProtocolGame::parseTileTransformThing(InputMessage& msg)
     }
     else {
         ThingPtr thing = internalGetItem(msg, thingId);
-        thing->setPosition(pos);
-
-        g_map.removeThing(pos, stackpos);
-        g_map.addThing(thing, stackpos);
+        g_map.removeThing(pos, stackPos);
+        g_map.addThing(thing, pos, stackPos);
     }
 }
 
 void ProtocolGame::parseTileRemoveThing(InputMessage& msg)
 {
     Position pos = parsePosition(msg);
-    uint8 stackpos = msg.getU8();
+    uint8 stackPos = msg.getU8();
 
-    g_map.removeThing(pos, stackpos);
+    g_map.removeThing(pos, stackPos);
 }
 
 void ProtocolGame::parseCreatureMove(InputMessage& msg)
@@ -404,12 +401,11 @@ void ProtocolGame::parseCreatureMove(InputMessage& msg)
     uint8 oldStackpos = msg.getU8();
     Position newPos = parsePosition(msg);
 
-    ThingPtr thing = g_map.getThing(oldPos, oldStackpos);
-    if(thing) {
-        CreaturePtr creature = thing->asCreature();
-        if(creature)
-            creature->walk(newPos);
-    }
+    ThingPtr thing = g_map.getTile(oldPos)->getThing(oldStackpos);
+    assert(thing);
+    CreaturePtr creature = thing->asCreature();
+    assert(creature);
+    creature->walk(newPos);
 }
 
 void ProtocolGame::parseOpenContainer(InputMessage& msg)
@@ -512,11 +508,13 @@ void ProtocolGame::parseWorldLight(InputMessage& msg)
 
 void ProtocolGame::parseMagicEffect(InputMessage& msg)
 {
+    Position pos = parsePosition(msg);
+    int effectId = msg.getU8();
     EffectPtr effect = EffectPtr(new Effect());
-    effect->setPosition(parsePosition(msg));
-    effect->setId(msg.getU8());
+    effect->setId(effectId);
 
-    g_map.addThing(effect);
+    TilePtr tile = g_map.getTile(pos);
+    tile->addEffect(effect);
 }
 
 void ProtocolGame::parseAnimatedText(InputMessage& msg)
@@ -895,23 +893,19 @@ void ProtocolGame::setTileDescription(InputMessage& msg, Position position)
 {
     g_map.cleanTile(position);
 
-    int stackpos = 0;
+    int stackPos = 0;
     while(1){
         uint16 inspectTileId = msg.getU16(true);
         if(inspectTileId >= 0xFF00)
             return;
         else {
-            if(stackpos >= 10) {
-                logTraceDebug("Too many things!.");
-                return;
-            }
+            if(stackPos >= 10)
+                logWarning("Too many things!");
 
             ThingPtr thing = internalGetThing(msg);
-            if(thing)
-                thing->setPosition(position);
-            g_map.addThing(thing);
+            g_map.addThing(thing, position);
         }
-        stackpos++;
+        stackPos++;
     }
 }
 

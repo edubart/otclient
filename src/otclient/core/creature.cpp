@@ -24,11 +24,14 @@
 #include "thingstype.h"
 #include "localplayer.h"
 #include "map.h"
+#include "tile.h"
+#include "item.h"
+
 #include <framework/platform/platform.h>
 #include <framework/graphics/graphics.h>
 
 
-Creature::Creature() : Thing(Otc::Creature)
+Creature::Creature() : Thing()
 {
     m_healthPercent = 0;
     m_direction = Otc::South;
@@ -218,9 +221,10 @@ void Creature::walk(const Position& position)
     }
 
     // update map tiles
-    g_map.removeThingByPtr(asThing());
-    m_position = position;
-    g_map.addThing(asThing());
+    TilePtr oldTile = g_map.getTile(m_position);
+    TilePtr newTile = g_map.getTile(position);
+    oldTile->removeThing(asThing());
+    newTile->addThing(asThing(), -1);
 
     if(m_walking) {
         // Calculate xPattern
@@ -237,7 +241,7 @@ void Creature::walk(const Position& position)
         // get walk speed
         int groundSpeed = 0;
 
-        ThingPtr ground = g_map.getThing(m_position, 0);
+        ItemPtr ground = newTile->getGround();
         if(ground)
             groundSpeed = ground->getType().groundSpeed;
 

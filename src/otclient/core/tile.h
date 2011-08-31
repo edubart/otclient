@@ -32,34 +32,26 @@ public:
     Tile(const Position& position);
 
     void draw(int x, int y);
-
-    void addThing(ThingPtr thing, int stackpos);
-    ThingPtr getThing(unsigned int stackpos);
-    void removeThing(unsigned int stackpos);
-    void removeThingByPtr(ThingPtr thing);
-
     void clean();
 
-    bool hasGround() { return (!!m_ground); }
-
-    int getStackSize(int stop);
-
-    const ThingList& getCreatures() { return m_creatures; }
-    int getDrawNextOffset() { return m_drawNextOffset; }
+    void addEffect(const EffectPtr& effect);
+    void removeEffect(const EffectPtr& effect);
+    ThingPtr addThing(const ThingPtr& thing, int stackPos = -1);
+    ThingPtr getThing(int stackPos);
+    ThingPtr removeThing(int stackPos);
+    ThingPtr removeThing(const ThingPtr& thing);
 
     const Position& getPosition() { return m_position; }
-
-    bool isOpaque();
+    int getDrawElevation() { return m_drawElevation; }
+    std::vector<CreaturePtr> getCreatures();
+    ItemPtr getGround();
+    bool isFullyOpaque();
 
 private:
-    ThingPtr m_ground;
-    ThingList m_itemsBottom;
-    ThingList m_creatures;
-    ThingList m_itemsTop;
-    ThingList m_effects;
+    std::vector<EffectPtr> m_effects;
+    std::vector<ThingPtr> m_things;
     Position m_position;
-
-    int m_drawNextOffset;
+    int m_drawElevation;
 };
 
 #endif

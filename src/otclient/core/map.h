@@ -42,18 +42,18 @@ class Map
 
 public:
     void draw(const Rect& rect);
+    void clean();
 
     int getMaxVisibleFloor();
     bool isCovered(const Position& pos, int maxFloor);
     bool isCompletlyCovered(const Position& pos, int maxFloor);
 
-    void addThing(ThingPtr thing, int stackpos = -1);
-    ThingPtr getThing(const Position& pos, int stackpos);
-    void removeThing(const Position& pos, int stackpos);
-    void removeThingByPtr(ThingPtr thing);
-
-    void clean();
+    void addThing(const ThingPtr& thing, const Position& pos, int stackPos = -1);
+    ThingPtr getThing(const Position& pos, int stackPos);
+    void removeThing(const Position& pos, int stackPos);
+    void removeThing(const ThingPtr& thing);
     void cleanTile(const Position& pos);
+    TilePtr getTile(const Position& pos);
 
     void setLight(const Light& light) { m_light = light; }
     Light getLight() { return m_light; }
@@ -61,6 +61,7 @@ public:
     void setCentralPosition(const Position& centralPosition);
     Position getCentralPosition() { return m_centralPosition; }
 
+    void addCreature(const CreaturePtr& creature);
     CreaturePtr getCreatureById(uint32 id);
     void removeCreatureById(uint32 id);
 

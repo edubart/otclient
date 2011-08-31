@@ -64,7 +64,8 @@ struct ThingType
         isLensHelp = false;
         isFullGround = false;
         isIgnoreLook = false;
-        isClothe = false;
+        isCloth = false;
+        isAnimation = false;
         hasLight = false;
         hasMiniMapColor = false;
 
@@ -73,7 +74,8 @@ struct ThingType
         maxTextLength = 0;
         lightLevel = lightColor = 0;
         miniMapColor = 0;
-        lensHelpParam = 0;
+        lensHelp = 0;
+        clothSlot = 0;
     }
 
     uint8 layers;
@@ -113,7 +115,8 @@ struct ThingType
     bool isLensHelp;
     bool isFullGround;
     bool isIgnoreLook;
-    bool isClothe;
+    bool isCloth;
+    bool isAnimation;
     bool hasLight;
     bool hasMiniMapColor;
 
@@ -122,7 +125,8 @@ struct ThingType
     uint16 maxTextLength;
     uint16 lightLevel, lightColor;
     uint16 miniMapColor;
-    uint16 lensHelpParam;
+    uint16 lensHelp;
+    uint16 clothSlot;
 };
 
 typedef std::vector<ThingType> ThingTypeList;

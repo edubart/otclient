@@ -85,7 +85,7 @@ namespace Otc
         DatLensHelp = 29,
         DatFullGround = 30,
         DatIgnoreLook = 31,
-        DatClothe = 32,
+        DatCloth = 32,
         DatAnimation = 33,
         DatLastOpt = 255
     };
@@ -247,13 +247,6 @@ namespace Otc
         ClientGetQuestLine = 241,
         ClientRuleViolationReport = 242,
         ClientGetObjectInfo = 243
-    };
-
-    enum ThingType {
-        Item,
-        Creature,
-        Effect,
-        Shot
     };
 
     enum SpriteMask {

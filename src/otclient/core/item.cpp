@@ -26,7 +26,7 @@
 #include "thing.h"
 #include <framework/platform/platform.h>
 
-Item::Item() : Thing(Otc::Item)
+Item::Item() : Thing()
 {
     m_count = 0;
     m_lastTicks = g_platform.getTicks();

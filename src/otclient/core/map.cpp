@@ -76,18 +76,16 @@ void Map::draw(const Rect& rect)
     // draw player names and health bars
     for(int x = 0; x < MAP_VISIBLE_WIDTH; ++x) {
         for(int y = 0; y < MAP_VISIBLE_HEIGHT; ++y) {
-            Position tilePos = Position(m_centralPosition.x + (x - PLAYER_OFFSET_X - 1), m_centralPosition.y + (y - PLAYER_OFFSET_Y - 1), m_centralPosition.z);
+            Position tilePos = Position(m_centralPosition.x + (x - PLAYER_OFFSET_X + 1), m_centralPosition.y + (y - PLAYER_OFFSET_Y + 1), m_centralPosition.z);
             if(const TilePtr& tile = m_tiles[tilePos]) {
-                auto& creatures = tile->getCreatures();
+                auto creatures = tile->getCreatures();
 
                 if(creatures.size() == 0)
                     continue;
 
-                for(auto it = creatures.rbegin(), end = creatures.rend(); it != end; ++it) {
-                    CreaturePtr creature = (*it)->asCreature();
-
-                    int x = (7 + (tilePos.x - m_centralPosition.x))*NUM_TILE_PIXELS + 10 - tile->getDrawNextOffset();
-                    int y = (5 + (tilePos.y - m_centralPosition.y))*NUM_TILE_PIXELS - 10 - tile->getDrawNextOffset();
+                for(const CreaturePtr& creature : creatures) {
+                    int x = (7 + (tilePos.x - m_centralPosition.x))*NUM_TILE_PIXELS + 10 - tile->getDrawElevation();
+                    int y = (5 + (tilePos.y - m_centralPosition.y))*NUM_TILE_PIXELS - 10 - tile->getDrawElevation();
 
                     if(creature != localPlayer) {
                         x += creature->getWalkOffsetX() - walkOffsetX;
@@ -99,6 +97,11 @@ void Map::draw(const Rect& rect)
             }
         }
     }
+}
+
+void Map::clean()
+{
+    m_tiles.clear();
 }
 
 int Map::getMaxVisibleFloor()
@@ -159,7 +162,7 @@ bool Map::isCompletlyCovered(const Position& pos, int maxFloor)
         for(int x=0;x<2;++x) {
             for(int y=0;y<2;++y) {
                 TilePtr tile = m_tiles[tilePos + Position(-x, -y, 0)];
-                if(!tile || !tile->isOpaque()) {
+                if(!tile || !tile->isFullyOpaque()) {
                     covered = false;
                     break;
                 }
@@ -172,56 +175,57 @@ bool Map::isCompletlyCovered(const Position& pos, int maxFloor)
     return false;
 }
 
-void Map::addThing(ThingPtr thing, int stackpos)
+void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
 {
     if(!thing)
         return;
 
-    TilePtr& tile = m_tiles[thing->getPosition()];
-    if(!tile) {
-        tile = TilePtr(new Tile(thing->getPosition()));
-    }
+    TilePtr tile = getTile(pos);
+    tile->addThing(thing, stackPos);
 
-    tile->addThing(thing, stackpos);
-
-    if(const CreaturePtr& creature = thing->asCreature())
-        m_creatures[thing->getId()] = creature;
+    if(CreaturePtr creature = thing->asCreature())
+        m_creatures[creature ->getId()] = creature;
 }
 
-ThingPtr Map::getThing(const Position& pos, int stackpos)
+ThingPtr Map::getThing(const Position& pos, int stackPos)
 {
-    if(const TilePtr& tile = m_tiles[pos]) {
-        return tile->getThing(stackpos);
-    }
-    return ThingPtr();
+    if(const TilePtr& tile = m_tiles[pos])
+        return tile->getThing(stackPos);
+    return nullptr;
 }
 
-void Map::removeThing(const Position& pos, int stackpos)
+void Map::removeThing(const Position& pos, int stackPos)
 {
-    if(TilePtr& tile = m_tiles[pos]) {
-        tile->removeThing(stackpos);
-    }
+    if(TilePtr& tile = m_tiles[pos])
+        tile->removeThing(stackPos);
 }
 
-void Map::removeThingByPtr(ThingPtr thing)
+void Map::removeThing(const ThingPtr& thing)
 {
     if(!thing)
         return;
 
-    if(TilePtr& tile = m_tiles[thing->getPosition()]) {
-        tile->removeThingByPtr(thing);
-    }
+    if(TilePtr& tile = m_tiles[thing->getPosition()])
+        tile->removeThing(thing);
 }
 
-void Map::clean()
+TilePtr Map::getTile(const Position& pos)
 {
-    m_tiles.clear();
+    TilePtr& tile = m_tiles[pos];
+    if(!tile)
+        tile = TilePtr(new Tile(pos));
+    return tile;
 }
 
 void Map::cleanTile(const Position& pos)
 {
     if(TilePtr& tile = m_tiles[pos])
         tile->clean();
+}
+
+void Map::addCreature(const CreaturePtr& creature)
+{
+    m_creatures[creature->getId()] = creature;
 }
 
 CreaturePtr Map::getCreatureById(uint32 id)

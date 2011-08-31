@@ -174,7 +174,7 @@ void ThingsType::parseThingType(std::stringstream& fin, ThingType& thingType)
                 break;
             case Otc::DatLensHelp: // Used for giving players tips?
                 thingType.isLensHelp = true;
-                thingType.lensHelpParam = Fw::getU16(fin);
+                thingType.lensHelp = Fw::getU16(fin);
                 break;
             case Otc::DatFullGround: // Grounds that has no transparent pixels
                 thingType.isFullGround = true;
@@ -182,9 +182,9 @@ void ThingsType::parseThingType(std::stringstream& fin, ThingType& thingType)
             case Otc::DatIgnoreLook: // Ignore look, then looks at the item on the bottom of it
                 thingType.isIgnoreLook = true;
                 break;
-            case Otc::DatClothe: // Clothes
-                break;
-            case Otc::DatAnimation: // Not used in 8.62
+            case Otc::DatCloth: // Clothes
+                thingType.isCloth = true;
+                thingType.clothSlot = Fw::getU16(fin);
                 break;
             case Otc::DatLastOpt:
                 done = true;
@@ -207,6 +207,8 @@ void ThingsType::parseThingType(std::stringstream& fin, ThingType& thingType)
     thingType.yPattern = Fw::getU8(fin);
     thingType.zPattern = Fw::getU8(fin);
     thingType.animationPhases = Fw::getU8(fin);
+    if(thingType.animationPhases > 1)
+        thingType.isAnimation = true;
 
     int totalSprites = thingType.width
                        * thingType.height

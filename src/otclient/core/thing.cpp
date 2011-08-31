@@ -24,7 +24,7 @@
 #include "spritemanager.h"
 #include <framework/graphics/graphics.h>
 
-Thing::Thing(Otc::ThingType type) : m_id(0), m_type(type)
+Thing::Thing() : m_id(0)
 {
     m_xPattern = 0;
     m_yPattern = 0;
@@ -67,3 +67,20 @@ void Thing::internalDraw(int x, int y, int layers, Otc::SpriteMask mask)
         }
     }
 }
+
+int Thing::getStackPriority()
+{
+    const ThingType& type = getType();
+    if(type.isGround)
+        return 0;
+    else if(type.isGroundClip)
+        return 1;
+    else if(type.isOnBottom)
+        return 2;
+    else if(type.isOnTop)
+        return 3;
+    else if(asCreature())
+        return 4;
+    return 5;
+}
+

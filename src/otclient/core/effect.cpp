@@ -23,10 +23,11 @@
 #include "effect.h"
 #include "thingstype.h"
 #include "map.h"
+#include "tile.h"
 #include <framework/platform/platform.h>
 #include <framework/core/eventdispatcher.h>
 
-Effect::Effect() : Thing(Otc::Effect)
+Effect::Effect() : Thing()
 {
     m_lastTicks = g_platform.getTicks();
     m_finished = false;
@@ -38,7 +39,11 @@ void Effect::draw(int x, int y)
         if(g_platform.getTicks() - m_lastTicks > 75) {
             const ThingType& type = getType();
             if(m_animation+1 == type.animationPhases) {
-                g_dispatcher.addEvent(std::bind(&Map::removeThingByPtr, &g_map, asThing()));
+                EffectPtr self = asEffect();
+                g_dispatcher.addEvent([self] {
+                    TilePtr tile = g_map.getTile(self->getPosition());
+                    tile->removeEffect(self);
+                });
                 m_finished = true;
             }
             else
