@@ -28,6 +28,9 @@
 
 class Tile : public LuaObject
 {
+    enum {
+        MAX_DRAW_ELEVATION = 24
+    };
 public:
     Tile(const Position& position);
 

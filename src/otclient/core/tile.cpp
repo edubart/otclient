@@ -42,10 +42,24 @@ void Tile::draw(int x, int y)
     // first bottom items
     for(const ThingPtr& thing : m_things) {
         const ThingType& type = thing->getType();
-        if(thing->asCreature() || type.isOnTop)
-            continue;
+        if(!type.isGround && !type.isGroundClip && !type.isOnBottom)
+            break;
         thing->draw(x - m_drawElevation, y - m_drawElevation);
         m_drawElevation += type.elevation;
+        if(m_drawElevation > MAX_DRAW_ELEVATION)
+            m_drawElevation = MAX_DRAW_ELEVATION;
+    }
+
+    // now common items
+    for(auto it = m_things.rbegin(); it != m_things.rend(); ++it) {
+        const ThingPtr& thing = *it;
+        const ThingType& type = thing->getType();
+        if(type.isOnTop || type.isOnBottom || type.isGround || type.isGroundClip)
+            break;
+        thing->draw(x - m_drawElevation, y - m_drawElevation);
+        m_drawElevation += type.elevation;
+        if(m_drawElevation > MAX_DRAW_ELEVATION)
+            m_drawElevation = MAX_DRAW_ELEVATION;
     }
 
     // creatures
@@ -164,7 +178,7 @@ bool Tile::isFullyOpaque()
     ThingPtr firstObject = getThing(0);
     if(firstObject) {
         const ThingType& type = firstObject->getType();
-        if(type.isGround && !type.isTranslucent)
+        if(type.isFullGround)
             return true;
     }
     return false;
