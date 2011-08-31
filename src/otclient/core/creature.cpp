@@ -21,7 +21,7 @@
  */
 
 #include "creature.h"
-#include "datmanager.h"
+#include "thingstype.h"
 #include "localplayer.h"
 #include "map.h"
 #include <framework/platform/platform.h>
@@ -68,10 +68,10 @@ void Creature::draw(int x, int y)
     x += m_walkOffsetX;
     y += m_walkOffsetY;
 
-    const ThingAttributes& attributes = getAttributes();
+    const ThingType& type = getType();
 
     // Render creature
-    for(m_yPattern = 0; m_yPattern < attributes.yPattern; m_yPattern++) {
+    for(m_yPattern = 0; m_yPattern < type.yPattern; m_yPattern++) {
 
         // continue if we dont have this addon.
         if(m_yPattern > 0 && !(m_outfit.addons & (1 << (m_yPattern-1))))
@@ -81,7 +81,7 @@ void Creature::draw(int x, int y)
         internalDraw(x, y, 0);
 
         // draw mask if exists
-        if(attributes.layers > 1) {
+        if(type.layers > 1) {
             // switch to blend color mode
             g_graphics.bindBlendFunc(Fw::BlendColorzing);
 
@@ -108,7 +108,7 @@ void Creature::draw(int x, int y)
     }
 
     // Update animation and position
-    if(m_walking && attributes.animationPhases > 1) {
+    if(m_walking && type.animationPhases > 1) {
 
         if(g_platform.getTicks() - m_lastTicks >= m_walkTimePerPixel) {
             int pixelsWalked = std::floor((g_platform.getTicks() - m_lastTicks) / m_walkTimePerPixel);
@@ -125,8 +125,8 @@ void Creature::draw(int x, int y)
                 m_walkOffsetX = std::max(m_walkOffsetX - pixelsWalked, 0);
 
             int walkOffset = std::max(std::abs(m_walkOffsetX), std::abs(m_walkOffsetY));
-            if(walkOffset % (int)std::ceil(32 / (float)attributes.animationPhases) == 0) {
-                if((m_animation+1) % attributes.animationPhases == 0)
+            if(walkOffset % (int)std::ceil(32 / (float)type.animationPhases) == 0) {
+                if((m_animation+1) % type.animationPhases == 0)
                     m_animation = 1;
                 else
                     m_animation++;
@@ -239,7 +239,7 @@ void Creature::walk(const Position& position)
 
         ThingPtr ground = g_map.getThing(m_position, 0);
         if(ground)
-            groundSpeed = ground->getAttributes().groundSpeed;
+            groundSpeed = ground->getType().groundSpeed;
 
         float walkTime = walkTimeFactor * 1000.0 * (float)groundSpeed / m_speed;
         walkTime = walkTime == 0 ? 1000 : walkTime;
@@ -266,9 +266,9 @@ void Creature::setHealthPercent(uint8 healthPercent)
     onHealthPercentChange(oldHealthPercent);
 }
 
-const ThingAttributes& Creature::getAttributes()
+const ThingType& Creature::getType()
 {
-    return g_dat.getCreatureAttributes(m_outfit.type);
+    return g_thingsType.getCreatureType(m_outfit.type);
 }
 
 void Creature::onHealthPercentChange(int)

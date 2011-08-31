@@ -23,7 +23,7 @@
 #include "protocolgame.h"
 
 #include <otclient/core/localplayer.h>
-#include <otclient/core/datmanager.h>
+#include <otclient/core/thingstype.h>
 #include <otclient/core/game.h>
 #include <otclient/core/map.h>
 #include <otclient/core/item.h>
@@ -1037,8 +1037,8 @@ ItemPtr ProtocolGame::internalGetItem(InputMessage& msg, uint16 id)
         id = msg.getU16();
     item->setId(id);
 
-    const ThingAttributes& itemAttributes = g_dat.getItemAttributes(id);
-    if(itemAttributes.isStackable || itemAttributes.isFluidContainer || itemAttributes.isSplash == Otc::ThingSplashGroup)
+    const ThingType& itemType = g_thingsType.getItemType(id);
+    if(itemType.isStackable || itemType.isFluidContainer || itemType.isSplash)
         item->setCount(msg.getU8());
 
     return item;

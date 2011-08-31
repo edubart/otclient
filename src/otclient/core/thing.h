@@ -24,7 +24,7 @@
 #define THING_H
 
 #include "declarations.h"
-#include "thingattributes.h"
+#include "thingtype.h"
 #include <framework/luascript/luaobject.h>
 
 struct Light
@@ -47,7 +47,7 @@ public:
     uint32 getId() const { return m_id; }
     Otc::ThingType getType() const { return m_type; }
     Position getPosition() const { return m_position; }
-    virtual const ThingAttributes& getAttributes() = 0;
+    virtual const ThingType& getType() = 0;
 
     virtual void onPositionChange(const Position&) {}
 

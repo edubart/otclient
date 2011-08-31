@@ -37,8 +37,6 @@
 #include <otclient/net/protocolgame.h>
 #include <otclient/core/game.h>
 #include <otclient/core/map.h>
-#include "core/datmanager.h"
-#include "core/item.h"
 
 OTClient g_client;
 
@@ -231,28 +229,6 @@ void OTClient::render()
 {
     // everything is rendered by UI components
     g_ui.render();
-
-    // utility for viewing dat items
-    /*
-    int count = 0;
-    auto maxSize = g_graphics.getScreenSize();
-    ItemPtr item(new Item);
-    int x = 32;
-    int y = 32;
-    for(int i=100;i<11803;++i) {
-        if(g_dat.getItemAttributes(i).group == Otc::ThingGroundGroup && !g_dat.getItemAttributes(i).changesFloor) {
-            item->setId(i);
-            item->draw(x, y);
-            x += 64;
-            if(x > g_graphics.getScreenSize().width()) {
-                x = 32;
-                y += 64;
-            if(y > maxSize.height())
-                break;
-            }
-        }
-    }
-    */
 }
 
 void OTClient::loadConfigurations()

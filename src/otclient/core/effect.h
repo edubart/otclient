@@ -35,7 +35,7 @@ public:
 
     bool finished() { return m_finished; }
 
-    const ThingAttributes& getAttributes();
+    const ThingType& getType();
 
     EffectPtr asEffect() { return std::static_pointer_cast<Effect>(shared_from_this()); }
 

@@ -80,24 +80,6 @@ namespace Otc
         LastDatFlag = 255
     };
 
-    enum ThingAttributesGroup {
-        ThingNoGroup = 0,
-        ThingGroundGroup,
-        ThingContainerGroup,
-        ThingWeaponGroup,
-        ThingAmmunitionGroup,
-        ThingArmorGroup,
-        ThingRuneGroup,
-        ThingTeleportGroup,
-        ThingMagicFieldGroup,
-        ThingWriteableGroup,
-        ThingKeyGroup,
-        ThingSplashGroup,
-        ThingFluidGroup,
-        ThingDoorGroup,
-        ThingLastGroup
-    };
-
     enum ThingType {
         Item,
         Creature,

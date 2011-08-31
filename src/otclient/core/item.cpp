@@ -21,7 +21,7 @@
  */
 
 #include "item.h"
-#include "datmanager.h"
+#include "thingstype.h"
 #include "spritemanager.h"
 #include "thing.h"
 #include <framework/platform/platform.h>
@@ -34,21 +34,21 @@ Item::Item() : Thing(Otc::Item)
 
 void Item::draw(int x, int y)
 {
-    const ThingAttributes& attributes = g_dat.getItemAttributes(m_id);
+    const ThingType& type = g_thingsType.getItemType(m_id);
 
-    if(attributes.animationPhases > 1) {
+    if(type.animationPhases > 1) {
         if(g_platform.getTicks() - m_lastTicks > 500) {
             m_animation++;
             m_lastTicks = g_platform.getTicks();
         }
     }
 
-    /*if(attributes.group == Otc::ThingSplashGroup || attributes.group == Otc::ThingFluidGroup) {
-        //xPattern = m_count % attributes.xPattern;
-        //yPattern = m_count / attributes.yPattern;
+    /*if(type.group == Otc::ThingSplashGroup || type.group == Otc::ThingFluidGroup) {
+        //xPattern = m_count % type.xPattern;
+        //yPattern = m_count / type.yPattern;
     }*/
 
-    for(int b = 0; b < attributes.layers; b++)
+    for(int b = 0; b < type.layers; b++)
         internalDraw(x, y, b);
 }
 
@@ -59,27 +59,27 @@ void Item::setCount(int count)
     onCountChange(oldCount);
 }
 
-const ThingAttributes& Item::getAttributes()
+const ThingType& Item::getType()
 {
-    return g_dat.getItemAttributes(m_id);
+    return g_thingsType.getItemType(m_id);
 }
 
 void Item::onPositionChange(const Position&)
 {
-    const ThingAttributes& attributes = g_dat.getItemAttributes(m_id);
+    const ThingType& type = g_thingsType.getItemType(m_id);
 
-    if(attributes.isNotMoveable) {
-        m_xPattern = m_position.x % attributes.xPattern;
-        m_yPattern = m_position.y % attributes.yPattern;
-        m_zPattern = m_position.z % attributes.zPattern;
+    if(type.isNotMoveable) {
+        m_xPattern = m_position.x % type.xPattern;
+        m_yPattern = m_position.y % type.yPattern;
+        m_zPattern = m_position.z % type.zPattern;
     }
 }
 
 void Item::onCountChange(int)
 {
-    const ThingAttributes& attributes = g_dat.getItemAttributes(m_id);
+    const ThingType& type = g_thingsType.getItemType(m_id);
 
-    if(attributes.isStackable && attributes.xPattern == 4 && attributes.yPattern == 2) {
+    if(type.isStackable && type.xPattern == 4 && type.yPattern == 2) {
         if(m_count < 5) {
             m_xPattern = m_count-1;
             m_yPattern = 0;

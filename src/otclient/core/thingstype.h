@@ -24,33 +24,32 @@
 #define DATMANAGER_H
 
 #include <framework/global.h>
-#include "thingattributes.h"
+#include "thingtype.h"
 
-class DatManager
+class ThingsType
 {
 public:
     bool load(const std::string& file);
     void unload();
 
-    void parseThingAttributes(std::stringstream& fin, ThingAttributes& thingAttributes);
-    void parseThingAttributesOpt(std::stringstream& fin, ThingAttributes& thingAttributes, uint8 opt);
+    void parseThingType(std::stringstream& fin, ThingType& thingType);
 
-    ThingAttributes& getItemAttributes(uint16 id) { return m_itemsAttributes[id - 100]; }
-    ThingAttributes& getCreatureAttributes(uint16 id)  { return m_creaturesAttributes[id]; }
-    ThingAttributes& getEffectAttributes(uint16 id) { return m_effectsAttributes[id]; }
-    ThingAttributes& getShotAttributes(uint16 id) { return m_shotsAttributes[id]; }
+    ThingType& getItemType(uint16 id) { return m_itemsType[id - 100]; }
+    ThingType& getCreatureType(uint16 id)  { return m_creaturesType[id]; }
+    ThingType& getEffectType(uint16 id) { return m_effectsType[id]; }
+    ThingType& getShotType(uint16 id) { return m_shotsType[id]; }
 
     uint32 getSignature() { return m_signature; }
 
 private:
     uint32 m_signature;
 
-    ThingAttributesList m_itemsAttributes;
-    ThingAttributesList m_creaturesAttributes;
-    ThingAttributesList m_effectsAttributes;
-    ThingAttributesList m_shotsAttributes;
+    ThingTypeList m_itemsType;
+    ThingTypeList m_creaturesType;
+    ThingTypeList m_effectsType;
+    ThingTypeList m_shotsType;
 };
 
-extern DatManager g_dat;
+extern ThingsType g_thingsType;
 
 #endif

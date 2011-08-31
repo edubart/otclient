@@ -66,7 +66,7 @@ public:
     uint8 getShield() { return m_shield; }
     uint8 getEmblem() { return m_emblem; }
     bool getImpassable() { return m_impassable; }
-    const ThingAttributes& getAttributes();
+    const ThingType& getType();
 
     void onHealthPercentChange(int);
 

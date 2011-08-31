@@ -36,7 +36,7 @@ public:
     void setCount(int count);
 
     int getCount() { return m_count; }
-    const ThingAttributes& getAttributes();
+    const ThingType& getType();
 
     void onPositionChange(const Position&);
     void onCountChange(int);

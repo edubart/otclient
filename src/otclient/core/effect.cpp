@@ -21,7 +21,7 @@
  */
 
 #include "effect.h"
-#include "datmanager.h"
+#include "thingstype.h"
 #include "map.h"
 #include <framework/platform/platform.h>
 #include <framework/core/eventdispatcher.h>
@@ -36,8 +36,8 @@ void Effect::draw(int x, int y)
 {
     if(!m_finished) {
         if(g_platform.getTicks() - m_lastTicks > 75) {
-            const ThingAttributes& attributes = getAttributes();
-            if(m_animation+1 == attributes.animationPhases) {
+            const ThingType& type = getType();
+            if(m_animation+1 == type.animationPhases) {
                 g_dispatcher.addEvent(std::bind(&Map::removeThingByPtr, &g_map, asThing()));
                 m_finished = true;
             }
@@ -50,7 +50,7 @@ void Effect::draw(int x, int y)
     }
 }
 
-const ThingAttributes& Effect::getAttributes()
+const ThingType& Effect::getType()
 {
-    return g_dat.getEffectAttributes(m_id);
+    return g_thingsType.getEffectType(m_id);
 }

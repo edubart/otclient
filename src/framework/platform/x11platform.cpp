@@ -528,7 +528,7 @@ bool Platform::createWindow(int x, int y, int width, int height, int minWidth, i
                                   x11.visual->visual,
                                   AllocNone);
 
-    // setup window attributes
+    // setup window type
     XSetWindowAttributes wa;
     wa.colormap = x11.colormap;
     wa.border_pixel = 0;

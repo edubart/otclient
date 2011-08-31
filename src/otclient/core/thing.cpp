@@ -42,7 +42,7 @@ void Thing::setPosition(const Position& position)
 
 void Thing::internalDraw(int x, int y, int layers, Otc::SpriteMask mask)
 {
-    const ThingAttributes& type = getAttributes();
+    const ThingType& type = getType();
 
     for(int yi = 0; yi < type.height; yi++) {
         for(int xi = 0; xi < type.width; xi++) {
