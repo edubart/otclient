@@ -111,118 +111,114 @@ void DatManager::parseThingAttributes(std::stringstream& fin, ThingAttributes& t
 void DatManager::parseThingAttributesOpt(std::stringstream& fin, ThingAttributes& thingAttributes, uint8 opt)
 {
     switch(opt) {
-        case Otc::Bank: // Ground tile
+        case Otc::DatGround: // Grounds, must be drawn first
             thingAttributes.speed = Fw::getU16(fin);
             thingAttributes.group = Otc::ThingGroundGroup;
             break;
-        case Otc::Clip: // Ground borders
+        case Otc::DatGroundClip: // Objects that clips (has transparent pixels) and must be drawn just after ground (e.g: ground borders)
             thingAttributes.alwaysOnTop = true;
             thingAttributes.alwaysOnTopOrder = 1;
             break;
-        case Otc::Bottom: // Bottom items
+        case Otc::DatOnBottom: // Bottom items, must be drawn above general items and below creatures (e.g: stairs)
             thingAttributes.alwaysOnTop = true;
             thingAttributes.alwaysOnTopOrder = 2;
             break;
-        case Otc::Top: // Top items
+        case Otc::DatOnTop: // Top items, must be drawn above creatures (e.g: doors)
             thingAttributes.alwaysOnTop = true;
             thingAttributes.alwaysOnTopOrder = 3;
             break;
-        case Otc::Container: // Container
+        case Otc::DatContainer: // Containers
             thingAttributes.group = Otc::ThingContainerGroup;
             break;
-        case Otc::Cumulative: // Stackable
+        case Otc::DatStackable: // Stackable
             thingAttributes.stackable = true;
             break;
-        case Otc::ForceUse: // Unknown, some corpses, stairs, even ground ????
+        case Otc::DatForceUse: // Items that are automatically used when step over?
             break;
-        case Otc::MultiUse: // Useable
+        case Otc::DatMultiUse: // Usable items
             thingAttributes.useable = true;
             break;
-        case Otc::Write: // Writtable
+        case Otc::DatWritable: // Writable
             thingAttributes.group = Otc::ThingWriteableGroup;
             thingAttributes.readable = true;
             thingAttributes.subParam08 = Fw::getU16(fin);
             break;
-        case Otc::WriteOnce: // Writtable once. objects that can't be edited by players
+        case Otc::DatWritableOnce: // Writable once. objects that can't be edited by players
             thingAttributes.readable = true;
             thingAttributes.subParam08 = Fw::getU16(fin);
             break;
-        case Otc::LiquidContainer: // Fluid containers
+        case Otc::DatFluidContainer: // Fluid containers
             thingAttributes.group = Otc::ThingFluidGroup;
             Fw::getU8(fin);
             break;
-        case Otc::LiquidPool: // Splashes
+        case Otc::DatSplash: // Splashes
             thingAttributes.group = Otc::ThingSplashGroup;
             break;
-        case Otc::Unpass: // Blocks solid objects (creatures, walls etc)
+        case Otc::DatBlockWalk: // Blocks solid objects (creatures, walls etc)
             thingAttributes.blockSolid = true;
             break;
-        case Otc::Unmove: // Not moveable
+        case Otc::DatNotMovable: // Not movable
             thingAttributes.moveable = false;
             break;
-        case Otc::Unsight: // Blocks missiles (walls, magic wall etc)
+        case Otc::DatBlockProjectile: // Blocks missiles (walls, magic wall etc)
             thingAttributes.blockProjectile = true;
             break;
-        case Otc::Avout: // Blocks pathfind algorithms (monsters)
+        case Otc::DatBlockPathFind: // Blocks pathfind algorithms (monsters)
             thingAttributes.blockPathFind = true;
             break;
-        case Otc::Take: // Pickupable
+        case Otc::DatPickupable: // Pickupable
             thingAttributes.pickupable = true;
             break;
-        case Otc::Hang: // Hangable objects (wallpaper etc)
+        case Otc::DatHangable: // Hangable objects (wallpaper etc)
             thingAttributes.isHangable = true;
             break;
-        case Otc::HookSouth: // Horizontal wall??
+        case Otc::DatHookSouth: // Horizontal walls
             thingAttributes.isHorizontal = true;
             break;
-        case Otc::HookEast: // Vertical wall??
+        case Otc::DatHookEast: // Vertical walls
             thingAttributes.isVertical = true;
             break;
-        case Otc::Rotate: // Rotable
+        case Otc::DatRotable: // Rotable
             thingAttributes.rotable = true;
             break;
-        case Otc::Light: // Light info
+        case Otc::DatLight: // Light info
             thingAttributes.lightLevel = Fw::getU16(fin);
             thingAttributes.lightColor = Fw::getU16(fin);
             break;
-        case Otc::DontHide: // Unknown, just a few monuments
+        case Otc::DatDontHide: // A few monuments that are not supposed to be hidden by floors
             break;
-        case Otc::Translucent: // Unknown description
+        case Otc::DatTranslucent: // Grounds that are translucent
             thingAttributes.changesFloor = true;
             break;
-        case Otc::Shift: // Thing must be drawed with offset
+        case Otc::DatDrawShift: // Must shift draw
             thingAttributes.hasHeight = true;
-            thingAttributes.drawOffset = Fw::getU8(fin);
-            Fw::getU8(fin);
+            thingAttributes.drawOffset = Fw::getU16(fin);
             Fw::getU16(fin);
             break;
-        case Otc::Height: // pixels characters height
-            thingAttributes.drawNextOffset = Fw::getU8(fin);
-            Fw::getU8(fin);
+        case Otc::DatDrawHeight: // pixels characters height
+            thingAttributes.drawNextOffset = Fw::getU16(fin);
             break;
-        case Otc::LyingObject: // Unknown, some corpses
-            //thingAttributes.hasHeight = true;
+        case Otc::DatLyingCorpse: // Some corpses
             break;
-        case Otc::AnimateAlways: // Unknown, check if firesword is a kind of AnimateAlways.
+        case Otc::DatAnimateAlways: // Unknown, check if firesword is a kind of AnimateAlways.
             break;
-        case Otc::Automap: // Minimap color
-            thingAttributes.miniMapColor = Fw::getU16(fin);
+        case Otc::DatMinimapColor: // Minimap color
             thingAttributes.hasMiniMapColor = true;
+            thingAttributes.miniMapColor = Fw::getU16(fin);
             break;
-        case Otc::LensHelp: // Unknown
-            if(Fw::getU16(fin) == 1112)
-                thingAttributes.readable = true;
+        case Otc::DatLensHelp: // Used for giving players tips?
+            Fw::getU16(fin);
             break;
-        case Otc::FullBank: // Ground has no transparent pixels.
+        case Otc::DatFullGround: // Grounds that has no transparent pixels
             break;
-        case Otc::IgnoreLook: // Ignore look, then looks at the item on the bottom of it.
+        case Otc::DatIgnoreLook: // Ignore look, then looks at the item on the bottom of it
             thingAttributes.lookThrough = true;
             break;
-        case Otc::Clothes: // Unknown
+        case Otc::DatClothe: // Clothes
             break;
-        case Otc::Animation: // Not used in 8.62
+        case Otc::DatAnimation: // Not used in 8.62
             break;
         default:
-            throw std::runtime_error(Fw::mkstr("unknown .dat byte code: 0x", std::hex, (int)opt));
+            throw std::runtime_error(Fw::mkstr("unknown .dat byte code: ", (int)opt));
     }
 }
