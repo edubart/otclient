@@ -32,7 +32,7 @@ Map g_map;
 void Map::draw(const Rect& rect)
 {
     if(!m_framebuffer)
-        m_framebuffer = FrameBufferPtr(new FrameBuffer(NUM_VISIBLE_X_TILES * NUM_TILE_PIXELS, NUM_VISIBLE_Y_TILES * NUM_TILE_PIXELS));
+        m_framebuffer = FrameBufferPtr(new FrameBuffer(MAP_VISIBLE_WIDTH * NUM_TILE_PIXELS, MAP_VISIBLE_HEIGHT * NUM_TILE_PIXELS));
 
     g_graphics.bindColor(Fw::white);
     m_framebuffer->bind();
@@ -41,19 +41,19 @@ void Map::draw(const Rect& rect)
     int walkOffsetX = localPlayer->getWalkOffsetX();
     int walkOffsetY = localPlayer->getWalkOffsetY();
 
-    int zstart = getMaxVisibleFloor();
-    for(int z = NUM_Z_TILES-1; z >= zstart; --z) {
-        if(z < zstart)
+    int maxFloor = getMaxVisibleFloor();
+    for(int z = MAX_Z-1; z >= maxFloor; --z) {
+        if(z < maxFloor)
             continue;
 
         int zdif = m_centralPosition.z - z;
-        for(int y = 0; y < NUM_Y_TILES; ++y) {
-            for(int x = 0; x < NUM_X_TILES; ++x) {
-                Position tilePos(m_centralPosition.x + (x - 8), m_centralPosition.y + (y - 6), m_centralPosition.z);
+        for(int y = 0; y < MAP_SIZE_Y; ++y) {
+            for(int x = 0; x < MAP_SIZE_X; ++x) {
+                Position tilePos(m_centralPosition.x + (x - PLAYER_OFFSET_X), m_centralPosition.y + (y - PLAYER_OFFSET_Y), m_centralPosition.z);
                 tilePos.coveredUp(m_centralPosition.z - z);
                 if(const TilePtr& tile = m_tiles[tilePos]) {
                     // skip tiles that are behind another tile
-                    if(z > zstart && isCompletlyCovered(tilePos, zstart))
+                    if(z > maxFloor && isCompletlyCovered(tilePos, maxFloor))
                         continue;
 
                     int x = (7 + (tile->getPosition().x - m_centralPosition.x) - zdif) * NUM_TILE_PIXELS;
@@ -70,13 +70,13 @@ void Map::draw(const Rect& rect)
     m_framebuffer->draw(rect);
 
     // calculate stretch factor
-    float horizontalStretchFactor = rect.width() / (float)(NUM_VISIBLE_X_TILES * NUM_TILE_PIXELS);
-    float verticalStretchFactor = rect.height() / (float)(NUM_VISIBLE_Y_TILES * NUM_TILE_PIXELS);
+    float horizontalStretchFactor = rect.width() / (float)(MAP_VISIBLE_WIDTH * NUM_TILE_PIXELS);
+    float verticalStretchFactor = rect.height() / (float)(MAP_VISIBLE_HEIGHT * NUM_TILE_PIXELS);
 
     // draw player names and health bars
-    for(int x = 0; x < NUM_VISIBLE_X_TILES; ++x) {
-        for(int y = 0; y < NUM_VISIBLE_Y_TILES; ++y) {
-            Position tilePos = Position(m_centralPosition.x + (x - 7), m_centralPosition.y + (y - 5), m_centralPosition.z);
+    for(int x = 0; x < MAP_VISIBLE_WIDTH; ++x) {
+        for(int y = 0; y < MAP_VISIBLE_HEIGHT; ++y) {
+            Position tilePos = Position(m_centralPosition.x + (x - PLAYER_OFFSET_X - 1), m_centralPosition.y + (y - PLAYER_OFFSET_Y - 1), m_centralPosition.z);
             if(const TilePtr& tile = m_tiles[tilePos]) {
                 auto& creatures = tile->getCreatures();
 
@@ -94,7 +94,7 @@ void Map::draw(const Rect& rect)
                         y += creature->getWalkOffsetY() - walkOffsetY;
                     }
 
-                    creature->drawInformation(rect.x() + x*horizontalStretchFactor, rect.y() + y*verticalStretchFactor, isCovered(tilePos, zstart));
+                    creature->drawInformation(rect.x() + x*horizontalStretchFactor, rect.y() + y*verticalStretchFactor, isCovered(tilePos, maxFloor));
                 }
             }
         }
@@ -116,6 +116,23 @@ int Map::getMaxVisibleFloor()
         if(tile)
             return tilePos.z + 1;
     }
+    /*
+    int maxZ = MAP_SIZE_Z - 1;
+    int currentZ = m_centralPosition.z;
+    while(maxZ > currentZ) {
+        TilePtr tile = m_tiles[tilePos];
+        if(tilç
+        maxZ--;
+    };
+
+    for(int x = PLAYER_OFFSET_X-1; x <= PLAYER_OFFSET_X+1; ++x) {
+        for(int y = PLAYER_OFFSET_Y-1; y <= PLAYER_OFFSET_Y+1; ++y) {
+            if(x == PLAYER_OFFSET_X && y == PLAYER_OFFSET_Y)
+                continue;
+            for(int z = currentZ + 1; z <
+        }
+    }
+    */
 
     return 0;
 }
