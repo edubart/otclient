@@ -31,7 +31,7 @@ class Tile : public LuaObject
 public:
     Tile(const Position& position);
 
-    void draw(int x, int y, int step);
+    void draw(int x, int y);
 
     void addThing(ThingPtr thing, int stackpos);
     ThingPtr getThing(unsigned int stackpos);

@@ -39,7 +39,6 @@ class Map
 
 public:
     void draw(const Rect& rect);
-    void update();
 
     int getMaxVisibleFloor();
     bool isCovered(const Position& pos, int maxFloor);
@@ -65,8 +64,6 @@ public:
 private:
     std::unordered_map<Position, TilePtr, PositionHasher> m_tiles;
     std::map<uint32, CreaturePtr> m_creatures;
-    std::array<std::vector<TilePtr>, NUM_Z_TILES> m_visibleTiles;
-    int m_zstart;
 
     Light m_light;
     Position m_centralPosition;
