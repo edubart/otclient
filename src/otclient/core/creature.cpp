@@ -36,7 +36,6 @@ Creature::Creature() : Thing(Otc::Creature)
     m_walking = false;
     m_walkOffsetX = 0;
     m_walkOffsetY = 0;
-    m_lastWalkAnim = 1;
 
     m_informationFont = g_fonts.getFont("tibia-12px-rounded");
 }
@@ -127,12 +126,11 @@ void Creature::draw(int x, int y)
 
             int walkOffset = std::max(std::abs(m_walkOffsetX), std::abs(m_walkOffsetY));
             if(walkOffset % (int)std::ceil(32 / (float)attributes.animationPhases) == 0) {
-                if(m_lastWalkAnim+1 == attributes.animationPhases)
-                    m_lastWalkAnim = 1;
+                if((m_animation+1) % attributes.animationPhases == 0)
+                    m_animation = 1;
                 else
-                    m_lastWalkAnim++;
+                    m_animation++;
             }
-            m_animation = m_lastWalkAnim;
 
             if(((m_walkOffsetX == 0 && m_walkOffsetY == 0) && m_walkOffsetX != m_walkOffsetY) ||
                ((m_walkOffsetX == 0 || m_walkOffsetY == 0) && m_walkOffsetX == m_walkOffsetY)) {

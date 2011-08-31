@@ -38,11 +38,7 @@ void Item::draw(int x, int y)
 
     if(attributes.animationPhases > 1) {
         if(g_platform.getTicks() - m_lastTicks > 500) {
-            if(m_animation+1 == attributes.animationPhases)
-                m_animation = 0;
-            else
-                m_animation++;
-
+            m_animation++;
             m_lastTicks = g_platform.getTicks();
         }
     }
