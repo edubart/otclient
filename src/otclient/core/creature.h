@@ -96,6 +96,7 @@ private:
     bool m_walking;
     float m_walkTimePerPixel;
     Position m_walkingFromPosition;
+    int m_lastWalkAnim;
     int m_walkOffsetX, m_walkOffsetY;
 };
 

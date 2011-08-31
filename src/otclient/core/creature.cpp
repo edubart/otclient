@@ -39,6 +39,7 @@ Creature::Creature() : Thing()
     m_walking = false;
     m_walkOffsetX = 0;
     m_walkOffsetY = 0;
+    m_lastWalkAnim = 1;
 
     m_informationFont = g_fonts.getFont("tibia-12px-rounded");
 }
@@ -112,7 +113,6 @@ void Creature::draw(int x, int y)
 
     // Update animation and position
     if(m_walking && type.animationPhases > 1) {
-
         if(g_platform.getTicks() - m_lastTicks >= m_walkTimePerPixel) {
             int pixelsWalked = std::floor((g_platform.getTicks() - m_lastTicks) / m_walkTimePerPixel);
             int remainingTime = (g_platform.getTicks() - m_lastTicks) % (int)m_walkTimePerPixel;
@@ -129,11 +129,12 @@ void Creature::draw(int x, int y)
 
             int walkOffset = std::max(std::abs(m_walkOffsetX), std::abs(m_walkOffsetY));
             if(walkOffset % (int)std::ceil(32 / (float)type.animationPhases) == 0) {
-                if((m_animation+1) % type.animationPhases == 0)
-                    m_animation = 1;
+                if((m_lastWalkAnim+1) % type.animationPhases == 0)
+                    m_lastWalkAnim = 1;
                 else
-                    m_animation++;
+                    m_lastWalkAnim++;
             }
+            m_animation = m_lastWalkAnim;
 
             if(((m_walkOffsetX == 0 && m_walkOffsetY == 0) && m_walkOffsetX != m_walkOffsetY) ||
                ((m_walkOffsetX == 0 || m_walkOffsetY == 0) && m_walkOffsetX == m_walkOffsetY)) {
@@ -221,10 +222,8 @@ void Creature::walk(const Position& position)
     }
 
     // update map tiles
-    TilePtr oldTile = g_map.getTile(m_position);
-    TilePtr newTile = g_map.getTile(position);
-    oldTile->removeThing(asThing());
-    newTile->addThing(asThing(), -1);
+    g_map.removeThing(asThing());
+    g_map.addThing(asThing(), position);
 
     if(m_walking) {
         // Calculate xPattern
@@ -241,7 +240,7 @@ void Creature::walk(const Position& position)
         // get walk speed
         int groundSpeed = 0;
 
-        ItemPtr ground = newTile->getGround();
+        ItemPtr ground = g_map.getTile(position)->getGround();
         if(ground)
             groundSpeed = ground->getType().groundSpeed;
 

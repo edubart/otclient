@@ -54,7 +54,7 @@ void Tile::draw(int x, int y)
     for(auto it = m_things.rbegin(); it != m_things.rend(); ++it) {
         const ThingPtr& thing = *it;
         const ThingType& type = thing->getType();
-        if(type.isOnTop || type.isOnBottom || type.isGround || type.isGroundClip)
+        if(thing->asCreature() || type.isOnTop || type.isOnBottom || type.isGroundClip || type.isGround)
             break;
         thing->draw(x - m_drawElevation, y - m_drawElevation);
         m_drawElevation += type.elevation;
