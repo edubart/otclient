@@ -37,216 +37,216 @@ void ProtocolGame::parseMessage(InputMessage& msg)
         //dump << "protocol id:" << std::hex << (int)opt;
 
         switch(opt) {
-            case 0x0A:
+            case Otc::GameServerInitGame:
                 parsePlayerLogin(msg);
                 break;
             case 0x0B:
                 parseGMActions(msg);
                 break;
-            case 0x14:
+            case Otc::GameServerLoginError:
                 parseErrorMessage(msg);
                 break;
-            case 0x15:
+            case Otc::GameServerLoginAdvice:
                 parseFYIMessage(msg);
                 break;
-            case 0x16:
+            case Otc::GameServerLoginWait:
                 parseWaitList(msg);
                 break;
-            case 0x1E:
+            case Otc::GameServerPing:
                 parsePing(msg);
                 break;
-            case 0x28:
+            //case Otc::GameServerChallange:
+            case Otc::GameServerDead:
                 parseDeath(msg);
                 break;
-            case 0x32:
-                parseCanReportBugs(msg);
-                break;
-            case 0x64:
+            case Otc::GameServerFullMap:
                 parseMapDescription(msg);
                 break;
-            case 0x65:
+            case Otc::GameServerMapTopRow:
                 parseMoveNorth(msg);
                 break;
-            case 0x66:
+            case Otc::GameServerMapRightRow:
                 parseMoveEast(msg);
                 break;
-            case 0x67:
+            case Otc::GameServerMapBottomRow:
                 parseMoveSouth(msg);
                 break;
-            case 0x68:
+            case Otc::GameServerMapLeftRow:
                 parseMoveWest(msg);
                 break;
-            case 0x69:
+            case Otc::GameServerTileData:
                 parseUpdateTile(msg);
                 break;
-            case 0x6A:
+            case Otc::GameServerCreateOnMap:
                 parseTileAddThing(msg);
                 break;
-            case 0x6B:
+            case Otc::GameServerChangeOnMap:
                 parseTileTransformThing(msg);
                 break;
-            case 0x6C:
+            case Otc::GameServerDeleteOnMap:
                 parseTileRemoveThing(msg);
                 break;
-            case 0x6D:
+            case Otc::GameServerMoveCreature:
                 parseCreatureMove(msg);
                 break;
-            case 0x6E:
+            case Otc::GameServerOpenContainer:
                 parseOpenContainer(msg);
                 break;
-            case 0x6F:
+            case Otc::GameServerCloseContainer:
                 parseCloseContainer(msg);
                 break;
-            case 0x70:
+            case Otc::GameServerCreateContainer:
                 parseContainerAddItem(msg);
                 break;
-            case 0x71:
+            case Otc::GameServerChangeInContainer:
                 parseContainerUpdateItem(msg);
                 break;
-            case 0x72:
+            case Otc::GameServerDeleteInContainer:
                 parseContainerRemoveItem(msg);
                 break;
-            case 0x78:
+            case Otc::GameServerSetInventory:
                 parseAddInventoryItem(msg);
                 break;
-            case 0x79:
+            case Otc::GameServerDeleteInventory:
                 parseRemoveInventoryItem(msg);
                 break;
-            case 0x7A:
+            case Otc::GameServerNpcOffer:
                 parseOpenShopWindow(msg);
                 break;
-            case 0x7B:
+            case Otc::GameServerPlayerGoods:
                 parsePlayerCash(msg);
                 break;
-            case 0x7C:
+            case Otc::GameServerCloseNpcTrade:
                 parseCloseShopWindow(msg);
                 break;
-            case 0x7D:
+            case Otc::GameServerOwnOffer:
                 parseSafeTradeRequest(msg);
                 break;
-            case 0x7E:
+            case Otc::GameServerCounterOffer:
                 parseSafeTradeRequest(msg);
                 break;
-            case 0x7F:
+            case Otc::GameServerCloseTrade:
                 parseSafeTradeClose(msg);
                 break;
-            case 0x82:
+            case Otc::GameServerAmbient:
                 parseWorldLight(msg);
                 break;
-            case 0x83:
+            case Otc::GameServerGraphicalEffect:
                 parseMagicEffect(msg);
                 break;
-            case 0x84:
+            case Otc::GameServerTextEffect:
                 parseAnimatedText(msg);
                 break;
-            case 0x85:
+            case Otc::GameServerMissleEffect:
                 parseDistanceShot(msg);
                 break;
-            case 0x86:
+            case Otc::GameServerMarkCreature:
                 parseCreatureSquare(msg);
                 break;
-            case 0x8C:
+            //case Otc::GameServerTrappers
+            case Otc::GameServerCreatureHealth:
                 parseCreatureHealth(msg);
                 break;
-            case 0x8D:
+            case Otc::GameServerCreatureLight:
                 parseCreatureLight(msg);
                 break;
-            case 0x8E:
+            case Otc::GameServerCreatureOutfit:
                 parseCreatureOutfit(msg);
                 break;
-            case 0x8F:
+            case Otc::GameServerCreatureSpeed:
                 parseCreatureSpeed(msg);
                 break;
-            case 0x90:
+            case Otc::GameServerCreatureSkull:
                 parseCreatureSkulls(msg);
                 break;
-            case 0x91:
+            case Otc::GameServerCreatureParty:
                 parseCreatureShields(msg);
                 break;
-            case 0x96:
+            // case Otc::GameServerCreatureUnpass
+            case Otc::GameServerEditText:
                 parseItemTextWindow(msg);
                 break;
-            case 0x97:
+            case Otc::GameServerEditList:
                 parseHouseTextWindow(msg);
                 break;
-            case 0xA0:
+            case Otc::GameServerPlayerData:
                 parsePlayerStats(msg);
                 break;
-            case 0xA1:
+            case Otc::GameServerPlayerSkills:
                 parsePlayerSkills(msg);
                 break;
-            case 0xA2:
+            case Otc::GameServerPlayerState:
                 parsePlayerIcons(msg);
                 break;
-            case 0xA3:
+            case Otc::GameServerClearTarget:
                 parsePlayerCancelAttack(msg);
                 break;
-            case 0xAA:
+            //case Otc::GameServerSpellDelay:
+            //case Otc::GameServerSpellGroupDelay:
+            case Otc::GameServerTalk:
                 parseCreatureSpeak(msg);
                 break;
-            case 0xAB:
+            case Otc::GameServerChannels:
                 parseChannelList(msg);
                 break;
-            case 0xAC:
+            case Otc::GameServerOpenChannel:
                 parseOpenChannel(msg);
                 break;
-            case 0xAD:
+            case Otc::GameServerPrivateChannel:
                 parseOpenPrivatePlayerChat(msg);
                 break;
-            case 0xAE:
+            case Otc::GameServerRuleViolation:
+            case Otc::GameServerRuleViolation1:
+            case Otc::GameServerRuleViolation2:
+            case Otc::GameServerRuleViolation3:
                 parseOpenRuleViolation(msg);
                 break;
-            case 0xAF:
-                parseRuleViolationAF(msg);
-                break;
-            case 0xB0:
-                parseRuleViolationB0(msg);
-                break;
-            case 0xB1:
-                parseRuleViolationB1(msg);
-                break;
-            case 0xB2:
+            case Otc::GameServerOpenOwnChannel:
                 parseCreatePrivateChannel(msg);
                 break;
-            case 0xB3:
+            case Otc::GameServerCloseChannel:
                 parseClosePrivateChannel(msg);
                 break;
-            case 0xB4:
+            case Otc::GameServerMessage:
                 parseTextMessage(msg);
                 break;
-            case 0xB5:
+            case Otc::GameServerSnapBack:
                 parseCancelWalk(msg);
                 break;
-            case 0xBE:
+            //case Otc::GameServerWait:
+            case Otc::GameServerTopFloor:
                 parseFloorChangeUp(msg);
                 break;
-            case 0xBF:
+            case Otc::GameServerBottomFloor:
                 parseFloorChangeDown(msg);
                 break;
-            case 0xC8:
+            case Otc::GameServerOutfit:
                 parseOutfitWindow(msg);
                 break;
-            case 0xD2:
+            case Otc::GameServerBuddyData:
                 parseVipState(msg);
                 break;
-            case 0xD3:
+            case Otc::GameServerBuddyLogin:
                 parseVipLogin(msg);
                 break;
-            case 0xD4:
+            case Otc::GameServerBuddyLogout:
                 parseVipLogout(msg);
                 break;
-            case 0xDC:
+            case Otc::GameServerTutorialHint:
                 parseShowTutorial(msg);
                 break;
-            case 0xDD:
+            case Otc::GameServerAutomapFlag:
                 parseAddMarker(msg);
                 break;
-            case 0xF0:
+            case Otc::GameServerQuestLog:
                 parseQuestList(msg);
                 break;
-            case 0xF1:
+            case Otc::GameServerQuestLine:
                 parseQuestPartList(msg);
                 break;
+            //case Otc::GameServerChannelEvent:
+            //case Otc::GameServerObjectInfo:
+            //case Otc::GameServerPlayerInventory:
             default:
                 logError("UNKNOWN PACKET OPT BYTE: 0x", std::hex, opt);
                 break;
@@ -297,11 +297,6 @@ void ProtocolGame::parsePing(InputMessage&)
 void ProtocolGame::parseDeath(InputMessage&)
 {
 
-}
-
-void ProtocolGame::parseCanReportBugs(InputMessage& msg)
-{
-    msg.getU8(); // report bugs
 }
 
 void ProtocolGame::parseMapDescription(InputMessage& msg)
@@ -723,21 +718,6 @@ void ProtocolGame::parseOpenPrivatePlayerChat(InputMessage& msg)
 }
 
 void ProtocolGame::parseOpenRuleViolation(InputMessage& msg)
-{
-    msg.getU16(); // a
-}
-
-void ProtocolGame::parseRuleViolationAF(InputMessage& msg)
-{
-    msg.getU16(); // a
-}
-
-void ProtocolGame::parseRuleViolationB0(InputMessage& msg)
-{
-    msg.getU16(); // a
-}
-
-void ProtocolGame::parseRuleViolationB1(InputMessage& msg)
 {
     msg.getU16(); // a
 }

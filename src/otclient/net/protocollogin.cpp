@@ -25,6 +25,8 @@
 #include <framework/net/rsa.h>
 #include <framework/luascript/luainterface.h>
 #include <boost/bind.hpp>
+#include <otclient/core/thingstype.h>
+#include <otclient/core/spritemanager.h>
 
 ProtocolLogin::ProtocolLogin()
 {
@@ -57,16 +59,16 @@ void ProtocolLogin::onRecv(InputMessage& inputMessage)
     while(!inputMessage.eof()) {
         uint8 opt = inputMessage.getU8();
         switch(opt) {
-        case 0x0A:
+        case Otc::LoginServerError:
             parseError(inputMessage);
             break;
-        case 0x14:
+        case Otc::LoginServerMotd:
             parseMOTD(inputMessage);
             break;
-        case 0x1e:
+        case Otc::LoginServerUpdateNeeded:
             callLuaField("onError", "Client needs update.");
             break;
-        case 0x64:
+        case Otc::LoginServerCharacterList:
             parseCharacterList(inputMessage);
             break;
         }
@@ -83,13 +85,13 @@ void ProtocolLogin::sendLoginPacket()
 {
     OutputMessage oMsg;
 
-    oMsg.addU8(0x01); // protocol id
-    oMsg.addU16(0x02); // os
-    oMsg.addU16(862); // client version
+    oMsg.addU8(Otc::ClientEnterAccount);
+    oMsg.addU16(Otc::OsLinux);
+    oMsg.addU16(Otc::ClientVersion);
 
-    oMsg.addU32(0x4E12DAFF); // data signature
-    oMsg.addU32(0x4E12DB27); // sprite signature
-    oMsg.addU32(0x4E119CBF); // pic signature
+    oMsg.addU32(g_thingsType.getSignature()); // data signature
+    oMsg.addU32(g_sprites.getSignature()); // sprite signature
+    oMsg.addU32(Otc::PicSignature); // pic signature
 
     oMsg.addU8(0); // first RSA byte must be 0
 

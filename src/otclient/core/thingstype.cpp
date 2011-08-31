@@ -186,7 +186,7 @@ void ThingsType::parseThingType(std::stringstream& fin, ThingType& thingType)
                 break;
             case Otc::DatAnimation: // Not used in 8.62
                 break;
-            case Otc::LastDatFlag:
+            case Otc::DatLastOpt:
                 done = true;
                 break;
             default:

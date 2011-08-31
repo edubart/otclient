@@ -27,9 +27,9 @@ void ProtocolGame::sendLoginPacket(uint32 timestamp, uint8 unknown)
 {
     OutputMessage oMsg;
 
-    oMsg.addU8(0x0A); // protocol id
-    oMsg.addU16(0x02); // os
-    oMsg.addU16(862); // client version
+    oMsg.addU8(Otc::ClientEnterGame);
+    oMsg.addU16(Otc::OsLinux);
+    oMsg.addU16(Otc::ClientVersion);
 
     oMsg.addU8(0); // first RSA byte must be 0
 
@@ -63,97 +63,97 @@ void ProtocolGame::sendLoginPacket(uint32 timestamp, uint8 unknown)
 void ProtocolGame::sendLogout()
 {
     OutputMessage oMsg;
-    oMsg.addU8(0x14);
+    oMsg.addU8(Otc::ClientQuitGame);
     send(oMsg);
 }
 
 void ProtocolGame::sendPing()
 {
     OutputMessage oMsg;
-    oMsg.addU8(0x1E);
+    oMsg.addU8(Otc::ClientPingBack);
     send(oMsg);
 }
 
 void ProtocolGame::sendWalkNorth()
 {
     OutputMessage oMsg;
-    oMsg.addU8(0x65);
+    oMsg.addU8(Otc::ClientGoNorth);
     send(oMsg);
 }
 
 void ProtocolGame::sendWalkEast()
 {
     OutputMessage oMsg;
-    oMsg.addU8(0x66);
+    oMsg.addU8(Otc::ClientGoEast);
     send(oMsg);
 }
 
 void ProtocolGame::sendWalkSouth()
 {
     OutputMessage oMsg;
-    oMsg.addU8(0x67);
+    oMsg.addU8(Otc::ClientGoSouth);
     send(oMsg);
 }
 
 void ProtocolGame::sendWalkWest()
 {
     OutputMessage oMsg;
-    oMsg.addU8(0x68);
+    oMsg.addU8(Otc::ClientGoWest);
     send(oMsg);
 }
 
 void ProtocolGame::sendWalkNorthEast()
 {
     OutputMessage oMsg;
-    oMsg.addU8(0x6A);
+    oMsg.addU8(Otc::ClientGoNorthEast);
     send(oMsg);
 }
 
 void ProtocolGame::sendWalkSouthEast()
 {
     OutputMessage oMsg;
-    oMsg.addU8(0x6B);
+    oMsg.addU8(Otc::ClientGoSouthEast);
     send(oMsg);
 }
 
 void ProtocolGame::sendWalkSouthWest()
 {
     OutputMessage oMsg;
-    oMsg.addU8(0x6C);
+    oMsg.addU8(Otc::ClientGoSouthWest);
     send(oMsg);
 }
 
 void ProtocolGame::sendWalkNorthWest()
 {
     OutputMessage oMsg;
-    oMsg.addU8(0x6D);
+    oMsg.addU8(Otc::ClientGoNorthWest);
     send(oMsg);
 }
 
 void ProtocolGame::sendTurnNorth()
 {
     OutputMessage oMsg;
-    oMsg.addU8(0x6F);
+    oMsg.addU8(Otc::ClientRotateNorth);
     send(oMsg);
 }
 
 void ProtocolGame::sendTurnEast()
 {
     OutputMessage oMsg;
-    oMsg.addU8(0x70);
+    oMsg.addU8(Otc::ClientRotateEast);
     send(oMsg);
 }
 
 void ProtocolGame::sendTurnSouth()
 {
     OutputMessage oMsg;
-    oMsg.addU8(0x71);
+    oMsg.addU8(Otc::ClientRotateSouth);
     send(oMsg);
 }
 
 void ProtocolGame::sendTurnWest()
 {
     OutputMessage oMsg;
-    oMsg.addU8(0x72);
+    oMsg.addU8(Otc::ClientRotateWest);
     send(oMsg);
 }
