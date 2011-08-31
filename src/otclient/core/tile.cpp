@@ -45,9 +45,9 @@ void Tile::draw(int x, int y)
         const ThingPtr& thing = *it;
         const ThingAttributes& thingAttributes = thing->getAttributes();
 
-        if(thingAttributes.alwaysOnTopOrder == 1) {
+        if(thingAttributes.isGroundClip) {
             thing->draw(x - m_drawNextOffset, y - m_drawNextOffset);
-            m_drawNextOffset += thingAttributes.drawNextOffset;
+            m_drawNextOffset += thingAttributes.elevation;
         }
     }
 
@@ -55,9 +55,9 @@ void Tile::draw(int x, int y)
         const ThingPtr& thing = *it;
         const ThingAttributes& thingAttributes = thing->getAttributes();
 
-        if(thingAttributes.alwaysOnTopOrder == 2) {
+        if(thingAttributes.isOnBottom) {
             thing->draw(x - m_drawNextOffset, y - m_drawNextOffset);
-            m_drawNextOffset += thingAttributes.drawNextOffset;
+            m_drawNextOffset += thingAttributes.elevation;
         }
     }
 
@@ -65,7 +65,7 @@ void Tile::draw(int x, int y)
         const ThingPtr& thing = *it;
         const ThingAttributes& thingAttributes = thing->getAttributes();
         thing->draw(x - m_drawNextOffset, y - m_drawNextOffset);
-        m_drawNextOffset += thingAttributes.drawNextOffset;
+        m_drawNextOffset += thingAttributes.elevation;
     }
 
     for(auto it = m_creatures.rbegin(), end = m_creatures.rend(); it != end; ++it) {
@@ -82,7 +82,7 @@ void Tile::draw(int x, int y)
         const ThingPtr& thing = *it;
         const ThingAttributes& thingAttributes = thing->getAttributes();
 
-        if(thingAttributes.alwaysOnTopOrder == 3) {
+        if(thingAttributes.isOnTop) {
             thing->draw(x, y);
         }
     }
@@ -97,10 +97,10 @@ void Tile::addThing(ThingPtr thing, int stackpos)
     const ThingAttributes& thingAttributes = thing->getAttributes();
 
     if(thing->asItem()) {
-        if(thingAttributes.group == Otc::ThingGroundGroup)
+        if(thingAttributes.isGround)
             m_ground = thing;
         else {
-            if(thingAttributes.alwaysOnTop)
+            if(thingAttributes.isGroundClip || thingAttributes.isOnBottom || thingAttributes.isOnTop)
                 m_itemsTop.push_back(thing);
             else {
                 if(stackpos == -1)
@@ -173,7 +173,7 @@ void Tile::removeThingByPtr(ThingPtr thing)
     if(thing->asItem()) {
         const ThingAttributes& thingAttributes = thing->getAttributes();
 
-        if(!thingAttributes.alwaysOnTop) {
+        if(!(thingAttributes.isGroundClip || thingAttributes.isOnBottom || thingAttributes.isOnTop)) {
             for(auto it = m_itemsBottom.begin(), end = m_itemsBottom.end(); it != end; ++it) {
                 if(*it == thing) {
                     m_itemsBottom.erase(it);
@@ -240,7 +240,7 @@ int Tile::getStackSize(int stop)
 
 bool Tile::isOpaque()
 {
-    if(m_ground && !m_ground->getAttributes().changesFloor)
+    if(m_ground && !m_ground->getAttributes().isTranslucent)
         return true;
     return false;
 }

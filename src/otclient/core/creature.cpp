@@ -72,17 +72,17 @@ void Creature::draw(int x, int y)
     const ThingAttributes& attributes = getAttributes();
 
     // Render creature
-    for(m_yDiv = 0; m_yDiv < attributes.ydiv; m_yDiv++) {
+    for(m_yPattern = 0; m_yPattern < attributes.yPattern; m_yPattern++) {
 
         // continue if we dont have this addon.
-        if(m_yDiv > 0 && !(m_outfit.addons & (1 << (m_yDiv-1))))
+        if(m_yPattern > 0 && !(m_outfit.addons & (1 << (m_yPattern-1))))
             continue;
 
         // draw white item
         internalDraw(x, y, 0);
 
         // draw mask if exists
-        if(attributes.blendframes > 1) {
+        if(attributes.layers > 1) {
             // switch to blend color mode
             g_graphics.bindBlendFunc(Fw::BlendColorzing);
 
@@ -109,7 +109,7 @@ void Creature::draw(int x, int y)
     }
 
     // Update animation and position
-    if(m_walking && attributes.animcount > 1) {
+    if(m_walking && attributes.animationPhases > 1) {
 
         if(g_platform.getTicks() - m_lastTicks >= m_walkTimePerPixel) {
             int pixelsWalked = std::floor((g_platform.getTicks() - m_lastTicks) / m_walkTimePerPixel);
@@ -126,8 +126,8 @@ void Creature::draw(int x, int y)
                 m_walkOffsetX = std::max(m_walkOffsetX - pixelsWalked, 0);
 
             int walkOffset = std::max(std::abs(m_walkOffsetX), std::abs(m_walkOffsetY));
-            if(walkOffset % (int)std::ceil(32 / (float)attributes.animcount) == 0) {
-                if(m_lastWalkAnim+1 == attributes.animcount)
+            if(walkOffset % (int)std::ceil(32 / (float)attributes.animationPhases) == 0) {
+                if(m_lastWalkAnim+1 == attributes.animationPhases)
                     m_lastWalkAnim = 1;
                 else
                     m_lastWalkAnim++;
@@ -225,15 +225,15 @@ void Creature::walk(const Position& position)
     g_map.addThing(asThing());
 
     if(m_walking) {
-        // Calculate xDiv
+        // Calculate xPattern
         if(m_direction >= 4) {
             if(m_direction == Otc::NorthEast || m_direction == Otc::SouthEast)
-                m_xDiv = Otc::East;
+                m_xPattern = Otc::East;
             else if(m_direction == Otc::NorthWest || m_direction == Otc::SouthWest)
-                m_xDiv = Otc::West;
+                m_xPattern = Otc::West;
         }
         else {
-            m_xDiv = m_direction;
+            m_xPattern = m_direction;
         }
 
         // get walk speed
@@ -241,7 +241,7 @@ void Creature::walk(const Position& position)
 
         ThingPtr ground = g_map.getThing(m_position, 0);
         if(ground)
-            groundSpeed = ground->getAttributes().speed;
+            groundSpeed = ground->getAttributes().groundSpeed;
 
         float walkTime = walkTimeFactor * 1000.0 * (float)groundSpeed / m_speed;
         walkTime = walkTime == 0 ? 1000 : walkTime;

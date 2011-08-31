@@ -67,8 +67,8 @@ namespace Otc
         DatLight,
         DatDontHide,
         DatTranslucent,
-        DatDrawShift,
-        DatDrawHeight,
+        DatDisplacment,
+        DatElevation,
         DatLyingCorpse,
         DatAnimateAlways,
         DatMinimapColor,
@@ -77,7 +77,7 @@ namespace Otc
         DatIgnoreLook,
         DatClothe,
         DatAnimation,
-        LastDatFlag
+        LastDatFlag = 255
     };
 
     enum ThingAttributesGroup {

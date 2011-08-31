@@ -37,7 +37,7 @@ void Effect::draw(int x, int y)
     if(!m_finished) {
         if(g_platform.getTicks() - m_lastTicks > 75) {
             const ThingAttributes& attributes = getAttributes();
-            if(m_animation+1 == attributes.animcount) {
+            if(m_animation+1 == attributes.animationPhases) {
                 g_dispatcher.addEvent(std::bind(&Map::removeThingByPtr, &g_map, asThing()));
                 m_finished = true;
             }

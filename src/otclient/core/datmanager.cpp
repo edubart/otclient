@@ -78,7 +78,7 @@ void DatManager::parseThingAttributes(std::stringstream& fin, ThingAttributes& t
         uint8 opt;
         fin.read((char*)&opt, 1);
 
-        if(opt == 0xFF)
+        if(opt == Otc::LastDatFlag)
             break;
 
         parseThingAttributesOpt(fin, thingAttributes, opt);
@@ -86,22 +86,25 @@ void DatManager::parseThingAttributes(std::stringstream& fin, ThingAttributes& t
 
     thingAttributes.width = Fw::getU8(fin);
     thingAttributes.height = Fw::getU8(fin);
-    if(thingAttributes.width > 1 || thingAttributes.height > 1)
-        Fw::getU8(fin); // ??
 
-    thingAttributes.blendframes = Fw::getU8(fin);
-    thingAttributes.xdiv = Fw::getU8(fin);
-    thingAttributes.ydiv = Fw::getU8(fin);
-    thingAttributes.zdiv = Fw::getU8(fin);
-    thingAttributes.animcount = Fw::getU8(fin);
+    if(thingAttributes.width > 1 || thingAttributes.height > 1)
+        thingAttributes.exactSize = Fw::getU8(fin);
+    else
+        thingAttributes.exactSize = 32;
+
+    thingAttributes.layers = Fw::getU8(fin);
+    thingAttributes.xPattern = Fw::getU8(fin);
+    thingAttributes.yPattern = Fw::getU8(fin);
+    thingAttributes.zPattern = Fw::getU8(fin);
+    thingAttributes.animationPhases = Fw::getU8(fin);
 
     int totalSprites = thingAttributes.width
                        * thingAttributes.height
-                       * thingAttributes.blendframes
-                       * thingAttributes.xdiv
-                       * thingAttributes.ydiv
-                       * thingAttributes.zdiv
-                       * thingAttributes.animcount;
+                       * thingAttributes.layers
+                       * thingAttributes.xPattern
+                       * thingAttributes.yPattern
+                       * thingAttributes.zPattern
+                       * thingAttributes.animationPhases;
 
     thingAttributes.sprites.resize(totalSprites);
     for(uint16 i = 0; i < totalSprites; i++)
@@ -112,107 +115,107 @@ void DatManager::parseThingAttributesOpt(std::stringstream& fin, ThingAttributes
 {
     switch(opt) {
         case Otc::DatGround: // Grounds, must be drawn first
-            thingAttributes.speed = Fw::getU16(fin);
-            thingAttributes.group = Otc::ThingGroundGroup;
+            thingAttributes.groundSpeed = Fw::getU16(fin);
+            thingAttributes.isGround = true;
             break;
         case Otc::DatGroundClip: // Objects that clips (has transparent pixels) and must be drawn just after ground (e.g: ground borders)
-            thingAttributes.alwaysOnTop = true;
-            thingAttributes.alwaysOnTopOrder = 1;
+            thingAttributes.isGroundClip = true;
             break;
         case Otc::DatOnBottom: // Bottom items, must be drawn above general items and below creatures (e.g: stairs)
-            thingAttributes.alwaysOnTop = true;
-            thingAttributes.alwaysOnTopOrder = 2;
+            thingAttributes.isOnBottom = true;
             break;
         case Otc::DatOnTop: // Top items, must be drawn above creatures (e.g: doors)
-            thingAttributes.alwaysOnTop = true;
-            thingAttributes.alwaysOnTopOrder = 3;
+            thingAttributes.isOnTop = true;
             break;
         case Otc::DatContainer: // Containers
-            thingAttributes.group = Otc::ThingContainerGroup;
+            thingAttributes.isContainer = true;
             break;
         case Otc::DatStackable: // Stackable
-            thingAttributes.stackable = true;
+            thingAttributes.isStackable = true;
             break;
         case Otc::DatForceUse: // Items that are automatically used when step over?
+            thingAttributes.isForceUse = true;
             break;
         case Otc::DatMultiUse: // Usable items
-            thingAttributes.useable = true;
+            thingAttributes.isMultiUse = true;
             break;
         case Otc::DatWritable: // Writable
-            thingAttributes.group = Otc::ThingWriteableGroup;
-            thingAttributes.readable = true;
-            thingAttributes.subParam08 = Fw::getU16(fin);
+            thingAttributes.isWritable = true;
+            thingAttributes.maxTextLength = Fw::getU16(fin);
             break;
         case Otc::DatWritableOnce: // Writable once. objects that can't be edited by players
-            thingAttributes.readable = true;
-            thingAttributes.subParam08 = Fw::getU16(fin);
+            thingAttributes.isWritableOnce = true;
+            thingAttributes.maxTextLength = Fw::getU16(fin);
             break;
         case Otc::DatFluidContainer: // Fluid containers
-            thingAttributes.group = Otc::ThingFluidGroup;
-            Fw::getU8(fin);
+            thingAttributes.fluidParam = Fw::getU8(fin);
             break;
         case Otc::DatSplash: // Splashes
-            thingAttributes.group = Otc::ThingSplashGroup;
+            thingAttributes.isStackable = true;
             break;
         case Otc::DatBlockWalk: // Blocks solid objects (creatures, walls etc)
-            thingAttributes.blockSolid = true;
+            thingAttributes.isNotWalkable = true;
             break;
         case Otc::DatNotMovable: // Not movable
-            thingAttributes.moveable = false;
+            thingAttributes.isNotMoveable = true;
             break;
         case Otc::DatBlockProjectile: // Blocks missiles (walls, magic wall etc)
-            thingAttributes.blockProjectile = true;
+            thingAttributes.isNotProjectable = true;
             break;
         case Otc::DatBlockPathFind: // Blocks pathfind algorithms (monsters)
-            thingAttributes.blockPathFind = true;
+            thingAttributes.isNotPathable = true;
             break;
         case Otc::DatPickupable: // Pickupable
-            thingAttributes.pickupable = true;
+            thingAttributes.isPickupable = true;
             break;
         case Otc::DatHangable: // Hangable objects (wallpaper etc)
             thingAttributes.isHangable = true;
             break;
         case Otc::DatHookSouth: // Horizontal walls
-            thingAttributes.isHorizontal = true;
+            thingAttributes.isHookSouth = true;
             break;
         case Otc::DatHookEast: // Vertical walls
-            thingAttributes.isVertical = true;
+            thingAttributes.isHookEast = true;
             break;
         case Otc::DatRotable: // Rotable
-            thingAttributes.rotable = true;
+            thingAttributes.isRotable = true;
             break;
         case Otc::DatLight: // Light info
+            thingAttributes.hasLight = true;
             thingAttributes.lightLevel = Fw::getU16(fin);
             thingAttributes.lightColor = Fw::getU16(fin);
             break;
         case Otc::DatDontHide: // A few monuments that are not supposed to be hidden by floors
             break;
         case Otc::DatTranslucent: // Grounds that are translucent
-            thingAttributes.changesFloor = true;
+            thingAttributes.isTranslucent = true;
             break;
-        case Otc::DatDrawShift: // Must shift draw
-            thingAttributes.hasHeight = true;
-            thingAttributes.drawOffset = Fw::getU16(fin);
-            Fw::getU16(fin);
+        case Otc::DatDisplacment: // Must shift draw
+            thingAttributes.xDisplacment = Fw::getU16(fin);
+            thingAttributes.yDisplacment = Fw::getU16(fin);
             break;
-        case Otc::DatDrawHeight: // pixels characters height
-            thingAttributes.drawNextOffset = Fw::getU16(fin);
+        case Otc::DatElevation: // Must elevate draw
+            thingAttributes.elevation = Fw::getU16(fin);
             break;
         case Otc::DatLyingCorpse: // Some corpses
+            thingAttributes.isLyingCorpse = true;
             break;
         case Otc::DatAnimateAlways: // Unknown, check if firesword is a kind of AnimateAlways.
+            thingAttributes.isAnimatedAlways = true;
             break;
         case Otc::DatMinimapColor: // Minimap color
             thingAttributes.hasMiniMapColor = true;
             thingAttributes.miniMapColor = Fw::getU16(fin);
             break;
         case Otc::DatLensHelp: // Used for giving players tips?
-            Fw::getU16(fin);
+            thingAttributes.isLensHelp = true;
+            thingAttributes.lensHelpParam = Fw::getU16(fin);
             break;
         case Otc::DatFullGround: // Grounds that has no transparent pixels
+            thingAttributes.isFullGround = true;
             break;
         case Otc::DatIgnoreLook: // Ignore look, then looks at the item on the bottom of it
-            thingAttributes.lookThrough = true;
+            thingAttributes.isIgnoreLook = true;
             break;
         case Otc::DatClothe: // Clothes
             break;

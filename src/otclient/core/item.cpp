@@ -36,9 +36,9 @@ void Item::draw(int x, int y)
 {
     const ThingAttributes& attributes = g_dat.getItemAttributes(m_id);
 
-    if(attributes.animcount > 1) {
+    if(attributes.animationPhases > 1) {
         if(g_platform.getTicks() - m_lastTicks > 500) {
-            if(m_animation+1 == attributes.animcount)
+            if(m_animation+1 == attributes.animationPhases)
                 m_animation = 0;
             else
                 m_animation++;
@@ -48,11 +48,11 @@ void Item::draw(int x, int y)
     }
 
     /*if(attributes.group == Otc::ThingSplashGroup || attributes.group == Otc::ThingFluidGroup) {
-        //xdiv = m_count % attributes.xdiv;
-        //ydiv = m_count / attributes.ydiv;
+        //xPattern = m_count % attributes.xPattern;
+        //yPattern = m_count / attributes.yPattern;
     }*/
 
-    for(int b = 0; b < attributes.blendframes; b++)
+    for(int b = 0; b < attributes.layers; b++)
         internalDraw(x, y, b);
 }
 
@@ -72,10 +72,10 @@ void Item::onPositionChange(const Position&)
 {
     const ThingAttributes& attributes = g_dat.getItemAttributes(m_id);
 
-    if(!attributes.moveable) {
-        m_xDiv = m_position.x % attributes.xdiv;
-        m_yDiv = m_position.y % attributes.ydiv;
-        m_zDiv = m_position.z % attributes.zdiv;
+    if(attributes.isNotMoveable) {
+        m_xPattern = m_position.x % attributes.xPattern;
+        m_yPattern = m_position.y % attributes.yPattern;
+        m_zPattern = m_position.z % attributes.zPattern;
     }
 }
 
@@ -83,26 +83,26 @@ void Item::onCountChange(int)
 {
     const ThingAttributes& attributes = g_dat.getItemAttributes(m_id);
 
-    if(attributes.stackable && attributes.xdiv == 4 && attributes.ydiv == 2) {
+    if(attributes.isStackable && attributes.xPattern == 4 && attributes.yPattern == 2) {
         if(m_count < 5) {
-            m_xDiv = m_count-1;
-            m_yDiv = 0;
+            m_xPattern = m_count-1;
+            m_yPattern = 0;
         }
         else if(m_count < 10) {
-            m_xDiv = 0;
-            m_yDiv = 1;
+            m_xPattern = 0;
+            m_yPattern = 1;
         }
         else if(m_count < 25) {
-            m_xDiv = 1;
-            m_yDiv = 1;
+            m_xPattern = 1;
+            m_yPattern = 1;
         }
         else if(m_count < 50) {
-            m_xDiv = 2;
-            m_yDiv = 1;
+            m_xPattern = 2;
+            m_yPattern = 1;
         }
         else if(m_count <= 100) {
-            m_xDiv = 3;
-            m_yDiv = 1;
+            m_xPattern = 3;
+            m_yPattern = 1;
         }
     }
 }

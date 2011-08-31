@@ -1038,7 +1038,7 @@ ItemPtr ProtocolGame::internalGetItem(InputMessage& msg, uint16 id)
     item->setId(id);
 
     const ThingAttributes& itemAttributes = g_dat.getItemAttributes(id);
-    if(itemAttributes.stackable || itemAttributes.group == Otc::ThingFluidGroup || itemAttributes.group == Otc::ThingSplashGroup)
+    if(itemAttributes.isStackable || itemAttributes.isFluidContainer || itemAttributes.isSplash == Otc::ThingSplashGroup)
         item->setCount(msg.getU8());
 
     return item;

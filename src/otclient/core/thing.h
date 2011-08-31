@@ -59,13 +59,13 @@ public:
     virtual LocalPlayerPtr asLocalPlayer() { return nullptr; }
 
 protected:
-    void internalDraw(int x, int y, int blendframes, Otc::SpriteMask mask = Otc::SpriteNoMask);
+    void internalDraw(int x, int y, int layers, Otc::SpriteMask mask = Otc::SpriteNoMask);
 
     uint32 m_id;
     Otc::ThingType m_type;
     Position m_position;
 
-    int m_xDiv, m_yDiv, m_zDiv, m_animation;
+    int m_xPattern, m_yPattern, m_zPattern, m_animation;
 };
 
 #endif
