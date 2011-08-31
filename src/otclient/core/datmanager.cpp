@@ -111,115 +111,116 @@ void DatManager::parseThingAttributes(std::stringstream& fin, ThingAttributes& t
 void DatManager::parseThingAttributesOpt(std::stringstream& fin, ThingAttributes& thingAttributes, uint8 opt)
 {
     switch(opt) {
-        case 0x00: // Ground tile
+        case Otc::Bank: // Ground tile
             thingAttributes.speed = Fw::getU16(fin);
             thingAttributes.group = Otc::ThingGroundGroup;
             break;
-        case 0x01: // Must be drawn behind creatures foot, e.g.: ground, carpets, borders...
+        case Otc::Clip: // Ground borders
             thingAttributes.alwaysOnTop = true;
             thingAttributes.alwaysOnTopOrder = 1;
             break;
-        case 0x02: // Must be drawn over tile items, e.g.: trees, walls, stairs, rocks, statues...
+        case Otc::Bottom: // Bottom items
             thingAttributes.alwaysOnTop = true;
             thingAttributes.alwaysOnTopOrder = 2;
             break;
-        case 0x03: // Can walk trough and must be drawn over creatures, e.g: open doors, arces, bug pen fence
+        case Otc::Top: // Top items
             thingAttributes.alwaysOnTop = true;
             thingAttributes.alwaysOnTopOrder = 3;
             break;
-        case 0x04: // Container
+        case Otc::Container: // Container
             thingAttributes.group = Otc::ThingContainerGroup;
             break;
-        case 0x05: // Stackable
+        case Otc::Cumulative: // Stackable
             thingAttributes.stackable = true;
             break;
-        case 0x06: // Unknown, some corpses, stairs, even ground ????
+        case Otc::ForceUse: // Unknown, some corpses, stairs, even ground ????
             break;
-        case 0x07: // Useable
+        case Otc::MultiUse: // Useable
             thingAttributes.useable = true;
             break;
-        case 0x08: // Writtable
+        case Otc::Write: // Writtable
             thingAttributes.group = Otc::ThingWriteableGroup;
             thingAttributes.readable = true;
             thingAttributes.subParam08 = Fw::getU16(fin);
             break;
-        case 0x09: // Writtable once
-            // Writtable objects that can't be edited by players
+        case Otc::WriteOnce: // Writtable once. objects that can't be edited by players
             thingAttributes.readable = true;
             thingAttributes.subParam08 = Fw::getU16(fin);
             break;
-        case 0x0A: // Fluid containers
+        case Otc::LiquidContainer: // Fluid containers
             thingAttributes.group = Otc::ThingFluidGroup;
             Fw::getU8(fin);
             break;
-        case 0x0B: // Splashes
+        case Otc::LiquidPool: // Splashes
             thingAttributes.group = Otc::ThingSplashGroup;
             break;
-        case 0x0C: // Blocks solid objects (creatures, walls etc)
+        case Otc::Unpass: // Blocks solid objects (creatures, walls etc)
             thingAttributes.blockSolid = true;
             break;
-        case 0x0D: // Not moveable
+        case Otc::Unmove: // Not moveable
             thingAttributes.moveable = false;
             break;
-        case 0x0E: // Blocks missiles (walls, magic wall etc)
+        case Otc::Unsight: // Blocks missiles (walls, magic wall etc)
             thingAttributes.blockProjectile = true;
             break;
-        case 0x0F: // Blocks pathfind algorithms (monsters)
+        case Otc::Avout: // Blocks pathfind algorithms (monsters)
             thingAttributes.blockPathFind = true;
             break;
-        case 0x10: // Pickupable
+        case Otc::Take: // Pickupable
             thingAttributes.pickupable = true;
             break;
-        case 0x11: // Hangable objects (wallpaper etc)
+        case Otc::Hang: // Hangable objects (wallpaper etc)
             thingAttributes.isHangable = true;
             break;
-        case 0x12: // Horizontal wall
+        case Otc::HookSouth: // Horizontal wall??
             thingAttributes.isHorizontal = true;
             break;
-        case 0x13: // Vertical wall
+        case Otc::HookEast: // Vertical wall??
             thingAttributes.isVertical = true;
             break;
-        case 0x14: // Rotable
+        case Otc::Rotate: // Rotable
             thingAttributes.rotable = true;
             break;
-        case 0x15: // Light info
+        case Otc::Light: // Light info
             thingAttributes.lightLevel = Fw::getU16(fin);
             thingAttributes.lightColor = Fw::getU16(fin);
             break;
-        case 0x16: // Unknown, just a few monuments
+        case Otc::DontHide: // Unknown, just a few monuments
             break;
-        case 0x17: // Changes floor, e.g: holes
+        case Otc::Translucent: // Unknown description
             thingAttributes.changesFloor = true;
             break;
-        case 0x18: // Thing must be drawed with offset
+        case Otc::Shift: // Thing must be drawed with offset
             thingAttributes.hasHeight = true;
             thingAttributes.drawOffset = Fw::getU8(fin);
             Fw::getU8(fin);
             Fw::getU16(fin);
             break;
-        case 0x19: // pixels characters height
+        case Otc::Height: // pixels characters height
             thingAttributes.drawNextOffset = Fw::getU8(fin);
             Fw::getU8(fin);
             break;
-        case 0x1A: // Unknown, some corpses
+        case Otc::LyingObject: // Unknown, some corpses
             //thingAttributes.hasHeight = true;
             break;
-        case 0x1B:
+        case Otc::AnimateAlways: // Unknown, check if firesword is a kind of AnimateAlways.
             break;
-        case 0x1C: // Minimap color
+        case Otc::Automap: // Minimap color
             thingAttributes.miniMapColor = Fw::getU16(fin);
             thingAttributes.hasMiniMapColor = true;
             break;
-        case 0x1D: // Unknown
+        case Otc::LensHelp: // Unknown
             if(Fw::getU16(fin) == 1112)
                 thingAttributes.readable = true;
             break;
-        case 0x1E: // Unknown, only grounds
+        case Otc::FullBank: // Ground has no transparent pixels.
             break;
-        case 0x1F: // Unknown, borders that cant walk into?
+        case Otc::IgnoreLook: // Ignore look, then looks at the item on the bottom of it.
             thingAttributes.lookThrough = true;
             break;
-        case 0x20: // Unknown
+        case Otc::Clothes: // Unknown
+            break;
+        case Otc::Animation: // Not used in 8.62
             break;
         default:
             throw std::runtime_error(Fw::mkstr("unknown .dat byte code: 0x", std::hex, (int)opt));

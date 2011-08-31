@@ -42,6 +42,44 @@ namespace Otc
                                          "6207862794310902180176810615217550567108238764764442605581471797"
                                          "07119674283982419152118103759076030616683978566631413";
 
+    enum DatFlag {
+        Bank = 0,
+        Clip,
+        Bottom,
+        Top,
+        Container,
+        Cumulative,
+        ForceUse,
+        MultiUse,
+        Write,
+        WriteOnce,
+        LiquidContainer,
+        LiquidPool,
+        Unpass,
+        Unmove,
+        Unsight,
+        Avout,
+        Take,
+        Hang,
+        HookSouth,
+        HookEast,
+        Rotate,
+        Light,
+        DontHide,
+        Translucent,
+        Shift,
+        Height,
+        LyingObject,
+        AnimateAlways,
+        Automap,
+        LensHelp,
+        FullBank,
+        IgnoreLook,
+        Clothes,
+        Animation,
+        LastDatFlag
+    };
+
     enum ThingAttributesGroup {
         ThingNoGroup = 0,
         ThingGroundGroup,
