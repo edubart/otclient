@@ -83,7 +83,7 @@ void Item::onCountChange(int)
 {
     const ThingAttributes& attributes = g_dat.getItemAttributes(m_id);
 
-    if(attributes.stackable) {
+    if(attributes.stackable && attributes.xdiv == 4 && attributes.ydiv == 2) {
         if(m_count < 5) {
             m_xDiv = m_count-1;
             m_yDiv = 0;
