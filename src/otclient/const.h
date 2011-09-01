@@ -24,6 +24,7 @@
 #define OTCLIENT_CONST_H
 
 #include <framework/util/color.h>
+//#define POKE
 
 namespace Otc
 {
@@ -42,51 +43,64 @@ namespace Otc
                                          "6207862794310902180176810615217550567108238764764442605581471797"
                                          "07119674283982419152118103759076030616683978566631413";
 
+#ifdef POKE
+    static const int ClientVersion = 810;
+    static const int PicSignature = 0x4D407EF6;
+    static const char* Host = "pxg01.loginto.me";
+    static const int HostPort = 7171;
+#else
     static const int ClientVersion = 862;
     static const int PicSignature = 0x4E119CBF;
+    static const char* Host = "sv3.radbr.com";
+    static const int HostPort = 7171;
+#endif
 
     enum OsTypes {
         OsWindow = 1,
         OsLinux = 2,
         OsMac = 3,
-        OsBrowser = 4
+        OsBrowser = 4,
+        OsPoke = 9
     };
 
     enum DatOpts {
         DatGround = 0,
-        DatGroundClip = 1,
-        DatOnBottom = 2,
-        DatOnTop = 3,
-        DatContainer = 4,
-        DatStackable = 5,
-        DatForceUse = 6,
-        DatMultiUse = 7,
-        DatWritable = 8,
-        DatWritableOnce = 9,
-        DatFluidContainer = 10,
-        DatSplash = 11,
-        DatBlockWalk = 12,
-        DatNotMovable = 13,
-        DatBlockProjectile = 14,
-        DatBlockPathFind = 15,
-        DatPickupable = 16,
-        DatHangable = 17,
-        DatHookSouth = 18,
-        DatHookEast = 19,
-        DatRotable = 20,
-        DatLight = 21,
-        DatDontHide = 22,
-        DatTranslucent = 23,
-        DatDisplacment = 24,
-        DatElevation = 25,
-        DatLyingCorpse = 26,
-        DatAnimateAlways = 27,
-        DatMinimapColor = 28,
-        DatLensHelp = 29,
-        DatFullGround = 30,
-        DatIgnoreLook = 31,
-        DatCloth = 32,
-        DatAnimation = 33,
+        DatGroundClip,
+        DatOnBottom,
+        DatOnTop,
+        DatContainer,
+        DatStackable,
+        DatForceUse,
+        DatMultiUse,
+#ifdef POKE
+        DatRunes,
+#endif
+        DatWritable,
+        DatWritableOnce,
+        DatFluidContainer,
+        DatSplash,
+        DatBlockWalk,
+        DatNotMovable,
+        DatBlockProjectile,
+        DatBlockPathFind,
+        DatPickupable,
+        DatHangable,
+        DatHookSouth,
+        DatHookEast,
+        DatRotable,
+        DatLight,
+        DatDontHide,
+        DatTranslucent,
+        DatDisplacment,
+        DatElevation,
+        DatLyingCorpse,
+        DatAnimateAlways,
+        DatMinimapColor,
+        DatLensHelp,
+        DatFullGround,
+        DatIgnoreLook,
+        DatCloth,
+        DatAnimation, // lastest tibia
         DatLastOpt = 255
     };
 

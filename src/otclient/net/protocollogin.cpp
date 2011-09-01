@@ -30,7 +30,9 @@
 
 ProtocolLogin::ProtocolLogin()
 {
+#ifndef POKE
     enableChecksum();
+#endif
 }
 
 void ProtocolLogin::login(const std::string& accountName, const std::string& accountPassword)
@@ -43,10 +45,7 @@ void ProtocolLogin::login(const std::string& accountName, const std::string& acc
     m_accountName = accountName;
     m_accountPassword = accountPassword;
 
-    std::string host = "sv3.radbr.com";
-    uint16 port = 7171;
-
-    connect(host, port);
+    connect(Otc::Host, Otc::HostPort);
 }
 
 void ProtocolLogin::onConnect()
@@ -85,6 +84,30 @@ void ProtocolLogin::sendLoginPacket()
 {
     OutputMessage oMsg;
 
+#ifdef POKE
+    oMsg.addU8(Otc::ClientEnterAccount);
+    oMsg.addU16(Otc::OsPoke);
+    oMsg.addU16(Otc::ClientVersion);
+
+    oMsg.addU32(g_thingsType.getSignature()); // data signature
+    oMsg.addU32(g_sprites.getSignature()); // sprite signature
+    oMsg.addU32(Otc::PicSignature); // pic signature
+
+    oMsg.addU8(0); // first RSA byte must be 0
+
+    // xtea key
+    generateXteaKey();
+    oMsg.addU32(m_xteaKey[0]);
+    oMsg.addU32(m_xteaKey[1]);
+    oMsg.addU32(m_xteaKey[2]);
+    oMsg.addU32(m_xteaKey[3]);
+
+    oMsg.addU32(Fw::unsafeCast<int>(m_accountName));
+    oMsg.addString(m_accountPassword);
+
+    // complete the 128 bytes for rsa encryption with zeros
+    oMsg.addPaddingBytes(128 - (23 + m_accountPassword.length()));
+#else
     oMsg.addU8(Otc::ClientEnterAccount);
     oMsg.addU16(Otc::OsLinux);
     oMsg.addU16(Otc::ClientVersion);
@@ -107,8 +130,9 @@ void ProtocolLogin::sendLoginPacket()
 
     // complete the 128 bytes for rsa encryption with zeros
     oMsg.addPaddingBytes(128 - (21 + m_accountName.length() + m_accountPassword.length()));
+#endif
 
-    if(!Rsa::encrypt((char*)oMsg.getBuffer() + 6 + oMsg.getMessageSize() - 128, 128, Otc::OtservPublicRSA))
+    if(!Rsa::encrypt((char*)oMsg.getBuffer() + InputMessage::DATA_POS + oMsg.getMessageSize() - 128, 128, Otc::OtservPublicRSA))
         return;
 
     send(oMsg);

@@ -104,6 +104,10 @@ void ThingsType::parseThingType(std::stringstream& fin, ThingType& thingType)
             case Otc::DatMultiUse: // Usable items
                 thingType.isMultiUse = true;
                 break;
+#ifdef POKE
+            case Otc::DatRunes:
+                break;
+#endif
             case Otc::DatWritable: // Writable
                 thingType.isWritable = true;
                 thingType.maxTextLength = Fw::getU16(fin);
