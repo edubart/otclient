@@ -71,7 +71,7 @@ void Tile::draw(int x, int y)
                 // own creature not walking
                 if(creature->getWalkOffsetX() == 0 && creature->getWalkOffsetY() == 0 && xi == 0 && yi == 0)
                     draw = true;
-                // own creature walking west/east/north/south
+                // own creature walking on any direction
                 else if(xi == 0 && yi == 0 &&
                           creature->getWalkOffsetX() <= 8 && creature->getWalkOffsetY() <= 8 &&
                           creature->getWalkOffsetX() > -24 && creature->getWalkOffsetY() > -24)
@@ -83,8 +83,8 @@ void Tile::draw(int x, int y)
                 else if(xi != 0 && yi == 0 && (creature->getWalkOffsetX() > 8 || creature->getWalkOffsetX() <= -24) && creature->getWalkOffsetY() == 0)
                     draw = true;
                 // creature walking in diagonal
-                else if(xi != 0 && yi != 0 && (creature->getWalkOffsetY() > 8 || creature->getWalkOffsetY() <= -24) &&
-                                                (creature->getWalkOffsetX() > 8 || creature->getWalkOffsetX() <= -24))
+                else if(xi != 0 && yi != 0 && ((creature->getWalkOffsetY() > 8 || creature->getWalkOffsetY() <= -24) ||
+                                                (creature->getWalkOffsetX() > 8 || creature->getWalkOffsetX() <= -24)))
                     draw = true;
                 if(draw)
                     creature->draw(x - m_drawElevation + xi*32, y - m_drawElevation + yi*32);
