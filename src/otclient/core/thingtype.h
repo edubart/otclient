@@ -33,7 +33,7 @@ struct ThingType
         exactSize = 0;
         xPattern = yPattern = zPattern = 0;
         animationPhases = 0;
-        xDisplacment = yDisplacment = 0;
+        xDisplacement = yDisplacement = 0;
         elevation = 0;
 
         isGround = false;
@@ -83,7 +83,7 @@ struct ThingType
     uint8 exactSize;
     uint8 xPattern, yPattern, zPattern;
     uint8 animationPhases;
-    uint16 xDisplacment, yDisplacment;
+    uint16 xDisplacement, yDisplacement;
     uint16 elevation;
     std::vector<int> sprites;
 

@@ -91,7 +91,7 @@ namespace Otc
         DatLight,
         DatDontHide,
         DatTranslucent,
-        DatDisplacment,
+        DatDisplacement,
         DatElevation,
         DatLyingCorpse,
         DatAnimateAlways,

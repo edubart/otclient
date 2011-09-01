@@ -159,9 +159,9 @@ void ThingsType::parseThingType(std::stringstream& fin, ThingType& thingType)
             case Otc::DatTranslucent: // Grounds that are translucent
                 thingType.isTranslucent = true;
                 break;
-            case Otc::DatDisplacment: // Must shift draw
-                thingType.xDisplacment = Fw::getU16(fin);
-                thingType.yDisplacment = Fw::getU16(fin);
+            case Otc::DatDisplacement: // Must shift draw
+                thingType.xDisplacement = Fw::getU16(fin);
+                thingType.yDisplacement = Fw::getU16(fin);
                 break;
             case Otc::DatElevation: // Must elevate draw
                 thingType.elevation = Fw::getU16(fin);

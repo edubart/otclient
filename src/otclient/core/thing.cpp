@@ -60,8 +60,8 @@ void Thing::internalDraw(int x, int y, int layers, Otc::SpriteMask mask)
 
             TexturePtr spriteTex = g_sprites.getSpriteTexture(spriteId, mask);
 
-            Rect drawRect((x - xi*32) - type.xDisplacment,
-                          (y - yi*32) - type.yDisplacment,
+            Rect drawRect((x - xi*32) - type.xDisplacement,
+                          (y - yi*32) - type.yDisplacement,
                           32, 32);
             g_graphics.drawTexturedRect(drawRect, spriteTex);
         }

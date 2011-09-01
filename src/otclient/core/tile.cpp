@@ -68,7 +68,7 @@ void Tile::draw(int x, int y)
         for(int yi = -1; yi <= 1; ++yi) {
             for(CreaturePtr creature : g_map.getTile(m_position + Position(xi, yi, 0))->getCreatures()) {
                 auto& type = creature->getType();
-                Rect creatureRect(x + xi*32 + creature->getWalkOffsetX() - type.xDisplacment, y + yi*32 + creature->getWalkOffsetY() - type.yDisplacment, 32, 32);
+                Rect creatureRect(x + xi*32 + creature->getWalkOffsetX() - type.xDisplacement, y + yi*32 + creature->getWalkOffsetY() - type.yDisplacement, 32, 32);
                 Rect thisTileRect(x, y, 32, 32);
 
                 // only render creatures where bottom right is inside our rect
