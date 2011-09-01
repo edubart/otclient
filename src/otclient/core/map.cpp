@@ -43,11 +43,12 @@ void Map::draw(const Rect& rect)
     int walkOffsetX = localPlayer->getWalkOffsetX();
     int walkOffsetY = localPlayer->getWalkOffsetY();
 
+    //TODO: cache first/last visible floor
     // draw from bottom floors to top floors
     int firstFloor = getFirstVisibleFloor();
     const int lastFloor = MAX_Z-1;
     for(int iz = lastFloor; iz >= firstFloor; --iz) {
-        // draw tiles in linus pauling's rule order
+        // draw tiles like linus pauling's rule order
         const int numDiagonals = MAP_SIZE_X + MAP_SIZE_Y - 1;
         for(int diagonal = 0; diagonal < numDiagonals; ++diagonal) {
             // loop through / diagonal tiles
