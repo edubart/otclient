@@ -25,6 +25,7 @@
 
 #include <otclient/const.h>
 #include <framework/util/types.h>
+#include <framework/util/point.h>
 
 class Position
 {
@@ -70,10 +71,15 @@ public:
         return std::abs(x-pos.x) <= xdif && std::abs(y-pos.y) <= ydif && std::abs(pos.z-z) <= zdif;
     }
 
+    Point to2D(const Position& centerPos) const {
+        return Point((7 + (x - centerPos.x) - (centerPos.z - z)) * 32,
+                     (5 + (y - centerPos.y) - (centerPos.z - z)) * 32);
+    };
+
     void up(int n = 1) { z-=n; }
     void down(int n = 1) { z+=n; }
 
-    void coveredUp(int n = 1) { x+=n; y+=n; z-=n; }
+    void perspectiveUp(int n = 1) { x+=n; y+=n; z-=n; }
     void coveredDown(int n = 1) { x-=n; y-=n; z+=n; }
 
     int x;

@@ -24,6 +24,7 @@
 #include "game.h"
 #include "localplayer.h"
 #include "tile.h"
+#include "item.h"
 #include <framework/graphics/graphics.h>
 #include <framework/graphics/framebuffer.h>
 
@@ -37,29 +38,27 @@ void Map::draw(const Rect& rect)
     g_graphics.bindColor(Fw::white);
     m_framebuffer->bind();
 
+    // draw offsets
     LocalPlayerPtr localPlayer = g_game.getLocalPlayer();
     int walkOffsetX = localPlayer->getWalkOffsetX();
     int walkOffsetY = localPlayer->getWalkOffsetY();
 
-    int maxFloor = getMaxVisibleFloor();
-    for(int z = MAX_Z-1; z >= maxFloor; --z) {
-        if(z < maxFloor)
-            continue;
-
-        int zdif = m_centralPosition.z - z;
-        for(int y = 0; y < MAP_SIZE_Y; ++y) {
-            for(int x = 0; x < MAP_SIZE_X; ++x) {
-                Position tilePos(m_centralPosition.x + (x - PLAYER_OFFSET_X), m_centralPosition.y + (y - PLAYER_OFFSET_Y), m_centralPosition.z);
-                tilePos.coveredUp(m_centralPosition.z - z);
-                if(const TilePtr& tile = m_tiles[tilePos]) {
-                    // skip tiles that are behind another tile
-                    if(z > maxFloor && isCompletlyCovered(tilePos, maxFloor))
-                        continue;
-
-                    int x = (7 + (tile->getPosition().x - m_centralPosition.x) - zdif) * NUM_TILE_PIXELS;
-                    int y = (5 + (tile->getPosition().y - m_centralPosition.y) - zdif) * NUM_TILE_PIXELS;
-                    tile->draw(x - walkOffsetX, y - walkOffsetY);
-                }
+    // draw from bottom floors to top floors
+    int firstFloor = getFirstVisibleFloor();
+    const int lastFloor = MAX_Z-1;
+    for(int iz = lastFloor; iz >= firstFloor; --iz) {
+        // draw tiles in linus pauling's rule order
+        const int numDiagonals = MAP_SIZE_X + MAP_SIZE_Y - 1;
+        for(int diagonal = 0; diagonal < numDiagonals; ++diagonal) {
+            // loop through / diagonal tiles
+            for(int ix = std::min(diagonal, MAP_SIZE_X - 1), iy = std::max(diagonal - MAP_SIZE_X, 0); ix >= 0 && iy < MAP_SIZE_Y; --ix, ++iy) {
+                // position on current floor
+                Position tilePos(m_centralPosition.x + (ix - PLAYER_OFFSET_X), m_centralPosition.y + (iy - PLAYER_OFFSET_Y), m_centralPosition.z);
+                // adjust tilePos to the wanted floor
+                tilePos.perspectiveUp(m_centralPosition.z - iz);
+                // TODO: skip tiles that are behind another tile
+                if(const TilePtr& tile = m_tiles[tilePos])
+                    tile->draw(tilePos.to2D(m_centralPosition) - Point(walkOffsetX, walkOffsetY));
             }
         }
     }
@@ -93,7 +92,7 @@ void Map::draw(const Rect& rect)
                         y += creature->getWalkOffsetY() - walkOffsetY;
                     }
 
-                    creature->drawInformation(rect.x() + x*horizontalStretchFactor, rect.y() + y*verticalStretchFactor, isCovered(tilePos, maxFloor));
+                    creature->drawInformation(rect.x() + x*horizontalStretchFactor, rect.y() + y*verticalStretchFactor, isCovered(tilePos, firstFloor));
                 }
             }
         }
@@ -105,51 +104,62 @@ void Map::clean()
     m_tiles.clear();
 }
 
-int Map::getMaxVisibleFloor()
+int Map::getFirstVisibleFloor()
 {
-    Position tilePos = m_centralPosition;
-    tilePos.up();
-    TilePtr tile = m_tiles[tilePos];
-    if(tile)
-        return m_centralPosition.z;
-
-    tilePos = Position(m_centralPosition);
-    while(tilePos.z >= 0) {
-        tilePos.coveredUp();
-        tile = m_tiles[tilePos];
-        if(tile)
-            return tilePos.z + 1;
-    }
-    /*
-    int maxZ = MAP_SIZE_Z - 1;
-    int currentZ = m_centralPosition.z;
-    while(maxZ > currentZ) {
-        TilePtr tile = m_tiles[tilePos];
-        if(tilç
-        maxZ--;
-    };
-
-    for(int x = PLAYER_OFFSET_X-1; x <= PLAYER_OFFSET_X+1; ++x) {
-        for(int y = PLAYER_OFFSET_Y-1; y <= PLAYER_OFFSET_Y+1; ++y) {
-            if(x == PLAYER_OFFSET_X && y == PLAYER_OFFSET_Y)
-                continue;
-            for(int z = currentZ + 1; z <
+    int firstFloor = 0;
+    for(int ix = -1; ix <= 1 && firstFloor < m_centralPosition.z; ++ix) {
+        for(int iy = -1; iy <= 1 && firstFloor < m_centralPosition.z; ++iy) {
+            Position currentPos(m_centralPosition.x + ix, m_centralPosition.y + iy, m_centralPosition.z);
+            if((ix == 0 && iy == 0) || isLookPossible(currentPos)) {
+                Position upperPos = currentPos;
+                Position perspectivePos = currentPos;
+                perspectivePos.perspectiveUp();
+                upperPos.up();
+                while(upperPos.z >= firstFloor) {
+                    if(TilePtr tile = m_tiles[upperPos]) {
+                        if(ThingPtr firstThing = tile->getThing(0)) {
+                            const ThingType type = firstThing->getType();
+                            if((type.isGround || type.isOnBottom) && !type.isDontHide) {
+                                firstFloor = upperPos.z + 1;
+                                break;
+                            }
+                        }
+                    }
+                    if(TilePtr tile = m_tiles[perspectivePos]) {
+                        if(ThingPtr firstThing = tile->getThing(0)) {
+                            const ThingType type = firstThing->getType();
+                            if((type.isGround || type.isOnBottom) && !type.isDontHide) {
+                                firstFloor = perspectivePos.z + 1;
+                                break;
+                            }
+                        }
+                    }
+                    perspectivePos.perspectiveUp();
+                    upperPos.up();
+                }
+            }
         }
     }
-    */
+    return firstFloor;
+}
 
-    return 0;
+bool Map::isLookPossible(const Position& pos)
+{
+    TilePtr tile = m_tiles[pos];
+    if(tile)
+        return tile->isLookPossible();
+    return true;
 }
 
 bool Map::isCovered(const Position& pos, int maxFloor)
 {
     Position tilePos = pos;
-    tilePos.coveredUp();
+    tilePos.perspectiveUp();
     while(tilePos.z >= maxFloor) {
         TilePtr tile = m_tiles[tilePos];
-        if(tile)
+        if(tile && tile->isFullGround())
             return true;
-        tilePos.coveredUp();
+        tilePos.perspectiveUp();
     }
     return false;
 }
@@ -157,7 +167,7 @@ bool Map::isCovered(const Position& pos, int maxFloor)
 bool Map::isCompletlyCovered(const Position& pos, int maxFloor)
 {
     Position tilePos = pos;
-    tilePos.coveredUp();
+    tilePos.perspectiveUp();
     while(tilePos.z >= maxFloor) {
         bool covered = true;
         for(int x=0;x<2;++x) {
@@ -171,7 +181,7 @@ bool Map::isCompletlyCovered(const Position& pos, int maxFloor)
         }
         if(covered)
             return true;
-        tilePos.coveredUp();
+        tilePos.perspectiveUp();
     }
     return false;
 }

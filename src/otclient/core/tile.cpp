@@ -35,7 +35,7 @@ Tile::Tile(const Position& position)
     m_position = position;
 }
 
-void Tile::draw(int x, int y)
+void Tile::draw(const Point& p)
 {
     m_drawElevation = 0;
 
@@ -44,7 +44,7 @@ void Tile::draw(int x, int y)
         const ThingType& type = thing->getType();
         if(!type.isGround && !type.isGroundClip && !type.isOnBottom)
             break;
-        thing->draw(x - m_drawElevation, y - m_drawElevation);
+        thing->draw(p.x - m_drawElevation, p.y - m_drawElevation);
         m_drawElevation += type.elevation;
         if(m_drawElevation > MAX_DRAW_ELEVATION)
             m_drawElevation = MAX_DRAW_ELEVATION;
@@ -56,7 +56,7 @@ void Tile::draw(int x, int y)
         const ThingType& type = thing->getType();
         if(thing->asCreature() || type.isOnTop || type.isOnBottom || type.isGroundClip || type.isGround)
             break;
-        thing->draw(x - m_drawElevation, y - m_drawElevation);
+        thing->draw(p.x - m_drawElevation, p.y - m_drawElevation);
         m_drawElevation += type.elevation;
         if(m_drawElevation > MAX_DRAW_ELEVATION)
             m_drawElevation = MAX_DRAW_ELEVATION;
@@ -68,25 +68,25 @@ void Tile::draw(int x, int y)
         for(int yi = -1; yi <= 1; ++yi) {
             for(CreaturePtr creature : g_map.getTile(m_position + Position(xi, yi, 0))->getCreatures()) {
                 auto& type = creature->getType();
-                Rect creatureRect(x + xi*32 + creature->getWalkOffsetX() - type.xDisplacement, y + yi*32 + creature->getWalkOffsetY() - type.yDisplacement, 32, 32);
-                Rect thisTileRect(x, y, 32, 32);
+                Rect creatureRect(p.x + xi*32 + creature->getWalkOffsetX() - type.xDisplacement, p.y + yi*32 + creature->getWalkOffsetY() - type.yDisplacement, 32, 32);
+                Rect thisTileRect(p.x, p.y, 32, 32);
 
                 // only render creatures where bottom right is inside our rect
                 if(thisTileRect.contains(creatureRect.bottomRight()))
-                    creature->draw(x + xi*32 - m_drawElevation, y + yi*32 - m_drawElevation);
+                    creature->draw(p.x + xi*32 - m_drawElevation, p.y + yi*32 - m_drawElevation);
             }
         }
     }
 
     // effects
     for(const EffectPtr& effect : m_effects)
-        effect->draw(x - m_drawElevation, y - m_drawElevation);
+        effect->draw(p.x - m_drawElevation, p.y - m_drawElevation);
 
     // top items
     for(const ThingPtr& thing : m_things) {
         const ThingType& type = thing->getType();
         if(type.isOnTop)
-            thing->draw(x - m_drawElevation, y - m_drawElevation);
+            thing->draw(p.x - m_drawElevation, p.y - m_drawElevation);
     }
 }
 
@@ -183,6 +183,17 @@ ItemPtr Tile::getGround()
     return nullptr;
 }
 
+bool Tile::isFullGround()
+{
+    ThingPtr ground = getThing(0);
+    if(!ground)
+        return false;
+    const ThingType& type = ground->getType();
+    if(type.isGround && type.isFullGround)
+        return true;
+    return false;
+}
+
 bool Tile::isFullyOpaque()
 {
     ThingPtr firstObject = getThing(0);
@@ -192,4 +203,14 @@ bool Tile::isFullyOpaque()
             return true;
     }
     return false;
+}
+
+bool Tile::isLookPossible()
+{
+    for(const ThingPtr& thing : m_things) {
+        const ThingType& type = thing->getType();
+        if(type.isUnsight)
+            return false;
+    }
+    return true;
 }

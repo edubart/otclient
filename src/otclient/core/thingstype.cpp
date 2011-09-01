@@ -129,7 +129,7 @@ void ThingsType::parseThingType(std::stringstream& fin, ThingType& thingType)
                 thingType.isNotMoveable = true;
                 break;
             case Otc::DatBlockProjectile: // Blocks missiles (walls, magic wall etc)
-                thingType.isNotProjectable = true;
+                thingType.isUnsight = true;
                 break;
             case Otc::DatBlockPathFind: // Blocks pathfind algorithms (monsters)
                 thingType.isNotPathable = true;

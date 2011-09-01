@@ -34,7 +34,7 @@ class Tile : public LuaObject
 public:
     Tile(const Position& position);
 
-    void draw(int x, int y);
+    void draw(const Point& p);
     void clean();
 
     void addEffect(const EffectPtr& effect);
@@ -48,7 +48,9 @@ public:
     int getDrawElevation() { return m_drawElevation; }
     std::vector<CreaturePtr> getCreatures();
     ItemPtr getGround();
+    bool isFullGround();
     bool isFullyOpaque();
+    bool isLookPossible();
 
     TilePtr asTile() { return std::static_pointer_cast<Tile>(shared_from_this()); }
 

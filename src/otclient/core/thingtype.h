@@ -50,7 +50,7 @@ struct ThingType
         isSplash = false;
         isNotWalkable = false;
         isNotMoveable = false;
-        isNotProjectable = false;
+        isUnsight = false;
         isNotPathable = false;
         isPickupable = false;
         isHangable = false;
@@ -101,7 +101,7 @@ struct ThingType
     bool isSplash;
     bool isNotWalkable;
     bool isNotMoveable;
-    bool isNotProjectable;
+    bool isUnsight;
     bool isNotPathable;
     bool isPickupable;
     bool isHangable;

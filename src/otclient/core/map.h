@@ -44,7 +44,8 @@ public:
     void draw(const Rect& rect);
     void clean();
 
-    int getMaxVisibleFloor();
+    int getFirstVisibleFloor();
+    bool isLookPossible(const Position& pos);
     bool isCovered(const Position& pos, int maxFloor);
     bool isCompletlyCovered(const Position& pos, int maxFloor);
 
