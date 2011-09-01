@@ -62,32 +62,16 @@ void Tile::draw(int x, int y)
             m_drawElevation = MAX_DRAW_ELEVATION;
     }
 
-    // creatures, check for walking creatures in 2x2 tiles
-    for(int xi = -1; xi <= 0; ++xi) {
-        for(int yi = -1; yi <= 0; ++yi) {
-            TilePtr tile = g_map.getTile(m_position + Position(xi, yi, 0));
+    // we can render creatures in 3x3 range
+    for(int xi = -1; xi <= 1; ++xi) {
+        for(int yi = -1; yi <= 1; ++yi) {
             for(CreaturePtr creature : g_map.getTile(m_position + Position(xi, yi, 0))->getCreatures()) {
-                bool draw = false;
-                // own creature not walking
-                if(creature->getWalkOffsetX() == 0 && creature->getWalkOffsetY() == 0 && xi == 0 && yi == 0)
-                    draw = true;
-                // own creature walking on any direction
-                else if(xi == 0 && yi == 0 &&
-                          creature->getWalkOffsetX() <= 8 && creature->getWalkOffsetY() <= 8 &&
-                          creature->getWalkOffsetX() > -24 && creature->getWalkOffsetY() > -24)
-                    draw = true;
-                // creature walking north/south to neighbour tile
-                else if(xi == 0 && yi != 0 && (creature->getWalkOffsetY() > 8 || creature->getWalkOffsetY() <= -24) && creature->getWalkOffsetX() == 0)
-                    draw = true;
-                // creature walking west/east to neighbour tile
-                else if(xi != 0 && yi == 0 && (creature->getWalkOffsetX() > 8 || creature->getWalkOffsetX() <= -24) && creature->getWalkOffsetY() == 0)
-                    draw = true;
-                // creature walking in diagonal
-                else if(xi != 0 && yi != 0 && ((creature->getWalkOffsetY() > 8 || creature->getWalkOffsetY() <= -24) ||
-                                                (creature->getWalkOffsetX() > 8 || creature->getWalkOffsetX() <= -24)))
-                    draw = true;
-                if(draw)
-                    creature->draw(x - m_drawElevation + xi*32, y - m_drawElevation + yi*32);
+                Rect creatureRect(x + xi*32 + creature->getWalkOffsetX(), y + yi*32 + creature->getWalkOffsetY(), 24, 24);
+                Rect thisTileRect(x, y, 32, 32);
+
+                // only render creatures where bottom right is inside our rect
+                if(thisTileRect.contains(creatureRect.bottomRight()))
+                    creature->draw(x + xi*32 - m_drawElevation, y + yi*32 - m_drawElevation);
             }
         }
     }

@@ -50,6 +50,8 @@ public:
     ItemPtr getGround();
     bool isFullyOpaque();
 
+    TilePtr asTile() { return std::static_pointer_cast<Tile>(shared_from_this()); }
+
 private:
     std::vector<EffectPtr> m_effects;
     std::vector<ThingPtr> m_things;

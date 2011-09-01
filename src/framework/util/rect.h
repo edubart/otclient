@@ -244,10 +244,10 @@ public:
             b2 = r.y2;
 
         TRect<T> tmp;
-        tmp.x1 = std::min(l1, l2);
-        tmp.x2 = std::max(r1, r2);
-        tmp.y1 = std::min(t1, t2);
-        tmp.y2 = std::max(b1, b2);
+        tmp.x1 = std::max(l1, l2);
+        tmp.x2 = std::min(r1, r2);
+        tmp.y1 = std::max(t1, t2);
+        tmp.y2 = std::min(b1, b2);
         return tmp;
     }
 

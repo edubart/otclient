@@ -75,6 +75,8 @@ public:
     int getWalkOffsetX() { return m_walkOffsetX; }
     int getWalkOffsetY() { return m_walkOffsetY; }
 
+    bool isWalking() { return m_walking; }
+
     CreaturePtr asCreature() { return std::static_pointer_cast<Creature>(shared_from_this()); }
 
 private:
