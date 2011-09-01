@@ -62,18 +62,32 @@ void Tile::draw(int x, int y)
             m_drawElevation = MAX_DRAW_ELEVATION;
     }
 
-    // creatures
+    // creatures, check for walking creatures in 2x2 tiles
     for(int xi = -1; xi <= 0; ++xi) {
         for(int yi = -1; yi <= 0; ++yi) {
             TilePtr tile = g_map.getTile(m_position + Position(xi, yi, 0));
             for(CreaturePtr creature : g_map.getTile(m_position + Position(xi, yi, 0))->getCreatures()) {
-                // own creatures that are walking to east/south
-                if(xi == 0 && yi == 0 && creature->getWalkOffsetX() <= 0 && creature->getWalkOffsetY() <= 0) {
-                    creature->draw(x - m_drawElevation, y - m_drawElevation);
-                // creatures from other tiles that are walking to north/west
-                } else if(xi != 0 && yi != 0 && (creature->getWalkOffsetX() > 0 || creature->getWalkOffsetY() > 0)) {
-                    creature->draw(x - tile->getDrawElevation() + xi*32, y - tile->getDrawElevation() + yi*32);
-                }
+                bool draw = false;
+                // own creature not walking
+                if(creature->getWalkOffsetX() == 0 && creature->getWalkOffsetY() == 0 && xi == 0 && yi == 0)
+                    draw = true;
+                // own creature walking west/east/north/south
+                else if(xi == 0 && yi == 0 &&
+                          creature->getWalkOffsetX() <= 8 && creature->getWalkOffsetY() <= 8 &&
+                          creature->getWalkOffsetX() > -24 && creature->getWalkOffsetY() > -24)
+                    draw = true;
+                // creature walking north/south to neighbour tile
+                else if(xi == 0 && yi != 0 && (creature->getWalkOffsetY() > 8 || creature->getWalkOffsetY() <= -24) && creature->getWalkOffsetX() == 0)
+                    draw = true;
+                // creature walking west/east to neighbour tile
+                else if(xi != 0 && yi == 0 && (creature->getWalkOffsetX() > 8 || creature->getWalkOffsetX() <= -24) && creature->getWalkOffsetY() == 0)
+                    draw = true;
+                // creature walking in diagonal
+                else if(xi != 0 && yi != 0 && (creature->getWalkOffsetY() > 8 || creature->getWalkOffsetY() <= -24) &&
+                                                (creature->getWalkOffsetX() > 8 || creature->getWalkOffsetX() <= -24))
+                    draw = true;
+                if(draw)
+                    creature->draw(x - m_drawElevation + xi*32, y - m_drawElevation + yi*32);
             }
         }
     }
