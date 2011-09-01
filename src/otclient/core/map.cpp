@@ -74,6 +74,7 @@ void Map::draw(const Rect& rect)
     float verticalStretchFactor = rect.height() / (float)(MAP_VISIBLE_HEIGHT * NUM_TILE_PIXELS);
 
     // draw player names and health bars
+    //TODO: this could be cached to improve framerate
     for(int x = 0; x < MAP_VISIBLE_WIDTH; ++x) {
         for(int y = 0; y < MAP_VISIBLE_HEIGHT; ++y) {
             Position tilePos = Position(m_centralPosition.x + (x - PLAYER_OFFSET_X + 1), m_centralPosition.y + (y - PLAYER_OFFSET_Y + 1), m_centralPosition.z);

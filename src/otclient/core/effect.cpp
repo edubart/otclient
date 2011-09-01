@@ -41,8 +41,7 @@ void Effect::draw(int x, int y)
             if(m_animation+1 == type.animationPhases) {
                 EffectPtr self = asEffect();
                 g_dispatcher.addEvent([self] {
-                    TilePtr tile = g_map.getTile(self->getPosition());
-                    tile->removeEffect(self);
+                    g_map.getTile(self->getPosition())->removeEffect(self);
                 });
                 m_finished = true;
             }

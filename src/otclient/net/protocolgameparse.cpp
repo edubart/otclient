@@ -35,7 +35,7 @@ void ProtocolGame::parseMessage(InputMessage& msg)
 {
     while(!msg.eof()) {
         uint8 opt = msg.getU8();
-        //dump << "protocol id:" << std::hex << (int)opt;
+        //dump << "protocol id:" << (int)opt;
 
         switch(opt) {
             case Otc::GameServerInitGame:
@@ -663,8 +663,8 @@ void ProtocolGame::parsePlayerCancelAttack(InputMessage& msg)
 void ProtocolGame::parseCreatureSpeak(InputMessage& msg)
 {
     msg.getU32(); // unkSpeak
-    msg.getString(); // name
-    msg.getU16(); // level
+    std::string name = msg.getString(); // name
+    uint16 level = msg.getU16(); // level
     uint8 type = msg.getU8();
 
     switch(type) {
@@ -692,7 +692,8 @@ void ProtocolGame::parseCreatureSpeak(InputMessage& msg)
             break;
     }
 
-    msg.getString(); // message
+    std::string message = msg.getString(); // message
+    logDebug(name, "[", level, "]: ", message);
 }
 
 void ProtocolGame::parseChannelList(InputMessage& msg)

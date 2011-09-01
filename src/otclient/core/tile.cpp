@@ -63,10 +63,12 @@ void Tile::draw(int x, int y)
     }
 
     // we can render creatures in 3x3 range
+    //TODO: this algorithm is slowing down render too much, but it could be cached to improve framerate
     for(int xi = -1; xi <= 1; ++xi) {
         for(int yi = -1; yi <= 1; ++yi) {
             for(CreaturePtr creature : g_map.getTile(m_position + Position(xi, yi, 0))->getCreatures()) {
-                Rect creatureRect(x + xi*32 + creature->getWalkOffsetX(), y + yi*32 + creature->getWalkOffsetY(), 24, 24);
+                auto& type = creature->getType();
+                Rect creatureRect(x + xi*32 + creature->getWalkOffsetX() - type.xDisplacment, y + yi*32 + creature->getWalkOffsetY() - type.yDisplacment, 32, 32);
                 Rect thisTileRect(x, y, 32, 32);
 
                 // only render creatures where bottom right is inside our rect
