@@ -57,9 +57,13 @@ void Map::draw(const Rect& rect)
                 Position tilePos(m_centralPosition.x + (ix - PLAYER_OFFSET_X), m_centralPosition.y + (iy - PLAYER_OFFSET_Y), m_centralPosition.z);
                 // adjust tilePos to the wanted floor
                 tilePos.perspectiveUp(m_centralPosition.z - iz);
-                // TODO: skip tiles that are behind another tile
-                if(const TilePtr& tile = m_tiles[tilePos])
+                //TODO: cache visible tiles, m_tiles[] has a high cost (50% fps decrease)
+                if(const TilePtr& tile = m_tiles[tilePos]) {
+                    // skip tiles that are behind another tile
+                    //if(isCompletlyCovered(tilePos, firstFloor))
+                    //    continue;
                     tile->draw(tilePos.to2D(m_centralPosition) - Point(walkOffsetX, walkOffsetY));
+                }
             }
         }
     }
@@ -74,7 +78,7 @@ void Map::draw(const Rect& rect)
     float verticalStretchFactor = rect.height() / (float)(MAP_VISIBLE_HEIGHT * NUM_TILE_PIXELS);
 
     // draw player names and health bars
-    //TODO: this could be cached to improve framerate
+    //TODO: this must be cached with creature walks
     for(int x = 0; x < MAP_VISIBLE_WIDTH; ++x) {
         for(int y = 0; y < MAP_VISIBLE_HEIGHT; ++y) {
             Position tilePos = Position(m_centralPosition.x + (x - PLAYER_OFFSET_X + 1), m_centralPosition.y + (y - PLAYER_OFFSET_Y + 1), m_centralPosition.z);
@@ -152,11 +156,11 @@ bool Map::isLookPossible(const Position& pos)
     return true;
 }
 
-bool Map::isCovered(const Position& pos, int maxFloor)
+bool Map::isCovered(const Position& pos, int firstFloor)
 {
     Position tilePos = pos;
     tilePos.perspectiveUp();
-    while(tilePos.z >= maxFloor) {
+    while(tilePos.z >= firstFloor) {
         TilePtr tile = m_tiles[tilePos];
         if(tile && tile->isFullGround())
             return true;
@@ -165,11 +169,11 @@ bool Map::isCovered(const Position& pos, int maxFloor)
     return false;
 }
 
-bool Map::isCompletlyCovered(const Position& pos, int maxFloor)
+bool Map::isCompletlyCovered(const Position& pos, int firstFloor)
 {
     Position tilePos = pos;
     tilePos.perspectiveUp();
-    while(tilePos.z >= maxFloor) {
+    while(tilePos.z >= firstFloor) {
         bool covered = true;
         for(int x=0;x<2;++x) {
             for(int y=0;y<2;++y) {

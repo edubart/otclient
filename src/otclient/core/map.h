@@ -46,8 +46,8 @@ public:
 
     int getFirstVisibleFloor();
     bool isLookPossible(const Position& pos);
-    bool isCovered(const Position& pos, int maxFloor);
-    bool isCompletlyCovered(const Position& pos, int maxFloor);
+    bool isCovered(const Position& pos, int firstFloor = 0);
+    bool isCompletlyCovered(const Position& pos, int firstFloor = 0);
 
     void addThing(const ThingPtr& thing, const Position& pos, int stackPos = -1);
     ThingPtr getThing(const Position& pos, int stackPos);
