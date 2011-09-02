@@ -1,0 +1,12 @@
+Window
+  id: vipWindow
+  title: VIP
+  size: 200 200
+  
+  TextList
+    id: vipList
+    anchors.fill: parent
+    margin.top: 19
+    margin.bottom: 3
+    margin.left: 3
+    margin.right: 3

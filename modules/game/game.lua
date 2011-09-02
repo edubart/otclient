@@ -1,4 +1,5 @@
 require 'textmessage'
+require 'vip'
 
 -- private functions
 local function onGameKeyPress(self, keyCode, keyChar, keyboardModifiers)
@@ -18,6 +19,8 @@ local function createMainInterface()
   Game.gameUi = loadUI('/game/ui/gameinterface.otui', UI.root)
   Game.gameMapUi = Game.gameUi:getChildById('gameMap')
   Game.gameUi.onKeyPress = onGameKeyPress
+  
+  createVipWindow()
 end
 
 
