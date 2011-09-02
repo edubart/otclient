@@ -157,3 +157,19 @@ void ProtocolGame::sendTurnWest()
     oMsg.addU8(Otc::ClientRotateWest);
     send(oMsg);
 }
+
+void ProtocolGame::sendAddVip(const std::string& name)
+{
+    OutputMessage oMsg;
+    oMsg.addU8(Otc::ClientAddBuddy);
+    oMsg.addString(name);
+    send(oMsg);
+}
+
+void ProtocolGame::sendRemoveVip(int id)
+{
+    OutputMessage oMsg;
+    oMsg.addU8(Otc::ClientRemoveBuddy);
+    oMsg.addU32(id);
+    send(oMsg);
+}

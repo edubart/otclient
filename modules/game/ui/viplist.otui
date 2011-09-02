@@ -1,3 +1,7 @@
+VipListLabel < Label
+  font: tibia-10px-monochrome
+  margin.left: 30
+
 Window
   id: vipWindow
   title: VIP

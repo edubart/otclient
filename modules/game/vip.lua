@@ -11,6 +11,7 @@ function Game.onAddVip(id, name, online)
   vipList:addChild(label)
   label:setId('vip' .. id)
   label:setText(name)
+  label:setStyle('VipListLabel')
   
   if online then
     label:setForegroundColor('#00ff00')

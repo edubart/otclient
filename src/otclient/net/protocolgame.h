@@ -54,6 +54,8 @@ public:
     void sendTurnEast();
     void sendTurnSouth();
     void sendTurnWest();
+    void sendAddVip(const std::string& name);
+    void sendRemoveVip(int id);
 
 private:
     void sendLoginPacket(uint32 timestamp, uint8 unknown);
