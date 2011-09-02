@@ -102,6 +102,10 @@ luavalue_cast(int index, std::function<Ret(Args...)>& func);
 template<typename T>
 void push_luavalue(const std::vector<T>& vec);
 
+// deque
+template<class T>
+void push_luavalue(const std::deque<T>& vec);
+
 // tuple
 template<typename... Args>
 void push_luavalue(const std::tuple<Args...>& tuple);
@@ -213,6 +217,17 @@ luavalue_cast(int index, std::function<Ret(Args...)>& func) {
 
 template<typename T>
 void push_luavalue(const std::vector<T>& vec) {
+    g_lua.newTable();
+    int i = 1;
+    for(const T& v : vec) {
+        push_luavalue(v);
+        g_lua.rawSeti(i);
+        i++;
+    }
+}
+
+template<typename T>
+void push_luavalue(const std::deque<T>& vec) {
     g_lua.newTable();
     int i = 1;
     for(const T& v : vec) {
