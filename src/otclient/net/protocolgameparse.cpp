@@ -295,9 +295,9 @@ void ProtocolGame::parsePing(InputMessage&)
     sendPing();
 }
 
-void ProtocolGame::parseDeath(InputMessage&)
+void ProtocolGame::parseDeath(InputMessage& msg)
 {
-
+    msg.getU8(); // 100 is a fair death. < 100 is a unfair death.
 }
 
 void ProtocolGame::parseMapDescription(InputMessage& msg)

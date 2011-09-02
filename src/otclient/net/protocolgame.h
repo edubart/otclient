@@ -67,7 +67,7 @@ private:
     void parseFYIMessage(InputMessage& msg);
     void parseWaitList(InputMessage& msg);
     void parsePing(InputMessage&);
-    void parseDeath(InputMessage&);
+    void parseDeath(InputMessage& msg);
     void parseCanReportBugs(InputMessage& msg);
     void parseMapDescription(InputMessage& msg);
     void parseMoveNorth(InputMessage& msg);
