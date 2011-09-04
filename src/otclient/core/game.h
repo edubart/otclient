@@ -44,7 +44,7 @@ public:
     void processLogin(const LocalPlayerPtr& localPlayer);
     void processLogout();
 
-    void processTextMessage(const std::string& message);
+    void processTextMessage(int type, const std::string& message);
 
     void walk(Otc::Direction direction);
     void turn(Otc::Direction direction);

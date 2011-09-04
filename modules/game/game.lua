@@ -20,6 +20,7 @@ local function createMainInterface()
   Game.gameMapUi = Game.gameUi:getChildById('gameMap')
   Game.gameUi.onKeyPress = onGameKeyPress
   
+  createTextInterface()
   createVipWindow()
 end
 

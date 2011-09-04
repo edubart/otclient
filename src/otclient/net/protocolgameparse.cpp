@@ -734,11 +734,11 @@ void ProtocolGame::parseClosePrivateChannel(InputMessage& msg)
 
 void ProtocolGame::parseTextMessage(InputMessage& msg)
 {
-    msg.getU8(); // messageType
+    uint8 type = msg.getU8();
     std::string message = msg.getString();
 
     // must be scheduled because the map may not exist yet
-    g_dispatcher.addEvent(std::bind(&Game::processTextMessage, &g_game, message));
+    g_dispatcher.addEvent(std::bind(&Game::processTextMessage, &g_game, type, message));
 }
 
 void ProtocolGame::parseCancelWalk(InputMessage& msg)

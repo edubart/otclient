@@ -1,6 +1,14 @@
-Label
+CenterLabel < Label
   font: tibia-12px-rounded
-  color: white
+  height: 16
+  align: center
+  anchors.top: parent.verticalCenter
+  anchors.bottom: parent.verticalCenter
+  anchors.left: parent.left
+  anchors.right: parent.right
+
+BottomLabel < Label
+  font: tibia-12px-rounded
   height: 16
   align: center
   anchors.bottom: parent.bottom

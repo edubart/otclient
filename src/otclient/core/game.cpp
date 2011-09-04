@@ -97,9 +97,9 @@ void Game::processLogout()
     }
 }
 
-void Game::processTextMessage(const std::string& message)
+void Game::processTextMessage(int type, const std::string& message)
 {
-    g_lua.callGlobalField("Game","onTextMessage", message);
+    g_lua.callGlobalField("Game","onTextMessage", type, message);
 }
 
 void Game::walk(Otc::Direction direction)
