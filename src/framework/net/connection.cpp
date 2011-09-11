@@ -132,14 +132,14 @@ void Connection::onConnect(const boost::system::error_code& error)
 {
     m_readTimer.cancel();
 
-    m_connecting = false;
-
     if(!error) {
         m_connected = true;
         if(m_connectCallback)
             g_dispatcher.addEvent(m_connectCallback);
     } else
         handleError(error);
+        
+    m_connecting = false;
 }
 
 void Connection::onWrite(const boost::system::error_code& error, size_t)
