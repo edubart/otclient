@@ -1,4 +1,5 @@
 require 'textmessage'
+require 'skill'
 require 'vip'
 
 -- private functions

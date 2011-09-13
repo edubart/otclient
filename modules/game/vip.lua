@@ -1,7 +1,7 @@
 vipWindow = nil
 
 function createVipWindow()
-  vipWindow = loadUI("/game/ui/viplist.otui", Game.gameUi)
+  vipWindow = loadUI("/game/ui/vipwindow.otui", Game.gameUi)
 end
 
 function Game.onAddVip(id, name, online)
