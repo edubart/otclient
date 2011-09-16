@@ -39,19 +39,19 @@ bool ThingsType::load(const std::string& file)
         int numEffects = Fw::getU16(fin);
         int numShots = Fw::getU16(fin);
 
-        m_itemsType.resize(numItems);
+        m_itemsType.resize(numItems-100);
         for(int id = 100; id < numItems; ++id)
             parseThingType(fin, m_itemsType[id - 100]);
 
-        m_creaturesType.resize(numItems);
+        m_creaturesType.resize(numCreatures);
         for(int id = 0; id < numCreatures; ++id)
             parseThingType(fin, m_creaturesType[id]);
 
-        m_effectsType.resize(numItems);
+        m_effectsType.resize(numEffects);
         for(int id = 0; id < numEffects; ++id)
             parseThingType(fin, m_effectsType[id]);
 
-        m_shotsType.resize(numItems);
+        m_shotsType.resize(numShots);
         for(int id = 0; id < numShots; ++id)
             parseThingType(fin, m_shotsType[id]);
 
@@ -120,7 +120,7 @@ void ThingsType::parseThingType(std::stringstream& fin, ThingType& thingType)
                 thingType.isFluidContainer = true;
                 break;
             case Otc::DatSplash: // Splashes
-                thingType.isStackable = true;
+                thingType.isSplash = true;
                 break;
             case Otc::DatBlockWalk: // Blocks solid objects (creatures, walls etc)
                 thingType.isNotWalkable = true;
@@ -155,6 +155,7 @@ void ThingsType::parseThingType(std::stringstream& fin, ThingType& thingType)
                 thingType.lightColor = Fw::getU16(fin);
                 break;
             case Otc::DatDontHide: // A few monuments that are not supposed to be hidden by floors
+                thingType.isDontHide = true;
                 break;
             case Otc::DatTranslucent: // Grounds that are translucent
                 thingType.isTranslucent = true;
