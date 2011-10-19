@@ -52,7 +52,7 @@ public:
     uint8* getBuffer() { return m_buffer; }
     uint16 getMessageSize() { return m_messageSize; }
     void setMessageSize(uint16 messageSize) { m_messageSize = messageSize; }
-    bool eof() { return m_readPos == m_messageSize; }
+    bool eof() { return m_readPos >= m_messageSize; }
 
 private:
     bool canRead(int bytes);
