@@ -801,7 +801,7 @@ void ProtocolGame::parseOutfitWindow(InputMessage& msg)
 
 void ProtocolGame::parseVipState(InputMessage& msg)
 {
-    uint32 id = msg.getU32();
+    int id = msg.getU32();
     std::string name = msg.getString();
     bool online = msg.getU8() != 0;
 
@@ -812,7 +812,7 @@ void ProtocolGame::parseVipState(InputMessage& msg)
 
 void ProtocolGame::parseVipLogin(InputMessage& msg)
 {
-    uint32 id = msg.getU32();
+    int id = msg.getU32();
 
     g_dispatcher.addEvent([=] {
         g_lua.callGlobalField("Game", "onVipStateChange", id, true);
@@ -821,7 +821,7 @@ void ProtocolGame::parseVipLogin(InputMessage& msg)
 
 void ProtocolGame::parseVipLogout(InputMessage& msg)
 {
-    uint32 id = msg.getU32();
+    int id = msg.getU32();
 
     g_dispatcher.addEvent([=] {
         g_lua.callGlobalField("Game", "onVipStateChange", id, false);

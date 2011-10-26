@@ -868,8 +868,7 @@ std::string Platform::getAppUserDir()
     return sdir.str();
 }
 
-
-std::string Platform::generateBacktrace(int maxLevel = 100)
+std::string Platform::generateBacktrace(int maxLevel)
 {
     std::stringstream ss;
     std::vector<void*> buffer(maxLevel);
