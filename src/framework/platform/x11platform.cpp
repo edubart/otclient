@@ -33,6 +33,7 @@
 
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
+#include <execinfo.h>
 
 struct X11PlatformPrivate {
     Display *display;
@@ -865,4 +866,32 @@ std::string Platform::getAppUserDir()
     if((mkdir(sdir.str().c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) != 0) && (errno != EEXIST))
         logError("Couldn't create directory for saving configuration file. (",sdir.str(),")");
     return sdir.str();
+}
+
+
+std::string Platform::generateBacktrace(int maxLevel = 100)
+{
+    std::stringstream ss;
+    std::vector<void*> buffer(maxLevel);
+    int numLevels = backtrace(&buffer[0], maxLevel);
+    char **tracebackBuffer = backtrace_symbols(&buffer[0], numLevels);
+    if(tracebackBuffer) {
+        for(int i = 1; i < numLevels; i++) {
+            std::string line = tracebackBuffer[i];
+            if(line.find("__libc_start_main") != std::string::npos)
+                break;
+            std::size_t demanglePos = line.find("(_Z");
+            if(demanglePos != std::string::npos) {
+                demanglePos++;
+                int len = std::min(line.find_first_of("+", demanglePos), line.find_first_of(")", demanglePos)) - demanglePos;
+                std::string funcName = line.substr(demanglePos, len);
+                line.replace(demanglePos, len, Fw::demangleName(funcName.c_str()));
+            }
+            if(i > 1)
+                ss << "\n";
+            ss << line;
+        }
+        free(tracebackBuffer);
+    }
+    return ss.str();
 }

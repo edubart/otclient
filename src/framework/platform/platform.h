@@ -81,6 +81,7 @@ public:
 
     /// Get the app user directory, the place to save files configurations files
     std::string getAppUserDir();
+    std::string generateBacktrace(int maxLevel);
 
 private:
     PlatformListener* m_listener;
