@@ -44,7 +44,7 @@ public:
 
     int getWidth() const { return m_size.width(); }
     int getHeight() const { return m_size.height(); }
-    const Size getSize() const { return m_size; }
+    const Size& getSize() const { return m_size; }
     const Size& getGlSize() const { return m_glSize; }
 
     bool isEmpty() const { return m_textureId == 0; }

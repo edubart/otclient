@@ -27,37 +27,45 @@
 
 #include <framework/otml/otml.h>
 
-Image::Image(TexturePtr texture, Rect textureCoords)
+Image::Image()
 {
-    m_texture = texture;
-    if(!textureCoords.isValid())
-        m_textureCoords = Rect(0, 0, m_texture->getSize());
-    else
-        m_textureCoords = textureCoords;
+    m_fixedRatio = false;
 }
 
-ImagePtr Image::loadFromOTML(const OTMLNodePtr& imageNode)
+void Image::loadFromOTML(const OTMLNodePtr& imageNode)
 {
     // load configs from otml node
     std::string source = imageNode->hasValue() ? imageNode->value() : imageNode->valueAt("source");
     bool smooth = imageNode->valueAt("smooth", false);
-    Rect textureCoords = imageNode->valueAt("coords", Rect());
+    m_textureCoords = imageNode->valueAt("coords", Rect());
+    m_fixedRatio = imageNode->valueAt("fixed ratio", false);
 
     // load texture
-    TexturePtr texture = g_textures.getTexture(source);
-    if(!texture)
+    m_texture = g_textures.getTexture(source);
+    if(!m_texture)
         throw OTMLException(imageNode, "could not load image texture");
 
     // enable texture bilinear filter
     if(smooth)
-        texture->enableBilinearFilter();
-
-    // create image
-    return ImagePtr(new Image(texture, textureCoords));
+        m_texture->enableBilinearFilter();
 }
 
 void Image::draw(const Rect& screenCoords)
 {
-    if(m_texture)
-        g_graphics.drawTexturedRect(screenCoords, m_texture, m_textureCoords);
+    if(m_texture) {
+        if(m_fixedRatio) {
+            const Size& texSize = m_texture->getSize();
+            Size texCoordsSize = screenCoords.size();
+            texCoordsSize.scale(texSize, Fw::KeepAspectRatio);
+            Point texCoordsOffset;
+            if(texSize.height() > texCoordsSize.height())
+                texCoordsOffset.y = (texSize.height() - texCoordsSize.height())/2;
+            else if(texSize.width() > texCoordsSize.width())
+                texCoordsOffset.x = (texSize.width() - texCoordsSize.width())/2;
+
+            g_graphics.drawTexturedRect(screenCoords, m_texture, Rect(texCoordsOffset, texCoordsSize));
+        } else {
+            g_graphics.drawTexturedRect(screenCoords, m_texture, m_textureCoords);
+        }
+    }
 }

@@ -31,7 +31,7 @@ UILineEdit::UILineEdit()
     m_align = Fw::AlignLeftCenter;
     m_cursorPos = 0;
     m_startRenderPos = 0;
-    m_textHorizontalMargin = 3;
+    m_textHorizontalMargin = 0;
     m_textHidden = false;
     blinkCursor();
 }
@@ -381,6 +381,8 @@ void UILineEdit::onStyleApply(const OTMLNodePtr& styleNode)
             setCursorPos(m_text.length());
         } else if(node->tag() == "text hidden") {
             setTextHidden(node->value<bool>());
+        } else if(node->tag() == "text margin") {
+            m_textHorizontalMargin = node->value<int>();
         }
     }
 }

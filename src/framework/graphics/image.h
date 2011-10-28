@@ -30,15 +30,16 @@
 class Image
 {
 public:
-    Image(TexturePtr texture, Rect textureCoords = Rect());
+    Image();
 
-    static ImagePtr loadFromOTML(const OTMLNodePtr& imageNode);
+    void loadFromOTML(const OTMLNodePtr& imageNode);
 
     virtual void draw(const Rect& screenCoords);
 
 protected:
     TexturePtr m_texture;
     Rect m_textureCoords;
+    bool m_fixedRatio;
 };
 
 #endif

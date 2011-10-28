@@ -155,7 +155,7 @@ bool luavalue_cast(int index, std::function<void(Args...)>& func) {
         // weak references are used here, this means that the script must hold another reference
         // to this function, otherwise it will expire
         int funcWeakRef = g_lua.weakRef();
-        func = [=](Args... args...) {
+        func = [=](Args... args) {
             // note that we must catch exceptions, because this lambda can be called from anywhere
             // and most of them won't catch exceptions (e.g. dispatcher)
             g_lua.getWeakRef(funcWeakRef);
@@ -187,7 +187,7 @@ luavalue_cast(int index, std::function<Ret(Args...)>& func) {
         // weak references are used here, this means that the script must hold another reference
         // to this function, otherwise it will expire
         int funcWeakRef = g_lua.weakRef();
-        func = [=](Args... args...) -> Ret {
+        func = [=](Args... args) -> Ret {
             // note that we must catch exceptions, because this lambda can be called from anywhere
             // and most of them won't catch exceptions (e.g. dispatcher)
             try {

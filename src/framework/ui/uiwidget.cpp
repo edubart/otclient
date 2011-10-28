@@ -102,7 +102,7 @@ void UIWidget::render()
             child->render();
 
             // debug draw box
-            //g_graphics.bindColor(Color::green);
+            //g_graphics.bindColor(Fw::green);
             //g_graphics.drawBoundingRect(child->getRect());
             //g_fonts.getDefaultFont()->renderText(child->getId(), child->getPosition() + Point(2, 0), Color::red);
 
@@ -709,7 +709,9 @@ void UIWidget::onStyleApply(const OTMLNodePtr& styleNode)
     for(const OTMLNodePtr& node : styleNode->children()) {
         // background image
         if(node->tag() == "image") {
-            setImage(Image::loadFromOTML(node));
+            ImagePtr image = ImagePtr(new Image);
+            image->loadFromOTML(node);
+            setImage(image);
         }
         else if(node->tag() == "border-image") {
             setImage(BorderImage::loadFromOTML(node));

@@ -52,7 +52,7 @@ private:
     BorderImagePtr m_headImage;
     ImagePtr m_bodyImage;
     int m_headHeight;
-    int m_headMargin;
+    Point m_headOffset;
     Fw::AlignmentFlag m_titleAlign;
 };
 

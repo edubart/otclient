@@ -36,8 +36,9 @@ BorderImage::BorderImage(TexturePtr texture,
                              const Rect& topRight,
                              const Rect& bottomLeft,
                              const Rect& bottomRight,
-                             const Rect& center) : Image(texture)
+                             const Rect& center)
 {
+    m_texture = texture;
     m_leftBorderTexCoords = left;
     m_rightBorderTexCoords = right;
     m_topBorderTexCoords = top;
@@ -102,7 +103,7 @@ BorderImagePtr BorderImage::loadFromOTML(const OTMLNodePtr& borderImageNode)
     bottomBorder = Rect(subRect.left() + left, subRect.bottom() - bottom + 1, subRect.width() - right - left, bottom);
     topLeftCorner = Rect(subRect.left(), subRect.top(), left, top);
     topRightCorner = Rect(subRect.right() - right + 1, subRect.top(), right, top);
-    bottomLeftCorner = Rect(subRect.left(), subRect.bottom() - bottom, left, bottom);
+    bottomLeftCorner = Rect(subRect.left(), subRect.bottom() - bottom + 1, left, bottom);
     bottomRightCorner = Rect(subRect.right() - right + 1, subRect.bottom() - bottom + 1, right, bottom);
     center = Rect(subRect.left() + left, subRect.top() + top, subRect.width() - right - left, subRect.height() - top - bottom);
 
@@ -184,7 +185,7 @@ void BorderImage::draw(const Rect& screenCoords)
 
     // bottom left corner
     rectCoords = Rect(screenCoords.left(),
-                      screenCoords.top() + m_topBorderTexCoords.height() + centerSize.height(),
+                      screenCoords.top() + m_topLeftCornerTexCoords.height() + centerSize.height(),
                       m_bottomLeftCornerTexCoords.size());
     g_graphics.drawTexturedRect(rectCoords, m_texture, m_bottomLeftCornerTexCoords);
 

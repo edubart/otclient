@@ -888,7 +888,7 @@ std::string Platform::generateBacktrace(int maxLevel)
             }
             if(i > 1)
                 ss << "\n";
-            ss << line;
+            ss << i << ": " << line;
         }
         free(tracebackBuffer);
     }

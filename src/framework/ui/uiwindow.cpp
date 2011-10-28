@@ -31,39 +31,29 @@ void UIWindow::setup()
     UIWidget::setup();
     m_moving = false;
     m_headHeight = 0;
-    m_headMargin = 0;
     m_titleAlign = Fw::AlignCenter;
 }
 
 void UIWindow::render()
 {
-    // draw window head
-    Rect headRect = getRect();
-    headRect.setHeight(m_headHeight);
-
-    if(m_headImage && m_headHeight > 0) {
-        g_graphics.bindColor(m_backgroundColor);
-        m_headImage->draw(headRect);
-
-        // draw window head text
-        Rect headTextRect = headRect;
-        if(m_titleAlign & Fw::AlignLeft)
-            headTextRect.addLeft(-m_headMargin);
-        else if(m_titleAlign & Fw::AlignRight)
-            headTextRect.addRight(-m_headMargin);
-        m_font->renderText(m_title, headTextRect, m_titleAlign, m_foregroundColor);
-    }
-
-    // draw window body
-    Rect bodyRect = getRect();
-    bodyRect.setTop(headRect.bottom() + 1);
-    if(m_bodyImage) {
-        g_graphics.bindColor(m_backgroundColor);
-        m_bodyImage->draw(bodyRect);
-    }
-
     // render children
     UIWidget::render();
+
+    // draw window head
+
+    // draw window head text
+    Rect headTextRect = m_rect;
+    headTextRect.addTop(-m_headOffset.y);
+    headTextRect.setHeight(m_headHeight);
+    if(m_titleAlign & Fw::AlignLeft)
+        headTextRect.addLeft(-m_headOffset.x);
+    else if(m_titleAlign & Fw::AlignRight)
+        headTextRect.addRight(-m_headOffset.x);
+    else {
+        headTextRect.addLeft(-m_headOffset.x);
+        headTextRect.addRight(-m_headOffset.x);
+    }
+    m_font->renderText(m_title, headTextRect, m_titleAlign, m_foregroundColor);
 }
 
 void UIWindow::onStyleApply(const OTMLNodePtr& styleNode)
@@ -71,20 +61,14 @@ void UIWindow::onStyleApply(const OTMLNodePtr& styleNode)
     UIWidget::onStyleApply(styleNode);
 
     for(OTMLNodePtr node : styleNode->children()) {
-        if(node->tag() == "head") {
-            if(OTMLNodePtr cnode = node->get("border-image"))
-                m_headImage = BorderImage::loadFromOTML(cnode);
-            m_headHeight = node->valueAt("height", m_headImage->getDefaultSize().height());
-            m_headMargin = node->valueAt("margin", 0);
-            m_titleAlign = Fw::translateAlignment(node->valueAt("text align", std::string("center")));
-        }
-        else if(node->tag() == "body") {
-            if(OTMLNodePtr cnode = node->get("border-image"))
-                m_bodyImage = BorderImage::loadFromOTML(cnode);
-        }
-        else if(node->tag() == "title") {
+        if(node->tag() == "head height")
+            m_headHeight = node->value<int>();
+        else if(node->tag() == "head offset")
+            m_headOffset = node->value<Point>();
+        else if(node->tag() == "title")
             setTitle(node->value());
-        }
+        else if(node->tag() == "head text align")
+            m_titleAlign = Fw::translateAlignment(node->value());
         else if(node->tag() == "onEnter") {
             g_lua.loadFunction(node->value(), "@" + node->source() + "[" + node->tag() + "]");
             luaSetField(node->tag());
