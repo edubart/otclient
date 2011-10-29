@@ -3,21 +3,12 @@ Window < UIWindow
   size: 200 200
   opacity: 255
   background-color: white
-  head:
-    height: 20
-    border-image:
-      source: /core_ui/images/window.png
-      size: 256 19
-      border: 4
-      border.bottom: 3
-
-  body:
-    border-image:
-      source: /core_ui/images/window.png
-      size: 256 237
-      offset: 0 19
-      border: 4
-      border.top: 0
+  head height: 20
+  head text align: center
+  border-image:
+    source: /core_ui/images/window.png
+    border: 4
+    border.top: 20
 
   state.pressed:
     opacity: 192

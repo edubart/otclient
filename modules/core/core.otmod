@@ -13,7 +13,6 @@ Module
     require 'constants'
     require 'util'
     require 'widget'
-    require 'ui'
     require 'messagebox/messagebox'
     require 'dispatcher'
 

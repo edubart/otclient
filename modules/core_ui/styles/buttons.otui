@@ -3,6 +3,7 @@ Button < UIButton
   background-color: white
   color: #f0ad4dff
   size: 106 24
+  text-translate: 0 0
   border-image:
     source: /core_ui/images/button.png
     border: 5
