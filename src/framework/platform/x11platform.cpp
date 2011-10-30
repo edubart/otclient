@@ -64,7 +64,8 @@ struct X11PlatformPrivate {
     int lastTicks;
     std::string clipboardText;
     std::map<int, Fw::Key> keyMap;
-    PlatformEvent inputEvent;
+    PlatformListener* listener;
+    PlatformEvent platformEvent;
 } x11;
 
 Platform g_platform;
@@ -88,7 +89,7 @@ void Platform::init(PlatformListener* platformListener, const char *appName)
     x11.width = 0;
     x11.height = 0;
     x11.maximizeOnFirstShow = false;
-    m_listener = platformListener;
+    x11.listener = platformListener;
 
     x11.keyMap[XK_Escape] = Fw::KeyEscape;
     x11.keyMap[XK_Tab] = Fw::KeyTab;
@@ -294,7 +295,7 @@ void Platform::terminate()
 void Platform::poll()
 {
     XEvent event, peekevent;
-    PlatformEvent& inputEvent = x11.inputEvent;
+    PlatformEvent& platformEvent = x11.platformEvent;
     while(XPending(x11.display) > 0) {
         XNextEvent(x11.display, &event);
 
@@ -317,7 +318,7 @@ void Platform::poll()
                 static int oldWidth = -1;
                 static int oldHeight = -1;
                 if(oldWidth != event.xconfigure.width || oldHeight != event.xconfigure.height) {
-                    m_listener->onResize(Size(event.xconfigure.width, event.xconfigure.height));
+                    x11.listener->onResize(Size(event.xconfigure.width, event.xconfigure.height));
                     oldWidth = event.xconfigure.width;
                     oldHeight = event.xconfigure.height;
                 }
@@ -343,13 +344,13 @@ void Platform::poll()
                 char buf[32];
                 int len;
 
-                inputEvent.ctrl = (event.xkey.state & ControlMask);
-                inputEvent.shift = (event.xkey.state & ShiftMask);
-                inputEvent.alt = (event.xkey.state & Mod1Mask);
-                inputEvent.keychar = 0;
+                platformEvent.ctrl = (event.xkey.state & ControlMask);
+                platformEvent.shift = (event.xkey.state & ShiftMask);
+                platformEvent.alt = (event.xkey.state & Mod1Mask);
+                platformEvent.keychar = 0;
 
                 // fire enter text event
-                if(event.type == KeyPress && !inputEvent.ctrl && !inputEvent.alt) {
+                if(event.type == KeyPress && !platformEvent.ctrl && !platformEvent.alt) {
                     if(x11.xic) { // with xim we can get latin1 input correctly
                         Status status;
                         len = XmbLookupString(x11.xic, &event.xkey, buf, sizeof(buf), &keysym, &status);
@@ -367,57 +368,57 @@ void Platform::poll()
                        (uchar)(buf[0]) >= 32
                     ) {
                         //logDebug("char: ", buf[0], " code: ", (uint)buf[0]);
-                        inputEvent.keychar = buf[0];
+                        platformEvent.keychar = buf[0];
                     }
                 } else {
                     //event.xkey.state &= ~(ShiftMask | LockMask);
                     len = XLookupString(&event.xkey, buf, sizeof(buf), &keysym, 0);
 
-                    if(len > 0 && (uchar)inputEvent.keychar >= 32)
-                        inputEvent.keychar = (len > 0) ? buf[0] : 0;
+                    if(len > 0 && (uchar)platformEvent.keychar >= 32)
+                        platformEvent.keychar = (len > 0) ? buf[0] : 0;
                 }
 
                 if(x11.keyMap.find(keysym) != x11.keyMap.end())
-                    inputEvent.keycode = x11.keyMap[keysym];
+                    platformEvent.keycode = x11.keyMap[keysym];
                 else
-                    inputEvent.keycode = Fw::KeyUnknown;
+                    platformEvent.keycode = Fw::KeyUnknown;
 
-                inputEvent.keycode = x11.keyMap[keysym];
-                inputEvent.type = (event.type == KeyPress) ? EventKeyDown : EventKeyUp;
+                platformEvent.keycode = x11.keyMap[keysym];
+                platformEvent.type = (event.type == KeyPress) ? EventKeyDown : EventKeyUp;
 
-                if(inputEvent.keycode != Fw::KeyUnknown || inputEvent.keychar != 0)
-                    m_listener->onPlatformEvent(inputEvent);
+                if(platformEvent.keycode != Fw::KeyUnknown || platformEvent.keychar != 0)
+                    x11.listener->onPlatformEvent(platformEvent);
                 break;
             }
             case ButtonPress:
             case ButtonRelease:
                 switch(event.xbutton.button) {
                     case Button1:
-                        inputEvent.type = (event.type == ButtonPress) ? EventMouseLeftButtonDown : EventMouseLeftButtonUp;
+                        platformEvent.type = (event.type == ButtonPress) ? EventMouseLeftButtonDown : EventMouseLeftButtonUp;
                         break;
                     case Button3:
-                        inputEvent.type = (event.type == ButtonPress) ? EventMouseRightButtonDown : EventMouseRightButtonUp;
+                        platformEvent.type = (event.type == ButtonPress) ? EventMouseRightButtonDown : EventMouseRightButtonUp;
                         break;
                     case Button2:
-                        inputEvent.type = (event.type == ButtonPress) ? EventMouseMiddleButtonDown : EventMouseMiddleButtonUp;
+                        platformEvent.type = (event.type == ButtonPress) ? EventMouseMiddleButtonDown : EventMouseMiddleButtonUp;
                         break;
                     case Button4:
-                        inputEvent.type = EventMouseWheelUp;
+                        platformEvent.type = EventMouseWheelUp;
                         break;
                     case Button5:
-                        inputEvent.type = EventMouseWheelDown;
+                        platformEvent.type = EventMouseWheelDown;
                         break;
                 }
-                m_listener->onPlatformEvent(inputEvent);
+                x11.listener->onPlatformEvent(platformEvent);
                 break;
 
             case MotionNotify:
             {
-                inputEvent.type = EventMouseMove;
+                platformEvent.type = EventMouseMove;
                 Point newMousePos(event.xbutton.x, event.xbutton.y);
-                inputEvent.mouseMoved = newMousePos - inputEvent.mousePos;
-                inputEvent.mousePos = newMousePos;
-                m_listener->onPlatformEvent(inputEvent);
+                platformEvent.mouseMoved = newMousePos - platformEvent.mousePos;
+                platformEvent.mousePos = newMousePos;
+                x11.listener->onPlatformEvent(platformEvent);
                 break;
             }
 
@@ -477,7 +478,7 @@ void Platform::poll()
             case ClientMessage:
             {
                 if((Atom)event.xclient.data.l[0] == x11.atomDeleteWindow)
-                    m_listener->onClose();
+                    x11.listener->onClose();
                 break;
             }
         }
@@ -595,7 +596,7 @@ bool Platform::createWindow(int x, int y, int width, int height, int minWidth, i
     x11.maximizeOnFirstShow = maximized;
 
     // call first onResize
-    m_listener->onResize(Size(width, height));
+    x11.listener->onResize(Size(width, height));
 
     return true;
 }
@@ -768,7 +769,7 @@ void Platform::showMouseCursor()
 
 Point Platform::getMouseCursorPos()
 {
-    return x11.inputEvent.mousePos;
+    return x11.platformEvent.mousePos;
 }
 
 void Platform::setVerticalSync(bool enable)

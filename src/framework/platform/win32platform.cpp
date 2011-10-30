@@ -20,9 +20,8 @@
  * THE SOFTWARE.
  */
 
-#include <global.h>
-#include <core/platform.h>
-#include <core/engine.h>
+#include "platform.h"
+#include "platformlistener.h"
 
 #include <windows.h>
 #include <dir.h>
@@ -36,23 +35,26 @@ struct Win32PlatformPrivate {
     HINSTANCE instance;
     HDC hdc;
     HGLRC hrc;
-
     std::string appName;
     int x, y;
     int width, height;
     int minWidth, minHeight;
     bool focused, visible, maximized;
-
-    std::map<int, uchar> keyMap;
+    std::map<int, Fw::Key> keyMap;
+    PlatformListener* listener;
+    PlatformEvent platformEvent;
 } win32;
 
-void Platform::init(const char *appName)
+Platform g_platform;
+
+void Platform::init(PlatformListener* platformListener, const char *appName)
 {
     // seend random numbers
     std::srand(std::time(NULL));
 
     win32.appName = appName;
     win32.instance = GetModuleHandle(NULL);
+    win32.listener = platformListener;
 
     win32.keyMap[VK_ESCAPE] = Fw::KeyEscape;
     win32.keyMap[VK_TAB] = Fw::KeyTab;
@@ -188,30 +190,30 @@ void Platform::init(const char *appName)
     win32.keyMap[VK_NUMPAD8] = Fw::KeyNumpad8;
     win32.keyMap[VK_NUMPAD9] = Fw::KeyNumpad9;
 
-    win32.keyMap[VK_OEM_1] = KeySemicolon;
-    win32.keyMap[VK_OEM_2] = KeySlash;
-    win32.keyMap[VK_OEM_3] = KeyGrave;
-    win32.keyMap[VK_OEM_4] = KeyLeftBracket;
-    win32.keyMap[VK_OEM_5] = KeyBackslash;
-    win32.keyMap[VK_OEM_6] = KeyRightBracket;
-    win32.keyMap[VK_OEM_7] = KeyApostrophe;
-    win32.keyMap[VK_OEM_MINUS] = KeyMinus;
-    win32.keyMap[VK_OEM_PLUS] = KeyPlus;
-    win32.keyMap[VK_OEM_COMMA] = KeyComma;
-    win32.keyMap[VK_OEM_PERIOD] = KeyPeriod;
+    win32.keyMap[VK_OEM_1] = Fw::KeySemicolon;
+    win32.keyMap[VK_OEM_2] = Fw::KeySlash;
+    win32.keyMap[VK_OEM_3] = Fw::KeyGrave;
+    win32.keyMap[VK_OEM_4] = Fw::KeyLeftBracket;
+    win32.keyMap[VK_OEM_5] = Fw::KeyBackslash;
+    win32.keyMap[VK_OEM_6] = Fw::KeyRightBracket;
+    win32.keyMap[VK_OEM_7] = Fw::KeyApostrophe;
+    win32.keyMap[VK_OEM_MINUS] = Fw::KeyMinus;
+    win32.keyMap[VK_OEM_PLUS] = Fw::KeyPlus;
+    win32.keyMap[VK_OEM_COMMA] = Fw::KeyComma;
+    win32.keyMap[VK_OEM_PERIOD] = Fw::KeyPeriod;
 
-    win32.keyMap[VK_F1] = KeyF1;
-    win32.keyMap[VK_F2] = KeyF2;
-    win32.keyMap[VK_F3] = KeyF3;
-    win32.keyMap[VK_F4] = KeyF4;
-    win32.keyMap[VK_F5] = KeyF5;
-    win32.keyMap[VK_F6] = KeyF6;
-    win32.keyMap[VK_F7] = KeyF7;
-    win32.keyMap[VK_F8] = KeyF8;
-    win32.keyMap[VK_F9] = KeyF9;
-    win32.keyMap[VK_F10] = KeyF10;
-    win32.keyMap[VK_F11] = KeyF11;
-    win32.keyMap[VK_F12] = KeyF12;
+    win32.keyMap[VK_F1] = Fw::KeyF1;
+    win32.keyMap[VK_F2] = Fw::KeyF2;
+    win32.keyMap[VK_F3] = Fw::KeyF3;
+    win32.keyMap[VK_F4] = Fw::KeyF4;
+    win32.keyMap[VK_F5] = Fw::KeyF5;
+    win32.keyMap[VK_F6] = Fw::KeyF6;
+    win32.keyMap[VK_F7] = Fw::KeyF7;
+    win32.keyMap[VK_F8] = Fw::KeyF8;
+    win32.keyMap[VK_F9] = Fw::KeyF9;
+    win32.keyMap[VK_F10] = Fw::KeyF10;
+    win32.keyMap[VK_F11] = Fw::KeyF11;
+    win32.keyMap[VK_F12] = Fw::KeyF12;
 
     // win class
     WNDCLASSA wc;
@@ -230,7 +232,7 @@ void Platform::init(const char *appName)
         logFatal("FATAL ERROR: Failed to register the window class.");
 
     // force first tick
-    Platform::getTicks();
+    updateTicks();
 }
 
 void Platform::terminate()
@@ -257,13 +259,13 @@ void Platform::poll()
     }
 }
 
-int Platform::getTicks()
+void Platform::updateTicks()
 {
     static ulong firstTick = 0;
     if(!firstTick)
         firstTick = GetTickCount();
 
-    return (uint32_t)(GetTickCount() - firstTick);
+    m_lastTicks = (uint32_t)(GetTickCount() - firstTick);
 }
 
 void Platform::sleep(ulong miliseconds)
@@ -306,7 +308,7 @@ bool Platform::createWindow(int x, int y, int width, int height, int minWidth, i
         return false;
     }
 
-    GLuint pixelFormat;
+    uint pixelFormat;
     static PIXELFORMATDESCRIPTOR pfd=               // pfd Tells Windows How We Want Things To Be
     {
         sizeof(PIXELFORMATDESCRIPTOR),              // Size Of This Pixel Format Descriptor
@@ -397,6 +399,11 @@ void Platform::showWindow()
         ShowWindow(win32.window, SW_SHOW);
 }
 
+void Platform::hideWindow()
+{
+    ShowWindow(win32.window, SW_HIDE);
+}
+
 void Platform::setWindowTitle(const char *title)
 {
     SetWindowTextA(win32.window, title);
@@ -451,9 +458,14 @@ void Platform::showMouseCursor()
     ShowCursor(true);
 }
 
+Point Platform::getMouseCursorPos()
+{
+    return win32.platformEvent.mousePos;
+}
+
 void Platform::setVerticalSync(bool enable /*= true*/)
 {
-    typedef GLint (*glSwapIntervalProc)(GLint);
+    typedef int (*glSwapIntervalProc)(int);
     glSwapIntervalProc glSwapInterval = NULL;
 
     if(isExtensionSupported("WGL_EXT_swap_control"))
@@ -525,7 +537,7 @@ std::string Platform::getAppUserDir()
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     static int lastX, lastY;
-    static InputEvent inputEvent;
+    PlatformEvent& platformEvent = win32.platformEvent;
 
     switch(uMsg)
     {
@@ -537,16 +549,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case WM_CHAR:
         {
             if(wParam >= 32 && wParam <= 255) {
-                inputEvent.type = EV_TEXT_ENTER;
-                inputEvent.keychar = wParam;
-                inputEvent.keycode = KeyUNKNOWN;
-                g_engine.onInputEvent(inputEvent);
+                platformEvent.type = EventKeyDown;
+                platformEvent.ctrl = HIWORD(GetKeyState(VK_CONTROL)) == 0 ? false : true;
+                platformEvent.alt = HIWORD(GetKeyState(VK_MENU)) == 0 ? false : true;
+                platformEvent.shift = HIWORD(GetKeyState(VK_SHIFT)) == 0 ? false : true;
+                platformEvent.keychar = wParam;
+                platformEvent.keycode = Fw::KeyUnknown;
+                win32.listener->onPlatformEvent(platformEvent);
             }
             break;
         }
     case WM_CLOSE:
         {
-            g_engine.onClose();
+            win32.listener->onClose();
             break;
         }
     case WM_GETMINMAXINFO:
@@ -560,64 +575,65 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case WM_KEYUP:
         {
             if(win32.keyMap.find(wParam) != win32.keyMap.end()) {
-                inputEvent.type = uMsg == WM_KEYDOWN ? EV_KEY_DOWN : EV_KEY_UP;
-                inputEvent.ctrl = HIWORD(GetKeyState(VK_CONTROL)) == 0 ? false : true;
-                inputEvent.alt = HIWORD(GetKeyState(VK_MENU)) == 0 ? false : true;
-                inputEvent.shift = HIWORD(GetKeyState(VK_SHIFT)) == 0 ? false : true;
-                inputEvent.keycode = win32.keyMap[wParam];
+                platformEvent.type = uMsg == WM_KEYDOWN ? EventKeyDown : EventKeyUp;
+                platformEvent.ctrl = HIWORD(GetKeyState(VK_CONTROL)) == 0 ? false : true;
+                platformEvent.alt = HIWORD(GetKeyState(VK_MENU)) == 0 ? false : true;
+                platformEvent.shift = HIWORD(GetKeyState(VK_SHIFT)) == 0 ? false : true;
+                platformEvent.keycode = win32.keyMap[wParam];
+                platformEvent.keychar = 0;
             }
-            g_engine.onInputEvent(inputEvent);
+            win32.listener->onPlatformEvent(platformEvent);
             break;
         }
     case WM_LBUTTONDOWN:
         {
-            inputEvent.type = EV_MOUSE_LDOWN;
-            g_engine.onInputEvent(inputEvent);
+            platformEvent.type = EventMouseLeftButtonDown;
+            win32.listener->onPlatformEvent(platformEvent);
             break;
         }
     case WM_LBUTTONUP:
         {
-            inputEvent.type = EV_MOUSE_LUP;
-            g_engine.onInputEvent(inputEvent);
+            platformEvent.type = EventMouseLeftButtonUp;
+            win32.listener->onPlatformEvent(platformEvent);
             break;
         }
     case WM_MBUTTONDOWN:
         {
-            inputEvent.type = EV_MOUSE_MDOWN;
-            g_engine.onInputEvent(inputEvent);
+            platformEvent.type = EventMouseMiddleButtonDown;
+            win32.listener->onPlatformEvent(platformEvent);
             break;
         }
     case WM_MBUTTONUP:
         {
-            inputEvent.type = EV_MOUSE_MUP;
-            g_engine.onInputEvent(inputEvent);
+            platformEvent.type = EventMouseMiddleButtonUp;
+            win32.listener->onPlatformEvent(platformEvent);
             break;
         }
     case WM_RBUTTONDOWN:
         {
-            inputEvent.type = EV_MOUSE_RDOWN;
-            g_engine.onInputEvent(inputEvent);
+            platformEvent.type = EventMouseRightButtonDown;
+            win32.listener->onPlatformEvent(platformEvent);
             break;
         }
     case WM_RBUTTONUP:
         {
-            inputEvent.type = EV_MOUSE_RUP;
-            g_engine.onInputEvent(inputEvent);
+            platformEvent.type = EventMouseRightButtonUp;
+            win32.listener->onPlatformEvent(platformEvent);
             break;
         }
     case WM_MOUSEMOVE:
         {
-            inputEvent.type = EV_MOUSE_MOVE;
+            platformEvent.type = EventMouseMove;
             Point newMousePos(LOWORD(lParam), HIWORD(lParam));
-            inputEvent.mouseMoved = newMousePos - inputEvent.mousePos;
-            inputEvent.mousePos = newMousePos;
-            g_engine.onInputEvent(inputEvent);
+            platformEvent.mouseMoved = newMousePos - platformEvent.mousePos;
+            platformEvent.mousePos = newMousePos;
+            win32.listener->onPlatformEvent(platformEvent);
             break;
         }
     case WM_MOUSEWHEEL:
         {
-            inputEvent.type = HIWORD(wParam) > 0 ? EV_MOUSE_WHEEL_UP : EV_MOUSE_WHEEL_DOWN;
-            g_engine.onInputEvent(inputEvent);
+            platformEvent.type = HIWORD(wParam) > 0 ? EventMouseWheelUp : EventMouseWheelDown;
+            win32.listener->onPlatformEvent(platformEvent);
             break;
         }
     case WM_MOVE:
@@ -649,7 +665,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
                 win32.height = HIWORD(lParam);
             }
 
-            g_engine.onResize(Size(LOWORD(lParam), HIWORD(lParam)));
+            win32.listener->onResize(Size(LOWORD(lParam), HIWORD(lParam)));
             break;
         }
     default:

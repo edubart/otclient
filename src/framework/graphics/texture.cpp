@@ -24,6 +24,7 @@
 #include "graphics.h"
 
 #include <GL/gl.h>
+#include <GL/glext.h>
 
 Texture::Texture()
 {

@@ -84,7 +84,6 @@ public:
     std::string generateBacktrace(int maxLevel = 100);
 
 private:
-    PlatformListener* m_listener;
     int m_lastTicks;
 };
 

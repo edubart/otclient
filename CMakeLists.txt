@@ -26,7 +26,7 @@ MESSAGE(STATUS "BUILD TYPE: " ${CMAKE_BUILD_TYPE})
 # setup compiler options
 IF(CMAKE_COMPILER_IS_GNUCXX)
     SET(CXX_WARNS "-Wall -Wextra -Werror -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-unused-variable -Wno-switch")
-    SET(CMAKE_CXX_FLAGS "-std=c++0x -pipe ${CXX_WARNS}")
+    SET(CMAKE_CXX_FLAGS "-std=gnu++0x -pipe ${CXX_WARNS}")
     SET(CMAKE_CXX_FLAGS_DEBUG "-O0 -g3 -ggdb3 -fno-inline")
     SET(CMAKE_CXX_FLAGS_RELEASE "-O2 -rdynamic")
     SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O1 -g -fno-inline")
@@ -170,4 +170,5 @@ ENDIF(USE_PCH)
 # installation
 SET(DATA_INSTALL_DIR share/otclient)
 INSTALL(TARGETS otclient RUNTIME DESTINATION bin)
-INSTALL(DIRECTORY modules DESTINATION ${DATA_INSTALL_DIR})
+INSTALL(DIRECTORY modules DESTINATION ${DATA_INSTALL_DIR}
+        PATTERN ".git" EXCLUDE)
