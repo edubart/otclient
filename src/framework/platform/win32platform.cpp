@@ -419,9 +419,11 @@ bool Platform::isExtensionSupported(const char *ext)
     typedef const char* _wglGetExtensionsStringARB(HDC hdc);
     _wglGetExtensionsStringARB *wglGetExtensionsStringARB = (_wglGetExtensionsStringARB*)getExtensionProcAddress("wglGetExtensionsStringARB");
 
-    const char *exts = wglGetExtensionsStringARB(win32.hdc);
-    if(strstr(exts, ext))
-        return true;
+    if(wglGetExtensionsStringARB) {
+        const char *exts = wglGetExtensionsStringARB(win32.hdc);
+        if(strstr(exts, ext))
+            return true;
+    }
     return false;
 }
 

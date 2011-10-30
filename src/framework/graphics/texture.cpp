@@ -72,7 +72,7 @@ uint Texture::internalLoadGLTexture(uchar *pixels, int channels, int width, int 
     std::vector<uint8> tmp;
 
     // old opengl drivers only accept power of two dimensions
-    if(!g_graphics.isExtensionSupported("GL_ARB_texture_non_power_of_two") && pixels) {
+    if(!g_graphics.isExtensionSupported("GL_ARB_texture_non_power_of_two")) {
         int glWidth = 1;
         while(glWidth < width)
             glWidth = glWidth << 1;
@@ -81,13 +81,12 @@ uint Texture::internalLoadGLTexture(uchar *pixels, int channels, int width, int 
         while(glHeight < height)
             glHeight = glHeight << 1;
 
-        if(m_size != m_glSize) {
+        if(m_size != m_glSize && pixels) {
             tmp.resize(glHeight*glWidth*channels, 0);
-            if(pixels)
-                for(int y=0; y<height; ++y)
-                    for(int x=0; x<width; ++x)
-                        for(int i=0; i<channels; ++i)
-                            tmp[y*glWidth*channels+x*channels+i] = pixels[y*width*channels+x*channels+i];
+            for(int y=0; y<height; ++y)
+                for(int x=0; x<width; ++x)
+                    for(int i=0; i<channels; ++i)
+                        tmp[y*glWidth*channels+x*channels+i] = pixels[y*width*channels+x*channels+i];
             pixels = &tmp[0];
         }
 

@@ -45,7 +45,7 @@ FrameBuffer::FrameBuffer(int width, int height)
     m_texture->enableBilinearFilter();
 
     // use FBO ext only if supported
-    if(false && g_graphics.isExtensionSupported("GL_ARB_framebuffer_object")) {
+    if(g_graphics.isExtensionSupported("GL_ARB_framebuffer_object")) {
         m_fallbackOldImp = false;
         if(!oglGenFramebuffers) {
             oglGenFramebuffers = (PFNGLGENFRAMEBUFFERSPROC)g_platform.getExtensionProcAddress("glGenFramebuffers");
@@ -106,7 +106,7 @@ void FrameBuffer::bind()
     glLoadIdentity();
 
     // clear framebuffer
-    glClearColor(0.0, 0.0, 0.0, 0.0);
+    glClearColor(0.0, 0.0, 0.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT);
 }
 
@@ -136,5 +136,5 @@ void FrameBuffer::unbind()
 
 void FrameBuffer::draw(const Rect& screenCoords, const Rect& framebufferCoords)
 {
-    g_graphics.drawTexturedRect(screenCoords, m_texture ,framebufferCoords);
+    g_graphics.drawTexturedRect(screenCoords, m_texture, framebufferCoords);
 }

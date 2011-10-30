@@ -148,18 +148,18 @@ void Graphics::drawTexturedRect(const Rect& screenCoords,
     float textureBottom;
     float textureTop;
     float textureLeft;
+    const Size& textureSize = texture->getGlSize();
 
     if(textureCoords.isEmpty()) {
-        textureRight = 1.0f;
-        textureBottom = 1.0f;
+        textureRight = texture->getWidth() / (float)textureSize.width();
+        textureBottom = texture->getHeight()  / (float)textureSize.height();
         textureTop = 0.0f;
         textureLeft = 0.0f;
     } else {
-        const Size& textureSize = texture->getGlSize();
-        textureRight = (float)(textureCoords.right() + 1) / textureSize.width();
-        textureBottom = (float)(textureCoords.bottom() + 1) / textureSize.height();
-        textureTop = (float)textureCoords.top() / textureSize.height();
-        textureLeft = (float)textureCoords.left() / textureSize.width();
+        textureRight = (textureCoords.right() + 1) / (float)textureSize.width();
+        textureBottom = (textureCoords.bottom() + 1) / (float)textureSize.height();
+        textureTop = textureCoords.top() / (float)textureSize.height();
+        textureLeft = textureCoords.left() / (float)textureSize.width();
     }
 
     if(!m_drawing) {
