@@ -81,7 +81,6 @@ public:
 
     /// Get the app user directory, the place to save files configurations files
     std::string getAppUserDir();
-    std::string generateBacktrace(int maxLevel = 100);
 
 private:
     int m_lastTicks;

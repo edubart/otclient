@@ -6,6 +6,7 @@ SET(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake;${CMAKE_MODULE_PATH}")
 
 OPTION(USE_PCH "Use precompiled header" ON)
 OPTION(NO_CONSOLE "Disable console window on Windows" OFF)
+OPTION(HANDLE_EXCEPTIONS "Generate crash reports" OFF)
 
 # find needed packages
 SET(Boost_USE_STATIC_LIBS ON)
@@ -135,6 +136,10 @@ SET(SOURCES
     src/framework/ui/uiverticallayout.cpp
     src/framework/ui/uilayout.cpp
 )
+
+IF(HANDLE_EXCEPTIONS)
+    ADD_DEFINITIONS(-DHANDLE_EXCEPTIONS)
+ENDIF(HANDLE_EXCEPTIONS)
 
 IF(WIN32)
     SET(SOURCES ${SOURCES} src/framework/platform/win32platform.cpp)

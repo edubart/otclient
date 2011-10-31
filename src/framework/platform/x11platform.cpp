@@ -70,8 +70,102 @@ struct X11PlatformPrivate {
 
 Platform g_platform;
 
+#ifdef HANDLE_EXCEPTIONS
+
+#define MAX_BACKTRACE_DEPTH 128
+#define DEMANGLE_BACKTRACE_SYMBOLS
+
+#include <csignal>
+
+void crashHandler(int signum, siginfo_t* info, void* secret)
+{
+    logError("Application crashed");
+
+    ucontext_t context = *(ucontext_t*)secret;
+    time_t tnow;
+    char fileName[128];
+    time(&tnow);
+    tm *ts = localtime(&tnow);
+    strftime(fileName, 128, (x11.appName + "-crash_-%d-%m-%Y_%H:%M:%S.txt").c_str(), ts);
+
+    std::stringstream ss;
+    ss.flags(std::ios::hex | std::ios::showbase);
+#if __WORDSIZE == 32
+    ss <<
+    ss << "  at eip = " << context.uc_mcontext.gregs[REG_EIP] << std::endl;
+    ss << "     eax = " << context.uc_mcontext.gregs[REG_EAX] << std::endl;
+    ss << "     ebx = " << context.uc_mcontext.gregs[REG_EBX] << std::endl;
+    ss << "     ecx = " << context.uc_mcontext.gregs[REG_ECX] << std::endl;
+    ss << "     edx = " << context.uc_mcontext.gregs[REG_EDX] << std::endl;
+    ss << "     esi = " << context.uc_mcontext.gregs[REG_ESI] << std::endl;
+    ss << "     edi = " << context.uc_mcontext.gregs[REG_EDI] << std::endl;
+    ss << "     ebp = " << context.uc_mcontext.gregs[REG_EBP] << std::endl;
+    ss << "     esp = " << context.uc_mcontext.gregs[REG_ESP] << std::endl;
+    ss << "     efl = " << context.uc_mcontext.gregs[REG_EFL] << std::endl;
+#else // 64-bit
+    ss << "  at rip = " << context.uc_mcontext.gregs[REG_RIP] << std::endl;
+    ss << "     rax = " << context.uc_mcontext.gregs[REG_RAX] << std::endl;
+    ss << "     rbx = " << context.uc_mcontext.gregs[REG_RBX] << std::endl;
+    ss << "     rcx = " << context.uc_mcontext.gregs[REG_RCX] << std::endl;
+    ss << "     rdx = " << context.uc_mcontext.gregs[REG_RDX] << std::endl;
+    ss << "     rsi = " << context.uc_mcontext.gregs[REG_RSI] << std::endl;
+    ss << "     rdi = " << context.uc_mcontext.gregs[REG_RDI] << std::endl;
+    ss << "     rbp = " << context.uc_mcontext.gregs[REG_RBP] << std::endl;
+    ss << "     rsp = " << context.uc_mcontext.gregs[REG_RSP] << std::endl;
+    ss << "     efl = " << context.uc_mcontext.gregs[REG_EFL] << std::endl;
+#endif
+    ss << std::endl;
+    ss.flags(std::ios::dec);
+    ss << "  backtrace:" << std::endl;
+
+    void* buffer[MAX_BACKTRACE_DEPTH];
+    int numLevels = backtrace(buffer, MAX_BACKTRACE_DEPTH);
+    char **tracebackBuffer = backtrace_symbols(buffer, numLevels);
+    if(tracebackBuffer) {
+        for(int i = 2; i < numLevels; i++) {
+            std::string line = tracebackBuffer[i];
+            if(line.find("__libc_start_main") != std::string::npos)
+                break;
+#ifdef DEMANGLE_BACKTRACE_SYMBOLS
+            std::size_t demanglePos = line.find("(_Z");
+            if(demanglePos != std::string::npos) {
+                demanglePos++;
+                int len = std::min(line.find_first_of("+", demanglePos), line.find_first_of(")", demanglePos)) - demanglePos;
+                std::string funcName = line.substr(demanglePos, len);
+                line.replace(demanglePos, len, Fw::demangleName(funcName.c_str()));
+            }
+#endif
+            ss << "    " << i-1 << ": " << line << std::endl;
+        }
+        free(tracebackBuffer);
+    }
+
+    logInfo(ss.str());
+
+    std::ofstream out(fileName);
+    out << ss.str();
+    out.close();
+    logInfo("Crash report saved to file ", fileName);
+
+    signal(SIGILL, SIG_DFL);
+    signal(SIGSEGV, SIG_DFL);
+    signal(SIGFPE, SIG_DFL);
+}
+#endif
+
 void Platform::init(PlatformListener* platformListener, const char *appName)
 {
+#ifdef HANDLE_EXCEPTIONS
+    struct sigaction sa;
+    sa.sa_sigaction = &crashHandler;
+    sigemptyset (&sa.sa_mask);
+    sa.sa_flags = SA_RESTART | SA_SIGINFO;
+
+    sigaction(SIGILL, &sa, NULL);   // illegal instruction
+    sigaction(SIGSEGV, &sa, NULL);  // segmentation fault
+    sigaction(SIGFPE, &sa, NULL);   // floating-point exception
+#endif
+
     // seend random numbers
     srand(time(NULL));
 
@@ -867,31 +961,4 @@ std::string Platform::getAppUserDir()
     if((mkdir(sdir.str().c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) != 0) && (errno != EEXIST))
         logError("Couldn't create directory for saving configuration file. (",sdir.str(),")");
     return sdir.str();
-}
-
-std::string Platform::generateBacktrace(int maxLevel)
-{
-    std::stringstream ss;
-    std::vector<void*> buffer(maxLevel);
-    int numLevels = backtrace(&buffer[0], maxLevel);
-    char **tracebackBuffer = backtrace_symbols(&buffer[0], numLevels);
-    if(tracebackBuffer) {
-        for(int i = 1; i < numLevels; i++) {
-            std::string line = tracebackBuffer[i];
-            if(line.find("__libc_start_main") != std::string::npos)
-                break;
-            std::size_t demanglePos = line.find("(_Z");
-            if(demanglePos != std::string::npos) {
-                demanglePos++;
-                int len = std::min(line.find_first_of("+", demanglePos), line.find_first_of(")", demanglePos)) - demanglePos;
-                std::string funcName = line.substr(demanglePos, len);
-                line.replace(demanglePos, len, Fw::demangleName(funcName.c_str()));
-            }
-            if(i > 1)
-                ss << "\n";
-            ss << i << ": " << line;
-        }
-        free(tracebackBuffer);
-    }
-    return ss.str();
 }

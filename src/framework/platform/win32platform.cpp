@@ -25,7 +25,6 @@
 
 #include <windows.h>
 #include <dir.h>
-
 #include <physfs.h>
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -47,15 +46,76 @@ struct Win32PlatformPrivate {
 
 Platform g_platform;
 
+#ifdef HANDLE_EXCEPTIONS
+#include <dbghelp.h>
+
+typedef BOOL (WINAPI *MINIDUMPWRITEDUMP)(
+  HANDLE hProcess,
+  DWORD ProcessId,
+  HANDLE hFile,
+  MINIDUMP_TYPE DumpType,
+  PMINIDUMP_EXCEPTION_INFORMATION ExceptionParam,
+  PMINIDUMP_USER_STREAM_INFORMATION UserStreamParam,
+  PMINIDUMP_CALLBACK_INFORMATION CallbackParam);
+
+LONG WINAPI crashHandler(EXCEPTION_POINTERS* exceptionPointers)
+{
+    logError("Application crashed");
+    HMODULE hDbgHelp = LoadLibraryA("DBGHELP.DLL");
+    char fileName[128];
+
+    if(hDbgHelp) {
+        MINIDUMPWRITEDUMP minuDumpWriteDump = (MINIDUMPWRITEDUMP)GetProcAddress(hDbgHelp, "MiniDumpWriteDump");
+
+        SYSTEMTIME systemTime;
+        GetSystemTime(&systemTime);
+        snprintf(fileName, 128, "%s_%02u-%02u-%04u_%02u-%02u-%02u.mdmp", win32.appName.c_str(),
+                systemTime.wDay, systemTime.wMonth, systemTime.wYear,
+                systemTime.wHour, systemTime.wMinute, systemTime.wSecond);
+
+        HANDLE hFile = CreateFileA(fileName, GENERIC_READ | GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+        if(hFile) {
+            MINIDUMP_EXCEPTION_INFORMATION exceptionInformation;
+            exceptionInformation.ClientPointers = FALSE;
+            exceptionInformation.ExceptionPointers = exceptionPointers;
+            exceptionInformation.ThreadId = GetCurrentThreadId();
+
+            HANDLE hProcess = GetCurrentProcess();
+            DWORD ProcessId = GetProcessId(hProcess);
+            MINIDUMP_TYPE flags = (MINIDUMP_TYPE)(MiniDumpNormal);
+
+            BOOL dumpResult = minuDumpWriteDump(hProcess, ProcessId, hFile, flags, &exceptionInformation, NULL, NULL);
+            if(!dumpResult){
+                logError("Cannot generate minidump: ", GetLastError());
+                CloseHandle(hFile);
+                DeleteFileA(fileName);
+                return EXCEPTION_CONTINUE_SEARCH;
+            } else {
+                logInfo("Crash minidump genarated on file ", fileName);
+            }
+        } else {
+            logError("Cannot create dump file: ", GetLastError());
+        }
+    } else {
+        logError("Cannot create dump file: dbghlp.dll not found");
+    }
+    return EXCEPTION_CONTINUE_SEARCH;
+}
+#endif
+
 void Platform::init(PlatformListener* platformListener, const char *appName)
 {
+    // install crash handler
+#ifdef HANDLE_EXCEPTIONS
+    SetUnhandledExceptionFilter(crashHandler);
+#endif
+
     // seend random numbers
     std::srand(std::time(NULL));
 
     win32.appName = appName;
     win32.instance = GetModuleHandle(NULL);
     win32.listener = platformListener;
-
     win32.keyMap[VK_ESCAPE] = Fw::KeyEscape;
     win32.keyMap[VK_TAB] = Fw::KeyTab;
     win32.keyMap[VK_RETURN] = Fw::KeyReturn;
