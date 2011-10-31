@@ -11,6 +11,7 @@ RectPanel
   UIWidget
     id: consoleBuffer
     layout: verticalBox
+    focusable: false
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.bottom: commandSymbolLabel.top

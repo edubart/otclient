@@ -91,7 +91,6 @@ void Platform::init(PlatformListener* platformListener, const char *appName)
     win32.keyMap[VK_MENU] = Fw::KeyMenu;
 
     // ascii characters
-    /*
     win32.keyMap['!'] = Fw::KeyExclamation;
     win32.keyMap['"'] = Fw::KeyQuote;
     win32.keyMap['#'] = Fw::KeyNumberSign;
@@ -107,7 +106,6 @@ void Platform::init(PlatformListener* platformListener, const char *appName)
     win32.keyMap['-'] = Fw::KeyMinus;
     win32.keyMap['.'] = Fw::KeyPeriod;
     win32.keyMap['/'] = Fw::KeySlash;
-    */
 
     win32.keyMap['0'] = Fw::Key0;
     win32.keyMap['1'] = Fw::Key1;
@@ -120,7 +118,6 @@ void Platform::init(PlatformListener* platformListener, const char *appName)
     win32.keyMap['8'] = Fw::Key8;
     win32.keyMap['9'] = Fw::Key9;
 
-    /*
     win32.keyMap[':'] = Fw::KeyColon;
     win32.keyMap[';'] = Fw::KeySemicolon;
     win32.keyMap['<'] = Fw::KeyLess;
@@ -128,7 +125,6 @@ void Platform::init(PlatformListener* platformListener, const char *appName)
     win32.keyMap['>'] = Fw::KeyGreater;
     win32.keyMap['?'] = Fw::KeyQuestion;
     win32.keyMap['@'] = Fw::KeyAtSign;
-    */
 
     win32.keyMap['A'] = Fw::KeyA;
     win32.keyMap['B'] = Fw::KeyB;
@@ -157,7 +153,6 @@ void Platform::init(PlatformListener* platformListener, const char *appName)
     win32.keyMap['Y'] = Fw::KeyY;
     win32.keyMap['Z'] = Fw::KeyZ;
 
-    /*
     win32.keyMap['['] = Fw::KeyLeftBracket;
     win32.keyMap['\\'] = Fw::KeyBackslash;
     win32.keyMap[']'] = Fw::KeyRightBracket;
@@ -168,7 +163,6 @@ void Platform::init(PlatformListener* platformListener, const char *appName)
     win32.keyMap['|'] = Fw::KeyBar;
     win32.keyMap['}'] = Fw::KeyRightCurly;
     win32.keyMap['~'] = Fw::KeyTilde;
-    */
 
     // keypad
     win32.keyMap[VK_ADD] = Fw::KeyPlus;

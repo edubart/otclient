@@ -289,7 +289,7 @@ void OTClient::onPlatformEvent(const PlatformEvent& event)
 {
     bool fireUi = true;
 
-    if(event.type == EventKeyDown && event.ctrl && !event.alt && !event.shift && event.keycode == Fw::KeyApostrophe) {
+    if(event.type == EventKeyDown && event.ctrl && !event.alt && !event.shift && event.keycode == Fw::KeyF8) {
         // TODO: move this events to lua
         UIWidgetPtr console = g_ui.getRootWidget()->getChildById("consolePanel");
         if(!console->isExplicitlyVisible()) {

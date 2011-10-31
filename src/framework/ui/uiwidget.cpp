@@ -828,7 +828,7 @@ void UIWidget::onGeometryUpdate(const Rect& oldRect, const Rect& newRect)
 
 void UIWidget::onFocusChange(bool focused, Fw::FocusReason reason)
 {
-    callLuaField("onHoverChange", focused, reason);
+    callLuaField("onFocusChange", focused, reason);
 }
 
 void UIWidget::onHoverChange(bool hovered)
