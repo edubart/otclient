@@ -9,6 +9,7 @@ Panel
   image:
     source: /mainmenu/ui/background.png
     smooth: true
+    fixed ratio: true
   anchors.fill: parent
   focusable: false
 
