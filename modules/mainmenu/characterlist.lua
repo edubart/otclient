@@ -75,7 +75,7 @@ function CharacterList.create(characters, premDays)
     label.worldHost = worldHost
     label.worldPort = worldIp
 
-    if i == 0 or Configs.get('lastUsedCharacter') == characterName then
+    if i == 1 or Configs.get('lastUsedCharacter') == characterName then
       characterList:focusChild(label, ActiveFocusReason)
     end
   end

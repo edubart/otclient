@@ -4,6 +4,7 @@ EnterGame = { }
 local password
 local loadBox
 local enterGameWindow
+local hideCharlist = false
 
 -- private functions
 local function onError(protocol, error)
@@ -14,16 +15,24 @@ end
 
 local function onMotd(protocol, motd)
   loadBox:destroy()
-  local motdNumber = string.sub(motd, 0, string.find(motd, "\n"))
+  local motdNumber = tonumber(string.sub(motd, 0, string.find(motd, "\n")))
   local motdMessage = string.sub(motd, string.find(motd, "\n") + 1, string.len(motd))
-  if motdNumber ~= Configs.get("motd") then
-    displayInfoBox("Message of the day", motdMessage)
+  if motdNumber ~= tonumber(Configs.get("motd")) then
+    hideCharlist = true
+    local motdBox = displayInfoBox("Message of the day", motdMessage)
+    motdBox.onOk = function()
+      CharacterList.show()
+    end
     Configs.set("motd", motdNumber)
   end
 end
 
 local function onCharacterList(protocol, characters, premDays)
   CharacterList.create(characters, premDays)
+  if hideCharlist then
+    CharacterList.hide()
+    hideCharlist = false
+  end
 end
 
 -- public functions

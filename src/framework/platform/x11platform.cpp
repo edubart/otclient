@@ -33,7 +33,6 @@
 
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
-#include <execinfo.h>
 
 struct X11PlatformPrivate {
     Display *display;
@@ -72,10 +71,11 @@ Platform g_platform;
 
 #ifdef HANDLE_EXCEPTIONS
 
+#include <csignal>
+#include <execinfo.h>
+
 #define MAX_BACKTRACE_DEPTH 128
 #define DEMANGLE_BACKTRACE_SYMBOLS
-
-#include <csignal>
 
 void crashHandler(int signum, siginfo_t* info, void* secret)
 {

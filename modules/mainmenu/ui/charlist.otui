@@ -34,7 +34,6 @@ MainWindow
       Account Status:
       Free Account
     font: helvetica-11px-bold
-    color: #33cc66
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.bottom: next.top
