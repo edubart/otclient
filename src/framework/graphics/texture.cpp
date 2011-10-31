@@ -61,6 +61,7 @@ uint Texture::internalLoadGLTexture(uchar *pixels, int channels, int width, int 
         logError("loading texture with size ", width, "x", height, " failed, "
                  "the maximum size allowed by the graphics card is ", maxTexSize, "x", maxTexSize, ",",
                  "to prevent crashes the texture will be displayed as a blank texture");
+        //TODO: a workground, like bilinear scaling the texture
         return 0;
     }
 
