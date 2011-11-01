@@ -1,12 +1,13 @@
 Module
   name: mainmenu
-  description: Create the game mainmenu, where everything starts
+  description: Create the game main menu
   author: OTClient team
   website: https://github.com/edubart/otclient
   version: 0.2
   autoLoad: true
   dependencies:
     - core
+    - topmenu
 
   onLoad: |
     require 'mainmenu'
@@ -15,6 +16,7 @@ Module
 
     if not initialized then
       MainMenu.create()
+      EnterGame.create()
       initialized = true
     end
     return true

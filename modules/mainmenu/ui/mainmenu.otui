@@ -10,31 +10,8 @@ Panel
     source: /mainmenu/ui/background.png
     smooth: true
     fixed ratio: true
-  anchors.fill: parent
+  anchors.top: topMenu.bottom
+  anchors.left: parent.left
+  anchors.right: parent.right
+  anchors.bottom: parent.bottom
   focusable: false
-
-  RoundedPanel
-    id: mainMenu
-    size: 144 162
-    anchors.left: parent.left
-    anchors.bottom: parent.bottom
-    margin.left: 60
-    margin.bottom: 70
-    layout: verticalBox
-
-    MenuButton
-      text: Enter Game
-      margin.top: 18
-      onClick: EnterGame.create()
-
-    MenuButton
-      text: Options
-      onClick: UI.loadAndDisplayLocked("/mainmenu/ui/optionswindow.otui")
-
-    MenuButton
-      text: Info
-      onClick: UI.loadAndDisplayLocked("/mainmenu/ui/infowindow.otui")
-
-    MenuButton
-      text: Exit
-      onClick: exit()

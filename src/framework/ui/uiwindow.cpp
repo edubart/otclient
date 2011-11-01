@@ -112,10 +112,10 @@ void UIWindow::onFocusChange(bool focused, Fw::FocusReason reason)
 
 bool UIWindow::onMousePress(const Point& mousePos, Fw::MouseButton button)
 {
-    if(!getChildByPos(mousePos)) {
+    UIWidgetPtr clickedChild = getChildByPos(mousePos);
+    if(!clickedChild || clickedChild->isPhantom()) {
         m_moving = true;
         m_movingReference = mousePos - getRect().topLeft();
-        return true;
     }
     return UIWidget::onMousePress(mousePos, button);
 }

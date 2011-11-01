@@ -38,7 +38,7 @@ end
 
 -- public functions
 function EnterGame.create()
-  enterGameWindow = UI.loadAndDisplayLocked('/mainmenu/ui/entergamewindow.otui')
+  enterGameWindow = UI.loadAndDisplay('/mainmenu/ui/entergamewindow.otui')
 end
 
 function EnterGame.destroy()

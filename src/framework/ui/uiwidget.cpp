@@ -59,6 +59,7 @@ void UIWidget::setup()
     setVisible(true);
     setEnabled(true);
     setFocusable(true);
+    setPhantom(false);
     setPressed(false);
     setSizeFixed(false);
     setFont(g_fonts.getDefaultFont());
@@ -732,9 +733,17 @@ void UIWidget::onStyleApply(const OTMLNodePtr& styleNode)
         else if(node->tag() == "opacity") {
             setOpacity(node->value<int>());
         }
+        // enabled
+        else if(node->tag() == "enabled") {
+            setEnabled(node->value<bool>());
+        }
         // focusable
         else if(node->tag() == "focusable") {
             setFocusable(node->value<bool>());
+        }
+        // focusable
+        else if(node->tag() == "phantom") {
+            setPhantom(node->value<bool>());
         }
         // size
         else if(node->tag() == "size") {
@@ -910,8 +919,11 @@ bool UIWidget::onMousePress(const Point& mousePos, Fw::MouseButton button)
 
         bool mustEnd = child->onMousePress(mousePos, button);
 
-        if(!child->getChildByPos(mousePos) && !child->isPressed())
-            child->setPressed(true);
+        if(button == Fw::MouseLeftButton && !child->isPressed()) {
+            UIWidgetPtr clickedChild = child->getChildByPos(mousePos);
+            if(!clickedChild || clickedChild->isPhantom())
+                child->setPressed(true);
+        }
 
         if(mustEnd)
             return true;

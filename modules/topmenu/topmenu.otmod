@@ -1,0 +1,18 @@
+Module
+  name: topmenu
+  description: Create the top menu
+  author: OTClient team
+  website: https://github.com/edubart/otclient
+  version: 0.2
+  autoLoad: true
+  dependencies:
+    - core
+
+  onLoad: |
+    require 'topmenu'
+    TopMenu.create()
+    return true
+
+  onUnload: |
+    TopMenu.destroy()
+

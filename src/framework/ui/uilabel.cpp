@@ -28,6 +28,7 @@ void UILabel::setup()
 {
     UIWidget::setup();
     setFocusable(false);
+    setPhantom(true);
     setAlign(Fw::AlignLeft);
 }
 

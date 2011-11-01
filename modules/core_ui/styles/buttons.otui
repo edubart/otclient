@@ -22,3 +22,30 @@ Button < UIButton
   state.disabled:
     color: #999999
     background-color: #ffffff88
+
+TopButton < UIButton
+  background-color: white
+  size: 26 25
+  text-translate: 0 0
+  border-image:
+    source: /core_ui/images/top_button.png
+    size: 26 25
+    border: 3
+
+  state.hover:
+    border-image:
+      source: /core_ui/images/top_button.png
+      size: 26 25
+      offset: 26 0
+      border: 3
+
+  state.pressed:
+    text-translate: 1 1
+    border-image:
+      source: /core_ui/images/top_button.png
+      size: 26 25
+      offset: 52 0
+      border: 3
+
+  state.disabled:
+    background-color: #ffffff66

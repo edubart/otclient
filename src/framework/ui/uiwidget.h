@@ -46,6 +46,7 @@ public:
     void setPressed(bool pressed) { m_pressed = pressed; updateState(Fw::PressedState); }
     void setId(const std::string& id) { m_id = id; }
     void setFocusable(bool focusable) { m_focusable = focusable; }
+    void setPhantom(bool phantom) { m_phantom = phantom; }
     void setStyle(const std::string& styleName);
     void setStyleFromNode(const OTMLNodePtr& styleNode);
     void setLayout(const UILayoutPtr& layout) { m_layout = layout; }
@@ -87,6 +88,7 @@ public:
     bool isExplicitlyEnabled() const { return m_enabled; }
     bool isExplicitlyVisible() const { return m_visible; }
     bool isFocusable() const { return m_focusable; }
+    bool isPhantom() const { return m_phantom; }
     bool isSizeFixed() const { return m_fixedSize; }
     bool hasChildren() const { return m_children.size() > 0; }
     bool hasChild(const UIWidgetPtr& child);
@@ -181,6 +183,7 @@ protected:
     bool m_focusable;
     bool m_fixedSize;
     bool m_pressed;
+    bool m_phantom;
     Rect m_rect;
     UILayoutPtr m_layout;
     UIWidgetWeakPtr m_parent;

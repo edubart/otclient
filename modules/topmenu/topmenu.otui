@@ -1,0 +1,52 @@
+TopPanel
+  id: topMenu
+  anchors.top: parent.top
+  anchors.left: parent.left
+  anchors.right: parent.right
+  focusable: false
+
+  TopButton
+    anchors.top: parent.top
+    anchors.left: parent.left
+    margin.top: 3
+    margin.left: 6
+
+    UIWidget
+      size: 16 16
+      image: /core_ui/icons/settings.png
+      anchors.centerIn: parent
+      phantom: true
+
+  TopButton
+    anchors.top: prev.top
+    anchors.left: prev.right
+    margin.left: 6
+
+    UIWidget
+      size: 16 16
+      image: /core_ui/icons/login.png
+      anchors.centerIn: parent
+      phantom: true
+
+  TopButton
+    anchors.top: parent.top
+    anchors.right: parent.right
+    margin.top: 3
+    margin.right: 6
+
+    UIWidget
+      size: 16 16
+      image: /core_ui/icons/exit.png
+      anchors.centerIn: parent
+      phantom: true
+
+  TopButton
+    anchors.top: prev.top
+    anchors.right: prev.left
+    margin.right: 6
+
+    UIWidget
+      size: 16 16
+      image: /core_ui/icons/logout.png
+      anchors.centerIn: parent
+      phantom: true

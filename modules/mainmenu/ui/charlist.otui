@@ -69,4 +69,5 @@ MainWindow
       function(self)
         self:getParent():unlock()
         self:getParent():hide()
+        EnterGame.create()
       end

@@ -1,10 +1,16 @@
 Panel < UIWidget
+  phantom: true
 
 FlatPanel < Panel
   border-image:
     source: /core_ui/images/panel_flat.png
     border: 4
 
+TopPanel < Panel
+  height: 34
+  border-image:
+    source: /core_ui/images/top_panel.png
+    border-bottom: 3
 
 RoundedPanel < Panel
   background-color: #ffffffdd
