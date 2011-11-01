@@ -50,6 +50,7 @@ public:
     std::string getText() const { return m_text; }
     std::string getDisplayedText();
     int getTextPos(Point pos);
+    int getCursorPos() const { return m_cursorPos; }
 
 protected:
     virtual void onStyleApply(const OTMLNodePtr& styleNode);

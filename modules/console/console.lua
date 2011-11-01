@@ -30,6 +30,57 @@ local function navigateCommand(step)
   end
 end
 
+local function completeCommand()
+  local cursorPos = commandLineEdit:getCursorPos()
+  if cursorPos == 0 then return end
+
+  local commandBegin = string.sub(commandLineEdit:getText(), 1, cursorPos)
+  local possibleCommands = {}
+
+  -- create a list containing all globals
+  local allVars = table.copy(_G)
+  table.merge(allVars, commandEnv)
+
+  -- match commands
+  for k,v in pairs(allVars) do
+    if string.sub(k, 1, cursorPos) == commandBegin then
+      table.insert(possibleCommands, k)
+    end
+  end
+
+  -- complete command with one match
+  if #possibleCommands == 1 then
+    commandLineEdit:setText(possibleCommands[1])
+  -- show command matches
+  elseif #possibleCommands > 0 then
+    print('>> ' .. commandBegin)
+
+    -- expand command
+    local expandedComplete = commandBegin
+    local done = false
+    while not done do
+      cursorPos = #commandBegin+1
+      if #possibleCommands[1] < cursorPos then
+        break
+      end
+      expandedComplete = commandBegin .. string.sub(possibleCommands[1], cursorPos, cursorPos)
+      for i,v in ipairs(possibleCommands) do
+        if string.sub(v, 1, #expandedComplete) ~= expandedComplete then
+          done = true
+        end
+      end
+      if not done then
+        commandBegin = expandedComplete
+      end
+    end
+    commandLineEdit:setText(commandBegin)
+
+    for i,v in ipairs(possibleCommands) do
+      print(v)
+    end
+  end
+end
+
 local function onKeyPress(widget, keyCode, keyChar, keyboardModifiers)
   if keyboardModifiers == KeyboardNoModifier then
     -- execute current command
@@ -45,6 +96,10 @@ local function onKeyPress(widget, keyCode, keyChar, keyboardModifiers)
     -- navigate history down
     elseif keyCode == KeyDown then
       navigateCommand(-1)
+      return true
+    -- complete command
+    elseif keyCode == KeyTab then
+      completeCommand()
       return true
     end
   end
@@ -102,6 +157,18 @@ function Console.addLine(text, color)
 end
 
 function Console.executeCommand(command)
+  -- detect and convert commands with simple syntax
+  local realCommand
+  if commandEnv[command] then
+    if type(commandEnv[command]) == "function" then
+      realCommand = command .. '()'
+    else
+      realCommand = 'print(' .. command .. ')'
+    end
+  else
+    realCommand = command
+  end
+
   -- reset current history index
   currentHistoryIndex = 0
 
@@ -112,7 +179,7 @@ function Console.executeCommand(command)
   Console.addLine(">> " .. command, "#ffffff")
 
   -- load command buffer
-  local func, err = loadstring(command, "@")
+  local func, err = loadstring(realCommand, "@")
 
   -- check for syntax errors
   if not func then

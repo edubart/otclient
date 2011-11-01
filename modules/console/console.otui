@@ -33,4 +33,5 @@ RectPanel
     anchors.bottom: parent.bottom
     anchors.left: commandSymbolLabel.right
     anchors.right: parent.right
+    margin.left: 5
     font: terminus-14px-bold

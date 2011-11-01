@@ -30,6 +30,7 @@
 Image::Image()
 {
     m_fixedRatio = false;
+    m_repeated = false;
 }
 
 void Image::loadFromOTML(const OTMLNodePtr& imageNode)
@@ -37,13 +38,14 @@ void Image::loadFromOTML(const OTMLNodePtr& imageNode)
     // load configs from otml node
     std::string source = imageNode->hasValue() ? imageNode->value() : imageNode->valueAt("source");
     bool smooth = imageNode->valueAt("smooth", false);
-    m_textureCoords = imageNode->valueAt("coords", Rect());
     m_fixedRatio = imageNode->valueAt("fixed ratio", false);
+    m_repeated = imageNode->valueAt("repeated", false);
 
     // load texture
     m_texture = g_textures.getTexture(source);
     if(!m_texture)
         throw OTMLException(imageNode, "could not load image texture");
+    m_textureCoords = imageNode->valueAt("coords", Rect(Point(0,0),m_texture->getSize()));
 
     // enable texture bilinear filter
     if(smooth)
@@ -65,7 +67,10 @@ void Image::draw(const Rect& screenCoords)
 
             g_graphics.drawTexturedRect(screenCoords, m_texture, Rect(texCoordsOffset, texCoordsSize));
         } else {
-            g_graphics.drawTexturedRect(screenCoords, m_texture, m_textureCoords);
+            if(m_repeated)
+                g_graphics.drawRepeatedTexturedRect(screenCoords, m_texture, m_textureCoords);
+            else
+                g_graphics.drawTexturedRect(screenCoords, m_texture, m_textureCoords);
         }
     }
 }

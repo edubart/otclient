@@ -92,7 +92,7 @@ void push_luavalue(const std::string& str)
 bool luavalue_cast(int index, std::string& str)
 {
     str = g_lua.toString(index);
-    if(str.empty() && !g_lua.isString(index))
+    if(str.empty() && g_lua.isString(index) && !g_lua.isNil())
         return false;
     return true;
 }

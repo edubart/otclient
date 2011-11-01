@@ -40,6 +40,7 @@ protected:
     TexturePtr m_texture;
     Rect m_textureCoords;
     bool m_fixedRatio;
+    bool m_repeated;
 };
 
 #endif

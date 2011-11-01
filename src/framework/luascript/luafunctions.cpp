@@ -108,6 +108,7 @@ void LuaInterface::registerFunctions()
     g_lua.bindClassMemberFunction<UILineEdit>("getText", &UILineEdit::getText);
     g_lua.bindClassMemberFunction<UILineEdit>("setText", &UILineEdit::setText);
     g_lua.bindClassMemberFunction<UILineEdit>("clearText", &UILineEdit::clearText);
+    g_lua.bindClassMemberFunction<UILineEdit>("getCursorPos", &UILineEdit::getCursorPos);
 
     // UIWindow
     g_lua.registerClass<UIWindow, UIWidget>();

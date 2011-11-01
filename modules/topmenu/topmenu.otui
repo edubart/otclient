@@ -36,17 +36,6 @@ TopPanel
 
     UIWidget
       size: 16 16
-      image: /core_ui/icons/exit.png
-      anchors.centerIn: parent
-      phantom: true
-
-  TopButton
-    anchors.top: prev.top
-    anchors.right: prev.left
-    margin.right: 6
-
-    UIWidget
-      size: 16 16
       image: /core_ui/icons/logout.png
       anchors.centerIn: parent
       phantom: true

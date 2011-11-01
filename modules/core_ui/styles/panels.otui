@@ -8,9 +8,9 @@ FlatPanel < Panel
 
 TopPanel < Panel
   height: 34
-  border-image:
+  image:
     source: /core_ui/images/top_panel.png
-    border-bottom: 3
+    repeated: true
 
 RoundedPanel < Panel
   background-color: #ffffffdd

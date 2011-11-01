@@ -105,7 +105,7 @@ void UIWidget::render()
             // debug draw box
             //g_graphics.bindColor(Fw::green);
             //g_graphics.drawBoundingRect(child->getRect());
-            //g_fonts.getDefaultFont()->renderText(child->getId(), child->getPosition() + Point(2, 0), Color::red);
+            //g_fonts.getDefaultFont()->renderText(child->getId(), child->getPosition() + Point(2, 0), Fw::red);
 
             g_graphics.setOpacity(oldOpacity);
         }

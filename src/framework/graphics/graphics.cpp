@@ -183,9 +183,11 @@ void Graphics::drawRepeatedTexturedRect(const Rect& screenCoords,
     if(screenCoords.isEmpty() || texture->getId() == 0 || textureCoords.isEmpty())
         return;
 
+    bool mustStopDrawing = false;
     if(!m_drawing) {
         bindTexture(texture);
         startDrawing();
+        mustStopDrawing = true;
     }
 
     // render many repeated texture rects
@@ -212,7 +214,7 @@ void Graphics::drawRepeatedTexturedRect(const Rect& screenCoords,
         }
     }
 
-    if(!m_drawing)
+    if(mustStopDrawing)
         stopDrawing();
 }
 
