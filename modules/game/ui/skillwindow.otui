@@ -3,17 +3,17 @@ SkillFirstWidget < UIWidget
   anchors.top: parent.top
 
 SkillNameLabel < Label
-  font: tibia-10px-monochrome
-  
+  font: verdana-11px-monochrome
+
   margin.top: 2
   margin.left: 10
   margin.right: 10
   anchors.top: prev.bottom
   anchors.left: parent.left
   anchors.right: parent.right
-  
+
 SkillLevelLabel < Label
-  font: tibia-10px-monochrome
+  font: verdana-11px-monochrome
   align: right
   margin.top: 2
   margin.left: 10
@@ -21,7 +21,7 @@ SkillLevelLabel < Label
   anchors.top: prev.top
   anchors.left: parent.left
   anchors.right: parent.right
-  
+
 SkillPercentPanel < UIWidget
   color: blue
   background-color: red
@@ -37,7 +37,7 @@ Window
   id: skillWindow
   title: Skills
   size: 200 200
-  
+
   Panel
     id: skillPanel
     anchors.fill: parent

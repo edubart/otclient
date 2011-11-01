@@ -1,5 +1,6 @@
 LineEdit < UILineEdit
-  font: helvetica-12px
+  font: verdana-11px-antialised
+  color: #aaaaaa
   size: 86 20
   text margin: 3
   border-image:

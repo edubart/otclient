@@ -18,6 +18,7 @@ MainWindow
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: prev.bottom
+    margin.top: 2
     margin.left: 18
     margin.right: 18
 
@@ -33,6 +34,7 @@ MainWindow
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: prev.bottom
+    margin.top: 2
     margin.left: 18
     margin.right: 18
 

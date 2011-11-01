@@ -1,6 +1,6 @@
 CharacterListLabel < Label
   image: /core_ui/images/empty_rect.png
-  font: tibia-10px-monochrome
+  font: verdana-11px-monochrome
   background-color: #00000000
   offset: 2 0
   focusable: true
@@ -33,7 +33,6 @@ MainWindow
     text: |-
       Account Status:
       Free Account
-    font: helvetica-11px-bold
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.bottom: next.top

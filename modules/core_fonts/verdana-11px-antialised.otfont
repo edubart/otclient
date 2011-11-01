@@ -1,0 +1,8 @@
+Font
+  name: verdana-11px-antialised
+  height: 14
+  texture: verdana-11px-antialised.png
+  glyph size: 16 16
+
+  glyph widths:
+    32: 4

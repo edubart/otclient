@@ -1,8 +1,6 @@
 Label < UILabel
-  font: helvetica-12px
-  color: #ffffff
+  font: verdana-11px-antialised
+  color: #aaaaaa
 
 LargerLabel < Label
-  font: helvetica-12px-bold
-  color: white
 

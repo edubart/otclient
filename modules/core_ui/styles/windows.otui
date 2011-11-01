@@ -1,5 +1,5 @@
 Window < UIWindow
-  font: helvetica-12px-bold
+  font: verdana-11px-antialised
   size: 200 200
   opacity: 255
   background-color: white

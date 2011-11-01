@@ -1,9 +1,7 @@
 Font
-  name: tibia-12px-rounded
-  height: 12
-  glyph spacing: 0 1
-  top margin: 3
-  texture: tibia-12px-rounded.png
+  name: verdana-11px-rounded
+  height: 14
+  texture: verdana-11px-rounded.png
   glyph size: 16 16
 
   glyph widths:

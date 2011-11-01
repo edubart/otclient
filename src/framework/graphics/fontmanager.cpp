@@ -79,6 +79,7 @@ FontPtr FontManager::getFont(const std::string& fontName)
     }
 
     // when not found, fallback to default font
+    logError("font '", fontName, "' not found");
     return getDefaultFont();
 }
 

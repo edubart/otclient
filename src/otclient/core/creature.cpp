@@ -41,7 +41,7 @@ Creature::Creature() : Thing()
     m_walkOffsetY = 0;
     m_lastWalkAnim = 1;
 
-    m_informationFont = g_fonts.getFont("tibia-12px-rounded");
+    m_informationFont = g_fonts.getFont("verdana-11px-rounded");
 }
 
 void Creature::draw(int x, int y)

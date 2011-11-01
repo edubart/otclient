@@ -25,7 +25,10 @@ def generate_bitmap_font(timg, tdrawable, font, font_size, first_char, glyph_wid
 	disp = gimp.Display(image)
 
 	for i in range(char_begin, char_end):
-		string = unichr(i)
+		if i == 129 or (i >= 141 and i <= 144) or i == 157:
+			string = u"\u25A1"
+		else:
+			string = chr(i).decode('cp1252')
 		offset = i - char_begin
 
 		x_pos =  (offset % 16) * int(glyph_width)

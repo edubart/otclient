@@ -1,12 +1,12 @@
 VipListLabel < Label
-  font: tibia-10px-monochrome
+  font: verdana-11px-monochrome
   margin.left: 30
 
 Window
   id: vipWindow
   title: VIP
   size: 200 200
-  
+
   TextList
     id: vipList
     anchors.fill: parent

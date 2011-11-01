@@ -6,18 +6,10 @@ Module
   version: 0.2
   autoLoad: true
   onLoad: |
-    importFont('helvetica-11px-bold')
-    importFont('helvetica-11px')
-    importFont('helvetica-12px-bold')
-    importFont('helvetica-12px')
-    importFont('helvetica-14px-bold')
+    importFont('verdana-11px-antialised')
+    importFont('verdana-11px-monochrome')
+    importFont('verdana-11px-rounded')
     importFont('terminus-14px-bold')
-    
-    importFont('tibia-8px-antialised')
-    importFont('tibia-10px-antialised')
-    importFont('tibia-10px-monochrome')
-    importFont('tibia-12px-rounded')
-
-    setDefaultFont('helvetica-12px')
+    setDefaultFont('verdana-11px-antialised')
     return true
 

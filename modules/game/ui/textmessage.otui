@@ -1,5 +1,5 @@
 CenterLabel < Label
-  font: tibia-12px-rounded
+  font: verdana-11px-rounded
   height: 16
   align: center
   anchors.top: parent.verticalCenter
@@ -8,7 +8,7 @@ CenterLabel < Label
   anchors.right: parent.right
 
 BottomLabel < Label
-  font: tibia-12px-rounded
+  font: verdana-11px-rounded
   height: 16
   align: center
   anchors.bottom: parent.bottom

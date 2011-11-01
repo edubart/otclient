@@ -17,7 +17,8 @@ local function onMotd(protocol, motd)
   loadBox:destroy()
   local motdNumber = tonumber(string.sub(motd, 0, string.find(motd, "\n")))
   local motdMessage = string.sub(motd, string.find(motd, "\n") + 1, string.len(motd))
-  if motdNumber ~= tonumber(Configs.get("motd")) then
+  local lastMotdNumber = tonumber(Configs.get("motd"))
+  if motdNumber ~= lastMotdNumber then
     hideCharlist = true
     local motdBox = displayInfoBox("Message of the day", motdMessage)
     motdBox.onOk = function()
