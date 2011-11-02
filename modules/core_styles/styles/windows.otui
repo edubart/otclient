@@ -6,7 +6,7 @@ Window < UIWindow
   head height: 20
   head text align: center
   border-image:
-    source: /core_ui/images/window.png
+    source: /core_styles/images/window.png
     border: 4
     border.top: 20
 

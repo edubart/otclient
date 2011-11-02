@@ -3,21 +3,21 @@ Panel < UIWidget
 
 FlatPanel < Panel
   border-image:
-    source: /core_ui/images/panel_flat.png
+    source: /core_styles/images/panel_flat.png
     border: 4
 
 TopPanel < Panel
   height: 34
   image:
-    source: /core_ui/images/top_panel.png
+    source: /core_styles/images/top_panel.png
     repeated: true
 
 RoundedPanel < Panel
   background-color: #ffffffdd
   border-image:
-    source: /core_ui/images/panel_rounded.png
+    source: /core_styles/images/panel_rounded.png
     border: 4
 
 
 RectPanel < UIWidget
-  image: /core_ui/images/empty_rect.png
+  image: /core_styles/images/empty_rect.png

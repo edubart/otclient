@@ -1,7 +1,6 @@
 Font
   name: terminus-14px-bold
   height: 16
-  spacing: 0 0
   top margin: 2
   texture: terminus-14px-bold.png
   glyph size: 16 16

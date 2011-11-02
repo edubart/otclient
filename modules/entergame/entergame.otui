@@ -1,9 +1,9 @@
 MainWindow
-  id: enterGameWindow
+  id: enterGame
   title: Enter Game
   size: 236 160
   onEnter: EnterGame.doLogin()
-  onEscape: function(self) self:destroy() end
+  onEscape: EnterGame.hide()
 
   LargerLabel
     text: Account name
@@ -54,4 +54,4 @@ MainWindow
     anchors.bottom: parent.bottom
     margin.bottom: 16
     margin.right: 16
-    onClick: function(self) self:getParent():destroy() end
+    onClick: EnterGame.hide()

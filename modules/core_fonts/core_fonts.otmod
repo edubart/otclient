@@ -3,8 +3,6 @@ Module
   description: Contains fonts used by core
   author: OTClient team
   website: https://github.com/edubart/otclient
-  version: 0.2
-  autoLoad: true
   onLoad: |
     importFont('verdana-11px-antialised')
     importFont('verdana-11px-monochrome')

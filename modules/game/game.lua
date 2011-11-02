@@ -20,7 +20,7 @@ local function createMainInterface()
   Game.gameUi = loadUI('/game/ui/gameinterface.otui', UI.root)
   Game.gameMapUi = Game.gameUi:getChildById('gameMap')
   Game.gameUi.onKeyPress = onGameKeyPress
-  
+
   createTextInterface()
   createVipWindow()
 end
@@ -35,7 +35,7 @@ end
 
 -- public functions
 function Game.onLogin()
-  MainMenu.hide()
+  Background.hide()
   CharacterList.destroyLoadBox()
   createMainInterface()
 end
@@ -53,7 +53,7 @@ function Game.onConnectionError(message)
 end
 
 function Game.onLogout()
-  MainMenu.show()
+  Background.show()
   CharacterList.show()
   destroyMainInterface()
 end

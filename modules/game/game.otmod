@@ -8,10 +8,10 @@ Module
   dependencies:
     - core
     - tibiafiles
+    - topmenu
+    - entergame
+    - background
 
   onLoad: |
     require 'game'
     return true
-
-  onUnload: |
-    -- nothing yet

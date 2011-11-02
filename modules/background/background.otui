@@ -1,13 +1,7 @@
-MenuButton < Button
-  margin.bottom: 11
-  margin.left: 20
-  margin.right: 20
-
-
 Panel
-  id: mainMenuBackground
+  id: background
   image:
-    source: /mainmenu/ui/background.png
+    source: /background/background.png
     smooth: true
     fixed ratio: true
   anchors.top: topMenu.bottom

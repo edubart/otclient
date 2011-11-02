@@ -1,0 +1,18 @@
+Module
+  name: background
+  description: Handles the background of the login screen
+  author: OTClient team
+  website: https://github.com/edubart/otclient
+  autoLoad: true
+  dependencies:
+    - core
+    - topmenu
+
+  onLoad: |
+    require 'background'
+    Background.create()
+    return true
+
+  onUnload:
+    Background.destroy()
+

@@ -1,0 +1,17 @@
+Module
+  name: core_styles
+  description: Contains ui styles used by other modules
+  author: OTClient team
+  website: https://github.com/edubart/otclient
+  dependencies:
+    - core_fonts
+  onLoad: |
+    importStyles 'styles/buttons.otui'
+    importStyles 'styles/labels.otui'
+    importStyles 'styles/panels.otui'
+    importStyles 'styles/separators.otui'
+    importStyles 'styles/lineedits.otui'
+    importStyles 'styles/windows.otui'
+    importStyles 'styles/listboxes.otui'
+    return true
+

@@ -1,5 +1,5 @@
 CharacterListLabel < Label
-  image: /core_ui/images/empty_rect.png
+  image: /core_styles/images/empty_rect.png
   font: verdana-11px-monochrome
   background-color: #00000000
   offset: 2 0
@@ -14,10 +14,10 @@ CharacterListLabel < Label
 
 MainWindow
   id: charactersWindow
-  title: Charlist
+  title: Character List
   size: 250 250
   onEnter: CharacterList.doLogin()
-  onEscape: CharacterList.close()
+  onEscape: CharacterList.destroy()
 
   TextList
     id: characterList
@@ -65,4 +65,4 @@ MainWindow
     anchors.bottom: parent.bottom
     margin.bottom: 16
     margin.right: 16
-    onClick: CharacterList.close()
+    onClick: CharacterList.destroy()

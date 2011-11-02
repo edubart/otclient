@@ -1,5 +1,5 @@
 TextList < UIWidget
   layout: verticalBox
   border-image:
-    source: /core_ui/images/panel_flat.png
+    source: /core_styles/images/panel_flat.png
     border: 4

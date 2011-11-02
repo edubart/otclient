@@ -6,6 +6,7 @@ TopPanel
   focusable: false
 
   TopButton
+    id: settingsButton
     anchors.top: parent.top
     anchors.left: parent.left
     margin.top: 3
@@ -13,7 +14,7 @@ TopPanel
 
     UIWidget
       size: 16 16
-      image: /core_ui/icons/settings.png
+      image: /core_styles/icons/settings.png
       anchors.centerIn: parent
       phantom: true
 
@@ -21,10 +22,11 @@ TopPanel
     anchors.top: prev.top
     anchors.left: prev.right
     margin.left: 6
+    onClick: EnterGame.show()
 
     UIWidget
       size: 16 16
-      image: /core_ui/icons/login.png
+      image: /core_styles/icons/login.png
       anchors.centerIn: parent
       phantom: true
 
@@ -33,9 +35,15 @@ TopPanel
     anchors.right: parent.right
     margin.top: 3
     margin.right: 6
+    onClick: |
+      if Game.isOnline() then
+        Game.logout(false)
+      else
+        exit()
+      end
 
     UIWidget
       size: 16 16
-      image: /core_ui/icons/logout.png
+      image: /core_styles/icons/logout.png
       anchors.centerIn: parent
       phantom: true

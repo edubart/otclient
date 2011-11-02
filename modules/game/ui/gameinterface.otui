@@ -1,14 +1,10 @@
 UIWidget
   id: gameRootInterface
   anchors.fill: parent
+  anchors.top: topMenu.bottom
+  margin.top: 1
 
   UIMap
     id: gameMap
     anchors.fill:parent
     margin.right: 200
-
-  Button
-    anchors.left: gameMap.right
-    anchors.top: parent.top
-    text: Logout
-    onClick: Game.logout(false)

@@ -20,11 +20,3 @@ function UI.displayLocked(widget)
   UI.root:addChild(widget)
   UI.root:lockChild(widget)
 end
-
-importStyles('styles/buttons.otui')
-importStyles('styles/labels.otui')
-importStyles('styles/panels.otui')
-importStyles('styles/separators.otui')
-importStyles('styles/lineedits.otui')
-importStyles('styles/windows.otui')
-importStyles('styles/listboxes.otui')

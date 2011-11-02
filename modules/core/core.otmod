@@ -7,19 +7,17 @@ Module
   autoLoad: true
   dependencies:
     - core_fonts
-    - core_ui
+    - core_styles
 
   onLoad: |
     require 'ext/table'
     require 'ext/string'
     require 'constants'
     require 'util'
-    require 'widget'
-    require 'messagebox/messagebox'
     require 'dispatcher'
-
+    require 'widget'
+    require 'ui'
+    require 'gfx'
+    require 'messagebox/messagebox'
     return true
-
-  onUnload: |
-    rootWidget = nil
 

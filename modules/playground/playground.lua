@@ -1,1 +1,1 @@
---UI.loadAndDisplayLocked('/mainmenu/ui/charlist.otui')
+-- place any code for testing purposes here

@@ -2,7 +2,7 @@ EnterGame = { }
 
 -- private variables
 local loadBox
-local enterGameWindow
+local enterGame
 local motdNumber
 local motdMessage
 
@@ -32,25 +32,26 @@ local function onCharacterList(protocol, characters, premDays)
 end
 
 -- public functions
-function EnterGame.show()
-  if not enterGameWindow then
-    enterGameWindow = UI.loadAndDisplay('/mainmenu/ui/entergamewindow.otui')
-  end
-  enterGameWindow:show()
-end
-
-function EnterGame.hide()
-  enterGameWindow:hide()
+function EnterGame.create()
+  enterGame = UI.loadAndDisplay('/entergame/entergame.otui')
 end
 
 function EnterGame.destroy()
-  enterGameWindow:destroy()
-  enterGameWindow = nil
+  enterGame:destroy()
+  enterGame = nil
+end
+
+function EnterGame.show()
+  enterGame:show()
+end
+
+function EnterGame.hide()
+  enterGame:hide()
 end
 
 function EnterGame.doLogin()
-  EnterGame.account = enterGameWindow:getChildById('accountNameLineEdit'):getText()
-  EnterGame.password = enterGameWindow:getChildById('accountPasswordLineEdit'):getText()
+  EnterGame.account = enterGame:getChildById('accountNameLineEdit'):getText()
+  EnterGame.password = enterGame:getChildById('accountPasswordLineEdit'):getText()
   EnterGame.hide()
 
   local protocolLogin = ProtocolLogin.create()
