@@ -3,7 +3,6 @@ Module
   description: Contains lua classes, functions and constants used by other modules
   author: OTClient team
   website: https://github.com/edubart/otclient
-  version: 0.2
   autoLoad: true
   dependencies:
     - core_fonts
