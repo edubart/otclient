@@ -1,10 +1,10 @@
 EnterGame = { }
 
 -- private variables
-local password
 local loadBox
 local enterGameWindow
-local hideCharlist = false
+local motdNumber
+local motdMessage
 
 -- private functions
 local function onError(protocol, error)
@@ -14,31 +14,33 @@ local function onError(protocol, error)
 end
 
 local function onMotd(protocol, motd)
-  loadBox:destroy()
-  local motdNumber = tonumber(string.sub(motd, 0, string.find(motd, "\n")))
-  local motdMessage = string.sub(motd, string.find(motd, "\n") + 1, string.len(motd))
-  local lastMotdNumber = tonumber(Configs.get("motd"))
-  if motdNumber ~= lastMotdNumber then
-    hideCharlist = true
-    local motdBox = displayInfoBox("Message of the day", motdMessage)
-    motdBox.onOk = function()
-      CharacterList.show()
-    end
-    Configs.set("motd", motdNumber)
-  end
+  motdNumber = tonumber(string.sub(motd, 0, string.find(motd, "\n")))
+  motdMessage = string.sub(motd, string.find(motd, "\n") + 1, string.len(motd))
 end
 
 local function onCharacterList(protocol, characters, premDays)
+  loadBox:destroy()
   CharacterList.create(characters, premDays)
-  if hideCharlist then
+
+  local lastMotdNumber = tonumber(Configs.get("motd"))
+  if motdNumber and motdNumber ~= lastMotdNumber then
+    Configs.set("motd", motdNumber)
+    local motdBox = displayInfoBox("Message of the day", motdMessage)
+    motdBox.onOk = CharacterList.show
     CharacterList.hide()
-    hideCharlist = false
   end
 end
 
 -- public functions
-function EnterGame.create()
-  enterGameWindow = UI.loadAndDisplay('/mainmenu/ui/entergamewindow.otui')
+function EnterGame.show()
+  if not enterGameWindow then
+    enterGameWindow = UI.loadAndDisplay('/mainmenu/ui/entergamewindow.otui')
+  end
+  enterGameWindow:show()
+end
+
+function EnterGame.hide()
+  enterGameWindow:hide()
 end
 
 function EnterGame.destroy()
@@ -49,7 +51,7 @@ end
 function EnterGame.doLogin()
   EnterGame.account = enterGameWindow:getChildById('accountNameLineEdit'):getText()
   EnterGame.password = enterGameWindow:getChildById('accountPasswordLineEdit'):getText()
-  EnterGame.destroy()
+  EnterGame.hide()
 
   local protocolLogin = ProtocolLogin.create()
   protocolLogin.onError = onError
@@ -59,7 +61,7 @@ function EnterGame.doLogin()
   loadBox = displayCancelBox('Please wait', 'Connecting to login server...')
   loadBox.onCancel = function(msgbox)
     protocolLogin:cancelLogin()
-    EnterGame.create()
+    EnterGame.show()
   end
 
   protocolLogin:login(EnterGame.account, EnterGame.password)

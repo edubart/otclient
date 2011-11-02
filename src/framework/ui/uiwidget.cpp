@@ -444,7 +444,7 @@ void UIWidget::focusPreviousChild(Fw::FocusReason reason)
 {
     UIWidgetPtr toFocus;
     UIWidgetList rotatedChildren(m_children);
-    std::reverse(m_children.begin(), m_children.end());
+    std::reverse(rotatedChildren.begin(), rotatedChildren.end());
 
     if(m_focusedChild) {
         auto focusedIt = std::find(rotatedChildren.begin(), rotatedChildren.end(), m_focusedChild);

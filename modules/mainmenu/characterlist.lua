@@ -86,14 +86,17 @@ function CharacterList.create(characters, premDays)
 end
 
 function CharacterList.hide()
-  charactersWindow:unlock()
   charactersWindow:hide()
+end
+
+function CharacterList.close()
+  CharacterList.hide()
+  EnterGame.show()
 end
 
 function CharacterList.show()
   if not loadBox then
     charactersWindow:show()
-    charactersWindow:lock()
   end
 end
 

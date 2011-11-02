@@ -16,7 +16,7 @@ Module
 
     if not initialized then
       MainMenu.create()
-      EnterGame.create()
+      EnterGame.show()
       initialized = true
     end
     return true

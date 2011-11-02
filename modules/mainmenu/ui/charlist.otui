@@ -17,7 +17,7 @@ MainWindow
   title: Charlist
   size: 250 250
   onEnter: CharacterList.doLogin()
-  onEscape: CharacterList.hide()
+  onEscape: CharacterList.close()
 
   TextList
     id: characterList
@@ -65,9 +65,4 @@ MainWindow
     anchors.bottom: parent.bottom
     margin.bottom: 16
     margin.right: 16
-    onClick: |
-      function(self)
-        self:getParent():unlock()
-        self:getParent():hide()
-        EnterGame.create()
-      end
+    onClick: CharacterList.close()
