@@ -1,0 +1,29 @@
+HealthLabel < Label
+  color: red
+  background-color: green
+  align: center
+  font: verdana-11px-monochrome
+  anchors.left: parent.left
+  anchors.right: parent.right
+  anchors.top: parent.top
+  image: /core_styles/images/empty_rect.png
+
+ManaLabel < Label
+  color: blue
+  background-color: red
+  align: center
+  font: verdana-11px-monochrome
+  anchors.left: parent.left
+  anchors.right: parent.right
+  anchors.bottom: parent.bottom
+  image: /core_styles/images/empty_rect.png
+
+UIWindow
+  id: healthManaPanel
+  width: 192
+  margin.top: 6
+  margin.left: 6
+  margin.right: 6
+  move policy: free updated
+  image: /core_styles/images/empty_rect.png
+

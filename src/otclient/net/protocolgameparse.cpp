@@ -631,12 +631,22 @@ void ProtocolGame::parsePlayerStats(InputMessage& msg)
 {
     m_localPlayer->setStatistic(Otc::Health, msg.getU16());
     m_localPlayer->setStatistic(Otc::MaxHealth, msg.getU16());
+
+    g_dispatcher.addEvent([=] {
+        g_lua.callGlobalField("Game", "onHealthChange", m_localPlayer->getStatistic(Otc::Health), m_localPlayer->getStatistic(Otc::MaxHealth));
+    });
+
     m_localPlayer->setStatistic(Otc::FreeCapacity, msg.getU32());
     m_localPlayer->setStatistic(Otc::Experience, msg.getU32());
     m_localPlayer->setStatistic(Otc::Level, msg.getU16());
     m_localPlayer->setStatistic(Otc::LevelPercent, msg.getU8());
     m_localPlayer->setStatistic(Otc::Mana, msg.getU16());
     m_localPlayer->setStatistic(Otc::MaxMana, msg.getU16());
+
+    g_dispatcher.addEvent([=] {
+        g_lua.callGlobalField("Game", "onManaChange", m_localPlayer->getStatistic(Otc::Mana), m_localPlayer->getStatistic(Otc::MaxMana));
+    });
+
     m_localPlayer->setStatistic(Otc::MagicLevel, msg.getU8());
     m_localPlayer->setStatistic(Otc::MagicLevelPercent, msg.getU8());
     m_localPlayer->setStatistic(Otc::Soul, msg.getU8());

@@ -1,0 +1,14 @@
+Module
+  name: health_mana
+  description: Displays health and mana points
+  author: OTClient team
+  website: https://github.com/edubart/otclient
+  autoLoad: true
+  dependencies:
+    - game
+
+  onLoad: |
+    require 'viplist'
+    return true
+
+
