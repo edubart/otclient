@@ -26,6 +26,9 @@
 #include <framework/net/protocol.h>
 #include <framework/core/eventdispatcher.h>
 #include <framework/core/configs.h>
+#include <framework/platform/platform.h>
+#include <framework/otml/otml.h>
+#include <framework/graphics/graphics.h>
 
 void LuaInterface::registerFunctions()
 {
@@ -42,6 +45,10 @@ void LuaInterface::registerFunctions()
     g_lua.bindClassMemberFunction<UIWidget>("setWidth", &UIWidget::setWidth);
     g_lua.bindClassMemberFunction<UIWidget>("getHeight", &UIWidget::getHeight);
     g_lua.bindClassMemberFunction<UIWidget>("setHeight", &UIWidget::setHeight);
+    g_lua.bindClassMemberFunction<UIWidget>("getSize", &UIWidget::getSize);
+    g_lua.bindClassMemberFunction<UIWidget>("setSize", &UIWidget::resize);
+    g_lua.bindClassMemberFunction<UIWidget>("getPosition", &UIWidget::getPosition);
+    g_lua.bindClassMemberFunction<UIWidget>("moveTo", &UIWidget::moveTo);
     g_lua.bindClassMemberFunction<UIWidget>("getParent", &UIWidget::getParent);
     g_lua.bindClassMemberFunction<UIWidget>("setParent", &UIWidget::setParent);
     g_lua.bindClassMemberFunction<UIWidget>("getBackgroundColor", &UIWidget::getBackgroundColor);
@@ -51,6 +58,7 @@ void LuaInterface::registerFunctions()
     g_lua.bindClassMemberFunction<UIWidget>("getOpacity", &UIWidget::getOpacity);
     g_lua.bindClassMemberFunction<UIWidget>("setOpacity", &UIWidget::setOpacity);
     g_lua.bindClassMemberFunction<UIWidget>("setStyle", &UIWidget::setStyle);
+    g_lua.bindClassMemberFunction<UIWidget>("getStyle", &UIWidget::getStyle);
     g_lua.bindClassMemberFunction<UIWidget>("getMarginTop", &UIWidget::getMarginTop);
     g_lua.bindClassMemberFunction<UIWidget>("setMarginTop", &UIWidget::setMarginTop);
     g_lua.bindClassMemberFunction<UIWidget>("getMarginBottom", &UIWidget::getMarginBottom);
@@ -139,4 +147,6 @@ void LuaInterface::registerFunctions()
     g_lua.bindGlobalFunction("getRootWidget", std::bind(&UIManager::getRootWidget, &g_ui));
     g_lua.bindGlobalFunction("addEvent", std::bind(&EventDispatcher::addEvent, &g_dispatcher, _1, false));
     g_lua.bindGlobalFunction("scheduleEvent", std::bind(&EventDispatcher::scheduleEvent, &g_dispatcher, _1, _2));
+    g_lua.bindGlobalFunction("getMouseCursorPos", std::bind(&Platform::getMouseCursorPos, &g_platform));
+    g_lua.bindGlobalFunction("getScreenSize", std::bind(&Graphics::getScreenSize, &g_graphics));
 }

@@ -57,7 +57,7 @@ void UIVerticalLayout::update()
 
 void UIVerticalLayout::addWidget(const UIWidgetPtr& widget)
 {
-    // needed to be correcly sorted on update
+    // needed to be correctly sorted on the following update
     widget->setY(9999);
     update();
 }

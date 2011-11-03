@@ -119,6 +119,7 @@ public:
     int getMarginTop() const { return m_marginTop; }
     int getMarginBottom() const { return m_marginBottom; }
     Fw::FocusReason getLastFocusReason() const { return m_lastFocusReason; }
+    OTMLNodePtr getStyle() const { return m_style; }
 
     UIWidgetList getChildren() const { return m_children; }
     UIWidgetPtr getFocusedChild() const { return m_focusedChild; }

@@ -199,6 +199,33 @@ bool luavalue_cast(int index, Point& point)
     return true;
 }
 
+// size
+void push_luavalue(const Size& size)
+{
+    g_lua.newTable();
+    g_lua.pushInteger(size.width());
+    g_lua.setField("width");
+    g_lua.pushInteger(size.height());
+    g_lua.setField("height");
+}
+
+bool luavalue_cast(int index, Size& size)
+{
+    if(g_lua.isTable(index)) {
+        g_lua.getField("width", index);
+        size.setWidth(g_lua.popInteger());
+        g_lua.getField("height", index);
+        size.setHeight(g_lua.popInteger());
+        return true;
+    } else if(g_lua.isString()) {
+        return Fw::cast(g_lua.toString(index), size);
+    } else if(g_lua.isNil()) {
+        size = Size();
+        return true;
+    }
+    return true;
+}
+
 // otml nodes
 void push_luavalue(const OTMLNodePtr& node)
 {

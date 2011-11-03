@@ -53,9 +53,6 @@ void UIButton::onStyleApply(const OTMLNodePtr& styleNode)
             m_textTranslate = node->value<Point>();
         } else if(node->tag() == "text") {
             m_text = node->value();
-        } else if(node->tag() == "onClick") {
-            g_lua.loadFunction(node->value(), "@" + node->source() + "[" + node->tag() + "]");
-            luaSetField(node->tag());
         }
     }
 }

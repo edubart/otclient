@@ -11,6 +11,7 @@ TopPanel
     anchors.left: parent.left
     margin.top: 4
     margin.left: 6
+    tooltip: Options
     onClick: Options.create()
 
     UIWidget
@@ -23,6 +24,7 @@ TopPanel
     anchors.top: prev.top
     anchors.left: prev.right
     margin.left: 6
+    tooltip: Enter game with a character
     onClick: |
       if Game.isOnline() then
         CharacterList.show()
@@ -41,6 +43,7 @@ TopPanel
     anchors.right: parent.right
     margin.top: 4
     margin.right: 6
+    tooltip: Logout
     onClick: |
       if Game.isOnline() then
         Game.logout(false)
@@ -59,6 +62,7 @@ TopPanel
     anchors.right: prev.left
     margin.top: 4
     margin.right: 6
+    tooltip: About OTClient
     onClick: About.create()
 
     UIWidget

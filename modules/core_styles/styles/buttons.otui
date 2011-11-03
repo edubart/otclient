@@ -23,7 +23,17 @@ Button < UIButton
     color: #999999
     background-color: #ffffff88
 
-TopButton < UIButton
+ToolTipButton < UIButton
+  onHoverChange: |
+    function(self, hovered)
+      if hovered then
+        ToolTip.display(self:getStyle().tooltip)
+      else
+        ToolTip:hide()
+      end
+    end
+
+TopButton < ToolTipButton
   background-color: white
   size: 26 25
   text-translate: 0 0

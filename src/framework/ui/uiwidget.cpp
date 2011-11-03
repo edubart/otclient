@@ -841,6 +841,11 @@ void UIWidget::onStyleApply(const OTMLNodePtr& styleNode)
 
                 anchorLayout->addAnchor(asUIWidget(), anchoredEdge, hookedWidgetId, hookedEdge);
             }
+        } else if(node->tag() == "onClick" ||
+                  node->tag() == "onHoverChange") {
+            dump << node->tag();
+            g_lua.loadFunction(node->value(), "@" + node->source() + "[" + node->tag() + "]");
+            luaSetField(node->tag());
         }
     }
 }
@@ -858,6 +863,10 @@ void UIWidget::onFocusChange(bool focused, Fw::FocusReason reason)
 void UIWidget::onHoverChange(bool hovered)
 {
     callLuaField("onHoverChange", hovered);
+
+    // check for new hovered elements when the current widget is removed
+    if(!hovered && !getParent())
+        g_ui.getRootWidget()->updateState(Fw::HoverState);
 }
 
 bool UIWidget::onKeyPress(uchar keyCode, char keyChar, int keyboardModifiers)

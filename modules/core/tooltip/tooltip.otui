@@ -1,0 +1,9 @@
+RectPanel
+  background-color: #111111bb
+  size: 200 200
+  id: toolTip
+  focusable: false
+
+  Label
+    id: toolTipText
+    anchors.centerIn: parent

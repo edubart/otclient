@@ -186,6 +186,16 @@ namespace luabinder
                                     Tuple>(f);
     }
 
+    template<typename Obj, typename Ret, typename... Args, typename... Holders>
+    LuaCppFunction bind_fun(const std::_Bind<std::_Mem_fn<Ret (Obj::*)(Args...) const>(Obj*, Holders...)>& f) {
+        typedef typename std::tuple<Args...> ArgsTuple;
+        typedef typename std::tuple<Holders...> HoldersTuple;
+        typedef typename get_holded_tuple<void, sizeof...(Holders), ArgsTuple, HoldersTuple>::type Tuple;
+        return bind_fun_specializer<typename remove_const_ref<Ret>::type,
+                                    decltype(f),
+                                    Tuple>(f);
+    }
+
     /// Bind customized functions already bound by std::bind
     template<typename Obj>
     LuaCppFunction bind_fun(const std::_Bind<std::_Mem_fn<int (Obj::*)(LuaInterface*)>(Obj*, std::_Placeholder<1>)>& f) {
