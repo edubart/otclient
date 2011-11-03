@@ -1,5 +1,3 @@
-require 'textmessage'
-
 -- private functions
 local function onGameKeyPress(self, keyCode, keyChar, keyboardModifiers)
   if keyboardModifiers == KeyboardCtrlModifier then
@@ -18,7 +16,7 @@ end
 function Game.createInterface()
   Background.hide()
   CharacterList.destroyLoadBox()
-  Game.gameUi = loadUI('/game/ui/gameinterface.otui', UI.root)
+  Game.gameUi = loadUI('/game/game.otui', UI.root)
   Game.gameMapPanel = Game.gameUi:getChildById('mapPanel')
   Game.gameRightPanel = Game.gameUi:getChildById('rightPanel')
   Game.gameBottomPanel = Game.gameUi:getChildById('bottomPanel')

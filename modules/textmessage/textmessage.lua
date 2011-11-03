@@ -1,7 +1,7 @@
 TextMessage = {}
 
 -- require styles
-importStyles '/game/ui/textmessage.otui'
+importStyles '/textmessage/textmessage.otui'
 
 -- private variables
 local bottomLabelWidget, centerLabelWidget
@@ -56,3 +56,7 @@ function Game.onTextMessage(type, message)
                   end, time)
   end
 end
+
+
+connect(Game, { onLogin = TextMessage.create,
+                onLogout = TextMessage.destroy })
