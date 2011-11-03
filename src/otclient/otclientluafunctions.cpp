@@ -49,6 +49,7 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassMemberFunction("cancelLogin", &ProtocolLogin::cancelLogin);
 
     g_lua.registerClass<ProtocolGame, Protocol>();
+    g_lua.bindClassMemberFunction("sendTalk", &ProtocolGame::sendTalk);
 
     g_lua.registerClass<Thing>();
     g_lua.registerClass<Creature>();
@@ -63,6 +64,7 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassStaticFunction<Game>("logout", std::bind(&Game::logout, &g_game, _1));
     g_lua.bindClassStaticFunction<Game>("cancelLogin", std::bind(&Game::cancelLogin, &g_game));
     g_lua.bindClassStaticFunction<Game>("isOnline", std::bind(&Game::isOnline, &g_game));
+    g_lua.bindClassStaticFunction<Game>("getProtocolGame", std::bind(&Game::getProtocolGame, &g_game));
 
     g_lua.registerClass<UIMap, UIWidget>();
     g_lua.bindClassStaticFunction<UIMap>("create", &UIWidget::create<UIMap>);
