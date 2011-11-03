@@ -1,23 +1,28 @@
 Panel < UIWidget
   phantom: true
 
+RectPanel < UIWidget
+  image: /core_styles/images/empty_rect.png
+
 FlatPanel < Panel
   border-image:
     source: /core_styles/images/panel_flat.png
     border: 4
 
 TopPanel < Panel
-  height: 34
+  height: 36
   image:
     source: /core_styles/images/top_panel.png
     repeated: true
 
-RoundedPanel < Panel
-  background-color: #ffffffdd
+InterfacePanel < Panel
+  focusable: false
   border-image:
-    source: /core_styles/images/panel_rounded.png
+    source: /core_styles/images/interface_panel.png
     border: 4
 
-
-RectPanel < UIWidget
-  image: /core_styles/images/empty_rect.png
+MapPanel < UIMap
+  map margin: 4
+  border-image:
+    source: /core_styles/images/map_panel.png
+    border: 4

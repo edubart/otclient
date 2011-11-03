@@ -40,6 +40,8 @@ public:
 
     virtual void setup();
     virtual void render();
+    void renderSelf();
+    void renderChildren();
 
     void setVisible(bool visible);
     void setEnabled(bool enabled) { m_enabled = enabled; updateState(Fw::DisabledState); }
@@ -76,6 +78,7 @@ public:
     void enable() { setEnabled(true); }
     void lock();
     void unlock();
+    void focus();
 
     bool isActive() const { return hasState(Fw::ActiveState); }
     bool isEnabled() const { return !hasState(Fw::DisabledState); }

@@ -23,6 +23,8 @@
 #include "uimap.h"
 #include <otclient/core/map.h>
 #include <otclient/core/game.h>
+#include <framework/otml/otml.h>
+#include <framework/graphics/graphics.h>
 
 void UIMap::setup()
 {
@@ -31,10 +33,15 @@ void UIMap::setup()
 
 void UIMap::render()
 {
-    if(g_game.isOnline())
-        g_map.draw(m_rect);
+    renderSelf();
 
-    UIWidget::render();
+    if(g_game.isOnline()) {
+        g_graphics.bindColor(Fw::black);
+        g_graphics.drawBoundingRect(m_mapRect.expanded(1));
+        g_map.draw(m_mapRect);
+    }
+
+    renderChildren();
 }
 
 bool UIMap::onKeyPress(uchar keyCode, char keyChar, int keyboardModifiers)
@@ -83,6 +90,16 @@ bool UIMap::onKeyPress(uchar keyCode, char keyChar, int keyboardModifiers)
     return UIWidget::onKeyPress(keyCode, keyChar, keyboardModifiers);
 }
 
+void UIMap::onStyleApply(const OTMLNodePtr& styleNode)
+{
+    for(OTMLNodePtr node : styleNode->children()) {
+        if(node->tag() == "map margin")
+            m_mapMargin = node->value<int>();
+    }
+
+    UIWidget::onStyleApply(styleNode);
+}
+
 bool UIMap::onMousePress(const Point& mousePos, Fw::MouseButton button)
 {
     return UIWidget::onMousePress(mousePos, button);
@@ -90,10 +107,9 @@ bool UIMap::onMousePress(const Point& mousePos, Fw::MouseButton button)
 
 void UIMap::onGeometryUpdate(const Rect& oldRect, const Rect& newRect)
 {
-    Rect mapRect = newRect;
+    Rect mapRect = newRect.expanded(-m_mapMargin-1);
     Size mapSize(15*32, 11*32);
     mapSize.scale(mapRect.size(), Fw::KeepAspectRatio);
-    mapRect.setSize(mapSize);
-    if(mapRect != newRect)
-        setRect(mapRect);
+    m_mapRect.setSize(mapSize);
+    m_mapRect.moveCenter(newRect.center());
 }

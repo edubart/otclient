@@ -91,12 +91,15 @@ end
 
 function CharacterList.destroy()
   CharacterList.hide()
-  EnterGame.show()
+  if not Game.isOnline then
+    EnterGame.show()
+  end
 end
 
 function CharacterList.show()
   if not loadBox then
     charactersWindow:show()
+    charactersWindow:focus()
   end
 end
 

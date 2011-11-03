@@ -1,6 +1,4 @@
 require 'textmessage'
-require 'skill'
-require 'vip'
 
 -- private functions
 local function onGameKeyPress(self, keyCode, keyChar, keyboardModifiers)
@@ -16,28 +14,37 @@ local function onGameKeyPress(self, keyCode, keyChar, keyboardModifiers)
   return false
 end
 
-local function createMainInterface()
+-- public functions
+function Game.create()
   Game.gameUi = loadUI('/game/ui/gameinterface.otui', UI.root)
   Game.gameMapUi = Game.gameUi:getChildById('gameMap')
   Game.gameUi.onKeyPress = onGameKeyPress
 
-  createTextInterface()
-  createVipWindow()
+  TextMessage.create()
 end
 
-
-local function destroyMainInterface()
+function Game.destroy()
   if Game.gameUi then
     Game.gameUi:destroy()
     Game.gameUi = nil
   end
 end
 
--- public functions
+function Game.show()
+  Game.gameUi:show()
+  Game.gameUi:focus()
+  Game.gameMapUi:focus()
+end
+
+function Game.hide()
+  Game.gameUi:hide()
+end
+
+-- hooked events
 function Game.onLogin()
   Background.hide()
   CharacterList.destroyLoadBox()
-  createMainInterface()
+  Game.show()
 end
 
 function Game.onLoginError(message)
@@ -53,7 +60,7 @@ function Game.onConnectionError(message)
 end
 
 function Game.onLogout()
+  Game.hide()
   Background.show()
   CharacterList.show()
-  destroyMainInterface()
 end

@@ -2,9 +2,24 @@ UIWidget
   id: gameRootInterface
   anchors.fill: parent
   anchors.top: topMenu.bottom
-  margin.top: 1
 
-  UIMap
+  InterfacePanel
+    id: rightPanel
+    width: 200
+    anchors.right: parent.right
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
+
+  InterfacePanel
+    id: bottomPanel
+    height: 140
+    anchors.left: parent.left
+    anchors.right: rightPanel.left
+    anchors.bottom: parent.bottom
+
+  MapPanel
     id: gameMap
-    anchors.fill:parent
-    margin.right: 200
+    anchors.left: parent.left
+    anchors.right: rightPanel.left
+    anchors.top: parent.top
+    anchors.bottom: bottomPanel.top

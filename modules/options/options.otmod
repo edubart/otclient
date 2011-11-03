@@ -1,0 +1,13 @@
+Module
+  name: options
+  description: Create the options window
+  author: OTClient team
+  website: https://github.com/edubart/otclient
+  autoLoad: true
+  dependencies:
+    - core
+
+  onLoad: |
+    require 'options'
+    return true
+

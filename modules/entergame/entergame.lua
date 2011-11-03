@@ -43,6 +43,7 @@ end
 
 function EnterGame.show()
   enterGame:show()
+  enterGame:focus()
 end
 
 function EnterGame.hide()

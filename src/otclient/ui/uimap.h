@@ -33,11 +33,14 @@ public:
     void render();
 
 protected:
+    virtual void onStyleApply(const OTMLNodePtr& styleNode);
     virtual bool onKeyPress(uchar keyCode, char keyChar, int keyboardModifiers);
     virtual bool onMousePress(const Point& mousePos, Fw::MouseButton button);
     virtual void onGeometryUpdate(const Rect& oldRect, const Rect& newRect);
 
 private:
+    int m_mapMargin;
+    Rect m_mapRect;
 };
 
 #endif

@@ -83,12 +83,21 @@ void UIWidget::destroy()
 
 void UIWidget::render()
 {
+    renderSelf();
+    renderChildren();
+}
+
+void UIWidget::renderSelf()
+{
     // draw background
     if(m_image) {
         g_graphics.bindColor(m_backgroundColor);
         m_image->draw(m_rect);
     }
+}
 
+void UIWidget::renderChildren()
+{
     // draw children
     for(const UIWidgetPtr& child : m_children) {
         // render only visible children with a valid rect
@@ -189,6 +198,12 @@ void UIWidget::unlock()
 {
     if(UIWidgetPtr parent = getParent())
         parent->unlockChild(asUIWidget());
+}
+
+void UIWidget::focus()
+{
+    if(UIWidgetPtr parent = getParent())
+        parent->focusChild(asUIWidget(), Fw::ActiveFocusReason);
 }
 
 bool UIWidget::isVisible()

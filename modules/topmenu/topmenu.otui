@@ -11,6 +11,7 @@ TopPanel
     anchors.left: parent.left
     margin.top: 3
     margin.left: 6
+    onClick: Options.create()
 
     UIWidget
       size: 16 16
@@ -22,7 +23,12 @@ TopPanel
     anchors.top: prev.top
     anchors.left: prev.right
     margin.left: 6
-    onClick: EnterGame.show()
+    onClick: |
+      if Game.isOnline() then
+        CharacterList.show()
+      else
+        EnterGame.show()
+      end
 
     UIWidget
       size: 16 16
@@ -45,5 +51,18 @@ TopPanel
     UIWidget
       size: 16 16
       image: /core_styles/icons/logout.png
+      anchors.centerIn: parent
+      phantom: true
+
+  TopButton
+    anchors.top: parent.top
+    anchors.right: prev.left
+    margin.top: 3
+    margin.right: 6
+    onClick: About.create()
+
+    UIWidget
+      size: 16 16
+      image: /core_styles/icons/about.png
       anchors.centerIn: parent
       phantom: true

@@ -3,7 +3,6 @@ Module
   description: Create the game interface, where the ingame stuff starts
   author: OTClient team
   website: https://github.com/edubart/otclient
-  version: 0.2
   autoLoad: true
   dependencies:
     - core
@@ -14,4 +13,7 @@ Module
 
   onLoad: |
     require 'game'
+    require 'textmessage'
+    Game.create()
+    Game.hide()
     return true
