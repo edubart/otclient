@@ -33,7 +33,7 @@ void UIVerticalLayout::update()
     UIWidgetPtr parentWidget = getParentWidget();
     UIWidgetList widgets = parentWidget->getChildren();
 
-    // sort by Y center
+    // sort by Y pos
     std::sort(widgets.begin(), widgets.end(),
     [](const UIWidgetPtr& first, const UIWidgetPtr& second) -> bool {
         return first->getY() < second->getY();
@@ -57,6 +57,8 @@ void UIVerticalLayout::update()
 
 void UIVerticalLayout::addWidget(const UIWidgetPtr& widget)
 {
+    // needed to be correcly sorted on update
+    widget->setY(9999);
     update();
 }
 
