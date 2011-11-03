@@ -91,7 +91,7 @@ end
 
 function CharacterList.destroy()
   CharacterList.hide()
-  if not Game.isOnline then
+  if not Game.isOnline() then
     EnterGame.show()
   end
 end
