@@ -23,7 +23,6 @@ MiniWindow < UIWindow
   margin.left: 6
   margin.right: 6
   move policy: free updated
-  focusable: false
   border-image:
     source: /core_styles/images/mini_window.png
     border: 4

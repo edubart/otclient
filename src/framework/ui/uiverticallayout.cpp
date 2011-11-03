@@ -36,7 +36,7 @@ void UIVerticalLayout::update()
     // sort by Y center
     std::sort(widgets.begin(), widgets.end(),
     [](const UIWidgetPtr& first, const UIWidgetPtr& second) -> bool {
-        return first->getRect().center().y < second->getRect().center().y;
+        return first->getY() < second->getY();
     });
 
     Point pos = parentWidget->getPosition();
