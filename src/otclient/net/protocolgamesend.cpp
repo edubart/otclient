@@ -28,7 +28,7 @@ void ProtocolGame::sendLoginPacket(uint32 timestamp, uint8 unknown)
     OutputMessage oMsg;
 
     oMsg.addU8(Otc::ClientEnterGame);
-    oMsg.addU16(Otc::OsPoke);
+    oMsg.addU16(Otc::OsLinux);
     oMsg.addU16(Otc::ClientVersion);
 
     oMsg.addU8(0); // first RSA byte must be 0

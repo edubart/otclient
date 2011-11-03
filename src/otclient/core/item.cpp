@@ -36,7 +36,8 @@ void Item::draw(int x, int y)
 {
     const ThingType& type = g_thingsType.getItemType(m_id);
 
-    m_animation = (g_platform.getTicks() % (500 * type.animationPhases)) / 500;
+    if(type.animationPhases > 1)
+        m_animation = (g_platform.getTicks() % (TICKS_PER_FRAME * type.animationPhases)) / TICKS_PER_FRAME;
 
     /*if(type.group == Otc::ThingSplashGroup || type.group == Otc::ThingFluidGroup) {
         //xPattern = m_count % type.xPattern;

@@ -31,6 +31,10 @@ class Item : public Thing
 public:
     Item();
 
+    enum {
+        TICKS_PER_FRAME = 500
+    };
+
     void draw(int x, int y);
 
     void setCount(int count);
