@@ -16,11 +16,19 @@ local function moveToolTip(tooltip)
   tooltip:moveTo(pos)
 end
 
+local function onButtonHoverChange(button, hovered)
+  if hovered then
+    ToolTip.display(button:getStyle().tooltip)
+  else
+    ToolTip:hide()
+  end
+end
+
 -- public functions
 function ToolTip.display(text)
   ToolTip.hide()
   if text then
-    currentToolTip = UI.loadAndDisplay('/core/tooltip/tooltip.otui', UI.root)
+    currentToolTip = UI.loadAndDisplay('/tooltip/tooltip.otui', UI.root)
     currentToolTip.onMouseMove = moveToolTip
     local label = currentToolTip:getChildById('toolTipText')
     label:setText(text)
@@ -39,3 +47,6 @@ function ToolTip.hide()
     currentToolTip = nil
   end
 end
+
+-- hooks
+connect(UIButton, { onHoverChange = onButtonHoverChange})

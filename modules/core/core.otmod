@@ -17,7 +17,5 @@ Module
     require 'widget'
     require 'ui'
     require 'gfx'
-    require 'messagebox/messagebox'
-    require 'tooltip/tooltip'
     return true
 
