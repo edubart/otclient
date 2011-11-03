@@ -6,11 +6,12 @@ UIWidget
   InterfacePanel
     id: rightPanel
     width: 200
+    layout: verticalBox
     anchors.right: parent.right
     anchors.top: parent.top
     anchors.bottom: parent.bottom
 
-  InterfacePanel
+  InterfacePanel2
     id: bottomPanel
     height: 140
     anchors.left: parent.left
@@ -18,7 +19,7 @@ UIWidget
     anchors.bottom: parent.bottom
 
   MapPanel
-    id: gameMap
+    id: mapPanel
     anchors.left: parent.left
     anchors.right: rightPanel.left
     anchors.top: parent.top

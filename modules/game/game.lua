@@ -17,7 +17,8 @@ end
 -- public functions
 function Game.create()
   Game.gameUi = loadUI('/game/ui/gameinterface.otui', UI.root)
-  Game.gameMapUi = Game.gameUi:getChildById('gameMap')
+  Game.gameMapPanel = Game.gameUi:getChildById('mapPanel')
+  Game.gameRightPanel = Game.gameUi:getChildById('rightPanel')
   Game.gameUi.onKeyPress = onGameKeyPress
 
   TextMessage.create()
@@ -33,7 +34,7 @@ end
 function Game.show()
   Game.gameUi:show()
   Game.gameUi:focus()
-  Game.gameMapUi:focus()
+  Game.gameMapPanel:focus()
 end
 
 function Game.hide()

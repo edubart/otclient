@@ -1,0 +1,18 @@
+Module
+  name: viplist
+  description: Manage vip list window
+  author: OTClient team
+  website: https://github.com/edubart/otclient
+  autoLoad: true
+  dependencies:
+    - game
+
+  onLoad: |
+    require 'viplist'
+    VipList.create()
+    return true
+
+  onUnload:
+    VipList.destroy()
+
+

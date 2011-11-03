@@ -1,16 +1,15 @@
 VipListLabel < Label
   font: verdana-11px-monochrome
-  margin.left: 30
+  margin.left: 5
 
-Window
+MiniWindow
   id: vipWindow
-  title: VIP
-  size: 200 200
+  title: VIP List
 
   TextList
     id: vipList
     anchors.fill: parent
-    margin.top: 19
-    margin.bottom: 3
-    margin.left: 3
-    margin.right: 3
+    margin.top: 26
+    margin.bottom: 6
+    margin.left: 6
+    margin.right: 6

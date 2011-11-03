@@ -1,9 +1,12 @@
-skillWindow = nil
+Skills = {}
 
+-- private variables
+local skillWindow = nil
 local skills = {"Fist Fighting", "Club Fighting", "Sword Fighting", "Axe Fighting", "Distance Fighting", "Shielding", "Fishing"}
 
-function csw()
-  skillWindow = loadUI("/game/ui/skillwindow.otui", UI.root)
+-- public functions
+function Skills.create()
+  skillWindow = loadUI("/skills/skills.otui", Game.gameRightPanel)
 
   local skillPanel = skillWindow:getChildById('skillPanel')
 
@@ -31,6 +34,12 @@ function csw()
   end
 end
 
+function Skills.destroy()
+  skillWindow:destroy()
+  skillWindow = nil
+end
+
+-- hooked events
 function Game.setSkill(id, level, percent)
   local skillPanel = skillWindow:getChildById('skillPanel')
   local levelLabel = skillPanel:getChildById('skillLevel' .. id)

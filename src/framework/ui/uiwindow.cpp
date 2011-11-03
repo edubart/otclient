@@ -30,6 +30,7 @@ void UIWindow::setup()
 {
     UIWidget::setup();
     m_moving = false;
+    m_freeMove = false;
     m_headHeight = 0;
     m_titleAlign = Fw::AlignCenter;
 }
@@ -69,6 +70,8 @@ void UIWindow::onStyleApply(const OTMLNodePtr& styleNode)
             setTitle(node->value());
         else if(node->tag() == "head text align")
             m_titleAlign = Fw::translateAlignment(node->value());
+        else if(node->tag() == "free move")
+            m_freeMove = node->value<bool>();
         else if(node->tag() == "onEnter") {
             g_lua.loadFunction(node->value(), "@" + node->source() + "[" + node->tag() + "]");
             luaSetField(node->tag());
@@ -112,10 +115,12 @@ void UIWindow::onFocusChange(bool focused, Fw::FocusReason reason)
 
 bool UIWindow::onMousePress(const Point& mousePos, Fw::MouseButton button)
 {
-    UIWidgetPtr clickedChild = getChildByPos(mousePos);
-    if(!clickedChild || clickedChild->isPhantom()) {
-        m_moving = true;
-        m_movingReference = mousePos - getRect().topLeft();
+    if(m_freeMove) {
+        UIWidgetPtr clickedChild = getChildByPos(mousePos);
+        if(!clickedChild || clickedChild->isPhantom()) {
+            m_moving = true;
+            m_movingReference = mousePos - getRect().topLeft();
+        }
     }
     return UIWidget::onMousePress(mousePos, button);
 }

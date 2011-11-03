@@ -22,10 +22,10 @@ local messageTypes = {
 -- public functions
 function TextMessage.create()
   bottomLabelWidget = UILabel.create()
-  Game.gameMapUi:addChild(bottomLabelWidget)
+  Game.gameMapPanel:addChild(bottomLabelWidget)
 
   centerLabelWidget = UILabel.create()
-  Game.gameMapUi:addChild(centerLabelWidget)
+  Game.gameMapPanel:addChild(centerLabelWidget)
 end
 
 -- hooked events

@@ -1,9 +1,19 @@
-vipWindow = nil
+VipList = {}
 
-function createVipWindow()
-  vipWindow = loadUI("/game/ui/vipwindow.otui", Game.gameUi)
+-- private variables
+local vipWindow = nil
+
+-- public functions
+function VipList.create()
+  vipWindow = loadUI("/viplist/viplist.otui", Game.gameRightPanel)
 end
 
+function VipList.destroy()
+  vipWindow:destroy()
+  vipWindow = nil
+end
+
+-- hooked events
 function Game.onAddVip(id, name, online)
   local vipList = vipWindow:getChildById('vipList')
 

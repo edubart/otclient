@@ -1,0 +1,18 @@
+Module
+  name: skills
+  description: Manage skills window
+  author: OTClient team
+  website: https://github.com/edubart/otclient
+  autoLoad: true
+  dependencies:
+    - game
+
+  onLoad: |
+    require 'skills'
+    Skills.create()
+    return true
+
+  onUnload:
+    Skills.destroy()
+
+

@@ -46,6 +46,7 @@ protected:
 private:
     std::string m_title;
     bool m_moving;
+    bool m_freeMove;
     Point m_movingReference;
 
     // styling

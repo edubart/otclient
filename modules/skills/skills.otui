@@ -33,15 +33,15 @@ SkillPercentPanel < UIWidget
   anchors.left: parent.left
   anchors.right: parent.right
 
-Window
+MiniWindow
   id: skillWindow
   title: Skills
-  size: 200 200
+  size: 200 185
 
   Panel
     id: skillPanel
     anchors.fill: parent
-    margin.top: 19
+    margin.top: 26
     margin.bottom: 3
     margin.left: 3
     margin.right: 3

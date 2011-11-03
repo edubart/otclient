@@ -11,6 +11,7 @@ BottomLabel < Label
   font: verdana-11px-rounded
   height: 16
   align: center
+  margin.bottom: 2
   anchors.bottom: parent.bottom
   anchors.left: parent.left
   anchors.right: parent.right

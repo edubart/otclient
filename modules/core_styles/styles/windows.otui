@@ -5,6 +5,7 @@ Window < UIWindow
   background-color: white
   head height: 20
   head text align: center
+  free move: true
   border-image:
     source: /core_styles/images/window.png
     border: 4
@@ -12,6 +13,21 @@ Window < UIWindow
 
   state.pressed:
     opacity: 192
+
+MiniWindow < UIWindow
+  font: verdana-11px-antialised
+  size: 192 200
+  head height: 25
+  head text align: center
+  margin.top: 6
+  margin.left: 6
+  margin.right: 6
+  margin.bottom: 6
+  free move: true
+  border-image:
+    source: /core_styles/images/mini_window.png
+    border: 4
+    border.top: 25
 
 MainWindow < Window
   anchors.centerIn: parent
