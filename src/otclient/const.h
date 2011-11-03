@@ -259,6 +259,22 @@ namespace Otc
         SpriteNoMask = 255
     };
 
+    enum Statistic {
+        Health,
+        MaxHealth,
+        FreeCapacity,
+        Experience,
+        Level,
+        LevelPercent,
+        Mana,
+        MaxMana,
+        MagicLevel,
+        MagicLevelPercent,
+        Soul,
+        Stamina,
+        LastStatistic
+    };
+
     enum Skill {
         Fist = 0,
         Club,

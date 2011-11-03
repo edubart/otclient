@@ -39,6 +39,9 @@ public:
     void setSkill(Otc::Skill skill, Otc::SkillType skillType, int value) { m_skills[skill][skillType] = value; }
     int getSkill(Otc::Skill skill, Otc::SkillType skillType) { return m_skills[skill][skillType]; }
 
+    void setStatistic(Otc::Statistic statistic, double value) { m_statistics[statistic] = value; }
+    uint32 getStatistic(Otc::Statistic statistic) { return m_statistics[statistic]; }
+
     void walk(Otc::Direction direction);
 
     LocalPlayerPtr asLocalPlayer() { return std::static_pointer_cast<LocalPlayer>(shared_from_this()); }
@@ -48,6 +51,7 @@ private:
     bool m_canReportBugs;
 
     int m_skills[Otc::LastSkill][Otc::LastSkillType];
+    double m_statistics[Otc::LastStatistic];
 };
 
 #endif

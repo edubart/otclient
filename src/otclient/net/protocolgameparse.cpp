@@ -629,18 +629,18 @@ void ProtocolGame::parseHouseTextWindow(InputMessage& msg)
 
 void ProtocolGame::parsePlayerStats(InputMessage& msg)
 {
-    msg.getU16(); // health
-    msg.getU16(); // max health
-    msg.getU32(); // free capacity
-    msg.getU32(); // experience
-    msg.getU16(); // level
-    msg.getU8(); // level percent
-    msg.getU16(); // mana
-    msg.getU16(); // max mana
-    msg.getU8(); // magic level
-    msg.getU8(); // magic level percent
-    msg.getU8(); // soul
-    msg.getU16(); // stamina
+    m_localPlayer->setStatistic(Otc::Health, msg.getU16());
+    m_localPlayer->setStatistic(Otc::MaxHealth, msg.getU16());
+    m_localPlayer->setStatistic(Otc::FreeCapacity, msg.getU32());
+    m_localPlayer->setStatistic(Otc::Experience, msg.getU32());
+    m_localPlayer->setStatistic(Otc::Level, msg.getU16());
+    m_localPlayer->setStatistic(Otc::LevelPercent, msg.getU8());
+    m_localPlayer->setStatistic(Otc::Mana, msg.getU16());
+    m_localPlayer->setStatistic(Otc::MaxMana, msg.getU16());
+    m_localPlayer->setStatistic(Otc::MagicLevel, msg.getU8());
+    m_localPlayer->setStatistic(Otc::MagicLevelPercent, msg.getU8());
+    m_localPlayer->setStatistic(Otc::Soul, msg.getU8());
+    m_localPlayer->setStatistic(Otc::Stamina, msg.getU16());
 }
 
 void ProtocolGame::parsePlayerSkills(InputMessage& msg)
