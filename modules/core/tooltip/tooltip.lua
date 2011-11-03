@@ -29,6 +29,7 @@ function ToolTip.display(text)
     size.width = size.width + 4
     size.height = size.height + 4
     currentToolTip:setSize(size)
+    moveToolTip(currentToolTip)
   end
 end
 

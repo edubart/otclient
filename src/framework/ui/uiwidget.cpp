@@ -639,7 +639,9 @@ void UIWidget::updateState(Fw::WidgetState state)
     }
 
     if(updateChildren) {
-        for(const UIWidgetPtr& child : m_children)
+        // do a backup of children list, because it may change while looping it
+        UIWidgetList children = m_children;
+        for(const UIWidgetPtr& child : children)
             child->updateState(state);
     }
 
@@ -843,7 +845,6 @@ void UIWidget::onStyleApply(const OTMLNodePtr& styleNode)
             }
         } else if(node->tag() == "onClick" ||
                   node->tag() == "onHoverChange") {
-            dump << node->tag();
             g_lua.loadFunction(node->value(), "@" + node->source() + "[" + node->tag() + "]");
             luaSetField(node->tag());
         }
