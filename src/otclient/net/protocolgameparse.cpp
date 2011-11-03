@@ -645,9 +645,17 @@ void ProtocolGame::parsePlayerStats(InputMessage& msg)
 
 void ProtocolGame::parsePlayerSkills(InputMessage& msg)
 {
-    for(int skill = 0; skill < Otc::LastSkill; skill++)
-        for(int skillType = 0; skillType < Otc::LastSkillType; skillType++)
-            m_localPlayer->setSkill((Otc::Skill)skill, (Otc::SkillType)skillType, msg.getU8());
+    for(int skill = 0; skill < Otc::LastSkill; skill++) {
+        int values[Otc::LastSkillType];
+        for(int skillType = 0; skillType < Otc::LastSkillType; skillType++) {
+            values[skillType] = msg.getU8();
+            m_localPlayer->setSkill((Otc::Skill)skill, (Otc::SkillType)skillType, values[skillType]);
+        }
+
+        g_dispatcher.addEvent([=] {
+            g_lua.callGlobalField("Game", "setSkill", skill, values[Otc::SkillLevel], values[Otc::SkillPercent]);
+        });
+    }
 }
 
 void ProtocolGame::parsePlayerIcons(InputMessage& msg)

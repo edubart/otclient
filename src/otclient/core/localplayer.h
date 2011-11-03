@@ -40,7 +40,7 @@ public:
     int getSkill(Otc::Skill skill, Otc::SkillType skillType) { return m_skills[skill][skillType]; }
 
     void setStatistic(Otc::Statistic statistic, double value) { m_statistics[statistic] = value; }
-    uint32 getStatistic(Otc::Statistic statistic) { return m_statistics[statistic]; }
+    double getStatistic(Otc::Statistic statistic) { return m_statistics[statistic]; }
 
     void walk(Otc::Direction direction);
 

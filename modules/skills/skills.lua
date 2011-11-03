@@ -26,7 +26,7 @@ function Skills.create()
     skillPanel:addChild(levelLabel)
     levelLabel:setStyle('SkillLevelLabel')
     levelLabel:setId('skillLevelId' .. i)
-    levelLabel:setText('10')
+    levelLabel:setText('0')
 
     local percentPanel = UIWidget.create()
     skillPanel:addChild(percentPanel)
@@ -42,7 +42,12 @@ end
 -- hooked events
 function Game.setSkill(id, level, percent)
   local skillPanel = skillWindow:getChildById('skillPanel')
-  local levelLabel = skillPanel:getChildById('skillLevel' .. id)
+
+  local levelLabel = skillPanel:getChildById('skillLevelId' .. (id + 1))
+  levelLabel:setText(level)
+
+  --local percentLabel = skillPanel:getChildById('skillLevelId' .. id)
+  --levelLabel:setText(percent)
 end
 
 connect(Game, { onLogin = Skills.create,
