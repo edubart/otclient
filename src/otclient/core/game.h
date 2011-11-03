@@ -48,6 +48,8 @@ public:
 
     void walk(Otc::Direction direction);
     void turn(Otc::Direction direction);
+    void talkChannel(int channelType, int channelId, const std::string& message);
+    void talkPrivate(int channelType, const std::string& receiver, const std::string& message);
 
     bool isOnline() { return m_online; }
 

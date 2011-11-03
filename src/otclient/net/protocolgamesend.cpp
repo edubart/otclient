@@ -158,12 +158,9 @@ void ProtocolGame::sendTurnWest()
     send(oMsg);
 }
 
-void ProtocolGame::sendTalk(int channelType, const std::string& message, int channelId, const std::string& receiver)
+void ProtocolGame::sendTalk(int channelType, int channelId, const std::string& receiver, const std::string& message)
 {
-    // Game.getProtocolGame():sendTalk(1, "lalala", 0, "ignore")
-    // TODO: MAKE SURE IT WAS AN USER EVENT AND NOT DIRECTLY FROM SCRIPT.
-
-    if(message.length() > 255 && message.length() <= 0)
+    if(message.length() > 255 || message.length() <= 0)
         return;
 
     OutputMessage oMsg;

@@ -54,7 +54,7 @@ public:
     void sendTurnEast();
     void sendTurnSouth();
     void sendTurnWest();
-    void sendTalk(int channelType, const std::string& message, int channelId = 1, const std::string& receiver = "");
+    void sendTalk(int channelType, int channelId, const std::string& receiver, const std::string& message);
     void sendAddVip(const std::string& name);
     void sendRemoveVip(int id);
 

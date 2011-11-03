@@ -104,6 +104,8 @@ void Game::processTextMessage(int type, const std::string& message)
 
 void Game::walk(Otc::Direction direction)
 {
+    if(!m_online)
+        return;
 
     // TODO: check if we can walk.
 
@@ -156,4 +158,23 @@ void Game::turn(Otc::Direction direction)
         m_protocolGame->sendTurnWest();
         break;
     }
+}
+
+// Game.talkChannel(1, 0, "lalala")
+// TODO: MAKE SURE IT WAS AN USER EVENT AND NOT DIRECTLY FROM SCRIPT.
+
+void Game::talkChannel(int channelType, int channelId, const std::string& message)
+{
+    if(!m_online)
+        return;
+
+    m_protocolGame->sendTalk(channelType, channelId, "", message);
+}
+
+void Game::talkPrivate(int channelType, const std::string& receiver, const std::string& message)
+{
+    if(!m_online)
+        return;
+
+    m_protocolGame->sendTalk(channelType, 0, receiver, message);
 }
