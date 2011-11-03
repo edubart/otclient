@@ -41,7 +41,7 @@ public:
 
     virtual void draw(int x, int y) = 0;
 
-    void setId(uint32 id) { m_id = id; }
+    void setId(uint32 id);
     void setPosition(const Position& position);
 
     uint32 getId() const { return m_id; }
@@ -49,6 +49,7 @@ public:
     int getStackPriority();
     virtual const ThingType& getType() = 0;
 
+    virtual void onIdChange(int) {}
     virtual void onPositionChange(const Position&) {}
 
     ThingPtr asThing() { return std::static_pointer_cast<Thing>(shared_from_this()); }

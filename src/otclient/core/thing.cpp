@@ -32,6 +32,14 @@ Thing::Thing() : m_id(0)
     m_animation = 0;
 }
 
+void Thing::setId(uint32 id)
+{
+    int oldId = m_id;
+    m_id = id;
+
+    onIdChange(oldId);
+}
+
 void Thing::setPosition(const Position& position)
 {
     Position oldPosition = m_position;
