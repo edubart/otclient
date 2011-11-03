@@ -71,6 +71,7 @@ private:
     int m_cursorTicks;
     int m_textHorizontalMargin;
     bool m_textHidden;
+    bool m_alwaysFocused;
 
     std::vector<Rect> m_glyphsCoords;
     std::vector<Rect> m_glyphsTexCoords;

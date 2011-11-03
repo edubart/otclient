@@ -9,10 +9,6 @@ Module
 
   onLoad: |
     require 'viplist'
-    VipList.create()
     return true
-
-  onUnload:
-    VipList.destroy()
 
 

@@ -44,3 +44,6 @@ function Game.onVipStateChange(id, online)
 
   label.vipOnline = online
 end
+
+connect(Game, { onLogin = VipList.create,
+                onLogout = VipList.destroy })

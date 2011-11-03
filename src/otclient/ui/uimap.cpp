@@ -25,6 +25,7 @@
 #include <otclient/core/game.h>
 #include <framework/otml/otml.h>
 #include <framework/graphics/graphics.h>
+#include <framework/ui/uilineedit.h>
 
 void UIMap::setup()
 {
@@ -46,6 +47,8 @@ void UIMap::render()
 
 bool UIMap::onKeyPress(uchar keyCode, char keyChar, int keyboardModifiers)
 {
+    UILineEditPtr chatLineEdit = std::dynamic_pointer_cast<UILineEdit>(getParent()->recursiveGetChildById("chatLineEdit"));
+
     if(keyboardModifiers == Fw::KeyboardNoModifier) {
         if(keyCode == Fw::KeyUp || keyCode == Fw::KeyNumpad8) {
             g_game.walk(Otc::North);
@@ -71,6 +74,28 @@ bool UIMap::onKeyPress(uchar keyCode, char keyChar, int keyboardModifiers)
         } else if(keyCode == Fw::KeyNumpad7) {
             g_game.walk(Otc::NorthWest);
             return true;
+        } else if(keyCode == Fw::KeyReturn || keyCode == Fw::KeyEnter) {
+            g_game.talkChannel(1, 0, chatLineEdit->getText());
+            chatLineEdit->clearText();
+            return true;
+        } else if(keyCode == Fw::KeyDelete) {
+            chatLineEdit->removeCharacter(true);
+            return true;
+        } else if(keyCode == Fw::KeyBackspace) {
+            chatLineEdit->removeCharacter(false);
+            return true;
+        } else if(keyCode == Fw::KeyRight) {
+            chatLineEdit->moveCursor(true);
+            return true;
+        } else if(keyCode == Fw::KeyLeft) {
+            chatLineEdit->moveCursor(false);
+            return true;
+        } else if(keyCode == Fw::KeyHome) {
+            chatLineEdit->setCursorPos(0);
+            return true;
+        } else if(keyCode == Fw::KeyEnd) {
+            chatLineEdit->setCursorPos(chatLineEdit->getText().length());
+            return true;
         }
     } else if(keyboardModifiers == Fw::KeyboardCtrlModifier) {
         if(keyCode == Fw::KeyUp || keyCode == Fw::KeyNumpad8) {
@@ -86,7 +111,21 @@ bool UIMap::onKeyPress(uchar keyCode, char keyChar, int keyboardModifiers)
             g_game.turn(Otc::West);
             return true;
         }
+    } else if(keyboardModifiers == Fw::KeyboardShiftModifier) {
+        if(keyCode == Fw::KeyRight || keyCode == Fw::KeyNumpad6) {
+            chatLineEdit->moveCursor(true);
+            return true;
+        } else if(keyCode == Fw::KeyLeft || keyCode == Fw::KeyNumpad4) {
+            chatLineEdit->moveCursor(false);
+            return true;
+        }
     }
+
+    if(keyChar != 0) {
+        chatLineEdit->appendText(std::string(1, keyChar));
+        return true;
+    }
+
     return UIWidget::onKeyPress(keyCode, keyChar, keyboardModifiers);
 }
 

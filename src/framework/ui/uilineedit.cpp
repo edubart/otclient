@@ -33,6 +33,7 @@ UILineEdit::UILineEdit()
     m_startRenderPos = 0;
     m_textHorizontalMargin = 0;
     m_textHidden = false;
+    m_alwaysFocused = false;
     blinkCursor();
 }
 
@@ -50,7 +51,7 @@ void UILineEdit::render()
         g_graphics.drawTexturedRect(m_glyphsCoords[i], texture, m_glyphsTexCoords[i]);
 
     // render cursor
-    if(isExplicitlyEnabled() && isActive() && m_cursorPos >= 0) {
+    if(isExplicitlyEnabled() && (isActive() || m_alwaysFocused) && m_cursorPos >= 0) {
         assert(m_cursorPos <= textLength);
         // draw every 333ms
         const int delay = 333;
@@ -384,6 +385,8 @@ void UILineEdit::onStyleApply(const OTMLNodePtr& styleNode)
             setTextHidden(node->value<bool>());
         } else if(node->tag() == "text margin") {
             m_textHorizontalMargin = node->value<int>();
+        } else if(node->tag() == "always focused") {
+            m_alwaysFocused = true;
         }
     }
 }
@@ -395,7 +398,7 @@ void UILineEdit::onGeometryUpdate(const Rect& oldRect, const Rect& newRect)
 
 void UILineEdit::onFocusChange(bool focused, Fw::FocusReason reason)
 {
-    if(focused) {
+    if(focused && !m_alwaysFocused) {
         if(reason == Fw::TabFocusReason)
             setCursorPos(m_text.length());
         else
@@ -420,8 +423,10 @@ bool UILineEdit::onKeyPress(uchar keyCode, char keyChar, int keyboardModifiers)
     else if(keyCode == Fw::KeyV && keyboardModifiers == Fw::KeyboardCtrlModifier)
         appendText(g_platform.getClipboardText());
     else if(keyCode == Fw::KeyTab) {
-        if(UIWidgetPtr parent = getParent())
-            parent->focusNextChild(Fw::TabFocusReason);
+        if(!m_alwaysFocused) {
+            if(UIWidgetPtr parent = getParent())
+                parent->focusNextChild(Fw::TabFocusReason);
+        }
     } else if(keyChar != 0)
         appendCharacter(keyChar);
     else

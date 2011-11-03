@@ -18,9 +18,8 @@ function connect(object, signalsAndSlots)
         object[signal] = slot
     elseif type(object[signal]) == 'function' then
         object[signal] = { object[signal], slot }
-    elseif type(signal) == 'table' then
-        table.insert(object[signal], slot)
-    else
+    elseif type(object[signal]) == 'table' then
+        table.insert(object[signal], #object[signal]+1, slot)
     end
   end
 end

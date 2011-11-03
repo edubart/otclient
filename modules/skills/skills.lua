@@ -44,3 +44,6 @@ function Game.setSkill(id, level, percent)
   local skillPanel = skillWindow:getChildById('skillPanel')
   local levelLabel = skillPanel:getChildById('skillLevel' .. id)
 end
+
+connect(Game, { onLogin = Skills.create,
+                onLogout = Skills.destroy })

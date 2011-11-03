@@ -1,0 +1,30 @@
+ChatLabel < UILabel
+  font: verdana-11px-monochrome
+  height: 16
+
+Panel
+  id: chatPanel
+  anchors.fill: parent
+
+  Panel
+    id: chatBuffer
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: next.top
+    margin.right: 6
+    margin.left: 6
+    margin.bottom: 2
+    margin.top: 6
+    layout: verticalBox
+    focusable: false
+
+  LineEdit
+    id: chatLineEdit
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    margin.right: 6
+    margin.left: 6
+    margin.bottom: 6
+    always focused: true

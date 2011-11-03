@@ -1,6 +1,6 @@
 Module
-  name: skills
-  description: Manage skills window
+  name: chat
+  description: Manage chat window
   author: OTClient team
   website: https://github.com/edubart/otclient
   autoLoad: true
@@ -8,7 +8,7 @@ Module
     - game
 
   onLoad: |
-    require 'skills'
+    require 'chat'
     return true
 
 

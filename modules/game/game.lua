@@ -15,20 +15,23 @@ local function onGameKeyPress(self, keyCode, keyChar, keyboardModifiers)
 end
 
 -- public functions
-function Game.create()
+function Game.createInterface()
+  Background.hide()
+  CharacterList.destroyLoadBox()
   Game.gameUi = loadUI('/game/ui/gameinterface.otui', UI.root)
   Game.gameMapPanel = Game.gameUi:getChildById('mapPanel')
   Game.gameRightPanel = Game.gameUi:getChildById('rightPanel')
+  Game.gameBottomPanel = Game.gameUi:getChildById('bottomPanel')
   Game.gameUi.onKeyPress = onGameKeyPress
-
-  TextMessage.create()
 end
 
-function Game.destroy()
+function Game.destroyInterface()
   if Game.gameUi then
     Game.gameUi:destroy()
     Game.gameUi = nil
   end
+  Background.show()
+  CharacterList.show()
 end
 
 function Game.show()
@@ -42,12 +45,6 @@ function Game.hide()
 end
 
 -- hooked events
-function Game.onLogin()
-  Background.hide()
-  CharacterList.destroyLoadBox()
-  Game.show()
-end
-
 function Game.onLoginError(message)
   CharacterList.destroyLoadBox()
   local errorBox = displayErrorBox("Login Error", "Login error: " .. message)
@@ -60,8 +57,5 @@ function Game.onConnectionError(message)
   errorBox.onOk = CharacterList.show
 end
 
-function Game.onLogout()
-  Game.hide()
-  Background.show()
-  CharacterList.show()
-end
+connect(Game, { onLogin = Game.createInterface,
+                onLogout = Game.destroyInterface })

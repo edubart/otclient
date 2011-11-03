@@ -8,7 +8,7 @@ RectPanel
   opacity: 216
   anchors.fill: parent
 
-  UIWidget
+  Panel
     id: consoleBuffer
     layout: verticalBox
     focusable: false

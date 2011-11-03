@@ -13,7 +13,4 @@ Module
 
   onLoad: |
     require 'game'
-    require 'textmessage'
-    Game.create()
-    Game.hide()
     return true
