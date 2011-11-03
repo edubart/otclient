@@ -5,7 +5,7 @@ Window < UIWindow
   background-color: white
   head height: 20
   head text align: center
-  free move: true
+  move policy: free
   border-image:
     source: /core_styles/images/window.png
     border: 4
@@ -22,8 +22,8 @@ MiniWindow < UIWindow
   margin.top: 6
   margin.left: 6
   margin.right: 6
-  margin.bottom: 6
-  free move: true
+  move policy: free updated
+  focusable: false
   border-image:
     source: /core_styles/images/mini_window.png
     border: 4

@@ -27,6 +27,12 @@
 
 class UIWindow : public UIWidget
 {
+    enum MovePolicy {
+        DONT_MOVE = 0,
+        FREE_MOVE,
+        FREE_UPDATED_MOVE
+    };
+
 public:
     virtual void setup();
     virtual void render();
@@ -46,7 +52,7 @@ protected:
 private:
     std::string m_title;
     bool m_moving;
-    bool m_freeMove;
+    MovePolicy m_movePolicy;
     Point m_movingReference;
 
     // styling

@@ -32,6 +32,13 @@ void UIVerticalLayout::update()
 {
     UIWidgetPtr parentWidget = getParentWidget();
     UIWidgetList widgets = parentWidget->getChildren();
+
+    // sort by Y center
+    std::sort(widgets.begin(), widgets.end(),
+    [](const UIWidgetPtr& first, const UIWidgetPtr& second) -> bool {
+        return first->getRect().center().y < second->getRect().center().y;
+    });
+
     Point pos = parentWidget->getPosition();
     for(const UIWidgetPtr& widget : widgets) {
         Size size = widget->getSize();
