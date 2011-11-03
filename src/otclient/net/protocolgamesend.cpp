@@ -158,35 +158,6 @@ void ProtocolGame::sendTurnWest()
     send(oMsg);
 }
 
-void ProtocolGame::sendTalk(int channelType, const std::string& message, int channelId, const std::string& receiver)
-{
-    // Game.getProtocolGame():sendTalk(1, "lalala", 0, "ignore")
-    // TODO: MAKE SURE IT WAS AN USER EVENT AND NOT DIRECTLY FROM SCRIPT.
-
-    if(message.length() > 255 && message.length() <= 0)
-        return;
-
-    OutputMessage oMsg;
-    oMsg.addU8(Otc::ClientTalk);
-
-    assert(channelType >= 0);
-    oMsg.addU8(channelType);
-
-    switch(channelType) {
-    case Otc::SpeakPrivate:
-    case Otc::SpeakPrivateRed:
-        oMsg.addString(receiver);
-        break;
-    case Otc::SpeakChannelYellow:
-    case Otc::SpeakChannelRed:
-        oMsg.addU16(channelId);
-        break;
-    }
-
-    oMsg.addString(message);
-    send(oMsg);
-}
-
 void ProtocolGame::sendAddVip(const std::string& name)
 {
     OutputMessage oMsg;
