@@ -123,6 +123,7 @@ bool UIWindow::onMousePress(const Point& mousePos, Fw::MouseButton button)
 {
     if(m_movePolicy != DONT_MOVE) {
         UIWidgetPtr clickedChild = getChildByPos(mousePos);
+        //FIXME: recursively check for non phantom children
         if(!clickedChild || clickedChild->isPhantom()) {
             m_moving = true;
             m_movingReference = mousePos - getRect().topLeft();

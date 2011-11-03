@@ -1,8 +1,13 @@
 modules managment interface
 clean sprites cache periodically
 hotkeys events in lua
-make password text edit hidden
 load modules from zip packages
 ip/host/rsa configuration
 review directories search
-move tibia fonts to tibiafiles module
+tooltips
+left panel with dragging windows
+console history
+console text selection
+console scrolling
+padding
+remember password/account
