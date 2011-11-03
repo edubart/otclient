@@ -22,10 +22,22 @@
 
 #include "uiverticallayout.h"
 #include "uiwidget.h"
+#include <framework/otml/otml.h>
 
 UIVerticalLayout::UIVerticalLayout(UIWidgetPtr parentWidget)
     : UILayout(parentWidget)
 {
+    m_alignBottom = false;
+}
+
+void UIVerticalLayout::applyStyle(const OTMLNodePtr& styleNode)
+{
+    UILayout::applyStyle(styleNode);
+
+    for(const OTMLNodePtr& node : styleNode->children()) {
+        if(node->tag() == "align bottom")
+            m_alignBottom = node->value<bool>();
+    }
 }
 
 void UIVerticalLayout::update()
@@ -39,10 +51,14 @@ void UIVerticalLayout::update()
         return first->getY() < second->getY();
     });
 
-    Point pos = parentWidget->getPosition();
+    if(m_alignBottom)
+        std::reverse(widgets.begin(), widgets.end());
+
+    Point pos = (m_alignBottom) ? parentWidget->getRect().bottomLeft() : parentWidget->getPosition();
+
     for(const UIWidgetPtr& widget : widgets) {
         Size size = widget->getSize();
-        pos.y += widget->getMarginTop();
+        pos.y += (m_alignBottom) ? -(widget->getMarginBottom()+widget->getHeight()) : widget->getMarginTop();
         if(widget->isSizeFixed()) {
             pos.x = parentWidget->getX() + (parentWidget->getWidth() - (widget->getMarginLeft() + widget->getWidth() + widget->getMarginRight()))/2;
             pos.x = std::max(pos.x, parentWidget->getX());
@@ -51,7 +67,7 @@ void UIVerticalLayout::update()
             pos.x = std::max(pos.x, parentWidget->getX() + (parentWidget->getWidth() - size.width())/2);
         }
         widget->setRect(Rect(pos, size));
-        pos.y += widget->getHeight() + widget->getMarginBottom();
+        pos.y += (m_alignBottom) ? -widget->getMarginTop() : (widget->getHeight() + widget->getMarginBottom());
     }
 }
 

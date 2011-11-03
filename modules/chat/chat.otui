@@ -1,6 +1,9 @@
 ChatLabel < UILabel
-  font: verdana-11px-monochrome
-  height: 16
+  font: verdana-11px-antialised
+  height: 14
+
+YellowChatLabel < ChatLabel
+  color: yellow
 
 Panel
   id: chatPanel
@@ -11,12 +14,14 @@ Panel
     anchors.top: parent.top
     anchors.left: parent.left
     anchors.right: parent.right
-    anchors.bottom: next.top
+    anchors.bottom: chatLineEdit.top
     margin.right: 6
     margin.left: 6
     margin.bottom: 2
     margin.top: 6
-    layout: verticalBox
+    layout:
+      type: verticalBox
+      align bottom: true
     focusable: false
 
   LineEdit

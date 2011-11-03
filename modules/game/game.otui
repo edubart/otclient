@@ -13,7 +13,7 @@ UIWidget
 
   InterfacePanel2
     id: bottomPanel
-    height: 140
+    height: 144
     anchors.left: parent.left
     anchors.right: rightPanel.left
     anchors.bottom: parent.bottom

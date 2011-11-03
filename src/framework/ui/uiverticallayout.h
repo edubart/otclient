@@ -30,9 +30,13 @@ class UIVerticalLayout : public UILayout
 public:
     UIVerticalLayout(UIWidgetPtr parentWidget);
 
+    virtual void applyStyle(const OTMLNodePtr& styleNode);
     virtual void update();
     virtual void addWidget(const UIWidgetPtr& widget);
     virtual void removeWidget(const UIWidgetPtr& widget);
+
+private:
+    bool m_alignBottom;
 };
 
 #endif

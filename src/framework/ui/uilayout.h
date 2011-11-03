@@ -25,12 +25,14 @@
 
 #include "declarations.h"
 #include <framework/luascript/luaobject.h>
+#include <framework/otml/declarations.h>
 
 class UILayout : public LuaObject
 {
 public:
     UILayout(UIWidgetPtr parentWidget) : m_parentWidget(parentWidget) { }
 
+    virtual void applyStyle(const OTMLNodePtr& styleNode) { }
     virtual void update() = 0;
     virtual void addWidget(const UIWidgetPtr& widget) = 0;
     virtual void removeWidget(const UIWidgetPtr& widget) = 0;

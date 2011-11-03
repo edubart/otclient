@@ -663,7 +663,7 @@ void ProtocolGame::parsePlayerSkills(InputMessage& msg)
         }
 
         g_dispatcher.addEvent([=] {
-            g_lua.callGlobalField("Game", "setSkill", skill, values[Otc::SkillLevel], values[Otc::SkillPercent]);
+            g_lua.callGlobalField("Game", "onSkillUpdate", skill, values[Otc::SkillLevel], values[Otc::SkillPercent]);
         });
     }
 }
@@ -711,7 +711,10 @@ void ProtocolGame::parseCreatureSpeak(InputMessage& msg)
     }
 
     std::string message = msg.getString(); // message
-    logDebug(name, "[", level, "]: ", message);
+
+    g_dispatcher.addEvent([=] {
+        g_lua.callGlobalField("Game", "onCreatureSpeak", name, level, type, message);
+    });
 }
 
 void ProtocolGame::parseChannelList(InputMessage& msg)

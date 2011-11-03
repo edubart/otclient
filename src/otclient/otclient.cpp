@@ -148,7 +148,7 @@ void OTClient::run()
             render();
 
             // render fps
-            defaultFont->renderText(fpsText, Point(g_graphics.getScreenSize().width() - fpsTextSize.width() - 10, 38));
+            defaultFont->renderText(fpsText, Point(g_graphics.getScreenSize().width() - fpsTextSize.width() - 70, 10));
 
             // render end
             g_graphics.endRender();

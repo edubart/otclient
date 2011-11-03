@@ -40,7 +40,7 @@ function Skills.destroy()
 end
 
 -- hooked events
-function Game.setSkill(id, level, percent)
+function Game.onSkillUpdate(id, level, percent)
   local skillPanel = skillWindow:getChildById('skillPanel')
 
   local levelLabel = skillPanel:getChildById('skillLevelId' .. (id + 1))

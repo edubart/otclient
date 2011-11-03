@@ -101,7 +101,7 @@ void UIWidget::renderChildren()
     // draw children
     for(const UIWidgetPtr& child : m_children) {
         // render only visible children with a valid rect
-        if(child->isExplicitlyVisible() && child->getRect().isValid()) {
+        if(child->isExplicitlyVisible() && child->getRect().isValid() && child->getRect().intersects(m_rect)) {
             // store current graphics opacity
             int oldOpacity = g_graphics.getOpacity();
 
@@ -802,11 +802,24 @@ void UIWidget::onStyleApply(const OTMLNodePtr& styleNode)
         else if(node->tag() == "layout") {
             // layout is set only once
             assert(!m_layout);
-            if(node->value() == "verticalBox") {
-                setLayout(UILayoutPtr(new UIVerticalLayout(asUIWidget())));
-            } else if(node->value() == "anchor") {
-                setLayout(UILayoutPtr(new UIAnchorLayout(asUIWidget())));
-            }
+
+            std::string layoutType;
+            if(node->hasValue())
+                layoutType = node->value();
+            else
+                layoutType = node->valueAt("type");
+
+            UILayoutPtr layout;
+            if(layoutType == "verticalBox")
+                layout = UILayoutPtr(new UIVerticalLayout(asUIWidget()));
+            else if(layoutType == "anchor")
+                layout = UILayoutPtr(new UIAnchorLayout(asUIWidget()));
+            else
+                throw OTMLException(node, "cannot determine layout type");
+
+            if(node->hasChildren())
+                layout->applyStyle(node);
+            setLayout(layout);
         }
         // anchors
         else if(boost::starts_with(node->tag(), "anchors.")) {
