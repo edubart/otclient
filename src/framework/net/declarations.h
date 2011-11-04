@@ -32,8 +32,10 @@ class Connection;
 class InputMessage;
 class OutputMessage;
 class Protocol;
+class Server;
 
 typedef std::shared_ptr<Connection> ConnectionPtr;
 typedef std::shared_ptr<Protocol> ProtocolPtr;
+typedef std::shared_ptr<Server> ServerPtr;
 
 #endif
