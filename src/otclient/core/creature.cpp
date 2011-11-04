@@ -46,29 +46,6 @@ Creature::Creature() : Thing()
 
 void Creature::draw(int x, int y)
 {
-    //dump << (int)m_speed;
-
-    // gspeed = 100
-    // pspeed = 234
-    // (recorded) 400 - 866 = 466
-    // (calc by ot eq) 1000 * 100 / 234 = 427
-
-    // gspeed = 150
-    // pspeed = 234
-    // (recorded) 934 - 1597 = 663
-    // (calc by ot eq) 1000 * 150 / 234 = 641
-
-    // gspeed = 100
-    // pspeed = 110
-    // (recorded) 900 - 1833 = 933
-    // (calc by ot eq) 1000 * 100 / 110 = 909
-
-    // 1000 * groundSpeed / playerSpeed
-
-    // TODO 1: FIX RENDER STEP 2
-    // TODO 2: FIX DIAGONAL WALKING, BUGS MAP
-    // TODO 3: ADD ANIMATION
-
     x += m_walkOffsetX;
     y += m_walkOffsetY;
 
@@ -146,25 +123,53 @@ void Creature::draw(int x, int y)
     }
 }
 
-void Creature::drawInformation(int x, int y, bool useGray)
+void Creature::drawInformation(int x, int y, bool useGray, const Rect& rect)
 {
     Color fillColor = Color(96, 96, 96);
 
     if(!useGray)
         fillColor = m_informationColor;
 
-    Rect backgroundRect = Rect(x-(14.5), y, 27, 4);
-    Rect healthRect = backgroundRect.expanded(-1);
-    healthRect.setWidth((m_healthPercent/100.0)*25);
+    // calculate main rects
+    Rect backgroundRect = Rect(x-(13.5), y, 27, 4);
+    if(backgroundRect.left() < rect.left())
+        backgroundRect.moveLeft(rect.left());
+    if(backgroundRect.top() < rect.top())
+        backgroundRect.moveTop(rect.top());
+    if(backgroundRect.bottom() > rect.bottom())
+        backgroundRect.moveBottom(rect.bottom());
+    if(backgroundRect.right() > rect.right())
+        backgroundRect.moveRight(rect.right());
 
+    Size textSize = m_informationFont->calculateTextRectSize(m_name);
+    Rect textRect = Rect(x - textSize.width() / 2.0, y-15, textSize);
+    if(textRect.left() < rect.left())
+        textRect.moveLeft(rect.left());
+    if(textRect.top() < rect.top())
+        textRect.moveTop(rect.top());
+    if(textRect.bottom() > rect.bottom())
+        textRect.moveBottom(rect.bottom());
+    if(textRect.right() > rect.right())
+        textRect.moveRight(rect.right());
+
+    // distance them
+    if(textRect.top() == rect.top())
+        backgroundRect.moveTop(textRect.top() + 15);
+    if(backgroundRect.bottom() == rect.bottom())
+        textRect.moveTop(backgroundRect.top() - 15);
+
+    // health rect is based on background rect, so no worries
+    Rect healthRect = backgroundRect.expanded(-1);
+    healthRect.setWidth((m_healthPercent / 100.0) * 25);
+
+    // draw
     g_graphics.bindColor(Fw::black);
     g_graphics.drawFilledRect(backgroundRect);
 
     g_graphics.bindColor(fillColor);
     g_graphics.drawFilledRect(healthRect);
 
-    // name
-    m_informationFont->renderText(m_name, Rect(x-100, y-15, 200, 15), Fw::AlignTopCenter, fillColor);
+    m_informationFont->renderText(m_name, textRect, Fw::AlignTopCenter, fillColor);
 }
 
 void Creature::walk(const Position& position)

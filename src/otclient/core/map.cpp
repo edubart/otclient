@@ -97,7 +97,7 @@ void Map::draw(const Rect& rect)
                         y += creature->getWalkOffsetY() - walkOffsetY;
                     }
 
-                    creature->drawInformation(rect.x() + x*horizontalStretchFactor, rect.y() + y*verticalStretchFactor, isCovered(tilePos, firstFloor));
+                    creature->drawInformation(rect.x() + x*horizontalStretchFactor, rect.y() + y*verticalStretchFactor, isCovered(tilePos, firstFloor), rect);
                 }
             }
         }

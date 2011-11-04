@@ -43,7 +43,7 @@ public:
     virtual ~Creature() { }
 
     virtual void draw(int x, int y);
-    void drawInformation(int x, int y, bool useGray);
+    void drawInformation(int x, int y, bool useGray, const Rect& rect);
 
     void setName(const std::string& name) { m_name = name; }
     void setHealthPercent(uint8 healthPercent);
