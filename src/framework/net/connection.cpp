@@ -105,11 +105,26 @@ void Connection::read(uint16 bytes, const RecvCallback& callback)
         return;
 
     m_recvCallback = callback;
-    m_recvSize = bytes;
 
     asio::async_read(m_socket,
                      asio::buffer(m_recvBuffer, bytes),
-                     std::bind(&Connection::onRecv, shared_from_this(), _1));
+                     std::bind(&Connection::onRecv, shared_from_this(), _1, bytes));
+
+    m_readTimer.expires_from_now(boost::posix_time::seconds(READ_TIMEOUT));
+    m_readTimer.async_wait(std::bind(&Connection::onTimeout, shared_from_this(), _1));
+}
+
+void Connection::read_some(const RecvCallback& callback)
+{
+    m_readTimer.cancel();
+
+    if(!m_connected)
+        return;
+
+    m_recvCallback = callback;
+
+    m_socket.async_read_some(asio::buffer(m_recvBuffer, RECV_BUFFER_SIZE),
+                             std::bind(&Connection::onRecv, shared_from_this(), _1, _2));
 
     m_readTimer.expires_from_now(boost::posix_time::seconds(READ_TIMEOUT));
     m_readTimer.async_wait(std::bind(&Connection::onTimeout, shared_from_this(), _1));
@@ -138,7 +153,7 @@ void Connection::onConnect(const boost::system::error_code& error)
             g_dispatcher.addEvent(m_connectCallback);
     } else
         handleError(error);
-        
+
     m_connecting = false;
 }
 
@@ -153,7 +168,7 @@ void Connection::onWrite(const boost::system::error_code& error, size_t)
         handleError(error);
 }
 
-void Connection::onRecv(const boost::system::error_code& error)
+void Connection::onRecv(const boost::system::error_code& error, size_t recvSize)
 {
     m_readTimer.cancel();
 
@@ -162,7 +177,7 @@ void Connection::onRecv(const boost::system::error_code& error)
 
     if(!error) {
         if(m_recvCallback)
-            g_dispatcher.addEvent(std::bind(m_recvCallback, m_recvBuffer, m_recvSize));
+            g_dispatcher.addEvent(std::bind(m_recvCallback, m_recvBuffer, recvSize));
     } else
         handleError(error);
 }

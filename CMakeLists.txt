@@ -88,6 +88,7 @@ SET(SOURCES
     src/framework/net/outputmessage.cpp
     src/framework/net/protocol.cpp
     src/framework/net/rsa.cpp
+    src/framework/net/server.cpp
 
     # framework util
     src/framework/util/translator.cpp
