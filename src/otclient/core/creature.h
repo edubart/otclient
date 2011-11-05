@@ -94,11 +94,10 @@ protected:
     FontPtr m_informationFont;
     Color m_informationColor;
 
-    int m_lastTicks;
+    int m_walkStartTicks;
     bool m_walking, m_inverseWalking;
     float m_walkTimePerPixel;
     Position m_walkingFromPosition;
-    int m_lastWalkAnim;
     int m_walkOffsetX, m_walkOffsetY;
 };
 
