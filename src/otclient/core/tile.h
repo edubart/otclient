@@ -48,6 +48,7 @@ public:
     int getDrawElevation() { return m_drawElevation; }
     std::vector<CreaturePtr> getCreatures();
     ItemPtr getGround();
+    bool isWalkable();
     bool isFullGround();
     bool isFullyOpaque();
     bool isLookPossible();

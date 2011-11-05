@@ -28,7 +28,7 @@
 class LocalPlayer : public Player
 {
 public:
-    LocalPlayer() { }
+    LocalPlayer();
 
     void setDrawSpeed(uint16 drawSpeed) { m_drawSpeed = drawSpeed; }
     uint16 getDrawSpeed() { return m_drawSpeed; }
@@ -42,13 +42,17 @@ public:
     void setStatistic(Otc::Statistic statistic, double value) { m_statistics[statistic] = value; }
     double getStatistic(Otc::Statistic statistic) { return m_statistics[statistic]; }
 
-    void walk(Otc::Direction direction);
+    void clientWalk(Otc::Direction direction);
+    void walk(const Position& position, bool inverse);
+    void cancelWalk(Otc::Direction direction);
+    bool canWalk(Otc::Direction direction);
 
     LocalPlayerPtr asLocalPlayer() { return std::static_pointer_cast<LocalPlayer>(shared_from_this()); }
 
 private:
     uint16 m_drawSpeed;
     bool m_canReportBugs;
+    bool m_clientWalking;
 
     int m_skills[Otc::LastSkill][Otc::LastSkillType];
     double m_statistics[Otc::LastStatistic];

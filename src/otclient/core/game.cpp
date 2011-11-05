@@ -104,12 +104,10 @@ void Game::processTextMessage(int type, const std::string& message)
 
 void Game::walk(Otc::Direction direction)
 {
-    if(!m_online)
+    if(!m_online || !m_localPlayer->canWalk(direction))
         return;
 
-    // TODO: check if we can walk.
-
-    m_localPlayer->walk(direction);
+    m_localPlayer->clientWalk(direction);
 
     switch(direction) {
     case Otc::North:

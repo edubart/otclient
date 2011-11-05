@@ -21,10 +21,59 @@
  */
 
 #include "localplayer.h"
+#include "map.h"
+#include "game.h"
+#include "tile.h"
 
-void LocalPlayer::walk(Otc::Direction direction)
+LocalPlayer::LocalPlayer()
 {
-    //Position newPos = m_position + Position::getPositionFromDirection(direction);
+    m_clientWalking = false;
+}
 
-    //asCreature()->walk(newPos);
+void LocalPlayer::clientWalk(Otc::Direction direction)
+{
+    if(!m_walking) {
+        Position newPos = m_position + Position::getPositionFromDirection(direction);
+        Creature::walk(newPos, false);
+        m_clientWalking = true;
+    }
+}
+
+void LocalPlayer::walk(const Position& position, bool inverse)
+{
+    if(m_clientWalking) {
+        Position pos = Position::getPositionFromDirection(m_direction);
+        int walkOffsetX = m_walkOffsetX - pos.x * 32;
+        int walkOffsetY = m_walkOffsetY - pos.y * 32;
+
+        Creature::walk(position, inverse);
+
+        m_walkOffsetX = walkOffsetX;
+        m_walkOffsetY = walkOffsetY;
+        m_clientWalking = false;
+    }
+    else {
+        m_walkOffsetX = 0;
+        m_walkOffsetY = 0;
+        Creature::walk(position, inverse);
+    }
+}
+
+void LocalPlayer::cancelWalk(Otc::Direction direction)
+{
+    m_clientWalking = false;
+    Creature::cancelWalk(direction);
+}
+
+bool LocalPlayer::canWalk(Otc::Direction direction)
+{
+    Position newPos = m_position + Position::getPositionFromDirection(direction);
+    TilePtr tile = g_map.getTile(newPos);
+    if(!tile->isWalkable()) {
+        // TODO: create enum for 17, white message on screen bottom and console.
+        g_game.processTextMessage(17, "Sorry, not possible.");
+        return false;
+    }
+
+    return !m_clientWalking;
 }

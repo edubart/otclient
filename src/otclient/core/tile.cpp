@@ -183,6 +183,19 @@ ItemPtr Tile::getGround()
     return nullptr;
 }
 
+bool Tile::isWalkable()
+{
+    if(!getGround())
+        return false;
+
+    for(const ThingPtr& thing : m_things) {
+        const ThingType& type = thing->getType();
+        if(type.isNotWalkable)
+            return false;
+    }
+    return true;
+}
+
 bool Tile::isFullGround()
 {
     ThingPtr ground = getThing(0);

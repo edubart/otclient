@@ -406,6 +406,10 @@ void ProtocolGame::parseCreatureMove(InputMessage& msg)
     CreaturePtr creature = thing->asCreature();
     assert(creature);
     creature->walk(newPos);
+
+    // update map tiles
+    g_map.removeThing(thing);
+    g_map.addThing(thing, newPos);
 }
 
 void ProtocolGame::parseOpenContainer(InputMessage& msg)

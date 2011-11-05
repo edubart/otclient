@@ -70,8 +70,8 @@ public:
 
     void onHealthPercentChange(int);
 
-    void walk(const Position& position);
-    void cancelWalk(Otc::Direction direction);
+    virtual void walk(const Position& position, bool inverse = true);
+    virtual void cancelWalk(Otc::Direction direction);
     int getWalkOffsetX() { return m_walkOffsetX; }
     int getWalkOffsetY() { return m_walkOffsetY; }
 
@@ -79,7 +79,7 @@ public:
 
     CreaturePtr asCreature() { return std::static_pointer_cast<Creature>(shared_from_this()); }
 
-private:
+protected:
     std::string m_name;
     uint8 m_healthPercent;
     Otc::Direction m_direction;
@@ -95,7 +95,7 @@ private:
     Color m_informationColor;
 
     int m_lastTicks;
-    bool m_walking;
+    bool m_walking, m_inverseWalking;
     float m_walkTimePerPixel;
     Position m_walkingFromPosition;
     int m_lastWalkAnim;
