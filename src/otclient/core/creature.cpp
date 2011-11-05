@@ -227,8 +227,7 @@ void Creature::walk(const Position& position, bool inverse)
         m_walkTimePerPixel = walkTime / 32.0;
         if(!sameWalk)
             m_walkStartTicks = g_platform.getTicks();
-
-        g_dispatcher.scheduleEvent(std::bind(&Creature::updateWalk, asCreature()), m_walkTimePerPixel);
+        updateWalk();
     }
 }
 
@@ -280,8 +279,13 @@ void Creature::cancelWalk(Otc::Direction direction)
     m_walkStartTicks = 0;
     m_walkOffsetX = 0;
     m_walkOffsetY = 0;
-    m_animation = 0;
     m_direction = direction;
+
+    auto self = asCreature();
+    g_dispatcher.scheduleEvent([=]() {
+        if(!self->m_walking)
+            self->m_animation = 0;
+    }, 150);
 }
 
 void Creature::setHealthPercent(uint8 healthPercent)
