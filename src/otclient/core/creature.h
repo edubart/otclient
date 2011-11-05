@@ -80,6 +80,8 @@ public:
     CreaturePtr asCreature() { return std::static_pointer_cast<Creature>(shared_from_this()); }
 
 protected:
+    void updateWalk();
+
     std::string m_name;
     uint8 m_healthPercent;
     Otc::Direction m_direction;

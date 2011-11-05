@@ -29,6 +29,7 @@
 
 #include <framework/platform/platform.h>
 #include <framework/graphics/graphics.h>
+#include <framework/core/eventdispatcher.h>
 
 
 Creature::Creature() : Thing()
@@ -45,8 +46,10 @@ Creature::Creature() : Thing()
 
 void Creature::draw(int x, int y)
 {
-    x += m_walkOffsetX;
-    y += m_walkOffsetY;
+    if(m_walking) {
+        x += m_walkOffsetX;
+        y += m_walkOffsetY;
+    }
 
     const ThingType& type = getType();
 
@@ -86,42 +89,6 @@ void Creature::draw(int x, int y)
             g_graphics.bindColor(Fw::white);
         }
     }
-
-    // Update animation and position
-    if(m_walking && type.animationPhases > 1) {
-        int elapsedTicks = g_platform.getTicks() - m_walkStartTicks;
-        int totalPixelsWalked = std::min((int)std::round(elapsedTicks / m_walkTimePerPixel), 32);
-
-        if(m_inverseWalking) {
-            if(m_direction == Otc::North || m_direction == Otc::NorthEast || m_direction == Otc::NorthWest)
-                m_walkOffsetY = 32 - totalPixelsWalked;
-            else if(m_direction == Otc::South || m_direction == Otc::SouthEast || m_direction == Otc::SouthWest)
-                m_walkOffsetY = totalPixelsWalked - 32;
-
-            if(m_direction == Otc::East || m_direction == Otc::NorthEast || m_direction == Otc::SouthEast)
-                m_walkOffsetX = totalPixelsWalked - 32;
-            else if(m_direction == Otc::West || m_direction == Otc::NorthWest || m_direction == Otc::SouthWest)
-                m_walkOffsetX = 32 - totalPixelsWalked;
-
-            if(m_walkOffsetX == 0 && m_walkOffsetY == 0)
-                cancelWalk(m_direction);
-        }
-        else {
-            if(m_direction == Otc::North || m_direction == Otc::NorthEast || m_direction == Otc::NorthWest)
-                m_walkOffsetY = -totalPixelsWalked;
-            else if(m_direction == Otc::South || m_direction == Otc::SouthEast || m_direction == Otc::SouthWest)
-                m_walkOffsetY = totalPixelsWalked;
-
-            if(m_direction == Otc::East || m_direction == Otc::NorthEast || m_direction == Otc::SouthEast)
-                m_walkOffsetX = totalPixelsWalked;
-            else if(m_direction == Otc::West || m_direction == Otc::NorthWest || m_direction == Otc::SouthWest)
-                m_walkOffsetX = -totalPixelsWalked;
-        }
-
-        int totalWalkTileTicks = (int)m_walkTimePerPixel*32;
-        m_animation = (g_platform.getTicks() % totalWalkTileTicks) / (totalWalkTileTicks / (type.animationPhases - 1)) + 1;
-    } else
-        m_animation = 0;
 }
 
 void Creature::drawInformation(int x, int y, bool useGray, const Rect& rect)
@@ -225,6 +192,9 @@ void Creature::walk(const Position& position, bool inverse)
     else { // Teleport
         // we teleported, dont walk or change direction
         m_walking = false;
+        m_walkOffsetX = 0;
+        m_walkOffsetY = 0;
+        m_animation = 0;
     }
 
     if(!m_inverseWalking) {
@@ -257,12 +227,57 @@ void Creature::walk(const Position& position, bool inverse)
         m_walkTimePerPixel = walkTime / 32.0;
         if(!sameWalk)
             m_walkStartTicks = g_platform.getTicks();
+
+        g_dispatcher.scheduleEvent(std::bind(&Creature::updateWalk, asCreature()), m_walkTimePerPixel);
+    }
+}
+
+void Creature::updateWalk()
+{
+    const ThingType& type = getType();
+    if(m_walking) {
+        int elapsedTicks = g_platform.getTicks() - m_walkStartTicks;
+        int totalPixelsWalked = std::min((int)std::round(elapsedTicks / m_walkTimePerPixel), 32);
+
+        if(m_inverseWalking) {
+            if(m_direction == Otc::North || m_direction == Otc::NorthEast || m_direction == Otc::NorthWest)
+                m_walkOffsetY = 32 - totalPixelsWalked;
+            else if(m_direction == Otc::South || m_direction == Otc::SouthEast || m_direction == Otc::SouthWest)
+                m_walkOffsetY = totalPixelsWalked - 32;
+
+            if(m_direction == Otc::East || m_direction == Otc::NorthEast || m_direction == Otc::SouthEast)
+                m_walkOffsetX = totalPixelsWalked - 32;
+            else if(m_direction == Otc::West || m_direction == Otc::NorthWest || m_direction == Otc::SouthWest)
+                m_walkOffsetX = 32 - totalPixelsWalked;
+
+            if(m_walkOffsetX == 0 && m_walkOffsetY == 0)
+                cancelWalk(m_direction);
+        }
+        else {
+            if(m_direction == Otc::North || m_direction == Otc::NorthEast || m_direction == Otc::NorthWest)
+                m_walkOffsetY = -totalPixelsWalked;
+            else if(m_direction == Otc::South || m_direction == Otc::SouthEast || m_direction == Otc::SouthWest)
+                m_walkOffsetY = totalPixelsWalked;
+
+            if(m_direction == Otc::East || m_direction == Otc::NorthEast || m_direction == Otc::SouthEast)
+                m_walkOffsetX = totalPixelsWalked;
+            else if(m_direction == Otc::West || m_direction == Otc::NorthWest || m_direction == Otc::SouthWest)
+                m_walkOffsetX = -totalPixelsWalked;
+        }
+
+        int totalWalkTileTicks = (int)m_walkTimePerPixel*32;
+        m_animation = (g_platform.getTicks() % totalWalkTileTicks) / (totalWalkTileTicks / (type.animationPhases - 1)) + 1;
+        g_dispatcher.scheduleEvent(std::bind(&Creature::updateWalk, asCreature()), m_walkTimePerPixel);
+
+        if(totalPixelsWalked == 32)
+            cancelWalk(m_direction);
     }
 }
 
 void Creature::cancelWalk(Otc::Direction direction)
 {
     m_walking = false;
+    m_walkStartTicks = 0;
     m_walkOffsetX = 0;
     m_walkOffsetY = 0;
     m_animation = 0;
