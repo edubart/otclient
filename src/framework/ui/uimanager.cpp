@@ -131,9 +131,13 @@ void UIManager::importStyleFromOTML(const OTMLNodePtr& styleNode)
     boost::trim(name);
     boost::trim(base);
 
+    // TODO: styles must be searched by widget scopes, in that way this warning could be fixed
+    // disable this warning because many ppl was complening about it
+    /*
     auto it = m_styles.find(name);
     if(it != m_styles.end())
         logWarning("style '", name, "' is being redefined");
+    */
 
     OTMLNodePtr style = getStyle(base)->clone();
     style->merge(styleNode);

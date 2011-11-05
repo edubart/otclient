@@ -27,6 +27,7 @@
 #include "../const.h"
 #include <vector>
 #include <functional>
+#include <list>
 
 struct LogMessage {
   LogMessage(Fw::LogLevel level, const std::string& message, std::size_t when) : level(level), message(message), when(when) { }
