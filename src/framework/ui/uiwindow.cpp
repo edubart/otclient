@@ -96,14 +96,7 @@ void UIWindow::onGeometryUpdate(const Rect& oldRect, const Rect& newRect)
     UIWidgetPtr parent = getParent();
     if(parent) {
         Rect parentRect = parent->getRect();
-        if(boundRect.left() < parentRect.left())
-            boundRect.moveLeft(parentRect.left());
-        if(boundRect.top() < parentRect.top())
-            boundRect.moveTop(parentRect.top());
-        if(boundRect.bottom() > parentRect.bottom())
-            boundRect.moveBottom(parentRect.bottom());
-        if(boundRect.right() > parentRect.right())
-            boundRect.moveRight(parentRect.right());
+        boundRect.bound(parentRect);
     }
 
     if(boundRect != newRect)

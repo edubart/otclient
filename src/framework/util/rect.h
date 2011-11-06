@@ -251,6 +251,20 @@ public:
         return tmp;
     }
 
+    void bound(const TRect<T> &r) {
+        if(isNull() || r.isNull())
+            return;
+
+        if(left() < r.left())
+            moveLeft(r.left());
+        if(top() < r.top())
+            moveTop(r.top());
+        if(bottom() > r.bottom())
+            moveBottom(r.bottom());
+        if(right() > r.right())
+            moveRight(r.right());
+    }
+
     TRect<T>& operator=(const TRect<T>& other) { x1 = other.x1; y1 = other.y1; x2 = other.x2; y2 = other.y2; return *this;  }
     bool operator==(const TRect<T>& other) const { return (x1 == other.x1 && y1 == other.y1 && x2 == other.x2 && y2 == other.y2); }
     bool operator!=(const TRect<T>& other) const { return (x1 != other.x1 || y1 != other.y1 || x2 != other.x2 || y2 != other.y2); }

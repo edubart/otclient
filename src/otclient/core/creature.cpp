@@ -100,25 +100,11 @@ void Creature::drawInformation(int x, int y, bool useGray, const Rect& rect)
 
     // calculate main rects
     Rect backgroundRect = Rect(x-(13.5), y, 27, 4);
-    if(backgroundRect.left() < rect.left())
-        backgroundRect.moveLeft(rect.left());
-    if(backgroundRect.top() < rect.top())
-        backgroundRect.moveTop(rect.top());
-    if(backgroundRect.bottom() > rect.bottom())
-        backgroundRect.moveBottom(rect.bottom());
-    if(backgroundRect.right() > rect.right())
-        backgroundRect.moveRight(rect.right());
+    backgroundRect.bound(rect);
 
     Size textSize = m_informationFont->calculateTextRectSize(m_name);
     Rect textRect = Rect(x - textSize.width() / 2.0, y-15, textSize);
-    if(textRect.left() < rect.left())
-        textRect.moveLeft(rect.left());
-    if(textRect.top() < rect.top())
-        textRect.moveTop(rect.top());
-    if(textRect.bottom() > rect.bottom())
-        textRect.moveBottom(rect.bottom());
-    if(textRect.right() > rect.right())
-        textRect.moveRight(rect.right());
+    textRect.bound(rect);
 
     // distance them
     if(textRect.top() == rect.top())
@@ -264,7 +250,7 @@ void Creature::updateWalk()
                 m_walkOffsetX = -totalPixelsWalked;
         }
 
-        int totalWalkTileTicks = (int)m_walkTimePerPixel*32;
+        int totalWalkTileTicks = (int)m_walkTimePerPixel*32 * 0.5;
         m_animation = (g_platform.getTicks() % totalWalkTileTicks) / (totalWalkTileTicks / (type.animationPhases - 1)) + 1;
         g_dispatcher.scheduleEvent(std::bind(&Creature::updateWalk, asCreature()), m_walkTimePerPixel);
 
@@ -285,7 +271,7 @@ void Creature::cancelWalk(Otc::Direction direction)
     g_dispatcher.scheduleEvent([=]() {
         if(!self->m_walking)
             self->m_animation = 0;
-    }, 150);
+    }, m_walkTimePerPixel * 2);
 }
 
 void Creature::setHealthPercent(uint8 healthPercent)
