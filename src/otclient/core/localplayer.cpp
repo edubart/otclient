@@ -67,6 +67,9 @@ void LocalPlayer::cancelWalk(Otc::Direction direction)
 
 bool LocalPlayer::canWalk(Otc::Direction direction)
 {
+    if(m_walking)
+        return false;
+
     Position newPos = m_position + Position::getPositionFromDirection(direction);
     TilePtr tile = g_map.getTile(newPos);
     if(!tile->isWalkable()) {
@@ -75,5 +78,5 @@ bool LocalPlayer::canWalk(Otc::Direction direction)
         return false;
     }
 
-    return !m_clientWalking;
+    return true;
 }

@@ -86,7 +86,7 @@ void Tile::draw(const Point& p)
     for(const ThingPtr& thing : m_things) {
         const ThingType& type = thing->getType();
         if(type.isOnTop)
-            thing->draw(p.x - m_drawElevation, p.y - m_drawElevation);
+            thing->draw(p.x, p.y);
     }
 }
 
