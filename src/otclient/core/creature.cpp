@@ -136,41 +136,41 @@ void Creature::walk(const Position& position, bool inverse)
 
     // set new direction
     if(m_position + Position(0, -1, 0) == position) {
-        m_direction = Otc::North;
+        setDirection(Otc::North);
         m_walkOffsetY = 32;
     }
     else if(m_position + Position(1, 0, 0) == position) {
-        m_direction = Otc::East;
+        setDirection(Otc::East);
         m_walkOffsetX = -32;
     }
     else if(m_position + Position(0, 1, 0) == position) {
-        m_direction = Otc::South;
+        setDirection(Otc::South);
         m_walkOffsetY = -32;
     }
     else if(m_position + Position(-1, 0, 0) == position) {
-        m_direction = Otc::West;
+        setDirection(Otc::West);
         m_walkOffsetX = 32;
     }
     else if(m_position + Position(1, -1, 0) == position) {
-        m_direction = Otc::NorthEast;
+        setDirection(Otc::NorthEast);
         m_walkOffsetX = -32;
         m_walkOffsetY = 32;
         walkTimeFactor = 2;
     }
     else if(m_position + Position(1, 1, 0) == position) {
-        m_direction = Otc::SouthEast;
+        setDirection(Otc::SouthEast);
         m_walkOffsetX = -32;
         m_walkOffsetY = -32;
         walkTimeFactor = 2;
     }
     else if(m_position + Position(-1, 1, 0) == position) {
-        m_direction = Otc::SouthWest;
+        setDirection(Otc::SouthWest);
         m_walkOffsetX = 32;
         m_walkOffsetY = -32;
         walkTimeFactor = 2;
     }
     else if(m_position + Position(-1, -1, 0) == position) {
-        m_direction = Otc::NorthWest;
+        setDirection(Otc::NorthWest);
         m_walkOffsetX = 32;
         m_walkOffsetY = 32;
         walkTimeFactor = 2;
@@ -189,17 +189,6 @@ void Creature::walk(const Position& position, bool inverse)
     }
 
     if(m_walking) {
-        // Calculate xPattern
-        if(m_direction >= 4) {
-            if(m_direction == Otc::NorthEast || m_direction == Otc::SouthEast)
-                m_xPattern = Otc::East;
-            else if(m_direction == Otc::NorthWest || m_direction == Otc::SouthWest)
-                m_xPattern = Otc::West;
-        }
-        else {
-            m_xPattern = m_direction;
-        }
-
         // get walk speed
         int groundSpeed = 100;
 
@@ -281,6 +270,13 @@ void Creature::setHealthPercent(uint8 healthPercent)
     onHealthPercentChange(oldHealthPercent);
 }
 
+void Creature::setDirection(Otc::Direction direction)
+{
+    Otc::Direction oldDirection = m_direction;
+    m_direction = direction;
+    onDirectionChange(oldDirection);
+}
+
 const ThingType& Creature::getType()
 {
     return g_thingsType.getCreatureType(m_outfit.type);
@@ -312,5 +308,18 @@ void Creature::onHealthPercentChange(int)
     }
     else {
         m_informationColor.setRed(79);
+    }
+}
+
+void Creature::onDirectionChange(Otc::Direction)
+{
+    if(m_direction >= 4) {
+        if(m_direction == Otc::NorthEast || m_direction == Otc::SouthEast)
+            m_xPattern = Otc::East;
+        else if(m_direction == Otc::NorthWest || m_direction == Otc::SouthWest)
+            m_xPattern = Otc::West;
+    }
+    else {
+        m_xPattern = m_direction;
     }
 }

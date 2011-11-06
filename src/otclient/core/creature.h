@@ -47,7 +47,7 @@ public:
 
     void setName(const std::string& name) { m_name = name; }
     void setHealthPercent(uint8 healthPercent);
-    void setDirection(Otc::Direction direction) { m_direction = direction; }
+    void setDirection(Otc::Direction direction);
     void setOutfit(const Outfit& outfit) { m_outfit = outfit; }
     void setLight(const Light& light) { m_light = light; }
     void setSpeed(uint16 speed) { m_speed = speed; }
@@ -69,6 +69,7 @@ public:
     const ThingType& getType();
 
     void onHealthPercentChange(int);
+    void onDirectionChange(Otc::Direction);
 
     virtual void walk(const Position& position, bool inverse = true);
     virtual void cancelWalk(Otc::Direction direction);
