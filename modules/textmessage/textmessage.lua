@@ -18,6 +18,7 @@ local messageTypes = {
   { type = 'MessageBlue', color = '#3264C8', showOnConsole = true, showOnWindow = false },
   { type = 'MessageRed', color = '#C83200', showOnConsole = true, showOnWindow = false }
 }
+local hideEvent
 
 -- public functions
 function TextMessage.create()
@@ -47,11 +48,11 @@ function Game.onTextMessage(type, message)
     label:setVisible(true)
     label:setForegroundColor(messageType.color)
     label:setText(message)
-
     label:setStyle(messageType.windowLocation)
 
     time = #message * 75
-    scheduleEvent(function()
+    removeEvent(hideEvent)
+    hideEvent = scheduleEvent(function()
                     label:setVisible(false)
                   end, time)
   end
