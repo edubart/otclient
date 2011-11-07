@@ -29,29 +29,28 @@
 
 Effect::Effect() : Thing()
 {
-    m_lastTicks = g_platform.getTicks();
-    m_finished = false;
+    m_animationStartTicks = 0;
 }
 
 void Effect::draw(int x, int y)
 {
-    if(!m_finished) {
-        if(g_platform.getTicks() - m_lastTicks > 75) {
-            const ThingType& type = getType();
-            if(m_animation+1 == type.animationPhases) {
-                EffectPtr self = asEffect();
-                g_dispatcher.addEvent([self] {
-                    g_map.getTile(self->getPosition())->removeEffect(self);
-                });
-                m_finished = true;
-            }
-            else
-                m_animation++;
-            m_lastTicks = g_platform.getTicks();
-        }
+    int animationPhase = (g_platform.getTicks() - m_animationStartTicks) / TICKS_PER_FRAME;
 
+    if(animationPhase < getAnimationPhases()) {
+        m_animation = animationPhase;
         internalDraw(x, y, 0);
     }
+}
+
+void Effect::startAnimation()
+{
+    m_animationStartTicks = g_platform.getTicks();
+
+    // schedule removal
+    auto self = asEffect();
+    g_dispatcher.scheduleEvent([self]() {
+        g_map.getTile(self->getPosition())->removeEffect(self);
+    }, TICKS_PER_FRAME * getAnimationPhases());
 }
 
 const ThingType& Effect::getType()

@@ -2,8 +2,7 @@ CenterLabel < Label
   font: verdana-11px-rounded
   height: 16
   align: center
-  anchors.top: parent.verticalCenter
-  anchors.bottom: parent.verticalCenter
+  anchors.verticalCenter: parent.verticalCenter
   anchors.left: parent.left
   anchors.right: parent.right
 

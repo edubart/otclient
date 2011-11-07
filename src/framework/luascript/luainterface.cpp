@@ -663,6 +663,7 @@ std::string LuaInterface::functionSourcePath()
 
     // gets function source path
     lua_Debug ar;
+    memset(&ar, 0, sizeof(ar));
     lua_getinfo(L, ">Sn", &ar);
     if(ar.source) {
         // scripts coming from files has source beginning with '@'

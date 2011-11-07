@@ -28,20 +28,24 @@
 
 class Effect : public Thing
 {
+    enum {
+        TICKS_PER_FRAME = 75
+    };
+
 public:
     Effect();
 
     void draw(int x, int y);
 
-    bool finished() { return m_finished; }
+    void startAnimation();
+    void updateAnimation();
 
     const ThingType& getType();
 
     EffectPtr asEffect() { return std::static_pointer_cast<Effect>(shared_from_this()); }
 
 private:
-    int m_lastTicks;
-    bool m_finished;
+    int m_animationStartTicks;
 };
 
 #endif

@@ -120,6 +120,7 @@ void OTClient::run()
     poll();
 
     while(!m_stopping) {
+        //g_platform.sleep(150);
         g_platform.updateTicks();
         frameTicks = g_platform.getTicks();
 

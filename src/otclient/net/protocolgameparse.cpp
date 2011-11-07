@@ -516,6 +516,7 @@ void ProtocolGame::parseMagicEffect(InputMessage& msg)
     int effectId = msg.getU8();
     EffectPtr effect = EffectPtr(new Effect());
     effect->setId(effectId);
+    effect->startAnimation();
 
     TilePtr tile = g_map.getTile(pos);
     tile->addEffect(effect);

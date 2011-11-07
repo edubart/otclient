@@ -200,7 +200,7 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
     tile->addThing(thing, stackPos);
 
     if(CreaturePtr creature = thing->asCreature())
-        m_creatures[creature ->getId()] = creature;
+        m_creatures[creature->getId()] = creature;
 }
 
 ThingPtr Map::getThing(const Position& pos, int stackPos)

@@ -73,7 +73,6 @@ private:
     Light m_light;
     Position m_centralPosition;
 
-
     FrameBufferPtr m_framebuffer;
 };
 

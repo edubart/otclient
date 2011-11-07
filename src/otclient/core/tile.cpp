@@ -72,8 +72,9 @@ void Tile::draw(const Point& p)
                 Rect thisTileRect(p.x, p.y, 32, 32);
 
                 // only render creatures where bottom right is inside our rect
-                if(thisTileRect.contains(creatureRect.bottomRight()))
+                if(thisTileRect.contains(creatureRect.bottomRight())) {
                     creature->draw(p.x + xi*32 - m_drawElevation, p.y + yi*32 - m_drawElevation);
+                }
             }
         }
     }
