@@ -32,13 +32,13 @@ Effect::Effect() : Thing()
     m_animationStartTicks = 0;
 }
 
-void Effect::draw(int x, int y)
+void Effect::draw(const Point& p)
 {
     int animationPhase = (g_platform.getTicks() - m_animationStartTicks) / TICKS_PER_FRAME;
 
     if(animationPhase < getAnimationPhases()) {
         m_animation = animationPhase;
-        internalDraw(x, y, 0);
+        internalDraw(p, 0);
     }
 }
 

@@ -48,7 +48,7 @@ void Thing::setPosition(const Position& position)
     onPositionChange(oldPosition);
 }
 
-void Thing::internalDraw(int x, int y, int layers, Otc::SpriteMask mask)
+void Thing::internalDraw(const Point& p, int layers, Otc::SpriteMask mask)
 {
     const ThingType& type = getType();
 
@@ -68,8 +68,8 @@ void Thing::internalDraw(int x, int y, int layers, Otc::SpriteMask mask)
 
             TexturePtr spriteTex = g_sprites.getSpriteTexture(spriteId, mask);
 
-            Rect drawRect((x - xi*32) - type.xDisplacement,
-                          (y - yi*32) - type.yDisplacement,
+            Rect drawRect((p.x - xi*32) - type.xDisplacement,
+                          (p.y - yi*32) - type.yDisplacement,
                           32, 32);
             g_graphics.drawTexturedRect(drawRect, spriteTex);
         }

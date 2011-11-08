@@ -30,6 +30,7 @@ class Thing;
 class Item;
 class Creature;
 class Effect;
+class Missile;
 class Player;
 class LocalPlayer;
 
@@ -38,6 +39,7 @@ typedef std::shared_ptr<Thing> ThingPtr;
 typedef std::shared_ptr<Item> ItemPtr;
 typedef std::shared_ptr<Creature> CreaturePtr;
 typedef std::shared_ptr<Effect> EffectPtr;
+typedef std::shared_ptr<Missile> MissilePtr;
 typedef std::shared_ptr<Player> PlayerPtr;
 typedef std::shared_ptr<LocalPlayer> LocalPlayerPtr;
 

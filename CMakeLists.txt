@@ -68,6 +68,7 @@ SET(SOURCES
     src/otclient/core/thing.cpp
     src/otclient/core/creature.cpp
     src/otclient/core/effect.cpp
+    src/otclient/core/missile.cpp
     src/otclient/core/localplayer.cpp
 
     # otclient ui

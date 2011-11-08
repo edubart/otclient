@@ -35,20 +35,20 @@ public:
         TICKS_PER_FRAME = 500
     };
 
-    void draw(int x, int y);
+    void draw(const Point& p);
 
-    void setCount(int count);
+    void setData(int count);
 
-    int getCount() { return m_count; }
+    int getData() { return m_data; }
     const ThingType& getType();
 
     void onPositionChange(const Position&);
-    void onCountChange(int);
+    void onDataChange(int);
 
     ItemPtr asItem() { return std::static_pointer_cast<Item>(shared_from_this()); }
 
 private:
-    int m_count;
+    int m_data;
     int m_lastTicks;
 };
 

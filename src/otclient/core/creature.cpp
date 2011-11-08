@@ -38,19 +38,12 @@ Creature::Creature() : Thing()
     m_direction = Otc::South;
 
     m_walking = false;
-    m_walkOffsetX = 0;
-    m_walkOffsetY = 0;
 
     m_informationFont = g_fonts.getFont("verdana-11px-rounded");
 }
 
-void Creature::draw(int x, int y)
+void Creature::draw(const Point& p)
 {
-    if(m_walking) {
-        x += m_walkOffsetX;
-        y += m_walkOffsetY;
-    }
-
     const ThingType& type = getType();
 
     // Render creature
@@ -61,7 +54,7 @@ void Creature::draw(int x, int y)
             continue;
 
         // draw white item
-        internalDraw(x, y, 0);
+        internalDraw(p + m_walkOffset, 0);
 
         // draw mask if exists
         if(type.layers > 1) {
@@ -70,19 +63,19 @@ void Creature::draw(int x, int y)
 
             // head
             g_graphics.bindColor(Otc::OutfitColors[m_outfit.head]);
-            internalDraw(x, y, 1, Otc::SpriteYellowMask);
+            internalDraw(p + m_walkOffset, 1, Otc::SpriteYellowMask);
 
             // body
             g_graphics.bindColor(Otc::OutfitColors[m_outfit.body]);
-            internalDraw(x, y, 1, Otc::SpriteRedMask);
+            internalDraw(p + m_walkOffset, 1, Otc::SpriteRedMask);
 
             // legs
             g_graphics.bindColor(Otc::OutfitColors[m_outfit.legs]);
-            internalDraw(x, y, 1, Otc::SpriteGreenMask);
+            internalDraw(p + m_walkOffset, 1, Otc::SpriteGreenMask);
 
             // feet
             g_graphics.bindColor(Otc::OutfitColors[m_outfit.feet]);
-            internalDraw(x, y, 1, Otc::SpriteBlueMask);
+            internalDraw(p + m_walkOffset, 1, Otc::SpriteBlueMask);
 
             // restore default blend func
             g_graphics.bindBlendFunc(Fw::BlendDefault);
@@ -137,55 +130,55 @@ void Creature::walk(const Position& position, bool inverse)
     // set new direction
     if(m_position + Position(0, -1, 0) == position) {
         setDirection(Otc::North);
-        m_walkOffsetY = 32;
+        m_walkOffset.y = 32;
     }
     else if(m_position + Position(1, 0, 0) == position) {
         setDirection(Otc::East);
-        m_walkOffsetX = -32;
+        m_walkOffset.x = -32;
     }
     else if(m_position + Position(0, 1, 0) == position) {
         setDirection(Otc::South);
-        m_walkOffsetY = -32;
+        m_walkOffset.y = -32;
     }
     else if(m_position + Position(-1, 0, 0) == position) {
         setDirection(Otc::West);
-        m_walkOffsetX = 32;
+        m_walkOffset.x = 32;
     }
     else if(m_position + Position(1, -1, 0) == position) {
         setDirection(Otc::NorthEast);
-        m_walkOffsetX = -32;
-        m_walkOffsetY = 32;
+        m_walkOffset.x = -32;
+        m_walkOffset.y = 32;
         walkTimeFactor = 2;
     }
     else if(m_position + Position(1, 1, 0) == position) {
         setDirection(Otc::SouthEast);
-        m_walkOffsetX = -32;
-        m_walkOffsetY = -32;
+        m_walkOffset.x = -32;
+        m_walkOffset.y = -32;
         walkTimeFactor = 2;
     }
     else if(m_position + Position(-1, 1, 0) == position) {
         setDirection(Otc::SouthWest);
-        m_walkOffsetX = 32;
-        m_walkOffsetY = -32;
+        m_walkOffset.x = 32;
+        m_walkOffset.y = -32;
         walkTimeFactor = 2;
     }
     else if(m_position + Position(-1, -1, 0) == position) {
         setDirection(Otc::NorthWest);
-        m_walkOffsetX = 32;
-        m_walkOffsetY = 32;
+        m_walkOffset.x = 32;
+        m_walkOffset.y = 32;
         walkTimeFactor = 2;
     }
     else { // Teleport
         // we teleported, dont walk or change direction
         m_walking = false;
-        m_walkOffsetX = 0;
-        m_walkOffsetY = 0;
+        m_walkOffset.x = 0;
+        m_walkOffset.y = 0;
         m_animation = 0;
     }
 
     if(!m_inverseWalking) {
-        m_walkOffsetX = 0;
-        m_walkOffsetY = 0;
+        m_walkOffset.x = 0;
+        m_walkOffset.y = 0;
     }
 
     if(m_walking) {
@@ -215,28 +208,28 @@ void Creature::updateWalk()
 
         if(m_inverseWalking) {
             if(m_direction == Otc::North || m_direction == Otc::NorthEast || m_direction == Otc::NorthWest)
-                m_walkOffsetY = 32 - totalPixelsWalked;
+                m_walkOffset.y = 32 - totalPixelsWalked;
             else if(m_direction == Otc::South || m_direction == Otc::SouthEast || m_direction == Otc::SouthWest)
-                m_walkOffsetY = totalPixelsWalked - 32;
+                m_walkOffset.y = totalPixelsWalked - 32;
 
             if(m_direction == Otc::East || m_direction == Otc::NorthEast || m_direction == Otc::SouthEast)
-                m_walkOffsetX = totalPixelsWalked - 32;
+                m_walkOffset.x = totalPixelsWalked - 32;
             else if(m_direction == Otc::West || m_direction == Otc::NorthWest || m_direction == Otc::SouthWest)
-                m_walkOffsetX = 32 - totalPixelsWalked;
+                m_walkOffset.x = 32 - totalPixelsWalked;
 
-            if(m_walkOffsetX == 0 && m_walkOffsetY == 0)
+            if(m_walkOffset.x == 0 && m_walkOffset.y == 0)
                 cancelWalk(m_direction);
         }
         else {
             if(m_direction == Otc::North || m_direction == Otc::NorthEast || m_direction == Otc::NorthWest)
-                m_walkOffsetY = -totalPixelsWalked;
+                m_walkOffset.y = -totalPixelsWalked;
             else if(m_direction == Otc::South || m_direction == Otc::SouthEast || m_direction == Otc::SouthWest)
-                m_walkOffsetY = totalPixelsWalked;
+                m_walkOffset.y = totalPixelsWalked;
 
             if(m_direction == Otc::East || m_direction == Otc::NorthEast || m_direction == Otc::SouthEast)
-                m_walkOffsetX = totalPixelsWalked;
+                m_walkOffset.x = totalPixelsWalked;
             else if(m_direction == Otc::West || m_direction == Otc::NorthWest || m_direction == Otc::SouthWest)
-                m_walkOffsetX = -totalPixelsWalked;
+                m_walkOffset.x = -totalPixelsWalked;
         }
 
         int totalWalkTileTicks = (int)m_walkTimePerPixel*32 * 0.5;
@@ -252,8 +245,8 @@ void Creature::cancelWalk(Otc::Direction direction)
 {
     m_walking = false;
     m_walkStartTicks = 0;
-    m_walkOffsetX = 0;
-    m_walkOffsetY = 0;
+    m_walkOffset.x = 0;
+    m_walkOffset.y = 0;
     m_direction = direction;
 
     auto self = asCreature();

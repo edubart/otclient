@@ -42,7 +42,7 @@ public:
     Creature();
     virtual ~Creature() { }
 
-    virtual void draw(int x, int y);
+    virtual void draw(const Point& p);
     void drawInformation(int x, int y, bool useGray, const Rect& rect);
 
     void setName(const std::string& name) { m_name = name; }
@@ -73,8 +73,7 @@ public:
 
     virtual void walk(const Position& position, bool inverse = true);
     virtual void cancelWalk(Otc::Direction direction);
-    int getWalkOffsetX() { return m_walkOffsetX; }
-    int getWalkOffsetY() { return m_walkOffsetY; }
+    Point getWalkOffset() { return m_walkOffset; }
 
     bool isWalking() { return m_walking; }
 
@@ -101,7 +100,7 @@ protected:
     bool m_walking, m_inverseWalking;
     float m_walkTimePerPixel;
     Position m_walkingFromPosition;
-    int m_walkOffsetX, m_walkOffsetY;
+    Point m_walkOffset;
 };
 
 #endif

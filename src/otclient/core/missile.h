@@ -20,32 +20,35 @@
  * THE SOFTWARE.
  */
 
-#ifndef EFFECT_H
-#define EFFECT_H
+#ifndef SHOT_H
+#define SHOT_H
 
 #include <framework/global.h>
 #include "thing.h"
 
-class Effect : public Thing
+class Missile : public Thing
 {
     enum {
         TICKS_PER_FRAME = 75
     };
 
 public:
-    Effect();
+    Missile();
 
     void draw(const Point& p);
 
-    void startAnimation();
     void updateAnimation();
+
+    void setPath(const Position& fromPosition, const Position& toPosition);
 
     const ThingType& getType();
 
-    EffectPtr asEffect() { return std::static_pointer_cast<Effect>(shared_from_this()); }
+    MissilePtr asMissile() { return std::static_pointer_cast<Missile>(shared_from_this()); }
 
 private:
-    int m_animationStartTicks;
+    int m_startTicks;
+    Position m_positionDelta;
+    float m_duration;
 };
 
 #endif

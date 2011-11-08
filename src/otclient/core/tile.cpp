@@ -44,7 +44,7 @@ void Tile::draw(const Point& p)
         const ThingType& type = thing->getType();
         if(!type.isGround && !type.isGroundClip && !type.isOnBottom)
             break;
-        thing->draw(p.x - m_drawElevation, p.y - m_drawElevation);
+        thing->draw(p - m_drawElevation);
         m_drawElevation += type.elevation;
         if(m_drawElevation > MAX_DRAW_ELEVATION)
             m_drawElevation = MAX_DRAW_ELEVATION;
@@ -56,7 +56,7 @@ void Tile::draw(const Point& p)
         const ThingType& type = thing->getType();
         if(thing->asCreature() || type.isOnTop || type.isOnBottom || type.isGroundClip || type.isGround)
             break;
-        thing->draw(p.x - m_drawElevation, p.y - m_drawElevation);
+        thing->draw(p - m_drawElevation);
         m_drawElevation += type.elevation;
         if(m_drawElevation > MAX_DRAW_ELEVATION)
             m_drawElevation = MAX_DRAW_ELEVATION;
@@ -68,12 +68,12 @@ void Tile::draw(const Point& p)
         for(int yi = -1; yi <= 1; ++yi) {
             for(CreaturePtr creature : g_map.getTile(m_position + Position(xi, yi, 0))->getCreatures()) {
                 auto& type = creature->getType();
-                Rect creatureRect(p.x + xi*32 + creature->getWalkOffsetX() - type.xDisplacement, p.y + yi*32 + creature->getWalkOffsetY() - type.yDisplacement, 32, 32);
+                Rect creatureRect(p.x + xi*32 + creature->getWalkOffset().x - type.xDisplacement, p.y + yi*32 + creature->getWalkOffset().y - type.yDisplacement, 32, 32);
                 Rect thisTileRect(p.x, p.y, 32, 32);
 
                 // only render creatures where bottom right is inside our rect
                 if(thisTileRect.contains(creatureRect.bottomRight())) {
-                    creature->draw(p.x + xi*32 - m_drawElevation, p.y + yi*32 - m_drawElevation);
+                    creature->draw(Point(p.x + xi*32 - m_drawElevation, p.y + yi*32 - m_drawElevation));
                 }
             }
         }
@@ -81,13 +81,13 @@ void Tile::draw(const Point& p)
 
     // effects
     for(const EffectPtr& effect : m_effects)
-        effect->draw(p.x - m_drawElevation, p.y - m_drawElevation);
+        effect->draw(p - m_drawElevation);
 
     // top items
     for(const ThingPtr& thing : m_things) {
         const ThingType& type = thing->getType();
         if(type.isOnTop)
-            thing->draw(p.x, p.y);
+            thing->draw(p);
     }
 }
 

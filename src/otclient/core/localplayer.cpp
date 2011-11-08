@@ -43,18 +43,17 @@ void LocalPlayer::walk(const Position& position, bool inverse)
 {
     if(m_clientWalking) {
         Position pos = Position::getPositionFromDirection(m_direction);
-        int walkOffsetX = m_walkOffsetX - pos.x * 32;
-        int walkOffsetY = m_walkOffsetY - pos.y * 32;
+        Point walkOffset = Point(m_walkOffset.x - pos.x * 32,
+                                 m_walkOffset.y - pos.y * 32);
 
         Creature::walk(position, inverse);
 
-        m_walkOffsetX = walkOffsetX;
-        m_walkOffsetY = walkOffsetY;
+        m_walkOffset = walkOffset;
         m_clientWalking = false;
     }
     else {
-        m_walkOffsetX = 0;
-        m_walkOffsetY = 0;
+        m_walkOffset.x = 0;
+        m_walkOffset.y = 0;
         Creature::walk(position, inverse);
     }
 }

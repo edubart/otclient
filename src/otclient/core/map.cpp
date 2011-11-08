@@ -25,6 +25,7 @@
 #include "localplayer.h"
 #include "tile.h"
 #include "item.h"
+#include "missile.h"
 #include <framework/graphics/graphics.h>
 #include <framework/graphics/framebuffer.h>
 
@@ -40,8 +41,7 @@ void Map::draw(const Rect& rect)
 
     // draw offsets
     LocalPlayerPtr localPlayer = g_game.getLocalPlayer();
-    int walkOffsetX = localPlayer->getWalkOffsetX();
-    int walkOffsetY = localPlayer->getWalkOffsetY();
+    Point walkOffset = localPlayer->getWalkOffset();
 
     //TODO: cache first/last visible floor
     // draw from bottom floors to top floors
@@ -62,9 +62,15 @@ void Map::draw(const Rect& rect)
                     // skip tiles that are behind another tile
                     //if(isCompletlyCovered(tilePos, firstFloor))
                     //    continue;
-                    tile->draw(tilePos.to2D(m_centralPosition) - Point(walkOffsetX, walkOffsetY));
+                    tile->draw(tilePos.to2D(m_centralPosition) - walkOffset);
                 }
             }
+        }
+
+        // after drawing all tiles, draw shots
+        for(const MissilePtr& shot : m_missilesAtFloor[iz]) {
+            Position missilePos = shot->getPosition();
+            shot->draw(missilePos.to2D(m_centralPosition) - walkOffset);
         }
     }
 
@@ -89,15 +95,14 @@ void Map::draw(const Rect& rect)
                     continue;
 
                 for(const CreaturePtr& creature : creatures) {
-                    int x = (7 + (tilePos.x - m_centralPosition.x))*NUM_TILE_PIXELS + 10 - tile->getDrawElevation();
-                    int y = (5 + (tilePos.y - m_centralPosition.y))*NUM_TILE_PIXELS - 10 - tile->getDrawElevation();
+                    Point p((7 + (tilePos.x - m_centralPosition.x))*NUM_TILE_PIXELS + 10 - tile->getDrawElevation(),
+                            (5 + (tilePos.y - m_centralPosition.y))*NUM_TILE_PIXELS - 10 - tile->getDrawElevation());
 
                     if(creature != localPlayer) {
-                        x += creature->getWalkOffsetX() - walkOffsetX;
-                        y += creature->getWalkOffsetY() - walkOffsetY;
+                        p += creature->getWalkOffset() - walkOffset;
                     }
 
-                    creature->drawInformation(rect.x() + x*horizontalStretchFactor, rect.y() + y*verticalStretchFactor, isCovered(tilePos, firstFloor), rect);
+                    creature->drawInformation(rect.x() + p.x*horizontalStretchFactor, rect.y() + p.y*verticalStretchFactor, isCovered(tilePos, firstFloor), rect);
                 }
             }
         }
@@ -196,6 +201,11 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
     if(!thing)
         return;
 
+    if(MissilePtr shot = thing->asMissile()) {
+        m_missilesAtFloor[shot->getPosition().z].push_back(shot);
+        return;
+    }
+
     TilePtr tile = getTile(pos);
     tile->addThing(thing, stackPos);
 
@@ -220,6 +230,17 @@ void Map::removeThing(const ThingPtr& thing)
 {
     if(!thing)
         return;
+
+    if(MissilePtr shot = thing->asMissile()) {
+        m_missilesAtFloor[shot->getPosition().z];
+        for(auto it = m_missilesAtFloor[shot->getPosition().z].begin(), end = m_missilesAtFloor[shot->getPosition().z].end(); it != end; ++it) {
+            if(shot == *it) {
+                m_missilesAtFloor[shot->getPosition().z].erase(it);
+                break;
+            }
+        }
+        return;
+    }
 
     if(TilePtr& tile = m_tiles[thing->getPosition()])
         tile->removeThing(thing);

@@ -39,7 +39,7 @@ public:
     Thing();
     virtual ~Thing() { }
 
-    virtual void draw(int x, int y) = 0;
+    virtual void draw(const Point& p) = 0;
 
     void setId(uint32 id);
     void setPosition(const Position& position);
@@ -57,11 +57,12 @@ public:
     virtual ItemPtr asItem() { return nullptr; }
     virtual CreaturePtr asCreature() { return nullptr; }
     virtual EffectPtr asEffect() { return nullptr; }
+    virtual MissilePtr asMissile() { return nullptr; }
     virtual PlayerPtr asPlayer() { return nullptr; }
     virtual LocalPlayerPtr asLocalPlayer() { return nullptr; }
 
 protected:
-    void internalDraw(int x, int y, int layers, Otc::SpriteMask mask = Otc::SpriteNoMask);
+    void internalDraw(const Point& p, int layers, Otc::SpriteMask mask = Otc::SpriteNoMask);
 
     uint32 m_id;
     Position m_position;

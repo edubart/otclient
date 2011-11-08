@@ -28,6 +28,7 @@
 #include <otclient/core/map.h>
 #include <otclient/core/item.h>
 #include <otclient/core/effect.h>
+#include <otclient/core/missile.h>
 #include <otclient/core/tile.h>
 #include <framework/core/eventdispatcher.h>
 
@@ -531,9 +532,14 @@ void ProtocolGame::parseAnimatedText(InputMessage& msg)
 
 void ProtocolGame::parseDistanceShot(InputMessage& msg)
 {
-    parsePosition(msg); // fromPos
-    parsePosition(msg); // toPos
-    msg.getU8(); // effect
+    Position fromPos = parsePosition(msg);
+    Position toPos = parsePosition(msg);
+    int shotId = msg.getU8();
+
+    MissilePtr shot = MissilePtr(new Missile());
+    shot->setId(shotId);
+    shot->setPath(fromPos, toPos);
+    g_map.addThing(shot, fromPos);
 }
 
 void ProtocolGame::parseCreatureSquare(InputMessage& msg)
@@ -1052,7 +1058,7 @@ ItemPtr ProtocolGame::internalGetItem(InputMessage& msg, uint16 id)
 
     const ThingType& itemType = g_thingsType.getItemType(id);
     if(itemType.isStackable || itemType.isFluidContainer || itemType.isSplash)
-        item->setCount(msg.getU8());
+        item->setData(msg.getU8());
 
     return item;
 }

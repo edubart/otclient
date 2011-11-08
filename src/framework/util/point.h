@@ -34,26 +34,31 @@ template<class T>
 class TPoint
 {
 public:
-    TPoint() : x(0), y(0) {};
-    TPoint(T x, T y) : x(x), y(y) { };
-    TPoint(const TPoint<T>& other) : x(other.x), y(other.y) { };
+    TPoint() : x(0), y(0) {}
+    TPoint(T x, T y) : x(x), y(y) { }
+    TPoint(const TPoint<T>& other) : x(other.x), y(other.y) { }
 
     bool isNull() const { return x==0 && y==0; }
     TSize<T> toSize() const { return TSize<T>(x, y); }
 
     TPoint<T> operator-() const { return TPoint<T>(-x, -y); }
-    TPoint<T> operator+(const TPoint<T>& other) const { return TPoint<T>(x + other.x, y + other.y);   }
+    TPoint<T> operator+(const TPoint<T>& other) const { return TPoint<T>(x + other.x, y + other.y); }
     TPoint<T>& operator+=(const TPoint<T>& other) { x+=other.x; y+=other.y; return *this; }
-    TPoint<T> operator-(const TPoint<T>& other) const { return TPoint<T>(x - other.x, y - other.y);   }
+    TPoint<T> operator-(const TPoint<T>& other) const { return TPoint<T>(x - other.x, y - other.y); }
     TPoint<T>& operator-=(const TPoint<T>& other) { x-=other.x; y-=other.y; return *this; }
-    TPoint<T> operator*(const TPoint<T>& other) const { return TPoint<T>(x * other.x, y * other.y);   }
+    TPoint<T> operator*(const TPoint<T>& other) const { return TPoint<T>(x * other.x, y * other.y); }
     TPoint<T>& operator*=(const TPoint<T>& other) { x*=other.x; y*=other.y; return *this; }
     TPoint<T> operator*(const T v) const { return TPoint<T>(x * v, y * v);  }
     TPoint<T>& operator*=(const T v) { x*=v; y*=v; return *this; }
-    TPoint<T> operator/(const TPoint<T>& other) const { return TPoint<T>(x/other.x, y/other.y);   }
+    TPoint<T> operator/(const TPoint<T>& other) const { return TPoint<T>(x/other.x, y/other.y); }
     TPoint<T>& operator/=(const TPoint<T>& other)   { x/=other.x; y/=other.y; return *this; }
-    TPoint<T> operator/(const T v) const { return TPoint<T>(x/v, y/v);  }
+    TPoint<T> operator/(const T v) const { return TPoint<T>(x/v, y/v); }
     TPoint<T>& operator/=(const T v) { x/=v; y/=v; return *this; }
+
+    TPoint<T> operator+(T other) const { return TPoint<T>(x + other, y + other); }
+    TPoint<T>& operator+=(T other) { x+=other; y+=other; return *this; }
+    TPoint<T> operator-(T other) const { return TPoint<T>(x - other, y - other); }
+    TPoint<T>& operator-=(T other) { x-=other; y-=other; return *this; }
 
     bool operator<=(const TPoint<T>&other) const { return x<=other.x && y<=other.y; }
     bool operator>=(const TPoint<T>&other) const { return x>=other.x && y>=other.y; }
