@@ -232,12 +232,9 @@ void Map::removeThing(const ThingPtr& thing)
         return;
 
     if(MissilePtr shot = thing->asMissile()) {
-        m_missilesAtFloor[shot->getPosition().z];
-        for(auto it = m_missilesAtFloor[shot->getPosition().z].begin(), end = m_missilesAtFloor[shot->getPosition().z].end(); it != end; ++it) {
-            if(shot == *it) {
-                m_missilesAtFloor[shot->getPosition().z].erase(it);
-                break;
-            }
+        auto it = std::find(m_missilesAtFloor[shot->getPosition().z].begin(), m_missilesAtFloor[shot->getPosition().z].end(), shot);
+        if(it != m_missilesAtFloor[shot->getPosition().z].end()) {
+            m_missilesAtFloor[shot->getPosition().z].erase(it);
         }
         return;
     }

@@ -69,7 +69,7 @@ public:
 private:
     std::unordered_map<Position, TilePtr, PositionHasher> m_tiles;
     std::map<uint32, CreaturePtr> m_creatures;
-    std::map<int, std::vector<MissilePtr> > m_missilesAtFloor;
+    std::array<std::vector<MissilePtr>, MAX_Z> m_missilesAtFloor;
 
     Light m_light;
     Position m_centralPosition;
