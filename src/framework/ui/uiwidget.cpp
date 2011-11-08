@@ -351,9 +351,13 @@ void UIWidget::addChild(const UIWidgetPtr& child)
     m_children.push_back(child);
     child->setParent(asUIWidget());
 
-    // always focus new child
-    if(child->isFocusable() && child->isExplicitlyVisible() && child->isExplicitlyEnabled())
-        focusChild(child, Fw::ActiveFocusReason);
+    // focus must be set after the style has been loaded
+    auto self = asUIWidget();
+    g_dispatcher.addEvent([=]() {
+        // always focus new child
+        if(child->isFocusable() && child->isExplicitlyVisible() && child->isExplicitlyEnabled())
+            self->focusChild(child, Fw::ActiveFocusReason);
+    });
 
     // create default layout
     if(!m_layout)
