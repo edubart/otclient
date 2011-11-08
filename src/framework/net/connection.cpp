@@ -149,6 +149,11 @@ void Connection::onConnect(const boost::system::error_code& error)
 
     if(!error) {
         m_connected = true;
+
+        // disable nagle's algorithm
+        boost::asio::ip::tcp::no_delay option(true);
+        m_socket.set_option(option);
+
         if(m_connectCallback)
             g_dispatcher.addEvent(m_connectCallback);
     } else
