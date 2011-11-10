@@ -158,6 +158,17 @@ void ProtocolGame::sendTurnWest()
     send(oMsg);
 }
 
+void ProtocolGame::sendUseItem(const Position& position, int itemId, int stackpos, int index)
+{
+    OutputMessage oMsg;
+    oMsg.addU8(Otc::ClientUseObject);
+    addPosition(oMsg, position);
+    oMsg.addU16(itemId);
+    oMsg.addU8(stackpos);
+    oMsg.addU8(index);
+    send(oMsg);
+}
+
 void ProtocolGame::sendTalk(int channelType, int channelId, const std::string& receiver, const std::string& message)
 {
     if(message.length() > 255 || message.length() <= 0)
@@ -198,4 +209,11 @@ void ProtocolGame::sendRemoveVip(int id)
     oMsg.addU8(Otc::ClientRemoveBuddy);
     oMsg.addU32(id);
     send(oMsg);
+}
+
+void ProtocolGame::addPosition(OutputMessage& msg, const Position& position)
+{
+    msg.addU16(position.x);
+    msg.addU16(position.y);
+    msg.addU8(position.z);
 }

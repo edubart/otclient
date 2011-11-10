@@ -28,6 +28,7 @@
 
 class Map
 {
+public:
     enum {
         PLAYER_OFFSET_X = 8,
         PLAYER_OFFSET_Y = 6,
@@ -40,7 +41,6 @@ class Map
         NUM_TILE_PIXELS = 32
     };
 
-public:
     void draw(const Rect& rect);
     void clean();
 

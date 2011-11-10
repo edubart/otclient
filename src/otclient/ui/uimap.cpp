@@ -26,6 +26,8 @@
 #include <framework/otml/otml.h>
 #include <framework/graphics/graphics.h>
 #include <framework/ui/uilineedit.h>
+#include <otclient/core/localplayer.h>
+#include <otclient/core/tile.h>
 
 void UIMap::setup()
 {
@@ -141,13 +143,27 @@ void UIMap::onStyleApply(const OTMLNodePtr& styleNode)
 
 bool UIMap::onMousePress(const Point& mousePos, Fw::MouseButton button)
 {
+    if(m_mapRect.contains(mousePos)) {
+        Point relativeStretchMousePos = mousePos - m_mapRect.topLeft();
+        Size mapSize(Map::MAP_VISIBLE_WIDTH * Map::NUM_TILE_PIXELS, Map::MAP_VISIBLE_HEIGHT * Map::NUM_TILE_PIXELS);
+
+        PointF stretchFactor(m_mapRect.width() / (float)mapSize.width(), m_mapRect.height() / (float)mapSize.height());
+        PointF relativeMousePos = PointF(relativeStretchMousePos.x, relativeStretchMousePos.y) / stretchFactor;
+
+        PointF tilePosF = relativeMousePos / Map::NUM_TILE_PIXELS;
+        Position tilePos = Position(1 + (int)tilePosF.x - Map::PLAYER_OFFSET_X, 1 + (int)tilePosF.y - Map::PLAYER_OFFSET_Y, 0) + g_game.getLocalPlayer()->getPosition();
+
+        TilePtr tile = g_map.getTile(tilePos);
+        tile->useItem();
+    }
+
     return UIWidget::onMousePress(mousePos, button);
 }
 
 void UIMap::onGeometryUpdate(const Rect& oldRect, const Rect& newRect)
 {
     Rect mapRect = newRect.expanded(-m_mapMargin-1);
-    Size mapSize(15*32, 11*32);
+    Size mapSize(Map::MAP_VISIBLE_WIDTH * Map::NUM_TILE_PIXELS, Map::MAP_VISIBLE_HEIGHT * Map::NUM_TILE_PIXELS);
     mapSize.scale(mapRect.size(), Fw::KeepAspectRatio);
     m_mapRect.setSize(mapSize);
     m_mapRect.moveCenter(newRect.center());

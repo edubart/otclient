@@ -53,6 +53,8 @@ public:
     bool isFullyOpaque();
     bool isLookPossible();
 
+    void useItem();
+
     TilePtr asTile() { return std::static_pointer_cast<Tile>(shared_from_this()); }
 
 private:

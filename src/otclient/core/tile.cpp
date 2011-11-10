@@ -27,6 +27,7 @@
 #include "game.h"
 #include "localplayer.h"
 #include "effect.h"
+#include <otclient/net/protocolgame.h>
 #include <framework/graphics/fontmanager.h>
 
 Tile::Tile(const Position& position)
@@ -227,4 +228,32 @@ bool Tile::isLookPossible()
             return false;
     }
     return true;
+}
+
+// TODO:
+/*
+  Get menu options
+
+  if invited to party
+  if creature, attack and follow
+  if item, use or use with
+*/
+
+void Tile::useItem()
+{
+    // Get top item of stack priority 2 (do a function to do this later)
+    ThingPtr thing;
+    int lastStackpos = -1;
+    for(int stackPos = 0; stackPos < (int)m_things.size(); ++stackPos) {
+        int otherPriority = m_things[stackPos]->getStackPriority();
+        if(otherPriority == 2) {
+            thing = m_things[stackPos];
+            lastStackpos = stackPos;
+        }
+    }
+
+    if(lastStackpos != -1) {
+        // use this
+        g_game.getProtocolGame()->sendUseItem(m_position, thing->getId(), lastStackpos, 0); // 0 has something to do with container
+    }
 }
