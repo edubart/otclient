@@ -353,7 +353,7 @@ void UIWidget::addChild(const UIWidgetPtr& child)
 
     // focus must be set after the style has been loaded
     auto self = asUIWidget();
-    g_dispatcher.addEvent([=]() {
+    g_dispatcher.addEvent([self,child]() {
         // always focus new child
         if(child->isFocusable() && child->isExplicitlyVisible() && child->isExplicitlyEnabled())
             self->focusChild(child, Fw::ActiveFocusReason);
