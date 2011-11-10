@@ -259,6 +259,19 @@ namespace Otc
         SpriteNoMask = 255
     };
 
+    enum InventorySlots {
+        InventorySlotHead = 1,
+        InventorySlotNecklace,
+        InventorySlotBackpack,
+        InventorySlotArmor,
+        InventorySlotRight,
+        InventorySlotLeft,
+        InventorySlotLegs,
+        InventorySlotFeet,
+        InventorySlotRing,
+        InventorySlotAmmo
+    };
+
     enum Statistic {
         Health,
         MaxHealth,

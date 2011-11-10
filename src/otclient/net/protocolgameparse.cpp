@@ -452,13 +452,15 @@ void ProtocolGame::parseContainerRemoveItem(InputMessage& msg)
 
 void ProtocolGame::parseAddInventoryItem(InputMessage& msg)
 {
-    msg.getU8(); // slot
-    internalGetItem(msg, 0xFFFF);
+    uint8 slot = msg.getU8();
+    ItemPtr item = internalGetItem(msg, 0xFFFF);
+    g_game.processInventoryChange(slot, item);
 }
 
 void ProtocolGame::parseRemoveInventoryItem(InputMessage& msg)
 {
-    msg.getU8(); // slot
+    uint8 slot = msg.getU8();
+    g_game.processInventoryChange(slot, ItemPtr(nullptr));
 }
 
 void ProtocolGame::parseOpenShopWindow(InputMessage& msg)

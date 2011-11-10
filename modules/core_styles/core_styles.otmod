@@ -13,5 +13,6 @@ Module
     importStyles 'styles/lineedits.otui'
     importStyles 'styles/windows.otui'
     importStyles 'styles/listboxes.otui'
+    importStyles 'styles/items.otui'
     return true
 

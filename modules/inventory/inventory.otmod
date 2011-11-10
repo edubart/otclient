@@ -1,0 +1,14 @@
+Module
+  name: equipments
+  description: View local player equipments window
+  author: OTClient team
+  website: https://github.com/edubart/otclient
+  autoLoad: true
+  dependencies:
+    - game
+
+  onLoad: |
+    require 'inventory'
+    return true
+
+

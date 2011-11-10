@@ -19,7 +19,7 @@ MiniWindow < UIWindow
   size: 192 200
   head height: 25
   head text align: center
-  margin.top: 6
+  margin.top: 10
   margin.left: 6
   margin.right: 6
   move policy: free updated

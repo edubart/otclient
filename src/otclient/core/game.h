@@ -25,6 +25,7 @@
 
 #include "declarations.h"
 #include <otclient/net/declarations.h>
+#include <otclient/core/item.h>
 
 class Game
 {
@@ -45,6 +46,7 @@ public:
     void processLogout();
 
     void processTextMessage(int type, const std::string& message);
+    void processInventoryChange(int slot, const ItemPtr& item);
 
     void walk(Otc::Direction direction);
     void turn(Otc::Direction direction);

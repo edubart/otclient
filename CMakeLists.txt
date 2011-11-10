@@ -72,6 +72,7 @@ SET(SOURCES
     src/otclient/core/localplayer.cpp
 
     # otclient ui
+    src/otclient/ui/uiitem.cpp
     src/otclient/ui/uimap.cpp
 
     # otclient net

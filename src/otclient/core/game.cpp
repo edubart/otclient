@@ -23,6 +23,7 @@
 #include "game.h"
 #include "localplayer.h"
 #include <otclient/net/protocolgame.h>
+#include <framework/core/eventdispatcher.h>
 
 Game g_game;
 
@@ -102,6 +103,13 @@ void Game::processTextMessage(int type, const std::string& message)
     g_lua.callGlobalField("Game","onTextMessage", type, message);
 }
 
+void Game::processInventoryChange(int slot, const ItemPtr& item)
+{
+    g_dispatcher.addEvent([=] {
+        g_lua.callGlobalField("Game","onInventoryChange", slot, item);
+    });
+}
+
 void Game::walk(Otc::Direction direction)
 {
     if(!m_online || !m_localPlayer->canWalk(direction))
@@ -157,9 +165,6 @@ void Game::turn(Otc::Direction direction)
         break;
     }
 }
-
-// Game.talkChannel(1, 0, "lalala")
-// TODO: MAKE SURE IT WAS AN USER EVENT AND NOT DIRECTLY FROM SCRIPT.
 
 void Game::talkChannel(int channelType, int channelId, const std::string& message)
 {
