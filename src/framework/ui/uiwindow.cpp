@@ -129,8 +129,6 @@ bool UIWindow::onMouseRelease(const Point& mousePos, Fw::MouseButton button)
 {
     if(m_moving) {
         m_moving = false;
-        if(m_movePolicy == FREE_UPDATED_MOVE)
-            updateParentLayout();
         return true;
     }
     return UIWidget::onMouseRelease(mousePos, button);
@@ -140,6 +138,8 @@ bool UIWindow::onMouseMove(const Point& mousePos, const Point& mouseMoved)
 {
     if(m_moving) {
         moveTo(mousePos - m_movingReference);
+        if(m_movePolicy == FREE_UPDATED_MOVE)
+            updateParentLayout();
         return true;
     }
     return UIWidget::onMouseMove(mousePos, mouseMoved);
