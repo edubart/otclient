@@ -32,6 +32,7 @@ void UIWindow::setup()
     m_moving = false;
     m_movePolicy = DONT_MOVE;
     m_headHeight = 0;
+    m_oldIndex = -1;
     m_titleAlign = Fw::AlignCenter;
 }
 
@@ -103,15 +104,6 @@ void UIWindow::onGeometryUpdate(const Rect& oldRect, const Rect& newRect)
         setRect(boundRect);
 }
 
-void UIWindow::onFocusChange(bool focused, Fw::FocusReason reason)
-{
-    // when a window is focused it goes to the top
-    if(focused) {
-        if(UIWidgetPtr parent = getParent())
-            parent->moveChildToTop(asUIWidget());
-    }
-}
-
 bool UIWindow::onMousePress(const Point& mousePos, Fw::MouseButton button)
 {
     if(m_movePolicy != DONT_MOVE) {
@@ -120,6 +112,9 @@ bool UIWindow::onMousePress(const Point& mousePos, Fw::MouseButton button)
         if(!clickedChild || clickedChild->isPhantom()) {
             m_moving = true;
             m_movingReference = mousePos - getRect().topLeft();
+            m_oldIndex = getParent()->getChildIndex(asUIWidget());
+            m_oldPos = getPosition();
+            getParent()->moveChildToTop(asUIWidget());
         }
     }
     return UIWidget::onMousePress(mousePos, button);
@@ -128,6 +123,25 @@ bool UIWindow::onMousePress(const Point& mousePos, Fw::MouseButton button)
 bool UIWindow::onMouseRelease(const Point& mousePos, Fw::MouseButton button)
 {
     if(m_moving) {
+        if(m_movePolicy == FREE_UPDATED_MOVE) {
+            UIWidgetPtr parent = getParent();
+
+            // restore position before move
+            parent->moveChildToIndex(asUIWidget(), m_oldIndex);
+            moveTo(m_oldPos);
+
+            // calculate new index
+            int newIndex;
+            for(newIndex=parent->getChildCount();newIndex>1;--newIndex) {
+                UIWidgetPtr child = parent->getChildByIndex(newIndex);
+                if(mousePos.y >= child->getRect().top())
+                    break;
+            }
+
+            // set the new index
+            parent->moveChildToIndex(asUIWidget(), newIndex);
+            updateParentLayout();
+        }
         m_moving = false;
         return true;
     }
@@ -138,8 +152,6 @@ bool UIWindow::onMouseMove(const Point& mousePos, const Point& mouseMoved)
 {
     if(m_moving) {
         moveTo(mousePos - m_movingReference);
-        if(m_movePolicy == FREE_UPDATED_MOVE)
-            updateParentLayout();
         return true;
     }
     return UIWidget::onMouseMove(mousePos, mouseMoved);

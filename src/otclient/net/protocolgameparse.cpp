@@ -46,7 +46,7 @@ void ProtocolGame::parseMessage(InputMessage& msg)
                 parseGMActions(msg);
                 break;
             case Otc::GameServerLoginError:
-                parseErrorMessage(msg);
+                parseLoginError(msg);
                 break;
             case Otc::GameServerLoginAdvice:
                 parseFYIMessage(msg);
@@ -274,10 +274,10 @@ void ProtocolGame::parseGMActions(InputMessage& msg)
         msg.getU8();
 }
 
-void ProtocolGame::parseErrorMessage(InputMessage& msg)
+void ProtocolGame::parseLoginError(InputMessage& msg)
 {
     std::string error = msg.getString();
-    g_game.processLoginError(error);
+    g_dispatcher.addEvent(std::bind(&Game::processLoginError, &g_game, error));
 }
 
 void ProtocolGame::parseFYIMessage(InputMessage& msg)
@@ -454,13 +454,13 @@ void ProtocolGame::parseAddInventoryItem(InputMessage& msg)
 {
     uint8 slot = msg.getU8();
     ItemPtr item = internalGetItem(msg, 0xFFFF);
-    g_game.processInventoryChange(slot, item);
+    g_dispatcher.addEvent(std::bind(&Game::processInventoryChange, &g_game, slot, item));
 }
 
 void ProtocolGame::parseRemoveInventoryItem(InputMessage& msg)
 {
     uint8 slot = msg.getU8();
-    g_game.processInventoryChange(slot, ItemPtr(nullptr));
+    g_dispatcher.addEvent(std::bind(&Game::processInventoryChange, &g_game, slot, ItemPtr()));
 }
 
 void ProtocolGame::parseOpenShopWindow(InputMessage& msg)
@@ -771,7 +771,6 @@ void ProtocolGame::parseTextMessage(InputMessage& msg)
     uint8 type = msg.getU8();
     std::string message = msg.getString();
 
-    // must be scheduled because the map may not exist yet
     g_dispatcher.addEvent(std::bind(&Game::processTextMessage, &g_game, type, message));
 }
 

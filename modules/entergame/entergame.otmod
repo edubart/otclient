@@ -3,12 +3,6 @@ Module
   description: Manages enter game and character list windows
   author: OTClient team
   website: https://github.com/edubart/otclient
-  autoLoad: true
-  dependencies:
-    - core
-    - topmenu
-    - background
-
   onLoad: |
     require 'entergame'
     require 'characterlist'

@@ -67,7 +67,7 @@ private:
 
     void parsePlayerLogin(InputMessage& msg);
     void parseGMActions(InputMessage& msg);
-    void parseErrorMessage(InputMessage& msg);
+    void parseLoginError(InputMessage& msg);
     void parseFYIMessage(InputMessage& msg);
     void parseWaitList(InputMessage& msg);
     void parsePing(InputMessage&);

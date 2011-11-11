@@ -49,6 +49,7 @@ void LuaInterface::registerFunctions()
     g_lua.bindClassMemberFunction<UIWidget>("setSize", &UIWidget::resize);
     g_lua.bindClassMemberFunction<UIWidget>("getPosition", &UIWidget::getPosition);
     g_lua.bindClassMemberFunction<UIWidget>("moveTo", &UIWidget::moveTo);
+    g_lua.bindClassMemberFunction<UIWidget>("moveChildToIndex", &UIWidget::moveChildToIndex);
     g_lua.bindClassMemberFunction<UIWidget>("getParent", &UIWidget::getParent);
     g_lua.bindClassMemberFunction<UIWidget>("setParent", &UIWidget::setParent);
     g_lua.bindClassMemberFunction<UIWidget>("getBackgroundColor", &UIWidget::getBackgroundColor);

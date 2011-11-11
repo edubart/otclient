@@ -6,6 +6,7 @@ Window < UIWindow
   head height: 20
   head text align: center
   move policy: free
+  stackable: true
   border-image:
     source: /core_styles/images/window.png
     border: 4

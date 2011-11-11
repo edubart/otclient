@@ -28,6 +28,7 @@
 namespace Otc
 {
     static const char* AppName = "OTClient";
+    static const char* AppPathName = "otclient";
     static const char* AppVersion = "0.4.0";
 
     static const char* CipsoftPublicRSA = "1321277432058722840622950990822933849527763264961655079678763618"

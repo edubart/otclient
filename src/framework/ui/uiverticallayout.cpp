@@ -28,6 +28,7 @@ UIVerticalLayout::UIVerticalLayout(UIWidgetPtr parentWidget)
     : UILayout(parentWidget)
 {
     m_alignBottom = false;
+    m_padding = 0;
 }
 
 void UIVerticalLayout::applyStyle(const OTMLNodePtr& styleNode)
@@ -37,6 +38,8 @@ void UIVerticalLayout::applyStyle(const OTMLNodePtr& styleNode)
     for(const OTMLNodePtr& node : styleNode->children()) {
         if(node->tag() == "align bottom")
             m_alignBottom = node->value<bool>();
+        else if(node->tag() == "padding")
+            m_padding = node->value<int>();
     }
 }
 
@@ -44,12 +47,6 @@ void UIVerticalLayout::update()
 {
     UIWidgetPtr parentWidget = getParentWidget();
     UIWidgetList widgets = parentWidget->getChildren();
-
-    // sort by Y pos
-    std::sort(widgets.begin(), widgets.end(),
-    [](const UIWidgetPtr& first, const UIWidgetPtr& second) -> bool {
-        return first->getY() < second->getY();
-    });
 
     if(m_alignBottom)
         std::reverse(widgets.begin(), widgets.end());
@@ -68,13 +65,12 @@ void UIVerticalLayout::update()
         }
         widget->setRect(Rect(pos, size));
         pos.y += (m_alignBottom) ? -widget->getMarginTop() : (widget->getHeight() + widget->getMarginBottom());
+        pos.y += m_padding;
     }
 }
 
 void UIVerticalLayout::addWidget(const UIWidgetPtr& widget)
 {
-    // needed to be correctly sorted on the following update
-    widget->setY(9999);
     update();
 }
 

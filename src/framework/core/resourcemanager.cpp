@@ -29,7 +29,7 @@
 
 ResourceManager g_resources;
 
-void ResourceManager::init(const char* argv0)
+void ResourceManager::init(const char* argv0, const char *appName)
 {
     PHYSFS_init(argv0);
 
@@ -39,11 +39,12 @@ void ResourceManager::init(const char* argv0)
     std::string possibleDirs[] = { "modules",
                                    baseDir + "modules",
                                    baseDir + "../modules",
-                                   baseDir + "../share/otclient/modules",
+                                   baseDir + "../share/" + appName + "/otclient/modules",
                                    "" };
 
     bool found = false;
     for(const std::string& dir : possibleDirs) {
+        dump << dir;
         if(g_resources.addToSearchPath(dir)) {
             logInfo("Using modules directory '", dir.c_str(), "'");
             found = true;

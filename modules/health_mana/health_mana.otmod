@@ -3,10 +3,6 @@ Module
   description: Displays health and mana points
   author: OTClient team
   website: https://github.com/edubart/otclient
-  autoLoad: true
-  dependencies:
-    - game
-
   onLoad: |
     require 'health_mana'
     return true

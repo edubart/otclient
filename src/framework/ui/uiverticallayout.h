@@ -37,6 +37,7 @@ public:
 
 private:
     bool m_alignBottom;
+    int m_padding;
 };
 
 #endif

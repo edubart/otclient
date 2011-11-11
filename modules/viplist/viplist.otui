@@ -8,6 +8,7 @@ MiniWindow
 
   TextList
     id: vipList
+    border-image: ~
     anchors.fill: parent
     margin.top: 26
     margin.bottom: 6

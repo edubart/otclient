@@ -28,7 +28,7 @@
 class ResourceManager
 {
 public:
-    void init(const char* argv0);
+    void init(const char* argv0, const char *appName);
     void terminate();
 
     /// Set output files directory

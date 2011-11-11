@@ -1,0 +1,17 @@
+Module
+  name: otclient
+  description: Load all other otclient modules
+  author: OTClient team
+  website: https://github.com/edubart/otclient
+  dependencies:
+    - core
+    - background
+    - topmenu
+    - game
+    - health_mana
+    - inventory
+    - skills
+    - viplist
+    - textmessage
+    - chat
+

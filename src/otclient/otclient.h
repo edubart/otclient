@@ -59,14 +59,14 @@ public:
     void setOnClose(const SimpleCallback& onCloseCallback) { m_onCloseCallback = onCloseCallback; }
     SimpleCallback getOnClose() const { return m_onCloseCallback; }
 
+    static void registerLuaFunctions();
+
 private:
     /// Set default configurations and load the user configurations
     void loadConfigurations();
     /// Use the loaded configurations to setup other classes
     void setupConfigurations();
     void saveConfigurations();
-
-    void registerLuaFunctions();
 
     bool m_running;
     bool m_stopping;

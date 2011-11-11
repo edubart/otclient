@@ -3,10 +3,6 @@ Module
   description: Manage game text messages
   author: OTClient team
   website: https://github.com/edubart/otclient
-  autoLoad: true
-  dependencies:
-    - game
-
   onLoad: |
     require 'textmessage'
     return true

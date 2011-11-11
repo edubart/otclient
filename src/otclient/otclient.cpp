@@ -58,7 +58,7 @@ void OTClient::init(std::vector<std::string> args)
     registerLuaFunctions();
 
     // initialize resources
-    g_resources.init(args[0].c_str());
+    g_resources.init(args[0].c_str(), Otc::AppPathName);
 
     // load configurations
     loadConfigurations();
@@ -90,6 +90,7 @@ void OTClient::init(std::vector<std::string> args)
 
     // discover and load modules
     g_modules.discoverAndLoadModules();
+    g_modules.getModule("otclient")->load();
 
     // now that everything is initialized, setup configurations
     setupConfigurations();

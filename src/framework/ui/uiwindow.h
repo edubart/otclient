@@ -43,7 +43,6 @@ public:
 protected:
     virtual void onStyleApply(const OTMLNodePtr& styleNode);
     virtual void onGeometryUpdate(const Rect& oldRect, const Rect& newRect);
-    virtual void onFocusChange(bool focused, Fw::FocusReason reason);
     virtual bool onMousePress(const Point& mousePos, Fw::MouseButton button);
     virtual bool onMouseRelease(const Point& mousePos, Fw::MouseButton button);
     virtual bool onMouseMove(const Point& mousePos, const Point& mouseMoved);
@@ -54,6 +53,8 @@ private:
     bool m_moving;
     MovePolicy m_movePolicy;
     Point m_movingReference;
+    Point m_oldPos;
+    int m_oldIndex;
 
     // styling
     BorderImagePtr m_headImage;

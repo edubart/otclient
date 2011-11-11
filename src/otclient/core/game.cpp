@@ -105,9 +105,7 @@ void Game::processTextMessage(int type, const std::string& message)
 
 void Game::processInventoryChange(int slot, const ItemPtr& item)
 {
-    g_dispatcher.addEvent([slot, item] {
-        g_lua.callGlobalField("Game","onInventoryChange", slot, item);
-    });
+    g_lua.callGlobalField("Game","onInventoryChange", slot, item);
 }
 
 void Game::walk(Otc::Direction direction)

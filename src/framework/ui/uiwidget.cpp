@@ -497,6 +497,18 @@ void UIWidget::moveChildToTop(const UIWidgetPtr& child)
     m_children.push_back(child);
 }
 
+void UIWidget::moveChildToIndex(const UIWidgetPtr& child, int index)
+{
+    if(!child)
+        return;
+
+    // remove and push child again
+    auto it = std::find(m_children.begin(), m_children.end(), child);
+    assert(it != m_children.end());
+    m_children.erase(it);
+    m_children.insert(m_children.begin() + index - 1, child);
+}
+
 void UIWidget::lockChild(const UIWidgetPtr& child)
 {
     if(!child)
@@ -570,6 +582,17 @@ bool UIWidget::isChildLocked(const UIWidgetPtr& child)
 {
     auto it = std::find(m_lockedChildren.begin(), m_lockedChildren.end(), child);
     return it != m_lockedChildren.end();
+}
+
+int UIWidget::getChildIndex(const UIWidgetPtr& child)
+{
+    int index = 1;
+    for(auto it = m_children.begin(); it != m_children.end(); ++it) {
+        if(*it == child)
+            return index;
+        ++index;
+    }
+    return -1;
 }
 
 void UIWidget::updateParentLayout()

@@ -3,14 +3,6 @@ Module
   description: Create the game interface, where the ingame stuff starts
   author: OTClient team
   website: https://github.com/edubart/otclient
-  autoLoad: true
-  dependencies:
-    - core
-    - tibiafiles
-    - topmenu
-    - entergame
-    - background
-
   onLoad: |
     require 'game'
     return true

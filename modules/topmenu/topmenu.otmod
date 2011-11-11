@@ -3,9 +3,11 @@ Module
   description: Create the top menu
   author: OTClient team
   website: https://github.com/edubart/otclient
-  autoLoad: true
   dependencies:
     - core
+    - entergame
+    - options
+    - about
 
   onLoad: |
     require 'topmenu'

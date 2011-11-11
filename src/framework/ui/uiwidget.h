@@ -139,9 +139,11 @@ public:
     void focusNextChild(Fw::FocusReason reason);
     void focusPreviousChild(Fw::FocusReason reason);
     void moveChildToTop(const UIWidgetPtr& child);
+    void moveChildToIndex(const UIWidgetPtr& child, int index);
     void lockChild(const UIWidgetPtr& child);
     void unlockChild(const UIWidgetPtr& child);
     bool isChildLocked(const UIWidgetPtr& child);
+    int getChildIndex(const UIWidgetPtr& child);
 
     void updateParentLayout();
     void updateLayout();
