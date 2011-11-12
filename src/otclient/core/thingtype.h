@@ -27,106 +27,75 @@
 
 struct ThingType
 {
-    ThingType() {
-        layers = 0;
-        width = height = 0;
-        exactSize = 0;
-        xPattern = yPattern = zPattern = 0;
-        animationPhases = 0;
-        xDisplacement = yDisplacement = 0;
-        elevation = 0;
-
-        isGround = false;
-        isGroundClip = false;
-        isOnBottom = false;
-        isOnTop = false;
-        isContainer = false;
-        isStackable = false;
-        isForceUse = false;
-        isMultiUse = false;
-        isWritable = false;
-        isWritableOnce = false;
-        isFluidContainer = false;
-        isSplash = false;
-        isNotWalkable = false;
-        isNotMoveable = false;
-        isUnsight = false;
-        isNotPathable = false;
-        isPickupable = false;
-        isHangable = false;
-        isHookSouth = false;
-        isHookEast = false;
-        isRotable = false;
-        isDontHide = false;
-        isTranslucent = false;
-        isLyingCorpse = false;
-        isAnimatedAlways = false;
-        isLensHelp = false;
-        isFullGround = false;
-        isIgnoreLook = false;
-        isCloth = false;
-        isAnimation = false;
-        hasLight = false;
-        hasMiniMapColor = false;
-
-        groundSpeed = 0;
-        fluidParam = 0;
-        maxTextLength = 0;
-        lightLevel = lightColor = 0;
-        miniMapColor = 0;
-        lensHelp = 0;
-        clothSlot = 0;
-    }
-
-    uint8 layers;
-    uint8 width, height;
-    uint8 exactSize;
-    uint8 xPattern, yPattern, zPattern;
-    uint8 animationPhases;
-    uint16 xDisplacement, yDisplacement;
-    uint16 elevation;
+    enum Dimensions {
+        Width = 0,
+        Height,
+        ExactSize,
+        Layers,
+        PatternX,
+        PatternY,
+        PatternZ,
+        AnimationPhases,
+        LastDimension
+    };
+    std::array<int, LastDimension> dimensions;
     std::vector<int> sprites;
 
-    bool isGround;
-    bool isGroundClip;
-    bool isOnBottom;
-    bool isOnTop;
-    bool isContainer;
-    bool isStackable;
-    bool isForceUse;
-    bool isMultiUse;
-    bool isWritable;
-    bool isWritableOnce;
-    bool isFluidContainer;
-    bool isSplash;
-    bool isNotWalkable;
-    bool isNotMoveable;
-    bool isUnsight;
-    bool isNotPathable;
-    bool isPickupable;
-    bool isHangable;
-    bool isHookSouth;
-    bool isHookEast;
-    bool isRotable;
-    bool isDontHide;
-    bool isTranslucent;
-    bool isLyingCorpse;
-    bool isAnimatedAlways;
-    bool isLensHelp;
-    bool isFullGround;
-    bool isIgnoreLook;
-    bool isCloth;
-    bool isAnimation;
-    bool hasLight;
-    bool hasMiniMapColor;
+    enum Properties {
+        IsGround = 0,
+        IsGroundBorder,
+        IsOnBottom,
+        IsOnTop,
+        IsContainer,
+        IsStackable,
+        IsForceUse,
+        IsMultiUse,
+        IsWritable,
+        IsWritableOnce,
+        IsFluidContainer,
+        IsFluid,
+        NotWalkable,
+        NotMovable,
+        BlockProjectile,
+        NotPathable,
+        Pickupable,
+        IsHangable,
+        HookSouth,
+        HookEast,
+        IsRotable,
+        HasLight,
+        DontHide,
+        IsTranslucent,
+        HasDisplacement,
+        HasElevation,
+        IsLyingCorpse,
+        AnimateAlways,
+        MiniMap,
+        LensHelp,
+        IsFullGround,
+        IgnoreLook,
+        Cloth,
+        Animation,
+        LastProperty,
+        LastPropertyValue = 255
+    };
+    std::array<bool, LastProperty> properties;
 
-    uint16 groundSpeed;
-    uint8 fluidParam;
-    uint16 maxTextLength;
-    uint16 lightLevel, lightColor;
-    uint16 miniMapColor;
-    uint16 lensHelp;
-    uint16 clothSlot;
+    enum Parameters {
+        GroundSpeed = 0,
+        Fluid,
+        MaxTextLenght,
+        LightLevel,
+        LightColor,
+        MiniMapColor,
+        LensHelpParameter,
+        ClothSlot,
+        DisplacementX,
+        DisplacementY,
+        Elevation,
+        LastParameter
+    };
+    std::array<int, LastParameter> parameters;
 };
 
 typedef std::vector<ThingType> ThingTypeList;

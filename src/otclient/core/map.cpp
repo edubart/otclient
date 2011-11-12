@@ -129,7 +129,7 @@ int Map::getFirstVisibleFloor()
                     if(TilePtr tile = m_tiles[upperPos]) {
                         if(ThingPtr firstThing = tile->getThing(0)) {
                             const ThingType type = firstThing->getType();
-                            if((type.isGround || type.isOnBottom) && !type.isDontHide) {
+                            if((type.properties[ThingType::IsGround] || type.properties[ThingType::IsOnBottom]) && !type.properties[ThingType::DontHide]) {
                                 firstFloor = upperPos.z + 1;
                                 break;
                             }
@@ -138,7 +138,7 @@ int Map::getFirstVisibleFloor()
                     if(TilePtr tile = m_tiles[perspectivePos]) {
                         if(ThingPtr firstThing = tile->getThing(0)) {
                             const ThingType type = firstThing->getType();
-                            if((type.isGround || type.isOnBottom) && !type.isDontHide) {
+                            if((type.properties[ThingType::IsGround] || type.properties[ThingType::IsOnBottom]) && !type.properties[ThingType::DontHide]) {
                                 firstFloor = perspectivePos.z + 1;
                                 break;
                             }

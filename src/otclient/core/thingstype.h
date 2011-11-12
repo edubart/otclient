@@ -29,25 +29,28 @@
 class ThingsType
 {
 public:
+
+    enum Categories {
+        Item = 0,
+        Creature,
+        Effect,
+        Missile,
+        LastCategory
+    };
+
     bool load(const std::string& file);
     void unload();
 
     void parseThingType(std::stringstream& fin, ThingType& thingType);
 
-    ThingType& getItemType(uint16 id) { return m_itemsType[id - 100]; }
-    ThingType& getCreatureType(uint16 id)  { return m_creaturesType[id]; }
-    ThingType& getEffectType(uint16 id) { return m_effectsType[id]; }
-    ThingType& getShotType(uint16 id) { return m_shotsType[id]; }
+    ThingType& getThingType(uint16 id, Categories category);
 
     uint32 getSignature() { return m_signature; }
 
 private:
     uint32 m_signature;
 
-    ThingTypeList m_itemsType;
-    ThingTypeList m_creaturesType;
-    ThingTypeList m_effectsType;
-    ThingTypeList m_shotsType;
+    ThingTypeList m_things[LastCategory];
 };
 
 extern ThingsType g_thingsType;

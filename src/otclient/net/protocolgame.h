@@ -96,7 +96,7 @@ private:
     void parseWorldLight(InputMessage& msg);
     void parseMagicEffect(InputMessage& msg);
     void parseAnimatedText(InputMessage& msg);
-    void parseDistanceShot(InputMessage& msg);
+    void parseDistanceMissile(InputMessage& msg);
     void parseCreatureSquare(InputMessage& msg);
     void parseCreatureHealth(InputMessage& msg);
     void parseCreatureLight(InputMessage& msg);

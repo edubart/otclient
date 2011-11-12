@@ -48,7 +48,7 @@ public:
     Position getPosition() const { return m_position; }
     int getStackPriority();
     virtual const ThingType& getType() = 0;
-    int getAnimationPhases() { return getType().animationPhases; }
+    int getAnimationPhases() { return getType().dimensions[ThingType::AnimationPhases]; }
 
     virtual void onIdChange(int) {}
     virtual void onPositionChange(const Position&) {}

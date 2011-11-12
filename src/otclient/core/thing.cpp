@@ -52,15 +52,15 @@ void Thing::internalDraw(const Point& p, int layers, Otc::SpriteMask mask)
 {
     const ThingType& type = getType();
 
-    for(int yi = 0; yi < type.height; yi++) {
-        for(int xi = 0; xi < type.width; xi++) {
-            int sprIndex = ((((((m_animation % type.animationPhases)
-                            * type.zPattern + m_zPattern)
-                            * type.yPattern + m_yPattern)
-                            * type.xPattern + m_xPattern)
-                            * type.layers + layers)
-                            * type.height + yi)
-                            * type.width + xi;
+    for(int yi = 0; yi < type.dimensions[ThingType::Height]; yi++) {
+        for(int xi = 0; xi < type.dimensions[ThingType::Width]; xi++) {
+            int sprIndex = ((((((m_animation % type.dimensions[ThingType::AnimationPhases])
+                            * type.dimensions[ThingType::PatternZ] + m_zPattern)
+                            * type.dimensions[ThingType::PatternY] + m_yPattern)
+                            * type.dimensions[ThingType::PatternX] + m_xPattern)
+                            * type.dimensions[ThingType::Layers] + layers)
+                            * type.dimensions[ThingType::Height] + yi)
+                            * type.dimensions[ThingType::Width] + xi;
 
             int spriteId = type.sprites[sprIndex];
             if(!spriteId)
@@ -68,8 +68,8 @@ void Thing::internalDraw(const Point& p, int layers, Otc::SpriteMask mask)
 
             TexturePtr spriteTex = g_sprites.getSpriteTexture(spriteId, mask);
 
-            Rect drawRect((p.x - xi*32) - type.xDisplacement,
-                          (p.y - yi*32) - type.yDisplacement,
+            Rect drawRect((p.x - xi*32) - type.parameters[ThingType::DisplacementX],
+                          (p.y - yi*32) - type.parameters[ThingType::DisplacementY],
                           32, 32);
             g_graphics.drawTexturedRect(drawRect, spriteTex);
         }
@@ -79,13 +79,13 @@ void Thing::internalDraw(const Point& p, int layers, Otc::SpriteMask mask)
 int Thing::getStackPriority()
 {
     const ThingType& type = getType();
-    if(type.isGround)
+    if(type.properties[ThingType::IsGround])
         return 0;
-    else if(type.isGroundClip)
+    else if(type.properties[ThingType::IsGroundBorder])
         return 1;
-    else if(type.isOnBottom)
+    else if(type.properties[ThingType::IsOnBottom])
         return 2;
-    else if(type.isOnTop)
+    else if(type.properties[ThingType::IsOnTop])
         return 3;
     else if(asCreature())
         return 4;

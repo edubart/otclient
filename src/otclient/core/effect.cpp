@@ -55,5 +55,5 @@ void Effect::startAnimation()
 
 const ThingType& Effect::getType()
 {
-    return g_thingsType.getEffectType(m_id);
+    return g_thingsType.getThingType(m_id, ThingsType::Effect);
 }

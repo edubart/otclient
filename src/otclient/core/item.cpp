@@ -34,12 +34,12 @@ Item::Item() : Thing()
 
 void Item::draw(const Point& p)
 {
-    const ThingType& type = g_thingsType.getItemType(m_id);
+    const ThingType& type = getType();
 
-    if(type.animationPhases > 1)
-        m_animation = (g_platform.getTicks() % (TICKS_PER_FRAME * type.animationPhases)) / TICKS_PER_FRAME;
+    if(type.dimensions[ThingType::AnimationPhases] > 1)
+        m_animation = (g_platform.getTicks() % (TICKS_PER_FRAME * type.dimensions[ThingType::AnimationPhases])) / TICKS_PER_FRAME;
 
-    for(int b = 0; b < type.layers; b++)
+    for(int b = 0; b < type.dimensions[ThingType::Layers]; b++)
         internalDraw(p, b);
 }
 
@@ -52,25 +52,25 @@ void Item::setData(int count)
 
 const ThingType& Item::getType()
 {
-    return g_thingsType.getItemType(m_id);
+    return g_thingsType.getThingType(m_id, ThingsType::Item);
 }
 
 void Item::onPositionChange(const Position&)
 {
-    const ThingType& type = g_thingsType.getItemType(m_id);
+    const ThingType& type = getType();
 
-    if(type.isNotMoveable) {
-        m_xPattern = m_position.x % type.xPattern;
-        m_yPattern = m_position.y % type.yPattern;
-        m_zPattern = m_position.z % type.zPattern;
+    if(type.properties[ThingType::NotMovable]) {
+        m_xPattern = m_position.x % type.dimensions[ThingType::PatternX];
+        m_yPattern = m_position.y % type.dimensions[ThingType::PatternY];
+        m_zPattern = m_position.z % type.dimensions[ThingType::PatternZ];
     }
 }
 
 void Item::onDataChange(int)
 {
-    const ThingType& type = g_thingsType.getItemType(m_id);
+    const ThingType& type = getType();
 
-    if(type.isStackable && type.xPattern == 4 && type.yPattern == 2) {
+    if(type.properties[ThingType::IsStackable] && type.dimensions[ThingType::PatternX] == 4 && type.dimensions[ThingType::PatternY] == 2) {
         if(m_data < 5) {
             m_xPattern = m_data-1;
             m_yPattern = 0;
@@ -92,15 +92,15 @@ void Item::onDataChange(int)
             m_yPattern = 1;
         }
     }
-    else if(type.isHangable) {
-        if(type.isHookSouth) {
-            m_xPattern = type.xPattern >= 2 ? 1 : 0;
+    else if(type.properties[ThingType::IsHangable]) {
+        if(type.properties[ThingType::HookSouth]) {
+            m_xPattern = type.dimensions[ThingType::PatternX] >= 2 ? 1 : 0;
         }
-        else if(type.isHookEast) {
-            m_xPattern = type.xPattern >= 3 ? 2 : 0;
+        else if(type.properties[ThingType::HookEast]) {
+            m_xPattern = type.dimensions[ThingType::PatternX] >= 3 ? 2 : 0;
         }
     }
-    else if(type.isSplash || type.isFluidContainer) {
+    else if(type.properties[ThingType::IsFluid] || type.properties[ThingType::IsFluidContainer]) {
         int var = 0;
         // TODO: find out what the heck does it mean
         switch(m_data) {
@@ -163,7 +163,7 @@ void Item::onDataChange(int)
             break;
         }
 
-        m_xPattern = (var & 3) % type.xPattern;
-        m_yPattern = (var >> 2) % type.yPattern;
+        m_xPattern = (var & 3) % type.dimensions[ThingType::PatternX];
+        m_yPattern = (var >> 2) % type.dimensions[ThingType::PatternY];
     }
 }

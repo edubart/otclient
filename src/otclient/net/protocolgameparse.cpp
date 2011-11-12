@@ -140,7 +140,7 @@ void ProtocolGame::parseMessage(InputMessage& msg)
                 parseAnimatedText(msg);
                 break;
             case Otc::GameServerMissleEffect:
-                parseDistanceShot(msg);
+                parseDistanceMissile(msg);
                 break;
             case Otc::GameServerMarkCreature:
                 parseCreatureSquare(msg);
@@ -532,7 +532,7 @@ void ProtocolGame::parseAnimatedText(InputMessage& msg)
     msg.getString(); // text
 }
 
-void ProtocolGame::parseDistanceShot(InputMessage& msg)
+void ProtocolGame::parseDistanceMissile(InputMessage& msg)
 {
     Position fromPos = parsePosition(msg);
     Position toPos = parsePosition(msg);
@@ -1057,8 +1057,8 @@ ItemPtr ProtocolGame::internalGetItem(InputMessage& msg, uint16 id)
         id = msg.getU16();
     item->setId(id);
 
-    const ThingType& itemType = g_thingsType.getItemType(id);
-    if(itemType.isStackable || itemType.isFluidContainer || itemType.isSplash)
+    const ThingType& itemType = item->getType();
+    if(itemType.properties[ThingType::IsStackable] || itemType.properties[ThingType::IsFluidContainer] || itemType.properties[ThingType::IsFluid])
         item->setData(msg.getU8());
 
     return item;
