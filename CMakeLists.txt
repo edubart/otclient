@@ -50,7 +50,7 @@ IF(CMAKE_BUILD_TYPE STREQUAL "Debug")
     ADD_DEFINITIONS(-D_DEBUG)
 ENDIF(CMAKE_BUILD_TYPE STREQUAL "Debug")
 
-SET(SOURCES
+SET(SOURCES src/framework/ui/uiframecounter.cpp
     # main
     src/main.cpp
 

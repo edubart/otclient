@@ -29,5 +29,6 @@
 #include "uilabel.h"
 #include "uilineedit.h"
 #include "uiwindow.h"
+#include "uiframecounter.h"
 
 #endif

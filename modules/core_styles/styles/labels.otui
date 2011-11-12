@@ -4,3 +4,7 @@ Label < UILabel
 
 LargerLabel < Label
 
+
+FrameCounter < UIFrameCounter
+  size: 68 16
+  align: right

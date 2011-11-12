@@ -98,7 +98,6 @@ void LuaInterface::registerFunctions()
     g_lua.bindClassMemberFunction<UIWidget>("updateParentLayout", &UIWidget::updateParentLayout);
     g_lua.bindClassMemberFunction<UIWidget>("destroy", &UIWidget::destroy);
 
-
     // UILabel
     g_lua.registerClass<UILabel, UIWidget>();
     g_lua.bindClassStaticFunction<UILabel>("create", &UIWidget::create<UILabel>);
@@ -125,6 +124,11 @@ void LuaInterface::registerFunctions()
     g_lua.bindClassStaticFunction<UIWindow>("create", &UIWidget::create<UIWindow>);
     g_lua.bindClassMemberFunction<UIWindow>("getTitle", &UIWindow::getTitle);
     g_lua.bindClassMemberFunction<UIWindow>("setTitle", &UIWindow::setTitle);
+
+    // UIFrameCounter
+    g_lua.registerClass<UIFrameCounter, UIWidget>();
+    g_lua.bindClassStaticFunction<UIFrameCounter>("create", &UIWidget::create<UIFrameCounter>);
+    g_lua.bindClassMemberFunction("getFrameCount", &UIFrameCounter::getFrameCount);
 
     // Protocol
     g_lua.registerClass<Protocol>();

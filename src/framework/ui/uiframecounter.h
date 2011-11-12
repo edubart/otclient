@@ -20,35 +20,29 @@
  * THE SOFTWARE.
  */
 
-#ifndef FRAMEWORK_UI_DECLARATIONS_H
-#define FRAMEWORK_UI_DECLARATIONS_H
+#ifndef UIFRAMECOUNTER_H
+#define UIFRAMECOUNTER_H
 
-#include <framework/global.h>
-#include <framework/platform/platformevent.h>
+#include "uiwidget.h"
 
-class UIManager;
-class UIWidget;
-class UILabel;
-class UIButton;
-class UILineEdit;
-class UIWindow;
-class UIFrameCounter;
-class UILayout;
-class UIVerticalLayout;
-class UIAnchorLayout;
+class UIFrameCounter : public UIWidget
+{
+public:
+    virtual void setup();
+    virtual void render();
 
-typedef std::shared_ptr<UIWidget> UIWidgetPtr;
-typedef std::weak_ptr<UIWidget> UIWidgetWeakPtr;
+    void setAlign(Fw::AlignmentFlag align) { m_align = align; }
+    Fw::AlignmentFlag getAlign() { return m_align; }
+    int getFrameCount() { return m_frameCount; }
 
-typedef std::shared_ptr<UILabel> UILabelPtr;
-typedef std::shared_ptr<UIButton> UIButtonPtr;
-typedef std::shared_ptr<UILineEdit> UILineEditPtr;
-typedef std::shared_ptr<UIWindow> UIWindowPtr;
-typedef std::shared_ptr<UIWindow> UIFrameCounterPtr;
-typedef std::shared_ptr<UILayout> UILayoutPtr;
-typedef std::shared_ptr<UIVerticalLayout> UIVerticalLayoutPtr;
-typedef std::shared_ptr<UIAnchorLayout> UIAnchorLayoutPtr;
+protected:
+    virtual void onStyleApply(const OTMLNodePtr& styleNode);
 
-typedef std::deque<UIWidgetPtr> UIWidgetList;
+private:
+    Fw::AlignmentFlag m_align;
+    int m_frameCount;
+    int m_lastFrameTicks;
+    std::string m_fpsText;
+};
 
 #endif

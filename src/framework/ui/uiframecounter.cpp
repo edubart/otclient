@@ -20,35 +20,43 @@
  * THE SOFTWARE.
  */
 
-#ifndef FRAMEWORK_UI_DECLARATIONS_H
-#define FRAMEWORK_UI_DECLARATIONS_H
+#include "uiframecounter.h"
+#include <framework/graphics/font.h>
+#include <framework/otml/otmlnode.h>
+#include <framework/platform/platform.h>
+#include <framework/graphics/graphics.h>
 
-#include <framework/global.h>
-#include <framework/platform/platformevent.h>
+void UIFrameCounter::setup()
+{
+    UIWidget::setup();
+    setFocusable(false);
+    setPhantom(true);
+    setAlign(Fw::AlignLeft);
+    m_lastFrameTicks = g_platform.getTicks();
+    m_frameCount = 0;
+}
 
-class UIManager;
-class UIWidget;
-class UILabel;
-class UIButton;
-class UILineEdit;
-class UIWindow;
-class UIFrameCounter;
-class UILayout;
-class UIVerticalLayout;
-class UIAnchorLayout;
+void UIFrameCounter::render()
+{
+    UIWidget::render();
 
-typedef std::shared_ptr<UIWidget> UIWidgetPtr;
-typedef std::weak_ptr<UIWidget> UIWidgetWeakPtr;
+    int now = g_platform.getTicks();
+    if(now - m_lastFrameTicks >= 1000) {
+        m_fpsText = Fw::mkstr("FPS: ", m_frameCount);
+        m_lastFrameTicks = now;
+        m_frameCount = 0;
+    } else
+        m_frameCount++;
 
-typedef std::shared_ptr<UILabel> UILabelPtr;
-typedef std::shared_ptr<UIButton> UIButtonPtr;
-typedef std::shared_ptr<UILineEdit> UILineEditPtr;
-typedef std::shared_ptr<UIWindow> UIWindowPtr;
-typedef std::shared_ptr<UIWindow> UIFrameCounterPtr;
-typedef std::shared_ptr<UILayout> UILayoutPtr;
-typedef std::shared_ptr<UIVerticalLayout> UIVerticalLayoutPtr;
-typedef std::shared_ptr<UIAnchorLayout> UIAnchorLayoutPtr;
+    m_font->renderText(m_fpsText, m_rect, m_align, Fw::white);
+}
 
-typedef std::deque<UIWidgetPtr> UIWidgetList;
+void UIFrameCounter::onStyleApply(const OTMLNodePtr& styleNode)
+{
+    UIWidget::onStyleApply(styleNode);
 
-#endif
+    for(const OTMLNodePtr& node : styleNode->children()) {
+        if(node->tag() == "align")
+            setAlign(Fw::translateAlignment(node->value()));
+    }
+}

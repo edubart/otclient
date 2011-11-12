@@ -101,11 +101,7 @@ void OTClient::init(std::vector<std::string> args)
 
 void OTClient::run()
 {
-    std::string fpsText;
-    Size fpsTextSize;
-    FontPtr defaultFont = g_fonts.getDefaultFont();
     int frameTicks = g_platform.getTicks();
-    int lastFpsTicks = frameTicks;
     int lastPollTicks = frameTicks;
     int frameCount = 0;
 
@@ -125,15 +121,6 @@ void OTClient::run()
         g_platform.updateTicks();
         frameTicks = g_platform.getTicks();
 
-        // calculate fps
-        frameCount++;
-        if(frameTicks - lastFpsTicks >= 1000) {
-            fpsText = Fw::mkstr("FPS: ", frameCount);
-            fpsTextSize = defaultFont->calculateTextRectSize(fpsText);
-            frameCount = 0;
-            lastFpsTicks = frameTicks;
-        }
-
         // poll events every POLL_CYCLE_DELAY
         // this delay exists to avoid massive polling thus increasing framerate
         if(frameTicks - lastPollTicks >= POLL_CYCLE_DELAY) {
@@ -148,9 +135,6 @@ void OTClient::run()
 
             // render everything
             render();
-
-            // render fps
-            defaultFont->renderText(fpsText, Point(g_graphics.getScreenSize().width() - fpsTextSize.width() - 70, 10));
 
             // render end
             g_graphics.endRender();

@@ -70,3 +70,9 @@ TopPanel
       image: /core_styles/icons/about.png
       anchors.centerIn: parent
       phantom: true
+
+  FrameCounter
+    anchors.top: parent.top
+    anchors.right: prev.left
+    margin.top: 8
+    margin.right: 12
