@@ -29,7 +29,7 @@ function Inventory.destroy()
 end
 
 -- hooked events
-function Game.onInventoryChange(slot, item)
+function Inventory.onInventoryChange(slot, item)
   local slotId
   if slot == InventorySlotHead then
     slotId = 'head'
@@ -57,5 +57,18 @@ function Game.onInventoryChange(slot, item)
   itemWidget:setItem(item)
 end
 
+function Inventory.onFreeCapacityChange(freeCapacity)
+  local widget = window:getChildById('capacity')
+  widget:setText("Cap:\n" .. freeCapacity)
+end
+
+function Inventory.onSoulChange(soul)
+  local widget = window:getChildById('soul')
+  widget:setText("Soul:\n" .. soul)
+end
+
 connect(Game, { onLogin = Inventory.create,
-                onLogout = Inventory.destroy })
+                onLogout = Inventory.destroy,
+                onInventoryChange = Inventory.onInventoryChange,
+                onFreeCapacityChange = Inventory.onFreeCapacityChange,
+                onSoulChange = Inventory.onSoulChange })

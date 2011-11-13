@@ -35,6 +35,7 @@
 Creature::Creature() : Thing()
 {
     m_healthPercent = 0;
+    m_showSquareColor = false;
     m_direction = Otc::South;
 
     m_walking = false;
@@ -46,6 +47,12 @@ void Creature::draw(const Point& p)
 {
     const ThingType& type = getType();
 
+    // TODO: activate on attack, follow, discover how 'attacked' works
+    if(m_showSquareColor) {
+        g_graphics.bindColor(Outfit::getColor(m_squareColor));
+        g_graphics.drawBoundingRect(Rect(p + m_walkOffset - 8, Size(32, 32)), 2);
+    }
+
     // Render creature
     for(m_yPattern = 0; m_yPattern < type.dimensions[ThingType::PatternY]; m_yPattern++) {
 
@@ -54,6 +61,7 @@ void Creature::draw(const Point& p)
             continue;
 
         // draw white item
+        g_graphics.bindColor(Fw::white);
         internalDraw(p + m_walkOffset, 0);
 
         // draw mask if exists

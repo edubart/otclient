@@ -546,8 +546,12 @@ void ProtocolGame::parseDistanceMissile(InputMessage& msg)
 
 void ProtocolGame::parseCreatureSquare(InputMessage& msg)
 {
-    msg.getU32(); // creatureId
-    msg.getU8(); // color
+    uint32 id = msg.getU32();
+    uint8 color = msg.getU8();
+
+    CreaturePtr creature = g_map.getCreatureById(id);
+    if(creature)
+        creature->setSquareColor(color);
 }
 
 void ProtocolGame::parseCreatureHealth(InputMessage& msg)
@@ -649,10 +653,16 @@ void ProtocolGame::parsePlayerStats(InputMessage& msg)
         g_lua.callGlobalField("Game", "onHealthChange", m_localPlayer->getStatistic(Otc::Health), m_localPlayer->getStatistic(Otc::MaxHealth));
     });
 
-    m_localPlayer->setStatistic(Otc::FreeCapacity, msg.getU32());
+    m_localPlayer->setStatistic(Otc::FreeCapacity, msg.getU32() / 100.0);
+
+    g_dispatcher.addEvent([=] {
+        g_lua.callGlobalField("Game", "onFreeCapacityChange", m_localPlayer->getStatistic(Otc::FreeCapacity));
+    });
+
     m_localPlayer->setStatistic(Otc::Experience, msg.getU32());
     m_localPlayer->setStatistic(Otc::Level, msg.getU16());
     m_localPlayer->setStatistic(Otc::LevelPercent, msg.getU8());
+
     m_localPlayer->setStatistic(Otc::Mana, msg.getU16());
     m_localPlayer->setStatistic(Otc::MaxMana, msg.getU16());
 
@@ -662,7 +672,13 @@ void ProtocolGame::parsePlayerStats(InputMessage& msg)
 
     m_localPlayer->setStatistic(Otc::MagicLevel, msg.getU8());
     m_localPlayer->setStatistic(Otc::MagicLevelPercent, msg.getU8());
+
     m_localPlayer->setStatistic(Otc::Soul, msg.getU8());
+
+    g_dispatcher.addEvent([=] {
+        g_lua.callGlobalField("Game", "onSoulChange", m_localPlayer->getStatistic(Otc::Soul));
+    });
+
     m_localPlayer->setStatistic(Otc::Stamina, msg.getU16());
 }
 

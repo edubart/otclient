@@ -15,57 +15,83 @@ UIWindow
     id: armor
     anchors.top: prev.bottom
     anchors.horizontalCenter: prev.horizontalCenter
-    margin.top: 10
+    margin.top: 5
 
   Item
     id: legs
     anchors.top: prev.bottom
     anchors.horizontalCenter: prev.horizontalCenter
-    margin.top: 10
+    margin.top: 5
 
   Item
     id: feet
     anchors.top: prev.bottom
     anchors.horizontalCenter: prev.horizontalCenter
-    margin.top: 10
+    margin.top: 5
 
   Item
     id: necklace
     anchors.top: parent.top
     anchors.right: head.left
-    margin.top: 15
-    margin.right: 10
+    margin.top: 10
+    margin.right: 5
 
   Item
     id: left
     anchors.top: prev.bottom
     anchors.horizontalCenter: prev.horizontalCenter
-    margin.top: 10
+    margin.top: 5
 
   Item
     id: ring
     anchors.top: prev.bottom
     anchors.horizontalCenter: prev.horizontalCenter
-    margin.top: 10
+    margin.top: 5
 
   Item
     id: backpack
     anchors.top: parent.top
     anchors.left: head.right
-    margin.top: 15
-    margin.left: 10
+    margin.top: 10
+    margin.left: 5
 
   Item
     id: right
     anchors.top: prev.bottom
     anchors.horizontalCenter: prev.horizontalCenter
-    margin.top: 10
+    margin.top: 5
 
   Item
     id: ammo
     anchors.top: prev.bottom
     anchors.horizontalCenter: prev.horizontalCenter
-    margin.top: 10
-
-
+    margin.top: 5
+    
+  Label
+    id: soul
+    anchors.top: ring.bottom
+    anchors.bottom: feet.bottom
+    anchors.left: ring.left
+    anchors.right: ring.right
+    margin.top: 5
+    
+    align: center
+    
+    border-image:
+      source: /core_styles/images/panel_flat.png
+      border: 4
+      
+  Label
+    id: capacity
+    anchors.top: ammo.bottom
+    anchors.bottom: feet.bottom
+    anchors.left: ammo.left
+    anchors.right: ammo.right
+    margin.top: 5
+    
+    align: center
+    
+    border-image:
+      source: /core_styles/images/panel_flat.png
+      border: 4
 

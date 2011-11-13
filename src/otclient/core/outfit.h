@@ -33,11 +33,13 @@ class Outfit
     };
 
 public:
+    static Color getColor(int color);
+
     void setType(int type) { m_type = type; }
-    void setHead(int head) { m_head = internalGetColor(head); }
-    void setBody(int body) { m_body = internalGetColor(body); }
-    void setLegs(int legs) { m_legs = internalGetColor(legs); }
-    void setFeet(int feet) { m_feet = internalGetColor(feet); }
+    void setHead(int head) { m_head = getColor(head); }
+    void setBody(int body) { m_body = getColor(body); }
+    void setLegs(int legs) { m_legs = getColor(legs); }
+    void setFeet(int feet) { m_feet = getColor(feet); }
     void setAddons(int addons) { m_addons = addons; }
 
     int getType() { return m_type; }
@@ -48,8 +50,6 @@ public:
     int getAddons() { return m_addons; }
 
 private:
-    Color internalGetColor(int color);
-
     int m_type, m_addons;
     Color m_head, m_body, m_legs, m_feet;
 };

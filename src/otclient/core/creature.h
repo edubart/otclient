@@ -46,6 +46,7 @@ public:
     void setShield(uint8 shield) { m_shield = shield; }
     void setEmblem(uint8 emblem) { m_emblem = emblem; }
     void setImpassable(bool impassable) { m_impassable = impassable; }
+    void setSquareColor(uint8 squareColor) { m_squareColor = squareColor; }
 
     std::string getName() { return m_name; }
     uint8 getHealthPercent() { return m_healthPercent; }
@@ -81,6 +82,8 @@ protected:
     uint8 m_shield;
     uint8 m_emblem;
     bool m_impassable;
+    uint8 m_squareColor;
+    bool m_showSquareColor;
 
     FontPtr m_informationFont;
     Color m_informationColor;

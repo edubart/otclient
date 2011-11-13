@@ -22,7 +22,7 @@
 
 #include "outfit.h"
 
-Color Outfit::internalGetColor(int color)
+Color Outfit::getColor(int color)
 {
     if(color >= HSI_H_STEPS * HSI_SI_VALUES)
         color = 0;
