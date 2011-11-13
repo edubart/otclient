@@ -20,34 +20,38 @@
  * THE SOFTWARE.
  */
 
-#ifndef ITEM_H
-#define ITEM_H
+#ifndef OUTFIT_H
+#define OUTFIT_H
 
-#include <framework/global.h>
-#include "thing.h"
+#include <framework/util/color.h>
 
-class Item : public Thing
+class Outfit
 {
-public:
-    Item();
-
     enum {
-        TICKS_PER_FRAME = 500
+        HSI_SI_VALUES = 7,
+        HSI_H_STEPS = 19
     };
 
-    void draw(const Point& p);
+public:
+    void setType(int type) { m_type = type; }
+    void setHead(int head) { m_head = internalGetColor(head); }
+    void setBody(int body) { m_body = internalGetColor(body); }
+    void setLegs(int legs) { m_legs = internalGetColor(legs); }
+    void setFeet(int feet) { m_feet = internalGetColor(feet); }
+    void setAddons(int addons) { m_addons = addons; }
 
-    void setPosition(const Position &position);
-    void setData(int data);
-
-    int getData() { return m_data; }
-    const ThingType& getType();
-
-    ItemPtr asItem() { return std::static_pointer_cast<Item>(shared_from_this()); }
+    int getType() { return m_type; }
+    Color getHead() { return m_head; }
+    Color getBody() { return m_body; }
+    Color getLegs() { return m_legs; }
+    Color getFeet() { return m_feet; }
+    int getAddons() { return m_addons; }
 
 private:
-    int m_data;
-    int m_lastTicks;
+    Color internalGetColor(int color);
+
+    int m_type, m_addons;
+    Color m_head, m_body, m_legs, m_feet;
 };
 
 #endif

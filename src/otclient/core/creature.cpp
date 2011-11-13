@@ -50,7 +50,7 @@ void Creature::draw(const Point& p)
     for(m_yPattern = 0; m_yPattern < type.dimensions[ThingType::PatternY]; m_yPattern++) {
 
         // continue if we dont have this addon.
-        if(m_yPattern > 0 && !(m_outfit.addons & (1 << (m_yPattern-1))))
+        if(m_yPattern > 0 && !(m_outfit.getAddons() & (1 << (m_yPattern-1))))
             continue;
 
         // draw white item
@@ -62,19 +62,19 @@ void Creature::draw(const Point& p)
             g_graphics.bindBlendFunc(Fw::BlendColorzing);
 
             // head
-            g_graphics.bindColor(Otc::OutfitColors[m_outfit.head]);
+            g_graphics.bindColor(m_outfit.getHead());
             internalDraw(p + m_walkOffset, 1, Otc::SpriteYellowMask);
 
             // body
-            g_graphics.bindColor(Otc::OutfitColors[m_outfit.body]);
+            g_graphics.bindColor(m_outfit.getBody());
             internalDraw(p + m_walkOffset, 1, Otc::SpriteRedMask);
 
             // legs
-            g_graphics.bindColor(Otc::OutfitColors[m_outfit.legs]);
+            g_graphics.bindColor(m_outfit.getLegs());
             internalDraw(p + m_walkOffset, 1, Otc::SpriteGreenMask);
 
             // feet
-            g_graphics.bindColor(Otc::OutfitColors[m_outfit.feet]);
+            g_graphics.bindColor(m_outfit.getFeet());
             internalDraw(p + m_walkOffset, 1, Otc::SpriteBlueMask);
 
             // restore default blend func
@@ -95,8 +95,7 @@ void Creature::drawInformation(int x, int y, bool useGray, const Rect& rect)
     Rect backgroundRect = Rect(x-(13.5), y, 27, 4);
     backgroundRect.bound(rect);
 
-    Size textSize = m_informationFont->calculateTextRectSize(m_name);
-    Rect textRect = Rect(x - textSize.width() / 2.0, y-15, textSize);
+    Rect textRect = Rect(x - m_nameSize.width() / 2.0, y-15, m_nameSize);
     textRect.bound(rect);
 
     // distance them
@@ -256,63 +255,59 @@ void Creature::cancelWalk(Otc::Direction direction)
     }, m_walkTimePerPixel * 2);
 }
 
+void Creature::setName(const std::string& name)
+{
+    m_nameSize = m_informationFont->calculateTextRectSize(name);
+    m_name = name;
+}
+
 void Creature::setHealthPercent(uint8 healthPercent)
-{
-    int oldHealthPercent = m_healthPercent;
-    m_healthPercent = healthPercent;
-    onHealthPercentChange(oldHealthPercent);
-}
-
-void Creature::setDirection(Otc::Direction direction)
-{
-    Otc::Direction oldDirection = m_direction;
-    m_direction = direction;
-    onDirectionChange(oldDirection);
-}
-
-const ThingType& Creature::getType()
-{
-    return g_thingsType.getThingType(m_outfit.type, ThingsType::Creature);
-}
-
-void Creature::onHealthPercentChange(int)
 {
     m_informationColor = Fw::black;
 
-    if(m_healthPercent > 92) {
+    if(healthPercent > 92) {
         m_informationColor.setGreen(188);
     }
-    else if(m_healthPercent > 60) {
+    else if(healthPercent > 60) {
         m_informationColor.setRed(80);
         m_informationColor.setGreen(161);
         m_informationColor.setBlue(80);
     }
-    else if(m_healthPercent > 30) {
+    else if(healthPercent > 30) {
         m_informationColor.setRed(161);
         m_informationColor.setGreen(161);
     }
-    else if(m_healthPercent > 8) {
+    else if(healthPercent > 8) {
         m_informationColor.setRed(160);
         m_informationColor.setGreen(39);
         m_informationColor.setBlue(39);
     }
-    else if(m_healthPercent > 3) {
+    else if(healthPercent > 3) {
         m_informationColor.setRed(160);
     }
     else {
         m_informationColor.setRed(79);
     }
+
+    m_healthPercent = healthPercent;
 }
 
-void Creature::onDirectionChange(Otc::Direction)
+void Creature::setDirection(Otc::Direction direction)
 {
-    if(m_direction >= 4) {
-        if(m_direction == Otc::NorthEast || m_direction == Otc::SouthEast)
+    if(direction >= 4) {
+        if(direction == Otc::NorthEast || direction == Otc::SouthEast)
             m_xPattern = Otc::East;
-        else if(m_direction == Otc::NorthWest || m_direction == Otc::SouthWest)
+        else if(direction == Otc::NorthWest || direction == Otc::SouthWest)
             m_xPattern = Otc::West;
     }
     else {
-        m_xPattern = m_direction;
+        m_xPattern = direction;
     }
+
+    m_direction = direction;
+}
+
+const ThingType& Creature::getType()
+{
+    return g_thingsType.getThingType(m_outfit.getType(), ThingsType::Creature);
 }

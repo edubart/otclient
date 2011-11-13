@@ -70,6 +70,7 @@ SET(SOURCES src/framework/ui/uiframecounter.cpp
     src/otclient/core/effect.cpp
     src/otclient/core/missile.cpp
     src/otclient/core/localplayer.cpp
+    src/otclient/core/outfit.cpp
 
     # otclient ui
     src/otclient/ui/uiitem.cpp

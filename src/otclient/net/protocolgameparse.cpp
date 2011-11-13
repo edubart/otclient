@@ -959,16 +959,24 @@ Outfit ProtocolGame::internalGetOutfit(InputMessage& msg)
 {
     Outfit outfit;
 
-    outfit.type = msg.getU16(); // looktype
-    if(outfit.type != 0) {
-        outfit.head = msg.getU8();
-        outfit.body = msg.getU8();
-        outfit.legs = msg.getU8();
-        outfit.feet = msg.getU8();
-        outfit.addons = msg.getU8();
+    uint16 type = msg.getU16();
+    if(type != 0) {
+        uint8 head = msg.getU8();
+        uint8 body = msg.getU8();
+        uint8 legs = msg.getU8();
+        uint8 feet = msg.getU8();
+        uint8 addons = msg.getU8();
+
+        outfit.setType(type);
+        outfit.setHead(head);
+        outfit.setBody(body);
+        outfit.setLegs(legs);
+        outfit.setFeet(feet);
+        outfit.setAddons(addons);
     }
     else {
-        outfit.type = msg.getU16();
+        uint16 type = msg.getU16();
+        outfit.setType(type);
     }
 
     return outfit;

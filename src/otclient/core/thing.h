@@ -41,17 +41,14 @@ public:
 
     virtual void draw(const Point& p) = 0;
 
-    void setId(uint32 id);
-    void setPosition(const Position& position);
+    void setId(uint32 id) { m_id = id; }
+    virtual void setPosition(const Position& position) { m_position = position; }
 
     uint32 getId() const { return m_id; }
     Position getPosition() const { return m_position; }
     int getStackPriority();
     virtual const ThingType& getType() = 0;
     int getAnimationPhases() { return getType().dimensions[ThingType::AnimationPhases]; }
-
-    virtual void onIdChange(int) {}
-    virtual void onPositionChange(const Position&) {}
 
     ThingPtr asThing() { return std::static_pointer_cast<Thing>(shared_from_this()); }
     virtual ItemPtr asItem() { return nullptr; }

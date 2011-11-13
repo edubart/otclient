@@ -24,17 +24,8 @@
 #define CREATURE_H
 
 #include "thing.h"
+#include "outfit.h"
 #include <framework/graphics/fontmanager.h>
-
-//TODO: create Outfit class and move to a separate file
-struct Outfit {
-    uint16 type;
-    uint8 head;
-    uint8 body;
-    uint8 legs;
-    uint8 feet;
-    uint8 addons;
-};
 
 class Creature : public Thing
 {
@@ -45,7 +36,7 @@ public:
     virtual void draw(const Point& p);
     void drawInformation(int x, int y, bool useGray, const Rect& rect);
 
-    void setName(const std::string& name) { m_name = name; }
+    void setName(const std::string& name);
     void setHealthPercent(uint8 healthPercent);
     void setDirection(Otc::Direction direction);
     void setOutfit(const Outfit& outfit) { m_outfit = outfit; }
@@ -68,9 +59,6 @@ public:
     bool getImpassable() { return m_impassable; }
     const ThingType& getType();
 
-    void onHealthPercentChange(int);
-    void onDirectionChange(Otc::Direction);
-
     virtual void walk(const Position& position, bool inverse = true);
     virtual void cancelWalk(Otc::Direction direction);
     Point getWalkOffset() { return m_walkOffset; }
@@ -83,6 +71,7 @@ protected:
     void updateWalk();
 
     std::string m_name;
+    Size m_nameSize;
     uint8 m_healthPercent;
     Otc::Direction m_direction;
     Outfit m_outfit;
