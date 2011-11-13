@@ -4,67 +4,68 @@ UIWindow
   margin.left: 6
   margin.right: 6
   move policy: free updated
-  
+
   Item
     id: head
     anchors.top: parent.top
     anchors.horizontalCenter: parent.horizontalCenter
-    
+    popup menu: /inventory/itempopupmenu.otui
+
   Item
     id: armor
     anchors.top: prev.bottom
     anchors.horizontalCenter: prev.horizontalCenter
     margin.top: 10
-    
+
   Item
     id: legs
     anchors.top: prev.bottom
     anchors.horizontalCenter: prev.horizontalCenter
     margin.top: 10
-    
+
   Item
     id: feet
     anchors.top: prev.bottom
     anchors.horizontalCenter: prev.horizontalCenter
     margin.top: 10
-    
+
   Item
     id: necklace
     anchors.top: parent.top
     anchors.right: head.left
     margin.top: 15
     margin.right: 10
-    
+
   Item
     id: left
     anchors.top: prev.bottom
     anchors.horizontalCenter: prev.horizontalCenter
     margin.top: 10
-    
+
   Item
     id: ring
     anchors.top: prev.bottom
     anchors.horizontalCenter: prev.horizontalCenter
     margin.top: 10
-    
+
   Item
     id: backpack
     anchors.top: parent.top
     anchors.left: head.right
     margin.top: 15
     margin.left: 10
-    
+
   Item
     id: right
     anchors.top: prev.bottom
     anchors.horizontalCenter: prev.horizontalCenter
     margin.top: 10
-    
+
   Item
     id: ammo
     anchors.top: prev.bottom
     anchors.horizontalCenter: prev.horizontalCenter
     margin.top: 10
-  
+
 
 

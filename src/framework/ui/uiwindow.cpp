@@ -120,7 +120,7 @@ bool UIWindow::onMousePress(const Point& mousePos, Fw::MouseButton button)
     return UIWidget::onMousePress(mousePos, button);
 }
 
-bool UIWindow::onMouseRelease(const Point& mousePos, Fw::MouseButton button)
+void UIWindow::onMouseRelease(const Point& mousePos, Fw::MouseButton button)
 {
     if(m_moving) {
         if(m_movePolicy == FREE_UPDATED_MOVE) {
@@ -143,9 +143,8 @@ bool UIWindow::onMouseRelease(const Point& mousePos, Fw::MouseButton button)
             updateParentLayout();
         }
         m_moving = false;
-        return true;
     }
-    return UIWidget::onMouseRelease(mousePos, button);
+    UIWidget::onMouseRelease(mousePos, button);
 }
 
 bool UIWindow::onMouseMove(const Point& mousePos, const Point& mouseMoved)

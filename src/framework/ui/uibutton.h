@@ -41,7 +41,7 @@ public:
 
 protected:
     virtual void onStyleApply(const OTMLNodePtr& styleNode);
-    virtual bool onMouseRelease(const Point& mousePos, Fw::MouseButton button);
+    virtual void onMouseRelease(const Point& mousePos, Fw::MouseButton button);
 
     SimpleCallback m_onClick;
     Point m_textTranslate;

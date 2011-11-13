@@ -57,12 +57,10 @@ void UIButton::onStyleApply(const OTMLNodePtr& styleNode)
     }
 }
 
-bool UIButton::onMouseRelease(const Point& mousePos, Fw::MouseButton button)
+void UIButton::onMouseRelease(const Point& mousePos, Fw::MouseButton button)
 {
     if(isPressed()) {
         if(m_onClick && getRect().contains(mousePos))
             m_onClick();
-        return true;
     }
-    return false;
 }

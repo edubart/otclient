@@ -173,7 +173,7 @@ protected:
     /// Triggered when a mouse button is pressed down while mouse pointer is inside widget area
     virtual bool onMousePress(const Point& mousePos, Fw::MouseButton button);
     /// Triggered when a mouse button is released
-    virtual bool onMouseRelease(const Point& mousePos, Fw::MouseButton button);
+    virtual void onMouseRelease(const Point& mousePos, Fw::MouseButton button);
     /// Triggered when mouse moves (even when the mouse is outside widget area)
     virtual bool onMouseMove(const Point& mousePos, const Point& mouseMoved);
     /// Triggered when mouse middle button wheels inside widget area

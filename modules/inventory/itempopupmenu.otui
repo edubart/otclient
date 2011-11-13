@@ -3,7 +3,7 @@ Panel
   size: 64 48
 
   MenuButton
-    text: New
+    text: Foo
 
   MenuButton
     text: Quit

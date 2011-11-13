@@ -909,7 +909,7 @@ void UIWidget::onHoverChange(bool hovered)
     callLuaField("onHoverChange", hovered);
 
     // check for new hovered elements when the current widget is removed
-    if(!hovered && !getParent())
+    if(!hovered && !getParent() && g_ui.getRootWidget())
         g_ui.getRootWidget()->updateState(Fw::HoverState);
 }
 
@@ -1000,10 +1000,9 @@ bool UIWidget::onMousePress(const Point& mousePos, Fw::MouseButton button)
     return false;
 }
 
-bool UIWidget::onMouseRelease(const Point& mousePos, Fw::MouseButton button)
+void UIWidget::onMouseRelease(const Point& mousePos, Fw::MouseButton button)
 {
-    if(callLuaField<bool>("onMouseRelease", mousePos, button))
-        return true;
+    callLuaField("onMouseRelease", mousePos, button);
 
     // do a backup of children list, because it may change while looping it
     UIWidgetList children;
@@ -1017,16 +1016,11 @@ bool UIWidget::onMouseRelease(const Point& mousePos, Fw::MouseButton button)
     }
 
     for(const UIWidgetPtr& child : children) {
-        bool mustEnd = child->onMouseRelease(mousePos, button);
+        child->onMouseRelease(mousePos, button);
 
         if(child->isPressed())
             child->setPressed(false);
-
-        if(mustEnd)
-            return true;
     }
-
-    return false;
 }
 
 bool UIWidget::onMouseMove(const Point& mousePos, const Point& mouseMoved)

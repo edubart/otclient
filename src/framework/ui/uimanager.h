@@ -44,10 +44,15 @@ public:
     UIWidgetPtr loadUI(const std::string& file, const UIWidgetPtr& parent = nullptr);
     UIWidgetPtr loadWidgetFromOTML(const OTMLNodePtr& widgetNode, const UIWidgetPtr& parent);
 
+    //void setMouseGrabWidget();
+    //void setKeyboardGrabWidget();
+
     UIWidgetPtr getRootWidget() { return m_rootWidget; }
 
 private:
     UIWidgetPtr m_rootWidget;
+    //UIWidgetPtr m_mouseGrabWidget;
+    //UIWidgetPtr m_keyboardGrabWidget;
     std::map<std::string, OTMLNodePtr> m_styles;
 };
 

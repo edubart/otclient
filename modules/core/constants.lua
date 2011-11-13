@@ -131,3 +131,8 @@ KeyboardNoModifier = 0
 KeyboardCtrlModifier = 1
 KeyboardAltModifier = 2
 KeyboardShiftModifier = 4
+
+MouseNoButton = 0
+MouseLeftButton = 1
+MouseRightButton = 2
+MouseMidButton = 3
