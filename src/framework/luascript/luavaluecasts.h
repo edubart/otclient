@@ -70,6 +70,7 @@ bool luavalue_cast(int index, Size& size);
 
 // otml nodes
 void push_luavalue(const OTMLNodePtr& node);
+bool luavalue_cast(int index, OTMLNodePtr& node);
 
 // enum
 template<class T>

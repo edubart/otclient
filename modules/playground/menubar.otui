@@ -1,0 +1,29 @@
+MenuButton < UIButton
+  color: white
+  size: 40 18
+  align: center
+  border-image:
+    source: /core_styles/images/menu.png
+    size: 64 24
+
+  state.hover:
+    border-image:
+      source: /core_styles/images/menu.png
+      offset: 0 24
+      size: 64 24
+    color: black
+
+TopMenuButton < MenuButton
+  onMousePress: |
+    function(self, mousePos, mouseButton)
+      local popupMenu = UI.loadAndDisplay(self:getStyle()['popup menu'])
+      if popupMenu then
+        popupMenu:moveTo({ x = self:getX(), y = self:getY() + self:getHeight()})
+        popupMenu.onMouseRelease = function(self) self:destroy() end
+      end
+    end
+
+TopMenuButton
+  text: File
+  position: 80 0
+  popup menu: /playground/filemenu.otui

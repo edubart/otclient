@@ -48,6 +48,8 @@ void LuaInterface::registerFunctions()
     g_lua.bindClassMemberFunction<UIWidget>("getSize", &UIWidget::getSize);
     g_lua.bindClassMemberFunction<UIWidget>("setSize", &UIWidget::resize);
     g_lua.bindClassMemberFunction<UIWidget>("getPosition", &UIWidget::getPosition);
+    g_lua.bindClassMemberFunction<UIWidget>("getX", &UIWidget::getX);
+    g_lua.bindClassMemberFunction<UIWidget>("getY", &UIWidget::getY);
     g_lua.bindClassMemberFunction<UIWidget>("moveTo", &UIWidget::moveTo);
     g_lua.bindClassMemberFunction<UIWidget>("moveChildToIndex", &UIWidget::moveChildToIndex);
     g_lua.bindClassMemberFunction<UIWidget>("getParent", &UIWidget::getParent);
@@ -59,6 +61,7 @@ void LuaInterface::registerFunctions()
     g_lua.bindClassMemberFunction<UIWidget>("getOpacity", &UIWidget::getOpacity);
     g_lua.bindClassMemberFunction<UIWidget>("setOpacity", &UIWidget::setOpacity);
     g_lua.bindClassMemberFunction<UIWidget>("setStyle", &UIWidget::setStyle);
+    g_lua.bindClassMemberFunction<UIWidget>("applyStyle", &UIWidget::applyStyle);
     g_lua.bindClassMemberFunction<UIWidget>("getStyle", &UIWidget::getStyle);
     g_lua.bindClassMemberFunction<UIWidget>("getMarginTop", &UIWidget::getMarginTop);
     g_lua.bindClassMemberFunction<UIWidget>("setMarginTop", &UIWidget::setMarginTop);

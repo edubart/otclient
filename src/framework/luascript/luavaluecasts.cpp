@@ -252,6 +252,29 @@ void push_luavalue(const OTMLNodePtr& node)
         g_lua.pushNil();
 }
 
+bool luavalue_cast(int index, OTMLNodePtr& node)
+{
+    node = OTMLNode::create();
+    node->setUnique(true);
+    if(g_lua.isTable(index)) {
+        g_lua.pushNil();
+        while(g_lua.next(index < 0 ? index-1 : index)) {
+            std::string cnodeName = g_lua.toString(-2);
+            if(g_lua.isTable()) {
+                OTMLNodePtr cnode;
+                if(luavalue_cast(-1, node)) {
+                    cnode->setTag(cnodeName);
+                    node->addChild(cnode);
+                }
+            } else
+                node->writeAt(cnodeName, g_lua.toString());
+            g_lua.pop();
+        }
+    } else
+        return false;
+    return true;
+}
+
 // object ptr
 bool luavalue_cast(int index, LuaObjectPtr& obj) {
     if(g_lua.isUserdata(index)) {

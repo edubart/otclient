@@ -1,0 +1,10 @@
+Panel
+  layout: verticalBox
+  size: 64 48
+
+  MenuButton
+    text: New
+
+  MenuButton
+    text: Quit
+    onClick: exit()

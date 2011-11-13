@@ -75,8 +75,10 @@ void UIWidget::setup()
 void UIWidget::destroy()
 {
     // remove itself from parent
-    if(UIWidgetPtr parent = getParent())
-        parent->removeChild(asUIWidget());
+    if(UIWidgetPtr parent = getParent()) {
+        if(parent->hasChild(asUIWidget()))
+            parent->removeChild(asUIWidget());
+    }
     setVisible(false);
     setEnabled(false);
 }
@@ -680,10 +682,10 @@ void UIWidget::updateState(Fw::WidgetState state)
 
         updateStyle();
 
-        if(state == Fw::FocusState)
-            onFocusChange(newStatus, m_lastFocusReason);
-        else if(state == Fw::HoverState)
-            onHoverChange(newStatus);
+        if(state == Fw::FocusState) {
+            g_dispatcher.addEvent(std::bind(&UIWidget::onFocusChange, asUIWidget(), newStatus, m_lastFocusReason));
+        } else if(state == Fw::HoverState)
+            g_dispatcher.addEvent(std::bind(&UIWidget::onHoverChange, asUIWidget(), newStatus));
     }
 }
 
@@ -884,6 +886,7 @@ void UIWidget::onStyleApply(const OTMLNodePtr& styleNode)
                 anchorLayout->addAnchor(asUIWidget(), anchoredEdge, hookedWidgetId, hookedEdge);
             }
         } else if(node->tag() == "onClick" ||
+                  node->tag() == "onMousePress" ||
                   node->tag() == "onHoverChange") {
             g_lua.loadFunction(node->value(), "@" + node->source() + "[" + node->tag() + "]");
             luaSetField(node->tag());
