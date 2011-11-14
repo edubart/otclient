@@ -7,11 +7,21 @@ local healthManaPanel = nil
 function HealthMana.create()
   healthManaPanel = loadUI("/health_mana/health_mana.otui", Game.gameRightPanel)
 
+  local healthBar = UIProgressBar.create()
+  healthManaPanel:addChild(healthBar)
+  healthBar:setId('healthBar')
+  healthBar:setStyle('HealthBar')
+
   local healthLabel = UILabel.create()
   healthManaPanel:addChild(healthLabel)
   healthLabel:setId('healthLabel')
   healthLabel:setStyle('HealthLabel')
   healthLabel:setText('0 / 0')
+  
+  local manaBar = UIProgressBar.create()
+  healthManaPanel:addChild(manaBar)
+  manaBar:setId('manaBar')
+  manaBar:setStyle('ManaBar')
 
   local manaLabel = UILabel.create()
   healthManaPanel:addChild(manaLabel)
@@ -19,7 +29,7 @@ function HealthMana.create()
   manaLabel:setStyle('ManaLabel')
   manaLabel:setText('0 / 0')
 
-  healthManaPanel:setHeight(healthLabel:getHeight() + manaLabel:getHeight())
+  healthManaPanel:setHeight(healthBar:getHeight() + manaBar:getHeight() + 4)
 end
 
 function HealthMana.destroy()
@@ -31,11 +41,17 @@ end
 function Game.onHealthChange(health, maxHealth)
   local label = healthManaPanel:getChildById('healthLabel')
   label:setText(health .. ' / ' .. maxHealth)
+  
+  local healthBar = healthManaPanel:getChildById('healthBar')
+  healthBar:setPercent(health / maxHealth * 100)
 end
 
 function Game.onManaChange(mana, maxMana)
   local label = healthManaPanel:getChildById('manaLabel')
   label:setText(mana .. ' / ' .. maxMana)
+  
+  local manaBar = healthManaPanel:getChildById('manaBar')
+  manaBar:setPercent(mana / maxMana * 100)
 end
 
 connect(Game, { onLogin = HealthMana.create,
