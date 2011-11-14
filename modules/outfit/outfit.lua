@@ -16,10 +16,7 @@ function Outfit.test()
 end
 
 function Outfit.create(creature, outfitList)
-  if window ~= nil then
-    Outfit.destroy()
-  end
-
+  Outfit.destroy()
   window = loadUI("/outfit/outfit.otui", UI.root)
   
   local creatureWidget = window:getChildById('creature')
@@ -27,8 +24,10 @@ function Outfit.create(creature, outfitList)
 end
 
 function Outfit.destroy()
-  window:destroy()
-  window = nil
+  if window ~= nil then
+    window:destroy()
+    window = nil
+  end
 end
 
 -- private functions

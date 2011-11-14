@@ -70,19 +70,19 @@ void Creature::draw(const Point& p)
             g_graphics.bindBlendFunc(Fw::BlendColorzing);
 
             // head
-            g_graphics.bindColor(m_outfit.getHead());
+            g_graphics.bindColor(m_outfit.getHeadColor());
             internalDraw(p + m_walkOffset, 1, Otc::SpriteYellowMask);
 
             // body
-            g_graphics.bindColor(m_outfit.getBody());
+            g_graphics.bindColor(m_outfit.getBodyColor());
             internalDraw(p + m_walkOffset, 1, Otc::SpriteRedMask);
 
             // legs
-            g_graphics.bindColor(m_outfit.getLegs());
+            g_graphics.bindColor(m_outfit.getLegsColor());
             internalDraw(p + m_walkOffset, 1, Otc::SpriteGreenMask);
 
             // feet
-            g_graphics.bindColor(m_outfit.getFeet());
+            g_graphics.bindColor(m_outfit.getFeetColor());
             internalDraw(p + m_walkOffset, 1, Otc::SpriteBlueMask);
 
             // restore default blend func

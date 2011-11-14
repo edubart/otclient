@@ -36,22 +36,27 @@ public:
     static Color getColor(int color);
 
     void setType(int type) { m_type = type; }
-    void setHead(int head) { m_head = getColor(head); }
-    void setBody(int body) { m_body = getColor(body); }
-    void setLegs(int legs) { m_legs = getColor(legs); }
-    void setFeet(int feet) { m_feet = getColor(feet); }
+    void setHead(int head) { m_head = head; m_headColor = getColor(head); }
+    void setBody(int body) { m_body = body; m_bodyColor = getColor(body); }
+    void setLegs(int legs) { m_legs = legs; m_legsColor = getColor(legs); }
+    void setFeet(int feet) { m_feet = feet; m_feetColor = getColor(feet); }
     void setAddons(int addons) { m_addons = addons; }
 
-    int getType() { return m_type; }
-    Color getHead() { return m_head; }
-    Color getBody() { return m_body; }
-    Color getLegs() { return m_legs; }
-    Color getFeet() { return m_feet; }
-    int getAddons() { return m_addons; }
+    int getType() const { return m_type; }
+    int getHead() const { return m_head; }
+    int getBody() const { return m_body; }
+    int getLegs() const { return m_legs; }
+    int getFeet() const { return m_feet; }
+    int getAddons() const { return m_addons; }
+
+    Color getHeadColor() { return m_headColor; }
+    Color getBodyColor() { return m_bodyColor; }
+    Color getLegsColor() { return m_legsColor; }
+    Color getFeetColor() { return m_feetColor; }
 
 private:
-    int m_type, m_addons;
-    Color m_head, m_body, m_legs, m_feet;
+    int m_type, m_head, m_body, m_legs, m_feet, m_addons;
+    Color m_headColor, m_bodyColor, m_legsColor, m_feetColor;
 };
 
 #endif

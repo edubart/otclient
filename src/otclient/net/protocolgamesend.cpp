@@ -202,6 +202,21 @@ void ProtocolGame::sendGetOutfit()
     send(oMsg);
 }
 
+void ProtocolGame::sendSetOutfit(const Outfit& outfit)
+{
+    OutputMessage oMsg;
+    oMsg.addU8(Otc::ClientSetOutfit);
+
+    oMsg.addU16(outfit.getType());
+    oMsg.addU8(outfit.getHead());
+    oMsg.addU8(outfit.getBody());
+    oMsg.addU8(outfit.getLegs());
+    oMsg.addU8(outfit.getFeet());
+    oMsg.addU8(outfit.getAddons());
+
+    send(oMsg);
+}
+
 void ProtocolGame::sendAddVip(const std::string& name)
 {
     OutputMessage oMsg;
