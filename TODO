@@ -1,14 +1,14 @@
 modules managment interface
 clean sprites cache periodically
-hotkeys events in lua
 load modules from zip packages
 ip/host/rsa configuration
 review directories search
-tooltips
 left panel with dragging windows
 console history
 console text selection
 console scrolling
 padding
 remember password/account
-move fps to a module
+scrollbar
+make otui syntax more like css
+a real working border and background property in otui

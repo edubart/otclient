@@ -40,7 +40,7 @@ function ToolTip.hide()
   end
 end
 
--- hooks
+-- UIWidget hooks
 local function onWidgetHoverChange(widget, hovered)
   if hovered then
     ToolTip.display(widget.tooltip)
@@ -50,14 +50,15 @@ local function onWidgetHoverChange(widget, hovered)
 end
 
 local function onWidgetStyleApply(widget, style)
-  if not style then return end
-  widget.tooltip = style.tooltip
+  if style and style.tooltip then
+    widget.tooltip = style.tooltip
+  end
 end
 
 connect(UIWidget, {  onStyleApply = onWidgetStyleApply,
                      onHoverChange = onWidgetHoverChange})
 
--- public extensions
+-- UIWidget extensions
 function UIWidget:setTooltip(text)
   self.tooltip = text
 end
