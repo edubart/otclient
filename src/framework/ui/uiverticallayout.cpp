@@ -54,6 +54,8 @@ void UIVerticalLayout::update()
     Point pos = (m_alignBottom) ? parentWidget->getRect().bottomLeft() : parentWidget->getPosition();
 
     for(const UIWidgetPtr& widget : widgets) {
+        if(!widget->isExplicitlyVisible())
+            continue;
         Size size = widget->getSize();
         pos.y += (m_alignBottom) ? -(widget->getMarginBottom()+widget->getHeight()) : widget->getMarginTop();
         if(widget->isSizeFixed()) {
