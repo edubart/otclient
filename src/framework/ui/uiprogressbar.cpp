@@ -48,6 +48,7 @@ void UIProgressBar::render()
 
 void UIProgressBar::setPercent(double percent)
 {
-    assert(percent >= 0 && percent <= 100);
-    m_percent = percent;
+    if(percent == NAN)
+        percent = 0;
+    m_percent = std::min(std::max(percent, 0.0), 100.0);
 }

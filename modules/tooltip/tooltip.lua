@@ -50,10 +50,8 @@ local function onWidgetHoverChange(widget, hovered)
 end
 
 local function onWidgetStyleApply(widget, style)
-  if not style or not style.tooltip then return end
-  print(style.tooltip)
+  if not style then return end
   widget.tooltip = style.tooltip
-  table.dump(style)
 end
 
 connect(UIWidget, {  onStyleApply = onWidgetStyleApply,

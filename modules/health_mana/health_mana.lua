@@ -17,7 +17,7 @@ function HealthMana.create()
   healthLabel:setId('healthLabel')
   healthLabel:setStyle('HealthLabel')
   healthLabel:setText('0 / 0')
-  
+
   local manaBar = UIProgressBar.create()
   healthManaPanel:addChild(manaBar)
   manaBar:setId('manaBar')
@@ -41,7 +41,7 @@ end
 function Game.onHealthChange(health, maxHealth)
   local label = healthManaPanel:getChildById('healthLabel')
   label:setText(health .. ' / ' .. maxHealth)
-  
+
   local healthBar = healthManaPanel:getChildById('healthBar')
   healthBar:setPercent(health / maxHealth * 100)
 end
@@ -49,9 +49,16 @@ end
 function Game.onManaChange(mana, maxMana)
   local label = healthManaPanel:getChildById('manaLabel')
   label:setText(mana .. ' / ' .. maxMana)
-  
+
   local manaBar = healthManaPanel:getChildById('manaBar')
-  manaBar:setPercent(mana / maxMana * 100)
+
+  local percent
+  if maxMana == 0 then
+    percent = 100
+  else
+    percent = mana / maxMana * 100
+  end
+  manaBar:setPercent(percent)
 end
 
 connect(Game, { onLogin = HealthMana.create,
