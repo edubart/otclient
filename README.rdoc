@@ -1,18 +1,18 @@
-=== Welcome
+== Welcome
 OTClient is an alternative tibia client for otserv written in C++2011, made
 with a modular system that uses lua scripts for ingame interface and
 functionality, making otclient flexible and easy to customize.
 
-=== Getting Started
+== Getting Started
 
 * {Compiling on Windows}[http://otclient.info/page/articles.html/_/general/compiling-on-windows-r9]
 * {Compiling on Ubuntu}[http://otclient.info/page/articles.html/_/general/compiling-on-ubuntu-r12]
 Checkout our website at {http://otclient.info}[http://otclient.info/] for tutorials and more information
 
-=== Contributing
+== Contributing
 
 We encourage you to contribute to OTClient! Please check out
 {our website}[http://otclient.info/] for guidelines about how to proceed. Join us!
 
-=== License
+== License
 OTClient is made available under the MIT License
