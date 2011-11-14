@@ -48,5 +48,10 @@ function ToolTip.hide()
   end
 end
 
+function UIWidget:setTooltip(text)
+  self:applyStyle({ tooltip = text })
+end
+
 -- hooks
 connect(UIButton, { onHoverChange = onButtonHoverChange})
+connect(UIProgressBar, { onHoverChange = onButtonHoverChange})

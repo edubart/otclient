@@ -20,16 +20,34 @@
  * THE SOFTWARE.
  */
 
-#ifndef UI_H
-#define UI_H
-
-#include "uimanager.h"
-#include "uiwidget.h"
-#include "uibutton.h"
-#include "uilabel.h"
-#include "uilineedit.h"
-#include "uiwindow.h"
-#include "uiframecounter.h"
 #include "uiprogressbar.h"
+#include <framework/graphics/graphics.h>
+#include <framework/otml/otmlnode.h>
 
-#endif
+void UIProgressBar::setup()
+{
+    UIWidget::setup();
+    setPhantom(true);
+    setFocusable(false);
+    m_percent = 0;
+}
+
+void UIProgressBar::render()
+{
+    UIWidget::render();
+
+    g_graphics.bindColor(m_foregroundColor);
+    g_graphics.drawBoundingRect(m_rect, 1);
+
+    Rect fillRect = m_rect.expanded(-1);
+    fillRect.setWidth(fillRect.width() * m_percent / 100.0);
+
+    g_graphics.bindColor(m_backgroundColor);
+    g_graphics.drawFilledRect(fillRect);
+}
+
+void UIProgressBar::setPercent(double percent)
+{
+    assert(percent >= 0 && percent <= 100);
+    m_percent = percent;
+}

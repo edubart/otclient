@@ -108,6 +108,12 @@ void LuaInterface::registerFunctions()
     g_lua.bindClassMemberFunction<UILabel>("setText", &UILabel::setText);
     g_lua.bindClassMemberFunction("resizeToText", &UILabel::resizeToText);
 
+    // UILabel
+    g_lua.registerClass<UIProgressBar, UIWidget>();
+    g_lua.bindClassStaticFunction<UIProgressBar>("create", &UIWidget::create<UIProgressBar>);
+    g_lua.bindClassMemberFunction<UIProgressBar>("getPercent", &UIProgressBar::getPercent);
+    g_lua.bindClassMemberFunction<UIProgressBar>("setPercent", &UIProgressBar::setPercent);
+
     // UIButton
     g_lua.registerClass<UIButton, UIWidget>();
     g_lua.bindClassStaticFunction<UIButton>("create", &UIWidget::create<UIButton>);

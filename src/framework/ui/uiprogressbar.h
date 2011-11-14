@@ -20,16 +20,22 @@
  * THE SOFTWARE.
  */
 
-#ifndef UI_H
-#define UI_H
+#ifndef UIPROGRESSBAR_H
+#define UIPROGRESSBAR_H
 
-#include "uimanager.h"
 #include "uiwidget.h"
-#include "uibutton.h"
-#include "uilabel.h"
-#include "uilineedit.h"
-#include "uiwindow.h"
-#include "uiframecounter.h"
-#include "uiprogressbar.h"
+
+class UIProgressBar : public UIWidget
+{
+public:
+    virtual void setup();
+    virtual void render();
+
+    void setPercent(double percent);
+    double getPercent() { return m_percent; }
+
+private:
+    double m_percent;
+};
 
 #endif

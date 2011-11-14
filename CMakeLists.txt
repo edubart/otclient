@@ -140,6 +140,7 @@ SET(SOURCES src/framework/ui/uiframecounter.cpp
     src/framework/ui/uianchorlayout.cpp
     src/framework/ui/uiverticallayout.cpp
     src/framework/ui/uilayout.cpp
+    src/framework/ui/uiprogressbar.cpp
 )
 
 IF(HANDLE_EXCEPTIONS)
