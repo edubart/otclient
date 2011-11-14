@@ -741,6 +741,7 @@ void UIWidget::applyStyle(const OTMLNodePtr& styleNode)
 {
     try {
         onStyleApply(styleNode);
+        callLuaField("onStyleApply", styleNode);
     } catch(std::exception& e) {
         logError("failed to apply widget '", m_id, "' style: ", e.what());
     }

@@ -16,18 +16,10 @@ local function moveToolTip(tooltip)
   tooltip:moveTo(pos)
 end
 
-local function onButtonHoverChange(button, hovered)
-  if hovered then
-    ToolTip.display(button:getStyle().tooltip)
-  else
-    ToolTip:hide()
-  end
-end
-
 -- public functions
 function ToolTip.display(text)
-  ToolTip.hide()
   if text then
+    ToolTip.hide()
     currentToolTip = UI.loadAndDisplay('/tooltip/tooltip.otui', UI.root)
     currentToolTip.onMouseMove = moveToolTip
     local label = currentToolTip:getChildById('toolTipText')
@@ -48,10 +40,31 @@ function ToolTip.hide()
   end
 end
 
-function UIWidget:setTooltip(text)
-  self:applyStyle({ tooltip = text })
+-- hooks
+local function onWidgetHoverChange(widget, hovered)
+  if hovered then
+    ToolTip.display(widget.tooltip)
+  else
+    ToolTip:hide()
+  end
 end
 
--- hooks
-connect(UIButton, { onHoverChange = onButtonHoverChange})
-connect(UIProgressBar, { onHoverChange = onButtonHoverChange})
+local function onWidgetStyleApply(widget, style)
+  if not style or not style.tooltip then return end
+  print(style.tooltip)
+  widget.tooltip = style.tooltip
+  table.dump(style)
+end
+
+connect(UIWidget, {  onStyleApply = onWidgetStyleApply,
+                     onHoverChange = onWidgetHoverChange})
+
+-- public extensions
+function UIWidget:setTooltip(text)
+  self.tooltip = text
+end
+
+function UIWidget:getTooltip()
+  return self.tooltip
+end
+
