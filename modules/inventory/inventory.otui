@@ -79,7 +79,7 @@ UIWindow
     
     border-image:
       source: /core_styles/images/panel_flat.png
-      border: 4
+      border: 1
       
   Label
     id: capacity
@@ -93,5 +93,5 @@ UIWindow
     
     border-image:
       source: /core_styles/images/panel_flat.png
-      border: 4
+      border: 1
 

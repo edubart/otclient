@@ -3,4 +3,4 @@ Item < UIItem
   item margin: 1
   border-image:
     source: /core_styles/images/panel_flat.png
-    border: 4
+    border: 1
