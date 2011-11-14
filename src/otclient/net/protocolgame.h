@@ -56,6 +56,7 @@ public:
     void sendTurnWest();
     void sendUseItem(const Position& position, int itemId, int stackpos, int index);
     void sendTalk(int channelType, int channelId, const std::string& receiver, const std::string& message);
+    void sendGetOutfit();
     void sendAddVip(const std::string& name);
     void sendRemoveVip(int id);
 

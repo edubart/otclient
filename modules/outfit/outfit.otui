@@ -1,0 +1,40 @@
+Window
+  title: Select Outfit
+  
+  anchors.horizontalCenter: parent.horizontalCenter
+  anchors.verticalCenter: parent.verticalCenter
+  
+  Creature
+    id: creature
+    anchors.top: parent.top
+    anchors.left: parent.left
+    margin.top: 30
+    margin.left: 20
+  
+  HorizontalSeparator
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: next.top
+    margin.left: 16
+    margin.right: 16
+    margin.bottom: 10
+
+  Button
+    id: buttonOk
+    text: Ok
+    width: 64
+    anchors.right: next.left
+    anchors.bottom: parent.bottom
+    margin.bottom: 16
+    margin.right: 16
+    onClick: Outfit.accept()
+
+  Button
+    id: buttonCancel
+    text: Cancel
+    width: 64
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    margin.bottom: 16
+    margin.right: 16
+    onClick: Outfit.destroy()

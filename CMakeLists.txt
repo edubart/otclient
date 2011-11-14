@@ -74,6 +74,7 @@ SET(SOURCES src/framework/ui/uiframecounter.cpp
 
     # otclient ui
     src/otclient/ui/uiitem.cpp
+    src/otclient/ui/uicreature.cpp
     src/otclient/ui/uimap.cpp
 
     # otclient net

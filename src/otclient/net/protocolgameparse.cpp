@@ -838,14 +838,27 @@ void ProtocolGame::parseFloorChangeDown(InputMessage& msg)
 
 void ProtocolGame::parseOutfitWindow(InputMessage& msg)
 {
-    internalGetOutfit(msg);
-    uint8 outfitCount = msg.getU8();
+    Outfit outfit = internalGetOutfit(msg);
 
+    typedef std::tuple<int, std::string, int> OutfitInfo;
+    std::vector<OutfitInfo> outfitList;
+
+    uint8 outfitCount = msg.getU8();
     for(int i = 0; i < outfitCount; i++) {
-        msg.getU16(); // outfit id
-        msg.getString(); // outfit name
-        msg.getU8(); // addons
+        uint16 outfitId = msg.getU16();
+        std::string outfitName = msg.getString();
+        uint8 outfitAddons = msg.getU8();
+
+        outfitList.push_back(OutfitInfo(outfitId, outfitName, outfitAddons));
     }
+
+    CreaturePtr creature = CreaturePtr(new Creature);
+    creature->setXPattern(2);
+    creature->setOutfit(outfit);
+
+    g_dispatcher.addEvent([=] {
+        g_lua.callGlobalField("Game", "onOpenOutfitWindow", creature, outfitList);
+    });
 }
 
 void ProtocolGame::parseVipState(InputMessage& msg)

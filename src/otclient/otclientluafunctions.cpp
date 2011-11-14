@@ -35,6 +35,7 @@
 #include <otclient/net/protocollogin.h>
 #include <otclient/net/protocolgame.h>
 #include <otclient/ui/uiitem.h>
+#include <otclient/ui/uicreature.h>
 #include <otclient/ui/uimap.h>
 
 void OTClient::registerLuaFunctions()
@@ -65,11 +66,17 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassStaticFunction<Game>("cancelLogin", std::bind(&Game::cancelLogin, &g_game));
     g_lua.bindClassStaticFunction<Game>("isOnline", std::bind(&Game::isOnline, &g_game));
     g_lua.bindClassStaticFunction<Game>("isOnline", std::bind(&Game::isOnline, &g_game));
+    g_lua.bindClassStaticFunction<Game>("openOutfitWindow", std::bind(&Game::openOutfitWindow, &g_game));
 
     g_lua.registerClass<UIItem, UIWidget>();
     g_lua.bindClassStaticFunction<UIItem>("create", &UIItem::create<UIItem>);
     g_lua.bindClassMemberFunction<UIItem>("getItem", &UIItem::getItem);
     g_lua.bindClassMemberFunction<UIItem>("setItem", &UIItem::setItem);
+
+    g_lua.registerClass<UICreature, UIWidget>();
+    g_lua.bindClassStaticFunction<UICreature>("create", &UICreature::create<UICreature>);
+    g_lua.bindClassMemberFunction<UICreature>("getCreature", &UICreature::getCreature);
+    g_lua.bindClassMemberFunction<UICreature>("setCreature", &UICreature::setCreature);
 
     g_lua.registerClass<UIMap, UIWidget>();
     g_lua.bindClassStaticFunction<UIMap>("create", &UIWidget::create<UIMap>);

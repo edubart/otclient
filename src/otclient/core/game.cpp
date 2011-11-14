@@ -179,3 +179,8 @@ void Game::talkPrivate(int channelType, const std::string& receiver, const std::
 
     m_protocolGame->sendTalk(channelType, 0, receiver, message);
 }
+
+void Game::openOutfitWindow()
+{
+    m_protocolGame->sendGetOutfit();
+}

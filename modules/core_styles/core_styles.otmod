@@ -14,5 +14,6 @@ Module
     importStyles 'styles/windows.otui'
     importStyles 'styles/listboxes.otui'
     importStyles 'styles/items.otui'
+    importStyles 'styles/creatures.otui'
     return true
 

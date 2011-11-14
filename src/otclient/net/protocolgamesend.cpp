@@ -195,6 +195,13 @@ void ProtocolGame::sendTalk(int channelType, int channelId, const std::string& r
     send(oMsg);
 }
 
+void ProtocolGame::sendGetOutfit()
+{
+    OutputMessage oMsg;
+    oMsg.addU8(Otc::ClientGetOutfit);
+    send(oMsg);
+}
+
 void ProtocolGame::sendAddVip(const std::string& name)
 {
     OutputMessage oMsg;

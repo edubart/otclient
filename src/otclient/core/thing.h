@@ -50,6 +50,10 @@ public:
     virtual const ThingType& getType() = 0;
     int getAnimationPhases() { return getType().dimensions[ThingType::AnimationPhases]; }
 
+    void setXPattern(int xPattern) { m_xPattern = xPattern; }
+    void setYPattern(int yPattern) { m_yPattern = yPattern; }
+    void setZPattern(int zPattern) { m_zPattern = zPattern; }
+
     ThingPtr asThing() { return std::static_pointer_cast<Thing>(shared_from_this()); }
     virtual ItemPtr asItem() { return nullptr; }
     virtual CreaturePtr asCreature() { return nullptr; }
