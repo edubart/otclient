@@ -28,7 +28,7 @@ function Skills.create()
     nameLabel:resizeToText()
 
     local levelLabel = UILabel.create()
-    skillButton :addChild(levelLabel)
+    skillButton:addChild(levelLabel)
     levelLabel:setStyle('SkillLevelLabel')
     levelLabel:setId('skillLevelId' .. i)
     levelLabel:setText('0')

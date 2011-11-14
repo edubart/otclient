@@ -15,6 +15,7 @@ SkillNameLabel < Label
 SkillLevelLabel < Label
   font: verdana-11px-monochrome
   align: right
+  width: 32
   anchors.right: parent.right
   anchors.top: parent.top
   anchors.bottom: parent.bottom
