@@ -1,24 +1,23 @@
 SkillFirstWidget < UIWidget
-  anchors.top: parent.top
 
-SkillNameLabel < Label
-  font: verdana-11px-monochrome
-
+SkillButton < UIButton
+  height: 14
   margin.top: 4
   margin.left: 10
   margin.right: 10
-  anchors.top: prev.bottom
+
+SkillNameLabel < Label
+  font: verdana-11px-monochrome
   anchors.left: parent.left
-  anchors.right: parent.right
+  anchors.top: parent.top
+  anchors.bottom: parent.bottom
 
 SkillLevelLabel < Label
   font: verdana-11px-monochrome
   align: right
-  margin.left: 10
-  margin.right: 10
-  anchors.top: prev.top
-  anchors.left: parent.left
   anchors.right: parent.right
+  anchors.top: parent.top
+  anchors.bottom: parent.bottom
 
 SkillPercentPanel < UIProgressBar
   color: black
@@ -28,9 +27,6 @@ SkillPercentPanel < UIProgressBar
   margin.top: 3
   margin.left: 10
   margin.right: 10
-  anchors.top: prev.bottom
-  anchors.left: parent.left
-  anchors.right: parent.right
 
 MiniWindow
   id: skillWindow
@@ -44,3 +40,4 @@ MiniWindow
     margin.bottom: 3
     margin.left: 3
     margin.right: 3
+    layout: verticalBox

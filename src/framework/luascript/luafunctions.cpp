@@ -85,6 +85,7 @@ void LuaInterface::registerFunctions()
     g_lua.bindClassMemberFunction<UIWidget>("unlock", &UIWidget::unlock);
     g_lua.bindClassMemberFunction<UIWidget>("focus", &UIWidget::focus);
     g_lua.bindClassMemberFunction<UIWidget>("getChildren", &UIWidget::getChildren);
+    g_lua.bindClassMemberFunction<UIWidget>("recursiveGetChildById", &UIWidget::recursiveGetChildById);
     g_lua.bindClassMemberFunction<UIWidget>("getChildById", &UIWidget::getChildById);
     g_lua.bindClassMemberFunction<UIWidget>("getChildByIndex", &UIWidget::getChildByIndex);
     g_lua.bindClassMemberFunction<UIWidget>("getChildCount", &UIWidget::getChildCount);
