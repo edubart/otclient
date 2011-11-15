@@ -2,6 +2,8 @@ Outfit = {}
 
 -- private variables
 local window = nil
+local outfits = nil
+local currentOutfit = 1
 
 -- public functions
 function Outfit.test()
@@ -18,9 +20,13 @@ end
 function Outfit.create(creature, outfitList)
   Outfit.destroy()
   window = loadUI("/outfit/outfit.otui", UI.root)
+  window:lock()
   
   local creatureWidget = window:getChildById('creature')
   creatureWidget:setCreature(creature)
+  
+  outfits = outfitList
+  currentOutfit = 1
 end
 
 function Outfit.destroy()
@@ -28,6 +34,30 @@ function Outfit.destroy()
     window:destroy()
     window = nil
   end
+end
+
+function Outfit.nextType()
+  local creatureWidget = window:getChildById('creature')
+  currentOutfit = currentOutfit + 1
+  if currentOutfit > #outfits then
+    currentOutfit = 1
+  end
+  
+  creatureWidget:setOutfitType(outfits[currentOutfit][1])
+  
+  -- TODO: update addons
+end
+
+function Outfit.previousType()
+  local creatureWidget = window:getChildById('creature')
+  currentOutfit = currentOutfit - 1
+  if currentOutfit <= 0 then
+    currentOutfit = #outfits
+  end
+  
+  creatureWidget:setOutfitType(outfits[currentOutfit][1])
+  
+  -- TODO: update addons
 end
 
 -- private functions

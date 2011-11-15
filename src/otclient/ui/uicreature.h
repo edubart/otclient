@@ -34,6 +34,8 @@ public:
     void render();
 
     void setCreature(const CreaturePtr& creature) { m_creature = creature; }
+    void setOutfitType(int outfitType);
+
     CreaturePtr getCreature() { return m_creature; }
 
 protected:
