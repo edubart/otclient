@@ -246,12 +246,16 @@ namespace Fw
     };
 
     enum WidgetState {
+        InvalidState = -1,
         DefaultState = 0,
         ActiveState = 1,
         FocusState = 2,
         HoverState = 4,
         PressedState = 8,
-        DisabledState = 16
+        DisabledState = 16,
+        CheckedState = 32,
+        OnState = 64,
+        LastState = 128
         //FirstState,
         //MiddleState,
         //LastState,

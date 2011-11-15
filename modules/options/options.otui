@@ -10,7 +10,7 @@ MainWindow
     anchors.top: parent.top
     margin.left: 18
     margin.top: 32
-    onClick: displayErrorBox("Error", "Not implemented yet")
+    @onClick: displayErrorBox("Error", "Not implemented yet")
 
   Label
     text: |-
@@ -28,7 +28,7 @@ MainWindow
     anchors.top: parent.top
     margin.left: 18
     margin.top: 65
-    onClick: displayErrorBox("Error", "Not implemented yet")
+    @onClick: displayErrorBox("Error", "Not implemented yet")
 
   Label
     text: |-
@@ -46,7 +46,7 @@ MainWindow
     anchors.top: parent.top
     margin.left: 18
     margin.top: 98
-    onClick: displayErrorBox("Error", "Not implemented yet")
+    @onClick: displayErrorBox("Error", "Not implemented yet")
 
   Label
     text: Customise the console
@@ -62,7 +62,7 @@ MainWindow
     anchors.top: parent.top
     margin.left: 18
     margin.top: 131
-    onClick: displayErrorBox("Error", "Not implemented yet")
+    @onClick: displayErrorBox("Error", "Not implemented yet")
 
   Label
     text: Edit your hotkey texts
@@ -86,7 +86,7 @@ MainWindow
     anchors.bottom: parent.bottom
     margin.left: 18
     margin.bottom: 60
-    onClick: displayErrorBox("Error", "Not implemented yet")
+    @onClick: displayErrorBox("Error", "Not implemented yet")
 
   Label
     text: |-
@@ -113,4 +113,4 @@ MainWindow
     anchors.bottom: parent.bottom
     margin.right: 10
     margin.bottom: 10
-    onClick: Options.destroy()
+    @onClick: Options.destroy()

@@ -44,7 +44,6 @@ void ResourceManager::init(const char* argv0, const char *appName)
 
     bool found = false;
     for(const std::string& dir : possibleDirs) {
-        dump << dir;
         if(g_resources.addToSearchPath(dir)) {
             logInfo("Using modules directory '", dir.c_str(), "'");
             found = true;

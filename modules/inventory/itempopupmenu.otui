@@ -7,4 +7,4 @@ Panel
 
   MenuButton
     text: Quit
-    onClick: exit()
+    @onClick: exit()

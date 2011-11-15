@@ -20,59 +20,31 @@
  * THE SOFTWARE.
  */
 
-#ifndef FRAMEWORK_GLOBAL_H
-#define FRAMEWORK_GLOBAL_H
+#ifndef UICHECKBOX_H
+#define UICHECKBOX_H
 
-// common C headers
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-#include <cassert>
-#include <ctime>
-#include <cmath>
+#include "uiwidget.h"
 
-// common STL headers
-#include <iostream>
-#include <sstream>
-#include <fstream>
-#include <string>
-#include <vector>
-#include <list>
-#include <queue>
-#include <deque>
-#include <stack>
-#include <map>
-#include <algorithm>
-#include <exception>
-#include <memory>
-#include <type_traits>
-#include <tuple>
-#include <functional>
-#include <typeinfo>
-#include <array>
-#include <iomanip>
-#include <unordered_map>
-#include <random>
+class UICheckBox : public UIWidget
+{
+public:
+    void render();
 
-// boost utilities
-#include <boost/algorithm/string.hpp>
-#include <boost/any.hpp>
+    bool isChecked() { return hasState(Fw::CheckedState); }
+    void setChecked(bool checked) { setState(Fw::CheckedState, checked); }
 
-// global constants
-#include "const.h"
+    void setText(const std::string& text) { m_text = text; }
+    std::string getText() { return m_text; }
 
-// additional utilities
-#include "util/types.h"
-#include "util/tools.h"
-#include "util/point.h"
-#include "util/color.h"
-#include "util/rect.h"
-#include "util/size.h"
+    UICheckBoxPtr asUICheckBox() { return std::static_pointer_cast<UICheckBox>(shared_from_this()); }
 
-// logger
-#include "core/logger.h"
+protected:
+    virtual void onStyleApply(const OTMLNodePtr& styleNode);
+    virtual void onMouseRelease(const Point& mousePos, Fw::MouseButton button);
 
-// easy typing for _1, _2, ...
-using namespace std::placeholders;
+    std::string m_text;
+    Size m_boxSize;
+    Point m_textOffset;
+};
 
 #endif

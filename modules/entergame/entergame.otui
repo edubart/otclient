@@ -1,7 +1,7 @@
 MainWindow
   id: enterGame
   title: Enter Game
-  size: 236 160
+  size: 236 200
   onEnter: EnterGame.doLogin()
   onEscape: EnterGame.hide()
 
@@ -38,6 +38,27 @@ MainWindow
     margin.left: 18
     margin.right: 18
 
+  CheckBox
+    id: rememberPasswordBox
+    text: Remember password
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: prev.bottom
+    margin.top: 10
+    margin.left: 18
+    margin.right: 18
+
+  CheckBox
+    id: autoLoginBox
+    text: Auto login
+    checked: true
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: prev.bottom
+    margin.top: 8
+    margin.left: 18
+    margin.right: 18
+
   Button
     text: Ok
     width: 64
@@ -45,7 +66,7 @@ MainWindow
     anchors.bottom: parent.bottom
     margin.bottom: 16
     margin.right: 16
-    onClick: EnterGame.doLogin()
+    @onClick: EnterGame.doLogin()
 
   Button
     text: Cancel
@@ -54,4 +75,4 @@ MainWindow
     anchors.bottom: parent.bottom
     margin.bottom: 16
     margin.right: 16
-    onClick: EnterGame.hide()
+    @onClick: EnterGame.hide()

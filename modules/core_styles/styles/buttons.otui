@@ -8,18 +8,18 @@ Button < UIButton
     source: /core_styles/images/button.png
     border: 5
 
-  state.hover:
+  $hover:
     border-image:
       source: /core_styles/images/button_hover.png
       border: 5
 
-  state.pressed:
+  $pressed:
     text-translate: 1 1
     border-image:
       source: /core_styles/images/button_down.png
       border: 5
 
-  state.disabled:
+  $disabled:
     color: #999999
     background-color: #ffffff88
 
@@ -32,14 +32,14 @@ TopButton < UIButton
     size: 26 25
     border: 3
 
-  state.hover:
+  $hover:
     border-image:
       source: /core_styles/images/top_button.png
       size: 26 25
       offset: 26 0
       border: 3
 
-  state.pressed:
+  $pressed:
     text-translate: 1 1
     border-image:
       source: /core_styles/images/top_button.png
@@ -47,7 +47,7 @@ TopButton < UIButton
       offset: 52 0
       border: 3
 
-  state.disabled:
+  $disabled:
     background-color: #ffffff66
 
 MenuButton < UIButton
@@ -58,7 +58,7 @@ MenuButton < UIButton
     source: /core_styles/images/menu.png
     size: 64 24
 
-  state.hover:
+  $hover:
     border-image:
       source: /core_styles/images/menu.png
       offset: 0 24

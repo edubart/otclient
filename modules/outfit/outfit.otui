@@ -12,7 +12,7 @@ Window
     margin.left: 20
     
   Button
-    onClick: Outfit.previousType()
+    @onClick: Outfit.previousType()
     text: <<
     width: 32
     margin.top: 3
@@ -20,7 +20,7 @@ Window
     anchors.left: creature.left
     
   Button
-    onClick: Outfit.nextType()
+    @onClick: Outfit.nextType()
     text: >>
     width: 32
     margin.top: 3
@@ -43,7 +43,7 @@ Window
     anchors.bottom: parent.bottom
     margin.bottom: 16
     margin.right: 16
-    onClick: Outfit.accept()
+    @onClick: Outfit.accept()
 
   Button
     id: buttonCancel
@@ -53,4 +53,4 @@ Window
     anchors.bottom: parent.bottom
     margin.bottom: 16
     margin.right: 16
-    onClick: Outfit.destroy()
+    @onClick: Outfit.destroy()

@@ -129,6 +129,10 @@ void LuaInterface::registerFunctions()
     g_lua.bindClassMemberFunction<UILineEdit>("clearText", &UILineEdit::clearText);
     g_lua.bindClassMemberFunction<UILineEdit>("getCursorPos", &UILineEdit::getCursorPos);
 
+    // UICheckBox
+    g_lua.registerClass<UICheckBox, UIWidget>();
+    g_lua.bindClassStaticFunction<UICheckBox>("create", &UIWidget::create<UICheckBox>);
+
     // UIWindow
     g_lua.registerClass<UIWindow, UIWidget>();
     g_lua.bindClassStaticFunction<UIWindow>("create", &UIWidget::create<UIWindow>);

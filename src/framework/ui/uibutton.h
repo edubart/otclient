@@ -44,7 +44,7 @@ protected:
     virtual void onMouseRelease(const Point& mousePos, Fw::MouseButton button);
 
     SimpleCallback m_onClick;
-    Point m_textTranslate;
+    Point m_textOffset;
     std::string m_text;
 };
 

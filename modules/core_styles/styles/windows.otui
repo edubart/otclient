@@ -12,7 +12,7 @@ Window < UIWindow
     border: 4
     border.top: 20
 
-  state.pressed:
+  $pressed:
     opacity: 192
 
 MiniWindow < UIWindow

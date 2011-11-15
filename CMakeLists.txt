@@ -50,7 +50,7 @@ IF(CMAKE_BUILD_TYPE STREQUAL "Debug")
     ADD_DEFINITIONS(-D_DEBUG)
 ENDIF(CMAKE_BUILD_TYPE STREQUAL "Debug")
 
-SET(SOURCES src/framework/ui/uiframecounter.cpp
+SET(SOURCES
     # main
     src/main.cpp
 
@@ -93,9 +93,6 @@ SET(SOURCES src/framework/ui/uiframecounter.cpp
     src/framework/net/protocol.cpp
     src/framework/net/rsa.cpp
     src/framework/net/server.cpp
-
-    # framework util
-    src/framework/util/translator.cpp
 
     # framework core
     src/framework/core/logger.cpp
@@ -142,6 +139,9 @@ SET(SOURCES src/framework/ui/uiframecounter.cpp
     src/framework/ui/uiverticallayout.cpp
     src/framework/ui/uilayout.cpp
     src/framework/ui/uiprogressbar.cpp
+    src/framework/ui/uicheckbox.cpp
+    src/framework/ui/uiframecounter.cpp
+    src/framework/ui/uitranslator.cpp
 )
 
 IF(HANDLE_EXCEPTIONS)

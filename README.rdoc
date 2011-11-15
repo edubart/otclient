@@ -1,16 +1,11 @@
 == What is OTClient?
 
 OTClient is an alternative Tibia client for usage with otserv. It aims to be complete and flexible,
-for that it uses LUA scripting for all game interface functionality and configuration files created with
-a syntax similar to CSS for its interface design. OTClient works with a modular system, this means
+for that it uses LUA scripting for all game interface functionality and OTML files that has a syntax
+similar to CSS for the client interface design. OTClient works with a modular system, this means
 that each functionality is a separated module, giving the possibility to users modify and customize
 anything easily. Users can also create new mods and extend game interface for their own purposes.
 OTClient is written in C++2011, the upcoming C++ standard.
-
-== Need help?
-
-If you have any questions or are looking for more information, please feel free to ask on our official
-forum at http://otclient.info/
 
 == Getting Started
 
@@ -19,9 +14,14 @@ In short, if you need to compile OTClient, follow these tutorials:
 * {Compiling on Ubuntu}[http://otclient.info/page/articles.html/_/general/compiling-on-ubuntu-r12]
 Checkout our website at {http://otclient.info}[http://otclient.info/] for tutorials and more information
 
+== Need help?
+
+If you have any questions or are looking for more information, please feel free to ask on our official
+forum at http://otclient.info/
+
 == Bugs
 
-Have found a bug? Please create an issue in our bug tracker!
+Have found a bug? Please create an issue in our bug tracker
 http://otclient.info/tracker
 
 == Contributing
@@ -31,8 +31,8 @@ We encourage you to contribute to OTClient! Please check out
 
 == Authors
 
-* edubart <edub4rt@gmail.com> (project creator and leader developer)
-* baxnie <henrique_santiago93@hotmail.com> (official developer)
+* edubart (project creator and leader developer) <edub4rt@gmail.com>
+* baxnie (official developer) <henrique_santiago93@hotmail.com>
 
 == License
 

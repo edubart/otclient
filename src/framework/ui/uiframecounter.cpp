@@ -21,6 +21,7 @@
  */
 
 #include "uiframecounter.h"
+#include "uitranslator.h"
 #include <framework/graphics/font.h>
 #include <framework/otml/otmlnode.h>
 #include <framework/platform/platform.h>

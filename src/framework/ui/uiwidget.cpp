@@ -24,6 +24,7 @@
 #include "uimanager.h"
 #include "uianchorlayout.h"
 #include "uiverticallayout.h"
+#include "uitranslator.h"
 
 #include <framework/core/eventdispatcher.h>
 #include <framework/graphics/image.h>
@@ -36,6 +37,7 @@
 UIWidget::UIWidget()
 {
     m_updateEventScheduled = false;
+    m_firstOnStyle = true;
     m_states = Fw::DefaultState;
 
     // generate an unique id, this is need because anchored layouts find widgets by id
@@ -611,6 +613,28 @@ void UIWidget::updateLayout()
         m_layout->update();
 }
 
+void UIWidget::setState(Fw::WidgetState state, bool on)
+{
+    if(state == Fw::InvalidState)
+        return;
+
+    int oldStates = m_states;
+    if(on)
+        m_states |= state;
+    else
+        m_states &= ~state;
+
+    if(oldStates != m_states)
+        updateStyle();
+}
+
+bool UIWidget::hasState(Fw::WidgetState state)
+{
+    if(state == Fw::InvalidState)
+        return false;
+    return (m_states & state);
+}
+
 void UIWidget::updateState(Fw::WidgetState state)
 {
     bool newStatus = true;
@@ -675,12 +699,7 @@ void UIWidget::updateState(Fw::WidgetState state)
     }
 
     if(newStatus != oldStatus) {
-        if(newStatus)
-            m_states |= state;
-        else
-            m_states &= ~state;
-
-        updateStyle();
+        setState(state, newStatus);
 
         if(state == Fw::FocusState) {
             g_dispatcher.addEvent(std::bind(&UIWidget::onFocusChange, asUIWidget(), newStatus, m_lastFocusReason));
@@ -691,10 +710,8 @@ void UIWidget::updateState(Fw::WidgetState state)
 
 void UIWidget::updateStates()
 {
-    updateState(Fw::ActiveState);
-    updateState(Fw::FocusState);
-    updateState(Fw::DisabledState);
-    updateState(Fw::HoverState);
+    for(int state = 1; state != Fw::LastState; state <<= 1)
+        updateState((Fw::WidgetState)state);
 }
 
 void UIWidget::updateStyle()
@@ -712,26 +729,32 @@ void UIWidget::updateStyle()
         }
     }
 
-    // merge states styles, NOTE: order does matter
-    OTMLNodePtr style = m_style->get("state.active");
-    if(style && hasState(Fw::ActiveState))
-        newStateStyle->merge(style);
+    // checks for states combination
+    for(const OTMLNodePtr& style : m_style->children()) {
+        if(boost::starts_with(style->tag(), "$")) {
+            std::string statesStr = style->tag().substr(1);
+            std::vector<std::string> statesSplit;
+            boost::split(statesSplit, statesStr, boost::is_any_of(std::string(" ")));
 
-    style = m_style->get("state.focus");
-    if(style && hasState(Fw::FocusState))
-        newStateStyle->merge(style);
+            bool match = true;
+            for(std::string stateStr : statesSplit) {
+                if(stateStr.length() == 0)
+                    continue;
 
-    style = m_style->get("state.hover");
-    if(style && hasState(Fw::HoverState))
-        newStateStyle->merge(style);
+                bool notstate = (stateStr[0] == '!');
+                if(notstate)
+                    stateStr = stateStr.substr(1);
 
-    style = m_style->get("state.pressed");
-    if(style && hasState(Fw::PressedState))
-        newStateStyle->merge(style);
+                bool stateOn = hasState(Fw::translateState(stateStr));
+                if((!notstate && !stateOn) || (notstate && stateOn))
+                    match = false;
+            }
 
-    style = m_style->get("state.disabled");
-    if(style && hasState(Fw::DisabledState))
-        newStateStyle->merge(style);
+            // merge states styles
+            if(match)
+                newStateStyle->merge(style);
+        }
+    }
 
     applyStyle(newStateStyle);
     m_stateStyle = newStateStyle;
@@ -886,13 +909,25 @@ void UIWidget::onStyleApply(const OTMLNodePtr& styleNode)
 
                 anchorLayout->addAnchor(asUIWidget(), anchoredEdge, hookedWidgetId, hookedEdge);
             }
-        } else if(node->tag() == "onClick" ||
-                  node->tag() == "onMousePress" ||
-                  node->tag() == "onHoverChange") {
-            g_lua.loadFunction(node->value(), "@" + node->source() + "[" + node->tag() + "]");
-            luaSetField(node->tag());
+        // lua functions
+        } else if(boost::starts_with(node->tag(), "@")) {
+            // on load once
+            if(m_firstOnStyle) {
+                std::string funcName = node->tag().substr(1);
+                std::string funcOrigin = "@" + node->source() + "[" + node->tag() + "]";
+                g_lua.loadFunction(node->value(), funcOrigin);
+                luaSetField(funcName);
+            }
+        // lua fields value
+        } else if(boost::starts_with(node->tag(), "&")) {
+            std::string fieldName = node->tag().substr(1);
+            std::string fieldOrigin = "@" + node->source() + "[" + node->tag() + "]";
+            g_lua.evaluateExpression(node->value(), fieldOrigin);
+            luaSetField(fieldName);
         }
     }
+
+    m_firstOnStyle = false;
 }
 
 void UIWidget::onGeometryUpdate(const Rect& oldRect, const Rect& newRect)

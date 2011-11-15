@@ -20,47 +20,47 @@
  * THE SOFTWARE.
  */
 
-#include "uibutton.h"
-#include <framework/graphics/borderimage.h>
-#include <framework/graphics/font.h>
+#include "uicheckbox.h"
 #include <framework/otml/otmlnode.h>
-#include <framework/luascript/luainterface.h>
+#include <framework/graphics/image.h>
+#include <framework/graphics/font.h>
 #include <framework/graphics/graphics.h>
+#include <framework/core/eventdispatcher.h>
 
-void UIButton::setup()
+void UICheckBox::render()
 {
-    UIWidget::setup();
-    setFocusable(false);
+    Rect boxRect;
+    boxRect.setSize(m_boxSize);
+    boxRect.moveLeft(m_rect.left());
+    boxRect.moveVerticalCenter(m_rect.verticalCenter());
+    g_graphics.bindColor(m_backgroundColor);
+    m_image->draw(boxRect);
 
-    // by default, all callbacks call lua fields
-    m_onClick = [this]() { this->callLuaField("onClick"); };
+    Rect textRect(m_rect);
+    textRect.setTopLeft(textRect.topLeft() + m_textOffset);
+    m_font->renderText(m_text, textRect, Fw::AlignLeft, m_foregroundColor);
 }
 
-void UIButton::render()
+void UICheckBox::onMouseRelease(const Point& mousePos, Fw::MouseButton button)
 {
-    UIWidget::render();
-    Rect textRect = m_rect;
-    textRect.translate(m_textOffset);
-    m_font->renderText(m_text, textRect, Fw::AlignCenter, m_foregroundColor);
+    if(isPressed() && getRect().contains(mousePos))
+        setState(Fw::CheckedState, !isChecked());
 }
 
-void UIButton::onStyleApply(const OTMLNodePtr& styleNode)
+void UICheckBox::onStyleApply(const OTMLNodePtr& styleNode)
 {
     UIWidget::onStyleApply(styleNode);
 
     for(OTMLNodePtr node : styleNode->children()) {
-        if(node->tag() == "text-offset") {
+        if(node->tag() == "text-offset")
             m_textOffset = node->value<Point>();
-        } else if(node->tag() == "text") {
+        else if(node->tag() == "text")
             m_text = node->value();
+        else if(node->tag() == "box-size")
+            m_boxSize = node->value<Size>();
+        else if(node->tag() == "checked") {
+            // must be scheduled because setChecked can change the style again
+            g_dispatcher.addEvent(std::bind(&UICheckBox::setChecked, asUICheckBox(), node->value<bool>()));
         }
-    }
-}
-
-void UIButton::onMouseRelease(const Point& mousePos, Fw::MouseButton button)
-{
-    if(isPressed()) {
-        if(m_onClick && getRect().contains(mousePos))
-            m_onClick();
     }
 }

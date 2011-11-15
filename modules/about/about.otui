@@ -41,7 +41,7 @@ MainWindow
       anchors.bottom: parent.bottom
       margin.bottom: 9
       margin.right: 9
-      onClick: About.openWebpage()
+      @onClick: About.openWebpage()
 
   HorizontalSeparator
     anchors.left: parent.left
@@ -58,4 +58,4 @@ MainWindow
     anchors.top: parent.top
     margin.top: 191
     margin.left: 188
-    onClick: About.destroy()
+    @onClick: About.destroy()

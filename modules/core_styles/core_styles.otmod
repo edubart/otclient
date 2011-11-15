@@ -11,6 +11,7 @@ Module
     importStyles 'styles/panels.otui'
     importStyles 'styles/separators.otui'
     importStyles 'styles/lineedits.otui'
+    importStyles 'styles/checkboxes.otui'
     importStyles 'styles/windows.otui'
     importStyles 'styles/listboxes.otui'
     importStyles 'styles/items.otui'

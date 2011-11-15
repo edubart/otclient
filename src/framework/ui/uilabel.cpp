@@ -21,6 +21,7 @@
  */
 
 #include "uilabel.h"
+#include "uitranslator.h"
 #include <framework/graphics/font.h>
 #include <framework/otml/otmlnode.h>
 

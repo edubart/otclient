@@ -17,10 +17,9 @@ local InventorySlotAmmo = 10
 -- public functions
 function Inventory.create()
   window = loadUI("/inventory/inventory.otui", Game.gameRightPanel)
-  
+
   local itemWidget = window:getChildById('feet')
   window:setHeight(itemWidget:getPosition().y + itemWidget:getHeight() - window:getPosition().y)
-  
 end
 
 function Inventory.destroy()
@@ -52,7 +51,7 @@ function Inventory.onInventoryChange(slot, item)
   elseif slot == InventorySlotAmmo then
     slotId = 'ammo'
   end
-  
+
   local itemWidget = window:getChildById(slotId)
   itemWidget:setItem(item)
 end

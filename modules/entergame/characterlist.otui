@@ -8,7 +8,7 @@ CharacterListLabel < Label
   margin.right: 1
   margin.top: 1
 
-  state.focus:
+  $focus:
     background-color: #ffffff22
     color: #ffffff
 
@@ -55,7 +55,7 @@ MainWindow
     anchors.bottom: parent.bottom
     margin.bottom: 16
     margin.right: 16
-    onClick: CharacterList.doLogin()
+    @onClick: CharacterList.doLogin()
 
   Button
     id: buttonCancel
@@ -65,4 +65,4 @@ MainWindow
     anchors.bottom: parent.bottom
     margin.bottom: 16
     margin.right: 16
-    onClick: CharacterList.destroy()
+    @onClick: CharacterList.destroy()

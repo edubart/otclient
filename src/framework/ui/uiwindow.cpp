@@ -21,6 +21,7 @@
  */
 
 #include "uiwindow.h"
+#include "uitranslator.h"
 #include <framework/graphics/borderimage.h>
 #include <framework/graphics/font.h>
 #include <framework/graphics/graphics.h>
