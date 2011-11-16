@@ -184,3 +184,8 @@ void Game::openOutfitWindow()
 {
     m_protocolGame->sendGetOutfit();
 }
+
+void Game::setOutfit(const Outfit& outfit)
+{
+    m_protocolGame->sendSetOutfit(outfit);
+}

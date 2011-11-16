@@ -58,7 +58,11 @@ void OTClient::registerLuaFunctions()
     g_lua.registerClass<ProtocolGame, Protocol>();
 
     g_lua.registerClass<Thing>();
+
     g_lua.registerClass<Creature>();
+    g_lua.bindClassMemberFunction("setOutfit", &Creature::setOutfit);
+    g_lua.bindClassMemberFunction("getOutfit", &Creature::getOutfit);
+
     g_lua.registerClass<Player, Creature>();
     g_lua.registerClass<LocalPlayer, Player>();
     g_lua.registerClass<Item>();
@@ -70,8 +74,8 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassStaticFunction<Game>("logout", std::bind(&Game::logout, &g_game, _1));
     g_lua.bindClassStaticFunction<Game>("cancelLogin", std::bind(&Game::cancelLogin, &g_game));
     g_lua.bindClassStaticFunction<Game>("isOnline", std::bind(&Game::isOnline, &g_game));
-    g_lua.bindClassStaticFunction<Game>("isOnline", std::bind(&Game::isOnline, &g_game));
     g_lua.bindClassStaticFunction<Game>("openOutfitWindow", std::bind(&Game::openOutfitWindow, &g_game));
+    g_lua.bindClassStaticFunction<Game>("setOutfit", std::bind(&Game::setOutfit, &g_game, _1));
 
     g_lua.registerClass<UIItem, UIWidget>();
     g_lua.bindClassStaticFunction<UIItem>("create", &UIItem::create<UIItem>);

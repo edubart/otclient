@@ -26,6 +26,7 @@
 #include "declarations.h"
 #include <otclient/net/declarations.h>
 #include <otclient/core/item.h>
+#include <otclient/core/outfit.h>
 
 class Game
 {
@@ -53,6 +54,7 @@ public:
     void talkChannel(int channelType, int channelId, const std::string& message);
     void talkPrivate(int channelType, const std::string& receiver, const std::string& message);
     void openOutfitWindow();
+    void setOutfit(const Outfit& outfit);
 
     bool isOnline() { return m_online; }
 
