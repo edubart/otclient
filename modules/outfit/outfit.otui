@@ -1,15 +1,35 @@
 Window
   title: Select Outfit
+  size: 256 320
   
   anchors.horizontalCenter: parent.horizontalCenter
   anchors.verticalCenter: parent.verticalCenter
   
-  Creature
-    id: creature
+  onEnter: Outfit.accept()
+  onEscape: Outfit.destroy()
+  
+  Label
+    id: name
+    text: Outfit Name
+    width: 100
     anchors.top: parent.top
     anchors.left: parent.left
-    margin.top: 30
+    margin.top: 34
     margin.left: 20
+  
+  Creature
+    id: creature
+    anchors.top: name.bottom
+    anchors.left: name.left
+    margin.top: 5
+
+  Button
+    @onClick: Outfit.nextType()
+    text: >>
+    width: 32
+    margin.top: 3
+    anchors.top: creature.bottom
+    anchors.right: creature.right
     
   Button
     @onClick: Outfit.previousType()
@@ -19,13 +39,29 @@ Window
     anchors.top: creature.bottom
     anchors.left: creature.left
     
-  Button
-    @onClick: Outfit.nextType()
-    text: >>
-    width: 32
-    margin.top: 3
-    anchors.top: creature.bottom
-    anchors.right: creature.right
+  CheckBox
+    text: Addon 1
+    enabled: false
+    margin.top: 10
+    width: 100
+    anchors.top: prev.bottom
+    anchors.left: prev.left
+    
+  CheckBox
+    text: Addon 2
+    enabled: false
+    margin.top: 10
+    width: 100
+    anchors.top: prev.bottom
+    anchors.left: prev.left
+    
+  CheckBox
+    text: Addon 3
+    enabled: false
+    margin.top: 10
+    width: 100
+    anchors.top: prev.bottom
+    anchors.left: prev.left
   
   HorizontalSeparator
     anchors.left: parent.left
