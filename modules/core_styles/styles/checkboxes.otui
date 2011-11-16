@@ -3,6 +3,8 @@ CheckBox < UICheckBox
   box-size: 12 12
   text-offset: 16 -1
   color: #aaaaaa
+  enabled: false
+  background-color: #ffffff88
 
   $hover:
     color: #cccccc
@@ -26,3 +28,7 @@ CheckBox < UICheckBox
     image:
       source: /core_styles/images/checkbox.png
       coords: 0 36 12 12
+
+  $disabled
+    background-color: #ffffff88
+    color: #aaaaaa88

@@ -4,6 +4,7 @@ Button < UIButton
   color: #f0ad4dff
   size: 106 24
   text-translate: 0 0
+
   border-image:
     source: /core_styles/images/button.png
     border: 5
@@ -20,7 +21,7 @@ Button < UIButton
       border: 5
 
   $disabled:
-    color: #999999
+    color: #f0ad4d88
     background-color: #ffffff88
 
 TopButton < UIButton

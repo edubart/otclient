@@ -81,8 +81,8 @@ void UIWidget::destroy()
         if(parent->hasChild(asUIWidget()))
             parent->removeChild(asUIWidget());
     }
-    setVisible(false);
-    setEnabled(false);
+    //setVisible(false);
+    //setEnabled(false);
 }
 
 void UIWidget::render()
@@ -139,12 +139,14 @@ void UIWidget::setStyle(const std::string& styleName)
     OTMLNodePtr styleNode = g_ui.getStyle(styleName);
     applyStyle(styleNode);
     m_style = styleNode;
+    updateStyle();
 }
 
 void UIWidget::setStyleFromNode(const OTMLNodePtr& styleNode)
 {
     applyStyle(styleNode);
     m_style = styleNode;
+    updateStyle();
 }
 
 void UIWidget::setParent(const UIWidgetPtr& parent)
@@ -751,8 +753,9 @@ void UIWidget::updateStyle()
             }
 
             // merge states styles
-            if(match)
+            if(match) {
                 newStateStyle->merge(style);
+            }
         }
     }
 
