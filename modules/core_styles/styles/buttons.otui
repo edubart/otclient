@@ -26,17 +26,17 @@ Button < UIButton
 
 TopButton < UIButton
   background-color: white
-  size: 26 25
+  size: 26 26
   text-translate: 0 0
   border-image:
     source: /core_styles/images/top_button.png
-    size: 26 25
+    size: 26 26
     border: 3
 
   $hover:
     border-image:
       source: /core_styles/images/top_button.png
-      size: 26 25
+      size: 26 26
       offset: 26 0
       border: 3
 
@@ -44,7 +44,7 @@ TopButton < UIButton
     text-translate: 1 1
     border-image:
       source: /core_styles/images/top_button.png
-      size: 26 25
+      size: 26 26
       offset: 52 0
       border: 3
 

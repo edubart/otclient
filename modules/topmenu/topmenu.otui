@@ -21,6 +21,7 @@ TopPanel
       phantom: true
 
   TopButton
+    id: enterGameButton
     anchors.top: prev.top
     anchors.left: prev.right
     margin.left: 6
@@ -35,6 +36,20 @@ TopPanel
     UIWidget
       size: 16 16
       image: /core_styles/icons/login.png
+      anchors.centerIn: parent
+      phantom: true
+
+  TopButton
+    id: motdButton
+    anchors.top: prev.top
+    anchors.left: prev.right
+    margin.left: 6
+    tooltip: Message of the day
+    @onClick:
+
+    UIWidget
+      size: 16 16
+      image: /core_styles/icons/motd.png
       anchors.centerIn: parent
       phantom: true
 
