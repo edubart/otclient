@@ -12,13 +12,9 @@ TopPanel
     margin.top: 4
     margin.left: 6
     tooltip: Options
+    icon: /core_styles/icons/settings.png
     @onClick: Options.create()
 
-    UIWidget
-      size: 16 16
-      image: /core_styles/icons/settings.png
-      anchors.centerIn: parent
-      phantom: true
 
   TopButton
     id: enterGameButton
@@ -26,6 +22,7 @@ TopPanel
     anchors.left: prev.right
     margin.left: 6
     tooltip: Enter game with a character
+    icon: /core_styles/icons/login.png
     @onClick: |
       if Game.isOnline() then
         CharacterList.show()
@@ -33,25 +30,14 @@ TopPanel
         EnterGame.show()
       end
 
-    UIWidget
-      size: 16 16
-      image: /core_styles/icons/login.png
-      anchors.centerIn: parent
-      phantom: true
-
   TopButton
     id: motdButton
     anchors.top: prev.top
     anchors.left: prev.right
     margin.left: 6
     tooltip: Message of the day
+    icon: /core_styles/icons/motd.png
     @onClick:
-
-    UIWidget
-      size: 16 16
-      image: /core_styles/icons/motd.png
-      anchors.centerIn: parent
-      phantom: true
 
   TopButton
     anchors.top: parent.top
@@ -59,6 +45,7 @@ TopPanel
     margin.top: 4
     margin.right: 6
     tooltip: Logout
+    icon: /core_styles/icons/logout.png
     @onClick: |
       if Game.isOnline() then
         Game.logout(false)
@@ -66,25 +53,14 @@ TopPanel
         exit()
       end
 
-    UIWidget
-      size: 16 16
-      image: /core_styles/icons/logout.png
-      anchors.centerIn: parent
-      phantom: true
-
   TopButton
     anchors.top: parent.top
     anchors.right: prev.left
     margin.top: 4
     margin.right: 6
     tooltip: About OTClient
+    icon: /core_styles/icons/about.png
     @onClick: About.create()
-
-    UIWidget
-      size: 16 16
-      image: /core_styles/icons/about.png
-      anchors.centerIn: parent
-      phantom: true
 
   FrameCounter
     anchors.top: parent.top

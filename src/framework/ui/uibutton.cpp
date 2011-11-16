@@ -26,19 +26,26 @@
 #include <framework/otml/otmlnode.h>
 #include <framework/luascript/luainterface.h>
 #include <framework/graphics/graphics.h>
+#include <framework/graphics/texture.h>
+#include <framework/graphics/texturemanager.h>
 
 void UIButton::setup()
 {
     UIWidget::setup();
     setFocusable(false);
-
-    // by default, all callbacks call lua fields
-    m_onClick = [this]() { this->callLuaField("onClick"); };
 }
 
 void UIButton::render()
 {
     UIWidget::render();
+
+    if(m_icon) {
+        Rect iconRect;
+        iconRect.setSize(m_icon->getSize());
+        iconRect.moveCenter(m_rect.center());
+        g_graphics.drawTexturedRect(iconRect, m_icon);
+    }
+
     Rect textRect = m_rect;
     textRect.translate(m_textOffset);
     m_font->renderText(m_text, textRect, Fw::AlignCenter, m_foregroundColor);
@@ -49,18 +56,18 @@ void UIButton::onStyleApply(const OTMLNodePtr& styleNode)
     UIWidget::onStyleApply(styleNode);
 
     for(OTMLNodePtr node : styleNode->children()) {
-        if(node->tag() == "text-offset") {
+        if(node->tag() == "text-offset")
             m_textOffset = node->value<Point>();
-        } else if(node->tag() == "text") {
+        else if(node->tag() == "text")
             m_text = node->value();
-        }
+        else if(node->tag() == "icon")
+            m_icon = g_textures.getTexture(node->value());
     }
 }
 
 void UIButton::onMouseRelease(const Point& mousePos, Fw::MouseButton button)
 {
-    if(isPressed()) {
-        if(m_onClick && getRect().contains(mousePos))
-            m_onClick();
+    if(isPressed() && getRect().contains(mousePos)) {
+        callLuaField("onClick");
     }
 }
