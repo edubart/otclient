@@ -149,7 +149,7 @@ public:
 
     void updateStates();
     virtual void updateState(Fw::WidgetState state);
-    void setState(Fw::WidgetState state, bool on);
+    bool setState(Fw::WidgetState state, bool on);
     bool hasState(Fw::WidgetState state);
 
     void updateStyle();

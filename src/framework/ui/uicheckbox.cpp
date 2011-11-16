@@ -48,7 +48,7 @@ void UICheckBox::render()
 void UICheckBox::onMouseRelease(const Point& mousePos, Fw::MouseButton button)
 {
     if(isPressed() && getRect().contains(mousePos))
-        setState(Fw::CheckedState, !isChecked());
+        setChecked(!isChecked());
 }
 
 void UICheckBox::onStyleApply(const OTMLNodePtr& styleNode)
@@ -67,4 +67,15 @@ void UICheckBox::onStyleApply(const OTMLNodePtr& styleNode)
             g_dispatcher.addEvent(std::bind(&UICheckBox::setChecked, asUICheckBox(), node->value<bool>()));
         }
     }
+}
+
+bool UICheckBox::isChecked()
+{
+    return hasState(Fw::CheckedState);
+}
+
+void UICheckBox::setChecked(bool checked)
+{
+    if(setState(Fw::CheckedState, checked))
+        callLuaField("onCheckChange", checked);
 }

@@ -163,13 +163,14 @@ bool luavalue_cast(int index, Rect& rect)
         rect.setWidth(g_lua.popInteger());
         g_lua.getField("height", index);
         rect.setHeight(g_lua.popInteger());
+        return true;
     } else if(g_lua.isString()) {
         return Fw::cast(g_lua.toString(index), rect);
     } else if(g_lua.isNil()) {
         rect = Rect();
         return true;
     }
-    return true;
+    return false;
 }
 
 // point
@@ -196,7 +197,7 @@ bool luavalue_cast(int index, Point& point)
         point = Point();
         return true;
     }
-    return true;
+    return false;
 }
 
 // size
@@ -223,7 +224,7 @@ bool luavalue_cast(int index, Size& size)
         size = Size();
         return true;
     }
-    return true;
+    return false;
 }
 
 // otml nodes
@@ -270,9 +271,9 @@ bool luavalue_cast(int index, OTMLNodePtr& node)
                 node->writeAt(cnodeName, g_lua.toString());
             g_lua.pop();
         }
-    } else
-        return false;
-    return true;
+        return true;
+    }
+    return false;
 }
 
 // object ptr

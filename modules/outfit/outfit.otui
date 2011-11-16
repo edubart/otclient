@@ -1,31 +1,23 @@
-ColorCheckBox < UICheckBox
-  size: 12 12
-  box-size: 12 12
-  background-color: #ffffffff
-  
-  image:
-    source: /core_styles/images/empty_rect.png
-
 ColorFirst < UIWidget
   id: color
   margin.left: 20
   anchors.top: creature.top
   anchors.left: creature.right
-  
-Color < ColorCheckBox
+
+Color < ColorBox
   anchors.top: color.top
   anchors.left: color.right
-  
+
 Window
   title: Select Outfit
-  size: 420 280
-  
+  size: 450 280
+
   anchors.horizontalCenter: parent.horizontalCenter
   anchors.verticalCenter: parent.verticalCenter
-  
+
   onEnter: Outfit.accept()
   onEscape: Outfit.destroy()
-  
+
   Label
     id: name
     text: Outfit Name
@@ -34,7 +26,7 @@ Window
     anchors.left: parent.left
     margin.top: 34
     margin.left: 20
-  
+
   Creature
     id: creature
     anchors.top: name.bottom
@@ -48,7 +40,7 @@ Window
     margin.top: 3
     anchors.top: creature.bottom
     anchors.right: creature.right
-    
+
   Button
     @onClick: Outfit.previousType()
     text: <<
@@ -56,7 +48,7 @@ Window
     margin.top: 3
     anchors.top: creature.bottom
     anchors.left: creature.left
-    
+
   CheckBox
     id: addon1
     text: Addon 1
@@ -65,7 +57,7 @@ Window
     width: 100
     anchors.top: prev.bottom
     anchors.left: prev.left
-    
+
   CheckBox
     id: addon2
     text: Addon 2
@@ -74,7 +66,7 @@ Window
     width: 100
     anchors.top: prev.bottom
     anchors.left: prev.left
-    
+
   CheckBox
     id: addon3
     text: Addon 3
@@ -83,7 +75,7 @@ Window
     width: 100
     anchors.top: prev.bottom
     anchors.left: prev.left
-  
+
   HorizontalSeparator
     anchors.left: parent.left
     anchors.right: parent.right

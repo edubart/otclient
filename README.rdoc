@@ -17,7 +17,7 @@ Checkout our website at {http://otclient.info}[http://otclient.info/] for tutori
 == Need help?
 
 If you have any questions or are looking for more information, please feel free to ask on our official
-forum at http://otclient.info/
+forum at http://otclient.info
 
 == Bugs
 

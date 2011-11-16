@@ -31,3 +31,18 @@ CheckBox < UICheckBox
   $disabled:
     background-color: #ffffff88
     color: #aaaaaa88
+
+ColorBox < UICheckBox
+  size: 16 16
+  box-size: 16 16
+  background-color: #ffffffff
+
+  $checked:
+    image:
+      source: /core_styles/images/colorbox.png
+      coords: 16 0 16 16
+
+  $!checked:
+    image:
+      source: /core_styles/images/colorbox.png
+      coords: 0 0 16 16

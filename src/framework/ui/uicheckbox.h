@@ -30,8 +30,8 @@ class UICheckBox : public UIWidget
 public:
     void render();
 
-    bool isChecked() { return hasState(Fw::CheckedState); }
-    void setChecked(bool checked) { setState(Fw::CheckedState, checked); }
+    bool isChecked();
+    void setChecked(bool checked);
 
     void setText(const std::string& text) { m_text = text; }
     std::string getText() { return m_text; }

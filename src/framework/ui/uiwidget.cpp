@@ -615,10 +615,10 @@ void UIWidget::updateLayout()
         m_layout->update();
 }
 
-void UIWidget::setState(Fw::WidgetState state, bool on)
+bool UIWidget::setState(Fw::WidgetState state, bool on)
 {
     if(state == Fw::InvalidState)
-        return;
+        return false;
 
     int oldStates = m_states;
     if(on)
@@ -626,8 +626,11 @@ void UIWidget::setState(Fw::WidgetState state, bool on)
     else
         m_states &= ~state;
 
-    if(oldStates != m_states)
+    if(oldStates != m_states) {
         updateStyle();
+        return true;
+    }
+    return false;
 }
 
 bool UIWidget::hasState(Fw::WidgetState state)
@@ -700,9 +703,7 @@ void UIWidget::updateState(Fw::WidgetState state)
             child->updateState(state);
     }
 
-    if(newStatus != oldStatus) {
-        setState(state, newStatus);
-
+    if(setState(state, newStatus)) {
         if(state == Fw::FocusState) {
             g_dispatcher.addEvent(std::bind(&UIWidget::onFocusChange, asUIWidget(), newStatus, m_lastFocusReason));
         } else if(state == Fw::HoverState)

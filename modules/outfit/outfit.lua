@@ -9,10 +9,10 @@ local currentOutfit = 1
 local function update()
   local creatureWidget = window:getChildById('creature')
   creatureWidget:setOutfitType(outfits[currentOutfit][1])
-  
+
   local nameWidget = window:getChildById('name')
   nameWidget:setText(outfits[currentOutfit][2])
-  
+
   local availableAddons = outfits[currentOutfit][3]
   local addon1 = window:getChildById('addon1')
   local addon2 = window:getChildById('addon2')
@@ -20,7 +20,7 @@ local function update()
   addon1:setChecked(false)
   addon2:setChecked(false)
   addon3:setChecked(false)
-  
+
   -- Maybe rework this someday
   if availableAddons == 1 then
     addon1:setChecked(true)
@@ -42,7 +42,7 @@ local function update()
     addon2:setChecked(true)
     addon3:setChecked(true)
   end
-  
+
 end
 
 -- public functions
@@ -61,28 +61,28 @@ function Outfit.create(creature, outfitList)
   Outfit.destroy()
   window = loadUI("/outfit/outfit.otui", UI.root)
   window:lock()
-  
+
   local creatureWidget = window:getChildById('creature')
   creatureWidget:setCreature(creature)
-  
+
   local firstColor = UIWidget.create()
   window:addChild(firstColor)
   firstColor:setStyle('ColorFirst')
-  
+
   for i=0,18 do
     for j=0,6 do
       local color = UICheckBox.create()
       window:addChild(color)
-      
+
       local outfitColor = getOufitColor(j*19 + i)
-      
+
       color:setStyle('Color')
       color:setBackgroundColor(outfitColor)
-      color:setMarginTop(j * 3 + j * 12)
-      color:setMarginLeft(i * 3 + i * 12)
+      color:setMarginTop(j * 3 + j * 14)
+      color:setMarginLeft(i * 3 + i * 14)
     end
   end
-  
+
   outfits = outfitList
   currentOutfit = 1
   update()
@@ -96,14 +96,14 @@ function Outfit.destroy()
 end
 
 function Outfit.nextType()
-  
+
   currentOutfit = currentOutfit + 1
   if currentOutfit > #outfits then
     currentOutfit = 1
   end
-  
+
   update()
-  
+
 end
 
 function Outfit.previousType()
@@ -111,9 +111,9 @@ function Outfit.previousType()
   if currentOutfit <= 0 then
     currentOutfit = #outfits
   end
-  
+
   update()
-  
+
 end
 
 -- hooked events
