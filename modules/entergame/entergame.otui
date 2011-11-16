@@ -41,6 +41,7 @@ MainWindow
   CheckBox
     id: rememberPasswordBox
     text: Remember password
+    checked: true
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: prev.bottom
@@ -51,7 +52,6 @@ MainWindow
   CheckBox
     id: autoLoginBox
     text: Auto login
-    checked: true
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: prev.bottom
