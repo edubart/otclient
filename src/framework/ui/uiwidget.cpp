@@ -788,73 +788,46 @@ void UIWidget::onStyleApply(const OTMLNodePtr& styleNode)
             image->loadFromOTML(node);
             setImage(image);
         }
-        else if(node->tag() == "border-image") {
+        else if(node->tag() == "border-image")
             setImage(BorderImage::loadFromOTML(node));
-        }
-        // font
-        else if(node->tag() == "font") {
+        else if(node->tag() == "font")
             setFont(g_fonts.getFont(node->value()));
-        }
-        // foreground color
-        else if(node->tag() == "color") {
+        else if(node->tag() == "color")
             setForegroundColor(node->value<Color>());
-        }
-        // background color
-        else if(node->tag() == "background-color") {
+        else if(node->tag() == "background-color")
             setBackgroundColor(node->value<Color>());
-        }
-        // opacity
-        else if(node->tag() == "opacity") {
+        else if(node->tag() == "opacity")
             setOpacity(node->value<int>());
-        }
-        // enabled
-        else if(node->tag() == "enabled") {
+        else if(node->tag() == "enabled")
             setEnabled(node->value<bool>());
-        }
-        // focusable
-        else if(node->tag() == "focusable") {
+        else if(node->tag() == "visible")
+            setVisible(node->value<bool>());
+        else if(node->tag() == "focusable")
             setFocusable(node->value<bool>());
-        }
-        // focusable
-        else if(node->tag() == "phantom") {
+        else if(node->tag() == "phantom")
             setPhantom(node->value<bool>());
-        }
-        // size
-        else if(node->tag() == "size") {
+        else if(node->tag() == "size")
             resize(node->value<Size>());
-        }
-        else if(node->tag() == "width") {
+        else if(node->tag() == "width")
             setWidth(node->value<int>());
-        }
-        else if(node->tag() == "height") {
+        else if(node->tag() == "height")
             setHeight(node->value<int>());
-        }
-        else if(node->tag() == "size fixed") {
+        else if(node->tag() == "size fixed")
             setSizeFixed(node->value<bool>());
-        }
-        // absolute position
-        else if(node->tag() == "position") {
+        else if(node->tag() == "position")
             moveTo(node->value<Point>());
-        }
-        else if(node->tag() == "x") {
+        else if(node->tag() == "x")
             setX(node->value<int>());
-        }
-        else if(node->tag() == "y") {
+        else if(node->tag() == "y")
             setY(node->value<int>());
-        }
-        // margins
-        else if(node->tag() == "margin.left") {
+        else if(node->tag() == "margin.left")
             setMarginLeft(node->value<int>());
-        }
-        else if(node->tag() == "margin.right") {
+        else if(node->tag() == "margin.right")
             setMarginRight(node->value<int>());
-        }
-        else if(node->tag() == "margin.top") {
+        else if(node->tag() == "margin.top")
             setMarginTop(node->value<int>());
-        }
-        else if(node->tag() == "margin.bottom") {
+        else if(node->tag() == "margin.bottom")
             setMarginBottom(node->value<int>());
-        }
         // layouts
         else if(node->tag() == "layout") {
             // layout is set only once

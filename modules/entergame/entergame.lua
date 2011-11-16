@@ -16,6 +16,7 @@ end
 local function onMotd(protocol, motd)
   motdNumber = tonumber(string.sub(motd, 0, string.find(motd, "\n")))
   motdMessage = string.sub(motd, string.find(motd, "\n") + 1, string.len(motd))
+  TopMenu.getButton('motdButton'):show()
 end
 
 local function onCharacterList(protocol, characters, premDays)
@@ -67,4 +68,8 @@ function EnterGame.doLogin()
   end
 
   protocolLogin:login(EnterGame.account, EnterGame.password)
+end
+
+function EnterGame.displayMotd()
+  displayInfoBox("Message of the day", motdMessage)
 end

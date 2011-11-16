@@ -37,7 +37,8 @@ TopPanel
     margin.left: 6
     tooltip: Message of the day
     icon: /core_styles/icons/motd.png
-    @onClick:
+    visible: false
+    @onClick: EnterGame.displayMotd()
 
   TopButton
     anchors.top: parent.top
