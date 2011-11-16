@@ -10,7 +10,7 @@ local motdMessage
 local function onError(protocol, error)
   loadBox:destroy()
   local errorBox = displayErrorBox('Login Error', error)
-  errorBox.onOk = EnterGame.create
+  errorBox.onOk = EnterGame.show
 end
 
 local function onMotd(protocol, motd)
@@ -20,6 +20,17 @@ local function onMotd(protocol, motd)
 end
 
 local function onCharacterList(protocol, characters, premDays)
+  if enterGame:getChildById('rememberPasswordBox'):isChecked() then
+    Configs.set('account', EnterGame.account)
+    Configs.set('password', EnterGame.password)
+    Configs.set('autologin', tostring(enterGame:getChildById('autoLoginBox'):isChecked()))
+  else
+    Configs.set('account', nil)
+    Configs.set('password', nil)
+    enterGame:getChildById('accountNameLineEdit'):clearText()
+    enterGame:getChildById('accountPasswordLineEdit'):clearText()
+  end
+
   loadBox:destroy()
   CharacterList.create(characters, premDays)
 
@@ -35,6 +46,21 @@ end
 -- public functions
 function EnterGame.create()
   enterGame = UI.loadAndDisplay('/entergame/entergame.otui')
+
+  local account = Configs.get('account')
+  local password = Configs.get('password')
+  local autologin = toboolean(Configs.get('autologin'))
+
+  enterGame:getChildById('accountNameLineEdit'):setText(account)
+  enterGame:getChildById('accountPasswordLineEdit'):setText(password)
+
+  if #account > 0 then
+    enterGame:getChildById('rememberPasswordBox'):setChecked(true)
+    if autologin then
+        enterGame:getChildById('autoLoginBox'):setChecked(true)
+        addEvent(EnterGame.doLogin)
+    end
+  end
 end
 
 function EnterGame.destroy()

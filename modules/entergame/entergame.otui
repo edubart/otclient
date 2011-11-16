@@ -14,7 +14,6 @@ MainWindow
 
   LineEdit
     id: accountNameLineEdit
-    text: otclient0
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: prev.bottom
@@ -30,7 +29,6 @@ MainWindow
 
   PasswordLineEdit
     id: accountPasswordLineEdit
-    text: 123456
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: prev.bottom
@@ -41,17 +39,23 @@ MainWindow
   CheckBox
     id: rememberPasswordBox
     text: Remember password
-    checked: true
+    tooltip: Remember account and password when starts otclient
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: prev.bottom
     margin.top: 10
     margin.left: 18
     margin.right: 18
+    @onCheckChange: |
+      function(self, checked)
+        self:getParent():getChildById('autoLoginBox'):setEnabled(checked)
+      end
 
   CheckBox
     id: autoLoginBox
+    enabled: false
     text: Auto login
+    tooltip: Open charlist automatically when starting otclient
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: prev.bottom
