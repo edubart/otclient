@@ -1,0 +1,28 @@
+CheckBox < UICheckBox
+  size: 12 12
+  box-size: 12 12
+  text-offset: 16 -1
+  color: #aaaaaa
+
+  $hover:
+    color: #cccccc
+
+  $!checked:
+    image:
+      source: /core_styles/images/checkbox.png
+      coords: 0 0 12 12
+
+  $hover !checked:
+    image:
+      source: /core_styles/images/checkbox.png
+      coords: 0 12 12 12
+
+  $checked:
+    image:
+      source: /core_styles/images/checkbox.png
+      coords: 0 24 12 12
+
+  $hover checked:
+    image:
+      source: /core_styles/images/checkbox.png
+      coords: 0 36 12 12
