@@ -36,7 +36,7 @@ public:
 
     static ProtocolLoginPtr create() { return ProtocolLoginPtr(new ProtocolLogin); }
 
-    void login(const std::string& accountName, const std::string& accountPassword);
+    void login(const std::string& host, int port, const std::string& accountName, const std::string& accountPassword);
     void cancelLogin() { disconnect(); }
 
     void onConnect();

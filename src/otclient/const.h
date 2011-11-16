@@ -45,8 +45,6 @@ namespace Otc
 
     static const int ClientVersion = 862;
     static const int PicSignature = 0x4E119CBF;
-    static const char* Host = "sv3.radbr.com";
-    static const int HostPort = 7171;
 
     enum OsTypes {
         OsWindow = 1,

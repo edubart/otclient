@@ -27,6 +27,12 @@
 #include <framework/graphics/graphics.h>
 #include <framework/core/eventdispatcher.h>
 
+void UICheckBox::setup()
+{
+    UIWidget::setup();
+    setFocusable(false);
+}
+
 void UICheckBox::render()
 {
     if(m_image) {

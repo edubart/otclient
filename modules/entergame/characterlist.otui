@@ -48,16 +48,16 @@ MainWindow
     margin.right: 16
     margin.bottom: 10
 
-  CheckBox
-    id: charAutoLoginBox
-    text: Auto login
-    tooltip: Auto login selected character on next charlist load
-    anchors.left: parent.left
-    anchors.right: parent.right
-    anchors.bottom: next.top
-    margin.bottom: 6
-    margin.left: 18
-    margin.right: 18
+  //CheckBox
+  //  id: charAutoLoginBox
+  //  text: Auto login
+  //  tooltip: Auto login selected character on next charlist load
+  //  anchors.left: parent.left
+  //  anchors.right: parent.right
+  //  anchors.bottom: next.top
+  //  margin.bottom: 6
+  //  margin.left: 18
+  //  margin.right: 18
 
   Button
     id: buttonOk

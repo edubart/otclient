@@ -33,7 +33,7 @@ ProtocolLogin::ProtocolLogin()
     enableChecksum();
 }
 
-void ProtocolLogin::login(const std::string& accountName, const std::string& accountPassword)
+void ProtocolLogin::login(const std::string& host, int port, const std::string& accountName, const std::string& accountPassword)
 {
     if(accountName.empty() || accountPassword.empty()) {
         callLuaField("onError", "You must enter an account name and password.");
@@ -43,7 +43,7 @@ void ProtocolLogin::login(const std::string& accountName, const std::string& acc
     m_accountName = accountName;
     m_accountPassword = accountPassword;
 
-    connect(Otc::Host, Otc::HostPort);
+    connect(host, port);
 }
 
 void ProtocolLogin::onConnect()

@@ -1,7 +1,7 @@
 MainWindow
   id: enterGame
   title: Enter Game
-  size: 236 200
+  size: 236 240
   onEnter: EnterGame.doLogin()
   onEscape: EnterGame.hide()
 
@@ -35,6 +35,38 @@ MainWindow
     margin.top: 2
     margin.left: 18
     margin.right: 18
+
+  LargerLabel
+    id: serverLabel
+    width: 140
+    text: Server
+    anchors.left: prev.left
+    anchors.top: prev.bottom
+    margin.top: 8
+
+  LineEdit
+    id: serverHostLineEdit
+    tooltip: Only protocol 8.62 is supported
+    anchors.left: serverLabel.left
+    anchors.right: serverLabel.right
+    anchors.top: serverLabel.bottom
+    margin.top: 2
+
+  LargerLabel
+    id: portLabel
+    text: Port
+    width: 50
+    anchors.left: serverLabel.right
+    anchors.top: serverLabel.top
+    margin.left: 10
+
+  LineEdit
+    id: serverPortLineEdit
+    text: 7171
+    anchors.left: portLabel.left
+    anchors.right: portLabel.right
+    anchors.top: portLabel.bottom
+    margin.top: 2
 
   CheckBox
     id: rememberPasswordBox
