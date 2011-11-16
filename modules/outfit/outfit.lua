@@ -127,7 +127,15 @@ function Outfit.create(creature, outfitList)
 
   m_creature = creature
   m_outfits = outfitList
+  
   currentOutfit = 1
+  for i=1,#outfitList do
+    if outfitList[i][1] == m_outfit.type then
+      currentOutfit = i
+      break
+    end
+  end
+
   update()
 end
 
