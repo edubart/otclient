@@ -50,12 +50,3 @@ void UICreature::onStyleApply(const OTMLNodePtr& styleNode)
 
     UIWidget::onStyleApply(styleNode);
 }
-
-void UICreature::setOutfitType(int outfitType)
-{
-    if(m_creature) {
-        Outfit outfit = m_creature->getOutfit();
-        outfit.setType(outfitType);
-        m_creature->setOutfit(outfit);
-    }
-}

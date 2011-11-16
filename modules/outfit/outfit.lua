@@ -2,47 +2,84 @@ Outfit = {}
 
 -- private variables
 local window = nil
-local outfits = nil
-local currentOutfit = 1
+local m_creature = nil
+local m_outfit = nil
+local m_outfits = nil
+local m_currentOutfit = 1
+local m_currentColor = nil
 
 -- private functions
+local function onAddonCheckChange(addon, value)
+  if addon:isChecked() then
+    m_outfit.addons = m_outfit.addons + value
+  else
+    m_outfit.addons = m_outfit.addons - value
+  end
+  m_creature:setOutfit(m_outfit)
+end
+
 local function update()
-  local creatureWidget = window:getChildById('creature')
-  creatureWidget:setOutfitType(outfits[currentOutfit][1])
-
   local nameWidget = window:getChildById('name')
-  nameWidget:setText(outfits[currentOutfit][2])
+  nameWidget:setText(m_outfits[currentOutfit][2])
 
-  local availableAddons = outfits[currentOutfit][3]
+  local availableAddons = m_outfits[currentOutfit][3]
   local addon1 = window:getChildById('addon1')
   local addon2 = window:getChildById('addon2')
   local addon3 = window:getChildById('addon3')
+  addon1.onCheckChange = function() onAddonCheckChange(addon1, 1) end
+  addon2.onCheckChange = function() onAddonCheckChange(addon2, 2) end
+  addon3.onCheckChange = function() onAddonCheckChange(addon3, 4) end
   addon1:setChecked(false)
   addon2:setChecked(false)
   addon3:setChecked(false)
+  addon1:setEnabled(false)
+  addon2:setEnabled(false)
+  addon3:setEnabled(false)
 
   -- Maybe rework this someday
   if availableAddons == 1 then
-    addon1:setChecked(true)
+    addon1:setEnabled(true)
   elseif availableAddons == 2 then
-    addon2:setChecked(true)
+    addon2:setEnabled(true)
   elseif availableAddons == 3 then
-    addon1:setChecked(true)
-    addon2:setChecked(true)
+    addon1:setEnabled(true)
+    addon2:setEnabled(true)
   elseif availableAddons == 4 then
-    addon3:setChecked(true)
+    addon3:setEnabled(true)
   elseif availableAddons == 5 then
-    addon1:setChecked(true)
-    addon3:setChecked(true)
+    addon1:setEnabled(true)
+    addon3:setEnabled(true)
   elseif availableAddons == 6 then
-    addon2:setChecked(true)
-    addon3:setChecked(true)
+    addon2:setEnabled(true)
+    addon3:setEnabled(true)
   elseif availableAddons == 7 then
-    addon1:setChecked(true)
-    addon2:setChecked(true)
-    addon3:setChecked(true)
+    addon1:setEnabled(true)
+    addon2:setEnabled(true)
+    addon3:setEnabled(true)
   end
 
+  m_outfit.type = m_outfits[currentOutfit][1]
+  m_outfit.addons = 0
+  m_creature:setOutfit(m_outfit)
+  
+end
+
+local function onColorCheckChange(color)
+  if color == m_currentColor then
+    color.onCheckChange = nil
+    color:setChecked(true)
+    color.onCheckChange = function() onColorCheckChange(color) end
+  else
+    m_currentColor.onCheckChange = nil
+    m_currentColor:setChecked(false)
+    local color2 = m_currentColor
+    m_currentColor.onCheckChange = function() onColorCheckChange(color2) end
+    
+    m_currentColor = color
+    
+    m_outfit.head = m_currentColor.colorId
+    m_creature:setOutfit(m_outfit)
+  end
 end
 
 -- public functions
@@ -61,13 +98,11 @@ function Outfit.create(creature, outfitList)
   Outfit.destroy()
   window = loadUI("/outfit/outfit.otui", UI.root)
   window:lock()
+  
+  m_outfit = creature:getOutfit()
 
   local creatureWidget = window:getChildById('creature')
   creatureWidget:setCreature(creature)
-
-  local firstColor = UIWidget.create()
-  window:addChild(firstColor)
-  firstColor:setStyle('ColorFirst')
 
   for i=0,18 do
     for j=0,6 do
@@ -75,15 +110,23 @@ function Outfit.create(creature, outfitList)
       window:addChild(color)
 
       local outfitColor = getOufitColor(j*19 + i)
-
+      color.colorId = j*19 + i
       color:setStyle('Color')
       color:setBackgroundColor(outfitColor)
       color:setMarginTop(j * 3 + j * 14)
-      color:setMarginLeft(i * 3 + i * 14)
+      color:setMarginLeft(10 + i * 3 + i * 14)
+      
+      if j*19 + i == m_outfit.head then
+        m_currentColor = color
+        color:setChecked(true)
+      end
+      
+      color.onCheckChange = function() onColorCheckChange(color) end
     end
   end
 
-  outfits = outfitList
+  m_creature = creature
+  m_outfits = outfitList
   currentOutfit = 1
   update()
 end
@@ -95,25 +138,27 @@ function Outfit.destroy()
   end
 end
 
-function Outfit.nextType()
+function Outfit.accept()
+  Game.setOutfit(m_outfit)
+  Outfit.destroy()
+end
 
+function Outfit.nextType()
   currentOutfit = currentOutfit + 1
-  if currentOutfit > #outfits then
+  if currentOutfit > #m_outfits then
     currentOutfit = 1
   end
 
   update()
-
 end
 
 function Outfit.previousType()
   currentOutfit = currentOutfit - 1
   if currentOutfit <= 0 then
-    currentOutfit = #outfits
+    currentOutfit = #m_outfits
   end
 
   update()
-
 end
 
 -- hooked events

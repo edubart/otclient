@@ -86,8 +86,6 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassStaticFunction<UICreature>("create", &UICreature::create<UICreature>);
     g_lua.bindClassMemberFunction<UICreature>("getCreature", &UICreature::getCreature);
     g_lua.bindClassMemberFunction<UICreature>("setCreature", &UICreature::setCreature);
-    g_lua.bindClassMemberFunction<UICreature>("setOutfitType", &UICreature::setOutfitType);
-
 
     g_lua.registerClass<UIMap, UIWidget>();
     g_lua.bindClassStaticFunction<UIMap>("create", &UIWidget::create<UIMap>);

@@ -1,16 +1,10 @@
-ColorFirst < UIWidget
-  id: color
-  margin.left: 20
-  anchors.top: creature.top
-  anchors.left: creature.right
-
 Color < ColorBox
-  anchors.top: color.top
-  anchors.left: color.right
+  anchors.top: head.top
+  anchors.left: head.right
 
 Window
   title: Select Outfit
-  size: 450 280
+  size: 550 280
 
   anchors.horizontalCenter: parent.horizontalCenter
   anchors.verticalCenter: parent.verticalCenter
@@ -32,12 +26,37 @@ Window
     anchors.top: name.bottom
     anchors.left: name.left
     margin.top: 5
+    
+  Button
+    id: head
+    text: Head
+    anchors.top: creature.top
+    anchors.left: creature.right
+    margin.left: 10
+    
+  Button
+    id: primary
+    text: Primary
+    anchors.top: prev.bottom
+    anchors.left: prev.left
+    
+  Button
+    id: secondary
+    text: Secondary
+    anchors.top: prev.bottom
+    anchors.left: prev.left
+    
+  Button
+    id: detail
+    text: Detail
+    anchors.top: prev.bottom
+    anchors.left: prev.left
 
   Button
     @onClick: Outfit.nextType()
     text: >>
     width: 32
-    margin.top: 3
+    margin.top: 4
     anchors.top: creature.bottom
     anchors.right: creature.right
 
@@ -45,7 +64,7 @@ Window
     @onClick: Outfit.previousType()
     text: <<
     width: 32
-    margin.top: 3
+    margin.top: 4
     anchors.top: creature.bottom
     anchors.left: creature.left
 
