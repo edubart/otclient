@@ -44,10 +44,10 @@ public:
     void renderChildren();
 
     void setVisible(bool visible);
-    void setEnabled(bool enabled) { m_enabled = enabled; updateState(Fw::DisabledState); }
+    void setEnabled(bool enabled);
     void setPressed(bool pressed) { m_pressed = pressed; updateState(Fw::PressedState); }
     void setId(const std::string& id) { m_id = id; }
-    void setFocusable(bool focusable) { m_focusable = focusable; }
+    void setFocusable(bool focusable);
     void setPhantom(bool phantom) { m_phantom = phantom; }
     void setStyle(const std::string& styleName);
     void setStyleFromNode(const OTMLNodePtr& styleNode);

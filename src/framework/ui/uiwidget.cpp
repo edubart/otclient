@@ -104,7 +104,7 @@ void UIWidget::renderChildren()
 {
     // draw children
     for(const UIWidgetPtr& child : m_children) {
-        // render only visible children with a valid rect
+        // render only visible children with a valid rect inside our rect
         if(child->isExplicitlyVisible() && child->getRect().isValid() && child->getRect().intersects(m_rect)) {
             // store current graphics opacity
             int oldOpacity = g_graphics.getOpacity();
@@ -125,12 +125,43 @@ void UIWidget::renderChildren()
     }
 }
 
+void UIWidget::setEnabled(bool enabled)
+{
+    if(enabled != m_enabled) {
+        m_enabled = enabled;
+
+        updateState(Fw::DisabledState);
+        updateState(Fw::ActiveState);
+        updateState(Fw::HoverState);
+    }
+}
+
 void UIWidget::setVisible(bool visible)
 {
-    m_visible = visible;
-    if(!visible && isFocused()) {
-        if(UIWidgetPtr parent = getParent())
-            parent->focusNextChild(Fw::ActiveFocusReason);
+    if(m_visible != visible) {
+        m_visible = visible;
+
+        // make parent focus another child
+        if(!visible && isFocused()) {
+            if(UIWidgetPtr parent = getParent())
+                parent->focusPreviousChild(Fw::ActiveFocusReason);
+        }
+
+        updateState(Fw::ActiveState);
+        updateState(Fw::HoverState);
+    }
+}
+
+void UIWidget::setFocusable(bool focusable)
+{
+    if(m_focusable != focusable) {
+        m_focusable = focusable;
+
+        // make parent focus another child
+        if(!focusable && isFocused()) {
+            if(UIWidgetPtr parent = getParent())
+                parent->focusPreviousChild(Fw::ActiveFocusReason);
+        }
     }
 }
 
@@ -208,6 +239,8 @@ void UIWidget::unlock()
 
 void UIWidget::focus()
 {
+    if(!m_focusable)
+        return;
     if(UIWidgetPtr parent = getParent())
         parent->focusChild(asUIWidget(), Fw::ActiveFocusReason);
 }
@@ -356,14 +389,6 @@ void UIWidget::addChild(const UIWidgetPtr& child)
 
     m_children.push_back(child);
     child->setParent(asUIWidget());
-
-    // focus must be set after the style has been loaded
-    auto self = asUIWidget();
-    g_dispatcher.addEvent([self,child]() {
-        // always focus new child
-        if(child->getParent() == self && child->isFocusable() && child->isExplicitlyVisible() && child->isExplicitlyEnabled())
-            self->focusChild(child, Fw::ActiveFocusReason);
-    });
 
     // create default layout
     if(!m_layout)
@@ -670,7 +695,7 @@ void UIWidget::updateState(Fw::WidgetState state)
         UIWidgetPtr parent;
         do {
             parent = widget->getParent();
-            if(!widget->isExplicitlyEnabled() || !widget->getRect().contains(mousePos) ||
+            if(!widget->isExplicitlyEnabled() || !widget->isExplicitlyVisible() || !widget->getRect().contains(mousePos) ||
                (parent && widget != parent->getChildByPos(mousePos))) {
                 newStatus = false;
                 break;
@@ -759,6 +784,8 @@ void UIWidget::updateStyle()
             }
         }
     }
+
+    //TODO: prevent setting already set proprieties
 
     applyStyle(newStateStyle);
     m_stateStyle = newStateStyle;
@@ -902,6 +929,12 @@ void UIWidget::onStyleApply(const OTMLNodePtr& styleNode)
             g_lua.evaluateExpression(node->value(), fieldOrigin);
             luaSetField(fieldName);
         }
+    }
+
+    if(m_firstOnStyle) {
+        // always focus new child
+        if(isFocusable() && isExplicitlyVisible() && isExplicitlyEnabled())
+            focus();
     }
 
     m_firstOnStyle = false;

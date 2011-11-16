@@ -2,6 +2,9 @@ Label < UILabel
   font: verdana-11px-antialised
   color: #aaaaaa
 
+  $disabled:
+    color: #aaaaaa88
+
 LargerLabel < Label
 
 

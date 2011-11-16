@@ -2,6 +2,7 @@ Window < UIWindow
   font: verdana-11px-antialised
   size: 200 200
   opacity: 255
+  color: white
   background-color: white
   head height: 20
   head text align: center
@@ -14,6 +15,9 @@ Window < UIWindow
 
   $pressed:
     opacity: 192
+
+  $disabled:
+    color: #aaaaaa88
 
 MiniWindow < UIWindow
   font: verdana-11px-antialised

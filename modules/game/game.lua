@@ -16,7 +16,7 @@ end
 function Game.createInterface()
   Background.hide()
   CharacterList.destroyLoadBox()
-  Game.gameUi = loadUI('/game/game.otui', UI.root)
+  Game.gameUi = UI.loadAndDisplay('/game/game.otui')
   UI.root:moveChildToIndex(Game.gameUi, 1)
   Game.gameMapPanel = Game.gameUi:getChildById('mapPanel')
   Game.gameRightPanel = Game.gameUi:getChildById('rightPanel')

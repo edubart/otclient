@@ -7,8 +7,17 @@ local motdNumber
 local motdMessage
 
 -- private functions
+local function clearAccountFields()
+  enterGame:getChildById('accountNameLineEdit'):clearText()
+  enterGame:getChildById('accountPasswordLineEdit'):clearText()
+  enterGame:getChildById('accountNameLineEdit'):focus()
+  Configs.set('account', nil)
+  Configs.set('password', nil)
+end
+
 local function onError(protocol, error)
   loadBox:destroy()
+  clearAccountFields()
   local errorBox = displayErrorBox('Login Error', error)
   errorBox.onOk = EnterGame.show
 end
@@ -25,10 +34,7 @@ local function onCharacterList(protocol, characters, premDays)
     Configs.set('password', EnterGame.password)
     Configs.set('autologin', tostring(enterGame:getChildById('autoLoginBox'):isChecked()))
   else
-    Configs.set('account', nil)
-    Configs.set('password', nil)
-    enterGame:getChildById('accountNameLineEdit'):clearText()
-    enterGame:getChildById('accountPasswordLineEdit'):clearText()
+    clearAccountFields()
   end
 
   loadBox:destroy()
@@ -59,6 +65,7 @@ function EnterGame.create()
   enterGame:getChildById('serverPortLineEdit'):setText(port)
   enterGame:getChildById('autoLoginBox'):setChecked(autologin)
   enterGame:getChildById('rememberPasswordBox'):setChecked(#account > 0)
+  enterGame:getChildById('accountNameLineEdit'):focus()
 
   if #account > 0 and autologin then
     addEvent(EnterGame.doLogin)

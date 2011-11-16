@@ -7,5 +7,8 @@ LineEdit < UILineEdit
     source: /core_styles/images/panel_flat.png
     border: 1
 
+  $disabled:
+    color: #aaaaaa88
+
 PasswordLineEdit < LineEdit
   text hidden: true
