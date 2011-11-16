@@ -37,6 +37,7 @@
 #include <otclient/ui/uiitem.h>
 #include <otclient/ui/uicreature.h>
 #include <otclient/ui/uimap.h>
+#include <otclient/core/outfit.h>
 
 void OTClient::registerLuaFunctions()
 {
@@ -44,6 +45,7 @@ void OTClient::registerLuaFunctions()
     g_lua.bindGlobalFunction("setOnClose", std::bind(&OTClient::setOnClose, &g_client, _1));
     g_lua.bindGlobalFunction("importDat", std::bind(&ThingsType::load, &g_thingsType, _1));
     g_lua.bindGlobalFunction("importSpr", std::bind(&SpriteManager::load, &g_sprites, _1));
+    g_lua.bindGlobalFunction("getOufitColor", Outfit::getColor);
 
     g_lua.registerClass<ProtocolLogin, Protocol>();
     g_lua.bindClassStaticFunction<ProtocolLogin>("create", &ProtocolLogin::create);

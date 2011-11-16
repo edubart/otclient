@@ -1,6 +1,24 @@
+ColorCheckBox < UICheckBox
+  size: 12 12
+  box-size: 12 12
+  background-color: #ffffffff
+  
+  image:
+    source: /core_styles/images/empty_rect.png
+
+ColorFirst < UIWidget
+  id: color
+  margin.left: 20
+  anchors.top: creature.top
+  anchors.left: creature.right
+  
+Color < ColorCheckBox
+  anchors.top: color.top
+  anchors.left: color.right
+  
 Window
   title: Select Outfit
-  size: 256 320
+  size: 420 280
   
   anchors.horizontalCenter: parent.horizontalCenter
   anchors.verticalCenter: parent.verticalCenter
@@ -40,6 +58,7 @@ Window
     anchors.left: creature.left
     
   CheckBox
+    id: addon1
     text: Addon 1
     enabled: false
     margin.top: 10
@@ -48,6 +67,7 @@ Window
     anchors.left: prev.left
     
   CheckBox
+    id: addon2
     text: Addon 2
     enabled: false
     margin.top: 10
@@ -56,6 +76,7 @@ Window
     anchors.left: prev.left
     
   CheckBox
+    id: addon3
     text: Addon 3
     enabled: false
     margin.top: 10

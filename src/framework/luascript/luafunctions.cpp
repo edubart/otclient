@@ -132,6 +132,9 @@ void LuaInterface::registerFunctions()
     // UICheckBox
     g_lua.registerClass<UICheckBox, UIWidget>();
     g_lua.bindClassStaticFunction<UICheckBox>("create", &UIWidget::create<UICheckBox>);
+    g_lua.bindClassMemberFunction<UICheckBox>("isChecked", &UICheckBox::isChecked);
+    g_lua.bindClassMemberFunction<UICheckBox>("setChecked", &UICheckBox::setChecked);
+
 
     // UIWindow
     g_lua.registerClass<UIWindow, UIWidget>();
