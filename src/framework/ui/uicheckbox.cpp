@@ -29,16 +29,20 @@
 
 void UICheckBox::render()
 {
-    Rect boxRect;
-    boxRect.setSize(m_boxSize);
-    boxRect.moveLeft(m_rect.left());
-    boxRect.moveVerticalCenter(m_rect.verticalCenter());
-    g_graphics.bindColor(m_backgroundColor);
-    m_image->draw(boxRect);
+    if(m_image) {
+        Rect boxRect;
+        boxRect.setSize(m_boxSize);
+        boxRect.moveLeft(m_rect.left());
+        boxRect.moveVerticalCenter(m_rect.verticalCenter());
+        g_graphics.bindColor(m_backgroundColor);
+        m_image->draw(boxRect);
+    }
 
-    Rect textRect(m_rect);
-    textRect.setTopLeft(textRect.topLeft() + m_textOffset);
-    m_font->renderText(m_text, textRect, Fw::AlignLeft, m_foregroundColor);
+    if(m_text.length()) {
+        Rect textRect(m_rect);
+        textRect.setTopLeft(textRect.topLeft() + m_textOffset);
+        m_font->renderText(m_text, textRect, Fw::AlignLeft, m_foregroundColor);
+    }
 }
 
 void UICheckBox::onMouseRelease(const Point& mousePos, Fw::MouseButton button)
