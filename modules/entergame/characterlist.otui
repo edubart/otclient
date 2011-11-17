@@ -4,9 +4,9 @@ CharacterListLabel < Label
   background-color: #00000000
   offset: 2 0
   focusable: true
-  margin.left: 1
-  margin.right: 1
-  margin.top: 1
+  margin-left: 1
+  margin-right: 1
+  margin-top: 1
 
   $focus:
     background-color: #ffffff22
@@ -16,17 +16,17 @@ MainWindow
   id: charactersWindow
   title: Character List
   size: 250 248
-  onEnter: CharacterList.doLogin()
-  onEscape: CharacterList.destroy()
+  @onEnter: CharacterList.doLogin()
+  @onEscape: CharacterList.destroy()
 
   TextList
     id: characterList
     anchors.fill: parent
     anchors.bottom: next.top
-    margin.top: 30
-    margin.bottom: 5
-    margin.left: 16
-    margin.right: 16
+    margin-top: 30
+    margin-bottom: 5
+    margin-left: 16
+    margin-right: 16
 
   Label
     id: accountStatusLabel
@@ -36,17 +36,17 @@ MainWindow
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.bottom: separator.top
-    margin.left: 16
-    margin.bottom: 5
+    margin-left: 16
+    margin-bottom: 5
 
   HorizontalSeparator
     id: separator
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.bottom: next.top
-    margin.left: 16
-    margin.right: 16
-    margin.bottom: 10
+    margin-left: 16
+    margin-right: 16
+    margin-bottom: 10
 
   //CheckBox
   //  id: charAutoLoginBox
@@ -55,9 +55,9 @@ MainWindow
   //  anchors.left: parent.left
   //  anchors.right: parent.right
   //  anchors.bottom: next.top
-  //  margin.bottom: 6
-  //  margin.left: 18
-  //  margin.right: 18
+  //  margin-bottom: 6
+  //  margin-left: 18
+  //  margin-right: 18
 
   Button
     id: buttonOk
@@ -65,8 +65,8 @@ MainWindow
     width: 64
     anchors.right: next.left
     anchors.bottom: parent.bottom
-    margin.bottom: 16
-    margin.right: 16
+    margin-bottom: 16
+    margin-right: 16
     @onClick: CharacterList.doLogin()
 
   Button
@@ -75,6 +75,6 @@ MainWindow
     width: 64
     anchors.right: parent.right
     anchors.bottom: parent.bottom
-    margin.bottom: 16
-    margin.right: 16
+    margin-bottom: 16
+    margin-right: 16
     @onClick: CharacterList.destroy()

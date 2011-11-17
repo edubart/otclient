@@ -36,7 +36,7 @@ void UIVerticalLayout::applyStyle(const OTMLNodePtr& styleNode)
     UILayout::applyStyle(styleNode);
 
     for(const OTMLNodePtr& node : styleNode->children()) {
-        if(node->tag() == "align bottom")
+        if(node->tag() == "align-bottom")
             m_alignBottom = node->value<bool>();
         else if(node->tag() == "padding")
             m_padding = node->value<int>();

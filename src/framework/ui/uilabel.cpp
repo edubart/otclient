@@ -29,15 +29,15 @@ UILabel::UILabel()
 {
     m_focusable = false;
     m_phantom = true;
-    m_align = Fw::AlignLeft;
+    m_textAlign = Fw::AlignLeft;
 }
 
 void UILabel::render()
 {
     UIWidget::render();
     Rect textRect = m_rect;
-    textRect.setTopLeft(textRect.topLeft() + m_offset);
-    m_font->renderText(m_text, textRect, m_align, m_foregroundColor);
+    textRect.setTopLeft(textRect.topLeft() + m_textOffset);
+    m_font->renderText(m_text, textRect, m_textAlign, m_foregroundColor);
 }
 
 void UILabel::setText(const std::string& text)
@@ -66,10 +66,10 @@ void UILabel::onStyleApply(const OTMLNodePtr& styleNode)
     for(const OTMLNodePtr& node : styleNode->children()) {
         if(node->tag() == "text")
             setText(node->value());
-        else if(node->tag() == "align")
-            setAlign(Fw::translateAlignment(node->value()));
-        else if(node->tag() == "offset") {
-            setOffset(node->value<Point>());
+        else if(node->tag() == "text-align")
+            setTextAlign(Fw::translateAlignment(node->value()));
+        else if(node->tag() == "text-offset") {
+            setTextOffset(node->value<Point>());
         }
     }
 }

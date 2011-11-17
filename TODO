@@ -6,11 +6,11 @@ left panel with dragging windows
 console history
 console text selection
 console scrolling
-padding
 scrollbar
-make otui syntax more like css
 a real working border and background property in otui
 load state styles in order
 grid layout
 fix moving windows and tooltips conflicts
 todo display otclient icon in window bar
+remake otui styles states system
+padding

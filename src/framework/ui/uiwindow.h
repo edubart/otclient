@@ -53,7 +53,7 @@ private:
     bool m_moving;
     MovePolicy m_movePolicy;
     Fw::AlignmentFlag m_titleAlign;
-    Point m_headOffset;
+    Point m_headTextOffset;
     Point m_movingReference;
     Point m_oldPos;
     int m_oldIndex;

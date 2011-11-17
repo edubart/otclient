@@ -41,19 +41,17 @@ void UIWindow::render()
     // render children
     UIWidget::render();
 
-    // draw window head
-
     // draw window head text
     Rect headTextRect = m_rect;
-    headTextRect.addTop(-m_headOffset.y);
+    headTextRect.addTop(-m_headTextOffset.y);
     headTextRect.setHeight(m_headHeight);
     if(m_titleAlign & Fw::AlignLeft)
-        headTextRect.addLeft(-m_headOffset.x);
+        headTextRect.addLeft(-m_headTextOffset.x);
     else if(m_titleAlign & Fw::AlignRight)
-        headTextRect.addRight(-m_headOffset.x);
+        headTextRect.addRight(-m_headTextOffset.x);
     else {
-        headTextRect.addLeft(-m_headOffset.x);
-        headTextRect.addRight(-m_headOffset.x);
+        headTextRect.addLeft(-m_headTextOffset.x);
+        headTextRect.addRight(-m_headTextOffset.x);
     }
     m_font->renderText(m_title, headTextRect, m_titleAlign, m_foregroundColor);
 }
@@ -63,29 +61,21 @@ void UIWindow::onStyleApply(const OTMLNodePtr& styleNode)
     UIWidget::onStyleApply(styleNode);
 
     for(OTMLNodePtr node : styleNode->children()) {
-        if(node->tag() == "head height")
+        if(node->tag() == "head-height")
             m_headHeight = node->value<int>();
-        else if(node->tag() == "head offset")
-            m_headOffset = node->value<Point>();
+        else if(node->tag() == "head-text-offset")
+            m_headTextOffset = node->value<Point>();
         else if(node->tag() == "title")
             setTitle(node->value());
-        else if(node->tag() == "head text align")
+        else if(node->tag() == "head-text-align")
             m_titleAlign = Fw::translateAlignment(node->value());
-        else if(node->tag() == "move policy") {
+        else if(node->tag() == "move-policy") {
             if(node->value() == "free")
                 m_movePolicy = FREE_MOVE;
             else if(node->value() == "free updated")
                 m_movePolicy = FREE_UPDATED_MOVE;
             else
                 m_movePolicy = DONT_MOVE;
-        }
-        else if(node->tag() == "onEnter") {
-            g_lua.loadFunction(node->value(), "@" + node->source() + "[" + node->tag() + "]");
-            luaSetField(node->tag());
-        }
-        else if(node->tag() == "onEscape") {
-            g_lua.loadFunction(node->value(), "@" + node->source() + "[" + node->tag() + "]");
-            luaSetField(node->tag());
         }
     }
 }

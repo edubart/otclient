@@ -1,7 +1,7 @@
 CenterLabel < Label
   font: verdana-11px-rounded
   height: 16
-  align: center
+  text-align: center
   anchors.verticalCenter: parent.verticalCenter
   anchors.left: parent.left
   anchors.right: parent.right
@@ -9,8 +9,8 @@ CenterLabel < Label
 BottomLabel < Label
   font: verdana-11px-rounded
   height: 16
-  align: center
-  margin.bottom: 2
+  text-align: center
+  margin-bottom: 2
   anchors.bottom: parent.bottom
   anchors.left: parent.left
   anchors.right: parent.right

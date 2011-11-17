@@ -9,8 +9,8 @@ TopPanel
     id: settingsButton
     anchors.top: parent.top
     anchors.left: parent.left
-    margin.top: 4
-    margin.left: 6
+    margin-top: 4
+    margin-left: 6
     tooltip: Options
     icon: /core_styles/icons/settings.png
     @onClick: Options.create()
@@ -20,7 +20,7 @@ TopPanel
     id: enterGameButton
     anchors.top: prev.top
     anchors.left: prev.right
-    margin.left: 6
+    margin-left: 6
     tooltip: Enter game with a character
     icon: /core_styles/icons/login.png
     @onClick: |
@@ -34,7 +34,7 @@ TopPanel
     id: motdButton
     anchors.top: prev.top
     anchors.left: prev.right
-    margin.left: 6
+    margin-left: 6
     tooltip: Message of the day
     icon: /core_styles/icons/motd.png
     visible: false
@@ -43,8 +43,8 @@ TopPanel
   TopButton
     anchors.top: parent.top
     anchors.right: parent.right
-    margin.top: 4
-    margin.right: 6
+    margin-top: 4
+    margin-right: 6
     tooltip: Logout
     icon: /core_styles/icons/logout.png
     @onClick: |
@@ -57,8 +57,8 @@ TopPanel
   TopButton
     anchors.top: parent.top
     anchors.right: prev.left
-    margin.top: 4
-    margin.right: 6
+    margin-top: 4
+    margin-right: 6
     tooltip: About OTClient
     icon: /core_styles/icons/about.png
     @onClick: About.create()
@@ -67,5 +67,5 @@ TopPanel
     id: frameCounter
     anchors.top: parent.top
     anchors.right: prev.left
-    margin.top: 8
-    margin.right: 12
+    margin-top: 8
+    margin-right: 12

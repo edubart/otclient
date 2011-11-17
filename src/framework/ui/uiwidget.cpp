@@ -40,7 +40,7 @@ UIWidget::UIWidget()
     m_states = Fw::DefaultState;
     m_font = g_fonts.getDefaultFont();
     m_opacity = 255;
-    m_marginTop = m_marginBottom = m_marginLeft = m_marginRight = 0;
+    m_marginTop = m_marginRight = m_marginBottom = m_marginLeft = 0;
 
     // generate an unique id, this is need because anchored layouts find widgets by id
     static unsigned long id = 1;
@@ -817,7 +817,7 @@ void UIWidget::onStyleApply(const OTMLNodePtr& styleNode)
             setWidth(node->value<int>());
         else if(node->tag() == "height")
             setHeight(node->value<int>());
-        else if(node->tag() == "size fixed")
+        else if(node->tag() == "fixed-size")
             setSizeFixed(node->value<bool>());
         else if(node->tag() == "position")
             moveTo(node->value<Point>());
@@ -825,14 +825,46 @@ void UIWidget::onStyleApply(const OTMLNodePtr& styleNode)
             setX(node->value<int>());
         else if(node->tag() == "y")
             setY(node->value<int>());
-        else if(node->tag() == "margin.left")
-            setMarginLeft(node->value<int>());
-        else if(node->tag() == "margin.right")
-            setMarginRight(node->value<int>());
-        else if(node->tag() == "margin.top")
+        else if(node->tag() == "margin-top")
             setMarginTop(node->value<int>());
-        else if(node->tag() == "margin.bottom")
+        else if(node->tag() == "margin-right")
+            setMarginRight(node->value<int>());
+        else if(node->tag() == "margin-bottom")
             setMarginBottom(node->value<int>());
+        else if(node->tag() == "margin-left")
+            setMarginLeft(node->value<int>());
+        else if(node->tag() == "margin") {
+            std::string marginDesc = node->value();
+            std::vector<std::string> split;
+            boost::split(split, marginDesc, boost::is_any_of(std::string(" ")));
+            if(split.size() == 4) {
+                setMarginTop(Fw::safeCast<int>(split[0]));
+                setMarginRight(Fw::safeCast<int>(split[1]));
+                setMarginBottom(Fw::safeCast<int>(split[2]));
+                setMarginLeft(Fw::safeCast<int>(split[3]));
+            } else if(split.size() == 3) {
+                int marginTop = Fw::safeCast<int>(split[0]);
+                int marginHorizontal = Fw::safeCast<int>(split[1]);
+                int marginBottom = Fw::safeCast<int>(split[2]);
+                setMarginTop(marginTop);
+                setMarginRight(marginHorizontal);
+                setMarginBottom(marginBottom);
+                setMarginLeft(marginHorizontal);
+            } else if(split.size() == 2) {
+                int marginVertical = Fw::safeCast<int>(split[0]);
+                int marginHorizontal = Fw::safeCast<int>(split[1]);
+                setMarginTop(marginVertical);
+                setMarginRight(marginHorizontal);
+                setMarginBottom(marginVertical);
+                setMarginLeft(marginHorizontal);
+            } else if(split.size() == 1) {
+                int margin = Fw::safeCast<int>(split[0]);
+                setMarginTop(margin);
+                setMarginRight(margin);
+                setMarginBottom(margin);
+                setMarginLeft(margin);
+            }
+        }
         // layouts
         else if(node->tag() == "layout") {
             // layout is set only once

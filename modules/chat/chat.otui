@@ -15,13 +15,13 @@ Panel
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.bottom: chatLineEdit.top
-    margin.right: 6
-    margin.left: 6
-    margin.bottom: 2
-    margin.top: 6
+    margin-right: 6
+    margin-left: 6
+    margin-bottom: 2
+    margin-top: 6
     layout:
       type: verticalBox
-      align bottom: true
+      align-bottom: true
     focusable: false
 
   LineEdit
@@ -29,7 +29,7 @@ Panel
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.bottom: parent.bottom
-    margin.right: 6
-    margin.left: 6
-    margin.bottom: 6
-    always focused: true
+    margin-right: 6
+    margin-left: 6
+    margin-bottom: 6
+    always-active: true

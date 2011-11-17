@@ -5,8 +5,7 @@ local about
 
 -- public functions
 function About.create()
-  about = UI.display('about.otui')
-  UI.root:lockChild(about)
+  about = UI.display('about.otui', { locked = true })
 end
 
 function About.destroy()

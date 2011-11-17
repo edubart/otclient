@@ -15,15 +15,15 @@ RectPanel
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.bottom: commandSymbolLabel.top
-    margin.left: 2
+    margin-left: 2
 
   UILabel
     id: commandSymbolLabel
     size: 20 16
-    size fixed: true
+    fixed-size: true
     anchors.bottom: parent.bottom
     anchors.left: parent.left
-    margin.left: 2
+    margin-left: 2
     font: terminus-14px-bold
     text: >>
 
@@ -33,5 +33,5 @@ RectPanel
     anchors.bottom: parent.bottom
     anchors.left: commandSymbolLabel.right
     anchors.right: parent.right
-    margin.left: 5
+    margin-left: 5
     font: terminus-14px-bold

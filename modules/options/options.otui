@@ -10,9 +10,9 @@ MainWindow
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: parent.top
-    margin.top: 28
-    margin.left: 18
-    margin.right: 18
+    margin-top: 28
+    margin-left: 18
+    margin-right: 18
 
   CheckBox
     id: fpsCheckBox
@@ -20,15 +20,15 @@ MainWindow
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: prev.bottom
-    margin.top: 10
-    margin.left: 18
-    margin.right: 18
+    margin-top: 10
+    margin-left: 18
+    margin-right: 18
 
   Button
     text: Ok
     width: 64
     anchors.right: parent.right
     anchors.bottom: parent.bottom
-    margin.right: 10
-    margin.bottom: 10
+    margin-right: 10
+    margin-bottom: 10
     @onClick: Options.destroy()

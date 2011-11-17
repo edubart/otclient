@@ -59,7 +59,7 @@ public:
     const Rect* getGlyphsTextureCoords() const { return m_glyphsTextureCoords; }
     const Size* getGlyphsSize() const { return m_glyphsSize; }
     const TexturePtr& getTexture() const { return m_texture; }
-    int getTopMargin() const { return m_topMargin; }
+    int getYOffset() const { return m_yOffset; }
     Size getGlyphSpacing() const { return m_glyphSpacing; }
 
 private:
@@ -69,7 +69,7 @@ private:
     std::string m_name;
     int m_glyphHeight;
     int m_firstGlyph;
-    int m_topMargin;
+    int m_yOffset;
     Size m_glyphSpacing;
     TexturePtr m_texture;
     Rect m_glyphsTextureCoords[256];

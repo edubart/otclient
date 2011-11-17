@@ -2,39 +2,39 @@ MainWindow
   id: enterGame
   title: Enter Game
   size: 236 240
-  onEnter: EnterGame.doLogin()
-  onEscape: EnterGame.hide()
+  @onEnter: EnterGame.doLogin()
+  @onEscape: EnterGame.hide()
 
   LargerLabel
     text: Account name
     anchors.left: parent.left
     anchors.top: parent.top
-    margin.left: 18
-    margin.top: 28
+    margin-left: 18
+    margin-top: 28
 
   LineEdit
     id: accountNameLineEdit
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: prev.bottom
-    margin.top: 2
-    margin.left: 18
-    margin.right: 18
+    margin-top: 2
+    margin-left: 18
+    margin-right: 18
 
   LargerLabel
     text: Password
     anchors.left: prev.left
     anchors.top: prev.bottom
-    margin.top: 8
+    margin-top: 8
 
   PasswordLineEdit
     id: accountPasswordLineEdit
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: prev.bottom
-    margin.top: 2
-    margin.left: 18
-    margin.right: 18
+    margin-top: 2
+    margin-left: 18
+    margin-right: 18
 
   LargerLabel
     id: serverLabel
@@ -42,7 +42,7 @@ MainWindow
     text: Server
     anchors.left: prev.left
     anchors.top: prev.bottom
-    margin.top: 8
+    margin-top: 8
 
   LineEdit
     id: serverHostLineEdit
@@ -50,7 +50,7 @@ MainWindow
     anchors.left: serverLabel.left
     anchors.right: serverLabel.right
     anchors.top: serverLabel.bottom
-    margin.top: 2
+    margin-top: 2
 
   LargerLabel
     id: portLabel
@@ -58,7 +58,7 @@ MainWindow
     width: 50
     anchors.left: serverLabel.right
     anchors.top: serverLabel.top
-    margin.left: 10
+    margin-left: 10
 
   LineEdit
     id: serverPortLineEdit
@@ -66,7 +66,7 @@ MainWindow
     anchors.left: portLabel.left
     anchors.right: portLabel.right
     anchors.top: portLabel.bottom
-    margin.top: 2
+    margin-top: 2
 
   CheckBox
     id: rememberPasswordBox
@@ -75,9 +75,9 @@ MainWindow
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: prev.bottom
-    margin.top: 10
-    margin.left: 18
-    margin.right: 18
+    margin-top: 10
+    margin-left: 18
+    margin-right: 18
     @onCheckChange: |
       function(self, checked)
         self:getParent():getChildById('autoLoginBox'):setEnabled(checked)
@@ -91,17 +91,17 @@ MainWindow
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: prev.bottom
-    margin.top: 8
-    margin.left: 18
-    margin.right: 18
+    margin-top: 8
+    margin-left: 18
+    margin-right: 18
 
   Button
     text: Ok
     width: 64
     anchors.right: next.left
     anchors.bottom: parent.bottom
-    margin.bottom: 16
-    margin.right: 16
+    margin-bottom: 16
+    margin-right: 16
     @onClick: EnterGame.doLogin()
 
   Button
@@ -109,6 +109,6 @@ MainWindow
     width: 64
     anchors.right: parent.right
     anchors.bottom: parent.bottom
-    margin.bottom: 16
-    margin.right: 16
+    margin-bottom: 16
+    margin-right: 16
     @onClick: EnterGame.hide()

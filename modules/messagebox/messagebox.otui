@@ -8,14 +8,14 @@ Window
     id: messageBoxLabel
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.top: parent.top
-    margin.top: 27
-    margin.bottom : 27
+    margin-top: 27
+    margin-bottom : 27
 
   Button
     id: messageBoxRightButton
     anchors.bottom: parent.bottom
     anchors.right: parent.right
-    margin.right: 10
-    margin.bottom: 10
+    margin-right: 10
+    margin-bottom: 10
     width: 64
     visible: true

@@ -54,7 +54,7 @@ TopButton < UIButton
 MenuButton < UIButton
   color: white
   size: 40 18
-  align: center
+  text-align: center
   border-image:
     source: /core_styles/images/menu.png
     size: 64 24

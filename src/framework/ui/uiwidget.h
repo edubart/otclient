@@ -62,10 +62,10 @@ public:
     void setOpacity(int opacity) { m_opacity = opacity; }
     void setBackgroundColor(const Color& color) { m_backgroundColor = color; }
     void setForegroundColor(const Color& color) { m_foregroundColor = color; }
-    void setMarginLeft(int margin) { m_marginLeft = margin; updateParentLayout(); }
-    void setMarginRight(int margin) { m_marginRight = margin; updateParentLayout(); }
     void setMarginTop(int margin) { m_marginTop = margin; updateParentLayout(); }
+    void setMarginRight(int margin) { m_marginRight = margin; updateParentLayout(); }
     void setMarginBottom(int margin) { m_marginBottom = margin; updateParentLayout(); }
+    void setMarginLeft(int margin) { m_marginLeft = margin; updateParentLayout(); }
     void setSizeFixed(bool fixed) { m_fixedSize = fixed; updateParentLayout(); }
     void setLastFocusReason(Fw::FocusReason reason) { m_lastFocusReason = reason; }
 
@@ -112,10 +112,10 @@ public:
     Color getForegroundColor()  { return m_foregroundColor; }
     Color getBackgroundColor()  { return m_backgroundColor; }
     int getOpacity()  { return m_opacity; }
-    int getMarginLeft()  { return m_marginLeft; }
-    int getMarginRight()  { return m_marginRight; }
     int getMarginTop()  { return m_marginTop; }
+    int getMarginRight()  { return m_marginRight; }
     int getMarginBottom()  { return m_marginBottom; }
+    int getMarginLeft()  { return m_marginLeft; }
     Fw::FocusReason getLastFocusReason()  { return m_lastFocusReason; }
     OTMLNodePtr getStyle()  { return m_style; }
 
@@ -205,10 +205,10 @@ protected:
     Color m_foregroundColor;
     int m_states;
     int m_opacity;
-    int m_marginLeft;
-    int m_marginRight;
     int m_marginTop;
+    int m_marginRight;
     int m_marginBottom;
+    int m_marginLeft;
 };
 
 #endif

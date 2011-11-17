@@ -9,8 +9,8 @@ Window
   anchors.horizontalCenter: parent.horizontalCenter
   anchors.verticalCenter: parent.verticalCenter
 
-  onEnter: Outfit.accept()
-  onEscape: Outfit.destroy()
+  @onEnter: Outfit.accept()
+  @onEscape: Outfit.destroy()
 
   Label
     id: name
@@ -18,34 +18,34 @@ Window
     width: 100
     anchors.top: parent.top
     anchors.left: parent.left
-    margin.top: 34
-    margin.left: 20
+    margin-top: 34
+    margin-left: 20
 
   Creature
     id: creature
     anchors.top: name.bottom
     anchors.left: name.left
-    margin.top: 5
-    
+    margin-top: 5
+
   Button
     id: head
     text: Head
     anchors.top: creature.top
     anchors.left: creature.right
-    margin.left: 10
-    
+    margin-left: 10
+
   Button
     id: primary
     text: Primary
     anchors.top: prev.bottom
     anchors.left: prev.left
-    
+
   Button
     id: secondary
     text: Secondary
     anchors.top: prev.bottom
     anchors.left: prev.left
-    
+
   Button
     id: detail
     text: Detail
@@ -56,7 +56,7 @@ Window
     @onClick: Outfit.nextType()
     text: >>
     width: 32
-    margin.top: 4
+    margin-top: 4
     anchors.top: creature.bottom
     anchors.right: creature.right
 
@@ -64,7 +64,7 @@ Window
     @onClick: Outfit.previousType()
     text: <<
     width: 32
-    margin.top: 4
+    margin-top: 4
     anchors.top: creature.bottom
     anchors.left: creature.left
 
@@ -72,7 +72,7 @@ Window
     id: addon1
     text: Addon 1
     enabled: false
-    margin.top: 10
+    margin-top: 10
     width: 100
     anchors.top: prev.bottom
     anchors.left: prev.left
@@ -81,7 +81,7 @@ Window
     id: addon2
     text: Addon 2
     enabled: false
-    margin.top: 10
+    margin-top: 10
     width: 100
     anchors.top: prev.bottom
     anchors.left: prev.left
@@ -90,7 +90,7 @@ Window
     id: addon3
     text: Addon 3
     enabled: false
-    margin.top: 10
+    margin-top: 10
     width: 100
     anchors.top: prev.bottom
     anchors.left: prev.left
@@ -99,9 +99,9 @@ Window
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.bottom: next.top
-    margin.left: 16
-    margin.right: 16
-    margin.bottom: 10
+    margin-left: 16
+    margin-right: 16
+    margin-bottom: 10
 
   Button
     id: buttonOk
@@ -109,8 +109,8 @@ Window
     width: 64
     anchors.right: next.left
     anchors.bottom: parent.bottom
-    margin.bottom: 16
-    margin.right: 16
+    margin-bottom: 16
+    margin-right: 16
     @onClick: Outfit.accept()
 
   Button
@@ -119,6 +119,6 @@ Window
     width: 64
     anchors.right: parent.right
     anchors.bottom: parent.bottom
-    margin.bottom: 16
-    margin.right: 16
+    margin-bottom: 16
+    margin-right: 16
     @onClick: Outfit.destroy()

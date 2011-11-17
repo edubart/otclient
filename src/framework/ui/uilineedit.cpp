@@ -33,7 +33,7 @@ UILineEdit::UILineEdit()
     m_startRenderPos = 0;
     m_textHorizontalMargin = 0;
     m_textHidden = false;
-    m_alwaysFocused = false;
+    m_alwaysActive = false;
     blinkCursor();
 }
 
@@ -51,7 +51,7 @@ void UILineEdit::render()
         g_graphics.drawTexturedRect(m_glyphsCoords[i], texture, m_glyphsTexCoords[i]);
 
     // render cursor
-    if(isExplicitlyEnabled() && (isActive() || m_alwaysFocused) && m_cursorPos >= 0) {
+    if(isExplicitlyEnabled() && (isActive() || m_alwaysActive) && m_cursorPos >= 0) {
         assert(m_cursorPos <= textLength);
         // draw every 333ms
         const int delay = 333;
@@ -98,7 +98,7 @@ void UILineEdit::update()
         if(m_cursorPos < m_startRenderPos) // cursor is before the previuos first rendered glyph, so we need to update
         {
             m_startInternalPos.x = glyphsPositions[m_cursorPos].x;
-            m_startInternalPos.y = glyphsPositions[m_cursorPos].y - m_font->getTopMargin();
+            m_startInternalPos.y = glyphsPositions[m_cursorPos].y - m_font->getYOffset();
             m_startRenderPos = m_cursorPos;
         } else if(m_cursorPos > m_startRenderPos || // cursor is after the previuos first rendered glyph
                   (m_cursorPos == m_startRenderPos && textLength == m_cursorPos)) // cursor is at the previuos rendered element, and is the last text element
@@ -119,13 +119,13 @@ void UILineEdit::update()
                 for(pos = 0; pos < textLength; ++pos) {
                     glyph = (uchar)text[pos];
                     glyphRect = Rect(glyphsPositions[pos], glyphsSize[glyph]);
-                    glyphRect.setTop(std::max(glyphRect.top() - m_font->getTopMargin() - m_font->getGlyphSpacing().height(), 0));
+                    glyphRect.setTop(std::max(glyphRect.top() - m_font->getYOffset() - m_font->getGlyphSpacing().height(), 0));
                     glyphRect.setLeft(std::max(glyphRect.left() - m_font->getGlyphSpacing().width(), 0));
 
                     // first glyph entirely visible found
                     if(glyphRect.topLeft() >= startGlyphPos) {
                         m_startInternalPos.x = glyphsPositions[pos].x;
-                        m_startInternalPos.y = glyphsPositions[pos].y - m_font->getTopMargin();
+                        m_startInternalPos.y = glyphsPositions[pos].y - m_font->getYOffset();
                         m_startRenderPos = pos;
                         break;
                     }
@@ -351,7 +351,7 @@ int UILineEdit::getTextPos(Point pos)
     int candidatePos = -1;
     for(int i=0;i<textLength;++i) {
         Rect clickGlyphRect = m_glyphsCoords[i];
-        clickGlyphRect.addTop(m_font->getTopMargin() + m_font->getGlyphSpacing().height());
+        clickGlyphRect.addTop(m_font->getYOffset() + m_font->getGlyphSpacing().height());
         clickGlyphRect.addLeft(m_font->getGlyphSpacing().width()+1);
         if(clickGlyphRect.contains(pos))
             return i;
@@ -381,12 +381,12 @@ void UILineEdit::onStyleApply(const OTMLNodePtr& styleNode)
         if(node->tag() == "text") {
             setText(node->value());
             setCursorPos(m_text.length());
-        } else if(node->tag() == "text hidden") {
+        } else if(node->tag() == "text-hidden") {
             setTextHidden(node->value<bool>());
-        } else if(node->tag() == "text margin") {
+        } else if(node->tag() == "text-margin") {
             m_textHorizontalMargin = node->value<int>();
-        } else if(node->tag() == "always focused") {
-            m_alwaysFocused = true;
+        } else if(node->tag() == "always-active") {
+            m_alwaysActive = true;
         }
     }
 }
@@ -398,7 +398,7 @@ void UILineEdit::onGeometryUpdate(const Rect& oldRect, const Rect& newRect)
 
 void UILineEdit::onFocusChange(bool focused, Fw::FocusReason reason)
 {
-    if(focused && !m_alwaysFocused) {
+    if(focused && !m_alwaysActive) {
         if(reason == Fw::TabFocusReason)
             setCursorPos(m_text.length());
         else
@@ -423,7 +423,7 @@ bool UILineEdit::onKeyPress(uchar keyCode, char keyChar, int keyboardModifiers)
     else if(keyCode == Fw::KeyV && keyboardModifiers == Fw::KeyboardCtrlModifier)
         appendText(g_platform.getClipboardText());
     else if(keyCode == Fw::KeyTab) {
-        if(!m_alwaysFocused) {
+        if(!m_alwaysActive) {
             if(UIWidgetPtr parent = getParent())
                 parent->focusNextChild(Fw::TabFocusReason);
         }

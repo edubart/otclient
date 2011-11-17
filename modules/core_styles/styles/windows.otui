@@ -4,9 +4,9 @@ Window < UIWindow
   opacity: 255
   color: white
   background-color: white
-  head height: 20
-  head text align: center
-  move policy: free
+  head-height: 20
+  head-text-align: center
+  move-policy: free
   stackable: true
   border-image:
     source: /core_styles/images/window.png
@@ -22,12 +22,12 @@ Window < UIWindow
 MiniWindow < UIWindow
   font: verdana-11px-antialised
   size: 192 200
-  head height: 25
-  head text align: center
-  margin.top: 10
-  margin.left: 6
-  margin.right: 6
-  move policy: free updated
+  head-height: 25
+  head-text-align: center
+  margin-top: 10
+  margin-left: 6
+  margin-right: 6
+  move-policy: free updated
   border-image:
     source: /core_styles/images/mini_window.png
     border: 4

@@ -34,20 +34,20 @@ public:
     void resizeToText();
 
     void setText(const std::string& text);
-    void setAlign(Fw::AlignmentFlag align) { m_align = align; }
-    void setOffset(const Point& offset) { m_offset = offset; }
+    void setTextAlign(Fw::AlignmentFlag align) { m_textAlign = align; }
+    void setTextOffset(const Point& offset) { m_textOffset = offset; }
 
     std::string getText() const { return m_text; }
-    Fw::AlignmentFlag getAlign() const { return m_align; }
-    Point getOffset() const { return m_offset; }
+    Fw::AlignmentFlag getTextAlign() const { return m_textAlign; }
+    Point getTextOffset() const { return m_textOffset; }
 
 protected:
     virtual void onStyleApply(const OTMLNodePtr& styleNode);
 
 private:
     std::string m_text;
-    Point m_offset;
-    Fw::AlignmentFlag m_align;
+    Point m_textOffset;
+    Fw::AlignmentFlag m_textAlign;
 };
 
 #endif

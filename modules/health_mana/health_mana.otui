@@ -5,7 +5,7 @@ HealthBar < UIProgressBar
   anchors.top: parent.top
   anchors.left: parent.left
   anchors.right: parent.right
-  
+
 ManaBar < UIProgressBar
   color: black
   height: 15
@@ -16,27 +16,27 @@ ManaBar < UIProgressBar
 
 HealthLabel < Label
   color: white
-  align: center
+  text-align: center
   font: verdana-11px-rounded
   anchors.left: parent.left
   anchors.right: parent.right
   anchors.top: parent.top
-  margin.top: 2
+  margin-top: 2
 
 ManaLabel < Label
   color: white
-  align: center
+  text-align: center
   font: verdana-11px-rounded
   anchors.left: parent.left
   anchors.right: parent.right
   anchors.bottom: parent.bottom
-  margin.bottom: -1
+  margin-bottom: -1
 
 UIWindow
   id: healthManaPanel
   width: 192
-  margin.top: 10
-  margin.left: 6
-  margin.right: 6
-  move policy: free updated
+  margin-top: 10
+  margin-left: 6
+  margin-right: 6
+  move-policy: free updated
 

@@ -1,6 +1,6 @@
 VipListLabel < Label
   font: verdana-11px-monochrome
-  margin.left: 5
+  margin-left: 5
   
   $disabled: ~
 
@@ -12,7 +12,7 @@ MiniWindow
     id: vipList
     border-image: ~
     anchors.fill: parent
-    margin.top: 26
-    margin.bottom: 6
-    margin.left: 6
-    margin.right: 6
+    margin-top: 26
+    margin-bottom: 6
+    margin-left: 6
+    margin-right: 6
