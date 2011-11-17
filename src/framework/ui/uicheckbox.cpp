@@ -27,10 +27,9 @@
 #include <framework/graphics/graphics.h>
 #include <framework/core/eventdispatcher.h>
 
-void UICheckBox::setup()
+UICheckBox::UICheckBox()
 {
-    UIWidget::setup();
-    setFocusable(false);
+    m_focusable = false;
 }
 
 void UICheckBox::render()

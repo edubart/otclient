@@ -30,7 +30,7 @@
 class UICreature : public UIWidget
 {
 public:
-    void setup();
+    UICreature();
     void render();
 
     void setCreature(const CreaturePtr& creature) { m_creature = creature; }

@@ -28,7 +28,7 @@
 class UIProgressBar : public UIWidget
 {
 public:
-    virtual void setup();
+    UIProgressBar();
     virtual void render();
 
     void setPercent(double percent);

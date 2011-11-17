@@ -31,14 +31,13 @@ class UIWidget : public LuaObject
 {
 public:
     UIWidget();
-    virtual ~UIWidget();
+    virtual ~UIWidget() { }
 
     template<class T>
-    static std::shared_ptr<T> create() { auto t = std::shared_ptr<T>(new T); t->setup(); return t; }
+    static std::shared_ptr<T> create() { auto t = std::shared_ptr<T>(new T); return t; }
 
     void destroy();
 
-    virtual void setup();
     virtual void render();
     void renderSelf();
     void renderChildren();
@@ -184,14 +183,14 @@ protected:
 protected:
     std::string m_id;
     Fw::FocusReason m_lastFocusReason;
-    bool m_enabled;
-    bool m_visible;
-    bool m_focusable;
-    bool m_fixedSize;
-    bool m_pressed;
-    bool m_phantom;
-    bool m_updateEventScheduled;
-    bool m_firstOnStyle;
+    boolean<true> m_enabled;
+    boolean<true> m_visible;
+    boolean<true> m_focusable;
+    boolean<false> m_fixedSize;
+    boolean<false> m_pressed;
+    boolean<false> m_phantom;
+    boolean<false> m_updateEventScheduled;
+    boolean<true> m_firstOnStyle;
     Rect m_rect;
     UILayoutPtr m_layout;
     UIWidgetWeakPtr m_parent;
@@ -200,14 +199,12 @@ protected:
     UIWidgetPtr m_focusedChild;
     OTMLNodePtr m_style;
     OTMLNodePtr m_stateStyle;
-    int m_states;
-
-    // basic style components used by all widgets
     ImagePtr m_image;
     FontPtr m_font;
-    int m_opacity;
     Color m_backgroundColor;
     Color m_foregroundColor;
+    int m_states;
+    int m_opacity;
     int m_marginLeft;
     int m_marginRight;
     int m_marginTop;

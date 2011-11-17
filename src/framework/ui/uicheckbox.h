@@ -28,7 +28,7 @@
 class UICheckBox : public UIWidget
 {
 public:
-    void setup();
+    UICheckBox();
     void render();
 
     bool isChecked();

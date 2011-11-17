@@ -42,8 +42,15 @@ typedef int8_t int8;
 typedef std::function<void()> SimpleCallback;
 typedef std::function<bool()> BooleanCallback;
 
-#ifndef nullptr
-#define nullptr NULL
-#endif
+// boolean with default value initializer
+template<bool def>
+struct boolean {
+    boolean() : v(def) { }
+    operator bool &() { return v; }
+    operator bool const &() const { return v; }
+    bool& operator=(const bool& o) { v = o; return v; }
+private:
+    bool v;
+};
 
 #endif

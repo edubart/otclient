@@ -24,9 +24,9 @@
 #include <framework/otml/otml.h>
 #include <framework/graphics/graphics.h>
 
-void UIItem::setup()
+UIItem::UIItem()
 {
-    UIWidget::setup();
+    m_itemMargin = 0;
 }
 
 void UIItem::render()

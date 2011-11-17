@@ -24,11 +24,10 @@
 #include <framework/graphics/graphics.h>
 #include <framework/otml/otmlnode.h>
 
-void UIProgressBar::setup()
+UIProgressBar::UIProgressBar()
 {
-    UIWidget::setup();
-    setPhantom(true);
-    setFocusable(false);
+    m_phantom = false;
+    m_focusable = false;
     m_percent = 0;
 }
 

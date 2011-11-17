@@ -28,7 +28,8 @@
 class UIButton : public UIWidget
 {
 public:
-    virtual void setup();
+    UIButton();
+
     virtual void render();
 
     void setText(const std::string& text) { m_text = text; }

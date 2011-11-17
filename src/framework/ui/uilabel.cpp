@@ -25,12 +25,11 @@
 #include <framework/graphics/font.h>
 #include <framework/otml/otmlnode.h>
 
-void UILabel::setup()
+UILabel::UILabel()
 {
-    UIWidget::setup();
-    setFocusable(false);
-    setPhantom(true);
-    setAlign(Fw::AlignLeft);
+    m_focusable = false;
+    m_phantom = true;
+    m_align = Fw::AlignLeft;
 }
 
 void UILabel::render()

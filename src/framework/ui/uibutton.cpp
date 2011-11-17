@@ -29,10 +29,9 @@
 #include <framework/graphics/texture.h>
 #include <framework/graphics/texturemanager.h>
 
-void UIButton::setup()
+UIButton::UIButton()
 {
-    UIWidget::setup();
-    setFocusable(false);
+    m_focusable = false;
 }
 
 void UIButton::render()

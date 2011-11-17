@@ -30,7 +30,7 @@
 class Color
 {
 public:
-    Color() : m_rgba(0) { }
+    Color() : m_rgba(0xFFFFFFFF) { }
     Color(uint8 r, uint8 g, uint8 b, uint8 a = 0xFF) : m_r(r), m_g(g), m_b(b), m_a(a) { }
     Color(const Color& other) : m_rgba(other.m_rgba) { }
     Color(uint32 rgba) : m_rgba(rgba) { }

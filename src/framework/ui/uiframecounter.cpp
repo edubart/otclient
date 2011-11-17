@@ -27,12 +27,11 @@
 #include <framework/platform/platform.h>
 #include <framework/graphics/graphics.h>
 
-void UIFrameCounter::setup()
+UIFrameCounter::UIFrameCounter()
 {
-    UIWidget::setup();
-    setFocusable(false);
-    setPhantom(true);
-    setAlign(Fw::AlignLeft);
+    m_focusable = false;
+    m_phantom = true;
+    m_align = Fw::AlignLeft;
     m_lastFrameTicks = g_platform.getTicks();
     m_frameCount = 0;
 }

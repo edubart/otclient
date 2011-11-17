@@ -27,14 +27,13 @@
 #include <framework/graphics/graphics.h>
 #include <framework/otml/otml.h>
 
-void UIWindow::setup()
+UIWindow::UIWindow()
 {
-    UIWidget::setup();
     m_moving = false;
     m_movePolicy = DONT_MOVE;
+    m_titleAlign = Fw::AlignCenter;
     m_headHeight = 0;
     m_oldIndex = -1;
-    m_titleAlign = Fw::AlignCenter;
 }
 
 void UIWindow::render()

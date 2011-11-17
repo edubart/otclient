@@ -24,9 +24,9 @@
 #include <framework/otml/otml.h>
 #include <framework/graphics/graphics.h>
 
-void UICreature::setup()
+UICreature::UICreature()
 {
-    UIWidget::setup();
+    m_creatureMargin = 0;
 }
 
 void UICreature::render()

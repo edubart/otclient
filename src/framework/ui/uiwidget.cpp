@@ -36,53 +36,27 @@
 
 UIWidget::UIWidget()
 {
-    m_updateEventScheduled = false;
-    m_firstOnStyle = true;
+    m_lastFocusReason = Fw::ActiveFocusReason;
     m_states = Fw::DefaultState;
+    m_font = g_fonts.getDefaultFont();
+    m_opacity = 255;
+    m_marginTop = m_marginBottom = m_marginLeft = m_marginRight = 0;
 
     // generate an unique id, this is need because anchored layouts find widgets by id
     static unsigned long id = 1;
     m_id = Fw::mkstr("widget", id++);
 }
 
-UIWidget::~UIWidget()
-{
-    // clear all references
-    releaseLuaFieldsTable();
-    m_focusedChild.reset();
-    m_layout.reset();
-    m_parent.reset();
-    m_lockedChildren.clear();
-    m_children.clear();
-}
-
-void UIWidget::setup()
-{
-    setVisible(true);
-    setEnabled(true);
-    setFocusable(true);
-    setPhantom(false);
-    setPressed(false);
-    setSizeFixed(false);
-    setFont(g_fonts.getDefaultFont());
-    setBackgroundColor(Fw::white);
-    setForegroundColor(Fw::white);
-    setOpacity(255);
-    setMarginTop(0);
-    setMarginRight(0);
-    setMarginBottom(0);
-    setMarginLeft(0);
-}
-
 void UIWidget::destroy()
 {
+    setVisible(false);
+    setEnabled(false);
+
     // remove itself from parent
     if(UIWidgetPtr parent = getParent()) {
         if(parent->hasChild(asUIWidget()))
             parent->removeChild(asUIWidget());
     }
-    //setVisible(false);
-    //setEnabled(false);
 }
 
 void UIWidget::render()

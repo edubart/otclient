@@ -29,9 +29,9 @@
 #include <otclient/core/localplayer.h>
 #include <otclient/core/tile.h>
 
-void UIMap::setup()
+UIMap::UIMap()
 {
-    UIWidget::setup();
+    m_mapMargin = 0;
 }
 
 void UIMap::render()

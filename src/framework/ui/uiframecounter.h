@@ -28,7 +28,7 @@
 class UIFrameCounter : public UIWidget
 {
 public:
-    virtual void setup();
+    UIFrameCounter();
     virtual void render();
 
     void setAlign(Fw::AlignmentFlag align) { m_align = align; }

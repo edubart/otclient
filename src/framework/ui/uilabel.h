@@ -28,7 +28,7 @@
 class UILabel : public UIWidget
 {
 public:
-    virtual void setup();
+    UILabel();
     virtual void render();
 
     void resizeToText();

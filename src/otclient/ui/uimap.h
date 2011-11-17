@@ -29,7 +29,7 @@
 class UIMap : public UIWidget
 {
 public:
-    void setup();
+    UIMap();
     void render();
 
 protected:

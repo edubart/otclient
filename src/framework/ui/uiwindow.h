@@ -34,7 +34,7 @@ class UIWindow : public UIWidget
     };
 
 public:
-    virtual void setup();
+    UIWindow();
     virtual void render();
 
     void setTitle(const std::string& title) { m_title = title; }
@@ -52,16 +52,12 @@ private:
     std::string m_title;
     bool m_moving;
     MovePolicy m_movePolicy;
+    Fw::AlignmentFlag m_titleAlign;
+    Point m_headOffset;
     Point m_movingReference;
     Point m_oldPos;
     int m_oldIndex;
-
-    // styling
-    BorderImagePtr m_headImage;
-    ImagePtr m_bodyImage;
     int m_headHeight;
-    Point m_headOffset;
-    Fw::AlignmentFlag m_titleAlign;
 };
 
 #endif

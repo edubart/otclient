@@ -32,7 +32,6 @@ void UIManager::init()
 {
     // creates root widget
     m_rootWidget = UIWidget::create<UIWidget>();
-    m_rootWidget->setup();
     m_rootWidget->setId("root");
     m_rootWidget->resize(g_graphics.getScreenSize());
 }
