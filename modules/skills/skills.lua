@@ -6,7 +6,7 @@ local skills = {"Fist Fighting", "Club Fighting", "Sword Fighting", "Axe Fightin
 
 -- public functions
 function Skills.create()
-  skillWindow = loadUI("/skills/skills.otui", Game.gameRightPanel)
+  skillWindow = UI.display('skills.otui', { parent = Game.gameRightPanel })
 
   local skillPanel = skillWindow:getChildById('skillPanel')
 

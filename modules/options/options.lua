@@ -43,7 +43,7 @@ end
 
 -- public functions
 function Options.create()
-  options = UI.loadAndDisplayLocked("/options/options.otui")
+  options = UI.display('options.otui', { locked = true })
 
   local fpsBox = options:getChildById('fpsCheckBox')
   local vsyncBox = options:getChildById('vsyncCheckBox')

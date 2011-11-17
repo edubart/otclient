@@ -3,7 +3,7 @@ function table.dump(t, depth)
   for k,v in pairs(t) do
     str = string.rep(' ', depth * 2) .. k .. ': '
     if type(v) ~= "table" then
-      print(str .. v)
+      print(str .. tostring(v))
     else
       print(str)
       table.dump(v, depth+1)

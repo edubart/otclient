@@ -29,3 +29,27 @@ function dumpWidgets()
     print(UI.root:getChildByIndex(i):getId())
   end
 end
+
+function getCallingScriptSourcePath(depth)
+  depth = depth or 2
+  local info = debug.getinfo(1+depth, "Sn")
+  local path
+  if info.short_src then
+    path = info.short_src:match("(.*)/.*")
+  end
+  if not path then
+    path = '/'
+  elseif path:sub(0, 1) ~= '/' then
+    path = '/' .. path
+  end
+  return path
+end
+
+function resolveFileFullPath(filePath, depth)
+  depth = depth or 1
+  if filePath:sub(0, 1) ~= '/' then
+    return getCallingScriptSourcePath(depth+1) .. '/' .. filePath
+  else
+    return filePath
+  end
+end

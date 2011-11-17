@@ -156,10 +156,14 @@ void UIWidget::setStyleFromNode(const OTMLNodePtr& styleNode)
 
 void UIWidget::setParent(const UIWidgetPtr& parent)
 {
-    UIWidgetPtr self = asUIWidget();
-
     // remove from old parent
     UIWidgetPtr oldParent = getParent();
+
+    // the parent is already the same
+    if(oldParent == parent)
+        return;
+
+    UIWidgetPtr self = asUIWidget();
     if(oldParent && oldParent->hasChild(self))
         oldParent->removeChild(self);
 

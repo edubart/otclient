@@ -61,7 +61,7 @@ local function update()
   m_outfit.type = m_outfits[currentOutfit][1]
   m_outfit.addons = 0
   m_creature:setOutfit(m_outfit)
-  
+
 end
 
 local function onColorCheckChange(color)
@@ -74,9 +74,9 @@ local function onColorCheckChange(color)
     m_currentColor:setChecked(false)
     local color2 = m_currentColor
     m_currentColor.onCheckChange = function() onColorCheckChange(color2) end
-    
+
     m_currentColor = color
-    
+
     m_outfit.head = m_currentColor.colorId
     m_creature:setOutfit(m_outfit)
   end
@@ -96,9 +96,9 @@ end
 
 function Outfit.create(creature, outfitList)
   Outfit.destroy()
-  window = loadUI("/outfit/outfit.otui", UI.root)
+  window = UI.display('outfit.otui', { parent = UI.root })
   window:lock()
-  
+
   m_outfit = creature:getOutfit()
 
   local creatureWidget = window:getChildById('creature')
@@ -115,19 +115,19 @@ function Outfit.create(creature, outfitList)
       color:setBackgroundColor(outfitColor)
       color:setMarginTop(j * 3 + j * 14)
       color:setMarginLeft(10 + i * 3 + i * 14)
-      
+
       if j*19 + i == m_outfit.head then
         m_currentColor = color
         color:setChecked(true)
       end
-      
+
       color.onCheckChange = function() onColorCheckChange(color) end
     end
   end
 
   m_creature = creature
   m_outfits = outfitList
-  
+
   currentOutfit = 1
   for i=1,#outfitList do
     if outfitList[i][1] == m_outfit.type then

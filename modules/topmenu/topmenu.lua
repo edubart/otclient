@@ -5,7 +5,7 @@ local topMenu
 
 -- public functions
 function TopMenu.create()
-  topMenu = UI.loadAndDisplay("/topmenu/topmenu.otui")
+  topMenu = UI.display('topmenu.otui')
 end
 
 function TopMenu.destroy()

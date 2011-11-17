@@ -16,7 +16,7 @@ local InventorySlotAmmo = 10
 
 -- public functions
 function Inventory.create()
-  window = loadUI("/inventory/inventory.otui", Game.gameRightPanel)
+  window = UI.display('inventory.otui', { parent = Game.gameRightPanel })
 
   local itemWidget = window:getChildById('feet')
   window:setHeight(itemWidget:getPosition().y + itemWidget:getHeight() - window:getPosition().y)

@@ -5,7 +5,7 @@ local healthManaPanel = nil
 
 -- public functions
 function HealthMana.create()
-  healthManaPanel = loadUI("/health_mana/health_mana.otui", Game.gameRightPanel)
+  healthManaPanel = UI.display('health_mana.otui', { parent = Game.gameRightPanel })
 
   local healthBar = UIProgressBar.create()
   healthManaPanel:addChild(healthBar)

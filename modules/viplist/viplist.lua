@@ -5,7 +5,7 @@ local vipWindow = nil
 
 -- public functions
 function VipList.create()
-  vipWindow = loadUI("/viplist/viplist.otui", Game.gameRightPanel)
+  vipWindow = UI.display('viplist.otui', { parent = Game.gameRightPanel })
 end
 
 function VipList.destroy()

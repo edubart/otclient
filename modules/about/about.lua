@@ -5,7 +5,7 @@ local about
 
 -- public functions
 function About.create()
-  about = UI.loadAndDisplay("/about/about.otui")
+  about = UI.display('about.otui')
   UI.root:lockChild(about)
 end
 

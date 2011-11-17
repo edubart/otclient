@@ -20,7 +20,7 @@ end
 function ToolTip.display(text)
   if text then
     ToolTip.hide()
-    currentToolTip = UI.loadAndDisplay('/tooltip/tooltip.otui', UI.root)
+    currentToolTip = UI.display('tooltip.otui')
     currentToolTip.onMouseMove = moveToolTip
     local label = currentToolTip:getChildById('toolTipText')
     label:setText(text)

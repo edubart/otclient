@@ -120,8 +120,7 @@ end
 
 -- public functions
 function Console.init()
-  consoleWidget = UI.loadAndDisplay("/console/console.otui")
-  consoleWidget:hide()
+  consoleWidget = UI.display('console.otui', { visible = false })
   connect(consoleWidget, { onKeyPress = onKeyPress })
 
   commandLineEdit = consoleWidget:getChildById('commandLineEdit')

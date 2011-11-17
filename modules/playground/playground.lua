@@ -11,7 +11,7 @@ function UIItem.onMouseRelease(self, mousePos, mouseButton)
   local menuFile = self:getStyle()['popup menu']
   if not menuFile then return end
 
-  local popupMenu = UI.loadAndDisplay(menuFile)
+  local popupMenu = UI.display(menuFile)
   if not popupMenu then return end
 
   popupMenu:moveTo(mousePos)

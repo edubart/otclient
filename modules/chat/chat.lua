@@ -20,7 +20,7 @@ end
 
 -- public functions
 function Chat.create()
-  chatPanel = loadUI("/chat/chat.otui", Game.gameBottomPanel)
+  chatPanel = UI.display('chat.otui', { parent = Game.gameBottomPanel } )
   chatBuffer = chatPanel:getChildById('chatBuffer')
 end
 

@@ -56,7 +56,7 @@ function CharacterList.create(characters, premDays)
     charactersWindow:destroy()
   end
 
-  charactersWindow = UI.loadAndDisplay('/entergame/characterlist.otui')
+  charactersWindow = UI.display('characterlist.otui')
   characterList = charactersWindow:getChildById('characterList')
   local accountStatusLabel = charactersWindow:getChildById('accountStatusLabel')
   charactersWindow.onKeyPress = onCharactersWindowKeyPress
