@@ -166,6 +166,13 @@ IF(WIN32)
             SET(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -mwindows")
         ENDIF(CMAKE_COMPILER_IS_GNUCXX)
     ENDIF(NO_CONSOLE)
+
+    ADD_CUSTOM_COMMAND(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/icon.o
+                       COMMAND ${CMAKE_RC_COMPILER}
+                       -I${CMAKE_CURRENT_SOURCE_DIR}/src/otclient/win32icon
+                       -i${CMAKE_CURRENT_SOURCE_DIR}/src/otclient/win32icon/icon.rc
+                       -o ${CMAKE_CURRENT_BINARY_DIR}/icon.o)
+    SET(SOURCES ${SOURCES} icon.o)
 ELSE(WIN32)
     SET(ADDITIONAL_LIBRARIES -lpthread)
     SET(SOURCES ${SOURCES} src/framework/platform/x11platform.cpp)

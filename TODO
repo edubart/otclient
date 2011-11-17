@@ -13,3 +13,4 @@ a real working border and background property in otui
 load state styles in order
 grid layout
 fix moving windows and tooltips conflicts
+todo display otclient icon in window bar
