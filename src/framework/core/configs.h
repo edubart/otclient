@@ -31,6 +31,7 @@ public:
     bool load(const std::string& file);
     bool save();
 
+    bool exists(const std::string& key) { return m_confsMap.find(key) != m_confsMap.end(); }
     void set(const std::string& key, const std::string& value) { m_confsMap[key] = value; }
     std::string get(const std::string& key) { return m_confsMap[key]; }
 

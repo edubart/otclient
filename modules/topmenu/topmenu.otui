@@ -64,6 +64,7 @@ TopPanel
     @onClick: About.create()
 
   FrameCounter
+    id: frameCounter
     anchors.top: parent.top
     anchors.right: prev.left
     margin.top: 8

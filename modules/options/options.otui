@@ -1,111 +1,29 @@
 MainWindow
   id: optionsWindow
   title: Options
-  size: 286 262
+  size: 286 100
 
-  // general
-  Button
-    text: General
-    anchors.left: parent.left
-    anchors.top: parent.top
-    margin.left: 18
-    margin.top: 32
-    @onClick: displayErrorBox("Error", "Not implemented yet")
-
-  Label
-    text: |-
-      Change general
-      game options
-    anchors.left: prev.right
-    anchors.top: prev.top
-    margin.left: 10
-    margin.top: -2
-
-  // graphics
-  Button
-    text: Graphics
-    anchors.left: parent.left
-    anchors.top: parent.top
-    margin.left: 18
-    margin.top: 65
-    @onClick: displayErrorBox("Error", "Not implemented yet")
-
-  Label
-    text: |-
-      Change graphics and
-      performance settings
-    anchors.left: prev.right
-    anchors.top: prev.top
-    margin.left: 10
-    margin.top: -2
-
-  // console
-  Button
-    text: Console
-    anchors.left: parent.left
-    anchors.top: parent.top
-    margin.left: 18
-    margin.top: 98
-    @onClick: displayErrorBox("Error", "Not implemented yet")
-
-  Label
-    text: Customise the console
-    anchors.left: prev.right
-    anchors.top: prev.top
-    margin.left: 10
-    margin.top: -2
-
-  // hotkeys
-  Button
-    text: Hotkeys
-    anchors.left: parent.left
-    anchors.top: parent.top
-    margin.left: 18
-    margin.top: 131
-    @onClick: displayErrorBox("Error", "Not implemented yet")
-
-  Label
-    text: Edit your hotkey texts
-    anchors.left: prev.right
-    anchors.top: prev.top
-    margin.left: 10
-    margin.top: -2
-
-  HorizontalSeparator
+  CheckBox
+    id: vsyncCheckBox
+    text: Enable vertical synchronization
+    tooltip: Limits FPS to 60
     anchors.left: parent.left
     anchors.right: parent.right
-    anchors.bottom: parent.bottom
-    margin.bottom: 97
+    anchors.top: parent.top
+    margin.top: 28
     margin.left: 18
     margin.right: 18
 
-  // motd
-  Button
-    text: Motd
-    anchors.left: parent.left
-    anchors.bottom: parent.bottom
-    margin.left: 18
-    margin.bottom: 60
-    @onClick: displayErrorBox("Error", "Not implemented yet")
-
-  Label
-    text: |-
-      Show the most recent
-      Message of the Day
-    anchors.left: prev.right
-    anchors.top: prev.top
-    margin.left: 10
-    margin.top: -2
-
-  HorizontalSeparator
+  CheckBox
+    id: fpsCheckBox
+    text: Show frame rate
     anchors.left: parent.left
     anchors.right: parent.right
-    anchors.bottom: parent.bottom
-    margin.bottom: 40
-    margin.left: 13
-    margin.right: 13
+    anchors.top: prev.bottom
+    margin.top: 10
+    margin.left: 18
+    margin.right: 18
 
-  // ok button
   Button
     text: Ok
     width: 64

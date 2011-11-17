@@ -154,6 +154,7 @@ void LuaInterface::registerFunctions()
     g_lua.registerClass<Configs>();
     g_lua.bindClassStaticFunction<Configs>("set", std::bind(&Configs::set, &g_configs, _1, _2));
     g_lua.bindClassStaticFunction<Configs>("get", std::bind(&Configs::get, &g_configs, _1));
+    g_lua.bindClassStaticFunction<Configs>("exists", std::bind(&Configs::exists, &g_configs, _1));
 
     // Logger
     g_lua.registerClass<Logger>();
@@ -170,5 +171,6 @@ void LuaInterface::registerFunctions()
     g_lua.bindGlobalFunction("addEvent", std::bind(&EventDispatcher::addEvent, &g_dispatcher, _1, false));
     g_lua.bindGlobalFunction("scheduleEvent", std::bind(&EventDispatcher::scheduleEvent, &g_dispatcher, _1, _2));
     g_lua.bindGlobalFunction("getMouseCursorPos", std::bind(&Platform::getMouseCursorPos, &g_platform));
+    g_lua.bindGlobalFunction("setVerticalSync", std::bind(&Platform::setVerticalSync, &g_platform, _1));
     g_lua.bindGlobalFunction("getScreenSize", std::bind(&Graphics::getScreenSize, &g_graphics));
 }

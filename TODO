@@ -1,17 +1,15 @@
 modules managment interface
 clean sprites cache periodically
 load modules from zip packages
-ip/host/rsa configuration
 review directories search
 left panel with dragging windows
 console history
 console text selection
 console scrolling
 padding
-remember password/account
 scrollbar
 make otui syntax more like css
 a real working border and background property in otui
-setIcon() for buttons
 load state styles in order
 grid layout
+fix moving windows and tooltips conflicts
