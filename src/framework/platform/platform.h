@@ -82,6 +82,8 @@ public:
     /// Get the app user directory, the place to save files configurations files
     std::string getAppUserDir();
 
+    void displayFatalError(const std::string& message);
+
 private:
     int m_lastTicks;
 };

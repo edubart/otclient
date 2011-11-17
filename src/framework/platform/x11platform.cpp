@@ -962,3 +962,8 @@ std::string Platform::getAppUserDir()
         logError("Couldn't create directory for saving configuration file. (",sdir.str(),")");
     return sdir.str();
 }
+
+void Platform::displayFatalError(const std::string& message)
+{
+    // nothing to do
+}

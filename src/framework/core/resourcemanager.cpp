@@ -52,7 +52,7 @@ void ResourceManager::init(const char* argv0, const char *appName)
     }
 
     if(!found)
-        logFatal("could not find modules directory");
+        logFatal("Could not find modules directory.");
 
     // setup write directory
     std::string dir = g_platform.getAppUserDir();

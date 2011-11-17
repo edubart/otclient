@@ -80,9 +80,6 @@ void OTClient::init(std::vector<std::string> args)
     // initialize event dispatcher
     g_dispatcher.init();
 
-    // initialize network
-    //g_network.init();
-
     // initialize the ui
     g_ui.init();
 
@@ -91,6 +88,11 @@ void OTClient::init(std::vector<std::string> args)
     // discover and load modules
     g_modules.discoverAndLoadModules();
     g_modules.getModule("otclient")->load();
+    ModulePtr tibiaFilesModule = g_modules.getModule("tibiafiles");
+    if(!tibiaFilesModule || !tibiaFilesModule->isLoaded()) {
+        logFatal("Could not find or load 'tibiafiles' module, this module contains SPR and DAT files.\n"
+                 "Please download it and place in modules directory, then try running again.");
+    }
 
     // now that everything is initialized, setup configurations
     setupConfigurations();

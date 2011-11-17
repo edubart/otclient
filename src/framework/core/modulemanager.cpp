@@ -42,7 +42,7 @@ void ModuleManager::discoverAndLoadModules()
     for(const ModulePtr& module : m_modules) {
         if(!module->isLoaded() && module->autoLoad()) {
             if(!module->load())
-                logFatal("cannot continue to run");
+                logFatal("A required module has failed to load, cannot continue to run.");
         }
     }
 }

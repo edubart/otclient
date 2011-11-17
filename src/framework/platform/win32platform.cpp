@@ -289,7 +289,7 @@ void Platform::init(PlatformListener* platformListener, const char *appName)
     wc.lpszClassName            = win32.appName.c_str();                        // Set The Class Name
 
     if(!RegisterClassA(&wc))
-        logFatal("FATAL ERROR: Failed to register the window class.");
+        logFatal("Failed to register the window class.");
 
     // force first tick
     updateTicks();
@@ -737,3 +737,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     }
     return 0;
 }
+
+void Platform::displayFatalError(const std::string& message)
+{
+    MessageBoxA(NULL, message.c_str(), "Fatal Error", MB_OK | MB_ICONERROR);
+}
+
