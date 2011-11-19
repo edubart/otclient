@@ -20,37 +20,20 @@
  * THE SOFTWARE.
  */
 
-#ifndef TYPES_H
-#define TYPES_H
+#ifndef OTCLIENT_LUAVALUECASTS_H
+#define OTCLIENT_LUAVALUECASTS_H
 
-#include <stdint.h>
-#include <functional>
+#include <otclient/global.h>
+#include <framework/luascript/declarations.h>
+#include <otclient/core/outfit.h>
 
-// easy handwriting types
-typedef unsigned char uchar;
-typedef unsigned short ushort;
-typedef unsigned int uint;
-typedef unsigned long ulong;
-typedef uint64_t uint64;
-typedef uint32_t uint32;
-typedef uint16_t uint16;
-typedef uint8_t uint8;
-typedef int32_t int32;
-typedef int16_t int16;
-typedef int8_t int8;
+// outfit
+void push_luavalue(const Outfit& outfit);
+bool luavalue_cast(int index, Outfit& outfit);
 
-typedef std::function<void()> SimpleCallback;
-typedef std::function<bool()> BooleanCallback;
+// position
+void push_luavalue(const Position& pos);
+bool luavalue_cast(int index, Position& pos);
 
-// boolean with default value initializer
-template<bool def>
-struct Boolean {
-    Boolean() : v(def) { }
-    operator bool &() { return v; }
-    operator bool const &() const { return v; }
-    bool& operator=(const bool& o) { v = o; return v; }
-private:
-    bool v;
-};
 
 #endif

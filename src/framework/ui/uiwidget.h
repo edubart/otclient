@@ -183,14 +183,14 @@ protected:
 protected:
     std::string m_id;
     Fw::FocusReason m_lastFocusReason;
-    boolean<true> m_enabled;
-    boolean<true> m_visible;
-    boolean<true> m_focusable;
-    boolean<false> m_fixedSize;
-    boolean<false> m_pressed;
-    boolean<false> m_phantom;
-    boolean<false> m_updateEventScheduled;
-    boolean<true> m_firstOnStyle;
+    Boolean<true> m_enabled;
+    Boolean<true> m_visible;
+    Boolean<true> m_focusable;
+    Boolean<false> m_fixedSize;
+    Boolean<false> m_pressed;
+    Boolean<false> m_phantom;
+    Boolean<false> m_updateEventScheduled;
+    Boolean<true> m_firstOnStyle;
     Rect m_rect;
     UILayoutPtr m_layout;
     UIWidgetWeakPtr m_parent;

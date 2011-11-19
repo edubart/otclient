@@ -56,7 +56,10 @@ SET(SOURCES
 
     # otclient
     src/otclient/otclient.cpp
-    src/otclient/otclientluafunctions.cpp
+
+    # otclient luascript
+    src/otclient/luascript/luafunctions.cpp
+    src/otclient/luascript/luavaluecasts.cpp
 
     # otclient core
     src/otclient/core/game.cpp

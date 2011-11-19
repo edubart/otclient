@@ -30,6 +30,7 @@
 #include <otclient/core/effect.h>
 #include <otclient/core/missile.h>
 #include <otclient/core/tile.h>
+#include <otclient/luascript/luavaluecasts.h>
 #include <framework/core/eventdispatcher.h>
 
 void ProtocolGame::parseMessage(InputMessage& msg)
@@ -711,8 +712,10 @@ void ProtocolGame::parseCreatureSpeak(InputMessage& msg)
 {
     msg.getU32(); // unkSpeak
     std::string name = msg.getString(); // name
-    uint16 level = msg.getU16(); // level
-    uint8 type = msg.getU8();
+    int level = msg.getU16(); // level
+    int type = msg.getU8();
+    int channelId;
+    Position creaturePos;
 
     switch(type) {
         case Otc::SpeakSay:
@@ -721,13 +724,13 @@ void ProtocolGame::parseCreatureSpeak(InputMessage& msg)
         case Otc::SpeakMonsterSay:
         case Otc::SpeakMonsterYell:
         case Otc::SpeakPrivateNpcToPlayer:
-            parsePosition(msg); // creaturePos
+            creaturePos = parsePosition(msg); // creaturePos
             break;
         case Otc::SpeakChannelRed:
         case Otc::SpeakChannelOrange:
         case Otc::SpeakChannelYellow:
         case Otc::SpeakChannelWhite:
-            msg.getU16(); // channelId
+            channelId = msg.getU16(); // channelId
             break;
         case Otc::SpeakPrivate:
         case Otc::SpeakPrivatePlayerToNpc:
@@ -742,23 +745,33 @@ void ProtocolGame::parseCreatureSpeak(InputMessage& msg)
     std::string message = msg.getString(); // message
 
     g_dispatcher.addEvent([=] {
-        g_lua.callGlobalField("Game", "onCreatureSpeak", name, level, type, message);
+        g_lua.callGlobalField("Game", "onCreatureSpeak", name, level, type, message, channelId, creaturePos);
     });
 }
 
 void ProtocolGame::parseChannelList(InputMessage& msg)
 {
-    uint8 count = msg.getU8();
-    for(uint8 i = 0; i < count; i++) {
-        msg.getU16();
-        msg.getString();
+    int count = msg.getU8();
+    std::vector<std::tuple<int, std::string> > channelList(count);
+    for(int i = 0; i < count; i++) {
+        int id = msg.getU16();
+        std::string name = msg.getString();
+        channelList.push_back(std::make_tuple(id, name));
     }
+
+    g_dispatcher.addEvent([=] {
+        g_lua.callGlobalField("Game", "onChannelList", channelList);
+    });
 }
 
 void ProtocolGame::parseOpenChannel(InputMessage& msg)
 {
-    msg.getU16(); // channelId
-    msg.getString(); // name
+    int channelId = msg.getU16();
+    std::string name = msg.getString();
+
+    g_dispatcher.addEvent([=] {
+        g_lua.callGlobalField("Game", "onOpenChannel", channelId, name);
+    });
 }
 
 void ProtocolGame::parseOpenPrivatePlayerChat(InputMessage& msg)

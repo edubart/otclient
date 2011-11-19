@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#include "otclient.h"
-
+#include <otclient/otclient.h>
 #include <framework/luascript/luainterface.h>
 #include <otclient/core/game.h>
 #include <otclient/core/tile.h>
@@ -39,8 +38,7 @@
 #include <otclient/ui/uimap.h>
 #include <otclient/core/outfit.h>
 
-void push_luavalue(const Outfit& outfit);
-bool luavalue_cast(int index, Outfit& outfit);
+#include "luavaluecasts.h"
 
 void OTClient::registerLuaFunctions()
 {
@@ -94,41 +92,4 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassStaticFunction<Game>("talkChannel", std::bind(&Game::talkChannel, &g_game, _1, _2, _3));
     g_lua.bindClassStaticFunction<Game>("talkPrivate", std::bind(&Game::talkPrivate, &g_game, _1, _2, _3));
 #endif
-}
-
-void push_luavalue(const Outfit& outfit)
-{
-    g_lua.newTable();
-    g_lua.pushInteger(outfit.getType());
-    g_lua.setField("type");
-    g_lua.pushInteger(outfit.getAddons());
-    g_lua.setField("addons");
-    g_lua.pushInteger(outfit.getHead());
-    g_lua.setField("head");
-    g_lua.pushInteger(outfit.getBody());
-    g_lua.setField("body");
-    g_lua.pushInteger(outfit.getLegs());
-    g_lua.setField("legs");
-    g_lua.pushInteger(outfit.getFeet());
-    g_lua.setField("feet");
-}
-
-bool luavalue_cast(int index, Outfit& outfit)
-{
-    if(g_lua.isTable(index)) {
-        g_lua.getField("type", index);
-        outfit.setType(g_lua.popInteger());
-        g_lua.getField("addons", index);
-        outfit.setAddons(g_lua.popInteger());
-        g_lua.getField("head", index);
-        outfit.setHead(g_lua.popInteger());
-        g_lua.getField("body", index);
-        outfit.setBody(g_lua.popInteger());
-        g_lua.getField("legs", index);
-        outfit.setLegs(g_lua.popInteger());
-        g_lua.getField("feet", index);
-        outfit.setFeet(g_lua.popInteger());
-        return true;
-    }
-    return false;
 }
