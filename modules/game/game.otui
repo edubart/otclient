@@ -1,4 +1,4 @@
-UIWidget
+UIGame
   id: gameRootInterface
   anchors.fill: parent
   anchors.top: topMenu.bottom

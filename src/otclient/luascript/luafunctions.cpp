@@ -36,6 +36,7 @@
 #include <otclient/ui/uiitem.h>
 #include <otclient/ui/uicreature.h>
 #include <otclient/ui/uimap.h>
+#include <otclient/ui/uigame.h>
 #include <otclient/core/outfit.h>
 
 #include "luavaluecasts.h"
@@ -87,6 +88,9 @@ void OTClient::registerLuaFunctions()
 
     g_lua.registerClass<UIMap, UIWidget>();
     g_lua.bindClassStaticFunction<UIMap>("create", &UIWidget::create<UIMap>);
+
+    g_lua.registerClass<UIGame, UIWidget>();
+    g_lua.bindClassStaticFunction<UIGame>("create", &UIWidget::create<UIGame>);
 
 #ifdef FORBIDDEN_FUNCTIONS
     g_lua.bindClassStaticFunction<Game>("talkChannel", std::bind(&Game::talkChannel, &g_game, _1, _2, _3));

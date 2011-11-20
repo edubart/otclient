@@ -79,6 +79,7 @@ SET(SOURCES
     src/otclient/ui/uiitem.cpp
     src/otclient/ui/uicreature.cpp
     src/otclient/ui/uimap.cpp
+    src/otclient/ui/uigame.cpp
 
     # otclient net
     src/otclient/net/protocollogin.cpp
