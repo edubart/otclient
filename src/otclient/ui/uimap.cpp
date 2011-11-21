@@ -65,7 +65,8 @@ bool UIMap::onMousePress(const Point& mousePos, Fw::MouseButton button)
         Position tilePos = Position(1 + (int)tilePosF.x - Map::PLAYER_OFFSET_X, 1 + (int)tilePosF.y - Map::PLAYER_OFFSET_Y, 0) + g_map.getCentralPosition();
 
         TilePtr tile = g_map.getTile(tilePos);
-        tile->useItem();
+        if(tile)
+            tile->useItem();
     }
 
     return UIWidget::onMousePress(mousePos, button);

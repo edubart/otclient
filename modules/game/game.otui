@@ -24,3 +24,4 @@ UIGame
     anchors.right: rightPanel.left
     anchors.top: parent.top
     anchors.bottom: bottomPanel.top
+
