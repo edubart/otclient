@@ -26,8 +26,7 @@
 #include <framework/graphics/texture.h>
 
 #include <GL/gl.h>
-#include <GL/glu.h>
-#include <GL/glext.h>
+#include <framework/thirdparty/glext.h>
 
 Graphics g_graphics;
 
@@ -113,7 +112,7 @@ void Graphics::restoreViewport()
     // setup view region like above
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluOrtho2D(0.0f, width, height, 0.0f);
+    glOrtho(0.0f, width, height, 0.0f, -1, 1);
 
     // back to model view
     glMatrixMode(GL_MODELVIEW);

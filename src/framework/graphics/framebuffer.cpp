@@ -27,8 +27,7 @@
 #include <framework/platform/platform.h>
 
 #include <GL/gl.h>
-#include <GL/glu.h>
-#include <GL/glext.h>
+#include <framework/thirdparty/glext.h>
 
 PFNGLGENFRAMEBUFFERSPROC         oglGenFramebuffers = 0;
 PFNGLBINDFRAMEBUFFERPROC         oglBindFramebuffer = 0;
@@ -99,7 +98,7 @@ void FrameBuffer::bind()
     glViewport(0, 0, m_texture->getWidth(), m_texture->getHeight());
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluOrtho2D(0.0f, m_texture->getWidth(), 0, m_texture->getHeight());
+    glOrtho(0.0f, m_texture->getWidth(), 0, m_texture->getHeight(), -1, 1);
 
     // back to model view
     glMatrixMode(GL_MODELVIEW);
