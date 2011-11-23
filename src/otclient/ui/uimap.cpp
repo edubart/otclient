@@ -56,7 +56,7 @@ bool UIMap::onMousePress(const Point& mousePos, Fw::MouseButton button)
 {
     if(m_mapRect.contains(mousePos)) {
         Point relativeStretchMousePos = mousePos - m_mapRect.topLeft();
-        Size mapSize(Map::MAP_VISIBLE_WIDTH * Map::NUM_TILE_PIXELS, Map::MAP_VISIBLE_HEIGHT * Map::NUM_TILE_PIXELS);
+        Size mapSize(g_map.getVibibleSize().width() * Map::NUM_TILE_PIXELS, g_map.getVibibleSize().height() * Map::NUM_TILE_PIXELS);
 
         PointF stretchFactor(m_mapRect.width() / (float)mapSize.width(), m_mapRect.height() / (float)mapSize.height());
         PointF relativeMousePos = PointF(relativeStretchMousePos.x, relativeStretchMousePos.y) / stretchFactor;
@@ -75,8 +75,18 @@ bool UIMap::onMousePress(const Point& mousePos, Fw::MouseButton button)
 void UIMap::onGeometryUpdate(const Rect& oldRect, const Rect& newRect)
 {
     Rect mapRect = newRect.expanded(-m_mapMargin-1);
-    Size mapSize(Map::MAP_VISIBLE_WIDTH * Map::NUM_TILE_PIXELS, Map::MAP_VISIBLE_HEIGHT * Map::NUM_TILE_PIXELS);
+    Size mapSize(g_map.getVibibleSize().width() * Map::NUM_TILE_PIXELS, g_map.getVibibleSize().height() * Map::NUM_TILE_PIXELS);
     mapSize.scale(mapRect.size(), Fw::KeepAspectRatio);
+
+
+    /*bool useHeight = ((float)mapRect.width() / mapRect.height() < (float)mapSize.width() / mapSize.height());
+    if(useHeight) {
+        mapRect.setWidth(mapRect.height() * ((float)mapSize.width() / mapSize.height()));
+    }
+    else {
+        mapRect.setHeight(mapRect.width() * ((float)mapSize.width() / mapSize.height()));
+    }*/
+
     m_mapRect.setSize(mapSize);
     m_mapRect.moveCenter(newRect.center());
 }

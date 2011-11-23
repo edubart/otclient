@@ -39,6 +39,8 @@ public:
         NUM_TILE_PIXELS = 32
     };
 
+    Map();
+
     void draw(const Rect& rect);
     void clean();
 
@@ -65,6 +67,7 @@ public:
     void removeCreatureById(uint32 id);
 
     void setVisibleSize(const Size& visibleSize);
+    Size getVibibleSize() { return m_visibleSize; }
     Point getCentralOffset() { return m_centralOffset; }
 
     Point positionTo2D(const Position& position);

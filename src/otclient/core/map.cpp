@@ -31,10 +31,15 @@
 
 Map g_map;
 
+Map::Map()
+{
+    setVisibleSize(Size(MAP_VISIBLE_WIDTH, MAP_VISIBLE_HEIGHT) + Size(8, 2));
+}
+
 void Map::draw(const Rect& rect)
 {
     if(!m_framebuffer)
-        setVisibleSize(Size(MAP_VISIBLE_WIDTH, MAP_VISIBLE_HEIGHT));
+        m_framebuffer = FrameBufferPtr(new FrameBuffer(m_visibleSize.width() * NUM_TILE_PIXELS, m_visibleSize.height() * NUM_TILE_PIXELS));
 
     g_graphics.bindColor(Fw::white);
     m_framebuffer->bind();
@@ -290,7 +295,8 @@ void Map::setVisibleSize(const Size& visibleSize)
     m_centralOffset = Point(std::ceil(m_visibleSize.width() / 2.0), std::ceil(m_visibleSize.height() / 2.0));
     m_size = m_visibleSize + Size(3, 3);
 
-    m_framebuffer = FrameBufferPtr(new FrameBuffer(m_visibleSize.width() * NUM_TILE_PIXELS, m_visibleSize.height() * NUM_TILE_PIXELS));
+    if(m_framebuffer)
+        m_framebuffer = FrameBufferPtr(new FrameBuffer(m_visibleSize.width() * NUM_TILE_PIXELS, m_visibleSize.height() * NUM_TILE_PIXELS));
 }
 
 Point Map::positionTo2D(const Position& position)
