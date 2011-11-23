@@ -78,15 +78,6 @@ void UIMap::onGeometryUpdate(const Rect& oldRect, const Rect& newRect)
     Size mapSize(g_map.getVibibleSize().width() * Map::NUM_TILE_PIXELS, g_map.getVibibleSize().height() * Map::NUM_TILE_PIXELS);
     mapSize.scale(mapRect.size(), Fw::KeepAspectRatio);
 
-
-    /*bool useHeight = ((float)mapRect.width() / mapRect.height() < (float)mapSize.width() / mapSize.height());
-    if(useHeight) {
-        mapRect.setWidth(mapRect.height() * ((float)mapSize.width() / mapSize.height()));
-    }
-    else {
-        mapRect.setHeight(mapRect.width() * ((float)mapSize.width() / mapSize.height()));
-    }*/
-
     m_mapRect.setSize(mapSize);
     m_mapRect.moveCenter(newRect.center());
 }

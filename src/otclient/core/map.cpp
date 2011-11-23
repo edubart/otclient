@@ -33,7 +33,7 @@ Map g_map;
 
 Map::Map()
 {
-    setVisibleSize(Size(MAP_VISIBLE_WIDTH, MAP_VISIBLE_HEIGHT) + Size(8, 2));
+    setVisibleSize(Size(MAP_VISIBLE_WIDTH, MAP_VISIBLE_HEIGHT));
 }
 
 void Map::draw(const Rect& rect)
