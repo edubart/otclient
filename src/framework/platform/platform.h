@@ -45,6 +45,7 @@ public:
     void sleep(ulong ms);
 
     bool createWindow(int x, int y, int width, int height, int minWidth, int minHeight, bool maximized);
+    void setWindowIcon(const std::string& pngIcon);
     void destroyWindow();
     void showWindow();
     void hideWindow();

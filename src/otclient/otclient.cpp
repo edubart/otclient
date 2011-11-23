@@ -64,6 +64,7 @@ void OTClient::init(std::vector<std::string> args)
     loadConfigurations();
 
     // create the client window
+    //TODO: bind these functions and move to otclient module
     int minWidth = 550;
     int minHeight = 450;
     int windowX = Fw::fromstring(g_configs.get("window x"), 0);
@@ -73,6 +74,7 @@ void OTClient::init(std::vector<std::string> args)
     bool maximized = Fw::fromstring(g_configs.get("window maximized"), false);
     g_platform.createWindow(windowX, windowY, windowWidth, windowHeight, minWidth, minHeight, maximized);
     g_platform.setWindowTitle(Otc::AppName);
+    g_platform.setWindowIcon("otclient/otcicon.png");
 
     // initialize graphics
     g_graphics.init();

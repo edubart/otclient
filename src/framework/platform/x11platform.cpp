@@ -34,6 +34,9 @@
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
 
+#include <framework/thirdparty/apngloader.h>
+#include <framework/core/resourcemanager.h>
+
 struct X11PlatformPrivate {
     Display *display;
     XVisualInfo *visual;
@@ -693,6 +696,28 @@ bool Platform::createWindow(int x, int y, int width, int height, int minWidth, i
     x11.listener->onResize(Size(width, height));
 
     return true;
+}
+
+void Platform::setWindowIcon(const std::string& pngIcon)
+{
+    apng_data apng;
+    std::stringstream fin;
+    g_resources.loadFile(pngIcon, fin);
+    if(load_apng(fin, &apng) == 0) {
+        int n = apng.width * apng.height;
+        std::vector<unsigned long int> iconData(n + 2);
+        iconData[0] = apng.width;
+        iconData[1] = apng.height;
+        for(int i=0; i < n;++i)
+            iconData[2 + i] = *(uint32_t*)(apng.pdata + (i * 4));
+
+        Atom property = XInternAtom(x11.display, "_NET_WM_ICON", 0);
+        if(!XChangeProperty(x11.display, x11.window, property, XA_CARDINAL, 32, PropModeReplace, (const unsigned char*)&iconData[0], iconData.size()))
+            logError("could not set app icon");
+
+        free_apng(&apng);
+    } else
+        logError("could not load app icon");
 }
 
 void Platform::destroyWindow()
