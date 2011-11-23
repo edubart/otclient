@@ -27,6 +27,9 @@
 #include <dir.h>
 #include <physfs.h>
 
+#include <framework/thirdparty/apngloader.h>
+#include <framework/core/resourcemanager.h>
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 struct Win32PlatformPrivate {
@@ -422,6 +425,45 @@ bool Platform::createWindow(int x, int y, int width, int height, int minWidth, i
     }
 
     return true;
+}
+
+void Platform::setWindowIcon(const std::string& pngIcon)
+{
+    apng_data apng;
+    std::stringstream fin;
+    g_resources.loadFile(pngIcon, fin);
+    if(load_apng(fin, &apng) == 0) {
+        if(apng.bpp != 4)
+            logError("could not set app icon, icon image must have 4 channels");
+
+        int n = apng.width * apng.height;
+        std::vector<uint32> iconData(n);
+        for(int i=0; i < n;++i) {
+            uint8 *pixel = (uint8*)&iconData[i];
+            pixel[2] = *(apng.pdata + (i * 4) + 0);
+            pixel[1] = *(apng.pdata + (i * 4) + 1);
+            pixel[0] = *(apng.pdata + (i * 4) + 2);
+            pixel[3] = *(apng.pdata + (i * 4) + 3);
+        }
+
+        HBITMAP hbmColor = CreateBitmap(apng.width, apng.height, 1, 32, &iconData[0]);
+        HBITMAP hbmMask = CreateCompatibleBitmap(GetDC(NULL), apng.width, apng.height);
+
+        ICONINFO ii;
+        ii.fIcon = TRUE;
+        ii.hbmColor = hbmColor;
+        ii.hbmMask = hbmMask;
+        ii.xHotspot = 0;
+        ii.yHotspot = 0;
+
+        HICON icon = CreateIconIndirect(&ii);
+        DeleteObject(hbmMask);
+        DeleteObject(hbmColor);
+
+        SendMessage(win32.window, WM_SETICON, ICON_SMALL, (LPARAM)icon);
+        SendMessage(win32.window, WM_SETICON, ICON_BIG, (LPARAM)icon);
+    } else
+        logError("could not load app icon");
 }
 
 void Platform::destroyWindow()

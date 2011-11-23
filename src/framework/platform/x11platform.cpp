@@ -704,12 +704,19 @@ void Platform::setWindowIcon(const std::string& pngIcon)
     std::stringstream fin;
     g_resources.loadFile(pngIcon, fin);
     if(load_apng(fin, &apng) == 0) {
+        if(apng.bpp != 4)
+            logError("could not set app icon, icon image must have 4 channels");
         int n = apng.width * apng.height;
         std::vector<unsigned long int> iconData(n + 2);
         iconData[0] = apng.width;
         iconData[1] = apng.height;
-        for(int i=0; i < n;++i)
-            iconData[2 + i] = *(uint32_t*)(apng.pdata + (i * 4));
+        for(int i=0; i < n;++i) {
+            uint8 *pixel = (uint8*)&iconData[2 + i];
+            pixel[2] = *(apng.pdata + (i * 4) + 0);
+            pixel[1] = *(apng.pdata + (i * 4) + 1);
+            pixel[0] = *(apng.pdata + (i * 4) + 2);
+            pixel[3] = *(apng.pdata + (i * 4) + 3);
+        }
 
         Atom property = XInternAtom(x11.display, "_NET_WM_ICON", 0);
         if(!XChangeProperty(x11.display, x11.window, property, XA_CARDINAL, 32, PropModeReplace, (const unsigned char*)&iconData[0], iconData.size()))
