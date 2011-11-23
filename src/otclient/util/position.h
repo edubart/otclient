@@ -71,11 +71,6 @@ public:
         return std::abs(x-pos.x) <= xdif && std::abs(y-pos.y) <= ydif && std::abs(pos.z-z) <= zdif;
     }
 
-    Point to2D(const Position& centerPos) const {
-        return Point((7 + (x - centerPos.x) - (centerPos.z - z)) * 32,
-                     (5 + (y - centerPos.y) - (centerPos.z - z)) * 32);
-    };
-
     void up(int n = 1) { z-=n; }
     void down(int n = 1) { z+=n; }
 

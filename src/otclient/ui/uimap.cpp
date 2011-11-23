@@ -62,7 +62,7 @@ bool UIMap::onMousePress(const Point& mousePos, Fw::MouseButton button)
         PointF relativeMousePos = PointF(relativeStretchMousePos.x, relativeStretchMousePos.y) / stretchFactor;
 
         PointF tilePosF = relativeMousePos / Map::NUM_TILE_PIXELS;
-        Position tilePos = Position(1 + (int)tilePosF.x - Map::PLAYER_OFFSET_X, 1 + (int)tilePosF.y - Map::PLAYER_OFFSET_Y, 0) + g_map.getCentralPosition();
+        Position tilePos = Position(1 + (int)tilePosF.x - g_map.getCentralOffset().x, 1 + (int)tilePosF.y - g_map.getCentralOffset().y, 0) + g_map.getCentralPosition();
 
         TilePtr tile = g_map.getTile(tilePos);
         if(tile)

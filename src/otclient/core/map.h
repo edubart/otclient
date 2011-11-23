@@ -30,13 +30,11 @@ class Map
 {
 public:
     enum {
-        PLAYER_OFFSET_X = 8,
-        PLAYER_OFFSET_Y = 6,
         MAP_VISIBLE_WIDTH = 15,
         MAP_VISIBLE_HEIGHT = 11,
-        MAP_SIZE_X = MAP_VISIBLE_WIDTH + 3,
-        MAP_SIZE_Y = MAP_VISIBLE_HEIGHT + 3,
         MAP_SIZE_Z = 8,
+        MAX_WIDTH = 24,
+        MAX_HEIGHT = 24,
         MAX_Z = 15,
         NUM_TILE_PIXELS = 32
     };
@@ -66,6 +64,11 @@ public:
     CreaturePtr getCreatureById(uint32 id);
     void removeCreatureById(uint32 id);
 
+    void setVisibleSize(const Size& visibleSize);
+    Point getCentralOffset() { return m_centralOffset; }
+
+    Point positionTo2D(const Position& position);
+
 private:
     std::unordered_map<Position, TilePtr, PositionHasher> m_tiles;
     std::map<uint32, CreaturePtr> m_creatures;
@@ -73,6 +76,8 @@ private:
 
     Light m_light;
     Position m_centralPosition;
+    Size m_size, m_visibleSize;
+    Point m_centralOffset, m_drawOffset;
 
     FrameBufferPtr m_framebuffer;
 };

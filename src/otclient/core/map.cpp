@@ -34,14 +34,15 @@ Map g_map;
 void Map::draw(const Rect& rect)
 {
     if(!m_framebuffer)
-        m_framebuffer = FrameBufferPtr(new FrameBuffer(MAP_VISIBLE_WIDTH * NUM_TILE_PIXELS, MAP_VISIBLE_HEIGHT * NUM_TILE_PIXELS));
+        setVisibleSize(Size(MAP_VISIBLE_WIDTH, MAP_VISIBLE_HEIGHT));
 
     g_graphics.bindColor(Fw::white);
     m_framebuffer->bind();
 
     // draw offsets
     LocalPlayerPtr localPlayer = g_game.getLocalPlayer();
-    Point walkOffset = localPlayer->getWalkOffset();
+    if(localPlayer)
+        m_drawOffset = localPlayer->getWalkOffset();
 
     //TODO: cache first/last visible floor
     // draw from bottom floors to top floors
@@ -49,12 +50,12 @@ void Map::draw(const Rect& rect)
     const int lastFloor = MAX_Z-1;
     for(int iz = lastFloor; iz >= firstFloor; --iz) {
         // draw tiles like linus pauling's rule order
-        const int numDiagonals = MAP_SIZE_X + MAP_SIZE_Y - 1;
+        const int numDiagonals = m_size.width() + m_size.height() - 1;
         for(int diagonal = 0; diagonal < numDiagonals; ++diagonal) {
             // loop through / diagonal tiles
-            for(int ix = std::min(diagonal, MAP_SIZE_X - 1), iy = std::max(diagonal - MAP_SIZE_X, 0); ix >= 0 && iy < MAP_SIZE_Y; --ix, ++iy) {
+            for(int ix = std::min(diagonal, m_size.width() - 1), iy = std::max(diagonal - m_size.width(), 0); ix >= 0 && iy < m_size.height(); --ix, ++iy) {
                 // position on current floor
-                Position tilePos(m_centralPosition.x + (ix - PLAYER_OFFSET_X), m_centralPosition.y + (iy - PLAYER_OFFSET_Y), m_centralPosition.z);
+                Position tilePos(m_centralPosition.x + (ix - m_centralOffset.x), m_centralPosition.y + (iy - m_centralOffset.y), m_centralPosition.z);
                 // adjust tilePos to the wanted floor
                 tilePos.perspectiveUp(m_centralPosition.z - iz);
                 //TODO: cache visible tiles, m_tiles[] has a high cost (50% fps decrease)
@@ -62,7 +63,7 @@ void Map::draw(const Rect& rect)
                     // skip tiles that are behind another tile
                     //if(isCompletlyCovered(tilePos, firstFloor))
                     //    continue;
-                    tile->draw(tilePos.to2D(m_centralPosition) - walkOffset);
+                    tile->draw(positionTo2D(tilePos) - m_drawOffset);
                 }
             }
         }
@@ -70,7 +71,7 @@ void Map::draw(const Rect& rect)
         // after drawing all tiles, draw shots
         for(const MissilePtr& shot : m_missilesAtFloor[iz]) {
             Position missilePos = shot->getPosition();
-            shot->draw(missilePos.to2D(m_centralPosition) - walkOffset);
+            shot->draw(positionTo2D(missilePos) - m_drawOffset);
         }
     }
 
@@ -80,14 +81,14 @@ void Map::draw(const Rect& rect)
     m_framebuffer->draw(rect);
 
     // calculate stretch factor
-    float horizontalStretchFactor = rect.width() / (float)(MAP_VISIBLE_WIDTH * NUM_TILE_PIXELS);
-    float verticalStretchFactor = rect.height() / (float)(MAP_VISIBLE_HEIGHT * NUM_TILE_PIXELS);
+    float horizontalStretchFactor = rect.width() / (float)(m_visibleSize.width() * NUM_TILE_PIXELS);
+    float verticalStretchFactor = rect.height() / (float)(m_visibleSize.height() * NUM_TILE_PIXELS);
 
     // draw player names and health bars
     //TODO: this must be cached with creature walks
-    for(int x = 0; x < MAP_VISIBLE_WIDTH; ++x) {
-        for(int y = 0; y < MAP_VISIBLE_HEIGHT; ++y) {
-            Position tilePos = Position(m_centralPosition.x + (x - PLAYER_OFFSET_X + 1), m_centralPosition.y + (y - PLAYER_OFFSET_Y + 1), m_centralPosition.z);
+    for(int x = 0; x < m_visibleSize.width(); ++x) {
+        for(int y = 0; y < m_visibleSize.height(); ++y) {
+            Position tilePos = Position(m_centralPosition.x + (x - m_centralOffset.x + 1), m_centralPosition.y + (y - m_centralOffset.y + 1), m_centralPosition.z);
             if(const TilePtr& tile = m_tiles[tilePos]) {
                 auto creatures = tile->getCreatures();
 
@@ -95,11 +96,11 @@ void Map::draw(const Rect& rect)
                     continue;
 
                 for(const CreaturePtr& creature : creatures) {
-                    Point p((7 + (tilePos.x - m_centralPosition.x))*NUM_TILE_PIXELS + 10 - tile->getDrawElevation(),
-                            (5 + (tilePos.y - m_centralPosition.y))*NUM_TILE_PIXELS - 10 - tile->getDrawElevation());
+                    Point p((m_centralOffset.x - 1 + (tilePos.x - m_centralPosition.x))*NUM_TILE_PIXELS + 10 - tile->getDrawElevation(),
+                            (m_centralOffset.y - 1 + (tilePos.y - m_centralPosition.y))*NUM_TILE_PIXELS - 10 - tile->getDrawElevation());
 
                     if(creature != localPlayer) {
-                        p += creature->getWalkOffset() - walkOffset;
+                        p += creature->getWalkOffset() - m_drawOffset;
                     }
 
                     creature->drawInformation(rect.x() + p.x*horizontalStretchFactor, rect.y() + p.y*verticalStretchFactor, isCovered(tilePos, firstFloor), rect);
@@ -277,4 +278,23 @@ void Map::removeCreatureById(uint32 id)
 void Map::setCentralPosition(const Position& centralPosition)
 {
     m_centralPosition = centralPosition;
+}
+
+void Map::setVisibleSize(const Size& visibleSize)
+{
+    m_visibleSize = visibleSize;
+
+    if(m_visibleSize.width() > MAX_WIDTH || m_visibleSize.height() > MAX_HEIGHT)
+        m_visibleSize = Size(MAP_VISIBLE_WIDTH, MAP_VISIBLE_HEIGHT);
+
+    m_centralOffset = Point(std::ceil(m_visibleSize.width() / 2.0), std::ceil(m_visibleSize.height() / 2.0));
+    m_size = m_visibleSize + Size(3, 3);
+
+    m_framebuffer = FrameBufferPtr(new FrameBuffer(m_visibleSize.width() * NUM_TILE_PIXELS, m_visibleSize.height() * NUM_TILE_PIXELS));
+}
+
+Point Map::positionTo2D(const Position& position)
+{
+    return Point((m_centralOffset.x - 1 + (position.x - m_centralPosition.x) - (m_centralPosition.z - position.z)) * NUM_TILE_PIXELS,
+                 (m_centralOffset.y - 1 + (position.y - m_centralPosition.y) - (m_centralPosition.z - position.z)) * NUM_TILE_PIXELS);
 }
