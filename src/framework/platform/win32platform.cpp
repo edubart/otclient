@@ -433,8 +433,10 @@ void Platform::setWindowIcon(const std::string& pngIcon)
     std::stringstream fin;
     g_resources.loadFile(pngIcon, fin);
     if(load_apng(fin, &apng) == 0) {
-        if(apng.bpp != 4)
+        if(apng.bpp != 4) {
             logError("could not set app icon, icon image must have 4 channels");
+            free_apng(&apng);
+        }
 
         int n = apng.width * apng.height;
         std::vector<uint32> iconData(n);
@@ -462,6 +464,8 @@ void Platform::setWindowIcon(const std::string& pngIcon)
 
         SendMessage(win32.window, WM_SETICON, ICON_SMALL, (LPARAM)icon);
         SendMessage(win32.window, WM_SETICON, ICON_BIG, (LPARAM)icon);
+
+        free_apng(&apng);
     } else
         logError("could not load app icon");
 }
