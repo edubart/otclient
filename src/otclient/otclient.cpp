@@ -271,8 +271,19 @@ void OTClient::onClose()
 
 void OTClient::onResize(const Size& size)
 {
-    g_graphics.resize(size);
-    g_ui.resize(size);
+    static bool eventScheduled = false;
+    static Size newSize;
+    newSize = size;
+
+    // avoid massive resize updates
+    if(!eventScheduled) {
+        g_dispatcher.addEvent([&] {
+            g_graphics.resize(newSize);
+            g_ui.resize(newSize);
+            eventScheduled = false;
+        });
+        eventScheduled = true;
+    }
 }
 
 void OTClient::onPlatformEvent(const PlatformEvent& event)

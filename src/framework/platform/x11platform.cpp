@@ -393,6 +393,8 @@ void Platform::poll()
 {
     XEvent event, peekevent;
     PlatformEvent& platformEvent = x11.platformEvent;
+    static int oldWidth = -1;
+    static int oldHeight = -1;
     while(XPending(x11.display) > 0) {
         XNextEvent(x11.display, &event);
 
@@ -410,10 +412,11 @@ void Platform::poll()
         }
 
         switch(event.type) {
+            case Expose:
+                // needs redraw
+                break;
             case ConfigureNotify:
                 // window resize
-                static int oldWidth = -1;
-                static int oldHeight = -1;
                 if(oldWidth != event.xconfigure.width || oldHeight != event.xconfigure.height) {
                     x11.listener->onResize(Size(event.xconfigure.width, event.xconfigure.height));
                     oldWidth = event.xconfigure.width;
@@ -617,24 +620,29 @@ bool Platform::createWindow(int x, int y, int width, int height, int minWidth, i
         logFatal("RGBA/Double buffered visual not supported");
 
     // create GLX context
-    x11.glxContext = glXCreateContext(x11.display, x11.visual, 0, GL_TRUE);
+    x11.glxContext = glXCreateContext(x11.display, x11.visual, NULL, False);
     if(!x11.glxContext)
         logFatal("Unable to create GLX context");
 
+    logInfo("Direct rendering: ", glXIsDirect(x11.display, x11.glxContext) ? "Yes" : "No");
+
     // color map
     x11.colormap  = XCreateColormap(x11.display,
-                                  RootWindow(x11.display, x11.visual->screen),
-                                  x11.visual->visual,
-                                  AllocNone);
+                                    RootWindow(x11.display, x11.visual->screen),
+                                    x11.visual->visual,
+                                    AllocNone);
 
     // setup window type
-    XSetWindowAttributes wa;
-    wa.colormap = x11.colormap;
-    wa.border_pixel = 0;
-    wa.event_mask = KeyPressMask | KeyReleaseMask |
+    XSetWindowAttributes attr;
+    attr.colormap = x11.colormap;
+    attr.border_pixel = 0;
+    attr.backing_store = Always;
+    attr.background_pixel = 0;
+    attr.event_mask = KeyPressMask | KeyReleaseMask |
                          ButtonPressMask | ButtonReleaseMask | PointerMotionMask |
                          ExposureMask | VisibilityChangeMask |
                          StructureNotifyMask | FocusChangeMask;
+    unsigned int mask = CWBorderPixel | CWColormap | CWEventMask | CWBackingStore | CWBackPixel;
 
     x11.x = x;
     x11.y = y;
@@ -648,11 +656,10 @@ bool Platform::createWindow(int x, int y, int width, int height, int minWidth, i
                              x11.visual->depth,
                              InputOutput,
                              x11.visual->visual,
-                             CWBorderPixel | CWColormap | CWEventMask,
-                             &wa);
-
+                             mask,
+                             &attr);
     if(!x11.window)
-        logFatal("Unable to create X window");
+        logFatal("XCreateWindow failed");
 
     //  create input context (to have better key input handling)
     if(XSupportsLocale()) {
@@ -673,7 +680,6 @@ bool Platform::createWindow(int x, int y, int width, int height, int minWidth, i
     if(!x11.xic)
         logWarning("Input of special keys maybe messed up because we couldn't create an input context");
 
-
     // set window minimum size
     XSizeHints xsizehints;
     xsizehints.flags = PMinSize;
@@ -686,7 +692,8 @@ bool Platform::createWindow(int x, int y, int width, int height, int minWidth, i
     XSetWMProtocols(x11.display, x11.window, &x11.atomDeleteWindow , 1);
 
     // connect the GLX-context to the window
-    glXMakeCurrent(x11.display, x11.window, x11.glxContext);
+    if(!glXMakeCurrent(x11.display, x11.window, x11.glxContext))
+        logFatal("glXMakeCurrent failed");
 
     x11.width = width;
     x11.height = height;
@@ -918,6 +925,8 @@ void Platform::setVerticalSync(bool enable)
 
 void Platform::swapBuffers()
 {
+    //glFlush();
+    //glFinish();
     glXSwapBuffers(x11.display, x11.window);
 }
 
