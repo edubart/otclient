@@ -79,6 +79,9 @@ FrameBuffer::FrameBuffer(int width, int height)
         // otherwise fallback to copy texture from screen implementation
         m_fallbackOldImp = true;
     }
+
+    if(m_fallbackOldImp)
+        logInfo("Framebuffers not supported, falling back to old implementation.");
 }
 
 FrameBuffer::~FrameBuffer()
@@ -92,13 +95,23 @@ void FrameBuffer::bind()
     if(!m_fallbackOldImp) {
         // bind framebuffer
         oglBindFramebuffer(GL_FRAMEBUFFER_EXT, m_fbo);
+    } else {
+        int screenWidth = g_graphics.getScreenSize().width();
+        int screenHeight = g_graphics.getScreenSize().height();
+
+        if(!m_screenBackup || m_screenBackup->getSize() != g_graphics.getScreenSize())
+            m_screenBackup = TexturePtr(new Texture(screenWidth, screenHeight, 4));
+
+        // save screen state
+        glBindTexture(GL_TEXTURE_2D, m_screenBackup->getId());
+        glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, screenWidth, screenHeight);
     }
 
     // setup framebuffer viewport
     glViewport(0, 0, m_texture->getWidth(), m_texture->getHeight());
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(0.0f, m_texture->getWidth(), 0, m_texture->getHeight(), -1, 1);
+    glOrtho(0.0f, m_texture->getWidth(), m_texture->getHeight(), 0, -1, 1);
 
     // back to model view
     glMatrixMode(GL_MODELVIEW);
@@ -127,13 +140,14 @@ void FrameBuffer::unbind()
         // restore graphics viewport
         g_graphics.restoreViewport();
 
-        // clear screen
+        // restore screen
         glClearColor(0.0, 0.0, 0.0, 1.0);
         glClear(GL_COLOR_BUFFER_BIT);
+        g_graphics.drawTexturedRect(Rect(Point(0,0), g_graphics.getScreenSize()), m_screenBackup, Rect(), true);
     }
 }
 
 void FrameBuffer::draw(const Rect& screenCoords, const Rect& framebufferCoords)
 {
-    g_graphics.drawTexturedRect(screenCoords, m_texture, framebufferCoords);
+    g_graphics.drawTexturedRect(screenCoords, m_texture, framebufferCoords, true);
 }

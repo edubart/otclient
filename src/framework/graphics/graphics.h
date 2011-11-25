@@ -56,7 +56,8 @@ public:
     // drawing API
     void drawTexturedRect(const Rect& screenCoords,
                           const TexturePtr& texture,
-                          const Rect& textureCoords = Rect());
+                          const Rect& textureCoords = Rect(),
+                          bool upsideDown = false);
 
     void drawRepeatedTexturedRect(const Rect& screenCoords,
                                   const TexturePtr& texture,

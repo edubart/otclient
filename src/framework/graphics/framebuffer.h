@@ -44,6 +44,7 @@ public:
 
 private:
     TexturePtr m_texture;
+    TexturePtr m_screenBackup;
     uint m_fbo;
     bool m_fallbackOldImp;
 };

@@ -132,7 +132,8 @@ void Graphics::endRender()
 
 void Graphics::drawTexturedRect(const Rect& screenCoords,
                                 const TexturePtr& texture,
-                                const Rect& textureCoords)
+                                const Rect& textureCoords,
+                                bool upsideDown)
 {
     if(screenCoords.isEmpty() || texture->getId() == 0)
         return;
@@ -151,13 +152,23 @@ void Graphics::drawTexturedRect(const Rect& screenCoords,
 
     if(textureCoords.isEmpty()) {
         textureRight = texture->getWidth() / (float)textureSize.width();
-        textureBottom = texture->getHeight()  / (float)textureSize.height();
-        textureTop = 0.0f;
+        if(upsideDown) {
+            textureBottom = 0.0f;
+            textureTop = texture->getHeight()  / (float)textureSize.height();
+        } else {
+            textureBottom = texture->getHeight()  / (float)textureSize.height();
+            textureTop = 0.0f;
+        }
         textureLeft = 0.0f;
     } else {
         textureRight = (textureCoords.right() + 1) / (float)textureSize.width();
-        textureBottom = (textureCoords.bottom() + 1) / (float)textureSize.height();
-        textureTop = textureCoords.top() / (float)textureSize.height();
+        if(upsideDown) {
+            textureTop = (textureCoords.bottom() + 1) / (float)textureSize.height();
+            textureBottom = textureCoords.top() / (float)textureSize.height();
+        } else {
+            textureBottom = (textureCoords.bottom() + 1) / (float)textureSize.height();
+            textureTop = textureCoords.top() / (float)textureSize.height();
+        }
         textureLeft = textureCoords.left() / (float)textureSize.width();
     }
 
