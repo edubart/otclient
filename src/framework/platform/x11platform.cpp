@@ -620,7 +620,7 @@ bool Platform::createWindow(int x, int y, int width, int height, int minWidth, i
         logFatal("RGBA/Double buffered visual not supported");
 
     // create GLX context
-    x11.glxContext = glXCreateContext(x11.display, x11.visual, NULL, True);
+    x11.glxContext = glXCreateContext(x11.display, x11.visual, NULL, False);
     if(!x11.glxContext)
         logFatal("Unable to create GLX context");
 
@@ -636,13 +636,11 @@ bool Platform::createWindow(int x, int y, int width, int height, int minWidth, i
     XSetWindowAttributes attr;
     attr.colormap = x11.colormap;
     attr.border_pixel = 0;
-    attr.backing_store = Always;
-    attr.background_pixel = 0;
     attr.event_mask = KeyPressMask | KeyReleaseMask |
                          ButtonPressMask | ButtonReleaseMask | PointerMotionMask |
                          ExposureMask | VisibilityChangeMask |
                          StructureNotifyMask | FocusChangeMask;
-    unsigned int mask = CWBorderPixel | CWColormap | CWEventMask | CWBackingStore | CWBackPixel;
+    unsigned int mask = CWBorderPixel | CWColormap | CWEventMask;
 
     x11.x = x;
     x11.y = y;
