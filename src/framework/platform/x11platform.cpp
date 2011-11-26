@@ -620,7 +620,7 @@ bool Platform::createWindow(int x, int y, int width, int height, int minWidth, i
         logFatal("RGBA/Double buffered visual not supported");
 
     // create GLX context
-    x11.glxContext = glXCreateContext(x11.display, x11.visual, NULL, False);
+    x11.glxContext = glXCreateContext(x11.display, x11.visual, NULL, True);
     if(!x11.glxContext)
         logFatal("Unable to create GLX context");
 

@@ -73,7 +73,7 @@ uint Texture::internalLoadGLTexture(uchar *pixels, int channels, int width, int 
     std::vector<uint8> tmp;
 
     // old opengl drivers only accept power of two dimensions
-    if(!g_graphics.isExtensionSupported("GL_ARB_texture_non_power_of_two")) {
+    //if(!g_graphics.isExtensionSupported("GL_ARB_texture_non_power_of_two")) {
         int glWidth = 1;
         while(glWidth < width)
             glWidth = glWidth << 1;
@@ -92,8 +92,8 @@ uint Texture::internalLoadGLTexture(uchar *pixels, int channels, int width, int 
         }
 
         m_glSize.setSize(glWidth, glHeight);
-    } else
-        m_glSize = m_size;
+    //} else
+    //    m_glSize = m_size;
 
     // detect pixels GL format
     GLenum format = 0;
