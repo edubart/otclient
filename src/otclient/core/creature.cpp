@@ -211,7 +211,7 @@ void Creature::updateWalk()
     const ThingType& type = getType();
     if(m_walking) {
         int elapsedTicks = g_platform.getTicks() - m_walkStartTicks;
-        int totalPixelsWalked = std::min((int)std::round(elapsedTicks / m_walkTimePerPixel), 32);
+        int totalPixelsWalked = std::min((int)round(elapsedTicks / m_walkTimePerPixel), 32);
 
         if(m_inverseWalking) {
             if(m_direction == Otc::North || m_direction == Otc::NorthEast || m_direction == Otc::NorthWest)
