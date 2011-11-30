@@ -46,3 +46,32 @@ ColorBox < UICheckBox
     image:
       source: /core_styles/images/colorbox.png
       coords: 0 0 16 16
+      
+ButtonBox < UICheckBox
+  font: verdana-11px-antialised
+  background-color: white
+  color: #f0ad4dff
+  size: 106 24
+  box-size: 106 24
+  text-offset: 0 0
+  text-align: center
+
+  border-image:
+    source: /core_styles/images/button.png
+    border: 5
+
+  $hover:
+    border-image:
+      source: /core_styles/images/button_hover.png
+      border: 5
+
+  $checked:
+    text-offset: 1 1
+    border-image:
+      source: /core_styles/images/button_down.png
+      border: 5
+
+  $disabled:
+    color: #f0ad4d88
+    background-color: #ffffff88
+    

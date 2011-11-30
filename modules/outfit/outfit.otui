@@ -27,26 +27,27 @@ Window
     anchors.left: name.left
     margin-top: 5
 
-  Button
+  ButtonBox
     id: head
     text: Head
     anchors.top: creature.top
     anchors.left: creature.right
     margin-left: 10
+    checked: true
 
-  Button
+  ButtonBox
     id: primary
     text: Primary
     anchors.top: prev.bottom
     anchors.left: prev.left
 
-  Button
+  ButtonBox
     id: secondary
     text: Secondary
     anchors.top: prev.bottom
     anchors.left: prev.left
 
-  Button
+  ButtonBox
     id: detail
     text: Detail
     anchors.top: prev.bottom

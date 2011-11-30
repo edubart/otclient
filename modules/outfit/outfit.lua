@@ -7,6 +7,7 @@ local m_outfit = nil
 local m_outfits = nil
 local m_currentOutfit = 1
 local m_currentColor = nil
+local m_currentClothe = nil
 
 -- private functions
 local function onAddonCheckChange(addon, value)
@@ -16,6 +17,60 @@ local function onAddonCheckChange(addon, value)
     m_outfit.addons = m_outfit.addons - value
   end
   m_creature:setOutfit(m_outfit)
+end
+
+local function onColorCheckChange(color)
+  if color == m_currentColor then
+    color.onCheckChange = nil
+    color:setChecked(true)
+    color.onCheckChange = function() onColorCheckChange(color) end
+  else
+    m_currentColor.onCheckChange = nil
+    m_currentColor:setChecked(false)
+    local color2 = m_currentColor
+    m_currentColor.onCheckChange = function() onColorCheckChange(color2) end
+
+    m_currentColor = color
+
+    if m_currentClothe:getId() == 'head' then
+      m_outfit.head = m_currentColor.colorId
+    elseif m_currentClothe:getId() == 'primary' then
+      m_outfit.body = m_currentColor.colorId
+    elseif m_currentClothe:getId() == 'secondary' then
+      m_outfit.legs = m_currentColor.colorId
+    elseif m_currentClothe:getId() == 'detail' then
+      m_outfit.feet = m_currentColor.colorId
+    end
+      
+    m_creature:setOutfit(m_outfit)
+  end
+end
+
+local function onClotheCheckChange(clothe)
+  if clothe == m_currentClothe then
+    clothe.onCheckChange = nil
+    clothe:setChecked(true)
+    clothe.onCheckChange = function() onClotheCheckChange(clothe) end
+  else
+    m_currentClothe.onCheckChange = nil
+    m_currentClothe:setChecked(false)
+    local clothe2 = m_currentClothe
+    m_currentClothe.onCheckChange = function() onClotheCheckChange(clothe2) end
+
+    m_currentClothe = clothe
+    
+    local color = 0
+    if m_currentClothe:getId() == 'head' then
+      color = m_outfit.head
+    elseif m_currentClothe:getId() == 'primary' then
+      color = m_outfit.body
+    elseif m_currentClothe:getId() == 'secondary' then
+      color = m_outfit.legs
+    elseif m_currentClothe:getId() == 'detail' then
+      color = m_outfit.feet
+    end
+    window:getChildById('color' .. color):setChecked(true)
+  end
 end
 
 local function update()
@@ -64,24 +119,6 @@ local function update()
 
 end
 
-local function onColorCheckChange(color)
-  if color == m_currentColor then
-    color.onCheckChange = nil
-    color:setChecked(true)
-    color.onCheckChange = function() onColorCheckChange(color) end
-  else
-    m_currentColor.onCheckChange = nil
-    m_currentColor:setChecked(false)
-    local color2 = m_currentColor
-    m_currentColor.onCheckChange = function() onColorCheckChange(color2) end
-
-    m_currentColor = color
-
-    m_outfit.head = m_currentColor.colorId
-    m_creature:setOutfit(m_outfit)
-  end
-end
-
 -- public functions
 function Outfit.test()
   local button = UIButton.create()
@@ -100,6 +137,16 @@ function Outfit.create(creature, outfitList)
   window:lock()
 
   m_outfit = creature:getOutfit()
+  
+  m_currentClothe = window:getChildById('head')
+  local head = window:getChildById('head')
+  local primary = window:getChildById('primary')
+  local secondary = window:getChildById('secondary')
+  local detail = window:getChildById('detail')
+  head.onCheckChange = function() onClotheCheckChange(head) end
+  primary.onCheckChange = function() onClotheCheckChange(primary) end
+  secondary.onCheckChange = function() onClotheCheckChange(secondary) end
+  detail.onCheckChange = function() onClotheCheckChange(detail) end
 
   local creatureWidget = window:getChildById('creature')
   creatureWidget:setCreature(creature)
@@ -110,6 +157,7 @@ function Outfit.create(creature, outfitList)
       window:addChild(color)
 
       local outfitColor = getOufitColor(j*19 + i)
+      color:setId('color' .. j*19+i)
       color.colorId = j*19 + i
       color:setStyle('Color')
       color:setBackgroundColor(outfitColor)

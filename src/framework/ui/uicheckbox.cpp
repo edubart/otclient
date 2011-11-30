@@ -21,6 +21,7 @@
  */
 
 #include "uicheckbox.h"
+#include "uitranslator.h"
 #include <framework/otml/otmlnode.h>
 #include <framework/graphics/image.h>
 #include <framework/graphics/font.h>
@@ -30,6 +31,7 @@
 UICheckBox::UICheckBox()
 {
     m_focusable = false;
+    m_textAlign = Fw::AlignLeft;
 }
 
 void UICheckBox::render()
@@ -46,7 +48,7 @@ void UICheckBox::render()
     if(m_text.length()) {
         Rect textRect(m_rect);
         textRect.setTopLeft(textRect.topLeft() + m_textOffset);
-        m_font->renderText(m_text, textRect, Fw::AlignLeft, m_foregroundColor);
+        m_font->renderText(m_text, textRect, m_textAlign, m_foregroundColor);
     }
 }
 
@@ -67,6 +69,8 @@ void UICheckBox::onStyleApply(const OTMLNodePtr& styleNode)
             m_text = node->value();
         else if(node->tag() == "box-size")
             m_boxSize = node->value<Size>();
+        else if(node->tag() == "text-align")
+            m_textAlign = Fw::translateAlignment(node->value());
         else if(node->tag() == "checked") {
             // must be scheduled because setChecked can change the style again
             g_dispatcher.addEvent(std::bind(&UICheckBox::setChecked, asUICheckBox(), node->value<bool>()));

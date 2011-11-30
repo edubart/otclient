@@ -46,6 +46,7 @@ protected:
     std::string m_text;
     Size m_boxSize;
     Point m_textOffset;
+    Fw::AlignmentFlag m_textAlign;
 };
 
 #endif
