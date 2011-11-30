@@ -315,6 +315,30 @@ namespace Otc
         NorthWest
     };
 
+    enum FluidsColor {
+        FluidTransparent,
+        FluidBlue,
+        FluidRed,
+        FluidBrown,
+        FluidGreen,
+        FluidYellow,
+        FluidWhite,
+        FluidPurple
+    };
+
+    enum FluidsType {
+        FluidWater = 1,
+        FluidMana = 2,
+        FluidBeer = 3,
+        FluidBlood = 5,
+        FluidSlime = 6,
+        FluidLemonade = 8,
+        FluidMilk = 9,
+        FluidWine = 10,
+        FluidHealth = 11,
+        FluidCoconutMilk = 15
+    };
+
     enum SpeakClasses {
         SpeakSay                = 0x01, //normal talk
         SpeakWhisper            = 0x02, //whispering - #w text

@@ -47,7 +47,7 @@ void Item::setPosition(const Position& position)
 {
     const ThingType& type = getType();
 
-    if(type.properties[ThingType::NotMovable]) {
+    if(type.properties[ThingType::IsGround]) {
         m_xPattern = position.x % type.dimensions[ThingType::PatternX];
         m_yPattern = position.y % type.dimensions[ThingType::PatternY];
         m_zPattern = position.z % type.dimensions[ThingType::PatternZ];
@@ -91,70 +91,70 @@ void Item::setData(int data)
         }
     }
     else if(type.properties[ThingType::IsFluid] || type.properties[ThingType::IsFluidContainer]) {
-        int var = 0;
-        // TODO: find out what the heck does it mean
+        int color = 0;
+        // TODO: find out what the heck does it mean 4, 7, 12, 13, 14, 16, 17. options are already there
         switch(data) {
         case 0:
-            var = 0;
+            color = 0;
             break;
-        case 1:
-            var = 1;
+        case Otc::FluidWater:
+            color = Otc::FluidBlue;
             break;
-        case 2:
-            var = 7;
+        case Otc::FluidMana:
+            color = Otc::FluidPurple;
             break;
-        case 3:
-            var = 3;
+        case Otc::FluidBeer:
+            color = Otc::FluidBrown;
             break;
         case 4:
-            var = 3;
+            color = Otc::FluidBrown; // oil, mud, mead, rum, tea
             break;
-        case 5:
-            var = 2;
+        case Otc::FluidBlood:
+            color = Otc::FluidRed;
             break;
-        case 6:
-            var = 4;
+        case Otc::FluidSlime:
+            color = Otc::FluidGreen;
             break;
         case 7:
-            var = 3;
+            color = Otc::FluidBrown; // oil, mud, mead, rum, tea
             break;
-        case 8:
-            var = 5;
+        case Otc::FluidLemonade:
+            color = Otc::FluidYellow;
             break;
-        case 9:
-            var = 6;
+        case Otc::FluidMilk:
+            color = Otc::FluidWhite;
             break;
-        case 10:
-            var = 7;
+        case Otc::FluidWine:
+            color = Otc::FluidPurple;
             break;
-        case 11:
-            var = 2;
+        case Otc::FluidHealth:
+            color = Otc::FluidRed;
             break;
         case 12:
-            var = 5;
+            color = Otc::FluidYellow; // urine, fruit juice
             break;
         case 13:
-            var = 3;
+            color = Otc::FluidBrown; // oil, mud, mead, rum, tea
             break;
         case 14:
-            var = 5;
+            color = Otc::FluidYellow; // urine, fruit juice
             break;
-        case 15:
-            var = 6;
+        case Otc::FluidCoconutMilk:
+            color = Otc::FluidWhite;
             break;
         case 16:
-            var = 3;
+            color = Otc::FluidBrown; // oil, mud, mead, rum, tea
             break;
         case 17:
-            var = 3;
+            color = Otc::FluidBrown; // oil, mud, mead, rum, tea
             break;
         default:
-            var = 1;
+            color = 1;
             break;
         }
 
-        m_xPattern = (var & 3) % type.dimensions[ThingType::PatternX];
-        m_yPattern = (var >> 2) % type.dimensions[ThingType::PatternY];
+        m_xPattern = (color % 4) % type.dimensions[ThingType::PatternX];
+        m_yPattern = (color / 4) % type.dimensions[ThingType::PatternY];
     }
 
     m_data = data;
