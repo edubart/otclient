@@ -23,12 +23,11 @@ local function onColorCheckChange(color)
   if color == m_currentColor then
     color.onCheckChange = nil
     color:setChecked(true)
-    color.onCheckChange = function() onColorCheckChange(color) end
+    color.onCheckChange = onColorCheckChange
   else
     m_currentColor.onCheckChange = nil
     m_currentColor:setChecked(false)
-    local color2 = m_currentColor
-    m_currentColor.onCheckChange = function() onColorCheckChange(color2) end
+    m_currentColor.onCheckChange = onColorCheckChange
 
     m_currentColor = color
 
@@ -50,12 +49,11 @@ local function onClotheCheckChange(clothe)
   if clothe == m_currentClothe then
     clothe.onCheckChange = nil
     clothe:setChecked(true)
-    clothe.onCheckChange = function() onClotheCheckChange(clothe) end
+    clothe.onCheckChange = onClotheCheckChange
   else
     m_currentClothe.onCheckChange = nil
     m_currentClothe:setChecked(false)
-    local clothe2 = m_currentClothe
-    m_currentClothe.onCheckChange = function() onClotheCheckChange(clothe2) end
+    m_currentClothe.onCheckChange = onClotheCheckChange
 
     m_currentClothe = clothe
     
@@ -75,18 +73,18 @@ end
 
 local function update()
   local nameWidget = window:getChildById('name')
-  nameWidget:setText(m_outfits[currentOutfit][2])
+  nameWidget:setText(m_outfits[m_currentOutfit][2])
 
-  local availableAddons = m_outfits[currentOutfit][3]
+  local availableAddons = m_outfits[m_currentOutfit][3]
   local addon1 = window:getChildById('addon1')
   local addon2 = window:getChildById('addon2')
   local addon3 = window:getChildById('addon3')
-  addon1.onCheckChange = function() onAddonCheckChange(addon1, 1) end
-  addon2.onCheckChange = function() onAddonCheckChange(addon2, 2) end
-  addon3.onCheckChange = function() onAddonCheckChange(addon3, 4) end
   addon1:setChecked(false)
   addon2:setChecked(false)
   addon3:setChecked(false)
+  addon1.onCheckChange = function(self) onAddonCheckChange(self, 1) end
+  addon2.onCheckChange = function(self) onAddonCheckChange(self, 2) end
+  addon3.onCheckChange = function(self) onAddonCheckChange(self, 4) end
   addon1:setEnabled(false)
   addon2:setEnabled(false)
   addon3:setEnabled(false)
@@ -113,7 +111,7 @@ local function update()
     addon3:setEnabled(true)
   end
 
-  m_outfit.type = m_outfits[currentOutfit][1]
+  m_outfit.type = m_outfits[m_currentOutfit][1]
   m_outfit.addons = 0
   m_creature:setOutfit(m_outfit)
 
@@ -139,14 +137,10 @@ function Outfit.create(creature, outfitList)
   m_outfit = creature:getOutfit()
   
   m_currentClothe = window:getChildById('head')
-  local head = window:getChildById('head')
-  local primary = window:getChildById('primary')
-  local secondary = window:getChildById('secondary')
-  local detail = window:getChildById('detail')
-  head.onCheckChange = function() onClotheCheckChange(head) end
-  primary.onCheckChange = function() onClotheCheckChange(primary) end
-  secondary.onCheckChange = function() onClotheCheckChange(secondary) end
-  detail.onCheckChange = function() onClotheCheckChange(detail) end
+  window:getChildById('head').onCheckChange = onClotheCheckChange
+  window:getChildById('primary').onCheckChange = onClotheCheckChange
+  window:getChildById('secondary').onCheckChange = onClotheCheckChange
+  window:getChildById('detail').onCheckChange = onClotheCheckChange
 
   local creatureWidget = window:getChildById('creature')
   creatureWidget:setCreature(creature)
@@ -169,17 +163,17 @@ function Outfit.create(creature, outfitList)
         color:setChecked(true)
       end
 
-      color.onCheckChange = function() onColorCheckChange(color) end
+      color.onCheckChange = onColorCheckChange
     end
   end
 
   m_creature = creature
   m_outfits = outfitList
 
-  currentOutfit = 1
+  m_currentOutfit = 1
   for i=1,#outfitList do
     if outfitList[i][1] == m_outfit.type then
-      currentOutfit = i
+      m_currentOutfit = i
       break
     end
   end
@@ -200,18 +194,18 @@ function Outfit.accept()
 end
 
 function Outfit.nextType()
-  currentOutfit = currentOutfit + 1
-  if currentOutfit > #m_outfits then
-    currentOutfit = 1
+  m_currentOutfit = m_currentOutfit + 1
+  if m_currentOutfit > #m_outfits then
+    m_currentOutfit = 1
   end
 
   update()
 end
 
 function Outfit.previousType()
-  currentOutfit = currentOutfit - 1
-  if currentOutfit <= 0 then
-    currentOutfit = #m_outfits
+  m_currentOutfit = m_currentOutfit - 1
+  if m_currentOutfit <= 0 then
+    m_currentOutfit = #m_outfits
   end
 
   update()
