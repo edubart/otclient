@@ -83,6 +83,9 @@ TexturePtr SpriteManager::loadSpriteTexture(int id)
         m_fin.read((char*)&transparentPixels, 2);
         m_fin.read((char*)&coloredPixels, 2);
 
+        if(writePos + transparentPixels*4 + coloredPixels*3 >= 4096)
+            return g_graphics.getEmptyTexture();
+
         for(int i = 0; i < transparentPixels; i++) {
             pixels[writePos + 0] = 0x00;
             pixels[writePos + 1] = 0x00;
