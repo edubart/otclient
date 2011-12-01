@@ -23,17 +23,17 @@
 #include "otclient.h"
 
 #include <framework/core/modulemanager.h>
-#include <framework/core/configs.h>
+#include <framework/core/configmanager.h>
 #include <framework/core/resourcemanager.h>
 #include <framework/core/eventdispatcher.h>
+#include <framework/core/clock.h>
 #include <framework/luascript/luainterface.h>
-#include <framework/platform/platform.h>
 #include <framework/graphics/graphics.h>
 #include <framework/graphics/fontmanager.h>
 #include <framework/ui/uimanager.h>
 #include <framework/ui/uiwidget.h>
 #include <framework/net/connection.h>
-
+#include <framework/platform/platform.h>
 #include <otclient/net/protocolgame.h>
 #include <otclient/core/game.h>
 #include <otclient/core/map.h>
@@ -79,9 +79,6 @@ void OTClient::init(std::vector<std::string> args)
     // initialize graphics
     g_graphics.init();
 
-    // initialize event dispatcher
-    g_dispatcher.init();
-
     // initialize the ui
     g_ui.init();
 
@@ -105,7 +102,7 @@ void OTClient::init(std::vector<std::string> args)
 
 void OTClient::run()
 {
-    int frameTicks = g_platform.getTicks();
+    int frameTicks = g_clock.ticks();
     int lastPollTicks = frameTicks;
     int frameCount = 0;
 
@@ -113,7 +110,7 @@ void OTClient::run()
     m_running = true;
 
     if(g_ui.getRootWidget()->getChildCount() == 0) {
-        logError("there is no root widgets to display, the app will close");
+        logError("There is no root widgets to display, the app will close");
         m_stopping = true;
     }
 
@@ -122,8 +119,7 @@ void OTClient::run()
 
     while(!m_stopping) {
         //g_platform.sleep(150);
-        g_platform.updateTicks();
-        frameTicks = g_platform.getTicks();
+        frameTicks = g_clock.updateTicks();
 
         // poll events every POLL_CYCLE_DELAY
         // this delay exists to avoid massive polling thus increasing framerate
@@ -147,7 +143,7 @@ void OTClient::run()
             g_platform.swapBuffers();
         } else {
             // sleeps until next poll to avoid massive cpu usage
-            g_platform.sleep(POLL_CYCLE_DELAY+1);
+            g_clock.sleep(POLL_CYCLE_DELAY+1);
         }
     }
 
@@ -177,8 +173,8 @@ void OTClient::terminate()
     // terminate network
     Connection::terminate();
 
-    // terminate dispatcher
-    g_dispatcher.terminate();
+    // flush remaining dispatcher events
+    g_dispatcher.flush();
 
     // terminate graphics
     g_graphics.terminate();
@@ -257,7 +253,7 @@ void OTClient::saveConfigurations()
 
     // saves user configuration
     if(!g_configs.save())
-        logError("configurations are lost because it couldn't be saved");
+        logError("Configurations are lost because it couldn't be saved");
 }
 
 void OTClient::onClose()

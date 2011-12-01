@@ -24,7 +24,7 @@
 #include "thingstype.h"
 #include "map.h"
 #include "tile.h"
-#include <framework/platform/platform.h>
+#include <framework/core/clock.h>
 #include <framework/core/eventdispatcher.h>
 
 Missile::Missile() : Thing()
@@ -34,7 +34,7 @@ Missile::Missile() : Thing()
 
 void Missile::draw(const Point& p)
 {
-    float time = (g_platform.getTicks() - m_startTicks) / m_duration;
+    float time = (g_clock.ticks() - m_startTicks) / m_duration;
     internalDraw(p + Point(m_positionDelta.x * time, m_positionDelta.y * time), 0);
 }
 
@@ -108,7 +108,7 @@ void Missile::setPath(const Position& fromPosition, const Position& toPosition)
     m_positionDelta.x *= 32;
     m_positionDelta.y *= 32;
 
-    m_startTicks = g_platform.getTicks();
+    m_startTicks = g_clock.ticks();
 
     // schedule removal
     auto self = asMissile();

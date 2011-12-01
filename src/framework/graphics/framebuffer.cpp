@@ -27,7 +27,7 @@
 #include <framework/platform/platform.h>
 
 #include <GL/gl.h>
-#include <framework/thirdparty/glext.h>
+#include <GL/glext.h>
 
 PFNGLGENFRAMEBUFFERSPROC         oglGenFramebuffers = 0;
 PFNGLBINDFRAMEBUFFERPROC         oglBindFramebuffer = 0;

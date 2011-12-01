@@ -57,28 +57,29 @@ void Module::discover(const OTMLNodePtr& moduleNode)
 
 bool Module::load()
 {
-    try {
-        for(const std::string& depName : m_dependencies) {
-            ModulePtr dep = g_modules.getModule(depName);
-            if(!dep)
-                throw std::runtime_error(Fw::mkstr("could not find module dependency '", depName ,"'"));
-
-            if(!dep->isLoaded() && !dep->load())
-                throw std::runtime_error(Fw::mkstr("dependency '", depName, "' has failed to load"));
+    for(const std::string& depName : m_dependencies) {
+        ModulePtr dep = g_modules.getModule(depName);
+        if(!dep) {
+            logError("Unable to load module '", m_name, "' because dependency '", depName, "' was not found");
+            return false;
         }
 
-        if(m_loadCallback) {
-            m_loaded = m_loadCallback();
-            if(!m_loaded)
-                throw std::runtime_error("module onLoad event returned false");
+        if(!dep->isLoaded() && !dep->load()) {
+            logError("Unable to load module '", m_name, "' because dependency '", depName, "' has failed to laod");
+            return false;
         }
-
-        logInfo("Loaded module '", m_name, "'");
-        return true;
-    } catch(std::exception& e) {
-        logError("failed to load module '", m_name, "': ", e.what());
-        return false;
     }
+
+    if(m_loadCallback) {
+        m_loaded = m_loadCallback();
+        if(!m_loaded) {
+            logError("Unable to load module '", m_name, "' because its onLoad event returned false");
+            return false;
+        }
+    }
+
+    logInfo("Loaded module '", m_name, "'");
+    return true;
 }
 
 void Module::unload()

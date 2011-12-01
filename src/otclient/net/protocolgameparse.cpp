@@ -35,11 +35,11 @@
 
 void ProtocolGame::parseMessage(InputMessage& msg)
 {
-    while(!msg.eof()) {
-        uint8 opt = msg.getU8();
-        //dump << "protocol id:" << (int)opt;
+    try {
+        while(!msg.eof()) {
+            uint8 opt = msg.getU8();
 
-        switch(opt) {
+            switch(opt) {
             case Otc::GameServerInitGame:
                 parsePlayerLogin(msg);
                 break;
@@ -251,9 +251,12 @@ void ProtocolGame::parseMessage(InputMessage& msg)
             //case Otc::GameServerObjectInfo:
             //case Otc::GameServerPlayerInventory:
             default:
-                logError("UNKNOWN PACKET OPT BYTE: 0x", std::hex, opt);
+                Fw::throwException("unknown opt byte ", opt);
                 break;
+            }
         }
+    } catch(Exception& e) {
+        logTraceError(e.what());
     }
 }
 
@@ -738,7 +741,7 @@ void ProtocolGame::parseCreatureSpeak(InputMessage& msg)
         case Otc::SpeakPrivateRed:
             break;
         default:
-            logTraceDebug("Unknown speak type.", (int)type);
+            logTraceError("unknown speak type ", type);
             break;
     }
 
@@ -811,7 +814,7 @@ void ProtocolGame::parseCancelWalk(InputMessage& msg)
 
 void ProtocolGame::parseFloorChangeUp(InputMessage& msg)
 {
-    logDebug("[ProtocolGame::parseFloorChangeUp]: This function has never been tested.");
+    logTraceDebug("this function has never been tested.");
 
     Position pos = g_map.getCentralPosition();
     pos.z--;
@@ -830,7 +833,7 @@ void ProtocolGame::parseFloorChangeUp(InputMessage& msg)
 
 void ProtocolGame::parseFloorChangeDown(InputMessage& msg)
 {
-    logDebug("[ProtocolGame::parseFloorChangeDown]: This function has never been tested.");
+    logTraceDebug("this function has never been tested.");
 
     Position pos = g_map.getCentralPosition();
     pos.z++;
@@ -982,13 +985,13 @@ void ProtocolGame::setTileDescription(InputMessage& msg, Position position)
     g_map.cleanTile(position);
 
     int stackPos = 0;
-    while(1){
+    while(true) {
         uint16 inspectTileId = msg.getU16(true);
         if(inspectTileId >= 0xFF00)
             return;
         else {
             if(stackPos >= 10)
-                logWarning("Too many things!");
+                logTraceWarning("too many things");
 
             ThingPtr thing = internalGetThing(msg);
             g_map.addThing(thing, position, 255);

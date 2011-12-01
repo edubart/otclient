@@ -65,9 +65,11 @@ void Rsa::setKey(const char* p, const char* q, const char* d)
 
     mpz_clear(pm1);
     mpz_clear(qm1);
+
+    m_keySet = true;
 }
 
-bool Rsa::encrypt(char* msg, int32_t size, const char* key)
+void Rsa::encrypt(char* msg, int32_t size, const char* key)
 {
     mpz_t plain, c;
     mpz_init2(plain, 1024);
@@ -92,11 +94,13 @@ bool Rsa::encrypt(char* msg, int32_t size, const char* key)
     mpz_clear(plain);
     mpz_clear(e);
     mpz_clear(mod);
-    return true;
 }
 
 bool Rsa::decrypt(char* msg, int32_t size)
 {
+    if(!m_keySet)
+        return false;
+
     mpz_t c,v1,v2,u2,tmp;
     mpz_init2(c, 1024);
     mpz_init2(v1, 1024);
@@ -130,6 +134,5 @@ bool Rsa::decrypt(char* msg, int32_t size)
     mpz_clear(v2);
     mpz_clear(u2);
     mpz_clear(tmp);
-
     return true;
 }

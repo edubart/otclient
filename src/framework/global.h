@@ -30,6 +30,7 @@
 #include <cassert>
 #include <ctime>
 #include <cmath>
+#include <unistd.h>
 
 // common STL headers
 #include <iostream>
@@ -53,6 +54,7 @@
 #include <iomanip>
 #include <unordered_map>
 #include <random>
+#include <chrono>
 
 // boost utilities
 #include <boost/algorithm/string.hpp>

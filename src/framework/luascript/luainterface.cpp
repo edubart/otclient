@@ -545,7 +545,7 @@ void LuaInterface::createLuaState()
     // creates lua state
     L = luaL_newstate();
     if(!L)
-        throw std::runtime_error("failed to create lua state");
+        logFatal("Unable to create lua state");
 
     // load lua standard libraries
     luaL_openlibs(L);

@@ -48,8 +48,7 @@ void Logger::log(Fw::LogLevel level, std::string message)
 
     if(level == Fw::LogFatal) {
         m_terminated = true;
-        g_platform.displayFatalError(message);
-        exit(-1);
+        throw std::runtime_error(message);
     }
 }
 

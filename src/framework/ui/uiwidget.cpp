@@ -142,6 +142,8 @@ void UIWidget::setFocusable(bool focusable)
 void UIWidget::setStyle(const std::string& styleName)
 {
     OTMLNodePtr styleNode = g_ui.getStyle(styleName);
+    if(!styleNode)
+        return;
     applyStyle(styleNode);
     m_style = styleNode;
     updateStyle();
@@ -331,7 +333,7 @@ UIWidgetPtr UIWidget::backwardsGetWidgetById(const std::string& id)
 void UIWidget::focusChild(const UIWidgetPtr& child, Fw::FocusReason reason)
 {
     if(child && !hasChild(child)) {
-        logError("attempt to focus an unknown child in a UIWidget");
+        logError("Attempt to focus an unknown child in a UIWidget");
         return;
     }
 
@@ -440,7 +442,7 @@ void UIWidget::removeChild(const UIWidgetPtr& child)
         if(focusAnother && !m_focusedChild)
             focusPreviousChild(Fw::ActiveFocusReason);
     } else
-        logError("attempt to remove an unknown child from a UIWidget");
+        logError("Attempt to remove an unknown child from a UIWidget");
 }
 
 void UIWidget::focusNextChild(Fw::FocusReason reason)
@@ -774,8 +776,8 @@ void UIWidget::applyStyle(const OTMLNodePtr& styleNode)
     try {
         onStyleApply(styleNode);
         callLuaField("onStyleApply", styleNode);
-    } catch(std::exception& e) {
-        logError("failed to apply widget '", m_id, "' style: ", e.what());
+    } catch(Exception& e) {
+        logError("Failed to apply style to widget '", m_id, "' style: ", e.what());
     }
 }
 

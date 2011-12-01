@@ -36,14 +36,14 @@ public:
     bool load();
     void unload();
 
-    bool isLoaded() const { return m_loaded; }
+    bool isLoaded() { return m_loaded; }
 
-    std::string getDescription() const { return m_description; }
-    std::string getName() const { return m_name; }
-    std::string getAuthor() const { return m_author; }
-    std::string getWebsite() const { return m_website; }
-    std::string getVersion() const { return m_version; }
-    bool autoLoad() const { return m_autoLoad; }
+    std::string getDescription() { return m_description; }
+    std::string getName() { return m_name; }
+    std::string getAuthor() { return m_author; }
+    std::string getWebsite() { return m_website; }
+    std::string getVersion() { return m_version; }
+    bool autoLoad() { return m_autoLoad; }
 
 private:
     bool m_loaded;

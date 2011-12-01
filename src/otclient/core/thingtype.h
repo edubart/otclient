@@ -27,6 +27,13 @@
 
 struct ThingType
 {
+    ThingType() {
+        // fill default values
+        dimensions.fill(0);
+        properties.fill(false);
+        parameters.fill(0);
+    }
+
     enum Dimensions {
         Width = 0,
         Height,

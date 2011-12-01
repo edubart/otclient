@@ -20,32 +20,14 @@
  * THE SOFTWARE.
  */
 
-#ifndef EVENTDISPATCHER_H
-#define EVENTDISPATCHER_H
+#ifndef ENGINE_H
+#define ENGINE_H
 
 #include "declarations.h"
 
-struct ScheduledEvent {
-    ScheduledEvent(int ticks, const SimpleCallback& callback) : ticks(ticks), callback(callback) { }
-    bool operator<(const ScheduledEvent& other) const { return ticks > other.ticks; }
-    int ticks;
-    SimpleCallback callback;
-};
-
-class EventDispatcher
+class Engine
 {
-public:
-    void flush();
-    void poll();
-
-    void addEvent(const SimpleCallback& callback, bool pushFront = false);
-    void scheduleEvent(const SimpleCallback& callback, int delay);
-
-private:
-    std::list<SimpleCallback> m_eventList;
-    std::priority_queue<ScheduledEvent> m_scheduledEventList;
 };
-
-extern EventDispatcher g_dispatcher;
 
 #endif
+

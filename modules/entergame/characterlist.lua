@@ -47,7 +47,7 @@ local function tryLogin(charInfo, tries)
   end
 
   -- save last used character
-  Configs.set('lastUsedCharacter', charInfo.characterName)
+  ConfigManager.set('lastUsedCharacter', charInfo.characterName)
 end
 
 -- public functions
@@ -75,7 +75,7 @@ function CharacterList.create(characters, premDays)
     label.worldHost = worldHost
     label.worldPort = worldIp
 
-    if i == 1 or Configs.get('lastUsedCharacter') == characterName then
+    if i == 1 or ConfigManager.get('lastUsedCharacter') == characterName then
       characterList:focusChild(label, ActiveFocusReason)
     end
   end

@@ -20,32 +20,37 @@
  * THE SOFTWARE.
  */
 
-#ifndef EVENTDISPATCHER_H
-#define EVENTDISPATCHER_H
+#include "configmanager.h"
+#include "resourcemanager.h"
 
-#include "declarations.h"
+#include <framework/otml/otml.h>
 
-struct ScheduledEvent {
-    ScheduledEvent(int ticks, const SimpleCallback& callback) : ticks(ticks), callback(callback) { }
-    bool operator<(const ScheduledEvent& other) const { return ticks > other.ticks; }
-    int ticks;
-    SimpleCallback callback;
-};
+ConfigManager g_configs;
 
-class EventDispatcher
+bool ConfigManager::load(const std::string& file)
 {
-public:
-    void flush();
-    void poll();
+    m_fileName = file;
 
-    void addEvent(const SimpleCallback& callback, bool pushFront = false);
-    void scheduleEvent(const SimpleCallback& callback, int delay);
+    if(!g_resources.fileExists(file))
+        return false;
 
-private:
-    std::list<SimpleCallback> m_eventList;
-    std::priority_queue<ScheduledEvent> m_scheduledEventList;
-};
+    try {
+        OTMLDocumentPtr doc = OTMLDocument::parse(file);
+        for(const OTMLNodePtr& child : doc->children())
+            m_confsMap[child->tag()] = child->value();
+        return true;
+    } catch(Exception& e) {
+        logError("could not load configurations: ", e.what());
+        return false;
+    }
+}
 
-extern EventDispatcher g_dispatcher;
-
-#endif
+bool ConfigManager::save()
+{
+    OTMLDocumentPtr doc = OTMLDocument::create();
+    for(auto it : m_confsMap) {
+        OTMLNodePtr node = OTMLNode::create(it.first, it.second);
+        doc->addChild(node);
+    }
+    return doc->save(m_fileName);
+}

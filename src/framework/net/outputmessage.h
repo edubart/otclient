@@ -24,6 +24,7 @@
 #define OUTPUTMESSAGE_H
 
 #include "declarations.h"
+#include "networkexception.h"
 
 class OutputMessage
 {
@@ -56,6 +57,7 @@ public:
 
 private:
     bool canWrite(int bytes);
+    void checkWrite(int bytes);
 
     uint16 m_writePos;
     uint16 m_messageSize;

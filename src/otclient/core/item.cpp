@@ -24,12 +24,12 @@
 #include "thingstype.h"
 #include "spritemanager.h"
 #include "thing.h"
-#include <framework/platform/platform.h>
+#include <framework/core/clock.h>
 
 Item::Item() : Thing()
 {
     m_data = 0;
-    m_lastTicks = g_platform.getTicks();
+    m_lastTicks = g_clock.ticks();
 }
 
 void Item::draw(const Point& p)
@@ -37,7 +37,7 @@ void Item::draw(const Point& p)
     const ThingType& type = getType();
 
     if(type.dimensions[ThingType::AnimationPhases] > 1)
-        m_animation = (g_platform.getTicks() % (TICKS_PER_FRAME * type.dimensions[ThingType::AnimationPhases])) / TICKS_PER_FRAME;
+        m_animation = (g_clock.ticks() % (TICKS_PER_FRAME * type.dimensions[ThingType::AnimationPhases])) / TICKS_PER_FRAME;
 
     for(int b = 0; b < type.dimensions[ThingType::Layers]; b++)
         internalDraw(p, b);

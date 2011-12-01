@@ -11,8 +11,8 @@ local function clearAccountFields()
   enterGame:getChildById('accountNameLineEdit'):clearText()
   enterGame:getChildById('accountPasswordLineEdit'):clearText()
   enterGame:getChildById('accountNameLineEdit'):focus()
-  Configs.set('account', nil)
-  Configs.set('password', nil)
+  ConfigManager.set('account', nil)
+  ConfigManager.set('password', nil)
 end
 
 local function onError(protocol, error)
@@ -30,9 +30,9 @@ end
 
 local function onCharacterList(protocol, characters, premDays)
   if enterGame:getChildById('rememberPasswordBox'):isChecked() then
-    Configs.set('account', EnterGame.account)
-    Configs.set('password', EnterGame.password)
-    Configs.set('autologin', tostring(enterGame:getChildById('autoLoginBox'):isChecked()))
+    ConfigManager.set('account', EnterGame.account)
+    ConfigManager.set('password', EnterGame.password)
+    ConfigManager.set('autologin', tostring(enterGame:getChildById('autoLoginBox'):isChecked()))
   else
     clearAccountFields()
   end
@@ -40,9 +40,9 @@ local function onCharacterList(protocol, characters, premDays)
   loadBox:destroy()
   CharacterList.create(characters, premDays)
 
-  local lastMotdNumber = tonumber(Configs.get("motd"))
+  local lastMotdNumber = tonumber(ConfigManager.get("motd"))
   if motdNumber and motdNumber ~= lastMotdNumber then
-    Configs.set("motd", motdNumber)
+    ConfigManager.set("motd", motdNumber)
     local motdBox = displayInfoBox("Message of the day", motdMessage)
     motdBox.onOk = CharacterList.show
     CharacterList.hide()
@@ -53,11 +53,11 @@ end
 function EnterGame.create()
   enterGame = UI.display('entergame.otui')
 
-  local account = Configs.get('account')
-  local password = Configs.get('password')
-  local host = Configs.get('host')
-  local port = tonumber(Configs.get('port'))
-  local autologin = toboolean(Configs.get('autologin'))
+  local account = ConfigManager.get('account')
+  local password = ConfigManager.get('password')
+  local host = ConfigManager.get('host')
+  local port = tonumber(ConfigManager.get('port'))
+  local autologin = toboolean(ConfigManager.get('autologin'))
 
   enterGame:getChildById('accountNameLineEdit'):setText(account)
   enterGame:getChildById('accountPasswordLineEdit'):setText(password)
@@ -93,8 +93,8 @@ function EnterGame.doLogin()
   EnterGame.port = enterGame:getChildById('serverPortLineEdit'):getText()
   EnterGame.hide()
 
-  Configs.set('host', EnterGame.host)
-  Configs.set('port', EnterGame.port)
+  ConfigManager.set('host', EnterGame.host)
+  ConfigManager.set('port', EnterGame.port)
 
   local protocolLogin = ProtocolLogin.create()
   protocolLogin.onError = onError

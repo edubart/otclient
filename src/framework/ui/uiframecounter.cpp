@@ -24,7 +24,7 @@
 #include "uitranslator.h"
 #include <framework/graphics/font.h>
 #include <framework/otml/otmlnode.h>
-#include <framework/platform/platform.h>
+#include <framework/core/clock.h>
 #include <framework/graphics/graphics.h>
 
 UIFrameCounter::UIFrameCounter()
@@ -32,7 +32,7 @@ UIFrameCounter::UIFrameCounter()
     m_focusable = false;
     m_phantom = true;
     m_align = Fw::AlignLeft;
-    m_lastFrameTicks = g_platform.getTicks();
+    m_lastFrameTicks = g_clock.ticks();
     m_frameCount = 0;
 }
 
@@ -40,7 +40,7 @@ void UIFrameCounter::render()
 {
     UIWidget::render();
 
-    int now = g_platform.getTicks();
+    int now = g_clock.ticks();
     if(now - m_lastFrameTicks >= 1000) {
         m_fpsText = Fw::mkstr("FPS: ", m_frameCount);
         m_lastFrameTicks = now;

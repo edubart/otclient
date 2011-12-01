@@ -35,7 +35,7 @@ void InputMessage::reset()
 
 uint8 InputMessage::getU8(bool peek)
 {
-    assert(canRead(1));
+    checkRead(1);
     uint8 v = m_buffer[m_readPos];
 
     if(!peek)
@@ -46,7 +46,7 @@ uint8 InputMessage::getU8(bool peek)
 
 uint16 InputMessage::getU16(bool peek)
 {
-    assert(canRead(2));
+    checkRead(2);
     uint16 v = *(uint16_t*)(m_buffer + m_readPos);
 
     if(!peek)
@@ -57,7 +57,7 @@ uint16 InputMessage::getU16(bool peek)
 
 uint32 InputMessage::getU32(bool peek)
 {
-    assert(canRead(4));
+    checkRead(4);
     uint32 v = *(uint32*)(m_buffer + m_readPos);
 
     if(!peek)
@@ -68,7 +68,7 @@ uint32 InputMessage::getU32(bool peek)
 
 uint64 InputMessage::getU64(bool peek)
 {
-    assert(canRead(8));
+    checkRead(8);
     uint64 v = *(uint64*)(m_buffer + m_readPos);
 
     if(!peek)
@@ -80,7 +80,7 @@ uint64 InputMessage::getU64(bool peek)
 std::string InputMessage::getString()
 {
     uint16 stringLength = getU16();
-    assert(canRead(stringLength));
+    checkRead(stringLength);
     char* v = (char*)(m_buffer + m_readPos);
     m_readPos += stringLength;
     return std::string(v, stringLength);
@@ -92,3 +92,10 @@ bool InputMessage::canRead(int bytes)
         return false;
     return true;
 }
+
+void InputMessage::checkRead(int bytes)
+{
+    if(!canRead(bytes))
+        throw NetworkException("InputMessage eof reached");
+}
+

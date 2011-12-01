@@ -30,6 +30,7 @@
 #include <exception>
 #include <cxxabi.h>
 #include "types.h"
+#include "exception.h"
 
 namespace Fw {
 
@@ -185,9 +186,9 @@ inline bool cast(const bool& in, std::string& out) {
 }
 
 // used by safe_cast
-class BadCast : public std::bad_cast {
+class CastException : public Exception {
 public:
-    virtual ~BadCast() throw() { }
+    virtual ~CastException() throw() { }
     template<class T, class R>
     void setWhat() {
         m_what = mkstr("failed to cast value of type '", demangleType<T>(),
@@ -205,7 +206,7 @@ template<typename R, typename T>
 R safeCast(const T& t) {
     R r;
     if(!cast(t, r)) {
-        BadCast e;
+        CastException e;
         e.setWhat<T,R>();
         throw e;
     }
@@ -219,7 +220,7 @@ template<typename R, typename T>
 R unsafeCast(const T& t, R def = R()) {
     try {
         return safeCast<R,T>(t);
-    } catch(BadCast& e) {
+    } catch(CastException& e) {
         println("CAST ERROR: ", e.what());
         return def;
     }
@@ -256,8 +257,10 @@ inline std::string ip2str(uint32 ip) {
     return std::string(host);
 }
 
-// an empty string to use anywhere needed
-const static std::string empty_string;
+template<typename... T>
+void throwException(const T&... args) {
+    throw Exception(Fw::mkstr(args...));
+}
 
 }
 
