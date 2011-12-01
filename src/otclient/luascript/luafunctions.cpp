@@ -43,6 +43,8 @@
 
 void OTClient::registerLuaFunctions()
 {
+    using namespace std::placeholders;
+
     g_lua.bindGlobalFunction("exit", std::bind(&OTClient::exit, &g_client));
     g_lua.bindGlobalFunction("setOnClose", std::bind(&OTClient::setOnClose, &g_client, _1));
     g_lua.bindGlobalFunction("importDat", std::bind(&ThingsType::load, &g_thingsType, _1));

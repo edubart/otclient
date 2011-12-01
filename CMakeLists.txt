@@ -8,22 +8,22 @@ OPTION(USE_PCH "Use precompiled header" ON)
 OPTION(NO_CONSOLE "Disable console window on Windows" OFF)
 OPTION(HANDLE_EXCEPTIONS "Generate crash reports" OFF)
 OPTION(FORBIDDEN_FUNCTIONS "Enable forbidden lua functions" ON)
-OPTION(USE_GLES "Use OpenGLES (for mobiles devices)" OFF)
+OPTION(USE_OPENGLES2 "Use OpenGL ES 2.0 (for mobiles devices)" OFF)
 
 # find needed packages
 SET(Boost_USE_STATIC_LIBS ON)
 SET(Boost_USE_MULTITHREADED OFF)
 FIND_PACKAGE(Boost COMPONENTS system REQUIRED)
 
-IF(USE_GLES)
-    FIND_PACKAGE(OpenGLES REQUIRED)
+IF(USE_OPENGLES2)
+    FIND_PACKAGE(OpenGLES2 REQUIRED)
     FIND_PACKAGE(EGL REQUIRED)
     SET(OPENGL_INCLUDE_DIR ${OPENGLES_INCLUDE_DIR} ${EGL_INCLUDE_DIR})
     SET(OPENGL_LIBRARIES ${OPENGLES_LIBRARY} ${EGL_LIBRARY})
-    ADD_DEFINITIONS(-DGLES -DEGL)
-ELSE(USE_GLES)
+    ADD_DEFINITIONS(-DOPENGLES2)
+ELSE(USE_OPENGLES2)
     FIND_PACKAGE(OpenGL REQUIRED)
-ENDIF(USE_GLES)
+ENDIF(USE_OPENGLES2)
 
 FIND_PACKAGE(Lua REQUIRED)
 FIND_PACKAGE(PhysFS REQUIRED)
@@ -44,7 +44,7 @@ IF(CMAKE_COMPILER_IS_GNUCXX)
     SET(CMAKE_CXX_FLAGS_DEBUG "-O0 -g3 -ggdb3 -fno-inline")
     SET(CMAKE_CXX_FLAGS_RELEASE "-O2")
     SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O1 -g -fno-inline")
-    SET(CMAKE_CXX_LINK_FLAGS "-rdynamic -static-libgcc -static-libstdc++ -Wl,--as-needed")
+    SET(CMAKE_CXX_LINK_FLAGS "-static-libgcc -static-libstdc++ -Wl,--as-needed")
 ENDIF(CMAKE_COMPILER_IS_GNUCXX)
 
 
@@ -117,6 +117,7 @@ SET(SOURCES
     src/framework/core/eventdispatcher.cpp
     src/framework/core/modulemanager.cpp
     src/framework/core/module.cpp
+    src/framework/core/engine.cpp
 
     # framework graphics
     src/framework/graphics/font.cpp
@@ -190,7 +191,8 @@ IF(WIN32)
                        -o ${CMAKE_CURRENT_BINARY_DIR}/icon.o)
     SET(SOURCES ${SOURCES} icon.o)
 ELSE(WIN32)
-    SET(ADDITIONAL_LIBRARIES -lpthread)
+    SET(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -rdynamic")
+    SET(ADDITIONAL_LIBRARIES pthread)
     SET(SOURCES ${SOURCES} src/framework/platform/x11platform.cpp)
 ENDIF(WIN32)
 

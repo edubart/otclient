@@ -26,7 +26,7 @@
 #include <framework/graphics/texture.h>
 
 #include <GL/gl.h>
-#include <framework/thirdparty/glext.h>
+#include <GL/glext.h>
 
 Graphics g_graphics;
 

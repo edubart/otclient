@@ -29,9 +29,21 @@
 #include <sstream>
 #include <exception>
 #include <cxxabi.h>
+#include <chrono>
+#include <unistd.h>
 #include "types.h"
 
 namespace Fw {
+
+inline int getTicks() {
+    static auto firstTick = std::chrono::high_resolution_clock::now();
+    auto tickNow = std::chrono::high_resolution_clock::now();
+    return std::chrono::duration_cast<std::chrono::milliseconds>(tickNow - firstTick).count();
+}
+
+inline void sleep(int ms) {
+    usleep(ms);
+}
 
 // read utilities for istream
 inline uint8 getU8(std::istream& in) {
@@ -255,9 +267,6 @@ inline std::string ip2str(uint32 ip) {
     sprintf(host, "%d.%d.%d.%d", (uint8)ip, (uint8)(ip >> 8), (uint8)(ip >> 16), (uint8)(ip >> 24));
     return std::string(host);
 }
-
-// an empty string to use anywhere needed
-const static std::string empty_string;
 
 }
 

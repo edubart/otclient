@@ -147,7 +147,7 @@ void OTClient::run()
             g_platform.swapBuffers();
         } else {
             // sleeps until next poll to avoid massive cpu usage
-            g_platform.sleep(POLL_CYCLE_DELAY+1);
+            Fw::sleep(POLL_CYCLE_DELAY+1);
         }
     }
 

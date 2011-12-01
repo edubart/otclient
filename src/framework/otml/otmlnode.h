@@ -30,7 +30,7 @@ class OTMLNode : public std::enable_shared_from_this<OTMLNode>
 public:
     virtual ~OTMLNode() { }
 
-    static OTMLNodePtr create(std::string tag = Fw::empty_string, bool unique = false);
+    static OTMLNodePtr create(std::string tag = "", bool unique = false);
     static OTMLNodePtr create(std::string tag, std::string value);
 
     std::string tag() const { return m_tag; }
