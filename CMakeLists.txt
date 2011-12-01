@@ -33,7 +33,7 @@ FIND_PACKAGE(PCHSupport REQUIRED)
 
 # choose a default build type if not specified
 IF(NOT CMAKE_BUILD_TYPE)
-    SET(CMAKE_BUILD_TYPE ReleaseWithDebInfo)
+    SET(CMAKE_BUILD_TYPE Debug)
 ENDIF(NOT CMAKE_BUILD_TYPE)
 MESSAGE(STATUS "BUILD TYPE: " ${CMAKE_BUILD_TYPE})
 
@@ -43,7 +43,7 @@ IF(CMAKE_COMPILER_IS_GNUCXX)
     SET(CMAKE_CXX_FLAGS "-std=gnu++0x -pipe ${CXX_WARNS}")
     SET(CMAKE_CXX_FLAGS_DEBUG "-O0 -g3 -ggdb3 -fno-inline")
     SET(CMAKE_CXX_FLAGS_RELEASE "-O2")
-    SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O1 -g -fno-inline")
+    SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O1 -g -ggdb -fno-inline")
     SET(CMAKE_CXX_LINK_FLAGS "-static-libgcc -static-libstdc++ -Wl,--as-needed")
 ENDIF(CMAKE_COMPILER_IS_GNUCXX)
 
@@ -112,12 +112,14 @@ SET(SOURCES
 
     # framework core
     src/framework/core/logger.cpp
-    src/framework/core/configs.cpp
+    src/framework/core/clock.cpp
+    src/framework/core/configmanager.cpp
     src/framework/core/resourcemanager.cpp
     src/framework/core/eventdispatcher.cpp
     src/framework/core/modulemanager.cpp
     src/framework/core/module.cpp
     src/framework/core/engine.cpp
+    src/framework/core/clock.cpp
 
     # framework graphics
     src/framework/graphics/font.cpp

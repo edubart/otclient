@@ -56,13 +56,13 @@ bool ModuleManager::discoverModule(const std::string& file)
 
         std::string name = moduleNode->valueAt("name");
         if(getModule(name))
-            throw OTMLException(moduleNode, "a module with the same name is already discovered, did you duplicate module names?");
+            Fw::throwException("module '", name, "' already exists, cannot have duplicate module names");
 
         module = ModulePtr(new Module(name));
         module->discover(moduleNode);
         m_modules.push_back(module);
-    } catch(std::exception& e) {
-        logError("failed to load module from '", file, "': ", e.what());
+    } catch(Exception& e) {
+        logError("Unable to discover module from file '", file, "': ", e.what());
         return false;
     }
     return true;

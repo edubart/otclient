@@ -34,7 +34,7 @@ public:
 
     void setKey(const char* p, const char* q, const char* d);
     bool decrypt(char* msg, int32_t size);
-    static bool encrypt(char* msg, int32_t size, const char* key);
+    static void encrypt(char* msg, int32_t size, const char* key);
 
 protected:
     bool m_keySet;

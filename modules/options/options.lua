@@ -6,8 +6,8 @@ local fpsEnabled = false
 local vsyncEnabled = false
 
 function getConfig(name, default)
-  if Configs.exists(name) then
-    local val = string.trim(Configs.get(name))
+  if ConfigManager.exists(name) then
+    local val = string.trim(ConfigManager.get(name))
     if val == 'true' or val == 'false' then
       return toboolean(val)
     else
@@ -15,7 +15,7 @@ function getConfig(name, default)
     end
   else
     if default ~= nil then
-      Configs.set(name, default)
+      ConfigManager.set(name, default)
       return default
     else
       return nil
@@ -24,7 +24,7 @@ function getConfig(name, default)
 end
 
 function setConfig(name, value)
-  Configs.set(name, tostring(value))
+  ConfigManager.set(name, tostring(value))
 end
 
 -- private functions

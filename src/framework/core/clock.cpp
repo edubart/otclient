@@ -20,32 +20,23 @@
  * THE SOFTWARE.
  */
 
-#ifndef EVENTDISPATCHER_H
-#define EVENTDISPATCHER_H
+#include "clock.h"
 
-#include "declarations.h"
+Clock g_clock;
 
-struct ScheduledEvent {
-    ScheduledEvent(int ticks, const SimpleCallback& callback) : ticks(ticks), callback(callback) { }
-    bool operator<(const ScheduledEvent& other) const { return ticks > other.ticks; }
-    int ticks;
-    SimpleCallback callback;
-};
-
-class EventDispatcher
+Clock::Clock()
 {
-public:
-    void flush();
-    void poll();
+    m_startupTime = std::chrono::high_resolution_clock::now();
+}
 
-    void addEvent(const SimpleCallback& callback, bool pushFront = false);
-    void scheduleEvent(const SimpleCallback& callback, int delay);
+int Clock::updateTicks()
+{
+    auto timeNow = std::chrono::high_resolution_clock::now();
+    m_currentTicks = std::chrono::duration_cast<std::chrono::milliseconds>(timeNow - m_startupTime).count();
+    return m_currentTicks;
+}
 
-private:
-    std::list<SimpleCallback> m_eventList;
-    std::priority_queue<ScheduledEvent> m_scheduledEventList;
-};
-
-extern EventDispatcher g_dispatcher;
-
-#endif
+void Clock::sleep(int ms)
+{
+    usleep(ms * 1000);
+}

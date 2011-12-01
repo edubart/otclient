@@ -44,7 +44,7 @@ bool FontManager::importFont(std::string fontFile)
 
         std::string name = fontNode->valueAt("name");
         if(fontExists(name))
-            throw std::runtime_error("a font with the same name is already imported, did you duplicate font names?");
+            Fw::throwException("font '", name, "' already exists, cannot have duplicate font names");
 
         FontPtr font(new Font(name));
         font->load(fontNode);
@@ -55,8 +55,8 @@ bool FontManager::importFont(std::string fontFile)
             m_defaultFont = font;
 
         return true;
-    } catch(std::exception& e) {
-        logError("could not load font from '", fontFile, "': ", e.what());
+    } catch(Exception& e) {
+        logError("Unable to load font from file '", fontFile, "': ", e.what());
         return false;
     }
 }

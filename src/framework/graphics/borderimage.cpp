@@ -79,8 +79,6 @@ BorderImagePtr BorderImage::loadFromOTML(const OTMLNodePtr& borderImageNode)
     // load texture
     std::string source = borderImageNode->at("source")->value();
     TexturePtr texture = g_textures.getTexture(source);
-    if(!texture)
-        throw OTMLException(borderImageNode, "could not load border-image texture");
 
     // load basic border confs
     size = texture->getSize();

@@ -24,6 +24,7 @@
 #include <framework/graphics/font.h>
 #include <framework/graphics/graphics.h>
 #include <framework/platform/platform.h>
+#include <framework/core/clock.h>
 #include <framework/otml/otmlnode.h>
 
 UILineEdit::UILineEdit()
@@ -55,7 +56,7 @@ void UILineEdit::render()
         assert(m_cursorPos <= textLength);
         // draw every 333ms
         const int delay = 333;
-        int ticks = g_platform.getTicks();
+        int ticks = g_clock.ticks();
         if(ticks - m_cursorTicks <= delay) {
             Rect cursorRect;
             // when cursor is at 0 or is the first visible element
@@ -447,5 +448,5 @@ bool UILineEdit::onMousePress(const Point& mousePos, Fw::MouseButton button)
 
 void UILineEdit::blinkCursor()
 {
-    m_cursorTicks = g_platform.getTicks();
+    m_cursorTicks = g_clock.ticks();
 }

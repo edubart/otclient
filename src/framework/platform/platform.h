@@ -36,11 +36,6 @@ public:
     /// Poll platform input/window events
     void poll();
 
-    void updateTicks();
-
-    /// Get current time in milliseconds since last application init
-    int getTicks() { return m_lastTicks; }
-
     /// Sleep in current thread
     void sleep(ulong ms);
 
@@ -84,9 +79,6 @@ public:
     std::string getAppUserDir();
 
     void displayFatalError(const std::string& message);
-
-private:
-    int m_lastTicks;
 };
 
 extern Platform g_platform;

@@ -20,37 +20,29 @@
  * THE SOFTWARE.
  */
 
-#include "configs.h"
-#include "resourcemanager.h"
+#ifndef CLOCK_H
+#define CLOCK_H
 
-#include <framework/otml/otml.h>
+#include "declarations.h"
 
-Configs g_configs;
-
-bool Configs::load(const std::string& file)
+class Clock
 {
-    m_fileName = file;
+public:
+    Clock();
 
-    if(!g_resources.fileExists(file))
-        return false;
+    int updateTicks();
+    void sleep(int ms);
 
-    try {
-        OTMLDocumentPtr doc = OTMLDocument::parse(file);
-        for(const OTMLNodePtr& child : doc->children())
-            m_confsMap[child->tag()] = child->value();
-        return true;
-    } catch(std::exception& e) {
-        logError("could not load configurations: ", e.what());
-        return false;
-    }
-}
+    int ticks() { return m_currentTicks; }
+    int ticksElapsed(int prevTicks) { return ticks() - prevTicks; }
+    int ticksFor(int delay) { return ticks() + delay; }
 
-bool Configs::save()
-{
-    OTMLDocumentPtr doc = OTMLDocument::create();
-    for(auto it : m_confsMap) {
-        OTMLNodePtr node = OTMLNode::create(it.first, it.second);
-        doc->addChild(node);
-    }
-    return doc->save(m_fileName);
-}
+private:
+    int m_currentTicks;
+    std::chrono::system_clock::time_point m_startupTime;
+};
+
+extern Clock g_clock;
+
+#endif
+

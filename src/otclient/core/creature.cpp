@@ -27,16 +27,16 @@
 #include "tile.h"
 #include "item.h"
 
-#include <framework/platform/platform.h>
 #include <framework/graphics/graphics.h>
 #include <framework/core/eventdispatcher.h>
-
+#include <framework/core/clock.h>
 
 Creature::Creature() : Thing()
 {
     m_healthPercent = 0;
     m_showSquareColor = false;
     m_direction = Otc::South;
+    m_walkTimePerPixel = 1000.0/32.0;
 
     m_walking = false;
 
@@ -201,7 +201,7 @@ void Creature::walk(const Position& position, bool inverse)
 
         m_walkTimePerPixel = walkTime / 32.0;
         if(!sameWalk)
-            m_walkStartTicks = g_platform.getTicks();
+            m_walkStartTicks = g_clock.ticks();
         updateWalk();
     }
 }
@@ -210,7 +210,7 @@ void Creature::updateWalk()
 {
     const ThingType& type = getType();
     if(m_walking) {
-        int elapsedTicks = g_platform.getTicks() - m_walkStartTicks;
+        int elapsedTicks = g_clock.ticks() - m_walkStartTicks;
         int totalPixelsWalked = std::min((int)round(elapsedTicks / m_walkTimePerPixel), 32);
 
         if(m_inverseWalking) {
@@ -240,7 +240,10 @@ void Creature::updateWalk()
         }
 
         int totalWalkTileTicks = (int)m_walkTimePerPixel*32 * 0.5;
-        m_animation = (g_platform.getTicks() % totalWalkTileTicks) / (totalWalkTileTicks / (type.dimensions[ThingType::AnimationPhases] - 1)) + 1;
+        if(type.dimensions[ThingType::AnimationPhases] > 0)
+            m_animation = (g_clock.ticks() % totalWalkTileTicks) / (totalWalkTileTicks / (type.dimensions[ThingType::AnimationPhases] - 1)) + 1;
+        else
+            m_animation = 0;
         g_dispatcher.scheduleEvent(std::bind(&Creature::updateWalk, asCreature()), m_walkTimePerPixel);
 
         if(totalPixelsWalked == 32)
@@ -250,17 +253,19 @@ void Creature::updateWalk()
 
 void Creature::cancelWalk(Otc::Direction direction)
 {
+    if(m_walking) {
+        auto self = asCreature();
+        g_dispatcher.scheduleEvent([=]() {
+            if(!self->m_walking)
+                self->m_animation = 0;
+        }, m_walkTimePerPixel * 2);
+    }
+
     m_walking = false;
     m_walkStartTicks = 0;
     m_walkOffset.x = 0;
     m_walkOffset.y = 0;
     m_direction = direction;
-
-    auto self = asCreature();
-    g_dispatcher.scheduleEvent([=]() {
-        if(!self->m_walking)
-            self->m_animation = 0;
-    }, m_walkTimePerPixel * 2);
 }
 
 void Creature::setName(const std::string& name)

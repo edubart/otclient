@@ -48,8 +48,8 @@ bool ThingsType::load(const std::string& file)
         }
 
         return true;
-    } catch(std::exception& e) {
-        logError("failed to load dat from '", file, "': ", e.what());
+    } catch(Exception& e) {
+        logError("Failed to load dat from '", file, "': ", e.what());
         return false;
     }
 }
@@ -116,7 +116,14 @@ ThingType& ThingsType::getThingType(uint16 id, Categories category)
     if(category == Item)
         id -= 100;
 
-    assert(id < m_things[category].size());
+    //assert(id < m_things[category].size());
+
+    // assert wrokground
+    if(id >= m_things[category].size()) {
+        //logTraceErrorOnce("got an invalid type");
+        static ThingType emptyType;
+        return emptyType;
+    }
 
     return m_things[category][id];
 }

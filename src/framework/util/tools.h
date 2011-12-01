@@ -29,21 +29,10 @@
 #include <sstream>
 #include <exception>
 #include <cxxabi.h>
-#include <chrono>
-#include <unistd.h>
 #include "types.h"
+#include "exception.h"
 
 namespace Fw {
-
-inline int getTicks() {
-    static auto firstTick = std::chrono::high_resolution_clock::now();
-    auto tickNow = std::chrono::high_resolution_clock::now();
-    return std::chrono::duration_cast<std::chrono::milliseconds>(tickNow - firstTick).count();
-}
-
-inline void sleep(int ms) {
-    usleep(ms);
-}
 
 // read utilities for istream
 inline uint8 getU8(std::istream& in) {
@@ -197,9 +186,9 @@ inline bool cast(const bool& in, std::string& out) {
 }
 
 // used by safe_cast
-class BadCast : public std::bad_cast {
+class CastException : public Exception {
 public:
-    virtual ~BadCast() throw() { }
+    virtual ~CastException() throw() { }
     template<class T, class R>
     void setWhat() {
         m_what = mkstr("failed to cast value of type '", demangleType<T>(),
@@ -217,7 +206,7 @@ template<typename R, typename T>
 R safeCast(const T& t) {
     R r;
     if(!cast(t, r)) {
-        BadCast e;
+        CastException e;
         e.setWhat<T,R>();
         throw e;
     }
@@ -231,7 +220,7 @@ template<typename R, typename T>
 R unsafeCast(const T& t, R def = R()) {
     try {
         return safeCast<R,T>(t);
-    } catch(BadCast& e) {
+    } catch(CastException& e) {
         println("CAST ERROR: ", e.what());
         return def;
     }
@@ -266,6 +255,11 @@ inline std::string ip2str(uint32 ip) {
     char host[16];
     sprintf(host, "%d.%d.%d.%d", (uint8)ip, (uint8)(ip >> 8), (uint8)(ip >> 16), (uint8)(ip >> 24));
     return std::string(host);
+}
+
+template<typename... T>
+void throwException(const T&... args) {
+    throw Exception(Fw::mkstr(args...));
 }
 
 }

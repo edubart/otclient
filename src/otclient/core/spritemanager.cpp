@@ -40,8 +40,8 @@ bool SpriteManager::load(const std::string& file)
         m_spritesCount = Fw::getU16(m_fin);
         m_sprites.resize(m_spritesCount);
         return true;
-    } catch(std::exception& e) {
-        logError("faile to load sprites from '", file, "': ", e.what());
+    } catch(Exception& e) {
+        logError("Failed to load sprites from '", file, "': ", e.what());
         return false;
     }
 }

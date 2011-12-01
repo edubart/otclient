@@ -20,32 +20,26 @@
  * THE SOFTWARE.
  */
 
-#ifndef EVENTDISPATCHER_H
-#define EVENTDISPATCHER_H
+#ifndef CONFIGMANAGER_H
+#define CONFIGMANAGER_H
 
 #include "declarations.h"
 
-struct ScheduledEvent {
-    ScheduledEvent(int ticks, const SimpleCallback& callback) : ticks(ticks), callback(callback) { }
-    bool operator<(const ScheduledEvent& other) const { return ticks > other.ticks; }
-    int ticks;
-    SimpleCallback callback;
-};
-
-class EventDispatcher
+class ConfigManager
 {
 public:
-    void flush();
-    void poll();
+    bool load(const std::string& file);
+    bool save();
 
-    void addEvent(const SimpleCallback& callback, bool pushFront = false);
-    void scheduleEvent(const SimpleCallback& callback, int delay);
+    bool exists(const std::string& key) { return m_confsMap.find(key) != m_confsMap.end(); }
+    void set(const std::string& key, const std::string& value) { m_confsMap[key] = value; }
+    std::string get(const std::string& key) { return m_confsMap[key]; }
 
 private:
-    std::list<SimpleCallback> m_eventList;
-    std::priority_queue<ScheduledEvent> m_scheduledEventList;
+    std::string m_fileName;
+    std::map<std::string, std::string> m_confsMap;
 };
 
-extern EventDispatcher g_dispatcher;
+extern ConfigManager g_configs;
 
 #endif

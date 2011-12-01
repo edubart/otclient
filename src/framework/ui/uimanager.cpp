@@ -110,8 +110,8 @@ bool UIManager::importStyles(const std::string& file)
         for(const OTMLNodePtr& styleNode : doc->children())
             importStyleFromOTML(styleNode);
         return true;
-    } catch(std::exception& e) {
-        logError("failed to import ui styles from '", file, "':\n", e.what());
+    } catch(Exception& e) {
+        logError("Failed to import UI styles from '", file, "': ", e.what());
         return false;
     }
 }
@@ -153,8 +153,11 @@ OTMLNodePtr UIManager::getStyle(const std::string& styleName)
     }
 
     auto it = m_styles.find(styleName);
-    if(it == m_styles.end())
-        throw std::runtime_error(Fw::mkstr("style '", styleName, "' is not a defined style"));
+    if(it == m_styles.end()) {
+        logError("Unable to retrive style '", styleName, "': not a defined style");
+        return nullptr;
+    }
+
     return m_styles[styleName];
 }
 
@@ -171,14 +174,14 @@ UIWidgetPtr UIManager::loadUI(const std::string& file, const UIWidgetPtr& parent
                 importStyleFromOTML(node);
             else {
                 if(widget)
-                    throw std::runtime_error("cannot have multiple main widgets in .otui files");
+                    Fw::throwException("cannot have multiple main widgets in otui files");
                 widget = loadWidgetFromOTML(node, parent);
             }
         }
 
         return widget;
-    } catch(std::exception& e) {
-        logError("failed to load ui from '", file, "':\n", e.what());
+    } catch(Exception& e) {
+        logError("Failed to load UI from '", file, "': ", e.what());
         return nullptr;
     }
 }

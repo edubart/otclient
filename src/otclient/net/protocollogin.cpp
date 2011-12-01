@@ -53,22 +53,29 @@ void ProtocolLogin::onConnect()
 
 void ProtocolLogin::onRecv(InputMessage& inputMessage)
 {
-    while(!inputMessage.eof()) {
-        uint8 opt = inputMessage.getU8();
-        switch(opt) {
-        case Otc::LoginServerError:
-            parseError(inputMessage);
-            break;
-        case Otc::LoginServerMotd:
-            parseMOTD(inputMessage);
-            break;
-        case Otc::LoginServerUpdateNeeded:
-            callLuaField("onError", "Client needs update.");
-            break;
-        case Otc::LoginServerCharacterList:
-            parseCharacterList(inputMessage);
-            break;
+    try {
+        while(!inputMessage.eof()) {
+            uint8 opt = inputMessage.getU8();
+            switch(opt) {
+            case Otc::LoginServerError:
+                parseError(inputMessage);
+                break;
+            case Otc::LoginServerMotd:
+                parseMOTD(inputMessage);
+                break;
+            case Otc::LoginServerUpdateNeeded:
+                callLuaField("onError", "Client needs update.");
+                break;
+            case Otc::LoginServerCharacterList:
+                parseCharacterList(inputMessage);
+                break;
+            default:
+                Fw::throwException("unknown opt byte ", opt);
+                break;
+            }
         }
+    } catch(Exception& e) {
+        logTraceError(e.what());
     }
     disconnect();
 }
@@ -104,14 +111,10 @@ void ProtocolLogin::sendLoginPacket()
 
     // complete the 128 bytes for rsa encryption with zeros
     oMsg.addPaddingBytes(128 - (21 + m_accountName.length() + m_accountPassword.length()));
-
-    if(!Rsa::encrypt((char*)oMsg.getBuffer() + InputMessage::DATA_POS + oMsg.getMessageSize() - 128, 128, Otc::OtservPublicRSA))
-        return;
+    Rsa::encrypt((char*)oMsg.getBuffer() + InputMessage::DATA_POS + oMsg.getMessageSize() - 128, 128, Otc::OtservPublicRSA);
 
     send(oMsg);
-
     enableXteaEncryption();
-
     recv();
 }
 

@@ -370,9 +370,6 @@ void Platform::init(PlatformListener* platformListener, const char *appName)
     x11.atomWindowState = XInternAtom(x11.display, "_NET_WM_STATE", False);
     x11.atomWindowMaximizedVert = XInternAtom(x11.display, "_NET_WM_STATE_MAXIMIZED_VERT", False);
     x11.atomWindowMaximizedHorz = XInternAtom(x11.display, "_NET_WM_STATE_MAXIMIZED_HORZ", False);
-
-    // force first tick
-    updateTicks();
 }
 
 void Platform::terminate()
@@ -585,26 +582,6 @@ void Platform::poll()
     }
 }
 
-void Platform::updateTicks()
-{
-    static timeval tv;
-    static ulong firstTick = 0;
-
-    gettimeofday(&tv, 0);
-    if(!firstTick)
-        firstTick = tv.tv_sec;
-
-    m_lastTicks = ((tv.tv_sec - firstTick) * 1000) + (tv.tv_usec / 1000);
-}
-
-void Platform::sleep(ulong miliseconds)
-{
-    timespec tv;
-    tv.tv_sec  = miliseconds / 1000;
-    tv.tv_nsec = (miliseconds % 1000) * 1000000;
-    nanosleep(&tv, NULL);
-}
-
 bool Platform::createWindow(int x, int y, int width, int height, int minWidth, int minHeight, bool maximized)
 {
     static int attrList[] = {
@@ -729,11 +706,11 @@ void Platform::setWindowIcon(const std::string& pngIcon)
 
         Atom property = XInternAtom(x11.display, "_NET_WM_ICON", 0);
         if(!XChangeProperty(x11.display, x11.window, property, XA_CARDINAL, 32, PropModeReplace, (const unsigned char*)&iconData[0], iconData.size()))
-            logError("could not set app icon");
+            logError("Couldn't set app icon");
 
         free_apng(&apng);
     } else
-        logError("could not load app icon");
+        logError("Couldn't load app icon");
 }
 
 void Platform::destroyWindow()
@@ -835,7 +812,7 @@ const char *Platform::getClipboardText()
         XFlush(x11.display);
 
         // hack to wait SelectioNotify event, otherwise we will get wrong clipboard pastes
-        sleep(100);
+        usleep(100 * 1000);
 
         // check for data
         Atom type;

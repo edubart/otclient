@@ -25,7 +25,7 @@
 #include <framework/ui/ui.h>
 #include <framework/net/protocol.h>
 #include <framework/core/eventdispatcher.h>
-#include <framework/core/configs.h>
+#include <framework/core/configmanager.h>
 #include <framework/platform/platform.h>
 #include <framework/otml/otml.h>
 #include <framework/graphics/graphics.h>
@@ -152,10 +152,10 @@ void LuaInterface::registerFunctions()
     g_lua.registerClass<Protocol>();
 
     // ConfigManager
-    g_lua.registerClass<Configs>();
-    g_lua.bindClassStaticFunction<Configs>("set", std::bind(&Configs::set, &g_configs, _1, _2));
-    g_lua.bindClassStaticFunction<Configs>("get", std::bind(&Configs::get, &g_configs, _1));
-    g_lua.bindClassStaticFunction<Configs>("exists", std::bind(&Configs::exists, &g_configs, _1));
+    g_lua.registerClass<ConfigManager>();
+    g_lua.bindClassStaticFunction<ConfigManager>("set", std::bind(&ConfigManager::set, &g_configs, _1, _2));
+    g_lua.bindClassStaticFunction<ConfigManager>("get", std::bind(&ConfigManager::get, &g_configs, _1));
+    g_lua.bindClassStaticFunction<ConfigManager>("exists", std::bind(&ConfigManager::exists, &g_configs, _1));
 
     // Logger
     g_lua.registerClass<Logger>();

@@ -24,6 +24,7 @@
 #define INPUTMESSAGE_H
 
 #include "declarations.h"
+#include "networkexception.h"
 
 class InputMessage
 {
@@ -56,6 +57,7 @@ public:
 
 private:
     bool canRead(int bytes);
+    void checkRead(int bytes);
 
     uint16 m_readPos;
     uint16 m_messageSize;

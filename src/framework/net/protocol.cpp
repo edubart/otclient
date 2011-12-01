@@ -107,14 +107,15 @@ void Protocol::internalRecvData(uint8* buffer, uint16 size)
     if(m_checksumEnabled) {
         uint32 checksum = getAdlerChecksum(m_inputMessage.getBuffer() + InputMessage::DATA_POS, m_inputMessage.getMessageSize() - InputMessage::CHECKSUM_LENGTH);
         if(m_inputMessage.getU32() != checksum) {
-            // error
-            logError("got a network message with invalid checksum");
+            logTraceError("got a network message with invalid checksum");
             return;
         }
     }
 
-    if(m_xteaEncryptionEnabled)
-        xteaDecrypt(m_inputMessage);
+    if(m_xteaEncryptionEnabled) {
+        if(!xteaDecrypt(m_inputMessage))
+            return;
+    }
 
     onRecv(m_inputMessage);
 }
@@ -133,7 +134,7 @@ bool Protocol::xteaDecrypt(InputMessage& inputMessage)
 {
     uint16 messageSize = inputMessage.getMessageSize() - InputMessage::CHECKSUM_LENGTH;
     if(messageSize % 8 != 0) {
-        logError("invalid encrypted network message");
+        logTraceError("invalid encrypted network message");
         return false;
     }
 
@@ -156,7 +157,7 @@ bool Protocol::xteaDecrypt(InputMessage& inputMessage)
 
     int tmp = inputMessage.getU16();
     if(tmp > inputMessage.getMessageSize() - 4) {
-        logError("invalid decrypted a network message");
+        logTraceError("invalid decrypted a network message");
         return false;
     }
 

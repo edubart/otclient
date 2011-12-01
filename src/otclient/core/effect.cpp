@@ -24,7 +24,7 @@
 #include "thingstype.h"
 #include "map.h"
 #include "tile.h"
-#include <framework/platform/platform.h>
+#include <framework/core/clock.h>
 #include <framework/core/eventdispatcher.h>
 
 Effect::Effect() : Thing()
@@ -34,7 +34,7 @@ Effect::Effect() : Thing()
 
 void Effect::draw(const Point& p)
 {
-    int animationPhase = (g_platform.getTicks() - m_animationStartTicks) / TICKS_PER_FRAME;
+    int animationPhase = (g_clock.ticks() - m_animationStartTicks) / TICKS_PER_FRAME;
 
     if(animationPhase < getAnimationPhases()) {
         m_animation = animationPhase;
@@ -44,7 +44,7 @@ void Effect::draw(const Point& p)
 
 void Effect::startAnimation()
 {
-    m_animationStartTicks = g_platform.getTicks();
+    m_animationStartTicks = g_clock.ticks();
 
     // schedule removal
     auto self = asEffect();

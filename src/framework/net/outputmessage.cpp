@@ -35,7 +35,7 @@ void OutputMessage::reset()
 
 void OutputMessage::addU8(uint8 value)
 {
-    assert(canWrite(1));
+    checkWrite(1);
     m_buffer[m_writePos] = value;
     m_writePos += 1;
     m_messageSize += 1;
@@ -43,7 +43,7 @@ void OutputMessage::addU8(uint8 value)
 
 void OutputMessage::addU16(uint16 value)
 {
-    assert(canWrite(2));
+    checkWrite(2);
     *(uint16_t*)(m_buffer + m_writePos) = value;
     m_writePos += 2;
     m_messageSize += 2;
@@ -51,7 +51,7 @@ void OutputMessage::addU16(uint16 value)
 
 void OutputMessage::addU32(uint32 value)
 {
-    assert(canWrite(4));
+    checkWrite(4);
     *(uint32*)(m_buffer + m_writePos) = value;
     m_writePos += 4;
     m_messageSize += 4;
@@ -59,7 +59,7 @@ void OutputMessage::addU32(uint32 value)
 
 void OutputMessage::addU64(uint64 value)
 {
-    assert(canWrite(8));
+    checkWrite(8);
     *(uint64*)(m_buffer + m_writePos) = value;
     m_writePos += 8;
     m_messageSize += 8;
@@ -68,7 +68,9 @@ void OutputMessage::addU64(uint64 value)
 void OutputMessage::addString(const char* value)
 {
     size_t stringLength = strlen(value);
-    assert(stringLength < 0xFFFF && canWrite(stringLength + 2));
+    if(stringLength > 65535)
+        throw NetworkException("[OutputMessage::addString] string length > 65535");
+    checkWrite(stringLength + 2);
     addU16(stringLength);
     strcpy((char*)(m_buffer + m_writePos), value);
     m_writePos += stringLength;
@@ -82,7 +84,9 @@ void OutputMessage::addString(const std::string &value)
 
 void OutputMessage::addPaddingBytes(int bytes, uint8 byte)
 {
-    assert(canWrite(bytes) && bytes >= 0);
+    if(bytes <= 0)
+        return;
+    checkWrite(bytes);
     memset((void*)&m_buffer[m_writePos], byte, bytes);
     m_writePos += bytes;
     m_messageSize += bytes;
@@ -93,4 +97,10 @@ bool OutputMessage::canWrite(int bytes)
     if(m_writePos + bytes > BUFFER_MAXSIZE)
         return false;
     return true;
+}
+
+void OutputMessage::checkWrite(int bytes)
+{
+    if(!canWrite(bytes))
+        throw NetworkException("OutputMessage max buffer size reached");
 }

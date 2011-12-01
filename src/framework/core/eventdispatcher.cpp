@@ -22,44 +22,42 @@
 
 #include "eventdispatcher.h"
 
-#include <framework/platform/platform.h>
+#include <framework/core/clock.h>
 
 EventDispatcher g_dispatcher;
 
-void EventDispatcher::init()
+void EventDispatcher::flush()
 {
-    // nothing to do
-}
+    poll();
 
-void EventDispatcher::terminate()
-{
-    // clean scheduled events
+    m_eventList.clear();
     while(!m_scheduledEventList.empty())
         m_scheduledEventList.pop();
 }
 
 void EventDispatcher::poll()
 {
-    while(!m_eventList.empty()) {
-        m_eventList.front()();
-        m_eventList.pop_front();
-    }
-
     while(!m_scheduledEventList.empty()) {
-        if(g_platform.getTicks() < m_scheduledEventList.top().ticks)
+        if(g_clock.ticks() < m_scheduledEventList.top().ticks)
             break;
         SimpleCallback callback = std::move(m_scheduledEventList.top().callback);
         m_scheduledEventList.pop();
         callback();
     }
+
+    while(!m_eventList.empty()) {
+        m_eventList.front()();
+        m_eventList.pop_front();
+    }
 }
 
 void EventDispatcher::scheduleEvent(const SimpleCallback& callback, int delay)
 {
-    m_scheduledEventList.push(ScheduledEvent(g_platform.getTicks() + delay, callback));
+    assert(delay >= 0);
+    m_scheduledEventList.push(ScheduledEvent(g_clock.ticksFor(delay), callback));
 }
 
-void EventDispatcher::addEvent(const SimpleCallback& callback, bool pushFront /* = false */)
+void EventDispatcher::addEvent(const SimpleCallback& callback, bool pushFront)
 {
     if(pushFront)
         m_eventList.push_front(callback);
