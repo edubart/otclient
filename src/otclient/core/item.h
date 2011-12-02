@@ -41,7 +41,7 @@ public:
     void setData(int data);
 
     int getData() { return m_data; }
-    const ThingType& getType();
+    ThingType *getType();
 
     ItemPtr asItem() { return std::static_pointer_cast<Item>(shared_from_this()); }
 

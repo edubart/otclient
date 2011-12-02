@@ -22,6 +22,11 @@
 
 #include "outfit.h"
 
+Outfit::Outfit()
+{
+    m_type = 0;
+}
+
 Color Outfit::getColor(int color)
 {
     if(color >= HSI_H_STEPS * HSI_SI_VALUES)
@@ -78,37 +83,37 @@ Color Outfit::getColor(int color)
         return Color(loc7, loc7, loc7);
     }
 
-    float loc4 = 0, loc5 = 0, loc6 = 0;
+    float red = 0, green = 0, blue = 0;
 
     if(loc1 < 1.0/6.0) {
-        loc4 = loc3;
-        loc6 = loc3 * (1 - loc2);
-        loc5 = loc6 + (loc3 - loc6) * 6 * loc1;
+        red = loc3;
+        blue = loc3 * (1 - loc2);
+        green = blue + (loc3 - blue) * 6 * loc1;
     }
     else if (loc1 < 2.0/6.0) {
-        loc5 = loc3;
-        loc6 = loc3 * (1 - loc2);
-        loc4 = loc5 - (loc3 - loc6) * (6 * loc1 - 1);
+        green = loc3;
+        blue = loc3 * (1 - loc2);
+        red = green - (loc3 - blue) * (6 * loc1 - 1);
     }
     else if(loc1 < 3.0/6.0) {
-        loc5 = loc3;
-        loc4 = loc3 * (1 - loc2);
-        loc6 = loc4 + (loc3 - loc4) * (6 * loc1 - 2);
+        green = loc3;
+        red = loc3 * (1 - loc2);
+        blue = red + (loc3 - red) * (6 * loc1 - 2);
     }
     else if (loc1 < 4.0/6.0) {
-        loc6 = loc3;
-        loc4 = loc3 * (1 - loc2);
-        loc5 = loc6 - (loc3 - loc4) * (6 * loc1 - 3);
+        blue = loc3;
+        red = loc3 * (1 - loc2);
+        green = blue - (loc3 - red) * (6 * loc1 - 3);
     }
     else if (loc1 < 5.0/6.0) {
-        loc6 = loc3;
-        loc5 = loc3 * (1 - loc2);
-        loc4 = loc5 + (loc3 - loc5) * (6 * loc1 - 4);
+        blue = loc3;
+        green = loc3 * (1 - loc2);
+        red = green + (loc3 - green) * (6 * loc1 - 4);
     }
     else {
-        loc4 = loc3;
-        loc5 = loc3 * (1 - loc2);
-        loc6 = loc4 - (loc3 - loc5) * (6 * loc1 - 5);
+        red = loc3;
+        green = loc3 * (1 - loc2);
+        blue = red - (loc3 - green) * (6 * loc1 - 5);
     }
-    return Color(int(loc4 * 255), int(loc5 * 255), int(loc6 * 255));
+    return Color(int(red * 255), int(green * 255), int(blue * 255));
 }

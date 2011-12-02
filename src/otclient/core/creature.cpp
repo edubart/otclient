@@ -45,8 +45,6 @@ Creature::Creature() : Thing()
 
 void Creature::draw(const Point& p)
 {
-    const ThingType& type = getType();
-
     // TODO: activate on attack, follow, discover how 'attacked' works
     if(m_showSquareColor) {
         g_graphics.bindColor(Outfit::getColor(m_squareColor));
@@ -54,7 +52,7 @@ void Creature::draw(const Point& p)
     }
 
     // Render creature
-    for(m_yPattern = 0; m_yPattern < type.dimensions[ThingType::PatternY]; m_yPattern++) {
+    for(m_yPattern = 0; m_yPattern < m_type->dimensions[ThingType::PatternY]; m_yPattern++) {
 
         // continue if we dont have this addon.
         if(m_yPattern > 0 && !(m_outfit.getAddons() & (1 << (m_yPattern-1))))
@@ -65,7 +63,7 @@ void Creature::draw(const Point& p)
         internalDraw(p + m_walkOffset, 0);
 
         // draw mask if exists
-        if(type.dimensions[ThingType::Layers] > 1) {
+        if(m_type->dimensions[ThingType::Layers] > 1) {
             // switch to blend color mode
             g_graphics.bindBlendFunc(Fw::BlendColorzing);
 
@@ -194,7 +192,7 @@ void Creature::walk(const Position& position, bool inverse)
 
         ItemPtr ground = g_map.getTile(position)->getGround();
         if(ground)
-            groundSpeed = ground->getType().parameters[ThingType::GroundSpeed];
+            groundSpeed = ground->getType()->parameters[ThingType::GroundSpeed];
 
         float walkTime = walkTimeFactor * 1000.0 * (float)groundSpeed / m_speed;
         walkTime = (walkTime == 0) ? 1000 : walkTime;
@@ -208,7 +206,6 @@ void Creature::walk(const Position& position, bool inverse)
 
 void Creature::updateWalk()
 {
-    const ThingType& type = getType();
     if(m_walking) {
         int elapsedTicks = g_clock.ticks() - m_walkStartTicks;
         int totalPixelsWalked = std::min((int)round(elapsedTicks / m_walkTimePerPixel), 32);
@@ -240,8 +237,8 @@ void Creature::updateWalk()
         }
 
         int totalWalkTileTicks = (int)m_walkTimePerPixel*32 * 0.5;
-        if(type.dimensions[ThingType::AnimationPhases] > 0)
-            m_animation = (g_clock.ticks() % totalWalkTileTicks) / (totalWalkTileTicks / (type.dimensions[ThingType::AnimationPhases] - 1)) + 1;
+        if(m_type->dimensions[ThingType::AnimationPhases] > 0)
+            m_animation = (g_clock.ticks() % totalWalkTileTicks) / (totalWalkTileTicks / (m_type->dimensions[ThingType::AnimationPhases] - 1)) + 1;
         else
             m_animation = 0;
         g_dispatcher.scheduleEvent(std::bind(&Creature::updateWalk, asCreature()), m_walkTimePerPixel);
@@ -320,7 +317,13 @@ void Creature::setDirection(Otc::Direction direction)
     m_direction = direction;
 }
 
-const ThingType& Creature::getType()
+void Creature::setOutfit(const Outfit& outfit)
+{
+    m_outfit = outfit;
+    m_type = getType();
+}
+
+ThingType *Creature::getType()
 {
     return g_thingsType.getThingType(m_outfit.getType(), ThingsType::Creature);
 }

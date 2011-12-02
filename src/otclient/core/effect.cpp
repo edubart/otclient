@@ -53,7 +53,7 @@ void Effect::startAnimation()
     }, TICKS_PER_FRAME * getAnimationPhases());
 }
 
-const ThingType& Effect::getType()
+ThingType *Effect::getType()
 {
     return g_thingsType.getThingType(m_id, ThingsType::Effect);
 }

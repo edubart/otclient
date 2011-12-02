@@ -1110,8 +1110,8 @@ ItemPtr ProtocolGame::internalGetItem(InputMessage& msg, uint16 id)
         id = msg.getU16();
     item->setId(id);
 
-    const ThingType& itemType = item->getType();
-    if(itemType.properties[ThingType::IsStackable] || itemType.properties[ThingType::IsFluidContainer] || itemType.properties[ThingType::IsFluid])
+    ThingType *itemType = item->getType();
+    if(itemType->properties[ThingType::IsStackable] || itemType->properties[ThingType::IsFluidContainer] || itemType->properties[ThingType::IsFluid])
         item->setData(msg.getU8());
 
     return item;

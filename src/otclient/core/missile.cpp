@@ -117,7 +117,7 @@ void Missile::setPath(const Position& fromPosition, const Position& toPosition)
     }, m_duration);
 }
 
-const ThingType& Missile::getType()
+ThingType *Missile::getType()
 {
     return g_thingsType.getThingType(m_id, ThingsType::Missile);
 }

@@ -42,11 +42,11 @@ void Tile::draw(const Point& p)
 
     // first bottom items
     for(const ThingPtr& thing : m_things) {
-        const ThingType& type = thing->getType();
-        if(!type.properties[ThingType::IsGround] && !type.properties[ThingType::IsGroundBorder] && !type.properties[ThingType::IsOnBottom])
+        ThingType *type = thing->getType();
+        if(!type->properties[ThingType::IsGround] && !type->properties[ThingType::IsGroundBorder] && !type->properties[ThingType::IsOnBottom])
             break;
         thing->draw(p - m_drawElevation);
-        m_drawElevation += type.parameters[ThingType::Elevation];
+        m_drawElevation += type->parameters[ThingType::Elevation];
         if(m_drawElevation > MAX_DRAW_ELEVATION)
             m_drawElevation = MAX_DRAW_ELEVATION;
     }
@@ -54,11 +54,11 @@ void Tile::draw(const Point& p)
     // now common items
     for(auto it = m_things.rbegin(); it != m_things.rend(); ++it) {
         const ThingPtr& thing = *it;
-        const ThingType& type = thing->getType();
-        if(thing->asCreature() || type.properties[ThingType::IsOnTop] || type.properties[ThingType::IsOnBottom] || type.properties[ThingType::IsGroundBorder] || type.properties[ThingType::IsGround])
+        ThingType *type = thing->getType();
+        if(thing->asCreature() || type->properties[ThingType::IsOnTop] || type->properties[ThingType::IsOnBottom] || type->properties[ThingType::IsGroundBorder] || type->properties[ThingType::IsGround])
             break;
         thing->draw(p - m_drawElevation);
-        m_drawElevation += type.parameters[ThingType::Elevation];
+        m_drawElevation += type->parameters[ThingType::Elevation];
         if(m_drawElevation > MAX_DRAW_ELEVATION)
             m_drawElevation = MAX_DRAW_ELEVATION;
     }
@@ -68,8 +68,8 @@ void Tile::draw(const Point& p)
     for(int xi = -1; xi <= 1; ++xi) {
         for(int yi = -1; yi <= 1; ++yi) {
             for(CreaturePtr creature : g_map.getTile(m_position + Position(xi, yi, 0))->getCreatures()) {
-                const ThingType& type = creature->getType();
-                Rect creatureRect(p.x + xi*32 + creature->getWalkOffset().x - type.parameters[ThingType::DisplacementX], p.y + yi*32 + creature->getWalkOffset().y - type.parameters[ThingType::DisplacementY], 32, 32);
+                ThingType *type = creature->getType();
+                Rect creatureRect(p.x + xi*32 + creature->getWalkOffset().x - type->parameters[ThingType::DisplacementX], p.y + yi*32 + creature->getWalkOffset().y - type->parameters[ThingType::DisplacementY], 32, 32);
                 Rect thisTileRect(p.x, p.y, 32, 32);
 
                 // only render creatures where bottom right is inside our rect
@@ -86,8 +86,8 @@ void Tile::draw(const Point& p)
 
     // top items
     for(const ThingPtr& thing : m_things) {
-        const ThingType& type = thing->getType();
-        if(type.properties[ThingType::IsOnTop])
+        ThingType *type = thing->getType();
+        if(type->properties[ThingType::IsOnTop])
             thing->draw(p);
     }
 }
@@ -179,8 +179,8 @@ ItemPtr Tile::getGround()
     ThingPtr firstObject = getThing(0);
     if(!firstObject)
         return nullptr;
-    const ThingType& type = firstObject->getType();
-    if(type.properties[ThingType::IsGround])
+    ThingType *type = firstObject->getType();
+    if(type->properties[ThingType::IsGround])
         return firstObject->asItem();
     return nullptr;
 }
@@ -191,8 +191,8 @@ bool Tile::isWalkable()
         return false;
 
     for(const ThingPtr& thing : m_things) {
-        const ThingType& type = thing->getType();
-        if(type.properties[ThingType::NotWalkable])
+        ThingType *type = thing->getType();
+        if(type->properties[ThingType::NotWalkable])
             return false;
     }
     return true;
@@ -203,8 +203,8 @@ bool Tile::isFullGround()
     ThingPtr ground = getThing(0);
     if(!ground)
         return false;
-    const ThingType& type = ground->getType();
-    if(type.properties[ThingType::IsGround] && type.properties[ThingType::IsFullGround])
+    ThingType *type = ground->getType();
+    if(type->properties[ThingType::IsGround] && type->properties[ThingType::IsFullGround])
         return true;
     return false;
 }
@@ -213,8 +213,8 @@ bool Tile::isFullyOpaque()
 {
     ThingPtr firstObject = getThing(0);
     if(firstObject) {
-        const ThingType& type = firstObject->getType();
-        if(type.properties[ThingType::IsFullGround])
+        ThingType *type = firstObject->getType();
+        if(type->properties[ThingType::IsFullGround])
             return true;
     }
     return false;
@@ -223,8 +223,8 @@ bool Tile::isFullyOpaque()
 bool Tile::isLookPossible()
 {
     for(const ThingPtr& thing : m_things) {
-        const ThingType& type = thing->getType();
-        if(type.properties[ThingType::BlockProjectile])
+        ThingType *type = thing->getType();
+        if(type->properties[ThingType::BlockProjectile])
             return false;
     }
     return true;

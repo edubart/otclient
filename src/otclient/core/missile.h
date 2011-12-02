@@ -41,7 +41,7 @@ public:
 
     void setPath(const Position& fromPosition, const Position& toPosition);
 
-    const ThingType& getType();
+    ThingType *getType();
 
     MissilePtr asMissile() { return std::static_pointer_cast<Missile>(shared_from_this()); }
 

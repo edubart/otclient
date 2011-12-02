@@ -41,14 +41,14 @@ public:
 
     virtual void draw(const Point& p) = 0;
 
-    void setId(uint32 id) { m_id = id; }
+    void setId(uint32 id);
     virtual void setPosition(const Position& position) { m_position = position; }
 
     uint32 getId() const { return m_id; }
     Position getPosition() const { return m_position; }
     int getStackPriority();
-    virtual const ThingType& getType() = 0;
-    int getAnimationPhases() { return getType().dimensions[ThingType::AnimationPhases]; }
+    virtual ThingType *getType() = 0;
+    int getAnimationPhases() { return m_type->dimensions[ThingType::AnimationPhases]; }
 
     void setXPattern(int xPattern) { m_xPattern = xPattern; }
     void setYPattern(int yPattern) { m_yPattern = yPattern; }
@@ -67,6 +67,7 @@ protected:
 
     uint32 m_id;
     Position m_position;
+    ThingType *m_type;
 
     int m_xPattern, m_yPattern, m_zPattern, m_animation;
 };

@@ -39,7 +39,7 @@ public:
     void setName(const std::string& name);
     void setHealthPercent(uint8 healthPercent);
     void setDirection(Otc::Direction direction);
-    void setOutfit(const Outfit& outfit) { m_outfit = outfit; }
+    void setOutfit(const Outfit& outfit);
     void setLight(const Light& light) { m_light = light; }
     void setSpeed(uint16 speed) { m_speed = speed; }
     void setSkull(uint8 skull) { m_skull = skull; }
@@ -58,7 +58,7 @@ public:
     uint8 getShield() { return m_shield; }
     uint8 getEmblem() { return m_emblem; }
     bool getImpassable() { return m_impassable; }
-    const ThingType& getType();
+    ThingType *getType();
 
     virtual void walk(const Position& position, bool inverse = true);
     virtual void cancelWalk(Otc::Direction direction);

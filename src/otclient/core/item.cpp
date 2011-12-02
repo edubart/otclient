@@ -34,23 +34,19 @@ Item::Item() : Thing()
 
 void Item::draw(const Point& p)
 {
-    const ThingType& type = getType();
+    if(m_type->dimensions[ThingType::AnimationPhases] > 1)
+        m_animation = (g_clock.ticks() % (TICKS_PER_FRAME * m_type->dimensions[ThingType::AnimationPhases])) / TICKS_PER_FRAME;
 
-    if(type.dimensions[ThingType::AnimationPhases] > 1)
-        m_animation = (g_clock.ticks() % (TICKS_PER_FRAME * type.dimensions[ThingType::AnimationPhases])) / TICKS_PER_FRAME;
-
-    for(int b = 0; b < type.dimensions[ThingType::Layers]; b++)
+    for(int b = 0; b < m_type->dimensions[ThingType::Layers]; b++)
         internalDraw(p, b);
 }
 
 void Item::setPosition(const Position& position)
 {
-    const ThingType& type = getType();
-
-    if(type.properties[ThingType::IsGround]) {
-        m_xPattern = position.x % type.dimensions[ThingType::PatternX];
-        m_yPattern = position.y % type.dimensions[ThingType::PatternY];
-        m_zPattern = position.z % type.dimensions[ThingType::PatternZ];
+    if(m_type->properties[ThingType::IsGround]) {
+        m_xPattern = position.x % m_type->dimensions[ThingType::PatternX];
+        m_yPattern = position.y % m_type->dimensions[ThingType::PatternY];
+        m_zPattern = position.z % m_type->dimensions[ThingType::PatternZ];
     }
 
     Thing::setPosition(position);
@@ -58,9 +54,7 @@ void Item::setPosition(const Position& position)
 
 void Item::setData(int data)
 {
-    const ThingType& type = getType();
-
-    if(type.properties[ThingType::IsStackable] && type.dimensions[ThingType::PatternX] == 4 && type.dimensions[ThingType::PatternY] == 2) {
+    if(m_type->properties[ThingType::IsStackable] && m_type->dimensions[ThingType::PatternX] == 4 && m_type->dimensions[ThingType::PatternY] == 2) {
         if(data < 5) {
             m_xPattern = data-1;
             m_yPattern = 0;
@@ -82,15 +76,15 @@ void Item::setData(int data)
             m_yPattern = 1;
         }
     }
-    else if(type.properties[ThingType::IsHangable]) {
-        if(type.properties[ThingType::HookSouth]) {
-            m_xPattern = type.dimensions[ThingType::PatternX] >= 2 ? 1 : 0;
+    else if(m_type->properties[ThingType::IsHangable]) {
+        if(m_type->properties[ThingType::HookSouth]) {
+            m_xPattern = m_type->dimensions[ThingType::PatternX] >= 2 ? 1 : 0;
         }
-        else if(type.properties[ThingType::HookEast]) {
-            m_xPattern = type.dimensions[ThingType::PatternX] >= 3 ? 2 : 0;
+        else if(m_type->properties[ThingType::HookEast]) {
+            m_xPattern = m_type->dimensions[ThingType::PatternX] >= 3 ? 2 : 0;
         }
     }
-    else if(type.properties[ThingType::IsFluid] || type.properties[ThingType::IsFluidContainer]) {
+    else if(m_type->properties[ThingType::IsFluid] || m_type->properties[ThingType::IsFluidContainer]) {
         int color = 0;
         // TODO: find out what the heck does it mean 4, 7, 12, 13, 14, 16, 17. options are already there
         switch(data) {
@@ -153,14 +147,14 @@ void Item::setData(int data)
             break;
         }
 
-        m_xPattern = (color % 4) % type.dimensions[ThingType::PatternX];
-        m_yPattern = (color / 4) % type.dimensions[ThingType::PatternY];
+        m_xPattern = (color % 4) % m_type->dimensions[ThingType::PatternX];
+        m_yPattern = (color / 4) % m_type->dimensions[ThingType::PatternY];
     }
 
     m_data = data;
 }
 
-const ThingType& Item::getType()
+ThingType *Item::getType()
 {
     return g_thingsType.getThingType(m_id, ThingsType::Item);
 }

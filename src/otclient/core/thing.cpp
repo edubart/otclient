@@ -34,42 +34,45 @@ Thing::Thing() : m_id(0)
 
 void Thing::internalDraw(const Point& p, int layers, Otc::SpriteMask mask)
 {
-    const ThingType& type = getType();
+    for(int yi = 0; yi < m_type->dimensions[ThingType::Height]; yi++) {
+        for(int xi = 0; xi < m_type->dimensions[ThingType::Width]; xi++) {
+            int sprIndex = ((((((m_animation % m_type->dimensions[ThingType::AnimationPhases])
+                            * m_type->dimensions[ThingType::PatternZ] + m_zPattern)
+                            * m_type->dimensions[ThingType::PatternY] + m_yPattern)
+                            * m_type->dimensions[ThingType::PatternX] + m_xPattern)
+                            * m_type->dimensions[ThingType::Layers] + layers)
+                            * m_type->dimensions[ThingType::Height] + yi)
+                            * m_type->dimensions[ThingType::Width] + xi;
 
-    for(int yi = 0; yi < type.dimensions[ThingType::Height]; yi++) {
-        for(int xi = 0; xi < type.dimensions[ThingType::Width]; xi++) {
-            int sprIndex = ((((((m_animation % type.dimensions[ThingType::AnimationPhases])
-                            * type.dimensions[ThingType::PatternZ] + m_zPattern)
-                            * type.dimensions[ThingType::PatternY] + m_yPattern)
-                            * type.dimensions[ThingType::PatternX] + m_xPattern)
-                            * type.dimensions[ThingType::Layers] + layers)
-                            * type.dimensions[ThingType::Height] + yi)
-                            * type.dimensions[ThingType::Width] + xi;
-
-            int spriteId = type.sprites[sprIndex];
+            int spriteId = m_type->sprites[sprIndex];
             if(!spriteId)
                 continue;
 
             TexturePtr spriteTex = g_sprites.getSpriteTexture(spriteId, mask);
 
-            Rect drawRect((p.x - xi*32) - type.parameters[ThingType::DisplacementX],
-                          (p.y - yi*32) - type.parameters[ThingType::DisplacementY],
+            Rect drawRect((p.x - xi*32) - m_type->parameters[ThingType::DisplacementX],
+                          (p.y - yi*32) - m_type->parameters[ThingType::DisplacementY],
                           32, 32);
             g_graphics.drawTexturedRect(drawRect, spriteTex);
         }
     }
 }
 
+void Thing::setId(uint32 id)
+{
+    m_id = id;
+    m_type = getType();
+}
+
 int Thing::getStackPriority()
 {
-    const ThingType& type = getType();
-    if(type.properties[ThingType::IsGround])
+    if(m_type->properties[ThingType::IsGround])
         return 0;
-    else if(type.properties[ThingType::IsGroundBorder])
+    else if(m_type->properties[ThingType::IsGroundBorder])
         return 1;
-    else if(type.properties[ThingType::IsOnBottom])
+    else if(m_type->properties[ThingType::IsOnBottom])
         return 2;
-    else if(type.properties[ThingType::IsOnTop])
+    else if(m_type->properties[ThingType::IsOnTop])
         return 3;
     else if(asCreature())
         return 4;

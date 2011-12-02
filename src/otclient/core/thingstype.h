@@ -43,7 +43,7 @@ public:
 
     void parseThingType(std::stringstream& fin, ThingType& thingType);
 
-    ThingType& getThingType(uint16 id, Categories category);
+    ThingType *getThingType(uint16 id, Categories category);
 
     uint32 getSignature() { return m_signature; }
 

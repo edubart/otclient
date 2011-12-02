@@ -33,6 +33,8 @@ class Outfit
     };
 
 public:
+    Outfit();
+
     static Color getColor(int color);
 
     void setType(int type) { m_type = type; }

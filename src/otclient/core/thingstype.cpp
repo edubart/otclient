@@ -111,7 +111,7 @@ void ThingsType::parseThingType(std::stringstream& fin, ThingType& thingType)
         thingType.sprites[i] = Fw::getU16(fin);
 }
 
-ThingType& ThingsType::getThingType(uint16 id, Categories category)
+ThingType *ThingsType::getThingType(uint16 id, Categories category)
 {
     if(category == Item)
         id -= 100;
@@ -122,8 +122,8 @@ ThingType& ThingsType::getThingType(uint16 id, Categories category)
     if(id >= m_things[category].size()) {
         //logTraceErrorOnce("got an invalid type");
         static ThingType emptyType;
-        return emptyType;
+        return &emptyType;
     }
 
-    return m_things[category][id];
+    return &m_things[category][id];
 }

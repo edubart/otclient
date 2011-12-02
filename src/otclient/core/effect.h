@@ -40,7 +40,7 @@ public:
     void startAnimation();
     void updateAnimation();
 
-    const ThingType& getType();
+    ThingType *getType();
 
     EffectPtr asEffect() { return std::static_pointer_cast<Effect>(shared_from_this()); }
 
