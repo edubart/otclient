@@ -26,6 +26,7 @@
 #include <framework/core/resourcemanager.h>
 
 ThingsType g_thingsType;
+ThingType ThingsType::m_emptyThingType;
 
 bool ThingsType::load(const std::string& file)
 {
@@ -121,8 +122,7 @@ ThingType *ThingsType::getThingType(uint16 id, Categories category)
     // assert wrokground
     if(id >= m_things[category].size()) {
         //logTraceErrorOnce("got an invalid type");
-        static ThingType emptyType;
-        return &emptyType;
+        return &m_emptyThingType;
     }
 
     return &m_things[category][id];

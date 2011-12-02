@@ -22,6 +22,7 @@
 
 #include "thing.h"
 #include "spritemanager.h"
+#include "thingstype.h"
 #include <framework/graphics/graphics.h>
 
 Thing::Thing() : m_id(0)
@@ -30,6 +31,7 @@ Thing::Thing() : m_id(0)
     m_yPattern = 0;
     m_zPattern = 0;
     m_animation = 0;
+    m_type = g_thingsType.getEmptyThingType();
 }
 
 void Thing::internalDraw(const Point& p, int layers, Otc::SpriteMask mask)

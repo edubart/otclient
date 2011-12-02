@@ -43,6 +43,7 @@ public:
 
     void parseThingType(std::stringstream& fin, ThingType& thingType);
 
+    ThingType *getEmptyThingType() { return &m_emptyThingType; }
     ThingType *getThingType(uint16 id, Categories category);
 
     uint32 getSignature() { return m_signature; }
@@ -51,6 +52,7 @@ private:
     uint32 m_signature;
 
     ThingTypeList m_things[LastCategory];
+    static ThingType m_emptyThingType;
 };
 
 extern ThingsType g_thingsType;
