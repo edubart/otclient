@@ -31,9 +31,6 @@
 class Game
 {
 public:
-    void init();
-    void terminate();
-
     // login/logout related
     void loginWorld(const std::string& account,
                     const std::string& password,

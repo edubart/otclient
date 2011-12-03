@@ -251,7 +251,7 @@ void ProtocolGame::parseMessage(InputMessage& msg)
             //case Otc::GameServerObjectInfo:
             //case Otc::GameServerPlayerInventory:
             default:
-                Fw::throwException("unknown opt byte ", opt);
+                Fw::throwException("unknown opt byte ", (int)opt);
                 break;
             }
         }

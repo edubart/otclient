@@ -24,7 +24,7 @@
 #include <otclient/core/game.h>
 #include <framework/ui/uilineedit.h>
 
-bool UIGame::onKeyPress(uchar keyCode, char keyChar, int keyboardModifiers)
+bool UIGame::onKeyPress(uchar keyCode, std::string keyText, int keyboardModifiers)
 {
     UILineEditPtr chatLineEdit = std::dynamic_pointer_cast<UILineEdit>(getParent()->recursiveGetChildById("chatLineEdit"));
 
@@ -100,10 +100,10 @@ bool UIGame::onKeyPress(uchar keyCode, char keyChar, int keyboardModifiers)
         }
     }
 
-    if(keyChar != 0) {
-        chatLineEdit->appendText(std::string(1, keyChar));
+    if(!keyText.empty()) {
+        chatLineEdit->appendText(keyText);
         return true;
     }
 
-    return UIWidget::onKeyPress(keyCode, keyChar, keyboardModifiers);
+    return UIWidget::onKeyPress(keyCode, keyText, keyboardModifiers);
 }

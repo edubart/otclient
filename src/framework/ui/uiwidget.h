@@ -166,9 +166,9 @@ protected:
     /// Triggered when the mouse enters or leaves widget area
     virtual void onHoverChange(bool hovered);
     /// Triggered when user presses key while widget has focus
-    virtual bool onKeyPress(uchar keyCode, char keyChar, int keyboardModifiers);
+    virtual bool onKeyPress(uchar keyCode, std::string keyText, int keyboardModifiers);
     /// Triggered when user releases key while widget has focus
-    virtual bool onKeyRelease(uchar keyCode, char keyChar, int keyboardModifiers);
+    virtual bool onKeyRelease(uchar keyCode, std::string keyText, int keyboardModifiers);
     /// Triggered when a mouse button is pressed down while mouse pointer is inside widget area
     virtual bool onMousePress(const Point& mousePos, Fw::MouseButton button);
     /// Triggered when a mouse button is released

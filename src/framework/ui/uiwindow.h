@@ -46,7 +46,7 @@ protected:
     virtual bool onMousePress(const Point& mousePos, Fw::MouseButton button);
     virtual void onMouseRelease(const Point& mousePos, Fw::MouseButton button);
     virtual bool onMouseMove(const Point& mousePos, const Point& mouseMoved);
-    virtual bool onKeyPress(uchar keyCode, char keyChar, int keyboardModifiers);
+    virtual bool onKeyPress(uchar keyCode, std::string keyText, int keyboardModifiers);
 
 private:
     std::string m_title;

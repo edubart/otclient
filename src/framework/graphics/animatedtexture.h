@@ -41,7 +41,7 @@ private:
     std::vector<int> m_framesDelay;
     int m_numFrames;
     int m_currentFrame;
-    int m_lastAnimCheckTicks;
+    ticks_t m_lastAnimCheckTicks;
 };
 
 #endif

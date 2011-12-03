@@ -3,6 +3,8 @@ Module
   description: Load all other otclient modules
   author: OTClient team
   website: https://github.com/edubart/otclient
+  autoLoad: true
+  autoLoadPriority: 10
   dependencies:
     - core
     - background
@@ -16,3 +18,10 @@ Module
     - chat
     - outfit
     - tibiafiles
+
+  onLoad: |
+    require 'otclient'
+    return OTClient.init()
+
+  onUnload: |
+    OTClient.terminate()

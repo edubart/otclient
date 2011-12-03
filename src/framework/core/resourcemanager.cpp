@@ -22,24 +22,28 @@
 
 #include "resourcemanager.h"
 
-#include <framework/platform/platform.h>
+#include <framework/application.h>
 #include <framework/luascript/luainterface.h>
 
 #include <physfs.h>
 
 ResourceManager g_resources;
 
-void ResourceManager::init(const char* argv0, const char *appName)
+void ResourceManager::init(const char *argv0)
 {
     PHYSFS_init(argv0);
 
-    // try to find modules directory, all data lives there
-    std::string baseDir = PHYSFS_getBaseDir();
+    // setup write directory
+    if(!g_resources.setupWriteDir())
+        logError("Could not setup write directory");
 
+    // try to find modules directory, all data lives there
+    //TODO: move this to Application class
+    std::string baseDir = PHYSFS_getBaseDir();
     std::string possibleDirs[] = { "modules",
                                    baseDir + "modules",
                                    baseDir + "../modules",
-                                   baseDir + "../share/" + appName + "/otclient/modules",
+                                   baseDir + "../share/" + g_app.getAppName() + "/otclient/modules",
                                    "" };
 
     bool found = false;
@@ -52,14 +56,7 @@ void ResourceManager::init(const char* argv0, const char *appName)
     }
 
     if(!found)
-        logFatal("Could not find modules directory.");
-
-    // setup write directory
-    std::string dir = g_platform.getAppUserDir();
-    if(g_resources.setWriteDir(dir))
-        g_resources.addToSearchPath(dir);
-    else
-        logError("could not setup write directory");
+        logFatal("Could not find modules directory");
 }
 
 void ResourceManager::terminate()
@@ -67,10 +64,22 @@ void ResourceManager::terminate()
     PHYSFS_deinit();
 }
 
-bool ResourceManager::setWriteDir(const std::string& path)
+bool ResourceManager::setupWriteDir()
 {
-    if(!PHYSFS_setWriteDir(path.c_str()))
-        return false;
+    std::string userDir = PHYSFS_getUserDir();
+    std::string dirName = Fw::mkstr(".", g_app.getAppName());
+    std::string writeDir = userDir + dirName;
+    if(!PHYSFS_setWriteDir(writeDir.c_str())) {
+        if(!PHYSFS_setWriteDir(userDir.c_str()))
+            return false;
+        if(!PHYSFS_mkdir(dirName.c_str())) {
+            PHYSFS_setWriteDir(NULL);
+            return false;
+        }
+        if(!PHYSFS_setWriteDir(writeDir.c_str()))
+            return false;
+    }
+    addToSearchPath(writeDir);
     return true;
 }
 
@@ -97,7 +106,7 @@ bool ResourceManager::fileExists(const std::string& fileName)
 
 bool ResourceManager::directoryExists(const std::string& directoryName)
 {
-    return (PHYSFS_exists(resolvePath(directoryName).c_str()) && PHYSFS_isDirectory(resolvePath(directoryName).c_str()));
+    return (PHYSFS_isDirectory(resolvePath(directoryName).c_str()));
 }
 
 void ResourceManager::loadFile(const std::string& fileName, std::iostream& out)

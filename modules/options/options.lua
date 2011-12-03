@@ -6,8 +6,8 @@ local fpsEnabled = false
 local vsyncEnabled = false
 
 function getConfig(name, default)
-  if ConfigManager.exists(name) then
-    local val = string.trim(ConfigManager.get(name))
+  if g_configs.exists(name) then
+    local val = string.trim(g_configs.get(name))
     if val == 'true' or val == 'false' then
       return toboolean(val)
     else
@@ -15,7 +15,7 @@ function getConfig(name, default)
     end
   else
     if default ~= nil then
-      ConfigManager.set(name, default)
+      g_configs.set(name, default)
       return default
     else
       return nil
@@ -24,13 +24,13 @@ function getConfig(name, default)
 end
 
 function setConfig(name, value)
-  ConfigManager.set(name, tostring(value))
+  g_configs.set(name, tostring(value))
 end
 
 -- private functions
 function Options.enableVsync(on)
   vsyncEnabled = on
-  setVerticalSync(on)
+  g_window.setVerticalSync(on)
   setConfig('vsync', on)
 end
 

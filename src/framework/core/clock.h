@@ -30,15 +30,15 @@ class Clock
 public:
     Clock();
 
-    int updateTicks();
+    ticks_t updateTicks();
     void sleep(int ms);
 
-    int ticks() { return m_currentTicks; }
-    int ticksElapsed(int prevTicks) { return ticks() - prevTicks; }
-    int ticksFor(int delay) { return ticks() + delay; }
+    ticks_t ticks() { return m_currentTicks; }
+    ticks_t ticksElapsed(long prevTicks) { return ticks() - prevTicks; }
+    ticks_t ticksFor(int delay) { return ticks() + delay; }
 
 private:
-    int m_currentTicks;
+    ticks_t m_currentTicks;
     std::chrono::system_clock::time_point m_startupTime;
 };
 

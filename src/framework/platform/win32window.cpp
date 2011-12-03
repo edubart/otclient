@@ -20,6 +20,10 @@
  * THE SOFTWARE.
  */
 
+// disabled for a while
+#if 0
+#include "win32window.h"
+
 #include "platform.h"
 #include "platformlistener.h"
 
@@ -789,3 +793,4 @@ void Platform::displayFatalError(const std::string& message)
     MessageBoxA(NULL, message.c_str(), "Fatal Error", MB_OK | MB_ICONERROR);
 }
 
+#endif

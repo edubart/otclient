@@ -28,11 +28,10 @@
 class ResourceManager
 {
 public:
-    void init(const char* argv0, const char *appName);
+    void init(const char *argv0);
     void terminate();
 
-    /// Set output files directory
-    bool setWriteDir(const std::string& path);
+    bool setupWriteDir();
 
     /// Add an package or directory to the search path
     bool addToSearchPath(const std::string& path, bool insertInFront = true);
@@ -55,6 +54,7 @@ public:
     std::list<std::string> listDirectoryFiles(const std::string& directoryPath = "");
 
     std::string resolvePath(const std::string& path);
+    std::string getAppUserPath();
 };
 
 extern ResourceManager g_resources;

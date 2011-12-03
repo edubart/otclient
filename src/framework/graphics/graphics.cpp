@@ -25,9 +25,6 @@
 #include <framework/graphics/graphics.h>
 #include <framework/graphics/texture.h>
 
-#include <GL/gl.h>
-#include <GL/glext.h>
-
 Graphics g_graphics;
 
 void Graphics::init()

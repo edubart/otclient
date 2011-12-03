@@ -45,7 +45,7 @@ public:
     EffectPtr asEffect() { return std::static_pointer_cast<Effect>(shared_from_this()); }
 
 private:
-    int m_animationStartTicks;
+    ticks_t m_animationStartTicks;
 };
 
 #endif

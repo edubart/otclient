@@ -41,7 +41,7 @@ protected:
 private:
     Fw::AlignmentFlag m_align;
     int m_frameCount;
-    int m_lastFrameTicks;
+    ticks_t m_lastFrameTicks;
     std::string m_fpsText;
 };
 

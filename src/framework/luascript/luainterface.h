@@ -42,6 +42,7 @@ public:
     void registerFunctions();
 
     // functions that will register all script stuff in lua global environment
+    void registerStaticClass(const std::string& className);
     void registerClass(const std::string& className, const std::string& baseClass = "LuaObject");
 
     void registerClassStaticFunction(const std::string& className,
@@ -86,18 +87,28 @@ public:
     // methods for binding functions
     template<class C, typename F>
     void bindClassStaticFunction(const std::string& functionName, const F& function);
+    template<typename F>
+    void bindClassStaticFunction(const std::string& className, const std::string& functionName, const F& function);
 
     template<class C, typename F>
     void bindClassMemberFunction(const std::string& functionName, F C::*function);
+    template<class C, typename F>
+    void bindClassMemberFunction(const std::string& className, const std::string& functionName, F C::*function);
 
     template<class C, typename F1, typename F2>
     void bindClassMemberField(const std::string& fieldName, F1 C::*getFunction, F2 C::*setFunction);
+    template<class C, typename F1, typename F2>
+    void bindClassMemberField(const std::string& className, const std::string& fieldName, F1 C::*getFunction, F2 C::*setFunction);
 
     template<class C, typename F>
     void bindClassMemberGetField(const std::string& fieldName, F C::*getFunction);
+    template<class C, typename F>
+    void bindClassMemberGetField(const std::string& className, const std::string& fieldName, F C::*getFunction);
 
     template<class C, typename F>
     void bindClassMemberSetField(const std::string& fieldName, F C::*setFunction);
+    template<class C, typename F>
+    void bindClassMemberSetField(const std::string& className, const std::string& fieldName, F C::*setFunction);
 
     template<typename F>
     void bindGlobalFunction(const std::string& functionName, const F& function);
@@ -314,31 +325,45 @@ template<class C, typename F>
 void LuaInterface::bindClassStaticFunction(const std::string& functionName, const F& function) {
     registerClassStaticFunction<C>(functionName, luabinder::bind_fun(function));
 }
+template<typename F>
+void LuaInterface::bindClassStaticFunction(const std::string& className, const std::string& functionName, const F& function) {
+    registerClassStaticFunction(className, functionName, luabinder::bind_fun(function));
+}
 
 template<class C, typename F>
 void LuaInterface::bindClassMemberFunction(const std::string& functionName, F C::*function) {
     registerClassMemberFunction<C>(functionName, luabinder::bind_mem_fun(function));
 }
+template<class C, typename F>
+void LuaInterface::bindClassMemberFunction(const std::string& className, const std::string& functionName, F C::*function) {
+    registerClassMemberFunction(className, functionName, luabinder::bind_mem_fun(function));
+}
 
 template<class C, typename F1, typename F2>
 void LuaInterface::bindClassMemberField(const std::string& fieldName, F1 C::*getFunction, F2 C::*setFunction) {
-    registerClassMemberField<C>(fieldName,
-                                luabinder::bind_mem_fun(getFunction),
-                                luabinder::bind_mem_fun(setFunction));
+    registerClassMemberField<C>(fieldName, luabinder::bind_mem_fun(getFunction), luabinder::bind_mem_fun(setFunction));
+}
+template<class C, typename F1, typename F2>
+void LuaInterface::bindClassMemberField(const std::string& className, const std::string& fieldName, F1 C::*getFunction, F2 C::*setFunction) {
+    registerClassMemberField(className, fieldName, luabinder::bind_mem_fun(getFunction), luabinder::bind_mem_fun(setFunction));
 }
 
 template<class C, typename F>
 void LuaInterface::bindClassMemberGetField(const std::string& fieldName, F C::*getFunction) {
-    registerClassMemberField<C>(fieldName,
-                                luabinder::bind_mem_fun(getFunction),
-                                LuaCppFunction());
+    registerClassMemberField<C>(fieldName, luabinder::bind_mem_fun(getFunction), LuaCppFunction());
+}
+template<class C, typename F>
+void LuaInterface::bindClassMemberGetField(const std::string& className, const std::string& fieldName, F C::*getFunction) {
+    registerClassMemberField(className, fieldName, luabinder::bind_mem_fun(getFunction), LuaCppFunction());
 }
 
 template<class C, typename F>
 void LuaInterface::bindClassMemberSetField(const std::string& fieldName, F C::*setFunction) {
-    registerClassMemberField<C>(fieldName,
-                                LuaCppFunction(),
-                                luabinder::bind_mem_fun(setFunction));
+    registerClassMemberField<C>(fieldName, LuaCppFunction(), luabinder::bind_mem_fun(setFunction));
+}
+template<class C, typename F>
+void LuaInterface::bindClassMemberSetField(const std::string& className, const std::string& fieldName, F C::*setFunction) {
+    registerClassMemberField(className, fieldName, LuaCppFunction(), luabinder::bind_mem_fun(setFunction));
 }
 
 template<typename F>

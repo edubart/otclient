@@ -5,7 +5,7 @@ PROJECT(otclient)
 SET(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake;${CMAKE_MODULE_PATH}")
 
 OPTION(USE_PCH "Use precompiled header" ON)
-OPTION(NO_CONSOLE "Disable console window on Windows" OFF)
+OPTION(NO_CONSOLE "Disable console window on Windows platform" OFF)
 OPTION(HANDLE_EXCEPTIONS "Generate crash reports" OFF)
 OPTION(FORBIDDEN_FUNCTIONS "Enable forbidden lua functions" ON)
 OPTION(USE_OPENGLES2 "Use OpenGL ES 2.0 (for mobiles devices)" OFF)
@@ -39,7 +39,7 @@ MESSAGE(STATUS "BUILD TYPE: " ${CMAKE_BUILD_TYPE})
 
 # setup compiler options
 IF(CMAKE_COMPILER_IS_GNUCXX)
-    SET(CXX_WARNS "-Wall -Wextra -Werror -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-unused-variable -Wno-switch")
+    SET(CXX_WARNS "-Wall -Wextra -Werror -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-unused-variable -Wno-switch -Wno-missing-field-initializers")
     SET(CMAKE_CXX_FLAGS "-std=gnu++0x -pipe ${CXX_WARNS}")
     SET(CMAKE_CXX_FLAGS_DEBUG "-O0 -g3 -ggdb3 -fno-inline")
     SET(CMAKE_CXX_FLAGS_RELEASE "-O2")
@@ -68,9 +68,9 @@ SET(SOURCES
 
     # otclient
     src/otclient/otclient.cpp
+    src/otclient/luafunctions.cpp
 
     # otclient luascript
-    src/otclient/luascript/luafunctions.cpp
     src/otclient/luascript/luavaluecasts.cpp
 
     # otclient core
@@ -99,6 +99,10 @@ SET(SOURCES
     src/otclient/net/protocolgamesend.cpp
     src/otclient/net/protocolgameparse.cpp
 
+    # framework
+    src/framework/application.cpp
+    src/framework/luafunctions.cpp
+
     # framework third party
     src/framework/thirdparty/apngloader.cpp
 
@@ -118,8 +122,10 @@ SET(SOURCES
     src/framework/core/eventdispatcher.cpp
     src/framework/core/modulemanager.cpp
     src/framework/core/module.cpp
-    src/framework/core/engine.cpp
     src/framework/core/clock.cpp
+
+    # framework platform
+    src/framework/platform/platformwindow.cpp
 
     # framework graphics
     src/framework/graphics/font.cpp
@@ -144,7 +150,6 @@ SET(SOURCES
     src/framework/luascript/luainterface.cpp
     src/framework/luascript/luaobject.cpp
     src/framework/luascript/luaexception.cpp
-    src/framework/luascript/luafunctions.cpp
     src/framework/luascript/luavaluecasts.cpp
 
     # framework ui
@@ -172,7 +177,7 @@ IF(FORBIDDEN_FUNCTIONS)
 ENDIF(FORBIDDEN_FUNCTIONS)
 
 IF(WIN32)
-    SET(SOURCES ${SOURCES} src/framework/platform/win32platform.cpp)
+    SET(SOURCES ${SOURCES} src/framework/platform/win32window.cpp)
     SET(ADDITIONAL_LIBRARIES ws2_32 mswsock)
 
     IF(CMAKE_COMPILER_IS_GNUCXX)
@@ -180,7 +185,6 @@ IF(WIN32)
     ENDIF(CMAKE_COMPILER_IS_GNUCXX)
 
     IF(NO_CONSOLE)
-        ADD_DEFINITIONS(-DWIN32_NO_CONSOLE)
         IF(CMAKE_COMPILER_IS_GNUCXX)
             SET(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -mwindows")
         ENDIF(CMAKE_COMPILER_IS_GNUCXX)
@@ -195,7 +199,7 @@ IF(WIN32)
 ELSE(WIN32)
     SET(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -rdynamic")
     SET(ADDITIONAL_LIBRARIES pthread)
-    SET(SOURCES ${SOURCES} src/framework/platform/x11platform.cpp)
+    SET(SOURCES ${SOURCES} src/framework/platform/x11window.cpp)
 ENDIF(WIN32)
 
 # target executable

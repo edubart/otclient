@@ -23,10 +23,7 @@
 #include "animatedtexture.h"
 #include "graphics.h"
 
-#include <framework/platform/platform.h>
 #include <framework/core/eventdispatcher.h>
-
-#include <GL/gl.h>
 
 AnimatedTexture::AnimatedTexture(int width, int height, int channels, int numFrames, uchar *framesPixels, int *framesDelay) :
     Texture(),

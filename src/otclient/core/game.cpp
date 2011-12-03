@@ -27,17 +27,6 @@
 
 Game g_game;
 
-void Game::init()
-{
-    m_online = false;
-}
-
-void Game::terminate()
-{
-    if(m_online)
-        logout(true);
-}
-
 void Game::loginWorld(const std::string& account, const std::string& password, const std::string& worldHost, int worldPort, const std::string& characterName)
 {
     m_protocolGame = ProtocolGamePtr(new ProtocolGame);
@@ -51,12 +40,13 @@ void Game::cancelLogin()
 
 void Game::logout(bool force)
 {
-    if(m_protocolGame) {
-        m_protocolGame->sendLogout();
+    if(!m_protocolGame || !m_online)
+        return;
 
-        if(force)
-            processLogout();
-    }
+    m_protocolGame->sendLogout();
+
+    if(force)
+        processLogout();
 }
 
 void Game::processLoginError(const std::string& error)

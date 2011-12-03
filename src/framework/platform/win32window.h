@@ -20,14 +20,14 @@
  * THE SOFTWARE.
  */
 
-#ifndef ENGINE_H
-#define ENGINE_H
+#ifndef WIN32WINDOW_H
+#define WIN32WINDOW_H
 
-#include "declarations.h"
+#include "platformwindow.h"
 
-class Engine
+class WIN32Window : public PlatformWindow
 {
+    //TODO
 };
 
 #endif
-

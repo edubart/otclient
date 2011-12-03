@@ -30,7 +30,7 @@
 class Module
 {
 public:
-    Module(const std::string& name) : m_loaded(false), m_autoLoad(false), m_name(name) { }
+    Module(const std::string& name);
     void discover(const OTMLNodePtr& moduleNode);
 
     bool load();
@@ -43,11 +43,13 @@ public:
     std::string getAuthor() { return m_author; }
     std::string getWebsite() { return m_website; }
     std::string getVersion() { return m_version; }
-    bool autoLoad() { return m_autoLoad; }
+    bool isAutoLoad() { return m_autoLoad; }
+    int getAutoLoadPriority() { return m_autoLoadPriority; }
 
 private:
-    bool m_loaded;
-    bool m_autoLoad;
+    Boolean<false> m_loaded;
+    Boolean<false> m_autoLoad;
+    int m_autoLoadPriority;
     std::string m_name;
     std::string m_description;
     std::string m_author;

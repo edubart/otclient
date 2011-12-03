@@ -32,7 +32,7 @@
 #include <framework/graphics/fontmanager.h>
 #include <framework/otml/otmlnode.h>
 #include <framework/graphics/graphics.h>
-#include <framework/platform/platform.h>
+#include <framework/platform/platformwindow.h>
 
 UIWidget::UIWidget()
 {
@@ -670,7 +670,7 @@ void UIWidget::updateState(Fw::WidgetState state)
     }
     else if(state == Fw::HoverState) {
         updateChildren = true;
-        Point mousePos = g_platform.getMouseCursorPos();
+        Point mousePos = g_window.getMousePos();
         UIWidgetPtr widget = asUIWidget();
         UIWidgetPtr parent;
         do {
@@ -971,9 +971,9 @@ void UIWidget::onHoverChange(bool hovered)
         g_ui.getRootWidget()->updateState(Fw::HoverState);
 }
 
-bool UIWidget::onKeyPress(uchar keyCode, char keyChar, int keyboardModifiers)
+bool UIWidget::onKeyPress(uchar keyCode, std::string keyText, int keyboardModifiers)
 {
-    if(callLuaField<bool>("onKeyPress", keyCode, keyChar, keyboardModifiers))
+    if(callLuaField<bool>("onKeyPress", keyCode, keyText, keyboardModifiers))
         return true;
 
     // do a backup of children list, because it may change while looping it
@@ -989,16 +989,16 @@ bool UIWidget::onKeyPress(uchar keyCode, char keyChar, int keyboardModifiers)
     }
 
     for(const UIWidgetPtr& child : children) {
-        if(child->onKeyPress(keyCode, keyChar, keyboardModifiers))
+        if(child->onKeyPress(keyCode, keyText, keyboardModifiers))
             return true;
     }
 
     return false;
 }
 
-bool UIWidget::onKeyRelease(uchar keyCode, char keyChar, int keyboardModifiers)
+bool UIWidget::onKeyRelease(uchar keyCode, std::string keyText, int keyboardModifiers)
 {
-    if(callLuaField<bool>("onKeyRelease", keyCode, keyChar, keyboardModifiers))
+    if(callLuaField<bool>("onKeyRelease", keyCode, keyText, keyboardModifiers))
         return true;
 
     // do a backup of children list, because it may change while looping it
@@ -1014,7 +1014,7 @@ bool UIWidget::onKeyRelease(uchar keyCode, char keyChar, int keyboardModifiers)
     }
 
     for(const UIWidgetPtr& child : children) {
-        if(child->onKeyRelease(keyCode, keyChar, keyboardModifiers))
+        if(child->onKeyRelease(keyCode, keyText, keyboardModifiers))
             return true;
     }
 

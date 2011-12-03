@@ -26,6 +26,11 @@
 #include <framework/otml/otml.h>
 #include <framework/luascript/luainterface.h>
 
+Module::Module(const std::string& name)
+{
+    m_name = name;
+}
+
 void Module::discover(const OTMLNodePtr& moduleNode)
 {
     const static std::string none = "none";
@@ -34,6 +39,7 @@ void Module::discover(const OTMLNodePtr& moduleNode)
     m_website = moduleNode->valueAt("website", none);
     m_version = moduleNode->valueAt("version", none);
     m_autoLoad = moduleNode->valueAt<bool>("autoLoad", false);
+    m_autoLoadPriority = moduleNode->valueAt<int>("autoLoadPriority", 100);
 
     if(OTMLNodePtr node = moduleNode->get("dependencies")) {
         for(const OTMLNodePtr& tmp : node->children())
@@ -57,6 +63,9 @@ void Module::discover(const OTMLNodePtr& moduleNode)
 
 bool Module::load()
 {
+    if(m_loaded)
+        return true;
+
     for(const std::string& depName : m_dependencies) {
         ModulePtr dep = g_modules.getModule(depName);
         if(!dep) {

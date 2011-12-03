@@ -29,7 +29,7 @@ class ModuleManager
 {
 public:
     void discoverAndLoadModules();
-    bool discoverModule(const std::string& file);
+    ModulePtr discoverModule(const std::string& moduleFile);
     void unloadModules();
 
     ModulePtr getModule(const std::string& moduleName);

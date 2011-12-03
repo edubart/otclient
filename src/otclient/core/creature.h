@@ -88,7 +88,7 @@ protected:
     FontPtr m_informationFont;
     Color m_informationColor;
 
-    int m_walkStartTicks;
+    ticks_t m_walkStartTicks;
     bool m_walking, m_inverseWalking;
     float m_walkTimePerPixel;
     Position m_walkingFromPosition;

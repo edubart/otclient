@@ -20,5 +20,18 @@
  * THE SOFTWARE.
  */
 
-#include "engine.h"
 
+#ifndef GLUTIL_H
+#define GLUTIL_H
+
+#define GL_GLEXT_PROTOTYPES
+
+#ifndef OPENGL_ES2
+#include <GL/gl.h>
+#include <GL/glext.h>
+#else
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
+#endif
+
+#endif

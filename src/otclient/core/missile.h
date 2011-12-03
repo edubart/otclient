@@ -46,7 +46,7 @@ public:
     MissilePtr asMissile() { return std::static_pointer_cast<Missile>(shared_from_this()); }
 
 private:
-    int m_startTicks;
+    ticks_t m_startTicks;
     Position m_positionDelta;
     float m_duration;
 };

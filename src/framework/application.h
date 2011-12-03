@@ -20,34 +20,45 @@
  * THE SOFTWARE.
  */
 
-#ifndef ITEM_H
-#define ITEM_H
+#ifndef APPLICATION_H
+#define APPLICATION_H
 
-#include <framework/global.h>
-#include "thing.h"
+#include <framework/core/inputevent.h>
 
-class Item : public Thing
+class Application
 {
-public:
-    Item();
-
     enum {
-        TICKS_PER_FRAME = 500
+        POLL_CYCLE_DELAY = 10
     };
 
-    void draw(const Point& p);
+public:
+    virtual void init(const std::string& appName, const std::vector<std::string>& args);
+    virtual void registerLuaFunctions();
+    virtual void terminate();
+    virtual void run();
+    virtual void exit();
+    virtual void poll();
+    virtual void close() { exit(); }
 
-    void setPosition(const Position &position);
-    void setData(int data);
+    void setPollCycleDelay(int delay) { m_pollCycleDelay = delay; }
 
-    int getData() { return m_data; }
-    ThingType *getType();
+    bool isRunning() { return m_running; }
+    bool isStopping() { return m_stopping; }
+    std::string getAppName() { return m_appName; }
 
-    ItemPtr asItem() { return std::static_pointer_cast<Item>(shared_from_this()); }
+protected:
+    virtual void render();
+    virtual void resize(const Size& size);
+    virtual void inputEvent(const InputEvent& event);
 
 private:
-    int m_data;
-    ticks_t m_lastTicks;
+    std::string m_appName;
+    int m_pollCycleDelay;
+    Boolean<false> m_running;
+    Boolean<false> m_stopping;
 };
 
+extern Application& g_app;
+
 #endif
+

@@ -24,7 +24,7 @@
 #define UIMANAGER_H
 
 #include "declarations.h"
-#include <framework/platform/platformevent.h>
+#include <framework/core/inputevent.h>
 #include <framework/otml/declarations.h>
 
 class UIManager
@@ -35,7 +35,7 @@ public:
 
     void render();
     void resize(const Size& size);
-    void inputEvent(const PlatformEvent& event);
+    void inputEvent(const InputEvent& event);
 
     bool importStyles(const std::string& file);
     void importStyleFromOTML(const OTMLNodePtr& styleNode);

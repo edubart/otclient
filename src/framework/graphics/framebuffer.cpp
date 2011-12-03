@@ -24,17 +24,6 @@
 #include "graphics.h"
 #include "texture.h"
 
-#include <framework/platform/platform.h>
-
-#include <GL/gl.h>
-#include <GL/glext.h>
-
-PFNGLGENFRAMEBUFFERSPROC         oglGenFramebuffers = 0;
-PFNGLBINDFRAMEBUFFERPROC         oglBindFramebuffer = 0;
-PFNGLFRAMEBUFFERTEXTURE2DPROC    oglFramebufferTexture2D = 0;
-PFNGLDELETEFRAMEBUFFERSPROC      oglDeleteFramebuffers = 0;
-PFNGLCHECKFRAMEBUFFERSTATUSPROC  oglCheckFramebufferStatus = 0;
-
 FrameBuffer::FrameBuffer(int width, int height)
 {
     m_fbo = 0;
@@ -46,22 +35,15 @@ FrameBuffer::FrameBuffer(int width, int height)
     // use FBO ext only if supported
     if(g_graphics.isExtensionSupported("GL_ARB_framebuffer_object")) {
         m_fallbackOldImp = false;
-        if(!oglGenFramebuffers) {
-            oglGenFramebuffers = (PFNGLGENFRAMEBUFFERSPROC)g_platform.getExtensionProcAddress("glGenFramebuffers");
-            oglBindFramebuffer = (PFNGLBINDFRAMEBUFFERPROC)g_platform.getExtensionProcAddress("glBindFramebuffer");
-            oglFramebufferTexture2D = (PFNGLFRAMEBUFFERTEXTURE2DPROC)g_platform.getExtensionProcAddress("glFramebufferTexture2D");
-            oglDeleteFramebuffers = (PFNGLDELETEFRAMEBUFFERSPROC)g_platform.getExtensionProcAddress("glDeleteFramebuffers");
-            oglCheckFramebufferStatus = (PFNGLCHECKFRAMEBUFFERSTATUSPROC)g_platform.getExtensionProcAddress("glCheckFramebufferStatus");
-        }
 
         // generate FBO
-        oglGenFramebuffers(1, &m_fbo);
-        oglBindFramebuffer(GL_FRAMEBUFFER_EXT, m_fbo);
+        glGenFramebuffers(1, &m_fbo);
+        glBindFramebuffer(GL_FRAMEBUFFER_EXT, m_fbo);
 
         // attach 2D texture to this FBO
-        oglFramebufferTexture2D(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, m_texture->getId(), 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, m_texture->getId(), 0);
 
-        GLenum status = oglCheckFramebufferStatus(GL_FRAMEBUFFER_EXT);
+        GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER_EXT);
         switch(status) {
             case GL_FRAMEBUFFER_COMPLETE_EXT:
                 //ok
@@ -72,7 +54,7 @@ FrameBuffer::FrameBuffer(int width, int height)
         }
 
         // restore back buffer
-        oglBindFramebuffer(GL_FRAMEBUFFER_EXT, 0);
+        glBindFramebuffer(GL_FRAMEBUFFER_EXT, 0);
         glDrawBuffer(GL_BACK);
         glReadBuffer(GL_BACK);
     } else {
@@ -87,14 +69,14 @@ FrameBuffer::FrameBuffer(int width, int height)
 FrameBuffer::~FrameBuffer()
 {
     if(m_fbo)
-        oglDeleteFramebuffers(1, &m_fbo);
+        glDeleteFramebuffers(1, &m_fbo);
 }
 
 void FrameBuffer::bind()
 {
     if(!m_fallbackOldImp) {
         // bind framebuffer
-        oglBindFramebuffer(GL_FRAMEBUFFER_EXT, m_fbo);
+        glBindFramebuffer(GL_FRAMEBUFFER_EXT, m_fbo);
     } else {
         int screenWidth = g_graphics.getScreenSize().width();
         int screenHeight = g_graphics.getScreenSize().height();
@@ -126,7 +108,7 @@ void FrameBuffer::unbind()
 {
     if(!m_fallbackOldImp) {
         // bind back buffer again
-        oglBindFramebuffer(GL_FRAMEBUFFER_EXT, 0);
+        glBindFramebuffer(GL_FRAMEBUFFER_EXT, 0);
         glDrawBuffer(GL_BACK);
         glReadBuffer(GL_BACK);
 

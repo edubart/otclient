@@ -5,9 +5,9 @@ local currentToolTip
 
 -- private functions
 local function moveToolTip(tooltip)
-  local pos = getMouseCursorPos()
+  local pos = g_window.getMousePos()
   pos.y = pos.y + 1
-  local xdif = getScreenSize().width - (pos.x + tooltip:getWidth())
+  local xdif = g_window.getSize().width - (pos.x + tooltip:getWidth())
   if xdif < 2 then
     pos.x = pos.x - tooltip:getWidth() - 3
   else

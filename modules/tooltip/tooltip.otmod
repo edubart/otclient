@@ -4,6 +4,7 @@ Module
   author: OTClient team
   website: https://github.com/edubart/otclient
   autoLoad: true
+  autoLoadPriority: 2
   dependencies:
     - core
 

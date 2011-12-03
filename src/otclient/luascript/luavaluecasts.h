@@ -35,5 +35,4 @@ bool luavalue_cast(int index, Outfit& outfit);
 void push_luavalue(const Position& pos);
 bool luavalue_cast(int index, Position& pos);
 
-
 #endif

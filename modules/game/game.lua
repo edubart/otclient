@@ -1,5 +1,5 @@
 -- private functions
-local function onGameKeyPress(self, keyCode, keyChar, keyboardModifiers)
+local function onGameKeyPress(self, keyCode, keyText, keyboardModifiers)
   if keyboardModifiers == KeyboardCtrlModifier then
     if keyCode == KeyG then
       CharacterList.show()

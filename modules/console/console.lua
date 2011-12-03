@@ -81,7 +81,7 @@ local function completeCommand()
   end
 end
 
-local function onKeyPress(widget, keyCode, keyChar, keyboardModifiers)
+local function onKeyPress(widget, keyCode, keyText, keyboardModifiers)
   if keyboardModifiers == KeyboardNoModifier then
     -- execute current command
     if keyCode == KeyReturn or keyCode == keyEnter then

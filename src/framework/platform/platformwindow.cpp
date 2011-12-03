@@ -20,34 +20,14 @@
  * THE SOFTWARE.
  */
 
-#ifndef ITEM_H
-#define ITEM_H
+#include "platformwindow.h"
 
-#include <framework/global.h>
-#include "thing.h"
-
-class Item : public Thing
-{
-public:
-    Item();
-
-    enum {
-        TICKS_PER_FRAME = 500
-    };
-
-    void draw(const Point& p);
-
-    void setPosition(const Position &position);
-    void setData(int data);
-
-    int getData() { return m_data; }
-    ThingType *getType();
-
-    ItemPtr asItem() { return std::static_pointer_cast<Item>(shared_from_this()); }
-
-private:
-    int m_data;
-    ticks_t m_lastTicks;
-};
-
+#ifdef WIN32
+#include "win32window.h"
+WIN32Window window;
+#else
+#include "x11window.h"
+X11Window window;
 #endif
+
+PlatformWindow& g_window = window;

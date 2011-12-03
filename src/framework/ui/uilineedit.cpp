@@ -23,7 +23,7 @@
 #include "uilineedit.h"
 #include <framework/graphics/font.h>
 #include <framework/graphics/graphics.h>
-#include <framework/platform/platform.h>
+#include <framework/platform/platformwindow.h>
 #include <framework/core/clock.h>
 #include <framework/otml/otmlnode.h>
 
@@ -56,8 +56,7 @@ void UILineEdit::render()
         assert(m_cursorPos <= textLength);
         // draw every 333ms
         const int delay = 333;
-        int ticks = g_clock.ticks();
-        if(ticks - m_cursorTicks <= delay) {
+        if(g_clock.ticksElapsed(m_cursorTicks) <= delay) {
             Rect cursorRect;
             // when cursor is at 0 or is the first visible element
             if(m_cursorPos == 0 || m_cursorPos == m_startRenderPos)
@@ -65,8 +64,8 @@ void UILineEdit::render()
             else
                 cursorRect = Rect(m_glyphsCoords[m_cursorPos-1].right(), m_glyphsCoords[m_cursorPos-1].top(), 1, m_font->getGlyphHeight());
             g_graphics.drawFilledRect(cursorRect);
-        } else if(ticks - m_cursorTicks >= 2*delay) {
-            m_cursorTicks = ticks;
+        } else if(g_clock.ticksElapsed(m_cursorTicks) >= 2*delay) {
+            m_cursorTicks = g_clock.ticks();
         }
     }
 }
@@ -407,7 +406,7 @@ void UILineEdit::onFocusChange(bool focused, Fw::FocusReason reason)
     }
 }
 
-bool UILineEdit::onKeyPress(uchar keyCode, char keyChar, int keyboardModifiers)
+bool UILineEdit::onKeyPress(uchar keyCode, std::string keyText, int keyboardModifiers)
 {
     if(keyCode == Fw::KeyDelete) // erase right character
         removeCharacter(true);
@@ -422,14 +421,14 @@ bool UILineEdit::onKeyPress(uchar keyCode, char keyChar, int keyboardModifiers)
     else if(keyCode == Fw::KeyEnd) // move cursor to last character
         setCursorPos(m_text.length());
     else if(keyCode == Fw::KeyV && keyboardModifiers == Fw::KeyboardCtrlModifier)
-        appendText(g_platform.getClipboardText());
+        appendText(g_window.getClipboardText());
     else if(keyCode == Fw::KeyTab) {
         if(!m_alwaysActive) {
             if(UIWidgetPtr parent = getParent())
                 parent->focusNextChild(Fw::TabFocusReason);
         }
-    } else if(keyChar != 0)
-        appendCharacter(keyChar);
+    } else if(!keyText.empty())
+        appendText(keyText);
     else
         return false;
 

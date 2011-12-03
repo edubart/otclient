@@ -47,15 +47,20 @@ void LuaInterface::init()
     // register LuaObject, the base of all other objects
     registerClass<LuaObject>();
     bindClassMemberGetField<LuaObject>("use_count", &LuaObject::getUseCount);
-
-    // register the real script stuff
-    registerFunctions();
 }
 
 void LuaInterface::terminate()
 {
     // close lua state, it will release all objects
     closeLuaState();
+}
+
+void LuaInterface::registerStaticClass(const std::string& className)
+{
+    newTable();
+    pushValue();
+    setGlobal(className);
+    pop();
 }
 
 void LuaInterface::registerClass(const std::string& className, const std::string& baseClass)

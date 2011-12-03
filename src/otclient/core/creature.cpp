@@ -207,7 +207,7 @@ void Creature::walk(const Position& position, bool inverse)
 void Creature::updateWalk()
 {
     if(m_walking) {
-        int elapsedTicks = g_clock.ticks() - m_walkStartTicks;
+        int elapsedTicks = g_clock.ticksElapsed(m_walkStartTicks);
         int totalPixelsWalked = std::min((int)round(elapsedTicks / m_walkTimePerPixel), 32);
 
         if(m_inverseWalking) {

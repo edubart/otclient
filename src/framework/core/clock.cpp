@@ -22,14 +22,18 @@
 
 #include "clock.h"
 
+// for usleep
+#include <unistd.h>
+
 Clock g_clock;
 
 Clock::Clock()
 {
     m_startupTime = std::chrono::high_resolution_clock::now();
+    m_currentTicks = 0;
 }
 
-int Clock::updateTicks()
+ticks_t Clock::updateTicks()
 {
     auto timeNow = std::chrono::high_resolution_clock::now();
     m_currentTicks = std::chrono::duration_cast<std::chrono::milliseconds>(timeNow - m_startupTime).count();

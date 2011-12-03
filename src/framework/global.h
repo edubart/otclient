@@ -30,7 +30,7 @@
 #include <cassert>
 #include <ctime>
 #include <cmath>
-#include <unistd.h>
+#include <csignal>
 
 // common STL headers
 #include <iostream>

@@ -29,29 +29,32 @@ ModuleManager g_modules;
 
 void ModuleManager::discoverAndLoadModules()
 {
+    std::multimap<int, ModulePtr> m_autoLoadModules;
+
     auto moduleDirs = g_resources.listDirectoryFiles("/");
     for(const std::string& moduleDir : moduleDirs) {
         auto moduleFiles = g_resources.listDirectoryFiles("/" + moduleDir);
-        for(const std::string& file : moduleFiles) {
-            if(boost::ends_with(file, ".otmod"))
-                discoverModule("/" + moduleDir + "/" + file);
+        for(const std::string& moduleFile : moduleFiles) {
+            if(boost::ends_with(moduleFile, ".otmod")) {
+                ModulePtr module = discoverModule("/" + moduleDir + "/" + moduleFile);
+                if(module && module->isAutoLoad())
+                    m_autoLoadModules.insert(make_pair(module->getAutoLoadPriority(), module));
+            }
         }
     }
 
-    // auto load modules
-    for(const ModulePtr& module : m_modules) {
-        if(!module->isLoaded() && module->autoLoad()) {
-            if(!module->load())
-                logFatal("A required module has failed to load, cannot continue to run.");
-        }
+    for(auto& pair : m_autoLoadModules) {
+        ModulePtr module = pair.second;
+        if(!module->isLoaded() && !module->load())
+            logFatal("A required module has failed to load, cannot continue to run.");
     }
 }
 
-bool ModuleManager::discoverModule(const std::string& file)
+ModulePtr ModuleManager::discoverModule(const std::string& moduleFile)
 {
     ModulePtr module;
     try {
-        OTMLDocumentPtr doc = OTMLDocument::parse(file);
+        OTMLDocumentPtr doc = OTMLDocument::parse(moduleFile);
         OTMLNodePtr moduleNode = doc->at("Module");
 
         std::string name = moduleNode->valueAt("name");
@@ -62,10 +65,9 @@ bool ModuleManager::discoverModule(const std::string& file)
         module->discover(moduleNode);
         m_modules.push_back(module);
     } catch(Exception& e) {
-        logError("Unable to discover module from file '", file, "': ", e.what());
-        return false;
+        logError("Unable to discover module from file '", moduleFile, "': ", e.what());
     }
-    return true;
+    return module;
 }
 
 void ModuleManager::unloadModules()

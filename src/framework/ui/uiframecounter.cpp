@@ -40,13 +40,12 @@ void UIFrameCounter::render()
 {
     UIWidget::render();
 
-    int now = g_clock.ticks();
-    if(now - m_lastFrameTicks >= 1000) {
+    if(g_clock.ticksElapsed(m_lastFrameTicks) >= 1000) {
         m_fpsText = Fw::mkstr("FPS: ", m_frameCount);
-        m_lastFrameTicks = now;
+        m_lastFrameTicks = g_clock.ticks();
         m_frameCount = 0;
-    } else
-        m_frameCount++;
+    }
+    m_frameCount++;
 
     m_font->renderText(m_fpsText, m_rect, m_align, Fw::white);
 }

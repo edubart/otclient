@@ -146,7 +146,7 @@ bool UIWindow::onMouseMove(const Point& mousePos, const Point& mouseMoved)
     return UIWidget::onMouseMove(mousePos, mouseMoved);
 }
 
-bool UIWindow::onKeyPress(uchar keyCode, char keyChar, int keyboardModifiers)
+bool UIWindow::onKeyPress(uchar keyCode, std::string keyText, int keyboardModifiers)
 {
     if(keyboardModifiers == Fw::KeyboardNoModifier) {
         if(keyCode == Fw::KeyReturn || keyCode == Fw::KeyEnter) {
@@ -157,5 +157,5 @@ bool UIWindow::onKeyPress(uchar keyCode, char keyChar, int keyboardModifiers)
                 return true;
         }
     }
-    return UIWidget::onKeyPress(keyCode, keyChar, keyboardModifiers);
+    return UIWidget::onKeyPress(keyCode, keyText, keyboardModifiers);
 }

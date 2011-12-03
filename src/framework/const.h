@@ -225,6 +225,16 @@ namespace Fw
         OtherFocusReason
     };
 
+    enum InputEventType {
+        NoInputEvent = 0,
+        KeyPressInputEvent,
+        KeyReleaseInputEvent,
+        MousePressInputEvent,
+        MouseReleaseInputEvent,
+        MouseMoveInputEvent,
+        MouseWheelInputEvent
+    };
+
     enum MouseButton {
         MouseNoButton = 0,
         MouseLeftButton,

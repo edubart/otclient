@@ -26,9 +26,9 @@
 #include "declarations.h"
 
 struct ScheduledEvent {
-    ScheduledEvent(int ticks, const SimpleCallback& callback) : ticks(ticks), callback(callback) { }
+    ScheduledEvent(ticks_t ticks, const SimpleCallback& callback) : ticks(ticks), callback(callback) { }
     bool operator<(const ScheduledEvent& other) const { return ticks > other.ticks; }
-    int ticks;
+    ticks_t ticks;
     SimpleCallback callback;
 };
 

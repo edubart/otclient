@@ -20,17 +20,18 @@
  * THE SOFTWARE.
  */
 
-#include "luainterface.h"
+#include <framework/luascript/luainterface.h>
+#include <framework/application.h>
 #include <framework/graphics/fontmanager.h>
 #include <framework/ui/ui.h>
 #include <framework/net/protocol.h>
 #include <framework/core/eventdispatcher.h>
 #include <framework/core/configmanager.h>
-#include <framework/platform/platform.h>
 #include <framework/otml/otml.h>
 #include <framework/graphics/graphics.h>
+#include <framework/platform/platformwindow.h>
 
-void LuaInterface::registerFunctions()
+void Application::registerLuaFunctions()
 {
     // UIWidget
     g_lua.registerClass<UIWidget>();
@@ -152,10 +153,21 @@ void LuaInterface::registerFunctions()
     g_lua.registerClass<Protocol>();
 
     // ConfigManager
-    g_lua.registerClass<ConfigManager>();
-    g_lua.bindClassStaticFunction<ConfigManager>("set", std::bind(&ConfigManager::set, &g_configs, _1, _2));
-    g_lua.bindClassStaticFunction<ConfigManager>("get", std::bind(&ConfigManager::get, &g_configs, _1));
-    g_lua.bindClassStaticFunction<ConfigManager>("exists", std::bind(&ConfigManager::exists, &g_configs, _1));
+    g_lua.registerStaticClass("g_configs");
+    g_lua.bindClassStaticFunction("g_configs", "set", std::bind(&ConfigManager::set, &g_configs, _1, _2));
+    g_lua.bindClassStaticFunction("g_configs", "get", std::bind(&ConfigManager::get, &g_configs, _1));
+    g_lua.bindClassStaticFunction("g_configs", "exists", std::bind(&ConfigManager::exists, &g_configs, _1));
+
+    g_lua.registerStaticClass("g_window");
+    g_lua.bindClassStaticFunction("g_window", "show", std::bind(&PlatformWindow::show, &g_window));
+    g_lua.bindClassStaticFunction("g_window", "hide", std::bind(&PlatformWindow::hide, &g_window));
+    g_lua.bindClassStaticFunction("g_window", "move", std::bind(&PlatformWindow::move, &g_window, _1));
+    g_lua.bindClassStaticFunction("g_window", "resize", std::bind(&PlatformWindow::resize, &g_window, _1));
+    g_lua.bindClassStaticFunction("g_window", "setVerticalSync", std::bind(&PlatformWindow::setVerticalSync, &g_window, _1));
+    g_lua.bindClassStaticFunction("g_window", "setTitle", std::bind(&PlatformWindow::setTitle, &g_window, _1));
+    g_lua.bindClassStaticFunction("g_window", "setIcon", std::bind(&PlatformWindow::setIcon, &g_window, _1));
+    g_lua.bindClassStaticFunction("g_window", "getMousePos", std::bind(&PlatformWindow::getMousePos, &g_window));
+    g_lua.bindClassStaticFunction("g_window", "getSize", std::bind(&PlatformWindow::getSize, &g_window));
 
     // Logger
     g_lua.registerClass<Logger>();
@@ -171,7 +183,4 @@ void LuaInterface::registerFunctions()
     g_lua.bindGlobalFunction("getRootWidget", std::bind(&UIManager::getRootWidget, &g_ui));
     g_lua.bindGlobalFunction("addEvent", std::bind(&EventDispatcher::addEvent, &g_dispatcher, _1, false));
     g_lua.bindGlobalFunction("scheduleEvent", std::bind(&EventDispatcher::scheduleEvent, &g_dispatcher, _1, _2));
-    g_lua.bindGlobalFunction("getMouseCursorPos", std::bind(&Platform::getMouseCursorPos, &g_platform));
-    g_lua.bindGlobalFunction("setVerticalSync", std::bind(&Platform::setVerticalSync, &g_platform, _1));
-    g_lua.bindGlobalFunction("getScreenSize", std::bind(&Graphics::getScreenSize, &g_graphics));
 }

@@ -56,7 +56,7 @@ protected:
     virtual void onStyleApply(const OTMLNodePtr& styleNode);
     virtual void onGeometryUpdate(const Rect& oldRect, const Rect& newRect);
     virtual void onFocusChange(bool focused, Fw::FocusReason reason);
-    virtual bool onKeyPress(uchar keyCode, char keyChar, int keyboardModifiers);
+    virtual bool onKeyPress(uchar keyCode, std::string keyText, int keyboardModifiers);
     virtual bool onMousePress(const Point& mousePos, Fw::MouseButton button);
 
 private:
@@ -68,7 +68,7 @@ private:
     int m_cursorPos;
     Point m_startInternalPos;
     int m_startRenderPos;
-    int m_cursorTicks;
+    ticks_t m_cursorTicks;
     int m_textHorizontalMargin;
     bool m_textHidden;
     bool m_alwaysActive;

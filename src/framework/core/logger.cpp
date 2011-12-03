@@ -22,7 +22,6 @@
 
 #include "logger.h"
 #include "eventdispatcher.h"
-#include <framework/platform/platform.h>
 
 Logger g_logger;
 

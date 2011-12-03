@@ -20,20 +20,20 @@
  * THE SOFTWARE.
  */
 
-#ifndef PLATFORMLISTENER_H
-#define PLATFORMLISTENER_H
+#ifndef INPUTEVENT_H
+#define INPUTEVENT_H
 
-#include "platformevent.h"
+#include "declarations.h"
 
-class PlatformListener
-{
-public:
-    /// Fired when user tries to close the window
-    virtual void onClose() = 0;
-    /// Fired when user resize the window
-    virtual void onResize(const Size& size) = 0;
-    /// Fired when user press a key or move the mouse
-    virtual void onPlatformEvent(const PlatformEvent& event) = 0;
+struct InputEvent {
+    Fw::InputEventType type;
+    Fw::MouseWheelDirection wheelDirection;
+    Fw::MouseButton mouseButton;
+    int keyboardModifiers;
+    std::string keyText;
+    Fw::Key keyCode;
+    Point mousePos;
+    Point mouseMoved;
 };
 
 #endif

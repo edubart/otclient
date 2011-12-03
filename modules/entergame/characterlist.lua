@@ -6,7 +6,7 @@ local loadBox
 local characterList
 
 -- private functions
-local function onCharactersWindowKeyPress(self, keyCode, keyChar, keyboardModifiers)
+local function onCharactersWindowKeyPress(self, keyCode, keyText, keyboardModifiers)
   if keyboardModifiers == KeyboardNoModifier then
     if keyCode == KeyUp or keyCode == KeyTab then
       characterList:focusPreviousChild(ActiveFocusReason)
@@ -47,7 +47,7 @@ local function tryLogin(charInfo, tries)
   end
 
   -- save last used character
-  ConfigManager.set('lastUsedCharacter', charInfo.characterName)
+  g_configs.set('lastUsedCharacter', charInfo.characterName)
 end
 
 -- public functions
@@ -75,7 +75,7 @@ function CharacterList.create(characters, premDays)
     label.worldHost = worldHost
     label.worldPort = worldIp
 
-    if i == 1 or ConfigManager.get('lastUsedCharacter') == characterName then
+    if i == 1 or g_configs.get('lastUsedCharacter') == characterName then
       characterList:focusChild(label, ActiveFocusReason)
     end
   end

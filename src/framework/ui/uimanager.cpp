@@ -50,56 +50,32 @@ void UIManager::render()
 
 void UIManager::resize(const Size& size)
 {
-    if(m_rootWidget)
-        m_rootWidget->resize(g_graphics.getScreenSize());
+    m_rootWidget->resize(g_graphics.getScreenSize());
 }
 
-void UIManager::inputEvent(const PlatformEvent& event)
+void UIManager::inputEvent(const InputEvent& event)
 {
-    // translate input event to ui events
-    if(m_rootWidget) {
-        if(event.type & EventKeyboardAction) {
-            int keyboardModifiers = Fw::KeyboardNoModifier;
-            if(event.ctrl)
-                keyboardModifiers |= Fw::KeyboardCtrlModifier;
-            if(event.shift)
-                keyboardModifiers |= Fw::KeyboardShiftModifier;
-            if(event.alt)
-                keyboardModifiers |= Fw::KeyboardAltModifier;
-
-            if(event.type == EventKeyDown)
-                m_rootWidget->onKeyPress(event.keycode, event.keychar, keyboardModifiers);
-            else
-                m_rootWidget->onKeyRelease(event.keycode, event.keychar, keyboardModifiers);
-        } else if(event.type & EventMouseAction) {
-            if(event.type == EventMouseMove) {
-                m_rootWidget->updateState(Fw::HoverState);
-                m_rootWidget->onMouseMove(event.mousePos, event.mouseMoved);
-            }
-            else if(event.type & EventMouseWheel) {
-                Fw::MouseWheelDirection dir = Fw::MouseNoWheel;
-                if(event.type & EventDown)
-                    dir = Fw::MouseWheelDown;
-                else if(event.type & EventUp)
-                    dir = Fw::MouseWheelUp;
-
-                m_rootWidget->onMouseWheel(event.mousePos, dir);
-            } else  {
-                Fw::MouseButton button = Fw::MouseNoButton;
-                if(event.type & EventMouseLeftButton)
-                    button = Fw::MouseLeftButton;
-                else if(event.type & EventMouseMidButton)
-                    button = Fw::MouseMidButton;
-                else if(event.type & EventMouseRightButton)
-                    button = Fw::MouseRightButton;
-
-                if(event.type & EventDown)
-                    m_rootWidget->onMousePress(event.mousePos, button);
-                else if(event.type & EventUp)
-                    m_rootWidget->onMouseRelease(event.mousePos, button);
-            }
-        }
-    }
+    switch(event.type) {
+        case Fw::KeyPressInputEvent:
+            m_rootWidget->onKeyPress(event.keyCode, event.keyText, event.keyboardModifiers);
+            break;
+        case Fw::KeyReleaseInputEvent:
+            m_rootWidget->onKeyRelease(event.keyCode, event.keyText, event.keyboardModifiers);
+            break;
+        case Fw::MousePressInputEvent:
+            m_rootWidget->onMousePress(event.mousePos, event.mouseButton);
+            break;
+        case Fw::MouseReleaseInputEvent:
+            m_rootWidget->onMouseRelease(event.mousePos, event.mouseButton);
+            break;
+        case Fw::MouseMoveInputEvent:
+            m_rootWidget->updateState(Fw::HoverState);
+            m_rootWidget->onMouseMove(event.mousePos, event.mouseMoved);
+            break;
+        case Fw::MouseWheelInputEvent:
+            m_rootWidget->onMouseWheel(event.mousePos, event.wheelDirection);
+            break;
+    };
 }
 
 bool UIManager::importStyles(const std::string& file)
