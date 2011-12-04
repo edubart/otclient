@@ -218,7 +218,7 @@ TARGET_LINK_LIBRARIES(
 )
 
 IF(USE_PCH)
-    ADD_PRECOMPILED_HEADER(otclient ${CMAKE_CURRENT_SOURCE_DIR}/src/pch.h)
+    ADD_PRECOMPILED_HEADER(otclient ${CMAKE_CURRENT_SOURCE_DIR}/src/framework/pch.h)
 ENDIF(USE_PCH)
 
 # installation

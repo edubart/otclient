@@ -20,19 +20,43 @@
  * THE SOFTWARE.
  */
 
-#ifndef OTCLIENT_H
-#define OTCLIENT_H
+#ifndef PCH_H
+#define PCH_H
 
-#include <framework/application.h>
-#include <otclient/global.h>
+// common C headers
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <cassert>
+#include <ctime>
+#include <cmath>
+#include <csignal>
 
-class OTClient : public Application
-{
-public:
-    void init(const std::vector<std::string>& args);
-    void registerLuaFunctions();
-};
+// common STL headers
+#include <iostream>
+#include <sstream>
+#include <fstream>
+#include <string>
+#include <vector>
+#include <list>
+#include <queue>
+#include <deque>
+#include <stack>
+#include <map>
+#include <algorithm>
+#include <exception>
+#include <memory>
+#include <type_traits>
+#include <tuple>
+#include <functional>
+#include <typeinfo>
+#include <array>
+#include <iomanip>
+#include <unordered_map>
+#include <random>
+#include <chrono>
 
-extern OTClient g_otclient;
+// boost utilities
+#include <boost/algorithm/string.hpp>
 
 #endif

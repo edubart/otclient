@@ -28,3 +28,4 @@ make lua/c++ logger more friendly
 bind every global lua function in a static class
 use metatable for Point,Rect,Color,Size lua classes
 lua binder generator
+restore win32 platform
