@@ -1,0 +1,10 @@
+Module
+  name: game_outfit
+  description: Change local player outfit
+  author: OTClient team
+  website: https://github.com/edubart/otclient
+  onLoad: |
+    require 'outfit'
+    return true
+
+

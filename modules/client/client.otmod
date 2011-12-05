@@ -1,0 +1,22 @@
+Module
+  name: client
+  description: Load all other otclient dependecies
+  author: OTClient team
+  website: https://github.com/edubart/otclient
+
+  // NOTE: order does matter
+  dependencies:
+    - client_background
+    - client_topmenu
+    - client_tibiafiles
+    - client_about
+    - client_options
+    - client_entergame
+    - game
+
+  onLoad: |
+    require 'client'
+    return Client.init()
+
+  onUnload: |
+    Client.terminate()

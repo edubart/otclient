@@ -1,0 +1,10 @@
+Module
+  name: game_viplist
+  description: Manage vip list window
+  author: OTClient team
+  website: https://github.com/edubart/otclient
+  onLoad: |
+    require 'viplist'
+    return true
+
+

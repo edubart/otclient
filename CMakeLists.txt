@@ -6,7 +6,7 @@ INCLUDE(src/otclient/CMakeLists.txt)
 
 OPTION(USE_PCH "Use precompiled header (speed up compile)" ON)
 
-SET(EXECUTABLE_SOURCES src/main.cpp)
+SET(executable_SOURCES src/main.cpp)
 
 # add executable icon for win32 platforms
 IF(WIN32)
@@ -15,14 +15,14 @@ IF(WIN32)
                        -I${CMAKE_CURRENT_SOURCE_DIR}/src
                        -i${CMAKE_CURRENT_SOURCE_DIR}/src/otcicon.rc
                        -o ${CMAKE_CURRENT_BINARY_DIR}/otcicon.o)
-    SET(${EXECUTABLE_SOURCES} ${EXECUTABLE_SOURCES} otcicon.o)
+    SET(executable_SOURCES ${executable_SOURCES} otcicon.o)
 ENDIF(WIN32)
 
 # add otclient executable
-ADD_EXECUTABLE(otclient ${FRAMEWORK_SOURCES} ${OTCLIENT_SOURCES} ${EXECUTABLE_SOURCES})
+ADD_EXECUTABLE(otclient ${framework_SOURCES} ${otclient_SOURCES} ${executable_SOURCES})
 
 # target link libraries
-TARGET_LINK_LIBRARIES(otclient ${FRAMEWORK_LIBRARIES})
+TARGET_LINK_LIBRARIES(otclient ${framework_LIBRARIES})
 
 IF(USE_PCH)
     FIND_PACKAGE(PCHSupport REQUIRED)

@@ -1,0 +1,10 @@
+Module
+  name: core_widgets
+  description: Contains widgets used by other modules
+  author: OTClient team
+  website: https://github.com/edubart/otclient
+
+  onLoad: |
+    require 'tooltip/tooltip'
+    require 'messagebox/messagebox'
+    return true

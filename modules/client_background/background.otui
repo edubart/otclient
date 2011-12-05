@@ -1,0 +1,12 @@
+Panel
+  id: background
+  image:
+    source: /client_background/background.png
+    smooth: true
+    fixed ratio: true
+  anchors.top: topMenu.bottom
+  anchors.left: parent.left
+  anchors.right: parent.right
+  anchors.bottom: parent.bottom
+  margin-top: 1
+  focusable: false

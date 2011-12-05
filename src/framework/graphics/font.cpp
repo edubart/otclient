@@ -76,7 +76,7 @@ void Font::renderText(const std::string& text,
                       const Color& color)
 {
     // prevent glitches from invalid rects
-    if(!screenCoords.isValid())
+    if(!screenCoords.isValid() || !m_texture)
         return;
 
     int textLenght = text.length();

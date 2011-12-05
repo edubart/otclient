@@ -16,7 +16,7 @@ end
 function Game.createInterface()
   Background.hide()
   CharacterList.destroyLoadBox()
-  Game.gameUi = UI.display('/game/game.otui')
+  Game.gameUi = UI.display('game.otui')
   UI.root:moveChildToIndex(Game.gameUi, 1)
   Game.gameMapPanel = Game.gameUi:getChildById('mapPanel')
   Game.gameRightPanel = Game.gameUi:getChildById('rightPanel')
@@ -56,5 +56,5 @@ function Game.onConnectionError(message)
   errorBox.onOk = CharacterList.show
 end
 
-connect(Game, { onLogin = Game.createInterface,
-                onLogout = Game.destroyInterface })
+connect(Game, { onLogin = Game.createInterface }, true)
+connect(Game, { onLogout = Game.destroyInterface })

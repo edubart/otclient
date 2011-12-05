@@ -1,0 +1,13 @@
+Module
+  name: client_topmenu
+  description: Create the top menu
+  author: OTClient team
+  website: https://github.com/edubart/otclient
+
+  onLoad: |
+    require 'topmenu'
+    TopMenu.create()
+    return true
+
+  onUnload: |
+    TopMenu.destroy()

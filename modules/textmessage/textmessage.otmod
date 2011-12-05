@@ -1,9 +1,0 @@
-Module
-  name: textmessage
-  description: Manage game text messages
-  author: OTClient team
-  website: https://github.com/edubart/otclient
-  onLoad: |
-    require 'textmessage'
-    return true
-

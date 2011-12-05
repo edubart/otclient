@@ -1,0 +1,14 @@
+Module
+  name: client_background
+  description: Handles the background of the login screen
+  author: OTClient team
+  website: https://github.com/edubart/otclient
+
+  onLoad: |
+    require 'background'
+    Background.create()
+    return true
+
+  onUnload:
+    Background.destroy()
+

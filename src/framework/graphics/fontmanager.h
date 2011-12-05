@@ -28,6 +28,8 @@
 class FontManager
 {
 public:
+    FontManager();
+
     /// Release fonts references, thus making possible to destruct them
     void releaseFonts();
 

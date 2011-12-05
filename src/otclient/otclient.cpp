@@ -21,6 +21,7 @@
  */
 
 #include "otclient.h"
+#include <framework/core/modulemanager.h>
 
 OTClient::OTClient() : Application(Otc::AppCompactName)
 {
@@ -31,4 +32,10 @@ void OTClient::init(const std::vector<std::string>& args)
 {
     logInfo(Otc::AppName, " ", Otc::AppVersion);
     Application::init(args, Fw::AppEnableAll);
+
+    g_modules.discoverModules();
+    g_modules.autoLoadModules(100);
+    g_modules.ensureModuleLoaded("client");
+    g_modules.ensureModuleLoaded("game");
+    g_modules.autoLoadModules(1000);
 }

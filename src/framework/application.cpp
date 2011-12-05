@@ -103,33 +103,12 @@ void Application::init(const std::vector<std::string>& args, int appFlags)
         resize(g_window.getSize());
     }
 
-    if(m_appFlags & Fw::AppEnableModules) {
-        // search for modules directory
-        std::string baseDir = g_resources.getBaseDir();
-        std::string possibleDirs[] = { "modules",
-                                       baseDir + "modules",
-                                       baseDir + "../modules",
-                                       baseDir + "../share/" + m_appName + "/modules",
-                                       "" };
-        bool found = false;
-        for(const std::string& dir : possibleDirs) {
-            // try to add module directory
-            if(g_resources.addToSearchPath(dir)) {
-                logInfo("Using modules directory '", dir.c_str(), "'");
-                found = true;
-                break;
-            }
-        }
-
-        if(!found)
-            logFatal("Could not find modules directory");
-
-        g_modules.discoverAndLoadModules();
-    }
-
     // finally show the window
     if(m_appFlags & Fw::AppEnableGraphics)
         g_window.show();
+
+    if(m_appFlags & Fw::AppEnableModules)
+        g_modules.discoverModulesPath();
 }
 
 

@@ -1,0 +1,10 @@
+Module
+  name: client_about
+  description: Create the about window
+  author: OTClient team
+  website: https://github.com/edubart/otclient
+
+  onLoad: |
+    require 'about'
+    return true
+

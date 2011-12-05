@@ -27,6 +27,11 @@
 
 FontManager g_fonts;
 
+FontManager::FontManager()
+{
+    m_defaultFont = FontPtr(new Font("emptyfont"));
+}
+
 void FontManager::releaseFonts()
 {
     m_defaultFont.reset();

@@ -3,8 +3,7 @@ Module
   description: Contains ui styles used by other modules
   author: OTClient team
   website: https://github.com/edubart/otclient
-  dependencies:
-    - core_fonts
+
   onLoad: |
     importStyles 'styles/buttons.otui'
     importStyles 'styles/labels.otui'
@@ -17,4 +16,3 @@ Module
     importStyles 'styles/items.otui'
     importStyles 'styles/creatures.otui'
     return true
-

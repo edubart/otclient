@@ -24,13 +24,12 @@
 #include "resourcemanager.h"
 
 #include <framework/otml/otml.h>
+#include <framework/application.h>
 
 ModuleManager g_modules;
 
-void ModuleManager::discoverAndLoadModules()
+void ModuleManager::discoverModules()
 {
-    std::multimap<int, ModulePtr> m_autoLoadModules;
-
     auto moduleDirs = g_resources.listDirectoryFiles("/");
     for(const std::string& moduleDir : moduleDirs) {
         auto moduleFiles = g_resources.listDirectoryFiles("/" + moduleDir);
@@ -42,12 +41,40 @@ void ModuleManager::discoverAndLoadModules()
             }
         }
     }
+}
 
+void ModuleManager::autoLoadModules(int maxPriority)
+{
     for(auto& pair : m_autoLoadModules) {
+        int priority = pair.first;
+        if(priority > maxPriority)
+            break;
         ModulePtr module = pair.second;
         if(!module->isLoaded() && !module->load())
             logFatal("A required module has failed to load, cannot continue to run.");
     }
+}
+
+void ModuleManager::discoverModulesPath()
+{
+    // search for modules directory
+    std::string possibleDirs[] = { "modules",
+                                    g_resources.getBaseDir() + "modules",
+                                    g_resources.getBaseDir() + "../modules",
+                                    g_resources.getBaseDir() + "../share/" + g_app->getAppName() + "/modules",
+                                    "" };
+    bool found = false;
+    for(const std::string& dir : possibleDirs) {
+        // try to add module directory
+        if(g_resources.addToSearchPath(dir)) {
+            logInfo("Using modules directory '", dir.c_str(), "'");
+            found = true;
+            break;
+        }
+    }
+
+    if(!found)
+        logFatal("Could not find modules directory");
 }
 
 ModulePtr ModuleManager::discoverModule(const std::string& moduleFile)
@@ -68,6 +95,13 @@ ModulePtr ModuleManager::discoverModule(const std::string& moduleFile)
         logError("Unable to discover module from file '", moduleFile, "': ", e.what());
     }
     return module;
+}
+
+void ModuleManager::ensureModuleLoaded(const std::string& moduleName)
+{
+    ModulePtr module = g_modules.getModule(moduleName);
+    if(!module || !module->load())
+        logFatal("Unable to load '", moduleName, "' module");
 }
 
 void ModuleManager::unloadModules()

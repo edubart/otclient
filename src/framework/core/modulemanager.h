@@ -28,14 +28,18 @@
 class ModuleManager
 {
 public:
-    void discoverAndLoadModules();
+    void discoverModulesPath();
+    void discoverModules();
+    void autoLoadModules(int maxPriority);
     ModulePtr discoverModule(const std::string& moduleFile);
+    void ensureModuleLoaded(const std::string& moduleName);
     void unloadModules();
 
     ModulePtr getModule(const std::string& moduleName);
 
 private:
     std::vector<ModulePtr> m_modules;
+    std::multimap<int, ModulePtr> m_autoLoadModules;
 };
 
 extern ModuleManager g_modules;

@@ -1,0 +1,16 @@
+Module
+  name: client_entergame
+  description: Manages enter game and character list windows
+  author: OTClient team
+  website: https://github.com/edubart/otclient
+
+  onLoad: |
+    require 'entergame'
+    require 'characterlist'
+    EnterGame.create()
+    return true
+
+  onUnload:
+    EnterGame.destroy()
+
+

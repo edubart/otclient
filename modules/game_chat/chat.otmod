@@ -1,0 +1,10 @@
+Module
+  name: game_chat
+  description: Manage chat window
+  author: OTClient team
+  website: https://github.com/edubart/otclient
+  onLoad: |
+    require 'chat'
+    return true
+
+

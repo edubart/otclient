@@ -29,3 +29,4 @@ bind every global lua function in a static class
 use metatable for Point,Rect,Color,Size lua classes
 lua binder generator
 restore win32 platform
+set special types for g_configs like lists/point/size

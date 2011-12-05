@@ -1,0 +1,7 @@
+Module
+  name: playground
+  autoLoad: true
+  onLoad: |
+    require 'playground'
+    return true
+

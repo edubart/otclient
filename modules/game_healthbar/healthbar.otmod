@@ -1,0 +1,10 @@
+Module
+  name: game_healthbar
+  description: Displays health and mana points
+  author: OTClient team
+  website: https://github.com/edubart/otclient
+  onLoad: |
+    require 'healthbar'
+    return true
+
+

@@ -54,7 +54,6 @@ protected:
     virtual void resize(const Size& size);
     virtual void inputEvent(const InputEvent& event);
 
-private:
     std::string m_appName;
     int m_appFlags;
     int m_pollCycleDelay;

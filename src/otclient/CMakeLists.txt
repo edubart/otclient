@@ -8,7 +8,7 @@ ELSE(FORBIDDEN_FUNCTIONS)
     MESSAGE(STATUS "Lua forbidden functions: OFF")
 ENDIF(FORBIDDEN_FUNCTIONS)
 
-SET(OTCLIENT_SOURCES ${OTCLIENT_SOURCES}
+SET(otclient_SOURCES ${otclient_SOURCES}
     # otclient
     ${CMAKE_CURRENT_LIST_DIR}/otclient.cpp
     ${CMAKE_CURRENT_LIST_DIR}/luafunctions.cpp

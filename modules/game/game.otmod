@@ -3,6 +3,16 @@ Module
   description: Create the game interface, where the ingame stuff starts
   author: OTClient team
   website: https://github.com/edubart/otclient
+
+  dependencies:
+    - game_healthbar
+    - game_inventory
+    - game_skills
+    - game_textmessage
+    - game_viplist
+    - game_chat
+    - game_outfit
+
   onLoad: |
     require 'game'
     return true
