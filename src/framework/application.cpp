@@ -33,6 +33,8 @@
 #include <framework/graphics/graphics.h>
 #include <framework/luascript/luainterface.h>
 
+Application *g_app = nullptr;
+
 void exitSignalHandler(int sig)
 {
     static bool signaled = false;
@@ -41,18 +43,28 @@ void exitSignalHandler(int sig)
         case SIGINT:
             if(!signaled) {
                 signaled = true;
-                g_dispatcher.addEvent(std::bind(&Application::close, &g_app));
+                g_dispatcher.addEvent(std::bind(&Application::close, g_app));
             }
             break;
     }
 }
 
-void Application::init(const std::string& appName, const std::vector<std::string>& args)
+Application::Application(const std::string& appName)
 {
-    logInfo("Starting application...");
-
-    m_pollCycleDelay = POLL_CYCLE_DELAY;
+    g_app = this;
     m_appName = appName;
+    m_pollCycleDelay = POLL_CYCLE_DELAY;
+}
+
+Application::~Application()
+{
+    g_app = nullptr;
+}
+
+void Application::init(const std::vector<std::string>& args, int appFlags)
+{
+    m_appFlags = appFlags;
+    logInfo("Starting application...");
 
     // capture exit signals
     signal(SIGTERM, exitSignalHandler);
@@ -65,37 +77,71 @@ void Application::init(const std::string& appName, const std::vector<std::string
     // initialize resources
     g_resources.init(args[0].c_str());
 
-    // loads user configuration
-    if(!g_configs.load("config.otml"))
-        logInfo("Using default configurations.");
+    if(m_appFlags & Fw::AppEnableConfigs) {
+        // setup configs write directory
+        if(!g_resources.setupWriteDir(m_appName))
+            logError("Could not setup write directory");
 
-    // initialize the ui
-    g_ui.init();
+        // load configs
+        if(!g_configs.load("config.otml"))
+            logInfo("Using default configurations.");
+    }
 
     // setup platform window
-    g_window.init();
-    g_window.setOnResize(std::bind(&Application::resize, this, _1));
-    g_window.setOnInputEvent(std::bind(&Application::inputEvent, this, _1));
-    g_window.setOnClose(std::bind(&Application::close, this));
+    if(m_appFlags & Fw::AppEnableGraphics) {
+        g_ui.init();
 
-    // initialize graphics
-    g_graphics.init();
+        g_window.init();
+        g_window.setOnResize(std::bind(&Application::resize, this, _1));
+        g_window.setOnInputEvent(std::bind(&Application::inputEvent, this, _1));
+        g_window.setOnClose(std::bind(&Application::close, this));
 
-    // fire first resize
-    resize(g_window.getSize());
+        // initialize graphics
+        g_graphics.init();
 
-    // auto load lua modules
-    g_modules.discoverAndLoadModules();
+        // fire first resize
+        resize(g_window.getSize());
+    }
+
+    if(m_appFlags & Fw::AppEnableModules) {
+        // search for modules directory
+        std::string baseDir = g_resources.getBaseDir();
+        std::string possibleDirs[] = { "modules",
+                                       baseDir + "modules",
+                                       baseDir + "../modules",
+                                       baseDir + "../share/" + m_appName + "/modules",
+                                       "" };
+        bool found = false;
+        for(const std::string& dir : possibleDirs) {
+            // try to add module directory
+            if(g_resources.addToSearchPath(dir)) {
+                logInfo("Using modules directory '", dir.c_str(), "'");
+                found = true;
+                break;
+            }
+        }
+
+        if(!found)
+            logFatal("Could not find modules directory");
+
+        g_modules.discoverAndLoadModules();
+    }
+
+    // finally show the window
+    if(m_appFlags & Fw::AppEnableGraphics)
+        g_window.show();
 }
 
 
 void Application::terminate()
 {
     // hide the window because there is no render anymore
-    g_window.hide();
+    if(m_appFlags & Fw::AppEnableGraphics)
+        g_window.hide();
 
     // run modules unload events
-    g_modules.unloadModules();
+    if(m_appFlags & Fw::AppEnableModules)
+        g_modules.unloadModules();
 
     // release remaining lua object references
     g_lua.collectGarbage();
@@ -103,29 +149,28 @@ void Application::terminate()
     // poll remaining events
     poll();
 
-    // terminate ui
-    g_ui.terminate();
-
     // terminate network
     Connection::terminate();
+
+    // terminate graphics
+    if(m_appFlags & Fw::AppEnableGraphics) {
+        g_ui.terminate();
+        g_graphics.terminate();
+        g_window.terminate();
+    }
 
     // flush remaining dispatcher events
     g_dispatcher.flush();
 
-    // terminate graphics
-    g_graphics.terminate();
-
     // save configurations
-    g_configs.save();
+    if(m_appFlags & Fw::AppEnableConfigs)
+        g_configs.save();
 
     // release resources
     g_resources.terminate();
 
     // terminate script environment
     g_lua.terminate();
-
-    // release platform window
-    g_window.terminate();
 
     logInfo("Application ended successfully.");
 }
@@ -139,11 +184,6 @@ void Application::run()
     // run the first poll
     poll();
 
-    if(g_ui.getRootWidget()->getChildCount() == 0) {
-        logError("There is no root widgets to display, the app will close");
-        m_stopping = true;
-    }
-
     while(!m_stopping) {
         g_clock.updateTicks();
 
@@ -154,7 +194,7 @@ void Application::run()
             lastPollTicks = g_clock.ticks();
         }
 
-        if(g_window.isVisible()) {
+        if(m_appFlags & Fw::AppEnableGraphics && g_window.isVisible()) {
             g_graphics.beginRender();
             render();
             g_graphics.endRender();
@@ -180,7 +220,8 @@ void Application::exit()
 void Application::poll()
 {
     // poll input events
-    g_window.poll();
+    if(m_appFlags & Fw::AppEnableGraphics)
+        g_window.poll();
 
     // poll network events
     Connection::poll();

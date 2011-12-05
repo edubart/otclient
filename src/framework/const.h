@@ -271,6 +271,13 @@ namespace Fw
         //LastState,
         //AlternateState
     };
+
+    enum AppicationFlags {
+        AppEnableModules = 1,
+        AppEnableGraphics = 2,
+        AppEnableConfigs = 4,
+        AppEnableAll = AppEnableModules | AppEnableGraphics | AppEnableConfigs
+    };
 }
 
 #endif

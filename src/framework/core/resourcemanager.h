@@ -31,7 +31,7 @@ public:
     void init(const char *argv0);
     void terminate();
 
-    bool setupWriteDir();
+    bool setupWriteDir(const std::string& appWriteDirName);
 
     /// Add an package or directory to the search path
     bool addToSearchPath(const std::string& path, bool insertInFront = true);
@@ -54,7 +54,7 @@ public:
     std::list<std::string> listDirectoryFiles(const std::string& directoryPath = "");
 
     std::string resolvePath(const std::string& path);
-    std::string getAppUserPath();
+    std::string getBaseDir();
 };
 
 extern ResourceManager g_resources;

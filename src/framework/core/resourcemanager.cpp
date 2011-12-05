@@ -32,31 +32,6 @@ ResourceManager g_resources;
 void ResourceManager::init(const char *argv0)
 {
     PHYSFS_init(argv0);
-
-    // setup write directory
-    if(!g_resources.setupWriteDir())
-        logError("Could not setup write directory");
-
-    // try to find modules directory, all data lives there
-    //TODO: move this to Application class
-    std::string baseDir = PHYSFS_getBaseDir();
-    std::string possibleDirs[] = { "modules",
-                                   baseDir + "modules",
-                                   baseDir + "../modules",
-                                   baseDir + "../share/" + g_app.getAppName() + "/otclient/modules",
-                                   "" };
-
-    bool found = false;
-    for(const std::string& dir : possibleDirs) {
-        if(g_resources.addToSearchPath(dir)) {
-            logInfo("Using modules directory '", dir.c_str(), "'");
-            found = true;
-            break;
-        }
-    }
-
-    if(!found)
-        logFatal("Could not find modules directory");
 }
 
 void ResourceManager::terminate()
@@ -64,10 +39,10 @@ void ResourceManager::terminate()
     PHYSFS_deinit();
 }
 
-bool ResourceManager::setupWriteDir()
+bool ResourceManager::setupWriteDir(const std::string& appWriteDirName)
 {
     std::string userDir = PHYSFS_getUserDir();
-    std::string dirName = Fw::mkstr(".", g_app.getAppName());
+    std::string dirName = Fw::mkstr(".", appWriteDirName);
     std::string writeDir = userDir + dirName;
     if(!PHYSFS_setWriteDir(writeDir.c_str())) {
         if(!PHYSFS_setWriteDir(userDir.c_str()))
@@ -196,3 +171,9 @@ std::string ResourceManager::resolvePath(const std::string& path)
     }
     return fullPath;
 }
+
+std::string ResourceManager::getBaseDir()
+{
+    return PHYSFS_getBaseDir();
+}
+

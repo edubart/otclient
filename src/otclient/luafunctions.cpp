@@ -22,7 +22,7 @@ void OTClient::registerLuaFunctions()
 {
     Application::registerLuaFunctions();
 
-    g_lua.bindGlobalFunction("exit", std::bind(&Application::exit, &g_app));
+    g_lua.bindGlobalFunction("exit", std::bind(&Application::exit, g_app));
     g_lua.bindGlobalFunction("importDat", std::bind(&ThingsType::load, &g_thingsType, _1));
     g_lua.bindGlobalFunction("importSpr", std::bind(&SpriteManager::load, &g_sprites, _1));
     g_lua.bindGlobalFunction("getOufitColor", Outfit::getColor);

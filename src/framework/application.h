@@ -32,7 +32,10 @@ class Application
     };
 
 public:
-    virtual void init(const std::string& appName, const std::vector<std::string>& args);
+    Application(const std::string& appName);
+    ~Application();
+
+    virtual void init(const std::vector<std::string>& args, int appFlags);
     virtual void registerLuaFunctions();
     virtual void terminate();
     virtual void run();
@@ -53,12 +56,13 @@ protected:
 
 private:
     std::string m_appName;
+    int m_appFlags;
     int m_pollCycleDelay;
     Boolean<false> m_running;
     Boolean<false> m_stopping;
 };
 
-extern Application& g_app;
+extern Application *g_app;
 
 #endif
 

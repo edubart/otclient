@@ -22,11 +22,13 @@
 
 #include "otclient.h"
 
-OTClient g_otclient;
-Application& g_app = g_otclient;
+OTClient::OTClient() : Application(Otc::AppCompactName)
+{
+
+}
 
 void OTClient::init(const std::vector<std::string>& args)
 {
     logInfo(Otc::AppName, " ", Otc::AppVersion);
-    Application::init(Otc::AppCompactName, args);
+    Application::init(args, Fw::AppEnableAll);
 }

@@ -29,10 +29,9 @@
 class OTClient : public Application
 {
 public:
+    OTClient();
     void init(const std::vector<std::string>& args);
     void registerLuaFunctions();
 };
-
-extern OTClient g_otclient;
 
 #endif
