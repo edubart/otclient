@@ -33,7 +33,6 @@
 #include <framework/graphics/graphics.h>
 #include <framework/graphics/painter.h>
 #include <framework/luascript/luainterface.h>
-#include <../../oglrenderer/graphics/painter.h>
 
 Application *g_app = nullptr;
 
