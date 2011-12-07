@@ -132,7 +132,7 @@ std::vector<uint8> Texture::getPixels()
     // copy pixels from opengl memory
     std::vector<uint8> pixels(m_glSize.area()*4, 0);
     glBindTexture(GL_TEXTURE_2D, m_textureId);
-    //glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, &pixels[0]);
+    glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, &pixels[0]);
 
     // convert pixels to the real texture size
     if(m_size != m_glSize)

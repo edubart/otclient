@@ -83,6 +83,11 @@ void PainterShaderProgram::drawTriangleStrip(int numVertices)
     glDrawArrays(GL_TRIANGLE_STRIP, 0, numVertices);
 }
 
+void PainterShaderProgram::drawTriangles(int numVertices)
+{
+    glDrawArrays(GL_TRIANGLES, 0, numVertices);
+}
+
 void PainterShaderProgram::releaseFromDraw()
 {
     if(m_mustDisableTexCoordsArray) {

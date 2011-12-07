@@ -20,31 +20,11 @@
  * THE SOFTWARE.
  */
 
-#ifndef IMAGE_H
-#define IMAGE_H
+#ifndef GLBUFFER_H
+#define GLBUFFER_H
 
-#include "declarations.h"
-#include "coordsbuffer.h"
-
-#include <framework/otml/declarations.h>
-
-class Image
+class GLBuffer
 {
-public:
-    Image();
-
-    void loadFromOTML(const OTMLNodePtr& imageNode);
-
-    virtual void draw(const Rect& screenCoords);
-
-protected:
-    TexturePtr m_texture;
-    Rect m_textureCoords;
-    bool m_fixedRatio;
-    bool m_repeated;
-
-    Rect m_cachedScreenCoords;
-    CoordsBuffer m_coordsBuffer;
 };
 
 #endif

@@ -26,6 +26,7 @@
 #include "paintershaderprogram.h"
 #include "shaderprogram.h"
 #include "graphics.h"
+#include "vertexarray.h"
 
 Painter g_painter;
 
@@ -94,6 +95,40 @@ void Painter::updateProjectionMatrix(const Size& viewportSize, bool inverseYAxis
     }
 }
 
+void Painter::drawCoords(CoordsBuffer& coordsBuffer)
+{
+    coordsBuffer.cacheVertexArrays();
+
+    if(coordsBuffer.getVertexCount() < 3)
+        return;
+
+    m_drawSolidColorProgram->prepareForDraw();
+    m_drawSolidColorProgram->setProjectionMatrix(m_projectionMatrix);
+    m_drawSolidColorProgram->setOpacity(m_currentOpacity);
+    m_drawSolidColorProgram->setColor(m_currentColor);
+    m_drawSolidColorProgram->setVertexCoords(coordsBuffer.getVertexCoords());
+    m_drawSolidColorProgram->drawTriangles(coordsBuffer.getVertexCount());
+    m_drawSolidColorProgram->releaseFromDraw();
+}
+
+void Painter::drawTextureCoords(CoordsBuffer& coordsBuffer, const TexturePtr& texture)
+{
+    coordsBuffer.cacheVertexArrays();
+
+    if(coordsBuffer.getVertexCount() < 3)
+        return;
+
+    m_drawTexturedProgram->prepareForDraw();
+    m_drawTexturedProgram->setProjectionMatrix(m_projectionMatrix);
+    m_drawTexturedProgram->setOpacity(m_currentOpacity);
+    m_drawTexturedProgram->setColor(m_currentColor);
+    m_drawTexturedProgram->setTexture(texture);
+    m_drawTexturedProgram->setVertexCoords(coordsBuffer.getVertexCoords());
+    m_drawTexturedProgram->setTextureCoords(coordsBuffer.getTextureCoords());
+    m_drawTexturedProgram->drawTriangles(coordsBuffer.getVertexCount());
+    m_drawTexturedProgram->releaseFromDraw();
+}
+
 void Painter::drawTexturedRect(const Rect& dest, const TexturePtr& texture)
 {
     drawTexturedRect(dest, texture, Rect(Point(0,0), texture->getSize()));
@@ -104,25 +139,9 @@ void Painter::drawTexturedRect(const Rect& dest, const TexturePtr& texture, cons
     if(dest.isEmpty() || src.isEmpty() || !texture->getId())
         return;
 
-    GLfloat vertexCoords[] = { (float)dest.left(), (float)dest.top(),
-                               (float)dest.right()+1, (float)dest.top(),
-                               (float)dest.left(), (float)dest.bottom()+1,
-                               (float)dest.right()+1, (float)dest.bottom()+1 };
-
-    GLfloat textureCoords[] = { (float)src.left(), (float)src.top(),
-                                (float)src.right()+1, (float)src.top(),
-                                (float)src.left(), (float)src.bottom()+1,
-                                (float)src.right()+1, (float)src.bottom()+1 };
-
-    m_drawTexturedProgram->prepareForDraw();
-    m_drawTexturedProgram->setProjectionMatrix(m_projectionMatrix);
-    m_drawTexturedProgram->setOpacity(m_currentOpacity);
-    m_drawTexturedProgram->setColor(m_currentColor);
-    m_drawTexturedProgram->setTexture(texture);
-    m_drawTexturedProgram->setVertexCoords(vertexCoords);
-    m_drawTexturedProgram->setTextureCoords(textureCoords);
-    m_drawTexturedProgram->drawTriangleStrip(4);
-    m_drawTexturedProgram->releaseFromDraw();
+    m_coordsBuffer.clear();
+    m_coordsBuffer.addRect(dest, src);
+    drawTextureCoords(m_coordsBuffer, texture);
 }
 
 void Painter::drawRepeatedTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src)
@@ -130,27 +149,9 @@ void Painter::drawRepeatedTexturedRect(const Rect& dest, const TexturePtr& textu
     if(dest.isEmpty() || src.isEmpty() || !texture->getId())
         return;
 
-    //TODO: use vertex arrays..
-    Rect virtualDest(0, 0, dest.size());
-    for(int y = 0; y <= virtualDest.height(); y += src.height()) {
-        for(int x = 0; x <= virtualDest.width(); x += src.width()) {
-            Rect partialDest(x, y, src.size());
-            Rect partialSrc = src;
-
-            // partialCoords to screenCoords bottomRight
-            if(partialDest.bottom() > virtualDest.bottom()) {
-                partialSrc.setBottom(partialSrc.bottom() + (virtualDest.bottom() - partialDest.bottom()));
-                partialDest.setBottom(virtualDest.bottom());
-            }
-            if(partialDest.right() > virtualDest.right()) {
-                partialSrc.setRight(partialSrc.right() + (virtualDest.right() - partialDest.right()));
-                partialDest.setRight(virtualDest.right());
-            }
-
-            partialDest.translate(dest.topLeft());
-            drawTexturedRect(partialDest, texture, partialSrc);
-        }
-    }
+    m_coordsBuffer.clear();
+    m_coordsBuffer.addRepeatedRects(dest, src);
+    drawTextureCoords(m_coordsBuffer, texture);
 }
 
 void Painter::drawFilledRect(const Rect& dest)
@@ -158,23 +159,9 @@ void Painter::drawFilledRect(const Rect& dest)
     if(dest.isEmpty())
         return;
 
-    GLfloat right = dest.right()+1;
-    GLfloat bottom = dest.bottom()+1;
-    GLfloat top = dest.top();
-    GLfloat left = dest.left();
-
-    GLfloat vertexCoords[] = { left, top,
-                               right, top,
-                               left, bottom,
-                               right, bottom };
-
-    m_drawSolidColorProgram->prepareForDraw();
-    m_drawSolidColorProgram->setProjectionMatrix(m_projectionMatrix);
-    m_drawSolidColorProgram->setOpacity(m_currentOpacity);
-    m_drawSolidColorProgram->setColor(m_currentColor);
-    m_drawSolidColorProgram->setVertexCoords(vertexCoords);
-    m_drawSolidColorProgram->drawTriangleStrip(4);
-    m_drawSolidColorProgram->releaseFromDraw();
+    m_coordsBuffer.clear();
+    m_coordsBuffer.addRect(dest);
+    drawCoords(m_coordsBuffer);
 }
 
 void Painter::drawBoundingRect(const Rect& dest, int innerLineWidth)
@@ -182,33 +169,9 @@ void Painter::drawBoundingRect(const Rect& dest, int innerLineWidth)
     if(dest.isEmpty() || innerLineWidth == 0)
         return;
 
-    GLfloat right = dest.right()+1;
-    GLfloat bottom = dest.bottom()+1;
-    GLfloat top = dest.top();
-    GLfloat left = dest.left();
-    GLfloat w = innerLineWidth;
-
-    GLfloat vertexCoords[] = { left, top,
-                               right, top,
-                               left, top+w,
-                               right, top+w,
-                               right-w, top+w,
-                               right, bottom,
-                               right-w, bottom,
-                               right-w, bottom-w,
-                               left, bottom,
-                               left, bottom-w,
-                               left+w, bottom-w,
-                               left, top+w,
-                               left+w, top+w };
-
-    m_drawSolidColorProgram->prepareForDraw();
-    m_drawSolidColorProgram->setProjectionMatrix(m_projectionMatrix);
-    m_drawSolidColorProgram->setOpacity(m_currentOpacity);
-    m_drawSolidColorProgram->setColor(m_currentColor);
-    m_drawSolidColorProgram->setVertexCoords(vertexCoords);
-    m_drawSolidColorProgram->drawTriangleStrip(13);
-    m_drawSolidColorProgram->releaseFromDraw();
+    m_coordsBuffer.clear();
+    m_coordsBuffer.addBoudingRect(dest, innerLineWidth);
+    drawCoords(m_coordsBuffer);
 }
 
 void Painter::setCompositionMode(Painter::CompositionMode compositionMode)

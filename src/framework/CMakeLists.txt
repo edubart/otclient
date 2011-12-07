@@ -146,6 +146,7 @@ SET(framework_SOURCES ${framework_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/graphics/shader.cpp
     ${CMAKE_CURRENT_LIST_DIR}/graphics/shaderprogram.cpp
     ${CMAKE_CURRENT_LIST_DIR}/graphics/paintershaderprogram.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/graphics/coordsbuffer.cpp
 
     # framework otml
     ${CMAKE_CURRENT_LIST_DIR}/otml/otmldocument.cpp

@@ -47,6 +47,7 @@ public:
 
     void prepareForDraw();
     void drawTriangleStrip(int numVertices);
+    void drawTriangles(int numVertices);
     void releaseFromDraw();
 
 private:

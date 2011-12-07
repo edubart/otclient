@@ -20,31 +20,36 @@
  * THE SOFTWARE.
  */
 
-#ifndef IMAGE_H
-#define IMAGE_H
+#ifndef COORDSBUFFER_H
+#define COORDSBUFFER_H
 
-#include "declarations.h"
-#include "coordsbuffer.h"
+#include "vertexarray.h"
 
-#include <framework/otml/declarations.h>
-
-class Image
+class CoordsBuffer
 {
 public:
-    Image();
+    void clear();
 
-    void loadFromOTML(const OTMLNodePtr& imageNode);
+    // no texture
+    void addRect(const Rect& dest);
+    void addBoudingRect(const Rect& dest, int innerLineWidth);
 
-    virtual void draw(const Rect& screenCoords);
+    // textured
+    void addRect(const Rect& dest, const Rect& src);
+    void addRepeatedRects(const Rect& dest, const Rect& src);
 
-protected:
-    TexturePtr m_texture;
-    Rect m_textureCoords;
-    bool m_fixedRatio;
-    bool m_repeated;
+    void cacheVertexArrays();
 
-    Rect m_cachedScreenCoords;
-    CoordsBuffer m_coordsBuffer;
+    GLfloat *getVertexCoords() const { return m_vertexCoords.vertexArray(); }
+    GLfloat *getTextureCoords() const { return m_textureCoords.vertexArray(); }
+    int getVertexCount() const { return m_vertexCoords.vertexCount(); }
+
+private:
+    DataBuffer<Rect> m_destRects;
+    DataBuffer<Rect> m_srcRects;
+    VertexArray m_vertexCoords;
+    VertexArray m_textureCoords;
+    Boolean<true> m_updateCache;
 };
 
 #endif

@@ -24,6 +24,8 @@
 #define PAINTER_H
 
 #include "declarations.h"
+#include <framework/util/databuffer.h>
+#include "coordsbuffer.h"
 
 class Painter
 {
@@ -37,6 +39,10 @@ public:
     void terminate();
 
     void updateProjectionMatrix(const Size& viewportSize, bool inverseYAxis = false);
+
+    void drawCoords(CoordsBuffer& coordsBuffer);
+    void drawTextureCoords(CoordsBuffer& coordsBuffer, const TexturePtr& texture);
+
     void drawTexturedRect(const Rect& dest, const TexturePtr& texture);
     void drawTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src);
     void drawRepeatedTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src);
@@ -57,6 +63,7 @@ private:
     GLfloat m_projectionMatrix[3][3];
     Color m_currentColor;
     GLfloat m_currentOpacity;
+    CoordsBuffer m_coordsBuffer;
 };
 
 extern Painter g_painter;

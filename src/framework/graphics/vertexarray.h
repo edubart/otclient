@@ -20,31 +20,48 @@
  * THE SOFTWARE.
  */
 
-#ifndef IMAGE_H
-#define IMAGE_H
+#ifndef VERTEXARRAY_H
+#define VERTEXARRAY_H
 
 #include "declarations.h"
-#include "coordsbuffer.h"
+#include <framework/util/databuffer.h>
 
-#include <framework/otml/declarations.h>
-
-class Image
+class VertexArray
 {
 public:
-    Image();
+    inline void addVertex(GLfloat x, GLfloat y) {  m_buffer << x << y; }
+    inline void addRect(const Rect& rect) {
+        GLfloat top = rect.top();
+        GLfloat right = rect.right()+1;
+        GLfloat bottom = rect.bottom()+1;
+        GLfloat left = rect.left();
 
-    void loadFromOTML(const OTMLNodePtr& imageNode);
+        addVertex(left, top);
+        addVertex(right, top);
+        addVertex(left, bottom);
+        addVertex(left, bottom);
+        addVertex(right, top);
+        addVertex(right, bottom);
+    }
 
-    virtual void draw(const Rect& screenCoords);
+    inline void addQuad(const Rect& rect) {
+        GLfloat top = rect.top();
+        GLfloat right = rect.right()+1;
+        GLfloat bottom = rect.bottom()+1;
+        GLfloat left = rect.left();
 
-protected:
-    TexturePtr m_texture;
-    Rect m_textureCoords;
-    bool m_fixedRatio;
-    bool m_repeated;
+        addVertex(left, top);
+        addVertex(right, top);
+        addVertex(left, bottom);
+        addVertex(right, bottom);
+    }
 
-    Rect m_cachedScreenCoords;
-    CoordsBuffer m_coordsBuffer;
+    void clear() { m_buffer.reset(); }
+    GLfloat *vertexArray() const { return m_buffer.data(); }
+    int vertexCount() const { return m_buffer.size() / 2; }
+
+private:
+    DataBuffer<GLfloat> m_buffer;
 };
 
 #endif
