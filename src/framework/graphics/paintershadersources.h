@@ -30,7 +30,7 @@ static int OPACITY_UNIFORM = 3;
 static int TEXTURE_UNIFORM = 4;
 
 static const std::string glslMainVertexShader = "\n\
-    vec4 calculatePosition();\n\
+    highp vec4 calculatePosition();\n\
     void main() {\n\
         gl_Position = calculatePosition();\n\
     }\n";
@@ -54,26 +54,23 @@ static std::string glslPositionOnlyVertexShader = "\n\
     }\n";
 
 static const std::string glslMainFragmentShader = "\n\
-    precision lowp vec4;\n\
-    precision lowp float;\n\
-    uniform float opacity;\n\
-    vec4 calculatePixel();\n\
+    uniform lowp float opacity;\n\
+    lowp vec4 calculatePixel();\n\
     void main()\n\
     {\n\
         gl_FragColor = calculatePixel() * opacity;\n\
     }\n";
 
 static const std::string glslTextureSrcFragmentShader = "\n\
-    precision mediump vec2;\n\
-    varying vec2 textureCoords;\n\
-    uniform vec4 color;\n\
+    varying mediump vec2 textureCoords;\n\
+    uniform lowp vec4 color;\n\
     uniform sampler2D texture;\n\
     vec4 calculatePixel() {\n\
         return texture2D(texture, textureCoords) * color;\n\
     }\n";
 
 static const std::string glslSolidColorFragmentShader = "\n\
-    uniform vec4 color;\n\
+    uniform lowp vec4 color;\n\
     vec4 calculatePixel() {\n\
         return color;\n\
     }\n";
