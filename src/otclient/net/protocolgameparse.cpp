@@ -717,7 +717,7 @@ void ProtocolGame::parseCreatureSpeak(InputMessage& msg)
     std::string name = msg.getString(); // name
     int level = msg.getU16(); // level
     int type = msg.getU8();
-    int channelId;
+    int channelId = 0;
     Position creaturePos;
 
     switch(type) {
