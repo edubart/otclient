@@ -36,10 +36,8 @@ void Painter::init()
     setCompositionMode(CompositionMode_SourceOver);
 
     PainterShaderProgramPtr program = PainterShaderProgramPtr(new PainterShaderProgram);
-    program->addShaderFromSourceCode(Shader::Vertex, glslMainWithTexCoordsVertexShader);
-    program->addShaderFromSourceCode(Shader::Vertex, glslPositionOnlyVertexShader);
-    program->addShaderFromSourceCode(Shader::Fragment, glslMainFragmentShader);
-    program->addShaderFromSourceCode(Shader::Fragment, glslTextureSrcFragmentShader);
+    program->addShaderFromSourceCode(Shader::Vertex, glslMainWithTexCoordsVertexShader + glslPositionOnlyVertexShader);
+    program->addShaderFromSourceCode(Shader::Fragment, glslMainFragmentShader + glslTextureSrcFragmentShader);
     program->bindAttributeLocation(VERTEX_COORDS_ATTR, "vertexCoord");
     program->bindAttributeLocation(TEXTURE_COORDS_ATTR, "textureCoord");
     assert(program->link());
@@ -51,10 +49,8 @@ void Painter::init()
     m_drawTexturedProgram = program;
 
     program = PainterShaderProgramPtr(new PainterShaderProgram);
-    program->addShaderFromSourceCode(Shader::Vertex, glslMainVertexShader);
-    program->addShaderFromSourceCode(Shader::Vertex, glslPositionOnlyVertexShader);
-    program->addShaderFromSourceCode(Shader::Fragment, glslMainFragmentShader);
-    program->addShaderFromSourceCode(Shader::Fragment, glslSolidColorFragmentShader);
+    program->addShaderFromSourceCode(Shader::Vertex, glslMainVertexShader + glslPositionOnlyVertexShader);
+    program->addShaderFromSourceCode(Shader::Fragment, glslMainFragmentShader + glslSolidColorFragmentShader);
     program->bindAttributeLocation(VERTEX_COORDS_ATTR, "vertexCoord");
     assert(program->link());
     program->bindUniformLocation(PainterShaderProgram::PROJECTION_MATRIX_UNIFORM, "projectionMatrix");
