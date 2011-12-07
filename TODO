@@ -33,6 +33,7 @@ restore ctrl+g and keybindings
 create a class for reading binary files
 handle corrupt errors in dat/spr
 
+create image class
 use CoordsBuffer in font
 cache into framebuffers
 implement glbuffer for CoordsBuffer

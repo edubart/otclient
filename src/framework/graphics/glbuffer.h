@@ -23,8 +23,22 @@
 #ifndef GLBUFFER_H
 #define GLBUFFER_H
 
+#include "declarations.h"
+
 class GLBuffer
 {
+public:
+    GLBuffer();
+    ~GLBuffer();
+
+    void write(const
+    void bind();
+    void release();
+
+    GLuint bufferId();
+
+private:
+    GLuint m_id;
 };
 
 #endif

@@ -21,6 +21,7 @@
  */
 
 #include "shader.h"
+#include <framework/core/resourcemanager.h>
 
 Shader::Shader(Shader::ShaderType shaderType)
 {
@@ -70,8 +71,7 @@ bool Shader::compileSourceCode(const std::string& sourceCode)
 
 bool Shader::compileSourceFile(const std::string& sourceFile)
 {
-    std::ifstream fin(sourceFile);
-    std::string sourceCode((std::istreambuf_iterator<char>(fin)), std::istreambuf_iterator<char>());
+    std::string sourceCode = g_resources.loadFile(sourceFile);
     return compileSourceCode(sourceCode);
 }
 

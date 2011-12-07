@@ -57,6 +57,8 @@ public:
 
     void setCompositionMode(CompositionMode compositionMode);
 
+    GLfloat *getProjectionMatrix() { return (GLfloat*)m_projectionMatrix; }
+
 private:
     PainterShaderProgramPtr m_drawTexturedProgram;
     PainterShaderProgramPtr m_drawSolidColorProgram;

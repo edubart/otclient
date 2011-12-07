@@ -35,7 +35,8 @@ public:
         TEXTURE_TRANSFORM_MATRIX_UNIFORM = 1,
         COLOR_UNIFORM = 2,
         OPACITY_UNIFORM = 3,
-        TEXTURE_UNIFORM = 4
+        TEXTURE_UNIFORM = 4,
+        TICKS_UNIFORM = 5
     };
 
     void setProjectionMatrix(GLfloat projectionMatrix[3][3]);

@@ -24,6 +24,7 @@
 #include "painter.h"
 #include "texture.h"
 #include "texturemanager.h"
+#include <framework/core/clock.h>
 
 void PainterShaderProgram::setProjectionMatrix(float projectionMatrix[3][3])
 {
@@ -76,6 +77,7 @@ void PainterShaderProgram::setTextureCoords(const GLfloat *textureCoords)
 void PainterShaderProgram::prepareForDraw()
 {
     assert(bind());
+    setUniformValue(TICKS_UNIFORM, (GLfloat)g_clock.ticks());
 }
 
 void PainterShaderProgram::drawTriangleStrip(int numVertices)

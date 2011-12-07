@@ -47,6 +47,7 @@ void Painter::init()
     program->bindUniformLocation(PainterShaderProgram::COLOR_UNIFORM, "color");
     program->bindUniformLocation(PainterShaderProgram::OPACITY_UNIFORM, "opacity");
     program->bindUniformLocation(PainterShaderProgram::TEXTURE_UNIFORM, "texture");
+    program->bindUniformLocation(PainterShaderProgram::TICKS_UNIFORM, "ticks");
     m_drawTexturedProgram = program;
 
     program = PainterShaderProgramPtr(new PainterShaderProgram);
@@ -57,6 +58,7 @@ void Painter::init()
     program->bindUniformLocation(PainterShaderProgram::PROJECTION_MATRIX_UNIFORM, "projectionMatrix");
     program->bindUniformLocation(PainterShaderProgram::COLOR_UNIFORM, "color");
     program->bindUniformLocation(PainterShaderProgram::OPACITY_UNIFORM, "opacity");
+    program->bindUniformLocation(PainterShaderProgram::TICKS_UNIFORM, "ticks");
     m_drawSolidColorProgram = program;
 }
 

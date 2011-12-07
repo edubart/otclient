@@ -22,3 +22,20 @@
 
 #include "glbuffer.h"
 
+GLBuffer::GLBuffer()
+{
+    glGenBuffers(1, &m_id);
+    if(!m_id)
+        logFatal("Unable to create a simple GL buffer");
+}
+
+void GLBuffer::bind()
+{
+    gl
+}
+
+void GLBuffer::release()
+{
+
+}
+
