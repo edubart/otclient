@@ -40,14 +40,15 @@ public:
 
     void cacheVertexArrays();
 
-    GLfloat *getVertexCoords() const { return m_vertexCoords.vertexArray(); }
-    GLfloat *getTextureCoords() const { return m_textureCoords.vertexArray(); }
-    int getVertexCount() const { return m_vertexCoords.vertexCount(); }
+    GLfloat *getVertices() const { return m_vertices.vertices(); }
+    GLfloat *getTextureCoords() const { return m_textureCoords.vertices(); }
+    int getVertexCount() const { return m_vertices.vertexCount(); }
+    int getTextureCoordsCount() const { return m_textureCoords.vertexCount(); }
 
 private:
     DataBuffer<Rect> m_destRects;
     DataBuffer<Rect> m_srcRects;
-    VertexArray m_vertexCoords;
+    VertexArray m_vertices;
     VertexArray m_textureCoords;
     Boolean<true> m_updateCache;
 };

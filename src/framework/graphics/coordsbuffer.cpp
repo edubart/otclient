@@ -27,7 +27,7 @@ void CoordsBuffer::clear()
     m_destRects.reset();
     m_srcRects.reset();
     m_textureCoords.clear();
-    m_vertexCoords.clear();
+    m_vertices.clear();
     m_updateCache = true;
 }
 
@@ -97,11 +97,11 @@ void CoordsBuffer::cacheVertexArrays()
 
     int numDestRects = m_destRects.size();
     int numSrcRects = m_srcRects.size();
-    m_vertexCoords.clear();
+    m_vertices.clear();
     m_textureCoords.clear();
 
     for(int i=0;i<numDestRects;++i) {
-        m_vertexCoords.addRect(m_destRects[i]);
+        m_vertices.addRect(m_destRects[i]);
         if(numSrcRects == numDestRects)
             m_textureCoords.addRect(m_srcRects[i]);
     }

@@ -26,13 +26,31 @@
 #include "texturemanager.h"
 #include <framework/core/clock.h>
 
+bool PainterShaderProgram::link()
+{
+    bindAttributeLocation(VERTEX_COORDS_ATTR, "vertexCoord");
+    bindAttributeLocation(TEXTURE_COORDS_ATTR, "textureCoord");
+    if(ShaderProgram::link()) {
+        bindUniformLocation(PROJECTION_MATRIX_UNIFORM, "projectionMatrix");
+        bindUniformLocation(TEXTURE_TRANSFORM_MATRIX_UNIFORM, "textureTransformMatrix");
+        bindUniformLocation(COLOR_UNIFORM, "color");
+        bindUniformLocation(OPACITY_UNIFORM, "opacity");
+        bindUniformLocation(TEXTURE_UNIFORM, "texture");
+        bindUniformLocation(TICKS_UNIFORM, "ticks");
+        return true;
+    }
+    return false;
+}
+
 void PainterShaderProgram::setProjectionMatrix(float projectionMatrix[3][3])
 {
+    bind();
     setUniformValue(PROJECTION_MATRIX_UNIFORM, projectionMatrix, true);
 }
 
 void PainterShaderProgram::setColor(const Color& color)
 {
+    bind();
     setUniformValue(COLOR_UNIFORM,
                     color.r() / 255.0f,
                     color.g() / 255.0f,
@@ -42,11 +60,15 @@ void PainterShaderProgram::setColor(const Color& color)
 
 void PainterShaderProgram::setOpacity(GLfloat opacity)
 {
+    bind();
     setUniformValue(OPACITY_UNIFORM, opacity);
 }
 
 void PainterShaderProgram::setTexture(const TexturePtr& texture)
 {
+    if(!texture)
+        return;
+
     float w = texture->getGlSize().width();
     float h = texture->getGlSize().height();
 
@@ -55,52 +77,45 @@ void PainterShaderProgram::setTexture(const TexturePtr& texture)
         { 0.0f,    1.0f/h }
     };
 
+    bind();
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture->getId());
     setUniformValue(TEXTURE_UNIFORM, 0);
     setUniformValue(TEXTURE_TRANSFORM_MATRIX_UNIFORM, textureTransformMatrix, true);
 }
 
-void PainterShaderProgram::setVertexCoords(const GLfloat *vertices)
-{
-    enableAttributeArray(PainterShaderProgram::VERTEX_COORDS_ATTR);
-    setAttributeArray(PainterShaderProgram::VERTEX_COORDS_ATTR, vertices, 2);
-}
-
-void PainterShaderProgram::setTextureCoords(const GLfloat *textureCoords)
-{
-    enableAttributeArray(PainterShaderProgram::TEXTURE_COORDS_ATTR);
-    setAttributeArray(PainterShaderProgram::TEXTURE_COORDS_ATTR, textureCoords, 2);
-    m_mustDisableTexCoordsArray = true;
-}
-
-void PainterShaderProgram::prepareForDraw()
+void PainterShaderProgram::draw(const CoordsBuffer& coordsBuffer, DrawMode drawMode)
 {
     assert(bind());
+
     setUniformValue(TICKS_UNIFORM, (GLfloat)g_clock.ticks());
-}
 
-void PainterShaderProgram::drawTriangleStrip(int numVertices)
-{
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, numVertices);
-}
+    int numVertices = coordsBuffer.getVertexCount();
+    if(numVertices == 0)
+        return;
 
-void PainterShaderProgram::drawTriangles(int numVertices)
-{
-    glDrawArrays(GL_TRIANGLES, 0, numVertices);
-}
-
-void PainterShaderProgram::releaseFromDraw()
-{
-    if(m_mustDisableTexCoordsArray) {
-        disableAttributeArray(PainterShaderProgram::TEXTURE_COORDS_ATTR);
-        m_mustDisableTexCoordsArray = false;
+    bool mustDisableVertexArray = false;
+    if(coordsBuffer.getVertexCount() > 0) {
+        enableAttributeArray(PainterShaderProgram::VERTEX_COORDS_ATTR);
+        setAttributeArray(PainterShaderProgram::VERTEX_COORDS_ATTR, coordsBuffer.getVertices(), 2);
+        mustDisableVertexArray = true;
     }
 
-    if(m_mustDisableVertexArray) {
+    bool mustDisableTexCoordsArray = false;
+    if(coordsBuffer.getTextureCoords() > 0) {
+        enableAttributeArray(PainterShaderProgram::TEXTURE_COORDS_ATTR);
+        setAttributeArray(PainterShaderProgram::TEXTURE_COORDS_ATTR, coordsBuffer.getTextureCoords(), 2);
+        mustDisableTexCoordsArray = true;
+    }
+
+    glDrawArrays(drawMode, 0, numVertices);
+
+    if(mustDisableVertexArray)
         disableAttributeArray(PainterShaderProgram::VERTEX_COORDS_ATTR);
-        m_mustDisableVertexArray = false;
-    }
+
+    if(mustDisableTexCoordsArray)
+        disableAttributeArray(PainterShaderProgram::TEXTURE_COORDS_ATTR);
 
     //release();
 }
+

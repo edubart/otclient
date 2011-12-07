@@ -36,30 +36,15 @@ void Painter::init()
     setOpacity(255);
     setCompositionMode(CompositionMode_SourceOver);
 
-    PainterShaderProgramPtr program = PainterShaderProgramPtr(new PainterShaderProgram);
-    program->addShaderFromSourceCode(Shader::Vertex, glslMainWithTexCoordsVertexShader + glslPositionOnlyVertexShader);
-    program->addShaderFromSourceCode(Shader::Fragment, glslMainFragmentShader + glslTextureSrcFragmentShader);
-    program->bindAttributeLocation(VERTEX_COORDS_ATTR, "vertexCoord");
-    program->bindAttributeLocation(TEXTURE_COORDS_ATTR, "textureCoord");
-    assert(program->link());
-    program->bindUniformLocation(PainterShaderProgram::PROJECTION_MATRIX_UNIFORM, "projectionMatrix");
-    program->bindUniformLocation(PainterShaderProgram::TEXTURE_TRANSFORM_MATRIX_UNIFORM, "textureTransformMatrix");
-    program->bindUniformLocation(PainterShaderProgram::COLOR_UNIFORM, "color");
-    program->bindUniformLocation(PainterShaderProgram::OPACITY_UNIFORM, "opacity");
-    program->bindUniformLocation(PainterShaderProgram::TEXTURE_UNIFORM, "texture");
-    program->bindUniformLocation(PainterShaderProgram::TICKS_UNIFORM, "ticks");
-    m_drawTexturedProgram = program;
+    m_drawTexturedProgram = PainterShaderProgramPtr(new PainterShaderProgram);
+    m_drawTexturedProgram->addShaderFromSourceCode(Shader::Vertex, glslMainWithTexCoordsVertexShader + glslPositionOnlyVertexShader);
+    m_drawTexturedProgram->addShaderFromSourceCode(Shader::Fragment, glslMainFragmentShader + glslTextureSrcFragmentShader);
+    assert(m_drawTexturedProgram->link());
 
-    program = PainterShaderProgramPtr(new PainterShaderProgram);
-    program->addShaderFromSourceCode(Shader::Vertex, glslMainVertexShader + glslPositionOnlyVertexShader);
-    program->addShaderFromSourceCode(Shader::Fragment, glslMainFragmentShader + glslSolidColorFragmentShader);
-    program->bindAttributeLocation(VERTEX_COORDS_ATTR, "vertexCoord");
-    assert(program->link());
-    program->bindUniformLocation(PainterShaderProgram::PROJECTION_MATRIX_UNIFORM, "projectionMatrix");
-    program->bindUniformLocation(PainterShaderProgram::COLOR_UNIFORM, "color");
-    program->bindUniformLocation(PainterShaderProgram::OPACITY_UNIFORM, "opacity");
-    program->bindUniformLocation(PainterShaderProgram::TICKS_UNIFORM, "ticks");
-    m_drawSolidColorProgram = program;
+    m_drawSolidColorProgram = PainterShaderProgramPtr(new PainterShaderProgram);
+    m_drawSolidColorProgram->addShaderFromSourceCode(Shader::Vertex, glslMainVertexShader + glslPositionOnlyVertexShader);
+    m_drawSolidColorProgram->addShaderFromSourceCode(Shader::Fragment, glslMainFragmentShader + glslSolidColorFragmentShader);
+    assert(m_drawSolidColorProgram->link());
 }
 
 void Painter::terminate()
@@ -97,38 +82,23 @@ void Painter::updateProjectionMatrix(const Size& viewportSize, bool inverseYAxis
     }
 }
 
-void Painter::drawCoords(CoordsBuffer& coordsBuffer)
+void Painter::drawProgram(const PainterShaderProgramPtr& program, CoordsBuffer& coordsBuffer, PainterShaderProgram::DrawMode drawMode)
 {
     coordsBuffer.cacheVertexArrays();
-
-    if(coordsBuffer.getVertexCount() < 3)
+    if(coordsBuffer.getVertexCount() == 0)
         return;
 
-    m_drawSolidColorProgram->prepareForDraw();
-    m_drawSolidColorProgram->setProjectionMatrix(m_projectionMatrix);
-    m_drawSolidColorProgram->setOpacity(m_currentOpacity);
-    m_drawSolidColorProgram->setColor(m_currentColor);
-    m_drawSolidColorProgram->setVertexCoords(coordsBuffer.getVertexCoords());
-    m_drawSolidColorProgram->drawTriangles(coordsBuffer.getVertexCount());
-    m_drawSolidColorProgram->releaseFromDraw();
+    program->setProjectionMatrix(m_projectionMatrix);
+    program->setOpacity(m_currentOpacity);
+    program->setColor(m_currentColor);
+    program->draw(coordsBuffer, drawMode);
 }
 
 void Painter::drawTextureCoords(CoordsBuffer& coordsBuffer, const TexturePtr& texture)
 {
-    coordsBuffer.cacheVertexArrays();
-
-    if(coordsBuffer.getVertexCount() < 3)
-        return;
-
-    m_drawTexturedProgram->prepareForDraw();
-    m_drawTexturedProgram->setProjectionMatrix(m_projectionMatrix);
-    m_drawTexturedProgram->setOpacity(m_currentOpacity);
-    m_drawTexturedProgram->setColor(m_currentColor);
-    m_drawTexturedProgram->setTexture(texture);
-    m_drawTexturedProgram->setVertexCoords(coordsBuffer.getVertexCoords());
-    m_drawTexturedProgram->setTextureCoords(coordsBuffer.getTextureCoords());
-    m_drawTexturedProgram->drawTriangles(coordsBuffer.getVertexCount());
-    m_drawTexturedProgram->releaseFromDraw();
+    PainterShaderProgramPtr program = m_customProgram ? m_customProgram : m_drawTexturedProgram;
+    program->setTexture(texture);
+    drawProgram(program, coordsBuffer);
 }
 
 void Painter::drawTexturedRect(const Rect& dest, const TexturePtr& texture)
@@ -163,7 +133,7 @@ void Painter::drawFilledRect(const Rect& dest)
 
     m_coordsBuffer.clear();
     m_coordsBuffer.addRect(dest);
-    drawCoords(m_coordsBuffer);
+    drawProgram(m_customProgram ? m_customProgram : m_drawSolidColorProgram, m_coordsBuffer);
 }
 
 void Painter::drawBoundingRect(const Rect& dest, int innerLineWidth)
@@ -173,7 +143,12 @@ void Painter::drawBoundingRect(const Rect& dest, int innerLineWidth)
 
     m_coordsBuffer.clear();
     m_coordsBuffer.addBoudingRect(dest, innerLineWidth);
-    drawCoords(m_coordsBuffer);
+    drawProgram(m_customProgram ? m_customProgram : m_drawSolidColorProgram, m_coordsBuffer);
+}
+
+void Painter::setCustomProgram(PainterShaderProgramPtr program)
+{
+    m_customProgram = program;
 }
 
 void Painter::setCompositionMode(Painter::CompositionMode compositionMode)

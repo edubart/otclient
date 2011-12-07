@@ -1,5 +1,40 @@
 uniform sampler2D texture;
 varying vec2 textureCoords;
+
+void main()
+{
+   vec4 sum = vec4(0);
+   vec2 texcoord = textureCoords;
+   int j;
+   int i;
+
+   for( i= -4 ;i < 4; i++)
+   {
+        for (j = -3; j < 3; j++)
+        {
+            sum += texture2D(texture, texcoord + vec2(j, i)*0.004) * 0.25;
+        }
+   }
+       if (texture2D(texture, texcoord).r < 0.3)
+    {
+       gl_FragColor = sum*sum*0.012 + texture2D(texture, texcoord);
+    }
+    else
+    {
+        if (texture2D(texture, texcoord).r < 0.5)
+        {
+            gl_FragColor = sum*sum*0.009 + texture2D(texture, texcoord);
+        }
+        else
+        {
+            gl_FragColor = sum*sum*0.0075 + texture2D(texture, texcoord);
+        }
+    }
+}
+
+/*
+uniform sampler2D texture;
+varying vec2 textureCoords;
 uniform vec4 color;
 uniform float opacity;
 
@@ -35,7 +70,7 @@ void main (void)
   vec2 uv = textureCoords.st;
   gl_FragColor = PostFX(texture, uv, ticks) * opacity;
 }
-
+*/
 /*
 uniform float opacity;
 vec4 calculatePixel();

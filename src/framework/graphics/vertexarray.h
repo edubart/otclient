@@ -57,7 +57,7 @@ public:
     }
 
     void clear() { m_buffer.reset(); }
-    GLfloat *vertexArray() const { return m_buffer.data(); }
+    GLfloat *vertices() const { return m_buffer.data(); }
     int vertexCount() const { return m_buffer.size() / 2; }
 
 private:

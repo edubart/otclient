@@ -24,10 +24,10 @@
 #define PAINTERSHADER_H
 
 #include "shaderprogram.h"
+#include "coordsbuffer.h"
 
 class PainterShaderProgram : public ShaderProgram
 {
-public:
     enum {
         VERTEX_COORDS_ATTR = 0,
         TEXTURE_COORDS_ATTR = 1,
@@ -38,22 +38,22 @@ public:
         TEXTURE_UNIFORM = 4,
         TICKS_UNIFORM = 5
     };
+public:
+    enum DrawMode {
+        Triangles = GL_TRIANGLES,
+        TriangleStrip = GL_TRIANGLE_STRIP
+    };
+
+    bool link();
 
     void setProjectionMatrix(GLfloat projectionMatrix[3][3]);
     void setColor(const Color& color);
     void setOpacity(GLfloat opacity);
     void setTexture(const TexturePtr& texture);
-    void setVertexCoords(const GLfloat *vertices);
-    void setTextureCoords(const GLfloat *textureCoords);
-
-    void prepareForDraw();
-    void drawTriangleStrip(int numVertices);
-    void drawTriangles(int numVertices);
-    void releaseFromDraw();
+    void draw(const CoordsBuffer& coordsBuffer, DrawMode drawMode = Triangles);
 
 private:
-    Boolean<false> m_mustDisableVertexArray;
-    Boolean<false> m_mustDisableTexCoordsArray;
+    DrawMode m_drawMode;
 };
 
 #endif

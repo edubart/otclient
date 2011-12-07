@@ -26,6 +26,7 @@
 #include "declarations.h"
 #include <framework/util/databuffer.h>
 #include "coordsbuffer.h"
+#include "paintershaderprogram.h"
 
 class Painter
 {
@@ -40,9 +41,8 @@ public:
 
     void updateProjectionMatrix(const Size& viewportSize, bool inverseYAxis = false);
 
-    void drawCoords(CoordsBuffer& coordsBuffer);
+    void drawProgram(const PainterShaderProgramPtr& program, CoordsBuffer& coordsBuffer, PainterShaderProgram::DrawMode drawMode = PainterShaderProgram::Triangles);
     void drawTextureCoords(CoordsBuffer& coordsBuffer, const TexturePtr& texture);
-
     void drawTexturedRect(const Rect& dest, const TexturePtr& texture);
     void drawTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src);
     void drawRepeatedTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src);
@@ -55,6 +55,8 @@ public:
     void setOpacity(int opacity) { m_currentOpacity = opacity / 255.0f; }
     int getOpacity() { return m_currentOpacity * 255.0f; }
 
+    void setCustomProgram(PainterShaderProgramPtr program);
+    void releaseCustomProgram() { m_customProgram = nullptr; }
     void setCompositionMode(CompositionMode compositionMode);
 
     GLfloat *getProjectionMatrix() { return (GLfloat*)m_projectionMatrix; }
@@ -62,6 +64,7 @@ public:
 private:
     PainterShaderProgramPtr m_drawTexturedProgram;
     PainterShaderProgramPtr m_drawSolidColorProgram;
+    PainterShaderProgramPtr m_customProgram;
     GLfloat m_projectionMatrix[3][3];
     Color m_currentColor;
     GLfloat m_currentOpacity;

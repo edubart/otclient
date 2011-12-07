@@ -39,7 +39,7 @@ public:
     bool addShaderFromSourceFile(Shader::ShaderType shaderType, const std::string& sourceFile);
     void removeShader(const ShaderPtr& shader);
     void removeAllShaders();
-    bool link();
+    virtual bool link();
     bool bind();
     void release();
     std::string log();

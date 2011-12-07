@@ -48,15 +48,7 @@ void Map::draw(const Rect& rect)
         program = PainterShaderProgramPtr(new PainterShaderProgram);
         program->addShaderFromSourceCode(Shader::Vertex, glslMainWithTexCoordsVertexShader + glslPositionOnlyVertexShader);
         program->addShaderFromSourceFile(Shader::Fragment, "/shadertest.frag");
-        program->bindAttributeLocation(VERTEX_COORDS_ATTR, "vertexCoord");
-        program->bindAttributeLocation(TEXTURE_COORDS_ATTR, "textureCoord");
         assert(program->link());
-        program->bindUniformLocation(PainterShaderProgram::PROJECTION_MATRIX_UNIFORM, "projectionMatrix");
-        program->bindUniformLocation(PainterShaderProgram::TEXTURE_TRANSFORM_MATRIX_UNIFORM, "textureTransformMatrix");
-        program->bindUniformLocation(PainterShaderProgram::COLOR_UNIFORM, "color");
-        program->bindUniformLocation(PainterShaderProgram::OPACITY_UNIFORM, "opacity");
-        program->bindUniformLocation(PainterShaderProgram::TEXTURE_UNIFORM, "texture");
-        program->bindUniformLocation(PainterShaderProgram::TICKS_UNIFORM, "ticks");
     }
 
     g_painter.setColor(Fw::white);
@@ -100,22 +92,11 @@ void Map::draw(const Rect& rect)
 
     m_framebuffer->release();
 
-    //g_painter.setColor(Fw::white);
-    //m_framebuffer->draw(rect);
 
-
-    CoordsBuffer coordsBuffer;
-    coordsBuffer.addRect(rect, Rect(0,0,m_framebuffer->getTexture()->getSize()));
-    coordsBuffer.cacheVertexArrays();
-    program->prepareForDraw();
-    program->setProjectionMatrix((GLfloat (*)[3])g_painter.getProjectionMatrix());
-    program->setOpacity(1.0f);
-    program->setColor(Fw::white);
-    program->setTexture(m_framebuffer->getTexture());
-    program->setVertexCoords(coordsBuffer.getVertexCoords());
-    program->setTextureCoords(coordsBuffer.getTextureCoords());
-    program->drawTriangles(coordsBuffer.getVertexCount());
-    program->releaseFromDraw();
+    g_painter.setCustomProgram(program);
+    g_painter.setColor(Fw::white);
+    m_framebuffer->draw(rect);
+    g_painter.releaseCustomProgram();
 
     // calculate stretch factor
     float horizontalStretchFactor = rect.width() / (float)(m_visibleSize.width() * NUM_TILE_PIXELS);
