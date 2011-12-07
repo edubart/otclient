@@ -31,6 +31,7 @@
 #include <framework/ui/uimanager.h>
 #include <framework/ui/uiwidget.h>
 #include <framework/graphics/graphics.h>
+#include <framework/graphics/particlesmanager.h>
 #include <framework/luascript/luainterface.h>
 
 Application *g_app = nullptr;
@@ -207,12 +208,16 @@ void Application::poll()
 
     // poll application genareted events
     g_dispatcher.poll();
+
+    g_particlesManager.update();
 }
 
 void Application::render()
 {
     // everything is rendered by UI components
     g_ui.render();
+
+    g_particlesManager.render();
 }
 
 void Application::resize(const Size& size)
