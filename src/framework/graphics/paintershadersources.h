@@ -36,10 +36,10 @@ static const std::string glslMainVertexShader = "\n\
     }\n";
 
 static const std::string glslMainWithTexCoordsVertexShader = "\n\
-    attribute vec2 textureCoord;\n\
-    uniform mat2 textureTransformMatrix;\n\
-    varying vec2 textureCoords;\n\
-    vec4 calculatePosition();\n\
+    attribute highp vec2 textureCoord;\n\
+    uniform highp mat2 textureTransformMatrix;\n\
+    varying highp vec2 textureCoords;\n\
+    highp vec4 calculatePosition();\n\
     void main()\n\
     {\n\
         gl_Position = calculatePosition();\n\
@@ -47,9 +47,9 @@ static const std::string glslMainWithTexCoordsVertexShader = "\n\
     }\n";
 
 static std::string glslPositionOnlyVertexShader = "\n\
-    attribute vec2 vertexCoord;\n\
-    uniform mat3 projectionMatrix;\n\
-    vec4 calculatePosition() {\n\
+    attribute highp vec2 vertexCoord;\n\
+    uniform highp mat3 projectionMatrix;\n\
+    highp vec4 calculatePosition() {\n\
         return vec4(projectionMatrix * vec3(vertexCoord.xy, 1), 1);\n\
     }\n";
 
@@ -65,12 +65,12 @@ static const std::string glslTextureSrcFragmentShader = "\n\
     varying mediump vec2 textureCoords;\n\
     uniform lowp vec4 color;\n\
     uniform sampler2D texture;\n\
-    vec4 calculatePixel() {\n\
+    lowp vec4 calculatePixel() {\n\
         return texture2D(texture, textureCoords) * color;\n\
     }\n";
 
 static const std::string glslSolidColorFragmentShader = "\n\
     uniform lowp vec4 color;\n\
-    vec4 calculatePixel() {\n\
+    lowp vec4 calculatePixel() {\n\
         return color;\n\
     }\n";
