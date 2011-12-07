@@ -30,6 +30,8 @@
 #include <sstream>
 #include <exception>
 #include <cxxabi.h>
+#include <vector>
+#include <boost/algorithm/string.hpp>
 #include "types.h"
 #include "exception.h"
 
@@ -256,6 +258,16 @@ inline std::string ip2str(uint32 ip) {
     char host[16];
     sprintf(host, "%d.%d.%d.%d", (uint8)ip, (uint8)(ip >> 8), (uint8)(ip >> 16), (uint8)(ip >> 24));
     return std::string(host);
+}
+
+template<typename T = std::string>
+std::vector<T> split(const std::string& str, const std::string& separators = " ") {
+    std::vector<std::string> splitted;
+    boost::split(splitted, str, boost::is_any_of(std::string(separators)));
+    std::vector<T> results(splitted.size());
+    for(uint i=0;i<splitted.size();++i)
+        results[i] = Fw::safeCast<T>(splitted[i]);
+    return results;
 }
 
 template<typename... T>

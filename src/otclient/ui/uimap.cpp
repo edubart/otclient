@@ -35,8 +35,8 @@ void UIMap::render()
 {
     renderSelf();
 
-    g_graphics.bindColor(Fw::black);
-    g_graphics.drawBoundingRect(m_mapRect.expanded(1));
+    g_painter.setColor(Fw::black);
+    g_painter.drawBoundingRect(m_mapRect.expanded(1));
     g_map.draw(m_mapRect);
 
     renderChildren();
@@ -78,6 +78,6 @@ void UIMap::onGeometryUpdate(const Rect& oldRect, const Rect& newRect)
     Size mapSize(g_map.getVibibleSize().width() * Map::NUM_TILE_PIXELS, g_map.getVibibleSize().height() * Map::NUM_TILE_PIXELS);
     mapSize.scale(mapRect.size(), Fw::KeepAspectRatio);
 
-    m_mapRect.setSize(mapSize);
+    m_mapRect.resize(mapSize);
     m_mapRect.moveCenter(newRect.center());
 }

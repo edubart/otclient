@@ -20,41 +20,32 @@
  * THE SOFTWARE.
  */
 
-#ifndef TEXTURE_H
-#define TEXTURE_H
+#ifndef SHADER_H
+#define SHADER_H
 
 #include "declarations.h"
 
-class Texture : public std::enable_shared_from_this<Texture>
+class Shader
 {
 public:
-    /// Create a texture, width and height must be a multiple of 2
-    Texture();
-    Texture(int width, int height, int channels, uchar* pixels = NULL);
-    virtual ~Texture();
+    enum ShaderType {
+        Vertex,
+        Fragment
+    };
 
-    /// Enable texture bilinear filter (smooth scaled textures)
-    virtual void enableBilinearFilter();
+    Shader(ShaderType shaderType);
+    ~Shader();
 
-    /// Get OpenGL texture id
-    GLuint getId()  { return m_textureId; }
+    bool compileSourceCode(const std::string& sourceCode);
+    bool compileSourceFile(const std::string& sourceFile);
+    std::string log();
 
-    /// Copy pixels from OpenGL texture
-    std::vector<uint8> getPixels();
+    GLuint getShaderId() { return m_shaderId; }
+    ShaderType getShaderType() { return m_shaderType; }
 
-    int getWidth() { return m_size.width(); }
-    int getHeight() { return m_size.height(); }
-    const Size& getSize() { return m_size; }
-    const Size& getGlSize() { return m_glSize; }
-
-    bool isEmpty() const { return m_textureId == 0; }
-
-protected:
-    GLuint internalLoadGLTexture(uchar* pixels, int channels, int w, int h);
-
-    GLuint m_textureId;
-    Size m_size;
-    Size m_glSize;
+private:
+    GLuint m_shaderId;
+    ShaderType m_shaderType;
 };
 
 #endif

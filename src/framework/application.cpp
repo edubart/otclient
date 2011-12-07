@@ -31,7 +31,9 @@
 #include <framework/ui/uimanager.h>
 #include <framework/ui/uiwidget.h>
 #include <framework/graphics/graphics.h>
+#include <framework/graphics/painter.h>
 #include <framework/luascript/luainterface.h>
+#include <../../oglrenderer/graphics/painter.h>
 
 Application *g_app = nullptr;
 
@@ -134,7 +136,6 @@ void Application::terminate()
     // terminate graphics
     if(m_appFlags & Fw::AppEnableGraphics) {
         g_ui.terminate();
-        g_graphics.terminate();
         g_window.terminate();
     }
 
@@ -217,8 +218,8 @@ void Application::render()
 
 void Application::resize(const Size& size)
 {
-    g_graphics.resize(size);
     g_ui.resize(size);
+    g_graphics.resize(size);
 }
 
 void Application::inputEvent(const InputEvent& event)

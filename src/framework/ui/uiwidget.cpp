@@ -69,7 +69,7 @@ void UIWidget::renderSelf()
 {
     // draw background
     if(m_image) {
-        g_graphics.bindColor(m_backgroundColor);
+        g_painter.setColor(m_backgroundColor);
         m_image->draw(m_rect);
     }
 }
@@ -81,20 +81,20 @@ void UIWidget::renderChildren()
         // render only visible children with a valid rect inside our rect
         if(child->isExplicitlyVisible() && child->getRect().isValid() && child->getRect().intersects(m_rect)) {
             // store current graphics opacity
-            int oldOpacity = g_graphics.getOpacity();
+            int oldOpacity = g_painter.getOpacity();
 
             // decrease to self opacity
             if(child->getOpacity() < oldOpacity)
-                g_graphics.setOpacity(child->getOpacity());
+                g_painter.setOpacity(child->getOpacity());
 
             child->render();
 
             // debug draw box
-            //g_graphics.bindColor(Fw::green);
-            //g_graphics.drawBoundingRect(child->getRect());
+            //g_painter.setColor(Fw::green);
+            //g_painter.drawBoundingRect(child->getRect());
             //g_fonts.getDefaultFont()->renderText(child->getId(), child->getPosition() + Point(2, 0), Fw::red);
 
-            g_graphics.setOpacity(oldOpacity);
+            g_painter.setOpacity(oldOpacity);
         }
     }
 }

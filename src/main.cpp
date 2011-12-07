@@ -25,9 +25,9 @@
 int main(int argc, const char* argv[])
 {
     std::vector<std::string> args(argv, argv + argc);
-    OTClient otclient;
-    otclient.init(args);
-    otclient.run();
-    otclient.terminate();
+    OTClient app;
+    app.init(args);
+    app.run();
+    app.terminate();
     return 0;
 }

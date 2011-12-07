@@ -1,7 +1,7 @@
 function table.dump(t, depth)
   if not depth then depth = 0 end
   for k,v in pairs(t) do
-    str = string.rep(' ', depth * 2) .. k .. ': '
+    str = (' '):rep(depth * 2) .. k .. ': '
     if type(v) ~= "table" then
       print(str .. tostring(v))
     else

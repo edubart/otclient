@@ -35,14 +35,14 @@ void UIProgressBar::render()
 {
     UIWidget::render();
 
-    g_graphics.bindColor(m_foregroundColor);
-    g_graphics.drawBoundingRect(m_rect, 1);
+    g_painter.setColor(m_foregroundColor);
+    g_painter.drawBoundingRect(m_rect, 1);
 
     Rect fillRect = m_rect.expanded(-1);
     fillRect.setWidth(fillRect.width() * m_percent / 100.0);
 
-    g_graphics.bindColor(m_backgroundColor);
-    g_graphics.drawFilledRect(fillRect);
+    g_painter.setColor(m_backgroundColor);
+    g_painter.drawFilledRect(fillRect);
 }
 
 void UIProgressBar::setPercent(double percent)

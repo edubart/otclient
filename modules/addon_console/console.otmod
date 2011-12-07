@@ -8,11 +8,9 @@ Module
   autoLoad: true
   autoLoadPriority: 20
 
-  dependencies:
-    - core
-
   onLoad: |
     require 'console'
+    require 'commands'
     Console.init()
     return true
 

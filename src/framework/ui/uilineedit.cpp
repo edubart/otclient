@@ -47,9 +47,9 @@ void UILineEdit::render()
     int textLength = m_text.length();
     const TexturePtr& texture = m_font->getTexture();
 
-    g_graphics.bindColor(m_foregroundColor);
+    g_painter.setColor(m_foregroundColor);
     for(int i=0;i<textLength;++i)
-        g_graphics.drawTexturedRect(m_glyphsCoords[i], texture, m_glyphsTexCoords[i]);
+        g_painter.drawTexturedRect(m_glyphsCoords[i], texture, m_glyphsTexCoords[i]);
 
     // render cursor
     if(isExplicitlyEnabled() && (isActive() || m_alwaysActive) && m_cursorPos >= 0) {
@@ -63,7 +63,7 @@ void UILineEdit::render()
                 cursorRect = Rect(m_drawArea.left()-1, m_drawArea.top(), 1, m_font->getGlyphHeight());
             else
                 cursorRect = Rect(m_glyphsCoords[m_cursorPos-1].right(), m_glyphsCoords[m_cursorPos-1].top(), 1, m_font->getGlyphHeight());
-            g_graphics.drawFilledRect(cursorRect);
+            g_painter.drawFilledRect(cursorRect);
         } else if(g_clock.ticksElapsed(m_cursorTicks) >= 2*delay) {
             m_cursorTicks = g_clock.ticks();
         }

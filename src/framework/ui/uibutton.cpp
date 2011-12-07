@@ -40,9 +40,9 @@ void UIButton::render()
 
     if(m_icon) {
         Rect iconRect;
-        iconRect.setSize(m_icon->getSize());
+        iconRect.resize(m_icon->getSize());
         iconRect.moveCenter(m_rect.center());
-        g_graphics.drawTexturedRect(iconRect, m_icon);
+        g_painter.drawTexturedRect(iconRect, m_icon);
     }
 
     Rect textRect = m_rect;

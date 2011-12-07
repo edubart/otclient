@@ -1,43 +1,33 @@
 local eventId = 0
-local eventsTable = { }
-local orig = { scheduleEvent = scheduleEvent,
-               addEvent = addEvent }
+local eventList = {}
 
--- fix original scheduleEvent
 function scheduleEvent(func, delay)
   eventId = eventId + 1
   local id = eventId
   local function proxyFunc()
-    if eventsTable[id] then
-      func()
-      eventsTable[id] = nil
+    if eventList[id] then
+      if eventList[id].active then
+        func()
+      end
+      eventList[id] = nil
     end
   end
-  eventsTable[id] = proxyFunc
-  orig.scheduleEvent(proxyFunc, delay)
+  eventList[id] = { func = proxyFunc, active = true }
+  if delay and delay > 0 then
+    g_dispatcher.scheduleEvent(proxyFunc, delay)
+  else
+    g_dispatcher.addEvent(proxyFunc, false)
+  end
   return id
 end
 
--- FIXME: the event function can be collected
--- and the dispatcher would call an invalid function, generating an warning
+function addEvent(func)
+  return scheduleEvent(func, 0)
+end
+
 function removeEvent(id)
-  if id and eventsTable[id] then
-    eventsTable[id] = nil
+  if id and eventList[id] then
+    eventList[id].active = false
     return true
   end
-end
-
--- fix original addEvent
-function addEvent(func)
-  eventId = eventId + 1
-  local id = eventId
-  local function proxyFunc()
-    if eventsTable[id] then
-      func()
-      eventsTable[id] = nil
-    end
-  end
-  eventsTable[id] = proxyFunc
-  orig.addEvent(proxyFunc)
-  return id
 end

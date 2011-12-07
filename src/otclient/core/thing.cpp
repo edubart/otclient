@@ -55,7 +55,7 @@ void Thing::internalDraw(const Point& p, int layers, Otc::SpriteMask mask)
             Rect drawRect((p.x - xi*32) - m_type->parameters[ThingType::DisplacementX],
                           (p.y - yi*32) - m_type->parameters[ThingType::DisplacementY],
                           32, 32);
-            g_graphics.drawTexturedRect(drawRect, spriteTex);
+            g_painter.drawTexturedRect(drawRect, spriteTex);
         }
     }
 }

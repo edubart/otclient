@@ -43,7 +43,7 @@ public:
     int width() const { return wd; }
     int height() const { return ht; }
 
-    void setSize(T w, T h) { wd = w; ht = h; }
+    void resize(T w, T h) { wd = w; ht = h; }
     void setWidth(T w) { wd = w; }
     void setHeight(T h) { ht = h; }
 
@@ -115,7 +115,7 @@ std::istream& operator>>(std::istream& in, TSize<T>& size)
 {
     T w, h;
     in >> w >> h;
-    size.setSize(w, h);
+    size.resize(w, h);
     return in;
 }
 

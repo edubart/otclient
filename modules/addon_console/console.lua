@@ -34,7 +34,7 @@ local function completeCommand()
   local cursorPos = commandLineEdit:getCursorPos()
   if cursorPos == 0 then return end
 
-  local commandBegin = string.sub(commandLineEdit:getText(), 1, cursorPos)
+  local commandBegin = commandLineEdit:getText():sub(1, cursorPos)
   local possibleCommands = {}
 
   -- create a list containing all globals
@@ -43,7 +43,7 @@ local function completeCommand()
 
   -- match commands
   for k,v in pairs(allVars) do
-    if string.sub(k, 1, cursorPos) == commandBegin then
+    if k:sub(1, cursorPos) == commandBegin then
       table.insert(possibleCommands, k)
     end
   end
@@ -63,9 +63,9 @@ local function completeCommand()
       if #possibleCommands[1] < cursorPos then
         break
       end
-      expandedComplete = commandBegin .. string.sub(possibleCommands[1], cursorPos, cursorPos)
+      expandedComplete = commandBegin .. possibleCommands[1]:sub(cursorPos, cursorPos)
       for i,v in ipairs(possibleCommands) do
-        if string.sub(v, 1, #expandedComplete) ~= expandedComplete then
+        if v:sub(1, #expandedComplete) ~= expandedComplete then
           done = true
         end
       end

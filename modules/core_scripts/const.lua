@@ -1,4 +1,3 @@
--- AnchorEdge
 AnchorNone = 0
 AnchorTop = 1
 AnchorBottom = 2
@@ -15,9 +14,6 @@ LogFatal = 4
 
 ActiveFocusReason = 2
 
-EmptyFunction = function() end
-
--- KeyCodes
 KeyUnknown = 0
 KeyEscape = 1
 KeyTab = 2
@@ -57,7 +53,7 @@ KeyLeftParen = 40    -- (
 KeyRightParen = 41   -- )
 KeyAsterisk = 42     -- *
 KeyPlus = 43         -- +
-KeyComma = 44        --
+KeyComma = 44        -- ,
 KeyMinus = 45        -- -
 KeyPeriod = 46       -- .
 KeySlash = 47        -- /

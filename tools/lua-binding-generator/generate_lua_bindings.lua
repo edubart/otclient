@@ -15,16 +15,16 @@ if not io.open(cppclassheader, 'r') then
   return false
 end
 
-function string.matchcount(str, pattern)
+function string:matchcount(pattern)
   local count = 0
-  for w in str:gmatch(pattern) do count = count + 1 end
+  for w in self:gmatch(pattern) do count = count + 1 end
   return count
 end
 
-function string.splitlines(str)
+function string:splitlines()
   local t = {}
   local function helper(line) table.insert(t, line) return "" end
-  helper((str:gsub("(.-)\r?\n", helper)))
+  helper((self:gsub("(.-)\r?\n", helper)))
   return t
 end
 
@@ -34,7 +34,7 @@ for line in io.lines(cppclassheader) do
   foundclassname = line:match('^class ([%w_]+)')
   if foundclassname then
     if not cppclassname then
-      guessedclassname = cppclassheader:match('([%w_]+).h'):lower()
+      guessedclassname = cppclassheader:match('([%w_]+)\.h$'):lower()
       if foundclassname:lower() == guessedclassname then
         cppclassname = foundclassname
       end
@@ -69,8 +69,9 @@ for line in io.lines(cppclassheader) do
     elseif line:match('private:') or line:match('protected:') then
       publicmethods = false
     elseif publicmethods then
-      for funcname,args in line:gmatch(' *[%w :_]* ([%w_]+)%(([^%(]*%)) *[;{].*$') do
-        if funcname ~= cppclassname then
+      funcname, args = line:match('^ *[%w <>&\*:_]* ([%w_]+)%(([^%)]*%))[%w ]*[;{].*$')
+      if funcname then
+        if funcname ~= cppclassname and funcname ~= 'create' then
           numargs = args:matchcount('[^,)]+[,)]')
 
           if cppclassinstance then

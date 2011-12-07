@@ -32,8 +32,8 @@ public:
     virtual ~FrameBuffer();
 
     void bind();
-    void unbind();
-    void draw(const Rect& screenCoords, const Rect& framebufferCoords = Rect());
+    void release();
+    void draw(const Rect& dest);
 
     TexturePtr getTexture() { return m_texture; }
 

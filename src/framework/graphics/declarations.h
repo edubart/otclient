@@ -32,6 +32,9 @@ class Font;
 class Image;
 class BorderImage;
 class FrameBuffer;
+class Shader;
+class ShaderProgram;
+class PainterShaderProgram;
 
 typedef std::weak_ptr<Texture> TextureWeakPtr;
 
@@ -41,5 +44,9 @@ typedef std::shared_ptr<Font> FontPtr;
 typedef std::shared_ptr<Image> ImagePtr;
 typedef std::shared_ptr<BorderImage> BorderImagePtr;
 typedef std::shared_ptr<FrameBuffer> FrameBufferPtr;
+typedef std::shared_ptr<Shader> ShaderPtr;
+typedef std::shared_ptr<ShaderProgram> ShaderProgramPtr;
+typedef std::shared_ptr<PainterShaderProgram> PainterShaderProgramPtr;
+typedef std::vector<ShaderPtr> ShaderList;
 
 #endif

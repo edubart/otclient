@@ -36,6 +36,5 @@ void OTClient::init(const std::vector<std::string>& args)
     g_modules.discoverModules();
     g_modules.autoLoadModules(100);
     g_modules.ensureModuleLoaded("client");
-    g_modules.ensureModuleLoaded("game");
     g_modules.autoLoadModules(1000);
 }

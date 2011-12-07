@@ -340,7 +340,7 @@ void X11Window::internalChooseGLVisual()
     m_rootWindow = RootWindow(m_display, m_visual->screen);
 #else
     static int attrList[] = {
-        EGL_BUFFER_SIZE, 16,
+        EGL_BUFFER_SIZE, 24,
         EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
         EGL_NONE
     };

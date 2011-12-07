@@ -13,12 +13,12 @@ function string:starts(start)
   return self:sub(1, #start) == start
 end
 
-function string.trim(str)
-  return str:match'^%s*(.*%S)' or ''
+function string:trim()
+  return self:match('^%s*(.*%S)') or ''
 end
 
 function toboolean(str)
-  str = string.trim(str)
+  str = str:trim()
   if str == '1' or str == 'true' then
     return true
   end

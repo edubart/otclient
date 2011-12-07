@@ -7,10 +7,14 @@ Module
   onLoad: |
     require 'ext/table'
     require 'ext/string'
-    require 'constants'
+    require 'util/point'
+    require 'util/size'
+    require 'util/color'
+    require 'util/rect'
+    require 'const'
     require 'util'
     require 'dispatcher'
     require 'widget'
     require 'ui'
-    require 'gfx'
+    require 'effects'
     return true

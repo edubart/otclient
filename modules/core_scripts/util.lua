@@ -6,10 +6,8 @@ function print(...)
   Logger.log(LogInfo, msg)
 end
 
-function createEnvironment()
-  local env = { }
-  setmetatable(env, { __index = _G} )
-  return env
+function fatal(msg)
+  Logger.log(LogFatal, msg)
 end
 
 function connect(object, signalsAndSlots, pushFront)
@@ -28,10 +26,10 @@ function connect(object, signalsAndSlots, pushFront)
   end
 end
 
-function dumpWidgets()
-  for i=1,UI.root:getChildCount() do
-    print(UI.root:getChildByIndex(i):getId())
-  end
+function createEnvironment()
+  local env = { }
+  setmetatable(env, { __index = _G} )
+  return env
 end
 
 function getCallingScriptSourcePath(depth)

@@ -34,7 +34,7 @@ void UIItem::render()
     renderSelf();
 
     if(m_item) {
-        g_graphics.bindColor(Fw::white);
+        g_painter.setColor(Fw::white);
         m_item->draw(m_rect.bottomRight() - Point(32, 32) + m_itemMargin);
     }
 

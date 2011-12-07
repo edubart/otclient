@@ -20,41 +20,38 @@
  * THE SOFTWARE.
  */
 
-#ifndef TEXTURE_H
-#define TEXTURE_H
+#ifndef PAINTERSHADER_H
+#define PAINTERSHADER_H
 
-#include "declarations.h"
+#include "shaderprogram.h"
 
-class Texture : public std::enable_shared_from_this<Texture>
+class PainterShaderProgram : public ShaderProgram
 {
 public:
-    /// Create a texture, width and height must be a multiple of 2
-    Texture();
-    Texture(int width, int height, int channels, uchar* pixels = NULL);
-    virtual ~Texture();
+    enum {
+        VERTEX_COORDS_ATTR = 0,
+        TEXTURE_COORDS_ATTR = 1,
+        PROJECTION_MATRIX_UNIFORM = 0,
+        TEXTURE_TRANSFORM_MATRIX_UNIFORM = 1,
+        COLOR_UNIFORM = 2,
+        OPACITY_UNIFORM = 3,
+        TEXTURE_UNIFORM = 4
+    };
 
-    /// Enable texture bilinear filter (smooth scaled textures)
-    virtual void enableBilinearFilter();
+    void setProjectionMatrix(GLfloat projectionMatrix[3][3]);
+    void setColor(const Color& color);
+    void setOpacity(GLfloat opacity);
+    void setTexture(const TexturePtr& texture);
+    void setVertexCoords(const GLfloat *vertices);
+    void setTextureCoords(const GLfloat *textureCoords);
 
-    /// Get OpenGL texture id
-    GLuint getId()  { return m_textureId; }
+    void prepareForDraw();
+    void drawTriangleStrip(int numVertices);
+    void releaseFromDraw();
 
-    /// Copy pixels from OpenGL texture
-    std::vector<uint8> getPixels();
-
-    int getWidth() { return m_size.width(); }
-    int getHeight() { return m_size.height(); }
-    const Size& getSize() { return m_size; }
-    const Size& getGlSize() { return m_glSize; }
-
-    bool isEmpty() const { return m_textureId == 0; }
-
-protected:
-    GLuint internalLoadGLTexture(uchar* pixels, int channels, int w, int h);
-
-    GLuint m_textureId;
-    Size m_size;
-    Size m_glSize;
+private:
+    Boolean<false> m_mustDisableVertexArray;
+    Boolean<false> m_mustDisableTexCoordsArray;
 };
 
 #endif

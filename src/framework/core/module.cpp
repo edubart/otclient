@@ -79,15 +79,13 @@ bool Module::load()
         }
     }
 
-    if(m_loadCallback) {
-        m_loaded = m_loadCallback();
-        if(!m_loaded) {
-            logError("Unable to load module '", m_name, "' because its onLoad event returned false");
-            return false;
-        }
+    if(m_loadCallback && !m_loadCallback()) {
+        logError("Unable to load module '", m_name, "' because its onLoad event returned false");
+        return false;
     }
 
     logInfo("Loaded module '", m_name, "'");
+    m_loaded = true;
     return true;
 }
 

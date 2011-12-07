@@ -64,7 +64,7 @@ void Font::renderText(const std::string& text,
                       const Point& startPos,
                       const Color& color)
 {
-    Size boxSize = g_graphics.getScreenSize() - startPos.toSize();
+    Size boxSize = g_graphics.getViewportSize() - startPos.toSize();
     Rect screenCoords(startPos, boxSize);
     renderText(text, screenCoords, Fw::AlignTopLeft, color);
 }
@@ -85,9 +85,7 @@ void Font::renderText(const std::string& text,
     Size textBoxSize;
     const std::vector<Point>& glyphsPositions = calculateGlyphsPositions(text, align, &textBoxSize);
 
-    g_graphics.bindColor(color);
-    g_graphics.bindTexture(m_texture);
-    g_graphics.startDrawing();
+    g_painter.setColor(color);
 
     for(int i = 0; i < textLenght; ++i) {
         int glyph = (uchar)text[i];
@@ -149,10 +147,8 @@ void Font::renderText(const std::string& text,
         }
 
         // render glyph
-        g_graphics.drawTexturedRect(glyphScreenCoords, m_texture, glyphTextureCoords);
+        g_painter.drawTexturedRect(glyphScreenCoords, m_texture, glyphTextureCoords);
     }
-
-    g_graphics.stopDrawing();
 }
 
 const std::vector<Point>& Font::calculateGlyphsPositions(const std::string& text,
@@ -172,7 +168,7 @@ const std::vector<Point>& Font::calculateGlyphsPositions(const std::string& text
     // return if there is no text
     if(textLength == 0) {
         if(textBoxSize)
-            textBoxSize->setSize(0,m_glyphHeight);
+            textBoxSize->resize(0,m_glyphHeight);
         return glyphsPositions;
     }
 
@@ -280,6 +276,6 @@ void Font::calculateGlyphsWidthsAutomatically(const Size& glyphSize)
             lastColumnFilledPixels = columnFilledPixels;
         }
         // store glyph size
-        m_glyphsSize[glyph].setSize(width, m_glyphHeight);
+        m_glyphsSize[glyph].resize(width, m_glyphHeight);
     }
 }

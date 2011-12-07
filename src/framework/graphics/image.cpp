@@ -63,12 +63,12 @@ void Image::draw(const Rect& screenCoords)
             else if(texSize.width() > texCoordsSize.width())
                 texCoordsOffset.x = (texSize.width() - texCoordsSize.width())/2;
 
-            g_graphics.drawTexturedRect(screenCoords, m_texture, Rect(texCoordsOffset, texCoordsSize));
+            g_painter.drawTexturedRect(screenCoords, m_texture, Rect(texCoordsOffset, texCoordsSize));
         } else {
             if(m_repeated)
-                g_graphics.drawRepeatedTexturedRect(screenCoords, m_texture, m_textureCoords);
+                g_painter.drawRepeatedTexturedRect(screenCoords, m_texture, m_textureCoords);
             else
-                g_graphics.drawTexturedRect(screenCoords, m_texture, m_textureCoords);
+                g_painter.drawTexturedRect(screenCoords, m_texture, m_textureCoords);
         }
     }
 }

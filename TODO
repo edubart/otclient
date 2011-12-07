@@ -14,11 +14,10 @@ fix moving windows and tooltips conflicts
 todo display otclient icon in window bar
 remake otui styles states system
 padding
-
+break UILabel lines
 
 rename Game to g_game, etc
 implement Console key binding
-fatal error if sprite load fails
 impl vertical sync, clipboard
 crash handler
 modify COnnection::poll()
@@ -30,3 +29,6 @@ use metatable for Point,Rect,Color,Size lua classes
 lua binder generator
 restore win32 platform
 set special types for g_configs like lists/point/size
+restore ctrl+g and keybindings
+create a class for reading binary files
+handle corrupt errors in dat/spr

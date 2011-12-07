@@ -20,41 +20,45 @@
  * THE SOFTWARE.
  */
 
-#ifndef TEXTURE_H
-#define TEXTURE_H
+#ifndef PAINTER_H
+#define PAINTER_H
 
 #include "declarations.h"
 
-class Texture : public std::enable_shared_from_this<Texture>
+class Painter
 {
 public:
-    /// Create a texture, width and height must be a multiple of 2
-    Texture();
-    Texture(int width, int height, int channels, uchar* pixels = NULL);
-    virtual ~Texture();
+    enum CompositionMode {
+        CompositionMode_SourceOver,
+        CompositionMode_ColorizeDest
+    };
 
-    /// Enable texture bilinear filter (smooth scaled textures)
-    virtual void enableBilinearFilter();
+    void init();
+    void terminate();
 
-    /// Get OpenGL texture id
-    GLuint getId()  { return m_textureId; }
+    void updateProjectionMatrix(const Size& viewportSize, bool inverseYAxis = false);
+    void drawTexturedRect(const Rect& dest, const TexturePtr& texture);
+    void drawTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src);
+    void drawRepeatedTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src);
+    void drawFilledRect(const Rect& dest);
+    void drawBoundingRect(const Rect& dest, int innerLineWidth = 1);
 
-    /// Copy pixels from OpenGL texture
-    std::vector<uint8> getPixels();
+    void setColor(const Color& color) { m_currentColor = color; }
+    Color getColor() { return m_currentColor; }
 
-    int getWidth() { return m_size.width(); }
-    int getHeight() { return m_size.height(); }
-    const Size& getSize() { return m_size; }
-    const Size& getGlSize() { return m_glSize; }
+    void setOpacity(int opacity) { m_currentOpacity = opacity / 255.0f; }
+    int getOpacity() { return m_currentOpacity * 255.0f; }
 
-    bool isEmpty() const { return m_textureId == 0; }
+    void setCompositionMode(CompositionMode compositionMode);
 
-protected:
-    GLuint internalLoadGLTexture(uchar* pixels, int channels, int w, int h);
-
-    GLuint m_textureId;
-    Size m_size;
-    Size m_glSize;
+private:
+    PainterShaderProgramPtr m_drawTexturedProgram;
+    PainterShaderProgramPtr m_drawSolidColorProgram;
+    GLfloat m_projectionMatrix[3][3];
+    Color m_currentColor;
+    GLfloat m_currentOpacity;
 };
+
+extern Painter g_painter;
 
 #endif

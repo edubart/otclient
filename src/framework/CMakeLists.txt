@@ -135,6 +135,7 @@ SET(framework_SOURCES ${framework_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/graphics/font.cpp
     ${CMAKE_CURRENT_LIST_DIR}/graphics/fontmanager.cpp
     ${CMAKE_CURRENT_LIST_DIR}/graphics/graphics.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/graphics/painter.cpp
     ${CMAKE_CURRENT_LIST_DIR}/graphics/texture.cpp
     ${CMAKE_CURRENT_LIST_DIR}/graphics/framebuffer.cpp
     ${CMAKE_CURRENT_LIST_DIR}/graphics/animatedtexture.cpp
@@ -142,6 +143,9 @@ SET(framework_SOURCES ${framework_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/graphics/texturemanager.cpp
     ${CMAKE_CURRENT_LIST_DIR}/graphics/borderimage.cpp
     ${CMAKE_CURRENT_LIST_DIR}/graphics/image.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/graphics/shader.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/graphics/shaderprogram.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/graphics/paintershaderprogram.cpp
 
     # framework otml
     ${CMAKE_CURRENT_LIST_DIR}/otml/otmldocument.cpp

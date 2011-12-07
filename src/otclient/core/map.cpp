@@ -41,7 +41,7 @@ void Map::draw(const Rect& rect)
     if(!m_framebuffer)
         m_framebuffer = FrameBufferPtr(new FrameBuffer(m_visibleSize.width() * NUM_TILE_PIXELS, m_visibleSize.height() * NUM_TILE_PIXELS));
 
-    g_graphics.bindColor(Fw::white);
+    g_painter.setColor(Fw::white);
     m_framebuffer->bind();
 
     // draw offsets
@@ -80,9 +80,9 @@ void Map::draw(const Rect& rect)
         }
     }
 
-    m_framebuffer->unbind();
+    m_framebuffer->release();
 
-    g_graphics.bindColor(Fw::white);
+    g_painter.setColor(Fw::white);
     m_framebuffer->draw(rect);
 
     // calculate stretch factor

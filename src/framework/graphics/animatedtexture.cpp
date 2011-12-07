@@ -29,7 +29,7 @@ AnimatedTexture::AnimatedTexture(int width, int height, int channels, int numFra
     Texture(),
     m_numFrames(numFrames)
 {
-    m_size.setSize(width, height);
+    m_size.resize(width, height);
 
     m_framesTextureId.resize(numFrames);
     m_framesDelay.resize(numFrames);

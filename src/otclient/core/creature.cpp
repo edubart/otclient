@@ -47,8 +47,8 @@ void Creature::draw(const Point& p)
 {
     // TODO: activate on attack, follow, discover how 'attacked' works
     if(m_showSquareColor) {
-        g_graphics.bindColor(Outfit::getColor(m_squareColor));
-        g_graphics.drawBoundingRect(Rect(p + m_walkOffset - 8, Size(32, 32)), 2);
+        g_painter.setColor(Outfit::getColor(m_squareColor));
+        g_painter.drawBoundingRect(Rect(p + m_walkOffset - 8, Size(32, 32)), 2);
     }
 
     // Render creature
@@ -59,33 +59,33 @@ void Creature::draw(const Point& p)
             continue;
 
         // draw white item
-        g_graphics.bindColor(Fw::white);
+        g_painter.setColor(Fw::white);
         internalDraw(p + m_walkOffset, 0);
 
         // draw mask if exists
         if(m_type->dimensions[ThingType::Layers] > 1) {
             // switch to blend color mode
-            g_graphics.bindBlendFunc(Fw::BlendColorzing);
+            g_painter.setCompositionMode(Painter::CompositionMode_ColorizeDest);
 
             // head
-            g_graphics.bindColor(m_outfit.getHeadColor());
+            g_painter.setColor(m_outfit.getHeadColor());
             internalDraw(p + m_walkOffset, 1, Otc::SpriteYellowMask);
 
             // body
-            g_graphics.bindColor(m_outfit.getBodyColor());
+            g_painter.setColor(m_outfit.getBodyColor());
             internalDraw(p + m_walkOffset, 1, Otc::SpriteRedMask);
 
             // legs
-            g_graphics.bindColor(m_outfit.getLegsColor());
+            g_painter.setColor(m_outfit.getLegsColor());
             internalDraw(p + m_walkOffset, 1, Otc::SpriteGreenMask);
 
             // feet
-            g_graphics.bindColor(m_outfit.getFeetColor());
+            g_painter.setColor(m_outfit.getFeetColor());
             internalDraw(p + m_walkOffset, 1, Otc::SpriteBlueMask);
 
             // restore default blend func
-            g_graphics.bindBlendFunc(Fw::BlendDefault);
-            g_graphics.bindColor(Fw::white);
+            g_painter.setCompositionMode(Painter::CompositionMode_SourceOver);
+            g_painter.setColor(Fw::white);
         }
     }
 }
@@ -115,11 +115,11 @@ void Creature::drawInformation(int x, int y, bool useGray, const Rect& rect)
     healthRect.setWidth((m_healthPercent / 100.0) * 25);
 
     // draw
-    g_graphics.bindColor(Fw::black);
-    g_graphics.drawFilledRect(backgroundRect);
+    g_painter.setColor(Fw::black);
+    g_painter.drawFilledRect(backgroundRect);
 
-    g_graphics.bindColor(fillColor);
-    g_graphics.drawFilledRect(healthRect);
+    g_painter.setColor(fillColor);
+    g_painter.drawFilledRect(healthRect);
 
     m_informationFont->renderText(m_name, textRect, Fw::AlignTopCenter, fillColor);
 }
