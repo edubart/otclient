@@ -5,15 +5,24 @@ struct Particle {
 public:
 
     Particle(const Rect& rect, float vx, float vy, float ax, float ay, const Color& color = Color(255, 255, 255), TexturePtr texture = nullptr);
+    ~Particle();
+
     void render();
+    void update();
+
+    bool hasFinished() { return m_finished; }
 
 private:
     Rect m_rect;
+
+    int m_ix, m_iy;
     float m_vx, m_vy;
     float m_ax, m_ay;
 
     Color m_color;
     TexturePtr m_texture;
+
+    ticks_t m_startTicks;
     bool m_finished;
 };
 
@@ -24,6 +33,8 @@ public:
 
     void render();
     void update();
+
+    bool hasFinished() { return m_finished; }
 
 private:
     // self related

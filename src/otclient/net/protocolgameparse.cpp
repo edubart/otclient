@@ -532,7 +532,7 @@ void ProtocolGame::parseMagicEffect(InputMessage& msg)
     // test particles
     ParticlesSystem particlesSystem;
 
-    Emitter emitter = Emitter(Point(100, 100), 30, 30);
+    Emitter emitter = Emitter(Point(100, 100), 5, 1);
     particlesSystem.add(emitter);
 
     g_particlesManager.add(particlesSystem);
