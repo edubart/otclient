@@ -4,7 +4,7 @@
 struct Particle {
 public:
 
-    Particle(const Rect& rect, float vx, float vy, float ax, float ay, const Color& color = Color(255, 255, 255), TexturePtr texture = nullptr);
+    Particle(const Rect& rect, float vx, float vy, float ax, float ay, float duration, const Color& color = Color(255, 255, 255), TexturePtr texture = nullptr);
     ~Particle();
 
     void render();
@@ -22,6 +22,7 @@ private:
     Color m_color;
     TexturePtr m_texture;
 
+    float m_duration;
     ticks_t m_startTicks;
     bool m_finished;
 };
@@ -29,7 +30,7 @@ private:
 class Emitter {
 public:
 
-    Emitter(const Point& position, int duration, int particlesPerSecond);
+    Emitter(const Point& position, float duration, int particlesPerSecond);
 
     void render();
     void update();
