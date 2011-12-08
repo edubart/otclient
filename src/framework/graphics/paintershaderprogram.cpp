@@ -51,17 +51,22 @@ void PainterShaderProgram::setProjectionMatrix(float projectionMatrix[3][3])
 void PainterShaderProgram::setColor(const Color& color)
 {
     bind();
-    setUniformValue(COLOR_UNIFORM,
-                    color.r() / 255.0f,
-                    color.g() / 255.0f,
-                    color.b() / 255.0f,
-                    color.a() / 255.0f);
+    setUniformValue(COLOR_UNIFORM, color);
 }
 
 void PainterShaderProgram::setOpacity(GLfloat opacity)
 {
     bind();
     setUniformValue(OPACITY_UNIFORM, opacity);
+}
+
+void PainterShaderProgram::setUniformTexture(int location, const TexturePtr& texture, int index)
+{
+    if(!texture)
+        return;
+    glActiveTexture(GL_TEXTURE0 + index);
+    glBindTexture(GL_TEXTURE_2D, texture->getId());
+    setUniformValue(location, index);
 }
 
 void PainterShaderProgram::setTexture(const TexturePtr& texture)
@@ -78,9 +83,7 @@ void PainterShaderProgram::setTexture(const TexturePtr& texture)
     };
 
     bind();
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texture->getId());
-    setUniformValue(TEXTURE_UNIFORM, 0);
+    setUniformTexture(TEXTURE_UNIFORM, texture, 0);
     setUniformValue(TEXTURE_TRANSFORM_MATRIX_UNIFORM, textureTransformMatrix, true);
 }
 

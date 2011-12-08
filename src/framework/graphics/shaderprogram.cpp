@@ -139,6 +139,6 @@ void ShaderProgram::bindAttributeLocation(int location, const char* name)
 void ShaderProgram::bindUniformLocation(int location, const char* name)
 {
     assert(m_linked);
-    assert(location >= 0 && location < 10);
+    assert(location >= 0 && location < MAX_UNIFORM_LOCATIONS);
     m_uniformLocations[location] = glGetUniformLocation(m_programId, name);
 }

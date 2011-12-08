@@ -1,3 +1,38 @@
+varying vec2 textureCoords;
+uniform float opacity;
+uniform vec4 color;
+uniform float ticks;
+uniform sampler2D texture;
+
+void main()
+{
+    gl_FragColor = texture2D(texture, textureCoords) * color * opacity;
+}
+
+/*
+varying vec2 textureCoords;
+uniform vec4 color;
+uniform float ticks;
+uniform sampler2D texture;
+
+void main()
+{
+    int num = 4;
+    vec4 sum = vec4(0);
+    int i, j;
+    for(i=-num/2;i<num/2;++i) {
+        for(j=-num/2;j<num/2;++j) {
+            sum += texture2D(texture, textureCoords + vec2(i+1, j+1)*0.001) * 1.0/(num*num);
+        }
+    }
+
+    float period = ticks/1000.0;
+    float a = (sin(period)+1.0)/2.0;
+    sum.a = 0;
+    gl_FragColor = vec4(1,1,1,2) - texture2D(texture, textureCoords);
+}
+*/
+/*
 uniform sampler2D texture;
 varying vec2 textureCoords;
 
@@ -31,7 +66,7 @@ void main()
         }
     }
 }
-
+*/
 /*
 uniform sampler2D texture;
 varying vec2 textureCoords;

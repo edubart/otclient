@@ -50,6 +50,7 @@ public:
     void setColor(const Color& color);
     void setOpacity(GLfloat opacity);
     void setTexture(const TexturePtr& texture);
+    void setUniformTexture(int location, const TexturePtr& texture, int index);
     void draw(const CoordsBuffer& coordsBuffer, DrawMode drawMode = Triangles);
 
 private:

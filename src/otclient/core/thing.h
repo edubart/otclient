@@ -63,7 +63,7 @@ public:
     virtual LocalPlayerPtr asLocalPlayer() { return nullptr; }
 
 protected:
-    void internalDraw(const Point& p, int layers, Otc::SpriteMask mask = Otc::SpriteNoMask);
+    void internalDraw(const Point& p, int layers);
 
     uint32 m_id;
     Position m_position;

@@ -34,7 +34,7 @@ Thing::Thing() : m_id(0)
     m_type = g_thingsType.getEmptyThingType();
 }
 
-void Thing::internalDraw(const Point& p, int layers, Otc::SpriteMask mask)
+void Thing::internalDraw(const Point& p, int layers)
 {
     for(int yi = 0; yi < m_type->dimensions[ThingType::Height]; yi++) {
         for(int xi = 0; xi < m_type->dimensions[ThingType::Width]; xi++) {
@@ -50,7 +50,7 @@ void Thing::internalDraw(const Point& p, int layers, Otc::SpriteMask mask)
             if(!spriteId)
                 continue;
 
-            TexturePtr spriteTex = g_sprites.getSpriteTexture(spriteId, mask);
+            TexturePtr spriteTex = g_sprites.getSpriteTexture(spriteId);
 
             Rect drawRect((p.x - xi*32) - m_type->parameters[ThingType::DisplacementX],
                           (p.y - yi*32) - m_type->parameters[ThingType::DisplacementY],

@@ -31,6 +31,10 @@
 #include <framework/core/eventdispatcher.h>
 #include <framework/core/clock.h>
 
+#include <framework/graphics/paintershaderprogram.h>
+#include <framework/graphics/paintershadersources.h>
+#include "spritemanager.h"
+
 Creature::Creature() : Thing()
 {
     m_healthPercent = 0;
@@ -43,12 +47,31 @@ Creature::Creature() : Thing()
     m_informationFont = g_fonts.getFont("verdana-11px-rounded");
 }
 
+PainterShaderProgramPtr outfitProgram;
+int HEAD_COLOR_UNIFORM = 10;
+int BODY_COLOR_UNIFORM = 11;
+int LEGS_COLOR_UNIFORM = 12;
+int FEET_COLOR_UNIFORM = 13;
+int MASK_TEXTURE_UNIFORM = 14;
+
 void Creature::draw(const Point& p)
 {
     // TODO: activate on attack, follow, discover how 'attacked' works
     if(m_showSquareColor) {
         g_painter.setColor(Outfit::getColor(m_squareColor));
         g_painter.drawBoundingRect(Rect(p + m_walkOffset - 8, Size(32, 32)), 2);
+    }
+
+    if(!outfitProgram) {
+        outfitProgram = PainterShaderProgramPtr(new PainterShaderProgram);
+        outfitProgram->addShaderFromSourceCode(Shader::Vertex, glslMainWithTexCoordsVertexShader + glslPositionOnlyVertexShader);
+        outfitProgram->addShaderFromSourceFile(Shader::Fragment, "/outfit.frag");
+        assert(outfitProgram->link());
+        outfitProgram->bindUniformLocation(HEAD_COLOR_UNIFORM, "headColor");
+        outfitProgram->bindUniformLocation(BODY_COLOR_UNIFORM, "bodyColor");
+        outfitProgram->bindUniformLocation(LEGS_COLOR_UNIFORM, "legsColor");
+        outfitProgram->bindUniformLocation(FEET_COLOR_UNIFORM, "feetColor");
+        outfitProgram->bindUniformLocation(MASK_TEXTURE_UNIFORM, "maskTexture");
     }
 
     // Render creature
@@ -58,35 +81,52 @@ void Creature::draw(const Point& p)
         if(m_yPattern > 0 && !(m_outfit.getAddons() & (1 << (m_yPattern-1))))
             continue;
 
-        // draw white item
-        g_painter.setColor(Fw::white);
-        internalDraw(p + m_walkOffset, 0);
+        g_painter.setCustomProgram(outfitProgram);
 
-        // draw mask if exists
-        if(m_type->dimensions[ThingType::Layers] > 1) {
-            // switch to blend color mode
-            g_painter.setCompositionMode(Painter::CompositionMode_ColorizeDest);
+        outfitProgram->bind();
+        outfitProgram->setUniformValue(HEAD_COLOR_UNIFORM, m_outfit.getHeadColor());
+        outfitProgram->setUniformValue(BODY_COLOR_UNIFORM, m_outfit.getBodyColor());
+        outfitProgram->setUniformValue(LEGS_COLOR_UNIFORM, m_outfit.getLegsColor());
+        outfitProgram->setUniformValue(FEET_COLOR_UNIFORM, m_outfit.getFeetColor());
 
-            // head
-            g_painter.setColor(m_outfit.getHeadColor());
-            internalDraw(p + m_walkOffset, 1, Otc::SpriteYellowMask);
+        for(int yi = 0; yi < m_type->dimensions[ThingType::Height]; yi++) {
+            for(int xi = 0; xi < m_type->dimensions[ThingType::Width]; xi++) {
+                int sprIndex = ((((((m_animation % m_type->dimensions[ThingType::AnimationPhases])
+                                * m_type->dimensions[ThingType::PatternZ] + m_zPattern)
+                                * m_type->dimensions[ThingType::PatternY] + m_yPattern)
+                                * m_type->dimensions[ThingType::PatternX] + m_xPattern)
+                                * m_type->dimensions[ThingType::Layers] + 0)
+                                * m_type->dimensions[ThingType::Height] + yi)
+                                * m_type->dimensions[ThingType::Width] + xi;
+                if(m_type->dimensions[ThingType::Layers] > 1) {
+                    int maskIndex = ((((((m_animation % m_type->dimensions[ThingType::AnimationPhases])
+                                    * m_type->dimensions[ThingType::PatternZ] + m_zPattern)
+                                    * m_type->dimensions[ThingType::PatternY] + m_yPattern)
+                                    * m_type->dimensions[ThingType::PatternX] + m_xPattern)
+                                    * m_type->dimensions[ThingType::Layers] + 1)
+                                    * m_type->dimensions[ThingType::Height] + yi)
+                                    * m_type->dimensions[ThingType::Width] + xi;
+                    int spriteId = m_type->sprites[maskIndex];
+                    if(!spriteId)
+                        continue;
+                    TexturePtr maskTex = g_sprites.getSpriteTexture(spriteId);
+                    outfitProgram->setUniformTexture(MASK_TEXTURE_UNIFORM, maskTex, 1);
+                }
 
-            // body
-            g_painter.setColor(m_outfit.getBodyColor());
-            internalDraw(p + m_walkOffset, 1, Otc::SpriteRedMask);
+                int spriteId = m_type->sprites[sprIndex];
+                if(!spriteId)
+                    continue;
 
-            // legs
-            g_painter.setColor(m_outfit.getLegsColor());
-            internalDraw(p + m_walkOffset, 1, Otc::SpriteGreenMask);
+                TexturePtr spriteTex = g_sprites.getSpriteTexture(spriteId);
 
-            // feet
-            g_painter.setColor(m_outfit.getFeetColor());
-            internalDraw(p + m_walkOffset, 1, Otc::SpriteBlueMask);
-
-            // restore default blend func
-            g_painter.setCompositionMode(Painter::CompositionMode_SourceOver);
-            g_painter.setColor(Fw::white);
+                Rect drawRect(((p + m_walkOffset).x - xi*32) - m_type->parameters[ThingType::DisplacementX],
+                            ((p + m_walkOffset).y - yi*32) - m_type->parameters[ThingType::DisplacementY],
+                            32, 32);
+                g_painter.drawTexturedRect(drawRect, spriteTex);
+            }
         }
+
+        g_painter.releaseCustomProgram();
     }
 }
 

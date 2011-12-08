@@ -118,30 +118,7 @@ TexturePtr SpriteManager::loadSpriteTexture(int id)
     return TexturePtr(new Texture(32, 32, 4, pixels));
 }
 
-TexturePtr SpriteManager::loadSpriteMask(TexturePtr spriteTex, Otc::SpriteMask mask)
-{
-    auto pixels = spriteTex->getPixels();
-
-    static uint32 maskColors[4] = { Fw::red, Fw::green, Fw::blue, Fw::yellow };
-    uint32 maskColor = maskColors[mask];
-    uint32 whiteColor = Fw::white;
-    uint32 alphaColor = Fw::alpha;
-
-    // convert pixels
-    // masked color -> white color
-    // any other color -> alpha color
-    for(int i=0;i<4096;i+=4) {
-        uint32& currentColor = *(uint32*)&pixels[i];
-        if(currentColor == maskColor)
-            currentColor = whiteColor;
-        else
-            currentColor = alphaColor;
-    }
-
-    return TexturePtr(new Texture(32, 32, 4, &pixels[0]));
-}
-
-TexturePtr SpriteManager::getSpriteTexture(int id, Otc::SpriteMask mask)
+TexturePtr SpriteManager::getSpriteTexture(int id)
 {
     if(id == 0)
         return g_graphics.getEmptyTexture();
@@ -149,17 +126,11 @@ TexturePtr SpriteManager::getSpriteTexture(int id, Otc::SpriteMask mask)
     assert(id > 0 && id <= m_spritesCount);
 
     // load sprites on demand
-    Sprite& sprite = m_sprites[id-1];
-    if(!sprite.texture)
-        sprite.texture = loadSpriteTexture(id);
+    TexturePtr& sprite = m_sprites[id-1];
+    if(!sprite)
+        sprite = loadSpriteTexture(id);
 
     //TODO: release unused sprites textures after X seconds
     // to avoid massive texture allocations
-
-    if(mask != Otc::SpriteNoMask) {
-        if(!sprite.masks[mask])
-            sprite.masks[mask] = loadSpriteMask(sprite.texture, mask);
-        return sprite.masks[mask];
-    } else
-        return sprite.texture;
+    return sprite;
 }
