@@ -24,6 +24,7 @@
 #define IMAGE_H
 
 #include "declarations.h"
+#include "coordsbuffer.h"
 
 #include <framework/otml/declarations.h>
 
@@ -41,6 +42,9 @@ protected:
     Rect m_textureCoords;
     bool m_fixedRatio;
     bool m_repeated;
+
+    Rect m_cachedScreenCoords;
+    CoordsBuffer m_coordsBuffer;
 };
 
 #endif

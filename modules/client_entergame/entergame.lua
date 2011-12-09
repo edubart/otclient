@@ -23,8 +23,8 @@ local function onError(protocol, error)
 end
 
 local function onMotd(protocol, motd)
-  motdNumber = tonumber(string.sub(motd, 0, string.find(motd, "\n")))
-  motdMessage = string.sub(motd, string.find(motd, "\n") + 1, string.len(motd))
+  motdNumber = tonumber(motd:sub(0, motd:find("\n")))
+  motdMessage = motd:sub(motd:find("\n") + 1, #motd)
   TopMenu.getButton('motdButton'):show()
 end
 

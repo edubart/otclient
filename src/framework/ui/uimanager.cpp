@@ -25,6 +25,7 @@
 
 #include <framework/otml/otml.h>
 #include <framework/graphics/graphics.h>
+#include <framework/platform/platformwindow.h>
 
 UIManager g_ui;
 
@@ -33,7 +34,7 @@ void UIManager::init()
     // creates root widget
     m_rootWidget = UIWidget::create<UIWidget>();
     m_rootWidget->setId("root");
-    m_rootWidget->resize(g_graphics.getScreenSize());
+    m_rootWidget->resize(g_window.getSize());
 }
 
 void UIManager::terminate()
@@ -50,7 +51,7 @@ void UIManager::render()
 
 void UIManager::resize(const Size& size)
 {
-    m_rootWidget->resize(g_graphics.getScreenSize());
+    m_rootWidget->resize(g_window.getSize());
 }
 
 void UIManager::inputEvent(const InputEvent& event)
@@ -174,12 +175,15 @@ UIWidgetPtr UIManager::loadWidgetFromOTML(const OTMLNodePtr& widgetNode, const U
     if(parent)
         parent->addChild(widget);
 
-    widget->setStyleFromNode(styleNode);
+    if(widget) {
+        widget->setStyleFromNode(styleNode);
 
-    for(const OTMLNodePtr& childNode : widgetNode->children()) {
-        if(!childNode->isUnique())
-            loadWidgetFromOTML(childNode, widget);
-    }
+        for(const OTMLNodePtr& childNode : widgetNode->children()) {
+            if(!childNode->isUnique())
+                loadWidgetFromOTML(childNode, widget);
+        }
+    } else
+        logError("Unable to create widget of type '", widgetType, "'");
 
     return widget;
 }

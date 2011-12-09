@@ -19,19 +19,19 @@ Particle::Particle(const Rect& rect, float vx, float vy, float ax, float ay, flo
 
 Particle::~Particle()
 {
-    dump << "deleted";
+    //dump << "deleted";
 }
 
 void Particle::render()
 {
-    g_graphics.bindColor(m_color);
+    g_painter.setColor(m_color);
 
     if(!m_texture)
-        g_graphics.drawFilledRect(m_rect);
+        g_painter.drawFilledRect(m_rect);
     else {
-        g_graphics.bindBlendFunc(Fw::BlendParticles);
-        g_graphics.drawTexturedRect(m_rect, m_texture);
-        g_graphics.bindBlendFunc(Fw::BlendDefault);
+        g_painter.setCompositionMode(Painter::CompositionMode_AdditiveSource);
+        g_painter.drawTexturedRect(m_rect, m_texture);
+        g_painter.setCompositionMode(Painter::CompositionMode_SourceOver);
     }
 }
 

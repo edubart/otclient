@@ -28,7 +28,7 @@ function MessageBox.create(title, text, flags)
 
   if flags == MessageBoxOk then
     buttonRight:setText("Ok")
-    box.onOk = EmptyFunction
+    box.onOk = function() end
     buttonRight.onClick = function()
       box.onOk()
       box:destroy()
@@ -37,7 +37,7 @@ function MessageBox.create(title, text, flags)
     window.onEscape = buttonRight.onClick
   elseif flags == MessageBoxCancel then
     buttonRight:setText("Cancel")
-    box.onCancel = EmptyFunction
+    box.onCancel = function() end
     buttonRight.onClick = function()
       box.onCancel()
       box:destroy()

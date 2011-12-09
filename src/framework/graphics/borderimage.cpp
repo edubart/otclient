@@ -133,72 +133,72 @@ BorderImagePtr BorderImage::loadFromOTML(const OTMLNodePtr& borderImageNode)
 void BorderImage::draw(const Rect& screenCoords)
 {
     //TODO: borderimage drawing could be optimized by caching the render into a texture
+    if(screenCoords != m_cachedScreenCoords) {
+        m_cachedScreenCoords = screenCoords;
+        m_coordsBuffer.clear();
 
-    Rect rectCoords;
-    Size centerSize = screenCoords.size() - m_bordersSize;
+        Rect rectCoords;
+        Size centerSize = screenCoords.size() - m_bordersSize;
 
-    g_graphics.bindTexture(m_texture);
-    g_graphics.startDrawing();
+        // first the center
+        if(centerSize.area() > 0) {
+            rectCoords = Rect(screenCoords.left() + m_leftBorderTexCoords.width(),
+                            screenCoords.top() + m_topBorderTexCoords.height(),
+                            centerSize);
+            m_coordsBuffer.addRepeatedRects(rectCoords, m_centerTexCoords);
+        }
 
-    // first the center
-    if(centerSize.area() > 0) {
-        rectCoords = Rect(screenCoords.left() + m_leftBorderTexCoords.width(),
-                        screenCoords.top() + m_topBorderTexCoords.height(),
-                        centerSize);
-        g_graphics.drawRepeatedTexturedRect(rectCoords, m_texture, m_centerTexCoords);
+        // top left corner
+        rectCoords = Rect(screenCoords.topLeft(),
+                        m_topLeftCornerTexCoords.size());
+        m_coordsBuffer.addRepeatedRects(rectCoords, m_topLeftCornerTexCoords);
+
+        // top
+        rectCoords = Rect(screenCoords.left() + m_topLeftCornerTexCoords.width(),
+                        screenCoords.topLeft().y,
+                        centerSize.width(),
+                        m_topBorderTexCoords.height());
+        m_coordsBuffer.addRepeatedRects(rectCoords, m_topBorderTexCoords);
+
+
+        // top right corner
+        rectCoords = Rect(screenCoords.left() + m_topLeftCornerTexCoords.width() + centerSize.width(),
+                        screenCoords.top(),
+                        m_topRightCornerTexCoords.size());
+        m_coordsBuffer.addRepeatedRects(rectCoords, m_topRightCornerTexCoords);
+
+        // left
+        rectCoords = Rect(screenCoords.left(),
+                        screenCoords.top() + m_topLeftCornerTexCoords.height(),
+                        m_leftBorderTexCoords.width(),
+                        centerSize.height());
+        m_coordsBuffer.addRepeatedRects(rectCoords, m_leftBorderTexCoords);
+
+        // right
+        rectCoords = Rect(screenCoords.left() + m_leftBorderTexCoords.width() + centerSize.width(),
+                        screenCoords.top() + m_topRightCornerTexCoords.height(),
+                        m_rightBorderTexCoords.width(),
+                        centerSize.height());
+        m_coordsBuffer.addRepeatedRects(rectCoords, m_rightBorderTexCoords);
+
+        // bottom left corner
+        rectCoords = Rect(screenCoords.left(),
+                        screenCoords.top() + m_topLeftCornerTexCoords.height() + centerSize.height(),
+                        m_bottomLeftCornerTexCoords.size());
+        m_coordsBuffer.addRepeatedRects(rectCoords, m_bottomLeftCornerTexCoords);
+
+        // bottom
+        rectCoords = Rect(screenCoords.left() + m_bottomLeftCornerTexCoords.width(),
+                        screenCoords.top() + m_topBorderTexCoords.height() + centerSize.height(),
+                        centerSize.width(),
+                        m_bottomBorderTexCoords.height());
+        m_coordsBuffer.addRepeatedRects(rectCoords, m_bottomBorderTexCoords);
+
+        // bottom right corner
+        rectCoords = Rect(screenCoords.left() + m_bottomLeftCornerTexCoords.width() + centerSize.width(),
+                        screenCoords.top() + m_topRightCornerTexCoords.height() + centerSize.height(),
+                        m_bottomRightCornerTexCoords.size());
+        m_coordsBuffer.addRepeatedRects(rectCoords, m_bottomRightCornerTexCoords);
     }
-
-    // top left corner
-    rectCoords = Rect(screenCoords.topLeft(),
-                      m_topLeftCornerTexCoords.size());
-    g_graphics.drawTexturedRect(rectCoords, m_texture, m_topLeftCornerTexCoords);
-
-    // top
-    rectCoords = Rect(screenCoords.left() + m_topLeftCornerTexCoords.width(),
-                      screenCoords.topLeft().y,
-                      centerSize.width(),
-                      m_topBorderTexCoords.height());
-    g_graphics.drawRepeatedTexturedRect(rectCoords, m_texture, m_topBorderTexCoords);
-
-
-    // top right corner
-    rectCoords = Rect(screenCoords.left() + m_topLeftCornerTexCoords.width() + centerSize.width(),
-                      screenCoords.top(),
-                      m_topRightCornerTexCoords.size());
-    g_graphics.drawTexturedRect(rectCoords, m_texture, m_topRightCornerTexCoords);
-
-    // left
-    rectCoords = Rect(screenCoords.left(),
-                      screenCoords.top() + m_topLeftCornerTexCoords.height(),
-                      m_leftBorderTexCoords.width(),
-                      centerSize.height());
-    g_graphics.drawRepeatedTexturedRect(rectCoords, m_texture, m_leftBorderTexCoords);
-
-    // right
-    rectCoords = Rect(screenCoords.left() + m_leftBorderTexCoords.width() + centerSize.width(),
-                      screenCoords.top() + m_topRightCornerTexCoords.height(),
-                      m_rightBorderTexCoords.width(),
-                      centerSize.height());
-    g_graphics.drawRepeatedTexturedRect(rectCoords, m_texture, m_rightBorderTexCoords);
-
-    // bottom left corner
-    rectCoords = Rect(screenCoords.left(),
-                      screenCoords.top() + m_topLeftCornerTexCoords.height() + centerSize.height(),
-                      m_bottomLeftCornerTexCoords.size());
-    g_graphics.drawTexturedRect(rectCoords, m_texture, m_bottomLeftCornerTexCoords);
-
-    // bottom
-    rectCoords = Rect(screenCoords.left() + m_bottomLeftCornerTexCoords.width(),
-                      screenCoords.top() + m_topBorderTexCoords.height() + centerSize.height(),
-                      centerSize.width(),
-                      m_bottomBorderTexCoords.height());
-    g_graphics.drawRepeatedTexturedRect(rectCoords, m_texture, m_bottomBorderTexCoords);
-
-    // bottom right corner
-    rectCoords = Rect(screenCoords.left() + m_bottomLeftCornerTexCoords.width() + centerSize.width(),
-                      screenCoords.top() + m_topRightCornerTexCoords.height() + centerSize.height(),
-                      m_bottomRightCornerTexCoords.size());
-    g_graphics.drawTexturedRect(rectCoords, m_texture, m_bottomRightCornerTexCoords);
-
-    g_graphics.stopDrawing();
+    g_painter.drawTextureCoords(m_coordsBuffer, m_texture);
 }

@@ -36,7 +36,6 @@ Texture::Texture(int width, int height, int channels, uchar *pixels)
 
 Texture::~Texture()
 {
-    assert(!g_graphics.isDrawing());
     // free texture from gl memory
     if(m_textureId > 0)
         glDeleteTextures(1, &m_textureId);
@@ -44,9 +43,7 @@ Texture::~Texture()
 
 uint Texture::internalLoadGLTexture(uchar *pixels, int channels, int width, int height)
 {
-    assert(!g_graphics.isDrawing());
-
-    m_size.setSize(width, height);
+    m_size.resize(width, height);
 
     // gets max texture size supported by the driver
     static GLint maxTexSize = -1;
@@ -70,7 +67,7 @@ uint Texture::internalLoadGLTexture(uchar *pixels, int channels, int width, int 
     std::vector<uint8> tmp;
 
     // old opengl drivers only accept power of two dimensions
-    //if(!g_graphics.isExtensionSupported("GL_ARB_texture_non_power_of_two")) {
+    //if(!g_painter.isExtensionSupported("GL_ARB_texture_non_power_of_two")) {
         int glWidth = 1;
         while(glWidth < width)
             glWidth = glWidth << 1;
@@ -88,7 +85,7 @@ uint Texture::internalLoadGLTexture(uchar *pixels, int channels, int width, int 
             pixels = &tmp[0];
         }
 
-        m_glSize.setSize(glWidth, glHeight);
+        m_glSize.resize(glWidth, glHeight);
     //} else
     //    m_glSize = m_size;
 
@@ -110,7 +107,7 @@ uint Texture::internalLoadGLTexture(uchar *pixels, int channels, int width, int 
     }
 
     // load pixels into gl memory
-    glTexImage2D(GL_TEXTURE_2D, 0, channels, m_glSize.width(), m_glSize.height(), 0, format, GL_UNSIGNED_BYTE, pixels);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_glSize.width(), m_glSize.height(), 0, format, GL_UNSIGNED_BYTE, pixels);
 
     // disable texture border
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -119,7 +116,6 @@ uint Texture::internalLoadGLTexture(uchar *pixels, int channels, int width, int 
     // nearest filtering (non smooth)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
     return id;
 }
 

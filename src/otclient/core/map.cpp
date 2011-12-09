@@ -28,7 +28,9 @@
 #include "missile.h"
 #include <framework/graphics/graphics.h>
 #include <framework/graphics/framebuffer.h>
-
+#include <framework/graphics/paintershaderprogram.h>
+#include <framework/graphics/paintershadersources.h>
+#include <framework/graphics/texture.h>
 Map g_map;
 
 Map::Map()
@@ -36,12 +38,20 @@ Map::Map()
     setVisibleSize(Size(MAP_VISIBLE_WIDTH, MAP_VISIBLE_HEIGHT));
 }
 
+PainterShaderProgramPtr program;
 void Map::draw(const Rect& rect)
 {
-    if(!m_framebuffer)
+    if(!m_framebuffer) {
         m_framebuffer = FrameBufferPtr(new FrameBuffer(m_visibleSize.width() * NUM_TILE_PIXELS, m_visibleSize.height() * NUM_TILE_PIXELS));
 
-    g_graphics.bindColor(Fw::white);
+
+        program = PainterShaderProgramPtr(new PainterShaderProgram);
+        program->addShaderFromSourceCode(Shader::Vertex, glslMainWithTexCoordsVertexShader + glslPositionOnlyVertexShader);
+        program->addShaderFromSourceFile(Shader::Fragment, "/shadertest.frag");
+        assert(program->link());
+    }
+
+    g_painter.setColor(Fw::white);
     m_framebuffer->bind();
 
     // draw offsets
@@ -80,10 +90,13 @@ void Map::draw(const Rect& rect)
         }
     }
 
-    m_framebuffer->unbind();
+    m_framebuffer->release();
 
-    g_graphics.bindColor(Fw::white);
+
+    g_painter.setCustomProgram(program);
+    g_painter.setColor(Fw::white);
     m_framebuffer->draw(rect);
+    g_painter.releaseCustomProgram();
 
     // calculate stretch factor
     float horizontalStretchFactor = rect.width() / (float)(m_visibleSize.width() * NUM_TILE_PIXELS);

@@ -79,7 +79,7 @@ IF(WIN32)
     ENDIF(NO_CONSOLE)
 ELSE(WIN32)
     SET(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -rdynamic")
-    SET(ADDITIONAL_LIBRARIES pthread)
+    SET(ADDITIONAL_LIBRARIES pthread X11)
     SET(framework_SOURCES ${framework_SOURCES} ${CMAKE_CURRENT_LIST_DIR}/platform/x11window.cpp)
 ENDIF(WIN32)
 
@@ -135,6 +135,7 @@ SET(framework_SOURCES ${framework_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/graphics/font.cpp
     ${CMAKE_CURRENT_LIST_DIR}/graphics/fontmanager.cpp
     ${CMAKE_CURRENT_LIST_DIR}/graphics/graphics.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/graphics/painter.cpp
     ${CMAKE_CURRENT_LIST_DIR}/graphics/texture.cpp
     ${CMAKE_CURRENT_LIST_DIR}/graphics/framebuffer.cpp
     ${CMAKE_CURRENT_LIST_DIR}/graphics/animatedtexture.cpp
@@ -144,6 +145,10 @@ SET(framework_SOURCES ${framework_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/graphics/image.cpp
     ${CMAKE_CURRENT_LIST_DIR}/graphics/particlesmanager.cpp
     ${CMAKE_CURRENT_LIST_DIR}/graphics/particlessystem.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/graphics/shader.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/graphics/shaderprogram.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/graphics/paintershaderprogram.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/graphics/coordsbuffer.cpp
 
     # framework otml
     ${CMAKE_CURRENT_LIST_DIR}/otml/otmldocument.cpp

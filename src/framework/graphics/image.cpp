@@ -52,7 +52,13 @@ void Image::loadFromOTML(const OTMLNodePtr& imageNode)
 
 void Image::draw(const Rect& screenCoords)
 {
-    if(m_texture) {
+    if(!m_texture)
+        return;
+
+    if(m_cachedScreenCoords != screenCoords) {
+        m_cachedScreenCoords = screenCoords;
+        m_coordsBuffer.clear();
+
         if(m_fixedRatio) {
             const Size& texSize = m_texture->getSize();
             Size texCoordsSize = screenCoords.size();
@@ -63,12 +69,14 @@ void Image::draw(const Rect& screenCoords)
             else if(texSize.width() > texCoordsSize.width())
                 texCoordsOffset.x = (texSize.width() - texCoordsSize.width())/2;
 
-            g_graphics.drawTexturedRect(screenCoords, m_texture, Rect(texCoordsOffset, texCoordsSize));
+            m_coordsBuffer.addRect(screenCoords, Rect(texCoordsOffset, texCoordsSize));
         } else {
             if(m_repeated)
-                g_graphics.drawRepeatedTexturedRect(screenCoords, m_texture, m_textureCoords);
+                m_coordsBuffer.addRepeatedRects(screenCoords, m_textureCoords);
             else
-                g_graphics.drawTexturedRect(screenCoords, m_texture, m_textureCoords);
+                m_coordsBuffer.addRect(screenCoords, m_textureCoords);
         }
     }
+
+    g_painter.drawTextureCoords(m_coordsBuffer, m_texture);
 }

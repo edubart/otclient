@@ -37,22 +37,22 @@ public:
     virtual void enableBilinearFilter();
 
     /// Get OpenGL texture id
-    uint getId() const { return m_textureId; }
+    GLuint getId()  { return m_textureId; }
 
     /// Copy pixels from OpenGL texture
     std::vector<uint8> getPixels();
 
-    int getWidth() const { return m_size.width(); }
-    int getHeight() const { return m_size.height(); }
-    const Size& getSize() const { return m_size; }
-    const Size& getGlSize() const { return m_glSize; }
+    int getWidth() { return m_size.width(); }
+    int getHeight() { return m_size.height(); }
+    const Size& getSize() { return m_size; }
+    const Size& getGlSize() { return m_glSize; }
 
     bool isEmpty() const { return m_textureId == 0; }
 
 protected:
-    uint internalLoadGLTexture(uchar* pixels, int channels, int w, int h);
+    GLuint internalLoadGLTexture(uchar* pixels, int channels, int w, int h);
 
-    uint m_textureId;
+    GLuint m_textureId;
     Size m_size;
     Size m_glSize;
 };

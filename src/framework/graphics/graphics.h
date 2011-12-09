@@ -24,64 +24,25 @@
 #define GRAPHICS_H
 
 #include "declarations.h"
+#include "painter.h"
 
 class Graphics
 {
 public:
-    /// Initialize default OpenGL states
     void init();
-
-    /// Termiante graphics
     void terminate();
 
-    /// Check if a GL extension is supported
     bool isExtensionSupported(const char *extension);
 
-    /// Resizes OpenGL viewport
     void resize(const Size& size);
-
-    /// Restore original viewport
-    void restoreViewport();
-
-    /// Called before every render
     void beginRender();
-
-    /// Called after every render
     void endRender();
 
-    void bindColor(const Color& color);
-    void bindTexture(const TexturePtr& texture);
-    void bindBlendFunc(Fw::BlendFunc blendType);
-
-    // drawing API
-    void drawTexturedRect(const Rect& screenCoords,
-                          const TexturePtr& texture,
-                          const Rect& textureCoords = Rect(),
-                          bool upsideDown = false);
-
-    void drawRepeatedTexturedRect(const Rect& screenCoords,
-                                  const TexturePtr& texture,
-                                  const Rect& textureCoords);
-
-    void drawFilledRect(const Rect& screenCoords);
-
-    void drawBoundingRect(const Rect& screenCoords,
-                          int innerLineWidth = 1);
-
-    const Size& getScreenSize() const { return m_screenSize; }
-
-    void startDrawing();
-    void stopDrawing();
-    bool isDrawing() const { return m_drawing; }
-
-    int getOpacity() const { return m_opacity; }
-    void setOpacity(int opacity) { m_opacity = opacity; }
+    const Size& getViewportSize() const { return m_viewportSize; }
     TexturePtr getEmptyTexture() { return m_emptyTexture; }
 
 private:
-    bool m_drawing;
-    int m_opacity;
-    Size m_screenSize;
+    Size m_viewportSize;
     TexturePtr m_emptyTexture;
 };
 

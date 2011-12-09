@@ -178,12 +178,6 @@ namespace Fw
         LogFatal
     };
 
-    enum BlendFunc {
-        BlendDefault,
-        BlendColorzing,
-        BlendParticles
-    };
-
     enum AspectRatioMode {
         IgnoreAspectRatio,
         KeepAspectRatio,

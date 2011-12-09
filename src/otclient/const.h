@@ -250,14 +250,6 @@ namespace Otc
         ClientGetObjectInfo = 243
     };
 
-    enum SpriteMask {
-        SpriteRedMask = 0,
-        SpriteGreenMask,
-        SpriteBlueMask,
-        SpriteYellowMask,
-        SpriteNoMask = 255
-    };
-
     enum InventorySlots {
         InventorySlotHead = 1,
         InventorySlotNecklace,

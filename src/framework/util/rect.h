@@ -78,8 +78,8 @@ public:
     void setBottomLeft(const TPoint<T> &p) { x1 = p.x; y2 = p.y; }
     void setWidth(T width) { x2 = x1 + width - 1; }
     void setHeight(T height) { y2 = y1 + height- 1; }
-    void setSize(T width, T height) { x2 = x1 + width - 1; y2 = y1 + height - 1; }
-    void setSize(const TSize<T>& size) { x2 = x1 + size.width() - 1; y2 = y1 + size.height() - 1; }
+    void resize(T width, T height) { x2 = x1 + width - 1; y2 = y1 + height - 1; }
+    void resize(const TSize<T>& size) { x2 = x1 + size.width() - 1; y2 = y1 + size.height() - 1; }
     void setRect(T x, T y, T width, T height) { x1 = x; y1 = y; x2 = (x + width - 1); y2 = (y + height - 1); }
     void setCoords(int left, int top, int right, int bottom) { x1 = left; y1 = top; x2 = right; y2 = bottom; }
 

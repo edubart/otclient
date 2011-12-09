@@ -7,7 +7,7 @@ local vsyncEnabled = false
 
 function getConfig(name, default)
   if g_configs.exists(name) then
-    local val = string.trim(g_configs.get(name))
+    local val = g_configs.get(name):trim()
     if val == 'true' or val == 'false' then
       return toboolean(val)
     else

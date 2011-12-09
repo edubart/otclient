@@ -38,10 +38,10 @@ void UICheckBox::render()
 {
     if(m_image) {
         Rect boxRect;
-        boxRect.setSize(m_boxSize);
+        boxRect.resize(m_boxSize);
         boxRect.moveLeft(m_rect.left());
         boxRect.moveVerticalCenter(m_rect.verticalCenter());
-        g_graphics.bindColor(m_backgroundColor);
+        g_painter.setColor(m_backgroundColor);
         m_image->draw(boxRect);
     }
 

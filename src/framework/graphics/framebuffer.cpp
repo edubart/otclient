@@ -26,110 +26,52 @@
 
 FrameBuffer::FrameBuffer(int width, int height)
 {
-    m_fbo = 0;
-
     // create FBO texture
     m_texture = TexturePtr(new Texture(width, height, 4));
     m_texture->enableBilinearFilter();
 
-    // use FBO ext only if supported
-    if(g_graphics.isExtensionSupported("GL_ARB_framebuffer_object")) {
-        m_fallbackOldImp = false;
+    // generate FBO
+    glGenFramebuffers(1, &m_fbo);
+    if(!m_fbo)
+        logFatal("Unable to create framebuffer object");
 
-        // generate FBO
-        glGenFramebuffers(1, &m_fbo);
-        glBindFramebuffer(GL_FRAMEBUFFER_EXT, m_fbo);
+    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
 
-        // attach 2D texture to this FBO
-        glFramebufferTexture2D(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, m_texture->getId(), 0);
+    // attach 2D texture to this FBO
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture->getId(), 0);
 
-        GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER_EXT);
-        switch(status) {
-            case GL_FRAMEBUFFER_COMPLETE_EXT:
-                //ok
-                break;
-            default: // fallback to old implementation
-                m_fallbackOldImp = true;
-                break;
-        }
+    GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    if(status != GL_FRAMEBUFFER_COMPLETE)
+        logFatal("Unable to create framebuffer object");
 
-        // restore back buffer
-        glBindFramebuffer(GL_FRAMEBUFFER_EXT, 0);
-        glDrawBuffer(GL_BACK);
-        glReadBuffer(GL_BACK);
-    } else {
-        // otherwise fallback to copy texture from screen implementation
-        m_fallbackOldImp = true;
-    }
-
-    if(m_fallbackOldImp)
-        logInfo("Framebuffers not supported, falling back to old implementation.");
+    // restore back buffer
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 FrameBuffer::~FrameBuffer()
 {
-    if(m_fbo)
-        glDeleteFramebuffers(1, &m_fbo);
+    glDeleteFramebuffers(1, &m_fbo);
 }
 
 void FrameBuffer::bind()
 {
-    if(!m_fallbackOldImp) {
-        // bind framebuffer
-        glBindFramebuffer(GL_FRAMEBUFFER_EXT, m_fbo);
-    } else {
-        int screenWidth = g_graphics.getScreenSize().width();
-        int screenHeight = g_graphics.getScreenSize().height();
-
-        if(!m_screenBackup || m_screenBackup->getSize() != g_graphics.getScreenSize())
-            m_screenBackup = TexturePtr(new Texture(screenWidth, screenHeight, 4));
-
-        // save screen state
-        glBindTexture(GL_TEXTURE_2D, m_screenBackup->getId());
-        glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, screenWidth, screenHeight);
-    }
-
-    // setup framebuffer viewport
-    glViewport(0, 0, m_texture->getWidth(), m_texture->getHeight());
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glOrtho(0.0f, m_texture->getWidth(), m_texture->getHeight(), 0, -1, 1);
-
-    // back to model view
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-
-    // clear framebuffer
-    glClearColor(0.0, 0.0, 0.0, 1.0);
+    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
     glClear(GL_COLOR_BUFFER_BIT);
+    glViewport(0, 0, m_texture->getWidth(), m_texture->getHeight());
+    g_painter.updateProjectionMatrix(m_texture->getSize(), true);
 }
 
-void FrameBuffer::unbind()
+void FrameBuffer::release()
 {
-    if(!m_fallbackOldImp) {
-        // bind back buffer again
-        glBindFramebuffer(GL_FRAMEBUFFER_EXT, 0);
-        glDrawBuffer(GL_BACK);
-        glReadBuffer(GL_BACK);
+    // bind back buffer again
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-        // restore graphics viewport
-        g_graphics.restoreViewport();
-    } else {
-        // copy screen to texture
-        glBindTexture(GL_TEXTURE_2D, m_texture->getId());
-        glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, m_texture->getWidth(), m_texture->getHeight());
-
-        // restore graphics viewport
-        g_graphics.restoreViewport();
-
-        // restore screen
-        glClearColor(0.0, 0.0, 0.0, 1.0);
-        glClear(GL_COLOR_BUFFER_BIT);
-        g_graphics.drawTexturedRect(Rect(Point(0,0), g_graphics.getScreenSize()), m_screenBackup, Rect(), true);
-    }
+    // restore graphics viewport
+    glViewport(0, 0, g_graphics.getViewportSize().width(), g_graphics.getViewportSize().height());
+    g_painter.updateProjectionMatrix(g_graphics.getViewportSize());
 }
 
-void FrameBuffer::draw(const Rect& screenCoords, const Rect& framebufferCoords)
+void FrameBuffer::draw(const Rect& dest)
 {
-    g_graphics.drawTexturedRect(screenCoords, m_texture, framebufferCoords, true);
+    g_painter.drawTexturedRect(dest, m_texture);
 }
