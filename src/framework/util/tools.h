@@ -263,6 +263,25 @@ void throwException(const T&... args) {
     throw Exception(Fw::mkstr(args...));
 }
 
+template<typename T>
+T randomRange(T min, T max);
+
+template<>
+inline int randomRange<int>(int min, int max) {
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+    static std::uniform_int_distribution<int> dis(0, 2147483647);
+    return min + (dis(gen) % (max - min + 1));
+}
+
+template<>
+inline float randomRange<float>(float min, float max) {
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+    static std::uniform_real_distribution<float> dis(0.0, 1.0);
+    return min + (max - min)*dis(gen);
+}
+
 }
 
 // shortcut for Fw::dump
