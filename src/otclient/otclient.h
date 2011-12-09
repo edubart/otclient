@@ -31,6 +31,7 @@ class OTClient : public Application
 public:
     OTClient();
     void init(const std::vector<std::string>& args);
+    void close();
     void registerLuaFunctions();
 };
 

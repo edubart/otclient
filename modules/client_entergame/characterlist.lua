@@ -61,6 +61,7 @@ function CharacterList.create(characters, premDays)
   local accountStatusLabel = charactersWindow:getChildById('accountStatusLabel')
   charactersWindow.onKeyPress = onCharactersWindowKeyPress
 
+  local focusLabel
   for i,characterInfo in ipairs(characters) do
     local characterName = characterInfo[1]
     local worldName = characterInfo[2]
@@ -76,9 +77,11 @@ function CharacterList.create(characters, premDays)
     label.worldPort = worldIp
 
     if i == 1 or g_configs.get('lastUsedCharacter') == characterName then
-      characterList:focusChild(label, ActiveFocusReason)
+      focusLabel = label
     end
   end
+
+  characterList:focusChild(focusLabel, ActiveFocusReason)
 
   if premDays > 0 then
     accountStatusLabel:setText("Account Status:\nPremium Account (" .. premDays .. ' days left)')

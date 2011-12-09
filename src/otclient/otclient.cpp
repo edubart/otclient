@@ -22,6 +22,7 @@
 
 #include "otclient.h"
 #include <framework/core/modulemanager.h>
+#include "core/game.h"
 
 OTClient::OTClient() : Application(Otc::AppCompactName)
 {
@@ -37,4 +38,11 @@ void OTClient::init(const std::vector<std::string>& args)
     g_modules.autoLoadModules(100);
     g_modules.ensureModuleLoaded("client");
     g_modules.autoLoadModules(1000);
+}
+
+void OTClient::close()
+{
+    if(g_game.isOnline())
+        g_game.logout(true);
+    exit();
 }

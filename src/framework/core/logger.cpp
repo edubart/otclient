@@ -34,21 +34,17 @@ void Logger::log(Fw::LogLevel level, std::string message)
 {
     const static std::string logPrefixes[] = { "", "", "WARNING: ", "ERROR: ", "FATAL ERROR: " };
 
-    if(!m_terminated) {
-        message.insert(0, logPrefixes[level]);
-        std::cout << message << std::endl;
+    message.insert(0, logPrefixes[level]);
+    std::cout << message << std::endl;
 
-        std::size_t now = std::time(NULL);
-        m_logMessages.push_back(LogMessage(level, message, now));
+    std::size_t now = std::time(NULL);
+    m_logMessages.push_back(LogMessage(level, message, now));
 
-        if(m_onLog)
-            m_onLog(level, message, now);
-    }
+    if(m_onLog)
+        m_onLog(level, message, now);
 
-    if(level == Fw::LogFatal) {
-        m_terminated = true;
+    if(level == Fw::LogFatal)
         throw std::runtime_error(message);
-    }
 }
 
 void Logger::logFunc(Fw::LogLevel level, const std::string& message, std::string prettyFunction)

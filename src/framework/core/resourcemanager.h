@@ -33,10 +33,7 @@ public:
 
     bool setupWriteDir(const std::string& appWriteDirName);
 
-    /// Add an package or directory to the search path
     bool addToSearchPath(const std::string& path, bool insertInFront = true);
-
-    /// Search and packages from a directory to the search path
     void searchAndAddPackages(const std::string& packagesDir, const std::string& packagesExt, bool append);
 
     bool fileExists(const std::string& fileName);

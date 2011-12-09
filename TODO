@@ -15,6 +15,7 @@ todo display otclient icon in window bar
 remake otui styles states system
 padding
 break UILabel lines
+find a way to add new widgets without focusing them
 
 rename Game to g_game, etc
 implement Console key binding
