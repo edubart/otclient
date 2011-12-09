@@ -180,7 +180,8 @@ namespace Fw
 
     enum BlendFunc {
         BlendDefault,
-        BlendColorzing
+        BlendColorzing,
+        BlendParticles
     };
 
     enum AspectRatioMode {

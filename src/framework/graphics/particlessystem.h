@@ -1,7 +1,7 @@
 #include <framework/global.h>
 #include <framework/graphics/texture.h>
 
-struct Particle {
+class Particle {
 public:
 
     Particle(const Rect& rect, float vx, float vy, float ax, float ay, float duration, const Color& color = Color(255, 255, 255), TexturePtr texture = nullptr);
@@ -14,23 +14,24 @@ public:
 
 private:
     Rect m_rect;
-
-    int m_ix, m_iy;
-    float m_vx, m_vy;
-    float m_ax, m_ay;
-
     Color m_color;
     TexturePtr m_texture;
+
+    int m_ix, m_iy;
+    PointF m_s0, m_v, m_a;
+    float m_vx, m_vy;
+    float m_ax, m_ay;
 
     float m_duration;
     ticks_t m_startTicks;
     bool m_finished;
 };
+typedef std::shared_ptr<Particle> ParticlePtr;
 
-class Emitter {
+class ParticleEmitter {
 public:
 
-    Emitter(const Point& position, float duration, int particlesPerSecond);
+    ParticleEmitter(const Point& position, float duration, int particlesPerSecond);
 
     void render();
     void update();
@@ -44,11 +45,14 @@ private:
     ticks_t m_startTicks;
     bool m_finished;
     int m_particlesPerSecond, m_createdParticles;
-    std::list<Particle> m_particles;
+    std::list<ParticlePtr> m_particles;
+
+    // particles size
+    Size m_pMinSize, m_pMaxSize;
 
     // particles initial position related to emitter position
-    float positionMinRadius, positionMaxRadius;
-    float positionMinAngle, positionMaxAngle;
+    float m_pPositionMinRadius, m_pPositionMaxRadius;
+    float m_pPositionMinAngle, m_pPositionMaxAngle;
 
     // particles initial velocity
     float minVelocity, maxVelocity;
@@ -58,16 +62,20 @@ private:
     float minAcceleration, maxAcceleration;
     float minAccelerationAngle, maxAccelerationAngle;
 
+    // particles duration
+    float m_pMinDuration, m_pMaxDuration;
+
     // color ralated
     Color color;
 
 
     // texture related
 };
+typedef std::shared_ptr<ParticleEmitter> ParticleEmitterPtr;
 
 class Affector {
 public:
-    virtual void update() {};
+    virtual void update() {}
 };
 
 class Gravity270Affector : public Affector {
@@ -79,12 +87,12 @@ public:
 
 class ParticlesSystem {
 public:
-    void add(Emitter emitter);
+    void add(const ParticleEmitterPtr& emitter);
 
     void render();
     void update();
 
 private:
-    std::list<Emitter> m_emitters;
+    std::list<ParticleEmitterPtr> m_emitters;
     std::list<Affector> m_affectors;
 };

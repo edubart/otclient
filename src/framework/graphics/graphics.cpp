@@ -317,6 +317,9 @@ void Graphics::bindBlendFunc(Fw::BlendFunc blendType)
         case Fw::BlendColorzing:
             glBlendFunc(GL_DST_COLOR, GL_ONE_MINUS_SRC_ALPHA);
             break;
+        case Fw::BlendParticles:
+            glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_ONE);
+            break;
     }
 }
 
