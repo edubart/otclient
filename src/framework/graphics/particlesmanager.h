@@ -2,6 +2,8 @@
 
 class ParticlesManager {
 public:
+    bool load(const std::string& filename);
+
     void add(ParticlesSystem particleSystem);
 
     void render();

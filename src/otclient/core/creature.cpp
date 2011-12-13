@@ -344,15 +344,12 @@ void Creature::setHealthPercent(uint8 healthPercent)
 
 void Creature::setDirection(Otc::Direction direction)
 {
-    if(direction >= 4) {
-        if(direction == Otc::NorthEast || direction == Otc::SouthEast)
-            m_xPattern = Otc::East;
-        else if(direction == Otc::NorthWest || direction == Otc::SouthWest)
-            m_xPattern = Otc::West;
-    }
-    else {
+    if(direction == Otc::NorthEast || direction == Otc::SouthEast)
+        m_xPattern = Otc::East;
+    else if(direction == Otc::NorthWest || direction == Otc::SouthWest)
+        m_xPattern = Otc::West;
+    else
         m_xPattern = direction;
-    }
 
     m_direction = direction;
 }

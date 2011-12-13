@@ -29,9 +29,9 @@ void Particle::render()
     if(!m_texture)
         g_painter.drawFilledRect(m_rect);
     else {
-        g_painter.setCompositionMode(Painter::CompositionMode_AdditiveSource);
+        //g_painter.setCompositionMode(Painter::CompositionMode_AdditiveSource);
         g_painter.drawTexturedRect(m_rect, m_texture);
-        g_painter.setCompositionMode(Painter::CompositionMode_SourceOver);
+        //g_painter.setCompositionMode(Painter::CompositionMode_SourceOver);
     }
 }
 
@@ -50,28 +50,33 @@ void Particle::update()
                   m_iy + (m_vy * t / 1000.0) + (m_ay * t*t / (2.0 * 1000 * 1000)));
 }
 
-ParticleEmitter::ParticleEmitter(const Point& position, float duration, int particlesPerSecond)
+ParticleEmitter::ParticleEmitter(const Point& position, float duration, float burstRate, float burstCount)
 {
     m_position = position;
     m_duration = duration;
-    m_particlesPerSecond = particlesPerSecond;
-    m_createdParticles = 0;
+    m_burstRate = burstRate; m_burstCount = burstCount;
+    m_currentBurst = 0;
     m_startTicks = g_clock.ticks();
     m_finished = false;
 
-    // particles default configuration. (make them reasonable detect missing properties on scripts)
+    // particles default configuration. (make them reasonable for user detect missing properties on scripts)
     m_pPositionMinRadius = 0; m_pPositionMaxRadius = 3;
-    m_pPositionMinAngle = 0; m_pPositionMaxAngle = 90;
+    m_pPositionMinAngle = -Fw::pi; m_pPositionMaxAngle = Fw::pi;
     m_pMinSize = Size(32, 32); m_pMaxSize = Size(32, 32);
     m_pMinDuration = 0; m_pMaxDuration = 10;
+
+    m_pMinVelocity = 32; m_pMaxVelocity = 64;
+    m_pMinVelocityAngle = -Fw::pi; m_pMaxVelocityAngle = Fw::pi;
+
+    m_pMinAcceleration = 32; m_pMaxAcceleration = 64;
+    m_pMinAccelerationAngle = -Fw::pi; m_pMaxAccelerationAngle = Fw::pi;
+
+    m_pColor = Color(255, 0, 0, 128);
+    m_pTexture = nullptr;
 }
 
 void ParticleEmitter::render()
 {
-    // testing
-    //g_graphics.bindColor(Color(255, 255, 255));
-    //g_graphics.drawFilledRect(Rect(0, 0, 400, 400));
-
     for(auto it = m_particles.begin(), end = m_particles.end(); it != end; ++it)
         (*it)->render();
 }
@@ -98,24 +103,37 @@ void ParticleEmitter::update()
     }
 
     // create some particles
-    TexturePtr tex = g_textures.getTexture("circle2.png");
+    m_pTexture = g_textures.getTexture("circle2.png"); // remove this, 'll be parsed on loader
 
-    int currentParticles = 1 + elapsedTicks / 1000.0 * m_particlesPerSecond;
-    for(int i = m_createdParticles; i < currentParticles; ++i) {
+    int currentBurst = elapsedTicks / 1000.0 / m_burstRate + 1;
+    for(int b = m_currentBurst; b < currentBurst; ++b) {
 
-        // \/ not working properly
+        // every burst created at same position.
         float pRadius = Fw::randomRange(m_pPositionMinRadius, m_pPositionMaxRadius);
-        float pAngle = Fw::randomRange(m_pPositionMinAngle, m_pPositionMaxAngle) * 3.141592 / 180.0;
+        float pAngle = Fw::randomRange(m_pPositionMinAngle, m_pPositionMaxAngle);
+        Point pPosition = Point(pRadius * cos(pAngle), pRadius * sin(pAngle));
 
-        Point pPosition = Point(cos(pAngle * pRadius), sin(pAngle * pRadius));
+        for(int p = 0; p < m_burstCount; ++p) {
 
-        Size pSize = Size(Fw::randomRange(m_pMinSize.width(), m_pMaxSize.width()), Fw::randomRange(m_pMinSize.height(), m_pMaxSize.height()));
-        float pDuration = Fw::randomRange(m_pMinDuration, m_pMaxDuration);
+            Size pSize = Size(Fw::randomRange(m_pMinSize.width(), m_pMaxSize.width()), Fw::randomRange(m_pMinSize.height(), m_pMaxSize.height()));
+            float pDuration = Fw::randomRange(m_pMinDuration, m_pMaxDuration);
 
-        // todo: add random data generation
-        m_particles.push_back(ParticlePtr(new Particle(Rect(m_position + pPosition, pSize), 16, 8, 0, 0, pDuration, Color(255, 0, 0, 32), tex)));
+            // particles initial velocity
+            float pVelocity = Fw::randomRange(m_pMinVelocity, m_pMaxVelocity);
+            float pVelocityAngle = Fw::randomRange(m_pMinVelocityAngle, m_pMaxVelocityAngle);
+
+            // particles initial acceleration
+            float pAcceleration = Fw::randomRange(m_pMinAcceleration, m_pMaxAcceleration);
+            float pAccelerationAngle = Fw::randomRange(m_pMinAccelerationAngle, m_pMaxAccelerationAngle);
+
+            m_particles.push_back(ParticlePtr(new Particle(Rect(m_position + pPosition, pSize),
+                                                           pVelocity * cos(pVelocityAngle), pVelocity * sin(pVelocityAngle),
+                                                           pAcceleration * cos(pAccelerationAngle), pAcceleration * sin(pAccelerationAngle),
+                                                           pDuration, m_pColor, m_pTexture)));
+        }
     }
-    m_createdParticles = currentParticles;
+
+    m_currentBurst = currentBurst;
 }
 
 void ParticlesSystem::add(const ParticleEmitterPtr& emitter)

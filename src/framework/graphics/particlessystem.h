@@ -31,7 +31,7 @@ typedef std::shared_ptr<Particle> ParticlePtr;
 class ParticleEmitter {
 public:
 
-    ParticleEmitter(const Point& position, float duration, int particlesPerSecond);
+    ParticleEmitter(const Point& position, float duration, float burstRate, float burstCount);
 
     void render();
     void update();
@@ -44,7 +44,8 @@ private:
     int m_duration;
     ticks_t m_startTicks;
     bool m_finished;
-    int m_particlesPerSecond, m_createdParticles;
+    float m_burstRate, m_burstCount;
+    int m_currentBurst;
     std::list<ParticlePtr> m_particles;
 
     // particles size
@@ -55,21 +56,19 @@ private:
     float m_pPositionMinAngle, m_pPositionMaxAngle;
 
     // particles initial velocity
-    float minVelocity, maxVelocity;
-    float minVelocityAngle, maxVelocityAngle;
+    float m_pMinVelocity, m_pMaxVelocity;
+    float m_pMinVelocityAngle, m_pMaxVelocityAngle;
 
     // particles initial acceleration
-    float minAcceleration, maxAcceleration;
-    float minAccelerationAngle, maxAccelerationAngle;
+    float m_pMinAcceleration, m_pMaxAcceleration;
+    float m_pMinAccelerationAngle, m_pMaxAccelerationAngle;
 
     // particles duration
     float m_pMinDuration, m_pMaxDuration;
 
-    // color ralated
-    Color color;
-
-
-    // texture related
+    // visual ralated
+    Color m_pColor;
+    TexturePtr m_pTexture;
 };
 typedef std::shared_ptr<ParticleEmitter> ParticleEmitterPtr;
 
@@ -81,7 +80,7 @@ public:
 class Gravity270Affector : public Affector {
 public:
     void update() {
-
+        // earth gravity is 9.8 m/s². -> in tibia, 32 pixels are equal to 1 meter -> 32 pixels/m -> 9.8 * 32 is gravity constant
     }
 };
 

@@ -1,6 +1,24 @@
 #include "particlesmanager.h"
+#include <framework/core/resourcemanager.h>
+#include <framework/otml/otml.h>
 
 ParticlesManager g_particlesManager;
+
+bool ParticlesManager::load(const std::string& filename)
+{
+    if(!g_resources.fileExists(filename))
+        return false;
+
+    try {
+        OTMLDocumentPtr doc = OTMLDocument::parse(filename);
+        //for(const OTMLNodePtr& child : doc->children())
+            //m_confsMap[child->tag()] = child->value();
+        return true;
+    } catch(Exception& e) {
+        logError("could not load configurations: ", e.what());
+        return false;
+    }
+}
 
 void ParticlesManager::add(ParticlesSystem particleSystem)
 {
