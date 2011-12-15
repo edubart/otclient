@@ -23,6 +23,7 @@
 #ifndef PARTICLEMANAGER_H
 #define PARTICLEMANAGER_H
 
+#include "declarations.h"
 #include "particlesystem.h"
 
 class ParticleManager {

@@ -78,8 +78,10 @@ void Particle::update()
     m_rect.moveTo((int)m_pos.x, (int)m_pos.y);
 }
 
-ParticleEmitter::ParticleEmitter()
+ParticleEmitter::ParticleEmitter(const ParticleSystemPtr& parent)
 {
+    m_parent = parent;
+
     m_position = Point(0, 0);
     m_duration = -1;
     m_burstRate = 1; m_burstCount = 32;
@@ -228,6 +230,7 @@ void ParticleEmitter::update()
         // every burst created at same position.
         float pRadius = Fw::randomRange(m_pMinPositionRadius, m_pMaxPositionRadius);
         float pAngle = Fw::randomRange(m_pMinPositionAngle, m_pMaxPositionAngle);
+
         Point pPosition = m_position + Point(pRadius * cos(pAngle), pRadius * sin(pAngle));
 
         for(int p = 0; p < m_burstCount; ++p) {

@@ -23,6 +23,7 @@
 #ifndef PARTICLEEMITTER_H
 #define PARTICLEEMITTER_H
 
+#include "declarations.h"
 #include <framework/global.h>
 #include <framework/graphics/texture.h>
 #include <framework/otml/otml.h>
@@ -49,12 +50,11 @@ private:
     double m_lastUpdateTime;
     bool m_finished;
 };
-typedef std::shared_ptr<Particle> ParticlePtr;
 
 class ParticleEmitter {
 public:
 
-    ParticleEmitter();
+    ParticleEmitter(const ParticleSystemPtr& parent);
 
     bool load(const OTMLNodePtr& node);
 
@@ -64,6 +64,8 @@ public:
     bool hasFinished() { return m_finished; }
 
 private:
+    ParticleSystemWeakPtr m_parent;
+
     // self related
     Point m_position;
     int m_duration;
@@ -95,6 +97,5 @@ private:
     Color m_pColor;
     TexturePtr m_pTexture;
 };
-typedef std::shared_ptr<ParticleEmitter> ParticleEmitterPtr;
 
 #endif

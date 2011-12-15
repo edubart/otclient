@@ -21,12 +21,14 @@
  */
 
 #include "particlesystem.h"
+#include <framework/core/declarations.h>
+#include <framework/ui/declarations.h>
 
 bool ParticleSystem::load(const OTMLNodePtr& node)
 {
     for(const OTMLNodePtr& childNode : node->children()) {
         if(childNode->tag() == "Emitter") {
-            ParticleEmitterPtr emitter = ParticleEmitterPtr(new ParticleEmitter);
+            ParticleEmitterPtr emitter = ParticleEmitterPtr(new ParticleEmitter(shared_from_this()));
             emitter->load(childNode);
             m_emitters.push_back(emitter);
         }

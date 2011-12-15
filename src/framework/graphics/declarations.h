@@ -35,8 +35,12 @@ class FrameBuffer;
 class Shader;
 class ShaderProgram;
 class PainterShaderProgram;
+class Particle;
+class ParticleEmitter;
+class ParticleSystem;
 
 typedef std::weak_ptr<Texture> TextureWeakPtr;
+typedef std::weak_ptr<ParticleSystem> ParticleSystemWeakPtr;
 
 typedef std::shared_ptr<Texture> TexturePtr;
 typedef std::shared_ptr<AnimatedTexture> AnimatedTexturePtr;
@@ -47,6 +51,9 @@ typedef std::shared_ptr<FrameBuffer> FrameBufferPtr;
 typedef std::shared_ptr<Shader> ShaderPtr;
 typedef std::shared_ptr<ShaderProgram> ShaderProgramPtr;
 typedef std::shared_ptr<PainterShaderProgram> PainterShaderProgramPtr;
+typedef std::shared_ptr<Particle> ParticlePtr;
+typedef std::shared_ptr<ParticleEmitter> ParticleEmitterPtr;
+typedef std::shared_ptr<ParticleSystem> ParticleSystemPtr;
 typedef std::vector<ShaderPtr> ShaderList;
 
 #endif

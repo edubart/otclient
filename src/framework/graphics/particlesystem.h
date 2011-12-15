@@ -23,6 +23,7 @@
 #ifndef PARTICLESYSTEM_H
 #define PARTICLESYSTEM_H
 
+#include "declarations.h"
 #include "particleemitter.h"
 
 class Affector {
@@ -37,7 +38,7 @@ public:
     }
 };
 
-class ParticleSystem {
+class ParticleSystem : public std::enable_shared_from_this<ParticleSystem> {
 public:
     bool load(const OTMLNodePtr& node);
 
@@ -48,6 +49,5 @@ private:
     std::list<ParticleEmitterPtr> m_emitters;
     std::list<Affector> m_affectors;
 };
-typedef std::shared_ptr<ParticleSystem> ParticleSystemPtr;
 
 #endif
