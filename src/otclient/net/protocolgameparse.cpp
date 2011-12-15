@@ -32,7 +32,7 @@
 #include <otclient/core/tile.h>
 #include <otclient/luascript/luavaluecasts.h>
 #include <framework/core/eventdispatcher.h>
-#include <framework/graphics/particlesmanager.h>
+#include <framework/graphics/particlemanager.h>
 
 void ProtocolGame::parseMessage(InputMessage& msg)
 {
@@ -529,12 +529,8 @@ void ProtocolGame::parseMagicEffect(InputMessage& msg)
     TilePtr tile = g_map.getTile(pos);
     tile->addEffect(effect);
 
-    // test particles
-    ParticlesSystem particlesSystem;
-
-    particlesSystem.add(ParticleEmitterPtr(new ParticleEmitter(Point(100, 100), -1, 2, 10)));
-
-    g_particlesManager.add(particlesSystem);
+    // TODO: check if particles effect exists, if not, play standard sprite effect.
+    g_particleManager.load("particle.otpa");
 }
 
 void ProtocolGame::parseAnimatedText(InputMessage& msg)

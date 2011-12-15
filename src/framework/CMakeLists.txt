@@ -143,8 +143,9 @@ SET(framework_SOURCES ${framework_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/graphics/texturemanager.cpp
     ${CMAKE_CURRENT_LIST_DIR}/graphics/borderimage.cpp
     ${CMAKE_CURRENT_LIST_DIR}/graphics/image.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/particlesmanager.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/particlessystem.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/graphics/particlemanager.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/graphics/particlesystem.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/graphics/particleemitter.cpp
     ${CMAKE_CURRENT_LIST_DIR}/graphics/shader.cpp
     ${CMAKE_CURRENT_LIST_DIR}/graphics/shaderprogram.cpp
     ${CMAKE_CURRENT_LIST_DIR}/graphics/paintershaderprogram.cpp

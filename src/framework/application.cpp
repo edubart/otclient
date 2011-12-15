@@ -31,7 +31,7 @@
 #include <framework/ui/uimanager.h>
 #include <framework/ui/uiwidget.h>
 #include <framework/graphics/graphics.h>
-#include <framework/graphics/particlesmanager.h>
+#include <framework/graphics/particlemanager.h>
 #include <framework/graphics/painter.h>
 #include <framework/luascript/luainterface.h>
 
@@ -209,7 +209,7 @@ void Application::poll()
     // poll application genareted events
     g_dispatcher.poll();
 
-    g_particlesManager.update();
+    g_particleManager.update();
 }
 
 void Application::render()
@@ -217,7 +217,7 @@ void Application::render()
     // everything is rendered by UI components
     g_ui.render();
 
-    g_particlesManager.render();
+    g_particleManager.render();
 }
 
 void Application::resize(const Size& size)
