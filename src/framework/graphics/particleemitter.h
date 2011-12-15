@@ -29,9 +29,7 @@
 
 class Particle {
 public:
-
-    Particle(const Rect& rect, float vx, float vy, float ax, float ay, float duration, const Color& color = Color(255, 255, 255), TexturePtr texture = nullptr);
-    ~Particle();
+    Particle(const Point& pos, const Size& size, const PointF& velocity, const PointF& acceleration, float duration, const Color& color = Fw::white, TexturePtr texture = nullptr);
 
     void render();
     void update();
@@ -39,16 +37,16 @@ public:
     bool hasFinished() { return m_finished; }
 
 private:
-    Rect m_rect;
     Color m_color;
     TexturePtr m_texture;
-
-    int m_ix, m_iy;
-    float m_vx, m_vy;
-    float m_ax, m_ay;
-
+    PointF m_pos;
+    PointF m_velocity;
+    PointF m_acceleration;
+    Size m_size;
+    Rect m_rect;
     float m_duration;
-    ticks_t m_startTicks;
+    double m_startTime;
+    double m_lastUpdateTime;
     bool m_finished;
 };
 typedef std::shared_ptr<Particle> ParticlePtr;
@@ -69,7 +67,7 @@ private:
     // self related
     Point m_position;
     int m_duration;
-    ticks_t m_startTicks;
+    double m_startTime;
     bool m_finished;
     float m_burstRate;
     int m_currentBurst, m_burstCount;

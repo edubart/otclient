@@ -28,9 +28,6 @@ ParticleManager g_particleManager;
 
 bool ParticleManager::load(const std::string& filename)
 {
-    if(!g_resources.fileExists(filename))
-        return false;
-
     try {
         OTMLDocumentPtr doc = OTMLDocument::parse(filename);
         const OTMLNodePtr& node = doc->at("ParticleSystem");

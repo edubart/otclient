@@ -39,3 +39,5 @@ use CoordsBuffer in font
 cache into framebuffers
 implement glbuffer for CoordsBuffer
 use indices in CoordsBuffer
+
+create a Timer class

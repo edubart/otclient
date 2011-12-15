@@ -37,6 +37,10 @@ public:
     ticks_t ticksElapsed(long prevTicks) { return ticks() - prevTicks; }
     ticks_t ticksFor(int delay) { return ticks() + delay; }
 
+    double time() { return m_currentTicks/1000.0; }
+    double timeElapsed(double prevTime) { return time() - prevTime; }
+    double timeFor(double delay) { return time() + delay; }
+
 private:
     ticks_t m_currentTicks;
     std::chrono::system_clock::time_point m_startupTime;
