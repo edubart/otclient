@@ -1,0 +1,30 @@
+ParticleSystem
+  Emitter
+    position: 100 100
+    duration: 9
+    burstRate: 0.03
+    burstCount: 1
+    
+    
+    pSize: 8 8
+    
+    pPositionRadius: 0
+    pVelocityAngle: 360
+    pAcceleration: 0
+    
+    pColor: #22940684
+    pTexture: circle2.png
+    
+  Emitter
+    position: 100 100
+    duration: 9
+    burstRate: 0.01
+    burstCount: 1
+    
+    pSize: 5 5
+    
+    pPositionRadius: 0
+    pVelocityAngle: 360
+    pAccelerationAngle: 315
+    pColor: #aaaaaaff
+    pTexture: circle2.png
