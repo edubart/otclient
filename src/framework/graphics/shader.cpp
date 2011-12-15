@@ -56,6 +56,7 @@ bool Shader::compileSourceCode(const std::string& sourceCode)
         "#ifndef GL_FRAGMENT_PRECISION_HIGH\n"
         "#define highp mediump\n"
         "#endif\n";
+        "precision highp float;\n"
 #endif
 
     std::string code = qualifierDefines;
