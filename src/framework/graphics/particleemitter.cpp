@@ -20,63 +20,14 @@
  * THE SOFTWARE.
  */
 
+#include "particle.h"
 #include "particleemitter.h"
-#include "graphics.h"
+#include "particlesystem.h"
 #include <framework/core/clock.h>
 #include <framework/graphics/texturemanager.h>
 #include <framework/util/tools.h>
 
 #define DEG_TO_RAD (acos(-1)/180.0)
-
-Particle::Particle(const Point& pos, const Size& size, const PointF& velocity, const PointF& acceleration, float duration, const Color& color, TexturePtr texture)
-{
-    m_rect = Rect(pos, size);
-    m_pos = PointF(pos.x, pos.y);
-    m_size = size;
-    m_velocity = velocity;
-    m_acceleration = acceleration;
-    m_color = color;
-    m_texture = texture;
-    m_duration = duration;
-    m_startTime = g_clock.time();
-    m_lastUpdateTime = g_clock.time();
-    m_finished = false;
-}
-
-void Particle::render()
-{
-    g_painter.setColor(m_color);
-
-    if(!m_texture)
-        g_painter.drawFilledRect(m_rect);
-    else {
-        //g_painter.setCompositionMode(Painter::CompositionMode_AdditiveSource);
-        g_painter.drawTexturedRect(m_rect, m_texture);
-        //g_painter.setCompositionMode(Painter::CompositionMode_SourceOver);
-    }
-}
-
-void Particle::update()
-{
-    float elapsedTime = g_clock.timeElapsed(m_lastUpdateTime);
-    m_lastUpdateTime = g_clock.time();
-
-    // check if finished
-    if(m_duration > 0 && g_clock.timeElapsed(m_startTime) >= m_duration) {
-        m_finished = true;
-        return;
-    }
-
-    // update position
-    PointF delta = m_velocity * elapsedTime;
-    delta.y *= -1; // painter orientate Y axis in the inverse direction
-    m_pos += delta;
-
-    // update acceleration
-    m_velocity += m_acceleration * elapsedTime;
-
-    m_rect.moveTo((int)m_pos.x, (int)m_pos.y);
-}
 
 ParticleEmitter::ParticleEmitter(const ParticleSystemPtr& parent)
 {
@@ -121,6 +72,7 @@ bool ParticleEmitter::load(const OTMLNodePtr& node)
             m_burstRate = childNode->value<float>();
         else if(childNode->tag() == "burstCount")
             m_burstCount = childNode->value<int>();
+
         // particles generation related
         else if(childNode->tag() == "particle-position-radius") {
             m_pMinPositionRadius = childNode->value<float>();
@@ -139,6 +91,7 @@ bool ParticleEmitter::load(const OTMLNodePtr& node)
         else if(childNode->tag() == "particle-max-position-angle")
             m_pMaxPositionAngle = childNode->value<float>() * DEG_TO_RAD;
 
+        // velocity
         else if(childNode->tag() == "particle-velocity") {
             m_pMinVelocity = childNode->value<float>();
             m_pMaxVelocity = childNode->value<float>();
@@ -159,6 +112,8 @@ bool ParticleEmitter::load(const OTMLNodePtr& node)
             m_pMinAcceleration = childNode->value<float>();
             m_pMaxAcceleration = childNode->value<float>();
         }
+
+        // acceleration
         else if(childNode->tag() == "particle-min-acceleration")
             m_pMinAcceleration = childNode->value<float>();
         else if(childNode->tag() == "particle-max-acceleration")
@@ -171,6 +126,8 @@ bool ParticleEmitter::load(const OTMLNodePtr& node)
             m_pMinAccelerationAngle = childNode->value<float>() * DEG_TO_RAD;
         else if(childNode->tag() == "particle-max-acceleration-angle")
             m_pMaxAccelerationAngle = childNode->value<float>() * DEG_TO_RAD;
+
+        // duration
         else if(childNode->tag() == "particle-duration") {
             m_pMinDuration = childNode->value<float>();
             m_pMaxDuration = childNode->value<float>();
@@ -179,6 +136,8 @@ bool ParticleEmitter::load(const OTMLNodePtr& node)
             m_pMinDuration = childNode->value<float>();
         else if(childNode->tag() == "particle-max-duration")
             m_pMaxDuration = childNode->value<float>();
+
+        // visual
         else if(childNode->tag() == "particle-size") {
             m_pMinSize = childNode->value<Size>();
             m_pMaxSize = childNode->value<Size>();
@@ -195,32 +154,13 @@ bool ParticleEmitter::load(const OTMLNodePtr& node)
     return true;
 }
 
-void ParticleEmitter::render()
-{
-    for(auto it = m_particles.begin(), end = m_particles.end(); it != end; ++it)
-        (*it)->render();
-}
-
 void ParticleEmitter::update()
 {
     float elapsedTime = g_clock.timeElapsed(m_startTime);
 
-    // update particles
-    for(auto it = m_particles.begin(), end = m_particles.end(); it != end;) {
-        const ParticlePtr& particle = *it;
-        if(particle->hasFinished()) {
-            it = m_particles.erase(it);
-            continue;
-        }
-        particle->update();
-        ++it;
-    }
-
     // check if finished
     if(m_duration > 0 && elapsedTime > m_duration) {
-        // stop emitting but only self remove when there are no particles left
-        if(m_particles.size() == 0)
-            m_finished = true;
+        m_finished = true;
         return;
     }
 
@@ -248,7 +188,8 @@ void ParticleEmitter::update()
             float pAccelerationAngle = Fw::randomRange(m_pMinAccelerationAngle, m_pMaxAccelerationAngle);
             PointF pAcceleration(pAccelerationAbs * cos(pAccelerationAngle), pAccelerationAbs * sin(pAccelerationAngle));
 
-            m_particles.push_back(ParticlePtr(new Particle(pPosition, pSize, pVelocity, pAcceleration, pDuration, m_pColor, m_pTexture)));
+            ParticleSystemPtr particleSystem = m_parent.lock();
+            particleSystem->addParticle(ParticlePtr(new Particle(pPosition, pSize, pVelocity, pAcceleration, pDuration, m_pColor, m_pTexture)));
         }
     }
 

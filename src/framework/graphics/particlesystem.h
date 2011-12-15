@@ -42,10 +42,13 @@ class ParticleSystem : public std::enable_shared_from_this<ParticleSystem> {
 public:
     bool load(const OTMLNodePtr& node);
 
+    void addParticle(const ParticlePtr& particle);
+
     void render();
     void update();
 
 private:
+    std::list<ParticlePtr> m_particles;
     std::list<ParticleEmitterPtr> m_emitters;
     std::list<Affector> m_affectors;
 };

@@ -28,29 +28,6 @@
 #include <framework/graphics/texture.h>
 #include <framework/otml/otml.h>
 
-class Particle {
-public:
-    Particle(const Point& pos, const Size& size, const PointF& velocity, const PointF& acceleration, float duration, const Color& color = Fw::white, TexturePtr texture = nullptr);
-
-    void render();
-    void update();
-
-    bool hasFinished() { return m_finished; }
-
-private:
-    Color m_color;
-    TexturePtr m_texture;
-    PointF m_pos;
-    PointF m_velocity;
-    PointF m_acceleration;
-    Size m_size;
-    Rect m_rect;
-    float m_duration;
-    double m_startTime;
-    double m_lastUpdateTime;
-    bool m_finished;
-};
-
 class ParticleEmitter {
 public:
 
@@ -58,7 +35,6 @@ public:
 
     bool load(const OTMLNodePtr& node);
 
-    void render();
     void update();
 
     bool hasFinished() { return m_finished; }
@@ -73,7 +49,6 @@ private:
     bool m_finished;
     float m_burstRate;
     int m_currentBurst, m_burstCount;
-    std::list<ParticlePtr> m_particles;
 
     // particles size
     Size m_pMinSize, m_pMaxSize;

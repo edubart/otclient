@@ -20,6 +20,7 @@
  * THE SOFTWARE.
  */
 
+#include "particle.h"
 #include "particlesystem.h"
 #include <framework/core/declarations.h>
 #include <framework/ui/declarations.h>
@@ -36,14 +37,20 @@ bool ParticleSystem::load(const OTMLNodePtr& node)
     return true;
 }
 
+void ParticleSystem::addParticle(const ParticlePtr& particle)
+{
+    m_particles.push_back(particle);
+}
+
 void ParticleSystem::render()
 {
-    for(auto it = m_emitters.begin(), end = m_emitters.end(); it != end; ++it)
+    for(auto it = m_particles.begin(), end = m_particles.end(); it != end; ++it)
         (*it)->render();
 }
 
 void ParticleSystem::update()
 {
+    // update emitters
     for(auto it = m_emitters.begin(), end = m_emitters.end(); it != end;) {
         const ParticleEmitterPtr& emitter = *it;
         if(emitter->hasFinished()) {
@@ -51,6 +58,17 @@ void ParticleSystem::update()
             continue;
         }
         emitter->update();
+        ++it;
+    }
+
+    // update particles
+    for(auto it = m_particles.begin(), end = m_particles.end(); it != end;) {
+        const ParticlePtr& particle = *it;
+        if(particle->hasFinished()) {
+            it = m_particles.erase(it);
+            continue;
+        }
+        particle->update();
         ++it;
     }
 }
