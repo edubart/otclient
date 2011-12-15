@@ -6,25 +6,25 @@ ParticleSystem
     burstCount: 1
     
     
-    pSize: 8 8
+    particle-size: 8 8
     
-    pPositionRadius: 0
-    pVelocityAngle: 360
-    pAcceleration: 0
+    particle-position-radius: 0
+    particle-velocity-angle: 360
+    particle-acceleration: 0
     
-    pColor: #22940684
-    pTexture: circle2.png
+    particle-color: #22940684
+    particle-texture: circle2.png
     
   Emitter
     position: 100 100
     duration: 9
-    burstRate: 0.01
-    burstCount: 1
+    burstRate: 1
+    burstCount: 30
     
-    pSize: 5 5
+    particle-size: 5 5
     
-    pPositionRadius: 0
-    pVelocityAngle: 360
-    pAccelerationAngle: 315
-    pColor: #aaaaaaff
-    pTexture: circle2.png
+    particle-position-radius: 0
+    particle-velocity-angle: 360
+    particle-acceleration-angle: 315
+    particle-color: #ff0000ff
+    particle-texture: circle2.png
