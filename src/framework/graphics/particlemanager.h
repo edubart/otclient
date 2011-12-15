@@ -34,7 +34,7 @@ public:
     void update();
 
 private:
-    std::list<ParticleSystemPtr> m_particlesSystems;
+    std::list<ParticleSystemPtr> m_particleSystems;
 };
 
 extern ParticleManager g_particleManager;

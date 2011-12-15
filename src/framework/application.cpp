@@ -111,6 +111,8 @@ void Application::init(const std::vector<std::string>& args, int appFlags)
 
     if(m_appFlags & Fw::AppEnableModules)
         g_modules.discoverModulesPath();
+
+    g_particleManager.load("particle.otpa");
 }
 
 

@@ -22,8 +22,11 @@
 
 #include "particle.h"
 #include "particlesystem.h"
-#include <framework/core/declarations.h>
-#include <framework/ui/declarations.h>
+
+ParticleSystem::ParticleSystem()
+{
+    m_finished = false;
+}
 
 bool ParticleSystem::load(const OTMLNodePtr& node)
 {
@@ -50,6 +53,12 @@ void ParticleSystem::render()
 
 void ParticleSystem::update()
 {
+    // check if finished
+    if(m_particles.empty() && m_emitters.empty()) {
+        m_finished = true;
+        return;
+    }
+
     // update emitters
     for(auto it = m_emitters.begin(), end = m_emitters.end(); it != end;) {
         const ParticleEmitterPtr& emitter = *it;

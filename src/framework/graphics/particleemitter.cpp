@@ -35,6 +35,7 @@ ParticleEmitter::ParticleEmitter(const ParticleSystemPtr& parent)
 
     m_position = Point(0, 0);
     m_duration = -1;
+    m_delay = 0;
     m_burstRate = 1; m_burstCount = 32;
     m_currentBurst = 0;
     m_startTime = g_clock.time();
@@ -68,6 +69,8 @@ bool ParticleEmitter::load(const OTMLNodePtr& node)
             m_position = childNode->value<Point>();
         else if(childNode->tag() == "duration")
             m_duration = childNode->value<float>();
+        else if(childNode->tag() == "delay")
+            m_delay = childNode->value<float>();
         else if(childNode->tag() == "burstRate")
             m_burstRate = childNode->value<float>();
         else if(childNode->tag() == "burstCount")
@@ -157,6 +160,13 @@ bool ParticleEmitter::load(const OTMLNodePtr& node)
 void ParticleEmitter::update()
 {
     float elapsedTime = g_clock.timeElapsed(m_startTime);
+
+    // only start updating after delay
+    if(elapsedTime < m_delay)
+        return;
+
+    // setup a new start time
+    elapsedTime -= m_delay;
 
     // check if finished
     if(m_duration > 0 && elapsedTime > m_duration) {

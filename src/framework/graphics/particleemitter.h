@@ -32,6 +32,7 @@ class ParticleEmitter {
 public:
 
     ParticleEmitter(const ParticleSystemPtr& parent);
+    ~ParticleEmitter() { dump << "ParticleEmitter deleted"; }
 
     bool load(const OTMLNodePtr& node);
 
@@ -44,7 +45,7 @@ private:
 
     // self related
     Point m_position;
-    int m_duration;
+    float m_duration, m_delay;
     double m_startTime;
     bool m_finished;
     float m_burstRate;

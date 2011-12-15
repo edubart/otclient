@@ -40,6 +40,9 @@ public:
 
 class ParticleSystem : public std::enable_shared_from_this<ParticleSystem> {
 public:
+    ParticleSystem();
+    ~ParticleSystem() { dump << "ParticleSystem deleted"; }
+
     bool load(const OTMLNodePtr& node);
 
     void addParticle(const ParticlePtr& particle);
@@ -47,7 +50,10 @@ public:
     void render();
     void update();
 
+    bool hasFinished() { return m_finished; }
+
 private:
+    bool m_finished;
     std::list<ParticlePtr> m_particles;
     std::list<ParticleEmitterPtr> m_emitters;
     std::list<Affector> m_affectors;
