@@ -1,14 +1,14 @@
 ParticleSystem
-
-  GoToPointAffector
+    
+  AttractionAffector
     destination: 150 150
 
   Emitter
     position: 100 100
-    burstRate: 2
+    burstRate: 99
     burstCount: 1
 
-    particle-duration: 1
+    particle-duration: 999
     particle-position-radius: 0
     
     particle-velocity: 32
@@ -20,3 +20,17 @@ ParticleSystem
     particle-color: #ffff0044
     particle-texture: circle2.png
   
+  Emitter
+    position: 150 150
+    burstRate: 99
+    burstCount: 1
+
+    particle-duration: 999
+    particle-position-radius: 0
+    
+    particle-velocity: 0
+    particle-acceleration: 0
+
+    particle-size: 24 24
+    particle-color: #ffff0044
+    particle-texture: circle2.png

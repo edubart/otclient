@@ -41,12 +41,10 @@ bool ParticleSystem::load(const OTMLNodePtr& node)
         else if(childNode->tag().find("Affector") != std::string::npos) {
             ParticleAffectorPtr affector;
 
-            if(childNode->tag() == "Gravity270Affector")
-                affector = ParticleAffectorPtr(new Gravity270Affector);
-            else if(childNode->tag() == "Gravity315Affector")
-                affector = ParticleAffectorPtr(new Gravity315Affector);
-            else if(childNode->tag() == "GoToPointAffector")
-                affector = ParticleAffectorPtr(new GoToPointAffector);
+            if(childNode->tag() == "GravityAffector")
+                affector = ParticleAffectorPtr(new GravityAffector);
+            else if(childNode->tag() == "AttractionAffector")
+                affector = ParticleAffectorPtr(new AttractionAffector);
 
             if(affector) {
                 affector->load(childNode);

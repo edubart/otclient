@@ -48,7 +48,7 @@ public:
     TPoint<T>& operator-=(const TPoint<T>& other) { x-=other.x; y-=other.y; return *this; }
     TPoint<T> operator*(const TPoint<T>& other) const { return TPoint<T>(x * other.x, y * other.y); }
     TPoint<T>& operator*=(const TPoint<T>& other) { x*=other.x; y*=other.y; return *this; }
-    TPoint<T> operator*(const T v) const { return TPoint<T>(x * v, y * v);  }
+    TPoint<T> operator*(const T v) const { return TPoint<T>(x*v, y*v); }
     TPoint<T>& operator*=(const T v) { x*=v; y*=v; return *this; }
     TPoint<T> operator/(const TPoint<T>& other) const { return TPoint<T>(x/other.x, y/other.y); }
     TPoint<T>& operator/=(const TPoint<T>& other)   { x/=other.x; y/=other.y; return *this; }

@@ -32,24 +32,23 @@ public:
     virtual void update(const ParticlePtr&, double) {}
 };
 
-class Gravity270Affector : public ParticleAffector {
+class GravityAffector : public ParticleAffector {
 public:
+    bool load(const OTMLNodePtr& node);
     void update(const ParticlePtr& particle, double elapsedTime);
+
+private:
+    float m_angle, m_gravity;
 };
 
-class Gravity315Affector : public ParticleAffector {
-public:
-    void update(const ParticlePtr& particle, double elapsedTime);
-};
-
-class GoToPointAffector : public ParticleAffector {
+class AttractionAffector : public ParticleAffector {
 public:
     bool load(const OTMLNodePtr& node);
     void update(const ParticlePtr& particle, double elapsedTime);
 
 private:
     Point m_destination;
-    float m_rotateSpeedPercent;
+    float m_acceleration;
 };
 
 #endif

@@ -24,43 +24,52 @@
 #include "particleaffector.h"
 #include <framework/core/clock.h>
 
-void Gravity270Affector::update(const ParticlePtr& particle, double elapsedTime)
+#define DEG_TO_RAD (acos(-1)/180.0)
+
+bool GravityAffector::load(const OTMLNodePtr& node)
 {
-    // earth gravity is 9.8 m/s². -> in tibia, 32 pixels are equal to 1 meter -> 32 pixels/m -> 9.8 * 32 is gravity constant
-    const float gravity = 9.8 * 32;
+    m_angle = 270 * DEG_TO_RAD;
+    m_gravity = 9.8;
 
-    PointF velocity = particle->getVelocity();
-    velocity += PointF(0, -gravity * elapsedTime);
-
-    particle->setVelocity(velocity);
-}
-
-void Gravity315Affector::update(const ParticlePtr& particle, double elapsedTime)
-{
-    // earth gravity is 9.8 m/s². -> in tibia, 32 pixels are equal to 1 meter -> 32 pixels/m -> 9.8 * 32 is gravity constant
-    const float gravity = 9.8 * 32;
-
-    PointF velocity = particle->getVelocity();
-    velocity += PointF(gravity * elapsedTime * cos(7 * Fw::pi / 4), gravity * elapsedTime * sin(7 * Fw::pi / 4));
-
-    particle->setVelocity(velocity);
-}
-
-bool GoToPointAffector::load(const OTMLNodePtr& node)
-{
     for(const OTMLNodePtr& childNode : node->children()) {
-        if(childNode->tag() == "destination")
-            m_destination = childNode->value<Point>();
-        else if(childNode->tag() == "rotate-speed-percent")
-            m_rotateSpeedPercent = childNode->value<float>();
+        if(childNode->tag() == "angle")
+            m_angle = childNode->value<float>() * DEG_TO_RAD;
+        else if(childNode->tag() == "gravity")
+            m_gravity = childNode->value<float>();
     }
     return true;
 }
 
-void GoToPointAffector::update(const ParticlePtr& particle, double elapsedTime)
+void GravityAffector::update(const ParticlePtr& particle, double elapsedTime)
+{
+    PointF velocity = particle->getVelocity();
+    velocity += PointF(m_gravity * elapsedTime * cos(m_angle), m_gravity * elapsedTime * sin(m_angle));
+    particle->setVelocity(velocity);
+}
+
+bool AttractionAffector::load(const OTMLNodePtr& node)
+{
+    m_acceleration = 32;
+
+    for(const OTMLNodePtr& childNode : node->children()) {
+        if(childNode->tag() == "destination")
+            m_destination = childNode->value<Point>();
+        else if(childNode->tag() == "acceleration")
+            m_acceleration = childNode->value<float>();
+    }
+    return true;
+}
+
+void AttractionAffector::update(const ParticlePtr& particle, double elapsedTime)
 {
     // must change velocity angle, keeping modulus.
 
+    PointF pPosition = particle->getPosition();
 
+    PointF d = PointF(m_destination.x - pPosition.x, pPosition.y - m_destination.y);
+    if(d.length() == 0)
+        return;
 
+    PointF pVelocity = particle->getVelocity();
+    particle->setVelocity(pVelocity + (d / d.length()) * m_acceleration * elapsedTime);
 }
