@@ -37,6 +37,7 @@ class ShaderProgram;
 class PainterShaderProgram;
 class Particle;
 class ParticleEmitter;
+class ParticleAffector;
 class ParticleSystem;
 
 typedef std::weak_ptr<Texture> TextureWeakPtr;
@@ -53,6 +54,7 @@ typedef std::shared_ptr<ShaderProgram> ShaderProgramPtr;
 typedef std::shared_ptr<PainterShaderProgram> PainterShaderProgramPtr;
 typedef std::shared_ptr<Particle> ParticlePtr;
 typedef std::shared_ptr<ParticleEmitter> ParticleEmitterPtr;
+typedef std::shared_ptr<ParticleAffector> ParticleAffectorPtr;
 typedef std::shared_ptr<ParticleSystem> ParticleSystemPtr;
 typedef std::vector<ShaderPtr> ShaderList;
 

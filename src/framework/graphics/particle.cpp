@@ -27,7 +27,7 @@
 Particle::Particle(const Point& pos, const Size& size, const PointF& velocity, const PointF& acceleration, float duration, const Color& color, TexturePtr texture)
 {
     m_rect = Rect(pos, size);
-    m_pos = PointF(pos.x, pos.y);
+    m_position = PointF(pos.x, pos.y);
     m_size = size;
     m_velocity = velocity;
     m_acceleration = acceleration;
@@ -66,10 +66,10 @@ void Particle::update()
     // update position
     PointF delta = m_velocity * elapsedTime;
     delta.y *= -1; // painter orientate Y axis in the inverse direction
-    m_pos += delta;
+    m_position += delta;
 
     // update acceleration
     m_velocity += m_acceleration * elapsedTime;
 
-    m_rect.moveTo((int)m_pos.x, (int)m_pos.y);
+    m_rect.moveTo((int)m_position.x, (int)m_position.y);
 }

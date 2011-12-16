@@ -146,6 +146,7 @@ SET(framework_SOURCES ${framework_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/graphics/particlemanager.cpp
     ${CMAKE_CURRENT_LIST_DIR}/graphics/particlesystem.cpp
     ${CMAKE_CURRENT_LIST_DIR}/graphics/particleemitter.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/graphics/particleaffector.cpp
     ${CMAKE_CURRENT_LIST_DIR}/graphics/particle.cpp
     ${CMAKE_CURRENT_LIST_DIR}/graphics/shader.cpp
     ${CMAKE_CURRENT_LIST_DIR}/graphics/shaderprogram.cpp

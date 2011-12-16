@@ -35,7 +35,7 @@ bool ParticleManager::load(const std::string& filename)
             if(node->tag() == "ParticleSystem") {
                 ParticleSystemPtr particleSystem = ParticleSystemPtr(new ParticleSystem);
                 particleSystem->load(node);
-                m_particleSystems.push_back(particleSystem);
+                m_systems.push_back(particleSystem);
             }
         }
         return true;
@@ -47,17 +47,17 @@ bool ParticleManager::load(const std::string& filename)
 
 void ParticleManager::render()
 {
-    for(auto it = m_particleSystems.begin(), end = m_particleSystems.end(); it != end; ++it)
+    for(auto it = m_systems.begin(), end = m_systems.end(); it != end; ++it)
         (*it)->render();
 }
 
 void ParticleManager::update()
 {
-    for(auto it = m_particleSystems.begin(), end = m_particleSystems.end(); it != end;) {
+    for(auto it = m_systems.begin(), end = m_systems.end(); it != end;) {
         const ParticleSystemPtr& particleSystem = *it;
 
         if(particleSystem->hasFinished()) {
-            it = m_particleSystems.erase(it);
+            it = m_systems.erase(it);
             continue;
         }
 

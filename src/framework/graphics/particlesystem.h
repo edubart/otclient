@@ -25,18 +25,7 @@
 
 #include "declarations.h"
 #include "particleemitter.h"
-
-class Affector {
-public:
-    virtual void update() {}
-};
-
-class Gravity270Affector : public Affector {
-public:
-    void update() {
-        // earth gravity is 9.8 m/s². -> in tibia, 32 pixels are equal to 1 meter -> 32 pixels/m -> 9.8 * 32 is gravity constant
-    }
-};
+#include "particleaffector.h"
 
 class ParticleSystem : public std::enable_shared_from_this<ParticleSystem> {
 public:
@@ -54,9 +43,10 @@ public:
 
 private:
     bool m_finished;
+    double m_lastUpdateTime;
     std::list<ParticlePtr> m_particles;
     std::list<ParticleEmitterPtr> m_emitters;
-    std::list<Affector> m_affectors;
+    std::list<ParticleAffectorPtr> m_affectors;
 };
 
 #endif

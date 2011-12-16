@@ -20,39 +20,36 @@
  * THE SOFTWARE.
  */
 
-#ifndef PARTICLE_H
-#define PARTICLE_H
+#ifndef PARTICLEAFFECTOR_H
+#define PARTICLEAFFECTOR_H
 
 #include "declarations.h"
-#include <framework/global.h>
+#include <framework/otml/otml.h>
 
-class Particle {
+class ParticleAffector {
 public:
-    Particle(const Point& pos, const Size& size, const PointF& velocity, const PointF& acceleration, float duration, const Color& color = Fw::white, TexturePtr texture = nullptr);
+    virtual bool load(const OTMLNodePtr&) { return true; }
+    virtual void update(const ParticlePtr&, double) {}
+};
 
-    void render();
-    void update();
+class Gravity270Affector : public ParticleAffector {
+public:
+    void update(const ParticlePtr& particle, double elapsedTime);
+};
 
-    bool hasFinished() { return m_finished; }
+class Gravity315Affector : public ParticleAffector {
+public:
+    void update(const ParticlePtr& particle, double elapsedTime);
+};
 
-    PointF getPosition() { return m_position; }
-    PointF getVelocity() { return m_velocity; }
-
-    void setPos(const PointF& position) { m_position = position; }
-    void setVelocity(const PointF& velocity) { m_velocity = velocity; }
+class GoToPointAffector : public ParticleAffector {
+public:
+    bool load(const OTMLNodePtr& node);
+    void update(const ParticlePtr& particle, double elapsedTime);
 
 private:
-    Color m_color;
-    TexturePtr m_texture;
-    PointF m_position;
-    PointF m_velocity;
-    PointF m_acceleration;
-    Size m_size;
-    Rect m_rect;
-    float m_duration;
-    double m_startTime;
-    double m_lastUpdateTime;
-    bool m_finished;
+    Point m_destination;
+    float m_rotateSpeedPercent;
 };
 
 #endif

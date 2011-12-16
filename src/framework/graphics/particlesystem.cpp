@@ -22,10 +22,12 @@
 
 #include "particle.h"
 #include "particlesystem.h"
+#include <framework/core/clock.h>
 
 ParticleSystem::ParticleSystem()
 {
     m_finished = false;
+    m_lastUpdateTime = g_clock.time();
 }
 
 bool ParticleSystem::load(const OTMLNodePtr& node)
@@ -35,6 +37,21 @@ bool ParticleSystem::load(const OTMLNodePtr& node)
             ParticleEmitterPtr emitter = ParticleEmitterPtr(new ParticleEmitter(shared_from_this()));
             emitter->load(childNode);
             m_emitters.push_back(emitter);
+        }
+        else if(childNode->tag().find("Affector") != std::string::npos) {
+            ParticleAffectorPtr affector;
+
+            if(childNode->tag() == "Gravity270Affector")
+                affector = ParticleAffectorPtr(new Gravity270Affector);
+            else if(childNode->tag() == "Gravity315Affector")
+                affector = ParticleAffectorPtr(new Gravity315Affector);
+            else if(childNode->tag() == "GoToPointAffector")
+                affector = ParticleAffectorPtr(new GoToPointAffector);
+
+            if(affector) {
+                affector->load(childNode);
+                m_affectors.push_back(affector);
+            }
         }
     }
     return true;
@@ -53,6 +70,9 @@ void ParticleSystem::render()
 
 void ParticleSystem::update()
 {
+    float elapsedTime = g_clock.timeElapsed(m_lastUpdateTime);
+    m_lastUpdateTime = g_clock.time();
+
     // check if finished
     if(m_particles.empty() && m_emitters.empty()) {
         m_finished = true;
@@ -77,6 +97,11 @@ void ParticleSystem::update()
             it = m_particles.erase(it);
             continue;
         }
+
+        // pass particles through affectors
+        for(const ParticleAffectorPtr& particleAffector : m_affectors)
+            particleAffector->update(particle, elapsedTime);
+
         particle->update();
         ++it;
     }

@@ -25,6 +25,7 @@
 
 #include "declarations.h"
 #include "particlesystem.h"
+#include "particleaffector.h"
 
 class ParticleManager {
 public:
@@ -34,7 +35,7 @@ public:
     void update();
 
 private:
-    std::list<ParticleSystemPtr> m_particleSystems;
+    std::list<ParticleSystemPtr> m_systems;
 };
 
 extern ParticleManager g_particleManager;
