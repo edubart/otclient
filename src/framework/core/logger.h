@@ -23,7 +23,7 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
-#include <framework/global.h>
+#include "../global.h"
 
 struct LogMessage {
     LogMessage(Fw::LogLevel level, const std::string& message, std::size_t when) : level(level), message(message), when(when) { }
