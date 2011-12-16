@@ -562,6 +562,7 @@ void X11Window::poll()
                 int len;
 
                 m_inputEvent.keyboardModifiers = 0;
+                m_inputEvent.keyText = "";
                 if(event.xkey.state & ControlMask)
                     m_inputEvent.keyboardModifiers |= Fw::KeyboardCtrlModifier;
                 if(event.xkey.state & ShiftMask)
@@ -590,6 +591,11 @@ void X11Window::poll()
                         //logDebug("char: ", buf[0], " code: ", (uint)buf[0]);
                         m_inputEvent.keyText = buf;
                     }
+                } else {
+                    len = XLookupString(&event.xkey, buf, sizeof(buf), &keysym, 0);
+
+                    if(len > 0)
+                        m_inputEvent.keyText = buf;
                 }
 
                 if(m_keyMap.find(keysym) != m_keyMap.end())

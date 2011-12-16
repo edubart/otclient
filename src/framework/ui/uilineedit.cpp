@@ -427,7 +427,7 @@ bool UILineEdit::onKeyPress(uchar keyCode, std::string keyText, int keyboardModi
             if(UIWidgetPtr parent = getParent())
                 parent->focusNextChild(Fw::TabFocusReason);
         }
-    } else if(!keyText.empty())
+    } else if(!keyText.empty() && (keyboardModifiers == Fw::KeyboardNoModifier || keyboardModifiers == Fw::KeyboardShiftModifier))
         appendText(keyText);
     else
         return false;

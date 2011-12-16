@@ -100,7 +100,7 @@ bool UIGame::onKeyPress(uchar keyCode, std::string keyText, int keyboardModifier
         }
     }
 
-    if(!keyText.empty()) {
+    if(!keyText.empty() && (keyboardModifiers == Fw::KeyboardNoModifier || keyboardModifiers == Fw::KeyboardShiftModifier)) {
         chatLineEdit->appendText(keyText);
         return true;
     }
