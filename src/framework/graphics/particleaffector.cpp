@@ -56,6 +56,8 @@ bool AttractionAffector::load(const OTMLNodePtr& node)
             m_destination = childNode->value<Point>();
         else if(childNode->tag() == "acceleration")
             m_acceleration = childNode->value<float>();
+        else if(childNode->tag() == "velocity-reduction-percent")
+            m_reduction = childNode->value<float>();
     }
     return true;
 }
@@ -70,6 +72,7 @@ void AttractionAffector::update(const ParticlePtr& particle, double elapsedTime)
     if(d.length() == 0)
         return;
 
-    PointF pVelocity = particle->getVelocity();
-    particle->setVelocity(pVelocity + (d / d.length()) * m_acceleration * elapsedTime);
+    PointF pVelocity = particle->getVelocity() + (d / d.length() * m_acceleration * elapsedTime);
+
+    particle->setVelocity(pVelocity - pVelocity * m_reduction/100.0 * elapsedTime);
 }

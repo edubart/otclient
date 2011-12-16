@@ -48,7 +48,7 @@ public:
 
 private:
     Point m_destination;
-    float m_acceleration;
+    float m_acceleration, m_reduction;
 };
 
 #endif
