@@ -71,5 +71,5 @@ void Particle::update()
     // update acceleration
     m_velocity += m_acceleration * elapsedTime;
 
-    m_rect.moveTo((int)m_position.x, (int)m_position.y);
+    m_rect.moveTo((int)m_position.x - m_size.width() / 2, (int)m_position.y - m_size.height() / 2);
 }
