@@ -24,7 +24,7 @@
 #include "graphics.h"
 #include <framework/core/clock.h>
 
-Particle::Particle(const Point& pos, const Size& size, const PointF& velocity, const PointF& acceleration, float duration, const Color& color, TexturePtr texture)
+Particle::Particle(const Point& pos, const Size& size, const PointF& velocity, const PointF& acceleration, float duration, float ignorePhysicsAfter, const Color& color, TexturePtr texture)
 {
     m_rect = Rect(pos, size);
     m_position = PointF(pos.x, pos.y);
@@ -34,8 +34,8 @@ Particle::Particle(const Point& pos, const Size& size, const PointF& velocity, c
     m_color = color;
     m_texture = texture;
     m_duration = duration;
-    m_startTime = g_clock.time();
-    m_lastUpdateTime = g_clock.time();
+    m_ignorePhysicsAfter = ignorePhysicsAfter;
+    m_elapsedTime = 0;
     m_finished = false;
 }
 
@@ -52,24 +52,25 @@ void Particle::render()
     }
 }
 
-void Particle::update()
+void Particle::update(double elapsedTime)
 {
-    float elapsedTime = g_clock.timeElapsed(m_lastUpdateTime);
-    m_lastUpdateTime = g_clock.time();
-
     // check if finished
-    if(m_duration > 0 && g_clock.timeElapsed(m_startTime) >= m_duration) {
+    if(m_duration > 0 && m_elapsedTime >= m_duration) {
         m_finished = true;
         return;
     }
 
-    // update position
-    PointF delta = m_velocity * elapsedTime;
-    delta.y *= -1; // painter orientate Y axis in the inverse direction
-    m_position += delta;
+    m_elapsedTime += elapsedTime;
 
-    // update acceleration
-    m_velocity += m_acceleration * elapsedTime;
+    if(m_ignorePhysicsAfter < 0 || m_elapsedTime < m_ignorePhysicsAfter ) {
+        // update position
+        PointF delta = m_velocity * elapsedTime;
+        delta.y *= -1; // painter orientate Y axis in the inverse direction
+        m_position += delta;
 
-    m_rect.moveTo((int)m_position.x - m_size.width() / 2, (int)m_position.y - m_size.height() / 2);
+        // update acceleration
+        m_velocity += m_acceleration * elapsedTime;
+
+        m_rect.moveTo((int)m_position.x - m_size.width() / 2, (int)m_position.y - m_size.height() / 2);
+    }
 }

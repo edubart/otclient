@@ -28,10 +28,10 @@
 
 class Particle {
 public:
-    Particle(const Point& pos, const Size& size, const PointF& velocity, const PointF& acceleration, float duration, const Color& color = Fw::white, TexturePtr texture = nullptr);
+    Particle(const Point& pos, const Size& size, const PointF& velocity, const PointF& acceleration, float duration, float ignorePhysicsAfter, const Color& color = Fw::white, TexturePtr texture = nullptr);
 
     void render();
-    void update();
+    void update(double elapsedTime);
 
     bool hasFinished() { return m_finished; }
 
@@ -49,9 +49,8 @@ private:
     PointF m_acceleration;
     Size m_size;
     Rect m_rect;
-    float m_duration;
-    double m_startTime;
-    double m_lastUpdateTime;
+    float m_duration, m_ignorePhysicsAfter;
+    double m_elapsedTime;
     bool m_finished;
 };
 

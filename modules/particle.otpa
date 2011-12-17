@@ -1,16 +1,21 @@
 ParticleSystem
   AttractionAffector
+    delay: 0
+    duration: 12
     destination: 200 200
     acceleration: 64
     velocity-reduction-percent: 0
 
   Emitter
     position: 200 264
-    duration: 12
-    burstRate: 2
+    duration: 2
+    burstRate: 0.2
     burstCount: 1
-    delay: 0.5
-    particle-duration: 9999
+    delay: 0
+    
+    particle-ignore-physics-after: 999
+
+    particle-duration: 12
     particle-position-radius: 0
     particle-velocity: 32
     particle-velocity-angle: 0
@@ -21,9 +26,12 @@ ParticleSystem
 
   Emitter
     position: 200 200
-    burstRate: 9999999999
+    burstRate: 13
     burstCount: 1
-    particle-duration: 9999999
+    duration: 12
+
+    particle-duration: 12
+
     particle-position-radius: 0
     particle-velocity: 0
     particle-velocity-angle: 0

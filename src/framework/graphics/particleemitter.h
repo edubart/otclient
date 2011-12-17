@@ -36,7 +36,7 @@ public:
 
     bool load(const OTMLNodePtr& node);
 
-    void update();
+    void update(double elapsedTime);
 
     bool hasFinished() { return m_finished; }
 
@@ -46,7 +46,7 @@ private:
     // self related
     Point m_position;
     float m_duration, m_delay;
-    double m_startTime;
+    double m_elapsedTime;
     bool m_finished;
     float m_burstRate;
     int m_currentBurst, m_burstCount;
@@ -67,7 +67,7 @@ private:
     float m_pMinAccelerationAngle, m_pMaxAccelerationAngle;
 
     // particles duration
-    float m_pMinDuration, m_pMaxDuration;
+    float m_pMinDuration, m_pMaxDuration, m_pIgnorePhysicsAfter;
 
     // visual ralated
     Color m_pColor;

@@ -38,7 +38,7 @@ ParticleEmitter::ParticleEmitter(const ParticleSystemPtr& parent)
     m_delay = 0;
     m_burstRate = 1; m_burstCount = 32;
     m_currentBurst = 0;
-    m_startTime = g_clock.time();
+    m_elapsedTime = 0;
     m_finished = false;
 
     // particles default configuration. (make them reasonable for user detect missing properties on scripts)
@@ -50,6 +50,7 @@ ParticleEmitter::ParticleEmitter(const ParticleSystemPtr& parent)
     m_pMaxSize = Size(32, 32);
     m_pMinDuration = 0;
     m_pMaxDuration = 10;
+    m_pIgnorePhysicsAfter = -1;
     m_pMinVelocity = 32;
     m_pMaxVelocity = 64;
     m_pMinVelocityAngle = 0;
@@ -139,6 +140,8 @@ bool ParticleEmitter::load(const OTMLNodePtr& node)
             m_pMinDuration = childNode->value<float>();
         else if(childNode->tag() == "particle-max-duration")
             m_pMaxDuration = childNode->value<float>();
+        else if(childNode->tag() == "particle-ignore-physics-after")
+            m_pIgnorePhysicsAfter = childNode->value<float>();
 
         // visual
         else if(childNode->tag() == "particle-size") {
@@ -157,24 +160,20 @@ bool ParticleEmitter::load(const OTMLNodePtr& node)
     return true;
 }
 
-void ParticleEmitter::update()
+void ParticleEmitter::update(double elapsedTime)
 {
-    float elapsedTime = g_clock.timeElapsed(m_startTime);
-
-    // only start updating after delay
-    if(elapsedTime < m_delay)
-        return;
-
-    // setup a new start time
-    elapsedTime -= m_delay;
-
     // check if finished
-    if(m_duration > 0 && elapsedTime > m_duration) {
+    if(m_duration > 0 && m_elapsedTime >= m_duration + m_delay) {
         m_finished = true;
         return;
     }
 
-    int currentBurst = (elapsedTime / m_burstRate) + 1;
+    m_elapsedTime += elapsedTime;
+
+    if(m_elapsedTime - elapsedTime < m_delay)
+        return;
+
+    int currentBurst = std::floor((m_elapsedTime - m_delay) / m_burstRate) + 1;
     for(int b = m_currentBurst; b < currentBurst; ++b) {
 
         // every burst created at same position.
@@ -199,7 +198,7 @@ void ParticleEmitter::update()
             PointF pAcceleration(pAccelerationAbs * cos(pAccelerationAngle), pAccelerationAbs * sin(pAccelerationAngle));
 
             ParticleSystemPtr particleSystem = m_parent.lock();
-            particleSystem->addParticle(ParticlePtr(new Particle(pPosition, pSize, pVelocity, pAcceleration, pDuration, m_pColor, m_pTexture)));
+            particleSystem->addParticle(ParticlePtr(new Particle(pPosition, pSize, pVelocity, pAcceleration, pDuration, m_pIgnorePhysicsAfter, m_pColor, m_pTexture)));
         }
     }
 

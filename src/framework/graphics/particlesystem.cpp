@@ -68,8 +68,7 @@ void ParticleSystem::render()
 
 void ParticleSystem::update()
 {
-    float elapsedTime = g_clock.timeElapsed(m_lastUpdateTime);
-    m_lastUpdateTime = g_clock.time();
+    static const double delay = 0.0166; // 60 updates/s
 
     // check if finished
     if(m_particles.empty() && m_emitters.empty()) {
@@ -77,30 +76,50 @@ void ParticleSystem::update()
         return;
     }
 
-    // update emitters
-    for(auto it = m_emitters.begin(), end = m_emitters.end(); it != end;) {
-        const ParticleEmitterPtr& emitter = *it;
-        if(emitter->hasFinished()) {
-            it = m_emitters.erase(it);
-            continue;
+    // check time
+    double elapsedTime = g_clock.timeElapsed(m_lastUpdateTime);
+    if(elapsedTime < delay)
+        return;
+    m_lastUpdateTime = g_clock.time() - std::fmod(elapsedTime, delay);
+
+    for(int i = 0; i < elapsedTime / delay; ++i) {
+
+        // update emitters
+        for(auto it = m_emitters.begin(), end = m_emitters.end(); it != end;) {
+            const ParticleEmitterPtr& emitter = *it;
+            if(emitter->hasFinished()) {
+                it = m_emitters.erase(it);
+                continue;
+            }
+            emitter->update(delay);
+            ++it;
         }
-        emitter->update();
-        ++it;
-    }
 
-    // update particles
-    for(auto it = m_particles.begin(), end = m_particles.end(); it != end;) {
-        const ParticlePtr& particle = *it;
-        if(particle->hasFinished()) {
-            it = m_particles.erase(it);
-            continue;
+        // update affectors
+        for(auto it = m_affectors.begin(), end = m_affectors.end(); it != end;) {
+            const ParticleAffectorPtr& affector = *it;
+            if(affector->hasFinished()) {
+                it = m_affectors.erase(it);
+                continue;
+            }
+            affector->update(delay);
+            ++it;
         }
 
-        // pass particles through affectors
-        for(const ParticleAffectorPtr& particleAffector : m_affectors)
-            particleAffector->update(particle, elapsedTime);
+        // update particles
+        for(auto it = m_particles.begin(), end = m_particles.end(); it != end;) {
+            const ParticlePtr& particle = *it;
+            if(particle->hasFinished()) {
+                it = m_particles.erase(it);
+                continue;
+            }
 
-        particle->update();
-        ++it;
+            // pass particles through affectors
+            for(const ParticleAffectorPtr& particleAffector : m_affectors)
+                particleAffector->updateParticle(particle, delay);
+
+            particle->update(delay);
+            ++it;
+        }
     }
 }
