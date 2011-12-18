@@ -24,14 +24,17 @@
 #include "graphics.h"
 #include <framework/core/clock.h>
 
-Particle::Particle(const Point& pos, const Size& size, const PointF& velocity, const PointF& acceleration, float duration, float ignorePhysicsAfter, const Color& color, TexturePtr texture)
+Particle::Particle(const Point& pos, const Size& size, const PointF& velocity, const PointF& acceleration, float duration, float ignorePhysicsAfter, const std::vector<Color>& colors, const std::vector<float>& colorsStops, TexturePtr texture)
 {
+    m_colors = colors;
+    m_colorsStops = colorsStops;
+
     m_rect = Rect(pos, size);
     m_position = PointF(pos.x, pos.y);
     m_size = size;
     m_velocity = velocity;
     m_acceleration = acceleration;
-    m_color = color;
+
     m_texture = texture;
     m_duration = duration;
     m_ignorePhysicsAfter = ignorePhysicsAfter;
@@ -55,13 +58,14 @@ void Particle::render()
 void Particle::update(double elapsedTime)
 {
     // check if finished
-    if(m_duration > 0 && m_elapsedTime >= m_duration) {
+    if(m_duration >= 0 && m_elapsedTime >= m_duration) {
         m_finished = true;
         return;
     }
 
-    m_elapsedTime += elapsedTime;
+    updateColor();
 
+    // update position
     if(m_ignorePhysicsAfter < 0 || m_elapsedTime < m_ignorePhysicsAfter ) {
         // update position
         PointF delta = m_velocity * elapsedTime;
@@ -72,5 +76,26 @@ void Particle::update(double elapsedTime)
         m_velocity += m_acceleration * elapsedTime;
 
         m_rect.moveTo((int)m_position.x - m_size.width() / 2, (int)m_position.y - m_size.height() / 2);
+    }
+
+    m_elapsedTime += elapsedTime;
+}
+
+void Particle::updateColor()
+{
+    if(m_elapsedTime < m_colorsStops[1]) {
+        m_color.setRGBA(m_colors[0].r() + (m_colors[1].r() - m_colors[0].r()) / (m_colorsStops[1] - m_colorsStops[0]) * (m_elapsedTime - m_colorsStops[0]),
+                        m_colors[0].g() + (m_colors[1].g() - m_colors[0].g()) / (m_colorsStops[1] - m_colorsStops[0]) * (m_elapsedTime - m_colorsStops[0]),
+                        m_colors[0].b() + (m_colors[1].b() - m_colors[0].b()) / (m_colorsStops[1] - m_colorsStops[0]) * (m_elapsedTime - m_colorsStops[0]),
+                        m_colors[0].a() + (m_colors[1].a() - m_colors[0].a()) / (m_colorsStops[1] - m_colorsStops[0]) * (m_elapsedTime - m_colorsStops[0]));
+    }
+    else {
+        if(m_colors.size() > 1) {
+            m_colors.erase(m_colors.begin());
+            m_colorsStops.erase(m_colorsStops.begin());
+        }
+        else {
+            m_color = m_colors[0];
+        }
     }
 }

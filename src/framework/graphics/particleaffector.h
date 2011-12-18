@@ -58,7 +58,7 @@ public:
     void updateParticle(const ParticlePtr& particle, double elapsedTime);
 
 private:
-    Point m_destination;
+    Point m_position;
     float m_acceleration, m_reduction;
 };
 

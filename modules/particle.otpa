@@ -1,15 +1,15 @@
 ParticleSystem
   AttractionAffector
     delay: 0
-    duration: 12
-    destination: 200 200
+    duration: 999
+    position: 200 200
     acceleration: 64
     velocity-reduction-percent: 0
 
   Emitter
     position: 200 264
     duration: 2
-    burstRate: 0.2
+    burstRate: 3
     burstCount: 1
     delay: 0
     
@@ -21,22 +21,6 @@ ParticleSystem
     particle-velocity-angle: 0
     particle-acceleration: 0
     particle-size: 32 32
-    particle-color: #33ff33ff
+    particle-colors: #00ff00ff #ff0000ff #0000ffff #00ff00ff #00ff0000
+    particle-colors-stops: 3 6 9 12
     particle-texture: circle2.png
-
-  Emitter
-    position: 200 200
-    burstRate: 13
-    burstCount: 1
-    duration: 12
-
-    particle-duration: 12
-
-    particle-position-radius: 0
-    particle-velocity: 0
-    particle-velocity-angle: 0
-    particle-acceleration: 0
-    particle-size: 32 32
-    particle-color: #33ff33ff
-    particle-texture: circle2.png
-

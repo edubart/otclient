@@ -37,7 +37,7 @@ ParticleAffector::ParticleAffector()
 
 void ParticleAffector::update(double elapsedTime)
 {
-    if(m_duration > 0 && m_elapsedTime >= m_duration + m_delay) {
+    if(m_duration >= 0 && m_elapsedTime >= m_duration + m_delay) {
         m_finished = true;
         return;
     }
@@ -114,8 +114,8 @@ bool AttractionAffector::load(const OTMLNodePtr& node)
     m_acceleration = 32;
 
     for(const OTMLNodePtr& childNode : node->children()) {
-        if(childNode->tag() == "destination")
-            m_destination = childNode->value<Point>();
+        if(childNode->tag() == "position")
+            m_position = childNode->value<Point>();
         else if(childNode->tag() == "acceleration")
             m_acceleration = childNode->value<float>();
         else if(childNode->tag() == "velocity-reduction-percent")
@@ -130,7 +130,7 @@ void AttractionAffector::updateParticle(const ParticlePtr& particle, double elap
         return;
 
     PointF pPosition = particle->getPosition();
-    PointF d = PointF(m_destination.x - pPosition.x, pPosition.y - m_destination.y);
+    PointF d = PointF(m_position.x - pPosition.x, pPosition.y - m_position.y);
     if(d.length() == 0)
         return;
 

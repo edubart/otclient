@@ -28,7 +28,7 @@
 
 class Particle {
 public:
-    Particle(const Point& pos, const Size& size, const PointF& velocity, const PointF& acceleration, float duration, float ignorePhysicsAfter, const Color& color = Fw::white, TexturePtr texture = nullptr);
+    Particle(const Point& pos, const Size& size, const PointF& velocity, const PointF& acceleration, float duration, float ignorePhysicsAfter, const std::vector<Color>& colors, const std::vector<float>& colorsStops, TexturePtr texture = nullptr);
 
     void render();
     void update(double elapsedTime);
@@ -42,7 +42,11 @@ public:
     void setVelocity(const PointF& velocity) { m_velocity = velocity; }
 
 private:
+    void updateColor();
+
     Color m_color;
+    std::vector<Color> m_colors;
+    std::vector<float> m_colorsStops;
     TexturePtr m_texture;
     PointF m_position;
     PointF m_velocity;

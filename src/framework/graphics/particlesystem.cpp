@@ -35,7 +35,8 @@ bool ParticleSystem::load(const OTMLNodePtr& node)
     for(const OTMLNodePtr& childNode : node->children()) {
         if(childNode->tag() == "Emitter") {
             ParticleEmitterPtr emitter = ParticleEmitterPtr(new ParticleEmitter(shared_from_this()));
-            emitter->load(childNode);
+            if(!emitter->load(childNode))
+                return false;
             m_emitters.push_back(emitter);
         }
         else if(childNode->tag().find("Affector") != std::string::npos) {
@@ -47,7 +48,8 @@ bool ParticleSystem::load(const OTMLNodePtr& node)
                 affector = ParticleAffectorPtr(new AttractionAffector);
 
             if(affector) {
-                affector->load(childNode);
+                if(!affector->load(childNode))
+                    return false;
                 m_affectors.push_back(affector);
             }
         }

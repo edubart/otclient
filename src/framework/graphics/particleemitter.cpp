@@ -40,6 +40,7 @@ ParticleEmitter::ParticleEmitter(const ParticleSystemPtr& parent)
     m_currentBurst = 0;
     m_elapsedTime = 0;
     m_finished = false;
+    m_active = false;
 
     // particles default configuration. (make them reasonable for user detect missing properties on scripts)
     m_pMinPositionRadius = 0;
@@ -59,7 +60,6 @@ ParticleEmitter::ParticleEmitter(const ParticleSystemPtr& parent)
     m_pMaxAcceleration = 64;
     m_pMinAccelerationAngle = 0;
     m_pMaxAccelerationAngle = 360;
-    m_pColor = Color(255, 255, 255, 128);
 }
 
 bool ParticleEmitter::load(const OTMLNodePtr& node)
@@ -152,55 +152,70 @@ bool ParticleEmitter::load(const OTMLNodePtr& node)
             m_pMinSize = childNode->value<Size>();
         else if(childNode->tag() == "particle-max-size")
             m_pMaxSize = childNode->value<Size>();
-        else if(childNode->tag() == "particle-color")
-            m_pColor = childNode->value<Color>();
+
+        else if(childNode->tag() == "particle-colors")
+            m_pColors = Fw::split<Color>(childNode->value());
+        else if(childNode->tag() == "particle-colors-stops")
+            m_pColorsStops = Fw::split<float>(childNode->value());
         else if(childNode->tag() == "particle-texture")
             m_pTexture = g_textures.getTexture(childNode->value());
     }
+
+    if(m_pColors.empty())
+        m_pColors.push_back(Color(255, 255, 255, 128));
+    m_pColorsStops.insert(m_pColorsStops.begin(), 0);
+
+    if(m_pColors.size() != m_pColorsStops.size()) {
+        logError("particle colors must be equal to colorstops-1");
+        return false;
+    }
+
     return true;
 }
 
 void ParticleEmitter::update(double elapsedTime)
 {
     // check if finished
-    if(m_duration > 0 && m_elapsedTime >= m_duration + m_delay) {
+    if(m_duration >= 0 && m_elapsedTime >= m_duration + m_delay) {
         m_finished = true;
         return;
     }
 
-    m_elapsedTime += elapsedTime;
+    if(!m_active && m_elapsedTime > m_delay)
+        m_active = true;
 
-    if(m_elapsedTime - elapsedTime < m_delay)
-        return;
+    if(m_active) {
+        int currentBurst = std::floor((m_elapsedTime - m_delay) / m_burstRate) + 1;
+        for(int b = m_currentBurst; b < currentBurst; ++b) {
 
-    int currentBurst = std::floor((m_elapsedTime - m_delay) / m_burstRate) + 1;
-    for(int b = m_currentBurst; b < currentBurst; ++b) {
+            // every burst created at same position.
+            float pRadius = Fw::randomRange(m_pMinPositionRadius, m_pMaxPositionRadius);
+            float pAngle = Fw::randomRange(m_pMinPositionAngle, m_pMaxPositionAngle);
 
-        // every burst created at same position.
-        float pRadius = Fw::randomRange(m_pMinPositionRadius, m_pMaxPositionRadius);
-        float pAngle = Fw::randomRange(m_pMinPositionAngle, m_pMaxPositionAngle);
+            Point pPosition = m_position + Point(pRadius * cos(pAngle), pRadius * sin(pAngle));
 
-        Point pPosition = m_position + Point(pRadius * cos(pAngle), pRadius * sin(pAngle));
+            for(int p = 0; p < m_burstCount; ++p) {
 
-        for(int p = 0; p < m_burstCount; ++p) {
+                Size pSize = Size(Fw::randomRange(m_pMinSize.width(), m_pMaxSize.width()), Fw::randomRange(m_pMinSize.height(), m_pMaxSize.height()));
+                float pDuration = Fw::randomRange(m_pMinDuration, m_pMaxDuration);
 
-            Size pSize = Size(Fw::randomRange(m_pMinSize.width(), m_pMaxSize.width()), Fw::randomRange(m_pMinSize.height(), m_pMaxSize.height()));
-            float pDuration = Fw::randomRange(m_pMinDuration, m_pMaxDuration);
+                // particles initial velocity
+                float pVelocityAbs = Fw::randomRange(m_pMinVelocity, m_pMaxVelocity);
+                float pVelocityAngle = Fw::randomRange(m_pMinVelocityAngle, m_pMaxVelocityAngle);
+                PointF pVelocity(pVelocityAbs * cos(pVelocityAngle), pVelocityAbs * sin(pVelocityAngle));
 
-            // particles initial velocity
-            float pVelocityAbs = Fw::randomRange(m_pMinVelocity, m_pMaxVelocity);
-            float pVelocityAngle = Fw::randomRange(m_pMinVelocityAngle, m_pMaxVelocityAngle);
-            PointF pVelocity(pVelocityAbs * cos(pVelocityAngle), pVelocityAbs * sin(pVelocityAngle));
+                // particles initial acceleration
+                float pAccelerationAbs = Fw::randomRange(m_pMinAcceleration, m_pMaxAcceleration);
+                float pAccelerationAngle = Fw::randomRange(m_pMinAccelerationAngle, m_pMaxAccelerationAngle);
+                PointF pAcceleration(pAccelerationAbs * cos(pAccelerationAngle), pAccelerationAbs * sin(pAccelerationAngle));
 
-            // particles initial acceleration
-            float pAccelerationAbs = Fw::randomRange(m_pMinAcceleration, m_pMaxAcceleration);
-            float pAccelerationAngle = Fw::randomRange(m_pMinAccelerationAngle, m_pMaxAccelerationAngle);
-            PointF pAcceleration(pAccelerationAbs * cos(pAccelerationAngle), pAccelerationAbs * sin(pAccelerationAngle));
-
-            ParticleSystemPtr particleSystem = m_parent.lock();
-            particleSystem->addParticle(ParticlePtr(new Particle(pPosition, pSize, pVelocity, pAcceleration, pDuration, m_pIgnorePhysicsAfter, m_pColor, m_pTexture)));
+                ParticleSystemPtr particleSystem = m_parent.lock();
+                particleSystem->addParticle(ParticlePtr(new Particle(pPosition, pSize, pVelocity, pAcceleration, pDuration, m_pIgnorePhysicsAfter, m_pColors, m_pColorsStops, m_pTexture)));
+            }
         }
+
+        m_currentBurst = currentBurst;
     }
 
-    m_currentBurst = currentBurst;
+    m_elapsedTime += elapsedTime;
 }
