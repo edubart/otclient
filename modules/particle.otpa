@@ -20,7 +20,8 @@ ParticleSystem
     particle-velocity: 32
     particle-velocity-angle: 0
     particle-acceleration: 0
-    particle-size: 32 32
+    particle-start-size: 4 4
+    particle-final-size: 48 48
     particle-colors: #00ff00ff #ff0000ff #0000ffff #00ff00ff #00ff0000
     particle-colors-stops: 3 6 9 12
     particle-texture: circle2.png

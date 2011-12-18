@@ -24,14 +24,14 @@
 #include "graphics.h"
 #include <framework/core/clock.h>
 
-Particle::Particle(const Point& pos, const Size& size, const PointF& velocity, const PointF& acceleration, float duration, float ignorePhysicsAfter, const std::vector<Color>& colors, const std::vector<float>& colorsStops, TexturePtr texture)
+Particle::Particle(const Point& pos, const Size& startSize, const Size& finalSize, const PointF& velocity, const PointF& acceleration, float duration, float ignorePhysicsAfter, const std::vector<Color>& colors, const std::vector<float>& colorsStops, TexturePtr texture)
 {
     m_colors = colors;
     m_colorsStops = colorsStops;
 
-    m_rect = Rect(pos, size);
     m_position = PointF(pos.x, pos.y);
-    m_size = size;
+    m_startSize = startSize;
+    m_finalSize = finalSize;
     m_velocity = velocity;
     m_acceleration = acceleration;
 
@@ -65,6 +65,9 @@ void Particle::update(double elapsedTime)
 
     updateColor();
 
+    // update size
+    m_size = m_startSize + (m_finalSize - m_startSize) / m_duration * m_elapsedTime;
+
     // update position
     if(m_ignorePhysicsAfter < 0 || m_elapsedTime < m_ignorePhysicsAfter ) {
         // update position
@@ -74,9 +77,10 @@ void Particle::update(double elapsedTime)
 
         // update acceleration
         m_velocity += m_acceleration * elapsedTime;
-
-        m_rect.moveTo((int)m_position.x - m_size.width() / 2, (int)m_position.y - m_size.height() / 2);
     }
+
+    m_rect.moveTo((int)m_position.x - m_size.width() / 2, (int)m_position.y - m_size.height() / 2);
+    m_rect.resize(m_size);
 
     m_elapsedTime += elapsedTime;
 }

@@ -52,7 +52,7 @@ private:
     int m_currentBurst, m_burstCount;
 
     // particles size
-    Size m_pMinSize, m_pMaxSize;
+    Size m_pStartSize, m_pFinalSize;
 
     // particles initial position related to emitter position
     float m_pMinPositionRadius, m_pMaxPositionRadius;

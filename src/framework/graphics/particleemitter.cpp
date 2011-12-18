@@ -47,8 +47,8 @@ ParticleEmitter::ParticleEmitter(const ParticleSystemPtr& parent)
     m_pMaxPositionRadius = 3;
     m_pMinPositionAngle = 0;
     m_pMaxPositionAngle = 360;
-    m_pMinSize = Size(32, 32);
-    m_pMaxSize = Size(32, 32);
+    m_pStartSize = Size(32, 32);
+    m_pFinalSize = Size(32, 32);
     m_pMinDuration = 0;
     m_pMaxDuration = 10;
     m_pIgnorePhysicsAfter = -1;
@@ -145,13 +145,13 @@ bool ParticleEmitter::load(const OTMLNodePtr& node)
 
         // visual
         else if(childNode->tag() == "particle-size") {
-            m_pMinSize = childNode->value<Size>();
-            m_pMaxSize = childNode->value<Size>();
+            m_pStartSize = childNode->value<Size>();
+            m_pFinalSize = childNode->value<Size>();
         }
-        else if(childNode->tag() == "particle-min-size")
-            m_pMinSize = childNode->value<Size>();
-        else if(childNode->tag() == "particle-max-size")
-            m_pMaxSize = childNode->value<Size>();
+        else if(childNode->tag() == "particle-start-size")
+            m_pStartSize = childNode->value<Size>();
+        else if(childNode->tag() == "particle-final-size")
+            m_pFinalSize = childNode->value<Size>();
 
         else if(childNode->tag() == "particle-colors")
             m_pColors = Fw::split<Color>(childNode->value());
@@ -196,7 +196,6 @@ void ParticleEmitter::update(double elapsedTime)
 
             for(int p = 0; p < m_burstCount; ++p) {
 
-                Size pSize = Size(Fw::randomRange(m_pMinSize.width(), m_pMaxSize.width()), Fw::randomRange(m_pMinSize.height(), m_pMaxSize.height()));
                 float pDuration = Fw::randomRange(m_pMinDuration, m_pMaxDuration);
 
                 // particles initial velocity
@@ -210,7 +209,7 @@ void ParticleEmitter::update(double elapsedTime)
                 PointF pAcceleration(pAccelerationAbs * cos(pAccelerationAngle), pAccelerationAbs * sin(pAccelerationAngle));
 
                 ParticleSystemPtr particleSystem = m_parent.lock();
-                particleSystem->addParticle(ParticlePtr(new Particle(pPosition, pSize, pVelocity, pAcceleration, pDuration, m_pIgnorePhysicsAfter, m_pColors, m_pColorsStops, m_pTexture)));
+                particleSystem->addParticle(ParticlePtr(new Particle(pPosition, m_pStartSize, m_pFinalSize, pVelocity, pAcceleration, pDuration, m_pIgnorePhysicsAfter, m_pColors, m_pColorsStops, m_pTexture)));
             }
         }
 
