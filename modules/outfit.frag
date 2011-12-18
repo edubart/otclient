@@ -45,5 +45,5 @@ void main()
     }
     sum = sin(ticks/500.0)*sum;
 
-    gl_FragColor = pixel * color * opacity + sum;
+    gl_FragColor = pixel * color * opacity;
 }

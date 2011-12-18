@@ -49,9 +49,9 @@ void Particle::render()
     if(!m_texture)
         g_painter.drawFilledRect(m_rect);
     else {
-        //g_painter.setCompositionMode(Painter::CompositionMode_AdditiveSource);
+        g_painter.setCompositionMode(Painter::CompositionMode_AdditiveSource);
         g_painter.drawTexturedRect(m_rect, m_texture);
-        //g_painter.setCompositionMode(Painter::CompositionMode_SourceOver);
+        g_painter.setCompositionMode(Painter::CompositionMode_SourceOver);
     }
 }
 

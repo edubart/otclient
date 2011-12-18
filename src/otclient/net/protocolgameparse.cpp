@@ -530,7 +530,7 @@ void ProtocolGame::parseMagicEffect(InputMessage& msg)
     tile->addEffect(effect);
 
     // TODO: check if particles effect exists, if not, play standard sprite effect.
-    g_particleManager.load("particle.otpa");
+    //g_particleManager.load("particle.otpa");
 }
 
 void ProtocolGame::parseAnimatedText(InputMessage& msg)
