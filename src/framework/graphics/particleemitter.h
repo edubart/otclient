@@ -24,6 +24,7 @@
 #define PARTICLEEMITTER_H
 
 #include "declarations.h"
+#include "painter.h"
 #include <framework/global.h>
 #include <framework/graphics/texture.h>
 #include <framework/otml/otml.h>
@@ -73,6 +74,7 @@ private:
     std::vector<Color> m_pColors;
     std::vector<float> m_pColorsStops;
     TexturePtr m_pTexture;
+    Painter::CompositionMode m_pCompositionMode;
 };
 
 #endif

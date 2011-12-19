@@ -32,9 +32,9 @@ class Painter
 {
 public:
     enum CompositionMode {
-        CompositionMode_SourceOver,
-        CompositionMode_ColorizeSource,
-        CompositionMode_AdditiveSource
+        CompositionMode_Normal,
+        CompositionMode_Multiply,
+        CompositionMode_Addition
     };
 
     void init();

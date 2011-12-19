@@ -112,6 +112,8 @@ bool AttractionAffector::load(const OTMLNodePtr& node)
         return false;
 
     m_acceleration = 32;
+    m_reduction = 0;
+    m_repelish = false;
 
     for(const OTMLNodePtr& childNode : node->children()) {
         if(childNode->tag() == "position")
@@ -120,6 +122,8 @@ bool AttractionAffector::load(const OTMLNodePtr& node)
             m_acceleration = childNode->value<float>();
         else if(childNode->tag() == "velocity-reduction-percent")
             m_reduction = childNode->value<float>();
+        else if(childNode->tag() == "repelish")
+            m_repelish = childNode->value<bool>();
     }
     return true;
 }
@@ -134,6 +138,10 @@ void AttractionAffector::updateParticle(const ParticlePtr& particle, double elap
     if(d.length() == 0)
         return;
 
-    PointF pVelocity = particle->getVelocity() + (d / d.length() * m_acceleration * elapsedTime);
+    PointF direction = PointF(1, 1);
+    if(m_repelish)
+        direction = PointF(-1, -1);
+
+    PointF pVelocity = particle->getVelocity() + (d / d.length() * m_acceleration * elapsedTime) * direction;
     particle->setVelocity(pVelocity - pVelocity * m_reduction/100.0 * elapsedTime);
 }

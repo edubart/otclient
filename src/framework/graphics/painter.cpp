@@ -34,7 +34,7 @@ void Painter::init()
 {
     setColor(Fw::white);
     setOpacity(255);
-    setCompositionMode(CompositionMode_SourceOver);
+    setCompositionMode(CompositionMode_Normal);
 
     m_drawTexturedProgram = PainterShaderProgramPtr(new PainterShaderProgram);
     m_drawTexturedProgram->addShaderFromSourceCode(Shader::Vertex, glslMainWithTexCoordsVertexShader + glslPositionOnlyVertexShader);
@@ -154,13 +154,13 @@ void Painter::setCustomProgram(PainterShaderProgramPtr program)
 void Painter::setCompositionMode(Painter::CompositionMode compositionMode)
 {
     switch(compositionMode) {
-    case CompositionMode_SourceOver:
+    case CompositionMode_Normal:
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         break;
-    case CompositionMode_ColorizeSource:
+    case CompositionMode_Multiply:
         glBlendFunc(GL_DST_COLOR, GL_ONE_MINUS_SRC_ALPHA);
         break;
-    case CompositionMode_AdditiveSource:
+    case CompositionMode_Addition:
         glBlendFunc(GL_SRC_ALPHA, GL_ONE);
         break;
     }

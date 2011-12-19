@@ -1,11 +1,17 @@
 ParticleSystem
     
+  AttractionAffector
+    position: 320 180
+    acceleration: 500
+    repelish: true
+    delay: 0.5
+    
   // Fire
   Emitter
     position: 295 180
     duration: 0.5
     burstRate: 0.0166
-    burstCount: 6
+    burstCount: 3
     delay: 0
     
     particle-min-duration: 0.3
@@ -15,24 +21,25 @@ ParticleSystem
 
     particle-min-velocity: 200
     particle-max-velocity: 240
-    particle-min-velocity-angle: -5
-    particle-max-velocity-angle: 10
+    particle-min-velocity-angle: -10
+    particle-max-velocity-angle:  10
     
     particle-acceleration: 0
     
-    particle-start-size: 8 8
+    particle-start-size: 16 16
     particle-final-size: 64 64
     
-    particle-colors: #ff8c00ff #e6660080 #1e1e1e00
+    particle-colors: #ffcc0050 #ffff0025 #ff000000
     particle-colors-stops: 0 0.15 0.3
     
+    particle-composition-mode: addition
     particle-texture: circle2.png
 
 
   // Fire ball
   Emitter
-    position: 200 200
-    duration: 0.7
+    position: 295 180
+    duration: 0
     burstRate: 0.0166
     burstCount: 3
     delay: 0
@@ -50,38 +57,46 @@ ParticleSystem
     particle-acceleration: 0
     
     particle-start-size: 16 16
-    particle-final-size: 64 64
+    particle-final-size: 32 32
     
+    particle-composition-mode: addition
     particle-colors: #19191980 #0f0f0f80 #00000000
     particle-colors-stops: 0 0.45 0.9
     
     particle-texture: circle2.png
     
+ParticleSystem
+
+  AttractionAffector
+    position: 320 180
+    acceleration: 30
+    repelish: true
+    
   // Smoke
   Emitter
-    position: 200 200
-    duration: 0.1
+    position: 295 180
+    duration: 0.7
     burstRate: 0.0166
     burstCount: 3
-    delay: 0
+    delay: 0.4
     
-    particle-min-duration: 0.1
-    particle-max-duration: 0.45
+    particle-min-duration: 0.9
+    particle-max-duration: 0.9
 
     particle-position-radius: 0
 
     particle-min-velocity: 60
-    particle-max-velocity: 80
-    particle-min-velocity-angle: -5
-    particle-max-velocity-angle: 10
+    particle-max-velocity: 85
+    particle-min-velocity-angle: -20
+    particle-max-velocity-angle: 20
     
     particle-acceleration: 0
     
     particle-start-size: 8 8
     particle-final-size: 64 64
     
-    particle-colors: #555555ff #55555580 #55555500
-    particle-colors-stops: 0 0.225 0.45
+    particle-colors:  #66666610 #00000000
+    particle-colors-stops: 0 0.9
     
     particle-texture: circle2.png
 

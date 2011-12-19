@@ -24,7 +24,7 @@
 #include "graphics.h"
 #include <framework/core/clock.h>
 
-Particle::Particle(const Point& pos, const Size& startSize, const Size& finalSize, const PointF& velocity, const PointF& acceleration, float duration, float ignorePhysicsAfter, const std::vector<Color>& colors, const std::vector<float>& colorsStops, TexturePtr texture)
+Particle::Particle(const Point& pos, const Size& startSize, const Size& finalSize, const PointF& velocity, const PointF& acceleration, float duration, float ignorePhysicsAfter, const std::vector<Color>& colors, const std::vector<float>& colorsStops, Painter::CompositionMode compositionMode, TexturePtr texture)
 {
     m_colors = colors;
     m_colorsStops = colorsStops;
@@ -35,6 +35,7 @@ Particle::Particle(const Point& pos, const Size& startSize, const Size& finalSiz
     m_velocity = velocity;
     m_acceleration = acceleration;
 
+    m_compositionMode = compositionMode;
     m_texture = texture;
     m_duration = duration;
     m_ignorePhysicsAfter = ignorePhysicsAfter;
@@ -49,9 +50,9 @@ void Particle::render()
     if(!m_texture)
         g_painter.drawFilledRect(m_rect);
     else {
-        g_painter.setCompositionMode(Painter::CompositionMode_AdditiveSource);
+        g_painter.setCompositionMode(m_compositionMode);
         g_painter.drawTexturedRect(m_rect, m_texture);
-        g_painter.setCompositionMode(Painter::CompositionMode_SourceOver);
+        g_painter.setCompositionMode(Painter::CompositionMode_Normal);
     }
 }
 

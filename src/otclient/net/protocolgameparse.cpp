@@ -522,15 +522,17 @@ void ProtocolGame::parseMagicEffect(InputMessage& msg)
 {
     Position pos = parsePosition(msg);
     int effectId = msg.getU8();
-    EffectPtr effect = EffectPtr(new Effect());
-    effect->setId(effectId);
-    effect->startAnimation();
 
-    TilePtr tile = g_map.getTile(pos);
-    tile->addEffect(effect);
+    if(effectId != 37) {
+        EffectPtr effect = EffectPtr(new Effect());
+        effect->setId(effectId);
+        effect->startAnimation();
 
-    // TODO: check if particles effect exists, if not, play standard sprite effect.
-    //g_particleManager.load("particle.otpa");
+        TilePtr tile = g_map.getTile(pos);
+        tile->addEffect(effect);
+    }
+    else
+        g_particleManager.load("particle.otpa");
 }
 
 void ProtocolGame::parseAnimatedText(InputMessage& msg)
@@ -546,10 +548,12 @@ void ProtocolGame::parseDistanceMissile(InputMessage& msg)
     Position toPos = parsePosition(msg);
     int shotId = msg.getU8();
 
-    MissilePtr shot = MissilePtr(new Missile());
-    shot->setId(shotId);
-    shot->setPath(fromPos, toPos);
-    g_map.addThing(shot, fromPos);
+    if(shotId != 4) {
+        MissilePtr shot = MissilePtr(new Missile());
+        shot->setId(shotId);
+        shot->setPath(fromPos, toPos);
+        g_map.addThing(shot, fromPos);
+    }
 }
 
 void ProtocolGame::parseCreatureSquare(InputMessage& msg)

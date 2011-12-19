@@ -24,11 +24,12 @@
 #define PARTICLE_H
 
 #include "declarations.h"
+#include "painter.h"
 #include <framework/global.h>
 
 class Particle {
 public:
-    Particle(const Point& pos, const Size& startSize, const Size& finalSize, const PointF& velocity, const PointF& acceleration, float duration, float ignorePhysicsAfter, const std::vector<Color>& colors, const std::vector<float>& colorsStops, TexturePtr texture = nullptr);
+    Particle(const Point& pos, const Size& startSize, const Size& finalSize, const PointF& velocity, const PointF& acceleration, float duration, float ignorePhysicsAfter, const std::vector<Color>& colors, const std::vector<float>& colorsStops, Painter::CompositionMode compositionMode = Painter::CompositionMode_Normal, TexturePtr texture = nullptr);
 
     void render();
     void update(double elapsedTime);
@@ -53,6 +54,7 @@ private:
     PointF m_acceleration;
     Size m_size, m_startSize, m_finalSize;
     Rect m_rect;
+    Painter::CompositionMode m_compositionMode;
     float m_duration, m_ignorePhysicsAfter;
     double m_elapsedTime;
     bool m_finished;

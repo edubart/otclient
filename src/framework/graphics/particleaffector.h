@@ -60,6 +60,7 @@ public:
 private:
     Point m_position;
     float m_acceleration, m_reduction;
+    bool m_repelish;
 };
 
 #endif

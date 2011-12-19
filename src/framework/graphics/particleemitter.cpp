@@ -159,6 +159,14 @@ bool ParticleEmitter::load(const OTMLNodePtr& node)
             m_pColorsStops = Fw::split<float>(childNode->value());
         else if(childNode->tag() == "particle-texture")
             m_pTexture = g_textures.getTexture(childNode->value());
+        else if(childNode->tag() == "particle-composition-mode") {
+            if(childNode->value() == "normal")
+                m_pCompositionMode = Painter::CompositionMode_Normal;
+            else if(childNode->value() == "multiply")
+                m_pCompositionMode = Painter::CompositionMode_Multiply;
+            else if(childNode->value() == "addition")
+                m_pCompositionMode = Painter::CompositionMode_Addition;
+        }
     }
 
     if(m_pColors.empty())
@@ -210,7 +218,7 @@ void ParticleEmitter::update(double elapsedTime)
                 PointF pAcceleration(pAccelerationAbs * cos(pAccelerationAngle), pAccelerationAbs * sin(pAccelerationAngle));
 
                 ParticleSystemPtr particleSystem = m_parent.lock();
-                particleSystem->addParticle(ParticlePtr(new Particle(pPosition, m_pStartSize, m_pFinalSize, pVelocity, pAcceleration, pDuration, m_pIgnorePhysicsAfter, m_pColors, m_pColorsStops, m_pTexture)));
+                particleSystem->addParticle(ParticlePtr(new Particle(pPosition, m_pStartSize, m_pFinalSize, pVelocity, pAcceleration, pDuration, m_pIgnorePhysicsAfter, m_pColors, m_pColorsStops, m_pCompositionMode, m_pTexture)));
             }
         }
 
