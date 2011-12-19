@@ -296,7 +296,7 @@ public:
 
     /// Pushes any type onto the stack
     template<typename T, typename... Args>
-    void polymorphicPush(T v, Args... args) { push_luavalue(v); polymorphicPush(args...); }
+    void polymorphicPush(T v, Args... args);
     void polymorphicPush() { }
 
     /// Casts a value from stack to any type
@@ -319,6 +319,12 @@ extern LuaInterface g_lua;
 #include "luaexception.h"
 #include "luabinder.h"
 #include "luavaluecasts.h"
+
+template<typename T, typename... Args>
+void LuaInterface::polymorphicPush(T v, Args... args) {
+    push_luavalue(v);
+    polymorphicPush(args...);
+}
 
 // next templates must be defined after above includes
 template<class C, typename F>

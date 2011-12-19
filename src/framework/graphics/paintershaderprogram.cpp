@@ -105,7 +105,7 @@ void PainterShaderProgram::draw(const CoordsBuffer& coordsBuffer, DrawMode drawM
     }
 
     bool mustDisableTexCoordsArray = false;
-    if(coordsBuffer.getTextureCoords() > 0) {
+    if(coordsBuffer.getTextureCoordsCount() > 0) {
         enableAttributeArray(PainterShaderProgram::TEXTURE_COORDS_ATTR);
         setAttributeArray(PainterShaderProgram::TEXTURE_COORDS_ATTR, coordsBuffer.getTextureCoords(), 2);
         mustDisableTexCoordsArray = true;

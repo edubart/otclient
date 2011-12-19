@@ -6,6 +6,7 @@ MESSAGE(STATUS ${CMAKE_MODULE_PATH})
 OPTION(NO_CONSOLE "Disables console window on Windows platform" OFF)
 OPTION(HANDLE_EXCEPTIONS "Generate crash reports" OFF)
 OPTION(USE_OPENGL_ES2 "Use OpenGL ES 2.0 (for mobiles devices)" OFF)
+OPTION(USE_GCC47 "Use experimental gcc 4.7" OFF)
 
 # set debug as default build type
 IF(NOT CMAKE_BUILD_TYPE)
@@ -14,7 +15,6 @@ ENDIF(NOT CMAKE_BUILD_TYPE)
 
 # find needed libraries
 SET(Boost_USE_STATIC_LIBS ON)
-SET(Boost_USE_MULTITHREADED OFF)
 FIND_PACKAGE(Boost COMPONENTS system REQUIRED)
 
 IF(USE_OPENGL_ES2)
@@ -60,6 +60,10 @@ ELSE(HANDLE_EXCEPTIONS)
     MESSAGE(STATUS "Generate crash reports: OFF")
 ENDIF(HANDLE_EXCEPTIONS)
 
+IF(USE_GCC47)
+    SET(CMAKE_C_COMPILER gcc-4.7)
+    SET(CMAKE_CXX_COMPILER g++-4.7)
+ENDIF(USE_GCC47)
 
 IF(WIN32)
     SET(framework_SOURCES ${framework_SOURCES} ${CMAKE_CURRENT_LIST_DIR}/platform/win32window.cpp)
@@ -71,6 +75,7 @@ IF(WIN32)
 
     IF(NO_CONSOLE)
         IF(CMAKE_COMPILER_IS_GNUCXX)
+            SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mthread")
             SET(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -mwindows")
         ENDIF(CMAKE_COMPILER_IS_GNUCXX)
         MESSAGE(STATUS "Disable windows console: ON")
@@ -78,8 +83,12 @@ IF(WIN32)
         MESSAGE(STATUS "Disable windows console: OFF")
     ENDIF(NO_CONSOLE)
 ELSE(WIN32)
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
     SET(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -rdynamic")
-    SET(ADDITIONAL_LIBRARIES pthread X11 dl)
+    IF(USE_GCC47)
+        ADD_DEFINITIONS(-D_GLIBCXX__PTHREADS)
+    ENDIF(USE_GCC47)
+    SET(ADDITIONAL_LIBRARIES X11 dl)
     SET(framework_SOURCES ${framework_SOURCES} ${CMAKE_CURRENT_LIST_DIR}/platform/x11window.cpp)
 ENDIF(WIN32)
 
