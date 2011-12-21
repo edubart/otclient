@@ -3,6 +3,7 @@ Font
   texture: verdana-11px-rounded.png
   height: 14
   glyph-size: 16 16
+  spacing: -1 0
 
   glyph-widths:
     32: 4

@@ -188,7 +188,9 @@ const std::vector<Point>& Font::calculateGlyphsPositions(const std::string& text
                     lineWidths.resize(lines+1);
                 lineWidths[lines] = 0;
             } else if(glyph >= 32) {
-                lineWidths[lines] += m_glyphsSize[glyph].width();
+                lineWidths[lines] += m_glyphsSize[glyph].width() ;
+                if((i+1 != textLength && text[i+1] != '\n')) // only add space if letter is not the last or before a \n.
+                    lineWidths[lines] += m_glyphSpacing.width();
                 maxLineWidth = std::max(maxLineWidth, lineWidths[lines]);
             }
         }
@@ -221,7 +223,7 @@ const std::vector<Point>& Font::calculateGlyphsPositions(const std::string& text
 
         // render only if the glyph is valid
         if(glyph >= 32 && glyph != (uchar)'\n') {
-            virtualPos.x += m_glyphsSize[glyph].width();
+            virtualPos.x += m_glyphsSize[glyph].width() + m_glyphSpacing.width();
         }
     }
 

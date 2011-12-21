@@ -1055,6 +1055,9 @@ ThingPtr ProtocolGame::internalGetThing(InputMessage& msg)
             uint32 id = msg.getU32();
             std::string name = msg.getString();
 
+            if(name.length() > 0) // every creature name must have a capital letter
+                name[0] = toupper(name[0]);
+
             g_map.removeCreatureById(removeId);
 
             if(m_localPlayer->getId() == id)
