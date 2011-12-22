@@ -1,10 +1,24 @@
 SkillFirstWidget < UIWidget
 
 SkillButton < UIButton
-  height: 14
-  margin-top: 4
+  height: 21
+  margin-top: 3
   margin-left: 10
   margin-right: 10
+  
+  @onClick: |
+    function(self)
+      local percentBar = self:getChildById('percent')
+      if percentBar then
+        percentBar:setVisible(not percentBar:isVisible())
+        if percentBar:isVisible() then
+          self:setHeight(21)
+        else
+          self:setHeight(21 - 6)
+        end
+        self:updateParentLayout()
+      end
+    end
 
 SkillNameLabel < Label
   font: verdana-11px-monochrome
@@ -12,28 +26,31 @@ SkillNameLabel < Label
   anchors.top: parent.top
   anchors.bottom: parent.bottom
 
-SkillLevelLabel < Label
+SkillValueLabel < Label
+  id: value
   font: verdana-11px-monochrome
-  text-align: right
-  width: 32
+  text-align: topright
+  width: 64
   anchors.right: parent.right
   anchors.top: parent.top
   anchors.bottom: parent.bottom
 
 SkillPercentPanel < UIProgressBar
+  id: percent
   color: black
   background-color: green
-  tooltip: test
   height: 5
-  margin-top: 3
-  margin-left: 10
-  margin-right: 10
+  margin-top: 15
+  anchors.left: parent.left
+  anchors.right: parent.right
+  anchors.top: parent.top
+  tooltip: 0
 
 MiniWindow
   id: skillWindow
   title: Skills
   size: 200 220
-
+  
   Panel
     id: skillPanel
     anchors.fill: parent
@@ -42,3 +59,112 @@ MiniWindow
     margin-left: 3
     margin-right: 3
     layout: verticalBox
+  
+    SkillButton
+      id: experience
+      height: 15
+      SkillNameLabel
+        text: Experience
+      SkillValueLabel
+        
+    SkillButton
+      id: level
+      SkillNameLabel
+        text: Level
+      SkillValueLabel
+      SkillPercentPanel
+        background-color: red
+        
+    SkillButton
+      id: health
+      height: 15
+      SkillNameLabel
+        text: Hit Points
+      SkillValueLabel
+      
+    SkillButton
+      id: mana
+      height: 15
+      SkillNameLabel
+        text: Mana
+      SkillValueLabel
+      
+    SkillButton
+      id: soul
+      height: 15
+      SkillNameLabel
+        text: Soul Points
+      SkillValueLabel
+      
+    SkillButton
+      id: capacity
+      height: 15
+      SkillNameLabel
+        text: Capacity
+      SkillValueLabel
+      
+    SkillButton
+      id: stamina
+      SkillNameLabel
+        text: Stamina
+      SkillValueLabel
+      SkillPercentPanel
+      
+    SkillButton
+      id: magiclevel
+      SkillNameLabel
+        text: Magic Level
+      SkillValueLabel
+      SkillPercentPanel
+        background-color: red
+
+    SkillButton
+      id: skillId0
+      SkillNameLabel
+        text: Fist Fighting
+      SkillValueLabel
+      SkillPercentPanel
+        
+    SkillButton
+      id: skillId1
+      SkillNameLabel
+        text: Club Fighting
+      SkillValueLabel
+      SkillPercentPanel
+        
+    SkillButton
+      id: skillId2
+      
+      SkillNameLabel
+        text: Sword Fighting
+      SkillValueLabel
+      SkillPercentPanel
+
+    SkillButton
+      id: skillId3
+      SkillNameLabel
+        text: Axe Fighting
+      SkillValueLabel
+      SkillPercentPanel
+
+    SkillButton
+      id: skillId4
+      SkillNameLabel
+        text: Distance Fighting
+      SkillValueLabel
+      SkillPercentPanel
+
+    SkillButton
+      id: skillId5
+      SkillNameLabel
+        text: Shielding
+      SkillValueLabel
+      SkillPercentPanel
+
+    SkillButton
+      id: skillId6
+      SkillNameLabel
+        text: Fishing
+      SkillValueLabel
+      SkillPercentPanel
+

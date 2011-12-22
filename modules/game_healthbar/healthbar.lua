@@ -38,7 +38,7 @@ function HealthBar.destroy()
 end
 
 -- hooked events
-function Game.onHealthChange(health, maxHealth)
+function HealthBar.onHealthChange(health, maxHealth)
   local label = healthManaPanel:getChildById('healthLabel')
   label:setText(health .. ' / ' .. maxHealth)
 
@@ -46,7 +46,7 @@ function Game.onHealthChange(health, maxHealth)
   healthBar:setPercent(health / maxHealth * 100)
 end
 
-function Game.onManaChange(mana, maxMana)
+function HealthBar.onManaChange(mana, maxMana)
   local label = healthManaPanel:getChildById('manaLabel')
   label:setText(mana .. ' / ' .. maxMana)
 
@@ -62,4 +62,6 @@ function Game.onManaChange(mana, maxMana)
 end
 
 connect(Game, { onLogin = HealthBar.create,
-                onLogout = HealthBar.destroy })
+                onLogout = HealthBar.destroy,
+                onHealthChange = HealthBar.onHealthChange,
+                onManaChange = HealthBar.onManaChange })

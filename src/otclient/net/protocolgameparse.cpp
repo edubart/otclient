@@ -660,38 +660,47 @@ void ProtocolGame::parsePlayerStats(InputMessage& msg)
 {
     m_localPlayer->setStatistic(Otc::Health, msg.getU16());
     m_localPlayer->setStatistic(Otc::MaxHealth, msg.getU16());
-
     g_dispatcher.addEvent([=] {
         g_lua.callGlobalField("Game", "onHealthChange", m_localPlayer->getStatistic(Otc::Health), m_localPlayer->getStatistic(Otc::MaxHealth));
     });
 
     m_localPlayer->setStatistic(Otc::FreeCapacity, msg.getU32() / 100.0);
-
     g_dispatcher.addEvent([=] {
         g_lua.callGlobalField("Game", "onFreeCapacityChange", m_localPlayer->getStatistic(Otc::FreeCapacity));
     });
 
     m_localPlayer->setStatistic(Otc::Experience, msg.getU32());
+    g_dispatcher.addEvent([=] {
+        g_lua.callGlobalField("Game", "onExperienceChange", m_localPlayer->getStatistic(Otc::Experience));
+    });
+
     m_localPlayer->setStatistic(Otc::Level, msg.getU16());
     m_localPlayer->setStatistic(Otc::LevelPercent, msg.getU8());
+    g_dispatcher.addEvent([=] {
+        g_lua.callGlobalField("Game", "onLevelChange", m_localPlayer->getStatistic(Otc::Level), m_localPlayer->getStatistic(Otc::LevelPercent));
+    });
 
     m_localPlayer->setStatistic(Otc::Mana, msg.getU16());
     m_localPlayer->setStatistic(Otc::MaxMana, msg.getU16());
-
     g_dispatcher.addEvent([=] {
         g_lua.callGlobalField("Game", "onManaChange", m_localPlayer->getStatistic(Otc::Mana), m_localPlayer->getStatistic(Otc::MaxMana));
     });
 
     m_localPlayer->setStatistic(Otc::MagicLevel, msg.getU8());
     m_localPlayer->setStatistic(Otc::MagicLevelPercent, msg.getU8());
+    g_dispatcher.addEvent([=] {
+        g_lua.callGlobalField("Game", "onMagicLevelChange", m_localPlayer->getStatistic(Otc::MagicLevel), m_localPlayer->getStatistic(Otc::MagicLevelPercent));
+    });
 
     m_localPlayer->setStatistic(Otc::Soul, msg.getU8());
-
     g_dispatcher.addEvent([=] {
         g_lua.callGlobalField("Game", "onSoulChange", m_localPlayer->getStatistic(Otc::Soul));
     });
 
     m_localPlayer->setStatistic(Otc::Stamina, msg.getU16());
+    g_dispatcher.addEvent([=] {
+        g_lua.callGlobalField("Game", "onStaminaChange", m_localPlayer->getStatistic(Otc::Stamina));
+    });
 }
 
 void ProtocolGame::parsePlayerSkills(InputMessage& msg)
@@ -704,7 +713,7 @@ void ProtocolGame::parsePlayerSkills(InputMessage& msg)
         }
 
         g_dispatcher.addEvent([=] {
-            g_lua.callGlobalField("Game", "onSkillUpdate", skill, values[Otc::SkillLevel], values[Otc::SkillPercent]);
+            g_lua.callGlobalField("Game", "onSkillChange", skill, values[Otc::SkillLevel], values[Otc::SkillPercent]);
         });
     }
 }

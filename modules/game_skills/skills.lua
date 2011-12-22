@@ -2,48 +2,46 @@ Skills = {}
 
 -- private variables
 local skillWindow = nil
-local skills = {"Fist Fighting", "Club Fighting", "Sword Fighting", "Axe Fighting", "Distance Fighting", "Shielding", "Fishing"}
+
+-- private functions
+local function getNumberString(number)
+  local out = ''
+  number = tostring(number):reverse()
+  for i=1,#number do
+    out = out .. number:sub(i, i)
+    if i % 3 == 0 and i ~= #number then
+      out = out .. ','
+    end
+  end
+  out = out:reverse()
+  return out
+end
+
+local function setSkillValue(id, value)
+  local skill = skillWindow:recursiveGetChildById(id)
+  
+  if skill then
+    local widget = skill:getChildById('value')
+    widget:setText(value)
+  end
+end
+
+local function setSkillPercent(id, percent, tooltip)
+  local skill = skillWindow:recursiveGetChildById(id)
+  
+  if skill then
+    local widget = skill:getChildById('percent')
+    widget:setPercent(percent)
+    
+    if tooltip then
+      widget:setTooltip(tooltip)
+    end
+  end
+end
 
 -- public functions
 function Skills.create()
   skillWindow = UI.display('skills.otui', { parent = Game.gameRightPanel })
-
-  local skillPanel = skillWindow:getChildById('skillPanel')
-
-  -- create first widget cause of layout
-  local widget = UIWidget.create()
-  skillPanel:addChild(widget)
-  widget:setStyle('SkillFirstWidget')
-
-  -- create skills
-  for i=1,#skills,1 do
-    local skillButton = UIButton.create()
-    skillPanel:addChild(skillButton)
-    skillButton:setStyle('SkillButton')
-
-    local nameLabel = UILabel.create()
-    skillButton :addChild(nameLabel)
-    nameLabel:setStyle('SkillNameLabel')
-    nameLabel:setText(skills[i])
-    nameLabel:resizeToText()
-
-    local levelLabel = UILabel.create()
-    skillButton:addChild(levelLabel)
-    levelLabel:setStyle('SkillLevelLabel')
-    levelLabel:setId('skillLevelId' .. i)
-    levelLabel:setText('0')
-
-    local percentBar = UIProgressBar.create()
-    skillPanel:addChild(percentBar)
-    percentBar:setStyle('SkillPercentPanel')
-    percentBar:setId('skillPercentId' .. i)
-
-    skillButton.onClick = function(self)
-      percentBar:setVisible(not percentBar:isVisible())
-      self:updateParentLayout()
-      return true
-    end
-  end
 end
 
 function Skills.destroy()
@@ -52,16 +50,61 @@ function Skills.destroy()
 end
 
 -- hooked events
-function Game.onSkillUpdate(id, level, percent)
-  local skillPanel = skillWindow:recursiveGetChildById('skillPanel')
+function Skills.onExperienceChange(value)
+  setSkillValue('experience', getNumberString(value))
+end
 
-  local levelLabel = skillPanel:recursiveGetChildById('skillLevelId' .. (id + 1))
-  levelLabel:setText(level)
+function Skills.onLevelChange(value, percent)
+  setSkillValue('level', getNumberString(value))
+  setSkillPercent('level', percent, 'You have ' .. (100 - percent) .. ' percent to go')
+end
 
-  local percentBar = skillPanel:getChildById('skillPercentId' .. (id + 1))
-  percentBar:setPercent(percent)
-  percentBar:setTooltip(percent .. "% to go")
+function Skills.onHealthChange(health, maxHealth)
+  setSkillValue('health', getNumberString(health))
+end
+
+function Skills.onManaChange(mana, maxMana)
+  setSkillValue('mana', getNumberString(mana))
+end
+
+function Skills.onSoulChange(soul)
+  setSkillValue('soul', soul)
+end
+
+function Skills.onFreeCapacityChange(freeCapacity)
+  setSkillValue('capacity', freeCapacity)
+end
+
+function Skills.onStaminaChange(stamina)
+  local hours = math.floor(stamina / 60)
+  local minutes = stamina % 60
+  if minutes < 10 then
+    minutes = '0' .. minutes
+  end
+  local percent = 100 * stamina / (42 * 60) -- max is 42 hours
+  
+  setSkillValue('stamina', hours .. ":" .. minutes)
+  setSkillPercent('stamina', percent, 'You have ' .. percent .. ' percent')
+end
+
+function Skills.onMagicLevelChange(value, percent)
+  setSkillValue('magiclevel', value)
+  setSkillPercent('magiclevel', percent, 'You have ' .. (100 - percent) .. ' percent to go')
+end
+
+function Skills.onSkillChange(id, level, percent)
+  setSkillValue('skillId' .. id, level)
+  setSkillPercent('skillId' .. id, percent, 'You have ' .. (100 - percent) .. ' percent to go')
 end
 
 connect(Game, { onLogin = Skills.create,
-                onLogout = Skills.destroy })
+                onLogout = Skills.destroy,
+                onExperienceChange = Skills.onExperienceChange,
+                onLevelChange = Skills.onLevelChange,
+                onHealthChange = Skills.onHealthChange,
+                onManaChange = Skills.onManaChange,
+                onSoulChange = Skills.onSoulChange,
+                onFreeCapacityChange = Skills.onFreeCapacityChange,
+                onStaminaChange = Skills.onStaminaChange,
+                onMagicLevelChange = Skills.onMagicLevelChange,
+                onSkillChange = Skills.onSkillChange })
