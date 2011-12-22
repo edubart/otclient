@@ -11,39 +11,30 @@ uniform vec4 bodyColor;
 uniform vec4 legsColor;
 uniform vec4 feetColor;
 
-vec4 calcPixel(vec2 texCoord)
+const vec4 yellow = vec4(1.0, 1.0, 0.0, 1.0);
+const vec4 red = vec4(1.0, 0.0, 0.0, 1.0);
+const vec4 green = vec4(0.0, 1.0, 0.0, 1.0);
+const vec4 blue = vec4(0.0, 0.0, 1.0, 1.0);
+
+vec4 calcOutfitPixel()
 {
-    vec4 pixel = texture2D(texture, texCoord);
-    vec4 maskColor = texture2D(maskTexture, texCoord);
+    vec4 pixel = texture2D(texture, textureCoords);
+    vec4 maskColor = texture2D(maskTexture, textureCoords);
 
-    vec4 outColor = vec4(0);
-    if(maskColor.r == 1.0 && maskColor.g == 1.0) {
+    vec4 outColor = vec4(1.0, 1.0, 1.0, 1.0);
+    if(maskColor == yellow)
         outColor = headColor;
-    } else if(maskColor.r == 1.0) {
+    else if(maskColor == red)
         outColor = bodyColor;
-    } else if(maskColor.g == 1.0) {
+    else if(maskColor == green)
         outColor = legsColor;
-    } else if(maskColor.b == 1.0) {
+    else if(maskColor == blue)
         outColor = feetColor;
-    }
 
-    if(outColor.a != 0.0)
-        pixel = pixel * outColor;
-    return pixel;
+    return pixel * outColor;
 }
+
 void main()
 {
-    vec4 pixel = calcPixel(textureCoords);
-    int num = 16;
-
-    vec4 sum = vec4(0);
-    int i, j;
-    for(i=-num/2;i<num/2;++i) {
-        for(j=-num/2;j<num/2;++j) {
-            sum += calcPixel(textureCoords + vec2(i+1, j+1)*0.005) * 1.0/(num*num);
-        }
-    }
-    sum = sin(ticks/500.0)*sum;
-
-    gl_FragColor = pixel * color * opacity;
+    gl_FragColor = calcOutfitPixel() * color * opacity;
 }
