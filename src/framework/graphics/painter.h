@@ -40,8 +40,6 @@ public:
     void init();
     void terminate();
 
-    void updateProjectionMatrix(const Size& viewportSize, bool inverseYAxis = false);
-
     void drawProgram(const PainterShaderProgramPtr& program, CoordsBuffer& coordsBuffer, PainterShaderProgram::DrawMode drawMode = PainterShaderProgram::Triangles);
     void drawTextureCoords(CoordsBuffer& coordsBuffer, const TexturePtr& texture);
     void drawTexturedRect(const Rect& dest, const TexturePtr& texture);
@@ -59,16 +57,17 @@ public:
     void setCustomProgram(PainterShaderProgramPtr program);
     void releaseCustomProgram() { m_customProgram = nullptr; }
     void setCompositionMode(CompositionMode compositionMode);
-
-    GLfloat *getProjectionMatrix() { return (GLfloat*)m_projectionMatrix; }
+    
+    void setProjectionMatrix(const Matrix3& projectionMatrix) { m_projectionMatrix = projectionMatrix; }
+    Matrix3 getProjectionMatrix() { return m_projectionMatrix; }
 
 private:
     PainterShaderProgramPtr m_drawTexturedProgram;
     PainterShaderProgramPtr m_drawSolidColorProgram;
     PainterShaderProgramPtr m_customProgram;
-    GLfloat m_projectionMatrix[3][3];
+    Matrix3 m_projectionMatrix;
     Color m_currentColor;
-    GLfloat m_currentOpacity;
+    float m_currentOpacity;
     CoordsBuffer m_coordsBuffer;
 };
 

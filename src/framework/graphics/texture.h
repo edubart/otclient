@@ -28,24 +28,18 @@
 class Texture : public std::enable_shared_from_this<Texture>
 {
 public:
-    /// Create a texture, width and height must be a multiple of 2
     Texture();
     Texture(int width, int height, int channels, uchar* pixels = NULL);
     virtual ~Texture();
 
-    /// Enable texture bilinear filter (smooth scaled textures)
     virtual void enableBilinearFilter();
-
-    /// Get OpenGL texture id
     GLuint getId()  { return m_textureId; }
 
-    /// Copy pixels from OpenGL texture
     std::vector<uint8> getPixels();
 
     int getWidth() { return m_size.width(); }
     int getHeight() { return m_size.height(); }
     const Size& getSize() { return m_size; }
-    const Size& getGlSize() { return m_glSize; }
 
     bool isEmpty() const { return m_textureId == 0; }
 
@@ -54,7 +48,6 @@ protected:
 
     GLuint m_textureId;
     Size m_size;
-    Size m_glSize;
 };
 
 #endif

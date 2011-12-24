@@ -24,28 +24,15 @@
 #include "graphics.h"
 #include "texture.h"
 
-FrameBuffer::FrameBuffer(int width, int height)
-{
-    // create FBO texture
-    m_texture = TexturePtr(new Texture(width, height, 4));
-    m_texture->enableBilinearFilter();
+uint FrameBuffer::boundFbo = 0;
 
-    // generate FBO
+FrameBuffer::FrameBuffer(const Size& size)
+{
     glGenFramebuffers(1, &m_fbo);
     if(!m_fbo)
         logFatal("Unable to create framebuffer object");
 
-    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
-
-    // attach 2D texture to this FBO
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture->getId(), 0);
-
-    GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-    if(status != GL_FRAMEBUFFER_COMPLETE)
-        logFatal("Unable to create framebuffer object");
-
-    // restore back buffer
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    resize(size);
 }
 
 FrameBuffer::~FrameBuffer()
@@ -53,25 +40,60 @@ FrameBuffer::~FrameBuffer()
     glDeleteFramebuffers(1, &m_fbo);
 }
 
-void FrameBuffer::bind()
+void FrameBuffer::resize(const Size& size)
 {
-    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
-    glClear(GL_COLOR_BUFFER_BIT);
-    glViewport(0, 0, m_texture->getWidth(), m_texture->getHeight());
-    g_painter.updateProjectionMatrix(m_texture->getSize(), true);
+    internalBind();
+    m_texture = TexturePtr(new Texture(size.width(), size.height(), 4));
+    m_texture->enableBilinearFilter();
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture->getId(), 0);
+
+    GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    if(status != GL_FRAMEBUFFER_COMPLETE)
+        logFatal("Unable to setup framebuffer object");
+    internalRelease();
+}
+
+void FrameBuffer::bind(bool clear)
+{
+    internalBind();
+    Matrix3 projectionMatrix = { 2.0f/m_texture->getWidth(),  0.0f,                         0.0f,
+                                 0.0f,                        2.0f/m_texture->getHeight(),  0.0f,
+                                -1.0f,                       -1.0f,                         0.0f };
+
+    m_oldProjectionMatrix = g_painter.getProjectionMatrix();
+    m_oldViewportSize = g_graphics.getViewportSize();
+    g_painter.setProjectionMatrix(projectionMatrix);
+    g_graphics.setViewportSize(m_texture->getSize());
+
+    if(clear)
+        glClear(GL_COLOR_BUFFER_BIT);
 }
 
 void FrameBuffer::release()
 {
-    // bind back buffer again
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-    // restore graphics viewport
-    glViewport(0, 0, g_graphics.getViewportSize().width(), g_graphics.getViewportSize().height());
-    g_painter.updateProjectionMatrix(g_graphics.getViewportSize());
+    internalRelease();
+    g_painter.setProjectionMatrix(m_oldProjectionMatrix);
+    g_graphics.setViewportSize(m_oldViewportSize);
 }
 
 void FrameBuffer::draw(const Rect& dest)
 {
     g_painter.drawTexturedRect(dest, m_texture);
+}
+
+void FrameBuffer::internalBind()
+{
+    if(boundFbo == m_fbo)
+        return;
+    assert(boundFbo != m_fbo);
+    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+    m_prevBoundFbo = boundFbo;
+    boundFbo = m_fbo;
+}
+
+void FrameBuffer::internalRelease()
+{
+    assert(boundFbo == m_fbo);
+    glBindFramebuffer(GL_FRAMEBUFFER, m_prevBoundFbo);
+    boundFbo = m_prevBoundFbo;
 }

@@ -199,16 +199,13 @@ void Application::exit()
 void Application::poll()
 {
     // poll input events
-    if(m_appFlags & Fw::AppEnableGraphics)
+    if(m_appFlags & Fw::AppEnableGraphics) {
         g_window.poll();
+        g_particleManager.update();
+    }
 
-    // poll network events
     Connection::poll();
-
-    // poll application genareted events
     g_dispatcher.poll();
-
-    g_particleManager.update();
 }
 
 void Application::render()
@@ -221,8 +218,8 @@ void Application::render()
 
 void Application::resize(const Size& size)
 {
-    g_ui.resize(size);
     g_graphics.resize(size);
+    g_ui.resize(size);
 }
 
 void Application::inputEvent(const InputEvent& event)

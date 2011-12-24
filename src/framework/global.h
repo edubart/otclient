@@ -36,6 +36,7 @@
 #include "util/color.h"
 #include "util/rect.h"
 #include "util/size.h"
+#include "util/matrix.h"
 
 // logger
 #include "core/logger.h"

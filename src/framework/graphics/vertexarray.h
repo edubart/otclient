@@ -29,12 +29,12 @@
 class VertexArray
 {
 public:
-    inline void addVertex(GLfloat x, GLfloat y) {  m_buffer << x << y; }
+    inline void addVertex(float x, float y) { m_buffer << x << y; }
     inline void addRect(const Rect& rect) {
-        GLfloat top = rect.top();
-        GLfloat right = rect.right()+1;
-        GLfloat bottom = rect.bottom()+1;
-        GLfloat left = rect.left();
+        float top = rect.top();
+        float right = rect.right()+1;
+        float bottom = rect.bottom()+1;
+        float left = rect.left();
 
         addVertex(left, top);
         addVertex(right, top);
@@ -45,10 +45,10 @@ public:
     }
 
     inline void addQuad(const Rect& rect) {
-        GLfloat top = rect.top();
-        GLfloat right = rect.right()+1;
-        GLfloat bottom = rect.bottom()+1;
-        GLfloat left = rect.left();
+        float top = rect.top();
+        float right = rect.right()+1;
+        float bottom = rect.bottom()+1;
+        float left = rect.left();
 
         addVertex(left, top);
         addVertex(right, top);
@@ -57,11 +57,11 @@ public:
     }
 
     void clear() { m_buffer.reset(); }
-    GLfloat *vertices() const { return m_buffer.data(); }
+    float *vertices() const { return m_buffer.data(); }
     int vertexCount() const { return m_buffer.size() / 2; }
 
 private:
-    DataBuffer<GLfloat> m_buffer;
+    DataBuffer<float> m_buffer;
 };
 
 #endif

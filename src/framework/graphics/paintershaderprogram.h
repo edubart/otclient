@@ -46,9 +46,9 @@ public:
 
     bool link();
 
-    void setProjectionMatrix(GLfloat projectionMatrix[3][3]);
+    void setProjectionMatrix(const Matrix3& projectionMatrix);
     void setColor(const Color& color);
-    void setOpacity(GLfloat opacity);
+    void setOpacity(float opacity);
     void setTexture(const TexturePtr& texture);
     void setUniformTexture(int location, const TexturePtr& texture, int index);
     void draw(const CoordsBuffer& coordsBuffer, DrawMode drawMode = Triangles);

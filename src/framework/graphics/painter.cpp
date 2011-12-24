@@ -53,35 +53,6 @@ void Painter::terminate()
     m_drawSolidColorProgram.reset();
 }
 
-void Painter::updateProjectionMatrix(const Size& viewportSize, bool inverseYAxis)
-{
-    // The projection matrix converts from Painter's coordinate system to GL's coordinate system
-    //    * GL's viewport is 2x2, Painter's is width x height
-    //    * GL has +y -> -y going from bottom -> top, Painter is the other way round
-    //    * GL has [0,0] in the center, Painter has it in the top-left
-    //
-    // This results in the Projection matrix below, which is multiplied by the painter's
-    // transformation matrix, as shown below:
-    //
-    //                Projection Matrix                   Painter Coord   GL Coord
-    // ------------------------------------------------     ---------     ---------
-    // | 2.0 / width  |      0.0      |     -1.0      |     |   x   |     |   y'  |
-    // |     0.0      | -2.0 / height |      1.0      |  *  |   y   |  =  |   x'  |
-    // |     0.0      |      0.0      |      0.0      |     |   1   |     |   0   |
-    // ------------------------------------------------     ---------     ---------
-    float w = viewportSize.width();
-    float h = viewportSize.height();
-    if(inverseYAxis) {
-        m_projectionMatrix[0][0] = 2.0f/w;  m_projectionMatrix[0][1] = 0.0f;    m_projectionMatrix[0][2] =-1.0f;
-        m_projectionMatrix[1][0] = 0.0f;    m_projectionMatrix[1][1] = 2.0f/h;  m_projectionMatrix[1][2] =-1.0f;
-        m_projectionMatrix[2][0] = 0.0f;    m_projectionMatrix[2][1] = 0.0f;    m_projectionMatrix[2][2] = 0.0f;
-    } else {
-        m_projectionMatrix[0][0] = 2.0f/w;  m_projectionMatrix[0][1] = 0.0f;    m_projectionMatrix[0][2] =-1.0f;
-        m_projectionMatrix[1][0] = 0.0f;    m_projectionMatrix[1][1] =-2.0f/h;  m_projectionMatrix[1][2] = 1.0f;
-        m_projectionMatrix[2][0] = 0.0f;    m_projectionMatrix[2][1] = 0.0f;    m_projectionMatrix[2][2] = 0.0f;
-    }
-}
-
 void Painter::drawProgram(const PainterShaderProgramPtr& program, CoordsBuffer& coordsBuffer, PainterShaderProgram::DrawMode drawMode)
 {
     coordsBuffer.cacheVertexArrays();

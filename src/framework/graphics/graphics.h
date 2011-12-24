@@ -38,7 +38,9 @@ public:
     void beginRender();
     void endRender();
 
-    const Size& getViewportSize() const { return m_viewportSize; }
+    void setViewportSize(const Size& size);
+
+    const Size& getViewportSize() { return m_viewportSize; }
     TexturePtr getEmptyTexture() { return m_emptyTexture; }
 
 private:

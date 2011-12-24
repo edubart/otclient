@@ -42,10 +42,10 @@ bool PainterShaderProgram::link()
     return false;
 }
 
-void PainterShaderProgram::setProjectionMatrix(float projectionMatrix[3][3])
+void PainterShaderProgram::setProjectionMatrix(const Matrix3& projectionMatrix)
 {
     bind();
-    setUniformValue(PROJECTION_MATRIX_UNIFORM, projectionMatrix, true);
+    setUniformValue(PROJECTION_MATRIX_UNIFORM, projectionMatrix);
 }
 
 void PainterShaderProgram::setColor(const Color& color)
@@ -54,7 +54,7 @@ void PainterShaderProgram::setColor(const Color& color)
     setUniformValue(COLOR_UNIFORM, color);
 }
 
-void PainterShaderProgram::setOpacity(GLfloat opacity)
+void PainterShaderProgram::setOpacity(float opacity)
 {
     bind();
     setUniformValue(OPACITY_UNIFORM, opacity);
@@ -74,24 +74,23 @@ void PainterShaderProgram::setTexture(const TexturePtr& texture)
     if(!texture)
         return;
 
-    float w = texture->getGlSize().width();
-    float h = texture->getGlSize().height();
+    float w = texture->getWidth();
+    float h = texture->getHeight();
 
-    GLfloat textureTransformMatrix[2][2] = {
-        { 1.0f/w,  0.0f   },
-        { 0.0f,    1.0f/h }
-    };
+    Matrix2 textureTransformMatrix = { 1.0f/w,  0.0f,
+                                       0.0f,    1.0f/h };
+    textureTransformMatrix.transpose();
 
     bind();
     setUniformTexture(TEXTURE_UNIFORM, texture, 0);
-    setUniformValue(TEXTURE_TRANSFORM_MATRIX_UNIFORM, textureTransformMatrix, true);
+    setUniformValue(TEXTURE_TRANSFORM_MATRIX_UNIFORM, textureTransformMatrix);
 }
 
 void PainterShaderProgram::draw(const CoordsBuffer& coordsBuffer, DrawMode drawMode)
 {
     assert(bind());
 
-    setUniformValue(TICKS_UNIFORM, (GLfloat)g_clock.ticks());
+    setUniformValue(TICKS_UNIFORM, (float)g_clock.ticks());
 
     int numVertices = coordsBuffer.getVertexCount();
     if(numVertices == 0)

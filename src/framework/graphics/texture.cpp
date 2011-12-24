@@ -22,6 +22,7 @@
 
 #include "texture.h"
 #include "graphics.h"
+#include "framebuffer.h"
 
 Texture::Texture()
 {
@@ -64,32 +65,6 @@ uint Texture::internalLoadGLTexture(uchar *pixels, int channels, int width, int 
     glGenTextures(1, &id);
     glBindTexture(GL_TEXTURE_2D, id);
 
-    std::vector<uint8> tmp;
-
-    // old opengl drivers only accept power of two dimensions
-    /*
-    if(!g_painter.isExtensionSupported("GL_ARB_texture_non_power_of_two")) {
-        int glWidth = 1;
-        while(glWidth < width)
-            glWidth = glWidth << 1;
-
-        int glHeight = 1;
-        while(glHeight < height)
-            glHeight = glHeight << 1;
-
-        if(m_size != m_glSize && pixels) {
-            tmp.resize(glHeight*glWidth*channels, 0);
-            for(int y=0; y<height; ++y)
-                for(int x=0; x<width; ++x)
-                    for(int i=0; i<channels; ++i)
-                        tmp[y*glWidth*channels+x*channels+i] = pixels[y*width*channels+x*channels+i];
-            pixels = &tmp[0];
-        }
-
-        m_glSize.resize(glWidth, glHeight);
-    } else */
-        m_glSize = m_size;
-
     // detect pixels GL format
     GLenum format = 0;
     switch(channels) {
@@ -108,7 +83,7 @@ uint Texture::internalLoadGLTexture(uchar *pixels, int channels, int width, int 
     }
 
     // load pixels into gl memory
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_glSize.width(), m_glSize.height(), 0, format, GL_UNSIGNED_BYTE, pixels);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_size.width(), m_size.height(), 0, format, GL_UNSIGNED_BYTE, pixels);
 
     // disable texture border
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -130,16 +105,12 @@ void Texture::enableBilinearFilter()
 
 std::vector<uint8> Texture::getPixels()
 {
-    // copy pixels from opengl memory
-    std::vector<uint8> pixels(m_glSize.area()*4, 0);
-    glBindTexture(GL_TEXTURE_2D, m_textureId);
-    glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, &pixels[0]);
-
-    // convert pixels to the real texture size
-    if(m_size != m_glSize)
-        for(int y=0; y<m_size.height(); ++y)
-            for(int x=0; x<m_size.width(); ++x)
-                for(int i=0; i<4; ++i)
-                    pixels[y*m_size.width()*4+x*4+i] = pixels[y*m_glSize.width()*4+x*4+i];
+    // hack to copy pixels from opengl memory
+    FrameBufferPtr fb(new FrameBuffer(m_size));
+    std::vector<uint8> pixels(m_size.area()*4, 0);
+    fb->bind();
+    g_painter.drawTexturedRect(Rect(0,0,m_size), shared_from_this());
+    glReadPixels(0, 0, m_size.width(), m_size.height(), GL_RGBA, GL_UNSIGNED_BYTE, &pixels[0]);
+    fb->release();
     return pixels;
 }

@@ -40,8 +40,8 @@ public:
 
     void cacheVertexArrays();
 
-    GLfloat *getVertices() const { return m_vertices.vertices(); }
-    GLfloat *getTextureCoords() const { return m_textureCoords.vertices(); }
+    float *getVertices() const { return m_vertices.vertices(); }
+    float *getTextureCoords() const { return m_textureCoords.vertices(); }
     int getVertexCount() const { return m_vertices.vertexCount(); }
     int getTextureCoordsCount() const { return m_textureCoords.vertexCount(); }
 

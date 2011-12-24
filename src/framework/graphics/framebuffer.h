@@ -28,20 +28,28 @@
 class FrameBuffer
 {
 public:
-    FrameBuffer(int width, int height);
+    FrameBuffer(const Size& size);
     virtual ~FrameBuffer();
-
-    void bind();
+    
+    void resize(const Size& size);
+    void bind(bool clear = true);
     void release();
     void draw(const Rect& dest);
 
     TexturePtr getTexture() { return m_texture; }
 
 private:
+    void internalBind();
+    void internalRelease();
+
     TexturePtr m_texture;
     TexturePtr m_screenBackup;
+    Matrix3 m_oldProjectionMatrix;
+    Size m_oldViewportSize;
     uint m_fbo;
-    bool m_fallbackOldImp;
+    uint m_prevBoundFbo;
+
+    static uint boundFbo;
 };
 
 #endif

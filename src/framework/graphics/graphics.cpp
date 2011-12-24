@@ -24,20 +24,17 @@
 
 #include <framework/graphics/graphics.h>
 #include <framework/graphics/texture.h>
+#include <framework/platform/platformwindow.h>
 
 Graphics g_graphics;
 
 void Graphics::init()
 {
-    // setup opengl
     glEnable(GL_BLEND);
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
     logInfo("GPU ", glGetString(GL_RENDERER));
     logInfo("OpenGL ", glGetString(GL_VERSION));
-
-    //if(!isExtensionSupported("GL_ARB_framebuffer_object"))
-    //    logFatal("Your graphics card is not supported.");
 
     m_emptyTexture = TexturePtr(new Texture);
 
@@ -60,9 +57,26 @@ bool Graphics::isExtensionSupported(const char *extension)
 
 void Graphics::resize(const Size& size)
 {
-    glViewport(0, 0, size.width(), size.height());
-    g_painter.updateProjectionMatrix(size);
-    m_viewportSize = size;
+    setViewportSize(size);
+
+    // The projection matrix converts from Painter's coordinate system to GL's coordinate system
+    //    * GL's viewport is 2x2, Painter's is width x height
+    //    * GL has +y -> -y going from bottom -> top, Painter is the other way round
+    //    * GL has [0,0] in the center, Painter has it in the top-left
+    //
+    // This results in the Projection matrix below.
+    //
+    //                Projection Matrix                   Painter Coord   GL Coord
+    // ------------------------------------------------     ---------     ---------
+    // | 2.0 / width  |      0.0      |     -1.0      |     |   x   |     |   x'  |
+    // |     0.0      | -2.0 / height |      1.0      |  *  |   y   |  =  |   y'  |
+    // |     0.0      |      0.0      |      0.0      |     |   1   |     |   0   |
+    // ------------------------------------------------     ---------     ---------
+    Matrix3 projectionMatrix = { 2.0f/size.width(),  0.0f,                -1.0f,
+                                 0.0f,              -2.0f/size.height(),   1.0f,
+                                 0.0f,               0.0f,                 0.0f };
+    projectionMatrix.transpose();
+    g_painter.setProjectionMatrix(projectionMatrix);
 }
 
 void Graphics::beginRender()
@@ -72,5 +86,11 @@ void Graphics::beginRender()
 
 void Graphics::endRender()
 {
+}
+
+void Graphics::setViewportSize(const Size& size)
+{
+    glViewport(0, 0, size.width(), size.height());
+    m_viewportSize = size;
 }
 
