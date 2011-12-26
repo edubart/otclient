@@ -40,75 +40,51 @@ void Missile::draw(const Point& p)
 
 void Missile::setPath(const Position& fromPosition, const Position& toPosition)
 {
-    m_position = fromPosition;
-    m_positionDelta = toPosition - fromPosition;
+    Otc::Direction direction = fromPosition.getDirectionFromPosition(toPosition);
 
-    if(m_positionDelta.x == 0 && m_positionDelta.y == 0) {
+    if(direction == Otc::NorthWest) {
+        m_xPattern = 0;
+        m_yPattern = 0;
+    }
+    else if(direction == Otc::North) {
         m_xPattern = 1;
+        m_yPattern = 0;
+    }
+    else if(direction == Otc::NorthEast) {
+        m_xPattern = 2;
+        m_yPattern = 0;
+    }
+    else if(direction == Otc::East) {
+        m_xPattern = 2;
         m_yPattern = 1;
     }
-    else if(m_positionDelta.x == 0) {
-        m_xPattern = 1;
-        if(m_positionDelta.y < 0) {
-            m_yPattern = 0;
-        }
-        else if(m_positionDelta.y > 0) {
-            m_yPattern = 2;
-        }
+    else if(direction == Otc::SouthEast) {
+        m_xPattern = 2;
+        m_yPattern = 2;
     }
-    else if(m_positionDelta.y == 0) {
+    else if(direction == Otc::South) {
+        m_xPattern = 1;
+        m_yPattern = 2;
+    }
+    else if(direction == Otc::SouthWest) {
+        m_xPattern = 0;
+        m_yPattern = 2;
+    }
+    else if(direction == Otc::West) {
+        m_xPattern = 0;
         m_yPattern = 1;
-        if(m_positionDelta.x < 0) {
-            m_xPattern = 0;
-        }
-        else if(m_positionDelta.x > 0) {
-            m_xPattern = 2;
-        }
     }
     else {
-        float angle = std::atan2(m_positionDelta.y * -1, m_positionDelta.x) * 180.0 / 3.141592;
-        if(angle < 0)
-            angle += 360;
-
-        if(angle >= 360 - 22.5 || angle < 0 + 22.5) {
-            m_xPattern = 2;
-            m_yPattern = 1;
-        }
-        else if(angle >= 45 - 22.5 && angle < 45 + 22.5) {
-            m_xPattern = 2;
-            m_yPattern = 0;
-        }
-        else if(angle >= 90 - 22.5 && angle < 90 + 22.5) {
-            m_xPattern = 1;
-            m_yPattern = 0;
-        }
-        else if(angle >= 135 - 22.5 && angle < 135 + 22.5) {
-            m_xPattern = 0;
-            m_yPattern = 0;
-        }
-        else if(angle >= 180 - 22.5 && angle < 180 + 22.5) {
-            m_xPattern = 0;
-            m_yPattern = 1;
-        }
-        else if(angle >= 225 - 22.5 && angle < 225 + 22.5) {
-            m_xPattern = 0;
-            m_yPattern = 2;
-        }
-        else if(angle >= 270 - 22.5 && angle < 270 + 22.5) {
-            m_xPattern = 1;
-            m_yPattern = 2;
-        }
-        else if(angle >= 315 - 22.5 && angle < 315 + 22.5) {
-            m_xPattern = 2;
-            m_yPattern = 2;
-        }
+        m_xPattern = 1;
+        m_yPattern = 1;
     }
 
-    m_duration = 150 * std::sqrt(Point(m_positionDelta.x, m_positionDelta.y).length());
-    m_positionDelta.x *= 32;
-    m_positionDelta.y *= 32;
-
+    m_position = fromPosition;
+    m_positionDelta = toPosition - fromPosition;
     m_startTicks = g_clock.ticks();
+    m_duration = 150 * std::sqrt(Point(m_positionDelta.x, m_positionDelta.y).length());
+    m_positionDelta.x *= Map::NUM_TILE_PIXELS;
+    m_positionDelta.y *= Map::NUM_TILE_PIXELS;
 
     // schedule removal
     auto self = asMissile();

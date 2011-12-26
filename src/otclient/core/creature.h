@@ -91,7 +91,6 @@ protected:
     ticks_t m_walkStartTicks;
     bool m_walking, m_inverseWalking;
     float m_walkTimePerPixel;
-    Position m_walkingFromPosition;
     Point m_walkOffset;
 };
 

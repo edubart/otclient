@@ -56,6 +56,48 @@ public:
         }
     }
 
+    Otc::Direction getDirectionFromPosition(const Position& position) const {
+        Position positionDelta = position - *this;
+
+        if(positionDelta.x == 0 && positionDelta.y == 0)
+            return Otc::InvalidDirection;
+        else if(positionDelta.x == 0) {
+            if(positionDelta.y < 0)
+                return Otc::North;
+            else if(positionDelta.y > 0)
+                return Otc::South;
+        }
+        else if(positionDelta.y == 0) {
+            if(positionDelta.x < 0)
+                return Otc::West;
+            else if(positionDelta.x > 0)
+                return Otc::East;
+        }
+        else {
+            float angle = std::atan2(positionDelta.y * -1, positionDelta.x) * 180.0 / 3.141592;
+            if(angle < 0)
+                angle += 360;
+
+            if(angle >= 360 - 22.5 || angle < 0 + 22.5)
+                return Otc::East;
+            else if(angle >= 45 - 22.5 && angle < 45 + 22.5)
+                return Otc::NorthEast;
+            else if(angle >= 90 - 22.5 && angle < 90 + 22.5)
+                return Otc::North;
+            else if(angle >= 135 - 22.5 && angle < 135 + 22.5)
+                return Otc::NorthWest;
+            else if(angle >= 180 - 22.5 && angle < 180 + 22.5)
+                return Otc::West;
+            else if(angle >= 225 - 22.5 && angle < 225 + 22.5)
+                return Otc::SouthWest;
+            else if(angle >= 270 - 22.5 && angle < 270 + 22.5)
+                return Otc::South;
+            else if(angle >= 315 - 22.5 && angle < 315 + 22.5)
+                return Otc::SouthEast;
+        }
+        return Otc::InvalidDirection;
+    }
+
     bool isValid() const { return x >= 0 && y >= 0 && z >= 0 && x < 65536 && y < 65536 && z < 15; }
 
     Position operator+(const Position& other) const { return Position(x + other.x, y + other.y, z + other.z);   }

@@ -304,7 +304,8 @@ namespace Otc
         NorthEast,
         SouthEast,
         SouthWest,
-        NorthWest
+        NorthWest,
+        InvalidDirection
     };
 
     enum FluidsColor {

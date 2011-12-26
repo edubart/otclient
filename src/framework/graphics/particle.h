@@ -44,6 +44,8 @@ public:
 
 private:
     void updateColor();
+    void updatePosition(double elapsedTime);
+    void updateSize();
 
     Color m_color;
     std::vector<Color> m_colors;

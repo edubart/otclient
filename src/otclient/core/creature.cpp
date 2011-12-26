@@ -43,6 +43,7 @@ Creature::Creature() : Thing()
     m_walkTimePerPixel = 1000.0/32.0;
 
     m_walking = false;
+    m_inverseWalking = true;
 
     m_informationFont = g_fonts.getFont("verdana-11px-rounded");
 }
@@ -173,45 +174,42 @@ void Creature::walk(const Position& position, bool inverse)
     int walkTimeFactor = 1;
 
     // set new direction
-    if(m_position + Position(0, -1, 0) == position) {
-        setDirection(Otc::North);
-        m_walkOffset.y = 32;
-    }
-    else if(m_position + Position(1, 0, 0) == position) {
-        setDirection(Otc::East);
-        m_walkOffset.x = -32;
-    }
-    else if(m_position + Position(0, 1, 0) == position) {
-        setDirection(Otc::South);
-        m_walkOffset.y = -32;
-    }
-    else if(m_position + Position(-1, 0, 0) == position) {
-        setDirection(Otc::West);
-        m_walkOffset.x = 32;
-    }
-    else if(m_position + Position(1, -1, 0) == position) {
-        setDirection(Otc::NorthEast);
-        m_walkOffset.x = -32;
-        m_walkOffset.y = 32;
-        walkTimeFactor = 2;
-    }
-    else if(m_position + Position(1, 1, 0) == position) {
-        setDirection(Otc::SouthEast);
-        m_walkOffset.x = -32;
-        m_walkOffset.y = -32;
-        walkTimeFactor = 2;
-    }
-    else if(m_position + Position(-1, 1, 0) == position) {
-        setDirection(Otc::SouthWest);
-        m_walkOffset.x = 32;
-        m_walkOffset.y = -32;
-        walkTimeFactor = 2;
-    }
-    else if(m_position + Position(-1, -1, 0) == position) {
-        setDirection(Otc::NorthWest);
-        m_walkOffset.x = 32;
-        m_walkOffset.y = 32;
-        walkTimeFactor = 2;
+    if(m_position.isInRange(position, 1, 1, 0)) {
+        Otc::Direction direction = m_position.getDirectionFromPosition(position);
+        setDirection(direction);
+
+        if(direction == Otc::NorthWest) {
+            m_walkOffset.x = 32;
+            m_walkOffset.y = 32;
+            walkTimeFactor = 2;
+        }
+        else if(direction == Otc::North) {
+            m_walkOffset.y = 32;
+        }
+        else if(direction == Otc::NorthEast) {
+            m_walkOffset.x = -32;
+            m_walkOffset.y = 32;
+            walkTimeFactor = 2;
+        }
+        else if(direction == Otc::East) {
+            m_walkOffset.x = -32;
+        }
+        else if(direction == Otc::SouthEast) {
+            m_walkOffset.x = -32;
+            m_walkOffset.y = -32;
+            walkTimeFactor = 2;
+        }
+        else if(direction == Otc::South) {
+            m_walkOffset.y = -32;
+        }
+        else if(direction == Otc::SouthWest) {
+            m_walkOffset.x = 32;
+            m_walkOffset.y = -32;
+            walkTimeFactor = 2;
+        }
+        else if(direction == Otc::West) {
+            m_walkOffset.x = 32;
+        }
     }
     else { // Teleport
         // we teleported, dont walk or change direction
@@ -260,9 +258,6 @@ void Creature::updateWalk()
                 m_walkOffset.x = totalPixelsWalked - 32;
             else if(m_direction == Otc::West || m_direction == Otc::NorthWest || m_direction == Otc::SouthWest)
                 m_walkOffset.x = 32 - totalPixelsWalked;
-
-            if(m_walkOffset.x == 0 && m_walkOffset.y == 0)
-                cancelWalk(m_direction);
         }
         else {
             if(m_direction == Otc::North || m_direction == Otc::NorthEast || m_direction == Otc::NorthWest)
@@ -281,10 +276,12 @@ void Creature::updateWalk()
             m_animation = (g_clock.ticks() % totalWalkTileTicks) / (totalWalkTileTicks / (m_type->dimensions[ThingType::AnimationPhases] - 1)) + 1;
         else
             m_animation = 0;
-        g_dispatcher.scheduleEvent(std::bind(&Creature::updateWalk, asCreature()), m_walkTimePerPixel);
+
 
         if(totalPixelsWalked == 32)
             cancelWalk(m_direction);
+        else
+            g_dispatcher.scheduleEvent(std::bind(&Creature::updateWalk, asCreature()), m_walkTimePerPixel);
     }
 }
 

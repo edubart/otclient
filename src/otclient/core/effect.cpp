@@ -34,11 +34,21 @@ Effect::Effect() : Thing()
 
 void Effect::draw(const Point& p)
 {
+    internalDraw(p, 0);
+}
+
+void Effect::updateAnimation()
+{
     int animationPhase = (g_clock.ticks() - m_animationStartTicks) / TICKS_PER_FRAME;
 
-    if(animationPhase < getAnimationPhases()) {
+    if(animationPhase < getAnimationPhases())
         m_animation = animationPhase;
-        internalDraw(p, 0);
+
+    if(animationPhase < getAnimationPhases() - 1) {
+        auto self = asEffect();
+        g_dispatcher.scheduleEvent([self]() {
+            self->updateAnimation();
+        }, TICKS_PER_FRAME);
     }
 }
 
@@ -46,8 +56,14 @@ void Effect::startAnimation()
 {
     m_animationStartTicks = g_clock.ticks();
 
-    // schedule removal
     auto self = asEffect();
+
+    // schedule update
+    g_dispatcher.scheduleEvent([self]() {
+        self->updateAnimation();
+    }, TICKS_PER_FRAME);
+
+    // schedule removal
     g_dispatcher.scheduleEvent([self]() {
         g_map.getTile(self->getPosition())->removeEffect(self);
     }, TICKS_PER_FRAME * getAnimationPhases());
