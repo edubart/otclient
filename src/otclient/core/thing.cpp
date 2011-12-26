@@ -81,3 +81,7 @@ int Thing::getStackPriority()
     return 5;
 }
 
+ThingType *Thing::getType()
+{
+    return g_thingsType.getEmptyThingType();
+}

@@ -20,31 +20,36 @@
  * THE SOFTWARE.
  */
 
-#ifndef OTCLIENT_CORE_DECLARATIONS_H
-#define OTCLIENT_CORE_DECLARATIONS_H
+#ifndef ANIMATEDTEXT_H
+#define ANIMATEDTEXT_H
 
-#include <otclient/global.h>
+#include "thing.h"
+#include <framework/graphics/fontmanager.h>
 
-class Tile;
-class Thing;
-class Item;
-class Creature;
-class Effect;
-class Missile;
-class Player;
-class LocalPlayer;
-class AnimatedText;
+class AnimatedText : public Thing
+{
+public:
+    enum {
+        DURATION = 1000
+    };
 
-typedef std::shared_ptr<Tile> TilePtr;
-typedef std::shared_ptr<Thing> ThingPtr;
-typedef std::shared_ptr<Item> ItemPtr;
-typedef std::shared_ptr<Creature> CreaturePtr;
-typedef std::shared_ptr<Effect> EffectPtr;
-typedef std::shared_ptr<Missile> MissilePtr;
-typedef std::shared_ptr<Player> PlayerPtr;
-typedef std::shared_ptr<LocalPlayer> LocalPlayerPtr;
-typedef std::shared_ptr<AnimatedText> AnimatedTextPtr;
+    AnimatedText();
 
-typedef std::vector<ThingPtr> ThingList;
+    void start();
+    void draw(const Point& p);
+
+    void setColor(int color);
+    void setText(const std::string& text);
+
+    AnimatedTextPtr asAnimatedText() { return std::static_pointer_cast<AnimatedText>(shared_from_this()); }
+
+private:
+    FontPtr m_font;
+    Size m_textSize;
+    std::string m_text;
+    Color m_color;
+    double m_startTime;
+};
+
 
 #endif

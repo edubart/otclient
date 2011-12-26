@@ -537,9 +537,16 @@ void ProtocolGame::parseMagicEffect(InputMessage& msg)
 
 void ProtocolGame::parseAnimatedText(InputMessage& msg)
 {
-    parsePosition(msg); // textPos
-    msg.getU8(); // color
-    msg.getString(); // text
+    Position position = parsePosition(msg);
+    uint8 color = msg.getU8();
+    std::string text = msg.getString();
+
+    AnimatedTextPtr animatedText = AnimatedTextPtr(new AnimatedText);
+    animatedText->setPosition(position);
+    animatedText->setColor(color);
+    animatedText->setText(text);
+
+    g_map.addThing(animatedText, position);
 }
 
 void ProtocolGame::parseDistanceMissile(InputMessage& msg)

@@ -20,31 +20,42 @@
  * THE SOFTWARE.
  */
 
-#ifndef OTCLIENT_CORE_DECLARATIONS_H
-#define OTCLIENT_CORE_DECLARATIONS_H
+#include "animatedtext.h"
+#include "outfit.h"
+#include "map.h"
+#include <framework/core/clock.h>
+#include <framework/core/eventdispatcher.h>
 
-#include <otclient/global.h>
+AnimatedText::AnimatedText()
+{
+    m_font = g_fonts.getFont("verdana-11px-rounded");
+}
 
-class Tile;
-class Thing;
-class Item;
-class Creature;
-class Effect;
-class Missile;
-class Player;
-class LocalPlayer;
-class AnimatedText;
+void AnimatedText::start()
+{
+    m_startTime = g_clock.time();
 
-typedef std::shared_ptr<Tile> TilePtr;
-typedef std::shared_ptr<Thing> ThingPtr;
-typedef std::shared_ptr<Item> ItemPtr;
-typedef std::shared_ptr<Creature> CreaturePtr;
-typedef std::shared_ptr<Effect> EffectPtr;
-typedef std::shared_ptr<Missile> MissilePtr;
-typedef std::shared_ptr<Player> PlayerPtr;
-typedef std::shared_ptr<LocalPlayer> LocalPlayerPtr;
-typedef std::shared_ptr<AnimatedText> AnimatedTextPtr;
+    auto self = asAnimatedText();
 
-typedef std::vector<ThingPtr> ThingList;
+    // schedule removal
+    g_dispatcher.scheduleEvent([self]() {
+        g_map.removeThing(self);
+    }, DURATION);
+}
 
-#endif
+void AnimatedText::draw(const Point& p)
+{
+    assert(m_font);
+    m_font->renderText(m_text, Rect(p + Point(0, -20.0 * g_clock.timeElapsed(m_startTime) / (DURATION / 1000)), m_textSize), Fw::AlignTopCenter, m_color);
+}
+
+void AnimatedText::setColor(int color)
+{
+    m_color = Color::from8bit(color);
+}
+
+void AnimatedText::setText(const std::string& text)
+{
+    m_textSize = m_font->calculateTextRectSize(text);
+    m_text = text;
+}

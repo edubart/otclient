@@ -24,6 +24,8 @@
 #define MAP_H
 
 #include "creature.h"
+#include "animatedtext.h"
+#include <framework/core/clock.h>
 #include <framework/graphics/declarations.h>
 
 class Map
@@ -76,6 +78,7 @@ private:
     std::unordered_map<Position, TilePtr, PositionHasher> m_tiles;
     std::map<uint32, CreaturePtr> m_creatures;
     std::array<std::vector<MissilePtr>, MAX_Z> m_missilesAtFloor;
+    std::vector<AnimatedTextPtr> m_animatedTexts;
 
     Light m_light;
     Position m_centralPosition;

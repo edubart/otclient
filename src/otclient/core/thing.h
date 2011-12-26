@@ -47,7 +47,7 @@ public:
     uint32 getId() const { return m_id; }
     Position getPosition() const { return m_position; }
     int getStackPriority();
-    virtual ThingType *getType() = 0;
+    virtual ThingType *getType();
     int getAnimationPhases() { return m_type->dimensions[ThingType::AnimationPhases]; }
 
     void setXPattern(int xPattern) { m_xPattern = xPattern; }
@@ -61,6 +61,7 @@ public:
     virtual MissilePtr asMissile() { return nullptr; }
     virtual PlayerPtr asPlayer() { return nullptr; }
     virtual LocalPlayerPtr asLocalPlayer() { return nullptr; }
+    virtual AnimatedTextPtr asAnimatedText() { return nullptr; }
 
 protected:
     void internalDraw(const Point& p, int layers);

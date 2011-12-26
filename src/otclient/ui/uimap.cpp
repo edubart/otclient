@@ -27,6 +27,7 @@
 #include <otclient/core/tile.h>
 #include <otclient/core/missile.h>
 #include <otclient/core/effect.h>
+#include <otclient/core/animatedtext.h>
 
 UIMap::UIMap()
 {
@@ -72,10 +73,17 @@ bool UIMap::onMousePress(const Point& mousePos, Fw::MouseButton button)
 
         // cool testing \/
         if(button == Fw::MouseLeftButton) {
-            MissilePtr shot = MissilePtr(new Missile());
+            /*MissilePtr shot = MissilePtr(new Missile());
             shot->setId(1);
             shot->setPath(g_map.getCentralPosition(), tilePos);
-            g_map.addThing(shot, g_map.getCentralPosition());
+            g_map.addThing(shot, g_map.getCentralPosition());*/
+
+            AnimatedTextPtr animatedText = AnimatedTextPtr(new AnimatedText);
+            animatedText->setPosition(g_map.getCentralPosition());
+            animatedText->setColor(12);
+            animatedText->setText("text");
+
+            g_map.addThing(animatedText, g_map.getCentralPosition());
         }
         else if(button == Fw::MouseRightButton) {
             EffectPtr effect = EffectPtr(new Effect());

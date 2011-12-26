@@ -61,6 +61,16 @@ public:
     bool operator==(const Color& other) const { return other.m_rgba == m_rgba; }
     bool operator!=(const Color& other) const { return other.m_rgba != m_rgba; }
 
+    static Color from8bit(int color) {
+        if(color >= 216 || color <= 0)
+            return Color(0, 0, 0);
+
+        int r = int(color / 36) % 6 * 51;
+        int g = int(color / 6) % 6 * 51;
+        int b = color % 6 * 51;
+        return Color(r, g, b);
+    }
+
 private:
     union {
         uint32 m_rgba;

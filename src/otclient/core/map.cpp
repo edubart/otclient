@@ -127,6 +127,14 @@ void Map::draw(const Rect& rect)
             }
         }
     }
+
+    // draw animated text
+    for(auto it = m_animatedTexts.begin(), end = m_animatedTexts.end(); it != end; ++it) {
+        Point pos = positionTo2D((*it)->getPosition()) - m_drawOffset;
+        pos.x *= horizontalStretchFactor;
+        pos.y *= verticalStretchFactor;
+        (*it)->draw(rect.topLeft() + pos);
+    }
 }
 
 void Map::clean()
@@ -225,6 +233,11 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
         m_missilesAtFloor[shot->getPosition().z].push_back(shot);
         return;
     }
+    else if(AnimatedTextPtr animatedText = thing->asAnimatedText()) {
+        animatedText->start();
+        m_animatedTexts.push_back(animatedText);
+        return;
+    }
 
     TilePtr tile = getTile(pos);
     tile->addThing(thing, stackPos);
@@ -256,6 +269,12 @@ void Map::removeThing(const ThingPtr& thing)
         if(it != m_missilesAtFloor[shot->getPosition().z].end()) {
             m_missilesAtFloor[shot->getPosition().z].erase(it);
         }
+        return;
+    }
+    else if(AnimatedTextPtr animatedText = thing->asAnimatedText()) {
+        auto it = std::find(m_animatedTexts.begin(), m_animatedTexts.end(), animatedText);
+        if(it != m_animatedTexts.end())
+            m_animatedTexts.erase(it);
         return;
     }
 
