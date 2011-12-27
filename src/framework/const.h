@@ -25,6 +25,8 @@
 
 #include "util/types.h"
 
+#define DEG_TO_RAD (acos(-1)/180.0)
+
 namespace Fw
 {
     static const double pi = 3.14159265;

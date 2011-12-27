@@ -103,6 +103,22 @@ struct ThingType
         LastParameter
     };
     std::array<int, LastParameter> parameters;
+
+    int getSpriteId(int w, int h, int l, int x, int y, int z, int a)
+    {
+        int sprIndex = ((((((a % dimensions[ThingType::AnimationPhases])
+                        * dimensions[ThingType::PatternZ] + z)
+                        * dimensions[ThingType::PatternY] + y)
+                        * dimensions[ThingType::PatternX] + x)
+                        * dimensions[ThingType::Layers] + l)
+                        * dimensions[ThingType::Height] + h)
+                        * dimensions[ThingType::Width] + w;
+
+        if(sprIndex >= 0 && sprIndex < (int)sprites.size())
+            return sprites[sprIndex];
+
+        return 0;
+    }
 };
 
 typedef std::vector<ThingType> ThingTypeList;

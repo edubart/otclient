@@ -229,7 +229,16 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
     if(!thing)
         return;
 
-    if(MissilePtr shot = thing->asMissile()) {
+    TilePtr tile = getTile(pos);
+
+    if(CreaturePtr creature = thing->asCreature()) {
+        tile->addThing(thing, stackPos);
+        m_creatures[creature->getId()] = creature;
+    }
+    else if(EffectPtr effect = thing->asEffect()) {
+        tile->addEffect(effect);
+    }
+    else if(MissilePtr shot = thing->asMissile()) {
         m_missilesAtFloor[shot->getPosition().z].push_back(shot);
         return;
     }
@@ -238,12 +247,11 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
         m_animatedTexts.push_back(animatedText);
         return;
     }
+    else {
+        tile->addThing(thing, stackPos);
+    }
 
-    TilePtr tile = getTile(pos);
-    tile->addThing(thing, stackPos);
-
-    if(CreaturePtr creature = thing->asCreature())
-        m_creatures[creature->getId()] = creature;
+    thing->start();
 }
 
 ThingPtr Map::getThing(const Position& pos, int stackPos)

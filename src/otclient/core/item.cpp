@@ -25,11 +25,11 @@
 #include "spritemanager.h"
 #include "thing.h"
 #include <framework/core/clock.h>
+#include <framework/core/eventdispatcher.h>
 
 Item::Item() : Thing()
 {
     m_data = 0;
-    m_lastTicks = g_clock.ticks();
 }
 
 void Item::draw(const Point& p)

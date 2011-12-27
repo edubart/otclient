@@ -88,7 +88,7 @@ bool UIMap::onMousePress(const Point& mousePos, Fw::MouseButton button)
         else if(button == Fw::MouseRightButton) {
             EffectPtr effect = EffectPtr(new Effect());
             effect->setId(6);
-            effect->startAnimation();
+            effect->start();
             if(tile)
                 tile->addEffect(effect);
         }

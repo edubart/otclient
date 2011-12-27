@@ -74,7 +74,7 @@ public:
                 return Otc::East;
         }
         else {
-            float angle = std::atan2(positionDelta.y * -1, positionDelta.x) * 180.0 / 3.141592;
+            float angle = std::atan2(positionDelta.y * -1, positionDelta.x) * DEG_TO_RAD;
             if(angle < 0)
                 angle += 360;
 

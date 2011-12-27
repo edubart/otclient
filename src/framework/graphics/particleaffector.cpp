@@ -24,8 +24,6 @@
 #include "particleaffector.h"
 #include <framework/core/clock.h>
 
-#define DEG_TO_RAD (acos(-1)/180.0)
-
 ParticleAffector::ParticleAffector()
 {
     m_active = false;

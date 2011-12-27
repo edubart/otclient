@@ -45,8 +45,8 @@ void AnimatedText::start()
 
 void AnimatedText::draw(const Point& p)
 {
-    assert(m_font);
-    m_font->renderText(m_text, Rect(p + Point(0, -20.0 * g_clock.timeElapsed(m_startTime) / (DURATION / 1000)), m_textSize), Fw::AlignTopCenter, m_color);
+    if(m_font)
+        m_font->renderText(m_text, Rect(p + Point(0, -20.0 * g_clock.timeElapsed(m_startTime) / (DURATION / 1000)), m_textSize), Fw::AlignTopCenter, m_color);
 }
 
 void AnimatedText::setColor(int color)
@@ -56,6 +56,7 @@ void AnimatedText::setColor(int color)
 
 void AnimatedText::setText(const std::string& text)
 {
-    m_textSize = m_font->calculateTextRectSize(text);
+    if(m_font)
+        m_textSize = m_font->calculateTextRectSize(text);
     m_text = text;
 }

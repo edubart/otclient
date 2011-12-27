@@ -39,6 +39,8 @@ public:
     Thing();
     virtual ~Thing() { }
 
+    virtual void start() {}
+
     virtual void draw(const Point& p) = 0;
 
     void setId(uint32 id);
@@ -64,7 +66,7 @@ public:
     virtual AnimatedTextPtr asAnimatedText() { return nullptr; }
 
 protected:
-    void internalDraw(const Point& p, int layers);
+    void internalDraw(const Point& p, int layer);
 
     uint32 m_id;
     Position m_position;

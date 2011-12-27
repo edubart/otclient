@@ -526,10 +526,9 @@ void ProtocolGame::parseMagicEffect(InputMessage& msg)
     if(effectId != 37) {
         EffectPtr effect = EffectPtr(new Effect());
         effect->setId(effectId);
-        effect->startAnimation();
+        effect->setPosition(pos);
 
-        TilePtr tile = g_map.getTile(pos);
-        tile->addEffect(effect);
+        g_map.addThing(effect, pos);
     }
     else
         g_particleManager.load("particle.otpa");

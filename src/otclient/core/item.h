@@ -47,7 +47,6 @@ public:
 
 private:
     int m_data;
-    ticks_t m_lastTicks;
 };
 
 #endif

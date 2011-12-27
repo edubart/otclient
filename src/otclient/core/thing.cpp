@@ -34,26 +34,18 @@ Thing::Thing() : m_id(0)
     m_type = g_thingsType.getEmptyThingType();
 }
 
-void Thing::internalDraw(const Point& p, int layers)
+void Thing::internalDraw(const Point& p, int layer)
 {
-    for(int yi = 0; yi < m_type->dimensions[ThingType::Height]; yi++) {
-        for(int xi = 0; xi < m_type->dimensions[ThingType::Width]; xi++) {
-            int sprIndex = ((((((m_animation % m_type->dimensions[ThingType::AnimationPhases])
-                            * m_type->dimensions[ThingType::PatternZ] + m_zPattern)
-                            * m_type->dimensions[ThingType::PatternY] + m_yPattern)
-                            * m_type->dimensions[ThingType::PatternX] + m_xPattern)
-                            * m_type->dimensions[ThingType::Layers] + layers)
-                            * m_type->dimensions[ThingType::Height] + yi)
-                            * m_type->dimensions[ThingType::Width] + xi;
-
-            int spriteId = m_type->sprites[sprIndex];
+    for(int h = 0; h < m_type->dimensions[ThingType::Height]; h++) {
+        for(int w = 0; w < m_type->dimensions[ThingType::Width]; w++) {
+            int spriteId = m_type->getSpriteId(w, h, layer, m_xPattern, m_yPattern, m_zPattern, m_animation);
             if(!spriteId)
                 continue;
 
             TexturePtr spriteTex = g_sprites.getSpriteTexture(spriteId);
 
-            Rect drawRect((p.x - xi*32) - m_type->parameters[ThingType::DisplacementX],
-                          (p.y - yi*32) - m_type->parameters[ThingType::DisplacementY],
+            Rect drawRect((p.x - w*32) - m_type->parameters[ThingType::DisplacementX],
+                          (p.y - h*32) - m_type->parameters[ThingType::DisplacementY],
                           32, 32);
             g_painter.drawTexturedRect(drawRect, spriteTex);
         }

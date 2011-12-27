@@ -27,8 +27,6 @@
 #include <framework/graphics/texturemanager.h>
 #include <framework/util/tools.h>
 
-#define DEG_TO_RAD (acos(-1)/180.0)
-
 ParticleEmitter::ParticleEmitter(const ParticleSystemPtr& parent)
 {
     m_parent = parent;

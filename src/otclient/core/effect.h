@@ -37,7 +37,7 @@ public:
 
     void draw(const Point& p);
 
-    void startAnimation();
+    void start();
     void updateAnimation();
 
     ThingType *getType();
