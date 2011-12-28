@@ -26,6 +26,7 @@
 #include "util/types.h"
 
 #define DEG_TO_RAD (acos(-1)/180.0)
+#define RAD_TO_DEC (180.0/acos(-1))
 
 namespace Fw
 {

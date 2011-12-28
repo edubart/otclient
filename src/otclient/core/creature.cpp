@@ -90,38 +90,24 @@ void Creature::draw(const Point& p)
         outfitProgram->setUniformValue(LEGS_COLOR_UNIFORM, m_outfit.getLegsColor());
         outfitProgram->setUniformValue(FEET_COLOR_UNIFORM, m_outfit.getFeetColor());
 
-        for(int yi = 0; yi < m_type->dimensions[ThingType::Height]; yi++) {
-            for(int xi = 0; xi < m_type->dimensions[ThingType::Width]; xi++) {
-                int sprIndex = ((((((m_animation % m_type->dimensions[ThingType::AnimationPhases])
-                                * m_type->dimensions[ThingType::PatternZ] + m_zPattern)
-                                * m_type->dimensions[ThingType::PatternY] + m_yPattern)
-                                * m_type->dimensions[ThingType::PatternX] + m_xPattern)
-                                * m_type->dimensions[ThingType::Layers] + 0)
-                                * m_type->dimensions[ThingType::Height] + yi)
-                                * m_type->dimensions[ThingType::Width] + xi;
+        for(int h = 0; h < m_type->dimensions[ThingType::Height]; h++) {
+            for(int w = 0; w < m_type->dimensions[ThingType::Width]; w++) {
                 if(m_type->dimensions[ThingType::Layers] > 1) {
-                    int maskIndex = ((((((m_animation % m_type->dimensions[ThingType::AnimationPhases])
-                                    * m_type->dimensions[ThingType::PatternZ] + m_zPattern)
-                                    * m_type->dimensions[ThingType::PatternY] + m_yPattern)
-                                    * m_type->dimensions[ThingType::PatternX] + m_xPattern)
-                                    * m_type->dimensions[ThingType::Layers] + 1)
-                                    * m_type->dimensions[ThingType::Height] + yi)
-                                    * m_type->dimensions[ThingType::Width] + xi;
-                    int spriteId = m_type->sprites[maskIndex];
-                    if(!spriteId)
+                    int maskId = m_type->getSpriteId(w, h, 1, m_xPattern, m_yPattern, m_zPattern, m_animation);
+                    if(!maskId)
                         continue;
-                    TexturePtr maskTex = g_sprites.getSpriteTexture(spriteId);
+                    TexturePtr maskTex = g_sprites.getSpriteTexture(maskId);
                     outfitProgram->setUniformTexture(MASK_TEXTURE_UNIFORM, maskTex, 1);
                 }
 
-                int spriteId = m_type->sprites[sprIndex];
+                int spriteId = m_type->getSpriteId(w, h, 0, m_xPattern, m_yPattern, m_zPattern, m_animation);
                 if(!spriteId)
                     continue;
 
                 TexturePtr spriteTex = g_sprites.getSpriteTexture(spriteId);
 
-                Rect drawRect(((p + m_walkOffset).x - xi*32) - m_type->parameters[ThingType::DisplacementX],
-                            ((p + m_walkOffset).y - yi*32) - m_type->parameters[ThingType::DisplacementY],
+                Rect drawRect(((p + m_walkOffset).x - w*32) - m_type->parameters[ThingType::DisplacementX],
+                            ((p + m_walkOffset).y - h*32) - m_type->parameters[ThingType::DisplacementY],
                             32, 32);
                 g_painter.drawTexturedRect(drawRect, spriteTex);
             }
@@ -162,127 +148,104 @@ void Creature::drawInformation(int x, int y, bool useGray, const Rect& rect)
     g_painter.setColor(fillColor);
     g_painter.drawFilledRect(healthRect);
 
-    m_informationFont->renderText(m_name, textRect, Fw::AlignTopCenter, fillColor);
+    if(m_informationFont)
+        m_informationFont->renderText(m_name, textRect, Fw::AlignTopCenter, fillColor);
 }
 
 void Creature::walk(const Position& position, bool inverse)
 {
-    // set walking state
-    bool sameWalk = m_walking && !m_inverseWalking && inverse;
-    m_walking = true;
-    m_inverseWalking = inverse;
-    int walkTimeFactor = 1;
-
-    // set new direction
+    // We're walking
     if(m_position.isInRange(position, 1, 1, 0)) {
         Otc::Direction direction = m_position.getDirectionFromPosition(position);
         setDirection(direction);
 
-        if(direction == Otc::NorthWest) {
-            m_walkOffset.x = 32;
-            m_walkOffset.y = 32;
-            walkTimeFactor = 2;
+        if(inverse) {
+            Position positionDelta = m_position - position;
+            m_walkOffset = Point(positionDelta.x * 32, positionDelta.y * 32);
         }
-        else if(direction == Otc::North) {
-            m_walkOffset.y = 32;
-        }
-        else if(direction == Otc::NorthEast) {
-            m_walkOffset.x = -32;
-            m_walkOffset.y = 32;
-            walkTimeFactor = 2;
-        }
-        else if(direction == Otc::East) {
-            m_walkOffset.x = -32;
-        }
-        else if(direction == Otc::SouthEast) {
-            m_walkOffset.x = -32;
-            m_walkOffset.y = -32;
-            walkTimeFactor = 2;
-        }
-        else if(direction == Otc::South) {
-            m_walkOffset.y = -32;
-        }
-        else if(direction == Otc::SouthWest) {
-            m_walkOffset.x = 32;
-            m_walkOffset.y = -32;
-            walkTimeFactor = 2;
-        }
-        else if(direction == Otc::West) {
-            m_walkOffset.x = 32;
-        }
-    }
-    else { // Teleport
-        // we teleported, dont walk or change direction
-        m_walking = false;
-        m_walkOffset.x = 0;
-        m_walkOffset.y = 0;
-        m_animation = 0;
-    }
+        else
+            m_walkOffset = Point(0, 0);
 
-    if(!m_inverseWalking) {
-        m_walkOffset.x = 0;
-        m_walkOffset.y = 0;
-    }
+        // Diagonal walking lasts 3 times more.
+        int walkTimeFactor = 1;
+        if(direction == Otc::NorthWest || direction == Otc::NorthEast || direction == Otc::SouthWest || direction == Otc::SouthEast)
+            walkTimeFactor = 3;
 
-    if(m_walking) {
-        // get walk speed
+        // Get walking speed
         int groundSpeed = 100;
-
-        ItemPtr ground = g_map.getTile(position)->getGround();
-        if(ground)
+        if(ItemPtr ground = g_map.getTile(position)->getGround())
             groundSpeed = ground->getType()->parameters[ThingType::GroundSpeed];
 
-        float walkTime = walkTimeFactor * 1000.0 * (float)groundSpeed / m_speed;
+        float walkTime = 1000.0 * (float)groundSpeed / m_speed;
         walkTime = (walkTime == 0) ? 1000 : walkTime;
 
+        bool sameWalk = m_walking && !m_inverseWalking && inverse;
+        m_inverseWalking = inverse;
+        m_walking = true;
+
         m_walkTimePerPixel = walkTime / 32.0;
-        if(!sameWalk)
-            m_walkStartTicks = g_clock.ticks();
+        m_walkStart = sameWalk ? m_walkStart : g_clock.ticks();
+        m_walkEnd = m_walkStart + walkTime * walkTimeFactor;
+
+        m_turnDirection = m_direction;
         updateWalk();
     }
+    // Teleport
+    else {
+        m_walking = false;
+        m_walkOffset = Point(0, 0);
+        m_animation = 0;
+    }
+}
+
+void Creature::turn(Otc::Direction direction)
+{
+    if(!m_walking)
+        setDirection(direction);
+    else
+        m_turnDirection = direction;
 }
 
 void Creature::updateWalk()
 {
-    if(m_walking) {
-        int elapsedTicks = g_clock.ticksElapsed(m_walkStartTicks);
-        int totalPixelsWalked = std::min((int)round(elapsedTicks / m_walkTimePerPixel), 32);
+    if(!m_walking)
+        return;
 
-        if(m_inverseWalking) {
-            if(m_direction == Otc::North || m_direction == Otc::NorthEast || m_direction == Otc::NorthWest)
-                m_walkOffset.y = 32 - totalPixelsWalked;
-            else if(m_direction == Otc::South || m_direction == Otc::SouthEast || m_direction == Otc::SouthWest)
-                m_walkOffset.y = totalPixelsWalked - 32;
+    int elapsedTicks = g_clock.ticksElapsed(m_walkStart);
+    int totalPixelsWalked = std::min((int)round(elapsedTicks / m_walkTimePerPixel), 32);
 
-            if(m_direction == Otc::East || m_direction == Otc::NorthEast || m_direction == Otc::SouthEast)
-                m_walkOffset.x = totalPixelsWalked - 32;
-            else if(m_direction == Otc::West || m_direction == Otc::NorthWest || m_direction == Otc::SouthWest)
-                m_walkOffset.x = 32 - totalPixelsWalked;
-        }
-        else {
-            if(m_direction == Otc::North || m_direction == Otc::NorthEast || m_direction == Otc::NorthWest)
-                m_walkOffset.y = -totalPixelsWalked;
-            else if(m_direction == Otc::South || m_direction == Otc::SouthEast || m_direction == Otc::SouthWest)
-                m_walkOffset.y = totalPixelsWalked;
+    if(m_inverseWalking) {
+        if(m_direction == Otc::North || m_direction == Otc::NorthEast || m_direction == Otc::NorthWest)
+            m_walkOffset.y = 32 - totalPixelsWalked;
+        else if(m_direction == Otc::South || m_direction == Otc::SouthEast || m_direction == Otc::SouthWest)
+            m_walkOffset.y = totalPixelsWalked - 32;
 
-            if(m_direction == Otc::East || m_direction == Otc::NorthEast || m_direction == Otc::SouthEast)
-                m_walkOffset.x = totalPixelsWalked;
-            else if(m_direction == Otc::West || m_direction == Otc::NorthWest || m_direction == Otc::SouthWest)
-                m_walkOffset.x = -totalPixelsWalked;
-        }
-
-        int totalWalkTileTicks = (int)m_walkTimePerPixel*32 * 0.5;
-        if(m_type->dimensions[ThingType::AnimationPhases] > 0)
-            m_animation = (g_clock.ticks() % totalWalkTileTicks) / (totalWalkTileTicks / (m_type->dimensions[ThingType::AnimationPhases] - 1)) + 1;
-        else
-            m_animation = 0;
-
-
-        if(totalPixelsWalked == 32)
-            cancelWalk(m_direction);
-        else
-            g_dispatcher.scheduleEvent(std::bind(&Creature::updateWalk, asCreature()), m_walkTimePerPixel);
+        if(m_direction == Otc::East || m_direction == Otc::NorthEast || m_direction == Otc::SouthEast)
+            m_walkOffset.x = totalPixelsWalked - 32;
+        else if(m_direction == Otc::West || m_direction == Otc::NorthWest || m_direction == Otc::SouthWest)
+            m_walkOffset.x = 32 - totalPixelsWalked;
     }
+    else {
+        if(m_direction == Otc::North || m_direction == Otc::NorthEast || m_direction == Otc::NorthWest)
+            m_walkOffset.y = -totalPixelsWalked;
+        else if(m_direction == Otc::South || m_direction == Otc::SouthEast || m_direction == Otc::SouthWest)
+            m_walkOffset.y = totalPixelsWalked;
+
+        if(m_direction == Otc::East || m_direction == Otc::NorthEast || m_direction == Otc::SouthEast)
+            m_walkOffset.x = totalPixelsWalked;
+        else if(m_direction == Otc::West || m_direction == Otc::NorthWest || m_direction == Otc::SouthWest)
+            m_walkOffset.x = -totalPixelsWalked;
+    }
+
+    if(totalPixelsWalked == 32 || m_type->dimensions[ThingType::AnimationPhases] == 0)
+        m_animation = 0;
+    else if(m_type->dimensions[ThingType::AnimationPhases] > 0)
+        m_animation = 1 + totalPixelsWalked * 4 / Map::NUM_TILE_PIXELS % (m_type->dimensions[ThingType::AnimationPhases] - 1);
+
+    if(g_clock.ticks() > m_walkEnd)
+        cancelWalk(m_turnDirection);
+    else
+        g_dispatcher.scheduleEvent(std::bind(&Creature::updateWalk, asCreature()), m_walkTimePerPixel);
 }
 
 void Creature::cancelWalk(Otc::Direction direction)
@@ -296,15 +259,15 @@ void Creature::cancelWalk(Otc::Direction direction)
     }
 
     m_walking = false;
-    m_walkStartTicks = 0;
-    m_walkOffset.x = 0;
-    m_walkOffset.y = 0;
-    m_direction = direction;
+    m_walkStart = 0;
+    m_walkOffset = Point(0, 0);
+    setDirection(direction);
 }
 
 void Creature::setName(const std::string& name)
 {
-    m_nameSize = m_informationFont->calculateTextRectSize(name);
+    if(m_informationFont)
+        m_nameSize = m_informationFont->calculateTextRectSize(name);
     m_name = name;
 }
 
@@ -355,6 +318,14 @@ void Creature::setOutfit(const Outfit& outfit)
 {
     m_outfit = outfit;
     m_type = getType();
+
+    // Do not apply any mask color.
+    if(m_type->dimensions[ThingType::Layers] == 1) {
+        m_outfit.setHead(0);
+        m_outfit.setBody(0);
+        m_outfit.setLegs(0);
+        m_outfit.setFeet(0);
+    }
 }
 
 ThingType *Creature::getType()

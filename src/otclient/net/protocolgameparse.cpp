@@ -408,9 +408,17 @@ void ProtocolGame::parseCreatureMove(InputMessage& msg)
     Position newPos = parsePosition(msg);
 
     ThingPtr thing = g_map.getTile(oldPos)->getThing(oldStackpos);
-    assert(thing);
+    if(!thing) {
+        logError("could not get thing");
+        return;
+    }
+
     CreaturePtr creature = thing->asCreature();
-    assert(creature);
+    if(!creature) {
+        logError("thing is not a creature");
+        return;
+    }
+
     creature->walk(newPos);
 
     // update map tiles
@@ -642,7 +650,7 @@ void ProtocolGame::parseCreatureTurn(InputMessage& msg)
 
     CreaturePtr creature = g_map.getCreatureById(id);
     if(creature)
-        creature->setDirection(direction);
+        creature->turn(direction);
 }
 
 void ProtocolGame::parseItemTextWindow(InputMessage& msg)

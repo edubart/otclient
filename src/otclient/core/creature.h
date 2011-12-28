@@ -61,6 +61,7 @@ public:
     ThingType *getType();
 
     virtual void walk(const Position& position, bool inverse = true);
+    void turn(Otc::Direction direction);
     virtual void cancelWalk(Otc::Direction direction);
     Point getWalkOffset() { return m_walkOffset; }
 
@@ -88,10 +89,11 @@ protected:
     FontPtr m_informationFont;
     Color m_informationColor;
 
-    ticks_t m_walkStartTicks;
+    ticks_t m_walkStart, m_walkEnd;
     bool m_walking, m_inverseWalking;
     float m_walkTimePerPixel;
     Point m_walkOffset;
+    Otc::Direction m_turnDirection;
 };
 
 #endif
