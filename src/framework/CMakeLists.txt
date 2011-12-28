@@ -128,6 +128,7 @@ SET(framework_SOURCES ${framework_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/core/modulemanager.cpp
     ${CMAKE_CURRENT_LIST_DIR}/core/module.cpp
     ${CMAKE_CURRENT_LIST_DIR}/core/clock.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/core/timer.cpp
 
     # framework net
     ${CMAKE_CURRENT_LIST_DIR}/net/connection.cpp

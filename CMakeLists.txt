@@ -4,7 +4,7 @@ PROJECT(otclient)
 INCLUDE(src/framework/CMakeLists.txt)
 INCLUDE(src/otclient/CMakeLists.txt)
 
-OPTION(USE_PCH "Use precompiled header (speed up compile)" ON)
+OPTION(USE_PCH "Use precompiled header (speed up compile)" OFF)
 
 SET(executable_SOURCES src/main.cpp)
 

@@ -7,4 +7,5 @@ Module
   onLoad: |
     require 'tooltip/tooltip'
     require 'messagebox/messagebox'
+    require 'uicombobox/uicombobox'
     return true

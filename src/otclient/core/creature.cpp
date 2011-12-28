@@ -67,7 +67,7 @@ void Creature::draw(const Point& p)
     if(!outfitProgram) {
         outfitProgram = PainterShaderProgramPtr(new PainterShaderProgram);
         outfitProgram->addShaderFromSourceCode(Shader::Vertex, glslMainWithTexCoordsVertexShader + glslPositionOnlyVertexShader);
-        outfitProgram->addShaderFromSourceFile(Shader::Fragment, "/outfit.frag");
+        outfitProgram->addShaderFromSourceFile(Shader::Fragment, "/game_shaders/outfit.frag");
         assert(outfitProgram->link());
         outfitProgram->bindUniformLocation(HEAD_COLOR_UNIFORM, "headColor");
         outfitProgram->bindUniformLocation(BODY_COLOR_UNIFORM, "bodyColor");
@@ -93,6 +93,13 @@ void Creature::draw(const Point& p)
 
         for(int h = 0; h < m_type->dimensions[ThingType::Height]; h++) {
             for(int w = 0; w < m_type->dimensions[ThingType::Width]; w++) {
+                int spriteId = m_type->getSpriteId(w, h, 0, m_xPattern, m_yPattern, m_zPattern, m_animation);
+                if(!spriteId)
+                    continue;
+                TexturePtr spriteTex = g_sprites.getSpriteTexture(spriteId);
+                if(!spriteTex)
+                    continue;
+
                 if(m_type->dimensions[ThingType::Layers] > 1) {
                     int maskId = m_type->getSpriteId(w, h, 1, m_xPattern, m_yPattern, m_zPattern, m_animation);
                     if(!maskId)
@@ -100,12 +107,6 @@ void Creature::draw(const Point& p)
                     TexturePtr maskTex = g_sprites.getSpriteTexture(maskId);
                     outfitProgram->setUniformTexture(MASK_TEXTURE_UNIFORM, maskTex, 1);
                 }
-
-                int spriteId = m_type->getSpriteId(w, h, 0, m_xPattern, m_yPattern, m_zPattern, m_animation);
-                if(!spriteId)
-                    continue;
-
-                TexturePtr spriteTex = g_sprites.getSpriteTexture(spriteId);
 
                 Rect drawRect(((p + m_walkOffset).x - w*32) - m_type->parameters[ThingType::DisplacementX],
                             ((p + m_walkOffset).y - h*32) - m_type->parameters[ThingType::DisplacementY],

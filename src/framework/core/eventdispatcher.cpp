@@ -30,7 +30,6 @@ void EventDispatcher::flush()
 {
     poll();
 
-    m_eventList.clear();
     while(!m_scheduledEventList.empty())
         m_scheduledEventList.pop();
 }

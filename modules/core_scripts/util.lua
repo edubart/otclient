@@ -55,3 +55,17 @@ function resolveFileFullPath(filePath, depth)
     return filePath
   end
 end
+
+function extends(base)
+  local derived = {}
+  function derived.internalCreate()
+    local instance = base.create()
+    for k,v in pairs(derived) do
+      instance[k] = v
+    end
+    return instance
+  end
+  derived.create = derived.internalCreate
+  return derived
+end
+

@@ -48,7 +48,6 @@ public:
 private:
     std::list<LogMessage> m_logMessages;
     OnLogCallback m_onLog;
-    bool m_terminated;
 };
 
 extern Logger g_logger;

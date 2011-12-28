@@ -299,4 +299,6 @@ inline float randomRange<float>(float min, float max) {
 // shortcut for Fw::dump
 const static Fw::dumper dump;
 
+#define forever for(;;)
+
 #endif

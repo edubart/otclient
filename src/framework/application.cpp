@@ -103,11 +103,10 @@ void Application::init(const std::vector<std::string>& args, int appFlags)
 
         // fire first resize
         resize(g_window.getSize());
-    }
 
-    // finally show the window
-    if(m_appFlags & Fw::AppEnableGraphics)
-        g_window.show();
+        // display window when the application starts running
+        g_dispatcher.addEvent([]{ g_window.show(); });
+    }
 
     if(m_appFlags & Fw::AppEnableModules)
         g_modules.discoverModulesPath();

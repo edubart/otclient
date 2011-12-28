@@ -1,6 +1,6 @@
-uniform float opacity;
-uniform vec4 color;
-uniform float ticks;
+uniform float opacity; // painter opacity
+uniform vec4 color; // painter color
+uniform float time; // time in seconds since shader linkage
 
 uniform sampler2D texture; // outfit texture
 varying vec2 textureCoords; // outfit texture coords
@@ -38,3 +38,4 @@ void main()
 {
     gl_FragColor = calcOutfitPixel() * color * opacity;
 }
+

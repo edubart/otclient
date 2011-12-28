@@ -20,43 +20,11 @@
  * THE SOFTWARE.
  */
 
-#ifndef PAINTERSHADER_H
-#define PAINTERSHADER_H
+#ifndef GAMESHADERMANAGER_H
+#define GAMESHADERMANAGER_H
 
-#include "shaderprogram.h"
-#include "coordsbuffer.h"
-#include <framework/core/timer.h>
-
-class PainterShaderProgram : public ShaderProgram
+class GameShaderManager
 {
-    enum {
-        VERTEX_COORDS_ATTR = 0,
-        TEXTURE_COORDS_ATTR = 1,
-        PROJECTION_MATRIX_UNIFORM = 0,
-        TEXTURE_TRANSFORM_MATRIX_UNIFORM = 1,
-        COLOR_UNIFORM = 2,
-        OPACITY_UNIFORM = 3,
-        TEXTURE_UNIFORM = 4,
-        TIME_UNIFORM = 5
-    };
-public:
-    enum DrawMode {
-        Triangles = GL_TRIANGLES,
-        TriangleStrip = GL_TRIANGLE_STRIP
-    };
-
-    bool link();
-
-    void setProjectionMatrix(const Matrix3& projectionMatrix);
-    void setColor(const Color& color);
-    void setOpacity(float opacity);
-    void setTexture(const TexturePtr& texture);
-    void setUniformTexture(int location, const TexturePtr& texture, int index);
-    void draw(const CoordsBuffer& coordsBuffer, DrawMode drawMode = Triangles);
-
-private:
-    DrawMode m_drawMode;
-    Timer m_startTimer;
 };
 
 #endif

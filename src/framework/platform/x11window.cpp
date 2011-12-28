@@ -427,7 +427,12 @@ bool X11Window::isExtensionSupported(const char *ext)
 
 void X11Window::move(const Point& pos)
 {
+    bool wasVisible = isVisible();
+    if(!wasVisible)
+        show();
     XMoveWindow(m_display, m_window, pos.x, pos.y);
+    if(!wasVisible)
+        hide();
 }
 
 void X11Window::resize(const Size& size)

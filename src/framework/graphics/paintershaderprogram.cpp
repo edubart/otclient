@@ -36,9 +36,10 @@ bool PainterShaderProgram::link()
         bindUniformLocation(COLOR_UNIFORM, "color");
         bindUniformLocation(OPACITY_UNIFORM, "opacity");
         bindUniformLocation(TEXTURE_UNIFORM, "texture");
-        bindUniformLocation(TICKS_UNIFORM, "ticks");
+        bindUniformLocation(TIME_UNIFORM, "ticks");
         return true;
     }
+    m_startTimer.restart();
     return false;
 }
 
@@ -62,10 +63,11 @@ void PainterShaderProgram::setOpacity(float opacity)
 
 void PainterShaderProgram::setUniformTexture(int location, const TexturePtr& texture, int index)
 {
-    if(!texture)
-        return;
-    glActiveTexture(GL_TEXTURE0 + index);
-    glBindTexture(GL_TEXTURE_2D, texture->getId());
+    if(index > 0)
+        glActiveTexture(GL_TEXTURE0 + index);
+    glBindTexture(GL_TEXTURE_2D, texture ? texture->getId() : 0);
+    if(index > 0)
+        glActiveTexture(GL_TEXTURE0);
     setUniformValue(location, index);
 }
 
@@ -90,7 +92,7 @@ void PainterShaderProgram::draw(const CoordsBuffer& coordsBuffer, DrawMode drawM
 {
     assert(bind());
 
-    setUniformValue(TICKS_UNIFORM, (float)g_clock.ticks());
+    setUniformValue(TIME_UNIFORM, (float)m_startTimer.timeElapsed());
 
     int numVertices = coordsBuffer.getVertexCount();
     if(numVertices == 0)

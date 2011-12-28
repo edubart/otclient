@@ -48,20 +48,5 @@ private:
 
 extern Clock g_clock;
 
-class Timer
-{
-public:
-    Timer() { restart(); }
-
-    void restart() { m_startTicks = g_clock.ticks(); }
-
-    ticks_t startTicks() { return m_startTicks; }
-    ticks_t ticksElapsed() { return g_clock.ticks() - m_startTicks; }
-    double timeElapsed() { return ticksElapsed()/1000.0; }
-
-private:
-    ticks_t m_startTicks;
-};
-
 #endif
 

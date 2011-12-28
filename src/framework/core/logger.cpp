@@ -25,7 +25,7 @@
 
 Logger g_logger;
 
-Logger::Logger() : m_terminated(false)
+Logger::Logger()
 {
 
 }

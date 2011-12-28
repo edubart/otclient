@@ -48,7 +48,7 @@ void Map::draw(const Rect& rect)
 
         program = PainterShaderProgramPtr(new PainterShaderProgram);
         program->addShaderFromSourceCode(Shader::Vertex, glslMainWithTexCoordsVertexShader + glslPositionOnlyVertexShader);
-        program->addShaderFromSourceFile(Shader::Fragment, "/shadertest.frag");
+        program->addShaderFromSourceFile(Shader::Fragment, "/game_shaders/map.frag");
         assert(program->link());
     }
 
