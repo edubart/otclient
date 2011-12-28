@@ -26,6 +26,7 @@
 #include "map.h"
 #include "tile.h"
 #include "item.h"
+#include "game.h"
 
 #include <framework/graphics/graphics.h>
 #include <framework/core/eventdispatcher.h>
@@ -161,7 +162,7 @@ void Creature::walk(const Position& position, bool inverse)
 
         if(inverse) {
             Position positionDelta = m_position - position;
-            m_walkOffset = Point(positionDelta.x * 32, positionDelta.y * 32);
+            m_walkOffset = Point(positionDelta.x * Map::NUM_TILE_PIXELS, positionDelta.y * Map::NUM_TILE_PIXELS);
         }
         else
             m_walkOffset = Point(0, 0);
@@ -178,6 +179,7 @@ void Creature::walk(const Position& position, bool inverse)
 
         float walkTime = 1000.0 * (float)groundSpeed / m_speed;
         walkTime = (walkTime == 0) ? 1000 : walkTime;
+        walkTime = std::ceil(walkTime / g_game.getServerBeat()) * g_game.getServerBeat();
 
         bool sameWalk = m_walking && !m_inverseWalking && inverse;
         m_inverseWalking = inverse;
@@ -237,9 +239,9 @@ void Creature::updateWalk()
             m_walkOffset.x = -totalPixelsWalked;
     }
 
-    if(totalPixelsWalked == 32 || m_type->dimensions[ThingType::AnimationPhases] == 0)
+    if(totalPixelsWalked == 32 || m_type->dimensions[ThingType::AnimationPhases] <= 1)
         m_animation = 0;
-    else if(m_type->dimensions[ThingType::AnimationPhases] > 0)
+    else if(m_type->dimensions[ThingType::AnimationPhases] > 1)
         m_animation = 1 + totalPixelsWalked * 4 / Map::NUM_TILE_PIXELS % (m_type->dimensions[ThingType::AnimationPhases] - 1);
 
     if(g_clock.ticks() > m_walkEnd)
@@ -250,16 +252,9 @@ void Creature::updateWalk()
 
 void Creature::cancelWalk(Otc::Direction direction)
 {
-    if(m_walking) {
-        auto self = asCreature();
-        g_dispatcher.scheduleEvent([=]() {
-            if(!self->m_walking)
-                self->m_animation = 0;
-        }, m_walkTimePerPixel * 2);
-    }
-
     m_walking = false;
     m_walkStart = 0;
+    m_animation = 0;
     m_walkOffset = Point(0, 0);
     setDirection(direction);
 }

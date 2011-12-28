@@ -55,6 +55,9 @@ public:
 
     bool isOnline() { return m_online; }
 
+    void setServerBeat(int serverBeat) { m_serverBeat = serverBeat; }
+    int getServerBeat() { return m_serverBeat; }
+
     LocalPlayerPtr getLocalPlayer() { return m_localPlayer; }
     ProtocolGamePtr getProtocolGame() { return m_protocolGame; }
 
@@ -62,6 +65,7 @@ private:
     LocalPlayerPtr m_localPlayer;
     ProtocolGamePtr m_protocolGame;
     bool m_online;
+    int m_serverBeat;
 };
 
 extern Game g_game;

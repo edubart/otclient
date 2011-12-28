@@ -269,6 +269,7 @@ void ProtocolGame::parsePlayerLogin(InputMessage& msg)
 
     m_localPlayer = LocalPlayerPtr(new LocalPlayer);
     m_localPlayer->setId(playerId);
+    g_game.setServerBeat(playerDrawSpeed);
     m_localPlayer->setDrawSpeed(playerDrawSpeed);
     m_localPlayer->setCanReportBugs(playerCanReportBugs);
 }
