@@ -841,7 +841,7 @@ void ProtocolGame::parseTextMessage(InputMessage& msg)
 void ProtocolGame::parseCancelWalk(InputMessage& msg)
 {
     Otc::Direction direction = (Otc::Direction)msg.getU8();
-    m_localPlayer->cancelWalk(direction);
+    m_localPlayer->cancelWalk(direction, true);
 }
 
 void ProtocolGame::parseFloorChangeUp(InputMessage& msg)

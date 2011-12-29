@@ -44,7 +44,7 @@ public:
 
     void clientWalk(Otc::Direction direction);
     void walk(const Position& position, bool inverse);
-    void cancelWalk(Otc::Direction direction);
+    void cancelWalk(Otc::Direction direction, bool force = false);
     bool canWalk(Otc::Direction direction);
 
     LocalPlayerPtr asLocalPlayer() { return std::static_pointer_cast<LocalPlayer>(shared_from_this()); }
@@ -53,6 +53,7 @@ private:
     uint16 m_drawSpeed;
     bool m_canReportBugs;
     bool m_clientWalking;
+    Otc::Direction m_nextWalkDirection;
 
     int m_skills[Otc::LastSkill][Otc::LastSkillType];
     double m_statistics[Otc::LastStatistic];

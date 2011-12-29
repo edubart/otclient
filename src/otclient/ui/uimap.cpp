@@ -73,10 +73,10 @@ bool UIMap::onMousePress(const Point& mousePos, Fw::MouseButton button)
 
         // cool testing \/
         if(button == Fw::MouseLeftButton) {
-            /*MissilePtr shot = MissilePtr(new Missile());
+            MissilePtr shot = MissilePtr(new Missile());
             shot->setId(1);
             shot->setPath(g_map.getCentralPosition(), tilePos);
-            g_map.addThing(shot, g_map.getCentralPosition());*/
+            g_map.addThing(shot, g_map.getCentralPosition());
 
             AnimatedTextPtr animatedText = AnimatedTextPtr(new AnimatedText);
             animatedText->setPosition(g_map.getCentralPosition());
@@ -91,6 +91,12 @@ bool UIMap::onMousePress(const Point& mousePos, Fw::MouseButton button)
             effect->start();
             if(tile)
                 tile->addEffect(effect);
+
+            AnimatedTextPtr animatedText = AnimatedTextPtr(new AnimatedText);
+            animatedText->setPosition(g_map.getCentralPosition());
+            animatedText->setColor(12);
+            animatedText->setText("8");
+            g_map.addThing(animatedText, g_map.getCentralPosition());
         }
     }
 

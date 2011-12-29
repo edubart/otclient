@@ -62,7 +62,7 @@ public:
 
     virtual void walk(const Position& position, bool inverse = true);
     void turn(Otc::Direction direction);
-    virtual void cancelWalk(Otc::Direction direction);
+    virtual void cancelWalk(Otc::Direction direction, bool force = false);
     Point getWalkOffset() { return m_walkOffset; }
 
     bool isWalking() { return m_walking; }

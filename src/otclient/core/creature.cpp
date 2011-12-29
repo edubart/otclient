@@ -130,14 +130,14 @@ void Creature::drawInformation(int x, int y, bool useGray, const Rect& rect)
     Rect backgroundRect = Rect(x-(13.5), y, 27, 4);
     backgroundRect.bound(rect);
 
-    Rect textRect = Rect(x - m_nameSize.width() / 2.0, y-15, m_nameSize);
+    Rect textRect = Rect(x - m_nameSize.width() / 2.0, y-12, m_nameSize);
     textRect.bound(rect);
 
     // distance them
     if(textRect.top() == rect.top())
-        backgroundRect.moveTop(textRect.top() + 15);
+        backgroundRect.moveTop(textRect.top() + 12);
     if(backgroundRect.bottom() == rect.bottom())
-        textRect.moveTop(backgroundRect.top() - 15);
+        textRect.moveTop(backgroundRect.top() - 12);
 
     // health rect is based on background rect, so no worries
     Rect healthRect = backgroundRect.expanded(-1);
@@ -251,7 +251,7 @@ void Creature::updateWalk()
         g_dispatcher.scheduleEvent(std::bind(&Creature::updateWalk, asCreature()), m_walkTimePerPixel);
 }
 
-void Creature::cancelWalk(Otc::Direction direction)
+void Creature::cancelWalk(Otc::Direction direction, bool)
 {
     m_walking = false;
     m_walkStart = 0;

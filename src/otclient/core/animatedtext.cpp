@@ -25,6 +25,7 @@
 #include "map.h"
 #include <framework/core/clock.h>
 #include <framework/core/eventdispatcher.h>
+#include <framework/graphics/graphics.h>
 
 AnimatedText::AnimatedText()
 {
@@ -46,7 +47,7 @@ void AnimatedText::start()
 void AnimatedText::draw(const Point& p)
 {
     if(m_font)
-        m_font->renderText(m_text, Rect(p + Point(0, -20.0 * g_clock.timeElapsed(m_startTime) / (DURATION / 1000)), m_textSize), Fw::AlignTopCenter, m_color);
+        m_font->renderText(m_text, Rect(p + Point(20 - m_textSize.width() / 2, -20.0 * g_clock.timeElapsed(m_startTime) / (DURATION / 1000)), m_textSize), Fw::AlignLeft, m_color);
 }
 
 void AnimatedText::setColor(int color)

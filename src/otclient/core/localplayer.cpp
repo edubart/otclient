@@ -28,10 +28,12 @@
 LocalPlayer::LocalPlayer()
 {
     m_clientWalking = false;
+    m_nextWalkDirection = Otc::InvalidDirection;
 }
 
 void LocalPlayer::clientWalk(Otc::Direction direction)
 {
+    // We're not walking, so start a client walk.
     if(!m_walking) {
         Position newPos = m_position + Position::getPositionFromDirection(direction);
         Creature::walk(newPos, false);
@@ -41,33 +43,59 @@ void LocalPlayer::clientWalk(Otc::Direction direction)
 
 void LocalPlayer::walk(const Position& position, bool inverse)
 {
+    // This can only be received by protocol, so its always inverse.
+
+    // If we're already walking, just finish it.
     if(m_clientWalking) {
+        m_clientWalking = false;
+
         Position pos = Position::getPositionFromDirection(m_direction);
         Point walkOffset = Point(m_walkOffset.x - pos.x * 32,
                                  m_walkOffset.y - pos.y * 32);
 
         Creature::walk(position, inverse);
 
+        // Restore walk offset, because we were already walking.
         m_walkOffset = walkOffset;
-        m_clientWalking = false;
     }
-    else {
-        m_walkOffset.x = 0;
-        m_walkOffset.y = 0;
+    // If we're not client walking, we'll just walk like every NPC. Ie: When player is pushed.
+    else
         Creature::walk(position, inverse);
-    }
 }
 
-void LocalPlayer::cancelWalk(Otc::Direction direction)
+void LocalPlayer::cancelWalk(Otc::Direction direction, bool force)
 {
-    m_clientWalking = false;
-    Creature::cancelWalk(direction);
+    // Server said we cant walk. Ie: houses, vip areas.
+    if(force) {
+        m_clientWalking = false;
+        Creature::cancelWalk(direction);
+    }
+    else {
+        // Walk finished, and we already received the confirmation from server.
+        if(m_walking && !m_clientWalking) {
+            m_clientWalking = false;
+            Creature::cancelWalk(direction);
+
+            if(m_nextWalkDirection != Otc::InvalidDirection) {
+                g_game.walk(m_nextWalkDirection);
+                m_nextWalkDirection = Otc::InvalidDirection;
+            }
+        }
+        //else..
+        // Walk finished, however we havent received the confirmation from server. So wait for it.
+    }
 }
 
 bool LocalPlayer::canWalk(Otc::Direction direction)
 {
-    if(m_walking)
+    if(m_walking) {
+        if(direction != m_direction && m_nextWalkDirection != direction)
+            m_nextWalkDirection = direction;
+        else if(direction == m_direction && m_nextWalkDirection != Otc::InvalidDirection)
+            m_nextWalkDirection = Otc::InvalidDirection;
+
         return false;
+    }
 
     Position newPos = m_position + Position::getPositionFromDirection(direction);
     TilePtr tile = g_map.getTile(newPos);
