@@ -421,7 +421,7 @@ void X11Window::internalDestroyGLContext()
             eglDestroyContext(m_eglDisplay, m_eglContext);
             m_eglContext = 0;
         }
-        if(m_eglSurface)
+        if(m_eglSurface) {
             eglDestroySurface(m_eglDisplay, m_eglSurface);
             m_eglSurface = 0;
         }

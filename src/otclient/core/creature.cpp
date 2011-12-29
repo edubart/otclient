@@ -315,13 +315,8 @@ void Creature::setOutfit(const Outfit& outfit)
     m_outfit = outfit;
     m_type = getType();
 
-    // Do not apply any mask color.
-    if(m_type->dimensions[ThingType::Layers] == 1) {
-        m_outfit.setHead(0);
-        m_outfit.setBody(0);
-        m_outfit.setLegs(0);
-        m_outfit.setFeet(0);
-    }
+    if(m_type->dimensions[ThingType::Layers] == 1)
+        m_outfit.resetClothes();
 }
 
 ThingType *Creature::getType()

@@ -44,6 +44,8 @@ public:
     void setFeet(int feet) { m_feet = feet; m_feetColor = getColor(feet); }
     void setAddons(int addons) { m_addons = addons; }
 
+    void resetClothes();
+
     int getType() const { return m_type; }
     int getHead() const { return m_head; }
     int getBody() const { return m_body; }

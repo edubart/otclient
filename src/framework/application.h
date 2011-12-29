@@ -47,7 +47,7 @@ public:
 
     bool isRunning() { return m_running; }
     bool isStopping() { return m_stopping; }
-    std::string getAppName() { return m_appName; }
+    const std::string& getAppName() { return m_appName; }
 
 protected:
     virtual void render();

@@ -117,3 +117,11 @@ Color Outfit::getColor(int color)
     }
     return Color(int(red * 255), int(green * 255), int(blue * 255));
 }
+
+void Outfit::resetClothes()
+{
+    setHead(0);
+    setBody(0);
+    setLegs(0);
+    setFeet(0);
+}
