@@ -133,7 +133,6 @@ SET(framework_SOURCES ${framework_SOURCES}
 
     # framework core
     ${CMAKE_CURRENT_LIST_DIR}/core/logger.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/core/clock.cpp
     ${CMAKE_CURRENT_LIST_DIR}/core/configmanager.cpp
     ${CMAKE_CURRENT_LIST_DIR}/core/resourcemanager.cpp
     ${CMAKE_CURRENT_LIST_DIR}/core/eventdispatcher.cpp
@@ -161,7 +160,6 @@ SET(framework_SOURCES ${framework_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/graphics/texture.cpp
     ${CMAKE_CURRENT_LIST_DIR}/graphics/framebuffer.cpp
     ${CMAKE_CURRENT_LIST_DIR}/graphics/animatedtexture.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/framebuffer.cpp
     ${CMAKE_CURRENT_LIST_DIR}/graphics/texturemanager.cpp
     ${CMAKE_CURRENT_LIST_DIR}/graphics/borderimage.cpp
     ${CMAKE_CURRENT_LIST_DIR}/graphics/image.cpp
