@@ -21,7 +21,6 @@
  */
 
 #include "animatedtext.h"
-#include "outfit.h"
 #include "map.h"
 #include <framework/core/clock.h>
 #include <framework/core/eventdispatcher.h>

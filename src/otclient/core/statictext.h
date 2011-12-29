@@ -20,33 +20,41 @@
  * THE SOFTWARE.
  */
 
-#ifndef OTCLIENT_CORE_DECLARATIONS_H
-#define OTCLIENT_CORE_DECLARATIONS_H
+#ifndef STATICTEXT_H
+#define STATICTEXT_H
 
-#include <otclient/global.h>
+#include "thing.h"
+#include <framework/graphics/fontmanager.h>
 
-class Tile;
-class Thing;
-class Item;
-class Creature;
-class Effect;
-class Missile;
-class Player;
-class LocalPlayer;
-class AnimatedText;
-class StaticText;
+class StaticText : public Thing
+{
+public:
+    enum {
+        DURATION = 3000
+    };
 
-typedef std::shared_ptr<Tile> TilePtr;
-typedef std::shared_ptr<Thing> ThingPtr;
-typedef std::shared_ptr<Item> ItemPtr;
-typedef std::shared_ptr<Creature> CreaturePtr;
-typedef std::shared_ptr<Effect> EffectPtr;
-typedef std::shared_ptr<Missile> MissilePtr;
-typedef std::shared_ptr<Player> PlayerPtr;
-typedef std::shared_ptr<LocalPlayer> LocalPlayerPtr;
-typedef std::shared_ptr<AnimatedText> AnimatedTextPtr;
-typedef std::shared_ptr<StaticText> StaticTextPtr;
+    StaticText();
 
-typedef std::vector<ThingPtr> ThingList;
+    void draw(const Point& p);
+
+    std::string getName() { return m_name; }
+    int getMessageType() { return m_type; }
+    std::string getFirstMessage() { return m_messages[0]; }
+
+    bool addMessage(const std::string& name, int type, const std::string& message);
+    void removeMessage();
+
+    StaticTextPtr asStaticText() { return std::static_pointer_cast<StaticText>(shared_from_this()); }
+
+private:
+    void compose();
+
+    FontPtr m_font;
+    Size m_textSize;
+    std::vector<std::string> m_messages;
+    std::string m_name, m_text;
+    int m_type;
+    Color m_color;
+};
 
 #endif

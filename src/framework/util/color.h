@@ -153,6 +153,8 @@ inline std::istream& operator>>(std::istream& in, Color& color)
             color = Fw::darkGray;
         } else if(tmp == "lightGray") {
             color = Fw::lightGray;
+        } else if(tmp == "orange") {
+            color = Fw::orange;
         } else {
             in.seekg(-tmp.length(), ios_base::cur);
         }

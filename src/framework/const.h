@@ -51,7 +51,8 @@ namespace Fw
         darkTeal   = 0xff808000,
         gray       = 0xffa0a0a0,
         darkGray   = 0xff808080,
-        lightGray  = 0xffc0c0c0
+        lightGray  = 0xffc0c0c0,
+        orange     = 0xffff8c00
     };
 
     enum Key : uint8 {

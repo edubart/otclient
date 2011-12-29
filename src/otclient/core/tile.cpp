@@ -132,7 +132,6 @@ ThingPtr Tile::addThing(const ThingPtr& thing, int stackPos)
     if(stackPos < (int)m_things.size())
         oldObject = m_things[stackPos];
     m_things.insert(m_things.begin() + stackPos, thing);
-    thing->setPosition(m_position);
     return oldObject;
 }
 

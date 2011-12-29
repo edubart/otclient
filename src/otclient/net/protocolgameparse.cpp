@@ -33,6 +33,7 @@
 #include <otclient/luascript/luavaluecasts.h>
 #include <framework/core/eventdispatcher.h>
 #include <framework/graphics/particlemanager.h>
+#include <otclient/core/statictext.h>
 
 void ProtocolGame::parseMessage(InputMessage& msg)
 {
@@ -746,8 +747,8 @@ void ProtocolGame::parsePlayerCancelAttack(InputMessage& msg)
 void ProtocolGame::parseCreatureSpeak(InputMessage& msg)
 {
     msg.getU32(); // unkSpeak
-    std::string name = msg.getString(); // name
-    int level = msg.getU16(); // level
+    std::string name = msg.getString();
+    int level = msg.getU16();
     int type = msg.getU8();
     int channelId = 0;
     Position creaturePos;
@@ -759,13 +760,13 @@ void ProtocolGame::parseCreatureSpeak(InputMessage& msg)
         case Otc::SpeakMonsterSay:
         case Otc::SpeakMonsterYell:
         case Otc::SpeakPrivateNpcToPlayer:
-            creaturePos = parsePosition(msg); // creaturePos
+            creaturePos = parsePosition(msg);
             break;
         case Otc::SpeakChannelRed:
         case Otc::SpeakChannelOrange:
         case Otc::SpeakChannelYellow:
         case Otc::SpeakChannelWhite:
-            channelId = msg.getU16(); // channelId
+            channelId = msg.getU16();
             break;
         case Otc::SpeakPrivate:
         case Otc::SpeakPrivatePlayerToNpc:
@@ -777,11 +778,17 @@ void ProtocolGame::parseCreatureSpeak(InputMessage& msg)
             break;
     }
 
-    std::string message = msg.getString(); // message
+    std::string message = msg.getString();
 
     g_dispatcher.addEvent([=] {
         g_lua.callGlobalField("Game", "onCreatureSpeak", name, level, type, message, channelId, creaturePos);
     });
+
+    if(creaturePos.isValid()) {
+        StaticTextPtr staticText = StaticTextPtr(new StaticText);
+        staticText->addMessage(name, type, message);
+        g_map.addThing(staticText, creaturePos);
+    }
 }
 
 void ProtocolGame::parseChannelList(InputMessage& msg)

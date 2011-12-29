@@ -79,6 +79,7 @@ private:
     std::map<uint32, CreaturePtr> m_creatures;
     std::array<std::vector<MissilePtr>, MAX_Z> m_missilesAtFloor;
     std::vector<AnimatedTextPtr> m_animatedTexts;
+    std::vector<StaticTextPtr> m_staticTexts;
 
     Light m_light;
     Position m_centralPosition;

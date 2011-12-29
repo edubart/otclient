@@ -64,6 +64,7 @@ public:
     virtual PlayerPtr asPlayer() { return nullptr; }
     virtual LocalPlayerPtr asLocalPlayer() { return nullptr; }
     virtual AnimatedTextPtr asAnimatedText() { return nullptr; }
+    virtual StaticTextPtr asStaticText() { return nullptr; }
 
 protected:
     void internalDraw(const Point& p, int layer);

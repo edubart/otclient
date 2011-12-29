@@ -26,6 +26,7 @@
 #include "tile.h"
 #include "item.h"
 #include "missile.h"
+#include "statictext.h"
 #include <framework/graphics/graphics.h>
 #include <framework/graphics/framebuffer.h>
 #include <framework/graphics/paintershaderprogram.h>
@@ -130,6 +131,14 @@ void Map::draw(const Rect& rect)
 
     // draw animated text
     for(auto it = m_animatedTexts.begin(), end = m_animatedTexts.end(); it != end; ++it) {
+        Point pos = positionTo2D((*it)->getPosition()) - m_drawOffset;
+        pos.x *= horizontalStretchFactor;
+        pos.y *= verticalStretchFactor;
+        (*it)->draw(rect.topLeft() + pos);
+    }
+
+    // draw static text
+    for(auto it = m_staticTexts.begin(), end = m_staticTexts.end(); it != end; ++it) {
         Point pos = positionTo2D((*it)->getPosition()) - m_drawOffset;
         pos.x *= horizontalStretchFactor;
         pos.y *= verticalStretchFactor;
@@ -240,18 +249,36 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
     }
     else if(MissilePtr shot = thing->asMissile()) {
         m_missilesAtFloor[shot->getPosition().z].push_back(shot);
-        return;
     }
     else if(AnimatedTextPtr animatedText = thing->asAnimatedText()) {
-        animatedText->start();
         m_animatedTexts.push_back(animatedText);
-        return;
+    }
+    else if(StaticTextPtr staticText = thing->asStaticText()) {
+        bool mustAdd = true;
+        for(auto it = m_staticTexts.begin(), end = m_staticTexts.end(); it != end; ++it) {
+            StaticTextPtr cStaticText = *it;
+            if(cStaticText->getPosition() == pos) {
+                // try to combine messages
+                if(cStaticText->addMessage(staticText->getName(), staticText->getMessageType(), staticText->getFirstMessage())) {
+                    mustAdd = false;
+                    break;
+                }
+                else {
+                    // must add another message and rearrenge current
+                }
+            }
+
+        }
+
+        if(mustAdd)
+            m_staticTexts.push_back(staticText);
     }
     else {
         tile->addThing(thing, stackPos);
     }
 
     thing->start();
+    thing->setPosition(pos);
 }
 
 ThingPtr Map::getThing(const Position& pos, int stackPos)
@@ -283,6 +310,12 @@ void Map::removeThing(const ThingPtr& thing)
         auto it = std::find(m_animatedTexts.begin(), m_animatedTexts.end(), animatedText);
         if(it != m_animatedTexts.end())
             m_animatedTexts.erase(it);
+        return;
+    }
+    else if(StaticTextPtr staticText = thing->asStaticText()) {
+        auto it = std::find(m_staticTexts.begin(), m_staticTexts.end(), staticText);
+        if(it != m_staticTexts.end())
+            m_staticTexts.erase(it);
         return;
     }
 

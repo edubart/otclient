@@ -51,5 +51,4 @@ private:
     double m_startTime;
 };
 
-
 #endif

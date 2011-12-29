@@ -30,6 +30,7 @@ SET(otclient_SOURCES ${otclient_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/core/localplayer.cpp
     ${CMAKE_CURRENT_LIST_DIR}/core/outfit.cpp
     ${CMAKE_CURRENT_LIST_DIR}/core/animatedtext.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/core/statictext.cpp
 
     # otclient ui
     ${CMAKE_CURRENT_LIST_DIR}/ui/uiitem.cpp
