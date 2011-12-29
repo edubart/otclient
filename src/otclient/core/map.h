@@ -87,6 +87,7 @@ private:
     Point m_centralOffset, m_drawOffset;
 
     FrameBufferPtr m_framebuffer;
+    PainterShaderProgramPtr m_shaderProgram;
 };
 
 extern Map g_map;

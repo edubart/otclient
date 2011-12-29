@@ -34,6 +34,7 @@
 #include <framework/graphics/particlemanager.h>
 #include <framework/graphics/painter.h>
 #include <framework/luascript/luainterface.h>
+#include <framework/platform/crashhandler.h>
 
 Application *g_app = nullptr;
 
@@ -71,6 +72,10 @@ void Application::init(const std::vector<std::string>& args, int appFlags)
     // capture exit signals
     signal(SIGTERM, exitSignalHandler);
     signal(SIGINT, exitSignalHandler);
+
+#ifdef HANDLE_EXCEPTIONS
+    installCrashHandler();
+#endif
 
     // initialize lua
     g_lua.init();

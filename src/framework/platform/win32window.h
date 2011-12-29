@@ -25,9 +25,61 @@
 
 #include "platformwindow.h"
 
+#include <windows.h>
+
+struct WindowProcProxy;
+
 class WIN32Window : public PlatformWindow
 {
-    //TODO
+    void internalCreateWindow();
+    void internalRegisterWindowClass();
+
+    void internalChooseGLVisual();
+    void internalCreateGLContext();
+
+    void *getExtensionProcAddress(const char *ext);
+    bool isExtensionSupported(const char *ext);
+
+    LRESULT windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+    friend class WindowProcProxy;
+
+public:
+    WIN32Window();
+
+    void init();
+    void terminate();
+
+    void move(const Point& pos);
+    void resize(const Size& size);
+    void show();
+    void hide();
+    void maximize();
+    void poll();
+    void swapBuffers();
+    void showMouse();
+    void hideMouse();
+
+    void setTitle(const std::string& title);
+    void setMinimumSize(const Size& minimumSize);
+    void setFullscreen(bool fullscreen);
+    void setVerticalSync(bool enable);
+    void setIcon(const std::string& iconFile);
+    void setClipboardText(const std::string& text);
+
+    Size getDisplaySize();
+    std::string getClipboardText();
+
+    bool isMaximized() { return m_maximized; }
+
+private:
+    HWND m_window;
+    HINSTANCE m_instance;
+    HDC m_deviceContext;
+    HGLRC m_glContext;
+    bool m_maximized;
+    Point m_lastWindowPos;
+    std::string m_clipboardText;
+    std::map<int, Fw::Key> m_keyMap;
 };
 
 #endif

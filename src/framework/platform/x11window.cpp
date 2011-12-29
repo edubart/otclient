@@ -26,9 +26,25 @@
 
 X11Window::X11Window()
 {
-    m_cursor = None;
+    m_display = 0;
     m_visual = 0;
+    m_window = 0;
+    m_rootWindow = 0;
     m_colormap = 0;
+    m_cursor = 0;
+    m_xim = 0;
+    m_xic = 0;
+    m_screen = 0;
+    m_wmDelete = 0;
+
+#ifndef OPENGL_ES2
+    m_glxContext = 0;
+#else
+    m_eglConfig = 0;
+    m_eglContext = 0;
+    m_eglDisplay = 0;
+    m_eglSurface = 0;
+#endif
 
     m_keyMap[XK_Escape] = Fw::KeyEscape;
     m_keyMap[XK_Tab] = Fw::KeyTab;
@@ -193,23 +209,37 @@ void X11Window::init()
 
 void X11Window::terminate()
 {
-    XDestroyWindow(m_display, m_window);
+    if(m_window) {
+        XDestroyWindow(m_display, m_window);
+        m_window = 0;
+    }
 
-    if(m_colormap)
+    if(m_colormap) {
         XFreeColormap(m_display, m_colormap);
+        m_colormap = 0;
+    }
 
     internalDestroyGLContext();
 
-    if(m_visual)
+    if(m_visual) {
         XFree(m_visual);
+        m_visual = 0;
+    }
 
-    if(m_xic)
+    if(m_xic) {
         XDestroyIC(m_xic);
+        m_xic = 0;
+    }
 
-    if(m_xim)
+    if(m_xim) {
         XCloseIM(m_xim);
+        m_xim = 0;
+    }
 
-    XCloseDisplay(m_display);
+    if(m_display) {
+        XCloseDisplay(m_display);
+        m_display = 0;
+    }
 
     m_visible = false;
 }
@@ -380,12 +410,24 @@ void X11Window::internalCreateGLContext()
 void X11Window::internalDestroyGLContext()
 {
 #ifndef OPENGL_ES2
-    glXMakeCurrent(m_display, None, NULL);
-    glXDestroyContext(m_display, m_glxContext);
+    if(m_glxContext) {
+        glXMakeCurrent(m_display, None, NULL);
+        glXDestroyContext(m_display, m_glxContext);
+        m_glxContext = 0;
+    }
 #else
-    eglDestroyContext(m_eglDisplay, m_eglContext);
-    eglDestroySurface(m_eglDisplay, m_eglSurface);
-    eglTerminate(m_eglDisplay);
+    if(m_eglDisplay) {
+        if(m_eglContext) {
+            eglDestroyContext(m_eglDisplay, m_eglContext);
+            m_eglContext = 0;
+        }
+        if(m_eglSurface)
+            eglDestroySurface(m_eglDisplay, m_eglSurface);
+            m_eglSurface = 0;
+        }
+        eglTerminate(m_eglDisplay);
+        m_eglDisplay = 0;
+    }
 #endif
 }
 

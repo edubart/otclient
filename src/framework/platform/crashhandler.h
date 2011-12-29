@@ -20,19 +20,9 @@
  * THE SOFTWARE.
  */
 
+#ifndef CRASHHANDLER_H
+#define CRASHHANDLER_H
 
-#ifndef GLUTIL_H
-#define GLUTIL_H
-
-#ifndef OPENGL_ES2
-#define GLEW_STATIC
-#include <GL/glew.h>
-//#include <GL/gl.h>
-//#include <GL/glext.h>
-#else
-#define GL_GLEXT_PROTOTYPES
-#include <GLES2/gl2.h>
-#include <GLES2/gl2ext.h>
-#endif
+void installCrashHandler();
 
 #endif

@@ -27,11 +27,13 @@
 #include "item.h"
 #include "missile.h"
 #include "statictext.h"
+
 #include <framework/graphics/graphics.h>
 #include <framework/graphics/framebuffer.h>
 #include <framework/graphics/paintershaderprogram.h>
 #include <framework/graphics/paintershadersources.h>
 #include <framework/graphics/texture.h>
+
 Map g_map;
 
 Map::Map()
@@ -39,7 +41,6 @@ Map::Map()
     setVisibleSize(Size(MAP_VISIBLE_WIDTH, MAP_VISIBLE_HEIGHT));
 }
 
-PainterShaderProgramPtr program;
 void Map::draw(const Rect& rect)
 {
     if(!m_framebuffer) {
@@ -47,10 +48,10 @@ void Map::draw(const Rect& rect)
         m_framebuffer = FrameBufferPtr(new FrameBuffer(fboSize));
 
 
-        program = PainterShaderProgramPtr(new PainterShaderProgram);
-        program->addShaderFromSourceCode(Shader::Vertex, glslMainWithTexCoordsVertexShader + glslPositionOnlyVertexShader);
-        program->addShaderFromSourceFile(Shader::Fragment, "/game_shaders/map.frag");
-        assert(program->link());
+        m_shaderProgram = PainterShaderProgramPtr(new PainterShaderProgram);
+        m_shaderProgram->addShaderFromSourceCode(Shader::Vertex, glslMainWithTexCoordsVertexShader + glslPositionOnlyVertexShader);
+        m_shaderProgram->addShaderFromSourceFile(Shader::Fragment, "/game_shaders/map.frag");
+        assert(m_shaderProgram->link());
     }
 
     g_painter.setColor(Fw::white);
@@ -95,7 +96,7 @@ void Map::draw(const Rect& rect)
     m_framebuffer->release();
 
 
-    g_painter.setCustomProgram(program);
+    g_painter.setCustomProgram(m_shaderProgram);
     g_painter.setColor(Fw::white);
     m_framebuffer->draw(rect);
     g_painter.releaseCustomProgram();

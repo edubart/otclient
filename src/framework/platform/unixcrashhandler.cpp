@@ -20,11 +20,10 @@
  * THE SOFTWARE.
  */
 
-
-#ifdef HANDLE_EXCEPTIONS
-
-#include <csignal>
+#include "crashhandler.h"
+#include <framework/global.h>
 #include <execinfo.h>
+#include <framework/application.h>
 
 #define MAX_BACKTRACE_DEPTH 128
 #define DEMANGLE_BACKTRACE_SYMBOLS
@@ -38,7 +37,7 @@ void crashHandler(int signum, siginfo_t* info, void* secret)
     char fileName[128];
     time(&tnow);
     tm *ts = localtime(&tnow);
-    strftime(fileName, 128, (x11.appName + "-crash_-%d-%m-%Y_%H:%M:%S.txt").c_str(), ts);
+    strftime(fileName, 128, (g_app->getAppName() + "-crash_-%d-%m-%Y_%H:%M:%S.txt").c_str(), ts);
 
     std::stringstream ss;
     ss.flags(std::ios::hex | std::ios::showbase);
@@ -103,10 +102,9 @@ void crashHandler(int signum, siginfo_t* info, void* secret)
     signal(SIGSEGV, SIG_DFL);
     signal(SIGFPE, SIG_DFL);
 }
-#endif
 
-
-#ifdef HANDLE_EXCEPTIONS
+void installCrashHandler()
+{
     struct sigaction sa;
     sa.sa_sigaction = &crashHandler;
     sigemptyset (&sa.sa_mask);
@@ -115,4 +113,4 @@ void crashHandler(int signum, siginfo_t* info, void* secret)
     sigaction(SIGILL, &sa, NULL);   // illegal instruction
     sigaction(SIGSEGV, &sa, NULL);  // segmentation fault
     sigaction(SIGFPE, &sa, NULL);   // floating-point exception
-#endif
+}

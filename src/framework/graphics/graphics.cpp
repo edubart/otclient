@@ -30,6 +30,18 @@ Graphics g_graphics;
 
 void Graphics::init()
 {
+#ifndef OPENGL_ES2
+    // init GL extensions
+    GLenum err = glewInit();
+    if(err != GLEW_OK)
+        logFatal("Unable to init GLEW: ", glewGetErrorString(err));
+    if(!GLEW_ARB_vertex_program || !GLEW_ARB_vertex_shader ||
+       !GLEW_ARB_fragment_program || !GLEW_ARB_fragment_shader ||
+       !GLEW_ARB_framebuffer_object ||
+       !GLEW_ARB_multitexture)
+        logFatal("Your video driver is not supported");
+#endif
+
     glEnable(GL_BLEND);
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
