@@ -245,9 +245,6 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
         tile->addThing(thing, stackPos);
         m_creatures[creature->getId()] = creature;
     }
-    else if(EffectPtr effect = thing->asEffect()) {
-        tile->addEffect(effect);
-    }
     else if(MissilePtr shot = thing->asMissile()) {
         m_missilesAtFloor[shot->getPosition().z].push_back(shot);
     }

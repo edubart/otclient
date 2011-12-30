@@ -37,8 +37,6 @@ public:
     void draw(const Point& p);
     void clean();
 
-    void addEffect(const EffectPtr& effect);
-    void removeEffect(const EffectPtr& effect);
     ThingPtr addThing(const ThingPtr& thing, int stackPos = -1);
     ThingPtr getThing(int stackPos);
     ThingPtr removeThing(int stackPos);
@@ -52,13 +50,14 @@ public:
     bool isFullGround();
     bool isFullyOpaque();
     bool isLookPossible();
+    bool hasCreature();
 
     void useItem();
 
     TilePtr asTile() { return std::static_pointer_cast<Tile>(shared_from_this()); }
 
 private:
-    std::vector<EffectPtr> m_effects;
+    std::vector<EffectPtr> m_effects; // Leave this outside m_things because it has no stackpos.
     std::vector<ThingPtr> m_things;
     Position m_position;
     int m_drawElevation;

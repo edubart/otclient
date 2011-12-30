@@ -47,7 +47,7 @@ void Effect::start()
 
     // schedule removal
     g_dispatcher.scheduleEvent([self]() {
-        g_map.getTile(self->getPosition())->removeEffect(self);
+        g_map.removeThing(self);
     }, TICKS_PER_FRAME * getAnimationPhases());
 }
 

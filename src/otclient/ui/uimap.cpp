@@ -88,9 +88,7 @@ bool UIMap::onMousePress(const Point& mousePos, Fw::MouseButton button)
         else if(button == Fw::MouseRightButton) {
             EffectPtr effect = EffectPtr(new Effect());
             effect->setId(6);
-            effect->start();
-            if(tile)
-                tile->addEffect(effect);
+            g_map.addThing(effect, tilePos);
 
             AnimatedTextPtr animatedText = AnimatedTextPtr(new AnimatedText);
             animatedText->setPosition(g_map.getCentralPosition());

@@ -45,7 +45,7 @@ public:
     void setSkull(uint8 skull) { m_skull = skull; }
     void setShield(uint8 shield) { m_shield = shield; }
     void setEmblem(uint8 emblem) { m_emblem = emblem; }
-    void setImpassable(bool impassable) { m_impassable = impassable; }
+    void setPassable(bool passable) { m_passable = passable; }
     void setSquareColor(uint8 squareColor) { m_squareColor = squareColor; }
 
     std::string getName() { return m_name; }
@@ -57,7 +57,7 @@ public:
     uint8 getSkull() { return m_skull; }
     uint8 getShield() { return m_shield; }
     uint8 getEmblem() { return m_emblem; }
-    bool getImpassable() { return m_impassable; }
+    bool getPassable() { return m_passable; }
     ThingType *getType();
 
     virtual void walk(const Position& position, bool inverse = true);
@@ -82,7 +82,7 @@ protected:
     uint8 m_skull;
     uint8 m_shield;
     uint8 m_emblem;
-    bool m_impassable;
+    bool m_passable;
     uint8 m_squareColor;
     bool m_showSquareColor;
 

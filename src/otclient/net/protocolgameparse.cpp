@@ -847,8 +847,6 @@ void ProtocolGame::parseCancelWalk(InputMessage& msg)
 
 void ProtocolGame::parseFloorChangeUp(InputMessage& msg)
 {
-    logTraceDebug("this function has never been tested.");
-
     Position pos = g_map.getCentralPosition();
     pos.z--;
 
@@ -866,8 +864,6 @@ void ProtocolGame::parseFloorChangeUp(InputMessage& msg)
 
 void ProtocolGame::parseFloorChangeDown(InputMessage& msg)
 {
-    logTraceDebug("this function has never been tested.");
-
     Position pos = g_map.getCentralPosition();
     pos.z++;
 
@@ -1108,7 +1104,7 @@ ThingPtr ProtocolGame::internalGetThing(InputMessage& msg)
         if(thingId == 0x0061) // emblem is sent only in packet type 0x61
             emblem = msg.getU8();
 
-        bool impassable = (msg.getU8() == 0); // impassable
+        bool passable = (msg.getU8() == 0);
 
         creature->setHealthPercent(healthPercent);
         creature->setDirection(direction);
@@ -1118,7 +1114,7 @@ ThingPtr ProtocolGame::internalGetThing(InputMessage& msg)
         creature->setSkull(skull);
         creature->setShield(shield);
         creature->setEmblem(emblem);
-        creature->setImpassable(impassable);
+        creature->setPassable(passable);
         creature->cancelWalk(direction);
 
         thing = creature;

@@ -98,24 +98,15 @@ void Tile::clean()
     m_effects.clear();
 }
 
-void Tile::addEffect(const EffectPtr& effect)
-{
-    m_effects.push_back(effect);
-    effect->setPosition(m_position);
-}
-
-void Tile::removeEffect(const EffectPtr& effect)
-{
-    auto it = std::find(m_effects.begin(), m_effects.end(), effect);
-    if(it != m_effects.end()) {
-        m_effects.erase(it);
-    }
-}
-
 ThingPtr Tile::addThing(const ThingPtr& thing, int stackPos)
 {
     if(!thing)
         return nullptr;
+
+    if(EffectPtr effect = thing->asEffect()) {
+        m_effects.push_back(effect);
+        return nullptr;
+    }
 
     if(stackPos < 0) {
         stackPos = 0;
@@ -154,6 +145,12 @@ ThingPtr Tile::removeThing(int stackPos)
 
 ThingPtr Tile::removeThing(const ThingPtr& thing)
 {
+    if(EffectPtr effect = thing->asEffect()) {
+        auto it = std::find(m_effects.begin(), m_effects.end(), effect);
+        if(it != m_effects.end())
+            m_effects.erase(it);
+        return thing;
+    }
     ThingPtr oldObject;
     auto it = std::find(m_things.begin(), m_things.end(), thing);
     if(it != m_things.end()) {
@@ -193,6 +190,11 @@ bool Tile::isWalkable()
         ThingType *type = thing->getType();
         if(type->properties[ThingType::NotWalkable])
             return false;
+
+        if(CreaturePtr creature = thing->asCreature()) {
+            if(!creature->getPassable())
+                return false;
+        }
     }
     return true;
 }
@@ -229,13 +231,78 @@ bool Tile::isLookPossible()
     return true;
 }
 
+bool Tile::hasCreature()
+{
+    for(const ThingPtr& thing : m_things)
+        if(thing->asCreature())
+            return true;
+    return false;
+}
+
+/*bool Tile::canAttack()
+{
+    return hasCreature();
+}
+
+bool Tile::canFollow()
+{
+    return hasCreature();
+}
+
+bool Tile::canCopyName()
+{
+    return hasCreature();
+}*/
+
 // TODO:
 /*
+
+//Ranges for ID Creatures
+#define PLAYER_ID_RANGE 0x10000000
+#define MONSTER_ID_RANGE 0x40000000
+#define NPC_ID_RANGE 0x80000000
+
   Get menu options
 
-  if invited to party
-  if creature, attack and follow
-  if item, use or use with
+
+  if creature:
+    Look
+    -----
+    Attack
+    Follow
+    -----
+    Copy Name
+
+  if item:
+    Look
+    Use (if not container)
+    Open (if container)
+    Use with ... (if multiuse?)
+    Rotate (if rotable)
+    -----
+    Trade with ... (if pickupable?)
+
+  if player:
+    Look
+    -----
+    Attack
+    Follow
+    -----
+    Message to NAME
+    Add to VIP list
+    Ignore NAME
+    Invite to Party
+    -----
+    Report Offense
+    -----
+    Copy Name
+
+  if localplayer:
+    Look
+    -----
+    Set Outfit
+    -----
+    Copy Name
 */
 
 void Tile::useItem()
