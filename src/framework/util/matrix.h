@@ -48,7 +48,7 @@ public:
 
     T *data() { return m[0]; }
     const T *data() const { return m[0]; }
-    
+
     T& operator()(int row, int column) { return m[row-1][column-1]; }
     T operator()(int row, int column) const { return m[row-1][column-1]; }
 
@@ -83,19 +83,18 @@ void Matrix<N,M,T>::setIdentity() {
 
 template<int N, int M, typename T>
 bool Matrix<N,M,T>::isIdentity() const {
-    for(int i=0;i<N;++i) {
-        for(int j=0;j<M;++j) {
+    for(int i=0;i<N;++i)
+        for(int j=0;j<M;++j)
             if((i==j && m[i][j] != 1.0f) || (i!=j && m[i][j] != 0.0f))
                 return false;
-        }
-    }
     return true;
 }
 
 template<int N, int M, typename T>
 void Matrix<N,M,T>::fill(T value) {
-    for(int i=0;i<N*M;++i)
-        m[0][i] = value;
+    for(int i=0;i<N;++i)
+        for(int j=0;j<M;++j)
+            m[i][j] = value;
 }
 
 template<int N, int M, typename T>
@@ -104,15 +103,16 @@ Matrix<M,N,T> Matrix<N,M,T>::transposed() const {
     for(int i=0;i<N;++i)
         for(int j=0;j<M;++j)
             result.m[j][i] = m[i][j];
-        return result;
+    return result;
 }
 
 template<int N, int M, typename T>
 template<typename U>
 Matrix<N,M,T>& Matrix<N,M,T>::operator=(const std::initializer_list<U>& values) {
     auto it = values.begin();
-    for(int i=0;i<N*M;++i)
-        m[0][i] = *(it++);
+    for(int i=0;i<N;++i)
+        for(int j=0;j<M;++j)
+            m[i][j] = *(it++);
     return *this;
 }
 
@@ -122,53 +122,59 @@ Matrix<N,M,T>& Matrix<N,M,T>::operator=(const U *values) {
     for(int i=0;i<N;++i)
         for(int j=0;j<M;++j)
             m[i][j] = values[i*N + j];
-        return *this;
+    return *this;
 }
 
 template<int N, int M, typename T>
 Matrix<N,M,T>& Matrix<N,M,T>::operator+=(const Matrix<N,M,T>& other) {
-    for(int i=0;i<N*M;++i)
-        m[0][i] += other.m[0][i];
+    for(int i=0;i<N;++i)
+        for(int j=0;j<M;++j)
+            m[i][j] += other.m[i][j];
     return *this;
 }
 
 template<int N, int M, typename T>
 Matrix<N,M,T>& Matrix<N,M,T>::operator-=(const Matrix<N,M,T>& other) {
-    for(int i=0;i<N*M;++i)
-        m[0][i] -= other.m[0][i];
+    for(int i=0;i<N;++i)
+        for(int j=0;j<M;++j)
+            m[i][j] -= other.m[i][j];
     return *this;
 }
 
 template<int N, int M, typename T>
 Matrix<N,M,T>& Matrix<N,M,T>::operator*=(T factor) {
-    for(int i=0;i<N*M;++i)
-        m[0][i] *= factor;
+    for(int i=0;i<N;++i)
+        for(int j=0;j<M;++j)
+            m[i][j] *= factor;
     return *this;
 }
 
 template<int N, int M, typename T>
 Matrix<N,M,T>& Matrix<N,M,T>::operator/=(T divisor) {
-    for(int i=0;i<N*M;++i)
-        m[0][i] /= divisor;
+    for(int i=0;i<N;++i)
+        for(int j=0;j<M;++j)
+            m[i][j] /= divisor;
     return *this;
 }
 
 template<int N, int M, typename T>
 bool Matrix<N,M,T>::operator==(const Matrix<N,M,T>& other) const
 {
-    for(int i=0;i<N*M;++i)
-        if(m[0][i] != other.m[0][i])
-            return false;
-        return true;
+    for(int i=0;i<N;++i)
+        for(int j=0;j<M;++j)
+            if(m[i][j] != other.m[i][j])
+                return false;
+    return true;
 }
 
 template<int N, int M, typename T>
 bool Matrix<N,M,T>::operator!=(const Matrix<N,M,T>& other) const
 {
-    for(int i=0;i<N*M;++i)
-        if(m[0][i] != other.m[0][i])
+    for(int i=0;i<N;++i)
+        for(int j=0;j<M;++j)
+            if(m[i][j] != other.m[i][j])
             return true;
-        return false;
+    return false;
 }
 
 template<int N, int M, typename T>
