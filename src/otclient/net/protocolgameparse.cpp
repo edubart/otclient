@@ -533,15 +533,11 @@ void ProtocolGame::parseMagicEffect(InputMessage& msg)
     Position pos = parsePosition(msg);
     int effectId = msg.getU8();
 
-    if(effectId != 37) {
-        EffectPtr effect = EffectPtr(new Effect());
-        effect->setId(effectId);
-        effect->setPosition(pos);
+    EffectPtr effect = EffectPtr(new Effect());
+    effect->setId(effectId);
+    effect->setPosition(pos);
 
-        g_map.addThing(effect, pos);
-    }
-    else
-        g_particleManager.load("particle.otpa");
+    g_map.addThing(effect, pos);
 }
 
 void ProtocolGame::parseAnimatedText(InputMessage& msg)
@@ -564,12 +560,10 @@ void ProtocolGame::parseDistanceMissile(InputMessage& msg)
     Position toPos = parsePosition(msg);
     int shotId = msg.getU8();
 
-    if(shotId != 4) {
-        MissilePtr shot = MissilePtr(new Missile());
-        shot->setId(shotId);
-        shot->setPath(fromPos, toPos);
-        g_map.addThing(shot, fromPos);
-    }
+    MissilePtr shot = MissilePtr(new Missile());
+    shot->setId(shotId);
+    shot->setPath(fromPos, toPos);
+    g_map.addThing(shot, fromPos);
 }
 
 void ProtocolGame::parseCreatureSquare(InputMessage& msg)

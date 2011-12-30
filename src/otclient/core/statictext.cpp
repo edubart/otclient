@@ -83,25 +83,28 @@ void StaticText::compose()
     if(m_type == Otc::SpeakSay) {
         m_text += m_name;
         m_text += " says:\n";
-        m_color = Fw::yellow;
+        m_color = Color(239, 239, 0);
     }
     else if(m_type == Otc::SpeakWhisper) {
         m_text += m_name;
         m_text += " whispers:\n";
-        m_color = Fw::yellow;
+        m_color = Color(239, 239, 0);
     }
     else if(m_type == Otc::SpeakYell) {
         m_text += m_name;
         m_text += " yells:\n";
-        m_color = Fw::yellow;
+        m_color = Color(239, 239, 0);
     }
     else if(m_type == Otc::SpeakMonsterSay || m_type == Otc::SpeakMonsterYell) {
-        m_color = Fw::orange;
+        m_color = Color(254, 101, 0);
     }
     else if(m_type == Otc::SpeakPrivateNpcToPlayer) {
         m_text += m_name;
         m_text += " says:\n";
-        m_color = Fw::blue;
+        m_color = Color(95, 247, 247);
+    }
+    else {
+        logWarning("unknown message type: ", m_type);
     }
 
     // Todo: add break lines
