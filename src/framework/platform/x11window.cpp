@@ -904,6 +904,15 @@ std::string X11Window::getClipboardText()
     return clipboardText;
 }
 
+std::string X11Window::getPlatformType()
+{
+#ifndef OPENGL_ES2
+    return "X11-GLX";
+#else
+    return "X11-EGL";
+#endif
+}
+
 bool X11Window::isMaximized()
 {
     Atom wmState = XInternAtom(m_display, "_NET_WM_STATE", False);

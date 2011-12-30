@@ -53,6 +53,7 @@ void crashHandler(int signum, siginfo_t* info, void* secret)
     ss << "     ebp = " << context.uc_mcontext.gregs[REG_EBP] << std::endl;
     ss << "     esp = " << context.uc_mcontext.gregs[REG_ESP] << std::endl;
     ss << "     efl = " << context.uc_mcontext.gregs[REG_EFL] << std::endl;
+    ss << std::endl;
 #elif __WORDSIZE == 64
     ss << "  at rip = " << context.uc_mcontext.gregs[REG_RIP] << std::endl;
     ss << "     rax = " << context.uc_mcontext.gregs[REG_RAX] << std::endl;
@@ -64,8 +65,8 @@ void crashHandler(int signum, siginfo_t* info, void* secret)
     ss << "     rbp = " << context.uc_mcontext.gregs[REG_RBP] << std::endl;
     ss << "     rsp = " << context.uc_mcontext.gregs[REG_RSP] << std::endl;
     ss << "     efl = " << context.uc_mcontext.gregs[REG_EFL] << std::endl;
-#endif
     ss << std::endl;
+#endif
     ss.flags(std::ios::dec);
     ss << "  backtrace:" << std::endl;
 

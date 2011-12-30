@@ -54,6 +54,7 @@ public:
 
     virtual Size getDisplaySize() = 0;
     virtual std::string getClipboardText() = 0;
+    virtual std::string getPlatformType() = 0;
 
     int getDisplayWidth() { return getDisplaySize().width(); }
     int getDisplayHeight() { return getDisplaySize().width(); }

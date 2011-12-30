@@ -75,6 +75,7 @@ public:
 
     Size getDisplaySize();
     std::string getClipboardText();
+    std::string getPlatformType();
 
     bool isMaximized();
 

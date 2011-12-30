@@ -352,14 +352,13 @@ std::string LuaInterface::traceback(const std::string& errorMessage, int level)
     return popString();
 }
 
-std::string LuaInterface::currentSourcePath()
+std::string LuaInterface::getCurrentSourcePath(int level)
 {
     std::string path;
     if(!L)
         return path;
 
     // check all stack functions for script source path
-    int level = 0;
     while(true) {
         getStackFunction(level); // pushes stack function
 

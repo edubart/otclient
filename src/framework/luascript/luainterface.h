@@ -154,7 +154,7 @@ public:
     std::string traceback(const std::string& errorMessage = "", int level = 0);
 
     /// Searches for the source of the current running function
-    std::string currentSourcePath();
+    std::string getCurrentSourcePath(int level = 0);
 
     /// @brief Calls a function
     /// The function and arguments must be on top of the stack in order,

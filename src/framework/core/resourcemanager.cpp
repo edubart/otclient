@@ -164,7 +164,7 @@ std::string ResourceManager::resolvePath(const std::string& path)
     if(boost::starts_with(path, "/"))
         fullPath = path;
     else {
-        std::string scriptPath = "/" + g_lua.currentSourcePath();
+        std::string scriptPath = "/" + g_lua.getCurrentSourcePath();
         if(!scriptPath.empty())
             fullPath += scriptPath + "/";
         fullPath += path;

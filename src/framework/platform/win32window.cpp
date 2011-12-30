@@ -610,3 +610,8 @@ std::string WIN32Window::getClipboardText()
     return text;
 }
 
+std::string WIN32Window::getPlatformType()
+{
+    return "WIN32-WGL";
+}
+
