@@ -237,5 +237,4 @@ void Application::registerLuaFunctions()
     g_lua.bindGlobalFunction("setDefaultFont", std::bind(&FontManager::setDefaultFont, &g_fonts, _1));
     g_lua.bindGlobalFunction("loadUI", std::bind(&UIManager::loadUI, &g_ui, _1, _2));
     g_lua.bindGlobalFunction("getRootWidget", std::bind(&UIManager::getRootWidget, &g_ui));
-    g_lua.bindGlobalFunction("getCurrentSourcePath", std::bind(&LuaInterface::getCurrentSourcePath, &g_lua, _1));
 }
