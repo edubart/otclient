@@ -77,7 +77,6 @@ private:
     HDC m_deviceContext;
     HGLRC m_glContext;
     bool m_maximized;
-    Point m_lastWindowPos;
     std::string m_clipboardText;
     std::map<int, Fw::Key> m_keyMap;
 };

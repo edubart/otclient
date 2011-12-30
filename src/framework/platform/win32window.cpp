@@ -263,7 +263,6 @@ void WIN32Window::internalCreateWindow()
     DWORD dwExStyle = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
     DWORD dwStyle = WS_OVERLAPPEDWINDOW | WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
 
-    dump << m_size;
     RECT windowRect = {m_pos.x, m_pos.y, m_pos.x + m_size.width(), m_pos.y + m_size.height()};
     AdjustWindowRectEx(&windowRect, dwStyle, FALSE, dwExStyle);
 
@@ -471,15 +470,14 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
             break;
         }
         case WM_MOVE: {
-            m_lastWindowPos = m_pos;
             m_pos.x = LOWORD(lParam);
             m_pos.y = HIWORD(lParam);
+            dump << m_pos;
             break;
         }
         case WM_SIZE: {
             switch(wParam) {
                 case SIZE_MAXIMIZED:
-                    m_pos = m_lastWindowPos;
                     m_maximized = true;
                     break;
                 case SIZE_RESTORED:
@@ -488,12 +486,8 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
             }
 
             m_visible = !(wParam == SIZE_MINIMIZED);
-
-            if(!m_maximized) {
-                m_size.setWidth(LOWORD(lParam));
-                m_size.setHeight(HIWORD(lParam));
-            }
-
+            m_size.setWidth(LOWORD(lParam));
+            m_size.setHeight(HIWORD(lParam));
             m_onResize(m_size);
             break;
         }

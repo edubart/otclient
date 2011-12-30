@@ -560,8 +560,7 @@ void X11Window::poll()
                 }
 
                 // updates window pos
-                if(m_pos != newPos && !isMaximized())
-                    m_pos = newPos;
+                m_pos = newPos;
                 break;
             }
             case SelectionRequest: {
