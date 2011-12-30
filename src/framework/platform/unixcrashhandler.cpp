@@ -41,7 +41,7 @@ void crashHandler(int signum, siginfo_t* info, void* secret)
 
     std::stringstream ss;
     ss.flags(std::ios::hex | std::ios::showbase);
-#if __WORDSIZE == 32
+#ifdef REG_EIP
     ss <<
     ss << "  at eip = " << context.uc_mcontext.gregs[REG_EIP] << std::endl;
     ss << "     eax = " << context.uc_mcontext.gregs[REG_EAX] << std::endl;
@@ -54,7 +54,7 @@ void crashHandler(int signum, siginfo_t* info, void* secret)
     ss << "     esp = " << context.uc_mcontext.gregs[REG_ESP] << std::endl;
     ss << "     efl = " << context.uc_mcontext.gregs[REG_EFL] << std::endl;
     ss << std::endl;
-#elif __WORDSIZE == 64
+#elifdef REG_RIP
     ss << "  at rip = " << context.uc_mcontext.gregs[REG_RIP] << std::endl;
     ss << "     rax = " << context.uc_mcontext.gregs[REG_RAX] << std::endl;
     ss << "     rbx = " << context.uc_mcontext.gregs[REG_RBX] << std::endl;
