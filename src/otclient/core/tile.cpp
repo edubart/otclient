@@ -181,6 +181,14 @@ ItemPtr Tile::getGround()
     return nullptr;
 }
 
+int Tile::getLookStackpos()
+{
+    // TODO: this needs to be improved
+    // check if thing has look property.
+    // check other floors
+    return m_things.size() - 1;
+}
+
 bool Tile::isWalkable()
 {
     if(!getGround())
@@ -256,11 +264,6 @@ bool Tile::canCopyName()
 
 // TODO:
 /*
-
-//Ranges for ID Creatures
-#define PLAYER_ID_RANGE 0x10000000
-#define MONSTER_ID_RANGE 0x40000000
-#define NPC_ID_RANGE 0x80000000
 
   Get menu options
 

@@ -22,6 +22,8 @@
 
 #include "game.h"
 #include "localplayer.h"
+#include "map.h"
+#include "tile.h"
 #include <otclient/net/protocolgame.h>
 #include <framework/core/eventdispatcher.h>
 
@@ -151,6 +153,17 @@ void Game::turn(Otc::Direction direction)
     case Otc::West:
         m_protocolGame->sendTurnWest();
         break;
+    }
+}
+
+void Game::look(const Position& position)
+{
+    const TilePtr& tile = g_map.getTile(position);
+    if(tile) {
+        int stackpos = tile->getLookStackpos();
+        ThingPtr thing = tile->getThing(stackpos);
+        if(thing)
+            m_protocolGame->sendLookAt(position, thing->getId(), stackpos);
     }
 }
 

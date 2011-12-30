@@ -30,8 +30,9 @@ function TextMessage.create()
 end
 
 -- hooked events
-function Game.onTextMessage(type, message)
+function TextMessage.onTextMessage(type, message)
   local messageType = messageTypes[type - messageTypes.first]
+  print(messageType.color)
 
   if messageType.showOnConsole then
     -- TODO
@@ -46,9 +47,9 @@ function Game.onTextMessage(type, message)
     end
 
     label:setVisible(true)
-    label:setForegroundColor(messageType.color)
     label:setText(message)
     label:setStyle(messageType.windowLocation)
+    label:setForegroundColor(messageType.color)
 
     time = #message * 75
     removeEvent(hideEvent)
@@ -60,4 +61,5 @@ end
 
 
 connect(Game, { onLogin = TextMessage.create,
-                onLogout = TextMessage.destroy })
+                onLogout = TextMessage.destroy,
+                onTextMessage = TextMessage.onTextMessage })

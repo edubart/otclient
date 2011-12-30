@@ -21,6 +21,7 @@
  */
 
 #include "uimap.h"
+#include <otclient/core/game.h>
 #include <otclient/core/map.h>
 #include <framework/otml/otml.h>
 #include <framework/graphics/graphics.h>
@@ -95,6 +96,8 @@ bool UIMap::onMousePress(const Point& mousePos, Fw::MouseButton button)
             animatedText->setColor(12);
             animatedText->setText("8");
             g_map.addThing(animatedText, g_map.getCentralPosition());
+
+            g_game.look(tilePos);
         }
     }
 

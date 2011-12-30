@@ -1062,7 +1062,7 @@ ThingPtr ProtocolGame::internalGetThing(InputMessage& msg)
 
     uint16 thingId = msg.getU16();
     if(thingId == 0x0061 || thingId == 0x0062) { // add new creature
-        CreaturePtr creature = CreaturePtr(new Creature);
+        CreaturePtr creature;
 
         if(thingId == 0x0062) { //creature is known
             uint32 id = msg.getU32();
@@ -1070,19 +1070,29 @@ ThingPtr ProtocolGame::internalGetThing(InputMessage& msg)
             CreaturePtr knownCreature = g_map.getCreatureById(id);
             if(knownCreature)
                 creature = knownCreature;
+            else
+                logFatal("Server says creature is known, but its not on creatures list.");
         }
         else if(thingId == 0x0061) { //creature is not known
             uint32 removeId = msg.getU32();
             uint32 id = msg.getU32();
             std::string name = msg.getString();
 
-            if(name.length() > 0) // every creature name must have a capital letter
+            if(name.length() > 0) // every creature name must start with a capital letter
                 name[0] = toupper(name[0]);
 
             g_map.removeCreatureById(removeId);
 
-            if(m_localPlayer->getId() == id)
+            if(id == m_localPlayer->getId())
                 creature = m_localPlayer->asCreature();
+            else if(id >= Otc::PlayerStartId && id < Otc::PlayerEndId)
+                creature = PlayerPtr(new Player)->asCreature();
+            else if(id >= Otc::MonsterStartId && id < Otc::MonsterEndId)
+                creature = CreaturePtr(new Creature);
+            else if(id >= Otc::NpcStartId && id < Otc::NpcEndId)
+                creature = CreaturePtr(new Creature);
+            else
+                logFatal("creature id is invalid");
 
             creature->setId(id);
             creature->setName(name);

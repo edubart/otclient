@@ -168,6 +168,16 @@ void ProtocolGame::sendUseItem(const Position& position, int itemId, int stackpo
     send(oMsg);
 }
 
+void ProtocolGame::sendLookAt(const Position& position, int thingId, int stackpos)
+{
+    OutputMessage oMsg;
+    oMsg.addU8(Otc::ClientLook);
+    addPosition(oMsg, position);
+    oMsg.addU16(thingId);
+    oMsg.addU8(stackpos);
+    send(oMsg);
+}
+
 void ProtocolGame::sendTalk(int channelType, int channelId, const std::string& receiver, const std::string& message)
 {
     if(message.length() > 255 || message.length() <= 0)
