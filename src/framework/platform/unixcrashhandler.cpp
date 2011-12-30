@@ -53,7 +53,7 @@ void crashHandler(int signum, siginfo_t* info, void* secret)
     ss << "     ebp = " << context.uc_mcontext.gregs[REG_EBP] << std::endl;
     ss << "     esp = " << context.uc_mcontext.gregs[REG_ESP] << std::endl;
     ss << "     efl = " << context.uc_mcontext.gregs[REG_EFL] << std::endl;
-#else // 64-bit
+#elif __WORDSIZE == 64
     ss << "  at rip = " << context.uc_mcontext.gregs[REG_RIP] << std::endl;
     ss << "     rax = " << context.uc_mcontext.gregs[REG_RAX] << std::endl;
     ss << "     rbx = " << context.uc_mcontext.gregs[REG_RBX] << std::endl;

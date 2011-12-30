@@ -472,7 +472,6 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
         case WM_MOVE: {
             m_pos.x = LOWORD(lParam);
             m_pos.y = HIWORD(lParam);
-            dump << m_pos;
             break;
         }
         case WM_SIZE: {
