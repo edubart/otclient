@@ -83,6 +83,10 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIWidget>("isFocused", &UIWidget::isFocused);
     g_lua.bindClassMemberFunction<UIWidget>("isHovered", &UIWidget::isHovered);
     g_lua.bindClassMemberFunction<UIWidget>("isPressed", &UIWidget::isPressed);
+    g_lua.bindClassMemberFunction<UIWidget>("isFirst", &UIWidget::isFirst);
+    g_lua.bindClassMemberFunction<UIWidget>("isMiddle", &UIWidget::isMiddle);
+    g_lua.bindClassMemberFunction<UIWidget>("isLast", &UIWidget::isLast);
+    g_lua.bindClassMemberFunction<UIWidget>("isAlternate", &UIWidget::isAlternate);
     g_lua.bindClassMemberFunction<UIWidget>("isVisible", &UIWidget::isVisible);
     g_lua.bindClassMemberFunction<UIWidget>("isHidden", &UIWidget::isHidden);
     g_lua.bindClassMemberFunction<UIWidget>("isExplicitlyEnabled", &UIWidget::isExplicitlyEnabled);
@@ -142,11 +146,6 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIWidget>("getChildIndex", &UIWidget::getChildIndex);
     g_lua.bindClassMemberFunction<UIWidget>("updateParentLayout", &UIWidget::updateParentLayout);
     g_lua.bindClassMemberFunction<UIWidget>("updateLayout", &UIWidget::updateLayout);
-    g_lua.bindClassMemberFunction<UIWidget>("updateStates", &UIWidget::updateStates);
-    g_lua.bindClassMemberFunction<UIWidget>("updateState", &UIWidget::updateState);
-    g_lua.bindClassMemberFunction<UIWidget>("setState", &UIWidget::setState);
-    g_lua.bindClassMemberFunction<UIWidget>("hasState", &UIWidget::hasState);
-    g_lua.bindClassMemberFunction<UIWidget>("updateStyle", &UIWidget::updateStyle);
     g_lua.bindClassMemberFunction<UIWidget>("applyStyle", &UIWidget::applyStyle);
 
     // UILayout

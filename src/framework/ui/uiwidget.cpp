@@ -422,6 +422,7 @@ void UIWidget::addChild(const UIWidgetPtr& child)
 
     // update new child states
     child->updateStates();
+    updateChildrenIndexStates();
 }
 
 void UIWidget::insertChild(int index, const UIWidgetPtr& child)
@@ -454,6 +455,7 @@ void UIWidget::insertChild(int index, const UIWidgetPtr& child)
 
     // update new child states
     child->updateStates();
+    updateChildrenIndexStates();
 }
 
 void UIWidget::removeChild(const UIWidgetPtr& child)
@@ -481,6 +483,7 @@ void UIWidget::removeChild(const UIWidgetPtr& child)
 
         // update child states
         child->updateStates();
+        updateChildrenIndexStates();
 
         if(focusAnother && !m_focusedChild)
             focusPreviousChild(Fw::ActiveFocusReason);
@@ -549,6 +552,7 @@ void UIWidget::moveChildToTop(const UIWidgetPtr& child)
     assert(it != m_children.end());
     m_children.erase(it);
     m_children.push_back(child);
+    updateChildrenIndexStates();
 }
 
 void UIWidget::moveChildToIndex(const UIWidgetPtr& child, int index)
@@ -561,6 +565,7 @@ void UIWidget::moveChildToIndex(const UIWidgetPtr& child, int index)
     assert(it != m_children.end());
     m_children.erase(it);
     m_children.insert(m_children.begin() + index - 1, child);
+    updateChildrenIndexStates();
 }
 
 void UIWidget::lockChild(const UIWidgetPtr& child)
@@ -663,6 +668,16 @@ void UIWidget::updateLayout()
         m_layout->update();
 }
 
+void UIWidget::applyStyle(const OTMLNodePtr& styleNode)
+{
+    try {
+        onStyleApply(styleNode);
+        callLuaField("onStyleApply", styleNode);
+    } catch(Exception& e) {
+        logError("Failed to apply style to widget '", m_id, "' style: ", e.what());
+    }
+}
+
 bool UIWidget::setState(Fw::WidgetState state, bool on)
 {
     if(state == Fw::InvalidState)
@@ -694,54 +709,76 @@ void UIWidget::updateState(Fw::WidgetState state)
     bool oldStatus = hasState(state);
     bool updateChildren = false;
 
-    if(state == Fw::ActiveState) {
-        UIWidgetPtr widget = asUIWidget();
-        UIWidgetPtr parent;
-        do {
-            parent = widget->getParent();
-            if(!widget->isExplicitlyEnabled() ||
-               ((parent && parent->getFocusedChild() != widget))) {
-                newStatus = false;
-                break;
-            }
-        } while(widget = parent);
+    switch(state) {
+        case Fw::ActiveState: {
+            UIWidgetPtr widget = asUIWidget();
+            UIWidgetPtr parent;
+            do {
+                parent = widget->getParent();
+                if(!widget->isExplicitlyEnabled() ||
+                ((parent && parent->getFocusedChild() != widget))) {
+                    newStatus = false;
+                    break;
+                }
+            } while(widget = parent);
 
-        updateChildren = true;
-    }
-    else if(state == Fw::FocusState) {
-        newStatus = (getParent() && getParent()->getFocusedChild() == asUIWidget());
-    }
-    else if(state == Fw::HoverState) {
-        updateChildren = true;
-        Point mousePos = g_window.getMousePos();
-        UIWidgetPtr widget = asUIWidget();
-        UIWidgetPtr parent;
-        do {
-            parent = widget->getParent();
-            if(!widget->isExplicitlyEnabled() || !widget->isExplicitlyVisible() || !widget->containsPoint(mousePos) ||
-               (parent && widget != parent->getChildByPos(mousePos))) {
-                newStatus = false;
-                break;
-            }
-        } while(widget = parent);
-    }
-    else if(state == Fw::PressedState) {
-        newStatus = m_pressed;
-    }
-    else if(state == Fw::DisabledState) {
-        bool enabled = true;
-        updateChildren = true;
-        UIWidgetPtr widget = asUIWidget();
-        do {
-            if(!widget->isExplicitlyEnabled()) {
-                enabled = false;
-                break;
-            }
-        } while(widget = widget->getParent());
-        newStatus = !enabled;
-    }
-    else {
-        return;
+            updateChildren = true;
+            break;
+        }
+        case Fw::FocusState: {
+            newStatus = (getParent() && getParent()->getFocusedChild() == asUIWidget());
+            break;
+        }
+        case Fw::HoverState: {
+            updateChildren = true;
+            Point mousePos = g_window.getMousePos();
+            UIWidgetPtr widget = asUIWidget();
+            UIWidgetPtr parent;
+            do {
+                parent = widget->getParent();
+                if(!widget->isExplicitlyEnabled() || !widget->isExplicitlyVisible() || !widget->containsPoint(mousePos) ||
+                (parent && widget != parent->getChildByPos(mousePos))) {
+                    newStatus = false;
+                    break;
+                }
+            } while(widget = parent);
+            break;
+        }
+        case Fw::PressedState: {
+            newStatus = m_pressed;
+            break;
+        }
+        case Fw::DisabledState: {
+            bool enabled = true;
+            updateChildren = true;
+            UIWidgetPtr widget = asUIWidget();
+            do {
+                if(!widget->isExplicitlyEnabled()) {
+                    enabled = false;
+                    break;
+                }
+            } while(widget = widget->getParent());
+            newStatus = !enabled;
+            break;
+        }
+        case Fw::FirstState: {
+            newStatus = (getParent() && getParent()->getFirstChild() == asUIWidget());
+            break;
+        }
+        case Fw::MiddleState: {
+            newStatus = (getParent() && getParent()->getFirstChild() != asUIWidget() && getParent()->getLastChild() != asUIWidget());
+            break;
+        }
+        case Fw::LastState: {
+            newStatus = (getParent() && getParent()->getLastChild() == asUIWidget());
+            break;
+        }
+        case Fw::AlternateState: {
+            newStatus = (getParent() && (getParent()->getChildIndex(asUIWidget()) % 2) == 1);
+            break;
+        }
+        default:
+            return;
     }
 
     if(updateChildren) {
@@ -763,6 +800,16 @@ void UIWidget::updateStates()
 {
     for(int state = 1; state != Fw::LastState; state <<= 1)
         updateState((Fw::WidgetState)state);
+}
+
+void UIWidget::updateChildrenIndexStates()
+{
+    for(const UIWidgetPtr& child : m_children) {
+        child->updateState(Fw::FirstState);
+        child->updateState(Fw::MiddleState);
+        child->updateState(Fw::LastState);
+        child->updateState(Fw::AlternateState);
+    }
 }
 
 void UIWidget::updateStyle()
@@ -812,16 +859,6 @@ void UIWidget::updateStyle()
 
     applyStyle(newStateStyle);
     m_stateStyle = newStateStyle;
-}
-
-void UIWidget::applyStyle(const OTMLNodePtr& styleNode)
-{
-    try {
-        onStyleApply(styleNode);
-        callLuaField("onStyleApply", styleNode);
-    } catch(Exception& e) {
-        logError("Failed to apply style to widget '", m_id, "' style: ", e.what());
-    }
 }
 
 void UIWidget::onStyleApply(const OTMLNodePtr& styleNode)

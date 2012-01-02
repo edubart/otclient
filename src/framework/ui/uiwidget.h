@@ -84,49 +84,53 @@ public:
     void grabKeyboard();
     void ungrabKeyboard();
 
-    bool isActive()  { return hasState(Fw::ActiveState); }
-    bool isEnabled()  { return !hasState(Fw::DisabledState); }
-    bool isDisabled()  { return hasState(Fw::DisabledState); }
-    bool isFocused()  { return hasState(Fw::FocusState); }
-    bool isHovered()  { return hasState(Fw::HoverState); }
-    bool isPressed()  { return hasState(Fw::PressedState); }
+    bool isActive() { return hasState(Fw::ActiveState); }
+    bool isEnabled() { return !hasState(Fw::DisabledState); }
+    bool isDisabled() { return hasState(Fw::DisabledState); }
+    bool isFocused() { return hasState(Fw::FocusState); }
+    bool isHovered() { return hasState(Fw::HoverState); }
+    bool isPressed() { return hasState(Fw::PressedState); }
+    bool isFirst() { return hasState(Fw::FirstState); }
+    bool isMiddle() { return hasState(Fw::MiddleState); }
+    bool isLast() { return hasState(Fw::LastState); }
+    bool isAlternate() { return hasState(Fw::AlternateState); }
     bool isVisible();
     bool isHidden() { return !isVisible(); }
-    bool isExplicitlyEnabled()  { return m_enabled; }
-    bool isExplicitlyVisible()  { return m_visible; }
-    bool isFocusable()  { return m_focusable; }
-    bool isPhantom()  { return m_phantom; }
-    bool isSizeFixed()  { return m_fixedSize; }
+    bool isExplicitlyEnabled() { return m_enabled; }
+    bool isExplicitlyVisible() { return m_visible; }
+    bool isFocusable() { return m_focusable; }
+    bool isPhantom() { return m_phantom; }
+    bool isSizeFixed() { return m_fixedSize; }
     bool containsPoint(const Point& point) { return m_rect.contains(point); }
-    bool hasChildren()  { return m_children.size() > 0; }
+    bool hasChildren() { return m_children.size() > 0; }
     bool hasChild(const UIWidgetPtr& child);
 
-    std::string getId()  { return m_id; }
-    int getChildCount()  { return m_children.size(); }
-    UILayoutPtr getLayout()  { return m_layout; }
-    UIWidgetPtr getParent()  { return m_parent.lock(); }
+    std::string getId() { return m_id; }
+    int getChildCount() { return m_children.size(); }
+    UILayoutPtr getLayout() { return m_layout; }
+    UIWidgetPtr getParent() { return m_parent.lock(); }
     UIWidgetPtr getRootParent();
-    Point getPosition()  { return m_rect.topLeft(); }
-    Size getSize()  { return m_rect.size(); }
-    Rect getRect()  { return m_rect; }
-    int getX()  { return m_rect.x(); }
-    int getY()  { return m_rect.y(); }
-    int getWidth()  { return m_rect.width(); }
-    int getHeight()  { return m_rect.height(); }
-    ImagePtr getImage()  { return m_image; }
-    FontPtr getFont()  { return m_font; }
-    Color getForegroundColor()  { return m_foregroundColor; }
-    Color getBackgroundColor()  { return m_backgroundColor; }
-    int getOpacity()  { return m_opacity; }
-    int getMarginTop()  { return m_marginTop; }
-    int getMarginRight()  { return m_marginRight; }
-    int getMarginBottom()  { return m_marginBottom; }
-    int getMarginLeft()  { return m_marginLeft; }
-    Fw::FocusReason getLastFocusReason()  { return m_lastFocusReason; }
-    OTMLNodePtr getStyle()  { return m_style; }
+    Point getPosition() { return m_rect.topLeft(); }
+    Size getSize() { return m_rect.size(); }
+    Rect getRect() { return m_rect; }
+    int getX() { return m_rect.x(); }
+    int getY() { return m_rect.y(); }
+    int getWidth() { return m_rect.width(); }
+    int getHeight() { return m_rect.height(); }
+    ImagePtr getImage() { return m_image; }
+    FontPtr getFont() { return m_font; }
+    Color getForegroundColor() { return m_foregroundColor; }
+    Color getBackgroundColor() { return m_backgroundColor; }
+    int getOpacity() { return m_opacity; }
+    int getMarginTop() { return m_marginTop; }
+    int getMarginRight() { return m_marginRight; }
+    int getMarginBottom() { return m_marginBottom; }
+    int getMarginLeft() { return m_marginLeft; }
+    Fw::FocusReason getLastFocusReason() { return m_lastFocusReason; }
+    OTMLNodePtr getStyle() { return m_style; }
 
-    UIWidgetList getChildren()  { return m_children; }
-    UIWidgetPtr getFocusedChild()  { return m_focusedChild; }
+    UIWidgetList getChildren() { return m_children; }
+    UIWidgetPtr getFocusedChild() { return m_focusedChild; }
     UIWidgetPtr getChildAfter(const UIWidgetPtr& relativeChild);
     UIWidgetPtr getChildBefore(const UIWidgetPtr& relativeChild);
     UIWidgetPtr getChildById(const std::string& childId);
@@ -153,16 +157,20 @@ public:
 
     void updateParentLayout();
     void updateLayout();
-
-    void updateStates();
-    virtual void updateState(Fw::WidgetState state);
-    bool setState(Fw::WidgetState state, bool on);
-    bool hasState(Fw::WidgetState state);
-
-    void updateStyle();
     void applyStyle(const OTMLNodePtr& styleNode);
 
     UIWidgetPtr asUIWidget() { return std::static_pointer_cast<UIWidget>(shared_from_this()); }
+
+protected:
+    bool setState(Fw::WidgetState state, bool on);
+    bool hasState(Fw::WidgetState state);
+
+private:
+    void updateState(Fw::WidgetState state);
+    void updateStates();
+    void updateChildrenIndexStates();
+
+    void updateStyle();
 
 protected:
     /// Triggered when widget style is changed

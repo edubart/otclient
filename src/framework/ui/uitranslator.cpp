@@ -70,7 +70,7 @@ Fw::AnchorEdge Fw::translateAnchorEdge(std::string anchorEdge)
 Fw::WidgetState Fw::translateState(std::string state)
 {
     boost::to_lower(state);
-    boost::erase_all(state, " ");
+    boost::trim(state);
     if(state == "active")
         return Fw::ActiveState;
     else if(state == "focus")
@@ -85,6 +85,14 @@ Fw::WidgetState Fw::translateState(std::string state)
         return Fw::DisabledState;
     else if(state == "on")
         return Fw::OnState;
+    else if(state == "first")
+        return Fw::FirstState;
+    else if(state == "middle")
+        return Fw::MiddleState;
+    else if(state == "last")
+        return Fw::LastState;
+    else if(state == "alternate")
+        return Fw::AlternateState;
     else
         return Fw::InvalidState;
 }

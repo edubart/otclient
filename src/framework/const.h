@@ -266,11 +266,10 @@ namespace Fw
         DisabledState = 16,
         CheckedState = 32,
         OnState = 64,
-        LastState = 128
-        //FirstState,
-        //MiddleState,
-        //LastState,
-        //AlternateState
+        FirstState = 128,
+        MiddleState = 256,
+        AlternateState = 512,
+        LastState = 1024,
     };
 
     enum AppicationFlags {
