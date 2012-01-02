@@ -1,3 +1,6 @@
+InvetoryItem < Item
+  popupmenu: /game_inventory/itempopupmenu.otui
+
 UIWindow
   width: 192
   margin-top: 10
@@ -5,63 +8,62 @@ UIWindow
   margin-right: 6
   move-policy: free updated
 
-  Item
+  InvetoryItem
     id: head
     anchors.top: parent.top
     anchors.horizontalCenter: parent.horizontalCenter
-    popup menu: /inventory/itempopupmenu.otui
 
-  Item
+  InvetoryItem
     id: armor
     anchors.top: prev.bottom
     anchors.horizontalCenter: prev.horizontalCenter
     margin-top: 5
 
-  Item
+  InvetoryItem
     id: legs
     anchors.top: prev.bottom
     anchors.horizontalCenter: prev.horizontalCenter
     margin-top: 5
 
-  Item
+  InvetoryItem
     id: feet
     anchors.top: prev.bottom
     anchors.horizontalCenter: prev.horizontalCenter
     margin-top: 5
 
-  Item
+  InvetoryItem
     id: necklace
     anchors.top: parent.top
     anchors.right: head.left
     margin-top: 10
     margin-right: 5
 
-  Item
+  InvetoryItem
     id: left
     anchors.top: prev.bottom
     anchors.horizontalCenter: prev.horizontalCenter
     margin-top: 5
 
-  Item
+  InvetoryItem
     id: ring
     anchors.top: prev.bottom
     anchors.horizontalCenter: prev.horizontalCenter
     margin-top: 5
 
-  Item
+  InvetoryItem
     id: backpack
     anchors.top: parent.top
     anchors.left: head.right
     margin-top: 10
     margin-left: 5
 
-  Item
+  InvetoryItem
     id: right
     anchors.top: prev.bottom
     anchors.horizontalCenter: prev.horizontalCenter
     margin-top: 5
 
-  Item
+  InvetoryItem
     id: ammo
     anchors.top: prev.bottom
     anchors.horizontalCenter: prev.horizontalCenter

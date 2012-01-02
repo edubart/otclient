@@ -26,7 +26,7 @@
 #include "declarations.h"
 
 /// All OTML errors throw this exception
-class OTMLException : public std::exception
+class OTMLException : public Exception
 {
 public:
     OTMLException(const OTMLNodePtr& node, const std::string& error);

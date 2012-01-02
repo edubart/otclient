@@ -45,7 +45,7 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIWidget>("setPhantom", &UIWidget::setPhantom);
     g_lua.bindClassMemberFunction<UIWidget>("setStyle", &UIWidget::setStyle);
     g_lua.bindClassMemberFunction<UIWidget>("setStyleFromNode", &UIWidget::setStyleFromNode);
-    //g_lua.bindClassMemberFunction<UIWidget>("setLayout", &UIWidget::setLayout);
+    g_lua.bindClassMemberFunction<UIWidget>("setLayout", &UIWidget::setLayout);
     g_lua.bindClassMemberFunction<UIWidget>("setParent", &UIWidget::setParent);
     g_lua.bindClassMemberFunction<UIWidget>("setRect", &UIWidget::setRect);
     g_lua.bindClassMemberFunction<UIWidget>("setX", &UIWidget::setX);
@@ -89,7 +89,7 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIWidget>("hasChild", &UIWidget::hasChild);
     g_lua.bindClassMemberFunction<UIWidget>("getId", &UIWidget::getId);
     g_lua.bindClassMemberFunction<UIWidget>("getChildCount", &UIWidget::getChildCount);
-    //g_lua.bindClassMemberFunction<UIWidget>("getLayout", &UIWidget::getLayout);
+    g_lua.bindClassMemberFunction<UIWidget>("getLayout", &UIWidget::getLayout);
     g_lua.bindClassMemberFunction<UIWidget>("getParent", &UIWidget::getParent);
     g_lua.bindClassMemberFunction<UIWidget>("getRootParent", &UIWidget::getRootParent);
     g_lua.bindClassMemberFunction<UIWidget>("getPosition", &UIWidget::getPosition);
@@ -140,6 +140,26 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIWidget>("hasState", &UIWidget::hasState);
     g_lua.bindClassMemberFunction<UIWidget>("updateStyle", &UIWidget::updateStyle);
     g_lua.bindClassMemberFunction<UIWidget>("applyStyle", &UIWidget::applyStyle);
+
+    // UILayout
+    g_lua.registerClass<UILayout>();
+    g_lua.bindClassMemberFunction<UILayout>("applyStyle", &UILayout::applyStyle);
+    g_lua.bindClassMemberFunction<UILayout>("update", &UILayout::update);
+    g_lua.bindClassMemberFunction<UILayout>("addWidget", &UILayout::addWidget);
+    g_lua.bindClassMemberFunction<UILayout>("removeWidget", &UILayout::removeWidget);
+    g_lua.bindClassMemberFunction<UILayout>("getParentWidget", &UILayout::getParentWidget);
+
+    // UIVerticalLayout
+    g_lua.registerClass<UIVerticalLayout, UILayout>();
+    g_lua.bindClassStaticFunction<UILayout>("create", &UIVerticalLayout::create);
+    g_lua.bindClassMemberFunction<UIVerticalLayout>("setFitParent", &UIVerticalLayout::setFitParent);
+
+    // UIAnchorLayout
+    g_lua.registerClass<UIAnchorLayout, UILayout>();
+    g_lua.bindClassStaticFunction<UIAnchorLayout>("create", &UIAnchorLayout::create);
+    g_lua.bindClassMemberFunction<UIAnchorLayout>("removeAnchors", &UIAnchorLayout::removeAnchors);
+    g_lua.bindClassMemberFunction<UIAnchorLayout>("centerIn", &UIAnchorLayout::centerIn);
+    g_lua.bindClassMemberFunction<UIAnchorLayout>("fill", &UIAnchorLayout::fill);
 
     // UILabel
     g_lua.registerClass<UILabel, UIWidget>();

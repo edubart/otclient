@@ -445,7 +445,7 @@ int LuaInterface::protectedCall(int numArgs, int requestedResults)
             }
             pop(numArgs + 1); // pops the table of function and arguments
 
-            if(requestedResults == -1 || requestedResults == 1) {
+            if(requestedResults == 1) {
                 numRets = 1;
                 pushBoolean(done);
             }

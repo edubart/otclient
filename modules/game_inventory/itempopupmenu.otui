@@ -1,10 +1,5 @@
-Panel
-  layout: verticalBox
-  size: 64 48
-
-  MenuButton
-    text: Foo
-
-  MenuButton
-    text: Quit
-    @onClick: exit()
+PopupMenu
+  PopupMenuFirstButton
+    text: Look
+  PopupMenuLastButton
+    text: Use

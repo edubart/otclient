@@ -31,6 +31,10 @@ function UI.display(arg1, options)
         widget:lock()
       elseif option == 'visible' then
         widget:setVisible(value)
+      elseif option == 'x' then
+        widget:setX(value)
+      elseif option == 'y' then
+        widget:setY(value)
       end
     end
   end

@@ -69,7 +69,7 @@ for line in io.lines(cppclassheader) do
     elseif line:match('private:') or line:match('protected:') then
       publicmethods = false
     elseif publicmethods then
-      funcname, args = line:match('^ *[%w <>&\*:_]* ([%w_]+)%(([^%)]*%))[%w ]*[;{].*$')
+      funcname, args = line:match('^ *[%w <>&\*:_]* ([%w_]+)%(([^%)]*%))[%w ]*[;{=].*$')
       if funcname then
         if funcname ~= cppclassname and funcname ~= 'create' then
           numargs = args:matchcount('[^,)]+[,)]')

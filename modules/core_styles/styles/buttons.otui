@@ -51,17 +51,3 @@ TopButton < UIButton
   $disabled:
     background-color: #ffffff66
 
-MenuButton < UIButton
-  color: white
-  size: 40 18
-  text-align: center
-  border-image:
-    source: /core_styles/images/menu.png
-    size: 64 24
-
-  $hover:
-    border-image:
-      source: /core_styles/images/menu.png
-      offset: 0 24
-      size: 64 24
-    color: black

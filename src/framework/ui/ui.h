@@ -32,5 +32,8 @@
 #include "uiframecounter.h"
 #include "uiprogressbar.h"
 #include "uicheckbox.h"
+#include "uilayout.h"
+#include "uiverticallayout.h"
+#include "uianchorlayout.h"
 
 #endif

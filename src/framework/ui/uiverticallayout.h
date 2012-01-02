@@ -29,15 +29,21 @@ class UIVerticalLayout : public UILayout
 {
 public:
     UIVerticalLayout(UIWidgetPtr parentWidget);
+    static UIVerticalLayoutPtr create(UIWidgetPtr parentWidget) { return UIVerticalLayoutPtr(new UIVerticalLayout(parentWidget)); }
 
     virtual void applyStyle(const OTMLNodePtr& styleNode);
     virtual void update();
     virtual void addWidget(const UIWidgetPtr& widget);
     virtual void removeWidget(const UIWidgetPtr& widget);
 
+    void setAlignBottom(bool aliginBottom);
+    void setSpacing(int spacing);
+    void setFitParent(bool fitParent);
+
 private:
     bool m_alignBottom;
-    int m_padding;
+    bool m_fitParent;
+    int m_spacing;
 };
 
 #endif

@@ -142,8 +142,10 @@ void UIWidget::setFocusable(bool focusable)
 void UIWidget::setStyle(const std::string& styleName)
 {
     OTMLNodePtr styleNode = g_ui.getStyle(styleName);
-    if(!styleNode)
+    if(!styleNode) {
+        logTraceError("unable to retrive style '", styleName, "': not a defined style");
         return;
+    }
     applyStyle(styleNode);
     m_style = styleNode;
     updateStyle();
@@ -372,7 +374,7 @@ void UIWidget::addChild(const UIWidgetPtr& child)
 
     // create default layout
     if(!m_layout)
-        m_layout = UILayoutPtr(new UIAnchorLayout(asUIWidget()));
+        m_layout = UIAnchorLayout::create(asUIWidget());
 
     // add to layout and updates it
     m_layout->addWidget(child);
@@ -404,7 +406,7 @@ void UIWidget::insertChild(int index, const UIWidgetPtr& child)
 
     // create default layout if needed
     if(!m_layout)
-        m_layout = UILayoutPtr(new UIAnchorLayout(asUIWidget()));
+        m_layout = UIAnchorLayout::create(asUIWidget());
 
     // add to layout and updates it
     m_layout->addWidget(child);
@@ -869,26 +871,25 @@ void UIWidget::onStyleApply(const OTMLNodePtr& styleNode)
         }
         // layouts
         else if(node->tag() == "layout") {
-            // layout is set only once
-            assert(!m_layout);
-
             std::string layoutType;
             if(node->hasValue())
                 layoutType = node->value();
             else
-                layoutType = node->valueAt("type");
+                layoutType = node->valueAt<std::string>("type", "");
 
-            UILayoutPtr layout;
-            if(layoutType == "verticalBox")
-                layout = UILayoutPtr(new UIVerticalLayout(asUIWidget()));
-            else if(layoutType == "anchor")
-                layout = UILayoutPtr(new UIAnchorLayout(asUIWidget()));
-            else
-                throw OTMLException(node, "cannot determine layout type");
+            if(!layoutType.empty()) {
+                UILayoutPtr layout;
+                if(layoutType == "verticalBox")
+                    layout = UIVerticalLayout::create(asUIWidget());
+                else if(layoutType == "anchor")
+                    layout = UIAnchorLayout::create(asUIWidget());
+                else
+                    throw OTMLException(node, "cannot determine layout type");
+                setLayout(layout);
+            }
 
             if(node->hasChildren())
-                layout->applyStyle(node);
-            setLayout(layout);
+                m_layout->applyStyle(node);
         }
         // anchors
         else if(boost::starts_with(node->tag(), "anchors.")) {

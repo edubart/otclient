@@ -7,7 +7,7 @@ RectPanel < UIWidget
 FlatPanel < Panel
   border-image:
     source: /core_styles/images/panel_flat.png
-    border: 4
+    border: 1
 
 TopPanel < Panel
   height: 36
