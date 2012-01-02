@@ -17,11 +17,11 @@ PopupMenuButton < UIButton
   $disabled:
     color: #555555
 
-PopupMenuFirstButton < PopupMenuButton
-  margin-top: 3
+  $first:
+    margin-top: 3
 
-PopupMenuLastButton < PopupMenuButton
-  margin-bottom: 3
+  $last:
+    margin-bottom: 3
 
 PopupMenuSeparator < UIWidget
   margin-left: 2

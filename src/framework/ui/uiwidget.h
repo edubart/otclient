@@ -69,6 +69,7 @@ public:
     void setSizeFixed(bool fixed) { m_fixedSize = fixed; updateParentLayout(); }
     void setLastFocusReason(Fw::FocusReason reason) { m_lastFocusReason = reason; }
 
+    void bindRectToParent();
     void resize(const Size& size) { setRect(Rect(getPosition(), size)); }
     void moveTo(const Point& pos) { setRect(Rect(pos, getSize())); }
     void hide() { setVisible(false); }
@@ -78,6 +79,10 @@ public:
     void lock();
     void unlock();
     void focus();
+    void grabMouse();
+    void ungrabMouse();
+    void grabKeyboard();
+    void ungrabKeyboard();
 
     bool isActive()  { return hasState(Fw::ActiveState); }
     bool isEnabled()  { return !hasState(Fw::DisabledState); }
@@ -92,6 +97,7 @@ public:
     bool isFocusable()  { return m_focusable; }
     bool isPhantom()  { return m_phantom; }
     bool isSizeFixed()  { return m_fixedSize; }
+    bool containsPoint(const Point& point) { return m_rect.contains(point); }
     bool hasChildren()  { return m_children.size() > 0; }
     bool hasChild(const UIWidgetPtr& child);
 
@@ -126,6 +132,8 @@ public:
     UIWidgetPtr getChildById(const std::string& childId);
     UIWidgetPtr getChildByPos(const Point& childPos);
     UIWidgetPtr getChildByIndex(int index);
+    UIWidgetPtr getFirstChild() { return getChildByIndex(1); }
+    UIWidgetPtr getLastChild() { return getChildByIndex(-1); }
     UIWidgetPtr recursiveGetChildById(const std::string& id);
     UIWidgetPtr recursiveGetChildByPos(const Point& childPos);
     UIWidgetPtr backwardsGetWidgetById(const std::string& id);

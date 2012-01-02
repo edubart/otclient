@@ -35,6 +35,8 @@ void UIManager::init()
     m_rootWidget = UIWidget::create<UIWidget>();
     m_rootWidget->setId("root");
     m_rootWidget->resize(g_window.getSize());
+    m_mouseReceiver = m_rootWidget;
+    m_keyboardReceiver = m_rootWidget;
 }
 
 void UIManager::terminate()
@@ -58,23 +60,23 @@ void UIManager::inputEvent(const InputEvent& event)
 {
     switch(event.type) {
         case Fw::KeyPressInputEvent:
-            m_rootWidget->onKeyPress(event.keyCode, event.keyText, event.keyboardModifiers);
+            m_keyboardReceiver->onKeyPress(event.keyCode, event.keyText, event.keyboardModifiers);
             break;
         case Fw::KeyReleaseInputEvent:
-            m_rootWidget->onKeyRelease(event.keyCode, event.keyText, event.keyboardModifiers);
+            m_keyboardReceiver->onKeyRelease(event.keyCode, event.keyText, event.keyboardModifiers);
             break;
         case Fw::MousePressInputEvent:
-            m_rootWidget->onMousePress(event.mousePos, event.mouseButton);
+            m_keyboardReceiver->onMousePress(event.mousePos, event.mouseButton);
             break;
         case Fw::MouseReleaseInputEvent:
-            m_rootWidget->onMouseRelease(event.mousePos, event.mouseButton);
+            m_mouseReceiver->onMouseRelease(event.mousePos, event.mouseButton);
             break;
         case Fw::MouseMoveInputEvent:
-            m_rootWidget->updateState(Fw::HoverState);
-            m_rootWidget->onMouseMove(event.mousePos, event.mouseMoved);
+            m_mouseReceiver->updateState(Fw::HoverState);
+            m_mouseReceiver->onMouseMove(event.mousePos, event.mouseMoved);
             break;
         case Fw::MouseWheelInputEvent:
-            m_rootWidget->onMouseWheel(event.mousePos, event.wheelDirection);
+            m_mouseReceiver->onMouseWheel(event.mousePos, event.wheelDirection);
             break;
     };
 }

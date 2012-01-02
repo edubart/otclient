@@ -52,6 +52,13 @@ void UIWidget::destroy()
     setVisible(false);
     setEnabled(false);
 
+    // release input grabs
+    if(g_ui.getKeyboardReceiver() == asUIWidget())
+        g_ui.resetKeyboardReceiver();
+
+    if(g_ui.getMouseReceiver() == asUIWidget())
+        g_ui.resetMouseReceiver();
+
     // remove itself from parent
     if(UIWidgetPtr parent = getParent()) {
         if(parent->hasChild(asUIWidget()))
@@ -207,6 +214,18 @@ void UIWidget::setRect(const Rect& rect)
     m_updateEventScheduled = true;
 }
 
+void UIWidget::bindRectToParent()
+{
+    Rect boundRect = m_rect;
+    UIWidgetPtr parent = getParent();
+    if(parent) {
+        Rect parentRect = parent->getRect();
+        boundRect.bound(parentRect);
+    }
+
+    setRect(boundRect);
+}
+
 void UIWidget::lock()
 {
     if(UIWidgetPtr parent = getParent())
@@ -225,6 +244,28 @@ void UIWidget::focus()
         return;
     if(UIWidgetPtr parent = getParent())
         parent->focusChild(asUIWidget(), Fw::ActiveFocusReason);
+}
+
+void UIWidget::grabMouse()
+{
+    g_ui.setMouseReceiver(asUIWidget());
+}
+
+void UIWidget::ungrabMouse()
+{
+    if(g_ui.getMouseReceiver() == asUIWidget())
+        g_ui.resetMouseReceiver();
+}
+
+void UIWidget::grabKeyboard()
+{
+    g_ui.setKeyboardReceiver(asUIWidget());
+}
+
+void UIWidget::ungrabKeyboard()
+{
+    if(g_ui.getKeyboardReceiver() == asUIWidget())
+        g_ui.resetKeyboardReceiver();
 }
 
 bool UIWidget::isVisible()
@@ -282,7 +323,7 @@ UIWidgetPtr UIWidget::getChildByPos(const Point& childPos)
 {
     for(auto it = m_children.rbegin(); it != m_children.rend(); ++it) {
         const UIWidgetPtr& widget = (*it);
-        if(widget->isExplicitlyVisible() && widget->getRect().contains(childPos))
+        if(widget->isExplicitlyVisible() && widget->containsPoint(childPos))
             return widget;
     }
 
@@ -313,7 +354,7 @@ UIWidgetPtr UIWidget::recursiveGetChildById(const std::string& id)
 UIWidgetPtr UIWidget::recursiveGetChildByPos(const Point& childPos)
 {
     for(const UIWidgetPtr& child : m_children) {
-        if(child->getRect().contains(childPos)) {
+        if(child->containsPoint(childPos)) {
             if(UIWidgetPtr subChild = child->recursiveGetChildByPos(childPos))
                 return subChild;
             return child;
@@ -677,7 +718,7 @@ void UIWidget::updateState(Fw::WidgetState state)
         UIWidgetPtr parent;
         do {
             parent = widget->getParent();
-            if(!widget->isExplicitlyEnabled() || !widget->isExplicitlyVisible() || !widget->getRect().contains(mousePos) ||
+            if(!widget->isExplicitlyEnabled() || !widget->isExplicitlyVisible() || !widget->containsPoint(mousePos) ||
                (parent && widget != parent->getChildByPos(mousePos))) {
                 newStatus = false;
                 break;
@@ -1035,7 +1076,7 @@ bool UIWidget::onMousePress(const Point& mousePos, Fw::MouseButton button)
             continue;
 
         // mouse press events only go to children that contains the mouse position
-        if(child->getRect().contains(mousePos) && child == getChildByPos(mousePos))
+        if(child->containsPoint(mousePos) && child == getChildByPos(mousePos))
             children.push_back(child);
     }
 
@@ -1119,7 +1160,7 @@ bool UIWidget::onMouseWheel(const Point& mousePos, Fw::MouseWheelDirection direc
             continue;
 
         // mouse wheel events only go to children that contains the mouse position
-        if(child->getRect().contains(mousePos) && child == getChildByPos(mousePos))
+        if(child->containsPoint(mousePos) && child == getChildByPos(mousePos))
             children.push_back(child);
     }
 

@@ -17,9 +17,6 @@ local InventorySlotAmmo = 10
 -- public functions
 function Inventory.create()
   window = UI.display('inventory.otui', { parent = Game.gameRightPanel })
-
-  local itemWidget = window:getChildById('feet')
-  window:setHeight(itemWidget:getPosition().y + itemWidget:getHeight() - window:getPosition().y)
 end
 
 function Inventory.destroy()
@@ -64,6 +61,13 @@ end
 function Inventory.onSoulChange(soul)
   local widget = window:getChildById('soul')
   widget:setText("Soul:\n" .. soul)
+end
+
+function Inventory.onInventoryItemMousePress(itemWidget, mousePos, mouseButton)
+  local menu = UIPopupMenu.create()
+  menu:addOption('Look', function() print('look') end)
+  menu:addOption('Use', function() print('use') end)
+  menu:display(mousePos)
 end
 
 connect(Game, { onLogin = Inventory.create,

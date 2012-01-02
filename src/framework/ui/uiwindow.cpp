@@ -82,16 +82,7 @@ void UIWindow::onStyleApply(const OTMLNodePtr& styleNode)
 
 void UIWindow::onGeometryUpdate(const Rect& oldRect, const Rect& newRect)
 {
-    // bind window rect to parent rect
-    Rect boundRect = newRect;
-    UIWidgetPtr parent = getParent();
-    if(parent) {
-        Rect parentRect = parent->getRect();
-        boundRect.bound(parentRect);
-    }
-
-    if(boundRect != newRect)
-        setRect(boundRect);
+    bindRectToParent();
 }
 
 bool UIWindow::onMousePress(const Point& mousePos, Fw::MouseButton button)

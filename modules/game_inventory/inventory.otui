@@ -1,8 +1,9 @@
 InvetoryItem < Item
-  popupmenu: /game_inventory/itempopupmenu.otui
+  &onMousePress: Inventory.onInventoryItemMousePress
 
 UIWindow
   width: 192
+  height: 148
   margin-top: 10
   margin-left: 6
   margin-right: 6

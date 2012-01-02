@@ -44,15 +44,19 @@ public:
     UIWidgetPtr loadUI(const std::string& file, const UIWidgetPtr& parent = nullptr);
     UIWidgetPtr loadWidgetFromOTML(const OTMLNodePtr& widgetNode, const UIWidgetPtr& parent);
 
-    //void setMouseGrabWidget();
-    //void setKeyboardGrabWidget();
+    void setMouseReceiver(const UIWidgetPtr& widget) { m_mouseReceiver = widget; }
+    void setKeyboardReceiver(const UIWidgetPtr& widget) { m_keyboardReceiver = widget; }
+    void resetMouseReceiver() { m_mouseReceiver = m_rootWidget; }
+    void resetKeyboardReceiver() { m_keyboardReceiver = m_rootWidget; }
+    UIWidgetPtr getMouseReceiver() { return m_mouseReceiver; }
+    UIWidgetPtr getKeyboardReceiver() { return m_keyboardReceiver; }
 
     UIWidgetPtr getRootWidget() { return m_rootWidget; }
 
 private:
     UIWidgetPtr m_rootWidget;
-    //UIWidgetPtr m_mouseGrabWidget;
-    //UIWidgetPtr m_keyboardGrabWidget;
+    UIWidgetPtr m_mouseReceiver;
+    UIWidgetPtr m_keyboardReceiver;
     std::map<std::string, OTMLNodePtr> m_styles;
 };
 

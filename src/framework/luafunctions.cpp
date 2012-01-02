@@ -63,6 +63,7 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIWidget>("setMarginLeft", &UIWidget::setMarginLeft);
     g_lua.bindClassMemberFunction<UIWidget>("setSizeFixed", &UIWidget::setSizeFixed);
     g_lua.bindClassMemberFunction<UIWidget>("setLastFocusReason", &UIWidget::setLastFocusReason);
+    g_lua.bindClassMemberFunction<UIWidget>("bindRectToParent", &UIWidget::bindRectToParent);
     g_lua.bindClassMemberFunction<UIWidget>("resize", &UIWidget::resize);
     g_lua.bindClassMemberFunction<UIWidget>("moveTo", &UIWidget::moveTo);
     g_lua.bindClassMemberFunction<UIWidget>("hide", &UIWidget::hide);
@@ -72,6 +73,10 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIWidget>("lock", &UIWidget::lock);
     g_lua.bindClassMemberFunction<UIWidget>("unlock", &UIWidget::unlock);
     g_lua.bindClassMemberFunction<UIWidget>("focus", &UIWidget::focus);
+    g_lua.bindClassMemberFunction<UIWidget>("grabMouse", &UIWidget::grabMouse);
+    g_lua.bindClassMemberFunction<UIWidget>("ungrabMouse", &UIWidget::ungrabMouse);
+    g_lua.bindClassMemberFunction<UIWidget>("grabKeyboard", &UIWidget::grabKeyboard);
+    g_lua.bindClassMemberFunction<UIWidget>("ungrabKeyboard", &UIWidget::ungrabKeyboard);
     g_lua.bindClassMemberFunction<UIWidget>("isActive", &UIWidget::isActive);
     g_lua.bindClassMemberFunction<UIWidget>("isEnabled", &UIWidget::isEnabled);
     g_lua.bindClassMemberFunction<UIWidget>("isDisabled", &UIWidget::isDisabled);
@@ -85,6 +90,7 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIWidget>("isFocusable", &UIWidget::isFocusable);
     g_lua.bindClassMemberFunction<UIWidget>("isPhantom", &UIWidget::isPhantom);
     g_lua.bindClassMemberFunction<UIWidget>("isSizeFixed", &UIWidget::isSizeFixed);
+    g_lua.bindClassMemberFunction<UIWidget>("containsPoint", &UIWidget::containsPoint);
     g_lua.bindClassMemberFunction<UIWidget>("hasChildren", &UIWidget::hasChildren);
     g_lua.bindClassMemberFunction<UIWidget>("hasChild", &UIWidget::hasChild);
     g_lua.bindClassMemberFunction<UIWidget>("getId", &UIWidget::getId);
@@ -117,6 +123,8 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIWidget>("getChildById", &UIWidget::getChildById);
     g_lua.bindClassMemberFunction<UIWidget>("getChildByPos", &UIWidget::getChildByPos);
     g_lua.bindClassMemberFunction<UIWidget>("getChildByIndex", &UIWidget::getChildByIndex);
+    g_lua.bindClassMemberFunction<UIWidget>("getFirstChild", &UIWidget::getFirstChild);
+    g_lua.bindClassMemberFunction<UIWidget>("getLastChild", &UIWidget::getLastChild);
     g_lua.bindClassMemberFunction<UIWidget>("recursiveGetChildById", &UIWidget::recursiveGetChildById);
     g_lua.bindClassMemberFunction<UIWidget>("recursiveGetChildByPos", &UIWidget::recursiveGetChildByPos);
     g_lua.bindClassMemberFunction<UIWidget>("backwardsGetWidgetById", &UIWidget::backwardsGetWidgetById);
