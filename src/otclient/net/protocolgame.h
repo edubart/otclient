@@ -46,6 +46,7 @@ public:
     void sendWalkEast();
     void sendWalkSouth();
     void sendWalkWest();
+    void sendStopAutowalk();
     void sendWalkNorthEast();
     void sendWalkSouthEast();
     void sendWalkSouthWest();
@@ -54,6 +55,15 @@ public:
     void sendTurnEast();
     void sendTurnSouth();
     void sendTurnWest();
+    void sendThrow(const Position& fromPos, int thingId, int stackpos, const Position& toPos, int count);
+    void sendLookInShop(int thingId, int count);
+    void sendPlayerPurchase(int thingId, int count, int amount, bool ignoreCapacity, bool buyWithBackpack);
+    void sendPlayerSale(int thingId, int count, int amount, bool ignoreEquipped);
+    void sendCloseShop();
+    void sendRequestTrade(const Position& pos, int thingId, int stackpos, int playerId);
+    void sendLookInTrade(bool counterOffer, int index);
+    void sendAcceptTrade();
+    void sendRejectTrade();
     void sendUseItem(const Position& position, int itemId, int stackpos, int index);
     void sendLookAt(const Position& position, int thingId, int stackpos);
     void sendTalk(int channelType, int channelId, const std::string& receiver, const std::string& message);

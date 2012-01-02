@@ -73,6 +73,8 @@ void ProtocolGame::sendPing()
     send(oMsg);
 }
 
+// autowalk
+
 void ProtocolGame::sendWalkNorth()
 {
     OutputMessage oMsg;
@@ -98,6 +100,13 @@ void ProtocolGame::sendWalkWest()
 {
     OutputMessage oMsg;
     oMsg.addU8(Otc::ClientGoWest);
+    send(oMsg);
+}
+
+void ProtocolGame::sendStopAutowalk()
+{
+    OutputMessage oMsg;
+    oMsg.addU8(Otc::ClientStop);
     send(oMsg);
 }
 
@@ -157,6 +166,91 @@ void ProtocolGame::sendTurnWest()
     send(oMsg);
 }
 
+void ProtocolGame::sendThrow(const Position& fromPos, int thingId, int stackpos, const Position& toPos, int count)
+{
+    OutputMessage oMsg;
+    oMsg.addU8(Otc::ClientMoveObject);
+    addPosition(oMsg, fromPos);
+    oMsg.addU16(thingId);
+    oMsg.addU8(stackpos);
+    addPosition(oMsg, toPos);
+    oMsg.addU8(count);
+    send(oMsg);
+}
+
+void ProtocolGame::sendLookInShop(int thingId, int count)
+{
+    OutputMessage oMsg;
+    oMsg.addU8(Otc::ClientInspectNpcTrade);
+    oMsg.addU16(thingId);
+    oMsg.addU8(count);
+    send(oMsg);
+}
+
+void ProtocolGame::sendPlayerPurchase(int thingId, int count, int amount, bool ignoreCapacity, bool buyWithBackpack)
+{
+    OutputMessage oMsg;
+    oMsg.addU8(Otc::ClientBuyObject);
+    oMsg.addU16(thingId);
+    oMsg.addU8(count);
+    oMsg.addU8(amount);
+    oMsg.addU8(ignoreCapacity ? 0x01 : 0x00);
+    oMsg.addU8(buyWithBackpack ? 0x01 : 0x00);
+    send(oMsg);
+}
+
+void ProtocolGame::sendPlayerSale(int thingId, int count, int amount, bool ignoreEquipped)
+{
+    OutputMessage oMsg;
+    oMsg.addU8(Otc::ClientSellObject);
+    oMsg.addU16(thingId);
+    oMsg.addU8(count);
+    oMsg.addU8(amount);
+    oMsg.addU8(ignoreEquipped ? 0x01 : 0x00);
+    send(oMsg);
+}
+
+void ProtocolGame::sendCloseShop()
+{
+    OutputMessage oMsg;
+    oMsg.addU8(Otc::ClientCloseNpcTrade);
+    send(oMsg);
+}
+
+void ProtocolGame::sendRequestTrade(const Position& pos, int thingId, int stackpos, int playerId)
+{
+    OutputMessage oMsg;
+    oMsg.addU8(Otc::ClientTradeObject);
+    addPosition(oMsg, pos);
+    oMsg.addU16(thingId);
+    oMsg.addU8(stackpos);
+    oMsg.addU32(playerId);
+    send(oMsg);
+}
+
+void ProtocolGame::sendLookInTrade(bool counterOffer, int index)
+{
+    OutputMessage oMsg;
+    oMsg.addU8(Otc::ClientInspectTrade);
+    oMsg.addU8(counterOffer ? 0x01 : 0x00);
+    oMsg.addU8(index);
+    send(oMsg);
+}
+
+void ProtocolGame::sendAcceptTrade()
+{
+    OutputMessage oMsg;
+    oMsg.addU8(Otc::ClientAcceptTrade);
+    send(oMsg);
+}
+
+void ProtocolGame::sendRejectTrade()
+{
+    OutputMessage oMsg;
+    oMsg.addU8(Otc::ClientRejectTrade);
+    send(oMsg);
+}
+
 void ProtocolGame::sendUseItem(const Position& position, int itemId, int stackpos, int index)
 {
     OutputMessage oMsg;
@@ -167,6 +261,20 @@ void ProtocolGame::sendUseItem(const Position& position, int itemId, int stackpo
     oMsg.addU8(index);
     send(oMsg);
 }
+
+// use item ex
+
+// battle window
+
+// rotate item
+
+// close container
+
+// up arrow container
+
+// text window
+
+// house window
 
 void ProtocolGame::sendLookAt(const Position& position, int thingId, int stackpos)
 {
@@ -203,6 +311,52 @@ void ProtocolGame::sendTalk(int channelType, int channelId, const std::string& r
     oMsg.addString(message);
     send(oMsg);
 }
+
+// get channels
+
+// open channels
+
+// close channel
+
+// open priv
+
+// process report
+
+// gm closes report
+
+// cancel report
+
+// close npc
+
+// fight modes
+
+// attack
+
+// follow
+
+// invite to party
+
+// join party
+
+// revoke party invitation
+
+// pass party leadership
+
+// leave party
+
+// enable shared exp
+
+// create private channel
+
+// channel invite
+
+// channel exclude
+
+// cancel move
+
+// update tile
+
+// update container
 
 void ProtocolGame::sendGetOutfit()
 {
@@ -241,6 +395,16 @@ void ProtocolGame::sendRemoveVip(int id)
     oMsg.addU32(id);
     send(oMsg);
 }
+
+// bug report
+
+// violation window
+
+// debug assert
+
+// quest log
+
+// quest line
 
 void ProtocolGame::addPosition(OutputMessage& msg, const Position& position)
 {
