@@ -58,50 +58,44 @@ void UIMap::onStyleApply(const OTMLNodePtr& styleNode)
 
 bool UIMap::onMousePress(const Point& mousePos, Fw::MouseButton button)
 {
-    if(m_mapRect.contains(mousePos)) {
-        Point relativeStretchMousePos = mousePos - m_mapRect.topLeft();
-        Size mapSize(g_map.getVibibleSize().width() * Map::NUM_TILE_PIXELS, g_map.getVibibleSize().height() * Map::NUM_TILE_PIXELS);
+    if(!m_mapRect.contains(mousePos))
+        return UIWidget::onMousePress(mousePos, button);
 
-        PointF stretchFactor(m_mapRect.width() / (float)mapSize.width(), m_mapRect.height() / (float)mapSize.height());
-        PointF relativeMousePos = PointF(relativeStretchMousePos.x, relativeStretchMousePos.y) / stretchFactor;
+    // Get tile position
+    Point relativeStretchMousePos = mousePos - m_mapRect.topLeft();
+    Size mapSize(g_map.getVibibleSize().width() * Map::NUM_TILE_PIXELS, g_map.getVibibleSize().height() * Map::NUM_TILE_PIXELS);
 
-        PointF tilePosF = relativeMousePos / Map::NUM_TILE_PIXELS;
-        Position tilePos = Position(1 + (int)tilePosF.x - g_map.getCentralOffset().x, 1 + (int)tilePosF.y - g_map.getCentralOffset().y, 0) + g_map.getCentralPosition();
+    PointF stretchFactor(m_mapRect.width() / (float)mapSize.width(), m_mapRect.height() / (float)mapSize.height());
+    PointF relativeMousePos = PointF(relativeStretchMousePos.x, relativeStretchMousePos.y) / stretchFactor;
 
-        TilePtr tile = g_map.getTile(tilePos);
-        if(tile)
-            tile->useItem();
+    PointF tilePosF = relativeMousePos / Map::NUM_TILE_PIXELS;
+    Position tilePos = Position(1 + (int)tilePosF.x - g_map.getCentralOffset().x, 1 + (int)tilePosF.y - g_map.getCentralOffset().y, 0) + g_map.getCentralPosition();
 
-        // cool testing \/
-        if(button == Fw::MouseLeftButton) {
-            MissilePtr shot = MissilePtr(new Missile());
-            shot->setId(1);
-            shot->setPath(g_map.getCentralPosition(), tilePos);
-            g_map.addThing(shot, g_map.getCentralPosition());
+    // Get tile
+    TilePtr tile = nullptr;
 
-            AnimatedTextPtr animatedText = AnimatedTextPtr(new AnimatedText);
-            animatedText->setPosition(g_map.getCentralPosition());
-            animatedText->setColor(12);
-            animatedText->setText("text");
-
-            g_map.addThing(animatedText, g_map.getCentralPosition());
-        }
-        else if(button == Fw::MouseRightButton) {
-            EffectPtr effect = EffectPtr(new Effect());
-            effect->setId(6);
-            g_map.addThing(effect, tilePos);
-
-            AnimatedTextPtr animatedText = AnimatedTextPtr(new AnimatedText);
-            animatedText->setPosition(g_map.getCentralPosition());
-            animatedText->setColor(12);
-            animatedText->setText("8");
-            g_map.addThing(animatedText, g_map.getCentralPosition());
-
-            g_game.look(tilePos);
-        }
+    // We must check every floor, from top to bottom
+    int firstFloor = g_map.getFirstVisibleFloor();
+    tilePos.perspectiveUp(tilePos.z - firstFloor);
+    for(int i = firstFloor; i <= Map::MAX_Z; i++) {
+        tile = g_map.getTile(tilePos);
+        if(!tile->isEmpty())
+            break;
+        tilePos.coveredDown();
     }
 
-    return UIWidget::onMousePress(mousePos, button);
+    if(!tile || tile->isEmpty())
+        return true;
+
+    //tile->useItem();
+
+    if(button == Fw::MouseLeftButton) {
+    }
+    else if(button == Fw::MouseRightButton) {
+        g_game.look(tilePos);
+    }
+
+    return true;
 }
 
 void UIMap::onGeometryUpdate(const Rect& oldRect, const Rect& newRect)

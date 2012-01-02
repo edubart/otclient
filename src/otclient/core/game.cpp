@@ -158,13 +158,22 @@ void Game::turn(Otc::Direction direction)
 
 void Game::look(const Position& position)
 {
-    const TilePtr& tile = g_map.getTile(position);
-    if(tile) {
-        int stackpos = tile->getLookStackpos();
-        ThingPtr thing = tile->getThing(stackpos);
-        if(thing)
-            m_protocolGame->sendLookAt(position, thing->getId(), stackpos);
+    Position tilePos = position;
+    TilePtr tile = nullptr;
+    int stackpos = -1;
+
+    while(true) {
+        tile = g_map.getTile(tilePos);
+        stackpos = tile->getLookStackpos();
+        if(stackpos != -1 || tilePos.z >= Map::MAX_Z)
+            break;
+
+        tilePos.coveredDown();
     }
+
+    ThingPtr thing = tile->getThing(stackpos);
+    if(thing)
+        m_protocolGame->sendLookAt(tilePos, thing->getId(), stackpos);
 }
 
 void Game::talkChannel(int channelType, int channelId, const std::string& message)

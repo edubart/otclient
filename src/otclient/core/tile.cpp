@@ -183,10 +183,13 @@ ItemPtr Tile::getGround()
 
 int Tile::getLookStackpos()
 {
-    // TODO: this needs to be improved
-    // check if thing has look property.
-    // check other floors
-    return m_things.size() - 1;
+    for(int i = m_things.size() - 1; i >= 0; --i) {
+        ThingType *type = m_things[i]->getType();
+        if(!type->properties[ThingType::IgnoreLook] &&
+           (type->properties[ThingType::IsGround] || type->properties[ThingType::IsGroundBorder] || type->properties[ThingType::IsOnBottom] || type->properties[ThingType::IsOnTop]))
+            return i;
+    }
+    return -1;
 }
 
 bool Tile::isWalkable()
@@ -245,6 +248,11 @@ bool Tile::hasCreature()
         if(thing->asCreature())
             return true;
     return false;
+}
+
+bool Tile::isEmpty()
+{
+    return m_things.size() == 0;
 }
 
 /*bool Tile::canAttack()

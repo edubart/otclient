@@ -32,7 +32,6 @@ end
 -- hooked events
 function TextMessage.onTextMessage(type, message)
   local messageType = messageTypes[type - messageTypes.first]
-  print(messageType.color)
 
   if messageType.showOnConsole then
     -- TODO

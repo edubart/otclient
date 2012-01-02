@@ -52,6 +52,7 @@ public:
     bool isFullyOpaque();
     bool isLookPossible();
     bool hasCreature();
+    bool isEmpty();
 
     void useItem();
 
