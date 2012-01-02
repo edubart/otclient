@@ -35,14 +35,16 @@ void OTClient::registerLuaFunctions()
     g_lua.registerClass<ProtocolGame, Protocol>();
 
     g_lua.registerClass<Thing>();
+    g_lua.bindClassMemberFunction<Thing>("getType", &Thing::getType);
+    g_lua.bindClassMemberFunction<Thing>("isContainer", &Thing::isContainer);
 
-    g_lua.registerClass<Creature>();
+    g_lua.registerClass<Creature, Thing>();
     g_lua.bindClassMemberFunction("setOutfit", &Creature::setOutfit);
     g_lua.bindClassMemberFunction("getOutfit", &Creature::getOutfit);
 
     g_lua.registerClass<Player, Creature>();
     g_lua.registerClass<LocalPlayer, Player>();
-    g_lua.registerClass<Item>();
+    g_lua.registerClass<Item, Thing>();
     g_lua.registerClass<Tile>();
     g_lua.registerClass<Map>();
 

@@ -64,9 +64,24 @@ function Inventory.onSoulChange(soul)
 end
 
 function Inventory.onInventoryItemMousePress(itemWidget, mousePos, mouseButton)
+  if mouseButton ~= MouseRightButton then
+    return
+  end
+  
+  local item = itemWidget:getItem()
+  if not item then
+    return
+  end
+  
   local menu = UIPopupMenu.create()
   menu:addOption('Look', function() print('look') end)
-  menu:addOption('Use', function() print('use') end)
+  
+  if item:isContainer() then
+    menu:addOption('Open', function() print('open') end)
+  else
+    menu:addOption('Use', function() print('use') end)
+  end
+  
   menu:display(mousePos)
 end
 

@@ -31,7 +31,7 @@ Thing::Thing() : m_id(0)
     m_yPattern = 0;
     m_zPattern = 0;
     m_animation = 0;
-    m_type = g_thingsType.getEmptyThingType();
+    m_type = getType();
 }
 
 void Thing::internalDraw(const Point& p, int layer)
@@ -76,4 +76,9 @@ int Thing::getStackPriority()
 ThingType *Thing::getType()
 {
     return g_thingsType.getEmptyThingType();
+}
+
+bool Thing::isContainer()
+{
+    return m_type->properties[ThingType::IsContainer];
 }

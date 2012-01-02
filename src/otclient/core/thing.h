@@ -66,6 +66,8 @@ public:
     virtual AnimatedTextPtr asAnimatedText() { return nullptr; }
     virtual StaticTextPtr asStaticText() { return nullptr; }
 
+    bool isContainer();
+
 protected:
     void internalDraw(const Point& p, int layer);
 
