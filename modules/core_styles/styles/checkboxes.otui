@@ -46,7 +46,7 @@ ColorBox < UICheckBox
     image:
       source: /core_styles/images/colorbox.png
       coords: 0 0 16 16
-      
+
 ButtonBox < UICheckBox
   font: verdana-11px-antialised
   background-color: white
@@ -74,4 +74,3 @@ ButtonBox < UICheckBox
   $disabled:
     color: #f0ad4d88
     background-color: #ffffff88
-    

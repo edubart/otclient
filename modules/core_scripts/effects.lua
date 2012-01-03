@@ -6,7 +6,7 @@ function Effects.fadeIn(widget, time, elapsed)
     widget:setOpacity(math.min((255*elapsed)/time, 255))
     if elapsed < time then
         scheduleEvent(function()
-                        GFX.fadeIn(widget, time, elapsed + 30)
+                        Effects.fadeIn(widget, time, elapsed + 30)
                       end, 30)
     end
 end
@@ -17,7 +17,7 @@ function Effects.fadeOut(widget, time, elapsed)
     widget:setOpacity((255*(time - elapsed))/time)
     if elapsed < time then
         scheduleEvent(function()
-                        GFX.fadeOut(widget, time, elapsed + 30)
+                        Effects.fadeOut(widget, time, elapsed + 30)
                       end, 30)
     else
         widget:destroy()

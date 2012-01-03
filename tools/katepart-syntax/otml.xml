@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE language SYSTEM "language.dtd">
+<language name="OTML" section="Markup"
+          version="1.0"
+          mimetype="text/otml"
+          extensions="*.otml;*.otui;*.otmod;*.otfont;*.otpa"
+          author="Eduardo Bart"
+          license="MIT">
+  <highlighting>
+    <contexts>
+      <context attribute="Normal Text" lineEndContext="#stay" name="normal">
+        <RegExpr attribute="Comment" context="#stay" String="^ *//.*$" />
+        <RegExpr attribute="List Item" context="#stay" String=" *-.*$" />
+        <RegExpr attribute="State Hash Tag" context="#stay" String="^ *\$[^:]*:" />
+        <RegExpr attribute="Function Hash Tag" context="#stay" String="^ *@[^:]*:" />
+        <RegExpr attribute="Lua Value Hash Tag" context="#stay" String="^ *&amp;[^:]*:" />
+        <RegExpr attribute="Hash Tag" context="#stay" String="^ *[^:]*:" />
+        <RegExpr attribute="Tag" context="#stay" String="^ *[#]?[a-zA-Z0-9-_]*$" />
+        <RegExpr attribute="Inheritance Tag" context="#stay" String="^ *[a-zA-Z0-9-_]*\s*&lt;\s*[a-zA-Z0-9-_]*$" />
+        <RegExpr attribute="Color" context="#stay" String="#\b[0-9a-fA-F]+\b" />
+        <RegExpr attribute="Number" context="#stay" String="\b[0-9]+\b" />
+      </context>
+    </contexts>
+    <itemDatas>
+      <itemData name="Normal Text" defStyleNum="dsNormal" />
+      <itemData name="List Item" defStyleNum="dsNormal" />
+      <itemData name="Hash Tag" defStyleNum="dsFunction" />
+      <itemData name="Lua Value Hash Tag" defStyleNum="dsDataType" />
+      <itemData name="Function Hash Tag" defStyleNum="dsOthers" />
+      <itemData name="State Hash Tag" defStyleNum="dsOthers" bold="1" />
+      <itemData name="Tag" defStyleNum="dsKeyword" />
+      <itemData name="Inheritance Tag" defStyleNum="dsDataType" bold="1" />
+      <itemData name="Comment" defStyleNum="dsComment" />
+      <itemData name="Number" defStyleNum="dsDecVal" />
+      <itemData name="Color" defStyleNum="dsString" />
+    </itemDatas>
+  </highlighting>
+</language>

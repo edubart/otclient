@@ -1,0 +1,6 @@
+Syntax for OTML files for kate/kwrite/kdevelop
+Place the xml files in $HOME/.kde4/share/apps/katepart/syntax/
+
+After installing the files to go in "Configure Kate->Editor Component->Open/Save->Mode & Filetypes"
+select "Markup/OTML" and add "kate: space-indent on; indent-width 2;" in Variables field,
+do the same for "Scripts/Lua".
