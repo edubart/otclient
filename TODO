@@ -20,17 +20,13 @@ find a way to add new widgets without focusing them
 rename Game to g_game, etc
 implement Console key binding
 impl vertical sync, clipboard
-crash handler
 modify COnnection::poll()
 setOnClose
 review and reenable some warnings
 make lua/c++ logger more friendly
 bind every global lua function in a static class
 use metatable for Point,Rect,Color,Size lua classes
-lua binder generator
-restore win32 platform
 set special types for g_configs like lists/point/size
-restore ctrl+g and keybindings
 create a class for reading binary files
 handle corrupt errors in dat/spr
 

@@ -14,7 +14,6 @@ function MessageBox.create(title, text, flags)
   window:setTitle(title)
 
   local label = window:getChildById('messageBoxLabel')
-  label:setStyle('Label')
   label:setText(text)
   label:resizeToText()
 

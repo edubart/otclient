@@ -1,54 +1,44 @@
 HealthBar = {}
 
 -- private variables
-local healthManaPanel = nil
+local healthManaPanel
+local healthBar
+local manaBar
+local healthLabel
+local manaLabel
 
 -- public functions
 function HealthBar.create()
   healthManaPanel = displayUI('healthbar.otui', { parent = Game.gameRightPanel })
-
-  local healthBar = createWidget('HealthBar', healthManaPanel)
-  healthBar:setId('healthBar')
-
-  local healthLabel = createWidget('HealthLabel', healthManaPanel)
-  healthLabel:setId('healthLabel')
-  healthLabel:setText('0 / 0')
-
-  local manaBar = createWidget('ManaBar', healthManaPanel)
-  manaBar:setId('manaBar')
-
-  local manaLabel = createWidget('ManaLabel', healthManaPanel)
-  manaLabel:setId('manaLabel')
-  manaLabel:setText('0 / 0')
-
-  healthManaPanel:setHeight(healthBar:getHeight() + manaBar:getHeight() + 4)
+  healthBar = healthManaPanel:getChildById('healthBar')
+  manaBar = healthManaPanel:getChildById('manaBar')
+  healthLabel = healthManaPanel:getChildById('healthLabel')
+  manaLabel = healthManaPanel:getChildById('manaLabel')
 end
 
 function HealthBar.destroy()
   healthManaPanel:destroy()
   healthManaPanel = nil
+  healthBar = nil
+  manaBar = nil
+  healthLabel = nil
+  manaLabel = nil
 end
 
 -- hooked events
 function HealthBar.onHealthChange(health, maxHealth)
-  local label = healthManaPanel:getChildById('healthLabel')
-  label:setText(health .. ' / ' .. maxHealth)
-
-  local healthBar = healthManaPanel:getChildById('healthBar')
+  healthLabel:setText(health .. ' / ' .. maxHealth)
   healthBar:setPercent(health / maxHealth * 100)
 end
 
 function HealthBar.onManaChange(mana, maxMana)
-  local label = healthManaPanel:getChildById('manaLabel')
-  label:setText(mana .. ' / ' .. maxMana)
-
-  local manaBar = healthManaPanel:getChildById('manaBar')
+  manaLabel:setText(mana .. ' / ' .. maxMana)
 
   local percent
   if maxMana == 0 then
     percent = 100
   else
-    percent = mana / maxMana * 100
+    percent = (mana * 100)/maxMana
   end
   manaBar:setPercent(percent)
 end

@@ -1,4 +1,5 @@
 HealthBar < UIProgressBar
+  id: healthBar
   color: black
   height: 15
   background-color: red
@@ -7,6 +8,7 @@ HealthBar < UIProgressBar
   anchors.right: parent.right
 
 ManaBar < UIProgressBar
+  id: manaBar
   color: black
   height: 15
   background-color: blue
@@ -15,28 +17,33 @@ ManaBar < UIProgressBar
   anchors.right: parent.right
 
 HealthLabel < GameLabel
+  id: healthLabel
   color: white
   text-align: center
   font: verdana-11px-rounded
-  anchors.left: parent.left
-  anchors.right: parent.right
-  anchors.top: parent.top
+  anchors.fill: healthBar
   margin-top: 2
+  text: 0 / 0
 
 ManaLabel < GameLabel
+  id: manaLabel
   color: white
   text-align: center
   font: verdana-11px-rounded
-  anchors.left: parent.left
-  anchors.right: parent.right
-  anchors.bottom: parent.bottom
-  margin-bottom: -1
+  anchors.fill: manaBar
+  margin-top: 2
+  text: 0 / 0
 
 UIWindow
   id: healthManaPanel
   width: 192
+  height: 34
   margin-top: 10
   margin-left: 6
   margin-right: 6
   move-policy: free updated
 
+  HealthBar
+  HealthLabel
+  ManaBar
+  ManaLabel
