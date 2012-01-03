@@ -357,6 +357,17 @@ namespace Otc
         NpcStartId = 0x80000000,
         NpcEndId = 0xffffffff
     };
+
+    enum FightModes {
+        FightOffensive = 1,
+        FightBalanced = 2,
+        FightDefensive = 3
+    };
+
+    enum ChaseModes {
+        StandWhileFighting = 0,
+        ChaseOpponent = 1
+    };
 }
 
 #endif

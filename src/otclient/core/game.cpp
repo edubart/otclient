@@ -176,7 +176,7 @@ void Game::lookAtMap(const Position& position)
         m_protocolGame->sendLookAt(tilePos, thing->getId(), stackpos);
 }
 
-void Game::lookAtInventory(int thingId, int slot)
+void Game::lookAtInventory(int thingId, Otc::InventorySlots slot)
 {
     Position pos = Position(0xffff, slot, 0);
     m_protocolGame->sendLookAt(pos, thingId, 0);
