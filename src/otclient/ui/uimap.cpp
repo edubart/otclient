@@ -92,7 +92,7 @@ bool UIMap::onMousePress(const Point& mousePos, Fw::MouseButton button)
     if(button == Fw::MouseLeftButton) {
     }
     else if(button == Fw::MouseRightButton) {
-        g_game.look(tilePos);
+        //g_game.lookAtMap(tilePos);
     }
 
     return true;

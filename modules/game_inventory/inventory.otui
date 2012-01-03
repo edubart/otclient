@@ -10,72 +10,82 @@ UIWindow
   move-policy: free updated
 
   InvetoryItem
-    id: head
+    // head
+    id: slot1
     anchors.top: parent.top
     anchors.horizontalCenter: parent.horizontalCenter
 
   InvetoryItem
-    id: armor
+    // armor
+    id: slot4
     anchors.top: prev.bottom
     anchors.horizontalCenter: prev.horizontalCenter
     margin-top: 5
 
   InvetoryItem
-    id: legs
+    // legs
+    id: slot7
     anchors.top: prev.bottom
     anchors.horizontalCenter: prev.horizontalCenter
     margin-top: 5
 
   InvetoryItem
-    id: feet
+    // feet
+    id: slot8
     anchors.top: prev.bottom
     anchors.horizontalCenter: prev.horizontalCenter
     margin-top: 5
 
   InvetoryItem
-    id: necklace
+    // necklace
+    id: slot2
     anchors.top: parent.top
-    anchors.right: head.left
+    anchors.right: slot1.left
     margin-top: 10
     margin-right: 5
 
   InvetoryItem
-    id: left
+    // left
+    id: slot6
     anchors.top: prev.bottom
     anchors.horizontalCenter: prev.horizontalCenter
     margin-top: 5
 
   InvetoryItem
-    id: ring
+    // ring
+    id: slot9
     anchors.top: prev.bottom
     anchors.horizontalCenter: prev.horizontalCenter
     margin-top: 5
 
   InvetoryItem
-    id: backpack
+    // backpack
+    id: slot3
     anchors.top: parent.top
-    anchors.left: head.right
+    anchors.left: slot1.right
     margin-top: 10
     margin-left: 5
 
   InvetoryItem
-    id: right
+    // right
+    id: slot5
     anchors.top: prev.bottom
     anchors.horizontalCenter: prev.horizontalCenter
     margin-top: 5
 
   InvetoryItem
-    id: ammo
+    // ammo
+    id: slot10
     anchors.top: prev.bottom
     anchors.horizontalCenter: prev.horizontalCenter
     margin-top: 5
 
   Label
     id: soul
-    anchors.top: ring.bottom
-    anchors.bottom: feet.bottom
-    anchors.left: ring.left
-    anchors.right: ring.right
+    anchors.top: slot9.bottom
+    anchors.bottom: slot8.bottom
+    anchors.left: slot9.left
+    anchors.right: slot9.right
     margin-top: 5
 
     text-align: center
@@ -86,10 +96,10 @@ UIWindow
 
   Label
     id: capacity
-    anchors.top: ammo.bottom
-    anchors.bottom: feet.bottom
-    anchors.left: ammo.left
-    anchors.right: ammo.right
+    anchors.top: slot10.bottom
+    anchors.bottom: slot8.bottom
+    anchors.left: slot10.left
+    anchors.right: slot10.right
     margin-top: 5
 
     text-align: center

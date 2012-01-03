@@ -3,17 +3,6 @@ Inventory = {}
 -- private variables
 local window = nil
 
-local InventorySlotHead = 1
-local InventorySlotNecklace = 2
-local InventorySlotBackpack = 3
-local InventorySlotArmor = 4
-local InventorySlotRight = 5
-local InventorySlotLeft = 6
-local InventorySlotLegs = 7
-local InventorySlotFeet = 8
-local InventorySlotRing = 9
-local InventorySlotAmmo = 10
-
 -- public functions
 function Inventory.create()
   window = UI.display('inventory.otui', { parent = Game.gameRightPanel })
@@ -26,30 +15,7 @@ end
 
 -- hooked events
 function Inventory.onInventoryChange(slot, item)
-  local slotId
-  if slot == InventorySlotHead then
-    slotId = 'head'
-  elseif slot == InventorySlotNecklace then
-    slotId = 'necklace'
-  elseif slot == InventorySlotBackpack then
-    slotId = 'backpack'
-  elseif slot == InventorySlotArmor then
-    slotId = 'armor'
-  elseif slot == InventorySlotRight then
-    slotId = 'right'
-  elseif slot == InventorySlotLeft then
-    slotId = 'left'
-  elseif slot == InventorySlotLegs then
-    slotId = 'legs'
-  elseif slot == InventorySlotFeet then
-    slotId = 'feet'
-  elseif slot == InventorySlotRing then
-    slotId = 'ring'
-  elseif slot == InventorySlotAmmo then
-    slotId = 'ammo'
-  end
-
-  local itemWidget = window:getChildById(slotId)
+  local itemWidget = window:getChildById('slot' .. slot)
   itemWidget:setItem(item)
 end
 
@@ -64,18 +30,19 @@ function Inventory.onSoulChange(soul)
 end
 
 function Inventory.onInventoryItemMousePress(itemWidget, mousePos, mouseButton)
-  if mouseButton ~= MouseRightButton then
-    return
-  end
+  if mouseButton ~= MouseRightButton then return end
   
   local item = itemWidget:getItem()
-  if not item then
-    return
-  end
+  if not item then return end
   
   local menu = UIPopupMenu.create()
-  menu:addOption('Look', function() print('look') end)
   
+  -- Look
+  local itemId = item:getId()
+  local slotId = tonumber(itemWidget:getId():sub(5))
+  menu:addOption('Look', function() Game.lookAtInventory(itemId, slotId) end)
+  
+  -- Open or Use, depending if thing is a container
   if item:isContainer() then
     menu:addOption('Open', function() print('open') end)
   else

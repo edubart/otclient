@@ -43,10 +43,10 @@ public:
 
     virtual void draw(const Point& p) = 0;
 
-    void setId(uint32 id);
+    void setId(int id);
     virtual void setPosition(const Position& position) { m_position = position; }
 
-    uint32 getId() const { return m_id; }
+    int getId() const { return m_id; }
     Position getPosition() const { return m_position; }
     int getStackPriority();
     virtual ThingType *getType();

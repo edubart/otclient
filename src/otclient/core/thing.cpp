@@ -52,7 +52,7 @@ void Thing::internalDraw(const Point& p, int layer)
     }
 }
 
-void Thing::setId(uint32 id)
+void Thing::setId(int id)
 {
     m_id = id;
     m_type = getType();

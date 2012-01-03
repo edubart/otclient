@@ -342,7 +342,7 @@ void Map::addCreature(const CreaturePtr& creature)
 
 CreaturePtr Map::getCreatureById(uint32 id)
 {
-    if(g_game.getLocalPlayer() && g_game.getLocalPlayer()->getId() == id)
+    if(g_game.getLocalPlayer() && (uint32)g_game.getLocalPlayer()->getId() == id)
         return g_game.getLocalPlayer();
     return m_creatures[id];
 }

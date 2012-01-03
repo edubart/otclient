@@ -156,7 +156,7 @@ void Game::turn(Otc::Direction direction)
     }
 }
 
-void Game::look(const Position& position)
+void Game::lookAtMap(const Position& position)
 {
     Position tilePos = position;
     TilePtr tile = nullptr;
@@ -174,6 +174,12 @@ void Game::look(const Position& position)
     ThingPtr thing = tile->getThing(stackpos);
     if(thing)
         m_protocolGame->sendLookAt(tilePos, thing->getId(), stackpos);
+}
+
+void Game::lookAtInventory(int thingId, int slot)
+{
+    Position pos = Position(0xffff, slot, 0);
+    m_protocolGame->sendLookAt(pos, thingId, 0);
 }
 
 void Game::talkChannel(int channelType, int channelId, const std::string& message)

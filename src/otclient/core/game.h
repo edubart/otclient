@@ -48,7 +48,8 @@ public:
 
     void walk(Otc::Direction direction);
     void turn(Otc::Direction direction);
-    void look(const Position& position);
+    void lookAtMap(const Position& position);
+    void lookAtInventory(int thingId, int slot);
     void talkChannel(int channelType, int channelId, const std::string& message);
     void talkPrivate(int channelType, const std::string& receiver, const std::string& message);
     void openOutfitWindow();

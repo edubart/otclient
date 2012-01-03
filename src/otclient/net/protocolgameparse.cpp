@@ -1083,7 +1083,7 @@ ThingPtr ProtocolGame::internalGetThing(InputMessage& msg)
 
             g_map.removeCreatureById(removeId);
 
-            if(id == m_localPlayer->getId())
+            if(id == (uint32)m_localPlayer->getId())
                 creature = m_localPlayer->asCreature();
             else if(id >= Otc::PlayerStartId && id < Otc::PlayerEndId)
                 creature = PlayerPtr(new Player)->asCreature();
