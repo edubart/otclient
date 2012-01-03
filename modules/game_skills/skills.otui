@@ -5,7 +5,7 @@ SkillButton < UIButton
   margin-top: 3
   margin-left: 10
   margin-right: 10
-  
+
   @onClick: |
     function(self)
       local percentBar = self:getChildById('percent')
@@ -20,13 +20,13 @@ SkillButton < UIButton
       end
     end
 
-SkillNameLabel < Label
+SkillNameLabel < GameLabel
   font: verdana-11px-monochrome
   anchors.left: parent.left
   anchors.top: parent.top
   anchors.bottom: parent.bottom
 
-SkillValueLabel < Label
+SkillValueLabel < GameLabel
   id: value
   font: verdana-11px-monochrome
   text-align: topright
@@ -49,8 +49,8 @@ SkillPercentPanel < UIProgressBar
 MiniWindow
   id: skillWindow
   title: Skills
-  size: 200 220
-  
+  size: 200 400
+
   Panel
     id: skillPanel
     anchors.fill: parent
@@ -59,14 +59,14 @@ MiniWindow
     margin-left: 3
     margin-right: 3
     layout: verticalBox
-  
+
     SkillButton
       id: experience
       height: 15
       SkillNameLabel
         text: Experience
       SkillValueLabel
-        
+
     SkillButton
       id: level
       SkillNameLabel
@@ -74,42 +74,42 @@ MiniWindow
       SkillValueLabel
       SkillPercentPanel
         background-color: red
-        
+
     SkillButton
       id: health
       height: 15
       SkillNameLabel
         text: Hit Points
       SkillValueLabel
-      
+
     SkillButton
       id: mana
       height: 15
       SkillNameLabel
         text: Mana
       SkillValueLabel
-      
+
     SkillButton
       id: soul
       height: 15
       SkillNameLabel
         text: Soul Points
       SkillValueLabel
-      
+
     SkillButton
       id: capacity
       height: 15
       SkillNameLabel
         text: Capacity
       SkillValueLabel
-      
+
     SkillButton
       id: stamina
       SkillNameLabel
         text: Stamina
       SkillValueLabel
       SkillPercentPanel
-      
+
     SkillButton
       id: magiclevel
       SkillNameLabel
@@ -124,17 +124,17 @@ MiniWindow
         text: Fist Fighting
       SkillValueLabel
       SkillPercentPanel
-        
+
     SkillButton
       id: skillId1
       SkillNameLabel
         text: Club Fighting
       SkillValueLabel
       SkillPercentPanel
-        
+
     SkillButton
       id: skillId2
-      
+
       SkillNameLabel
         text: Sword Fighting
       SkillValueLabel

@@ -118,15 +118,6 @@ local function update()
 end
 
 -- public functions
-function Outfit.test()
-  local button = createWidget('Button', rootWidget)
-  button:setText('Set Outfit')
-  button:moveTo({x = 0, y = 100})
-  button:setWidth('100')
-  button:setHeight('30')
-  button.onClick = function() Game.openOutfitWindow() end
-end
-
 function Outfit.create(creature, outfitList)
   Outfit.destroy()
   window = displayUI('outfit.otui', { parent = rootWidget })
@@ -207,8 +198,5 @@ function Outfit.previousType()
 end
 
 -- hooked events
-
 connect(Game, { onOpenOutfitWindow = Outfit.create,
                 onLogout = Outfit.destroy })
-
-connect(Game, { onLogin = Outfit.test })

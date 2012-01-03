@@ -14,7 +14,7 @@ ManaBar < UIProgressBar
   anchors.left: parent.left
   anchors.right: parent.right
 
-HealthLabel < Label
+HealthLabel < GameLabel
   color: white
   text-align: center
   font: verdana-11px-rounded
@@ -23,7 +23,7 @@ HealthLabel < Label
   anchors.top: parent.top
   margin-top: 2
 
-ManaLabel < Label
+ManaLabel < GameLabel
   color: white
   text-align: center
   font: verdana-11px-rounded

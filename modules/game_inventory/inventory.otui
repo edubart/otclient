@@ -80,7 +80,7 @@ UIWindow
     anchors.horizontalCenter: prev.horizontalCenter
     margin-top: 5
 
-  Label
+  GameLabel
     id: soul
     anchors.top: slot9.bottom
     anchors.bottom: slot8.bottom
@@ -94,7 +94,7 @@ UIWindow
       source: /core_styles/images/panel_flat.png
       border: 1
 
-  Label
+  GameLabel
     id: capacity
     anchors.top: slot10.bottom
     anchors.bottom: slot8.bottom

@@ -7,6 +7,9 @@ Label < UILabel
 
 LargerLabel < Label
 
+GameLabel < UILabel
+  font: verdana-11px-antialised
+  color: #aaaaaa
 
 FrameCounter < UIFrameCounter
   size: 68 16

@@ -1,4 +1,4 @@
-CenterLabel < Label
+CenterLabel < GameLabel
   font: verdana-11px-rounded
   height: 64
   text-align: center
@@ -6,7 +6,7 @@ CenterLabel < Label
   anchors.left: parent.left
   anchors.right: parent.right
 
-BottomLabel < Label
+BottomLabel < GameLabel
   font: verdana-11px-rounded
   height: 16
   text-align: center
