@@ -185,6 +185,20 @@ void Game::look(const ThingPtr& thing)
         m_protocolGame->sendLookAt(thing->getPosition(), thing->getId(), 0);
 }
 
+void Game::use(const ThingPtr& thing)
+{
+    // thing is at map
+    if(thing->getPosition().x != 65535) {
+        TilePtr tile = g_map.getTile(thing->getPosition());
+        int stackpos = tile->getThingStackpos(thing);
+        if(stackpos != -1)
+            m_protocolGame->sendUseItem(thing->getPosition(), thing->getId(), stackpos, 0);
+    }
+    // thing is at inventory
+    else
+        m_protocolGame->sendUseItem(thing->getPosition(), thing->getId(), 0, 0); // last 0 has something to do with container
+}
+
 void Game::talkChannel(int channelType, int channelId, const std::string& message)
 {
     if(!m_online)

@@ -67,6 +67,10 @@ public:
     virtual StaticTextPtr asStaticText() { return nullptr; }
 
     bool isContainer();
+    bool isMultiUse();
+    bool isRotateable();
+    bool isNotMoveable();
+    bool isPickupable();
 
 protected:
     void internalDraw(const Point& p, int layer);

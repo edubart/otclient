@@ -82,3 +82,23 @@ bool Thing::isContainer()
 {
     return m_type->properties[ThingType::IsContainer];
 }
+
+bool Thing::isMultiUse()
+{
+    return m_type->properties[ThingType::IsMultiUse];
+}
+
+bool Thing::isRotateable()
+{
+    return m_type->properties[ThingType::IsRotateable];
+}
+
+bool Thing::isNotMoveable()
+{
+    return m_type->properties[ThingType::IsNotMovable];
+}
+
+bool Thing::isPickupable()
+{
+    return m_type->properties[ThingType::IsPickupable];
+}

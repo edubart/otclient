@@ -133,6 +133,14 @@ ThingPtr Tile::getThing(int stackPos)
     return nullptr;
 }
 
+int Tile::getThingStackpos(const ThingPtr& thing)
+{
+    for(uint stackpos = 0; stackpos < m_things.size(); ++stackpos)
+        if(thing == m_things[stackpos])
+            return stackpos;
+    return -1;
+}
+
 ThingPtr Tile::getTopThing()
 {
     if(isEmpty())
@@ -261,84 +269,4 @@ bool Tile::hasCreature()
 bool Tile::isEmpty()
 {
     return m_things.size() == 0;
-}
-
-/*bool Tile::canAttack()
-{
-    return hasCreature();
-}
-
-bool Tile::canFollow()
-{
-    return hasCreature();
-}
-
-bool Tile::canCopyName()
-{
-    return hasCreature();
-}*/
-
-// TODO:
-/*
-
-  Get menu options
-
-
-  if creature:
-    Look
-    -----
-    Attack
-    Follow
-    -----
-    Copy Name
-
-  if item:
-    Look
-    Use (if not container)
-    Open (if container)
-    Use with ... (if multiuse?)
-    Rotate (if rotable)
-    -----
-    Trade with ... (if pickupable?)
-
-  if player:
-    Look
-    -----
-    Attack
-    Follow
-    -----
-    Message to NAME
-    Add to VIP list
-    Ignore NAME
-    Invite to Party
-    -----
-    Report Offense
-    -----
-    Copy Name
-
-  if localplayer:
-    Look
-    -----
-    Set Outfit
-    -----
-    Copy Name
-*/
-
-void Tile::useItem()
-{
-    // Get top item of stack priority 2 (do a function to do this later)
-    ThingPtr thing;
-    int lastStackpos = -1;
-    for(int stackPos = 0; stackPos < (int)m_things.size(); ++stackPos) {
-        int otherPriority = m_things[stackPos]->getStackPriority();
-        if(otherPriority == 2) {
-            thing = m_things[stackPos];
-            lastStackpos = stackPos;
-        }
-    }
-
-    if(lastStackpos != -1) {
-        // use this
-        g_game.getProtocolGame()->sendUseItem(m_position, thing->getId(), lastStackpos, 0); // 0 has something to do with container
-    }
 }

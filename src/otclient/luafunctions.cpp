@@ -38,9 +38,16 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Thing>("getId", &Thing::getId);
     g_lua.bindClassMemberFunction<Thing>("getType", &Thing::getType);
     g_lua.bindClassMemberFunction<Thing>("isContainer", &Thing::isContainer);
+    g_lua.bindClassMemberFunction<Thing>("isMultiUse", &Thing::isMultiUse);
+    g_lua.bindClassMemberFunction<Thing>("isRotateable", &Thing::isRotateable);
+    g_lua.bindClassMemberFunction<Thing>("isNotMoveable", &Thing::isNotMoveable);
+    g_lua.bindClassMemberFunction<Thing>("isPickupable", &Thing::isPickupable);
+    g_lua.bindClassMemberFunction<Thing>("asCreature", &Thing::asCreature);
+    g_lua.bindClassMemberFunction<Thing>("asPlayer", &Thing::asPlayer);
     g_lua.bindClassMemberFunction<Thing>("asLocalPlayer", &Thing::asLocalPlayer);
 
     g_lua.registerClass<Creature, Thing>();
+    g_lua.bindClassMemberFunction("getName", &Creature::getName);
     g_lua.bindClassMemberFunction("setOutfit", &Creature::setOutfit);
     g_lua.bindClassMemberFunction("getOutfit", &Creature::getOutfit);
 
@@ -58,6 +65,7 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassStaticFunction<Game>("openOutfitWindow", std::bind(&Game::openOutfitWindow, &g_game));
     g_lua.bindClassStaticFunction<Game>("setOutfit", std::bind(&Game::setOutfit, &g_game, _1));
     g_lua.bindClassStaticFunction<Game>("look", std::bind(&Game::look, &g_game, _1));
+    g_lua.bindClassStaticFunction<Game>("use", std::bind(&Game::use, &g_game, _1));
 
     g_lua.registerClass<UIItem, UIWidget>();
     g_lua.bindClassStaticFunction<UIItem>("create", &UIItem::create<UIItem>);
