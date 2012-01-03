@@ -5,28 +5,20 @@ local healthManaPanel = nil
 
 -- public functions
 function HealthBar.create()
-  healthManaPanel = UI.display('healthbar.otui', { parent = Game.gameRightPanel })
+  healthManaPanel = displayUI('healthbar.otui', { parent = Game.gameRightPanel })
 
-  local healthBar = UIProgressBar.create()
-  healthManaPanel:addChild(healthBar)
+  local healthBar = createWidget('HealthBar', healthManaPanel)
   healthBar:setId('healthBar')
-  healthBar:setStyle('HealthBar')
 
-  local healthLabel = UILabel.create()
-  healthManaPanel:addChild(healthLabel)
+  local healthLabel = createWidget('HealthLabel', healthManaPanel)
   healthLabel:setId('healthLabel')
-  healthLabel:setStyle('HealthLabel')
   healthLabel:setText('0 / 0')
 
-  local manaBar = UIProgressBar.create()
-  healthManaPanel:addChild(manaBar)
+  local manaBar = createWidget('ManaBar', healthManaPanel)
   manaBar:setId('manaBar')
-  manaBar:setStyle('ManaBar')
 
-  local manaLabel = UILabel.create()
-  healthManaPanel:addChild(manaLabel)
+  local manaLabel = createWidget('ManaLabel', healthManaPanel)
   manaLabel:setId('manaLabel')
-  manaLabel:setStyle('ManaLabel')
   manaLabel:setText('0 / 0')
 
   healthManaPanel:setHeight(healthBar:getHeight() + manaBar:getHeight() + 4)

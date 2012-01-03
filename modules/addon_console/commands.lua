@@ -1,5 +1,5 @@
 function dumpWidgets()
-  for i=1,UI.root:getChildCount() do
-    print(UI.root:getChildByIndex(i):getId())
+  for i=1,rootWidget:getChildCount() do
+    print(rootWidget:getChildByIndex(i):getId())
   end
 end

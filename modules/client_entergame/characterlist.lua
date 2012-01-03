@@ -56,7 +56,7 @@ function CharacterList.create(characters, premDays)
     charactersWindow:destroy()
   end
 
-  charactersWindow = UI.display('characterlist.otui')
+  charactersWindow = displayUI('characterlist.otui')
   characterList = charactersWindow:getChildById('characterList')
   local accountStatusLabel = charactersWindow:getChildById('accountStatusLabel')
   charactersWindow.onKeyPress = onCharactersWindowKeyPress
@@ -68,10 +68,8 @@ function CharacterList.create(characters, premDays)
     local worldHost = characterInfo[3]
     local worldIp = characterInfo[4]
 
-    local label = UILabel.create()
-    characterList:addChild(label)
+    local label = createWidget('CharacterListLabel', characterList)
     label:setText(characterName .. '  (' .. worldName .. ')')
-    label:setStyle('CharacterListLabel')
     label.characterName = characterName
     label.worldHost = worldHost
     label.worldPort = worldIp

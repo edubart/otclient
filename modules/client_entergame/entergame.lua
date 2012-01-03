@@ -51,7 +51,7 @@ end
 
 -- public functions
 function EnterGame.create()
-  enterGame = UI.display('entergame.otui')
+  enterGame = displayUI('entergame.otui')
 
   local account = g_configs.get('account')
   local password = g_configs.get('password')

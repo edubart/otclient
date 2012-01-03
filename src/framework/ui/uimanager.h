@@ -37,9 +37,10 @@ public:
     void resize(const Size& size);
     void inputEvent(const InputEvent& event);
 
-    bool importStyles(const std::string& file);
+    bool importStyle(const std::string& file);
     void importStyleFromOTML(const OTMLNodePtr& styleNode);
     OTMLNodePtr getStyle(const std::string& styleName);
+    std::string getStyleClass(const std::string& styleName);
 
     UIWidgetPtr loadUI(const std::string& file, const UIWidgetPtr& parent = nullptr);
     UIWidgetPtr loadWidgetFromOTML(const OTMLNodePtr& widgetNode, const UIWidgetPtr& parent);

@@ -241,7 +241,13 @@ void Application::registerLuaFunctions()
     g_lua.bindClassStaticFunction<Logger>("fireOldMessages", std::bind(&Logger::fireOldMessages, &g_logger));
     g_lua.bindClassStaticFunction<Logger>("setOnLog", std::bind(&Logger::setOnLog, &g_logger, _1));
 
-    // Font
+    // UI
+    g_lua.registerStaticClass("g_ui");
+    g_lua.bindClassStaticFunction("g_ui", "importStyle", std::bind(&UIManager::importStyle, &g_ui, _1));
+    g_lua.bindClassStaticFunction("g_ui", "getStyle", std::bind(&UIManager::getStyle, &g_ui, _1));
+    g_lua.bindClassStaticFunction("g_ui", "getStyleClass", std::bind(&UIManager::getStyleClass, &g_ui, _1));
+    g_lua.bindClassStaticFunction("g_ui", "loadUI", std::bind(&UIManager::loadUI, &g_ui, _1, _2));
+    g_lua.bindClassStaticFunction("g_ui", "getRootWidget", std::bind(&UIManager::getRootWidget, &g_ui));
 
     /*
     // FontManager
@@ -260,8 +266,5 @@ void Application::registerLuaFunctions()
 
     // global functions
     g_lua.bindGlobalFunction("importFont", std::bind(&FontManager::importFont, &g_fonts, _1));
-    g_lua.bindGlobalFunction("importStyles", std::bind(&UIManager::importStyles, &g_ui, _1));
     g_lua.bindGlobalFunction("setDefaultFont", std::bind(&FontManager::setDefaultFont, &g_fonts, _1));
-    g_lua.bindGlobalFunction("loadUI", std::bind(&UIManager::loadUI, &g_ui, _1, _2));
-    g_lua.bindGlobalFunction("getRootWidget", std::bind(&UIManager::getRootWidget, &g_ui));
 }

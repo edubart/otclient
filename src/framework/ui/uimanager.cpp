@@ -81,7 +81,7 @@ void UIManager::inputEvent(const InputEvent& event)
     };
 }
 
-bool UIManager::importStyles(const std::string& file)
+bool UIManager::importStyle(const std::string& file)
 {
     try {
         OTMLDocumentPtr doc = OTMLDocument::parse(file);
@@ -135,11 +135,19 @@ OTMLNodePtr UIManager::getStyle(const std::string& styleName)
     // styles starting with UI are automatically defined
     if(boost::starts_with(styleName, "UI")) {
         OTMLNodePtr node = OTMLNode::create();
-        node->writeAt("__widgetType", styleName);
+        node->writeAt("__class", styleName);
         return node;
     }
 
     return nullptr;
+}
+
+std::string UIManager::getStyleClass(const std::string& styleName)
+{
+    OTMLNodePtr style = getStyle(styleName);
+    if(style && style->get("__class"))
+        return style->valueAt("__class");
+    return "";
 }
 
 UIWidgetPtr UIManager::loadUI(const std::string& file, const UIWidgetPtr& parent)
@@ -176,7 +184,7 @@ UIWidgetPtr UIManager::loadWidgetFromOTML(const OTMLNodePtr& widgetNode, const U
     OTMLNodePtr styleNode = originalStyleNode->clone();
     styleNode->merge(widgetNode);
 
-    std::string widgetType = styleNode->valueAt("__widgetType");
+    std::string widgetType = styleNode->valueAt("__class");
 
     // call widget creation from lua
     UIWidgetPtr widget = g_lua.callGlobalField<UIWidgetPtr>(widgetType, "create");

@@ -7,12 +7,11 @@ function UIPopupMenu.create()
   local layout = UIVerticalLayout.create(menu)
   layout:setFitParent(true)
   menu:setLayout(layout)
-  menu:setStyle('PopupMenu')
   return menu
 end
 
 function UIPopupMenu.display(menu, pos)
-  UI.display(menu, {x = pos.x, y = pos.y})
+  displayUI(menu, {x = pos.x, y = pos.y})
   menu:bindRectToParent()
   menu:grabMouse()
   menu:grabKeyboard()
@@ -20,21 +19,17 @@ function UIPopupMenu.display(menu, pos)
 end
 
 function UIPopupMenu.addOption(menu, optionName, optionCallback)
-  local optionWidget = UIButton.create()
+  local optionWidget = createWidget(menu.buttonStyle, menu)
   local lastOptionWidget = menu:getLastChild()
   optionWidget.onClick = function()
     optionCallback()
     menu:destroy()
   end
   optionWidget:setText(optionName)
-  optionWidget:setStyle('PopupMenuButton')
-  menu:addChild(optionWidget)
 end
 
 function UIPopupMenu.addSeparator(menu)
-  local separatorWidget = UIWidget.create()
-  separatorWidget:setStyle('PopupMenuSeparator')
-  menu:addChild(separator)
+  local separatorWidget = createWidget(menu.separatorStyle, separator)
 end
 
 -- hooked events
@@ -53,4 +48,13 @@ function UIPopupMenu.onKeyPress(menu, keyCode, keyText, keyboardModifiers)
     return true
   end
   return false
+end
+
+function UIPopupMenu.onStyleApply(menu, style)
+  if style['button-style'] then
+    menu.buttonStyle = style['button-style']
+  end
+  if style['separator-style'] then
+    menu.separatorStyle = style['separator-style']
+  end
 end

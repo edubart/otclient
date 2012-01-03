@@ -5,7 +5,7 @@ local window = nil
 
 -- public functions
 function Inventory.create()
-  window = UI.display('inventory.otui', { parent = Game.gameRightPanel })
+  window = displayUI('inventory.otui', { parent = Game.gameRightPanel })
 end
 
 function Inventory.destroy()
@@ -31,24 +31,23 @@ end
 
 function Inventory.onInventoryItemMousePress(itemWidget, mousePos, mouseButton)
   if mouseButton ~= MouseRightButton then return end
-  
+
   local item = itemWidget:getItem()
   if not item then return end
-  
-  local menu = UIPopupMenu.create()
-  
+
+  local menu = createWidget('PopupMenu')
+
   -- Look
   local itemId = item:getId()
   local slotId = tonumber(itemWidget:getId():sub(5))
   menu:addOption('Look', function() Game.lookAtInventory(itemId, slotId) end)
-  
+
   -- Open or Use, depending if thing is a container
   if item:isContainer() then
     menu:addOption('Open', function() print('open') end)
   else
     menu:addOption('Use', function() print('use') end)
   end
-  
   menu:display(mousePos)
 end
 

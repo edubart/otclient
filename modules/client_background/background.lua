@@ -5,7 +5,7 @@ local background
 
 -- public functions
 function Background.create()
-  background = UI.display('background.otui')
+  background = displayUI('background.otui')
 end
 
 function Background.destroy()

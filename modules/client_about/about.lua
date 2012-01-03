@@ -5,7 +5,7 @@ local aboutWindow
 
 -- public functions
 function About.create()
-  aboutWindow = UI.display('about.otui', { locked = true })
+  aboutWindow = displayUI('about.otui', { locked = true })
 end
 
 function About.destroy()

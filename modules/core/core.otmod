@@ -10,8 +10,8 @@ Module
 
   // NOTE: order does matter
   dependencies:
+    - core_scripts
     - core_fonts
     - core_styles
-    - core_scripts
     - core_widgets
 

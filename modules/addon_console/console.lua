@@ -120,7 +120,7 @@ end
 
 -- public functions
 function Console.init()
-  consoleWidget = UI.display('console.otui', { visible = false })
+  consoleWidget = displayUI('console.otui', { visible = false })
   connect(consoleWidget, { onKeyPress = onKeyPress })
 
   commandLineEdit = consoleWidget:getChildById('commandLineEdit')
@@ -139,10 +139,8 @@ end
 function Console.addLine(text, color)
   -- create new line label
   local numLines = consoleBuffer:getChildCount() + 1
-  local label = UILabel.create()
-  consoleBuffer:addChild(label)
+  local label = createWidget('ConsoleLabel', consoleBuffer)
   label:setId('consoleLabel' .. numLines)
-  label:setStyle('ConsoleLabel')
   label:setText(text)
   label:setForegroundColor(color)
 

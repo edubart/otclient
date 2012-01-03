@@ -40,7 +40,7 @@ local function onColorCheckChange(color)
     elseif m_currentClothe:getId() == 'detail' then
       m_outfit.feet = m_currentColor.colorId
     end
-      
+
     m_creature:setOutfit(m_outfit)
   end
 end
@@ -56,7 +56,7 @@ local function onClotheCheckChange(clothe)
     m_currentClothe.onCheckChange = onClotheCheckChange
 
     m_currentClothe = clothe
-    
+
     local color = 0
     if m_currentClothe:getId() == 'head' then
       color = m_outfit.head
@@ -119,10 +119,8 @@ end
 
 -- public functions
 function Outfit.test()
-  local button = UIButton.create()
-  UI.root:addChild(button)
+  local button = createWidget('Button', rootWidget)
   button:setText('Set Outfit')
-  button:setStyle('Button')
   button:moveTo({x = 0, y = 100})
   button:setWidth('100')
   button:setHeight('30')
@@ -131,11 +129,11 @@ end
 
 function Outfit.create(creature, outfitList)
   Outfit.destroy()
-  window = UI.display('outfit.otui', { parent = UI.root })
+  window = displayUI('outfit.otui', { parent = rootWidget })
   window:lock()
 
   m_outfit = creature:getOutfit()
-  
+
   m_currentClothe = window:getChildById('head')
   window:getChildById('head').onCheckChange = onClotheCheckChange
   window:getChildById('primary').onCheckChange = onClotheCheckChange
@@ -147,13 +145,10 @@ function Outfit.create(creature, outfitList)
 
   for i=0,18 do
     for j=0,6 do
-      local color = UICheckBox.create()
-      window:addChild(color)
-
+      local color = createWidget('Color', window)
       local outfitColor = getOufitColor(j*19 + i)
       color:setId('color' .. j*19+i)
       color.colorId = j*19 + i
-      color:setStyle('Color')
       color:setBackgroundColor(outfitColor)
       color:setMarginTop(j * 3 + j * 14)
       color:setMarginLeft(10 + i * 3 + i * 14)

@@ -226,7 +226,7 @@ bool luavalue_cast(int index, Size& size)
 }
 
 // otml nodes
-void push_luavalue(const OTMLNodePtr& node)
+void push_otml_subnode_luavalue(const OTMLNodePtr& node)
 {
     if(node->hasValue()) {
         g_lua.pushString(node->value());
@@ -249,6 +249,20 @@ void push_luavalue(const OTMLNodePtr& node)
         }
     } else
         g_lua.pushNil();
+}
+
+void push_luavalue(const OTMLNodePtr& node)
+{
+    g_lua.newTable();
+    for(const OTMLNodePtr& cnode : node->children()) {
+        if(cnode->isUnique()) {
+            push_otml_subnode_luavalue(cnode);
+            if(!g_lua.isNil()) {
+                g_lua.setField(cnode->tag());
+            } else
+                g_lua.pop();
+        }
+    }
 }
 
 bool luavalue_cast(int index, OTMLNodePtr& node)

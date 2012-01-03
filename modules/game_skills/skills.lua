@@ -41,7 +41,7 @@ end
 
 -- public functions
 function Skills.create()
-  skillWindow = UI.display('skills.otui', { parent = Game.gameRightPanel })
+  skillWindow = displayUI('skills.otui', { parent = Game.gameRightPanel })
 end
 
 function Skills.destroy()

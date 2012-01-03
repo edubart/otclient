@@ -12,15 +12,14 @@ local function onCreatureSpeak(name, level, msgtype, message)
       style = 'YellowChatLabel'
   end
 
-  local label = UILabel.create()
-  label:setStyle(style)
+  local label = createWidget(style)
   label:setText(message)
   chatBuffer:addChild(label)
 end
 
 -- public functions
 function Chat.create()
-  chatPanel = UI.display('chat.otui', { parent = Game.gameBottomPanel } )
+  chatPanel = displayUI('chat.otui', { parent = Game.gameBottomPanel } )
   chatBuffer = chatPanel:getChildById('chatBuffer')
 end
 

@@ -5,16 +5,16 @@ Module
   website: https://github.com/edubart/otclient
 
   onLoad: |
-    importStyles 'styles/buttons.otui'
-    importStyles 'styles/labels.otui'
-    importStyles 'styles/panels.otui'
-    importStyles 'styles/separators.otui'
-    importStyles 'styles/lineedits.otui'
-    importStyles 'styles/checkboxes.otui'
-    importStyles 'styles/windows.otui'
-    importStyles 'styles/listboxes.otui'
-    importStyles 'styles/items.otui'
-    importStyles 'styles/creatures.otui'
-    importStyles 'styles/comboboxes.otui'
-    importStyles 'styles/popupmenus.otui'
+    importStyle 'styles/buttons.otui'
+    importStyle 'styles/labels.otui'
+    importStyle 'styles/panels.otui'
+    importStyle 'styles/separators.otui'
+    importStyle 'styles/lineedits.otui'
+    importStyle 'styles/checkboxes.otui'
+    importStyle 'styles/windows.otui'
+    importStyle 'styles/listboxes.otui'
+    importStyle 'styles/items.otui'
+    importStyle 'styles/creatures.otui'
+    importStyle 'styles/comboboxes.otui'
+    importStyle 'styles/popupmenus.otui'
     return true

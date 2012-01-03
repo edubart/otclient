@@ -36,14 +36,14 @@ end
 
 function Options.enableFps(on)
   fpsEnabled = on
-  local frameCounter = UI.root:recursiveGetChildById('frameCounter')
+  local frameCounter = rootWidget:recursiveGetChildById('frameCounter')
   frameCounter:setVisible(on)
   setConfig('showfps', on)
 end
 
 -- public functions
 function Options.create()
-  options = UI.display('options.otui', { locked = true })
+  options = displayUI('options.otui', { locked = true })
 
   local fpsBox = options:getChildById('fpsCheckBox')
   local vsyncBox = options:getChildById('vsyncCheckBox')

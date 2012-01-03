@@ -1,37 +1,34 @@
 TextMessage = {}
 
 -- require styles
-importStyles 'textmessage.otui'
+importStyle 'textmessage.otui'
 
 -- private variables
 local bottomLabelWidget, centerLabelWidget
 local messageTypes = {
   first = 12,
-  { type = 'MessageOrange', color = '#C87832', showOnConsole = true, showOnWindow = false },
-  { type = 'MessageOrange', color = '#C87832', showOnConsole = true, showOnWindow = false },
-  { type = 'MessageRed', color = '#C83200', showOnConsole = true, showOnWindow = true, windowLocation = 'CenterLabel' },
-  { type = 'MessageWhite', color = '#FFFFFF', showOnConsole = true, showOnWindow = true, windowLocation = 'CenterLabel' },
-  { type = 'MessageWhite', color = '#FFFFFF', showOnConsole = true, showOnWindow = true, windowLocation = 'BottomLabel' },
-  { type = 'MessageWhite', color = '#FFFFFF', showOnConsole = true, showOnWindow = true, windowLocation = 'BottomLabel' },
-  { type = 'MessageGreen', color = '#3FBE32', showOnConsole = true, showOnWindow = true, windowLocation = 'CenterLabel' },
-  { type = 'MessageWhite', color = '#FFFFFF', showOnConsole = false, showOnWindow = true, windowLocation = 'BottomLabel' },
-  { type = 'MessageBlue', color = '#3264C8', showOnConsole = true, showOnWindow = false },
-  { type = 'MessageRed', color = '#C83200', showOnConsole = true, showOnWindow = false }
+  { msgtype = 'MessageOrange', color = '#C87832', showOnConsole = true, showOnWindow = false },
+  { msgtype = 'MessageOrange', color = '#C87832', showOnConsole = true, showOnWindow = false },
+  { msgtype = 'MessageRed', color = '#C83200', showOnConsole = true, showOnWindow = true, windowLocation = 'CenterLabel' },
+  { msgtype = 'MessageWhite', color = '#FFFFFF', showOnConsole = true, showOnWindow = true, windowLocation = 'CenterLabel' },
+  { msgtype = 'MessageWhite', color = '#FFFFFF', showOnConsole = true, showOnWindow = true, windowLocation = 'BottomLabel' },
+  { msgtype = 'MessageWhite', color = '#FFFFFF', showOnConsole = true, showOnWindow = true, windowLocation = 'BottomLabel' },
+  { msgtype = 'MessageGreen', color = '#3FBE32', showOnConsole = true, showOnWindow = true, windowLocation = 'CenterLabel' },
+  { msgtype = 'MessageWhite', color = '#FFFFFF', showOnConsole = false, showOnWindow = true, windowLocation = 'BottomLabel' },
+  { msgtype = 'MessageBlue', color = '#3264C8', showOnConsole = true, showOnWindow = false },
+  { msgtype = 'MessageRed', color = '#C83200', showOnConsole = true, showOnWindow = false }
 }
 local hideEvent
 
 -- public functions
 function TextMessage.create()
-  bottomLabelWidget = UILabel.create()
-  Game.gameMapPanel:addChild(bottomLabelWidget)
-
-  centerLabelWidget = UILabel.create()
-  Game.gameMapPanel:addChild(centerLabelWidget)
+  bottomLabelWidget = createWidget('UILabel', Game.gameMapPanel)
+  centerLabelWidget = createWidget('UILabel', Game.gameMapPanel)
 end
 
 -- hooked events
-function TextMessage.onTextMessage(type, message)
-  local messageType = messageTypes[type - messageTypes.first]
+function TextMessage.onTextMessage(msgtype, message)
+  local messageType = messageTypes[msgtype - messageTypes.first]
 
   if messageType.showOnConsole then
     -- TODO

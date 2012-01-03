@@ -5,7 +5,7 @@ local vipWindow = nil
 
 -- public functions
 function VipList.create()
-  vipWindow = UI.display('viplist.otui', { parent = Game.gameRightPanel })
+  vipWindow = displayUI('viplist.otui', { parent = Game.gameRightPanel })
 end
 
 function VipList.destroy()
@@ -17,11 +17,9 @@ end
 function Game.onAddVip(id, name, online)
   local vipList = vipWindow:getChildById('vipList')
 
-  local label = UILabel.create()
-  vipList:addChild(label)
+  local label = createWidget('VipListLabel', vipList)
   label:setId('vip' .. id)
   label:setText(name)
-  label:setStyle('VipListLabel')
 
   if online then
     label:setForegroundColor('#00ff00')
