@@ -97,6 +97,9 @@ void Game::processTextMessage(int type, const std::string& message)
 
 void Game::processInventoryChange(int slot, const ItemPtr& item)
 {
+    if(item)
+        item->setPosition(Position(65535, slot, 0));
+
     g_lua.callGlobalField("Game","onInventoryChange", slot, item);
 }
 
@@ -156,30 +159,30 @@ void Game::turn(Otc::Direction direction)
     }
 }
 
-void Game::lookAtMap(const Position& position)
+void Game::look(const ThingPtr& thing)
 {
-    Position tilePos = position;
-    TilePtr tile = nullptr;
-    int stackpos = -1;
+    // thing is at map
+    if(thing->getPosition().x != 65535) {
+        Position tilePos = thing->getPosition();
+        TilePtr tile = nullptr;
+        int stackpos = -1;
 
-    while(true) {
-        tile = g_map.getTile(tilePos);
-        stackpos = tile->getLookStackpos();
-        if(stackpos != -1 || tilePos.z >= Map::MAX_Z)
-            break;
+        while(true) {
+            tile = g_map.getTile(tilePos);
+            stackpos = tile->getLookStackpos();
+            if(stackpos != -1 || tilePos.z >= Map::MAX_Z)
+                break;
 
-        tilePos.coveredDown();
+            tilePos.coveredDown();
+        }
+
+        ThingPtr lookThing = tile->getThing(stackpos);
+        if(lookThing)
+            m_protocolGame->sendLookAt(tilePos, lookThing->getId(), stackpos);
     }
-
-    ThingPtr thing = tile->getThing(stackpos);
-    if(thing)
-        m_protocolGame->sendLookAt(tilePos, thing->getId(), stackpos);
-}
-
-void Game::lookAtInventory(int thingId, Otc::InventorySlots slot)
-{
-    Position pos = Position(0xffff, slot, 0);
-    m_protocolGame->sendLookAt(pos, thingId, 0);
+    // thing is at inventory
+    else
+        m_protocolGame->sendLookAt(thing->getPosition(), thing->getId(), 0);
 }
 
 void Game::talkChannel(int channelType, int channelId, const std::string& message)

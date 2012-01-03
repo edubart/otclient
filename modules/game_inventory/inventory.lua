@@ -35,20 +35,7 @@ function Inventory.onInventoryItemMousePress(itemWidget, mousePos, mouseButton)
   local item = itemWidget:getItem()
   if not item then return end
 
-  local menu = createWidget('PopupMenu')
-
-  -- Look
-  local itemId = item:getId()
-  local slotId = tonumber(itemWidget:getId():sub(5))
-  menu:addOption('Look', function() Game.lookAtInventory(itemId, slotId) end)
-
-  -- Open or Use, depending if thing is a container
-  if item:isContainer() then
-    menu:addOption('Open', function() print('open') end)
-  else
-    menu:addOption('Use', function() print('use') end)
-  end
-  menu:display(mousePos)
+  item:createMenu(mousePos)
 end
 
 connect(Game, { onLogin = Inventory.create,

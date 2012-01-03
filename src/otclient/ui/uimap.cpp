@@ -90,9 +90,11 @@ bool UIMap::onMousePress(const Point& mousePos, Fw::MouseButton button)
     //tile->useItem();
 
     if(button == Fw::MouseLeftButton) {
+        g_game.look(tile->getThing(0));
     }
     else if(button == Fw::MouseRightButton) {
-        //g_game.lookAtMap(tilePos);
+
+        g_lua.callGlobalField("Thing","createMenu", tile->getTopThing(), mousePos);
     }
 
     return true;

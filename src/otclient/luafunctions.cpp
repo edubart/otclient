@@ -38,6 +38,7 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Thing>("getId", &Thing::getId);
     g_lua.bindClassMemberFunction<Thing>("getType", &Thing::getType);
     g_lua.bindClassMemberFunction<Thing>("isContainer", &Thing::isContainer);
+    g_lua.bindClassMemberFunction<Thing>("asLocalPlayer", &Thing::asLocalPlayer);
 
     g_lua.registerClass<Creature, Thing>();
     g_lua.bindClassMemberFunction("setOutfit", &Creature::setOutfit);
@@ -56,7 +57,7 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassStaticFunction<Game>("isOnline", std::bind(&Game::isOnline, &g_game));
     g_lua.bindClassStaticFunction<Game>("openOutfitWindow", std::bind(&Game::openOutfitWindow, &g_game));
     g_lua.bindClassStaticFunction<Game>("setOutfit", std::bind(&Game::setOutfit, &g_game, _1));
-    g_lua.bindClassStaticFunction<Game>("lookAtInventory", std::bind(&Game::lookAtInventory, &g_game, _1, _2));
+    g_lua.bindClassStaticFunction<Game>("look", std::bind(&Game::look, &g_game, _1));
 
     g_lua.registerClass<UIItem, UIWidget>();
     g_lua.bindClassStaticFunction<UIItem>("create", &UIItem::create<UIItem>);

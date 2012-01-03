@@ -133,6 +133,14 @@ ThingPtr Tile::getThing(int stackPos)
     return nullptr;
 }
 
+ThingPtr Tile::getTopThing()
+{
+    if(isEmpty())
+        return nullptr;
+
+    return m_things[m_things.size() - 1];
+}
+
 ThingPtr Tile::removeThing(int stackPos)
 {
     ThingPtr oldObject;
