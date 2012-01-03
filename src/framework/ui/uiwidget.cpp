@@ -155,6 +155,7 @@ void UIWidget::setStyle(const std::string& styleName)
     }
     applyStyle(styleNode);
     m_style = styleNode;
+    assert(getStyleName() != "");
     updateStyle();
 }
 

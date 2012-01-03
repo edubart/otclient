@@ -26,6 +26,7 @@
 #include "declarations.h"
 #include <framework/luascript/luaobject.h>
 #include <framework/graphics/declarations.h>
+#include <framework/otml/otmlnode.h>
 
 class UIWidget : public LuaObject
 {
@@ -128,6 +129,7 @@ public:
     int getMarginLeft() { return m_marginLeft; }
     Fw::FocusReason getLastFocusReason() { return m_lastFocusReason; }
     OTMLNodePtr getStyle() { return m_style; }
+    std::string getStyleName() { return m_style->tag(); }
 
     UIWidgetList getChildren() { return m_children; }
     UIWidgetPtr getFocusedChild() { return m_focusedChild; }

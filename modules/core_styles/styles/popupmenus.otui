@@ -35,8 +35,6 @@ PopupMenuSeparator < UIWidget
 
 PopupMenu < UIPopupMenu
   width: 100
-  button-style: PopupMenuButton
-  separator-style: PopupMenuSeparator
   border-image:
     source: /core_styles/images/menubox.png
     border: 3

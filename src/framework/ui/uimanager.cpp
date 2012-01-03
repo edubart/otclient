@@ -34,7 +34,6 @@ void UIManager::init()
     // creates root widget
     m_rootWidget = UIWidget::create<UIWidget>();
     m_rootWidget->setId("root");
-    m_rootWidget->resize(g_window.getSize());
     m_mouseReceiver = m_rootWidget;
     m_keyboardReceiver = m_rootWidget;
 }
@@ -134,8 +133,9 @@ OTMLNodePtr UIManager::getStyle(const std::string& styleName)
 
     // styles starting with UI are automatically defined
     if(boost::starts_with(styleName, "UI")) {
-        OTMLNodePtr node = OTMLNode::create();
+        OTMLNodePtr node = OTMLNode::create(styleName);
         node->writeAt("__class", styleName);
+        m_styles[styleName] = node;
         return node;
     }
 

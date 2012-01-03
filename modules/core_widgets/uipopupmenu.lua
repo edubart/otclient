@@ -19,7 +19,7 @@ function UIPopupMenu.display(menu, pos)
 end
 
 function UIPopupMenu.addOption(menu, optionName, optionCallback)
-  local optionWidget = createWidget(menu.buttonStyle, menu)
+  local optionWidget = createWidget(menu:getStyleName() .. 'Button', menu)
   local lastOptionWidget = menu:getLastChild()
   optionWidget.onClick = function()
     optionCallback()
@@ -29,7 +29,7 @@ function UIPopupMenu.addOption(menu, optionName, optionCallback)
 end
 
 function UIPopupMenu.addSeparator(menu)
-  local separatorWidget = createWidget(menu.separatorStyle, separator)
+  local separatorWidget = createWidget(menu:getStyleName() .. 'Separator', separator)
 end
 
 -- hooked events
@@ -48,13 +48,4 @@ function UIPopupMenu.onKeyPress(menu, keyCode, keyText, keyboardModifiers)
     return true
   end
   return false
-end
-
-function UIPopupMenu.onStyleApply(menu, style)
-  if style['button-style'] then
-    menu.buttonStyle = style['button-style']
-  end
-  if style['separator-style'] then
-    menu.separatorStyle = style['separator-style']
-  end
 end
