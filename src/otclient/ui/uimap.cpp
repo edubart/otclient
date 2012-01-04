@@ -79,7 +79,7 @@ bool UIMap::onMousePress(const Point& mousePos, Fw::MouseButton button)
     tilePos.perspectiveUp(tilePos.z - firstFloor);
     for(int i = firstFloor; i <= Map::MAX_Z; i++) {
         tile = g_map.getTile(tilePos);
-        if(!tile || !tile->isEmpty())
+        if(tile && !tile->isEmpty() && tile->getGround())
             break;
         tilePos.coveredDown();
     }

@@ -199,28 +199,16 @@ ItemPtr Tile::getGround()
 
 ThingPtr Tile::getTopLookThing()
 {
-    ThingPtr retThing;
-    // check if there is any lookable object in this tile
+    if(isEmpty())
+        return nullptr;
+
     for(int i = m_things.size() - 1; i >= 0; --i) {
         ThingPtr thing = m_things[i];
         if(!thing->ignoreLook() && (!thing->isGround() && !thing->isGroundBorder() && !thing->isOnBottom() && !thing->isOnTop()))
             return thing;
-        else if(!thing->ignoreLook())
-            retThing = thing;
     }
 
-    // return this, it it is lookable.
-    if(retThing)
-        return retThing;
-
-    // if not, check on under tile
-    Position tilePos = m_position;
-    tilePos.coveredDown();
-    TilePtr tile = g_map.getTile(tilePos);
-    if(tile)
-        return tile->getTopLookThing();
-
-    return nullptr;
+    return m_things[0];
 }
 
 ThingPtr Tile::getTopUseThing()
