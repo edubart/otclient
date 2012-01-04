@@ -85,6 +85,7 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIWidget>("ungrabMouse", &UIWidget::ungrabMouse);
     g_lua.bindClassMemberFunction<UIWidget>("grabKeyboard", &UIWidget::grabKeyboard);
     g_lua.bindClassMemberFunction<UIWidget>("ungrabKeyboard", &UIWidget::ungrabKeyboard);
+    g_lua.bindClassMemberFunction<UIWidget>("clearText", &UIWidget::clearText);
     g_lua.bindClassMemberFunction<UIWidget>("isActive", &UIWidget::isActive);
     g_lua.bindClassMemberFunction<UIWidget>("isEnabled", &UIWidget::isEnabled);
     g_lua.bindClassMemberFunction<UIWidget>("isDisabled", &UIWidget::isDisabled);

@@ -9,6 +9,12 @@ function UIPopupMenu.create()
 end
 
 function UIPopupMenu:display(pos)
+  -- don't display if not options was added
+  if self:getChildCount() == 0 then
+    self:destroy()
+    return
+  end
+
   displayUI(self, {x = pos.x, y = pos.y})
   self:bindRectToParent()
   self:grabMouse()
