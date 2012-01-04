@@ -66,11 +66,17 @@ public:
     virtual AnimatedTextPtr asAnimatedText() { return nullptr; }
     virtual StaticTextPtr asStaticText() { return nullptr; }
 
+    bool isGround();
+    bool isGroundBorder();
+    bool isOnBottom();
+    bool isOnTop();
     bool isContainer();
+    bool isForceUse();
     bool isMultiUse();
     bool isRotateable();
     bool isNotMoveable();
     bool isPickupable();
+    bool ignoreLook();
 
 protected:
     void internalDraw(const Point& p, int layer);

@@ -79,7 +79,7 @@ bool UIMap::onMousePress(const Point& mousePos, Fw::MouseButton button)
     tilePos.perspectiveUp(tilePos.z - firstFloor);
     for(int i = firstFloor; i <= Map::MAX_Z; i++) {
         tile = g_map.getTile(tilePos);
-        if(!tile->isEmpty())
+        if(!tile || !tile->isEmpty())
             break;
         tilePos.coveredDown();
     }
@@ -87,14 +87,12 @@ bool UIMap::onMousePress(const Point& mousePos, Fw::MouseButton button)
     if(!tile || tile->isEmpty())
         return true;
 
-    //tile->useItem();
-
     if(button == Fw::MouseLeftButton) {
-        g_game.look(tile->getThing(0));
+        g_game.look(tile->getTopLookThing());
     }
     else if(button == Fw::MouseRightButton) {
 
-        g_lua.callGlobalField("Thing","createMenu", tile->getTopThing(), mousePos);
+        g_lua.callGlobalField("Game","createThingMenu", mousePos, tile->getTopLookThing(), tile->getTopUseThing(), tile->getTopCreature());
     }
 
     return true;

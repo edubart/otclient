@@ -161,42 +161,60 @@ void Game::turn(Otc::Direction direction)
 
 void Game::look(const ThingPtr& thing)
 {
-    // thing is at map
-    if(thing->getPos().x != 65535) {
-        Position tilePos = thing->getPos();
-        TilePtr tile = nullptr;
-        int stackpos = -1;
+    if(!m_online || !thing)
+        return;
 
-        while(true) {
-            tile = g_map.getTile(tilePos);
-            stackpos = tile->getLookStackpos();
-            if(stackpos != -1 || tilePos.z >= Map::MAX_Z)
-                break;
-
-            tilePos.coveredDown();
-        }
-
-        ThingPtr lookThing = tile->getThing(stackpos);
-        if(lookThing)
-            m_protocolGame->sendLookAt(tilePos, lookThing->getId(), stackpos);
-    }
-    // thing is at inventory
-    else
-        m_protocolGame->sendLookAt(thing->getPos(), thing->getId(), 0);
+    int stackpos = getThingStackpos(thing);
+    if(stackpos != -1)
+        m_protocolGame->sendLookAt(thing->getPos(), thing->getId(), stackpos);
 }
 
 void Game::use(const ThingPtr& thing)
 {
+    if(!m_online || !thing)
+        return;
+
+    int stackpos = getThingStackpos(thing);
+    if(stackpos != -1)
+        m_protocolGame->sendUseItem(thing->getPos(), thing->getId(), stackpos, 0);// last 0 has something to do with container
+}
+
+void Game::attack(const CreaturePtr& creature)
+{
+    if(!m_online || !creature)
+        return;
+
+    m_protocolGame->sendAttack(creature->getId());
+}
+
+void Game::follow(const CreaturePtr& creature)
+{
+    if(!m_online || !creature)
+        return;
+
+    m_protocolGame->sendFollow(creature->getId());
+}
+
+void Game::rotate(const ThingPtr& thing)
+{
+    if(!m_online || !thing)
+        return;
+
+    int stackpos = getThingStackpos(thing);
+    if(stackpos != -1)
+        m_protocolGame->sendRotateItem(thing->getPos(), thing->getId(), stackpos);
+}
+
+int Game::getThingStackpos(const ThingPtr& thing)
+{
     // thing is at map
     if(thing->getPos().x != 65535) {
         TilePtr tile = g_map.getTile(thing->getPos());
-        int stackpos = tile->getThingStackpos(thing);
-        if(stackpos != -1)
-            m_protocolGame->sendUseItem(thing->getPos(), thing->getId(), stackpos, 0);
+        return tile->getThingStackpos(thing);
     }
-    // thing is at inventory
-    else
-        m_protocolGame->sendUseItem(thing->getPos(), thing->getId(), 0, 0); // last 0 has something to do with container
+
+    // thing is at container or inventory
+    return 0;
 }
 
 void Game::talkChannel(int channelType, int channelId, const std::string& message)

@@ -197,15 +197,57 @@ ItemPtr Tile::getGround()
     return nullptr;
 }
 
-int Tile::getLookStackpos()
+ThingPtr Tile::getTopLookThing()
 {
+    ThingPtr retThing;
+    // check if there is any lookable object in this tile
     for(int i = m_things.size() - 1; i >= 0; --i) {
-        ThingType *type = m_things[i]->getType();
-        if(!type->properties[ThingType::IgnoreLook] &&
-           (type->properties[ThingType::IsGround] || type->properties[ThingType::IsGroundBorder] || type->properties[ThingType::IsOnBottom] || type->properties[ThingType::IsOnTop]))
-            return i;
+        ThingPtr thing = m_things[i];
+        if(!thing->ignoreLook() && (!thing->isGround() && !thing->isGroundBorder() && !thing->isOnBottom() && !thing->isOnTop()))
+            return thing;
+        else if(!thing->ignoreLook())
+            retThing = thing;
     }
-    return -1;
+
+    // return this, it it is lookable.
+    if(retThing)
+        return retThing;
+
+    // if not, check on under tile
+    Position tilePos = m_position;
+    tilePos.coveredDown();
+    TilePtr tile = g_map.getTile(tilePos);
+    if(tile)
+        return tile->getTopLookThing();
+
+    return nullptr;
+}
+
+ThingPtr Tile::getTopUseThing()
+{
+    if(isEmpty())
+        return nullptr;
+
+    for(int i = m_things.size() - 1; i >= 0; --i) {
+        ThingPtr thing = m_things[i];
+        if(thing->isForceUse() || (!thing->isGround() && !thing->isGroundBorder() && !thing->isOnBottom() && !thing->isOnTop()))
+            return thing;
+    }
+
+    return m_things[0];
+}
+
+CreaturePtr Tile::getTopCreature()
+{
+    CreaturePtr creature;
+    for(int i = m_things.size() - 1; i >= 0; --i) {
+        ThingPtr thing = m_things[i];
+        if(thing->asLocalPlayer()) // return local player if there aint no other creature.
+            creature = thing->asCreature();
+        else if(thing->asCreature() && !thing->asLocalPlayer())
+            return thing->asCreature();
+    }
+    return creature;
 }
 
 bool Tile::isWalkable()

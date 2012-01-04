@@ -35,7 +35,7 @@ function Inventory.onInventoryItemMousePress(itemWidget, mousePos, mouseButton)
   local item = itemWidget:getItem()
   if not item then return end
 
-  item:createMenu(mousePos)
+  Game.createThingMenu(mousePos, item, item, nil)
 end
 
 connect(Game, { onLogin = Inventory.create,

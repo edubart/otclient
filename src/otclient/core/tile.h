@@ -44,11 +44,15 @@ public:
     ThingPtr removeThing(int stackPos);
     ThingPtr removeThing(const ThingPtr& thing);
 
+
+    ThingPtr getTopLookThing();
+    ThingPtr getTopUseThing();
+    CreaturePtr getTopCreature();
+
     const Position& getPos() { return m_position; }
     int getDrawElevation() { return m_drawElevation; }
     std::vector<CreaturePtr> getCreatures();
     ItemPtr getGround();
-    int getLookStackpos();
     bool isWalkable();
     bool isFullGround();
     bool isFullyOpaque();

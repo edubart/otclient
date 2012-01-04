@@ -323,6 +323,9 @@ void Map::removeThing(const ThingPtr& thing)
 
 TilePtr Map::getTile(const Position& pos)
 {
+    if(!pos.isValid())
+        return nullptr;
+
     TilePtr& tile = m_tiles[pos];
     if(!tile)
         tile = TilePtr(new Tile(pos));

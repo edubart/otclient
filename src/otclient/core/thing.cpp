@@ -78,9 +78,34 @@ ThingType *Thing::getType()
     return g_thingsType.getEmptyThingType();
 }
 
+bool Thing::isGround()
+{
+    return m_type->properties[ThingType::IsGround];
+}
+
+bool Thing::isGroundBorder()
+{
+    return m_type->properties[ThingType::IsGroundBorder];
+}
+
+bool Thing::isOnBottom()
+{
+    return m_type->properties[ThingType::IsOnBottom];
+}
+
+bool Thing::isOnTop()
+{
+    return m_type->properties[ThingType::IsOnTop];
+}
+
 bool Thing::isContainer()
 {
     return m_type->properties[ThingType::IsContainer];
+}
+
+bool Thing::isForceUse()
+{
+    return m_type->properties[ThingType::IsForceUse];
 }
 
 bool Thing::isMultiUse()
@@ -101,4 +126,9 @@ bool Thing::isNotMoveable()
 bool Thing::isPickupable()
 {
     return m_type->properties[ThingType::IsPickupable];
+}
+
+bool Thing::ignoreLook()
+{
+    return m_type->properties[ThingType::IgnoreLook];
 }

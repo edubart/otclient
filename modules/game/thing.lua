@@ -1,47 +1,51 @@
 
 -- public functions
-function Thing:createMenu(menuPosition)
+function Game.createThingMenu(menuPosition, lookThing, useThing, creatureThing)
   local menu = createWidget('PopupMenu')
-  menu:addOption('Look', function() Game.look(self) end)
+  
+  if lookThing then
+    menu:addOption('Look', function() Game.look(lookThing) end)
+  end
 
   -- Open or Use, depending if thing is a container
-  if not self:asCreature() then
-    if self:isContainer() then
+  if useThing then
+    if useThing:isContainer() then
       menu:addOption('Open', function() print('open') end)
     else
-      if self:isMultiUse() then
+      if useThing:isMultiUse() then
         menu:addOption('Use with ...', function() print('use with...') end)
       else
-        menu:addOption('Use', function() Game.use(self) end)
+        menu:addOption('Use', function() Game.use(useThing) end)
       end
     end
-    
-    if self:isRotateable() then
-      menu:addOption('Rotate', function() print('rotate') end)
+      
+    if useThing:isRotateable() then
+      menu:addOption('Rotate', function() Game.rotate(useThing) end)
     end
-    
+      
     menu:addSeparator()
-    
-    if not self:isNotMoveable() and self:isPickupable() then
+     
+    if not useThing:isNotMoveable() and useThing:isPickupable() then
       menu:addOption('Trade with ...', function() print('trade with') end)
     end
+  end
      
-  else
+  if creatureThing then
   
     menu:addSeparator()
   
-    if self:asLocalPlayer() then
+    if creatureThing:asLocalPlayer() then
       menu:addOption('Set Outfit', function() Game.openOutfitWindow() end)
     else
       -- todo: check for stop attack/follow
-      menu:addOption('Attack', function() print('attack') end)
-      menu:addOption('Follow', function() print('follow') end)
+      menu:addOption('Attack', function() Game.attack(creatureThing) end)
+      menu:addOption('Follow', function() Game.follow(creatureThing)end)
       
-      if self:asPlayer() then
+      if creatureThing:asPlayer() then
         menu:addSeparator()
-        menu:addOption('Message to ' .. self:asCreature():getName(), function() print('message') end)
+        menu:addOption('Message to ' .. creatureThing:getName(), function() print('message') end)
         menu:addOption('Add to VIP list', function() print('vip') end)
-        menu:addOption('Ignore ' .. self:asCreature():getName(), function() print('ignore') end)
+        menu:addOption('Ignore ' .. creatureThing:getName(), function() print('ignore') end)
         menu:addOption('Invite to Party', function() print('invite to party') end)
       end
       
