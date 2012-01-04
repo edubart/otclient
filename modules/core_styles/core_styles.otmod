@@ -15,6 +15,6 @@ Module
     importStyle 'styles/listboxes.otui'
     importStyle 'styles/items.otui'
     importStyle 'styles/creatures.otui'
-    importStyle 'styles/comboboxes.otui'
     importStyle 'styles/popupmenus.otui'
+    importStyle 'styles/comboboxes.otui'
     return true

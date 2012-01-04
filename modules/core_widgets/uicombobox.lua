@@ -27,7 +27,7 @@ function UIComboBox:addOption(text, data)
 end
 
 function UIComboBox:onMousePress(mousePos, mouseButton)
-  local menu = createWidget('PopupMenu', self)
+  local menu = createWidget(self:getStyleName() .. 'PopupMenu', self)
   for i,v in ipairs(self.options) do
     menu:addOption(v.text, function() self:setCurrentOption(v.text) end)
   end

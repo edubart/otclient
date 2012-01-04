@@ -34,7 +34,7 @@ PopupMenuSeparator < UIWidget
   phantom: true
 
 PopupMenu < UIPopupMenu
-  width: 100
+  width: 50
   border-image:
     source: /core_styles/images/menubox.png
     border: 3

@@ -36,4 +36,9 @@ cache into framebuffers
 implement glbuffer for CoordsBuffer
 use indices in CoordsBuffer
 
-create a Timer class
+move UICheckBox to lua
+move UIWindow to lua
+rework UI image style
+class UIImage and UIText
+add UI border
+fix style inheretance using a style translator

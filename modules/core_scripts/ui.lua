@@ -47,7 +47,17 @@ end
 
 function createWidget(style, parent)
   local className = g_ui.getStyleClass(style)
+  if className == "" then
+    error('could not find style ' .. style)
+    return
+  end
+
   local class = _G[className]
+  if not class then
+    error('could not find widget class ' .. class)
+    return
+  end
+
   local widget = class.create()
   if parent then
     parent:addChild(widget)

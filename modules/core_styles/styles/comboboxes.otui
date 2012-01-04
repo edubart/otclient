@@ -1,3 +1,7 @@
+ComboBoxPopupMenuSeparator < PopupMenuSeparator
+ComboBoxPopupMenuButton < PopupMenuButton
+ComboBoxPopupMenu < PopupMenu
+
 ComboBox < UIComboBox
   font: verdana-11px-antialised
   color: #aaaaaa

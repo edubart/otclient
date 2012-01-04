@@ -23,6 +23,8 @@ function UIPopupMenu:addOption(optionName, optionCallback)
     self:destroy()
   end
   optionWidget:setText(optionName)
+  local width = optionWidget:getTextSize().width + optionWidget:getMarginLeft() + optionWidget:getMarginRight() + 6
+  self:setWidth(math.max(self:getWidth(), width))
 end
 
 function UIPopupMenu:addSeparator()
