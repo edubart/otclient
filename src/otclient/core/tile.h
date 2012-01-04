@@ -59,8 +59,7 @@ public:
     bool isLookPossible();
     bool hasCreature();
     bool isEmpty();
-
-    void useItem();
+    bool isClickable();
 
     TilePtr asTile() { return std::static_pointer_cast<Tile>(shared_from_this()); }
 

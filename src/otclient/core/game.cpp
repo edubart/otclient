@@ -235,10 +235,32 @@ void Game::talkPrivate(int channelType, const std::string& receiver, const std::
 
 void Game::openOutfitWindow()
 {
+    if(!m_online)
+        return;
+
     m_protocolGame->sendGetOutfit();
 }
 
 void Game::setOutfit(const Outfit& outfit)
 {
+    if(!m_online)
+        return;
+
     m_protocolGame->sendSetOutfit(outfit);
+}
+
+void Game::addVip(const std::string& name)
+{
+    if(!m_online || name.empty())
+        return;
+
+    m_protocolGame->sendAddVip(name);
+}
+
+void Game::removeVip(int playerId)
+{
+    if(!m_online)
+        return;
+
+    m_protocolGame->sendRemoveVip(playerId);
 }

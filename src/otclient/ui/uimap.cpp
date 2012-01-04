@@ -74,17 +74,19 @@ bool UIMap::onMousePress(const Point& mousePos, Fw::MouseButton button)
     // Get tile
     TilePtr tile = nullptr;
 
-    // We must check every floor, from top to bottom
+    // We must check every floor, from top to bottom to check for a clickable tile
     int firstFloor = g_map.getFirstVisibleFloor();
     tilePos.perspectiveUp(tilePos.z - firstFloor);
     for(int i = firstFloor; i <= Map::MAX_Z; i++) {
         tile = g_map.getTile(tilePos);
-        if(tile && !tile->isEmpty() && tile->getGround())
+        if(tile && tile->isClickable())
             break;
         tilePos.coveredDown();
     }
 
-    if(!tile || tile->isEmpty())
+    // todo: get creature, using walkOffset etc.
+
+    if(!tile || !tile->isClickable())
         return true;
 
     if(button == Fw::MouseLeftButton) {

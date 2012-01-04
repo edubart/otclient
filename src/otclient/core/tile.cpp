@@ -288,6 +288,24 @@ bool Tile::isLookPossible()
     return true;
 }
 
+bool Tile::isClickable()
+{
+    bool hasGround = false, hasOnBottom = false, hasIgnoreLook = false;
+    for(const ThingPtr& thing : m_things) {
+        ThingType *type = thing->getType();
+        if(type->properties[ThingType::IsGround])
+            hasGround = true;
+        if(type->properties[ThingType::IsOnBottom])
+            hasOnBottom = true;
+        if(type->properties[ThingType::IgnoreLook])
+            hasIgnoreLook = true;
+
+        if((hasGround || hasOnBottom) && !hasIgnoreLook)
+            return true;
+    }
+    return false;
+}
+
 bool Tile::hasCreature()
 {
     for(const ThingPtr& thing : m_things)

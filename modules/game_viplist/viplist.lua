@@ -43,5 +43,16 @@ function Game.onVipStateChange(id, online)
   label.vipOnline = online
 end
 
+function VipList.onVipListLabelMousePress(widget, mousePos, mouseButton)
+  if mouseButton ~= MouseRightButton then return end
+
+  local vipList = vipWindow:getChildById('vipList')
+
+  local menu = createWidget('PopupMenu')
+  menu:addOption('Remove from VIP list', function() if widget then Game.removeVip(widget:getId():sub(4)) vipList:removeChild(widget) end end)
+  menu:display(mousePos)
+end
+
+
 connect(Game, { onLogin = VipList.create,
                 onLogout = VipList.destroy })

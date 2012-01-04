@@ -44,7 +44,7 @@ function Game.createThingMenu(menuPosition, lookThing, useThing, creatureThing)
       if creatureThing:asPlayer() then
         menu:addSeparator()
         menu:addOption('Message to ' .. creatureThing:getName(), function() print('message') end)
-        menu:addOption('Add to VIP list', function() print('vip') end)
+        menu:addOption('Add to VIP list', function() Game.addVip(creatureThing:getName()) end)
         menu:addOption('Ignore ' .. creatureThing:getName(), function() print('ignore') end)
         menu:addOption('Invite to Party', function() print('invite to party') end)
       end

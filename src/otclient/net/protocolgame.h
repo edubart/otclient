@@ -96,7 +96,7 @@ public:
     void sendGetOutfit();
     void sendSetOutfit(const Outfit& outfit);
     void sendAddVip(const std::string& name);
-    void sendRemoveVip(int id);
+    void sendRemoveVip(int playerId);
     void sendGetQuestLog();
     void sendGetQuestLine(int questId);
 

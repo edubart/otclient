@@ -57,6 +57,8 @@ public:
     void talkPrivate(int channelType, const std::string& receiver, const std::string& message);
     void openOutfitWindow();
     void setOutfit(const Outfit& outfit);
+    void addVip(const std::string& name);
+    void removeVip(int playerId);
     int getThingStackpos(const ThingPtr& thing);
 
     bool isOnline() { return m_online; }

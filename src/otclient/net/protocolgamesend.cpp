@@ -555,11 +555,11 @@ void ProtocolGame::sendAddVip(const std::string& name)
     send(oMsg);
 }
 
-void ProtocolGame::sendRemoveVip(int id)
+void ProtocolGame::sendRemoveVip(int playerId)
 {
     OutputMessage oMsg;
     oMsg.addU8(Otc::ClientRemoveBuddy);
-    oMsg.addU32(id);
+    oMsg.addU32(playerId);
     send(oMsg);
 }
 
