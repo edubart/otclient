@@ -29,7 +29,7 @@ function UIPopupMenu.addOption(menu, optionName, optionCallback)
 end
 
 function UIPopupMenu.addSeparator(menu)
-  local separatorWidget = createWidget(menu:getStyleName() .. 'Separator', separator)
+  local separatorWidget = createWidget(menu:getStyleName() .. 'Separator', menu)
 end
 
 -- hooked events
