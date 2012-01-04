@@ -40,7 +40,7 @@ public:
     UICheckBoxPtr asUICheckBox() { return std::static_pointer_cast<UICheckBox>(shared_from_this()); }
 
 protected:
-    virtual void onStyleApply(const OTMLNodePtr& styleNode);
+    virtual void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode);
     virtual void onMouseRelease(const Point& mousePos, Fw::MouseButton button);
 
     std::string m_text;

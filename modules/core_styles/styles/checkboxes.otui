@@ -1,6 +1,7 @@
 CheckBox < UICheckBox
   size: 12 12
   box-size: 12 12
+  text-align: left
   text-offset: 16 -1
   color: #aaaaaa
   background-color: #ffffffff

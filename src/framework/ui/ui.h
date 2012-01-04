@@ -25,8 +25,6 @@
 
 #include "uimanager.h"
 #include "uiwidget.h"
-#include "uibutton.h"
-#include "uilabel.h"
 #include "uilineedit.h"
 #include "uiwindow.h"
 #include "uiframecounter.h"

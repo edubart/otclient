@@ -49,9 +49,9 @@ local function onWidgetHoverChange(widget, hovered)
   end
 end
 
-local function onWidgetStyleApply(widget, style)
-  if style and style.tooltip then
-    widget.tooltip = style.tooltip
+local function onWidgetStyleApply(widget, styleName, styleNode)
+  if styleNode.tooltip then
+    widget.tooltip = styleNode.tooltip
   end
 end
 

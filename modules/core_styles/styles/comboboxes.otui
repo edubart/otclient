@@ -2,7 +2,8 @@ ComboBox < UIComboBox
   font: verdana-11px-antialised
   color: #aaaaaa
   size: 86 20
-  text-margin: 3
+  text-offset: 3 0
+  text-align: left
   border-image:
     source: /core_styles/images/combobox.png
     border: 1

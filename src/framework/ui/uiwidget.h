@@ -27,6 +27,7 @@
 #include <framework/luascript/luaobject.h>
 #include <framework/graphics/declarations.h>
 #include <framework/otml/otmlnode.h>
+#include <framework/graphics/font.h>
 
 class UIWidget : public LuaObject
 {
@@ -40,9 +41,17 @@ public:
     void destroy();
 
     virtual void render();
-    void renderSelf();
-    void renderChildren();
+    virtual void renderSelf();
+    virtual void renderChildren();
 
+protected:
+    void drawBackground(const Rect& screenCoords);
+    void drawBorder(const Rect& screenCoords);
+    void drawImage(const Rect& screenCoords);
+    void drawIcon(const Rect& screenCoords);
+    void drawText(const Rect& screenCoords);
+
+public:
     void setVisible(bool visible);
     void setEnabled(bool enabled);
     void setPressed(bool pressed) { m_pressed = pressed; updateState(Fw::PressedState); }
@@ -59,7 +68,7 @@ public:
     void setWidth(int width) { resize(Size(width, getHeight())); }
     void setHeight(int height) { resize(Size(getWidth(), height)); }
     void setImage(const ImagePtr& image) { m_image = image; }
-    virtual void setFont(const FontPtr& font) { m_font = font; }
+    void setIcon(const std::string& iconFile);
     void setOpacity(int opacity) { m_opacity = opacity; }
     void setBackgroundColor(const Color& color) { m_backgroundColor = color; }
     void setForegroundColor(const Color& color) { m_foregroundColor = color; }
@@ -67,11 +76,16 @@ public:
     void setMarginRight(int margin) { m_marginRight = margin; updateParentLayout(); }
     void setMarginBottom(int margin) { m_marginBottom = margin; updateParentLayout(); }
     void setMarginLeft(int margin) { m_marginLeft = margin; updateParentLayout(); }
+    void setText(const std::string& text);
+    void setTextAlign(Fw::AlignmentFlag align) { m_textAlign = align; }
+    void setTextOffset(const Point& offset) { m_textOffset = offset; }
+    void setFont(const std::string& fontName);
     void setSizeFixed(bool fixed) { m_fixedSize = fixed; updateParentLayout(); }
     void setLastFocusReason(Fw::FocusReason reason) { m_lastFocusReason = reason; }
 
     void bindRectToParent();
-    void resize(const Size& size) { setRect(Rect(getPosition(), size)); }
+    void resize(const Size& size) { setRect(Rect(getPos(), size)); }
+    void resizeToText() { resize(getTextSize()); }
     void moveTo(const Point& pos) { setRect(Rect(pos, getSize())); }
     void hide() { setVisible(false); }
     void show() { setVisible(true); }
@@ -84,6 +98,7 @@ public:
     void ungrabMouse();
     void grabKeyboard();
     void ungrabKeyboard();
+    void clearText() { setText(""); }
 
     bool isActive() { return hasState(Fw::ActiveState); }
     bool isEnabled() { return !hasState(Fw::DisabledState); }
@@ -111,15 +126,13 @@ public:
     UILayoutPtr getLayout() { return m_layout; }
     UIWidgetPtr getParent() { return m_parent.lock(); }
     UIWidgetPtr getRootParent();
-    Point getPosition() { return m_rect.topLeft(); }
+    Point getPos() { return m_rect.topLeft(); }
     Size getSize() { return m_rect.size(); }
     Rect getRect() { return m_rect; }
     int getX() { return m_rect.x(); }
     int getY() { return m_rect.y(); }
     int getWidth() { return m_rect.width(); }
     int getHeight() { return m_rect.height(); }
-    ImagePtr getImage() { return m_image; }
-    FontPtr getFont() { return m_font; }
     Color getForegroundColor() { return m_foregroundColor; }
     Color getBackgroundColor() { return m_backgroundColor; }
     int getOpacity() { return m_opacity; }
@@ -127,6 +140,12 @@ public:
     int getMarginRight() { return m_marginRight; }
     int getMarginBottom() { return m_marginBottom; }
     int getMarginLeft() { return m_marginLeft; }
+    std::string getText() { return m_text; }
+    Fw::AlignmentFlag getTextAlign() { return m_textAlign; }
+    Point getTextOffset() { return m_textOffset; }
+    std::string getFont() { return m_font->getName(); }
+    Size getTextSize() { return m_font->calculateTextRectSize(m_text); }
+
     Fw::FocusReason getLastFocusReason() { return m_lastFocusReason; }
     OTMLNodePtr getStyle() { return m_style; }
     std::string getStyleName() { return m_style->tag(); }
@@ -175,27 +194,18 @@ private:
     void updateStyle();
 
 protected:
-    /// Triggered when widget style is changed
-    virtual void onStyleApply(const OTMLNodePtr& styleNode);
-    /// Triggered when widget is moved or resized
+    virtual void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode);
     virtual void onGeometryUpdate(const Rect& oldRect, const Rect& newRect);
-    /// Triggered when widget gets or loses focus
     virtual void onFocusChange(bool focused, Fw::FocusReason reason);
-    /// Triggered when the mouse enters or leaves widget area
     virtual void onHoverChange(bool hovered);
-    /// Triggered when user presses key while widget has focus
+    virtual void onTextChange(const std::string& text);
+    virtual void onFontChange(const std::string& font);
     virtual bool onKeyPress(uchar keyCode, std::string keyText, int keyboardModifiers);
-    /// Triggered when user releases key while widget has focus
     virtual bool onKeyRelease(uchar keyCode, std::string keyText, int keyboardModifiers);
-    /// Triggered when a mouse button is pressed down while mouse pointer is inside widget area
     virtual bool onMousePress(const Point& mousePos, Fw::MouseButton button);
-    /// Triggered when a mouse button is released
     virtual void onMouseRelease(const Point& mousePos, Fw::MouseButton button);
-    /// Triggered when mouse moves (even when the mouse is outside widget area)
     virtual bool onMouseMove(const Point& mousePos, const Point& mouseMoved);
-    /// Triggered when mouse middle button wheels inside widget area
     virtual bool onMouseWheel(const Point& mousePos, Fw::MouseWheelDirection direction);
-
     friend class UIManager;
 
 protected:
@@ -218,6 +228,7 @@ protected:
     OTMLNodePtr m_style;
     OTMLNodePtr m_stateStyle;
     ImagePtr m_image;
+    TexturePtr m_icon;
     FontPtr m_font;
     Color m_backgroundColor;
     Color m_foregroundColor;
@@ -227,6 +238,9 @@ protected:
     int m_marginRight;
     int m_marginBottom;
     int m_marginLeft;
+    std::string m_text;
+    Point m_textOffset;
+    Fw::AlignmentFlag m_textAlign;
 };
 
 #endif

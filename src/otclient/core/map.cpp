@@ -88,7 +88,7 @@ void Map::draw(const Rect& rect)
 
         // after drawing all tiles, draw shots
         for(const MissilePtr& shot : m_missilesAtFloor[iz]) {
-            Position missilePos = shot->getPosition();
+            Position missilePos = shot->getPos();
             shot->draw(positionTo2D(missilePos) - m_drawOffset);
         }
     }
@@ -132,7 +132,7 @@ void Map::draw(const Rect& rect)
 
     // draw animated text
     for(auto it = m_animatedTexts.begin(), end = m_animatedTexts.end(); it != end; ++it) {
-        Point pos = positionTo2D((*it)->getPosition()) - m_drawOffset;
+        Point pos = positionTo2D((*it)->getPos()) - m_drawOffset;
         pos.x *= horizontalStretchFactor;
         pos.y *= verticalStretchFactor;
         (*it)->draw(rect.topLeft() + pos);
@@ -140,7 +140,7 @@ void Map::draw(const Rect& rect)
 
     // draw static text
     for(auto it = m_staticTexts.begin(), end = m_staticTexts.end(); it != end; ++it) {
-        Point pos = positionTo2D((*it)->getPosition()) - m_drawOffset;
+        Point pos = positionTo2D((*it)->getPos()) - m_drawOffset;
         pos.x *= horizontalStretchFactor;
         pos.y *= verticalStretchFactor;
         (*it)->draw(rect.topLeft() + pos);
@@ -246,7 +246,7 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
         m_creatures[creature->getId()] = creature;
     }
     else if(MissilePtr shot = thing->asMissile()) {
-        m_missilesAtFloor[shot->getPosition().z].push_back(shot);
+        m_missilesAtFloor[shot->getPos().z].push_back(shot);
     }
     else if(AnimatedTextPtr animatedText = thing->asAnimatedText()) {
         m_animatedTexts.push_back(animatedText);
@@ -255,7 +255,7 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
         bool mustAdd = true;
         for(auto it = m_staticTexts.begin(), end = m_staticTexts.end(); it != end; ++it) {
             StaticTextPtr cStaticText = *it;
-            if(cStaticText->getPosition() == pos) {
+            if(cStaticText->getPos() == pos) {
                 // try to combine messages
                 if(cStaticText->addMessage(staticText->getName(), staticText->getMessageType(), staticText->getFirstMessage())) {
                     mustAdd = false;
@@ -276,7 +276,7 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
     }
 
     thing->start();
-    thing->setPosition(pos);
+    thing->setPos(pos);
 }
 
 ThingPtr Map::getThing(const Position& pos, int stackPos)
@@ -298,9 +298,9 @@ void Map::removeThing(const ThingPtr& thing)
         return;
 
     if(MissilePtr shot = thing->asMissile()) {
-        auto it = std::find(m_missilesAtFloor[shot->getPosition().z].begin(), m_missilesAtFloor[shot->getPosition().z].end(), shot);
-        if(it != m_missilesAtFloor[shot->getPosition().z].end()) {
-            m_missilesAtFloor[shot->getPosition().z].erase(it);
+        auto it = std::find(m_missilesAtFloor[shot->getPos().z].begin(), m_missilesAtFloor[shot->getPos().z].end(), shot);
+        if(it != m_missilesAtFloor[shot->getPos().z].end()) {
+            m_missilesAtFloor[shot->getPos().z].erase(it);
         }
         return;
     }
@@ -317,7 +317,7 @@ void Map::removeThing(const ThingPtr& thing)
         return;
     }
 
-    if(TilePtr& tile = m_tiles[thing->getPosition()])
+    if(TilePtr& tile = m_tiles[thing->getPos()])
         tile->removeThing(thing);
 }
 

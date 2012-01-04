@@ -38,7 +38,7 @@ public:
     CreaturePtr getCreature() { return m_creature; }
 
 protected:
-    virtual void onStyleApply(const OTMLNodePtr& styleNode);
+    virtual void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode);
 
 private:
     CreaturePtr m_creature;

@@ -535,7 +535,7 @@ void ProtocolGame::parseMagicEffect(InputMessage& msg)
 
     EffectPtr effect = EffectPtr(new Effect());
     effect->setId(effectId);
-    effect->setPosition(pos);
+    effect->setPos(pos);
 
     g_map.addThing(effect, pos);
 }
@@ -547,7 +547,7 @@ void ProtocolGame::parseAnimatedText(InputMessage& msg)
     std::string text = msg.getString();
 
     AnimatedTextPtr animatedText = AnimatedTextPtr(new AnimatedText);
-    animatedText->setPosition(position);
+    animatedText->setPos(position);
     animatedText->setColor(color);
     animatedText->setText(text);
 

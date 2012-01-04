@@ -50,9 +50,9 @@ void UIFrameCounter::render()
     m_font->renderText(m_fpsText, m_rect, m_align, Fw::white);
 }
 
-void UIFrameCounter::onStyleApply(const OTMLNodePtr& styleNode)
+void UIFrameCounter::onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode)
 {
-    UIWidget::onStyleApply(styleNode);
+    UIWidget::onStyleApply(styleName, styleNode);
 
     for(const OTMLNodePtr& node : styleNode->children()) {
         if(node->tag() == "align")

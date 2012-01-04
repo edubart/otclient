@@ -1,7 +1,5 @@
--- extends UIWidget
 UIPopupMenu = extends(UIWidget)
 
--- public functions
 function UIPopupMenu.create()
   local menu = UIPopupMenu.internalCreate()
   local layout = UIVerticalLayout.create(menu)
@@ -10,41 +8,39 @@ function UIPopupMenu.create()
   return menu
 end
 
-function UIPopupMenu.display(menu, pos)
-  displayUI(menu, {x = pos.x, y = pos.y})
-  menu:bindRectToParent()
-  menu:grabMouse()
-  menu:grabKeyboard()
-  return menu
+function UIPopupMenu:display(pos)
+  displayUI(self, {x = pos.x, y = pos.y})
+  self:bindRectToParent()
+  self:grabMouse()
+  self:grabKeyboard()
 end
 
-function UIPopupMenu.addOption(menu, optionName, optionCallback)
-  local optionWidget = createWidget(menu:getStyleName() .. 'Button', menu)
-  local lastOptionWidget = menu:getLastChild()
+function UIPopupMenu:addOption(optionName, optionCallback)
+  local optionWidget = createWidget(self:getStyleName() .. 'Button', self)
+  local lastOptionWidget = self:getLastChild()
   optionWidget.onClick = function()
     optionCallback()
-    menu:destroy()
+    self:destroy()
   end
   optionWidget:setText(optionName)
 end
 
-function UIPopupMenu.addSeparator(menu)
-  local separatorWidget = createWidget(menu:getStyleName() .. 'Separator', menu)
+function UIPopupMenu:addSeparator()
+  createWidget(self:getStyleName() .. 'Separator', self)
 end
 
--- hooked events
-function UIPopupMenu.onMousePress(menu, mousePos, mouseButton)
-  -- clicks outside menu area destroys the menu
-  if not menu:containsPoint(mousePos) then
-    menu:destroy()
+function UIPopupMenu:onMousePress(mousePos, mouseButton)
+  -- clicks outside self area destroys the self
+  if not self:containsPoint(mousePos) then
+    self:destroy()
     return true
   end
   return false
 end
 
-function UIPopupMenu.onKeyPress(menu, keyCode, keyText, keyboardModifiers)
+function UIPopupMenu:onKeyPress(keyCode, keyText, keyboardModifiers)
   if keyCode == KeyEscape then
-    menu:destroy()
+    self:destroy()
     return true
   end
   return false

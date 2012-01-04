@@ -37,7 +37,7 @@ public:
 
     void draw(const Point& p);
 
-    void setPosition(const Position &position);
+    void setPos(const Position &position);
     void setData(int data);
 
     int getData() { return m_data; }

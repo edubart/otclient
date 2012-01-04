@@ -41,12 +41,12 @@ void UICreature::render()
     renderChildren();
 }
 
-void UICreature::onStyleApply(const OTMLNodePtr& styleNode)
+void UICreature::onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode)
 {
     for(OTMLNodePtr node : styleNode->children()) {
         if(node->tag() == "creature-margin")
             m_creatureMargin = node->value<int>();
     }
 
-    UIWidget::onStyleApply(styleNode);
+    UIWidget::onStyleApply(styleName, styleNode);
 }

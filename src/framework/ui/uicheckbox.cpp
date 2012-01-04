@@ -58,9 +58,9 @@ void UICheckBox::onMouseRelease(const Point& mousePos, Fw::MouseButton button)
         setChecked(!isChecked());
 }
 
-void UICheckBox::onStyleApply(const OTMLNodePtr& styleNode)
+void UICheckBox::onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode)
 {
-    UIWidget::onStyleApply(styleNode);
+    UIWidget::onStyleApply(styleName, styleNode);
 
     for(OTMLNodePtr node : styleNode->children()) {
         if(node->tag() == "text-offset")

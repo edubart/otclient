@@ -37,7 +37,7 @@ public:
     ItemPtr getItem() { return m_item; }
 
 protected:
-    virtual void onStyleApply(const OTMLNodePtr& styleNode);
+    virtual void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode);
 
 private:
     ItemPtr m_item;

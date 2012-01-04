@@ -36,7 +36,7 @@ public:
     int getFrameCount() { return m_frameCount; }
 
 protected:
-    virtual void onStyleApply(const OTMLNodePtr& styleNode);
+    virtual void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode);
 
 private:
     Fw::AlignmentFlag m_align;

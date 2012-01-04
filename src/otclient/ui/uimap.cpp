@@ -46,14 +46,14 @@ void UIMap::render()
     renderChildren();
 }
 
-void UIMap::onStyleApply(const OTMLNodePtr& styleNode)
+void UIMap::onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode)
 {
     for(OTMLNodePtr node : styleNode->children()) {
         if(node->tag() == "map margin")
             m_mapMargin = node->value<int>();
     }
 
-    UIWidget::onStyleApply(styleNode);
+    UIWidget::onStyleApply(styleName, styleNode);
 }
 
 bool UIMap::onMousePress(const Point& mousePos, Fw::MouseButton button)

@@ -44,10 +44,10 @@ public:
     virtual void draw(const Point& p) = 0;
 
     void setId(int id);
-    virtual void setPosition(const Position& position) { m_position = position; }
+    virtual void setPos(const Position& position) { m_position = position; }
 
     int getId() const { return m_id; }
-    Position getPosition() const { return m_position; }
+    Position getPos() const { return m_position; }
     int getStackPriority();
     virtual ThingType *getType();
     int getAnimationPhases() { return m_type->dimensions[ThingType::AnimationPhases]; }

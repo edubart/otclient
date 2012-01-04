@@ -56,9 +56,9 @@ void UIWindow::render()
     m_font->renderText(m_title, headTextRect, m_titleAlign, m_foregroundColor);
 }
 
-void UIWindow::onStyleApply(const OTMLNodePtr& styleNode)
+void UIWindow::onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode)
 {
-    UIWidget::onStyleApply(styleNode);
+    UIWidget::onStyleApply(styleName, styleNode);
 
     for(OTMLNodePtr node : styleNode->children()) {
         if(node->tag() == "head-height")
@@ -94,7 +94,7 @@ bool UIWindow::onMousePress(const Point& mousePos, Fw::MouseButton button)
             m_moving = true;
             m_movingReference = mousePos - getRect().topLeft();
             m_oldIndex = getParent()->getChildIndex(asUIWidget());
-            m_oldPos = getPosition();
+            m_oldPos = getPos();
             getParent()->moveChildToTop(asUIWidget());
         }
     }

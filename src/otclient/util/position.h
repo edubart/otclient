@@ -33,7 +33,7 @@ public:
     Position() : x(-1), y(-1), z(-1) { }
     Position(int x, int y, int z) : x(x), y(y), z(z) { }
 
-    static Position getPositionFromDirection(Otc::Direction direction) {
+    static Position getPosFromDirection(Otc::Direction direction) {
         switch(direction) {
         case Otc::North:
             return Position( 0, -1, 0);

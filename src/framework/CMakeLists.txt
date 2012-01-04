@@ -187,8 +187,6 @@ SET(framework_SOURCES ${framework_SOURCES}
     # framework ui
     ${CMAKE_CURRENT_LIST_DIR}/ui/uimanager.cpp
     ${CMAKE_CURRENT_LIST_DIR}/ui/uiwidget.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/ui/uilabel.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/ui/uibutton.cpp
     ${CMAKE_CURRENT_LIST_DIR}/ui/uilineedit.cpp
     ${CMAKE_CURRENT_LIST_DIR}/ui/uiwindow.cpp
     ${CMAKE_CURRENT_LIST_DIR}/ui/uianchorlayout.cpp

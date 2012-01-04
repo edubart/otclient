@@ -44,7 +44,7 @@ public:
     ThingPtr removeThing(int stackPos);
     ThingPtr removeThing(const ThingPtr& thing);
 
-    const Position& getPosition() { return m_position; }
+    const Position& getPos() { return m_position; }
     int getDrawElevation() { return m_drawElevation; }
     std::vector<CreaturePtr> getCreatures();
     ItemPtr getGround();

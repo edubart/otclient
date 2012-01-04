@@ -36,7 +36,7 @@ public:
 
     bool hasFinished() { return m_finished; }
 
-    PointF getPosition() { return m_position; }
+    PointF getPos() { return m_position; }
     PointF getVelocity() { return m_velocity; }
 
     void setPos(const PointF& position) { m_position = position; }

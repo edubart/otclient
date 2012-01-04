@@ -98,7 +98,7 @@ void Game::processTextMessage(int type, const std::string& message)
 void Game::processInventoryChange(int slot, const ItemPtr& item)
 {
     if(item)
-        item->setPosition(Position(65535, slot, 0));
+        item->setPos(Position(65535, slot, 0));
 
     g_lua.callGlobalField("Game","onInventoryChange", slot, item);
 }
@@ -162,8 +162,8 @@ void Game::turn(Otc::Direction direction)
 void Game::look(const ThingPtr& thing)
 {
     // thing is at map
-    if(thing->getPosition().x != 65535) {
-        Position tilePos = thing->getPosition();
+    if(thing->getPos().x != 65535) {
+        Position tilePos = thing->getPos();
         TilePtr tile = nullptr;
         int stackpos = -1;
 
@@ -182,21 +182,21 @@ void Game::look(const ThingPtr& thing)
     }
     // thing is at inventory
     else
-        m_protocolGame->sendLookAt(thing->getPosition(), thing->getId(), 0);
+        m_protocolGame->sendLookAt(thing->getPos(), thing->getId(), 0);
 }
 
 void Game::use(const ThingPtr& thing)
 {
     // thing is at map
-    if(thing->getPosition().x != 65535) {
-        TilePtr tile = g_map.getTile(thing->getPosition());
+    if(thing->getPos().x != 65535) {
+        TilePtr tile = g_map.getTile(thing->getPos());
         int stackpos = tile->getThingStackpos(thing);
         if(stackpos != -1)
-            m_protocolGame->sendUseItem(thing->getPosition(), thing->getId(), stackpos, 0);
+            m_protocolGame->sendUseItem(thing->getPos(), thing->getId(), stackpos, 0);
     }
     // thing is at inventory
     else
-        m_protocolGame->sendUseItem(thing->getPosition(), thing->getId(), 0, 0); // last 0 has something to do with container
+        m_protocolGame->sendUseItem(thing->getPos(), thing->getId(), 0, 0); // last 0 has something to do with container
 }
 
 void Game::talkChannel(int channelType, int channelId, const std::string& message)

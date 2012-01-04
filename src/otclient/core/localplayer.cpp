@@ -35,7 +35,7 @@ void LocalPlayer::clientWalk(Otc::Direction direction)
 {
     // We're not walking, so start a client walk.
     if(!m_walking) {
-        Position newPos = m_position + Position::getPositionFromDirection(direction);
+        Position newPos = m_position + Position::getPosFromDirection(direction);
         Creature::walk(newPos, false);
         m_clientWalking = true;
     }
@@ -49,7 +49,7 @@ void LocalPlayer::walk(const Position& position, bool inverse)
     if(m_clientWalking) {
         m_clientWalking = false;
 
-        Position pos = Position::getPositionFromDirection(m_direction);
+        Position pos = Position::getPosFromDirection(m_direction);
         Point walkOffset = Point(m_walkOffset.x - pos.x * 32,
                                  m_walkOffset.y - pos.y * 32);
 
@@ -97,7 +97,7 @@ bool LocalPlayer::canWalk(Otc::Direction direction)
         return false;
     }
 
-    Position newPos = m_position + Position::getPositionFromDirection(direction);
+    Position newPos = m_position + Position::getPosFromDirection(direction);
     TilePtr tile = g_map.getTile(newPos);
     if(!tile->isWalkable()) {
         // TODO: create enum for 17, white message on screen bottom and console.

@@ -41,7 +41,7 @@ void Item::draw(const Point& p)
         internalDraw(p, b);
 }
 
-void Item::setPosition(const Position& position)
+void Item::setPos(const Position& position)
 {
     if(m_type->properties[ThingType::IsGround]) {
         m_xPattern = position.x % m_type->dimensions[ThingType::PatternX];
@@ -49,7 +49,7 @@ void Item::setPosition(const Position& position)
         m_zPattern = position.z % m_type->dimensions[ThingType::PatternZ];
     }
 
-    Thing::setPosition(position);
+    Thing::setPos(position);
 }
 
 void Item::setData(int data)

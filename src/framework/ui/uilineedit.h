@@ -30,30 +30,35 @@ class UILineEdit : public UIWidget
 public:
     UILineEdit();
 
-    virtual void render();
+    virtual void renderSelf();
 
+private:
     void update();
 
-    void setText(const std::string& text);
-    void setTextHidden(bool hidden);
-    void setAlign(Fw::AlignmentFlag align);
+public:
+    void setTextHorizontalMargin(int margin);
     void setCursorPos(int pos);
-    void setCursorEnabled(bool enable = true);
+    void setCursorEnabled(bool enable);
+    void setTextHidden(bool hidden);
+    void setAlwaysActive(bool enable);
 
-    void clearText() { setText(""); }
     void moveCursor(bool right);
     void appendText(std::string text);
     void appendCharacter(char c);
     void removeCharacter(bool right);
 
-    void setFont(const FontPtr& font);
-    std::string getText() const { return m_text; }
     std::string getDisplayedText();
     int getTextPos(Point pos);
-    int getCursorPos() const { return m_cursorPos; }
+    int getTextHorizontalMargin() { return m_textHorizontalMargin; }
+    int getCursorPos() { return m_cursorPos; }
+    bool isCursorEnabled() { return m_cursorPos != -1; }
+    bool isAlwaysActive() { return m_alwaysActive; }
+    bool isTextHidden() { return m_textHidden; }
 
 protected:
-    virtual void onStyleApply(const OTMLNodePtr& styleNode);
+    virtual void onTextChange(const std::string& text);
+    virtual void onFontChange(const std::string& font);
+    virtual void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode);
     virtual void onGeometryUpdate(const Rect& oldRect, const Rect& newRect);
     virtual void onFocusChange(bool focused, Fw::FocusReason reason);
     virtual bool onKeyPress(uchar keyCode, std::string keyText, int keyboardModifiers);
@@ -62,9 +67,7 @@ protected:
 private:
     void blinkCursor();
 
-    std::string m_text;
     Rect m_drawArea;
-    Fw::AlignmentFlag m_align;
     int m_cursorPos;
     Point m_startInternalPos;
     int m_startRenderPos;

@@ -131,7 +131,7 @@ void AttractionAffector::updateParticle(const ParticlePtr& particle, double elap
     if(!m_active)
         return;
 
-    PointF pPosition = particle->getPosition();
+    PointF pPosition = particle->getPos();
     PointF d = PointF(m_position.x - pPosition.x, pPosition.y - m_position.y);
     if(d.length() == 0)
         return;

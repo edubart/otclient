@@ -41,12 +41,12 @@ void UIItem::render()
     renderChildren();
 }
 
-void UIItem::onStyleApply(const OTMLNodePtr& styleNode)
+void UIItem::onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode)
 {
     for(OTMLNodePtr node : styleNode->children()) {
         if(node->tag() == "item margin")
             m_itemMargin = node->value<int>();
     }
 
-    UIWidget::onStyleApply(styleNode);
+    UIWidget::onStyleApply(styleName, styleNode);
 }

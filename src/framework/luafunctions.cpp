@@ -37,6 +37,9 @@ void Application::registerLuaFunctions()
     g_lua.registerClass<UIWidget>();
     g_lua.bindClassStaticFunction<UIWidget>("create", &UIWidget::create<UIWidget>);
     g_lua.bindClassMemberFunction<UIWidget>("destroy", &UIWidget::destroy);
+    g_lua.bindClassMemberFunction<UIWidget>("render", &UIWidget::render);
+    g_lua.bindClassMemberFunction<UIWidget>("renderSelf", &UIWidget::renderSelf);
+    g_lua.bindClassMemberFunction<UIWidget>("renderChildren", &UIWidget::renderChildren);
     g_lua.bindClassMemberFunction<UIWidget>("setVisible", &UIWidget::setVisible);
     g_lua.bindClassMemberFunction<UIWidget>("setEnabled", &UIWidget::setEnabled);
     g_lua.bindClassMemberFunction<UIWidget>("setPressed", &UIWidget::setPressed);
@@ -53,7 +56,7 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIWidget>("setWidth", &UIWidget::setWidth);
     g_lua.bindClassMemberFunction<UIWidget>("setHeight", &UIWidget::setHeight);
     //g_lua.bindClassMemberFunction<UIWidget>("setImage", &UIWidget::setImage);
-    //g_lua.bindClassMemberFunction<UIWidget>("setFont", &UIWidget::setFont);
+    g_lua.bindClassMemberFunction<UIWidget>("setIcon", &UIWidget::setIcon);
     g_lua.bindClassMemberFunction<UIWidget>("setOpacity", &UIWidget::setOpacity);
     g_lua.bindClassMemberFunction<UIWidget>("setBackgroundColor", &UIWidget::setBackgroundColor);
     g_lua.bindClassMemberFunction<UIWidget>("setForegroundColor", &UIWidget::setForegroundColor);
@@ -61,10 +64,15 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIWidget>("setMarginRight", &UIWidget::setMarginRight);
     g_lua.bindClassMemberFunction<UIWidget>("setMarginBottom", &UIWidget::setMarginBottom);
     g_lua.bindClassMemberFunction<UIWidget>("setMarginLeft", &UIWidget::setMarginLeft);
+    g_lua.bindClassMemberFunction<UIWidget>("setText", &UIWidget::setText);
+    g_lua.bindClassMemberFunction<UIWidget>("setTextAlign", &UIWidget::setTextAlign);
+    g_lua.bindClassMemberFunction<UIWidget>("setTextOffset", &UIWidget::setTextOffset);
+    g_lua.bindClassMemberFunction<UIWidget>("setFont", &UIWidget::setFont);
     g_lua.bindClassMemberFunction<UIWidget>("setSizeFixed", &UIWidget::setSizeFixed);
     g_lua.bindClassMemberFunction<UIWidget>("setLastFocusReason", &UIWidget::setLastFocusReason);
     g_lua.bindClassMemberFunction<UIWidget>("bindRectToParent", &UIWidget::bindRectToParent);
     g_lua.bindClassMemberFunction<UIWidget>("resize", &UIWidget::resize);
+    g_lua.bindClassMemberFunction<UIWidget>("resizeToText", &UIWidget::resizeToText);
     g_lua.bindClassMemberFunction<UIWidget>("moveTo", &UIWidget::moveTo);
     g_lua.bindClassMemberFunction<UIWidget>("hide", &UIWidget::hide);
     g_lua.bindClassMemberFunction<UIWidget>("show", &UIWidget::show);
@@ -102,15 +110,13 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIWidget>("getLayout", &UIWidget::getLayout);
     g_lua.bindClassMemberFunction<UIWidget>("getParent", &UIWidget::getParent);
     g_lua.bindClassMemberFunction<UIWidget>("getRootParent", &UIWidget::getRootParent);
-    g_lua.bindClassMemberFunction<UIWidget>("getPosition", &UIWidget::getPosition);
+    g_lua.bindClassMemberFunction<UIWidget>("getPos", &UIWidget::getPos);
     g_lua.bindClassMemberFunction<UIWidget>("getSize", &UIWidget::getSize);
     g_lua.bindClassMemberFunction<UIWidget>("getRect", &UIWidget::getRect);
     g_lua.bindClassMemberFunction<UIWidget>("getX", &UIWidget::getX);
     g_lua.bindClassMemberFunction<UIWidget>("getY", &UIWidget::getY);
     g_lua.bindClassMemberFunction<UIWidget>("getWidth", &UIWidget::getWidth);
     g_lua.bindClassMemberFunction<UIWidget>("getHeight", &UIWidget::getHeight);
-    //g_lua.bindClassMemberFunction<UIWidget>("getImage", &UIWidget::getImage);
-    //g_lua.bindClassMemberFunction<UIWidget>("getFont", &UIWidget::getFont);
     g_lua.bindClassMemberFunction<UIWidget>("getForegroundColor", &UIWidget::getForegroundColor);
     g_lua.bindClassMemberFunction<UIWidget>("getBackgroundColor", &UIWidget::getBackgroundColor);
     g_lua.bindClassMemberFunction<UIWidget>("getOpacity", &UIWidget::getOpacity);
@@ -118,6 +124,11 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIWidget>("getMarginRight", &UIWidget::getMarginRight);
     g_lua.bindClassMemberFunction<UIWidget>("getMarginBottom", &UIWidget::getMarginBottom);
     g_lua.bindClassMemberFunction<UIWidget>("getMarginLeft", &UIWidget::getMarginLeft);
+    g_lua.bindClassMemberFunction<UIWidget>("getText", &UIWidget::getText);
+    g_lua.bindClassMemberFunction<UIWidget>("getTextAlign", &UIWidget::getTextAlign);
+    g_lua.bindClassMemberFunction<UIWidget>("getTextOffset", &UIWidget::getTextOffset);
+    g_lua.bindClassMemberFunction<UIWidget>("getFont", &UIWidget::getFont);
+    g_lua.bindClassMemberFunction<UIWidget>("getTextSize", &UIWidget::getTextSize);
     g_lua.bindClassMemberFunction<UIWidget>("getLastFocusReason", &UIWidget::getLastFocusReason);
     g_lua.bindClassMemberFunction<UIWidget>("getStyle", &UIWidget::getStyle);
     g_lua.bindClassMemberFunction<UIWidget>("getStyleName", &UIWidget::getStyleName);
@@ -169,39 +180,36 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIAnchorLayout>("centerIn", &UIAnchorLayout::centerIn);
     g_lua.bindClassMemberFunction<UIAnchorLayout>("fill", &UIAnchorLayout::fill);
 
-    // UILabel
-    g_lua.registerClass<UILabel, UIWidget>();
-    g_lua.bindClassStaticFunction<UILabel>("create", &UIWidget::create<UILabel>);
-    g_lua.bindClassMemberFunction<UILabel>("getText", &UILabel::getText);
-    g_lua.bindClassMemberFunction<UILabel>("setText", &UILabel::setText);
-    g_lua.bindClassMemberFunction("resizeToText", &UILabel::resizeToText);
-
-    // UILabel
+    // UIProgressBar
     g_lua.registerClass<UIProgressBar, UIWidget>();
     g_lua.bindClassStaticFunction<UIProgressBar>("create", &UIWidget::create<UIProgressBar>);
     g_lua.bindClassMemberFunction<UIProgressBar>("getPercent", &UIProgressBar::getPercent);
     g_lua.bindClassMemberFunction<UIProgressBar>("setPercent", &UIProgressBar::setPercent);
 
-    // UIButton
-    g_lua.registerClass<UIButton, UIWidget>();
-    g_lua.bindClassStaticFunction<UIButton>("create", &UIWidget::create<UIButton>);
-    g_lua.bindClassMemberFunction<UIButton>("getText", &UIButton::getText);
-    g_lua.bindClassMemberFunction<UIButton>("setText", &UIButton::setText);
-
     // UILineEdit
     g_lua.registerClass<UILineEdit, UIWidget>();
     g_lua.bindClassStaticFunction<UILineEdit>("create", &UIWidget::create<UILineEdit>);
-    g_lua.bindClassMemberFunction<UILineEdit>("getText", &UILineEdit::getText);
-    g_lua.bindClassMemberFunction<UILineEdit>("setText", &UILineEdit::setText);
-    g_lua.bindClassMemberFunction<UILineEdit>("clearText", &UILineEdit::clearText);
+    g_lua.bindClassMemberFunction<UILineEdit>("setTextHorizontalMargin", &UILineEdit::setTextHorizontalMargin);
+    g_lua.bindClassMemberFunction<UILineEdit>("setCursorPos", &UILineEdit::setCursorPos);
+    g_lua.bindClassMemberFunction<UILineEdit>("setCursorEnabled", &UILineEdit::setCursorEnabled);
+    g_lua.bindClassMemberFunction<UILineEdit>("setTextHidden", &UILineEdit::setTextHidden);
+    g_lua.bindClassMemberFunction<UILineEdit>("setAlwaysActive", &UILineEdit::setAlwaysActive);
+    g_lua.bindClassMemberFunction<UILineEdit>("moveCursor", &UILineEdit::moveCursor);
+    g_lua.bindClassMemberFunction<UILineEdit>("appendText", &UILineEdit::appendText);
+    g_lua.bindClassMemberFunction<UILineEdit>("removeCharacter", &UILineEdit::removeCharacter);
+    g_lua.bindClassMemberFunction<UILineEdit>("getDisplayedText", &UILineEdit::getDisplayedText);
+    g_lua.bindClassMemberFunction<UILineEdit>("getTextPos", &UILineEdit::getTextPos);
+    g_lua.bindClassMemberFunction<UILineEdit>("getTextHorizontalMargin", &UILineEdit::getTextHorizontalMargin);
     g_lua.bindClassMemberFunction<UILineEdit>("getCursorPos", &UILineEdit::getCursorPos);
+    g_lua.bindClassMemberFunction<UILineEdit>("isCursorEnabled", &UILineEdit::isCursorEnabled);
+    g_lua.bindClassMemberFunction<UILineEdit>("isAlwaysActive", &UILineEdit::isAlwaysActive);
+    g_lua.bindClassMemberFunction<UILineEdit>("isTextHidden", &UILineEdit::isTextHidden);
 
     // UICheckBox
     g_lua.registerClass<UICheckBox, UIWidget>();
     g_lua.bindClassStaticFunction<UICheckBox>("create", &UIWidget::create<UICheckBox>);
     g_lua.bindClassMemberFunction<UICheckBox>("isChecked", &UICheckBox::isChecked);
     g_lua.bindClassMemberFunction<UICheckBox>("setChecked", &UICheckBox::setChecked);
-
 
     // UIWindow
     g_lua.registerClass<UIWindow, UIWidget>();

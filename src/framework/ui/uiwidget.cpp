@@ -33,6 +33,7 @@
 #include <framework/otml/otmlnode.h>
 #include <framework/graphics/graphics.h>
 #include <framework/platform/platformwindow.h>
+#include <framework/graphics/texturemanager.h>
 
 UIWidget::UIWidget()
 {
@@ -41,6 +42,10 @@ UIWidget::UIWidget()
     m_font = g_fonts.getDefaultFont();
     m_opacity = 255;
     m_marginTop = m_marginRight = m_marginBottom = m_marginLeft = 0;
+    //m_backgroundColor = Fw::alpha;
+    m_backgroundColor = Fw::white;
+    m_foregroundColor = Fw::white;
+    m_textAlign = Fw::AlignCenter;
 
     // generate an unique id, this is need because anchored layouts find widgets by id
     static unsigned long id = 1;
@@ -74,11 +79,12 @@ void UIWidget::render()
 
 void UIWidget::renderSelf()
 {
-    // draw background
-    if(m_image) {
-        g_painter.setColor(m_backgroundColor);
-        m_image->draw(m_rect);
-    }
+    // draw style components in order
+    drawBackground(m_rect);
+    drawBorder(m_rect);
+    drawImage(m_rect);
+    drawIcon(m_rect);
+    drawText(m_rect);
 }
 
 void UIWidget::renderChildren()
@@ -86,7 +92,10 @@ void UIWidget::renderChildren()
     // draw children
     for(const UIWidgetPtr& child : m_children) {
         // render only visible children with a valid rect inside our rect
-        if(child->isExplicitlyVisible() && child->getRect().isValid() && child->getRect().intersects(m_rect)) {
+        if(child->isExplicitlyVisible() &&
+           child->getRect().isValid() &&
+           child->getRect().intersects(m_rect) &&
+           child->getOpacity() > 0) {
             // store current graphics opacity
             int oldOpacity = g_painter.getOpacity();
 
@@ -99,10 +108,60 @@ void UIWidget::renderChildren()
             // debug draw box
             //g_painter.setColor(Fw::green);
             //g_painter.drawBoundingRect(child->getRect());
-            //g_fonts.getDefaultFont()->renderText(child->getId(), child->getPosition() + Point(2, 0), Fw::red);
+            //g_fonts.getDefaultFont()->renderText(child->getId(), child->getPos() + Point(2, 0), Fw::red);
 
             g_painter.setOpacity(oldOpacity);
         }
+    }
+}
+
+void UIWidget::drawBackground(const Rect& screenCoords)
+{
+    /*
+    if(m_backgroundColor.a() > 0) {
+        g_painter.setColor(m_backgroundColor);
+        g_painter.drawFilledRect(screenCoords);
+        //g_painter.drawFilledRect(screenCoords.expanded(-m_borderWidth));
+    }
+    */
+}
+
+void UIWidget::drawBorder(const Rect& screenCoords)
+{
+    /*
+    if(m_borderWidth > 0 && m_borderColor.a() > 0) {
+        g_painter.bindColor(m_borderColor);
+        g_painter.drawBoundingRect(screenCoords, m_borderWidth);
+    }
+    */
+}
+
+void UIWidget::drawImage(const Rect& screenCoords)
+{
+    if(m_image) {
+        g_painter.setColor(m_backgroundColor);
+        m_image->draw(screenCoords);
+    }
+}
+
+void UIWidget::drawIcon(const Rect& screenCoords)
+{
+    if(m_icon) {
+        Rect iconRect;
+        iconRect.resize(m_icon->getSize());
+        iconRect.moveCenter(screenCoords.center());
+        g_painter.setColor(Fw::white);
+        g_painter.drawTexturedRect(iconRect, m_icon);
+    }
+}
+
+void UIWidget::drawText(const Rect& screenCoords)
+{
+    g_painter.setColor(m_foregroundColor);
+    if(m_text.length() > 0 && m_foregroundColor.a() > 0) {
+        Rect textRect = screenCoords;
+        textRect.translate(m_textOffset);
+        m_font->renderText(m_text, textRect, m_textAlign, m_foregroundColor);
     }
 }
 
@@ -213,6 +272,36 @@ void UIWidget::setRect(const Rect& rect)
         });
     }
     m_updateEventScheduled = true;
+}
+
+void UIWidget::setIcon(const std::string& iconFile)
+{
+    m_icon = g_textures.getTexture(iconFile);
+}
+
+void UIWidget::setText(const std::string& text)
+{
+    if(m_text != text) {
+        m_text = text;
+
+        // update rect size
+        if(!m_rect.isValid()) {
+            Size textSize = m_font->calculateTextRectSize(m_text);
+            Size newSize = getSize();
+            if(newSize.width() <= 0)
+                newSize.setWidth(textSize.width());
+            if(newSize.height() <= 0)
+                newSize.setHeight(textSize.height());
+            resize(newSize);
+        }
+
+        onTextChange(text);
+    }
+}
+
+void UIWidget::setFont(const std::string& fontName)
+{
+    m_font = g_fonts.getFont(fontName);
 }
 
 void UIWidget::bindRectToParent()
@@ -672,8 +761,8 @@ void UIWidget::updateLayout()
 void UIWidget::applyStyle(const OTMLNodePtr& styleNode)
 {
     try {
-        onStyleApply(styleNode);
-        callLuaField("onStyleApply", styleNode);
+        onStyleApply(styleNode->tag(), styleNode);
+        callLuaField("onStyleApply", styleNode->tag(), styleNode);
     } catch(Exception& e) {
         logError("Failed to apply style to widget '", m_id, "' style: ", e.what());
     }
@@ -862,7 +951,7 @@ void UIWidget::updateStyle()
     m_stateStyle = newStateStyle;
 }
 
-void UIWidget::onStyleApply(const OTMLNodePtr& styleNode)
+void UIWidget::onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode)
 {
     // first set id
     if(const OTMLNodePtr& node = styleNode->get("id"))
@@ -878,8 +967,16 @@ void UIWidget::onStyleApply(const OTMLNodePtr& styleNode)
         }
         else if(node->tag() == "border-image")
             setImage(BorderImage::loadFromOTML(node));
+        if(node->tag() == "icon")
+            setIcon(node->value());
+        else if(node->tag() == "text")
+            setText(node->value());
+        else if(node->tag() == "text-align")
+            setTextAlign(Fw::translateAlignment(node->value()));
+        else if(node->tag() == "text-offset")
+            setTextOffset(node->value<Point>());
         else if(node->tag() == "font")
-            setFont(g_fonts.getFont(node->value()));
+            setFont(node->value());
         else if(node->tag() == "color")
             setForegroundColor(node->value<Color>());
         else if(node->tag() == "background-color")
@@ -902,7 +999,7 @@ void UIWidget::onStyleApply(const OTMLNodePtr& styleNode)
             setHeight(node->value<int>());
         else if(node->tag() == "fixed-size")
             setSizeFixed(node->value<bool>());
-        else if(node->tag() == "position")
+        else if(node->tag() == "pos")
             moveTo(node->value<Point>());
         else if(node->tag() == "x")
             setX(node->value<int>());
@@ -1007,7 +1104,7 @@ void UIWidget::onStyleApply(const OTMLNodePtr& styleNode)
             }
         // lua functions
         } else if(boost::starts_with(node->tag(), "@")) {
-            // on load once
+            // load once
             if(m_firstOnStyle) {
                 std::string funcName = node->tag().substr(1);
                 std::string funcOrigin = "@" + node->source() + "[" + node->tag() + "]";
@@ -1049,6 +1146,17 @@ void UIWidget::onHoverChange(bool hovered)
     // check for new hovered elements when the current widget is removed
     if(!hovered && !getParent() && g_ui.getRootWidget())
         g_ui.getRootWidget()->updateState(Fw::HoverState);
+}
+
+
+void UIWidget::onTextChange(const std::string& text)
+{
+    callLuaField("onTextChange", text);
+}
+
+void UIWidget::onFontChange(const std::string& font)
+{
+    callLuaField("onFontChange", font);
 }
 
 bool UIWidget::onKeyPress(uchar keyCode, std::string keyText, int keyboardModifiers)
@@ -1140,6 +1248,9 @@ bool UIWidget::onMousePress(const Point& mousePos, Fw::MouseButton button)
 
 void UIWidget::onMouseRelease(const Point& mousePos, Fw::MouseButton button)
 {
+    if(isPressed() && getRect().contains(mousePos))
+        callLuaField("onClick");
+
     callLuaField("onMouseRelease", mousePos, button);
 
     // do a backup of children list, because it may change while looping it

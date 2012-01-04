@@ -29,8 +29,8 @@
 
 UILineEdit::UILineEdit()
 {
-    m_align = Fw::AlignLeftCenter;
     m_cursorPos = 0;
+    m_textAlign = Fw::AlignLeftCenter;
     m_startRenderPos = 0;
     m_textHorizontalMargin = 0;
     m_textHidden = false;
@@ -38,9 +38,12 @@ UILineEdit::UILineEdit()
     blinkCursor();
 }
 
-void UILineEdit::render()
+void UILineEdit::renderSelf()
 {
-    UIWidget::render();
+    drawBackground(m_rect);
+    drawBorder(m_rect);
+    drawImage(m_rect);
+    drawIcon(m_rect);
 
     //TODO: text rendering could be much optimized by using vertex buffer or caching the render into a texture
 
@@ -81,7 +84,7 @@ void UILineEdit::update()
 
     // map glyphs positions
     Size textBoxSize;
-    const std::vector<Point>& glyphsPositions = m_font->calculateGlyphsPositions(text, m_align, &textBoxSize);
+    const std::vector<Point>& glyphsPositions = m_font->calculateGlyphsPositions(text, m_textAlign, &textBoxSize);
     const Rect *glyphsTextureCoords = m_font->getGlyphsTextureCoords();
     const Size *glyphsSize = m_font->getGlyphsSize();
     int glyph;
@@ -141,16 +144,16 @@ void UILineEdit::update()
     textScreenCoords.addRight(-m_textHorizontalMargin);
     m_drawArea = textScreenCoords;
 
-    if(m_align & Fw::AlignBottom) {
+    if(m_textAlign & Fw::AlignBottom) {
         m_drawArea.translate(0, textScreenCoords.height() - textBoxSize.height());
-    } else if(m_align & Fw::AlignVerticalCenter) {
+    } else if(m_textAlign & Fw::AlignVerticalCenter) {
         m_drawArea.translate(0, (textScreenCoords.height() - textBoxSize.height()) / 2);
     } else { // AlignTop
     }
 
-    if(m_align & Fw::AlignRight) {
+    if(m_textAlign & Fw::AlignRight) {
         m_drawArea.translate(textScreenCoords.width() - textBoxSize.width(), 0);
-    } else if(m_align & Fw::AlignHorizontalCenter) {
+    } else if(m_textAlign & Fw::AlignHorizontalCenter) {
         m_drawArea.translate((textScreenCoords.width() - textBoxSize.width()) / 2, 0);
     } else { // AlignLeft
 
@@ -169,17 +172,17 @@ void UILineEdit::update()
         Rect glyphTextureCoords = glyphsTextureCoords[glyph];
 
         // first translate to align position
-        if(m_align & Fw::AlignBottom) {
+        if(m_textAlign & Fw::AlignBottom) {
             glyphScreenCoords.translate(0, textScreenCoords.height() - textBoxSize.height());
-        } else if(m_align & Fw::AlignVerticalCenter) {
+        } else if(m_textAlign & Fw::AlignVerticalCenter) {
             glyphScreenCoords.translate(0, (textScreenCoords.height() - textBoxSize.height()) / 2);
         } else { // AlignTop
             // nothing to do
         }
 
-        if(m_align & Fw::AlignRight) {
+        if(m_textAlign & Fw::AlignRight) {
             glyphScreenCoords.translate(textScreenCoords.width() - textBoxSize.width(), 0);
-        } else if(m_align & Fw::AlignHorizontalCenter) {
+        } else if(m_textAlign & Fw::AlignHorizontalCenter) {
             glyphScreenCoords.translate((textScreenCoords.width() - textBoxSize.width()) / 2, 0);
         } else { // AlignLeft
             // nothing to do
@@ -225,36 +228,10 @@ void UILineEdit::update()
     }
 }
 
-void UILineEdit::setFont(const FontPtr& font)
+void UILineEdit::setTextHorizontalMargin(int margin)
 {
-    if(m_font != font) {
-        m_font = font;
-        update();
-    }
-}
-
-void UILineEdit::setText(const std::string& text)
-{
-    if(m_text != text) {
-        m_text = text;
-        m_cursorPos = text.length();
-        blinkCursor();
-        update();
-    }
-}
-
-void UILineEdit::setTextHidden(bool hidden)
-{
-    m_textHidden = true;
+    m_textHorizontalMargin = margin;
     update();
-}
-
-void UILineEdit::setAlign(Fw::AlignmentFlag align)
-{
-    if(m_align != align) {
-        m_align = align;
-        update();
-    }
 }
 
 void UILineEdit::setCursorPos(int pos)
@@ -278,6 +255,17 @@ void UILineEdit::setCursorEnabled(bool enable)
     } else
         m_cursorPos = -1;
     update();
+}
+
+void UILineEdit::setTextHidden(bool hidden)
+{
+    m_textHidden = true;
+    update();
+}
+
+void UILineEdit::setAlwaysActive(bool enable)
+{
+    m_alwaysActive = enable;
 }
 
 void UILineEdit::appendText(std::string text)
@@ -373,21 +361,34 @@ std::string UILineEdit::getDisplayedText()
         return m_text;
 }
 
-void UILineEdit::onStyleApply(const OTMLNodePtr& styleNode)
+void UILineEdit::onTextChange(const std::string& text)
 {
-    UIWidget::onStyleApply(styleNode);
+    m_cursorPos = text.length();
+    blinkCursor();
+    update();
+    UIWidget::onTextChange(text);
+}
+
+void UILineEdit::onFontChange(const std::string& font)
+{
+    update();
+    UIWidget::onFontChange(font);
+}
+
+void UILineEdit::onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode)
+{
+    UIWidget::onStyleApply(styleName, styleNode);
 
     for(const OTMLNodePtr& node : styleNode->children()) {
         if(node->tag() == "text") {
             setText(node->value());
             setCursorPos(m_text.length());
-        } else if(node->tag() == "text-hidden") {
+        } else if(node->tag() == "text-hidden")
             setTextHidden(node->value<bool>());
-        } else if(node->tag() == "text-margin") {
-            m_textHorizontalMargin = node->value<int>();
-        } else if(node->tag() == "always-active") {
-            m_alwaysActive = true;
-        }
+        else if(node->tag() == "text-margin")
+            setTextHorizontalMargin(node->value<int>());
+        else if(node->tag() == "always-active")
+            setAlwaysActive(node->value<bool>());
     }
 }
 

@@ -198,15 +198,15 @@ namespace Fw
         AlignBottom = 8,
         AlignHorizontalCenter = 16,
         AlignVerticalCenter = 32,
-        AlignTopLeft = AlignTop | AlignLeft,
-        AlignTopRight = AlignTop | AlignRight,
-        AlignBottomLeft = AlignBottom | AlignLeft,
-        AlignBottomRight = AlignBottom | AlignRight,
-        AlignLeftCenter = AlignLeft | AlignVerticalCenter,
-        AlignRightCenter = AlignRight | AlignVerticalCenter,
-        AlignTopCenter = AlignTop | AlignHorizontalCenter,
-        AlignBottomCenter = AlignBottom | AlignHorizontalCenter,
-        AlignCenter = AlignVerticalCenter | AlignHorizontalCenter
+        AlignTopLeft = AlignTop | AlignLeft, // 5
+        AlignTopRight = AlignTop | AlignRight, // 6
+        AlignBottomLeft = AlignBottom | AlignLeft, // 9
+        AlignBottomRight = AlignBottom | AlignRight, // 10
+        AlignLeftCenter = AlignLeft | AlignVerticalCenter, // 33
+        AlignRightCenter = AlignRight | AlignVerticalCenter, // 34
+        AlignTopCenter = AlignTop | AlignHorizontalCenter, // 20
+        AlignBottomCenter = AlignBottom | AlignHorizontalCenter, // 24
+        AlignCenter = AlignVerticalCenter | AlignHorizontalCenter // 48
     };
 
     enum AnchorEdge {
