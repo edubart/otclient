@@ -71,7 +71,7 @@ BorderImagePtr BorderImage::loadFromOTML(const OTMLNodePtr& borderImageNode)
     Rect bottomLeftCorner;
     Rect bottomRightCorner;
     Rect center;
-    Rect subRect;
+    Rect clipRect;
     int top, bottom, left, right, border;
     Size size;
     Point offset;
@@ -81,11 +81,8 @@ BorderImagePtr BorderImage::loadFromOTML(const OTMLNodePtr& borderImageNode)
     TexturePtr texture = g_textures.getTexture(source);
 
     // load basic border confs
-    size = texture->getSize();
-    size = borderImageNode->valueAt("size", size);
-    offset = borderImageNode->valueAt("offset", offset);
     border = borderImageNode->valueAt("border", 0);
-    subRect = Rect(offset, size);
+    clipRect = borderImageNode->valueAt("clip", Rect(0, 0, texture->getSize()));
 
     // load border margins
     top = bottom = left = right = border;
@@ -95,15 +92,15 @@ BorderImagePtr BorderImage::loadFromOTML(const OTMLNodePtr& borderImageNode)
     right = borderImageNode->valueAt("border.right", right);
 
     // calculates border coords
-    leftBorder = Rect(subRect.left(), subRect.top() + top, left, subRect.height() - top - bottom);
-    rightBorder = Rect(subRect.right() - right + 1, subRect.top() + top, right, subRect.height() - top - bottom);
-    topBorder = Rect(subRect.left() + left, subRect.top(), subRect.width() - right - left, top);
-    bottomBorder = Rect(subRect.left() + left, subRect.bottom() - bottom + 1, subRect.width() - right - left, bottom);
-    topLeftCorner = Rect(subRect.left(), subRect.top(), left, top);
-    topRightCorner = Rect(subRect.right() - right + 1, subRect.top(), right, top);
-    bottomLeftCorner = Rect(subRect.left(), subRect.bottom() - bottom + 1, left, bottom);
-    bottomRightCorner = Rect(subRect.right() - right + 1, subRect.bottom() - bottom + 1, right, bottom);
-    center = Rect(subRect.left() + left, subRect.top() + top, subRect.width() - right - left, subRect.height() - top - bottom);
+    leftBorder = Rect(clipRect.left(), clipRect.top() + top, left, clipRect.height() - top - bottom);
+    rightBorder = Rect(clipRect.right() - right + 1, clipRect.top() + top, right, clipRect.height() - top - bottom);
+    topBorder = Rect(clipRect.left() + left, clipRect.top(), clipRect.width() - right - left, top);
+    bottomBorder = Rect(clipRect.left() + left, clipRect.bottom() - bottom + 1, clipRect.width() - right - left, bottom);
+    topLeftCorner = Rect(clipRect.left(), clipRect.top(), left, top);
+    topRightCorner = Rect(clipRect.right() - right + 1, clipRect.top(), right, top);
+    bottomLeftCorner = Rect(clipRect.left(), clipRect.bottom() - bottom + 1, left, bottom);
+    bottomRightCorner = Rect(clipRect.right() - right + 1, clipRect.bottom() - bottom + 1, right, bottom);
+    center = Rect(clipRect.left() + left, clipRect.top() + top, clipRect.width() - right - left, clipRect.height() - top - bottom);
 
     // load individual border conf if supplied
     /*

@@ -10,11 +10,6 @@ function UIPopupMenu.create()
   return menu
 end
 
-function UIPopupMenu:destroy()
-  table.removevalue(displayedMenuList, self)
-  UIWidget.destroy(self)
-end
-
 function UIPopupMenu:display(pos)
   -- don't display if not options was added
   if self:getChildCount() == 0 then
@@ -43,6 +38,10 @@ end
 
 function UIPopupMenu:addSeparator()
   createWidget(self:getStyleName() .. 'Separator', self)
+end
+
+function UIPopupMenu:onDestroy()
+  table.removevalue(displayedMenuList, self)
 end
 
 function UIPopupMenu:onMousePress(mousePos, mouseButton)

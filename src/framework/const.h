@@ -268,8 +268,9 @@ namespace Fw
         OnState = 64,
         FirstState = 128,
         MiddleState = 256,
-        AlternateState = 512,
-        LastState = 1024,
+        LastState = 512,
+        AlternateState = 1024,
+        LastWidgetState = 2048,
     };
 
     enum AppicationFlags {

@@ -69,6 +69,8 @@ void UIWidget::destroy()
         if(parent->hasChild(asUIWidget()))
             parent->removeChild(asUIWidget());
     }
+
+    callLuaField("onDestroy");
 }
 
 void UIWidget::render()
@@ -200,6 +202,17 @@ void UIWidget::setPressed(bool pressed)
     }
 }
 
+void UIWidget::setOn(bool on)
+{
+    setState(Fw::OnState, on);
+}
+
+void UIWidget::setChecked(bool checked)
+{
+    if(setState(Fw::CheckedState, checked))
+        callLuaField("onCheckChange", checked);
+}
+
 void UIWidget::setFocusable(bool focusable)
 {
     if(m_focusable != focusable) {
@@ -278,8 +291,8 @@ void UIWidget::setRect(const Rect& rect)
             self->m_updateEventScheduled = false;
             self->onGeometryChange(oldRect, self->getRect());
         });
+        m_updateEventScheduled = true;
     }
-    m_updateEventScheduled = true;
 }
 
 void UIWidget::setIcon(const std::string& iconFile)
@@ -769,8 +782,10 @@ void UIWidget::updateLayout()
 void UIWidget::applyStyle(const OTMLNodePtr& styleNode)
 {
     try {
+        m_loadingStyle = true;
         onStyleApply(styleNode->tag(), styleNode);
         callLuaField("onStyleApply", styleNode->tag(), styleNode);
+        m_loadingStyle = false;
     } catch(Exception& e) {
         logError("Failed to apply style to widget '", m_id, "' style: ", e.what());
     }
@@ -896,7 +911,7 @@ void UIWidget::updateState(Fw::WidgetState state)
 
 void UIWidget::updateStates()
 {
-    for(int state = 1; state != Fw::LastState; state <<= 1)
+    for(int state = 1; state != Fw::LastWidgetState; state <<= 1)
         updateState((Fw::WidgetState)state);
 }
 
@@ -912,6 +927,16 @@ void UIWidget::updateChildrenIndexStates()
 
 void UIWidget::updateStyle()
 {
+    if(m_loadingStyle && !m_updateStyleScheduled) {
+        UIWidgetPtr self = asUIWidget();
+        g_dispatcher.addEvent([self] {
+            self->m_updateStyleScheduled = false;
+            self->updateStyle();
+        });
+        m_updateStyleScheduled = true;
+        return;
+    }
+
     if(!m_style)
         return;
 
@@ -995,6 +1020,10 @@ void UIWidget::onStyleApply(const std::string& styleName, const OTMLNodePtr& sty
             setEnabled(node->value<bool>());
         else if(node->tag() == "visible")
             setVisible(node->value<bool>());
+        else if(node->tag() == "checked")
+            setChecked(node->value<bool>());
+        else if(node->tag() == "on")
+            setOn(node->value<bool>());
         else if(node->tag() == "focusable")
             setFocusable(node->value<bool>());
         else if(node->tag() == "phantom")

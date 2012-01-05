@@ -77,14 +77,3 @@ void UICheckBox::onStyleApply(const std::string& styleName, const OTMLNodePtr& s
         }
     }
 }
-
-bool UICheckBox::isChecked()
-{
-    return hasState(Fw::CheckedState);
-}
-
-void UICheckBox::setChecked(bool checked)
-{
-    if(setState(Fw::CheckedState, checked))
-        callLuaField("onCheckChange", checked);
-}

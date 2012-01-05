@@ -31,9 +31,6 @@ public:
     UICheckBox();
     void render();
 
-    bool isChecked();
-    void setChecked(bool checked);
-
     void setText(const std::string& text) { m_text = text; }
     std::string getText() { return m_text; }
 

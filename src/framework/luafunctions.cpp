@@ -39,6 +39,8 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIWidget>("destroy", &UIWidget::destroy);
     g_lua.bindClassMemberFunction<UIWidget>("setVisible", &UIWidget::setVisible);
     g_lua.bindClassMemberFunction<UIWidget>("setEnabled", &UIWidget::setEnabled);
+    g_lua.bindClassMemberFunction<UIWidget>("setChecked", &UICheckBox::setChecked);
+    g_lua.bindClassMemberFunction<UIWidget>("setOn", &UICheckBox::setOn);
     g_lua.bindClassMemberFunction<UIWidget>("setPressed", &UIWidget::setPressed);
     g_lua.bindClassMemberFunction<UIWidget>("setId", &UIWidget::setId);
     g_lua.bindClassMemberFunction<UIWidget>("setFocusable", &UIWidget::setFocusable);
@@ -52,7 +54,6 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIWidget>("setY", &UIWidget::setY);
     g_lua.bindClassMemberFunction<UIWidget>("setWidth", &UIWidget::setWidth);
     g_lua.bindClassMemberFunction<UIWidget>("setHeight", &UIWidget::setHeight);
-    //g_lua.bindClassMemberFunction<UIWidget>("setImage", &UIWidget::setImage);
     g_lua.bindClassMemberFunction<UIWidget>("setIcon", &UIWidget::setIcon);
     g_lua.bindClassMemberFunction<UIWidget>("setOpacity", &UIWidget::setOpacity);
     g_lua.bindClassMemberFunction<UIWidget>("setBackgroundColor", &UIWidget::setBackgroundColor);
@@ -94,6 +95,8 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIWidget>("isLast", &UIWidget::isLast);
     g_lua.bindClassMemberFunction<UIWidget>("isAlternate", &UIWidget::isAlternate);
     g_lua.bindClassMemberFunction<UIWidget>("isVisible", &UIWidget::isVisible);
+    g_lua.bindClassMemberFunction<UIWidget>("isOn", &UICheckBox::isOn);
+    g_lua.bindClassMemberFunction<UIWidget>("isChecked", &UICheckBox::isChecked);
     g_lua.bindClassMemberFunction<UIWidget>("isHidden", &UIWidget::isHidden);
     g_lua.bindClassMemberFunction<UIWidget>("isExplicitlyEnabled", &UIWidget::isExplicitlyEnabled);
     g_lua.bindClassMemberFunction<UIWidget>("isExplicitlyVisible", &UIWidget::isExplicitlyVisible);
@@ -206,8 +209,6 @@ void Application::registerLuaFunctions()
     // UICheckBox
     g_lua.registerClass<UICheckBox, UIWidget>();
     g_lua.bindClassStaticFunction<UICheckBox>("create", &UIWidget::create<UICheckBox>);
-    g_lua.bindClassMemberFunction<UICheckBox>("isChecked", &UICheckBox::isChecked);
-    g_lua.bindClassMemberFunction<UICheckBox>("setChecked", &UICheckBox::setChecked);
 
     // UIWindow
     g_lua.registerClass<UIWindow, UIWidget>();

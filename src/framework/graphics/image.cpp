@@ -43,7 +43,7 @@ void Image::loadFromOTML(const OTMLNodePtr& imageNode)
 
     // load texture
     m_texture = g_textures.getTexture(source);
-    m_textureCoords = imageNode->valueAt("coords", Rect(Point(0,0),m_texture->getSize()));
+    m_textureCoords = imageNode->valueAt("clip", Rect(0, 0, m_texture->getSize()));
 
     // enable texture bilinear filter
     if(smooth)

@@ -5,6 +5,8 @@ PopupMenuButton < UIButton
   height: 18
   margin-left: 3
   margin-right: 3
+  margin-top: 0
+  margin-bottom: 0
 
   image:
     source: /core_styles/images/empty_rect.png
@@ -26,11 +28,12 @@ PopupMenuButton < UIButton
 PopupMenuSeparator < UIWidget
   margin-left: 2
   margin-right: 2
-  image:
+  border-image:
     source: /core_styles/images/menubox.png
-    repeated: true
-    coords: 3 0 26 3
-  height: 3
+    border.left: 1
+    border.right: 1
+    clip: 0 0 32 2
+  height: 2
   phantom: true
 
 PopupMenu < UIPopupMenu

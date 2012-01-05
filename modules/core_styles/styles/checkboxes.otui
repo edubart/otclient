@@ -12,22 +12,22 @@ CheckBox < UICheckBox
   $!checked:
     image:
       source: /core_styles/images/checkbox.png
-      coords: 0 0 12 12
+      clip: 0 0 12 12
 
   $hover !checked:
     image:
       source: /core_styles/images/checkbox.png
-      coords: 0 12 12 12
+      clip: 0 12 12 12
 
   $checked:
     image:
       source: /core_styles/images/checkbox.png
-      coords: 0 24 12 12
+      clip: 0 24 12 12
 
   $hover checked:
     image:
       source: /core_styles/images/checkbox.png
-      coords: 0 36 12 12
+      clip: 0 36 12 12
 
   $disabled:
     background-color: #ffffff88
@@ -41,12 +41,12 @@ ColorBox < UICheckBox
   $checked:
     image:
       source: /core_styles/images/colorbox.png
-      coords: 16 0 16 16
+      clip: 16 0 16 16
 
   $!checked:
     image:
       source: /core_styles/images/colorbox.png
-      coords: 0 0 16 16
+      clip: 0 0 16 16
 
 ButtonBox < UICheckBox
   font: verdana-11px-antialised

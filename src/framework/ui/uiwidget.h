@@ -57,6 +57,8 @@ public:
     void setVisible(bool visible);
     void setEnabled(bool enabled);
     void setPressed(bool pressed);
+    void setOn(bool on);
+    void setChecked(bool checked);
     void setId(const std::string& id) { m_id = id; }
     void setFocusable(bool focusable);
     void setPhantom(bool phantom) { m_phantom = phantom; }
@@ -112,6 +114,8 @@ public:
     bool isMiddle() { return hasState(Fw::MiddleState); }
     bool isLast() { return hasState(Fw::LastState); }
     bool isAlternate() { return hasState(Fw::AlternateState); }
+    bool isChecked() { return hasState(Fw::CheckedState); }
+    bool isOn() { return hasState(Fw::OnState); }
     bool isVisible();
     bool isHidden() { return !isVisible(); }
     bool isExplicitlyEnabled() { return m_enabled; }
@@ -226,6 +230,8 @@ protected:
     Boolean<false> m_pressed;
     Boolean<false> m_phantom;
     Boolean<false> m_updateEventScheduled;
+    Boolean<false> m_loadingStyle;
+    Boolean<false> m_updateStyleScheduled;
     Boolean<true> m_firstOnStyle;
     Rect m_rect;
     UILayoutPtr m_layout;

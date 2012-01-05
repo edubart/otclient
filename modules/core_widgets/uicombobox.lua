@@ -33,6 +33,8 @@ function UIComboBox:onMousePress(mousePos, mouseButton)
   end
   menu:setWidth(self:getWidth())
   menu:display({ x = self:getX(), y = self:getY() + self:getHeight() })
+  connect(menu, { onDestroy = function() self:setOn(false) end })
+  self:setOn(true)
   return true
 end
 
