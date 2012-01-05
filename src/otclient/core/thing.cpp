@@ -132,3 +132,8 @@ bool Thing::ignoreLook()
 {
     return m_type->properties[ThingType::IgnoreLook];
 }
+
+bool Thing::isStackable()
+{
+    return m_type->properties[ThingType::IsStackable];
+}

@@ -42,6 +42,7 @@ protected:
 private:
     ItemPtr m_item;
     int m_itemMargin;
+    FontPtr m_font;
 };
 
 #endif

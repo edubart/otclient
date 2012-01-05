@@ -77,6 +77,7 @@ public:
     bool isNotMoveable();
     bool isPickupable();
     bool ignoreLook();
+    bool isStackable();
 
 protected:
     void internalDraw(const Point& p, int layer);

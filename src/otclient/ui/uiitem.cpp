@@ -23,10 +23,12 @@
 #include "uiitem.h"
 #include <framework/otml/otml.h>
 #include <framework/graphics/graphics.h>
+#include <framework/graphics/fontmanager.h>
 
 UIItem::UIItem()
 {
     m_itemMargin = 0;
+    m_font = g_fonts.getFont("verdana-11px-rounded");
 }
 
 void UIItem::render()
@@ -34,8 +36,16 @@ void UIItem::render()
     renderSelf();
 
     if(m_item) {
+        Point topLeft = m_rect.bottomRight() - Point(32, 32) + m_itemMargin;
+
         g_painter.setColor(Fw::white);
-        m_item->draw(m_rect.bottomRight() - Point(32, 32) + m_itemMargin, m_rect);
+        m_item->draw(topLeft, m_rect);
+
+        if(m_font && m_item->isStackable() && m_item->getData() > 1) {
+            std::string count = Fw::tostring(m_item->getData());
+            m_font->renderText(count, Rect(m_rect.topLeft(), m_rect.bottomRight() - Point(3, 0)), Fw::AlignBottomRight, Color(231, 231, 231));
+            dump << m_rect;
+        }
     }
 
     renderChildren();
