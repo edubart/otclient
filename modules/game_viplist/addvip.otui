@@ -1,7 +1,9 @@
 MainWindow
   size: 256 128
   title: Add to VIP list
-  
+  @onEnter: VipList.addVip()
+  @onEscape: VipList.destroyAddWindow()
+
   Label
     text: Please enter a character name:
     anchors.top: parent.top
@@ -10,7 +12,7 @@ MainWindow
     margin-left: 16
     margin-right: 16
     margin-top: 32
-    
+
   LineEdit
     id: name
     anchors.top: prev.bottom
@@ -19,7 +21,7 @@ MainWindow
     margin-left: 16
     margin-right: 16
     margin-top: 4
-    
+
   HorizontalSeparator
     anchors.left: parent.left
     anchors.right: parent.right

@@ -4,3 +4,4 @@ HorizontalSeparator < UIWidget
     border.top: 2
   height: 2
   phantom: true
+  focusable: false

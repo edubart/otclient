@@ -1,6 +1,8 @@
 ComboBoxPopupMenuButton < UIButton
   font: verdana-11px-antialised
   background-color: alpha
+  text-align: left
+  text-offset: 2 0
   color: #aaaaaa
   height: 18
   margin-left: 1

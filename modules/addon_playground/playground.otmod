@@ -1,6 +1,7 @@
 Module
   name: playground
   autoLoad: true
+  autoLoadPriority: 1000
   onLoad: |
     require 'playground'
 
