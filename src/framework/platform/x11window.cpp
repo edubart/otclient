@@ -605,6 +605,7 @@ void X11Window::poll()
             case KeyRelease: {
                 KeySym keysym;
                 char buf[32];
+                memset(buf, 0, 32);
                 int len;
 
                 m_inputEvent.keyboardModifiers = 0;
