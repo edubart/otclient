@@ -23,7 +23,7 @@
 #include "uigame.h"
 #include <otclient/core/game.h>
 #include <framework/ui/uilineedit.h>
-#include <framework/graphics/particlemanager.h>
+#include <framework/platform/platformwindow.h>
 
 bool UIGame::onKeyPress(uchar keyCode, std::string keyText, int keyboardModifiers)
 {
@@ -83,7 +83,6 @@ bool UIGame::onKeyPress(uchar keyCode, std::string keyText, int keyboardModifier
             return true;
         } else if(keyCode == Fw::KeyRight || keyCode == Fw::KeyNumpad6) {
             g_game.turn(Otc::East);
-            //g_particleManager.load("particle.otpa");
             return true;
         } else if(keyCode == Fw::KeyDown || keyCode == Fw::KeyNumpad2) {
             g_game.turn(Otc::South);
@@ -91,6 +90,8 @@ bool UIGame::onKeyPress(uchar keyCode, std::string keyText, int keyboardModifier
         } else if(keyCode == Fw::KeyLeft || keyCode == Fw::KeyNumpad4) {
             g_game.turn(Otc::West);
             return true;
+        } else if(keyCode == Fw::KeyV) {
+            chatLineEdit->appendText(g_window.getClipboardText());
         }
     } else if(keyboardModifiers == Fw::KeyboardShiftModifier) {
         if(keyCode == Fw::KeyRight || keyCode == Fw::KeyNumpad6) {

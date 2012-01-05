@@ -79,7 +79,7 @@ function VipList.onVipListLabelMousePress(widget, mousePos, mouseButton)
   menu:addOption('Add new VIP', function() VipList.createAddWindow() end)
   menu:addOption('Remove ' .. widget:getText(), function() if widget then Game.removeVip(widget:getId():sub(4)) vipList:removeChild(widget) end end)
   menu:addSeparator()
-  menu:addOption('Copy Name', function() end)
+  menu:addOption('Copy Name', function() g_window.setClipboardText(widget:getText()) end)
   menu:display(mousePos)
   
   return true

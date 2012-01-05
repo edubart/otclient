@@ -55,6 +55,7 @@ public:
     void rotate(const ThingPtr& thing);
     void talkChannel(int channelType, int channelId, const std::string& message);
     void talkPrivate(int channelType, const std::string& receiver, const std::string& message);
+    void inviteToParty(int creatureId);
     void openOutfitWindow();
     void setOutfit(const Outfit& outfit);
     void addVip(const std::string& name);

@@ -46,13 +46,13 @@ function Game.createThingMenu(menuPosition, lookThing, useThing, creatureThing)
         menu:addOption('Message to ' .. creatureThing:getName(), function() print('message') end)
         menu:addOption('Add to VIP list', function() Game.addVip(creatureThing:getName()) end)
         menu:addOption('Ignore ' .. creatureThing:getName(), function() print('ignore') end)
-        menu:addOption('Invite to Party', function() print('invite to party') end)
+        menu:addOption('Invite to Party', function() Game.inviteToParty(creatureThing:getId()) end)
       end
       
     end
 
     menu:addSeparator()
-    menu:addOption('Copy Name', function() print('copy name') end)
+    menu:addOption('Copy Name', function() g_window.setClipboardText(creatureThing:getName()) end)
     
   end
   

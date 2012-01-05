@@ -26,6 +26,7 @@
 #include "tile.h"
 #include <otclient/net/protocolgame.h>
 #include <framework/core/eventdispatcher.h>
+#include <framework/ui/uimanager.h>
 
 Game g_game;
 
@@ -105,7 +106,7 @@ void Game::processInventoryChange(int slot, const ItemPtr& item)
 
 void Game::walk(Otc::Direction direction)
 {
-    if(!m_online || !m_localPlayer->canWalk(direction))
+    if(!m_online || !m_localPlayer->canWalk(direction) || !g_ui.isOnInputEvent())
         return;
 
     m_localPlayer->clientWalk(direction);
@@ -161,7 +162,7 @@ void Game::turn(Otc::Direction direction)
 
 void Game::look(const ThingPtr& thing)
 {
-    if(!m_online || !thing)
+    if(!m_online || !thing || !g_ui.isOnInputEvent())
         return;
 
     int stackpos = getThingStackpos(thing);
@@ -171,7 +172,7 @@ void Game::look(const ThingPtr& thing)
 
 void Game::use(const ThingPtr& thing)
 {
-    if(!m_online || !thing)
+    if(!m_online || !thing || !g_ui.isOnInputEvent())
         return;
 
     int stackpos = getThingStackpos(thing);
@@ -181,7 +182,7 @@ void Game::use(const ThingPtr& thing)
 
 void Game::attack(const CreaturePtr& creature)
 {
-    if(!m_online || !creature)
+    if(!m_online || !creature || !g_ui.isOnInputEvent())
         return;
 
     m_protocolGame->sendAttack(creature->getId());
@@ -189,7 +190,7 @@ void Game::attack(const CreaturePtr& creature)
 
 void Game::follow(const CreaturePtr& creature)
 {
-    if(!m_online || !creature)
+    if(!m_online || !creature || !g_ui.isOnInputEvent())
         return;
 
     m_protocolGame->sendFollow(creature->getId());
@@ -197,7 +198,7 @@ void Game::follow(const CreaturePtr& creature)
 
 void Game::rotate(const ThingPtr& thing)
 {
-    if(!m_online || !thing)
+    if(!m_online || !thing || !g_ui.isOnInputEvent())
         return;
 
     int stackpos = getThingStackpos(thing);
@@ -219,7 +220,7 @@ int Game::getThingStackpos(const ThingPtr& thing)
 
 void Game::talkChannel(int channelType, int channelId, const std::string& message)
 {
-    if(!m_online)
+    if(!m_online || !g_ui.isOnInputEvent())
         return;
 
     m_protocolGame->sendTalk(channelType, channelId, "", message);
@@ -227,15 +228,23 @@ void Game::talkChannel(int channelType, int channelId, const std::string& messag
 
 void Game::talkPrivate(int channelType, const std::string& receiver, const std::string& message)
 {
-    if(!m_online)
+    if(!m_online || !g_ui.isOnInputEvent())
         return;
 
     m_protocolGame->sendTalk(channelType, 0, receiver, message);
 }
 
+void Game::inviteToParty(int creatureId)
+{
+    if(!m_online || !g_ui.isOnInputEvent())
+        return;
+
+    m_protocolGame->sendInviteToParty(creatureId);
+}
+
 void Game::openOutfitWindow()
 {
-    if(!m_online)
+    if(!m_online || !g_ui.isOnInputEvent())
         return;
 
     m_protocolGame->sendGetOutfit();
@@ -243,7 +252,7 @@ void Game::openOutfitWindow()
 
 void Game::setOutfit(const Outfit& outfit)
 {
-    if(!m_online)
+    if(!m_online || !g_ui.isOnInputEvent())
         return;
 
     m_protocolGame->sendSetOutfit(outfit);
@@ -251,7 +260,7 @@ void Game::setOutfit(const Outfit& outfit)
 
 void Game::addVip(const std::string& name)
 {
-    if(!m_online || name.empty())
+    if(!m_online || name.empty() || !g_ui.isOnInputEvent())
         return;
 
     m_protocolGame->sendAddVip(name);
@@ -259,7 +268,7 @@ void Game::addVip(const std::string& name)
 
 void Game::removeVip(int playerId)
 {
-    if(!m_online)
+    if(!m_online || !g_ui.isOnInputEvent())
         return;
 
     m_protocolGame->sendRemoveVip(playerId);
