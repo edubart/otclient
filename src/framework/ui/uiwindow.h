@@ -42,7 +42,7 @@ public:
 
 protected:
     virtual void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode);
-    virtual void onGeometryUpdate(const Rect& oldRect, const Rect& newRect);
+    virtual void onGeometryChange(const Rect& oldRect, const Rect& newRect);
     virtual bool onMousePress(const Point& mousePos, Fw::MouseButton button);
     virtual void onMouseRelease(const Point& mousePos, Fw::MouseButton button);
     virtual bool onMouseMove(const Point& mousePos, const Point& mouseMoved);

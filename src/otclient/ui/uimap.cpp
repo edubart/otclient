@@ -100,7 +100,7 @@ bool UIMap::onMousePress(const Point& mousePos, Fw::MouseButton button)
     return true;
 }
 
-void UIMap::onGeometryUpdate(const Rect& oldRect, const Rect& newRect)
+void UIMap::onGeometryChange(const Rect& oldRect, const Rect& newRect)
 {
     Rect mapRect = newRect.expanded(-m_mapMargin-1);
     Size mapSize(g_map.getVibibleSize().width() * Map::NUM_TILE_PIXELS, g_map.getVibibleSize().height() * Map::NUM_TILE_PIXELS);

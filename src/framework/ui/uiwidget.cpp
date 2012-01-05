@@ -165,17 +165,6 @@ void UIWidget::drawText(const Rect& screenCoords)
     }
 }
 
-void UIWidget::setEnabled(bool enabled)
-{
-    if(enabled != m_enabled) {
-        m_enabled = enabled;
-
-        updateState(Fw::DisabledState);
-        updateState(Fw::ActiveState);
-        updateState(Fw::HoverState);
-    }
-}
-
 void UIWidget::setVisible(bool visible)
 {
     if(m_visible != visible) {
@@ -189,6 +178,25 @@ void UIWidget::setVisible(bool visible)
 
         updateState(Fw::ActiveState);
         updateState(Fw::HoverState);
+    }
+}
+
+void UIWidget::setEnabled(bool enabled)
+{
+    if(enabled != m_enabled) {
+        m_enabled = enabled;
+
+        updateState(Fw::DisabledState);
+        updateState(Fw::ActiveState);
+        updateState(Fw::HoverState);
+    }
+}
+
+void UIWidget::setPressed(bool pressed)
+{
+    if(pressed != m_pressed) {
+        m_pressed = pressed;
+        updateState(Fw::PressedState);
     }
 }
 
@@ -268,7 +276,7 @@ void UIWidget::setRect(const Rect& rect)
         UIWidgetPtr self = asUIWidget();
         g_dispatcher.addEvent([self, oldRect]() {
             self->m_updateEventScheduled = false;
-            self->onGeometryUpdate(oldRect, self->getRect());
+            self->onGeometryChange(oldRect, self->getRect());
         });
     }
     m_updateEventScheduled = true;
@@ -1129,9 +1137,9 @@ void UIWidget::onStyleApply(const std::string& styleName, const OTMLNodePtr& sty
     m_firstOnStyle = false;
 }
 
-void UIWidget::onGeometryUpdate(const Rect& oldRect, const Rect& newRect)
+void UIWidget::onGeometryChange(const Rect& oldRect, const Rect& newRect)
 {
-    callLuaField("onGeometryUpdate", oldRect, newRect);
+    callLuaField("onGeometryChange", oldRect, newRect);
 }
 
 void UIWidget::onFocusChange(bool focused, Fw::FocusReason reason)
@@ -1161,9 +1169,39 @@ void UIWidget::onFontChange(const std::string& font)
 
 bool UIWidget::onKeyPress(uchar keyCode, std::string keyText, int keyboardModifiers)
 {
-    if(callLuaField<bool>("onKeyPress", keyCode, keyText, keyboardModifiers))
-        return true;
+    return callLuaField<bool>("onKeyPress", keyCode, keyText, keyboardModifiers);
+}
 
+bool UIWidget::onKeyRelease(uchar keyCode, std::string keyText, int keyboardModifiers)
+{
+    return callLuaField<bool>("onKeyRelease", keyCode, keyText, keyboardModifiers);
+}
+
+bool UIWidget::onMousePress(const Point& mousePos, Fw::MouseButton button)
+{
+    return callLuaField<bool>("onMousePress", mousePos, button);
+}
+
+void UIWidget::onMouseRelease(const Point& mousePos, Fw::MouseButton button)
+{
+    if(isPressed() && getRect().contains(mousePos))
+        callLuaField("onClick");
+
+    callLuaField("onMouseRelease", mousePos, button);
+}
+
+bool UIWidget::onMouseMove(const Point& mousePos, const Point& mouseMoved)
+{
+    return callLuaField<bool>("onMouseMove", mousePos, mouseMoved);
+}
+
+bool UIWidget::onMouseWheel(const Point& mousePos, Fw::MouseWheelDirection direction)
+{
+    return callLuaField<bool>("onMouseWheel", mousePos, direction);
+}
+
+bool UIWidget::propagateOnKeyPress(uchar keyCode, std::string keyText, int keyboardModifiers)
+{
     // do a backup of children list, because it may change while looping it
     UIWidgetList children;
     for(const UIWidgetPtr& child : m_children) {
@@ -1177,18 +1215,15 @@ bool UIWidget::onKeyPress(uchar keyCode, std::string keyText, int keyboardModifi
     }
 
     for(const UIWidgetPtr& child : children) {
-        if(child->onKeyPress(keyCode, keyText, keyboardModifiers))
+        if(child->propagateOnKeyPress(keyCode, keyText, keyboardModifiers))
             return true;
     }
 
-    return false;
+    return onKeyPress(keyCode, keyText, keyboardModifiers);
 }
 
-bool UIWidget::onKeyRelease(uchar keyCode, std::string keyText, int keyboardModifiers)
+bool UIWidget::propagateOnKeyRelease(uchar keyCode, std::string keyText, int keyboardModifiers)
 {
-    if(callLuaField<bool>("onKeyRelease", keyCode, keyText, keyboardModifiers))
-        return true;
-
     // do a backup of children list, because it may change while looping it
     UIWidgetList children;
     for(const UIWidgetPtr& child : m_children) {
@@ -1202,18 +1237,15 @@ bool UIWidget::onKeyRelease(uchar keyCode, std::string keyText, int keyboardModi
     }
 
     for(const UIWidgetPtr& child : children) {
-        if(child->onKeyRelease(keyCode, keyText, keyboardModifiers))
+        if(child->propagateOnKeyRelease(keyCode, keyText, keyboardModifiers))
             return true;
     }
 
-    return false;
+    return onKeyRelease(keyCode, keyText, keyboardModifiers);
 }
 
-bool UIWidget::onMousePress(const Point& mousePos, Fw::MouseButton button)
+bool UIWidget::propagateOnMousePress(const Point& mousePos, Fw::MouseButton button)
 {
-    if(callLuaField<bool>("onMousePress", mousePos, button))
-        return true;
-
     // do a backup of children list, because it may change while looping it
     UIWidgetList children;
     for(const UIWidgetPtr& child : m_children) {
@@ -1231,7 +1263,7 @@ bool UIWidget::onMousePress(const Point& mousePos, Fw::MouseButton button)
         if(child->isFocusable())
             focusChild(child, Fw::MouseFocusReason);
 
-        bool mustEnd = child->onMousePress(mousePos, button);
+        bool mustEnd = child->propagateOnMousePress(mousePos, button);
 
         if(button == Fw::MouseLeftButton && !child->isPressed()) {
             UIWidgetPtr clickedChild = child->getChildByPos(mousePos);
@@ -1243,16 +1275,14 @@ bool UIWidget::onMousePress(const Point& mousePos, Fw::MouseButton button)
             return true;
     }
 
-    return false;
+    if(!isPhantom())
+        return onMousePress(mousePos, button);
+    else
+        return false;
 }
 
-void UIWidget::onMouseRelease(const Point& mousePos, Fw::MouseButton button)
+void UIWidget::propagateOnMouseRelease(const Point& mousePos, Fw::MouseButton button)
 {
-    if(isPressed() && getRect().contains(mousePos))
-        callLuaField("onClick");
-
-    callLuaField("onMouseRelease", mousePos, button);
-
     // do a backup of children list, because it may change while looping it
     UIWidgetList children;
     for(const UIWidgetPtr& child : m_children) {
@@ -1265,18 +1295,19 @@ void UIWidget::onMouseRelease(const Point& mousePos, Fw::MouseButton button)
     }
 
     for(const UIWidgetPtr& child : children) {
-        child->onMouseRelease(mousePos, button);
+        child->propagateOnMouseRelease(mousePos, button);
 
-        if(child->isPressed())
+        if(child->isPressed() && button == Fw::MouseLeftButton)
             child->setPressed(false);
     }
+
+    // fire release events only when pressed
+    if(isPressed())
+        onMouseRelease(mousePos, button);
 }
 
-bool UIWidget::onMouseMove(const Point& mousePos, const Point& mouseMoved)
+bool UIWidget::propagateOnMouseMove(const Point& mousePos, const Point& mouseMoved)
 {
-    if(callLuaField<bool>("onMouseMove", mousePos, mouseMoved))
-        return true;
-
     // do a backup of children list, because it may change while looping it
     UIWidgetList children;
     for(const UIWidgetPtr& child : m_children) {
@@ -1289,18 +1320,18 @@ bool UIWidget::onMouseMove(const Point& mousePos, const Point& mouseMoved)
     }
 
     for(const UIWidgetPtr& child : children) {
-        if(child->onMouseMove(mousePos, mouseMoved))
+        if(child->propagateOnMouseMove(mousePos, mouseMoved))
             return true;
     }
 
-    return false;
+    if(!isPhantom())
+        return onMouseMove(mousePos, mouseMoved);
+    else
+        return false;
 }
 
-bool UIWidget::onMouseWheel(const Point& mousePos, Fw::MouseWheelDirection direction)
+bool UIWidget::propagateOnMouseWheel(const Point& mousePos, Fw::MouseWheelDirection direction)
 {
-    if(callLuaField<bool>("onMouseWheel", mousePos, direction))
-        return true;
-
     // do a backup of children list, because it may change while looping it
     UIWidgetList children;
     for(const UIWidgetPtr& child : m_children) {
@@ -1314,9 +1345,12 @@ bool UIWidget::onMouseWheel(const Point& mousePos, Fw::MouseWheelDirection direc
     }
 
     for(const UIWidgetPtr& child : children) {
-        if(child->onMouseWheel(mousePos, direction))
+        if(child->propagateOnMouseWheel(mousePos, direction))
             return true;
     }
 
-    return false;
+    if(!isPhantom())
+        return onMouseWheel(mousePos, direction);
+    else
+        return false;
 }

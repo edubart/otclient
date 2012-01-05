@@ -60,23 +60,23 @@ void UIManager::inputEvent(const InputEvent& event)
     m_isOnInputEvent = true;
     switch(event.type) {
         case Fw::KeyPressInputEvent:
-            m_keyboardReceiver->onKeyPress(event.keyCode, event.keyText, event.keyboardModifiers);
+            m_keyboardReceiver->propagateOnKeyPress(event.keyCode, event.keyText, event.keyboardModifiers);
             break;
         case Fw::KeyReleaseInputEvent:
-            m_keyboardReceiver->onKeyRelease(event.keyCode, event.keyText, event.keyboardModifiers);
+            m_keyboardReceiver->propagateOnKeyRelease(event.keyCode, event.keyText, event.keyboardModifiers);
             break;
         case Fw::MousePressInputEvent:
-            m_keyboardReceiver->onMousePress(event.mousePos, event.mouseButton);
+            m_keyboardReceiver->propagateOnMousePress(event.mousePos, event.mouseButton);
             break;
         case Fw::MouseReleaseInputEvent:
-            m_mouseReceiver->onMouseRelease(event.mousePos, event.mouseButton);
+            m_mouseReceiver->propagateOnMouseRelease(event.mousePos, event.mouseButton);
             break;
         case Fw::MouseMoveInputEvent:
             m_mouseReceiver->updateState(Fw::HoverState);
-            m_mouseReceiver->onMouseMove(event.mousePos, event.mouseMoved);
+            m_mouseReceiver->propagateOnMouseMove(event.mousePos, event.mouseMoved);
             break;
         case Fw::MouseWheelInputEvent:
-            m_mouseReceiver->onMouseWheel(event.mousePos, event.wheelDirection);
+            m_mouseReceiver->propagateOnMouseWheel(event.mousePos, event.wheelDirection);
             break;
     };
     m_isOnInputEvent = false;

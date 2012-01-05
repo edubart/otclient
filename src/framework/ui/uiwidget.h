@@ -56,7 +56,7 @@ protected:
 public:
     void setVisible(bool visible);
     void setEnabled(bool enabled);
-    void setPressed(bool pressed) { m_pressed = pressed; updateState(Fw::PressedState); }
+    void setPressed(bool pressed);
     void setId(const std::string& id) { m_id = id; }
     void setFocusable(bool focusable);
     void setPhantom(bool phantom) { m_phantom = phantom; }
@@ -197,7 +197,7 @@ private:
 
 protected:
     virtual void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode);
-    virtual void onGeometryUpdate(const Rect& oldRect, const Rect& newRect);
+    virtual void onGeometryChange(const Rect& oldRect, const Rect& newRect);
     virtual void onFocusChange(bool focused, Fw::FocusReason reason);
     virtual void onHoverChange(bool hovered);
     virtual void onTextChange(const std::string& text);
@@ -208,6 +208,13 @@ protected:
     virtual void onMouseRelease(const Point& mousePos, Fw::MouseButton button);
     virtual bool onMouseMove(const Point& mousePos, const Point& mouseMoved);
     virtual bool onMouseWheel(const Point& mousePos, Fw::MouseWheelDirection direction);
+
+    bool propagateOnKeyPress(uchar keyCode, std::string keyText, int keyboardModifiers);
+    bool propagateOnKeyRelease(uchar keyCode, std::string keyText, int keyboardModifiers);
+    bool propagateOnMousePress(const Point& mousePos, Fw::MouseButton button);
+    void propagateOnMouseRelease(const Point& mousePos, Fw::MouseButton button);
+    bool propagateOnMouseMove(const Point& mousePos, const Point& mouseMoved);
+    bool propagateOnMouseWheel(const Point& mousePos, Fw::MouseWheelDirection direction);
 
 protected:
     std::string m_id;

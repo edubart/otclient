@@ -69,4 +69,4 @@ local function onRootGeometryUpdate()
   end
 end
 
-connect(rootWidget, { onGeometryUpdate = onRootGeometryUpdate} )
+connect(rootWidget, { onGeometryChange = onRootGeometryUpdate} )

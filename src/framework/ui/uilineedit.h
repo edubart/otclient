@@ -59,7 +59,7 @@ protected:
     virtual void onTextChange(const std::string& text);
     virtual void onFontChange(const std::string& font);
     virtual void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode);
-    virtual void onGeometryUpdate(const Rect& oldRect, const Rect& newRect);
+    virtual void onGeometryChange(const Rect& oldRect, const Rect& newRect);
     virtual void onFocusChange(bool focused, Fw::FocusReason reason);
     virtual bool onKeyPress(uchar keyCode, std::string keyText, int keyboardModifiers);
     virtual bool onMousePress(const Point& mousePos, Fw::MouseButton button);

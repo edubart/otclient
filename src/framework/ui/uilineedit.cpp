@@ -392,9 +392,10 @@ void UILineEdit::onStyleApply(const std::string& styleName, const OTMLNodePtr& s
     }
 }
 
-void UILineEdit::onGeometryUpdate(const Rect& oldRect, const Rect& newRect)
+void UILineEdit::onGeometryChange(const Rect& oldRect, const Rect& newRect)
 {
     update();
+    UIWidget::onGeometryChange(oldRect, newRect);
 }
 
 void UILineEdit::onFocusChange(bool focused, Fw::FocusReason reason)
@@ -405,6 +406,7 @@ void UILineEdit::onFocusChange(bool focused, Fw::FocusReason reason)
         else
             blinkCursor();
     }
+    UIWidget::onFocusChange(focused, reason);
 }
 
 bool UILineEdit::onKeyPress(uchar keyCode, std::string keyText, int keyboardModifiers)
@@ -431,7 +433,7 @@ bool UILineEdit::onKeyPress(uchar keyCode, std::string keyText, int keyboardModi
     } else if(!keyText.empty() && (keyboardModifiers == Fw::KeyboardNoModifier || keyboardModifiers == Fw::KeyboardShiftModifier))
         appendText(keyText);
     else
-        return false;
+        return UIWidget::onKeyPress(keyCode, keyText, keyboardModifiers);
 
     return true;
 }

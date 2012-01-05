@@ -1,6 +1,7 @@
 VipListLabel < GameLabel
   font: verdana-11px-monochrome
   margin-left: 5
+  phantom: false
   &onMousePress: VipList.onVipListLabelMousePress
 
 MiniWindow

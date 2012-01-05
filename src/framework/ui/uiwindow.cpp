@@ -80,14 +80,15 @@ void UIWindow::onStyleApply(const std::string& styleName, const OTMLNodePtr& sty
     }
 }
 
-void UIWindow::onGeometryUpdate(const Rect& oldRect, const Rect& newRect)
+void UIWindow::onGeometryChange(const Rect& oldRect, const Rect& newRect)
 {
     bindRectToParent();
+    UIWidget::onGeometryChange(oldRect, newRect);
 }
 
 bool UIWindow::onMousePress(const Point& mousePos, Fw::MouseButton button)
 {
-    if(m_movePolicy != DONT_MOVE) {
+    if(m_movePolicy != DONT_MOVE && button == Fw::MouseLeftButton) {
         UIWidgetPtr clickedChild = getChildByPos(mousePos);
         //FIXME: recursively check for non phantom children
         if(!clickedChild || clickedChild->isPhantom()) {

@@ -35,7 +35,7 @@ public:
 protected:
     virtual void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode);
     virtual bool onMousePress(const Point& mousePos, Fw::MouseButton button);
-    virtual void onGeometryUpdate(const Rect& oldRect, const Rect& newRect);
+    virtual void onGeometryChange(const Rect& oldRect, const Rect& newRect);
 
 private:
     int m_mapMargin;
