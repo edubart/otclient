@@ -35,7 +35,7 @@ class Effect : public Thing
 public:
     Effect();
 
-    void draw(const Point& p);
+    void draw(const Point& p, const Rect&);
 
     void start();
     void updateAnimation();

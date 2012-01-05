@@ -35,7 +35,7 @@ void UICreature::render()
 
     if(m_creature) {
         g_painter.setColor(Fw::white);
-        m_creature->draw(m_rect.bottomRight() - Point(32, 32) + m_creatureMargin);
+        m_creature->draw(m_rect.bottomRight() - Point(32, 32) + m_creatureMargin, m_rect);
     }
 
     renderChildren();

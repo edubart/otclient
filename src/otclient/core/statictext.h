@@ -35,7 +35,7 @@ public:
 
     StaticText();
 
-    void draw(const Point& p);
+    void draw(const Point& p, const Rect& visibleRect);
 
     std::string getName() { return m_name; }
     int getMessageType() { return m_type; }

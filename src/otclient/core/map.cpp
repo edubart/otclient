@@ -81,7 +81,7 @@ void Map::draw(const Rect& rect)
                     // skip tiles that are behind another tile
                     //if(isCompletlyCovered(tilePos, firstFloor))
                     //    continue;
-                    tile->draw(positionTo2D(tilePos) - m_drawOffset);
+                    tile->draw(positionTo2D(tilePos) - m_drawOffset, rect);
                 }
             }
         }
@@ -89,7 +89,7 @@ void Map::draw(const Rect& rect)
         // after drawing all tiles, draw shots
         for(const MissilePtr& shot : m_missilesAtFloor[iz]) {
             Position missilePos = shot->getPos();
-            shot->draw(positionTo2D(missilePos) - m_drawOffset);
+            shot->draw(positionTo2D(missilePos) - m_drawOffset, rect);
         }
     }
 
@@ -135,7 +135,7 @@ void Map::draw(const Rect& rect)
         Point pos = positionTo2D((*it)->getPos()) - m_drawOffset;
         pos.x *= horizontalStretchFactor;
         pos.y *= verticalStretchFactor;
-        (*it)->draw(rect.topLeft() + pos);
+        (*it)->draw(rect.topLeft() + pos, rect);
     }
 
     // draw static text
@@ -143,7 +143,7 @@ void Map::draw(const Rect& rect)
         Point pos = positionTo2D((*it)->getPos()) - m_drawOffset;
         pos.x *= horizontalStretchFactor;
         pos.y *= verticalStretchFactor;
-        (*it)->draw(rect.topLeft() + pos);
+        (*it)->draw(rect.topLeft() + pos, rect);
     }
 }
 

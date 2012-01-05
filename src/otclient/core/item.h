@@ -35,7 +35,7 @@ public:
         TICKS_PER_FRAME = 500
     };
 
-    void draw(const Point& p);
+    void draw(const Point& p, const Rect&);
 
     void setPos(const Position &position);
     void setData(int data);

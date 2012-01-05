@@ -22,10 +22,9 @@ function Game.createThingMenu(menuPosition, lookThing, useThing, creatureThing)
     if useThing:isRotateable() then
       menu:addOption('Rotate', function() Game.rotate(useThing) end)
     end
-      
-    menu:addSeparator()
      
     if not useThing:isNotMoveable() and useThing:isPickupable() then
+      menu:addSeparator()
       menu:addOption('Trade with ...', function() print('trade with') end)
     end
   end

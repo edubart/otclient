@@ -32,7 +32,7 @@ Item::Item() : Thing()
     m_data = 0;
 }
 
-void Item::draw(const Point& p)
+void Item::draw(const Point& p, const Rect&)
 {
     if(m_type->dimensions[ThingType::AnimationPhases] > 1)
         m_animation = (g_clock.ticks() % (TICKS_PER_FRAME * m_type->dimensions[ThingType::AnimationPhases])) / TICKS_PER_FRAME;

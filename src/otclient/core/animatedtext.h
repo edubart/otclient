@@ -36,7 +36,7 @@ public:
     AnimatedText();
 
     void start();
-    void draw(const Point& p);
+    void draw(const Point& p, const Rect& visibleRect);
 
     void setColor(int color);
     void setText(const std::string& text);

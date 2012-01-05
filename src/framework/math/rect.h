@@ -159,6 +159,12 @@ public:
         return true;
     }
 
+    bool contains(const TRect<T> &r, bool insideOnly = false) const {
+        if(contains(r.topLeft(), insideOnly) && contains(r.bottomRight(), insideOnly))
+            return true;
+        return false;
+    }
+
     bool intersects(const TRect<T> &r) const {
         if(isNull() || r.isNull())
             return false;

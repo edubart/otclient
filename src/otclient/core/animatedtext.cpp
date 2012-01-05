@@ -43,10 +43,13 @@ void AnimatedText::start()
     }, DURATION);
 }
 
-void AnimatedText::draw(const Point& p)
+void AnimatedText::draw(const Point& p, const Rect& visibleRect)
 {
-    if(m_font)
-        m_font->renderText(m_text, Rect(p + Point(20 - m_textSize.width() / 2, -20.0 * g_clock.timeElapsed(m_startTime) / (DURATION / 1000)), m_textSize), Fw::AlignLeft, m_color);
+    if(m_font) {
+        Rect rect = Rect(p + Point(20 - m_textSize.width() / 2, -20.0 * g_clock.timeElapsed(m_startTime) / (DURATION / 1000)), m_textSize);
+        if(visibleRect.contains(rect))
+            m_font->renderText(m_text, rect, Fw::AlignLeft, m_color);
+    }
 }
 
 void AnimatedText::setColor(int color)

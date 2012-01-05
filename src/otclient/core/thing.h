@@ -41,7 +41,7 @@ public:
 
     virtual void start() {}
 
-    virtual void draw(const Point& p) = 0;
+    virtual void draw(const Point& p, const Rect&) = 0;
 
     void setId(int id);
     virtual void setPos(const Position& position) { m_position = position; }

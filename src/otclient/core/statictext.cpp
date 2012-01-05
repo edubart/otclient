@@ -31,10 +31,13 @@ StaticText::StaticText()
     m_font = g_fonts.getFont("verdana-11px-rounded");
 }
 
-void StaticText::draw(const Point& p)
+void StaticText::draw(const Point& p, const Rect& visibleRect)
 {
-    if(m_font)
-        m_font->renderText(m_text, Rect(p - Point(m_textSize.width() / 2, m_textSize.height()) + Point(20, 5), m_textSize), Fw::AlignCenter, m_color);
+    if(m_font) {
+        Rect rect = Rect(p - Point(m_textSize.width() / 2, m_textSize.height()) + Point(20, 5), m_textSize);
+        if(visibleRect.contains(rect))
+            m_font->renderText(m_text, rect, Fw::AlignCenter, m_color);
+    }
 }
 
 bool StaticText::addMessage(const std::string& name, int type, const std::string& message)

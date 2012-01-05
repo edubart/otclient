@@ -35,7 +35,7 @@ class Missile : public Thing
 public:
     Missile();
 
-    void draw(const Point& p);
+    void draw(const Point& p, const Rect&);
 
     void updateAnimation();
 

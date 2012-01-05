@@ -32,7 +32,7 @@ Missile::Missile() : Thing()
     m_startTicks = 0;
 }
 
-void Missile::draw(const Point& p)
+void Missile::draw(const Point& p, const Rect&)
 {
     float time = (g_clock.ticks() - m_startTicks) / m_duration;
     internalDraw(p + Point(m_positionDelta.x * time, m_positionDelta.y * time), 0);

@@ -51,7 +51,7 @@ void Effect::start()
     }, TICKS_PER_FRAME * getAnimationPhases());
 }
 
-void Effect::draw(const Point& p)
+void Effect::draw(const Point& p, const Rect&)
 {
     internalDraw(p, 0);
 }

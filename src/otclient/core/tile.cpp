@@ -36,7 +36,7 @@ Tile::Tile(const Position& position)
     m_position = position;
 }
 
-void Tile::draw(const Point& p)
+void Tile::draw(const Point& p, const Rect& visibleRect)
 {
     m_drawElevation = 0;
 
@@ -45,7 +45,7 @@ void Tile::draw(const Point& p)
         ThingType *type = thing->getType();
         if(!type->properties[ThingType::IsGround] && !type->properties[ThingType::IsGroundBorder] && !type->properties[ThingType::IsOnBottom])
             break;
-        thing->draw(p - m_drawElevation);
+        thing->draw(p - m_drawElevation, visibleRect);
         m_drawElevation += type->parameters[ThingType::Elevation];
         if(m_drawElevation > MAX_DRAW_ELEVATION)
             m_drawElevation = MAX_DRAW_ELEVATION;
@@ -57,7 +57,7 @@ void Tile::draw(const Point& p)
         ThingType *type = thing->getType();
         if(thing->asCreature() || type->properties[ThingType::IsOnTop] || type->properties[ThingType::IsOnBottom] || type->properties[ThingType::IsGroundBorder] || type->properties[ThingType::IsGround])
             break;
-        thing->draw(p - m_drawElevation);
+        thing->draw(p - m_drawElevation, visibleRect);
         m_drawElevation += type->parameters[ThingType::Elevation];
         if(m_drawElevation > MAX_DRAW_ELEVATION)
             m_drawElevation = MAX_DRAW_ELEVATION;
@@ -74,7 +74,7 @@ void Tile::draw(const Point& p)
 
                 // only render creatures where bottom right is inside our rect
                 if(thisTileRect.contains(creatureRect.bottomRight())) {
-                    creature->draw(Point(p.x + xi*32 - m_drawElevation, p.y + yi*32 - m_drawElevation));
+                    creature->draw(Point(p.x + xi*32 - m_drawElevation, p.y + yi*32 - m_drawElevation), visibleRect);
                 }
             }
         }
@@ -82,13 +82,13 @@ void Tile::draw(const Point& p)
 
     // effects
     for(const EffectPtr& effect : m_effects)
-        effect->draw(p - m_drawElevation);
+        effect->draw(p - m_drawElevation, visibleRect);
 
     // top items
     for(const ThingPtr& thing : m_things) {
         ThingType *type = thing->getType();
         if(type->properties[ThingType::IsOnTop])
-            thing->draw(p);
+            thing->draw(p, visibleRect);
     }
 }
 

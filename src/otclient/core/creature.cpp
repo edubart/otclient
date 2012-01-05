@@ -57,7 +57,7 @@ int LEGS_COLOR_UNIFORM = 12;
 int FEET_COLOR_UNIFORM = 13;
 int MASK_TEXTURE_UNIFORM = 14;
 
-void Creature::draw(const Point& p)
+void Creature::draw(const Point& p, const Rect&)
 {
     if(m_showVolatileSquare) {
         g_painter.setColor(m_volatileSquareColor);
@@ -125,7 +125,7 @@ void Creature::draw(const Point& p)
     }
 }
 
-void Creature::drawInformation(int x, int y, bool useGray, const Rect& rect)
+void Creature::drawInformation(int x, int y, bool useGray, const Rect& visibleRect)
 {
     Color fillColor = Color(96, 96, 96);
 
@@ -134,15 +134,15 @@ void Creature::drawInformation(int x, int y, bool useGray, const Rect& rect)
 
     // calculate main rects
     Rect backgroundRect = Rect(x-(13.5), y, 27, 4);
-    backgroundRect.bound(rect);
+    backgroundRect.bound(visibleRect);
 
     Rect textRect = Rect(x - m_nameSize.width() / 2.0, y-12, m_nameSize);
-    textRect.bound(rect);
+    textRect.bound(visibleRect);
 
     // distance them
-    if(textRect.top() == rect.top())
+    if(textRect.top() == visibleRect.top())
         backgroundRect.moveTop(textRect.top() + 12);
-    if(backgroundRect.bottom() == rect.bottom())
+    if(backgroundRect.bottom() == visibleRect.bottom())
         textRect.moveTop(backgroundRect.top() - 12);
 
     // health rect is based on background rect, so no worries
