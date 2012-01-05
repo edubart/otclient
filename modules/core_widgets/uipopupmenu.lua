@@ -1,11 +1,18 @@
 UIPopupMenu = extends(UIWidget)
 
+local displayedMenuList = {}
+
 function UIPopupMenu.create()
   local menu = UIPopupMenu.internalCreate()
   local layout = UIVerticalLayout.create(menu)
   layout:setFitParent(true)
   menu:setLayout(layout)
   return menu
+end
+
+function UIPopupMenu:destroy()
+  table.removevalue(displayedMenuList, self)
+  UIWidget.destroy(self)
 end
 
 function UIPopupMenu:display(pos)
@@ -19,6 +26,7 @@ function UIPopupMenu:display(pos)
   self:bindRectToParent()
   self:grabMouse()
   self:grabKeyboard()
+  table.insert(displayedMenuList, self)
 end
 
 function UIPopupMenu:addOption(optionName, optionCallback)
@@ -53,3 +61,12 @@ function UIPopupMenu:onKeyPress(keyCode, keyText, keyboardModifiers)
   end
   return false
 end
+
+local function onRootGeometryUpdate()
+  -- close all menus when the window is resized
+  for i,menu in ipairs(displayedMenuList) do
+    menu:destroy()
+  end
+end
+
+connect(rootWidget, { onGeometryUpdate = onRootGeometryUpdate} )

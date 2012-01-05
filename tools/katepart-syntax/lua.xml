@@ -117,10 +117,11 @@
       <item> openfile </item>    <item> closefile </item>
       <item> date </item>        <item> clock </item>
 
-      <item> string.trim </item>  <item> string.starts </item>
+      <item> string.trim </item>          <item> string.starts </item>
       <item> string.split </item>
-      <item> table.dump </item>  <item> table.copy </item>
-      <item> table.selective_copy </item>  <item> table.merge </item>
+      <item> table.dump </item>           <item> table.copy </item>
+      <item> table.selectivecopy </item>  <item> table.merge </item>
+      <item> table.find </item>           <item> table.removevalue </item>
       <item> toboolean </item>
     </list>
     <list name="otclient-core-functions">
