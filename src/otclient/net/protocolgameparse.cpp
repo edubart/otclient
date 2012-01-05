@@ -573,7 +573,7 @@ void ProtocolGame::parseCreatureSquare(InputMessage& msg)
 
     CreaturePtr creature = g_map.getCreatureById(id);
     if(creature)
-        creature->setSquareColor(color);
+        creature->addVolatileSquare(color);
 }
 
 void ProtocolGame::parseCreatureHealth(InputMessage& msg)
@@ -735,7 +735,8 @@ void ProtocolGame::parsePlayerIcons(InputMessage& msg)
 
 void ProtocolGame::parsePlayerCancelAttack(InputMessage& msg)
 {
-    msg.getU32();
+    msg.getU32(); // unknown
+    g_game.onAttackCancelled();
 }
 
 void ProtocolGame::parseCreatureSpeak(InputMessage& msg)

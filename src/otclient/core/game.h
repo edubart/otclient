@@ -51,7 +51,9 @@ public:
     void look(const ThingPtr& thing);
     void use(const ThingPtr& thing);
     void attack(const CreaturePtr& creature);
+    void cancelAttack();
     void follow(const CreaturePtr& creature);
+    void cancelFollow();
     void rotate(const ThingPtr& thing);
     void talkChannel(int channelType, int channelId, const std::string& message);
     void talkPrivate(int channelType, const std::string& receiver, const std::string& message);
@@ -61,6 +63,10 @@ public:
     void addVip(const std::string& name);
     void removeVip(int playerId);
     int getThingStackpos(const ThingPtr& thing);
+    void onAttackCancelled();
+
+    CreaturePtr getAttackingCreature() { return m_attackingCreature; }
+    CreaturePtr getFollowingCreature() { return m_followingCreature; }
 
     bool isOnline() { return m_online; }
 
@@ -75,6 +81,8 @@ private:
     ProtocolGamePtr m_protocolGame;
     bool m_online;
     int m_serverBeat;
+
+    CreaturePtr m_attackingCreature, m_followingCreature;
 };
 
 extern Game g_game;

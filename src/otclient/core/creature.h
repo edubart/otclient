@@ -30,6 +30,10 @@
 class Creature : public Thing
 {
 public:
+    enum {
+        VOLATILE_SQUARE_DURATION = 1000
+    };
+
     Creature();
     virtual ~Creature() { }
 
@@ -46,7 +50,12 @@ public:
     void setShield(uint8 shield) { m_shield = shield; }
     void setEmblem(uint8 emblem) { m_emblem = emblem; }
     void setPassable(bool passable) { m_passable = passable; }
-    void setSquareColor(uint8 squareColor) { m_squareColor = squareColor; }
+
+    void addVolatileSquare(uint8 color);
+    void removeVolatileSquare() { m_showVolatileSquare = false; }
+
+    void activateStaticSquare(const Color& color) { m_showStaticSquare = true; m_staticSquareColor = color; }
+    void deactivateStaticSquare() { m_showStaticSquare = false; }
 
     std::string getName() { return m_name; }
     uint8 getHealthPercent() { return m_healthPercent; }
@@ -83,8 +92,8 @@ protected:
     uint8 m_shield;
     uint8 m_emblem;
     bool m_passable;
-    uint8 m_squareColor;
-    bool m_showSquareColor;
+    Color m_volatileSquareColor, m_staticSquareColor;
+    bool m_showVolatileSquare, m_showStaticSquare;
 
     FontPtr m_informationFont;
     Color m_informationColor;

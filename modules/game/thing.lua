@@ -37,10 +37,18 @@ function Game.createThingMenu(menuPosition, lookThing, useThing, creatureThing)
     if creatureThing:asLocalPlayer() then
       menu:addOption('Set Outfit', function() Game.openOutfitWindow() end)
     else
-      -- todo: check for stop attack/follow
-      menu:addOption('Attack', function() Game.attack(creatureThing) end)
-      menu:addOption('Follow', function() Game.follow(creatureThing)end)
+      if Game.getAttackingCreature() ~= creatureThing then
+        menu:addOption('Attack', function() Game.attack(creatureThing) end)
+      else
+        menu:addOption('Stop Attack', function() Game.cancelAttack() end)
+      end
       
+      if Game.getFollowingCreature() ~= creatureThing then
+        menu:addOption('Follow', function() Game.follow(creatureThing) end)
+      else
+        menu:addOption('Stop Follow', function() Game.cancelFollow() end)
+      end
+
       if creatureThing:asPlayer() then
         menu:addSeparator()
         menu:addOption('Message to ' .. creatureThing:getName(), function() print('message') end)

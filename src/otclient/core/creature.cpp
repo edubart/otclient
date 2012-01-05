@@ -39,7 +39,8 @@
 Creature::Creature() : Thing()
 {
     m_healthPercent = 0;
-    m_showSquareColor = false;
+    m_showVolatileSquare = false;
+    m_showStaticSquare = false;
     m_direction = Otc::South;
     m_walkTimePerPixel = 1000.0/32.0;
 
@@ -58,12 +59,17 @@ int MASK_TEXTURE_UNIFORM = 14;
 
 void Creature::draw(const Point& p)
 {
-    // TODO: activate on attack, follow, discover how 'attacked' works
-    if(m_showSquareColor) {
-        g_painter.setColor(Outfit::getColor(m_squareColor));
-        g_painter.drawBoundingRect(Rect(p + m_walkOffset - 8, Size(32, 32)), 2);
+    if(m_showVolatileSquare) {
+        g_painter.setColor(m_volatileSquareColor);
+        g_painter.drawBoundingRect(Rect(p + m_walkOffset - Point(m_type->parameters[ThingType::DisplacementX], m_type->parameters[ThingType::DisplacementY]) + 3, Size(28, 28)), 2);
     }
 
+    if(m_showStaticSquare) {
+        g_painter.setColor(m_staticSquareColor);
+        g_painter.drawBoundingRect(Rect(p + m_walkOffset - Point(m_type->parameters[ThingType::DisplacementX], m_type->parameters[ThingType::DisplacementY]) + 1, Size(32, 32)), 2);
+    }
+
+    g_painter.setColor(Fw::white);
     if(!outfitProgram) {
         outfitProgram = PainterShaderProgramPtr(new PainterShaderProgram);
         outfitProgram->addShaderFromSourceCode(Shader::Vertex, glslMainWithTexCoordsVertexShader + glslPositionOnlyVertexShader);
@@ -317,6 +323,18 @@ void Creature::setOutfit(const Outfit& outfit)
 
     if(m_type->dimensions[ThingType::Layers] == 1)
         m_outfit.resetClothes();
+}
+
+void Creature::addVolatileSquare(uint8 color)
+{
+    m_showVolatileSquare = true;
+    m_volatileSquareColor = Color::from8bit(color);
+
+    // schedule removal
+    auto self = asCreature();
+    g_dispatcher.scheduleEvent([self]() {
+        self->removeVolatileSquare();
+    }, VOLATILE_SQUARE_DURATION);
 }
 
 ThingType *Creature::getType()

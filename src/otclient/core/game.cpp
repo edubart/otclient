@@ -109,6 +109,8 @@ void Game::walk(Otc::Direction direction)
     if(!m_online || !m_localPlayer->canWalk(direction) || !g_ui.isOnInputEvent())
         return;
 
+    cancelFollow();
+
     m_localPlayer->clientWalk(direction);
 
     switch(direction) {
@@ -185,7 +187,30 @@ void Game::attack(const CreaturePtr& creature)
     if(!m_online || !creature || !g_ui.isOnInputEvent())
         return;
 
+    if(m_attackingCreature)
+        m_attackingCreature->deactivateStaticSquare();
+
+    creature->activateStaticSquare(Fw::red);
+    m_attackingCreature = creature;
+
     m_protocolGame->sendAttack(creature->getId());
+}
+
+void Game::cancelAttack()
+{
+    if(m_attackingCreature) {
+        m_protocolGame->sendAttack(0);
+        m_attackingCreature->deactivateStaticSquare();
+        m_attackingCreature = nullptr;
+    }
+}
+
+void Game::onAttackCancelled()
+{
+    if(m_attackingCreature) {
+        m_attackingCreature->deactivateStaticSquare();
+        m_attackingCreature = nullptr;
+    }
 }
 
 void Game::follow(const CreaturePtr& creature)
@@ -193,7 +218,22 @@ void Game::follow(const CreaturePtr& creature)
     if(!m_online || !creature || !g_ui.isOnInputEvent())
         return;
 
+    if(m_followingCreature)
+        m_followingCreature->deactivateStaticSquare();
+
+    creature->activateStaticSquare(Fw::green);
+    m_followingCreature = creature;
+
     m_protocolGame->sendFollow(creature->getId());
+}
+
+void Game::cancelFollow()
+{
+    if(m_followingCreature) {
+        m_protocolGame->sendFollow(0);
+        m_followingCreature->deactivateStaticSquare();
+        m_followingCreature = nullptr;
+    }
 }
 
 void Game::rotate(const ThingPtr& thing)
