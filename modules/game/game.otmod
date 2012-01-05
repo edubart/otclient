@@ -16,4 +16,3 @@ Module
   onLoad: |
     require 'game'
     require 'thing'
-    return true

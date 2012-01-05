@@ -90,7 +90,7 @@ void Application::init(const std::vector<std::string>& args, int appFlags)
             logError("Could not setup write directory");
 
         // load configs
-        if(!g_configs.load("config.otml"))
+        if(!g_configs.load("/config.otml"))
             logInfo("Using default configurations.");
     }
 

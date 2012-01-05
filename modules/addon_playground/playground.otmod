@@ -3,5 +3,4 @@ Module
   autoLoad: true
   onLoad: |
     require 'playground'
-    return true
 

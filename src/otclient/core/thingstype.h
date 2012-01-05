@@ -47,10 +47,11 @@ public:
     ThingType *getThingType(uint16 id, Categories category);
 
     uint32 getSignature() { return m_signature; }
+    bool isLoaded() { return m_loaded; }
 
 private:
     uint32 m_signature;
-
+    Boolean<false> m_loaded;
     ThingTypeList m_things[LastCategory];
     static ThingType m_emptyThingType;
 };

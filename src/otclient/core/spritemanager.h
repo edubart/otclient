@@ -38,10 +38,12 @@ public:
     int getSpritesCount() { return m_spritesCount; }
 
     TexturePtr getSpriteTexture(int id);
+    bool isLoaded() { return m_loaded; }
 
 private:
     TexturePtr loadSpriteTexture(int id);
 
+    Boolean<false> m_loaded;
     uint32 m_signature;
     uint16 m_spritesCount;
     std::stringstream m_fin;

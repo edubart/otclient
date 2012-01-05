@@ -5,6 +5,3 @@ Module
   website: https://github.com/edubart/otclient
   onLoad: |
     require 'inventory'
-    return true
-
-

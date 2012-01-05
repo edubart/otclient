@@ -29,7 +29,6 @@
 class ParticleAffector {
 public:
     ParticleAffector();
-    virtual ~ParticleAffector() { dump << "ParticleAffector deleted"; }
 
     void update(double elapsedTime);
     virtual bool load(const OTMLNodePtr& node);

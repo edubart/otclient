@@ -39,6 +39,7 @@ bool SpriteManager::load(const std::string& file)
         m_signature = Fw::getU32(m_fin);
         m_spritesCount = Fw::getU16(m_fin);
         m_sprites.resize(m_spritesCount);
+        m_loaded = true;
         return true;
     } catch(Exception& e) {
         logError("Failed to load sprites from '", file, "': ", e.what());

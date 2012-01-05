@@ -23,7 +23,7 @@
 #ifndef OTCLIENT_CONST_H
 #define OTCLIENT_CONST_H
 
-#include <framework/util/color.h>
+#include <framework/math/color.h>
 
 namespace Otc
 {

@@ -8,7 +8,6 @@ Module
     require 'entergame'
     require 'characterlist'
     EnterGame.create()
-    return true
 
   onUnload:
     EnterGame.destroy()

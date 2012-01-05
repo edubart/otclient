@@ -5,4 +5,3 @@ Module
   website: https://github.com/edubart/otclient
   onLoad: |
     require 'skills'
-    return true

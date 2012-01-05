@@ -1,9 +1,15 @@
--- globals
 rootWidget = g_ui.getRootWidget()
 
--- public functions
 function importStyle(otui)
-  g_ui.importStyle(resolveFileFullPath(otui, 2))
+  g_ui.importStyle(resolvepath(otui, 2))
+end
+
+function importFont(otfont)
+  g_fonts.importFont(resolvepath(otfont, 2))
+end
+
+function setDefaultFont(font)
+  g_fonts.setDefaultFont(font)
 end
 
 function displayUI(arg1, options)
@@ -14,7 +20,7 @@ function displayUI(arg1, options)
 
   -- display otui files
   if type(arg1) == 'string' then
-    local otuiFilePath = resolveFileFullPath(arg1, 2)
+    local otuiFilePath = resolvepath(arg1, 2)
     widget = g_ui.loadUI(otuiFilePath, parent)
   -- display already loaded widgets
   else

@@ -25,7 +25,7 @@
 
 #include <otclient/const.h>
 #include <framework/util/types.h>
-#include <framework/util/point.h>
+#include <framework/math/point.h>
 
 class Position
 {

@@ -23,7 +23,7 @@
 #ifndef OUTFIT_H
 #define OUTFIT_H
 
-#include <framework/util/color.h>
+#include <framework/math/color.h>
 
 class Outfit
 {

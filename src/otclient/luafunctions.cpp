@@ -22,9 +22,15 @@ void OTClient::registerLuaFunctions()
 {
     Application::registerLuaFunctions();
 
+    g_lua.registerStaticClass("g_thingsType");
+    g_lua.bindClassStaticFunction("g_thingsType", "load", std::bind(&ThingsType::load, &g_thingsType, _1));
+    g_lua.bindClassStaticFunction("g_thingsType", "isLoaded", std::bind(&ThingsType::isLoaded, &g_thingsType));
+
+    g_lua.registerStaticClass("g_sprites");
+    g_lua.bindClassStaticFunction("g_sprites", "load", std::bind(&SpriteManager::load, &g_sprites, _1));
+    g_lua.bindClassStaticFunction("g_sprites", "isLoaded", std::bind(&SpriteManager::isLoaded, &g_sprites));
+
     g_lua.bindGlobalFunction("exit", std::bind(&Application::exit, g_app));
-    g_lua.bindGlobalFunction("importDat", std::bind(&ThingsType::load, &g_thingsType, _1));
-    g_lua.bindGlobalFunction("importSpr", std::bind(&SpriteManager::load, &g_sprites, _1));
     g_lua.bindGlobalFunction("getOufitColor", Outfit::getColor);
 
     g_lua.registerClass<ProtocolLogin, Protocol>();

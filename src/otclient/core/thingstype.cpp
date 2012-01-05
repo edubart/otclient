@@ -48,6 +48,7 @@ bool ThingsType::load(const std::string& file)
                 parseThingType(fin, m_things[i][id]);
         }
 
+        m_loaded = true;
         return true;
     } catch(Exception& e) {
         logError("Failed to load dat from '", file, "': ", e.what());

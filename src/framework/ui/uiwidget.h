@@ -40,11 +40,13 @@ public:
 
     void destroy();
 
+protected:
     virtual void render();
     virtual void renderSelf();
     virtual void renderChildren();
 
-protected:
+    friend class UIManager;
+
     void drawBackground(const Rect& screenCoords);
     void drawBorder(const Rect& screenCoords);
     void drawImage(const Rect& screenCoords);
@@ -206,7 +208,6 @@ protected:
     virtual void onMouseRelease(const Point& mousePos, Fw::MouseButton button);
     virtual bool onMouseMove(const Point& mousePos, const Point& mouseMoved);
     virtual bool onMouseWheel(const Point& mousePos, Fw::MouseWheelDirection direction);
-    friend class UIManager;
 
 protected:
     std::string m_id;

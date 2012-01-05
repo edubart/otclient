@@ -128,6 +128,9 @@
       <item> extends </item>
       <item> print </item>
       <item> fatal </item>
+      <item> newenv </item>
+      <item> getfsrcpath </item>
+      <item> resolvepath </item>
 
       <item> scheduleEvent </item>
       <item> addEvent </item>

@@ -55,7 +55,7 @@ private:
     std::string m_author;
     std::string m_website;
     std::string m_version;
-    BooleanCallback m_loadCallback;
+    SimpleCallback m_loadCallback;
     SimpleCallback m_unloadCallback;
     std::list<std::string> m_dependencies;
 };

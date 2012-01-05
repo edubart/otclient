@@ -32,11 +32,11 @@
 // additional utilities
 #include "util/types.h"
 #include "util/tools.h"
-#include "util/point.h"
-#include "util/color.h"
-#include "util/rect.h"
-#include "util/size.h"
-#include "util/matrix.h"
+#include "math/point.h"
+#include "math/color.h"
+#include "math/rect.h"
+#include "math/size.h"
+#include "math/matrix.h"
 
 // logger
 #include "core/logger.h"

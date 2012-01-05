@@ -26,13 +26,26 @@ function connect(object, signalsAndSlots, pushFront)
   end
 end
 
-function createEnvironment()
+function extends(base)
+  local derived = {}
+  function derived.internalCreate()
+    local instance = base.create()
+    for k,v in pairs(derived) do
+      instance[k] = v
+    end
+    return instance
+  end
+  derived.create = derived.internalCreate
+  return derived
+end
+
+function newenv()
   local env = { }
   setmetatable(env, { __index = _G} )
   return env
 end
 
-function getCallingScriptSourcePath(depth)
+function getfsrcpath(depth)
   depth = depth or 2
   local info = debug.getinfo(1+depth, "Sn")
   local path
@@ -47,25 +60,11 @@ function getCallingScriptSourcePath(depth)
   return path
 end
 
-function resolveFileFullPath(filePath, depth)
+function resolvepath(filePath, depth)
   depth = depth or 1
   if filePath:sub(0, 1) ~= '/' then
-    return getCallingScriptSourcePath(depth+1) .. '/' .. filePath
+    return getfsrcpath(depth+1) .. '/' .. filePath
   else
     return filePath
   end
 end
-
-function extends(base)
-  local derived = {}
-  function derived.internalCreate()
-    local instance = base.create()
-    for k,v in pairs(derived) do
-      instance[k] = v
-    end
-    return instance
-  end
-  derived.create = derived.internalCreate
-  return derived
-end
-

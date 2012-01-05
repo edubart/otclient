@@ -54,10 +54,13 @@ public:
 
     UIWidgetPtr getRootWidget() { return m_rootWidget; }
 
+    bool isOnInputEvent() { return m_isOnInputEvent; }
+
 private:
     UIWidgetPtr m_rootWidget;
     UIWidgetPtr m_mouseReceiver;
     UIWidgetPtr m_keyboardReceiver;
+    bool m_isOnInputEvent;
     std::map<std::string, OTMLNodePtr> m_styles;
 };
 

@@ -28,7 +28,8 @@
 
 void Font::load(const OTMLNodePtr& fontNode)
 {
-    std::string textureName = fontNode->valueAt("texture");
+    OTMLNodePtr textureNode = fontNode->at("texture");
+    std::string textureFile = Fw::resolvePath(textureNode->value(), textureNode->source());
     Size glyphSize = fontNode->valueAt<Size>("glyph-size");
     m_glyphHeight = fontNode->valueAt<int>("height");
     m_yOffset = fontNode->valueAt("y-offset", 0);
@@ -36,7 +37,7 @@ void Font::load(const OTMLNodePtr& fontNode)
     m_glyphSpacing = fontNode->valueAt("spacing", Size(0,0));
 
     // load font texture
-    m_texture = g_textures.getTexture(textureName);
+    m_texture = g_textures.getTexture(textureFile);
 
     if(OTMLNodePtr node = fontNode->get("fixed-glyph-width")) {
         for(int glyph = m_firstGlyph; glyph < 256; ++glyph)

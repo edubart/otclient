@@ -17,4 +17,3 @@ Module
     importStyle 'styles/creatures.otui'
     importStyle 'styles/popupmenus.otui'
     importStyle 'styles/comboboxes.otui'
-    return true

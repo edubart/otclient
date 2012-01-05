@@ -11,4 +11,3 @@ Module
     require 'uilabel'
     require 'uicombobox'
     require 'uipopupmenu'
-    return true

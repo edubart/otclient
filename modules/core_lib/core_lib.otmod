@@ -1,5 +1,5 @@
 Module
-  name: core_scripts
+  name: core_lib
   description: Contains core lua classes, functions and constants used by other modules
   author: OTClient team
   website: https://github.com/edubart/otclient
@@ -7,14 +7,13 @@ Module
   onLoad: |
     require 'ext/table'
     require 'ext/string'
-    require 'util/point'
-    require 'util/size'
-    require 'util/color'
-    require 'util/rect'
+    require 'math/point'
+    require 'math/size'
+    require 'math/color'
+    require 'math/rect'
     require 'const'
     require 'util'
+    require 'globals'
     require 'dispatcher'
     require 'widget'
-    require 'ui'
     require 'effects'
-    return true

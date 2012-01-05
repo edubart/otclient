@@ -10,7 +10,7 @@ local LabelHeight = 16
 -- private variables
 local consoleWidget
 local logLocked = false
-local commandEnv = createEnvironment()
+local commandEnv = newenv()
 local commandLineEdit
 local consoleBuffer
 local commandHistory = { }

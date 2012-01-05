@@ -30,7 +30,6 @@
 class ParticleSystem : public std::enable_shared_from_this<ParticleSystem> {
 public:
     ParticleSystem();
-    ~ParticleSystem() { dump << "ParticleSystem deleted"; }
 
     bool load(const OTMLNodePtr& node);
 

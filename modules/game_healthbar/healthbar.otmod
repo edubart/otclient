@@ -5,6 +5,3 @@ Module
   website: https://github.com/edubart/otclient
   onLoad: |
     require 'healthbar'
-    return true
-
-

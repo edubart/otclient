@@ -16,7 +16,7 @@ Module
 
   onLoad: |
     require 'client'
-    return Client.init()
+    Client.init()
 
   onUnload: |
     Client.terminate()

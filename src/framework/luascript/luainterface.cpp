@@ -290,9 +290,14 @@ void LuaInterface::runBuffer(const std::string& buffer, const std::string& sourc
 
 void LuaInterface::loadScript(const std::string& fileName)
 {
-    std::string buffer = g_resources.loadFile(fileName);
-    std::string source = "@" + g_resources.resolvePath(fileName);
-    loadBuffer(g_resources.loadFile(fileName), "@" + g_resources.resolvePath(fileName));
+    // resolve file full path
+    std::string filePath = fileName;
+    if(!boost::starts_with(fileName, "/"))
+        filePath = getCurrentSourcePath() + "/" + filePath;
+
+    std::string buffer = g_resources.loadFile(filePath);
+    std::string source = "@" + filePath;
+    loadBuffer(buffer, source);
 }
 
 void LuaInterface::loadFunction(const std::string& buffer, const std::string& source)

@@ -23,8 +23,8 @@
 #ifndef COLOR_H
 #define COLOR_H
 
-#include "types.h"
-#include "tools.h"
+#include "../util/types.h"
+#include "../util/tools.h"
 #include "../const.h"
 
 class Color

@@ -76,6 +76,11 @@ std::string mkstr(const T&... args) {
     return buf.str();
 }
 
+template<typename... T>
+void throwException(const T&... args) {
+    throw Exception(Fw::mkstr(args...));
+}
+
 // used by dumper
 struct dump_util {
     ~dump_util() { std::cout << std::endl; }
@@ -270,9 +275,16 @@ std::vector<T> split(const std::string& str, const std::string& separators = " "
     return results;
 }
 
-template<typename... T>
-void throwException(const T&... args) {
-    throw Exception(Fw::mkstr(args...));
+inline std::string resolvePath(const std::string& file, std::string sourcePath) {
+    if(boost::starts_with(file, "/"))
+        return file;
+    if(!boost::ends_with(sourcePath, "/")) {
+        std::size_t slashPos = sourcePath.find_last_of("/");
+        if(slashPos == std::string::npos)
+            throwException("invalid source path '", sourcePath, "' for file '", file, "'");
+        sourcePath = sourcePath.substr(0, slashPos + 1);
+    }
+    return sourcePath + file;
 }
 
 template<typename T>

@@ -50,7 +50,7 @@ void Module::discover(const OTMLNodePtr& moduleNode)
     if(OTMLNodePtr node = moduleNode->get("onLoad")) {
         g_lua.loadFunction(node->value(), "@" + node->source() + "[" + node->tag() + "]");
         g_lua.useValue();
-        m_loadCallback = g_lua.polymorphicPop<BooleanCallback>();
+        m_loadCallback = g_lua.polymorphicPop<SimpleCallback>();
     }
 
     // set onUnload callback
@@ -79,10 +79,8 @@ bool Module::load()
         }
     }
 
-    if(m_loadCallback && !m_loadCallback()) {
-        logError("Unable to load module '", m_name, "' because its onLoad event returned false");
-        return false;
-    }
+    if(m_loadCallback)
+        m_loadCallback();
 
     logInfo("Loaded module '", m_name, "'");
     m_loaded = true;

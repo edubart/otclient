@@ -33,7 +33,6 @@ class ParticleEmitter {
 public:
 
     ParticleEmitter(const ParticleSystemPtr& parent);
-    ~ParticleEmitter() { dump << "ParticleEmitter deleted"; }
 
     bool load(const OTMLNodePtr& node);
 

@@ -12,7 +12,6 @@ Module
     require 'console'
     require 'commands'
     Console.init()
-    return true
 
   onUnload: |
     Console.terminate()

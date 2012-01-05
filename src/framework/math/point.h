@@ -23,7 +23,7 @@
 #ifndef POINT_H
 #define POINT_H
 
-#include "types.h"
+#include "../util/types.h"
 #include <sstream>
 #include <cmath>
 

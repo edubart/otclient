@@ -23,7 +23,7 @@
 #ifndef RECT_H
 #define RECT_H
 
-#include "types.h"
+#include "../util/types.h"
 #include <sstream>
 
 template<class T>

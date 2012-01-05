@@ -50,7 +50,7 @@ public:
 
     std::list<std::string> listDirectoryFiles(const std::string& directoryPath = "");
 
-    std::string resolvePath(const std::string& path);
+    std::string checkPath(const std::string& path);
     std::string getBaseDir();
 };
 

@@ -7,7 +7,6 @@ Module
   onLoad: |
     require 'topmenu'
     TopMenu.create()
-    return true
 
   onUnload: |
     TopMenu.destroy()

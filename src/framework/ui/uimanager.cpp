@@ -57,6 +57,7 @@ void UIManager::resize(const Size& size)
 
 void UIManager::inputEvent(const InputEvent& event)
 {
+    m_isOnInputEvent = true;
     switch(event.type) {
         case Fw::KeyPressInputEvent:
             m_keyboardReceiver->onKeyPress(event.keyCode, event.keyText, event.keyboardModifiers);
@@ -78,6 +79,7 @@ void UIManager::inputEvent(const InputEvent& event)
             m_mouseReceiver->onMouseWheel(event.mousePos, event.wheelDirection);
             break;
     };
+    m_isOnInputEvent = false;
 }
 
 bool UIManager::importStyle(const std::string& file)

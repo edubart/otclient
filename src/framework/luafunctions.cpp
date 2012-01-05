@@ -37,9 +37,6 @@ void Application::registerLuaFunctions()
     g_lua.registerClass<UIWidget>();
     g_lua.bindClassStaticFunction<UIWidget>("create", &UIWidget::create<UIWidget>);
     g_lua.bindClassMemberFunction<UIWidget>("destroy", &UIWidget::destroy);
-    g_lua.bindClassMemberFunction<UIWidget>("render", &UIWidget::render);
-    g_lua.bindClassMemberFunction<UIWidget>("renderSelf", &UIWidget::renderSelf);
-    g_lua.bindClassMemberFunction<UIWidget>("renderChildren", &UIWidget::renderChildren);
     g_lua.bindClassMemberFunction<UIWidget>("setVisible", &UIWidget::setVisible);
     g_lua.bindClassMemberFunction<UIWidget>("setEnabled", &UIWidget::setEnabled);
     g_lua.bindClassMemberFunction<UIWidget>("setPressed", &UIWidget::setPressed);
@@ -237,6 +234,7 @@ void Application::registerLuaFunctions()
     g_lua.bindClassStaticFunction("g_window", "hide", std::bind(&PlatformWindow::hide, &g_window));
     g_lua.bindClassStaticFunction("g_window", "move", std::bind(&PlatformWindow::move, &g_window, _1));
     g_lua.bindClassStaticFunction("g_window", "resize", std::bind(&PlatformWindow::resize, &g_window, _1));
+    g_lua.bindClassStaticFunction("g_window", "setMinimumSize", std::bind(&PlatformWindow::setMinimumSize, &g_window, _1));
     g_lua.bindClassStaticFunction("g_window", "setVerticalSync", std::bind(&PlatformWindow::setVerticalSync, &g_window, _1));
     g_lua.bindClassStaticFunction("g_window", "setFullscreen", std::bind(&PlatformWindow::setFullscreen, &g_window, _1));
     g_lua.bindClassStaticFunction("g_window", "setTitle", std::bind(&PlatformWindow::setTitle, &g_window, _1));
@@ -260,22 +258,14 @@ void Application::registerLuaFunctions()
     g_lua.bindClassStaticFunction("g_ui", "loadUI", std::bind(&UIManager::loadUI, &g_ui, _1, _2));
     g_lua.bindClassStaticFunction("g_ui", "getRootWidget", std::bind(&UIManager::getRootWidget, &g_ui));
 
-    /*
     // FontManager
     g_lua.registerStaticClass("g_fonts");
-    g_lua.bindClassStaticFunction("g_fonts", "releaseFonts", std::bind(&FontManager::releaseFonts, &g_fonts));
     g_lua.bindClassStaticFunction("g_fonts", "importFont", std::bind(&FontManager::importFont, &g_fonts, _1));
     g_lua.bindClassStaticFunction("g_fonts", "fontExists", std::bind(&FontManager::fontExists, &g_fonts, _1));
-    g_lua.bindClassStaticFunction("g_fonts", "getFont", std::bind(&FontManager::getFont, &g_fonts, _1));
-    g_lua.bindClassStaticFunction("g_fonts", "getDefaultFont", std::bind(&FontManager::getDefaultFont, &g_fonts));
     g_lua.bindClassStaticFunction("g_fonts", "setDefaultFont", std::bind(&FontManager::setDefaultFont, &g_fonts, _1));
-    */
 
+    // EventDispatcher
     g_lua.registerStaticClass("g_dispatcher");
     g_lua.bindClassStaticFunction("g_dispatcher", "addEvent", std::bind(&EventDispatcher::addEvent, &g_dispatcher, _1, _2));
     g_lua.bindClassStaticFunction("g_dispatcher", "scheduleEvent", std::bind(&EventDispatcher::scheduleEvent, &g_dispatcher, _1, _2));
-
-    // global functions
-    g_lua.bindGlobalFunction("importFont", std::bind(&FontManager::importFont, &g_fonts, _1));
-    g_lua.bindGlobalFunction("setDefaultFont", std::bind(&FontManager::setDefaultFont, &g_fonts, _1));
 }

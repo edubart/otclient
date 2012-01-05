@@ -5,5 +5,3 @@ Module
   website: https://github.com/edubart/otclient
   onLoad: |
     require 'textmessage'
-    return true
-
