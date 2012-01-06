@@ -202,7 +202,7 @@ ThingPtr Tile::getTopLookThing()
     if(isEmpty())
         return nullptr;
 
-    for(int i = m_things.size() - 1; i >= 0; --i) {
+    for(uint i = 0; i < m_things.size(); ++i) {
         ThingPtr thing = m_things[i];
         if(!thing->ignoreLook() && (!thing->isGround() && !thing->isGroundBorder() && !thing->isOnBottom() && !thing->isOnTop()))
             return thing;
@@ -216,9 +216,9 @@ ThingPtr Tile::getTopUseThing()
     if(isEmpty())
         return nullptr;
 
-    for(int i = m_things.size() - 1; i >= 0; --i) {
+    for(uint i = 0; i < m_things.size(); ++i) {
         ThingPtr thing = m_things[i];
-        if(thing->isForceUse() || (!thing->isGround() && !thing->isGroundBorder() && !thing->isOnBottom() && !thing->isOnTop()))
+        if(thing->isForceUse() || (!thing->isGround() && !thing->isGroundBorder() && !thing->isOnBottom() && !thing->isOnTop() && !thing->asCreature()))
             return thing;
     }
 
@@ -228,7 +228,7 @@ ThingPtr Tile::getTopUseThing()
 CreaturePtr Tile::getTopCreature()
 {
     CreaturePtr creature;
-    for(int i = m_things.size() - 1; i >= 0; --i) {
+    for(uint i = 0; i < m_things.size(); ++i) {
         ThingPtr thing = m_things[i];
         if(thing->asLocalPlayer()) // return local player if there aint no other creature.
             creature = thing->asCreature();
