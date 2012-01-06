@@ -1,10 +1,8 @@
 Client = {}
 
--- TODO: load and save configurations
-function Client.init()
-  -- set default settings
+local function setupWindow()
   g_window.show()
-  g_window.setMinimumSize({ width = 550, height = 450 })
+  g_window.setMinimumSize({ width = 600, height = 480 })
 
   -- initialize in fullscreen mode on mobile devices
   if g_window.getPlatformType() == "X11-EGL" then
@@ -29,9 +27,13 @@ function Client.init()
 
   g_window.setTitle('OTClient')
   g_window.setIcon(resolvepath('clienticon.png'))
+end
+
+function Client.init()
+  setupWindow()
 
   if not g_sprites.isLoaded() or not g_thingsType.isLoaded() then
-    fatal("spr and dat files are not loaded, did you loaded them?")
+    fatal("spr and dat files are not loaded, are them missing?")
   end
 end
 
