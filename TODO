@@ -1,54 +1,79 @@
 == Core
-a class for binding hotkeys
-review directories loading search
-load modules from zip packages
-capture close application events in lua
-create a class for reading binary files
-make lua/c++ logger more friendly
+[bart] a class for binding hotkeys
+[bart] review directories loading search
+[bart] load modules from zip packages
+[bart] capture close application events in lua (old setOnClose)
+[bart] create a class for reading binary files
+[bart] rework lua/c++ logger
 
 == Graphics
-use CoordsBuffer in font
-cache renders into framebuffers
-use hardware buffer
-use indices
+[bart] use CoordsBuffer in font
+[bart] cache renders into framebuffers
+[bart] use hardware buffer
+[bart] use indices
+[bart] change mouse icon
 
 == Lua
-make possible to bind non LuaObject derived classes on lua engine (for usage with Point,Rect,Color,Size)
-bind every global lua function in a static classes
+[bart] make possible to bind non LuaObject derived classes on lua engine (for usage with Point,Rect,Color,Size)
+[bart] bind every global lua function in a static classes
 
 == Platform
-implement fullscreen, maximize and minsize for win32
+[bart] implement fullscreen, maximize and minsize for win32
 
 == UI
-scrollbar
-scrollable widgets
-grid layout
-move UICheckBox to lua
-move UIWindow to lua
-create UIMessageBox, UIToolTip and UIInputBox
-rework UI image style
-class UIImage and UIText
-add UI border
-fix style inheretance using a style translator
-find a way to add new widgets without focusing them
-fix moving windows and tooltips conflicts
-break UILabel lines
-padding
-review and make more error prone with more warnings
-a real working border and background property in otui
+[bart] tab widgets
+[bart] scrollbar
+[bart] scrollable widgets
+[bart] grid layout
+[bart] move UICheckBox to lua
+[bart] move UIWindow to lua
+[bart] multiline text editor widget
+[bart] multiline rich text widget
+[bart] create UIMessageBox, UIToolTip and UIInputBox
+[bart] rework UI image style
+[bart] class UIImage and UIText
+[bart] add UI border
+[bart] fix style inheretance using a style translator
+[bart] find a way to add new widgets without focusing them
+[bart] fix moving windows and tooltips conflicts
+[bart] break UILabel lines
+[bart] padding
+[bart] review and make more error prone with more warnings
+[bart] a real working border and background property in otui
 
-== Client Modules
-modules managment interface
-restore Console key binding
-console history, text selection, scrolling
+== Client modules
+[bart] modules managment interface
+[bart] restore Console key binding
+[bart] console history, text selection, scrolling
+
+== Client drawing
+[bart] rework map tile rendering (cache visible tiles, etc)
+[bart] minimap windows
+[bart] lights
+[baxnie] auto walk
+[baxnie] container windows
+[baxnie] attack modes
+[baxnie] skulls/party rendering
+[baxnie] move items in map
+[baxnie] use with
+[baxnie] private messages
+[baxnie] open channels
+[baxnie] chat text colors
+[baxnie] login queue
+[baxnie] battle list
+[baxnie] questlog
+[baxnie] edit texts
+[baxnie] ignore list
 
 == Client
-clean sprites cache periodically
-handle corrupt errors in dat/spr
-create a shader manager
-find a way to load map rendering styles
+[bart] clean sprites cache periodically
+[bart] create a shader manager
+[bart] find a way to load map rendering styles
+[bart] cache screen creatures in a list on map
+[bart] handle corrupt errors in dat/spr
+[bart] remake spr/dat using OTML and image files
 
-== Client Interface
-implement left panel with dragging windows
-complete miniwindow
-add other icons on topmenu
+== Client interface
+[bart] implement left panel with dragging windows
+[bart] complete miniwindow
+[bart] add other icons on topmenu
