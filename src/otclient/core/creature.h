@@ -46,9 +46,12 @@ public:
     void setOutfit(const Outfit& outfit);
     void setLight(const Light& light) { m_light = light; }
     void setSpeed(uint16 speed) { m_speed = speed; }
-    void setSkull(uint8 skull) { m_skull = skull; }
-    void setShield(uint8 shield) { m_shield = shield; }
-    void setEmblem(uint8 emblem) { m_emblem = emblem; }
+    void setSkull(uint8 skull);
+    void setShield(uint8 shield);
+    void setEmblem(uint8 emblem);
+    void setSkullTexture(const std::string& filename);
+    void setShieldTexture(const std::string& filename);
+    void setEmblemTexture(const std::string& filename);
     void setPassable(bool passable) { m_passable = passable; }
 
     void addVolatileSquare(uint8 color);
@@ -88,9 +91,8 @@ protected:
     Outfit m_outfit;
     Light m_light;
     uint16 m_speed;
-    uint8 m_skull;
-    uint8 m_shield;
-    uint8 m_emblem;
+    uint8 m_skull, m_shield, m_emblem;
+    TexturePtr m_skullTexture, m_shieldTexture, m_emblemTexture;
     bool m_passable;
     Color m_volatileSquareColor, m_staticSquareColor;
     bool m_showVolatileSquare, m_showStaticSquare;

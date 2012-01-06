@@ -16,3 +16,4 @@ Module
   onLoad: |
     require 'game'
     require 'thing'
+    require 'creature'

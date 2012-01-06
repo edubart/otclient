@@ -34,6 +34,7 @@
 
 #include <framework/graphics/paintershaderprogram.h>
 #include <framework/graphics/paintershadersources.h>
+#include <framework/graphics/texturemanager.h>
 #include "spritemanager.h"
 
 Creature::Creature() : Thing()
@@ -158,6 +159,19 @@ void Creature::drawInformation(int x, int y, bool useGray, const Rect& visibleRe
 
     if(m_informationFont)
         m_informationFont->renderText(m_name, textRect, Fw::AlignTopCenter, fillColor);
+
+    if(m_skull != Otc::SkullNone && m_skullTexture) {
+        g_painter.setColor(Fw::white);
+        g_painter.drawTexturedRect(Rect(x + 12, y + 5, m_skullTexture->getSize()), m_skullTexture);
+    }
+    if(m_shield != Otc::ShieldNone && m_shieldTexture) {
+        g_painter.setColor(Fw::white);
+        g_painter.drawTexturedRect(Rect(x, y + 5, m_shieldTexture->getSize()), m_shieldTexture);
+    }
+    if(m_emblem != Otc::EmblemNone && m_emblemTexture) {
+        g_painter.setColor(Fw::white);
+        g_painter.drawTexturedRect(Rect(x + 12, y + 16, m_emblemTexture->getSize()), m_emblemTexture);
+    }
 }
 
 void Creature::walk(const Position& position, bool inverse)
@@ -323,6 +337,40 @@ void Creature::setOutfit(const Outfit& outfit)
 
     if(m_type->dimensions[ThingType::Layers] == 1)
         m_outfit.resetClothes();
+}
+
+void Creature::setSkull(uint8 skull)
+{
+    m_skull = skull;
+    g_lua.callGlobalField("Creature","onSkullChange", asCreature(), m_skull);
+}
+
+void Creature::setShield(uint8 shield)
+{
+    m_shield = shield;
+    g_lua.callGlobalField("Creature","onShieldChange", asCreature(), m_shield);
+}
+
+void Creature::setEmblem(uint8 emblem)
+{
+    m_emblem = emblem;
+
+    g_lua.callGlobalField("Creature","onEmblemChange", asCreature(), m_emblem);
+}
+
+void Creature::setSkullTexture(const std::string& filename)
+{
+    m_skullTexture = g_textures.getTexture(filename);
+}
+
+void Creature::setShieldTexture(const std::string& filename)
+{
+    m_shieldTexture = g_textures.getTexture(filename);
+}
+
+void Creature::setEmblemTexture(const std::string& filename)
+{
+    m_emblemTexture = g_textures.getTexture(filename);
 }
 
 void Creature::addVolatileSquare(uint8 color)
