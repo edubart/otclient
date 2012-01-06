@@ -68,3 +68,11 @@ function resolvepath(filePath, depth)
     return filePath
   end
 end
+
+function toboolean(str)
+  str = str:trim():lower()
+  if str == '1' or str == 'true' then
+    return true
+  end
+  return false
+end

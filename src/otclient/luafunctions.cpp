@@ -35,8 +35,8 @@ void OTClient::registerLuaFunctions()
 
     g_lua.registerClass<ProtocolLogin, Protocol>();
     g_lua.bindClassStaticFunction<ProtocolLogin>("create", &ProtocolLogin::create);
-    g_lua.bindClassMemberFunction("login", &ProtocolLogin::login);
-    g_lua.bindClassMemberFunction("cancelLogin", &ProtocolLogin::cancelLogin);
+    g_lua.bindClassMemberFunction<ProtocolLogin>("login", &ProtocolLogin::login);
+    g_lua.bindClassMemberFunction<ProtocolLogin>("cancelLogin", &ProtocolLogin::cancelLogin);
 
     g_lua.registerClass<ProtocolGame, Protocol>();
 
@@ -53,9 +53,9 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Thing>("asLocalPlayer", &Thing::asLocalPlayer);
 
     g_lua.registerClass<Creature, Thing>();
-    g_lua.bindClassMemberFunction("getName", &Creature::getName);
-    g_lua.bindClassMemberFunction("setOutfit", &Creature::setOutfit);
-    g_lua.bindClassMemberFunction("getOutfit", &Creature::getOutfit);
+    g_lua.bindClassMemberFunction<Creature>("getName", &Creature::getName);
+    g_lua.bindClassMemberFunction<Creature>("setOutfit", &Creature::setOutfit);
+    g_lua.bindClassMemberFunction<Creature>("getOutfit", &Creature::getOutfit);
 
     g_lua.registerClass<Player, Creature>();
     g_lua.registerClass<LocalPlayer, Player>();

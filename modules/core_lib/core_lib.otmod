@@ -17,3 +17,4 @@ Module
     require 'dispatcher'
     require 'widget'
     require 'effects'
+    require 'settings'

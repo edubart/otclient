@@ -31,11 +31,29 @@
 #include <framework/graphics/graphics.h>
 #include <framework/platform/platformwindow.h>
 
+class LuaRect : public LuaObject, public Rect {
+public:
+    LuaRect() : TRect() { }
+};
+
 void Application::registerLuaFunctions()
 {
+    // globals
+    g_lua.registerStaticClass("Rect");
+    g_lua.bindClassStaticFunction("Rect", "create", []{ return std::shared_ptr<LuaRect>(new LuaRect); });
+    g_lua.bindClassMemberFunction<LuaRect>("Rect", "resize", (void (Rect::*)(int,int)) &Rect::resize);
+
+    /*
+    g_lua.bindGlobalFunction("torect", [](const std::string& str) { return Fw::unsafeCast<Rect>(str); });
+    g_lua.bindGlobalFunction("topoint", [](const std::string& str) { return Fw::unsafeCast<Point>(str); });
+    g_lua.bindGlobalFunction("tocolor", [](const std::string& str) { return Fw::unsafeCast<Color>(str); });
+    g_lua.bindGlobalFunction("tosize", [](const std::string& str) { return Fw::unsafeCast<Size>(str); });
+    g_lua.bindGlobalFunction("toboolean", [](const std::string& str) { return Fw::unsafeCast<bool>(str); });
+    */
+
     // UIWidget
     g_lua.registerClass<UIWidget>();
-    g_lua.bindClassStaticFunction<UIWidget>("create", &UIWidget::create<UIWidget>);
+    g_lua.bindClassStaticFunction<UIWidget>("create", []{ return UIWidgetPtr(new UIWidget); } );
     g_lua.bindClassMemberFunction<UIWidget>("destroy", &UIWidget::destroy);
     g_lua.bindClassMemberFunction<UIWidget>("setVisible", &UIWidget::setVisible);
     g_lua.bindClassMemberFunction<UIWidget>("setEnabled", &UIWidget::setEnabled);
@@ -219,7 +237,7 @@ void Application::registerLuaFunctions()
     // UIFrameCounter
     g_lua.registerClass<UIFrameCounter, UIWidget>();
     g_lua.bindClassStaticFunction<UIFrameCounter>("create", &UIWidget::create<UIFrameCounter>);
-    g_lua.bindClassMemberFunction("getFrameCount", &UIFrameCounter::getFrameCount);
+    g_lua.bindClassMemberFunction<UIFrameCounter>("getFrameCount", &UIFrameCounter::getFrameCount);
 
     // Protocol
     g_lua.registerClass<Protocol>();
@@ -229,6 +247,7 @@ void Application::registerLuaFunctions()
     g_lua.bindClassStaticFunction("g_configs", "set", std::bind(&ConfigManager::set, &g_configs, _1, _2));
     g_lua.bindClassStaticFunction("g_configs", "get", std::bind(&ConfigManager::get, &g_configs, _1));
     g_lua.bindClassStaticFunction("g_configs", "exists", std::bind(&ConfigManager::exists, &g_configs, _1));
+
 
     g_lua.registerStaticClass("g_window");
     g_lua.bindClassStaticFunction("g_window", "show", std::bind(&PlatformWindow::show, &g_window));

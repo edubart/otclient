@@ -56,7 +56,7 @@ for line in io.lines(cppclassheader) do
         bindline = bindline .. '>();'
         print(bindline)
 
-        bindline = 'g_lua.bindClassStaticFunction<' .. cppclassname .. '>("create", &' .. cppclassname .. '::create);'
+        bindline = 'g_lua.bindClassStaticFunction<' .. cppclassname .. '>("create", []{ return ' .. cppclassname .. 'Ptr(new ' .. cppclassname ..  '); });'
         print(bindline)
       end
     elseif classfound then

@@ -113,6 +113,27 @@ namespace luabinder
                                     Tuple>(f);
     }
 
+    /// Specialization for lambdas
+    template<typename F>
+    struct bind_lambda_fun;
+
+    template<typename Lambda, typename Ret, typename... Args>
+    struct bind_lambda_fun<Ret(Lambda::*)(Args...) const> {
+        static LuaCppFunction call(const Lambda& f) {
+            typedef typename std::tuple<typename remove_const_ref<Args>::type...> Tuple;
+            return bind_fun_specializer<typename remove_const_ref<Ret>::type,
+                                        decltype(f),
+                                        Tuple>(f);
+
+        }
+    };
+
+    template<typename Lambda>
+    typename std::enable_if<std::is_class<Lambda>::value, LuaCppFunction>::type bind_fun(const Lambda& f) {
+        typedef decltype(&Lambda::operator()) F;
+        return bind_lambda_fun<F>::call(f);
+    }
+
     /// Bind a customized functions
     template<>
     inline
@@ -207,29 +228,29 @@ namespace luabinder
     }
 
     /// Bind member functions
-    template<typename Ret, typename Obj, typename... Args>
-    LuaCppFunction bind_mem_fun(Ret (Obj::*f)(Args...)) {
+    template<typename C, typename Ret, class FC, typename... Args>
+    LuaCppFunction bind_mem_fun(Ret (FC::*f)(Args...)) {
         auto mf = std::mem_fn(f);
-        typedef typename std::tuple<std::shared_ptr<Obj>, typename remove_const_ref<Args>::type...> Tuple;
+        typedef typename std::tuple<std::shared_ptr<C>, typename remove_const_ref<Args>::type...> Tuple;
         return bind_fun_specializer<typename remove_const_ref<Ret>::type,
                                     decltype(mf),
                                     Tuple>(mf);
     }
-    template<typename Ret, typename Obj, typename... Args>
-    LuaCppFunction bind_mem_fun(Ret (Obj::*f)(Args...) const) {
+    template<typename C, typename Ret, class FC, typename... Args>
+    LuaCppFunction bind_mem_fun(Ret (FC::*f)(Args...) const) {
         auto mf = std::mem_fn(f);
-        typedef typename std::tuple<std::shared_ptr<Obj>, typename remove_const_ref<Args>::type...> Tuple;
+        typedef typename std::tuple<std::shared_ptr<C>, typename remove_const_ref<Args>::type...> Tuple;
         return bind_fun_specializer<typename remove_const_ref<Ret>::type,
                                     decltype(mf),
                                     Tuple>(mf);
     }
 
     /// Bind customized member functions
-    template<typename Obj>
-    LuaCppFunction bind_mem_fun(int (Obj::*f)(LuaInterface*)) {
+    template<typename C>
+    LuaCppFunction bind_mem_fun(int (C::*f)(LuaInterface*)) {
         auto mf = std::mem_fn(f);
         return [=](LuaInterface* lua) {
-            auto obj = lua->castValue<std::shared_ptr<Obj>>(1);
+            auto obj = lua->castValue<std::shared_ptr<C>>(1);
             lua->remove(1);
             return mf(obj, lua);
         };
