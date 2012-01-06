@@ -181,6 +181,8 @@ public:
     template<typename R, typename... T>
     R callGlobalField(const std::string& global, const std::string& field, const T&... args);
 
+    bool isInCppCallback() { return m_cppCallbackDepth != 0; }
+
 private:
     /// Load scripts requested by lua 'require'
     static int luaScriptLoader(lua_State* L);
@@ -311,6 +313,7 @@ public:
 private:
     lua_State* L;
     int m_weakTableRef;
+    int m_cppCallbackDepth;
 };
 
 extern LuaInterface g_lua;

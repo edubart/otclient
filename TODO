@@ -6,6 +6,7 @@
 [bart] create a class for reading binary files
 [bart] rework lua/c++ logger
 [bart] save lists on config manager
+[bart] make protocol class compatible with old tibia protocols
 
 == Graphics
 [bart] use CoordsBuffer in font
@@ -16,13 +17,15 @@
 
 == Lua
 [bart] make possible to bind non LuaObject derived classes on lua engine (for usage with Point,Rect,Color,Size)
-[bart] bind every global lua function in a static classes
+[bart] bind every global lua function in static classes
 
 == Platform
 [bart] implement fullscreen, maximize and minsize for win32
+[bart] port to MacOs and iphone
 
 == UI
 [bart] tab widgets
+[bart] add anchors API
 [bart] scrollbar
 [bart] scrollable widgets
 [bart] grid layout
@@ -64,6 +67,7 @@
 [bart] draw lights using shaders
 [bart] chat with tabs
 [bart] limit FPS in options
+[baxnie] do lua game event calls from Game instead from GameProtocol
 [baxnie] trade window
 [baxnie] auto walk
 [baxnie] hotkeys window

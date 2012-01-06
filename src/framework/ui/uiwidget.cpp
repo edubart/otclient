@@ -785,6 +785,15 @@ void UIWidget::applyStyle(const OTMLNodePtr& styleNode)
         m_loadingStyle = true;
         onStyleApply(styleNode->tag(), styleNode);
         callLuaField("onStyleApply", styleNode->tag(), styleNode);
+
+        if(m_firstOnStyle) {
+            callLuaField("onSetup");
+            // always focus new child
+            if(isFocusable() && isExplicitlyVisible() && isExplicitlyEnabled())
+                focus();
+        }
+        m_firstOnStyle = false;
+
         m_loadingStyle = false;
     } catch(Exception& e) {
         logError("Failed to apply style to widget '", m_id, "' style: ", e.what());
@@ -1156,15 +1165,6 @@ void UIWidget::onStyleApply(const std::string& styleName, const OTMLNodePtr& sty
             luaSetField(fieldName);
         }
     }
-
-    if(m_firstOnStyle) {
-        callLuaField("onSetup");
-        // always focus new child
-        if(isFocusable() && isExplicitlyVisible() && isExplicitlyEnabled())
-            focus();
-    }
-
-    m_firstOnStyle = false;
 }
 
 void UIWidget::onGeometryChange(const Rect& oldRect, const Rect& newRect)

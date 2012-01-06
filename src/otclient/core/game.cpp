@@ -106,7 +106,7 @@ void Game::processInventoryChange(int slot, const ItemPtr& item)
 
 void Game::walk(Otc::Direction direction)
 {
-    if(!m_online || !m_localPlayer->canWalk(direction) || (!g_ui.isOnInputEvent() && m_localPlayer->getNextWalkDirection() == Otc::InvalidDirection))
+    if(!m_online || !m_localPlayer->canWalk(direction) || !checkBotProtection())
         return;
 
     cancelFollow();
@@ -164,7 +164,7 @@ void Game::turn(Otc::Direction direction)
 
 void Game::look(const ThingPtr& thing)
 {
-    if(!m_online || !thing || !g_ui.isOnInputEvent())
+    if(!m_online || !thing || !checkBotProtection())
         return;
 
     int stackpos = getThingStackpos(thing);
@@ -174,7 +174,7 @@ void Game::look(const ThingPtr& thing)
 
 void Game::use(const ThingPtr& thing)
 {
-    if(!m_online || !thing || !g_ui.isOnInputEvent())
+    if(!m_online || !thing || !checkBotProtection())
         return;
 
     int stackpos = getThingStackpos(thing);
@@ -184,7 +184,7 @@ void Game::use(const ThingPtr& thing)
 
 void Game::attack(const CreaturePtr& creature)
 {
-    if(!m_online || !creature || !g_ui.isOnInputEvent())
+    if(!m_online || !creature || !checkBotProtection())
         return;
 
     if(m_attackingCreature)
@@ -215,7 +215,7 @@ void Game::onAttackCancelled()
 
 void Game::follow(const CreaturePtr& creature)
 {
-    if(!m_online || !creature || !g_ui.isOnInputEvent())
+    if(!m_online || !creature || !checkBotProtection())
         return;
 
     if(m_followingCreature)
@@ -238,7 +238,7 @@ void Game::cancelFollow()
 
 void Game::rotate(const ThingPtr& thing)
 {
-    if(!m_online || !thing || !g_ui.isOnInputEvent())
+    if(!m_online || !thing || !checkBotProtection())
         return;
 
     int stackpos = getThingStackpos(thing);
@@ -260,7 +260,7 @@ int Game::getThingStackpos(const ThingPtr& thing)
 
 void Game::talkChannel(int channelType, int channelId, const std::string& message)
 {
-    if(!m_online || !g_ui.isOnInputEvent())
+    if(!m_online || !checkBotProtection())
         return;
 
     m_protocolGame->sendTalk(channelType, channelId, "", message);
@@ -268,7 +268,7 @@ void Game::talkChannel(int channelType, int channelId, const std::string& messag
 
 void Game::talkPrivate(int channelType, const std::string& receiver, const std::string& message)
 {
-    if(!m_online || !g_ui.isOnInputEvent())
+    if(!m_online || !checkBotProtection())
         return;
 
     m_protocolGame->sendTalk(channelType, 0, receiver, message);
@@ -276,7 +276,7 @@ void Game::talkPrivate(int channelType, const std::string& receiver, const std::
 
 void Game::inviteToParty(int creatureId)
 {
-    if(!m_online || !g_ui.isOnInputEvent())
+    if(!m_online || !checkBotProtection())
         return;
 
     m_protocolGame->sendInviteToParty(creatureId);
@@ -284,7 +284,7 @@ void Game::inviteToParty(int creatureId)
 
 void Game::openOutfitWindow()
 {
-    if(!m_online || !g_ui.isOnInputEvent())
+    if(!m_online || !checkBotProtection())
         return;
 
     m_protocolGame->sendGetOutfit();
@@ -292,7 +292,7 @@ void Game::openOutfitWindow()
 
 void Game::setOutfit(const Outfit& outfit)
 {
-    if(!m_online || !g_ui.isOnInputEvent())
+    if(!m_online || !checkBotProtection())
         return;
 
     m_protocolGame->sendSetOutfit(outfit);
@@ -300,7 +300,7 @@ void Game::setOutfit(const Outfit& outfit)
 
 void Game::addVip(const std::string& name)
 {
-    if(!m_online || name.empty() || !g_ui.isOnInputEvent())
+    if(!m_online || name.empty() || !checkBotProtection())
         return;
 
     m_protocolGame->sendAddVip(name);
@@ -308,8 +308,19 @@ void Game::addVip(const std::string& name)
 
 void Game::removeVip(int playerId)
 {
-    if(!m_online || !g_ui.isOnInputEvent())
+    if(!m_online || !checkBotProtection())
         return;
 
     m_protocolGame->sendRemoveVip(playerId);
+}
+
+bool Game::checkBotProtection()
+{
+#ifndef DISABLE_BOT_PROTECTION
+    if(g_lua.isInCppCallback() && !g_ui.isOnInputEvent()) {
+        logError("cought a lua call to a bot protected game function, the call was canceled");
+        return false;
+    }
+#endif
+    return true;
 }

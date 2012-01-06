@@ -65,6 +65,8 @@ public:
     int getThingStackpos(const ThingPtr& thing);
     void onAttackCancelled();
 
+    bool checkBotProtection();
+
     CreaturePtr getAttackingCreature() { return m_attackingCreature; }
     CreaturePtr getFollowingCreature() { return m_followingCreature; }
 

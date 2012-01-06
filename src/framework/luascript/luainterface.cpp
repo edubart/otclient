@@ -28,9 +28,11 @@
 
 LuaInterface g_lua;
 
-LuaInterface::LuaInterface() :
-    L(NULL), m_weakTableRef(0)
+LuaInterface::LuaInterface()
 {
+    L = nullptr;
+    m_cppCallbackDepth = 0;
+    m_weakTableRef = 0;
 }
 
 LuaInterface::~LuaInterface()
@@ -529,7 +531,9 @@ int LuaInterface::luaCppFunctionCallback(lua_State* L)
 
     // do the call
     try {
+        g_lua.m_cppCallbackDepth++;
         numRets = (*(funcPtr->get()))(&g_lua);
+        g_lua.m_cppCallbackDepth--;
         assert(numRets == g_lua.stackSize());
     } catch(LuaException &e) {
         logError("lua cpp callback failed: ", e.what());
