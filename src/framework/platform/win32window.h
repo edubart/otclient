@@ -58,6 +58,7 @@ public:
     void swapBuffers();
     void showMouse();
     void hideMouse();
+    void displayFatalError(const std::string& message);
 
     void setTitle(const std::string& title);
     void setMinimumSize(const Size& minimumSize);

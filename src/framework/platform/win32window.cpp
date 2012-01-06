@@ -618,3 +618,7 @@ std::string WIN32Window::getPlatformType()
     return "WIN32-WGL";
 }
 
+void WIN32Window::displayFatalError(const std::string& message)
+{
+    MessageBoxA(m_window, message.c_str(), "FATAL ERROR", MB_OK | MB_ICONERROR);
+}

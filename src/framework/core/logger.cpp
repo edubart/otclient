@@ -22,13 +22,9 @@
 
 #include "logger.h"
 #include "eventdispatcher.h"
+#include <framework/platform/platformwindow.h>
 
 Logger g_logger;
-
-Logger::Logger()
-{
-
-}
 
 void Logger::log(Fw::LogLevel level, std::string message)
 {
@@ -43,8 +39,10 @@ void Logger::log(Fw::LogLevel level, std::string message)
     if(m_onLog)
         m_onLog(level, message, now);
 
-    if(level == Fw::LogFatal)
-        throw std::runtime_error(message);
+    if(level == Fw::LogFatal) {
+        g_window.displayFatalError(message);
+        exit(-1);
+    }
 }
 
 void Logger::logFunc(Fw::LogLevel level, const std::string& message, std::string prettyFunction)

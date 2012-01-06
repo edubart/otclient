@@ -43,6 +43,7 @@ public:
     virtual void poll() = 0;
     virtual void swapBuffers() = 0;
     virtual void showMouse() = 0;
+    virtual void displayFatalError(const std::string& message) { }
     virtual void hideMouse() = 0;
 
     virtual void setTitle(const std::string& title) = 0;

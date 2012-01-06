@@ -37,8 +37,6 @@ class Logger
     typedef std::function<void(Fw::LogLevel, std::string, std::size_t)> OnLogCallback;
 
 public:
-    Logger();
-
     void log(Fw::LogLevel level, std::string message);
     void logFunc(Fw::LogLevel level, const std::string& message, std::string prettyFunction);
 
