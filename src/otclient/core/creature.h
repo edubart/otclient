@@ -54,8 +54,8 @@ public:
     void addVolatileSquare(uint8 color);
     void removeVolatileSquare() { m_showVolatileSquare = false; }
 
-    void activateStaticSquare(const Color& color) { m_showStaticSquare = true; m_staticSquareColor = color; }
-    void deactivateStaticSquare() { m_showStaticSquare = false; }
+    void showStaticSquare(const Color& color) { m_showStaticSquare = true; m_staticSquareColor = color; }
+    void hideStaticSquare() { m_showStaticSquare = false; }
 
     std::string getName() { return m_name; }
     uint8 getHealthPercent() { return m_healthPercent; }

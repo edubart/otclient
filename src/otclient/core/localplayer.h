@@ -46,6 +46,7 @@ public:
     void walk(const Position& position, bool inverse);
     void cancelWalk(Otc::Direction direction, bool force = false);
     bool canWalk(Otc::Direction direction);
+    Otc::Direction getNextWalkDirection() { return m_nextWalkDirection; }
 
     LocalPlayerPtr asLocalPlayer() { return std::static_pointer_cast<LocalPlayer>(shared_from_this()); }
 

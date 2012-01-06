@@ -106,7 +106,7 @@ void Game::processInventoryChange(int slot, const ItemPtr& item)
 
 void Game::walk(Otc::Direction direction)
 {
-    if(!m_online || !m_localPlayer->canWalk(direction) || !g_ui.isOnInputEvent())
+    if(!m_online || !m_localPlayer->canWalk(direction) || (!g_ui.isOnInputEvent() && m_localPlayer->getNextWalkDirection() == Otc::InvalidDirection))
         return;
 
     cancelFollow();
@@ -188,9 +188,9 @@ void Game::attack(const CreaturePtr& creature)
         return;
 
     if(m_attackingCreature)
-        m_attackingCreature->deactivateStaticSquare();
+        m_attackingCreature->hideStaticSquare();
 
-    creature->activateStaticSquare(Fw::red);
+    creature->showStaticSquare(Fw::red);
     m_attackingCreature = creature;
 
     m_protocolGame->sendAttack(creature->getId());
@@ -200,7 +200,7 @@ void Game::cancelAttack()
 {
     if(m_attackingCreature) {
         m_protocolGame->sendAttack(0);
-        m_attackingCreature->deactivateStaticSquare();
+        m_attackingCreature->hideStaticSquare();
         m_attackingCreature = nullptr;
     }
 }
@@ -208,7 +208,7 @@ void Game::cancelAttack()
 void Game::onAttackCancelled()
 {
     if(m_attackingCreature) {
-        m_attackingCreature->deactivateStaticSquare();
+        m_attackingCreature->hideStaticSquare();
         m_attackingCreature = nullptr;
     }
 }
@@ -219,9 +219,9 @@ void Game::follow(const CreaturePtr& creature)
         return;
 
     if(m_followingCreature)
-        m_followingCreature->deactivateStaticSquare();
+        m_followingCreature->hideStaticSquare();
 
-    creature->activateStaticSquare(Fw::green);
+    creature->showStaticSquare(Fw::green);
     m_followingCreature = creature;
 
     m_protocolGame->sendFollow(creature->getId());
@@ -231,7 +231,7 @@ void Game::cancelFollow()
 {
     if(m_followingCreature) {
         m_protocolGame->sendFollow(0);
-        m_followingCreature->deactivateStaticSquare();
+        m_followingCreature->hideStaticSquare();
         m_followingCreature = nullptr;
     }
 }
