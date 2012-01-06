@@ -31,10 +31,6 @@ end
 
 function Client.init()
   setupWindow()
-
-  if not g_sprites.isLoaded() or not g_thingsType.isLoaded() then
-    fatal("spr and dat files are not loaded, are them missing?")
-  end
 end
 
 function Client.terminate()

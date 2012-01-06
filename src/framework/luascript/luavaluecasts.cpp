@@ -50,6 +50,21 @@ bool luavalue_cast(int index, int& i)
     return true;
 }
 
+// uint
+void push_luavalue(uint v)
+{
+    push_luavalue((double)v);
+}
+
+bool luavalue_cast(int index, uint& v)
+{
+    double d;
+    bool ret = luavalue_cast(index, d);
+    v = (uint32)d;
+    return ret;
+}
+
+
 // double
 void push_luavalue(double d)
 {

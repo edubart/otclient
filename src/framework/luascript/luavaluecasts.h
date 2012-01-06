@@ -36,6 +36,10 @@ bool luavalue_cast(int index, bool& b);
 void push_luavalue(int i);
 bool luavalue_cast(int index, int& i);
 
+// uint
+void push_luavalue(uint v);
+bool luavalue_cast(int index, uint& v);
+
 // double
 void push_luavalue(double d);
 bool luavalue_cast(int index, double& d);
