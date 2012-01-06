@@ -1,32 +1,38 @@
-MainWindow
-  id: optionsWindow
-  title: Options
-  size: 286 100
+OptionCheckBox < CheckBox
+  margin-left: 18
+  margin-right: 18
+  @onCheckChange: Options.changeOption(self:getId(), self:isChecked())
+  @onSetup: self:setChecked(Options[self:getId()])
 
-  CheckBox
-    id: vsyncCheckBox
-    text: Enable vertical synchronization
-    tooltip: Limits FPS to 60
+  $first:
+    margin-top: 28
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: parent.top
-    margin-top: 28
-    margin-left: 18
-    margin-right: 18
-    @onCheckChange: Options.enableVsync(self:isChecked())
-    @onSetup: self:setChecked(Options.vsync)
 
-  CheckBox
-    id: fpsCheckBox
-    text: Show frame rate
+  $middle:
+    margin-top: 10
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: prev.bottom
-    margin-top: 10
-    margin-left: 18
-    margin-right: 18
-    @onCheckChange: Options.enableFps(self:isChecked())
-    @onSetup: self:setChecked(Options.fps)
+
+MainWindow
+  id: optionsWindow
+  title: Options
+  size: 286 120
+
+  OptionCheckBox
+    id: vsync
+    text: Enable vertical synchronization
+    tooltip: Limits FPS to 60
+
+  OptionCheckBox
+    id: showfps
+    text: Show frame rate
+
+  OptionCheckBox
+    id: fullscreen
+    text: Fullscreen
 
   Button
     text: Ok

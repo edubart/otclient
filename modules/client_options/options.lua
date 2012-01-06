@@ -1,14 +1,14 @@
 Options = {}
 
--- public functions
 function Options.load()
-  -- set default settings
-  Settings.setDefault('vsync', true)
-  Settings.setDefault('showfps', true)
+  local booleanOptions = { vsync = true,
+                           showfps = true,
+                           fullscreen = false }
 
-  -- load the options
-  Options.enableVsync(Settings.getBoolean('vsync'))
-  Options.enableFps(Settings.getBoolean('showfps'))
+  for k,v in pairs(booleanOptions) do
+    Settings.setDefault(k, v)
+    Options.changeOption(k, Settings.getBoolean(k))
+  end
 end
 
 function Options.show()
@@ -20,15 +20,14 @@ function Options.openWebpage()
 end
 
 -- private functions
-function Options.enableVsync(on)
-  g_window.setVerticalSync(on)
-  Settings.set('vsync', on)
-  Options.vsync = on
-end
-
-function Options.enableFps(on)
-  local frameCounter = rootWidget:recursiveGetChildById('frameCounter')
-  frameCounter:setVisible(on)
-  Settings.set('showfps', on)
-  Options.fps = on
+function Options.changeOption(key, status)
+  if key == 'vsync' then
+    g_window.setVerticalSync(status)
+  elseif key == 'showfps' then
+    addEvent(function() rootWidget:recursiveGetChildById('frameCounter'):setVisible(status) end)
+  elseif key == 'fullscreen' then
+    addEvent(function() g_window.setFullscreen(status) end)
+  end
+  Settings.set(key, status)
+  Options[key] = status
 end

@@ -495,8 +495,6 @@ void X11Window::hide()
 
 void X11Window::maximize()
 {
-    updateUnmaximizedCoords();
-
     Atom wmState = XInternAtom(m_display, "_NET_WM_STATE", False);
     Atom wmStateMaximizedVert = XInternAtom(m_display, "_NET_WM_STATE_MAXIMIZED_VERT", False);
     Atom wmStateMaximizedHorz = XInternAtom(m_display, "_NET_WM_STATE_MAXIMIZED_HORZ", False);

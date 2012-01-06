@@ -34,7 +34,7 @@ PlatformWindow& g_window = window;
 
 void PlatformWindow::updateUnmaximizedCoords()
 {
-    if(!isMaximized()) {
+    if(!isMaximized() && !isFullscreen()) {
         m_unmaximizedPos = m_pos;
         m_unmaximizedSize = m_size;
     }

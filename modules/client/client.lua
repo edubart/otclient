@@ -19,7 +19,7 @@ function Client.init()
     local displaySize = g_window.getDisplaySize()
     local pos = { x = (displaySize.width - size.width)/2,
                   y = (displaySize.height - size.height)/2 }
-    pos = Settings.getPoint('window-pos', size)
+    pos = Settings.getPoint('window-pos', pos)
     g_window.move(pos)
 
     -- window maximized?
