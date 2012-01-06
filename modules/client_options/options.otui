@@ -13,6 +13,8 @@ MainWindow
     margin-top: 28
     margin-left: 18
     margin-right: 18
+    @onCheckChange: Options.enableVsync(self:isChecked())
+    @onSetup: self:setChecked(Options.vsync)
 
   CheckBox
     id: fpsCheckBox
@@ -23,6 +25,8 @@ MainWindow
     margin-top: 10
     margin-left: 18
     margin-right: 18
+    @onCheckChange: Options.enableFps(self:isChecked())
+    @onSetup: self:setChecked(Options.fps)
 
   Button
     text: Ok
@@ -31,4 +35,4 @@ MainWindow
     anchors.bottom: parent.bottom
     margin-right: 10
     margin-bottom: 10
-    @onClick: Options.destroy()
+    @onClick: self:getParent():destroy()

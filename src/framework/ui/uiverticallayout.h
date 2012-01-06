@@ -29,7 +29,6 @@ class UIVerticalLayout : public UILayout
 {
 public:
     UIVerticalLayout(UIWidgetPtr parentWidget);
-    static UIVerticalLayoutPtr create(UIWidgetPtr parentWidget) { return UIVerticalLayoutPtr(new UIVerticalLayout(parentWidget)); }
 
     virtual void applyStyle(const OTMLNodePtr& styleNode);
     virtual void update();

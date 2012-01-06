@@ -302,25 +302,26 @@ void LuaInterface::loadScript(const std::string& fileName)
 
 void LuaInterface::loadFunction(const std::string& buffer, const std::string& source)
 {
-    // gets the function contained in that buffer
-    if(boost::starts_with(buffer, "function")) {
-        // evaluate the function
-        std::string buf = Fw::mkstr("__func = ", buffer);
-        loadBuffer(buf, source);
-        safeCall();
-
-        // get the function
-        getGlobal("__func");
-
-        // reset the global __func
+    if(buffer.empty()) {
         pushNil();
-        setGlobal("__func");
+        return;
     }
-    // gets the buffer as a function
-    else if(!buffer.empty())
-        loadBuffer(buffer, source);
+
+    std::string buf;
+    if(boost::starts_with(buffer, "function"))
+        buf = Fw::mkstr("__func = ", buffer);
     else
-        pushNil();
+        buf = Fw::mkstr("__func = function(self)\n", buffer,"\nend");
+
+    loadBuffer(buf, source);
+    safeCall();
+
+    // get the function
+    getGlobal("__func");
+
+    // reset the global __func
+    pushNil();
+    setGlobal("__func");
 }
 
 void LuaInterface::evaluateExpression(const std::string& expression, const std::string& source)

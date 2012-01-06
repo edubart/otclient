@@ -45,7 +45,7 @@ function UIPopupMenu:onDestroy()
 end
 
 function UIPopupMenu:onMousePress(mousePos, mouseButton)
-  -- clicks outside self area destroys the self
+  -- clicks outside menu area destroys the menu
   if not self:containsPoint(mousePos) then
     self:destroy()
     return true
@@ -61,11 +61,10 @@ function UIPopupMenu:onKeyPress(keyCode, keyText, keyboardModifiers)
   return false
 end
 
-local function onRootGeometryUpdate()
   -- close all menus when the window is resized
+local function onRootGeometryUpdate()
   for i,menu in ipairs(displayedMenuList) do
     menu:destroy()
   end
 end
-
 connect(rootWidget, { onGeometryChange = onRootGeometryUpdate} )

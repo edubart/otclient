@@ -278,6 +278,7 @@ void X11Window::internalCreateWindow()
         vis = CopyFromParent;
     }
 
+    updateUnmaximizedCoords();
     m_window = XCreateWindow(m_display, m_rootWindow,
                              m_pos.x, m_pos.y, m_size.width(), m_size.height(),
                              0,
@@ -494,6 +495,8 @@ void X11Window::hide()
 
 void X11Window::maximize()
 {
+    updateUnmaximizedCoords();
+
     Atom wmState = XInternAtom(m_display, "_NET_WM_STATE", False);
     Atom wmStateMaximizedVert = XInternAtom(m_display, "_NET_WM_STATE_MAXIMIZED_VERT", False);
     Atom wmStateMaximizedHorz = XInternAtom(m_display, "_NET_WM_STATE_MAXIMIZED_HORZ", False);
@@ -561,6 +564,7 @@ void X11Window::poll()
 
                 // updates window pos
                 m_pos = newPos;
+                updateUnmaximizedCoords();
                 break;
             }
             case SelectionRequest: {
@@ -916,6 +920,9 @@ std::string X11Window::getPlatformType()
 
 bool X11Window::isMaximized()
 {
+    if(!m_display || !m_window)
+        return false;
+
     Atom wmState = XInternAtom(m_display, "_NET_WM_STATE", False);
     Atom wmStateMaximizedVert = XInternAtom(m_display, "_NET_WM_STATE_MAXIMIZED_VERT", False);
     Atom wmStateMaximizedHorz = XInternAtom(m_display, "_NET_WM_STATE_MAXIMIZED_HORZ", False);
@@ -940,7 +947,7 @@ bool X11Window::isMaximized()
         }
 
         if(maximizedMask == 3)
-            maximizedMask = true;
+            maximized = true;
 
         XFree(propertyValue);
     }

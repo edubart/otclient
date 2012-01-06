@@ -59,9 +59,11 @@ public:
     int getDisplayWidth() { return getDisplaySize().width(); }
     int getDisplayHeight() { return getDisplaySize().width(); }
 
+    Size getUnmaximizedSize() { return m_unmaximizedSize; }
     Size getSize() { return m_size; }
     int getWidth() { return m_size.width(); }
     int getHeight() { return m_size.height(); }
+    Point getUnmaximizedPos() { return m_unmaximizedPos; }
     Point getPos() { return m_pos; }
     int getX() { return m_pos.x; }
     int getY() { return m_pos.y; }
@@ -70,6 +72,7 @@ public:
 
     bool isVisible() { return m_visible; }
     bool isFullscreen() { return m_fullscreen; }
+    virtual bool isMaximized() = 0;
     bool hasFocus() { return m_focused; }
 
     void setOnClose(const SimpleCallback& onClose) { m_onClose = onClose; }
@@ -77,8 +80,12 @@ public:
     void setOnInputEvent(const OnInputEventCallback& onInputEvent) { m_onInputEvent = onInputEvent; }
 
 protected:
+    void updateUnmaximizedCoords();
+
     Size m_size;
     Point m_pos;
+    Size m_unmaximizedSize;
+    Point m_unmaximizedPos;
     InputEvent m_inputEvent;
 
     Boolean<false> m_created;

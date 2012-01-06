@@ -62,7 +62,6 @@ class UIAnchorLayout : public UILayout
 {
 public:
     UIAnchorLayout(UIWidgetPtr parentWidget) : UILayout(parentWidget) { }
-    static UIAnchorLayoutPtr create(UIWidgetPtr parentWidget) { return UIAnchorLayoutPtr(new UIAnchorLayout(parentWidget)); }
 
     void addAnchor(const UIWidgetPtr& anchoredWidget, Fw::AnchorEdge anchoredEdge,
                    const std::string& hookedWidgetId, Fw::AnchorEdge hookedEdge);

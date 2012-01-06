@@ -35,9 +35,6 @@ public:
     UIWidget();
     virtual ~UIWidget() { }
 
-    template<class T>
-    static std::shared_ptr<T> create() { auto t = std::shared_ptr<T>(new T); return t; }
-
     void destroy();
 
 protected:

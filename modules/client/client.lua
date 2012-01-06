@@ -2,6 +2,7 @@ Client = {}
 
 -- TODO: load and save configurations
 function Client.init()
+  -- set default settings
   g_window.show()
   g_window.setMinimumSize({ width = 550, height = 450 })
 
@@ -9,14 +10,21 @@ function Client.init()
   if g_window.getPlatformType() == "X11-EGL" then
     g_window.setFullscreen(true)
   else
-    local size = { width = 1024,
-                   height = 768 }
+    -- window size
+    local size = { width = 800, height = 600 }
+    size = Settings.getSize('window-size', size)
     g_window.resize(size)
 
+    -- window position, default is the screen center
     local displaySize = g_window.getDisplaySize()
     local pos = { x = (displaySize.width - size.width)/2,
                   y = (displaySize.height - size.height)/2 }
+    pos = Settings.getPoint('window-pos', size)
     g_window.move(pos)
+
+    -- window maximized?
+    local maximized = Settings.getBoolean('window-maximized', false)
+    if maximized then g_window.maximize() end
   end
 
   g_window.setTitle('OTClient')
@@ -28,4 +36,7 @@ function Client.init()
 end
 
 function Client.terminate()
+  Settings.set('window-size', g_window.getUnmaximizedSize())
+  Settings.set('window-pos', g_window.getUnmaximizedPos())
+  Settings.set('window-maximized', g_window.isMaximized())
 end

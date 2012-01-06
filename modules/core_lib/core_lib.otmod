@@ -15,6 +15,5 @@ Module
     require 'util'
     require 'globals'
     require 'dispatcher'
-    require 'widget'
     require 'effects'
     require 'settings'

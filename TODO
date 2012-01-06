@@ -25,7 +25,7 @@ setOnClose
 review and reenable some warnings
 make lua/c++ logger more friendly
 bind every global lua function in a static class
-use metatable for Point,Rect,Color,Size lua classes
+use metatable for  lua classes
 set special types for g_configs like lists/point/size
 create a class for reading binary files
 handle corrupt errors in dat/spr
@@ -38,7 +38,10 @@ use indices in CoordsBuffer
 
 move UICheckBox to lua
 move UIWindow to lua
+create UIMessageBox, UIToolTip and UIInputBox
 rework UI image style
 class UIImage and UIText
 add UI border
 fix style inheretance using a style translator
+
+make possible to bind non LuaObject derived classes on lua engine (for usage with Point,Rect,Color,Size)

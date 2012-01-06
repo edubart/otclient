@@ -19,7 +19,7 @@ end
 
 local function setSkillValue(id, value)
   local skill = skillWindow:recursiveGetChildById(id)
-  
+
   if skill then
     local widget = skill:getChildById('value')
     widget:setText(value)
@@ -28,11 +28,11 @@ end
 
 local function setSkillPercent(id, percent, tooltip)
   local skill = skillWindow:recursiveGetChildById(id)
-  
+
   if skill then
     local widget = skill:getChildById('percent')
     widget:setPercent(percent)
-    
+
     if tooltip then
       widget:setTooltip(tooltip)
     end
@@ -47,6 +47,19 @@ end
 function Skills.destroy()
   skillWindow:destroy()
   skillWindow = nil
+end
+
+function Skills.onSkillButtonClick(button)
+  local percentBar = button:getChildById('percent')
+  if percentBar then
+    percentBar:setVisible(not percentBar:isVisible())
+    if percentBar:isVisible() then
+      button:setHeight(21)
+    else
+      button:setHeight(21 - 6)
+    end
+    button:updateParentLayout()
+  end
 end
 
 -- hooked events
@@ -82,7 +95,7 @@ function Skills.onStaminaChange(stamina)
     minutes = '0' .. minutes
   end
   local percent = 100 * stamina / (42 * 60) -- max is 42 hours
-  
+
   setSkillValue('stamina', hours .. ":" .. minutes)
   setSkillPercent('stamina', percent, 'You have ' .. percent .. ' percent')
 end

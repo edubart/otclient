@@ -78,10 +78,7 @@ MainWindow
     margin-top: 10
     margin-left: 18
     margin-right: 18
-    @onCheckChange: |
-      function(self, checked)
-        self:getParent():getChildById('autoLoginBox'):setEnabled(checked)
-      end
+    @onCheckChange: self:getParent():getChildById('autoLoginBox'):setEnabled(self:isChecked())
 
   CheckBox
     id: autoLoginBox

@@ -20,3 +20,20 @@
  * THE SOFTWARE.
  */
 
+#ifndef OTCLIENT_UI_DECLARATIONS_H
+#define OTCLIENT_UI_DECLARATIONS_H
+
+#include <otclient/global.h>
+#include <framework/ui/declarations.h>
+
+class UIItem;
+class UICreature;
+class UIMap;
+class UIGame;
+
+typedef std::shared_ptr<UIItem> UIItemPtr;
+typedef std::shared_ptr<UICreature> UICreaturePtr;
+typedef std::shared_ptr<UIMap> UIMapPtr;
+typedef std::shared_ptr<UIGame> UIGamePtr;
+
+#endif

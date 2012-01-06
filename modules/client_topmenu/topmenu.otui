@@ -13,7 +13,7 @@ TopPanel
     margin-left: 6
     tooltip: Options
     icon: /core_styles/icons/settings.png
-    @onClick: Options.create()
+    @onClick: Options.show()
 
 
   TopButton

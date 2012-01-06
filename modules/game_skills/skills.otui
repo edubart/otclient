@@ -5,20 +5,7 @@ SkillButton < UIButton
   margin-top: 3
   margin-left: 10
   margin-right: 10
-
-  @onClick: |
-    function(self)
-      local percentBar = self:getChildById('percent')
-      if percentBar then
-        percentBar:setVisible(not percentBar:isVisible())
-        if percentBar:isVisible() then
-          self:setHeight(21)
-        else
-          self:setHeight(21 - 6)
-        end
-        self:updateParentLayout()
-      end
-    end
+  &onClick: Skills.onSkillButtonClick
 
 SkillNameLabel < GameLabel
   font: verdana-11px-monochrome

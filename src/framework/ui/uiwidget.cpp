@@ -526,7 +526,7 @@ void UIWidget::addChild(const UIWidgetPtr& child)
 
     // create default layout
     if(!m_layout)
-        m_layout = UIAnchorLayout::create(asUIWidget());
+        m_layout = UIAnchorLayoutPtr(new UIAnchorLayout(asUIWidget()));
 
     // add to layout and updates it
     m_layout->addWidget(child);
@@ -559,7 +559,7 @@ void UIWidget::insertChild(int index, const UIWidgetPtr& child)
 
     // create default layout if needed
     if(!m_layout)
-        m_layout = UIAnchorLayout::create(asUIWidget());
+        m_layout = UIAnchorLayoutPtr(new UIAnchorLayout(asUIWidget()));
 
     // add to layout and updates it
     m_layout->addWidget(child);
@@ -829,7 +829,7 @@ void UIWidget::updateState(Fw::WidgetState state)
             do {
                 parent = widget->getParent();
                 if(!widget->isExplicitlyEnabled() ||
-                ((parent && parent->getFocusedChild() != widget))) {
+                   ((parent && parent->getFocusedChild() != widget))) {
                     newStatus = false;
                     break;
                 }
@@ -850,7 +850,7 @@ void UIWidget::updateState(Fw::WidgetState state)
             do {
                 parent = widget->getParent();
                 if(!widget->isExplicitlyEnabled() || !widget->isExplicitlyVisible() || !widget->containsPoint(mousePos) ||
-                (parent && widget != parent->getChildByPos(mousePos))) {
+                   (parent && widget != parent->getChildByPos(mousePos))) {
                     newStatus = false;
                     break;
                 }
@@ -1093,9 +1093,9 @@ void UIWidget::onStyleApply(const std::string& styleName, const OTMLNodePtr& sty
             if(!layoutType.empty()) {
                 UILayoutPtr layout;
                 if(layoutType == "verticalBox")
-                    layout = UIVerticalLayout::create(asUIWidget());
+                    layout = UIVerticalLayoutPtr(new UIVerticalLayout(asUIWidget()));
                 else if(layoutType == "anchor")
-                    layout = UIAnchorLayout::create(asUIWidget());
+                    layout = UIAnchorLayoutPtr(new UIAnchorLayout(asUIWidget()));
                 else
                     throw OTMLException(node, "cannot determine layout type");
                 setLayout(layout);
@@ -1158,6 +1158,7 @@ void UIWidget::onStyleApply(const std::string& styleName, const OTMLNodePtr& sty
     }
 
     if(m_firstOnStyle) {
+        callLuaField("onSetup");
         // always focus new child
         if(isFocusable() && isExplicitlyVisible() && isExplicitlyEnabled())
             focus();

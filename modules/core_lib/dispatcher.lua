@@ -2,6 +2,7 @@ local eventId = 0
 local eventList = {}
 
 function scheduleEvent(func, delay)
+  if not func then return end
   eventId = eventId + 1
   local id = eventId
   local function proxyFunc()

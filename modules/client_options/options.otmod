@@ -6,3 +6,5 @@ Module
 
   onLoad: |
     require 'options'
+    Options.load()
+

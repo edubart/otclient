@@ -32,7 +32,7 @@ UIManager g_ui;
 void UIManager::init()
 {
     // creates root widget
-    m_rootWidget = UIWidget::create<UIWidget>();
+    m_rootWidget = UIWidgetPtr(new UIWidget);
     m_rootWidget->setId("root");
     m_mouseReceiver = m_rootWidget;
     m_keyboardReceiver = m_rootWidget;

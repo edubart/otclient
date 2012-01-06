@@ -31,25 +31,17 @@
 #include <framework/graphics/graphics.h>
 #include <framework/platform/platformwindow.h>
 
-class LuaRect : public LuaObject, public Rect {
-public:
-    LuaRect() : TRect() { }
-};
-
 void Application::registerLuaFunctions()
 {
-    // globals
-    g_lua.registerStaticClass("Rect");
-    g_lua.bindClassStaticFunction("Rect", "create", []{ return std::shared_ptr<LuaRect>(new LuaRect); });
-    g_lua.bindClassMemberFunction<LuaRect>("Rect", "resize", (void (Rect::*)(int,int)) &Rect::resize);
-
-    /*
-    g_lua.bindGlobalFunction("torect", [](const std::string& str) { return Fw::unsafeCast<Rect>(str); });
-    g_lua.bindGlobalFunction("topoint", [](const std::string& str) { return Fw::unsafeCast<Point>(str); });
-    g_lua.bindGlobalFunction("tocolor", [](const std::string& str) { return Fw::unsafeCast<Color>(str); });
-    g_lua.bindGlobalFunction("tosize", [](const std::string& str) { return Fw::unsafeCast<Size>(str); });
-    g_lua.bindGlobalFunction("toboolean", [](const std::string& str) { return Fw::unsafeCast<bool>(str); });
-    */
+    // conversion globals
+    g_lua.bindGlobalFunction("torect", [](const std::string& v) { return Fw::fromstring<Rect>(v); });
+    g_lua.bindGlobalFunction("topoint", [](const std::string& v) { return Fw::fromstring<Point>(v); });
+    g_lua.bindGlobalFunction("tocolor", [](const std::string& v) { return Fw::fromstring<Color>(v); });
+    g_lua.bindGlobalFunction("tosize", [](const std::string& v) { return Fw::fromstring<Size>(v); });
+    g_lua.bindGlobalFunction("recttostring", [](const Rect& v) { return Fw::tostring(v); });
+    g_lua.bindGlobalFunction("pointtostring", [](const Point& v) { return Fw::tostring(v); });
+    g_lua.bindGlobalFunction("colortostring", [](const Color& v) { return Fw::tostring(v); });
+    g_lua.bindGlobalFunction("sizetostring", [](const Size& v) { return Fw::tostring(v); });
 
     // UIWidget
     g_lua.registerClass<UIWidget>();
@@ -189,25 +181,25 @@ void Application::registerLuaFunctions()
 
     // UIVerticalLayout
     g_lua.registerClass<UIVerticalLayout, UILayout>();
-    g_lua.bindClassStaticFunction<UILayout>("create", &UIVerticalLayout::create);
+    g_lua.bindClassStaticFunction<UIVerticalLayout>("create", [](UIWidgetPtr parent){ return UIVerticalLayoutPtr(new UIVerticalLayout(parent)); } );
     g_lua.bindClassMemberFunction<UIVerticalLayout>("setFitParent", &UIVerticalLayout::setFitParent);
 
     // UIAnchorLayout
     g_lua.registerClass<UIAnchorLayout, UILayout>();
-    g_lua.bindClassStaticFunction<UIAnchorLayout>("create", &UIAnchorLayout::create);
+    g_lua.bindClassStaticFunction<UIAnchorLayout>("create", [](UIWidgetPtr parent){ return UIAnchorLayoutPtr(new UIAnchorLayout(parent)); } );
     g_lua.bindClassMemberFunction<UIAnchorLayout>("removeAnchors", &UIAnchorLayout::removeAnchors);
     g_lua.bindClassMemberFunction<UIAnchorLayout>("centerIn", &UIAnchorLayout::centerIn);
     g_lua.bindClassMemberFunction<UIAnchorLayout>("fill", &UIAnchorLayout::fill);
 
     // UIProgressBar
     g_lua.registerClass<UIProgressBar, UIWidget>();
-    g_lua.bindClassStaticFunction<UIProgressBar>("create", &UIWidget::create<UIProgressBar>);
+    g_lua.bindClassStaticFunction<UIProgressBar>("create", []{ return UIProgressBarPtr(new UIProgressBar); } );
     g_lua.bindClassMemberFunction<UIProgressBar>("getPercent", &UIProgressBar::getPercent);
     g_lua.bindClassMemberFunction<UIProgressBar>("setPercent", &UIProgressBar::setPercent);
 
     // UILineEdit
     g_lua.registerClass<UILineEdit, UIWidget>();
-    g_lua.bindClassStaticFunction<UILineEdit>("create", &UIWidget::create<UILineEdit>);
+    g_lua.bindClassStaticFunction<UILineEdit>("create", []{ return UILineEditPtr(new UILineEdit); } );
     g_lua.bindClassMemberFunction<UILineEdit>("setTextHorizontalMargin", &UILineEdit::setTextHorizontalMargin);
     g_lua.bindClassMemberFunction<UILineEdit>("setCursorPos", &UILineEdit::setCursorPos);
     g_lua.bindClassMemberFunction<UILineEdit>("setCursorEnabled", &UILineEdit::setCursorEnabled);
@@ -226,17 +218,17 @@ void Application::registerLuaFunctions()
 
     // UICheckBox
     g_lua.registerClass<UICheckBox, UIWidget>();
-    g_lua.bindClassStaticFunction<UICheckBox>("create", &UIWidget::create<UICheckBox>);
+    g_lua.bindClassStaticFunction<UICheckBox>("create", []{ return UICheckBoxPtr(new UICheckBox); } );
 
     // UIWindow
     g_lua.registerClass<UIWindow, UIWidget>();
-    g_lua.bindClassStaticFunction<UIWindow>("create", &UIWidget::create<UIWindow>);
+    g_lua.bindClassStaticFunction<UIWindow>("create", []{ return UIWindowPtr(new UIWindow); } );
     g_lua.bindClassMemberFunction<UIWindow>("getTitle", &UIWindow::getTitle);
     g_lua.bindClassMemberFunction<UIWindow>("setTitle", &UIWindow::setTitle);
 
     // UIFrameCounter
     g_lua.registerClass<UIFrameCounter, UIWidget>();
-    g_lua.bindClassStaticFunction<UIFrameCounter>("create", &UIWidget::create<UIFrameCounter>);
+    g_lua.bindClassStaticFunction<UIFrameCounter>("create", []{ return UIFrameCounterPtr(new UIFrameCounter); } );
     g_lua.bindClassMemberFunction<UIFrameCounter>("getFrameCount", &UIFrameCounter::getFrameCount);
 
     // Protocol
@@ -250,21 +242,38 @@ void Application::registerLuaFunctions()
 
 
     g_lua.registerStaticClass("g_window");
-    g_lua.bindClassStaticFunction("g_window", "show", std::bind(&PlatformWindow::show, &g_window));
-    g_lua.bindClassStaticFunction("g_window", "hide", std::bind(&PlatformWindow::hide, &g_window));
     g_lua.bindClassStaticFunction("g_window", "move", std::bind(&PlatformWindow::move, &g_window, _1));
     g_lua.bindClassStaticFunction("g_window", "resize", std::bind(&PlatformWindow::resize, &g_window, _1));
-    g_lua.bindClassStaticFunction("g_window", "setMinimumSize", std::bind(&PlatformWindow::setMinimumSize, &g_window, _1));
-    g_lua.bindClassStaticFunction("g_window", "setVerticalSync", std::bind(&PlatformWindow::setVerticalSync, &g_window, _1));
-    g_lua.bindClassStaticFunction("g_window", "setFullscreen", std::bind(&PlatformWindow::setFullscreen, &g_window, _1));
+    g_lua.bindClassStaticFunction("g_window", "show", std::bind(&PlatformWindow::show, &g_window));
+    g_lua.bindClassStaticFunction("g_window", "hide", std::bind(&PlatformWindow::hide, &g_window));
+    g_lua.bindClassStaticFunction("g_window", "maximize", std::bind(&PlatformWindow::maximize, &g_window));
+    g_lua.bindClassStaticFunction("g_window", "showMouse", std::bind(&PlatformWindow::showMouse, &g_window));
+    g_lua.bindClassStaticFunction("g_window", "hideMouse", std::bind(&PlatformWindow::hideMouse, &g_window));
     g_lua.bindClassStaticFunction("g_window", "setTitle", std::bind(&PlatformWindow::setTitle, &g_window, _1));
+    g_lua.bindClassStaticFunction("g_window", "setMinimumSize", std::bind(&PlatformWindow::setMinimumSize, &g_window, _1));
+    g_lua.bindClassStaticFunction("g_window", "setFullscreen", std::bind(&PlatformWindow::setFullscreen, &g_window, _1));
+    g_lua.bindClassStaticFunction("g_window", "setVerticalSync", std::bind(&PlatformWindow::setVerticalSync, &g_window, _1));
     g_lua.bindClassStaticFunction("g_window", "setIcon", std::bind(&PlatformWindow::setIcon, &g_window, _1));
     g_lua.bindClassStaticFunction("g_window", "setClipboardText", std::bind(&PlatformWindow::setClipboardText, &g_window, _1));
-    g_lua.bindClassStaticFunction("g_window", "getMousePos", std::bind(&PlatformWindow::getMousePos, &g_window));
-    g_lua.bindClassStaticFunction("g_window", "getSize", std::bind(&PlatformWindow::getSize, &g_window));
     g_lua.bindClassStaticFunction("g_window", "getDisplaySize", std::bind(&PlatformWindow::getDisplaySize, &g_window));
-    g_lua.bindClassStaticFunction("g_window", "getPlatformType", std::bind(&PlatformWindow::getPlatformType, &g_window));
     g_lua.bindClassStaticFunction("g_window", "getClipboardText", std::bind(&PlatformWindow::getClipboardText, &g_window));
+    g_lua.bindClassStaticFunction("g_window", "getPlatformType", std::bind(&PlatformWindow::getPlatformType, &g_window));
+    g_lua.bindClassStaticFunction("g_window", "getDisplayWidth", std::bind(&PlatformWindow::getDisplayWidth, &g_window));
+    g_lua.bindClassStaticFunction("g_window", "getDisplayHeight", std::bind(&PlatformWindow::getDisplayHeight, &g_window));
+    g_lua.bindClassStaticFunction("g_window", "getUnmaximizedSize", std::bind(&PlatformWindow::getUnmaximizedSize, &g_window));
+    g_lua.bindClassStaticFunction("g_window", "getSize", std::bind(&PlatformWindow::getSize, &g_window));
+    g_lua.bindClassStaticFunction("g_window", "getWidth", std::bind(&PlatformWindow::getWidth, &g_window));
+    g_lua.bindClassStaticFunction("g_window", "getHeight", std::bind(&PlatformWindow::getHeight, &g_window));
+    g_lua.bindClassStaticFunction("g_window", "getUnmaximizedPos", std::bind(&PlatformWindow::getUnmaximizedPos, &g_window));
+    g_lua.bindClassStaticFunction("g_window", "getPos", std::bind(&PlatformWindow::getPos, &g_window));
+    g_lua.bindClassStaticFunction("g_window", "getX", std::bind(&PlatformWindow::getX, &g_window));
+    g_lua.bindClassStaticFunction("g_window", "getY", std::bind(&PlatformWindow::getY, &g_window));
+    g_lua.bindClassStaticFunction("g_window", "getMousePos", std::bind(&PlatformWindow::getMousePos, &g_window));
+    g_lua.bindClassStaticFunction("g_window", "getKeyboardModifiers", std::bind(&PlatformWindow::getKeyboardModifiers, &g_window));
+    g_lua.bindClassStaticFunction("g_window", "isVisible", std::bind(&PlatformWindow::isVisible, &g_window));
+    g_lua.bindClassStaticFunction("g_window", "isFullscreen", std::bind(&PlatformWindow::isFullscreen, &g_window));
+    g_lua.bindClassStaticFunction("g_window", "isMaximized", std::bind(&PlatformWindow::isMaximized, &g_window));
+    g_lua.bindClassStaticFunction("g_window", "hasFocus", std::bind(&PlatformWindow::hasFocus, &g_window));
 
     // Logger
     g_lua.registerClass<Logger>();

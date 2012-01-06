@@ -354,6 +354,7 @@ void WIN32Window::resize(const Size& size)
 
 void WIN32Window::show()
 {
+    updateUnmaximizedCoords();
     if(m_maximized)
         ShowWindow(m_window, SW_MAXIMIZE);
     else
@@ -472,6 +473,7 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
         case WM_MOVE: {
             m_pos.x = LOWORD(lParam);
             m_pos.y = HIWORD(lParam);
+            updateUnmaximizedCoords();
             break;
         }
         case WM_SIZE: {
@@ -487,6 +489,7 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
             m_visible = !(wParam == SIZE_MINIMIZED);
             m_size.setWidth(LOWORD(lParam));
             m_size.setHeight(HIWORD(lParam));
+            updateUnmaximizedCoords();
             m_onResize(m_size);
             break;
         }

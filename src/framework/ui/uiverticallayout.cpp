@@ -119,4 +119,3 @@ void UIVerticalLayout::setFitParent(bool fitParent)
     m_fitParent = fitParent;
     update();
 }
-
