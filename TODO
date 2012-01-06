@@ -46,12 +46,24 @@
 [bart] restore Console key binding
 [bart] console history, text selection, scrolling
 
-== Client drawing
+== Client
+[bart] implement left panel with dragging windows
+[bart] complete miniwindow
+[bart] add other buttons on topmenu
+[bart] clean sprites cache periodically
+[bart] create a shader manager
+[bart] find a way to load map rendering styles
+[bart] cache screen creatures in a list on map
+[bart] handle corrupt errors in dat/spr
+[bart] remake spr/dat using OTML and image files
 [bart] rework map tile rendering (cache visible tiles, etc)
 [bart] minimap windows
-[bart] lights
+[bart] draw lights using shaders
+[bart] chat with tabs
 [baxnie] auto walk
-[baxnie] container windows
+[baxnie] hotkeys window
+[baxnie] container window
+[baxnie] player status icons (poison, etc)
 [baxnie] attack modes
 [baxnie] skulls/party rendering
 [baxnie] move items in map
@@ -64,16 +76,3 @@
 [baxnie] questlog
 [baxnie] edit texts
 [baxnie] ignore list
-
-== Client
-[bart] clean sprites cache periodically
-[bart] create a shader manager
-[bart] find a way to load map rendering styles
-[bart] cache screen creatures in a list on map
-[bart] handle corrupt errors in dat/spr
-[bart] remake spr/dat using OTML and image files
-
-== Client interface
-[bart] implement left panel with dragging windows
-[bart] complete miniwindow
-[bart] add other icons on topmenu
