@@ -20,7 +20,6 @@
 [bart] bind every global lua function in static classes
 
 == Platform
-[bart] implement fullscreen, maximize and minsize for win32
 [bart] port to MacOs and iphone
 
 == UI

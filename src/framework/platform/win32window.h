@@ -79,7 +79,7 @@ private:
     HDC m_deviceContext;
     HGLRC m_glContext;
     bool m_maximized;
-    std::string m_clipboardText;
+    Size m_minimumSize;
     std::map<int, Fw::Key> m_keyMap;
 };
 

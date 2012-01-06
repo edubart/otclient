@@ -33,6 +33,8 @@ WIN32Window::WIN32Window()
     m_deviceContext = 0;
     m_glContext = 0;
     m_maximized = false;
+    m_minimumSize = Size(16,16);
+    m_size = m_minimumSize;
 
     m_keyMap[VK_ESCAPE] = Fw::KeyEscape;
     m_keyMap[VK_TAB] = Fw::KeyTab;
@@ -261,11 +263,12 @@ void WIN32Window::internalRegisterWindowClass()
 void WIN32Window::internalCreateWindow()
 {
     DWORD dwExStyle = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
-    DWORD dwStyle = WS_OVERLAPPEDWINDOW | WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
+    DWORD dwStyle = WS_OVERLAPPEDWINDOW;
 
     RECT windowRect = {m_pos.x, m_pos.y, m_pos.x + m_size.width(), m_pos.y + m_size.height()};
     AdjustWindowRectEx(&windowRect, dwStyle, FALSE, dwExStyle);
 
+    updateUnmaximizedCoords();
     m_window = CreateWindowExA(dwExStyle,
                                g_app->getAppName().c_str(),
                                NULL,
@@ -344,21 +347,21 @@ void *WIN32Window::getExtensionProcAddress(const char *ext)
 
 void WIN32Window::move(const Point& pos)
 {
-    MoveWindow(m_window, pos.x, pos.y, m_size.width(), m_size.height(), TRUE);
+    RECT windowRect = {pos.x, pos.y, m_pos.x + m_size.width(), m_pos.y + m_size.height()};
+    AdjustWindowRectEx(&windowRect, WS_OVERLAPPEDWINDOW, FALSE, WS_EX_APPWINDOW | WS_EX_WINDOWEDGE);
+    MoveWindow(m_window, windowRect.left, windowRect.top, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top, TRUE);
 }
 
 void WIN32Window::resize(const Size& size)
 {
-    MoveWindow(m_window, m_pos.x, m_pos.y, size.width(), size.height(), TRUE);
+    RECT windowRect = {m_pos.x, m_pos.y, m_pos.x + size.width(), m_pos.y + size.height()};
+    AdjustWindowRectEx(&windowRect, WS_OVERLAPPEDWINDOW, FALSE, WS_EX_APPWINDOW | WS_EX_WINDOWEDGE);
+    MoveWindow(m_window, windowRect.left, windowRect.top, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top, TRUE);
 }
 
 void WIN32Window::show()
 {
-    updateUnmaximizedCoords();
-    if(m_maximized)
-        ShowWindow(m_window, SW_MAXIMIZE);
-    else
-        ShowWindow(m_window, SW_SHOW);
+    ShowWindow(m_window, SW_SHOW);
 }
 
 void WIN32Window::hide()
@@ -368,15 +371,24 @@ void WIN32Window::hide()
 
 void WIN32Window::maximize()
 {
-    //TODO
+    ShowWindow(m_window, SW_MAXIMIZE);
 }
 
 void WIN32Window::poll()
 {
-    MSG msg;
-    if(PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
+    for(int i=0;i<2;++i) {
+        MSG msg;
+        if(PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
+        }
+
+        updateUnmaximizedCoords();
+
+        if(m_size < m_minimumSize) {
+            resize(m_size.expandedTo(m_minimumSize));
+        } else
+            break;
     }
 }
 
@@ -398,12 +410,6 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
         case WM_CHAR: {
             if(wParam >= 32 && wParam <= 255) {
                 m_inputEvent.type = Fw::KeyPressInputEvent;
-                if(HIWORD(GetKeyState(VK_CONTROL)))
-                    m_inputEvent.keyboardModifiers |= Fw::KeyboardCtrlModifier;
-                if(HIWORD(GetKeyState(VK_MENU)))
-                    m_inputEvent.keyboardModifiers |= Fw::KeyboardAltModifier;
-                if(HIWORD(GetKeyState(VK_SHIFT)))
-                    m_inputEvent.keyboardModifiers |= Fw::KeyboardShiftModifier;
                 m_inputEvent.keyCode = Fw::KeyUnknown;
                 m_inputEvent.keyText = wParam;
             }
@@ -417,12 +423,6 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
         case WM_KEYUP: {
             if(m_keyMap.find(wParam) != m_keyMap.end()) {
                 m_inputEvent.type = (uMsg == WM_KEYDOWN) ? Fw::KeyPressInputEvent : Fw::KeyReleaseInputEvent;
-                if(HIWORD(GetKeyState(VK_CONTROL)))
-                    m_inputEvent.keyboardModifiers |= Fw::KeyboardCtrlModifier;
-                if(HIWORD(GetKeyState(VK_MENU)))
-                    m_inputEvent.keyboardModifiers |= Fw::KeyboardAltModifier;
-                if(HIWORD(GetKeyState(VK_SHIFT)))
-                    m_inputEvent.keyboardModifiers |= Fw::KeyboardShiftModifier;
                 m_inputEvent.keyCode = m_keyMap[wParam];
             }
             break;
@@ -473,7 +473,6 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
         case WM_MOVE: {
             m_pos.x = LOWORD(lParam);
             m_pos.y = HIWORD(lParam);
-            updateUnmaximizedCoords();
             break;
         }
         case WM_SIZE: {
@@ -489,7 +488,7 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
             m_visible = !(wParam == SIZE_MINIMIZED);
             m_size.setWidth(LOWORD(lParam));
             m_size.setHeight(HIWORD(lParam));
-            updateUnmaximizedCoords();
+
             m_onResize(m_size);
             break;
         }
@@ -497,8 +496,16 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
             return DefWindowProc(hWnd, uMsg, wParam, lParam);
     }
 
-    if(m_inputEvent.type != Fw::NoInputEvent)
+    if(m_inputEvent.type != Fw::NoInputEvent) {
+        m_inputEvent.keyboardModifiers = 0;
+        if(HIWORD(GetKeyState(VK_CONTROL)))
+            m_inputEvent.keyboardModifiers |= Fw::KeyboardCtrlModifier;
+        if(HIWORD(GetKeyState(VK_MENU)))
+            m_inputEvent.keyboardModifiers |= Fw::KeyboardAltModifier;
+        if(HIWORD(GetKeyState(VK_SHIFT)))
+            m_inputEvent.keyboardModifiers |= Fw::KeyboardShiftModifier;
         m_onInputEvent(m_inputEvent);
+    }
 
     return 0;
 }
@@ -525,12 +532,31 @@ void WIN32Window::setTitle(const std::string& title)
 
 void WIN32Window::setMinimumSize(const Size& minimumSize)
 {
-    //TODO
+    m_minimumSize = minimumSize;
+    if(m_size < m_minimumSize)
+        resize(m_size.expandedTo(m_minimumSize));
 }
 
 void WIN32Window::setFullscreen(bool fullscreen)
 {
-    //TODO
+    if(m_fullscreen == fullscreen)
+        return;
+
+    DWORD dwStyle = GetWindowLong(m_window, GWL_STYLE);
+    static WINDOWPLACEMENT wpPrev = { sizeof(wpPrev) };
+    if(fullscreen) {
+        GetWindowPlacement(m_window, &wpPrev);
+        SetWindowLong(m_window, GWL_STYLE, dwStyle & ~WS_OVERLAPPEDWINDOW);
+        SetWindowPos(m_window, HWND_TOP, 0, 0, getDisplayWidth(), getDisplayHeight(),
+                     SWP_NOOWNERZORDER | SWP_FRAMECHANGED);
+    } else {
+        SetWindowLong(m_window, GWL_STYLE, dwStyle | WS_OVERLAPPEDWINDOW);
+        SetWindowPlacement(m_window, &wpPrev);
+        SetWindowPos(m_window, NULL, 0, 0, 0, 0,
+                     SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_FRAMECHANGED);
+    }
+
+    m_fullscreen = fullscreen;
 }
 
 void WIN32Window::setVerticalSync(bool enable)
@@ -590,12 +616,21 @@ void WIN32Window::setIcon(const std::string& pngIcon)
 
 void WIN32Window::setClipboardText(const std::string& text)
 {
-    m_clipboardText = text;
-    if(OpenClipboard(NULL)) {
-        EmptyClipboard();
-        SetClipboardData(CF_TEXT, (void*)&m_clipboardText[0]);
-        CloseClipboard();
-    }
+    if(!OpenClipboard(m_window))
+        return;
+
+    HGLOBAL hglb = GlobalAlloc(GMEM_MOVEABLE, (text.length() + 1) * sizeof(TCHAR));
+    if(!hglb)
+        return;
+
+    LPTSTR lptstr = (LPTSTR)GlobalLock(hglb);
+    memcpy(lptstr, &text[0], text.length() * sizeof(TCHAR));
+    lptstr[text.length()] = (TCHAR)0;
+    GlobalUnlock(hglb);
+
+    EmptyClipboard();
+    SetClipboardData(CF_TEXT, hglb);
+    CloseClipboard();
 }
 
 Size WIN32Window::getDisplaySize()
@@ -606,10 +641,19 @@ Size WIN32Window::getDisplaySize()
 std::string WIN32Window::getClipboardText()
 {
     std::string text;
-    if(OpenClipboard(NULL)) {
-        text = (const char*)GetClipboardData(CF_TEXT);
-        CloseClipboard();
+
+    if(!OpenClipboard(m_window))
+        return text;
+
+    HGLOBAL hglb = GetClipboardData(CF_TEXT);
+    if(hglb) {
+        LPTSTR lptstr = (LPTSTR)GlobalLock(hglb);
+        if(lptstr) {
+            text = lptstr;
+            GlobalUnlock(hglb);
+        }
     }
+    CloseClipboard();
     return text;
 }
 

@@ -36,6 +36,7 @@ X11Window::X11Window()
     m_xic = 0;
     m_screen = 0;
     m_wmDelete = 0;
+    m_size = Size(16,16);
 
 #ifndef OPENGL_ES2
     m_glxContext = 0;

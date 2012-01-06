@@ -44,7 +44,6 @@ void UIItem::render()
         if(m_font && m_item->isStackable() && m_item->getData() > 1) {
             std::string count = Fw::tostring(m_item->getData());
             m_font->renderText(count, Rect(m_rect.topLeft(), m_rect.bottomRight() - Point(3, 0)), Fw::AlignBottomRight, Color(231, 231, 231));
-            dump << m_rect;
         }
     }
 

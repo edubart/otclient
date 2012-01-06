@@ -26,18 +26,18 @@
 
 Logger g_logger;
 
-void Logger::log(Fw::LogLevel level, std::string message)
+void Logger::log(Fw::LogLevel level, const std::string& message)
 {
     const static std::string logPrefixes[] = { "", "", "WARNING: ", "ERROR: ", "FATAL ERROR: " };
 
-    message.insert(0, logPrefixes[level]);
-    std::cout << message << std::endl;
+    std::string outmsg = logPrefixes[level] + message;
+    std::cout << outmsg << std::endl;
 
     std::size_t now = std::time(NULL);
-    m_logMessages.push_back(LogMessage(level, message, now));
+    m_logMessages.push_back(LogMessage(level, outmsg, now));
 
     if(m_onLog)
-        m_onLog(level, message, now);
+        m_onLog(level, outmsg, now);
 
     if(level == Fw::LogFatal) {
         g_window.displayFatalError(message);
