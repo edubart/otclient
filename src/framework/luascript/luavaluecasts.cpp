@@ -50,21 +50,6 @@ bool luavalue_cast(int index, int& i)
     return true;
 }
 
-// uint
-void push_luavalue(uint v)
-{
-    push_luavalue((double)v);
-}
-
-bool luavalue_cast(int index, uint& v)
-{
-    double d;
-    bool ret = luavalue_cast(index, d);
-    v = (uint32)d;
-    return ret;
-}
-
-
 // double
 void push_luavalue(double d)
 {
@@ -77,20 +62,6 @@ bool luavalue_cast(int index, double& d)
     if(d == 0 && !g_lua.isNumber(index))
         return false;
     return true;
-}
-
-// size_t
-void push_luavalue(std::size_t s)
-{
-    push_luavalue((double)s);
-}
-
-bool luavalue_cast(int index, std::size_t& s)
-{
-    double d;
-    bool ret = luavalue_cast(index, d);
-    s = d;
-    return ret;
 }
 
 // string
