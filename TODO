@@ -5,6 +5,7 @@
 [bart] capture close application events in lua (old setOnClose)
 [bart] create a class for reading binary files
 [bart] rework lua/c++ logger
+[bart] save lists on config manager
 
 == Graphics
 [bart] use CoordsBuffer in font
@@ -25,6 +26,8 @@
 [bart] scrollbar
 [bart] scrollable widgets
 [bart] grid layout
+[bart] horizontal box layout
+[bart] move layout proprieties to widget style
 [bart] move UICheckBox to lua
 [bart] move UIWindow to lua
 [bart] multiline text editor widget
@@ -60,6 +63,8 @@
 [bart] minimap windows
 [bart] draw lights using shaders
 [bart] chat with tabs
+[bart] limit FPS in options
+[baxnie] trade window
 [baxnie] auto walk
 [baxnie] hotkeys window
 [baxnie] container window
@@ -76,3 +81,4 @@
 [baxnie] questlog
 [baxnie] edit texts
 [baxnie] ignore list
+[baxnie] viplist marks
