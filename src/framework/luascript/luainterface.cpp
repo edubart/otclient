@@ -934,6 +934,7 @@ void LuaInterface::pushBoolean(bool v)
 
 void LuaInterface::pushCString(const char* v)
 {
+    assert(v);
     lua_pushstring(L, v);
 }
 

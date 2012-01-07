@@ -11,6 +11,8 @@ local function convertSettingValue(value)
     elseif value.r then
       return colortostring(value)
     end
+  elseif value == nil then
+    return ''
   else
     return tostring(value)
   end
@@ -25,7 +27,12 @@ function Settings.remove(key)
 end
 
 function Settings.set(key, value)
-  g_configs.set(key, convertSettingValue(value))
+  local valuestr = convertSettingValue(value)
+  if valuestr == '' then
+    g_configs.remove(key)
+  else
+    g_configs.set(key, convertSettingValue(value))
+  end
 end
 
 function Settings.setDefault(key, value)
@@ -35,8 +42,7 @@ function Settings.setDefault(key, value)
 end
 
 function Settings.get(key, default)
-  if Settings.exists(key) then
-  elseif default ~= nil then
+  if not Settings.exists(key) and default ~= nil then
     Settings.set(key, default)
   end
   return g_configs.get(key)

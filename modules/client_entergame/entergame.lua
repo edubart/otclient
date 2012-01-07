@@ -56,7 +56,7 @@ function EnterGame.create()
   local account = Settings.get('account')
   local password = Settings.get('password')
   local host = Settings.get('host')
-  local port = Settings.getNumber('port')
+  local port = Settings.get('port')
   local autologin = Settings.getBoolean('autologin')
 
   enterGame:getChildById('accountNameLineEdit'):setText(account)
