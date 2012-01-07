@@ -18,10 +18,12 @@ local function clearAccountFields()
   Settings.remove('password')
 end
 
-local function onError(protocol, error)
+local function onError(protocol, message, connectionError)
   loadBox:destroy()
-  clearAccountFields()
-  local errorBox = displayErrorBox('Login Error', error)
+  if not connectionError then
+    clearAccountFields()
+  end
+  local errorBox = displayErrorBox('Login Error', message)
   errorBox.onOk = EnterGame.show
 end
 

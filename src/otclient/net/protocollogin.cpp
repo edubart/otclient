@@ -82,7 +82,7 @@ void ProtocolLogin::onRecv(InputMessage& inputMessage)
 
 void ProtocolLogin::onError(const boost::system::error_code& error)
 {
-    callLuaField("onError", error.message());
+    callLuaField("onError", error.message(), true);
 }
 
 void ProtocolLogin::sendLoginPacket()
@@ -121,7 +121,7 @@ void ProtocolLogin::sendLoginPacket()
 void ProtocolLogin::parseError(InputMessage& inputMessage)
 {
     std::string error = inputMessage.getString();
-    callLuaField("onError", error);
+    callLuaField("onError", error, false);
 }
 
 void ProtocolLogin::parseMOTD(InputMessage& inputMessage)
