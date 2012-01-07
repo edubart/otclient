@@ -24,9 +24,14 @@ function Options.changeOption(key, status)
   if key == 'vsync' then
     g_window.setVerticalSync(status)
   elseif key == 'showfps' then
-    addEvent(function() rootWidget:recursiveGetChildById('frameCounter'):setVisible(status) end)
+    addEvent(function()
+      local frameCounter = rootWidget:recursiveGetChildById('frameCounter')
+      if frameCounter then frameCounter:setVisible(status) end
+    end)
   elseif key == 'fullscreen' then
-    addEvent(function() g_window.setFullscreen(status) end)
+    addEvent(function()
+      g_window.setFullscreen(status)
+    end)
   end
   Settings.set(key, status)
   Options[key] = status
