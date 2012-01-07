@@ -286,6 +286,10 @@ void Application::registerLuaFunctions()
     g_lua.bindClassStaticFunction<Logger>("fireOldMessages", std::bind(&Logger::fireOldMessages, &g_logger));
     g_lua.bindClassStaticFunction<Logger>("setOnLog", std::bind(&Logger::setOnLog, &g_logger, _1));
 
+    // Lua
+    g_lua.registerStaticClass("g_lua");
+    g_lua.bindClassStaticFunction("g_lua", "runScript", std::bind(&LuaInterface::runScript, &g_lua, _1));
+
     // UI
     g_lua.registerStaticClass("g_ui");
     g_lua.bindClassStaticFunction("g_ui", "importStyle", std::bind(&UIManager::importStyle, &g_ui, _1));

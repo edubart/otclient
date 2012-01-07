@@ -108,6 +108,9 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassStaticFunction<Game>("removeVip", std::bind(&Game::removeVip, &g_game, _1));
     g_lua.bindClassStaticFunction<Game>("getAttackingCreature", std::bind(&Game::getAttackingCreature, &g_game));
     g_lua.bindClassStaticFunction<Game>("getFollowingCreature", std::bind(&Game::getFollowingCreature, &g_game));
+    g_lua.bindClassStaticFunction<Game>("talk", std::bind(&Game::talk, &g_game, _1));
+    g_lua.bindClassStaticFunction<Game>("talkChannel", std::bind(&Game::talkChannel, &g_game, _1, _2, _3));
+    g_lua.bindClassStaticFunction<Game>("talkPrivate", std::bind(&Game::talkPrivate, &g_game, _1, _2, _3));
 
     g_lua.registerClass<UIItem, UIWidget>();
     g_lua.bindClassStaticFunction<UIItem>("create", []{ return UIItemPtr(new UIItem); } );
@@ -125,8 +128,4 @@ void OTClient::registerLuaFunctions()
     g_lua.registerClass<UIGame, UIWidget>();
     g_lua.bindClassStaticFunction<UIGame>("create", []{ return UIGamePtr(new UIGame); } );
 
-#ifdef FORBIDDEN_FUNCTIONS
-    g_lua.bindClassStaticFunction<Game>("talkChannel", std::bind(&Game::talkChannel, &g_game, _1, _2, _3));
-    g_lua.bindClassStaticFunction<Game>("talkPrivate", std::bind(&Game::talkPrivate, &g_game, _1, _2, _3));
-#endif
 }

@@ -70,10 +70,18 @@ end
 
 function resolvepath(filePath, depth)
   depth = depth or 1
-  if filePath:sub(0, 1) ~= '/' then
-    return getfsrcpath(depth+1) .. '/' .. filePath
+  if filePath then
+    if filePath:sub(0, 1) ~= '/' then
+      local basepath = getfsrcpath(depth+1)
+      if basepath:sub(#basepath) ~= '/' then basepath = basepath .. '/' end
+      return  basepath .. filePath
+    else
+      return filePath
+    end
   else
-    return filePath
+    local basepath = getfsrcpath(depth+1)
+    if basepath:sub(#basepath) ~= '/' then basepath = basepath .. '/' end
+    return basepath
   end
 end
 
@@ -89,4 +97,8 @@ local oldtonumber = tonumber
 function tonumber(v)
   if v == nil then return 0 end
   return oldtonumber(v)
+end
+
+function runscript(file)
+  g_lua.runScript(resolvepath(file, 2))
 end

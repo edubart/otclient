@@ -58,6 +58,7 @@ public:
     void follow(const CreaturePtr& creature);
     void cancelFollow();
     void rotate(const ThingPtr& thing);
+    void talk(const std::string& message);
     void talkChannel(int channelType, int channelId, const std::string& message);
     void talkPrivate(int channelType, const std::string& receiver, const std::string& message);
     void inviteToParty(int creatureId);

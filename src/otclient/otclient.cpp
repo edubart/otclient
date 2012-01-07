@@ -23,6 +23,7 @@
 #include "otclient.h"
 #include <framework/core/modulemanager.h>
 #include "core/game.h"
+#include <framework/core/resourcemanager.h>
 
 OTClient::OTClient() : Application(Otc::AppCompactName)
 {
@@ -38,4 +39,13 @@ void OTClient::init(const std::vector<std::string>& args)
     g_modules.autoLoadModules(100);
     g_modules.ensureModuleLoaded("client");
     g_modules.autoLoadModules(1000);
+
+    // load otclientrc.lua
+    if(g_resources.fileExists("/otclientrc.lua")) {
+        try {
+            g_lua.runScript("/otclientrc.lua");
+        } catch(LuaException& e) {
+            logError("failed to load otclientrc.lua: ", e.what());
+        }
+    }
 }

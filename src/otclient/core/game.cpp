@@ -268,6 +268,11 @@ int Game::getThingStackpos(const ThingPtr& thing)
     return 0;
 }
 
+void Game::talk(const std::string& message)
+{
+    talkChannel(1, 0, message);
+}
+
 void Game::talkChannel(int channelType, int channelId, const std::string& message)
 {
     if(!m_online || !checkBotProtection())

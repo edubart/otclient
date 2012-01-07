@@ -55,7 +55,7 @@ bool UIGame::onKeyPress(uchar keyCode, std::string keyText, int keyboardModifier
             g_game.walk(Otc::NorthWest);
             return true;
         } else if(keyCode == Fw::KeyReturn || keyCode == Fw::KeyEnter) {
-            g_game.talkChannel(1, 0, chatLineEdit->getText());
+            g_game.talk(chatLineEdit->getText());
             chatLineEdit->clearText();
             return true;
         } else if(keyCode == Fw::KeyDelete) {

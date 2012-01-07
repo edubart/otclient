@@ -27,7 +27,7 @@ InterfacePanel2 < Panel
     source: /core_styles/images/interface_panel2.png
     border: 4
 
-MapPanel < UIMap
+Map< UIMap
   map margin: 4
   border-image:
     source: /core_styles/images/map_panel.png

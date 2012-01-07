@@ -18,7 +18,7 @@ UIGame
     anchors.right: rightPanel.left
     anchors.bottom: parent.bottom
 
-  MapPanel
+  Map
     id: mapPanel
     anchors.left: parent.left
     anchors.right: rightPanel.left
