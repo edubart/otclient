@@ -17,3 +17,4 @@ Module
     require 'dispatcher'
     require 'effects'
     require 'settings'
+    require 'hotkeys'

@@ -5,24 +5,27 @@ local topMenu
 local leftButtonsPanel
 local rightButtonsPanel
 
+-- private functions
+local function onLogout()
+  if Game.isOnline() then
+    Game.logout(false)
+  else
+    exit()
+  end
+end
+
 -- public functions
 function TopMenu.init()
   topMenu = displayUI('topmenu.otui')
   leftButtonsPanel = topMenu:getChildById('leftButtonsPanel')
   rightButtonsPanel = topMenu:getChildById('rightButtonsPanel')
 
-  TopMenu.addRightButton('logoutButton', 'Logout', '/core_styles/icons/logout.png',
-    function()
-      if Game.isOnline() then
-        Game.logout(false)
-      else
-        exit()
-      end
-    end
-  )
+  TopMenu.addRightButton('logoutButton', 'Logout (Ctrl+Q)', '/core_styles/icons/logout.png', onLogout)
+  Hotkeys.bind('Ctrl+Q', onLogout)
 end
 
 function TopMenu.terminate()
+  Hotkeys.unbind('Ctrl+Q')
   leftButtonsPanel = nil
   rightButtonsPanel = nil
   topMenu:destroy()

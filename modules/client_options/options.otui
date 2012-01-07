@@ -20,6 +20,8 @@ MainWindow
   id: optionsWindow
   title: Options
   size: 286 140
+  @onEnter: Options.hide()
+  @onEscape: Options.hide()
 
   OptionCheckBox
     id: vsync
@@ -45,4 +47,4 @@ MainWindow
     anchors.bottom: parent.bottom
     margin-right: 10
     margin-bottom: 10
-    @onClick: self:getParent():destroy()
+    @onClick: Options.hide()

@@ -1,18 +1,23 @@
-function string:split(sep)
-  local t = { }
-  local function helper(word)
-    table.insert(t, word)
-    return ""
+function string.split(s, delim)
+  local start = 1
+  local results = {}
+  while true do
+    local pos = string.find(s, delim, start, true)
+    if not pos then
+      break
+    end
+    table.insert(results, string.sub(s, start, pos-1))
+    start = pos + string.len(delim)
   end
-  if not self:gsub("%w+", helper):find("%S") then
-    return t
-  end
+  table.insert(results, string.sub(s, start))
+  table.removevalue(results, '')
+  return results
 end
 
-function string:starts(start)
-  return self:sub(1, #start) == start
+function string.starts(s, start)
+  return string.sub(s, 1, #start) == start
 end
 
-function string:trim()
-  return self:match('^%s*(.*%S)') or ''
+function string.trim(s)
+  return string.match(s, '^%s*(.*%S)') or ''
 end

@@ -7,6 +7,7 @@ RectPanel
   background-color: #000000
   opacity: 216
   anchors.fill: parent
+  @onEscape: Terminal.hide()
 
   Panel
     id: terminalBuffer

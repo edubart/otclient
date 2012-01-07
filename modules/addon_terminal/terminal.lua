@@ -124,7 +124,8 @@ function Terminal.init()
   terminalWidget = displayUI('terminal.otui')
   terminalWidget:setVisible(false)
 
-  terminalButton = TopMenu.addButton('terminalButton', 'Terminal', '/core_styles/icons/terminal.png', Terminal.show)
+  terminalButton = TopMenu.addButton('terminalButton', 'Terminal (Ctrl + T)', '/core_styles/icons/terminal.png', Terminal.toggle)
+  Hotkeys.bind('Ctrl+T', Terminal.toggle)
 
   commandLineEdit = terminalWidget:getChildById('commandLineEdit')
   connect(commandLineEdit, { onKeyPress = onCommandLineKeyPress })
@@ -135,6 +136,7 @@ function Terminal.init()
 end
 
 function Terminal.terminate()
+  Hotkeys.unbind('Ctrl+T')
   Logger.setOnLog(nil)
   terminalButton:destroy()
   terminalButton = nil
@@ -143,6 +145,14 @@ function Terminal.terminate()
   terminalWidget:destroy()
   terminalWidget = nil
   commandEnv = nil
+end
+
+function Terminal.toggle()
+  if terminalWidget:isVisible() then
+    Terminal.hide()
+  else
+    Terminal.show()
+  end
 end
 
 function Terminal.show()

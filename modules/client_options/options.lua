@@ -1,17 +1,15 @@
 Options = {}
 
+local optionsWindow
 local optionsButton
 
 function Options.init()
-  optionsButton = TopMenu.addButton('settingsButton', 'Options', '/core_styles/icons/settings.png', Options.show)
-  Options.load()
-end
+  optionsWindow = displayUI('options.otui')
+  optionsWindow:setVisible(false)
+  optionsButton = TopMenu.addButton('settingsButton', 'Options (Ctrl+O)', '/core_styles/icons/settings.png', Options.toggle)
+  Hotkeys.bind('Ctrl+O', Options.toggle)
 
-function Options.terminate()
-  TopMenu.removeButton(optionsButton)
-end
-
-function Options.load()
+  -- load settings
   local booleanOptions = { vsync = true,
                            showfps = true,
                            fullscreen = false,
@@ -23,8 +21,30 @@ function Options.load()
   end
 end
 
+function Options.terminate()
+  Hotkeys.unbind('Ctrl+O')
+  optionsWindow:destroy()
+  optionsWindow = nil
+  optionsButton:destroy()
+  optionsButton = nil
+end
+
+function Options.toggle()
+  if optionsWindow:isVisible() then
+    Options.hide()
+  else
+    Options.show()
+  end
+end
+
 function Options.show()
-  displayUI('options.otui', { locked = true })
+  optionsWindow:show()
+  optionsWindow:lock()
+end
+
+function Options.hide()
+  optionsWindow:unlock()
+  optionsWindow:hide()
 end
 
 function Options.openWebpage()

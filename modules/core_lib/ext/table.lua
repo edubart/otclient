@@ -40,13 +40,17 @@ function table.find(t, value)
 end
 
 function table.removevalue(t, value)
-  local queue = {}
   for k,v in pairs(t) do
     if v == value then
-      table.insert(queue, k)
+      table.remove(t, k)
     end
   end
-  for i,v in pairs(queue) do
-    table.remove(t, i)
+end
+
+function table.compare(t, other)
+  if #t ~= #other then return false end
+  for k,v in pairs(t) do
+    if v ~= other[k] then return false end
   end
+  return true
 end

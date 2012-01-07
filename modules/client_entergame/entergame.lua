@@ -54,7 +54,8 @@ end
 
 -- public functions
 function EnterGame.init()
-  enterGameButton = TopMenu.addButton('enterGameButton', 'Login', '/core_styles/icons/login.png', EnterGame.openWindow)
+  enterGameButton = TopMenu.addButton('enterGameButton', 'Login (Ctrl + G)', '/core_styles/icons/login.png', EnterGame.openWindow)
+  Hotkeys.bind('Ctrl+G', EnterGame.openWindow)
   motdButton = TopMenu.addButton('motdButton', 'Message of the day', '/core_styles/icons/motd.png', EnterGame.displayMotd)
   motdButton:hide()
   enterGame = displayUI('entergame.otui')
@@ -79,6 +80,7 @@ function EnterGame.init()
 end
 
 function EnterGame.terminate()
+  Hotkeys.unbind('Ctrl+G')
   enterGame:destroy()
   enterGame = nil
   enterGameButton:destroy()

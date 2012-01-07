@@ -1,5 +1,4 @@
 == Core
-[bart] a class for binding hotkeys
 [bart] review directories loading search
 [bart] load modules from zip packages
 [bart] create a class for reading binary files
@@ -44,12 +43,10 @@
 [bart] padding
 [bart] review and make more error prone with more warnings
 [bart] a real working border and background property in otui
-[bart] merge states declared in inherited styles
 [bart] reapply anchor styles when adding new childs
 
 == Client modules
 [bart] modules managment interface
-[bart] restore Console key binding
 [bart] console history, text selection, scrolling
 
 == Client
