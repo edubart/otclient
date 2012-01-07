@@ -4,11 +4,6 @@ local optionsWindow
 local optionsButton
 
 function Options.init()
-  optionsWindow = displayUI('options.otui')
-  optionsWindow:setVisible(false)
-  optionsButton = TopMenu.addButton('settingsButton', 'Options (Ctrl+O)', '/core_styles/icons/settings.png', Options.toggle)
-  Hotkeys.bind('Ctrl+O', Options.toggle)
-
   -- load settings
   local booleanOptions = { vsync = true,
                            showfps = true,
@@ -19,6 +14,11 @@ function Options.init()
     Settings.setDefault(k, v)
     Options.changeOption(k, Settings.getBoolean(k))
   end
+
+  optionsWindow = displayUI('options.otui')
+  optionsWindow:setVisible(false)
+  optionsButton = TopMenu.addButton('settingsButton', 'Options (Ctrl+O)', '/core_styles/icons/settings.png', Options.toggle)
+  Hotkeys.bind('Ctrl+O', Options.toggle)
 end
 
 function Options.terminate()
