@@ -106,7 +106,7 @@ void Game::processInventoryChange(int slot, const ItemPtr& item)
 
 void Game::walk(Otc::Direction direction)
 {
-    if(!m_online || !m_localPlayer->canWalk(direction) || !checkBotProtection())
+    if(!m_online || !m_localPlayer->canWalk(direction) || (!checkBotProtection() && m_localPlayer->getNextWalkDirection() == Otc::InvalidDirection))
         return;
 
     cancelFollow();
