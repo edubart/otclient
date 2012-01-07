@@ -106,7 +106,7 @@ void Game::processInventoryChange(int slot, const ItemPtr& item)
 
 void Game::walk(Otc::Direction direction)
 {
-    if(!m_online || !m_localPlayer->canWalk(direction) || (!checkBotProtection() && m_localPlayer->getNextWalkDirection() == Otc::InvalidDirection))
+    if(!m_online || !m_localPlayer->canWalk(direction) || !checkBotProtection())
         return;
 
     cancelFollow();
@@ -318,7 +318,7 @@ bool Game::checkBotProtection()
 {
 #ifndef DISABLE_BOT_PROTECTION
     if(g_lua.isInCppCallback() && !g_ui.isOnInputEvent()) {
-        logError("cought a lua call to a bot protected game function, the call was canceled");
+        logError("caught a lua call to a bot protected game function, the call was canceled");
         return false;
     }
 #endif

@@ -19,7 +19,7 @@ OptionCheckBox < CheckBox
 MainWindow
   id: optionsWindow
   title: Options
-  size: 286 120
+  size: 286 140
 
   OptionCheckBox
     id: vsync
@@ -33,6 +33,10 @@ MainWindow
   OptionCheckBox
     id: fullscreen
     text: Fullscreen
+
+  OptionCheckBox
+    id: classicControl
+    text: Classic control
 
   Button
     text: Ok

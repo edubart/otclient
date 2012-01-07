@@ -67,6 +67,7 @@
 [bart] chat with tabs
 [bart] limit FPS in options
 [baxnie] do lua game event calls from Game instead from GameProtocol
+[baxnie] classic control
 [baxnie] trade window
 [baxnie] auto walk
 [baxnie] hotkeys window

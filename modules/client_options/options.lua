@@ -3,7 +3,8 @@ Options = {}
 function Options.load()
   local booleanOptions = { vsync = true,
                            showfps = true,
-                           fullscreen = false }
+                           fullscreen = false,
+                           classicControl = false }
 
   for k,v in pairs(booleanOptions) do
     Settings.setDefault(k, v)
