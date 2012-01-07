@@ -32,6 +32,8 @@ Game g_game;
 
 void Game::loginWorld(const std::string& account, const std::string& password, const std::string& worldHost, int worldPort, const std::string& characterName)
 {
+    m_online = false;
+    m_dead = false;
     m_protocolGame = ProtocolGamePtr(new ProtocolGame);
     m_protocolGame->login(account, password, worldHost, (uint16)worldPort, characterName);
 }
@@ -72,7 +74,6 @@ void Game::processLogin(const LocalPlayerPtr& localPlayer)
 {
     m_localPlayer = localPlayer;
     m_online = true;
-
     g_lua.callGlobalField("Game", "onLogin", m_localPlayer);
 }
 
@@ -91,6 +92,15 @@ void Game::processLogout()
     }
 }
 
+void Game::processDeath()
+{
+    m_dead = true;
+    g_lua.callGlobalField("Game","onDeath");
+
+    // force logout in five seconds
+    g_dispatcher.scheduleEvent(std::bind(&Game::forceLogout, &g_game), 5 * 1000);
+}
+
 void Game::processTextMessage(int type, const std::string& message)
 {
     g_lua.callGlobalField("Game","onTextMessage", type, message);
@@ -104,9 +114,17 @@ void Game::processInventoryChange(int slot, const ItemPtr& item)
     g_lua.callGlobalField("Game","onInventoryChange", slot, item);
 }
 
+void Game::processAttackCancel()
+{
+    if(m_attackingCreature) {
+        m_attackingCreature->hideStaticSquare();
+        m_attackingCreature = nullptr;
+    }
+}
+
 void Game::walk(Otc::Direction direction)
 {
-    if(!m_online || !m_localPlayer->canWalk(direction) || !checkBotProtection())
+    if(!isOnline() || isDead() || !checkBotProtection() || !m_localPlayer->canWalk(direction))
         return;
 
     cancelFollow();
@@ -200,14 +218,6 @@ void Game::cancelAttack()
 {
     if(m_attackingCreature) {
         m_protocolGame->sendAttack(0);
-        m_attackingCreature->hideStaticSquare();
-        m_attackingCreature = nullptr;
-    }
-}
-
-void Game::onAttackCancelled()
-{
-    if(m_attackingCreature) {
         m_attackingCreature->hideStaticSquare();
         m_attackingCreature = nullptr;
     }

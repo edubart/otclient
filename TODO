@@ -66,6 +66,7 @@
 [bart] draw lights using shaders
 [bart] chat with tabs
 [bart] limit FPS in options
+[baxnie] display 'You are dead.' message
 [baxnie] do lua game event calls from Game instead from GameProtocol
 [baxnie] classic control
 [baxnie] trade window

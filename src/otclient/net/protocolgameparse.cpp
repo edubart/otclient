@@ -306,6 +306,7 @@ void ProtocolGame::parsePing(InputMessage&)
 void ProtocolGame::parseDeath(InputMessage& msg)
 {
     msg.getU8(); // 100 is a fair death. < 100 is a unfair death.
+    g_dispatcher.addEvent(std::bind(&Game::processDeath, &g_game));
 }
 
 void ProtocolGame::parseMapDescription(InputMessage& msg)
@@ -736,7 +737,7 @@ void ProtocolGame::parsePlayerIcons(InputMessage& msg)
 void ProtocolGame::parsePlayerCancelAttack(InputMessage& msg)
 {
     msg.getU32(); // unknown
-    g_game.onAttackCancelled();
+    g_dispatcher.addEvent(std::bind(&Game::processAttackCancel, &g_game));
 }
 
 void ProtocolGame::parseCreatureSpeak(InputMessage& msg)
