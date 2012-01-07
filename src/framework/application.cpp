@@ -212,6 +212,15 @@ void Application::poll()
     g_dispatcher.poll();
 }
 
+void Application::close()
+{
+    g_lua.getGlobalField("g_app", "onClose");
+    if(!g_lua.isNil())
+        g_lua.protectedCall();
+    else
+        exit();
+}
+
 void Application::render()
 {
     // everything is rendered by UI components

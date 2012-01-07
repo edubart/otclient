@@ -60,5 +60,15 @@ function Game.onDeath()
   print('dead')
 end
 
+local function onApplicationClose()
+  print('close app')
+  if Game.isOnline() then
+    Game.logout(false)
+  else
+    exit()
+  end
+end
+
+setonclose(onApplicationClose)
 connect(Game, { onLogin = Game.createInterface }, true)
 connect(Game, { onLogout = Game.destroyInterface })

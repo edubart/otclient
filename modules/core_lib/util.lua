@@ -10,6 +10,14 @@ function fatal(msg)
   Logger.log(LogFatal, msg)
 end
 
+function setonclose(func)
+  g_app.onClose = func
+end
+
+function exit()
+  g_app.exit()
+end
+
 function connect(object, signalsAndSlots, pushFront)
   for signal,slot in pairs(signalsAndSlots) do
     if not object[signal] then

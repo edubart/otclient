@@ -2,7 +2,6 @@
 [bart] a class for binding hotkeys
 [bart] review directories loading search
 [bart] load modules from zip packages
-[bart] capture close application events in lua (old setOnClose)
 [bart] create a class for reading binary files
 [bart] rework lua/c++ logger
 [bart] save lists on config manager
@@ -67,6 +66,7 @@
 [bart] chat with tabs
 [bart] limit FPS in options
 [baxnie] display 'You are dead.' message
+[baxnie] display exit box when exiting from game
 [baxnie] do lua game event calls from Game instead from GameProtocol
 [baxnie] classic control
 [baxnie] trade window

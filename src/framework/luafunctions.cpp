@@ -234,6 +234,10 @@ void Application::registerLuaFunctions()
     // Protocol
     g_lua.registerClass<Protocol>();
 
+    // Application
+    g_lua.registerStaticClass("g_app");
+    g_lua.bindClassStaticFunction("g_app", "exit", std::bind(&Application::exit, g_app));
+
     // ConfigManager
     g_lua.registerStaticClass("g_configs");
     g_lua.bindClassStaticFunction("g_configs", "set", std::bind(&ConfigManager::set, &g_configs, _1, _2));
@@ -241,7 +245,7 @@ void Application::registerLuaFunctions()
     g_lua.bindClassStaticFunction("g_configs", "exists", std::bind(&ConfigManager::exists, &g_configs, _1));
     g_lua.bindClassStaticFunction("g_configs", "remove", std::bind(&ConfigManager::remove, &g_configs, _1));
 
-
+    // PlatformWindow
     g_lua.registerStaticClass("g_window");
     g_lua.bindClassStaticFunction("g_window", "move", std::bind(&PlatformWindow::move, &g_window, _1));
     g_lua.bindClassStaticFunction("g_window", "resize", std::bind(&PlatformWindow::resize, &g_window, _1));

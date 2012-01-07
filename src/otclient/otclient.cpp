@@ -39,10 +39,3 @@ void OTClient::init(const std::vector<std::string>& args)
     g_modules.ensureModuleLoaded("client");
     g_modules.autoLoadModules(1000);
 }
-
-void OTClient::close()
-{
-    if(g_game.isOnline())
-        g_game.logout(true);
-    exit();
-}

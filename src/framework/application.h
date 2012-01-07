@@ -41,7 +41,7 @@ public:
     virtual void run();
     virtual void exit();
     virtual void poll();
-    virtual void close() { exit(); }
+    virtual void close();
 
     void setPollCycleDelay(int delay) { m_pollCycleDelay = delay; }
 

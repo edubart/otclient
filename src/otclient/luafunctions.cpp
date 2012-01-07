@@ -54,7 +54,6 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassStaticFunction("g_sprites", "isLoaded", std::bind(&SpriteManager::isLoaded, &g_sprites));
     g_lua.bindClassStaticFunction("g_sprites", "getSignature", std::bind(&SpriteManager::getSignature, &g_sprites));
 
-    g_lua.bindGlobalFunction("exit", std::bind(&Application::exit, g_app));
     g_lua.bindGlobalFunction("getOufitColor", Outfit::getColor);
 
     g_lua.registerClass<ProtocolLogin, Protocol>();
