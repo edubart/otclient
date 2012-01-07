@@ -104,6 +104,13 @@ function CharacterList.show()
   end
 end
 
+function CharacterList.isVisible()
+  if charactersWindow and charactersWindow:isVisible() then
+    return true
+  end
+  return false
+end
+
 function CharacterList.doLogin()
   local selected = charactersWindow:getChildById('characterList'):getFocusedChild()
   if selected then
