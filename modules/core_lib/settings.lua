@@ -27,12 +27,7 @@ function Settings.remove(key)
 end
 
 function Settings.set(key, value)
-  local valuestr = convertSettingValue(value)
-  if valuestr == '' then
-    g_configs.remove(key)
-  else
-    g_configs.set(key, convertSettingValue(value))
-  end
+  g_configs.set(key, convertSettingValue(value))
 end
 
 function Settings.setDefault(key, value)

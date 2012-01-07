@@ -76,3 +76,10 @@ function toboolean(str)
   end
   return false
 end
+
+local oldtonumber = tonumber
+function tonumber(v)
+  local v = oldtonumber(v)
+  if not v then return 0 end
+  return v
+end

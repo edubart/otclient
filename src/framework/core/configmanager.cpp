@@ -49,30 +49,11 @@ bool ConfigManager::save()
 {
     OTMLDocumentPtr doc = OTMLDocument::create();
     for(auto it : m_confsMap) {
+        if(it.second == "")
+            continue;
         OTMLNodePtr node = OTMLNode::create(it.first, it.second);
         doc->addChild(node);
     }
     return doc->save(m_fileName);
 }
 
-bool ConfigManager::exists(const std::string& key)
-{
-    return m_confsMap.find(key) != m_confsMap.end();
-}
-
-void ConfigManager::set(const std::string& key, const std::string& value)
-{
-    m_confsMap[key] = value;
-}
-
-std::string ConfigManager::get(const std::string& key)
-{
-    return m_confsMap[key];
-}
-
-void ConfigManager::remove(const std::string& key)
-{
-    auto it = m_confsMap.find(key);
-    if(it != m_confsMap.end())
-        m_confsMap.erase(it);
-}

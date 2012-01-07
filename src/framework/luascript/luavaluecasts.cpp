@@ -45,8 +45,8 @@ void push_luavalue(int i)
 bool luavalue_cast(int index, int& i)
 {
     i = g_lua.toInteger(index);
-    if(i == 0 && !g_lua.isNumber(index))
-        return false;
+    //if(i == 0 && !g_lua.isNumber(index))
+    //    return false;
     return true;
 }
 
@@ -59,8 +59,8 @@ void push_luavalue(double d)
 bool luavalue_cast(int index, double& d)
 {
     d = g_lua.toNumber(index);
-    if(d == 0 && !g_lua.isNumber(index))
-        return false;
+    //if(d == 0 && !g_lua.isNumber(index))
+    //    return false;
     return true;
 }
 
