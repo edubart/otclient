@@ -116,18 +116,19 @@ void Game::processInventoryChange(int slot, const ItemPtr& item)
 
 void Game::processAttackCancel()
 {
-    if(m_attackingCreature) {
-        m_attackingCreature->hideStaticSquare();
-        m_attackingCreature = nullptr;
-    }
+    if(m_localPlayer->isAttacking())
+        m_localPlayer->setAttackingCreature(nullptr);
 }
 
 void Game::walk(Otc::Direction direction)
 {
+    if(m_localPlayer->isFollowing()) {
+        cancelFollow();
+        return;
+    }
+
     if(!isOnline() || isDead() || !checkBotProtection() || !m_localPlayer->canWalk(direction))
         return;
-
-    cancelFollow();
 
     m_localPlayer->clientWalk(direction);
 
@@ -205,22 +206,17 @@ void Game::attack(const CreaturePtr& creature)
     if(!m_online || !creature || !checkBotProtection())
         return;
 
-    if(m_attackingCreature)
-        m_attackingCreature->hideStaticSquare();
+    if(m_localPlayer->isFollowing())
+        cancelFollow();
 
-    creature->showStaticSquare(Fw::red);
-    m_attackingCreature = creature;
-
+    m_localPlayer->setAttackingCreature(creature);
     m_protocolGame->sendAttack(creature->getId());
 }
 
 void Game::cancelAttack()
 {
-    if(m_attackingCreature) {
-        m_protocolGame->sendAttack(0);
-        m_attackingCreature->hideStaticSquare();
-        m_attackingCreature = nullptr;
-    }
+    m_localPlayer->setAttackingCreature(nullptr);
+    m_protocolGame->sendAttack(0);
 }
 
 void Game::follow(const CreaturePtr& creature)
@@ -228,22 +224,17 @@ void Game::follow(const CreaturePtr& creature)
     if(!m_online || !creature || !checkBotProtection())
         return;
 
-    if(m_followingCreature)
-        m_followingCreature->hideStaticSquare();
+    if(m_localPlayer->isAttacking())
+        cancelAttack();
 
-    creature->showStaticSquare(Fw::green);
-    m_followingCreature = creature;
-
+    m_localPlayer->setFollowingCreature(creature);
     m_protocolGame->sendFollow(creature->getId());
 }
 
 void Game::cancelFollow()
 {
-    if(m_followingCreature) {
-        m_protocolGame->sendFollow(0);
-        m_followingCreature->hideStaticSquare();
-        m_followingCreature = nullptr;
-    }
+    m_localPlayer->setFollowingCreature(nullptr);
+    m_protocolGame->sendFollow(0);
 }
 
 void Game::rotate(const ThingPtr& thing)

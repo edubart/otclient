@@ -265,13 +265,12 @@ void ProtocolGame::parseMessage(InputMessage& msg)
 void ProtocolGame::parsePlayerLogin(InputMessage& msg)
 {
     int playerId = msg.getU32();
-    int playerDrawSpeed = msg.getU16();
+    int serverBeat = msg.getU16();
     int playerCanReportBugs = msg.getU8();
 
     m_localPlayer = LocalPlayerPtr(new LocalPlayer);
     m_localPlayer->setId(playerId);
-    g_game.setServerBeat(playerDrawSpeed);
-    m_localPlayer->setDrawSpeed(playerDrawSpeed);
+    g_game.setServerBeat(serverBeat);
     m_localPlayer->setCanReportBugs(playerCanReportBugs);
 }
 
@@ -536,7 +535,6 @@ void ProtocolGame::parseMagicEffect(InputMessage& msg)
 
     EffectPtr effect = EffectPtr(new Effect());
     effect->setId(effectId);
-    effect->setPos(pos);
 
     g_map.addThing(effect, pos);
 }
@@ -548,7 +546,6 @@ void ProtocolGame::parseAnimatedText(InputMessage& msg)
     std::string text = msg.getString();
 
     AnimatedTextPtr animatedText = AnimatedTextPtr(new AnimatedText);
-    animatedText->setPos(position);
     animatedText->setColor(color);
     animatedText->setText(text);
 
@@ -731,7 +728,8 @@ void ProtocolGame::parsePlayerSkills(InputMessage& msg)
 
 void ProtocolGame::parsePlayerIcons(InputMessage& msg)
 {
-    msg.getU16(); // icons
+    uint16 icons = msg.getU16();
+    m_localPlayer->setIcons(icons);
 }
 
 void ProtocolGame::parsePlayerCancelAttack(InputMessage& msg)

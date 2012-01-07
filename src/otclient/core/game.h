@@ -70,9 +70,6 @@ public:
 
     bool checkBotProtection();
 
-    CreaturePtr getAttackingCreature() { return m_attackingCreature; }
-    CreaturePtr getFollowingCreature() { return m_followingCreature; }
-
     bool isOnline() { return m_online; }
     bool isDead() { return m_dead; }
 
@@ -89,7 +86,7 @@ private:
     bool m_dead;
     int m_serverBeat;
 
-    CreaturePtr m_attackingCreature, m_followingCreature;
+
 };
 
 extern Game g_game;

@@ -30,22 +30,24 @@ function Game.createThingMenu(menuPosition, lookThing, useThing, creatureThing)
   end
      
   if creatureThing then
-  
     menu:addSeparator()
   
     if creatureThing:asLocalPlayer() then
       menu:addOption('Set Outfit', function() Game.openOutfitWindow() end)
     else
-      if Game.getAttackingCreature() ~= creatureThing then
-        menu:addOption('Attack', function() Game.attack(creatureThing) end)
-      else
-        menu:addOption('Stop Attack', function() Game.cancelAttack() end)
-      end
-      
-      if Game.getFollowingCreature() ~= creatureThing then
-        menu:addOption('Follow', function() Game.follow(creatureThing) end)
-      else
-        menu:addOption('Stop Follow', function() Game.cancelFollow() end)
+      local localPlayer = Game.getLocalPlayer()
+      if localPlayer then
+        if localPlayer:getAttackingCreature() ~= creatureThing then
+          menu:addOption('Attack', function() Game.attack(creatureThing) end)
+        else
+          menu:addOption('Stop Attack', function() Game.cancelAttack() end)
+        end
+        
+        if localPlayer:getFollowingCreature() ~= creatureThing then
+          menu:addOption('Follow', function() Game.follow(creatureThing) end)
+        else
+          menu:addOption('Stop Follow', function() Game.cancelFollow() end)
+        end
       end
 
       if creatureThing:asPlayer() then

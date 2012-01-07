@@ -30,32 +30,37 @@ class LocalPlayer : public Player
 public:
     LocalPlayer();
 
-    void setDrawSpeed(uint16 drawSpeed) { m_drawSpeed = drawSpeed; }
-    uint16 getDrawSpeed() { return m_drawSpeed; }
-
     void setCanReportBugs(uint8 canReportBugs) { m_canReportBugs = (canReportBugs != 0); }
-    bool getCanReportBugs() { return m_canReportBugs; }
-
     void setSkill(Otc::Skill skill, Otc::SkillType skillType, int value) { m_skills[skill][skillType] = value; }
-    int getSkill(Otc::Skill skill, Otc::SkillType skillType) { return m_skills[skill][skillType]; }
-
     void setStatistic(Otc::Statistic statistic, double value) { m_statistics[statistic] = value; }
+    void setAttackingCreature(const CreaturePtr& creature);
+    void setFollowingCreature(const CreaturePtr& creature);
+    void setIcons(int icons) { m_icons = icons; }
+
+    bool getCanReportBugs() { return m_canReportBugs; }
+    int getSkill(Otc::Skill skill, Otc::SkillType skillType) { return m_skills[skill][skillType]; }
     double getStatistic(Otc::Statistic statistic) { return m_statistics[statistic]; }
+    CreaturePtr getAttackingCreature() { return m_attackingCreature; }
+    CreaturePtr getFollowingCreature() { return m_followingCreature; }
+    Otc::Direction getNextWalkDirection() { return m_nextWalkDirection; }
+    int getIcons() { return m_icons; }
+
+    bool isAttacking() { return m_attackingCreature != nullptr; }
+    bool isFollowing() { return m_followingCreature != nullptr; }
 
     void clientWalk(Otc::Direction direction);
     void walk(const Position& position, bool inverse);
     void cancelWalk(Otc::Direction direction, bool force = false);
     bool canWalk(Otc::Direction direction);
-    Otc::Direction getNextWalkDirection() { return m_nextWalkDirection; }
 
     LocalPlayerPtr asLocalPlayer() { return std::static_pointer_cast<LocalPlayer>(shared_from_this()); }
 
 private:
-    uint16 m_drawSpeed;
     bool m_canReportBugs;
     bool m_clientWalking;
     Otc::Direction m_nextWalkDirection;
-
+    CreaturePtr m_attackingCreature, m_followingCreature;
+    int m_icons;
     int m_skills[Otc::LastSkill][Otc::LastSkillType];
     double m_statistics[Otc::LastStatistic];
 };

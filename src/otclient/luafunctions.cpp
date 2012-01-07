@@ -84,7 +84,11 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Creature>("setEmblemTexture", &Creature::setEmblemTexture);
 
     g_lua.registerClass<Player, Creature>();
+
     g_lua.registerClass<LocalPlayer, Player>();
+    g_lua.bindClassMemberFunction<LocalPlayer>("getAttackingCreature", &LocalPlayer::getAttackingCreature);
+    g_lua.bindClassMemberFunction<LocalPlayer>("getFollowingCreature", &LocalPlayer::getFollowingCreature);
+
     g_lua.registerClass<Item, Thing>();
     g_lua.registerClass<Tile>();
     g_lua.registerClass<Map>();
@@ -106,11 +110,10 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassStaticFunction<Game>("inviteToParty", std::bind(&Game::inviteToParty, &g_game, _1));
     g_lua.bindClassStaticFunction<Game>("addVip", std::bind(&Game::addVip, &g_game, _1));
     g_lua.bindClassStaticFunction<Game>("removeVip", std::bind(&Game::removeVip, &g_game, _1));
-    g_lua.bindClassStaticFunction<Game>("getAttackingCreature", std::bind(&Game::getAttackingCreature, &g_game));
-    g_lua.bindClassStaticFunction<Game>("getFollowingCreature", std::bind(&Game::getFollowingCreature, &g_game));
     g_lua.bindClassStaticFunction<Game>("talk", std::bind(&Game::talk, &g_game, _1));
     g_lua.bindClassStaticFunction<Game>("talkChannel", std::bind(&Game::talkChannel, &g_game, _1, _2, _3));
     g_lua.bindClassStaticFunction<Game>("talkPrivate", std::bind(&Game::talkPrivate, &g_game, _1, _2, _3));
+    g_lua.bindClassStaticFunction<Game>("getLocalPlayer", std::bind(&Game::getLocalPlayer, &g_game));
 
     g_lua.registerClass<UIItem, UIWidget>();
     g_lua.bindClassStaticFunction<UIItem>("create", []{ return UIItemPtr(new UIItem); } );

@@ -107,3 +107,29 @@ bool LocalPlayer::canWalk(Otc::Direction direction)
 
     return true;
 }
+
+void LocalPlayer::setAttackingCreature(const CreaturePtr& creature)
+{
+    if(m_attackingCreature) {
+        m_attackingCreature->hideStaticSquare();
+        m_attackingCreature = nullptr;
+    }
+
+    if(creature) {
+        creature->showStaticSquare(Fw::red);
+        m_attackingCreature = creature;
+    }
+}
+
+void LocalPlayer::setFollowingCreature(const CreaturePtr& creature)
+{
+    if(m_followingCreature) {
+        m_followingCreature->hideStaticSquare();
+        m_followingCreature = nullptr;
+    }
+
+    if(creature) {
+        creature->showStaticSquare(Fw::green);
+        m_followingCreature = creature;
+    }
+}
