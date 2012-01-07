@@ -44,6 +44,8 @@
 [bart] padding
 [bart] review and make more error prone with more warnings
 [bart] a real working border and background property in otui
+[bart] merge states declared in inherited styles
+[bart] reapply anchor styles when adding new childs
 
 == Client modules
 [bart] modules managment interface

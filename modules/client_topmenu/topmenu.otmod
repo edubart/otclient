@@ -6,7 +6,7 @@ Module
 
   onLoad: |
     require 'topmenu'
-    TopMenu.create()
+    TopMenu.init()
 
   onUnload: |
-    TopMenu.destroy()
+    TopMenu.terminate()

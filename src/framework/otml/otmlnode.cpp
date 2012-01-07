@@ -95,6 +95,13 @@ void OTMLNode::addChild(const OTMLNodePtr& newChild)
         for(const OTMLNodePtr& node : m_children) {
             if(node->tag() == newChild->tag() && (node->isUnique() || newChild->isUnique())) {
                 newChild->setUnique(true);
+
+                if(node->hasChildren() && newChild->hasChildren()) {
+                    OTMLNodePtr tmpNode = node->clone();
+                    tmpNode->merge(newChild);
+                    newChild->copy(tmpNode);
+                }
+
                 replaceChild(node, newChild);
 
                 // remove any other child with the same tag
@@ -138,6 +145,18 @@ bool OTMLNode::replaceChild(const OTMLNodePtr& oldChild, const OTMLNodePtr& newC
         return true;
     }
     return false;
+}
+
+void OTMLNode::copy(const OTMLNodePtr& node)
+{
+    setTag(node->tag());
+    setValue(node->value());
+    setUnique(node->isUnique());
+    setNull(node->isNull());
+    setSource(node->source());
+    clear();
+    for(const OTMLNodePtr& child : node->m_children)
+        addChild(child->clone());
 }
 
 void OTMLNode::merge(const OTMLNodePtr& node)

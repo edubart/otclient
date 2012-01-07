@@ -6,5 +6,7 @@ Module
 
   onLoad: |
     require 'options'
-    Options.load()
+    Options.init()
 
+  onUnload:
+    Options.terminate()

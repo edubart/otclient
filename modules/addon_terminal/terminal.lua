@@ -1,4 +1,4 @@
-Console = { }
+Terminal = { }
 
 -- configs
 local LogColors = { [LogInfo] = 'white',
@@ -8,11 +8,12 @@ local MaxLogLines = 80
 local LabelHeight = 16
 
 -- private variables
-local consoleWidget
+local terminalWidget
+local terminalButton
 local logLocked = false
 local commandEnv = newenv()
 local commandLineEdit
-local consoleBuffer
+local terminalBuffer
 local commandHistory = { }
 local currentHistoryIndex = 0
 
@@ -81,12 +82,12 @@ local function completeCommand()
   end
 end
 
-local function onKeyPress(widget, keyCode, keyText, keyboardModifiers)
+local function onCommandLineKeyPress(widget, keyCode, keyText, keyboardModifiers)
   if keyboardModifiers == KeyboardNoModifier then
     -- execute current command
-    if keyCode == KeyReturn or keyCode == keyEnter then
+    if keyCode == KeyReturn or keyCode == KeyEnter then
       local currentCommand = commandLineEdit:getText()
-      Console.executeCommand(currentCommand)
+      Terminal.executeCommand(currentCommand)
       commandLineEdit:clearText()
       return true
     -- navigate history up
@@ -114,46 +115,64 @@ local function onLog(level, message, time)
   if logLocked then return end
 
   logLocked = true
-  Console.addLine(message, LogColors[level])
+  Terminal.addLine(message, LogColors[level])
   logLocked = false
 end
 
 -- public functions
-function Console.init()
-  consoleWidget = displayUI('console.otui', { visible = false })
-  connect(consoleWidget, { onKeyPress = onKeyPress })
+function Terminal.init()
+  terminalWidget = displayUI('terminal.otui')
+  terminalWidget:setVisible(false)
 
-  commandLineEdit = consoleWidget:getChildById('commandLineEdit')
-  consoleBuffer = consoleWidget:getChildById('consoleBuffer')
+  terminalButton = TopMenu.addButton('terminalButton', 'Terminal', '/core_styles/icons/terminal.png', Terminal.show)
+
+  commandLineEdit = terminalWidget:getChildById('commandLineEdit')
+  connect(commandLineEdit, { onKeyPress = onCommandLineKeyPress })
+
+  terminalBuffer = terminalWidget:getChildById('terminalBuffer')
   Logger.setOnLog(onLog)
   Logger.fireOldMessages()
 end
 
-function Console.terminate()
+function Terminal.terminate()
   Logger.setOnLog(nil)
-  consoleWidget:destroy()
+  terminalButton:destroy()
+  terminalButton = nil
   commandLineEdit = nil
-  consoleWidget = nil
+  terminalBuffer = nil
+  terminalWidget:destroy()
+  terminalWidget = nil
+  commandEnv = nil
 end
 
-function Console.addLine(text, color)
+function Terminal.show()
+  terminalWidget:show()
+  terminalWidget:lock()
+end
+
+function Terminal.hide()
+  terminalWidget:unlock()
+  terminalWidget:hide()
+end
+
+function Terminal.addLine(text, color)
   -- create new line label
-  local numLines = consoleBuffer:getChildCount() + 1
-  local label = createWidget('ConsoleLabel', consoleBuffer)
-  label:setId('consoleLabel' .. numLines)
+  local numLines = terminalBuffer:getChildCount() + 1
+  local label = createWidget('TerminalLabel', terminalBuffer)
+  label:setId('terminalLabel' .. numLines)
   label:setText(text)
   label:setForegroundColor(color)
 
   -- delete old lines if needed
   if numLines > MaxLogLines then
-    consoleBuffer:getChildByIndex(1):destroy()
+    terminalBuffer:getChildByIndex(1):destroy()
   else
-    consoleBuffer:setHeight(consoleBuffer:getHeight() + LabelHeight)
-    consoleBuffer:updateParentLayout()
+    terminalBuffer:setHeight(terminalBuffer:getHeight() + LabelHeight)
+    terminalBuffer:updateParentLayout()
   end
 end
 
-function Console.executeCommand(command)
+function Terminal.executeCommand(command)
   -- detect and convert commands with simple syntax
   local realCommand
   if commandEnv[command] then
@@ -173,7 +192,7 @@ function Console.executeCommand(command)
   table.insert(commandHistory, command)
 
   -- add command line
-  Console.addLine(">> " .. command, "#ffffff")
+  Terminal.addLine(">> " .. command, "#ffffff")
 
   -- load command buffer
   local func, err = loadstring(realCommand, "@")
@@ -196,4 +215,3 @@ function Console.executeCommand(command)
     Logger.log(LogError, 'command failed: ' .. ret)
   end
 end
-

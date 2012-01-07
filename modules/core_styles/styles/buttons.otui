@@ -24,28 +24,3 @@ Button < UIButton
     color: #f0ad4d88
     background-color: #ffffff88
 
-TopButton < UIButton
-  background-color: white
-  size: 26 26
-  text-translate: 0 0
-  border-image:
-    source: /core_styles/images/top_button.png
-    clip: 0 0 26 26
-    border: 3
-
-  $hover:
-    border-image:
-      source: /core_styles/images/top_button.png
-      clip: 26 0 26 26
-      border: 3
-
-  $pressed:
-    text-translate: 1 1
-    border-image:
-      source: /core_styles/images/top_button.png
-      clip: 52 0 26 26
-      border: 3
-
-  $disabled:
-    background-color: #ffffff66
-

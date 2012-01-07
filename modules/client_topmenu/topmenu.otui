@@ -1,3 +1,52 @@
+TopButton < UIButton
+  background-color: white
+  size: 26 26
+  text-translate: 0 0
+  border-image:
+    source: /core_styles/images/top_button.png
+    clip: 0 0 26 26
+    border: 3
+
+  $hover:
+    border-image:
+      source: /core_styles/images/top_button.png
+      clip: 26 0 26 26
+      border: 3
+
+  $pressed:
+    text-translate: 1 1
+    border-image:
+      source: /core_styles/images/top_button.png
+      clip: 52 0 26 26
+      border: 3
+
+  $disabled:
+    background-color: #ffffff66
+
+TopLeftButton < TopButton
+  $first:
+    anchors.top: parent.top
+    anchors.left: parent.left
+    margin-top: 4
+    margin-left: 6
+
+  $!first:
+    anchors.top: prev.top
+    anchors.left: prev.right
+    margin-left: 6
+
+TopRightButton < TopButton
+  $first:
+    anchors.top: parent.top
+    anchors.right: parent.right
+    margin-top: 4
+    margin-right: 6
+
+  $!first:
+    anchors.top: prev.top
+    anchors.right: prev.left
+    margin-right: 6
+
 TopPanel
   id: topMenu
   anchors.top: parent.top
@@ -5,63 +54,19 @@ TopPanel
   anchors.right: parent.right
   focusable: false
 
-  TopButton
-    id: settingsButton
+  Panel
+    id: leftButtonsPanel
     anchors.top: parent.top
+    anchors.bottom: parent.bottom
     anchors.left: parent.left
-    margin-top: 4
-    margin-left: 6
-    tooltip: Options
-    icon: /core_styles/icons/settings.png
-    @onClick: Options.show()
+    anchors.right: next.left
 
-
-  TopButton
-    id: enterGameButton
-    anchors.top: prev.top
-    anchors.left: prev.right
-    margin-left: 6
-    tooltip: Enter game with a character
-    icon: /core_styles/icons/login.png
-    @onClick: |
-      if Game.isOnline() then
-        CharacterList.show()
-      elseif not CharacterList.isVisible() then
-        EnterGame.show()
-      end
-
-  TopButton
-    id: motdButton
-    anchors.top: prev.top
-    anchors.left: prev.right
-    margin-left: 6
-    tooltip: Message of the day
-    icon: /core_styles/icons/motd.png
-    visible: false
-    @onClick: EnterGame.displayMotd()
-
-  TopButton
+  Panel
+    id: rightButtonsPanel
     anchors.top: parent.top
+    anchors.bottom: parent.bottom
     anchors.right: parent.right
-    margin-top: 4
-    margin-right: 6
-    tooltip: Logout
-    icon: /core_styles/icons/logout.png
-    @onClick: |
-      if Game.isOnline() then
-        Game.logout(false)
-      else
-        exit()
-      end
-
-  TopButton
-    anchors.top: parent.top
-    anchors.right: prev.left
-    margin-top: 4
-    margin-right: 6
-    tooltip: About OTClient
-    icon: /core_styles/icons/about.png
-    @onClick: About.create()
+    width: 60
 
   FrameCounter
     id: frameCounter

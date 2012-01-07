@@ -5,6 +5,9 @@ local loadBox
 local enterGame
 local motdNumber
 local motdMessage
+local motdButton
+local enterGameButton
+
 
 -- private functions
 local function clearAccountFields()
@@ -25,7 +28,7 @@ end
 local function onMotd(protocol, motd)
   motdNumber = tonumber(motd:sub(0, motd:find("\n")))
   motdMessage = motd:sub(motd:find("\n") + 1, #motd)
-  TopMenu.getButton('motdButton'):show()
+  motdButton:show()
 end
 
 local function onCharacterList(protocol, characters, premDays)
@@ -50,7 +53,10 @@ local function onCharacterList(protocol, characters, premDays)
 end
 
 -- public functions
-function EnterGame.create()
+function EnterGame.init()
+  enterGameButton = TopMenu.addButton('enterGameButton', 'Login', '/core_styles/icons/login.png', EnterGame.openWindow)
+  motdButton = TopMenu.addButton('motdButton', 'Message of the day', '/core_styles/icons/motd.png', EnterGame.displayMotd)
+  motdButton:hide()
   enterGame = displayUI('entergame.otui')
 
   local account = Settings.get('account')
@@ -72,9 +78,13 @@ function EnterGame.create()
   end
 end
 
-function EnterGame.destroy()
+function EnterGame.terminate()
   enterGame:destroy()
   enterGame = nil
+  enterGameButton:destroy()
+  enterGameButton = nil
+  motdButton:destroy()
+  motdButton = nil
 end
 
 function EnterGame.show()
@@ -84,6 +94,14 @@ end
 
 function EnterGame.hide()
   enterGame:hide()
+end
+
+function EnterGame.openWindow()
+  if Game.isOnline() then
+    CharacterList.show()
+  elseif not CharacterList.isVisible() then
+    EnterGame.show()
+  end
 end
 
 function EnterGame.doLogin()
@@ -111,5 +129,6 @@ function EnterGame.doLogin()
 end
 
 function EnterGame.displayMotd()
-  displayInfoBox("Message of the day", motdMessage)
+  displayInfoBox('Message of the day', motdMessage)
 end
+

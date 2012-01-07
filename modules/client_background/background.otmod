@@ -6,8 +6,8 @@ Module
 
   onLoad: |
     require 'background'
-    Background.create()
+    Background.init()
 
   onUnload:
-    Background.destroy()
+    Background.terminate()
 

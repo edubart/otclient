@@ -7,9 +7,9 @@ Module
   onLoad: |
     require 'entergame'
     require 'characterlist'
-    EnterGame.create()
+    EnterGame.init()
 
   onUnload:
-    EnterGame.destroy()
+    EnterGame.terminate()
 
 

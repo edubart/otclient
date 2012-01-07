@@ -4,11 +4,11 @@ Background = { }
 local background
 
 -- public functions
-function Background.create()
+function Background.init()
   background = displayUI('background.otui')
 end
 
-function Background.destroy()
+function Background.terminate()
   background:destroy()
   background = nil
 end

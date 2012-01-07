@@ -1116,8 +1116,12 @@ void UIWidget::onStyleApply(const std::string& styleName, const OTMLNodePtr& sty
         // anchors
         else if(boost::starts_with(node->tag(), "anchors.")) {
             UIWidgetPtr parent = getParent();
-            if(!parent)
-                throw OTMLException(node, "cannot create anchor, there is no parent widget!");
+            if(!parent) {
+                if(m_firstOnStyle)
+                    throw OTMLException(node, "cannot create anchor, there is no parent widget!");
+                else
+                    continue;
+            }
 
             UIAnchorLayoutPtr anchorLayout = parent->getLayout()->asUIAnchorLayout();
             if(!anchorLayout)
@@ -1331,9 +1335,7 @@ void UIWidget::propagateOnMouseRelease(const Point& mousePos, Fw::MouseButton bu
             child->setPressed(false);
     }
 
-    // fire release events only when pressed
-    if(isPressed())
-        onMouseRelease(mousePos, button);
+    onMouseRelease(mousePos, button);
 }
 
 bool UIWidget::propagateOnMouseMove(const Point& mousePos, const Point& mouseMoved)

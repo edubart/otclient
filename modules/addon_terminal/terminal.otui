@@ -1,15 +1,15 @@
-ConsoleLabel < UILabel
+TerminalLabel < UILabel
   font: terminus-14px-bold
   height: 16
 
 RectPanel
-  id: consolePanel
+  id: terminalPanel
   background-color: #000000
   opacity: 216
   anchors.fill: parent
 
   Panel
-    id: consoleBuffer
+    id: terminalBuffer
     layout: verticalBox
     focusable: false
     anchors.left: parent.left

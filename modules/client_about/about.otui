@@ -58,4 +58,4 @@ MainWindow
     anchors.top: parent.top
     margin-top: 191
     margin-left: 188
-    @onClick: About.destroy()
+    @onClick: self:getParent():destroy()

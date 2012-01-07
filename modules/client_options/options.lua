@@ -1,5 +1,16 @@
 Options = {}
 
+local optionsButton
+
+function Options.init()
+  optionsButton = TopMenu.addButton('settingsButton', 'Options', '/core_styles/icons/settings.png', Options.show)
+  Options.load()
+end
+
+function Options.terminate()
+  TopMenu.removeButton(optionsButton)
+end
+
 function Options.load()
   local booleanOptions = { vsync = true,
                            showfps = true,

@@ -63,7 +63,7 @@ public:
 
     /// Returns the class name used in Lua
     virtual std::string getLuaObjectName() const {
-        // this could later be cached for more performance
+        // TODO: this could be cached for more performance
         return Fw::demangleName(typeid(*this).name());
     }
 

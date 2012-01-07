@@ -1,17 +1,16 @@
 Module
-  name: console
-  description: Console for executing lua functions
+  name: terminal
+  description: Terminal for executing lua functions
   author: OTClient team
   website: https://github.com/edubart/otclient
 
-  // console can be loaded after core
   autoLoad: true
   autoLoadPriority: 1000
 
   onLoad: |
-    require 'console'
+    require 'terminal'
     require 'commands'
-    Console.init()
+    Terminal.init()
 
   onUnload: |
-    Console.terminate()
+    Terminal.terminate()

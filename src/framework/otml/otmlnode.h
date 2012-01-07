@@ -63,6 +63,7 @@ public:
     void addChild(const OTMLNodePtr& newChild);
     bool removeChild(const OTMLNodePtr& oldChild);
     bool replaceChild(const OTMLNodePtr& oldChild, const OTMLNodePtr& newChild);
+    void copy(const OTMLNodePtr& node);
     void merge(const OTMLNodePtr& node);
     void clear();
 

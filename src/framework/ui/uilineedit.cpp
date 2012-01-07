@@ -411,6 +411,9 @@ void UILineEdit::onFocusChange(bool focused, Fw::FocusReason reason)
 
 bool UILineEdit::onKeyPress(uchar keyCode, std::string keyText, int keyboardModifiers)
 {
+    if(UIWidget::onKeyPress(keyCode, keyText, keyboardModifiers))
+        return true;
+
     if(keyCode == Fw::KeyDelete) // erase right character
         removeCharacter(true);
     else if(keyCode == Fw::KeyBackspace) // erase left character {
@@ -433,8 +436,7 @@ bool UILineEdit::onKeyPress(uchar keyCode, std::string keyText, int keyboardModi
     } else if(!keyText.empty() && (keyboardModifiers == Fw::KeyboardNoModifier || keyboardModifiers == Fw::KeyboardShiftModifier))
         appendText(keyText);
     else
-        return UIWidget::onKeyPress(keyCode, keyText, keyboardModifiers);
-
+        return false;
     return true;
 }
 
