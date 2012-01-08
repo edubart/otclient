@@ -53,7 +53,7 @@ public:
 
     void addThing(const ThingPtr& thing, const Position& pos, int stackPos = -1);
     ThingPtr getThing(const Position& pos, int stackPos);
-    void removeThing(const Position& pos, int stackPos);
+    void removeThingByPos(const Position& pos, int stackPos);
     void removeThing(const ThingPtr& thing);
     void cleanTile(const Position& pos);
     TilePtr getTile(const Position& pos);

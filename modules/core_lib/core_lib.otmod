@@ -7,6 +7,7 @@ Module
   onLoad: |
     require 'ext/table'
     require 'ext/string'
+    require 'ext/os'
     require 'math/point'
     require 'math/size'
     require 'math/color'

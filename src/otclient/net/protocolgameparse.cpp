@@ -353,8 +353,6 @@ void ProtocolGame::parseMoveWest(InputMessage& msg)
 
 void ProtocolGame::parseUpdateTile(InputMessage& msg)
 {
-    logDebug("PARSE UPDATE TILE!");
-
     Position tilePos = parsePosition(msg);
     uint16 thingId = msg.getU16(true);
     if(thingId == 0xFF01) {
@@ -390,7 +388,7 @@ void ProtocolGame::parseTileTransformThing(InputMessage& msg)
     }
     else {
         ThingPtr thing = internalGetItem(msg, thingId);
-        g_map.removeThing(pos, stackPos);
+        g_map.removeThingByPos(pos, stackPos);
         g_map.addThing(thing, pos, stackPos);
     }
 }
@@ -400,7 +398,7 @@ void ProtocolGame::parseTileRemoveThing(InputMessage& msg)
     Position pos = parsePosition(msg);
     uint8 stackPos = msg.getU8();
 
-    g_map.removeThing(pos, stackPos);
+    g_map.removeThingByPos(pos, stackPos);
 }
 
 void ProtocolGame::parseCreatureMove(InputMessage& msg)
@@ -756,10 +754,13 @@ void ProtocolGame::parseCreatureSpeak(InputMessage& msg)
         case Otc::SpeakPrivateNpcToPlayer:
             creaturePos = parsePosition(msg);
             break;
-        case Otc::SpeakChannelRed:
-        case Otc::SpeakChannelOrange:
         case Otc::SpeakChannelYellow:
         case Otc::SpeakChannelWhite:
+        case Otc::SpeakChannelRed:
+#if PROTOCOL==860
+        case Otc::SpeakChannelRed2:
+#endif
+        case Otc::SpeakChannelOrange:
             channelId = msg.getU16();
             break;
         case Otc::SpeakPrivate:
@@ -767,6 +768,11 @@ void ProtocolGame::parseCreatureSpeak(InputMessage& msg)
         case Otc::SpeakBroadcast:
         case Otc::SpeakPrivateRed:
             break;
+#if PROTOCOL==860
+        case Otc::SpeakReportChannel:
+            msg.getU32();
+            break;
+#endif
         default:
             logTraceError("unknown speak type ", type);
             break;

@@ -149,7 +149,7 @@ ThingPtr Tile::getTopThing()
     return m_things[m_things.size() - 1];
 }
 
-ThingPtr Tile::removeThing(int stackPos)
+ThingPtr Tile::removeThingByStackpos(int stackPos)
 {
     ThingPtr oldObject;
     if(stackPos >= 0 && stackPos < (int)m_things.size()) {

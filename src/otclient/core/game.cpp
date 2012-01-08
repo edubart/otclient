@@ -322,7 +322,7 @@ void Game::removeVip(int playerId)
 
 bool Game::checkBotProtection()
 {
-#ifndef DISABLE_BOT_PROTECTION
+#ifndef NO_BOT_PROTECTION
     if(g_lua.isInCppCallback() && !g_ui.isOnInputEvent()) {
         logError("caught a lua call to a bot protected game function, the call was canceled");
         return false;

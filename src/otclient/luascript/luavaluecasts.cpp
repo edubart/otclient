@@ -80,6 +80,7 @@ bool luavalue_cast(int index, Position& pos)
         pos.y = g_lua.popInteger();
         g_lua.getField("z", index);
         pos.z = g_lua.popInteger();
+        return true;
     }
     return false;
 }

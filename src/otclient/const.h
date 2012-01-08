@@ -333,20 +333,30 @@ namespace Otc
     };
 
     enum SpeakClasses {
-        SpeakSay                = 0x01, //normal talk
-        SpeakWhisper            = 0x02, //whispering - #w text
-        SpeakYell               = 0x03, //yelling - #y text
-        SpeakPrivatePlayerToNpc = 0x04, //Player-to-NPC speaking(NPCs channel)
-        SpeakPrivateNpcToPlayer = 0x05, //NPC-to-Player speaking
-        SpeakPrivate            = 0x06, //Players speaking privately to players
-        SpeakChannelYellow      = 0x07, //Yellow message in chat
-        SpeakChannelWhite       = 0x08, //White message in chat
-        SpeakBroadcast          = 0x09, //Broadcast a message - #b
-        SpeakChannelRed         = 0x0A, //Talk red on chat - #c
-        SpeakPrivateRed         = 0x0B, //Red private - @name@ text
-        SpeakChannelOrange      = 0x0C, //Talk orange on text
-        SpeakMonsterSay         = 0x0D, //Talk orange
-        SpeakMonsterYell        = 0x0E  //Yell orange
+        SpeakSay = 1,             //normal talk
+        SpeakWhisper,             //whispering - #w text
+        SpeakYell,                //yelling - #y text
+        SpeakPrivatePlayerToNpc,  //Player-to-NPC speaking(NPCs channel)
+        SpeakPrivateNpcToPlayer,  //NPC-to-Player speaking
+        SpeakPrivate,             //Players speaking privately to players
+        SpeakChannelYellow,       //Yellow message in chat
+        SpeakChannelWhite,        //White message in chat
+#if PROTOCOL==860
+        SpeakReportChannel,       //Reporting rule violation - Ctrl+R
+        SpeakReportAnswer,        //Answering report
+        SpeakReportContinue,      //Answering the answer of the report
+#endif
+        SpeakBroadcast,           //Broadcast a message - #b
+        SpeakChannelRed,          //Talk red on chat - #c
+        SpeakPrivateRed,          //Red private - @name@ text
+        SpeakChannelOrange,       //Talk orange on text
+#if PROTOCOL==860
+        SpeakUnk1,
+        SpeakChannelRed2,         //Talk red anonymously on chat - #d
+        SpeakUnk2,
+#endif
+        SpeakMonsterSay,          //Talk orange
+        SpeakMonsterYell          //Yell orange
     };
 
     enum CreaturesIdRange {

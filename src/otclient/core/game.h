@@ -78,6 +78,7 @@ public:
 
     LocalPlayerPtr getLocalPlayer() { return m_localPlayer; }
     ProtocolGamePtr getProtocolGame() { return m_protocolGame; }
+    int getProtocolVersion() { return PROTOCOL; }
 
 private:
     LocalPlayerPtr m_localPlayer;

@@ -286,10 +286,10 @@ ThingPtr Map::getThing(const Position& pos, int stackPos)
     return nullptr;
 }
 
-void Map::removeThing(const Position& pos, int stackPos)
+void Map::removeThingByPos(const Position& pos, int stackPos)
 {
     if(TilePtr& tile = m_tiles[pos])
-        tile->removeThing(stackPos);
+        tile->removeThingByStackpos(stackPos);
 }
 
 void Map::removeThing(const ThingPtr& thing)

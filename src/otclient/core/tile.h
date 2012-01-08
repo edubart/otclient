@@ -41,7 +41,7 @@ public:
     ThingPtr getThing(int stackPos);
     int getThingStackpos(const ThingPtr& thing);
     ThingPtr getTopThing();
-    ThingPtr removeThing(int stackPos);
+    ThingPtr removeThingByStackpos(int stackPos);
     ThingPtr removeThing(const ThingPtr& thing);
 
 

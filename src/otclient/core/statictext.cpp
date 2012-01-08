@@ -107,7 +107,7 @@ void StaticText::compose()
         m_color = Color(95, 247, 247);
     }
     else {
-        logWarning("unknown message type: ", m_type);
+        logWarning("unknown speak type: ", m_type);
     }
 
     // Todo: add break lines
