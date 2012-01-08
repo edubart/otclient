@@ -23,12 +23,11 @@
 #include "uiverticallayout.h"
 #include "uiwidget.h"
 #include <framework/otml/otml.h>
+#include <framework/core/eventdispatcher.h>
 
 UIVerticalLayout::UIVerticalLayout(UIWidgetPtr parentWidget)
     : UILayout(parentWidget)
 {
-    m_alignBottom = false;
-    m_fitParent = false;
     m_spacing = 0;
 }
 
@@ -46,7 +45,36 @@ void UIVerticalLayout::applyStyle(const OTMLNodePtr& styleNode)
     }
 }
 
-void UIVerticalLayout::update()
+void UIVerticalLayout::addWidget(const UIWidgetPtr& widget)
+{
+    update();
+}
+
+void UIVerticalLayout::removeWidget(const UIWidgetPtr& widget)
+{
+    update();
+}
+
+void UIVerticalLayout::setAlignBottom(bool aliginBottom)
+{
+    m_alignBottom = aliginBottom;
+    update();
+}
+
+void UIVerticalLayout::setSpacing(int spacing)
+{
+    m_spacing = spacing;
+    update();
+}
+
+void UIVerticalLayout::setFitParent(bool fitParent)
+{
+    m_fitParent = fitParent;
+    update();
+}
+
+
+void UIVerticalLayout::internalUpdate()
 {
     UIWidgetPtr parentWidget = getParentWidget();
     UIWidgetList widgets = parentWidget->getChildren();
@@ -88,34 +116,10 @@ void UIVerticalLayout::update()
 
     prefferedHeight -= m_spacing;
 
-    if(m_fitParent && prefferedHeight != parentWidget->getHeight())
-        parentWidget->setHeight(prefferedHeight);
-}
-
-void UIVerticalLayout::addWidget(const UIWidgetPtr& widget)
-{
-    update();
-}
-
-void UIVerticalLayout::removeWidget(const UIWidgetPtr& widget)
-{
-    update();
-}
-
-void UIVerticalLayout::setAlignBottom(bool aliginBottom)
-{
-    m_alignBottom = aliginBottom;
-    update();
-}
-
-void UIVerticalLayout::setSpacing(int spacing)
-{
-    m_spacing = spacing;
-    update();
-}
-
-void UIVerticalLayout::setFitParent(bool fitParent)
-{
-    m_fitParent = fitParent;
-    update();
+    if(m_fitParent && prefferedHeight != parentWidget->getHeight()) {
+        // must set the preffered width later
+        g_dispatcher.addEvent([=] {
+            parentWidget->setHeight(prefferedHeight);
+        });
+    }
 }

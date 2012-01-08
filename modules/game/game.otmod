@@ -10,7 +10,7 @@ Module
     - game_skills
     - game_textmessage
     - game_viplist
-    - game_chat
+    - game_console
     - game_outfit
 
   onLoad: |

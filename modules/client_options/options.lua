@@ -8,7 +8,8 @@ function Options.init()
   local booleanOptions = { vsync = true,
                            showfps = true,
                            fullscreen = false,
-                           classicControl = false }
+                           classicControl = false,
+                           showLevelInConsole = false}
 
   for k,v in pairs(booleanOptions) do
     Settings.setDefault(k, v)

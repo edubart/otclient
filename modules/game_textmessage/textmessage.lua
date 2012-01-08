@@ -8,6 +8,7 @@ local MessageTypes = {
   warning = { color = '#F55E5E', showOnConsole = true, windowLocation = 'center' },
   eventAdvance = { color = '#FFFFFF', showOnConsole = true, windowLocation = 'center' },
   eventDefault = { color = '#FFFFFF', showOnConsole = true, windowLocation = 'bottom' },
+  eventOrange = { color = '#FE6500', showOnConsole = true, windowLocation = 'bottom' },
   statusDefault = { color = '#FFFFFF', showOnConsole = true, windowLocation = 'bottom' },
   infoDescription = { color = '#00EB00', showOnConsole = true, windowLocation = 'center' },
   statusSmall = { color = '#FFFFFF', showOnConsole = false, windowLocation = 'bottom' },

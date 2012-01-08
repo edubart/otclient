@@ -30,18 +30,24 @@ class UIVerticalLayout : public UILayout
 public:
     UIVerticalLayout(UIWidgetPtr parentWidget);
 
-    virtual void applyStyle(const OTMLNodePtr& styleNode);
-    virtual void update();
-    virtual void addWidget(const UIWidgetPtr& widget);
-    virtual void removeWidget(const UIWidgetPtr& widget);
+    void applyStyle(const OTMLNodePtr& styleNode);
+    void addWidget(const UIWidgetPtr& widget);
+    void removeWidget(const UIWidgetPtr& widget);
 
     void setAlignBottom(bool aliginBottom);
     void setSpacing(int spacing);
     void setFitParent(bool fitParent);
 
+    bool needsUpdatesOnChildChange() { return m_fitParent; }
+
+    UIVerticalLayoutPtr asUIVerticalLayout() { return std::static_pointer_cast<UIVerticalLayout>(shared_from_this()); }
+
+protected:
+    void internalUpdate();
+
 private:
-    bool m_alignBottom;
-    bool m_fitParent;
+    Boolean<false> m_alignBottom;
+    Boolean<false> m_fitParent;
     int m_spacing;
 };
 

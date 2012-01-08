@@ -1,20 +1,18 @@
-ChatLabel < UILabel
+ConsoleLabel < UILabel
   font: verdana-11px-antialised
   height: 14
-
-YellowChatLabel < ChatLabel
   color: yellow
 
 Panel
-  id: chatPanel
+  id: consolePanel
   anchors.fill: parent
 
   Panel
-    id: chatBuffer
+    id: consoleBuffer
     anchors.top: parent.top
     anchors.left: parent.left
     anchors.right: parent.right
-    anchors.bottom: chatLineEdit.top
+    anchors.bottom: consoleLineEdit.top
     margin-right: 6
     margin-left: 6
     margin-bottom: 2
@@ -25,7 +23,7 @@ Panel
     focusable: false
 
   LineEdit
-    id: chatLineEdit
+    id: consoleLineEdit
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.bottom: parent.bottom

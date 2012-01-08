@@ -71,23 +71,6 @@ void UIAnchorLayout::fill(const UIWidgetPtr& anchoredWidget, const std::string& 
     addAnchor(anchoredWidget, Fw::AnchorBottom, hookedWidgetId, Fw::AnchorBottom);
 }
 
-void UIAnchorLayout::update()
-{
-    // reset all anchors groups update state
-    for(auto& it : m_anchorsGroups) {
-        UIAnchorGroup& anchorGroup = it.second;
-        anchorGroup.setUpdated(false);
-    }
-
-    // update all anchors
-    for(auto& it : m_anchorsGroups) {
-        const UIWidgetPtr& widget = it.first;
-        UIAnchorGroup& anchorGroup = it.second;
-        if(!anchorGroup.isUpdated())
-            updateWidget(widget, anchorGroup);
-    }
-}
-
 void UIAnchorLayout::addWidget(const UIWidgetPtr& widget)
 {
     update();
@@ -209,4 +192,21 @@ void UIAnchorLayout::updateWidget(const UIWidgetPtr& widget, UIAnchorGroup& anch
 
     widget->setRect(newRect);
     anchorGroup.setUpdated(true);
+}
+
+void UIAnchorLayout::internalUpdate()
+{
+    // reset all anchors groups update state
+    for(auto& it : m_anchorsGroups) {
+        UIAnchorGroup& anchorGroup = it.second;
+        anchorGroup.setUpdated(false);
+    }
+
+    // update all anchors
+    for(auto& it : m_anchorsGroups) {
+        const UIWidgetPtr& widget = it.first;
+        UIAnchorGroup& anchorGroup = it.second;
+        if(!anchorGroup.isUpdated())
+            updateWidget(widget, anchorGroup);
+    }
 }

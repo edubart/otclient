@@ -120,6 +120,7 @@ public:
     bool isFocusable() { return m_focusable; }
     bool isPhantom() { return m_phantom; }
     bool isSizeFixed() { return m_fixedSize; }
+    bool isDestroyed() { return m_destroyed; }
     bool containsPoint(const Point& point) { return m_rect.contains(point); }
     bool hasChildren() { return m_children.size() > 0; }
     bool hasChild(const UIWidgetPtr& child);
@@ -230,6 +231,7 @@ protected:
     Boolean<false> m_loadingStyle;
     Boolean<false> m_updateStyleScheduled;
     Boolean<true> m_firstOnStyle;
+    Boolean<false> m_destroyed;
     Rect m_rect;
     UILayoutPtr m_layout;
     UIWidgetWeakPtr m_parent;

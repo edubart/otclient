@@ -54,6 +54,9 @@ UIWidget::UIWidget()
 
 void UIWidget::destroy()
 {
+    if(m_destroyed)
+        logWarning("attempt to destroy widget '", m_id, "' two times");
+
     setVisible(false);
     setEnabled(false);
 
@@ -71,6 +74,8 @@ void UIWidget::destroy()
     }
 
     callLuaField("onDestroy");
+
+    m_destroyed = true;
 }
 
 void UIWidget::render()
@@ -289,7 +294,8 @@ void UIWidget::setRect(const Rect& rect)
         UIWidgetPtr self = asUIWidget();
         g_dispatcher.addEvent([self, oldRect]() {
             self->m_updateEventScheduled = false;
-            self->onGeometryChange(oldRect, self->getRect());
+            if(oldRect != self->getRect())
+                self->onGeometryChange(oldRect, self->getRect());
         });
         m_updateEventScheduled = true;
     }
@@ -777,6 +783,11 @@ void UIWidget::updateLayout()
 {
     if(m_layout)
         m_layout->update();
+
+    // children can affect the parent layout
+    if(UIWidgetPtr parent = getParent())
+        if(UILayoutPtr parentLayout = parent->getLayout())
+            parentLayout->updateLater();
 }
 
 void UIWidget::applyStyle(const OTMLNodePtr& styleNode)

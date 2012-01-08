@@ -20,7 +20,6 @@ function MessageBox.create(title, text, flags)
   -- set window size based on label size
   window:setWidth(math.max(label:getWidth() + 48, 120))
   window:setHeight(label:getHeight() + 64)
-  window:updateParentLayout()
 
   -- setup messagebox first button
   local buttonRight = window:getChildById('messageBoxRightButton')

@@ -58,7 +58,6 @@ function Skills.onSkillButtonClick(button)
     else
       button:setHeight(21 - 6)
     end
-    button:updateParentLayout()
   end
 end
 

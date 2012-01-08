@@ -27,7 +27,7 @@
 
 bool UIGame::onKeyPress(uchar keyCode, std::string keyText, int keyboardModifiers)
 {
-    UILineEditPtr chatLineEdit = std::dynamic_pointer_cast<UILineEdit>(getParent()->recursiveGetChildById("chatLineEdit"));
+    UILineEditPtr chatLineEdit = std::dynamic_pointer_cast<UILineEdit>(getParent()->recursiveGetChildById("consoleLineEdit"));
 
     if(keyboardModifiers == Fw::KeyboardNoModifier) {
         if(keyCode == Fw::KeyUp || keyCode == Fw::KeyNumpad8) {

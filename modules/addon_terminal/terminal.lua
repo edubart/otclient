@@ -178,7 +178,6 @@ function Terminal.addLine(text, color)
     terminalBuffer:getChildByIndex(1):destroy()
   else
     terminalBuffer:setHeight(terminalBuffer:getHeight() + LabelHeight)
-    terminalBuffer:updateParentLayout()
   end
 end
 

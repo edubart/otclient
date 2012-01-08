@@ -32,16 +32,27 @@ class UILayout : public LuaObject
 public:
     UILayout(UIWidgetPtr parentWidget) : m_parentWidget(parentWidget) { }
 
+    void update();
+    void updateLater();
+
     virtual void applyStyle(const OTMLNodePtr& styleNode) { }
-    virtual void update() = 0;
     virtual void addWidget(const UIWidgetPtr& widget) = 0;
     virtual void removeWidget(const UIWidgetPtr& widget) = 0;
 
     UIWidgetPtr getParentWidget() { return m_parentWidget.lock(); }
 
+    bool isUpdating() { return m_updating; }
+    virtual bool needsUpdatesOnChildChange() { return false; }
+
+    UILayoutPtr asUILayout() { return std::static_pointer_cast<UILayout>(shared_from_this()); }
     virtual UIAnchorLayoutPtr asUIAnchorLayout() { return nullptr; }
+    virtual UIVerticalLayoutPtr asUIVerticalLayout() { return nullptr; }
 
 protected:
+    virtual void internalUpdate() = 0;
+
+    Boolean<false> m_updating;
+    Boolean<false> m_updateScheduled;
     UIWidgetWeakPtr m_parentWidget;
 };
 

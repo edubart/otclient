@@ -69,11 +69,13 @@ public:
     void centerIn(const UIWidgetPtr& anchoredWidget, const std::string& hookedWidgetId);
     void fill(const UIWidgetPtr& anchoredWidget, const std::string& hookedWidgetId);
 
-    void update();
     void addWidget(const UIWidgetPtr& widget);
     void removeWidget(const UIWidgetPtr& widget);
 
     UIAnchorLayoutPtr asUIAnchorLayout() { return std::static_pointer_cast<UIAnchorLayout>(shared_from_this()); }
+
+protected:
+    void internalUpdate();
 
 private:
     void updateWidget(const UIWidgetPtr& widget, UIAnchorGroup& anchorGroup);

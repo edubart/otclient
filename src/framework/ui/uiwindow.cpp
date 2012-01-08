@@ -83,7 +83,8 @@ void UIWindow::onStyleApply(const std::string& styleName, const OTMLNodePtr& sty
 void UIWindow::onGeometryChange(const Rect& oldRect, const Rect& newRect)
 {
     bindRectToParent();
-    UIWidget::onGeometryChange(oldRect, newRect);
+    if(newRect == getRect())
+        UIWidget::onGeometryChange(oldRect, newRect);
 }
 
 bool UIWindow::onMousePress(const Point& mousePos, Fw::MouseButton button)

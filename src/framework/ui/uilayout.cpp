@@ -21,3 +21,26 @@
  */
 
 #include "uilayout.h"
+
+#include <framework/core/eventdispatcher.h>
+
+void UILayout::update()
+{
+    assert(!m_updating);
+    m_updating = true;
+    internalUpdate();
+    m_updating = false;
+}
+
+void UILayout::updateLater()
+{
+    if(m_updateScheduled)
+        return;
+
+    auto self = asUILayout();
+    g_dispatcher.addEvent([self] {
+        self->m_updateScheduled = false;
+        self->update();
+    });
+    m_updateScheduled = true;
+}
