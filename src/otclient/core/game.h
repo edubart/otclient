@@ -45,7 +45,8 @@ public:
     void processLogout();
     void processDeath();
 
-    void processTextMessage(int type, const std::string& message);
+    void processTextMessage(const std::string& type, const std::string& message);
+    void processCreatureSpeak(const std::string& name, int level, const std::string& type, const std::string& message, int channelId, const Position& creaturePos);
     void processInventoryChange(int slot, const ItemPtr& item);
     void processAttackCancel();
 

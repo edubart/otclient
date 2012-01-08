@@ -24,9 +24,11 @@
 #include "localplayer.h"
 #include "map.h"
 #include "tile.h"
-#include <otclient/net/protocolgame.h>
 #include <framework/core/eventdispatcher.h>
 #include <framework/ui/uimanager.h>
+#include <otclient/luascript/luavaluecasts.h>
+#include <otclient/core/statictext.h>
+#include <otclient/net/protocolgame.h>
 
 Game g_game;
 
@@ -101,7 +103,18 @@ void Game::processDeath()
     g_dispatcher.scheduleEvent(std::bind(&Game::forceLogout, &g_game), 5 * 1000);
 }
 
-void Game::processTextMessage(int type, const std::string& message)
+void Game::processCreatureSpeak(const std::string& name, int level, const std::string& type, const std::string& message, int channelId, const Position& creaturePos)
+{
+    if(creaturePos.isValid()) {
+        StaticTextPtr staticText = StaticTextPtr(new StaticText);
+        staticText->addMessage(name, type, message);
+        g_map.addThing(staticText, creaturePos);
+    }
+
+    g_lua.callGlobalField("Game", "onCreatureSpeak", name, level, type, message, channelId, creaturePos);
+}
+
+void Game::processTextMessage(const std::string& type, const std::string& message)
 {
     g_lua.callGlobalField("Game","onTextMessage", type, message);
 }

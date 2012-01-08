@@ -40,16 +40,16 @@ void StaticText::draw(const Point& p, const Rect& visibleRect)
     }
 }
 
-bool StaticText::addMessage(const std::string& name, int type, const std::string& message)
+bool StaticText::addMessage(const std::string& name, const std::string& type, const std::string& message)
 {
     // First message
     if(m_messages.size() == 0) {
         m_name = name;
-        m_type = type;
+        m_messageType = type;
     }
     else {
         // we can only add another message if it follows these conditions
-        if(m_name != name || m_type != type)
+        if(m_name != name || m_messageType != type)
             return false;
     }
 
@@ -83,31 +83,31 @@ void StaticText::compose()
 {
     m_text.clear();
 
-    if(m_type == Otc::SpeakSay) {
+    if(m_messageType == "say") {
         m_text += m_name;
         m_text += " says:\n";
         m_color = Color(239, 239, 0);
     }
-    else if(m_type == Otc::SpeakWhisper) {
+    else if(m_messageType == "whisper") {
         m_text += m_name;
         m_text += " whispers:\n";
         m_color = Color(239, 239, 0);
     }
-    else if(m_type == Otc::SpeakYell) {
+    else if(m_messageType == "yell") {
         m_text += m_name;
         m_text += " yells:\n";
         m_color = Color(239, 239, 0);
     }
-    else if(m_type == Otc::SpeakMonsterSay || m_type == Otc::SpeakMonsterYell) {
+    else if(m_messageType == "monsterSay" || m_messageType == "monsterYell") {
         m_color = Color(254, 101, 0);
     }
-    else if(m_type == Otc::SpeakPrivateNpcToPlayer) {
+    else if(m_messageType == "npcToPlayer") {
         m_text += m_name;
         m_text += " says:\n";
         m_color = Color(95, 247, 247);
     }
     else {
-        logWarning("unknown speak type: ", m_type);
+        logWarning("unknown speak type: ", m_messageType);
     }
 
     // Todo: add break lines

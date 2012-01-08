@@ -38,10 +38,10 @@ public:
     void draw(const Point& p, const Rect& visibleRect);
 
     std::string getName() { return m_name; }
-    int getMessageType() { return m_type; }
+    std::string getMessageType() { return m_messageType; }
     std::string getFirstMessage() { return m_messages[0]; }
 
-    bool addMessage(const std::string& name, int type, const std::string& message);
+    bool addMessage(const std::string& name, const std::string& type, const std::string& message);
     void removeMessage();
 
     StaticTextPtr asStaticText() { return std::static_pointer_cast<StaticText>(shared_from_this()); }
@@ -53,7 +53,7 @@ private:
     Size m_textSize;
     std::vector<std::string> m_messages;
     std::string m_name, m_text;
-    int m_type;
+    std::string m_messageType;
     Color m_color;
 };
 

@@ -56,10 +56,6 @@ function Game.onConnectionError(message)
   errorBox.onOk = CharacterList.show
 end
 
-function Game.onDeath()
-  print('dead')
-end
-
 local function onApplicationClose()
   print('close app')
   if Game.isOnline() then

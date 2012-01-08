@@ -25,6 +25,7 @@
 
 #include <otclient/global.h>
 #include <framework/net/declarations.h>
+#include "protocolcodes.h"
 
 class ProtocolLogin;
 class ProtocolGame;

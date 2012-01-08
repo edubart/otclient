@@ -62,13 +62,16 @@ bool luavalue_cast(int index, Outfit& outfit)
 
 void push_luavalue(const Position& pos)
 {
-    g_lua.newTable();
-    g_lua.pushInteger(pos.x);
-    g_lua.setField("x");
-    g_lua.pushInteger(pos.y);
-    g_lua.setField("y");
-    g_lua.pushInteger(pos.z);
-    g_lua.setField("z");
+    if(pos.isValid()) {
+        g_lua.newTable();
+        g_lua.pushInteger(pos.x);
+        g_lua.setField("x");
+        g_lua.pushInteger(pos.y);
+        g_lua.setField("y");
+        g_lua.pushInteger(pos.z);
+        g_lua.setField("z");
+    } else
+        g_lua.pushNil();
 }
 
 bool luavalue_cast(int index, Position& pos)

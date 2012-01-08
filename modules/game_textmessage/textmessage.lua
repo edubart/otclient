@@ -4,8 +4,6 @@ TextMessage = {}
 importStyle 'textmessage.otui'
 
 -- private variables
-local bottomLabelWidget, centerLabelWidget
-
 local MessageTypes = {
   warning = { color = '#F55E5E', showOnConsole = true, showOnWindow = true, windowLocation = 'CenterLabel' },
   eventAdvance = { color = '#FFFFFF', showOnConsole = true, showOnWindow = true, windowLocation = 'CenterLabel' },
@@ -18,37 +16,13 @@ local MessageTypes = {
   consoleRed = { color = '#F55E5E', showOnConsole = true, showOnWindow = false }
 }
 
-local MessageTypesMap = {
-  [12] = MessageTypes.consoleOrange,
-  [13] = MessageTypes.consoleOrange,
-  [14] = MessageTypes.warning,
-  [15] = MessageTypes.eventAdvance,
-  [15] = MessageTypes.eventDefault,
-  [16] = MessageTypes.statusDefault,
-  [17] = MessageTypes.infoDesc,
-  [18] = MessageTypes.statusSmall,
-  [19] = MessageTypes.consoleBlue,
-  [20] = MessageTypes.consoleRed,
---[[
-  [18] = MessageTypes.consoleRed,
-  [19] = MessageTypes.consoleOrange,
-  [20] = MessageTypes.consoleOrange,
-  [21] = MessageTypes.warning,
-  [22] = MessageTypes.eventAdvance,
-  [23] = MessageTypes.eventDefault,
-  [24] = MessageTypes.statusDefault,
-  [25] = MessageTypes.infoDesc,
-  [26] = MessageTypes.statusSmall,
-  [27] = MessageTypes.consoleBlue
-]]--
-}
-
--- private variables
+local bottomLabelWidget
+local centerLabelWidget
 local bottomLabelHideEvent
 local centerLabelHideEvent
 
 -- private functions
-local function displayMessage(msgtype, msg)
+local function displayMessage(msgtype, msg, time)
   if msgtype.showOnConsole then
     -- TODO
   end
@@ -66,7 +40,11 @@ local function displayMessage(msgtype, msg)
     label:setStyle(msgtype.windowLocation)
     label:setForegroundColor(msgtype.color)
 
-    time = #msg * 75
+    if not time then
+      time = math.max(#msg * 75, 3000)
+    else
+      time = time * 1000
+    end
     removeEvent(label.hideEvent)
     label.hideEvent = scheduleEvent(function() label:setVisible(false) end, time)
   end
@@ -78,25 +56,33 @@ function TextMessage.create()
   centerLabelWidget = createWidget('UILabel', Game.gameMapPanel)
 end
 
-function TextMessage.displayWarning(msg)
-  TextMessage.display(MessageTypes.warning, msg)
+function TextMessage.displayStatus(msg, time)
+  displayMessage(MessageTypes.warning, msg)
 end
 
-function TextMessage.display(msgtypeid, msg)
-  local msgtype = MessageTypesMap[msgtypeid]
+function TextMessage.displayEventAdvance(msg, time)
+  displayMessage(MessageTypes.eventAdvance, msg, time)
+end
+
+function TextMessage.display(msgtypedesc, msg)
+  local msgtype = MessageTypes[msgtypedesc]
   if msgtype == nil then
-    error('unknown text msg type ' .. msgtypeid)
+    error('unknown text msg type ' .. msgtype)
     return
   end
   displayMessage(msgtype, msg)
 end
 
 -- hooked events
-function TextMessage.onTextMessage(msgtypeid, msg)
-  TextMessage.display(msgtypeid, msg)
+local function onGameDeath()
+  TextMessage.displayEventAdvance('You are dead.', 10)
 end
 
+local function onGameTextMessage(msgtype, msg)
+  TextMessage.display(msgtype, msg)
+end
 
 connect(Game, { onLogin = TextMessage.create,
                 onLogout = TextMessage.destroy,
-                onTextMessage = TextMessage.onTextMessage })
+                onDeath = onGameDeath,
+                onTextMessage = onGameTextMessage })

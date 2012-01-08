@@ -32,8 +32,6 @@
 #include <otclient/core/tile.h>
 #include <otclient/luascript/luavaluecasts.h>
 #include <framework/core/eventdispatcher.h>
-#include <framework/graphics/particlemanager.h>
-#include <otclient/core/statictext.h>
 
 void ProtocolGame::parseMessage(InputMessage& msg)
 {
@@ -42,216 +40,216 @@ void ProtocolGame::parseMessage(InputMessage& msg)
             uint8 opt = msg.getU8();
 
             switch(opt) {
-            case Otc::GameServerInitGame:
+            case Proto::GameServerInitGame:
                 parsePlayerLogin(msg);
                 break;
             case 0x0B:
                 parseGMActions(msg);
                 break;
-            case Otc::GameServerLoginError:
+            case Proto::GameServerLoginError:
                 parseLoginError(msg);
                 break;
-            case Otc::GameServerLoginAdvice:
+            case Proto::GameServerLoginAdvice:
                 parseFYIMessage(msg);
                 break;
-            case Otc::GameServerLoginWait:
+            case Proto::GameServerLoginWait:
                 parseWaitList(msg);
                 break;
-            case Otc::GameServerPing:
+            case Proto::GameServerPing:
                 parsePing(msg);
                 break;
-            //case Otc::GameServerChallange:
-            case Otc::GameServerDead:
+            //case Proto::GameServerChallange:
+            case Proto::GameServerDead:
                 parseDeath(msg);
                 break;
-            case Otc::GameServerFullMap:
+            case Proto::GameServerFullMap:
                 parseMapDescription(msg);
                 break;
-            case Otc::GameServerMapTopRow:
+            case Proto::GameServerMapTopRow:
                 parseMoveNorth(msg);
                 break;
-            case Otc::GameServerMapRightRow:
+            case Proto::GameServerMapRightRow:
                 parseMoveEast(msg);
                 break;
-            case Otc::GameServerMapBottomRow:
+            case Proto::GameServerMapBottomRow:
                 parseMoveSouth(msg);
                 break;
-            case Otc::GameServerMapLeftRow:
+            case Proto::GameServerMapLeftRow:
                 parseMoveWest(msg);
                 break;
-            case Otc::GameServerTileData:
+            case Proto::GameServerTileData:
                 parseUpdateTile(msg);
                 break;
-            case Otc::GameServerCreateOnMap:
+            case Proto::GameServerCreateOnMap:
                 parseTileAddThing(msg);
                 break;
-            case Otc::GameServerChangeOnMap:
+            case Proto::GameServerChangeOnMap:
                 parseTileTransformThing(msg);
                 break;
-            case Otc::GameServerDeleteOnMap:
+            case Proto::GameServerDeleteOnMap:
                 parseTileRemoveThing(msg);
                 break;
-            case Otc::GameServerMoveCreature:
+            case Proto::GameServerMoveCreature:
                 parseCreatureMove(msg);
                 break;
-            case Otc::GameServerOpenContainer:
+            case Proto::GameServerOpenContainer:
                 parseOpenContainer(msg);
                 break;
-            case Otc::GameServerCloseContainer:
+            case Proto::GameServerCloseContainer:
                 parseCloseContainer(msg);
                 break;
-            case Otc::GameServerCreateContainer:
+            case Proto::GameServerCreateContainer:
                 parseContainerAddItem(msg);
                 break;
-            case Otc::GameServerChangeInContainer:
+            case Proto::GameServerChangeInContainer:
                 parseContainerUpdateItem(msg);
                 break;
-            case Otc::GameServerDeleteInContainer:
+            case Proto::GameServerDeleteInContainer:
                 parseContainerRemoveItem(msg);
                 break;
-            case Otc::GameServerSetInventory:
+            case Proto::GameServerSetInventory:
                 parseAddInventoryItem(msg);
                 break;
-            case Otc::GameServerDeleteInventory:
+            case Proto::GameServerDeleteInventory:
                 parseRemoveInventoryItem(msg);
                 break;
-            case Otc::GameServerNpcOffer:
+            case Proto::GameServerNpcOffer:
                 parseOpenShopWindow(msg);
                 break;
-            case Otc::GameServerPlayerGoods:
+            case Proto::GameServerPlayerGoods:
                 parsePlayerCash(msg);
                 break;
-            case Otc::GameServerCloseNpcTrade:
+            case Proto::GameServerCloseNpcTrade:
                 parseCloseShopWindow(msg);
                 break;
-            case Otc::GameServerOwnOffer:
+            case Proto::GameServerOwnOffer:
                 parseSafeTradeRequest(msg);
                 break;
-            case Otc::GameServerCounterOffer:
+            case Proto::GameServerCounterOffer:
                 parseSafeTradeRequest(msg);
                 break;
-            case Otc::GameServerCloseTrade:
+            case Proto::GameServerCloseTrade:
                 parseSafeTradeClose(msg);
                 break;
-            case Otc::GameServerAmbient:
+            case Proto::GameServerAmbient:
                 parseWorldLight(msg);
                 break;
-            case Otc::GameServerGraphicalEffect:
+            case Proto::GameServerGraphicalEffect:
                 parseMagicEffect(msg);
                 break;
-            case Otc::GameServerTextEffect:
+            case Proto::GameServerTextEffect:
                 parseAnimatedText(msg);
                 break;
-            case Otc::GameServerMissleEffect:
+            case Proto::GameServerMissleEffect:
                 parseDistanceMissile(msg);
                 break;
-            case Otc::GameServerMarkCreature:
+            case Proto::GameServerMarkCreature:
                 parseCreatureSquare(msg);
                 break;
-            //case Otc::GameServerTrappers
-            case Otc::GameServerCreatureHealth:
+            //case Proto::GameServerTrappers
+            case Proto::GameServerCreatureHealth:
                 parseCreatureHealth(msg);
                 break;
-            case Otc::GameServerCreatureLight:
+            case Proto::GameServerCreatureLight:
                 parseCreatureLight(msg);
                 break;
-            case Otc::GameServerCreatureOutfit:
+            case Proto::GameServerCreatureOutfit:
                 parseCreatureOutfit(msg);
                 break;
-            case Otc::GameServerCreatureSpeed:
+            case Proto::GameServerCreatureSpeed:
                 parseCreatureSpeed(msg);
                 break;
-            case Otc::GameServerCreatureSkull:
+            case Proto::GameServerCreatureSkull:
                 parseCreatureSkulls(msg);
                 break;
-            case Otc::GameServerCreatureParty:
+            case Proto::GameServerCreatureParty:
                 parseCreatureShields(msg);
                 break;
-            // case Otc::GameServerCreatureUnpass
-            case Otc::GameServerEditText:
+            // case Proto::GameServerCreatureUnpass
+            case Proto::GameServerEditText:
                 parseItemTextWindow(msg);
                 break;
-            case Otc::GameServerEditList:
+            case Proto::GameServerEditList:
                 parseHouseTextWindow(msg);
                 break;
-            case Otc::GameServerPlayerData:
+            case Proto::GameServerPlayerData:
                 parsePlayerStats(msg);
                 break;
-            case Otc::GameServerPlayerSkills:
+            case Proto::GameServerPlayerSkills:
                 parsePlayerSkills(msg);
                 break;
-            case Otc::GameServerPlayerState:
+            case Proto::GameServerPlayerState:
                 parsePlayerIcons(msg);
                 break;
-            case Otc::GameServerClearTarget:
+            case Proto::GameServerClearTarget:
                 parsePlayerCancelAttack(msg);
                 break;
-            //case Otc::GameServerSpellDelay:
-            //case Otc::GameServerSpellGroupDelay:
-            case Otc::GameServerTalk:
+            //case Proto::GameServerSpellDelay:
+            //case Proto::GameServerSpellGroupDelay:
+            case Proto::GameServerTalk:
                 parseCreatureSpeak(msg);
                 break;
-            case Otc::GameServerChannels:
+            case Proto::GameServerChannels:
                 parseChannelList(msg);
                 break;
-            case Otc::GameServerOpenChannel:
+            case Proto::GameServerOpenChannel:
                 parseOpenChannel(msg);
                 break;
-            case Otc::GameServerPrivateChannel:
+            case Proto::GameServerPrivateChannel:
                 parseOpenPrivatePlayerChat(msg);
                 break;
-            case Otc::GameServerRuleViolation:
-            case Otc::GameServerRuleViolation1:
-            case Otc::GameServerRuleViolation2:
-            case Otc::GameServerRuleViolation3:
+            case Proto::GameServerRuleViolation:
+            case Proto::GameServerRuleViolation1:
+            case Proto::GameServerRuleViolation2:
+            case Proto::GameServerRuleViolation3:
                 parseOpenRuleViolation(msg);
                 break;
-            case Otc::GameServerOpenOwnChannel:
+            case Proto::GameServerOpenOwnChannel:
                 parseCreatePrivateChannel(msg);
                 break;
-            case Otc::GameServerCloseChannel:
+            case Proto::GameServerCloseChannel:
                 parseClosePrivateChannel(msg);
                 break;
-            case Otc::GameServerMessage:
+            case Proto::GameServerMessage:
                 parseTextMessage(msg);
                 break;
-            case Otc::GameServerSnapBack:
+            case Proto::GameServerSnapBack:
                 parseCancelWalk(msg);
                 break;
-            //case Otc::GameServerWait:
-            case Otc::GameServerTopFloor:
+            //case Proto::GameServerWait:
+            case Proto::GameServerTopFloor:
                 parseFloorChangeUp(msg);
                 break;
-            case Otc::GameServerBottomFloor:
+            case Proto::GameServerBottomFloor:
                 parseFloorChangeDown(msg);
                 break;
-            case Otc::GameServerOutfit:
+            case Proto::GameServerOutfit:
                 parseOutfitWindow(msg);
                 break;
-            case Otc::GameServerBuddyData:
+            case Proto::GameServerBuddyData:
                 parseVipState(msg);
                 break;
-            case Otc::GameServerBuddyLogin:
+            case Proto::GameServerBuddyLogin:
                 parseVipLogin(msg);
                 break;
-            case Otc::GameServerBuddyLogout:
+            case Proto::GameServerBuddyLogout:
                 parseVipLogout(msg);
                 break;
-            case Otc::GameServerTutorialHint:
+            case Proto::GameServerTutorialHint:
                 parseShowTutorial(msg);
                 break;
-            case Otc::GameServerAutomapFlag:
+            case Proto::GameServerAutomapFlag:
                 parseAddMarker(msg);
                 break;
-            case Otc::GameServerQuestLog:
+            case Proto::GameServerQuestLog:
                 parseQuestList(msg);
                 break;
-            case Otc::GameServerQuestLine:
+            case Proto::GameServerQuestLine:
                 parseQuestPartList(msg);
                 break;
-            //case Otc::GameServerChannelEvent:
-            //case Otc::GameServerObjectInfo:
-            //case Otc::GameServerPlayerInventory:
+            //case Proto::GameServerChannelEvent:
+            //case Proto::GameServerObjectInfo:
+            //case Proto::GameServerPlayerInventory:
             default:
                 Fw::throwException("unknown opt byte ", (int)opt);
                 break;
@@ -746,30 +744,30 @@ void ProtocolGame::parseCreatureSpeak(InputMessage& msg)
     Position creaturePos;
 
     switch(type) {
-        case Otc::SpeakSay:
-        case Otc::SpeakWhisper:
-        case Otc::SpeakYell:
-        case Otc::SpeakMonsterSay:
-        case Otc::SpeakMonsterYell:
-        case Otc::SpeakPrivateNpcToPlayer:
+        case Proto::SpeakSay:
+        case Proto::SpeakWhisper:
+        case Proto::SpeakYell:
+        case Proto::SpeakMonsterSay:
+        case Proto::SpeakMonsterYell:
+        case Proto::SpeakPrivateNpcToPlayer:
             creaturePos = parsePosition(msg);
             break;
-        case Otc::SpeakChannelYellow:
-        case Otc::SpeakChannelWhite:
-        case Otc::SpeakChannelRed:
+        case Proto::SpeakChannelYellow:
+        case Proto::SpeakChannelWhite:
+        case Proto::SpeakChannelRed:
 #if PROTOCOL==860
-        case Otc::SpeakChannelRed2:
+        case Proto::SpeakUnk2:
 #endif
-        case Otc::SpeakChannelOrange:
+        case Proto::SpeakChannelOrange:
             channelId = msg.getU16();
             break;
-        case Otc::SpeakPrivate:
-        case Otc::SpeakPrivatePlayerToNpc:
-        case Otc::SpeakBroadcast:
-        case Otc::SpeakPrivateRed:
+        case Proto::SpeakPrivate:
+        case Proto::SpeakPrivatePlayerToNpc:
+        case Proto::SpeakBroadcast:
+        case Proto::SpeakPrivateRed:
             break;
 #if PROTOCOL==860
-        case Otc::SpeakReportChannel:
+        case Proto::SpeakReportChannel:
             msg.getU32();
             break;
 #endif
@@ -779,16 +777,11 @@ void ProtocolGame::parseCreatureSpeak(InputMessage& msg)
     }
 
     std::string message = msg.getString();
+    std::string typeDesc = Proto::translateSpeakType(type);
 
     g_dispatcher.addEvent([=] {
-        g_lua.callGlobalField("Game", "onCreatureSpeak", name, level, type, message, channelId, creaturePos);
+        g_game.processCreatureSpeak(name, level, typeDesc, message, channelId, creaturePos);
     });
-
-    if(creaturePos.isValid()) {
-        StaticTextPtr staticText = StaticTextPtr(new StaticText);
-        staticText->addMessage(name, type, message);
-        g_map.addThing(staticText, creaturePos);
-    }
 }
 
 void ProtocolGame::parseChannelList(InputMessage& msg)
@@ -840,9 +833,11 @@ void ProtocolGame::parseClosePrivateChannel(InputMessage& msg)
 void ProtocolGame::parseTextMessage(InputMessage& msg)
 {
     uint8 type = msg.getU8();
+
+    std::string typeDesc = Proto::translateMessageType(type);
     std::string message = msg.getString();
 
-    g_dispatcher.addEvent(std::bind(&Game::processTextMessage, &g_game, type, message));
+    g_dispatcher.addEvent(std::bind(&Game::processTextMessage, &g_game, typeDesc, message));
 }
 
 void ProtocolGame::parseCancelWalk(InputMessage& msg)
@@ -1091,11 +1086,11 @@ ThingPtr ProtocolGame::internalGetThing(InputMessage& msg)
 
             if(id == (uint32)m_localPlayer->getId())
                 creature = m_localPlayer->asCreature();
-            else if(id >= Otc::PlayerStartId && id < Otc::PlayerEndId)
+            else if(id >= Proto::PlayerStartId && id < Proto::PlayerEndId)
                 creature = PlayerPtr(new Player)->asCreature();
-            else if(id >= Otc::MonsterStartId && id < Otc::MonsterEndId)
+            else if(id >= Proto::MonsterStartId && id < Proto::MonsterEndId)
                 creature = CreaturePtr(new Creature);
-            else if(id >= Otc::NpcStartId && id < Otc::NpcEndId)
+            else if(id >= Proto::NpcStartId && id < Proto::NpcEndId)
                 creature = CreaturePtr(new Creature);
             else
                 logFatal("creature id is invalid");

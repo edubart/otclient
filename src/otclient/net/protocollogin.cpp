@@ -57,16 +57,16 @@ void ProtocolLogin::onRecv(InputMessage& inputMessage)
         while(!inputMessage.eof()) {
             uint8 opt = inputMessage.getU8();
             switch(opt) {
-            case Otc::LoginServerError:
+            case Proto::LoginServerError:
                 parseError(inputMessage);
                 break;
-            case Otc::LoginServerMotd:
+            case Proto::LoginServerMotd:
                 parseMOTD(inputMessage);
                 break;
-            case Otc::LoginServerUpdateNeeded:
+            case Proto::LoginServerUpdateNeeded:
                 callLuaField("onError", "Client needs update.");
                 break;
-            case Otc::LoginServerCharacterList:
+            case Proto::LoginServerCharacterList:
                 parseCharacterList(inputMessage);
                 break;
             default:
@@ -89,13 +89,13 @@ void ProtocolLogin::sendLoginPacket()
 {
     OutputMessage oMsg;
 
-    oMsg.addU8(Otc::ClientEnterAccount);
-    oMsg.addU16(Otc::OsLinux);
-    oMsg.addU16(Otc::ClientVersion);
+    oMsg.addU8(Proto::ClientEnterAccount);
+    oMsg.addU16(Proto::OsLinux);
+    oMsg.addU16(Proto::ClientVersion);
 
     oMsg.addU32(g_thingsType.getSignature()); // data signature
     oMsg.addU32(g_sprites.getSignature()); // sprite signature
-    oMsg.addU32(Otc::PicSignature); // pic signature
+    oMsg.addU32(Proto::PicSignature); // pic signature
 
     oMsg.addU8(0); // first RSA byte must be 0
 
@@ -111,7 +111,7 @@ void ProtocolLogin::sendLoginPacket()
 
     // complete the 128 bytes for rsa encryption with zeros
     oMsg.addPaddingBytes(128 - (21 + m_accountName.length() + m_accountPassword.length()));
-    Rsa::encrypt((char*)oMsg.getBuffer() + InputMessage::DATA_POS + oMsg.getMessageSize() - 128, 128, Otc::OtservPublicRSA);
+    Rsa::encrypt((char*)oMsg.getBuffer() + InputMessage::DATA_POS + oMsg.getMessageSize() - 128, 128, Proto::RSA);
 
     send(oMsg);
     enableXteaEncryption();

@@ -100,8 +100,7 @@ bool LocalPlayer::canWalk(Otc::Direction direction)
     Position newPos = m_position + Position::getPosFromDirection(direction);
     TilePtr tile = g_map.getTile(newPos);
     if(!tile->isWalkable()) {
-        // TODO: create enum for 17, white message on screen bottom and console.
-        g_game.processTextMessage(17, "Sorry, not possible.");
+        g_game.processTextMessage("statusSmall", "Sorry, not possible.");
         return false;
     }
 
