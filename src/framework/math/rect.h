@@ -257,7 +257,7 @@ public:
         return tmp;
     }
 
-    void bound(const TRect<T> &r, bool resize = false) {
+    void bound(const TRect<T> &r) {
         if(isNull() || r.isNull())
             return;
 

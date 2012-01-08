@@ -21,6 +21,7 @@
 [bart] port to MacOs and iphone
 
 == UI
+[bart] fix massive hotkeys when holding down a key
 [bart] tab widgets
 [bart] add anchors API
 [bart] scrollbar
@@ -45,6 +46,8 @@
 [bart] a real working border and background property in otui
 [bart] reapply anchor styles when adding new childs
 [bart] ui text selection
+
+break window anchors when moving
 
 == Client modules
 [bart] modules managment interface

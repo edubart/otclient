@@ -19,7 +19,7 @@ OptionCheckBox < CheckBox
 MainWindow
   id: optionsWindow
   title: Options
-  size: 286 160
+  size: 286 280
   @onEnter: Options.hide()
   @onEscape: Options.hide()
 
@@ -41,8 +41,27 @@ MainWindow
     text: Classic control
 
   OptionCheckBox
-    id: showLevelInConsole
-    text: Show players level in console
+    id: showInfoMessagesInConsole
+    text: Show info messages in console
+
+  OptionCheckBox
+    id: showEventMessagesInConsole
+    text: Show event messages in console
+
+  OptionCheckBox
+    id: showStatusMessagesInConsole
+    text: Show status messages in console
+
+  OptionCheckBox
+    id: showTimestampsInConsole
+    text: Show timestamps in console
+
+  OptionCheckBox
+    id: showLevelsInConsole
+    text: Show levels in console
+  //OptionCheckBox
+  //  id: showPrivateMessagesInConsole
+  //  text: Show private messages in console
 
   Button
     text: Ok

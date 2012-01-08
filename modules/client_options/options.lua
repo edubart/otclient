@@ -9,7 +9,13 @@ function Options.init()
                            showfps = true,
                            fullscreen = false,
                            classicControl = false,
-                           showLevelInConsole = false}
+                           showStatusMessagesInConsole = true,
+                           showEventMessagesInConsole = true,
+                           showInfoMessagesInConsole = true,
+                           showTimestampsInConsole = true,
+                           showLevelsInConsole = true,
+                           showPrivateMessagesInConsole = true,
+                           }
 
   for k,v in pairs(booleanOptions) do
     Settings.setDefault(k, v)

@@ -5,7 +5,7 @@ local SpeakTypes = {
   say = { color = '#FFFF00' },
   whisper = { color = '#FFFF00' },
   yell = { color = '#FFFF00' },
-  monsterSay = { color = '#FE6500' },
+  monsterSay = { color = '#FE6500', hideInConsole = false},
   npcToPlayer = { color = '#5FF7F7' },
   channelYellow = { color = '#FFFF00' },
   channelWhite = { color = '#FFFFFF' },
@@ -34,18 +34,22 @@ end
 function Console.addText(text, color)
   color = color or 'white'
 
+  if Options.showTimestampsInConsole then
+    text = os.date('%H:%M') .. ' ' .. text
+  end
+
   local label = createWidget('ConsoleLabel', consoleBuffer)
   label:setText(text)
   label:setForegroundColor(color)
 end
 
 -- hooked events
-local function onCreatureSpeak(name, level, speaktypedesc, message)
+local function onCreatureSpeak(name, level, speaktypedesc, message, channelId, creaturePos)
   speaktype = SpeakTypes[speaktypedesc]
-  if speaktype == nil then return end
+  if speaktype == SpeakTypes.monsterSay then return end
 
   if name then
-    if Options.showLevelInConsole and level > 0 then
+    if Options.showLevelsInConsole and level > 0 then
       message = name .. ' [' .. level .. ']: ' .. message
     else
       message = name .. ': ' .. message

@@ -5,12 +5,12 @@ importStyle 'textmessage.otui'
 
 -- private variables
 local MessageTypes = {
-  warning = { color = '#F55E5E', showOnConsole = true, windowLocation = 'center' },
-  eventAdvance = { color = '#FFFFFF', showOnConsole = true, windowLocation = 'center' },
-  eventDefault = { color = '#FFFFFF', showOnConsole = true, windowLocation = 'bottom' },
-  eventOrange = { color = '#FE6500', showOnConsole = true, windowLocation = 'bottom' },
-  statusDefault = { color = '#FFFFFF', showOnConsole = true, windowLocation = 'bottom' },
-  infoDescription = { color = '#00EB00', showOnConsole = true, windowLocation = 'center' },
+  warning = { color = '#F55E5E', showOnConsole = true, windowLocation = 'center', consoleOption = 'showInfoMessagesInConsole' },
+  eventAdvance = { color = '#FFFFFF', showOnConsole = true, windowLocation = 'center', consoleOption = 'showEventMessagesInConsole' },
+  eventDefault = { color = '#FFFFFF', showOnConsole = true, windowLocation = 'bottom', consoleOption = 'showEventMessagesInConsole' },
+  eventOrange = { color = '#FE6500', showOnConsole = true, windowLocation = 'bottom', consoleOption = 'showEventMessagesInConsole' },
+  statusDefault = { color = '#FFFFFF', showOnConsole = true, windowLocation = 'bottom', consoleOption = 'showStatusMessagesInConsole' },
+  infoDescription = { color = '#00EB00', showOnConsole = true, windowLocation = 'center', consoleOption = 'showInfoMessagesInConsole' },
   statusSmall = { color = '#FFFFFF', showOnConsole = false, windowLocation = 'bottom' },
   consoleOrange = { color = '#FE6500', showOnConsole = true },
   consoleBlue =  { color = '#9F9DFD', showOnConsole = true },
@@ -27,7 +27,9 @@ local function displayMessage(msgtype, msg, time)
   if not Game.isOnline() then return end
 
   if msgtype.showOnConsole then
-    -- TODO
+    if msgtype.consoleOption == nil or Options[msgtype.consoleOption] then
+      Console.addText(msg, msgtype.color)
+    end
   end
 
   if msgtype.windowLocation  then
