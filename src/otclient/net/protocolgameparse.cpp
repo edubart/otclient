@@ -755,9 +755,7 @@ void ProtocolGame::parseCreatureSpeak(InputMessage& msg)
         case Proto::SpeakChannelYellow:
         case Proto::SpeakChannelWhite:
         case Proto::SpeakChannelRed:
-#if PROTOCOL==860
-        case Proto::SpeakUnk2:
-#endif
+        case Proto::SpeakChannelRed2:
         case Proto::SpeakChannelOrange:
             channelId = msg.getU16();
             break;
@@ -766,11 +764,9 @@ void ProtocolGame::parseCreatureSpeak(InputMessage& msg)
         case Proto::SpeakBroadcast:
         case Proto::SpeakPrivateRed:
             break;
-#if PROTOCOL==860
-        case Proto::SpeakReportChannel:
+        case Proto::SpeakRVRChannel:
             msg.getU32();
             break;
-#endif
         default:
             logTraceError("unknown speak type ", type);
             break;
@@ -834,7 +830,7 @@ void ProtocolGame::parseTextMessage(InputMessage& msg)
 {
     uint8 type = msg.getU8();
 
-    std::string typeDesc = Proto::translateMessageType(type);
+    std::string typeDesc = Proto::translateTextMessageType(type);
     std::string message = msg.getString();
 
     g_dispatcher.addEvent(std::bind(&Game::processTextMessage, &g_game, typeDesc, message));

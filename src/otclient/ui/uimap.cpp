@@ -96,7 +96,6 @@ bool UIMap::onMousePress(const Point& mousePos, Fw::MouseButton button)
         EffectPtr effect = EffectPtr(new Effect);
         static int id = 0;
         effect->setId(id++);
-        dump << id;
         g_map.addThing(effect, tilePos);
     }
     else if(button == Fw::MouseRightButton) {

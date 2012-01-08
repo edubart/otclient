@@ -228,7 +228,13 @@ namespace Proto {
         SpeakPrivateRed,
         SpeakChannelOrange,
         SpeakMonsterSay,
-        SpeakMonsterYell
+        SpeakMonsterYell,
+
+        // removed
+        SpeakRVRChannel = 255,
+        SpeakRVRAnswer,
+        SpeakRVRContinue,
+        SpeakChannelRed2
 #elif PROTOCOL==860
         SpeakSay = 1,
         SpeakWhisper,
@@ -238,17 +244,15 @@ namespace Proto {
         SpeakPrivate,
         SpeakChannelYellow,
         SpeakChannelWhite,
-        SpeakReportChannel,
-        SpeakReportAnswer,
-        SpeakReportContinue,
+        SpeakRVRChannel,
+        SpeakRVRAnswer,
+        SpeakRVRContinue,
         SpeakBroadcast,
         SpeakChannelRed,
         SpeakPrivateRed,
         SpeakChannelOrange,
-        SpeakUnk1,
-        SpeakUnk2,
-        SpeakUnk3,
-        SpeakMonsterSay,
+        SpeakChannelRed2 = 17,
+        SpeakMonsterSay = 19,
         SpeakMonsterYell
 #endif
     };
@@ -256,18 +260,18 @@ namespace Proto {
     enum MessageTypes {
 #if PROTOCOL==860
         MessageConsoleRed = 18,
-        MessageConsoleOrange1,
-        MessageConsoleOrange2,
+        MessageEventOrange,
+        MessageConsoleOrange,
         MessageWarning,
         MessageEventAdvance,
         MessageEventDefault,
         MessageStatusDefault,
-        MessageInfoDescription,
+        MessageInfoDescription ,
         MessageStatusSmall,
         MessageConsoleBlue
 #elif PROTOCOL==862
-        MessageConsoleOrange1 = 12,
-        MessageConsoleOrange2,
+        MessageEventOrange = 12,
+        MessageConsoleOrange,
         MessageWarning,
         MessageEventAdvance,
         MessageEventDefault,
@@ -302,12 +306,12 @@ namespace Proto {
                 return "monsterYell";
             case Proto::SpeakPrivateNpcToPlayer:
                 return "npcToPlayer";
-                break;
             case Proto::SpeakChannelYellow:
                 return "channelYellow";
             case Proto::SpeakChannelWhite:
                 return "channelWhite";
             case Proto::SpeakChannelRed:
+            case Proto::SpeakChannelRed2:
                 return "channelRed";
             case Proto::SpeakChannelOrange:
                 return "channelOrange";
@@ -320,18 +324,17 @@ namespace Proto {
             case Proto::SpeakPrivateRed:
                 return "privateRed";
             default:
+                logError("unknown protocol speak type ", type);
                 return "unknown";
         }
     }
 
-    inline std::string translateMessageType(int type) {
+    inline std::string translateTextMessageType(int type) {
         switch(type) {
-            case Proto::MessageConsoleRed:
-                return "consoleRed";
-            case Proto::MessageConsoleOrange1:
+            case Proto::MessageConsoleOrange:
                 return "consoleOrange";
-            case Proto::MessageConsoleOrange2:
-                return "consoleOrange";
+            case Proto::MessageEventOrange:
+                return "eventOrange";
             case Proto::MessageWarning:
                 return "warning";
             case Proto::MessageEventAdvance:
@@ -346,7 +349,10 @@ namespace Proto {
                 return "statusSmall";
             case Proto::MessageConsoleBlue:
                 return "consoleBlue";
+            case Proto::MessageConsoleRed:
+                return "consoleRed";
             default:
+                logError("unknown protocol text message type ", type);
                 return "unknown";
         }
     }

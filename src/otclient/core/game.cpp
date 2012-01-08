@@ -105,7 +105,7 @@ void Game::processDeath()
 
 void Game::processCreatureSpeak(const std::string& name, int level, const std::string& type, const std::string& message, int channelId, const Position& creaturePos)
 {
-    if(creaturePos.isValid()) {
+    if(creaturePos.isValid() && (type == "say" || type == "whisper" || type == "yell" || type == "monsterSay" || type == "monsterYell")) {
         StaticTextPtr staticText = StaticTextPtr(new StaticText);
         staticText->addMessage(name, type, message);
         g_map.addThing(staticText, creaturePos);

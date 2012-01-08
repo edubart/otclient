@@ -5,15 +5,15 @@ importStyle 'textmessage.otui'
 
 -- private variables
 local MessageTypes = {
-  warning = { color = '#F55E5E', showOnConsole = true, showOnWindow = true, windowLocation = 'CenterLabel' },
-  eventAdvance = { color = '#FFFFFF', showOnConsole = true, showOnWindow = true, windowLocation = 'CenterLabel' },
-  eventDefault = { color = '#FFFFFF', showOnConsole = true, showOnWindow = true, windowLocation = 'BottomLabel' },
-  statusDefault = { color = '#FFFFFF', showOnConsole = true, showOnWindow = true, windowLocation = 'BottomLabel' },
-  infoDesc = { color = '#00EB00', showOnConsole = true, showOnWindow = true, windowLocation = 'CenterLabel' },
-  statusSmall = { color = '#FFFFFF', showOnConsole = false, showOnWindow = true, windowLocation = 'BottomLabel' },
-  consoleOrange = { color = '#FE6500', showOnConsole = true, showOnWindow = false },
-  consoleBlue =  { color = '#9F9DFD', showOnConsole = true, showOnWindow = false },
-  consoleRed = { color = '#F55E5E', showOnConsole = true, showOnWindow = false }
+  warning = { color = '#F55E5E', showOnConsole = true, windowLocation = 'center' },
+  eventAdvance = { color = '#FFFFFF', showOnConsole = true, windowLocation = 'center' },
+  eventDefault = { color = '#FFFFFF', showOnConsole = true, windowLocation = 'bottom' },
+  statusDefault = { color = '#FFFFFF', showOnConsole = true, windowLocation = 'bottom' },
+  infoDescription = { color = '#00EB00', showOnConsole = true, windowLocation = 'center' },
+  statusSmall = { color = '#FFFFFF', showOnConsole = false, windowLocation = 'bottom' },
+  consoleOrange = { color = '#FE6500', showOnConsole = true },
+  consoleBlue =  { color = '#9F9DFD', showOnConsole = true },
+  consoleRed = { color = '#F55E5E', showOnConsole = true }
 }
 
 local bottomLabelWidget
@@ -23,21 +23,26 @@ local centerLabelHideEvent
 
 -- private functions
 local function displayMessage(msgtype, msg, time)
+  if not Game.isOnline() then return end
+
   if msgtype.showOnConsole then
     -- TODO
   end
 
-  if msgtype.showOnWindow then
+  if msgtype.windowLocation  then
     local label
-    if msgtype.windowLocation == 'BottomLabel' then
+    local style
+    if msgtype.windowLocation == 'bottom' then
       label = bottomLabelWidget
-    elseif msgtype.windowLocation == 'CenterLabel' then
+      style = 'BottomLabel'
+    elseif msgtype.windowLocation == 'center' then
       label = centerLabelWidget
+      style = 'CenterLabel'
     end
 
     label:setVisible(true)
     label:setText(msg)
-    label:setStyle(msgtype.windowLocation)
+    label:setStyle(style)
     label:setForegroundColor(msgtype.color)
 
     if not time then
@@ -66,11 +71,9 @@ end
 
 function TextMessage.display(msgtypedesc, msg)
   local msgtype = MessageTypes[msgtypedesc]
-  if msgtype == nil then
-    error('unknown text msg type ' .. msgtype)
-    return
+  if msgtype then
+    displayMessage(msgtype, msg)
   end
-  displayMessage(msgtype, msg)
 end
 
 -- hooked events

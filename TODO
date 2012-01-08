@@ -44,10 +44,12 @@
 [bart] review and make more error prone with more warnings
 [bart] a real working border and background property in otui
 [bart] reapply anchor styles when adding new childs
+[bart] ui text selection
 
 == Client modules
 [bart] modules managment interface
 [bart] console history, text selection, scrolling
+[bart] make possible to reload modules
 
 == Client
 [bart] implement left panel with dragging windows
@@ -64,7 +66,6 @@
 [bart] draw lights using shaders
 [bart] chat with tabs
 [bart] limit FPS in options
-[baxnie] display 'You are dead.' message
 [baxnie] display exit box when exiting from game
 [baxnie] do lua game event calls from Game instead from GameProtocol
 [baxnie] classic control
@@ -89,3 +90,10 @@
 [baxnie] fix walk jump when cancel creature following
 [baxnie] fix creature outfit when invisible or with item appearance
 
+===== KNOWN BUGS
+2x2 corpses is drawn above players
+cratures with invisible effect is not rendered correctly
+animatedtext is displayed in non visible floors
+attack while walking cancels the walk
+if a spell is used while pressing arrows keys the walk is canceled and it doesnt starts walking again
+game map text message boxes is not displayed like tibia
