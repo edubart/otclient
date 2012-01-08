@@ -270,7 +270,7 @@ namespace Proto {
         MessageStatusSmall,
         MessageConsoleBlue
 #elif PROTOCOL==862
-        MessageEventOrange = 12,
+        MessageEventOrange = 13,
         MessageConsoleOrange,
         MessageWarning,
         MessageEventAdvance,

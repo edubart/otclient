@@ -95,8 +95,9 @@ break window anchors when moving
 
 ===== KNOWN BUGS
 2x2 corpses is drawn above players
-cratures with invisible effect is not rendered correctly
+creatures with invisible effect is not rendered correctly
 animatedtext is displayed in non visible floors
 attack while walking cancels the walk
 if a spell is used while pressing arrows keys the walk is canceled and it doesnt starts walking again
 game map text message boxes is not displayed like tibia
+name/shields doesnt follow the creature when walking on parcels
