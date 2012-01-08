@@ -11,5 +11,7 @@ otclient.exe
 otclient.kdev4
 CMakeLists.txt.user
 callgrind.out.*
+modules/myotclientrc.lua
+modules/myconfig.otml
 !.gitignore
 *.kate-swp

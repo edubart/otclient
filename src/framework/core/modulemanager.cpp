@@ -66,7 +66,7 @@ void ModuleManager::discoverModulesPath()
     bool found = false;
     for(const std::string& dir : possibleDirs) {
         // try to add module directory
-        if(g_resources.addToSearchPath(dir)) {
+        if(g_resources.addToSearchPath(dir, false)) {
             logInfo("Using modules directory '", dir.c_str(), "'");
             found = true;
             break;
