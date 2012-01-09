@@ -40,7 +40,7 @@ bool ThingsType::load(const std::string& file)
         for(int i = 0; i < LastCategory; ++i)
             numThings[i] = Fw::getU16(fin);
 
-        numThings[Item] -= 100;
+        numThings[Item] -= 99;
 
         for(int i = 0; i < LastCategory; ++i) {
             m_things[i].resize(numThings[i]);
@@ -115,16 +115,11 @@ void ThingsType::parseThingType(std::stringstream& fin, ThingType& thingType)
 
 ThingType *ThingsType::getThingType(uint16 id, Categories category)
 {
+    assert(id != 0);
     if(category == Item)
         id -= 100;
-
-    //assert(id < m_things[category].size());
-
-    // assert wrokground
-    if(id >= m_things[category].size()) {
-        //logTraceErrorOnce("got an invalid type");
-        return &m_emptyThingType;
-    }
-
+    else if(category == Creature || category == Effect || category == Missile)
+        id -= 1;
+    assert(id < m_things[category].size());
     return &m_things[category][id];
 }

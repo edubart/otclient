@@ -129,6 +129,8 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Creature>("setEmblemTexture", &Creature::setEmblemTexture);
 
     g_lua.registerClass<Item, Thing>();
+    g_lua.bindClassStaticFunction<Item>("create", &Item::create);
+
     g_lua.registerClass<Effect, Thing>();
     g_lua.registerClass<Missile, Thing>();
     g_lua.registerClass<StaticText, Thing>();

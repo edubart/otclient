@@ -24,7 +24,8 @@
 
 Outfit::Outfit()
 {
-    m_type = 0;
+    m_type = 128;
+    resetClothes();
 }
 
 Color Outfit::getColor(int color)
