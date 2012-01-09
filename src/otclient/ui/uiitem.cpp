@@ -27,7 +27,6 @@
 
 UIItem::UIItem()
 {
-    m_itemMargin = 0;
     m_font = g_fonts.getFont("verdana-11px-rounded");
 }
 
@@ -36,7 +35,7 @@ void UIItem::render()
     renderSelf();
 
     if(m_item) {
-        Point topLeft = m_rect.bottomRight() - Point(32, 32) + m_itemMargin;
+        Point topLeft = m_rect.bottomRight() - Point(32, 32) + Point(m_paddingLeft, m_paddingTop);
 
         g_painter.setColor(Fw::white);
         m_item->draw(topLeft, m_rect);
@@ -48,14 +47,4 @@ void UIItem::render()
     }
 
     renderChildren();
-}
-
-void UIItem::onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode)
-{
-    for(OTMLNodePtr node : styleNode->children()) {
-        if(node->tag() == "item margin")
-            m_itemMargin = node->value<int>();
-    }
-
-    UIWidget::onStyleApply(styleName, styleNode);
 }

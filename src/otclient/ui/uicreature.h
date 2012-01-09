@@ -30,19 +30,14 @@
 class UICreature : public UIWidget
 {
 public:
-    UICreature();
     void render();
 
     void setCreature(const CreaturePtr& creature) { m_creature = creature; }
 
     CreaturePtr getCreature() { return m_creature; }
 
-protected:
-    virtual void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode);
-
 private:
     CreaturePtr m_creature;
-    int m_creatureMargin;
 };
 
 #endif

@@ -27,11 +27,6 @@
 #include <framework/graphics/graphics.h>
 #include <otclient/core/localplayer.h>
 
-UIMap::UIMap()
-{
-    m_mapMargin = 0;
-}
-
 void UIMap::render()
 {
     renderSelf();
@@ -41,16 +36,6 @@ void UIMap::render()
     g_map.draw(m_mapRect);
 
     renderChildren();
-}
-
-void UIMap::onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode)
-{
-    for(OTMLNodePtr node : styleNode->children()) {
-        if(node->tag() == "map margin")
-            m_mapMargin = node->value<int>();
-    }
-
-    UIWidget::onStyleApply(styleName, styleNode);
 }
 
 TilePtr UIMap::getTile(const Point& mousePos)
@@ -96,7 +81,11 @@ TilePtr UIMap::getTile(const Point& mousePos)
 
 void UIMap::onGeometryChange(const Rect& oldRect, const Rect& newRect)
 {
-    Rect mapRect = newRect.expanded(-m_mapMargin-1);
+    Rect mapRect = newRect.expanded(-1);
+    mapRect.addTop(m_paddingTop);
+    mapRect.addLeft(m_paddingLeft);
+    mapRect.addBottom(-m_paddingBottom);
+    mapRect.addRight(-m_paddingRight);
     Size mapSize(g_map.getVibibleSize().width() * Map::NUM_TILE_PIXELS, g_map.getVibibleSize().height() * Map::NUM_TILE_PIXELS);
     mapSize.scale(mapRect.size(), Fw::KeepAspectRatio);
 

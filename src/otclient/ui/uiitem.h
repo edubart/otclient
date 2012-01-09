@@ -36,12 +36,8 @@ public:
     void setItem(const ItemPtr& item) { m_item = item; }
     ItemPtr getItem() { return m_item; }
 
-protected:
-    virtual void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode);
-
 private:
     ItemPtr m_item;
-    int m_itemMargin;
     FontPtr m_font;
 };
 

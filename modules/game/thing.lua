@@ -1,5 +1,61 @@
 
 -- public functions
+function Game.processMouseAction(menuPosition, mouseButton, autoWalk, lookThing, useThing, creatureThing, multiUseThing)
+  local keyboardModifiers = g_window.getKeyboardModifiers()
+  
+  if autoWalk and keyboardModifiers == KeyboardNoModifier and mouseButton == MouseLeftButton then
+    -- todo auto walk
+    return true
+  end
+  
+  if not Options.classicControl then
+    if keyboardModifiers == KeyboardNoModifier and mouseButton == MouseRightButton then
+      Game.createThingMenu(menuPosition, lookThing, useThing, creatureThing)
+      return true
+    elseif lookThing and keyboardModifiers == KeyboardShiftModifier and (mouseButton == MouseLeftButton or mouseButton == MouseRightButton) then
+      Game.look(lookThing)
+      return true
+    elseif useThing and keyboardModifiers == KeyboardCtrlModifier and (mouseButton == MouseLeftButton or mouseButton == MouseRightButton) then
+      if useThing:isContainer() then
+        print "open"
+      elseif useThing:isMultiUse() then
+        print "use with..."
+      else
+        Game.use(useThing)
+      end
+      return true
+    elseif creatureThing and keyboardModifiers == KeyboardAltModifier and (mouseButton == MouseLeftButton or mouseButton == MouseRightButton) then
+      Game.attack(creatureThing)
+      return true
+    end
+  else
+    if multiUseThing and keyboardModifiers == KeyboardNoModifier and mouseButton == MouseRightButton then
+      if multiUseThing:asCreature() then
+        Game.attack(multiUseThing:asCreature())
+      elseif multiUseThing:isContainer() then
+        print "open"
+      elseif multiUseThing:isMultiUse() then
+        print "use with..."
+      else
+        Game.use(useThing)
+      end
+      return true
+    elseif lookThing and keyboardModifiers == KeyboardShiftModifier and (mouseButton == MouseLeftButton or mouseButton == MouseRightButton) then
+      Game.look(lookThing)
+      return true
+    elseif useThing and keyboardModifiers == KeyboardCtrlModifier and (mouseButton == MouseLeftButton or mouseButton == MouseRightButton) then
+      Game.createThingMenu(menuPosition, lookThing, useThing, creatureThing)
+      return true
+    elseif creatureThing and keyboardModifiers == KeyboardAltModifier and (mouseButton == MouseLeftButton or mouseButton == MouseRightButton) then
+      Game.attack(creatureThing)
+      return true
+    end
+  end
+  
+  return false
+end
+
+
 function Game.createThingMenu(menuPosition, lookThing, useThing, creatureThing)
   local menu = createWidget('PopupMenu')
   

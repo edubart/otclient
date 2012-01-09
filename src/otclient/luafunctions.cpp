@@ -152,6 +152,7 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Tile>("getTopLookThing", &Tile::getTopLookThing);
     g_lua.bindClassMemberFunction<Tile>("getTopUseThing", &Tile::getTopUseThing);
     g_lua.bindClassMemberFunction<Tile>("getTopCreature", &Tile::getTopCreature);
+    g_lua.bindClassMemberFunction<Tile>("getTopMultiUseThing", &Tile::getTopMultiUseThing);
     g_lua.bindClassMemberFunction<Tile>("getPos", &Tile::getPos);
     g_lua.bindClassMemberFunction<Tile>("getDrawElevation", &Tile::getDrawElevation);
     g_lua.bindClassMemberFunction<Tile>("getCreatures", &Tile::getCreatures);

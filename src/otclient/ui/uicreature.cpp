@@ -24,29 +24,14 @@
 #include <framework/otml/otml.h>
 #include <framework/graphics/graphics.h>
 
-UICreature::UICreature()
-{
-    m_creatureMargin = 0;
-}
-
 void UICreature::render()
 {
     renderSelf();
 
     if(m_creature) {
         g_painter.setColor(Fw::white);
-        m_creature->draw(m_rect.bottomRight() - Point(32, 32) + m_creatureMargin, m_rect);
+        m_creature->draw(m_rect.bottomRight() - Point(32, 32) + Point(m_paddingLeft, m_paddingTop), m_rect);
     }
 
     renderChildren();
-}
-
-void UICreature::onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode)
-{
-    for(OTMLNodePtr node : styleNode->children()) {
-        if(node->tag() == "creature-margin")
-            m_creatureMargin = node->value<int>();
-    }
-
-    UIWidget::onStyleApply(styleName, styleNode);
 }

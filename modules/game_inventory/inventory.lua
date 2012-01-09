@@ -29,13 +29,10 @@ function Inventory.onSoulChange(soul)
   widget:setText("Soul:\n" .. soul)
 end
 
-function Inventory.onInventoryItemMousePress(itemWidget, mousePos, mouseButton)
-  if mouseButton ~= MouseRightButton then return end
-
+function Inventory.onInventoryItemMousePress(itemWidget, mousePosition, mouseButton)
   local item = itemWidget:getItem()
-  if not item then return end
-
-  Game.createThingMenu(mousePos, item, item, nil)
+  if item and Game.processMouseAction(mousePosition, mouseButton, nil, item, item, nil, item) then return true end
+  return false
 end
 
 connect(Game, { onLogin = Inventory.create,
@@ -43,3 +40,4 @@ connect(Game, { onLogin = Inventory.create,
                 onInventoryChange = Inventory.onInventoryChange,
                 onFreeCapacityChange = Inventory.onFreeCapacityChange,
                 onSoulChange = Inventory.onSoulChange })
+

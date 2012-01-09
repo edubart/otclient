@@ -30,17 +30,14 @@
 class UIMap : public UIWidget
 {
 public:
-    UIMap();
     void render();
 
     TilePtr getTile(const Point& mousePos);
 
 protected:
-    virtual void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode);
     virtual void onGeometryChange(const Rect& oldRect, const Rect& newRect);
 
 private:
-    int m_mapMargin;
     Rect m_mapRect;
 };
 

@@ -1,6 +1,6 @@
 Creature < UICreature
   size: 66 66
-  creature-margin: 1
+  padding: 1
   border-image:
     source: /core_styles/images/panel_flat.png
     border: 1
