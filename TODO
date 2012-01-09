@@ -41,7 +41,6 @@
 [bart] find a way to add new widgets without focusing them
 [bart] fix moving windows and tooltips conflicts
 [bart] break UILabel lines
-[bart] padding
 [bart] review and make more error prone with more warnings
 [bart] a real working border and background property in otui
 [bart] reapply anchor styles when adding new childs

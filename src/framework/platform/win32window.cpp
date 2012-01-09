@@ -35,6 +35,7 @@ WIN32Window::WIN32Window()
     m_maximized = false;
     m_minimumSize = Size(16,16);
     m_size = m_minimumSize;
+    m_inputEvent.keyboardModifiers = 0;
 
     m_keyMap[VK_ESCAPE] = Fw::KeyEscape;
     m_keyMap[VK_TAB] = Fw::KeyTab;

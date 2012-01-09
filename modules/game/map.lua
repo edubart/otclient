@@ -1,12 +1,9 @@
 function UIMap:onMouseRelease(mousePos, mouseButton)
-
   local tile = self:getTile(mousePos)
   if not tile then return false end
-  
+
   local keyboardModifiers = g_window.getKeyboardModifiers()
-  print ("lol " .. keyboardModifiers)
   if not Options.classicControl then
-  
     if keyboardModifiers == KeyboardNoModifier and mouseButton == MouseLeftButton then
       -- auto walk
       return true
@@ -23,8 +20,7 @@ function UIMap:onMouseRelease(mousePos, mouseButton)
       Game.attack(tile:getTopCreature())
       return true
     end
-    
   end
-  
+
   return false
 end

@@ -37,6 +37,7 @@ X11Window::X11Window()
     m_screen = 0;
     m_wmDelete = 0;
     m_size = Size(16,16);
+    m_inputEvent.keyboardModifiers = 0;
 
 #ifndef OPENGL_ES2
     m_glxContext = 0;
@@ -543,6 +544,13 @@ void X11Window::poll()
         m_inputEvent.keyText = "";
         m_inputEvent.mouseMoved = Point();
         m_inputEvent.wheelDirection = Fw::MouseNoWheel;
+        m_inputEvent.keyboardModifiers = 0;
+        if(event.xkey.state & ControlMask)
+            m_inputEvent.keyboardModifiers |= Fw::KeyboardCtrlModifier;
+        if(event.xkey.state & ShiftMask)
+            m_inputEvent.keyboardModifiers |= Fw::KeyboardShiftModifier;
+        if(event.xkey.state & Mod1Mask)
+            m_inputEvent.keyboardModifiers |= Fw::KeyboardAltModifier;
 
         switch(event.type) {
             case ClientMessage: {
@@ -610,15 +618,6 @@ void X11Window::poll()
                 char buf[32];
                 memset(buf, 0, 32);
                 int len;
-
-                m_inputEvent.keyboardModifiers = 0;
-                m_inputEvent.keyText = "";
-                if(event.xkey.state & ControlMask)
-                    m_inputEvent.keyboardModifiers |= Fw::KeyboardCtrlModifier;
-                if(event.xkey.state & ShiftMask)
-                    m_inputEvent.keyboardModifiers |= Fw::KeyboardShiftModifier;
-                if(event.xkey.state & Mod1Mask)
-                    m_inputEvent.keyboardModifiers |= Fw::KeyboardAltModifier;
 
                 // lookup for keyText
                 if(event.type == KeyPress && !(event.xkey.state & ControlMask) && !(event.xkey.state & Mod1Mask)) {
