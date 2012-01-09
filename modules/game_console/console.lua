@@ -5,7 +5,8 @@ local SpeakTypes = {
   say = { color = '#FFFF00' },
   whisper = { color = '#FFFF00' },
   yell = { color = '#FFFF00' },
-  monsterSay = { color = '#FE6500', hideInConsole = false},
+  monsterSay = { color = '#FE6500', hideInConsole = true},
+  monsterYell = { color = '#FE6500', hideInConsole = true},
   npcToPlayer = { color = '#5FF7F7' },
   channelYellow = { color = '#FFFF00' },
   channelWhite = { color = '#FFFFFF' },
@@ -46,7 +47,7 @@ end
 -- hooked events
 local function onCreatureSpeak(name, level, speaktypedesc, message, channelId, creaturePos)
   speaktype = SpeakTypes[speaktypedesc]
-  if speaktype == SpeakTypes.monsterSay then return end
+  if speaktype.hideInConsole then return end
 
   if name then
     if Options.showLevelsInConsole and level > 0 then

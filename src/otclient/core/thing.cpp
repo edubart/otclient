@@ -25,8 +25,9 @@
 #include "thingstype.h"
 #include <framework/graphics/graphics.h>
 
-Thing::Thing() : m_id(0)
+Thing::Thing()
 {
+    m_id = 0;
     m_xPattern = 0;
     m_yPattern = 0;
     m_zPattern = 0;
@@ -52,7 +53,7 @@ void Thing::internalDraw(const Point& p, int layer)
     }
 }
 
-void Thing::setId(int id)
+void Thing::setId(uint32 id)
 {
     m_id = id;
     m_type = getType();
@@ -78,62 +79,4 @@ ThingType *Thing::getType()
     return g_thingsType.getEmptyThingType();
 }
 
-bool Thing::isGround()
-{
-    return m_type->properties[ThingType::IsGround];
-}
 
-bool Thing::isGroundBorder()
-{
-    return m_type->properties[ThingType::IsGroundBorder];
-}
-
-bool Thing::isOnBottom()
-{
-    return m_type->properties[ThingType::IsOnBottom];
-}
-
-bool Thing::isOnTop()
-{
-    return m_type->properties[ThingType::IsOnTop];
-}
-
-bool Thing::isContainer()
-{
-    return m_type->properties[ThingType::IsContainer];
-}
-
-bool Thing::isForceUse()
-{
-    return m_type->properties[ThingType::IsForceUse];
-}
-
-bool Thing::isMultiUse()
-{
-    return m_type->properties[ThingType::IsMultiUse];
-}
-
-bool Thing::isRotateable()
-{
-    return m_type->properties[ThingType::IsRotateable];
-}
-
-bool Thing::isNotMoveable()
-{
-    return m_type->properties[ThingType::IsNotMovable];
-}
-
-bool Thing::isPickupable()
-{
-    return m_type->properties[ThingType::IsPickupable];
-}
-
-bool Thing::ignoreLook()
-{
-    return m_type->properties[ThingType::IgnoreLook];
-}
-
-bool Thing::isStackable()
-{
-    return m_type->properties[ThingType::IsStackable];
-}

@@ -34,11 +34,10 @@ LocalPlayer::LocalPlayer()
 void LocalPlayer::clientWalk(Otc::Direction direction)
 {
     // We're not walking, so start a client walk.
-    if(!m_walking) {
-        Position newPos = m_position + Position::getPosFromDirection(direction);
-        Creature::walk(newPos, false);
-        m_clientWalking = true;
-    }
+    assert(!m_walking);
+    Position newPos = m_position + Position::getPosFromDirection(direction);
+    Creature::walk(newPos, false);
+    m_clientWalking = true;
 }
 
 void LocalPlayer::walk(const Position& position, bool inverse)

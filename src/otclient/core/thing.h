@@ -43,10 +43,10 @@ public:
 
     virtual void draw(const Point& p, const Rect&) = 0;
 
-    void setId(int id);
+    void setId(uint32 id);
     virtual void setPos(const Position& position) { m_position = position; }
 
-    int getId() const { return m_id; }
+    uint32 getId() const { return m_id; }
     Position getPos() const { return m_position; }
     int getStackPriority();
     virtual ThingType *getType();
@@ -58,26 +58,30 @@ public:
 
     ThingPtr asThing() { return std::static_pointer_cast<Thing>(shared_from_this()); }
     virtual ItemPtr asItem() { return nullptr; }
-    virtual CreaturePtr asCreature() { return nullptr; }
     virtual EffectPtr asEffect() { return nullptr; }
     virtual MissilePtr asMissile() { return nullptr; }
+    virtual CreaturePtr asCreature() { return nullptr; }
+    virtual NpcPtr asNpc() { return nullptr; }
+    virtual MonsterPtr asMonster() { return nullptr; }
     virtual PlayerPtr asPlayer() { return nullptr; }
     virtual LocalPlayerPtr asLocalPlayer() { return nullptr; }
     virtual AnimatedTextPtr asAnimatedText() { return nullptr; }
     virtual StaticTextPtr asStaticText() { return nullptr; }
 
-    bool isGround();
-    bool isGroundBorder();
-    bool isOnBottom();
-    bool isOnTop();
-    bool isContainer();
-    bool isForceUse();
-    bool isMultiUse();
-    bool isRotateable();
-    bool isNotMoveable();
-    bool isPickupable();
-    bool ignoreLook();
-    bool isStackable();
+    bool isGround() { return m_type->properties[ThingType::IsGround]; }
+    bool isGroundBorder() { return m_type->properties[ThingType::IsGroundBorder]; }
+    bool isOnBottom() { return m_type->properties[ThingType::IsOnBottom]; }
+    bool isOnTop() { return m_type->properties[ThingType::IsOnTop]; }
+    bool isContainer() { return m_type->properties[ThingType::IsContainer]; }
+    bool isForceUse() { return m_type->properties[ThingType::IsForceUse]; }
+    bool isMultiUse() { return m_type->properties[ThingType::IsMultiUse]; }
+    bool isRotateable() { return m_type->properties[ThingType::IsRotateable]; }
+    bool isNotMoveable() { return m_type->properties[ThingType::IsNotMovable]; }
+    bool isPickupable() { return m_type->properties[ThingType::IsPickupable]; }
+    bool ignoreLook() { return m_type->properties[ThingType::IgnoreLook]; }
+    bool isStackable() { return m_type->properties[ThingType::IsStackable]; }
+    bool isFluid() { return m_type->properties[ThingType::IsFluid]; }
+    bool isFluidContainer() { return m_type->properties[ThingType::IsFluidContainer]; }
 
 protected:
     void internalDraw(const Point& p, int layer);

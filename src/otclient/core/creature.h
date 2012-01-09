@@ -72,6 +72,7 @@ public:
     bool getPassable() { return m_passable; }
     ThingType *getType();
 
+    //virtual void walk(const Position& oldPos, const Position& newPos, bool inverse = true);
     virtual void walk(const Position& position, bool inverse = true);
     void turn(Otc::Direction direction);
     virtual void cancelWalk(Otc::Direction direction, bool force = false);
@@ -105,6 +106,16 @@ protected:
     float m_walkTimePerPixel;
     Point m_walkOffset;
     Otc::Direction m_turnDirection;
+};
+
+class Npc : public Creature {
+public:
+    NpcPtr asNpc() { return std::static_pointer_cast<Npc>(shared_from_this()); }
+};
+
+class Monster : public Creature {
+public:
+    MonsterPtr asMonster() { return std::static_pointer_cast<Monster>(shared_from_this()); }
 };
 
 #endif

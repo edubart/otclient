@@ -32,6 +32,13 @@ Item::Item() : Thing()
     m_data = 0;
 }
 
+ItemPtr Item::create(int id)
+{
+    ItemPtr item = ItemPtr(new Item);
+    item->setId(id);
+    return item;
+}
+
 void Item::draw(const Point& p, const Rect&)
 {
     if(m_type->dimensions[ThingType::AnimationPhases] > 1)

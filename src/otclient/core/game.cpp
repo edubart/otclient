@@ -36,6 +36,9 @@ void Game::loginWorld(const std::string& account, const std::string& password, c
 {
     m_online = false;
     m_dead = false;
+    m_walkFeedback = true;
+    m_ping = 0;
+    m_pingTimer.restart();
     m_protocolGame = ProtocolGamePtr(new ProtocolGame);
     m_protocolGame->login(account, password, worldHost, (uint16)worldPort, characterName);
 }
@@ -72,11 +75,15 @@ void Game::processConnectionError(const boost::system::error_code& error)
     }
 }
 
-void Game::processLogin(const LocalPlayerPtr& localPlayer)
+void Game::processLogin(const LocalPlayerPtr& localPlayer, int serverBeat)
 {
+    updatePing();
     m_localPlayer = localPlayer;
     m_online = true;
-    g_lua.callGlobalField("Game", "onLogin", m_localPlayer);
+    m_serverBeat = serverBeat;
+
+    // NOTE: the entire map description is not known yet
+    g_lua.callGlobalField("Game", "onLogin", localPlayer);
 }
 
 void Game::processLogout()
@@ -127,10 +134,40 @@ void Game::processInventoryChange(int slot, const ItemPtr& item)
     g_lua.callGlobalField("Game","onInventoryChange", slot, item);
 }
 
+void Game::processCreatureMove(const CreaturePtr& creature, const Position& oldPos, const Position& newPos)
+{
+    /*
+    // walk
+    if(oldPos.isInRange(newPos, 1, 1, 0)) {
+        Otc::Direction direction = oldPos.getDirectionFromPosition(newPos);
+        creature->setDirection(direction);
+    // teleport
+    } else {
+        // stop animation on teleport
+        if(creature->isWalking())
+            creature->cancelWalk();
+    }
+    */
+    if(!m_walkFeedback) {
+        updatePing();
+        m_walkFeedback = true;
+    }
+    creature->walk(newPos);
+}
+
 void Game::processAttackCancel()
 {
     if(m_localPlayer->isAttacking())
         m_localPlayer->setAttackingCreature(nullptr);
+}
+
+void Game::processWalkCancel(Otc::Direction direction)
+{
+    if(!m_walkFeedback) {
+        updatePing();
+        m_walkFeedback = true;
+    }
+    m_localPlayer->cancelWalk(direction, true);
 }
 
 void Game::walk(Otc::Direction direction)
@@ -144,6 +181,9 @@ void Game::walk(Otc::Direction direction)
         return;
 
     m_localPlayer->clientWalk(direction);
+
+    // ping calculation restarts when the local players try to walk one tile
+    m_pingTimer.restart();
 
     switch(direction) {
     case Otc::North:
@@ -171,6 +211,8 @@ void Game::walk(Otc::Direction direction)
         m_protocolGame->sendWalkNorthWest();
         break;
     }
+
+    m_walkFeedback = false;
 }
 
 void Game::turn(Otc::Direction direction)
@@ -342,4 +384,10 @@ bool Game::checkBotProtection()
     }
 #endif
     return true;
+}
+
+void Game::updatePing()
+{
+    m_ping = m_pingTimer.ticksElapsed();
+    g_lua.callGlobalField("Game", "onPingUpdate", m_ping);
 }

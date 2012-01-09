@@ -268,8 +268,8 @@ void ProtocolGame::parsePlayerLogin(InputMessage& msg)
 
     m_localPlayer = LocalPlayerPtr(new LocalPlayer);
     m_localPlayer->setId(playerId);
-    g_game.setServerBeat(serverBeat);
     m_localPlayer->setCanReportBugs(playerCanReportBugs);
+    g_game.processLogin(m_localPlayer, serverBeat);
 }
 
 void ProtocolGame::parseGMActions(InputMessage& msg)
@@ -281,7 +281,7 @@ void ProtocolGame::parseGMActions(InputMessage& msg)
 void ProtocolGame::parseLoginError(InputMessage& msg)
 {
     std::string error = msg.getString();
-    g_dispatcher.addEvent(std::bind(&Game::processLoginError, &g_game, error));
+    g_game.processLoginError(error);
 }
 
 void ProtocolGame::parseFYIMessage(InputMessage& msg)
@@ -303,7 +303,7 @@ void ProtocolGame::parsePing(InputMessage&)
 void ProtocolGame::parseDeath(InputMessage& msg)
 {
     msg.getU8(); // 100 is a fair death. < 100 is a unfair death.
-    g_dispatcher.addEvent(std::bind(&Game::processDeath, &g_game));
+    g_game.processDeath();
 }
 
 void ProtocolGame::parseMapDescription(InputMessage& msg)
@@ -355,14 +355,9 @@ void ProtocolGame::parseUpdateTile(InputMessage& msg)
     uint16 thingId = msg.getU16(true);
     if(thingId == 0xFF01) {
         msg.getU16();
-        /*msg->AddByte(0);
-        msg->AddByte(0xFF);*/
-    }
-    else  {
+    } else {
         setTileDescription(msg, tilePos);
         msg.getU16();
-        /*msg->AddByte(0x01);
-        msg->AddByte(0xFF);*/
     }
 }
 
@@ -407,21 +402,23 @@ void ProtocolGame::parseCreatureMove(InputMessage& msg)
 
     ThingPtr thing = g_map.getTile(oldPos)->getThing(oldStackpos);
     if(!thing) {
-        logError("could not get thing");
+        logTraceError("could not get thing");
         return;
     }
 
     CreaturePtr creature = thing->asCreature();
     if(!creature) {
-        logError("thing is not a creature");
+        logTraceError("thing is not a creature");
         return;
     }
 
-    creature->walk(newPos);
+    g_game.processCreatureMove(creature, oldPos, newPos);
 
     // update map tiles
     g_map.removeThing(thing);
     g_map.addThing(thing, newPos);
+
+    //g_game.processCreatureMove(creature, oldPos, newPos);
 }
 
 void ProtocolGame::parseOpenContainer(InputMessage& msg)
@@ -465,13 +462,13 @@ void ProtocolGame::parseAddInventoryItem(InputMessage& msg)
 {
     uint8 slot = msg.getU8();
     ItemPtr item = internalGetItem(msg, 0xFFFF);
-    g_dispatcher.addEvent(std::bind(&Game::processInventoryChange, &g_game, slot, item));
+    g_game.processInventoryChange(slot, item);
 }
 
 void ProtocolGame::parseRemoveInventoryItem(InputMessage& msg)
 {
     uint8 slot = msg.getU8();
-    g_dispatcher.addEvent(std::bind(&Game::processInventoryChange, &g_game, slot, ItemPtr()));
+    g_game.processInventoryChange(slot, ItemPtr());
 }
 
 void ProtocolGame::parseOpenShopWindow(InputMessage& msg)
@@ -664,47 +661,31 @@ void ProtocolGame::parsePlayerStats(InputMessage& msg)
 {
     m_localPlayer->setStatistic(Otc::Health, msg.getU16());
     m_localPlayer->setStatistic(Otc::MaxHealth, msg.getU16());
-    g_dispatcher.addEvent([=] {
-        g_lua.callGlobalField("Game", "onHealthChange", m_localPlayer->getStatistic(Otc::Health), m_localPlayer->getStatistic(Otc::MaxHealth));
-    });
+    g_lua.callGlobalField("Game", "onHealthChange", m_localPlayer->getStatistic(Otc::Health), m_localPlayer->getStatistic(Otc::MaxHealth));
 
     m_localPlayer->setStatistic(Otc::FreeCapacity, msg.getU32() / 100.0);
-    g_dispatcher.addEvent([=] {
-        g_lua.callGlobalField("Game", "onFreeCapacityChange", m_localPlayer->getStatistic(Otc::FreeCapacity));
-    });
+    g_lua.callGlobalField("Game", "onFreeCapacityChange", m_localPlayer->getStatistic(Otc::FreeCapacity));
 
     m_localPlayer->setStatistic(Otc::Experience, msg.getU32());
-    g_dispatcher.addEvent([=] {
-        g_lua.callGlobalField("Game", "onExperienceChange", m_localPlayer->getStatistic(Otc::Experience));
-    });
+    g_lua.callGlobalField("Game", "onExperienceChange", m_localPlayer->getStatistic(Otc::Experience));
 
     m_localPlayer->setStatistic(Otc::Level, msg.getU16());
     m_localPlayer->setStatistic(Otc::LevelPercent, msg.getU8());
-    g_dispatcher.addEvent([=] {
-        g_lua.callGlobalField("Game", "onLevelChange", m_localPlayer->getStatistic(Otc::Level), m_localPlayer->getStatistic(Otc::LevelPercent));
-    });
+    g_lua.callGlobalField("Game", "onLevelChange", m_localPlayer->getStatistic(Otc::Level), m_localPlayer->getStatistic(Otc::LevelPercent));
 
     m_localPlayer->setStatistic(Otc::Mana, msg.getU16());
     m_localPlayer->setStatistic(Otc::MaxMana, msg.getU16());
-    g_dispatcher.addEvent([=] {
-        g_lua.callGlobalField("Game", "onManaChange", m_localPlayer->getStatistic(Otc::Mana), m_localPlayer->getStatistic(Otc::MaxMana));
-    });
+    g_lua.callGlobalField("Game", "onManaChange", m_localPlayer->getStatistic(Otc::Mana), m_localPlayer->getStatistic(Otc::MaxMana));
 
     m_localPlayer->setStatistic(Otc::MagicLevel, msg.getU8());
     m_localPlayer->setStatistic(Otc::MagicLevelPercent, msg.getU8());
-    g_dispatcher.addEvent([=] {
-        g_lua.callGlobalField("Game", "onMagicLevelChange", m_localPlayer->getStatistic(Otc::MagicLevel), m_localPlayer->getStatistic(Otc::MagicLevelPercent));
-    });
+    g_lua.callGlobalField("Game", "onMagicLevelChange", m_localPlayer->getStatistic(Otc::MagicLevel), m_localPlayer->getStatistic(Otc::MagicLevelPercent));
 
     m_localPlayer->setStatistic(Otc::Soul, msg.getU8());
-    g_dispatcher.addEvent([=] {
-        g_lua.callGlobalField("Game", "onSoulChange", m_localPlayer->getStatistic(Otc::Soul));
-    });
+    g_lua.callGlobalField("Game", "onSoulChange", m_localPlayer->getStatistic(Otc::Soul));
 
     m_localPlayer->setStatistic(Otc::Stamina, msg.getU16());
-    g_dispatcher.addEvent([=] {
-        g_lua.callGlobalField("Game", "onStaminaChange", m_localPlayer->getStatistic(Otc::Stamina));
-    });
+    g_lua.callGlobalField("Game", "onStaminaChange", m_localPlayer->getStatistic(Otc::Stamina));
 }
 
 void ProtocolGame::parsePlayerSkills(InputMessage& msg)
@@ -716,9 +697,7 @@ void ProtocolGame::parsePlayerSkills(InputMessage& msg)
             m_localPlayer->setSkill((Otc::Skill)skill, (Otc::SkillType)skillType, values[skillType]);
         }
 
-        g_dispatcher.addEvent([=] {
-            g_lua.callGlobalField("Game", "onSkillChange", skill, values[Otc::SkillLevel], values[Otc::SkillPercent]);
-        });
+        g_lua.callGlobalField("Game", "onSkillChange", skill, values[Otc::SkillLevel], values[Otc::SkillPercent]);
     }
 }
 
@@ -731,7 +710,7 @@ void ProtocolGame::parsePlayerIcons(InputMessage& msg)
 void ProtocolGame::parsePlayerCancelAttack(InputMessage& msg)
 {
     msg.getU32(); // unknown
-    g_dispatcher.addEvent(std::bind(&Game::processAttackCancel, &g_game));
+    g_game.processAttackCancel();
 }
 
 void ProtocolGame::parseCreatureSpeak(InputMessage& msg)
@@ -775,9 +754,7 @@ void ProtocolGame::parseCreatureSpeak(InputMessage& msg)
     std::string message = msg.getString();
     std::string typeDesc = Proto::translateSpeakType(type);
 
-    g_dispatcher.addEvent([=] {
-        g_game.processCreatureSpeak(name, level, typeDesc, message, channelId, creaturePos);
-    });
+    g_game.processCreatureSpeak(name, level, typeDesc, message, channelId, creaturePos);
 }
 
 void ProtocolGame::parseChannelList(InputMessage& msg)
@@ -790,9 +767,7 @@ void ProtocolGame::parseChannelList(InputMessage& msg)
         channelList.push_back(std::make_tuple(id, name));
     }
 
-    g_dispatcher.addEvent([=] {
-        g_lua.callGlobalField("Game", "onChannelList", channelList);
-    });
+    g_lua.callGlobalField("Game", "onChannelList", channelList);
 }
 
 void ProtocolGame::parseOpenChannel(InputMessage& msg)
@@ -800,9 +775,7 @@ void ProtocolGame::parseOpenChannel(InputMessage& msg)
     int channelId = msg.getU16();
     std::string name = msg.getString();
 
-    g_dispatcher.addEvent([=] {
-        g_lua.callGlobalField("Game", "onOpenChannel", channelId, name);
-    });
+    g_lua.callGlobalField("Game", "onOpenChannel", channelId, name);
 }
 
 void ProtocolGame::parseOpenPrivatePlayerChat(InputMessage& msg)
@@ -833,13 +806,14 @@ void ProtocolGame::parseTextMessage(InputMessage& msg)
     std::string typeDesc = Proto::translateTextMessageType(type);
     std::string message = msg.getString();
 
-    g_dispatcher.addEvent(std::bind(&Game::processTextMessage, &g_game, typeDesc, message));
+    g_game.processTextMessage(typeDesc, message);
 }
 
 void ProtocolGame::parseCancelWalk(InputMessage& msg)
 {
     Otc::Direction direction = (Otc::Direction)msg.getU8();
-    m_localPlayer->cancelWalk(direction, true);
+
+    g_game.processWalkCancel(direction);
 }
 
 void ProtocolGame::parseFloorChangeUp(InputMessage& msg)
@@ -898,9 +872,7 @@ void ProtocolGame::parseOutfitWindow(InputMessage& msg)
     creature->setXPattern(2);
     creature->setOutfit(outfit);
 
-    g_dispatcher.addEvent([=] {
-        g_lua.callGlobalField("Game", "onOpenOutfitWindow", creature, outfitList);
-    });
+    g_lua.callGlobalField("Game", "onOpenOutfitWindow", creature, outfitList);
 }
 
 void ProtocolGame::parseVipState(InputMessage& msg)
@@ -909,27 +881,21 @@ void ProtocolGame::parseVipState(InputMessage& msg)
     std::string name = msg.getString();
     bool online = msg.getU8() != 0;
 
-    g_dispatcher.addEvent([=] {
-        g_lua.callGlobalField("Game", "onAddVip", id, name, online);
-    });
+    g_lua.callGlobalField("Game", "onAddVip", id, name, online);
 }
 
 void ProtocolGame::parseVipLogin(InputMessage& msg)
 {
     int id = msg.getU32();
 
-    g_dispatcher.addEvent([=] {
-        g_lua.callGlobalField("Game", "onVipStateChange", id, true);
-    });
+    g_lua.callGlobalField("Game", "onVipStateChange", id, true);
 }
 
 void ProtocolGame::parseVipLogout(InputMessage& msg)
 {
     int id = msg.getU32();
 
-    g_dispatcher.addEvent([=] {
-        g_lua.callGlobalField("Game", "onVipStateChange", id, false);
-    });
+    g_lua.callGlobalField("Game", "onVipStateChange", id, false);
 }
 
 void ProtocolGame::parseShowTutorial(InputMessage& msg)
@@ -1068,9 +1034,8 @@ ThingPtr ProtocolGame::internalGetThing(InputMessage& msg)
             if(knownCreature)
                 creature = knownCreature;
             else
-                logFatal("Server says creature is known, but its not on creatures list.");
-        }
-        else if(thingId == 0x0061) { //creature is not known
+                logTraceError("server says creature is known, but its not on creatures list");
+        } else if(thingId == 0x0061) { //creature is not known
             uint32 removeId = msg.getU32();
             uint32 id = msg.getU32();
             std::string name = msg.getString();
@@ -1080,16 +1045,16 @@ ThingPtr ProtocolGame::internalGetThing(InputMessage& msg)
 
             g_map.removeCreatureById(removeId);
 
-            if(id == (uint32)m_localPlayer->getId())
-                creature = m_localPlayer->asCreature();
+            if(id == m_localPlayer->getId())
+                creature = m_localPlayer;
             else if(id >= Proto::PlayerStartId && id < Proto::PlayerEndId)
-                creature = PlayerPtr(new Player)->asCreature();
+                creature = PlayerPtr(new Player);
             else if(id >= Proto::MonsterStartId && id < Proto::MonsterEndId)
-                creature = CreaturePtr(new Creature);
+                creature = MonsterPtr(new Monster);
             else if(id >= Proto::NpcStartId && id < Proto::NpcEndId)
-                creature = CreaturePtr(new Creature);
+                creature = NpcPtr(new Npc);
             else
-                logFatal("creature id is invalid");
+                logTraceError("creature id is invalid");
 
             creature->setId(id);
             creature->setName(name);
@@ -1113,29 +1078,23 @@ ThingPtr ProtocolGame::internalGetThing(InputMessage& msg)
 
         bool passable = (msg.getU8() == 0);
 
-        creature->setHealthPercent(healthPercent);
-        creature->setDirection(direction);
-        creature->setOutfit(outfit);
-        creature->setLight(light);
-        creature->setSpeed(speed);
-        creature->setSkull(skull);
-        creature->setShield(shield);
-        creature->setEmblem(emblem);
-        creature->setPassable(passable);
-        creature->cancelWalk(direction);
+        if(creature) {
+            creature->setHealthPercent(healthPercent);
+            creature->setDirection(direction);
+            creature->setOutfit(outfit);
+            creature->setLight(light);
+            creature->setSpeed(speed);
+            creature->setSkull(skull);
+            creature->setShield(shield);
+            creature->setEmblem(emblem);
+            creature->setPassable(passable);
+            creature->cancelWalk(direction);
+        }
 
         thing = creature;
-
-        // login event is generated the first time that local player gets known
-        if(!g_game.isOnline() && creature == m_localPlayer) {
-            // this event must be scheduled because the entire map description is not known yet
-            g_dispatcher.addEvent(std::bind(&Game::processLogin, &g_game, m_localPlayer));
-        }
-    }
-    else if(thingId == 0x0063) { // creature turn
+    } else if(thingId == 0x0063) { // creature turn
         parseCreatureTurn(msg);
-    }
-    else // item
+    } else // item
         thing = internalGetItem(msg, thingId);
 
     return thing;
@@ -1143,14 +1102,11 @@ ThingPtr ProtocolGame::internalGetThing(InputMessage& msg)
 
 ItemPtr ProtocolGame::internalGetItem(InputMessage& msg, uint16 id)
 {
-    ItemPtr item = ItemPtr(new Item());
-
     if(id == 0xFFFF)
         id = msg.getU16();
-    item->setId(id);
 
-    ThingType *itemType = item->getType();
-    if(itemType->properties[ThingType::IsStackable] || itemType->properties[ThingType::IsFluidContainer] || itemType->properties[ThingType::IsFluid])
+    ItemPtr item = Item::create(id);
+    if(item->isStackable() || item->isFluidContainer() || item->isFluid())
         item->setData(msg.getU8());
 
     return item;

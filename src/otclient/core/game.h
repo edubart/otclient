@@ -27,6 +27,7 @@
 #include <otclient/net/declarations.h>
 #include <otclient/core/item.h>
 #include <otclient/core/outfit.h>
+#include <framework/core/timer.h>
 
 class Game
 {
@@ -41,14 +42,16 @@ public:
     void cleanLogout() { logout(false); }
     void processLoginError(const std::string& error);
     void processConnectionError(const boost::system::error_code& error);
-    void processLogin(const LocalPlayerPtr& localPlayer);
+    void processLogin(const LocalPlayerPtr& localPlayer, int serverBeat);
     void processLogout();
     void processDeath();
 
     void processTextMessage(const std::string& type, const std::string& message);
     void processCreatureSpeak(const std::string& name, int level, const std::string& type, const std::string& message, int channelId, const Position& creaturePos);
     void processInventoryChange(int slot, const ItemPtr& item);
+    void processCreatureMove(const CreaturePtr& creature, const Position& oldPos, const Position& newPos);
     void processAttackCancel();
+    void processWalkCancel(Otc::Direction direction);
 
     void walk(Otc::Direction direction);
     void turn(Otc::Direction direction);
@@ -80,15 +83,19 @@ public:
     LocalPlayerPtr getLocalPlayer() { return m_localPlayer; }
     ProtocolGamePtr getProtocolGame() { return m_protocolGame; }
     int getProtocolVersion() { return PROTOCOL; }
+    int getPing() { return m_ping; }
 
 private:
+    void updatePing();
+
     LocalPlayerPtr m_localPlayer;
     ProtocolGamePtr m_protocolGame;
     bool m_online;
     bool m_dead;
+    bool m_walkFeedback;
+    Timer m_pingTimer;
+    int m_ping;
     int m_serverBeat;
-
-
 };
 
 extern Game g_game;

@@ -128,18 +128,18 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Creature>("setShieldTexture", &Creature::setShieldTexture);
     g_lua.bindClassMemberFunction<Creature>("setEmblemTexture", &Creature::setEmblemTexture);
 
-    g_lua.registerClass<Player, Creature>();
-
+    g_lua.registerClass<Item, Thing>();
     g_lua.registerClass<Effect, Thing>();
     g_lua.registerClass<Missile, Thing>();
     g_lua.registerClass<StaticText, Thing>();
     g_lua.registerClass<AnimatedText, Thing>();
 
+    g_lua.registerClass<Player, Creature>();
+    g_lua.registerClass<Npc, Creature>();
+    g_lua.registerClass<Monster, Creature>();
     g_lua.registerClass<LocalPlayer, Player>();
     g_lua.bindClassMemberFunction<LocalPlayer>("getAttackingCreature", &LocalPlayer::getAttackingCreature);
     g_lua.bindClassMemberFunction<LocalPlayer>("getFollowingCreature", &LocalPlayer::getFollowingCreature);
-
-    g_lua.registerClass<Item, Thing>();
 
     g_lua.registerClass<Tile>();
     g_lua.bindClassMemberFunction<Tile>("clean", &Tile::clean);

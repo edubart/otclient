@@ -37,6 +37,9 @@ void UILayout::updateLater()
     if(m_updateScheduled)
         return;
 
+    if(!getParentWidget())
+        return;
+
     auto self = asUILayout();
     g_dispatcher.addEvent([self] {
         self->m_updateScheduled = false;
