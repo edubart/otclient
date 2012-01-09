@@ -35,7 +35,7 @@ void UIProgressBar::render()
 {
     UIWidget::render();
 
-    g_painter.setColor(m_foregroundColor);
+    g_painter.setColor(m_color);
     g_painter.drawBoundingRect(m_rect, 1);
 
     Rect fillRect = m_rect.expanded(-1);

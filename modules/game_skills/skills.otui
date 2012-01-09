@@ -17,10 +17,10 @@ SkillValueLabel < GameLabel
   id: value
   font: verdana-11px-monochrome
   text-align: topright
-  width: 64
   anchors.right: parent.right
   anchors.top: parent.top
   anchors.bottom: parent.bottom
+  anchors.left: prev.left
 
 SkillPercentPanel < UIProgressBar
   id: percent

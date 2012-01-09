@@ -72,11 +72,15 @@ public:
     void setIcon(const std::string& iconFile);
     void setOpacity(int opacity) { m_opacity = opacity; }
     void setBackgroundColor(const Color& color) { m_backgroundColor = color; }
-    void setForegroundColor(const Color& color) { m_foregroundColor = color; }
+    void setColor(const Color& color) { m_color = color; }
     void setMarginTop(int margin) { m_marginTop = margin; updateParentLayout(); }
     void setMarginRight(int margin) { m_marginRight = margin; updateParentLayout(); }
     void setMarginBottom(int margin) { m_marginBottom = margin; updateParentLayout(); }
     void setMarginLeft(int margin) { m_marginLeft = margin; updateParentLayout(); }
+    void setPaddingTop(int padding) { m_paddingTop = padding; updateLayout(); }
+    void setPaddingRight(int padding) { m_paddingRight = padding; updateLayout(); }
+    void setPaddingBottom(int padding) { m_paddingBottom = padding; updateLayout(); }
+    void setPaddingLeft(int padding) { m_paddingLeft = padding; updateLayout(); }
     void setText(const std::string& text);
     void setTextAlign(Fw::AlignmentFlag align) { m_textAlign = align; }
     void setTextOffset(const Point& offset) { m_textOffset = offset; }
@@ -133,17 +137,22 @@ public:
     Point getPos() { return m_rect.topLeft(); }
     Size getSize() { return m_rect.size(); }
     Rect getRect() { return m_rect; }
+    Rect getChildrenRect();
     int getX() { return m_rect.x(); }
     int getY() { return m_rect.y(); }
     int getWidth() { return m_rect.width(); }
     int getHeight() { return m_rect.height(); }
-    Color getForegroundColor() { return m_foregroundColor; }
+    Color getColor() { return m_color; }
     Color getBackgroundColor() { return m_backgroundColor; }
     int getOpacity() { return m_opacity; }
     int getMarginTop() { return m_marginTop; }
     int getMarginRight() { return m_marginRight; }
     int getMarginBottom() { return m_marginBottom; }
     int getMarginLeft() { return m_marginLeft; }
+    int getPaddingTop() { return m_paddingTop; }
+    int getPaddingRight() { return m_paddingRight; }
+    int getPaddingBottom() { return m_paddingBottom; }
+    int getPaddingLeft() { return m_paddingLeft; }
     std::string getText() { return m_text; }
     Fw::AlignmentFlag getTextAlign() { return m_textAlign; }
     Point getTextOffset() { return m_textOffset; }
@@ -244,13 +253,17 @@ protected:
     TexturePtr m_icon;
     FontPtr m_font;
     Color m_backgroundColor;
-    Color m_foregroundColor;
+    Color m_color;
     int m_states;
     int m_opacity;
     int m_marginTop;
     int m_marginRight;
     int m_marginBottom;
     int m_marginLeft;
+    int m_paddingTop;
+    int m_paddingRight;
+    int m_paddingBottom;
+    int m_paddingLeft;
     std::string m_text;
     Point m_textOffset;
     Fw::AlignmentFlag m_textAlign;

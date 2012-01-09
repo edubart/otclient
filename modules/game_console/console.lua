@@ -41,7 +41,7 @@ function Console.addText(text, color)
 
   local label = createWidget('ConsoleLabel', consoleBuffer)
   label:setText(text)
-  label:setForegroundColor(color)
+  label:setColor(color)
 end
 
 -- hooked events

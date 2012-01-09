@@ -82,29 +82,11 @@ local function completeCommand()
   end
 end
 
-local function onCommandLineKeyPress(widget, keyCode, keyText, keyboardModifiers)
-  if keyboardModifiers == KeyboardNoModifier then
-    -- execute current command
-    if keyCode == KeyReturn or keyCode == KeyEnter then
-      local currentCommand = commandLineEdit:getText()
-      Terminal.executeCommand(currentCommand)
-      commandLineEdit:clearText()
-      return true
-    -- navigate history up
-    elseif keyCode == KeyUp then
-      navigateCommand(1)
-      return true
-    -- navigate history down
-    elseif keyCode == KeyDown then
-      navigateCommand(-1)
-      return true
-    -- complete command
-    elseif keyCode == KeyTab then
-      completeCommand()
-      return true
-    end
-  end
-  return false
+local function doCommand()
+  local currentCommand = commandLineEdit:getText()
+  Terminal.executeCommand(currentCommand)
+  commandLineEdit:clearText()
+  return true
 end
 
 local function onLog(level, message, time)
@@ -128,7 +110,11 @@ function Terminal.init()
   Hotkeys.bind('Ctrl+T', Terminal.toggle)
 
   commandLineEdit = terminalWidget:getChildById('commandLineEdit')
-  connect(commandLineEdit, { onKeyPress = onCommandLineKeyPress })
+  Hotkeys.bind('Up', function() navigateCommand(1) end, commandLineEdit)
+  Hotkeys.bind('Down', function() navigateCommand(-1) end, commandLineEdit)
+  Hotkeys.bind('Tab', completeCommand, commandLineEdit)
+  Hotkeys.bind('Enter', doCommand, commandLineEdit)
+  Hotkeys.bind('Return', doCommand, commandLineEdit)
 
   terminalBuffer = terminalWidget:getChildById('terminalBuffer')
   Logger.setOnLog(onLog)
@@ -171,7 +157,7 @@ function Terminal.addLine(text, color)
   local label = createWidget('TerminalLabel', terminalBuffer)
   label:setId('terminalLabel' .. numLines)
   label:setText(text)
-  label:setForegroundColor(color)
+  label:setColor(color)
 
   -- delete old lines if needed
   if numLines > MaxLogLines then
@@ -182,6 +168,7 @@ function Terminal.addLine(text, color)
 end
 
 function Terminal.executeCommand(command)
+  if command == nil or #command == 0 then return end
   -- detect and convert commands with simple syntax
   local realCommand
   if commandEnv[command] then

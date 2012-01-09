@@ -48,7 +48,7 @@ void UICheckBox::render()
     if(m_text.length()) {
         Rect textRect(m_rect);
         textRect.setTopLeft(textRect.topLeft() + m_textOffset);
-        m_font->renderText(m_text, textRect, m_textAlign, m_foregroundColor);
+        m_font->renderText(m_text, textRect, m_textAlign, m_color);
     }
 }
 

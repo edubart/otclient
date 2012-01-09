@@ -37,9 +37,9 @@ function Game.onAddVip(id, name, online)
   label:setText(name)
 
   if online then
-    label:setForegroundColor('#00ff00')
+    label:setColor('#00ff00')
   else
-    label:setForegroundColor('#ff0000')
+    label:setColor('#ff0000')
   end
 
   label.vipOnline = online
@@ -50,9 +50,9 @@ function Game.onVipStateChange(id, online)
   local label = vipList:getChildById('vip' .. id)
 
   if online then
-    label:setForegroundColor('#00ff00')
+    label:setColor('#00ff00')
   else
-    label:setForegroundColor('#ff0000')
+    label:setColor('#ff0000')
   end
 
   label.vipOnline = online

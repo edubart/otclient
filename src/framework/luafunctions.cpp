@@ -67,7 +67,7 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIWidget>("setIcon", &UIWidget::setIcon);
     g_lua.bindClassMemberFunction<UIWidget>("setOpacity", &UIWidget::setOpacity);
     g_lua.bindClassMemberFunction<UIWidget>("setBackgroundColor", &UIWidget::setBackgroundColor);
-    g_lua.bindClassMemberFunction<UIWidget>("setForegroundColor", &UIWidget::setForegroundColor);
+    g_lua.bindClassMemberFunction<UIWidget>("setColor", &UIWidget::setColor);
     g_lua.bindClassMemberFunction<UIWidget>("setMarginTop", &UIWidget::setMarginTop);
     g_lua.bindClassMemberFunction<UIWidget>("setMarginRight", &UIWidget::setMarginRight);
     g_lua.bindClassMemberFunction<UIWidget>("setMarginBottom", &UIWidget::setMarginBottom);
@@ -128,7 +128,7 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIWidget>("getY", &UIWidget::getY);
     g_lua.bindClassMemberFunction<UIWidget>("getWidth", &UIWidget::getWidth);
     g_lua.bindClassMemberFunction<UIWidget>("getHeight", &UIWidget::getHeight);
-    g_lua.bindClassMemberFunction<UIWidget>("getForegroundColor", &UIWidget::getForegroundColor);
+    g_lua.bindClassMemberFunction<UIWidget>("getColor", &UIWidget::getColor);
     g_lua.bindClassMemberFunction<UIWidget>("getBackgroundColor", &UIWidget::getBackgroundColor);
     g_lua.bindClassMemberFunction<UIWidget>("getOpacity", &UIWidget::getOpacity);
     g_lua.bindClassMemberFunction<UIWidget>("getMarginTop", &UIWidget::getMarginTop);
@@ -297,6 +297,8 @@ void Application::registerLuaFunctions()
     g_lua.bindClassStaticFunction("g_ui", "getStyleClass", std::bind(&UIManager::getStyleClass, &g_ui, _1));
     g_lua.bindClassStaticFunction("g_ui", "loadUI", std::bind(&UIManager::loadUI, &g_ui, _1, _2));
     g_lua.bindClassStaticFunction("g_ui", "getRootWidget", std::bind(&UIManager::getRootWidget, &g_ui));
+    g_lua.bindClassStaticFunction("g_ui", "setDebugBoxesDrawing", std::bind(&UIManager::setDebugBoxesDrawing, &g_ui, _1));
+    g_lua.bindClassStaticFunction("g_ui", "isDrawingDebugBoxes", std::bind(&UIManager::setDebugBoxesDrawing, &g_ui, _1));
 
     // FontManager
     g_lua.registerStaticClass("g_fonts");

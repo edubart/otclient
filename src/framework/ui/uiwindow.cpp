@@ -53,7 +53,7 @@ void UIWindow::render()
         headTextRect.addLeft(-m_headTextOffset.x);
         headTextRect.addRight(-m_headTextOffset.x);
     }
-    m_font->renderText(m_title, headTextRect, m_titleAlign, m_foregroundColor);
+    m_font->renderText(m_title, headTextRect, m_titleAlign, m_color);
 }
 
 void UIWindow::onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode)

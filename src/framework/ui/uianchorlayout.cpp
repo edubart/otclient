@@ -122,25 +122,29 @@ void UIAnchorLayout::updateWidget(const UIWidgetPtr& widget, UIAnchorGroup& anch
         }
 
         // determine hooked widget edge point
+        Rect hookedWidgetRect = hookedWidget->getRect();
+        if(hookedWidget == parentWidget)
+            hookedWidgetRect = parentWidget->getChildrenRect();
+
         int point = 0;
         switch(anchor.getHookedEdge()) {
             case Fw::AnchorLeft:
-                point = hookedWidget->getRect().left();
+                point = hookedWidgetRect.left();
                 break;
             case Fw::AnchorRight:
-                point = hookedWidget->getRect().right();
+                point = hookedWidgetRect.right();
                 break;
             case Fw::AnchorTop:
-                point = hookedWidget->getRect().top();
+                point = hookedWidgetRect.top();
                 break;
             case Fw::AnchorBottom:
-                point = hookedWidget->getRect().bottom();
+                point = hookedWidgetRect.bottom();
                 break;
             case Fw::AnchorHorizontalCenter:
-                point = hookedWidget->getRect().horizontalCenter();
+                point = hookedWidgetRect.horizontalCenter();
                 break;
             case Fw::AnchorVerticalCenter:
-                point = hookedWidget->getRect().verticalCenter();
+                point = hookedWidgetRect.verticalCenter();
                 break;
             default:
                 // must never happens

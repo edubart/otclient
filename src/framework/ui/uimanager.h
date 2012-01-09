@@ -47,6 +47,7 @@ public:
 
     void setMouseReceiver(const UIWidgetPtr& widget) { m_mouseReceiver = widget; }
     void setKeyboardReceiver(const UIWidgetPtr& widget) { m_keyboardReceiver = widget; }
+    void setDebugBoxesDrawing(bool enabled) { m_drawDebugBoxes = enabled; }
     void resetMouseReceiver() { m_mouseReceiver = m_rootWidget; }
     void resetKeyboardReceiver() { m_keyboardReceiver = m_rootWidget; }
     UIWidgetPtr getMouseReceiver() { return m_mouseReceiver; }
@@ -55,12 +56,14 @@ public:
     UIWidgetPtr getRootWidget() { return m_rootWidget; }
 
     bool isOnInputEvent() { return m_isOnInputEvent; }
+    bool isDrawingDebugBoxes() { return m_drawDebugBoxes; }
 
 private:
     UIWidgetPtr m_rootWidget;
     UIWidgetPtr m_mouseReceiver;
     UIWidgetPtr m_keyboardReceiver;
     bool m_isOnInputEvent;
+    Boolean<false> m_drawDebugBoxes;
     std::map<std::string, OTMLNodePtr> m_styles;
 };
 

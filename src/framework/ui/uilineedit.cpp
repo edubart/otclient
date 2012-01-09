@@ -50,7 +50,7 @@ void UILineEdit::renderSelf()
     int textLength = m_text.length();
     const TexturePtr& texture = m_font->getTexture();
 
-    g_painter.setColor(m_foregroundColor);
+    g_painter.setColor(m_color);
     for(int i=0;i<textLength;++i)
         g_painter.drawTexturedRect(m_glyphsCoords[i], texture, m_glyphsTexCoords[i]);
 

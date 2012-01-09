@@ -46,7 +46,7 @@ local function displayMessage(msgtype, msg, time)
     label:setVisible(true)
     label:setText(msg)
     label:setStyle(style)
-    label:setForegroundColor(msgtype.color)
+    label:setColor(msgtype.color)
 
     if not time then
       time = math.max(#msg * 75, 3000)

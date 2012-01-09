@@ -87,6 +87,7 @@ public:
     void addTop(T add) { y1 -= add; }
     void addRight(T add) { x2 += add; }
     void addBottom(T add) { y2 += add; }
+    void add(T top, T right, T bottom, T left) { x1 -= left; y1 -= top; x2 += right; y2 += bottom; }
 
     void translate(T x, T y) { x1 += x; y1 += y; x2 += x; y2 += y; }
     void translate(const TPoint<T> &p) { x1 += p.x; y1 += p.y; x2 += p.x; y2 += p.y; }

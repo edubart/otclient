@@ -42,9 +42,10 @@ UIWidget::UIWidget()
     m_font = g_fonts.getDefaultFont();
     m_opacity = 255;
     m_marginTop = m_marginRight = m_marginBottom = m_marginLeft = 0;
+    m_paddingTop = m_paddingRight = m_paddingBottom = m_paddingLeft = 0;
     //m_backgroundColor = Fw::alpha;
     m_backgroundColor = Fw::white;
-    m_foregroundColor = Fw::white;
+    m_color = Fw::white;
     m_textAlign = Fw::AlignCenter;
 
     // generate an unique id, this is need because anchored layouts find widgets by id
@@ -113,8 +114,10 @@ void UIWidget::renderChildren()
             child->render();
 
             // debug draw box
-            //g_painter.setColor(Fw::green);
-            //g_painter.drawBoundingRect(child->getRect());
+            if(g_ui.isDrawingDebugBoxes()) {
+                g_painter.setColor(Fw::green);
+                g_painter.drawBoundingRect(child->getRect());
+            }
             //g_fonts.getDefaultFont()->renderText(child->getId(), child->getPos() + Point(2, 0), Fw::red);
 
             g_painter.setOpacity(oldOpacity);
@@ -164,11 +167,11 @@ void UIWidget::drawIcon(const Rect& screenCoords)
 
 void UIWidget::drawText(const Rect& screenCoords)
 {
-    g_painter.setColor(m_foregroundColor);
-    if(m_text.length() > 0 && m_foregroundColor.a() > 0) {
+    g_painter.setColor(m_color);
+    if(m_text.length() > 0 && m_color.a() > 0) {
         Rect textRect = screenCoords;
         textRect.translate(m_textOffset);
-        m_font->renderText(m_text, textRect, m_textAlign, m_foregroundColor);
+        m_font->renderText(m_text, textRect, m_textAlign, m_color);
     }
 }
 
@@ -401,6 +404,13 @@ bool UIWidget::hasChild(const UIWidgetPtr& child)
     if(it != m_children.end())
         return true;
     return false;
+}
+
+Rect UIWidget::getChildrenRect()
+{
+    Rect rect = m_rect;
+    rect.add(-m_paddingTop, -m_paddingRight, -m_paddingBottom, -m_paddingLeft);
+    return rect;
 }
 
 UIWidgetPtr UIWidget::getRootParent()
@@ -1031,7 +1041,7 @@ void UIWidget::onStyleApply(const std::string& styleName, const OTMLNodePtr& sty
         else if(node->tag() == "font")
             setFont(node->value());
         else if(node->tag() == "color")
-            setForegroundColor(node->value<Color>());
+            setColor(node->value<Color>());
         else if(node->tag() == "background-color")
             setBackgroundColor(node->value<Color>());
         else if(node->tag() == "opacity")
@@ -1100,6 +1110,46 @@ void UIWidget::onStyleApply(const std::string& styleName, const OTMLNodePtr& sty
                 setMarginRight(margin);
                 setMarginBottom(margin);
                 setMarginLeft(margin);
+            }
+        }
+        else if(node->tag() == "padding-top")
+            setPaddingTop(node->value<int>());
+        else if(node->tag() == "padding-right")
+            setPaddingRight(node->value<int>());
+        else if(node->tag() == "padding-bottom")
+            setPaddingBottom(node->value<int>());
+        else if(node->tag() == "padding-left")
+            setPaddingLeft(node->value<int>());
+        else if(node->tag() == "padding") {
+            std::string paddingDesc = node->value();
+            std::vector<std::string> split;
+            boost::split(split, paddingDesc, boost::is_any_of(std::string(" ")));
+            if(split.size() == 4) {
+                setPaddingTop(Fw::safeCast<int>(split[0]));
+                setPaddingRight(Fw::safeCast<int>(split[1]));
+                setPaddingBottom(Fw::safeCast<int>(split[2]));
+                setPaddingLeft(Fw::safeCast<int>(split[3]));
+            } else if(split.size() == 3) {
+                int paddingTop = Fw::safeCast<int>(split[0]);
+                int paddingHorizontal = Fw::safeCast<int>(split[1]);
+                int paddingBottom = Fw::safeCast<int>(split[2]);
+                setPaddingTop(paddingTop);
+                setPaddingRight(paddingHorizontal);
+                setPaddingBottom(paddingBottom);
+                setPaddingLeft(paddingHorizontal);
+            } else if(split.size() == 2) {
+                int paddingVertical = Fw::safeCast<int>(split[0]);
+                int paddingHorizontal = Fw::safeCast<int>(split[1]);
+                setPaddingTop(paddingVertical);
+                setPaddingRight(paddingHorizontal);
+                setPaddingBottom(paddingVertical);
+                setPaddingLeft(paddingHorizontal);
+            } else if(split.size() == 1) {
+                int padding = Fw::safeCast<int>(split[0]);
+                setPaddingTop(padding);
+                setPaddingRight(padding);
+                setPaddingBottom(padding);
+                setPaddingLeft(padding);
             }
         }
         // layouts

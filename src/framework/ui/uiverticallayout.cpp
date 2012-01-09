@@ -82,7 +82,8 @@ void UIVerticalLayout::internalUpdate()
     if(m_alignBottom)
         std::reverse(widgets.begin(), widgets.end());
 
-    Point pos = (m_alignBottom) ? parentWidget->getRect().bottomLeft() : parentWidget->getPos();
+    Rect childrenRect = parentWidget->getChildrenRect();
+    Point pos = (m_alignBottom) ? childrenRect.bottomLeft() : childrenRect.topLeft();
     int prefferedHeight = 0;
     int gap;
 
@@ -98,12 +99,12 @@ void UIVerticalLayout::internalUpdate()
 
         if(widget->isSizeFixed()) {
             // center it
-            pos.x = parentWidget->getX() + (parentWidget->getWidth() - (widget->getMarginLeft() + widget->getWidth() + widget->getMarginRight()))/2;
+            pos.x = childrenRect.left() + (childrenRect.width() - (widget->getMarginLeft() + widget->getWidth() + widget->getMarginRight()))/2;
             pos.x = std::max(pos.x, parentWidget->getX());
         } else {
             // expand width
-            size.setWidth(parentWidget->getWidth() - (widget->getMarginLeft() + widget->getMarginRight()));
-            pos.x = parentWidget->getX() + (parentWidget->getWidth() - size.width())/2;
+            size.setWidth(childrenRect.width() - (widget->getMarginLeft() + widget->getMarginRight()));
+            pos.x = childrenRect.left() + (childrenRect.width() - size.width())/2;
         }
 
         widget->setRect(Rect(pos, size));
@@ -115,6 +116,7 @@ void UIVerticalLayout::internalUpdate()
     }
 
     prefferedHeight -= m_spacing;
+    prefferedHeight += parentWidget->getPaddingTop() + parentWidget->getPaddingBottom();
 
     if(m_fitParent && prefferedHeight != parentWidget->getHeight()) {
         // must set the preffered width later
