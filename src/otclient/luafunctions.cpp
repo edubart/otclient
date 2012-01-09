@@ -201,6 +201,7 @@ void OTClient::registerLuaFunctions()
 
     g_lua.registerClass<UIMap, UIWidget>();
     g_lua.bindClassStaticFunction<UIMap>("create", []{ return UIMapPtr(new UIMap); } );
+    g_lua.bindClassMemberFunction<UIMap>("getTile", &UIMap::getTile);
 
     g_lua.registerClass<UIGame, UIWidget>();
     g_lua.bindClassStaticFunction<UIGame>("create", []{ return UIGamePtr(new UIGame); } );

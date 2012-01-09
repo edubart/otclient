@@ -25,6 +25,7 @@
 
 #include "declarations.h"
 #include <framework/ui/uiwidget.h>
+#include <otclient/core/tile.h>
 
 class UIMap : public UIWidget
 {
@@ -32,9 +33,10 @@ public:
     UIMap();
     void render();
 
+    TilePtr getTile(const Point& mousePos);
+
 protected:
     virtual void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode);
-    virtual bool onMousePress(const Point& mousePos, Fw::MouseButton button);
     virtual void onGeometryChange(const Rect& oldRect, const Rect& newRect);
 
 private:
@@ -43,4 +45,3 @@ private:
 };
 
 #endif
-

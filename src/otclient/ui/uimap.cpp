@@ -25,9 +25,7 @@
 #include <otclient/core/map.h>
 #include <framework/otml/otml.h>
 #include <framework/graphics/graphics.h>
-#include <otclient/core/tile.h>
 #include <otclient/core/localplayer.h>
-#include <otclient/core/effect.h>
 
 UIMap::UIMap()
 {
@@ -55,16 +53,18 @@ void UIMap::onStyleApply(const std::string& styleName, const OTMLNodePtr& styleN
     UIWidget::onStyleApply(styleName, styleNode);
 }
 
-bool UIMap::onMousePress(const Point& mousePos, Fw::MouseButton button)
+TilePtr UIMap::getTile(const Point& mousePos)
 {
     if(!m_mapRect.contains(mousePos))
-        return UIWidget::onMousePress(mousePos, button);
+        return nullptr;
 
     // Get tile position
     Point relativeStretchMousePos = mousePos - m_mapRect.topLeft();
+
     LocalPlayerPtr localPlayer = g_game.getLocalPlayer();
     if(localPlayer)
         relativeStretchMousePos += localPlayer->getWalkOffset();
+
     Size mapSize(g_map.getVibibleSize().width() * Map::NUM_TILE_PIXELS, g_map.getVibibleSize().height() * Map::NUM_TILE_PIXELS);
 
     PointF stretchFactor(m_mapRect.width() / (float)mapSize.width(), m_mapRect.height() / (float)mapSize.height());
@@ -89,21 +89,9 @@ bool UIMap::onMousePress(const Point& mousePos, Fw::MouseButton button)
     // todo: get creature, using walkOffset etc.
 
     if(!tile || !tile->isClickable())
-        return true;
+        return nullptr;
 
-    if(button == Fw::MouseLeftButton) {
-        g_game.look(tile->getTopLookThing());
-        EffectPtr effect = EffectPtr(new Effect);
-        static int id = 0;
-        effect->setId(id++);
-        g_map.addThing(effect, tilePos);
-    }
-    else if(button == Fw::MouseRightButton) {
-
-        g_lua.callGlobalField("Game","createThingMenu", mousePos, tile->getTopLookThing(), tile->getTopUseThing(), tile->getTopCreature());
-    }
-
-    return true;
+    return tile;
 }
 
 void UIMap::onGeometryChange(const Rect& oldRect, const Rect& newRect)
