@@ -83,7 +83,7 @@ namespace Otc
     };
 
     enum Statistic {
-        Health,
+        Health = 0,
         MaxHealth,
         FreeCapacity,
         Experience,
@@ -110,7 +110,7 @@ namespace Otc
     };
 
     enum SkillType {
-        SkillLevel,
+        SkillLevel = 0,
         SkillPercent,
         LastSkillType
     };
@@ -128,7 +128,7 @@ namespace Otc
     };
 
     enum FluidsColor {
-        FluidTransparent,
+        FluidTransparent = 0,
         FluidBlue,
         FluidRed,
         FluidBrown,
@@ -164,33 +164,52 @@ namespace Otc
 
     enum PlayerSkulls {
         SkullNone = 0,
-        SkullYellow = 1,
-        SkullGreen = 2,
-        SkullWhite = 3,
-        SkullRed = 4,
-        SkullBlack = 5,
-        SkullOrange = 6
+        SkullYellow,
+        SkullGreen,
+        SkullWhite,
+        SkullRed,
+        SkullBlack,
+        SkullOrange
     };
 
     enum PlayerShields {
         ShieldNone = 0,
-        ShieldWhiteYellow = 1,
-        ShieldWhiteBlue = 2,
-        ShieldBlue = 3,
-        ShieldYellow = 4,
-        ShieldBlueSharedExp = 5,
-        ShieldYellowSharedExp = 6,
-        ShieldBlueNoSharedExpBlink = 7,
-        ShieldYellowNoSharedExpBlink = 8,
-        ShieldBlueNoSharedExp = 9,
-        ShieldYellowNoSharedExp = 10
+        ShieldWhiteYellow,
+        ShieldWhiteBlue,
+        ShieldBlue,
+        ShieldYellow,
+        ShieldBlueSharedExp,
+        ShieldYellowSharedExp,
+        ShieldBlueNoSharedExpBlink,
+        ShieldYellowNoSharedExpBlink,
+        ShieldBlueNoSharedExp,
+        ShieldYellowNoSharedExp
     };
 
     enum PlayerEmblems {
         EmblemNone = 0,
-        EmblemGreen = 1,
-        EmblemRed = 2,
-        EmblemBlue = 3
+        EmblemGreen,
+        EmblemRed,
+        EmblemBlue
+    };
+
+    enum PlayerIcons {
+        IconNone = 0,
+        IconPoison = 1,
+        IconBurn = 2,
+        IconEnergy = 4,
+        IconDrunk = 8,
+        IconManaShield = 16,
+        IconParalyze = 32,
+        IconHaste = 64,
+        IconSwords = 128,
+        IconDrowning = 256,
+        IconFreezing = 512,
+        IconDazzled = 1024,
+        IconCursed = 2048,
+        IconPartyBuff = 4096,
+        IconPzBlock = 8192,
+        IconPz = 16384
     };
 }
 

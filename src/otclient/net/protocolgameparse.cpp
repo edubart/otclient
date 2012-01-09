@@ -725,7 +725,7 @@ void ProtocolGame::parsePlayerSkills(InputMessage& msg)
 void ProtocolGame::parsePlayerIcons(InputMessage& msg)
 {
     uint16 icons = msg.getU16();
-    m_localPlayer->setIcons(icons);
+    m_localPlayer->setIcons((Otc::PlayerIcons)icons);
 }
 
 void ProtocolGame::parsePlayerCancelAttack(InputMessage& msg)

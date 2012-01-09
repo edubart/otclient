@@ -35,7 +35,7 @@ public:
     void setStatistic(Otc::Statistic statistic, double value) { m_statistics[statistic] = value; }
     void setAttackingCreature(const CreaturePtr& creature);
     void setFollowingCreature(const CreaturePtr& creature);
-    void setIcons(int icons) { m_icons = icons; }
+    void setIcons(Otc::PlayerIcons icons) { m_icons = icons; }
 
     bool getCanReportBugs() { return m_canReportBugs; }
     int getSkill(Otc::Skill skill, Otc::SkillType skillType) { return m_skills[skill][skillType]; }
@@ -43,7 +43,7 @@ public:
     CreaturePtr getAttackingCreature() { return m_attackingCreature; }
     CreaturePtr getFollowingCreature() { return m_followingCreature; }
     Otc::Direction getNextWalkDirection() { return m_nextWalkDirection; }
-    int getIcons() { return m_icons; }
+    Otc::PlayerIcons getIcons() { return m_icons; }
 
     bool isAttacking() { return m_attackingCreature != nullptr; }
     bool isFollowing() { return m_followingCreature != nullptr; }
@@ -60,7 +60,7 @@ private:
     bool m_clientWalking;
     Otc::Direction m_nextWalkDirection;
     CreaturePtr m_attackingCreature, m_followingCreature;
-    int m_icons;
+    Otc::PlayerIcons m_icons;
     int m_skills[Otc::LastSkill][Otc::LastSkillType];
     double m_statistics[Otc::LastStatistic];
 };

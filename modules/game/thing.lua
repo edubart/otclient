@@ -10,6 +10,7 @@ function Game.createThingMenu(menuPosition, lookThing, useThing, creatureThing)
   -- Open or Use, depending if thing is a container
   if useThing then
     if useThing:isContainer() then
+      -- check for open in new window
       menu:addOption('Open', function() print('open') end)
     else
       if useThing:isMultiUse() then
@@ -22,12 +23,15 @@ function Game.createThingMenu(menuPosition, lookThing, useThing, creatureThing)
     if useThing:isRotateable() then
       menu:addOption('Rotate', function() Game.rotate(useThing) end)
     end
-     
-    if not useThing:isNotMoveable() and useThing:isPickupable() then
-      menu:addSeparator()
-      menu:addOption('Trade with ...', function() print('trade with') end)
-    end
+    
   end
+  
+  if lookThing and not lookThing:asCreature() and not lookThing:isNotMoveable() and lookThing:isPickupable() then
+    menu:addSeparator()
+    menu:addOption('Trade with ...', function() print('trade with') end)
+  end
+  
+  -- check for move up
      
   if creatureThing then
     menu:addSeparator()

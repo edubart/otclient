@@ -130,16 +130,16 @@ void Map::draw(const Rect& rect)
         }
     }
 
-    // draw animated text
-    for(auto it = m_animatedTexts.begin(), end = m_animatedTexts.end(); it != end; ++it) {
+    // draw static text
+    for(auto it = m_staticTexts.begin(), end = m_staticTexts.end(); it != end; ++it) {
         Point pos = positionTo2D((*it)->getPos()) - m_drawOffset;
         pos.x *= horizontalStretchFactor;
         pos.y *= verticalStretchFactor;
         (*it)->draw(rect.topLeft() + pos, rect);
     }
 
-    // draw static text
-    for(auto it = m_staticTexts.begin(), end = m_staticTexts.end(); it != end; ++it) {
+    // draw animated text
+    for(auto it = m_animatedTexts.begin(), end = m_animatedTexts.end(); it != end; ++it) {
         Point pos = positionTo2D((*it)->getPos()) - m_drawOffset;
         pos.x *= horizontalStretchFactor;
         pos.y *= verticalStretchFactor;
