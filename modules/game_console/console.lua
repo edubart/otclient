@@ -12,7 +12,7 @@ local SpeakTypes = {
   channelWhite = { color = '#FFFFFF' },
   channelRed = { color = '#F55E5E' },
   channelOrange = { color = '#FE6500' },
-  private = { color = '#FFFF00' },
+  private = { color = '#5FF7F7' },
   playerToNpc = { color = '#9F9DFD' },
   broadcast = { color = '#F55E5E' },
   privateRed = { color = '#F55E5E' }

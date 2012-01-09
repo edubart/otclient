@@ -37,8 +37,7 @@ void Game::loginWorld(const std::string& account, const std::string& password, c
     m_online = false;
     m_dead = false;
     m_walkFeedback = true;
-    m_ping = 0;
-    m_pingTimer.restart();
+    m_walkPing = 0;
     m_protocolGame = ProtocolGamePtr(new ProtocolGame);
     m_protocolGame->login(account, password, worldHost, (uint16)worldPort, characterName);
 }
@@ -77,7 +76,6 @@ void Game::processConnectionError(const boost::system::error_code& error)
 
 void Game::processLogin(const LocalPlayerPtr& localPlayer, int serverBeat)
 {
-    updatePing();
     m_localPlayer = localPlayer;
     m_online = true;
     m_serverBeat = serverBeat;
@@ -148,7 +146,7 @@ void Game::processCreatureMove(const CreaturePtr& creature, const Position& oldP
             creature->cancelWalk();
     }
     */
-    if(!m_walkFeedback) {
+    if(!m_walkFeedback && creature == m_localPlayer) {
         updatePing();
         m_walkFeedback = true;
     }
@@ -183,7 +181,7 @@ void Game::walk(Otc::Direction direction)
     m_localPlayer->clientWalk(direction);
 
     // ping calculation restarts when the local players try to walk one tile
-    m_pingTimer.restart();
+    m_walkPingTimer.restart();
 
     switch(direction) {
     case Otc::North:
@@ -388,6 +386,6 @@ bool Game::checkBotProtection()
 
 void Game::updatePing()
 {
-    m_ping = m_pingTimer.ticksElapsed();
-    g_lua.callGlobalField("Game", "onPingUpdate", m_ping);
+    m_walkPing = m_walkPingTimer.ticksElapsed();
+    g_lua.callGlobalField("Game", "onWalkPingUpdate", m_walkPing);
 }

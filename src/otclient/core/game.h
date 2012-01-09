@@ -83,7 +83,7 @@ public:
     LocalPlayerPtr getLocalPlayer() { return m_localPlayer; }
     ProtocolGamePtr getProtocolGame() { return m_protocolGame; }
     int getProtocolVersion() { return PROTOCOL; }
-    int getPing() { return m_ping; }
+    int getWalkPing() { return m_walkPing; }
 
 private:
     void updatePing();
@@ -93,8 +93,8 @@ private:
     bool m_online;
     bool m_dead;
     bool m_walkFeedback;
-    Timer m_pingTimer;
-    int m_ping;
+    Timer m_walkPingTimer;
+    int m_walkPing;
     int m_serverBeat;
 };
 

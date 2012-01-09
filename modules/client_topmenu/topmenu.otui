@@ -66,11 +66,11 @@ TopPanel
     anchors.top: parent.top
     anchors.bottom: parent.bottom
     anchors.right: parent.right
-    width: 60
+    width: 70
 
   FrameCounter
     id: frameCounter
     anchors.top: parent.top
     anchors.right: prev.left
     margin-top: 8
-    margin-right: 12
+    margin-right: 5
