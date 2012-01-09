@@ -155,7 +155,7 @@ void Connection::onConnect(const boost::system::error_code& error)
         m_socket.set_option(option);
 
         if(m_connectCallback)
-            g_dispatcher.addEvent(m_connectCallback);
+            m_connectCallback();
     } else
         handleError(error);
 
@@ -182,7 +182,7 @@ void Connection::onRecv(const boost::system::error_code& error, size_t recvSize)
 
     if(!error) {
         if(m_recvCallback)
-            g_dispatcher.addEvent(std::bind(m_recvCallback, m_recvBuffer, recvSize));
+            m_recvCallback(m_recvBuffer, recvSize);
     } else
         handleError(error);
 }
@@ -197,7 +197,7 @@ void Connection::handleError(const boost::system::error_code& error)
 {
     if(error != asio::error::operation_aborted) {
         if(m_errorCallback)
-            g_dispatcher.addEvent(std::bind(m_errorCallback, error));
+            m_errorCallback(error);
         if(m_connected || m_connecting)
             close();
     }

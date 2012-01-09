@@ -983,7 +983,7 @@ void ProtocolGame::setTileDescription(InputMessage& msg, Position position)
             return;
         else {
             if(stackPos >= 10)
-                logTraceWarning("too many things");
+                logTraceError("too many things, stackpos=", stackPos, " pos=", position);
 
             ThingPtr thing = internalGetThing(msg);
             g_map.addThing(thing, position, 255);

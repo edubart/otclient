@@ -28,7 +28,7 @@
 
 class Connection : public std::enable_shared_from_this<Connection>, boost::noncopyable
 {
-    typedef std::function<void(boost::system::error_code&)> ErrorCallback;
+    typedef std::function<void(const boost::system::error_code&)> ErrorCallback;
     typedef std::function<void(uint8*, uint16)> RecvCallback;
 
     enum {
