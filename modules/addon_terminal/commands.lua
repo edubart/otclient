@@ -11,7 +11,5 @@ end
 
 function displayItem(id)
   local itemWidget = createWidget('Item', rootWidget)
-  --itemWidget:setItem(Item.create(11703))
+  itemWidget:setItem(Item.create(id))
 end
-
-addEvent(function() displayItem(408) end)
