@@ -198,11 +198,16 @@ void ProtocolGame::parseMessage(InputMessage& msg)
             case Proto::GameServerPrivateChannel:
                 parseOpenPrivatePlayerChat(msg);
                 break;
-            case Proto::GameServerRuleViolation:
-            case Proto::GameServerRuleViolation1:
-            case Proto::GameServerRuleViolation2:
-            case Proto::GameServerRuleViolation3:
-                parseOpenRuleViolation(msg);
+            case Proto::GameServerRuleViolationChannel:
+                msg.getU16();
+                break;
+            case Proto::GameServerRuleViolationRemove:
+                msg.getString();
+                break;
+            case Proto::GameServerRuleViolationCancel:
+                msg.getString();
+                break;
+            case Proto::GameServerRuleViolationLock:
                 break;
             case Proto::GameServerOpenOwnChannel:
                 parseCreatePrivateChannel(msg);
@@ -781,11 +786,6 @@ void ProtocolGame::parseOpenChannel(InputMessage& msg)
 void ProtocolGame::parseOpenPrivatePlayerChat(InputMessage& msg)
 {
     msg.getString(); // name
-}
-
-void ProtocolGame::parseOpenRuleViolation(InputMessage& msg)
-{
-    msg.getU16(); // a
 }
 
 void ProtocolGame::parseCreatePrivateChannel(InputMessage& msg)

@@ -156,7 +156,6 @@ private:
     void parseChannelList(InputMessage& msg);
     void parseOpenChannel(InputMessage& msg);
     void parseOpenPrivatePlayerChat(InputMessage& msg);
-    void parseOpenRuleViolation(InputMessage& msg);
     void parseCreatePrivateChannel(InputMessage& msg);
     void parseClosePrivateChannel(InputMessage& msg);
     void parseSafeTradeRequest(InputMessage& msg);

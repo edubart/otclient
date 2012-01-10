@@ -117,10 +117,10 @@ namespace Proto {
         GameServerChannels = 171,
         GameServerOpenChannel = 172,
         GameServerPrivateChannel = 173,
-        GameServerRuleViolation = 174, // absolate in last tibia?
-        GameServerRuleViolation1 = 175, // absolate in last tibia?
-        GameServerRuleViolation2 = 176, // absolate in last tibia?
-        GameServerRuleViolation3 = 177, // absolate in last tibia?
+        GameServerRuleViolationChannel = 174, // absolate in last tibia?
+        GameServerRuleViolationRemove = 175, // absolate in last tibia?
+        GameServerRuleViolationCancel = 176, // absolate in last tibia?
+        GameServerRuleViolationLock = 177, // absolate in last tibia?
         GameServerOpenOwnChannel = 178,
         GameServerCloseChannel = 179,
         GameServerMessage = 180,

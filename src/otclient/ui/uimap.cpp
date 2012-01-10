@@ -82,10 +82,7 @@ TilePtr UIMap::getTile(const Point& mousePos)
 void UIMap::onGeometryChange(const Rect& oldRect, const Rect& newRect)
 {
     Rect mapRect = newRect.expanded(-1);
-    mapRect.addTop(m_paddingTop);
-    mapRect.addLeft(m_paddingLeft);
-    mapRect.addBottom(-m_paddingBottom);
-    mapRect.addRight(-m_paddingRight);
+    mapRect.add(-m_paddingTop, -m_paddingLeft, -m_paddingBottom, -m_paddingRight);
     Size mapSize(g_map.getVibibleSize().width() * Map::NUM_TILE_PIXELS, g_map.getVibibleSize().height() * Map::NUM_TILE_PIXELS);
     mapSize.scale(mapRect.size(), Fw::KeepAspectRatio);
 
