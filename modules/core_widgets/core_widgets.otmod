@@ -5,10 +5,12 @@ Module
   website: https://github.com/edubart/otclient
 
   onLoad: |
-    require 'tooltip/tooltip'
-    require 'messagebox/messagebox'
     require 'uiwidget'
     require 'uibutton'
     require 'uilabel'
+    require 'uicheckbox'
     require 'uicombobox'
+    require 'uiprogressbar'
     require 'uipopupmenu'
+    require 'tooltip/tooltip'
+    require 'messagebox/messagebox'

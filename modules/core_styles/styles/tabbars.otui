@@ -1,0 +1,5 @@
+TabBar < UITabBar
+TabBarTabButton < UIButton
+TabBarCloseButton < UIButton
+TabBarPrevButton < UIButton
+TabBarNextButton < UIButton

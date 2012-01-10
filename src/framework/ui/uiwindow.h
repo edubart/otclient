@@ -35,7 +35,7 @@ class UIWindow : public UIWidget
 
 public:
     UIWindow();
-    virtual void render();
+    virtual void draw();
 
     void setTitle(const std::string& title) { m_title = title; }
     std::string getTitle() const { return m_title; }

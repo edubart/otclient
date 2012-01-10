@@ -22,9 +22,8 @@ SkillValueLabel < GameLabel
   anchors.bottom: parent.bottom
   anchors.left: prev.left
 
-SkillPercentPanel < UIProgressBar
+SkillPercentPanel < ProgressBar
   id: percent
-  color: black
   background-color: green
   height: 5
   margin-top: 15
@@ -36,7 +35,7 @@ SkillPercentPanel < UIProgressBar
 MiniWindow
   id: skillWindow
   title: Skills
-  size: 200 400
+  size: 200 310
 
   Panel
     id: skillPanel
@@ -60,7 +59,7 @@ MiniWindow
         text: Level
       SkillValueLabel
       SkillPercentPanel
-        background-color: red
+        image-color: red
 
     SkillButton
       id: health
@@ -103,7 +102,7 @@ MiniWindow
         text: Magic Level
       SkillValueLabel
       SkillPercentPanel
-        background-color: red
+        image-color: red
 
     SkillButton
       id: skillId0

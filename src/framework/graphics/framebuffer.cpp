@@ -44,7 +44,7 @@ void FrameBuffer::resize(const Size& size)
 {
     internalBind();
     m_texture = TexturePtr(new Texture(size.width(), size.height(), 4));
-    m_texture->enableBilinearFilter();
+    m_texture->setSmooth(true);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture->getId(), 0);
 
     GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);

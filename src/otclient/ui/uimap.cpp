@@ -27,15 +27,15 @@
 #include <framework/graphics/graphics.h>
 #include <otclient/core/localplayer.h>
 
-void UIMap::render()
+void UIMap::draw()
 {
-    renderSelf();
+    drawSelf();
 
     g_painter.setColor(Fw::black);
     g_painter.drawBoundingRect(m_mapRect.expanded(1));
     g_map.draw(m_mapRect);
 
-    renderChildren();
+    drawChildren();
 }
 
 TilePtr UIMap::getTile(const Point& mousePos)
@@ -81,8 +81,7 @@ TilePtr UIMap::getTile(const Point& mousePos)
 
 void UIMap::onGeometryChange(const Rect& oldRect, const Rect& newRect)
 {
-    Rect mapRect = newRect.expanded(-1);
-    mapRect.add(-m_paddingTop, -m_paddingLeft, -m_paddingBottom, -m_paddingRight);
+    Rect mapRect = getChildrenRect().expanded(-1);
     Size mapSize(g_map.getVibibleSize().width() * Map::NUM_TILE_PIXELS, g_map.getVibibleSize().height() * Map::NUM_TILE_PIXELS);
     mapSize.scale(mapRect.size(), Fw::KeepAspectRatio);
 

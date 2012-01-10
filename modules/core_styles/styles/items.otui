@@ -1,6 +1,5 @@
 Item < UIItem
   size: 34 34
   padding: 1
-  border-image:
-    source: /core_styles/images/panel_flat.png
-    border: 1
+  image-source: /core_styles/images/panel_flat.png
+  image-border: 1

@@ -1,9 +1,8 @@
 Panel
   id: background
-  image:
-    source: /client_background/background.png
-    smooth: true
-    fixed ratio: true
+  image-source: /client_background/background.png
+  image-smooth: true
+  image-fixed-ratio: true
   anchors.top: topMenu.bottom
   anchors.left: parent.left
   anchors.right: parent.right

@@ -1,12 +1,8 @@
 CharacterListLabel < Label
-  image: /core_styles/images/empty_rect.png
   font: verdana-11px-monochrome
-  background-color: #00000000
+  background-color: alpha
   text-offset: 2 0
   focusable: true
-  margin-left: 1
-  margin-right: 1
-  margin-top: 1
 
   $focus:
     background-color: #ffffff22

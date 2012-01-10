@@ -97,7 +97,7 @@ void UIVerticalLayout::internalUpdate()
         pos.y += gap;
         prefferedHeight += gap;
 
-        if(widget->isSizeFixed()) {
+        if(widget->isFixedSize()) {
             // center it
             pos.x = childrenRect.left() + (childrenRect.width() - (widget->getMarginLeft() + widget->getWidth() + widget->getMarginRight()))/2;
             pos.x = std::max(pos.x, parentWidget->getX());

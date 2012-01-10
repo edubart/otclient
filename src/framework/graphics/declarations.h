@@ -29,8 +29,6 @@
 class Texture;
 class AnimatedTexture;
 class Font;
-class Image;
-class BorderImage;
 class FrameBuffer;
 class Shader;
 class ShaderProgram;
@@ -46,8 +44,6 @@ typedef std::weak_ptr<ParticleSystem> ParticleSystemWeakPtr;
 typedef std::shared_ptr<Texture> TexturePtr;
 typedef std::shared_ptr<AnimatedTexture> AnimatedTexturePtr;
 typedef std::shared_ptr<Font> FontPtr;
-typedef std::shared_ptr<Image> ImagePtr;
-typedef std::shared_ptr<BorderImage> BorderImagePtr;
 typedef std::shared_ptr<FrameBuffer> FrameBufferPtr;
 typedef std::shared_ptr<Shader> ShaderPtr;
 typedef std::shared_ptr<ShaderProgram> ShaderProgramPtr;

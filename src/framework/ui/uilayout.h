@@ -38,9 +38,13 @@ public:
     virtual void applyStyle(const OTMLNodePtr& styleNode) { }
     virtual void addWidget(const UIWidgetPtr& widget) = 0;
     virtual void removeWidget(const UIWidgetPtr& widget) = 0;
+    void disableUpdates() { m_updateDisabled = true; }
+    void enableUpdates() { m_updateDisabled = false; }
 
+    void setParent(UIWidgetPtr parentWidget) { m_parentWidget = parentWidget; }
     UIWidgetPtr getParentWidget() { return m_parentWidget.lock(); }
 
+    bool isUpdateDisabled() { return m_updateDisabled; }
     bool isUpdating() { return m_updating; }
     virtual bool needsUpdatesOnChildChange() { return false; }
 
@@ -51,6 +55,7 @@ public:
 protected:
     virtual void internalUpdate() = 0;
 
+    Boolean<false> m_updateDisabled;
     Boolean<false> m_updating;
     Boolean<false> m_updateScheduled;
     UIWidgetWeakPtr m_parentWidget;

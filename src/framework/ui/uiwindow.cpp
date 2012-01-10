@@ -22,7 +22,6 @@
 
 #include "uiwindow.h"
 #include "uitranslator.h"
-#include <framework/graphics/borderimage.h>
 #include <framework/graphics/font.h>
 #include <framework/graphics/graphics.h>
 #include <framework/otml/otml.h>
@@ -36,22 +35,22 @@ UIWindow::UIWindow()
     m_oldIndex = -1;
 }
 
-void UIWindow::render()
+void UIWindow::draw()
 {
     // render children
-    UIWidget::render();
+    UIWidget::draw();
 
     // draw window head text
     Rect headTextRect = m_rect;
-    headTextRect.addTop(-m_headTextOffset.y);
+    headTextRect.expandTop(-m_headTextOffset.y);
     headTextRect.setHeight(m_headHeight);
     if(m_titleAlign & Fw::AlignLeft)
-        headTextRect.addLeft(-m_headTextOffset.x);
+        headTextRect.expandLeft(-m_headTextOffset.x);
     else if(m_titleAlign & Fw::AlignRight)
-        headTextRect.addRight(-m_headTextOffset.x);
+        headTextRect.expandRight(-m_headTextOffset.x);
     else {
-        headTextRect.addLeft(-m_headTextOffset.x);
-        headTextRect.addRight(-m_headTextOffset.x);
+        headTextRect.expandLeft(-m_headTextOffset.x);
+        headTextRect.expandRight(-m_headTextOffset.x);
     }
     m_font->renderText(m_title, headTextRect, m_titleAlign, m_color);
 }
@@ -111,7 +110,7 @@ void UIWindow::onMouseRelease(const Point& mousePos, Fw::MouseButton button)
 
             // restore position before move
             parent->moveChildToIndex(asUIWidget(), m_oldIndex);
-            moveTo(m_oldPos);
+            setPos(m_oldPos);
 
             // calculate new index
             int newIndex;
@@ -133,7 +132,7 @@ void UIWindow::onMouseRelease(const Point& mousePos, Fw::MouseButton button)
 bool UIWindow::onMouseMove(const Point& mousePos, const Point& mouseMoved)
 {
     if(m_moving) {
-        moveTo(mousePos - m_movingReference);
+        setPos(mousePos - m_movingReference);
         return true;
     }
     return UIWidget::onMouseMove(mousePos, mouseMoved);

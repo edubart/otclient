@@ -44,10 +44,10 @@ for line in io.lines(cppclassheader) do
       publicmethods = false
 
       if cppclassinstance then
-        print('g_lua.registerStaticClass("' .. luaclassname .. '");')
+        print('    g_lua.registerStaticClass("' .. luaclassname .. '");')
       else
         baseclassname = line:match(': public ([%w_]+)')
-        bindline = 'g_lua.registerClass<' .. cppclassname
+        bindline = '    g_lua.registerClass<' .. cppclassname
 
         if baseclassname and baseclassname ~= 'LuaObject' then
           bindline = bindline .. ', ' .. baseclassname
@@ -56,7 +56,7 @@ for line in io.lines(cppclassheader) do
         bindline = bindline .. '>();'
         print(bindline)
 
-        bindline = 'g_lua.bindClassStaticFunction<' .. cppclassname .. '>("create", []{ return ' .. cppclassname .. 'Ptr(new ' .. cppclassname ..  '); });'
+        bindline = '    g_lua.bindClassStaticFunction<' .. cppclassname .. '>("create", []{ return ' .. cppclassname .. 'Ptr(new ' .. cppclassname ..  '); });'
         print(bindline)
       end
     elseif classfound then
@@ -75,14 +75,14 @@ for line in io.lines(cppclassheader) do
           numargs = args:matchcount('[^,)]+[,)]')
 
           if cppclassinstance then
-            bindline = 'g_lua.bindClassStaticFunction("' .. luaclassname .. '", "' .. funcname .. '", ' ..
+            bindline = '    g_lua.bindClassStaticFunction("' .. luaclassname .. '", "' .. funcname .. '", ' ..
                       'std::bind(&' .. cppclassname .. "::" .. funcname .. ', &' .. cppclassinstance
             for i=1,numargs do
               bindline = bindline .. ', _' .. i
             end
             bindline = bindline .. '));'
           else
-            bindline = 'g_lua.bindClassMemberFunction<' .. cppclassname .. '>("' .. funcname .. '", &' ..
+            bindline = '    g_lua.bindClassMemberFunction<' .. cppclassname .. '>("' .. funcname .. '", &' ..
                       cppclassname .. '::' .. funcname .. ');'
           end
           print(bindline)

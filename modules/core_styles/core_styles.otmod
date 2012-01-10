@@ -11,6 +11,7 @@ Module
     importStyle 'styles/separators.otui'
     importStyle 'styles/lineedits.otui'
     importStyle 'styles/checkboxes.otui'
+    importStyle 'styles/progressbars.otui'
     importStyle 'styles/windows.otui'
     importStyle 'styles/listboxes.otui'
     importStyle 'styles/items.otui'

@@ -1,0 +1,1 @@
+UITabBar = extends(UIWidget)

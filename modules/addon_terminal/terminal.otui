@@ -2,10 +2,10 @@ TerminalLabel < UILabel
   font: terminus-14px-bold
   height: 16
 
-RectPanel
+Panel
   id: terminalPanel
   background-color: #000000
-  opacity: 216
+  opacity: 0.85
   anchors.fill: parent
   @onEscape: Terminal.hide()
 

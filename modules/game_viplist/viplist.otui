@@ -8,11 +8,11 @@ MiniWindow
   id: vipWindow
   title: VIP List
 
-  TextList
+  UIWidget
     id: vipList
-    border-image: ~
+    layout: verticalBox
     anchors.fill: parent
-    margin-top: 26
+    margin-top: 27
     margin-bottom: 6
     margin-left: 6
     margin-right: 6

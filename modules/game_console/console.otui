@@ -3,6 +3,27 @@ ConsoleLabel < UILabel
   height: 14
   color: yellow
 
+SayModeButton < UIButton
+  size: 26 26
+  icon: /core_styles/icons/say.png
+  image-source: /core_styles/images/top_button.png
+  image-color: white
+  image-clip: 0 0 26 26
+  image-border: 3
+
+  $hover:
+    image-source: /core_styles/images/top_button.png
+      clip: 26 0 26 26
+      border: 3
+
+  $pressed:
+    image-source: /core_styles/images/top_button.png
+    image-clip: 52 0 26 26
+    image-border: 3
+
+  $disabled:
+    image-color: #ffffff66
+
 Panel
   id: consolePanel
   anchors.fill: parent
@@ -22,9 +43,17 @@ Panel
       align-bottom: true
     focusable: false
 
+  SayModeButton
+    id: sayModeButton
+    size: 20 20
+    anchors.left: parent.left
+    anchors.bottom: parent.bottom
+    margin-left: 6
+    margin-bottom: 6
+
   LineEdit
     id: consoleLineEdit
-    anchors.left: parent.left
+    anchors.left: sayModeButton.right
     anchors.right: parent.right
     anchors.bottom: parent.bottom
     margin-right: 6

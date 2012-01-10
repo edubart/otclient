@@ -42,6 +42,7 @@ public:
     TRect(const TRect<T>& other) : x1(other.x1), y1(other.y1), x2(other.x2), y2(other.y2) { }
     TRect(T x, T y, const TSize<T>& size) : x1(x), y1(y), x2(x+size.width()-1), y2(y+size.height()-1) { }
     TRect(const TPoint<T>& topLeft, const TSize<T>& size) : x1(topLeft.x), y1(topLeft.y), x2(x1+size.width()-1), y2(y1+size.height()-1) { }
+    TRect(const TPoint<T>& topLeft, int width, int height) : x1(topLeft.x), y1(topLeft.y), x2(x1+width-1), y2(y1+height-1) { }
 
     bool isNull() const { return x2 == x1 - 1 && y2 == y1 - 1; }
     bool isEmpty() const { return x1 > x2 || y1 > y2; }
@@ -78,21 +79,23 @@ public:
     void setBottomLeft(const TPoint<T> &p) { x1 = p.x; y2 = p.y; }
     void setWidth(T width) { x2 = x1 + width - 1; }
     void setHeight(T height) { y2 = y1 + height- 1; }
-    void resize(T width, T height) { x2 = x1 + width - 1; y2 = y1 + height - 1; }
-    void resize(const TSize<T>& size) { x2 = x1 + size.width() - 1; y2 = y1 + size.height() - 1; }
+    void setSize(const TSize<T>& size) { x2 = x1 + size.width() - 1; y2 = y1 + size.height() - 1; }
     void setRect(T x, T y, T width, T height) { x1 = x; y1 = y; x2 = (x + width - 1); y2 = (y + height - 1); }
     void setCoords(int left, int top, int right, int bottom) { x1 = left; y1 = top; x2 = right; y2 = bottom; }
 
-    void addLeft(T add) { x1 -= add; }
-    void addTop(T add) { y1 -= add; }
-    void addRight(T add) { x2 += add; }
-    void addBottom(T add) { y2 += add; }
-    void add(T top, T right, T bottom, T left) { x1 -= left; y1 -= top; x2 += right; y2 += bottom; }
+    void expandLeft(T add) { x1 -= add; }
+    void expandTop(T add) { y1 -= add; }
+    void expandRight(T add) { x2 += add; }
+    void expandBottom(T add) { y2 += add; }
+    void expand(T top, T right, T bottom, T left) { x1 -= left; y1 -= top; x2 += right; y2 += bottom; }
+    void expand(T add) { x1 -= add; y1 -= add; x2 += add; y2 += add; }
 
     void translate(T x, T y) { x1 += x; y1 += y; x2 += x; y2 += y; }
     void translate(const TPoint<T> &p) { x1 += p.x; y1 += p.y; x2 += p.x; y2 += p.y; }
-    void moveTo(T x, T y) { x2 += x - x1; y2 += y - y1; x1 = x; y1 = y; }
-    void moveTo(const TPoint<T> &p) { x2 += p.x - x1; y2 += p.y - y1; x1 = p.x; y1 = p.y; }
+    void resize(const TSize<T>& size) { x2 = x1 + size.width() - 1; y2 = y1 + size.height() - 1; }
+    void resize(T width, T height) { x2 = x1 + width - 1; y2 = y1 + height - 1; }
+    void move(T x, T y) { x2 += x - x1; y2 += y - y1; x1 = x; y1 = y; }
+    void move(const TPoint<T> &p) { x2 += p.x - x1; y2 += p.y - y1; x1 = p.x; y1 = p.y; }
     void moveLeft(T pos) { x2 += (pos - x1); x1 = pos; }
     void moveTop(T pos) { y2 += (pos - y1); y1 = pos; }
     void moveRight(T pos) { x1 += (pos - x2); x2 = pos; }
@@ -105,7 +108,7 @@ public:
     TRect<T> translated(int x, int y) const { return TRect<T>(TPoint<T>(x1 + x, y1 + y), TPoint<T>(x2 + x, y2 + y)); }
     TRect<T> translated(const TPoint<T> &p) const { return TRect<T>(TPoint<T>(x1 + p.x, y1 + p.y), TPoint<T>(x2 + p.x, y2 + p.y)); }
 
-    TRect<T> expanded(T pixels) const { return TRect<T>(TPoint<T>(x1 - pixels, y1 - pixels), TPoint<T>(x2 + pixels, y2 + pixels)); }
+    TRect<T> expanded(T add) const { return TRect<T>(TPoint<T>(x1 - add, y1 - add), TPoint<T>(x2 + add, y2 + add)); }
 
     void moveCenter(const TPoint<T> &p) {
         T w = x2 - x1;

@@ -24,14 +24,14 @@
 #include <framework/otml/otml.h>
 #include <framework/graphics/graphics.h>
 
-void UICreature::render()
+void UICreature::draw()
 {
-    renderSelf();
+    drawSelf();
 
     if(m_creature) {
         g_painter.setColor(Fw::white);
-        m_creature->draw(m_rect.bottomRight() - Point(32, 32) + Point(m_paddingLeft, m_paddingTop), m_rect);
+        m_creature->draw(m_rect.bottomRight() - Point(32, 32) + Point(m_padding.left, m_padding.top), m_rect);
     }
 
-    renderChildren();
+    drawChildren();
 }

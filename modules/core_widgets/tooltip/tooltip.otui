@@ -1,4 +1,4 @@
-RectPanel
+Panel
   background-color: #111111bb
   size: 200 200
   id: toolTip

@@ -40,6 +40,10 @@ bool luavalue_cast(int index, int& i);
 void push_luavalue(double d);
 bool luavalue_cast(int index, double& d);
 
+// float
+inline void push_luavalue(float f) { push_luavalue((double)f); }
+inline bool luavalue_cast(int index, float& f) { double d; bool r = luavalue_cast(index, d); f = d; return r; }
+
 // int8
 inline void push_luavalue(int8 v) { push_luavalue((int)v); }
 inline bool luavalue_cast(int index, int8& v) { int i; bool r = luavalue_cast(index, i); v = i; return r; }

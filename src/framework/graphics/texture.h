@@ -32,7 +32,7 @@ public:
     Texture(int width, int height, int channels, uchar* pixels = NULL);
     virtual ~Texture();
 
-    virtual void enableBilinearFilter();
+    virtual void setSmooth(bool smooth);
     GLuint getId()  { return m_textureId; }
 
     std::vector<uint8> getPixels();
@@ -48,6 +48,7 @@ protected:
 
     GLuint m_textureId;
     Size m_size;
+    Boolean<false> m_smooth;
 };
 
 #endif

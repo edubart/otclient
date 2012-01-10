@@ -23,13 +23,9 @@
 #include "uiwidget.h"
 #include "uimanager.h"
 #include "uianchorlayout.h"
-#include "uiverticallayout.h"
 #include "uitranslator.h"
 
 #include <framework/core/eventdispatcher.h>
-#include <framework/graphics/image.h>
-#include <framework/graphics/borderimage.h>
-#include <framework/graphics/fontmanager.h>
 #include <framework/otml/otmlnode.h>
 #include <framework/graphics/graphics.h>
 #include <framework/platform/platformwindow.h>
@@ -39,79 +35,55 @@ UIWidget::UIWidget()
 {
     m_lastFocusReason = Fw::ActiveFocusReason;
     m_states = Fw::DefaultState;
-    m_font = g_fonts.getDefaultFont();
-    m_opacity = 255;
-    m_marginTop = m_marginRight = m_marginBottom = m_marginLeft = 0;
-    m_paddingTop = m_paddingRight = m_paddingBottom = m_paddingLeft = 0;
-    //m_backgroundColor = Fw::alpha;
-    m_backgroundColor = Fw::white;
-    m_color = Fw::white;
-    m_textAlign = Fw::AlignCenter;
 
-    // generate an unique id, this is need because anchored layouts find widgets by id
-    static unsigned long id = 1;
-    m_id = Fw::mkstr("widget", id++);
+    initBaseStyle();
+    initText();
+    initImage();
 }
 
-void UIWidget::destroy()
+UIWidget::~UIWidget()
 {
-    if(m_destroyed)
-        logWarning("attempt to destroy widget '", m_id, "' two times");
-
-    setVisible(false);
-    setEnabled(false);
-
-    // release input grabs
-    if(g_ui.getKeyboardReceiver() == asUIWidget())
-        g_ui.resetKeyboardReceiver();
-
-    if(g_ui.getMouseReceiver() == asUIWidget())
-        g_ui.resetMouseReceiver();
-
-    // remove itself from parent
-    if(UIWidgetPtr parent = getParent()) {
-        if(parent->hasChild(asUIWidget()))
-            parent->removeChild(asUIWidget());
-    }
-
-    callLuaField("onDestroy");
-
-    m_destroyed = true;
+    // nothing to do
 }
 
-void UIWidget::render()
+void UIWidget::draw()
 {
-    renderSelf();
-    renderChildren();
+    drawSelf();
+    drawChildren();
 }
 
-void UIWidget::renderSelf()
+void UIWidget::drawSelf()
 {
     // draw style components in order
-    drawBackground(m_rect);
+    if(m_backgroundColor.a() > 0) {
+        Rect backgroundDestRect = m_rect;
+        backgroundDestRect.expand(-m_borderWidth.top, -m_borderWidth.right, -m_borderWidth.bottom, -m_borderWidth.left);
+        drawBackground(m_rect);
+    }
+
     drawBorder(m_rect);
     drawImage(m_rect);
     drawIcon(m_rect);
     drawText(m_rect);
 }
 
-void UIWidget::renderChildren()
+void UIWidget::drawChildren()
 {
     // draw children
     for(const UIWidgetPtr& child : m_children) {
-        // render only visible children with a valid rect inside our rect
+        // render only visible children with a valid rect inside parent rect
         if(child->isExplicitlyVisible() &&
            child->getRect().isValid() &&
-           child->getRect().intersects(m_rect) &&
-           child->getOpacity() > 0) {
+           child->getOpacity() > 0.0f &&
+           child->getRect().intersects(m_rect)) {
             // store current graphics opacity
-            int oldOpacity = g_painter.getOpacity();
+            float oldOpacity = g_painter.getOpacity();
 
             // decrease to self opacity
             if(child->getOpacity() < oldOpacity)
                 g_painter.setOpacity(child->getOpacity());
 
-            child->render();
+            child->draw();
 
             // debug draw box
             if(g_ui.isDrawingDebugBoxes()) {
@@ -121,406 +93,6 @@ void UIWidget::renderChildren()
             //g_fonts.getDefaultFont()->renderText(child->getId(), child->getPos() + Point(2, 0), Fw::red);
 
             g_painter.setOpacity(oldOpacity);
-        }
-    }
-}
-
-void UIWidget::drawBackground(const Rect& screenCoords)
-{
-    /*
-    if(m_backgroundColor.a() > 0) {
-        g_painter.setColor(m_backgroundColor);
-        g_painter.drawFilledRect(screenCoords);
-        //g_painter.drawFilledRect(screenCoords.expanded(-m_borderWidth));
-    }
-    */
-}
-
-void UIWidget::drawBorder(const Rect& screenCoords)
-{
-    /*
-    if(m_borderWidth > 0 && m_borderColor.a() > 0) {
-        g_painter.bindColor(m_borderColor);
-        g_painter.drawBoundingRect(screenCoords, m_borderWidth);
-    }
-    */
-}
-
-void UIWidget::drawImage(const Rect& screenCoords)
-{
-    if(m_image) {
-        g_painter.setColor(m_backgroundColor);
-        m_image->draw(screenCoords);
-    }
-}
-
-void UIWidget::drawIcon(const Rect& screenCoords)
-{
-    if(m_icon) {
-        Rect iconRect;
-        iconRect.resize(m_icon->getSize());
-        iconRect.moveCenter(screenCoords.center());
-        g_painter.setColor(Fw::white);
-        g_painter.drawTexturedRect(iconRect, m_icon);
-    }
-}
-
-void UIWidget::drawText(const Rect& screenCoords)
-{
-    g_painter.setColor(m_color);
-    if(m_text.length() > 0 && m_color.a() > 0) {
-        Rect textRect = screenCoords;
-        textRect.translate(m_textOffset);
-        m_font->renderText(m_text, textRect, m_textAlign, m_color);
-    }
-}
-
-void UIWidget::setVisible(bool visible)
-{
-    if(m_visible != visible) {
-        m_visible = visible;
-
-        // make parent focus another child
-        if(!visible && isFocused()) {
-            if(UIWidgetPtr parent = getParent())
-                parent->focusPreviousChild(Fw::ActiveFocusReason);
-        }
-
-        updateState(Fw::ActiveState);
-        updateState(Fw::HoverState);
-    }
-}
-
-void UIWidget::setEnabled(bool enabled)
-{
-    if(enabled != m_enabled) {
-        m_enabled = enabled;
-
-        updateState(Fw::DisabledState);
-        updateState(Fw::ActiveState);
-        updateState(Fw::HoverState);
-    }
-}
-
-void UIWidget::setPressed(bool pressed)
-{
-    if(pressed != m_pressed) {
-        m_pressed = pressed;
-        updateState(Fw::PressedState);
-    }
-}
-
-void UIWidget::setOn(bool on)
-{
-    setState(Fw::OnState, on);
-}
-
-void UIWidget::setChecked(bool checked)
-{
-    if(setState(Fw::CheckedState, checked))
-        callLuaField("onCheckChange", checked);
-}
-
-void UIWidget::setFocusable(bool focusable)
-{
-    if(m_focusable != focusable) {
-        m_focusable = focusable;
-
-        // make parent focus another child
-        if(!focusable && isFocused()) {
-            if(UIWidgetPtr parent = getParent())
-                parent->focusPreviousChild(Fw::ActiveFocusReason);
-        }
-    }
-}
-
-void UIWidget::setStyle(const std::string& styleName)
-{
-    OTMLNodePtr styleNode = g_ui.getStyle(styleName);
-    if(!styleNode) {
-        logTraceError("unable to retrive style '", styleName, "': not a defined style");
-        return;
-    }
-    applyStyle(styleNode);
-    m_style = styleNode;
-    assert(getStyleName() != "");
-    updateStyle();
-}
-
-void UIWidget::setStyleFromNode(const OTMLNodePtr& styleNode)
-{
-    applyStyle(styleNode);
-    m_style = styleNode;
-    updateStyle();
-}
-
-void UIWidget::setParent(const UIWidgetPtr& parent)
-{
-    // remove from old parent
-    UIWidgetPtr oldParent = getParent();
-
-    // the parent is already the same
-    if(oldParent == parent)
-        return;
-
-    UIWidgetPtr self = asUIWidget();
-    if(oldParent && oldParent->hasChild(self))
-        oldParent->removeChild(self);
-
-    // reset parent
-    m_parent.reset();
-
-    // set new parent
-    if(parent) {
-        m_parent = parent;
-
-        // add to parent if needed
-        if(!parent->hasChild(self))
-            parent->addChild(self);
-    }
-}
-
-void UIWidget::setRect(const Rect& rect)
-{
-    // only update if the rect really changed
-    Rect oldRect = m_rect;
-    if(rect == oldRect)
-        return;
-
-    m_rect = rect;
-
-    // updates own layout
-    updateLayout();
-
-    // avoid massive update events
-    if(!m_updateEventScheduled) {
-        UIWidgetPtr self = asUIWidget();
-        g_dispatcher.addEvent([self, oldRect]() {
-            self->m_updateEventScheduled = false;
-            if(oldRect != self->getRect())
-                self->onGeometryChange(oldRect, self->getRect());
-        });
-        m_updateEventScheduled = true;
-    }
-}
-
-void UIWidget::setIcon(const std::string& iconFile)
-{
-    m_icon = g_textures.getTexture(iconFile);
-}
-
-void UIWidget::setText(const std::string& text)
-{
-    if(m_text != text) {
-        m_text = text;
-
-        // update rect size
-        if(!m_rect.isValid()) {
-            Size textSize = m_font->calculateTextRectSize(m_text);
-            Size newSize = getSize();
-            if(newSize.width() <= 0)
-                newSize.setWidth(textSize.width());
-            if(newSize.height() <= 0)
-                newSize.setHeight(textSize.height());
-            resize(newSize);
-        }
-
-        onTextChange(text);
-    }
-}
-
-void UIWidget::setFont(const std::string& fontName)
-{
-    m_font = g_fonts.getFont(fontName);
-}
-
-void UIWidget::bindRectToParent()
-{
-    Rect boundRect = m_rect;
-    UIWidgetPtr parent = getParent();
-    if(parent) {
-        Rect parentRect = parent->getRect();
-        boundRect.bound(parentRect);
-    }
-
-    setRect(boundRect);
-}
-
-void UIWidget::lock()
-{
-    if(UIWidgetPtr parent = getParent())
-        parent->lockChild(asUIWidget());
-}
-
-void UIWidget::unlock()
-{
-    if(UIWidgetPtr parent = getParent())
-        parent->unlockChild(asUIWidget());
-}
-
-void UIWidget::focus()
-{
-    if(!m_focusable)
-        return;
-    if(UIWidgetPtr parent = getParent())
-        parent->focusChild(asUIWidget(), Fw::ActiveFocusReason);
-}
-
-void UIWidget::grabMouse()
-{
-    g_ui.setMouseReceiver(asUIWidget());
-}
-
-void UIWidget::ungrabMouse()
-{
-    if(g_ui.getMouseReceiver() == asUIWidget())
-        g_ui.resetMouseReceiver();
-}
-
-void UIWidget::grabKeyboard()
-{
-    g_ui.setKeyboardReceiver(asUIWidget());
-}
-
-void UIWidget::ungrabKeyboard()
-{
-    if(g_ui.getKeyboardReceiver() == asUIWidget())
-        g_ui.resetKeyboardReceiver();
-}
-
-bool UIWidget::isVisible()
-{
-    if(!m_visible)
-        return false;
-    else if(UIWidgetPtr parent = getParent())
-        return parent->isVisible();
-    else
-        return asUIWidget() == g_ui.getRootWidget();
-}
-
-bool UIWidget::hasChild(const UIWidgetPtr& child)
-{
-    auto it = std::find(m_children.begin(), m_children.end(), child);
-    if(it != m_children.end())
-        return true;
-    return false;
-}
-
-Rect UIWidget::getChildrenRect()
-{
-    Rect rect = m_rect;
-    rect.add(-m_paddingTop, -m_paddingRight, -m_paddingBottom, -m_paddingLeft);
-    return rect;
-}
-
-UIWidgetPtr UIWidget::getRootParent()
-{
-    if(UIWidgetPtr parent = getParent())
-        return parent->getRootParent();
-    else
-        return asUIWidget();
-}
-
-UIWidgetPtr UIWidget::getChildAfter(const UIWidgetPtr& relativeChild)
-{
-    auto it = std::find(m_children.begin(), m_children.end(), relativeChild);
-    if(it != m_children.end() && ++it != m_children.end())
-        return *it;
-    return nullptr;
-}
-
-UIWidgetPtr UIWidget::getChildBefore(const UIWidgetPtr& relativeChild)
-{
-    auto it = std::find(m_children.rbegin(), m_children.rend(), relativeChild);
-    if(it != m_children.rend() && ++it != m_children.rend())
-        return *it;
-    return nullptr;
-}
-
-UIWidgetPtr UIWidget::getChildById(const std::string& childId)
-{
-    for(const UIWidgetPtr& child : m_children) {
-        if(child->getId() == childId)
-            return child;
-    }
-    return nullptr;
-}
-
-UIWidgetPtr UIWidget::getChildByPos(const Point& childPos)
-{
-    for(auto it = m_children.rbegin(); it != m_children.rend(); ++it) {
-        const UIWidgetPtr& widget = (*it);
-        if(widget->isExplicitlyVisible() && widget->containsPoint(childPos))
-            return widget;
-    }
-
-    return nullptr;
-}
-
-UIWidgetPtr UIWidget::getChildByIndex(int index)
-{
-    index = index <= 0 ? (m_children.size() + index) : index-1;
-    if(index >= 0 && (uint)index < m_children.size())
-        return m_children.at(index);
-    return nullptr;
-}
-
-UIWidgetPtr UIWidget::recursiveGetChildById(const std::string& id)
-{
-    UIWidgetPtr widget = getChildById(id);
-    if(!widget) {
-        for(const UIWidgetPtr& child : m_children) {
-            widget = child->recursiveGetChildById(id);
-            if(widget)
-                break;
-        }
-    }
-    return widget;
-}
-
-UIWidgetPtr UIWidget::recursiveGetChildByPos(const Point& childPos)
-{
-    for(const UIWidgetPtr& child : m_children) {
-        if(child->containsPoint(childPos)) {
-            if(UIWidgetPtr subChild = child->recursiveGetChildByPos(childPos))
-                return subChild;
-            return child;
-        }
-    }
-    return nullptr;
-}
-
-UIWidgetPtr UIWidget::backwardsGetWidgetById(const std::string& id)
-{
-    UIWidgetPtr widget = getChildById(id);
-    if(!widget) {
-        if(UIWidgetPtr parent = getParent())
-            widget = parent->backwardsGetWidgetById(id);
-    }
-    return widget;
-}
-
-void UIWidget::focusChild(const UIWidgetPtr& child, Fw::FocusReason reason)
-{
-    if(child && !hasChild(child)) {
-        logError("Attempt to focus an unknown child in a UIWidget");
-        return;
-    }
-
-    if(child != m_focusedChild) {
-        UIWidgetPtr oldFocused = m_focusedChild;
-        m_focusedChild = child;
-
-        if(child) {
-            child->setLastFocusReason(reason);
-            child->updateState(Fw::FocusState);
-            child->updateState(Fw::ActiveState);
-        }
-
-        if(oldFocused) {
-            oldFocused->setLastFocusReason(reason);
-            oldFocused->updateState(Fw::FocusState);
-            oldFocused->updateState(Fw::ActiveState);
         }
     }
 }
@@ -616,6 +188,32 @@ void UIWidget::removeChild(const UIWidgetPtr& child)
             focusPreviousChild(Fw::ActiveFocusReason);
     } else
         logError("Attempt to remove an unknown child from a UIWidget");
+}
+
+
+void UIWidget::focusChild(const UIWidgetPtr& child, Fw::FocusReason reason)
+{
+    if(child && !hasChild(child)) {
+        logError("Attempt to focus an unknown child in a UIWidget");
+        return;
+    }
+
+    if(child != m_focusedChild) {
+        UIWidgetPtr oldFocused = m_focusedChild;
+        m_focusedChild = child;
+
+        if(child) {
+            child->setLastFocusReason(reason);
+            child->updateState(Fw::FocusState);
+            child->updateState(Fw::ActiveState);
+        }
+
+        if(oldFocused) {
+            oldFocused->setLastFocusReason(reason);
+            oldFocused->updateState(Fw::FocusState);
+            oldFocused->updateState(Fw::ActiveState);
+        }
+    }
 }
 
 void UIWidget::focusNextChild(Fw::FocusReason reason)
@@ -764,21 +362,54 @@ void UIWidget::unlockChild(const UIWidgetPtr& child)
     }
 }
 
-bool UIWidget::isChildLocked(const UIWidgetPtr& child)
+void UIWidget::applyStyle(const OTMLNodePtr& styleNode)
 {
-    auto it = std::find(m_lockedChildren.begin(), m_lockedChildren.end(), child);
-    return it != m_lockedChildren.end();
+    try {
+        m_loadingStyle = true;
+        onStyleApply(styleNode->tag(), styleNode);
+        callLuaField("onStyleApply", styleNode->tag(), styleNode);
+
+        if(m_firstOnStyle) {
+            callLuaField("onSetup");
+            // always focus new child
+            if(isFocusable() && isExplicitlyVisible() && isExplicitlyEnabled())
+                focus();
+        }
+        m_firstOnStyle = false;
+
+        m_loadingStyle = false;
+    } catch(Exception& e) {
+        logError("Failed to apply style to widget '", m_id, "' style: ", e.what());
+    }
+}
+void UIWidget::addAnchor(Fw::AnchorEdge anchoredEdge, const std::string& hookedWidgetId, Fw::AnchorEdge hookedEdge)
+{
+    if(UIAnchorLayoutPtr anchorLayout = getAnchoredLayout())
+        anchorLayout->addAnchor(asUIWidget(), anchoredEdge, hookedWidgetId, hookedEdge);
 }
 
-int UIWidget::getChildIndex(const UIWidgetPtr& child)
+void UIWidget::centerIn(const std::string& hookedWidgetId)
 {
-    int index = 1;
-    for(auto it = m_children.begin(); it != m_children.end(); ++it) {
-        if(*it == child)
-            return index;
-        ++index;
+    if(UIAnchorLayoutPtr anchorLayout = getAnchoredLayout()) {
+        anchorLayout->addAnchor(asUIWidget(), Fw::AnchorHorizontalCenter, hookedWidgetId, Fw::AnchorHorizontalCenter);
+        anchorLayout->addAnchor(asUIWidget(), Fw::AnchorVerticalCenter, hookedWidgetId, Fw::AnchorVerticalCenter);
     }
-    return -1;
+}
+
+void UIWidget::fill(const std::string& hookedWidgetId)
+{
+    if(UIAnchorLayoutPtr anchorLayout = getAnchoredLayout()) {
+        anchorLayout->addAnchor(asUIWidget(), Fw::AnchorLeft, hookedWidgetId, Fw::AnchorLeft);
+        anchorLayout->addAnchor(asUIWidget(), Fw::AnchorRight, hookedWidgetId, Fw::AnchorRight);
+        anchorLayout->addAnchor(asUIWidget(), Fw::AnchorTop, hookedWidgetId, Fw::AnchorTop);
+        anchorLayout->addAnchor(asUIWidget(), Fw::AnchorBottom, hookedWidgetId, Fw::AnchorBottom);
+    }
+}
+
+void UIWidget::breakAnchors()
+{
+    if(UIAnchorLayoutPtr anchorLayout = getAnchoredLayout())
+        anchorLayout->removeAnchors(asUIWidget());
 }
 
 void UIWidget::updateParentLayout()
@@ -800,26 +431,405 @@ void UIWidget::updateLayout()
             parentLayout->updateLater();
 }
 
-void UIWidget::applyStyle(const OTMLNodePtr& styleNode)
+void UIWidget::lock()
 {
-    try {
-        m_loadingStyle = true;
-        onStyleApply(styleNode->tag(), styleNode);
-        callLuaField("onStyleApply", styleNode->tag(), styleNode);
+    if(UIWidgetPtr parent = getParent())
+        parent->lockChild(asUIWidget());
+}
 
-        if(m_firstOnStyle) {
-            callLuaField("onSetup");
-            // always focus new child
-            if(isFocusable() && isExplicitlyVisible() && isExplicitlyEnabled())
-                focus();
-        }
-        m_firstOnStyle = false;
+void UIWidget::unlock()
+{
+    if(UIWidgetPtr parent = getParent())
+        parent->unlockChild(asUIWidget());
+}
 
-        m_loadingStyle = false;
-    } catch(Exception& e) {
-        logError("Failed to apply style to widget '", m_id, "' style: ", e.what());
+void UIWidget::focus()
+{
+    if(!m_focusable)
+        return;
+    if(UIWidgetPtr parent = getParent())
+        parent->focusChild(asUIWidget(), Fw::ActiveFocusReason);
+}
+
+void UIWidget::grabMouse()
+{
+    g_ui.setMouseReceiver(asUIWidget());
+}
+
+void UIWidget::ungrabMouse()
+{
+    if(g_ui.getMouseReceiver() == asUIWidget())
+        g_ui.resetMouseReceiver();
+}
+
+void UIWidget::grabKeyboard()
+{
+    g_ui.setKeyboardReceiver(asUIWidget());
+}
+
+void UIWidget::ungrabKeyboard()
+{
+    if(g_ui.getKeyboardReceiver() == asUIWidget())
+        g_ui.resetKeyboardReceiver();
+}
+
+void UIWidget::bindRectToParent()
+{
+    Rect boundRect = m_rect;
+    UIWidgetPtr parent = getParent();
+    if(parent) {
+        Rect parentRect = parent->getRect();
+        boundRect.bound(parentRect);
+    }
+
+    setRect(boundRect);
+}
+
+void UIWidget::destroy()
+{
+    if(m_destroyed)
+        logWarning("attempt to destroy widget '", m_id, "' two times");
+
+    setVisible(false);
+    setEnabled(false);
+
+    // release input grabs
+    if(g_ui.getKeyboardReceiver() == asUIWidget())
+        g_ui.resetKeyboardReceiver();
+
+    if(g_ui.getMouseReceiver() == asUIWidget())
+        g_ui.resetMouseReceiver();
+
+    // remove itself from parent
+    if(UIWidgetPtr parent = getParent()) {
+        if(parent->hasChild(asUIWidget()))
+            parent->removeChild(asUIWidget());
+    }
+
+    callLuaField("onDestroy");
+
+    m_destroyed = true;
+}
+
+void UIWidget::setId(const std::string& id)
+{
+    m_id = id;
+}
+
+void UIWidget::setParent(const UIWidgetPtr& parent)
+{
+    // remove from old parent
+    UIWidgetPtr oldParent = getParent();
+
+    // the parent is already the same
+    if(oldParent == parent)
+        return;
+
+    UIWidgetPtr self = asUIWidget();
+    if(oldParent && oldParent->hasChild(self))
+        oldParent->removeChild(self);
+
+    // reset parent
+    m_parent.reset();
+
+    // set new parent
+    if(parent) {
+        m_parent = parent;
+
+        // add to parent if needed
+        if(!parent->hasChild(self))
+            parent->addChild(self);
     }
 }
+
+void UIWidget::setLayout(const UILayoutPtr& layout)
+{
+    if(m_layout)
+        m_layout->disableUpdates();
+
+    layout->setParent(asUIWidget());
+    layout->disableUpdates();
+
+    for(const UIWidgetPtr& child : m_children) {
+        if(m_layout)
+            m_layout->removeWidget(child);
+        layout->addWidget(child);
+    }
+
+    if(m_layout) {
+        m_layout->enableUpdates();
+        m_layout->setParent(nullptr);
+        m_layout->update();
+    }
+
+    layout->enableUpdates();
+    m_layout = layout;
+}
+
+void UIWidget::setRect(const Rect& rect)
+{
+    // only update if the rect really changed
+    Rect oldRect = m_rect;
+    if(rect == oldRect)
+        return;
+
+    m_rect = rect;
+
+    // updates own layout
+    updateLayout();
+
+    // avoid massive update events
+    if(!m_updateEventScheduled) {
+        UIWidgetPtr self = asUIWidget();
+        g_dispatcher.addEvent([self, oldRect]() {
+            self->m_updateEventScheduled = false;
+            if(oldRect != self->getRect())
+                self->onGeometryChange(oldRect, self->getRect());
+        });
+        m_updateEventScheduled = true;
+    }
+}
+
+void UIWidget::setStyle(const std::string& styleName)
+{
+    OTMLNodePtr styleNode = g_ui.getStyle(styleName);
+    if(!styleNode) {
+        logTraceError("unable to retrive style '", styleName, "': not a defined style");
+        return;
+    }
+    applyStyle(styleNode);
+    m_style = styleNode;
+    updateStyle();
+}
+
+void UIWidget::setStyleFromNode(const OTMLNodePtr& styleNode)
+{
+    applyStyle(styleNode);
+    m_style = styleNode;
+    updateStyle();
+}
+
+void UIWidget::setEnabled(bool enabled)
+{
+    if(enabled != m_enabled) {
+        m_enabled = enabled;
+
+        updateState(Fw::DisabledState);
+        updateState(Fw::ActiveState);
+        updateState(Fw::HoverState);
+    }
+}
+
+void UIWidget::setVisible(bool visible)
+{
+    if(m_visible != visible) {
+        m_visible = visible;
+
+        // hiding a widget make it lose focus
+        if(!visible && isFocused()) {
+            if(UIWidgetPtr parent = getParent())
+                parent->focusPreviousChild(Fw::ActiveFocusReason);
+        }
+
+        updateState(Fw::ActiveState);
+        updateState(Fw::HoverState);
+    }
+}
+
+void UIWidget::setPressed(bool pressed)
+{
+    if(pressed != m_pressed) {
+        m_pressed = pressed;
+        updateState(Fw::PressedState);
+    }
+}
+
+void UIWidget::setOn(bool on)
+{
+    setState(Fw::OnState, on);
+}
+
+void UIWidget::setChecked(bool checked)
+{
+    if(setState(Fw::CheckedState, checked))
+        callLuaField("onCheckChange", checked);
+}
+
+void UIWidget::setFocusable(bool focusable)
+{
+    if(m_focusable != focusable) {
+        m_focusable = focusable;
+
+        // make parent focus another child
+        if(!focusable && isFocused()) {
+            if(UIWidgetPtr parent = getParent())
+                parent->focusPreviousChild(Fw::ActiveFocusReason);
+        }
+    }
+}
+
+void UIWidget::setPhantom(bool phantom)
+{
+    m_phantom = phantom;
+}
+
+void UIWidget::setFixedSize(bool fixed)
+{
+    m_fixedSize = fixed;
+    updateParentLayout();
+}
+
+void UIWidget::setLastFocusReason(Fw::FocusReason reason)
+{
+    m_lastFocusReason = reason;
+}
+
+bool UIWidget::isVisible()
+{
+    if(!m_visible)
+        return false;
+    else if(UIWidgetPtr parent = getParent())
+        return parent->isVisible();
+    else
+        return asUIWidget() == g_ui.getRootWidget();
+}
+
+bool UIWidget::isChildLocked(const UIWidgetPtr& child)
+{
+    auto it = std::find(m_lockedChildren.begin(), m_lockedChildren.end(), child);
+    return it != m_lockedChildren.end();
+}
+
+bool UIWidget::hasChild(const UIWidgetPtr& child)
+{
+    auto it = std::find(m_children.begin(), m_children.end(), child);
+    if(it != m_children.end())
+        return true;
+    return false;
+}
+
+int UIWidget::getChildIndex(const UIWidgetPtr& child)
+{
+    int index = 1;
+    for(auto it = m_children.begin(); it != m_children.end(); ++it) {
+        if(*it == child)
+            return index;
+        ++index;
+    }
+    return -1;
+}
+
+Rect UIWidget::getChildrenRect()
+{
+    Rect rect = m_rect;
+    rect.expand(-m_borderWidth.top, -m_borderWidth.right, -m_borderWidth.bottom, -m_borderWidth.left);
+    rect.expand(-m_padding.top, -m_padding.right, -m_padding.bottom, -m_padding.left);
+    return rect;
+}
+
+UIAnchorLayoutPtr UIWidget::getAnchoredLayout()
+{
+    UIWidgetPtr parent = getParent();
+    if(!parent) {
+        logError("cannot add anchors to widget ", m_id, ": there is no parent");
+        return nullptr;
+    }
+
+    UIAnchorLayoutPtr anchorLayout = parent->getLayout()->asUIAnchorLayout();
+    if(!anchorLayout) {
+        logError("cannot add anchors to widget ", m_id, ": the parent doesn't use anchors layout");
+        return nullptr;
+    }
+    return anchorLayout;
+}
+
+UIWidgetPtr UIWidget::getRootParent()
+{
+    if(UIWidgetPtr parent = getParent())
+        return parent->getRootParent();
+    else
+        return asUIWidget();
+}
+
+UIWidgetPtr UIWidget::getChildAfter(const UIWidgetPtr& relativeChild)
+{
+    auto it = std::find(m_children.begin(), m_children.end(), relativeChild);
+    if(it != m_children.end() && ++it != m_children.end())
+        return *it;
+    return nullptr;
+}
+
+UIWidgetPtr UIWidget::getChildBefore(const UIWidgetPtr& relativeChild)
+{
+    auto it = std::find(m_children.rbegin(), m_children.rend(), relativeChild);
+    if(it != m_children.rend() && ++it != m_children.rend())
+        return *it;
+    return nullptr;
+}
+
+UIWidgetPtr UIWidget::getChildById(const std::string& childId)
+{
+    for(const UIWidgetPtr& child : m_children) {
+        if(child->getId() == childId)
+            return child;
+    }
+    return nullptr;
+}
+
+UIWidgetPtr UIWidget::getChildByPos(const Point& childPos)
+{
+    for(auto it = m_children.rbegin(); it != m_children.rend(); ++it) {
+        const UIWidgetPtr& widget = (*it);
+        if(widget->isExplicitlyVisible() && widget->containsPoint(childPos))
+            return widget;
+    }
+
+    return nullptr;
+}
+
+UIWidgetPtr UIWidget::getChildByIndex(int index)
+{
+    index = index <= 0 ? (m_children.size() + index) : index-1;
+    if(index >= 0 && (uint)index < m_children.size())
+        return m_children.at(index);
+    return nullptr;
+}
+
+UIWidgetPtr UIWidget::recursiveGetChildById(const std::string& id)
+{
+    UIWidgetPtr widget = getChildById(id);
+    if(!widget) {
+        for(const UIWidgetPtr& child : m_children) {
+            widget = child->recursiveGetChildById(id);
+            if(widget)
+                break;
+        }
+    }
+    return widget;
+}
+
+UIWidgetPtr UIWidget::recursiveGetChildByPos(const Point& childPos)
+{
+    for(const UIWidgetPtr& child : m_children) {
+        if(child->containsPoint(childPos)) {
+            if(UIWidgetPtr subChild = child->recursiveGetChildByPos(childPos))
+                return subChild;
+            return child;
+        }
+    }
+    return nullptr;
+}
+
+UIWidgetPtr UIWidget::backwardsGetWidgetById(const std::string& id)
+{
+    UIWidgetPtr widget = getChildById(id);
+    if(!widget) {
+        if(UIWidgetPtr parent = getParent())
+            widget = parent->backwardsGetWidgetById(id);
+    }
+    return widget;
+}
+
 
 bool UIWidget::setState(Fw::WidgetState state, bool on)
 {
@@ -1020,216 +1030,9 @@ void UIWidget::onStyleApply(const std::string& styleName, const OTMLNodePtr& sty
     if(const OTMLNodePtr& node = styleNode->get("id"))
         setId(node->value());
 
-    // load styles used by all widgets
-    for(const OTMLNodePtr& node : styleNode->children()) {
-        // background image
-        if(node->tag() == "image") {
-            ImagePtr image = ImagePtr(new Image);
-            image->loadFromOTML(node);
-            setImage(image);
-        }
-        else if(node->tag() == "border-image")
-            setImage(BorderImage::loadFromOTML(node));
-        if(node->tag() == "icon")
-            setIcon(node->value());
-        else if(node->tag() == "text")
-            setText(node->value());
-        else if(node->tag() == "text-align")
-            setTextAlign(Fw::translateAlignment(node->value()));
-        else if(node->tag() == "text-offset")
-            setTextOffset(node->value<Point>());
-        else if(node->tag() == "font")
-            setFont(node->value());
-        else if(node->tag() == "color")
-            setColor(node->value<Color>());
-        else if(node->tag() == "background-color")
-            setBackgroundColor(node->value<Color>());
-        else if(node->tag() == "opacity")
-            setOpacity(node->value<int>());
-        else if(node->tag() == "enabled")
-            setEnabled(node->value<bool>());
-        else if(node->tag() == "visible")
-            setVisible(node->value<bool>());
-        else if(node->tag() == "checked")
-            setChecked(node->value<bool>());
-        else if(node->tag() == "on")
-            setOn(node->value<bool>());
-        else if(node->tag() == "focusable")
-            setFocusable(node->value<bool>());
-        else if(node->tag() == "phantom")
-            setPhantom(node->value<bool>());
-        else if(node->tag() == "size")
-            resize(node->value<Size>());
-        else if(node->tag() == "width")
-            setWidth(node->value<int>());
-        else if(node->tag() == "height")
-            setHeight(node->value<int>());
-        else if(node->tag() == "fixed-size")
-            setSizeFixed(node->value<bool>());
-        else if(node->tag() == "pos")
-            moveTo(node->value<Point>());
-        else if(node->tag() == "x")
-            setX(node->value<int>());
-        else if(node->tag() == "y")
-            setY(node->value<int>());
-        else if(node->tag() == "margin-top")
-            setMarginTop(node->value<int>());
-        else if(node->tag() == "margin-right")
-            setMarginRight(node->value<int>());
-        else if(node->tag() == "margin-bottom")
-            setMarginBottom(node->value<int>());
-        else if(node->tag() == "margin-left")
-            setMarginLeft(node->value<int>());
-        else if(node->tag() == "margin") {
-            std::string marginDesc = node->value();
-            std::vector<std::string> split;
-            boost::split(split, marginDesc, boost::is_any_of(std::string(" ")));
-            if(split.size() == 4) {
-                setMarginTop(Fw::safeCast<int>(split[0]));
-                setMarginRight(Fw::safeCast<int>(split[1]));
-                setMarginBottom(Fw::safeCast<int>(split[2]));
-                setMarginLeft(Fw::safeCast<int>(split[3]));
-            } else if(split.size() == 3) {
-                int marginTop = Fw::safeCast<int>(split[0]);
-                int marginHorizontal = Fw::safeCast<int>(split[1]);
-                int marginBottom = Fw::safeCast<int>(split[2]);
-                setMarginTop(marginTop);
-                setMarginRight(marginHorizontal);
-                setMarginBottom(marginBottom);
-                setMarginLeft(marginHorizontal);
-            } else if(split.size() == 2) {
-                int marginVertical = Fw::safeCast<int>(split[0]);
-                int marginHorizontal = Fw::safeCast<int>(split[1]);
-                setMarginTop(marginVertical);
-                setMarginRight(marginHorizontal);
-                setMarginBottom(marginVertical);
-                setMarginLeft(marginHorizontal);
-            } else if(split.size() == 1) {
-                int margin = Fw::safeCast<int>(split[0]);
-                setMarginTop(margin);
-                setMarginRight(margin);
-                setMarginBottom(margin);
-                setMarginLeft(margin);
-            }
-        }
-        else if(node->tag() == "padding-top")
-            setPaddingTop(node->value<int>());
-        else if(node->tag() == "padding-right")
-            setPaddingRight(node->value<int>());
-        else if(node->tag() == "padding-bottom")
-            setPaddingBottom(node->value<int>());
-        else if(node->tag() == "padding-left")
-            setPaddingLeft(node->value<int>());
-        else if(node->tag() == "padding") {
-            std::string paddingDesc = node->value();
-            std::vector<std::string> split;
-            boost::split(split, paddingDesc, boost::is_any_of(std::string(" ")));
-            if(split.size() == 4) {
-                setPaddingTop(Fw::safeCast<int>(split[0]));
-                setPaddingRight(Fw::safeCast<int>(split[1]));
-                setPaddingBottom(Fw::safeCast<int>(split[2]));
-                setPaddingLeft(Fw::safeCast<int>(split[3]));
-            } else if(split.size() == 3) {
-                int paddingTop = Fw::safeCast<int>(split[0]);
-                int paddingHorizontal = Fw::safeCast<int>(split[1]);
-                int paddingBottom = Fw::safeCast<int>(split[2]);
-                setPaddingTop(paddingTop);
-                setPaddingRight(paddingHorizontal);
-                setPaddingBottom(paddingBottom);
-                setPaddingLeft(paddingHorizontal);
-            } else if(split.size() == 2) {
-                int paddingVertical = Fw::safeCast<int>(split[0]);
-                int paddingHorizontal = Fw::safeCast<int>(split[1]);
-                setPaddingTop(paddingVertical);
-                setPaddingRight(paddingHorizontal);
-                setPaddingBottom(paddingVertical);
-                setPaddingLeft(paddingHorizontal);
-            } else if(split.size() == 1) {
-                int padding = Fw::safeCast<int>(split[0]);
-                setPaddingTop(padding);
-                setPaddingRight(padding);
-                setPaddingBottom(padding);
-                setPaddingLeft(padding);
-            }
-        }
-        // layouts
-        else if(node->tag() == "layout") {
-            std::string layoutType;
-            if(node->hasValue())
-                layoutType = node->value();
-            else
-                layoutType = node->valueAt<std::string>("type", "");
-
-            if(!layoutType.empty()) {
-                UILayoutPtr layout;
-                if(layoutType == "verticalBox")
-                    layout = UIVerticalLayoutPtr(new UIVerticalLayout(asUIWidget()));
-                else if(layoutType == "anchor")
-                    layout = UIAnchorLayoutPtr(new UIAnchorLayout(asUIWidget()));
-                else
-                    throw OTMLException(node, "cannot determine layout type");
-                setLayout(layout);
-            }
-
-            if(node->hasChildren())
-                m_layout->applyStyle(node);
-        }
-        // anchors
-        else if(boost::starts_with(node->tag(), "anchors.")) {
-            UIWidgetPtr parent = getParent();
-            if(!parent) {
-                if(m_firstOnStyle)
-                    throw OTMLException(node, "cannot create anchor, there is no parent widget!");
-                else
-                    continue;
-            }
-
-            UIAnchorLayoutPtr anchorLayout = parent->getLayout()->asUIAnchorLayout();
-            if(!anchorLayout)
-                throw OTMLException(node, "cannot create anchor, the parent widget doesn't use anchor layout!");
-
-            std::string what = node->tag().substr(8);
-            if(what == "fill") {
-                anchorLayout->fill(asUIWidget(), node->value());
-            } else if(what == "centerIn") {
-                anchorLayout->centerIn(asUIWidget(), node->value());
-            } else {
-                Fw::AnchorEdge anchoredEdge = Fw::translateAnchorEdge(what);
-
-                std::string anchorDescription = node->value();
-                std::vector<std::string> split;
-                boost::split(split, anchorDescription, boost::is_any_of(std::string(".")));
-                if(split.size() != 2)
-                    throw OTMLException(node, "invalid anchor description");
-
-                std::string hookedWidgetId = split[0];
-                Fw::AnchorEdge hookedEdge = Fw::translateAnchorEdge(split[1]);
-
-                if(anchoredEdge == Fw::AnchorNone)
-                    throw OTMLException(node, "invalid anchor edge");
-
-                if(hookedEdge == Fw::AnchorNone)
-                    throw OTMLException(node, "invalid anchor target edge");
-
-                anchorLayout->addAnchor(asUIWidget(), anchoredEdge, hookedWidgetId, hookedEdge);
-            }
-        // lua functions
-        } else if(boost::starts_with(node->tag(), "@")) {
-            // load once
-            if(m_firstOnStyle) {
-                std::string funcName = node->tag().substr(1);
-                std::string funcOrigin = "@" + node->source() + "[" + node->tag() + "]";
-                g_lua.loadFunction(node->value(), funcOrigin);
-                luaSetField(funcName);
-            }
-        // lua fields value
-        } else if(boost::starts_with(node->tag(), "&")) {
-            std::string fieldName = node->tag().substr(1);
-            std::string fieldOrigin = "@" + node->source() + "[" + node->tag() + "]";
-            g_lua.evaluateExpression(node->value(), fieldOrigin);
-            luaSetField(fieldName);
-        }
-    }
+    parseBaseStyle(styleNode);
+    parseImageStyle(styleNode);
+    parseTextStyle(styleNode);
 }
 
 void UIWidget::onGeometryChange(const Rect& oldRect, const Rect& newRect)
@@ -1249,17 +1052,6 @@ void UIWidget::onHoverChange(bool hovered)
     // check for new hovered elements when the current widget is removed
     if(!hovered && !getParent() && g_ui.getRootWidget())
         g_ui.getRootWidget()->updateState(Fw::HoverState);
-}
-
-
-void UIWidget::onTextChange(const std::string& text)
-{
-    callLuaField("onTextChange", text);
-}
-
-void UIWidget::onFontChange(const std::string& font)
-{
-    callLuaField("onFontChange", font);
 }
 
 bool UIWidget::onKeyPress(uchar keyCode, std::string keyText, int keyboardModifiers)

@@ -26,6 +26,9 @@
 
 void UILayout::update()
 {
+    if(m_updateDisabled)
+        return;
+
     assert(!m_updating);
     m_updating = true;
     internalUpdate();
@@ -34,7 +37,7 @@ void UILayout::update()
 
 void UILayout::updateLater()
 {
-    if(m_updateScheduled)
+    if(m_updateDisabled || m_updateScheduled)
         return;
 
     if(!getParentWidget())

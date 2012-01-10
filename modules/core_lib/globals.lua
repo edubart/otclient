@@ -66,6 +66,9 @@ function createWidget(style, parent)
 
   local widget = class.create()
   if parent then
+    if type(parent) == 'string' then
+      parent = rootWidget:recursiveGetChildById(parent)
+    end
     parent:addChild(widget)
   end
   widget:setStyle(style)

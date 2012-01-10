@@ -30,7 +30,7 @@ class UILineEdit : public UIWidget
 public:
     UILineEdit();
 
-    virtual void renderSelf();
+    virtual void drawSelf();
 
 private:
     void update();

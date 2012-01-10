@@ -51,13 +51,13 @@ public:
     void setColor(const Color& color) { m_currentColor = color; }
     Color getColor() { return m_currentColor; }
 
-    void setOpacity(int opacity) { m_currentOpacity = opacity / 255.0f; }
-    int getOpacity() { return m_currentOpacity * 255.0f; }
+    void setOpacity(float opacity) { m_currentOpacity = opacity; }
+    float getOpacity() { return m_currentOpacity; }
 
     void setCustomProgram(PainterShaderProgramPtr program);
     void releaseCustomProgram() { m_customProgram = nullptr; }
     void setCompositionMode(CompositionMode compositionMode);
-    
+
     void setProjectionMatrix(const Matrix3& projectionMatrix) { m_projectionMatrix = projectionMatrix; }
     Matrix3 getProjectionMatrix() { return m_projectionMatrix; }
 

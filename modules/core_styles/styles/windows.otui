@@ -1,20 +1,18 @@
 Window < UIWindow
   font: verdana-11px-antialised
   size: 200 200
-  opacity: 255
+  opacity: 1
   color: white
-  background-color: white
   head-height: 20
   head-text-align: center
   move-policy: free
   stackable: true
-  border-image:
-    source: /core_styles/images/window.png
-    border: 4
-    border.top: 20
+  image-source: /core_styles/images/window.png
+  image-border: 4
+  image-border-top: 20
 
   $pressed:
-    opacity: 192
+    opacity: 0.75
 
   $disabled:
     color: #aaaaaa88
@@ -28,10 +26,9 @@ MiniWindow < UIWindow
   margin-left: 6
   margin-right: 6
   move-policy: free updated
-  border-image:
-    source: /core_styles/images/mini_window.png
-    border: 4
-    border.top: 25
+  image-source: /core_styles/images/mini_window.png
+  image-border: 4
+  image-border-top: 25
 
 MainWindow < Window
   anchors.centerIn: parent

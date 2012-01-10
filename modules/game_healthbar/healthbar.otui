@@ -1,15 +1,13 @@
-HealthBar < UIProgressBar
+HealthBar < ProgressBar
   id: healthBar
-  color: black
   height: 15
   background-color: red
   anchors.top: parent.top
   anchors.left: parent.left
   anchors.right: parent.right
 
-ManaBar < UIProgressBar
+ManaBar < ProgressBar
   id: manaBar
-  color: black
   height: 15
   background-color: blue
   anchors.bottom: parent.bottom

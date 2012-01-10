@@ -21,7 +21,7 @@ end
 
 -- hooked events
 local function onGamePingUpdate(ping)
-  pingLabel:setText('Walk Ping: ' .. ping .. ' ms')
+  pingLabel:setText('Ping: ' .. ping .. ' ms')
 end
 
 connect(Game, { onWalkPingUpdate = onGamePingUpdate })

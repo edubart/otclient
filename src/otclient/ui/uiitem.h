@@ -31,7 +31,7 @@ class UIItem : public UIWidget
 {
 public:
     UIItem();
-    void render();
+    void draw();
 
     void setItem(const ItemPtr& item) { m_item = item; }
     ItemPtr getItem() { return m_item; }

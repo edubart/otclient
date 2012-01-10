@@ -1,0 +1,4 @@
+ProgressBar < UIProgressBar
+  height: 15
+  background-color: red
+  border: 1 black

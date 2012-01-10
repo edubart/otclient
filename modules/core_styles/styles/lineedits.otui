@@ -3,9 +3,8 @@ LineEdit < UILineEdit
   color: #aaaaaa
   size: 86 20
   text-margin: 3
-  border-image:
-    source: /core_styles/images/panel_flat.png
-    border: 1
+  image-source: /core_styles/images/panel_flat.png
+  image-border: 1
 
   $disabled:
     color: #aaaaaa88

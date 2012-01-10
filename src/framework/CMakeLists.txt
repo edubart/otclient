@@ -159,8 +159,6 @@ SET(framework_SOURCES ${framework_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/graphics/framebuffer.cpp
     ${CMAKE_CURRENT_LIST_DIR}/graphics/animatedtexture.cpp
     ${CMAKE_CURRENT_LIST_DIR}/graphics/texturemanager.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/borderimage.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/image.cpp
     ${CMAKE_CURRENT_LIST_DIR}/graphics/particlemanager.cpp
     ${CMAKE_CURRENT_LIST_DIR}/graphics/particlesystem.cpp
     ${CMAKE_CURRENT_LIST_DIR}/graphics/particleemitter.cpp
@@ -187,13 +185,14 @@ SET(framework_SOURCES ${framework_SOURCES}
     # framework ui
     ${CMAKE_CURRENT_LIST_DIR}/ui/uimanager.cpp
     ${CMAKE_CURRENT_LIST_DIR}/ui/uiwidget.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/ui/uiwidgetimage.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/ui/uiwidgettext.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/ui/uiwidgetbasestyle.cpp
     ${CMAKE_CURRENT_LIST_DIR}/ui/uilineedit.cpp
     ${CMAKE_CURRENT_LIST_DIR}/ui/uiwindow.cpp
     ${CMAKE_CURRENT_LIST_DIR}/ui/uianchorlayout.cpp
     ${CMAKE_CURRENT_LIST_DIR}/ui/uiverticallayout.cpp
     ${CMAKE_CURRENT_LIST_DIR}/ui/uilayout.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/ui/uiprogressbar.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/ui/uicheckbox.cpp
     ${CMAKE_CURRENT_LIST_DIR}/ui/uiframecounter.cpp
     ${CMAKE_CURRENT_LIST_DIR}/ui/uitranslator.cpp
 

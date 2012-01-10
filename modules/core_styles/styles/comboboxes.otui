@@ -1,6 +1,6 @@
 ComboBoxPopupMenuButton < UIButton
   font: verdana-11px-antialised
-  background-color: alpha
+  image-color: alpha
   text-align: left
   text-offset: 2 0
   color: #aaaaaa
@@ -9,10 +9,7 @@ ComboBoxPopupMenuButton < UIButton
   margin-right: 1
   margin-top: 0
   margin-bottom: 0
-
-  image:
-    source: /core_styles/images/empty_rect.png
-    repeated: true
+  background-color: white
 
   $hover:
     color: #ffffff
@@ -30,19 +27,17 @@ ComboBoxPopupMenuButton < UIButton
 ComboBoxPopupMenuSeparator < UIWidget
   margin-left: 1
   margin-right: 1
-  image:
-    source: /core_styles/images/combobox.png
-    repeated: true
+  image-source: /core_styles/images/combobox.png
+  image-repeated: true
     clip: 1 59 89 1
   height: 1
   phantom: true
 
 ComboBoxPopupMenu < UIPopupMenu
-  border-image:
-    source: /core_styles/images/combobox.png
-    clip: 0 60 89 20
-    border: 1
-    border.top: 0
+  image-source: /core_styles/images/combobox.png
+  image-clip: 0 60 89 20
+  image-border: 1
+  image-border-top: 0
 
 ComboBox < UIComboBox
   font: verdana-11px-antialised
@@ -50,22 +45,19 @@ ComboBox < UIComboBox
   size: 86 20
   text-offset: 3 0
   text-align: left
-  border-image:
-    source: /core_styles/images/combobox.png
-    border: 1
-    border.right: 17
-    size: 89 20
+  image-source: /core_styles/images/combobox.png
+  image-border: 1
+  image-border-right: 17
+  image-clip: 0 0 89 20
 
   $hover:
-    border-image:
-      source: /core_styles/images/combobox.png
-      border: 1
-      border.right: 17
-      clip: 0 20 89 20
+    image-source: /core_styles/images/combobox.png
+    image-border: 1
+    image-border-right: 17
+    image-clip: 0 20 89 20
 
   $on:
-    border-image:
-      source: /core_styles/images/combobox.png
-      border: 1
-      border.right: 17
-      clip: 0 40 89 20
+    image-source: /core_styles/images/combobox.png
+    image-border: 1
+    image-border-right: 17
+    image-clip: 0 40 89 20

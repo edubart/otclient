@@ -1,34 +1,26 @@
 Panel < UIWidget
   phantom: true
 
-RectPanel < UIWidget
-  image: /core_styles/images/empty_rect.png
-
 FlatPanel < Panel
-  border-image:
-    source: /core_styles/images/panel_flat.png
-    border: 1
+  image-source: /core_styles/images/panel_flat.png
+  image-border: 1
 
 TopPanel < Panel
   height: 36
-  image:
-    source: /core_styles/images/top_panel.png
-    repeated: true
+  image-source: /core_styles/images/top_panel.png
+  image-repeated: true
 
 InterfacePanel < Panel
   focusable: false
-  border-image:
-    source: /core_styles/images/interface_panel.png
-    border: 4
+  image-source: /core_styles/images/interface_panel.png
+  image-border: 4
 
 InterfacePanel2 < Panel
   focusable: false
-  border-image:
-    source: /core_styles/images/interface_panel2.png
-    border: 4
+  image-source: /core_styles/images/interface_panel2.png
+  image-border: 4
 
 Map< UIMap
   padding: 4
-  border-image:
-    source: /core_styles/images/map_panel.png
-    border: 4
+  image-source: /core_styles/images/map_panel.png
+  image-border: 4

@@ -30,7 +30,7 @@
 class UIMap : public UIWidget
 {
 public:
-    void render();
+    void draw();
 
     TilePtr getTile(const Point& mousePos);
 

@@ -30,12 +30,12 @@ UIItem::UIItem()
     m_font = g_fonts.getFont("verdana-11px-rounded");
 }
 
-void UIItem::render()
+void UIItem::draw()
 {
-    renderSelf();
+    drawSelf();
 
     if(m_item) {
-        Point topLeft = m_rect.bottomRight() - Point(32, 32) + Point(m_paddingLeft, m_paddingTop);
+        Point topLeft = m_rect.bottomRight() - Point(32, 32) + Point(m_padding.left, m_padding.top);
 
         g_painter.setColor(Fw::white);
         m_item->draw(topLeft, m_rect);
@@ -46,5 +46,5 @@ void UIItem::render()
         }
     }
 
-    renderChildren();
+    drawChildren();
 }

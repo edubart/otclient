@@ -13,7 +13,7 @@ local function moveToolTip(tooltip)
   else
     pos.x = pos.x + 10
   end
-  tooltip:moveTo(pos)
+  tooltip:setPos(pos)
 end
 
 -- public functions
@@ -28,7 +28,7 @@ function ToolTip.display(text)
     local size = label:getSize()
     size.width = size.width + 4
     size.height = size.height + 4
-    currentToolTip:resize(size)
+    currentToolTip:setSize(size)
     moveToolTip(currentToolTip)
   end
 end

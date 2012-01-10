@@ -47,12 +47,12 @@ void UIManager::terminate()
 
 void UIManager::render()
 {
-    m_rootWidget->render();
+    m_rootWidget->draw();
 }
 
 void UIManager::resize(const Size& size)
 {
-    m_rootWidget->resize(g_window.getSize());
+    m_rootWidget->setSize(g_window.getSize());
 }
 
 void UIManager::inputEvent(const InputEvent& event)

@@ -16,6 +16,7 @@
 == Lua
 [bart] make possible to bind non LuaObject derived classes on lua engine (for usage with Point,Rect,Color,Size)
 [bart] bind every global lua function in static classes
+[bart] review usage of x,y/width,height in lua instead of point/size
 
 == Platform
 [bart] port to MacOs and iphone
@@ -102,3 +103,6 @@ game map text message boxes is not displayed like tibia
 name/shields doesnt follow the creature when walking on parcels
 hotkeys wont work with caps lock
 hotkeys works while windows are locked, it shouldnt
+
+-- current todo
+allow usage of background width alone

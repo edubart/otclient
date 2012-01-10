@@ -2,41 +2,38 @@ CheckBox < UICheckBox
   size: 12 12
   box-size: 12 12
   text-align: left
-  text-offset: 16 -1
+  text-offset: 16 0
   color: #aaaaaa
-  background-color: #ffffffff
+  image-color: #ffffffff
+  image-rect: 0 0 12 12
 
   $hover:
     color: #cccccc
 
   $!checked:
-    image:
-      source: /core_styles/images/checkbox.png
-      clip: 0 0 12 12
+    image-source: /core_styles/images/checkbox.png
+    image-clip: 0 0 12 12
 
   $hover !checked:
-    image:
-      source: /core_styles/images/checkbox.png
-      clip: 0 12 12 12
+    image-source: /core_styles/images/checkbox.png
+    image-clip: 0 12 12 12
 
   $checked:
-    image:
-      source: /core_styles/images/checkbox.png
-      clip: 0 24 12 12
+    image-source: /core_styles/images/checkbox.png
+    image-clip: 0 24 12 12
 
   $hover checked:
-    image:
-      source: /core_styles/images/checkbox.png
-      clip: 0 36 12 12
+    image-source: /core_styles/images/checkbox.png
+    image-clip: 0 36 12 12
 
   $disabled:
-    background-color: #ffffff88
+    image-color: #ffffff88
     color: #aaaaaa88
 
 ColorBox < UICheckBox
   size: 16 16
   box-size: 16 16
-  background-color: #ffffffff
+  image-color: #ffffffff
 
   $checked:
     image:
@@ -50,28 +47,25 @@ ColorBox < UICheckBox
 
 ButtonBox < UICheckBox
   font: verdana-11px-antialised
-  background-color: white
   color: #f0ad4dff
   size: 106 24
   box-size: 106 24
   text-offset: 0 0
   text-align: center
 
-  border-image:
-    source: /core_styles/images/button.png
-    border: 5
+  image-color: white
+  image-source: /core_styles/images/button.png
+  image-border: 5
 
   $hover:
-    border-image:
-      source: /core_styles/images/button_hover.png
-      border: 5
+    image-source: /core_styles/images/button_hover.png
+    image-border: 5
 
   $checked:
     text-offset: 1 1
-    border-image:
-      source: /core_styles/images/button_down.png
-      border: 5
+    image-source: /core_styles/images/button_down.png
+    image-border: 5
 
   $disabled:
     color: #f0ad4d88
-    background-color: #ffffff88
+    image-color: #ffffff88

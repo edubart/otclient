@@ -38,7 +38,7 @@ UILineEdit::UILineEdit()
     blinkCursor();
 }
 
-void UILineEdit::renderSelf()
+void UILineEdit::drawSelf()
 {
     drawBackground(m_rect);
     drawBorder(m_rect);
@@ -140,8 +140,8 @@ void UILineEdit::update()
     }
 
     Rect textScreenCoords = m_rect;
-    textScreenCoords.addLeft(-m_textHorizontalMargin);
-    textScreenCoords.addRight(-m_textHorizontalMargin);
+    textScreenCoords.expandLeft(-m_textHorizontalMargin);
+    textScreenCoords.expandRight(-m_textHorizontalMargin);
     m_drawArea = textScreenCoords;
 
     if(m_textAlign & Fw::AlignBottom) {
@@ -339,8 +339,8 @@ int UILineEdit::getTextPos(Point pos)
     int candidatePos = -1;
     for(int i=0;i<textLength;++i) {
         Rect clickGlyphRect = m_glyphsCoords[i];
-        clickGlyphRect.addTop(m_font->getYOffset() + m_font->getGlyphSpacing().height());
-        clickGlyphRect.addLeft(m_font->getGlyphSpacing().width()+1);
+        clickGlyphRect.expandTop(m_font->getYOffset() + m_font->getGlyphSpacing().height());
+        clickGlyphRect.expandLeft(m_font->getGlyphSpacing().width()+1);
         if(clickGlyphRect.contains(pos))
             return i;
         else if(pos.y >= clickGlyphRect.top() && pos.y <= clickGlyphRect.bottom()) {

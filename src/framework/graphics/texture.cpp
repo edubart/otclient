@@ -95,12 +95,23 @@ uint Texture::internalLoadGLTexture(uchar *pixels, int channels, int width, int 
     return id;
 }
 
-void Texture::enableBilinearFilter()
+void Texture::setSmooth(bool smooth)
 {
-    // enable smooth texture
-    glBindTexture(GL_TEXTURE_2D, m_textureId);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    if(smooth == m_smooth)
+        return;
+
+    if(smooth) {
+        // enable smooth texture
+        glBindTexture(GL_TEXTURE_2D, m_textureId);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    } else {
+        // nearest filtering (non smooth)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    }
+
+    m_smooth = true;
 }
 
 std::vector<uint8> Texture::getPixels()
