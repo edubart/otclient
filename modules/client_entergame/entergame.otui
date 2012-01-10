@@ -1,6 +1,6 @@
 MainWindow
   id: enterGame
-  title: Enter Game
+  text: Enter Game
   size: 236 240
   @onEnter: EnterGame.doLogin()
   @onEscape: EnterGame.hide()

@@ -10,7 +10,7 @@ CharacterListLabel < Label
 
 MainWindow
   id: charactersWindow
-  title: Character List
+  text: Character List
   size: 250 248
   @onEnter: CharacterList.doLogin()
   @onEscape: CharacterList.destroy()
@@ -23,6 +23,8 @@ MainWindow
     margin-bottom: 5
     margin-left: 16
     margin-right: 16
+    padding: 1
+    focusable: false
 
   Label
     id: accountStatusLabel

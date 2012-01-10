@@ -10,8 +10,10 @@ local function onCharactersWindowKeyPress(self, keyCode, keyText, keyboardModifi
   if keyboardModifiers == KeyboardNoModifier then
     if keyCode == KeyUp or keyCode == KeyTab then
       characterList:focusPreviousChild(ActiveFocusReason)
+      return true
     elseif keyCode == KeyDown then
       characterList:focusNextChild(ActiveFocusReason)
+      return true
     end
   end
   return false
@@ -59,7 +61,7 @@ function CharacterList.create(characters, premDays)
   charactersWindow = displayUI('characterlist.otui')
   characterList = charactersWindow:getChildById('characterList')
   local accountStatusLabel = charactersWindow:getChildById('accountStatusLabel')
-  charactersWindow.onKeyPress = onCharactersWindowKeyPress
+  connect(charactersWindow, {onKeyPress = onCharactersWindowKeyPress })
 
   local focusLabel
   for i,characterInfo in ipairs(characters) do

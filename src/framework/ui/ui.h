@@ -26,7 +26,6 @@
 #include "uimanager.h"
 #include "uiwidget.h"
 #include "uilineedit.h"
-#include "uiwindow.h"
 #include "uiframecounter.h"
 #include "uilayout.h"
 #include "uiverticallayout.h"

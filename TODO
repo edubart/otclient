@@ -24,28 +24,22 @@
 == UI
 [bart] fix massive hotkeys when holding down a key
 [bart] tab widgets
-[bart] add anchors API
 [bart] scrollbar
 [bart] scrollable widgets
 [bart] grid layout
 [bart] horizontal box layout
 [bart] move layout proprieties to widget style
-[bart] move UICheckBox to lua
-[bart] move UIWindow to lua
 [bart] multiline text editor widget
 [bart] multiline rich text widget
 [bart] create UIMessageBox, UIToolTip and UIInputBox
-[bart] rework UI image style
-[bart] class UIImage and UIText
-[bart] add UI border
 [bart] fix style inheretance using a style translator
 [bart] find a way to add new widgets without focusing them
 [bart] fix moving windows and tooltips conflicts
 [bart] break UILabel lines
 [bart] review and make more error prone with more warnings
-[bart] a real working border and background property in otui
 [bart] reapply anchor styles when adding new childs
 [bart] ui text selection
+[bart] implement ui window moving policies
 
 break window anchors when moving
 

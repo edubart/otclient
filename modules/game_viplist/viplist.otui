@@ -6,7 +6,7 @@ VipListLabel < GameLabel
 
 MiniWindow
   id: vipWindow
-  title: VIP List
+  text: VIP List
 
   UIWidget
     id: vipList

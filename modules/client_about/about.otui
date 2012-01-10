@@ -1,6 +1,6 @@
 MainWindow
   id: about
-  title: Info
+  text: Info
   size: 244 221
 
   FlatPanel

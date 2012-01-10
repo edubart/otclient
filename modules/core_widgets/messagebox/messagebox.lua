@@ -10,8 +10,9 @@ function MessageBox.create(title, text, flags)
   setmetatable(box, MessageBox)
 
   -- create messagebox window
-  local window = displayUI('messagebox.otui', { locked = true })
-  window:setTitle(title)
+  local window = displayUI('messagebox.otui')
+  window:lock()
+  window:setText(title)
 
   local label = window:getChildById('messageBoxLabel')
   label:setText(text)

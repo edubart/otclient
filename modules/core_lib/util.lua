@@ -99,6 +99,21 @@ function tonumber(v)
   return oldtonumber(v)
 end
 
+function signalcall(param, ...)
+  if type(param) == 'function' then
+    return param(...)
+  elseif type(param) == 'table' then
+    for k,v in pairs(param) do
+      if param(...) then
+        return true
+      end
+    end
+  elseif func ~= nil then
+    error('attempt to call a non function value')
+  end
+  return false
+end
+
 function runscript(file)
   g_lua.runScript(resolvepath(file, 2))
 end

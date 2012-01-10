@@ -34,9 +34,7 @@ void UIWidget::initText()
 void UIWidget::parseTextStyle(const OTMLNodePtr& styleNode)
 {
     for(const OTMLNodePtr& node : styleNode->children()) {
-        if(node->tag() == "icon")
-            setIcon(node->value());
-        else if(node->tag() == "text")
+        if(node->tag() == "text")
             setText(node->value());
         else if(node->tag() == "text-align")
             setTextAlign(Fw::translateAlignment(node->value()));

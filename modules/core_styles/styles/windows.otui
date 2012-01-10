@@ -3,16 +3,16 @@ Window < UIWindow
   size: 200 200
   opacity: 1
   color: white
-  head-height: 20
-  head-text-align: center
+  text-offset: 0 2
+  text-align: top
   move-policy: free
   stackable: true
   image-source: /core_styles/images/window.png
   image-border: 4
   image-border-top: 20
 
-  $pressed:
-    opacity: 0.75
+  //$pressed:
+  //  opacity: 0.75
 
   $disabled:
     color: #aaaaaa88
@@ -20,8 +20,8 @@ Window < UIWindow
 MiniWindow < UIWindow
   font: verdana-11px-antialised
   size: 192 200
-  head-height: 25
-  head-text-align: center
+  text-offset: 0 5
+  text-align: top
   margin-top: 10
   margin-left: 6
   margin-right: 6

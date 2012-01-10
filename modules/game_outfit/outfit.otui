@@ -3,7 +3,7 @@ Color < ColorBox
   anchors.left: head.right
 
 Window
-  title: Select Outfit
+  text: Select Outfit
   size: 550 280
 
   anchors.horizontalCenter: parent.horizontalCenter

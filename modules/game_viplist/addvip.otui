@@ -1,6 +1,6 @@
 MainWindow
   size: 256 128
-  title: Add to VIP list
+  text: Add to VIP list
   @onEnter: VipList.addVip()
   @onEscape: VipList.destroyAddWindow()
 

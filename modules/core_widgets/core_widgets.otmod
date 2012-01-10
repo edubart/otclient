@@ -12,5 +12,6 @@ Module
     require 'uicombobox'
     require 'uiprogressbar'
     require 'uipopupmenu'
+    require 'uiwindow'
     require 'tooltip/tooltip'
     require 'messagebox/messagebox'

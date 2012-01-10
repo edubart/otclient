@@ -307,12 +307,6 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UILineEdit>("isAlwaysActive", &UILineEdit::isAlwaysActive);
     g_lua.bindClassMemberFunction<UILineEdit>("isTextHidden", &UILineEdit::isTextHidden);
 
-    // UIWindow
-    g_lua.registerClass<UIWindow, UIWidget>();
-    g_lua.bindClassStaticFunction<UIWindow>("create", []{ return UIWindowPtr(new UIWindow); } );
-    g_lua.bindClassMemberFunction<UIWindow>("getTitle", &UIWindow::getTitle);
-    g_lua.bindClassMemberFunction<UIWindow>("setTitle", &UIWindow::setTitle);
-
     // UIFrameCounter
     g_lua.registerClass<UIFrameCounter, UIWidget>();
     g_lua.bindClassStaticFunction<UIFrameCounter>("create", []{ return UIFrameCounterPtr(new UIFrameCounter); } );

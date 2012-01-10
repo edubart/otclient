@@ -722,7 +722,6 @@ int UIWidget::getChildIndex(const UIWidgetPtr& child)
 Rect UIWidget::getChildrenRect()
 {
     Rect rect = m_rect;
-    rect.expand(-m_borderWidth.top, -m_borderWidth.right, -m_borderWidth.bottom, -m_borderWidth.left);
     rect.expand(-m_padding.top, -m_padding.right, -m_padding.bottom, -m_padding.left);
     return rect;
 }
