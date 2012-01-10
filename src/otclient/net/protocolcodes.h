@@ -63,7 +63,7 @@ namespace Proto {
 
     enum GameServerOpts {
         GameServerInitGame = 10,
-        GameServerGMActions = 11,
+        GameServerGMActions = 11, // deprecated in last tibia
         GameServerLoginError = 20,
         GameServerLoginAdvice = 21,
         GameServerLoginWait = 22,
@@ -95,7 +95,7 @@ namespace Proto {
         GameServerCloseTrade = 127,
         GameServerAmbient = 130,
         GameServerGraphicalEffect = 131,
-        GameServerTextEffect = 132, // absolate in last tibia?
+        GameServerTextEffect = 132, // deprecated in last tibia
         GameServerMissleEffect = 133,
         GameServerMarkCreature = 134,
         GameServerTrappers = 135,
@@ -118,10 +118,10 @@ namespace Proto {
         GameServerChannels = 171,
         GameServerOpenChannel = 172,
         GameServerPrivateChannel = 173,
-        GameServerRuleViolationChannel = 174, // absolate in last tibia?
-        GameServerRuleViolationRemove = 175, // absolate in last tibia?
-        GameServerRuleViolationCancel = 176, // absolate in last tibia?
-        GameServerRuleViolationLock = 177, // absolate in last tibia?
+        GameServerRuleViolationChannel = 174, // deprecated in last tibia
+        GameServerRuleViolationRemove = 175, // deprecated in last tibia
+        GameServerRuleViolationCancel = 176, // deprecated in last tibia
+        GameServerRuleViolationLock = 177, // deprecated in last tibia
         GameServerOpenOwnChannel = 178,
         GameServerCloseChannel = 179,
         GameServerMessage = 180,
