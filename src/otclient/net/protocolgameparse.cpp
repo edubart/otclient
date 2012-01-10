@@ -43,7 +43,7 @@ void ProtocolGame::parseMessage(InputMessage& msg)
             case Proto::GameServerInitGame:
                 parsePlayerLogin(msg);
                 break;
-            case 0x0B:
+            case Proto::GameServerGMActions:
                 parseGMActions(msg);
                 break;
             case Proto::GameServerLoginError:
@@ -279,7 +279,7 @@ void ProtocolGame::parsePlayerLogin(InputMessage& msg)
 
 void ProtocolGame::parseGMActions(InputMessage& msg)
 {
-    for(uint8 i = 0; i < 28; ++i)
+    for(uint8 i = 0; i < 19; ++i)
         msg.getU8();
 }
 

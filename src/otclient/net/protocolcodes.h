@@ -63,6 +63,7 @@ namespace Proto {
 
     enum GameServerOpts {
         GameServerInitGame = 10,
+        GameServerGMActions = 11,
         GameServerLoginError = 20,
         GameServerLoginAdvice = 21,
         GameServerLoginWait = 22,
