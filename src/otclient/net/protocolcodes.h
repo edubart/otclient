@@ -47,6 +47,12 @@ namespace Proto {
     static const int ClientVersion = PROTOCOL;
     static const int PicSignature = 0x4E119CBF;
 
+#if PROTOCOL==860
+    const int NumViolationReasons = 20;
+#elif PROTOCOL==862
+    const int NumViolationReasons = 19;
+#endif
+
     enum OsTypes {
         OsWindow = 1,
         OsLinux = 2,

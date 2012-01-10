@@ -279,7 +279,7 @@ void ProtocolGame::parsePlayerLogin(InputMessage& msg)
 
 void ProtocolGame::parseGMActions(InputMessage& msg)
 {
-    for(uint8 i = 0; i < 18; ++i)
+    for(uint8 i = 0; i < Proto::NumViolationReasons; ++i)
         msg.getU8();
 }
 
