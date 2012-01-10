@@ -122,6 +122,7 @@ void OTClient::registerLuaFunctions()
 
     g_lua.registerClass<Creature, Thing>();
     g_lua.bindClassMemberFunction<Creature>("getName", &Creature::getName);
+    g_lua.bindClassMemberFunction<Creature>("getShield", &Creature::getShield);
     g_lua.bindClassMemberFunction<Creature>("setOutfit", &Creature::setOutfit);
     g_lua.bindClassMemberFunction<Creature>("getOutfit", &Creature::getOutfit);
     g_lua.bindClassMemberFunction<Creature>("setSkullTexture", &Creature::setSkullTexture);
@@ -183,7 +184,14 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassStaticFunction<Game>("follow", std::bind(&Game::follow, &g_game, _1));
     g_lua.bindClassStaticFunction<Game>("cancelFollow", std::bind(&Game::cancelFollow, &g_game));
     g_lua.bindClassStaticFunction<Game>("rotate", std::bind(&Game::rotate, &g_game, _1));
-    g_lua.bindClassStaticFunction<Game>("inviteToParty", std::bind(&Game::inviteToParty, &g_game, _1));
+
+    g_lua.bindClassStaticFunction<Game>("partyInvite", std::bind(&Game::partyInvite, &g_game, _1));
+    g_lua.bindClassStaticFunction<Game>("partyJoin", std::bind(&Game::partyJoin, &g_game, _1));
+    g_lua.bindClassStaticFunction<Game>("partyRevokeInvitation", std::bind(&Game::partyRevokeInvitation, &g_game, _1));
+    g_lua.bindClassStaticFunction<Game>("partyPassLeadership", std::bind(&Game::partyPassLeadership, &g_game, _1));
+    g_lua.bindClassStaticFunction<Game>("partyLeave", std::bind(&Game::partyLeave, &g_game));
+    g_lua.bindClassStaticFunction<Game>("partyShareExperience", std::bind(&Game::partyShareExperience, &g_game, _1));
+
     g_lua.bindClassStaticFunction<Game>("addVip", std::bind(&Game::addVip, &g_game, _1));
     g_lua.bindClassStaticFunction<Game>("removeVip", std::bind(&Game::removeVip, &g_game, _1));
     g_lua.bindClassStaticFunction<Game>("talk", std::bind(&Game::talk, &g_game, _1));

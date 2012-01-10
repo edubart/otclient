@@ -94,6 +94,18 @@ function Game.createThingMenu(menuPosition, lookThing, useThing, creatureThing)
   
     if creatureThing:asLocalPlayer() then
       menu:addOption('Set Outfit', function() Game.openOutfitWindow() end)
+      
+      if creatureThing:asPlayer():isPartyMember() --[[and not fighting]] then
+        if creatureThing:asPlayer():isPartyLeader() then
+          if creatureThing:asPlayer():isPartySharedExperienceActive() then
+            menu:addOption('Disable Shared Experience', function() Game.partyShareExperience(false) end)
+          else
+            menu:addOption('Enable Shared Experience', function() Game.partyShareExperience(true) end)
+          end
+        end
+        menu:addOption('Leave Party', function() Game.partyLeave() end)
+      end
+      
     else
       local localPlayer = Game.getLocalPlayer()
       if localPlayer then
@@ -108,16 +120,37 @@ function Game.createThingMenu(menuPosition, lookThing, useThing, creatureThing)
         else
           menu:addOption('Stop Follow', function() Game.cancelFollow() end)
         end
+        
+        if creatureThing:asPlayer() then
+          menu:addSeparator()
+          menu:addOption('Message to ' .. creatureThing:getName(), function() print('message') end)
+          menu:addOption('Add to VIP list', function() Game.addVip(creatureThing:getName()) end)
+          menu:addOption('Ignore ' .. creatureThing:getName(), function() print('ignore') end)
+        
+          local localPlayerShield = localPlayer:asCreature():getShield()
+          local creatureShield = creatureThing:getShield()
+          
+          if localPlayerShield == ShieldNone or localPlayerShield == ShieldWhiteBlue then
+            if creatureShield == ShieldWhiteYellow then
+              menu:addOption('Join ' .. creatureThing:getName() .. '\'s Party', function() Game.partyJoin(creatureThing:getId()) end)
+            else
+              menu:addOption('Invite to Party', function() Game.partyInvite(creatureThing:getId()) end)
+            end
+          elseif localPlayerShield == ShieldWhiteYellow then
+            if creatureShield == ShieldWhiteBlue then
+              menu:addOption('Revoke ' .. creatureThing:getName() .. '\'s Invitation', function() Game.partyRevokeInvitation(creatureThing:getId()) end)
+            end
+          elseif localPlayerShield == ShieldYellow or localPlayerShield == ShieldYellowSharedExp or localPlayerShield == ShieldYellowNoSharedExpBlink or localPlayerShield == ShieldYellowNoSharedExp then
+            if creatureShield == ShieldWhiteBlue then
+              menu:addOption('Revoke ' .. creatureThing:getName() .. '\'s Invitation', function() Game.partyRevokeInvitation(creatureThing:getId()) end)
+            elseif creatureShield == ShieldBlue or creatureShield == ShieldBlueSharedExp or creatureShield == ShieldBlueNoSharedExpBlink or creatureShield == ShieldBlueNoSharedExp then
+              menu:addOption('Pass Leadership to ' .. creatureThing:getName(), function() Game.partyPassLeadership(creatureThing:getId()) end)
+            else
+              menu:addOption('Invite to Party', function() Game.partyInvite(creatureThing:getId()) end)
+            end
+          end
+        end
       end
-
-      if creatureThing:asPlayer() then
-        menu:addSeparator()
-        menu:addOption('Message to ' .. creatureThing:getName(), function() print('message') end)
-        menu:addOption('Add to VIP list', function() Game.addVip(creatureThing:getName()) end)
-        menu:addOption('Ignore ' .. creatureThing:getName(), function() print('ignore') end)
-        menu:addOption('Invite to Party', function() Game.inviteToParty(creatureThing:getId()) end)
-      end
-      
     end
 
     menu:addSeparator()

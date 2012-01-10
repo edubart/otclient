@@ -17,4 +17,5 @@ Module
     require 'game'
     require 'thing'
     require 'creature'
+    require 'player'
     require 'map'

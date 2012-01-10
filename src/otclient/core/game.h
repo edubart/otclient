@@ -65,7 +65,12 @@ public:
     void talk(const std::string& message);
     void talkChannel(int channelType, int channelId, const std::string& message);
     void talkPrivate(int channelType, const std::string& receiver, const std::string& message);
-    void inviteToParty(int creatureId);
+    void partyInvite(int creatureId);
+    void partyJoin(int creatureId);
+    void partyRevokeInvitation(int creatureId);
+    void partyPassLeadership(int creatureId);
+    void partyLeave();
+    void partyShareExperience(bool active);
     void openOutfitWindow();
     void setOutfit(const Outfit& outfit);
     void addVip(const std::string& name);

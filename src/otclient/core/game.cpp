@@ -333,12 +333,53 @@ void Game::talkPrivate(int channelType, const std::string& receiver, const std::
     m_protocolGame->sendTalk(channelType, 0, receiver, message);
 }
 
-void Game::inviteToParty(int creatureId)
+void Game::partyInvite(int creatureId)
 {
     if(!m_online || !checkBotProtection())
         return;
 
     m_protocolGame->sendInviteToParty(creatureId);
+}
+
+void Game::partyJoin(int creatureId)
+{
+    if(!m_online || !checkBotProtection())
+        return;
+
+    m_protocolGame->sendJoinParty(creatureId);
+}
+
+void Game::partyRevokeInvitation(int creatureId)
+{
+    if(!m_online || !checkBotProtection())
+        return;
+
+    m_protocolGame->sendRevokeInvitation(creatureId);
+}
+
+
+void Game::partyPassLeadership(int creatureId)
+{
+    if(!m_online || !checkBotProtection())
+        return;
+
+    m_protocolGame->sendPassLeadership(creatureId);
+}
+
+void Game::partyLeave()
+{
+    if(!m_online || !checkBotProtection())
+        return;
+
+    m_protocolGame->sendLeaveParty();
+}
+
+void Game::partyShareExperience(bool active)
+{
+    if(!m_online || !checkBotProtection())
+        return;
+
+    m_protocolGame->sendShareExperience(active, 0);
 }
 
 void Game::openOutfitWindow()
