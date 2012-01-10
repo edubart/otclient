@@ -28,11 +28,11 @@
 
 class Effect : public Thing
 {
+public:
     enum {
         TICKS_PER_FRAME = 75
     };
 
-public:
     Effect();
 
     void draw(const Point& p, const Rect&);

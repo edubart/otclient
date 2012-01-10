@@ -27,6 +27,7 @@
 #include "tile.h"
 #include "item.h"
 #include "game.h"
+#include "effect.h"
 
 #include <framework/graphics/graphics.h>
 #include <framework/core/eventdispatcher.h>
@@ -84,46 +85,54 @@ void Creature::draw(const Point& p, const Rect&)
     }
 
     // Render creature
-    for(m_yPattern = 0; m_yPattern < m_type->dimensions[ThingType::PatternY]; m_yPattern++) {
+    if(m_outfit.getCategory() == ThingsType::Creature) {
+        for(m_yPattern = 0; m_yPattern < m_type->dimensions[ThingType::PatternY]; m_yPattern++) {
 
-        // continue if we dont have this addon.
-        if(m_yPattern > 0 && !(m_outfit.getAddons() & (1 << (m_yPattern-1))))
-            continue;
+            // continue if we dont have this addon.
+            if(m_yPattern > 0 && !(m_outfit.getAddons() & (1 << (m_yPattern-1))))
+                continue;
 
-        g_painter.setCustomProgram(outfitProgram);
+            g_painter.setCustomProgram(outfitProgram);
 
-        outfitProgram->bind();
-        outfitProgram->setUniformValue(HEAD_COLOR_UNIFORM, m_outfit.getHeadColor());
-        outfitProgram->setUniformValue(BODY_COLOR_UNIFORM, m_outfit.getBodyColor());
-        outfitProgram->setUniformValue(LEGS_COLOR_UNIFORM, m_outfit.getLegsColor());
-        outfitProgram->setUniformValue(FEET_COLOR_UNIFORM, m_outfit.getFeetColor());
+            outfitProgram->bind();
+            outfitProgram->setUniformValue(HEAD_COLOR_UNIFORM, m_outfit.getHeadColor());
+            outfitProgram->setUniformValue(BODY_COLOR_UNIFORM, m_outfit.getBodyColor());
+            outfitProgram->setUniformValue(LEGS_COLOR_UNIFORM, m_outfit.getLegsColor());
+            outfitProgram->setUniformValue(FEET_COLOR_UNIFORM, m_outfit.getFeetColor());
 
-        for(int h = 0; h < m_type->dimensions[ThingType::Height]; h++) {
-            for(int w = 0; w < m_type->dimensions[ThingType::Width]; w++) {
-                int spriteId = m_type->getSpriteId(w, h, 0, m_xPattern, m_yPattern, m_zPattern, m_animation);
-                if(!spriteId)
-                    continue;
-                TexturePtr spriteTex = g_sprites.getSpriteTexture(spriteId);
-                if(!spriteTex)
-                    continue;
-
-                if(m_type->dimensions[ThingType::Layers] > 1) {
-                    int maskId = m_type->getSpriteId(w, h, 1, m_xPattern, m_yPattern, m_zPattern, m_animation);
-                    if(!maskId)
+            for(int h = 0; h < m_type->dimensions[ThingType::Height]; h++) {
+                for(int w = 0; w < m_type->dimensions[ThingType::Width]; w++) {
+                    int spriteId = m_type->getSpriteId(w, h, 0, m_xPattern, m_yPattern, m_zPattern, m_animation);
+                    if(!spriteId)
                         continue;
-                    TexturePtr maskTex = g_sprites.getSpriteTexture(maskId);
-                    outfitProgram->setUniformTexture(MASK_TEXTURE_UNIFORM, maskTex, 1);
+                    TexturePtr spriteTex = g_sprites.getSpriteTexture(spriteId);
+                    if(!spriteTex)
+                        continue;
+
+                    if(m_type->dimensions[ThingType::Layers] > 1) {
+                        int maskId = m_type->getSpriteId(w, h, 1, m_xPattern, m_yPattern, m_zPattern, m_animation);
+                        if(!maskId)
+                            continue;
+                        TexturePtr maskTex = g_sprites.getSpriteTexture(maskId);
+                        outfitProgram->setUniformTexture(MASK_TEXTURE_UNIFORM, maskTex, 1);
+                    }
+
+                    Rect drawRect(((p + m_walkOffset).x - w*32) - m_type->parameters[ThingType::DisplacementX],
+                                ((p + m_walkOffset).y - h*32) - m_type->parameters[ThingType::DisplacementY],
+                                32, 32);
+                    g_painter.drawTexturedRect(drawRect, spriteTex);
                 }
-
-                Rect drawRect(((p + m_walkOffset).x - w*32) - m_type->parameters[ThingType::DisplacementX],
-                            ((p + m_walkOffset).y - h*32) - m_type->parameters[ThingType::DisplacementY],
-                            32, 32);
-                g_painter.drawTexturedRect(drawRect, spriteTex);
             }
-        }
 
-        g_painter.releaseCustomProgram();
+            g_painter.releaseCustomProgram();
+        }
     }
+    else if(m_outfit.getCategory() == ThingsType::Item) {
+        for(int l = 0; l < m_type->dimensions[ThingType::Layers]; l++)
+            internalDraw(p + m_walkOffset, l);
+    }
+    else if(m_outfit.getCategory() == ThingsType::Effect)
+        internalDraw(p + m_walkOffset, 0);
 }
 
 void Creature::drawInformation(int x, int y, bool useGray, const Rect& visibleRect)
@@ -260,10 +269,12 @@ void Creature::updateWalk()
             m_walkOffset.x = -totalPixelsWalked;
     }
 
-    if(totalPixelsWalked == 32 || m_type->dimensions[ThingType::AnimationPhases] <= 1)
-        m_animation = 0;
-    else if(m_type->dimensions[ThingType::AnimationPhases] > 1)
-        m_animation = 1 + totalPixelsWalked * 4 / Map::NUM_TILE_PIXELS % (m_type->dimensions[ThingType::AnimationPhases] - 1);
+    if(m_outfit.getCategory() == ThingsType::Creature) {
+        if(totalPixelsWalked == 32 || m_type->dimensions[ThingType::AnimationPhases] <= 1)
+            m_animation = 0;
+        else if(m_type->dimensions[ThingType::AnimationPhases] > 1)
+            m_animation = 1 + totalPixelsWalked * 4 / Map::NUM_TILE_PIXELS % (m_type->dimensions[ThingType::AnimationPhases] - 1);
+    }
 
     if(g_clock.ticks() > m_walkEnd)
         cancelWalk(m_turnDirection);
@@ -275,7 +286,8 @@ void Creature::cancelWalk(Otc::Direction direction, bool)
 {
     m_walking = false;
     m_walkStart = 0;
-    m_animation = 0;
+    if(m_outfit.getCategory() == ThingsType::Creature)
+        m_animation = 0;
     m_walkOffset = Point(0, 0);
     setDirection(direction);
 }
@@ -320,23 +332,44 @@ void Creature::setHealthPercent(uint8 healthPercent)
 
 void Creature::setDirection(Otc::Direction direction)
 {
-    if(direction == Otc::NorthEast || direction == Otc::SouthEast)
-        m_xPattern = Otc::East;
-    else if(direction == Otc::NorthWest || direction == Otc::SouthWest)
-        m_xPattern = Otc::West;
-    else
-        m_xPattern = direction;
+    if(m_outfit.getCategory() == ThingsType::Creature) {
+        if(direction == Otc::NorthEast || direction == Otc::SouthEast)
+            m_xPattern = Otc::East;
+        else if(direction == Otc::NorthWest || direction == Otc::SouthWest)
+            m_xPattern = Otc::West;
+        else
+            m_xPattern = direction;
+    }
+    else {
+        m_xPattern = 0;
+    }
 
     m_direction = direction;
 }
 
 void Creature::setOutfit(const Outfit& outfit)
 {
+    if(m_outfit.getCategory() != ThingsType::Effect && outfit.getCategory() == ThingsType::Effect) {
+        auto self = asCreature();
+        g_dispatcher.scheduleEvent([self]() {
+            self->updateAnimation();
+        }, INVISIBLE_TICKS);
+
+        m_xPattern = 0;
+        m_yPattern = 0;
+    }
+    if(m_outfit.getCategory() == ThingsType::Item) {
+        m_xPattern = 0;
+        m_yPattern = 0;
+    }
+
     m_outfit = outfit;
     m_type = getType();
 
-    if(m_type->dimensions[ThingType::Layers] == 1)
+    if(m_outfit.getCategory() == ThingsType::Creature && m_type->dimensions[ThingType::Layers] == 1) {
+        m_animation = 0;
         m_outfit.resetClothes();
+    }
 }
 
 void Creature::setSkull(uint8 skull)
@@ -354,7 +387,6 @@ void Creature::setShield(uint8 shield)
 void Creature::setEmblem(uint8 emblem)
 {
     m_emblem = emblem;
-
     g_lua.callGlobalField("Creature","onEmblemChange", asCreature(), m_emblem);
 }
 
@@ -385,7 +417,26 @@ void Creature::addVolatileSquare(uint8 color)
     }, VOLATILE_SQUARE_DURATION);
 }
 
+void Creature::updateAnimation()
+{
+    if(m_animation == 1)
+        m_animation = 2;
+    else if(m_animation == 2)
+        m_animation = 3;
+    else if(m_animation == 3)
+        m_animation = 1;
+    else
+        m_animation = 1;
+
+    if(g_game.isOnline() && m_outfit.getCategory() == ThingsType::Effect) {
+        auto self = asCreature();
+        g_dispatcher.scheduleEvent([self]() {
+            self->updateAnimation();
+        }, INVISIBLE_TICKS);
+    }
+}
+
 ThingType *Creature::getType()
 {
-    return g_thingsType.getThingType(m_outfit.getType(), ThingsType::Creature);
+    return g_thingsType.getThingType(m_outfit.getId(), m_outfit.getCategory());
 }

@@ -996,15 +996,16 @@ Outfit ProtocolGame::internalGetOutfit(InputMessage& msg)
 {
     Outfit outfit;
 
-    uint16 type = msg.getU16();
-    if(type != 0) {
+    uint16 id = msg.getU16();
+    if(id != 0) {
+        outfit.setCategory(ThingsType::Creature);
         uint8 head = msg.getU8();
         uint8 body = msg.getU8();
         uint8 legs = msg.getU8();
         uint8 feet = msg.getU8();
         uint8 addons = msg.getU8();
 
-        outfit.setType(type);
+        outfit.setId(id);
         outfit.setHead(head);
         outfit.setBody(body);
         outfit.setLegs(legs);
@@ -1012,8 +1013,15 @@ Outfit ProtocolGame::internalGetOutfit(InputMessage& msg)
         outfit.setAddons(addons);
     }
     else {
-        uint16 type = msg.getU16();
-        outfit.setType(type);
+        uint16 id = msg.getU16();
+        if(id == 0) {
+            outfit.setCategory(ThingsType::Effect);
+            outfit.setId(13);
+        }
+        else {
+            outfit.setCategory(ThingsType::Item);
+            outfit.setId(id);
+        }
     }
 
     return outfit;

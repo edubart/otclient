@@ -537,7 +537,7 @@ void ProtocolGame::sendSetOutfit(const Outfit& outfit)
     OutputMessage oMsg;
     oMsg.addU8(Proto::ClientSetOutfit);
 
-    oMsg.addU16(outfit.getType());
+    oMsg.addU16(outfit.getId());
     oMsg.addU8(outfit.getHead());
     oMsg.addU8(outfit.getBody());
     oMsg.addU8(outfit.getLegs());

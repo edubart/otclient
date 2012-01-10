@@ -44,8 +44,8 @@ void Item::draw(const Point& p, const Rect&)
     if(m_type->dimensions[ThingType::AnimationPhases] > 1)
         m_animation = (g_clock.ticks() % (TICKS_PER_FRAME * m_type->dimensions[ThingType::AnimationPhases])) / TICKS_PER_FRAME;
 
-    for(int b = 0; b < m_type->dimensions[ThingType::Layers]; b++)
-        internalDraw(p, b);
+    for(int l = 0; l < m_type->dimensions[ThingType::Layers]; l++)
+        internalDraw(p, l);
 }
 
 void Item::setPos(const Position& position)

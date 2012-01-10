@@ -26,7 +26,7 @@
 void push_luavalue(const Outfit& outfit)
 {
     g_lua.newTable();
-    g_lua.pushInteger(outfit.getType());
+    g_lua.pushInteger(outfit.getId());
     g_lua.setField("type");
     g_lua.pushInteger(outfit.getAddons());
     g_lua.setField("addons");
@@ -44,7 +44,7 @@ bool luavalue_cast(int index, Outfit& outfit)
 {
     if(g_lua.isTable(index)) {
         g_lua.getField("type", index);
-        outfit.setType(g_lua.popInteger());
+        outfit.setId(g_lua.popInteger());
         g_lua.getField("addons", index);
         outfit.setAddons(g_lua.popInteger());
         g_lua.getField("head", index);

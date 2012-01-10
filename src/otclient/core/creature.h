@@ -31,6 +31,7 @@ class Creature : public Thing
 {
 public:
     enum {
+        INVISIBLE_TICKS = 500,
         VOLATILE_SQUARE_DURATION = 1000
     };
 
@@ -70,6 +71,9 @@ public:
     uint8 getShield() { return m_shield; }
     uint8 getEmblem() { return m_emblem; }
     bool getPassable() { return m_passable; }
+
+    void updateAnimation();
+
     ThingType *getType();
 
     //virtual void walk(const Position& oldPos, const Position& newPos, bool inverse = true);

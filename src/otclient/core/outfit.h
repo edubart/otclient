@@ -24,6 +24,7 @@
 #define OUTFIT_H
 
 #include <framework/math/color.h>
+#include <otclient/core/thingstype.h>
 
 class Outfit
 {
@@ -37,21 +38,23 @@ public:
 
     static Color getColor(int color);
 
-    void setType(int type) { m_type = type; }
+    void setId(int id) { m_id = id; }
     void setHead(int head) { m_head = head; m_headColor = getColor(head); }
     void setBody(int body) { m_body = body; m_bodyColor = getColor(body); }
     void setLegs(int legs) { m_legs = legs; m_legsColor = getColor(legs); }
     void setFeet(int feet) { m_feet = feet; m_feetColor = getColor(feet); }
     void setAddons(int addons) { m_addons = addons; }
+    void setCategory(ThingsType::Categories category) { m_category = category; }
 
     void resetClothes();
 
-    int getType() const { return m_type; }
+    int getId() const { return m_id; }
     int getHead() const { return m_head; }
     int getBody() const { return m_body; }
     int getLegs() const { return m_legs; }
     int getFeet() const { return m_feet; }
     int getAddons() const { return m_addons; }
+    ThingsType::Categories getCategory() const { return m_category; }
 
     Color getHeadColor() { return m_headColor; }
     Color getBodyColor() { return m_bodyColor; }
@@ -59,7 +62,8 @@ public:
     Color getFeetColor() { return m_feetColor; }
 
 private:
-    int m_type, m_head, m_body, m_legs, m_feet, m_addons;
+    ThingsType::Categories m_category;
+    int m_id, m_head, m_body, m_legs, m_feet, m_addons;
     Color m_headColor, m_bodyColor, m_legsColor, m_feetColor;
 };
 
