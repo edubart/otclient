@@ -29,10 +29,10 @@ function VipList.addVip()
 end
 
 -- hooked events
-function Game.onAddVip(id, name, online)
+function VipList.onAddVip(id, name, online)
   local vipList = vipWindow:getChildById('vipList')
 
-  local label = createWidget('VipListLabel', vipList)
+  local label = createWidget('VipListLabel', nil)
   label:setId('vip' .. id)
   label:setText(name)
 
@@ -43,19 +43,40 @@ function Game.onAddVip(id, name, online)
   end
 
   label.vipOnline = online
+  
+  local nameLower = name:lower()
+  local childrenCount = vipList:getChildCount()
+  for i=1,childrenCount do
+  
+    local child = vipList:getChildByIndex(i)
+    if online and not child.vipOnline then
+      vipList:insertChild(i, label)
+      return
+    end
+  
+    local childText = child:getText():lower()
+    local length = math.min(childText:len(), nameLower:len())
+    
+    for j=1,length do
+      if nameLower:byte(j) < childText:byte(j) then
+        vipList:insertChild(i, label)
+        return
+      elseif nameLower:byte(j) > childText:byte(j) then
+        break
+      end
+    end
+  end
+  
+  vipList:insertChild(childrenCount+1, label)
 end
 
-function Game.onVipStateChange(id, online)
+function VipList.onVipStateChange(id, online)
   local vipList = vipWindow:getChildById('vipList')
   local label = vipList:getChildById('vip' .. id)
-
-  if online then
-    label:setColor('#00ff00')
-  else
-    label:setColor('#ff0000')
-  end
-
-  label.vipOnline = online
+  local text = label:getText()
+  vipList:removeChild(label)
+  
+  VipList.onAddVip(id, text, online)
 end
 
 function VipList.onVipListMousePress(widget, mousePos, mouseButton)
@@ -87,4 +108,6 @@ end
 
 
 connect(Game, { onLogin = VipList.create,
-                onLogout = VipList.destroy })
+                onLogout = VipList.destroy,
+                onAddVip = VipList.onAddVip,
+                onVipStateChange = VipList.onVipStateChange })
