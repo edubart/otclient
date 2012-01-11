@@ -11,16 +11,17 @@ High priority TODO in order (before first public disclose)
 [bart] add top menu buttons
 [bart] console history, scrolling
 [bart] modules managment interface
+[bart] adjust interface design
 
 [baxnie] display exit box when exiting from game
 [baxnie] auto walk
 [baxnie] attack modes
 [baxnie] player status icons (poison, etc)
-[baxnie] trade window
-[baxnie] hotkeys window
 [baxnie] container windows
 [baxnie] move items
 [baxnie] use with
+[baxnie] hotkeys window
+[baxnie] trade window
 [baxnie] battle list
 
 
@@ -81,21 +82,10 @@ Low priority TODO
 [bart] minimap windows
 [bart] draw lights using shaders
 [bart] limit FPS in options
+[bart] resize map, right panel
 [baxnie] do lua game event calls from Game instead from GameProtocol
 [baxnie] login queue
 [baxnie] questlog
 [baxnie] edit texts
 [baxnie] ignore list
 [baxnie] viplist marks
-
-===== KNOWN BUGS
-2x2 corpses is drawn above players
-animatedtext is displayed in non visible floors
-attack while walking cancels the walk
-trying to walking in follow doesn't cancel de walk
-if a spell is used while pressing arrows keys the walk is canceled and it doesnt starts walking again
-game map text message boxes is not displayed like tibia
-name/shields doesnt follow the creature when walking on parcels
-hotkeys wont work with caps lock
-hotkeys works while windows are locked, it shouldnt
-some animated hits are displayed as 2 hits instead of one

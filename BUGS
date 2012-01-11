@@ -1,0 +1,10 @@
+2x2 corpses is drawn above players
+animatedtext is displayed in non visible floors
+attack while walking cancels the walk
+trying to walking in follow doesn't cancel de walk
+if a spell is used while pressing arrows keys the walk is canceled and it doesnt starts walking again
+game map text message boxes is not displayed like tibia
+name/shields doesnt follow the creature when walking on parcels
+hotkeys wont work with caps lock
+hotkeys works while windows are locked, it shouldnt
+some animated hits are displayed as 2 hits instead of one
