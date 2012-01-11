@@ -307,7 +307,9 @@ void ProtocolGame::parsePing(InputMessage&)
 
 void ProtocolGame::parseDeath(InputMessage& msg)
 {
+#if PROTOCOL==862
     msg.getU8(); // 100 is a fair death. < 100 is a unfair death.
+#endif
     g_game.processDeath();
 }
 

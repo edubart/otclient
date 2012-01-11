@@ -66,6 +66,7 @@ void Game::processLoginError(const std::string& error)
 void Game::processConnectionError(const boost::system::error_code& error)
 {
     // connection errors only have meaning if we still have a protocol
+    dump << "disconnected: connection error = " << error.message();
     if(m_protocolGame) {
         if(error != asio::error::eof)
             g_lua.callGlobalField("Game", "onConnectionError", error.message());
