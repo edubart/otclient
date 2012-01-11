@@ -1,3 +1,33 @@
+====================================================
+High priority TODO in order (before first public disclose)
+
+[bart] tab widgets
+[bart] multiline rich text widget
+[bart] chat with tabs
+[bart] scrollbar
+[bart] scrollable widgets
+[bart] complete miniwindow (close, minimize, resize)
+[bart] move windows
+[bart] add top menu buttons
+[bart] console history, scrolling
+[bart] modules managment interface
+
+[baxnie] display exit box when exiting from game
+[baxnie] auto walk
+[baxnie] attack modes
+[baxnie] player status icons (poison, etc)
+[baxnie] trade window
+[baxnie] hotkeys window
+[baxnie] container windows
+[baxnie] move items
+[baxnie] use with
+[baxnie] battle list
+
+
+
+====================================================
+Low priority TODO
+
 == Core
 [bart] review directories loading search
 [bart] load modules from zip packages
@@ -23,35 +53,24 @@
 
 == UI
 [bart] fix massive hotkeys when holding down a key
-[bart] tab widgets
-[bart] scrollbar
-[bart] scrollable widgets
 [bart] grid layout
 [bart] horizontal box layout
 [bart] move layout proprieties to widget style
 [bart] multiline text editor widget
-[bart] multiline rich text widget
 [bart] create UIMessageBox, UIToolTip and UIInputBox
 [bart] fix style inheretance using a style translator
 [bart] find a way to add new widgets without focusing them
-[bart] fix moving windows and tooltips conflicts
 [bart] break UILabel lines
 [bart] review and make more error prone with more warnings
 [bart] reapply anchor styles when adding new childs
 [bart] ui text selection
-[bart] implement ui window moving policies
-make set of background/icon/image width alone work
-break window anchors when moving
+[bart] make set of background/icon/image width alone work
 
 == Client modules
-[bart] modules managment interface
-[bart] console history, text selection, scrolling
 [bart] make possible to reload modules
 
 == Client
 [bart] implement left panel with dragging windows
-[bart] complete miniwindow
-[bart] add other buttons on topmenu
 [bart] clean sprites cache periodically
 [bart] create a shader manager
 [bart] find a way to load map rendering styles
@@ -61,31 +80,13 @@ break window anchors when moving
 [bart] rework map tile rendering (cache visible tiles, etc)
 [bart] minimap windows
 [bart] draw lights using shaders
-[bart] chat with tabs
 [bart] limit FPS in options
-[baxnie] display exit box when exiting from game
 [baxnie] do lua game event calls from Game instead from GameProtocol
-[baxnie] classic control
-[baxnie] trade window
-[baxnie] auto walk
-[baxnie] hotkeys window
-[baxnie] container window
-[baxnie] player status icons (poison, etc)
-[baxnie] attack modes
-[baxnie] skulls/party rendering
-[baxnie] move items in map
-[baxnie] use with
-[baxnie] private messages
-[baxnie] open channels
-[baxnie] chat text colors
 [baxnie] login queue
-[baxnie] battle list
 [baxnie] questlog
 [baxnie] edit texts
 [baxnie] ignore list
 [baxnie] viplist marks
-[baxnie] fix walk jump when cancel creature following
-[baxnie] fix creature outfit when invisible or with item appearance
 
 ===== KNOWN BUGS
 2x2 corpses is drawn above players

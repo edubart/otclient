@@ -104,9 +104,6 @@ void Game::processDeath()
 {
     m_dead = true;
     g_lua.callGlobalField("Game","onDeath");
-
-    // force logout in five seconds
-    g_dispatcher.scheduleEvent(std::bind(&Game::forceLogout, &g_game), 5 * 1000);
 }
 
 void Game::processCreatureSpeak(const std::string& name, int level, const std::string& type, const std::string& message, int channelId, const Position& creaturePos)
