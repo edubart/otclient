@@ -57,6 +57,7 @@ public:
     void turn(Otc::Direction direction);
     void look(const ThingPtr& thing);
     void use(const ThingPtr& thing);
+    void useWith(const ThingPtr& fromThing, const ThingPtr& toThing);
     void attack(const CreaturePtr& creature);
     void cancelAttack();
     void follow(const CreaturePtr& creature);
@@ -82,6 +83,9 @@ public:
     bool isOnline() { return m_online; }
     bool isDead() { return m_dead; }
 
+    void setSelectedThing(const ThingPtr& thing) { m_selectedThing = thing; }
+    ThingPtr getSelectedThing() { return m_selectedThing; }
+
     void setServerBeat(int serverBeat) { m_serverBeat = serverBeat; }
     int getServerBeat() { return m_serverBeat; }
 
@@ -101,6 +105,7 @@ private:
     Timer m_walkPingTimer;
     int m_walkPing;
     int m_serverBeat;
+    ThingPtr m_selectedThing;
 };
 
 extern Game g_game;

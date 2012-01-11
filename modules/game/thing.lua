@@ -3,13 +3,24 @@
 function Game.processMouseAction(menuPosition, mouseButton, autoWalk, lookThing, useThing, creatureThing, multiUseThing)
   local keyboardModifiers = g_window.getKeyboardModifiers()
   
-  if autoWalk and keyboardModifiers == KeyboardNoModifier and mouseButton == MouseLeftButton then
+  local selectedThing = Game.getSelectedThing()
+  if mouseButton == MouseRightButton and selectedThing then
+    Game.setSelectedThing(nil)
+    return true
+  end
+  
+  if autoWalk and keyboardModifiers == KeyboardNoModifier and mouseButton == MouseLeftButton and not Game.getSelectedThing() then
     -- todo auto walk
     return true
   end
   
   if not Options.classicControl then
-    if keyboardModifiers == KeyboardNoModifier and mouseButton == MouseRightButton then
+    if mouseButton == MouseLeftButton and selectedThing then
+      Game.useWith(Game.getSelectedThing(), useThing)
+      Game.setSelectedThing(nil)
+      -- restore cursor
+      return true
+    elseif keyboardModifiers == KeyboardNoModifier and mouseButton == MouseRightButton then
       Game.createThingMenu(menuPosition, lookThing, useThing, creatureThing)
       return true
     elseif lookThing and keyboardModifiers == KeyboardShiftModifier and (mouseButton == MouseLeftButton or mouseButton == MouseRightButton) then
@@ -19,7 +30,8 @@ function Game.processMouseAction(menuPosition, mouseButton, autoWalk, lookThing,
       if useThing:isContainer() then
         print "open"
       elseif useThing:isMultiUse() then
-        print "use with..."
+        Game.setSelectedThing(useThing)
+        -- todo change cursor
       else
         Game.use(useThing)
       end
@@ -29,13 +41,19 @@ function Game.processMouseAction(menuPosition, mouseButton, autoWalk, lookThing,
       return true
     end
   else
-    if multiUseThing and keyboardModifiers == KeyboardNoModifier and mouseButton == MouseRightButton then
+    if mouseButton == MouseLeftButton and selectedThing then
+      Game.useWith(Game.getSelectedThing(), multiUseThing)
+      Game.setSelectedThing(nil)
+      -- restore cursor
+      return true
+    elseif multiUseThing and keyboardModifiers == KeyboardNoModifier and mouseButton == MouseRightButton then
       if multiUseThing:asCreature() then
         Game.attack(multiUseThing:asCreature())
       elseif multiUseThing:isContainer() then
         print "open"
       elseif multiUseThing:isMultiUse() then
-        print "use with..."
+        Game.setSelectedThing(multiUseThing)
+        -- todo change cursor
       else
         Game.use(useThing)
       end
@@ -70,7 +88,8 @@ function Game.createThingMenu(menuPosition, lookThing, useThing, creatureThing)
       menu:addOption('Open', function() print('open') end)
     else
       if useThing:isMultiUse() then
-        menu:addOption('Use with ...', function() print('use with...') end)
+        -- todo change cursor
+        menu:addOption('Use with ...', function() Game.setSelectedThing(useThing) end)
       else
         menu:addOption('Use', function() Game.use(useThing) end)
       end

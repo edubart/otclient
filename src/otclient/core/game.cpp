@@ -37,6 +37,7 @@ void Game::loginWorld(const std::string& account, const std::string& password, c
     m_online = false;
     m_dead = false;
     m_walkFeedback = true;
+    m_selectedThing = nullptr;
     m_walkPing = 0;
     m_protocolGame = ProtocolGamePtr(new ProtocolGame);
     m_protocolGame->login(account, password, worldHost, (uint16)worldPort, characterName);
@@ -249,6 +250,16 @@ void Game::use(const ThingPtr& thing)
     int stackpos = getThingStackpos(thing);
     if(stackpos != -1)
         m_protocolGame->sendUseItem(thing->getPos(), thing->getId(), stackpos, 0);// last 0 has something to do with container
+}
+
+void Game::useWith(const ThingPtr& fromThing, const ThingPtr& toThing)
+{
+    if(!m_online || !fromThing || !toThing || !checkBotProtection())
+        return;
+
+    int fromStackpos = getThingStackpos(fromThing), toStackpos = getThingStackpos(toThing);
+    if(fromStackpos != -1 && toStackpos != -1)
+        m_protocolGame->sendUseItemEx(fromThing->getPos(), fromThing->getId(), fromStackpos, toThing->getPos(), toThing->getId(), toStackpos);
 }
 
 void Game::attack(const CreaturePtr& creature)

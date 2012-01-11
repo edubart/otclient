@@ -179,6 +179,7 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassStaticFunction<Game>("setOutfit", std::bind(&Game::setOutfit, &g_game, _1));
     g_lua.bindClassStaticFunction<Game>("look", std::bind(&Game::look, &g_game, _1));
     g_lua.bindClassStaticFunction<Game>("use", std::bind(&Game::use, &g_game, _1));
+    g_lua.bindClassStaticFunction<Game>("useWith", std::bind(&Game::useWith, &g_game, _1, _2));
     g_lua.bindClassStaticFunction<Game>("attack", std::bind(&Game::attack, &g_game, _1));
     g_lua.bindClassStaticFunction<Game>("cancelAttack", std::bind(&Game::cancelAttack, &g_game));
     g_lua.bindClassStaticFunction<Game>("follow", std::bind(&Game::follow, &g_game, _1));
@@ -199,6 +200,8 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassStaticFunction<Game>("talkPrivate", std::bind(&Game::talkPrivate, &g_game, _1, _2, _3));
     g_lua.bindClassStaticFunction<Game>("getLocalPlayer", std::bind(&Game::getLocalPlayer, &g_game));
     g_lua.bindClassStaticFunction<Game>("getProtocolVersion", std::bind(&Game::getProtocolVersion, &g_game));
+    g_lua.bindClassStaticFunction<Game>("setSelectedThing", std::bind(&Game::setSelectedThing, &g_game, _1));
+    g_lua.bindClassStaticFunction<Game>("getSelectedThing", std::bind(&Game::getSelectedThing, &g_game));
 
     g_lua.registerClass<UIItem, UIWidget>();
     g_lua.bindClassStaticFunction<UIItem>("create", []{ return UIItemPtr(new UIItem); } );
