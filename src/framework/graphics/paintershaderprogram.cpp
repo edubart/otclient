@@ -36,7 +36,7 @@ bool PainterShaderProgram::link()
         bindUniformLocation(COLOR_UNIFORM, "color");
         bindUniformLocation(OPACITY_UNIFORM, "opacity");
         bindUniformLocation(TEXTURE_UNIFORM, "texture");
-        bindUniformLocation(TIME_UNIFORM, "ticks");
+        bindUniformLocation(TIME_UNIFORM, "time");
         return true;
     }
     m_startTimer.restart();
