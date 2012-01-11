@@ -666,33 +666,67 @@ void ProtocolGame::parseHouseTextWindow(InputMessage& msg)
 
 void ProtocolGame::parsePlayerStats(InputMessage& msg)
 {
-    m_localPlayer->setStatistic(Otc::Health, msg.getU16());
-    m_localPlayer->setStatistic(Otc::MaxHealth, msg.getU16());
-    g_lua.callGlobalField("Game", "onHealthChange", m_localPlayer->getStatistic(Otc::Health), m_localPlayer->getStatistic(Otc::MaxHealth));
+    double health = msg.getU16();
+    double maxHealth = msg.getU16();
+    double freeCapacity = msg.getU32() / 100.0;
+    double experience = msg.getU32();
+    double level = msg.getU16();
+    double levelPercent = msg.getU8();
+    double mana = msg.getU16();
+    double maxMana = msg.getU16();
+    double magicLevel = msg.getU8();
+    double magicLevelPercent = msg.getU8();
+    double soul = msg.getU8();
+    double stamina = msg.getU16();
 
-    m_localPlayer->setStatistic(Otc::FreeCapacity, msg.getU32() / 100.0);
-    g_lua.callGlobalField("Game", "onFreeCapacityChange", m_localPlayer->getStatistic(Otc::FreeCapacity));
+    //TODO: move to game
+    if(m_localPlayer->getStatistic(Otc::Health) != health ||
+       m_localPlayer->getStatistic(Otc::MaxHealth) != maxHealth) {
+        m_localPlayer->setStatistic(Otc::Health, health);
+        m_localPlayer->setStatistic(Otc::MaxHealth, maxHealth);
+        g_lua.callGlobalField("Game", "onHealthChange", health, maxHealth);
+    }
 
-    m_localPlayer->setStatistic(Otc::Experience, msg.getU32());
-    g_lua.callGlobalField("Game", "onExperienceChange", m_localPlayer->getStatistic(Otc::Experience));
+    if(m_localPlayer->getStatistic(Otc::FreeCapacity) != freeCapacity) {
+        m_localPlayer->setStatistic(Otc::FreeCapacity, freeCapacity);
+        g_lua.callGlobalField("Game", "onFreeCapacityChange", freeCapacity);
+    }
 
-    m_localPlayer->setStatistic(Otc::Level, msg.getU16());
-    m_localPlayer->setStatistic(Otc::LevelPercent, msg.getU8());
-    g_lua.callGlobalField("Game", "onLevelChange", m_localPlayer->getStatistic(Otc::Level), m_localPlayer->getStatistic(Otc::LevelPercent));
+    if(m_localPlayer->getStatistic(Otc::Experience) != experience) {
+        m_localPlayer->setStatistic(Otc::Experience, experience);
+        g_lua.callGlobalField("Game", "onExperienceChange", experience);
+    }
 
-    m_localPlayer->setStatistic(Otc::Mana, msg.getU16());
-    m_localPlayer->setStatistic(Otc::MaxMana, msg.getU16());
-    g_lua.callGlobalField("Game", "onManaChange", m_localPlayer->getStatistic(Otc::Mana), m_localPlayer->getStatistic(Otc::MaxMana));
+    if(m_localPlayer->getStatistic(Otc::Level) != level ||
+       m_localPlayer->getStatistic(Otc::LevelPercent) != levelPercent) {
+        m_localPlayer->setStatistic(Otc::Level, level);
+        m_localPlayer->setStatistic(Otc::LevelPercent, levelPercent);
+        g_lua.callGlobalField("Game", "onLevelChange", level, levelPercent);
+    }
 
-    m_localPlayer->setStatistic(Otc::MagicLevel, msg.getU8());
-    m_localPlayer->setStatistic(Otc::MagicLevelPercent, msg.getU8());
-    g_lua.callGlobalField("Game", "onMagicLevelChange", m_localPlayer->getStatistic(Otc::MagicLevel), m_localPlayer->getStatistic(Otc::MagicLevelPercent));
+    if(m_localPlayer->getStatistic(Otc::Mana) != mana ||
+       m_localPlayer->getStatistic(Otc::MaxMana) != maxMana) {
+        m_localPlayer->setStatistic(Otc::Mana, mana);
+        m_localPlayer->setStatistic(Otc::MaxMana, maxMana);
+        g_lua.callGlobalField("Game", "onManaChange", mana, maxMana);
+    }
 
-    m_localPlayer->setStatistic(Otc::Soul, msg.getU8());
-    g_lua.callGlobalField("Game", "onSoulChange", m_localPlayer->getStatistic(Otc::Soul));
+    if(m_localPlayer->getStatistic(Otc::MagicLevel) != magicLevel ||
+       m_localPlayer->getStatistic(Otc::MagicLevelPercent) != magicLevelPercent) {
+        m_localPlayer->setStatistic(Otc::MagicLevel, magicLevel);
+        m_localPlayer->setStatistic(Otc::MagicLevelPercent, magicLevelPercent);
+        g_lua.callGlobalField("Game", "onMagicLevelChange", magicLevel, magicLevelPercent);
+    }
 
-    m_localPlayer->setStatistic(Otc::Stamina, msg.getU16());
-    g_lua.callGlobalField("Game", "onStaminaChange", m_localPlayer->getStatistic(Otc::Stamina));
+    if(m_localPlayer->getStatistic(Otc::Soul) != soul) {
+        m_localPlayer->setStatistic(Otc::Soul, soul);
+        g_lua.callGlobalField("Game", "onSoulChange", soul);
+    }
+
+    if(m_localPlayer->getStatistic(Otc::Stamina) != stamina) {
+        m_localPlayer->setStatistic(Otc::Stamina, stamina);
+        g_lua.callGlobalField("Game", "onStaminaChange", stamina);
+    }
 }
 
 void ProtocolGame::parsePlayerSkills(InputMessage& msg)
