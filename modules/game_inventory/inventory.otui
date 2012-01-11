@@ -1,5 +1,5 @@
 InvetoryItem < Item
-  &onMousePress: Inventory.onInventoryItemMousePress
+  &onMouseRelease: Inventory.onInventoryItemMouseRelease
 
 UIWindow
   width: 192

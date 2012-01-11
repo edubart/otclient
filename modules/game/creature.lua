@@ -51,15 +51,15 @@ function Creature:onShieldChange(shieldId)
   elseif shieldId == ShieldBlueSharedExp then
     self:setShieldTexture(resolvepath('images/shield_blue_shared.png'))
   elseif shieldId == ShieldYellowSharedExp then
-    self:setSkullTexture(resolvepath('images/shield_yellow_shared.png'))
+    self:setShieldTexture(resolvepath('images/shield_yellow_shared.png'))
   elseif shieldId == ShieldBlueNoSharedExpBlink then
-    self:setSkullTexture(resolvepath('images/shield_blue_not_shared.png'))
+    self:setShieldTexture(resolvepath('images/shield_blue_not_shared.png'))
   elseif shieldId == ShieldYellowNoSharedExpBlink then
-    self:setSkullTexture(resolvepath('images/shield_yellow_not_shared.png'))
+    self:setShieldTexture(resolvepath('images/shield_yellow_not_shared.png'))
   elseif shieldId == ShieldBlueNoSharedExp then
-    self:setSkullTexture(resolvepath('images/shield_blue_not_shared.png'))
+    self:setShieldTexture(resolvepath('images/shield_blue_not_shared.png'))
   elseif shieldId == ShieldYellowNoSharedExp then
-    self:setSkullTexture(resolvepath('images/shield_yellow_not_shared.png'))
+    self:setShieldTexture(resolvepath('images/shield_yellow_not_shared.png'))
   end
 end
 
