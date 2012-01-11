@@ -9,25 +9,18 @@ MainWindow
     anchors.top: parent.top
     anchors.left: parent.left
     anchors.right: parent.right
-    margin-left: 16
-    margin-right: 16
-    margin-top: 32
 
   LineEdit
     id: name
     anchors.top: prev.bottom
     anchors.left: parent.left
     anchors.right: parent.right
-    margin-left: 16
-    margin-right: 16
     margin-top: 4
 
   HorizontalSeparator
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.bottom: next.top
-    margin-left: 16
-    margin-right: 16
     margin-bottom: 10
 
   Button
@@ -35,8 +28,7 @@ MainWindow
     width: 64
     anchors.right: next.left
     anchors.bottom: parent.bottom
-    margin-bottom: 16
-    margin-right: 16
+    margin-right: 10
     @onClick: VipList.addVip()
 
   Button
@@ -44,6 +36,4 @@ MainWindow
     width: 64
     anchors.right: parent.right
     anchors.bottom: parent.bottom
-    margin-bottom: 16
-    margin-right: 16
     @onClick: VipList.destroyAddWindow()

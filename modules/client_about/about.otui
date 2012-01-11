@@ -7,8 +7,6 @@ MainWindow
     size: 208 129
     anchors.left: parent.left
     anchors.top: parent.top
-    margin-top: 32
-    margin-left: 18
 
     Label
       text-align: center
@@ -46,16 +44,12 @@ MainWindow
   HorizontalSeparator
     anchors.left: parent.left
     anchors.right: parent.right
-    anchors.bottom: parent.bottom
-    margin-bottom: 40
-    margin-left: 13
-    margin-right: 13
+    anchors.top: prev.bottom
+    margin-top: 12
 
   Button
     text: Ok
     size: 46 24
-    anchors.left: parent.left
-    anchors.top: parent.top
-    margin-top: 191
-    margin-left: 188
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
     @onClick: self:getParent():destroy()

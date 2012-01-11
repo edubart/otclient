@@ -19,10 +19,7 @@ MainWindow
     id: characterList
     anchors.fill: parent
     anchors.bottom: next.top
-    margin-top: 30
     margin-bottom: 5
-    margin-left: 16
-    margin-right: 16
     padding: 1
     focusable: false
 
@@ -34,7 +31,6 @@ MainWindow
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.bottom: separator.top
-    margin-left: 16
     margin-bottom: 5
 
   HorizontalSeparator
@@ -42,8 +38,6 @@ MainWindow
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.bottom: next.top
-    margin-left: 16
-    margin-right: 16
     margin-bottom: 10
 
   //CheckBox
@@ -63,8 +57,7 @@ MainWindow
     width: 64
     anchors.right: next.left
     anchors.bottom: parent.bottom
-    margin-bottom: 16
-    margin-right: 16
+    margin-right: 10
     @onClick: CharacterList.doLogin()
 
   Button
@@ -73,6 +66,4 @@ MainWindow
     width: 64
     anchors.right: parent.right
     anchors.bottom: parent.bottom
-    margin-bottom: 16
-    margin-right: 16
     @onClick: CharacterList.destroy()

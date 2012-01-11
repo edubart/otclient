@@ -1,12 +1,10 @@
 PopupMenuButton < UIButton
-  font: verdana-11px-antialised
-  image-color: alpha
-  color: #aaaaaa
   height: 18
   margin-left: 3
   margin-right: 3
-  margin-top: 0
-  margin-bottom: 0
+  font: verdana-11px-antialised
+
+  color: #aaaaaa
   background-color: alpha
 
   $hover:
@@ -15,12 +13,6 @@ PopupMenuButton < UIButton
 
   $disabled:
     color: #555555
-
-  $first:
-    margin-top: 3
-
-  $last:
-    margin-bottom: 3
 
 PopupMenuSeparator < UIWidget
   margin-left: 2
@@ -34,6 +26,7 @@ PopupMenuSeparator < UIWidget
 
 PopupMenu < UIPopupMenu
   width: 50
-  border-image:
   image-source: /core_styles/images/menubox.png
   image-border: 3
+  padding-top: 3
+  padding-bottom: 3

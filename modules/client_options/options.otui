@@ -1,25 +1,23 @@
 OptionCheckBox < CheckBox
-  margin-left: 18
-  margin-right: 18
   @onCheckChange: Options.changeOption(self:getId(), self:isChecked())
   @onSetup: self:setChecked(Options[self:getId()])
 
   $first:
-    margin-top: 28
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: parent.top
 
   $middle:
-    margin-top: 10
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: prev.bottom
+    margin-top: 2
 
 MainWindow
   id: optionsWindow
   text: Options
-  size: 286 280
+  size: 286 230
+
   @onEnter: Options.hide()
   @onEscape: Options.hide()
 
@@ -59,6 +57,7 @@ MainWindow
   OptionCheckBox
     id: showLevelsInConsole
     text: Show levels in console
+
   //OptionCheckBox
   //  id: showPrivateMessagesInConsole
   //  text: Show private messages in console
@@ -68,6 +67,4 @@ MainWindow
     width: 64
     anchors.right: parent.right
     anchors.bottom: parent.bottom
-    margin-right: 10
-    margin-bottom: 10
     @onClick: Options.hide()

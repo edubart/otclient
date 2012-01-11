@@ -9,8 +9,6 @@ MainWindow
     text: Account name
     anchors.left: parent.left
     anchors.top: parent.top
-    margin-left: 18
-    margin-top: 28
 
   LineEdit
     id: accountNameLineEdit
@@ -18,8 +16,6 @@ MainWindow
     anchors.right: parent.right
     anchors.top: prev.bottom
     margin-top: 2
-    margin-left: 18
-    margin-right: 18
 
   LargerLabel
     text: Password
@@ -33,8 +29,6 @@ MainWindow
     anchors.right: parent.right
     anchors.top: prev.bottom
     margin-top: 2
-    margin-left: 18
-    margin-right: 18
 
   LargerLabel
     id: serverLabel
@@ -76,8 +70,6 @@ MainWindow
     anchors.right: parent.right
     anchors.top: prev.bottom
     margin-top: 10
-    margin-left: 18
-    margin-right: 18
     @onCheckChange: self:getParent():getChildById('autoLoginBox'):setEnabled(self:isChecked())
 
   CheckBox
@@ -88,17 +80,14 @@ MainWindow
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: prev.bottom
-    margin-top: 8
-    margin-left: 18
-    margin-right: 18
+    margin-top: 2
 
   Button
     text: Ok
     width: 64
     anchors.right: next.left
     anchors.bottom: parent.bottom
-    margin-bottom: 16
-    margin-right: 16
+    margin-right: 10
     @onClick: EnterGame.doLogin()
 
   Button
@@ -106,6 +95,4 @@ MainWindow
     width: 64
     anchors.right: parent.right
     anchors.bottom: parent.bottom
-    margin-bottom: 16
-    margin-right: 16
     @onClick: EnterGame.hide()

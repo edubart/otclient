@@ -140,7 +140,7 @@ function Outfit.create(creature, outfitList)
       local outfitColor = getOufitColor(j*19 + i)
       color:setId('color' .. j*19+i)
       color.colorId = j*19 + i
-      color:setBackgroundColor(outfitColor)
+      color:setImageColor(outfitColor)
       color:setMarginTop(j * 3 + j * 14)
       color:setMarginLeft(10 + i * 3 + i * 14)
 

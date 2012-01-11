@@ -11,11 +11,28 @@ Window < UIWindow
   image-border: 4
   image-border-top: 20
 
-  //$pressed:
-  //  opacity: 0.75
-
   $disabled:
     color: #aaaaaa88
+
+Window2 < UIWindow
+  font: verdana-11px-antialised
+  size: 200 200
+  opacity: 1
+  color: white
+  text-offset: 0 2
+  text-align: top
+  image-source: /core_styles/images/window.png
+  image-border: 4
+  image-border-top: 20
+  padding-top: 28
+  padding-left: 16
+  padding-right: 16
+  padding-bottom: 16
+  $disabled:
+    color: #aaaaaa88
+
+MainWindow < Window2
+  anchors.centerIn: parent
 
 MiniWindow < UIWindow
   font: verdana-11px-antialised
@@ -30,5 +47,3 @@ MiniWindow < UIWindow
   image-border: 4
   image-border-top: 25
 
-MainWindow < Window
-  anchors.centerIn: parent

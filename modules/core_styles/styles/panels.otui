@@ -20,7 +20,7 @@ InterfacePanel2 < Panel
   image-source: /core_styles/images/interface_panel2.png
   image-border: 4
 
-Map< UIMap
+Map < UIMap
   padding: 4
   image-source: /core_styles/images/map_panel.png
   image-border: 4

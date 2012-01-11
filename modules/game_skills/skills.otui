@@ -59,7 +59,7 @@ MiniWindow
         text: Level
       SkillValueLabel
       SkillPercentPanel
-        image-color: red
+        background-color: red
 
     SkillButton
       id: health
@@ -102,7 +102,7 @@ MiniWindow
         text: Magic Level
       SkillValueLabel
       SkillPercentPanel
-        image-color: red
+        background-color: red
 
     SkillButton
       id: skillId0
