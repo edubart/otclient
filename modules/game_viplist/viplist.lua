@@ -46,23 +46,25 @@ function VipList.onAddVip(id, name, online)
   
   local nameLower = name:lower()
   local childrenCount = vipList:getChildCount()
-  for i=1,childrenCount do
   
+  for i=1,childrenCount do
     local child = vipList:getChildByIndex(i)
     if online and not child.vipOnline then
       vipList:insertChild(i, label)
       return
     end
-  
-    local childText = child:getText():lower()
-    local length = math.min(childText:len(), nameLower:len())
     
-    for j=1,length do
-      if nameLower:byte(j) < childText:byte(j) then
-        vipList:insertChild(i, label)
-        return
-      elseif nameLower:byte(j) > childText:byte(j) then
-        break
+    if (not online and not child.vipOnline) or (online and child.vipOnline) then
+      local childText = child:getText():lower()
+      local length = math.min(childText:len(), nameLower:len())
+      
+      for j=1,length do
+        if nameLower:byte(j) < childText:byte(j) then
+          vipList:insertChild(i, label)
+          return
+        elseif nameLower:byte(j) > childText:byte(j) then
+          break
+        end
       end
     end
   end

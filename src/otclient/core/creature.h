@@ -31,6 +31,7 @@ class Creature : public Thing
 {
 public:
     enum {
+        SHIELD_BLINK_TICKS = 500,
         INVISIBLE_TICKS = 500,
         VOLATILE_SQUARE_DURATION = 1000
     };
@@ -51,7 +52,7 @@ public:
     void setShield(uint8 shield);
     void setEmblem(uint8 emblem);
     void setSkullTexture(const std::string& filename);
-    void setShieldTexture(const std::string& filename);
+    void setShieldTexture(const std::string& filename, bool blink);
     void setEmblemTexture(const std::string& filename);
     void setPassable(bool passable) { m_passable = passable; }
 
@@ -73,6 +74,7 @@ public:
     bool getPassable() { return m_passable; }
 
     void updateAnimation();
+    void updateShield();
 
     ThingType *getType();
 
@@ -98,6 +100,7 @@ protected:
     uint16 m_speed;
     uint8 m_skull, m_shield, m_emblem;
     TexturePtr m_skullTexture, m_shieldTexture, m_emblemTexture;
+    bool m_showShieldTexture, m_shieldBlink;
     bool m_passable;
     Color m_volatileSquareColor, m_staticSquareColor;
     bool m_showVolatileSquare, m_showStaticSquare;

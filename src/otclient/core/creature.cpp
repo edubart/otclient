@@ -49,6 +49,12 @@ Creature::Creature() : Thing()
     m_walking = false;
     m_inverseWalking = true;
 
+    m_skull = Otc::SkullNone;
+    m_shield = Otc::ShieldNone;
+    m_emblem = Otc::EmblemNone;
+    m_shieldBlink = false;
+    m_showShieldTexture = true;
+
     m_informationFont = g_fonts.getFont("verdana-11px-rounded");
 }
 
@@ -173,7 +179,7 @@ void Creature::drawInformation(int x, int y, bool useGray, const Rect& visibleRe
         g_painter.setColor(Fw::white);
         g_painter.drawTexturedRect(Rect(x + 12, y + 5, m_skullTexture->getSize()), m_skullTexture);
     }
-    if(m_shield != Otc::ShieldNone && m_shieldTexture) {
+    if(m_shield != Otc::ShieldNone && m_shieldTexture && m_showShieldTexture) {
         g_painter.setColor(Fw::white);
         g_painter.drawTexturedRect(Rect(x, y + 5, m_shieldTexture->getSize()), m_shieldTexture);
     }
@@ -395,9 +401,19 @@ void Creature::setSkullTexture(const std::string& filename)
     m_skullTexture = g_textures.getTexture(filename);
 }
 
-void Creature::setShieldTexture(const std::string& filename)
+void Creature::setShieldTexture(const std::string& filename, bool blink)
 {
     m_shieldTexture = g_textures.getTexture(filename);
+    m_showShieldTexture = true;
+
+    if(blink && !m_shieldBlink) {
+        auto self = asCreature();
+        g_dispatcher.scheduleEvent([self]() {
+            self->updateShield();
+        }, SHIELD_BLINK_TICKS);
+    }
+
+    m_shieldBlink = blink;
 }
 
 void Creature::setEmblemTexture(const std::string& filename)
@@ -434,6 +450,20 @@ void Creature::updateAnimation()
             self->updateAnimation();
         }, INVISIBLE_TICKS);
     }
+}
+
+void Creature::updateShield()
+{
+    m_showShieldTexture = !m_showShieldTexture;
+
+    if(m_shield != Otc::ShieldNone && m_shieldBlink) {
+        auto self = asCreature();
+        g_dispatcher.scheduleEvent([self]() {
+            self->updateShield();
+        }, SHIELD_BLINK_TICKS);
+    }
+    else if(!m_shieldBlink)
+        m_showShieldTexture = true;
 }
 
 ThingType *Creature::getType()

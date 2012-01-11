@@ -41,25 +41,25 @@ end
 
 function Creature:onShieldChange(shieldId)
   if shieldId == ShieldWhiteYellow then
-    self:setShieldTexture(resolvepath('images/shield_yellow_white.png'))
+    self:setShieldTexture(resolvepath('images/shield_yellow_white.png'), false)
   elseif shieldId == ShieldWhiteBlue then
-    self:setShieldTexture(resolvepath('images/shield_blue_white.png'))
+    self:setShieldTexture(resolvepath('images/shield_blue_white.png'), false)
   elseif shieldId == ShieldBlue then
-    self:setShieldTexture(resolvepath('images/shield_blue.png'))
+    self:setShieldTexture(resolvepath('images/shield_blue.png'), false)
   elseif shieldId == ShieldYellow then
-    self:setShieldTexture(resolvepath('images/shield_yellow.png'))
+    self:setShieldTexture(resolvepath('images/shield_yellow.png'), false)
   elseif shieldId == ShieldBlueSharedExp then
-    self:setShieldTexture(resolvepath('images/shield_blue_shared.png'))
+    self:setShieldTexture(resolvepath('images/shield_blue_shared.png'), false)
   elseif shieldId == ShieldYellowSharedExp then
-    self:setShieldTexture(resolvepath('images/shield_yellow_shared.png'))
+    self:setShieldTexture(resolvepath('images/shield_yellow_shared.png'), false)
   elseif shieldId == ShieldBlueNoSharedExpBlink then
-    self:setShieldTexture(resolvepath('images/shield_blue_not_shared.png'))
+    self:setShieldTexture(resolvepath('images/shield_blue_not_shared.png'), true)
   elseif shieldId == ShieldYellowNoSharedExpBlink then
-    self:setShieldTexture(resolvepath('images/shield_yellow_not_shared.png'))
+    self:setShieldTexture(resolvepath('images/shield_yellow_not_shared.png'), true)
   elseif shieldId == ShieldBlueNoSharedExp then
-    self:setShieldTexture(resolvepath('images/shield_blue_not_shared.png'))
+    self:setShieldTexture(resolvepath('images/shield_blue_not_shared.png'), false)
   elseif shieldId == ShieldYellowNoSharedExp then
-    self:setShieldTexture(resolvepath('images/shield_yellow_not_shared.png'))
+    self:setShieldTexture(resolvepath('images/shield_yellow_not_shared.png'), false)
   end
 end
 
