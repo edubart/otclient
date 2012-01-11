@@ -7,9 +7,12 @@ Hotkeys.bind('F3', function() Game.talk('exori frigo') end)
 Hotkeys.bind('F4', function() Game.talk('exevo vis hur') end)
 Hotkeys.bind('F5', function() Game.talk('utani gran hur') end)
 Hotkeys.bind('F6', function() Game.talk('exani tera') end)
-Hotkeys.bind('Ctrl+R', function() runscript('otclientrc.lua') end)
 
-if rcloaded then
-  print('otclient.rc lua reloaded')
+local function reload()
+  runscript('otclientrc.lua')
+  TextMessage.displayEventAdvance('Script otclientrc.lua reloaded.')
+  print('Script otclient.rc lua reloaded')
 end
+Hotkeys.bind('Ctrl+R', reload)
+
 rcloaded = true
