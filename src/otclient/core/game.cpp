@@ -122,6 +122,14 @@ void Game::processTextMessage(const std::string& type, const std::string& messag
     g_lua.callGlobalField("Game","onTextMessage", type, message);
 }
 
+void Game::processContainerAddItem(int containerId, const ItemPtr& item)
+{
+    if(item)
+        item->setPos(Position(65535, containerId, 0));
+
+    g_lua.callGlobalField("Game", "onContainerAddItem", containerId, item);
+}
+
 void Game::processInventoryChange(int slot, const ItemPtr& item)
 {
     if(item)
