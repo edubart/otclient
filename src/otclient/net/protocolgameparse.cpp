@@ -430,39 +430,47 @@ void ProtocolGame::parseCreatureMove(InputMessage& msg)
 
 void ProtocolGame::parseOpenContainer(InputMessage& msg)
 {
-    msg.getU8(); // cid
-    msg.getU16(); // itemid
-    msg.getString(); // name
-    msg.getU8(); // capacity
-    msg.getU8(); // hasParent
-    int size = msg.getU8(); // size
+    int containerId = msg.getU8();
+    int itemId = msg.getU16();
+    std::string name = msg.getString();
+    int capacity = msg.getU8();
+    bool hasParent = (msg.getU8() != 0);
+    int itemCount = msg.getU8();
 
-    for(int i = 0; i < size; i++)
-        internalGetItem(msg);
+    g_lua.callGlobalField("Game", "onContainerOpen", containerId, itemId, name, capacity, hasParent);
+
+    for(int i = 0; i < itemCount; i++) {
+        ItemPtr item = internalGetItem(msg);
+        g_lua.callGlobalField("Game", "onContainerAddItem", containerId, item);
+    }
 }
 
 void ProtocolGame::parseCloseContainer(InputMessage& msg)
 {
-    msg.getU8(); // cid
+    int containerId = msg.getU8();
+    g_lua.callGlobalField("Game", "onContainerClose", containerId);
 }
 
 void ProtocolGame::parseContainerAddItem(InputMessage& msg)
 {
-    msg.getU8(); // cid
-    internalGetItem(msg);
+    int containerId = msg.getU8();
+    ItemPtr item = internalGetItem(msg);
+    g_lua.callGlobalField("Game", "onContainerAddItem", containerId, item);
 }
 
 void ProtocolGame::parseContainerUpdateItem(InputMessage& msg)
 {
-    msg.getU8(); // cid
-    msg.getU8(); // slot
-    internalGetItem(msg);
+    int containerId = msg.getU8();
+    int slot = msg.getU8();
+    ItemPtr item = internalGetItem(msg);
+    g_lua.callGlobalField("Game", "onContainerUpdateItem", containerId, slot, item);
 }
 
 void ProtocolGame::parseContainerRemoveItem(InputMessage& msg)
 {
-    msg.getU8(); // cid
-    msg.getU8(); // slot
+    int containerId = msg.getU8();
+    int slot = msg.getU8();
+    g_lua.callGlobalField("Game", "onContainerUpdateItem", containerId, slot);
 }
 
 void ProtocolGame::parseAddInventoryItem(InputMessage& msg)

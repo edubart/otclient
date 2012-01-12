@@ -48,6 +48,7 @@ public:
 
     void processTextMessage(const std::string& type, const std::string& message);
     void processCreatureSpeak(const std::string& name, int level, const std::string& type, const std::string& message, int channelId, const Position& creaturePos);
+    void processContainerAddItem(int containerId, const ItemPtr& item);
     void processInventoryChange(int slot, const ItemPtr& item);
     void processCreatureMove(const CreaturePtr& creature, const Position& oldPos, const Position& newPos);
     void processAttackCancel();
