@@ -65,6 +65,7 @@ Low priority TODO
 [bart] reapply anchor styles when adding new childs
 [bart] ui text selection
 [bart] make set of background/icon/image width alone work
+[bart] check for recursive anchors to print a error and avoid crashes
 
 == Client modules
 [bart] make possible to reload modules

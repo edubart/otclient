@@ -5,16 +5,16 @@ importStyle 'textmessage.otui'
 
 -- private variables
 local MessageTypes = {
-  warning = { color = '#F55E5E', showOnConsole = true, windowLocation = 'center', consoleOption = 'showInfoMessagesInConsole' },
-  eventAdvance = { color = '#FFFFFF', showOnConsole = true, windowLocation = 'center', consoleOption = 'showEventMessagesInConsole' },
-  eventDefault = { color = '#FFFFFF', showOnConsole = true, windowLocation = 'bottom', consoleOption = 'showEventMessagesInConsole' },
-  eventOrange = { color = '#FE6500', showOnConsole = true, windowLocation = 'bottom', consoleOption = 'showEventMessagesInConsole' },
-  statusDefault = { color = '#FFFFFF', showOnConsole = true, windowLocation = 'bottom', consoleOption = 'showStatusMessagesInConsole' },
-  infoDescription = { color = '#00EB00', showOnConsole = true, windowLocation = 'center', consoleOption = 'showInfoMessagesInConsole' },
-  statusSmall = { color = '#FFFFFF', showOnConsole = false, windowLocation = 'bottom' },
-  consoleOrange = { color = '#FE6500', showOnConsole = true },
-  consoleBlue =  { color = '#9F9DFD', showOnConsole = true },
-  consoleRed = { color = '#F55E5E', showOnConsole = true }
+  consoleRed = { color = '#F55E5E', consoleChannel = 'Server Log' },
+  eventOrange = { color = '#FE6500', consoleChannel = 'Default' , windowLocation = 'center', consoleOption = 'showEventMessagesInConsole' },
+  consoleOrange = { color = '#FE6500', consoleChannel = 'Default' },
+  warning = { color = '#F55E5E', consoleChannel = 'Server Log', windowLocation = 'center' },
+  eventAdvance = { color = '#FFFFFF', consoleChannel = 'Server Log', windowLocation = 'center', consoleOption = 'showEventMessagesInConsole' },
+  eventDefault = { color = '#FFFFFF', consoleChannel = 'Server Log', windowLocation = 'bottom', consoleOption = 'showEventMessagesInConsole' },
+  statusDefault = { color = '#FFFFFF', consoleChannel = 'Server Log', windowLocation = 'bottom', consoleOption = 'showStatusMessagesInConsole' },
+  infoDescription = { color = '#00EB00', consoleChannel = 'Server Log', windowLocation = 'center', consoleOption = 'showInfoMessagesInConsole' },
+  statusSmall = { color = '#FFFFFF', windowLocation = 'bottom' },
+  consoleBlue =  { color = '#9F9DFD', consoleChannel = 'Default' },
 }
 
 local bottomLabelWidget
@@ -26,9 +26,9 @@ local centerLabelHideEvent
 local function displayMessage(msgtype, msg, time)
   if not Game.isOnline() then return end
 
-  if msgtype.showOnConsole then
+  if msgtype.consoleChannel ~= nil then
     if msgtype.consoleOption == nil or Options[msgtype.consoleOption] then
-      Console.addText(msg, msgtype.color)
+      Console.addChannelMessage(msg, msgtype.color, msgtype.consoleChannel)
     end
   end
 

@@ -1,5 +1,34 @@
 TabBar < UITabBar
-TabBarTabButton < UIButton
-TabBarCloseButton < UIButton
-TabBarPrevButton < UIButton
-TabBarNextButton < UIButton
+TabBarPanel < Panel
+TabBarButton < UIButton
+  size: 20 20
+  image-source: /core_styles/images/consolebutton.png
+  image-color: white
+  image-clip: 0 0 20 20
+  image-border: 2
+  icon-color: white
+  color: #aaaaaa
+  anchors.top: parent.top
+  margin-left: 5
+  padding: 5
+
+  $first:
+    anchors.left: parent.left
+
+  $!first:
+    anchors.left: prev.right
+
+  $hover !checked:
+    image-clip: 0 20 20 20
+    color: white
+
+  $disabled:
+    image-color: #ffffff66
+    icon-color: #888888
+
+  $checked:
+    image-clip: 0 40 20 20
+    color: #80c7f8
+
+  $on !checked:
+    color: #F55E5E

@@ -3,48 +3,58 @@ ConsoleLabel < UILabel
   height: 14
   color: yellow
 
-SayModeButton < UIButton
-  size: 26 26
-  icon: /core_styles/icons/say.png
-  image-source: /core_styles/images/top_button.png
-  image-color: white
-  image-clip: 0 0 26 26
-  image-border: 3
-
-  $hover:
-    image-source: /core_styles/images/top_button.png
-      clip: 26 0 26 26
-      border: 3
-
-  $pressed:
-    image-source: /core_styles/images/top_button.png
-    image-clip: 52 0 26 26
-    image-border: 3
-
-  $disabled:
-    image-color: #ffffff66
+ConsoleTabBar < TabBar
+ConsoleTabBarPanel < TabBarPanel
+  layout:
+    type: verticalBox
+    align-bottom: true
+ConsoleTabBarButton < TabBarButton
 
 Panel
   id: consolePanel
   anchors.fill: parent
 
+  ConsoleButton
+    id: prevChannelButton
+    icon: /core_styles/icons/leftarrow.png
+    anchors.left: parent.left
+    anchors.top: parent.top
+    margin-left: 6
+    margin-top: 6
+    enabled: false
+
+  ConsoleTabBar
+    id: consoleTabBar
+    height: 20
+    anchors.left: prev.right
+    anchors.top: prev.top
+    anchors.right: next.left
+    margin-left: 5
+
+  ConsoleButton
+    id: nextChannelButton
+    icon: /core_styles/icons/rightarrow.png
+    anchors.right: parent.right
+    anchors.top: parent.top
+    margin-right: 5
+    margin-top: 6
+    enabled: false
+
   Panel
     id: consoleBuffer
-    anchors.top: parent.top
+    anchors.top: prev.bottom
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.bottom: consoleLineEdit.top
     margin-right: 6
     margin-left: 6
-    margin-bottom: 2
-    margin-top: 6
-    layout:
-      type: verticalBox
-      align-bottom: true
+    margin-bottom: 4
+    margin-top: 4
     focusable: false
 
-  SayModeButton
+  ConsoleButton
     id: sayModeButton
+    icon: /core_styles/icons/say.png
     size: 20 20
     anchors.left: parent.left
     anchors.bottom: parent.bottom

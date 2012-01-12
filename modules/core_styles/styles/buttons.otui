@@ -18,3 +18,23 @@ Button < UIButton
     color: #f0ad4d88
     image-color: #ffffff88
 
+ConsoleButton < UIButton
+  size: 20 20
+  image-source: /core_styles/images/consolebutton.png
+  image-color: white
+  image-clip: 0 0 20 20
+  image-border: 2
+  icon-color: white
+  color: #aaaaaa
+
+  $hover !on:
+    image-clip: 0 20 20 20
+    color: white
+
+  $disabled:
+    image-color: #ffffff66
+    icon-color: #888888
+
+  $on:
+    image-clip: 0 40 20 20
+    color: #80c7f8

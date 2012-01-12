@@ -44,6 +44,7 @@
 #include <otclient/ui/uigame.h>
 #include <otclient/core/outfit.h>
 
+
 void OTClient::registerLuaFunctions()
 {
     Application::registerLuaFunctions();

@@ -11,6 +11,7 @@ Module
     require 'uicheckbox'
     require 'uicombobox'
     require 'uiprogressbar'
+    require 'uitabbar'
     require 'uipopupmenu'
     require 'uiwindow'
     require 'tooltip/tooltip'

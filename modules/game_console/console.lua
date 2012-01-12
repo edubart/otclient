@@ -20,11 +20,19 @@ local SpeakTypes = {
 
 local consolePanel
 local consoleBuffer
+local consoleTabBar
+local defaultChannelTab
+local serverLogTab
+local current
 
 -- public functions
 function Console.create()
   consolePanel = displayUI('console.otui', { parent = Game.gameBottomPanel } )
   consoleBuffer = consolePanel:getChildById('consoleBuffer')
+  consoleTabBar = consolePanel:getChildById('consoleTabBar')
+  consoleTabBar:setContentWidget(consoleBuffer)
+  defaultChannelTab = consoleTabBar:addTab('Default')
+  serverLogTab = consoleTabBar:addTab('Server Log')
 end
 
 function Console.destroy()
@@ -32,16 +40,25 @@ function Console.destroy()
   consolePanel = nil
 end
 
-function Console.addText(text, color)
+function Console.addText(text, color, channelTab)
   color = color or 'white'
 
   if Options.showTimestampsInConsole then
     text = os.date('%H:%M') .. ' ' .. text
   end
 
-  local label = createWidget('ConsoleLabel', consoleBuffer)
+  local label = createWidget('ConsoleLabel', consoleTabBar:getTabPanel(channelTab))
   label:setText(text)
   label:setColor(color)
+  consoleTabBar:blinkTab(channelTab)
+end
+
+function Console.addChannelMessage(text, color, channel)
+  if channel == 'Server Log' then
+    Console.addText(text, color, serverLogTab)
+  elseif channel == 'Default' then
+    Console.addText(text, color, defaultChannelTab)
+  end
 end
 
 -- hooked events
@@ -57,7 +74,8 @@ local function onCreatureSpeak(name, level, speaktypedesc, message, channelId, c
     end
   end
 
-  Console.addText(message, speaktype.color)
+  local channelPanel = consoleTabBar:getTabPanel(defaultChannelTab)
+  Console.addText(message, speaktype.color, channelPanel)
 end
 
 connect(Game, { onLogin = Console.create,
