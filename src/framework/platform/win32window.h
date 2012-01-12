@@ -56,10 +56,12 @@ public:
     void maximize();
     void poll();
     void swapBuffers();
+    void restoreMouseCursor();
     void showMouse();
     void hideMouse();
     void displayFatalError(const std::string& message);
 
+    void setMouseCursor(const std::string& file);
     void setTitle(const std::string& title);
     void setMinimumSize(const Size& minimumSize);
     void setFullscreen(bool fullscreen);

@@ -24,6 +24,8 @@
 #include <framework/core/resourcemanager.h>
 #include <framework/thirdparty/apngloader.h>
 
+#define LSB_BIT_SET(p, n) (p[(n)/8] |= (1 <<((n)%8)))
+
 X11Window::X11Window()
 {
     m_display = 0;
@@ -729,6 +731,25 @@ void X11Window::swapBuffers()
 
 void X11Window::showMouse()
 {
+    restoreMouseCursor();
+}
+
+void X11Window::hideMouse()
+{
+    if(m_cursor != None)
+        restoreMouseCursor();
+
+    char bm[] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+    Pixmap pix = XCreateBitmapFromData(m_display, m_window, bm, 8, 8);
+    XColor black = {0};
+    black.flags = DoRed | DoGreen | DoBlue;
+    m_cursor = XCreatePixmapCursor(m_display, pix, pix, &black, &black, 0, 0);
+    XFreePixmap(m_display, pix);
+    XDefineCursor(m_display, m_window, m_cursor);
+}
+
+void X11Window::restoreMouseCursor()
+{
     XUndefineCursor(m_display, m_window);
     if(m_cursor != None) {
         XFreeCursor(m_display, m_cursor);
@@ -736,17 +757,69 @@ void X11Window::showMouse()
     }
 }
 
-void X11Window::hideMouse()
+void X11Window::setMouseCursor(const std::string& file)
 {
-    if(m_cursor == None) {
-        char bm[] = { 0, 0, 0, 0, 0, 0, 0, 0 };
-        Pixmap pix = XCreateBitmapFromData(m_display, m_window, bm, 8, 8);
-        XColor black = {0};
-        black.flags = DoRed | DoGreen | DoBlue;
-        m_cursor = XCreatePixmapCursor(m_display, pix, pix, &black, &black, 0, 0);
-        XFreePixmap(m_display, pix);
+    std::stringstream fin;
+    g_resources.loadFile(file, fin);
+
+    apng_data apng;
+    if(load_apng(fin, &apng) != 0) {
+        logTraceError("unable to load png file ", file);
+        return;
     }
+
+    if(apng.bpp != 4) {
+        logError("the cursor png must have 4 channels");
+        free_apng(&apng);
+        return;
+    }
+
+    if(apng.width % 8 != 0 || apng.height % 8 != 0) {
+        logError("the cursor png must have dimensions multiple of 8");
+        free_apng(&apng);
+        return;
+    }
+
+    if(m_cursor != None)
+        restoreMouseCursor();
+
+    int width = apng.width;
+    int height = apng.height;
+    int numbits = width * height;
+    int numbytes = (width * height)/8;
+
+    XColor bg, fg;
+    bg.red   = 255 << 8;
+    bg.green = 255 << 8;
+    bg.blue  = 255 << 8;
+    fg.red   = 0;
+    fg.green = 0;
+    fg.blue  = 0;
+
+    std::vector<uchar> mapBits(numbytes, 0);
+    std::vector<uchar> maskBits(numbytes, 0);
+
+    for(int i=0;i<numbits;++i) {
+        uchar r = apng.pdata[i*4+0];
+        uchar g = apng.pdata[i*4+1];
+        uchar b = apng.pdata[i*4+2];
+        uchar a = apng.pdata[i*4+3];
+        Color color(r,g,b,a);
+        if(color == Fw::white) { //background
+            LSB_BIT_SET(maskBits, i);
+        } else if(color == Fw::black) { //foreground
+            LSB_BIT_SET(mapBits, i);
+            LSB_BIT_SET(maskBits, i);
+        } //otherwise alpha
+    }
+    free_apng(&apng);
+
+    Pixmap cp = XCreateBitmapFromData(m_display, m_window, (char*)&mapBits[0], width, height);
+    Pixmap mp = XCreateBitmapFromData(m_display, m_window, (char*)&maskBits[0], width, height);
+    m_cursor = XCreatePixmapCursor(m_display, cp, mp, &fg, &bg, width/2, height/2);
     XDefineCursor(m_display, m_window, m_cursor);
+    XFreePixmap(m_display, cp);
+    XFreePixmap(m_display, mp);
 }
 
 void X11Window::setTitle(const std::string& title)

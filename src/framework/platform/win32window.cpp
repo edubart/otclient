@@ -526,6 +526,16 @@ void WIN32Window::hideMouse()
     ShowCursor(false);
 }
 
+void WIN32Window::displayFatalError(const std::string& message)
+{
+    MessageBoxA(m_window, message.c_str(), "FATAL ERROR", MB_OK | MB_ICONERROR);
+}
+
+void WIN32Window::setMouseCursor(const std::string& file)
+{
+
+}
+
 void WIN32Window::setTitle(const std::string& title)
 {
     SetWindowTextA(m_window, title.c_str());
@@ -661,9 +671,4 @@ std::string WIN32Window::getClipboardText()
 std::string WIN32Window::getPlatformType()
 {
     return "WIN32-WGL";
-}
-
-void WIN32Window::displayFatalError(const std::string& message)
-{
-    MessageBoxA(m_window, message.c_str(), "FATAL ERROR", MB_OK | MB_ICONERROR);
 }

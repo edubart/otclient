@@ -333,9 +333,11 @@ void Application::registerLuaFunctions()
     g_lua.bindClassStaticFunction("g_window", "show", std::bind(&PlatformWindow::show, &g_window));
     g_lua.bindClassStaticFunction("g_window", "hide", std::bind(&PlatformWindow::hide, &g_window));
     g_lua.bindClassStaticFunction("g_window", "maximize", std::bind(&PlatformWindow::maximize, &g_window));
+    g_lua.bindClassStaticFunction("g_window", "restoreMouseCursor", std::bind(&PlatformWindow::restoreMouseCursor, &g_window));
     g_lua.bindClassStaticFunction("g_window", "showMouse", std::bind(&PlatformWindow::showMouse, &g_window));
     g_lua.bindClassStaticFunction("g_window", "hideMouse", std::bind(&PlatformWindow::hideMouse, &g_window));
     g_lua.bindClassStaticFunction("g_window", "setTitle", std::bind(&PlatformWindow::setTitle, &g_window, _1));
+    g_lua.bindClassStaticFunction("g_window", "setMouseCursor", std::bind(&PlatformWindow::setMouseCursor, &g_window, _1));
     g_lua.bindClassStaticFunction("g_window", "setMinimumSize", std::bind(&PlatformWindow::setMinimumSize, &g_window, _1));
     g_lua.bindClassStaticFunction("g_window", "setFullscreen", std::bind(&PlatformWindow::setFullscreen, &g_window, _1));
     g_lua.bindClassStaticFunction("g_window", "setVerticalSync", std::bind(&PlatformWindow::setVerticalSync, &g_window, _1));

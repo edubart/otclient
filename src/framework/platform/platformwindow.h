@@ -42,10 +42,12 @@ public:
     virtual void maximize() = 0;
     virtual void poll() = 0;
     virtual void swapBuffers() = 0;
+    virtual void restoreMouseCursor() = 0;
     virtual void showMouse() = 0;
-    virtual void displayFatalError(const std::string& message) { }
     virtual void hideMouse() = 0;
+    virtual void displayFatalError(const std::string& message) { }
 
+    virtual void setMouseCursor(const std::string& file) = 0;
     virtual void setTitle(const std::string& title) = 0;
     virtual void setMinimumSize(const Size& minimumSize) = 0;
     virtual void setFullscreen(bool fullscreen) = 0;
