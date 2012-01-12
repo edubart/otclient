@@ -2,18 +2,18 @@
 -- public functions
 function Game.processMouseAction(menuPosition, mouseButton, autoWalk, lookThing, useThing, creatureThing, multiUseThing)
   local keyboardModifiers = g_window.getKeyboardModifiers()
-  
+
   local selectedThing = Game.getSelectedThing()
   if mouseButton == MouseRightButton and selectedThing then
     Game.setSelectedThing(nil)
     return true
   end
-  
+
   if autoWalk and keyboardModifiers == KeyboardNoModifier and mouseButton == MouseLeftButton and not Game.getSelectedThing() then
     -- todo auto walk
     return true
   end
-  
+
   if not Options.classicControl then
     if mouseButton == MouseLeftButton and selectedThing then
       Game.useWith(Game.getSelectedThing(), useThing)
@@ -31,7 +31,7 @@ function Game.processMouseAction(menuPosition, mouseButton, autoWalk, lookThing,
         print "open"
       elseif useThing:isMultiUse() then
         Game.setSelectedThing(useThing)
-        -- todo change cursor
+        setTargetCursor()
       else
         Game.use(useThing)
       end
@@ -44,7 +44,7 @@ function Game.processMouseAction(menuPosition, mouseButton, autoWalk, lookThing,
     if mouseButton == MouseLeftButton and selectedThing then
       Game.useWith(Game.getSelectedThing(), multiUseThing)
       Game.setSelectedThing(nil)
-      -- restore cursor
+      restoreCursor()
       return true
     elseif multiUseThing and keyboardModifiers == KeyboardNoModifier and mouseButton == MouseRightButton then
       if multiUseThing:asCreature() then
@@ -53,7 +53,7 @@ function Game.processMouseAction(menuPosition, mouseButton, autoWalk, lookThing,
         print "open"
       elseif multiUseThing:isMultiUse() then
         Game.setSelectedThing(multiUseThing)
-        -- todo change cursor
+        setTargetCursor()
       else
         Game.use(useThing)
       end
@@ -69,14 +69,14 @@ function Game.processMouseAction(menuPosition, mouseButton, autoWalk, lookThing,
       return true
     end
   end
-  
+
   return false
 end
 
 
 function Game.createThingMenu(menuPosition, lookThing, useThing, creatureThing)
   local menu = createWidget('PopupMenu')
-  
+
   if lookThing then
     menu:addOption('Look', function() Game.look(lookThing) end)
   end
@@ -88,32 +88,32 @@ function Game.createThingMenu(menuPosition, lookThing, useThing, creatureThing)
       menu:addOption('Open', function() print('open') end)
     else
       if useThing:isMultiUse() then
-        -- todo change cursor
+        setTargetCursor()
         menu:addOption('Use with ...', function() Game.setSelectedThing(useThing) end)
       else
         menu:addOption('Use', function() Game.use(useThing) end)
       end
     end
-      
+
     if useThing:isRotateable() then
       menu:addOption('Rotate', function() Game.rotate(useThing) end)
     end
-    
+
   end
-  
+
   if lookThing and not lookThing:asCreature() and not lookThing:isNotMoveable() and lookThing:isPickupable() then
     menu:addSeparator()
     menu:addOption('Trade with ...', function() print('trade with') end)
   end
-  
+
   -- check for move up
-     
+
   if creatureThing then
     menu:addSeparator()
-  
+
     if creatureThing:asLocalPlayer() then
       menu:addOption('Set Outfit', function() Game.openOutfitWindow() end)
-      
+
       if creatureThing:asPlayer():isPartyMember() --[[and not fighting]] then
         if creatureThing:asPlayer():isPartyLeader() then
           if creatureThing:asPlayer():isPartySharedExperienceActive() then
@@ -124,7 +124,7 @@ function Game.createThingMenu(menuPosition, lookThing, useThing, creatureThing)
         end
         menu:addOption('Leave Party', function() Game.partyLeave() end)
       end
-      
+
     else
       local localPlayer = Game.getLocalPlayer()
       if localPlayer then
@@ -133,22 +133,22 @@ function Game.createThingMenu(menuPosition, lookThing, useThing, creatureThing)
         else
           menu:addOption('Stop Attack', function() Game.cancelAttack() end)
         end
-        
+
         if localPlayer:getFollowingCreature() ~= creatureThing then
           menu:addOption('Follow', function() Game.follow(creatureThing) end)
         else
           menu:addOption('Stop Follow', function() Game.cancelFollow() end)
         end
-        
+
         if creatureThing:asPlayer() then
           menu:addSeparator()
           menu:addOption('Message to ' .. creatureThing:getName(), function() print('message') end)
           menu:addOption('Add to VIP list', function() Game.addVip(creatureThing:getName()) end)
           menu:addOption('Ignore ' .. creatureThing:getName(), function() print('ignore') end)
-        
+
           local localPlayerShield = localPlayer:asCreature():getShield()
           local creatureShield = creatureThing:getShield()
-          
+
           if localPlayerShield == ShieldNone or localPlayerShield == ShieldWhiteBlue then
             if creatureShield == ShieldWhiteYellow then
               menu:addOption('Join ' .. creatureThing:getName() .. '\'s Party', function() Game.partyJoin(creatureThing:getId()) end)
@@ -174,8 +174,8 @@ function Game.createThingMenu(menuPosition, lookThing, useThing, creatureThing)
 
     menu:addSeparator()
     menu:addOption('Copy Name', function() g_window.setClipboardText(creatureThing:getName()) end)
-    
+
   end
-  
+
   menu:display(menuPosition)
 end

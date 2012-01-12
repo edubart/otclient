@@ -19,3 +19,4 @@ Module
     require 'effects'
     require 'settings'
     require 'hotkeys'
+    require 'cursor'
