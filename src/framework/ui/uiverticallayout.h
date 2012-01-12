@@ -31,14 +31,12 @@ public:
     UIVerticalLayout(UIWidgetPtr parentWidget);
 
     void applyStyle(const OTMLNodePtr& styleNode);
-    void addWidget(const UIWidgetPtr& widget);
-    void removeWidget(const UIWidgetPtr& widget);
+    void addWidget(const UIWidgetPtr& widget) { update(); }
+    void removeWidget(const UIWidgetPtr& widget) { update(); }
 
-    void setAlignBottom(bool aliginBottom);
-    void setSpacing(int spacing);
-    void setFitParent(bool fitParent);
-
-    bool needsUpdatesOnChildChange() { return m_fitParent; }
+    void setAlignBottom(bool aliginBottom) { m_alignBottom = aliginBottom; update(); }
+    void setSpacing(int spacing) { m_spacing = spacing; update(); }
+    void setFitParent(bool fitParent) { m_fitParent = fitParent; update(); }
 
     UIVerticalLayoutPtr asUIVerticalLayout() { return std::static_pointer_cast<UIVerticalLayout>(shared_from_this()); }
 

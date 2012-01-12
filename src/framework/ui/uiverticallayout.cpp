@@ -22,7 +22,6 @@
 
 #include "uiverticallayout.h"
 #include "uiwidget.h"
-#include <framework/otml/otml.h>
 #include <framework/core/eventdispatcher.h>
 
 UIVerticalLayout::UIVerticalLayout(UIWidgetPtr parentWidget)
@@ -44,35 +43,6 @@ void UIVerticalLayout::applyStyle(const OTMLNodePtr& styleNode)
             setFitParent(node->value<bool>());
     }
 }
-
-void UIVerticalLayout::addWidget(const UIWidgetPtr& widget)
-{
-    update();
-}
-
-void UIVerticalLayout::removeWidget(const UIWidgetPtr& widget)
-{
-    update();
-}
-
-void UIVerticalLayout::setAlignBottom(bool aliginBottom)
-{
-    m_alignBottom = aliginBottom;
-    update();
-}
-
-void UIVerticalLayout::setSpacing(int spacing)
-{
-    m_spacing = spacing;
-    update();
-}
-
-void UIVerticalLayout::setFitParent(bool fitParent)
-{
-    m_fitParent = fitParent;
-    update();
-}
-
 
 void UIVerticalLayout::internalUpdate()
 {

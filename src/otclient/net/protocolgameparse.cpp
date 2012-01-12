@@ -37,7 +37,7 @@ void ProtocolGame::parseMessage(InputMessage& msg)
 {
     try {
         while(!msg.eof()) {
-            uint8 opt = msg.getU8();
+            int opt = msg.getU8();
 
             switch(opt) {
             case Proto::GameServerInitGame:
@@ -267,7 +267,7 @@ void ProtocolGame::parseMessage(InputMessage& msg)
 
 void ProtocolGame::parsePlayerLogin(InputMessage& msg)
 {
-    int playerId = msg.getU32();
+    uint playerId = msg.getU32();
     int serverBeat = msg.getU16();
     int playerCanReportBugs = msg.getU8();
 
@@ -279,7 +279,7 @@ void ProtocolGame::parsePlayerLogin(InputMessage& msg)
 
 void ProtocolGame::parseGMActions(InputMessage& msg)
 {
-    for(uint8 i = 0; i < Proto::NumViolationReasons; ++i)
+    for(int i = 0; i < Proto::NumViolationReasons; ++i)
         msg.getU8();
 }
 
@@ -359,7 +359,7 @@ void ProtocolGame::parseMoveWest(InputMessage& msg)
 void ProtocolGame::parseUpdateTile(InputMessage& msg)
 {
     Position tilePos = parsePosition(msg);
-    uint16 thingId = msg.getU16(true);
+    int thingId = msg.getU16(true);
     if(thingId == 0xFF01) {
         msg.getU16();
     } else {
@@ -371,7 +371,7 @@ void ProtocolGame::parseUpdateTile(InputMessage& msg)
 void ProtocolGame::parseTileAddThing(InputMessage& msg)
 {
     Position pos = parsePosition(msg);
-    uint8 stackPos = msg.getU8();
+    int stackPos = msg.getU8();
 
     ThingPtr thing = internalGetThing(msg);
     g_map.addThing(thing, pos, stackPos);
@@ -380,13 +380,13 @@ void ProtocolGame::parseTileAddThing(InputMessage& msg)
 void ProtocolGame::parseTileTransformThing(InputMessage& msg)
 {
     Position pos = parsePosition(msg);
-    uint8 stackPos = msg.getU8();
+    int stackPos = msg.getU8();
 
-    uint16 thingId = msg.getU16();
+    int thingId = msg.getU16();
+    assert(thingId != 0);
     if(thingId == 0x0061 || thingId == 0x0062 || thingId == 0x0063) {
         parseCreatureTurn(msg);
-    }
-    else {
+    } else {
         ThingPtr thing = internalGetItem(msg, thingId);
         g_map.removeThingByPos(pos, stackPos);
         g_map.addThing(thing, pos, stackPos);
@@ -396,7 +396,7 @@ void ProtocolGame::parseTileTransformThing(InputMessage& msg)
 void ProtocolGame::parseTileRemoveThing(InputMessage& msg)
 {
     Position pos = parsePosition(msg);
-    uint8 stackPos = msg.getU8();
+    int stackPos = msg.getU8();
 
     g_map.removeThingByPos(pos, stackPos);
 }
@@ -404,7 +404,7 @@ void ProtocolGame::parseTileRemoveThing(InputMessage& msg)
 void ProtocolGame::parseCreatureMove(InputMessage& msg)
 {
     Position oldPos = parsePosition(msg);
-    uint8 oldStackpos = msg.getU8();
+    int oldStackpos = msg.getU8();
     Position newPos = parsePosition(msg);
 
     ThingPtr thing = g_map.getTile(oldPos)->getThing(oldStackpos);
@@ -435,10 +435,10 @@ void ProtocolGame::parseOpenContainer(InputMessage& msg)
     msg.getString(); // name
     msg.getU8(); // capacity
     msg.getU8(); // hasParent
-    uint8 size = msg.getU8(); // size
+    int size = msg.getU8(); // size
 
-    for(uint32 i = 0; i < size; i++)
-        internalGetItem(msg, 0xFFFF);
+    for(int i = 0; i < size; i++)
+        internalGetItem(msg);
 }
 
 void ProtocolGame::parseCloseContainer(InputMessage& msg)
@@ -449,14 +449,14 @@ void ProtocolGame::parseCloseContainer(InputMessage& msg)
 void ProtocolGame::parseContainerAddItem(InputMessage& msg)
 {
     msg.getU8(); // cid
-    internalGetItem(msg, 0xFFFF);
+    internalGetItem(msg);
 }
 
 void ProtocolGame::parseContainerUpdateItem(InputMessage& msg)
 {
     msg.getU8(); // cid
     msg.getU8(); // slot
-    internalGetItem(msg, 0xFFFF);
+    internalGetItem(msg);
 }
 
 void ProtocolGame::parseContainerRemoveItem(InputMessage& msg)
@@ -467,21 +467,21 @@ void ProtocolGame::parseContainerRemoveItem(InputMessage& msg)
 
 void ProtocolGame::parseAddInventoryItem(InputMessage& msg)
 {
-    uint8 slot = msg.getU8();
-    ItemPtr item = internalGetItem(msg, 0xFFFF);
+    int slot = msg.getU8();
+    ItemPtr item = internalGetItem(msg);
     g_game.processInventoryChange(slot, item);
 }
 
 void ProtocolGame::parseRemoveInventoryItem(InputMessage& msg)
 {
-    uint8 slot = msg.getU8();
+    int slot = msg.getU8();
     g_game.processInventoryChange(slot, ItemPtr());
 }
 
 void ProtocolGame::parseOpenShopWindow(InputMessage& msg)
 {
-    uint8 listCount = msg.getU8();
-    for(uint8 i = 0; i < listCount; ++i) {
+    int listCount = msg.getU8();
+    for(int i = 0; i < listCount; ++i) {
         msg.getU16(); // item id
         msg.getU8(); // runecharges
         msg.getString(); // item name
@@ -494,7 +494,7 @@ void ProtocolGame::parseOpenShopWindow(InputMessage& msg)
 void ProtocolGame::parsePlayerCash(InputMessage& msg)
 {
     msg.getU32();
-    uint8 size = msg.getU8();
+    int size = msg.getU8();
 
     for(int i = 0; i < size; i++) {
         msg.getU16(); // itemid
@@ -509,10 +509,10 @@ void ProtocolGame::parseCloseShopWindow(InputMessage&)
 void ProtocolGame::parseSafeTradeRequest(InputMessage& msg)
 {
     msg.getString(); // name
-    uint8 count = msg.getU8();
+    int count = msg.getU8();
 
-    for(uint8 i = 0; i < count; i++)
-        internalGetItem(msg, 0xFFFF);
+    for(int i = 0; i < count; i++)
+        internalGetItem(msg);
 }
 
 void ProtocolGame::parseSafeTradeClose(InputMessage&)
@@ -542,7 +542,7 @@ void ProtocolGame::parseMagicEffect(InputMessage& msg)
 void ProtocolGame::parseAnimatedText(InputMessage& msg)
 {
     Position position = parsePosition(msg);
-    uint8 color = msg.getU8();
+    int color = msg.getU8();
     std::string text = msg.getString();
 
     AnimatedTextPtr animatedText = AnimatedTextPtr(new AnimatedText);
@@ -566,8 +566,8 @@ void ProtocolGame::parseDistanceMissile(InputMessage& msg)
 
 void ProtocolGame::parseCreatureSquare(InputMessage& msg)
 {
-    uint32 id = msg.getU32();
-    uint8 color = msg.getU8();
+    uint id = msg.getU32();
+    int color = msg.getU8();
 
     CreaturePtr creature = g_map.getCreatureById(id);
     if(creature)
@@ -576,8 +576,8 @@ void ProtocolGame::parseCreatureSquare(InputMessage& msg)
 
 void ProtocolGame::parseCreatureHealth(InputMessage& msg)
 {
-    uint32 id = msg.getU32();
-    uint8 healthPercent = msg.getU8();
+    uint id = msg.getU32();
+    int healthPercent = msg.getU8();
 
     CreaturePtr creature = g_map.getCreatureById(id);
     if(creature)
@@ -586,7 +586,7 @@ void ProtocolGame::parseCreatureHealth(InputMessage& msg)
 
 void ProtocolGame::parseCreatureLight(InputMessage& msg)
 {
-    uint32 id = msg.getU32();
+    uint id = msg.getU32();
 
     Light light;
     light.intensity = msg.getU8();
@@ -599,7 +599,7 @@ void ProtocolGame::parseCreatureLight(InputMessage& msg)
 
 void ProtocolGame::parseCreatureOutfit(InputMessage& msg)
 {
-    uint32 id = msg.getU32();
+    uint id = msg.getU32();
     Outfit outfit = internalGetOutfit(msg);
 
     CreaturePtr creature = g_map.getCreatureById(id);
@@ -609,8 +609,8 @@ void ProtocolGame::parseCreatureOutfit(InputMessage& msg)
 
 void ProtocolGame::parseCreatureSpeed(InputMessage& msg)
 {
-    uint32 id = msg.getU32();
-    uint16 speed = msg.getU16();
+    uint id = msg.getU32();
+    int speed = msg.getU16();
 
     CreaturePtr creature = g_map.getCreatureById(id);
     if(creature)
@@ -619,8 +619,8 @@ void ProtocolGame::parseCreatureSpeed(InputMessage& msg)
 
 void ProtocolGame::parseCreatureSkulls(InputMessage& msg)
 {
-    uint32 id = msg.getU32();
-    uint8 skull = msg.getU8();
+    uint id = msg.getU32();
+    int skull = msg.getU8();
 
     CreaturePtr creature = g_map.getCreatureById(id);
     if(creature)
@@ -629,8 +629,8 @@ void ProtocolGame::parseCreatureSkulls(InputMessage& msg)
 
 void ProtocolGame::parseCreatureShields(InputMessage& msg)
 {
-    uint32 id = msg.getU32();
-    uint8 shield = msg.getU8();
+    uint id = msg.getU32();
+    int shield = msg.getU8();
 
     CreaturePtr creature = g_map.getCreatureById(id);
     if(creature)
@@ -639,7 +639,7 @@ void ProtocolGame::parseCreatureShields(InputMessage& msg)
 
 void ProtocolGame::parseCreatureTurn(InputMessage& msg)
 {
-    uint32 id = msg.getU32();
+    uint id = msg.getU32();
     Otc::Direction direction = (Otc::Direction)msg.getU8();
 
     CreaturePtr creature = g_map.getCreatureById(id);
@@ -744,7 +744,7 @@ void ProtocolGame::parsePlayerSkills(InputMessage& msg)
 
 void ProtocolGame::parsePlayerIcons(InputMessage& msg)
 {
-    uint16 icons = msg.getU16();
+    int icons = msg.getU16();
     m_localPlayer->setIcons((Otc::PlayerIcons)icons);
 }
 
@@ -837,7 +837,7 @@ void ProtocolGame::parseClosePrivateChannel(InputMessage& msg)
 
 void ProtocolGame::parseTextMessage(InputMessage& msg)
 {
-    uint8 type = msg.getU8();
+    int type = msg.getU8();
 
     std::string typeDesc = Proto::translateTextMessageType(type);
     std::string message = msg.getString();
@@ -857,9 +857,9 @@ void ProtocolGame::parseFloorChangeUp(InputMessage& msg)
     Position pos = g_map.getCentralPosition();
     pos.z--;
 
-    int32 skip = 0;
+    int skip = 0;
     if(pos.z == 7)
-        for(int32 i = 5; i >= 0; i--)
+        for(int i = 5; i >= 0; i--)
             setFloorDescription(msg, pos.x - 8, pos.y - 6, i, 18, 14, 8 - i, &skip);
     else if(pos.z > 7)
         setFloorDescription(msg, pos.x - 8, pos.y - 6, pos.z - 2, 18, 14, 3, &skip);
@@ -913,7 +913,7 @@ void ProtocolGame::parseOutfitWindow(InputMessage& msg)
 
 void ProtocolGame::parseVipState(InputMessage& msg)
 {
-    int id = msg.getU32();
+    uint id = msg.getU32();
     std::string name = msg.getString();
     bool online = msg.getU8() != 0;
 
@@ -922,14 +922,14 @@ void ProtocolGame::parseVipState(InputMessage& msg)
 
 void ProtocolGame::parseVipLogin(InputMessage& msg)
 {
-    int id = msg.getU32();
+    uint id = msg.getU32();
 
     g_lua.callGlobalField("Game", "onVipStateChange", id, true);
 }
 
 void ProtocolGame::parseVipLogout(InputMessage& msg)
 {
-    int id = msg.getU32();
+    uint id = msg.getU32();
 
     g_lua.callGlobalField("Game", "onVipStateChange", id, false);
 }
@@ -948,8 +948,8 @@ void ProtocolGame::parseAddMarker(InputMessage& msg)
 
 void ProtocolGame::parseQuestList(InputMessage& msg)
 {
-    uint16 questsCount = msg.getU16();
-    for(uint16 i = 0; i < questsCount; i++) {
+    int questsCount = msg.getU16();
+    for(int i = 0; i < questsCount; i++) {
         msg.getU16(); // quest id
         msg.getString(); // quest name
         msg.getU8(); // quest state
@@ -959,8 +959,8 @@ void ProtocolGame::parseQuestList(InputMessage& msg)
 void ProtocolGame::parseQuestPartList(InputMessage& msg)
 {
     msg.getU16(); // quest id
-    uint8 missionCount = msg.getU8();
-    for(uint8 i = 0; i < missionCount; i++) {
+    int missionCount = msg.getU8();
+    for(int i = 0; i < missionCount; i++) {
         msg.getString(); // quest name
         msg.getString(); // quest description
     }
@@ -987,12 +987,12 @@ void ProtocolGame::setMapDescription(InputMessage& msg, int32 x, int32 y, int32 
 
 void ProtocolGame::setFloorDescription(InputMessage& msg, int32 x, int32 y, int32 z, int32 width, int32 height, int32 offset, int32* skipTiles)
 {
-    int32 skip = *skipTiles;
+    int skip = *skipTiles;
 
-    for(int32 nx = 0; nx < width; nx++) {
-        for(int32 ny = 0; ny < height; ny++) {
+    for(int nx = 0; nx < width; nx++) {
+        for(int ny = 0; ny < height; ny++) {
             if(skip == 0) {
-                uint16 tileOpt = msg.getU16(true);
+                int tileOpt = msg.getU16(true);
                 if(tileOpt >= 0xFF00)
                     skip = (msg.getU16() & 0xFF);
                 else {
@@ -1014,7 +1014,7 @@ void ProtocolGame::setTileDescription(InputMessage& msg, Position position)
 
     int stackPos = 0;
     while(true) {
-        uint16 inspectTileId = msg.getU16(true);
+        int inspectTileId = msg.getU16(true);
         if(inspectTileId >= 0xFF00)
             return;
         else {
@@ -1022,7 +1022,8 @@ void ProtocolGame::setTileDescription(InputMessage& msg, Position position)
                 logTraceError("too many things, stackpos=", stackPos, " pos=", position);
 
             ThingPtr thing = internalGetThing(msg);
-            g_map.addThing(thing, position, 255);
+            if(thing)
+                g_map.addThing(thing, position, 255);
         }
         stackPos++;
     }
@@ -1032,14 +1033,14 @@ Outfit ProtocolGame::internalGetOutfit(InputMessage& msg)
 {
     Outfit outfit;
 
-    uint16 id = msg.getU16();
+    int id = msg.getU16();
     if(id != 0) {
         outfit.setCategory(ThingsType::Creature);
-        uint8 head = msg.getU8();
-        uint8 body = msg.getU8();
-        uint8 legs = msg.getU8();
-        uint8 feet = msg.getU8();
-        uint8 addons = msg.getU8();
+        int head = msg.getU8();
+        int body = msg.getU8();
+        int legs = msg.getU8();
+        int feet = msg.getU8();
+        int addons = msg.getU8();
 
         outfit.setId(id);
         outfit.setHead(head);
@@ -1049,7 +1050,7 @@ Outfit ProtocolGame::internalGetOutfit(InputMessage& msg)
         outfit.setAddons(addons);
     }
     else {
-        uint16 id = msg.getU16();
+        int id = msg.getU16();
         if(id == 0) {
             outfit.setCategory(ThingsType::Effect);
             outfit.setId(13);
@@ -1067,12 +1068,13 @@ ThingPtr ProtocolGame::internalGetThing(InputMessage& msg)
 {
     ThingPtr thing;
 
-    uint16 thingId = msg.getU16();
+    int thingId = msg.getU16();
+    assert(thingId != 0);
     if(thingId == 0x0061 || thingId == 0x0062) { // add new creature
         CreaturePtr creature;
 
         if(thingId == 0x0062) { //creature is known
-            uint32 id = msg.getU32();
+            uint id = msg.getU32();
 
             CreaturePtr knownCreature = g_map.getCreatureById(id);
             if(knownCreature)
@@ -1080,8 +1082,8 @@ ThingPtr ProtocolGame::internalGetThing(InputMessage& msg)
             else
                 logTraceError("server says creature is known, but its not on creatures list");
         } else if(thingId == 0x0061) { //creature is not known
-            uint32 removeId = msg.getU32();
-            uint32 id = msg.getU32();
+            uint removeId = msg.getU32();
+            uint id = msg.getU32();
             std::string name = msg.getString();
 
             if(name.length() > 0) // every creature name must start with a capital letter
@@ -1112,11 +1114,11 @@ ThingPtr ProtocolGame::internalGetThing(InputMessage& msg)
         light.intensity = msg.getU8();
         light.color = msg.getU8();
 
-        uint16 speed = msg.getU16();
-        uint8 skull = msg.getU8();
-        uint8 shield = msg.getU8();
+        int speed = msg.getU16();
+        int skull = msg.getU8();
+        int shield = msg.getU8();
 
-        uint8 emblem = 0;
+        int emblem = 0;
         if(thingId == 0x0061) // emblem is sent only in packet type 0x61
             emblem = msg.getU8();
 
@@ -1144,9 +1146,9 @@ ThingPtr ProtocolGame::internalGetThing(InputMessage& msg)
     return thing;
 }
 
-ItemPtr ProtocolGame::internalGetItem(InputMessage& msg, uint16 id)
+ItemPtr ProtocolGame::internalGetItem(InputMessage& msg, int id)
 {
-    if(id == 0xFFFF)
+    if(id == 0)
         id = msg.getU16();
 
     ItemPtr item = Item::create(id);

@@ -281,6 +281,17 @@ void Application::registerLuaFunctions()
     g_lua.bindClassStaticFunction<UIVerticalLayout>("create", [](UIWidgetPtr parent){ return UIVerticalLayoutPtr(new UIVerticalLayout(parent)); } );
     g_lua.bindClassMemberFunction<UIVerticalLayout>("setFitParent", &UIVerticalLayout::setFitParent);
 
+    // UIGridLayout
+    g_lua.registerClass<UIGridLayout, UILayout>();
+    g_lua.bindClassStaticFunction<UIGridLayout>("create", [](UIWidgetPtr parent){ return UIGridLayoutPtr(new UIGridLayout(parent)); });
+    g_lua.bindClassMemberFunction<UIGridLayout>("setCellSize", &UIGridLayout::setCellSize);
+    g_lua.bindClassMemberFunction<UIGridLayout>("setCellWidth", &UIGridLayout::setCellWidth);
+    g_lua.bindClassMemberFunction<UIGridLayout>("setCellHeight", &UIGridLayout::setCellHeight);
+    g_lua.bindClassMemberFunction<UIGridLayout>("setCellSpacing", &UIGridLayout::setCellSpacing);
+    g_lua.bindClassMemberFunction<UIGridLayout>("setNumColumns", &UIGridLayout::setNumColumns);
+    g_lua.bindClassMemberFunction<UIGridLayout>("setNumLines", &UIGridLayout::setNumLines);
+    g_lua.bindClassMemberFunction<UIGridLayout>("asUIGridLayout", &UIGridLayout::asUIGridLayout);
+
     // UIAnchorLayout
     g_lua.registerClass<UIAnchorLayout, UILayout>();
     g_lua.bindClassStaticFunction<UIAnchorLayout>("create", [](UIWidgetPtr parent){ return UIAnchorLayoutPtr(new UIAnchorLayout(parent)); } );

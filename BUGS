@@ -10,3 +10,4 @@ hotkeys works while windows are locked, it shouldnt
 some animated hits are displayed as 2 hits instead of one
 numpad on windows doesn't work correctly
 skulls is rendering outside map bounds
+these are some issues when skill progressbar is 0% or 100%

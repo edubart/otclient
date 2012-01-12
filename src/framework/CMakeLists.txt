@@ -189,8 +189,9 @@ SET(framework_SOURCES ${framework_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/ui/uiwidgettext.cpp
     ${CMAKE_CURRENT_LIST_DIR}/ui/uiwidgetbasestyle.cpp
     ${CMAKE_CURRENT_LIST_DIR}/ui/uilineedit.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/ui/uianchorlayout.cpp
     ${CMAKE_CURRENT_LIST_DIR}/ui/uiverticallayout.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/ui/uigridlayout.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/ui/uianchorlayout.cpp
     ${CMAKE_CURRENT_LIST_DIR}/ui/uilayout.cpp
     ${CMAKE_CURRENT_LIST_DIR}/ui/uiframecounter.cpp
     ${CMAKE_CURRENT_LIST_DIR}/ui/uitranslator.cpp

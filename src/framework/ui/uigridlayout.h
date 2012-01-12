@@ -20,16 +20,38 @@
  * THE SOFTWARE.
  */
 
-#ifndef UI_H
-#define UI_H
+#ifndef UIGRIDLAYOUT_H
+#define UIGRIDLAYOUT_H
 
-#include "uimanager.h"
-#include "uiwidget.h"
-#include "uilineedit.h"
-#include "uiframecounter.h"
-#include "uilayout.h"
-#include "uiverticallayout.h"
-#include "uigridlayout.h"
-#include "uianchorlayout.h"
+#include <framework/ui/uilayout.h>
+
+class UIGridLayout : public UILayout
+{
+public:
+    UIGridLayout(UIWidgetPtr parentWidget);
+
+    void applyStyle(const OTMLNodePtr& styleNode);
+    void removeWidget(const UIWidgetPtr& widget);
+    void addWidget(const UIWidgetPtr& widget);
+
+    void setCellSize(const Size& size) { m_cellSize = size; update(); }
+    void setCellWidth(int width) { m_cellSize.setWidth(width); update(); }
+    void setCellHeight(int height) { m_cellSize.setHeight(height); update(); }
+    void setCellSpacing(int spacing) { m_cellSpacing = spacing; update(); }
+    void setNumColumns(int columns) { m_numColumns = columns; update(); }
+    void setNumLines(int lines) { m_numLines = lines; update(); }
+
+    virtual UIGridLayoutPtr asUIGridLayout() { return nullptr; }
+
+protected:
+    void internalUpdate();
+
+private:
+    Size m_cellSize;
+    int m_cellSpacing;
+    int m_numColumns;
+    int m_numLines;
+};
 
 #endif
+

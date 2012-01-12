@@ -20,16 +20,14 @@
  * THE SOFTWARE.
  */
 
-#ifndef UI_H
-#define UI_H
+#ifndef UIRICHTEXT_H
+#define UIRICHTEXT_H
 
-#include "uimanager.h"
-#include "uiwidget.h"
-#include "uilineedit.h"
-#include "uiframecounter.h"
-#include "uilayout.h"
-#include "uiverticallayout.h"
-#include "uigridlayout.h"
-#include "uianchorlayout.h"
+#include <framework/ui/uiwidget.h>
 
-#endif
+
+class UIRichText : public UIWidget
+{
+};
+
+#endif // UIRICHTEXT_H

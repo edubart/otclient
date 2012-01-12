@@ -23,7 +23,7 @@
 #include "protocolgame.h"
 #include <framework/net/rsa.h>
 
-void ProtocolGame::sendLoginPacket(uint32 timestamp, uint8 unknown)
+void ProtocolGame::sendLoginPacket(uint timestamp, uint8 unknown)
 {
     OutputMessage oMsg;
 
@@ -217,7 +217,7 @@ void ProtocolGame::sendCloseShop()
     send(oMsg);
 }
 
-void ProtocolGame::sendRequestTrade(const Position& pos, int thingId, int stackpos, int playerId)
+void ProtocolGame::sendRequestTrade(const Position& pos, int thingId, int stackpos, uint playerId)
 {
     OutputMessage oMsg;
     oMsg.addU8(Proto::ClientTradeObject);
@@ -275,7 +275,7 @@ void ProtocolGame::sendUseItemEx(const Position& fromPos, int fromThingId, int f
     send(oMsg);
 }
 
-void ProtocolGame::sendUseItemCreature(const Position& pos, int thingId, int stackpos, int creatureId)
+void ProtocolGame::sendUseItemCreature(const Position& pos, int thingId, int stackpos, uint creatureId)
 {
     OutputMessage oMsg;
     oMsg.addU8(Proto::ClientUseOnCreature);
@@ -312,7 +312,7 @@ void ProtocolGame::sendUpContainer(int containerId)
     send(oMsg);
 }
 
-void ProtocolGame::sendTextWindow(int windowTextId, const std::string& text)
+void ProtocolGame::sendTextWindow(uint windowTextId, const std::string& text)
 {
     OutputMessage oMsg;
     oMsg.addU8(Proto::ClientEditText);
@@ -321,7 +321,7 @@ void ProtocolGame::sendTextWindow(int windowTextId, const std::string& text)
     send(oMsg);
 }
 
-void ProtocolGame::sendHouseWindow(int doorId, int id, const std::string& text)
+void ProtocolGame::sendHouseWindow(int doorId, uint id, const std::string& text)
 {
     OutputMessage oMsg;
     oMsg.addU8(Proto::ClientEditList);
@@ -420,7 +420,7 @@ void ProtocolGame::sendFightTatics(Otc::FightModes fightMode, Otc::ChaseModes ch
     send(oMsg);
 }
 
-void ProtocolGame::sendAttack(int creatureId)
+void ProtocolGame::sendAttack(uint creatureId)
 {
     OutputMessage oMsg;
     oMsg.addU8(Proto::ClientAttack);
@@ -430,7 +430,7 @@ void ProtocolGame::sendAttack(int creatureId)
     send(oMsg);
 }
 
-void ProtocolGame::sendFollow(int creatureId)
+void ProtocolGame::sendFollow(uint creatureId)
 {
     OutputMessage oMsg;
     oMsg.addU8(Proto::ClientFollow);
@@ -438,7 +438,7 @@ void ProtocolGame::sendFollow(int creatureId)
     send(oMsg);
 }
 
-void ProtocolGame::sendInviteToParty(int creatureId)
+void ProtocolGame::sendInviteToParty(uint creatureId)
 {
     OutputMessage oMsg;
     oMsg.addU8(Proto::ClientInviteToParty);
@@ -446,7 +446,7 @@ void ProtocolGame::sendInviteToParty(int creatureId)
     send(oMsg);
 }
 
-void ProtocolGame::sendJoinParty(int creatureId)
+void ProtocolGame::sendJoinParty(uint creatureId)
 {
     OutputMessage oMsg;
     oMsg.addU8(Proto::ClientJoinParty);
@@ -454,7 +454,7 @@ void ProtocolGame::sendJoinParty(int creatureId)
     send(oMsg);
 }
 
-void ProtocolGame::sendRevokeInvitation(int creatureId)
+void ProtocolGame::sendRevokeInvitation(uint creatureId)
 {
     OutputMessage oMsg;
     oMsg.addU8(Proto::ClientRevokeInvitation);
@@ -462,7 +462,7 @@ void ProtocolGame::sendRevokeInvitation(int creatureId)
     send(oMsg);
 }
 
-void ProtocolGame::sendPassLeadership(int creatureId)
+void ProtocolGame::sendPassLeadership(uint creatureId)
 {
     OutputMessage oMsg;
     oMsg.addU8(Proto::ClientPassLeadership);
@@ -555,7 +555,7 @@ void ProtocolGame::sendAddVip(const std::string& name)
     send(oMsg);
 }
 
-void ProtocolGame::sendRemoveVip(int playerId)
+void ProtocolGame::sendRemoveVip(uint playerId)
 {
     OutputMessage oMsg;
     oMsg.addU8(Proto::ClientRemoveBuddy);

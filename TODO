@@ -54,7 +54,6 @@ Low priority TODO
 
 == UI
 [bart] fix massive hotkeys when holding down a key
-[bart] grid layout
 [bart] horizontal box layout
 [bart] move layout proprieties to widget style
 [bart] multiline text editor widget

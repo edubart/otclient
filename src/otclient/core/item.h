@@ -31,7 +31,7 @@ class Item : public Thing
 public:
     Item();
 
-    static ItemPtr create(int id = 0);
+    static ItemPtr create(int id);
 
     enum {
         TICKS_PER_FRAME = 500

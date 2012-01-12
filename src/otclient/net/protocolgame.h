@@ -60,18 +60,18 @@ public:
     void sendPlayerPurchase(int thingId, int count, int amount, bool ignoreCapacity, bool buyWithBackpack);
     void sendPlayerSale(int thingId, int count, int amount, bool ignoreEquipped);
     void sendCloseShop();
-    void sendRequestTrade(const Position& pos, int thingId, int stackpos, int playerId);
+    void sendRequestTrade(const Position& pos, int thingId, int stackpos, uint playerId);
     void sendLookInTrade(bool counterOffer, int index);
     void sendAcceptTrade();
     void sendRejectTrade();
     void sendUseItem(const Position& position, int itemId, int stackpos, int index);
     void sendUseItemEx(const Position& fromPos, int fromThingId, int fromStackpos, const Position& toPos, int toThingId, int toStackpos);
-    void sendUseItemCreature(const Position& pos, int thingId, int stackpos, int creatureId);
+    void sendUseItemCreature(const Position& pos, int thingId, int stackpos, uint creatureId);
     void sendRotateItem(const Position& pos, int thingId, int stackpos);
     void sendCloseContainer(int containerId);
     void sendUpContainer(int containerId);
-    void sendTextWindow(int windowTextId, const std::string& text);
-    void sendHouseWindow(int doorId, int id, const std::string& text);
+    void sendTextWindow(uint windowTextId, const std::string& text);
+    void sendHouseWindow(int doorId, uint id, const std::string& text);
     void sendLookAt(const Position& position, int thingId, int stackpos);
     void sendTalk(int channelType, int channelId, const std::string& receiver, const std::string& message);
     void sendGetChannels();
@@ -80,12 +80,12 @@ public:
     void sendPrivateChannel(const std::string& receiver);
     void sendCloseNpcChannel();
     void sendFightTatics(Otc::FightModes fightMode, Otc::ChaseModes chaseMode, bool safeFight);
-    void sendAttack(int creatureId);
-    void sendFollow(int creatureId);
-    void sendInviteToParty(int creatureId);
-    void sendJoinParty(int creatureId);
-    void sendRevokeInvitation(int creatureId);
-    void sendPassLeadership(int creatureId);
+    void sendAttack(uint creatureId);
+    void sendFollow(uint creatureId);
+    void sendInviteToParty(uint creatureId);
+    void sendJoinParty(uint creatureId);
+    void sendRevokeInvitation(uint creatureId);
+    void sendPassLeadership(uint creatureId);
     void sendLeaveParty();
     void sendShareExperience(bool active, int unknown);
     void sendOpenChannel();
@@ -96,12 +96,12 @@ public:
     void sendGetOutfit();
     void sendSetOutfit(const Outfit& outfit);
     void sendAddVip(const std::string& name);
-    void sendRemoveVip(int playerId);
+    void sendRemoveVip(uint playerId);
     void sendGetQuestLog();
     void sendGetQuestLine(int questId);
 
 private:
-    void sendLoginPacket(uint32 timestamp, uint8 unknown);
+    void sendLoginPacket(uint timestamp, uint8 unknown);
 
     // Parse Messages
     void parseMessage(InputMessage& msg);
@@ -173,13 +173,13 @@ private:
     void parseQuestList(InputMessage& msg);
     void parseQuestPartList(InputMessage& msg);
 
-    void setMapDescription(InputMessage& msg, int32 x, int32 y, int32 z, int32 width, int32 height);
-    void setFloorDescription(InputMessage& msg, int32 x, int32 y, int32 z, int32 width, int32 height, int32 offset, int32* skipTiles);
+    void setMapDescription(InputMessage& msg, int x, int y, int z, int width, int height);
+    void setFloorDescription(InputMessage& msg, int x, int y, int z, int width, int height, int offset, int* skipTiles);
     void setTileDescription(InputMessage& msg, Position position);
 
     Outfit internalGetOutfit(InputMessage& msg);
     ThingPtr internalGetThing(InputMessage& msg);
-    ItemPtr internalGetItem(InputMessage& msg, uint16 id);
+    ItemPtr internalGetItem(InputMessage& msg, int id = 0);
 
     void addPosition(OutputMessage& msg, const Position& position);
     Position parsePosition(InputMessage& msg);

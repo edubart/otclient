@@ -364,8 +364,8 @@ void UIWidget::unlockChild(const UIWidgetPtr& child)
 
 void UIWidget::applyStyle(const OTMLNodePtr& styleNode)
 {
+    m_loadingStyle = true;
     try {
-        m_loadingStyle = true;
         onStyleApply(styleNode->tag(), styleNode);
         callLuaField("onStyleApply", styleNode->tag(), styleNode);
 
@@ -377,10 +377,10 @@ void UIWidget::applyStyle(const OTMLNodePtr& styleNode)
         }
         m_firstOnStyle = false;
 
-        m_loadingStyle = false;
     } catch(Exception& e) {
         logError("Failed to apply style to widget '", m_id, "' style: ", e.what());
     }
+    m_loadingStyle = false;
 }
 void UIWidget::addAnchor(Fw::AnchorEdge anchoredEdge, const std::string& hookedWidgetId, Fw::AnchorEdge hookedEdge)
 {

@@ -21,8 +21,9 @@
  */
 
 #include "uiwidget.h"
-#include "uianchorlayout.h"
 #include "uiverticallayout.h"
+#include "uigridlayout.h"
+#include "uianchorlayout.h"
 #include "uitranslator.h"
 
 #include <framework/graphics/painter.h>
@@ -233,6 +234,8 @@ void UIWidget::parseBaseStyle(const OTMLNodePtr& styleNode)
                 UILayoutPtr layout;
                 if(layoutType == "verticalBox")
                     layout = UIVerticalLayoutPtr(new UIVerticalLayout(asUIWidget()));
+                else if(layoutType == "grid")
+                    layout = UIGridLayoutPtr(new UIGridLayout(asUIWidget()));
                 else if(layoutType == "anchor")
                     layout = UIAnchorLayoutPtr(new UIAnchorLayout(asUIWidget()));
                 else

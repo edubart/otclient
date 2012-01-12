@@ -55,7 +55,7 @@ void ProtocolLogin::onRecv(InputMessage& inputMessage)
 {
     try {
         while(!inputMessage.eof()) {
-            uint8 opt = inputMessage.getU8();
+            int opt = inputMessage.getU8();
             switch(opt) {
             case Proto::LoginServerError:
                 parseError(inputMessage);

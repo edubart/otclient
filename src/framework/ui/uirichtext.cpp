@@ -20,16 +20,5 @@
  * THE SOFTWARE.
  */
 
-#ifndef UI_H
-#define UI_H
+#include "uirichtext.h"
 
-#include "uimanager.h"
-#include "uiwidget.h"
-#include "uilineedit.h"
-#include "uiframecounter.h"
-#include "uilayout.h"
-#include "uiverticallayout.h"
-#include "uigridlayout.h"
-#include "uianchorlayout.h"
-
-#endif

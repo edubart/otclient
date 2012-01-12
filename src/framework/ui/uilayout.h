@@ -25,7 +25,7 @@
 
 #include "declarations.h"
 #include <framework/luascript/luaobject.h>
-#include <framework/otml/declarations.h>
+#include <framework/otml/otml.h>
 
 class UILayout : public LuaObject
 {
@@ -46,11 +46,11 @@ public:
 
     bool isUpdateDisabled() { return m_updateDisabled; }
     bool isUpdating() { return m_updating; }
-    virtual bool needsUpdatesOnChildChange() { return false; }
 
     UILayoutPtr asUILayout() { return std::static_pointer_cast<UILayout>(shared_from_this()); }
     virtual UIAnchorLayoutPtr asUIAnchorLayout() { return nullptr; }
     virtual UIVerticalLayoutPtr asUIVerticalLayout() { return nullptr; }
+    virtual UIGridLayoutPtr asUIGridLayout() { return nullptr; }
 
 protected:
     virtual void internalUpdate() = 0;

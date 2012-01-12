@@ -308,7 +308,7 @@ namespace Proto {
             case Proto::SpeakYell:
                 return "yell";
             case Proto::SpeakMonsterSay:
-                return  "monsterSay";
+                return "monsterSay";
             case Proto::SpeakMonsterYell:
                 return "monsterYell";
             case Proto::SpeakPrivateNpcToPlayer:
