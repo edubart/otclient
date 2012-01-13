@@ -125,7 +125,7 @@ void Game::processTextMessage(const std::string& type, const std::string& messag
 void Game::processContainerAddItem(int containerId, const ItemPtr& item)
 {
     if(item)
-        item->setPos(Position(65535, containerId, 0));
+        item->setPos(Position(65535, containerId + 0x40, 0));
 
     g_lua.callGlobalField("Game", "onContainerAddItem", containerId, item);
 }
@@ -250,6 +250,16 @@ void Game::look(const ThingPtr& thing)
         m_protocolGame->sendLookAt(thing->getPos(), thing->getId(), stackpos);
 }
 
+void Game::open(const ThingPtr& thing, int containerId)
+{
+    if(!m_online || !thing || !checkBotProtection())
+        return;
+
+    int stackpos = getThingStackpos(thing);
+    if(stackpos != -1)
+        m_protocolGame->sendUseItem(thing->getPos(), thing->getId(), stackpos, containerId);
+}
+
 void Game::use(const ThingPtr& thing)
 {
     if(!m_online || !thing || !checkBotProtection())
@@ -257,7 +267,7 @@ void Game::use(const ThingPtr& thing)
 
     int stackpos = getThingStackpos(thing);
     if(stackpos != -1)
-        m_protocolGame->sendUseItem(thing->getPos(), thing->getId(), stackpos, 0);// last 0 has something to do with container
+        m_protocolGame->sendUseItem(thing->getPos(), thing->getId(), stackpos, 0);
 }
 
 void Game::useWith(const ThingPtr& fromThing, const ThingPtr& toThing)

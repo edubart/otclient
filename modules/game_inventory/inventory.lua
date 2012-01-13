@@ -29,12 +29,6 @@ function Inventory.onSoulChange(soul)
   widget:setText("Soul:\n" .. soul)
 end
 
-function Inventory.onInventoryItemMouseRelease(itemWidget, mousePosition, mouseButton)
-  local item = itemWidget:getItem()
-  if not item or not itemWidget:containsPoint(mousePosition) then return false end
-  return Game.processMouseAction(mousePosition, mouseButton, nil, item, item, nil, item)
-end
-
 connect(Game, { onLogin = Inventory.create,
                 onLogout = Inventory.destroy,
                 onInventoryChange = Inventory.onInventoryChange,

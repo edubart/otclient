@@ -1,6 +1,3 @@
-InvetoryItem < Item
-  &onMouseRelease: Inventory.onInventoryItemMouseRelease
-
 UIWindow
   width: 192
   height: 148
@@ -9,34 +6,34 @@ UIWindow
   margin-right: 6
   move-policy: free updated
 
-  InvetoryItem
+  Item
     // head
     id: slot1
     anchors.top: parent.top
     anchors.horizontalCenter: parent.horizontalCenter
 
-  InvetoryItem
+  Item
     // armor
     id: slot4
     anchors.top: prev.bottom
     anchors.horizontalCenter: prev.horizontalCenter
     margin-top: 5
 
-  InvetoryItem
+  Item
     // legs
     id: slot7
     anchors.top: prev.bottom
     anchors.horizontalCenter: prev.horizontalCenter
     margin-top: 5
 
-  InvetoryItem
+  Item
     // feet
     id: slot8
     anchors.top: prev.bottom
     anchors.horizontalCenter: prev.horizontalCenter
     margin-top: 5
 
-  InvetoryItem
+  Item
     // necklace
     id: slot2
     anchors.top: parent.top
@@ -44,21 +41,21 @@ UIWindow
     margin-top: 10
     margin-right: 5
 
-  InvetoryItem
+  Item
     // left
     id: slot6
     anchors.top: prev.bottom
     anchors.horizontalCenter: prev.horizontalCenter
     margin-top: 5
 
-  InvetoryItem
+  Item
     // ring
     id: slot9
     anchors.top: prev.bottom
     anchors.horizontalCenter: prev.horizontalCenter
     margin-top: 5
 
-  InvetoryItem
+  Item
     // backpack
     id: slot3
     anchors.top: parent.top
@@ -66,14 +63,14 @@ UIWindow
     margin-top: 10
     margin-left: 5
 
-  InvetoryItem
+  Item
     // right
     id: slot5
     anchors.top: prev.bottom
     anchors.horizontalCenter: prev.horizontalCenter
     margin-top: 5
 
-  InvetoryItem
+  Item
     // ammo
     id: slot10
     anchors.top: prev.bottom

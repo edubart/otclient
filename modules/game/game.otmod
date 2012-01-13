@@ -7,11 +7,12 @@ Module
   dependencies:
     - game_healthbar
     - game_inventory
-    - game_skills
+    //- game_skills
     - game_textmessage
     - game_viplist
     - game_console
     - game_outfit
+    - game_containers
 
   onLoad: |
     require 'game'

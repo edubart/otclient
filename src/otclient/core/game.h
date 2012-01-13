@@ -57,6 +57,7 @@ public:
     void walk(Otc::Direction direction);
     void turn(Otc::Direction direction);
     void look(const ThingPtr& thing);
+    void open(const ThingPtr& thing, int containerId);
     void use(const ThingPtr& thing);
     void useWith(const ThingPtr& fromThing, const ThingPtr& toThing);
     void attack(const CreaturePtr& creature);
