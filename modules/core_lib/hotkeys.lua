@@ -29,7 +29,7 @@ end
 
 local function determineKeyComboDesc(keyCode, keyboardModifiers)
   local keyCombo = {}
-  if keyCode == KeyShift or keyCode == KeyAlt or keyCode == KeyAltGr then
+  if keyCode == KeyCtrl or keyCode == KeyShift or keyCode == KeyAlt or keyCode == KeyAltGr then
     table.insert(keyCombo, keyCode)
   elseif KeyCodeDescs[keyCode] ~= nil then
     if keyboardModifiers == KeyboardCtrlModifier then
@@ -59,6 +59,7 @@ local function determineKeyComboDesc(keyCode, keyboardModifiers)
 end
 
 local function onWidgetKeyPress(widget, keyCode, keyText, keyboardModifiers)
+  if keyCode == KeyUnknown then return end
   local keyComboDesc = determineKeyComboDesc(keyCode, keyboardModifiers)
   local callback = widget.boundKeyCombos[keyComboDesc]
   if callback then

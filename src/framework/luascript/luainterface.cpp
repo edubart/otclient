@@ -297,9 +297,13 @@ void LuaInterface::loadScript(const std::string& fileName)
     if(!boost::starts_with(fileName, "/"))
         filePath = getCurrentSourcePath() + "/" + filePath;
 
-    std::string buffer = g_resources.loadFile(filePath);
-    std::string source = "@" + filePath;
-    loadBuffer(buffer, source);
+    try {
+        std::string buffer = g_resources.loadFile(filePath);
+        std::string source = "@" + filePath;
+        loadBuffer(buffer, source);
+    } catch(Exception& e) {
+        throw LuaException(e.what());
+    }
 }
 
 void LuaInterface::loadFunction(const std::string& buffer, const std::string& source)

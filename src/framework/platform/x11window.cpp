@@ -77,8 +77,8 @@ X11Window::X11Window()
     m_keyMap[XK_Control_R] = Fw::KeyCtrl;
     m_keyMap[XK_Shift_R] = Fw::KeyShift;
     m_keyMap[XK_Shift_L] = Fw::KeyShift;
-    m_keyMap[XK_Alt_R] = Fw::KeyAlt;
-    m_keyMap[XK_Alt_L] = Fw::KeyAltGr;
+    m_keyMap[XK_Alt_R] = Fw::KeyAltGr;
+    m_keyMap[XK_Alt_L] = Fw::KeyAlt;
     m_keyMap[XK_Meta_L] = Fw::KeyMeta;
     m_keyMap[XK_Meta_R] = Fw::KeyMeta;
     m_keyMap[XK_Menu] = Fw::KeyMenu;
@@ -642,12 +642,13 @@ void X11Window::poll()
                         //logDebug("char: ", buf[0], " code: ", (uint)buf[0]);
                         m_inputEvent.keyText = buf;
                     }
-                } else {
-                    len = XLookupString(&event.xkey, buf, sizeof(buf), &keysym, 0);
-
-                    if(len > 0)
-                        m_inputEvent.keyText = buf;
                 }
+
+                XKeyEvent xkey = event.xkey;
+                xkey.state = xkey.state & ~(ShiftMask);
+                len = XLookupString(&xkey, buf, sizeof(buf), &keysym, 0);
+                if(len > 0 && m_inputEvent.keyText.length() == 0)
+                    m_inputEvent.keyText = buf;
 
                 if(m_keyMap.find(keysym) != m_keyMap.end())
                     m_inputEvent.keyCode = m_keyMap[keysym];

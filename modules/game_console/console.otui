@@ -70,3 +70,4 @@ Panel
     margin-left: 6
     margin-bottom: 6
     always-active: true
+    focusable: false

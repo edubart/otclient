@@ -16,7 +16,6 @@ InterfacePanel < Panel
   image-border: 4
 
 InterfacePanel2 < Panel
-  focusable: false
   image-source: /core_styles/images/interface_panel2.png
   image-border: 4
 

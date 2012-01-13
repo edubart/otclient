@@ -14,6 +14,7 @@ end
 -- public functions
 function UITabBar.create()
   local tabbar = UITabBar.internalCreate()
+  tabbar:setFocusable(false)
   tabbar.tabs = {}
   return tabbar
 end
@@ -46,6 +47,7 @@ function UITabBar:addTab(text, panel)
 end
 
 function UITabBar:selectTab(tabButton)
+  if self.currentTabButton == tabButton then return end
   if self.contentWidget then
     local selectedWidget = self.contentWidget:getFirstChild()
     if selectedWidget then
@@ -55,13 +57,31 @@ function UITabBar:selectTab(tabButton)
     tabButton.tabPanel:fill('parent')
   end
 
-  tabButton:setChecked(true)
-  tabButton:setOn(false)
-  tabButton.blinking = false
   if self.currentTabButton then
     self.currentTabButton:setChecked(false)
   end
   self.currentTabButton = tabButton
+  tabButton:setChecked(true)
+  tabButton:setOn(false)
+  tabButton.blinking = false
+end
+
+function UITabBar:selectNextTab()
+  if self.currentTabButton == nil then return end
+  local index = table.find(self.tabs, self.currentTabButton)
+  if index == nil then return end
+  local nextTab = self.tabs[index + 1] or self.tabs[1]
+  if not nextTab then return end
+  self:selectTab(nextTab)
+end
+
+function UITabBar:selectPrevTab()
+  if self.currentTabButton == nil then return end
+  local index = table.find(self.tabs, self.currentTabButton)
+  if index == nil then return end
+  local prevTab = self.tabs[index - 1] or self.tabs[#self.tabs]
+  if not prevTab then return end
+  self:selectTab(prevTab)
 end
 
 function UITabBar:blinkTab(tabButton)

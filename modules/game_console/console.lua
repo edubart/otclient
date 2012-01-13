@@ -23,7 +23,7 @@ local consoleBuffer
 local consoleTabBar
 local defaultChannelTab
 local serverLogTab
-local current
+local currentTab
 
 -- public functions
 function Console.create()
@@ -33,6 +33,9 @@ function Console.create()
   consoleTabBar:setContentWidget(consoleBuffer)
   defaultChannelTab = consoleTabBar:addTab('Default')
   serverLogTab = consoleTabBar:addTab('Server Log')
+
+  Hotkeys.bind('Tab', function() consoleTabBar:selectNextTab() end, consolePanel)
+  Hotkeys.bind('Shift+Tab', function() consoleTabBar:selectPrevTab() end, consolePanel)
 end
 
 function Console.destroy()

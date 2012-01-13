@@ -4,7 +4,7 @@ UIGame
   anchors.top: topMenu.bottom
 
   InterfacePanel
-    id: rightPanel
+    id: gameRightPanel
     width: 200
     layout: verticalBox
     anchors.right: parent.right
@@ -12,16 +12,17 @@ UIGame
     anchors.bottom: parent.bottom
 
   InterfacePanel2
-    id: bottomPanel
+    id: gameBottomPanel
     height: 170
     anchors.left: parent.left
-    anchors.right: rightPanel.left
+    anchors.right: gameRightPanel.left
     anchors.bottom: parent.bottom
 
   Map
-    id: mapPanel
+    id: gameMapPanel
     anchors.left: parent.left
-    anchors.right: rightPanel.left
+    anchors.right: gameRightPanel.left
     anchors.top: parent.top
-    anchors.bottom: bottomPanel.top
+    anchors.bottom: gameBottomPanel.top
+    focusable: false
 
