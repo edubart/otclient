@@ -39,8 +39,8 @@ class Connection : public std::enable_shared_from_this<Connection>, boost::nonco
 
 public:
     Connection();
+    ~Connection();
 
-    static void init();
     static void poll();
     static void terminate();
 
@@ -57,7 +57,6 @@ public:
     bool isConnected() const { return m_connected; }
 
 protected:
-    void onResolve(const boost::system::error_code& error, asio::ip::tcp::resolver::iterator endpointIterator);
     void onConnect(const boost::system::error_code& error);
     void onWrite(const boost::system::error_code& error, size_t);
     void onRecv(const boost::system::error_code& error, size_t recvSize);

@@ -29,6 +29,11 @@ Protocol::Protocol()
     m_checksumEnabled = false;
 }
 
+Protocol::~Protocol()
+{
+    disconnect();
+}
+
 void Protocol::connect(const std::string& host, uint16 port)
 {
     m_connection = ConnectionPtr(new Connection);

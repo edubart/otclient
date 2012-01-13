@@ -37,6 +37,11 @@ Connection::Connection() :
     m_connecting = false;
 }
 
+Connection::~Connection()
+{
+    close();
+}
+
 void Connection::poll()
 {
     g_ioService.poll();
@@ -55,7 +60,21 @@ void Connection::connect(const std::string& host, uint16 port, const SimpleCallb
     m_connectCallback = connectCallback;
 
     asio::ip::tcp::resolver::query query(host, Fw::unsafeCast<std::string>(port));
-    m_resolver.async_resolve(query, std::bind(&Connection::onResolve, shared_from_this(), _1, _2));
+
+    auto weakSelf = ConnectionWeakPtr(shared_from_this());
+    m_resolver.async_resolve(query, [=](const boost::system::error_code& error, asio::ip::tcp::resolver::iterator endpointIterator) {
+        if(!weakSelf.lock())
+            return;
+        m_readTimer.cancel();
+
+        if(!error) {
+            m_socket.async_connect(*endpointIterator, std::bind(&Connection::onConnect, shared_from_this(), _1));
+
+            m_readTimer.expires_from_now(boost::posix_time::seconds(READ_TIMEOUT));
+            m_readTimer.async_wait(std::bind(&Connection::onTimeout, shared_from_this(), _1));
+        } else
+            handleError(error);
+    });
 
     m_readTimer.expires_from_now(boost::posix_time::seconds(READ_TIMEOUT));
     m_readTimer.async_wait(std::bind(&Connection::onTimeout, shared_from_this(), _1));
@@ -72,6 +91,7 @@ void Connection::close()
     m_errorCallback = nullptr;
     m_recvCallback = nullptr;
 
+    m_resolver.cancel();
     m_readTimer.cancel();
     m_writeTimer.cancel();
 
@@ -128,19 +148,6 @@ void Connection::read_some(const RecvCallback& callback)
 
     m_readTimer.expires_from_now(boost::posix_time::seconds(READ_TIMEOUT));
     m_readTimer.async_wait(std::bind(&Connection::onTimeout, shared_from_this(), _1));
-}
-
-void Connection::onResolve(const boost::system::error_code& error, asio::ip::tcp::resolver::iterator endpointIterator)
-{
-    m_readTimer.cancel();
-
-    if(!error) {
-        m_socket.async_connect(*endpointIterator, std::bind(&Connection::onConnect, shared_from_this(), _1));
-
-        m_readTimer.expires_from_now(boost::posix_time::seconds(READ_TIMEOUT));
-        m_readTimer.async_wait(std::bind(&Connection::onTimeout, shared_from_this(), _1));
-    } else
-        handleError(error);
 }
 
 void Connection::onConnect(const boost::system::error_code& error)
