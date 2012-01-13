@@ -25,8 +25,11 @@
 
 #include "declarations.h"
 #include "networkexception.h"
+#include <framework/luascript/luaobject.h>
 
-class OutputMessage
+typedef std::shared_ptr<OutputMessage> OutputMessagePtr;
+
+class OutputMessage : public LuaObject
 {
 public:
     enum {
