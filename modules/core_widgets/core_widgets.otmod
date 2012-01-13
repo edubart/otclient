@@ -14,5 +14,7 @@ Module
     require 'uitabbar'
     require 'uipopupmenu'
     require 'uiwindow'
+    require 'uiitem'
     require 'tooltip/tooltip'
     require 'messagebox/messagebox'
+    

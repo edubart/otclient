@@ -1,4 +1,15 @@
 
+function Thing:isInsideContainer()
+  local pos = self:getPos()
+  return (pos and pos.x == 65535 and pos.y >= 64)
+end
+
+function Thing:getContainerId()
+  local pos = self:getPos()
+  if not pos then return 0 end
+  return pos.y - 64
+end
+
 -- public functions
 function Game.processMouseAction(menuPosition, mouseButton, autoWalk, lookThing, useThing, creatureThing, multiUseThing)
   local keyboardModifiers = g_window.getKeyboardModifiers()
@@ -18,7 +29,7 @@ function Game.processMouseAction(menuPosition, mouseButton, autoWalk, lookThing,
     if mouseButton == MouseLeftButton and selectedThing then
       Game.useWith(Game.getSelectedThing(), useThing)
       Game.setSelectedThing(nil)
-      -- restore cursor
+      restoreCursor()
       return true
     elseif keyboardModifiers == KeyboardNoModifier and mouseButton == MouseRightButton then
       Game.createThingMenu(menuPosition, lookThing, useThing, creatureThing)
@@ -28,7 +39,11 @@ function Game.processMouseAction(menuPosition, mouseButton, autoWalk, lookThing,
       return true
     elseif useThing and keyboardModifiers == KeyboardCtrlModifier and (mouseButton == MouseLeftButton or mouseButton == MouseRightButton) then
       if useThing:isContainer() then
-        print "open"
+        if useThing:isInsideContainer() then
+          Game.open(useThing, useThing:getContainerId())
+        else
+          Game.open(useThing, Containers.getFreeContainerId())
+        end
       elseif useThing:isMultiUse() then
         Game.setSelectedThing(useThing)
         setTargetCursor()
@@ -50,12 +65,16 @@ function Game.processMouseAction(menuPosition, mouseButton, autoWalk, lookThing,
       if multiUseThing:asCreature() then
         Game.attack(multiUseThing:asCreature())
       elseif multiUseThing:isContainer() then
-        print "open"
+        if multiUseThing:isInsideContainer() then
+          Game.open(multiUseThing, multiUseThing:getContainerId())
+        else
+          Game.open(multiUseThing, Containers.getFreeContainerId())
+        end
       elseif multiUseThing:isMultiUse() then
         Game.setSelectedThing(multiUseThing)
         setTargetCursor()
       else
-        Game.use(useThing)
+        Game.use(multiUseThing)
       end
       return true
     elseif lookThing and keyboardModifiers == KeyboardShiftModifier and (mouseButton == MouseLeftButton or mouseButton == MouseRightButton) then
@@ -81,15 +100,17 @@ function Game.createThingMenu(menuPosition, lookThing, useThing, creatureThing)
     menu:addOption('Look', function() Game.look(lookThing) end)
   end
 
-  -- Open or Use, depending if thing is a container
   if useThing then
     if useThing:isContainer() then
-      -- check for open in new window
-      menu:addOption('Open', function() print('open') end)
+      if useThing:isInsideContainer() then
+        menu:addOption('Open', function() Game.open(useThing, useThing:getContainerId()) end)
+        menu:addOption('Open in new window', function() Game.open(useThing, Containers.getFreeContainerId()) end)
+      else
+        menu:addOption('Open', function() Game.open(useThing, Containers.getFreeContainerId()) end)
+      end
     else
       if useThing:isMultiUse() then
-        setTargetCursor()
-        menu:addOption('Use with ...', function() Game.setSelectedThing(useThing) end)
+        menu:addOption('Use with ...', function() Game.setSelectedThing(useThing) setTargetCursor() end)
       else
         menu:addOption('Use', function() Game.use(useThing) end)
       end
@@ -179,3 +200,4 @@ function Game.createThingMenu(menuPosition, lookThing, useThing, creatureThing)
 
   menu:display(menuPosition)
 end
+

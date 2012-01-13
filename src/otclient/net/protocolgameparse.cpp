@@ -441,7 +441,7 @@ void ProtocolGame::parseOpenContainer(InputMessage& msg)
 
     for(int i = 0; i < itemCount; i++) {
         ItemPtr item = internalGetItem(msg);
-        g_lua.callGlobalField("Game", "onContainerAddItem", containerId, item);
+        g_game.processContainerAddItem(containerId, item);
     }
 }
 
@@ -455,7 +455,7 @@ void ProtocolGame::parseContainerAddItem(InputMessage& msg)
 {
     int containerId = msg.getU8();
     ItemPtr item = internalGetItem(msg);
-    g_lua.callGlobalField("Game", "onContainerAddItem", containerId, item);
+    g_game.processContainerAddItem(containerId, item);
 }
 
 void ProtocolGame::parseContainerUpdateItem(InputMessage& msg)
@@ -470,7 +470,7 @@ void ProtocolGame::parseContainerRemoveItem(InputMessage& msg)
 {
     int containerId = msg.getU8();
     int slot = msg.getU8();
-    g_lua.callGlobalField("Game", "onContainerUpdateItem", containerId, slot);
+    g_lua.callGlobalField("Game", "onContainerRemoveItem", containerId, slot);
 }
 
 void ProtocolGame::parseAddInventoryItem(InputMessage& msg)
