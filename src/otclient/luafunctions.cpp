@@ -89,18 +89,6 @@ void OTClient::registerLuaFunctions()
 
     g_lua.registerClass<ProtocolGame, Protocol>();
 
-    g_lua.registerClass<OutputMessage>();
-    g_lua.bindClassStaticFunction<OutputMessage>("new", []{ return OutputMessagePtr(new OutputMessage); });
-    g_lua.bindClassMemberFunction<OutputMessage>("reset", &OutputMessage::reset);
-    g_lua.bindClassMemberFunction<OutputMessage>("addU8", &OutputMessage::addU8);
-    g_lua.bindClassMemberFunction<OutputMessage>("addU16", &OutputMessage::addU16);
-    g_lua.bindClassMemberFunction<OutputMessage>("addU32", &OutputMessage::addU32);
-    g_lua.bindClassMemberFunction<OutputMessage>("addU64", &OutputMessage::addU64);
-    g_lua.bindClassMemberFunction<OutputMessage>("addString", (void(OutputMessage::*)(const std::string&))&OutputMessage::addString);
-
-    g_lua.registerClass<Protocol>();
-    g_lua.bindClassStaticFunction<Protocol>("send", [](const ProtocolPtr proto, OutputMessagePtr msg) { proto->send(*msg.get()); });
-
     g_lua.registerClass<Thing>();
     g_lua.bindClassMemberFunction<Thing>("setId", &Thing::setId);
     g_lua.bindClassMemberFunction<Thing>("setPos", &Thing::setPos);

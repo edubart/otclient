@@ -323,8 +323,19 @@ void Application::registerLuaFunctions()
     g_lua.bindClassStaticFunction<UIFrameCounter>("create", []{ return UIFrameCounterPtr(new UIFrameCounter); } );
     g_lua.bindClassMemberFunction<UIFrameCounter>("getFrameCount", &UIFrameCounter::getFrameCount);
 
+    // OutputMessage
+    g_lua.registerClass<OutputMessage>();
+    g_lua.bindClassStaticFunction<OutputMessage>("new", []{ return OutputMessagePtr(new OutputMessage); });
+    g_lua.bindClassMemberFunction<OutputMessage>("reset", &OutputMessage::reset);
+    g_lua.bindClassMemberFunction<OutputMessage>("addU8", &OutputMessage::addU8);
+    g_lua.bindClassMemberFunction<OutputMessage>("addU16", &OutputMessage::addU16);
+    g_lua.bindClassMemberFunction<OutputMessage>("addU32", &OutputMessage::addU32);
+    g_lua.bindClassMemberFunction<OutputMessage>("addU64", &OutputMessage::addU64);
+    g_lua.bindClassMemberFunction<OutputMessage>("addString", (void(OutputMessage::*)(const std::string&))&OutputMessage::addString);
+
     // Protocol
     g_lua.registerClass<Protocol>();
+    g_lua.bindClassStaticFunction<Protocol>("send", [](const ProtocolPtr proto, OutputMessagePtr msg) { proto->send(*msg.get()); });
 
     // Application
     g_lua.registerStaticClass("g_app");
