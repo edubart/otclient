@@ -75,8 +75,8 @@ void UIGridLayout::internalUpdate()
         if(!widget->isExplicitlyVisible())
             continue;
 
-        int line = index / m_numLines;
-        int column = index % m_numLines;
+        int line = index / m_numColumns;
+        int column = index % m_numColumns;
         Point virtualPos = Point(column * (m_cellSize.width() + m_cellSpacing), line * (m_cellSize.height() + m_cellSpacing));
         Point pos = topLeft + virtualPos;
 

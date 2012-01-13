@@ -74,8 +74,7 @@ local function onCreatureSpeak(name, level, speaktypedesc, message, channelId, c
     end
   end
 
-  local channelPanel = consoleTabBar:getTabPanel(defaultChannelTab)
-  Console.addText(message, speaktype.color, channelPanel)
+  Console.addText(message, speaktype.color, defaultChannelTab)
 end
 
 connect(Game, { onLogin = Console.create,
