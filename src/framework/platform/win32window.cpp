@@ -516,6 +516,11 @@ void WIN32Window::swapBuffers()
     SwapBuffers(m_deviceContext);
 }
 
+void WIN32Window::restoreMouseCursor()
+{
+    //TODO
+}
+
 void WIN32Window::showMouse()
 {
     ShowCursor(true);

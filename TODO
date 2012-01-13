@@ -51,6 +51,7 @@ Low priority TODO
 
 == Platform
 [bart] port to MacOs and iphone
+change win32 mouse cursor icon
 
 == UI
 [bart] fix massive hotkeys when holding down a key
