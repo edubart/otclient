@@ -6,10 +6,9 @@ local function onTabClick(tabButton)
 end
 
 local function tabBlink(tabButton)
-  if tabButton.blinking then
-    tabButton:setOn(not tabButton:isOn())
-    scheduleEvent(function() tabBlink(tabButton) end, 300)
-  end
+  if not tabButton.blinking then return end
+  tabButton:setOn(not tabButton:isOn())
+  scheduleEvent(function() tabBlink(tabButton) end, 500)
 end
 
 -- public functions
@@ -66,11 +65,9 @@ function UITabBar:selectTab(tabButton)
 end
 
 function UITabBar:blinkTab(tabButton)
-  if not tabButton:isChecked() then
-    tabButton:setOn(true)
-    tabButton.blinking = true
-    tabBlink(tabButton)
-  end
+  if tabButton:isChecked() or tabButton.blinking then return end
+  tabButton.blinking = true
+  tabBlink(tabButton)
 end
 
 function UITabBar:getTabPanel(tabButton)
