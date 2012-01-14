@@ -30,7 +30,7 @@ class ModuleManager
 public:
     void discoverModulesPath();
     void discoverModules();
-    void autoLoadModules(int maxPriority);
+    void autoLoadModules(int maxAntecedence);
     ModulePtr discoverModule(const std::string& moduleFile);
     void ensureModuleLoaded(const std::string& moduleName);
     void unloadModules();

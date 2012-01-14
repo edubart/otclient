@@ -340,23 +340,23 @@ int Game::getThingStackpos(const ThingPtr& thing)
 
 void Game::talk(const std::string& message)
 {
-    talkChannel(1, 0, message);
+    talkChannel("say", 0, message);
 }
 
-void Game::talkChannel(int channelType, int channelId, const std::string& message)
+void Game::talkChannel(const std::string& speakTypeDesc, int channelId, const std::string& message)
 {
     if(!m_online || !checkBotProtection())
         return;
 
-    m_protocolGame->sendTalk(channelType, channelId, "", message);
+    m_protocolGame->sendTalk(speakTypeDesc, channelId, "", message);
 }
 
-void Game::talkPrivate(int channelType, const std::string& receiver, const std::string& message)
+void Game::talkPrivate(const std::string& speakTypeDesc, const std::string& receiver, const std::string& message)
 {
     if(!m_online || !checkBotProtection())
         return;
 
-    m_protocolGame->sendTalk(channelType, 0, receiver, message);
+    m_protocolGame->sendTalk(speakTypeDesc, 0, receiver, message);
 }
 
 void Game::partyInvite(int creatureId)
@@ -408,12 +408,28 @@ void Game::partyShareExperience(bool active)
     m_protocolGame->sendShareExperience(active, 0);
 }
 
-void Game::openOutfitWindow()
+void Game::requestOutfit()
 {
     if(!m_online || !checkBotProtection())
         return;
 
     m_protocolGame->sendGetOutfit();
+}
+
+void Game::requestChannels()
+{
+    if(!m_online || !checkBotProtection())
+        return;
+
+    m_protocolGame->sendGetChannels();
+}
+
+void Game::openChannel(int channelId)
+{
+    if(!m_online || !checkBotProtection())
+        return;
+
+    m_protocolGame->sendOpenChannel(channelId);
 }
 
 void Game::setOutfit(const Outfit& outfit)

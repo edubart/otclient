@@ -341,18 +341,18 @@ void ProtocolGame::sendLookAt(const Position& position, int thingId, int stackpo
     send(oMsg);
 }
 
-void ProtocolGame::sendTalk(int channelType, int channelId, const std::string& receiver, const std::string& message)
+void ProtocolGame::sendTalk(const std::string& speakTypeDesc, int channelId, const std::string& receiver, const std::string& message)
 {
     if(message.length() > 255 || message.length() <= 0)
         return;
 
+    int speakType = Proto::translateSpeakTypeDesc(speakTypeDesc);
+
     OutputMessage oMsg;
     oMsg.addU8(Proto::ClientTalk);
+    oMsg.addU8(speakType);
 
-    assert(channelType >= 0);
-    oMsg.addU8(channelType);
-
-    switch(channelType) {
+    switch(speakType) {
     case Proto::SpeakPrivate:
     case Proto::SpeakPrivateRed:
         oMsg.addString(receiver);
@@ -486,10 +486,11 @@ void ProtocolGame::sendShareExperience(bool active, int unknown)
     send(oMsg);
 }
 
-void ProtocolGame::sendOpenChannel()
+void ProtocolGame::sendOpenChannel(int channelId)
 {
     OutputMessage oMsg;
     oMsg.addU8(Proto::ClientOpenChannel);
+    oMsg.addU16(channelId);
     send(oMsg);
 }
 

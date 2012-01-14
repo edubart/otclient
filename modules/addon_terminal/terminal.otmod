@@ -5,7 +5,7 @@ Module
   website: https://github.com/edubart/otclient
 
   autoLoad: true
-  autoLoadPriority: 200
+  autoLoadAntecedence: 200
 
   onLoad: |
     require 'terminal'
