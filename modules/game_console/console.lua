@@ -103,10 +103,15 @@ function Console.addTabText(text, speaktype, tab)
     text = os.date('%H:%M') .. ' ' .. text
   end
 
-  local label = createWidget('ConsoleLabel', consoleTabBar:getTabPanel(tab))
+  local panel = consoleTabBar:getTabPanel(tab)
+  local label = createWidget('ConsoleLabel', panel)
   label:setText(text)
   label:setColor(speaktype.color)
   consoleTabBar:blinkTab(tab)
+
+  if panel:getChildCount() > 10 then
+    panel:removeChild(panel:getFirstChild())
+  end
 end
 
 function Console.sendCurrentMessage()
