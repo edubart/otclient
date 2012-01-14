@@ -36,14 +36,21 @@ MainWindow < Window2
 
 MiniWindow < UIWindow
   font: verdana-11px-antialised
-  size: 192 200
-  text-offset: 0 5
-  text-align: top
-  margin-top: 10
+  icon: /core_styles/icons/login.png
+  icon-rect: 4 4 16 16
+  width: 192
+  height: 200
+  text-offset: 26 5
+  text-align: topLeft
+  margin-top: 2
   margin-left: 6
   margin-right: 6
   move-policy: free updated
   image-source: /core_styles/images/mini_window.png
   image-border: 4
-  image-border-top: 25
+  image-border-top: 23
+  padding: 25 8 2 8
 
+  $on:
+    height: 24
+    image-border-bottom: 1

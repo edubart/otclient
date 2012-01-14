@@ -36,7 +36,7 @@ public:
 
     CreaturePtr getCreature() { return m_creature; }
 
-private:
+protected:
     CreaturePtr m_creature;
 };
 

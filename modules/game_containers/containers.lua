@@ -23,20 +23,21 @@ function Containers.onContainerOpen(containerId, itemId, name, capacity, hasPare
   if container then
     Game.gameRightPanel:removeChild(container)
   end
-  
+
   container = displayUI('container.otui', { parent = Game.gameRightPanel })
+  name = name:sub(1,1):upper() .. name:sub(2)
   container:setText(name)
-  
+
   -- set icon, itemid
   -- closebutton
   -- resize
   if hasParent then
     -- parent button
   end
-  
+
   container.itemCount = 0
   container.capacity = capacity
-  
+
   for i=1,capacity do
     local item = UIItem.create()
     item:setStyle('Item')
@@ -65,7 +66,7 @@ function Containers.onContainerAddItem(containerId, item)
   local pos = item:getPos()
   pos.z = container.itemCount
   item:setPos(pos)
-  
+
   local itemWidget = container:getChildByIndex(container.itemCount + 1)
   itemWidget:setItem(item)
   container.itemCount = container.itemCount + 1

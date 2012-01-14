@@ -1,11 +1,9 @@
 MiniWindow
-  size: 200 186
-  padding-top: 30
-  padding-left: 10
+  size: 200 221
 
   layout:
     type: grid
-    cell-size: 32 32
+    cell-size: 34 34
     cell-spacing: 5
     num-columns: 4
     num-lines: 5

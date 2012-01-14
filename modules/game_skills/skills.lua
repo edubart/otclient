@@ -1,7 +1,8 @@
 Skills = {}
 
 -- private variables
-local skillWindow = nil
+local skillWindow
+local skillsButton
 
 -- private functions
 local function getNumberString(number)
@@ -42,11 +43,19 @@ end
 -- public functions
 function Skills.create()
   skillWindow = displayUI('skills.otui', { parent = Game.gameRightPanel })
+  --skillsButton = TopMenu.addButton('skillsButton', 'Skills (Ctrl+S)', '/core_styles/icons/skills.png', Skills.toggle)
+  --skillsButton:setWidth(32)
 end
 
 function Skills.destroy()
+  --skillsButton:destroy()
+  --skillsButton = nil
   skillWindow:destroy()
   skillWindow = nil
+end
+
+function Skills.toggle()
+
 end
 
 function Skills.onSkillButtonClick(button)

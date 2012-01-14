@@ -30,15 +30,14 @@
 class UIItem : public UIWidget
 {
 public:
-    UIItem();
     void draw();
 
     void setItem(const ItemPtr& item) { m_item = item; }
+
     ItemPtr getItem() { return m_item; }
 
-private:
+protected:
     ItemPtr m_item;
-    FontPtr m_font;
 };
 
 #endif
