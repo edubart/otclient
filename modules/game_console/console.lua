@@ -14,7 +14,7 @@ local SpeakTypes = {
   channelOrange = { color = '#FE6500' },
   private = { color = '#5FF7F7', private = true },
   playerToNpc = { color = '#9F9DFD', private = true, npcChat = true },
-  broadcast = { color = '#F55E5E', private = true },
+  broadcast = { color = '#F55E5E' },
   privateRed = { color = '#F55E5E', private = true }
 }
 
@@ -114,29 +114,39 @@ function Console.sendCurrentMessage()
   if #message == 0 then return end
   consoleLineEdit:clearText()
 
+  -- get current channel
   local tab = Console.getCurrentTab()
-  local name = tab:getText()
-  if name == 'Server Log' then name = 'Default' end
 
-  local speaktypedesc = 'say'
-  if tab.npcChat then
-    speaktypedesc = 'playerToNpc'
+  -- when talking on server log, the message goes to default channel
+  local name = tab:getText()
+  if name == 'Server Log' then
+    tab = Console.getTab('Default')
+    name = 'Default'
   end
+  local speaktypedesc
 
   if tab.channelId then
-    if tab.channelId ~= 0 then
+    if tab.channelId == 0 then
+      speaktypedesc = 'say'
+    else
       speaktypedesc = 'channelYellow'
     end
 
     Game.talkChannel(speaktypedesc, tab.channelId, message)
     return
   else
+    if tab.npcChat then
+      speaktypedesc = 'playerToNpc'
+    else
+      speaktypedesc = 'private'
+    end
+
     local speaktype = SpeakTypes[speaktypedesc]
     local player = Game.getLocalPlayer()
+    Game.talkPrivate(speaktypedesc, name, message)
+
     message = applyMessagePrefixies(player:getName(), player:getLevel(), message)
     Console.addPrivateText(message, speaktype, name)
-
-    Game.talkPrivate(speaktypedesc, name, message)
   end
 end
 
@@ -164,8 +174,7 @@ local function onChannelList(channelList)
   channelsWindow.onEnter = function(self)
     local selectedChannelLabel = channelListPanel:getFocusedChild()
     if not selectedChannelLabel then return end
-    --Game.joinChannel(selectedChannelLabel.channelId)
-    --Console.addChannel(selectedChannelLabel:getText(), selectedChannelLabel .channelId)
+    Game.joinChannel(selectedChannelLabel.channelId)
     channelsWindow:destroy()
   end
   for k,v in pairs(channelList) do
@@ -174,7 +183,6 @@ local function onChannelList(channelList)
 
     if channelId ~= 0 and #channelName > 0 then
       local label = createWidget('ChannelListLabel', channelListPanel)
-      print(channelId, channelName)
       label.channelId = channelId
       label:setText(channelName)
     end

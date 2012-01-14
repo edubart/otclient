@@ -54,32 +54,49 @@ public:
     void processAttackCancel();
     void processWalkCancel(Otc::Direction direction);
 
+    // walk related
     void walk(Otc::Direction direction);
     void turn(Otc::Direction direction);
+
+    // item related
     void look(const ThingPtr& thing);
     void open(const ThingPtr& thing, int containerId);
     void use(const ThingPtr& thing);
     void useWith(const ThingPtr& fromThing, const ThingPtr& toThing);
+    void useHotkey(int itemId, const ThingPtr& toThing);
+
+    // attack/follow related
     void attack(const CreaturePtr& creature);
     void cancelAttack();
     void follow(const CreaturePtr& creature);
     void cancelFollow();
     void rotate(const ThingPtr& thing);
+
+    // talk related
     void talk(const std::string& message);
     void talkChannel(const std::string& speakTypeDesc, int channelId, const std::string& message);
     void talkPrivate(const std::string& speakTypeDesc, const std::string& receiver, const std::string& message);
+    void requestChannels();
+    void joinChannel(int channelId);
+    void leaveChannel(int channelId);
+    void closeNpcChannel();
+
+    // party related
     void partyInvite(int creatureId);
     void partyJoin(int creatureId);
     void partyRevokeInvitation(int creatureId);
     void partyPassLeadership(int creatureId);
     void partyLeave();
     void partyShareExperience(bool active);
+
+    // outfit related
     void requestOutfit();
-    void requestChannels();
-    void openChannel(int channelId);
     void setOutfit(const Outfit& outfit);
+
+    // vip related
     void addVip(const std::string& name);
     void removeVip(int playerId);
+
     int getThingStackpos(const ThingPtr& thing);
 
     bool checkBotProtection();
@@ -99,7 +116,7 @@ public:
     int getWalkPing() { return m_walkPing; }
 
 private:
-    void updatePing();
+    void updateWalkPing();
 
     LocalPlayerPtr m_localPlayer;
     ProtocolGamePtr m_protocolGame;

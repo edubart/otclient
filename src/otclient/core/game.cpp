@@ -153,7 +153,7 @@ void Game::processCreatureMove(const CreaturePtr& creature, const Position& oldP
     }
     */
     if(!m_walkFeedback && creature == m_localPlayer) {
-        updatePing();
+        updateWalkPing();
         m_walkFeedback = true;
     }
     creature->walk(newPos);
@@ -168,7 +168,7 @@ void Game::processAttackCancel()
 void Game::processWalkCancel(Otc::Direction direction)
 {
     if(!m_walkFeedback) {
-        updatePing();
+        updateWalkPing();
         m_walkFeedback = true;
     }
     m_localPlayer->cancelWalk(direction, true);
@@ -280,6 +280,14 @@ void Game::useWith(const ThingPtr& fromThing, const ThingPtr& toThing)
         m_protocolGame->sendUseItemEx(fromThing->getPos(), fromThing->getId(), fromStackpos, toThing->getPos(), toThing->getId(), toStackpos);
 }
 
+void Game::useHotkey(int itemId, const ThingPtr& toThing)
+{
+    if(!m_online || !toThing || !checkBotProtection())
+        return;
+
+    m_protocolGame->sendUseItemEx(Position(0xFFFF, 0, 0), itemId, 0, toThing->getPos(), toThing->getId(), getThingStackpos(toThing));
+}
+
 void Game::attack(const CreaturePtr& creature)
 {
     if(!m_online || !creature || !checkBotProtection())
@@ -347,7 +355,6 @@ void Game::talkChannel(const std::string& speakTypeDesc, int channelId, const st
 {
     if(!m_online || !checkBotProtection())
         return;
-
     m_protocolGame->sendTalk(speakTypeDesc, channelId, "", message);
 }
 
@@ -355,15 +362,42 @@ void Game::talkPrivate(const std::string& speakTypeDesc, const std::string& rece
 {
     if(!m_online || !checkBotProtection())
         return;
-
     m_protocolGame->sendTalk(speakTypeDesc, 0, receiver, message);
 }
+
+void Game::requestChannels()
+{
+    if(!m_online || !checkBotProtection())
+        return;
+    m_protocolGame->sendGetChannels();
+}
+
+void Game::joinChannel(int channelId)
+{
+    if(!m_online || !checkBotProtection())
+        return;
+    m_protocolGame->sendJoinChannel(channelId);
+}
+
+void Game::leaveChannel(int channelId)
+{
+    if(!m_online || !checkBotProtection())
+        return;
+    m_protocolGame->sendLeaveChannel(channelId);
+}
+
+void Game::closeNpcChannel()
+{
+    if(!m_online || !checkBotProtection())
+        return;
+    m_protocolGame->sendCloseNpcChannel();
+}
+
 
 void Game::partyInvite(int creatureId)
 {
     if(!m_online || !checkBotProtection())
         return;
-
     m_protocolGame->sendInviteToParty(creatureId);
 }
 
@@ -371,7 +405,6 @@ void Game::partyJoin(int creatureId)
 {
     if(!m_online || !checkBotProtection())
         return;
-
     m_protocolGame->sendJoinParty(creatureId);
 }
 
@@ -379,7 +412,6 @@ void Game::partyRevokeInvitation(int creatureId)
 {
     if(!m_online || !checkBotProtection())
         return;
-
     m_protocolGame->sendRevokeInvitation(creatureId);
 }
 
@@ -388,7 +420,6 @@ void Game::partyPassLeadership(int creatureId)
 {
     if(!m_online || !checkBotProtection())
         return;
-
     m_protocolGame->sendPassLeadership(creatureId);
 }
 
@@ -396,7 +427,6 @@ void Game::partyLeave()
 {
     if(!m_online || !checkBotProtection())
         return;
-
     m_protocolGame->sendLeaveParty();
 }
 
@@ -404,7 +434,6 @@ void Game::partyShareExperience(bool active)
 {
     if(!m_online || !checkBotProtection())
         return;
-
     m_protocolGame->sendShareExperience(active, 0);
 }
 
@@ -412,31 +441,13 @@ void Game::requestOutfit()
 {
     if(!m_online || !checkBotProtection())
         return;
-
     m_protocolGame->sendGetOutfit();
-}
-
-void Game::requestChannels()
-{
-    if(!m_online || !checkBotProtection())
-        return;
-
-    m_protocolGame->sendGetChannels();
-}
-
-void Game::openChannel(int channelId)
-{
-    if(!m_online || !checkBotProtection())
-        return;
-
-    m_protocolGame->sendOpenChannel(channelId);
 }
 
 void Game::setOutfit(const Outfit& outfit)
 {
     if(!m_online || !checkBotProtection())
         return;
-
     m_protocolGame->sendSetOutfit(outfit);
 }
 
@@ -444,7 +455,6 @@ void Game::addVip(const std::string& name)
 {
     if(!m_online || name.empty() || !checkBotProtection())
         return;
-
     m_protocolGame->sendAddVip(name);
 }
 
@@ -452,7 +462,6 @@ void Game::removeVip(int playerId)
 {
     if(!m_online || !checkBotProtection())
         return;
-
     m_protocolGame->sendRemoveVip(playerId);
 }
 
@@ -467,7 +476,7 @@ bool Game::checkBotProtection()
     return true;
 }
 
-void Game::updatePing()
+void Game::updateWalkPing()
 {
     m_walkPing = m_walkPingTimer.ticksElapsed();
     g_lua.callGlobalField("Game", "onWalkPingUpdate", m_walkPing);
