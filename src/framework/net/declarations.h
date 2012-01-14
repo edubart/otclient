@@ -35,6 +35,7 @@ class Protocol;
 class Server;
 
 typedef std::shared_ptr<Connection> ConnectionPtr;
+typedef std::weak_ptr<Connection> ConnectionWeakPtr;
 typedef std::shared_ptr<Protocol> ProtocolPtr;
 typedef std::shared_ptr<Server> ServerPtr;
 

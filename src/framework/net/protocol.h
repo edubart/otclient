@@ -33,6 +33,7 @@ class Protocol : public LuaObject
 {
 public:
     Protocol();
+    virtual ~Protocol();
 
     void connect(const std::string& host, uint16 port);
     void disconnect();

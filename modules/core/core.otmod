@@ -6,7 +6,7 @@ Module
 
   // core must be loaded before other modules
   autoLoad: true
-  autoLoadPriority: 10
+  autoLoadAntecedence: 10
 
   // NOTE: order does matter
   dependencies:

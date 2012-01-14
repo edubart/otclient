@@ -133,7 +133,7 @@ function Game.createThingMenu(menuPosition, lookThing, useThing, creatureThing)
     menu:addSeparator()
 
     if creatureThing:asLocalPlayer() then
-      menu:addOption('Set Outfit', function() Game.openOutfitWindow() end)
+      menu:addOption('Set Outfit', function() Game.requestOutfit() end)
 
       if creatureThing:asPlayer():isPartyMember() --[[and not fighting]] then
         if creatureThing:asPlayer():isPartyLeader() then

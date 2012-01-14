@@ -55,6 +55,8 @@ public:
 
     LocalPlayerPtr asLocalPlayer() { return std::static_pointer_cast<LocalPlayer>(shared_from_this()); }
 
+    double getLevel() { return getStatistic(Otc::Level); }
+
 private:
     bool m_canReportBugs;
     bool m_clientWalking;

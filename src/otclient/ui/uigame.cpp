@@ -27,6 +27,9 @@
 
 bool UIGame::onKeyPress(uchar keyCode, std::string keyText, int keyboardModifiers)
 {
+    if(UIWidget::onKeyPress(keyCode, keyText, keyboardModifiers))
+        return true;
+
     UILineEditPtr chatLineEdit = std::dynamic_pointer_cast<UILineEdit>(getParent()->recursiveGetChildById("consoleLineEdit"));
 
     if(keyboardModifiers == Fw::KeyboardNoModifier) {
@@ -108,5 +111,5 @@ bool UIGame::onKeyPress(uchar keyCode, std::string keyText, int keyboardModifier
         return true;
     }
 
-    return UIWidget::onKeyPress(keyCode, keyText, keyboardModifiers);
+    return false;
 }

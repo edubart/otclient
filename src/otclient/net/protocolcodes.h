@@ -336,6 +336,43 @@ namespace Proto {
         }
     }
 
+    inline int translateSpeakTypeDesc(const std::string& type) {
+        if(type == "say")
+            return Proto::SpeakSay;
+        else if(type == "whisper")
+            return Proto::SpeakWhisper;
+        else if(type == "yell")
+            return Proto::SpeakYell;
+        else if(type == "monsterSay")
+            return Proto::SpeakMonsterSay;
+        else if(type == "monsterYell")
+            return Proto::SpeakMonsterYell;
+        else if(type == "npcToPlayer")
+            return Proto::SpeakPrivateNpcToPlayer;
+        else if(type == "channelYellow")
+            return Proto::SpeakChannelYellow;
+        else if(type == "channelWhite")
+            return Proto::SpeakChannelWhite;
+        else if(type == "channelRed")
+            return Proto::SpeakChannelRed;
+        else if(type == "channelRed")
+            return Proto::SpeakChannelRed2;
+        else if(type == "channelOrange")
+            return Proto::SpeakChannelOrange;
+        else if(type == "private")
+            return Proto::SpeakPrivate;
+        else if(type == "playerToNpc")
+            return Proto::SpeakPrivatePlayerToNpc;
+        else if(type == "broadcast")
+            return Proto::SpeakBroadcast;
+        else if(type == "privateRed")
+            return Proto::SpeakPrivateRed;
+        else {
+            logError("unknown protocol speak type desc ", type);
+            return 0;
+        }
+    }
+
     inline std::string translateTextMessageType(int type) {
         switch(type) {
             case Proto::MessageConsoleOrange:

@@ -145,6 +145,7 @@ void OTClient::registerLuaFunctions()
     g_lua.registerClass<LocalPlayer, Player>();
     g_lua.bindClassMemberFunction<LocalPlayer>("getAttackingCreature", &LocalPlayer::getAttackingCreature);
     g_lua.bindClassMemberFunction<LocalPlayer>("getFollowingCreature", &LocalPlayer::getFollowingCreature);
+    g_lua.bindClassMemberFunction<LocalPlayer>("getLevel", &LocalPlayer::getLevel);
 
     g_lua.registerClass<Tile>();
     g_lua.bindClassMemberFunction<Tile>("clean", &Tile::clean);
@@ -177,7 +178,9 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassStaticFunction<Game>("logout", std::bind(&Game::logout, &g_game, _1));
     g_lua.bindClassStaticFunction<Game>("cancelLogin", std::bind(&Game::cancelLogin, &g_game));
     g_lua.bindClassStaticFunction<Game>("isOnline", std::bind(&Game::isOnline, &g_game));
-    g_lua.bindClassStaticFunction<Game>("openOutfitWindow", std::bind(&Game::openOutfitWindow, &g_game));
+    g_lua.bindClassStaticFunction<Game>("requestOutfit", std::bind(&Game::requestOutfit, &g_game));
+    g_lua.bindClassStaticFunction<Game>("requestChannels", std::bind(&Game::requestChannels, &g_game));
+    g_lua.bindClassStaticFunction<Game>("openChannel", std::bind(&Game::openChannel, &g_game, _1));
     g_lua.bindClassStaticFunction<Game>("setOutfit", std::bind(&Game::setOutfit, &g_game, _1));
     g_lua.bindClassStaticFunction<Game>("look", std::bind(&Game::look, &g_game, _1));
     g_lua.bindClassStaticFunction<Game>("open", std::bind(&Game::open, &g_game, _1, _2));

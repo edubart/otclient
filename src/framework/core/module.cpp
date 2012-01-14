@@ -39,7 +39,7 @@ void Module::discover(const OTMLNodePtr& moduleNode)
     m_website = moduleNode->valueAt("website", none);
     m_version = moduleNode->valueAt("version", none);
     m_autoLoad = moduleNode->valueAt<bool>("autoLoad", false);
-    m_autoLoadPriority = moduleNode->valueAt<int>("autoLoadPriority", 100);
+    m_autoLoadAntecedence = moduleNode->valueAt<int>("autoLoadAntecedence", 100);
 
     if(OTMLNodePtr node = moduleNode->get("dependencies")) {
         for(const OTMLNodePtr& tmp : node->children())

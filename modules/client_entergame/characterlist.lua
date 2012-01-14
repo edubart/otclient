@@ -8,10 +8,10 @@ local characterList
 -- private functions
 local function onCharactersWindowKeyPress(self, keyCode, keyText, keyboardModifiers)
   if keyboardModifiers == KeyboardNoModifier then
-    if keyCode == KeyUp or keyCode == KeyTab then
+    if keyCode == KeyUp then
       characterList:focusPreviousChild(ActiveFocusReason)
       return true
-    elseif keyCode == KeyDown then
+    elseif keyCode == KeyDown or keyCode == KeyTab then
       characterList:focusNextChild(ActiveFocusReason)
       return true
     end

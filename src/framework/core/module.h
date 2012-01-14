@@ -44,12 +44,12 @@ public:
     std::string getWebsite() { return m_website; }
     std::string getVersion() { return m_version; }
     bool isAutoLoad() { return m_autoLoad; }
-    int getAutoLoadPriority() { return m_autoLoadPriority; }
+    int getAutoLoadAntecedence() { return m_autoLoadAntecedence; }
 
 private:
     Boolean<false> m_loaded;
     Boolean<false> m_autoLoad;
-    int m_autoLoadPriority;
+    int m_autoLoadAntecedence;
     std::string m_name;
     std::string m_description;
     std::string m_author;

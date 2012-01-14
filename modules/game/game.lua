@@ -18,9 +18,9 @@ function Game.createInterface()
   CharacterList.destroyLoadBox()
   Game.gameUi = displayUI('game.otui')
   rootWidget:moveChildToIndex(Game.gameUi, 1)
-  Game.gameMapPanel = Game.gameUi:getChildById('mapPanel')
-  Game.gameRightPanel = Game.gameUi:getChildById('rightPanel')
-  Game.gameBottomPanel = Game.gameUi:getChildById('bottomPanel')
+  Game.gameMapPanel = Game.gameUi:getChildById('gameMapPanel')
+  Game.gameRightPanel = Game.gameUi:getChildById('gameRightPanel')
+  Game.gameBottomPanel = Game.gameUi:getChildById('gameBottomPanel')
   Game.gameUi.onKeyPress = onGameKeyPress
 end
 

@@ -83,6 +83,7 @@ void ProtocolLogin::onRecv(InputMessage& inputMessage)
 void ProtocolLogin::onError(const boost::system::error_code& error)
 {
     callLuaField("onError", error.message(), true);
+    disconnect();
 }
 
 void ProtocolLogin::sendLoginPacket()

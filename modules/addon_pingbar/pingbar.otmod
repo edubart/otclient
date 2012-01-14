@@ -5,7 +5,7 @@ Module
   website: https://github.com/edubart/otclient
 
   autoLoad: true
-  autoLoadPriority: 1000
+  autoLoadAntecedence: 1000
 
   onLoad: |
     require 'pingbar'

@@ -73,7 +73,7 @@ public:
     void sendTextWindow(uint windowTextId, const std::string& text);
     void sendHouseWindow(int doorId, uint id, const std::string& text);
     void sendLookAt(const Position& position, int thingId, int stackpos);
-    void sendTalk(int channelType, int channelId, const std::string& receiver, const std::string& message);
+    void sendTalk(const std::string& speakTypeDesc, int channelId, const std::string& receiver, const std::string& message);
     void sendGetChannels();
     void sendJoinChannel(int channelId);
     void sendLeaveChannel(int channelId);
@@ -88,7 +88,7 @@ public:
     void sendPassLeadership(uint creatureId);
     void sendLeaveParty();
     void sendShareExperience(bool active, int unknown);
-    void sendOpenChannel();
+    void sendOpenChannel(int channelId);
     void sendInviteToChannel(const std::string& name);
     void sendExcludeFromChannel(const std::string& name);
     void sendCancel();
