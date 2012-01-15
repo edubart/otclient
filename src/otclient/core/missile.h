@@ -47,7 +47,7 @@ public:
 
 private:
     ticks_t m_startTicks;
-    Position m_positionDelta;
+    Position m_posDelta;
     float m_duration;
 };
 

@@ -29,8 +29,8 @@
 class UIGame : public UIWidget
 {
 protected:
-    virtual bool onKeyPress(uchar keyCode, std::string keyText, int keyboardModifiers);
-
+    bool onKeyPress(uchar keyCode, int keyboardModifiers, bool wouldFilter);
+    bool onKeyText(const std::string& keyText);
 };
 
 #endif

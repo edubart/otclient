@@ -27,6 +27,7 @@
 WIN32Window window;
 #else
 #include "x11window.h"
+#include <framework/core/clock.h>
 X11Window window;
 #endif
 
@@ -39,3 +40,83 @@ void PlatformWindow::updateUnmaximizedCoords()
         m_unmaximizedSize = m_size;
     }
 }
+
+void PlatformWindow::processKeyDown(Fw::Key keyCode)
+{
+    if(keyCode == Fw::KeyUnknown || m_keysState[keyCode])
+        return;
+
+    m_keysState[keyCode] = true;
+    m_lastKeysPress[keyCode] = -1;
+
+    if(keyCode == Fw::KeyCtrl)
+        m_inputEvent.keyboardModifiers |= Fw::KeyboardCtrlModifier;
+    else if(keyCode == Fw::KeyAlt)
+        m_inputEvent.keyboardModifiers |= Fw::KeyboardAltModifier;
+    else if(keyCode == Fw::KeyShift)
+        m_inputEvent.keyboardModifiers |= Fw::KeyboardShiftModifier;
+
+    m_inputEvent.reset();
+    m_inputEvent.type = Fw::KeyDownInputEvent;
+    m_inputEvent.keyCode = keyCode;
+
+    if(m_onInputEvent) {
+        m_onInputEvent(m_inputEvent);
+
+        m_inputEvent.reset(Fw::KeyPressInputEvent);
+        m_inputEvent.keyCode = keyCode;
+        m_lastKeysPress[keyCode] = g_clock.ticks();
+        m_firstKeysPress[keyCode] = g_clock.ticks();
+        m_onInputEvent(m_inputEvent);
+    }
+}
+
+void PlatformWindow::processKeyRelease(Fw::Key keyCode)
+{
+    if(keyCode == Fw::KeyUnknown || !m_keysState[keyCode])
+        return;
+
+    m_keysState[keyCode] = false;
+
+    if(keyCode == Fw::KeyCtrl)
+        m_inputEvent.keyboardModifiers &= ~Fw::KeyboardCtrlModifier;
+    else if(keyCode == Fw::KeyAlt)
+        m_inputEvent.keyboardModifiers &= ~Fw::KeyboardAltModifier;
+    else if(keyCode == Fw::KeyShift)
+        m_inputEvent.keyboardModifiers &= ~Fw::KeyboardShiftModifier;
+
+    if(m_onInputEvent) {
+        m_inputEvent.reset(Fw::KeyReleaseInputEvent);
+        m_onInputEvent(m_inputEvent);
+    }
+}
+
+void PlatformWindow::fireKeysPress()
+{
+    // avoid massive checks
+    if(m_keyPressTimer.ticksElapsed() < 10)
+        return;
+    m_keyPressTimer.restart();
+
+    for(auto it : m_keysState) {
+        Fw::Key keyCode = it.first;
+        bool pressed = it.second;
+
+        if(!pressed)
+            continue;
+
+        ticks_t lastPressTicks = m_lastKeysPress[keyCode];
+        ticks_t firstKeyPress = m_firstKeysPress[keyCode];
+        if(g_clock.ticksElapsed(lastPressTicks) >= KEY_PRESS_REPEAT_INTERVAL) {
+            if(m_onInputEvent) {
+                m_inputEvent.reset();
+                m_inputEvent.type = Fw::KeyPressInputEvent;
+                m_inputEvent.keyCode = keyCode;
+                m_inputEvent.wouldFilter = g_clock.ticksElapsed(firstKeyPress) < KEY_PRESS_REPEAT_DELAY;
+                m_onInputEvent(m_inputEvent);
+            }
+            m_lastKeysPress[keyCode] = g_clock.ticks();
+        }
+    }
+}
+

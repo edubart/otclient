@@ -93,7 +93,6 @@ private:
     int m_screen;
     Atom m_wmDelete;
     std::string m_clipboardText;
-    std::map<int, Fw::Key> m_keyMap;
 
 #ifndef OPENGL_ES2
     GLXContext m_glxContext;

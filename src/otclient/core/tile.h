@@ -50,10 +50,11 @@ public:
     CreaturePtr getTopCreature();
     ThingPtr getTopMultiUseThing();
 
-    const Position& getPos() { return m_position; }
+    const Position& getPos() { return m_pos; }
     int getDrawElevation() { return m_drawElevation; }
     std::vector<CreaturePtr> getCreatures();
     ItemPtr getGround();
+    int getGroundSpeed();
     bool isWalkable();
     bool isFullGround();
     bool isFullyOpaque();
@@ -67,7 +68,7 @@ public:
 private:
     std::vector<EffectPtr> m_effects; // Leave this outside m_things because it has no stackpos.
     std::vector<ThingPtr> m_things;
-    Position m_position;
+    Position m_pos;
     int m_drawElevation;
 };
 

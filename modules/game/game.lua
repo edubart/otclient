@@ -1,5 +1,6 @@
 -- private functions
-local function onGameKeyPress(self, keyCode, keyText, keyboardModifiers)
+local function onGameKeyPress(self, keyCode, keyboardModifiers, wouldFilter)
+  if wouldFilter then return end
   if keyboardModifiers == KeyboardCtrlModifier then
     if keyCode == KeyG then
       CharacterList.show()
@@ -17,6 +18,17 @@ function Game.createInterface()
   Background.hide()
   CharacterList.destroyLoadBox()
   Game.gameUi = displayUI('game.otui')
+
+  --Hotkeys.bindKeyPress('Up', function() Game.walk(North) end)
+  --Hotkeys.bindKeyPress('Down', function() Game.walk(South) end)
+  --Hotkeys.bindKeyPress('Left', function() Game.walk(West) end)
+  --Hotkeys.bindKeyPress('Right', function() Game.walk(East) end)
+
+  Hotkeys.bindKeyPress('Ctrl+Shift+Up', function() Game.forceWalk(North) end)
+  Hotkeys.bindKeyPress('Ctrl+Shift+Down', function() Game.forceWalk(South) end)
+  Hotkeys.bindKeyPress('Ctrl+Shift+Left', function() Game.forceWalk(West) end)
+  Hotkeys.bindKeyPress('Ctrl+Shift+Right', function() Game.forceWalk(East) end)
+
   rootWidget:moveChildToIndex(Game.gameUi, 1)
   Game.gameMapPanel = Game.gameUi:getChildById('gameMapPanel')
   Game.gameRightPanel = Game.gameUi:getChildById('gameRightPanel')

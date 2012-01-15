@@ -228,6 +228,8 @@ namespace Fw
 
     enum InputEventType {
         NoInputEvent = 0,
+        KeyTextInputEvent,
+        KeyDownInputEvent,
         KeyPressInputEvent,
         KeyReleaseInputEvent,
         MousePressInputEvent,

@@ -58,10 +58,10 @@ local function determineKeyComboDesc(keyCode, keyboardModifiers)
   return translateKeyCombo(keyCombo)
 end
 
-local function onWidgetKeyPress(widget, keyCode, keyText, keyboardModifiers)
+local function onWidgetKeyDown(widget, keyCode, keyboardModifiers)
   if keyCode == KeyUnknown then return end
   local keyComboDesc = determineKeyComboDesc(keyCode, keyboardModifiers)
-  local callback = widget.boundKeyCombos[keyComboDesc]
+  local callback = widget.boundKeyDownCombos[keyComboDesc]
   if callback then
     callback()
     return true
@@ -69,29 +69,57 @@ local function onWidgetKeyPress(widget, keyCode, keyText, keyboardModifiers)
   return false
 end
 
-local function connectWidgetHotkeyEvent(widget)
-  if widget.boundKeyCombos then return end
+local function onWidgetKeyPress(widget, keyCode, keyboardModifiers, wouldFilter)
+  local keyComboDesc = determineKeyComboDesc(keyCode, keyboardModifiers)
+  if keyCode == KeyUnknown then return end
+  local callback = widget.boundKeyPressCombos[keyComboDesc]
+  if callback then
+    callback()
+    return true
+  end
+  return false
+end
+
+local function connectKeyDownEvent(widget)
+  if widget.boundKeyDownCombos then return end
+  connect(widget, { onKeyDown = onWidgetKeyDown })
+  widget.boundKeyDownCombos = {}
+end
+
+local function connectKeyPressEvent(widget)
+  if widget.boundKeyPressCombos then return end
   connect(widget, { onKeyPress = onWidgetKeyPress })
-  widget.boundKeyCombos = {}
+  widget.boundKeyPressCombos = {}
 end
 
 -- public functions
-function Hotkeys.bind(keyComboDesc, callback, widget)
+function Hotkeys.bindKeyDown(keyComboDesc, callback, widget)
   widget = widget or rootWidget
-  connectWidgetHotkeyEvent(widget)
+  connectKeyDownEvent(widget)
   local keyComboDesc = retranslateKeyComboDesc(keyComboDesc)
   if keyComboDesc then
-    widget.boundKeyCombos[keyComboDesc] = callback
+    widget.boundKeyDownCombos[keyComboDesc] = callback
   else
     error('key combo \'' .. keyComboDesc .. '\' is failed')
   end
 end
 
-function Hotkeys.unbind(keyComboDesc, widget)
+function Hotkeys.bindKeyPress(keyComboDesc, callback, widget)
   widget = widget or rootWidget
-  if widget.boundKeyCombos == nil then return end
+  connectKeyPressEvent(widget)
   local keyComboDesc = retranslateKeyComboDesc(keyComboDesc)
   if keyComboDesc then
-    widget.boundKeyCombos[keyComboDesc] = nil
+    widget.boundKeyPressCombos[keyComboDesc] = callback
+  else
+    error('key combo \'' .. keyComboDesc .. '\' is failed')
+  end
+end
+
+function Hotkeys.unbindKeyDown(keyComboDesc, widget)
+  widget = widget or rootWidget
+  if widget.boundKeyDownCombos == nil then return end
+  local keyComboDesc = retranslateKeyComboDesc(keyComboDesc)
+  if keyComboDesc then
+    widget.boundKeyDownCombos[keyComboDesc] = nil
   end
 end

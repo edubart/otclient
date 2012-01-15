@@ -1,7 +1,6 @@
 ====================================================
 High priority TODO in order (before first public disclose)
 
-[bart] tab widgets
 [bart] chat with tabs
 [bart] scrollbar
 [bart] scrollable widgets
@@ -62,8 +61,10 @@ change win32 mouse cursor icon
 [bart] review and make more error prone with more warnings
 [bart] reapply anchor styles when adding new childs
 [bart] ui text selection
+[bart] find styles by scope
 [bart] make set of background/icon/image width alone work
 [bart] check for recursive anchors and print a error instead of crashing
+[bart] make api to enable/disable capture of events to avoid massive event processing
 
 == Client modules
 [bart] make possible to reload modules
@@ -73,11 +74,12 @@ change win32 mouse cursor icon
 [bart] clean sprites cache periodically
 [bart] create a shader manager
 [bart] find a way to load map rendering styles
+[bart] move redering of creatures names, skulls, etc to UI
 [bart] cache screen creatures in a list on map
 [bart] handle corrupt errors in dat/spr
 [bart] remake spr/dat using OTML and image files
 [bart] rework map tile rendering (cache visible tiles, etc)
-[bart] minimap windows
+[bart] minimap window
 [bart] draw lights using shaders
 [bart] limit FPS in options
 [bart] resize map, right panel

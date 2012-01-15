@@ -8,7 +8,7 @@ function PingBar.init()
   pingLabel:applyStyle({ ['anchors.left'] =  'prev.right',
                          ['anchors.top'] = 'parent.top',
                          ['margin-top'] = 12,
-                         ['margin-left'] = 10,
+                         ['margin-left'] = 20,
                          font = 'verdana-11px-rounded',
                          color = '#FE6500',
                          width = 120,

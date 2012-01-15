@@ -44,13 +44,14 @@ public:
     virtual void draw(const Point& p, const Rect&) = 0;
 
     void setId(uint32 id);
-    virtual void setPos(const Position& position) { m_position = position; }
+    virtual void setPos(const Position& position) { m_pos = position; }
 
     uint32 getId() const { return m_id; }
-    Position getPos() const { return m_position; }
+    Position getPos() const { return m_pos; }
     int getStackPriority();
     virtual ThingType *getType();
     int getAnimationPhases() { return m_type->dimensions[ThingType::AnimationPhases]; }
+    int getGroundSpeed() { return m_type->parameters[ThingType::GroundSpeed]; }
 
     void setXPattern(int xPattern) { m_xPattern = xPattern; }
     void setYPattern(int yPattern) { m_yPattern = yPattern; }
@@ -87,7 +88,7 @@ protected:
     void internalDraw(const Point& p, int layer);
 
     uint32 m_id;
-    Position m_position;
+    Position m_pos;
     ThingType *m_type;
 
     int m_xPattern, m_yPattern, m_zPattern, m_animation;

@@ -28,8 +28,6 @@
 class LocalPlayer : public Player
 {
 public:
-    LocalPlayer();
-
     void setCanReportBugs(uint8 canReportBugs) { m_canReportBugs = (canReportBugs != 0); }
     void setSkill(Otc::Skill skill, Otc::SkillType skillType, int value) { m_skills[skill][skillType] = value; }
     void setStatistic(Otc::Statistic statistic, double value) { m_statistics[statistic] = value; }
@@ -42,25 +40,21 @@ public:
     double getStatistic(Otc::Statistic statistic) { return m_statistics[statistic]; }
     CreaturePtr getAttackingCreature() { return m_attackingCreature; }
     CreaturePtr getFollowingCreature() { return m_followingCreature; }
-    Otc::Direction getNextWalkDirection() { return m_nextWalkDirection; }
     Otc::PlayerIcons getIcons() { return m_icons; }
 
     bool isAttacking() { return m_attackingCreature != nullptr; }
     bool isFollowing() { return m_followingCreature != nullptr; }
 
-    void clientWalk(Otc::Direction direction);
-    void walk(const Position& position, bool inverse);
-    void cancelWalk(Otc::Direction direction, bool force = false);
+    void preWalk(Otc::Direction direction);
     bool canWalk(Otc::Direction direction);
 
     LocalPlayerPtr asLocalPlayer() { return std::static_pointer_cast<LocalPlayer>(shared_from_this()); }
 
     double getLevel() { return getStatistic(Otc::Level); }
+    //TODO: more gets
 
 private:
     bool m_canReportBugs;
-    bool m_clientWalking;
-    Otc::Direction m_nextWalkDirection;
     CreaturePtr m_attackingCreature, m_followingCreature;
     Otc::PlayerIcons m_icons;
     int m_skills[Otc::LastSkill][Otc::LastSkillType];

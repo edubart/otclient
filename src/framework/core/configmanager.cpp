@@ -76,10 +76,8 @@ void ConfigManager::setList(const std::string& key, const std::vector<std::strin
         return;
 
     OTMLNodePtr child = OTMLNode::create(key, true);
-    for(const std::string& value : list) {
+    for(const std::string& value : list)
         child->writeIn(value);
-        dump << "insert" << value;
-    }
     m_confsDoc->addChild(child);
 }
 

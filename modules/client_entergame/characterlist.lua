@@ -6,7 +6,8 @@ local loadBox
 local characterList
 
 -- private functions
-local function onCharactersWindowKeyPress(self, keyCode, keyText, keyboardModifiers)
+local function onCharactersWindowKeyPress(self, keyCode, keyboardModifiers, wouldFilter)
+  if wouldFilter then return end
   if keyboardModifiers == KeyboardNoModifier then
     if keyCode == KeyUp then
       characterList:focusPreviousChild(ActiveFocusReason)

@@ -5,7 +5,7 @@ local displayedMenuList = {}
 function UIPopupMenu.create()
   local menu = UIPopupMenu.internalCreate()
   local layout = UIVerticalLayout.create(menu)
-  layout:setFitParent(true)
+  layout:setFitChildren(true)
   menu:setLayout(layout)
   return menu
 end
@@ -53,7 +53,8 @@ function UIPopupMenu:onMousePress(mousePos, mouseButton)
   return false
 end
 
-function UIPopupMenu:onKeyPress(keyCode, keyText, keyboardModifiers)
+function UIPopupMenu:onKeyPress(keyCode, keyboardModifiers, wouldFilter)
+  if wouldFilter then return end
   if keyCode == KeyEscape then
     self:destroy()
     return true

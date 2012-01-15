@@ -419,13 +419,11 @@ void ProtocolGame::parseCreatureMove(InputMessage& msg)
         return;
     }
 
-    g_game.processCreatureMove(creature, oldPos, newPos);
-
     // update map tiles
     g_map.removeThing(thing);
     g_map.addThing(thing, newPos);
 
-    //g_game.processCreatureMove(creature, oldPos, newPos);
+    g_game.processCreatureMove(creature, oldPos, newPos);
 }
 
 void ProtocolGame::parseOpenContainer(InputMessage& msg)

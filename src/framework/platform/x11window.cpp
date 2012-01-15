@@ -39,7 +39,6 @@ X11Window::X11Window()
     m_screen = 0;
     m_wmDelete = 0;
     m_size = Size(16,16);
-    m_inputEvent.keyboardModifiers = 0;
 
 #ifndef OPENGL_ES2
     m_glxContext = 0;
@@ -526,33 +525,41 @@ void X11Window::poll()
     while(XPending(m_display) > 0) {
         XNextEvent(m_display, &event);
 
+        // check for repeated key releases
+        bool repatedKeyRelease = false;
+        if(event.type == KeyRelease && XPending(m_display)) {
+            XPeekEvent(m_display, &peekEvent);
+            if((peekEvent.type == KeyPress) && (peekEvent.xkey.keycode == event.xkey.keycode) && ((peekEvent.xkey.time-event.xkey.time) < 2))
+                repatedKeyRelease = true;
+        }
+
+        // process keydown and keyrelease events first
+        if(event.type == KeyPress || (event.type == KeyRelease && !repatedKeyRelease)) {
+            // remove caps lock and shift maks
+            XKeyEvent xkey = event.xkey;
+            xkey.state &= ~(ShiftMask | LockMask);
+
+            // lookup keysym and translate it
+            KeySym keysym;
+            char buf[32];
+            int len = XLookupString(&xkey, buf, sizeof(buf), &keysym, 0);
+            Fw::Key keyCode = Fw::KeyUnknown;
+            if(m_keyMap.find(keysym) != m_keyMap.end())
+                keyCode = m_keyMap[keysym];
+
+            if(event.type == KeyPress)
+                processKeyDown(keyCode);
+            else if(event.type == KeyRelease)
+                processKeyRelease(keyCode);
+        }
+
         // call filter because xim will discard KeyPress events when keys still composing
         if(XFilterEvent(&event, m_window))
             continue;
 
-        // discard events of repeated key releases
-        if(event.type == KeyRelease && XPending(m_display)) {
-            XPeekEvent(m_display, &peekEvent);
-            if((peekEvent.type == KeyPress) &&
-              (peekEvent.xkey.keycode == event.xkey.keycode) &&
-              ((peekEvent.xkey.time-event.xkey.time) < 2))
-                continue;
-        }
-
-        // reset inputEvent values, except keyboardModifiers and mousePos
-        m_inputEvent.type = Fw::NoInputEvent;
-        m_inputEvent.mouseButton = Fw::MouseNoButton;
-        m_inputEvent.keyCode = Fw::KeyUnknown;
-        m_inputEvent.keyText = "";
-        m_inputEvent.mouseMoved = Point();
-        m_inputEvent.wheelDirection = Fw::MouseNoWheel;
-        m_inputEvent.keyboardModifiers = 0;
-        if(event.xkey.state & ControlMask)
-            m_inputEvent.keyboardModifiers |= Fw::KeyboardCtrlModifier;
-        if(event.xkey.state & ShiftMask)
-            m_inputEvent.keyboardModifiers |= Fw::KeyboardShiftModifier;
-        if(event.xkey.state & Mod1Mask)
-            m_inputEvent.keyboardModifiers |= Fw::KeyboardAltModifier;
+        // discard repated key releases
+        if(repatedKeyRelease)
+            continue;
 
         switch(event.type) {
             case ClientMessage: {
@@ -614,55 +621,44 @@ void X11Window::poll()
                 XFlush(m_display);
                 break;
             }
-            case KeyPress:
-            case KeyRelease: {
+            // process text events
+            case KeyPress: {
+                // text cant be insert while holding ctrl or alt
+                if(event.xkey.state & ControlMask || event.xkey.state & Mod1Mask)
+                    break;
+
+                // process key text events
                 KeySym keysym;
                 char buf[32];
                 memset(buf, 0, 32);
                 int len;
 
                 // lookup for keyText
-                if(event.type == KeyPress && !(event.xkey.state & ControlMask) && !(event.xkey.state & Mod1Mask)) {
-                    if(m_xic) { // with xim we can get latin1 input correctly
-                        Status status;
-                        len = XmbLookupString(m_xic, &event.xkey, buf, sizeof(buf), &keysym, &status);
-                    } else { // otherwise use XLookupString, but often it doesn't work right with dead keys
-                        static XComposeStatus compose = {NULL, 0};
-                        len = XLookupString(&event.xkey, buf, sizeof(buf), &keysym, &compose);
-                    }
-
-                    if(len > 0 &&
-                        // these keys produces characters that we don't want to capture
-                        keysym != XK_BackSpace &&
-                        keysym != XK_Return &&
-                        keysym != XK_Delete &&
-                        keysym != XK_Escape &&
-                        (uchar)(buf[0]) >= 32
-                    ) {
-                        //logDebug("char: ", buf[0], " code: ", (uint)buf[0]);
-                        m_inputEvent.keyText = buf;
-                    }
+                if(m_xic) { // with xim we can get latin1 input correctly
+                    Status status;
+                    len = XmbLookupString(m_xic, &event.xkey, buf, sizeof(buf), &keysym, &status);
+                } else { // otherwise use XLookupString, but often it doesn't work right with dead keys
+                    static XComposeStatus compose = {NULL, 0};
+                    len = XLookupString(&event.xkey, buf, sizeof(buf), &keysym, &compose);
                 }
 
-                XKeyEvent xkey = event.xkey;
-                xkey.state = xkey.state & ~(ShiftMask);
-                len = XLookupString(&xkey, buf, sizeof(buf), &keysym, 0);
-                if(len > 0 && m_inputEvent.keyText.length() == 0 && keysym != XK_BackSpace &&
-                        keysym != XK_Return &&
-                        keysym != XK_Delete &&
-                        keysym != XK_Escape)
-                    m_inputEvent.keyText = buf;
+                // filter unwanted characters
+                if(len == 0 || (uchar)(buf[0]) < 32 || keysym == XK_BackSpace || keysym == XK_Return || keysym == XK_Delete || keysym == XK_Escape)
+                    break;
+                std::string text = buf;
 
-                if(m_keyMap.find(keysym) != m_keyMap.end())
-                    m_inputEvent.keyCode = m_keyMap[keysym];
+                //logDebug("char: ", buf[0], " code: ", (int)((uchar)buf[0]));
 
-                m_inputEvent.type = (event.type == KeyPress) ? Fw::KeyPressInputEvent : Fw::KeyReleaseInputEvent;
-                if(m_inputEvent.keyCode != Fw::KeyUnknown || !m_inputEvent.keyText.empty())
+                if(m_onInputEvent && text.length() > 0) {
+                    m_inputEvent.reset(Fw::KeyTextInputEvent);
+                    m_inputEvent.keyText = text;
                     m_onInputEvent(m_inputEvent);
+                }
                 break;
             }
             case ButtonPress:
             case ButtonRelease: {
+                m_inputEvent.reset();
                 m_inputEvent.type = (event.type == ButtonPress) ? Fw::MousePressInputEvent : Fw::MouseReleaseInputEvent;
                 switch(event.xbutton.button) {
                     case Button1:
@@ -694,6 +690,7 @@ void X11Window::poll()
             }
 
             case MotionNotify: {
+                m_inputEvent.reset();
                 m_inputEvent.type = Fw::MouseMoveInputEvent;
                 Point newMousePos(event.xbutton.x, event.xbutton.y);
                 m_inputEvent.mouseMoved = newMousePos - m_inputEvent.mousePos;
@@ -722,6 +719,8 @@ void X11Window::poll()
 
     if(needsResizeUpdate && m_onResize)
         m_onResize(m_size);
+
+    fireKeysPress();
 }
 
 void X11Window::swapBuffers()

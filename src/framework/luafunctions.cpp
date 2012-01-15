@@ -294,12 +294,12 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIBoxLayout>("setFitChildren", &UIBoxLayout::setFitChildren);
 
     // UIVerticalLayout
-    g_lua.registerClass<UIVerticalLayout, UILayout>();
+    g_lua.registerClass<UIVerticalLayout, UIBoxLayout>();
     g_lua.bindClassStaticFunction<UIVerticalLayout>("create", [](UIWidgetPtr parent){ return UIVerticalLayoutPtr(new UIVerticalLayout(parent)); } );
     g_lua.bindClassMemberFunction<UIVerticalLayout>("setAlignBottom", &UIVerticalLayout::setAlignBottom);
 
     // UIHorizontalLayout
-    g_lua.registerClass<UIHorizontalLayout, UILayout>();
+    g_lua.registerClass<UIHorizontalLayout, UIBoxLayout>();
     g_lua.bindClassStaticFunction<UIHorizontalLayout>("create", [](UIWidgetPtr parent){ return UIHorizontalLayoutPtr(new UIHorizontalLayout(parent)); } );
     g_lua.bindClassMemberFunction<UIHorizontalLayout>("setAlignRight", &UIHorizontalLayout::setAlignRight);
 
@@ -404,6 +404,7 @@ void Application::registerLuaFunctions()
     g_lua.bindClassStaticFunction("g_window", "getY", std::bind(&PlatformWindow::getY, &g_window));
     g_lua.bindClassStaticFunction("g_window", "getMousePos", std::bind(&PlatformWindow::getMousePos, &g_window));
     g_lua.bindClassStaticFunction("g_window", "getKeyboardModifiers", std::bind(&PlatformWindow::getKeyboardModifiers, &g_window));
+    g_lua.bindClassStaticFunction("g_window", "isKeyPressed", std::bind(&PlatformWindow::isKeyPressed, &g_window, _1));
     g_lua.bindClassStaticFunction("g_window", "isVisible", std::bind(&PlatformWindow::isVisible, &g_window));
     g_lua.bindClassStaticFunction("g_window", "isFullscreen", std::bind(&PlatformWindow::isFullscreen, &g_window));
     g_lua.bindClassStaticFunction("g_window", "isMaximized", std::bind(&PlatformWindow::isMaximized, &g_window));

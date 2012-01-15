@@ -36,10 +36,10 @@ public:
 
     bool hasFinished() { return m_finished; }
 
-    PointF getPos() { return m_position; }
+    PointF getPos() { return m_pos; }
     PointF getVelocity() { return m_velocity; }
 
-    void setPos(const PointF& position) { m_position = position; }
+    void setPos(const PointF& position) { m_pos = position; }
     void setVelocity(const PointF& velocity) { m_velocity = velocity; }
 
 private:
@@ -51,7 +51,7 @@ private:
     std::vector<Color> m_colors;
     std::vector<float> m_colorsStops;
     TexturePtr m_texture;
-    PointF m_position;
+    PointF m_pos;
     PointF m_velocity;
     PointF m_acceleration;
     Size m_size, m_startSize, m_finalSize;

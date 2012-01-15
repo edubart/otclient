@@ -23,11 +23,11 @@ function TopMenu.init()
   gameButtonsPanel = topMenu:getChildById('gameButtonsPanel')
 
   TopMenu.addRightButton('logoutButton', 'Logout (Ctrl+Q)', '/core_styles/icons/logout.png', onLogout)
-  Hotkeys.bind('Ctrl+Q', onLogout)
+  Hotkeys.bindKeyDown('Ctrl+Q', onLogout)
 end
 
 function TopMenu.terminate()
-  Hotkeys.unbind('Ctrl+Q')
+  Hotkeys.unbindKeyDown('Ctrl+Q')
   leftButtonsPanel = nil
   rightButtonsPanel = nil
   topMenu:destroy()

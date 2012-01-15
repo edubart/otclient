@@ -47,7 +47,7 @@ Creature::Creature() : Thing()
     m_walkTimePerPixel = 1000.0/32.0;
 
     m_walking = false;
-    m_inverseWalking = true;
+    m_preWalking = false;
 
     m_skull = Otc::SkullNone;
     m_shield = Otc::ShieldNone;
@@ -189,51 +189,44 @@ void Creature::drawInformation(int x, int y, bool useGray, const Rect& visibleRe
     }
 }
 
-void Creature::walk(const Position& position, bool inverse)
+void Creature::walk(const Position& oldPos, const Position& newPos, bool preWalk)
 {
-    // We're walking
-    if(m_position.isInRange(position, 1, 1, 0)) {
-        Otc::Direction direction = m_position.getDirectionFromPosition(position);
-        setDirection(direction);
+    // get walk direction
+    Otc::Direction direction = oldPos.getDirectionFromPosition(newPos);
 
-        if(inverse) {
-            Position positionDelta = m_position - position;
-            m_walkOffset = Point(positionDelta.x * Map::NUM_TILE_PIXELS, positionDelta.y * Map::NUM_TILE_PIXELS);
-        }
-        else
-            m_walkOffset = Point(0, 0);
+    // already pre walking to the same direction
+    if(m_preWalking && preWalk && direction == m_direction)
+        return;
 
-        // Diagonal walking lasts 3 times more.
-        int walkTimeFactor = 1;
-        if(direction == Otc::NorthWest || direction == Otc::NorthEast || direction == Otc::SouthWest || direction == Otc::SouthEast)
-            walkTimeFactor = 3;
-
-        // Get walking speed
-        int groundSpeed = 100;
-        if(ItemPtr ground = g_map.getTile(position)->getGround())
-            groundSpeed = ground->getType()->parameters[ThingType::GroundSpeed];
-
-        float walkTime = 1000.0 * (float)groundSpeed / m_speed;
-        walkTime = (walkTime == 0) ? 1000 : walkTime;
-        walkTime = std::ceil(walkTime / g_game.getServerBeat()) * g_game.getServerBeat();
-
-        bool sameWalk = m_walking && !m_inverseWalking && inverse;
-        m_inverseWalking = inverse;
+    // pre walking was already going on, just change to normal waking
+    if(m_preWalking && !preWalk && direction == m_direction) {
+        m_preWalking = false;
         m_walking = true;
-
-        m_walkTimePerPixel = walkTime / 32.0;
-        m_walkStart = sameWalk ? m_walkStart : g_clock.ticks();
-        m_walkEnd = m_walkStart + walkTime * walkTimeFactor;
-
-        m_turnDirection = m_direction;
         updateWalk();
+        return;
     }
-    // Teleport
-    else {
-        m_walking = false;
-        m_walkOffset = Point(0, 0);
-        m_animation = 0;
-    }
+
+    setDirection(direction);
+
+    // diagonal walking lasts 3 times more.
+    int walkTimeFactor = 1;
+    if(direction == Otc::NorthWest || direction == Otc::NorthEast || direction == Otc::SouthWest || direction == Otc::SouthEast)
+        walkTimeFactor = 3;
+
+    // calculate walk interval
+    int groundSpeed = g_map.getTile(oldPos)->getGroundSpeed();
+    float walkInterval = 1000.0 * (float)groundSpeed / m_speed;
+    walkInterval = (walkInterval == 0) ? 1000 : walkInterval;
+    walkInterval = std::ceil(walkInterval / g_game.getServerBeat()) * g_game.getServerBeat();
+
+    m_walkTimePerPixel = walkInterval / 32.0;
+    m_walkOffset = Point();
+    m_walkStart = g_clock.ticks();
+    m_walkEnd = m_walkStart + walkInterval * walkTimeFactor;
+    m_walking = true;
+    m_preWalking = preWalk;
+    m_turnDirection = m_direction;
+    updateWalk();
 }
 
 void Creature::turn(Otc::Direction direction)
@@ -252,7 +245,7 @@ void Creature::updateWalk()
     int elapsedTicks = g_clock.ticksElapsed(m_walkStart);
     int totalPixelsWalked = std::min((int)round(elapsedTicks / m_walkTimePerPixel), 32);
 
-    if(m_inverseWalking) {
+    if(!m_preWalking) {
         if(m_direction == Otc::North || m_direction == Otc::NorthEast || m_direction == Otc::NorthWest)
             m_walkOffset.y = 32 - totalPixelsWalked;
         else if(m_direction == Otc::South || m_direction == Otc::SouthEast || m_direction == Otc::SouthWest)
@@ -262,8 +255,7 @@ void Creature::updateWalk()
             m_walkOffset.x = totalPixelsWalked - 32;
         else if(m_direction == Otc::West || m_direction == Otc::NorthWest || m_direction == Otc::SouthWest)
             m_walkOffset.x = 32 - totalPixelsWalked;
-    }
-    else {
+    } else {
         if(m_direction == Otc::North || m_direction == Otc::NorthEast || m_direction == Otc::NorthWest)
             m_walkOffset.y = -totalPixelsWalked;
         else if(m_direction == Otc::South || m_direction == Otc::SouthEast || m_direction == Otc::SouthWest)
@@ -282,20 +274,26 @@ void Creature::updateWalk()
             m_animation = 1 + totalPixelsWalked * 4 / Map::NUM_TILE_PIXELS % (m_type->dimensions[ThingType::AnimationPhases] - 1);
     }
 
-    if(g_clock.ticks() > m_walkEnd)
+    if(g_clock.ticks() > m_walkEnd) {
         cancelWalk(m_turnDirection);
-    else
+    } else
         g_dispatcher.scheduleEvent(std::bind(&Creature::updateWalk, asCreature()), m_walkTimePerPixel);
 }
 
-void Creature::cancelWalk(Otc::Direction direction, bool)
+void Creature::cancelWalk(Otc::Direction direction, bool force)
 {
+    if(force) {
+        m_walkOffset = Point();
+        m_preWalking = false;
+    } else if(!m_preWalking)
+        m_walkOffset = Point();
     m_walking = false;
-    m_walkStart = 0;
+
+    if(direction != Otc::InvalidDirection)
+        setDirection(direction);
+
     if(m_outfit.getCategory() == ThingsType::Creature)
         m_animation = 0;
-    m_walkOffset = Point(0, 0);
-    setDirection(direction);
 }
 
 void Creature::setName(const std::string& name)
@@ -345,8 +343,7 @@ void Creature::setDirection(Otc::Direction direction)
             m_xPattern = Otc::West;
         else
             m_xPattern = direction;
-    }
-    else {
+    } else {
         m_xPattern = 0;
     }
 
@@ -358,7 +355,7 @@ void Creature::setOutfit(const Outfit& outfit)
     if(m_outfit.getCategory() != ThingsType::Effect && outfit.getCategory() == ThingsType::Effect) {
         auto self = asCreature();
         g_dispatcher.scheduleEvent([self]() {
-            self->updateAnimation();
+            self->updateInvisibleAnimation();
         }, INVISIBLE_TICKS);
 
         m_xPattern = 0;
@@ -433,7 +430,7 @@ void Creature::addVolatileSquare(uint8 color)
     }, VOLATILE_SQUARE_DURATION);
 }
 
-void Creature::updateAnimation()
+void Creature::updateInvisibleAnimation()
 {
     if(m_animation == 1)
         m_animation = 2;
@@ -447,7 +444,7 @@ void Creature::updateAnimation()
     if(g_game.isOnline() && m_outfit.getCategory() == ThingsType::Effect) {
         auto self = asCreature();
         g_dispatcher.scheduleEvent([self]() {
-            self->updateAnimation();
+            self->updateInvisibleAnimation();
         }, INVISIBLE_TICKS);
     }
 }
@@ -470,3 +467,4 @@ ThingType *Creature::getType()
 {
     return g_thingsType.getThingType(m_outfit.getId(), m_outfit.getCategory());
 }
+

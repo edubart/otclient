@@ -33,7 +33,7 @@
 Tile::Tile(const Position& position)
 {
     m_drawElevation = 0;
-    m_position = position;
+    m_pos = position;
 }
 
 void Tile::draw(const Point& p, const Rect& visibleRect)
@@ -67,7 +67,7 @@ void Tile::draw(const Point& p, const Rect& visibleRect)
     //TODO: this algorithm is slowing down render too much, but it could be cached to improve framerate
     for(int xi = -1; xi <= 1; ++xi) {
         for(int yi = -1; yi <= 1; ++yi) {
-            for(CreaturePtr creature : g_map.getTile(m_position + Position(xi, yi, 0))->getCreatures()) {
+            for(CreaturePtr creature : g_map.getTile(m_pos + Position(xi, yi, 0))->getCreatures()) {
                 ThingType *type = creature->getType();
                 Rect creatureRect(p.x + xi*32 + creature->getWalkOffset().x - type->parameters[ThingType::DisplacementX], p.y + yi*32 + creature->getWalkOffset().y - type->parameters[ThingType::DisplacementY], 32, 32);
                 Rect thisTileRect(p.x, p.y, 32, 32);
@@ -195,6 +195,14 @@ ItemPtr Tile::getGround()
     if(type->properties[ThingType::IsGround])
         return firstObject->asItem();
     return nullptr;
+}
+
+int Tile::getGroundSpeed()
+{
+    int groundSpeed = 100;
+    if(ItemPtr ground = getGround())
+        groundSpeed = ground->getGroundSpeed();
+    return groundSpeed;
 }
 
 ThingPtr Tile::getTopLookThing()

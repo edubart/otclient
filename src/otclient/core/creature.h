@@ -73,18 +73,19 @@ public:
     uint8 getEmblem() { return m_emblem; }
     bool getPassable() { return m_passable; }
 
-    void updateAnimation();
+    void updateInvisibleAnimation();
     void updateShield();
 
     ThingType *getType();
 
-    //virtual void walk(const Position& oldPos, const Position& newPos, bool inverse = true);
-    virtual void walk(const Position& position, bool inverse = true);
+    // walk related
+    void walk(const Position& oldPos, const Position& newPos, bool preWalk = false);
     void turn(Otc::Direction direction);
-    virtual void cancelWalk(Otc::Direction direction, bool force = false);
+    void cancelWalk(Otc::Direction direction = Otc::InvalidDirection, bool force = false);
     Point getWalkOffset() { return m_walkOffset; }
 
     bool isWalking() { return m_walking; }
+    bool isPreWalking() { return m_preWalking; }
 
     CreaturePtr asCreature() { return std::static_pointer_cast<Creature>(shared_from_this()); }
 
@@ -109,7 +110,7 @@ protected:
     Color m_informationColor;
 
     ticks_t m_walkStart, m_walkEnd;
-    bool m_walking, m_inverseWalking;
+    bool m_walking, m_preWalking;
     float m_walkTimePerPixel;
     Point m_walkOffset;
     Otc::Direction m_turnDirection;

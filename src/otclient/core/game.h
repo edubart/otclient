@@ -56,6 +56,7 @@ public:
 
     // walk related
     void walk(Otc::Direction direction);
+    void forceWalk(Otc::Direction direction);
     void turn(Otc::Direction direction);
 
     // item related

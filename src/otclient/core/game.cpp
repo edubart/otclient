@@ -140,23 +140,22 @@ void Game::processInventoryChange(int slot, const ItemPtr& item)
 
 void Game::processCreatureMove(const CreaturePtr& creature, const Position& oldPos, const Position& newPos)
 {
-    /*
     // walk
     if(oldPos.isInRange(newPos, 1, 1, 0)) {
-        Otc::Direction direction = oldPos.getDirectionFromPosition(newPos);
-        creature->setDirection(direction);
+        creature->walk(oldPos, newPos);
     // teleport
     } else {
-        // stop animation on teleport
+        // stop walking on teleport
         if(creature->isWalking())
             creature->cancelWalk();
     }
-    */
-    if(!m_walkFeedback && creature == m_localPlayer) {
-        updateWalkPing();
-        m_walkFeedback = true;
+
+    if(creature == m_localPlayer) {
+        if(!m_walkFeedback) {
+            updateWalkPing();
+            m_walkFeedback = true;
+        }
     }
-    creature->walk(newPos);
 }
 
 void Game::processAttackCancel()
@@ -176,18 +175,23 @@ void Game::processWalkCancel(Otc::Direction direction)
 
 void Game::walk(Otc::Direction direction)
 {
-    if(m_localPlayer->isFollowing()) {
+    if(!isOnline() || isDead() || !checkBotProtection())
+        return;
+
+    if(m_localPlayer->isFollowing())
         cancelFollow();
-        return;
-    }
 
-    if(!isOnline() || isDead() || !checkBotProtection() || !m_localPlayer->canWalk(direction))
+    if(!m_localPlayer->canWalk(direction))
         return;
 
-    m_localPlayer->clientWalk(direction);
+    m_localPlayer->preWalk(direction);
+    forceWalk(direction);
+}
 
-    // ping calculation restarts when the local players try to walk one tile
+void Game::forceWalk(Otc::Direction direction)
+{
     m_walkPingTimer.restart();
+    m_walkFeedback = false;
 
     switch(direction) {
     case Otc::North:
@@ -215,8 +219,6 @@ void Game::walk(Otc::Direction direction)
         m_protocolGame->sendWalkNorthWest();
         break;
     }
-
-    m_walkFeedback = false;
 }
 
 void Game::turn(Otc::Direction direction)
@@ -334,6 +336,7 @@ void Game::rotate(const ThingPtr& thing)
         m_protocolGame->sendRotateItem(thing->getPos(), thing->getId(), stackpos);
 }
 
+//TODO: move this to Thing class
 int Game::getThingStackpos(const ThingPtr& thing)
 {
     // thing is at map

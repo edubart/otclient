@@ -35,7 +35,7 @@ Missile::Missile() : Thing()
 void Missile::draw(const Point& p, const Rect&)
 {
     float time = (g_clock.ticks() - m_startTicks) / m_duration;
-    internalDraw(p + Point(m_positionDelta.x * time, m_positionDelta.y * time), 0);
+    internalDraw(p + Point(m_posDelta.x * time, m_posDelta.y * time), 0);
 }
 
 void Missile::setPath(const Position& fromPosition, const Position& toPosition)
@@ -79,12 +79,12 @@ void Missile::setPath(const Position& fromPosition, const Position& toPosition)
         m_yPattern = 1;
     }
 
-    m_position = fromPosition;
-    m_positionDelta = toPosition - fromPosition;
+    m_pos = fromPosition;
+    m_posDelta = toPosition - fromPosition;
     m_startTicks = g_clock.ticks();
-    m_duration = 150 * std::sqrt(Point(m_positionDelta.x, m_positionDelta.y).length());
-    m_positionDelta.x *= Map::NUM_TILE_PIXELS;
-    m_positionDelta.y *= Map::NUM_TILE_PIXELS;
+    m_duration = 150 * std::sqrt(Point(m_posDelta.x, m_posDelta.y).length());
+    m_posDelta.x *= Map::NUM_TILE_PIXELS;
+    m_posDelta.y *= Map::NUM_TILE_PIXELS;
 
     // schedule removal
     auto self = asMissile();

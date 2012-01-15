@@ -109,7 +109,7 @@ public:
     bool operator==(const Position& other) const { return other.x == x && other.y == y && other.z == z; }
     bool operator!=(const Position& other) const { return other.x!=x || other.y!=y || other.z!=z; }
 
-    bool isInRange(const Position& pos, int xdif, int ydif, int zdif = 1) {
+    bool isInRange(const Position& pos, int xdif, int ydif, int zdif = 1) const {
         return std::abs(x-pos.x) <= xdif && std::abs(y-pos.y) <= ydif && std::abs(pos.z-z) <= zdif;
     }
 

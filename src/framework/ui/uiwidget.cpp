@@ -1053,14 +1053,24 @@ void UIWidget::onHoverChange(bool hovered)
         g_ui.getRootWidget()->updateState(Fw::HoverState);
 }
 
-bool UIWidget::onKeyPress(uchar keyCode, std::string keyText, int keyboardModifiers)
+bool UIWidget::onKeyText(const std::string& keyText)
 {
-    return callLuaField<bool>("onKeyPress", keyCode, keyText, keyboardModifiers);
+    return callLuaField<bool>("onKeyText", keyText);
 }
 
-bool UIWidget::onKeyRelease(uchar keyCode, std::string keyText, int keyboardModifiers)
+bool UIWidget::onKeyDown(uchar keyCode, int keyboardModifiers)
 {
-    return callLuaField<bool>("onKeyRelease", keyCode, keyText, keyboardModifiers);
+    return callLuaField<bool>("onKeyDown", keyCode, keyboardModifiers);
+}
+
+bool UIWidget::onKeyPress(uchar keyCode, int keyboardModifiers, bool wouldFilter)
+{
+    return callLuaField<bool>("onKeyPress", keyCode, keyboardModifiers, wouldFilter);
+}
+
+bool UIWidget::onKeyRelease(uchar keyCode, int keyboardModifiers)
+{
+    return callLuaField<bool>("onKeyRelease", keyCode, keyboardModifiers);
 }
 
 bool UIWidget::onMousePress(const Point& mousePos, Fw::MouseButton button)
@@ -1086,7 +1096,7 @@ bool UIWidget::onMouseWheel(const Point& mousePos, Fw::MouseWheelDirection direc
     return callLuaField<bool>("onMouseWheel", mousePos, direction);
 }
 
-bool UIWidget::propagateOnKeyPress(uchar keyCode, std::string keyText, int keyboardModifiers)
+bool UIWidget::propagateOnKeyText(const std::string& keyText)
 {
     // do a backup of children list, because it may change while looping it
     UIWidgetList children;
@@ -1101,14 +1111,58 @@ bool UIWidget::propagateOnKeyPress(uchar keyCode, std::string keyText, int keybo
     }
 
     for(const UIWidgetPtr& child : children) {
-        if(child->propagateOnKeyPress(keyCode, keyText, keyboardModifiers))
+        if(child->propagateOnKeyText(keyText))
             return true;
     }
 
-    return onKeyPress(keyCode, keyText, keyboardModifiers);
+    return onKeyText(keyText);
 }
 
-bool UIWidget::propagateOnKeyRelease(uchar keyCode, std::string keyText, int keyboardModifiers)
+bool UIWidget::propagateOnKeyDown(uchar keyCode, int keyboardModifiers)
+{
+    // do a backup of children list, because it may change while looping it
+    UIWidgetList children;
+    for(const UIWidgetPtr& child : m_children) {
+        // events on hidden or disabled widgets are discarded
+        if(!child->isExplicitlyEnabled() || !child->isExplicitlyVisible())
+            continue;
+
+        // key events go only to containers or focused child
+        if(child->isFocused())
+            children.push_back(child);
+    }
+
+    for(const UIWidgetPtr& child : children) {
+        if(child->propagateOnKeyDown(keyCode, keyboardModifiers))
+            return true;
+    }
+
+    return onKeyDown(keyCode, keyboardModifiers);
+}
+
+bool UIWidget::propagateOnKeyPress(uchar keyCode, int keyboardModifiers, bool wouldFilter)
+{
+    // do a backup of children list, because it may change while looping it
+    UIWidgetList children;
+    for(const UIWidgetPtr& child : m_children) {
+        // events on hidden or disabled widgets are discarded
+        if(!child->isExplicitlyEnabled() || !child->isExplicitlyVisible())
+            continue;
+
+        // key events go only to containers or focused child
+        if(child->isFocused())
+            children.push_back(child);
+    }
+
+    for(const UIWidgetPtr& child : children) {
+        if(child->propagateOnKeyPress(keyCode, keyboardModifiers, wouldFilter))
+            return true;
+    }
+
+    return onKeyPress(keyCode, keyboardModifiers, wouldFilter);
+}
+
+bool UIWidget::propagateOnKeyRelease(uchar keyCode, int keyboardModifiers)
 {
     // do a backup of children list, because it may change while looping it
     UIWidgetList children;
@@ -1123,11 +1177,11 @@ bool UIWidget::propagateOnKeyRelease(uchar keyCode, std::string keyText, int key
     }
 
     for(const UIWidgetPtr& child : children) {
-        if(child->propagateOnKeyRelease(keyCode, keyText, keyboardModifiers))
+        if(child->propagateOnKeyRelease(keyCode, keyboardModifiers))
             return true;
     }
 
-    return onKeyRelease(keyCode, keyText, keyboardModifiers);
+    return onKeyRelease(keyCode, keyboardModifiers);
 }
 
 bool UIWidget::propagateOnMousePress(const Point& mousePos, Fw::MouseButton button)

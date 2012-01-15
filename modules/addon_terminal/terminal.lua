@@ -108,16 +108,16 @@ function Terminal.init()
   terminalWidget:setVisible(false)
 
   terminalButton = TopMenu.addButton('terminalButton', 'Terminal (Ctrl + T)', '/core_styles/icons/terminal.png', Terminal.toggle)
-  Hotkeys.bind('Ctrl+T', Terminal.toggle)
+  Hotkeys.bindKeyDown('Ctrl+T', Terminal.toggle)
 
   commandHistory = Settings.getList('terminal-history')
 
   commandLineEdit = terminalWidget:getChildById('commandLineEdit')
-  Hotkeys.bind('Up', function() navigateCommand(1) end, commandLineEdit)
-  Hotkeys.bind('Down', function() navigateCommand(-1) end, commandLineEdit)
-  Hotkeys.bind('Tab', completeCommand, commandLineEdit)
-  Hotkeys.bind('Enter', doCommand, commandLineEdit)
-  Hotkeys.bind('Return', doCommand, commandLineEdit)
+  Hotkeys.bindKeyDown('Up', function() navigateCommand(1) end, commandLineEdit)
+  Hotkeys.bindKeyDown('Down', function() navigateCommand(-1) end, commandLineEdit)
+  Hotkeys.bindKeyDown('Tab', completeCommand, commandLineEdit)
+  Hotkeys.bindKeyDown('Enter', doCommand, commandLineEdit)
+  Hotkeys.bindKeyDown('Return', doCommand, commandLineEdit)
 
   terminalBuffer = terminalWidget:getChildById('terminalBuffer')
   Logger.setOnLog(onLog)
@@ -126,7 +126,7 @@ end
 
 function Terminal.terminate()
   Settings.setList('terminal-history', commandHistory)
-  Hotkeys.unbind('Ctrl+T')
+  Hotkeys.unbindKeyDown('Ctrl+T')
   Logger.setOnLog(nil)
   terminalButton:destroy()
   terminalButton = nil

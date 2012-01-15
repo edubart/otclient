@@ -82,7 +82,6 @@ private:
     HGLRC m_glContext;
     bool m_maximized;
     Size m_minimumSize;
-    std::map<int, Fw::Key> m_keyMap;
 };
 
 #endif

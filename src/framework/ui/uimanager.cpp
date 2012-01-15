@@ -59,11 +59,17 @@ void UIManager::inputEvent(const InputEvent& event)
 {
     m_isOnInputEvent = true;
     switch(event.type) {
+        case Fw::KeyTextInputEvent:
+            m_keyboardReceiver->propagateOnKeyText(event.keyText);
+            break;
+        case Fw::KeyDownInputEvent:
+            m_keyboardReceiver->propagateOnKeyDown(event.keyCode, event.keyboardModifiers);
+            break;
         case Fw::KeyPressInputEvent:
-            m_keyboardReceiver->propagateOnKeyPress(event.keyCode, event.keyText, event.keyboardModifiers);
+            m_keyboardReceiver->propagateOnKeyPress(event.keyCode, event.keyboardModifiers, event.wouldFilter);
             break;
         case Fw::KeyReleaseInputEvent:
-            m_keyboardReceiver->propagateOnKeyRelease(event.keyCode, event.keyText, event.keyboardModifiers);
+            m_keyboardReceiver->propagateOnKeyRelease(event.keyCode, event.keyboardModifiers);
             break;
         case Fw::MousePressInputEvent:
             m_keyboardReceiver->propagateOnMousePress(event.mousePos, event.mouseButton);

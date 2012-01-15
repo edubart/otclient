@@ -29,7 +29,7 @@ Particle::Particle(const Point& pos, const Size& startSize, const Size& finalSiz
     m_colors = colors;
     m_colorsStops = colorsStops;
 
-    m_position = PointF(pos.x, pos.y);
+    m_pos = PointF(pos.x, pos.y);
     m_startSize = startSize;
     m_finalSize = finalSize;
     m_velocity = velocity;
@@ -80,18 +80,18 @@ void Particle::updatePosition(double elapsedTime)
         PointF delta = m_velocity * elapsedTime;
         delta.y *= -1; // painter orientate Y axis in the inverse direction
 
-        PointF position = m_position + delta;
+        PointF position = m_pos + delta;
 
-        if(m_position != position) {
+        if(m_pos != position) {
             mustRedraw = true;
-            m_position += delta;
+            m_pos += delta;
         }
 
         // update acceleration
         m_velocity += m_acceleration * elapsedTime;
     }
 
-    m_rect.move((int)m_position.x - m_size.width() / 2, (int)m_position.y - m_size.height() / 2);
+    m_rect.move((int)m_pos.x - m_size.width() / 2, (int)m_pos.y - m_size.height() / 2);
 }
 
 void Particle::updateSize()

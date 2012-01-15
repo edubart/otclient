@@ -48,10 +48,10 @@ function Console.create()
   Console.addChannel('Default', 0)
   Console.addTab('Server Log')
 
-  Hotkeys.bind('Tab', function() consoleTabBar:selectNextTab() end, consolePanel)
-  Hotkeys.bind('Shift+Tab', function() consoleTabBar:selectPrevTab() end, consolePanel)
-  Hotkeys.bind('Enter', Console.sendCurrentMessage, consolePanel)
-  Hotkeys.bind('Return', Console.sendCurrentMessage, consolePanel)
+  Hotkeys.bindKeyDown('Tab', function() consoleTabBar:selectNextTab() end, consolePanel)
+  Hotkeys.bindKeyDown('Shift+Tab', function() consoleTabBar:selectPrevTab() end, consolePanel)
+  Hotkeys.bindKeyDown('Enter', Console.sendCurrentMessage, consolePanel)
+  Hotkeys.bindKeyDown('Return', Console.sendCurrentMessage, consolePanel)
 end
 
 function Console.destroy()

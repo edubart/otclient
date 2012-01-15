@@ -389,6 +389,8 @@ void UILineEdit::onStyleApply(const std::string& styleName, const OTMLNodePtr& s
             setTextHorizontalMargin(node->value<int>());
         else if(node->tag() == "always-active")
             setAlwaysActive(node->value<bool>());
+        //else if(node->tag() == "disable-arrow-navitation")
+        //    setArrowNavigation(node->value<bool>());
     }
 }
 
@@ -409,34 +411,41 @@ void UILineEdit::onFocusChange(bool focused, Fw::FocusReason reason)
     UIWidget::onFocusChange(focused, reason);
 }
 
-bool UILineEdit::onKeyPress(uchar keyCode, std::string keyText, int keyboardModifiers)
+bool UILineEdit::onKeyPress(uchar keyCode, int keyboardModifiers, bool wouldFilter)
 {
-    if(UIWidget::onKeyPress(keyCode, keyText, keyboardModifiers))
+    if(UIWidget::onKeyPress(keyCode, keyboardModifiers, wouldFilter))
         return true;
 
-    if(keyCode == Fw::KeyDelete) // erase right character
-        removeCharacter(true);
-    else if(keyCode == Fw::KeyBackspace) // erase left character {
-        removeCharacter(false);
-    else if(keyCode == Fw::KeyRight) // move cursor right
-        moveCursor(true);
-    else if(keyCode == Fw::KeyLeft) // move cursor left
-        moveCursor(false);
-    else if(keyCode == Fw::KeyHome) // move cursor to first character
-        setCursorPos(0);
-    else if(keyCode == Fw::KeyEnd) // move cursor to last character
-        setCursorPos(m_text.length());
-    else if(keyCode == Fw::KeyV && keyboardModifiers == Fw::KeyboardCtrlModifier)
-        appendText(g_window.getClipboardText());
-    else if(keyCode == Fw::KeyTab) {
-        if(!m_alwaysActive) {
-            if(UIWidgetPtr parent = getParent())
-                parent->focusNextChild(Fw::TabFocusReason);
-        }
-    } else if(!keyText.empty() && (keyboardModifiers == Fw::KeyboardNoModifier || keyboardModifiers == Fw::KeyboardShiftModifier))
-        appendText(keyText);
-    else
-        return false;
+    if(!wouldFilter) {
+        if(keyCode == Fw::KeyDelete) // erase right character
+            removeCharacter(true);
+        else if(keyCode == Fw::KeyBackspace) // erase left character {
+            removeCharacter(false);
+        else if(keyCode == Fw::KeyRight) // move cursor right
+            moveCursor(true);
+        else if(keyCode == Fw::KeyLeft) // move cursor left
+            moveCursor(false);
+        else if(keyCode == Fw::KeyHome) // move cursor to first character
+            setCursorPos(0);
+        else if(keyCode == Fw::KeyEnd) // move cursor to last character
+            setCursorPos(m_text.length());
+        else if(keyCode == Fw::KeyV && keyboardModifiers == Fw::KeyboardCtrlModifier)
+            appendText(g_window.getClipboardText());
+        else if(keyCode == Fw::KeyTab) {
+            if(!m_alwaysActive) {
+                if(UIWidgetPtr parent = getParent())
+                    parent->focusNextChild(Fw::TabFocusReason);
+            }
+        } else
+            return false;
+        return true;
+    }
+    return false;
+}
+
+bool UILineEdit::onKeyText(const std::string& keyText)
+{
+    appendText(keyText);
     return true;
 }
 

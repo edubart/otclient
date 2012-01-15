@@ -25,9 +25,15 @@
 
 #include <framework/global.h>
 #include <framework/core/inputevent.h>
+#include <framework/core/timer.h>
 
 class PlatformWindow
 {
+    enum {
+        KEY_PRESS_REPEAT_INTERVAL = 30,
+        KEY_PRESS_REPEAT_DELAY = 500
+    };
+
     typedef std::function<void(const Size&)> OnResizeCallback;
     typedef std::function<void(const InputEvent&)> OnInputEventCallback;
 
@@ -72,6 +78,7 @@ public:
     int getY() { return m_pos.y; }
     Point getMousePos() { return m_inputEvent.mousePos; }
     int getKeyboardModifiers() { return m_inputEvent.keyboardModifiers; }
+    bool isKeyPressed(Fw::Key keyCode) { return m_keysState[keyCode]; }
 
     bool isVisible() { return m_visible; }
     bool isFullscreen() { return m_fullscreen; }
@@ -84,6 +91,16 @@ public:
 
 protected:
     void updateUnmaximizedCoords();
+
+    void processKeyDown(Fw::Key keyCode);
+    void processKeyRelease(Fw::Key keyCode);
+    void fireKeysPress();
+
+    std::map<int, Fw::Key> m_keyMap;
+    std::map<Fw::Key, Boolean<false>> m_keysState;
+    std::map<Fw::Key, ticks_t> m_firstKeysPress;
+    std::map<Fw::Key, ticks_t> m_lastKeysPress;
+    Timer m_keyPressTimer;
 
     Size m_size;
     Point m_pos;

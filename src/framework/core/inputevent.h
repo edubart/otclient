@@ -26,14 +26,30 @@
 #include "declarations.h"
 
 struct InputEvent {
+    InputEvent() {
+        reset();
+        keyboardModifiers = 0;
+    }
+
+    void reset(Fw::InputEventType eventType = Fw::NoInputEvent) {
+        type = eventType;
+        wheelDirection = Fw::MouseNoWheel;
+        mouseButton = Fw::MouseNoButton;
+        keyCode = Fw::KeyUnknown;
+        keyText = "";
+        mouseMoved = Point();
+        wouldFilter = false;
+    };
+
     Fw::InputEventType type;
     Fw::MouseWheelDirection wheelDirection;
     Fw::MouseButton mouseButton;
-    int keyboardModifiers;
-    std::string keyText;
     Fw::Key keyCode;
+    std::string keyText;
+    int keyboardModifiers;
     Point mousePos;
     Point mouseMoved;
+    bool wouldFilter;
 };
 
 #endif

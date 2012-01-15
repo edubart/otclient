@@ -115,7 +115,7 @@ bool AttractionAffector::load(const OTMLNodePtr& node)
 
     for(const OTMLNodePtr& childNode : node->children()) {
         if(childNode->tag() == "position")
-            m_position = childNode->value<Point>();
+            m_pos = childNode->value<Point>();
         else if(childNode->tag() == "acceleration")
             m_acceleration = childNode->value<float>();
         else if(childNode->tag() == "velocity-reduction-percent")
@@ -132,7 +132,7 @@ void AttractionAffector::updateParticle(const ParticlePtr& particle, double elap
         return;
 
     PointF pPosition = particle->getPos();
-    PointF d = PointF(m_position.x - pPosition.x, pPosition.y - m_position.y);
+    PointF d = PointF(m_pos.x - pPosition.x, pPosition.y - m_pos.y);
     if(d.length() == 0)
         return;
 
