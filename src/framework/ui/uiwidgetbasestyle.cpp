@@ -21,6 +21,7 @@
  */
 
 #include "uiwidget.h"
+#include "uihorizontallayout.h"
 #include "uiverticallayout.h"
 #include "uigridlayout.h"
 #include "uianchorlayout.h"
@@ -232,7 +233,9 @@ void UIWidget::parseBaseStyle(const OTMLNodePtr& styleNode)
 
             if(!layoutType.empty()) {
                 UILayoutPtr layout;
-                if(layoutType == "verticalBox")
+                if(layoutType == "horizontalBox")
+                    layout = UIHorizontalLayoutPtr(new UIHorizontalLayout(asUIWidget()));
+                else if(layoutType == "verticalBox")
                     layout = UIVerticalLayoutPtr(new UIVerticalLayout(asUIWidget()));
                 else if(layoutType == "grid")
                     layout = UIGridLayoutPtr(new UIGridLayout(asUIWidget()));

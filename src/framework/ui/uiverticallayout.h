@@ -23,30 +23,23 @@
 #ifndef UIVERTICALLAYOUT_H
 #define UIVERTICALLAYOUT_H
 
-#include "uilayout.h"
+#include "uiboxlayout.h"
 
-class UIVerticalLayout : public UILayout
+class UIVerticalLayout : public UIBoxLayout
 {
 public:
-    UIVerticalLayout(UIWidgetPtr parentWidget);
+    UIVerticalLayout(UIWidgetPtr parentWidget) : UIBoxLayout(parentWidget) { }
 
     void applyStyle(const OTMLNodePtr& styleNode);
-    void addWidget(const UIWidgetPtr& widget) { update(); }
-    void removeWidget(const UIWidgetPtr& widget) { update(); }
 
     void setAlignBottom(bool aliginBottom) { m_alignBottom = aliginBottom; update(); }
-    void setSpacing(int spacing) { m_spacing = spacing; update(); }
-    void setFitParent(bool fitParent) { m_fitParent = fitParent; update(); }
 
     UIVerticalLayoutPtr asUIVerticalLayout() { return std::static_pointer_cast<UIVerticalLayout>(shared_from_this()); }
 
 protected:
     void internalUpdate();
 
-private:
     Boolean<false> m_alignBottom;
-    Boolean<false> m_fitParent;
-    int m_spacing;
 };
 
 #endif

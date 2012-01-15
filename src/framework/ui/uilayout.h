@@ -49,6 +49,8 @@ public:
 
     UILayoutPtr asUILayout() { return std::static_pointer_cast<UILayout>(shared_from_this()); }
     virtual UIAnchorLayoutPtr asUIAnchorLayout() { return nullptr; }
+    virtual UIBoxLayoutPtr asUIBoxLayout() { return nullptr; }
+    virtual UIHorizontalLayoutPtr asUIHorizontalLayout() { return nullptr; }
     virtual UIVerticalLayoutPtr asUIVerticalLayout() { return nullptr; }
     virtual UIGridLayoutPtr asUIGridLayout() { return nullptr; }
 

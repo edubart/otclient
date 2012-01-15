@@ -25,11 +25,6 @@
 #include <framework/graphics/graphics.h>
 #include <framework/graphics/fontmanager.h>
 
-UIItem::UIItem()
-{
-    m_font = g_fonts.getFont("verdana-11px-rounded");
-}
-
 void UIItem::draw()
 {
     drawSelf();

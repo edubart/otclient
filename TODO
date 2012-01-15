@@ -2,14 +2,13 @@
 High priority TODO in order (before first public disclose)
 
 [bart] tab widgets
-[bart] multiline rich text widget
 [bart] chat with tabs
 [bart] scrollbar
 [bart] scrollable widgets
 [bart] complete miniwindow (close, minimize, resize)
 [bart] move windows
 [bart] add top menu buttons
-[bart] console history, scrolling
+[bart] console scrolling
 [bart] modules managment interface
 [bart] adjust interface design
 
@@ -34,7 +33,6 @@ Low priority TODO
 [bart] load modules from zip packages
 [bart] create a class for reading binary files
 [bart] rework lua/c++ logger
-[bart] save lists on config manager
 [bart] make protocol class compatible with old tibia protocols
 
 == Graphics
@@ -42,20 +40,19 @@ Low priority TODO
 [bart] cache renders into framebuffers
 [bart] use hardware buffer
 [bart] use indices
-[bart] change mouse icon
 
 == Lua
 [bart] make possible to bind non LuaObject derived classes on lua engine (for usage with Point,Rect,Color,Size)
-[bart] bind every global lua function in static classes
 [bart] review usage of x,y/width,height in lua instead of point/size
 
 == Platform
 [bart] port to MacOs and iphone
+[bart] KeyDown, KeyText events
 change win32 mouse cursor icon
 
 == UI
 [bart] fix massive hotkeys when holding down a key
-[bart] horizontal box layout
+[bart] multiline rich text widget
 [bart] move layout proprieties to widget style
 [bart] multiline text editor widget
 [bart] create UIMessageBox, UIToolTip and UIInputBox
@@ -66,7 +63,7 @@ change win32 mouse cursor icon
 [bart] reapply anchor styles when adding new childs
 [bart] ui text selection
 [bart] make set of background/icon/image width alone work
-[bart] check for recursive anchors to print a error and avoid crashes
+[bart] check for recursive anchors and print a error instead of crashing
 
 == Client modules
 [bart] make possible to reload modules

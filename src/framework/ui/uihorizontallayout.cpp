@@ -20,31 +20,32 @@
  * THE SOFTWARE.
  */
 
-#include "uiverticallayout.h"
+#include "uihorizontallayout.h"
 #include "uiwidget.h"
 #include <framework/core/eventdispatcher.h>
 
-void UIVerticalLayout::applyStyle(const OTMLNodePtr& styleNode)
+
+void UIHorizontalLayout::applyStyle(const OTMLNodePtr& styleNode)
 {
     UIBoxLayout::applyStyle(styleNode);
 
     for(const OTMLNodePtr& node : styleNode->children()) {
-        if(node->tag() == "align-bottom")
-            setAlignBottom(node->value<bool>());
+        if(node->tag() == "align-right")
+            setAlignRight(node->value<bool>());
     }
 }
 
-void UIVerticalLayout::internalUpdate()
+void UIHorizontalLayout::internalUpdate()
 {
     UIWidgetPtr parentWidget = getParentWidget();
     UIWidgetList widgets = parentWidget->getChildren();
 
-    if(m_alignBottom)
+    if(m_alignRight)
         std::reverse(widgets.begin(), widgets.end());
 
     Rect childrenRect = parentWidget->getChildrenRect();
-    Point pos = (m_alignBottom) ? childrenRect.bottomLeft() : childrenRect.topLeft();
-    int prefferedHeight = 0;
+    Point pos = (m_alignRight) ? childrenRect.topRight() : childrenRect.topLeft();
+    int prefferedWidth = 0;
     int gap;
 
     for(const UIWidgetPtr& widget : widgets) {
@@ -53,35 +54,35 @@ void UIVerticalLayout::internalUpdate()
 
         Size size = widget->getSize();
 
-        gap = (m_alignBottom) ? -(widget->getMarginBottom()+widget->getHeight()) : widget->getMarginTop();
-        pos.y += gap;
-        prefferedHeight += gap;
+        gap = (m_alignRight) ? -(widget->getMarginRight()+widget->getWidth()) : widget->getMarginLeft();
+        pos.x += gap;
+        prefferedWidth += gap;
 
         if(widget->isFixedSize()) {
             // center it
-            pos.x = childrenRect.left() + (childrenRect.width() - (widget->getMarginLeft() + widget->getWidth() + widget->getMarginRight()))/2;
-            pos.x = std::max(pos.x, parentWidget->getX());
+            pos.y = childrenRect.top() + (childrenRect.height() - (widget->getMarginTop() + widget->getHeight() + widget->getMarginBottom()))/2;
+            pos.y = std::max(pos.y, parentWidget->getY());
         } else {
-            // expand width
-            size.setWidth(childrenRect.width() - (widget->getMarginLeft() + widget->getMarginRight()));
-            pos.x = childrenRect.left() + (childrenRect.width() - size.width())/2;
+            // expand height
+            size.setHeight(childrenRect.height() - (widget->getMarginTop() + widget->getMarginBottom()));
+            pos.y = childrenRect.top() + (childrenRect.height() - size.height())/2;
         }
 
         widget->setRect(Rect(pos, size));
 
-        gap = (m_alignBottom) ? -widget->getMarginTop() : (widget->getHeight() + widget->getMarginBottom());
+        gap = (m_alignRight) ? -widget->getMarginLeft() : (widget->getWidth() + widget->getMarginRight());
         gap += m_spacing;
-        pos.y += gap;
-        prefferedHeight += gap;
+        pos.x += gap;
+        prefferedWidth += gap;
     }
 
-    prefferedHeight -= m_spacing;
-    prefferedHeight += parentWidget->getPaddingTop() + parentWidget->getPaddingBottom();
+    prefferedWidth -= m_spacing;
+    prefferedWidth += parentWidget->getPaddingLeft() + parentWidget->getPaddingRight();
 
-    if(m_fitChildren && prefferedHeight != parentWidget->getHeight()) {
+    if(m_fitChildren && prefferedWidth != parentWidget->getWidth()) {
         // must set the preffered width later
         g_dispatcher.addEvent([=] {
-            parentWidget->setHeight(prefferedHeight);
+            parentWidget->setWidth(prefferedWidth);
         });
     }
 }

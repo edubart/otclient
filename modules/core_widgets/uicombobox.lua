@@ -2,16 +2,16 @@ UIComboBox = extends(UIWidget)
 
 function UIComboBox.create()
   local combobox = UIComboBox.internalCreate()
-  combobox.options = {}
-  combobox.currentIndex = -1
+  combobox.m_options = {}
+  combobox.m_currentIndex = -1
   return combobox
 end
 
 function UIComboBox:setCurrentOption(text)
-  if not self.options then return end
-  for i,v in ipairs(self.options) do
-    if v.text == text and self.currentIndex ~= i then
-      self.currentIndex = i
+  if not self.m_options then return end
+  for i,v in ipairs(self.m_options) do
+    if v.text == text and self.m_currentIndex ~= i then
+      self.m_currentIndex = i
       self:setText(text)
       self:onOptionChange(text, data)
       return
@@ -20,15 +20,15 @@ function UIComboBox:setCurrentOption(text)
 end
 
 function UIComboBox:addOption(text, data)
-  table.insert(self.options, { text = text, data = data })
-  local index = #self.options
+  table.insert(self.m_options, { text = text, data = data })
+  local index = #self.m_options
   if index == 1 then self:setCurrentOption(text) end
   return index
 end
 
 function UIComboBox:onMousePress(mousePos, mouseButton)
   local menu = createWidget(self:getStyleName() .. 'PopupMenu', self)
-  for i,v in ipairs(self.options) do
+  for i,v in ipairs(self.m_options) do
     menu:addOption(v.text, function() self:setCurrentOption(v.text) end)
   end
   menu:setWidth(self:getWidth())

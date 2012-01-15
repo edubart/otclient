@@ -20,24 +20,26 @@
  * THE SOFTWARE.
  */
 
-#ifndef UIITEM_H
-#define UIITEM_H
+#ifndef UIHORIZONTALLAYOUT_H
+#define UIHORIZONTALLAYOUT_H
 
-#include "declarations.h"
-#include <framework/ui/uiwidget.h>
-#include <otclient/core/item.h>
+#include "uiboxlayout.h"
 
-class UIItem : public UIWidget
+class UIHorizontalLayout : public UIBoxLayout
 {
 public:
-    void draw();
+    UIHorizontalLayout(UIWidgetPtr parentWidget) : UIBoxLayout(parentWidget) { }
 
-    void setItem(const ItemPtr& item) { m_item = item; }
+    void applyStyle(const OTMLNodePtr& styleNode);
 
-    ItemPtr getItem() { return m_item; }
+    void setAlignRight(bool aliginRight) { m_alignRight = aliginRight; update(); }
+
+    UIHorizontalLayoutPtr asUIHorizontalLayout() { return std::static_pointer_cast<UIHorizontalLayout>(shared_from_this()); }
 
 protected:
-    ItemPtr m_item;
+    void internalUpdate();
+
+    Boolean<false> m_alignRight;
 };
 
 #endif

@@ -28,6 +28,7 @@
 #include "uilineedit.h"
 #include "uiframecounter.h"
 #include "uilayout.h"
+#include "uihorizontallayout.h"
 #include "uiverticallayout.h"
 #include "uigridlayout.h"
 #include "uianchorlayout.h"

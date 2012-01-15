@@ -10,6 +10,8 @@ local function convertSettingValue(value)
       return sizetostring(value)
     elseif value.r then
       return colortostring(value)
+    else
+      return value
     end
   elseif value == nil then
     return ''
@@ -30,6 +32,10 @@ function Settings.set(key, value)
   g_configs.set(key, convertSettingValue(value))
 end
 
+function Settings.setList(key, list)
+  g_configs.setList(key, list)
+end
+
 function Settings.setDefault(key, value)
   if Settings.exists(key) then return false end
   Settings.set(key, value)
@@ -41,6 +47,10 @@ function Settings.get(key, default)
     Settings.set(key, default)
   end
   return g_configs.get(key)
+end
+
+function Settings.getList(key)
+  return g_configs.getList(key)
 end
 
 function Settings.getString(key, default)

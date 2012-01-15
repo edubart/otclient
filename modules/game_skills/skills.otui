@@ -2,9 +2,7 @@ SkillFirstWidget < UIWidget
 
 SkillButton < UIButton
   height: 21
-  margin-top: 3
-  margin-left: 10
-  margin-right: 10
+  margin-bottom: 2
   &onClick: Skills.onSkillButtonClick
 
 SkillNameLabel < GameLabel
@@ -35,15 +33,11 @@ SkillPercentPanel < ProgressBar
 MiniWindow
   id: skillWindow
   text: Skills
-  size: 200 310
+  size: 200 350
 
   Panel
     id: skillPanel
     anchors.fill: parent
-    margin-top: 26
-    margin-bottom: 3
-    margin-left: 3
-    margin-right: 3
     layout: verticalBox
 
     SkillButton

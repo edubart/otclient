@@ -647,7 +647,10 @@ void X11Window::poll()
                 XKeyEvent xkey = event.xkey;
                 xkey.state = xkey.state & ~(ShiftMask);
                 len = XLookupString(&xkey, buf, sizeof(buf), &keysym, 0);
-                if(len > 0 && m_inputEvent.keyText.length() == 0)
+                if(len > 0 && m_inputEvent.keyText.length() == 0 && keysym != XK_BackSpace &&
+                        keysym != XK_Return &&
+                        keysym != XK_Delete &&
+                        keysym != XK_Escape)
                     m_inputEvent.keyText = buf;
 
                 if(m_keyMap.find(keysym) != m_keyMap.end())

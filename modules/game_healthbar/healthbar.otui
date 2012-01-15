@@ -1,7 +1,7 @@
 HealthBar < ProgressBar
   id: healthBar
   height: 15
-  background-color: red
+  background-color: #ff4444
   anchors.top: parent.top
   anchors.left: parent.left
   anchors.right: parent.right
@@ -9,7 +9,7 @@ HealthBar < ProgressBar
 ManaBar < ProgressBar
   id: manaBar
   height: 15
-  background-color: blue
+  background-color: #4444ff
   anchors.bottom: parent.bottom
   anchors.left: parent.left
   anchors.right: parent.right

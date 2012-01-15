@@ -24,21 +24,25 @@
 #define CONFIGMANAGER_H
 
 #include "declarations.h"
+#include <framework/otml/declarations.h>
 
 class ConfigManager
 {
 public:
+    ConfigManager();
     bool load(const std::string& file);
     bool save();
 
-    bool exists(const std::string& key) { return m_confsMap.find(key) != m_confsMap.end(); }
-    void set(const std::string& key, const std::string& value) { m_confsMap[key] = value; }
-    std::string get(const std::string& key) { return m_confsMap[key]; }
-    void remove(const std::string& key) { m_confsMap[key] = ""; }
+    void set(const std::string& key, const std::string& value);
+    void setList(const std::string& key, const std::vector<std::string>& list);
+    std::string get(const std::string& key);
+    std::vector<std::string> getList(const std::string& key);
+    bool exists(const std::string& key);
+    void remove(const std::string& key);
 
 private:
     std::string m_fileName;
-    std::map<std::string, std::string> m_confsMap;
+    OTMLDocumentPtr m_confsDoc;
 };
 
 extern ConfigManager g_configs;

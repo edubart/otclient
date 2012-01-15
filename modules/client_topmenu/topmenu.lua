@@ -4,6 +4,7 @@ TopMenu = {}
 local topMenu
 local leftButtonsPanel
 local rightButtonsPanel
+local gameButtonsPanel
 
 -- private functions
 local function onLogout()
@@ -19,6 +20,7 @@ function TopMenu.init()
   topMenu = displayUI('topmenu.otui')
   leftButtonsPanel = topMenu:getChildById('leftButtonsPanel')
   rightButtonsPanel = topMenu:getChildById('rightButtonsPanel')
+  gameButtonsPanel = topMenu:getChildById('gameButtonsPanel')
 
   TopMenu.addRightButton('logoutButton', 'Logout (Ctrl+Q)', '/core_styles/icons/logout.png', onLogout)
   Hotkeys.bind('Ctrl+Q', onLogout)
@@ -44,6 +46,15 @@ function TopMenu.addButton(id, description, icon, callback, right)
   end
 
   local button = createWidget(class, panel)
+  button:setId(id)
+  button:setTooltip(description)
+  button:setIcon(resolvepath(icon, 2))
+  button.onClick = callback
+  return button
+end
+
+function TopMenu.addGameButton(id, description, icon, callback)
+  local button = createWidget('GameTopButton', gameButtonsPanel)
   button:setId(id)
   button:setTooltip(description)
   button:setIcon(resolvepath(icon, 2))

@@ -20,24 +20,23 @@
  * THE SOFTWARE.
  */
 
-#ifndef UIITEM_H
-#define UIITEM_H
+#include "uiboxlayout.h"
+#include "uiwidget.h"
 
-#include "declarations.h"
-#include <framework/ui/uiwidget.h>
-#include <otclient/core/item.h>
-
-class UIItem : public UIWidget
+UIBoxLayout::UIBoxLayout(UIWidgetPtr parentWidget) : UILayout(parentWidget)
 {
-public:
-    void draw();
+    m_spacing = 0;
+}
 
-    void setItem(const ItemPtr& item) { m_item = item; }
+void UIBoxLayout::applyStyle(const OTMLNodePtr& styleNode)
+{
+    UILayout::applyStyle(styleNode);
 
-    ItemPtr getItem() { return m_item; }
+    for(const OTMLNodePtr& node : styleNode->children()) {
+        if(node->tag() == "spacing")
+            setSpacing(node->value<int>());
+        else if(node->tag() == "fit-children")
+            setFitChildren(node->value<bool>());
+    }
+}
 
-protected:
-    ItemPtr m_item;
-};
-
-#endif

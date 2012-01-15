@@ -5,7 +5,7 @@ UIGame
 
   InterfacePanel
     id: gameRightPanel
-    width: 200
+    width: 178
     layout: verticalBox
     anchors.right: parent.right
     anchors.top: parent.top
