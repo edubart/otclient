@@ -270,16 +270,38 @@ void Application::registerLuaFunctions()
 
     // UILayout
     g_lua.registerClass<UILayout>();
-    g_lua.bindClassMemberFunction<UILayout>("applyStyle", &UILayout::applyStyle);
     g_lua.bindClassMemberFunction<UILayout>("update", &UILayout::update);
+    g_lua.bindClassMemberFunction<UILayout>("updateLater", &UILayout::updateLater);
+    g_lua.bindClassMemberFunction<UILayout>("applyStyle", &UILayout::applyStyle);
     g_lua.bindClassMemberFunction<UILayout>("addWidget", &UILayout::addWidget);
     g_lua.bindClassMemberFunction<UILayout>("removeWidget", &UILayout::removeWidget);
+    g_lua.bindClassMemberFunction<UILayout>("disableUpdates", &UILayout::disableUpdates);
+    g_lua.bindClassMemberFunction<UILayout>("enableUpdates", &UILayout::enableUpdates);
+    g_lua.bindClassMemberFunction<UILayout>("setParent", &UILayout::setParent);
     g_lua.bindClassMemberFunction<UILayout>("getParentWidget", &UILayout::getParentWidget);
+    g_lua.bindClassMemberFunction<UILayout>("isUpdateDisabled", &UILayout::isUpdateDisabled);
+    g_lua.bindClassMemberFunction<UILayout>("isUpdating", &UILayout::isUpdating);
+    g_lua.bindClassMemberFunction<UILayout>("asUILayout", &UILayout::asUILayout);
+    g_lua.bindClassMemberFunction<UILayout>("asUIAnchorLayout", &UILayout::asUIAnchorLayout);
+    g_lua.bindClassMemberFunction<UILayout>("asUIBoxLayout", &UILayout::asUIBoxLayout);
+    g_lua.bindClassMemberFunction<UILayout>("asUIHorizontalLayout", &UILayout::asUIHorizontalLayout);
+    g_lua.bindClassMemberFunction<UILayout>("asUIVerticalLayout", &UILayout::asUIVerticalLayout);
+    g_lua.bindClassMemberFunction<UILayout>("asUIGridLayout", &UILayout::asUIGridLayout);
+
+    // UIBoxLayout
+    g_lua.registerClass<UIBoxLayout>();
+    g_lua.bindClassMemberFunction<UIBoxLayout>("setSpacing", &UIBoxLayout::setSpacing);
+    g_lua.bindClassMemberFunction<UIBoxLayout>("setFitChildren", &UIBoxLayout::setFitChildren);
 
     // UIVerticalLayout
     g_lua.registerClass<UIVerticalLayout, UILayout>();
     g_lua.bindClassStaticFunction<UIVerticalLayout>("create", [](UIWidgetPtr parent){ return UIVerticalLayoutPtr(new UIVerticalLayout(parent)); } );
-    g_lua.bindClassMemberFunction<UIVerticalLayout>("setFitParent", &UIVerticalLayout::setFitParent);
+    g_lua.bindClassMemberFunction<UIVerticalLayout>("setAlignBottom", &UIVerticalLayout::setAlignBottom);
+
+    // UIHorizontalLayout
+    g_lua.registerClass<UIHorizontalLayout, UILayout>();
+    g_lua.bindClassStaticFunction<UIHorizontalLayout>("create", [](UIWidgetPtr parent){ return UIHorizontalLayoutPtr(new UIHorizontalLayout(parent)); } );
+    g_lua.bindClassMemberFunction<UIHorizontalLayout>("setAlignRight", &UIHorizontalLayout::setAlignRight);
 
     // UIGridLayout
     g_lua.registerClass<UIGridLayout, UILayout>();

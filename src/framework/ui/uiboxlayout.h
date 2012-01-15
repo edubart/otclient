@@ -20,17 +20,28 @@
  * THE SOFTWARE.
  */
 
-#ifndef UI_H
-#define UI_H
+#ifndef UIBOXLAYOUT_H
+#define UIBOXLAYOUT_H
 
-#include "uimanager.h"
-#include "uiwidget.h"
-#include "uilineedit.h"
-#include "uiframecounter.h"
 #include "uilayout.h"
-#include "uihorizontallayout.h"
-#include "uiverticallayout.h"
-#include "uigridlayout.h"
-#include "uianchorlayout.h"
+
+class UIBoxLayout : public UILayout
+{
+public:
+    UIBoxLayout(UIWidgetPtr parentWidget);
+
+    void applyStyle(const OTMLNodePtr& styleNode);
+    void addWidget(const UIWidgetPtr& widget) { update(); }
+    void removeWidget(const UIWidgetPtr& widget) { update(); }
+
+    void setSpacing(int spacing) { m_spacing = spacing; update(); }
+    void setFitChildren(bool fitParent) { m_fitChildren = fitParent; update(); }
+
+    UIBoxLayoutPtr asUIBoxLayout() { return std::static_pointer_cast<UIBoxLayout>(shared_from_this()); }
+
+protected:
+    Boolean<false> m_fitChildren;
+    int m_spacing;
+};
 
 #endif

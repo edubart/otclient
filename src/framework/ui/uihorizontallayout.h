@@ -20,17 +20,26 @@
  * THE SOFTWARE.
  */
 
-#ifndef UI_H
-#define UI_H
+#ifndef UIHORIZONTALLAYOUT_H
+#define UIHORIZONTALLAYOUT_H
 
-#include "uimanager.h"
-#include "uiwidget.h"
-#include "uilineedit.h"
-#include "uiframecounter.h"
-#include "uilayout.h"
-#include "uihorizontallayout.h"
-#include "uiverticallayout.h"
-#include "uigridlayout.h"
-#include "uianchorlayout.h"
+#include "uiboxlayout.h"
+
+class UIHorizontalLayout : public UIBoxLayout
+{
+public:
+    UIHorizontalLayout(UIWidgetPtr parentWidget) : UIBoxLayout(parentWidget) { }
+
+    void applyStyle(const OTMLNodePtr& styleNode);
+
+    void setAlignRight(bool aliginRight) { m_alignRight = aliginRight; update(); }
+
+    UIHorizontalLayoutPtr asUIHorizontalLayout() { return std::static_pointer_cast<UIHorizontalLayout>(shared_from_this()); }
+
+protected:
+    void internalUpdate();
+
+    Boolean<false> m_alignRight;
+};
 
 #endif

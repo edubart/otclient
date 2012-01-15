@@ -20,17 +20,23 @@
  * THE SOFTWARE.
  */
 
-#ifndef UI_H
-#define UI_H
-
-#include "uimanager.h"
+#include "uiboxlayout.h"
 #include "uiwidget.h"
-#include "uilineedit.h"
-#include "uiframecounter.h"
-#include "uilayout.h"
-#include "uihorizontallayout.h"
-#include "uiverticallayout.h"
-#include "uigridlayout.h"
-#include "uianchorlayout.h"
 
-#endif
+UIBoxLayout::UIBoxLayout(UIWidgetPtr parentWidget) : UILayout(parentWidget)
+{
+    m_spacing = 0;
+}
+
+void UIBoxLayout::applyStyle(const OTMLNodePtr& styleNode)
+{
+    UILayout::applyStyle(styleNode);
+
+    for(const OTMLNodePtr& node : styleNode->children()) {
+        if(node->tag() == "spacing")
+            setSpacing(node->value<int>());
+        else if(node->tag() == "fit-children")
+            setFitChildren(node->value<bool>());
+    }
+}
+
