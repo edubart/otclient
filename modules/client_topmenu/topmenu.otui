@@ -1,22 +1,45 @@
 TopButton < UIButton
   size: 26 26
-  image-color: white
   image-source: /core_styles/images/top_button.png
   image-clip: 0 0 26 26
   image-border: 3
+  image-color: #ffffffff
+  icon-color: #ffffffff
 
   $hover:
-    image-source: /core_styles/images/top_button.png
+    image-color: #ffffff99
     image-clip: 26 0 26 26
-    image-border: 3
 
   $pressed:
-    image-source: /core_styles/images/top_button.png
     image-clip: 52 0 26 26
-    image-border: 3
 
   $disabled:
-    image-color: #ffffff66
+    image-color: #ffffff44
+    icon-color: #ffffff44
+
+GameTopButton < UIButton
+  size: 26 26
+  image-source: /core_styles/images/top_button2.png
+  image-clip: 26 0 26 26
+  image-color: #ffffff22
+  icon-color: #ffffffff
+  image-border: 3
+
+  $hover:
+    image-clip: 0 0 26 26
+    image-color: #ffffffff
+    icon-color: #ffffffff
+
+  $first:
+    anchors.top: parent.top
+    anchors.left: parent.left
+    margin-top: 4
+    margin-left: 6
+
+  $!first:
+    anchors.top: prev.top
+    anchors.left: prev.right
+    margin-left: 6
 
 TopLeftButton < TopButton
   $first:
@@ -54,6 +77,13 @@ TopPanel
     anchors.top: parent.top
     anchors.bottom: parent.bottom
     anchors.left: parent.left
+    width: 150
+
+  Panel
+    id: gameButtonsPanel
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
+    anchors.left: prev.right
     anchors.right: next.left
 
   Panel

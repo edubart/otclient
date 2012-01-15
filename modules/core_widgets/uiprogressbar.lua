@@ -4,19 +4,28 @@ function UIProgressBar.create()
   local progressbar = UIProgressBar.internalCreate()
   progressbar:setFocusable(false)
   progressbar:setPhantom(true)
-  progressbar.percent = 0
-  progressbar:setBackgroundSize({width = 1, height = 1})
+  progressbar.m_percent = 0
+  progressbar:updateBackground()
   return progressbar
 end
 
 function UIProgressBar:setPercent(percent)
-  self:setBackgroundHeight(self:getHeight())
-  local width = (percent * self:getWidth())/100
-  if width == 0 then width = 1 end
-  self:setBackgroundWidth(width)
-  self.percent = percent
+  self.m_percent = percent
+  self:updateBackground()
 end
 
+
 function UIProgressBar:getPercent()
-  return self.percent
+  return self.m_percent
+end
+
+function UIProgressBar:updateBackground()
+  local width = math.max((self.m_percent * self:getWidth())/100, 1)
+  local height = self:getHeight()
+  self:setBackgroundSize({width=width, height=height})
+end
+
+
+function UIProgressBar:onGeometryChange(oldRect, newRect)
+  self:updateBackground()
 end

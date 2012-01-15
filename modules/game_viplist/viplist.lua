@@ -7,6 +7,8 @@ local addVipWindow = nil
 -- public functions
 function VipList.create()
   vipWindow = displayUI('viplist.otui', { parent = Game.gameRightPanel })
+  vipWindow:hide()
+  TopMenu.addGameButton('vipListButton', 'VIP list', '/core_styles/icons/viplist.png', VipList.toggle)
 end
 
 function VipList.destroy()
@@ -43,21 +45,21 @@ function VipList.onAddVip(id, name, online)
   end
 
   label.vipOnline = online
-  
+
   local nameLower = name:lower()
   local childrenCount = vipList:getChildCount()
-  
+
   for i=1,childrenCount do
     local child = vipList:getChildByIndex(i)
     if online and not child.vipOnline then
       vipList:insertChild(i, label)
       return
     end
-    
+
     if (not online and not child.vipOnline) or (online and child.vipOnline) then
       local childText = child:getText():lower()
       local length = math.min(childText:len(), nameLower:len())
-      
+
       for j=1,length do
         if nameLower:byte(j) < childText:byte(j) then
           vipList:insertChild(i, label)
@@ -68,7 +70,7 @@ function VipList.onAddVip(id, name, online)
       end
     end
   end
-  
+
   vipList:insertChild(childrenCount+1, label)
 end
 
@@ -77,7 +79,7 @@ function VipList.onVipStateChange(id, online)
   local label = vipList:getChildById('vip' .. id)
   local text = label:getText()
   vipList:removeChild(label)
-  
+
   VipList.onAddVip(id, text, online)
 end
 
@@ -89,7 +91,7 @@ function VipList.onVipListMousePress(widget, mousePos, mouseButton)
   local menu = createWidget('PopupMenu')
   menu:addOption('Add new VIP', function() VipList.createAddWindow() end)
   menu:display(mousePos)
-  
+
   return true
 end
 
@@ -104,7 +106,7 @@ function VipList.onVipListLabelMousePress(widget, mousePos, mouseButton)
   menu:addSeparator()
   menu:addOption('Copy Name', function() g_window.setClipboardText(widget:getText()) end)
   menu:display(mousePos)
-  
+
   return true
 end
 

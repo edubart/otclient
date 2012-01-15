@@ -43,8 +43,7 @@ end
 -- public functions
 function Skills.create()
   skillWindow = displayUI('skills.otui', { parent = Game.gameRightPanel })
-  --skillsButton = TopMenu.addButton('skillsButton', 'Skills (Ctrl+S)', '/core_styles/icons/skills.png', Skills.toggle)
-  --skillsButton:setWidth(32)
+  skillsButton = TopMenu.addGameButton('skillsButton', 'Skills (Ctrl+S)', '/core_styles/icons/skills.png', Skills.toggle)
 end
 
 function Skills.destroy()

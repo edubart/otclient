@@ -27,6 +27,11 @@
 
 ConfigManager g_configs;
 
+ConfigManager::ConfigManager()
+{
+    m_confsDoc = OTMLDocument::create();
+}
+
 bool ConfigManager::load(const std::string& file)
 {
     m_fileName = file;
@@ -35,9 +40,9 @@ bool ConfigManager::load(const std::string& file)
         return false;
 
     try {
-        OTMLDocumentPtr doc = OTMLDocument::parse(file);
-        for(const OTMLNodePtr& child : doc->children())
-            m_confsMap[child->tag()] = child->value();
+        OTMLDocumentPtr confsDoc = OTMLDocument::parse(file);
+        if(confsDoc)
+            m_confsDoc = confsDoc;
         return true;
     } catch(Exception& e) {
         logError("could not load configurations: ", e.what());
@@ -47,13 +52,65 @@ bool ConfigManager::load(const std::string& file)
 
 bool ConfigManager::save()
 {
-    OTMLDocumentPtr doc = OTMLDocument::create();
-    for(auto it : m_confsMap) {
-        if(it.second == "")
-            continue;
-        OTMLNodePtr node = OTMLNode::create(it.first, it.second);
-        doc->addChild(node);
-    }
-    return doc->save(m_fileName);
+    if(m_fileName.length() == 0)
+        return false;
+    return m_confsDoc->save(m_fileName);
 }
 
+void ConfigManager::set(const std::string& key, const std::string& value)
+{
+    if(key == "") {
+        remove(key);
+        return;
+    }
+
+    OTMLNodePtr child = OTMLNode::create(key, value);
+    m_confsDoc->addChild(child);
+}
+
+void ConfigManager::setList(const std::string& key, const std::vector<std::string>& list)
+{
+    remove(key);
+
+    if(list.size() == 0)
+        return;
+
+    OTMLNodePtr child = OTMLNode::create(key, true);
+    for(const std::string& value : list) {
+        child->writeIn(value);
+        dump << "insert" << value;
+    }
+    m_confsDoc->addChild(child);
+}
+
+bool ConfigManager::exists(const std::string& key)
+{
+    return m_confsDoc->hasChildAt(key);
+}
+
+std::string ConfigManager::get(const std::string& key)
+{
+    OTMLNodePtr child = m_confsDoc->get(key);
+    if(child)
+        return child->value();
+    else
+        return "";
+}
+
+std::vector<std::string> ConfigManager::getList(const std::string& key)
+{
+    std::vector<std::string> list;
+    OTMLNodePtr child = m_confsDoc->get(key);
+    if(child) {
+        for(const OTMLNodePtr& subchild : child->children())
+            list.push_back(subchild->value());
+    }
+    return list;
+}
+
+void ConfigManager::remove(const std::string& key)
+{
+    OTMLNodePtr child = m_confsDoc->get(key);
+    if(child)
+        m_confsDoc->removeChild(child);
+}

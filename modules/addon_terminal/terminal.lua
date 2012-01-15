@@ -6,6 +6,7 @@ local LogColors = { [LogInfo] = 'white',
                     [LogError] = 'red' }
 local MaxLogLines = 80
 local LabelHeight = 16
+local MaxHistory = 1000
 
 -- private variables
 local terminalWidget
@@ -109,6 +110,8 @@ function Terminal.init()
   terminalButton = TopMenu.addButton('terminalButton', 'Terminal (Ctrl + T)', '/core_styles/icons/terminal.png', Terminal.toggle)
   Hotkeys.bind('Ctrl+T', Terminal.toggle)
 
+  commandHistory = Settings.getList('terminal-history')
+
   commandLineEdit = terminalWidget:getChildById('commandLineEdit')
   Hotkeys.bind('Up', function() navigateCommand(1) end, commandLineEdit)
   Hotkeys.bind('Down', function() navigateCommand(-1) end, commandLineEdit)
@@ -122,6 +125,7 @@ function Terminal.init()
 end
 
 function Terminal.terminate()
+  Settings.setList('terminal-history', commandHistory)
   Hotkeys.unbind('Ctrl+T')
   Logger.setOnLog(nil)
   terminalButton:destroy()
@@ -186,6 +190,9 @@ function Terminal.executeCommand(command)
 
   -- add new command to history
   table.insert(commandHistory, command)
+  if #commandHistory > MaxHistory then
+    table.remove(commandHistory, 1)
+  end
 
   -- add command line
   Terminal.addLine(">> " .. command, "#ffffff")
