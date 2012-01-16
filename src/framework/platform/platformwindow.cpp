@@ -91,6 +91,19 @@ void PlatformWindow::processKeyRelease(Fw::Key keyCode)
     }
 }
 
+void PlatformWindow::releaseAllKeys()
+{
+    for(auto it : m_keysState) {
+        Fw::Key keyCode = it.first;
+        bool pressed = it.second;
+
+        if(!pressed)
+            continue;
+
+        processKeyRelease(keyCode);
+    }
+}
+
 void PlatformWindow::fireKeysPress()
 {
     // avoid massive checks
@@ -119,4 +132,3 @@ void PlatformWindow::fireKeysPress()
         }
     }
 }
-

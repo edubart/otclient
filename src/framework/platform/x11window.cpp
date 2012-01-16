@@ -710,6 +710,7 @@ void X11Window::poll()
                 break;
             case FocusOut:
                 m_focused = false;
+                releaseAllKeys();
                 break;
             case Expose:
                 // window needs redraw

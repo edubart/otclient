@@ -94,6 +94,7 @@ protected:
 
     void processKeyDown(Fw::Key keyCode);
     void processKeyRelease(Fw::Key keyCode);
+    void releaseAllKeys();
     void fireKeysPress();
 
     std::map<int, Fw::Key> m_keyMap;

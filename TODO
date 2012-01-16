@@ -46,7 +46,6 @@ Low priority TODO
 
 == Platform
 [bart] port to MacOs and iphone
-[bart] KeyDown, KeyText events
 change win32 mouse cursor icon
 
 == UI

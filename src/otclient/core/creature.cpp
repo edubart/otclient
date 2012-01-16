@@ -117,8 +117,6 @@ void Creature::draw(const Point& p, const Rect&)
 
                     if(m_type->dimensions[ThingType::Layers] > 1) {
                         int maskId = m_type->getSpriteId(w, h, 1, m_xPattern, m_yPattern, m_zPattern, m_animation);
-                        if(!maskId)
-                            continue;
                         TexturePtr maskTex = g_sprites.getSpriteTexture(maskId);
                         outfitProgram->setUniformTexture(MASK_TEXTURE_UNIFORM, maskTex, 1);
                     }
@@ -292,8 +290,7 @@ void Creature::cancelWalk(Otc::Direction direction, bool force)
     if(direction != Otc::InvalidDirection)
         setDirection(direction);
 
-    if(m_outfit.getCategory() == ThingsType::Creature)
-        m_animation = 0;
+    m_animation = 0;
 }
 
 void Creature::setName(const std::string& name)

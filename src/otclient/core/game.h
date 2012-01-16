@@ -114,18 +114,12 @@ public:
     LocalPlayerPtr getLocalPlayer() { return m_localPlayer; }
     ProtocolGamePtr getProtocolGame() { return m_protocolGame; }
     int getProtocolVersion() { return PROTOCOL; }
-    int getWalkPing() { return m_walkPing; }
 
 private:
-    void updateWalkPing();
-
     LocalPlayerPtr m_localPlayer;
     ProtocolGamePtr m_protocolGame;
     bool m_online;
     bool m_dead;
-    bool m_walkFeedback;
-    Timer m_walkPingTimer;
-    int m_walkPing;
     int m_serverBeat;
     ThingPtr m_selectedThing;
 };

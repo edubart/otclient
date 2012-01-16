@@ -36,9 +36,7 @@ void Game::loginWorld(const std::string& account, const std::string& password, c
 {
     m_online = false;
     m_dead = false;
-    m_walkFeedback = true;
     m_selectedThing = nullptr;
-    m_walkPing = 0;
     m_protocolGame = ProtocolGamePtr(new ProtocolGame);
     m_protocolGame->login(account, password, worldHost, (uint16)worldPort, characterName);
 }
@@ -146,15 +144,8 @@ void Game::processCreatureMove(const CreaturePtr& creature, const Position& oldP
     // teleport
     } else {
         // stop walking on teleport
-        if(creature->isWalking())
+        if(creature->isWalking() || creature->isPreWalking())
             creature->cancelWalk();
-    }
-
-    if(creature == m_localPlayer) {
-        if(!m_walkFeedback) {
-            updateWalkPing();
-            m_walkFeedback = true;
-        }
     }
 }
 
@@ -166,10 +157,6 @@ void Game::processAttackCancel()
 
 void Game::processWalkCancel(Otc::Direction direction)
 {
-    if(!m_walkFeedback) {
-        updateWalkPing();
-        m_walkFeedback = true;
-    }
     m_localPlayer->cancelWalk(direction, true);
 }
 
@@ -190,9 +177,6 @@ void Game::walk(Otc::Direction direction)
 
 void Game::forceWalk(Otc::Direction direction)
 {
-    m_walkPingTimer.restart();
-    m_walkFeedback = false;
-
     switch(direction) {
     case Otc::North:
         m_protocolGame->sendWalkNorth();
@@ -477,10 +461,4 @@ bool Game::checkBotProtection()
     }
 #endif
     return true;
-}
-
-void Game::updateWalkPing()
-{
-    m_walkPing = m_walkPingTimer.ticksElapsed();
-    g_lua.callGlobalField("Game", "onWalkPingUpdate", m_walkPing);
 }
