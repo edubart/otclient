@@ -55,8 +55,8 @@ local function onWidgetStyleApply(widget, styleName, styleNode)
   end
 end
 
-connect(UIWidget, {  onStyleApply = onWidgetStyleApply,
-                     onHoverChange = onWidgetHoverChange})
+--connect(UIWidget, {  onStyleApply = onWidgetStyleApply,
+--                     onHoverChange = onWidgetHoverChange})
 
 -- UIWidget extensions
 function UIWidget:setTooltip(text)

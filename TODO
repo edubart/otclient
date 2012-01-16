@@ -64,6 +64,7 @@ change win32 mouse cursor icon
 [bart] make set of background/icon/image width alone work
 [bart] check for recursive anchors and print a error instead of crashing
 [bart] make api to enable/disable capture of events to avoid massive event processing
+[bart] review style apply system
 
 == Client modules
 [bart] make possible to reload modules

@@ -13,7 +13,7 @@ function UIComboBox:setCurrentOption(text)
     if v.text == text and self.m_currentIndex ~= i then
       self.m_currentIndex = i
       self:setText(text)
-      self:onOptionChange(text, data)
+      self:onOptionChange(text, v.data)
       return
     end
   end
@@ -36,6 +36,14 @@ function UIComboBox:onMousePress(mousePos, mouseButton)
   connect(menu, { onDestroy = function() self:setOn(false) end })
   self:setOn(true)
   return true
+end
+
+function UIComboBox:onStyleApply(styleName, styleNode)
+  if styleNode.options then
+    for k,option in pairs(styleNode.options) do
+      self:addOption(option)
+    end
+  end
 end
 
 function UIComboBox:onOptionChange(optionText, optionData)

@@ -219,15 +219,18 @@ void push_otml_subnode_luavalue(const OTMLNodePtr& node)
     } else if(node->hasChildren()) {
         g_lua.newTable();
         bool pushedChild = false;
+        int currentIndex = 1;
         for(const OTMLNodePtr& cnode : node->children()) {
-            if(cnode->isUnique()) {
-                push_luavalue(cnode);
-                if(!g_lua.isNil()) {
-                    g_lua.setField(cnode->tag());
-                    pushedChild = true;
+            push_otml_subnode_luavalue(cnode);
+            if(!g_lua.isNil()) {
+                if(cnode->isUnique()) {
+                    g_lua.pushString(cnode->tag());
+                    g_lua.rawSet();
                 } else
-                    g_lua.pop();
-            }
+                    g_lua.rawSeti(currentIndex++);
+                pushedChild = true;
+            } else
+                g_lua.pop();
         }
         if(!pushedChild) {
             g_lua.pop();

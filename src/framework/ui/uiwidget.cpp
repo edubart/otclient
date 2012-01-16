@@ -364,6 +364,9 @@ void UIWidget::unlockChild(const UIWidgetPtr& child)
 
 void UIWidget::applyStyle(const OTMLNodePtr& styleNode)
 {
+    if(styleNode->size() == 0)
+        return;
+
     m_loadingStyle = true;
     try {
         onStyleApply(styleNode->tag(), styleNode);
