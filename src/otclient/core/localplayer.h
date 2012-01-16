@@ -50,8 +50,18 @@ public:
 
     LocalPlayerPtr asLocalPlayer() { return std::static_pointer_cast<LocalPlayer>(shared_from_this()); }
 
+    double getHealth() { return getStatistic(Otc::Health); }
+    double getMaxHealth() { return getStatistic(Otc::MaxHealth); }
+    double getFreeCapacity() { return getStatistic(Otc::FreeCapacity); }
+    double getExperience() { return getStatistic(Otc::Experience); }
     double getLevel() { return getStatistic(Otc::Level); }
-    //TODO: more gets
+    double getLevelPercent() { return getStatistic(Otc::LevelPercent); }
+    double getMana() { return getStatistic(Otc::Mana); }
+    double getMaxMana() { return getStatistic(Otc::MaxMana); }
+    double getMagicLevel() { return getStatistic(Otc::MagicLevel); }
+    double getMagicLevelPercent() { return getStatistic(Otc::MagicLevelPercent); }
+    double getSoul() { return getStatistic(Otc::Soul); }
+    double getStamina() { return getStatistic(Otc::Stamina); }
 
 private:
     bool m_canReportBugs;
