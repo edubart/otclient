@@ -9,7 +9,18 @@ function drawDebugBoxes(enable)
   g_ui.setDebugBoxesDrawing(enable)
 end
 
+function hideMap()
+  local map = rootWidget:recursiveGetChildById('gameMapPanel')
+  if map then map:hide() end
+end
+
+function showMap()
+  local map = rootWidget:recursiveGetChildById('gameMapPanel')
+  if map then map:show() end
+end
+
 function displayItem(id)
   local itemWidget = createWidget('Item', rootWidget)
   itemWidget:setItem(Item.create(id))
 end
+

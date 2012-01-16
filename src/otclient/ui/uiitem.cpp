@@ -39,7 +39,10 @@ void UIItem::draw()
             std::string count = Fw::tostring(m_item->getData());
             m_font->renderText(count, Rect(m_rect.topLeft(), m_rect.bottomRight() - Point(3, 0)), Fw::AlignBottomRight, Color(231, 231, 231));
         }
+
+        //m_font->renderText(Fw::unsafeCast<std::string>(m_item->getId()), m_rect);
     }
+
 
     drawChildren();
 }
