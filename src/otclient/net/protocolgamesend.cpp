@@ -275,7 +275,7 @@ void ProtocolGame::sendUseItemEx(const Position& fromPos, int fromThingId, int f
     send(oMsg);
 }
 
-void ProtocolGame::sendUseItemCreature(const Position& pos, int thingId, int stackpos, uint creatureId)
+void ProtocolGame::sendUseOnCreature(const Position& pos, int thingId, int stackpos, uint creatureId)
 {
     OutputMessage oMsg;
     oMsg.addU8(Proto::ClientUseOnCreature);

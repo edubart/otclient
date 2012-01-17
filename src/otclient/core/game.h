@@ -65,6 +65,7 @@ public:
     void use(const ThingPtr& thing);
     void useWith(const ThingPtr& fromThing, const ThingPtr& toThing);
     void useHotkey(int itemId, const ThingPtr& toThing);
+    void useOnCreature(const ThingPtr& thing, const CreaturePtr& creature);
 
     // attack/follow related
     void attack(const CreaturePtr& creature);

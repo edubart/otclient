@@ -18,10 +18,13 @@ function UIPopupMenu:display(pos)
   end
 
   displayUI(self, {x = pos.x, y = pos.y})
-  self:bindRectToParent()
   self:grabMouse()
   self:grabKeyboard()
   table.insert(displayedMenuList, self)
+end
+
+function UIPopupMenu:onGeometryChange()
+  self:bindRectToParent()
 end
 
 function UIPopupMenu:addOption(optionName, optionCallback)

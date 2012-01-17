@@ -274,6 +274,14 @@ void Game::useHotkey(int itemId, const ThingPtr& toThing)
     m_protocolGame->sendUseItemEx(Position(0xFFFF, 0, 0), itemId, 0, toThing->getPos(), toThing->getId(), getThingStackpos(toThing));
 }
 
+void Game::useOnCreature(const ThingPtr& thing, const CreaturePtr& creature)
+{
+    if(!m_online || !thing || !checkBotProtection())
+        return;
+
+    m_protocolGame->sendUseOnCreature(thing->getPos(), thing->getId(), getThingStackpos(thing), creature->getId());
+}
+
 void Game::attack(const CreaturePtr& creature)
 {
     if(!m_online || !creature || !checkBotProtection())

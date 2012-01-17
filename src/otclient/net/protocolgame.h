@@ -66,7 +66,7 @@ public:
     void sendRejectTrade();
     void sendUseItem(const Position& position, int itemId, int stackpos, int index);
     void sendUseItemEx(const Position& fromPos, int fromThingId, int fromStackpos, const Position& toPos, int toThingId, int toStackpos);
-    void sendUseItemCreature(const Position& pos, int thingId, int stackpos, uint creatureId);
+    void sendUseOnCreature(const Position& pos, int thingId, int stackpos, uint creatureId);
     void sendRotateItem(const Position& pos, int thingId, int stackpos);
     void sendCloseContainer(int containerId);
     void sendUpContainer(int containerId);
