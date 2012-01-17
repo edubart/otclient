@@ -64,7 +64,7 @@ public:
     void open(const ThingPtr& thing, int containerId);
     void use(const ThingPtr& thing);
     void useWith(const ThingPtr& fromThing, const ThingPtr& toThing);
-    void useHotkey(int itemId, const ThingPtr& toThing);
+    void useInventoryItem(int itemId, const ThingPtr& toThing);
 
     // attack/follow related
     void attack(const CreaturePtr& creature);

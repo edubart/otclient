@@ -278,12 +278,12 @@ void Game::useWith(const ThingPtr& fromThing, const ThingPtr& toThing)
     }
 }
 
-void Game::useHotkey(int itemId, const ThingPtr& toThing)
+void Game::useInventoryItem(int itemId, const ThingPtr& toThing)
 {
     if(!m_online || !toThing || !checkBotProtection())
         return;
 
-    Position pos = Position(0xFFFF, 0, 0); // means that is a hotkey use
+    Position pos = Position(0xFFFF, 0, 0); // means that is a item in inventory
     int toStackpos = getThingStackpos(toThing);
     if(toStackpos == -1)
         return;
