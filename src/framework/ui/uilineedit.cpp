@@ -280,6 +280,7 @@ void UILineEdit::appendText(std::string text)
             m_cursorPos += text.length();
             blinkCursor();
             update();
+            UIWidget::onTextChange(m_text);
         }
     }
 }
@@ -296,6 +297,7 @@ void UILineEdit::appendCharacter(char c)
         m_cursorPos++;
         blinkCursor();
         update();
+        UIWidget::onTextChange(m_text);
     }
 }
 
@@ -312,6 +314,7 @@ void UILineEdit::removeCharacter(bool right)
         }
         blinkCursor();
         update();
+        UIWidget::onTextChange(m_text);
     }
 }
 
