@@ -4,7 +4,7 @@ ComboBoxPopupMenuButton < UIButton
   text-align: left
   text-offset: 2 0
   color: #aaaaaa
-  background-color: white
+  background-color: alpha
 
   $hover:
     color: #ffffff

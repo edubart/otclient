@@ -123,3 +123,12 @@ function Hotkeys.unbindKeyDown(keyComboDesc, widget)
     widget.boundKeyDownCombos[keyComboDesc] = nil
   end
 end
+
+function Hotkeys.unbindKeyPress(keyComboDesc, widget)
+  widget = widget or rootWidget
+  if widget.boundKeyPressCombos == nil then return end
+  local keyComboDesc = retranslateKeyComboDesc(keyComboDesc)
+  if keyComboDesc then
+    widget.boundKeyPressCombos[keyComboDesc] = nil
+  end
+end
