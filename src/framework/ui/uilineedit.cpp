@@ -442,7 +442,8 @@ bool UILineEdit::onKeyPress(uchar keyCode, int keyboardModifiers, bool wouldFilt
         } else
             return false;
         return true;
-    }
+    } else
+        dump << "what?";
     return false;
 }
 

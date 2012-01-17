@@ -93,7 +93,7 @@ protected:
     void updateUnmaximizedCoords();
 
     void processKeyDown(Fw::Key keyCode);
-    void processKeyRelease(Fw::Key keyCode);
+    void processKeyUp(Fw::Key keyCode);
     void releaseAllKeys();
     void fireKeysPress();
 

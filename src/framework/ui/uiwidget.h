@@ -164,7 +164,7 @@ protected:
     virtual bool onKeyText(const std::string& keyText);
     virtual bool onKeyDown(uchar keyCode, int keyboardModifiers);
     virtual bool onKeyPress(uchar keyCode, int keyboardModifiers, bool wouldFilter);
-    virtual bool onKeyRelease(uchar keyCode, int keyboardModifiers);
+    virtual bool onKeyUp(uchar keyCode, int keyboardModifiers);
     virtual bool onMousePress(const Point& mousePos, Fw::MouseButton button);
     virtual void onMouseRelease(const Point& mousePos, Fw::MouseButton button);
     virtual bool onMouseMove(const Point& mousePos, const Point& mouseMoved);
@@ -173,7 +173,7 @@ protected:
     bool propagateOnKeyText(const std::string& keyText);
     bool propagateOnKeyDown(uchar keyCode, int keyboardModifiers);
     bool propagateOnKeyPress(uchar keyCode, int keyboardModifiers, bool wouldFilter);
-    bool propagateOnKeyRelease(uchar keyCode, int keyboardModifiers);
+    bool propagateOnKeyUp(uchar keyCode, int keyboardModifiers);
     bool propagateOnMousePress(const Point& mousePos, Fw::MouseButton button);
     void propagateOnMouseRelease(const Point& mousePos, Fw::MouseButton button);
     bool propagateOnMouseMove(const Point& mousePos, const Point& mouseMoved);

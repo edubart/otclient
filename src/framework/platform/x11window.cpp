@@ -550,7 +550,7 @@ void X11Window::poll()
             if(event.type == KeyPress)
                 processKeyDown(keyCode);
             else if(event.type == KeyRelease)
-                processKeyRelease(keyCode);
+                processKeyUp(keyCode);
         }
 
         // call filter because xim will discard KeyPress events when keys still composing

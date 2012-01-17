@@ -60,10 +60,13 @@ WIN32Window::WIN32Window()
     m_keyMap[VK_SNAPSHOT] = Fw::KeyPrintScreen;
     m_keyMap[VK_PAUSE] = Fw::KeyPause;
 
+    m_keyMap[VK_CONTROL] = Fw::KeyCtrl;
     m_keyMap[VK_LCONTROL] = Fw::KeyCtrl;
     m_keyMap[VK_RCONTROL] = Fw::KeyCtrl;
+    m_keyMap[VK_SHIFT] = Fw::KeyShift;
     m_keyMap[VK_LSHIFT] = Fw::KeyShift;
     m_keyMap[VK_RSHIFT] = Fw::KeyShift;
+    m_keyMap[VK_MENU] = Fw::KeyAlt;
     m_keyMap[VK_LMENU] = Fw::KeyAlt;
     m_keyMap[VK_RMENU] = Fw::KeyAltGr;
     m_keyMap[VK_LWIN] = Fw::KeyMeta;
@@ -376,6 +379,8 @@ void WIN32Window::maximize()
 
 void WIN32Window::poll()
 {
+    fireKeysPress();
+
     for(int i=0;i<2;++i) {
         MSG msg;
         if(PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
@@ -394,13 +399,16 @@ void WIN32Window::poll()
 
 LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-    m_inputEvent.type = Fw::NoInputEvent;
-    m_inputEvent.mouseButton = Fw::MouseNoButton;
-    m_inputEvent.keyCode = Fw::KeyUnknown;
-    m_inputEvent.keyText = "";
-    m_inputEvent.mouseMoved = Point();
-    m_inputEvent.wheelDirection = Fw::MouseNoWheel;
 
+    /*
+    m_inputEvent.keyboardModifiers = 0;
+    if(HIWORD(GetKeyState(VK_CONTROL)))
+        m_inputEvent.keyboardModifiers |= Fw::KeyboardCtrlModifier;
+    if(HIWORD(GetKeyState(VK_MENU)))
+        m_inputEvent.keyboardModifiers |= Fw::KeyboardAltModifier;
+    if(HIWORD(GetKeyState(VK_SHIFT)))
+        m_inputEvent.keyboardModifiers |= Fw::KeyboardShiftModifier;
+    */
     switch(uMsg)
     {
         case WM_ACTIVATE: {
@@ -409,9 +417,9 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
         }
         case WM_CHAR: {
             if(wParam >= 32 && wParam <= 255) {
-                m_inputEvent.type = Fw::KeyPressInputEvent;
-                m_inputEvent.keyCode = Fw::KeyUnknown;
+                m_inputEvent.reset(Fw::KeyTextInputEvent);
                 m_inputEvent.keyText = wParam;
+                m_onInputEvent(m_inputEvent);
             }
             break;
         }
@@ -419,55 +427,63 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
             m_onClose();
             break;
         }
-        case WM_KEYDOWN:
+        case WM_KEYDOWN: {
+            processKeyDown(m_keyMap[wParam]);
+            break;
+        }
         case WM_KEYUP: {
-            if(m_keyMap.find(wParam) != m_keyMap.end()) {
-                m_inputEvent.type = (uMsg == WM_KEYDOWN) ? Fw::KeyPressInputEvent : Fw::KeyReleaseInputEvent;
-                m_inputEvent.keyCode = m_keyMap[wParam];
-            }
+            processKeyUp(m_keyMap[wParam]);
             break;
         }
         case WM_LBUTTONDOWN: {
-            m_inputEvent.type = Fw::MousePressInputEvent;
+            m_inputEvent.reset(Fw::MousePressInputEvent);
             m_inputEvent.mouseButton = Fw::MouseLeftButton;
+            m_onInputEvent(m_inputEvent);
             break;
         }
         case WM_LBUTTONUP: {
-            m_inputEvent.type = Fw::MouseReleaseInputEvent;
+            m_inputEvent.reset(Fw::MouseReleaseInputEvent);
             m_inputEvent.mouseButton = Fw::MouseLeftButton;
+            m_onInputEvent(m_inputEvent);
             break;
         }
         case WM_MBUTTONDOWN: {
-            m_inputEvent.type = Fw::MousePressInputEvent;
+            m_inputEvent.reset(Fw::MousePressInputEvent);
             m_inputEvent.mouseButton = Fw::MouseMidButton;
+            m_onInputEvent(m_inputEvent);
             break;
         }
         case WM_MBUTTONUP: {
-            m_inputEvent.type = Fw::MouseReleaseInputEvent;
+            m_inputEvent.reset(Fw::MouseReleaseInputEvent);
             m_inputEvent.mouseButton = Fw::MouseMidButton;
+            m_onInputEvent(m_inputEvent);
             break;
         }
         case WM_RBUTTONDOWN: {
-            m_inputEvent.type = Fw::MousePressInputEvent;
+            m_inputEvent.reset(Fw::MousePressInputEvent);
             m_inputEvent.mouseButton = Fw::MouseRightButton;
+            m_onInputEvent(m_inputEvent);
             break;
         }
         case WM_RBUTTONUP: {
-            m_inputEvent.type = Fw::MouseReleaseInputEvent;
+            m_inputEvent.reset(Fw::MouseReleaseInputEvent);
             m_inputEvent.mouseButton = Fw::MouseRightButton;
+            m_onInputEvent(m_inputEvent);
             break;
         }
         case WM_MOUSEMOVE: {
-            m_inputEvent.type = Fw::MouseMoveInputEvent;
+            m_inputEvent.reset(Fw::MouseMoveInputEvent);
             Point newMousePos(LOWORD(lParam), HIWORD(lParam));
             m_inputEvent.mouseMoved = newMousePos - m_inputEvent.mousePos;
             m_inputEvent.mousePos = newMousePos;
+            m_onInputEvent(m_inputEvent);
             break;
         }
         case WM_MOUSEWHEEL: {
-            m_inputEvent.type = Fw::MouseWheelInputEvent;
+            m_inputEvent.reset(Fw::MouseWheelInputEvent);
             m_inputEvent.mouseButton = Fw::MouseMidButton;
             m_inputEvent.wheelDirection = HIWORD(wParam) > 0 ? Fw::MouseWheelUp : Fw::MouseWheelDown;
+            m_onInputEvent(m_inputEvent);
             break;
         }
         case WM_MOVE: {
@@ -494,17 +510,6 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
         }
         default:
             return DefWindowProc(hWnd, uMsg, wParam, lParam);
-    }
-
-    if(m_inputEvent.type != Fw::NoInputEvent) {
-        m_inputEvent.keyboardModifiers = 0;
-        if(HIWORD(GetKeyState(VK_CONTROL)))
-            m_inputEvent.keyboardModifiers |= Fw::KeyboardCtrlModifier;
-        if(HIWORD(GetKeyState(VK_MENU)))
-            m_inputEvent.keyboardModifiers |= Fw::KeyboardAltModifier;
-        if(HIWORD(GetKeyState(VK_SHIFT)))
-            m_inputEvent.keyboardModifiers |= Fw::KeyboardShiftModifier;
-        m_onInputEvent(m_inputEvent);
     }
 
     return 0;

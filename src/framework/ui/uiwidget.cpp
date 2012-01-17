@@ -1071,9 +1071,9 @@ bool UIWidget::onKeyPress(uchar keyCode, int keyboardModifiers, bool wouldFilter
     return callLuaField<bool>("onKeyPress", keyCode, keyboardModifiers, wouldFilter);
 }
 
-bool UIWidget::onKeyRelease(uchar keyCode, int keyboardModifiers)
+bool UIWidget::onKeyUp(uchar keyCode, int keyboardModifiers)
 {
-    return callLuaField<bool>("onKeyRelease", keyCode, keyboardModifiers);
+    return callLuaField<bool>("onKeyUp", keyCode, keyboardModifiers);
 }
 
 bool UIWidget::onMousePress(const Point& mousePos, Fw::MouseButton button)
@@ -1165,7 +1165,7 @@ bool UIWidget::propagateOnKeyPress(uchar keyCode, int keyboardModifiers, bool wo
     return onKeyPress(keyCode, keyboardModifiers, wouldFilter);
 }
 
-bool UIWidget::propagateOnKeyRelease(uchar keyCode, int keyboardModifiers)
+bool UIWidget::propagateOnKeyUp(uchar keyCode, int keyboardModifiers)
 {
     // do a backup of children list, because it may change while looping it
     UIWidgetList children;
@@ -1180,11 +1180,11 @@ bool UIWidget::propagateOnKeyRelease(uchar keyCode, int keyboardModifiers)
     }
 
     for(const UIWidgetPtr& child : children) {
-        if(child->propagateOnKeyRelease(keyCode, keyboardModifiers))
+        if(child->propagateOnKeyUp(keyCode, keyboardModifiers))
             return true;
     }
 
-    return onKeyRelease(keyCode, keyboardModifiers);
+    return onKeyUp(keyCode, keyboardModifiers);
 }
 
 bool UIWidget::propagateOnMousePress(const Point& mousePos, Fw::MouseButton button)

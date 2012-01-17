@@ -31,6 +31,8 @@ WIN32Window window;
 X11Window window;
 #endif
 
+#include <framework/core/clock.h>
+
 PlatformWindow& g_window = window;
 
 void PlatformWindow::updateUnmaximizedCoords()
@@ -71,7 +73,7 @@ void PlatformWindow::processKeyDown(Fw::Key keyCode)
     }
 }
 
-void PlatformWindow::processKeyRelease(Fw::Key keyCode)
+void PlatformWindow::processKeyUp(Fw::Key keyCode)
 {
     if(keyCode == Fw::KeyUnknown || !m_keysState[keyCode])
         return;
@@ -86,7 +88,7 @@ void PlatformWindow::processKeyRelease(Fw::Key keyCode)
         m_inputEvent.keyboardModifiers &= ~Fw::KeyboardShiftModifier;
 
     if(m_onInputEvent) {
-        m_inputEvent.reset(Fw::KeyReleaseInputEvent);
+        m_inputEvent.reset(Fw::KeyUpInputEvent);
         m_onInputEvent(m_inputEvent);
     }
 }
@@ -100,7 +102,7 @@ void PlatformWindow::releaseAllKeys()
         if(!pressed)
             continue;
 
-        processKeyRelease(keyCode);
+        processKeyUp(keyCode);
     }
 }
 

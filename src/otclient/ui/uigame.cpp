@@ -57,6 +57,8 @@ bool UIGame::onKeyPress(uchar keyCode, int keyboardModifiers, bool wouldFilter)
         } else if(keyCode == Fw::KeyNumpad7) {
             g_game.walk(Otc::NorthWest);
             return true;
+        } else if(wouldFilter) {
+            return false;
         } else if(keyCode == Fw::KeyReturn || keyCode == Fw::KeyEnter) {
             g_game.talk(chatLineEdit->getText());
             chatLineEdit->clearText();

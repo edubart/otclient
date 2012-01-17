@@ -231,7 +231,7 @@ namespace Fw
         KeyTextInputEvent,
         KeyDownInputEvent,
         KeyPressInputEvent,
-        KeyReleaseInputEvent,
+        KeyUpInputEvent,
         MousePressInputEvent,
         MouseReleaseInputEvent,
         MouseMoveInputEvent,
