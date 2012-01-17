@@ -332,14 +332,15 @@ void WIN32Window::internalCreateGLContext()
 
 bool WIN32Window::isExtensionSupported(const char *ext)
 {
-    typedef const char* _wglGetExtensionsStringARB(HDC hdc);
-    _wglGetExtensionsStringARB *wglGetExtensionsStringARB = (_wglGetExtensionsStringARB*)getExtensionProcAddress("wglGetExtensionsStringARB");
+    typedef const char* (__cdecl * wglGetExtensionsStringProc)(HDC hdc);
+    wglGetExtensionsStringProc wglGetExtensionsString = (wglGetExtensionsStringProc)getExtensionProcAddress("wglGetExtensionsStringEXT");
+    if(!wglGetExtensionsString)
+        return false;
 
-    if(wglGetExtensionsStringARB) {
-        const char *exts = wglGetExtensionsStringARB(m_deviceContext);
-        if(strstr(exts, ext))
-            return true;
-    }
+    const char *exts = wglGetExtensionsString(m_deviceContext);
+    if(exts && strstr(exts, ext))
+        return true;
+
     return false;
 }
 
@@ -399,16 +400,7 @@ void WIN32Window::poll()
 
 LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-
-    /*
-    m_inputEvent.keyboardModifiers = 0;
-    if(HIWORD(GetKeyState(VK_CONTROL)))
-        m_inputEvent.keyboardModifiers |= Fw::KeyboardCtrlModifier;
-    if(HIWORD(GetKeyState(VK_MENU)))
-        m_inputEvent.keyboardModifiers |= Fw::KeyboardAltModifier;
-    if(HIWORD(GetKeyState(VK_SHIFT)))
-        m_inputEvent.keyboardModifiers |= Fw::KeyboardShiftModifier;
-    */
+    m_inputEvent.reset();
     switch(uMsg)
     {
         case WM_ACTIVATE: {
@@ -419,7 +411,6 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
             if(wParam >= 32 && wParam <= 255) {
                 m_inputEvent.reset(Fw::KeyTextInputEvent);
                 m_inputEvent.keyText = wParam;
-                m_onInputEvent(m_inputEvent);
             }
             break;
         }
@@ -438,37 +429,31 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
         case WM_LBUTTONDOWN: {
             m_inputEvent.reset(Fw::MousePressInputEvent);
             m_inputEvent.mouseButton = Fw::MouseLeftButton;
-            m_onInputEvent(m_inputEvent);
             break;
         }
         case WM_LBUTTONUP: {
             m_inputEvent.reset(Fw::MouseReleaseInputEvent);
             m_inputEvent.mouseButton = Fw::MouseLeftButton;
-            m_onInputEvent(m_inputEvent);
             break;
         }
         case WM_MBUTTONDOWN: {
             m_inputEvent.reset(Fw::MousePressInputEvent);
             m_inputEvent.mouseButton = Fw::MouseMidButton;
-            m_onInputEvent(m_inputEvent);
             break;
         }
         case WM_MBUTTONUP: {
             m_inputEvent.reset(Fw::MouseReleaseInputEvent);
             m_inputEvent.mouseButton = Fw::MouseMidButton;
-            m_onInputEvent(m_inputEvent);
             break;
         }
         case WM_RBUTTONDOWN: {
             m_inputEvent.reset(Fw::MousePressInputEvent);
             m_inputEvent.mouseButton = Fw::MouseRightButton;
-            m_onInputEvent(m_inputEvent);
             break;
         }
         case WM_RBUTTONUP: {
             m_inputEvent.reset(Fw::MouseReleaseInputEvent);
             m_inputEvent.mouseButton = Fw::MouseRightButton;
-            m_onInputEvent(m_inputEvent);
             break;
         }
         case WM_MOUSEMOVE: {
@@ -476,14 +461,11 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
             Point newMousePos(LOWORD(lParam), HIWORD(lParam));
             m_inputEvent.mouseMoved = newMousePos - m_inputEvent.mousePos;
             m_inputEvent.mousePos = newMousePos;
-            m_onInputEvent(m_inputEvent);
             break;
         }
         case WM_MOUSEWHEEL: {
-            m_inputEvent.reset(Fw::MouseWheelInputEvent);
             m_inputEvent.mouseButton = Fw::MouseMidButton;
             m_inputEvent.wheelDirection = HIWORD(wParam) > 0 ? Fw::MouseWheelUp : Fw::MouseWheelDown;
-            m_onInputEvent(m_inputEvent);
             break;
         }
         case WM_MOVE: {
@@ -512,6 +494,8 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
             return DefWindowProc(hWnd, uMsg, wParam, lParam);
     }
 
+    if(m_onInputEvent && m_inputEvent.type != Fw::NoInputEvent)
+        m_onInputEvent(m_inputEvent);
     return 0;
 }
 
@@ -581,14 +565,15 @@ void WIN32Window::setFullscreen(bool fullscreen)
 
 void WIN32Window::setVerticalSync(bool enable)
 {
-    typedef int (*glSwapIntervalProc)(int);
-    glSwapIntervalProc glSwapInterval = NULL;
+    if(!isExtensionSupported("WGL_EXT_swap_control"))
+        return;
 
-    if(isExtensionSupported("WGL_EXT_swap_control"))
-        glSwapInterval = (glSwapIntervalProc)getExtensionProcAddress("wglSwapIntervalEXT");
+    typedef BOOL (WINAPI * wglSwapIntervalProc)(int);
+    wglSwapIntervalProc wglSwapInterval = (wglSwapIntervalProc)getExtensionProcAddress("wglSwapIntervalEXT");
+    if(!wglSwapInterval)
+        return;
 
-    if(glSwapInterval)
-        glSwapInterval(enable ? 1 : 0);
+    wglSwapInterval(enable ? 1 : 0);
 }
 
 void WIN32Window::setIcon(const std::string& pngIcon)

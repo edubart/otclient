@@ -124,8 +124,7 @@ void PlatformWindow::fireKeysPress()
         ticks_t firstKeyPress = m_firstKeysPress[keyCode];
         if(g_clock.ticksElapsed(lastPressTicks) >= KEY_PRESS_REPEAT_INTERVAL) {
             if(m_onInputEvent) {
-                m_inputEvent.reset();
-                m_inputEvent.type = Fw::KeyPressInputEvent;
+                m_inputEvent.reset(Fw::KeyPressInputEvent);
                 m_inputEvent.keyCode = keyCode;
                 m_inputEvent.wouldFilter = g_clock.ticksElapsed(firstKeyPress) < KEY_PRESS_REPEAT_DELAY;
                 m_onInputEvent(m_inputEvent);
