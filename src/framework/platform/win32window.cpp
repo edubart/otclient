@@ -332,12 +332,12 @@ void WIN32Window::internalCreateGLContext()
 
 bool WIN32Window::isExtensionSupported(const char *ext)
 {
-    typedef const char* (__cdecl * wglGetExtensionsStringProc)(HDC hdc);
+    typedef const char* (WINAPI * wglGetExtensionsStringProc)();
     wglGetExtensionsStringProc wglGetExtensionsString = (wglGetExtensionsStringProc)getExtensionProcAddress("wglGetExtensionsStringEXT");
     if(!wglGetExtensionsString)
         return false;
 
-    const char *exts = wglGetExtensionsString(m_deviceContext);
+    const char *exts = wglGetExtensionsString();
     if(exts && strstr(exts, ext))
         return true;
 
