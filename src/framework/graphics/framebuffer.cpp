@@ -42,6 +42,9 @@ FrameBuffer::~FrameBuffer()
 
 void FrameBuffer::resize(const Size& size)
 {
+    if(m_texture && m_texture->getSize() == size)
+        return;
+
     internalBind();
     m_texture = TexturePtr(new Texture(size.width(), size.height(), 4));
     m_texture->setSmooth(true);

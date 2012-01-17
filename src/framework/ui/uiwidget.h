@@ -407,6 +407,10 @@ private:
     void initText();
     void parseTextStyle(const OTMLNodePtr& styleNode);
 
+    Boolean<true> m_textMustRecache;
+    FrameBufferPtr m_textFramebuffer;
+    Size m_textCachedBoxSize;
+
 protected:
     void drawText(const Rect& screenCoords);
 
@@ -423,8 +427,8 @@ public:
     void clearText() { setText(""); }
 
     void setText(const std::string& text);
-    void setTextAlign(Fw::AlignmentFlag align) { m_textAlign = align; }
-    void setTextOffset(const Point& offset) { m_textOffset = offset; }
+    void setTextAlign(Fw::AlignmentFlag align) { m_textAlign = align; m_textMustRecache = true; }
+    void setTextOffset(const Point& offset) { m_textOffset = offset; m_textMustRecache = true; }
     void setFont(const std::string& fontName);
 
     std::string getText() { return m_text; }

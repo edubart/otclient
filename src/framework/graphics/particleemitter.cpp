@@ -163,7 +163,7 @@ bool ParticleEmitter::load(const OTMLNodePtr& node)
             else if(childNode->value() == "multiply")
                 m_pCompositionMode = Painter::CompositionMode_Multiply;
             else if(childNode->value() == "addition")
-                m_pCompositionMode = Painter::CompositionMode_Addition;
+                m_pCompositionMode = Painter::CompositionMode_Add;
         }
     }
 

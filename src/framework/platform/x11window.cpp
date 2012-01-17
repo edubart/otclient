@@ -704,6 +704,7 @@ void X11Window::poll()
                 break;
             case UnmapNotify:
                 m_visible = false;
+                releaseAllKeys();
                 break;
             case FocusIn:
                 m_focused = true;

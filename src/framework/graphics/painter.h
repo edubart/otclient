@@ -34,7 +34,7 @@ public:
     enum CompositionMode {
         CompositionMode_Normal,
         CompositionMode_Multiply,
-        CompositionMode_Addition
+        CompositionMode_Add
     };
 
     void init();
@@ -57,6 +57,7 @@ public:
     void setCustomProgram(PainterShaderProgramPtr program);
     void releaseCustomProgram() { m_customProgram = nullptr; }
     void setCompositionMode(CompositionMode compositionMode);
+    void resetCompositionMode() { setCompositionMode(CompositionMode_Normal); }
 
     void setProjectionMatrix(const Matrix3& projectionMatrix) { m_projectionMatrix = projectionMatrix; }
     Matrix3 getProjectionMatrix() { return m_projectionMatrix; }

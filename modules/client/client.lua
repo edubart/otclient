@@ -1,6 +1,6 @@
 Client = {}
 
-local function setupWindow()
+function Client.init()
   g_window.show()
   g_window.setMinimumSize({ width = 600, height = 480 })
 
@@ -29,11 +29,8 @@ local function setupWindow()
   g_window.setIcon(resolvepath('clienticon.png'))
 end
 
-function Client.init()
-  setupWindow()
-end
-
 function Client.terminate()
+  -- save window configs
   Settings.set('window-size', g_window.getUnmaximizedSize())
   Settings.set('window-pos', g_window.getUnmaximizedPos())
   Settings.set('window-maximized', g_window.isMaximized())

@@ -34,6 +34,7 @@ public:
     void setAttackingCreature(const CreaturePtr& creature);
     void setFollowingCreature(const CreaturePtr& creature);
     void setIcons(Otc::PlayerIcons icons) { m_icons = icons; }
+    void setKnown(bool known) { m_known = known; }
 
     bool getCanReportBugs() { return m_canReportBugs; }
     int getSkill(Otc::Skill skill, Otc::SkillType skillType) { return m_skills[skill][skillType]; }
@@ -42,6 +43,7 @@ public:
     CreaturePtr getFollowingCreature() { return m_followingCreature; }
     Otc::PlayerIcons getIcons() { return m_icons; }
 
+    bool isKnown() { return m_known; }
     bool isAttacking() { return m_attackingCreature != nullptr; }
     bool isFollowing() { return m_followingCreature != nullptr; }
 
@@ -65,6 +67,7 @@ public:
 
 private:
     bool m_canReportBugs;
+    bool m_known;
     CreaturePtr m_attackingCreature, m_followingCreature;
     Otc::PlayerIcons m_icons;
     int m_skills[Otc::LastSkill][Otc::LastSkillType];

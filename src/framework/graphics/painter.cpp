@@ -131,8 +131,8 @@ void Painter::setCompositionMode(Painter::CompositionMode compositionMode)
     case CompositionMode_Multiply:
         glBlendFunc(GL_DST_COLOR, GL_ONE_MINUS_SRC_ALPHA);
         break;
-    case CompositionMode_Addition:
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    case CompositionMode_Add:
+        glBlendFunc(GL_ONE, GL_ONE);
         break;
     }
 }

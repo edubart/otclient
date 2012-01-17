@@ -1,26 +1,20 @@
 ====================================================
 High priority TODO in order (before first public disclose)
 
-[bart] chat with tabs
-[bart] scrollbar
-[bart] scrollable widgets
-[bart] complete miniwindow (close, minimize, resize)
-[bart] move windows
-[bart] add top menu buttons
-[bart] console scrolling
-[bart] modules managment interface
-[bart] adjust interface design
-
-[baxnie] display exit box when exiting from game
-[baxnie] auto walk
-[baxnie] attack modes
-[baxnie] player status icons (poison, etc)
-[baxnie] container windows
-[baxnie] move items
-[baxnie] use with
-[baxnie] hotkeys window
-[baxnie] trade window
-[baxnie] battle list
+termiante chat
+scrollbar
+scrollable widgets
+complete miniwindow (close, minimize, resize, move)
+move windows
+add top menu buttons
+modules managment interface
+adjust interface design
+display exit box when exiting from game
+attack modes
+player status icons (poison, etc)
+container windows
+move items
+use with
 
 
 
@@ -28,25 +22,27 @@ High priority TODO in order (before first public disclose)
 Low priority TODO
 
 == Core
-[bart] review directories loading search
-[bart] load modules from zip packages
-[bart] create a class for reading binary files
-[bart] rework lua/c++ logger
-[bart] make protocol class compatible with old tibia protocols
+review directories loading search
+load modules from zip packages
+create a class for reading binary files
+rework lua/c++ logger
+ake protocol class compatible with old tibia protocols
 
 == Graphics
-[bart] use CoordsBuffer in font
-[bart] cache renders into framebuffers
-[bart] use hardware buffer
-[bart] use indices
+use CoordsBuffer in font
+cache renders into framebuffers
+use hardware buffer
+use indices
+fix opacity and cached framebuffers conflict
 
 == Lua
-[bart] make possible to bind non LuaObject derived classes on lua engine (for usage with Point,Rect,Color,Size)
-[bart] review usage of x,y/width,height in lua instead of point/size
+make possible to bind non LuaObject derived classes on lua engine (for usage with Point,Rect,Color,Size)
+review usage of x,y/width,height in lua instead of point/size
 
 == Platform
-[bart] port to MacOs and iphone
+port to MacOs and iphone
 change win32 mouse cursor icon
+rework win32 key input system
 
 == UI
 [bart] fix massive hotkeys when holding down a key
@@ -66,26 +62,29 @@ change win32 mouse cursor icon
 [bart] make api to enable/disable capture of events to avoid massive event processing
 [bart] review style apply system
 
-== Client modules
-[bart] make possible to reload modules
-
 == Client
-[bart] implement left panel with dragging windows
-[bart] clean sprites cache periodically
-[bart] create a shader manager
-[bart] find a way to load map rendering styles
-[bart] move redering of creatures names, skulls, etc to UI
-[bart] cache screen creatures in a list on map
-[bart] handle corrupt errors in dat/spr
-[bart] remake spr/dat using OTML and image files
-[bart] rework map tile rendering (cache visible tiles, etc)
-[bart] minimap window
-[bart] draw lights using shaders
-[bart] limit FPS in options
-[bart] resize map, right panel
-[baxnie] do lua game event calls from Game instead from GameProtocol
-[baxnie] login queue
-[baxnie] questlog
-[baxnie] edit texts
-[baxnie] ignore list
-[baxnie] viplist marks
+make possible to reload modules
+terminal/console scrolling
+auto walk
+hotkeys window
+trade window
+battle list
+implement left panel with dragging windows
+clean sprites cache periodically
+create a shader manager
+find a way to load map rendering styles
+move redering of creatures names, skulls, etc to UI
+cache screen creatures in a list on map
+handle corrupt errors in dat/spr
+remake spr/dat using OTML and image files
+rework map tile rendering (cache visible tiles, etc)
+minimap window
+draw lights using shaders
+limit FPS in options
+resize map, right panel
+do lua game event calls from Game instead from GameProtocol
+login queue
+questlog
+edit texts
+ignore list
+viplist marks

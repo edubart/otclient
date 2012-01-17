@@ -8,5 +8,5 @@ Module
     require 'options'
     Options.init()
 
-  onUnload:
+  onUnload: |
     Options.terminate()

@@ -162,7 +162,7 @@ void Game::processWalkCancel(Otc::Direction direction)
 
 void Game::walk(Otc::Direction direction)
 {
-    if(!isOnline() || isDead() || !checkBotProtection())
+    if(!isOnline() || !m_localPlayer->isKnown() || isDead() || !checkBotProtection())
         return;
 
     if(m_localPlayer->isFollowing())

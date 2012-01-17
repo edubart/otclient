@@ -39,6 +39,9 @@ bool LocalPlayer::canWalk(Otc::Direction direction)
 
     // check for blockable tiles in the walk direction
     TilePtr tile = g_map.getTile(m_pos + Position::getPosFromDirection(direction));
+    if(!tile)
+        return false;
+
     if(!tile->isWalkable()) {
         g_game.processTextMessage("statusSmall", "Sorry, not possible.");
         return false;

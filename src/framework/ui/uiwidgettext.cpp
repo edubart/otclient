@@ -24,6 +24,7 @@
 #include "uitranslator.h"
 #include <framework/graphics/fontmanager.h>
 #include <framework/graphics/painter.h>
+#include <framework/graphics/framebuffer.h>
 
 void UIWidget::initText()
 {
@@ -47,12 +48,30 @@ void UIWidget::parseTextStyle(const OTMLNodePtr& styleNode)
 
 void UIWidget::drawText(const Rect& screenCoords)
 {
-    g_painter.setColor(m_color);
-    if(m_text.length() > 0 && m_color.a() > 0) {
-        Rect textRect = screenCoords;
-        textRect.translate(m_textOffset);
-        m_font->renderText(m_text, textRect, m_textAlign, m_color);
+    if(m_text.length() == 0 || m_color.a() == 0)
+        return;
+
+    Size boxSize = screenCoords.size();
+    if(boxSize != m_textCachedBoxSize || m_textMustRecache) {
+        if(!m_textFramebuffer)
+            m_textFramebuffer = FrameBufferPtr(new FrameBuffer(boxSize));
+        else
+            m_textFramebuffer->resize(boxSize);
+
+        m_textFramebuffer->bind();
+        Rect virtualTextRect(0, 0, boxSize);
+        virtualTextRect.translate(m_textOffset);
+        g_painter.setCompositionMode(Painter::CompositionMode_Add);
+        m_font->renderText(m_text, virtualTextRect, m_textAlign, Fw::white);
+        g_painter.resetCompositionMode();
+        m_textFramebuffer->release();
+
+        m_textMustRecache = false;
+        m_textCachedBoxSize = boxSize;
     }
+
+    g_painter.setColor(m_color);
+    m_textFramebuffer->draw(screenCoords);
 }
 
 void UIWidget::onTextChange(const std::string& text)
@@ -67,26 +86,29 @@ void UIWidget::onFontChange(const std::string& font)
 
 void UIWidget::setText(const std::string& text)
 {
-    if(m_text != text) {
-        m_text = text;
+    if(m_text == text)
+        return;
 
-        // update rect size
-        if(!m_rect.isValid()) {
-            Size textSize = m_font->calculateTextRectSize(m_text);
-            Size newSize = getSize();
-            if(newSize.width() <= 0)
-                newSize.setWidth(textSize.width());
-            if(newSize.height() <= 0)
-                newSize.setHeight(textSize.height());
-            setSize(newSize);
-        }
+    m_text = text;
 
-        onTextChange(text);
+    // update rect size
+    if(!m_rect.isValid()) {
+        Size textSize = m_font->calculateTextRectSize(m_text);
+        Size newSize = getSize();
+        if(newSize.width() <= 0)
+            newSize.setWidth(textSize.width());
+        if(newSize.height() <= 0)
+            newSize.setHeight(textSize.height());
+        setSize(newSize);
     }
+
+    onTextChange(text);
+    m_textMustRecache = true;
 }
 
 void UIWidget::setFont(const std::string& fontName)
 {
     m_font = g_fonts.getFont(fontName);
     onFontChange(fontName);
+    m_textMustRecache = true;
 }
