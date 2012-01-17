@@ -24,10 +24,11 @@
 #include "localplayer.h"
 #include "map.h"
 #include "tile.h"
+#include "creature.h"
+#include "statictext.h"
 #include <framework/core/eventdispatcher.h>
 #include <framework/ui/uimanager.h>
 #include <otclient/luascript/luavaluecasts.h>
-#include <otclient/core/statictext.h>
 #include <otclient/net/protocolgame.h>
 
 Game g_game;
@@ -261,9 +262,20 @@ void Game::useWith(const ThingPtr& fromThing, const ThingPtr& toThing)
     if(!m_online || !fromThing || !toThing || !checkBotProtection())
         return;
 
-    int fromStackpos = getThingStackpos(fromThing), toStackpos = getThingStackpos(toThing);
-    if(fromStackpos != -1 && toStackpos != -1)
-        m_protocolGame->sendUseItemEx(fromThing->getPos(), fromThing->getId(), fromStackpos, toThing->getPos(), toThing->getId(), toStackpos);
+    Position pos = fromThing->getPos();
+    int fromStackpos = getThingStackpos(fromThing);
+    if(fromStackpos == -1)
+        return;
+
+    if(CreaturePtr creature = toThing->asCreature()) {
+        m_protocolGame->sendUseOnCreature(pos, fromThing->getId(), fromStackpos, creature->getId());
+    } else {
+        int toStackpos = getThingStackpos(toThing);
+        if(toStackpos == -1)
+            return;
+
+        m_protocolGame->sendUseItemEx(pos, fromThing->getId(), fromStackpos, toThing->getPos(), toThing->getId(), toStackpos);
+    }
 }
 
 void Game::useHotkey(int itemId, const ThingPtr& toThing)
@@ -271,15 +283,16 @@ void Game::useHotkey(int itemId, const ThingPtr& toThing)
     if(!m_online || !toThing || !checkBotProtection())
         return;
 
-    m_protocolGame->sendUseItemEx(Position(0xFFFF, 0, 0), itemId, 0, toThing->getPos(), toThing->getId(), getThingStackpos(toThing));
-}
-
-void Game::useOnCreature(const ThingPtr& thing, const CreaturePtr& creature)
-{
-    if(!m_online || !thing || !checkBotProtection())
+    Position pos = Position(0xFFFF, 0, 0); // means that is a hotkey use
+    int toStackpos = getThingStackpos(toThing);
+    if(toStackpos == -1)
         return;
 
-    m_protocolGame->sendUseOnCreature(thing->getPos(), thing->getId(), getThingStackpos(thing), creature->getId());
+    if(CreaturePtr creature = toThing->asCreature()) {
+        m_protocolGame->sendUseOnCreature(pos, itemId, 0, creature->getId());
+    } else {
+        m_protocolGame->sendUseItemEx(pos, itemId, 0, toThing->getPos(), toThing->getId(), toStackpos);
+    }
 }
 
 void Game::attack(const CreaturePtr& creature)
