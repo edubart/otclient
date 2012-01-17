@@ -25,7 +25,7 @@
 
 #include "declarations.h"
 
-class LuaException : public std::exception
+class LuaException : public Exception
 {
 public:
     LuaException(const std::string& error, int traceLevel = -1);

@@ -19,8 +19,12 @@ function showMap()
   if map then map:show() end
 end
 
-function displayItem(id)
-  local itemWidget = createWidget('Item', rootWidget)
-  itemWidget:setItem(Item.create(id))
+function debugContainersItems()
+  function UIItem:onHoverChange(hovered)
+    if hovered then
+      ToolTip.display(self:getItem():getId())
+    else
+      ToolTip.hide()
+    end
+  end
 end
-
