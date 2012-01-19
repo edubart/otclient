@@ -156,7 +156,6 @@ void Game::processAttackCancel()
 
 void Game::processWalkCancel(Otc::Direction direction)
 {
-    logTraceDebug();
     m_localPlayer->cancelWalk(direction);
 }
 

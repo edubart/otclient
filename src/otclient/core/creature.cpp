@@ -216,7 +216,7 @@ void Creature::walk(const Position& oldPos, const Position& newPos)
     //if(direction == Otc::NorthWest || direction == Otc::NorthEast || direction == Otc::SouthWest || direction == Otc::SouthEast)
     //    walkInterval *= 3;
 
-    m_walkInterval = (walkInterval / g_game.getServerBeat()) * g_game.getServerBeat();
+    m_walkInterval = std::ceil(walkInterval / g_game.getServerBeat()) * g_game.getServerBeat();
 
     // no direction needs to be changed when the walk ends
     m_walkTurnDirection = Otc::InvalidDirection;
