@@ -29,7 +29,7 @@
 class OTClient : public Application
 {
 public:
-    OTClient();
+    OTClient(const std::string &appName = Otc::AppCompactName);
     void init(const std::vector<std::string>& args);
     void registerLuaFunctions();
 };

@@ -25,7 +25,7 @@
 #include "core/game.h"
 #include <framework/core/resourcemanager.h>
 
-OTClient::OTClient() : Application(Otc::AppCompactName)
+OTClient::OTClient(const std::string& appName) : Application(appName)
 {
 
 }
