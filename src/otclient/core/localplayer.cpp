@@ -140,7 +140,7 @@ void LocalPlayer::updateWalkOffset(int totalPixelsWalked)
 
 void LocalPlayer::updateWalk()
 {
-    float walkTicksPerPixel = m_walkInterval / 32.0f;
+    float walkTicksPerPixel = m_walkAnimationInterval / 32.0f;
     int totalPixelsWalked = std::min(m_walkTimer.ticksElapsed() / walkTicksPerPixel, 32.0f);
 
     // update walk animation and offsets

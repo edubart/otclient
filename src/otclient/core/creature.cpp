@@ -46,6 +46,7 @@ Creature::Creature() : Thing()
     m_direction = Otc::South;
     m_walking = false;
     m_walkInterval = 0;
+    m_walkAnimationInterval = 0;
     m_walkTurnDirection = Otc::InvalidDirection;
     m_skull = Otc::SkullNone;
     m_shield = Otc::ShieldNone;
@@ -207,16 +208,19 @@ void Creature::walk(const Position& oldPos, const Position& newPos)
     m_walkTimer.restart();
 
     // calculates walk interval
-    float walkInterval = 1000;
+    float interval = 1000;
     int groundSpeed = g_map.getTile(oldPos)->getGroundSpeed();
     if(groundSpeed != 0)
-        walkInterval = (1000.0f * groundSpeed) / m_speed;
+        interval = (1000.0f * groundSpeed) / m_speed;
+
+    interval = std::ceil(interval / g_game.getServerBeat()) * g_game.getServerBeat();
+
+    m_walkAnimationInterval = interval;
+    m_walkInterval = interval;
 
     // diagonal walking lasts 3 times more.
-    //if(direction == Otc::NorthWest || direction == Otc::NorthEast || direction == Otc::SouthWest || direction == Otc::SouthEast)
-    //    walkInterval *= 3;
-
-    m_walkInterval = std::ceil(walkInterval / g_game.getServerBeat()) * g_game.getServerBeat();
+    if(direction == Otc::NorthWest || direction == Otc::NorthEast || direction == Otc::SouthWest || direction == Otc::SouthEast)
+        m_walkInterval *= 3;
 
     // no direction needs to be changed when the walk ends
     m_walkTurnDirection = Otc::InvalidDirection;
@@ -278,13 +282,13 @@ void Creature::nextWalkUpdate()
         m_walkUpdateEvent = g_dispatcher.scheduleEvent([self] {
             self->m_walkUpdateEvent = nullptr;
             self->nextWalkUpdate();
-        }, m_walkInterval / 32);
+        }, m_walkAnimationInterval / 32);
     }
 }
 
 void Creature::updateWalk()
 {
-    float walkTicksPerPixel = m_walkInterval / 32.0f;
+    float walkTicksPerPixel = m_walkAnimationInterval / 32;
     int totalPixelsWalked = std::min(m_walkTimer.ticksElapsed() / walkTicksPerPixel, 32.0f);
 
     // update walk animation and offsets

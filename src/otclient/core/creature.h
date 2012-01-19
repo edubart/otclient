@@ -117,6 +117,7 @@ protected:
     // walk related
     Timer m_walkTimer;
     int m_walkInterval;
+    int m_walkAnimationInterval;
     bool m_walking;
     ScheduledEventPtr m_walkUpdateEvent;
     Point m_walkOffset;
