@@ -28,7 +28,8 @@
 class LocalPlayer : public Player
 {
     enum {
-        WALK_LOCK_INTERVAL = 250
+        WALK_LOCK_INTERVAL = 250,
+        PREWALK_TIMEOUT = 1000
     };
 public:
     LocalPlayer();

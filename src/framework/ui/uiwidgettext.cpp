@@ -61,7 +61,7 @@ void UIWidget::drawText(const Rect& screenCoords)
         m_textFramebuffer->bind();
         Rect virtualTextRect(0, 0, boxSize);
         virtualTextRect.translate(m_textOffset);
-        g_painter.setCompositionMode(Painter::CompositionMode_Add);
+        g_painter.setCompositionMode(Painter::CompositionMode_DestBlending);
         m_font->renderText(m_text, virtualTextRect, m_textAlign, Fw::white);
         g_painter.resetCompositionMode();
         m_textFramebuffer->release();

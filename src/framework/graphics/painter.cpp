@@ -134,5 +134,11 @@ void Painter::setCompositionMode(Painter::CompositionMode compositionMode)
     case CompositionMode_Add:
         glBlendFunc(GL_ONE, GL_ONE);
         break;
+    case CompositionMode_Replace:
+        glBlendFunc(GL_ONE, GL_ZERO);
+        break;
+    case CompositionMode_DestBlending:
+        glBlendFunc(GL_ONE_MINUS_DST_ALPHA, GL_DST_ALPHA);
+        break;
     }
 }

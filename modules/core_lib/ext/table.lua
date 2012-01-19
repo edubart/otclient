@@ -43,6 +43,7 @@ function table.removevalue(t, value)
   for k,v in pairs(t) do
     if v == value then
       table.remove(t, k)
+      break
     end
   end
 end

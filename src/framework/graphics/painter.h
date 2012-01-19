@@ -34,7 +34,9 @@ public:
     enum CompositionMode {
         CompositionMode_Normal,
         CompositionMode_Multiply,
-        CompositionMode_Add
+        CompositionMode_Add,
+        CompositionMode_Replace,
+        CompositionMode_DestBlending
     };
 
     void init();

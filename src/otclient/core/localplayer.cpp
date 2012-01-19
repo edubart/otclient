@@ -54,9 +54,8 @@ void LocalPlayer::walk(const Position& oldPos, const Position& newPos)
         // switch to normal walking
         m_preWalking = false;
         m_lastPrewalkDone = true;
-        // if is to the destination, updates it preserving the animation
+        // if is to the last prewalk destination, updates the walk preserving the animation
         if(newPos == m_lastPrewalkDestionation) {
-            // walk started by prewalk could already be finished by now
             updateWalk();
         // was to another direction, replace the walk
         } else
@@ -77,12 +76,15 @@ void LocalPlayer::preWalk(Otc::Direction direction)
 
 bool LocalPlayer::canWalk(Otc::Direction direction)
 {
+    // prewalk has a timeout, because for some reason that I don't know yet the server sometimes doesn't answer the prewalk
+    bool prewalkTimeouted = m_walking && m_preWalking && m_walkTimer.ticksElapsed() >= m_walkInterval + PREWALK_TIMEOUT;
+
     // cannot walk while already walking
-    if(m_walking)
+    if(m_walking && !prewalkTimeouted)
         return false;
 
     // avoid doing more walks than wanted when receiving a lot of walks from server
-    if(!m_lastPrewalkDone)
+    if(!m_lastPrewalkDone && !prewalkTimeouted)
         return false;
 
     // cannot walk while locked
