@@ -20,22 +20,33 @@
  * THE SOFTWARE.
  */
 
-#ifndef EXCEPTION_H
-#define EXCEPTION_H
+#include "utf8.h"
 
-#include <exception>
+#include <string>
+#include <cstring>
 
-class Exception : public std::exception
+char Fw::utf8CharToLatin1(uchar *utf8, int *read)
 {
-public:
-    Exception() { }
-    Exception(const std::string& what) : m_what(what) { }
-    virtual ~Exception() throw() { };
+    if(utf8[0] == 0xc3) {
+        *read = 2;
+        return (char)(64 + utf8[1]);
+    } else if(utf8[0] == 0xc2) {
+        *read = 2;
+        return utf8[1];
+    } else {
+        *read = 1;
+        return utf8[0];
+    }
+}
 
-    virtual const char* what() const throw() { return m_what.c_str(); }
-
-protected:
-    std::string m_what;
-};
-
-#endif
+std::string Fw::utf8StringToLatin1(uchar *utf8) {
+    std::string out;
+    int len = strlen((char*)utf8);
+    for(int i=0; i<len;) {
+        int read;
+        uchar *utf8char = &utf8[i];
+        out += Fw::utf8CharToLatin1(utf8char, &read);
+        i += read;
+    }
+    return out;
+}

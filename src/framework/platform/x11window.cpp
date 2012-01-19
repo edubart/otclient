@@ -23,6 +23,7 @@
 #include "x11window.h"
 #include <framework/core/resourcemanager.h>
 #include <framework/thirdparty/apngloader.h>
+#include <framework/util/utf8.h>
 
 #define LSB_BIT_SET(p, n) (p[(n)/8] |= (1 <<((n)%8)))
 
@@ -977,7 +978,7 @@ std::string X11Window::getClipboardText()
                                             &dummy,
                                             &data);
             if(result == Success)
-                clipboardText = (const char*)data;
+                clipboardText = Fw::utf8StringToLatin1(data);
             XFree(data);
         }
     }

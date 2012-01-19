@@ -20,22 +20,17 @@
  * THE SOFTWARE.
  */
 
-#ifndef EXCEPTION_H
-#define EXCEPTION_H
+#ifndef UTF8_H
+#define UTF8_H
 
-#include <exception>
+#include "types.h"
+#include <string>
 
-class Exception : public std::exception
-{
-public:
-    Exception() { }
-    Exception(const std::string& what) : m_what(what) { }
-    virtual ~Exception() throw() { };
+namespace Fw {
 
-    virtual const char* what() const throw() { return m_what.c_str(); }
+char utf8CharToLatin1(uchar *utf8, int *read);
+std::string utf8StringToLatin1(uchar *utf8);
 
-protected:
-    std::string m_what;
 };
 
 #endif

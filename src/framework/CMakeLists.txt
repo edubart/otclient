@@ -129,6 +129,9 @@ SET(framework_SOURCES ${framework_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/application.cpp
     ${CMAKE_CURRENT_LIST_DIR}/luafunctions.cpp
 
+    # framework util
+    ${CMAKE_CURRENT_LIST_DIR}/util/utf8.cpp
+
     # framework core
     ${CMAKE_CURRENT_LIST_DIR}/core/logger.cpp
     ${CMAKE_CURRENT_LIST_DIR}/core/configmanager.cpp
