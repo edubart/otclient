@@ -83,8 +83,10 @@ private:
 
     Light m_light;
     Position m_centralPosition;
-    Size m_size, m_visibleSize;
-    Point m_centralOffset, m_drawOffset;
+    Size m_size;
+    Size m_visibleSize;
+    Point m_centralOffset;
+    Point m_drawOffset;
 
     FrameBufferPtr m_framebuffer;
     PainterShaderProgramPtr m_shaderProgram;

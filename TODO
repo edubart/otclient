@@ -61,6 +61,7 @@ rework win32 key input system
 [bart] check for recursive anchors and print a error instead of crashing
 [bart] make api to enable/disable capture of events to avoid massive event processing
 [bart] review style apply system
+rework styles rendering order
 
 == Client
 make possible to reload modules

@@ -16,3 +16,11 @@ function UIWindow:onKeyPress(keyCode, keyboardModifiers, wouldFilter)
     end
   end
 end
+
+function UIWindow:onMousePress(mousePos, mouseButton)
+
+end
+
+function UIWindow:onGeometryChange(oldRect, newRect)
+
+end

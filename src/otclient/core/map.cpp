@@ -150,6 +150,11 @@ void Map::draw(const Rect& rect)
 void Map::clean()
 {
     m_tiles.clear();
+    m_creatures.clear();
+    for(int i=0;i<MAX_Z-1;++i)
+        m_missilesAtFloor[i].clear();
+    m_animatedTexts.clear();
+    m_staticTexts.clear();
 }
 
 int Map::getFirstVisibleFloor()

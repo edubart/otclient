@@ -1,7 +1,8 @@
 2x2 corpses is drawn above players
 animatedtext is displayed in non visible floors
 attack while walking cancels the walk
-trying to walking in follow doesn't cancel de walk
+trying to walking while following doesn't cancel de walk
+attacked/followed creatures are not cleared when it goes out of range
 if a spell is used while pressing arrows keys the walk is canceled and it doesnt starts walking again
 game map text message boxes is not displayed like tibia
 name/shields doesnt follow the creature when walking on parcels

@@ -71,7 +71,7 @@ end
 local function onApplicationClose()
   print('close app')
   if Game.isOnline() then
-    Game.logout(false)
+    Game.logout(true)
   else
     exit()
   end

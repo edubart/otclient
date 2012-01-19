@@ -351,16 +351,12 @@ void *WIN32Window::getExtensionProcAddress(const char *ext)
 
 void WIN32Window::move(const Point& pos)
 {
-    RECT windowRect = {pos.x, pos.y, m_pos.x + m_size.width(), m_pos.y + m_size.height()};
-    AdjustWindowRectEx(&windowRect, WS_OVERLAPPEDWINDOW, FALSE, WS_EX_APPWINDOW | WS_EX_WINDOWEDGE);
-    MoveWindow(m_window, windowRect.left, windowRect.top, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top, TRUE);
+    MoveWindow(m_window, pos.x, pos.y, m_size.width(), m_size.height(), TRUE);
 }
 
 void WIN32Window::resize(const Size& size)
 {
-    RECT windowRect = {m_pos.x, m_pos.y, m_pos.x + size.width(), m_pos.y + size.height()};
-    AdjustWindowRectEx(&windowRect, WS_OVERLAPPEDWINDOW, FALSE, WS_EX_APPWINDOW | WS_EX_WINDOWEDGE);
-    MoveWindow(m_window, windowRect.left, windowRect.top, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top, TRUE);
+    MoveWindow(m_window, m_pos.x, m_pos.y, size.width(), size.height(), TRUE);
 }
 
 void WIN32Window::show()
@@ -400,7 +396,6 @@ void WIN32Window::poll()
 
 LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-    m_inputEvent.reset();
     switch(uMsg)
     {
         case WM_ACTIVATE: {
@@ -411,6 +406,8 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
             if(wParam >= 32 && wParam <= 255) {
                 m_inputEvent.reset(Fw::KeyTextInputEvent);
                 m_inputEvent.keyText = wParam;
+                if(m_onInputEvent)
+                    m_onInputEvent(m_inputEvent);
             }
             break;
         }
@@ -429,31 +426,43 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
         case WM_LBUTTONDOWN: {
             m_inputEvent.reset(Fw::MousePressInputEvent);
             m_inputEvent.mouseButton = Fw::MouseLeftButton;
+            if(m_onInputEvent)
+                m_onInputEvent(m_inputEvent);
             break;
         }
         case WM_LBUTTONUP: {
             m_inputEvent.reset(Fw::MouseReleaseInputEvent);
             m_inputEvent.mouseButton = Fw::MouseLeftButton;
+            if(m_onInputEvent)
+                m_onInputEvent(m_inputEvent);
             break;
         }
         case WM_MBUTTONDOWN: {
             m_inputEvent.reset(Fw::MousePressInputEvent);
             m_inputEvent.mouseButton = Fw::MouseMidButton;
+            if(m_onInputEvent)
+                m_onInputEvent(m_inputEvent);
             break;
         }
         case WM_MBUTTONUP: {
             m_inputEvent.reset(Fw::MouseReleaseInputEvent);
             m_inputEvent.mouseButton = Fw::MouseMidButton;
+            if(m_onInputEvent)
+                m_onInputEvent(m_inputEvent);
             break;
         }
         case WM_RBUTTONDOWN: {
             m_inputEvent.reset(Fw::MousePressInputEvent);
             m_inputEvent.mouseButton = Fw::MouseRightButton;
+            if(m_onInputEvent)
+                m_onInputEvent(m_inputEvent);
             break;
         }
         case WM_RBUTTONUP: {
             m_inputEvent.reset(Fw::MouseReleaseInputEvent);
             m_inputEvent.mouseButton = Fw::MouseRightButton;
+            if(m_onInputEvent)
+                m_onInputEvent(m_inputEvent);
             break;
         }
         case WM_MOUSEMOVE: {
@@ -461,11 +470,15 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
             Point newMousePos(LOWORD(lParam), HIWORD(lParam));
             m_inputEvent.mouseMoved = newMousePos - m_inputEvent.mousePos;
             m_inputEvent.mousePos = newMousePos;
+            if(m_onInputEvent)
+                m_onInputEvent(m_inputEvent);
             break;
         }
         case WM_MOUSEWHEEL: {
             m_inputEvent.mouseButton = Fw::MouseMidButton;
             m_inputEvent.wheelDirection = HIWORD(wParam) > 0 ? Fw::MouseWheelUp : Fw::MouseWheelDown;
+            if(m_onInputEvent)
+                m_onInputEvent(m_inputEvent);
             break;
         }
         case WM_MOVE: {
@@ -494,8 +507,6 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
             return DefWindowProc(hWnd, uMsg, wParam, lParam);
     }
 
-    if(m_onInputEvent && m_inputEvent.type != Fw::NoInputEvent)
-        m_onInputEvent(m_inputEvent);
     return 0;
 }
 

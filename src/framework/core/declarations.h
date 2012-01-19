@@ -26,6 +26,11 @@
 #include <framework/global.h>
 
 class Module;
+class Event;
+class ScheduledEvent;
+
 typedef std::shared_ptr<Module> ModulePtr;
+typedef std::shared_ptr<Event> EventPtr;
+typedef std::shared_ptr<ScheduledEvent> ScheduledEventPtr;
 
 #endif

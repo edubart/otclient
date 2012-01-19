@@ -81,8 +81,7 @@ end
 
 -- hooked events
 local function onGameDeath()
-  TextMessage.displayEventAdvance('You are dead.', 10)
-  scheduleEvent(function() Game.logout(true) end, 10*1000)
+  TextMessage.displayEventAdvance('You are dead.', 60)
 end
 
 local function onGameTextMessage(msgtype, msg)

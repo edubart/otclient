@@ -29,3 +29,7 @@ function debugContainersItems()
     end
   end
 end
+
+function quit()
+  exit()
+end

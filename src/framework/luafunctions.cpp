@@ -43,6 +43,14 @@ void Application::registerLuaFunctions()
     g_lua.bindGlobalFunction("colortostring", [](const Color& v) { return Fw::tostring(v); });
     g_lua.bindGlobalFunction("sizetostring", [](const Size& v) { return Fw::tostring(v); });
 
+    // Event
+    g_lua.registerClass<Event>();
+    g_lua.bindClassMemberFunction<Event>("isCanceled", &Event::isCanceled);
+    g_lua.bindClassMemberFunction<Event>("isExecuted", &Event::isExecuted);
+
+    // ScheduledEvent
+    g_lua.registerClass<ScheduledEvent, Event>();
+
     // UIWidget
     g_lua.registerClass<UIWidget>();
     g_lua.bindClassStaticFunction<UIWidget>("create", []{ return UIWidgetPtr(new UIWidget); });

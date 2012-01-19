@@ -1141,7 +1141,7 @@ ThingPtr ProtocolGame::internalGetThing(InputMessage& msg)
             if(emblem != -1)
                 creature->setEmblem(emblem);
             creature->setPassable(passable);
-            creature->cancelWalk(direction);
+            creature->setDirection(direction);
 
             if(creature == m_localPlayer) {
                 m_localPlayer->setKnown(true);

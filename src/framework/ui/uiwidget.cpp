@@ -193,26 +193,27 @@ void UIWidget::removeChild(const UIWidgetPtr& child)
 
 void UIWidget::focusChild(const UIWidgetPtr& child, Fw::FocusReason reason)
 {
+    if(child == m_focusedChild)
+        return;
+
     if(child && !hasChild(child)) {
-        logError("Attempt to focus an unknown child in a UIWidget");
+        logError("attempt to focus an unknown child in a UIWidget");
         return;
     }
 
-    if(child != m_focusedChild) {
-        UIWidgetPtr oldFocused = m_focusedChild;
-        m_focusedChild = child;
+    UIWidgetPtr oldFocused = m_focusedChild;
+    m_focusedChild = child;
 
-        if(child) {
-            child->setLastFocusReason(reason);
-            child->updateState(Fw::FocusState);
-            child->updateState(Fw::ActiveState);
-        }
+    if(child) {
+        child->setLastFocusReason(reason);
+        child->updateState(Fw::FocusState);
+        child->updateState(Fw::ActiveState);
+    }
 
-        if(oldFocused) {
-            oldFocused->setLastFocusReason(reason);
-            oldFocused->updateState(Fw::FocusState);
-            oldFocused->updateState(Fw::ActiveState);
-        }
+    if(oldFocused) {
+        oldFocused->setLastFocusReason(reason);
+        oldFocused->updateState(Fw::FocusState);
+        oldFocused->updateState(Fw::ActiveState);
     }
 }
 
@@ -389,6 +390,8 @@ void UIWidget::addAnchor(Fw::AnchorEdge anchoredEdge, const std::string& hookedW
 {
     if(UIAnchorLayoutPtr anchorLayout = getAnchoredLayout())
         anchorLayout->addAnchor(asUIWidget(), anchoredEdge, hookedWidgetId, hookedEdge);
+    else
+        logError("cannot add anchors to widget ", m_id, ": the parent doesn't use anchors layout");
 }
 
 void UIWidget::centerIn(const std::string& hookedWidgetId)
@@ -396,7 +399,8 @@ void UIWidget::centerIn(const std::string& hookedWidgetId)
     if(UIAnchorLayoutPtr anchorLayout = getAnchoredLayout()) {
         anchorLayout->addAnchor(asUIWidget(), Fw::AnchorHorizontalCenter, hookedWidgetId, Fw::AnchorHorizontalCenter);
         anchorLayout->addAnchor(asUIWidget(), Fw::AnchorVerticalCenter, hookedWidgetId, Fw::AnchorVerticalCenter);
-    }
+    } else
+        logError("cannot add anchors to widget ", m_id, ": the parent doesn't use anchors layout");
 }
 
 void UIWidget::fill(const std::string& hookedWidgetId)
@@ -406,7 +410,8 @@ void UIWidget::fill(const std::string& hookedWidgetId)
         anchorLayout->addAnchor(asUIWidget(), Fw::AnchorRight, hookedWidgetId, Fw::AnchorRight);
         anchorLayout->addAnchor(asUIWidget(), Fw::AnchorTop, hookedWidgetId, Fw::AnchorTop);
         anchorLayout->addAnchor(asUIWidget(), Fw::AnchorBottom, hookedWidgetId, Fw::AnchorBottom);
-    }
+    } else
+        logError("cannot add anchors to widget ", m_id, ": the parent doesn't use anchors layout");
 }
 
 void UIWidget::breakAnchors()
@@ -732,17 +737,10 @@ Rect UIWidget::getChildrenRect()
 UIAnchorLayoutPtr UIWidget::getAnchoredLayout()
 {
     UIWidgetPtr parent = getParent();
-    if(!parent) {
-        logError("cannot add anchors to widget ", m_id, ": there is no parent");
+    if(!parent)
         return nullptr;
-    }
 
-    UIAnchorLayoutPtr anchorLayout = parent->getLayout()->asUIAnchorLayout();
-    if(!anchorLayout) {
-        logError("cannot add anchors to widget ", m_id, ": the parent doesn't use anchors layout");
-        return nullptr;
-    }
-    return anchorLayout;
+    return parent->getLayout()->asUIAnchorLayout();
 }
 
 UIWidgetPtr UIWidget::getRootParent()
@@ -1190,38 +1188,38 @@ bool UIWidget::propagateOnKeyUp(uchar keyCode, int keyboardModifiers)
 bool UIWidget::propagateOnMousePress(const Point& mousePos, Fw::MouseButton button)
 {
     // do a backup of children list, because it may change while looping it
-    UIWidgetList children;
+    UIWidgetPtr clickedChild;
     for(const UIWidgetPtr& child : m_children) {
         // events on hidden or disabled widgets are discarded
         if(!child->isExplicitlyEnabled() || !child->isExplicitlyVisible())
             continue;
 
         // mouse press events only go to children that contains the mouse position
-        if(child->containsPoint(mousePos) && child == getChildByPos(mousePos))
-            children.push_back(child);
+        if(child->containsPoint(mousePos) && child == getChildByPos(mousePos)) {
+            clickedChild = child;
+            break;
+        }
     }
 
-    for(const UIWidgetPtr& child : children) {
-        // when a focusable item is focused it must gain focus
-        if(child->isFocusable())
-            focusChild(child, Fw::MouseFocusReason);
+    if(clickedChild) {
+        // focusable child gains focus when clicked
+        if(clickedChild->isFocusable())
+            focusChild(clickedChild, Fw::MouseFocusReason);
 
-        bool mustEnd = child->propagateOnMousePress(mousePos, button);
-
-        if(button == Fw::MouseLeftButton && !child->isPressed()) {
-            UIWidgetPtr clickedChild = child->getChildByPos(mousePos);
-            if(!clickedChild || clickedChild->isPhantom())
-                child->setPressed(true);
-        }
-
-        if(mustEnd)
+        // stop propagating if the child accept the event
+        if(clickedChild->propagateOnMousePress(mousePos, button))
             return true;
     }
 
-    if(!isPhantom())
-        return onMousePress(mousePos, button);
-    else
-        return false;
+    // only non phatom widgets receives mouse press events
+    if(!isPhantom()) {
+        onMousePress(mousePos, button);
+        if(button == Fw::MouseLeftButton && !isPressed())
+            setPressed(true);
+        return true;
+    }
+
+    return false;
 }
 
 void UIWidget::propagateOnMouseRelease(const Point& mousePos, Fw::MouseButton button)
@@ -1239,12 +1237,12 @@ void UIWidget::propagateOnMouseRelease(const Point& mousePos, Fw::MouseButton bu
 
     for(const UIWidgetPtr& child : children) {
         child->propagateOnMouseRelease(mousePos, button);
-
-        if(child->isPressed() && button == Fw::MouseLeftButton)
-            child->setPressed(false);
     }
 
     onMouseRelease(mousePos, button);
+
+    if(isPressed() && button == Fw::MouseLeftButton)
+        setPressed(false);
 }
 
 bool UIWidget::propagateOnMouseMove(const Point& mousePos, const Point& mouseMoved)

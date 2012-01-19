@@ -24,12 +24,49 @@
 #define EVENTDISPATCHER_H
 
 #include "declarations.h"
+#include "clock.h"
+#include <framework/luascript/luaobject.h>
 
-struct ScheduledEvent {
-    ScheduledEvent(ticks_t ticks, const SimpleCallback& callback) : ticks(ticks), callback(callback) { }
-    bool operator<(const ScheduledEvent& other) const { return ticks > other.ticks; }
-    ticks_t ticks;
-    SimpleCallback callback;
+class Event : public LuaObject
+{
+public:
+    Event(const SimpleCallback& callback) : m_callback(callback), m_canceled(false), m_executed(false) { }
+
+    void execute() {
+        if(!m_canceled) {
+            m_callback();
+            m_executed = true;
+        }
+    }
+    void cancel() { m_canceled = true; }
+
+    bool isCanceled() { return m_canceled; }
+    bool isExecuted() { return m_executed; }
+
+protected:
+    SimpleCallback m_callback;
+    bool m_canceled;
+    bool m_executed;
+};
+
+class ScheduledEvent : public Event
+{
+public:
+    ScheduledEvent(const SimpleCallback& callback, int delay) : Event(callback) {
+        m_ticks = g_clock.ticksFor(delay);
+    }
+
+    int ticks() const { return m_ticks; }
+    int reamaningTicks() const { return m_ticks - g_clock.ticks(); }
+
+private:
+    ticks_t m_ticks;
+};
+
+struct lessScheduledEvent : std::binary_function<ScheduledEventPtr, ScheduledEventPtr&, bool> {
+    bool operator()(const ScheduledEventPtr& a, const ScheduledEventPtr& b) const {
+        return  b->ticks() < a->ticks();
+    }
 };
 
 class EventDispatcher
@@ -38,12 +75,12 @@ public:
     void flush();
     void poll();
 
-    void addEvent(const SimpleCallback& callback, bool pushFront = false);
-    void scheduleEvent(const SimpleCallback& callback, int delay);
+    EventPtr addEvent(const SimpleCallback& callback, bool pushFront = false);
+    ScheduledEventPtr scheduleEvent(const SimpleCallback& callback, int delay);
 
 private:
-    std::list<SimpleCallback> m_eventList;
-    std::priority_queue<ScheduledEvent> m_scheduledEventList;
+    std::list<EventPtr> m_eventList;
+    std::priority_queue<ScheduledEventPtr, std::vector<ScheduledEventPtr>, lessScheduledEvent> m_scheduledEventList;
 };
 
 extern EventDispatcher g_dispatcher;

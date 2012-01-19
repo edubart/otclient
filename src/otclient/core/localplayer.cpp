@@ -25,29 +25,137 @@
 #include "game.h"
 #include "tile.h"
 
+LocalPlayer::LocalPlayer()
+{
+    m_preWalking = false;
+    m_canReportBugs = false;
+    m_known = false;
+    m_walkLocked = false;
+    m_lastPrewalkDone = true;
+    m_icons = 0;
+}
+
+void LocalPlayer::lockWalk()
+{
+    // prevents double locks
+    if(m_walkLocked)
+        return;
+
+    m_walkLocked = true;
+    m_walkLockTimer.restart();
+}
+
+void LocalPlayer::walk(const Position& oldPos, const Position& newPos)
+{
+    Otc::Direction direction = oldPos.getDirectionFromPosition(newPos);
+
+    // a prewalk was going on
+    if(m_preWalking) {
+        // switch to normal walking
+        m_preWalking = false;
+        m_lastPrewalkDone = true;
+        // if is to the destination, updates it preserving the animation
+        if(newPos == m_lastPrewalkDestionation) {
+            // walk started by prewalk could already be finished by now
+            updateWalk();
+        // was to another direction, replace the walk
+        } else
+            Creature::walk(oldPos, newPos);
+    } else
+        Creature::walk(oldPos, newPos);
+}
+
 void LocalPlayer::preWalk(Otc::Direction direction)
 {
-    // we're not walking, so start a client walk.
+    // start walking to direction
     Position newPos = m_pos + Position::getPosFromDirection(direction);
-    walk(m_pos, newPos, true);
+    m_preWalking = true;
+    m_lastPrewalkDone = false;
+    m_lastPrewalkDestionation = newPos;
+    Creature::walk(m_pos, newPos);
 }
 
 bool LocalPlayer::canWalk(Otc::Direction direction)
 {
-    if(m_walking || (m_preWalking && g_clock.ticksElapsed(m_walkEnd) < 1000))
+    // cannot walk while already walking
+    if(m_walking)
         return false;
+
+    // avoid doing more walks than wanted when receiving a lot of walks from server
+    if(!m_lastPrewalkDone)
+        return false;
+
+    // cannot walk while locked
+    if(m_walkLocked && m_walkLockTimer.ticksElapsed() <= WALK_LOCK_INTERVAL)
+        return false;
+    else
+        m_walkLocked = false;
 
     // check for blockable tiles in the walk direction
     TilePtr tile = g_map.getTile(m_pos + Position::getPosFromDirection(direction));
-    if(!tile)
-        return false;
-
-    if(!tile->isWalkable()) {
+    if(!tile || !tile->isWalkable()) {
         g_game.processTextMessage("statusSmall", "Sorry, not possible.");
         return false;
     }
 
     return true;
+}
+
+void LocalPlayer::cancelWalk(Otc::Direction direction)
+{
+    // only cancel client side walks
+    if(m_walking && m_preWalking)
+        stopWalk();
+
+    m_lastPrewalkDone = true;
+
+    // turn to the cancel direction
+    if(direction != Otc::InvalidDirection)
+        setDirection(direction);
+}
+
+void LocalPlayer::stopWalk()
+{
+    Creature::stopWalk();
+    m_lastPrewalkDestionation = Position();
+}
+
+void LocalPlayer::updateWalkOffset(int totalPixelsWalked)
+{
+    // pre walks offsets are calculated in the oposite direction
+    if(m_preWalking) {
+        m_walkOffset = Point(0,0);
+        if(m_direction == Otc::North || m_direction == Otc::NorthEast || m_direction == Otc::NorthWest)
+            m_walkOffset.y = -totalPixelsWalked;
+        else if(m_direction == Otc::South || m_direction == Otc::SouthEast || m_direction == Otc::SouthWest)
+            m_walkOffset.y = totalPixelsWalked;
+
+        if(m_direction == Otc::East || m_direction == Otc::NorthEast || m_direction == Otc::SouthEast)
+            m_walkOffset.x = totalPixelsWalked;
+        else if(m_direction == Otc::West || m_direction == Otc::NorthWest || m_direction == Otc::SouthWest)
+            m_walkOffset.x = -totalPixelsWalked;
+    } else
+        Creature::updateWalkOffset(totalPixelsWalked);
+}
+
+void LocalPlayer::updateWalk()
+{
+    float walkTicksPerPixel = m_walkInterval / 32.0f;
+    int totalPixelsWalked = std::min(m_walkTimer.ticksElapsed() / walkTicksPerPixel, 32.0f);
+
+    // update walk animation and offsets
+    updateWalkAnimation(totalPixelsWalked);
+    updateWalkOffset(totalPixelsWalked);
+
+    // terminate walk only when client and server side walk are complated
+    if(m_walking && !m_preWalking && m_walkTimer.ticksElapsed() >= m_walkInterval)
+        terminateWalk();
+}
+
+void LocalPlayer::terminateWalk()
+{
+    Creature::terminateWalk();
+    m_preWalking = false;
 }
 
 void LocalPlayer::setAttackingCreature(const CreaturePtr& creature)

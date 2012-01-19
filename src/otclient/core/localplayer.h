@@ -27,13 +27,18 @@
 
 class LocalPlayer : public Player
 {
+    enum {
+        WALK_LOCK_INTERVAL = 250
+    };
 public:
+    LocalPlayer();
+
     void setCanReportBugs(uint8 canReportBugs) { m_canReportBugs = (canReportBugs != 0); }
     void setSkill(Otc::Skill skill, Otc::SkillType skillType, int value) { m_skills[skill][skillType] = value; }
     void setStatistic(Otc::Statistic statistic, double value) { m_statistics[statistic] = value; }
     void setAttackingCreature(const CreaturePtr& creature);
     void setFollowingCreature(const CreaturePtr& creature);
-    void setIcons(Otc::PlayerIcons icons) { m_icons = icons; }
+    void setIcons(int icons) { m_icons = icons; }
     void setKnown(bool known) { m_known = known; }
 
     bool getCanReportBugs() { return m_canReportBugs; }
@@ -41,14 +46,19 @@ public:
     double getStatistic(Otc::Statistic statistic) { return m_statistics[statistic]; }
     CreaturePtr getAttackingCreature() { return m_attackingCreature; }
     CreaturePtr getFollowingCreature() { return m_followingCreature; }
-    Otc::PlayerIcons getIcons() { return m_icons; }
+    int getIcons() { return m_icons; }
 
     bool isKnown() { return m_known; }
     bool isAttacking() { return m_attackingCreature != nullptr; }
     bool isFollowing() { return m_followingCreature != nullptr; }
 
+    void unlockWalk() { m_walkLocked = false; }
+    void lockWalk();
+    void walk(const Position& oldPos, const Position& newPos);
     void preWalk(Otc::Direction direction);
     bool canWalk(Otc::Direction direction);
+    void cancelWalk(Otc::Direction direction = Otc::InvalidDirection);
+    void stopWalk();
 
     LocalPlayerPtr asLocalPlayer() { return std::static_pointer_cast<LocalPlayer>(shared_from_this()); }
 
@@ -65,11 +75,24 @@ public:
     double getSoul() { return getStatistic(Otc::Soul); }
     double getStamina() { return getStatistic(Otc::Stamina); }
 
+protected:
+    void updateWalkOffset(int totalPixelsWalked);
+    void updateWalk();
+    void terminateWalk();
+
 private:
+    // walk related
+    bool m_preWalking;
+    bool m_lastPrewalkDone;
+    bool m_walkLocked;
+    Position m_lastPrewalkDestionation;
+    Timer m_walkLockTimer;
+
     bool m_canReportBugs;
     bool m_known;
-    CreaturePtr m_attackingCreature, m_followingCreature;
-    Otc::PlayerIcons m_icons;
+    CreaturePtr m_attackingCreature;
+    CreaturePtr m_followingCreature;
+    int m_icons;
     int m_skills[Otc::LastSkill][Otc::LastSkillType];
     double m_statistics[Otc::LastStatistic];
 };

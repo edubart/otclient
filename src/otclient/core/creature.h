@@ -25,6 +25,8 @@
 
 #include "thing.h"
 #include "outfit.h"
+#include <framework/core/declarations.h>
+#include <framework/core/timer.h>
 #include <framework/graphics/fontmanager.h>
 
 class Creature : public Thing
@@ -79,18 +81,21 @@ public:
     ThingType *getType();
 
     // walk related
-    void walk(const Position& oldPos, const Position& newPos, bool preWalk = false);
     void turn(Otc::Direction direction);
-    void cancelWalk(Otc::Direction direction = Otc::InvalidDirection, bool force = false);
+    virtual void walk(const Position& oldPos, const Position& newPos);
+    virtual void stopWalk();
     Point getWalkOffset() { return m_walkOffset; }
 
     bool isWalking() { return m_walking; }
-    bool isPreWalking() { return m_preWalking; }
 
     CreaturePtr asCreature() { return std::static_pointer_cast<Creature>(shared_from_this()); }
 
 protected:
-    void updateWalk();
+    virtual void updateWalkAnimation(int totalPixelsWalked);
+    virtual void updateWalkOffset(int totalPixelsWalked);
+    virtual void nextWalkUpdate();
+    virtual void updateWalk();
+    virtual void terminateWalk();
 
     std::string m_name;
     Size m_nameSize;
@@ -98,7 +103,7 @@ protected:
     Otc::Direction m_direction;
     Outfit m_outfit;
     Light m_light;
-    uint16 m_speed;
+    int m_speed;
     uint8 m_skull, m_shield, m_emblem;
     TexturePtr m_skullTexture, m_shieldTexture, m_emblemTexture;
     bool m_showShieldTexture, m_shieldBlink;
@@ -109,11 +114,13 @@ protected:
     FontPtr m_informationFont;
     Color m_informationColor;
 
-    ticks_t m_walkStart, m_walkEnd;
-    bool m_walking, m_preWalking;
-    float m_walkTimePerPixel;
+    // walk related
+    Timer m_walkTimer;
+    int m_walkInterval;
+    bool m_walking;
+    ScheduledEventPtr m_walkUpdateEvent;
     Point m_walkOffset;
-    Otc::Direction m_turnDirection;
+    Otc::Direction m_walkTurnDirection;
 };
 
 class Npc : public Creature {

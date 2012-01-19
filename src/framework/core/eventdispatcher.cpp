@@ -37,29 +37,34 @@ void EventDispatcher::flush()
 void EventDispatcher::poll()
 {
     while(!m_scheduledEventList.empty()) {
-        if(g_clock.ticks() < m_scheduledEventList.top().ticks)
+        ScheduledEventPtr scheduledEvent = m_scheduledEventList.top();
+        if(scheduledEvent->reamaningTicks() > 0)
             break;
-        SimpleCallback callback = std::move(m_scheduledEventList.top().callback);
         m_scheduledEventList.pop();
-        callback();
+        scheduledEvent->execute();
     }
 
     while(!m_eventList.empty()) {
-        m_eventList.front()();
+        EventPtr event = m_eventList.front();
         m_eventList.pop_front();
+        event->execute();
     }
 }
 
-void EventDispatcher::scheduleEvent(const SimpleCallback& callback, int delay)
+ScheduledEventPtr EventDispatcher::scheduleEvent(const SimpleCallback& callback, int delay)
 {
     assert(delay >= 0);
-    m_scheduledEventList.push(ScheduledEvent(g_clock.ticksFor(delay), callback));
+    ScheduledEventPtr scheduledEvent(new ScheduledEvent(callback, delay));
+    m_scheduledEventList.push(scheduledEvent);
+    return scheduledEvent;
 }
 
-void EventDispatcher::addEvent(const SimpleCallback& callback, bool pushFront)
+EventPtr EventDispatcher::addEvent(const SimpleCallback& callback, bool pushFront)
 {
+    EventPtr event(new Event(callback));
     if(pushFront)
-        m_eventList.push_front(callback);
+        m_eventList.push_front(event);
     else
-        m_eventList.push_back(callback);
+        m_eventList.push_back(event);
+    return event;
 }
