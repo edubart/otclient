@@ -27,16 +27,22 @@
 
 char Fw::utf8CharToLatin1(uchar *utf8, int *read)
 {
-    if(utf8[0] == 0xc3) {
+    char c = '?';
+    uchar opt1 = utf8[0];
+    if(opt1 == 0xc3) {
         *read = 2;
-        return (char)(64 + utf8[1]);
-    } else if(utf8[0] == 0xc2) {
+        uchar opt2 = utf8[1];
+        c = 64 + opt2;
+    } else if(opt1 == 0xc2) {
         *read = 2;
-        return utf8[1];
-    } else {
+        uchar opt2 = utf8[1];
+        if(opt2 > 0xa1 && opt2 < 0xbb)
+            c = opt2;
+    } else if(opt1 < 0xc2) {
         *read = 1;
-        return utf8[0];
+        c = opt1;
     }
+    return c;
 }
 
 std::string Fw::utf8StringToLatin1(uchar *utf8) {

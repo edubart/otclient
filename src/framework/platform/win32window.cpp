@@ -25,6 +25,7 @@
 #include <framework/application.h>
 #include <framework/thirdparty/apngloader.h>
 #include <framework/core/resourcemanager.h>
+#include <framework/util/utf8.h>
 
 WIN32Window::WIN32Window()
 {
@@ -665,7 +666,7 @@ std::string WIN32Window::getClipboardText()
     if(hglb) {
         LPTSTR lptstr = (LPTSTR)GlobalLock(hglb);
         if(lptstr) {
-            text = lptstr;
+            text = Fw::utf8StringToLatin1((uchar*)lptstr);
             GlobalUnlock(hglb);
         }
     }
