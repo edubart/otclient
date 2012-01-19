@@ -2,6 +2,7 @@ Module
   name: client
   description: Load all other otclient dependecies
   author: OTClient team
+  website: https://github.com/edubart/otclient
 
   // NOTE: order does matter
   dependencies:

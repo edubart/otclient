@@ -28,6 +28,10 @@ MouseLeftButton = 1
 MouseRightButton = 2
 MouseMidButton = 3
 
+MouseNoWheel = 0
+MouseWheelUp = 1
+MouseWheelDown = 2
+
 AlignNone = 0
 AlignLeft = 1
 AlignRight = 2

@@ -19,6 +19,15 @@ function UIComboBox:setCurrentOption(text)
   end
 end
 
+function UIComboBox:setCurrentIndex(index)
+  if index >= 1 and index <= #self.m_options then
+    local v = self.m_options[index]
+    self.m_currentIndex = index
+    self:setText(v.text)
+    self:onOptionChange(v.text, v.data)
+  end
+end
+
 function UIComboBox:addOption(text, data)
   table.insert(self.m_options, { text = text, data = data })
   local index = #self.m_options
@@ -36,6 +45,17 @@ function UIComboBox:onMousePress(mousePos, mouseButton)
   connect(menu, { onDestroy = function() self:setOn(false) end })
   self:setOn(true)
   return true
+end
+
+function UIComboBox:onMouseWheel(mousePos, direction)
+  if direction == MouseWheelUp and self.m_currentIndex > 1 then
+    self:setCurrentIndex(self.m_currentIndex - 1)
+    return true
+  elseif direction == MouseWheelDown and self.m_currentIndex < #self.m_options then
+    self:setCurrentIndex(self.m_currentIndex + 1)
+    return true
+  end
+  return false
 end
 
 function UIComboBox:onStyleApply(styleName, styleNode)
