@@ -672,14 +672,18 @@ void X11Window::poll()
                         m_inputEvent.mouseButton = Fw::MouseMidButton;
                         break;
                     case Button4:
-                        m_inputEvent.type = Fw::MouseWheelInputEvent;
-                        m_inputEvent.mouseButton = Fw::MouseMidButton;
-                        m_inputEvent.wheelDirection = Fw::MouseWheelUp;
+                        if(event.type == ButtonPress) {
+                            m_inputEvent.type = Fw::MouseWheelInputEvent;
+                            m_inputEvent.mouseButton = Fw::MouseMidButton;
+                            m_inputEvent.wheelDirection = Fw::MouseWheelUp;
+                        }
                         break;
                     case Button5:
-                        m_inputEvent.type = Fw::MouseWheelInputEvent;
-                        m_inputEvent.mouseButton = Fw::MouseMidButton;
-                        m_inputEvent.wheelDirection = Fw::MouseWheelDown;
+                        if(event.type == ButtonPress) {
+                            m_inputEvent.type = Fw::MouseWheelInputEvent;
+                            m_inputEvent.mouseButton = Fw::MouseMidButton;
+                            m_inputEvent.wheelDirection = Fw::MouseWheelDown;
+                        }
                         break;
                     default:
                         m_inputEvent.type = Fw::NoInputEvent;
