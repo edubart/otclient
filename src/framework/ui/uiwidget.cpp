@@ -1116,7 +1116,7 @@ void UIWidget::onMouseRelease(const Point& mousePos, Fw::MouseButton button)
         callLuaField("onClick");
 
     UIWidgetPtr draggedWidget = g_ui.getDraggingWidget();
-    if(draggedWidget && containsPoint(mousePos) && button == Fw::MouseLeftButton) {
+    if(draggedWidget && button == Fw::MouseLeftButton && (containsPoint(mousePos) || asUIWidget() == g_ui.getRootWidget())) {
         onDrop(draggedWidget, mousePos);
         draggedWidget->onDragLeave(asUIWidget(), mousePos);
         draggedWidget->setDragging(false);
