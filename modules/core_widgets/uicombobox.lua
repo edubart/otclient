@@ -50,12 +50,10 @@ end
 function UIComboBox:onMouseWheel(mousePos, direction)
   if direction == MouseWheelUp and self.m_currentIndex > 1 then
     self:setCurrentIndex(self.m_currentIndex - 1)
-    return true
   elseif direction == MouseWheelDown and self.m_currentIndex < #self.m_options then
     self:setCurrentIndex(self.m_currentIndex + 1)
-    return true
   end
-  return false
+  return true
 end
 
 function UIComboBox:onStyleApply(styleName, styleNode)

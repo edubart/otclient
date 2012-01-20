@@ -62,6 +62,8 @@ protected:
     Boolean<false> m_fixedSize;
     Boolean<false> m_pressed;
     Boolean<false> m_phantom;
+    Boolean<false> m_dragable;
+    Boolean<false> m_dragging;
     Boolean<false> m_destroyed;
     UILayoutPtr m_layout;
     UIWidgetWeakPtr m_parent;
@@ -112,6 +114,8 @@ public:
     void setChecked(bool checked);
     void setFocusable(bool focusable);
     void setPhantom(bool phantom);
+    void setDragging(bool dragging);
+    void setDragable(bool dragable);
     void setFixedSize(bool fixed);
     void setLastFocusReason(Fw::FocusReason reason);
 
@@ -161,6 +165,9 @@ protected:
     virtual void onGeometryChange(const Rect& oldRect, const Rect& newRect);
     virtual void onFocusChange(bool focused, Fw::FocusReason reason);
     virtual void onHoverChange(bool hovered);
+    virtual void onDragEnter(const Point& mousePos);
+    virtual void onDragLeave(UIWidgetPtr droppedWidget, const Point& mousePos);
+    virtual void onDrop(UIWidgetPtr draggedWidget, const Point& mousePos);
     virtual bool onKeyText(const std::string& keyText);
     virtual bool onKeyDown(uchar keyCode, int keyboardModifiers);
     virtual bool onKeyPress(uchar keyCode, int keyboardModifiers, bool wouldFilter);
@@ -206,6 +213,8 @@ public:
     bool isExplicitlyVisible() { return m_visible; }
     bool isFocusable() { return m_focusable; }
     bool isPhantom() { return m_phantom; }
+    bool isDragable() { return m_dragable; }
+    bool isDragging() { return m_dragging; }
     bool isFixedSize() { return m_fixedSize; }
     bool isDestroyed() { return m_destroyed; }
 

@@ -592,6 +592,8 @@ void X11Window::poll()
                 if(req->target == targets) {
                     Atom typeList[] = { XInternAtom(m_display, "UTF8_STRING", False),
                                         XInternAtom(m_display, "TEXT", False),
+                                        XInternAtom(m_display, "STRING", False),
+                                        XInternAtom(m_display, "text/plain", False),
                                         XInternAtom(m_display, "COMPOUND_TEXT", False),
                                         XA_STRING };
 

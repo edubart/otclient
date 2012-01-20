@@ -681,6 +681,22 @@ void UIWidget::setPhantom(bool phantom)
     m_phantom = phantom;
 }
 
+void UIWidget::setDragging(bool dragging)
+{
+    if(dragging) {
+        g_ui.setDraggingWidget(asUIWidget());
+    } else {
+        if(g_ui.getDraggingWidget() == asUIWidget())
+            g_ui.setDraggingWidget(nullptr);
+    }
+    m_dragging = dragging;
+}
+
+void UIWidget::setDragable(bool dragable)
+{
+    m_dragable = dragable;
+}
+
 void UIWidget::setFixedSize(bool fixed)
 {
     m_fixedSize = fixed;
@@ -1054,6 +1070,21 @@ void UIWidget::onHoverChange(bool hovered)
         g_ui.getRootWidget()->updateState(Fw::HoverState);
 }
 
+void UIWidget::onDragEnter(const Point& mousePos)
+{
+    callLuaField("onDragEnter", mousePos);
+}
+
+void UIWidget::onDragLeave(UIWidgetPtr droppedWidget, const Point& mousePos)
+{
+    callLuaField("onDragLeave", droppedWidget, mousePos);
+}
+
+void UIWidget::onDrop(UIWidgetPtr draggedWidget, const Point& mousePos)
+{
+    callLuaField("onDrop", draggedWidget, mousePos);
+}
+
 bool UIWidget::onKeyText(const std::string& keyText)
 {
     return callLuaField<bool>("onKeyText", keyText);
@@ -1084,11 +1115,24 @@ void UIWidget::onMouseRelease(const Point& mousePos, Fw::MouseButton button)
     if(isPressed() && getRect().contains(mousePos))
         callLuaField("onClick");
 
+    UIWidgetPtr draggedWidget = g_ui.getDraggingWidget();
+    if(draggedWidget && containsPoint(mousePos) && button == Fw::MouseLeftButton) {
+        onDrop(draggedWidget, mousePos);
+        draggedWidget->onDragLeave(asUIWidget(), mousePos);
+        draggedWidget->setDragging(false);
+    }
+
     callLuaField("onMouseRelease", mousePos, button);
 }
 
 bool UIWidget::onMouseMove(const Point& mousePos, const Point& mouseMoved)
 {
+    if(isDragable() && isPressed() && !m_dragging && !g_ui.getDraggingWidget()) {
+        setDragging(true);
+        g_ui.setDraggingWidget(asUIWidget());
+        onDragEnter(mousePos - mouseMoved);
+    }
+
     return callLuaField<bool>("onMouseMove", mousePos, mouseMoved);
 }
 

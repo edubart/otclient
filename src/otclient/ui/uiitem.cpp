@@ -25,6 +25,11 @@
 #include <framework/graphics/graphics.h>
 #include <framework/graphics/fontmanager.h>
 
+UIItem::UIItem()
+{
+    m_dragable = true;
+}
+
 void UIItem::draw()
 {
     drawSelf();

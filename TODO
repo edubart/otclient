@@ -45,7 +45,6 @@ change win32 mouse cursor icon
 rework win32 key input system
 
 == UI
-[bart] fix massive hotkeys when holding down a key
 [bart] multiline rich text widget
 [bart] move layout proprieties to widget style
 [bart] multiline text editor widget
@@ -61,7 +60,8 @@ rework win32 key input system
 [bart] check for recursive anchors and print a error instead of crashing
 [bart] make api to enable/disable capture of events to avoid massive event processing
 [bart] review style apply system
-rework styles rendering order
+rework widgets rendering order
+cache or preload otui files to avoid freezes from hd
 
 == Client
 make possible to reload modules

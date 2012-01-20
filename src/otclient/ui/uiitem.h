@@ -30,6 +30,7 @@
 class UIItem : public UIWidget
 {
 public:
+    UIItem();
     void draw();
 
     void setItem(const ItemPtr& item) { m_item = item; }
