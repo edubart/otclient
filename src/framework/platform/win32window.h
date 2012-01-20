@@ -61,7 +61,7 @@ public:
     void hideMouse();
     void displayFatalError(const std::string& message);
 
-    void setMouseCursor(const std::string& file);
+    void setMouseCursor(const std::string& file, const Point& hotSpot);
     void setTitle(const std::string& title);
     void setMinimumSize(const Size& minimumSize);
     void setFullscreen(bool fullscreen);
@@ -80,6 +80,8 @@ private:
     HINSTANCE m_instance;
     HDC m_deviceContext;
     HGLRC m_glContext;
+    HCURSOR m_cursor;
+    HCURSOR m_defaultCursor;
     bool m_maximized;
     Size m_minimumSize;
 };

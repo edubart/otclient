@@ -33,6 +33,7 @@ WIN32Window::WIN32Window()
     m_instance = 0;
     m_deviceContext = 0;
     m_glContext = 0;
+    m_cursor = 0;
     m_maximized = false;
     m_minimumSize = Size(16,16);
     m_size = m_minimumSize;
@@ -226,6 +227,11 @@ void WIN32Window::terminate()
         m_deviceContext = NULL;
     }
 
+    if(m_cursor) {
+        DestroyCursor(m_cursor);
+        m_cursor = NULL;
+    }
+
     if(m_window) {
         if(!DestroyWindow(m_window))
             logError("ERROR: Destroy window failed.");
@@ -248,6 +254,7 @@ struct WindowProcProxy {
 
 void WIN32Window::internalRegisterWindowClass()
 {
+    m_defaultCursor = LoadCursor(NULL, IDC_ARROW);
     WNDCLASSA wc;
     wc.style            = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
     wc.lpfnWndProc      = (WNDPROC)WindowProcProxy::call;
@@ -255,7 +262,7 @@ void WIN32Window::internalRegisterWindowClass()
     wc.cbWndExtra       = 0;
     wc.hInstance        = m_instance;
     wc.hIcon            = LoadIcon(NULL, IDI_WINLOGO);
-    wc.hCursor          = LoadCursor(NULL, IDC_ARROW);
+    wc.hCursor          = m_defaultCursor;
     wc.hbrBackground    = NULL;
     wc.lpszMenuName     = NULL;
     wc.lpszClassName    = g_app->getAppName().c_str();
@@ -352,12 +359,16 @@ void *WIN32Window::getExtensionProcAddress(const char *ext)
 
 void WIN32Window::move(const Point& pos)
 {
-    MoveWindow(m_window, pos.x, pos.y, m_size.width(), m_size.height(), TRUE);
+    RECT windowRect = {pos.x, pos.y, m_pos.x + m_size.width(), m_pos.y + m_size.height()};
+    AdjustWindowRectEx(&windowRect, WS_OVERLAPPEDWINDOW, FALSE, WS_EX_APPWINDOW | WS_EX_WINDOWEDGE);
+    MoveWindow(m_window, windowRect.left, windowRect.top, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top, TRUE);
 }
 
 void WIN32Window::resize(const Size& size)
 {
-    MoveWindow(m_window, m_pos.x, m_pos.y, size.width(), size.height(), TRUE);
+    RECT windowRect = {m_pos.x, m_pos.y, m_pos.x + size.width(), m_pos.y + size.height()};
+    AdjustWindowRectEx(&windowRect, WS_OVERLAPPEDWINDOW, FALSE, WS_EX_APPWINDOW | WS_EX_WINDOWEDGE);
+    MoveWindow(m_window, windowRect.left, windowRect.top, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top, TRUE);
 }
 
 void WIN32Window::show()
@@ -399,6 +410,13 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 {
     switch(uMsg)
     {
+        case WM_SETCURSOR: {
+            if(m_cursor)
+                SetCursor(m_cursor);
+            else
+                SetCursor(m_defaultCursor);
+            break;
+        }
         case WM_ACTIVATE: {
             m_focused = !(wParam == WA_INACTIVE);
             break;
@@ -518,16 +536,24 @@ void WIN32Window::swapBuffers()
 
 void WIN32Window::restoreMouseCursor()
 {
-    //TODO
+    logTraceDebug();
+    if(m_cursor) {
+        DestroyCursor(m_cursor);
+        m_cursor = NULL;
+        SetCursor(m_defaultCursor);
+        ShowCursor(true);
+    }
 }
 
 void WIN32Window::showMouse()
 {
+    logTraceDebug();
     ShowCursor(true);
 }
 
 void WIN32Window::hideMouse()
 {
+    logTraceDebug();
     ShowCursor(false);
 }
 
@@ -536,9 +562,60 @@ void WIN32Window::displayFatalError(const std::string& message)
     MessageBoxA(m_window, message.c_str(), "FATAL ERROR", MB_OK | MB_ICONERROR);
 }
 
-void WIN32Window::setMouseCursor(const std::string& file)
-{
+#define LSB_BIT_SET(p, n) (p[(n)/8] |= (1 <<((n)%8)))
+#define HSB_BIT_SET(p, n) (p[(n)/8] |= (128 >>((n)%8)))
 
+void WIN32Window::setMouseCursor(const std::string& file, const Point& hotSpot)
+{
+    logTraceDebug();
+    std::stringstream fin;
+    g_resources.loadFile(file, fin);
+
+    apng_data apng;
+    if(load_apng(fin, &apng) != 0) {
+        logTraceError("unable to load png file ", file);
+        return;
+    }
+
+    if(apng.bpp != 4) {
+        logError("the cursor png must have 4 channels");
+        free_apng(&apng);
+        return;
+    }
+
+    if(apng.width != 32|| apng.height != 32) {
+        logError("the cursor png must have 32x32 dimension");
+        free_apng(&apng);
+        return;
+    }
+
+    if(m_cursor != NULL)
+        DestroyCursor(m_cursor);
+
+    int width = apng.width;
+    int height = apng.height;
+    int numbits = width * height;
+    int numbytes = (width * height)/8;
+
+    std::vector<uchar> andMask(numbytes, 0);
+    std::vector<uchar> xorMask(numbytes, 0);
+
+    for(int i=0;i<numbits;++i) {
+        uchar r = apng.pdata[i*4+0];
+        uchar g = apng.pdata[i*4+1];
+        uchar b = apng.pdata[i*4+2];
+        uchar a = apng.pdata[i*4+3];
+        Color color(r,g,b,a);
+        if(color == Fw::white) { //white
+            HSB_BIT_SET(xorMask, i);
+        } else if(color == Fw::alpha) { //alpha
+            HSB_BIT_SET(andMask, i);
+        } //otherwise black
+    }
+    free_apng(&apng);
+
+    m_cursor = CreateCursor(m_instance, hotSpot.x, hotSpot.y, width, height, &andMask[0], &xorMask[0]);
+    SetCursor(m_cursor);
 }
 
 void WIN32Window::setTitle(const std::string& title)

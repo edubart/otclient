@@ -67,7 +67,7 @@ public:
     void showMouse();
     void hideMouse();
 
-    void setMouseCursor(const std::string& file);
+    void setMouseCursor(const std::string& file, const Point& hotSpot);
     void setTitle(const std::string& title);
     void setMinimumSize(const Size& minimumSize);
     void setFullscreen(bool fullscreen);

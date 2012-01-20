@@ -769,7 +769,7 @@ void X11Window::restoreMouseCursor()
     }
 }
 
-void X11Window::setMouseCursor(const std::string& file)
+void X11Window::setMouseCursor(const std::string& file, const Point& hotSpot)
 {
     std::stringstream fin;
     g_resources.loadFile(file, fin);
@@ -786,8 +786,8 @@ void X11Window::setMouseCursor(const std::string& file)
         return;
     }
 
-    if(apng.width % 8 != 0 || apng.height % 8 != 0) {
-        logError("the cursor png must have dimensions multiple of 8");
+    if(apng.width != 32|| apng.height != 32) {
+        logError("the cursor png must have 32x32 dimension");
         free_apng(&apng);
         return;
     }
@@ -828,7 +828,7 @@ void X11Window::setMouseCursor(const std::string& file)
 
     Pixmap cp = XCreateBitmapFromData(m_display, m_window, (char*)&mapBits[0], width, height);
     Pixmap mp = XCreateBitmapFromData(m_display, m_window, (char*)&maskBits[0], width, height);
-    m_cursor = XCreatePixmapCursor(m_display, cp, mp, &fg, &bg, width/2, height/2);
+    m_cursor = XCreatePixmapCursor(m_display, cp, mp, &fg, &bg, hotSpot.x, hotSpot.y);
     XDefineCursor(m_display, m_window, m_cursor);
     XFreePixmap(m_display, cp);
     XFreePixmap(m_display, mp);

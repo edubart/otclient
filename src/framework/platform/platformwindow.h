@@ -53,7 +53,7 @@ public:
     virtual void hideMouse() = 0;
     virtual void displayFatalError(const std::string& message) { }
 
-    virtual void setMouseCursor(const std::string& file) = 0;
+    virtual void setMouseCursor(const std::string& file, const Point& hotSpot) = 0;
     virtual void setTitle(const std::string& title) = 0;
     virtual void setMinimumSize(const Size& minimumSize) = 0;
     virtual void setFullscreen(bool fullscreen) = 0;
