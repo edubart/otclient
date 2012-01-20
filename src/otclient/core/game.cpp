@@ -369,7 +369,12 @@ int Game::getThingStackpos(const ThingPtr& thing)
     // thing is at map
     if(thing->getPos().x != 65535) {
         TilePtr tile = g_map.getTile(thing->getPos());
-        return tile->getThingStackpos(thing);
+        if(tile)
+            return tile->getThingStackpos(thing);
+        else {
+            logError("could not get tile");
+            return -1;
+        }
     }
 
     // thing is at container or inventory

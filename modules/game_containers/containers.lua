@@ -98,6 +98,7 @@ function Containers.onContainerUpdateItem(containerId, slot, item)
   local itemWidget = container:getChildByIndex(slot + 1)
   if not itemWidget then return end
   itemWidget:setItem(item)
+  item:setPos(itemWidget.position)
 end
 
 function Containers.onContainerRemoveItem(containerId, slot)
