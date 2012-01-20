@@ -27,6 +27,11 @@
 #include <framework/graphics/graphics.h>
 #include <otclient/core/localplayer.h>
 
+UIMap::UIMap()
+{
+    m_dragable = true;
+}
+
 void UIMap::draw()
 {
     drawSelf();

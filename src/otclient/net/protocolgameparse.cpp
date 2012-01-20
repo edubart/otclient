@@ -435,12 +435,14 @@ void ProtocolGame::parseOpenContainer(InputMessage& msg)
     bool hasParent = (msg.getU8() != 0);
     int itemCount = msg.getU8();
 
-    g_lua.callGlobalField("Game", "onContainerOpen", containerId, itemId, name, capacity, hasParent);
-
+    std::vector<ItemPtr> items;
+    items.reserve(itemCount);
     for(int i = 0; i < itemCount; i++) {
         ItemPtr item = internalGetItem(msg);
-        g_game.processContainerAddItem(containerId, item);
+        items.push_back(item);
     }
+
+    g_lua.callGlobalField("Game", "onContainerOpen", containerId, itemId, name, capacity, hasParent, items);
 }
 
 void ProtocolGame::parseCloseContainer(InputMessage& msg)

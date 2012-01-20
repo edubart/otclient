@@ -1,10 +1,10 @@
 function UIMap:onDragEnter(mousePos)
-  local tile = self:getTile(mousePosition)
+  local tile = self:getTile(mousePos)
   if not tile then return false end
   
   local thing = tile:getTopMoveThing()
   if not thing then return false end
-  
+
   self.currentDragThing = thing
   setTargetCursor()
   return true
