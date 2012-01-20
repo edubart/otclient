@@ -27,7 +27,7 @@ function Game.processMouseAction(menuPosition, mouseButton, autoWalk, lookThing,
 
   if not Options.classicControl then
     if mouseButton == MouseLeftButton and selectedThing then
-      Game.useWith(Game.getSelectedThing(), useThing)
+      Game.useWith(Game.getSelectedThing(), multiUseThing)
       Game.setSelectedThing(nil)
       restoreCursor()
       return true

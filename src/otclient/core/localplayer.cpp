@@ -33,6 +33,9 @@ LocalPlayer::LocalPlayer()
     m_walkLocked = false;
     m_lastPrewalkDone = true;
     m_icons = 0;
+
+    for(int i = 0; i < Otc::LastStatistic; ++i)
+        m_statistics[i] = -1; // sets an invalid value to ensure lua event will be sent
 }
 
 void LocalPlayer::lockWalk()
