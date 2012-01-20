@@ -299,6 +299,20 @@ void Game::useInventoryItem(int itemId, const ThingPtr& toThing)
     }
 }
 
+void Game::move(const ThingPtr& thing, const Position& toPos, int count)
+{
+    if(!isOnline() || !thing || !checkBotProtection() || thing->getPos() == toPos || count <= 0)
+        return;
+
+    m_localPlayer->lockWalk();
+
+    int stackpos = getThingStackpos(thing);
+    if(stackpos == -1)
+        return;
+
+    m_protocolGame->sendThrow(thing->getPos(), thing->getId(), stackpos, toPos, count);
+}
+
 void Game::attack(const CreaturePtr& creature)
 {
     if(!isOnline() || !creature || !checkBotProtection())

@@ -169,6 +169,7 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Tile>("getTopLookThing", &Tile::getTopLookThing);
     g_lua.bindClassMemberFunction<Tile>("getTopUseThing", &Tile::getTopUseThing);
     g_lua.bindClassMemberFunction<Tile>("getTopCreature", &Tile::getTopCreature);
+    g_lua.bindClassMemberFunction<Tile>("getTopMoveThing", &Tile::getTopMoveThing);
     g_lua.bindClassMemberFunction<Tile>("getTopMultiUseThing", &Tile::getTopMultiUseThing);
     g_lua.bindClassMemberFunction<Tile>("getPos", &Tile::getPos);
     g_lua.bindClassMemberFunction<Tile>("getDrawElevation", &Tile::getDrawElevation);
@@ -237,6 +238,7 @@ void OTClient::registerLuaFunctions()
     g_lua.registerClass<UIMap, UIWidget>();
     g_lua.bindClassStaticFunction<UIMap>("create", []{ return UIMapPtr(new UIMap); } );
     g_lua.bindClassMemberFunction<UIMap>("getTile", &UIMap::getTile);
+    g_lua.bindClassMemberFunction<UIMap>("getPosition", &UIMap::getPosition);
 
     g_lua.registerClass<UIGame, UIWidget>();
     g_lua.bindClassStaticFunction<UIGame>("create", []{ return UIGamePtr(new UIGame); } );

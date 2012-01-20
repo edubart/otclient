@@ -48,6 +48,7 @@ public:
     ThingPtr getTopLookThing();
     ThingPtr getTopUseThing();
     CreaturePtr getTopCreature();
+    ThingPtr getTopMoveThing();
     ThingPtr getTopMultiUseThing();
 
     const Position& getPos() { return m_pos; }

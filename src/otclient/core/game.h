@@ -65,6 +65,7 @@ public:
     void use(const ThingPtr& thing);
     void useWith(const ThingPtr& fromThing, const ThingPtr& toThing);
     void useInventoryItem(int itemId, const ThingPtr& toThing);
+    void move(const ThingPtr &thing, const Position& toPos, int count);
 
     // attack/follow related
     void attack(const CreaturePtr& creature);

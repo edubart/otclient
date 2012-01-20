@@ -42,6 +42,7 @@ function Containers.onContainerOpen(containerId, itemId, name, capacity, hasPare
     local item = UIItem.create()
     item:setStyle('Item')
     container:addChild(item)
+    item.position = {x=65535, y=containerId+64, z=i-1}
   end
 
   m_containers[containerId] = container

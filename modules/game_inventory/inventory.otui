@@ -11,6 +11,7 @@ UIWindow
     id: slot1
     anchors.top: parent.top
     anchors.horizontalCenter: parent.horizontalCenter
+    &position: {x=65535, y=1, z=0}
 
   Item
     // armor
@@ -18,6 +19,7 @@ UIWindow
     anchors.top: prev.bottom
     anchors.horizontalCenter: prev.horizontalCenter
     margin-top: 5
+    &position: {x=65535, y=4, z=0}
 
   Item
     // legs
@@ -25,6 +27,7 @@ UIWindow
     anchors.top: prev.bottom
     anchors.horizontalCenter: prev.horizontalCenter
     margin-top: 5
+    &position: {x=65535, y=7, z=0}
 
   Item
     // feet
@@ -32,6 +35,7 @@ UIWindow
     anchors.top: prev.bottom
     anchors.horizontalCenter: prev.horizontalCenter
     margin-top: 5
+    &position: {x=65535, y=8, z=0}
 
   Item
     // necklace
@@ -40,6 +44,7 @@ UIWindow
     anchors.right: slot1.left
     margin-top: 10
     margin-right: 5
+    &position: {x=65535, y=2, z=0}
 
   Item
     // left
@@ -47,6 +52,7 @@ UIWindow
     anchors.top: prev.bottom
     anchors.horizontalCenter: prev.horizontalCenter
     margin-top: 5
+    &position: {x=65535, y=6, z=0}
 
   Item
     // ring
@@ -54,6 +60,7 @@ UIWindow
     anchors.top: prev.bottom
     anchors.horizontalCenter: prev.horizontalCenter
     margin-top: 5
+    &position: {x=65535, y=9, z=0}
 
   Item
     // backpack
@@ -62,6 +69,7 @@ UIWindow
     anchors.left: slot1.right
     margin-top: 10
     margin-left: 5
+    &position: {x=65535, y=3, z=0}
 
   Item
     // right
@@ -76,6 +84,7 @@ UIWindow
     anchors.top: prev.bottom
     anchors.horizontalCenter: prev.horizontalCenter
     margin-top: 5
+    &position: {x=65535, y=10, z=0}
 
   GameLabel
     id: soul

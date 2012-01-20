@@ -247,6 +247,23 @@ CreaturePtr Tile::getTopCreature()
     return creature;
 }
 
+ThingPtr Tile::getTopMoveThing()
+{
+    if(isEmpty())
+        return nullptr;
+
+    for(uint i = 0; i < m_things.size(); ++i) {
+        ThingPtr thing = m_things[i];
+        if(!thing->isGround() && !thing->isGroundBorder() && !thing->isOnBottom() && !thing->isOnTop() && !thing->asCreature()) {
+            if(i > 0 && thing->isNotMoveable())
+                return m_things[i-1];
+            return thing;
+        }
+    }
+
+    return m_things[0];
+}
+
 ThingPtr Tile::getTopMultiUseThing()
 {
     // this is related to classic controls, getting top item, forceuse or creature
