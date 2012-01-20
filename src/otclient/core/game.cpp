@@ -138,14 +138,17 @@ void Game::processInventoryChange(int slot, const ItemPtr& item)
 
 void Game::processCreatureMove(const CreaturePtr& creature, const Position& oldPos, const Position& newPos)
 {
-    // walk
-    if(oldPos.isInRange(newPos, 1, 1, 0)) {
-        creature->walk(oldPos, newPos);
-    // teleport
-    } else {
-        // stop walking on teleport
-        creature->stopWalk();
-    }
+    if(!oldPos.isInRange(newPos, 1, 1, 0))
+        logError("unexpected creature move");
+
+    // animate walk
+    creature->walk(oldPos, newPos);
+}
+
+void Game::processCreatureTeleport(const CreaturePtr& creature)
+{
+    // stop walking on creature teleports
+    creature->stopWalk();
 }
 
 void Game::processAttackCancel()
@@ -170,7 +173,21 @@ void Game::walk(Otc::Direction direction)
     if(!m_localPlayer->canWalk(direction))
         return;
 
-    m_localPlayer->preWalk(direction);
+
+    // TODO: restore check for blockable tiles
+    /*
+    if(toTile && !toTile->isWalkable() && !fromTile->getElevation() >= 3) {
+        g_game.processTextMessage("statusSmall", "Sorry, not possible.");
+        return false;
+    }*/
+
+    // only do prewalk to walkable tiles
+    TilePtr toTile = g_map.getTile(m_localPlayer->getPos() + Position::getPosFromDirection(direction));
+    if(toTile && toTile->isWalkable())
+        m_localPlayer->preWalk(direction);
+    else
+        m_localPlayer->lockWalk();
+
     forceWalk(direction);
 }
 
@@ -368,6 +385,7 @@ int Game::getThingStackpos(const ThingPtr& thing)
 {
     // thing is at map
     if(thing->getPos().x != 65535) {
+        dump << thing->getPos();
         TilePtr tile = g_map.getTile(thing->getPos());
         if(tile)
             return tile->getThingStackpos(thing);

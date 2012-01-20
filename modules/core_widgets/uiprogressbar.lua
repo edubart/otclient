@@ -10,7 +10,7 @@ function UIProgressBar.create()
 end
 
 function UIProgressBar:setPercent(percent)
-  self.m_percent = percent
+  self.m_percent = math.max(math.min(percent, 100), 0)
   self:updateBackground()
 end
 

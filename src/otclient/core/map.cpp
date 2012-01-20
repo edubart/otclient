@@ -244,11 +244,19 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
     if(!thing)
         return;
 
+    Position oldPos = thing->getPos();
+    bool teleport = false;
+    if(oldPos.isValid() && !oldPos.isInRange(pos,1,1,0))
+        teleport = true;
+
     TilePtr tile = getTile(pos);
 
     if(CreaturePtr creature = thing->asCreature()) {
         tile->addThing(thing, stackPos);
         m_creatures[creature->getId()] = creature;
+
+        if(teleport)
+            g_game.processCreatureTeleport(creature);
     }
     else if(MissilePtr shot = thing->asMissile()) {
         m_missilesAtFloor[shot->getPos().z].push_back(shot);

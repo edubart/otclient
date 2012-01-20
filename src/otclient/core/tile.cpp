@@ -152,12 +152,12 @@ ThingPtr Tile::getTopThing()
 
 ThingPtr Tile::removeThingByStackpos(int stackPos)
 {
-    ThingPtr oldObject;
+    ThingPtr oldThing;
     if(stackPos >= 0 && stackPos < (int)m_things.size()) {
-        oldObject = m_things[stackPos];
+        oldThing = m_things[stackPos];
         m_things.erase(m_things.begin() + stackPos);
     }
-    return oldObject;
+    return oldThing;
 }
 
 ThingPtr Tile::removeThing(const ThingPtr& thing)
@@ -168,13 +168,13 @@ ThingPtr Tile::removeThing(const ThingPtr& thing)
             m_effects.erase(it);
         return thing;
     }
-    ThingPtr oldObject;
+    ThingPtr oldThing;
     auto it = std::find(m_things.begin(), m_things.end(), thing);
     if(it != m_things.end()) {
-        oldObject = *it;
+        oldThing = *it;
         m_things.erase(it);
     }
-    return oldObject;
+    return oldThing;
 }
 
 std::vector<CreaturePtr> Tile::getCreatures()

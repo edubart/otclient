@@ -87,7 +87,7 @@ bool LocalPlayer::canWalk(Otc::Direction direction)
         return false;
 
     // avoid doing more walks than wanted when receiving a lot of walks from server
-    if(!m_lastPrewalkDone && !prewalkTimeouted)
+    if(!m_lastPrewalkDone && m_preWalking && !prewalkTimeouted)
         return false;
 
     // cannot walk while locked
@@ -95,13 +95,6 @@ bool LocalPlayer::canWalk(Otc::Direction direction)
         return false;
     else
         m_walkLocked = false;
-
-    // check for blockable tiles in the walk direction
-    TilePtr tile = g_map.getTile(m_pos + Position::getPosFromDirection(direction));
-    if(!tile || !tile->isWalkable()) {
-        g_game.processTextMessage("statusSmall", "Sorry, not possible.");
-        return false;
-    }
 
     return true;
 }
@@ -122,6 +115,7 @@ void LocalPlayer::cancelWalk(Otc::Direction direction)
 void LocalPlayer::stopWalk()
 {
     Creature::stopWalk();
+    m_lastPrewalkDone = true;
     m_lastPrewalkDestionation = Position();
 }
 

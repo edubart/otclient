@@ -27,6 +27,8 @@
 #include <framework/core/resourcemanager.h>
 #include <framework/util/utf8.h>
 
+#define HSB_BIT_SET(p, n) (p[(n)/8] |= (128 >>((n)%8)))
+
 WIN32Window::WIN32Window()
 {
     m_window = 0;
@@ -536,7 +538,6 @@ void WIN32Window::swapBuffers()
 
 void WIN32Window::restoreMouseCursor()
 {
-    logTraceDebug();
     if(m_cursor) {
         DestroyCursor(m_cursor);
         m_cursor = NULL;
@@ -547,13 +548,11 @@ void WIN32Window::restoreMouseCursor()
 
 void WIN32Window::showMouse()
 {
-    logTraceDebug();
     ShowCursor(true);
 }
 
 void WIN32Window::hideMouse()
 {
-    logTraceDebug();
     ShowCursor(false);
 }
 
@@ -562,12 +561,8 @@ void WIN32Window::displayFatalError(const std::string& message)
     MessageBoxA(m_window, message.c_str(), "FATAL ERROR", MB_OK | MB_ICONERROR);
 }
 
-#define LSB_BIT_SET(p, n) (p[(n)/8] |= (1 <<((n)%8)))
-#define HSB_BIT_SET(p, n) (p[(n)/8] |= (128 >>((n)%8)))
-
 void WIN32Window::setMouseCursor(const std::string& file, const Point& hotSpot)
 {
-    logTraceDebug();
     std::stringstream fin;
     g_resources.loadFile(file, fin);
 

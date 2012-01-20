@@ -51,6 +51,7 @@ public:
     void processContainerAddItem(int containerId, const ItemPtr& item);
     void processInventoryChange(int slot, const ItemPtr& item);
     void processCreatureMove(const CreaturePtr& creature, const Position& oldPos, const Position& newPos);
+    void processCreatureTeleport(const CreaturePtr& creature);
     void processAttackCancel();
     void processWalkCancel(Otc::Direction direction);
 
