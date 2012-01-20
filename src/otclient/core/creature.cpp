@@ -235,8 +235,8 @@ void Creature::stopWalk()
         return;
 
     // reset walk animation states
-    updateWalkAnimation(0);
-    updateWalkOffset(0);
+    m_walkOffset = Point(0,0);
+    m_animation = 0;
 
     // stops the walk right away
     terminateWalk();
