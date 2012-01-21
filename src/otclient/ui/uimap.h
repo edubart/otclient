@@ -33,7 +33,6 @@ public:
     UIMap();
     void draw();
 
-    Position getPosition(const Point& mousePos);
     TilePtr getTile(const Point& mousePos);
 
 protected:

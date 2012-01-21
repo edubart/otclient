@@ -19,10 +19,11 @@ end
 function UIMap:onDrop(widget, mousePos)
   if not widget or not widget.currentDragThing then return false end
   
-  local pos = self:getPosition(mousePos)
+  local tile = self:getTile(mousePos)
+  if not tile then return false end
   local count = 1 -- todo make a window for it
   
-  Game.move(widget.currentDragThing, pos, count)
+  Game.move(widget.currentDragThing, tile:getPos(), count)
   return true
 end
 

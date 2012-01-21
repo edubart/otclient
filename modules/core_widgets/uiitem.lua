@@ -1,6 +1,9 @@
 function UIItem:onDragEnter(mousePos)
   local item = self:getItem()
   if not item then return false end
+  
+  self:setBorderWidth('1')
+  self:setBorderColor('#ffffff')
 
   self.currentDragThing = item
   setTargetCursor()
@@ -10,6 +13,7 @@ end
 function UIItem:onDragLeave(widget, mousePos)
   self.currentDragThing = nil
   restoreCursor()
+  self:setBorderWidth('0')
   return true
 end
 
@@ -22,7 +26,6 @@ function UIItem:onDrop(widget, mousePos)
   Game.move(widget.currentDragThing, pos, count)
   return true
 end
-
 
 function UIItem:onMouseRelease(mousePosition, mouseButton)
   local item = self:getItem()

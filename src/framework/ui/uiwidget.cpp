@@ -61,8 +61,8 @@ void UIWidget::drawSelf()
         drawBackground(m_rect);
     }
 
-    drawBorder(m_rect);
     drawImage(m_rect);
+    drawBorder(m_rect);
     drawIcon(m_rect);
     drawText(m_rect);
 }
