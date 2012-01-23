@@ -80,6 +80,14 @@ function TopMenu.removeButton(param)
   button:destroy()
 end
 
+function TopMenu.hideGameButtons()
+  gameButtonsPanel:hide()
+end
+
+function TopMenu.showGameButtons()
+  gameButtonsPanel:show()
+end
+
 function TopMenu.getButton(id)
   return topMenu:recursiveGetChildById(id)
 end
@@ -87,3 +95,7 @@ end
 function TopMenu:getLogoutButton(id)
   return TopMenu.getButton('logoutButton')
 end
+
+
+connect(Game, { onLogin = TopMenu.showGameButtons,
+                onLogout = TopMenu.hideGameButtons})

@@ -84,6 +84,9 @@ void UIAnchorLayout::removeWidget(const UIWidgetPtr& widget)
 void UIAnchorLayout::updateWidget(const UIWidgetPtr& widget, UIAnchorGroup& anchorGroup)
 {
     UIWidgetPtr parentWidget = getParentWidget();
+    if(!parentWidget)
+        return;
+
     Rect newRect = widget->getRect();
     bool verticalMoved = false;
     bool horizontalMoved = false;

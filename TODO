@@ -17,6 +17,18 @@ move items
 use with
 
 
+move count itens
+open/close vip/skills
+move windows, go back in containers
+open private chat
+reopen channels
+fix use with
+move windows
+let windows open while playing
+fix auto repeats in lineedit
+trade
+battlelist
+offer window
 
 ====================================================
 Low priority TODO
@@ -25,8 +37,8 @@ Low priority TODO
 review directories loading search
 load modules from zip packages
 create a class for reading binary files
-rework lua/c++ logger
 ake protocol class compatible with old tibia protocols
+rework lua/c++ logger
 
 == Graphics
 use CoordsBuffer in font

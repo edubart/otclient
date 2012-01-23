@@ -37,6 +37,9 @@ void UIVerticalLayout::applyStyle(const OTMLNodePtr& styleNode)
 void UIVerticalLayout::internalUpdate()
 {
     UIWidgetPtr parentWidget = getParentWidget();
+    if(!parentWidget)
+        return;
+
     UIWidgetList widgets = parentWidget->getChildren();
 
     if(m_alignBottom)

@@ -1,7 +1,7 @@
 Skills = {}
 
 -- private variables
-local skillWindow
+local skillsWindow
 local skillsButton
 
 -- private functions
@@ -19,7 +19,7 @@ local function getNumberString(number)
 end
 
 local function setSkillValue(id, value)
-  local skill = skillWindow:recursiveGetChildById(id)
+  local skill = skillsWindow:recursiveGetChildById(id)
 
   if skill then
     local widget = skill:getChildById('value')
@@ -28,7 +28,7 @@ local function setSkillValue(id, value)
 end
 
 local function setSkillPercent(id, percent, tooltip)
-  local skill = skillWindow:recursiveGetChildById(id)
+  local skill = skillsWindow:recursiveGetChildById(id)
 
   if skill then
     local widget = skill:getChildById('percent')
@@ -42,19 +42,22 @@ end
 
 -- public functions
 function Skills.create()
-  skillWindow = displayUI('skills.otui', { parent = Game.gameRightPanel })
+  skillsWindow = displayUI('skills.otui', { parent = Game.gameRightPanel })
+  skillsWindow:hide()
   skillsButton = TopMenu.addGameButton('skillsButton', 'Skills (Ctrl+S)', '/core_styles/icons/skills.png', Skills.toggle)
 end
 
 function Skills.destroy()
-  --skillsButton:destroy()
-  --skillsButton = nil
-  skillWindow:destroy()
-  skillWindow = nil
+  skillsButton:destroy()
+  skillsButton = nil
+  skillsWindow:destroy()
+  skillsWindow = nil
 end
 
 function Skills.toggle()
-
+  local visible = not skillsWindow:isExplicitlyVisible()
+  skillsWindow:setVisible(visible)
+  skillsButton:setOn(visible)
 end
 
 function Skills.onSkillButtonClick(button)

@@ -33,7 +33,7 @@ SkillPercentPanel < ProgressBar
 MiniWindow
   id: skillWindow
   text: Skills
-  size: 200 350
+  height: 350
 
   Panel
     id: skillPanel

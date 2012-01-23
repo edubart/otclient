@@ -21,7 +21,7 @@ function UIItem:onDrop(widget, mousePos)
   if not widget or not widget.currentDragThing then return false end
 
   local pos = self.position
-  local count = 1 -- todo make a window for it
+  local count = widget.currentDragThing:getData()
 
   Game.move(widget.currentDragThing, pos, count)
   return true

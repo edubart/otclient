@@ -13,3 +13,10 @@ numpad on windows doesn't work correctly
 skulls is rendering outside map bounds
 these are some issues when skill progressbar is 0% or 100%
 paste on x11 platform does not work correctly when doing ctrl+c in google chrome
+
+walk animation doesnt reset when leaving invisible
+non tiles are no black
+drop items in container background
+can view ocean in underground floors
+
+render closets -> http://i.imgur.com/yooxD.jpg

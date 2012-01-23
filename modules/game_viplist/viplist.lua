@@ -1,19 +1,28 @@
 VipList = {}
 
 -- private variables
-local vipWindow = nil
-local addVipWindow = nil
+local vipWindow
+local vipButton
+local addVipWindow
 
 -- public functions
 function VipList.create()
   vipWindow = displayUI('viplist.otui', { parent = Game.gameRightPanel })
-  --vipWindow:hide()
-  TopMenu.addGameButton('vipListButton', 'VIP list', '/core_styles/icons/viplist.png', VipList.toggle)
+  vipWindow:hide()
+  vipButton = TopMenu.addGameButton('vipListButton', 'VIP list', '/core_styles/icons/viplist.png', VipList.toggle)
 end
 
 function VipList.destroy()
   vipWindow:destroy()
   vipWindow = nil
+  vipButton:destroy()
+  vipButton = nil
+end
+
+function VipList.toggle()
+  local visible = not vipWindow:isExplicitlyVisible()
+  vipWindow:setVisible(visible)
+  vipButton:setOn(visible)
 end
 
 function VipList.createAddWindow()

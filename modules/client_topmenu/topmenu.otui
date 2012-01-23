@@ -25,45 +25,13 @@ GameTopButton < UIButton
   icon-color: #ffffffff
   image-border: 3
 
-  $hover:
+  $on:
     image-clip: 0 0 26 26
     image-color: #ffffffff
     icon-color: #ffffffff
 
-  $first:
-    anchors.top: parent.top
-    anchors.left: parent.left
-    margin-top: 4
-    margin-left: 6
-
-  $!first:
-    anchors.top: prev.top
-    anchors.left: prev.right
-    margin-left: 6
-
 TopLeftButton < TopButton
-  $first:
-    anchors.top: parent.top
-    anchors.left: parent.left
-    margin-top: 4
-    margin-left: 6
-
-  $!first:
-    anchors.top: prev.top
-    anchors.left: prev.right
-    margin-left: 6
-
 TopRightButton < TopButton
-  $first:
-    anchors.top: parent.top
-    anchors.right: parent.right
-    margin-top: 4
-    margin-right: 6
-
-  $!first:
-    anchors.top: prev.top
-    anchors.right: prev.left
-    margin-right: 6
 
 TopPanel
   id: topMenu
@@ -77,7 +45,11 @@ TopPanel
     anchors.top: parent.top
     anchors.bottom: parent.bottom
     anchors.left: parent.left
-    width: 150
+    layout:
+      type: horizontalBox
+      spacing: 4
+      fit-children: true
+    padding: 6 4
 
   Panel
     id: gameButtonsPanel
@@ -85,13 +57,21 @@ TopPanel
     anchors.bottom: parent.bottom
     anchors.left: prev.right
     anchors.right: next.left
+    layout:
+      type: horizontalBox
+      spacing: 4
+    padding: 6 4
 
   Panel
     id: rightButtonsPanel
     anchors.top: parent.top
     anchors.bottom: parent.bottom
     anchors.right: parent.right
-    width: 70
+    layout:
+      type: horizontalBox
+      spacing: 4
+      fit-children: true
+    padding: 6 4
 
   FrameCounter
     id: frameCounter

@@ -639,6 +639,9 @@ void UIWidget::setVisible(bool visible)
                 parent->focusPreviousChild(Fw::ActiveFocusReason);
         }
 
+        // visibility can change can change parent layout
+        updateParentLayout();
+
         updateState(Fw::ActiveState);
         updateState(Fw::HoverState);
     }

@@ -29,7 +29,7 @@
 
 Item::Item() : Thing()
 {
-    m_data = 0;
+    m_data = 1;
 }
 
 ItemPtr Item::create(int id)

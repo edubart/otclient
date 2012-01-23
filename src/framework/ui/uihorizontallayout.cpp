@@ -38,6 +38,8 @@ void UIHorizontalLayout::applyStyle(const OTMLNodePtr& styleNode)
 void UIHorizontalLayout::internalUpdate()
 {
     UIWidgetPtr parentWidget = getParentWidget();
+    if(!parentWidget)
+        return;
     UIWidgetList widgets = parentWidget->getChildren();
 
     if(m_alignRight)

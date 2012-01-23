@@ -37,7 +37,7 @@ public:
         MAP_SIZE_Z = 8,
         MAX_WIDTH = 24,
         MAX_HEIGHT = 24,
-        MAX_Z = 15,
+        MAX_Z = 16,
         NUM_TILE_PIXELS = 32
     };
 

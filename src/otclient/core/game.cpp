@@ -385,7 +385,6 @@ int Game::getThingStackpos(const ThingPtr& thing)
 {
     // thing is at map
     if(thing->getPos().x != 65535) {
-        dump << thing->getPos();
         TilePtr tile = g_map.getTile(thing->getPos());
         if(tile)
             return tile->getThingStackpos(thing);
