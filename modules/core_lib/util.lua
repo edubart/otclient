@@ -21,15 +21,16 @@ end
 function connect(object, signalsAndSlots, pushFront)
   for signal,slot in pairs(signalsAndSlots) do
     if not object[signal] then
-        object[signal] = slot
+      object[signal] = slot
     elseif type(object[signal]) == 'function' then
-        object[signal] = { object[signal], slot }
-    elseif type(object[signal]) == 'table' then
-        if pushFront then
-          table.insert(object[signal], 1, slot)
-        else
-          table.insert(object[signal], #object[signal]+1, slot)
-        end
+      object[signal] = { object[signal] }
+    end
+    if type(object[signal]) == 'table' then
+      if pushFront then
+        table.insert(object[signal], 1, slot)
+      else
+        table.insert(object[signal], #object[signal]+1, slot)
+      end
     end
   end
 end
