@@ -26,3 +26,6 @@ UIGame
     anchors.bottom: gameBottomPanel.top
     focusable: false
 
+  UIWidget
+    id: mouseGrabber
+    focusable: false

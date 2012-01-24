@@ -173,7 +173,7 @@ protected:
     virtual bool onKeyPress(uchar keyCode, int keyboardModifiers, bool wouldFilter);
     virtual bool onKeyUp(uchar keyCode, int keyboardModifiers);
     virtual bool onMousePress(const Point& mousePos, Fw::MouseButton button);
-    virtual void onMouseRelease(const Point& mousePos, Fw::MouseButton button);
+    virtual bool onMouseRelease(const Point& mousePos, Fw::MouseButton button);
     virtual bool onMouseMove(const Point& mousePos, const Point& mouseMoved);
     virtual bool onMouseWheel(const Point& mousePos, Fw::MouseWheelDirection direction);
 
@@ -182,7 +182,7 @@ protected:
     bool propagateOnKeyPress(uchar keyCode, int keyboardModifiers, bool wouldFilter);
     bool propagateOnKeyUp(uchar keyCode, int keyboardModifiers);
     bool propagateOnMousePress(const Point& mousePos, Fw::MouseButton button);
-    void propagateOnMouseRelease(const Point& mousePos, Fw::MouseButton button);
+    bool propagateOnMouseRelease(const Point& mousePos, Fw::MouseButton button);
     bool propagateOnMouseMove(const Point& mousePos, const Point& mouseMoved);
     bool propagateOnMouseWheel(const Point& mousePos, Fw::MouseWheelDirection direction);
 

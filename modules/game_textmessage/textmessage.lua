@@ -6,7 +6,7 @@ importStyle 'textmessage.otui'
 -- private variables
 local MessageTypes = {
   consoleRed = { color = '#F55E5E', consoleTab = 'Server Log' },
-  eventOrange = { color = '#FE6500', consoleTab = 'Default' , windowLocation = 'center', consoleOption = 'showEventMessagesInConsole' },
+  eventOrange = { color = '#FE6500', consoleTab = 'Default' },
   consoleOrange = { color = '#FE6500', consoleTab = 'Default' },
   warning = { color = '#F55E5E', consoleTab = 'Server Log', windowLocation = 'center' },
   eventAdvance = { color = '#FFFFFF', consoleTab = 'Server Log', windowLocation = 'center', consoleOption = 'showEventMessagesInConsole' },

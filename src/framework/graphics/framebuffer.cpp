@@ -28,6 +28,8 @@ uint FrameBuffer::boundFbo = 0;
 
 FrameBuffer::FrameBuffer(const Size& size)
 {
+    m_clearColor = Fw::alpha;
+
     glGenFramebuffers(1, &m_fbo);
     if(!m_fbo)
         logFatal("Unable to create framebuffer object");
@@ -68,8 +70,10 @@ void FrameBuffer::bind(bool clear)
     g_painter.setProjectionMatrix(projectionMatrix);
     g_graphics.setViewportSize(m_texture->getSize());
 
-    if(clear)
+    if(clear) {
+        glClearColor(m_clearColor.rF(), m_clearColor.gF(), m_clearColor.bF(), m_clearColor.aF());
         glClear(GL_COLOR_BUFFER_BIT);
+    }
 }
 
 void FrameBuffer::release()

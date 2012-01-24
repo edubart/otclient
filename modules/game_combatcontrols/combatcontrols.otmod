@@ -1,0 +1,7 @@
+Module
+  name: game_combatcontrols
+  description: Combat controls window
+  author: OTClient team
+  website: https://github.com/edubart/otclient
+  onLoad: |
+    require 'combatcontrols'

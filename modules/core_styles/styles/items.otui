@@ -2,3 +2,4 @@ Item < UIItem
   size: 34 34
   image-source: /core_styles/images/item.png
   font: verdana-11px-rounded
+  border-color: white

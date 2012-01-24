@@ -72,7 +72,7 @@ void UIManager::inputEvent(const InputEvent& event)
             m_keyboardReceiver->propagateOnKeyUp(event.keyCode, event.keyboardModifiers);
             break;
         case Fw::MousePressInputEvent:
-            m_keyboardReceiver->propagateOnMousePress(event.mousePos, event.mouseButton);
+            m_mouseReceiver->propagateOnMousePress(event.mousePos, event.mouseButton);
             break;
         case Fw::MouseReleaseInputEvent:
             m_mouseReceiver->propagateOnMouseRelease(event.mousePos, event.mouseButton);

@@ -830,10 +830,11 @@ UIWidgetPtr UIWidget::recursiveGetChildById(const std::string& id)
 UIWidgetPtr UIWidget::recursiveGetChildByPos(const Point& childPos)
 {
     for(const UIWidgetPtr& child : m_children) {
-        if(child->containsPoint(childPos)) {
+        if(child->isExplicitlyVisible() && child->containsPoint(childPos)) {
             if(UIWidgetPtr subChild = child->recursiveGetChildByPos(childPos))
                 return subChild;
-            return child;
+            else if(!child->isPhantom())
+                return child;
         }
     }
     return nullptr;
@@ -1113,7 +1114,7 @@ bool UIWidget::onMousePress(const Point& mousePos, Fw::MouseButton button)
     return callLuaField<bool>("onMousePress", mousePos, button);
 }
 
-void UIWidget::onMouseRelease(const Point& mousePos, Fw::MouseButton button)
+bool UIWidget::onMouseRelease(const Point& mousePos, Fw::MouseButton button)
 {
     if(isPressed() && getRect().contains(mousePos))
         callLuaField("onClick");
@@ -1125,7 +1126,7 @@ void UIWidget::onMouseRelease(const Point& mousePos, Fw::MouseButton button)
         draggedWidget->setDragging(false);
     }
 
-    callLuaField("onMouseRelease", mousePos, button);
+    return callLuaField<bool>("onMouseRelease", mousePos, button);
 }
 
 bool UIWidget::onMouseMove(const Point& mousePos, const Point& mouseMoved)
@@ -1260,16 +1261,16 @@ bool UIWidget::propagateOnMousePress(const Point& mousePos, Fw::MouseButton butt
 
     // only non phatom widgets receives mouse press events
     if(!isPhantom()) {
-        onMousePress(mousePos, button);
+        bool ret = onMousePress(mousePos, button);
         if(button == Fw::MouseLeftButton && !isPressed())
             setPressed(true);
-        return true;
+        return ret;
     }
 
     return false;
 }
 
-void UIWidget::propagateOnMouseRelease(const Point& mousePos, Fw::MouseButton button)
+bool UIWidget::propagateOnMouseRelease(const Point& mousePos, Fw::MouseButton button)
 {
     // do a backup of children list, because it may change while looping it
     UIWidgetList children;
@@ -1283,13 +1284,16 @@ void UIWidget::propagateOnMouseRelease(const Point& mousePos, Fw::MouseButton bu
     }
 
     for(const UIWidgetPtr& child : children) {
-        child->propagateOnMouseRelease(mousePos, button);
+        if(child->propagateOnMouseRelease(mousePos, button))
+            return true;
     }
 
-    onMouseRelease(mousePos, button);
+    bool ret = onMouseRelease(mousePos, button);
 
     if(isPressed() && button == Fw::MouseLeftButton)
         setPressed(false);
+
+    return ret;
 }
 
 bool UIWidget::propagateOnMouseMove(const Point& mousePos, const Point& mouseMoved)

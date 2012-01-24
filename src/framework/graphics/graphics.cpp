@@ -43,7 +43,6 @@ void Graphics::init()
 #endif
 
     glEnable(GL_BLEND);
-    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
     logInfo("GPU ", glGetString(GL_RENDERER));
     logInfo("OpenGL ", glGetString(GL_VERSION));
@@ -93,6 +92,7 @@ void Graphics::resize(const Size& size)
 
 void Graphics::beginRender()
 {
+    glClearColor(0, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT);
 }
 

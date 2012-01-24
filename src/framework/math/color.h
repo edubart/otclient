@@ -40,6 +40,11 @@ public:
     uint8 g() const { return m_g; }
     uint8 r() const { return m_r; }
 
+    float aF() const { return m_a/255.0f; }
+    float bF() const { return m_b/255.0f; }
+    float gF() const { return m_g/255.0f; }
+    float rF() const { return m_r/255.0f; }
+
     uint32 rgba() const { return m_rgba; }
 
     const uint8* rgbaPtr() const { return (const uint8*)&m_rgba; }

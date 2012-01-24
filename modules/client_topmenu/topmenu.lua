@@ -63,11 +63,11 @@ function TopMenu.addGameButton(id, description, icon, callback)
 end
 
 function TopMenu.addLeftButton(id, description, icon, callback)
-  return TopMenu.addButton(id, description, icon, callback, false)
+  return TopMenu.addButton(id, description, resolvepath(icon, 2), callback, false)
 end
 
 function TopMenu.addRightButton(id, description, icon, callback)
-  return TopMenu.addButton(id, description, icon, callback, true)
+  return TopMenu.addButton(id, description, resolvepath(icon, 2), callback, true)
 end
 
 function TopMenu.removeButton(param)

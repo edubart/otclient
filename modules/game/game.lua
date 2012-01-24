@@ -1,3 +1,6 @@
+-- private variables
+local m_mouseGrabberWidget
+
 -- private functions
 local function onGameKeyPress(self, keyCode, keyboardModifiers, wouldFilter)
   if wouldFilter then return end
@@ -13,7 +16,34 @@ local function onGameKeyPress(self, keyCode, keyboardModifiers, wouldFilter)
   return false
 end
 
+local function onUseWithMouseRelease(self, mousePosition, mouseButton)
+  if Game.selectedThing == nil then return false end
+  if mouseButton == MouseLeftButton then
+    local clickedWidget = Game.gameUi:recursiveGetChildByPos(mousePosition)
+    if clickedWidget then
+      if clickedWidget.getTile then
+        local tile = clickedWidget:getTile(mousePosition)
+        if tile then
+          Game.useWith(Game.selectedThing, tile:getTopMultiUseThing())
+        end
+      elseif clickedWidget.getItem then
+        Game.useWith(Game.selectedThing, clickedWidget:getItem())
+      end
+    end
+  end
+  Game.selectedThing = nil
+  restoreCursor()
+  self:ungrabMouse()
+  return true
+end
+
 -- public functions
+function Game.startUseWith(thing)
+  Game.selectedThing = thing
+  m_mouseGrabberWidget:grabMouse()
+  setTargetCursor()
+end
+
 function Game.createInterface()
   Background.hide()
   CharacterList.destroyLoadBox()
@@ -33,7 +63,9 @@ function Game.createInterface()
   Game.gameMapPanel = Game.gameUi:getChildById('gameMapPanel')
   Game.gameRightPanel = Game.gameUi:getChildById('gameRightPanel')
   Game.gameBottomPanel = Game.gameUi:getChildById('gameBottomPanel')
-  Game.gameUi.onKeyPress = onGameKeyPress
+  m_mouseGrabberWidget = Game.gameUi:getChildById('mouseGrabber')
+  connect(Game.gameUi, { onKeyPress = onGameKeyPress })
+  connect(m_mouseGrabberWidget, { onMouseRelease = onUseWithMouseRelease })
 end
 
 function Game.destroyInterface()

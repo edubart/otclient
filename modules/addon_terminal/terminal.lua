@@ -107,7 +107,7 @@ function Terminal.init()
   terminalWidget = displayUI('terminal.otui')
   terminalWidget:setVisible(false)
 
-  terminalButton = TopMenu.addButton('terminalButton', 'Terminal (Ctrl + T)', '/core_styles/icons/terminal.png', Terminal.toggle)
+  terminalButton = TopMenu.addButton('terminalButton', 'Terminal (Ctrl + T)', 'terminal.png', Terminal.toggle)
   Hotkeys.bindKeyDown('Ctrl+T', Terminal.toggle)
 
   commandHistory = Settings.getList('terminal-history')

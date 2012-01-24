@@ -1,7 +1,7 @@
 HealthBar = {}
 
 -- private variables
-local healthManaPanel
+local healthBarWindow
 local healthBar
 local manaBar
 local healthLabel
@@ -9,20 +9,30 @@ local manaLabel
 
 -- public functions
 function HealthBar.create()
-  healthManaPanel = displayUI('healthbar.otui', { parent = Game.gameRightPanel })
-  healthBar = healthManaPanel:getChildById('healthBar')
-  manaBar = healthManaPanel:getChildById('manaBar')
-  healthLabel = healthManaPanel:getChildById('healthLabel')
-  manaLabel = healthManaPanel:getChildById('manaLabel')
+  healthBarWindow = displayUI('healthbar.otui', { parent = Game.gameRightPanel })
+  healthBarButton = TopMenu.addGameButton('healthBarButton', 'Healh Bar', 'healthbar.png', HealthBar.toggle)
+  healthBarButton:setOn(true)
+  healthBar = healthBarWindow:getChildById('healthBar')
+  manaBar = healthBarWindow:getChildById('manaBar')
+  healthLabel = healthBarWindow:getChildById('healthLabel')
+  manaLabel = healthBarWindow:getChildById('manaLabel')
 end
 
 function HealthBar.destroy()
-  healthManaPanel:destroy()
-  healthManaPanel = nil
+  healthBarWindow:destroy()
+  healthBarWindow = nil
+  healthBarButton:destroy()
+  healthBarButton = nil
   healthBar = nil
   manaBar = nil
   healthLabel = nil
   manaLabel = nil
+end
+
+function HealthBar.toggle()
+  local visible = not healthBarWindow:isExplicitlyVisible()
+  healthBarWindow:setVisible(visible)
+  healthBarButton:setOn(visible)
 end
 
 -- hooked events

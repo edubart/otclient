@@ -107,9 +107,6 @@ public:
     bool isOnline() { return !!m_localPlayer; }
     bool isDead() { return m_dead; }
 
-    void setSelectedThing(const ThingPtr& thing) { m_selectedThing = thing; }
-    ThingPtr getSelectedThing() { return m_selectedThing; }
-
     void setServerBeat(int serverBeat) { m_serverBeat = serverBeat; }
     int getServerBeat() { return m_serverBeat; }
 
@@ -122,7 +119,6 @@ private:
     ProtocolGamePtr m_protocolGame;
     bool m_dead;
     int m_serverBeat;
-    ThingPtr m_selectedThing;
 };
 
 extern Game g_game;

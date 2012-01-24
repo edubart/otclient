@@ -14,24 +14,13 @@ end
 function Game.processMouseAction(menuPosition, mouseButton, autoWalk, lookThing, useThing, creatureThing, multiUseThing)
   local keyboardModifiers = g_window.getKeyboardModifiers()
 
-  local selectedThing = Game.getSelectedThing()
-  if mouseButton == MouseRightButton and selectedThing then
-    Game.setSelectedThing(nil)
-    return true
-  end
-
-  if autoWalk and keyboardModifiers == KeyboardNoModifier and mouseButton == MouseLeftButton and not Game.getSelectedThing() then
+  if autoWalk and keyboardModifiers == KeyboardNoModifier and mouseButton == MouseLeftButton then
     -- todo auto walk
     return true
   end
 
   if not Options.classicControl then
-    if mouseButton == MouseLeftButton and selectedThing then
-      Game.useWith(Game.getSelectedThing(), multiUseThing)
-      Game.setSelectedThing(nil)
-      restoreCursor()
-      return true
-    elseif keyboardModifiers == KeyboardNoModifier and mouseButton == MouseRightButton then
+    if keyboardModifiers == KeyboardNoModifier and mouseButton == MouseRightButton then
       Game.createThingMenu(menuPosition, lookThing, useThing, creatureThing)
       return true
     elseif lookThing and keyboardModifiers == KeyboardShiftModifier and (mouseButton == MouseLeftButton or mouseButton == MouseRightButton) then
@@ -41,14 +30,17 @@ function Game.processMouseAction(menuPosition, mouseButton, autoWalk, lookThing,
       if useThing:isContainer() then
         if useThing:isInsideContainer() then
           Game.open(useThing, useThing:getContainerId())
+          return true
         else
           Game.open(useThing, Containers.getFreeContainerId())
+        return true
         end
       elseif useThing:isMultiUse() then
-        Game.setSelectedThing(useThing)
-        setTargetCursor()
+        Game.startUseWith(useThing)
+        return true
       else
         Game.use(useThing)
+        return true
       end
       return true
     elseif creatureThing and keyboardModifiers == KeyboardAltModifier and (mouseButton == MouseLeftButton or mouseButton == MouseRightButton) then
@@ -56,23 +48,21 @@ function Game.processMouseAction(menuPosition, mouseButton, autoWalk, lookThing,
       return true
     end
   else
-    if mouseButton == MouseLeftButton and selectedThing then
-      Game.useWith(Game.getSelectedThing(), multiUseThing)
-      Game.setSelectedThing(nil)
-      restoreCursor()
-      return true
-    elseif multiUseThing and keyboardModifiers == KeyboardNoModifier and mouseButton == MouseRightButton then
+    if multiUseThing and keyboardModifiers == KeyboardNoModifier and mouseButton == MouseRightButton then
       if multiUseThing:asCreature() then
         Game.attack(multiUseThing:asCreature())
+        return true
       elseif multiUseThing:isContainer() then
         if multiUseThing:isInsideContainer() then
           Game.open(multiUseThing, multiUseThing:getContainerId())
+          return true
         else
           Game.open(multiUseThing, Containers.getFreeContainerId())
+          return true
         end
       elseif multiUseThing:isMultiUse() then
-        Game.setSelectedThing(multiUseThing)
-        setTargetCursor()
+        Game.startUseWith(multiUseThing)
+        return true
       else
         Game.use(multiUseThing)
       end
@@ -110,7 +100,7 @@ function Game.createThingMenu(menuPosition, lookThing, useThing, creatureThing)
       end
     else
       if useThing:isMultiUse() then
-        menu:addOption('Use with ...', function() Game.setSelectedThing(useThing) setTargetCursor() end)
+        menu:addOption('Use with ...', function() Game.startUseWith(useThing) end)
       else
         menu:addOption('Use', function() Game.use(useThing) end)
       end

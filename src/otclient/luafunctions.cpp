@@ -224,8 +224,6 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassStaticFunction<Game>("getLocalPlayer", std::bind(&Game::getLocalPlayer, &g_game));
     g_lua.bindClassStaticFunction<Game>("getProtocolVersion", std::bind(&Game::getProtocolVersion, &g_game));
     g_lua.bindClassStaticFunction<Game>("getProtocolGame", std::bind(&Game::getProtocolGame, &g_game));
-    g_lua.bindClassStaticFunction<Game>("setSelectedThing", std::bind(&Game::setSelectedThing, &g_game, _1));
-    g_lua.bindClassStaticFunction<Game>("getSelectedThing", std::bind(&Game::getSelectedThing, &g_game));
 
     g_lua.registerClass<UIItem, UIWidget>();
     g_lua.bindClassStaticFunction<UIItem>("create", []{ return UIItemPtr(new UIItem); } );

@@ -24,7 +24,7 @@ function Options.init()
 
   optionsWindow = displayUI('options.otui')
   optionsWindow:setVisible(false)
-  optionsButton = TopMenu.addButton('settingsButton', 'Options (Ctrl+O)', '/core_styles/icons/settings.png', Options.toggle)
+  optionsButton = TopMenu.addButton('optionsButton', 'Options (Ctrl+O)', 'options.png', Options.toggle)
   Hotkeys.bindKeyDown('Ctrl+O', Options.toggle)
 end
 

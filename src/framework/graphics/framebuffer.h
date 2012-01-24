@@ -30,11 +30,13 @@ class FrameBuffer
 public:
     FrameBuffer(const Size& size);
     virtual ~FrameBuffer();
-    
+
     void resize(const Size& size);
     void bind(bool clear = true);
     void release();
     void draw(const Rect& dest);
+
+    void setClearColor(const Color& color) { m_clearColor = color; }
 
     TexturePtr getTexture() { return m_texture; }
 
@@ -48,6 +50,7 @@ private:
     Size m_oldViewportSize;
     uint m_fbo;
     uint m_prevBoundFbo;
+    Color m_clearColor;
 
     static uint boundFbo;
 };

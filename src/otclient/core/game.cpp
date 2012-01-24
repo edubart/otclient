@@ -36,7 +36,6 @@ Game g_game;
 void Game::loginWorld(const std::string& account, const std::string& password, const std::string& worldHost, int worldPort, const std::string& characterName)
 {
     m_dead = false;
-    m_selectedThing = nullptr;
     m_protocolGame = ProtocolGamePtr(new ProtocolGame);
     m_protocolGame->login(account, password, worldHost, (uint16)worldPort, characterName);
 }

@@ -245,12 +245,13 @@ void Creature::stopWalk()
 void Creature::updateWalkAnimation(int totalPixelsWalked)
 {
     // update outfit animation
-    if(m_outfit.getCategory() == ThingsType::Creature) {
-        if(totalPixelsWalked == 32 || totalPixelsWalked == 0 || m_type->dimensions[ThingType::AnimationPhases] <= 1)
-            m_animation = 0;
-        else if(m_type->dimensions[ThingType::AnimationPhases] > 1)
-            m_animation = 1 + ((totalPixelsWalked * 4) / Map::NUM_TILE_PIXELS) % (m_type->dimensions[ThingType::AnimationPhases] - 1);
-    }
+    if(m_outfit.getCategory() != ThingsType::Creature)
+        return;
+
+    if(totalPixelsWalked == 32 || totalPixelsWalked == 0 || m_type->dimensions[ThingType::AnimationPhases] <= 1)
+        m_animation = 0;
+    else if(m_type->dimensions[ThingType::AnimationPhases] > 1)
+        m_animation = 1 + ((totalPixelsWalked * 4) / Map::NUM_TILE_PIXELS) % (m_type->dimensions[ThingType::AnimationPhases] - 1);
 }
 
 void Creature::updateWalkOffset(int totalPixelsWalked)
@@ -373,11 +374,12 @@ void Creature::setDirection(Otc::Direction direction)
 
 void Creature::setOutfit(const Outfit& outfit)
 {
-    if(m_outfit.getCategory() != ThingsType::Effect && outfit.getCategory() == ThingsType::Effect) {
-        auto self = asCreature();
-        g_dispatcher.scheduleEvent([self]() {
-            self->updateInvisibleAnimation();
-        }, INVISIBLE_TICKS);
+    m_outfit = outfit;
+    m_type = getType();
+    m_animation = 0;
+
+    if(m_outfit.getCategory() == ThingsType::Effect) {
+        updateInvisibleAnimation();
 
         m_xPattern = 0;
         m_yPattern = 0;
@@ -387,11 +389,7 @@ void Creature::setOutfit(const Outfit& outfit)
         m_yPattern = 0;
     }
 
-    m_outfit = outfit;
-    m_type = getType();
-
     if(m_outfit.getCategory() == ThingsType::Creature && m_type->dimensions[ThingType::Layers] == 1) {
-        m_animation = 0;
         m_outfit.resetClothes();
     }
 }
@@ -453,6 +451,9 @@ void Creature::addVolatileSquare(uint8 color)
 
 void Creature::updateInvisibleAnimation()
 {
+    if(!g_game.isOnline() || m_outfit.getCategory() != ThingsType::Effect)
+        return;
+
     if(m_animation == 1)
         m_animation = 2;
     else if(m_animation == 2)
@@ -462,12 +463,10 @@ void Creature::updateInvisibleAnimation()
     else
         m_animation = 1;
 
-    if(g_game.isOnline() && m_outfit.getCategory() == ThingsType::Effect) {
-        auto self = asCreature();
-        g_dispatcher.scheduleEvent([self]() {
-            self->updateInvisibleAnimation();
-        }, INVISIBLE_TICKS);
-    }
+    auto self = asCreature();
+    g_dispatcher.scheduleEvent([self]() {
+        self->updateInvisibleAnimation();
+    }, INVISIBLE_TICKS);
 }
 
 void Creature::updateShield()

@@ -1,7 +1,7 @@
 function UIMap:onDragEnter(mousePos)
   local tile = self:getTile(mousePos)
   if not tile then return false end
-  
+
   local thing = tile:getTopMoveThing()
   if not thing then return false end
 
@@ -18,11 +18,11 @@ end
 
 function UIMap:onDrop(widget, mousePos)
   if not widget or not widget.currentDragThing then return false end
-  
+
   local tile = self:getTile(mousePos)
   if not tile then return false end
-  local count = 1 -- todo make a window for it
-  
+  local count = widget.currentDragThing:getData()
+
   Game.move(widget.currentDragThing, tile:getPos(), count)
   return true
 end

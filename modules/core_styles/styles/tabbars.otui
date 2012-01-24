@@ -2,7 +2,7 @@ TabBar < UITabBar
 TabBarPanel < Panel
 TabBarButton < UIButton
   size: 20 20
-  image-source: /core_styles/images/consolebutton.png
+  image-source: /core_styles/images/tabbutton.png
   image-color: white
   image-clip: 0 0 20 20
   image-border: 2

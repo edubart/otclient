@@ -9,7 +9,7 @@ local addVipWindow
 function VipList.create()
   vipWindow = displayUI('viplist.otui', { parent = Game.gameRightPanel })
   vipWindow:hide()
-  vipButton = TopMenu.addGameButton('vipListButton', 'VIP list', '/core_styles/icons/viplist.png', VipList.toggle)
+  vipButton = TopMenu.addGameButton('vipListButton', 'VIP list', 'viplist.png', VipList.toggle)
 end
 
 function VipList.destroy()

@@ -46,6 +46,7 @@ void Map::draw(const Rect& rect)
     if(!m_framebuffer) {
         Size fboSize(m_visibleSize.width() * NUM_TILE_PIXELS, m_visibleSize.height() * NUM_TILE_PIXELS);
         m_framebuffer = FrameBufferPtr(new FrameBuffer(fboSize));
+        m_framebuffer->setClearColor(Fw::black);
 
 
         m_shaderProgram = PainterShaderProgramPtr(new PainterShaderProgram);

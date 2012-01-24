@@ -11,11 +11,10 @@ hotkeys works while windows are locked, it shouldnt
 some animated hits are displayed as 2 hits instead of one
 numpad on windows doesn't work correctly
 skulls is rendering outside map bounds
-these are some issues when skill progressbar is 0% or 100%
 paste on x11 platform does not work correctly when doing ctrl+c in google chrome
+party options does not work when relogging inside a party
 
-walk animation doesnt reset when leaving invisible
-non tiles are no black
+chamaleon doesnt animate items
 drop items in container background
 can view ocean in underground floors
 
