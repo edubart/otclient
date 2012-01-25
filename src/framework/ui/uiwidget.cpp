@@ -487,7 +487,7 @@ void UIWidget::bindRectToParent()
     UIWidgetPtr parent = getParent();
     if(parent) {
         Rect parentRect = parent->getRect();
-        boundRect.bound(parentRect);
+        boundRect.bind(parentRect);
     }
 
     setRect(boundRect);

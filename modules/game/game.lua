@@ -101,7 +101,6 @@ function Game.onConnectionError(message)
 end
 
 local function onApplicationClose()
-  print('close app')
   if Game.isOnline() then
     Game.logout(true)
   else

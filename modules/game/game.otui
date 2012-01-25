@@ -29,3 +29,5 @@ UIGame
   UIWidget
     id: mouseGrabber
     focusable: false
+    visible: false
+    phantom: true

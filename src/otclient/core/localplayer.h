@@ -52,6 +52,7 @@ public:
     bool isKnown() { return m_known; }
     bool isAttacking() { return m_attackingCreature != nullptr; }
     bool isFollowing() { return m_followingCreature != nullptr; }
+    bool isPreWalking() { return m_preWalking; }
 
     void unlockWalk() { m_walkLocked = false; }
     void lockWalk();

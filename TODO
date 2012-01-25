@@ -68,6 +68,7 @@ port to MacOs and iphone
 [bart] review style apply system
 rework widgets rendering order
 cache or preload otui files to avoid freezes from hd
+change Align/Anchors lua API from enum to text
 
 == Client
 make possible to reload modules

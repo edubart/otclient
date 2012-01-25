@@ -100,7 +100,76 @@ void Game::processLogout()
 void Game::processDeath()
 {
     m_dead = true;
+    m_localPlayer->stopWalk();
     g_lua.callGlobalField("Game","onDeath");
+}
+
+void Game::processPlayerStats(double health, double maxHealth,
+                              double freeCapacity, double experience,
+                              double level, double levelPercent,
+                              double mana, double maxMana,
+                              double magicLevel, double magicLevelPercent,
+                              double soul, double stamina)
+{
+    if(m_localPlayer->getHealth() != health ||
+       m_localPlayer->getMaxHealth() != maxHealth) {
+        m_localPlayer->setStatistic(Otc::Health, health);
+        m_localPlayer->setStatistic(Otc::MaxHealth, maxHealth);
+        g_lua.callGlobalField("Game", "onHealthChange", health, maxHealth);
+
+        // cannot walk while dying
+        if(health == 0) {
+            if(m_localPlayer->isPreWalking())
+                m_localPlayer->stopWalk();
+            m_localPlayer->lockWalk();
+        }
+    }
+
+    if(m_localPlayer->getStatistic(Otc::FreeCapacity) != freeCapacity) {
+        m_localPlayer->setStatistic(Otc::FreeCapacity, freeCapacity);
+        g_lua.callGlobalField("Game", "onFreeCapacityChange", freeCapacity);
+    }
+
+    if(m_localPlayer->getStatistic(Otc::Experience) != experience) {
+        m_localPlayer->setStatistic(Otc::Experience, experience);
+        g_lua.callGlobalField("Game", "onExperienceChange", experience);
+    }
+
+    if(m_localPlayer->getStatistic(Otc::Level) != level ||
+       m_localPlayer->getStatistic(Otc::LevelPercent) != levelPercent) {
+        m_localPlayer->setStatistic(Otc::Level, level);
+        m_localPlayer->setStatistic(Otc::LevelPercent, levelPercent);
+        g_lua.callGlobalField("Game", "onLevelChange", level, levelPercent);
+    }
+
+    if(m_localPlayer->getStatistic(Otc::Mana) != mana ||
+       m_localPlayer->getStatistic(Otc::MaxMana) != maxMana) {
+        m_localPlayer->setStatistic(Otc::Mana, mana);
+        m_localPlayer->setStatistic(Otc::MaxMana, maxMana);
+        g_lua.callGlobalField("Game", "onManaChange", mana, maxMana);
+    }
+
+    if(m_localPlayer->getStatistic(Otc::MagicLevel) != magicLevel ||
+       m_localPlayer->getStatistic(Otc::MagicLevelPercent) != magicLevelPercent) {
+        m_localPlayer->setStatistic(Otc::MagicLevel, magicLevel);
+        m_localPlayer->setStatistic(Otc::MagicLevelPercent, magicLevelPercent);
+        g_lua.callGlobalField("Game", "onMagicLevelChange", magicLevel, magicLevelPercent);
+    }
+
+    if(m_localPlayer->getStatistic(Otc::Soul) != soul) {
+        m_localPlayer->setStatistic(Otc::Soul, soul);
+        g_lua.callGlobalField("Game", "onSoulChange", soul);
+    }
+
+    if(m_localPlayer->getStatistic(Otc::Stamina) != stamina) {
+        m_localPlayer->setStatistic(Otc::Stamina, stamina);
+        g_lua.callGlobalField("Game", "onStaminaChange", stamina);
+    }
+}
+
+void Game::processTextMessage(const std::string& type, const std::string& message)
+{
+    g_lua.callGlobalField("Game","onTextMessage", type, message);
 }
 
 void Game::processCreatureSpeak(const std::string& name, int level, const std::string& type, const std::string& message, int channelId, const Position& creaturePos)
@@ -112,11 +181,6 @@ void Game::processCreatureSpeak(const std::string& name, int level, const std::s
     }
 
     g_lua.callGlobalField("Game", "onCreatureSpeak", name, level, type, message, channelId, creaturePos);
-}
-
-void Game::processTextMessage(const std::string& type, const std::string& message)
-{
-    g_lua.callGlobalField("Game","onTextMessage", type, message);
 }
 
 void Game::processContainerAddItem(int containerId, const ItemPtr& item)
@@ -137,11 +201,9 @@ void Game::processInventoryChange(int slot, const ItemPtr& item)
 
 void Game::processCreatureMove(const CreaturePtr& creature, const Position& oldPos, const Position& newPos)
 {
-    if(!oldPos.isInRange(newPos, 1, 1, 0))
-        logError("unexpected creature move");
-
     // animate walk
-    creature->walk(oldPos, newPos);
+    if(oldPos.isInRange(newPos, 1, 1, 0))
+        creature->walk(oldPos, newPos);
 }
 
 void Game::processCreatureTeleport(const CreaturePtr& creature)

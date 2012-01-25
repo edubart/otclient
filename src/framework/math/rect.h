@@ -261,7 +261,7 @@ public:
         return tmp;
     }
 
-    void bound(const TRect<T> &r) {
+    void bind(const TRect<T> &r) {
         if(isNull() || r.isNull())
             return;
 

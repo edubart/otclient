@@ -30,7 +30,8 @@ class StaticText : public Thing
 {
 public:
     enum {
-        DURATION = 3000
+        DURATION_PER_CHARACTER = 75,
+        MIN_DURATION = 3000
     };
 
     StaticText();

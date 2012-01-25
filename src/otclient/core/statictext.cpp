@@ -33,11 +33,11 @@ StaticText::StaticText()
 
 void StaticText::draw(const Point& p, const Rect& visibleRect)
 {
-    if(m_font) {
-        Rect rect = Rect(p - Point(m_textSize.width() / 2, m_textSize.height()) + Point(20, 5), m_textSize);
-        if(visibleRect.contains(rect))
-            m_font->renderText(m_text, rect, Fw::AlignCenter, m_color);
-    }
+    Rect rect = Rect(p - Point(m_textSize.width() / 2, m_textSize.height()) + Point(20, 5), m_textSize);
+    Rect boundRect = rect;
+    boundRect.bind(visibleRect);
+    if((boundRect.center() - rect.center()).length() < visibleRect.width() / 15)
+        m_font->renderText(m_text, boundRect, Fw::AlignCenter, m_color);
 }
 
 bool StaticText::addMessage(const std::string& name, const std::string& type, const std::string& message)
@@ -59,7 +59,7 @@ bool StaticText::addMessage(const std::string& name, const std::string& type, co
     auto self = asStaticText();
     g_dispatcher.scheduleEvent([self]() {
         self->removeMessage();
-    }, DURATION);
+    }, std::max<int>(DURATION_PER_CHARACTER * message.length(), MIN_DURATION));
 
     return true;
 }
@@ -71,9 +71,7 @@ void StaticText::removeMessage()
     if(m_messages.empty()) {
         // schedule removal
         auto self = asStaticText();
-        g_dispatcher.scheduleEvent([self]() {
-            g_map.removeThing(self);
-        }, 0);
+        g_dispatcher.addEvent([self]() { g_map.removeThing(self); });
     }
     else
         compose();
@@ -81,43 +79,43 @@ void StaticText::removeMessage()
 
 void StaticText::compose()
 {
-    m_text.clear();
+    std::string text;
+    text.clear();
 
     if(m_messageType == "say") {
-        m_text += m_name;
-        m_text += " says:\n";
+        text += m_name;
+        text += " says:\n";
         m_color = Color(239, 239, 0);
     }
     else if(m_messageType == "whisper") {
-        m_text += m_name;
-        m_text += " whispers:\n";
+        text += m_name;
+        text += " whispers:\n";
         m_color = Color(239, 239, 0);
     }
     else if(m_messageType == "yell") {
-        m_text += m_name;
-        m_text += " yells:\n";
+        text += m_name;
+        text += " yells:\n";
         m_color = Color(239, 239, 0);
     }
     else if(m_messageType == "monsterSay" || m_messageType == "monsterYell") {
         m_color = Color(254, 101, 0);
     }
     else if(m_messageType == "npcToPlayer") {
-        m_text += m_name;
-        m_text += " says:\n";
+        text += m_name;
+        text += " says:\n";
         m_color = Color(95, 247, 247);
     }
     else {
         logWarning("unknown speak type: ", m_messageType);
     }
 
-    // Todo: add break lines
     for(uint i = 0; i < m_messages.size(); ++i) {
-        m_text += m_messages[i];
+        text += m_messages[i];
 
         if(i < m_messages.size() - 1)
-            m_text += "\n";
+            text += "\n";
     }
 
-    if(m_font)
-        m_textSize = m_font->calculateTextRectSize(m_text);
+    m_text = m_font->wrapText(text, 200);
+    m_textSize = m_font->calculateTextRectSize(m_text);
 }

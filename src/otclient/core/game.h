@@ -45,7 +45,12 @@ public:
     void processLogin(const LocalPlayerPtr& localPlayer, int serverBeat);
     void processLogout();
     void processDeath();
-
+    void processPlayerStats(double health, double maxHealth,
+                            double freeCapacity, double experience,
+                            double level, double levelPercent,
+                            double mana, double maxMana,
+                            double magicLevel, double magicLevelPercent,
+                            double soul, double stamina);
     void processTextMessage(const std::string& type, const std::string& message);
     void processCreatureSpeak(const std::string& name, int level, const std::string& type, const std::string& message, int channelId, const Position& creaturePos);
     void processContainerAddItem(int containerId, const ItemPtr& item);

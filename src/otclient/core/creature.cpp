@@ -146,10 +146,10 @@ void Creature::drawInformation(int x, int y, bool useGray, const Rect& visibleRe
 
     // calculate main rects
     Rect backgroundRect = Rect(x-(13.5), y, 27, 4);
-    backgroundRect.bound(visibleRect);
+    backgroundRect.bind(visibleRect);
 
     Rect textRect = Rect(x - m_nameSize.width() / 2.0, y-12, m_nameSize);
-    textRect.bound(visibleRect);
+    textRect.bind(visibleRect);
 
     // distance them
     if(textRect.top() == visibleRect.top())
