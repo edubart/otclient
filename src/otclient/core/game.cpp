@@ -148,6 +148,9 @@ void Game::processCreatureTeleport(const CreaturePtr& creature)
 {
     // stop walking on creature teleports
     creature->stopWalk();
+
+    if(creature == m_localPlayer)
+        m_localPlayer->lockWalk();
 }
 
 void Game::processAttackCancel()
