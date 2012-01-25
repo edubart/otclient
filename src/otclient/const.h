@@ -139,16 +139,24 @@ namespace Otc
     };
 
     enum FluidsType {
-        FluidWater = 1,
-        FluidMana = 2,
-        FluidBeer = 3,
-        FluidBlood = 5,
-        FluidSlime = 6,
-        FluidLemonade = 8,
-        FluidMilk = 9,
-        FluidWine = 10,
-        FluidHealth = 11,
-        FluidCoconutMilk = 15
+        FluidNone = 0,
+        FluidWater,
+        FluidMana,
+        FluidBeer,
+        FluidOil,
+        FluidBlood,
+        FluidSlime,
+        FluidMud,
+        FluidLemonade,
+        FluidMilk,
+        FluidWine,
+        FluidHealth,
+        FluidUrine,
+        FluidRum,
+        FluidFruidJuice,
+        FluidCoconutMilk,
+        FluidTea,
+        FluidMead
     };
 
     enum FightModes {

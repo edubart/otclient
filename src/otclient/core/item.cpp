@@ -92,11 +92,10 @@ void Item::setData(int data)
         }
     }
     else if(m_type->properties[ThingType::IsFluid] || m_type->properties[ThingType::IsFluidContainer]) {
-        int color = 0;
-        // TODO: find out what the heck does it mean 4, 7, 12, 13, 14, 16, 17. options are already there
+        int color = Otc::FluidTransparent;
         switch(data) {
-        case 0:
-            color = 0;
+        case Otc::FluidNone:
+            color = Otc::FluidTransparent;
             break;
         case Otc::FluidWater:
             color = Otc::FluidBlue;
@@ -107,8 +106,8 @@ void Item::setData(int data)
         case Otc::FluidBeer:
             color = Otc::FluidBrown;
             break;
-        case 4:
-            color = Otc::FluidBrown; // oil, mud, mead, rum, tea
+        case Otc::FluidOil:
+            color = Otc::FluidBrown;
             break;
         case Otc::FluidBlood:
             color = Otc::FluidRed;
@@ -116,8 +115,8 @@ void Item::setData(int data)
         case Otc::FluidSlime:
             color = Otc::FluidGreen;
             break;
-        case 7:
-            color = Otc::FluidBrown; // oil, mud, mead, rum, tea
+        case Otc::FluidMud:
+            color = Otc::FluidBrown;
             break;
         case Otc::FluidLemonade:
             color = Otc::FluidYellow;
@@ -131,26 +130,26 @@ void Item::setData(int data)
         case Otc::FluidHealth:
             color = Otc::FluidRed;
             break;
-        case 12:
-            color = Otc::FluidYellow; // urine, fruit juice
+        case Otc::FluidUrine:
+            color = Otc::FluidYellow;
             break;
-        case 13:
-            color = Otc::FluidBrown; // oil, mud, mead, rum, tea
+        case Otc::FluidRum:
+            color = Otc::FluidBrown;
             break;
-        case 14:
-            color = Otc::FluidYellow; // urine, fruit juice
+        case Otc::FluidFruidJuice:
+            color = Otc::FluidYellow;
             break;
         case Otc::FluidCoconutMilk:
             color = Otc::FluidWhite;
             break;
-        case 16:
-            color = Otc::FluidBrown; // oil, mud, mead, rum, tea
+        case Otc::FluidTea:
+            color = Otc::FluidBrown;
             break;
-        case 17:
-            color = Otc::FluidBrown; // oil, mud, mead, rum, tea
+        case Otc::FluidMead:
+            color = Otc::FluidBrown;
             break;
         default:
-            color = 1;
+            color = Otc::FluidTransparent;
             break;
         }
 
