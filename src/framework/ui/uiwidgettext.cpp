@@ -84,6 +84,11 @@ void UIWidget::onFontChange(const std::string& font)
     callLuaField("onFontChange", font);
 }
 
+void UIWidget::wrapText()
+{
+    setText(m_font->wrapText(m_text, getWidth()));
+}
+
 void UIWidget::setText(const std::string& text)
 {
     if(m_text == text)

@@ -5,16 +5,15 @@ importStyle 'textmessage.otui'
 
 -- private variables
 local MessageTypes = {
-  consoleRed = { color = '#F55E5E', consoleTab = 'Server Log' },
-  eventOrange = { color = '#FE6500', consoleTab = 'Default' },
-  consoleOrange = { color = '#FE6500', consoleTab = 'Default' },
-  warning = { color = '#F55E5E', consoleTab = 'Server Log', windowLocation = 'center' },
-  eventAdvance = { color = '#FFFFFF', consoleTab = 'Server Log', windowLocation = 'center', consoleOption = 'showEventMessagesInConsole' },
-  eventDefault = { color = '#FFFFFF', consoleTab = 'Server Log', windowLocation = 'bottom', consoleOption = 'showEventMessagesInConsole' },
-  statusDefault = { color = '#FFFFFF', consoleTab = 'Server Log', windowLocation = 'bottom', consoleOption = 'showStatusMessagesInConsole' },
-  infoDescription = { color = '#00EB00', consoleTab = 'Server Log', windowLocation = 'center', consoleOption = 'showInfoMessagesInConsole' },
-  statusSmall = { color = '#FFFFFF', windowLocation = 'bottom' },
-  consoleBlue =  { color = '#9F9DFD', consoleTab = 'Default' },
+  consoleRed      = { color = '#F55E5E', consoleTab = 'Default' }, -- 18
+  consoleOrange   = { color = '#FE6500', consoleTab = 'Default' }, -- 19/20
+  consoleBlue     = { color = '#9F9DFD', consoleTab = 'Default' }, -- 27
+  warning         = { color = '#F55E5E', consoleTab = 'Server Log', windowLocation = 'center' }, -- 21
+  infoDescription = { color = '#00EB00', consoleTab = 'Server Log', windowLocation = 'center', consoleOption = 'showInfoMessagesInConsole' }, -- 25
+  eventAdvance    = { color = '#FFFFFF', consoleTab = 'Server Log', windowLocation = 'center', consoleOption = 'showEventMessagesInConsole' }, -- 22
+  eventDefault    = { color = '#FFFFFF', consoleTab = 'Server Log', windowLocation = 'bottom', consoleOption = 'showEventMessagesInConsole' }, -- 23
+  statusDefault   = { color = '#FFFFFF', consoleTab = 'Server Log', windowLocation = 'bottom', consoleOption = 'showStatusMessagesInConsole' }, -- 24
+  statusSmall     = { color = '#FFFFFF', windowLocation = 'bottom' }, -- 26
 }
 
 local bottomLabelWidget
@@ -47,6 +46,10 @@ local function displayMessage(msgtype, msg, time)
     label:setText(msg)
     label:setStyle(style)
     label:setColor(msgtype.color)
+
+    if msgtype.windowLocation == 'center' then
+      label:wrapText()
+    end
 
     if not time then
       time = math.max(#msg * 75, 3000)

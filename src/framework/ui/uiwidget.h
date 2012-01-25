@@ -434,6 +434,7 @@ protected:
 public:
     void resizeToText() { setSize(getTextSize()); }
     void clearText() { setText(""); }
+    void wrapText();
 
     void setText(const std::string& text);
     void setTextAlign(Fw::AlignmentFlag align) { m_textAlign = align; m_textMustRecache = true; }

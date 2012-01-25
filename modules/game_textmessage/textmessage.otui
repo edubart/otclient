@@ -2,9 +2,8 @@ CenterLabel < GameLabel
   font: verdana-11px-rounded
   height: 64
   text-align: center
-  anchors.verticalCenter: parent.verticalCenter
-  anchors.left: parent.left
-  anchors.right: parent.right
+  anchors.centerIn: parent
+  size: 360 264
 
 BottomLabel < GameLabel
   font: verdana-11px-rounded

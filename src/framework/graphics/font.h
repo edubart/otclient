@@ -54,6 +54,8 @@ public:
     /// Simulate render and calculate text size
     Size calculateTextRectSize(const std::string& text);
 
+    std::string wrapText(const std::string& text, int maxWidth);
+
     std::string getName() const { return m_name; }
     int getGlyphHeight() const { return m_glyphHeight; }
     const Rect* getGlyphsTextureCoords() const { return m_glyphsTextureCoords; }

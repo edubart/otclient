@@ -282,3 +282,56 @@ void Font::calculateGlyphsWidthsAutomatically(const Size& glyphSize)
         m_glyphsSize[glyph].resize(width, m_glyphHeight);
     }
 }
+
+std::string Font::wrapText(const std::string& text, int maxWidth)
+{
+    std::string outText;
+    std::string line;
+    std::vector<std::string> words;
+    std::vector<std::string> wordsSplit = Fw::split(text);
+
+    // break huge words into small ones
+    for(uint i=0;i<wordsSplit.size();++i) {
+        const std::string& word = wordsSplit[i];
+        int wordWidth = calculateTextRectSize(word).width();
+        if(wordWidth > maxWidth) {
+            std::string newWord;
+            for(uint j=0;j<word.length();++j) {
+                std::string candidate = newWord + word[j];
+                if(j != word.length() - 1)
+                    candidate += "-";
+                int candidateWidth = calculateTextRectSize(candidate).width();
+
+                if(candidateWidth > maxWidth) {
+                    newWord += "-";
+                    words.push_back(newWord);
+                    newWord = "";
+                }
+
+                newWord += word[j];
+            }
+
+            words.push_back(newWord);
+        } else
+            words.push_back(word);
+    }
+
+    // compose lines
+    for(uint i=0;i<words.size();++i) {
+        std::string candidate = line + words[i];
+        int candidateWidth = calculateTextRectSize(candidate).width();
+
+        if(candidateWidth > maxWidth) {
+            if(!line.empty())
+                outText += line.substr(0, line.length()-1) + "\n";
+            line = "";
+        }
+
+        line += words[i] + " ";
+    }
+
+    outText += line;
+    outText = outText.substr(0, outText.length()-1);
+
+    return outText;
+}

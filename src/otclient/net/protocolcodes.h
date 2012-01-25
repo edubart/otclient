@@ -267,8 +267,8 @@ namespace Proto {
     enum MessageTypes {
 #if PROTOCOL==860
         MessageConsoleRed = 18,
-        MessageEventOrange,
         MessageConsoleOrange,
+        MessageConsoleOrange2,
         MessageWarning,
         MessageEventAdvance,
         MessageEventDefault,
@@ -277,8 +277,8 @@ namespace Proto {
         MessageStatusSmall,
         MessageConsoleBlue
 #elif PROTOCOL==862
-        MessageEventOrange = 13,
-        MessageConsoleOrange,
+        MessageConsoleOrange = 13,
+        MessageConsoleOrange2,
         MessageWarning,
         MessageEventAdvance,
         MessageEventDefault,
@@ -301,35 +301,21 @@ namespace Proto {
 
     inline std::string translateSpeakType(int type) {
         switch(type) {
-            case Proto::SpeakSay:
-                return "say";
-            case Proto::SpeakWhisper:
-                return "whisper";
-            case Proto::SpeakYell:
-                return "yell";
-            case Proto::SpeakMonsterSay:
-                return "monsterSay";
-            case Proto::SpeakMonsterYell:
-                return "monsterYell";
-            case Proto::SpeakPrivateNpcToPlayer:
-                return "npcToPlayer";
-            case Proto::SpeakChannelYellow:
-                return "channelYellow";
-            case Proto::SpeakChannelWhite:
-                return "channelWhite";
-            case Proto::SpeakChannelRed:
-            case Proto::SpeakChannelRed2:
-                return "channelRed";
-            case Proto::SpeakChannelOrange:
-                return "channelOrange";
-            case Proto::SpeakPrivate:
-                return "private";
-            case Proto::SpeakPrivatePlayerToNpc:
-                return "playerToNpc";
-            case Proto::SpeakBroadcast:
-                return "broadcast";
-            case Proto::SpeakPrivateRed:
-                return "privateRed";
+            case Proto::SpeakSay: return "say";
+            case Proto::SpeakWhisper: return "whisper";
+            case Proto::SpeakYell: return "yell";
+            case Proto::SpeakMonsterSay: return "monsterSay";
+            case Proto::SpeakMonsterYell: return "monsterYell";
+            case Proto::SpeakPrivateNpcToPlayer: return "npcToPlayer";
+            case Proto::SpeakChannelYellow: return "channelYellow";
+            case Proto::SpeakChannelWhite: return "channelWhite";
+            case Proto::SpeakChannelRed: return "channelRed";
+            case Proto::SpeakChannelRed2: return "channelRed";
+            case Proto::SpeakChannelOrange: return "channelOrange";
+            case Proto::SpeakPrivate: return "private";
+            case Proto::SpeakPrivatePlayerToNpc: return "playerToNpc";
+            case Proto::SpeakBroadcast: return "broadcast";
+            case Proto::SpeakPrivateRed: return "privateRed";
             default:
                 logError("unknown protocol speak type ", type);
                 return "unknown";
@@ -337,36 +323,21 @@ namespace Proto {
     }
 
     inline int translateSpeakTypeDesc(const std::string& type) {
-        if(type == "say")
-            return Proto::SpeakSay;
-        else if(type == "whisper")
-            return Proto::SpeakWhisper;
-        else if(type == "yell")
-            return Proto::SpeakYell;
-        else if(type == "monsterSay")
-            return Proto::SpeakMonsterSay;
-        else if(type == "monsterYell")
-            return Proto::SpeakMonsterYell;
-        else if(type == "npcToPlayer")
-            return Proto::SpeakPrivateNpcToPlayer;
-        else if(type == "channelYellow")
-            return Proto::SpeakChannelYellow;
-        else if(type == "channelWhite")
-            return Proto::SpeakChannelWhite;
-        else if(type == "channelRed")
-            return Proto::SpeakChannelRed;
-        else if(type == "channelRed")
-            return Proto::SpeakChannelRed2;
-        else if(type == "channelOrange")
-            return Proto::SpeakChannelOrange;
-        else if(type == "private")
-            return Proto::SpeakPrivate;
-        else if(type == "playerToNpc")
-            return Proto::SpeakPrivatePlayerToNpc;
-        else if(type == "broadcast")
-            return Proto::SpeakBroadcast;
-        else if(type == "privateRed")
-            return Proto::SpeakPrivateRed;
+        if(type == "say") return Proto::SpeakSay;
+        else if(type == "whisper") return Proto::SpeakWhisper;
+        else if(type == "yell") return Proto::SpeakYell;
+        else if(type == "monsterSay") return Proto::SpeakMonsterSay;
+        else if(type == "monsterYell") return Proto::SpeakMonsterYell;
+        else if(type == "npcToPlayer") return Proto::SpeakPrivateNpcToPlayer;
+        else if(type == "channelYellow") return Proto::SpeakChannelYellow;
+        else if(type == "channelWhite") return Proto::SpeakChannelWhite;
+        else if(type == "channelRed") return Proto::SpeakChannelRed;
+        else if(type == "channelRed") return Proto::SpeakChannelRed2;
+        else if(type == "channelOrange") return Proto::SpeakChannelOrange;
+        else if(type == "private")  return Proto::SpeakPrivate;
+        else if(type == "playerToNpc") return Proto::SpeakPrivatePlayerToNpc;
+        else if(type == "broadcast") return Proto::SpeakBroadcast;
+        else if(type == "privateRed") return Proto::SpeakPrivateRed;
         else {
             logError("unknown protocol speak type desc ", type);
             return 0;
@@ -375,26 +346,16 @@ namespace Proto {
 
     inline std::string translateTextMessageType(int type) {
         switch(type) {
-            case Proto::MessageConsoleOrange:
-                return "consoleOrange";
-            case Proto::MessageEventOrange:
-                return "eventOrange";
-            case Proto::MessageWarning:
-                return "warning";
-            case Proto::MessageEventAdvance:
-                return "eventAdvance";
-            case Proto::MessageEventDefault:
-                return "eventDefault";
-            case Proto::MessageStatusDefault:
-                return "statusDefault";
-            case Proto::MessageInfoDescription:
-                return "infoDescription";
-            case Proto::MessageStatusSmall:
-                return "statusSmall";
-            case Proto::MessageConsoleBlue:
-                return "consoleBlue";
-            case Proto::MessageConsoleRed:
-                return "consoleRed";
+            case Proto::MessageConsoleOrange: return "consoleOrange";
+            case Proto::MessageConsoleOrange2: return "consoleOrange";
+            case Proto::MessageWarning: return "warning";
+            case Proto::MessageEventAdvance: return "eventAdvance";
+            case Proto::MessageEventDefault: return "eventDefault";
+            case Proto::MessageStatusDefault: return "statusDefault";
+            case Proto::MessageInfoDescription: return "infoDescription";
+            case Proto::MessageStatusSmall: return "statusSmall";
+            case Proto::MessageConsoleBlue: return "consoleBlue";
+            case Proto::MessageConsoleRed: return "consoleRed";
             default:
                 logError("unknown protocol text message type ", type);
                 return "unknown";
