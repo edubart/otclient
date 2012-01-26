@@ -257,6 +257,9 @@ void Game::walk(Otc::Direction direction)
 
 void Game::forceWalk(Otc::Direction direction)
 {
+    if(!isOnline() || !checkBotProtection())
+        return;
+
     switch(direction) {
     case Otc::North:
         m_protocolGame->sendWalkNorth();

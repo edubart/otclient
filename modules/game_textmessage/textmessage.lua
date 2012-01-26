@@ -13,7 +13,7 @@ local MessageTypes = {
   eventAdvance    = { color = '#FFFFFF', consoleTab = 'Server Log', labelId = 'centerAdvance', consoleOption = 'showEventMessagesInConsole', wrap = true },
   eventDefault    = { color = '#FFFFFF', consoleTab = 'Server Log', labelId = 'bottomStatus', consoleOption = 'showEventMessagesInConsole' },
   statusDefault   = { color = '#FFFFFF', consoleTab = 'Server Log', labelId = 'bottomStatus', consoleOption = 'showStatusMessagesInConsole' },
-  statusSmall     = { color = '#FFFFFF', windowLocation = 'bottomStatus' },
+  statusSmall     = { color = '#FFFFFF', labelId = 'bottomStatus' },
 }
 
 local centerTextMessagePanel
@@ -44,7 +44,7 @@ local function displayMessage(msgtype, msg, time)
     end
 
     if not time then
-      time = math.max(#msg * 100, 5000)
+      time = math.max(#msg * 100, 4000)
     else
       time = time * 1000
     end
