@@ -338,6 +338,7 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UILineEdit>("setCursorEnabled", &UILineEdit::setCursorEnabled);
     g_lua.bindClassMemberFunction<UILineEdit>("setTextHidden", &UILineEdit::setTextHidden);
     g_lua.bindClassMemberFunction<UILineEdit>("setAlwaysActive", &UILineEdit::setAlwaysActive);
+    g_lua.bindClassMemberFunction<UILineEdit>("setValidCharacters", &UILineEdit::setValidCharacters);
     g_lua.bindClassMemberFunction<UILineEdit>("moveCursor", &UILineEdit::moveCursor);
     g_lua.bindClassMemberFunction<UILineEdit>("appendText", &UILineEdit::appendText);
     g_lua.bindClassMemberFunction<UILineEdit>("removeCharacter", &UILineEdit::removeCharacter);

@@ -41,6 +41,7 @@ public:
     void setCursorEnabled(bool enable);
     void setTextHidden(bool hidden);
     void setAlwaysActive(bool enable);
+    void setValidCharacters(const std::string validCharacters) { m_validCharacters = validCharacters; }
 
     void moveCursor(bool right);
     void appendText(std::string text);
@@ -76,6 +77,7 @@ private:
     int m_textHorizontalMargin;
     bool m_textHidden;
     bool m_alwaysActive;
+    std::string m_validCharacters;
 
     std::vector<Rect> m_glyphsCoords;
     std::vector<Rect> m_glyphsTexCoords;

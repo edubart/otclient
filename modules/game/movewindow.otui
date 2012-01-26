@@ -1,0 +1,40 @@
+MainWindow
+  text: Move Item
+  size: 196 112
+  @onEscape: self:getParent():destroy()
+  
+  Label
+    text: Amount:
+    width: 64
+    anchors.left: parent.left
+    anchors.top: parent.top
+    margin-top: 2
+    
+  SpinBox
+    id: spinbox
+    anchors.left: prev.right
+    anchors.right: parent.right
+    anchors.top: parent.top
+    
+  HorizontalSeparator
+    id: separator
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: next.top
+    margin-bottom: 10
+
+  Button
+    id: buttonOk
+    text: Ok
+    width: 64
+    anchors.right: next.left
+    anchors.bottom: parent.bottom
+    margin-right: 10
+
+  Button
+    id: buttonCancel
+    text: Cancel
+    width: 64
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    @onClick: self:getParent():destroy()

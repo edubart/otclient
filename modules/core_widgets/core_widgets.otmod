@@ -10,6 +10,7 @@ Module
     require 'uilabel'
     require 'uicheckbox'
     require 'uicombobox'
+    require 'uispinbox'
     require 'uiprogressbar'
     require 'uitabbar'
     require 'uipopupmenu'

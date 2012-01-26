@@ -4,13 +4,17 @@ function UIItem:onDragEnter(mousePos)
 
   self:setBorderWidth(1)
 
+  self.parsed = false
   self.currentDragThing = item
   setTargetCursor()
   return true
 end
 
 function UIItem:onDragLeave(widget, mousePos)
-  self.currentDragThing = nil
+  if not self.parsed then
+    self.currentDragThing = nil
+  end
+  
   restoreCursor()
   self:setBorderWidth(0)
   return true
@@ -20,9 +24,22 @@ function UIItem:onDrop(widget, mousePos)
   if not widget or not widget.currentDragThing then return false end
 
   local pos = self.position
-  local count = widget.currentDragThing:getData()
+  local data = widget.currentDragThing:getData()
+  if widget.currentDragThing:isStackable() and data > 1 then
+    widget.parsed = true
+    local moveWindow = displayUI('/game/movewindow.otui')
+    local spinbox = moveWindow:getChildById('spinbox')
+    spinbox:setMaximum(data)
+    spinbox:setMinimum(1)
+    spinbox:setCurrentIndex(data)
+    
+    local okButton = moveWindow:getChildById('buttonOk')
+    okButton.onClick = function() Game.move(widget.currentDragThing, pos, spinbox:getCurrentIndex()) okButton:getParent():destroy() widget.currentDragThing = nil end
+    moveWindow.onEnter = okButton.onClick
+  else
+    Game.move(widget.currentDragThing, pos, 1)
+  end
 
-  Game.move(widget.currentDragThing, pos, count)
   self:setBorderWidth(0)
   return true
 end

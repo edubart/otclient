@@ -5,13 +5,17 @@ function UIMap:onDragEnter(mousePos)
   local thing = tile:getTopMoveThing()
   if not thing then return false end
 
+  self.parsed = false
   self.currentDragThing = thing
   setTargetCursor()
   return true
 end
 
 function UIMap:onDragLeave(widget, mousePos)
-  self.currentDragThing = nil
+  if not self.parsed then
+    self.currentDragThing = nil
+  end
+  
   restoreCursor()
   return true
 end
@@ -21,9 +25,23 @@ function UIMap:onDrop(widget, mousePos)
 
   local tile = self:getTile(mousePos)
   if not tile then return false end
-  local count = widget.currentDragThing:getData()
+  
+  local data = widget.currentDragThing:getData()
+  if widget.currentDragThing:isStackable() and data > 1 then
+    widget.parsed = true
+    local moveWindow = displayUI('/game/movewindow.otui')
+    local spinbox = moveWindow:getChildById('spinbox')
+    spinbox:setMaximum(data)
+    spinbox:setMinimum(1)
+    spinbox:setCurrentIndex(data)
+    
+    local okButton = moveWindow:getChildById('buttonOk')
+    okButton.onClick = function() Game.move(widget.currentDragThing, tile:getPos(), spinbox:getCurrentIndex()) okButton:getParent():destroy() widget.currentDragThing = nil end
+    moveWindow.onEnter = okButton.onClick
+  else
+    Game.move(widget.currentDragThing, tile:getPos(), 1)
+  end
 
-  Game.move(widget.currentDragThing, tile:getPos(), count)
   return true
 end
 

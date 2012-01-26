@@ -276,6 +276,15 @@ void UILineEdit::appendText(std::string text)
         boost::replace_all(text, "\r", "    ");
 
         if(text.length() > 0) {
+
+            // only ignore text append if it contains invalid characters
+            if(m_validCharacters.size() > 0) {
+                for(uint i = 0; i < text.size(); ++i) {
+                    if(m_validCharacters.find(text[i]) == std::string::npos)
+                        return;
+                }
+            }
+
             m_text.insert(m_cursorPos, text);
             m_cursorPos += text.length();
             blinkCursor();
@@ -291,6 +300,9 @@ void UILineEdit::appendCharacter(char c)
         return;
 
     if(m_cursorPos >= 0) {
+        if(m_validCharacters.size() > 0 && m_validCharacters.find(c) == std::string::npos)
+            return;
+
         std::string tmp;
         tmp = c;
         m_text.insert(m_cursorPos, tmp);
