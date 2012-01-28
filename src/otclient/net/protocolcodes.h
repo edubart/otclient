@@ -25,7 +25,7 @@
 
 #include <otclient/global.h>
 
-#if PROTOCOL != 860 && PROTOCOL != 862
+#if PROTOCOL < 860 || PROTOCOL > 862
 #error "the supplied protocol version is not supported"
 #endif
 
@@ -49,7 +49,7 @@ namespace Proto {
 
 #if PROTOCOL==860
     const int NumViolationReasons = 20;
-#elif PROTOCOL==862
+#elif PROTOCOL==861 || PROTOCOL==862
     const int NumViolationReasons = 19;
 #endif
 
@@ -221,7 +221,7 @@ namespace Proto {
     };
 
     enum SpeakTypes {
-#if PROTOCOL==862
+#if PROTOCOL==861 || PROTOCOL==862
         SpeakSay = 1,
         SpeakWhisper,
         SpeakYell,
@@ -265,18 +265,7 @@ namespace Proto {
     };
 
     enum MessageTypes {
-#if PROTOCOL==860
-        MessageConsoleRed = 18,
-        MessageConsoleOrange,
-        MessageConsoleOrange2,
-        MessageWarning,
-        MessageEventAdvance,
-        MessageEventDefault,
-        MessageStatusDefault,
-        MessageInfoDescription ,
-        MessageStatusSmall,
-        MessageConsoleBlue
-#elif PROTOCOL==862
+#if PROTOCOL==862 || PROTOCOL==861
         MessageConsoleOrange = 13,
         MessageConsoleOrange2,
         MessageWarning,
@@ -287,6 +276,17 @@ namespace Proto {
         MessageStatusSmall,
         MessageConsoleBlue,
         MessageConsoleRed
+#elif PROTOCOL==860
+        MessageConsoleRed = 18,
+        MessageConsoleOrange,
+        MessageConsoleOrange2,
+        MessageWarning,
+        MessageEventAdvance,
+        MessageEventDefault,
+        MessageStatusDefault,
+        MessageInfoDescription ,
+        MessageStatusSmall,
+        MessageConsoleBlue
 #endif
     };
 

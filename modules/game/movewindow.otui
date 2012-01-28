@@ -1,21 +1,21 @@
 MainWindow
   text: Move Item
   size: 196 112
-  @onEscape: self:getParent():destroy()
-  
+  @onEscape: self:destroy()
+
   Label
     text: Amount:
     width: 64
     anchors.left: parent.left
     anchors.top: parent.top
     margin-top: 2
-    
+
   SpinBox
     id: spinbox
     anchors.left: prev.right
     anchors.right: parent.right
     anchors.top: parent.top
-    
+
   HorizontalSeparator
     id: separator
     anchors.left: parent.left

@@ -52,14 +52,6 @@ function UISpinBox:onMouseWheel(mousePos, direction)
   return true
 end
 
-function UISpinBox:onStyleApply(styleName, styleNode)
-  if styleNode.options then
-    for k,option in pairs(styleNode.options) do
-      self:addOption(option)
-    end
-  end
-end
-
 function UISpinBox:onTextChange(text)
   local number = tonumber(text)
   if not number or number > self.m_maximum or number < self.m_minimum then

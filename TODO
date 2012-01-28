@@ -22,9 +22,6 @@ fix use with
 move windows
 let windows open while playing
 fix auto repeats in lineedit
-trade
-battlelist
-offer window
 
 ====================================================
 Low priority TODO
@@ -42,6 +39,8 @@ cache renders into framebuffers
 use hardware buffer
 use indices
 fix opacity and cached framebuffers conflict
+
+map rendering could be optimized to infinite zoom out using quadtree voxels
 
 == Lua
 make possible to bind non LuaObject derived classes on lua engine (for usage with Point,Rect,Color,Size)
@@ -76,6 +75,7 @@ terminal/console scrolling
 auto walk
 hotkeys window
 trade window
+shop window
 battle list
 implement left panel with dragging windows
 clean sprites cache periodically
