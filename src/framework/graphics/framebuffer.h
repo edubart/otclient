@@ -34,6 +34,7 @@ public:
     void resize(const Size& size);
     void bind(bool clear = true);
     void release();
+    void generateMipmaps();
     void draw(const Rect& dest);
 
     void setClearColor(const Color& color) { m_clearColor = color; }

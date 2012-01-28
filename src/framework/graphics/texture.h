@@ -32,7 +32,10 @@ public:
     Texture(int width, int height, int channels, uchar* pixels = NULL);
     virtual ~Texture();
 
-    virtual void setSmooth(bool smooth);
+    void bind() { glBindTexture(GL_TEXTURE_2D, m_textureId); }
+
+    void generateMipmaps();
+    void setSmooth(bool smooth);
     GLuint getId()  { return m_textureId; }
 
     std::vector<uint8> getPixels();
@@ -44,10 +47,12 @@ public:
     bool isEmpty() const { return m_textureId == 0; }
 
 protected:
+    void setupFilters();
     GLuint internalLoadGLTexture(uchar* pixels, int channels, int w, int h);
 
     GLuint m_textureId;
     Size m_size;
+    Boolean<false> m_useMipmaps;
     Boolean<false> m_smooth;
 };
 

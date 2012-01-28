@@ -89,10 +89,21 @@ uint Texture::internalLoadGLTexture(uchar *pixels, int channels, int width, int 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-    // nearest filtering (non smooth)
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    setupFilters();
+
     return id;
+}
+
+void Texture::generateMipmaps()
+{
+    bind();
+
+    if(!m_useMipmaps) {
+        m_useMipmaps = true;
+        setupFilters();
+    }
+
+    glGenerateMipmap(GL_TEXTURE_2D);
 }
 
 void Texture::setSmooth(bool smooth)
@@ -100,18 +111,9 @@ void Texture::setSmooth(bool smooth)
     if(smooth == m_smooth)
         return;
 
-    if(smooth) {
-        // enable smooth texture
-        glBindTexture(GL_TEXTURE_2D, m_textureId);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    } else {
-        // nearest filtering (non smooth)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    }
-
-    m_smooth = true;
+    m_smooth = smooth;
+    bind();
+    setupFilters();
 }
 
 std::vector<uint8> Texture::getPixels()
@@ -124,4 +126,19 @@ std::vector<uint8> Texture::getPixels()
     glReadPixels(0, 0, m_size.width(), m_size.height(), GL_RGBA, GL_UNSIGNED_BYTE, &pixels[0]);
     fb->release();
     return pixels;
+}
+
+void Texture::setupFilters()
+{
+    GLint minFilter;
+    GLint magFilter;
+    if(m_smooth) {
+        minFilter = m_useMipmaps ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR;
+        magFilter = GL_LINEAR;
+    } else {
+        minFilter = m_useMipmaps ? GL_NEAREST_MIPMAP_NEAREST : GL_NEAREST;
+        magFilter = GL_NEAREST;
+    }
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
 }

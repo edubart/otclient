@@ -83,6 +83,11 @@ void FrameBuffer::release()
     g_graphics.setViewportSize(m_oldViewportSize);
 }
 
+void FrameBuffer::generateMipmaps()
+{
+    m_texture->generateMipmaps();
+}
+
 void FrameBuffer::draw(const Rect& dest)
 {
     g_painter.drawTexturedRect(dest, m_texture);
