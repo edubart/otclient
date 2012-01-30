@@ -109,7 +109,7 @@ protected:
 
     uint32 m_id;
     Position m_position;
-    int m_xPattern, m_yPattern, m_zPattern, m_animation;
+    uint8 m_xPattern, m_yPattern, m_zPattern, m_animation;
 
 private:
     ThingType *m_type;

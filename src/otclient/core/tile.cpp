@@ -36,63 +36,75 @@ Tile::Tile(const Position& position)
     m_position = position;
 }
 
-void Tile::draw(const Point& dest, float scaleFactor)
+void Tile::draw(const Point& dest, float scaleFactor, int drawFlags)
 {
     m_drawElevation = 0;
 
     // first bottom items
-    for(const ThingPtr& thing : m_things) {
-        if(!thing->isGround() && !thing->isGroundBorder() && !thing->isOnBottom())
-            break;
-        thing->draw(dest - m_drawElevation*scaleFactor, scaleFactor);
+    if(drawFlags & Otc::DrawGround || drawFlags & Otc::DrawWalls) {
+        for(const ThingPtr& thing : m_things) {
+            if(!thing->isGround() && !thing->isGroundBorder() && !thing->isOnBottom())
+                break;
 
-        m_drawElevation += thing->getElevation();
-        if(m_drawElevation > Otc::MAX_ELEVATION)
-            m_drawElevation = Otc::MAX_ELEVATION;
+            if((drawFlags & Otc::DrawGround && thing->isGround()) || (drawFlags & Otc::DrawWalls))
+                thing->draw(dest - m_drawElevation*scaleFactor, scaleFactor);
+
+            m_drawElevation += thing->getElevation();
+            if(m_drawElevation > Otc::MAX_ELEVATION)
+                m_drawElevation = Otc::MAX_ELEVATION;
+        }
     }
 
     // now common items in reverse order
-    for(auto it = m_things.rbegin(); it != m_things.rend(); ++it) {
-        const ThingPtr& thing = *it;
-        if(thing->asCreature() || thing->isOnTop() || thing->isOnBottom() || thing->isGroundBorder() || thing->isGround())
-            break;
-        thing->draw(dest - m_drawElevation*scaleFactor, scaleFactor);
+    if(drawFlags & Otc::DrawCommonItems) {
+        for(auto it = m_things.rbegin(); it != m_things.rend(); ++it) {
+            const ThingPtr& thing = *it;
+            if(thing->asCreature() || thing->isOnTop() || thing->isOnBottom() || thing->isGroundBorder() || thing->isGround())
+                break;
+            thing->draw(dest - m_drawElevation*scaleFactor, scaleFactor);
 
-        m_drawElevation += thing->getElevation();
-        if(m_drawElevation > Otc::MAX_ELEVATION)
-            m_drawElevation = Otc::MAX_ELEVATION;
+            m_drawElevation += thing->getElevation();
+            if(m_drawElevation > Otc::MAX_ELEVATION)
+                m_drawElevation = Otc::MAX_ELEVATION;
+        }
     }
 
     // we can render creatures in 3x3 range
-    for(int xi = -1; xi <= 1; ++xi) {
-        for(int yi = -1; yi <= 1; ++yi) {
-            const TilePtr& tile = g_map.getTile(m_position + Position(xi, yi, 0));
-            if(!tile)
-                continue;
-            for(const CreaturePtr& creature : tile->getCreatures()) {
-                int tileSize = Otc::TILE_PIXELS * scaleFactor;
-                Rect creatureRect(dest.x + xi*tileSize + (creature->getWalkOffset().x - creature->getDisplacementX())*scaleFactor,
-                                  dest.y + yi*tileSize + (creature->getWalkOffset().y - creature->getDisplacementY())*scaleFactor,
-                                  tileSize, tileSize);
-                Rect thisTileRect(dest.x, dest.y, tileSize, tileSize);
+    if(drawFlags & Otc::DrawCreatures) {
+        for(int xi = -1; xi <= 1; ++xi) {
+            for(int yi = -1; yi <= 1; ++yi) {
+                const TilePtr& tile = g_map.getTile(m_position.translated(xi, yi, 0));
+                if(!tile)
+                    continue;
+                for(const CreaturePtr& creature : tile->getCreatures()) {
+                    int tileSize = Otc::TILE_PIXELS * scaleFactor;
+                    Rect creatureRect(dest.x + xi*tileSize + (creature->getWalkOffset().x - creature->getDisplacementX())*scaleFactor,
+                                    dest.y + yi*tileSize + (creature->getWalkOffset().y - creature->getDisplacementY())*scaleFactor,
+                                    tileSize, tileSize);
+                    Rect thisTileRect(dest.x, dest.y, tileSize, tileSize);
 
-                // only render creatures where bottom right is inside our rect
-                if(thisTileRect.contains(creatureRect.bottomRight())) {
-                    creature->draw(Point(dest.x + xi*tileSize - m_drawElevation*scaleFactor,
-                                         dest.y + yi*tileSize - m_drawElevation*scaleFactor), scaleFactor);
+                    // only render creatures where bottom right is inside our rect
+                    if(thisTileRect.contains(creatureRect.bottomRight())) {
+                        creature->draw(Point(dest.x + xi*tileSize - m_drawElevation*scaleFactor,
+                                            dest.y + yi*tileSize - m_drawElevation*scaleFactor), scaleFactor);
+                    }
                 }
             }
         }
     }
 
     // effects
-    for(const EffectPtr& effect : m_effects)
-        effect->draw(dest, scaleFactor);
+    if(drawFlags & Otc::DrawEffects) {
+        for(const EffectPtr& effect : m_effects)
+            effect->draw(dest, scaleFactor);
+    }
 
     // top items
-    for(const ThingPtr& thing : m_things) {
-        if(thing->isOnTop())
-            thing->draw(dest - m_drawElevation, scaleFactor);
+    if(drawFlags & Otc::DrawWalls) {
+        for(const ThingPtr& thing : m_things) {
+            if(thing->isOnTop())
+                thing->draw(dest - m_drawElevation, scaleFactor);
+        }
     }
 }
 

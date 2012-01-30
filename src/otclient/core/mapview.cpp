@@ -45,6 +45,7 @@ MapView::MapView()
     m_shaderProgram->addShaderFromSourceCode(Shader::Vertex, glslMainWithTexCoordsVertexShader + glslPositionOnlyVertexShader);
     m_shaderProgram->addShaderFromSourceFile(Shader::Fragment, "/game_shaders/map.frag");
     assert(m_shaderProgram->link());
+    //m_animated = false;
 }
 
 void MapView::draw(const Rect& rect)
@@ -55,10 +56,26 @@ void MapView::draw(const Rect& rect)
     float scaleFactor = m_tileSize/(float)Otc::TILE_PIXELS;
     Position cameraPosition = getCameraPosition();
 
-    if(updated || m_animated) {
+    int tileDrawFlags = 0;
+    if(isNearView())
+        tileDrawFlags = Otc::DrawGround | Otc::DrawWalls | Otc::DrawCommonItems | Otc::DrawCreatures | Otc::DrawEffects;
+    else if(isMidView())
+        tileDrawFlags = Otc::DrawGround | Otc::DrawWalls | Otc::DrawCommonItems;
+    else if(isFarView())
+        tileDrawFlags = Otc::DrawGround | Otc::DrawWalls;
+    else // huge far view
+        tileDrawFlags = Otc::DrawGround;
+
+    bool animate = m_animated;
+
+    // avoid animation of mid/far views
+    if(!isNearView())
+        animate = false;
+
+    if(updated || animate) {
         m_framebuffer->bind();
         for(const TilePtr& tile : m_cachedVisibleTiles) {
-            tile->draw(transformPositionTo2D(tile->getPosition()), scaleFactor);
+            tile->draw(transformPositionTo2D(tile->getPosition()), scaleFactor, tileDrawFlags);
             //TODO: restore missiles
         }
         m_framebuffer->generateMipmaps();
@@ -128,6 +145,12 @@ void MapView::draw(const Rect& rect)
             animatedText->draw(p, rect);
         }
     }
+
+    // draw a arrow for position the center in non near views
+    if(!isNearView()) {
+        g_painter.setColor(Fw::red);
+        g_painter.drawFilledRect(Rect(rect.center(), 4, 4));
+    }
 }
 
 bool MapView::updateVisibleTilesCache()
@@ -159,10 +182,10 @@ bool MapView::updateVisibleTilesCache()
             // loop through / diagonal tiles
             for(int ix = std::min(diagonal, m_drawDimension.width() - 1), iy = std::max(diagonal - m_drawDimension.width() + 1, 0); ix >= 0 && iy < m_drawDimension.height(); --ix, ++iy) {
                 // position on current floor
-                Position tilePos(cameraPosition.x + (ix - m_virtualCenterOffset.x), cameraPosition.y + (iy - m_virtualCenterOffset.y), cameraPosition.z);
+                Position tilePos = cameraPosition.translated(ix - m_virtualCenterOffset.x, iy - m_virtualCenterOffset.y);
                 // adjust tilePos to the wanted floor
                 tilePos.coveredUp(cameraPosition.z - iz);
-                if(TilePtr tile = g_map.getTile(tilePos)) {
+                if(const TilePtr& tile = g_map.getTile(tilePos)) {
                     // skip tiles that have nothing
                     if(tile->getThingCount() == 0)
                         continue;
@@ -257,28 +280,30 @@ int MapView::getFirstVisibleFloor()
     if(m_lockedFirstVisibleFloor != -1)
         return m_lockedFirstVisibleFloor;
 
-    // if nothing is limiting the view, the first visible floor is 0
-    int firstFloor = 0;
     Position cameraPosition = getCameraPosition();
 
+    // avoid rendering multile floors on far views
+    if(!isNearView())
+        return cameraPosition.z;
+
+    // if nothing is limiting the view, the first visible floor is 0
+    int firstFloor = 0;
+
     // limits to underground floors while under sea level
-    if(cameraPosition.z > Otc::SEA_LEVEL)
-        firstFloor = Otc::SEA_LEVEL+1;
+    if(cameraPosition.z > Otc::SEA_FLOOR)
+        firstFloor = Otc::SEA_FLOOR+1;
 
     // loop in 3x3 tiles around the camera
     for(int ix = -1; ix <= 1 && firstFloor < cameraPosition.z; ++ix) {
         for(int iy = -1; iy <= 1 && firstFloor < cameraPosition.z; ++iy) {
-            Position pos(cameraPosition.x + ix, cameraPosition.y + iy, cameraPosition.z);
+            Position pos = cameraPosition.translated(ix, iy);
 
             // process tiles that we can look through, e.g. windows, doors
             if((ix == 0 && iy == 0) || g_map.isLookPossible(pos)) {
                 Position upperPos = pos;
                 Position coveredPos = pos;
 
-                coveredPos.coveredUp();
-                upperPos.up();
-
-                while(upperPos.z >= firstFloor) {
+                while(coveredPos.coveredUp() && upperPos.up() && upperPos.z >= firstFloor) {
                     // check tiles physically above
                     TilePtr tile = g_map.getTile(upperPos);
                     if(tile && tile->limitsFloorsView()) {
@@ -293,8 +318,8 @@ int MapView::getFirstVisibleFloor()
                         break;
                     }
 
-                    coveredPos.coveredUp();
-                    upperPos.up();
+                    if(upperPos.z == 0)
+                        break;
                 }
             }
         }
@@ -307,11 +332,15 @@ int MapView::getLastVisibleFloor()
 {
     Position cameraPosition = getCameraPosition();
 
+    // avoid rendering multile floors on far views
+    if(!isNearView())
+        return cameraPosition.z;
+
     // view only underground floors when below sea level
-    if(cameraPosition.z > Otc::SEA_LEVEL)
+    if(cameraPosition.z > Otc::SEA_FLOOR)
         return Otc::MAX_Z;
     else
-        return Otc::SEA_LEVEL;
+        return Otc::SEA_FLOOR;
 }
 
 Position MapView::getCameraPosition()

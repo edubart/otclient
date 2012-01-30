@@ -33,11 +33,21 @@ namespace Otc
 
     enum {
         TILE_PIXELS = 32,
-        SEA_LEVEL = 7,
+        MAX_ELEVATION = 24,
+
+        SEA_FLOOR = 7,
         MAX_Z = 15,
+        UNDERGROUND_FLOOR = SEA_FLOOR+1,
         VISIBLE_X_TILES = 15,
         VISIBLE_Y_TILES = 11,
-        MAX_ELEVATION = 24,
+        AWARE_UNDEGROUND_FLOOR_RANGE = 2,
+        AWARE_X_TILES = VISIBLE_X_TILES + 3,
+        AWARE_Y_TILES = VISIBLE_Y_TILES + 3,
+        AWARE_X_LEFT_TILES = AWARE_X_TILES/2 - 1,
+        AWARE_X_RIGHT_TILES = AWARE_X_TILES/2,
+        AWARE_Y_TOP_TILES = AWARE_Y_TILES/2 - 1,
+        AWARE_Y_BOTTOM_TILES = AWARE_Y_TILES/2,
+
         EFFECT_TICKS_PER_FRAME = 75,
         ITEM_TICKS_PER_FRAME = 500,
         ANIMATED_TEXT_DURATION = 1000,
@@ -46,19 +56,19 @@ namespace Otc
         MAX_STATIC_TEXT_WIDTH = 200,
     };
 
-    enum MapDrawFlags {
-        MapDrawNonMoveableItems = 1,
-        MapDrawMoveableItems = 2,
-        MapDrawCreatures = 4,
-        MapDrawCreaturesInformation = 8,
-        MapDrawStaticTexts = 16,
-        MapDrawAnimatedTexts = 32,
-        MapDrawEffects = 64,
-        MapDrawMissiles = 128,
-        MapDrawEverything = MapDrawNonMoveableItems | MapDrawMoveableItems |
-                            MapDrawCreatures | MapDrawCreaturesInformation |
-                            MapDrawStaticTexts | MapDrawAnimatedTexts |
-                            MapDrawEffects | MapDrawMissiles
+    enum DrawFlags {
+        DrawGround = 1,
+        DrawWalls = 2,
+        DrawCommonItems = 4,
+        DrawCreatures = 8,
+        DrawEffects = 16,
+        DrawMissiles = 32,
+        DrawCreaturesInformation = 64,
+        DrawStaticTexts = 128,
+        DrawAnimatedTexts = 256,
+        DrawEverything = DrawGround | DrawWalls | DrawCommonItems |
+                         DrawCreatures | DrawEffects | DrawMissiles |
+                         DrawCreaturesInformation | DrawStaticTexts | DrawAnimatedTexts
     };
 
     enum DatOpts {

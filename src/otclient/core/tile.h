@@ -31,7 +31,7 @@ class Tile : public LuaObject
 public:
     Tile(const Position& position);
 
-    void draw(const Point& dest, float scaleFactor);
+    void draw(const Point& dest, float scaleFactor, int drawFlags);
 
 private:
     void updateVisibleItemsCache();

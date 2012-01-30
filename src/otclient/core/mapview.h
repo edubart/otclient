@@ -30,12 +30,14 @@
 class MapView : public LuaObject
 {
     enum {
-        DEFAULT_FRAMBUFFER_SIZE = 2048
+        DEFAULT_FRAMBUFFER_SIZE = 2048,
+        NEAR_VIEW_AREA = 4096,
+        MID_VIEW_AREA = 16384,
+        FAR_VIEW_AREA = 32768
     };
 
 public:
     MapView();
-
     void draw(const Rect& rect);
 
 private:
@@ -69,6 +71,10 @@ public:
     Size getVisibleSize() { return m_visibleDimension * m_tileSize; }
     CreaturePtr getFollowingCreature() { return m_followingCreature; }
 
+    bool isNearView() { return m_drawDimension.area() <= NEAR_VIEW_AREA; }
+    bool isMidView() { return m_drawDimension.area() > NEAR_VIEW_AREA && m_drawDimension.area() <= MID_VIEW_AREA; }
+    bool isFarView() { return m_drawDimension.area() > MID_VIEW_AREA && m_drawDimension.area() <= FAR_VIEW_AREA; }
+    bool isHugeFarView() { return m_drawDimension.area() > FAR_VIEW_AREA; }
     bool isAnimated() { return m_animated; }
 
     Point transformPositionTo2D(const Position& position);

@@ -58,14 +58,17 @@ public:
     std::vector<CreaturePtr> getSpectatorsInRangeEx(const Position& centerPos, bool multiFloor, int minXRange, int maxXRange, int minYRange, int maxYRange);
 
     void setLight(const Light& light) { m_light = light; }
-    void setCentralPosition(const Position& centralPosition) { m_centralPosition = centralPosition; }
+    void setCentralPosition(const Position& centralPosition);
 
     bool isLookPossible(const Position& pos);
     bool isCovered(const Position& pos, int firstFloor = 0);
     bool isCompletelyCovered(const Position& pos, int firstFloor = 0);
+    bool isAwareOfPosition(const Position& pos);
 
     Light getLight() { return m_light; }
     Position getCentralPosition() { return m_centralPosition; }
+    int getFirstAwareFloor();
+    int getLastAwareFloor();
 
 
     std::vector<AnimatedTextPtr> getAnimatedTexts() { return m_animatedTexts; }

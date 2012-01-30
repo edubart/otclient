@@ -317,7 +317,7 @@ void ProtocolGame::parseMapDescription(InputMessage& msg)
 {
     Position pos = parsePosition(msg);
     g_map.setCentralPosition(pos);
-    setMapDescription(msg, pos.x - 8, pos.y - 6, pos.z, 18, 14);
+    setMapDescription(msg, pos.x - Otc::AWARE_X_LEFT_TILES, pos.y - Otc::AWARE_Y_TOP_TILES, pos.z, Otc::AWARE_X_TILES, Otc::AWARE_Y_TILES);
 }
 
 void ProtocolGame::parseMoveNorth(InputMessage& msg)
@@ -325,7 +325,7 @@ void ProtocolGame::parseMoveNorth(InputMessage& msg)
     Position pos = g_map.getCentralPosition();
     pos.y--;
 
-    setMapDescription(msg, pos.x - 8, pos.y - 6, pos.z, 18, 1);
+    setMapDescription(msg, pos.x - Otc::AWARE_X_LEFT_TILES, pos.y - Otc::AWARE_Y_TOP_TILES, pos.z, Otc::AWARE_X_TILES, 1);
     g_map.setCentralPosition(pos);
 }
 
@@ -334,7 +334,7 @@ void ProtocolGame::parseMoveEast(InputMessage& msg)
     Position pos = g_map.getCentralPosition();
     pos.x++;
 
-    setMapDescription(msg, pos.x + 9, pos.y - 6, pos.z, 1, 14);
+    setMapDescription(msg, pos.x + Otc::AWARE_X_RIGHT_TILES, pos.y - Otc::AWARE_Y_TOP_TILES, pos.z, 1, Otc::AWARE_Y_TILES);
     g_map.setCentralPosition(pos);
 }
 
@@ -343,7 +343,7 @@ void ProtocolGame::parseMoveSouth(InputMessage& msg)
     Position pos = g_map.getCentralPosition();
     pos.y++;
 
-    setMapDescription(msg, pos.x - 8, pos.y + 7, pos.z, 18, 1);
+    setMapDescription(msg, pos.x - Otc::AWARE_X_LEFT_TILES, pos.y + Otc::AWARE_Y_BOTTOM_TILES, pos.z, Otc::AWARE_X_TILES, 1);
     g_map.setCentralPosition(pos);
 }
 
@@ -352,7 +352,7 @@ void ProtocolGame::parseMoveWest(InputMessage& msg)
     Position pos = g_map.getCentralPosition();
     pos.x--;
 
-    setMapDescription(msg, pos.x - 8, pos.y - 6, pos.z, 1, 14);
+    setMapDescription(msg, pos.x - Otc::AWARE_X_LEFT_TILES, pos.y - Otc::AWARE_Y_TOP_TILES, pos.z, 1, Otc::AWARE_Y_TILES);
     g_map.setCentralPosition(pos);
 }
 
@@ -819,11 +819,11 @@ void ProtocolGame::parseFloorChangeUp(InputMessage& msg)
     pos.z--;
 
     int skip = 0;
-    if(pos.z == 7)
-        for(int i = 5; i >= 0; i--)
-            setFloorDescription(msg, pos.x - 8, pos.y - 6, i, 18, 14, 8 - i, &skip);
-    else if(pos.z > 7)
-        setFloorDescription(msg, pos.x - 8, pos.y - 6, pos.z - 2, 18, 14, 3, &skip);
+    if(pos.z == Otc::SEA_FLOOR)
+        for(int i = Otc::SEA_FLOOR - Otc::AWARE_UNDEGROUND_FLOOR_RANGE; i >= 0; i--)
+            setFloorDescription(msg, pos.x - Otc::AWARE_X_LEFT_TILES, pos.y - Otc::AWARE_Y_TOP_TILES, i, Otc::AWARE_X_TILES, Otc::AWARE_Y_TILES, 8 - i, &skip);
+    else if(pos.z > Otc::SEA_FLOOR)
+        setFloorDescription(msg, pos.x - Otc::AWARE_X_LEFT_TILES, pos.y - Otc::AWARE_Y_TOP_TILES, pos.z - Otc::AWARE_UNDEGROUND_FLOOR_RANGE, Otc::AWARE_X_TILES, Otc::AWARE_Y_TILES, 3, &skip);
 
     pos.x++;
     pos.y++;
@@ -836,13 +836,13 @@ void ProtocolGame::parseFloorChangeDown(InputMessage& msg)
     pos.z++;
 
     int skip = 0;
-    if(pos.z == 8) {
+    if(pos.z == Otc::UNDERGROUND_FLOOR) {
         int j, i;
-        for(i = pos.z, j = -1; i < pos.z + 3; ++i, --j)
-            setFloorDescription(msg, pos.x - 8, pos.y - 6, i, 18, 14, j, &skip);
+        for(i = pos.z, j = -1; i <= pos.z + Otc::AWARE_UNDEGROUND_FLOOR_RANGE; ++i, --j)
+            setFloorDescription(msg, pos.x - Otc::AWARE_X_LEFT_TILES, pos.y - Otc::AWARE_Y_TOP_TILES, i, Otc::AWARE_X_TILES, Otc::AWARE_Y_TILES, j, &skip);
     }
-    else if(pos.z > 8 && pos.z < 14)
-        setFloorDescription(msg, pos.x - 8, pos.y - 6, pos.z + 2, 18, 14, -3, &skip);
+    else if(pos.z > Otc::UNDERGROUND_FLOOR && pos.z < Otc::MAX_Z-1)
+        setFloorDescription(msg, pos.x - Otc::AWARE_X_LEFT_TILES, pos.y - Otc::AWARE_Y_TOP_TILES, pos.z + Otc::AWARE_UNDEGROUND_FLOOR_RANGE, Otc::AWARE_X_TILES, Otc::AWARE_Y_TILES, -3, &skip);
 
     pos.x--;
     pos.y--;
@@ -931,13 +931,13 @@ void ProtocolGame::setMapDescription(InputMessage& msg, int32 x, int32 y, int32 
 {
     int startz, endz, zstep, skip = 0;
 
-    if(z > 7) {
-        startz = z - 2;
-        endz = (15 < z+2) ? 15 : z+2;
+    if(z > Otc::SEA_FLOOR) {
+        startz = z - Otc::AWARE_UNDEGROUND_FLOOR_RANGE;
+        endz = std::min(z + Otc::AWARE_UNDEGROUND_FLOOR_RANGE, (int)Otc::MAX_Z);
         zstep = 1;
     }
     else {
-        startz = 7;
+        startz = Otc::SEA_FLOOR;
         endz = 0;
         zstep = -1;
     }
@@ -952,13 +952,17 @@ void ProtocolGame::setFloorDescription(InputMessage& msg, int32 x, int32 y, int3
 
     for(int nx = 0; nx < width; nx++) {
         for(int ny = 0; ny < height; ny++) {
+            Position tilePos(x + nx + offset, y + ny + offset, z);
+
+            // clean pre stored tiles
+            g_map.cleanTile(tilePos);
+
             if(skip == 0) {
                 int tileOpt = msg.getU16(true);
                 if(tileOpt >= 0xFF00)
                     skip = (msg.getU16() & 0xFF);
                 else {
-                    Position pos(x + nx + offset, y + ny + offset, z);
-                    setTileDescription(msg, pos);
+                    setTileDescription(msg, tilePos);
                     skip = (msg.getU16() & 0xFF);
                 }
             }

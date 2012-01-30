@@ -67,7 +67,13 @@ void Map::load()
         uint16 id;
         in.read((char*)&id, sizeof(id));
         while(id != 0xFFFF) {
-            addThing(Item::create(id), pos);
+            ItemPtr item = Item::create(id);
+            if(item->isStackable() || item->isFluidContainer() || item->isFluid()) {
+                uint8 data;
+                in.read((char*)&data, sizeof(data));
+                item->setData(data);
+            }
+            addThing(item, pos, 255);
             in.read((char*)&id, sizeof(id));
         }
     }
@@ -80,7 +86,7 @@ void Map::save()
     for(auto& pair : m_tiles) {
         Position pos = pair.first;
         TilePtr tile = pair.second;
-        if(!tile)
+        if(!tile || tile->isEmpty())
             continue;
         out.write((char*)&pos, sizeof(pos));
         uint16 id;
@@ -88,6 +94,10 @@ void Map::save()
             if(ItemPtr item = thing->asItem()) {
                 id = item->getId();
                 out.write((char*)&id, sizeof(id));
+                if(item->isStackable() || item->isFluidContainer() || item->isFluid()) {
+                    uint8 data = item->getData();
+                    out.write((char*)&data, sizeof(data));
+                }
             }
         }
         id = 0xFFFF;
@@ -121,7 +131,7 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
         tile->addThing(thing, stackPos);
 
         // creature teleported
-        if(oldPos.isValid() && !oldPos.isInRange(pos,1,1,0))
+        if(oldPos.isValid() && !oldPos.isInRange(pos,1,1))
             g_game.processCreatureTeleport(creature);
     } else if(MissilePtr missile = thing->asMissile()) {
         m_floorMissiles[pos.z].push_back(missile);
@@ -235,6 +245,36 @@ void Map::removeCreatureById(uint32 id)
     m_knownCreatures.erase(id);
 }
 
+void Map::setCentralPosition(const Position& centralPosition)
+{
+    bool teleported = !m_centralPosition.isInRange(centralPosition, 1,1);
+    m_centralPosition = centralPosition;
+
+    // remove all creatures when teleporting, the server will resend them again
+    if(teleported) {
+        for(const auto& pair : m_knownCreatures) {
+            const CreaturePtr& creature = pair.second;
+            const TilePtr& tile = creature->getCurrentTile();
+            if(tile) {
+                tile->removeThing(creature);
+                creature->setPosition(Position());
+            }
+        }
+    // remove creatures from tiles that we are not aware anymore
+    } else {
+        for(const auto& pair : m_knownCreatures) {
+            const CreaturePtr& creature = pair.second;
+            if(!isAwareOfPosition(creature->getPosition())) {
+                const TilePtr& tile = creature->getCurrentTile();
+                if(tile) {
+                    tile->removeThing(creature);
+                    creature->setPosition(Position());
+                }
+            }
+        }
+    }
+}
+
 std::vector<CreaturePtr> Map::getSpectators(const Position& centerPos, bool multiFloor)
 {
     return getSpectatorsInRange(centerPos, multiFloor, (Otc::VISIBLE_X_TILES - 1)/2, (Otc::VISIBLE_Y_TILES - 1)/2);
@@ -259,7 +299,7 @@ std::vector<CreaturePtr> Map::getSpectatorsInRangeEx(const Position& centerPos, 
     for(int iz=-minZRange; iz<=maxZRange; ++iz) {
         for(int iy=-minYRange; iy<=maxYRange; ++iy) {
             for(int ix=-minXRange; ix<=maxXRange; ++ix) {
-                TilePtr tile = getTile(centerPos + Position(ix,iy,iz));
+                TilePtr tile = getTile(centerPos.translated(ix,iy,iz));
                 if(!tile)
                     continue;
 
@@ -282,13 +322,14 @@ bool Map::isCovered(const Position& pos, int firstFloor)
 {
     // check for tiles on top of the postion
     Position tilePos = pos;
-    tilePos.coveredUp();
-    while(tilePos.z >= firstFloor) {
+    while(tilePos.coveredUp() && tilePos.z >= firstFloor) {
         TilePtr tile = getTile(tilePos);
         // the below tile is covered when the above tile has a full ground
         if(tile && tile->isFullGround())
             return true;
-        tilePos.coveredUp();
+
+        if(tilePos.z == 0)
+            break;
     }
     return false;
 }
@@ -296,8 +337,7 @@ bool Map::isCovered(const Position& pos, int firstFloor)
 bool Map::isCompletelyCovered(const Position& pos, int firstFloor)
 {
     Position tilePos = pos;
-    tilePos.coveredUp();
-    while(tilePos.z >= firstFloor) {
+    while(tilePos.coveredUp() && tilePos.z >= firstFloor) {
         bool covered = true;
         // check in 2x2 range tiles that has no transparent pixels
         for(int x=0;x<2;++x) {
@@ -311,7 +351,40 @@ bool Map::isCompletelyCovered(const Position& pos, int firstFloor)
         }
         if(covered)
             return true;
-        tilePos.coveredUp();
     }
     return false;
+}
+
+bool Map::isAwareOfPosition(const Position& pos)
+{
+    if(pos.z < getFirstAwareFloor() || pos.z > getLastAwareFloor())
+        return false;
+
+    Position groundedPos = pos;
+    while(groundedPos.z != m_centralPosition.z) {
+        if(groundedPos.z > m_centralPosition.z)
+            groundedPos.coveredUp();
+        else
+            groundedPos.coveredDown();
+    }
+    return m_centralPosition.isInRange(groundedPos, Otc::AWARE_X_LEFT_TILES,
+                                                    Otc::AWARE_X_RIGHT_TILES,
+                                                    Otc::AWARE_Y_TOP_TILES,
+                                                    Otc::AWARE_Y_BOTTOM_TILES);
+}
+
+int Map::getFirstAwareFloor()
+{
+    if(m_centralPosition.z > Otc::SEA_FLOOR)
+        return m_centralPosition.z-2;
+    else
+        return 0;
+}
+
+int Map::getLastAwareFloor()
+{
+    if(m_centralPosition.z > Otc::SEA_FLOOR)
+        return std::min(m_centralPosition.z+2, (int)Otc::MAX_Z);
+    else
+        return Otc::SEA_FLOOR;
 }

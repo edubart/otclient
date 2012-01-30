@@ -73,7 +73,7 @@ void Item::setPosition(const Position& position)
     Thing::setPosition(position);
 }
 
-void Item::setData(int data)
+void Item::setData(uint8 data)
 {
     if(isStackable() && getNumPatternsX() == 4 && getNumPatternsY() == 2) {
         if(data < 5) {

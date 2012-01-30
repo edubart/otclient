@@ -30,51 +30,99 @@
 class Position
 {
 public:
-    Position() : x(-1), y(-1), z(-1) { }
-    Position(int x, int y, int z) : x(x), y(y), z(z) { }
+    Position() : x(65535), y(65535), z(255) { }
+    Position(uint16 x, uint16 y, uint8 z) : x(x), y(y), z(z) { }
 
-    static Position getPositionFromDirection(Otc::Direction direction) {
+    Position translatedToDirection(Otc::Direction direction) {
+        Position pos = *this;
         switch(direction) {
         case Otc::North:
-            return Position( 0, -1, 0);
+            pos.y--;
+            break;
         case Otc::East:
-            return Position( 1,  0, 0);
+            pos.x++;
+            break;
         case Otc::South:
-            return Position( 0,  1, 0);
+            pos.y++;
+            break;
         case Otc::West:
-            return Position(-1,  0, 0);
+            pos.x--;
+            break;
         case Otc::NorthEast:
-            return Position( 1, -1, 0);
+            pos.x++;
+            pos.y--;
+            break;
         case Otc::SouthEast:
-            return Position( 1,  1, 0);
+            pos.x++;
+            pos.y++;
+            break;
         case Otc::SouthWest:
-            return Position(-1,  1, 0);
+            pos.x--;
+            pos.y++;
+            break;
         case Otc::NorthWest:
-            return Position(-1, -1, 0);
-        default:
-            return Position();
+            pos.x--;
+            pos.y--;
+            break;
         }
+        return pos;
+    }
+
+    Position translatedToReverseDirection(Otc::Direction direction) {
+        Position pos = *this;
+        switch(direction) {
+        case Otc::North:
+            pos.y++;
+            break;
+        case Otc::East:
+            pos.x--;
+            break;
+        case Otc::South:
+            pos.y--;
+            break;
+        case Otc::West:
+            pos.x++;
+            break;
+        case Otc::NorthEast:
+            pos.x--;
+            pos.y++;
+            break;
+        case Otc::SouthEast:
+            pos.x--;
+            pos.y--;
+            break;
+        case Otc::SouthWest:
+            pos.x++;
+            pos.y--;
+            break;
+        case Otc::NorthWest:
+            pos.x++;
+            pos.y++;
+            break;
+        }
+        return pos;
     }
 
     Otc::Direction getDirectionFromPosition(const Position& position) const {
-        Position positionDelta = position - *this;
+        int dx = position.x - x;
+        int dy = position.y - y;
 
-        if(positionDelta.x == 0 && positionDelta.y == 0)
+        if(dx == 0 && dy == 0)
             return Otc::InvalidDirection;
-        else if(positionDelta.x == 0) {
-            if(positionDelta.y < 0)
+        else if(dx == 0) {
+            if(dy < 0)
                 return Otc::North;
-            else if(positionDelta.y > 0)
+            else if(dy > 0)
                 return Otc::South;
         }
-        else if(positionDelta.y == 0) {
-            if(positionDelta.x < 0)
+        else if(dy == 0) {
+            if(dx < 0)
                 return Otc::West;
-            else if(positionDelta.x > 0)
+            else if(dx > 0)
                 return Otc::East;
         }
         else {
-            float angle = std::atan2(positionDelta.y * -1, positionDelta.x) * RAD_TO_DEC;
+            float angle = std::atan2(dy * -1, dx) * RAD_TO_DEC;
             if(angle < 0)
                 angle += 360;
 
@@ -98,7 +146,10 @@ public:
         return Otc::InvalidDirection;
     }
 
-    bool isValid() const { return x >= 0 && y >= 0 && z >= 0 && x <= 65535 && y <= 65535 && z <= 15; }
+    bool isValid() const { return !(x == 65535 && y == 65535 && z == 255); }
+
+    void translate(int dx, int dy, short dz = 0) { x += dx; y += dy; z += dz; }
+    Position translated(int dx, int dy, short dz = 0) const { Position pos = *this; pos.x += dx; pos.y += dy; pos.z += dz; return pos; }
 
     Position operator+(const Position& other) const { return Position(x + other.x, y + other.y, z + other.z);   }
     Position& operator+=(const Position& other) { x+=other.x; y+=other.y; z +=other.z; return *this; }
@@ -109,19 +160,50 @@ public:
     bool operator==(const Position& other) const { return other.x == x && other.y == y && other.z == z; }
     bool operator!=(const Position& other) const { return other.x!=x || other.y!=y || other.z!=z; }
 
-    bool isInRange(const Position& pos, int xdif, int ydif, int zdif = 1) const {
-        return std::abs(x-pos.x) <= xdif && std::abs(y-pos.y) <= ydif && std::abs(pos.z-z) <= zdif;
+    bool isInRange(const Position& pos, int xRange, int yRange) const { return std::abs(x-pos.x) <= xRange && std::abs(y-pos.y) <= yRange; }
+    bool isInRange(const Position& pos, int minXRange, int maxXRange, int minYRange, int maxYRange) const {
+        return (pos.x >= x-minXRange && pos.x <= x+maxXRange && pos.y >= y-minYRange && pos.y <= y+maxYRange);
     }
 
-    void up(int n = 1) { z-=n; }
-    void down(int n = 1) { z+=n; }
+    bool up(int n = 1) {
+        int nz = z-n;
+        if(nz >= 0 && nz <= Otc::MAX_Z) {
+            z = nz;
+            return true;
+        }
+        return false;
+    }
 
-    void coveredUp(int n = 1) { x+=n; y+=n; z-=n; }
-    void coveredDown(int n = 1) { x-=n; y-=n; z+=n; }
+    bool down(int n = 1) {
+        int nz = z+n;
+        if(nz >= 0 && nz <= Otc::MAX_Z) {
+            z = nz;
+            return true;
+        }
+        return false;
+    }
 
-    int x;
-    int y;
-    int z;
+    bool coveredUp(int n = 1) {
+        int nx = x+n, ny = y+n, nz = z-n;
+        if(nx >= 0 && nx <= 65535 && ny >= 0 && ny <= 65535 && nz >= 0 && nz <= Otc::MAX_Z) {
+            x = nx; y = ny; z = nz;
+            return true;
+        }
+        return false;
+    }
+
+    bool coveredDown(int n = 1) {
+        int nx = x-n, ny = y-n, nz = z+n;
+        if(nx >= 0 && nx <= 65535 && ny >= 0 && ny <= 65535 && nz >= 0 && nz <= Otc::MAX_Z) {
+            x = nx; y = ny; z = nz;
+            return true;
+        }
+        return false;
+    }
+
+    uint16 x;
+    uint16 y;
+    uint8 z;
 };
 
 struct PositionHasher : std::unary_function<Position, std::size_t> {
@@ -132,13 +214,17 @@ struct PositionHasher : std::unary_function<Position, std::size_t> {
 
 inline std::ostream& operator<<(std::ostream& out, const Position& pos)
 {
-    out << pos.x << " " << pos.y << " " << pos.z;
+    out << (int)pos.x << " " << (int)pos.y << " " << (int)pos.z;
     return out;
 }
 
 inline std::istream& operator>>(std::istream& in, Position& pos)
 {
-    in >> pos.x >> pos.y >> pos.z;
+    int x, y, z;
+    in >> x >> y >> z;
+    pos.x = x;
+    pos.y = y;
+    pos.z = z;
     return in;
 }
 

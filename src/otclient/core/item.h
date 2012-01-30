@@ -36,14 +36,14 @@ public:
     void draw(const Point& dest, float scaleFactor);
 
     void setPosition(const Position &position);
-    void setData(int data);
+    void setData(uint8 data);
 
-    int getData() { return m_data; }
+    uint8 getData() { return m_data; }
 
     ItemPtr asItem() { return std::static_pointer_cast<Item>(shared_from_this()); }
 
 private:
-    int m_data;
+    uint8 m_data;
 };
 
 #endif
