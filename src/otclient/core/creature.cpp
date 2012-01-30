@@ -66,16 +66,15 @@ int MASK_TEXTURE_UNIFORM = 14;
 void Creature::draw(const Point& dest, float scaleFactor)
 {
     int scaledTileSize = Otc::TILE_PIXELS * scaleFactor;
-    Point scaledWalkOffset = m_walkOffset * scaleFactor;
 
     if(m_showVolatileSquare) {
         g_painter.setColor(m_volatileSquareColor);
-        g_painter.drawBoundingRect(Rect(dest + scaledWalkOffset - (getDisplacement() + 3)*scaleFactor, Size(28*scaleFactor, 28*scaleFactor)), 2*scaleFactor);
+        g_painter.drawBoundingRect(Rect(dest + (m_walkOffset - getDisplacement() + 3)*scaleFactor, Size(28*scaleFactor, 28*scaleFactor)), 2*scaleFactor);
     }
 
     if(m_showStaticSquare) {
         g_painter.setColor(m_staticSquareColor);
-        g_painter.drawBoundingRect(Rect(dest + scaledWalkOffset - (getDisplacement() + 1)*scaleFactor, Size(scaledTileSize, scaledTileSize)), 2*scaleFactor);
+        g_painter.drawBoundingRect(Rect(dest + (m_walkOffset - getDisplacement() + 1)*scaleFactor, Size(scaledTileSize, scaledTileSize)), 2*scaleFactor);
     }
 
     g_painter.setColor(Fw::white);
@@ -116,14 +115,15 @@ void Creature::draw(const Point& dest, float scaleFactor)
                     if(!spriteTex)
                         continue;
 
+                    TexturePtr maskTex;
                     if(getLayers() > 1) {
                         int maskId = getSpriteId(w, h, 1, m_xPattern, m_yPattern, m_zPattern, m_animation);
-                        TexturePtr maskTex = g_sprites.getSpriteTexture(maskId);
-                        outfitProgram->setUniformTexture(MASK_TEXTURE_UNIFORM, maskTex, 1);
+                        maskTex = g_sprites.getSpriteTexture(maskId);
                     }
+                    outfitProgram->setUniformTexture(MASK_TEXTURE_UNIFORM, maskTex, 1);
 
-                    Rect drawRect((dest.x + scaledWalkOffset.x - w*scaledTileSize) - getDisplacementX()*scaleFactor,
-                                  (dest.y + scaledWalkOffset.y - h*scaledTileSize) - getDisplacementY()*scaleFactor,
+                    Rect drawRect(dest.x + (m_walkOffset.x - w*Otc::TILE_PIXELS - getDisplacementX())*scaleFactor,
+                                  dest.y + (m_walkOffset.y - h*Otc::TILE_PIXELS - getDisplacementY())*scaleFactor,
                                   scaledTileSize, scaledTileSize);
                     g_painter.drawTexturedRect(drawRect, spriteTex);
                 }
@@ -134,10 +134,10 @@ void Creature::draw(const Point& dest, float scaleFactor)
     }
     else if(m_outfit.getCategory() == ThingsType::Item) {
         for(int l = 0; l < getLayers(); l++)
-            internalDraw(dest + scaledWalkOffset, scaleFactor, l);
+            internalDraw(dest + m_walkOffset * scaleFactor, scaleFactor, l);
     }
     else if(m_outfit.getCategory() == ThingsType::Effect)
-        internalDraw(dest + scaledWalkOffset, scaleFactor, 0);
+        internalDraw(dest + m_walkOffset * scaleFactor, scaleFactor, 0);
 }
 
 void Creature::drawInformation(const Point& point, bool useGray, const Rect& parentRect)

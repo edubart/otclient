@@ -60,8 +60,8 @@ void Painter::drawProgram(const PainterShaderProgramPtr& program, CoordsBuffer& 
         return;
 
     program->setProjectionMatrix(m_projectionMatrix);
-    program->setOpacity(m_currentOpacity);
-    program->setColor(m_currentColor);
+    program->setOpacity(m_opacity);
+    program->setColor(m_color);
     program->draw(coordsBuffer, drawMode);
 }
 
@@ -141,4 +141,32 @@ void Painter::setCompositionMode(Painter::CompositionMode compositionMode)
         glBlendFunc(GL_ONE_MINUS_DST_ALPHA, GL_DST_ALPHA);
         break;
     }
+    m_compostionMode = compositionMode;
+}
+
+void Painter::saveAndResetState()
+{
+    m_oldCustomProgram = m_customProgram;
+    m_oldProjectionMatrix = m_projectionMatrix;
+    m_oldColor = m_color;
+    m_oldOpacity = m_opacity;
+    m_oldCompostionMode = m_compostionMode;
+
+    releaseCustomProgram();
+    setColor(Fw::white);
+    setOpacity(1);
+    setCompositionMode(CompositionMode_Normal);
+}
+
+void Painter::restoreSavedState()
+{
+    setCustomProgram(m_oldCustomProgram);
+    setColor(m_oldColor);
+    setOpacity(m_oldOpacity);
+    setCompositionMode(m_oldCompostionMode);
+
+    m_oldCustomProgram = nullptr;
+    m_oldColor = Fw::white;
+    m_oldOpacity = 1;
+    m_oldCompostionMode = CompositionMode_Normal;
 }

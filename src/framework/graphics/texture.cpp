@@ -122,8 +122,10 @@ std::vector<uint8> Texture::getPixels()
     FrameBufferPtr fb(new FrameBuffer(m_size));
     std::vector<uint8> pixels(m_size.area()*4, 0);
     fb->bind();
+    g_painter.saveAndResetState();
     g_painter.drawTexturedRect(Rect(0,0,m_size), shared_from_this());
     glReadPixels(0, 0, m_size.width(), m_size.height(), GL_RGBA, GL_UNSIGNED_BYTE, &pixels[0]);
+    g_painter.restoreSavedState();
     fb->release();
     return pixels;
 }

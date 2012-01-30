@@ -50,11 +50,11 @@ public:
     void drawFilledRect(const Rect& dest);
     void drawBoundingRect(const Rect& dest, int innerLineWidth = 1);
 
-    void setColor(const Color& color) { m_currentColor = color; }
-    Color getColor() { return m_currentColor; }
+    void setColor(const Color& color) { m_color = color; }
+    Color getColor() { return m_color; }
 
-    void setOpacity(float opacity) { m_currentOpacity = opacity; }
-    float getOpacity() { return m_currentOpacity; }
+    void setOpacity(float opacity) { m_opacity = opacity; }
+    float getOpacity() { return m_opacity; }
 
     void setCustomProgram(PainterShaderProgramPtr program);
     void releaseCustomProgram() { m_customProgram = nullptr; }
@@ -64,14 +64,24 @@ public:
     void setProjectionMatrix(const Matrix3& projectionMatrix) { m_projectionMatrix = projectionMatrix; }
     Matrix3 getProjectionMatrix() { return m_projectionMatrix; }
 
+    void saveAndResetState();
+    void restoreSavedState();
+
 private:
     PainterShaderProgramPtr m_drawTexturedProgram;
     PainterShaderProgramPtr m_drawSolidColorProgram;
     PainterShaderProgramPtr m_customProgram;
     Matrix3 m_projectionMatrix;
-    Color m_currentColor;
-    float m_currentOpacity;
+    Color m_color;
+    float m_opacity;
+    CompositionMode m_compostionMode;
     CoordsBuffer m_coordsBuffer;
+
+    PainterShaderProgramPtr m_oldCustomProgram;
+    Matrix3 m_oldProjectionMatrix;
+    Color m_oldColor;
+    float m_oldOpacity;
+    CompositionMode m_oldCompostionMode;
 };
 
 extern Painter g_painter;
