@@ -98,7 +98,7 @@ public:
         return Otc::InvalidDirection;
     }
 
-    bool isValid() const { return x >= 0 && y >= 0 && z >= 0 && x <= 65535 && y <= 65535 && z <= 255; }
+    bool isValid() const { return x >= 0 && y >= 0 && z >= 0 && x <= 65535 && y <= 65535 && z <= 15; }
 
     Position operator+(const Position& other) const { return Position(x + other.x, y + other.y, z + other.z);   }
     Position& operator+=(const Position& other) { x+=other.x; y+=other.y; z +=other.z; return *this; }

@@ -94,7 +94,7 @@ void Game::processLogout()
         m_protocolGame = nullptr;
     }
 
-    g_map.clean();
+    g_map.save();
 }
 
 void Game::processDeath()

@@ -24,6 +24,7 @@
 #include <framework/core/modulemanager.h>
 #include "core/game.h"
 #include <framework/core/resourcemanager.h>
+#include "core/map.h"
 
 OTClient::OTClient(const std::string& appName) : Application(appName)
 {
@@ -39,6 +40,8 @@ void OTClient::init(const std::vector<std::string>& args)
     g_modules.autoLoadModules(100);
     g_modules.ensureModuleLoaded("client");
     g_modules.autoLoadModules(1000);
+
+    g_map.load();
 
     // load otclientrc.lua
     if(g_resources.fileExists("/otclientrc.lua")) {

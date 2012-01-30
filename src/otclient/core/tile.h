@@ -45,10 +45,6 @@ public:
     int getThingStackpos(const ThingPtr& thing);
     ThingPtr getTopThing();
 
-    void addWalkingCreature(const CreaturePtr& creature);
-    void removeWalkingCreature(const CreaturePtr& creature);
-
-
     ThingPtr getTopLookThing();
     ThingPtr getTopUseThing();
     CreaturePtr getTopCreature();
@@ -58,6 +54,7 @@ public:
     const Position& getPosition() { return m_position; }
     int getDrawElevation() { return m_drawElevation; }
     std::vector<CreaturePtr> getCreatures();
+    const std::vector<ThingPtr>& getThings() { return m_things; }
     ItemPtr getGround();
     int getGroundSpeed();
     bool isWalkable();
@@ -73,7 +70,6 @@ public:
     TilePtr asTile() { return std::static_pointer_cast<Tile>(shared_from_this()); }
 
 private:
-    std::vector<CreaturePtr> m_walkingCreatures;
     std::vector<EffectPtr> m_effects; // leave this outside m_things because it has no stackpos.
     std::vector<ThingPtr> m_things;
     Position m_position;

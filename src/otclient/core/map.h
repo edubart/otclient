@@ -34,6 +34,8 @@ public:
     void removeMapView(const MapViewPtr& mapView);
     void notificateTileUpdateToMapViews(const Position& pos);
 
+    void load();
+    void save();
     void clean();
 
     // thing related

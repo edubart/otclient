@@ -53,6 +53,7 @@ void MapView::draw(const Rect& rect)
     bool updated = updateVisibleTilesCache();
 
     float scaleFactor = m_tileSize/(float)Otc::TILE_PIXELS;
+    Position cameraPosition = getCameraPosition();
 
     if(updated || m_animated) {
         m_framebuffer->bind();
@@ -75,6 +76,10 @@ void MapView::draw(const Rect& rect)
     m_framebuffer->draw(rect, srcRect);
 
     g_painter.releaseCustomProgram();
+
+    // this could happen if the player position is not known yet
+    if(!cameraPosition.isValid())
+        return;
 
     float horizontalStretchFactor = rect.width() / (float)(m_visibleDimension.width() * m_tileSize);
     float verticalStretchFactor = rect.height() / (float)(m_visibleDimension.height() * m_tileSize);
@@ -139,6 +144,11 @@ bool MapView::updateVisibleTilesCache()
 
     // clear current visible tiles cache
     m_cachedVisibleTiles.clear();
+    m_cachedFloorVisibleCreatures.clear();
+
+    // there is no tile to render on invalid positions
+    if(!cameraPosition.isValid())
+        return true;
 
     // cache visible tiles in draw order
     // draw from last floor (the lower) to first floor (the higher)
@@ -238,8 +248,6 @@ void MapView::setVisibleDimension(const Size& visibleDimension)
     m_virtualCenterOffset = (m_drawDimension/2 - Size(1,1)).toPoint();
     recalculateTileSize();
 
-    dump << m_framebuffer->getSize();
-    dump << visibleDimension * m_tileSize;
     requestVisibleTilesCacheUpdate();
 }
 

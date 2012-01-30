@@ -30,6 +30,7 @@
 
 #include <framework/core/eventdispatcher.h>
 #include "mapview.h"
+#include <framework/core/resourcemanager.h>
 
 Map g_map;
 
@@ -49,6 +50,51 @@ void Map::notificateTileUpdateToMapViews(const Position& pos)
 {
     for(const MapViewPtr& mapView : m_mapViews)
         mapView->onTileUpdate(pos);
+}
+
+void Map::load()
+{
+    if(!g_resources.fileExists("/map.otcmap"))
+        return;
+
+    std::stringstream in;
+    g_resources.loadFile("/map.otcmap", in);
+
+    while(!in.eof()) {
+        Position pos;
+        in.read((char*)&pos, sizeof(pos));
+
+        uint16 id;
+        in.read((char*)&id, sizeof(id));
+        while(id != 0xFFFF) {
+            addThing(Item::create(id), pos);
+            in.read((char*)&id, sizeof(id));
+        }
+    }
+}
+
+void Map::save()
+{
+    std::stringstream out;
+
+    for(auto& pair : m_tiles) {
+        Position pos = pair.first;
+        TilePtr tile = pair.second;
+        if(!tile)
+            continue;
+        out.write((char*)&pos, sizeof(pos));
+        uint16 id;
+        for(const ThingPtr& thing : tile->getThings()) {
+            if(ItemPtr item = thing->asItem()) {
+                id = item->getId();
+                out.write((char*)&id, sizeof(id));
+            }
+        }
+        id = 0xFFFF;
+        out.write((char*)&id, sizeof(id));
+    }
+
+    g_resources.saveFile("/map.otcmap", out);
 }
 
 void Map::clean()
