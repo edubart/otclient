@@ -189,7 +189,7 @@ protected:
 
 // function shortcuts
 public:
-    void resize(int width, int height) { setRect(Rect(getPos(), Size(width, height))); }
+    void resize(int width, int height) { setRect(Rect(getPosition(), Size(width, height))); }
     void move(int x, int y) { setRect(Rect(x, y, getSize())); }
     void hide() { setVisible(false); }
     void show() { setVisible(true); }
@@ -262,7 +262,7 @@ public:
     void setWidth(int width) { resize(width, getHeight()); }
     void setHeight(int height) { resize(getWidth(), height); }
     void setSize(const Size& size) { resize(size.width(), size.height()); }
-    void setPos(const Point& pos) { move(pos.x, pos.y); }
+    void setPosition(const Point& pos) { move(pos.x, pos.y); }
     void setColor(const Color& color) { m_color = color; }
     void setBackgroundColor(const Color& color) { m_backgroundColor = color; }
     void setBackgroundOffsetX(int x) { m_backgroundRect.setX(x); }
@@ -309,7 +309,7 @@ public:
 
     int getX() { return m_rect.x(); }
     int getY() { return m_rect.y(); }
-    Point getPos() { return m_rect.topLeft(); }
+    Point getPosition() { return m_rect.topLeft(); }
     int getWidth() { return m_rect.width(); }
     int getHeight() { return m_rect.height(); }
     Size getSize() { return m_rect.size(); }

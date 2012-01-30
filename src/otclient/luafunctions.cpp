@@ -60,10 +60,9 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassStaticFunction("g_sprites", "getSignature", std::bind(&SpriteManager::getSignature, &g_sprites));
 
     g_lua.registerStaticClass("g_map");
-    g_lua.bindClassStaticFunction("g_map", "getFirstVisibleFloor", std::bind(&Map::getFirstVisibleFloor, &g_map));
     g_lua.bindClassStaticFunction("g_map", "isLookPossible", std::bind(&Map::isLookPossible, &g_map, _1));
     g_lua.bindClassStaticFunction("g_map", "isCovered", std::bind(&Map::isCovered, &g_map, _1, _2));
-    g_lua.bindClassStaticFunction("g_map", "isCompletlyCovered", std::bind(&Map::isCompletlyCovered, &g_map, _1, _2));
+    g_lua.bindClassStaticFunction("g_map", "isCompletelyCovered", std::bind(&Map::isCompletelyCovered, &g_map, _1, _2));
     g_lua.bindClassStaticFunction("g_map", "addThing", std::bind(&Map::addThing, &g_map, _1, _2, _3));
     g_lua.bindClassStaticFunction("g_map", "getThing", std::bind(&Map::getThing, &g_map, _1, _2));
     g_lua.bindClassStaticFunction("g_map", "removeThingByPos", std::bind(&Map::removeThingByPos, &g_map, _1, _2));
@@ -72,13 +71,8 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassStaticFunction("g_map", "getTile", std::bind(&Map::getTile, &g_map, _1));
     g_lua.bindClassStaticFunction("g_map", "setCentralPosition", std::bind(&Map::setCentralPosition, &g_map, _1));
     g_lua.bindClassStaticFunction("g_map", "getCentralPosition", std::bind(&Map::getCentralPosition, &g_map));
-    g_lua.bindClassStaticFunction("g_map", "addCreature", std::bind(&Map::addCreature, &g_map, _1));
     g_lua.bindClassStaticFunction("g_map", "getCreatureById", std::bind(&Map::getCreatureById, &g_map, _1));
     g_lua.bindClassStaticFunction("g_map", "removeCreatureById", std::bind(&Map::removeCreatureById, &g_map, _1));
-    g_lua.bindClassStaticFunction("g_map", "setVisibleSize", std::bind(&Map::setVisibleSize, &g_map, _1));
-    g_lua.bindClassStaticFunction("g_map", "getVibibleSize", std::bind(&Map::getVibibleSize, &g_map));
-    g_lua.bindClassStaticFunction("g_map", "getCentralOffset", std::bind(&Map::getCentralOffset, &g_map));
-    g_lua.bindClassStaticFunction("g_map", "positionTo2D", std::bind(&Map::positionTo2D, &g_map, _1));
 
     g_lua.bindGlobalFunction("getOufitColor", Outfit::getColor);
 
@@ -91,9 +85,9 @@ void OTClient::registerLuaFunctions()
 
     g_lua.registerClass<Thing>();
     g_lua.bindClassMemberFunction<Thing>("setId", &Thing::setId);
-    g_lua.bindClassMemberFunction<Thing>("setPos", &Thing::setPos);
+    g_lua.bindClassMemberFunction<Thing>("setPosition", &Thing::setPosition);
     g_lua.bindClassMemberFunction<Thing>("getId", &Thing::getId);
-    g_lua.bindClassMemberFunction<Thing>("getPos", &Thing::getPos);
+    g_lua.bindClassMemberFunction<Thing>("getPosition", &Thing::getPosition);
     g_lua.bindClassMemberFunction<Thing>("getStackPriority", &Thing::getStackPriority);
     g_lua.bindClassMemberFunction<Thing>("getAnimationPhases", &Thing::getAnimationPhases);
     g_lua.bindClassMemberFunction<Thing>("setXPattern", &Thing::setXPattern);
@@ -118,7 +112,7 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Thing>("isRotateable", &Thing::isRotateable);
     g_lua.bindClassMemberFunction<Thing>("isNotMoveable", &Thing::isNotMoveable);
     g_lua.bindClassMemberFunction<Thing>("isPickupable", &Thing::isPickupable);
-    g_lua.bindClassMemberFunction<Thing>("ignoreLook", &Thing::ignoreLook);
+    g_lua.bindClassMemberFunction<Thing>("isIgnoreLook", &Thing::isIgnoreLook);
     g_lua.bindClassMemberFunction<Thing>("isStackable", &Thing::isStackable);
 
     g_lua.registerClass<Creature, Thing>();
@@ -165,14 +159,13 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Tile>("getThing", &Tile::getThing);
     g_lua.bindClassMemberFunction<Tile>("getThingStackpos", &Tile::getThingStackpos);
     g_lua.bindClassMemberFunction<Tile>("getTopThing", &Tile::getTopThing);
-    g_lua.bindClassMemberFunction<Tile>("removeThingByStackpos", &Tile::removeThingByStackpos);
     g_lua.bindClassMemberFunction<Tile>("removeThing", &Tile::removeThing);
     g_lua.bindClassMemberFunction<Tile>("getTopLookThing", &Tile::getTopLookThing);
     g_lua.bindClassMemberFunction<Tile>("getTopUseThing", &Tile::getTopUseThing);
     g_lua.bindClassMemberFunction<Tile>("getTopCreature", &Tile::getTopCreature);
     g_lua.bindClassMemberFunction<Tile>("getTopMoveThing", &Tile::getTopMoveThing);
     g_lua.bindClassMemberFunction<Tile>("getTopMultiUseThing", &Tile::getTopMultiUseThing);
-    g_lua.bindClassMemberFunction<Tile>("getPos", &Tile::getPos);
+    g_lua.bindClassMemberFunction<Tile>("getPosition", &Tile::getPosition);
     g_lua.bindClassMemberFunction<Tile>("getDrawElevation", &Tile::getDrawElevation);
     g_lua.bindClassMemberFunction<Tile>("getCreatures", &Tile::getCreatures);
     g_lua.bindClassMemberFunction<Tile>("getGround", &Tile::getGround);
@@ -238,6 +231,8 @@ void OTClient::registerLuaFunctions()
     g_lua.registerClass<UIMap, UIWidget>();
     g_lua.bindClassStaticFunction<UIMap>("create", []{ return UIMapPtr(new UIMap); } );
     g_lua.bindClassMemberFunction<UIMap>("getTile", &UIMap::getTile);
+    g_lua.bindClassMemberFunction<UIMap>("zoomIn", &UIMap::zoomIn);
+    g_lua.bindClassMemberFunction<UIMap>("zoomOut", &UIMap::zoomOut);
 
     g_lua.registerClass<UIGame, UIWidget>();
     g_lua.bindClassStaticFunction<UIGame>("create", []{ return UIGamePtr(new UIGame); } );

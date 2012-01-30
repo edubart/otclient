@@ -13,7 +13,7 @@ local function moveToolTip(tooltip)
   else
     pos.x = pos.x + 10
   end
-  tooltip:setPos(pos)
+  tooltip:setPosition(pos)
 end
 
 -- public functions

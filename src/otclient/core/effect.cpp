@@ -27,51 +27,35 @@
 #include <framework/core/clock.h>
 #include <framework/core/eventdispatcher.h>
 
-Effect::Effect() : Thing()
+void Effect::draw(const Point& dest, float scaleFactor)
 {
-    m_animationStartTicks = 0;
+    internalDraw(dest, scaleFactor, 0);
 }
 
-void Effect::start()
+void Effect::startAnimation()
 {
-    m_animationStartTicks = g_clock.ticks();
+    m_animationTimer.restart();
 
     auto self = asEffect();
 
-    // schedule update
-    if(getAnimationPhases() > 1) {
-        g_dispatcher.scheduleEvent([self]() {
-            self->updateAnimation();
-        }, TICKS_PER_FRAME);
-    }
+    // schedule next animation update
+    if(getAnimationPhases() > 1)
+        g_dispatcher.scheduleEvent([self]() { self->updateAnimation(); }, Otc::EFFECT_TICKS_PER_FRAME);
 
     // schedule removal
-    g_dispatcher.scheduleEvent([self]() {
-        g_map.removeThing(self);
-    }, TICKS_PER_FRAME * getAnimationPhases());
-}
-
-void Effect::draw(const Point& p, const Rect&)
-{
-    internalDraw(p, 0);
+    g_dispatcher.scheduleEvent([self]() { g_map.removeThing(self); }, Otc::EFFECT_TICKS_PER_FRAME * getAnimationPhases());
 }
 
 void Effect::updateAnimation()
 {
-    int animationPhase = (g_clock.ticks() - m_animationStartTicks) / TICKS_PER_FRAME;
+    int animationPhase = m_animationTimer.ticksElapsed() / Otc::EFFECT_TICKS_PER_FRAME;
 
     if(animationPhase < getAnimationPhases())
         m_animation = animationPhase;
 
     if(animationPhase < getAnimationPhases() - 1) {
+        //schedule next animation update
         auto self = asEffect();
-        g_dispatcher.scheduleEvent([self]() {
-            self->updateAnimation();
-        }, TICKS_PER_FRAME);
+        g_dispatcher.scheduleEvent([self]() { self->updateAnimation(); }, Otc::EFFECT_TICKS_PER_FRAME);
     }
-}
-
-ThingType *Effect::getType()
-{
-    return g_thingsType.getThingType(m_id, ThingsType::Effect);
 }

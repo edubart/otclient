@@ -25,6 +25,8 @@
 
 #include <otclient/global.h>
 
+class Map;
+class MapView;
 class Tile;
 class Thing;
 class Item;
@@ -38,6 +40,7 @@ class Missile;
 class AnimatedText;
 class StaticText;
 
+typedef std::shared_ptr<MapView> MapViewPtr;
 typedef std::shared_ptr<Tile> TilePtr;
 typedef std::shared_ptr<Thing> ThingPtr;
 typedef std::shared_ptr<Item> ItemPtr;

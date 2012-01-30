@@ -63,16 +63,19 @@ int LEGS_COLOR_UNIFORM = 12;
 int FEET_COLOR_UNIFORM = 13;
 int MASK_TEXTURE_UNIFORM = 14;
 
-void Creature::draw(const Point& p, const Rect&)
+void Creature::draw(const Point& dest, float scaleFactor)
 {
+    int scaledTileSize = Otc::TILE_PIXELS * scaleFactor;
+    Point scaledWalkOffset = m_walkOffset * scaleFactor;
+
     if(m_showVolatileSquare) {
         g_painter.setColor(m_volatileSquareColor);
-        g_painter.drawBoundingRect(Rect(p + m_walkOffset - Point(m_type->parameters[ThingType::DisplacementX], m_type->parameters[ThingType::DisplacementY]) + 3, Size(28, 28)), 2);
+        g_painter.drawBoundingRect(Rect(dest + scaledWalkOffset - (getDisplacement() + 3)*scaleFactor, Size(28*scaleFactor, 28*scaleFactor)), 2*scaleFactor);
     }
 
     if(m_showStaticSquare) {
         g_painter.setColor(m_staticSquareColor);
-        g_painter.drawBoundingRect(Rect(p + m_walkOffset - Point(m_type->parameters[ThingType::DisplacementX], m_type->parameters[ThingType::DisplacementY]) + 1, Size(32, 32)), 2);
+        g_painter.drawBoundingRect(Rect(dest + scaledWalkOffset - (getDisplacement() + 1)*scaleFactor, Size(scaledTileSize, scaledTileSize)), 2*scaleFactor);
     }
 
     g_painter.setColor(Fw::white);
@@ -90,7 +93,7 @@ void Creature::draw(const Point& p, const Rect&)
 
     // Render creature
     if(m_outfit.getCategory() == ThingsType::Creature) {
-        for(m_yPattern = 0; m_yPattern < m_type->dimensions[ThingType::PatternY]; m_yPattern++) {
+        for(m_yPattern = 0; m_yPattern < getNumPatternsY(); m_yPattern++) {
 
             // continue if we dont have this addon.
             if(m_yPattern > 0 && !(m_outfit.getAddons() & (1 << (m_yPattern-1))))
@@ -104,24 +107,24 @@ void Creature::draw(const Point& p, const Rect&)
             outfitProgram->setUniformValue(LEGS_COLOR_UNIFORM, m_outfit.getLegsColor());
             outfitProgram->setUniformValue(FEET_COLOR_UNIFORM, m_outfit.getFeetColor());
 
-            for(int h = 0; h < m_type->dimensions[ThingType::Height]; h++) {
-                for(int w = 0; w < m_type->dimensions[ThingType::Width]; w++) {
-                    int spriteId = m_type->getSpriteId(w, h, 0, m_xPattern, m_yPattern, m_zPattern, m_animation);
+            for(int h = 0; h < getDimensionHeight(); h++) {
+                for(int w = 0; w < getDimensionWidth(); w++) {
+                    int spriteId = getSpriteId(w, h, 0, m_xPattern, m_yPattern, m_zPattern, m_animation);
                     if(!spriteId)
                         continue;
                     TexturePtr spriteTex = g_sprites.getSpriteTexture(spriteId);
                     if(!spriteTex)
                         continue;
 
-                    if(m_type->dimensions[ThingType::Layers] > 1) {
-                        int maskId = m_type->getSpriteId(w, h, 1, m_xPattern, m_yPattern, m_zPattern, m_animation);
+                    if(getLayers() > 1) {
+                        int maskId = getSpriteId(w, h, 1, m_xPattern, m_yPattern, m_zPattern, m_animation);
                         TexturePtr maskTex = g_sprites.getSpriteTexture(maskId);
                         outfitProgram->setUniformTexture(MASK_TEXTURE_UNIFORM, maskTex, 1);
                     }
 
-                    Rect drawRect(((p + m_walkOffset).x - w*32) - m_type->parameters[ThingType::DisplacementX],
-                                ((p + m_walkOffset).y - h*32) - m_type->parameters[ThingType::DisplacementY],
-                                32, 32);
+                    Rect drawRect((dest.x + scaledWalkOffset.x - w*scaledTileSize) - getDisplacementX()*scaleFactor,
+                                  (dest.y + scaledWalkOffset.y - h*scaledTileSize) - getDisplacementY()*scaleFactor,
+                                  scaledTileSize, scaledTileSize);
                     g_painter.drawTexturedRect(drawRect, spriteTex);
                 }
             }
@@ -130,14 +133,14 @@ void Creature::draw(const Point& p, const Rect&)
         }
     }
     else if(m_outfit.getCategory() == ThingsType::Item) {
-        for(int l = 0; l < m_type->dimensions[ThingType::Layers]; l++)
-            internalDraw(p + m_walkOffset, l);
+        for(int l = 0; l < getLayers(); l++)
+            internalDraw(dest + scaledWalkOffset, scaleFactor, l);
     }
     else if(m_outfit.getCategory() == ThingsType::Effect)
-        internalDraw(p + m_walkOffset, 0);
+        internalDraw(dest + scaledWalkOffset, scaleFactor, 0);
 }
 
-void Creature::drawInformation(int x, int y, bool useGray, const Rect& visibleRect)
+void Creature::drawInformation(const Point& point, bool useGray, const Rect& parentRect)
 {
     Color fillColor = Color(96, 96, 96);
 
@@ -145,16 +148,16 @@ void Creature::drawInformation(int x, int y, bool useGray, const Rect& visibleRe
         fillColor = m_informationColor;
 
     // calculate main rects
-    Rect backgroundRect = Rect(x-(13.5), y, 27, 4);
-    backgroundRect.bind(visibleRect);
+    Rect backgroundRect = Rect(point.x-(13.5), point.y, 27, 4);
+    backgroundRect.bind(parentRect);
 
-    Rect textRect = Rect(x - m_nameSize.width() / 2.0, y-12, m_nameSize);
-    textRect.bind(visibleRect);
+    Rect textRect = Rect(point.x - m_nameSize.width() / 2.0, point.y-12, m_nameSize);
+    textRect.bind(parentRect);
 
     // distance them
-    if(textRect.top() == visibleRect.top())
+    if(textRect.top() == parentRect.top())
         backgroundRect.moveTop(textRect.top() + 12);
-    if(backgroundRect.bottom() == visibleRect.bottom())
+    if(backgroundRect.bottom() == parentRect.bottom())
         textRect.moveTop(backgroundRect.top() - 12);
 
     // health rect is based on background rect, so no worries
@@ -173,15 +176,15 @@ void Creature::drawInformation(int x, int y, bool useGray, const Rect& visibleRe
 
     if(m_skull != Otc::SkullNone && m_skullTexture) {
         g_painter.setColor(Fw::white);
-        g_painter.drawTexturedRect(Rect(x + 12, y + 5, m_skullTexture->getSize()), m_skullTexture);
+        g_painter.drawTexturedRect(Rect(point.x + 12, point.y + 5, m_skullTexture->getSize()), m_skullTexture);
     }
     if(m_shield != Otc::ShieldNone && m_shieldTexture && m_showShieldTexture) {
         g_painter.setColor(Fw::white);
-        g_painter.drawTexturedRect(Rect(x, y + 5, m_shieldTexture->getSize()), m_shieldTexture);
+        g_painter.drawTexturedRect(Rect(point.x, point.y + 5, m_shieldTexture->getSize()), m_shieldTexture);
     }
     if(m_emblem != Otc::EmblemNone && m_emblemTexture) {
         g_painter.setColor(Fw::white);
-        g_painter.drawTexturedRect(Rect(x + 12, y + 16, m_emblemTexture->getSize()), m_emblemTexture);
+        g_painter.drawTexturedRect(Rect(point.x + 12, point.y + 16, m_emblemTexture->getSize()), m_emblemTexture);
     }
 }
 
@@ -209,7 +212,12 @@ void Creature::walk(const Position& oldPos, const Position& newPos)
 
     // calculates walk interval
     float interval = 1000;
-    int groundSpeed = g_map.getTile(oldPos)->getGroundSpeed();
+    int groundSpeed = 0;
+
+    TilePtr oldTile = g_map.getTile(oldPos);
+    if(oldTile)
+        groundSpeed = oldTile->getGroundSpeed();
+
     if(groundSpeed != 0)
         interval = (1000.0f * groundSpeed) / m_speed;
 
@@ -248,10 +256,10 @@ void Creature::updateWalkAnimation(int totalPixelsWalked)
     if(m_outfit.getCategory() != ThingsType::Creature)
         return;
 
-    if(totalPixelsWalked == 32 || totalPixelsWalked == 0 || m_type->dimensions[ThingType::AnimationPhases] <= 1)
+    if(totalPixelsWalked == 32 || totalPixelsWalked == 0 || getAnimationPhases() <= 1)
         m_animation = 0;
-    else if(m_type->dimensions[ThingType::AnimationPhases] > 1)
-        m_animation = 1 + ((totalPixelsWalked * 4) / Map::NUM_TILE_PIXELS) % (m_type->dimensions[ThingType::AnimationPhases] - 1);
+    else if(getAnimationPhases() > 1)
+        m_animation = 1 + ((totalPixelsWalked * 4) / Otc::TILE_PIXELS) % (getAnimationPhases() - 1);
 }
 
 void Creature::updateWalkOffset(int totalPixelsWalked)
@@ -375,7 +383,7 @@ void Creature::setDirection(Otc::Direction direction)
 void Creature::setOutfit(const Outfit& outfit)
 {
     m_outfit = outfit;
-    m_type = getType();
+    updateType();
     m_animation = 0;
 
     if(m_outfit.getCategory() == ThingsType::Effect) {
@@ -389,7 +397,7 @@ void Creature::setOutfit(const Outfit& outfit)
         m_yPattern = 0;
     }
 
-    if(m_outfit.getCategory() == ThingsType::Creature && m_type->dimensions[ThingType::Layers] == 1) {
+    if(m_outfit.getCategory() == ThingsType::Creature && getLayers() == 1) {
         m_outfit.resetClothes();
     }
 }
@@ -483,8 +491,5 @@ void Creature::updateShield()
         m_showShieldTexture = true;
 }
 
-ThingType *Creature::getType()
-{
-    return g_thingsType.getThingType(m_outfit.getId(), m_outfit.getCategory());
-}
+
 

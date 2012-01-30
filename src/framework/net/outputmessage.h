@@ -36,7 +36,7 @@ public:
         BUFFER_MAXSIZE = 1024,
         HEADER_POS = 0,
         HEADER_LENGTH = 2,
-        CHECKSUM_POS = 2,
+        CHECKSUm_position = 2,
         CHECKSUM_LENGTH = 4,
         DATA_POS = 6
     };

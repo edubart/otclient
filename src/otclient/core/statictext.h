@@ -29,18 +29,15 @@
 class StaticText : public Thing
 {
 public:
-    enum {
-        DURATION_PER_CHARACTER = 75,
-        MIN_DURATION = 3000
-    };
-
     StaticText();
 
-    void draw(const Point& p, const Rect& visibleRect);
+    void draw(const Point& dest, const Rect& parentRect);
 
     std::string getName() { return m_name; }
     std::string getMessageType() { return m_messageType; }
     std::string getFirstMessage() { return m_messages[0]; }
+
+    bool isYell() { return m_yell; }
 
     bool addMessage(const std::string& name, const std::string& type, const std::string& message);
     void removeMessage();
@@ -52,6 +49,7 @@ private:
 
     FontPtr m_font;
     Size m_textSize;
+    Boolean<false> m_yell;
     std::vector<std::string> m_messages;
     std::string m_name, m_text;
     std::string m_messageType;

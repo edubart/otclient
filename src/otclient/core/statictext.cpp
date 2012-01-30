@@ -31,17 +31,21 @@ StaticText::StaticText()
     m_font = g_fonts.getFont("verdana-11px-rounded");
 }
 
-void StaticText::draw(const Point& p, const Rect& visibleRect)
+void StaticText::draw(const Point& dest, const Rect& parentRect)
 {
-    Rect rect = Rect(p - Point(m_textSize.width() / 2, m_textSize.height()) + Point(20, 5), m_textSize);
+    Rect rect = Rect(dest - Point(m_textSize.width() / 2, m_textSize.height()) + Point(20, 5), m_textSize);
     Rect boundRect = rect;
-    boundRect.bind(visibleRect);
-    if((boundRect.center() - rect.center()).length() < visibleRect.width() / 15)
+    boundRect.bind(parentRect);
+
+    if((boundRect.center() - rect.center()).length() < parentRect.width() / 15) {
+        //TODO: cache into a framebuffer
         m_font->renderText(m_text, boundRect, Fw::AlignCenter, m_color);
+    }
 }
 
 bool StaticText::addMessage(const std::string& name, const std::string& type, const std::string& message)
 {
+    //TODO: this could be moved to lua
     // First message
     if(m_messages.size() == 0) {
         m_name = name;
@@ -59,7 +63,11 @@ bool StaticText::addMessage(const std::string& name, const std::string& type, co
     auto self = asStaticText();
     g_dispatcher.scheduleEvent([self]() {
         self->removeMessage();
-    }, std::max<int>(DURATION_PER_CHARACTER * message.length(), MIN_DURATION));
+    }, std::max<int>(Otc::STATIC_DURATION_PER_CHARACTER * message.length(), Otc::MIN_STATIC_TEXT_DURATION));
+
+
+    if(type == "yell" || type == "monsterYell")
+        m_yell = true;
 
     return true;
 }
@@ -72,40 +80,34 @@ void StaticText::removeMessage()
         // schedule removal
         auto self = asStaticText();
         g_dispatcher.addEvent([self]() { g_map.removeThing(self); });
-    }
-    else
+    } else
         compose();
 }
 
 void StaticText::compose()
 {
+    //TODO: this could be moved to lua
     std::string text;
-    text.clear();
 
     if(m_messageType == "say") {
         text += m_name;
         text += " says:\n";
         m_color = Color(239, 239, 0);
-    }
-    else if(m_messageType == "whisper") {
+    } else if(m_messageType == "whisper") {
         text += m_name;
         text += " whispers:\n";
         m_color = Color(239, 239, 0);
-    }
-    else if(m_messageType == "yell") {
+    } else if(m_messageType == "yell") {
         text += m_name;
         text += " yells:\n";
         m_color = Color(239, 239, 0);
-    }
-    else if(m_messageType == "monsterSay" || m_messageType == "monsterYell") {
+    } else if(m_messageType == "monsterSay" || m_messageType == "monsterYell") {
         m_color = Color(254, 101, 0);
-    }
-    else if(m_messageType == "npcToPlayer") {
+    } else if(m_messageType == "npcToPlayer") {
         text += m_name;
         text += " says:\n";
         m_color = Color(95, 247, 247);
-    }
-    else {
+    } else {
         logWarning("unknown speak type: ", m_messageType);
     }
 
@@ -116,6 +118,6 @@ void StaticText::compose()
             text += "\n";
     }
 
-    m_text = m_font->wrapText(text, 200);
+    m_text = m_font->wrapText(text, Otc::MAX_STATIC_TEXT_WIDTH);
     m_textSize = m_font->calculateTextRectSize(m_text);
 }

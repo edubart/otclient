@@ -30,7 +30,7 @@ void UICreature::draw()
 
     if(m_creature) {
         g_painter.setColor(Fw::white);
-        m_creature->draw(m_rect.bottomRight() - Point(32, 32) + Point(m_padding.left, m_padding.top), m_rect);
+        m_creature->draw(m_rect.bottomRight() - Point(32, 32) + Point(m_padding.left, m_padding.top), 1);
     }
 
     drawChildren();

@@ -52,10 +52,14 @@ public:
     TSize<T>& operator+=(const TSize<T>& other) { wd+=other.wd; ht+=other.ht; return *this; }
     TSize<T> operator-(const TSize<T>& other) const { return TSize<T>(wd - other.wd, ht - other.ht);   }
     TSize<T>& operator-=(const TSize<T>& other) { wd-=other.wd; ht-=other.ht; return *this; }
+    TSize<T> operator*(const TSize<T>& other) const { return TSize<T>((T)other.wd*wd, (T)ht*other.ht);  }
+    TSize<T>& operator*=(const TSize<T>& other) { wd=(T)other.wd*wd; ht=(T)ht*other.ht; return *this; }
+    TSize<T> operator/(const TSize<T>& other) const { return TSize<T>((T)wd/other.wd, (T)ht/other.ht);  }
+    TSize<T>& operator/=(const TSize<T>& other) { (T)wd/=other.wd; (T)ht/=other.ht; return *this; }
     TSize<T> operator*(const float v) const { return TSize<T>((T)v*wd, (T)ht*v);  }
     TSize<T>& operator*=(const float v) { wd=(T)v*wd; ht=(T)ht*v; return *this; }
     TSize<T> operator/(const float v) const { return TSize<T>((T)wd/v, (T)ht/v);  }
-    TSize<T>& operator/=(const float v) { (T)wd/=v; (T)ht/=v; return *this; }
+    TSize<T>& operator/=(const float v) { wd/=v; ht/=v; return *this; }
 
     bool operator<=(const TSize<T>&other) const { return wd<=other.wd || ht<=other.ht; }
     bool operator>=(const TSize<T>&other) const { return wd>=other.wd || ht>=other.ht; }

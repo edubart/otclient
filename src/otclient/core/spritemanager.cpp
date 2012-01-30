@@ -116,7 +116,10 @@ TexturePtr SpriteManager::loadSpriteTexture(int id)
         writePos += 4;
     }
 
-    return TexturePtr(new Texture(32, 32, 4, pixels));
+    TexturePtr spriteTex(new Texture(32, 32, 4, pixels));
+    spriteTex->setSmooth(true);
+    spriteTex->generateBilinearMipmaps();
+    return spriteTex;
 }
 
 TexturePtr SpriteManager::getSpriteTexture(int id)

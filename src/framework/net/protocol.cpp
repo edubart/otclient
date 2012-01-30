@@ -71,7 +71,7 @@ void Protocol::send(OutputMessage& outputMessage)
 
     // set checksum
     uint32 checksum = getAdlerChecksum(outputMessage.getBuffer() + OutputMessage::DATA_POS, outputMessage.getMessageSize());
-    outputMessage.setWritePos(OutputMessage::CHECKSUM_POS);
+    outputMessage.setWritePos(OutputMessage::CHECKSUm_position);
     outputMessage.addU32(checksum);
 
     // set size
@@ -107,7 +107,7 @@ void Protocol::internalRecvHeader(uint8* buffer, uint16 size)
 
 void Protocol::internalRecvData(uint8* buffer, uint16 size)
 {
-    memcpy(m_inputMessage.getBuffer() + InputMessage::CHECKSUM_POS, buffer, size);
+    memcpy(m_inputMessage.getBuffer() + InputMessage::CHECKSUm_position, buffer, size);
 
     if(m_checksumEnabled) {
         uint32 checksum = getAdlerChecksum(m_inputMessage.getBuffer() + InputMessage::DATA_POS, m_inputMessage.getMessageSize() - InputMessage::CHECKSUM_LENGTH);

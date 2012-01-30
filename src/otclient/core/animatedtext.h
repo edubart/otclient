@@ -25,18 +25,15 @@
 
 #include "thing.h"
 #include <framework/graphics/fontmanager.h>
+#include <framework/core/timer.h>
 
 class AnimatedText : public Thing
 {
 public:
-    enum {
-        DURATION = 1000
-    };
-
     AnimatedText();
 
-    void start();
-    void draw(const Point& p, const Rect& visibleRect);
+    void draw(const Point& dest, const Rect& visibleRect);
+    void startAnimation();
 
     void setColor(int color);
     void setText(const std::string& text);
@@ -48,7 +45,7 @@ private:
     Size m_textSize;
     std::string m_text;
     Color m_color;
-    double m_startTime;
+    Timer m_animationTimer;
 };
 
 #endif

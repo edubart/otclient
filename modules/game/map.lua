@@ -36,10 +36,10 @@ function UIMap:onDrop(widget, mousePos)
     spinbox:setCurrentIndex(data)
     
     local okButton = moveWindow:getChildById('buttonOk')
-    okButton.onClick = function() Game.move(widget.currentDragThing, tile:getPos(), spinbox:getCurrentIndex()) okButton:getParent():destroy() widget.currentDragThing = nil end
+    okButton.onClick = function() Game.move(widget.currentDragThing, tile:getPosition(), spinbox:getCurrentIndex()) okButton:getParent():destroy() widget.currentDragThing = nil end
     moveWindow.onEnter = okButton.onClick
   else
-    Game.move(widget.currentDragThing, tile:getPos(), 1)
+    Game.move(widget.currentDragThing, tile:getPosition(), 1)
   end
 
   return true

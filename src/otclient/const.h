@@ -31,6 +31,36 @@ namespace Otc
     static const char* AppCompactName = "otclient";
     static const char* AppVersion = "0.4.0";
 
+    enum {
+        TILE_PIXELS = 32,
+        SEA_LEVEL = 7,
+        MAX_Z = 15,
+        VISIBLE_X_TILES = 15,
+        VISIBLE_Y_TILES = 11,
+        MAX_ELEVATION = 24,
+        EFFECT_TICKS_PER_FRAME = 75,
+        ITEM_TICKS_PER_FRAME = 500,
+        ANIMATED_TEXT_DURATION = 1000,
+        STATIC_DURATION_PER_CHARACTER = 75,
+        MIN_STATIC_TEXT_DURATION = 3000,
+        MAX_STATIC_TEXT_WIDTH = 200,
+    };
+
+    enum MapDrawFlags {
+        MapDrawNonMoveableItems = 1,
+        MapDrawMoveableItems = 2,
+        MapDrawCreatures = 4,
+        MapDrawCreaturesInformation = 8,
+        MapDrawStaticTexts = 16,
+        MapDrawAnimatedTexts = 32,
+        MapDrawEffects = 64,
+        MapDrawMissiles = 128,
+        MapDrawEverything = MapDrawNonMoveableItems | MapDrawMoveableItems |
+                            MapDrawCreatures | MapDrawCreaturesInformation |
+                            MapDrawStaticTexts | MapDrawAnimatedTexts |
+                            MapDrawEffects | MapDrawMissiles
+    };
+
     enum DatOpts {
         DatGround = 0,
         DatGroundClip,

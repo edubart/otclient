@@ -40,6 +40,7 @@ public:
 
     void setViewportSize(const Size& size);
 
+    int getMaxTextureSize();
     const Size& getViewportSize() { return m_viewportSize; }
     TexturePtr getEmptyTexture() { return m_emptyTexture; }
 

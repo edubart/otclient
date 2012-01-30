@@ -26,6 +26,15 @@
 
 uint FrameBuffer::boundFbo = 0;
 
+FrameBuffer::FrameBuffer()
+{
+    m_clearColor = Fw::alpha;
+
+    glGenFramebuffers(1, &m_fbo);
+    if(!m_fbo)
+        logFatal("Unable to create framebuffer object");
+}
+
 FrameBuffer::FrameBuffer(const Size& size)
 {
     m_clearColor = Fw::alpha;
@@ -44,6 +53,9 @@ FrameBuffer::~FrameBuffer()
 
 void FrameBuffer::resize(const Size& size)
 {
+    if(!size.isValid())
+        return;
+
     if(m_texture && m_texture->getSize() == size)
         return;
 
@@ -86,6 +98,11 @@ void FrameBuffer::release()
 void FrameBuffer::generateMipmaps()
 {
     m_texture->generateMipmaps();
+}
+
+void FrameBuffer::draw(const Rect& dest, const Rect& src)
+{
+    g_painter.drawTexturedRect(dest, m_texture, src);
 }
 
 void FrameBuffer::draw(const Rect& dest)

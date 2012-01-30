@@ -24,6 +24,7 @@
 #include "spritemanager.h"
 #include "thingstype.h"
 #include <framework/graphics/graphics.h>
+#include "map.h"
 
 Thing::Thing()
 {
@@ -32,51 +33,65 @@ Thing::Thing()
     m_yPattern = 0;
     m_zPattern = 0;
     m_animation = 0;
-    m_type = getType();
-}
-
-void Thing::internalDraw(const Point& p, int layer)
-{
-    for(int h = 0; h < m_type->dimensions[ThingType::Height]; h++) {
-        for(int w = 0; w < m_type->dimensions[ThingType::Width]; w++) {
-            int spriteId = m_type->getSpriteId(w, h, layer, m_xPattern, m_yPattern, m_zPattern, m_animation);
-            if(!spriteId)
-                continue;
-
-            TexturePtr spriteTex = g_sprites.getSpriteTexture(spriteId);
-
-            Rect drawRect((p.x - w*32) - m_type->parameters[ThingType::DisplacementX],
-                          (p.y - h*32) - m_type->parameters[ThingType::DisplacementY],
-                          32, 32);
-            g_painter.drawTexturedRect(drawRect, spriteTex);
-        }
-    }
+    m_type = g_thingsType.getEmptyThingType();
 }
 
 void Thing::setId(uint32 id)
 {
     m_id = id;
-    m_type = getType();
+    updateType();
 }
 
 int Thing::getStackPriority()
 {
-    if(m_type->properties[ThingType::IsGround])
+    if(isGround())
         return 0;
-    else if(m_type->properties[ThingType::IsGroundBorder])
+    else if(isGroundBorder())
         return 1;
-    else if(m_type->properties[ThingType::IsOnBottom])
+    else if(isOnBottom())
         return 2;
-    else if(m_type->properties[ThingType::IsOnTop])
+    else if(isOnTop())
         return 3;
     else if(asCreature())
         return 4;
-    return 5;
+    else // common items
+        return 5;
 }
 
-ThingType *Thing::getType()
+const TilePtr& Thing::getCurrentTile()
 {
-    return g_thingsType.getEmptyThingType();
+    return g_map.getTile(m_position);
 }
 
+void Thing::internalDraw(const Point& dest, float scaleFactor, int layer)
+{
+    int scaledSize = Otc::TILE_PIXELS * scaleFactor;
 
+    for(int h = 0; h < getDimensionHeight(); h++) {
+        for(int w = 0; w < getDimensionWidth(); w++) {
+            int spriteId = getSpriteId(w, h, layer, m_xPattern, m_yPattern, m_zPattern, m_animation);
+            if(!spriteId)
+                continue;
+
+            TexturePtr spriteTex = g_sprites.getSpriteTexture(spriteId);
+            Rect drawRect((dest.x - w*scaledSize) - getDisplacementX()*scaleFactor,
+                          (dest.y - h*scaledSize) - getDisplacementY()*scaleFactor,
+                          scaledSize, scaledSize);
+            g_painter.drawTexturedRect(drawRect, spriteTex);
+        }
+    }
+}
+
+void Thing::updateType()
+{
+    if(CreaturePtr creature = asCreature())
+        m_type = g_thingsType.getThingType(creature->getOutfit().getId(), creature->getOutfit().getCategory());
+    else if(asItem())
+        m_type = g_thingsType.getThingType(m_id, ThingsType::Item);
+    else if(asMissile())
+        m_type = g_thingsType.getThingType(m_id, ThingsType::Missile);
+    else if(asEffect())
+        m_type = g_thingsType.getThingType(m_id, ThingsType::Effect);
+    else
+        m_type = g_thingsType.getEmptyThingType();
+}

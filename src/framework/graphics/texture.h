@@ -35,6 +35,7 @@ public:
     void bind() { glBindTexture(GL_TEXTURE_2D, m_textureId); }
 
     void generateMipmaps();
+    void generateBilinearMipmaps();
     void setSmooth(bool smooth);
     GLuint getId()  { return m_textureId; }
 

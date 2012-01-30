@@ -31,7 +31,12 @@ class UIMap : public UIWidget
 {
 public:
     UIMap();
+    ~UIMap();
+
     void draw();
+
+    void zoomIn();
+    void zoomOut();
 
     TilePtr getTile(const Point& mousePos);
 
@@ -39,6 +44,7 @@ protected:
     virtual void onGeometryChange(const Rect& oldRect, const Rect& newRect);
 
 private:
+    MapViewPtr m_mapView;
     Rect m_mapRect;
 };
 

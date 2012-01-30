@@ -28,21 +28,25 @@
 
 class Tile : public LuaObject
 {
-    enum {
-        MAX_DRAW_ELEVATION = 24
-    };
 public:
     Tile(const Position& position);
 
-    void draw(const Point& p, const Rect& visibleRect);
+    void draw(const Point& dest, float scaleFactor);
+
+private:
+    void updateVisibleItemsCache();
+
+public:
     void clean();
 
     ThingPtr addThing(const ThingPtr& thing, int stackPos = -1);
+    bool removeThing(const ThingPtr& thing);
     ThingPtr getThing(int stackPos);
     int getThingStackpos(const ThingPtr& thing);
     ThingPtr getTopThing();
-    ThingPtr removeThingByStackpos(int stackPos);
-    ThingPtr removeThing(const ThingPtr& thing);
+
+    void addWalkingCreature(const CreaturePtr& creature);
+    void removeWalkingCreature(const CreaturePtr& creature);
 
 
     ThingPtr getTopLookThing();
@@ -51,7 +55,7 @@ public:
     ThingPtr getTopMoveThing();
     ThingPtr getTopMultiUseThing();
 
-    const Position& getPos() { return m_pos; }
+    const Position& getPosition() { return m_position; }
     int getDrawElevation() { return m_drawElevation; }
     std::vector<CreaturePtr> getCreatures();
     ItemPtr getGround();
@@ -60,16 +64,19 @@ public:
     bool isFullGround();
     bool isFullyOpaque();
     bool isLookPossible();
-    bool hasCreature();
-    bool isEmpty();
     bool isClickable();
+    bool isEmpty();
+    bool hasCreature();
+    bool limitsFloorsView();
+    int getThingCount() { return m_things.size() + m_effects.size(); }
 
     TilePtr asTile() { return std::static_pointer_cast<Tile>(shared_from_this()); }
 
 private:
-    std::vector<EffectPtr> m_effects; // Leave this outside m_things because it has no stackpos.
+    std::vector<CreaturePtr> m_walkingCreatures;
+    std::vector<EffectPtr> m_effects; // leave this outside m_things because it has no stackpos.
     std::vector<ThingPtr> m_things;
-    Position m_pos;
+    Position m_position;
     int m_drawElevation;
 };
 

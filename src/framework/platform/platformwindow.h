@@ -73,9 +73,9 @@ public:
     int getWidth() { return m_size.width(); }
     int getHeight() { return m_size.height(); }
     Point getUnmaximizedPos() { return m_unmaximizedPos; }
-    Point getPos() { return m_pos; }
-    int getX() { return m_pos.x; }
-    int getY() { return m_pos.y; }
+    Point getPosition() { return m_position; }
+    int getX() { return m_position.x; }
+    int getY() { return m_position.y; }
     Point getMousePos() { return m_inputEvent.mousePos; }
     int getKeyboardModifiers() { return m_inputEvent.keyboardModifiers; }
     bool isKeyPressed(Fw::Key keyCode) { return m_keysState[keyCode]; }
@@ -104,7 +104,7 @@ protected:
     Timer m_keyPressTimer;
 
     Size m_size;
-    Point m_pos;
+    Point m_position;
     Size m_unmaximizedSize;
     Point m_unmaximizedPos;
     InputEvent m_inputEvent;

@@ -26,6 +26,9 @@
 #include "thing.h"
 #include <framework/core/clock.h>
 #include <framework/core/eventdispatcher.h>
+#include <framework/graphics/graphics.h>
+#include <framework/graphics/paintershaderprogram.h>
+#include <framework/graphics/paintershadersources.h>
 
 Item::Item() : Thing()
 {
@@ -39,29 +42,40 @@ ItemPtr Item::create(int id)
     return item;
 }
 
-void Item::draw(const Point& p, const Rect&)
-{
-    if(m_type->dimensions[ThingType::AnimationPhases] > 1)
-        m_animation = (g_clock.ticks() % (TICKS_PER_FRAME * m_type->dimensions[ThingType::AnimationPhases])) / TICKS_PER_FRAME;
+PainterShaderProgramPtr itemProgram;
 
-    for(int l = 0; l < m_type->dimensions[ThingType::Layers]; l++)
-        internalDraw(p, l);
+void Item::draw(const Point& dest, float scaleFactor)
+{
+    if(getAnimationPhases() > 1)
+        m_animation = (g_clock.ticks() % (Otc::ITEM_TICKS_PER_FRAME * getAnimationPhases())) / Otc::ITEM_TICKS_PER_FRAME;
+
+    if(!itemProgram) {
+        itemProgram = PainterShaderProgramPtr(new PainterShaderProgram);
+        itemProgram->addShaderFromSourceCode(Shader::Vertex, glslMainWithTexCoordsVertexShader + glslPositionOnlyVertexShader);
+        itemProgram->addShaderFromSourceFile(Shader::Fragment, "/game_shaders/item.frag");
+        assert(itemProgram->link());
+    }
+    g_painter.setCustomProgram(itemProgram);
+
+    for(int layer = 0; layer < getLayers(); layer++)
+        internalDraw(dest, scaleFactor, layer);
+    g_painter.releaseCustomProgram();
 }
 
-void Item::setPos(const Position& position)
+void Item::setPosition(const Position& position)
 {
-    if(m_type->properties[ThingType::IsGround]) {
-        m_xPattern = position.x % m_type->dimensions[ThingType::PatternX];
-        m_yPattern = position.y % m_type->dimensions[ThingType::PatternY];
-        m_zPattern = position.z % m_type->dimensions[ThingType::PatternZ];
+    if(isGround()) {
+        m_xPattern = position.x % getNumPatternsX();
+        m_yPattern = position.y % getNumPatternsY();
+        m_zPattern = position.z % getNumPatternsZ();
     }
 
-    Thing::setPos(position);
+    Thing::setPosition(position);
 }
 
 void Item::setData(int data)
 {
-    if(m_type->properties[ThingType::IsStackable] && m_type->dimensions[ThingType::PatternX] == 4 && m_type->dimensions[ThingType::PatternY] == 2) {
+    if(isStackable() && getNumPatternsX() == 4 && getNumPatternsY() == 2) {
         if(data < 5) {
             m_xPattern = data-1;
             m_yPattern = 0;
@@ -83,15 +97,15 @@ void Item::setData(int data)
             m_yPattern = 1;
         }
     }
-    else if(m_type->properties[ThingType::IsHangable]) {
-        if(m_type->properties[ThingType::HookSouth]) {
-            m_xPattern = m_type->dimensions[ThingType::PatternX] >= 2 ? 1 : 0;
+    else if(isHangable()) {
+        if(isHookSouth()) {
+            m_xPattern = getNumPatternsX() >= 2 ? 1 : 0;
         }
-        else if(m_type->properties[ThingType::HookEast]) {
-            m_xPattern = m_type->dimensions[ThingType::PatternX] >= 3 ? 2 : 0;
+        else if(isHookEast()) {
+            m_xPattern = getNumPatternsX() >= 3 ? 2 : 0;
         }
     }
-    else if(m_type->properties[ThingType::IsFluid] || m_type->properties[ThingType::IsFluidContainer]) {
+    else if(isFluid() || isFluidContainer()) {
         int color = Otc::FluidTransparent;
         switch(data) {
         case Otc::FluidNone:
@@ -153,14 +167,9 @@ void Item::setData(int data)
             break;
         }
 
-        m_xPattern = (color % 4) % m_type->dimensions[ThingType::PatternX];
-        m_yPattern = (color / 4) % m_type->dimensions[ThingType::PatternY];
+        m_xPattern = (color % 4) % getNumPatternsX();
+        m_yPattern = (color / 4) % getNumPatternsY();
     }
 
     m_data = data;
-}
-
-ThingType *Item::getType()
-{
-    return g_thingsType.getThingType(m_id, ThingsType::Item);
 }

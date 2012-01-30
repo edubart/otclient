@@ -31,25 +31,26 @@ AnimatedText::AnimatedText()
     m_font = g_fonts.getFont("verdana-11px-rounded");
 }
 
-void AnimatedText::start()
+void AnimatedText::draw(const Point& dest, const Rect& visibleRect)
 {
-    m_startTime = g_clock.time();
+    Point p = dest;
+    p.x += 20 - m_textSize.width() / 2;
+    p.y += (-20 * m_animationTimer.ticksElapsed()) / Otc::ANIMATED_TEXT_DURATION;
+    Rect rect(p, m_textSize);
 
-    auto self = asAnimatedText();
-
-    // schedule removal
-    g_dispatcher.scheduleEvent([self]() {
-        g_map.removeThing(self);
-    }, DURATION);
+    if(visibleRect.contains(rect)) {
+        //TODO: cache into a framebuffer
+        m_font->renderText(m_text, rect, Fw::AlignLeft, m_color);
+    }
 }
 
-void AnimatedText::draw(const Point& p, const Rect& visibleRect)
+void AnimatedText::startAnimation()
 {
-    if(m_font) {
-        Rect rect = Rect(p + Point(20 - m_textSize.width() / 2, -20.0 * g_clock.timeElapsed(m_startTime) / (DURATION / 1000)), m_textSize);
-        if(visibleRect.contains(rect))
-            m_font->renderText(m_text, rect, Fw::AlignLeft, m_color);
-    }
+    m_animationTimer.restart();
+
+    // schedule removal
+    auto self = asAnimatedText();
+    g_dispatcher.scheduleEvent([self]() { g_map.removeThing(self); }, Otc::ANIMATED_TEXT_DURATION);
 }
 
 void AnimatedText::setColor(int color)
@@ -59,7 +60,6 @@ void AnimatedText::setColor(int color)
 
 void AnimatedText::setText(const std::string& text)
 {
-    if(m_font)
-        m_textSize = m_font->calculateTextRectSize(text);
+    m_textSize = m_font->calculateTextRectSize(text);
     m_text = text;
 }

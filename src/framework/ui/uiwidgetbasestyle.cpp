@@ -55,7 +55,7 @@ void UIWidget::parseBaseStyle(const OTMLNodePtr& styleNode)
         else if(node->tag() == "y")
             setY(node->value<int>());
         else if(node->tag() == "pos")
-            setPos(node->value<Point>());
+            setPosition(node->value<Point>());
         else if(node->tag() == "width")
             setWidth(node->value<int>());
         else if(node->tag() == "height")

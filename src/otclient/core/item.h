@@ -33,17 +33,12 @@ public:
 
     static ItemPtr create(int id);
 
-    enum {
-        TICKS_PER_FRAME = 500
-    };
+    void draw(const Point& dest, float scaleFactor);
 
-    void draw(const Point& p, const Rect&);
-
-    void setPos(const Position &position);
+    void setPosition(const Position &position);
     void setData(int data);
 
     int getData() { return m_data; }
-    ThingType *getType();
 
     ItemPtr asItem() { return std::static_pointer_cast<Item>(shared_from_this()); }
 

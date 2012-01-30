@@ -24,28 +24,21 @@
 #define EFFECT_H
 
 #include <framework/global.h>
+#include <framework/core/timer.h>
 #include "thing.h"
 
 class Effect : public Thing
 {
 public:
-    enum {
-        TICKS_PER_FRAME = 75
-    };
+    void draw(const Point& dest, float scaleFactor);
 
-    Effect();
-
-    void draw(const Point& p, const Rect&);
-
-    void start();
+    void startAnimation();
     void updateAnimation();
-
-    ThingType *getType();
 
     EffectPtr asEffect() { return std::static_pointer_cast<Effect>(shared_from_this()); }
 
 private:
-    ticks_t m_animationStartTicks;
+    Timer m_animationTimer;
 };
 
 #endif

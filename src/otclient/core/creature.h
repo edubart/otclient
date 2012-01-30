@@ -41,8 +41,8 @@ public:
     Creature();
     virtual ~Creature() { }
 
-    virtual void draw(const Point& p, const Rect&);
-    void drawInformation(int x, int y, bool useGray, const Rect& visibleRect);
+    virtual void draw(const Point& dest, float scaleFactor);
+    void drawInformation(const Point& point, bool useGray, const Rect& parentRect);
 
     void setName(const std::string& name);
     void setHealthPercent(uint8 healthPercent);

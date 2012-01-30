@@ -26,70 +26,59 @@
 #include "creature.h"
 #include "animatedtext.h"
 #include <framework/core/clock.h>
-#include <framework/graphics/declarations.h>
 
 class Map
 {
 public:
-    enum {
-        MAP_VISIBLE_WIDTH = 15,
-        MAP_VISIBLE_HEIGHT = 11,
-        MAP_SIZE_Z = 8,
-        MAX_WIDTH = 24,
-        MAX_HEIGHT = 24,
-        MAX_Z = 16,
-        NUM_TILE_PIXELS = 32
-    };
+    void addMapView(const MapViewPtr& mapView);
+    void removeMapView(const MapViewPtr& mapView);
+    void notificateTileUpdateToMapViews(const Position& pos);
 
-    Map();
-
-    void draw(const Rect& rect);
     void clean();
 
-    int getFirstVisibleFloor();
-    bool isLookPossible(const Position& pos);
-    bool isCovered(const Position& pos, int firstFloor = 0);
-    bool isCompletlyCovered(const Position& pos, int firstFloor = 0);
-
+    // thing related
     void addThing(const ThingPtr& thing, const Position& pos, int stackPos = -1);
     ThingPtr getThing(const Position& pos, int stackPos);
-    void removeThingByPos(const Position& pos, int stackPos);
-    void removeThing(const ThingPtr& thing);
+    bool removeThingByPos(const Position& pos, int stackPos);
+
+    // tile related
+    TilePtr createTile(const Position& pos);
+    const TilePtr& getTile(const Position& pos) { return m_tiles[pos]; }
     void cleanTile(const Position& pos);
-    TilePtr getTile(const Position& pos);
+    bool removeThing(const ThingPtr& thing);
 
-    void setLight(const Light& light) { m_light = light; }
-    Light getLight() { return m_light; }
-
-    void setCentralPosition(const Position& centralPosition);
-    Position getCentralPosition() { return m_centralPosition; }
-
+    // known creature related
     void addCreature(const CreaturePtr& creature);
     CreaturePtr getCreatureById(uint32 id);
     void removeCreatureById(uint32 id);
+    std::vector<CreaturePtr> getSpectators(const Position& centerPos, bool multiFloor);
+    std::vector<CreaturePtr> getSpectatorsInRange(const Position& centerPos, bool multiFloor, int xRange, int yRange);
+    std::vector<CreaturePtr> getSpectatorsInRangeEx(const Position& centerPos, bool multiFloor, int minXRange, int maxXRange, int minYRange, int maxYRange);
 
-    void setVisibleSize(const Size& visibleSize);
-    Size getVibibleSize() { return m_visibleSize; }
-    Point getCentralOffset() { return m_centralOffset; }
+    void setLight(const Light& light) { m_light = light; }
+    void setCentralPosition(const Position& centralPosition) { m_centralPosition = centralPosition; }
 
-    Point positionTo2D(const Position& position);
+    bool isLookPossible(const Position& pos);
+    bool isCovered(const Position& pos, int firstFloor = 0);
+    bool isCompletelyCovered(const Position& pos, int firstFloor = 0);
+
+    Light getLight() { return m_light; }
+    Position getCentralPosition() { return m_centralPosition; }
+
+
+    std::vector<AnimatedTextPtr> getAnimatedTexts() { return m_animatedTexts; }
+    std::vector<StaticTextPtr> getStaticTexts() { return m_staticTexts; }
 
 private:
     std::unordered_map<Position, TilePtr, PositionHasher> m_tiles;
-    std::map<uint32, CreaturePtr> m_creatures;
-    std::array<std::vector<MissilePtr>, MAX_Z> m_missilesAtFloor;
+    std::map<uint32, CreaturePtr> m_knownCreatures;
+    std::array<std::vector<MissilePtr>, Otc::MAX_Z+1> m_floorMissiles;
     std::vector<AnimatedTextPtr> m_animatedTexts;
     std::vector<StaticTextPtr> m_staticTexts;
+    std::vector<MapViewPtr> m_mapViews;
 
     Light m_light;
     Position m_centralPosition;
-    Size m_size;
-    Size m_visibleSize;
-    Point m_centralOffset;
-    Point m_drawOffset;
-
-    FrameBufferPtr m_framebuffer;
-    PainterShaderProgramPtr m_shaderProgram;
 };
 
 extern Map g_map;

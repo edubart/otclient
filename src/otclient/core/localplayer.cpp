@@ -70,11 +70,11 @@ void LocalPlayer::walk(const Position& oldPos, const Position& newPos)
 void LocalPlayer::preWalk(Otc::Direction direction)
 {
     // start walking to direction
-    Position newPos = m_pos + Position::getPosFromDirection(direction);
+    Position newPos = m_position + Position::getPositionFromDirection(direction);
     m_preWalking = true;
     m_lastPrewalkDone = false;
     m_lastPrewalkDestionation = newPos;
-    Creature::walk(m_pos, newPos);
+    Creature::walk(m_position, newPos);
 }
 
 bool LocalPlayer::canWalk(Otc::Direction direction)

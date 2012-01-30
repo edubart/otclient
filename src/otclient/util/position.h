@@ -33,7 +33,7 @@ public:
     Position() : x(-1), y(-1), z(-1) { }
     Position(int x, int y, int z) : x(x), y(y), z(z) { }
 
-    static Position getPosFromDirection(Otc::Direction direction) {
+    static Position getPositionFromDirection(Otc::Direction direction) {
         switch(direction) {
         case Otc::North:
             return Position( 0, -1, 0);
@@ -116,7 +116,7 @@ public:
     void up(int n = 1) { z-=n; }
     void down(int n = 1) { z+=n; }
 
-    void perspectiveUp(int n = 1) { x+=n; y+=n; z-=n; }
+    void coveredUp(int n = 1) { x+=n; y+=n; z-=n; }
     void coveredDown(int n = 1) { x-=n; y-=n; z+=n; }
 
     int x;

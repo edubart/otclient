@@ -154,7 +154,7 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIWidget>("setWidth", &UIWidget::setWidth);
     g_lua.bindClassMemberFunction<UIWidget>("setHeight", &UIWidget::setHeight);
     g_lua.bindClassMemberFunction<UIWidget>("setSize", &UIWidget::setSize);
-    g_lua.bindClassMemberFunction<UIWidget>("setPos", &UIWidget::setPos);
+    g_lua.bindClassMemberFunction<UIWidget>("setPosition", &UIWidget::setPosition);
     g_lua.bindClassMemberFunction<UIWidget>("setColor", &UIWidget::setColor);
     g_lua.bindClassMemberFunction<UIWidget>("setBackgroundColor", &UIWidget::setBackgroundColor);
     g_lua.bindClassMemberFunction<UIWidget>("setBackgroundOffsetX", &UIWidget::setBackgroundOffsetX);
@@ -192,7 +192,7 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIWidget>("setOpacity", &UIWidget::setOpacity);
     g_lua.bindClassMemberFunction<UIWidget>("getX", &UIWidget::getX);
     g_lua.bindClassMemberFunction<UIWidget>("getY", &UIWidget::getY);
-    g_lua.bindClassMemberFunction<UIWidget>("getPos", &UIWidget::getPos);
+    g_lua.bindClassMemberFunction<UIWidget>("getPosition", &UIWidget::getPosition);
     g_lua.bindClassMemberFunction<UIWidget>("getWidth", &UIWidget::getWidth);
     g_lua.bindClassMemberFunction<UIWidget>("getHeight", &UIWidget::getHeight);
     g_lua.bindClassMemberFunction<UIWidget>("getSize", &UIWidget::getSize);
@@ -409,7 +409,7 @@ void Application::registerLuaFunctions()
     g_lua.bindClassStaticFunction("g_window", "getWidth", std::bind(&PlatformWindow::getWidth, &g_window));
     g_lua.bindClassStaticFunction("g_window", "getHeight", std::bind(&PlatformWindow::getHeight, &g_window));
     g_lua.bindClassStaticFunction("g_window", "getUnmaximizedPos", std::bind(&PlatformWindow::getUnmaximizedPos, &g_window));
-    g_lua.bindClassStaticFunction("g_window", "getPos", std::bind(&PlatformWindow::getPos, &g_window));
+    g_lua.bindClassStaticFunction("g_window", "getPosition", std::bind(&PlatformWindow::getPosition, &g_window));
     g_lua.bindClassStaticFunction("g_window", "getX", std::bind(&PlatformWindow::getX, &g_window));
     g_lua.bindClassStaticFunction("g_window", "getY", std::bind(&PlatformWindow::getY, &g_window));
     g_lua.bindClassStaticFunction("g_window", "getMousePos", std::bind(&PlatformWindow::getMousePos, &g_window));

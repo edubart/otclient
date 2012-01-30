@@ -407,7 +407,7 @@ void ProtocolGame::parseCreatureMove(InputMessage& msg)
     int oldStackpos = msg.getU8();
     Position newPos = parsePosition(msg);
 
-    ThingPtr thing = g_map.getTile(oldPos)->getThing(oldStackpos);
+    ThingPtr thing = g_map.getThing(oldPos, oldStackpos);
     if(!thing) {
         logTraceError("could not get thing");
         return;
@@ -566,10 +566,10 @@ void ProtocolGame::parseDistanceMissile(InputMessage& msg)
     Position toPos = parsePosition(msg);
     int shotId = msg.getU8();
 
-    MissilePtr shot = MissilePtr(new Missile());
-    shot->setId(shotId);
-    shot->setPath(fromPos, toPos);
-    g_map.addThing(shot, fromPos);
+    MissilePtr missile = MissilePtr(new Missile());
+    missile->setId(shotId);
+    missile->setPath(fromPos, toPos);
+    g_map.addThing(missile, fromPos);
 }
 
 void ProtocolGame::parseCreatureSquare(InputMessage& msg)
@@ -866,7 +866,7 @@ void ProtocolGame::parseOutfitWindow(InputMessage& msg)
     }
 
     CreaturePtr creature = CreaturePtr(new Creature);
-    creature->setXPattern(2);
+    creature->setDirection(Otc::South);
     creature->setOutfit(outfit);
 
     g_lua.callGlobalField("Game", "onOpenOutfitWindow", creature, outfitList);
@@ -1041,7 +1041,7 @@ ThingPtr ProtocolGame::internalGetThing(InputMessage& msg)
             if(knownCreature)
                 creature = knownCreature;
             else
-                logTraceError("server says creature is known, but its not on creatures list");
+                logTraceError("server said that a creature is known, but it's not");
         } else if(thingId == 0x0061) { //creature is not known
             uint removeId = msg.getU32();
             uint id = msg.getU32();
@@ -1065,6 +1065,8 @@ ThingPtr ProtocolGame::internalGetThing(InputMessage& msg)
 
             creature->setId(id);
             creature->setName(name);
+
+            g_map.addCreature(creature);
         }
 
         uint8 healthPercent = msg.getU8();
