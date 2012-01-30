@@ -304,7 +304,7 @@ std::vector<CreaturePtr> Map::getSpectatorsInRangeEx(const Position& centerPos, 
                     continue;
 
                 auto tileCreatures = tile->getCreatures();
-                creatures.insert(creatures.end(), tileCreatures.begin(), tileCreatures.end());
+                creatures.insert(creatures.end(), tileCreatures.rbegin(), tileCreatures.rend());
             }
         }
     }
@@ -376,7 +376,7 @@ bool Map::isAwareOfPosition(const Position& pos)
 int Map::getFirstAwareFloor()
 {
     if(m_centralPosition.z > Otc::SEA_FLOOR)
-        return m_centralPosition.z-2;
+        return m_centralPosition.z-Otc::AWARE_UNDEGROUND_FLOOR_RANGE;
     else
         return 0;
 }
@@ -384,7 +384,7 @@ int Map::getFirstAwareFloor()
 int Map::getLastAwareFloor()
 {
     if(m_centralPosition.z > Otc::SEA_FLOOR)
-        return std::min(m_centralPosition.z+2, (int)Otc::MAX_Z);
+        return std::min(m_centralPosition.z+Otc::AWARE_UNDEGROUND_FLOOR_RANGE, (int)Otc::MAX_Z);
     else
         return Otc::SEA_FLOOR;
 }

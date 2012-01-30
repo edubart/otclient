@@ -78,8 +78,6 @@ public:
     void updateInvisibleAnimation();
     void updateShield();
 
-    ThingType *getType();
-
     // walk related
     void turn(Otc::Direction direction);
     virtual void walk(const Position& oldPos, const Position& newPos);
@@ -93,6 +91,7 @@ public:
 protected:
     virtual void updateWalkAnimation(int totalPixelsWalked);
     virtual void updateWalkOffset(int totalPixelsWalked);
+    void updateWalkingTile();
     virtual void nextWalkUpdate();
     virtual void updateWalk();
     virtual void terminateWalk();
@@ -116,6 +115,7 @@ protected:
 
     // walk related
     Timer m_walkTimer;
+    TilePtr m_walkingTile;
     int m_walkInterval;
     int m_walkAnimationInterval;
     bool m_walking;

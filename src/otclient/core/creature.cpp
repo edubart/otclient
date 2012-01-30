@@ -69,12 +69,12 @@ void Creature::draw(const Point& dest, float scaleFactor)
 
     if(m_showVolatileSquare) {
         g_painter.setColor(m_volatileSquareColor);
-        g_painter.drawBoundingRect(Rect(dest + (m_walkOffset - getDisplacement() + 3)*scaleFactor, Size(28*scaleFactor, 28*scaleFactor)), 2*scaleFactor);
+        g_painter.drawBoundingRect(Rect(dest + (m_walkOffset - getDisplacement() + 3)*scaleFactor, Size(28*scaleFactor, 28*scaleFactor)), std::max((int)(2*scaleFactor), 1));
     }
 
     if(m_showStaticSquare) {
         g_painter.setColor(m_staticSquareColor);
-        g_painter.drawBoundingRect(Rect(dest + (m_walkOffset - getDisplacement() + 1)*scaleFactor, Size(scaledTileSize, scaledTileSize)), 2*scaleFactor);
+        g_painter.drawBoundingRect(Rect(dest + (m_walkOffset - getDisplacement() + 1)*scaleFactor, Size(scaledTileSize, scaledTileSize)), std::max((int)(2*scaleFactor), 1));
     }
 
     g_painter.setColor(Fw::white);
@@ -134,10 +134,10 @@ void Creature::draw(const Point& dest, float scaleFactor)
     }
     else if(m_outfit.getCategory() == ThingsType::Item) {
         for(int l = 0; l < getLayers(); l++)
-            internalDraw(dest + m_walkOffset * scaleFactor, scaleFactor, l);
+            internalDraw(dest + m_walkOffset, scaleFactor, l);
     }
     else if(m_outfit.getCategory() == ThingsType::Effect)
-        internalDraw(dest + m_walkOffset * scaleFactor, scaleFactor, 0);
+        internalDraw(dest + m_walkOffset, scaleFactor, 0);
 }
 
 void Creature::drawInformation(const Point& point, bool useGray, const Rect& parentRect)
@@ -276,6 +276,36 @@ void Creature::updateWalkOffset(int totalPixelsWalked)
         m_walkOffset.x = 32 - totalPixelsWalked;
 }
 
+void Creature::updateWalkingTile()
+{
+    // determine new walking tile
+    TilePtr newWalkingTile;
+    Rect virtualCreatureRect(Otc::TILE_PIXELS + (m_walkOffset.x - getDisplacementX()),
+                             Otc::TILE_PIXELS + (m_walkOffset.y - getDisplacementY()),
+                             Otc::TILE_PIXELS, Otc::TILE_PIXELS);
+    for(int xi = -1; xi <= 1 && !newWalkingTile; ++xi) {
+        for(int yi = -1; yi <= 1 && !newWalkingTile; ++yi) {
+            Rect virtualTileRect((xi+1)*Otc::TILE_PIXELS, (yi+1)*Otc::TILE_PIXELS, Otc::TILE_PIXELS, Otc::TILE_PIXELS);
+
+            // only render creatures where bottom right is inside tile rect
+            if(virtualTileRect.contains(virtualCreatureRect.bottomRight())) {
+                const TilePtr& tile = g_map.getTile(m_position.translated(xi, yi, 0));
+                if(!tile)
+                    continue;
+                newWalkingTile = tile;
+            }
+        }
+    }
+
+    if(newWalkingTile != m_walkingTile) {
+        if(m_walkingTile)
+            m_walkingTile->removeWalkingCreature(asCreature());
+        if(newWalkingTile)
+            newWalkingTile->addWalkingCreature(asCreature());
+        m_walkingTile = newWalkingTile;
+    }
+}
+
 void Creature::nextWalkUpdate()
 {
     // remove any previous scheduled walk updates
@@ -303,6 +333,7 @@ void Creature::updateWalk()
     // update walk animation and offsets
     updateWalkAnimation(totalPixelsWalked);
     updateWalkOffset(totalPixelsWalked);
+    updateWalkingTile();
 
     // terminate walk
     if(m_walking && m_walkTimer.ticksElapsed() >= m_walkInterval)
@@ -321,6 +352,11 @@ void Creature::terminateWalk()
     if(m_walkTurnDirection != Otc::InvalidDirection)  {
         setDirection(m_walkTurnDirection);
         m_walkTurnDirection = Otc::InvalidDirection;
+    }
+
+    if(m_walkingTile) {
+        m_walkingTile->removeWalkingCreature(asCreature());
+        m_walkingTile = nullptr;
     }
 
     m_walking = false;

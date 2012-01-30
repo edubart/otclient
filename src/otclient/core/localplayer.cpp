@@ -145,6 +145,7 @@ void LocalPlayer::updateWalk()
     // update walk animation and offsets
     updateWalkAnimation(totalPixelsWalked);
     updateWalkOffset(totalPixelsWalked);
+    updateWalkingTile();
 
     // terminate walk only when client and server side walk are complated
     if(m_walking && !m_preWalking && m_walkTimer.ticksElapsed() >= m_walkInterval)

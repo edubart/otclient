@@ -33,11 +33,11 @@ public:
 
     void draw(const Point& dest, float scaleFactor, int drawFlags);
 
-private:
-    void updateVisibleItemsCache();
-
 public:
     void clean();
+
+    void addWalkingCreature(const CreaturePtr& creature);
+    void removeWalkingCreature(const CreaturePtr& creature);
 
     ThingPtr addThing(const ThingPtr& thing, int stackPos = -1);
     bool removeThing(const ThingPtr& thing);
@@ -70,6 +70,7 @@ public:
     TilePtr asTile() { return std::static_pointer_cast<Tile>(shared_from_this()); }
 
 private:
+    std::vector<CreaturePtr> m_walkingCreatures;
     std::vector<EffectPtr> m_effects; // leave this outside m_things because it has no stackpos.
     std::vector<ThingPtr> m_things;
     Position m_position;

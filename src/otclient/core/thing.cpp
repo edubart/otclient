@@ -77,6 +77,8 @@ void Thing::internalDraw(const Point& dest, float scaleFactor, int layer)
             Rect drawRect((dest.x - w*scaledSize) - getDisplacementX()*scaleFactor,
                           (dest.y - h*scaledSize) - getDisplacementY()*scaleFactor,
                           scaledSize, scaledSize);
+
+            g_painter.setColor(Fw::white);
             g_painter.drawTexturedRect(drawRect, spriteTex);
         }
     }

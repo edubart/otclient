@@ -45,7 +45,6 @@ MapView::MapView()
     m_shaderProgram->addShaderFromSourceCode(Shader::Vertex, glslMainWithTexCoordsVertexShader + glslPositionOnlyVertexShader);
     m_shaderProgram->addShaderFromSourceFile(Shader::Fragment, "/game_shaders/map.frag");
     assert(m_shaderProgram->link());
-    //m_animated = false;
 }
 
 void MapView::draw(const Rect& rect)
@@ -60,7 +59,7 @@ void MapView::draw(const Rect& rect)
     if(isNearView())
         tileDrawFlags = Otc::DrawGround | Otc::DrawWalls | Otc::DrawCommonItems | Otc::DrawCreatures | Otc::DrawEffects;
     else if(isMidView())
-        tileDrawFlags = Otc::DrawGround | Otc::DrawWalls | Otc::DrawCommonItems;
+        tileDrawFlags = Otc::DrawGround | Otc::DrawWalls | Otc::DrawCommonItems | Otc::DrawCreatures;
     else if(isFarView())
         tileDrawFlags = Otc::DrawGround | Otc::DrawWalls;
     else // huge far view
@@ -161,6 +160,10 @@ bool MapView::updateVisibleTilesCache()
 
     int firstFloor = getFirstVisibleFloor();
     int lastFloor = getLastVisibleFloor();
+
+    if(lastFloor < firstFloor)
+        lastFloor = firstFloor;
+
     m_cachedFirstVisibleFloor = firstFloor;
     m_cachedLastVisibleFloor = lastFloor;
     Position cameraPosition = getCameraPosition();
@@ -291,7 +294,7 @@ int MapView::getFirstVisibleFloor()
 
     // limits to underground floors while under sea level
     if(cameraPosition.z > Otc::SEA_FLOOR)
-        firstFloor = Otc::SEA_FLOOR+1;
+        firstFloor = cameraPosition.z - Otc::AWARE_UNDEGROUND_FLOOR_RANGE;
 
     // loop in 3x3 tiles around the camera
     for(int ix = -1; ix <= 1 && firstFloor < cameraPosition.z; ++ix) {
@@ -338,7 +341,7 @@ int MapView::getLastVisibleFloor()
 
     // view only underground floors when below sea level
     if(cameraPosition.z > Otc::SEA_FLOOR)
-        return Otc::MAX_Z;
+        return cameraPosition.z + Otc::AWARE_UNDEGROUND_FLOOR_RANGE;
     else
         return Otc::SEA_FLOOR;
 }
