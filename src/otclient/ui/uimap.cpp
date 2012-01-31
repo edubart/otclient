@@ -96,6 +96,11 @@ void UIMap::zoomOut()
     m_mapRect.moveCenter(m_rect.center());
 }
 
+void UIMap::setCameraPosition(const Position& pos)
+{
+    m_mapView->setCameraPosition(pos);
+}
+
 TilePtr UIMap::getTile(const Point& mousePos)
 {
     /*

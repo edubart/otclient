@@ -34,12 +34,11 @@ class MapView : public LuaObject
         // 3840x2160 => 1080p optimized
         // 2560x1440 => 720p optimized
         // 1728x972 => 480p optimized
-        DEFAULT_FRAMBUFFER_WIDTH = 3840,
-        DEFAULT_FRAMBUFFER_HEIGHT = 2160,
+        DEFAULT_FRAMBUFFER_WIDTH = 2560,
+        DEFAULT_FRAMBUFFER_HEIGHT = 1440,
 
-        NEAR_VIEW_AREA = 48*48,
-        MID_VIEW_AREA = 96*96,
-        FAR_VIEW_AREA = 384*384,
+        NEAR_VIEW_AREA = 32*32,
+        MID_VIEW_AREA = 64*64,
         MAX_TILE_UPDATES = NEAR_VIEW_AREA*7
     };
 

@@ -37,6 +37,7 @@ public:
 
     void zoomIn();
     void zoomOut();
+    void setCameraPosition(const Position& pos);
 
     TilePtr getTile(const Point& mousePos);
 
