@@ -30,10 +30,10 @@
 class MapView : public LuaObject
 {
     enum {
-        DEFAULT_FRAMBUFFER_SIZE = 2048,
+        DEFAULT_FRAMBUFFER_SIZE = 3840,
         NEAR_VIEW_AREA = 64*64,
         MID_VIEW_AREA = 128*128,
-        FAR_VIEW_AREA = 192*192
+        FAR_VIEW_AREA = 256*256
     };
 
 public:

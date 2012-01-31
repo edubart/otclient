@@ -59,7 +59,7 @@ void MapView::draw(const Rect& rect)
     if(isNearView())
         tileDrawFlags = Otc::DrawGround | Otc::DrawWalls | Otc::DrawCommonItems | Otc::DrawCreatures | Otc::DrawEffects;
     else if(isMidView())
-        tileDrawFlags = Otc::DrawGround | Otc::DrawWalls | Otc::DrawCommonItems | Otc::DrawCreatures;
+        tileDrawFlags = Otc::DrawGround | Otc::DrawWalls | Otc::DrawCommonItems;
     else if(isFarView())
         tileDrawFlags = Otc::DrawGround | Otc::DrawWalls;
     else // huge far view
@@ -135,6 +135,10 @@ void MapView::draw(const Rect& rect)
 
             // only draw animated texts from visible floors
             if(pos.z < m_cachedFirstVisibleFloor || pos.z > m_cachedLastVisibleFloor)
+                continue;
+
+            // dont draw animated texts from covered tiles
+            if(pos.z != cameraPosition.z && g_map.isCovered(pos, m_cachedFirstVisibleFloor))
                 continue;
 
             Point p = transformPositionTo2D(pos) - drawOffset;
@@ -286,7 +290,7 @@ int MapView::getFirstVisibleFloor()
     Position cameraPosition = getCameraPosition();
 
     // avoid rendering multile floors on far views
-    if(!isNearView())
+    if(!isNearView() && !isMidView())
         return cameraPosition.z;
 
     // if nothing is limiting the view, the first visible floor is 0
@@ -294,7 +298,7 @@ int MapView::getFirstVisibleFloor()
 
     // limits to underground floors while under sea level
     if(cameraPosition.z > Otc::SEA_FLOOR)
-        firstFloor = cameraPosition.z - Otc::AWARE_UNDEGROUND_FLOOR_RANGE;
+        firstFloor = std::max(cameraPosition.z - Otc::AWARE_UNDEGROUND_FLOOR_RANGE, (int)Otc::UNDERGROUND_FLOOR);
 
     // loop in 3x3 tiles around the camera
     for(int ix = -1; ix <= 1 && firstFloor < cameraPosition.z; ++ix) {
@@ -302,7 +306,7 @@ int MapView::getFirstVisibleFloor()
             Position pos = cameraPosition.translated(ix, iy);
 
             // process tiles that we can look through, e.g. windows, doors
-            if((ix == 0 && iy == 0) || g_map.isLookPossible(pos)) {
+            if((ix == 0 && iy == 0) || (/*(std::abs(ix) != std::abs(iy)) && */g_map.isLookPossible(pos))) {
                 Position upperPos = pos;
                 Position coveredPos = pos;
 
@@ -336,7 +340,7 @@ int MapView::getLastVisibleFloor()
     Position cameraPosition = getCameraPosition();
 
     // avoid rendering multile floors on far views
-    if(!isNearView())
+    if(!isNearView() && !isMidView())
         return cameraPosition.z;
 
     // view only underground floors when below sea level

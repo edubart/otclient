@@ -56,7 +56,16 @@ void UIMap::draw()
 
 void UIMap::zoomIn()
 {
-    m_mapView->setVisibleDimension(m_mapView->getVisibleDimension() + Size(2,2));
+    int dimensionHeight = m_mapView->getVisibleDimension().height() * 0.99;
+    if(dimensionHeight == m_mapView->getVisibleDimension().height())
+        dimensionHeight -= 1;
+    if(dimensionHeight % 2 == 0)
+        dimensionHeight -= 1;
+    int dimensionWidth = dimensionHeight * getSize().ratio();
+    if(dimensionWidth % 2 == 0)
+        dimensionWidth -= 1;
+
+    m_mapView->setVisibleDimension(Size(dimensionWidth, dimensionHeight));
 
     Rect mapRect = getChildrenRect().expanded(-1);
     Size mapSize = m_mapView->getVisibleSize();
@@ -68,7 +77,16 @@ void UIMap::zoomIn()
 
 void UIMap::zoomOut()
 {
-    m_mapView->setVisibleDimension(m_mapView->getVisibleDimension() - Size(2,2));
+    int dimensionHeight = m_mapView->getVisibleDimension().height() * 1.01;
+    if(dimensionHeight == m_mapView->getVisibleDimension().height())
+        dimensionHeight += 1;
+    if(dimensionHeight % 2 == 0)
+        dimensionHeight += 1;
+    int dimensionWidth = dimensionHeight * getSize().ratio();
+    if(dimensionWidth % 2 == 0)
+        dimensionWidth += 1;
+
+    m_mapView->setVisibleDimension(Size(dimensionWidth, dimensionHeight));
 
     Rect mapRect = getChildrenRect().expanded(-1);
     Size mapSize = m_mapView->getVisibleSize();
