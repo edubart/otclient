@@ -38,7 +38,7 @@ class MapView : public LuaObject
         DEFAULT_FRAMBUFFER_HEIGHT = 1440,
 
         NEAR_VIEW_AREA = 32*32,
-        MID_VIEW_AREA = 64*64,
+        MID_VIEW_AREA = 96*96,
         MAX_TILE_UPDATES = NEAR_VIEW_AREA*7
     };
 

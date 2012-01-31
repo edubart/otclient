@@ -212,7 +212,7 @@ void MapView::updateVisibleTilesCache(int start)
                     }
 
                     // avoid rendering too much tiles at once on far views
-                    if(count - start + 1 > MAX_TILE_UPDATES && m_viewRange >= FAR_VIEW) {
+                    if(count - start + 1 > MAX_TILE_UPDATES && m_viewRange >= HUGE_VIEW) {
                         stop = true;
                         break;
                     }
@@ -240,7 +240,6 @@ void MapView::updateVisibleTilesCache(int start)
             assert(m_drawDimension.width() % 2 == 0 && m_drawDimension.height() % 2 == 0);
             Point quadTopLeft(m_drawDimension.width()/2 - 1, m_drawDimension.height()/2 - 1);
             for(int step = 1; !(quadTopLeft.x < 0 && quadTopLeft.y < 0) && !stop; ++step) {
-
                 int quadWidth = std::min(2*step, m_drawDimension.width());
                 int quadHeight = std::min(2*step, m_drawDimension.height());
                 int fillWidth = (quadTopLeft.x >= 0) ? quadWidth-1 : quadWidth;
