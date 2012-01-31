@@ -61,10 +61,10 @@ public:
     TSize<T> operator/(const float v) const { return TSize<T>((T)wd/v, (T)ht/v);  }
     TSize<T>& operator/=(const float v) { wd/=v; ht/=v; return *this; }
 
-    bool operator<=(const TSize<T>&other) const { return wd<=other.wd || ht<=other.ht; }
-    bool operator>=(const TSize<T>&other) const { return wd>=other.wd || ht>=other.ht; }
-    bool operator<(const TSize<T>&other) const { return wd<other.wd || ht<other.ht; }
-    bool operator>(const TSize<T>&other) const { return wd>other.wd || ht>other.ht; }
+    bool operator<=(const TSize<T>&other) const { return wd<=other.wd && ht<=other.ht; }
+    bool operator>=(const TSize<T>&other) const { return wd>=other.wd && ht>=other.ht; }
+    bool operator<(const TSize<T>&other) const { return wd<other.wd && ht<other.ht; }
+    bool operator>(const TSize<T>&other) const { return wd>other.wd && ht>other.ht; }
 
     TSize<T>& operator=(const TSize<T>& other) { wd = other.wd; ht = other.ht; return *this; }
     bool operator==(const TSize<T>& other) const { return other.wd==wd && other.ht==ht; }

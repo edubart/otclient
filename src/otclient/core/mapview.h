@@ -26,14 +26,28 @@
 #include "declarations.h"
 #include <framework/graphics/declarations.h>
 #include <framework/luascript/luaobject.h>
+#include <framework/core/declarations.h>
 
 class MapView : public LuaObject
 {
     enum {
-        DEFAULT_FRAMBUFFER_SIZE = 3840,
-        NEAR_VIEW_AREA = 64*64,
-        MID_VIEW_AREA = 128*128,
-        FAR_VIEW_AREA = 256*256
+        // 3840x2160 => 1080p optimized
+        // 2560x1440 => 720p optimized
+        // 1728x972 => 480p optimized
+        DEFAULT_FRAMBUFFER_WIDTH = 3840,
+        DEFAULT_FRAMBUFFER_HEIGHT = 2160,
+
+        NEAR_VIEW_AREA = 48*48,
+        MID_VIEW_AREA = 96*96,
+        FAR_VIEW_AREA = 384*384,
+        MAX_TILE_UPDATES = NEAR_VIEW_AREA*7
+    };
+
+    enum ViewRange {
+        NEAR_VIEW,
+        MID_VIEW,
+        FAR_VIEW,
+        HUGE_VIEW
     };
 
 public:
@@ -41,8 +55,7 @@ public:
     void draw(const Rect& rect);
 
 private:
-    void recalculateTileSize();
-    bool updateVisibleTilesCache();
+    void updateVisibleTilesCache(int start = 0);
     void requestVisibleTilesCacheUpdate() { m_mustUpdateVisibleTilesCache = true; }
 
 protected:
@@ -71,10 +84,7 @@ public:
     Size getVisibleSize() { return m_visibleDimension * m_tileSize; }
     CreaturePtr getFollowingCreature() { return m_followingCreature; }
 
-    bool isNearView() { return m_drawDimension.area() <= NEAR_VIEW_AREA; }
-    bool isMidView() { return m_drawDimension.area() > NEAR_VIEW_AREA && m_drawDimension.area() <= MID_VIEW_AREA; }
-    bool isFarView() { return m_drawDimension.area() > MID_VIEW_AREA && m_drawDimension.area() <= FAR_VIEW_AREA; }
-    bool isHugeFarView() { return m_drawDimension.area() > FAR_VIEW_AREA; }
+    bool getViewRange() { return m_viewRange; }
     bool isAnimated() { return m_animated; }
 
     Point transformPositionTo2D(const Position& position);
@@ -91,13 +101,18 @@ private:
     Size m_visibleDimension;
     Point m_virtualCenterOffset;
     Position m_customCameraPosition;
+    Position m_framebufferCenterPosition;
     Boolean<true> m_mustUpdateVisibleTilesCache;
+    Boolean<true> m_mustDrawVisibleTilesCache;
+    Boolean<true> m_mustCleanFramebuffer;
     Boolean<true> m_animated;
     std::vector<TilePtr> m_cachedVisibleTiles;
     std::vector<CreaturePtr> m_cachedFloorVisibleCreatures;
+    EventPtr m_updateTilesCacheEvent;
     CreaturePtr m_followingCreature;
     FrameBufferPtr m_framebuffer;
     PainterShaderProgramPtr m_shaderProgram;
+    ViewRange m_viewRange;
 };
 
 #endif

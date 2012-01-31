@@ -40,6 +40,14 @@ void Tile::draw(const Point& dest, float scaleFactor, int drawFlags)
 {
     int drawElevation = 0;
 
+    // optimization far far views
+    if(drawFlags == Otc::DrawGround) {
+        const ThingPtr& thing = m_things.front();
+        if(thing)
+            thing->draw(dest, scaleFactor);
+        return;
+    }
+
     // first bottom items
     if(drawFlags & Otc::DrawGround || drawFlags & Otc::DrawWalls) {
         for(const ThingPtr& thing : m_things) {

@@ -216,10 +216,20 @@ TilePtr Map::createTile(const Position& pos)
     return tile;
 }
 
+const TilePtr& Map::getTile(const Position& pos)
+{
+    auto it = m_tiles.find(pos);
+    if(it != m_tiles.end())
+        return it->second;
+    static TilePtr nulltile;
+    return nulltile;
+}
+
 void Map::cleanTile(const Position& pos)
 {
     if(TilePtr tile = getTile(pos)) {
         tile->clean();
+        m_tiles.erase(m_tiles.find(pos));
 
         notificateTileUpdateToMapViews(pos);
     }

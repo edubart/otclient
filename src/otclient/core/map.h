@@ -45,7 +45,7 @@ public:
 
     // tile related
     TilePtr createTile(const Position& pos);
-    const TilePtr& getTile(const Position& pos) { return m_tiles[pos]; }
+    const TilePtr& getTile(const Position& pos);
     void cleanTile(const Position& pos);
     bool removeThing(const ThingPtr& thing);
 
