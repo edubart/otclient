@@ -264,7 +264,7 @@ bool luavalue_cast(int index, OTMLNodePtr& node)
             std::string cnodeName = g_lua.toString(-2);
             if(g_lua.isTable()) {
                 OTMLNodePtr cnode;
-                if(luavalue_cast(-1, node)) {
+                if(luavalue_cast(-1, cnode)) {
                     cnode->setTag(cnodeName);
                     node->addChild(cnode);
                 }

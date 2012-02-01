@@ -108,6 +108,10 @@ void Connection::write(uint8* buffer, uint16 size)
     if(!m_connected)
         return;
 
+    // send old buffer if we can't add more data
+    if(m_sendBufferSize + size >= SEND_BUFFER_SIZE && m_sendEvent)
+        m_sendEvent->execute();
+
     // we can't send right, otherwise we could create tcp congestion
     memcpy(m_sendBuffer + m_sendBufferSize, buffer, size);
     m_sendBufferSize += size;
@@ -172,7 +176,6 @@ void Connection::onConnect(const boost::system::error_code& error)
         m_connected = true;
 
         // disable nagle's algorithm
-        //TODO: implement custom cache
         boost::asio::ip::tcp::no_delay option(true);
         m_socket.set_option(option);
 

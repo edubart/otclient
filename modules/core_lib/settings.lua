@@ -1,5 +1,13 @@
 Settings = {}
 
+Settings.exists = g_configs.exists
+Settings.setNode = g_configs.setNode
+Settings.mergeNode = g_configs.mergeNode
+Settings.getNode = g_configs.getNode
+Settings.remove = g_configs.remove
+Settings.setList = g_configs.setList
+Settings.getList = g_configs.getList
+
 local function convertSettingValue(value)
   if type(value) == 'table' then
     if value.x and value.width then
@@ -20,21 +28,10 @@ local function convertSettingValue(value)
   end
 end
 
-function Settings.exists(key)
-  return g_configs.exists(key)
-end
-
-function Settings.remove(key)
-  g_configs.remove(key)
-end
-
 function Settings.set(key, value)
   g_configs.set(key, convertSettingValue(value))
 end
 
-function Settings.setList(key, list)
-  g_configs.setList(key, list)
-end
 
 function Settings.setDefault(key, value)
   if Settings.exists(key) then return false end
@@ -47,10 +44,6 @@ function Settings.get(key, default)
     Settings.set(key, default)
   end
   return g_configs.get(key)
-end
-
-function Settings.getList(key)
-  return g_configs.getList(key)
 end
 
 function Settings.getString(key, default)

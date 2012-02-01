@@ -381,6 +381,9 @@ void Application::registerLuaFunctions()
     g_lua.bindClassStaticFunction("g_configs", "getList", std::bind(&ConfigManager::getList, &g_configs, _1));
     g_lua.bindClassStaticFunction("g_configs", "exists", std::bind(&ConfigManager::exists, &g_configs, _1));
     g_lua.bindClassStaticFunction("g_configs", "remove", std::bind(&ConfigManager::remove, &g_configs, _1));
+    g_lua.bindClassStaticFunction("g_configs", "setNode", std::bind(&ConfigManager::setNode, &g_configs, _1, _2));
+    g_lua.bindClassStaticFunction("g_configs", "addNode", std::bind(&ConfigManager::addNode, &g_configs, _1, _2));
+    g_lua.bindClassStaticFunction("g_configs", "getNode", std::bind(&ConfigManager::getNode, &g_configs, _1));
 
     // PlatformWindow
     g_lua.registerStaticClass("g_window");
