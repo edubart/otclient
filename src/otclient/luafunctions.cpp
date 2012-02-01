@@ -114,6 +114,8 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Thing>("isPickupable", &Thing::isPickupable);
     g_lua.bindClassMemberFunction<Thing>("isIgnoreLook", &Thing::isIgnoreLook);
     g_lua.bindClassMemberFunction<Thing>("isStackable", &Thing::isStackable);
+    g_lua.bindClassMemberFunction<Thing>("isTranslucent", &Thing::isTranslucent);
+    g_lua.bindClassMemberFunction<Thing>("isFullGround", &Thing::isFullGround);
 
     g_lua.registerClass<Creature, Thing>();
     g_lua.bindClassMemberFunction<Creature>("getName", &Creature::getName);

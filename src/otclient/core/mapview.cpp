@@ -76,8 +76,6 @@ void MapView::draw(const Rect& rect)
 
     if(m_mustDrawVisibleTilesCache || animate) {
         m_framebuffer->bind(m_mustCleanFramebuffer);
-        if(m_mustCleanFramebuffer)
-            m_mustCleanFramebuffer = false;
 
         for(const TilePtr& tile : m_cachedVisibleTiles) {
             tile->draw(transformPositionTo2D(tile->getPosition()), scaleFactor, tileDrawFlags);
@@ -181,7 +179,8 @@ void MapView::updateVisibleTilesCache(int start)
         m_mustCleanFramebuffer = true;
         m_mustDrawVisibleTilesCache = true;
         m_mustUpdateVisibleTilesCache = false;
-    }
+    } else
+        m_mustCleanFramebuffer = false;
 
     // there is no tile to render on invalid positions
     Position cameraPosition = getCameraPosition();
@@ -227,7 +226,7 @@ void MapView::updateVisibleTilesCache(int start)
                         if(tile->isEmpty())
                             continue;
                         // skip tiles that are completely behind another tile
-                        if(g_map.isCompletelyCovered(tilePos, m_cachedLastVisibleFloor))
+                        if(g_map.isCompletelyCovered(tilePos, m_cachedFirstVisibleFloor))
                             continue;
                         m_cachedVisibleTiles.push_back(tile);
                     }
@@ -322,9 +321,6 @@ void MapView::updateVisibleTilesCache(int start)
                 if(const TilePtr& tile = g_map.getTile(tilePos)) {
                     // skip tiles that have nothing
                     if(tile->isEmpty())
-                        continue;
-                    // skip tiles that are completely behind another tile
-                    if(g_map.isCompletelyCovered(tilePos, m_cachedLastVisibleFloor))
                         continue;
                     m_cachedVisibleTiles.push_back(tile);
                 }

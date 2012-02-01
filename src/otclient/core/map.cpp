@@ -337,9 +337,6 @@ bool Map::isCovered(const Position& pos, int firstFloor)
         // the below tile is covered when the above tile has a full ground
         if(tile && tile->isFullGround())
             return true;
-
-        if(tilePos.z == 0)
-            break;
     }
     return false;
 }
@@ -352,7 +349,7 @@ bool Map::isCompletelyCovered(const Position& pos, int firstFloor)
         // check in 2x2 range tiles that has no transparent pixels
         for(int x=0;x<2;++x) {
             for(int y=0;y<2;++y) {
-                TilePtr tile = m_tiles[tilePos + Position(-x, -y, 0)];
+                const TilePtr& tile = getTile(tilePos.translated(-x, -y));
                 if(!tile || !tile->isFullyOpaque()) {
                     covered = false;
                     break;

@@ -37,6 +37,10 @@ Item::Item() : Thing()
 
 ItemPtr Item::create(int id)
 {
+    if(id < g_thingsType.getFirstItemId() || id > g_thingsType.getMaxItemid()) {
+        logTraceError("invalid item id ", id);
+        return nullptr;
+    }
     ItemPtr item = ItemPtr(new Item);
     item->setId(id);
     return item;

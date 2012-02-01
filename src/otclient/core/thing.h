@@ -69,6 +69,7 @@ public:
     // type related
     bool isGround() { return m_type->properties[ThingType::IsGround]; }
     bool isFullGround() { return m_type->properties[ThingType::IsFullGround]; }
+    bool isTranslucent() { return m_type->properties[ThingType::IsTranslucent]; }
     bool isGroundBorder() { return m_type->properties[ThingType::IsGroundBorder]; }
     bool isOnBottom() { return m_type->properties[ThingType::IsOnBottom]; }
     bool isOnTop() { return m_type->properties[ThingType::IsOnTop]; }

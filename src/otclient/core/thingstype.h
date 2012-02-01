@@ -49,6 +49,9 @@ public:
     uint32 getSignature() { return m_signature; }
     bool isLoaded() { return m_loaded; }
 
+    int getFirstItemId() { return 100; }
+    int getMaxItemid() { return m_things[Item].size() + 100 - 1; }
+
 private:
     uint32 m_signature;
     Boolean<false> m_loaded;
