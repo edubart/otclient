@@ -138,6 +138,7 @@ void OTClient::registerLuaFunctions()
     g_lua.registerClass<AnimatedText, Thing>();
 
     g_lua.registerClass<Player, Creature>();
+    g_lua.bindClassMemberFunction<Creature>("isWalking", &Creature::isWalking);
     g_lua.registerClass<Npc, Creature>();
     g_lua.registerClass<Monster, Creature>();
     g_lua.registerClass<LocalPlayer, Player>();

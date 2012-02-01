@@ -35,6 +35,7 @@ Connection::Connection() :
 {
     m_connected = false;
     m_connecting = false;
+    m_sendBufferSize = 0;
 }
 
 Connection::~Connection()
@@ -104,17 +105,30 @@ void Connection::close()
 
 void Connection::write(uint8* buffer, uint16 size)
 {
-    m_writeTimer.cancel();
-
     if(!m_connected)
         return;
 
-    asio::async_write(m_socket,
-                      asio::buffer(buffer, size),
-                      std::bind(&Connection::onWrite, shared_from_this(), _1, _2));
+    // we can't send right, otherwise we could create tcp congestion
+    memcpy(m_sendBuffer + m_sendBufferSize, buffer, size);
+    m_sendBufferSize += size;
 
-    m_writeTimer.expires_from_now(boost::posix_time::seconds(WRITE_TIMEOUT));
-    m_writeTimer.async_wait(std::bind(&Connection::onTimeout, shared_from_this(), _1));
+    if(!m_sendEvent || m_sendEvent->isExecuted() || m_sendEvent->isCanceled()) {
+        auto weakSelf = ConnectionWeakPtr(shared_from_this());
+        m_sendEvent = g_dispatcher.scheduleEvent([=] {
+            if(!weakSelf.lock())
+                return;
+            //m_writeTimer.cancel();
+
+            asio::async_write(m_socket,
+                              asio::buffer(m_sendBuffer, m_sendBufferSize),
+                              std::bind(&Connection::onWrite, shared_from_this(), _1, _2));
+
+            m_writeTimer.expires_from_now(boost::posix_time::seconds(WRITE_TIMEOUT));
+            m_writeTimer.async_wait(std::bind(&Connection::onTimeout, shared_from_this(), _1));
+
+            m_sendBufferSize = 0;
+        }, SEND_INTERVAL);
+    }
 }
 
 void Connection::read(uint16 bytes, const RecvCallback& callback)
@@ -158,6 +172,7 @@ void Connection::onConnect(const boost::system::error_code& error)
         m_connected = true;
 
         // disable nagle's algorithm
+        //TODO: implement custom cache
         boost::asio::ip::tcp::no_delay option(true);
         m_socket.set_option(option);
 

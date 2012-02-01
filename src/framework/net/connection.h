@@ -25,6 +25,8 @@
 
 #include "declarations.h"
 #include <boost/asio.hpp>
+#include <framework/core/timer.h>
+#include <framework/core/declarations.h>
 
 class Connection : public std::enable_shared_from_this<Connection>, boost::noncopyable
 {
@@ -34,6 +36,8 @@ class Connection : public std::enable_shared_from_this<Connection>, boost::nonco
     enum {
         READ_TIMEOUT = 30,
         WRITE_TIMEOUT = 30,
+        SEND_INTERVAL = 1,
+        SEND_BUFFER_SIZE = 65536,
         RECV_BUFFER_SIZE = 65536
     };
 
@@ -72,9 +76,13 @@ protected:
     asio::ip::tcp::resolver m_resolver;
     asio::ip::tcp::socket m_socket;
 
+    uint8 m_sendBuffer[SEND_BUFFER_SIZE];
     uint8 m_recvBuffer[RECV_BUFFER_SIZE];
     bool m_connected;
     bool m_connecting;
+    int m_sendBufferSize;
+    Timer m_sendTimer;
+    ScheduledEventPtr m_sendEvent;
 
     friend class Server;
 };

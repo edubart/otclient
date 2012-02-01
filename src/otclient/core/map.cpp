@@ -307,6 +307,7 @@ std::vector<CreaturePtr> Map::getSpectatorsInRangeEx(const Position& centerPos, 
     }
 
     //TODO: get creatures from other floors corretly
+    //TODO: delivery creatures in distance order
 
     for(int iz=-minZRange; iz<=maxZRange; ++iz) {
         for(int iy=-minYRange; iy<=maxYRange; ++iy) {
