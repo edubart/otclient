@@ -61,8 +61,8 @@ public:
     /// @note each userdata of this object on lua counts as a reference
     int getUseCount();
 
-    /// Returns the class name used in Lua
-    virtual std::string getLuaObjectName() const {
+    /// Returns the derived class name, its the same name used in Lua
+    virtual std::string getClassName() const {
         // TODO: this could be cached for more performance
         return Fw::demangleName(typeid(*this).name());
     }

@@ -30,7 +30,7 @@ function UIItem:onDrop(widget, mousePos)
   if not widget or not widget.currentDragThing then return true end
 
   local pos = self.position
-  local data = widget.currentDragThing:getData()
+  local data = widget.currentDragThing:getCount()
   if widget.currentDragThing:isStackable() and data > 1 then
     widget.parsed = true
     local moveWindow = displayUI('/game/movewindow.otui')

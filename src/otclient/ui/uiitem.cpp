@@ -40,8 +40,8 @@ void UIItem::draw()
         g_painter.setColor(Fw::white);
         m_item->draw(topLeft, 1);
 
-        if(m_font && m_item->isStackable() && m_item->getData() > 1) {
-            std::string count = Fw::tostring(m_item->getData());
+        if(m_font && m_item->isStackable() && m_item->getCount() > 1) {
+            std::string count = Fw::tostring(m_item->getCount());
             m_font->renderText(count, Rect(m_rect.topLeft(), m_rect.bottomRight() - Point(3, 0)), Fw::AlignBottomRight, Color(231, 231, 231));
         }
 
@@ -56,14 +56,19 @@ void UIItem::setItemId(int id)
 {
     if(!m_item)
         m_item = Item::create(id);
-    else
-        m_item->setId(id);
+    else {
+        // remove item
+        if(id == 0)
+            m_item = nullptr;
+        else
+            m_item->setId(id);
+    }
 }
 
 void UIItem::setItemCount(int count)
 {
     if(m_item)
-        m_item->setData(count);
+        m_item->setCount(count);
 }
 
 void UIItem::onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode)

@@ -129,7 +129,7 @@ void OTClient::registerLuaFunctions()
 
     g_lua.registerClass<Item, Thing>();
     g_lua.bindClassStaticFunction<Item>("create", &Item::create);
-    g_lua.bindClassMemberFunction<Item>("getData", &Item::getData);
+    g_lua.bindClassMemberFunction<Item>("getCount", &Item::getCount);
 
     g_lua.registerClass<Effect, Thing>();
     g_lua.registerClass<Missile, Thing>();

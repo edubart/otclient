@@ -37,9 +37,10 @@ public:
     void setItemCount(int count);
     void setItem(const ItemPtr& item) { m_item = item; }
     void setVirtual(bool virt) { m_virtual = virt; }
+    void clearItem() { setItemId(0); }
 
-    int getItemId() { return m_item->getId(); }
-    int getItemCount() { return m_item->getData(); }
+    int getItemId() { return m_item ? m_item->getId() : 0; }
+    int getItemCount() { return m_item ? m_item->getCount() : 0; }
     ItemPtr getItem() { return m_item; }
     bool isVirtual() { return m_virtual; }
 

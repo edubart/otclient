@@ -26,7 +26,7 @@ function UIMap:onDrop(widget, mousePos)
   local tile = self:getTile(mousePos)
   if not tile then return false end
   
-  local data = widget.currentDragThing:getData()
+  local data = widget.currentDragThing:getCount()
   if widget.currentDragThing:isStackable() and data > 1 then
     widget.parsed = true
     local moveWindow = displayUI('/game/movewindow.otui')

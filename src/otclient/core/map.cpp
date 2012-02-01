@@ -71,7 +71,7 @@ void Map::load()
             if(item->isStackable() || item->isFluidContainer() || item->isFluid()) {
                 uint8 data;
                 in.read((char*)&data, sizeof(data));
-                item->setData(data);
+                item->setCount(data);
             }
             addThing(item, pos, 255);
             in.read((char*)&id, sizeof(id));
@@ -95,7 +95,7 @@ void Map::save()
                 id = item->getId();
                 out.write((char*)&id, sizeof(id));
                 if(item->isStackable() || item->isFluidContainer() || item->isFluid()) {
-                    uint8 data = item->getData();
+                    uint8 data = item->getCount();
                     out.write((char*)&data, sizeof(data));
                 }
             }

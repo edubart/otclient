@@ -108,9 +108,9 @@ protected:
     void internalDraw(const Point& dest, float scaleFactor, int layer);
     void updateType();
 
-    uint32 m_id;
+    uint32 m_id; //TODO: move to derived class to use less memory
     Position m_position;
-    uint8 m_xPattern, m_yPattern, m_zPattern, m_animation;
+    uint8 m_xPattern, m_yPattern, m_zPattern, m_animation; //TODO: remove this variables to use less memory
 
 private:
     ThingType *m_type;

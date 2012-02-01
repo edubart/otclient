@@ -32,7 +32,7 @@
 
 Item::Item() : Thing()
 {
-    m_data = 1;
+    m_count = 1;
 }
 
 ItemPtr Item::create(int id)
@@ -77,26 +77,26 @@ void Item::setPosition(const Position& position)
     Thing::setPosition(position);
 }
 
-void Item::setData(uint8 data)
+void Item::setCount(uint8 count)
 {
     if(isStackable() && getNumPatternsX() == 4 && getNumPatternsY() == 2) {
-        if(data < 5) {
-            m_xPattern = data-1;
+        if(count < 5) {
+            m_xPattern = count-1;
             m_yPattern = 0;
         }
-        else if(data < 10) {
+        else if(count < 10) {
             m_xPattern = 0;
             m_yPattern = 1;
         }
-        else if(data < 25) {
+        else if(count < 25) {
             m_xPattern = 1;
             m_yPattern = 1;
         }
-        else if(data < 50) {
+        else if(count < 50) {
             m_xPattern = 2;
             m_yPattern = 1;
         }
-        else if(data <= 100) {
+        else if(count <= 100) {
             m_xPattern = 3;
             m_yPattern = 1;
         }
@@ -111,7 +111,7 @@ void Item::setData(uint8 data)
     }
     else if(isFluid() || isFluidContainer()) {
         int color = Otc::FluidTransparent;
-        switch(data) {
+        switch(count) {
         case Otc::FluidNone:
             color = Otc::FluidTransparent;
             break;
@@ -175,5 +175,5 @@ void Item::setData(uint8 data)
         m_yPattern = (color / 4) % getNumPatternsY();
     }
 
-    m_data = data;
+    m_count = count;
 }

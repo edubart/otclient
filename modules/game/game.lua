@@ -21,12 +21,12 @@ local function onUseWithMouseRelease(self, mousePosition, mouseButton)
   if mouseButton == MouseLeftButton then
     local clickedWidget = Game.gameUi:recursiveGetChildByPos(mousePosition)
     if clickedWidget then
-      if clickedWidget.getTile then
+      if clickedWidget:getClassName() == 'Tile' then
         local tile = clickedWidget:getTile(mousePosition)
         if tile then
           Game.useWith(Game.selectedThing, tile:getTopMultiUseThing())
         end
-      elseif clickedWidget.getItem and not clickedWidget:isVirtual() then
+      elseif clickedWidget:getClassName() == 'UIItem' and not clickedWidget:isVirtual() then
         Game.useWith(Game.selectedThing, clickedWidget:getItem())
       end
     end
