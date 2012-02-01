@@ -21,7 +21,7 @@ local function onUseWithMouseRelease(self, mousePosition, mouseButton)
   if mouseButton == MouseLeftButton then
     local clickedWidget = Game.gameUi:recursiveGetChildByPos(mousePosition)
     if clickedWidget then
-      if clickedWidget:getClassName() == 'Tile' then
+      if clickedWidget:getClassName() == 'UIMap' then
         local tile = clickedWidget:getTile(mousePosition)
         if tile then
           Game.useWith(Game.selectedThing, tile:getTopMultiUseThing())

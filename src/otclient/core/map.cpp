@@ -306,6 +306,8 @@ std::vector<CreaturePtr> Map::getSpectatorsInRangeEx(const Position& centerPos, 
         maxZRange = Otc::MAX_Z;
     }
 
+    //TODO: get creatures from other floors corretly
+
     for(int iz=-minZRange; iz<=maxZRange; ++iz) {
         for(int iy=-minYRange; iy<=maxYRange; ++iy) {
             for(int ix=-minXRange; ix<=maxXRange; ++ix) {

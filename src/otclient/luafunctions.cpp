@@ -73,6 +73,7 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassStaticFunction("g_map", "getCentralPosition", std::bind(&Map::getCentralPosition, &g_map));
     g_lua.bindClassStaticFunction("g_map", "getCreatureById", std::bind(&Map::getCreatureById, &g_map, _1));
     g_lua.bindClassStaticFunction("g_map", "removeCreatureById", std::bind(&Map::removeCreatureById, &g_map, _1));
+    g_lua.bindClassStaticFunction("g_map", "getSpectators", std::bind(&Map::getSpectators, &g_map, _1, _2));
 
     g_lua.bindGlobalFunction("getOufitColor", Outfit::getColor);
 

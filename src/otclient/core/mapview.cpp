@@ -197,7 +197,6 @@ void MapView::updateVisibleTilesCache(int start)
     // cache visible tiles in draw order
     // draw from last floor (the lower) to first floor (the higher)
     for(int iz = m_cachedLastVisibleFloor; iz >= m_cachedFirstVisibleFloor && !stop; --iz) {
-        //TODO: cleanup this code
         if(m_viewRange <= FAR_VIEW) {
             // draw tiles like linus pauling's rule order
             const int numDiagonals = m_drawDimension.width() + m_drawDimension.height() - 1;
@@ -245,6 +244,7 @@ void MapView::updateVisibleTilesCache(int start)
                 int fillHeight = (quadTopLeft.x >= 0) ? quadHeight-1 : quadHeight;
                 if(quadTopLeft.y >= 0) {
                     for(int qx=0;qx<fillWidth;++qx) {
+                        //TODO: remvoe this repeated code
                         // only start really looking tiles in the desired start
                         if(count < start) {
                             count++;
@@ -332,7 +332,6 @@ void MapView::updateVisibleTilesCache(int start)
         // schedule next update continuation
         m_updateTilesCacheEvent = g_dispatcher.addEvent(std::bind(&MapView::updateVisibleTilesCache, asMapView(), count));
     }
-
     if(start == 0)
         m_cachedFloorVisibleCreatures = g_map.getSpectators(cameraPosition, false);
 }
@@ -448,7 +447,7 @@ int MapView::getFirstVisibleFloor()
 
     Position cameraPosition = getCameraPosition();
 
-    // avoid rendering multile floors on far views
+    // avoid rendering multifloors in far views
     if(m_viewRange >= FAR_VIEW)
         return cameraPosition.z;
 
@@ -495,7 +494,7 @@ int MapView::getLastVisibleFloor()
 {
     Position cameraPosition = getCameraPosition();
 
-    // avoid rendering multile floors on far views
+    // avoid rendering multifloors in far views
     if(m_viewRange >= FAR_VIEW)
         return cameraPosition.z;
 
