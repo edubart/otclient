@@ -51,3 +51,31 @@ void UIItem::draw()
 
     drawChildren();
 }
+
+void UIItem::setItemId(int id)
+{
+    if(!m_item)
+        m_item = Item::create(id);
+    else
+        m_item->setId(id);
+}
+
+void UIItem::setItemCount(int count)
+{
+    if(m_item)
+        m_item->setData(count);
+}
+
+void UIItem::onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode)
+{
+    UIWidget::onStyleApply(styleName, styleNode);
+
+    for(const OTMLNodePtr& node : styleNode->children()) {
+        if(node->tag() == "item-id")
+            setItemId(node->value<int>());
+        else if(node->tag() == "item-count")
+            setItemCount(node->value<int>());
+        else if(node->tag() == "virtual")
+            setVirtual(node->value<bool>());
+    }
+}

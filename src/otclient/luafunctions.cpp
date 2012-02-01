@@ -221,9 +221,16 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassStaticFunction<Game>("getProtocolGame", std::bind(&Game::getProtocolGame, &g_game));
 
     g_lua.registerClass<UIItem, UIWidget>();
-    g_lua.bindClassStaticFunction<UIItem>("create", []{ return UIItemPtr(new UIItem); } );
-    g_lua.bindClassMemberFunction<UIItem>("getItem", &UIItem::getItem);
+    g_lua.bindClassStaticFunction<UIItem>("create", []{ return UIItemPtr(new UIItem); });
+    g_lua.bindClassMemberFunction<UIItem>("setItemId", &UIItem::setItemId);
+    g_lua.bindClassMemberFunction<UIItem>("setItemCount", &UIItem::setItemCount);
     g_lua.bindClassMemberFunction<UIItem>("setItem", &UIItem::setItem);
+    g_lua.bindClassMemberFunction<UIItem>("setVirtual", &UIItem::setVirtual);
+    g_lua.bindClassMemberFunction<UIItem>("getItemId", &UIItem::getItemId);
+    g_lua.bindClassMemberFunction<UIItem>("getItemCount", &UIItem::getItemCount);
+    g_lua.bindClassMemberFunction<UIItem>("getItem", &UIItem::getItem);
+    g_lua.bindClassMemberFunction<UIItem>("isVirtual", &UIItem::isVirtual);
+
 
     g_lua.registerClass<UICreature, UIWidget>();
     g_lua.bindClassStaticFunction<UICreature>("create", []{ return UICreaturePtr(new UICreature); } );

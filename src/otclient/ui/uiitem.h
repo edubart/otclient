@@ -33,12 +33,21 @@ public:
     UIItem();
     void draw();
 
+    void setItemId(int id);
+    void setItemCount(int count);
     void setItem(const ItemPtr& item) { m_item = item; }
+    void setVirtual(bool virt) { m_virtual = virt; }
 
+    int getItemId() { return m_item->getId(); }
+    int getItemCount() { return m_item->getData(); }
     ItemPtr getItem() { return m_item; }
+    bool isVirtual() { return m_virtual; }
 
 protected:
+    void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode);
+
     ItemPtr m_item;
+    Boolean<false> m_virtual;
 };
 
 #endif

@@ -26,7 +26,7 @@ local function onUseWithMouseRelease(self, mousePosition, mouseButton)
         if tile then
           Game.useWith(Game.selectedThing, tile:getTopMultiUseThing())
         end
-      elseif clickedWidget.getItem then
+      elseif clickedWidget.getItem and not clickedWidget:isVirtual() then
         Game.useWith(Game.selectedThing, clickedWidget:getItem())
       end
     end
