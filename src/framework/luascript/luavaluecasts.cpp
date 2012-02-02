@@ -293,7 +293,6 @@ bool luavalue_cast(int index, OTMLNodePtr& node)
             }
             g_lua.pop();
         }
-        dump << node->emit();
         return true;
     }
     return false;
