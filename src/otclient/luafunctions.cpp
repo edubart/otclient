@@ -92,9 +92,6 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Thing>("getPosition", &Thing::getPosition);
     g_lua.bindClassMemberFunction<Thing>("getStackPriority", &Thing::getStackPriority);
     g_lua.bindClassMemberFunction<Thing>("getAnimationPhases", &Thing::getAnimationPhases);
-    g_lua.bindClassMemberFunction<Thing>("setXPattern", &Thing::setXPattern);
-    g_lua.bindClassMemberFunction<Thing>("setYPattern", &Thing::setYPattern);
-    g_lua.bindClassMemberFunction<Thing>("setZPattern", &Thing::setZPattern);
     g_lua.bindClassMemberFunction<Thing>("asThing", &Thing::asThing);
     g_lua.bindClassMemberFunction<Thing>("asItem", &Thing::asItem);
     g_lua.bindClassMemberFunction<Thing>("asCreature", &Thing::asCreature);

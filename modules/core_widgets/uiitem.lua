@@ -30,14 +30,14 @@ function UIItem:onDrop(widget, mousePos)
   if not widget or not widget.currentDragThing then return true end
 
   local pos = self.position
-  local data = widget.currentDragThing:getCount()
-  if widget.currentDragThing:isStackable() and data > 1 then
+  local count = widget.currentDragThing:getCount()
+  if widget.currentDragThing:isStackable() and count > 1 then
     widget.parsed = true
     local moveWindow = displayUI('/game/movewindow.otui')
     local spinbox = moveWindow:getChildById('spinbox')
-    spinbox:setMaximum(data)
+    spinbox:setMaximum(count)
     spinbox:setMinimum(1)
-    spinbox:setCurrentIndex(data)
+    spinbox:setCurrentIndex(count)
 
     local okButton = moveWindow:getChildById('buttonOk')
     okButton.onClick = function() Game.move(widget.currentDragThing, pos, spinbox:getCurrentIndex()) okButton:getParent():destroy() widget.currentDragThing = nil end

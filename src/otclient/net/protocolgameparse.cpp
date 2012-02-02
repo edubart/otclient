@@ -1125,7 +1125,7 @@ ItemPtr ProtocolGame::internalGetItem(InputMessage& msg, int id)
 
     ItemPtr item = Item::create(id);
     if(item->isStackable() || item->isFluidContainer() || item->isFluid())
-        item->setCount(msg.getU8());
+        item->setCountOrSubType(msg.getU8());
 
     return item;
 }

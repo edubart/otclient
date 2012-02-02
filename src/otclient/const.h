@@ -49,6 +49,7 @@ namespace Otc
         AWARE_Y_BOTTOM_TILES = AWARE_Y_TILES/2,
 
         EFFECT_TICKS_PER_FRAME = 75,
+        INVISIBLE_TICKS_PER_FRAME = 500,
         ITEM_TICKS_PER_FRAME = 500,
         ANIMATED_TEXT_DURATION = 1000,
         STATIC_DURATION_PER_CHARACTER = 75,
@@ -66,9 +67,11 @@ namespace Otc
         DrawCreaturesInformation = 64,
         DrawStaticTexts = 128,
         DrawAnimatedTexts = 256,
-        DrawEverything = DrawGround | DrawWalls | DrawCommonItems |
+        DrawAnimations = 512,
+        DrawGroundBorders = 1024,
+        DrawEverything = DrawGround | DrawGroundBorders | DrawWalls | DrawCommonItems |
                          DrawCreatures | DrawEffects | DrawMissiles |
-                         DrawCreaturesInformation | DrawStaticTexts | DrawAnimatedTexts
+                         DrawCreaturesInformation | DrawStaticTexts | DrawAnimatedTexts | DrawAnimations
     };
 
     enum DatOpts {

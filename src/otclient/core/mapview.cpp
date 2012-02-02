@@ -60,12 +60,14 @@ void MapView::draw(const Rect& rect)
 
     int tileDrawFlags = 0;
     if(m_viewRange == NEAR_VIEW)
-        tileDrawFlags = Otc::DrawGround | Otc::DrawWalls | Otc::DrawCommonItems | Otc::DrawCreatures | Otc::DrawEffects;
+        tileDrawFlags = Otc::DrawGround | Otc::DrawGroundBorders | Otc::DrawWalls | Otc::DrawCommonItems | Otc::DrawCreatures | Otc::DrawEffects | Otc::DrawAnimations;
     else if(m_viewRange == MID_VIEW)
-        tileDrawFlags = Otc::DrawGround | Otc::DrawWalls | Otc::DrawCommonItems;
+        tileDrawFlags = Otc::DrawGround | Otc::DrawGroundBorders | Otc::DrawWalls | Otc::DrawCommonItems;
     else if(m_viewRange == FAR_VIEW)
-        tileDrawFlags = Otc::DrawGround | Otc::DrawWalls;
-    else // HUGE_VIEW
+        tileDrawFlags = Otc::DrawGround | Otc::DrawGroundBorders | Otc::DrawWalls;
+    else if(m_tileSize >= 4) // HUGE_VIEW 1
+        tileDrawFlags = Otc::DrawGround | Otc::DrawGroundBorders;
+    else // HUGE_VIEW 2
         tileDrawFlags = Otc::DrawGround;
 
     bool animate = m_animated;
@@ -109,11 +111,11 @@ void MapView::draw(const Rect& rect)
     // avoid drawing texts on map in far zoom outs
     if(m_viewRange == NEAR_VIEW) {
         for(const CreaturePtr& creature : m_cachedFloorVisibleCreatures) {
-            const TilePtr& tile = creature->getCurrentTile();
+            const TilePtr& tile = creature->getTile();
             Position pos = tile->getPosition();
 
             Point p = transformPositionTo2D(pos) - drawOffset;
-            p += (creature->getWalkOffset()-tile->getDrawElevation() + Point(8, -8)) * scaleFactor;
+            p += (creature->getWalkOffset()-tile->getDrawElevation() + Point(8, -10)) * scaleFactor;
             p.x = p.x * horizontalStretchFactor;
             p.y = p.y * verticalStretchFactor;
             p += rect.topLeft();

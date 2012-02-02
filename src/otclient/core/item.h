@@ -33,17 +33,23 @@ public:
 
     static ItemPtr create(int id);
 
-    void draw(const Point& dest, float scaleFactor);
+    void draw(const Point& dest, float scaleFactor, bool animate);
 
-    void setPosition(const Position &position);
-    void setCount(int count);
+    void setId(uint32 id);
+    void setCountOrSubType(uint8 value) { m_countOrSubType = value; }
+    void setCount(int count) { setCountOrSubType(count); }
+    void setSubType(int subType) { setCountOrSubType(subType); }
 
-    int getCount() { return m_count; }
+    uint8 getCountOrSubType() { return m_countOrSubType; }
+    int getSubType();
+    int getCount();
+    uint32 getId() { return m_id; }
 
     ItemPtr asItem() { return std::static_pointer_cast<Item>(shared_from_this()); }
 
 private:
-    uint8 m_count;
+    uint16 m_id;
+    uint8 m_countOrSubType;
 };
 
 #endif

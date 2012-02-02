@@ -27,24 +27,18 @@
 #include <framework/core/clock.h>
 #include <framework/core/eventdispatcher.h>
 
-Missile::Missile() : Thing()
-{
-    m_startTicks = 0;
-}
-
 void Missile::draw(const Point& p, const Rect&)
 {
+    if(m_id == 0)
+        return;
+
+    /*
     float time = (g_clock.ticks() - m_startTicks) / m_duration;
-    //internalDraw(p + Point(m_deltax * time, m_deltay * time), 0);
-}
 
-void Missile::setPath(const Position& fromPosition, const Position& toPosition)
-{
-    Otc::Direction direction = fromPosition.getDirectionFromPosition(toPosition);
-
+    int xPattern = 0, yPattern = 0;
     if(direction == Otc::NorthWest) {
-        m_xPattern = 0;
-        m_yPattern = 0;
+        xPattern = 0;
+        yPattern = 0;
     }
     else if(direction == Otc::North) {
         m_xPattern = 1;
@@ -79,20 +73,29 @@ void Missile::setPath(const Position& fromPosition, const Position& toPosition)
         m_yPattern = 1;
     }
 
+    //internalDraw(p + Point(m_deltax * time, m_deltay * time), 0, 0);
+    */
+}
+
+void Missile::setPath(const Position& fromPosition, const Position& toPosition)
+{
+    m_direction = fromPosition.getDirectionFromPosition(toPosition);
+
     m_position = fromPosition;
     m_deltax = toPosition.x - fromPosition.x;
     m_deltay = toPosition.y - fromPosition.y;
-    m_startTicks = g_clock.ticks();
     m_duration = 150 * std::sqrt(Point(m_deltax, m_deltay).length());
     m_deltax *= Otc::TILE_PIXELS;
     m_deltay *= Otc::TILE_PIXELS;
+    m_animationTimer.restart();
 
     // schedule removal
     auto self = asMissile();
     g_dispatcher.scheduleEvent([self]() { g_map.removeThing(self); }, m_duration);
 }
 
-ThingType *Missile::getType()
+void Missile::setId(uint32 id)
 {
-    return g_thingsType.getThingType(m_id, ThingsType::Missile);
+    m_id = id;
+    m_type = g_thingsType.getThingType(m_id, ThingsType::Missile);
 }

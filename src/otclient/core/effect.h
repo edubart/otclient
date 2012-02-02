@@ -30,15 +30,17 @@
 class Effect : public Thing
 {
 public:
-    void draw(const Point& dest, float scaleFactor);
+    void draw(const Point& dest, float scaleFactor, bool animate);
 
+    void setId(uint32 id);
     void startAnimation();
-    void updateAnimation();
 
+    uint32 getId() { return m_id; }
     EffectPtr asEffect() { return std::static_pointer_cast<Effect>(shared_from_this()); }
 
 private:
     Timer m_animationTimer;
+    uint16 m_id;
 };
 
 #endif

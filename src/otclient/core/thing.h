@@ -40,19 +40,15 @@ public:
     virtual ~Thing() { }
 
     virtual void startAnimation() { }
-    virtual void draw(const Point& dest, float scaleFactor) { }
+    virtual void draw(const Point& dest, float scaleFactor, bool animate) { }
 
-    virtual void setId(uint32 id);
-    virtual void setPosition(const Position& position) { m_position = position; }
+    virtual void setId(uint32 id) { }
+    void setPosition(const Position& position) { m_position = position; }
 
-    uint32 getId() { return m_id; }
+    virtual uint32 getId() { return 0; }
     Position getPosition() { return m_position; }
     int getStackPriority();
-    const TilePtr& getCurrentTile();
-
-    void setXPattern(int xPattern) { m_xPattern = xPattern; }
-    void setYPattern(int yPattern) { m_yPattern = yPattern; }
-    void setZPattern(int zPattern) { m_zPattern = zPattern; }
+    const TilePtr& getTile();
 
     ThingPtr asThing() { return std::static_pointer_cast<Thing>(shared_from_this()); }
     virtual ItemPtr asItem() { return nullptr; }
@@ -105,14 +101,9 @@ public:
     int getSpriteId(int w = 0, int h = 0, int layer = 0, int xPattern = 0, int yPattern = 0, int zPattern = 0, int animation = 0) { return m_type->getSpriteId(w, h, layer, xPattern, yPattern, zPattern, animation); }
 
 protected:
-    void internalDraw(const Point& dest, float scaleFactor, int layer);
-    void updateType();
+    void internalDraw(const Point& dest, float scaleFactor, int xPattern, int yPattern, int zPattern, int layer, int animationPhase);
 
-    uint32 m_id; //TODO: move to derived class to use less memory
     Position m_position;
-    uint8 m_xPattern, m_yPattern, m_zPattern, m_animation; //TODO: remove this variables to use less memory
-
-private:
     ThingType *m_type;
 };
 

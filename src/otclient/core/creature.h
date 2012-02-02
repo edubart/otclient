@@ -34,16 +34,16 @@ class Creature : public Thing
 public:
     enum {
         SHIELD_BLINK_TICKS = 500,
-        INVISIBLE_TICKS = 500,
         VOLATILE_SQUARE_DURATION = 1000
     };
 
     Creature();
     virtual ~Creature() { }
 
-    virtual void draw(const Point& dest, float scaleFactor);
+    virtual void draw(const Point& dest, float scaleFactor, bool animate);
     void drawInformation(const Point& point, bool useGray, const Rect& parentRect);
 
+    void setId(uint32 id) { m_id = id; }
     void setName(const std::string& name);
     void setHealthPercent(uint8 healthPercent);
     void setDirection(Otc::Direction direction);
@@ -64,6 +64,7 @@ public:
     void showStaticSquare(const Color& color) { m_showStaticSquare = true; m_staticSquareColor = color; }
     void hideStaticSquare() { m_showStaticSquare = false; }
 
+    uint32 getId() { return m_id; }
     std::string getName() { return m_name; }
     uint8 getHealthPercent() { return m_healthPercent; }
     Otc::Direction getDirection() { return m_direction; }
@@ -96,6 +97,7 @@ protected:
     virtual void updateWalk();
     virtual void terminateWalk();
 
+    uint32 m_id;
     std::string m_name;
     Size m_nameSize;
     uint8 m_healthPercent;
@@ -114,6 +116,7 @@ protected:
     Color m_informationColor;
 
     // walk related
+    int m_walkAnimationPhase;
     Timer m_walkTimer;
     TilePtr m_walkingTile;
     int m_walkInterval;

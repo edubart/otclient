@@ -6,6 +6,5 @@ varying vec2 textureCoords; // map texture coords
 
 void main()
 {
-    vec4 outColor = texture2D(texture, textureCoords) * opacity;
-    gl_FragColor = outColor;
+    gl_FragColor = texture2D(texture, textureCoords) * opacity;
 }

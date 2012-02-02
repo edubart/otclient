@@ -38,7 +38,7 @@ void UIItem::draw()
         Point topLeft = m_rect.bottomRight() - Point(32, 32) + Point(m_padding.left, m_padding.top);
 
         g_painter.setColor(Fw::white);
-        m_item->draw(topLeft, 1);
+        m_item->draw(topLeft, 1, true);
 
         if(m_font && m_item->isStackable() && m_item->getCount() > 1) {
             std::string count = Fw::tostring(m_item->getCount());
@@ -63,12 +63,6 @@ void UIItem::setItemId(int id)
         else
             m_item->setId(id);
     }
-}
-
-void UIItem::setItemCount(int count)
-{
-    if(m_item)
-        m_item->setCount(count);
 }
 
 void UIItem::onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode)

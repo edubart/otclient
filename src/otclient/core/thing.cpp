@@ -28,18 +28,7 @@
 
 Thing::Thing()
 {
-    m_id = 0;
-    m_xPattern = 0;
-    m_yPattern = 0;
-    m_zPattern = 0;
-    m_animation = 0;
     m_type = g_thingsType.getEmptyThingType();
-}
-
-void Thing::setId(uint32 id)
-{
-    m_id = id;
-    updateType();
 }
 
 int Thing::getStackPriority()
@@ -58,42 +47,28 @@ int Thing::getStackPriority()
         return 5;
 }
 
-const TilePtr& Thing::getCurrentTile()
+const TilePtr& Thing::getTile()
 {
     return g_map.getTile(m_position);
 }
 
-void Thing::internalDraw(const Point& dest, float scaleFactor, int layer)
+void Thing::internalDraw(const Point& dest, float scaleFactor, int xPattern, int yPattern, int zPattern, int layer, int animationPhase)
 {
     int scaledSize = Otc::TILE_PIXELS * scaleFactor;
 
     for(int h = 0; h < getDimensionHeight(); h++) {
         for(int w = 0; w < getDimensionWidth(); w++) {
-            int spriteId = getSpriteId(w, h, layer, m_xPattern, m_yPattern, m_zPattern, m_animation);
+            int spriteId = getSpriteId(w, h, layer, xPattern, yPattern, zPattern, animationPhase);
             if(!spriteId)
                 continue;
 
             TexturePtr spriteTex = g_sprites.getSpriteTexture(spriteId);
-            Rect drawRect((dest.x - w*scaledSize) - getDisplacementX()*scaleFactor,
-                          (dest.y - h*scaledSize) - getDisplacementY()*scaleFactor,
+            Rect drawRect(dest.x - (w*Otc::TILE_PIXELS - getDisplacementX())*scaleFactor,
+                          dest.y - (h*Otc::TILE_PIXELS - getDisplacementY())*scaleFactor,
                           scaledSize, scaledSize);
 
-            g_painter.setColor(Fw::white);
             g_painter.drawTexturedRect(drawRect, spriteTex);
         }
     }
 }
 
-void Thing::updateType()
-{
-    if(CreaturePtr creature = asCreature())
-        m_type = g_thingsType.getThingType(creature->getOutfit().getId(), creature->getOutfit().getCategory());
-    else if(asItem())
-        m_type = g_thingsType.getThingType(m_id, ThingsType::Item);
-    else if(asMissile())
-        m_type = g_thingsType.getThingType(m_id, ThingsType::Missile);
-    else if(asEffect())
-        m_type = g_thingsType.getThingType(m_id, ThingsType::Effect);
-    else
-        m_type = g_thingsType.getEmptyThingType();
-}

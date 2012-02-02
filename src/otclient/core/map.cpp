@@ -69,9 +69,9 @@ void Map::load()
         while(id != 0xFFFF) {
             ItemPtr item = Item::create(id);
             if(item->isStackable() || item->isFluidContainer() || item->isFluid()) {
-                uint8 data;
-                in.read((char*)&data, sizeof(data));
-                item->setCount(data);
+                uint8 countOrSubType;
+                in.read((char*)&countOrSubType, sizeof(countOrSubType));
+                item->setCountOrSubType(countOrSubType);
             }
             addThing(item, pos, 255);
             in.read((char*)&id, sizeof(id));
@@ -95,8 +95,8 @@ void Map::save()
                 id = item->getId();
                 out.write((char*)&id, sizeof(id));
                 if(item->isStackable() || item->isFluidContainer() || item->isFluid()) {
-                    uint8 data = item->getCount();
-                    out.write((char*)&data, sizeof(data));
+                    uint8 countOrSubType = item->getCountOrSubType();
+                    out.write((char*)&countOrSubType, sizeof(countOrSubType));
                 }
             }
         }
@@ -264,7 +264,7 @@ void Map::setCentralPosition(const Position& centralPosition)
     if(teleported) {
         for(const auto& pair : m_knownCreatures) {
             const CreaturePtr& creature = pair.second;
-            const TilePtr& tile = creature->getCurrentTile();
+            const TilePtr& tile = creature->getTile();
             if(tile) {
                 tile->removeThing(creature);
                 creature->setPosition(Position());
@@ -275,7 +275,7 @@ void Map::setCentralPosition(const Position& centralPosition)
         for(const auto& pair : m_knownCreatures) {
             const CreaturePtr& creature = pair.second;
             if(!isAwareOfPosition(creature->getPosition())) {
-                const TilePtr& tile = creature->getCurrentTile();
+                const TilePtr& tile = creature->getTile();
                 if(tile) {
                     tile->removeThing(creature);
                     creature->setPosition(Position());

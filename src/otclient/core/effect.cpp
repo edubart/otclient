@@ -27,35 +27,27 @@
 #include <framework/core/clock.h>
 #include <framework/core/eventdispatcher.h>
 
-void Effect::draw(const Point& dest, float scaleFactor)
+void Effect::draw(const Point& dest, float scaleFactor, bool animate)
 {
-    internalDraw(dest, scaleFactor, 0);
+    if(m_id == 0)
+        return;
+
+    int animationPhase = std::min((int)(m_animationTimer.ticksElapsed() / Otc::EFFECT_TICKS_PER_FRAME), getAnimationPhases() - 1);
+    for(int layer = 0; layer < getLayers(); layer++)
+        internalDraw(dest, scaleFactor, 0, 0, 0, layer, animate ? animationPhase : 0);
 }
 
 void Effect::startAnimation()
 {
     m_animationTimer.restart();
 
-    auto self = asEffect();
-
-    // schedule next animation update
-    if(getAnimationPhases() > 1)
-        g_dispatcher.scheduleEvent([self]() { self->updateAnimation(); }, Otc::EFFECT_TICKS_PER_FRAME);
-
     // schedule removal
+    auto self = asEffect();
     g_dispatcher.scheduleEvent([self]() { g_map.removeThing(self); }, Otc::EFFECT_TICKS_PER_FRAME * getAnimationPhases());
 }
 
-void Effect::updateAnimation()
+void Effect::setId(uint32 id)
 {
-    int animationPhase = m_animationTimer.ticksElapsed() / Otc::EFFECT_TICKS_PER_FRAME;
-
-    if(animationPhase < getAnimationPhases())
-        m_animation = animationPhase;
-
-    if(animationPhase < getAnimationPhases() - 1) {
-        //schedule next animation update
-        auto self = asEffect();
-        g_dispatcher.scheduleEvent([self]() { self->updateAnimation(); }, Otc::EFFECT_TICKS_PER_FRAME);
-    }
+    m_id = id;
+    m_type = g_thingsType.getThingType(m_id, ThingsType::Effect);
 }
