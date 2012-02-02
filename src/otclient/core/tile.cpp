@@ -109,21 +109,21 @@ void Tile::draw(const Point& dest, float scaleFactor, int drawFlags)
         for(auto it = m_things.rbegin(); it != m_things.rend(); ++it) {
             CreaturePtr creature = (*it)->asCreature();
             if(creature && (!creature->isWalking() || !animate))
-                creature->draw(dest - m_drawElevation, scaleFactor, animate);
+                creature->draw(dest - m_drawElevation*scaleFactor, scaleFactor, animate);
         }
     }
 
     // effects
     if(drawFlags & Otc::DrawEffects) {
         for(const EffectPtr& effect : m_effects)
-            effect->draw(dest, scaleFactor, animate);
+            effect->draw(dest - m_drawElevation*scaleFactor, scaleFactor, animate);
     }
 
     // top items
     if(drawFlags & Otc::DrawOnTop) {
         for(const ThingPtr& thing : m_things) {
             if(thing->isOnTop())
-                thing->draw(dest - m_drawElevation, scaleFactor, animate);
+                thing->draw(dest, scaleFactor, animate);
         }
     }
 }

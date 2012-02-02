@@ -216,8 +216,9 @@ void MapView::updateVisibleTilesCache(int start)
     for(int iz = m_cachedLastVisibleFloor; iz >= m_cachedFirstVisibleFloor && !stop; --iz) {
         if(m_viewRange <= FAR_VIEW) {
             const int numDiagonals = m_drawDimension.width() + m_drawDimension.height() - 1;
+            // loop through / diagonals beginning at top left and going to top right
             for(int diagonal = 0; diagonal < numDiagonals && !stop; ++diagonal) {
-                // loop through / diagonals beginning at top left and going to top right
+                // loop current diagonal tiles
                 for(int iy = std::min(diagonal, m_drawDimension.width() - 1), ix = std::max(diagonal - m_drawDimension.width() + 1, 0); iy >= 0 && ix < m_drawDimension.width() && !stop; --iy, ++ix) {
                     // only start really looking tiles in the desired start
                     if(count < start) {
