@@ -215,7 +215,11 @@ bool luavalue_cast(int index, Size& size)
 void push_otml_subnode_luavalue(const OTMLNodePtr& node)
 {
     if(node->hasValue()) {
-        g_lua.pushString(node->value());
+        // convert boolean types
+        if(node->value() == "true" || node->value() == "false")
+            g_lua.pushBoolean(node->value<bool>());
+        else
+            g_lua.pushString(node->value());
     } else if(node->hasChildren()) {
         g_lua.newTable();
         bool pushedChild = false;
@@ -225,6 +229,7 @@ void push_otml_subnode_luavalue(const OTMLNodePtr& node)
             if(!g_lua.isNil()) {
                 if(cnode->isUnique()) {
                     g_lua.pushString(cnode->tag());
+                    g_lua.insert(-2);
                     g_lua.rawSet();
                 } else
                     g_lua.rawSeti(currentIndex++);
@@ -242,15 +247,18 @@ void push_otml_subnode_luavalue(const OTMLNodePtr& node)
 
 void push_luavalue(const OTMLNodePtr& node)
 {
-    g_lua.newTable();
-    int currentIndex = 1;
-    for(const OTMLNodePtr& cnode : node->children()) {
-        push_otml_subnode_luavalue(cnode);
-        if(cnode->isUnique()) {
-            g_lua.setField(cnode->tag());
-        } else
-            g_lua.rawSeti(currentIndex++);
-    }
+    if(node) {
+        g_lua.newTable();
+        int currentIndex = 1;
+        for(const OTMLNodePtr& cnode : node->children()) {
+            push_otml_subnode_luavalue(cnode);
+            if(cnode->isUnique()) {
+                g_lua.setField(cnode->tag());
+            } else
+                g_lua.rawSeti(currentIndex++);
+        }
+    } else
+        g_lua.pushNil();
 }
 
 bool luavalue_cast(int index, OTMLNodePtr& node)
@@ -260,30 +268,32 @@ bool luavalue_cast(int index, OTMLNodePtr& node)
     if(g_lua.isTable(index)) {
         g_lua.pushNil();
         while(g_lua.next(index < 0 ? index-1 : index)) {
-            bool listItem = false;
             std::string cnodeName;
-            if(g_lua.isNumber(-2))
-                listItem = true;
-            else
+            if(!g_lua.isNumber(-2))
                 cnodeName = g_lua.toString(-2);
             if(g_lua.isTable()) {
                 OTMLNodePtr cnode;
                 if(luavalue_cast(-1, cnode)) {
-                    if(listItem)
+                    if(cnodeName.empty())
                         node->setUnique(false);
                     else
                         cnode->setTag(cnodeName);
                     node->addChild(cnode);
                 }
             } else {
-                std::string value = g_lua.toString();
-                if(listItem)
+                std::string value;
+                if(g_lua.isBoolean())
+                    value = Fw::unsafeCast<std::string>(g_lua.toBoolean());
+                else
+                    value = g_lua.toString();
+                if(cnodeName.empty())
                     node->writeIn(value);
                 else
                     node->writeAt(cnodeName, value);
             }
             g_lua.pop();
         }
+        dump << node->emit();
         return true;
     }
     return false;
