@@ -34,7 +34,7 @@ class Missile : public Thing
     };
 
 public:
-    void draw(const Point& p, const Rect&);
+    void draw(const Point& dest, float scaleFactor, bool animate);
 
     void updateAnimation();
 
@@ -47,8 +47,7 @@ public:
 
 private:
     Timer m_animationTimer;
-    int m_deltax;
-    int m_deltay;
+    Point m_delta;
     float m_duration;
     uint16 m_id;
     Otc::Direction m_direction;

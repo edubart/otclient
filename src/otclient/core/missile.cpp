@@ -27,54 +27,43 @@
 #include <framework/core/clock.h>
 #include <framework/core/eventdispatcher.h>
 
-void Missile::draw(const Point& p, const Rect&)
+void Missile::draw(const Point& dest, float scaleFactor, bool animate)
 {
-    if(m_id == 0)
+    if(m_id == 0 || !animate)
         return;
 
-    /*
-    float time = (g_clock.ticks() - m_startTicks) / m_duration;
-
     int xPattern = 0, yPattern = 0;
-    if(direction == Otc::NorthWest) {
+    if(m_direction == Otc::NorthWest) {
         xPattern = 0;
         yPattern = 0;
-    }
-    else if(direction == Otc::North) {
-        m_xPattern = 1;
-        m_yPattern = 0;
-    }
-    else if(direction == Otc::NorthEast) {
-        m_xPattern = 2;
-        m_yPattern = 0;
-    }
-    else if(direction == Otc::East) {
-        m_xPattern = 2;
-        m_yPattern = 1;
-    }
-    else if(direction == Otc::SouthEast) {
-        m_xPattern = 2;
-        m_yPattern = 2;
-    }
-    else if(direction == Otc::South) {
-        m_xPattern = 1;
-        m_yPattern = 2;
-    }
-    else if(direction == Otc::SouthWest) {
-        m_xPattern = 0;
-        m_yPattern = 2;
-    }
-    else if(direction == Otc::West) {
-        m_xPattern = 0;
-        m_yPattern = 1;
-    }
-    else {
-        m_xPattern = 1;
-        m_yPattern = 1;
+    } else if(m_direction == Otc::North) {
+        xPattern = 1;
+        yPattern = 0;
+    } else if(m_direction == Otc::NorthEast) {
+        xPattern = 2;
+        yPattern = 0;
+    } else if(m_direction == Otc::East) {
+        xPattern = 2;
+        yPattern = 1;
+    } else if(m_direction == Otc::SouthEast) {
+        xPattern = 2;
+        yPattern = 2;
+    } else if(m_direction == Otc::South) {
+        xPattern = 1;
+        yPattern = 2;
+    } else if(m_direction == Otc::SouthWest) {
+        xPattern = 0;
+        yPattern = 2;
+    } else if(m_direction == Otc::West) {
+        xPattern = 0;
+        yPattern = 1;
+    } else {
+        xPattern = 1;
+        yPattern = 1;
     }
 
-    //internalDraw(p + Point(m_deltax * time, m_deltay * time), 0, 0);
-    */
+    float fraction = m_animationTimer.ticksElapsed() / m_duration;
+    internalDraw(dest + m_delta * fraction * scaleFactor, scaleFactor, xPattern, yPattern, 0, 0);
 }
 
 void Missile::setPath(const Position& fromPosition, const Position& toPosition)
@@ -82,11 +71,9 @@ void Missile::setPath(const Position& fromPosition, const Position& toPosition)
     m_direction = fromPosition.getDirectionFromPosition(toPosition);
 
     m_position = fromPosition;
-    m_deltax = toPosition.x - fromPosition.x;
-    m_deltay = toPosition.y - fromPosition.y;
-    m_duration = 150 * std::sqrt(Point(m_deltax, m_deltay).length());
-    m_deltax *= Otc::TILE_PIXELS;
-    m_deltay *= Otc::TILE_PIXELS;
+    m_delta = Point(toPosition.x - fromPosition.x, toPosition.y - fromPosition.y);
+    m_duration = 150 * std::sqrt(m_delta.length());
+    m_delta *= Otc::TILE_PIXELS;
     m_animationTimer.restart();
 
     // schedule removal

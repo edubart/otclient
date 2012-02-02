@@ -70,7 +70,7 @@ public:
     Position getCentralPosition() { return m_centralPosition; }
     int getFirstAwareFloor();
     int getLastAwareFloor();
-
+    const std::vector<MissilePtr>& getFloorMissiles(int z) { return m_floorMissiles[z]; }
 
     std::vector<AnimatedTextPtr> getAnimatedTexts() { return m_animatedTexts; }
     std::vector<StaticTextPtr> getStaticTexts() { return m_staticTexts; }

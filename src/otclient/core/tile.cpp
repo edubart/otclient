@@ -42,14 +42,14 @@ void Tile::draw(const Point& dest, float scaleFactor, int drawFlags)
     bool animate = drawFlags & Otc::DrawAnimations;
 
     // first bottom items
-    if(drawFlags & Otc::DrawGround || drawFlags & Otc::DrawGroundBorders || drawFlags & Otc::DrawCommonItems) {
+    if(drawFlags & (Otc::DrawGround | Otc::DrawGroundBorders | Otc::DrawOnBottom)) {
         for(const ThingPtr& thing : m_things) {
             if(!thing->isGround() && !thing->isGroundBorder() && !thing->isOnBottom())
                 break;
 
             if((thing->isGround() && drawFlags & Otc::DrawGround) ||
                (thing->isGroundBorder() && drawFlags & Otc::DrawGroundBorders) ||
-               (thing->isOnBottom() && drawFlags & Otc::DrawCommonItems))
+               (thing->isOnBottom() && drawFlags & Otc::DrawOnBottom))
                 thing->draw(dest - drawElevation*scaleFactor, scaleFactor, animate);
 
             drawElevation += thing->getElevation();
@@ -58,10 +58,10 @@ void Tile::draw(const Point& dest, float scaleFactor, int drawFlags)
         }
     }
 
-    int redrawPreviousOnTopW = 0;
-    int redrawPreviousOnTopH = 0;
+    int redrawPreviousTopW = 0;
+    int redrawPreviousTopH = 0;
 
-    if(drawFlags & Otc::DrawCommonItems) {
+    if(drawFlags & Otc::DrawItems) {
         // now common items in reverse order
         for(auto it = m_things.rbegin(); it != m_things.rend(); ++it) {
             const ThingPtr& thing = *it;
@@ -70,8 +70,8 @@ void Tile::draw(const Point& dest, float scaleFactor, int drawFlags)
             thing->draw(dest - drawElevation*scaleFactor, scaleFactor, animate);
 
             if(thing->isLyingCorpse()) {
-                redrawPreviousOnTopW = std::max(thing->getDimensionWidth(), redrawPreviousOnTopW);
-                redrawPreviousOnTopH = std::max(thing->getDimensionHeight(), redrawPreviousOnTopH);
+                redrawPreviousTopW = std::max(thing->getDimensionWidth(), redrawPreviousTopW);
+                redrawPreviousTopH = std::max(thing->getDimensionHeight(), redrawPreviousTopH);
             }
 
             drawElevation += thing->getElevation();
@@ -80,18 +80,17 @@ void Tile::draw(const Point& dest, float scaleFactor, int drawFlags)
         }
     }
 
-    // must redraw previous creatures/ontop above lying corpses
-    if(redrawPreviousOnTopH > 0 || redrawPreviousOnTopW > 0) {
-        int onTopRedrawFlags = drawFlags & (Otc::DrawCreatures | Otc::DrawEffects | Otc::DrawWalls);
-        if(onTopRedrawFlags) {
-            for(int y=-redrawPreviousOnTopH;y<=0;++y) {
-                for(int x=-redrawPreviousOnTopW;x<=0;++x) {
+    // after we render 2x2 lying corpses, we must redraw previous creatures/ontop above them
+    if(redrawPreviousTopH > 0 || redrawPreviousTopW > 0) {
+        int topRedrawFlags = drawFlags & (Otc::DrawCreatures | Otc::DrawEffects | Otc::DrawOnTop | Otc::DrawAnimations);
+        if(topRedrawFlags) {
+            for(int y=-redrawPreviousTopH;y<=0;++y) {
+                for(int x=-redrawPreviousTopW;x<=0;++x) {
                     if(x == 0 && y == 0)
                         continue;
                     const TilePtr& tile = g_map.getTile(m_position.translated(x,y));
-                    if(tile) {
-                        tile->draw(dest + Point(x*Otc::TILE_PIXELS, y*Otc::TILE_PIXELS)*scaleFactor, scaleFactor, onTopRedrawFlags);
-                    }
+                    if(tile)
+                        tile->draw(dest + Point(x*Otc::TILE_PIXELS, y*Otc::TILE_PIXELS)*scaleFactor, scaleFactor, topRedrawFlags);
                 }
             }
         }
@@ -121,7 +120,7 @@ void Tile::draw(const Point& dest, float scaleFactor, int drawFlags)
     }
 
     // top items
-    if(drawFlags & Otc::DrawWalls) {
+    if(drawFlags & Otc::DrawOnTop) {
         for(const ThingPtr& thing : m_things) {
             if(thing->isOnTop())
                 thing->draw(dest - drawElevation, scaleFactor, animate);

@@ -59,17 +59,19 @@ namespace Otc
 
     enum DrawFlags {
         DrawGround = 1,
-        DrawWalls = 2,
-        DrawCommonItems = 4,
-        DrawCreatures = 8,
-        DrawEffects = 16,
-        DrawMissiles = 32,
-        DrawCreaturesInformation = 64,
-        DrawStaticTexts = 128,
-        DrawAnimatedTexts = 256,
-        DrawAnimations = 512,
-        DrawGroundBorders = 1024,
-        DrawEverything = DrawGround | DrawGroundBorders | DrawWalls | DrawCommonItems |
+        DrawGroundBorders = 2,
+        DrawOnBottom = 4,
+        DrawOnTop = 8,
+        DrawItems = 16,
+        DrawCreatures = 32,
+        DrawEffects = 64,
+        DrawMissiles = 128,
+        DrawCreaturesInformation = 256,
+        DrawStaticTexts = 512,
+        DrawAnimatedTexts = 1024,
+        DrawAnimations = 2048,
+        DrawWalls = DrawOnBottom | DrawOnTop,
+        DrawEverything = DrawGround | DrawGroundBorders | DrawWalls | DrawItems |
                          DrawCreatures | DrawEffects | DrawMissiles |
                          DrawCreaturesInformation | DrawStaticTexts | DrawAnimatedTexts | DrawAnimations
     };

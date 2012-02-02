@@ -31,6 +31,7 @@
 #include "tile.h"
 #include "statictext.h"
 #include "animatedtext.h"
+#include "missile.h"
 #include <framework/core/eventdispatcher.h>
 
 MapView::MapView()
@@ -58,30 +59,40 @@ void MapView::draw(const Rect& rect)
     float scaleFactor = m_tileSize/(float)Otc::TILE_PIXELS;
     Position cameraPosition = getCameraPosition();
 
-    int tileDrawFlags = 0;
+    int drawFlags = 0;
     if(m_viewRange == NEAR_VIEW)
-        tileDrawFlags = Otc::DrawGround | Otc::DrawGroundBorders | Otc::DrawWalls | Otc::DrawCommonItems | Otc::DrawCreatures | Otc::DrawEffects | Otc::DrawAnimations;
+        drawFlags = Otc::DrawGround | Otc::DrawGroundBorders | Otc::DrawWalls |
+                    Otc::DrawItems | Otc::DrawCreatures | Otc::DrawEffects | Otc::DrawMissiles | Otc::DrawAnimations;
     else if(m_viewRange == MID_VIEW)
-        tileDrawFlags = Otc::DrawGround | Otc::DrawGroundBorders | Otc::DrawWalls | Otc::DrawCommonItems;
+        drawFlags = Otc::DrawGround | Otc::DrawGroundBorders | Otc::DrawWalls | Otc::DrawItems;
     else if(m_viewRange == FAR_VIEW)
-        tileDrawFlags = Otc::DrawGround | Otc::DrawGroundBorders | Otc::DrawWalls;
+        drawFlags = Otc::DrawGround | Otc::DrawGroundBorders | Otc::DrawWalls;
     else if(m_tileSize >= 4) // HUGE_VIEW 1
-        tileDrawFlags = Otc::DrawGround | Otc::DrawGroundBorders;
+        drawFlags = Otc::DrawGround | Otc::DrawGroundBorders;
     else // HUGE_VIEW 2
-        tileDrawFlags = Otc::DrawGround;
+        drawFlags = Otc::DrawGround;
 
-    bool animate = m_animated;
-
-    // only animate in near views
-    if(m_viewRange != NEAR_VIEW)
-        animate = false;
-
-    if(m_mustDrawVisibleTilesCache || animate) {
+    if(m_mustDrawVisibleTilesCache || (drawFlags & Otc::DrawAnimations)) {
         m_framebuffer->bind(m_mustCleanFramebuffer);
 
-        for(const TilePtr& tile : m_cachedVisibleTiles) {
-            tile->draw(transformPositionTo2D(tile->getPosition()), scaleFactor, tileDrawFlags);
-            //TODO: restore missiles
+        auto it = m_cachedVisibleTiles.begin();
+        auto end = m_cachedVisibleTiles.end();
+        for(int z=m_cachedLastVisibleFloor;z>=m_cachedFirstVisibleFloor;--z) {
+            while(it != end) {
+                const TilePtr& tile = *it;
+                if(tile->getPosition().z != z)
+                    break;
+                else
+                    ++it;
+
+                tile->draw(transformPositionTo2D(tile->getPosition()), scaleFactor, drawFlags);
+            }
+
+            if(drawFlags & Otc::DrawMissiles) {
+                for(const MissilePtr& missile : g_map.getFloorMissiles(z)) {
+                    missile->draw(transformPositionTo2D(missile->getPosition()), scaleFactor, drawFlags & Otc::DrawAnimations);
+                }
+            }
         }
         m_framebuffer->generateMipmaps();
         m_framebuffer->release();
