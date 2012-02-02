@@ -35,7 +35,10 @@ public:
     void bind() { glBindTexture(GL_TEXTURE_2D, m_textureId); }
 
     void generateMipmaps();
-    void generateBilinearMipmaps();
+
+    // generate bilinear mipmaps optimized for alpha textures
+    void generateBilinearMipmaps(std::vector<uint8> inPixels);
+
     void setSmooth(bool smooth);
     GLuint getId()  { return m_textureId; }
 

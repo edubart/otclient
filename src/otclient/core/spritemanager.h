@@ -33,6 +33,7 @@ public:
 
     bool load(const std::string& file);
     void unload();
+    void preloadSprites();
 
     uint32 getSignature() { return m_signature; }
     int getSpritesCount() { return m_spritesCount; }
@@ -45,7 +46,7 @@ private:
 
     Boolean<false> m_loaded;
     uint32 m_signature;
-    uint16 m_spritesCount;
+    int m_spritesCount;
     std::stringstream m_fin;
     std::vector<TexturePtr> m_sprites;
     TexturePtr m_transparentSprite;

@@ -22,6 +22,7 @@
 
 #include "spritemanager.h"
 #include <framework/core/resourcemanager.h>
+#include <framework/core/eventdispatcher.h>
 #include <framework/graphics/graphics.h>
 
 SpriteManager g_sprites;
@@ -38,6 +39,7 @@ bool SpriteManager::load(const std::string& file)
         g_resources.loadFile(file, m_fin);
         m_signature = Fw::getU32(m_fin);
         m_spritesCount = Fw::getU16(m_fin);
+        dump << m_spritesCount;
         m_sprites.resize(m_spritesCount);
         m_loaded = true;
         return true;
@@ -52,6 +54,21 @@ void SpriteManager::unload()
     m_sprites.clear();
     m_spritesCount = 0;
     m_signature = 0;
+}
+
+void SpriteManager::preloadSprites()
+{
+    // preload every 100 sprites, periodically
+    const int burst = 50;
+    const int interval = 10;
+    auto preload = [this](int start) {
+        for(int i=start;i<start+burst && i<=m_spritesCount;++i) {
+            loadSpriteTexture(i);
+        }
+    };
+
+    for(int i=1;i<=m_spritesCount;i+=burst)
+        g_dispatcher.scheduleEvent(std::bind(preload, i), (i/burst) * interval);
 }
 
 TexturePtr SpriteManager::loadSpriteTexture(int id)
@@ -74,7 +91,7 @@ TexturePtr SpriteManager::loadSpriteTexture(int id)
 
     uint16 pixelDataSize = Fw::getU16(m_fin);
 
-    uchar pixels[4096];
+    static std::vector<uint8> pixels(4096);
     int writePos = 0;
     int read = 0;
 
@@ -116,9 +133,9 @@ TexturePtr SpriteManager::loadSpriteTexture(int id)
         writePos += 4;
     }
 
-    TexturePtr spriteTex(new Texture(32, 32, 4, pixels));
+    TexturePtr spriteTex(new Texture(32, 32, 4, &pixels[0]));
     spriteTex->setSmooth(true);
-    spriteTex->generateBilinearMipmaps();
+    spriteTex->generateBilinearMipmaps(pixels);
     return spriteTex;
 }
 

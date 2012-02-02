@@ -118,22 +118,27 @@ void Texture::setSmooth(bool smooth)
 
 std::vector<uint8> Texture::getPixels()
 {
-    // hack to copy pixels from opengl memory
-    FrameBufferPtr fb(new FrameBuffer(m_size));
     std::vector<uint8> pixels(m_size.area()*4, 0);
+#ifdef OPENGL_ES
+    // hack to copy pixels from opengl memory in opengl es
+    // NOTE: this can be slow, but its the only way to get pixels from a texture in OpenGL ES
+    FrameBufferPtr fb(new FrameBuffer(m_size));
     fb->bind();
     g_painter.saveAndResetState();
     g_painter.drawTexturedRect(Rect(0,0,m_size), shared_from_this());
     glReadPixels(0, 0, m_size.width(), m_size.height(), GL_RGBA, GL_UNSIGNED_BYTE, &pixels[0]);
     g_painter.restoreSavedState();
     fb->release();
+#else
+    // copy pixels from opengl memory
+    glBindTexture(GL_TEXTURE_2D, m_textureId);
+    glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, &pixels[0]);
+#endif
     return pixels;
 }
 
-void Texture::generateBilinearMipmaps()
+void Texture::generateBilinearMipmaps(std::vector<uint8> inPixels)
 {
-    std::vector<uint8> inPixels = getPixels();
-
     bind();
 
     if(!m_useMipmaps) {
@@ -188,7 +193,7 @@ void Texture::generateBilinearMipmaps()
         if(inSize.width() == 1 || inSize.height() == 1)
             break;
 
-        inPixels = outPixels;
+        inPixels = std::move(outPixels);
         inSize /= 2;
         outSize /= 2;
     }

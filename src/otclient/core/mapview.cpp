@@ -153,9 +153,14 @@ void MapView::draw(const Rect& rect)
             animatedText->draw(p, rect);
         }
     } else {
-        // draw a arrow for position the center in non near views
-        g_painter.setColor(Fw::red);
-        g_painter.drawFilledRect(Rect(rect.center(), 4, 4));
+        // draw a cross in the center instead of our creature
+        Rect vRect(0, 0, 2, 10);
+        Rect hRect(0, 0, 10, 2);
+        vRect.moveCenter(rect.center());
+        hRect.moveCenter(rect.center());
+        g_painter.setColor(Fw::white);
+        g_painter.drawFilledRect(vRect);
+        g_painter.drawFilledRect(hRect);
     }
 }
 
@@ -405,17 +410,10 @@ void MapView::setVisibleDimension(const Size& visibleDimension)
         viewRange = NEAR_VIEW;
     else if(tileSize >= 16 && visibleDimension.area() <= MID_VIEW_AREA)
         viewRange = MID_VIEW;
-    else if(tileSize >= 8)
+    else if(tileSize >= 8 && visibleDimension.area() <= FAR_VIEW_AREA)
         viewRange = FAR_VIEW;
     else
         viewRange = HUGE_VIEW;
-
-    if(m_viewRange != viewRange) {
-        if(viewRange == NEAR_VIEW) dump << "near view";
-        else if(viewRange == MID_VIEW) dump << "mid view";
-        else if(viewRange == FAR_VIEW) dump << "far view";
-        else if(viewRange == HUGE_VIEW) dump << "huge view";
-    }
 
     // draw actually more than what is needed to avoid massive recalculations on far views
     if(viewRange >= FAR_VIEW) {

@@ -77,8 +77,10 @@ void Item::setPosition(const Position& position)
     Thing::setPosition(position);
 }
 
-void Item::setCount(uint8 count)
+void Item::setCount(int count)
 {
+    count = std::max(std::min(count, 255), 0);
+
     if(isStackable() && getNumPatternsX() == 4 && getNumPatternsY() == 2) {
         if(count < 5) {
             m_xPattern = count-1;

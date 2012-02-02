@@ -36,9 +36,9 @@ public:
     void draw(const Point& dest, float scaleFactor);
 
     void setPosition(const Position &position);
-    void setCount(uint8 data);
+    void setCount(int count);
 
-    uint8 getCount() { return m_count; }
+    int getCount() { return m_count; }
 
     ItemPtr asItem() { return std::static_pointer_cast<Item>(shared_from_this()); }
 
