@@ -38,7 +38,7 @@ Tile::Tile(const Position& position)
 
 void Tile::draw(const Point& dest, float scaleFactor, int drawFlags)
 {
-    int drawElevation = 0;
+    m_drawElevation = 0;
     bool animate = drawFlags & Otc::DrawAnimations;
 
     // first bottom items
@@ -50,11 +50,11 @@ void Tile::draw(const Point& dest, float scaleFactor, int drawFlags)
             if((thing->isGround() && drawFlags & Otc::DrawGround) ||
                (thing->isGroundBorder() && drawFlags & Otc::DrawGroundBorders) ||
                (thing->isOnBottom() && drawFlags & Otc::DrawOnBottom))
-                thing->draw(dest - drawElevation*scaleFactor, scaleFactor, animate);
+                thing->draw(dest - m_drawElevation*scaleFactor, scaleFactor, animate);
 
-            drawElevation += thing->getElevation();
-            if(drawElevation > Otc::MAX_ELEVATION)
-                drawElevation = Otc::MAX_ELEVATION;
+            m_drawElevation += thing->getElevation();
+            if(m_drawElevation > Otc::MAX_ELEVATION)
+                m_drawElevation = Otc::MAX_ELEVATION;
         }
     }
 
@@ -67,16 +67,16 @@ void Tile::draw(const Point& dest, float scaleFactor, int drawFlags)
             const ThingPtr& thing = *it;
             if(thing->isOnTop() || thing->isOnBottom() || thing->isGroundBorder() || thing->isGround() || thing->asCreature())
                 break;
-            thing->draw(dest - drawElevation*scaleFactor, scaleFactor, animate);
+            thing->draw(dest - m_drawElevation*scaleFactor, scaleFactor, animate);
 
             if(thing->isLyingCorpse()) {
                 redrawPreviousTopW = std::max(thing->getDimensionWidth(), redrawPreviousTopW);
                 redrawPreviousTopH = std::max(thing->getDimensionHeight(), redrawPreviousTopH);
             }
 
-            drawElevation += thing->getElevation();
-            if(drawElevation > Otc::MAX_ELEVATION)
-                drawElevation = Otc::MAX_ELEVATION;
+            m_drawElevation += thing->getElevation();
+            if(m_drawElevation > Otc::MAX_ELEVATION)
+                m_drawElevation = Otc::MAX_ELEVATION;
         }
     }
 
@@ -100,8 +100,8 @@ void Tile::draw(const Point& dest, float scaleFactor, int drawFlags)
     if(drawFlags & Otc::DrawCreatures) {
         if(animate) {
             for(const CreaturePtr& creature : m_walkingCreatures) {
-                creature->draw(Point(dest.x + ((creature->getPosition().x - m_position.x)*Otc::TILE_PIXELS - drawElevation)*scaleFactor,
-                                    dest.y + ((creature->getPosition().y - m_position.y)*Otc::TILE_PIXELS - drawElevation)*scaleFactor), scaleFactor, animate);
+                creature->draw(Point(dest.x + ((creature->getPosition().x - m_position.x)*Otc::TILE_PIXELS - m_drawElevation)*scaleFactor,
+                                     dest.y + ((creature->getPosition().y - m_position.y)*Otc::TILE_PIXELS - m_drawElevation)*scaleFactor), scaleFactor, animate);
 
             }
         }
@@ -109,7 +109,7 @@ void Tile::draw(const Point& dest, float scaleFactor, int drawFlags)
         for(auto it = m_things.rbegin(); it != m_things.rend(); ++it) {
             CreaturePtr creature = (*it)->asCreature();
             if(creature && (!creature->isWalking() || !animate))
-                creature->draw(dest - drawElevation, scaleFactor, animate);
+                creature->draw(dest - m_drawElevation, scaleFactor, animate);
         }
     }
 
@@ -123,7 +123,7 @@ void Tile::draw(const Point& dest, float scaleFactor, int drawFlags)
     if(drawFlags & Otc::DrawOnTop) {
         for(const ThingPtr& thing : m_things) {
             if(thing->isOnTop())
-                thing->draw(dest - drawElevation, scaleFactor, animate);
+                thing->draw(dest - m_drawElevation, scaleFactor, animate);
         }
     }
 }
@@ -150,8 +150,6 @@ ThingPtr Tile::addThing(const ThingPtr& thing, int stackPos)
 {
     if(!thing)
         return nullptr;
-
-    thing->setPosition(m_position);
 
     if(EffectPtr effect = thing->asEffect()) {
         m_effects.push_back(effect);

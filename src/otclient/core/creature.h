@@ -75,15 +75,15 @@ public:
     uint8 getShield() { return m_shield; }
     uint8 getEmblem() { return m_emblem; }
     bool getPassable() { return m_passable; }
+    Point getDrawOffset();
+    Point getWalkOffset() { return m_walkOffset; }
 
-    void updateInvisibleAnimation();
     void updateShield();
 
     // walk related
     void turn(Otc::Direction direction);
     virtual void walk(const Position& oldPos, const Position& newPos);
     virtual void stopWalk();
-    Point getWalkOffset() { return m_walkOffset; }
 
     bool isWalking() { return m_walking; }
 

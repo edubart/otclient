@@ -129,6 +129,8 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
         tile->addThing(thing, stackPos);
 
         // creature teleported
+        if(creature == g_game.getLocalPlayer())
+            dump << "creature move from" << oldPos << "to" << pos;
         if(oldPos.isValid() && !oldPos.isInRange(pos,1,1))
             g_game.processCreatureTeleport(creature);
     } else if(MissilePtr missile = thing->asMissile()) {
@@ -172,9 +174,10 @@ ThingPtr Map::getThing(const Position& pos, int stackPos)
 
 bool Map::removeThing(const ThingPtr& thing)
 {
-    if(!thing) {
+    if(!thing)
         return false;
-    } else if(MissilePtr missile = thing->asMissile()) {
+
+    if(MissilePtr missile = thing->asMissile()) {
         auto it = std::find(m_floorMissiles[missile->getPosition().z].begin(), m_floorMissiles[missile->getPosition().z].end(), missile);
         if(it != m_floorMissiles[missile->getPosition().z].end()) {
             m_floorMissiles[missile->getPosition().z].erase(it);
@@ -192,7 +195,7 @@ bool Map::removeThing(const ThingPtr& thing)
             m_staticTexts.erase(it);
             return true;
         }
-    } else if(TilePtr tile = getTile(thing->getPosition()))
+    } else if(TilePtr tile = thing->getTile())
         return tile->removeThing(thing);
 
     notificateTileUpdateToMapViews(thing->getPosition());
@@ -272,22 +275,14 @@ void Map::setCentralPosition(const Position& centralPosition)
     if(teleported) {
         for(const auto& pair : m_knownCreatures) {
             const CreaturePtr& creature = pair.second;
-            const TilePtr& tile = creature->getTile();
-            if(tile) {
-                tile->removeThing(creature);
-                creature->setPosition(Position());
-            }
+            removeThing(creature);
         }
     // remove creatures from tiles that we are not aware anymore
     } else {
         for(const auto& pair : m_knownCreatures) {
             const CreaturePtr& creature = pair.second;
             if(!isAwareOfPosition(creature->getPosition())) {
-                const TilePtr& tile = creature->getTile();
-                if(tile) {
-                    tile->removeThing(creature);
-                    creature->setPosition(Position());
-                }
+                removeThing(creature);
             }
         }
     }

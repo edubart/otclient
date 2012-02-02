@@ -504,5 +504,17 @@ void Creature::updateShield()
         m_showShieldTexture = true;
 }
 
-
-
+Point Creature::getDrawOffset()
+{
+    Point drawOffset;
+    if(m_walking) {
+        if(m_walkingTile)
+            drawOffset -= Point(1,1) * m_walkingTile->getDrawElevation();
+        drawOffset += m_walkOffset;
+    } else {
+        const TilePtr& tile = getTile();
+        if(tile)
+            drawOffset -= Point(1,1) * tile->getDrawElevation();
+    }
+    return drawOffset;
+}

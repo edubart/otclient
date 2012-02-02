@@ -210,6 +210,7 @@ void Game::processCreatureTeleport(const CreaturePtr& creature)
 {
     // stop walking on creature teleports
     creature->stopWalk();
+    dump << "stop walk" << creature->getName();
 
     if(creature == m_localPlayer)
         m_localPlayer->lockWalk();
@@ -237,15 +238,7 @@ void Game::walk(Otc::Direction direction)
     if(!m_localPlayer->canWalk(direction))
         return;
 
-
-    // TODO: restore check for blockable tiles
-    /*
-    if(toTile && !toTile->isWalkable() && !fromTile->getElevation() >= 3) {
-        g_game.processTextMessage("statusSmall", "Sorry, not possible.");
-        return false;
-    }*/
-
-    // only do prewalk to walkable tiles
+    // only do prewalks to walkable tiles
     TilePtr toTile = g_map.getTile(m_localPlayer->getPosition().translatedToDirection(direction));
     if(toTile && toTile->isWalkable())
         m_localPlayer->preWalk(direction);
