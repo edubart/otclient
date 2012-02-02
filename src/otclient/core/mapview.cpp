@@ -86,6 +86,7 @@ void MapView::draw(const Rect& rect)
                     ++it;
 
                 tile->draw(transformPositionTo2D(tile->getPosition()), scaleFactor, drawFlags);
+                g_painter.drawBoundingRect(Rect(transformPositionTo2D(tile->getPosition()), Size(1,1)*Otc::TILE_PIXELS*scaleFactor));
             }
 
             if(drawFlags & Otc::DrawMissiles) {

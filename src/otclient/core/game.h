@@ -84,6 +84,7 @@ public:
     void talk(const std::string& message);
     void talkChannel(const std::string& speakTypeDesc, int channelId, const std::string& message);
     void talkPrivate(const std::string& speakTypeDesc, const std::string& receiver, const std::string& message);
+    void openPrivateChannel(const std::string& receiver);
     void requestChannels();
     void joinChannel(int channelId);
     void leaveChannel(int channelId);

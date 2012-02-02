@@ -123,7 +123,7 @@ namespace Proto {
         GameServerTalk = 170,
         GameServerChannels = 171,
         GameServerOpenChannel = 172,
-        GameServerPrivateChannel = 173,
+        GameServerOpenPrivateChannel = 173,
         GameServerRuleViolationChannel = 174, // deprecated in last tibia
         GameServerRuleViolationRemove = 175, // deprecated in last tibia
         GameServerRuleViolationCancel = 176, // deprecated in last tibia
@@ -190,7 +190,7 @@ namespace Proto {
         ClientGetChannels = 151,
         ClientJoinChannel = 152,
         ClientLeaveChannel = 153,
-        ClientPrivateChannel = 154,
+        ClientOpenPrivateChannel = 154,
         ClientCloseNpcChannel = 158,
         ClientSetTactics = 160,
         ClientAttack = 161,

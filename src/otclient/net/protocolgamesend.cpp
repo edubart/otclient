@@ -390,10 +390,10 @@ void ProtocolGame::sendLeaveChannel(int channelId)
     send(oMsg);
 }
 
-void ProtocolGame::sendPrivateChannel(const std::string& receiver)
+void ProtocolGame::sendOpenPrivateChannel(const std::string& receiver)
 {
     OutputMessage oMsg;
-    oMsg.addU8(Proto::ClientPrivateChannel);
+    oMsg.addU8(Proto::ClientOpenPrivateChannel);
     oMsg.addString(receiver);
     send(oMsg);
 }

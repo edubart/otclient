@@ -195,8 +195,8 @@ void ProtocolGame::parseMessage(InputMessage& msg)
             case Proto::GameServerOpenChannel:
                 parseOpenChannel(msg);
                 break;
-            case Proto::GameServerPrivateChannel:
-                parseOpenPrivatePlayerChat(msg);
+            case Proto::GameServerOpenPrivateChannel:
+                parseOpenPrivateChannel(msg);
                 break;
             case Proto::GameServerRuleViolationChannel:
                 msg.getU16();
@@ -210,10 +210,10 @@ void ProtocolGame::parseMessage(InputMessage& msg)
             case Proto::GameServerRuleViolationLock:
                 break;
             case Proto::GameServerOpenOwnChannel:
-                parseCreatePrivateChannel(msg);
+                parseCreateOwnPrivateChannel(msg);
                 break;
             case Proto::GameServerCloseChannel:
-                parseClosePrivateChannel(msg);
+                parseCloseChannel(msg);
                 break;
             case Proto::GameServerMessage:
                 parseTextMessage(msg);
@@ -780,20 +780,26 @@ void ProtocolGame::parseOpenChannel(InputMessage& msg)
     g_lua.callGlobalField("Game", "onOpenChannel", channelId, name);
 }
 
-void ProtocolGame::parseOpenPrivatePlayerChat(InputMessage& msg)
+void ProtocolGame::parseOpenPrivateChannel(InputMessage& msg)
 {
-    msg.getString(); // name
+    std::string name = msg.getString();
+
+    g_lua.callGlobalField("Game", "onOpenPrivateChannel", name);
 }
 
-void ProtocolGame::parseCreatePrivateChannel(InputMessage& msg)
+void ProtocolGame::parseCreateOwnPrivateChannel(InputMessage& msg)
 {
-    msg.getU16(); // channel id
-    msg.getString(); // channel name
+    int id = msg.getU16(); // channel id
+    std::string name = msg.getString(); // channel name
+
+    g_lua.callGlobalField("Game", "onOpenOwnPrivateChannel", id, name);
 }
 
-void ProtocolGame::parseClosePrivateChannel(InputMessage& msg)
+void ProtocolGame::parseCloseChannel(InputMessage& msg)
 {
-    msg.getU16(); // channel id
+    int id = msg.getU16(); // channel id
+
+    g_lua.callGlobalField("Game", "onCloseChannel", id);
 }
 
 void ProtocolGame::parseTextMessage(InputMessage& msg)

@@ -478,6 +478,14 @@ void Game::talkPrivate(const std::string& speakTypeDesc, const std::string& rece
     m_protocolGame->sendTalk(speakTypeDesc, 0, receiver, message);
 }
 
+
+void Game::openPrivateChannel(const std::string& receiver)
+{
+    if(!isOnline() || !checkBotProtection())
+        return;
+    m_protocolGame->sendOpenPrivateChannel(receiver);
+}
+
 void Game::requestChannels()
 {
     if(!isOnline() || !checkBotProtection())

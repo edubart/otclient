@@ -190,6 +190,9 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassStaticFunction<Game>("requestOutfit", std::bind(&Game::requestOutfit, &g_game));
     g_lua.bindClassStaticFunction<Game>("requestChannels", std::bind(&Game::requestChannels, &g_game));
     g_lua.bindClassStaticFunction<Game>("joinChannel", std::bind(&Game::joinChannel, &g_game, _1));
+    g_lua.bindClassStaticFunction<Game>("leaveChannel", std::bind(&Game::leaveChannel, &g_game, _1));
+    g_lua.bindClassStaticFunction<Game>("closeNpcChannel", std::bind(&Game::closeNpcChannel, &g_game));
+    g_lua.bindClassStaticFunction<Game>("openPrivateChannel", std::bind(&Game::openPrivateChannel, &g_game, _1));
     g_lua.bindClassStaticFunction<Game>("setOutfit", std::bind(&Game::setOutfit, &g_game, _1));
     g_lua.bindClassStaticFunction<Game>("look", std::bind(&Game::look, &g_game, _1));
     g_lua.bindClassStaticFunction<Game>("open", std::bind(&Game::open, &g_game, _1, _2));
