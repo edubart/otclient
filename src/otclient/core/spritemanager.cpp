@@ -39,7 +39,6 @@ bool SpriteManager::load(const std::string& file)
         g_resources.loadFile(file, m_fin);
         m_signature = Fw::getU32(m_fin);
         m_spritesCount = Fw::getU16(m_fin);
-        dump << m_spritesCount;
         m_sprites.resize(m_spritesCount);
         m_loaded = true;
         return true;

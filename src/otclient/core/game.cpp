@@ -210,7 +210,6 @@ void Game::processCreatureTeleport(const CreaturePtr& creature)
 {
     // stop walking on creature teleports
     creature->stopWalk();
-    dump << "stop walk" << creature->getName();
 
     if(creature == m_localPlayer)
         m_localPlayer->lockWalk();

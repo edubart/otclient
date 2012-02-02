@@ -37,7 +37,8 @@ void StaticText::draw(const Point& dest, const Rect& parentRect)
     Rect boundRect = rect;
     boundRect.bind(parentRect);
 
-    if((boundRect.center() - rect.center()).length() < parentRect.width() / 15) {
+    // draw only if the real center is not too far from the parent center, or its a yell
+    if((boundRect.center() - rect.center()).length() < parentRect.width() / 15 || m_yell) {
         //TODO: cache into a framebuffer
         m_font->renderText(m_text, boundRect, Fw::AlignCenter, m_color);
     }

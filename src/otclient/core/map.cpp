@@ -128,9 +128,6 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
         Position oldPos = thing->getPosition();
         tile->addThing(thing, stackPos);
 
-        // creature teleported
-        if(creature == g_game.getLocalPlayer())
-            dump << "creature move from" << oldPos << "to" << pos;
         if(oldPos.isValid() && !oldPos.isInRange(pos,1,1))
             g_game.processCreatureTeleport(creature);
     } else if(MissilePtr missile = thing->asMissile()) {

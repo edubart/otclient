@@ -32,6 +32,7 @@ bool UIGame::onKeyPress(uchar keyCode, int keyboardModifiers, bool wouldFilter)
 
     UILineEditPtr chatLineEdit = std::dynamic_pointer_cast<UILineEdit>(getParent()->recursiveGetChildById("consoleLineEdit"));
 
+    //TODO: move this whole shit to lua
     if(keyboardModifiers == Fw::KeyboardNoModifier) {
         if(keyCode == Fw::KeyUp || keyCode == Fw::KeyNumpad8) {
             g_game.walk(Otc::North);
