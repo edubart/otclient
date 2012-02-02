@@ -86,7 +86,6 @@ void MapView::draw(const Rect& rect)
                     ++it;
 
                 tile->draw(transformPositionTo2D(tile->getPosition()), scaleFactor, drawFlags);
-                g_painter.drawBoundingRect(Rect(transformPositionTo2D(tile->getPosition()), Size(1,1)*Otc::TILE_PIXELS*scaleFactor));
             }
 
             if(drawFlags & Otc::DrawMissiles) {
@@ -216,11 +215,10 @@ void MapView::updateVisibleTilesCache(int start)
     // draw from last floor (the lower) to first floor (the higher)
     for(int iz = m_cachedLastVisibleFloor; iz >= m_cachedFirstVisibleFloor && !stop; --iz) {
         if(m_viewRange <= FAR_VIEW) {
-            // draw tiles like linus pauling's rule order
             const int numDiagonals = m_drawDimension.width() + m_drawDimension.height() - 1;
             for(int diagonal = 0; diagonal < numDiagonals && !stop; ++diagonal) {
-                // loop through / diagonal tiles
-                for(int ix = std::min(diagonal, m_drawDimension.width() - 1), iy = std::max(diagonal - m_drawDimension.width() + 1, 0); ix >= 0 && iy < m_drawDimension.height() && !stop; --ix, ++iy) {
+                // loop through / diagonals beginning at top left and going to top right
+                for(int iy = std::min(diagonal, m_drawDimension.width() - 1), ix = std::max(diagonal - m_drawDimension.width() + 1, 0); iy >= 0 && ix < m_drawDimension.width() && !stop; --iy, ++ix) {
                     // only start really looking tiles in the desired start
                     if(count < start) {
                         count++;
