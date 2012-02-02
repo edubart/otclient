@@ -122,9 +122,7 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
     if(!thing)
         return;
 
-    TilePtr tile = getTile(pos);
-    if(!tile)
-        tile = createTile(pos);
+    TilePtr tile = getOrCreateTile(pos);
 
     if(CreaturePtr creature = thing->asCreature()) {
         Position oldPos = thing->getPosition();
@@ -225,11 +223,21 @@ const TilePtr& Map::getTile(const Position& pos)
     return nulltile;
 }
 
+TilePtr Map::getOrCreateTile(const Position& pos)
+{
+    const TilePtr& tile = getTile(pos);
+    if(tile)
+        return tile;
+    else
+        return createTile(pos);
+}
+
 void Map::cleanTile(const Position& pos)
 {
     if(TilePtr tile = getTile(pos)) {
         tile->clean();
-        m_tiles.erase(m_tiles.find(pos));
+        if(tile->canErase())
+            m_tiles.erase(m_tiles.find(pos));
 
         notificateTileUpdateToMapViews(pos);
     }

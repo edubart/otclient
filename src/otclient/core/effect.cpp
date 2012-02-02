@@ -32,9 +32,10 @@ void Effect::draw(const Point& dest, float scaleFactor, bool animate)
     if(m_id == 0)
         return;
 
-    int animationPhase = std::min((int)(m_animationTimer.ticksElapsed() / Otc::EFFECT_TICKS_PER_FRAME), getAnimationPhases() - 1);
-    for(int layer = 0; layer < getLayers(); layer++)
-        internalDraw(dest, scaleFactor, 0, 0, 0, layer, animate ? animationPhase : 0);
+    int animationPhase = 0;
+    if(animate)
+        animationPhase = std::min((int)(m_animationTimer.ticksElapsed() / Otc::EFFECT_TICKS_PER_FRAME), getAnimationPhases() - 1);
+    internalDraw(dest, scaleFactor, 0, 0, 0, animationPhase);
 }
 
 void Effect::startAnimation()

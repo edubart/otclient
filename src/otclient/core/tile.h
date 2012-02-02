@@ -40,7 +40,7 @@ public:
     void removeWalkingCreature(const CreaturePtr& creature);
 
     ThingPtr addThing(const ThingPtr& thing, int stackPos = -1);
-    bool removeThing(const ThingPtr& thing);
+    bool removeThing(ThingPtr thing);
     ThingPtr getThing(int stackPos);
     int getThingStackpos(const ThingPtr& thing);
     ThingPtr getTopThing();
@@ -57,6 +57,7 @@ public:
     const std::vector<ThingPtr>& getThings() { return m_things; }
     ItemPtr getGround();
     int getGroundSpeed();
+    int getThingCount() { return m_things.size() + m_effects.size(); }
     bool isWalkable();
     bool isFullGround();
     bool isFullyOpaque();
@@ -67,7 +68,7 @@ public:
     bool mustHookEast();
     bool hasCreature();
     bool limitsFloorsView();
-    int getThingCount() { return m_things.size() + m_effects.size(); }
+    bool canErase();
 
     TilePtr asTile() { return std::static_pointer_cast<Tile>(shared_from_this()); }
 
@@ -76,7 +77,7 @@ private:
     std::vector<EffectPtr> m_effects; // leave this outside m_things because it has no stackpos.
     std::vector<ThingPtr> m_things;
     Position m_position;
-    int m_drawElevation;
+    uint8 m_drawElevation;
 };
 
 #endif

@@ -170,9 +170,8 @@ void Item::draw(const Point& dest, float scaleFactor, bool animate)
     }
     g_painter.setCustomProgram(itemProgram);
 
-    // draw all item layers
-    for(int layer = 0; layer < getLayers(); layer++)
-        internalDraw(dest, scaleFactor, xPattern, yPattern, zPattern, layer, animationPhase);
+    // now we can draw the item
+    internalDraw(dest, scaleFactor, xPattern, yPattern, zPattern, animationPhase);
 
     // release draw shader
     g_painter.releaseCustomProgram();

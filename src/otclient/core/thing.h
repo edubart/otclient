@@ -49,6 +49,7 @@ public:
     Position getPosition() { return m_position; }
     int getStackPriority();
     const TilePtr& getTile();
+    int getStackpos();
 
     ThingPtr asThing() { return std::static_pointer_cast<Thing>(shared_from_this()); }
     virtual ItemPtr asItem() { return nullptr; }
@@ -82,6 +83,7 @@ public:
     bool isHookSouth() { return m_type->properties[ThingType::HookSouth]; }
     bool isHookEast() { return m_type->properties[ThingType::HookEast]; }
     bool isStackable() { return m_type->properties[ThingType::IsStackable]; }
+    bool isLyingCorpse() { return m_type->properties[ThingType::IsLyingCorpse]; }
     bool blocksProjectile() { return m_type->properties[ThingType::BlockProjectile]; }
     bool isFluid() { return m_type->properties[ThingType::IsFluid]; }
     bool isFluidContainer() { return m_type->properties[ThingType::IsFluidContainer]; }
@@ -98,10 +100,14 @@ public:
     int getAnimationPhases() { return m_type->dimensions[ThingType::AnimationPhases]; }
     int getGroundSpeed() { return m_type->parameters[ThingType::GroundSpeed]; }
     int getElevation() { return m_type->parameters[ThingType::Elevation]; }
-    int getSpriteId(int w = 0, int h = 0, int layer = 0, int xPattern = 0, int yPattern = 0, int zPattern = 0, int animation = 0) { return m_type->getSpriteId(w, h, layer, xPattern, yPattern, zPattern, animation); }
+
+    int getSpriteId(int w = 0, int h = 0, int layer = 0,
+                    int xPattern = 0, int yPattern = 0, int zPattern = 0,
+                    int animation = 0) { return m_type->getSpriteId(w, h, layer, xPattern, yPattern, zPattern, animation); }
 
 protected:
-    void internalDraw(const Point& dest, float scaleFactor, int xPattern, int yPattern, int zPattern, int layer, int animationPhase);
+    void internalDraw(const Point& dest, float scaleFactor, int w, int h, int xPattern, int yPattern, int zPattern, int layer, int animationPhase);
+    void internalDraw(const Point& dest, float scaleFactor, int xPattern, int yPattern, int zPattern, int animationPhase);
 
     Position m_position;
     ThingType *m_type;

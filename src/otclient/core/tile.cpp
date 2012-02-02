@@ -42,14 +42,14 @@ void Tile::draw(const Point& dest, float scaleFactor, int drawFlags)
     bool animate = drawFlags & Otc::DrawAnimations;
 
     // first bottom items
-    if(drawFlags & Otc::DrawGround || drawFlags & Otc::DrawWalls || drawFlags & Otc::DrawGroundBorders) {
+    if(drawFlags & Otc::DrawGround || drawFlags & Otc::DrawGroundBorders || drawFlags & Otc::DrawCommonItems) {
         for(const ThingPtr& thing : m_things) {
             if(!thing->isGround() && !thing->isGroundBorder() && !thing->isOnBottom())
                 break;
 
             if((thing->isGround() && drawFlags & Otc::DrawGround) ||
                (thing->isGroundBorder() && drawFlags & Otc::DrawGroundBorders) ||
-               (thing->isOnBottom() && drawFlags & Otc::DrawWalls))
+               (thing->isOnBottom() && drawFlags & Otc::DrawCommonItems))
                 thing->draw(dest - drawElevation*scaleFactor, scaleFactor, animate);
 
             drawElevation += thing->getElevation();
@@ -58,17 +58,42 @@ void Tile::draw(const Point& dest, float scaleFactor, int drawFlags)
         }
     }
 
-    // now common items in reverse order
+    int redrawPreviousOnTopW = 0;
+    int redrawPreviousOnTopH = 0;
+
     if(drawFlags & Otc::DrawCommonItems) {
+        // now common items in reverse order
         for(auto it = m_things.rbegin(); it != m_things.rend(); ++it) {
             const ThingPtr& thing = *it;
             if(thing->isOnTop() || thing->isOnBottom() || thing->isGroundBorder() || thing->isGround() || thing->asCreature())
                 break;
             thing->draw(dest - drawElevation*scaleFactor, scaleFactor, animate);
 
+            if(thing->isLyingCorpse()) {
+                redrawPreviousOnTopW = std::max(thing->getDimensionWidth(), redrawPreviousOnTopW);
+                redrawPreviousOnTopH = std::max(thing->getDimensionHeight(), redrawPreviousOnTopH);
+            }
+
             drawElevation += thing->getElevation();
             if(drawElevation > Otc::MAX_ELEVATION)
                 drawElevation = Otc::MAX_ELEVATION;
+        }
+    }
+
+    // must redraw previous creatures/ontop above lying corpses
+    if(redrawPreviousOnTopH > 0 || redrawPreviousOnTopW > 0) {
+        int onTopRedrawFlags = drawFlags & (Otc::DrawCreatures | Otc::DrawEffects | Otc::DrawWalls);
+        if(onTopRedrawFlags) {
+            for(int y=-redrawPreviousOnTopH;y<=0;++y) {
+                for(int x=-redrawPreviousOnTopW;x<=0;++x) {
+                    if(x == 0 && y == 0)
+                        continue;
+                    const TilePtr& tile = g_map.getTile(m_position.translated(x,y));
+                    if(tile) {
+                        tile->draw(dest + Point(x*Otc::TILE_PIXELS, y*Otc::TILE_PIXELS)*scaleFactor, scaleFactor, onTopRedrawFlags);
+                    }
+                }
+            }
         }
     }
 
@@ -106,8 +131,8 @@ void Tile::draw(const Point& dest, float scaleFactor, int drawFlags)
 
 void Tile::clean()
 {
-    m_things.clear();
-    m_effects.clear();
+    while(!m_things.empty())
+        removeThing(m_things.front());
 }
 
 void Tile::addWalkingCreature(const CreaturePtr& creature)
@@ -153,7 +178,7 @@ ThingPtr Tile::addThing(const ThingPtr& thing, int stackPos)
     return oldObject;
 }
 
-bool Tile::removeThing(const ThingPtr& thing)
+bool Tile::removeThing(ThingPtr thing)
 {
     if(!thing)
         return false;
@@ -406,3 +431,9 @@ bool Tile::limitsFloorsView()
         return true;
     return false;
 }
+
+bool Tile::canErase()
+{
+    return m_walkingCreatures.empty() && m_effects.empty() && m_things.empty();
+}
+

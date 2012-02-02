@@ -66,18 +66,16 @@ int MASK_TEXTURE_UNIFORM = 14;
 
 void Creature::draw(const Point& dest, float scaleFactor, bool animate)
 {
-    int scaledTileSize = Otc::TILE_PIXELS * scaleFactor;
-
     Point animationOffset = animate ? m_walkOffset : Point(0,0);
 
     if(m_showVolatileSquare && animate) {
         g_painter.setColor(m_volatileSquareColor);
-        g_painter.drawBoundingRect(Rect(dest + (animationOffset - getDisplacement() + 3)*scaleFactor, Size(28*scaleFactor, 28*scaleFactor)), std::max((int)(2*scaleFactor), 1));
+        g_painter.drawBoundingRect(Rect(dest + (animationOffset - getDisplacement() + 3)*scaleFactor, Size(28, 28)*scaleFactor), std::max((int)(2*scaleFactor), 1));
     }
 
     if(m_showStaticSquare && animate) {
         g_painter.setColor(m_staticSquareColor);
-        g_painter.drawBoundingRect(Rect(dest + (animationOffset - getDisplacement() + 1)*scaleFactor, Size(scaledTileSize, scaledTileSize)), std::max((int)(2*scaleFactor), 1));
+        g_painter.drawBoundingRect(Rect(dest + (animationOffset - getDisplacement() + 1)*scaleFactor, Size(Otc::TILE_PIXELS, Otc::TILE_PIXELS)*scaleFactor), std::max((int)(2*scaleFactor), 1));
     }
 
     g_painter.setColor(Fw::white);
@@ -124,13 +122,6 @@ void Creature::draw(const Point& dest, float scaleFactor, bool animate)
 
             for(int h = 0; h < getDimensionHeight(); h++) {
                 for(int w = 0; w < getDimensionWidth(); w++) {
-                    int spriteId = getSpriteId(w, h, 0, xPattern, yPattern, zPattern, m_walkAnimationPhase);
-                    if(!spriteId)
-                        continue;
-                    TexturePtr spriteTex = g_sprites.getSpriteTexture(spriteId);
-                    if(!spriteTex)
-                        continue;
-
                     // setup texture outfit mask
                     TexturePtr maskTex;
                     if(getLayers() > 1) {
@@ -139,10 +130,8 @@ void Creature::draw(const Point& dest, float scaleFactor, bool animate)
                     }
                     outfitProgram->setUniformTexture(MASK_TEXTURE_UNIFORM, maskTex, 1);
 
-                    Rect drawRect(dest.x + (animationOffset.x - w*Otc::TILE_PIXELS - getDisplacementX())*scaleFactor,
-                                  dest.y + (animationOffset.y - h*Otc::TILE_PIXELS - getDisplacementY())*scaleFactor,
-                                  scaledTileSize, scaledTileSize);
-                    g_painter.drawTexturedRect(drawRect, spriteTex);
+                    internalDraw(dest + (animationOffset - Point(w,h)*Otc::TILE_PIXELS)*scaleFactor,
+                                 scaleFactor, w, h, xPattern, yPattern, zPattern, 0, animationPhase);
                 }
             }
 
@@ -171,8 +160,7 @@ void Creature::draw(const Point& dest, float scaleFactor, bool animate)
         if(m_outfit.getCategory() == ThingsType::Effect)
             animationPhase = std::min(animationPhase+1, getAnimationPhases());
 
-        for(int layer = 0; layer < getLayers(); layer++)
-            internalDraw(dest + animationOffset*scaleFactor, scaleFactor, 0, 0, 0, layer, animationPhase);
+        internalDraw(dest + animationOffset*scaleFactor, scaleFactor, 0, 0, 0, animationPhase);
     }
 }
 
