@@ -96,6 +96,10 @@ void Creature::draw(const Point& dest, float scaleFactor, bool animate)
     // outfit is a real creature
     if(m_outfit.getCategory() == ThingsType::Creature) {
         int animationPhase = animate ? m_walkAnimationPhase : 0;
+        if(isAnimateAlways()) {
+            int ticksPerFrame = 1000 / getAnimationPhases();
+            animationPhase = (g_clock.ticks() % (ticksPerFrame * getAnimationPhases())) / ticksPerFrame;
+        }
 
         // xPattern => creature direction
         if(m_direction == Otc::NorthEast || m_direction == Otc::SouthEast)

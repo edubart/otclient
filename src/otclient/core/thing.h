@@ -83,6 +83,7 @@ public:
     bool isHookSouth() { return m_type->properties[ThingType::HookSouth]; }
     bool isHookEast() { return m_type->properties[ThingType::HookEast]; }
     bool isStackable() { return m_type->properties[ThingType::IsStackable]; }
+    bool isAnimateAlways() { return m_type->properties[ThingType::AnimateAlways]; }
     bool isLyingCorpse() { return m_type->properties[ThingType::IsLyingCorpse]; }
     bool blocksProjectile() { return m_type->properties[ThingType::BlockProjectile]; }
     bool isFluid() { return m_type->properties[ThingType::IsFluid]; }
