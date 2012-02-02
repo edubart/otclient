@@ -63,6 +63,8 @@ public:
     bool isLookPossible();
     bool isClickable();
     bool isEmpty();
+    bool mustHookSouth();
+    bool mustHookEast();
     bool hasCreature();
     bool limitsFloorsView();
     int getThingCount() { return m_things.size() + m_effects.size(); }

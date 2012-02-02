@@ -24,6 +24,7 @@
 #include "thingstype.h"
 #include "spritemanager.h"
 #include "thing.h"
+#include "tile.h"
 #include <framework/core/clock.h>
 #include <framework/core/eventdispatcher.h>
 #include <framework/graphics/graphics.h>
@@ -33,7 +34,7 @@
 Item::Item() : Thing()
 {
     m_id = 0;
-    m_countOrSubType = 1;
+    m_countOrSubType = 0;
 }
 
 ItemPtr Item::create(int id)
@@ -87,10 +88,13 @@ void Item::draw(const Point& dest, float scaleFactor, bool animate)
             yPattern = 1;
         }
     } else if(isHangable()) {
-        if(isHookSouth())
-            xPattern = getNumPatternsX() >= 2 ? 1 : 0;
-        else if(isHookEast())
-            xPattern = getNumPatternsX() >= 3 ? 2 : 0;
+        const TilePtr& tile = getTile();
+        if(tile) {
+            if(tile->mustHookSouth())
+                xPattern = getNumPatternsX() >= 2 ? 1 : 0;
+            else if(tile->mustHookSouth())
+                xPattern = getNumPatternsX() >= 3 ? 2 : 0;
+        }
     } else if(isFluid() || isFluidContainer()) {
         int color = Otc::FluidTransparent;
         switch(m_countOrSubType) {

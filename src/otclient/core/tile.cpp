@@ -374,6 +374,22 @@ bool Tile::isEmpty()
     return m_things.size() == 0;
 }
 
+bool Tile::mustHookEast()
+{
+    for(const ThingPtr& thing : m_things)
+        if(thing->isHookEast())
+            return true;
+    return false;
+}
+
+bool Tile::mustHookSouth()
+{
+    for(const ThingPtr& thing : m_things)
+        if(thing->isHookSouth())
+            return true;
+    return false;
+}
+
 bool Tile::hasCreature()
 {
     for(const ThingPtr& thing : m_things)

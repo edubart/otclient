@@ -113,6 +113,7 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Thing>("isPickupable", &Thing::isPickupable);
     g_lua.bindClassMemberFunction<Thing>("isIgnoreLook", &Thing::isIgnoreLook);
     g_lua.bindClassMemberFunction<Thing>("isStackable", &Thing::isStackable);
+    g_lua.bindClassMemberFunction<Thing>("isHookSouth", &Thing::isHookSouth);
     g_lua.bindClassMemberFunction<Thing>("isTranslucent", &Thing::isTranslucent);
     g_lua.bindClassMemberFunction<Thing>("isFullGround", &Thing::isFullGround);
 
