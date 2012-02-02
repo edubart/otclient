@@ -123,6 +123,7 @@ void ConfigManager::addNode(const std::string& key, const OTMLNodePtr& node)
 {
     OTMLNodePtr clone = node->clone();
     node->setTag(key);
+    node->setUnique(true);
     m_confsDoc->addChild(node);
 }
 

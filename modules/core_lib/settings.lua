@@ -2,7 +2,7 @@ Settings = {}
 
 Settings.exists = g_configs.exists
 Settings.setNode = g_configs.setNode
-Settings.mergeNode = g_configs.mergeNode
+Settings.addNode = g_configs.addNode
 Settings.getNode = g_configs.getNode
 Settings.remove = g_configs.remove
 Settings.setList = g_configs.setList

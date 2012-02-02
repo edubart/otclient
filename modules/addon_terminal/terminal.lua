@@ -173,6 +173,11 @@ end
 
 function Terminal.executeCommand(command)
   if command == nil or #command == 0 then return end
+
+  logLocked = true
+  Logger.log(LogInfo, '>> ' .. command)
+  logLocked = false
+
   -- detect and convert commands with simple syntax
   local realCommand
   if commandEnv[command] then
