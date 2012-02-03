@@ -58,7 +58,7 @@ end
 
 function UITabBar:getTab(text)
   for k,tab in pairs(self.tabs) do
-    if tab:getText() == text then
+    if tab:getText():lower() == text:lower() then
       return tab
     end
   end

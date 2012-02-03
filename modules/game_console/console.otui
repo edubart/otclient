@@ -74,11 +74,14 @@ Panel
   ConsoleButton
     id: sayModeButton
     icon: /core_styles/icons/say.png
+    tooltip: Adjust volume
+    &sayMode: 2
     size: 20 20
     anchors.left: parent.left
     anchors.bottom: parent.bottom
     margin-left: 6
     margin-bottom: 6
+    @onClick: Console.sayModeChange()
 
   LineEdit
     id: consoleLineEdit
