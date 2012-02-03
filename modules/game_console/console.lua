@@ -202,6 +202,7 @@ function Console.sendCurrentMessage()
   local originalMessage = message
   local chatCommandSayMode
   local chatCommandPrivate
+  local chatCommandPrivateReady
   
   local chatCommandMessage = message:match("^%#y (.*)")
   if chatCommandMessage ~= nil then chatCommandSayMode = 'yell' end -- player used yell command
@@ -218,8 +219,8 @@ function Console.sendCurrentMessage()
       if chatCommandInitial == "*" then
         consoleLineEdit:setText('*'.. chatCommandPrivate .. '* ')
       end      
-      chatCommandPrivate = chatCommandPrivate
       message = chatCommandMessage:trim()
+      chatCommandPrivateReady = true
     end
   end
   
@@ -241,7 +242,7 @@ function Console.sendCurrentMessage()
   end
   local speaktypedesc
 
-  if tab.channelId and not chatCommandPrivate then
+  if tab.channelId and not chatCommandPrivateReady then
     if tab.channelId == 0 then
       speaktypedesc = chatCommandSayMode or SayModes[consolePanel:getChildById('sayModeButton').sayMode].speakTypeDesc
       if speaktypedesc ~= 'say' then Console.sayModeChange(2) end -- head back to say mode
@@ -253,7 +254,7 @@ function Console.sendCurrentMessage()
     return
   else
     local isPrivateCommand = false
-    if chatCommandPrivate then
+    if chatCommandPrivateReady then
       speaktypedesc = 'privatePlayerToPlayer'
       name = chatCommandPrivate
       isPrivateCommand = true
