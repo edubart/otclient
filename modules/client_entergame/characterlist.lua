@@ -73,9 +73,12 @@ function CharacterList.create(characters, premDays)
 
     local label = createWidget('CharacterListLabel', characterList)
     label:setText(characterName .. '  (' .. worldName .. ')')
+    label:setPhantom(false)
     label.characterName = characterName
     label.worldHost = worldHost
     label.worldPort = worldIp
+    
+    connect(label, { onMouseDoubleClick = function () CharacterList.doLogin() return true end } )
 
     if i == 1 or Settings.get('lastUsedCharacter') == characterName then
       focusLabel = label

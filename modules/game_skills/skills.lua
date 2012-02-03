@@ -45,9 +45,11 @@ function Skills.create()
   skillsWindow = displayUI('skills.otui', { parent = Game.gameRightPanel })
   skillsWindow:hide()
   skillsButton = TopMenu.addGameButton('skillsButton', 'Skills (Ctrl+S)', '/core_styles/icons/skills.png', Skills.toggle)
+  Hotkeys.bindKeyDown('Ctrl+S', Skills.toggle)
 end
 
 function Skills.destroy()
+  Hotkeys.unbindKeyDown('Ctrl+S')
   skillsButton:destroy()
   skillsButton = nil
   skillsWindow:destroy()

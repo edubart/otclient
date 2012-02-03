@@ -127,6 +127,10 @@ function Console.addChannel(name, id)
 end
 
 function Console.addPrivateText(text, speaktype, name)
+  if speaktype.speakType == SpeakPrivateNpcToPlayer then
+    name = 'NPCs'
+  end
+
   local privateTab = Console.getTab(name)
   if privateTab == nil then
     if Options.showPrivateMessagesInConsole then
