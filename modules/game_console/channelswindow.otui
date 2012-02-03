@@ -11,7 +11,7 @@ ChannelListLabel < Label
 MainWindow
   id: channelsWindow
   text: Channels
-  size: 250 208
+  size: 250 238
   @onEscape: self:destroy()
 
   TextList
@@ -21,6 +21,22 @@ MainWindow
     margin-bottom: 10
     padding: 1
     focusable: false
+
+  LargerLabel
+    id: openPrivateChannelWithLabel
+    text: Open a private message channel:
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: next.top
+    text-align: center
+    margin-bottom: 2
+
+  LineEdit
+    id: openPrivateChannelWith
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: next.top
+    margin-bottom: 10
 
   Button
     id: buttonOpen

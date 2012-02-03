@@ -1,21 +1,39 @@
 Console = {}
 
 -- private variables
+local SpeakTypesSettings = {
+  say = { speakType = SpeakSay, color = '#FFFF00' },
+  whisper = { speakType = SpeakWhisper, color = '#FFFF00' },
+  yell = { speakType = SpeakYell, color = '#FFFF00' },
+  broadcast = { speakType = SpeakBroadcast, color = '#F55E5E' },
+  private = { speakType = SpeakPrivate, color = '#5FF7F7', private = true },
+  privateRed = { speakType = SpeakPrivateRed, color = '#F55E5E', private = true },
+  privatePlayerToPlayer = { speakType = SpeakPrivate, color = '#9F9DFD', private = true },
+  privatePlayerToNpc = { speakType = SpeakPrivatePlayerToNpc, color = '#9F9DFD', private = true, npcChat = true },
+  privateNpcToPlayer = { speakType = SpeakPrivateNpcToPlayer, color = '#5FF7F7', private = true, npcChat = true },
+  channelYellow = { speakType = SpeakChannelYellow, color = '#FFFF00' },
+  channelWhite = { speakType = SpeakChannelWhite, color = '#FFFFFF' },
+  channelRed = { speakType = SpeakChannelRed, color = '#F55E5E' },
+  channelOrange = { speakType = SpeakChannelOrange, color = '#FE6500' },
+  monsterSay = { speakType = SpeakMonsterSay, color = '#FE6500', hideInConsole = true},
+  monsterYell = { speakType = SpeakMonsterYell, color = '#FE6500', hideInConsole = true},
+}
+
 local SpeakTypes = {
-  say = { color = '#FFFF00' },
-  whisper = { color = '#FFFF00' },
-  yell = { color = '#FFFF00' },
-  monsterSay = { color = '#FE6500', hideInConsole = true},
-  monsterYell = { color = '#FE6500', hideInConsole = true},
-  npcToPlayer = { color = '#5FF7F7', private = true, npcChat = true },
-  channelYellow = { color = '#FFFF00' },
-  channelWhite = { color = '#FFFFFF' },
-  channelRed = { color = '#F55E5E' },
-  channelOrange = { color = '#FE6500' },
-  private = { color = '#5FF7F7', private = true },
-  playerToNpc = { color = '#9F9DFD', private = true, npcChat = true },
-  broadcast = { color = '#F55E5E' },
-  privateRed = { color = '#F55E5E', private = true }
+	[SpeakSay] = SpeakTypesSettings.say,
+	[SpeakWhisper] = SpeakTypesSettings.whisper,
+	[SpeakYell] = SpeakTypesSettings.yell,
+	[SpeakBroadcast] = SpeakTypesSettings.broadcast,
+	[SpeakPrivate] = SpeakTypesSettings.private,
+	[SpeakPrivateRed] = SpeakTypesSettings.privateRed,
+	[SpeakPrivatePlayerToNpc] = SpeakTypesSettings.privatePlayerToNpc,
+	[SpeakPrivateNpcToPlayer] = SpeakTypesSettings.privateNpcToPlayer,
+	[SpeakChannelYellow] = SpeakTypesSettings.channelYellow,
+	[SpeakChannelWhite] = SpeakTypesSettings.channelWhite,
+	[SpeakChannelRed] = SpeakTypesSettings.channelRed,
+	[SpeakChannelOrange] = SpeakTypesSettings.channelOrange,
+	[SpeakMonsterSay] = SpeakTypesSettings.monsterSay,
+	[SpeakMonsterYell] = SpeakTypesSettings.monsterYell,
 }
 
 local consolePanel
@@ -46,12 +64,22 @@ function Console.create()
   channels = {}
 
   Console.addChannel('Default', 0)
-  Console.addTab('Server Log')
+  Console.addTab('Server Log', false)
 
   Hotkeys.bindKeyDown('Tab', function() consoleTabBar:selectNextTab() end, consolePanel)
   Hotkeys.bindKeyDown('Shift+Tab', function() consoleTabBar:selectPrevTab() end, consolePanel)
   Hotkeys.bindKeyDown('Enter', Console.sendCurrentMessage, consolePanel)
   Hotkeys.bindKeyDown('Return', Console.sendCurrentMessage, consolePanel)
+  
+  --Apply buttom functions after loaded
+  consolePanel:getChildById('nextChannelButton').onClick = function() consoleTabBar:selectNextTab() end
+  consolePanel:getChildById('prevChannelButton').onClick = function() consoleTabBar:selectPrevTab() end
+  
+  --Tibia Like Hotkeys
+  Hotkeys.bindKeyDown('Ctrl+O', Game.requestChannels)
+  Hotkeys.bindKeyDown('Ctrl+E', Console.removeCurrentTab)
+  
+  connect(consoleTabBar, { onTabChange = Console.onTabChange })
 end
 
 function Console.destroy()
@@ -59,10 +87,29 @@ function Console.destroy()
   consolePanel = nil
 end
 
-function Console.addTab(name)
+function Console.addTab(name, focus)
   local tab = consoleTabBar:addTab(name)
-  consoleTabBar:selectTab(tab)
+  if focus then
+	consoleTabBar:selectTab(tab)
+  else
+	consoleTabBar:blinkTab(tab)
+  end
   return tab
+end
+
+function Console.onTabChange(tabBar, tab)
+	if tab:getText() == "Default" or tab:getText() == "Server Log" then
+		consolePanel:getChildById('closeChannelButton'):disable()
+	else
+		consolePanel:getChildById('closeChannelButton'):enable()
+	end
+end
+
+function Console.removeCurrentTab()
+  local tab = consoleTabBar:getCurrentTab()
+  if tab:getText() == "Default" or tab:getText() == "Server Log" then return end
+  
+  consoleTabBar:removeTab(tab)
 end
 
 function Console.getTab(name)
@@ -75,7 +122,7 @@ end
 
 function Console.addChannel(name, id)
   channels[id] = name
-  local tab = Console.addTab(name)
+  local tab = Console.addTab(name, true)
   tab.channelId = id
   return tab
 end
@@ -86,7 +133,7 @@ function Console.addPrivateText(text, speaktype, name)
     if Options.showPrivateMessagesInConsole then
       privateTab = Console.getTab('Default')
     else
-      privateTab = Console.addTab(name)
+      privateTab = Console.addTab(name, false)
     end
     privateTab.npcChat = speaktype.npcChat
   end
@@ -137,18 +184,18 @@ function Console.sendCurrentMessage()
       speaktypedesc = 'channelYellow'
     end
 
-    Game.talkChannel(speaktypedesc, tab.channelId, message)
+    Game.talkChannel(SpeakTypesSettings[speaktypedesc].speakType, tab.channelId, message)
     return
   else
     if tab.npcChat then
-      speaktypedesc = 'playerToNpc'
+      speaktypedesc = 'privatePlayerToNpc'
     else
-      speaktypedesc = 'private'
+      speaktypedesc = 'privatePlayerToPlayer'
     end
 
-    local speaktype = SpeakTypes[speaktypedesc]
+    local speaktype = SpeakTypesSettings[speaktypedesc]
     local player = Game.getLocalPlayer()
-    Game.talkPrivate(speaktypedesc, name, message)
+    Game.talkPrivate(speaktype.speakType, name, message)
 
     message = applyMessagePrefixies(player:getName(), player:getLevel(), message)
     Console.addPrivateText(message, speaktype, name)
@@ -156,8 +203,8 @@ function Console.sendCurrentMessage()
 end
 
 -- hooked events
-local function onCreatureSpeak(name, level, speaktypedesc, message, channelId, creaturePos)
-  speaktype = SpeakTypes[speaktypedesc]
+local function onCreatureSpeak(name, level, speaktype, message, channelId, creaturePos)
+  speaktype = SpeakTypes[speaktype]
   if speaktype.hideInConsole then return end
 
   message = applyMessagePrefixies(name, level, message)
@@ -173,13 +220,25 @@ local function onOpenChannel(channelId, channelName)
   Console.addChannel(channelName, channelId)
 end
 
+local function onOpenPrivateChannel(receiver)
+  local privateTab = Console.getTab(receiver)
+  if privateTab == nil then
+    Console.addTab(receiver, true)
+  end
+end
+
 local function onChannelList(channelList)
   local channelsWindow = displayUI('channelswindow.otui')
   local channelListPanel = channelsWindow:getChildById('channelList')
   channelsWindow.onEnter = function(self)
-    local selectedChannelLabel = channelListPanel:getFocusedChild()
-    if not selectedChannelLabel then return end
-    Game.joinChannel(selectedChannelLabel.channelId)
+    local openPrivateChannelWith = channelsWindow:getChildById('openPrivateChannelWith'):getText()
+	if openPrivateChannelWith ~= '' then
+		Game.openPrivateChannel(openPrivateChannelWith)
+	else
+		local selectedChannelLabel = channelListPanel:getFocusedChild()
+		if not selectedChannelLabel then return end
+		Game.joinChannel(selectedChannelLabel.channelId)
+	end
     channelsWindow:destroy()
   end
   for k,v in pairs(channelList) do
@@ -198,4 +257,5 @@ connect(Game, { onLogin = Console.create,
                 onLogout = Console.destroy,
                 onCreatureSpeak = onCreatureSpeak,
                 onChannelList = onChannelList,
-                onOpenChannel = onOpenChannel})
+                onOpenChannel = onOpenChannel,
+				onOpenPrivateChannel = onOpenPrivateChannel})

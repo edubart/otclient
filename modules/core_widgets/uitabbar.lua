@@ -46,6 +46,16 @@ function UITabBar:addTab(text, panel)
   return tab
 end
 
+function UITabBar:removeTab(tab)
+  local index = table.find(self.tabs, tab)
+  if index == nil then return end
+  if self.currentTab == tab then
+    self:selectPrevTab()
+  end
+  table.remove(self.tabs, index)
+  tab:destroy()
+end
+
 function UITabBar:getTab(text)
   for k,tab in pairs(self.tabs) do
     if tab:getText() == text then
@@ -68,6 +78,7 @@ function UITabBar:selectTab(tab)
   if self.currentTab then
     self.currentTab:setChecked(false)
   end
+  signalcall(self.onTabChange, self, tab)
   self.currentTab = tab
   tab:setChecked(true)
   tab:setOn(false)
