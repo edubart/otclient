@@ -220,7 +220,7 @@ namespace Proto {
         ClientGetObjectInfo = 243
     };
 
-    enum SpeakTypes {
+    enum ServerSpeakType {
 #if PROTOCOL==861 || PROTOCOL==862
         SpeakSay = 1,
         SpeakWhisper,
