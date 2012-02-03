@@ -57,6 +57,7 @@ public:
 
     void setErrorCallback(const ErrorCallback& errorCallback) { m_errorCallback = errorCallback; }
 
+    boost::system::error_code getError() const { return m_error; }
     bool isConnecting() const { return m_connecting; }
     bool isConnected() const { return m_connected; }
 
@@ -80,6 +81,7 @@ protected:
     uint8 m_recvBuffer[RECV_BUFFER_SIZE];
     bool m_connected;
     bool m_connecting;
+    boost::system::error_code m_error;
     int m_sendBufferSize;
     Timer m_sendTimer;
     ScheduledEventPtr m_sendEvent;

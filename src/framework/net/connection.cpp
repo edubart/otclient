@@ -58,6 +58,7 @@ void Connection::connect(const std::string& host, uint16 port, const SimpleCallb
 {
     m_connected = false;
     m_connecting = true;
+    m_error.clear();
     m_connectCallback = connectCallback;
 
     asio::ip::tcp::resolver::query query(host, Fw::unsafeCast<std::string>(port));
@@ -85,6 +86,10 @@ void Connection::close()
 {
     if(!m_connected && !m_connecting)
         return;
+
+    // flush send data before disconnecting on clean connections
+    if(m_connected && !m_error && m_sendBufferSize > 0 && m_sendEvent)
+        m_sendEvent->execute();
 
     m_connecting = false;
     m_connected = false;
@@ -221,6 +226,7 @@ void Connection::onTimeout(const boost::system::error_code& error)
 void Connection::handleError(const boost::system::error_code& error)
 {
     if(error != asio::error::operation_aborted) {
+        m_error = error;
         if(m_errorCallback)
             m_errorCallback(error);
         if(m_connected || m_connecting)
