@@ -153,8 +153,6 @@ function Console.addText(text, speaktype, tabName)
   local tab = Console.getTab(tabName)
   if tab ~= nil then
     Console.addTabText(text, speaktype, tab)
-  else
-    print("Error","Trying to addText on tabName: " .. tabName)
   end
 end
 
