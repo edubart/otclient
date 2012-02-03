@@ -47,8 +47,25 @@ local consoleBuffer
 local consoleTabBar
 local consoleLineEdit
 local channels
+local messageHistory = { }
+local currentMessageIndex = 0
+local MaxHistory = 1000
 
 -- private functions
+local function navigateMessageHistory(step)
+  print("PASSO")
+  local numCommands = #messageHistory
+  if numCommands > 0 then
+    currentMessageIndex = math.min(math.max(currentMessageIndex + step, 0), numCommands)
+    if currentMessageIndex > 0 then
+      local command = messageHistory[numCommands - currentMessageIndex + 1]
+      consoleLineEdit:setText(command)
+    else
+      consoleLineEdit:clearText()
+    end
+  end
+end
+
 function applyMessagePrefixies(name, level, message)
   if name then
     if Options.showLevelsInConsole and level > 0 then
@@ -72,6 +89,8 @@ function Console.create()
   Console.addChannel('Default', 0)
   Console.addTab('Server Log', false)
   
+  Hotkeys.bindKeyDown('Shift+Up', function() navigateMessageHistory(1) end, consolePanel)
+  Hotkeys.bindKeyDown('Shift+Down', function() navigateMessageHistory(-1) end, consolePanel)
   Hotkeys.bindKeyDown('Tab', function() consoleTabBar:selectNextTab() end, consolePanel)
   Hotkeys.bindKeyDown('Shift+Tab', function() consoleTabBar:selectPrevTab() end, consolePanel)
   Hotkeys.bindKeyDown('Enter', Console.sendCurrentMessage, consolePanel)
@@ -181,6 +200,7 @@ function Console.sendCurrentMessage()
   local tab = Console.getCurrentTab()
 
   -- handling chat commands
+  local originalMessage = message
   local chatCommandSayMode
   local chatCommandPrivate
   
@@ -207,6 +227,13 @@ function Console.sendCurrentMessage()
   message = message:gsub("^(%s*)(.*)","%2") -- remove space characters from message init
   if #message == 0 then return end
 
+  -- add new command to history
+  currentMessageIndex = 0
+  table.insert(messageHistory, originalMessage)
+  if #messageHistory > MaxHistory then
+    table.remove(messageHistory, 1)
+  end
+  
   -- when talking on server log, the message goes to default channel
   local name = tab:getText()
   if name == 'Server Log' then
