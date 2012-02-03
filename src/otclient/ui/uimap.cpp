@@ -45,7 +45,7 @@ void UIMap::draw()
 {
     drawSelf();
 
-    // draw black brounding border
+    // draw map border
     g_painter.setColor(Fw::black);
     g_painter.drawBoundingRect(m_mapRect.expanded(1));
 

@@ -117,7 +117,7 @@ void Connection::write(uint8* buffer, uint16 size)
     if(m_sendBufferSize + size >= SEND_BUFFER_SIZE && m_sendEvent)
         m_sendEvent->execute();
 
-    // we can't send right, otherwise we could create tcp congestion
+    // we can't send the data right away, otherwise we could create tcp congestion
     memcpy(m_sendBuffer + m_sendBufferSize, buffer, size);
     m_sendBufferSize += size;
 
@@ -180,7 +180,7 @@ void Connection::onConnect(const boost::system::error_code& error)
     if(!error) {
         m_connected = true;
 
-        // disable nagle's algorithm
+        // disable nagle's algorithm, this make the game play smoother
         boost::asio::ip::tcp::no_delay option(true);
         m_socket.set_option(option);
 
