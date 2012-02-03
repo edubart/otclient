@@ -341,24 +341,24 @@ void ProtocolGame::sendLookAt(const Position& position, int thingId, int stackpo
     send(oMsg);
 }
 
-void ProtocolGame::sendTalk(const std::string& speakTypeDesc, int channelId, const std::string& receiver, const std::string& message)
+void ProtocolGame::sendTalk(Otc::SpeakType speakType, int channelId, const std::string& receiver, const std::string& message)
 {
     if(message.length() > 255 || message.length() <= 0)
         return;
 
-    int speakType = Proto::translateSpeakTypeDesc(speakTypeDesc);
+    int serverSpeakType = Proto::translateSpeakTypeToServer(speakType);
 
     OutputMessage oMsg;
     oMsg.addU8(Proto::ClientTalk);
-    oMsg.addU8(speakType);
+    oMsg.addU8(serverSpeakType);
 
-    switch(speakType) {
-    case Proto::SpeakPrivate:
-    case Proto::SpeakPrivateRed:
+    switch(serverSpeakType) {
+    case Proto::ServerSpeakPrivate:
+    case Proto::ServerSpeakPrivateRed:
         oMsg.addString(receiver);
         break;
-    case Proto::SpeakChannelYellow:
-    case Proto::SpeakChannelRed:
+    case Proto::ServerSpeakChannelYellow:
+    case Proto::ServerSpeakChannelRed:
         oMsg.addU16(channelId);
         break;
     }

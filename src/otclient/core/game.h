@@ -52,7 +52,7 @@ public:
                             double magicLevel, double magicLevelPercent,
                             double soul, double stamina);
     void processTextMessage(const std::string& type, const std::string& message);
-    void processCreatureSpeak(const std::string& name, int level, const std::string& type, const std::string& message, int channelId, const Position& creaturePos);
+    void processCreatureSpeak(const std::string& name, int level, Otc::SpeakType type, const std::string& message, int channelId, const Position& creaturePos);
     void processContainerAddItem(int containerId, const ItemPtr& item);
     void processInventoryChange(int slot, const ItemPtr& item);
     void processCreatureMove(const CreaturePtr& creature, const Position& oldPos, const Position& newPos);
@@ -82,8 +82,8 @@ public:
 
     // talk related
     void talk(const std::string& message);
-    void talkChannel(const std::string& speakTypeDesc, int channelId, const std::string& message);
-    void talkPrivate(const std::string& speakTypeDesc, const std::string& receiver, const std::string& message);
+    void talkChannel(Otc::SpeakType speakType, int channelId, const std::string& message);
+    void talkPrivate(Otc::SpeakType speakType, const std::string& receiver, const std::string& message);
     void openPrivateChannel(const std::string& receiver);
     void requestChannels();
     void joinChannel(int channelId);

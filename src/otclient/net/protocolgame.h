@@ -73,7 +73,7 @@ public:
     void sendTextWindow(uint windowTextId, const std::string& text);
     void sendHouseWindow(int doorId, uint id, const std::string& text);
     void sendLookAt(const Position& position, int thingId, int stackpos);
-    void sendTalk(const std::string& speakTypeDesc, int channelId, const std::string& receiver, const std::string& message);
+    void sendTalk(Otc::SpeakType speakType, int channelId, const std::string& receiver, const std::string& message);
     void sendGetChannels();
     void sendJoinChannel(int channelId);
     void sendLeaveChannel(int channelId);

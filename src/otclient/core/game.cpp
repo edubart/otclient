@@ -172,9 +172,9 @@ void Game::processTextMessage(const std::string& type, const std::string& messag
     g_lua.callGlobalField("Game","onTextMessage", type, message);
 }
 
-void Game::processCreatureSpeak(const std::string& name, int level, const std::string& type, const std::string& message, int channelId, const Position& creaturePos)
+void Game::processCreatureSpeak(const std::string& name, int level, Otc::SpeakType type, const std::string& message, int channelId, const Position& creaturePos)
 {
-    if(creaturePos.isValid() && (type == "say" || type == "whisper" || type == "yell" || type == "monsterSay" || type == "monsterYell")) {
+    if(creaturePos.isValid() && (type == Otc::SpeakSay || type == Otc::SpeakWhisper || type == Otc::SpeakYell || type == Otc::SpeakMonsterSay || type == Otc::SpeakMonsterYell)) {
         StaticTextPtr staticText = StaticTextPtr(new StaticText);
         staticText->addMessage(name, type, message);
         g_map.addThing(staticText, creaturePos);
@@ -461,23 +461,22 @@ int Game::getThingStackpos(const ThingPtr& thing)
 
 void Game::talk(const std::string& message)
 {
-    talkChannel("say", 0, message);
+    talkChannel(Otc::SpeakSay, 0, message);
 }
 
-void Game::talkChannel(const std::string& speakTypeDesc, int channelId, const std::string& message)
+void Game::talkChannel(Otc::SpeakType speakType, int channelId, const std::string& message)
 {
     if(!isOnline() || !checkBotProtection())
         return;
-    m_protocolGame->sendTalk(speakTypeDesc, channelId, "", message);
+    m_protocolGame->sendTalk(speakType, channelId, "", message);
 }
 
-void Game::talkPrivate(const std::string& speakTypeDesc, const std::string& receiver, const std::string& message)
+void Game::talkPrivate(Otc::SpeakType speakType, const std::string& receiver, const std::string& message)
 {
     if(!isOnline() || !checkBotProtection())
         return;
-    m_protocolGame->sendTalk(speakTypeDesc, 0, receiver, message);
+    m_protocolGame->sendTalk(speakType, 0, receiver, message);
 }
-
 
 void Game::openPrivateChannel(const std::string& receiver)
 {

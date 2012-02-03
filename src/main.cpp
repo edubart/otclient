@@ -31,5 +31,3 @@ int main(int argc, const char* argv[])
     app.terminate();
     return 0;
 }
-
-// for freenode: fk39HHDJJF

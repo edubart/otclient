@@ -220,47 +220,47 @@ namespace Proto {
         ClientGetObjectInfo = 243
     };
 
-    enum SpeakTypes {
+    enum ServerSpeakType {
 #if PROTOCOL==862
-        SpeakSay = 1,
-        SpeakWhisper,
-        SpeakYell,
-        SpeakPrivatePlayerToNpc,
-        SpeakPrivateNpcToPlayer,
-        SpeakPrivate,
-        SpeakChannelYellow,
-        SpeakChannelWhite,
-        SpeakBroadcast,
-        SpeakChannelRed,
-        SpeakPrivateRed,
-        SpeakChannelOrange,
-        SpeakMonsterSay,
-        SpeakMonsterYell,
+        ServerSpeakSay = 1,
+        ServerSpeakWhisper,
+        ServerSpeakYell,
+        ServerSpeakPrivatePlayerToNpc,
+        ServerSpeakPrivateNpcToPlayer,
+        ServerSpeakPrivate,
+        ServerSpeakChannelYellow,
+        ServerSpeakChannelWhite,
+        ServerSpeakBroadcast,
+        ServerSpeakChannelRed,
+        ServerSpeakPrivateRed,
+        ServerSpeakChannelOrange,
+        ServerSpeakMonsterSay,
+        ServerSpeakMonsterYell,
 
         // removed
-        SpeakRVRChannel = 255,
-        SpeakRVRAnswer,
-        SpeakRVRContinue,
-        SpeakChannelRed2
+        ServerSpeakRVRChannel = 255,
+        ServerSpeakRVRAnswer,
+        ServerSpeakRVRContinue,
+        ServerSpeakChannelRed2
 #elif PROTOCOL==860
-        SpeakSay = 1,
-        SpeakWhisper,
-        SpeakYell,
-        SpeakPrivatePlayerToNpc,
-        SpeakPrivateNpcToPlayer,
-        SpeakPrivate,
-        SpeakChannelYellow,
-        SpeakChannelWhite,
-        SpeakRVRChannel,
-        SpeakRVRAnswer,
-        SpeakRVRContinue,
-        SpeakBroadcast,
-        SpeakChannelRed,
-        SpeakPrivateRed,
-        SpeakChannelOrange,
-        SpeakChannelRed2 = 17,
-        SpeakMonsterSay = 19,
-        SpeakMonsterYell
+        ServerSpeakSay = 1,
+        ServerSpeakWhisper,
+        ServerSpeakYell,
+        ServerSpeakPrivatePlayerToNpc,
+        ServerSpeakPrivateNpcToPlayer,
+        ServerSpeakPrivate,
+        ServerSpeakChannelYellow,
+        ServerSpeakChannelWhite,
+        ServerSpeakRVRChannel,
+        ServerSpeakRVRAnswer,
+        ServerSpeakRVRContinue,
+        ServerSpeakBroadcast,
+        ServerSpeakChannelRed,
+        ServerSpeakPrivateRed,
+        ServerSpeakChannelOrange,
+        ServerSpeakChannelRed2 = 17,
+        ServerSpeakMonsterSay = 19,
+        ServerSpeakMonsterYell
 #endif
     };
 
@@ -299,48 +299,48 @@ namespace Proto {
         NpcEndId = 0xffffffff
     };
 
-    inline std::string translateSpeakType(int type) {
+    inline Otc::SpeakType translateSpeakTypeFromServer(int type) {
         switch(type) {
-            case Proto::SpeakSay: return "say";
-            case Proto::SpeakWhisper: return "whisper";
-            case Proto::SpeakYell: return "yell";
-            case Proto::SpeakMonsterSay: return "monsterSay";
-            case Proto::SpeakMonsterYell: return "monsterYell";
-            case Proto::SpeakPrivateNpcToPlayer: return "npcToPlayer";
-            case Proto::SpeakChannelYellow: return "channelYellow";
-            case Proto::SpeakChannelWhite: return "channelWhite";
-            case Proto::SpeakChannelRed: return "channelRed";
-            case Proto::SpeakChannelRed2: return "channelRed";
-            case Proto::SpeakChannelOrange: return "channelOrange";
-            case Proto::SpeakPrivate: return "private";
-            case Proto::SpeakPrivatePlayerToNpc: return "playerToNpc";
-            case Proto::SpeakBroadcast: return "broadcast";
-            case Proto::SpeakPrivateRed: return "privateRed";
+            case Proto::ServerSpeakSay: return Otc::SpeakSay;
+            case Proto::ServerSpeakWhisper: return Otc::SpeakWhisper;
+            case Proto::ServerSpeakYell: return Otc::SpeakYell;
+            case Proto::ServerSpeakMonsterSay: return Otc::SpeakMonsterSay;
+            case Proto::ServerSpeakMonsterYell: return Otc::SpeakMonsterYell;
+            case Proto::ServerSpeakPrivateNpcToPlayer: return Otc::SpeakPrivateNpcToPlayer;
+            case Proto::ServerSpeakChannelYellow: return Otc::SpeakChannelYellow;
+            case Proto::ServerSpeakChannelWhite: return Otc::SpeakChannelWhite;
+            case Proto::ServerSpeakChannelRed: return Otc::SpeakChannelRed;
+            case Proto::ServerSpeakChannelRed2: return Otc::SpeakChannelRed;
+            case Proto::ServerSpeakChannelOrange: return Otc::SpeakChannelOrange;
+            case Proto::ServerSpeakPrivate: return Otc::SpeakPrivate;
+            case Proto::ServerSpeakPrivatePlayerToNpc: return Otc::SpeakPrivate;
+            case Proto::ServerSpeakBroadcast: return Otc::SpeakBroadcast;
+            case Proto::ServerSpeakPrivateRed: return Otc::SpeakPrivateRed;
             default:
                 logError("unknown protocol speak type ", type);
-                return "unknown";
+                return Otc::SpeakSay;
         }
     }
 
-    inline int translateSpeakTypeDesc(const std::string& type) {
-        if(type == "say") return Proto::SpeakSay;
-        else if(type == "whisper") return Proto::SpeakWhisper;
-        else if(type == "yell") return Proto::SpeakYell;
-        else if(type == "monsterSay") return Proto::SpeakMonsterSay;
-        else if(type == "monsterYell") return Proto::SpeakMonsterYell;
-        else if(type == "npcToPlayer") return Proto::SpeakPrivateNpcToPlayer;
-        else if(type == "channelYellow") return Proto::SpeakChannelYellow;
-        else if(type == "channelWhite") return Proto::SpeakChannelWhite;
-        else if(type == "channelRed") return Proto::SpeakChannelRed;
-        else if(type == "channelRed") return Proto::SpeakChannelRed2;
-        else if(type == "channelOrange") return Proto::SpeakChannelOrange;
-        else if(type == "private")  return Proto::SpeakPrivate;
-        else if(type == "playerToNpc") return Proto::SpeakPrivatePlayerToNpc;
-        else if(type == "broadcast") return Proto::SpeakBroadcast;
-        else if(type == "privateRed") return Proto::SpeakPrivateRed;
-        else {
-            logError("unknown protocol speak type desc ", type);
-            return 0;
+    inline Proto::ServerSpeakType translateSpeakTypeToServer(int type) {
+        switch(type) {
+            case Otc::SpeakSay: return Proto::ServerSpeakSay;
+            case Otc::SpeakWhisper: return Proto::ServerSpeakWhisper;
+            case Otc::SpeakYell: return Proto::ServerSpeakYell;
+            case Otc::SpeakBroadcast: return Proto::ServerSpeakBroadcast;
+            case Otc::SpeakPrivate: return Proto::ServerSpeakPrivate;
+            case Otc::SpeakPrivateRed: return Proto::ServerSpeakPrivateRed;
+            case Otc::SpeakPrivatePlayerToNpc: return Proto::ServerSpeakPrivatePlayerToNpc;
+            case Otc::SpeakPrivateNpcToPlayer: return Proto::ServerSpeakPrivateNpcToPlayer;
+            case Otc::SpeakChannelYellow: return Proto::ServerSpeakChannelYellow;
+            case Otc::SpeakChannelWhite: return Proto::ServerSpeakChannelWhite;
+            case Otc::SpeakChannelRed: return Proto::ServerSpeakChannelRed;
+            case Otc::SpeakChannelOrange: return Proto::ServerSpeakChannelOrange;
+            case Otc::SpeakMonsterSay: return Proto::ServerSpeakMonsterSay;
+            case Otc::SpeakMonsterYell: return Proto::ServerSpeakMonsterYell;
+            default:
+                logError("unknown protocol speak type desc ", type);
+                return Proto::ServerSpeakSay;
         }
     }
 

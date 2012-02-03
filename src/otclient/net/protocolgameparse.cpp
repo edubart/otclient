@@ -720,43 +720,43 @@ void ProtocolGame::parseCreatureSpeak(InputMessage& msg)
     msg.getU32(); // unkSpeak
     std::string name = msg.getString();
     int level = msg.getU16();
-    int type = msg.getU8();
+    int serverType = msg.getU8();
     int channelId = 0;
     Position creaturePos;
 
-    switch(type) {
-        case Proto::SpeakSay:
-        case Proto::SpeakWhisper:
-        case Proto::SpeakYell:
-        case Proto::SpeakMonsterSay:
-        case Proto::SpeakMonsterYell:
-        case Proto::SpeakPrivateNpcToPlayer:
+    switch(serverType) {
+        case Proto::ServerSpeakSay:
+        case Proto::ServerSpeakWhisper:
+        case Proto::ServerSpeakYell:
+        case Proto::ServerSpeakMonsterSay:
+        case Proto::ServerSpeakMonsterYell:
+        case Proto::ServerSpeakPrivateNpcToPlayer:
             creaturePos = parsePosition(msg);
             break;
-        case Proto::SpeakChannelYellow:
-        case Proto::SpeakChannelWhite:
-        case Proto::SpeakChannelRed:
-        case Proto::SpeakChannelRed2:
-        case Proto::SpeakChannelOrange:
+        case Proto::ServerSpeakChannelYellow:
+        case Proto::ServerSpeakChannelWhite:
+        case Proto::ServerSpeakChannelRed:
+        case Proto::ServerSpeakChannelRed2:
+        case Proto::ServerSpeakChannelOrange:
             channelId = msg.getU16();
             break;
-        case Proto::SpeakPrivate:
-        case Proto::SpeakPrivatePlayerToNpc:
-        case Proto::SpeakBroadcast:
-        case Proto::SpeakPrivateRed:
+        case Proto::ServerSpeakPrivate:
+        case Proto::ServerSpeakPrivatePlayerToNpc:
+        case Proto::ServerSpeakBroadcast:
+        case Proto::ServerSpeakPrivateRed:
             break;
-        case Proto::SpeakRVRChannel:
+        case Proto::ServerSpeakRVRChannel:
             msg.getU32();
             break;
         default:
-            logTraceError("unknown speak type ", type);
+            logTraceError("unknown speak type ", serverType);
             break;
     }
 
     std::string message = msg.getString();
-    std::string typeDesc = Proto::translateSpeakType(type);
+    Otc::SpeakType type = Proto::translateSpeakTypeFromServer(serverType);
 
-    g_game.processCreatureSpeak(name, level, typeDesc, message, channelId, creaturePos);
+    g_game.processCreatureSpeak(name, level, type, message, channelId, creaturePos);
 }
 
 void ProtocolGame::parseChannelList(InputMessage& msg)

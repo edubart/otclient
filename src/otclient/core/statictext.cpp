@@ -38,13 +38,13 @@ void StaticText::draw(const Point& dest, const Rect& parentRect)
     boundRect.bind(parentRect);
 
     // draw only if the real center is not too far from the parent center, or its a yell
-    if((boundRect.center() - rect.center()).length() < parentRect.width() / 15 || m_yell) {
+    if((boundRect.center() - rect.center()).length() < parentRect.width() / 15 || isYell()) {
         //TODO: cache into a framebuffer
         m_font->renderText(m_text, boundRect, Fw::AlignCenter, m_color);
     }
 }
 
-bool StaticText::addMessage(const std::string& name, const std::string& type, const std::string& message)
+bool StaticText::addMessage(const std::string& name, Otc::SpeakType type, const std::string& message)
 {
     //TODO: this could be moved to lua
     // First message
@@ -66,10 +66,6 @@ bool StaticText::addMessage(const std::string& name, const std::string& type, co
         self->removeMessage();
     }, std::max<int>(Otc::STATIC_DURATION_PER_CHARACTER * message.length(), Otc::MIN_STATIC_TEXT_DURATION));
 
-
-    if(type == "yell" || type == "monsterYell")
-        m_yell = true;
-
     return true;
 }
 
@@ -90,21 +86,21 @@ void StaticText::compose()
     //TODO: this could be moved to lua
     std::string text;
 
-    if(m_messageType == "say") {
+    if(m_messageType == Otc::SpeakSay) {
         text += m_name;
         text += " says:\n";
         m_color = Color(239, 239, 0);
-    } else if(m_messageType == "whisper") {
+    } else if(m_messageType == Otc::SpeakWhisper) {
         text += m_name;
         text += " whispers:\n";
         m_color = Color(239, 239, 0);
-    } else if(m_messageType == "yell") {
+    } else if(m_messageType == Otc::SpeakYell) {
         text += m_name;
         text += " yells:\n";
         m_color = Color(239, 239, 0);
-    } else if(m_messageType == "monsterSay" || m_messageType == "monsterYell") {
+    } else if(m_messageType == Otc::SpeakMonsterSay || m_messageType == Otc::SpeakMonsterYell) {
         m_color = Color(254, 101, 0);
-    } else if(m_messageType == "npcToPlayer") {
+    } else if(m_messageType == Otc::SpeakPrivateNpcToPlayer) {
         text += m_name;
         text += " says:\n";
         m_color = Color(95, 247, 247);

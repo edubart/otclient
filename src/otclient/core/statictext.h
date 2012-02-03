@@ -34,12 +34,12 @@ public:
     void draw(const Point& dest, const Rect& parentRect);
 
     std::string getName() { return m_name; }
-    std::string getMessageType() { return m_messageType; }
+    Otc::SpeakType getMessageType() { return m_messageType; }
     std::string getFirstMessage() { return m_messages[0]; }
 
-    bool isYell() { return m_yell; }
+    bool isYell() { return m_messageType == Otc::SpeakYell || m_messageType == Otc::SpeakMonsterYell; }
 
-    bool addMessage(const std::string& name, const std::string& type, const std::string& message);
+    bool addMessage(const std::string& name, Otc::SpeakType type, const std::string& message);
     void removeMessage();
 
     StaticTextPtr asStaticText() { return std::static_pointer_cast<StaticText>(shared_from_this()); }
@@ -52,7 +52,7 @@ private:
     Boolean<false> m_yell;
     std::vector<std::string> m_messages;
     std::string m_name, m_text;
-    std::string m_messageType;
+    Otc::SpeakType m_messageType;
     Color m_color;
 };
 

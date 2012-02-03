@@ -264,6 +264,23 @@ namespace Otc
         IconPzBlock = 8192,
         IconPz = 16384
     };
+
+    enum SpeakType {
+        SpeakSay = 1,
+        SpeakWhisper,
+        SpeakYell,
+        SpeakBroadcast,
+        SpeakPrivate,
+        SpeakPrivateRed,
+        SpeakPrivatePlayerToNpc,
+        SpeakPrivateNpcToPlayer,
+        SpeakChannelYellow,
+        SpeakChannelWhite,
+        SpeakChannelRed,
+        SpeakChannelOrange,
+        SpeakMonsterSay,
+        SpeakMonsterYell
+    };
 }
 
 #endif
