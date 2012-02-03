@@ -426,7 +426,7 @@ private:
 protected:
     void drawText(const Rect& screenCoords);
 
-    virtual void onTextChange(const std::string& text);
+    virtual void onTextChange(const std::string& text, const std::string& oldText);
     virtual void onFontChange(const std::string& font);
 
     std::string m_text;

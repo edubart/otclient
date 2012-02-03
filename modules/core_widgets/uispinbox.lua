@@ -6,13 +6,16 @@ function UISpinBox.create()
   spinbox.m_minimum = 0
   spinbox.m_maximum = 0
   spinbox:setCurrentIndex(0)
+  spinbox:setText("0")
   return spinbox
 end
 
 function UISpinBox:setCurrentIndex(index)
   if index >= self.m_minimum and index <= self.m_maximum then
+    if self:getText():len() > 0 then
+      self:setText(index)
+    end
     self.m_currentIndex = index
-    self:setText(index)
     self:onIndexChange(index)
   end
 end
@@ -52,14 +55,34 @@ function UISpinBox:onMouseWheel(mousePos, direction)
   return true
 end
 
-function UISpinBox:onTextChange(text)
+function UISpinBox:onTextChange(text, oldText)
+
+  if text:len() == 0 then
+    self:setCurrentIndex(self.m_minimum)
+    return
+  end
+
   local number = tonumber(text)
   if not number or number > self.m_maximum or number < self.m_minimum then
-    -- todo: restore old text instead of setting minimum
-    self:setCurrentIndex(self.m_minimum)
+    self:setText(oldText)
+    return
   end
+  
+  self:setCurrentIndex(number)
 end
 
 function UISpinBox:onIndexChange(index)
   -- nothing todo
 end
+
+function UISpinBox:onStyleApply(styleName, styleNode)
+  -- tonumber converts to 0 if not valid
+  if styleNode.maximum and tonumber(styleNode.maximum) then
+    self:setMaximum(tonumber(styleNode.maximum))
+  end
+  
+  if styleNode.minimum and tonumber(styleNode.minimum) then
+    self:setMinimum(tonumber(styleNode.minimum))
+  end
+end
+

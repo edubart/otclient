@@ -285,11 +285,12 @@ void UILineEdit::appendText(std::string text)
                 }
             }
 
+            std::string oldText = m_text;
             m_text.insert(m_cursorPos, text);
             m_cursorPos += text.length();
             blinkCursor();
             update();
-            UIWidget::onTextChange(m_text);
+            UIWidget::onTextChange(m_text, oldText);
         }
     }
 }
@@ -305,16 +306,18 @@ void UILineEdit::appendCharacter(char c)
 
         std::string tmp;
         tmp = c;
+        std::string oldText = m_text;
         m_text.insert(m_cursorPos, tmp);
         m_cursorPos++;
         blinkCursor();
         update();
-        UIWidget::onTextChange(m_text);
+        UIWidget::onTextChange(m_text, oldText);
     }
 }
 
 void UILineEdit::removeCharacter(bool right)
 {
+    std::string oldText = m_text;
     if(m_cursorPos >= 0 && m_text.length() > 0) {
         if((uint)m_cursorPos >= m_text.length()) {
             m_text.erase(m_text.begin() + (--m_cursorPos));
@@ -326,7 +329,7 @@ void UILineEdit::removeCharacter(bool right)
         }
         blinkCursor();
         update();
-        UIWidget::onTextChange(m_text);
+        UIWidget::onTextChange(m_text, oldText);
     }
 }
 
@@ -376,12 +379,12 @@ std::string UILineEdit::getDisplayedText()
         return m_text;
 }
 
-void UILineEdit::onTextChange(const std::string& text)
+void UILineEdit::onTextChange(const std::string& text, const std::string& oldText)
 {
     m_cursorPos = text.length();
     blinkCursor();
     update();
-    UIWidget::onTextChange(text);
+    UIWidget::onTextChange(text, oldText);
 }
 
 void UILineEdit::onFontChange(const std::string& font)

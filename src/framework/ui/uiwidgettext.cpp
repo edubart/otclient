@@ -74,9 +74,9 @@ void UIWidget::drawText(const Rect& screenCoords)
     m_textFramebuffer->draw(screenCoords);
 }
 
-void UIWidget::onTextChange(const std::string& text)
+void UIWidget::onTextChange(const std::string& text, const std::string& oldText)
 {
-    callLuaField("onTextChange", text);
+    callLuaField("onTextChange", text, oldText);
 }
 
 void UIWidget::onFontChange(const std::string& font)
@@ -94,6 +94,7 @@ void UIWidget::setText(const std::string& text)
     if(m_text == text)
         return;
 
+    std::string oldText = m_text;
     m_text = text;
 
     // update rect size
@@ -107,7 +108,7 @@ void UIWidget::setText(const std::string& text)
         setSize(newSize);
     }
 
-    onTextChange(text);
+    onTextChange(text, oldText);
     m_textMustRecache = true;
 }
 
