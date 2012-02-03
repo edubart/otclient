@@ -53,7 +53,6 @@ local MaxHistory = 1000
 
 -- private functions
 local function navigateMessageHistory(step)
-  print("PASSO")
   local numCommands = #messageHistory
   if numCommands > 0 then
     currentMessageIndex = math.min(math.max(currentMessageIndex + step, 0), numCommands)
