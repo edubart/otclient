@@ -119,7 +119,7 @@ void Texture::setSmooth(bool smooth)
 std::vector<uint8> Texture::getPixels()
 {
     std::vector<uint8> pixels(m_size.area()*4, 0);
-#ifdef OPENGL_ES
+#ifdef OPENGL_ES2
     // hack to copy pixels from opengl memory in opengl es
     // NOTE: this can be slow, but its the only way to get pixels from a texture in OpenGL ES
     FrameBufferPtr fb(new FrameBuffer(m_size));
