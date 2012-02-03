@@ -24,59 +24,59 @@
 #include "spritemanager.h"
 #include "thingstype.h"
 #include <framework/graphics/graphics.h>
+#include "map.h"
+#include "tile.h"
 
 Thing::Thing()
 {
-    m_id = 0;
-    m_xPattern = 0;
-    m_yPattern = 0;
-    m_zPattern = 0;
-    m_animation = 0;
-    m_type = getType();
-}
-
-void Thing::internalDraw(const Point& p, int layer)
-{
-    for(int h = 0; h < m_type->dimensions[ThingType::Height]; h++) {
-        for(int w = 0; w < m_type->dimensions[ThingType::Width]; w++) {
-            int spriteId = m_type->getSpriteId(w, h, layer, m_xPattern, m_yPattern, m_zPattern, m_animation);
-            if(!spriteId)
-                continue;
-
-            TexturePtr spriteTex = g_sprites.getSpriteTexture(spriteId);
-
-            Rect drawRect((p.x - w*32) - m_type->parameters[ThingType::DisplacementX],
-                          (p.y - h*32) - m_type->parameters[ThingType::DisplacementY],
-                          32, 32);
-            g_painter.drawTexturedRect(drawRect, spriteTex);
-        }
-    }
-}
-
-void Thing::setId(uint32 id)
-{
-    m_id = id;
-    m_type = getType();
+    m_type = g_thingsType.getEmptyThingType();
 }
 
 int Thing::getStackPriority()
 {
-    if(m_type->properties[ThingType::IsGround])
+    if(isGround())
         return 0;
-    else if(m_type->properties[ThingType::IsGroundBorder])
+    else if(isGroundBorder())
         return 1;
-    else if(m_type->properties[ThingType::IsOnBottom])
+    else if(isOnBottom())
         return 2;
-    else if(m_type->properties[ThingType::IsOnTop])
+    else if(isOnTop())
         return 3;
     else if(asCreature())
         return 4;
-    return 5;
+    else // common items
+        return 5;
 }
 
-ThingType *Thing::getType()
+const TilePtr& Thing::getTile()
 {
-    return g_thingsType.getEmptyThingType();
+    return g_map.getTile(m_position);
 }
 
+int Thing::getStackpos()
+{
+    const TilePtr& tile = getTile();
+    if(tile)
+        return tile->getThingStackpos(asThing());
+    return -1;
+}
 
+void Thing::internalDraw(const Point& dest, float scaleFactor, int w, int h, int xPattern, int yPattern, int zPattern, int layer, int animationPhase)
+{
+    int scaledSize = Otc::TILE_PIXELS * scaleFactor;
+
+    int spriteId = getSpriteId(w, h, layer, xPattern, yPattern, zPattern, animationPhase);
+    if(spriteId) {
+        Rect drawRect(dest - getDisplacement()*scaleFactor, Size(scaledSize, scaledSize));
+        g_painter.setColor(Fw::white);
+        g_painter.drawTexturedRect(drawRect, g_sprites.getSpriteTexture(spriteId));
+    }
+}
+
+void Thing::internalDraw(const Point& dest, float scaleFactor, int xPattern, int yPattern, int zPattern, int animationPhase)
+{
+    for(int l = 0; l < getLayers(); ++l)
+        for(int w = 0; w < getDimensionWidth(); ++w)
+            for(int h = 0; h < getDimensionHeight(); ++h)
+                internalDraw(dest - Point(w,h)*Otc::TILE_PIXELS*scaleFactor, scaleFactor, w, h, xPattern, yPattern, zPattern, l, animationPhase);
+}

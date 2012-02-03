@@ -28,216 +28,93 @@
 #include "missile.h"
 #include "statictext.h"
 
-#include <framework/graphics/graphics.h>
-#include <framework/graphics/framebuffer.h>
-#include <framework/graphics/paintershaderprogram.h>
-#include <framework/graphics/paintershadersources.h>
-#include <framework/graphics/texture.h>
+#include <framework/core/eventdispatcher.h>
+#include "mapview.h"
+#include <framework/core/resourcemanager.h>
 
 Map g_map;
 
-Map::Map()
+void Map::addMapView(const MapViewPtr& mapView)
 {
-    setVisibleSize(Size(MAP_VISIBLE_WIDTH, MAP_VISIBLE_HEIGHT));
+    m_mapViews.push_back(mapView);
 }
 
-void Map::draw(const Rect& rect)
+void Map::removeMapView(const MapViewPtr& mapView)
 {
-    if(!m_framebuffer) {
-        Size fboSize(m_visibleSize.width() * NUM_TILE_PIXELS, m_visibleSize.height() * NUM_TILE_PIXELS);
-        m_framebuffer = FrameBufferPtr(new FrameBuffer(fboSize));
-        m_framebuffer->setClearColor(Fw::black);
+    auto it = std::find(m_mapViews.begin(), m_mapViews.end(), mapView);
+    if(it != m_mapViews.end())
+        m_mapViews.erase(it);
+}
 
+void Map::notificateTileUpdateToMapViews(const Position& pos)
+{
+    for(const MapViewPtr& mapView : m_mapViews)
+        mapView->onTileUpdate(pos);
+}
 
-        m_shaderProgram = PainterShaderProgramPtr(new PainterShaderProgram);
-        m_shaderProgram->addShaderFromSourceCode(Shader::Vertex, glslMainWithTexCoordsVertexShader + glslPositionOnlyVertexShader);
-        m_shaderProgram->addShaderFromSourceFile(Shader::Fragment, "/game_shaders/map.frag");
-        assert(m_shaderProgram->link());
+void Map::load()
+{
+    if(!g_resources.fileExists("/map.otcmap"))
+        return;
+
+    std::stringstream in;
+    g_resources.loadFile("/map.otcmap", in);
+
+    while(!in.eof()) {
+        Position pos;
+        in.read((char*)&pos, sizeof(pos));
+
+        uint16 id;
+        in.read((char*)&id, sizeof(id));
+        while(id != 0xFFFF) {
+            ItemPtr item = Item::create(id);
+            if(item->isStackable() || item->isFluidContainer() || item->isFluid()) {
+                uint8 countOrSubType;
+                in.read((char*)&countOrSubType, sizeof(countOrSubType));
+                item->setCountOrSubType(countOrSubType);
+            }
+            addThing(item, pos, 255);
+            in.read((char*)&id, sizeof(id));
+        }
     }
+}
 
-    g_painter.setColor(Fw::white);
-    m_framebuffer->bind();
+void Map::save()
+{
+    std::stringstream out;
 
-    // draw offsets
-    LocalPlayerPtr localPlayer = g_game.getLocalPlayer();
-    if(localPlayer)
-        m_drawOffset = localPlayer->getWalkOffset();
-
-    //TODO: cache first/last visible floor
-    // draw from bottom floors to top floors
-    int firstFloor = getFirstVisibleFloor();
-    const int lastFloor = MAX_Z-1;
-    for(int iz = lastFloor; iz >= firstFloor; --iz) {
-        // draw tiles like linus pauling's rule order
-        const int numDiagonals = m_size.width() + m_size.height() - 1;
-        for(int diagonal = 0; diagonal < numDiagonals; ++diagonal) {
-            // loop through / diagonal tiles
-            for(int ix = std::min(diagonal, m_size.width() - 1), iy = std::max(diagonal - m_size.width(), 0); ix >= 0 && iy < m_size.height(); --ix, ++iy) {
-                // position on current floor
-                Position tilePos(m_centralPosition.x + (ix - m_centralOffset.x), m_centralPosition.y + (iy - m_centralOffset.y), m_centralPosition.z);
-                // adjust tilePos to the wanted floor
-                tilePos.perspectiveUp(m_centralPosition.z - iz);
-                //TODO: cache visible tiles, m_tiles[] has a high cost (50% fps decrease)
-                if(const TilePtr& tile = m_tiles[tilePos]) {
-                    // skip tiles that are behind another tile
-                    //if(isCompletlyCovered(tilePos, firstFloor))
-                    //    continue;
-                    tile->draw(positionTo2D(tilePos) - m_drawOffset, rect);
+    for(auto& pair : m_tiles) {
+        Position pos = pair.first;
+        TilePtr tile = pair.second;
+        if(!tile || tile->isEmpty())
+            continue;
+        out.write((char*)&pos, sizeof(pos));
+        uint16 id;
+        for(const ThingPtr& thing : tile->getThings()) {
+            if(ItemPtr item = thing->asItem()) {
+                id = item->getId();
+                out.write((char*)&id, sizeof(id));
+                if(item->isStackable() || item->isFluidContainer() || item->isFluid()) {
+                    uint8 countOrSubType = item->getCountOrSubType();
+                    out.write((char*)&countOrSubType, sizeof(countOrSubType));
                 }
             }
         }
-
-        // after drawing all tiles, draw shots
-        for(const MissilePtr& shot : m_missilesAtFloor[iz]) {
-            Position missilePos = shot->getPos();
-            shot->draw(positionTo2D(missilePos) - m_drawOffset, rect);
-        }
+        id = 0xFFFF;
+        out.write((char*)&id, sizeof(id));
     }
 
-    m_framebuffer->release();
-
-
-    g_painter.setCustomProgram(m_shaderProgram);
-    g_painter.setColor(Fw::white);
-    m_framebuffer->draw(rect);
-    g_painter.releaseCustomProgram();
-
-    // calculate stretch factor
-    float horizontalStretchFactor = rect.width() / (float)(m_visibleSize.width() * NUM_TILE_PIXELS);
-    float verticalStretchFactor = rect.height() / (float)(m_visibleSize.height() * NUM_TILE_PIXELS);
-
-    // draw player names and health bars
-    //TODO: this must be cached with creature walks
-    for(int x = 0; x < m_visibleSize.width(); ++x) {
-        for(int y = 0; y < m_visibleSize.height(); ++y) {
-            Position tilePos = Position(m_centralPosition.x + (x - m_centralOffset.x + 1), m_centralPosition.y + (y - m_centralOffset.y + 1), m_centralPosition.z);
-            if(const TilePtr& tile = m_tiles[tilePos]) {
-                auto creatures = tile->getCreatures();
-
-                if(creatures.size() == 0)
-                    continue;
-
-                for(const CreaturePtr& creature : creatures) {
-                    Point p((m_centralOffset.x - 1 + (tilePos.x - m_centralPosition.x))*NUM_TILE_PIXELS + 10 - tile->getDrawElevation(),
-                            (m_centralOffset.y - 1 + (tilePos.y - m_centralPosition.y))*NUM_TILE_PIXELS - 10 - tile->getDrawElevation());
-
-                    if(creature != localPlayer) {
-                        p += creature->getWalkOffset() - m_drawOffset;
-                    }
-
-                    creature->drawInformation(rect.x() + p.x*horizontalStretchFactor, rect.y() + p.y*verticalStretchFactor, isCovered(tilePos, firstFloor), rect);
-                }
-            }
-        }
-    }
-
-    // draw static text
-    for(auto it = m_staticTexts.begin(), end = m_staticTexts.end(); it != end; ++it) {
-        Point pos = positionTo2D((*it)->getPos()) - m_drawOffset;
-        pos.x *= horizontalStretchFactor;
-        pos.y *= verticalStretchFactor;
-        (*it)->draw(rect.topLeft() + pos, rect);
-    }
-
-    // draw animated text
-    for(auto it = m_animatedTexts.begin(), end = m_animatedTexts.end(); it != end; ++it) {
-        Point pos = positionTo2D((*it)->getPos()) - m_drawOffset;
-        pos.x *= horizontalStretchFactor;
-        pos.y *= verticalStretchFactor;
-        (*it)->draw(rect.topLeft() + pos, rect);
-    }
+    g_resources.saveFile("/map.otcmap", out);
 }
 
 void Map::clean()
 {
     m_tiles.clear();
-    m_creatures.clear();
-    for(int i=0;i<MAX_Z-1;++i)
-        m_missilesAtFloor[i].clear();
+    m_knownCreatures.clear();
+    for(int i=0;i<=Otc::MAX_Z;++i)
+        m_floorMissiles[i].clear();
     m_animatedTexts.clear();
     m_staticTexts.clear();
-}
-
-int Map::getFirstVisibleFloor()
-{
-    int firstFloor = 0;
-    for(int ix = -1; ix <= 1 && firstFloor < m_centralPosition.z; ++ix) {
-        for(int iy = -1; iy <= 1 && firstFloor < m_centralPosition.z; ++iy) {
-            Position currentPos(m_centralPosition.x + ix, m_centralPosition.y + iy, m_centralPosition.z);
-            if((ix == 0 && iy == 0) || isLookPossible(currentPos)) {
-                Position upperPos = currentPos;
-                Position perspectivePos = currentPos;
-                perspectivePos.perspectiveUp();
-                upperPos.up();
-                while(upperPos.z >= firstFloor) {
-                    if(TilePtr tile = m_tiles[upperPos]) {
-                        if(ThingPtr firstThing = tile->getThing(0)) {
-                            ThingType *type = firstThing->getType();
-                            if((type->properties[ThingType::IsGround] || type->properties[ThingType::IsOnBottom]) && !type->properties[ThingType::DontHide]) {
-                                firstFloor = upperPos.z + 1;
-                                break;
-                            }
-                        }
-                    }
-                    if(TilePtr tile = m_tiles[perspectivePos]) {
-                        if(ThingPtr firstThing = tile->getThing(0)) {
-                            ThingType *type = firstThing->getType();
-                            if((type->properties[ThingType::IsGround] || type->properties[ThingType::IsOnBottom]) && !type->properties[ThingType::DontHide]) {
-                                firstFloor = perspectivePos.z + 1;
-                                break;
-                            }
-                        }
-                    }
-                    perspectivePos.perspectiveUp();
-                    upperPos.up();
-                }
-            }
-        }
-    }
-    return firstFloor;
-}
-
-bool Map::isLookPossible(const Position& pos)
-{
-    TilePtr tile = m_tiles[pos];
-    if(tile)
-        return tile->isLookPossible();
-    return true;
-}
-
-bool Map::isCovered(const Position& pos, int firstFloor)
-{
-    Position tilePos = pos;
-    tilePos.perspectiveUp();
-    while(tilePos.z >= firstFloor) {
-        TilePtr tile = m_tiles[tilePos];
-        if(tile && tile->isFullGround())
-            return true;
-        tilePos.perspectiveUp();
-    }
-    return false;
-}
-
-bool Map::isCompletlyCovered(const Position& pos, int firstFloor)
-{
-    Position tilePos = pos;
-    tilePos.perspectiveUp();
-    while(tilePos.z >= firstFloor) {
-        bool covered = true;
-        for(int x=0;x<2;++x) {
-            for(int y=0;y<2;++y) {
-                TilePtr tile = m_tiles[tilePos + Position(-x, -y, 0)];
-                if(!tile || !tile->isFullyOpaque()) {
-                    covered = false;
-                    break;
-                }
-            }
-        }
-        if(covered)
-            return true;
-        tilePos.perspectiveUp();
-    }
-    return false;
 }
 
 void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
@@ -245,37 +122,28 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
     if(!thing)
         return;
 
-    Position oldPos = thing->getPos();
-    bool teleport = false;
-    if(oldPos.isValid() && !oldPos.isInRange(pos,1,1,0))
-        teleport = true;
-
-    TilePtr tile = getTile(pos);
+    TilePtr tile = getOrCreateTile(pos);
 
     if(CreaturePtr creature = thing->asCreature()) {
+        Position oldPos = thing->getPosition();
         tile->addThing(thing, stackPos);
-        m_creatures[creature->getId()] = creature;
 
-        if(teleport)
+        if(oldPos.isValid() && !oldPos.isInRange(pos,1,1))
             g_game.processCreatureTeleport(creature);
-    }
-    else if(MissilePtr shot = thing->asMissile()) {
-        m_missilesAtFloor[shot->getPos().z].push_back(shot);
-    }
-    else if(AnimatedTextPtr animatedText = thing->asAnimatedText()) {
+    } else if(MissilePtr missile = thing->asMissile()) {
+        m_floorMissiles[pos.z].push_back(missile);
+    } else if(AnimatedTextPtr animatedText = thing->asAnimatedText()) {
         m_animatedTexts.push_back(animatedText);
-    }
-    else if(StaticTextPtr staticText = thing->asStaticText()) {
+    } else if(StaticTextPtr staticText = thing->asStaticText()) {
         bool mustAdd = true;
         for(auto it = m_staticTexts.begin(), end = m_staticTexts.end(); it != end; ++it) {
             StaticTextPtr cStaticText = *it;
-            if(cStaticText->getPos() == pos) {
+            if(cStaticText->getPosition() == pos) {
                 // try to combine messages
                 if(cStaticText->addMessage(staticText->getName(), staticText->getMessageType(), staticText->getFirstMessage())) {
                     mustAdd = false;
                     break;
-                }
-                else {
+                } else {
                     // must add another message and rearrenge current
                 }
             }
@@ -284,113 +152,249 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
 
         if(mustAdd)
             m_staticTexts.push_back(staticText);
-    }
-    else {
+    } else {
         tile->addThing(thing, stackPos);
     }
 
-    thing->start();
-    thing->setPos(pos);
+    thing->startAnimation();
+    thing->setPosition(pos);
+
+    notificateTileUpdateToMapViews(pos);
 }
 
 ThingPtr Map::getThing(const Position& pos, int stackPos)
 {
-    if(const TilePtr& tile = m_tiles[pos])
+    if(TilePtr tile = getTile(pos))
         return tile->getThing(stackPos);
     return nullptr;
 }
 
-void Map::removeThingByPos(const Position& pos, int stackPos)
-{
-    if(TilePtr& tile = m_tiles[pos])
-        tile->removeThingByStackpos(stackPos);
-}
-
-void Map::removeThing(const ThingPtr& thing)
+bool Map::removeThing(const ThingPtr& thing)
 {
     if(!thing)
-        return;
+        return false;
 
-    if(MissilePtr shot = thing->asMissile()) {
-        auto it = std::find(m_missilesAtFloor[shot->getPos().z].begin(), m_missilesAtFloor[shot->getPos().z].end(), shot);
-        if(it != m_missilesAtFloor[shot->getPos().z].end()) {
-            m_missilesAtFloor[shot->getPos().z].erase(it);
+    if(MissilePtr missile = thing->asMissile()) {
+        auto it = std::find(m_floorMissiles[missile->getPosition().z].begin(), m_floorMissiles[missile->getPosition().z].end(), missile);
+        if(it != m_floorMissiles[missile->getPosition().z].end()) {
+            m_floorMissiles[missile->getPosition().z].erase(it);
+            return true;
         }
-        return;
-    }
-    else if(AnimatedTextPtr animatedText = thing->asAnimatedText()) {
+    } else if(AnimatedTextPtr animatedText = thing->asAnimatedText()) {
         auto it = std::find(m_animatedTexts.begin(), m_animatedTexts.end(), animatedText);
-        if(it != m_animatedTexts.end())
+        if(it != m_animatedTexts.end()) {
             m_animatedTexts.erase(it);
-        return;
-    }
-    else if(StaticTextPtr staticText = thing->asStaticText()) {
+            return true;
+        }
+    } else if(StaticTextPtr staticText = thing->asStaticText()) {
         auto it = std::find(m_staticTexts.begin(), m_staticTexts.end(), staticText);
-        if(it != m_staticTexts.end())
+        if(it != m_staticTexts.end()) {
             m_staticTexts.erase(it);
-        return;
-    }
+            return true;
+        }
+    } else if(TilePtr tile = thing->getTile())
+        return tile->removeThing(thing);
 
-    if(TilePtr& tile = m_tiles[thing->getPos()])
-        tile->removeThing(thing);
+    notificateTileUpdateToMapViews(thing->getPosition());
+
+    return false;
 }
 
-TilePtr Map::getTile(const Position& pos)
+bool Map::removeThingByPos(const Position& pos, int stackPos)
 {
-    if(!pos.isValid())
-        return nullptr;
+    if(TilePtr tile = getTile(pos))
+        return removeThing(tile->getThing(stackPos));
+    return false;
+}
 
-    TilePtr& tile = m_tiles[pos];
-    if(!tile)
-        tile = TilePtr(new Tile(pos));
+TilePtr Map::createTile(const Position& pos)
+{
+    TilePtr tile = TilePtr(new Tile(pos));
+    m_tiles[pos] = tile;
     return tile;
+}
+
+const TilePtr& Map::getTile(const Position& pos)
+{
+    auto it = m_tiles.find(pos);
+    if(it != m_tiles.end())
+        return it->second;
+    static TilePtr nulltile;
+    return nulltile;
+}
+
+TilePtr Map::getOrCreateTile(const Position& pos)
+{
+    const TilePtr& tile = getTile(pos);
+    if(tile)
+        return tile;
+    else
+        return createTile(pos);
 }
 
 void Map::cleanTile(const Position& pos)
 {
-    if(TilePtr& tile = m_tiles[pos])
+    if(TilePtr tile = getTile(pos)) {
         tile->clean();
+        if(tile->canErase())
+            m_tiles.erase(m_tiles.find(pos));
+
+        notificateTileUpdateToMapViews(pos);
+    }
 }
 
 void Map::addCreature(const CreaturePtr& creature)
 {
-    m_creatures[creature->getId()] = creature;
+    m_knownCreatures[creature->getId()] = creature;
 }
 
 CreaturePtr Map::getCreatureById(uint32 id)
 {
-    if(g_game.getLocalPlayer() && (uint32)g_game.getLocalPlayer()->getId() == id)
-        return g_game.getLocalPlayer();
-    return m_creatures[id];
+    LocalPlayerPtr localPlayer = g_game.getLocalPlayer();
+    if(localPlayer && localPlayer->getId() == id)
+        return localPlayer;
+    return m_knownCreatures[id];
 }
 
 void Map::removeCreatureById(uint32 id)
 {
-    m_creatures.erase(id);
+    if(id == 0)
+        return;
+    m_knownCreatures.erase(id);
 }
 
 void Map::setCentralPosition(const Position& centralPosition)
 {
+    bool teleported = !m_centralPosition.isInRange(centralPosition, 1,1);
     m_centralPosition = centralPosition;
-}
 
-void Map::setVisibleSize(const Size& visibleSize)
-{
-    m_visibleSize = visibleSize;
-
-    if(m_visibleSize.width() > MAX_WIDTH || m_visibleSize.height() > MAX_HEIGHT)
-        m_visibleSize = Size(MAP_VISIBLE_WIDTH, MAP_VISIBLE_HEIGHT);
-
-    m_centralOffset = Point(std::ceil(m_visibleSize.width() / 2.0), std::ceil(m_visibleSize.height() / 2.0));
-    m_size = m_visibleSize + Size(3, 3);
-
-    if(m_framebuffer) {
-        m_framebuffer->resize(Size(m_visibleSize.width() * NUM_TILE_PIXELS, m_visibleSize.height() * NUM_TILE_PIXELS));
+    // remove all creatures when teleporting, the server will resend them again
+    if(teleported) {
+        for(const auto& pair : m_knownCreatures) {
+            const CreaturePtr& creature = pair.second;
+            removeThing(creature);
+        }
+    // remove creatures from tiles that we are not aware anymore
+    } else {
+        for(const auto& pair : m_knownCreatures) {
+            const CreaturePtr& creature = pair.second;
+            if(!isAwareOfPosition(creature->getPosition())) {
+                removeThing(creature);
+            }
+        }
     }
 }
 
-Point Map::positionTo2D(const Position& position)
+std::vector<CreaturePtr> Map::getSpectators(const Position& centerPos, bool multiFloor)
 {
-    return Point((m_centralOffset.x - 1 + (position.x - m_centralPosition.x) - (m_centralPosition.z - position.z)) * NUM_TILE_PIXELS,
-                 (m_centralOffset.y - 1 + (position.y - m_centralPosition.y) - (m_centralPosition.z - position.z)) * NUM_TILE_PIXELS);
+    return getSpectatorsInRange(centerPos, multiFloor, (Otc::VISIBLE_X_TILES - 1)/2, (Otc::VISIBLE_Y_TILES - 1)/2);
+}
+
+std::vector<CreaturePtr> Map::getSpectatorsInRange(const Position& centerPos, bool multiFloor, int xRange, int yRange)
+{
+    return getSpectatorsInRangeEx(centerPos, multiFloor, xRange, xRange, yRange, yRange);
+}
+
+std::vector<CreaturePtr> Map::getSpectatorsInRangeEx(const Position& centerPos, bool multiFloor, int minXRange, int maxXRange, int minYRange, int maxYRange)
+{
+    int minZRange = 0;
+    int maxZRange = 0;
+    std::vector<CreaturePtr> creatures;
+
+    if(multiFloor) {
+        minZRange = 0;
+        maxZRange = Otc::MAX_Z;
+    }
+
+    //TODO: get creatures from other floors corretly
+    //TODO: delivery creatures in distance order
+
+    for(int iz=-minZRange; iz<=maxZRange; ++iz) {
+        for(int iy=-minYRange; iy<=maxYRange; ++iy) {
+            for(int ix=-minXRange; ix<=maxXRange; ++ix) {
+                TilePtr tile = getTile(centerPos.translated(ix,iy,iz));
+                if(!tile)
+                    continue;
+
+                auto tileCreatures = tile->getCreatures();
+                creatures.insert(creatures.end(), tileCreatures.rbegin(), tileCreatures.rend());
+            }
+        }
+    }
+
+    return creatures;
+}
+
+bool Map::isLookPossible(const Position& pos)
+{
+    TilePtr tile = getTile(pos);
+    return tile && tile->isLookPossible();
+}
+
+bool Map::isCovered(const Position& pos, int firstFloor)
+{
+    // check for tiles on top of the postion
+    Position tilePos = pos;
+    while(tilePos.coveredUp() && tilePos.z >= firstFloor) {
+        TilePtr tile = getTile(tilePos);
+        // the below tile is covered when the above tile has a full ground
+        if(tile && tile->isFullGround())
+            return true;
+    }
+    return false;
+}
+
+bool Map::isCompletelyCovered(const Position& pos, int firstFloor)
+{
+    Position tilePos = pos;
+    while(tilePos.coveredUp() && tilePos.z >= firstFloor) {
+        bool covered = true;
+        // check in 2x2 range tiles that has no transparent pixels
+        for(int x=0;x<2;++x) {
+            for(int y=0;y<2;++y) {
+                const TilePtr& tile = getTile(tilePos.translated(-x, -y));
+                if(!tile || !tile->isFullyOpaque()) {
+                    covered = false;
+                    break;
+                }
+            }
+        }
+        if(covered)
+            return true;
+    }
+    return false;
+}
+
+bool Map::isAwareOfPosition(const Position& pos)
+{
+    if(pos.z < getFirstAwareFloor() || pos.z > getLastAwareFloor())
+        return false;
+
+    Position groundedPos = pos;
+    while(groundedPos.z != m_centralPosition.z) {
+        if(groundedPos.z > m_centralPosition.z)
+            groundedPos.coveredUp();
+        else
+            groundedPos.coveredDown();
+    }
+    return m_centralPosition.isInRange(groundedPos, Otc::AWARE_X_LEFT_TILES,
+                                                    Otc::AWARE_X_RIGHT_TILES,
+                                                    Otc::AWARE_Y_TOP_TILES,
+                                                    Otc::AWARE_Y_BOTTOM_TILES);
+}
+
+int Map::getFirstAwareFloor()
+{
+    if(m_centralPosition.z > Otc::SEA_FLOOR)
+        return m_centralPosition.z-Otc::AWARE_UNDEGROUND_FLOOR_RANGE;
+    else
+        return 0;
+}
+
+int Map::getLastAwareFloor()
+{
+    if(m_centralPosition.z > Otc::SEA_FLOOR)
+        return std::min(m_centralPosition.z+Otc::AWARE_UNDEGROUND_FLOOR_RANGE, (int)Otc::MAX_Z);
+    else
+        return Otc::SEA_FLOOR;
 }

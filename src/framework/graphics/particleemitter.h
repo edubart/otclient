@@ -44,7 +44,7 @@ private:
     ParticleSystemWeakPtr m_parent;
 
     // self related
-    Point m_pos;
+    Point m_position;
     float m_duration, m_delay;
     double m_elapsedTime;
     bool m_finished, m_active;

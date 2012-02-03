@@ -65,7 +65,7 @@ function UIPopupMenu:onKeyPress(keyCode, keyboardModifiers, wouldFilter)
   return false
 end
 
-  -- close all menus when the window is resized
+-- close all menus when the window is resized
 local function onRootGeometryUpdate()
   for i,menu in ipairs(displayedMenuList) do
     menu:destroy()

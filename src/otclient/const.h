@@ -31,6 +31,51 @@ namespace Otc
     static const char* AppCompactName = "otclient";
     static const char* AppVersion = "0.4.0";
 
+    enum {
+        TILE_PIXELS = 32,
+        MAX_ELEVATION = 24,
+
+        SEA_FLOOR = 7,
+        MAX_Z = 15,
+        UNDERGROUND_FLOOR = SEA_FLOOR+1,
+        VISIBLE_X_TILES = 15,
+        VISIBLE_Y_TILES = 11,
+        AWARE_UNDEGROUND_FLOOR_RANGE = 2,
+        AWARE_X_TILES = VISIBLE_X_TILES + 3,
+        AWARE_Y_TILES = VISIBLE_Y_TILES + 3,
+        AWARE_X_LEFT_TILES = AWARE_X_TILES/2 - 1,
+        AWARE_X_RIGHT_TILES = AWARE_X_TILES/2,
+        AWARE_Y_TOP_TILES = AWARE_Y_TILES/2 - 1,
+        AWARE_Y_BOTTOM_TILES = AWARE_Y_TILES/2,
+
+        EFFECT_TICKS_PER_FRAME = 75,
+        INVISIBLE_TICKS_PER_FRAME = 500,
+        ITEM_TICKS_PER_FRAME = 500,
+        ANIMATED_TEXT_DURATION = 1000,
+        STATIC_DURATION_PER_CHARACTER = 75,
+        MIN_STATIC_TEXT_DURATION = 3000,
+        MAX_STATIC_TEXT_WIDTH = 200,
+    };
+
+    enum DrawFlags {
+        DrawGround = 1,
+        DrawGroundBorders = 2,
+        DrawOnBottom = 4,
+        DrawOnTop = 8,
+        DrawItems = 16,
+        DrawCreatures = 32,
+        DrawEffects = 64,
+        DrawMissiles = 128,
+        DrawCreaturesInformation = 256,
+        DrawStaticTexts = 512,
+        DrawAnimatedTexts = 1024,
+        DrawAnimations = 2048,
+        DrawWalls = DrawOnBottom | DrawOnTop,
+        DrawEverything = DrawGround | DrawGroundBorders | DrawWalls | DrawItems |
+                         DrawCreatures | DrawEffects | DrawMissiles |
+                         DrawCreaturesInformation | DrawStaticTexts | DrawAnimatedTexts | DrawAnimations
+    };
+
     enum DatOpts {
         DatGround = 0,
         DatGroundClip,
@@ -218,6 +263,23 @@ namespace Otc
         IconPartyBuff = 4096,
         IconPzBlock = 8192,
         IconPz = 16384
+    };
+
+    enum SpeakType {
+        SpeakSay = 1,
+        SpeakWhisper,
+        SpeakYell,
+        SpeakBroadcast,
+        SpeakPrivate,
+        SpeakPrivateRed,
+        SpeakPrivatePlayerToNpc,
+        SpeakPrivateNpcToPlayer,
+        SpeakChannelYellow,
+        SpeakChannelWhite,
+        SpeakChannelRed,
+        SpeakChannelOrange,
+        SpeakMonsterSay,
+        SpeakMonsterYell
     };
 }
 

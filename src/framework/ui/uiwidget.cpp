@@ -90,7 +90,7 @@ void UIWidget::drawChildren()
                 g_painter.setColor(Fw::green);
                 g_painter.drawBoundingRect(child->getRect());
             }
-            //g_fonts.getDefaultFont()->renderText(child->getId(), child->getPos() + Point(2, 0), Fw::red);
+            //g_fonts.getDefaultFont()->renderText(child->getId(), child->getPosition() + Point(2, 0), Fw::red);
 
             g_painter.setOpacity(oldOpacity);
         }

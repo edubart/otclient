@@ -195,8 +195,8 @@ void ProtocolGame::parseMessage(InputMessage& msg)
             case Proto::GameServerOpenChannel:
                 parseOpenChannel(msg);
                 break;
-            case Proto::GameServerPrivateChannel:
-                parseOpenPrivatePlayerChat(msg);
+            case Proto::GameServerOpenPrivateChannel:
+                parseOpenPrivateChannel(msg);
                 break;
             case Proto::GameServerRuleViolationChannel:
                 msg.getU16();
@@ -210,10 +210,10 @@ void ProtocolGame::parseMessage(InputMessage& msg)
             case Proto::GameServerRuleViolationLock:
                 break;
             case Proto::GameServerOpenOwnChannel:
-                parseCreatePrivateChannel(msg);
+                parseCreateOwnPrivateChannel(msg);
                 break;
             case Proto::GameServerCloseChannel:
-                parseClosePrivateChannel(msg);
+                parseCloseChannel(msg);
                 break;
             case Proto::GameServerMessage:
                 parseTextMessage(msg);
@@ -317,7 +317,7 @@ void ProtocolGame::parseMapDescription(InputMessage& msg)
 {
     Position pos = parsePosition(msg);
     g_map.setCentralPosition(pos);
-    setMapDescription(msg, pos.x - 8, pos.y - 6, pos.z, 18, 14);
+    setMapDescription(msg, pos.x - Otc::AWARE_X_LEFT_TILES, pos.y - Otc::AWARE_Y_TOP_TILES, pos.z, Otc::AWARE_X_TILES, Otc::AWARE_Y_TILES);
 }
 
 void ProtocolGame::parseMoveNorth(InputMessage& msg)
@@ -325,7 +325,7 @@ void ProtocolGame::parseMoveNorth(InputMessage& msg)
     Position pos = g_map.getCentralPosition();
     pos.y--;
 
-    setMapDescription(msg, pos.x - 8, pos.y - 6, pos.z, 18, 1);
+    setMapDescription(msg, pos.x - Otc::AWARE_X_LEFT_TILES, pos.y - Otc::AWARE_Y_TOP_TILES, pos.z, Otc::AWARE_X_TILES, 1);
     g_map.setCentralPosition(pos);
 }
 
@@ -334,7 +334,7 @@ void ProtocolGame::parseMoveEast(InputMessage& msg)
     Position pos = g_map.getCentralPosition();
     pos.x++;
 
-    setMapDescription(msg, pos.x + 9, pos.y - 6, pos.z, 1, 14);
+    setMapDescription(msg, pos.x + Otc::AWARE_X_RIGHT_TILES, pos.y - Otc::AWARE_Y_TOP_TILES, pos.z, 1, Otc::AWARE_Y_TILES);
     g_map.setCentralPosition(pos);
 }
 
@@ -343,7 +343,7 @@ void ProtocolGame::parseMoveSouth(InputMessage& msg)
     Position pos = g_map.getCentralPosition();
     pos.y++;
 
-    setMapDescription(msg, pos.x - 8, pos.y + 7, pos.z, 18, 1);
+    setMapDescription(msg, pos.x - Otc::AWARE_X_LEFT_TILES, pos.y + Otc::AWARE_Y_BOTTOM_TILES, pos.z, Otc::AWARE_X_TILES, 1);
     g_map.setCentralPosition(pos);
 }
 
@@ -352,7 +352,7 @@ void ProtocolGame::parseMoveWest(InputMessage& msg)
     Position pos = g_map.getCentralPosition();
     pos.x--;
 
-    setMapDescription(msg, pos.x - 8, pos.y - 6, pos.z, 1, 14);
+    setMapDescription(msg, pos.x - Otc::AWARE_X_LEFT_TILES, pos.y - Otc::AWARE_Y_TOP_TILES, pos.z, 1, Otc::AWARE_Y_TILES);
     g_map.setCentralPosition(pos);
 }
 
@@ -407,7 +407,7 @@ void ProtocolGame::parseCreatureMove(InputMessage& msg)
     int oldStackpos = msg.getU8();
     Position newPos = parsePosition(msg);
 
-    ThingPtr thing = g_map.getTile(oldPos)->getThing(oldStackpos);
+    ThingPtr thing = g_map.getThing(oldPos, oldStackpos);
     if(!thing) {
         logTraceError("could not get thing");
         return;
@@ -566,10 +566,10 @@ void ProtocolGame::parseDistanceMissile(InputMessage& msg)
     Position toPos = parsePosition(msg);
     int shotId = msg.getU8();
 
-    MissilePtr shot = MissilePtr(new Missile());
-    shot->setId(shotId);
-    shot->setPath(fromPos, toPos);
-    g_map.addThing(shot, fromPos);
+    MissilePtr missile = MissilePtr(new Missile());
+    missile->setId(shotId);
+    missile->setPath(fromPos, toPos);
+    g_map.addThing(missile, fromPos);
 }
 
 void ProtocolGame::parseCreatureSquare(InputMessage& msg)
@@ -720,43 +720,43 @@ void ProtocolGame::parseCreatureSpeak(InputMessage& msg)
     msg.getU32(); // unkSpeak
     std::string name = msg.getString();
     int level = msg.getU16();
-    int type = msg.getU8();
+    int serverType = msg.getU8();
     int channelId = 0;
     Position creaturePos;
 
-    switch(type) {
-        case Proto::SpeakSay:
-        case Proto::SpeakWhisper:
-        case Proto::SpeakYell:
-        case Proto::SpeakMonsterSay:
-        case Proto::SpeakMonsterYell:
-        case Proto::SpeakPrivateNpcToPlayer:
+    switch(serverType) {
+        case Proto::ServerSpeakSay:
+        case Proto::ServerSpeakWhisper:
+        case Proto::ServerSpeakYell:
+        case Proto::ServerSpeakMonsterSay:
+        case Proto::ServerSpeakMonsterYell:
+        case Proto::ServerSpeakPrivateNpcToPlayer:
             creaturePos = parsePosition(msg);
             break;
-        case Proto::SpeakChannelYellow:
-        case Proto::SpeakChannelWhite:
-        case Proto::SpeakChannelRed:
-        case Proto::SpeakChannelRed2:
-        case Proto::SpeakChannelOrange:
+        case Proto::ServerSpeakChannelYellow:
+        case Proto::ServerSpeakChannelWhite:
+        case Proto::ServerSpeakChannelRed:
+        case Proto::ServerSpeakChannelRed2:
+        case Proto::ServerSpeakChannelOrange:
             channelId = msg.getU16();
             break;
-        case Proto::SpeakPrivate:
-        case Proto::SpeakPrivatePlayerToNpc:
-        case Proto::SpeakBroadcast:
-        case Proto::SpeakPrivateRed:
+        case Proto::ServerSpeakPrivate:
+        case Proto::ServerSpeakPrivatePlayerToNpc:
+        case Proto::ServerSpeakBroadcast:
+        case Proto::ServerSpeakPrivateRed:
             break;
-        case Proto::SpeakRVRChannel:
+        case Proto::ServerSpeakRVRChannel:
             msg.getU32();
             break;
         default:
-            logTraceError("unknown speak type ", type);
+            logTraceError("unknown speak type ", serverType);
             break;
     }
 
     std::string message = msg.getString();
-    std::string typeDesc = Proto::translateSpeakType(type);
+    Otc::SpeakType type = Proto::translateSpeakTypeFromServer(serverType);
 
-    g_game.processCreatureSpeak(name, level, typeDesc, message, channelId, creaturePos);
+    g_game.processCreatureSpeak(name, level, type, message, channelId, creaturePos);
 }
 
 void ProtocolGame::parseChannelList(InputMessage& msg)
@@ -780,20 +780,26 @@ void ProtocolGame::parseOpenChannel(InputMessage& msg)
     g_lua.callGlobalField("Game", "onOpenChannel", channelId, name);
 }
 
-void ProtocolGame::parseOpenPrivatePlayerChat(InputMessage& msg)
+void ProtocolGame::parseOpenPrivateChannel(InputMessage& msg)
 {
-    msg.getString(); // name
+    std::string name = msg.getString();
+
+    g_lua.callGlobalField("Game", "onOpenPrivateChannel", name);
 }
 
-void ProtocolGame::parseCreatePrivateChannel(InputMessage& msg)
+void ProtocolGame::parseCreateOwnPrivateChannel(InputMessage& msg)
 {
-    msg.getU16(); // channel id
-    msg.getString(); // channel name
+    int id = msg.getU16(); // channel id
+    std::string name = msg.getString(); // channel name
+
+    g_lua.callGlobalField("Game", "onOpenOwnPrivateChannel", id, name);
 }
 
-void ProtocolGame::parseClosePrivateChannel(InputMessage& msg)
+void ProtocolGame::parseCloseChannel(InputMessage& msg)
 {
-    msg.getU16(); // channel id
+    int id = msg.getU16(); // channel id
+
+    g_lua.callGlobalField("Game", "onCloseChannel", id);
 }
 
 void ProtocolGame::parseTextMessage(InputMessage& msg)
@@ -819,11 +825,11 @@ void ProtocolGame::parseFloorChangeUp(InputMessage& msg)
     pos.z--;
 
     int skip = 0;
-    if(pos.z == 7)
-        for(int i = 5; i >= 0; i--)
-            setFloorDescription(msg, pos.x - 8, pos.y - 6, i, 18, 14, 8 - i, &skip);
-    else if(pos.z > 7)
-        setFloorDescription(msg, pos.x - 8, pos.y - 6, pos.z - 2, 18, 14, 3, &skip);
+    if(pos.z == Otc::SEA_FLOOR)
+        for(int i = Otc::SEA_FLOOR - Otc::AWARE_UNDEGROUND_FLOOR_RANGE; i >= 0; i--)
+            setFloorDescription(msg, pos.x - Otc::AWARE_X_LEFT_TILES, pos.y - Otc::AWARE_Y_TOP_TILES, i, Otc::AWARE_X_TILES, Otc::AWARE_Y_TILES, 8 - i, &skip);
+    else if(pos.z > Otc::SEA_FLOOR)
+        setFloorDescription(msg, pos.x - Otc::AWARE_X_LEFT_TILES, pos.y - Otc::AWARE_Y_TOP_TILES, pos.z - Otc::AWARE_UNDEGROUND_FLOOR_RANGE, Otc::AWARE_X_TILES, Otc::AWARE_Y_TILES, 3, &skip);
 
     pos.x++;
     pos.y++;
@@ -836,13 +842,13 @@ void ProtocolGame::parseFloorChangeDown(InputMessage& msg)
     pos.z++;
 
     int skip = 0;
-    if(pos.z == 8) {
+    if(pos.z == Otc::UNDERGROUND_FLOOR) {
         int j, i;
-        for(i = pos.z, j = -1; i < pos.z + 3; ++i, --j)
-            setFloorDescription(msg, pos.x - 8, pos.y - 6, i, 18, 14, j, &skip);
+        for(i = pos.z, j = -1; i <= pos.z + Otc::AWARE_UNDEGROUND_FLOOR_RANGE; ++i, --j)
+            setFloorDescription(msg, pos.x - Otc::AWARE_X_LEFT_TILES, pos.y - Otc::AWARE_Y_TOP_TILES, i, Otc::AWARE_X_TILES, Otc::AWARE_Y_TILES, j, &skip);
     }
-    else if(pos.z > 8 && pos.z < 14)
-        setFloorDescription(msg, pos.x - 8, pos.y - 6, pos.z + 2, 18, 14, -3, &skip);
+    else if(pos.z > Otc::UNDERGROUND_FLOOR && pos.z < Otc::MAX_Z-1)
+        setFloorDescription(msg, pos.x - Otc::AWARE_X_LEFT_TILES, pos.y - Otc::AWARE_Y_TOP_TILES, pos.z + Otc::AWARE_UNDEGROUND_FLOOR_RANGE, Otc::AWARE_X_TILES, Otc::AWARE_Y_TILES, -3, &skip);
 
     pos.x--;
     pos.y--;
@@ -866,7 +872,7 @@ void ProtocolGame::parseOutfitWindow(InputMessage& msg)
     }
 
     CreaturePtr creature = CreaturePtr(new Creature);
-    creature->setXPattern(2);
+    creature->setDirection(Otc::South);
     creature->setOutfit(outfit);
 
     g_lua.callGlobalField("Game", "onOpenOutfitWindow", creature, outfitList);
@@ -931,13 +937,13 @@ void ProtocolGame::setMapDescription(InputMessage& msg, int32 x, int32 y, int32 
 {
     int startz, endz, zstep, skip = 0;
 
-    if(z > 7) {
-        startz = z - 2;
-        endz = (15 < z+2) ? 15 : z+2;
+    if(z > Otc::SEA_FLOOR) {
+        startz = z - Otc::AWARE_UNDEGROUND_FLOOR_RANGE;
+        endz = std::min(z + Otc::AWARE_UNDEGROUND_FLOOR_RANGE, (int)Otc::MAX_Z);
         zstep = 1;
     }
     else {
-        startz = 7;
+        startz = Otc::SEA_FLOOR;
         endz = 0;
         zstep = -1;
     }
@@ -952,13 +958,17 @@ void ProtocolGame::setFloorDescription(InputMessage& msg, int32 x, int32 y, int3
 
     for(int nx = 0; nx < width; nx++) {
         for(int ny = 0; ny < height; ny++) {
+            Position tilePos(x + nx + offset, y + ny + offset, z);
+
+            // clean pre stored tiles
+            g_map.cleanTile(tilePos);
+
             if(skip == 0) {
                 int tileOpt = msg.getU16(true);
                 if(tileOpt >= 0xFF00)
                     skip = (msg.getU16() & 0xFF);
                 else {
-                    Position pos(x + nx + offset, y + ny + offset, z);
-                    setTileDescription(msg, pos);
+                    setTileDescription(msg, tilePos);
                     skip = (msg.getU16() & 0xFF);
                 }
             }
@@ -1041,7 +1051,7 @@ ThingPtr ProtocolGame::internalGetThing(InputMessage& msg)
             if(knownCreature)
                 creature = knownCreature;
             else
-                logTraceError("server says creature is known, but its not on creatures list");
+                logTraceError("server said that a creature is known, but it's not");
         } else if(thingId == 0x0061) { //creature is not known
             uint removeId = msg.getU32();
             uint id = msg.getU32();
@@ -1065,6 +1075,8 @@ ThingPtr ProtocolGame::internalGetThing(InputMessage& msg)
 
             creature->setId(id);
             creature->setName(name);
+
+            g_map.addCreature(creature);
         }
 
         uint8 healthPercent = msg.getU8();
@@ -1119,7 +1131,7 @@ ItemPtr ProtocolGame::internalGetItem(InputMessage& msg, int id)
 
     ItemPtr item = Item::create(id);
     if(item->isStackable() || item->isFluidContainer() || item->isFluid())
-        item->setData(msg.getU8());
+        item->setCountOrSubType(msg.getU8());
 
     return item;
 }

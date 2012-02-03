@@ -278,7 +278,7 @@ void WIN32Window::internalCreateWindow()
     DWORD dwExStyle = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
     DWORD dwStyle = WS_OVERLAPPEDWINDOW;
 
-    RECT windowRect = {m_pos.x, m_pos.y, m_pos.x + m_size.width(), m_pos.y + m_size.height()};
+    RECT windowRect = {m_position.x, m_position.y, m_position.x + m_size.width(), m_position.y + m_size.height()};
     AdjustWindowRectEx(&windowRect, dwStyle, FALSE, dwExStyle);
 
     updateUnmaximizedCoords();
@@ -361,14 +361,14 @@ void *WIN32Window::getExtensionProcAddress(const char *ext)
 
 void WIN32Window::move(const Point& pos)
 {
-    RECT windowRect = {pos.x, pos.y, m_pos.x + m_size.width(), m_pos.y + m_size.height()};
+    RECT windowRect = {pos.x, pos.y, m_position.x + m_size.width(), m_position.y + m_size.height()};
     AdjustWindowRectEx(&windowRect, WS_OVERLAPPEDWINDOW, FALSE, WS_EX_APPWINDOW | WS_EX_WINDOWEDGE);
     MoveWindow(m_window, windowRect.left, windowRect.top, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top, TRUE);
 }
 
 void WIN32Window::resize(const Size& size)
 {
-    RECT windowRect = {m_pos.x, m_pos.y, m_pos.x + size.width(), m_pos.y + size.height()};
+    RECT windowRect = {m_position.x, m_position.y, m_position.x + size.width(), m_position.y + size.height()};
     AdjustWindowRectEx(&windowRect, WS_OVERLAPPEDWINDOW, FALSE, WS_EX_APPWINDOW | WS_EX_WINDOWEDGE);
     MoveWindow(m_window, windowRect.left, windowRect.top, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top, TRUE);
 }
@@ -503,8 +503,8 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
             break;
         }
         case WM_MOVE: {
-            m_pos.x = LOWORD(lParam);
-            m_pos.y = HIWORD(lParam);
+            m_position.x = LOWORD(lParam);
+            m_position.y = HIWORD(lParam);
             break;
         }
         case WM_SIZE: {

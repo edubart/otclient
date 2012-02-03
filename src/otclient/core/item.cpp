@@ -24,143 +24,181 @@
 #include "thingstype.h"
 #include "spritemanager.h"
 #include "thing.h"
+#include "tile.h"
 #include <framework/core/clock.h>
 #include <framework/core/eventdispatcher.h>
+#include <framework/graphics/graphics.h>
+#include <framework/graphics/paintershaderprogram.h>
+#include <framework/graphics/paintershadersources.h>
 
 Item::Item() : Thing()
 {
-    m_data = 1;
+    m_id = 0;
+    m_countOrSubType = 0;
 }
 
 ItemPtr Item::create(int id)
 {
+    if(id < g_thingsType.getFirstItemId() || id > g_thingsType.getMaxItemid()) {
+        logTraceError("invalid item id ", id);
+        return nullptr;
+    }
     ItemPtr item = ItemPtr(new Item);
     item->setId(id);
     return item;
 }
 
-void Item::draw(const Point& p, const Rect&)
-{
-    if(m_type->dimensions[ThingType::AnimationPhases] > 1)
-        m_animation = (g_clock.ticks() % (TICKS_PER_FRAME * m_type->dimensions[ThingType::AnimationPhases])) / TICKS_PER_FRAME;
+PainterShaderProgramPtr itemProgram;
 
-    for(int l = 0; l < m_type->dimensions[ThingType::Layers]; l++)
-        internalDraw(p, l);
-}
-
-void Item::setPos(const Position& position)
+void Item::draw(const Point& dest, float scaleFactor, bool animate)
 {
-    if(m_type->properties[ThingType::IsGround]) {
-        m_xPattern = position.x % m_type->dimensions[ThingType::PatternX];
-        m_yPattern = position.y % m_type->dimensions[ThingType::PatternY];
-        m_zPattern = position.z % m_type->dimensions[ThingType::PatternZ];
+    if(m_id == 0)
+        return;
+
+    // determine animation phase
+    int animationPhase = 0;
+    if(getAnimationPhases() > 1) {
+        if(animate)
+            animationPhase = (g_clock.ticks() % (Otc::ITEM_TICKS_PER_FRAME * getAnimationPhases())) / Otc::ITEM_TICKS_PER_FRAME;
+        else
+            animationPhase = getAnimationPhases()-1;
     }
 
-    Thing::setPos(position);
-}
-
-void Item::setData(int data)
-{
-    if(m_type->properties[ThingType::IsStackable] && m_type->dimensions[ThingType::PatternX] == 4 && m_type->dimensions[ThingType::PatternY] == 2) {
-        if(data < 5) {
-            m_xPattern = data-1;
-            m_yPattern = 0;
+    // determine x,y,z patterns
+    int xPattern = 0, yPattern = 0, zPattern = 0;
+    if(isGround()) {
+        xPattern = m_position.x % getNumPatternsX();
+        yPattern = m_position.y % getNumPatternsY();
+        zPattern = m_position.z % getNumPatternsZ();
+    } else if(isStackable() && getNumPatternsX() == 4 && getNumPatternsY() == 2) {
+        if(m_countOrSubType < 5) {
+            xPattern = m_countOrSubType-1;
+            yPattern = 0;
+        } else if(m_countOrSubType < 10) {
+            xPattern = 0;
+            yPattern = 1;
+        } else if(m_countOrSubType < 25) {
+            xPattern = 1;
+            yPattern = 1;
+        } else if(m_countOrSubType < 50) {
+            xPattern = 2;
+            yPattern = 1;
+        } else if(m_countOrSubType <= 100) {
+            xPattern = 3;
+            yPattern = 1;
         }
-        else if(data < 10) {
-            m_xPattern = 0;
-            m_yPattern = 1;
+    } else if(isHangable()) {
+        const TilePtr& tile = getTile();
+        if(tile) {
+            if(tile->mustHookSouth())
+                xPattern = getNumPatternsX() >= 2 ? 1 : 0;
+            else if(tile->mustHookSouth())
+                xPattern = getNumPatternsX() >= 3 ? 2 : 0;
         }
-        else if(data < 25) {
-            m_xPattern = 1;
-            m_yPattern = 1;
-        }
-        else if(data < 50) {
-            m_xPattern = 2;
-            m_yPattern = 1;
-        }
-        else if(data <= 100) {
-            m_xPattern = 3;
-            m_yPattern = 1;
-        }
-    }
-    else if(m_type->properties[ThingType::IsHangable]) {
-        if(m_type->properties[ThingType::HookSouth]) {
-            m_xPattern = m_type->dimensions[ThingType::PatternX] >= 2 ? 1 : 0;
-        }
-        else if(m_type->properties[ThingType::HookEast]) {
-            m_xPattern = m_type->dimensions[ThingType::PatternX] >= 3 ? 2 : 0;
-        }
-    }
-    else if(m_type->properties[ThingType::IsFluid] || m_type->properties[ThingType::IsFluidContainer]) {
+    } else if(isFluid() || isFluidContainer()) {
         int color = Otc::FluidTransparent;
-        switch(data) {
-        case Otc::FluidNone:
-            color = Otc::FluidTransparent;
-            break;
-        case Otc::FluidWater:
-            color = Otc::FluidBlue;
-            break;
-        case Otc::FluidMana:
-            color = Otc::FluidPurple;
-            break;
-        case Otc::FluidBeer:
-            color = Otc::FluidBrown;
-            break;
-        case Otc::FluidOil:
-            color = Otc::FluidBrown;
-            break;
-        case Otc::FluidBlood:
-            color = Otc::FluidRed;
-            break;
-        case Otc::FluidSlime:
-            color = Otc::FluidGreen;
-            break;
-        case Otc::FluidMud:
-            color = Otc::FluidBrown;
-            break;
-        case Otc::FluidLemonade:
-            color = Otc::FluidYellow;
-            break;
-        case Otc::FluidMilk:
-            color = Otc::FluidWhite;
-            break;
-        case Otc::FluidWine:
-            color = Otc::FluidPurple;
-            break;
-        case Otc::FluidHealth:
-            color = Otc::FluidRed;
-            break;
-        case Otc::FluidUrine:
-            color = Otc::FluidYellow;
-            break;
-        case Otc::FluidRum:
-            color = Otc::FluidBrown;
-            break;
-        case Otc::FluidFruidJuice:
-            color = Otc::FluidYellow;
-            break;
-        case Otc::FluidCoconutMilk:
-            color = Otc::FluidWhite;
-            break;
-        case Otc::FluidTea:
-            color = Otc::FluidBrown;
-            break;
-        case Otc::FluidMead:
-            color = Otc::FluidBrown;
-            break;
-        default:
-            color = Otc::FluidTransparent;
-            break;
+        switch(m_countOrSubType) {
+            case Otc::FluidNone:
+                color = Otc::FluidTransparent;
+                break;
+            case Otc::FluidWater:
+                color = Otc::FluidBlue;
+                break;
+            case Otc::FluidMana:
+                color = Otc::FluidPurple;
+                break;
+            case Otc::FluidBeer:
+                color = Otc::FluidBrown;
+                break;
+            case Otc::FluidOil:
+                color = Otc::FluidBrown;
+                break;
+            case Otc::FluidBlood:
+                color = Otc::FluidRed;
+                break;
+            case Otc::FluidSlime:
+                color = Otc::FluidGreen;
+                break;
+            case Otc::FluidMud:
+                color = Otc::FluidBrown;
+                break;
+            case Otc::FluidLemonade:
+                color = Otc::FluidYellow;
+                break;
+            case Otc::FluidMilk:
+                color = Otc::FluidWhite;
+                break;
+            case Otc::FluidWine:
+                color = Otc::FluidPurple;
+                break;
+            case Otc::FluidHealth:
+                color = Otc::FluidRed;
+                break;
+            case Otc::FluidUrine:
+                color = Otc::FluidYellow;
+                break;
+            case Otc::FluidRum:
+                color = Otc::FluidBrown;
+                break;
+            case Otc::FluidFruidJuice:
+                color = Otc::FluidYellow;
+                break;
+            case Otc::FluidCoconutMilk:
+                color = Otc::FluidWhite;
+                break;
+            case Otc::FluidTea:
+                color = Otc::FluidBrown;
+                break;
+            case Otc::FluidMead:
+                color = Otc::FluidBrown;
+                break;
+            default:
+                color = Otc::FluidTransparent;
+                break;
         }
 
-        m_xPattern = (color % 4) % m_type->dimensions[ThingType::PatternX];
-        m_yPattern = (color / 4) % m_type->dimensions[ThingType::PatternY];
+        xPattern = (color % 4) % getNumPatternsX();
+        yPattern = (color / 4) % getNumPatternsY();
     }
 
-    m_data = data;
+    // setup item drawing shader
+    if(!itemProgram) {
+        itemProgram = PainterShaderProgramPtr(new PainterShaderProgram);
+        itemProgram->addShaderFromSourceCode(Shader::Vertex, glslMainWithTexCoordsVertexShader + glslPositionOnlyVertexShader);
+        itemProgram->addShaderFromSourceFile(Shader::Fragment, "/game_shaders/item.frag");
+        assert(itemProgram->link());
+    }
+    g_painter.setCustomProgram(itemProgram);
+
+    // now we can draw the item
+    internalDraw(dest, scaleFactor, xPattern, yPattern, zPattern, animationPhase);
+
+    // release draw shader
+    g_painter.releaseCustomProgram();
 }
 
-ThingType *Item::getType()
+void Item::setId(uint32 id)
 {
-    return g_thingsType.getThingType(m_id, ThingsType::Item);
+    if(id < g_thingsType.getFirstItemId() || id > g_thingsType.getMaxItemid()) {
+        logTraceError("invalid item id ", id);
+        return;
+    }
+    m_id = id;
+    m_type = g_thingsType.getThingType(m_id, ThingsType::Item);
+}
+
+int Item::getCount()
+{
+    if(isStackable())
+        return m_countOrSubType;
+    else
+        return 1;
+}
+
+int Item::getSubType()
+{
+    if(isFluid() || isFluidContainer())
+        return m_countOrSubType;
+    else
+        return 0;
 }

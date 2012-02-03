@@ -48,7 +48,8 @@ void LuaInterface::init()
 
     // register LuaObject, the base of all other objects
     registerClass<LuaObject>();
-    bindClassMemberGetField<LuaObject>("use_count", &LuaObject::getUseCount);
+    bindClassMemberFunction<LuaObject>("getUseCount", &LuaObject::getUseCount);
+    bindClassMemberFunction<LuaObject>("getClassName", &LuaObject::getClassName);
 }
 
 void LuaInterface::terminate()
@@ -958,7 +959,7 @@ void LuaInterface::pushObject(const LuaObjectPtr& obj)
     new(newUserdata(sizeof(LuaObjectPtr))) LuaObjectPtr(obj);
 
     // set the userdata metatable
-    getGlobal(Fw::mkstr(obj->getLuaObjectName(), "_mt"));
+    getGlobal(Fw::mkstr(obj->getClassName(), "_mt"));
     assert(!isNil());
     setMetatable();
 }

@@ -27,73 +27,62 @@
 #include <framework/core/clock.h>
 #include <framework/core/eventdispatcher.h>
 
-Missile::Missile() : Thing()
+void Missile::draw(const Point& dest, float scaleFactor, bool animate)
 {
-    m_startTicks = 0;
-}
+    if(m_id == 0 || !animate)
+        return;
 
-void Missile::draw(const Point& p, const Rect&)
-{
-    float time = (g_clock.ticks() - m_startTicks) / m_duration;
-    internalDraw(p + Point(m_posDelta.x * time, m_posDelta.y * time), 0);
+    int xPattern = 0, yPattern = 0;
+    if(m_direction == Otc::NorthWest) {
+        xPattern = 0;
+        yPattern = 0;
+    } else if(m_direction == Otc::North) {
+        xPattern = 1;
+        yPattern = 0;
+    } else if(m_direction == Otc::NorthEast) {
+        xPattern = 2;
+        yPattern = 0;
+    } else if(m_direction == Otc::East) {
+        xPattern = 2;
+        yPattern = 1;
+    } else if(m_direction == Otc::SouthEast) {
+        xPattern = 2;
+        yPattern = 2;
+    } else if(m_direction == Otc::South) {
+        xPattern = 1;
+        yPattern = 2;
+    } else if(m_direction == Otc::SouthWest) {
+        xPattern = 0;
+        yPattern = 2;
+    } else if(m_direction == Otc::West) {
+        xPattern = 0;
+        yPattern = 1;
+    } else {
+        xPattern = 1;
+        yPattern = 1;
+    }
+
+    float fraction = m_animationTimer.ticksElapsed() / m_duration;
+    internalDraw(dest + m_delta * fraction * scaleFactor, scaleFactor, xPattern, yPattern, 0, 0);
 }
 
 void Missile::setPath(const Position& fromPosition, const Position& toPosition)
 {
-    Otc::Direction direction = fromPosition.getDirectionFromPosition(toPosition);
+    m_direction = fromPosition.getDirectionFromPosition(toPosition);
 
-    if(direction == Otc::NorthWest) {
-        m_xPattern = 0;
-        m_yPattern = 0;
-    }
-    else if(direction == Otc::North) {
-        m_xPattern = 1;
-        m_yPattern = 0;
-    }
-    else if(direction == Otc::NorthEast) {
-        m_xPattern = 2;
-        m_yPattern = 0;
-    }
-    else if(direction == Otc::East) {
-        m_xPattern = 2;
-        m_yPattern = 1;
-    }
-    else if(direction == Otc::SouthEast) {
-        m_xPattern = 2;
-        m_yPattern = 2;
-    }
-    else if(direction == Otc::South) {
-        m_xPattern = 1;
-        m_yPattern = 2;
-    }
-    else if(direction == Otc::SouthWest) {
-        m_xPattern = 0;
-        m_yPattern = 2;
-    }
-    else if(direction == Otc::West) {
-        m_xPattern = 0;
-        m_yPattern = 1;
-    }
-    else {
-        m_xPattern = 1;
-        m_yPattern = 1;
-    }
-
-    m_pos = fromPosition;
-    m_posDelta = toPosition - fromPosition;
-    m_startTicks = g_clock.ticks();
-    m_duration = 150 * std::sqrt(Point(m_posDelta.x, m_posDelta.y).length());
-    m_posDelta.x *= Map::NUM_TILE_PIXELS;
-    m_posDelta.y *= Map::NUM_TILE_PIXELS;
+    m_position = fromPosition;
+    m_delta = Point(toPosition.x - fromPosition.x, toPosition.y - fromPosition.y);
+    m_duration = 150 * std::sqrt(m_delta.length());
+    m_delta *= Otc::TILE_PIXELS;
+    m_animationTimer.restart();
 
     // schedule removal
     auto self = asMissile();
-    g_dispatcher.scheduleEvent([self]() {
-        g_map.removeThing(self);
-    }, m_duration);
+    g_dispatcher.scheduleEvent([self]() { g_map.removeThing(self); }, m_duration);
 }
 
-ThingType *Missile::getType()
+void Missile::setId(uint32 id)
 {
-    return g_thingsType.getThingType(m_id, ThingsType::Missile);
+    m_id = id;
+    m_type = g_thingsType.getThingType(m_id, ThingsType::Missile);
 }

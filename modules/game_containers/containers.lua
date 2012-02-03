@@ -46,7 +46,7 @@ function Containers.onContainerOpen(containerId, itemId, name, capacity, hasPare
     
     if i <= #items then
       local item = items[i]
-      item:setPos(itemWidget.position)
+      item:setPosition(itemWidget.position)
       itemWidget:setItem(item)
     end
   end
@@ -76,7 +76,7 @@ function Containers.onContainerAddItem(containerId, item)
 
     local swapItem = itemWidget:getItem()
     if swapItem then
-      swapItem:setPos(nextItemWidget.position)
+      swapItem:setPosition(nextItemWidget.position)
       nextItemWidget:setItem(swapItem)
     end
     
@@ -85,7 +85,7 @@ function Containers.onContainerAddItem(containerId, item)
 
   local itemWidget = container:getChildByIndex(1)
   if not itemWidget then return end
-  item:setPos(itemWidget.position)
+  item:setPosition(itemWidget.position)
   itemWidget:setItem(item)
 
   container.itemCount = container.itemCount + 1
@@ -98,7 +98,7 @@ function Containers.onContainerUpdateItem(containerId, slot, item)
   local itemWidget = container:getChildByIndex(slot + 1)
   if not itemWidget then return end
   itemWidget:setItem(item)
-  item:setPos(itemWidget.position)
+  item:setPosition(itemWidget.position)
 end
 
 function Containers.onContainerRemoveItem(containerId, slot)
@@ -117,9 +117,9 @@ function Containers.onContainerRemoveItem(containerId, slot)
     if not nextItemWidget then return end
     
     local item = nextItemWidget:getItem()
-    local pos = item:getPos()
+    local pos = item:getPosition()
     pos.z = pos.z - 1
-    item:setPos(pos)
+    item:setPosition(pos)
     
     itemWidget:setItem(item)
     nextItemWidget:setItem(nil)

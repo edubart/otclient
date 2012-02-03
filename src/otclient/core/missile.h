@@ -24,6 +24,7 @@
 #define SHOT_H
 
 #include <framework/global.h>
+#include <framework/core/timer.h>
 #include "thing.h"
 
 class Missile : public Thing
@@ -33,22 +34,23 @@ class Missile : public Thing
     };
 
 public:
-    Missile();
-
-    void draw(const Point& p, const Rect&);
+    void draw(const Point& dest, float scaleFactor, bool animate);
 
     void updateAnimation();
 
+    void setId(uint32 id);
     void setPath(const Position& fromPosition, const Position& toPosition);
 
-    ThingType *getType();
+    uint32 getId() { return m_id; }
 
     MissilePtr asMissile() { return std::static_pointer_cast<Missile>(shared_from_this()); }
 
 private:
-    ticks_t m_startTicks;
-    Position m_posDelta;
+    Timer m_animationTimer;
+    Point m_delta;
     float m_duration;
+    uint16 m_id;
+    Otc::Direction m_direction;
 };
 
 #endif

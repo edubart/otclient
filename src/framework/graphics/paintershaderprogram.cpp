@@ -26,6 +26,11 @@
 #include "texturemanager.h"
 #include <framework/core/clock.h>
 
+PainterShaderProgram::PainterShaderProgram()
+{
+    m_textures.fill(std::make_tuple(-1, 0));
+}
+
 bool PainterShaderProgram::link()
 {
     bindAttributeLocation(VERTEX_COORDS_ATTR, "vertexCoord");
@@ -63,12 +68,9 @@ void PainterShaderProgram::setOpacity(float opacity)
 
 void PainterShaderProgram::setUniformTexture(int location, const TexturePtr& texture, int index)
 {
-    if(index > 0)
-        glActiveTexture(GL_TEXTURE0 + index);
-    glBindTexture(GL_TEXTURE_2D, texture ? texture->getId() : 0);
-    if(index > 0)
-        glActiveTexture(GL_TEXTURE0);
-    setUniformValue(location, index);
+    assert(index >= 0 && index <= 1);
+
+    m_textures[index] = std::make_tuple(location, texture ? texture->getId() : 0);
 }
 
 void PainterShaderProgram::setTexture(const TexturePtr& texture)
@@ -111,6 +113,18 @@ void PainterShaderProgram::draw(const CoordsBuffer& coordsBuffer, DrawMode drawM
         setAttributeArray(PainterShaderProgram::TEXTURE_COORDS_ATTR, coordsBuffer.getTextureCoords(), 2);
         mustDisableTexCoordsArray = true;
     }
+
+    for(int i=0;i<(int)m_textures.size();++i) {
+        int location = std::get<0>(m_textures[i]);
+        if(location == -1)
+            break;
+        int id = std::get<1>(m_textures[i]);
+        setUniformValue(location, i);
+
+        glActiveTexture(GL_TEXTURE0+i);
+        glBindTexture(GL_TEXTURE_2D, id);
+    }
+    glActiveTexture(GL_TEXTURE0);
 
     glDrawArrays(drawMode, 0, numVertices);
 

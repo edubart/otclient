@@ -22,6 +22,7 @@
 
 #include "spritemanager.h"
 #include <framework/core/resourcemanager.h>
+#include <framework/core/eventdispatcher.h>
 #include <framework/graphics/graphics.h>
 
 SpriteManager g_sprites;
@@ -54,6 +55,21 @@ void SpriteManager::unload()
     m_signature = 0;
 }
 
+void SpriteManager::preloadSprites()
+{
+    // preload every 100 sprites, periodically
+    const int burst = 50;
+    const int interval = 10;
+    auto preload = [this](int start) {
+        for(int i=start;i<start+burst && i<=m_spritesCount;++i) {
+            loadSpriteTexture(i);
+        }
+    };
+
+    for(int i=1;i<=m_spritesCount;i+=burst)
+        g_dispatcher.scheduleEvent(std::bind(preload, i), (i/burst) * interval);
+}
+
 TexturePtr SpriteManager::loadSpriteTexture(int id)
 {
     m_fin.seekg(((id-1) * 4) + 6, std::ios_base::beg);
@@ -74,7 +90,7 @@ TexturePtr SpriteManager::loadSpriteTexture(int id)
 
     uint16 pixelDataSize = Fw::getU16(m_fin);
 
-    uchar pixels[4096];
+    static std::vector<uint8> pixels(4096);
     int writePos = 0;
     int read = 0;
 
@@ -116,7 +132,10 @@ TexturePtr SpriteManager::loadSpriteTexture(int id)
         writePos += 4;
     }
 
-    return TexturePtr(new Texture(32, 32, 4, pixels));
+    TexturePtr spriteTex(new Texture(32, 32, 4, &pixels[0]));
+    spriteTex->setSmooth(true);
+    spriteTex->generateBilinearMipmaps(pixels);
+    return spriteTex;
 }
 
 TexturePtr SpriteManager::getSpriteTexture(int id)

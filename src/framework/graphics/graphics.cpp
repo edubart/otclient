@@ -106,3 +106,10 @@ void Graphics::setViewportSize(const Size& size)
     m_viewportSize = size;
 }
 
+int Graphics::getMaxTextureSize()
+{
+    static GLint maxTexSize = -1;
+    if(maxTexSize == -1)
+        glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTexSize);
+    return maxTexSize;
+}

@@ -70,11 +70,11 @@ void LocalPlayer::walk(const Position& oldPos, const Position& newPos)
 void LocalPlayer::preWalk(Otc::Direction direction)
 {
     // start walking to direction
-    Position newPos = m_pos + Position::getPosFromDirection(direction);
+    Position newPos = m_position.translatedToDirection(direction);
     m_preWalking = true;
     m_lastPrewalkDone = false;
     m_lastPrewalkDestionation = newPos;
-    Creature::walk(m_pos, newPos);
+    Creature::walk(m_position, newPos);
 }
 
 bool LocalPlayer::canWalk(Otc::Direction direction)
@@ -145,6 +145,7 @@ void LocalPlayer::updateWalk()
     // update walk animation and offsets
     updateWalkAnimation(totalPixelsWalked);
     updateWalkOffset(totalPixelsWalked);
+    updateWalkingTile();
 
     // terminate walk only when client and server side walk are complated
     if(m_walking && !m_preWalking && m_walkTimer.ticksElapsed() >= m_walkInterval)

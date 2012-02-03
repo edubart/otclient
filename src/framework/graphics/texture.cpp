@@ -89,10 +89,21 @@ uint Texture::internalLoadGLTexture(uchar *pixels, int channels, int width, int 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-    // nearest filtering (non smooth)
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    setupFilters();
+
     return id;
+}
+
+void Texture::generateMipmaps()
+{
+    bind();
+
+    if(!m_useMipmaps) {
+        m_useMipmaps = true;
+        setupFilters();
+    }
+
+    glGenerateMipmap(GL_TEXTURE_2D);
 }
 
 void Texture::setSmooth(bool smooth)
@@ -100,28 +111,105 @@ void Texture::setSmooth(bool smooth)
     if(smooth == m_smooth)
         return;
 
-    if(smooth) {
-        // enable smooth texture
-        glBindTexture(GL_TEXTURE_2D, m_textureId);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    } else {
-        // nearest filtering (non smooth)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    }
-
-    m_smooth = true;
+    m_smooth = smooth;
+    bind();
+    setupFilters();
 }
 
 std::vector<uint8> Texture::getPixels()
 {
-    // hack to copy pixels from opengl memory
-    FrameBufferPtr fb(new FrameBuffer(m_size));
     std::vector<uint8> pixels(m_size.area()*4, 0);
+#ifdef OPENGL_ES
+    // hack to copy pixels from opengl memory in opengl es
+    // NOTE: this can be slow, but its the only way to get pixels from a texture in OpenGL ES
+    FrameBufferPtr fb(new FrameBuffer(m_size));
     fb->bind();
+    g_painter.saveAndResetState();
     g_painter.drawTexturedRect(Rect(0,0,m_size), shared_from_this());
     glReadPixels(0, 0, m_size.width(), m_size.height(), GL_RGBA, GL_UNSIGNED_BYTE, &pixels[0]);
+    g_painter.restoreSavedState();
     fb->release();
+#else
+    // copy pixels from opengl memory
+    glBindTexture(GL_TEXTURE_2D, m_textureId);
+    glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, &pixels[0]);
+#endif
     return pixels;
+}
+
+void Texture::generateBilinearMipmaps(std::vector<uint8> inPixels)
+{
+    bind();
+
+    if(!m_useMipmaps) {
+        m_useMipmaps = true;
+        setupFilters();
+    }
+
+    Size inSize = getSize();
+    Size outSize = inSize / 2;
+    std::vector<uint8> outPixels(outSize.area()*4);
+
+    int mipmap = 1;
+    while(true) {
+        for(int x=0;x<outSize.width();++x) {
+            for(int y=0;y<outSize.height();++y) {
+                uint8 *inPixel[4];
+                inPixel[0] = &inPixels[((y*2)*inSize.width() + (x*2))*4];
+                inPixel[1] = &inPixels[((y*2)*inSize.width() + (x*2)+1)*4];
+                inPixel[2] = &inPixels[((y*2+1)*inSize.width() + (x*2))*4];
+                inPixel[3] = &inPixels[((y*2+1)*inSize.width() + (x*2)+1)*4];
+                uint8 *outPixel = &outPixels[(y*outSize.width() + x)*4];
+
+                int pixelsSum[4];
+                for(int i=0;i<4;++i)
+                    pixelsSum[i] = 0;
+
+                int usedPixels = 0;
+                for(int j=0;j<4;++j) {
+                    // ignore colors of complete alpha pixels
+                    if(inPixel[j][3] < 16)
+                        continue;
+
+                    for(int i=0;i<4;++i)
+                        pixelsSum[i] += inPixel[j][i];
+
+                    usedPixels++;
+                }
+
+                for(int i=0;i<4;++i) {
+                    if(usedPixels > 0)
+                        outPixel[i] = pixelsSum[i] / usedPixels;
+                    else
+                        outPixel[i] = 0;
+                }
+
+                outPixel[3] = pixelsSum[3]/4;
+            }
+        }
+
+        glTexImage2D(GL_TEXTURE_2D, mipmap++, GL_RGBA, outSize.width(), outSize.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, &outPixels[0]);
+
+        if(inSize.width() == 1 || inSize.height() == 1)
+            break;
+
+        inPixels = std::move(outPixels);
+        inSize /= 2;
+        outSize /= 2;
+    }
+}
+
+void Texture::setupFilters()
+{
+    GLint minFilter;
+    GLint magFilter;
+    if(m_smooth) {
+        minFilter = m_useMipmaps ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR;
+        magFilter = GL_LINEAR;
+    } else {
+        minFilter = m_useMipmaps ? GL_NEAREST_MIPMAP_NEAREST : GL_NEAREST;
+        magFilter = GL_NEAREST;
+    }
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
 }

@@ -33,22 +33,23 @@ public:
 
     static ItemPtr create(int id);
 
-    enum {
-        TICKS_PER_FRAME = 500
-    };
+    void draw(const Point& dest, float scaleFactor, bool animate);
 
-    void draw(const Point& p, const Rect&);
+    void setId(uint32 id);
+    void setCountOrSubType(uint8 value) { m_countOrSubType = value; }
+    void setCount(int count) { setCountOrSubType(count); }
+    void setSubType(int subType) { setCountOrSubType(subType); }
 
-    void setPos(const Position &position);
-    void setData(int data);
-
-    int getData() { return m_data; }
-    ThingType *getType();
+    uint8 getCountOrSubType() { return m_countOrSubType; }
+    int getSubType();
+    int getCount();
+    uint32 getId() { return m_id; }
 
     ItemPtr asItem() { return std::static_pointer_cast<Item>(shared_from_this()); }
 
 private:
-    int m_data;
+    uint16 m_id;
+    uint8 m_countOrSubType;
 };
 
 #endif

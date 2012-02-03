@@ -73,11 +73,11 @@ public:
     void sendTextWindow(uint windowTextId, const std::string& text);
     void sendHouseWindow(int doorId, uint id, const std::string& text);
     void sendLookAt(const Position& position, int thingId, int stackpos);
-    void sendTalk(const std::string& speakTypeDesc, int channelId, const std::string& receiver, const std::string& message);
+    void sendTalk(Otc::SpeakType speakType, int channelId, const std::string& receiver, const std::string& message);
     void sendGetChannels();
     void sendJoinChannel(int channelId);
     void sendLeaveChannel(int channelId);
-    void sendPrivateChannel(const std::string& receiver);
+    void sendOpenPrivateChannel(const std::string& receiver);
     void sendCloseNpcChannel();
     void sendFightTatics(Otc::FightModes fightMode, Otc::ChaseModes chaseMode, bool safeFight);
     void sendAttack(uint creatureId);
@@ -155,9 +155,9 @@ private:
     void parseCreatureSpeak(InputMessage& msg);
     void parseChannelList(InputMessage& msg);
     void parseOpenChannel(InputMessage& msg);
-    void parseOpenPrivatePlayerChat(InputMessage& msg);
-    void parseCreatePrivateChannel(InputMessage& msg);
-    void parseClosePrivateChannel(InputMessage& msg);
+    void parseOpenPrivateChannel(InputMessage& msg);
+    void parseCreateOwnPrivateChannel(InputMessage& msg);
+    void parseCloseChannel(InputMessage& msg);
     void parseSafeTradeRequest(InputMessage& msg);
     void parseSafeTradeClose(InputMessage&);
     void parseTextMessage(InputMessage& msg);

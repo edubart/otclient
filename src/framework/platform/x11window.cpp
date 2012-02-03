@@ -284,7 +284,7 @@ void X11Window::internalCreateWindow()
 
     updateUnmaximizedCoords();
     m_window = XCreateWindow(m_display, m_rootWindow,
-                             m_pos.x, m_pos.y, m_size.width(), m_size.height(),
+                             m_position.x, m_position.y, m_size.width(), m_size.height(),
                              0,
                              depth,
                              InputOutput,
@@ -300,7 +300,7 @@ void X11Window::internalCreateWindow()
     XSetWMHints(m_display, m_window, &hints);
 
     // ensure window position
-    XMoveWindow(m_display, m_window, m_pos.x, m_pos.y);
+    XMoveWindow(m_display, m_window, m_position.x, m_position.y);
 
     // handle wm_delete events
     m_wmDelete = XInternAtom(m_display, "WM_DELETE_WINDOW", True);
@@ -580,7 +580,7 @@ void X11Window::poll()
                 }
 
                 // updates window pos
-                m_pos = newPos;
+                m_position = newPos;
                 updateUnmaximizedCoords();
                 break;
             }

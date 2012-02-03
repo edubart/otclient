@@ -35,6 +35,7 @@ Connection::Connection() :
 {
     m_connected = false;
     m_connecting = false;
+    m_sendBufferSize = 0;
 }
 
 Connection::~Connection()
@@ -57,6 +58,7 @@ void Connection::connect(const std::string& host, uint16 port, const SimpleCallb
 {
     m_connected = false;
     m_connecting = true;
+    m_error.clear();
     m_connectCallback = connectCallback;
 
     asio::ip::tcp::resolver::query query(host, Fw::unsafeCast<std::string>(port));
@@ -85,6 +87,10 @@ void Connection::close()
     if(!m_connected && !m_connecting)
         return;
 
+    // flush send data before disconnecting on clean connections
+    if(m_connected && !m_error && m_sendBufferSize > 0 && m_sendEvent)
+        m_sendEvent->execute();
+
     m_connecting = false;
     m_connected = false;
     m_connectCallback = nullptr;
@@ -104,17 +110,34 @@ void Connection::close()
 
 void Connection::write(uint8* buffer, uint16 size)
 {
-    m_writeTimer.cancel();
-
     if(!m_connected)
         return;
 
-    asio::async_write(m_socket,
-                      asio::buffer(buffer, size),
-                      std::bind(&Connection::onWrite, shared_from_this(), _1, _2));
+    // send old buffer if we can't add more data
+    if(m_sendBufferSize + size >= SEND_BUFFER_SIZE && m_sendEvent)
+        m_sendEvent->execute();
 
-    m_writeTimer.expires_from_now(boost::posix_time::seconds(WRITE_TIMEOUT));
-    m_writeTimer.async_wait(std::bind(&Connection::onTimeout, shared_from_this(), _1));
+    // we can't send the data right away, otherwise we could create tcp congestion
+    memcpy(m_sendBuffer + m_sendBufferSize, buffer, size);
+    m_sendBufferSize += size;
+
+    if(!m_sendEvent || m_sendEvent->isExecuted() || m_sendEvent->isCanceled()) {
+        auto weakSelf = ConnectionWeakPtr(shared_from_this());
+        m_sendEvent = g_dispatcher.scheduleEvent([=] {
+            if(!weakSelf.lock())
+                return;
+            //m_writeTimer.cancel();
+
+            asio::async_write(m_socket,
+                              asio::buffer(m_sendBuffer, m_sendBufferSize),
+                              std::bind(&Connection::onWrite, shared_from_this(), _1, _2));
+
+            m_writeTimer.expires_from_now(boost::posix_time::seconds(WRITE_TIMEOUT));
+            m_writeTimer.async_wait(std::bind(&Connection::onTimeout, shared_from_this(), _1));
+
+            m_sendBufferSize = 0;
+        }, SEND_INTERVAL);
+    }
 }
 
 void Connection::read(uint16 bytes, const RecvCallback& callback)
@@ -157,7 +180,7 @@ void Connection::onConnect(const boost::system::error_code& error)
     if(!error) {
         m_connected = true;
 
-        // disable nagle's algorithm
+        // disable nagle's algorithm, this make the game play smoother
         boost::asio::ip::tcp::no_delay option(true);
         m_socket.set_option(option);
 
@@ -203,6 +226,7 @@ void Connection::onTimeout(const boost::system::error_code& error)
 void Connection::handleError(const boost::system::error_code& error)
 {
     if(error != asio::error::operation_aborted) {
+        m_error = error;
         if(m_errorCallback)
             m_errorCallback(error);
         if(m_connected || m_connecting)

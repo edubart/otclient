@@ -147,6 +147,7 @@ void OTMLNode::write(const T& v) {
 template<typename T>
 void OTMLNode::writeAt(const std::string& childTag, const T& v) {
     OTMLNodePtr child = OTMLNode::create(childTag);
+    child->setUnique(true);
     child->write<T>(v);
     addChild(child);
 }

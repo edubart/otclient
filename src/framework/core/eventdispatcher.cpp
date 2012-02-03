@@ -28,7 +28,8 @@ EventDispatcher g_dispatcher;
 
 void EventDispatcher::flush()
 {
-    poll();
+    while(!m_eventList.empty())
+        poll();
 
     while(!m_scheduledEventList.empty())
         m_scheduledEventList.pop();
@@ -44,7 +45,8 @@ void EventDispatcher::poll()
         scheduledEvent->execute();
     }
 
-    while(!m_eventList.empty()) {
+    int maxEvents = m_eventList.size();
+    for(int i=0;i<maxEvents;++i) {
         EventPtr event = m_eventList.front();
         m_eventList.pop_front();
         event->execute();

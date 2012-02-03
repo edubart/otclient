@@ -123,7 +123,7 @@ bool ResourceManager::saveFile(const std::string& fileName, const uchar* data, u
     return true;
 }
 
-bool ResourceManager::saveFile(const std::string& fileName, std::istream& in)
+bool ResourceManager::saveFile(const std::string& fileName, std::iostream& in)
 {
     std::streampos oldPos = in.tellg();
     in.seekg(0, std::ios::end);

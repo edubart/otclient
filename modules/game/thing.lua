@@ -1,11 +1,11 @@
 
 function Thing:isInsideContainer()
-  local pos = self:getPos()
+  local pos = self:getPosition()
   return (pos and pos.x == 65535 and pos.y >= 64)
 end
 
 function Thing:getContainerId()
-  local pos = self:getPos()
+  local pos = self:getPosition()
   if not pos then return 0 end
   return pos.y - 64
 end

@@ -33,70 +33,117 @@
 Tile::Tile(const Position& position)
 {
     m_drawElevation = 0;
-    m_pos = position;
+    m_position = position;
 }
 
-void Tile::draw(const Point& p, const Rect& visibleRect)
+void Tile::draw(const Point& dest, float scaleFactor, int drawFlags)
 {
     m_drawElevation = 0;
+    bool animate = drawFlags & Otc::DrawAnimations;
 
     // first bottom items
-    for(const ThingPtr& thing : m_things) {
-        ThingType *type = thing->getType();
-        if(!type->properties[ThingType::IsGround] && !type->properties[ThingType::IsGroundBorder] && !type->properties[ThingType::IsOnBottom])
-            break;
-        thing->draw(p - m_drawElevation, visibleRect);
-        m_drawElevation += type->parameters[ThingType::Elevation];
-        if(m_drawElevation > MAX_DRAW_ELEVATION)
-            m_drawElevation = MAX_DRAW_ELEVATION;
+    if(drawFlags & (Otc::DrawGround | Otc::DrawGroundBorders | Otc::DrawOnBottom)) {
+        for(const ThingPtr& thing : m_things) {
+            if(!thing->isGround() && !thing->isGroundBorder() && !thing->isOnBottom())
+                break;
+
+            if((thing->isGround() && drawFlags & Otc::DrawGround) ||
+               (thing->isGroundBorder() && drawFlags & Otc::DrawGroundBorders) ||
+               (thing->isOnBottom() && drawFlags & Otc::DrawOnBottom))
+                thing->draw(dest - m_drawElevation*scaleFactor, scaleFactor, animate);
+
+            m_drawElevation += thing->getElevation();
+            if(m_drawElevation > Otc::MAX_ELEVATION)
+                m_drawElevation = Otc::MAX_ELEVATION;
+        }
     }
 
-    // now common items
-    for(auto it = m_things.rbegin(); it != m_things.rend(); ++it) {
-        const ThingPtr& thing = *it;
-        ThingType *type = thing->getType();
-        if(thing->asCreature() || type->properties[ThingType::IsOnTop] || type->properties[ThingType::IsOnBottom] || type->properties[ThingType::IsGroundBorder] || type->properties[ThingType::IsGround])
-            break;
-        thing->draw(p - m_drawElevation, visibleRect);
-        m_drawElevation += type->parameters[ThingType::Elevation];
-        if(m_drawElevation > MAX_DRAW_ELEVATION)
-            m_drawElevation = MAX_DRAW_ELEVATION;
+    int redrawPreviousTopW = 0;
+    int redrawPreviousTopH = 0;
+
+    if(drawFlags & Otc::DrawItems) {
+        // now common items in reverse order
+        for(auto it = m_things.rbegin(); it != m_things.rend(); ++it) {
+            const ThingPtr& thing = *it;
+            if(thing->isOnTop() || thing->isOnBottom() || thing->isGroundBorder() || thing->isGround() || thing->asCreature())
+                break;
+            thing->draw(dest - m_drawElevation*scaleFactor, scaleFactor, animate);
+
+            if(thing->isLyingCorpse()) {
+                redrawPreviousTopW = std::max(thing->getDimensionWidth(), redrawPreviousTopW);
+                redrawPreviousTopH = std::max(thing->getDimensionHeight(), redrawPreviousTopH);
+            }
+
+            m_drawElevation += thing->getElevation();
+            if(m_drawElevation > Otc::MAX_ELEVATION)
+                m_drawElevation = Otc::MAX_ELEVATION;
+        }
     }
 
-    // we can render creatures in 3x3 range
-    //TODO: this algorithm is slowing down render too much, but it could be cached to improve framerate
-    //NOTE: looping for 9 tiles is a dirty way to render walking creatures, must change this later
-    for(int xi = -1; xi <= 1; ++xi) {
-        for(int yi = -1; yi <= 1; ++yi) {
-            for(CreaturePtr creature : g_map.getTile(m_pos + Position(xi, yi, 0))->getCreatures()) {
-                ThingType *type = creature->getType();
-                Rect creatureRect(p.x + xi*32 + creature->getWalkOffset().x - type->parameters[ThingType::DisplacementX], p.y + yi*32 + creature->getWalkOffset().y - type->parameters[ThingType::DisplacementY], 32, 32);
-                Rect thisTileRect(p.x, p.y, 32, 32);
-
-                // only render creatures where bottom right is inside our rect
-                if(thisTileRect.contains(creatureRect.bottomRight())) {
-                    creature->draw(Point(p.x + xi*32 - m_drawElevation, p.y + yi*32 - m_drawElevation), visibleRect);
+    // after we render 2x2 lying corpses, we must redraw previous creatures/ontop above them
+    if(redrawPreviousTopH > 0 || redrawPreviousTopW > 0) {
+        int topRedrawFlags = drawFlags & (Otc::DrawCreatures | Otc::DrawEffects | Otc::DrawOnTop | Otc::DrawAnimations);
+        if(topRedrawFlags) {
+            for(int y=-redrawPreviousTopH;y<=0;++y) {
+                for(int x=-redrawPreviousTopW;x<=0;++x) {
+                    if(x == 0 && y == 0)
+                        continue;
+                    const TilePtr& tile = g_map.getTile(m_position.translated(x,y));
+                    if(tile)
+                        tile->draw(dest + Point(x*Otc::TILE_PIXELS, y*Otc::TILE_PIXELS)*scaleFactor, scaleFactor, topRedrawFlags);
                 }
             }
         }
     }
 
+    // creatures
+    if(drawFlags & Otc::DrawCreatures) {
+        if(animate) {
+            for(const CreaturePtr& creature : m_walkingCreatures) {
+                creature->draw(Point(dest.x + ((creature->getPosition().x - m_position.x)*Otc::TILE_PIXELS - m_drawElevation)*scaleFactor,
+                                     dest.y + ((creature->getPosition().y - m_position.y)*Otc::TILE_PIXELS - m_drawElevation)*scaleFactor), scaleFactor, animate);
+
+            }
+        }
+
+        for(auto it = m_things.rbegin(); it != m_things.rend(); ++it) {
+            CreaturePtr creature = (*it)->asCreature();
+            if(creature && (!creature->isWalking() || !animate))
+                creature->draw(dest - m_drawElevation*scaleFactor, scaleFactor, animate);
+        }
+    }
+
     // effects
-    for(const EffectPtr& effect : m_effects)
-        effect->draw(p - m_drawElevation, visibleRect);
+    if(drawFlags & Otc::DrawEffects) {
+        for(const EffectPtr& effect : m_effects)
+            effect->draw(dest - m_drawElevation*scaleFactor, scaleFactor, animate);
+    }
 
     // top items
-    for(const ThingPtr& thing : m_things) {
-        ThingType *type = thing->getType();
-        if(type->properties[ThingType::IsOnTop])
-            thing->draw(p, visibleRect);
+    if(drawFlags & Otc::DrawOnTop) {
+        for(const ThingPtr& thing : m_things) {
+            if(thing->isOnTop())
+                thing->draw(dest, scaleFactor, animate);
+        }
     }
 }
 
 void Tile::clean()
 {
-    m_things.clear();
-    m_effects.clear();
+    while(!m_things.empty())
+        removeThing(m_things.front());
+}
+
+void Tile::addWalkingCreature(const CreaturePtr& creature)
+{
+    m_walkingCreatures.push_back(creature);
+}
+
+void Tile::removeWalkingCreature(const CreaturePtr& creature)
+{
+    auto it = std::find(m_walkingCreatures.begin(), m_walkingCreatures.end(), creature);
+    if(it != m_walkingCreatures.end())
+        m_walkingCreatures.erase(it);
 }
 
 ThingPtr Tile::addThing(const ThingPtr& thing, int stackPos)
@@ -124,7 +171,38 @@ ThingPtr Tile::addThing(const ThingPtr& thing, int stackPos)
     if(stackPos < (int)m_things.size())
         oldObject = m_things[stackPos];
     m_things.insert(m_things.begin() + stackPos, thing);
+
     return oldObject;
+}
+
+bool Tile::removeThing(ThingPtr thing)
+{
+    if(!thing)
+        return false;
+
+    bool removed = false;
+
+    if(EffectPtr effect = thing->asEffect()) {
+        auto it = std::find(m_effects.begin(), m_effects.end(), effect);
+        if(it != m_effects.end()) {
+            m_effects.erase(it);
+            removed = true;
+        }
+    } else {
+        auto it = std::find(m_things.begin(), m_things.end(), thing);
+        if(it != m_things.end()) {
+            m_things.erase(it);
+            removed = true;
+        }
+    }
+
+    // reset values managed by this tile
+    if(removed) {
+        //thing->setDrawOffset(0);
+        //thing->setStackpos(0);
+    }
+
+    return removed;
 }
 
 ThingPtr Tile::getThing(int stackPos)
@@ -150,33 +228,6 @@ ThingPtr Tile::getTopThing()
     return m_things[m_things.size() - 1];
 }
 
-ThingPtr Tile::removeThingByStackpos(int stackPos)
-{
-    ThingPtr oldThing;
-    if(stackPos >= 0 && stackPos < (int)m_things.size()) {
-        oldThing = m_things[stackPos];
-        m_things.erase(m_things.begin() + stackPos);
-    }
-    return oldThing;
-}
-
-ThingPtr Tile::removeThing(const ThingPtr& thing)
-{
-    if(EffectPtr effect = thing->asEffect()) {
-        auto it = std::find(m_effects.begin(), m_effects.end(), effect);
-        if(it != m_effects.end())
-            m_effects.erase(it);
-        return thing;
-    }
-    ThingPtr oldThing;
-    auto it = std::find(m_things.begin(), m_things.end(), thing);
-    if(it != m_things.end()) {
-        oldThing = *it;
-        m_things.erase(it);
-    }
-    return oldThing;
-}
-
 std::vector<CreaturePtr> Tile::getCreatures()
 {
     std::vector<CreaturePtr> creatures;
@@ -192,8 +243,7 @@ ItemPtr Tile::getGround()
     ThingPtr firstObject = getThing(0);
     if(!firstObject)
         return nullptr;
-    ThingType *type = firstObject->getType();
-    if(type->properties[ThingType::IsGround])
+    if(firstObject->isGround())
         return firstObject->asItem();
     return nullptr;
 }
@@ -213,7 +263,7 @@ ThingPtr Tile::getTopLookThing()
 
     for(uint i = 0; i < m_things.size(); ++i) {
         ThingPtr thing = m_things[i];
-        if(!thing->ignoreLook() && (!thing->isGround() && !thing->isGroundBorder() && !thing->isOnBottom() && !thing->isOnTop()))
+        if(!thing->isIgnoreLook() && (!thing->isGround() && !thing->isGroundBorder() && !thing->isOnBottom() && !thing->isOnTop()))
             return thing;
     }
 
@@ -239,7 +289,7 @@ CreaturePtr Tile::getTopCreature()
     CreaturePtr creature;
     for(uint i = 0; i < m_things.size(); ++i) {
         ThingPtr thing = m_things[i];
-        if(thing->asLocalPlayer()) // return local player if there aint no other creature.
+        if(thing->asLocalPlayer()) // return local player if there is no other creature
             creature = thing->asCreature();
         else if(thing->asCreature() && !thing->asLocalPlayer())
             return thing->asCreature();
@@ -288,8 +338,7 @@ bool Tile::isWalkable()
         return false;
 
     for(const ThingPtr& thing : m_things) {
-        ThingType *type = thing->getType();
-        if(type->properties[ThingType::NotWalkable])
+        if(thing->isNotWalkable())
             return false;
 
         if(CreaturePtr creature = thing->asCreature()) {
@@ -302,11 +351,8 @@ bool Tile::isWalkable()
 
 bool Tile::isFullGround()
 {
-    ThingPtr ground = getThing(0);
-    if(!ground)
-        return false;
-    ThingType *type = ground->getType();
-    if(type->properties[ThingType::IsGround] && type->properties[ThingType::IsFullGround])
+    ItemPtr ground = getGround();
+    if(ground && ground->isFullGround())
         return true;
     return false;
 }
@@ -314,19 +360,13 @@ bool Tile::isFullGround()
 bool Tile::isFullyOpaque()
 {
     ThingPtr firstObject = getThing(0);
-    if(firstObject) {
-        ThingType *type = firstObject->getType();
-        if(type->properties[ThingType::IsFullGround])
-            return true;
-    }
-    return false;
+    return firstObject && firstObject->isFullGround();
 }
 
 bool Tile::isLookPossible()
 {
     for(const ThingPtr& thing : m_things) {
-        ThingType *type = thing->getType();
-        if(type->properties[ThingType::BlockProjectile])
+        if(thing->blocksProjectile())
             return false;
     }
     return true;
@@ -334,19 +374,41 @@ bool Tile::isLookPossible()
 
 bool Tile::isClickable()
 {
-    bool hasGround = false, hasOnBottom = false, hasIgnoreLook = false;
+    bool hasGround = false;
+    bool hasOnBottom = false;
+    bool hasIgnoreLook = false;
     for(const ThingPtr& thing : m_things) {
-        ThingType *type = thing->getType();
-        if(type->properties[ThingType::IsGround])
+        if(thing->isGround())
             hasGround = true;
-        if(type->properties[ThingType::IsOnBottom])
+        if(thing->isOnBottom())
             hasOnBottom = true;
-        if(type->properties[ThingType::IgnoreLook])
+        if(thing->isIgnoreLook())
             hasIgnoreLook = true;
 
         if((hasGround || hasOnBottom) && !hasIgnoreLook)
             return true;
     }
+    return false;
+}
+
+bool Tile::isEmpty()
+{
+    return m_things.size() == 0;
+}
+
+bool Tile::mustHookEast()
+{
+    for(const ThingPtr& thing : m_things)
+        if(thing->isHookEast())
+            return true;
+    return false;
+}
+
+bool Tile::mustHookSouth()
+{
+    for(const ThingPtr& thing : m_things)
+        if(thing->isHookSouth())
+            return true;
     return false;
 }
 
@@ -358,7 +420,17 @@ bool Tile::hasCreature()
     return false;
 }
 
-bool Tile::isEmpty()
+bool Tile::limitsFloorsView()
 {
-    return m_things.size() == 0;
+    // ground and walls limits the view
+    ThingPtr firstThing = getThing(0);
+    if(firstThing && !firstThing->isDontHide() && (firstThing->isGround() || firstThing->isOnBottom()))
+        return true;
+    return false;
 }
+
+bool Tile::canErase()
+{
+    return m_walkingCreatures.empty() && m_effects.empty() && m_things.empty();
+}
+

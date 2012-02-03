@@ -31,7 +31,7 @@ ParticleEmitter::ParticleEmitter(const ParticleSystemPtr& parent)
 {
     m_parent = parent;
 
-    m_pos = Point(0, 0);
+    m_position = Point(0, 0);
     m_duration = -1;
     m_delay = 0;
     m_burstRate = 1; m_burstCount = 32;
@@ -65,7 +65,7 @@ bool ParticleEmitter::load(const OTMLNodePtr& node)
     for(const OTMLNodePtr& childNode : node->children()) {
         // self related
         if(childNode->tag() == "position")
-            m_pos = childNode->value<Point>();
+            m_position = childNode->value<Point>();
         else if(childNode->tag() == "duration")
             m_duration = childNode->value<float>();
         else if(childNode->tag() == "delay")
@@ -199,7 +199,7 @@ void ParticleEmitter::update(double elapsedTime)
             float pRadius = Fw::randomRange(m_pMinPositionRadius, m_pMaxPositionRadius);
             float pAngle = Fw::randomRange(m_pMinPositionAngle, m_pMaxPositionAngle);
 
-            Point pPosition = m_pos + Point(pRadius * cos(pAngle), pRadius * sin(pAngle));
+            Point pPosition = m_position + Point(pRadius * cos(pAngle), pRadius * sin(pAngle));
 
             for(int p = 0; p < m_burstCount; ++p) {
 

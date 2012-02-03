@@ -112,3 +112,22 @@ void ConfigManager::remove(const std::string& key)
     if(child)
         m_confsDoc->removeChild(child);
 }
+
+void ConfigManager::setNode(const std::string& key, const OTMLNodePtr& node)
+{
+    remove(key);
+    addNode(key, node);
+}
+
+void ConfigManager::addNode(const std::string& key, const OTMLNodePtr& node)
+{
+    OTMLNodePtr clone = node->clone();
+    node->setTag(key);
+    node->setUnique(true);
+    m_confsDoc->addChild(node);
+}
+
+OTMLNodePtr ConfigManager::getNode(const std::string& key)
+{
+    return m_confsDoc->get(key);
+}

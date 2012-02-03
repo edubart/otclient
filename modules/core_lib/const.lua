@@ -298,3 +298,18 @@ KeyCodeDescs = {
   [KeyNumpad8] = 'Numpad8',
   [KeyNumpad9] = 'Numpad9'
 }
+
+SpeakSay = 1
+SpeakWhisper = 2
+SpeakYell = 3
+SpeakBroadcast = 4
+SpeakPrivate = 5
+SpeakPrivateRed = 6
+SpeakPrivatePlayerToNpc = 7
+SpeakPrivateNpcToPlayer = 8
+SpeakChannelYellow = 9
+SpeakChannelWhite = 10
+SpeakChannelRed = 11
+SpeakChannelOrange = 12
+SpeakMonsterSay = 13
+SpeakMonsterYell = 14

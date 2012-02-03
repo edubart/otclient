@@ -44,7 +44,7 @@ public:
 
     bool saveFile(const std::string& fileName, const uchar* data, uint size);
     bool saveFile(const std::string& fileName, const std::string& data);
-    bool saveFile(const std::string& fileName, std::istream& in);
+    bool saveFile(const std::string& fileName, std::iostream& in);
 
     bool deleteFile(const std::string& fileName);
 

@@ -33,12 +33,24 @@ public:
     UIItem();
     void draw();
 
+    void setItemId(int id);
+    void setItemCount(int count) { if(m_item) m_item->setCount(count); }
+    void setItemSubType(int subType) { if(m_item) m_item->setSubType(subType); }
     void setItem(const ItemPtr& item) { m_item = item; }
+    void setVirtual(bool virt) { m_virtual = virt; }
+    void clearItem() { setItemId(0); }
 
+    int getItemId() { return m_item ? m_item->getId() : 0; }
+    int getItemCount() { return m_item ? m_item->getCount() : 0; }
+    int getItemSubType() { return m_item ? m_item->getSubType() : 0; }
     ItemPtr getItem() { return m_item; }
+    bool isVirtual() { return m_virtual; }
 
 protected:
+    void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode);
+
     ItemPtr m_item;
+    Boolean<false> m_virtual;
 };
 
 #endif

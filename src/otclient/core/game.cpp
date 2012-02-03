@@ -94,7 +94,7 @@ void Game::processLogout()
         m_protocolGame = nullptr;
     }
 
-    g_map.clean();
+    g_map.save();
 }
 
 void Game::processDeath()
@@ -172,9 +172,9 @@ void Game::processTextMessage(const std::string& type, const std::string& messag
     g_lua.callGlobalField("Game","onTextMessage", type, message);
 }
 
-void Game::processCreatureSpeak(const std::string& name, int level, const std::string& type, const std::string& message, int channelId, const Position& creaturePos)
+void Game::processCreatureSpeak(const std::string& name, int level, Otc::SpeakType type, const std::string& message, int channelId, const Position& creaturePos)
 {
-    if(creaturePos.isValid() && (type == "say" || type == "whisper" || type == "yell" || type == "monsterSay" || type == "monsterYell")) {
+    if(creaturePos.isValid() && (type == Otc::SpeakSay || type == Otc::SpeakWhisper || type == Otc::SpeakYell || type == Otc::SpeakMonsterSay || type == Otc::SpeakMonsterYell)) {
         StaticTextPtr staticText = StaticTextPtr(new StaticText);
         staticText->addMessage(name, type, message);
         g_map.addThing(staticText, creaturePos);
@@ -186,7 +186,7 @@ void Game::processCreatureSpeak(const std::string& name, int level, const std::s
 void Game::processContainerAddItem(int containerId, const ItemPtr& item)
 {
     if(item)
-        item->setPos(Position(65535, containerId + 0x40, 0));
+        item->setPosition(Position(65535, containerId + 0x40, 0));
 
     g_lua.callGlobalField("Game", "onContainerAddItem", containerId, item);
 }
@@ -194,7 +194,7 @@ void Game::processContainerAddItem(int containerId, const ItemPtr& item)
 void Game::processInventoryChange(int slot, const ItemPtr& item)
 {
     if(item)
-        item->setPos(Position(65535, slot, 0));
+        item->setPosition(Position(65535, slot, 0));
 
     g_lua.callGlobalField("Game","onInventoryChange", slot, item);
 }
@@ -202,7 +202,7 @@ void Game::processInventoryChange(int slot, const ItemPtr& item)
 void Game::processCreatureMove(const CreaturePtr& creature, const Position& oldPos, const Position& newPos)
 {
     // animate walk
-    if(oldPos.isInRange(newPos, 1, 1, 0))
+    if(oldPos.isInRange(newPos, 1, 1))
         creature->walk(oldPos, newPos);
 }
 
@@ -237,16 +237,8 @@ void Game::walk(Otc::Direction direction)
     if(!m_localPlayer->canWalk(direction))
         return;
 
-
-    // TODO: restore check for blockable tiles
-    /*
-    if(toTile && !toTile->isWalkable() && !fromTile->getElevation() >= 3) {
-        g_game.processTextMessage("statusSmall", "Sorry, not possible.");
-        return false;
-    }*/
-
-    // only do prewalk to walkable tiles
-    TilePtr toTile = g_map.getTile(m_localPlayer->getPos() + Position::getPosFromDirection(direction));
+    // only do prewalks to walkable tiles
+    TilePtr toTile = g_map.getTile(m_localPlayer->getPosition().translatedToDirection(direction));
     if(toTile && toTile->isWalkable())
         m_localPlayer->preWalk(direction);
     else
@@ -316,7 +308,7 @@ void Game::look(const ThingPtr& thing)
 
     int stackpos = getThingStackpos(thing);
     if(stackpos != -1)
-        m_protocolGame->sendLookAt(thing->getPos(), thing->getId(), stackpos);
+        m_protocolGame->sendLookAt(thing->getPosition(), thing->getId(), stackpos);
 }
 
 void Game::open(const ThingPtr& thing, int containerId)
@@ -326,7 +318,7 @@ void Game::open(const ThingPtr& thing, int containerId)
 
     int stackpos = getThingStackpos(thing);
     if(stackpos != -1)
-        m_protocolGame->sendUseItem(thing->getPos(), thing->getId(), stackpos, containerId);
+        m_protocolGame->sendUseItem(thing->getPosition(), thing->getId(), stackpos, containerId);
 }
 
 void Game::use(const ThingPtr& thing)
@@ -338,7 +330,7 @@ void Game::use(const ThingPtr& thing)
 
     int stackpos = getThingStackpos(thing);
     if(stackpos != -1)
-        m_protocolGame->sendUseItem(thing->getPos(), thing->getId(), stackpos, 0);
+        m_protocolGame->sendUseItem(thing->getPosition(), thing->getId(), stackpos, 0);
 }
 
 void Game::useWith(const ThingPtr& fromThing, const ThingPtr& toThing)
@@ -346,7 +338,7 @@ void Game::useWith(const ThingPtr& fromThing, const ThingPtr& toThing)
     if(!isOnline() || !fromThing || !toThing || !checkBotProtection())
         return;
 
-    Position pos = fromThing->getPos();
+    Position pos = fromThing->getPosition();
     int fromStackpos = getThingStackpos(fromThing);
     if(fromStackpos == -1)
         return;
@@ -360,7 +352,7 @@ void Game::useWith(const ThingPtr& fromThing, const ThingPtr& toThing)
         if(toStackpos == -1)
             return;
 
-        m_protocolGame->sendUseItemEx(pos, fromThing->getId(), fromStackpos, toThing->getPos(), toThing->getId(), toStackpos);
+        m_protocolGame->sendUseItemEx(pos, fromThing->getId(), fromStackpos, toThing->getPosition(), toThing->getId(), toStackpos);
     }
 }
 
@@ -379,13 +371,13 @@ void Game::useInventoryItem(int itemId, const ThingPtr& toThing)
     if(CreaturePtr creature = toThing->asCreature()) {
         m_protocolGame->sendUseOnCreature(pos, itemId, 0, creature->getId());
     } else {
-        m_protocolGame->sendUseItemEx(pos, itemId, 0, toThing->getPos(), toThing->getId(), toStackpos);
+        m_protocolGame->sendUseItemEx(pos, itemId, 0, toThing->getPosition(), toThing->getId(), toStackpos);
     }
 }
 
 void Game::move(const ThingPtr& thing, const Position& toPos, int count)
 {
-    if(!isOnline() || !thing || !checkBotProtection() || thing->getPos() == toPos || count <= 0)
+    if(!isOnline() || !thing || !checkBotProtection() || thing->getPosition() == toPos || count <= 0)
         return;
 
     m_localPlayer->lockWalk();
@@ -394,7 +386,7 @@ void Game::move(const ThingPtr& thing, const Position& toPos, int count)
     if(stackpos == -1)
         return;
 
-    m_protocolGame->sendThrow(thing->getPos(), thing->getId(), stackpos, toPos, count);
+    m_protocolGame->sendThrow(thing->getPosition(), thing->getId(), stackpos, toPos, count);
 }
 
 void Game::attack(const CreaturePtr& creature)
@@ -433,6 +425,9 @@ void Game::follow(const CreaturePtr& creature)
 
 void Game::cancelFollow()
 {
+    if(!isOnline() || !checkBotProtection())
+        return;
+
     m_localPlayer->setFollowingCreature(nullptr);
     m_protocolGame->sendFollow(0);
 }
@@ -444,16 +439,15 @@ void Game::rotate(const ThingPtr& thing)
 
     int stackpos = getThingStackpos(thing);
     if(stackpos != -1)
-        m_protocolGame->sendRotateItem(thing->getPos(), thing->getId(), stackpos);
+        m_protocolGame->sendRotateItem(thing->getPosition(), thing->getId(), stackpos);
 }
 
 //TODO: move this to Thing class
 int Game::getThingStackpos(const ThingPtr& thing)
 {
     // thing is at map
-    if(thing->getPos().x != 65535) {
-        TilePtr tile = g_map.getTile(thing->getPos());
-        if(tile)
+    if(thing->getPosition().x != 65535) {
+        if(TilePtr tile = g_map.getTile(thing->getPosition()))
             return tile->getThingStackpos(thing);
         else {
             logError("could not get tile");
@@ -467,21 +461,28 @@ int Game::getThingStackpos(const ThingPtr& thing)
 
 void Game::talk(const std::string& message)
 {
-    talkChannel("say", 0, message);
+    talkChannel(Otc::SpeakSay, 0, message);
 }
 
-void Game::talkChannel(const std::string& speakTypeDesc, int channelId, const std::string& message)
+void Game::talkChannel(Otc::SpeakType speakType, int channelId, const std::string& message)
 {
     if(!isOnline() || !checkBotProtection())
         return;
-    m_protocolGame->sendTalk(speakTypeDesc, channelId, "", message);
+    m_protocolGame->sendTalk(speakType, channelId, "", message);
 }
 
-void Game::talkPrivate(const std::string& speakTypeDesc, const std::string& receiver, const std::string& message)
+void Game::talkPrivate(Otc::SpeakType speakType, const std::string& receiver, const std::string& message)
 {
     if(!isOnline() || !checkBotProtection())
         return;
-    m_protocolGame->sendTalk(speakTypeDesc, 0, receiver, message);
+    m_protocolGame->sendTalk(speakType, 0, receiver, message);
+}
+
+void Game::openPrivateChannel(const std::string& receiver)
+{
+    if(!isOnline() || !checkBotProtection())
+        return;
+    m_protocolGame->sendOpenPrivateChannel(receiver);
 }
 
 void Game::requestChannels()

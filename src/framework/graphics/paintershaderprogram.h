@@ -45,6 +45,8 @@ public:
         TriangleStrip = GL_TRIANGLE_STRIP
     };
 
+    PainterShaderProgram();
+
     bool link();
 
     void setProjectionMatrix(const Matrix3& projectionMatrix);
@@ -57,6 +59,7 @@ public:
 private:
     DrawMode m_drawMode;
     Timer m_startTimer;
+    std::array<std::tuple<int, int>, 4> m_textures;
 };
 
 #endif

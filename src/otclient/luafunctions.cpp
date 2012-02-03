@@ -58,12 +58,12 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassStaticFunction("g_sprites", "load", std::bind(&SpriteManager::load, &g_sprites, _1));
     g_lua.bindClassStaticFunction("g_sprites", "isLoaded", std::bind(&SpriteManager::isLoaded, &g_sprites));
     g_lua.bindClassStaticFunction("g_sprites", "getSignature", std::bind(&SpriteManager::getSignature, &g_sprites));
+    g_lua.bindClassStaticFunction("g_sprites", "preloadSprites", std::bind(&SpriteManager::preloadSprites, &g_sprites));
 
     g_lua.registerStaticClass("g_map");
-    g_lua.bindClassStaticFunction("g_map", "getFirstVisibleFloor", std::bind(&Map::getFirstVisibleFloor, &g_map));
     g_lua.bindClassStaticFunction("g_map", "isLookPossible", std::bind(&Map::isLookPossible, &g_map, _1));
     g_lua.bindClassStaticFunction("g_map", "isCovered", std::bind(&Map::isCovered, &g_map, _1, _2));
-    g_lua.bindClassStaticFunction("g_map", "isCompletlyCovered", std::bind(&Map::isCompletlyCovered, &g_map, _1, _2));
+    g_lua.bindClassStaticFunction("g_map", "isCompletelyCovered", std::bind(&Map::isCompletelyCovered, &g_map, _1, _2));
     g_lua.bindClassStaticFunction("g_map", "addThing", std::bind(&Map::addThing, &g_map, _1, _2, _3));
     g_lua.bindClassStaticFunction("g_map", "getThing", std::bind(&Map::getThing, &g_map, _1, _2));
     g_lua.bindClassStaticFunction("g_map", "removeThingByPos", std::bind(&Map::removeThingByPos, &g_map, _1, _2));
@@ -72,13 +72,9 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassStaticFunction("g_map", "getTile", std::bind(&Map::getTile, &g_map, _1));
     g_lua.bindClassStaticFunction("g_map", "setCentralPosition", std::bind(&Map::setCentralPosition, &g_map, _1));
     g_lua.bindClassStaticFunction("g_map", "getCentralPosition", std::bind(&Map::getCentralPosition, &g_map));
-    g_lua.bindClassStaticFunction("g_map", "addCreature", std::bind(&Map::addCreature, &g_map, _1));
     g_lua.bindClassStaticFunction("g_map", "getCreatureById", std::bind(&Map::getCreatureById, &g_map, _1));
     g_lua.bindClassStaticFunction("g_map", "removeCreatureById", std::bind(&Map::removeCreatureById, &g_map, _1));
-    g_lua.bindClassStaticFunction("g_map", "setVisibleSize", std::bind(&Map::setVisibleSize, &g_map, _1));
-    g_lua.bindClassStaticFunction("g_map", "getVibibleSize", std::bind(&Map::getVibibleSize, &g_map));
-    g_lua.bindClassStaticFunction("g_map", "getCentralOffset", std::bind(&Map::getCentralOffset, &g_map));
-    g_lua.bindClassStaticFunction("g_map", "positionTo2D", std::bind(&Map::positionTo2D, &g_map, _1));
+    g_lua.bindClassStaticFunction("g_map", "getSpectators", std::bind(&Map::getSpectators, &g_map, _1, _2));
 
     g_lua.bindGlobalFunction("getOufitColor", Outfit::getColor);
 
@@ -91,14 +87,11 @@ void OTClient::registerLuaFunctions()
 
     g_lua.registerClass<Thing>();
     g_lua.bindClassMemberFunction<Thing>("setId", &Thing::setId);
-    g_lua.bindClassMemberFunction<Thing>("setPos", &Thing::setPos);
+    g_lua.bindClassMemberFunction<Thing>("setPosition", &Thing::setPosition);
     g_lua.bindClassMemberFunction<Thing>("getId", &Thing::getId);
-    g_lua.bindClassMemberFunction<Thing>("getPos", &Thing::getPos);
+    g_lua.bindClassMemberFunction<Thing>("getPosition", &Thing::getPosition);
     g_lua.bindClassMemberFunction<Thing>("getStackPriority", &Thing::getStackPriority);
     g_lua.bindClassMemberFunction<Thing>("getAnimationPhases", &Thing::getAnimationPhases);
-    g_lua.bindClassMemberFunction<Thing>("setXPattern", &Thing::setXPattern);
-    g_lua.bindClassMemberFunction<Thing>("setYPattern", &Thing::setYPattern);
-    g_lua.bindClassMemberFunction<Thing>("setZPattern", &Thing::setZPattern);
     g_lua.bindClassMemberFunction<Thing>("asThing", &Thing::asThing);
     g_lua.bindClassMemberFunction<Thing>("asItem", &Thing::asItem);
     g_lua.bindClassMemberFunction<Thing>("asCreature", &Thing::asCreature);
@@ -118,8 +111,11 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Thing>("isRotateable", &Thing::isRotateable);
     g_lua.bindClassMemberFunction<Thing>("isNotMoveable", &Thing::isNotMoveable);
     g_lua.bindClassMemberFunction<Thing>("isPickupable", &Thing::isPickupable);
-    g_lua.bindClassMemberFunction<Thing>("ignoreLook", &Thing::ignoreLook);
+    g_lua.bindClassMemberFunction<Thing>("isIgnoreLook", &Thing::isIgnoreLook);
     g_lua.bindClassMemberFunction<Thing>("isStackable", &Thing::isStackable);
+    g_lua.bindClassMemberFunction<Thing>("isHookSouth", &Thing::isHookSouth);
+    g_lua.bindClassMemberFunction<Thing>("isTranslucent", &Thing::isTranslucent);
+    g_lua.bindClassMemberFunction<Thing>("isFullGround", &Thing::isFullGround);
 
     g_lua.registerClass<Creature, Thing>();
     g_lua.bindClassMemberFunction<Creature>("getName", &Creature::getName);
@@ -133,7 +129,7 @@ void OTClient::registerLuaFunctions()
 
     g_lua.registerClass<Item, Thing>();
     g_lua.bindClassStaticFunction<Item>("create", &Item::create);
-    g_lua.bindClassMemberFunction<Item>("getData", &Item::getData);
+    g_lua.bindClassMemberFunction<Item>("getCount", &Item::getCount);
 
     g_lua.registerClass<Effect, Thing>();
     g_lua.registerClass<Missile, Thing>();
@@ -141,6 +137,7 @@ void OTClient::registerLuaFunctions()
     g_lua.registerClass<AnimatedText, Thing>();
 
     g_lua.registerClass<Player, Creature>();
+    g_lua.bindClassMemberFunction<Creature>("isWalking", &Creature::isWalking);
     g_lua.registerClass<Npc, Creature>();
     g_lua.registerClass<Monster, Creature>();
     g_lua.registerClass<LocalPlayer, Player>();
@@ -165,14 +162,13 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Tile>("getThing", &Tile::getThing);
     g_lua.bindClassMemberFunction<Tile>("getThingStackpos", &Tile::getThingStackpos);
     g_lua.bindClassMemberFunction<Tile>("getTopThing", &Tile::getTopThing);
-    g_lua.bindClassMemberFunction<Tile>("removeThingByStackpos", &Tile::removeThingByStackpos);
     g_lua.bindClassMemberFunction<Tile>("removeThing", &Tile::removeThing);
     g_lua.bindClassMemberFunction<Tile>("getTopLookThing", &Tile::getTopLookThing);
     g_lua.bindClassMemberFunction<Tile>("getTopUseThing", &Tile::getTopUseThing);
     g_lua.bindClassMemberFunction<Tile>("getTopCreature", &Tile::getTopCreature);
     g_lua.bindClassMemberFunction<Tile>("getTopMoveThing", &Tile::getTopMoveThing);
     g_lua.bindClassMemberFunction<Tile>("getTopMultiUseThing", &Tile::getTopMultiUseThing);
-    g_lua.bindClassMemberFunction<Tile>("getPos", &Tile::getPos);
+    g_lua.bindClassMemberFunction<Tile>("getPosition", &Tile::getPosition);
     g_lua.bindClassMemberFunction<Tile>("getDrawElevation", &Tile::getDrawElevation);
     g_lua.bindClassMemberFunction<Tile>("getCreatures", &Tile::getCreatures);
     g_lua.bindClassMemberFunction<Tile>("getGround", &Tile::getGround);
@@ -194,6 +190,9 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassStaticFunction<Game>("requestOutfit", std::bind(&Game::requestOutfit, &g_game));
     g_lua.bindClassStaticFunction<Game>("requestChannels", std::bind(&Game::requestChannels, &g_game));
     g_lua.bindClassStaticFunction<Game>("joinChannel", std::bind(&Game::joinChannel, &g_game, _1));
+    g_lua.bindClassStaticFunction<Game>("leaveChannel", std::bind(&Game::leaveChannel, &g_game, _1));
+    g_lua.bindClassStaticFunction<Game>("closeNpcChannel", std::bind(&Game::closeNpcChannel, &g_game));
+    g_lua.bindClassStaticFunction<Game>("openPrivateChannel", std::bind(&Game::openPrivateChannel, &g_game, _1));
     g_lua.bindClassStaticFunction<Game>("setOutfit", std::bind(&Game::setOutfit, &g_game, _1));
     g_lua.bindClassStaticFunction<Game>("look", std::bind(&Game::look, &g_game, _1));
     g_lua.bindClassStaticFunction<Game>("open", std::bind(&Game::open, &g_game, _1, _2));
@@ -201,6 +200,7 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassStaticFunction<Game>("useWith", std::bind(&Game::useWith, &g_game, _1, _2));
     g_lua.bindClassStaticFunction<Game>("move", std::bind(&Game::move, &g_game, _1, _2, _3));
     g_lua.bindClassStaticFunction<Game>("useInventoryItem", std::bind(&Game::useInventoryItem, &g_game, _1, _2));
+    g_lua.bindClassStaticFunction<Game>("turn", std::bind(&Game::turn, &g_game, _1));
     g_lua.bindClassStaticFunction<Game>("walk", std::bind(&Game::walk, &g_game, _1));
     g_lua.bindClassStaticFunction<Game>("forceWalk", std::bind(&Game::forceWalk, &g_game, _1));
     g_lua.bindClassStaticFunction<Game>("attack", std::bind(&Game::attack, &g_game, _1));
@@ -226,9 +226,16 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassStaticFunction<Game>("getProtocolGame", std::bind(&Game::getProtocolGame, &g_game));
 
     g_lua.registerClass<UIItem, UIWidget>();
-    g_lua.bindClassStaticFunction<UIItem>("create", []{ return UIItemPtr(new UIItem); } );
-    g_lua.bindClassMemberFunction<UIItem>("getItem", &UIItem::getItem);
+    g_lua.bindClassStaticFunction<UIItem>("create", []{ return UIItemPtr(new UIItem); });
+    g_lua.bindClassMemberFunction<UIItem>("setItemId", &UIItem::setItemId);
+    g_lua.bindClassMemberFunction<UIItem>("setItemCount", &UIItem::setItemCount);
     g_lua.bindClassMemberFunction<UIItem>("setItem", &UIItem::setItem);
+    g_lua.bindClassMemberFunction<UIItem>("setVirtual", &UIItem::setVirtual);
+    g_lua.bindClassMemberFunction<UIItem>("getItemId", &UIItem::getItemId);
+    g_lua.bindClassMemberFunction<UIItem>("getItemCount", &UIItem::getItemCount);
+    g_lua.bindClassMemberFunction<UIItem>("getItem", &UIItem::getItem);
+    g_lua.bindClassMemberFunction<UIItem>("isVirtual", &UIItem::isVirtual);
+
 
     g_lua.registerClass<UICreature, UIWidget>();
     g_lua.bindClassStaticFunction<UICreature>("create", []{ return UICreaturePtr(new UICreature); } );
@@ -238,6 +245,8 @@ void OTClient::registerLuaFunctions()
     g_lua.registerClass<UIMap, UIWidget>();
     g_lua.bindClassStaticFunction<UIMap>("create", []{ return UIMapPtr(new UIMap); } );
     g_lua.bindClassMemberFunction<UIMap>("getTile", &UIMap::getTile);
+    g_lua.bindClassMemberFunction<UIMap>("zoomIn", &UIMap::zoomIn);
+    g_lua.bindClassMemberFunction<UIMap>("zoomOut", &UIMap::zoomOut);
 
     g_lua.registerClass<UIGame, UIWidget>();
     g_lua.bindClassStaticFunction<UIGame>("create", []{ return UIGamePtr(new UIGame); } );
