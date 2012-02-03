@@ -84,8 +84,8 @@ void Tile::draw(const Point& dest, float scaleFactor, int drawFlags)
     if(redrawPreviousTopH > 0 || redrawPreviousTopW > 0) {
         int topRedrawFlags = drawFlags & (Otc::DrawCreatures | Otc::DrawEffects | Otc::DrawOnTop | Otc::DrawAnimations);
         if(topRedrawFlags) {
-            for(int y=-redrawPreviousTopH;y<=0;++y) {
-                for(int x=-redrawPreviousTopW;x<=0;++x) {
+            for(int x=-redrawPreviousTopW;x<=0;++x) {
+                for(int y=-redrawPreviousTopH;y<=0;++y) {
                     if(x == 0 && y == 0)
                         continue;
                     const TilePtr& tile = g_map.getTile(m_position.translated(x,y));
