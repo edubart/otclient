@@ -20,20 +20,20 @@ local SpeakTypesSettings = {
 }
 
 local SpeakTypes = {
-	[SpeakSay] = SpeakTypesSettings.say,
-	[SpeakWhisper] = SpeakTypesSettings.whisper,
-	[SpeakYell] = SpeakTypesSettings.yell,
-	[SpeakBroadcast] = SpeakTypesSettings.broadcast,
-	[SpeakPrivate] = SpeakTypesSettings.private,
-	[SpeakPrivateRed] = SpeakTypesSettings.privateRed,
-	[SpeakPrivatePlayerToNpc] = SpeakTypesSettings.privatePlayerToNpc,
-	[SpeakPrivateNpcToPlayer] = SpeakTypesSettings.privateNpcToPlayer,
-	[SpeakChannelYellow] = SpeakTypesSettings.channelYellow,
-	[SpeakChannelWhite] = SpeakTypesSettings.channelWhite,
-	[SpeakChannelRed] = SpeakTypesSettings.channelRed,
-	[SpeakChannelOrange] = SpeakTypesSettings.channelOrange,
-	[SpeakMonsterSay] = SpeakTypesSettings.monsterSay,
-	[SpeakMonsterYell] = SpeakTypesSettings.monsterYell,
+  [SpeakSay] = SpeakTypesSettings.say,
+  [SpeakWhisper] = SpeakTypesSettings.whisper,
+  [SpeakYell] = SpeakTypesSettings.yell,
+  [SpeakBroadcast] = SpeakTypesSettings.broadcast,
+  [SpeakPrivate] = SpeakTypesSettings.private,
+  [SpeakPrivateRed] = SpeakTypesSettings.privateRed,
+  [SpeakPrivatePlayerToNpc] = SpeakTypesSettings.privatePlayerToNpc,
+  [SpeakPrivateNpcToPlayer] = SpeakTypesSettings.privateNpcToPlayer,
+  [SpeakChannelYellow] = SpeakTypesSettings.channelYellow,
+  [SpeakChannelWhite] = SpeakTypesSettings.channelWhite,
+  [SpeakChannelRed] = SpeakTypesSettings.channelRed,
+  [SpeakChannelOrange] = SpeakTypesSettings.channelOrange,
+  [SpeakMonsterSay] = SpeakTypesSettings.monsterSay,
+  [SpeakMonsterYell] = SpeakTypesSettings.monsterYell,
 }
 
 local consolePanel
@@ -71,15 +71,14 @@ function Console.create()
   Hotkeys.bindKeyDown('Enter', Console.sendCurrentMessage, consolePanel)
   Hotkeys.bindKeyDown('Return', Console.sendCurrentMessage, consolePanel)
   
-  --Apply buttom functions after loaded
-  consolePanel:getChildById('nextChannelButton').onClick = function() consoleTabBar:selectNextTab() end
-  consolePanel:getChildById('prevChannelButton').onClick = function() consoleTabBar:selectPrevTab() end
-  
-  --Tibia Like Hotkeys
-  Hotkeys.bindKeyDown('Ctrl+O', Game.requestChannels)
-  Hotkeys.bindKeyDown('Ctrl+E', Console.removeCurrentTab)
-  
+  -- apply buttom functions after loaded
+  connect(consolePanel:getChildById('nextChannelButton'), { onClick = function() consoleTabBar:selectNextTab() end } )
+  connect(consolePanel:getChildById('prevChannelButton'), { onClick = function() consoleTabBar:selectPrevTab() end } )
   connect(consoleTabBar, { onTabChange = Console.onTabChange })
+  
+  -- tibia like hotkeys
+  Hotkeys.bindKeyDown('Ctrl+O', Game.requestChannels)
+  Hotkeys.bindKeyDown('Ctrl+E', Console.removeCurrentTab)  
 end
 
 function Console.destroy()
@@ -90,19 +89,19 @@ end
 function Console.addTab(name, focus)
   local tab = consoleTabBar:addTab(name)
   if focus then
-	consoleTabBar:selectTab(tab)
+  consoleTabBar:selectTab(tab)
   else
-	consoleTabBar:blinkTab(tab)
+  consoleTabBar:blinkTab(tab)
   end
   return tab
 end
 
 function Console.onTabChange(tabBar, tab)
-	if tab:getText() == "Default" or tab:getText() == "Server Log" then
-		consolePanel:getChildById('closeChannelButton'):disable()
-	else
-		consolePanel:getChildById('closeChannelButton'):enable()
-	end
+  if tab:getText() == "Default" or tab:getText() == "Server Log" then
+    consolePanel:getChildById('closeChannelButton'):disable()
+  else
+    consolePanel:getChildById('closeChannelButton'):enable()
+  end
 end
 
 function Console.removeCurrentTab()
@@ -232,13 +231,13 @@ local function onChannelList(channelList)
   local channelListPanel = channelsWindow:getChildById('channelList')
   channelsWindow.onEnter = function(self)
     local openPrivateChannelWith = channelsWindow:getChildById('openPrivateChannelWith'):getText()
-	if openPrivateChannelWith ~= '' then
-		Game.openPrivateChannel(openPrivateChannelWith)
-	else
-		local selectedChannelLabel = channelListPanel:getFocusedChild()
-		if not selectedChannelLabel then return end
-		Game.joinChannel(selectedChannelLabel.channelId)
-	end
+  if openPrivateChannelWith ~= '' then
+    Game.openPrivateChannel(openPrivateChannelWith)
+  else
+    local selectedChannelLabel = channelListPanel:getFocusedChild()
+    if not selectedChannelLabel then return end
+    Game.joinChannel(selectedChannelLabel.channelId)
+  end
     channelsWindow:destroy()
   end
   for k,v in pairs(channelList) do
@@ -258,4 +257,4 @@ connect(Game, { onLogin = Console.create,
                 onCreatureSpeak = onCreatureSpeak,
                 onChannelList = onChannelList,
                 onOpenChannel = onOpenChannel,
-				onOpenPrivateChannel = onOpenPrivateChannel})
+                onOpenPrivateChannel = onOpenPrivateChannel})
