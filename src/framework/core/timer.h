@@ -31,13 +31,17 @@ public:
     Timer() { restart(); }
 
     void restart();
+    void stop() { m_stopped = true; }
 
     ticks_t startTicks() { return m_startTicks; }
     ticks_t ticksElapsed();
     double timeElapsed() { return ticksElapsed()/1000.0; }
 
+    bool running() { return !m_stopped; }
+
 private:
     ticks_t m_startTicks;
+    Boolean<false> m_stopped;
 };
 
 #endif

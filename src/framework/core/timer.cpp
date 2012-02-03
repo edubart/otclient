@@ -27,6 +27,7 @@
 void Timer::restart()
 {
     m_startTicks = g_clock.ticks();
+    m_stopped = false;
 }
 
 ticks_t Timer::ticksElapsed()

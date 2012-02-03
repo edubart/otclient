@@ -35,6 +35,7 @@ UIWidget::UIWidget()
 {
     m_lastFocusReason = Fw::ActiveFocusReason;
     m_states = Fw::DefaultState;
+    m_clickTimer.stop();
 
     initBaseStyle();
     initText();
@@ -1111,6 +1112,14 @@ bool UIWidget::onKeyUp(uchar keyCode, int keyboardModifiers)
 
 bool UIWidget::onMousePress(const Point& mousePos, Fw::MouseButton button)
 {
+    if(button == Fw::MouseLeftButton) {
+        if(m_clickTimer.running() && m_clickTimer.ticksElapsed() <= 500) {
+            if(onMouseDoubleClick(mousePos))
+                return true;
+            m_clickTimer.stop();
+        } else
+            m_clickTimer.restart();
+    }
     return callLuaField<bool>("onMousePress", mousePos, button);
 }
 
@@ -1143,6 +1152,11 @@ bool UIWidget::onMouseMove(const Point& mousePos, const Point& mouseMoved)
 bool UIWidget::onMouseWheel(const Point& mousePos, Fw::MouseWheelDirection direction)
 {
     return callLuaField<bool>("onMouseWheel", mousePos, direction);
+}
+
+bool UIWidget::onMouseDoubleClick(const Point& mousePos)
+{
+    return callLuaField<bool>("onMouseDoubleClick", mousePos);
 }
 
 bool UIWidget::propagateOnKeyText(const std::string& keyText)

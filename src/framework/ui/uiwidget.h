@@ -29,6 +29,7 @@
 #include <framework/otml/otmlnode.h>
 #include <framework/graphics/font.h>
 #include <framework/graphics/coordsbuffer.h>
+#include <framework/core/timer.h>
 
 template<typename T = int>
 struct EdgeGroup {
@@ -71,6 +72,7 @@ protected:
     UIWidgetList m_lockedChildren;
     UIWidgetPtr m_focusedChild;
     OTMLNodePtr m_style;
+    Timer m_clickTimer;
     Fw::FocusReason m_lastFocusReason;
 
 public:
@@ -176,6 +178,7 @@ protected:
     virtual bool onMouseRelease(const Point& mousePos, Fw::MouseButton button);
     virtual bool onMouseMove(const Point& mousePos, const Point& mouseMoved);
     virtual bool onMouseWheel(const Point& mousePos, Fw::MouseWheelDirection direction);
+    virtual bool onMouseDoubleClick(const Point& mousePos);
 
     bool propagateOnKeyText(const std::string& keyText);
     bool propagateOnKeyDown(uchar keyCode, int keyboardModifiers);
