@@ -112,9 +112,9 @@ end
 function Console.addTab(name, focus)
   local tab = consoleTabBar:addTab(name)
   if focus then
-  consoleTabBar:selectTab(tab)
+    consoleTabBar:selectTab(tab)
   else
-  consoleTabBar:blinkTab(tab)
+    consoleTabBar:blinkTab(tab)
   end
   return tab
 end
@@ -132,6 +132,13 @@ function Console.removeCurrentTab()
   if tab:getText() == "Default" or tab:getText() == "Server Log" then return end
 
   consoleTabBar:removeTab(tab)
+
+  -- notificate the server that we are leaving the channel
+  if tab.channelId then
+    Game.leaveChannel(tab.channelId)
+  elseif tab:getText() == "NPCs" then
+    Game.closeNpcChannel()
+  end
 end
 
 function Console.getTab(name)
@@ -150,8 +157,10 @@ function Console.addChannel(name, id)
 end
 
 function Console.addPrivateText(text, speaktype, name, isPrivateCommand)
+  local focus = false
   if speaktype.speakType == SpeakPrivateNpcToPlayer then
     name = 'NPCs'
+    focus = true
   end
 
   local privateTab = Console.getTab(name)
@@ -159,9 +168,11 @@ function Console.addPrivateText(text, speaktype, name, isPrivateCommand)
     if Options.showPrivateMessagesInConsole or (isPrivateCommand and not privateTab) then
       privateTab = Console.getTab('Default')
     else
-      privateTab = Console.addTab(name, false)
+      privateTab = Console.addTab(name, focus)
     end
     privateTab.npcChat = speaktype.npcChat
+  elseif focus then
+    consoleTabBar:selectTab(privateTab)
   end
   Console.addTabText(text, speaktype, privateTab)
 end
@@ -295,7 +306,14 @@ local function onCreatureSpeak(name, level, speaktype, message, channelId, creat
   if speaktype.private then
     Console.addPrivateText(message, speaktype, name, false)
   else
-    Console.addText(message, speaktype, channels[channelId])
+    local channel = channels[channelId]
+
+    if channel then
+      Console.addText(message, speaktype, channel)
+    else
+      -- server sent a message on a channel that we are not aware of, must leave it
+      Game.leaveChannel(channelId)
+    end
   end
 end
 
