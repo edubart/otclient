@@ -78,7 +78,7 @@ function CharacterList.create(characters, premDays)
     label.worldHost = worldHost
     label.worldPort = worldIp
     
-    connect(label, { onMouseDoubleClick = function () CharacterList.doLogin() return true end } )
+    connect(label, { onDoubleClick = function () CharacterList.doLogin() return true end } )
 
     if i == 1 or Settings.get('lastUsedCharacter') == characterName then
       focusLabel = label

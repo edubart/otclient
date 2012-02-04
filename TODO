@@ -1,24 +1,18 @@
 ====================================================
 High priority TODO in order (before first public disclose)
 
-termiante chat
 scrollbar
 scrollable widgets
 complete miniwindow (close, minimize, resize, move)
 move windows
-add top menu buttons
+combat controls
 modules managment interface
 adjust interface design
 display exit box when exiting from game
-attack modes
 player status icons (poison, etc)
 
 
-move count itens
 move windows, go back in containers
-open private chat
-reopen channels
-fix use with
 move windows
 let windows open while playing
 fix auto repeats in lineedit
@@ -30,7 +24,6 @@ Low priority TODO
 review directories loading search
 load modules from zip packages
 create a class for reading binary files
-ake protocol class compatible with old tibia protocols
 rework lua/c++ logger
 
 == Graphics
@@ -39,8 +32,8 @@ cache renders into framebuffers
 use hardware buffer
 use indices
 fix opacity and cached framebuffers conflict
-
-map rendering could be optimized to infinite zoom out using quadtree voxels
+map zoom rendering could be optimized using framebuffer caches
+make low/medium/high settings for economizing graphics memory thus allowing client smoothily in smartphones
 
 == Lua
 make possible to bind non LuaObject derived classes on lua engine (for usage with Point,Rect,Color,Size)
@@ -50,49 +43,44 @@ review usage of x,y/width,height in lua instead of point/size
 port to MacOs and iphone
 
 == UI
-[bart] multiline rich text widget
-[bart] move layout proprieties to widget style
-[bart] multiline text editor widget
-[bart] create UIMessageBox, UIToolTip and UIInputBox
-[bart] fix style inheretance using a style translator
-[bart] find a way to add new widgets without focusing them
-[bart] break UILabel lines
-[bart] review and make more error prone with more warnings
-[bart] reapply anchor styles when adding new childs
-[bart] ui text selection
-[bart] find styles by scope
-[bart] make set of background/icon/image width alone work
-[bart] check for recursive anchors and print a error instead of crashing
-[bart] make api to enable/disable capture of events to avoid massive event processing
-[bart] review style apply system
+multiline rich text widget
+move layout proprieties to widget style
+multiline text editor widget
+rework UIMessageBox, UIToolTip and UIInputBox
+fix style inheretance using a style translator
+find a way to add new widgets without focusing them
+review UI/style loader and make more error prone with more warnings
+reapply anchor styles when adding new childs
+ui text selection
+find styles by scope
+make set of background/icon/image width alone work
+check for recursive anchors and print a error instead of crashing
+make api to enable/disable capture of events to avoid massive event processing
+review style apply system
 rework widgets rendering order
-cache or preload otui files to avoid freezes from hd
+cache or preload otui files to avoid freezes because of hd reading
 change Align/Anchors lua API from enum to text
 
 == Client
 make possible to reload modules
-terminal/console scrolling
 auto walk
-hotkeys window
-trade window
-shop window
-battle list
 implement left panel with dragging windows
 clean sprites cache periodically
 create a shader manager
 find a way to load map rendering styles
 move redering of creatures names, skulls, etc to UI
-cache screen creatures in a list on map
+make protocol class compatible with old tibia protocols
 handle corrupt errors in dat/spr
 remake spr/dat using OTML and image files
-rework map tile rendering (cache visible tiles, etc)
-minimap window
-draw lights using shaders
 limit FPS in options
-resize map, right panel
+resize map
 do lua game event calls from Game instead from GameProtocol
+
 login queue
 questlog
 edit texts
-ignore list
-viplist marks
+trade window
+shop window
+battle window
+hotkeys window
+minimap window

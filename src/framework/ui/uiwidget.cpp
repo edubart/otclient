@@ -1114,7 +1114,7 @@ bool UIWidget::onMousePress(const Point& mousePos, Fw::MouseButton button)
 {
     if(button == Fw::MouseLeftButton) {
         if(m_clickTimer.running() && m_clickTimer.ticksElapsed() <= 500) {
-            if(onMouseDoubleClick(mousePos))
+            if(onDoubleClick(mousePos))
                 return true;
             m_clickTimer.stop();
         } else
@@ -1154,9 +1154,9 @@ bool UIWidget::onMouseWheel(const Point& mousePos, Fw::MouseWheelDirection direc
     return callLuaField<bool>("onMouseWheel", mousePos, direction);
 }
 
-bool UIWidget::onMouseDoubleClick(const Point& mousePos)
+bool UIWidget::onDoubleClick(const Point& mousePos)
 {
-    return callLuaField<bool>("onMouseDoubleClick", mousePos);
+    return callLuaField<bool>("onDoubleClick", mousePos);
 }
 
 bool UIWidget::propagateOnKeyText(const std::string& keyText)

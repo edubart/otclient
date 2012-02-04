@@ -356,7 +356,7 @@ local function onChannelList(channelList)
       label:setText(channelName)
 
       label:setPhantom(false)
-      connect(label, { onMouseDoubleClick = function () doChannelListSubmit(channelsWindow) end } )
+      connect(label, { onDoubleClick = function () doChannelListSubmit(channelsWindow) end } )
     end
   end
 end

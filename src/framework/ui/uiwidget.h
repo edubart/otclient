@@ -178,7 +178,7 @@ protected:
     virtual bool onMouseRelease(const Point& mousePos, Fw::MouseButton button);
     virtual bool onMouseMove(const Point& mousePos, const Point& mouseMoved);
     virtual bool onMouseWheel(const Point& mousePos, Fw::MouseWheelDirection direction);
-    virtual bool onMouseDoubleClick(const Point& mousePos);
+    virtual bool onDoubleClick(const Point& mousePos);
 
     bool propagateOnKeyText(const std::string& keyText);
     bool propagateOnKeyDown(uchar keyCode, int keyboardModifiers);
