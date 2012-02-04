@@ -117,7 +117,6 @@ function Terminal.init()
   Hotkeys.bindKeyDown('Down', function() navigateCommand(-1) end, commandLineEdit)
   Hotkeys.bindKeyDown('Tab', completeCommand, commandLineEdit)
   Hotkeys.bindKeyDown('Enter', doCommand, commandLineEdit)
-  Hotkeys.bindKeyDown('Return', doCommand, commandLineEdit)
 
   terminalBuffer = terminalWidget:getChildById('terminalBuffer')
   Logger.setOnLog(onLog)

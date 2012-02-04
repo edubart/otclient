@@ -43,6 +43,8 @@ class WIN32Window : public PlatformWindow
     LRESULT windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
     friend class WindowProcProxy;
 
+    Fw::Key retranslateVirtualKey(WPARAM wParam, LPARAM lParam);
+
 public:
     WIN32Window();
 

@@ -52,7 +52,7 @@ X11Window::X11Window()
 
     m_keyMap[XK_Escape] = Fw::KeyEscape;
     m_keyMap[XK_Tab] = Fw::KeyTab;
-    m_keyMap[XK_Return] = Fw::KeyReturn;
+    m_keyMap[XK_Return] = Fw::KeyEnter;
     m_keyMap[XK_BackSpace] = Fw::KeyBackspace;
 
     m_keyMap[XK_Page_Up] = Fw::KeyPageUp;

@@ -38,7 +38,7 @@ local SpeakTypes = {
 
 local SayModes = {
   [1] = { speakTypeDesc = 'whisper', icon = '/core_styles/icons/whisper.png' },
-  [2] = { speakTypeDesc = 'say', icon = '/core_styles/icons/say.png' }, 
+  [2] = { speakTypeDesc = 'say', icon = '/core_styles/icons/say.png' },
   [3] = { speakTypeDesc = 'yell', icon = '/core_styles/icons/yell.png' }
 }
 
@@ -87,22 +87,21 @@ function Console.create()
 
   Console.addChannel('Default', 0)
   Console.addTab('Server Log', false)
-  
+
   Hotkeys.bindKeyDown('Shift+Up', function() navigateMessageHistory(1) end, consolePanel)
   Hotkeys.bindKeyDown('Shift+Down', function() navigateMessageHistory(-1) end, consolePanel)
   Hotkeys.bindKeyDown('Tab', function() consoleTabBar:selectNextTab() end, consolePanel)
   Hotkeys.bindKeyDown('Shift+Tab', function() consoleTabBar:selectPrevTab() end, consolePanel)
   Hotkeys.bindKeyDown('Enter', Console.sendCurrentMessage, consolePanel)
-  Hotkeys.bindKeyDown('Return', Console.sendCurrentMessage, consolePanel)
-  
+
   -- apply buttom functions after loaded
   connect(consolePanel:getChildById('nextChannelButton'), { onClick = function() consoleTabBar:selectNextTab() end } )
   connect(consolePanel:getChildById('prevChannelButton'), { onClick = function() consoleTabBar:selectPrevTab() end } )
   connect(consoleTabBar, { onTabChange = Console.onTabChange })
-  
+
   -- tibia like hotkeys
   Hotkeys.bindKeyDown('Ctrl+O', Game.requestChannels)
-  Hotkeys.bindKeyDown('Ctrl+E', Console.removeCurrentTab)  
+  Hotkeys.bindKeyDown('Ctrl+E', Console.removeCurrentTab)
 end
 
 function Console.destroy()
@@ -131,7 +130,7 @@ end
 function Console.removeCurrentTab()
   local tab = consoleTabBar:getCurrentTab()
   if tab:getText() == "Default" or tab:getText() == "Server Log" then return end
-  
+
   consoleTabBar:removeTab(tab)
 end
 
@@ -203,27 +202,27 @@ function Console.sendCurrentMessage()
   local chatCommandSayMode
   local chatCommandPrivate
   local chatCommandPrivateReady
-  
+
   local chatCommandMessage = message:match("^%#y (.*)")
   if chatCommandMessage ~= nil then chatCommandSayMode = 'yell' end -- player used yell command
   message = chatCommandMessage or message
-  
+
   local chatCommandMessage = message:match("^%#w (.*)")
   if chatCommandMessage ~= nil then chatCommandSayMode = 'whisper' end -- player used whisper
   message = chatCommandMessage or message
-  
-  local findIni, findEnd, chatCommandInitial, chatCommandPrivate, chatCommandEnd, chatCommandMessage = message:find("([%*%@])(.+)([%*%@])(.*)") 
+
+  local findIni, findEnd, chatCommandInitial, chatCommandPrivate, chatCommandEnd, chatCommandMessage = message:find("([%*%@])(.+)([%*%@])(.*)")
   if findIni ~= nil and findIni == 1 then -- player used private chat command
     if chatCommandInitial == chatCommandEnd then
       chatCommandPrivateRepeat = false
       if chatCommandInitial == "*" then
         consoleLineEdit:setText('*'.. chatCommandPrivate .. '* ')
-      end      
+      end
       message = chatCommandMessage:trim()
       chatCommandPrivateReady = true
     end
   end
-  
+
   message = message:gsub("^(%s*)(.*)","%2") -- remove space characters from message init
   if #message == 0 then return end
 
@@ -233,7 +232,7 @@ function Console.sendCurrentMessage()
   if #messageHistory > MaxHistory then
     table.remove(messageHistory, 1)
   end
-  
+
   -- when talking on server log, the message goes to default channel
   local name = tab:getText()
   if name == 'Server Log' then
@@ -263,7 +262,7 @@ function Console.sendCurrentMessage()
     else
       speaktypedesc = 'privatePlayerToPlayer'
     end
-    
+
 
     local speaktype = SpeakTypesSettings[speaktypedesc]
     local player = Game.getLocalPlayer()
@@ -279,11 +278,11 @@ function Console.sayModeChange(sayMode)
   if sayMode == nil then
     sayMode = buttom.sayMode + 1
   end
-  
+
   if sayMode > #SayModes then sayMode = 1 end
 
   buttom:setIcon(SayModes[sayMode].icon)
-  buttom.sayMode = sayMode  
+  buttom.sayMode = sayMode
 end
 
 -- hooked events
@@ -311,7 +310,7 @@ local function onOpenPrivateChannel(receiver)
   end
 end
 
-local function doChannelListSubmit(channelsWindow)  
+local function doChannelListSubmit(channelsWindow)
   local channelListPanel = channelsWindow:getChildById('channelList')
   local openPrivateChannelWith = channelsWindow:getChildById('openPrivateChannelWith'):getText()
   if openPrivateChannelWith ~= '' then
@@ -328,7 +327,7 @@ local function onChannelList(channelList)
   local channelsWindow = displayUI('channelswindow.otui')
   local channelListPanel = channelsWindow:getChildById('channelList')
   connect(channelsWindow, { onEnter = function () doChannelListSubmit(channelsWindow) end } )
-  
+
   for k,v in pairs(channelList) do
     local channelId = v[1]
     local channelName = v[2]
@@ -337,7 +336,7 @@ local function onChannelList(channelList)
       local label = createWidget('ChannelListLabel', channelListPanel)
       label.channelId = channelId
       label:setText(channelName)
-      
+
       label:setPhantom(false)
       connect(label, { onMouseDoubleClick = function () doChannelListSubmit(channelsWindow) end } )
     end

@@ -41,7 +41,7 @@ WIN32Window::WIN32Window()
 
     m_keyMap[VK_ESCAPE] = Fw::KeyEscape;
     m_keyMap[VK_TAB] = Fw::KeyTab;
-    m_keyMap[VK_RETURN] = Fw::KeyReturn;
+    m_keyMap[VK_RETURN] = Fw::KeyEnter;
     m_keyMap[VK_BACK] = Fw::KeyBackspace;
     m_keyMap[VK_SPACE] = Fw::KeySpace;
 
@@ -162,7 +162,6 @@ WIN32Window::WIN32Window()
     m_keyMap[VK_DECIMAL] = Fw::KeyPeriod;
     m_keyMap[VK_DIVIDE] = Fw::KeySlash;
     m_keyMap[VK_MULTIPLY] = Fw::KeyAsterisk;
-    m_keyMap[VK_SEPARATOR] = Fw::KeyEnter;
 
     // keypad with numlock off
     m_keyMap[VK_NUMPAD0] = Fw::KeyNumpad0;
@@ -423,6 +422,51 @@ void WIN32Window::poll()
     updateUnmaximizedCoords();
 }
 
+Fw::Key WIN32Window::retranslateVirtualKey(WPARAM wParam, LPARAM lParam)
+{
+    if(!(((HIWORD(lParam) >> 8) & 0xFF) & 1)) {
+        // ignore numpad keys when numlock is on
+        if((wParam >= VK_NUMPAD0 && wParam <= VK_NUMPAD9) || wParam == VK_SEPARATOR)
+            return Fw::KeyUnknown;
+
+        // retranslate numpad keys
+        switch(wParam) {
+            case VK_INSERT:
+                wParam = VK_NUMPAD0;
+                break;
+            case VK_END:
+                wParam = VK_NUMPAD1;
+                break;
+            case VK_DOWN:
+                wParam = VK_NUMPAD2;
+                break;
+            case VK_NEXT:
+                wParam = VK_NUMPAD3;
+                break;
+            case VK_LEFT:
+                wParam = VK_NUMPAD4;
+                break;
+            case VK_CLEAR:
+                wParam = VK_NUMPAD5;
+                break;
+            case VK_RIGHT:
+                wParam = VK_NUMPAD6;
+                break;
+            case VK_HOME:
+                wParam = VK_NUMPAD7;
+                break;
+            case VK_UP:
+                wParam = VK_NUMPAD8;
+                break;
+            case VK_PRIOR:
+                wParam = VK_NUMPAD9;
+                break;
+        }
+    }
+
+    return m_keyMap[wParam];
+}
+
 LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     switch(uMsg)
@@ -452,11 +496,11 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
             break;
         }
         case WM_KEYDOWN: {
-            processKeyDown(m_keyMap[wParam]);
+            processKeyDown(retranslateVirtualKey(wParam, lParam));
             break;
         }
         case WM_KEYUP: {
-            processKeyUp(m_keyMap[wParam]);
+            processKeyUp(retranslateVirtualKey(wParam, lParam));
             break;
         }
         case WM_LBUTTONDOWN: {
@@ -641,7 +685,6 @@ void WIN32Window::setTitle(const std::string& title)
 
 void WIN32Window::setMinimumSize(const Size& minimumSize)
 {
-    dump << "set minimum";
     m_minimumSize = minimumSize;
 }
 
@@ -770,3 +813,4 @@ std::string WIN32Window::getPlatformType()
 {
     return "WIN32-WGL";
 }
+
