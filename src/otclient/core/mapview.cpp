@@ -392,7 +392,7 @@ void MapView::setVisibleDimension(const Size& visibleDimension)
         return;
     }
 
-    if(visibleDimension.width() <= 3 || visibleDimension.height() <= 3) {
+    if(visibleDimension < Size(3,3)) {
         logTraceError("reach max zoom in");
         return;
     }

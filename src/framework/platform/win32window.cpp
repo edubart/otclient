@@ -37,8 +37,7 @@ WIN32Window::WIN32Window()
     m_glContext = 0;
     m_cursor = 0;
     m_maximized = false;
-    m_minimumSize = Size(16,16);
-    m_size = m_minimumSize;
+    m_minimumSize = Size(600,480);
 
     m_keyMap[VK_ESCAPE] = Fw::KeyEscape;
     m_keyMap[VK_TAB] = Fw::KeyTab;
@@ -278,6 +277,10 @@ void WIN32Window::internalCreateWindow()
     DWORD dwExStyle = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
     DWORD dwStyle = WS_OVERLAPPEDWINDOW;
 
+    // initialize in the center of the screen
+    m_size = m_minimumSize;
+    m_position = ((getDisplaySize() - m_size) / 2).toPoint();
+
     RECT windowRect = {m_position.x, m_position.y, m_position.x + m_size.width(), m_position.y + m_size.height()};
     AdjustWindowRectEx(&windowRect, dwStyle, FALSE, dwExStyle);
 
@@ -361,16 +364,35 @@ void *WIN32Window::getExtensionProcAddress(const char *ext)
 
 void WIN32Window::move(const Point& pos)
 {
-    RECT windowRect = {pos.x, pos.y, m_position.x + m_size.width(), m_position.y + m_size.height()};
+    RECT clientRect;
+    GetClientRect(m_window, &clientRect);
+
+    RECT windowRect = {pos.x, pos.y,  clientRect.right - clientRect.left, clientRect.bottom - clientRect.top};
     AdjustWindowRectEx(&windowRect, WS_OVERLAPPEDWINDOW, FALSE, WS_EX_APPWINDOW | WS_EX_WINDOWEDGE);
-    MoveWindow(m_window, windowRect.left, windowRect.top, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top, TRUE);
+
+    int x = windowRect.left;
+    int y = windowRect.top;
+    GetWindowRect(m_window, &windowRect);
+    int width = windowRect.right - windowRect.left;
+    int height = windowRect.bottom - windowRect.top;
+
+    MoveWindow(m_window, x, y, width, height, TRUE);
 }
 
 void WIN32Window::resize(const Size& size)
 {
-    RECT windowRect = {m_position.x, m_position.y, m_position.x + size.width(), m_position.y + size.height()};
-    AdjustWindowRectEx(&windowRect, WS_OVERLAPPEDWINDOW, FALSE, WS_EX_APPWINDOW | WS_EX_WINDOWEDGE);
-    MoveWindow(m_window, windowRect.left, windowRect.top, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top, TRUE);
+    RECT windowRect;
+    RECT clientRect;
+
+    GetWindowRect(m_window, &windowRect);
+    GetClientRect(m_window, &clientRect);
+
+    int x = windowRect.left;
+    int y = windowRect.top;
+    int width = size.width() + ((windowRect.right - windowRect.left) - (clientRect.right - clientRect.left));
+    int height = size.height() + ((windowRect.bottom - windowRect.top) - (clientRect.bottom - clientRect.top));
+
+    MoveWindow(m_window, x, y, width, height, TRUE);
 }
 
 void WIN32Window::show()
@@ -392,20 +414,13 @@ void WIN32Window::poll()
 {
     fireKeysPress();
 
-    for(int i=0;i<2;++i) {
-        MSG msg;
-        if(PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
-            TranslateMessage(&msg);
-            DispatchMessage(&msg);
-        }
-
-        updateUnmaximizedCoords();
-
-        if(m_size < m_minimumSize) {
-            resize(m_size.expandedTo(m_minimumSize));
-        } else
-            break;
+    MSG msg;
+    if(PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
+        TranslateMessage(&msg);
+        DispatchMessage(&msg);
     }
+
+    updateUnmaximizedCoords();
 }
 
 LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -503,8 +518,14 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
             break;
         }
         case WM_MOVE: {
-            m_position.x = LOWORD(lParam);
-            m_position.y = HIWORD(lParam);
+            m_position.x = (short)LOWORD(lParam);
+            m_position.y = (short)HIWORD(lParam);
+            break;
+        }
+        case WM_GETMINMAXINFO: {
+            LPMINMAXINFO pMMI = (LPMINMAXINFO)lParam;
+            pMMI->ptMinTrackSize.x = m_minimumSize.width();
+            pMMI->ptMinTrackSize.y = m_minimumSize.height();
             break;
         }
         case WM_SIZE: {
@@ -620,9 +641,8 @@ void WIN32Window::setTitle(const std::string& title)
 
 void WIN32Window::setMinimumSize(const Size& minimumSize)
 {
+    dump << "set minimum";
     m_minimumSize = minimumSize;
-    if(m_size < m_minimumSize)
-        resize(m_size.expandedTo(m_minimumSize));
 }
 
 void WIN32Window::setFullscreen(bool fullscreen)
