@@ -77,7 +77,7 @@ X11Window::X11Window()
     m_keyMap[XK_Control_R] = Fw::KeyCtrl;
     m_keyMap[XK_Shift_R] = Fw::KeyShift;
     m_keyMap[XK_Shift_L] = Fw::KeyShift;
-    m_keyMap[XK_Alt_R] = Fw::KeyAltGr;
+    m_keyMap[XK_Alt_R] = Fw::KeyAlt;
     m_keyMap[XK_Alt_L] = Fw::KeyAlt;
     m_keyMap[XK_Meta_L] = Fw::KeyMeta;
     m_keyMap[XK_Meta_R] = Fw::KeyMeta;
@@ -545,6 +545,7 @@ void X11Window::poll()
             char buf[32];
             int len = XLookupString(&xkey, buf, sizeof(buf), &keysym, 0);
             Fw::Key keyCode = Fw::KeyUnknown;
+
             if(m_keyMap.find(keysym) != m_keyMap.end())
                 keyCode = m_keyMap[keysym];
 

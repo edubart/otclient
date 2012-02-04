@@ -71,10 +71,10 @@ WIN32Window::WIN32Window()
     m_keyMap[VK_RSHIFT] = Fw::KeyShift;
     m_keyMap[VK_MENU] = Fw::KeyAlt;
     m_keyMap[VK_LMENU] = Fw::KeyAlt;
-    m_keyMap[VK_RMENU] = Fw::KeyAltGr;
+    m_keyMap[VK_RMENU] = Fw::KeyAlt;
     m_keyMap[VK_LWIN] = Fw::KeyMeta;
     m_keyMap[VK_RWIN] = Fw::KeyMeta;
-    m_keyMap[VK_MENU] = Fw::KeyMenu;
+    m_keyMap[VK_APPS] = Fw::KeyMenu;
 
     // ascii characters
     /*
@@ -162,18 +162,6 @@ WIN32Window::WIN32Window()
     m_keyMap[VK_DECIMAL] = Fw::KeyPeriod;
     m_keyMap[VK_DIVIDE] = Fw::KeySlash;
     m_keyMap[VK_MULTIPLY] = Fw::KeyAsterisk;
-
-    // keypad with numlock off
-    m_keyMap[VK_NUMPAD0] = Fw::KeyNumpad0;
-    m_keyMap[VK_NUMPAD1] = Fw::KeyNumpad1;
-    m_keyMap[VK_NUMPAD2] = Fw::KeyNumpad2;
-    m_keyMap[VK_NUMPAD3] = Fw::KeyNumpad3;
-    m_keyMap[VK_NUMPAD4] = Fw::KeyNumpad4;
-    m_keyMap[VK_NUMPAD5] = Fw::KeyNumpad5;
-    m_keyMap[VK_NUMPAD6] = Fw::KeyNumpad6;
-    m_keyMap[VK_NUMPAD7] = Fw::KeyNumpad7;
-    m_keyMap[VK_NUMPAD8] = Fw::KeyNumpad8;
-    m_keyMap[VK_NUMPAD9] = Fw::KeyNumpad9;
 
     m_keyMap[VK_OEM_1] = Fw::KeySemicolon;
     m_keyMap[VK_OEM_2] = Fw::KeySlash;
@@ -432,39 +420,32 @@ Fw::Key WIN32Window::retranslateVirtualKey(WPARAM wParam, LPARAM lParam)
         // retranslate numpad keys
         switch(wParam) {
             case VK_INSERT:
-                wParam = VK_NUMPAD0;
-                break;
+                return Fw::KeyNumpad0;
             case VK_END:
-                wParam = VK_NUMPAD1;
-                break;
+                return Fw::KeyNumpad1;
             case VK_DOWN:
-                wParam = VK_NUMPAD2;
-                break;
+                return Fw::KeyNumpad2;
             case VK_NEXT:
-                wParam = VK_NUMPAD3;
-                break;
+                return Fw::KeyNumpad3;
             case VK_LEFT:
-                wParam = VK_NUMPAD4;
-                break;
+                return Fw::KeyNumpad4;
             case VK_CLEAR:
-                wParam = VK_NUMPAD5;
-                break;
+                return Fw::KeyNumpad5;
             case VK_RIGHT:
-                wParam = VK_NUMPAD6;
-                break;
+                return Fw::KeyNumpad6;
             case VK_HOME:
-                wParam = VK_NUMPAD7;
-                break;
+                return Fw::KeyNumpad7;
             case VK_UP:
-                wParam = VK_NUMPAD8;
-                break;
+                return Fw::KeyNumpad8;
             case VK_PRIOR:
-                wParam = VK_NUMPAD9;
-                break;
+                return Fw::KeyNumpad9;
         }
     }
 
-    return m_keyMap[wParam];
+    if(m_keyMap.find(wParam) != m_keyMap.end())
+        return m_keyMap[wParam];
+
+    return Fw::KeyUnknown;
 }
 
 LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)

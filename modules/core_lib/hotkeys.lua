@@ -29,7 +29,7 @@ end
 
 local function determineKeyComboDesc(keyCode, keyboardModifiers)
   local keyCombo = {}
-  if keyCode == KeyCtrl or keyCode == KeyShift or keyCode == KeyAlt or keyCode == KeyAltGr then
+  if keyCode == KeyCtrl or keyCode == KeyShift or keyCode == KeyAlt then
     table.insert(keyCombo, keyCode)
   elseif KeyCodeDescs[keyCode] ~= nil then
     if keyboardModifiers == KeyboardCtrlModifier then

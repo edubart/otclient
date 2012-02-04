@@ -60,6 +60,7 @@ namespace Fw
         KeyEscape = 1,
         KeyTab = 2,
         KeyBackspace = 3,
+        //KeyReturn = 4,
         KeyEnter = 5,
         KeyInsert = 6,
         KeyDelete = 7,
@@ -79,7 +80,7 @@ namespace Fw
         KeyCtrl = 21,
         KeyShift = 22,
         KeyAlt = 23,
-        KeyAltGr = 24,
+        //KeyAltGr = 24,
         KeyMeta = 25,
         KeyMenu = 26,
         KeySpace = 32,        // ' '
