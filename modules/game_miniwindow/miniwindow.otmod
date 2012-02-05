@@ -1,0 +1,6 @@
+Module
+  name: game_minewindow
+  description: Manage game miniwindow
+  author: OTClient team
+  website: https://github.com/edubart/otclient
+  onLoad:

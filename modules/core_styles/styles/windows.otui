@@ -36,7 +36,7 @@ MainWindow < Window2
 
 MiniWindow < UIWindow
   font: verdana-11px-antialised
-  icon: /core_styles/icons/login.png
+  //icon: /core_styles/icons/login.png
   icon-rect: 4 4 16 16
   width: 192
   height: 200

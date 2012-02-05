@@ -1,3 +1,0 @@
-[submodule "modules/client_tibiafiles"]
-	path = modules/client_tibiafiles
-	url = git://github.com/Baxnie/otclient-tibiafiles.git
