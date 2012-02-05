@@ -6,6 +6,7 @@ local background
 -- public functions
 function Background.init()
   background = displayUI('background.otui')
+  background:lower()
 end
 
 function Background.terminate()

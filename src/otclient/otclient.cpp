@@ -41,7 +41,7 @@ void OTClient::init(const std::vector<std::string>& args)
     g_modules.ensureModuleLoaded("client");
     g_modules.autoLoadModules(1000);
 
-    g_map.load();
+    //g_map.load();
 
     // load otclientrc.lua
     if(g_resources.fileExists("/otclientrc.lua")) {

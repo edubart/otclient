@@ -54,6 +54,18 @@ local function tryLogin(charInfo, tries)
 end
 
 -- public functions
+function CharacterList.terminate()
+  characterList = nil
+  if charactersWindow then
+    charactersWindow:destroy()
+    charactersWindow = nil
+  end
+  if loadBox then
+    loadBox:destroy()
+    loadBox = nil
+  end
+end
+
 function CharacterList.create(characters, premDays)
   if charactersWindow then
     charactersWindow:destroy()
@@ -77,7 +89,7 @@ function CharacterList.create(characters, premDays)
     label.characterName = characterName
     label.worldHost = worldHost
     label.worldPort = worldIp
-    
+
     connect(label, { onDoubleClick = function () CharacterList.doLogin() return true end } )
 
     if i == 1 or Settings.get('lastUsedCharacter') == characterName then

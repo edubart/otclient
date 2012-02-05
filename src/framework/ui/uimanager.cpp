@@ -40,9 +40,12 @@ void UIManager::init()
 
 void UIManager::terminate()
 {
-    // destroy root widget and its children'
+    // destroy root widget and its children
     m_rootWidget->destroy();
-    m_rootWidget.reset();
+    m_mouseReceiver = nullptr;
+    m_keyboardReceiver = nullptr;
+    m_rootWidget = nullptr;
+    m_draggingWidget = nullptr;
 }
 
 void UIManager::render()

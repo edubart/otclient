@@ -80,6 +80,7 @@ public:
 
 private:
     std::list<EventPtr> m_eventList;
+    int m_pollEventsSize;
     std::priority_queue<ScheduledEventPtr, std::vector<ScheduledEventPtr>, lessScheduledEvent> m_scheduledEventList;
 };
 

@@ -78,11 +78,12 @@ protected:
 public:
     void addChild(const UIWidgetPtr& child);
     void insertChild(int index, const UIWidgetPtr& child);
-    void removeChild(const UIWidgetPtr& child);
+    void removeChild(UIWidgetPtr child);
     void focusChild(const UIWidgetPtr& child, Fw::FocusReason reason);
     void focusNextChild(Fw::FocusReason reason);
     void focusPreviousChild(Fw::FocusReason reason);
-    void moveChildToTop(const UIWidgetPtr& child);
+    void lowerChild(UIWidgetPtr child);
+    void raiseChild(UIWidgetPtr child);
     void moveChildToIndex(const UIWidgetPtr& child, int index);
     void lockChild(const UIWidgetPtr& child);
     void unlockChild(const UIWidgetPtr& child);
@@ -96,6 +97,8 @@ public:
     void lock();
     void unlock();
     void focus();
+    void lower();
+    void raise();
     void grabMouse();
     void ungrabMouse();
     void grabKeyboard();

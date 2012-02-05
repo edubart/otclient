@@ -9,7 +9,8 @@ Module
     require 'characterlist'
     EnterGame.init()
 
-  onUnload:
+  onUnload: |
     EnterGame.terminate()
+    CharacterList.terminate()
 
 

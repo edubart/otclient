@@ -8,6 +8,6 @@ Module
     require 'background'
     Background.init()
 
-  onUnload:
+  onUnload: |
     Background.terminate()
 

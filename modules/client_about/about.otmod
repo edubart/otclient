@@ -8,5 +8,5 @@ Module
     require 'about'
     About.init()
 
-  onUnload:
+  onUnload: |
     About.terminate()

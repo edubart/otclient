@@ -40,7 +40,7 @@ MainWindow
 
   LineEdit
     id: serverHostLineEdit
-    tooltip: Only protocol 8.62 is supported
+    tooltip: Only protocol 8.6 is supported
     anchors.left: serverLabel.left
     anchors.right: serverLabel.right
     anchors.top: serverLabel.bottom

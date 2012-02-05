@@ -3,7 +3,9 @@ CMakeCache.txt
 CMakeFiles
 cmake_install.cmake
 Makefile
-./otclient
+/otclient
+/*.h
+/*.cxx
 *.o
 *.gch
 *.a
@@ -13,6 +15,6 @@ Makefile
 *.kdev*
 *.cbp
 CMakeLists.txt.user
-./modules/myconfig.otml
-./modules/myotclientrc.lua
+/modules/myconfig.otml
+/modules/myotclientrc.lua
 !.gitignore

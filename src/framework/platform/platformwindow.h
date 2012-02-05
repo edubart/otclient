@@ -76,7 +76,7 @@ public:
     Point getPosition() { return m_position; }
     int getX() { return m_position.x; }
     int getY() { return m_position.y; }
-    Point getMousePos() { return m_inputEvent.mousePos; }
+    Point getMousePosition() { return m_inputEvent.mousePos; }
     int getKeyboardModifiers() { return m_inputEvent.keyboardModifiers; }
     bool isKeyPressed(Fw::Key keyCode) { return m_keysState[keyCode]; }
 

@@ -30,6 +30,7 @@ function TopMenu.terminate()
   Hotkeys.unbindKeyDown('Ctrl+Q')
   leftButtonsPanel = nil
   rightButtonsPanel = nil
+  gameButtonsPanel = nil
   topMenu:destroy()
   topMenu = nil
 end

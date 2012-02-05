@@ -45,8 +45,8 @@ void EventDispatcher::poll()
         scheduledEvent->execute();
     }
 
-    int maxEvents = m_eventList.size();
-    for(int i=0;i<maxEvents;++i) {
+    m_pollEventsSize = m_eventList.size();
+    for(int i=0;i<m_pollEventsSize;++i) {
         EventPtr event = m_eventList.front();
         m_eventList.pop_front();
         event->execute();
@@ -64,9 +64,10 @@ ScheduledEventPtr EventDispatcher::scheduleEvent(const SimpleCallback& callback,
 EventPtr EventDispatcher::addEvent(const SimpleCallback& callback, bool pushFront)
 {
     EventPtr event(new Event(callback));
-    if(pushFront)
+    if(pushFront) {
         m_eventList.push_front(event);
-    else
+        m_pollEventsSize++;
+    } else
         m_eventList.push_back(event);
     return event;
 }

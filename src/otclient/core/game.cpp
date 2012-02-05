@@ -94,7 +94,7 @@ void Game::processLogout()
         m_protocolGame = nullptr;
     }
 
-    g_map.save();
+    //g_map.save();
 }
 
 void Game::processDeath()
@@ -587,7 +587,7 @@ void Game::removeVip(int playerId)
 
 bool Game::checkBotProtection()
 {
-#ifndef NO_BOT_PROTECTION
+#ifdef BOT_PROTECTION
     if(g_lua.isInCppCallback() && !g_ui.isOnInputEvent()) {
         logError("caught a lua call to a bot protected game function, the call was canceled");
         return false;

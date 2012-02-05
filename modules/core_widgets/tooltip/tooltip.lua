@@ -1,11 +1,12 @@
 ToolTip = {}
 
 -- private variables
-local currentToolTip
+local toolTipLabel
+local currentHoveredWidget
 
 -- private functions
 local function moveToolTip(tooltip)
-  local pos = g_window.getMousePos()
+  local pos = g_window.getMousePosition()
   pos.y = pos.y + 1
   local xdif = g_window.getSize().width - (pos.x + tooltip:getWidth())
   if xdif < 2 then
@@ -18,34 +19,37 @@ end
 
 -- public functions
 function ToolTip.display(text)
-  if text then
-    ToolTip.hide()
-    currentToolTip = displayUI('tooltip.otui')
-    currentToolTip.onMouseMove = moveToolTip
-    local label = currentToolTip:getChildById('toolTipText')
-    label:setText(text)
-    label:resizeToText()
-    local size = label:getSize()
-    size.width = size.width + 4
-    size.height = size.height + 4
-    currentToolTip:setSize(size)
-    moveToolTip(currentToolTip)
-  end
+  if text == nil then return end
+  ToolTip.hide()
+  toolTipLabel = createWidget('Label', rootWidget)
+  toolTipLabel:setId('toolTip')
+  toolTipLabel:setBackgroundColor('#111111bb')
+  toolTipLabel:setText(text)
+  toolTipLabel:resizeToText()
+  toolTipLabel:resize(toolTipLabel:getWidth() + 4, toolTipLabel:getHeight() + 4)
+  toolTipLabel.onMouseMove = moveToolTip
+  moveToolTip(toolTipLabel)
 end
 
 function ToolTip.hide()
-  if currentToolTip then
-    currentToolTip:destroy()
-    currentToolTip = nil
+  if toolTipLabel then
+    toolTipLabel:destroy()
+    toolTipLabel = nil
   end
 end
 
 -- UIWidget hooks
 local function onWidgetHoverChange(widget, hovered)
   if hovered then
-    ToolTip.display(widget.tooltip)
+    if widget.tooltip then
+      ToolTip.display(widget.tooltip)
+      currentHoveredWidget = widget
+    end
   else
-    ToolTip:hide()
+    if widget == currentHoveredWidget then
+      ToolTip:hide()
+      currentHoveredWidget = nil
+    end
   end
 end
 

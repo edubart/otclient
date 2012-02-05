@@ -44,7 +44,10 @@ UIWidget::UIWidget()
 
 UIWidget::~UIWidget()
 {
-    // nothing to do
+#ifdef DEBUG
+    if(!m_destroyed)
+        logWarning("widget '", m_id, "' was not explicitly destroyed");
+#endif
 }
 
 void UIWidget::draw()
@@ -158,7 +161,7 @@ void UIWidget::insertChild(int index, const UIWidgetPtr& child)
     updateChildrenIndexStates();
 }
 
-void UIWidget::removeChild(const UIWidgetPtr& child)
+void UIWidget::removeChild(UIWidgetPtr child)
 {
     // remove from children list
     if(hasChild(child)) {
@@ -269,7 +272,20 @@ void UIWidget::focusPreviousChild(Fw::FocusReason reason)
         focusChild(toFocus, reason);
 }
 
-void UIWidget::moveChildToTop(const UIWidgetPtr& child)
+void UIWidget::lowerChild(UIWidgetPtr child)
+{
+    if(!child)
+        return;
+
+    // remove and push child again
+    auto it = std::find(m_children.begin(), m_children.end(), child);
+    assert(it != m_children.end());
+    m_children.erase(it);
+    m_children.push_front(child);
+    updateChildrenIndexStates();
+}
+
+void UIWidget::raiseChild(UIWidgetPtr child)
 {
     if(!child)
         return;
@@ -320,7 +336,7 @@ void UIWidget::lockChild(const UIWidgetPtr& child)
     if(child->isFocusable())
         focusChild(child, Fw::ActiveFocusReason);
 
-    moveChildToTop(child);
+    raiseChild(child);
 }
 
 void UIWidget::unlockChild(const UIWidgetPtr& child)
@@ -360,7 +376,7 @@ void UIWidget::unlockChild(const UIWidgetPtr& child)
         if(lockedChild->isFocusable())
             focusChild(lockedChild, Fw::ActiveFocusReason);
 
-        moveChildToTop(lockedChild);
+        raiseChild(lockedChild);
     }
 }
 
@@ -460,6 +476,21 @@ void UIWidget::focus()
         parent->focusChild(asUIWidget(), Fw::ActiveFocusReason);
 }
 
+void UIWidget::lower()
+{
+    UIWidgetPtr parent = getParent();
+    if(parent)
+        parent->lowerChild(asUIWidget());
+}
+
+void UIWidget::raise()
+{
+    focus();
+    UIWidgetPtr parent = getParent();
+    if(parent)
+        parent->raiseChild(asUIWidget());
+}
+
 void UIWidget::grabMouse()
 {
     g_ui.setMouseReceiver(asUIWidget());
@@ -515,7 +546,24 @@ void UIWidget::destroy()
             parent->removeChild(asUIWidget());
     }
 
+    // destroy children
+    while(!m_children.empty())
+        getFirstChild()->destroy();
+
     callLuaField("onDestroy");
+
+#ifdef DEBUG
+    auto self = asUIWidget();
+    g_lua.collectGarbage();
+    g_dispatcher.addEvent([self] {
+        g_lua.collectGarbage();
+        g_dispatcher.addEvent([self] {
+            g_lua.collectGarbage();
+            if(self->getUseCount() != 1)
+                logWarning("widget '", self->getId(), "' destroyed but still have ", self->getUseCount()-1, " reference(s) left");
+        });
+    });
+#endif
 
     m_destroyed = true;
 }
@@ -905,17 +953,11 @@ void UIWidget::updateState(Fw::WidgetState state)
         }
         case Fw::HoverState: {
             updateChildren = true;
-            Point mousePos = g_window.getMousePos();
-            UIWidgetPtr widget = asUIWidget();
-            UIWidgetPtr parent;
-            do {
-                parent = widget->getParent();
-                if(!widget->isExplicitlyEnabled() || !widget->isExplicitlyVisible() || !widget->containsPoint(mousePos) ||
-                   (parent && widget != parent->getChildByPos(mousePos))) {
-                    newStatus = false;
-                    break;
-                }
-            } while(widget = parent);
+            Point mousePos = g_window.getMousePosition();
+            UIWidgetPtr self = asUIWidget();
+            UIWidgetPtr rootParent = self->getRootParent();
+            if(!rootParent || rootParent->recursiveGetChildByPos(mousePos) != self)
+                newStatus = false;
             break;
         }
         case Fw::PressedState: {
@@ -1273,7 +1315,7 @@ bool UIWidget::propagateOnMousePress(const Point& mousePos, Fw::MouseButton butt
             return true;
     }
 
-    // only non phatom widgets receives mouse press events
+    // only non phatom widgets receives mouse events
     if(!isPhantom()) {
         bool ret = onMousePress(mousePos, button);
         if(button == Fw::MouseLeftButton && !isPressed())
@@ -1302,12 +1344,15 @@ bool UIWidget::propagateOnMouseRelease(const Point& mousePos, Fw::MouseButton bu
             return true;
     }
 
-    bool ret = onMouseRelease(mousePos, button);
+    // only non phatom widgets receives mouse events
+    if(!isPhantom()) {
+        bool ret = onMouseRelease(mousePos, button);
+        if(isPressed() && button == Fw::MouseLeftButton)
+            setPressed(false);
+        return ret;
+    }
 
-    if(isPressed() && button == Fw::MouseLeftButton)
-        setPressed(false);
-
-    return ret;
+    return false;
 }
 
 bool UIWidget::propagateOnMouseMove(const Point& mousePos, const Point& mouseMoved)
@@ -1328,10 +1373,7 @@ bool UIWidget::propagateOnMouseMove(const Point& mousePos, const Point& mouseMov
             return true;
     }
 
-    if(!isPhantom())
-        return onMouseMove(mousePos, mouseMoved);
-    else
-        return false;
+    return onMouseMove(mousePos, mouseMoved);
 }
 
 bool UIWidget::propagateOnMouseWheel(const Point& mousePos, Fw::MouseWheelDirection direction)
@@ -1353,6 +1395,7 @@ bool UIWidget::propagateOnMouseWheel(const Point& mousePos, Fw::MouseWheelDirect
             return true;
     }
 
+    // only non phatom widgets receives mouse events
     if(!isPhantom())
         return onMouseWheel(mousePos, direction);
     else

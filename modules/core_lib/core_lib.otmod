@@ -20,3 +20,6 @@ Module
     require 'settings'
     require 'hotkeys'
     require 'cursor'
+
+  onUnload: |
+    rootWidget = nil

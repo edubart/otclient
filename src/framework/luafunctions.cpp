@@ -60,7 +60,8 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIWidget>("focusChild", &UIWidget::focusChild);
     g_lua.bindClassMemberFunction<UIWidget>("focusNextChild", &UIWidget::focusNextChild);
     g_lua.bindClassMemberFunction<UIWidget>("focusPreviousChild", &UIWidget::focusPreviousChild);
-    g_lua.bindClassMemberFunction<UIWidget>("moveChildToTop", &UIWidget::moveChildToTop);
+    g_lua.bindClassMemberFunction<UIWidget>("lowerChild", &UIWidget::lowerChild);
+    g_lua.bindClassMemberFunction<UIWidget>("raiseChild", &UIWidget::raiseChild);
     g_lua.bindClassMemberFunction<UIWidget>("moveChildToIndex", &UIWidget::moveChildToIndex);
     g_lua.bindClassMemberFunction<UIWidget>("lockChild", &UIWidget::lockChild);
     g_lua.bindClassMemberFunction<UIWidget>("unlockChild", &UIWidget::unlockChild);
@@ -74,6 +75,8 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIWidget>("lock", &UIWidget::lock);
     g_lua.bindClassMemberFunction<UIWidget>("unlock", &UIWidget::unlock);
     g_lua.bindClassMemberFunction<UIWidget>("focus", &UIWidget::focus);
+    g_lua.bindClassMemberFunction<UIWidget>("lower", &UIWidget::lower);
+    g_lua.bindClassMemberFunction<UIWidget>("raise", &UIWidget::raise);
     g_lua.bindClassMemberFunction<UIWidget>("grabMouse", &UIWidget::grabMouse);
     g_lua.bindClassMemberFunction<UIWidget>("ungrabMouse", &UIWidget::ungrabMouse);
     g_lua.bindClassMemberFunction<UIWidget>("grabKeyboard", &UIWidget::grabKeyboard);
@@ -355,6 +358,11 @@ void Application::registerLuaFunctions()
     g_lua.bindClassStaticFunction<UIFrameCounter>("create", []{ return UIFrameCounterPtr(new UIFrameCounter); } );
     g_lua.bindClassMemberFunction<UIFrameCounter>("getFrameCount", &UIFrameCounter::getFrameCount);
 
+    // Protocol
+    g_lua.registerClass<Protocol>();
+
+    // network manipulation via lua is disabled for a while
+    /*
     // OutputMessage
     g_lua.registerClass<OutputMessage>();
     g_lua.bindClassStaticFunction<OutputMessage>("new", []{ return OutputMessagePtr(new OutputMessage); });
@@ -365,9 +373,8 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<OutputMessage>("addU64", &OutputMessage::addU64);
     g_lua.bindClassMemberFunction<OutputMessage>("addString", (void(OutputMessage::*)(const std::string&))&OutputMessage::addString);
 
-    // Protocol
-    g_lua.registerClass<Protocol>();
     g_lua.bindClassStaticFunction<Protocol>("send", [](const ProtocolPtr proto, OutputMessagePtr msg) { proto->send(*msg.get()); });
+    */
 
     // Application
     g_lua.registerStaticClass("g_app");
@@ -415,7 +422,7 @@ void Application::registerLuaFunctions()
     g_lua.bindClassStaticFunction("g_window", "getPosition", std::bind(&PlatformWindow::getPosition, &g_window));
     g_lua.bindClassStaticFunction("g_window", "getX", std::bind(&PlatformWindow::getX, &g_window));
     g_lua.bindClassStaticFunction("g_window", "getY", std::bind(&PlatformWindow::getY, &g_window));
-    g_lua.bindClassStaticFunction("g_window", "getMousePos", std::bind(&PlatformWindow::getMousePos, &g_window));
+    g_lua.bindClassStaticFunction("g_window", "getMousePosition", std::bind(&PlatformWindow::getMousePosition, &g_window));
     g_lua.bindClassStaticFunction("g_window", "getKeyboardModifiers", std::bind(&PlatformWindow::getKeyboardModifiers, &g_window));
     g_lua.bindClassStaticFunction("g_window", "isKeyPressed", std::bind(&PlatformWindow::isKeyPressed, &g_window, _1));
     g_lua.bindClassStaticFunction("g_window", "isVisible", std::bind(&PlatformWindow::isVisible, &g_window));

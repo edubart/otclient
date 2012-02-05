@@ -1,7 +1,0 @@
-Module
-  name: playground
-  autoLoad: true
-  autoLoadAntecedence: 1000
-  onLoad: |
-    require 'playground'
-

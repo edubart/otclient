@@ -9,7 +9,7 @@ function About.init()
 end
 
 function About.display()
-  aboutWindow = displayUI('about.otui', { locked = true })
+  displayUI('about.otui', { locked = true })
 end
 
 function About.terminate()

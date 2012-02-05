@@ -15,9 +15,9 @@ function Client.init()
 
     -- window position, default is the screen center
     local displaySize = g_window.getDisplaySize()
-    local pos = { x = (displaySize.width - size.width)/2,
-                  y = (displaySize.height - size.height)/2 }
-    pos = Settings.getPoint('window-pos', pos)
+    local defaultPos = { x = (displaySize.width - size.width)/2,
+                         y = (displaySize.height - size.height)/2 }
+    local pos = Settings.getPoint('window-pos', defaultPos)
     g_window.move(pos)
 
     -- window maximized?

@@ -73,7 +73,7 @@ void Application::init(const std::vector<std::string>& args, int appFlags)
     signal(SIGTERM, exitSignalHandler);
     signal(SIGINT, exitSignalHandler);
 
-#ifdef HANDLE_EXCEPTIONS
+#ifdef CRASH_HANDLER
     installCrashHandler();
 #endif
 
@@ -119,6 +119,8 @@ void Application::init(const std::vector<std::string>& args, int appFlags)
 
 void Application::terminate()
 {
+    g_lua.callGlobalField("g_app", "onTerminate");
+
     // hide the window because there is no render anymore
     if(m_appFlags & Fw::AppEnableGraphics)
         g_window.hide();
@@ -160,6 +162,8 @@ void Application::terminate()
 
 void Application::run()
 {
+    g_lua.callGlobalField("g_app", "onRun");
+
     ticks_t lastPollTicks = g_clock.updateTicks();
     m_stopping = false;
     m_running = true;

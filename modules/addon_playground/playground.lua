@@ -1,2 +1,0 @@
--- place any code for testing purposes here
---scheduleEvent(function() dumpWidgets() end, 100)
