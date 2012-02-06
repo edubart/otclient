@@ -1,0 +1,14 @@
+Module
+  name: client_tibiafiles
+  description: Contains tibia spr and dat
+  unloadable: false
+  autoload: true
+  autoload-antecedence: 170
+
+  onLoad: |
+    if not g_thingsType.load('/client_tibiafiles/Tibia.dat') then
+      fatal("Unable to load dat file, please place a valid Tibia dat in modules/client_tibiafiles/Tibia.dat")
+    end
+    if not g_sprites.load('/client_tibiafiles/Tibia.spr') then
+      fatal("Unable to load spr file, please place a valid Tibia spr in modules/client_tibiafiles/Tibia.spr")
+    end
