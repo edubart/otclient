@@ -554,15 +554,17 @@ void UIWidget::destroy()
 
 #ifdef DEBUG
     auto self = asUIWidget();
-    g_lua.collectGarbage();
-    g_dispatcher.addEvent([self] {
+    if(self != g_ui.getRootWidget()) {
         g_lua.collectGarbage();
         g_dispatcher.addEvent([self] {
             g_lua.collectGarbage();
-            if(self->getUseCount() != 1)
-                logWarning("widget '", self->getId(), "' destroyed but still have ", self->getUseCount()-1, " reference(s) left");
+            g_dispatcher.addEvent([self] {
+                g_lua.collectGarbage();
+                if(self->getUseCount() != 1)
+                    logWarning("widget '", self->getId(), "' destroyed but still have ", self->getUseCount()-1, " reference(s) left");
+            });
         });
-    });
+    }
 #endif
 
     m_destroyed = true;
@@ -853,9 +855,9 @@ UIWidgetPtr UIWidget::getChildById(const std::string& childId)
 UIWidgetPtr UIWidget::getChildByPos(const Point& childPos)
 {
     for(auto it = m_children.rbegin(); it != m_children.rend(); ++it) {
-        const UIWidgetPtr& widget = (*it);
-        if(widget->isExplicitlyVisible() && widget->containsPoint(childPos))
-            return widget;
+        const UIWidgetPtr& child = (*it);
+        if(child->isExplicitlyVisible() && child->containsPoint(childPos))
+            return child;
     }
 
     return nullptr;
@@ -884,7 +886,8 @@ UIWidgetPtr UIWidget::recursiveGetChildById(const std::string& id)
 
 UIWidgetPtr UIWidget::recursiveGetChildByPos(const Point& childPos)
 {
-    for(const UIWidgetPtr& child : m_children) {
+    for(auto it = m_children.rbegin(); it != m_children.rend(); ++it) {
+        const UIWidgetPtr& child = (*it);
         if(child->isExplicitlyVisible() && child->containsPoint(childPos)) {
             if(UIWidgetPtr subChild = child->recursiveGetChildByPos(childPos))
                 return subChild;
@@ -1280,9 +1283,9 @@ bool UIWidget::propagateOnKeyPress(uchar keyCode, int keyboardModifiers, int aut
             return true;
     }
 
-    if(autoRepeatTicks == 0 || autoRepeatTicks >= m_autoRepeatDelay) {
+    if(autoRepeatTicks == 0 || autoRepeatTicks >= m_autoRepeatDelay)
         return onKeyPress(keyCode, keyboardModifiers, autoRepeatTicks);
-    } else
+    else
         return false;
 }
 

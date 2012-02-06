@@ -3,6 +3,8 @@ Module
   description: Manages enter game and character list windows
   author: OTClient team
   website: https://github.com/edubart/otclient
+  autoload: true
+  autoload-antecedence: 150
 
   onLoad: |
     dofile 'entergame'

@@ -33,7 +33,7 @@ public:
     Event(const SimpleCallback& callback) : m_callback(callback), m_canceled(false), m_executed(false) { }
 
     void execute() {
-        if(!m_canceled && !m_executed) {
+        if(!m_canceled && !m_executed && m_callback) {
             m_callback();
             m_executed = true;
         }

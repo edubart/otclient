@@ -45,14 +45,6 @@ function quit()
   exit()
 end
 
-function reloadModule(name)
-  local module = g_modules.getModule(name)
-  if module then
-    module:unload()
-    module:load()
-  end
-end
-
 function autoReloadModule(name)
   local function reloadEvent()
     reloadModule(name)

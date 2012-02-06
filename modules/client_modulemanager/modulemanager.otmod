@@ -3,6 +3,12 @@ Module
   description: Manage other modules
   author: OTClient team
   website: https://github.com/edubart/otclient
+  autoload: true
+  autoload-antecedence: 140
+
+  dependencies:
+    - client_topmenu
+
   onLoad: |
     dofile 'modulemanager'
     ModuleManager.init()

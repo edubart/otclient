@@ -48,8 +48,16 @@ bool FontManager::importFont(std::string fontFile)
         OTMLNodePtr fontNode = doc->at("Font");
 
         std::string name = fontNode->valueAt("name");
-        if(fontExists(name))
-            Fw::throwException("font '", name, "' already exists, cannot have duplicate font names");
+        //if(fontExists(name))
+        //    Fw::throwException("font '", name, "' already exists, cannot have duplicate font names");
+
+        // remove any font with the same name
+        for(auto it = m_fonts.begin(); it != m_fonts.end(); ++it) {
+            if((*it)->getName() == name) {
+                m_fonts.erase(it);
+                break;
+            }
+        }
 
         FontPtr font(new Font(name));
         font->load(fontNode);

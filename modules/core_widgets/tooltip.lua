@@ -6,6 +6,8 @@ local currentHoveredWidget
 
 -- private functions
 local function moveToolTip(tooltip)
+  if not tooltip:isVisible() then return end
+
   local pos = g_window.getMousePosition()
   pos.y = pos.y + 1
   local xdif = g_window.getSize().width - (pos.x + tooltip:getWidth())
@@ -17,28 +19,6 @@ local function moveToolTip(tooltip)
   tooltip:setPosition(pos)
 end
 
--- public functions
-function ToolTip.display(text)
-  if text == nil then return end
-  ToolTip.hide()
-  toolTipLabel = createWidget('Label', rootWidget)
-  toolTipLabel:setId('toolTip')
-  toolTipLabel:setBackgroundColor('#111111bb')
-  toolTipLabel:setText(text)
-  toolTipLabel:resizeToText()
-  toolTipLabel:resize(toolTipLabel:getWidth() + 4, toolTipLabel:getHeight() + 4)
-  toolTipLabel.onMouseMove = moveToolTip
-  moveToolTip(toolTipLabel)
-end
-
-function ToolTip.hide()
-  if toolTipLabel then
-    toolTipLabel:destroy()
-    toolTipLabel = nil
-  end
-end
-
--- UIWidget hooks
 local function onWidgetHoverChange(widget, hovered)
   if hovered then
     if widget.tooltip then
@@ -59,8 +39,39 @@ local function onWidgetStyleApply(widget, styleName, styleNode)
   end
 end
 
-connect(UIWidget, {  onStyleApply = onWidgetStyleApply,
-                     onHoverChange = onWidgetHoverChange})
+-- public functions
+function ToolTip.init()
+  toolTipLabel = createWidget('Label', rootWidget)
+  toolTipLabel:setId('toolTip')
+  toolTipLabel:setBackgroundColor('#111111bb')
+  connect(toolTipLabel, { onMouseMove = moveToolTip })
+
+  connect(UIWidget, {  onStyleApply = onWidgetStyleApply,
+                       onHoverChange = onWidgetHoverChange})
+end
+
+function ToolTip.terminate()
+  disconnect(UIWidget, { onStyleApply = onWidgetStyleApply,
+                         onHoverChange = onWidgetHoverChange })
+
+  currentHoveredWidget = nil
+  toolTipLabel:destroy()
+  toolTipLabel = nil
+end
+
+function ToolTip.display(text)
+  if text == nil then return end
+  toolTipLabel:setText(text)
+  toolTipLabel:resizeToText()
+  toolTipLabel:resize(toolTipLabel:getWidth() + 4, toolTipLabel:getHeight() + 4)
+  toolTipLabel:show()
+  toolTipLabel:raise()
+  moveToolTip(toolTipLabel)
+end
+
+function ToolTip.hide()
+  toolTipLabel:hide()
+end
 
 -- UIWidget extensions
 function UIWidget:setTooltip(text)

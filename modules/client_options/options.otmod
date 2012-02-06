@@ -3,6 +3,11 @@ Module
   description: Create the options window
   author: OTClient team
   website: https://github.com/edubart/otclient
+  autoload: true
+  autoload-antecedence: 130
+
+  dependencies:
+    - client_topmenu
 
   onLoad: |
     dofile 'options'

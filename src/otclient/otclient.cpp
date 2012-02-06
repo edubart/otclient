@@ -37,11 +37,18 @@ void OTClient::init(const std::vector<std::string>& args)
     Application::init(args, Fw::AppEnableAll);
 
     g_modules.discoverModules();
-    g_modules.autoLoadModules(100);
-    g_modules.ensureModuleLoaded("client");
-    g_modules.autoLoadModules(1000);
 
-    //g_map.load();
+    // core modules 0-99
+    g_modules.autoLoadModules(99);
+    g_modules.ensureModuleLoaded("core_lib");
+    // client modules 100-499
+    g_modules.autoLoadModules(499);
+    g_modules.ensureModuleLoaded("client_main");
+    // game modules 500-999
+    g_modules.autoLoadModules(999);
+    g_modules.ensureModuleLoaded("game");
+    // addons 1000-9999
+    g_modules.autoLoadModules(9999);
 
     // load otclientrc.lua
     if(g_resources.fileExists("/otclientrc.lua")) {

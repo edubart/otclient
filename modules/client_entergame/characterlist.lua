@@ -42,11 +42,11 @@ local function tryLogin(charInfo, tries)
   Game.loginWorld(EnterGame.account, EnterGame.password, charInfo.worldHost, charInfo.worldPort, charInfo.characterName)
 
   loadBox = displayCancelBox('Please wait', 'Connecting to game server...')
-  function loadBox.onCancel()
-    loadBox = nil
-    Game.cancelLogin()
-    CharacterList.show()
-  end
+  connect(loadBox, { onCancel = function()
+                                  loadBox = nil
+                                  Game.cancelLogin()
+                                  CharacterList.show()
+                                end })
 
   -- save last used character
   Settings.set('lastUsedCharacter', charInfo.characterName)

@@ -47,11 +47,15 @@ void Application::registerLuaFunctions()
 
     // Event
     g_lua.registerClass<Event>();
+    g_lua.bindClassMemberFunction<Event>("cancel", &Event::cancel);
+    g_lua.bindClassMemberFunction<Event>("execute", &Event::execute);
     g_lua.bindClassMemberFunction<Event>("isCanceled", &Event::isCanceled);
     g_lua.bindClassMemberFunction<Event>("isExecuted", &Event::isExecuted);
 
     // ScheduledEvent
     g_lua.registerClass<ScheduledEvent, Event>();
+    g_lua.bindClassMemberFunction<ScheduledEvent>("reamaningTicks", &ScheduledEvent::reamaningTicks);
+    g_lua.bindClassMemberFunction<ScheduledEvent>("ticks", &ScheduledEvent::ticks);
 
     // UIWidget
     g_lua.registerClass<UIWidget>();
@@ -370,6 +374,8 @@ void Application::registerLuaFunctions()
     g_lua.registerClass<Module>();
     g_lua.bindClassMemberFunction<Module>("load", &Module::load);
     g_lua.bindClassMemberFunction<Module>("unload", &Module::unload);
+    g_lua.bindClassMemberFunction<Module>("reload", &Module::reload);
+    g_lua.bindClassMemberFunction<Module>("canUnload", &Module::canUnload);
     g_lua.bindClassMemberFunction<Module>("isLoaded", &Module::isLoaded);
     g_lua.bindClassMemberFunction<Module>("getDescription", &Module::getDescription);
     g_lua.bindClassMemberFunction<Module>("getName", &Module::getName);
@@ -397,6 +403,8 @@ void Application::registerLuaFunctions()
     // Application
     g_lua.registerStaticClass("g_app");
     g_lua.bindClassStaticFunction("g_app", "exit", std::bind(&Application::exit, g_app));
+    g_lua.bindClassStaticFunction("g_app", "isRunning", std::bind(&Application::isRunning, g_app));
+    g_lua.bindClassStaticFunction("g_app", "isStopping", std::bind(&Application::isStopping, g_app));
 
     // ConfigManager
     g_lua.registerStaticClass("g_configs");
@@ -477,6 +485,7 @@ void Application::registerLuaFunctions()
     g_lua.bindClassStaticFunction("g_modules", "discoverModule", std::bind(&ModuleManager::discoverModule, &g_modules, _1));
     g_lua.bindClassStaticFunction("g_modules", "ensureModuleLoaded", std::bind(&ModuleManager::ensureModuleLoaded, &g_modules, _1));
     g_lua.bindClassStaticFunction("g_modules", "unloadModules", std::bind(&ModuleManager::unloadModules, &g_modules));
+    g_lua.bindClassStaticFunction("g_modules", "reloadModules", std::bind(&ModuleManager::reloadModules, &g_modules));
     g_lua.bindClassStaticFunction("g_modules", "getModule", std::bind(&ModuleManager::getModule, &g_modules, _1));
     g_lua.bindClassStaticFunction("g_modules", "getModules", std::bind(&ModuleManager::getModules, &g_modules));
 

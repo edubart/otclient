@@ -3,6 +3,9 @@ Module
   description: Contains ui styles used by other modules
   author: OTClient team
   website: https://github.com/edubart/otclient
+  reloadable: true
+  autoload: true
+  autoload-antecedence: 20
 
   onLoad: |
     importStyle 'styles/buttons.otui'
@@ -20,3 +23,4 @@ Module
     importStyle 'styles/popupmenus.otui'
     importStyle 'styles/comboboxes.otui'
     importStyle 'styles/spinboxes.otui'
+    importStyle 'styles/messagebox.otui'

@@ -61,13 +61,13 @@ void ModuleManager::autoLoadModules(int maxAntecedence)
 void ModuleManager::discoverModulesPath()
 {
     // search for modules directory
-    std::string possibleDirs[] = { "modules",
-                                    g_resources.getBaseDir() + "modules",
-                                    g_resources.getBaseDir() + "../modules",
-                                    g_resources.getBaseDir() + "../share/" + g_app->getAppName() + "/modules",
-                                    "" };
+    std::string possibleModulesDirs[] = { "modules",
+                                          g_resources.getBaseDir() + "modules",
+                                          g_resources.getBaseDir() + "../modules",
+                                          g_resources.getBaseDir() + "../share/" + g_app->getAppName() + "/modules",
+                                           "" };
     bool found = false;
-    for(const std::string& dir : possibleDirs) {
+    for(const std::string& dir : possibleModulesDirs) {
         // try to add module directory
         if(g_resources.addToSearchPath(dir, false)) {
             logInfo("Using modules directory '", dir.c_str(), "'");
@@ -78,6 +78,21 @@ void ModuleManager::discoverModulesPath()
 
     if(!found)
         logFatal("Could not find modules directory");
+
+    // search for addons directory
+    std::string possibleAddonsDirs[] = { "addons",
+                                         g_resources.getBaseDir() + "addons",
+                                         g_resources.getBaseDir() + "../addons",
+                                         g_resources.getBaseDir() + "../addons/" + g_app->getAppName() + "/modules",
+                                         "" };
+    for(const std::string& dir : possibleAddonsDirs) {
+        // try to add module directory
+        if(g_resources.addToSearchPath(dir, false)) {
+            logInfo("Using addons directory '", dir.c_str(), "'");
+            found = true;
+            break;
+        }
+    }
 }
 
 ModulePtr ModuleManager::discoverModule(const std::string& moduleFile)
@@ -99,6 +114,7 @@ ModulePtr ModuleManager::discoverModule(const std::string& moduleFile)
         }
         module->discover(moduleNode);
 
+        // not loaded modules are always in back
         if(push)
             m_modules.push_back(module);
     } catch(Exception& e) {
@@ -116,8 +132,28 @@ void ModuleManager::ensureModuleLoaded(const std::string& moduleName)
 
 void ModuleManager::unloadModules()
 {
-    for(const ModulePtr& module : m_modules)
+    auto modulesBackup = m_modules;
+    for(const ModulePtr& module : modulesBackup)
         module->unload();
+}
+
+void ModuleManager::reloadModules()
+{
+    std::deque<ModulePtr> toLoadList;
+
+    // unload in the reverse direction, try to unload upto 10 times (because of dependencies)
+    for(int i=0;i<10;++i) {
+        auto modulesBackup = m_modules;
+        for(const ModulePtr& module : modulesBackup) {
+            if(module->isLoaded() && module->canUnload()) {
+                module->unload();
+                toLoadList.push_front(module);
+            }
+        }
+    }
+
+    for(const ModulePtr& module : toLoadList)
+        module->load();
 }
 
 ModulePtr ModuleManager::getModule(const std::string& moduleName)
@@ -126,4 +162,15 @@ ModulePtr ModuleManager::getModule(const std::string& moduleName)
         if(module->getName() == moduleName)
             return module;
     return nullptr;
+}
+
+void ModuleManager::updateModuleLoadOrder(ModulePtr module)
+{
+    auto it = std::find(m_modules.begin(), m_modules.end(), module);
+    if(it != m_modules.end())
+        m_modules.erase(it);
+    if(module->isLoaded())
+        m_modules.push_front(module);
+    else
+        m_modules.push_back(module);
 }

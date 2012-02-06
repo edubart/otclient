@@ -74,3 +74,16 @@ function createWidget(style, parent)
   widget:setStyle(style)
   return widget
 end
+
+function reloadModule(name)
+  local module = g_modules.getModule(name)
+  if module then
+    module:reload()
+  end
+end
+
+function reloadModules()
+  g_modules.reloadModules()
+end
+
+

@@ -86,7 +86,10 @@ end
 local function doCommand()
   local currentCommand = commandLineEdit:getText()
   Terminal.executeCommand(currentCommand)
-  commandLineEdit:clearText()
+
+  if commandLineEdit then
+    commandLineEdit:clearText()
+  end
   return true
 end
 

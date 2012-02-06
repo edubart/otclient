@@ -90,13 +90,13 @@ end
 function Game.onLoginError(message)
   CharacterList.destroyLoadBox()
   local errorBox = displayErrorBox("Login Error", "Login error: " .. message)
-  errorBox.onOk = CharacterList.show
+  connect(errorBox, { onOk = CharacterList.show })
 end
 
 function Game.onConnectionError(message)
   CharacterList.destroyLoadBox()
   local errorBox = displayErrorBox("Login Error", "Connection error: " .. message)
-  errorBox.onOk = CharacterList.show
+  connect(errorBox, { onOk = CharacterList.show })
 end
 
 local function onApplicationClose()

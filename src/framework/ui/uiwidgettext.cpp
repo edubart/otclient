@@ -86,7 +86,7 @@ void UIWidget::onFontChange(const std::string& font)
 
 void UIWidget::wrapText()
 {
-    setText(m_font->wrapText(m_text, getWidth()));
+    setText(m_font->wrapText(m_text, getWidth() - m_textOffset.x));
 }
 
 void UIWidget::setText(const std::string& text)

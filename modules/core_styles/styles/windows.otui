@@ -5,22 +5,6 @@ Window < UIWindow
   color: white
   text-offset: 0 2
   text-align: top
-  move-policy: free
-  stackable: true
-  image-source: /core_styles/images/window.png
-  image-border: 4
-  image-border-top: 20
-
-  $disabled:
-    color: #aaaaaa88
-
-Window2 < UIWindow
-  font: verdana-11px-antialised
-  size: 200 200
-  opacity: 1
-  color: white
-  text-offset: 0 2
-  text-align: top
   image-source: /core_styles/images/window.png
   image-border: 4
   image-border-top: 20
@@ -31,7 +15,7 @@ Window2 < UIWindow
   $disabled:
     color: #aaaaaa88
 
-MainWindow < Window2
+MainWindow < Window
   anchors.centerIn: parent
 
 MiniWindow < UIWindow

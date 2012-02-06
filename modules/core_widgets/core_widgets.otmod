@@ -3,6 +3,10 @@ Module
   description: Contains widgets used by other modules
   author: OTClient team
   website: https://github.com/edubart/otclient
+  reloadable: true
+  unloadble: false
+  autoload: true
+  autoload-antecedence: 40
 
   onLoad: |
     dofile 'uiwidget'
@@ -16,6 +20,12 @@ Module
     dofile 'uipopupmenu'
     dofile 'uiwindow'
     dofile 'uiitem'
-    dofile 'tooltip/tooltip'
-    dofile 'messagebox/messagebox'
-    
+    dofile 'uimessagebox'
+
+    dofile 'tooltip'
+    --dofile 'messagebox/messagebox'
+
+    ToolTip.init()
+
+  onUnload: |
+    ToolTip.terminate()

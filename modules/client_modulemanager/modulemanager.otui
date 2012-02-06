@@ -3,10 +3,20 @@ ModuleListLabel < Label
   background-color: alpha
   text-offset: 2 0
   focusable: true
+  color: #cccccc
 
   $focus:
-    background-color: #ffffff22
     color: #ffffff
+
+  $on:
+    background-color: #006600
+  $!on:
+    background-color: #660000
+
+  $on focus:
+    background-color: #004400
+  $!on focus:
+    background-color: #440000
 
 ModuleInfoLabel < Label
   $!first:
@@ -19,10 +29,11 @@ ModuleValueLabel < UILabel
   text-offset: 3 0
   image-source: /core_styles/images/panel_flat.png
   image-border: 1
+  height: 16
 
 MainWindow
   id: moduleManagerWindow
-  size: 450 450
+  size: 480 450
   text: Module Manager
 
   @onEscape: ModuleManager.hide()
@@ -38,11 +49,22 @@ MainWindow
     margin-bottom: 30
 
   Button
+    id: refreshModulesButton
     anchors.top: moduleList.bottom
-    anchors.horizontalCenter: moduleList.horizontalCenter
+    anchors.left: moduleList.left
     margin-top: 8
+    width: 80
     text: Refresh
     @onClick: ModuleManager.refreshModules()
+
+  Button
+    id: reloadAllModulesButton
+    anchors.top: moduleList.bottom
+    anchors.right: moduleList.right
+    margin-top: 8
+    width: 80
+    text: Reload All
+    @onClick: ModuleManager.reloadAllModules()
 
   Panel
     id: moduleInfo
@@ -50,9 +72,8 @@ MainWindow
     anchors.top: parent.top
     anchors.right: parent.right
     margin: 0 5 5 15
-    layout:
-      type: verticalBox
-      fit-children: true
+    layout: verticalBox
+    height: 265
 
     ModuleInfoLabel
       text: Module name
@@ -64,11 +85,6 @@ MainWindow
     ModuleValueLabel
       id: moduleDescription
       height: 100
-
-    ModuleInfoLabel
-      text: Loaded
-    ModuleValueLabel
-      id: moduleLoaded
 
     //ModuleInfoLabel
     //  text: Autoload
@@ -97,13 +113,13 @@ MainWindow
       id: moduleVersion
 
   Button
-    id: moduleLoadButton
+    id: moduleReloadButton
     anchors.top: moduleInfo.bottom
     anchors.left: moduleInfo.left
     margin-top: 8
     text: Load
-    enabled: false
-    @onClick: ModuleManager.loadCurrentModule()
+    visible: false
+    @onClick: ModuleManager.reloadCurrentModule()
 
   Button
     id: moduleUnloadButton
@@ -112,6 +128,6 @@ MainWindow
     margin-left: 10
     margin-top: 8
     text: Unload
-    enabled: false
+    visible: false
     @onClick: ModuleManager.unloadCurrentModule()
 

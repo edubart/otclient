@@ -34,5 +34,4 @@ function Client.terminate()
   Settings.set('window-size', g_window.getUnmaximizedSize())
   Settings.set('window-pos', g_window.getUnmaximizedPos())
   Settings.set('window-maximized', g_window.isMaximized())
-  g_window.hide()
 end

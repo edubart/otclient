@@ -1,11 +1,10 @@
 Module
-  name: terminal
+  name: client_terminal
   description: Terminal for executing lua functions
   author: OTClient team
   website: https://github.com/edubart/otclient
-
-  autoLoad: true
-  autoLoadAntecedence: 200
+  autoload: true
+  autoload-antecedence: 160
 
   onLoad: |
     dofile 'terminal'

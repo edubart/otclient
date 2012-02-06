@@ -1,7 +1,0 @@
-Label
-  id: toolTipText
-  background-color: #111111bb
-  size: 200 200
-  id: toolTip
-  focusable: false
-  anchors.centerIn: parent

@@ -8,7 +8,6 @@ local motdMessage
 local motdButton
 local enterGameButton
 
-
 -- private functions
 local function clearAccountFields()
   enterGame:getChildById('accountNameLineEdit'):clearText()
@@ -20,11 +19,13 @@ end
 
 local function onError(protocol, message, connectionError)
   loadBox:destroy()
+  loadBox = nil
+
   if not connectionError then
     clearAccountFields()
   end
   local errorBox = displayErrorBox('Login Error', message)
-  errorBox.onOk = EnterGame.show
+  connect(errorBox, { onOk = EnterGame.show })
 end
 
 local function onMotd(protocol, motd)
@@ -43,13 +44,15 @@ local function onCharacterList(protocol, characters, premDays)
   end
 
   loadBox:destroy()
+  loadBox = nil
+
   CharacterList.create(characters, premDays)
 
   local lastMotdNumber = Settings.getNumber("motd")
   if motdNumber and motdNumber ~= lastMotdNumber then
     Settings.set("motd", motdNumber)
     local motdBox = displayInfoBox("Message of the day", motdMessage)
-    motdBox.onOk = CharacterList.show
+    connect(motdBox, { onOk = CharacterList.show })
     CharacterList.hide()
   end
 end
@@ -76,8 +79,13 @@ function EnterGame.init()
   enterGame:getChildById('rememberPasswordBox'):setChecked(#account > 0)
   enterGame:getChildById('accountNameLineEdit'):focus()
 
-  if #account > 0 and autologin then
-    addEvent(EnterGame.doLogin)
+  -- only open entergame when app starts
+  if not g_app.isRunning() then
+    if #account > 0 and autologin then
+      addEvent(EnterGame.doLogin)
+    end
+  else
+    enterGame:hide()
   end
 end
 
@@ -124,10 +132,11 @@ function EnterGame.doLogin()
   protocolLogin.onCharacterList = onCharacterList
 
   loadBox = displayCancelBox('Please wait', 'Connecting to login server...')
-  loadBox.onCancel = function(msgbox)
-    protocolLogin:cancelLogin()
-    EnterGame.show()
-  end
+  connect(loadBox, { onCancel = function(msgbox)
+                                  loadBox = nil
+                                  protocolLogin:cancelLogin()
+                                  EnterGame.show()
+                                end })
 
   protocolLogin:login(EnterGame.host, EnterGame.port, EnterGame.account, EnterGame.password)
 end

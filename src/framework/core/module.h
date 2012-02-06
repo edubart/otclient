@@ -35,8 +35,12 @@ public:
 
     bool load();
     void unload();
+    bool reload();
 
+    bool canUnload() { return m_loaded && m_unloadable && !isDependent(); }
     bool isLoaded() { return m_loaded; }
+    bool isDependent();
+    bool hasDependency(const std::string& name);
 
     std::string getDescription() { return m_description; }
     std::string getName() { return m_name; }
@@ -46,6 +50,8 @@ public:
     bool isAutoLoad() { return m_autoLoad; }
     int getAutoLoadAntecedence() { return m_autoLoadAntecedence; }
 
+    ModulePtr asModule() { return std::static_pointer_cast<Module>(shared_from_this()); }
+
 protected:
     void discover(const OTMLNodePtr& moduleNode);
     friend class ModuleManager;
@@ -53,6 +59,7 @@ protected:
 private:
     Boolean<false> m_loaded;
     Boolean<false> m_autoLoad;
+    Boolean<true> m_unloadable;
     int m_autoLoadAntecedence;
     std::string m_name;
     std::string m_description;

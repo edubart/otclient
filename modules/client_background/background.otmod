@@ -3,6 +3,8 @@ Module
   description: Handles the background of the login screen
   author: OTClient team
   website: https://github.com/edubart/otclient
+  autoload: true
+  autoload-antecedence: 110
 
   onLoad: |
     dofile 'background'

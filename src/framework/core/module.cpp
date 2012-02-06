@@ -52,8 +52,10 @@ bool Module::load()
     if(m_loadCallback)
         m_loadCallback();
 
-    logInfo("Loaded module '", m_name, "'");
     m_loaded = true;
+    logInfo("Loaded module '", m_name, "'");
+    g_modules.updateModuleLoadOrder(asModule());
+
     return true;
 }
 
@@ -63,7 +65,31 @@ void Module::unload()
         if(m_unloadCallback)
             m_unloadCallback();
         m_loaded = false;
+        logInfo("Unloaded module '", m_name, "'");
+        g_modules.updateModuleLoadOrder(asModule());
     }
+}
+
+bool Module::reload()
+{
+    unload();
+    return load();
+}
+
+bool Module::isDependent()
+{
+    for(const ModulePtr& module : g_modules.getModules()) {
+        if(module->isLoaded() && module->hasDependency(m_name))
+            return true;
+    }
+    return false;
+}
+
+bool Module::hasDependency(const std::string& name)
+{
+    if(std::find(m_dependencies.begin(), m_dependencies.end(), name) != m_dependencies.end())
+        return true;
+    return false;
 }
 
 void Module::discover(const OTMLNodePtr& moduleNode)
@@ -73,8 +99,9 @@ void Module::discover(const OTMLNodePtr& moduleNode)
     m_author = moduleNode->valueAt("author", none);
     m_website = moduleNode->valueAt("website", none);
     m_version = moduleNode->valueAt("version", none);
-    m_autoLoad = moduleNode->valueAt<bool>("autoLoad", false);
-    m_autoLoadAntecedence = moduleNode->valueAt<int>("autoLoadAntecedence", 100);
+    m_autoLoad = moduleNode->valueAt<bool>("autoload", false);
+    m_unloadable = moduleNode->valueAt<bool>("unloadable", true);
+    m_autoLoadAntecedence = moduleNode->valueAt<int>("autoload-antecedence", 9999);
 
     if(OTMLNodePtr node = moduleNode->get("dependencies")) {
         for(const OTMLNodePtr& tmp : node->children())
@@ -95,4 +122,3 @@ void Module::discover(const OTMLNodePtr& moduleNode)
         m_unloadCallback = g_lua.polymorphicPop<SimpleCallback>();
     }
 }
-

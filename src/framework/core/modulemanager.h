@@ -34,12 +34,18 @@ public:
     ModulePtr discoverModule(const std::string& moduleFile);
     void ensureModuleLoaded(const std::string& moduleName);
     void unloadModules();
+    void reloadModules();
 
     ModulePtr getModule(const std::string& moduleName);
-    std::vector<ModulePtr> getModules() { return m_modules; }
+    std::deque<ModulePtr> getModules() { return m_modules; }
+
+protected:
+    void updateModuleLoadOrder(ModulePtr module);
+
+    friend class Module;
 
 private:
-    std::vector<ModulePtr> m_modules;
+    std::deque<ModulePtr> m_modules;
     std::multimap<int, ModulePtr> m_autoLoadModules;
 };
 

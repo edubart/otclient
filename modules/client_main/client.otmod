@@ -1,0 +1,14 @@
+Module
+  name: client_main
+  description: Initialize the client and setups its main window
+  author: OTClient team
+  website: https://github.com/edubart/otclient
+  autoload: true
+  autoload-antecedence: 100
+
+  onLoad: |
+    dofile 'client'
+    Client.init()
+
+  onUnload: |
+    Client.terminate()

@@ -35,6 +35,28 @@ function connect(object, signalsAndSlots, pushFront)
   end
 end
 
+function disconnect(object, signalsAndSlots)
+  for signal,slot in pairs(signalsAndSlots) do
+    if not object[signal] then
+    elseif type(object[signal]) == 'function' then
+      if object[signal] == slot then
+        object[signal] = nil
+      end
+    elseif type(object[signal]) == 'table' then
+      for k,func in pairs(object[signal]) do
+        if func == slot then
+          table.remove(object[signal], k)
+
+          if #object[signal] == 1 then
+            object[signal] = object[signal][1]
+          end
+          break
+        end
+      end
+    end
+  end
+end
+
 function extends(base)
   local derived = {}
   function derived.internalCreate()
