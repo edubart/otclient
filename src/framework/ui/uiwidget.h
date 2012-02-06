@@ -124,6 +124,7 @@ public:
     void setDragable(bool dragable);
     void setFixedSize(bool fixed);
     void setLastFocusReason(Fw::FocusReason reason);
+    void setAutoRepeatDelay(int delay) { m_autoRepeatDelay = delay; }
 
     bool isVisible();
     bool isChildLocked(const UIWidgetPtr& child);
@@ -177,7 +178,7 @@ protected:
     virtual void onDrop(UIWidgetPtr draggedWidget, const Point& mousePos);
     virtual bool onKeyText(const std::string& keyText);
     virtual bool onKeyDown(uchar keyCode, int keyboardModifiers);
-    virtual bool onKeyPress(uchar keyCode, int keyboardModifiers, bool wouldFilter);
+    virtual bool onKeyPress(uchar keyCode, int keyboardModifiers, int autoRepeatTicks);
     virtual bool onKeyUp(uchar keyCode, int keyboardModifiers);
     virtual bool onMousePress(const Point& mousePos, Fw::MouseButton button);
     virtual bool onMouseRelease(const Point& mousePos, Fw::MouseButton button);
@@ -188,7 +189,7 @@ protected:
 
     bool propagateOnKeyText(const std::string& keyText);
     bool propagateOnKeyDown(uchar keyCode, int keyboardModifiers);
-    bool propagateOnKeyPress(uchar keyCode, int keyboardModifiers, bool wouldFilter);
+    bool propagateOnKeyPress(uchar keyCode, int keyboardModifiers, int autoRepeatTicks);
     bool propagateOnKeyUp(uchar keyCode, int keyboardModifiers);
     bool propagateOnMousePress(const Point& mousePos, Fw::MouseButton button);
     bool propagateOnMouseRelease(const Point& mousePos, Fw::MouseButton button);
@@ -240,6 +241,7 @@ public:
     OTMLNodePtr getStyle() { return m_style; }
     int getChildCount() { return m_children.size(); }
     Fw::FocusReason getLastFocusReason() { return m_lastFocusReason; }
+    int getAutoRepeatDelay() { return m_autoRepeatDelay; }
     std::string getStyleName() { return m_style->tag(); }
 
 
@@ -264,6 +266,7 @@ protected:
     EdgeGroup<int> m_margin;
     EdgeGroup<int> m_padding;
     float m_opacity;
+    int m_autoRepeatDelay;
 
 public:
     void setX(int x) { move(x, getY()); }

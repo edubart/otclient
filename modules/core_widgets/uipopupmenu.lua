@@ -56,8 +56,7 @@ function UIPopupMenu:onMousePress(mousePos, mouseButton)
   return false
 end
 
-function UIPopupMenu:onKeyPress(keyCode, keyboardModifiers, wouldFilter)
-  if wouldFilter then return end
+function UIPopupMenu:onKeyPress(keyCode, keyboardModifiers)
   if keyCode == KeyEscape then
     self:destroy()
     return true

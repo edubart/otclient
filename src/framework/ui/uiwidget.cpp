@@ -36,6 +36,7 @@ UIWidget::UIWidget()
     m_lastFocusReason = Fw::ActiveFocusReason;
     m_states = Fw::DefaultState;
     m_clickTimer.stop();
+    m_autoRepeatDelay = 500;
 
     initBaseStyle();
     initText();
@@ -1152,9 +1153,9 @@ bool UIWidget::onKeyDown(uchar keyCode, int keyboardModifiers)
     return callLuaField<bool>("onKeyDown", keyCode, keyboardModifiers);
 }
 
-bool UIWidget::onKeyPress(uchar keyCode, int keyboardModifiers, bool wouldFilter)
+bool UIWidget::onKeyPress(uchar keyCode, int keyboardModifiers, int autoRepeatTicks)
 {
-    return callLuaField<bool>("onKeyPress", keyCode, keyboardModifiers, wouldFilter);
+    return callLuaField<bool>("onKeyPress", keyCode, keyboardModifiers, autoRepeatTicks);
 }
 
 bool UIWidget::onKeyUp(uchar keyCode, int keyboardModifiers)
@@ -1260,7 +1261,7 @@ bool UIWidget::propagateOnKeyDown(uchar keyCode, int keyboardModifiers)
     return onKeyDown(keyCode, keyboardModifiers);
 }
 
-bool UIWidget::propagateOnKeyPress(uchar keyCode, int keyboardModifiers, bool wouldFilter)
+bool UIWidget::propagateOnKeyPress(uchar keyCode, int keyboardModifiers, int autoRepeatTicks)
 {
     // do a backup of children list, because it may change while looping it
     UIWidgetList children;
@@ -1275,11 +1276,14 @@ bool UIWidget::propagateOnKeyPress(uchar keyCode, int keyboardModifiers, bool wo
     }
 
     for(const UIWidgetPtr& child : children) {
-        if(child->propagateOnKeyPress(keyCode, keyboardModifiers, wouldFilter))
+        if(child->propagateOnKeyPress(keyCode, keyboardModifiers, autoRepeatTicks))
             return true;
     }
 
-    return onKeyPress(keyCode, keyboardModifiers, wouldFilter);
+    if(autoRepeatTicks == 0 || autoRepeatTicks >= m_autoRepeatDelay) {
+        return onKeyPress(keyCode, keyboardModifiers, autoRepeatTicks);
+    } else
+        return false;
 }
 
 bool UIWidget::propagateOnKeyUp(uchar keyCode, int keyboardModifiers)

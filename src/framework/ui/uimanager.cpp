@@ -69,7 +69,7 @@ void UIManager::inputEvent(const InputEvent& event)
             m_keyboardReceiver->propagateOnKeyDown(event.keyCode, event.keyboardModifiers);
             break;
         case Fw::KeyPressInputEvent:
-            m_keyboardReceiver->propagateOnKeyPress(event.keyCode, event.keyboardModifiers, event.wouldFilter);
+            m_keyboardReceiver->propagateOnKeyPress(event.keyCode, event.keyboardModifiers, event.autoRepeatTicks);
             break;
         case Fw::KeyUpInputEvent:
             m_keyboardReceiver->propagateOnKeyUp(event.keyCode, event.keyboardModifiers);

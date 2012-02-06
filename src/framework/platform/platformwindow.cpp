@@ -58,7 +58,7 @@ void PlatformWindow::processKeyDown(Fw::Key keyCode)
     else if(keyCode == Fw::KeyShift)
         m_inputEvent.keyboardModifiers |= Fw::KeyboardShiftModifier;
 
-    m_inputEvent.reset();
+    m_inputEvent.reset(Fw::KeyDownInputEvent);
     m_inputEvent.type = Fw::KeyDownInputEvent;
     m_inputEvent.keyCode = keyCode;
 
@@ -126,7 +126,7 @@ void PlatformWindow::fireKeysPress()
             if(m_onInputEvent) {
                 m_inputEvent.reset(Fw::KeyPressInputEvent);
                 m_inputEvent.keyCode = keyCode;
-                m_inputEvent.wouldFilter = g_clock.ticksElapsed(firstKeyPress) < KEY_PRESS_REPEAT_DELAY;
+                m_inputEvent.autoRepeatTicks = g_clock.ticksElapsed(firstKeyPress);
                 m_onInputEvent(m_inputEvent);
             }
             m_lastKeysPress[keyCode] = g_clock.ticks();

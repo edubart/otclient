@@ -59,7 +59,7 @@ local function determineKeyComboDesc(keyCode, keyboardModifiers)
 end
 
 local function onWidgetKeyDown(widget, keyCode, keyboardModifiers)
-  if keyCode == KeyUnknown then return end
+  if keyCode == KeyUnknown then return false end
   local keyComboDesc = determineKeyComboDesc(keyCode, keyboardModifiers)
   local callback = widget.boundKeyDownCombos[keyComboDesc]
   if callback then
@@ -69,12 +69,12 @@ local function onWidgetKeyDown(widget, keyCode, keyboardModifiers)
   return false
 end
 
-local function onWidgetKeyPress(widget, keyCode, keyboardModifiers, wouldFilter)
+local function onWidgetKeyPress(widget, keyCode, keyboardModifiers, autoRepeatTicks)
   local keyComboDesc = determineKeyComboDesc(keyCode, keyboardModifiers)
-  if keyCode == KeyUnknown then return end
-  local callback = widget.boundKeyPressCombos[keyComboDesc]
-  if callback then
-    callback()
+  if keyCode == KeyUnknown then return false end
+  local comboConf = widget.boundKeyPressCombos[keyComboDesc]
+  if comboConf and (autoRepeatTicks >= comboConf.autoRepeatDelay or autoRepeatTicks == 0) and comboConf.callback then
+    comboConf.callback()
     return true
   end
   return false
@@ -104,12 +104,14 @@ function Keyboard.bindKeyDown(keyComboDesc, callback, widget)
   end
 end
 
-function Keyboard.bindKeyPress(keyComboDesc, callback, widget)
+function Keyboard.bindKeyPress(keyComboDesc, callback, widget, autoRepeatDelay)
+  autoRepeatDelay = autoRepeatDelay or 500
   widget = widget or rootWidget
   connectKeyPressEvent(widget)
   local keyComboDesc = retranslateKeyComboDesc(keyComboDesc)
   if keyComboDesc then
-    widget.boundKeyPressCombos[keyComboDesc] = callback
+    widget.boundKeyPressCombos[keyComboDesc] = { callback = callback, autoRepeatDelay = autoRepeatDelay }
+    widget:setAutoRepeatDelay(math.min(autoRepeatDelay, widget:getAutoRepeatDelay()))
   else
     error('key combo \'' .. keyComboDesc .. '\' is failed')
   end

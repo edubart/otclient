@@ -13,6 +13,9 @@ function ModuleManager.init()
                           ModuleManager.updateModuleInfo(focusedChild:getText())
                         end })
 
+  Keyboard.bindKeyPress('Up', function() moduleList:focusPreviousChild(KeyboardFocusReason) end, moduleManagerWindow)
+  Keyboard.bindKeyPress('Down', function() moduleList:focusNextChild(KeyboardFocusReason) end, moduleManagerWindow)
+
   moduleManagerButton = TopMenu.addButton('moduleManagerButton', 'Module manager', 'modulemanager.png', ModuleManager.toggle)
 
   addEvent(ModuleManager.listModules)

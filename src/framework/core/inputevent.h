@@ -37,8 +37,8 @@ struct InputEvent {
         mouseButton = Fw::MouseNoButton;
         keyCode = Fw::KeyUnknown;
         keyText = "";
+        autoRepeatTicks = 0;
         mouseMoved = Point();
-        wouldFilter = false;
     };
 
     Fw::InputEventType type;
@@ -49,7 +49,7 @@ struct InputEvent {
     int keyboardModifiers;
     Point mousePos;
     Point mouseMoved;
-    bool wouldFilter;
+    int autoRepeatTicks;
 };
 
 #endif

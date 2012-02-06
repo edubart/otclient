@@ -31,7 +31,6 @@ class PlatformWindow
 {
     enum {
         KEY_PRESS_REPEAT_INTERVAL = 30,
-        KEY_PRESS_REPEAT_DELAY = 500
     };
 
     typedef std::function<void(const Size&)> OnResizeCallback;

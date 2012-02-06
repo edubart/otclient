@@ -2,8 +2,7 @@
 local m_mouseGrabberWidget
 
 -- private functions
-local function onGameKeyPress(self, keyCode, keyboardModifiers, wouldFilter)
-  if wouldFilter then return end
+local function onGameKeyPress(self, keyCode, keyboardModifiers)
   if keyboardModifiers == KeyboardCtrlModifier then
     if keyCode == KeyG then
       CharacterList.show()

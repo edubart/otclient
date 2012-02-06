@@ -29,7 +29,7 @@
 class UIGame : public UIWidget
 {
 protected:
-    bool onKeyPress(uchar keyCode, int keyboardModifiers, bool wouldFilter);
+    bool onKeyPress(uchar keyCode, int keyboardModifiers, int autoRepeatTicks);
     bool onKeyText(const std::string& keyText);
 };
 

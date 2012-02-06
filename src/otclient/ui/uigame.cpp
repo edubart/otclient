@@ -25,9 +25,9 @@
 #include <framework/ui/uilineedit.h>
 #include <framework/platform/platformwindow.h>
 
-bool UIGame::onKeyPress(uchar keyCode, int keyboardModifiers, bool wouldFilter)
+bool UIGame::onKeyPress(uchar keyCode, int keyboardModifiers, int autoRepeatTicks)
 {
-    if(UIWidget::onKeyPress(keyCode, keyboardModifiers, wouldFilter))
+    if(UIWidget::onKeyPress(keyCode, keyboardModifiers, autoRepeatTicks))
         return true;
 
     UILineEditPtr chatLineEdit = std::dynamic_pointer_cast<UILineEdit>(getParent()->recursiveGetChildById("consoleLineEdit"));
@@ -58,8 +58,6 @@ bool UIGame::onKeyPress(uchar keyCode, int keyboardModifiers, bool wouldFilter)
         } else if(keyCode == Fw::KeyNumpad7) {
             g_game.walk(Otc::NorthWest);
             return true;
-        } else if(wouldFilter) {
-            return false;
         } else if(keyCode == Fw::KeyDelete) {
             chatLineEdit->removeCharacter(true);
             return true;

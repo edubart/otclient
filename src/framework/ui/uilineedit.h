@@ -63,7 +63,7 @@ protected:
     virtual void onGeometryChange(const Rect& oldRect, const Rect& newRect);
     virtual void onFocusChange(bool focused, Fw::FocusReason reason);
     virtual bool onKeyText(const std::string& keyText);
-    virtual bool onKeyPress(uchar keyCode, int keyboardModifiers, bool wouldFilter);
+    virtual bool onKeyPress(uchar keyCode, int keyboardModifiers, int autoRepeatTicks);
     virtual bool onMousePress(const Point& mousePos, Fw::MouseButton button);
 
 private:
