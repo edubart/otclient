@@ -25,11 +25,11 @@ function Options.init()
   optionsWindow = displayUI('options.otui')
   optionsWindow:setVisible(false)
   optionsButton = TopMenu.addButton('optionsButton', 'Options (Ctrl+O)', 'options.png', Options.toggle)
-  Hotkeys.bindKeyDown('Ctrl+O', Options.toggle)
+  Keyboard.bindKeyDown('Ctrl+O', Options.toggle)
 end
 
 function Options.terminate()
-  Hotkeys.unbindKeyDown('Ctrl+O')
+  Keyboard.unbindKeyDown('Ctrl+O')
   optionsWindow:destroy()
   optionsWindow = nil
   optionsButton:destroy()

@@ -5,21 +5,21 @@ Module
   website: https://github.com/edubart/otclient
 
   onLoad: |
-    require 'ext/table'
-    require 'ext/string'
-    require 'ext/os'
-    require 'math/point'
-    require 'math/size'
-    require 'math/color'
-    require 'math/rect'
-    require 'const'
-    require 'util'
-    require 'globals'
-    require 'dispatcher'
-    require 'effects'
-    require 'settings'
-    require 'hotkeys'
-    require 'cursor'
+    dofile 'ext/table'
+    dofile 'ext/string'
+    dofile 'ext/os'
+    dofile 'math/point'
+    dofile 'math/size'
+    dofile 'math/color'
+    dofile 'math/rect'
+    dofile 'const'
+    dofile 'util'
+    dofile 'globals'
+    dofile 'dispatcher'
+    dofile 'effects'
+    dofile 'settings'
+    dofile 'keyboard'
+    dofile 'mouse'
 
   onUnload: |
     rootWidget = nil

@@ -114,7 +114,3 @@ function signalcall(param, ...)
   end
   return false
 end
-
-function runscript(file)
-  g_lua.runScript(resolvepath(file, 2))
-end

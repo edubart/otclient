@@ -3,6 +3,7 @@ Module
   description: Load all other otclient dependecies
   author: OTClient team
   website: https://github.com/edubart/otclient
+  canUnload: false
 
   // NOTE: order does matter
   dependencies:
@@ -16,7 +17,7 @@ Module
     - game
 
   onLoad: |
-    require 'client'
+    dofile 'client'
     Client.init()
 
   onUnload: |

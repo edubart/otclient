@@ -32,7 +32,7 @@ local function onUseWithMouseRelease(self, mousePosition, mouseButton)
     end
   end
   Game.selectedThing = nil
-  restoreCursor()
+  Mouse.restoreCursor()
   self:ungrabMouse()
   return true
 end
@@ -41,7 +41,7 @@ end
 function Game.startUseWith(thing)
   Game.selectedThing = thing
   m_mouseGrabberWidget:grabMouse()
-  setTargetCursor()
+  Mouse.setTargetCursor()
 end
 
 function Game.createInterface()
@@ -49,15 +49,15 @@ function Game.createInterface()
   CharacterList.destroyLoadBox()
   Game.gameUi = displayUI('game.otui')
 
-  --Hotkeys.bindKeyPress('Up', function() Game.walk(North) end)
-  --Hotkeys.bindKeyPress('Down', function() Game.walk(South) end)
-  --Hotkeys.bindKeyPress('Left', function() Game.walk(West) end)
-  --Hotkeys.bindKeyPress('Right', function() Game.walk(East) end)
+  --Keyboard.bindKeyPress('Up', function() Game.walk(North) end)
+  --Keyboard.bindKeyPress('Down', function() Game.walk(South) end)
+  --Keyboard.bindKeyPress('Left', function() Game.walk(West) end)
+  --Keyboard.bindKeyPress('Right', function() Game.walk(East) end)
 
-  Hotkeys.bindKeyPress('Ctrl+Shift+Up', function() Game.forceWalk(North) end)
-  Hotkeys.bindKeyPress('Ctrl+Shift+Down', function() Game.forceWalk(South) end)
-  Hotkeys.bindKeyPress('Ctrl+Shift+Left', function() Game.forceWalk(West) end)
-  Hotkeys.bindKeyPress('Ctrl+Shift+Right', function() Game.forceWalk(East) end)
+  Keyboard.bindKeyPress('Ctrl+Shift+Up', function() Game.forceWalk(North) end)
+  Keyboard.bindKeyPress('Ctrl+Shift+Down', function() Game.forceWalk(South) end)
+  Keyboard.bindKeyPress('Ctrl+Shift+Left', function() Game.forceWalk(West) end)
+  Keyboard.bindKeyPress('Ctrl+Shift+Right', function() Game.forceWalk(East) end)
 
   rootWidget:moveChildToIndex(Game.gameUi, 1)
   Game.gameMapPanel = Game.gameUi:getChildById('gameMapPanel')

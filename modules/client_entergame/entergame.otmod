@@ -5,8 +5,8 @@ Module
   website: https://github.com/edubart/otclient
 
   onLoad: |
-    require 'entergame'
-    require 'characterlist'
+    dofile 'entergame'
+    dofile 'characterlist'
     EnterGame.init()
 
   onUnload: |

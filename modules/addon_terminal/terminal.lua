@@ -108,15 +108,15 @@ function Terminal.init()
   terminalWidget:setVisible(false)
 
   terminalButton = TopMenu.addButton('terminalButton', 'Terminal (Ctrl + T)', 'terminal.png', Terminal.toggle)
-  Hotkeys.bindKeyDown('Ctrl+T', Terminal.toggle)
+  Keyboard.bindKeyDown('Ctrl+T', Terminal.toggle)
 
   commandHistory = Settings.getList('terminal-history')
 
   commandLineEdit = terminalWidget:getChildById('commandLineEdit')
-  Hotkeys.bindKeyDown('Up', function() navigateCommand(1) end, commandLineEdit)
-  Hotkeys.bindKeyDown('Down', function() navigateCommand(-1) end, commandLineEdit)
-  Hotkeys.bindKeyDown('Tab', completeCommand, commandLineEdit)
-  Hotkeys.bindKeyDown('Enter', doCommand, commandLineEdit)
+  Keyboard.bindKeyDown('Up', function() navigateCommand(1) end, commandLineEdit)
+  Keyboard.bindKeyDown('Down', function() navigateCommand(-1) end, commandLineEdit)
+  Keyboard.bindKeyDown('Tab', completeCommand, commandLineEdit)
+  Keyboard.bindKeyDown('Enter', doCommand, commandLineEdit)
 
   terminalBuffer = terminalWidget:getChildById('terminalBuffer')
   Logger.setOnLog(onLog)
@@ -125,7 +125,7 @@ end
 
 function Terminal.terminate()
   Settings.setList('terminal-history', commandHistory)
-  Hotkeys.unbindKeyDown('Ctrl+T')
+  Keyboard.unbindKeyDown('Ctrl+T')
   Logger.setOnLog(nil)
   terminalButton:destroy()
   terminalButton = nil

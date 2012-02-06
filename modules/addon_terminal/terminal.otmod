@@ -8,8 +8,8 @@ Module
   autoLoadAntecedence: 200
 
   onLoad: |
-    require 'terminal'
-    require 'commands'
+    dofile 'terminal'
+    dofile 'commands'
     Terminal.init()
 
   onUnload: |

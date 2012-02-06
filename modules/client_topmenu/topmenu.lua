@@ -23,11 +23,11 @@ function TopMenu.init()
   gameButtonsPanel = topMenu:getChildById('gameButtonsPanel')
 
   TopMenu.addRightButton('logoutButton', 'Logout (Ctrl+Q)', '/core_styles/icons/logout.png', onLogout)
-  Hotkeys.bindKeyDown('Ctrl+Q', onLogout)
+  Keyboard.bindKeyDown('Ctrl+Q', onLogout)
 end
 
 function TopMenu.terminate()
-  Hotkeys.unbindKeyDown('Ctrl+Q')
+  Keyboard.unbindKeyDown('Ctrl+Q')
   leftButtonsPanel = nil
   rightButtonsPanel = nil
   gameButtonsPanel = nil
@@ -71,16 +71,6 @@ function TopMenu.addRightButton(id, description, icon, callback)
   return TopMenu.addButton(id, description, resolvepath(icon, 2), callback, true)
 end
 
-function TopMenu.removeButton(param)
-  local button
-  if type(param) == 'string' then
-    button = TopMenu.getButton(param)
-  else
-    button = param
-  end
-  button:destroy()
-end
-
 function TopMenu.hideGameButtons()
   gameButtonsPanel:hide()
 end
@@ -93,10 +83,5 @@ function TopMenu.getButton(id)
   return topMenu:recursiveGetChildById(id)
 end
 
-function TopMenu:getLogoutButton(id)
-  return TopMenu.getButton('logoutButton')
-end
-
-
 connect(Game, { onLogin = TopMenu.showGameButtons,
-                onLogout = TopMenu.hideGameButtons})
+                onLogout = TopMenu.hideGameButtons })

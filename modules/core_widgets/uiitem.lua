@@ -8,7 +8,7 @@ function UIItem:onDragEnter(mousePos)
 
   self.parsed = false
   self.currentDragThing = item
-  setTargetCursor()
+  Mouse.setTargetCursor()
   return true
 end
 
@@ -19,7 +19,7 @@ function UIItem:onDragLeave(widget, mousePos)
     self.currentDragThing = nil
   end
 
-  restoreCursor()
+  Mouse.restoreCursor()
   self:setBorderWidth(0)
   return true
 end

@@ -4,4 +4,4 @@ Module
   author: OTClient team
   website: https://github.com/edubart/otclient
   onLoad: |
-    require 'combatcontrols'
+    dofile 'combatcontrols'

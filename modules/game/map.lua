@@ -7,7 +7,7 @@ function UIMap:onDragEnter(mousePos)
 
   self.parsed = false
   self.currentDragThing = thing
-  setTargetCursor()
+  Mouse.setTargetCursor()
   return true
 end
 
@@ -16,7 +16,7 @@ function UIMap:onDragLeave(widget, mousePos)
     self.currentDragThing = nil
   end
 
-  restoreCursor()
+  Mouse.restoreCursor()
   return true
 end
 

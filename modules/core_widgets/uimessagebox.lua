@@ -1,3 +1,4 @@
+--[[
 UIMessageBox = extends(UIWindow)
 
 function UIMessageBox.create(title, message)
@@ -19,5 +20,4 @@ end
 
 function UIMessageBox:setMessage(message)
 end
-
-function
+]]--

@@ -9,11 +9,11 @@ function Inventory.create()
   inventoryWindow = displayUI('inventory.otui', { parent = Game.gameRightPanel })
   inventoryButton = TopMenu.addGameButton('inventoryButton', 'Inventory (Ctrl+I)', 'inventory.png', Inventory.toggle)
   inventoryButton:setOn(true)
-  Hotkeys.bindKeyDown('Ctrl+I', Inventory.toggle)
+  Keyboard.bindKeyDown('Ctrl+I', Inventory.toggle)
 end
 
 function Inventory.destroy()
-  Hotkeys.unbindKeyDown('Ctrl+I')
+  Keyboard.unbindKeyDown('Ctrl+I')
   inventoryWindow:destroy()
   inventoryWindow = nil
   inventoryButton:destroy()

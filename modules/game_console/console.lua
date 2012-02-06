@@ -88,11 +88,11 @@ function Console.create()
   Console.addChannel('Default', 0)
   Console.addTab('Server Log', false)
 
-  Hotkeys.bindKeyDown('Shift+Up', function() navigateMessageHistory(1) end, consolePanel)
-  Hotkeys.bindKeyDown('Shift+Down', function() navigateMessageHistory(-1) end, consolePanel)
-  Hotkeys.bindKeyDown('Tab', function() consoleTabBar:selectNextTab() end, consolePanel)
-  Hotkeys.bindKeyDown('Shift+Tab', function() consoleTabBar:selectPrevTab() end, consolePanel)
-  Hotkeys.bindKeyDown('Enter', Console.sendCurrentMessage, consolePanel)
+  Keyboard.bindKeyDown('Shift+Up', function() navigateMessageHistory(1) end, consolePanel)
+  Keyboard.bindKeyDown('Shift+Down', function() navigateMessageHistory(-1) end, consolePanel)
+  Keyboard.bindKeyDown('Tab', function() consoleTabBar:selectNextTab() end, consolePanel)
+  Keyboard.bindKeyDown('Shift+Tab', function() consoleTabBar:selectPrevTab() end, consolePanel)
+  Keyboard.bindKeyDown('Enter', Console.sendCurrentMessage, consolePanel)
 
   -- apply buttom functions after loaded
   connect(consolePanel:getChildById('nextChannelButton'), { onClick = function() consoleTabBar:selectNextTab() end } )
@@ -100,8 +100,8 @@ function Console.create()
   connect(consoleTabBar, { onTabChange = Console.onTabChange })
 
   -- tibia like hotkeys
-  Hotkeys.bindKeyDown('Ctrl+O', Game.requestChannels)
-  Hotkeys.bindKeyDown('Ctrl+E', Console.removeCurrentTab)
+  Keyboard.bindKeyDown('Ctrl+O', Game.requestChannels)
+  Keyboard.bindKeyDown('Ctrl+E', Console.removeCurrentTab)
 end
 
 function Console.destroy()

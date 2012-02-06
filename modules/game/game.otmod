@@ -15,8 +15,8 @@ Module
     - game_containers
 
   onLoad: |
-    require 'game'
-    require 'thing'
-    require 'creature'
-    require 'player'
-    require 'map'
+    dofile 'game'
+    dofile 'thing'
+    dofile 'creature'
+    dofile 'player'
+    dofile 'map'
