@@ -75,6 +75,8 @@ game/graphics window with options
 do lua game event calls from Game instead from GameProtocol
 
 auto walk
+minimap window
+
 login queue
 questlog
 edit texts
@@ -82,4 +84,3 @@ trade window
 shop window
 battle window
 hotkeys window
-minimap window

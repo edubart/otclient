@@ -221,7 +221,7 @@ namespace Fw
 
     enum FocusReason {
         MouseFocusReason = 0,
-        TabFocusReason,
+        KeyboardFocusReason,
         ActiveFocusReason,
         OtherFocusReason
     };

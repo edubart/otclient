@@ -6,7 +6,7 @@ TopButton < UIButton
   image-color: #ffffffff
   icon-color: #ffffffff
 
-  $hover:
+  $hover !disabled:
     image-color: #ffffff99
     image-clip: 26 0 26 26
 

@@ -1,5 +1,5 @@
 Module
-  name: game_minewindow
+  name: game_miniwindow
   description: Manage game miniwindow
   author: OTClient team
   website: https://github.com/edubart/otclient

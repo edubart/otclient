@@ -25,6 +25,7 @@
 
 #include <framework/global.h>
 
+class ModuleManager;
 class Module;
 class Event;
 class ScheduledEvent;

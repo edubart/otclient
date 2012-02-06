@@ -12,6 +12,7 @@ Module
     - client_about
     - client_options
     - client_entergame
+    - client_modulemanager
     - game
 
   onLoad: |

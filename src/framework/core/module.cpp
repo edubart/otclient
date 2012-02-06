@@ -31,36 +31,6 @@ Module::Module(const std::string& name)
     m_name = name;
 }
 
-void Module::discover(const OTMLNodePtr& moduleNode)
-{
-    const static std::string none = "none";
-    m_description = moduleNode->valueAt("description", none);
-    m_author = moduleNode->valueAt("author", none);
-    m_website = moduleNode->valueAt("website", none);
-    m_version = moduleNode->valueAt("version", none);
-    m_autoLoad = moduleNode->valueAt<bool>("autoLoad", false);
-    m_autoLoadAntecedence = moduleNode->valueAt<int>("autoLoadAntecedence", 100);
-
-    if(OTMLNodePtr node = moduleNode->get("dependencies")) {
-        for(const OTMLNodePtr& tmp : node->children())
-            m_dependencies.push_back(tmp->value());
-    }
-
-    // set onLoad callback
-    if(OTMLNodePtr node = moduleNode->get("onLoad")) {
-        g_lua.loadFunction(node->value(), "@" + node->source() + "[" + node->tag() + "]");
-        g_lua.useValue();
-        m_loadCallback = g_lua.polymorphicPop<SimpleCallback>();
-    }
-
-    // set onUnload callback
-    if(OTMLNodePtr node = moduleNode->get("onUnload")) {
-        g_lua.loadFunction(node->value(), "@" + node->source() + "[" + node->tag() + "]");
-        g_lua.useValue();
-        m_unloadCallback = g_lua.polymorphicPop<SimpleCallback>();
-    }
-}
-
 bool Module::load()
 {
     if(m_loaded)
@@ -95,3 +65,34 @@ void Module::unload()
         m_loaded = false;
     }
 }
+
+void Module::discover(const OTMLNodePtr& moduleNode)
+{
+    const static std::string none = "none";
+    m_description = moduleNode->valueAt("description", none);
+    m_author = moduleNode->valueAt("author", none);
+    m_website = moduleNode->valueAt("website", none);
+    m_version = moduleNode->valueAt("version", none);
+    m_autoLoad = moduleNode->valueAt<bool>("autoLoad", false);
+    m_autoLoadAntecedence = moduleNode->valueAt<int>("autoLoadAntecedence", 100);
+
+    if(OTMLNodePtr node = moduleNode->get("dependencies")) {
+        for(const OTMLNodePtr& tmp : node->children())
+            m_dependencies.push_back(tmp->value());
+    }
+
+    // set onLoad callback
+    if(OTMLNodePtr node = moduleNode->get("onLoad")) {
+        g_lua.loadFunction(node->value(), "@" + node->source() + "[" + node->tag() + "]");
+        g_lua.useValue();
+        m_loadCallback = g_lua.polymorphicPop<SimpleCallback>();
+    }
+
+    // set onUnload callback
+    if(OTMLNodePtr node = moduleNode->get("onUnload")) {
+        g_lua.loadFunction(node->value(), "@" + node->source() + "[" + node->tag() + "]");
+        g_lua.useValue();
+        m_unloadCallback = g_lua.polymorphicPop<SimpleCallback>();
+    }
+}
+

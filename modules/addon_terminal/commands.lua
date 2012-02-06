@@ -1,6 +1,17 @@
-function dumpWidgets()
-  for i=1,rootWidget:getChildCount() do
-    print(rootWidget:getChildByIndex(i):getId())
+function dumpWidgets(widget, level)
+  widget = widget or rootWidget
+  level = level or 0
+  for i=1,widget:getChildCount() do
+    local child = widget:getChildByIndex(i)
+    if child:isVisible() then
+      local name = child:getId()
+      if name:match('widget%d+') == nil then
+        print(string.rep(' ', level) .. name)
+      end
+      if child:getId() ~= 'terminalBuffer' then
+        dumpWidgets(child, level+1)
+      end
+    end
   end
 end
 

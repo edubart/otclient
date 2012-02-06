@@ -219,6 +219,8 @@ void UIWidget::focusChild(const UIWidgetPtr& child, Fw::FocusReason reason)
         oldFocused->updateState(Fw::FocusState);
         oldFocused->updateState(Fw::ActiveState);
     }
+
+    onChildFocusChange(child, oldFocused, reason);
 }
 
 void UIWidget::focusNextChild(Fw::FocusReason reason)
@@ -485,7 +487,6 @@ void UIWidget::lower()
 
 void UIWidget::raise()
 {
-    focus();
     UIWidgetPtr parent = getParent();
     if(parent)
         parent->raiseChild(asUIWidget());
@@ -546,9 +547,7 @@ void UIWidget::destroy()
             parent->removeChild(asUIWidget());
     }
 
-    // destroy children
-    while(!m_children.empty())
-        getFirstChild()->destroy();
+    destroyChildren();
 
     callLuaField("onDestroy");
 
@@ -566,6 +565,12 @@ void UIWidget::destroy()
 #endif
 
     m_destroyed = true;
+}
+
+void UIWidget::destroyChildren()
+{
+    while(!m_children.empty())
+        getFirstChild()->destroy();
 }
 
 void UIWidget::setId(const std::string& id)
@@ -1108,6 +1113,11 @@ void UIWidget::onFocusChange(bool focused, Fw::FocusReason reason)
     callLuaField("onFocusChange", focused, reason);
 }
 
+void UIWidget::onChildFocusChange(const UIWidgetPtr& focusedChild, const UIWidgetPtr& unfocusedChild, Fw::FocusReason reason)
+{
+    callLuaField("onChildFocusChange", focusedChild, unfocusedChild, reason);
+}
+
 void UIWidget::onHoverChange(bool hovered)
 {
     callLuaField("onHoverChange", hovered);
@@ -1168,7 +1178,7 @@ bool UIWidget::onMousePress(const Point& mousePos, Fw::MouseButton button)
 bool UIWidget::onMouseRelease(const Point& mousePos, Fw::MouseButton button)
 {
     if(isPressed() && getRect().contains(mousePos))
-        callLuaField("onClick");
+        onClick(mousePos);
 
     UIWidgetPtr draggedWidget = g_ui.getDraggingWidget();
     if(draggedWidget && button == Fw::MouseLeftButton && (containsPoint(mousePos) || asUIWidget() == g_ui.getRootWidget())) {
@@ -1194,6 +1204,11 @@ bool UIWidget::onMouseMove(const Point& mousePos, const Point& mouseMoved)
 bool UIWidget::onMouseWheel(const Point& mousePos, Fw::MouseWheelDirection direction)
 {
     return callLuaField<bool>("onMouseWheel", mousePos, direction);
+}
+
+bool UIWidget::onClick(const Point& mousePos)
+{
+    return callLuaField<bool>("onClick", mousePos);
 }
 
 bool UIWidget::onDoubleClick(const Point& mousePos)

@@ -8,7 +8,7 @@ CheckBox < UICheckBox
   image-offset: 0 2
   image-source: /core_styles/images/checkbox.png
 
-  $hover:
+  $hover !disabled:
     color: #cccccc
 
   $!checked:
@@ -48,7 +48,7 @@ ButtonBox < UICheckBox
   image-color: white
   image-border: 5
 
-  $hover:
+  $hover !disabled:
     image-source: /core_styles/images/button_hover.png
 
   $checked:

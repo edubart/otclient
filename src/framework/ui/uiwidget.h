@@ -105,6 +105,7 @@ public:
     void ungrabKeyboard();
     void bindRectToParent();
     void destroy();
+    void destroyChildren();
 
     void setId(const std::string& id);
     void setParent(const UIWidgetPtr& parent);
@@ -169,6 +170,7 @@ protected:
     virtual void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode);
     virtual void onGeometryChange(const Rect& oldRect, const Rect& newRect);
     virtual void onFocusChange(bool focused, Fw::FocusReason reason);
+    virtual void onChildFocusChange(const UIWidgetPtr& focusedChild, const UIWidgetPtr& unfocusedChild, Fw::FocusReason reason);
     virtual void onHoverChange(bool hovered);
     virtual void onDragEnter(const Point& mousePos);
     virtual void onDragLeave(UIWidgetPtr droppedWidget, const Point& mousePos);
@@ -181,6 +183,7 @@ protected:
     virtual bool onMouseRelease(const Point& mousePos, Fw::MouseButton button);
     virtual bool onMouseMove(const Point& mousePos, const Point& mouseMoved);
     virtual bool onMouseWheel(const Point& mousePos, Fw::MouseWheelDirection direction);
+    virtual bool onClick(const Point& mousePos);
     virtual bool onDoubleClick(const Point& mousePos);
 
     bool propagateOnKeyText(const std::string& keyText);

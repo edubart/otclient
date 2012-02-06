@@ -7,7 +7,7 @@ Button < UIButton
   image-source: /core_styles/images/button.png
   image-border: 5
 
-  $hover:
+  $hover !disabled:
     image-source: /core_styles/images/button_hover.png
 
   $pressed:

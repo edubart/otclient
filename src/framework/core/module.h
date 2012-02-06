@@ -26,12 +26,12 @@
 #include "declarations.h"
 
 #include <framework/otml/declarations.h>
+#include <framework/luascript/luaobject.h>
 
-class Module
+class Module : public LuaObject
 {
 public:
     Module(const std::string& name);
-    void discover(const OTMLNodePtr& moduleNode);
 
     bool load();
     void unload();
@@ -45,6 +45,10 @@ public:
     std::string getVersion() { return m_version; }
     bool isAutoLoad() { return m_autoLoad; }
     int getAutoLoadAntecedence() { return m_autoLoadAntecedence; }
+
+protected:
+    void discover(const OTMLNodePtr& moduleNode);
+    friend class ModuleManager;
 
 private:
     Boolean<false> m_loaded;

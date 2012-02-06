@@ -30,6 +30,8 @@
 #include <framework/otml/otml.h>
 #include <framework/graphics/graphics.h>
 #include <framework/platform/platformwindow.h>
+#include <framework/core/modulemanager.h>
+#include <framework/core/module.h>
 
 void Application::registerLuaFunctions()
 {
@@ -83,6 +85,7 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIWidget>("ungrabKeyboard", &UIWidget::ungrabKeyboard);
     g_lua.bindClassMemberFunction<UIWidget>("bindRectToParent", &UIWidget::bindRectToParent);
     g_lua.bindClassMemberFunction<UIWidget>("destroy", &UIWidget::destroy);
+    g_lua.bindClassMemberFunction<UIWidget>("destroyChildren", &UIWidget::destroyChildren);
     g_lua.bindClassMemberFunction<UIWidget>("setId", &UIWidget::setId);
     g_lua.bindClassMemberFunction<UIWidget>("setParent", &UIWidget::setParent);
     g_lua.bindClassMemberFunction<UIWidget>("setLayout", &UIWidget::setLayout);
@@ -361,6 +364,19 @@ void Application::registerLuaFunctions()
     // Protocol
     g_lua.registerClass<Protocol>();
 
+    // Module
+    g_lua.registerClass<Module>();
+    g_lua.bindClassMemberFunction<Module>("load", &Module::load);
+    g_lua.bindClassMemberFunction<Module>("unload", &Module::unload);
+    g_lua.bindClassMemberFunction<Module>("isLoaded", &Module::isLoaded);
+    g_lua.bindClassMemberFunction<Module>("getDescription", &Module::getDescription);
+    g_lua.bindClassMemberFunction<Module>("getName", &Module::getName);
+    g_lua.bindClassMemberFunction<Module>("getAuthor", &Module::getAuthor);
+    g_lua.bindClassMemberFunction<Module>("getWebsite", &Module::getWebsite);
+    g_lua.bindClassMemberFunction<Module>("getVersion", &Module::getVersion);
+    g_lua.bindClassMemberFunction<Module>("isAutoLoad", &Module::isAutoLoad);
+    g_lua.bindClassMemberFunction<Module>("getAutoLoadAntecedence", &Module::getAutoLoadAntecedence);
+
     // network manipulation via lua is disabled for a while
     /*
     // OutputMessage
@@ -450,6 +466,17 @@ void Application::registerLuaFunctions()
     g_lua.bindClassStaticFunction("g_ui", "getDraggingWidget", std::bind(&UIManager::getDraggingWidget, &g_ui));
     g_lua.bindClassStaticFunction("g_ui", "setDebugBoxesDrawing", std::bind(&UIManager::setDebugBoxesDrawing, &g_ui, _1));
     g_lua.bindClassStaticFunction("g_ui", "isDrawingDebugBoxes", std::bind(&UIManager::setDebugBoxesDrawing, &g_ui, _1));
+
+    // ModuleManager
+    g_lua.registerStaticClass("g_modules");
+    g_lua.bindClassStaticFunction("g_modules", "discoverModulesPath", std::bind(&ModuleManager::discoverModulesPath, &g_modules));
+    g_lua.bindClassStaticFunction("g_modules", "discoverModules", std::bind(&ModuleManager::discoverModules, &g_modules));
+    g_lua.bindClassStaticFunction("g_modules", "autoLoadModules", std::bind(&ModuleManager::autoLoadModules, &g_modules, _1));
+    g_lua.bindClassStaticFunction("g_modules", "discoverModule", std::bind(&ModuleManager::discoverModule, &g_modules, _1));
+    g_lua.bindClassStaticFunction("g_modules", "ensureModuleLoaded", std::bind(&ModuleManager::ensureModuleLoaded, &g_modules, _1));
+    g_lua.bindClassStaticFunction("g_modules", "unloadModules", std::bind(&ModuleManager::unloadModules, &g_modules));
+    g_lua.bindClassStaticFunction("g_modules", "getModule", std::bind(&ModuleManager::getModule, &g_modules, _1));
+    g_lua.bindClassStaticFunction("g_modules", "getModules", std::bind(&ModuleManager::getModules, &g_modules));
 
     // FontManager
     g_lua.registerStaticClass("g_fonts");

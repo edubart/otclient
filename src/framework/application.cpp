@@ -162,8 +162,6 @@ void Application::terminate()
 
 void Application::run()
 {
-    g_lua.callGlobalField("g_app", "onRun");
-
     ticks_t lastPollTicks = g_clock.updateTicks();
     m_stopping = false;
     m_running = true;

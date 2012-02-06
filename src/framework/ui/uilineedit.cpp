@@ -421,7 +421,7 @@ void UILineEdit::onGeometryChange(const Rect& oldRect, const Rect& newRect)
 void UILineEdit::onFocusChange(bool focused, Fw::FocusReason reason)
 {
     if(focused && !m_alwaysActive) {
-        if(reason == Fw::TabFocusReason)
+        if(reason == Fw::KeyboardFocusReason)
             setCursorPos(m_text.length());
         else
             blinkCursor();
@@ -452,7 +452,7 @@ bool UILineEdit::onKeyPress(uchar keyCode, int keyboardModifiers, bool wouldFilt
         else if(keyCode == Fw::KeyTab) {
             if(!m_alwaysActive) {
                 if(UIWidgetPtr parent = getParent())
-                    parent->focusNextChild(Fw::TabFocusReason);
+                    parent->focusNextChild(Fw::KeyboardFocusReason);
             }
         } else
             return false;

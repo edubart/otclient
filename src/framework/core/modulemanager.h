@@ -36,6 +36,7 @@ public:
     void unloadModules();
 
     ModulePtr getModule(const std::string& moduleName);
+    std::vector<ModulePtr> getModules() { return m_modules; }
 
 private:
     std::vector<ModulePtr> m_modules;

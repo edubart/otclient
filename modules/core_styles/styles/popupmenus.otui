@@ -7,7 +7,7 @@ PopupMenuButton < UIButton
   color: #aaaaaa
   background-color: alpha
 
-  $hover:
+  $hover !disabled:
     color: #ffffff
     background-color: #ffffff44
 

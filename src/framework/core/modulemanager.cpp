@@ -30,6 +30,9 @@ ModuleManager g_modules;
 
 void ModuleManager::discoverModules()
 {
+    // remove modules that are not loaded
+    m_autoLoadModules.clear();
+
     auto moduleDirs = g_resources.listDirectoryFiles("/");
     for(const std::string& moduleDir : moduleDirs) {
         auto moduleFiles = g_resources.listDirectoryFiles("/" + moduleDir);
@@ -85,12 +88,19 @@ ModulePtr ModuleManager::discoverModule(const std::string& moduleFile)
         OTMLNodePtr moduleNode = doc->at("Module");
 
         std::string name = moduleNode->valueAt("name");
-        if(getModule(name))
-            Fw::throwException("module '", name, "' already exists, cannot have duplicate module names");
+        //if(getModule(name))
+        //    Fw::throwException("module '", name, "' already exists, cannot have duplicate module names");
 
-        module = ModulePtr(new Module(name));
+        bool push = false;
+        module = getModule(name);
+        if(!module) {
+            module = ModulePtr(new Module(name));
+            push = true;
+        }
         module->discover(moduleNode);
-        m_modules.push_back(module);
+
+        if(push)
+            m_modules.push_back(module);
     } catch(Exception& e) {
         logError("Unable to discover module from file '", moduleFile, "': ", e.what());
     }

@@ -1,0 +1,11 @@
+Module
+  name: client_modulemanager
+  description: Manage other modules
+  author: OTClient team
+  website: https://github.com/edubart/otclient
+  onLoad: |
+    require 'modulemanager'
+    ModuleManager.init()
+
+  onUnload: |
+    ModuleManager.terminate()

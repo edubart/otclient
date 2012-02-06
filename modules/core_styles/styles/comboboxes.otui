@@ -6,7 +6,7 @@ ComboBoxPopupMenuButton < UIButton
   color: #aaaaaa
   background-color: alpha
 
-  $hover:
+  $hover !disabled:
     color: #ffffff
     background-color: #ffffff44
 
@@ -38,7 +38,7 @@ ComboBox < UIComboBox
   image-border-right: 17
   image-clip: 0 0 89 20
 
-  $hover:
+  $hover !disabled:
     image-clip: 0 20 89 20
 
   $on:

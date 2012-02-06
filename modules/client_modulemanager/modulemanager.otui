@@ -1,0 +1,117 @@
+ModuleListLabel < Label
+  font: verdana-11px-monochrome
+  background-color: alpha
+  text-offset: 2 0
+  focusable: true
+
+  $focus:
+    background-color: #ffffff22
+    color: #ffffff
+
+ModuleInfoLabel < Label
+  $!first:
+    margin-top: 5
+  margin-bottom: 2
+
+ModuleValueLabel < UILabel
+  font: verdana-11px-antialised
+  color: #aaaaaa
+  text-offset: 3 0
+  image-source: /core_styles/images/panel_flat.png
+  image-border: 1
+
+MainWindow
+  id: moduleManagerWindow
+  size: 450 450
+  text: Module Manager
+
+  @onEscape: ModuleManager.hide()
+
+  TextList
+    id: moduleList
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.bottom: parent.bottom
+    width: 180
+    padding: 1
+    focusable: false
+    margin-bottom: 30
+
+  Button
+    anchors.top: moduleList.bottom
+    anchors.horizontalCenter: moduleList.horizontalCenter
+    margin-top: 8
+    text: Refresh
+    @onClick: ModuleManager.refreshModules()
+
+  Panel
+    id: moduleInfo
+    anchors.left: moduleList.right
+    anchors.top: parent.top
+    anchors.right: parent.right
+    margin: 0 5 5 15
+    layout:
+      type: verticalBox
+      fit-children: true
+
+    ModuleInfoLabel
+      text: Module name
+    ModuleValueLabel
+      id: moduleName
+
+    ModuleInfoLabel
+      text: Description
+    ModuleValueLabel
+      id: moduleDescription
+      height: 100
+
+    ModuleInfoLabel
+      text: Loaded
+    ModuleValueLabel
+      id: moduleLoaded
+
+    //ModuleInfoLabel
+    //  text: Autoload
+    //ModuleValueLabel
+    //  id: moduleAutoload
+
+    //ModuleInfoLabel
+    //  text: Autoload antecedence
+    //ModuleValueLabel
+    //  id: moduleLoadAntecedence
+    //  text: 1000
+
+    ModuleInfoLabel
+      text: Author
+    ModuleValueLabel
+      id: moduleAuthor
+
+    ModuleInfoLabel
+      text: Website
+    ModuleValueLabel
+      id: moduleWebsite
+
+    ModuleInfoLabel
+      text: Version
+    ModuleValueLabel
+      id: moduleVersion
+
+  Button
+    id: moduleLoadButton
+    anchors.top: moduleInfo.bottom
+    anchors.left: moduleInfo.left
+    margin-top: 8
+    text: Load
+    enabled: false
+    @onClick: ModuleManager.loadCurrentModule()
+
+  Button
+    id: moduleUnloadButton
+    anchors.top: moduleInfo.bottom
+    anchors.right: moduleInfo.right
+    margin-left: 10
+    margin-top: 8
+    text: Unload
+    enabled: false
+    @onClick: ModuleManager.unloadCurrentModule()
+
