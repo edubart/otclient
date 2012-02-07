@@ -109,6 +109,10 @@ function Console.destroy()
   consolePanel = nil
 end
 
+function Console.setLineEditText(text)
+  consoleLineEdit:setText(text)
+end
+
 function Console.addTab(name, focus)
   local tab = consoleTabBar:addTab(name)
   if focus then

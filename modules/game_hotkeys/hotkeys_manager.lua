@@ -5,8 +5,19 @@ local hotkeysButton
 local currentHotkeysList
 local hotkeyLabelSelectedOnList
 local currentItemPreview
-local hotkeyList = {}
 local itemWidget
+local messageBox
+local addHotkey
+local removeHotkey
+local hotkeyText
+local hotKeyTextLabel
+local sendAutomatically
+local selectObjectButton
+local clearObjectButton
+local useOnSelf
+local useOnTarget
+local useWith
+local hotkeyList = {}
 
 HOTKEY_MANAGER_USEONSELF = 1
 HOTKEY_MANAGER_USEONTARGET = 2
@@ -23,14 +34,24 @@ local hotkeyColors = {
 
 -- public functions
 function HotkeysManager.init()
-	hotkeysWindow = displayUI('hotkeys_manager.otui')
+  hotkeysWindow = displayUI('hotkeys_manager.otui')
   
-	hotkeysWindow:setVisible(false)
-	hotkeysButton = TopMenu.addButton('hotkeysButton', 'Hotkeys (Ctrl+K)', '/game_hotkeys/icon.png', HotkeysManager.toggle)
-	Keyboard.bindKeyDown('Ctrl+K', HotkeysManager.toggle)
+  hotkeysWindow:setVisible(false)
+  hotkeysButton = TopMenu.addButton('hotkeysButton', 'Hotkeys (Ctrl+K)', '/game_hotkeys/icon.png', HotkeysManager.toggle)
+  Keyboard.bindKeyDown('Ctrl+K', HotkeysManager.toggle)
   
   currentHotkeysList = hotkeysWindow:getChildById('currentHotkeys')
   currentItemPreview = hotkeysWindow:getChildById('itemPreview')
+  addHotkey = hotkeysWindow:getChildById('addHotkey')
+  removeHotkey = hotkeysWindow:getChildById('removeHotkey')
+  hotkeyText = hotkeysWindow:getChildById('hotkeyText')
+  hotKeyTextLabel = hotkeysWindow:getChildById('hotKeyTextLabel')
+  sendAutomatically = hotkeysWindow:getChildById('sendAutomatically')
+  selectObjectButton = hotkeysWindow:getChildById('selectObjectButton')
+  clearObjectButton = hotkeysWindow:getChildById('clearObjectButton')
+  useOnSelf = hotkeysWindow:getChildById('useOnSelf')
+  useOnTarget = hotkeysWindow:getChildById('useOnTarget')
+  useWith = hotkeysWindow:getChildById('useWith')
   
   itemWidget = createWidget('UIItem')
   itemWidget:setVirtual(true)
@@ -38,16 +59,20 @@ function HotkeysManager.init()
   itemWidget:setFocusable(false) 
   
   HotkeysManager.load()
+  
+  connect(currentHotkeysList, { onChildFocusChange = function (self, focusedChild) HotkeysManager.checkSelectedHotkey(focusedChild) end } )
 end
 
 function HotkeysManager.load()
   local hotkeySettings = Settings.getNode('HotkeysManager')
   
-  for i, v in pairs(hotkeySettings) do 
-    HotkeysManager.addKeyCombo(nil, v.keyCombo, v)
+  local label
+  if hotkeySettings ~= nil then
+    for i, v in pairs(hotkeySettings) do 
+      label = HotkeysManager.addKeyCombo(nil, v.keyCombo, v)
+      HotkeysManager.checkSelectedHotkey(label)
+    end    
   end
-  
-  HotkeysManager.checkSelectedHotkey()
 end
 
 function HotkeysManager.save()
@@ -64,34 +89,52 @@ function HotkeysManager.save()
 end
 
 function HotkeysManager.terminate()	  
-	Keyboard.unbindKeyDown('Ctrl+K')
+  Keyboard.unbindKeyDown('Ctrl+K')
   HotkeysManager.save()
-	hotkeysWindow:destroy()
-	hotkeysWindow = nil
-	hotkeysButton:destroy()
-	hotkeysButton = nil
+  
+  currentHotkeysList = nil
+  hotkeyLabelSelectedOnList = nil
+  currentItemPreview = nil
+  itemWidget = nil
+  messageBox = nil
+  hotkeyList = nil
+  addHotkey = nil
+  removeHotkey = nil
+  hotkeyText = nil
+  hotKeyTextLabel = nil
+  sendAutomatically = nil
+  selectObjectButton = nil
+  clearObjectButton = nil
+  useOnSelf = nil
+  useOnTarget = nil
+  useWith = nil
+  
+  hotkeysWindow:destroy()
+  hotkeysWindow = nil
+  hotkeysButton:destroy()
+  hotkeysButton = nil
 end
 
 function HotkeysManager.toggle()
-	if hotkeysWindow:isVisible() then
-		HotkeysManager.hide()
-	else
-		HotkeysManager.show()
-	end
+  if hotkeysWindow:isVisible() then
+    HotkeysManager.hide()
+  else
+    HotkeysManager.show()
+  end
 end
 
 function HotkeysManager.show()
-	if Game.isOnline() then
+  if Game.isOnline() then
     hotkeysWindow:grabKeyboard()
-		hotkeysWindow:show()
-		hotkeysWindow:lock()
-	end
+    hotkeysWindow:show()
+    hotkeysWindow:lock()
+  end
 end
 
 function HotkeysManager.hide()  
   hotkeysWindow:ungrabKeyboard()
-	hotkeysWindow:unlock()
-	hotkeysWindow:hide()
+  hotkeysWindow:unlock()
+  hotkeysWindow:hide()
 end
 
 -- private functions
@@ -104,11 +147,9 @@ function HotkeysManager.onChooseItemMouseRelease(self, mousePosition, mouseButto
         local tile = clickedWidget:getTile(mousePosition)
         if tile then
           local thing = tile:getTopMoveThing()
-          if thing then
-            local uiitem = thing:asItem()
-            if uiitem then
-              item = uiitem:getItem()
-            end
+          local thing = tile:getTopMoveThing()
+          if thing then 
+            item = thing:asItem()
           end
         end
       elseif clickedWidget:getClassName() == 'UIItem' and not clickedWidget:isVirtual() then
@@ -121,7 +162,7 @@ function HotkeysManager.onChooseItemMouseRelease(self, mousePosition, mouseButto
     currentItemPreview:setItemId(item:getId())
     hotkeyLabelSelectedOnList.itemId = item:getId()
     HotkeysManager.changeUseType(HOTKEY_MANAGER_USEONSELF)
-    HotkeysManager.checkSelectedHotkey()
+    HotkeysManager.checkSelectedHotkey(hotkeyLabelSelectedOnList)
     HotkeysManager:show()    
   end
   
@@ -145,59 +186,64 @@ end
 
 function HotkeysManager.clearObject()
   hotkeyLabelSelectedOnList.itemId = nil  
-  currentItemPreview:setItemId(0) --TODO: call :clear() after get it binded
+  currentItemPreview:setItemId(0) -- TODO: item:clear()
   HotkeysManager.changeUseType(HOTKEY_MANAGER_USEONSELF)
   HotkeysManager.sendAutomatically(false)
   hotkeyLabelSelectedOnList:setText(hotkeyLabelSelectedOnList.keyCombo .. ': ')
   
-  HotkeysManager.checkSelectedHotkey()
+  HotkeysManager.checkSelectedHotkey(hotkeyLabelSelectedOnList)
 end
 
 function HotkeysManager.addHotkey()
-  local messageBox = createWidget('MainWindow', hotkeysWindow)
+  local widget
+  
+  messageBox = createWidget('MainWindow', hotkeysWindow)
   messageBox:setId('assignWindow')
   messageBox:setText('Button Assign')
   messageBox:setWidth(420)
   messageBox:setHeight(140)
   messageBox:setDragable(false)
   
-  local label = createWidget('Label', messageBox)
-  label:setText('Please, press the key you wish to add onto your hotkeys manager')
-  label:resizeToText()
-  label:addAnchor(AnchorHorizontalCenter, 'parent', AnchorHorizontalCenter)
-  label:addAnchor(AnchorTop, 'parent', AnchorTop)
+  widget = createWidget('Label', messageBox)
+  widget:setText('Please, press the key you wish to add onto your hotkeys manager')
+  widget:resizeToText()
+  widget:addAnchor(AnchorHorizontalCenter, 'parent', AnchorHorizontalCenter)
+  widget:addAnchor(AnchorTop, 'parent', AnchorTop)
   
-  local label = createWidget('Label', messageBox)
-  label:setId('comboPreview')
-  label:setText('Current hotkey to add: None')
-  label.keyCombo = ''
-  label:resizeToText()
-  label:addAnchor(AnchorHorizontalCenter, 'parent', AnchorHorizontalCenter)
-  label:addAnchor(AnchorTop, 'prev', AnchorBottom)
-  label:setMarginTop(20)
+  widget = createWidget('Label', messageBox)
+  widget:setId('comboPreview')
+  widget:setText('Current hotkey to add: None')
+  widget.keyCombo = ''
+  widget:resizeToText()
+  widget:addAnchor(AnchorHorizontalCenter, 'parent', AnchorHorizontalCenter)
+  widget:addAnchor(AnchorTop, 'prev', AnchorBottom)
+  widget:setMarginTop(20)
   
-  local button = createWidget('Button', messageBox)
-  button:setId('cancelButton')
-	button:setText('Cancel')
-	button:setWidth(64)
-	button:addAnchor(AnchorBottom, 'parent', AnchorBottom)
-	button:addAnchor(AnchorRight, 'parent', AnchorRight)
-	button.onClick = function () messageBox:destroy() end
+  widget = createWidget('Button', messageBox)
+  widget:setId('cancelButton')
+  widget:setText('Cancel')
+  widget:setWidth(64)
+  widget:addAnchor(AnchorBottom, 'parent', AnchorBottom)
+  widget:addAnchor(AnchorRight, 'parent', AnchorRight)
+  widget.onClick = function (self) self:getParent():destroy() end
   
-  local button = createWidget('Button', messageBox)
-  button:setId('addButton')
-	button:setText('Add')
-	button:setWidth(64)
-  button:disable()
-	button:addAnchor(AnchorBottom, 'cancelButton', AnchorBottom)
-	button:addAnchor(AnchorRight, 'cancelButton', AnchorLeft)
-  button:setMarginRight(10)
-	button.onClick = function () HotkeysManager.addKeyCombo(messageBox, label.keyCombo) end
+  widget = createWidget('Button', messageBox)
+  widget:setId('addButton')
+  widget:setText('Add')
+  widget:setWidth(64)
+  widget:disable()
+  widget:addAnchor(AnchorBottom, 'cancelButton', AnchorBottom)
+  widget:addAnchor(AnchorRight, 'cancelButton', AnchorLeft)
+  widget:setMarginRight(10)
+  widget.onClick = function (self) HotkeysManager.addKeyCombo(self:getParent(), self:getParent():getChildById('comboPreview').keyCombo) end
   
   connect(messageBox, { onKeyDown = HotkeysManager.hotkeyCapture }, true)
+  
+  widget = nil
 end
 
 function HotkeysManager.addKeyCombo(messageBox, keyCombo, keySettings)
+  local label = nil
   if currentHotkeysList:getChildById(keyCombo) == nil then
     local label = createWidget('HotkeyListLabel', currentHotkeysList)
     label:setId(keyCombo)
@@ -218,17 +264,19 @@ function HotkeysManager.addKeyCombo(messageBox, keyCombo, keySettings)
       label.useType = HOTKEY_MANAGER_USEONSELF
       label.value = ''
     end
-    connect(label, { onClick = function () HotkeysManager.checkSelectedHotkey() return true end } )
     
-    HotkeysManager.checkSelectedHotkey()
+    HotkeysManager.checkSelectedHotkey(label)
     
     hotkeyList[keyCombo] = label
-    Keyboard.bindKeyDown(keyCombo, function () HotkeysManager.call(keyCombo) end)
+    Keyboard.bindKeyPress(keyCombo, function () HotkeysManager.call(keyCombo) end, nil, 350)
   end
   
   if messageBox then
     messageBox:destroy()
-  end
+    messageBox = nil
+  end  
+  
+  return label
 end
 
 function HotkeysManager.call(keyCombo)
@@ -238,15 +286,15 @@ function HotkeysManager.call(keyCombo)
       if hotKey.autoSend then
         Game.talk(hotKey.value)
       else
-        rootWidget:getChildById('gameRootInterface'):getChildById('gameBottomPanel'):getChildById('consolePanel'):getChildById('consoleLineEdit'):setText(hotKey.value)
+        Console.setLineEditText(hotKey.value)
       end
     elseif hotKey.itemId ~= nil then
       if hotKey.useType == HOTKEY_MANAGER_USEONSELF then
-        Game.useInventoryItem(hotKey.itemId, Game.getLocalPlayer())
+        Game.useInventoryItemWith(hotKey.itemId, Game.getLocalPlayer())
       elseif hotKey.useType == HOTKEY_MANAGER_USEONTARGET then
         local attackingCreature = Game.getLocalPlayer():getAttackingCreature()
         if attackingCreature then
-          Game.useInventoryItem(hotKey.itemId, attackingCreature)
+          Game.useInventoryItemWith(hotKey.itemId, attackingCreature)
         end
       elseif hotKey.useType == HOTKEY_MANAGER_USEWITH then      
         itemWidget:setItemId(hotKey.itemId)
@@ -256,62 +304,55 @@ function HotkeysManager.call(keyCombo)
   end
 end
 
-function HotkeysManager.checkSelectedHotkey()
-  hotkeyLabelSelectedOnList = nil
-  for i = 1, currentHotkeysList:getChildCount() do
-    local child = currentHotkeysList:getChildByIndex(i)
-    if child:isFocused() then
-      hotkeyLabelSelectedOnList = child
-      break -- stop looping
-    end
-  end
+function HotkeysManager.checkSelectedHotkey(focused)
+  hotkeyLabelSelectedOnList = focused
   
   if hotkeyLabelSelectedOnList ~= nil then    
-    hotkeysWindow:getChildById('removeHotkey'):enable()
-    
+    removeHotkey:enable()
+
     if hotkeyLabelSelectedOnList.itemId == nil then
-      hotkeysWindow:getChildById('hotkeyText'):enable()
-      hotkeysWindow:getChildById('hotKeyTextLabel'):enable()
-      hotkeysWindow:getChildById('hotkeyText'):setText(hotkeyLabelSelectedOnList.value)
+      hotkeyText:enable()
+      hotKeyTextLabel:enable()
+      hotkeyText:setText(hotkeyLabelSelectedOnList.value)
       
       if hotkeyLabelSelectedOnList.value ~= '' then      
-        hotkeysWindow:getChildById('sendAutomatically'):enable()
+        sendAutomatically:enable()
       else
-        hotkeysWindow:getChildById('sendAutomatically'):disable()
+        sendAutomatically:disable()
       end
     
-      hotkeysWindow:getChildById('selectObjectButton'):enable()
-      hotkeysWindow:getChildById('clearObjectButton'):disable()    
+      selectObjectButton:enable()
+      clearObjectButton:disable()    
 
       currentItemPreview:setItemId(0)
     else      
-      hotkeysWindow:getChildById('hotkeyText'):clearText()
-      hotkeysWindow:getChildById('hotkeyText'):disable()
-      hotkeysWindow:getChildById('hotKeyTextLabel'):disable()
-      hotkeysWindow:getChildById('sendAutomatically'):disable()
+      hotkeyText:clearText()
+      hotkeyText:disable()
+      hotKeyTextLabel:disable()
+      sendAutomatically:disable()
       
-      hotkeysWindow:getChildById('selectObjectButton'):disable()
-      hotkeysWindow:getChildById('clearObjectButton'):enable()
+      selectObjectButton:disable()
+      clearObjectButton:enable()
       
       currentItemPreview:setItemId(hotkeyLabelSelectedOnList.itemId)     
     end
     HotkeysManager.changeUseType(hotkeyLabelSelectedOnList.useType)   
   else
-    hotkeysWindow:getChildById('hotkeyText'):clearText()
-    hotkeysWindow:getChildById('removeHotkey'):disable()
-    hotkeysWindow:getChildById('hotkeyText'):disable()
-    hotkeysWindow:getChildById('sendAutomatically'):disable()
-    hotkeysWindow:getChildById('sendAutomatically'):setChecked(false)
+    hotkeyText:clearText()
+    removeHotkey:disable()
+    hotkeyText:disable()
+    sendAutomatically:disable()
+    sendAutomatically:setChecked(false)
     
     currentItemPreview:setItemId(0)
-    hotkeysWindow:getChildById('selectObjectButton'):disable()
-    hotkeysWindow:getChildById('clearObjectButton'):disable()
-    hotkeysWindow:getChildById('useOnSelf'):disable()
-    hotkeysWindow:getChildById('useOnTarget'):disable()
-    hotkeysWindow:getChildById('useWith'):disable()
-    hotkeysWindow:getChildById('useOnSelf'):setChecked(false)
-    hotkeysWindow:getChildById('useOnTarget'):setChecked(false)
-    hotkeysWindow:getChildById('useWith'):setChecked(false)
+    selectObjectButton:disable()
+    clearObjectButton:disable()
+    useOnSelf:disable()
+    useOnTarget:disable()
+    useWith:disable()
+    useOnSelf:setChecked(false)
+    useOnTarget:setChecked(false)
+    useWith:setChecked(false)
   end  
 end
 
@@ -319,49 +360,49 @@ function HotkeysManager.changeUseType(useType, checked)
   if checked == nil or checked then
     hotkeyLabelSelectedOnList.useType = useType 
     if hotkeyLabelSelectedOnList.itemId ~= nil and currentItemPreview:getItem():isMultiUse() then
-      hotkeysWindow:getChildById('useOnSelf'):enable()
-      hotkeysWindow:getChildById('useOnTarget'):enable()
-      hotkeysWindow:getChildById('useWith'):enable()
+      useOnSelf:enable()
+      useOnTarget:enable()
+      useWith:enable()
       
       if useType == HOTKEY_MANAGER_USEONSELF then
         hotkeyLabelSelectedOnList:setText(hotkeyLabelSelectedOnList.keyCombo .. ': (use object on yourself)')
         hotkeyLabelSelectedOnList:setColor(hotkeyColors.itemUseSelf)
-        hotkeysWindow:getChildById('useOnSelf'):setChecked(true)
-        hotkeysWindow:getChildById('useOnTarget'):setChecked(false)
-        hotkeysWindow:getChildById('useWith'):setChecked(false)
+        useOnSelf:setChecked(true)
+        useOnTarget:setChecked(false)
+        useWith:setChecked(false)
       elseif useType == HOTKEY_MANAGER_USEONTARGET then  
         hotkeyLabelSelectedOnList:setText(hotkeyLabelSelectedOnList.keyCombo .. ': (use object on target)')
         hotkeyLabelSelectedOnList:setColor(hotkeyColors.itemUseTarget)
-        hotkeysWindow:getChildById('useOnSelf'):setChecked(false)
-        hotkeysWindow:getChildById('useOnTarget'):setChecked(true)
-        hotkeysWindow:getChildById('useWith'):setChecked(false)
+        useOnSelf:setChecked(false)
+        useOnTarget:setChecked(true)
+        useWith:setChecked(false)
       elseif useType == HOTKEY_MANAGER_USEWITH then
         hotkeyLabelSelectedOnList:setText(hotkeyLabelSelectedOnList.keyCombo .. ': (use object with crosshair)')
         hotkeyLabelSelectedOnList:setColor(hotkeyColors.itemUseWith)
         
-        hotkeysWindow:getChildById('useOnSelf'):setChecked(false)
-        hotkeysWindow:getChildById('useOnTarget'):setChecked(false)
-        hotkeysWindow:getChildById('useWith'):setChecked(true)
+        useOnSelf:setChecked(false)
+        useOnTarget:setChecked(false)
+        useWith:setChecked(true)
       end
     elseif hotkeyLabelSelectedOnList.itemId ~= nil and not currentItemPreview:getItem():isMultiUse() then
-      hotkeysWindow:getChildById('useOnSelf'):disable()
-      hotkeysWindow:getChildById('useOnTarget'):disable()
-      hotkeysWindow:getChildById('useWith'):disable()
+      useOnSelf:disable()
+      useOnTarget:disable()
+      useWith:disable()
       
       hotkeyLabelSelectedOnList:setText(hotkeyLabelSelectedOnList.keyCombo .. ': (use object)')
       hotkeyLabelSelectedOnList:setColor(hotkeyColors.itemUse)
       
-      hotkeysWindow:getChildById('useOnSelf'):setChecked(false)
-      hotkeysWindow:getChildById('useOnTarget'):setChecked(false)
-      hotkeysWindow:getChildById('useWith'):setChecked(false)
+      useOnSelf:setChecked(false)
+      useOnTarget:setChecked(false)
+      useWith:setChecked(false)
     else    
-      hotkeysWindow:getChildById('useOnSelf'):disable()
-      hotkeysWindow:getChildById('useOnTarget'):disable()
-      hotkeysWindow:getChildById('useWith'):disable()
+      useOnSelf:disable()
+      useOnTarget:disable()
+      useWith:disable()
       
-      hotkeysWindow:getChildById('useOnSelf'):setChecked(false)
-      hotkeysWindow:getChildById('useOnTarget'):setChecked(false)
-      hotkeysWindow:getChildById('useWith'):setChecked(false)
+      useOnSelf:setChecked(false)
+      useOnTarget:setChecked(false)
+      useWith:setChecked(false)
     end
   end
 end
@@ -369,21 +410,22 @@ end
 function HotkeysManager.removeHotkey()
   if hotkeyLabelSelectedOnList ~= nil then
     hotkeyList[hotkeyLabelSelectedOnList.keyCombo] = nil
-    Keyboard.unbindKeyDown(hotkeyLabelSelectedOnList.keyCombo)
+    Keyboard.unbindKeyPress(hotkeyLabelSelectedOnList.keyCombo)
     hotkeyLabelSelectedOnList:destroy()
-    HotkeysManager.checkSelectedHotkey() 
   end
 end
 
-function HotkeysManager.onHotkeyTextChange(id, value)
-  hotkeyLabelSelectedOnList:setText(hotkeyLabelSelectedOnList.keyCombo ..': ' .. value)
-  hotkeyLabelSelectedOnList.value = value
-  
-  if value ~= '' then
-    hotkeysWindow:getChildById('sendAutomatically'):enable()
-  else
-    hotkeysWindow:getChildById('sendAutomatically'):disable()
-    hotkeysWindow:getChildById('sendAutomatically'):setChecked(false)
+function HotkeysManager.onHotkeyTextChange(id, value)  
+  if hotkeyLabelSelectedOnList ~= nil and hotkeyLabelSelectedOnList.keyCombo ~= nil then
+    hotkeyLabelSelectedOnList:setText(hotkeyLabelSelectedOnList.keyCombo ..': ' .. value)
+    hotkeyLabelSelectedOnList.value = value
+    
+    if value ~= '' then
+      sendAutomatically:enable()
+    else
+      sendAutomatically:disable()
+      sendAutomatically:setChecked(false)
+    end
   end
 end
 
