@@ -67,10 +67,11 @@ public:
 
     // item related
     void look(const ThingPtr& thing);
-    void open(const ThingPtr& thing, int containerId);
+    void open(const ItemPtr& item, int containerId);
     void use(const ThingPtr& thing);
-    void useWith(const ThingPtr& fromThing, const ThingPtr& toThing);
-    void useInventoryItem(int itemId, const ThingPtr& toThing);
+    void useWith(const ItemPtr& fromThing, const ThingPtr& toThing);
+    void useInventoryItem(int itemId);
+    void useInventoryItemWith(int itemId, const ThingPtr& toThing);
     void move(const ThingPtr &thing, const Position& toPos, int count);
 
     // attack/follow related
@@ -105,8 +106,6 @@ public:
     // vip related
     void addVip(const std::string& name);
     void removeVip(int playerId);
-
-    int getThingStackpos(const ThingPtr& thing);
 
     bool checkBotProtection();
 

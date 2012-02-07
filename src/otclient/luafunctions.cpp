@@ -197,9 +197,10 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassStaticFunction<Game>("look", std::bind(&Game::look, &g_game, _1));
     g_lua.bindClassStaticFunction<Game>("open", std::bind(&Game::open, &g_game, _1, _2));
     g_lua.bindClassStaticFunction<Game>("use", std::bind(&Game::use, &g_game, _1));
+    g_lua.bindClassStaticFunction<Game>("useInventoryItem", std::bind(&Game::useInventoryItem, &g_game, _1));
     g_lua.bindClassStaticFunction<Game>("useWith", std::bind(&Game::useWith, &g_game, _1, _2));
+    g_lua.bindClassStaticFunction<Game>("useInventoryItemWith", std::bind(&Game::useInventoryItemWith, &g_game, _1, _2));
     g_lua.bindClassStaticFunction<Game>("move", std::bind(&Game::move, &g_game, _1, _2, _3));
-    g_lua.bindClassStaticFunction<Game>("useInventoryItem", std::bind(&Game::useInventoryItem, &g_game, _1, _2));
     g_lua.bindClassStaticFunction<Game>("turn", std::bind(&Game::turn, &g_game, _1));
     g_lua.bindClassStaticFunction<Game>("walk", std::bind(&Game::walk, &g_game, _1));
     g_lua.bindClassStaticFunction<Game>("forceWalk", std::bind(&Game::forceWalk, &g_game, _1));

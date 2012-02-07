@@ -262,12 +262,12 @@ void ProtocolGame::sendUseItem(const Position& position, int itemId, int stackpo
     send(oMsg);
 }
 
-void ProtocolGame::sendUseItemEx(const Position& fromPos, int fromThingId, int fromStackpos, const Position& toPos, int toThingId, int toStackpos)
+void ProtocolGame::sendUseItemEx(const Position& fromPos, int itemId, int fromStackpos, const Position& toPos, int toThingId, int toStackpos)
 {
     OutputMessage oMsg;
     oMsg.addU8(Proto::ClientUseTwoObjects);
     addPosition(oMsg, fromPos);
-    oMsg.addU16(fromThingId);
+    oMsg.addU16(itemId);
     oMsg.addU8(fromStackpos);
     addPosition(oMsg, toPos);
     oMsg.addU16(toThingId);

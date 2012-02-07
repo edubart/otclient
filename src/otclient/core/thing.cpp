@@ -55,10 +55,14 @@ const TilePtr& Thing::getTile()
 
 int Thing::getStackpos()
 {
-    const TilePtr& tile = getTile();
-    if(tile)
+    if(m_position.x == 65535 && asItem()) // is inside a container
+        return 0;
+    else if(const TilePtr& tile = getTile())
         return tile->getThingStackpos(asThing());
-    return -1;
+    else {
+        logTraceError("got a thing with invalid stackpos");
+        return -1;
+    }
 }
 
 void Thing::internalDraw(const Point& dest, float scaleFactor, int w, int h, int xPattern, int yPattern, int zPattern, int layer, int animationPhase)

@@ -306,19 +306,15 @@ void Game::look(const ThingPtr& thing)
     if(!isOnline() || !thing || !checkBotProtection())
         return;
 
-    int stackpos = getThingStackpos(thing);
-    if(stackpos != -1)
-        m_protocolGame->sendLookAt(thing->getPosition(), thing->getId(), stackpos);
+    m_protocolGame->sendLookAt(thing->getPosition(), thing->getId(), thing->getStackpos());
 }
 
-void Game::open(const ThingPtr& thing, int containerId)
+void Game::open(const ItemPtr& item, int containerId)
 {
-    if(!isOnline() || !thing || !checkBotProtection())
+    if(!isOnline() || !item || !checkBotProtection())
         return;
 
-    int stackpos = getThingStackpos(thing);
-    if(stackpos != -1)
-        m_protocolGame->sendUseItem(thing->getPosition(), thing->getId(), stackpos, containerId);
+    m_protocolGame->sendUseItem(item->getPosition(), item->getId(), item->getStackpos(), containerId);
 }
 
 void Game::use(const ThingPtr& thing)
@@ -326,40 +322,44 @@ void Game::use(const ThingPtr& thing)
     if(!isOnline() || !thing || !checkBotProtection())
         return;
 
-    m_localPlayer->lockWalk();
-
-    int stackpos = getThingStackpos(thing);
-    if(stackpos != -1)
-        m_protocolGame->sendUseItem(thing->getPosition(), thing->getId(), stackpos, 0);
-}
-
-void Game::useWith(const ThingPtr& fromThing, const ThingPtr& toThing)
-{
-    if(!isOnline() || !fromThing || !toThing || !checkBotProtection())
-        return;
-
-    Position pos = fromThing->getPosition();
+    Position pos = thing->getPosition();
     if(!pos.isValid()) // virtual item
         pos = Position(0xFFFF, 0, 0); // means that is a item in inventory
 
-    int fromStackpos = getThingStackpos(fromThing);
-    if(fromStackpos == -1)
+    m_localPlayer->lockWalk();
+
+    m_protocolGame->sendUseItem(pos, thing->getId(), thing->getStackpos(), 0);
+}
+
+void Game::useInventoryItem(int itemId)
+{
+    if(!isOnline() || !checkBotProtection())
         return;
+
+    Position pos = Position(0xFFFF, 0, 0); // means that is a item in inventory
+    m_localPlayer->lockWalk();
+
+    m_protocolGame->sendUseItem(pos, itemId, 0, 0);
+}
+
+void Game::useWith(const ItemPtr& item, const ThingPtr& toThing)
+{
+    if(!isOnline() || !item || !toThing || !checkBotProtection())
+        return;
+
+    Position pos = item->getPosition();
+    if(!pos.isValid()) // virtual item
+        pos = Position(0xFFFF, 0, 0); // means that is a item in inventory
 
     m_localPlayer->lockWalk();
 
-    if(CreaturePtr creature = toThing->asCreature()) {
-        m_protocolGame->sendUseOnCreature(pos, fromThing->getId(), fromStackpos, creature->getId());
-    } else {
-        int toStackpos = getThingStackpos(toThing);
-        if(toStackpos == -1)
-            return;
-
-        m_protocolGame->sendUseItemEx(pos, fromThing->getId(), fromStackpos, toThing->getPosition(), toThing->getId(), toStackpos);
-    }
+    if(CreaturePtr creature = toThing->asCreature())
+        m_protocolGame->sendUseOnCreature(pos, item->getId(), item->getStackpos(), creature->getId());
+    else
+        m_protocolGame->sendUseItemEx(pos, item->getId(), item->getStackpos(), toThing->getPosition(), toThing->getId(), toThing->getStackpos());
 }
 
-void Game::useInventoryItem(int itemId, const ThingPtr& toThing)
+void Game::useInventoryItemWith(int itemId, const ThingPtr& toThing)
 {
     if(!isOnline() || !toThing || !checkBotProtection())
         return;
@@ -367,15 +367,11 @@ void Game::useInventoryItem(int itemId, const ThingPtr& toThing)
     m_localPlayer->lockWalk();
 
     Position pos = Position(0xFFFF, 0, 0); // means that is a item in inventory
-    int toStackpos = getThingStackpos(toThing);
-    if(toStackpos == -1)
-        return;
 
-    if(CreaturePtr creature = toThing->asCreature()) {
+    if(CreaturePtr creature = toThing->asCreature())
         m_protocolGame->sendUseOnCreature(pos, itemId, 0, creature->getId());
-    } else {
-        m_protocolGame->sendUseItemEx(pos, itemId, 0, toThing->getPosition(), toThing->getId(), toStackpos);
-    }
+    else
+        m_protocolGame->sendUseItemEx(pos, itemId, 0, toThing->getPosition(), toThing->getId(), toThing->getStackpos());
 }
 
 void Game::move(const ThingPtr& thing, const Position& toPos, int count)
@@ -385,11 +381,7 @@ void Game::move(const ThingPtr& thing, const Position& toPos, int count)
 
     m_localPlayer->lockWalk();
 
-    int stackpos = getThingStackpos(thing);
-    if(stackpos == -1)
-        return;
-
-    m_protocolGame->sendThrow(thing->getPosition(), thing->getId(), stackpos, toPos, count);
+    m_protocolGame->sendThrow(thing->getPosition(), thing->getId(), thing->getStackpos(), toPos, count);
 }
 
 void Game::attack(const CreaturePtr& creature)
@@ -440,26 +432,7 @@ void Game::rotate(const ThingPtr& thing)
     if(!isOnline() || !thing || !checkBotProtection())
         return;
 
-    int stackpos = getThingStackpos(thing);
-    if(stackpos != -1)
-        m_protocolGame->sendRotateItem(thing->getPosition(), thing->getId(), stackpos);
-}
-
-//TODO: move this to Thing class
-int Game::getThingStackpos(const ThingPtr& thing)
-{
-    // thing is at map
-    if(thing->getPosition().x != 65535) {
-        if(TilePtr tile = g_map.getTile(thing->getPosition()))
-            return tile->getThingStackpos(thing);
-        else {
-            logError("could not get tile");
-            return -1;
-        }
-    }
-
-    // thing is at container or inventory
-    return 0;
+    m_protocolGame->sendRotateItem(thing->getPosition(), thing->getId(), thing->getStackpos());
 }
 
 void Game::talk(const std::string& message)
