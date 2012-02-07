@@ -177,7 +177,7 @@ protected:
     virtual void onDragEnter(const Point& mousePos);
     virtual void onDragLeave(UIWidgetPtr droppedWidget, const Point& mousePos);
     virtual bool onDragMove(const Point& mousePos, const Point& mouseMoved);
-    virtual void onDrop(UIWidgetPtr draggedWidget, const Point& mousePos);
+    virtual bool onDrop(UIWidgetPtr draggedWidget, const Point& mousePos);
     virtual bool onKeyText(const std::string& keyText);
     virtual bool onKeyDown(uchar keyCode, int keyboardModifiers);
     virtual bool onKeyPress(uchar keyCode, int keyboardModifiers, int autoRepeatTicks);

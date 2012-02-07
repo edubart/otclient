@@ -1156,9 +1156,9 @@ bool UIWidget::onDragMove(const Point& mousePos, const Point& mouseMoved)
     return callLuaField("onDragMove", mousePos, mouseMoved);
 }
 
-void UIWidget::onDrop(UIWidgetPtr draggedWidget, const Point& mousePos)
+bool UIWidget::onDrop(UIWidgetPtr draggedWidget, const Point& mousePos)
 {
-    callLuaField("onDrop", draggedWidget, mousePos);
+    return callLuaField<bool>("onDrop", draggedWidget, mousePos);
 }
 
 bool UIWidget::onKeyText(const std::string& keyText)

@@ -83,13 +83,11 @@ void UIManager::inputEvent(const InputEvent& event)
                 auto clickedChildren = m_rootWidget->recursiveGetChildrenByPos(event.mousePos);
                 UIWidgetPtr droppedWidget;
                 for(const UIWidgetPtr& child : clickedChildren) {
-                    if(child != m_draggingWidget) {
+                    if(child->onDrop(m_draggingWidget, event.mousePos)) {
                         droppedWidget = child;
                         break;
                     }
                 }
-                if(droppedWidget)
-                    droppedWidget->onDrop(m_draggingWidget, event.mousePos);
 
                 m_draggingWidget->onDragLeave(droppedWidget, event.mousePos);
                 m_draggingWidget->setDragging(false);

@@ -11,7 +11,7 @@ function UIMap:onDragEnter(mousePos)
   return true
 end
 
-function UIMap:onDragLeave(widget, mousePos)
+function UIMap:onDragLeave(droppedWidget, mousePos)
   if not self.parsed then
     self.currentDragThing = nil
   end
@@ -27,7 +27,7 @@ function UIMap:onDrop(widget, mousePos)
   if not tile then return false end
 
   local count = widget.currentDragThing:getCount()
-  if widget.currentDragThing:isStackable() and data > 1 then
+  if widget.currentDragThing:isStackable() and count > 1 then
     widget.parsed = true
     local moveWindow = displayUI('/game/movewindow.otui')
     local spinbox = moveWindow:getChildById('spinbox')
