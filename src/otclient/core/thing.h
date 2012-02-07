@@ -91,6 +91,7 @@ public:
     Size getDimension() { return Size(m_type->dimensions[ThingType::Width], m_type->dimensions[ThingType::Height]); }
     int getDimensionWidth() { return m_type->dimensions[ThingType::Width]; }
     int getDimensionHeight() { return m_type->dimensions[ThingType::Height]; }
+    int getExactSize() { return m_type->dimensions[ThingType::ExactSize]; }
     Point getDisplacement() { return Point(m_type->parameters[ThingType::DisplacementX], m_type->parameters[ThingType::DisplacementY]); }
     int getNumPatternsX() { return m_type->dimensions[ThingType::PatternX]; }
     int getNumPatternsY() { return m_type->dimensions[ThingType::PatternY]; }

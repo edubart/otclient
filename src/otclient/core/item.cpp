@@ -49,7 +49,7 @@ ItemPtr Item::create(int id)
 }
 
 PainterShaderProgramPtr itemProgram;
-int ITEM_ID_UNIFORM = 10;
+//int ITEM_ID_UNIFORM = 10;
 
 void Item::draw(const Point& dest, float scaleFactor, bool animate)
 {
@@ -168,11 +168,11 @@ void Item::draw(const Point& dest, float scaleFactor, bool animate)
         itemProgram->addShaderFromSourceCode(Shader::Vertex, glslMainWithTexCoordsVertexShader + glslPositionOnlyVertexShader);
         itemProgram->addShaderFromSourceFile(Shader::Fragment, "/game_shaders/item.frag");
         assert(itemProgram->link());
-        itemProgram->bindUniformLocation(ITEM_ID_UNIFORM, "itemId");
+        //itemProgram->bindUniformLocation(ITEM_ID_UNIFORM, "itemId");
     }
     g_painter.setCustomProgram(itemProgram);
     itemProgram->bind();
-    itemProgram->setUniformValue(ITEM_ID_UNIFORM, (int)m_id);
+    //itemProgram->setUniformValue(ITEM_ID_UNIFORM, (int)m_id);
 
     // now we can draw the item
     internalDraw(dest, scaleFactor, xPattern, yPattern, zPattern, animationPhase);
