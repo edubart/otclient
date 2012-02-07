@@ -1,12 +1,12 @@
 HotkeysManager = {}
 
+local hotkeysManagerLoaded = false
 local hotkeysWindow
 local hotkeysButton
 local currentHotkeysList
 local hotkeyLabelSelectedOnList
 local currentItemPreview
 local itemWidget
-local messageBox
 local addHotkey
 local removeHotkey
 local hotkeyText
@@ -58,9 +58,11 @@ function HotkeysManager.init()
   itemWidget:setVisible(false)
   itemWidget:setFocusable(false) 
   
-  HotkeysManager.load()
-  
   connect(currentHotkeysList, { onChildFocusChange = function (self, focusedChild) HotkeysManager.checkSelectedHotkey(focusedChild) end } )
+  
+  hotkeysManagerLoaded = true
+  
+  HotkeysManager.load()
 end
 
 function HotkeysManager.load()
@@ -69,8 +71,7 @@ function HotkeysManager.load()
   local label
   if hotkeySettings ~= nil then
     for i, v in pairs(hotkeySettings) do 
-      label = HotkeysManager.addKeyCombo(nil, v.keyCombo, v)
-      HotkeysManager.checkSelectedHotkey(label)
+      HotkeysManager.addKeyCombo(nil, v.keyCombo, v)
     end    
   end
 end
@@ -88,15 +89,16 @@ function HotkeysManager.save()
   Settings.setNode('HotkeysManager', hotkeySettings)
 end
 
-function HotkeysManager.terminate()	  
+function HotkeysManager.terminate()	 
+  hotkeysManagerLoaded = false
+  
   Keyboard.unbindKeyDown('Ctrl+K')
   HotkeysManager.save()
   
   currentHotkeysList = nil
   hotkeyLabelSelectedOnList = nil
   currentItemPreview = nil
-  itemWidget = nil
-  messageBox = nil
+  
   hotkeyList = nil
   addHotkey = nil
   removeHotkey = nil
@@ -109,6 +111,8 @@ function HotkeysManager.terminate()
   useOnTarget = nil
   useWith = nil
   
+  itemWidget:destroy()
+  itemWidget = nil
   hotkeysWindow:destroy()
   hotkeysWindow = nil
   hotkeysButton:destroy()
@@ -147,7 +151,6 @@ function HotkeysManager.onChooseItemMouseRelease(self, mousePosition, mouseButto
         local tile = clickedWidget:getTile(mousePosition)
         if tile then
           local thing = tile:getTopMoveThing()
-          local thing = tile:getTopMoveThing()
           if thing then 
             item = thing:asItem()
           end
@@ -172,7 +175,7 @@ function HotkeysManager.onChooseItemMouseRelease(self, mousePosition, mouseButto
 end
 
 function HotkeysManager.startChooseItem()
-  mouseGrabberWidget = createWidget('UIWidget')
+  local mouseGrabberWidget = createWidget('UIWidget')
   mouseGrabberWidget:setVisible(false)
   mouseGrabberWidget:setFocusable(false)
 
@@ -186,7 +189,7 @@ end
 
 function HotkeysManager.clearObject()
   hotkeyLabelSelectedOnList.itemId = nil  
-  currentItemPreview:setItemId(0) -- TODO: item:clear()
+  currentItemPreview:clearItem()
   HotkeysManager.changeUseType(HOTKEY_MANAGER_USEONSELF)
   HotkeysManager.sendAutomatically(false)
   hotkeyLabelSelectedOnList:setText(hotkeyLabelSelectedOnList.keyCombo .. ': ')
@@ -225,7 +228,10 @@ function HotkeysManager.addHotkey()
   widget:setWidth(64)
   widget:addAnchor(AnchorBottom, 'parent', AnchorBottom)
   widget:addAnchor(AnchorRight, 'parent', AnchorRight)
-  widget.onClick = function (self) self:getParent():destroy() end
+  widget.onClick =  function (self) 
+                      messageBox = nil 
+                      self:getParent():destroy() 
+                    end
   
   widget = createWidget('Button', messageBox)
   widget:setId('addButton')
@@ -235,11 +241,12 @@ function HotkeysManager.addHotkey()
   widget:addAnchor(AnchorBottom, 'cancelButton', AnchorBottom)
   widget:addAnchor(AnchorRight, 'cancelButton', AnchorLeft)
   widget:setMarginRight(10)
-  widget.onClick = function (self) HotkeysManager.addKeyCombo(self:getParent(), self:getParent():getChildById('comboPreview').keyCombo) end
+  widget.onClick =  function (self) 
+                      messageBox = nil
+                      HotkeysManager.addKeyCombo(self:getParent(), self:getParent():getChildById('comboPreview').keyCombo)
+                    end
   
   connect(messageBox, { onKeyDown = HotkeysManager.hotkeyCapture }, true)
-  
-  widget = nil
 end
 
 function HotkeysManager.addKeyCombo(messageBox, keyCombo, keySettings)
@@ -275,8 +282,6 @@ function HotkeysManager.addKeyCombo(messageBox, keyCombo, keySettings)
     messageBox:destroy()
     messageBox = nil
   end  
-  
-  return label
 end
 
 function HotkeysManager.call(keyCombo)
@@ -305,54 +310,56 @@ function HotkeysManager.call(keyCombo)
 end
 
 function HotkeysManager.checkSelectedHotkey(focused)
-  hotkeyLabelSelectedOnList = focused
-  
-  if hotkeyLabelSelectedOnList ~= nil then    
-    removeHotkey:enable()
+  if hotkeysManagerLoaded then
+    hotkeyLabelSelectedOnList = focused
+    
+    if hotkeyLabelSelectedOnList ~= nil then    
+      removeHotkey:enable()
 
-    if hotkeyLabelSelectedOnList.itemId == nil then
-      hotkeyText:enable()
-      hotKeyTextLabel:enable()
-      hotkeyText:setText(hotkeyLabelSelectedOnList.value)
+      if hotkeyLabelSelectedOnList.itemId == nil then
+        hotkeyText:enable()
+        hotKeyTextLabel:enable()
+        hotkeyText:setText(hotkeyLabelSelectedOnList.value)
+        
+        if hotkeyLabelSelectedOnList.value ~= '' then      
+          sendAutomatically:enable()
+        else
+          sendAutomatically:disable()
+        end
       
-      if hotkeyLabelSelectedOnList.value ~= '' then      
-        sendAutomatically:enable()
+        selectObjectButton:enable()
+        clearObjectButton:disable()    
+
+        currentItemPreview:setItemId(0)
       else
+        hotkeyText:clearText()
+        hotkeyText:disable()
+        hotKeyTextLabel:disable()
         sendAutomatically:disable()
+        
+        selectObjectButton:disable()
+        clearObjectButton:enable()
+        
+        currentItemPreview:setItemId(hotkeyLabelSelectedOnList.itemId)     
       end
-    
-      selectObjectButton:enable()
-      clearObjectButton:disable()    
-
-      currentItemPreview:setItemId(0)
-    else      
+      HotkeysManager.changeUseType(hotkeyLabelSelectedOnList.useType)   
+    else
       hotkeyText:clearText()
+      removeHotkey:disable()
       hotkeyText:disable()
-      hotKeyTextLabel:disable()
       sendAutomatically:disable()
+      sendAutomatically:setChecked(false)
       
+      currentItemPreview:setItemId(0)
       selectObjectButton:disable()
-      clearObjectButton:enable()
-      
-      currentItemPreview:setItemId(hotkeyLabelSelectedOnList.itemId)     
-    end
-    HotkeysManager.changeUseType(hotkeyLabelSelectedOnList.useType)   
-  else
-    hotkeyText:clearText()
-    removeHotkey:disable()
-    hotkeyText:disable()
-    sendAutomatically:disable()
-    sendAutomatically:setChecked(false)
-    
-    currentItemPreview:setItemId(0)
-    selectObjectButton:disable()
-    clearObjectButton:disable()
-    useOnSelf:disable()
-    useOnTarget:disable()
-    useWith:disable()
-    useOnSelf:setChecked(false)
-    useOnTarget:setChecked(false)
-    useWith:setChecked(false)
+      clearObjectButton:disable()
+      useOnSelf:disable()
+      useOnTarget:disable()
+      useWith:disable()
+      useOnSelf:setChecked(false)
+      useOnTarget:setChecked(false)
+      useWith:setChecked(false)
+    end 
   end  
 end
 
@@ -417,7 +424,7 @@ end
 
 function HotkeysManager.onHotkeyTextChange(id, value)  
   if hotkeyLabelSelectedOnList ~= nil and hotkeyLabelSelectedOnList.keyCombo ~= nil then
-    hotkeyLabelSelectedOnList:setText(hotkeyLabelSelectedOnList.keyCombo ..': ' .. value)
+    hotkeyLabelSelectedOnList:setText(hotkeyLabelSelectedOnList.keyCombo .. ': ' .. value)
     hotkeyLabelSelectedOnList.value = value
     
     if value ~= '' then
