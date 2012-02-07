@@ -14,6 +14,7 @@ Module
     - game_outfit
     - game_containers
     - game_combatcontrols
+    - game_hotkeys
 
   onLoad: |
     dofile 'game'

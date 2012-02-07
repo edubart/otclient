@@ -1,0 +1,159 @@
+HotkeyListLabel < UILabel
+  font: verdana-11px-monochrome
+  background-color: alpha
+  text-offset: 2 0
+  focusable: true
+  phantom: false
+  
+  $focus:
+    background-color: #ffffff22
+
+MainWindow
+  id: hotkeysWindow
+  text: Hotkeys
+  size: 340 460
+
+  @onEnter: HotkeysManager.hide()
+  @onEscape: HotkeysManager.hide()
+
+  LargerLabel
+    id: currentHotkeysLabel
+    text: Current hotkeys:
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: parent.top
+    
+  TextList
+    id: currentHotkeys
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: prev.bottom
+    height: 150
+    margin-top: 2
+    padding: 1
+    focusable: false
+  
+  LargerLabel
+    text: Manage hotkeys:
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: prev.bottom
+    margin-top: 10   
+    
+  Button
+    id: addHotkey
+    text: Add
+    width: 64
+    anchors.left: parent.left
+    anchors.top: prev.bottom
+    margin-top: 2
+    @onClick: HotkeysManager.addHotkey()
+  
+  Button
+    id: removeHotkey
+    text: Remove
+    width: 64
+    enabled: false
+    anchors.left: prev.right
+    anchors.top: prev.top
+    margin-left: 10
+    @onClick: HotkeysManager.removeHotkey()
+  
+  LargerLabel
+    id: hotKeyTextLabel
+    text: Edit hotkey text:
+    enable: false
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: prev.bottom
+    margin-top: 20  
+  
+  LineEdit
+    id: hotkeyText
+    enabled: false
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: prev.bottom
+    margin-bottom: 2
+    @onTextChange: HotkeysManager.onHotkeyTextChange(self:getId(), self:getText())
+  
+  CheckBox
+    id: sendAutomatically
+    text: Send automatically
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: prev.bottom
+    enabled:false
+    margin-top: 10
+    @onCheckChange: HotkeysManager.sendAutomatically(self:isChecked())
+  
+  Item
+    id: itemPreview
+    anchors.left: parent.left
+    anchors.top: prev.bottom
+    margin-top: 10
+    virtual: true
+    
+  Button
+    id: selectObjectButton
+    text: Select object
+    width: 128
+    enabled: false
+    anchors.left: prev.right
+    anchors.top: prev.top
+    margin-left: 10
+    @onClick: HotkeysManager.startChooseItem()
+    
+  Button
+    id: clearObjectButton
+    text: Clear object
+    width: 128
+    enabled: false
+    anchors.left: prev.left
+    anchors.right: prev.right
+    anchors.top: prev.bottom
+    margin-top: 2
+    @onClick: HotkeysManager.clearObject()
+    
+  ButtonBox
+    id: useOnSelf
+    text: Use on yourself
+    width: 128
+    enabled: false
+    anchors.left: selectObjectButton.right
+    anchors.right: parent.right
+    anchors.top: selectObjectButton.top
+    checked: false
+    margin-left: 10
+    @onCheckChange: HotkeysManager.changeUseType(HOTKEY_MANAGER_USEONSELF, self:isChecked())
+    
+  ButtonBox
+    id: useOnTarget
+    text: Use on target
+    width: 128
+    enabled: false
+    anchors.left: prev.left
+    anchors.right: parent.right
+    anchors.top: prev.bottom
+    checked: false
+    margin-top: 2
+    @onCheckChange: HotkeysManager.changeUseType(HOTKEY_MANAGER_USEONTARGET, self:isChecked())
+    
+  ButtonBox
+    id: useWith
+    text: With crosshair
+    width: 128
+    enabled: false
+    anchors.left: prev.left
+    anchors.right: parent.right
+    anchors.top: prev.bottom
+    checked: false
+    margin-top: 2
+    @onCheckChange: HotkeysManager.changeUseType(HOTKEY_MANAGER_USEWITH, self:isChecked())
+  
+  Button
+    text: Close
+    width: 64
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    @onClick: HotkeysManager.hide()

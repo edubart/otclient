@@ -1,0 +1,15 @@
+Module
+  name: game_hotkeys
+  description: Manage client hotkeys
+  author: OTClient team
+  website: https://github.com/edubart/otclient
+  
+  dependencies:
+    - client_tibiafiles
+  
+  onLoad: |
+    require 'hotkeys_manager'
+    HotkeysManager.init()
+
+  onUnload: |
+    HotkeysManager.terminate()

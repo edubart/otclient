@@ -1,7 +1,7 @@
 Keyboard = {}
 
 -- private functions
-local function translateKeyCombo(keyCombo)
+function translateKeyCombo(keyCombo)
   if not keyCombo or #keyCombo == 0 then return nil end
   table.sort(keyCombo)
   local keyComboDesc = ''
@@ -27,7 +27,7 @@ local function retranslateKeyComboDesc(keyComboDesc)
   return translateKeyCombo(keyCombo)
 end
 
-local function determineKeyComboDesc(keyCode, keyboardModifiers)
+function determineKeyComboDesc(keyCode, keyboardModifiers)
   local keyCombo = {}
   if keyCode == KeyCtrl or keyCode == KeyShift or keyCode == KeyAlt then
     table.insert(keyCombo, keyCode)
