@@ -339,6 +339,9 @@ void Game::useWith(const ThingPtr& fromThing, const ThingPtr& toThing)
         return;
 
     Position pos = fromThing->getPosition();
+    if(!pos.isValid()) // virtual item
+        pos = Position(0xFFFF, 0, 0); // means that is a item in inventory
+
     int fromStackpos = getThingStackpos(fromThing);
     if(fromStackpos == -1)
         return;
