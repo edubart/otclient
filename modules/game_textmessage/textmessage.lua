@@ -111,7 +111,7 @@ local function onGameTextMessage(msgtypedesc, msg)
   TextMessage.display(msgtypedesc, msg)
 end
 
-connect(Game, { onLogin = TextMessage.create,
-                onLogout = TextMessage.destroy,
+connect(Game, { onGameStart = TextMessage.create,
+                onGameEnd = TextMessage.destroy,
                 onDeath = onGameDeath,
                 onTextMessage = onGameTextMessage })

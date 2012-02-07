@@ -122,8 +122,8 @@ function Skills.onSkillChange(id, level, percent)
   setSkillPercent('skillId' .. id, percent, 'You have ' .. (100 - percent) .. ' percent to go')
 end
 
-connect(Game, { onLogin = Skills.create,
-                onLogout = Skills.destroy,
+connect(Game, { onGameStart = Skills.create,
+                onGameEnd = Skills.destroy,
                 onExperienceChange = Skills.onExperienceChange,
                 onLevelChange = Skills.onLevelChange,
                 onHealthChange = Skills.onHealthChange,

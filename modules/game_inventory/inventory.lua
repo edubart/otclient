@@ -42,8 +42,8 @@ function Inventory.onSoulChange(soul)
   widget:setText("Soul:\n" .. soul)
 end
 
-connect(Game, { onLogin = Inventory.create,
-                onLogout = Inventory.destroy,
+connect(Game, { onGameStart = Inventory.create,
+                onGameEnd = Inventory.destroy,
                 onInventoryChange = Inventory.onInventoryChange,
                 onFreeCapacityChange = Inventory.onFreeCapacityChange,
                 onSoulChange = Inventory.onSoulChange })

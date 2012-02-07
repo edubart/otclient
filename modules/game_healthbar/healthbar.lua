@@ -53,7 +53,7 @@ function HealthBar.onManaChange(mana, maxMana)
   manaBar:setPercent(percent)
 end
 
-connect(Game, { onLogin = HealthBar.create,
-                onLogout = HealthBar.destroy,
+connect(Game, { onGameStart = HealthBar.create,
+                onGameEnd = HealthBar.destroy,
                 onHealthChange = HealthBar.onHealthChange,
                 onManaChange = HealthBar.onManaChange })

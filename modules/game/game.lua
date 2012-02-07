@@ -108,5 +108,5 @@ local function onApplicationClose()
 end
 
 setonclose(onApplicationClose)
-connect(Game, { onLogin = Game.createInterface }, true)
-connect(Game, { onLogout = Game.destroyInterface })
+connect(Game, { onGameStart = Game.createInterface }, true)
+connect(Game, { onGameEnd = Game.destroyInterface })

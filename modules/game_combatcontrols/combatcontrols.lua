@@ -66,8 +66,8 @@ function CombatControls.init()
   connect(fightModeRadioGroup, { onSelectionChange = onFightModeChange })
   connect(chaseModeButton, { onCheckChange = onChaseModeChange })
   connect(safeFightButton, { onCheckChange = onSafeFightChange })
-  connect(Game, { onLogin = CombatControls.online })
-  connect(Game, { onLogout = CombatControls.offline })
+  connect(Game, { onGameStart = CombatControls.online })
+  connect(Game, { onGameEnd = CombatControls.offline })
 
   if Game.isOnline() then
     CombatControls.online()
@@ -94,8 +94,8 @@ function CombatControls.terminate()
   combatControlsWindow:destroy()
   combatControlsWindow = nil
 
-  disconnect(Game, { onLogin = CombatControls.online })
-  disconnect(Game, { onLogout = CombatControls.offline })
+  disconnect(Game, { onGameStart = CombatControls.online })
+  disconnect(Game, { onGameEnd = CombatControls.offline })
 
   CombatControls = nil
 end

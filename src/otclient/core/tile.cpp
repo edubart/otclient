@@ -38,11 +38,11 @@ Tile::Tile(const Position& position)
 
 void Tile::draw(const Point& dest, float scaleFactor, int drawFlags)
 {
-    m_drawElevation = 0;
     bool animate = drawFlags & Otc::DrawAnimations;
 
     // first bottom items
     if(drawFlags & (Otc::DrawGround | Otc::DrawGroundBorders | Otc::DrawOnBottom)) {
+        m_drawElevation = 0;
         for(const ThingPtr& thing : m_things) {
             if(!thing->isGround() && !thing->isGroundBorder() && !thing->isOnBottom())
                 break;

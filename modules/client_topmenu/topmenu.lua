@@ -25,8 +25,8 @@ function TopMenu.init()
   TopMenu.addRightButton('logoutButton', 'Logout (Ctrl+Q)', '/core_styles/icons/logout.png', onLogout)
   Keyboard.bindKeyDown('Ctrl+Q', onLogout)
 
-  connect(Game, { onLogin = TopMenu.showGameButtons,
-                  onLogout = TopMenu.hideGameButtons })
+  connect(Game, { onGameStart = TopMenu.showGameButtons,
+                  onGameEnd = TopMenu.hideGameButtons })
 end
 
 function TopMenu.terminate()
@@ -37,8 +37,8 @@ function TopMenu.terminate()
   topMenu:destroy()
   topMenu = nil
 
-  disconnect(Game, { onLogin = TopMenu.showGameButtons,
-                     onLogout = TopMenu.hideGameButtons })
+  disconnect(Game, { onGameStart = TopMenu.showGameButtons,
+                     onGameEnd = TopMenu.hideGameButtons })
 
   TopMenu = nil
 end

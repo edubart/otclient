@@ -43,7 +43,7 @@ function Containers.onContainerOpen(containerId, itemId, name, capacity, hasPare
     itemWidget:setStyle('Item')
     container:addChild(itemWidget)
     itemWidget.position = {x=65535, y=containerId+64, z=i-1}
-    
+
     if i <= #items then
       local item = items[i]
       item:setPosition(itemWidget.position)
@@ -70,7 +70,7 @@ function Containers.onContainerAddItem(containerId, item)
   while i >= 1 do
     local itemWidget = container:getChildByIndex(i)
     if not itemWidget then return end
-    
+
     local nextItemWidget = container:getChildByIndex(i+1)
     if not nextItemWidget then return end
 
@@ -79,7 +79,7 @@ function Containers.onContainerAddItem(containerId, item)
       swapItem:setPosition(nextItemWidget.position)
       nextItemWidget:setItem(swapItem)
     end
-    
+
     i = i - 1
   end
 
@@ -94,7 +94,7 @@ end
 function Containers.onContainerUpdateItem(containerId, slot, item)
   local container = m_containers[containerId]
   if not container then return end
-  
+
   local itemWidget = container:getChildByIndex(slot + 1)
   if not itemWidget then return end
   itemWidget:setItem(item)
@@ -104,35 +104,35 @@ end
 function Containers.onContainerRemoveItem(containerId, slot)
   local container = m_containers[containerId]
   if not container then return end
-  
+
   local itemWidget = container:getChildByIndex(slot+1)
   if not itemWidget then return end
   itemWidget:setItem(nil)
-  
+
   for i=slot,container.itemCount-2 do
     local itemWidget = container:getChildByIndex(i+1)
     if not itemWidget then return end
-    
+
     local nextItemWidget = container:getChildByIndex(i+2)
     if not nextItemWidget then return end
-    
+
     local item = nextItemWidget:getItem()
     local pos = item:getPosition()
     pos.z = pos.z - 1
     item:setPosition(pos)
-    
+
     itemWidget:setItem(item)
     nextItemWidget:setItem(nil)
   end
-  
+
   container.itemCount = container.itemCount - 1
 end
 
-connect(Game, { onLogin = Containers.clean,
-                onLogout = Containers.clean,
+connect(Game, { onGameStart = Containers.clean,
+                onGameEnd = Containers.clean,
                 onContainerOpen = Containers.onContainerOpen,
                 onContainerClose = Containers.onContainerClose,
                 onContainerAddItem = Containers.onContainerAddItem,
                 onContainerUpdateItem = Containers.onContainerUpdateItem,
                 onContainerRemoveItem = Containers.onContainerRemoveItem })
-                
+

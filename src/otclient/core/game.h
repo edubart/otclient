@@ -42,7 +42,8 @@ public:
     void cleanLogout() { logout(false); }
     void processLoginError(const std::string& error);
     void processConnectionError(const boost::system::error_code& error);
-    void processLogin(const LocalPlayerPtr& localPlayer, int serverBeat);
+    void processGameStart(const LocalPlayerPtr& localPlayer, int serverBeat);
+    void processLogin();
     void processLogout();
     void processDeath();
     void processPlayerStats(double health, double maxHealth,

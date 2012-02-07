@@ -106,7 +106,7 @@ private:
     // Parse Messages
     void parseMessage(InputMessage& msg);
 
-    void parsePlayerLogin(InputMessage& msg);
+    void parseInitGame(InputMessage& msg);
     void parseGMActions(InputMessage& msg);
     void parseLoginError(InputMessage& msg);
     void parseFYIMessage(InputMessage& msg);

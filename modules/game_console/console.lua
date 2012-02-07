@@ -365,8 +365,8 @@ local function onChannelList(channelList)
   end
 end
 
-connect(Game, { onLogin = Console.create,
-                onLogout = Console.destroy,
+connect(Game, { onGameStart = Console.create,
+                onGameEnd = Console.destroy,
                 onCreatureSpeak = onCreatureSpeak,
                 onChannelList = onChannelList,
                 onOpenChannel = onOpenChannel,

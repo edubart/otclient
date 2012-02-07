@@ -72,7 +72,7 @@ void Game::processConnectionError(const boost::system::error_code& error)
     }
 }
 
-void Game::processLogin(const LocalPlayerPtr& localPlayer, int serverBeat)
+void Game::processGameStart(const LocalPlayerPtr& localPlayer, int serverBeat)
 {
     m_localPlayer = localPlayer;
     m_serverBeat = serverBeat;
@@ -83,8 +83,16 @@ void Game::processLogin(const LocalPlayerPtr& localPlayer, int serverBeat)
     m_safeFight = true;
     m_protocolGame->sendFightTatics(m_fightMode, m_chaseMode, m_safeFight);
 
-    // NOTE: the entire map description is not known yet
-    g_lua.callGlobalField("Game", "onLogin", localPlayer);
+    // NOTE: the entire map description and local player informations is not known yet
+    g_lua.callGlobalField("Game", "onGameStart");
+}
+
+void Game::processLogin()
+{
+    if(!isOnline())
+        return;
+
+    g_lua.callGlobalField("Game", "onLogin", m_localPlayer);
 }
 
 void Game::processLogout()
@@ -93,6 +101,8 @@ void Game::processLogout()
         g_lua.callGlobalField("Game", "onLogout", m_localPlayer);
 
         m_localPlayer = nullptr;
+
+        g_lua.callGlobalField("Game", "onGameEnd");
     }
 
     if(m_protocolGame) {

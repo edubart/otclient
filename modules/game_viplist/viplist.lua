@@ -57,7 +57,7 @@ function VipList.onAddVip(id, name, online)
 
   label:setPhantom(false)
   connect(label, { onDoubleClick = function () Game.openPrivateChannel(label:getText()) return true end } )
-  
+
   local nameLower = name:lower()
   local childrenCount = vipList:getChildCount()
 
@@ -123,7 +123,7 @@ function VipList.onVipListLabelMousePress(widget, mousePos, mouseButton)
 end
 
 
-connect(Game, { onLogin = VipList.create,
-                onLogout = VipList.destroy,
+connect(Game, { onGameStart = VipList.create,
+                onGameEnd = VipList.destroy,
                 onAddVip = VipList.onAddVip,
                 onVipStateChange = VipList.onVipStateChange })

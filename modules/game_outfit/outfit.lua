@@ -199,4 +199,4 @@ end
 
 -- hooked events
 connect(Game, { onOpenOutfitWindow = Outfit.create,
-                onLogout = Outfit.destroy })
+                onGameEnd = Outfit.destroy })

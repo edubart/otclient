@@ -41,7 +41,7 @@ void ProtocolGame::parseMessage(InputMessage& msg)
 
             switch(opt) {
             case Proto::GameServerInitGame:
-                parsePlayerLogin(msg);
+                parseInitGame(msg);
                 break;
             case Proto::GameServerGMActions:
                 parseGMActions(msg);
@@ -265,7 +265,7 @@ void ProtocolGame::parseMessage(InputMessage& msg)
     }
 }
 
-void ProtocolGame::parsePlayerLogin(InputMessage& msg)
+void ProtocolGame::parseInitGame(InputMessage& msg)
 {
     uint playerId = msg.getU32();
     int serverBeat = msg.getU16();
@@ -274,7 +274,7 @@ void ProtocolGame::parsePlayerLogin(InputMessage& msg)
     m_localPlayer = LocalPlayerPtr(new LocalPlayer);
     m_localPlayer->setId(playerId);
     m_localPlayer->setCanReportBugs(playerCanReportBugs);
-    g_game.processLogin(m_localPlayer, serverBeat);
+    g_game.processGameStart(m_localPlayer, serverBeat);
 }
 
 void ProtocolGame::parseGMActions(InputMessage& msg)
@@ -1110,8 +1110,10 @@ ThingPtr ProtocolGame::internalGetThing(InputMessage& msg)
             creature->setPassable(passable);
             creature->setDirection(direction);
 
+            // now that the local player is known, we can schedule login event
             if(creature == m_localPlayer) {
                 m_localPlayer->setKnown(true);
+                g_dispatcher.addEvent([] { g_game.processLogin(); });
             }
         }
 
