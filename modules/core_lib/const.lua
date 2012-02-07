@@ -309,3 +309,11 @@ SpeakChannelRed = 11
 SpeakChannelOrange = 12
 SpeakMonsterSay = 13
 SpeakMonsterYell = 14
+
+
+FightOffensive = 1
+FightBalanced = 2
+FightDefensive = 3
+
+DontChase = 0
+ChaseOpponent = 1

@@ -57,6 +57,8 @@ function ToolTip.terminate()
   currentHoveredWidget = nil
   toolTipLabel:destroy()
   toolTipLabel = nil
+
+  ToolTip = nil
 end
 
 function ToolTip.display(text)

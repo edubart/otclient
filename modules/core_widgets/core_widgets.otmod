@@ -25,6 +25,8 @@ Module
     dofile 'uimessagebox'
 
     dofile 'tooltip'
+    dofile 'radiogroup'
+
     ToolTip.init()
 
   onUnload: |

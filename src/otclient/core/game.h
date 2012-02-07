@@ -74,6 +74,14 @@ public:
     void useInventoryItemWith(int itemId, const ThingPtr& toThing);
     void move(const ThingPtr &thing, const Position& toPos, int count);
 
+    // fight tatics related
+    void setChaseMode(Otc::ChaseModes chaseMode);
+    void setFightMode(Otc::FightModes fightMode);
+    void setSafeFight(bool on);
+    Otc::ChaseModes getChaseMode() { return m_chaseMode; }
+    Otc::FightModes getFightMode() { return m_fightMode; }
+    bool isSafeFight() { return m_safeFight; }
+
     // attack/follow related
     void attack(const CreaturePtr& creature);
     void cancelAttack();
@@ -124,6 +132,10 @@ private:
     ProtocolGamePtr m_protocolGame;
     bool m_dead;
     int m_serverBeat;
+
+    Otc::FightModes m_fightMode;
+    Otc::ChaseModes m_chaseMode;
+    bool m_safeFight;
 };
 
 extern Game g_game;

@@ -61,6 +61,7 @@ TopPanel
       type: horizontalBox
       spacing: 4
     padding: 6 4
+    visible: false
 
   Panel
     id: rightButtonsPanel

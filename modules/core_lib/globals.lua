@@ -51,6 +51,11 @@ function displayUI(arg1, options)
   return widget
 end
 
+function loadUI(otui, parent)
+  local otuiFilePath = resolvepath(otui, 2)
+  return g_ui.loadUI(otuiFilePath, parent)
+end
+
 function createWidget(style, parent)
   local className = g_ui.getStyleClass(style)
   if className == "" then

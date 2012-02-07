@@ -4,7 +4,6 @@ UIWindow
   margin-top: 10
   margin-left: 6
   margin-right: 6
-  move-policy: free updated
 
   Item
     // head

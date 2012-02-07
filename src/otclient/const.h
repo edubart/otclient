@@ -211,7 +211,7 @@ namespace Otc
     };
 
     enum ChaseModes {
-        StandWhileFighting = 0,
+        DontChase = 0,
         ChaseOpponent = 1
     };
 

@@ -61,6 +61,7 @@ change Align/Anchors lua API from enum to text
 
 == Client
 make possible to reload modules
+fix modules recursivity, it makes client crash
 implement left panel with dragging windows
 clean sprites cache periodically
 create a shader manager

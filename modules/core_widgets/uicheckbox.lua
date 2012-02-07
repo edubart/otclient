@@ -7,9 +7,7 @@ function UICheckBox.create()
   return checkbox
 end
 
-function UICheckBox:onMouseRelease(mousePos, mouseButton)
-  if self:isPressed() and self:containsPoint(mousePos) then
-    self:setChecked(not self:isChecked())
-    return true
-  end
+function UICheckBox:onMousePress(mousePos, mouseButton)
+  self:setChecked(not self:isChecked())
+  return true
 end

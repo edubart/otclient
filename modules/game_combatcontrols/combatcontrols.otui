@@ -1,0 +1,43 @@
+CombatBox < UICheckBox
+  size: 20 20
+  image-clip: 0 0 20 20
+  anchors.top: parent.top
+  margin-left: 5
+  margin-right: 5
+
+  $checked:
+    image-clip: 0 20 20 20
+
+FightOffensiveBox < CombatBox
+  image-source: /game_combatcontrols/icons/fightoffensive.png
+FightBalancedBox < CombatBox
+  image-source: /game_combatcontrols/icons/fightbalanced.png
+FightDefensiveBox < CombatBox
+  image-source: /game_combatcontrols/icons/fightdefensive.png
+ChaseModeBox < CombatBox
+  image-source: /game_combatcontrols/icons/chasemode.png
+SafeFightBox < CombatBox
+  image-source: /game_combatcontrols/icons/safefight.png
+
+UIWindow
+  width: 130
+  height: 30
+  margin-top: 10
+  margin-left: 6
+  margin-right: 6
+
+  FightOffensiveBox
+    id: fightOffensiveBox
+    anchors.right: next.left
+  FightBalancedBox
+    id: fightBalancedBox
+    anchors.right: next.left
+  FightDefensiveBox
+    id: fightDefensiveBox
+    anchors.horizontalCenter: parent.horizontalCenter
+  ChaseModeBox
+    id: chaseModeBox
+    anchors.left: prev.right
+  SafeFightBox
+    id: safeFightBox
+    anchors.left: prev.right

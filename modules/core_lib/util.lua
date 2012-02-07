@@ -57,6 +57,19 @@ function disconnect(object, signalsAndSlots)
   end
 end
 
+function newclass()
+  local class = {}
+  function class.internalCreate()
+    local instance = {}
+    for k,v in pairs(class) do
+      instance[k] = v
+    end
+    return instance
+  end
+  class.create = class.internalCreate
+  return class
+end
+
 function extends(base)
   local derived = {}
   function derived.internalCreate()

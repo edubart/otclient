@@ -204,6 +204,12 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassStaticFunction<Game>("turn", std::bind(&Game::turn, &g_game, _1));
     g_lua.bindClassStaticFunction<Game>("walk", std::bind(&Game::walk, &g_game, _1));
     g_lua.bindClassStaticFunction<Game>("forceWalk", std::bind(&Game::forceWalk, &g_game, _1));
+    g_lua.bindClassStaticFunction<Game>("setChaseMode", std::bind(&Game::setChaseMode, &g_game, _1));
+    g_lua.bindClassStaticFunction<Game>("setFightMode", std::bind(&Game::setFightMode, &g_game, _1));
+    g_lua.bindClassStaticFunction<Game>("setSafeFight", std::bind(&Game::setSafeFight, &g_game, _1));
+    g_lua.bindClassStaticFunction<Game>("getChaseMode", std::bind(&Game::getChaseMode, &g_game));
+    g_lua.bindClassStaticFunction<Game>("getFightMode", std::bind(&Game::getFightMode, &g_game));
+    g_lua.bindClassStaticFunction<Game>("isSafeFight", std::bind(&Game::isSafeFight, &g_game));
     g_lua.bindClassStaticFunction<Game>("attack", std::bind(&Game::attack, &g_game, _1));
     g_lua.bindClassStaticFunction<Game>("cancelAttack", std::bind(&Game::cancelAttack, &g_game));
     g_lua.bindClassStaticFunction<Game>("follow", std::bind(&Game::follow, &g_game, _1));

@@ -77,6 +77,12 @@ void Game::processLogin(const LocalPlayerPtr& localPlayer, int serverBeat)
     m_localPlayer = localPlayer;
     m_serverBeat = serverBeat;
 
+    // synchronize fight modes with the server
+    m_fightMode = Otc::FightBalanced;
+    m_chaseMode = Otc::DontChase;
+    m_safeFight = true;
+    m_protocolGame->sendFightTatics(m_fightMode, m_chaseMode, m_safeFight);
+
     // NOTE: the entire map description is not known yet
     g_lua.callGlobalField("Game", "onLogin", localPlayer);
 }
@@ -382,6 +388,33 @@ void Game::move(const ThingPtr& thing, const Position& toPos, int count)
     m_localPlayer->lockWalk();
 
     m_protocolGame->sendThrow(thing->getPosition(), thing->getId(), thing->getStackpos(), toPos, count);
+}
+
+void Game::setChaseMode(Otc::ChaseModes chaseMode)
+{
+    if(!isOnline() || !checkBotProtection())
+        return;
+
+    m_chaseMode = chaseMode;
+    m_protocolGame->sendFightTatics(m_fightMode, m_chaseMode, m_safeFight);
+}
+
+void Game::setFightMode(Otc::FightModes fightMode)
+{
+    if(!isOnline() || !checkBotProtection())
+        return;
+
+    m_fightMode = fightMode;
+    m_protocolGame->sendFightTatics(m_fightMode, m_chaseMode, m_safeFight);
+}
+
+void Game::setSafeFight(bool on)
+{
+    if(!isOnline() || !checkBotProtection())
+        return;
+
+    m_safeFight = on;
+    m_protocolGame->sendFightTatics(m_fightMode, m_chaseMode, m_safeFight);
 }
 
 void Game::attack(const CreaturePtr& creature)
