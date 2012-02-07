@@ -39,6 +39,8 @@ function TopMenu.terminate()
 
   disconnect(Game, { onLogin = TopMenu.showGameButtons,
                      onLogout = TopMenu.hideGameButtons })
+
+  TopMenu = nil
 end
 
 function TopMenu.addButton(id, description, icon, callback, right)

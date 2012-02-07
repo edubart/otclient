@@ -12,7 +12,7 @@ function UIItem:onDragEnter(mousePos)
   return true
 end
 
-function UIItem:onDragLeave(widget, mousePos)
+function UIItem:onDragLeave(droppedWidget, mousePos)
   if self:isVirtual() then return false end
 
   if not self.parsed then
@@ -53,8 +53,9 @@ end
 function UIItem:onHoverChange(hovered)
   if self:isVirtual() then return end
 
-  if g_ui.getDraggingWidget() and self ~= g_ui.getDraggingWidget() then
-    if hovered then
+  local dragginWidget = g_ui.getDraggingWidget()
+  if dragginWidget and self ~= dragginWidget then
+    if dragginWidget:getClassName() == 'UIItem' and not dragginWidget:isVirtual() and hovered then
       self:setBorderWidth(1)
     else
       self:setBorderWidth(0)

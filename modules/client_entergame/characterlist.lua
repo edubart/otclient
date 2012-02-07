@@ -63,6 +63,7 @@ function CharacterList.terminate()
     loadBox:destroy()
     loadBox = nil
   end
+  CharacterList = nil
 end
 
 function CharacterList.create(characters, premDays)

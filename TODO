@@ -3,7 +3,6 @@ High priority TODO in order (before first public disclose)
 
 restore map moving
 multiline text edit
-fix auto repeats events
 remove UIGame
 move windows, navigate in containers
 complete miniwindow (close, minimize, resize, move)
@@ -11,9 +10,7 @@ create and bind all game functions/events
 let windows stay open while playing
 combat controls
 player status icons (poison, etc)
-modules managment interface
 load modules from zip files
-addons folder
 display exit box when exiting from game
 scrollbar and scrollable widgets
 
@@ -25,6 +22,7 @@ review directories loading search
 load modules from zip packages
 create a class for reading binary files
 rework lua/c++ logger
+replace autoload-antencedence with load-before/load-after
 
 == Graphics
 use CoordsBuffer in font

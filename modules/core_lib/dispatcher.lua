@@ -1,4 +1,4 @@
-function scheduleEvent(func, delay)
+function scheduleEvent(callback, delay)
   local event = g_dispatcher.scheduleEvent(callback, delay)
 
   -- must hold a reference to the callback, otherwise it would be collected

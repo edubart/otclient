@@ -743,12 +743,6 @@ void UIWidget::setPhantom(bool phantom)
 
 void UIWidget::setDragging(bool dragging)
 {
-    if(dragging) {
-        g_ui.setDraggingWidget(asUIWidget());
-    } else {
-        if(g_ui.getDraggingWidget() == asUIWidget())
-            g_ui.setDraggingWidget(nullptr);
-    }
     m_dragging = dragging;
 }
 
@@ -896,6 +890,22 @@ UIWidgetPtr UIWidget::recursiveGetChildByPos(const Point& childPos)
         }
     }
     return nullptr;
+}
+
+UIWidgetList UIWidget::recursiveGetChildrenByPos(const Point& childPos)
+{
+    UIWidgetList children;
+    for(auto it = m_children.rbegin(); it != m_children.rend(); ++it) {
+        const UIWidgetPtr& child = (*it);
+        if(child->isExplicitlyVisible() && child->containsPoint(childPos)) {
+            UIWidgetList subChildren = child->recursiveGetChildrenByPos(childPos);
+            if(!subChildren.empty())
+                children.insert(children.end(), subChildren.begin(), subChildren.end());
+            else if(!child->isPhantom())
+                children.push_back(child);
+        }
+    }
+    return children;
 }
 
 UIWidgetPtr UIWidget::backwardsGetWidgetById(const std::string& id)
@@ -1141,6 +1151,11 @@ void UIWidget::onDragLeave(UIWidgetPtr droppedWidget, const Point& mousePos)
     callLuaField("onDragLeave", droppedWidget, mousePos);
 }
 
+bool UIWidget::onDragMove(const Point& mousePos, const Point& mouseMoved)
+{
+    return callLuaField("onDragMove", mousePos, mouseMoved);
+}
+
 void UIWidget::onDrop(UIWidgetPtr draggedWidget, const Point& mousePos)
 {
     callLuaField("onDrop", draggedWidget, mousePos);
@@ -1184,13 +1199,6 @@ bool UIWidget::onMouseRelease(const Point& mousePos, Fw::MouseButton button)
     if(isPressed() && getRect().contains(mousePos))
         onClick(mousePos);
 
-    UIWidgetPtr draggedWidget = g_ui.getDraggingWidget();
-    if(draggedWidget && button == Fw::MouseLeftButton && (containsPoint(mousePos) || asUIWidget() == g_ui.getRootWidget())) {
-        onDrop(draggedWidget, mousePos);
-        draggedWidget->onDragLeave(asUIWidget(), mousePos);
-        draggedWidget->setDragging(false);
-    }
-
     return callLuaField<bool>("onMouseRelease", mousePos, button);
 }
 
@@ -1200,6 +1208,11 @@ bool UIWidget::onMouseMove(const Point& mousePos, const Point& mouseMoved)
         setDragging(true);
         g_ui.setDraggingWidget(asUIWidget());
         onDragEnter(mousePos - mouseMoved);
+    }
+
+    if(m_dragging) {
+        if(onDragMove(mousePos, mouseMoved))
+            return true;
     }
 
     return callLuaField<bool>("onMouseMove", mousePos, mouseMoved);
@@ -1354,7 +1367,7 @@ bool UIWidget::propagateOnMouseRelease(const Point& mousePos, Fw::MouseButton bu
     UIWidgetList children;
     for(const UIWidgetPtr& child : m_children) {
         // events on hidden or disabled widgets are discarded
-        if(!child->isExplicitlyEnabled() || !child->isExplicitlyVisible())
+        if((!child->isExplicitlyEnabled() || !child->isExplicitlyVisible()) && (!child->isPressed() && button == Fw::MouseLeftButton))
             continue;
 
         // mouse release events go to all children

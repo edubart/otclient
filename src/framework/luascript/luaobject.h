@@ -57,6 +57,9 @@ public:
     /// Gets a field from this lua object, the result is pushed onto the stack
     void luaGetField(const std::string& key);
 
+    /// Gets the table containing all stored fields of this lua object, the result is pushed onto the stack
+    void luaGetFieldsTable();
+
     /// Returns the number of references of this object
     /// @note each userdata of this object on lua counts as a reference
     int getUseCount();

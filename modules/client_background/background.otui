@@ -9,4 +9,3 @@ Panel
   anchors.bottom: parent.bottom
   margin-top: 1
   focusable: false
-

@@ -34,6 +34,7 @@ function Options.terminate()
   optionsWindow = nil
   optionsButton:destroy()
   optionsButton = nil
+  Options = nil
 end
 
 function Options.toggle()

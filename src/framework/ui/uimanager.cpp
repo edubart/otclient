@@ -79,6 +79,22 @@ void UIManager::inputEvent(const InputEvent& event)
             break;
         case Fw::MouseReleaseInputEvent:
             m_mouseReceiver->propagateOnMouseRelease(event.mousePos, event.mouseButton);
+            if(m_draggingWidget && event.mouseButton == Fw::MouseLeftButton) {
+                auto clickedChildren = m_rootWidget->recursiveGetChildrenByPos(event.mousePos);
+                UIWidgetPtr droppedWidget;
+                for(const UIWidgetPtr& child : clickedChildren) {
+                    if(child != m_draggingWidget) {
+                        droppedWidget = child;
+                        break;
+                    }
+                }
+                if(droppedWidget)
+                    droppedWidget->onDrop(m_draggingWidget, event.mousePos);
+
+                m_draggingWidget->onDragLeave(droppedWidget, event.mousePos);
+                m_draggingWidget->setDragging(false);
+                m_draggingWidget = nullptr;
+            }
             break;
         case Fw::MouseMoveInputEvent:
             m_mouseReceiver->updateState(Fw::HoverState);

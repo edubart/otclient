@@ -54,7 +54,7 @@ void UIItem::draw()
 
 void UIItem::setItemId(int id)
 {
-    if(!m_item)
+    if(!m_item && id != 0)
         m_item = Item::create(id);
     else {
         // remove item

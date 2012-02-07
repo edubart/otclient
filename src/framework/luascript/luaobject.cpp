@@ -65,6 +65,14 @@ void LuaObject::luaGetField(const std::string& key)
     }
 }
 
+void LuaObject::luaGetFieldsTable()
+{
+    if(m_fieldsTableRef != -1)
+        g_lua.getRef(m_fieldsTableRef);
+    else
+        g_lua.pushNil();
+}
+
 int LuaObject::getUseCount()
 {
     return shared_from_this().use_count() - 1;

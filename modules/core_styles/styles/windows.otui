@@ -18,7 +18,7 @@ Window < UIWindow
 MainWindow < Window
   anchors.centerIn: parent
 
-MiniWindow < UIWindow
+MiniWindow < UIMiniWindow
   font: verdana-11px-antialised
   //icon: /core_styles/icons/login.png
   icon-rect: 4 4 16 16

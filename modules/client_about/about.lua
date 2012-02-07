@@ -15,6 +15,7 @@ end
 function About.terminate()
   aboutButton:destroy()
   aboutButton = nil
+  About = nil
 end
 
 function About.openWebpage()

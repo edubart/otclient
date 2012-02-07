@@ -19,12 +19,12 @@ Module
     dofile 'uitabbar'
     dofile 'uipopupmenu'
     dofile 'uiwindow'
+    dofile 'uiminiwindow'
+    dofile 'uiminiwindowcontainer'
     dofile 'uiitem'
     dofile 'uimessagebox'
 
     dofile 'tooltip'
-    --dofile 'messagebox/messagebox'
-
     ToolTip.init()
 
   onUnload: |

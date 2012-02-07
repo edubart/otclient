@@ -12,6 +12,7 @@ end
 function Background.terminate()
   background:destroy()
   background = nil
+  Background = nil
 end
 
 function Background.hide()

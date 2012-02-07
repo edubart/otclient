@@ -229,13 +229,15 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassStaticFunction<UIItem>("create", []{ return UIItemPtr(new UIItem); });
     g_lua.bindClassMemberFunction<UIItem>("setItemId", &UIItem::setItemId);
     g_lua.bindClassMemberFunction<UIItem>("setItemCount", &UIItem::setItemCount);
+    g_lua.bindClassMemberFunction<UIItem>("setItemSubType", &UIItem::setItemSubType);
     g_lua.bindClassMemberFunction<UIItem>("setItem", &UIItem::setItem);
     g_lua.bindClassMemberFunction<UIItem>("setVirtual", &UIItem::setVirtual);
+    g_lua.bindClassMemberFunction<UIItem>("clearItem", &UIItem::clearItem);
     g_lua.bindClassMemberFunction<UIItem>("getItemId", &UIItem::getItemId);
     g_lua.bindClassMemberFunction<UIItem>("getItemCount", &UIItem::getItemCount);
+    g_lua.bindClassMemberFunction<UIItem>("getItemSubType", &UIItem::getItemSubType);
     g_lua.bindClassMemberFunction<UIItem>("getItem", &UIItem::getItem);
     g_lua.bindClassMemberFunction<UIItem>("isVirtual", &UIItem::isVirtual);
-
 
     g_lua.registerClass<UICreature, UIWidget>();
     g_lua.bindClassStaticFunction<UICreature>("create", []{ return UICreaturePtr(new UICreature); } );

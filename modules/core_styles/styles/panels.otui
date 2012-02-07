@@ -10,8 +10,7 @@ TopPanel < Panel
   image-source: /core_styles/images/top_panel.png
   image-repeated: true
 
-InterfacePanel < Panel
-  focusable: false
+InterfacePanel < UIMiniWindowContainer
   image-source: /core_styles/images/interface_panel.png
   image-border: 4
 

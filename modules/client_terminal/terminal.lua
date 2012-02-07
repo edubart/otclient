@@ -137,6 +137,7 @@ function Terminal.terminate()
   terminalWidget:destroy()
   terminalWidget = nil
   commandEnv = nil
+  Terminal = nil
 end
 
 function Terminal.toggle()

@@ -97,6 +97,7 @@ function EnterGame.terminate()
   enterGameButton = nil
   motdButton:destroy()
   motdButton = nil
+  EnterGame = nil
 end
 
 function EnterGame.show()
@@ -144,4 +145,3 @@ end
 function EnterGame.displayMotd()
   displayInfoBox('Message of the day', motdMessage)
 end
-

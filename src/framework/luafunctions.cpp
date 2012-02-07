@@ -103,6 +103,8 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIWidget>("setChecked", &UIWidget::setChecked);
     g_lua.bindClassMemberFunction<UIWidget>("setFocusable", &UIWidget::setFocusable);
     g_lua.bindClassMemberFunction<UIWidget>("setPhantom", &UIWidget::setPhantom);
+    g_lua.bindClassMemberFunction<UIWidget>("setDragging", &UIWidget::setDragging);
+    g_lua.bindClassMemberFunction<UIWidget>("setDragable", &UIWidget::setDragable);
     g_lua.bindClassMemberFunction<UIWidget>("setFixedSize", &UIWidget::setFixedSize);
     g_lua.bindClassMemberFunction<UIWidget>("setLastFocusReason", &UIWidget::setLastFocusReason);
     g_lua.bindClassMemberFunction<UIWidget>("setAutoRepeatDelay", &UIWidget::setAutoRepeatDelay);
@@ -120,6 +122,7 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIWidget>("getChildByIndex", &UIWidget::getChildByIndex);
     g_lua.bindClassMemberFunction<UIWidget>("recursiveGetChildById", &UIWidget::recursiveGetChildById);
     g_lua.bindClassMemberFunction<UIWidget>("recursiveGetChildByPos", &UIWidget::recursiveGetChildByPos);
+    g_lua.bindClassMemberFunction<UIWidget>("recursiveGetChildrenByPos", &UIWidget::recursiveGetChildrenByPos);
     g_lua.bindClassMemberFunction<UIWidget>("backwardsGetWidgetById", &UIWidget::backwardsGetWidgetById);
     g_lua.bindClassMemberFunction<UIWidget>("asUIWidget", &UIWidget::asUIWidget);
     g_lua.bindClassMemberFunction<UIWidget>("resize", &UIWidget::resize);
@@ -145,6 +148,8 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIWidget>("isExplicitlyVisible", &UIWidget::isExplicitlyVisible);
     g_lua.bindClassMemberFunction<UIWidget>("isFocusable", &UIWidget::isFocusable);
     g_lua.bindClassMemberFunction<UIWidget>("isPhantom", &UIWidget::isPhantom);
+    g_lua.bindClassMemberFunction<UIWidget>("isDragable", &UIWidget::isDragable);
+    g_lua.bindClassMemberFunction<UIWidget>("isDragging", &UIWidget::isDragging);
     g_lua.bindClassMemberFunction<UIWidget>("isFixedSize", &UIWidget::isFixedSize);
     g_lua.bindClassMemberFunction<UIWidget>("isDestroyed", &UIWidget::isDestroyed);
     g_lua.bindClassMemberFunction<UIWidget>("hasChildren", &UIWidget::hasChildren);
@@ -186,7 +191,15 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIWidget>("setIconSize", &UIWidget::setIconSize);
     g_lua.bindClassMemberFunction<UIWidget>("setIconRect", &UIWidget::setIconRect);
     g_lua.bindClassMemberFunction<UIWidget>("setBorderWidth", &UIWidget::setBorderWidth);
+    g_lua.bindClassMemberFunction<UIWidget>("setBorderWidthTop", &UIWidget::setBorderWidthTop);
+    g_lua.bindClassMemberFunction<UIWidget>("setBorderWidthRight", &UIWidget::setBorderWidthRight);
+    g_lua.bindClassMemberFunction<UIWidget>("setBorderWidthBottom", &UIWidget::setBorderWidthBottom);
+    g_lua.bindClassMemberFunction<UIWidget>("setBorderWidthLeft", &UIWidget::setBorderWidthLeft);
     g_lua.bindClassMemberFunction<UIWidget>("setBorderColor", &UIWidget::setBorderColor);
+    g_lua.bindClassMemberFunction<UIWidget>("setBorderColorTop", &UIWidget::setBorderColorTop);
+    g_lua.bindClassMemberFunction<UIWidget>("setBorderColorRight", &UIWidget::setBorderColorRight);
+    g_lua.bindClassMemberFunction<UIWidget>("setBorderColorBottom", &UIWidget::setBorderColorBottom);
+    g_lua.bindClassMemberFunction<UIWidget>("setBorderColorLeft", &UIWidget::setBorderColorLeft);
     g_lua.bindClassMemberFunction<UIWidget>("setMargin", &UIWidget::setMargin);
     g_lua.bindClassMemberFunction<UIWidget>("setMarginHorizontal", &UIWidget::setMarginHorizontal);
     g_lua.bindClassMemberFunction<UIWidget>("setMarginVertical", &UIWidget::setMarginVertical);

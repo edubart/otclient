@@ -27,6 +27,7 @@ function ModuleManager.terminate()
   moduleManagerButton:destroy()
   moduleManagerButton = nil
   moduleList = nil
+  ModuleManager = nil
 end
 
 function ModuleManager.hide()
@@ -37,7 +38,6 @@ function ModuleManager.show()
   moduleManagerWindow:show()
   moduleManagerWindow:focus()
   moduleManagerWindow:raise()
-
 end
 
 function ModuleManager.toggle()

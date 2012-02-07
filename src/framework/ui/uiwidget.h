@@ -140,6 +140,7 @@ public:
     UIWidgetPtr getChildByIndex(int index);
     UIWidgetPtr recursiveGetChildById(const std::string& id);
     UIWidgetPtr recursiveGetChildByPos(const Point& childPos);
+    UIWidgetList recursiveGetChildrenByPos(const Point& childPos);
     UIWidgetPtr backwardsGetWidgetById(const std::string& id);
 
     UIWidgetPtr asUIWidget() { return std::static_pointer_cast<UIWidget>(shared_from_this()); }
@@ -175,6 +176,7 @@ protected:
     virtual void onHoverChange(bool hovered);
     virtual void onDragEnter(const Point& mousePos);
     virtual void onDragLeave(UIWidgetPtr droppedWidget, const Point& mousePos);
+    virtual bool onDragMove(const Point& mousePos, const Point& mouseMoved);
     virtual void onDrop(UIWidgetPtr draggedWidget, const Point& mousePos);
     virtual bool onKeyText(const std::string& keyText);
     virtual bool onKeyDown(uchar keyCode, int keyboardModifiers);

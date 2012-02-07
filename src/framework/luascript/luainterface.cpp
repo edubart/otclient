@@ -50,6 +50,12 @@ void LuaInterface::init()
     registerClass<LuaObject>();
     bindClassMemberFunction<LuaObject>("getUseCount", &LuaObject::getUseCount);
     bindClassMemberFunction<LuaObject>("getClassName", &LuaObject::getClassName);
+
+    registerClassMemberFunction<LuaObject>("getFieldsTable", (LuaCppFunction) ([](LuaInterface* lua) {
+        LuaObjectPtr obj = g_lua.popObject();
+        obj->luaGetFieldsTable();
+        return 1;
+    }));
 }
 
 void LuaInterface::terminate()

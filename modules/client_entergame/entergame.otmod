@@ -14,5 +14,3 @@ Module
   onUnload: |
     EnterGame.terminate()
     CharacterList.terminate()
-
-
