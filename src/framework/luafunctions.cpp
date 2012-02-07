@@ -98,12 +98,10 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIWidget>("setStyleFromNode", &UIWidget::setStyleFromNode);
     g_lua.bindClassMemberFunction<UIWidget>("setEnabled", &UIWidget::setEnabled);
     g_lua.bindClassMemberFunction<UIWidget>("setVisible", &UIWidget::setVisible);
-    g_lua.bindClassMemberFunction<UIWidget>("setPressed", &UIWidget::setPressed);
     g_lua.bindClassMemberFunction<UIWidget>("setOn", &UIWidget::setOn);
     g_lua.bindClassMemberFunction<UIWidget>("setChecked", &UIWidget::setChecked);
     g_lua.bindClassMemberFunction<UIWidget>("setFocusable", &UIWidget::setFocusable);
     g_lua.bindClassMemberFunction<UIWidget>("setPhantom", &UIWidget::setPhantom);
-    g_lua.bindClassMemberFunction<UIWidget>("setDragging", &UIWidget::setDragging);
     g_lua.bindClassMemberFunction<UIWidget>("setDragable", &UIWidget::setDragable);
     g_lua.bindClassMemberFunction<UIWidget>("setFixedSize", &UIWidget::setFixedSize);
     g_lua.bindClassMemberFunction<UIWidget>("setLastFocusReason", &UIWidget::setLastFocusReason);
@@ -143,13 +141,13 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIWidget>("isAlternate", &UIWidget::isAlternate);
     g_lua.bindClassMemberFunction<UIWidget>("isChecked", &UIWidget::isChecked);
     g_lua.bindClassMemberFunction<UIWidget>("isOn", &UIWidget::isOn);
+    g_lua.bindClassMemberFunction<UIWidget>("isDragging", &UIWidget::isDragging);
     g_lua.bindClassMemberFunction<UIWidget>("isHidden", &UIWidget::isHidden);
     g_lua.bindClassMemberFunction<UIWidget>("isExplicitlyEnabled", &UIWidget::isExplicitlyEnabled);
     g_lua.bindClassMemberFunction<UIWidget>("isExplicitlyVisible", &UIWidget::isExplicitlyVisible);
     g_lua.bindClassMemberFunction<UIWidget>("isFocusable", &UIWidget::isFocusable);
     g_lua.bindClassMemberFunction<UIWidget>("isPhantom", &UIWidget::isPhantom);
     g_lua.bindClassMemberFunction<UIWidget>("isDragable", &UIWidget::isDragable);
-    g_lua.bindClassMemberFunction<UIWidget>("isDragging", &UIWidget::isDragging);
     g_lua.bindClassMemberFunction<UIWidget>("isFixedSize", &UIWidget::isFixedSize);
     g_lua.bindClassMemberFunction<UIWidget>("isDestroyed", &UIWidget::isDestroyed);
     g_lua.bindClassMemberFunction<UIWidget>("hasChildren", &UIWidget::hasChildren);

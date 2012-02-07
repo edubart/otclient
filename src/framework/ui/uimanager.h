@@ -37,6 +37,10 @@ public:
     void resize(const Size& size);
     void inputEvent(const InputEvent& event);
 
+    void updatePressedWidget(const UIWidgetPtr& newPressedWidget, const Point& clickedPos = Point());
+    void updateHoveredWidget();
+    void updateDraggingWidget(const UIWidgetPtr& draggingWidget, const Point& clickedPos);
+
     bool importStyle(const std::string& file);
     void importStyleFromOTML(const OTMLNodePtr& styleNode);
     OTMLNodePtr getStyle(const std::string& styleName);
@@ -48,22 +52,32 @@ public:
     void setMouseReceiver(const UIWidgetPtr& widget) { m_mouseReceiver = widget; }
     void setKeyboardReceiver(const UIWidgetPtr& widget) { m_keyboardReceiver = widget; }
     void setDebugBoxesDrawing(bool enabled) { m_drawDebugBoxes = enabled; }
-    void setDraggingWidget(const UIWidgetPtr& widget) { m_draggingWidget = widget; }
     void resetMouseReceiver() { m_mouseReceiver = m_rootWidget; }
     void resetKeyboardReceiver() { m_keyboardReceiver = m_rootWidget; }
     UIWidgetPtr getMouseReceiver() { return m_mouseReceiver; }
     UIWidgetPtr getKeyboardReceiver() { return m_keyboardReceiver; }
     UIWidgetPtr getDraggingWidget() { return m_draggingWidget; }
+    UIWidgetPtr getHoveredWidget() { return m_hoveredWidget; }
+    UIWidgetPtr getPressedWidget() { return m_pressedWidget; }
     UIWidgetPtr getRootWidget() { return m_rootWidget; }
 
     bool isOnInputEvent() { return m_isOnInputEvent; }
     bool isDrawingDebugBoxes() { return m_drawDebugBoxes; }
+
+protected:
+    void onWidgetAppear(const UIWidgetPtr& widget);
+    void onWidgetDisappear(const UIWidgetPtr& widget);
+    void onWidgetDestroy(const UIWidgetPtr& widget);
+
+    friend class UIWidget;
 
 private:
     UIWidgetPtr m_rootWidget;
     UIWidgetPtr m_mouseReceiver;
     UIWidgetPtr m_keyboardReceiver;
     UIWidgetPtr m_draggingWidget;
+    UIWidgetPtr m_hoveredWidget;
+    UIWidgetPtr m_pressedWidget;
     bool m_isOnInputEvent;
     Boolean<false> m_drawDebugBoxes;
     std::map<std::string, OTMLNodePtr> m_styles;

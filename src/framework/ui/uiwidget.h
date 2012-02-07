@@ -61,10 +61,8 @@ protected:
     Boolean<true> m_visible;
     Boolean<true> m_focusable;
     Boolean<false> m_fixedSize;
-    Boolean<false> m_pressed;
     Boolean<false> m_phantom;
     Boolean<false> m_dragable;
-    Boolean<false> m_dragging;
     Boolean<false> m_destroyed;
     UILayoutPtr m_layout;
     UIWidgetWeakPtr m_parent;
@@ -115,12 +113,10 @@ public:
     void setStyleFromNode(const OTMLNodePtr& styleNode);
     void setEnabled(bool enabled);
     void setVisible(bool visible);
-    void setPressed(bool pressed);
     void setOn(bool on);
     void setChecked(bool checked);
     void setFocusable(bool focusable);
     void setPhantom(bool phantom);
-    void setDragging(bool dragging);
     void setDragable(bool dragable);
     void setFixedSize(bool fixed);
     void setLastFocusReason(Fw::FocusReason reason);
@@ -220,13 +216,13 @@ public:
     bool isAlternate() { return hasState(Fw::AlternateState); }
     bool isChecked() { return hasState(Fw::CheckedState); }
     bool isOn() { return hasState(Fw::OnState); }
+    bool isDragging() { return hasState(Fw::DraggingState); }
     bool isHidden() { return !isVisible(); }
     bool isExplicitlyEnabled() { return m_enabled; }
     bool isExplicitlyVisible() { return m_visible; }
     bool isFocusable() { return m_focusable; }
     bool isPhantom() { return m_phantom; }
     bool isDragable() { return m_dragable; }
-    bool isDragging() { return m_dragging; }
     bool isFixedSize() { return m_fixedSize; }
     bool isDestroyed() { return m_destroyed; }
 

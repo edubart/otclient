@@ -46,6 +46,8 @@ void UIManager::terminate()
     m_keyboardReceiver = nullptr;
     m_rootWidget = nullptr;
     m_draggingWidget = nullptr;
+    m_hoveredWidget = nullptr;
+    m_pressedWidget = nullptr;
 }
 
 void UIManager::render()
@@ -76,33 +78,135 @@ void UIManager::inputEvent(const InputEvent& event)
             break;
         case Fw::MousePressInputEvent:
             m_mouseReceiver->propagateOnMousePress(event.mousePos, event.mouseButton);
+            if(event.mouseButton == Fw::MouseLeftButton)
+                updatePressedWidget(m_rootWidget->recursiveGetChildByPos(event.mousePos), event.mousePos);
             break;
         case Fw::MouseReleaseInputEvent:
             m_mouseReceiver->propagateOnMouseRelease(event.mousePos, event.mouseButton);
-            if(m_draggingWidget && event.mouseButton == Fw::MouseLeftButton) {
-                auto clickedChildren = m_rootWidget->recursiveGetChildrenByPos(event.mousePos);
-                UIWidgetPtr droppedWidget;
-                for(const UIWidgetPtr& child : clickedChildren) {
-                    if(child->onDrop(m_draggingWidget, event.mousePos)) {
-                        droppedWidget = child;
-                        break;
-                    }
-                }
+            if(event.mouseButton == Fw::MouseLeftButton) {
+                // release pressed widget
+                if(m_pressedWidget)
+                    updatePressedWidget(nullptr, event.mousePos);
 
-                m_draggingWidget->onDragLeave(droppedWidget, event.mousePos);
-                m_draggingWidget->setDragging(false);
-                m_draggingWidget = nullptr;
+                // release dragging widget
+                if(m_draggingWidget)
+                    updateDraggingWidget(nullptr, event.mousePos);
             }
             break;
-        case Fw::MouseMoveInputEvent:
-            m_mouseReceiver->updateState(Fw::HoverState);
+        case Fw::MouseMoveInputEvent: {
+            // start dragging when moves a pressed widget
+            if(m_pressedWidget && m_pressedWidget->isDragable() && m_draggingWidget != m_pressedWidget)
+                updateDraggingWidget(m_pressedWidget, event.mousePos - event.mouseMoved);
+
+            if(m_draggingWidget)
+                m_draggingWidget->onDragMove(event.mousePos, event.mouseMoved);
+
+            updateHoveredWidget();
             m_mouseReceiver->propagateOnMouseMove(event.mousePos, event.mouseMoved);
             break;
+        }
         case Fw::MouseWheelInputEvent:
             m_mouseReceiver->propagateOnMouseWheel(event.mousePos, event.wheelDirection);
             break;
     };
     m_isOnInputEvent = false;
+}
+
+void UIManager::updatePressedWidget(const UIWidgetPtr& newPressedWidget, const Point& clickedPos)
+{
+    UIWidgetPtr oldPressedWidget = m_pressedWidget;
+    m_pressedWidget = newPressedWidget;
+
+    if(newPressedWidget)
+        newPressedWidget->updateState(Fw::PressedState);
+
+    if(oldPressedWidget) {
+        oldPressedWidget->updateState(Fw::PressedState);
+
+        // when releasing mouse inside pressed widget area send onClick event
+        if(!clickedPos.isNull() && oldPressedWidget->containsPoint(clickedPos))
+            oldPressedWidget->onClick(clickedPos);
+        // must send mouse events even if the mouse is outside widget area when releasing a pressed widget
+        else
+            oldPressedWidget->onMouseRelease(clickedPos, Fw::MouseLeftButton);
+    }
+}
+
+void UIManager::updateHoveredWidget()
+{
+    UIWidgetPtr hoveredWidget = m_rootWidget->recursiveGetChildByPos(g_window.getMousePosition());
+    if(hoveredWidget != m_hoveredWidget) {
+        UIWidgetPtr oldHovered = m_hoveredWidget;
+        m_hoveredWidget = hoveredWidget;
+        if(oldHovered)
+            oldHovered->updateState(Fw::HoverState);
+        if(hoveredWidget)
+            hoveredWidget->updateState(Fw::HoverState);
+    }
+}
+
+void UIManager::updateDraggingWidget(const UIWidgetPtr& draggingWidget, const Point& clickedPos)
+{
+    UIWidgetPtr oldDraggingWidget = m_draggingWidget;
+    if(oldDraggingWidget) {
+        auto clickedChildren = m_rootWidget->recursiveGetChildrenByPos(clickedPos);
+        UIWidgetPtr droppedWidget;
+        for(const UIWidgetPtr& child : clickedChildren) {
+            if(child->onDrop(oldDraggingWidget, clickedPos)) {
+                droppedWidget = child;
+                break;
+            }
+        }
+
+        oldDraggingWidget->onDragLeave(droppedWidget, clickedPos);
+    }
+
+    m_draggingWidget = draggingWidget;
+
+    if(oldDraggingWidget)
+        oldDraggingWidget->updateState(Fw::DraggingState);
+
+    if(draggingWidget) {
+        draggingWidget->updateState(Fw::DraggingState);
+        draggingWidget->onDragEnter(clickedPos);
+    }
+}
+
+void UIManager::onWidgetAppear(const UIWidgetPtr& widget)
+{
+    if(widget->getRootParent() != m_rootWidget || !widget->isVisible())
+        return;
+
+    if(widget->getRect().contains(g_window.getMousePosition()))
+        updateHoveredWidget();
+}
+
+void UIManager::onWidgetDisappear(const UIWidgetPtr& widget)
+{
+    if(widget->getRootParent() != m_rootWidget || widget->isVisible())
+        return;
+
+    if(m_hoveredWidget == widget)
+        updateHoveredWidget();
+
+    if(m_pressedWidget == widget)
+        updatePressedWidget(nullptr);
+}
+
+void UIManager::onWidgetDestroy(const UIWidgetPtr& widget)
+{
+    // release input grabs
+    if(m_keyboardReceiver == widget)
+        resetKeyboardReceiver();
+
+    if(m_mouseReceiver == widget)
+        resetMouseReceiver();
+
+    if(m_hoveredWidget == widget)
+        updateHoveredWidget();
+
+    if(m_pressedWidget == widget)
+        updatePressedWidget(nullptr);
 }
 
 bool UIManager::importStyle(const std::string& file)

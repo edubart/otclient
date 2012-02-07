@@ -93,6 +93,8 @@ Fw::WidgetState Fw::translateState(std::string state)
         return Fw::LastState;
     else if(state == "alternate")
         return Fw::AlternateState;
+    else if(state == "dragging")
+        return Fw::DraggingState;
     else
         return Fw::InvalidState;
 }

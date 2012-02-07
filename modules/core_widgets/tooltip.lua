@@ -66,6 +66,7 @@ function ToolTip.display(text)
   toolTipLabel:resize(toolTipLabel:getWidth() + 4, toolTipLabel:getHeight() + 4)
   toolTipLabel:show()
   toolTipLabel:raise()
+  toolTipLabel:enable()
   moveToolTip(toolTipLabel)
 end
 

@@ -87,7 +87,7 @@ void ModuleManager::discoverModulesPath()
                                          "" };
     for(const std::string& dir : possibleAddonsDirs) {
         // try to add module directory
-        if(g_resources.addToSearchPath(dir, false)) {
+        if(g_resources.addToSearchPath(dir, true)) {
             logInfo("Using addons directory '", dir.c_str(), "'");
             found = true;
             break;
