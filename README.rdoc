@@ -33,6 +33,7 @@ We encourage you to contribute to OTClient! Please check out
 
 * edubart (project creator and leader developer) <edub4rt@gmail.com>
 * baxnie (official developer) <henrique_santiago93@hotmail.com>
+* andrefaramir (official developer) <andre_faramir@hotmail.com>
 
 == License
 
