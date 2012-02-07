@@ -14,7 +14,7 @@ end
 function Effects.fadeOut(widget, time, elapsed)
     if not elapsed then elapsed = 0 end
     if not time then time = 250 end
-    widget:setOpacity((time - elapsed)/time)
+    widget:setOpacity(math.max((time - elapsed)/time, 0))
     if elapsed < time then
         scheduleEvent(function()
                         Effects.fadeOut(widget, time, elapsed + 30)
