@@ -40,6 +40,8 @@ public:
     template<typename R, typename... T>
     R callLuaField(const std::string& field, const T&... args);
 
+    bool hasLuaField(const std::string& field);
+
     /// Sets a field in this lua object
     template<typename T>
     void setLuaField(const std::string& key, const T& value);

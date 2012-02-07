@@ -8,12 +8,17 @@ Window < UIWindow
   image-source: /core_styles/images/window.png
   image-border: 4
   image-border-top: 20
+  opacity: 1
   padding-top: 28
   padding-left: 16
   padding-right: 16
   padding-bottom: 16
+
   $disabled:
     color: #aaaaaa88
+
+  $pressed:
+    opacity: 0.8
 
 MainWindow < Window
   anchors.centerIn: parent

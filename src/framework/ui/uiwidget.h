@@ -319,7 +319,7 @@ public:
     void setPaddingRight(int padding) { m_padding.right = padding; updateLayout(); }
     void setPaddingBottom(int padding) { m_padding.bottom = padding; updateLayout(); }
     void setPaddingLeft(int padding) { m_padding.left = padding; updateLayout(); }
-    void setOpacity(float opacity) { m_opacity = opacity; }
+    void setOpacity(float opacity) { m_opacity = std::min(std::max(opacity, 0.0f), 1.0f); }
 
     int getX() { return m_rect.x(); }
     int getY() { return m_rect.y(); }

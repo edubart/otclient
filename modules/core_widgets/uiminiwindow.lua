@@ -10,6 +10,7 @@ function UIMiniWindow:onMousePress(mousePos, mouseButton)
   if parent:getClassName() ~= 'UIMiniWindowContainer' then
     self:raise()
   end
+  return true
 end
 
 function UIMiniWindow:onDragEnter(mousePos)

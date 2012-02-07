@@ -1191,7 +1191,10 @@ bool UIWidget::onMousePress(const Point& mousePos, Fw::MouseButton button)
         } else
             m_clickTimer.restart();
     }
-    return callLuaField<bool>("onMousePress", mousePos, button);
+
+    if(hasLuaField("onMousePress"))
+        return callLuaField<bool>("onMousePress", mousePos, button);
+    return true;
 }
 
 bool UIWidget::onMouseRelease(const Point& mousePos, Fw::MouseButton button)

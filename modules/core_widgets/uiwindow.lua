@@ -18,7 +18,8 @@ function UIWindow:onKeyPress(keyCode, keyboardModifiers)
 end
 
 function UIWindow:onMousePress(mousePos, mouseButton)
-
+  self:raise()
+  return true
 end
 
 function UIWindow:onDragEnter(mousePos)

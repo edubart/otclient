@@ -32,6 +32,18 @@ LuaObject::~LuaObject()
     releaseLuaFieldsTable();
 }
 
+bool LuaObject::hasLuaField(const std::string& field)
+{
+    bool ret = false;
+    if(m_fieldsTableRef != -1) {
+        g_lua.getRef(m_fieldsTableRef);
+        g_lua.getField(field); // push the field value
+        ret = !g_lua.isNil();
+        g_lua.pop(2);
+    }
+    return ret;
+}
+
 void LuaObject::releaseLuaFieldsTable()
 {
     if(m_fieldsTableRef != -1) {

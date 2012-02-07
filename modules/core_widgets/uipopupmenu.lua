@@ -51,9 +51,8 @@ function UIPopupMenu:onMousePress(mousePos, mouseButton)
   -- clicks outside menu area destroys the menu
   if not self:containsPoint(mousePos) then
     self:destroy()
-    return true
   end
-  return false
+  return true
 end
 
 function UIPopupMenu:onKeyPress(keyCode, keyboardModifiers)

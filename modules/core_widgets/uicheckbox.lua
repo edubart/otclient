@@ -10,5 +10,6 @@ end
 function UICheckBox:onMouseRelease(mousePos, mouseButton)
   if self:isPressed() and self:containsPoint(mousePos) then
     self:setChecked(not self:isChecked())
+    return true
   end
 end
