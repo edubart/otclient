@@ -552,6 +552,8 @@ void UIWidget::destroy()
 
     callLuaField("onDestroy");
 
+    releaseLuaFieldsTable();
+
 #ifdef DEBUG
     auto self = asUIWidget();
     if(self != g_ui.getRootWidget()) {
