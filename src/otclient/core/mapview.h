@@ -80,6 +80,7 @@ public:
     int getFirstVisibleFloor();
     int getLastVisibleFloor();
     Position getCameraPosition();
+    TilePtr getTile(const Point& mousePos, const Rect& mapRect);
     Size getVisibleDimension() { return m_visibleDimension; }
     Size getVisibleSize() { return m_visibleDimension * m_tileSize; }
     CreaturePtr getFollowingCreature() { return m_followingCreature; }

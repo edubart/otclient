@@ -103,48 +103,11 @@ void UIMap::setCameraPosition(const Position& pos)
 
 TilePtr UIMap::getTile(const Point& mousePos)
 {
-    /*
     if(!m_mapRect.contains(mousePos))
         return nullptr;
 
-    // Get tile position
-    Point relativeStretchMousePos = mousePos - m_mapRect.topLeft();
-
-    LocalPlayerPtr localPlayer = g_game.getLocalPlayer();
-    if(localPlayer)
-        relativeStretchMousePos += localPlayer->getWalkOffset();
-
-    Size mapSize(g_map.getVibibleSize().width() * Otc::TILE_PIXELS, g_map.getVibibleSize().height() * Otc::TILE_PIXELS);
-
-    PointF stretchFactor(m_mapRect.width() / (float)mapSize.width(), m_mapRect.height() / (float)mapSize.height());
-    PointF relativeMousePos = PointF(relativeStretchMousePos.x, relativeStretchMousePos.y) / stretchFactor;
-
-    PointF tilePosF = relativeMousePos / Otc::TILE_PIXELS;
-    Position tilePos = Position(1 + (int)tilePosF.x - g_map.getCentralOffset().x, 1 + (int)tilePosF.y - g_map.getCentralOffset().y, 0) + g_map.getCentralPosition();
-    if(!tilePos.isValid())
-        return nullptr;
-
-    // Get tile
-    TilePtr tile = nullptr;
-
-    // We must check every floor, from top to bottom to check for a clickable tile
-    int firstFloor = g_map.getFirstVisibleFloor();
-    tilePos.coveredUp(tilePos.z - firstFloor);
-    for(int i = firstFloor; i <= Map::MAX_Z; i++) {
-        tile = g_map.getTile(tilePos);
-        if(tile && tile->isClickable())
-            break;
-        tilePos.coveredDown();
-    }
-
-    // todo: get creature, using walkOffset etc.
-
-    if(!tile || !tile->isClickable())
-        return nullptr;
-
-    return tile;
-    */
-    return nullptr;
+    //TODO: move MapView code to UIMap and rework this shit
+    return m_mapView->getTile(mousePos, m_mapRect);
 }
 
 void UIMap::onGeometryChange(const Rect& oldRect, const Rect& newRect)

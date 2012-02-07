@@ -522,6 +522,45 @@ Position MapView::getCameraPosition()
     return m_customCameraPosition;
 }
 
+TilePtr MapView::getTile(const Point& mousePos, const Rect& mapRect)
+{
+    Point relativeMousePos = mousePos - mapRect.topLeft();
+    Size visibleSize = getVisibleSize();
+    Position cameraPosition = getCameraPosition();
+
+    float scaleFactor = m_tileSize / (float)Otc::TILE_PIXELS;
+
+
+
+    float horizontalStretchFactor = visibleSize.width() / (float)mapRect.width();
+    float verticalStretchFactor = visibleSize.height() / (float)mapRect.height();
+
+    Point tilePos2D = Point(relativeMousePos.x * horizontalStretchFactor, relativeMousePos.y * verticalStretchFactor);
+
+    if(m_followingCreature)
+        tilePos2D += m_followingCreature->getWalkOffset() * scaleFactor;
+    tilePos2D /= m_tileSize;
+
+    Position tilePos = Position(1 + (int)tilePos2D.x - m_virtualCenterOffset.x, 1 + (int)tilePos2D.y - m_virtualCenterOffset.y, 0) + cameraPosition;
+    if(!tilePos.isValid())
+        return nullptr;
+
+    // we must check every floor, from top to bottom to check for a clickable tile
+    TilePtr tile;
+    tilePos.coveredUp(tilePos.z - m_cachedFirstVisibleFloor);
+    for(int i = m_cachedFirstVisibleFloor; i <= m_cachedLastVisibleFloor; i++) {
+        tile = g_map.getTile(tilePos);
+        if(tile && tile->isClickable())
+            break;
+        tilePos.coveredDown();
+    }
+
+    if(!tile || !tile->isClickable())
+        return nullptr;
+
+    return tile;
+}
+
 Point MapView::transformPositionTo2D(const Position& position)
 {
     Position cameraPosition = getCameraPosition();

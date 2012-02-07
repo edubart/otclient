@@ -13,6 +13,7 @@ Module
     - game_console
     - game_outfit
     - game_containers
+    - game_combatcontrols
 
   onLoad: |
     dofile 'game'

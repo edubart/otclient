@@ -3,5 +3,10 @@ Module
   description: Combat controls window
   author: OTClient team
   website: https://github.com/edubart/otclient
+
   onLoad: |
     dofile 'combatcontrols'
+    CombatControls.init()
+
+  onUnload: |
+    CombatControls.terminate()
