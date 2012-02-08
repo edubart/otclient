@@ -28,20 +28,10 @@ void UICreature::draw()
 {
     drawSelf();
 
-    //TODO: cache with framebuffer
     if(m_creature) {
         g_painter.setColor(Fw::white);
-
         Rect drawRect = getChildrenRect();
-
-        float scaleFactor = drawRect.width();
-        if(m_fixedCreatureSize)
-            scaleFactor /= Otc::TILE_PIXELS;
-        else
-            scaleFactor /= m_creature->getExactSize();
-
-        Point dest = drawRect.bottomRight() - (Point(1,1)*Otc::TILE_PIXELS - m_creature->getDisplacement()) * scaleFactor;
-        m_creature->draw(dest, scaleFactor, false);
+        m_creature->drawOutfit(drawRect, !m_fixedCreatureSize);
     }
 
     drawChildren();

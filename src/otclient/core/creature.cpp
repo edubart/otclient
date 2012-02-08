@@ -36,6 +36,7 @@
 #include <framework/graphics/paintershaderprogram.h>
 #include <framework/graphics/paintershadersources.h>
 #include <framework/graphics/texturemanager.h>
+#include <framework/graphics/framebuffer.h>
 #include "spritemanager.h"
 
 Creature::Creature() : Thing()
@@ -78,6 +79,12 @@ void Creature::draw(const Point& dest, float scaleFactor, bool animate)
         g_painter.drawBoundingRect(Rect(dest + (animationOffset - getDisplacement() + 1)*scaleFactor, Size(Otc::TILE_PIXELS, Otc::TILE_PIXELS)*scaleFactor), std::max((int)(2*scaleFactor), 1));
     }
 
+    internalDrawOutfit(dest + animationOffset * scaleFactor, scaleFactor, animate, animate, m_direction);
+
+}
+
+void Creature::internalDrawOutfit(const Point& dest, float scaleFactor, bool animateWalk, bool animateIdle, Otc::Direction direction)
+{
     g_painter.setColor(Fw::white);
     if(!outfitProgram) {
         outfitProgram = PainterShaderProgramPtr(new PainterShaderProgram);
@@ -95,19 +102,20 @@ void Creature::draw(const Point& dest, float scaleFactor, bool animate)
 
     // outfit is a real creature
     if(m_outfit.getCategory() == ThingsType::Creature) {
-        int animationPhase = animate ? m_walkAnimationPhase : 0;
-        if(isAnimateAlways()) {
+        int animationPhase = animateWalk ? m_walkAnimationPhase : 0;
+
+        if(isAnimateAlways() && animateIdle) {
             int ticksPerFrame = 1000 / getAnimationPhases();
             animationPhase = (g_clock.ticks() % (ticksPerFrame * getAnimationPhases())) / ticksPerFrame;
         }
 
         // xPattern => creature direction
-        if(m_direction == Otc::NorthEast || m_direction == Otc::SouthEast)
+        if(direction == Otc::NorthEast || direction == Otc::SouthEast)
             xPattern = Otc::East;
-        else if(m_direction == Otc::NorthWest || m_direction == Otc::SouthWest)
+        else if(direction == Otc::NorthWest || direction == Otc::SouthWest)
             xPattern = Otc::West;
         else
-            xPattern = m_direction;
+            xPattern = direction;
 
         // yPattern => creature addon
         for(yPattern = 0; yPattern < getNumPatternsY(); yPattern++) {
@@ -129,12 +137,12 @@ void Creature::draw(const Point& dest, float scaleFactor, bool animate)
                     // setup texture outfit mask
                     TexturePtr maskTex;
                     if(getLayers() > 1) {
-                        int maskId = getSpriteId(w, h, 1, xPattern, yPattern, zPattern, m_walkAnimationPhase);
+                        int maskId = getSpriteId(w, h, 1, xPattern, yPattern, zPattern, animationPhase);
                         maskTex = g_sprites.getSpriteTexture(maskId);
                     }
                     outfitProgram->setUniformTexture(MASK_TEXTURE_UNIFORM, maskTex, 1);
 
-                    internalDraw(dest + (animationOffset - Point(w,h)*Otc::TILE_PIXELS)*scaleFactor,
+                    internalDraw(dest + (-Point(w,h)*Otc::TILE_PIXELS)*scaleFactor,
                                  scaleFactor, w, h, xPattern, yPattern, zPattern, 0, animationPhase);
                 }
             }
@@ -155,7 +163,7 @@ void Creature::draw(const Point& dest, float scaleFactor, bool animate)
         }
 
         if(animationPhases > 1) {
-            if(animate)
+            if(animateIdle)
                 animationPhase = (g_clock.ticks() % (animateTicks * animationPhases)) / animateTicks;
             else
                 animationPhase = animationPhases-1;
@@ -164,7 +172,30 @@ void Creature::draw(const Point& dest, float scaleFactor, bool animate)
         if(m_outfit.getCategory() == ThingsType::Effect)
             animationPhase = std::min(animationPhase+1, getAnimationPhases());
 
-        internalDraw(dest + animationOffset*scaleFactor, scaleFactor, 0, 0, 0, animationPhase);
+        internalDraw(dest, scaleFactor, 0, 0, 0, animationPhase);
+    }
+}
+
+void Creature::drawOutfit(const Rect& destRect, bool resize)
+{
+    static FrameBufferPtr outfitBuffer;
+    if(!outfitBuffer)
+        outfitBuffer = FrameBufferPtr(new FrameBuffer(Size(2*Otc::TILE_PIXELS, 2*Otc::TILE_PIXELS)));
+
+    outfitBuffer->bind();
+    internalDrawOutfit(Point(Otc::TILE_PIXELS,Otc::TILE_PIXELS) + getDisplacement(), 1, false, true, Otc::South);
+    outfitBuffer->release();
+
+    if(resize) {
+        Rect srcRect;
+        srcRect.resize(getExactSize(), getExactSize());
+        srcRect.moveBottomRight(Point(2*Otc::TILE_PIXELS, 2*Otc::TILE_PIXELS));
+        outfitBuffer->draw(destRect, srcRect);
+    } else {
+        Rect dest = destRect;
+        dest.expandTop(Otc::TILE_PIXELS);
+        dest.expandLeft(Otc::TILE_PIXELS);
+        outfitBuffer->draw(dest);
     }
 }
 
