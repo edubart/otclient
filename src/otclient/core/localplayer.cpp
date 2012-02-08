@@ -171,6 +171,8 @@ void LocalPlayer::setAttackingCreature(const CreaturePtr& creature)
         creature->showStaticSquare(Fw::red);
         m_attackingCreature = creature;
     }
+
+    g_lua.callGlobalField("Game", "onSetAttackingCreature", creature);
 }
 
 void LocalPlayer::setFollowingCreature(const CreaturePtr& creature)
