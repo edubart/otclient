@@ -1500,7 +1500,7 @@ bool UIWidget::propagateOnMouseRelease(const Point& mousePos, Fw::MouseButton bu
 
     // only non phatom widgets receives mouse events
     if(!isPhantom())
-        onMouseRelease(mousePos, button);
+        return onMouseRelease(mousePos, button);
 
     return false;
 }
