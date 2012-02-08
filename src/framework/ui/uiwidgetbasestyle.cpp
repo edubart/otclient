@@ -122,8 +122,11 @@ void UIWidget::parseBaseStyle(const OTMLNodePtr& styleNode)
             setFixedSize(node->value<bool>());
         else if(node->tag() == "border") {
             auto split = Fw::split(node->value(), " ");
-            setBorderWidth(Fw::safeCast<int>(split[0]));
-            setBorderColor(Fw::safeCast<Color>(split[1]));
+            if(split.size() == 2) {
+                setBorderWidth(Fw::safeCast<int>(split[0]));
+                setBorderColor(Fw::safeCast<Color>(split[1]));
+            } else
+            throw OTMLException(node, "border param must have its width followed by its color");
         }
         else if(node->tag() == "border-width")
             setBorderWidth(node->value<int>());

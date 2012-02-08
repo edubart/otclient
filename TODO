@@ -1,14 +1,11 @@
 ====================================================
 High priority TODO in order (before first public disclose)
 
-restore map moving
 multiline text edit
 remove UIGame
 move windows, navigate in containers
 complete miniwindow (close, minimize, resize, move)
 create and bind all game functions/events
-let windows stay open while playing
-combat controls
 player status icons (poison, etc)
 load modules from zip files
 display exit box when exiting from game
