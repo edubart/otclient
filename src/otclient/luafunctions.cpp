@@ -248,8 +248,10 @@ void OTClient::registerLuaFunctions()
 
     g_lua.registerClass<UICreature, UIWidget>();
     g_lua.bindClassStaticFunction<UICreature>("create", []{ return UICreaturePtr(new UICreature); } );
-    g_lua.bindClassMemberFunction<UICreature>("getCreature", &UICreature::getCreature);
     g_lua.bindClassMemberFunction<UICreature>("setCreature", &UICreature::setCreature);
+    g_lua.bindClassMemberFunction<UICreature>("setFixedCreatureSize", &UICreature::setFixedCreatureSize);
+    g_lua.bindClassMemberFunction<UICreature>("getCreature", &UICreature::getCreature);
+    g_lua.bindClassMemberFunction<UICreature>("isFixedCreatureSize", &UICreature::isFixedCreatureSize);
 
     g_lua.registerClass<UIMap, UIWidget>();
     g_lua.bindClassStaticFunction<UIMap>("create", []{ return UIMapPtr(new UIMap); } );

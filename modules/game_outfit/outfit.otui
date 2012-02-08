@@ -5,6 +5,7 @@ Color < ColorBox
 Window
   text: Select Outfit
   size: 550 280
+  padding: 0 0 0 0
 
   anchors.horizontalCenter: parent.horizontalCenter
   anchors.verticalCenter: parent.verticalCenter
@@ -26,6 +27,8 @@ Window
     anchors.top: name.bottom
     anchors.left: name.left
     margin-top: 5
+    padding: 16 4 4 16
+    fixed-creature-size: true
 
   ButtonBox
     id: head

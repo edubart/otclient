@@ -33,11 +33,16 @@ public:
     void draw();
 
     void setCreature(const CreaturePtr& creature) { m_creature = creature; }
+    void setFixedCreatureSize(bool fixed) { m_fixedCreatureSize = fixed; }
 
     CreaturePtr getCreature() { return m_creature; }
+    bool isFixedCreatureSize() { return m_fixedCreatureSize; }
 
 protected:
+    void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode);
+
     CreaturePtr m_creature;
+    Boolean<false> m_fixedCreatureSize;
 };
 
 #endif

@@ -28,13 +28,31 @@ void UICreature::draw()
 {
     drawSelf();
 
+    //TODO: cache with framebuffer
     if(m_creature) {
         g_painter.setColor(Fw::white);
 
         Rect drawRect = getChildrenRect();
-        float scaleFactor = drawRect.width() / (float)m_creature->getExactSize();
-        m_creature->draw(drawRect.bottomRight() - Point(32, 32) * scaleFactor , scaleFactor, false);
+
+        float scaleFactor = drawRect.width();
+        if(m_fixedCreatureSize)
+            scaleFactor /= Otc::TILE_PIXELS;
+        else
+            scaleFactor /= m_creature->getExactSize();
+
+        Point dest = drawRect.bottomRight() - (Point(1,1)*Otc::TILE_PIXELS - m_creature->getDisplacement()) * scaleFactor;
+        m_creature->draw(dest, scaleFactor, false);
     }
 
     drawChildren();
+}
+
+void UICreature::onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode)
+{
+    UIWidget::onStyleApply(styleName, styleNode);
+
+    for(const OTMLNodePtr& node : styleNode->children()) {
+        if(node->tag() == "fixed-creature-size")
+            setFixedCreatureSize(node->value<bool>());
+    }
 }
