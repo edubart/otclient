@@ -157,11 +157,18 @@ ThingPtr Tile::addThing(const ThingPtr& thing, int stackPos)
     }
 
     if(stackPos < 0) {
+        // the items stackpos follows this order:
+        // 0 - ground
+        // 1 - ground borders
+        // 2 - bottom (walls)
+        // 3 - on top (doors)
+        // 4 - creatures, from top to bottom
+        // 5 - items, from top to bottom
         stackPos = 0;
         int priority = thing->getStackPriority();
         for(stackPos = 0; stackPos < (int)m_things.size(); ++stackPos) {
             int otherPriority = m_things[stackPos]->getStackPriority();
-            if(otherPriority > priority || (otherPriority == priority && otherPriority == 5))
+            if(otherPriority > priority)
                 break;
         }
     } else if(stackPos > (int)m_things.size())
