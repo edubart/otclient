@@ -175,9 +175,10 @@ bool Map::removeThing(const ThingPtr& thing)
         return false;
 
     if(MissilePtr missile = thing->asMissile()) {
-        auto it = std::find(m_floorMissiles[missile->getPosition().z].begin(), m_floorMissiles[missile->getPosition().z].end(), missile);
-        if(it != m_floorMissiles[missile->getPosition().z].end()) {
-            m_floorMissiles[missile->getPosition().z].erase(it);
+        int z = missile->getPosition().z;
+        auto it = std::find(m_floorMissiles[z].begin(), m_floorMissiles[z].end(), missile);
+        if(it != m_floorMissiles[z].end()) {
+            m_floorMissiles[z].erase(it);
             return true;
         }
     } else if(AnimatedTextPtr animatedText = thing->asAnimatedText()) {

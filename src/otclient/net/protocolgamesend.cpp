@@ -25,320 +25,333 @@
 
 void ProtocolGame::sendLoginPacket(uint timestamp, uint8 unknown)
 {
-    OutputMessage oMsg;
+    OutputMessage msg;
 
-    oMsg.addU8(Proto::ClientEnterGame);
-    oMsg.addU16(Proto::OsLinux);
-    oMsg.addU16(Proto::ClientVersion);
+    msg.addU8(Proto::ClientEnterGame);
 
-    oMsg.addU8(0); // first RSA byte must be 0
+#ifdef WIN32
+    msg.addU16(Proto::OsWindows);
+#else
+    msg.addU16(Proto::OsLinux);
+#endif
+
+    msg.addU16(Proto::ClientVersion);
+
+    msg.addU8(0); // first RSA byte must be 0
 
     // xtea key
     generateXteaKey();
-    oMsg.addU32(m_xteaKey[0]);
-    oMsg.addU32(m_xteaKey[1]);
-    oMsg.addU32(m_xteaKey[2]);
-    oMsg.addU32(m_xteaKey[3]);
+    msg.addU32(m_xteaKey[0]);
+    msg.addU32(m_xteaKey[1]);
+    msg.addU32(m_xteaKey[2]);
+    msg.addU32(m_xteaKey[3]);
 
-    oMsg.addU8(0); // is gm set?
-    oMsg.addString(m_accountName);
-    oMsg.addString(m_characterName);
-    oMsg.addString(m_accountPassword);
+    msg.addU8(0); // is gm set?
+    msg.addString(m_accountName);
+    msg.addString(m_characterName);
+    msg.addString(m_accountPassword);
 
-    oMsg.addU32(timestamp);
-    oMsg.addU8(unknown);
+    msg.addU32(timestamp);
+    msg.addU8(unknown);
 
     // complete the 128 bytes for rsa encryption with zeros
-    oMsg.addPaddingBytes(128 - (29 + m_accountName.length() + m_characterName.length() + m_accountPassword.length()));
+    msg.addPaddingBytes(128 - (29 + m_accountName.length() + m_characterName.length() + m_accountPassword.length()));
 
     // encrypt with RSA
-    Rsa::encrypt((char*)oMsg.getBuffer() + 6 + oMsg.getMessageSize() - 128, 128, Proto::RSA);
+    Rsa::encrypt((char*)msg.getBuffer() + 6 + msg.getMessageSize() - 128, 128, Proto::RSA);
 
-    send(oMsg);
+    send(msg);
 
     enableXteaEncryption();
 }
 
 void ProtocolGame::sendLogout()
 {
-    OutputMessage oMsg;
-    oMsg.addU8(Proto::ClientQuitGame);
-    send(oMsg);
+    OutputMessage msg;
+    msg.addU8(Proto::ClientLeaveGame);
+    send(msg);
 }
 
-void ProtocolGame::sendPing()
+void ProtocolGame::sendPingResponse()
 {
-    OutputMessage oMsg;
-    oMsg.addU8(Proto::ClientPingBack);
-    send(oMsg);
+    OutputMessage msg;
+    msg.addU8(Proto::ClientPingResponse);
+    send(msg);
 }
 
-// autowalk
+void ProtocolGame::sendWalkPath(const std::vector<Otc::Direction>& path)
+{
+    OutputMessage msg;
+    msg.addU8(path.size());
+    for(Otc::Direction dir : path)
+        msg.addU8(dir);
+    send(msg);
+}
 
 void ProtocolGame::sendWalkNorth()
 {
-    OutputMessage oMsg;
-    oMsg.addU8(Proto::ClientGoNorth);
-    send(oMsg);
+    OutputMessage msg;
+    msg.addU8(Proto::ClientWalkNorth);
+    send(msg);
 }
 
 void ProtocolGame::sendWalkEast()
 {
-    OutputMessage oMsg;
-    oMsg.addU8(Proto::ClientGoEast);
-    send(oMsg);
+    OutputMessage msg;
+    msg.addU8(Proto::ClientWalkEast);
+    send(msg);
 }
 
 void ProtocolGame::sendWalkSouth()
 {
-    OutputMessage oMsg;
-    oMsg.addU8(Proto::ClientGoSouth);
-    send(oMsg);
+    OutputMessage msg;
+    msg.addU8(Proto::ClientWalkSouth);
+    send(msg);
 }
 
 void ProtocolGame::sendWalkWest()
 {
-    OutputMessage oMsg;
-    oMsg.addU8(Proto::ClientGoWest);
-    send(oMsg);
+    OutputMessage msg;
+    msg.addU8(Proto::ClientWalkWest);
+    send(msg);
 }
 
-void ProtocolGame::sendStopAutowalk()
+void ProtocolGame::sendStop()
 {
-    OutputMessage oMsg;
-    oMsg.addU8(Proto::ClientStop);
-    send(oMsg);
+    OutputMessage msg;
+    msg.addU8(Proto::ClientStop);
+    send(msg);
 }
 
 void ProtocolGame::sendWalkNorthEast()
 {
-    OutputMessage oMsg;
-    oMsg.addU8(Proto::ClientGoNorthEast);
-    send(oMsg);
+    OutputMessage msg;
+    msg.addU8(Proto::ClientWalkNorthEast);
+    send(msg);
 }
 
 void ProtocolGame::sendWalkSouthEast()
 {
-    OutputMessage oMsg;
-    oMsg.addU8(Proto::ClientGoSouthEast);
-    send(oMsg);
+    OutputMessage msg;
+    msg.addU8(Proto::ClientWalkSouthEast);
+    send(msg);
 }
 
 void ProtocolGame::sendWalkSouthWest()
 {
-    OutputMessage oMsg;
-    oMsg.addU8(Proto::ClientGoSouthWest);
-    send(oMsg);
+    OutputMessage msg;
+    msg.addU8(Proto::ClientWalkSouthWest);
+    send(msg);
 }
 
 void ProtocolGame::sendWalkNorthWest()
 {
-    OutputMessage oMsg;
-    oMsg.addU8(Proto::ClientGoNorthWest);
-    send(oMsg);
+    OutputMessage msg;
+    msg.addU8(Proto::ClientWalkNorthWest);
+    send(msg);
 }
 
 void ProtocolGame::sendTurnNorth()
 {
-    OutputMessage oMsg;
-    oMsg.addU8(Proto::ClientRotateNorth);
-    send(oMsg);
+    OutputMessage msg;
+    msg.addU8(Proto::ClientTurnNorth);
+    send(msg);
 }
 
 void ProtocolGame::sendTurnEast()
 {
-    OutputMessage oMsg;
-    oMsg.addU8(Proto::ClientRotateEast);
-    send(oMsg);
+    OutputMessage msg;
+    msg.addU8(Proto::ClientTurnEast);
+    send(msg);
 }
 
 void ProtocolGame::sendTurnSouth()
 {
-    OutputMessage oMsg;
-    oMsg.addU8(Proto::ClientRotateSouth);
-    send(oMsg);
+    OutputMessage msg;
+    msg.addU8(Proto::ClientTurnSouth);
+    send(msg);
 }
 
 void ProtocolGame::sendTurnWest()
 {
-    OutputMessage oMsg;
-    oMsg.addU8(Proto::ClientRotateWest);
-    send(oMsg);
+    OutputMessage msg;
+    msg.addU8(Proto::ClientTurnWest);
+    send(msg);
 }
 
-void ProtocolGame::sendThrow(const Position& fromPos, int thingId, int stackpos, const Position& toPos, int count)
+void ProtocolGame::sendMove(const Position& fromPos, int thingId, int stackpos, const Position& toPos, int count)
 {
-    OutputMessage oMsg;
-    oMsg.addU8(Proto::ClientMoveObject);
-    addPosition(oMsg, fromPos);
-    oMsg.addU16(thingId);
-    oMsg.addU8(stackpos);
-    addPosition(oMsg, toPos);
-    oMsg.addU8(count);
-    send(oMsg);
+    OutputMessage msg;
+    msg.addU8(Proto::ClientMove);
+    addPosition(msg, fromPos);
+    msg.addU16(thingId);
+    msg.addU8(stackpos);
+    addPosition(msg, toPos);
+    msg.addU8(count);
+    send(msg);
 }
 
-void ProtocolGame::sendLookInShop(int thingId, int count)
+void ProtocolGame::sendInspectNpcTrade(int thingId, int count)
 {
-    OutputMessage oMsg;
-    oMsg.addU8(Proto::ClientInspectNpcTrade);
-    oMsg.addU16(thingId);
-    oMsg.addU8(count);
-    send(oMsg);
+    OutputMessage msg;
+    msg.addU8(Proto::ClientInspectNpcTrade);
+    msg.addU16(thingId);
+    msg.addU8(count);
+    send(msg);
 }
 
-void ProtocolGame::sendPlayerPurchase(int thingId, int count, int amount, bool ignoreCapacity, bool buyWithBackpack)
+void ProtocolGame::sendBuyItem(int thingId, int count, int amount, bool ignoreCapacity, bool buyWithBackpack)
 {
-    OutputMessage oMsg;
-    oMsg.addU8(Proto::ClientBuyObject);
-    oMsg.addU16(thingId);
-    oMsg.addU8(count);
-    oMsg.addU8(amount);
-    oMsg.addU8(ignoreCapacity ? 0x01 : 0x00);
-    oMsg.addU8(buyWithBackpack ? 0x01 : 0x00);
-    send(oMsg);
+    OutputMessage msg;
+    msg.addU8(Proto::ClientBuyItem);
+    msg.addU16(thingId);
+    msg.addU8(count);
+    msg.addU8(amount);
+    msg.addU8(ignoreCapacity ? 0x01 : 0x00);
+    msg.addU8(buyWithBackpack ? 0x01 : 0x00);
+    send(msg);
 }
 
-void ProtocolGame::sendPlayerSale(int thingId, int count, int amount, bool ignoreEquipped)
+void ProtocolGame::sendSellItem(int thingId, int count, int amount, bool ignoreEquipped)
 {
-    OutputMessage oMsg;
-    oMsg.addU8(Proto::ClientSellObject);
-    oMsg.addU16(thingId);
-    oMsg.addU8(count);
-    oMsg.addU8(amount);
-    oMsg.addU8(ignoreEquipped ? 0x01 : 0x00);
-    send(oMsg);
+    OutputMessage msg;
+    msg.addU8(Proto::ClientSellItem);
+    msg.addU16(thingId);
+    msg.addU8(count);
+    msg.addU8(amount);
+    msg.addU8(ignoreEquipped ? 0x01 : 0x00);
+    send(msg);
 }
 
-void ProtocolGame::sendCloseShop()
+void ProtocolGame::sendCloseNpcTrade()
 {
-    OutputMessage oMsg;
-    oMsg.addU8(Proto::ClientCloseNpcTrade);
-    send(oMsg);
+    OutputMessage msg;
+    msg.addU8(Proto::ClientCloseNpcTrade);
+    send(msg);
 }
 
 void ProtocolGame::sendRequestTrade(const Position& pos, int thingId, int stackpos, uint playerId)
 {
-    OutputMessage oMsg;
-    oMsg.addU8(Proto::ClientTradeObject);
-    addPosition(oMsg, pos);
-    oMsg.addU16(thingId);
-    oMsg.addU8(stackpos);
-    oMsg.addU32(playerId);
-    send(oMsg);
+    OutputMessage msg;
+    msg.addU8(Proto::ClientRequestTrade);
+    addPosition(msg, pos);
+    msg.addU16(thingId);
+    msg.addU8(stackpos);
+    msg.addU32(playerId);
+    send(msg);
 }
 
-void ProtocolGame::sendLookInTrade(bool counterOffer, int index)
+void ProtocolGame::sendInspectTrade(bool counterOffer, int index)
 {
-    OutputMessage oMsg;
-    oMsg.addU8(Proto::ClientInspectTrade);
-    oMsg.addU8(counterOffer ? 0x01 : 0x00);
-    oMsg.addU8(index);
-    send(oMsg);
+    OutputMessage msg;
+    msg.addU8(Proto::ClientInspectTrade);
+    msg.addU8(counterOffer ? 0x01 : 0x00);
+    msg.addU8(index);
+    send(msg);
 }
 
 void ProtocolGame::sendAcceptTrade()
 {
-    OutputMessage oMsg;
-    oMsg.addU8(Proto::ClientAcceptTrade);
-    send(oMsg);
+    OutputMessage msg;
+    msg.addU8(Proto::ClientAcceptTrade);
+    send(msg);
 }
 
 void ProtocolGame::sendRejectTrade()
 {
-    OutputMessage oMsg;
-    oMsg.addU8(Proto::ClientRejectTrade);
-    send(oMsg);
+    OutputMessage msg;
+    msg.addU8(Proto::ClientRejectTrade);
+    send(msg);
 }
 
 void ProtocolGame::sendUseItem(const Position& position, int itemId, int stackpos, int index)
 {
-    OutputMessage oMsg;
-    oMsg.addU8(Proto::ClientUseObject);
-    addPosition(oMsg, position);
-    oMsg.addU16(itemId);
-    oMsg.addU8(stackpos);
-    oMsg.addU8(index);
-    send(oMsg);
+    OutputMessage msg;
+    msg.addU8(Proto::ClientUseItem);
+    addPosition(msg, position);
+    msg.addU16(itemId);
+    msg.addU8(stackpos);
+    msg.addU8(index);
+    send(msg);
 }
 
-void ProtocolGame::sendUseItemEx(const Position& fromPos, int itemId, int fromStackpos, const Position& toPos, int toThingId, int toStackpos)
+void ProtocolGame::sendUseItemWith(const Position& fromPos, int itemId, int fromStackpos, const Position& toPos, int toThingId, int toStackpos)
 {
-    OutputMessage oMsg;
-    oMsg.addU8(Proto::ClientUseTwoObjects);
-    addPosition(oMsg, fromPos);
-    oMsg.addU16(itemId);
-    oMsg.addU8(fromStackpos);
-    addPosition(oMsg, toPos);
-    oMsg.addU16(toThingId);
-    oMsg.addU8(toStackpos);
-    send(oMsg);
+    OutputMessage msg;
+    msg.addU8(Proto::ClientUseItemWith);
+    addPosition(msg, fromPos);
+    msg.addU16(itemId);
+    msg.addU8(fromStackpos);
+    addPosition(msg, toPos);
+    msg.addU16(toThingId);
+    msg.addU8(toStackpos);
+    send(msg);
 }
 
 void ProtocolGame::sendUseOnCreature(const Position& pos, int thingId, int stackpos, uint creatureId)
 {
-    OutputMessage oMsg;
-    oMsg.addU8(Proto::ClientUseOnCreature);
-    addPosition(oMsg, pos);
-    oMsg.addU16(thingId);
-    oMsg.addU8(stackpos);
-    oMsg.addU32(creatureId);
-    send(oMsg);
+    OutputMessage msg;
+    msg.addU8(Proto::ClientUseOnCreature);
+    addPosition(msg, pos);
+    msg.addU16(thingId);
+    msg.addU8(stackpos);
+    msg.addU32(creatureId);
+    send(msg);
 }
 
 void ProtocolGame::sendRotateItem(const Position& pos, int thingId, int stackpos)
 {
-    OutputMessage oMsg;
-    oMsg.addU8(Proto::ClientTurnObject);
-    addPosition(oMsg, pos);
-    oMsg.addU16(thingId);
-    oMsg.addU8(stackpos);
-    send(oMsg);
+    OutputMessage msg;
+    msg.addU8(Proto::ClientRotateItem);
+    addPosition(msg, pos);
+    msg.addU16(thingId);
+    msg.addU8(stackpos);
+    send(msg);
 }
 
 void ProtocolGame::sendCloseContainer(int containerId)
 {
-    OutputMessage oMsg;
-    oMsg.addU8(Proto::ClientCloseContainer);
-    oMsg.addU8(containerId);
-    send(oMsg);
+    OutputMessage msg;
+    msg.addU8(Proto::ClientCloseContainer);
+    msg.addU8(containerId);
+    send(msg);
 }
 
 void ProtocolGame::sendUpContainer(int containerId)
 {
-    OutputMessage oMsg;
-    oMsg.addU8(Proto::ClientUpContainer);
-    oMsg.addU8(containerId);
-    send(oMsg);
+    OutputMessage msg;
+    msg.addU8(Proto::ClientUpContainer);
+    msg.addU8(containerId);
+    send(msg);
 }
 
-void ProtocolGame::sendTextWindow(uint windowTextId, const std::string& text)
+void ProtocolGame::sendEditText(uint textId, const std::string& text)
 {
-    OutputMessage oMsg;
-    oMsg.addU8(Proto::ClientEditText);
-    oMsg.addU32(windowTextId);
-    oMsg.addString(text);
-    send(oMsg);
+    OutputMessage msg;
+    msg.addU8(Proto::ClientEditText);
+    msg.addU32(textId);
+    msg.addString(text);
+    send(msg);
 }
 
-void ProtocolGame::sendHouseWindow(int doorId, uint id, const std::string& text)
+void ProtocolGame::sendEditList(int listId, uint id, const std::string& text)
 {
-    OutputMessage oMsg;
-    oMsg.addU8(Proto::ClientEditList);
-    oMsg.addU8(doorId);
-    oMsg.addU32(id);
-    oMsg.addString(text);
-    send(oMsg);
+    OutputMessage msg;
+    msg.addU8(Proto::ClientEditList);
+    msg.addU8(listId);
+    msg.addU32(id);
+    msg.addString(text);
+    send(msg);
 }
 
-void ProtocolGame::sendLookAt(const Position& position, int thingId, int stackpos)
+void ProtocolGame::sendLook(const Position& position, int thingId, int stackpos)
 {
-    OutputMessage oMsg;
-    oMsg.addU8(Proto::ClientLook);
-    addPosition(oMsg, position);
-    oMsg.addU16(thingId);
-    oMsg.addU8(stackpos);
-    send(oMsg);
+    OutputMessage msg;
+    msg.addU8(Proto::ClientLook);
+    addPosition(msg, position);
+    msg.addU16(thingId);
+    msg.addU8(stackpos);
+    send(msg);
 }
 
 void ProtocolGame::sendTalk(Otc::SpeakType speakType, int channelId, const std::string& receiver, const std::string& message)
@@ -348,239 +361,227 @@ void ProtocolGame::sendTalk(Otc::SpeakType speakType, int channelId, const std::
 
     int serverSpeakType = Proto::translateSpeakTypeToServer(speakType);
 
-    OutputMessage oMsg;
-    oMsg.addU8(Proto::ClientTalk);
-    oMsg.addU8(serverSpeakType);
+    OutputMessage msg;
+    msg.addU8(Proto::ClientTalk);
+    msg.addU8(serverSpeakType);
 
     switch(serverSpeakType) {
     case Proto::ServerSpeakPrivate:
     case Proto::ServerSpeakPrivateRed:
-        oMsg.addString(receiver);
+        msg.addString(receiver);
         break;
     case Proto::ServerSpeakChannelYellow:
     case Proto::ServerSpeakChannelRed:
-        oMsg.addU16(channelId);
+        msg.addU16(channelId);
         break;
     }
 
-    oMsg.addString(message);
-    send(oMsg);
+    msg.addString(message);
+    send(msg);
 }
 
-void ProtocolGame::sendGetChannels()
+void ProtocolGame::sendRequestChannels()
 {
-    OutputMessage oMsg;
-    oMsg.addU8(Proto::ClientGetChannels);
-    send(oMsg);
+    OutputMessage msg;
+    msg.addU8(Proto::ClientRequestChannels);
+    send(msg);
 }
 
 void ProtocolGame::sendJoinChannel(int channelId)
 {
-    OutputMessage oMsg;
-    oMsg.addU8(Proto::ClientJoinChannel);
-    oMsg.addU16(channelId);
-    send(oMsg);
+    OutputMessage msg;
+    msg.addU8(Proto::ClientJoinChannel);
+    msg.addU16(channelId);
+    send(msg);
 }
 
 void ProtocolGame::sendLeaveChannel(int channelId)
 {
-    OutputMessage oMsg;
-    oMsg.addU8(Proto::ClientLeaveChannel);
-    oMsg.addU16(channelId);
-    send(oMsg);
+    OutputMessage msg;
+    msg.addU8(Proto::ClientLeaveChannel);
+    msg.addU16(channelId);
+    send(msg);
 }
 
 void ProtocolGame::sendOpenPrivateChannel(const std::string& receiver)
 {
-    OutputMessage oMsg;
-    oMsg.addU8(Proto::ClientOpenPrivateChannel);
-    oMsg.addString(receiver);
-    send(oMsg);
+    OutputMessage msg;
+    msg.addU8(Proto::ClientOpenPrivateChannel);
+    msg.addString(receiver);
+    send(msg);
 }
-
-// removed from game
-// process report
-// gm closes report
-// cancel report
 
 void ProtocolGame::sendCloseNpcChannel()
 {
-    OutputMessage oMsg;
-    oMsg.addU8(Proto::ClientCloseNpcChannel);
-    send(oMsg);
+    OutputMessage msg;
+    msg.addU8(Proto::ClientCloseNpcChannel);
+    send(msg);
 }
 
-void ProtocolGame::sendFightTatics(Otc::FightModes fightMode, Otc::ChaseModes chaseMode, bool safeFight)
+void ProtocolGame::sendChangeFightModes(Otc::FightModes fightMode, Otc::ChaseModes chaseMode, bool safeFight)
 {
-    OutputMessage oMsg;
-    oMsg.addU8(Proto::ClientSetTactics);
-    oMsg.addU8(fightMode);
-    oMsg.addU8(chaseMode);
-    oMsg.addU8(safeFight ? 0x01: 0x00);
-    send(oMsg);
+    OutputMessage msg;
+    msg.addU8(Proto::ClientChangeFightModes);
+    msg.addU8(fightMode);
+    msg.addU8(chaseMode);
+    msg.addU8(safeFight ? 0x01: 0x00);
+    send(msg);
 }
 
 void ProtocolGame::sendAttack(uint creatureId)
 {
-    OutputMessage oMsg;
-    oMsg.addU8(Proto::ClientAttack);
-    oMsg.addU32(creatureId);
-    oMsg.addU32(0);
-    oMsg.addU32(0);
-    send(oMsg);
+    OutputMessage msg;
+    msg.addU8(Proto::ClientAttack);
+    msg.addU32(creatureId);
+    msg.addU32(0);
+    msg.addU32(0);
+    send(msg);
 }
 
 void ProtocolGame::sendFollow(uint creatureId)
 {
-    OutputMessage oMsg;
-    oMsg.addU8(Proto::ClientFollow);
-    oMsg.addU32(creatureId);
-    send(oMsg);
+    OutputMessage msg;
+    msg.addU8(Proto::ClientFollow);
+    msg.addU32(creatureId);
+    send(msg);
 }
 
 void ProtocolGame::sendInviteToParty(uint creatureId)
 {
-    OutputMessage oMsg;
-    oMsg.addU8(Proto::ClientInviteToParty);
-    oMsg.addU32(creatureId);
-    send(oMsg);
+    OutputMessage msg;
+    msg.addU8(Proto::ClientInviteToParty);
+    msg.addU32(creatureId);
+    send(msg);
 }
 
 void ProtocolGame::sendJoinParty(uint creatureId)
 {
-    OutputMessage oMsg;
-    oMsg.addU8(Proto::ClientJoinParty);
-    oMsg.addU32(creatureId);
-    send(oMsg);
+    OutputMessage msg;
+    msg.addU8(Proto::ClientJoinParty);
+    msg.addU32(creatureId);
+    send(msg);
 }
 
 void ProtocolGame::sendRevokeInvitation(uint creatureId)
 {
-    OutputMessage oMsg;
-    oMsg.addU8(Proto::ClientRevokeInvitation);
-    oMsg.addU32(creatureId);
-    send(oMsg);
+    OutputMessage msg;
+    msg.addU8(Proto::ClientRevokeInvitation);
+    msg.addU32(creatureId);
+    send(msg);
 }
 
 void ProtocolGame::sendPassLeadership(uint creatureId)
 {
-    OutputMessage oMsg;
-    oMsg.addU8(Proto::ClientPassLeadership);
-    oMsg.addU32(creatureId);
-    send(oMsg);
+    OutputMessage msg;
+    msg.addU8(Proto::ClientPassLeadership);
+    msg.addU32(creatureId);
+    send(msg);
 }
 
 void ProtocolGame::sendLeaveParty()
 {
-    OutputMessage oMsg;
-    oMsg.addU8(Proto::ClientLeaveParty);
-    send(oMsg);
+    OutputMessage msg;
+    msg.addU8(Proto::ClientLeaveParty);
+    send(msg);
 }
 
 void ProtocolGame::sendShareExperience(bool active, int unknown)
 {
-    OutputMessage oMsg;
-    oMsg.addU8(Proto::ClientShareExperience);
-    oMsg.addU8(active ? 0x01 : 0x00);
-    oMsg.addU8(unknown);
-    send(oMsg);
+    OutputMessage msg;
+    msg.addU8(Proto::ClientShareExperience);
+    msg.addU8(active ? 0x01 : 0x00);
+    msg.addU8(unknown);
+    send(msg);
 }
 
-void ProtocolGame::sendOpenChannel(int channelId)
+void ProtocolGame::sendOpenOwnChannel()
 {
-    OutputMessage oMsg;
-    oMsg.addU8(Proto::ClientOpenChannel);
-    oMsg.addU16(channelId);
-    send(oMsg);
+    OutputMessage msg;
+    msg.addU8(Proto::ClientOpenOwnChannel);
+    send(msg);
 }
 
-void ProtocolGame::sendInviteToChannel(const std::string& name)
+void ProtocolGame::sendInviteToOwnChannel(const std::string& name)
 {
-    OutputMessage oMsg;
-    oMsg.addU8(Proto::ClientInviteToChannel);
-    oMsg.addString(name);
-    send(oMsg);
+    OutputMessage msg;
+    msg.addU8(Proto::ClientInviteToOwnChannel);
+    msg.addString(name);
+    send(msg);
 }
 
-void ProtocolGame::sendExcludeFromChannel(const std::string& name)
+void ProtocolGame::sendExcludeFromOwnChannel(const std::string& name)
 {
-    OutputMessage oMsg;
-    oMsg.addU8(Proto::ClientExcludeFromChannel);
-    oMsg.addString(name);
-    send(oMsg);
+    OutputMessage msg;
+    msg.addU8(Proto::ClientExcludeFromOwnChannel);
+    msg.addString(name);
+    send(msg);
 }
 
-void ProtocolGame::sendCancel()
+void ProtocolGame::sendCancelAttackAndFollow()
 {
-    OutputMessage oMsg;
-    oMsg.addU8(Proto::ClientCancel);
-    send(oMsg);
+    OutputMessage msg;
+    msg.addU8(Proto::ClientCancelAttackAndFollow);
+    send(msg);
 }
 
-// update tile (not used)
-
-void ProtocolGame::sendUpdateContainer()
+void ProtocolGame::sendRefreshContainer()
 {
-    OutputMessage oMsg;
-    oMsg.addU8(Proto::ClientRefreshContainer);
-    send(oMsg);
+    OutputMessage msg;
+    msg.addU8(Proto::ClientRefreshContainer);
+    send(msg);
 }
 
-void ProtocolGame::sendGetOutfit()
+void ProtocolGame::sendRequestOutfit()
 {
-    OutputMessage oMsg;
-    oMsg.addU8(Proto::ClientGetOutfit);
-    send(oMsg);
+    OutputMessage msg;
+    msg.addU8(Proto::ClientRequestOutfit);
+    send(msg);
 }
 
-void ProtocolGame::sendSetOutfit(const Outfit& outfit)
+void ProtocolGame::sendChangeOutfit(const Outfit& outfit)
 {
-    OutputMessage oMsg;
-    oMsg.addU8(Proto::ClientSetOutfit);
+    OutputMessage msg;
+    msg.addU8(Proto::ClientChangeOutfit);
 
-    oMsg.addU16(outfit.getId());
-    oMsg.addU8(outfit.getHead());
-    oMsg.addU8(outfit.getBody());
-    oMsg.addU8(outfit.getLegs());
-    oMsg.addU8(outfit.getFeet());
-    oMsg.addU8(outfit.getAddons());
+    msg.addU16(outfit.getId());
+    msg.addU8(outfit.getHead());
+    msg.addU8(outfit.getBody());
+    msg.addU8(outfit.getLegs());
+    msg.addU8(outfit.getFeet());
+    msg.addU8(outfit.getAddons());
 
-    send(oMsg);
+    send(msg);
 }
 
 void ProtocolGame::sendAddVip(const std::string& name)
 {
-    OutputMessage oMsg;
-    oMsg.addU8(Proto::ClientAddBuddy);
-    oMsg.addString(name);
-    send(oMsg);
+    OutputMessage msg;
+    msg.addU8(Proto::ClientAddVip);
+    msg.addString(name);
+    send(msg);
 }
 
 void ProtocolGame::sendRemoveVip(uint playerId)
 {
-    OutputMessage oMsg;
-    oMsg.addU8(Proto::ClientRemoveBuddy);
-    oMsg.addU32(playerId);
-    send(oMsg);
+    OutputMessage msg;
+    msg.addU8(Proto::ClientRemoveVip);
+    msg.addU32(playerId);
+    send(msg);
 }
 
-// bug report
-// violation window
-// debug assert
-
-void ProtocolGame::sendGetQuestLog()
+void ProtocolGame::sendRequestQuestLog()
 {
-    OutputMessage oMsg;
-    oMsg.addU8(Proto::ClientGetQuestLog);
-    send(oMsg);
+    OutputMessage msg;
+    msg.addU8(Proto::ClientRequestQuestLog);
+    send(msg);
 }
 
-void ProtocolGame::sendGetQuestLine(int questId)
+void ProtocolGame::sendRequestQuestLine(int questLine)
 {
-    OutputMessage oMsg;
-    oMsg.addU8(Proto::ClientGetQuestLine);
-    oMsg.addU16(questId);
-    send(oMsg);
+    OutputMessage msg;
+    msg.addU8(Proto::ClientRequestQuestLine);
+    msg.addU16(questLine);
+    send(msg);
 }
 
 void ProtocolGame::addPosition(OutputMessage& msg, const Position& position)

@@ -51,6 +51,7 @@ public:
 
     uint16 getFirstItemId() { return 100; }
     uint16 getMaxItemid() { return m_things[Item].size() + 99; }
+    bool isValidItemId(int id) { return id >= getFirstItemId() && id <= getMaxItemid(); }
 
 private:
     uint32 m_signature;

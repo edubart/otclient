@@ -7,7 +7,7 @@ local addVipWindow
 
 -- public functions
 function VipList.create()
-  vipWindow = displayUI('viplist.otui', { parent = Game.gameRightPanel })
+  vipWindow = displayUI('viplist.otui', { parent = g_game.gameRightPanel })
   vipWindow:hide()
   vipButton = TopMenu.addGameButton('vipListButton', 'VIP list', 'viplist.png', VipList.toggle)
 end
@@ -35,7 +35,7 @@ function VipList.destroyAddWindow()
 end
 
 function VipList.addVip()
-  Game.addVip(addVipWindow:getChildById('name'):getText())
+  g_game.addVip(addVipWindow:getChildById('name'):getText())
   VipList.destroyAddWindow()
 end
 
@@ -56,7 +56,7 @@ function VipList.onAddVip(id, name, online)
   label.vipOnline = online
 
   label:setPhantom(false)
-  connect(label, { onDoubleClick = function () Game.openPrivateChannel(label:getText()) return true end } )
+  connect(label, { onDoubleClick = function () g_game.openPrivateChannel(label:getText()) return true end } )
 
   local nameLower = name:lower()
   local childrenCount = vipList:getChildCount()
@@ -114,7 +114,7 @@ function VipList.onVipListLabelMousePress(widget, mousePos, mouseButton)
 
   local menu = createWidget('PopupMenu')
   menu:addOption('Add new VIP', function() VipList.createAddWindow() end)
-  menu:addOption('Remove ' .. widget:getText(), function() if widget then Game.removeVip(widget:getId():sub(4)) vipList:removeChild(widget) end end)
+  menu:addOption('Remove ' .. widget:getText(), function() if widget then g_game.removeVip(widget:getId():sub(4)) vipList:removeChild(widget) end end)
   menu:addSeparator()
   menu:addOption('Copy Name', function() g_window.setClipboardText(widget:getText()) end)
   menu:display(mousePos)
@@ -123,7 +123,7 @@ function VipList.onVipListLabelMousePress(widget, mousePos, mouseButton)
 end
 
 
-connect(Game, { onGameStart = VipList.create,
+connect(g_game, { onGameStart = VipList.create,
                 onGameEnd = VipList.destroy,
                 onAddVip = VipList.onAddVip,
                 onVipStateChange = VipList.onVipStateChange })

@@ -78,7 +78,7 @@ end
 
 -- public functions
 function Console.create()
-  consolePanel = displayUI('console.otui', { parent = Game.gameBottomPanel } )
+  consolePanel = displayUI('console.otui', { parent = g_game.gameBottomPanel } )
   consoleLineEdit = consolePanel:getChildById('consoleLineEdit')
   consoleBuffer = consolePanel:getChildById('consoleBuffer')
   consoleTabBar = consolePanel:getChildById('consoleTabBar')
@@ -100,7 +100,7 @@ function Console.create()
   connect(consoleTabBar, { onTabChange = Console.onTabChange })
 
   -- tibia like hotkeys
-  Keyboard.bindKeyDown('Ctrl+O', Game.requestChannels)
+  Keyboard.bindKeyDown('Ctrl+O', g_game.requestChannels)
   Keyboard.bindKeyDown('Ctrl+E', Console.removeCurrentTab)
 end
 
@@ -139,9 +139,9 @@ function Console.removeCurrentTab()
 
   -- notificate the server that we are leaving the channel
   if tab.channelId then
-    Game.leaveChannel(tab.channelId)
+    g_game.leaveChannel(tab.channelId)
   elseif tab:getText() == "NPCs" then
-    Game.closeNpcChannel()
+    g_game.closeNpcChannel()
   end
 end
 
@@ -264,7 +264,7 @@ function Console.sendCurrentMessage()
       speaktypedesc = 'channelYellow'
     end
 
-    Game.talkChannel(SpeakTypesSettings[speaktypedesc].speakType, tab.channelId, message)
+    g_game.talkChannel(SpeakTypesSettings[speaktypedesc].speakType, tab.channelId, message)
     return
   else
     local isPrivateCommand = false
@@ -280,8 +280,8 @@ function Console.sendCurrentMessage()
 
 
     local speaktype = SpeakTypesSettings[speaktypedesc]
-    local player = Game.getLocalPlayer()
-    Game.talkPrivate(speaktype.speakType, name, message)
+    local player = g_game.getLocalPlayer()
+    g_game.talkPrivate(speaktype.speakType, name, message)
 
     message = applyMessagePrefixies(player:getName(), player:getLevel(), message)
     Console.addPrivateText(message, speaktype, name, isPrivateCommand)
@@ -316,7 +316,7 @@ local function onCreatureSpeak(name, level, speaktype, message, channelId, creat
       Console.addText(message, speaktype, channel)
     else
       -- server sent a message on a channel that we are not aware of, must leave it
-      Game.leaveChannel(channelId)
+      g_game.leaveChannel(channelId)
     end
   end
 end
@@ -336,11 +336,11 @@ local function doChannelListSubmit(channelsWindow)
   local channelListPanel = channelsWindow:getChildById('channelList')
   local openPrivateChannelWith = channelsWindow:getChildById('openPrivateChannelWith'):getText()
   if openPrivateChannelWith ~= '' then
-    Game.openPrivateChannel(openPrivateChannelWith)
+    g_game.openPrivateChannel(openPrivateChannelWith)
   else
     local selectedChannelLabel = channelListPanel:getFocusedChild()
     if not selectedChannelLabel then return end
-    Game.joinChannel(selectedChannelLabel.channelId)
+    g_game.joinChannel(selectedChannelLabel.channelId)
   end
   channelsWindow:destroy()
 end
@@ -365,7 +365,7 @@ local function onChannelList(channelList)
   end
 end
 
-connect(Game, { onGameStart = Console.create,
+connect(g_game, { onGameStart = Console.create,
                 onGameEnd = Console.destroy,
                 onCreatureSpeak = onCreatureSpeak,
                 onChannelList = onChannelList,

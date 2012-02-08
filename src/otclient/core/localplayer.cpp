@@ -28,7 +28,6 @@
 LocalPlayer::LocalPlayer()
 {
     m_preWalking = false;
-    m_canReportBugs = false;
     m_known = false;
     m_walkLocked = false;
     m_lastPrewalkDone = true;
@@ -158,34 +157,4 @@ void LocalPlayer::terminateWalk()
     m_preWalking = false;
 }
 
-void LocalPlayer::setAttackingCreature(const CreaturePtr& creature)
-{
-    // clear current attacking creature
-    if(m_attackingCreature) {
-        m_attackingCreature->hideStaticSquare();
-        m_attackingCreature = nullptr;
-    }
 
-    // set the new attacking creature
-    if(creature) {
-        creature->showStaticSquare(Fw::red);
-        m_attackingCreature = creature;
-    }
-
-    g_lua.callGlobalField("Game", "onSetAttackingCreature", creature);
-}
-
-void LocalPlayer::setFollowingCreature(const CreaturePtr& creature)
-{
-    // clear current following creature
-    if(m_followingCreature) {
-        m_followingCreature->hideStaticSquare();
-        m_followingCreature = nullptr;
-    }
-
-    // set the new attacking creature
-    if(creature) {
-        creature->showStaticSquare(Fw::green);
-        m_followingCreature = creature;
-    }
-}

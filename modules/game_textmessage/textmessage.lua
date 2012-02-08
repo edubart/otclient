@@ -21,7 +21,7 @@ local centerLabel
 
 -- private functions
 local function displayMessage(msgtype, msg, time)
-  if not Game.isOnline() then return end
+  if not g_game.isOnline() then return end
 
   if msgtype.consoleTab ~= nil then
     if msgtype.consoleOption == nil or Options[msgtype.consoleOption] then
@@ -30,7 +30,7 @@ local function displayMessage(msgtype, msg, time)
   end
 
   if msgtype.labelId  then
-    local label = Game.gameMapPanel:recursiveGetChildById(msgtype.labelId)
+    local label = g_game.gameMapPanel:recursiveGetChildById(msgtype.labelId)
 
     label:setVisible(true)
     label:setText(msg)
@@ -66,7 +66,7 @@ end
 -- public functions
 
 function TextMessage.create()
-  centerTextMessagePanel = createWidget('Panel', Game.gameMapPanel)
+  centerTextMessagePanel = createWidget('Panel', g_game.gameMapPanel)
   centerTextMessagePanel:setId('centerTextMessagePanel')
   local layout = UIVerticalLayout.create(centerTextMessagePanel)
   layout:setFitChildren(true)
@@ -78,7 +78,7 @@ function TextMessage.create()
   createTextMessageLabel('centerAdvance', centerTextMessagePanel)
   createTextMessageLabel('centerInfo', centerTextMessagePanel)
 
-  bottomStatusLabel = createTextMessageLabel('bottomStatus', Game.gameMapPanel)
+  bottomStatusLabel = createTextMessageLabel('bottomStatus', g_game.gameMapPanel)
   bottomStatusLabel:setHeight(16)
   bottomStatusLabel:addAnchor(AnchorBottom, 'parent', AnchorBottom)
   bottomStatusLabel:addAnchor(AnchorLeft, 'parent', AnchorLeft)
@@ -102,7 +102,7 @@ end
 
 -- hooked events
 local function onGameDeath()
-  local advanceLabel = Game.gameMapPanel:recursiveGetChildById('centerAdvance')
+  local advanceLabel = g_game.gameMapPanel:recursiveGetChildById('centerAdvance')
   if advanceLabel:isVisible() then return end
   TextMessage.displayEventAdvance('You are dead.')
 end
@@ -111,7 +111,7 @@ local function onGameTextMessage(msgtypedesc, msg)
   TextMessage.display(msgtypedesc, msg)
 end
 
-connect(Game, { onGameStart = TextMessage.create,
+connect(g_game, { onGameStart = TextMessage.create,
                 onGameEnd = TextMessage.destroy,
                 onDeath = onGameDeath,
                 onTextMessage = onGameTextMessage })

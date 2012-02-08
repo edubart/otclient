@@ -28,8 +28,8 @@ local function tryLogin(charInfo, tries)
     return
   end
 
-  if Game.isOnline() then
-    Game.safeLogout()
+  if g_game.isOnline() then
+    g_game.safeLogout()
     if tries == 1 then
       loadBox = displayCancelBox('Please wait', 'Loggin out...')
     end
@@ -39,12 +39,12 @@ local function tryLogin(charInfo, tries)
 
   CharacterList.destroyLoadBox()
 
-  Game.loginWorld(EnterGame.account, EnterGame.password, charInfo.worldHost, charInfo.worldPort, charInfo.characterName)
+  g_game.loginWorld(EnterGame.account, EnterGame.password, charInfo.worldHost, charInfo.worldPort, charInfo.characterName)
 
   loadBox = displayCancelBox('Please wait', 'Connecting to game server...')
   connect(loadBox, { onCancel = function()
                                   loadBox = nil
-                                  Game.cancelLogin()
+                                  g_game.cancelLogin()
                                   CharacterList.show()
                                 end })
 
@@ -110,7 +110,7 @@ end
 
 function CharacterList.destroy()
   CharacterList.hide()
-  if not Game.isOnline() then
+  if not g_game.isOnline() then
     EnterGame.show()
   end
 end

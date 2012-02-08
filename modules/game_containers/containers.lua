@@ -18,13 +18,13 @@ function Containers.getFreeContainerId()
 end
 
 -- hooked events
-function Containers.onContainerOpen(containerId, itemId, name, capacity, hasParent, items)
+function Containers.onOpenContainer(containerId, itemId, name, capacity, hasParent, items)
   local container = m_containers[containerId]
   if container then
-    Game.gameRightPanel:removeChild(container)
+    g_game.gameRightPanel:removeChild(container)
   end
 
-  container = displayUI('container.otui', { parent = Game.gameRightPanel })
+  container = displayUI('container.otui', { parent = g_game.gameRightPanel })
   name = name:sub(1,1):upper() .. name:sub(2)
   container:setText(name)
 
@@ -57,7 +57,7 @@ end
 function Containers.onContainerClose(containerId)
   local container = m_containers[containerId]
   if container then
-    Game.gameRightPanel:removeChild(container)
+    g_game.gameRightPanel:removeChild(container)
   end
   m_containers[containerId] = nil
 end
@@ -128,9 +128,9 @@ function Containers.onContainerRemoveItem(containerId, slot)
   container.itemCount = container.itemCount - 1
 end
 
-connect(Game, { onGameStart = Containers.clean,
+connect(g_game, { onGameStart = Containers.clean,
                 onGameEnd = Containers.clean,
-                onContainerOpen = Containers.onContainerOpen,
+                onOpenContainer = Containers.onOpenContainer,
                 onContainerClose = Containers.onContainerClose,
                 onContainerAddItem = Containers.onContainerAddItem,
                 onContainerUpdateItem = Containers.onContainerUpdateItem,

@@ -42,7 +42,7 @@ end
 
 -- public functions
 function Skills.create()
-  skillsWindow = displayUI('skills.otui', { parent = Game.gameRightPanel })
+  skillsWindow = displayUI('skills.otui', { parent = g_game.gameRightPanel })
   skillsWindow:hide()
   skillsButton = TopMenu.addGameButton('skillsButton', 'Skills (Ctrl+S)', '/core_styles/icons/skills.png', Skills.toggle)
   Keyboard.bindKeyDown('Ctrl+S', Skills.toggle)
@@ -122,7 +122,7 @@ function Skills.onSkillChange(id, level, percent)
   setSkillPercent('skillId' .. id, percent, 'You have ' .. (100 - percent) .. ' percent to go')
 end
 
-connect(Game, { onGameStart = Skills.create,
+connect(g_game, { onGameStart = Skills.create,
                 onGameEnd = Skills.destroy,
                 onExperienceChange = Skills.onExperienceChange,
                 onLevelChange = Skills.onLevelChange,

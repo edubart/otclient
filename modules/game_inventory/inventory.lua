@@ -6,7 +6,7 @@ local inventoryButton
 
 -- public functions
 function Inventory.create()
-  inventoryWindow = displayUI('inventory.otui', { parent = Game.gameRightPanel })
+  inventoryWindow = displayUI('inventory.otui', { parent = g_game.gameRightPanel })
   inventoryButton = TopMenu.addGameButton('inventoryButton', 'Inventory (Ctrl+I)', 'inventory.png', Inventory.toggle)
   inventoryButton:setOn(true)
   Keyboard.bindKeyDown('Ctrl+I', Inventory.toggle)
@@ -42,7 +42,7 @@ function Inventory.onSoulChange(soul)
   widget:setText("Soul:\n" .. soul)
 end
 
-connect(Game, { onGameStart = Inventory.create,
+connect(g_game, { onGameStart = Inventory.create,
                 onGameEnd = Inventory.destroy,
                 onInventoryChange = Inventory.onInventoryChange,
                 onFreeCapacityChange = Inventory.onFreeCapacityChange,

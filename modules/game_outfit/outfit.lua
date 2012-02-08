@@ -175,7 +175,7 @@ function Outfit.destroy()
 end
 
 function Outfit.accept()
-  Game.setOutfit(m_outfit)
+  g_game.changeOutfit(m_outfit)
   Outfit.destroy()
 end
 
@@ -198,5 +198,5 @@ function Outfit.previousType()
 end
 
 -- hooked events
-connect(Game, { onOpenOutfitWindow = Outfit.create,
+connect(g_game, { onOpenOutfitWindow = Outfit.create,
                 onGameEnd = Outfit.destroy })

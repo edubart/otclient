@@ -34,24 +34,16 @@ class LocalPlayer : public Player
 public:
     LocalPlayer();
 
-    void setCanReportBugs(uint8 canReportBugs) { m_canReportBugs = (canReportBugs != 0); }
     void setSkill(Otc::Skill skill, Otc::SkillType skillType, int value) { m_skills[skill][skillType] = value; }
     void setStatistic(Otc::Statistic statistic, double value) { m_statistics[statistic] = value; }
-    void setAttackingCreature(const CreaturePtr& creature);
-    void setFollowingCreature(const CreaturePtr& creature);
     void setIcons(int icons) { m_icons = icons; }
     void setKnown(bool known) { m_known = known; }
 
-    bool getCanReportBugs() { return m_canReportBugs; }
     int getSkill(Otc::Skill skill, Otc::SkillType skillType) { return m_skills[skill][skillType]; }
     double getStatistic(Otc::Statistic statistic) { return m_statistics[statistic]; }
-    CreaturePtr getAttackingCreature() { return m_attackingCreature; }
-    CreaturePtr getFollowingCreature() { return m_followingCreature; }
     int getIcons() { return m_icons; }
 
     bool isKnown() { return m_known; }
-    bool isAttacking() { return m_attackingCreature != nullptr; }
-    bool isFollowing() { return m_followingCreature != nullptr; }
     bool isPreWalking() { return m_preWalking; }
 
     void unlockWalk() { m_walkLocked = false; }
@@ -90,10 +82,7 @@ private:
     Position m_lastPrewalkDestionation;
     Timer m_walkLockTimer;
 
-    bool m_canReportBugs;
     bool m_known;
-    CreaturePtr m_attackingCreature;
-    CreaturePtr m_followingCreature;
     int m_icons;
     int m_skills[Otc::LastSkill][Otc::LastSkillType];
     double m_statistics[Otc::LastStatistic];

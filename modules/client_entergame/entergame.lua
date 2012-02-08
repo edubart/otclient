@@ -110,7 +110,7 @@ function EnterGame.hide()
 end
 
 function EnterGame.openWindow()
-  if Game.isOnline() then
+  if g_game.isOnline() then
     CharacterList.show()
   elseif not CharacterList.isVisible() then
     EnterGame.show()

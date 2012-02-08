@@ -40,10 +40,10 @@ function UIItem:onDrop(widget, mousePos)
     spinbox:setCurrentIndex(count)
 
     local okButton = moveWindow:getChildById('buttonOk')
-    okButton.onClick = function() Game.move(widget.currentDragThing, pos, spinbox:getCurrentIndex()) okButton:getParent():destroy() widget.currentDragThing = nil end
+    okButton.onClick = function() g_game.move(widget.currentDragThing, pos, spinbox:getCurrentIndex()) okButton:getParent():destroy() widget.currentDragThing = nil end
     moveWindow.onEnter = okButton.onClick
   else
-    Game.move(widget.currentDragThing, pos, 1)
+    g_game.move(widget.currentDragThing, pos, 1)
   end
 
   self:setBorderWidth(0)
@@ -70,6 +70,6 @@ function UIItem:onMouseRelease(mousePosition, mouseButton)
 
   local item = self:getItem()
   if not item or not self:containsPoint(mousePosition) then return false end
-  return Game.processMouseAction(mousePosition, mouseButton, nil, item, item, nil, item)
+  return g_game.processMouseAction(mousePosition, mouseButton, nil, item, item, nil, item)
 end
 

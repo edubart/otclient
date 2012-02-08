@@ -36,10 +36,10 @@ function UIMap:onDrop(widget, mousePos)
     spinbox:setCurrentIndex(count)
 
     local okButton = moveWindow:getChildById('buttonOk')
-    okButton.onClick = function() Game.move(widget.currentDragThing, tile:getPosition(), spinbox:getCurrentIndex()) okButton:getParent():destroy() widget.currentDragThing = nil end
+    okButton.onClick = function() g_game.move(widget.currentDragThing, tile:getPosition(), spinbox:getCurrentIndex()) okButton:getParent():destroy() widget.currentDragThing = nil end
     moveWindow.onEnter = okButton.onClick
   else
-    Game.move(widget.currentDragThing, tile:getPosition(), 1)
+    g_game.move(widget.currentDragThing, tile:getPosition(), 1)
   end
 
   return true
@@ -47,7 +47,7 @@ end
 
 function UIMap:onMouseRelease(mousePosition, mouseButton)
   local tile = self:getTile(mousePosition)
-  if tile and Game.processMouseAction(mousePosition, mouseButton, nil, tile:getTopLookThing(), tile:getTopUseThing(), tile:getTopCreature(), tile:getTopMultiUseThing()) then return true end
+  if tile and g_game.processMouseAction(mousePosition, mouseButton, nil, tile:getTopLookThing(), tile:getTopUseThing(), tile:getTopCreature(), tile:getTopMultiUseThing()) then return true end
   return false
 end
 

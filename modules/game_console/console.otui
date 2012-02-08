@@ -57,7 +57,7 @@ Panel
     anchors.top: parent.top
     margin-right: 5
     margin-top: 6
-    @onClick: Game.requestChannels()
+    @onClick: g_game.requestChannels()
 
   Panel
     id: consoleBuffer

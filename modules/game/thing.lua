@@ -11,7 +11,7 @@ function Thing:getContainerId()
 end
 
 -- public functions
-function Game.processMouseAction(menuPosition, mouseButton, autoWalk, lookThing, useThing, creatureThing, multiUseThing)
+function g_game.processMouseAction(menuPosition, mouseButton, autoWalk, lookThing, useThing, creatureThing, multiUseThing)
   local keyboardModifiers = g_window.getKeyboardModifiers()
 
   if autoWalk and keyboardModifiers == KeyboardNoModifier and mouseButton == MouseLeftButton then
@@ -21,60 +21,60 @@ function Game.processMouseAction(menuPosition, mouseButton, autoWalk, lookThing,
 
   if not Options.classicControl then
     if keyboardModifiers == KeyboardNoModifier and mouseButton == MouseRightButton then
-      Game.createThingMenu(menuPosition, lookThing, useThing, creatureThing)
+      g_game.createThingMenu(menuPosition, lookThing, useThing, creatureThing)
       return true
     elseif lookThing and keyboardModifiers == KeyboardShiftModifier and (mouseButton == MouseLeftButton or mouseButton == MouseRightButton) then
-      Game.look(lookThing)
+      g_game.look(lookThing)
       return true
     elseif useThing and keyboardModifiers == KeyboardCtrlModifier and (mouseButton == MouseLeftButton or mouseButton == MouseRightButton) then
       if useThing:isContainer() then
         if useThing:isInsideContainer() then
-          Game.open(useThing, useThing:getContainerId())
+          g_game.open(useThing, useThing:getContainerId())
           return true
         else
-          Game.open(useThing, Containers.getFreeContainerId())
+          g_game.open(useThing, Containers.getFreeContainerId())
         return true
         end
       elseif useThing:isMultiUse() then
-        Game.startUseWith(useThing)
+        g_game.startUseWith(useThing)
         return true
       else
-        Game.use(useThing)
+        g_game.use(useThing)
         return true
       end
       return true
     elseif creatureThing and keyboardModifiers == KeyboardAltModifier and (mouseButton == MouseLeftButton or mouseButton == MouseRightButton) then
-      Game.attack(creatureThing)
+      g_game.attack(creatureThing)
       return true
     end
   else
     if multiUseThing and keyboardModifiers == KeyboardNoModifier and mouseButton == MouseRightButton then
       if multiUseThing:asCreature() then
-        Game.attack(multiUseThing:asCreature())
+        g_game.attack(multiUseThing:asCreature())
         return true
       elseif multiUseThing:isContainer() then
         if multiUseThing:isInsideContainer() then
-          Game.open(multiUseThing, multiUseThing:getContainerId())
+          g_game.open(multiUseThing, multiUseThing:getContainerId())
           return true
         else
-          Game.open(multiUseThing, Containers.getFreeContainerId())
+          g_game.open(multiUseThing, Containers.getFreeContainerId())
           return true
         end
       elseif multiUseThing:isMultiUse() then
-        Game.startUseWith(multiUseThing)
+        g_game.startUseWith(multiUseThing)
         return true
       else
-        Game.use(multiUseThing)
+        g_game.use(multiUseThing)
       end
       return true
     elseif lookThing and keyboardModifiers == KeyboardShiftModifier and (mouseButton == MouseLeftButton or mouseButton == MouseRightButton) then
-      Game.look(lookThing)
+      g_game.look(lookThing)
       return true
     elseif useThing and keyboardModifiers == KeyboardCtrlModifier and (mouseButton == MouseLeftButton or mouseButton == MouseRightButton) then
-      Game.createThingMenu(menuPosition, lookThing, useThing, creatureThing)
+      g_game.createThingMenu(menuPosition, lookThing, useThing, creatureThing)
       return true
     elseif creatureThing and keyboardModifiers == KeyboardAltModifier and (mouseButton == MouseLeftButton or mouseButton == MouseRightButton) then
-      Game.attack(creatureThing)
+      g_game.attack(creatureThing)
       return true
     end
   end
@@ -83,31 +83,31 @@ function Game.processMouseAction(menuPosition, mouseButton, autoWalk, lookThing,
 end
 
 
-function Game.createThingMenu(menuPosition, lookThing, useThing, creatureThing)
+function g_game.createThingMenu(menuPosition, lookThing, useThing, creatureThing)
   local menu = createWidget('PopupMenu')
 
   if lookThing then
-    menu:addOption('Look', function() Game.look(lookThing) end)
+    menu:addOption('Look', function() g_game.look(lookThing) end)
   end
 
   if useThing then
     if useThing:isContainer() then
       if useThing:isInsideContainer() then
-        menu:addOption('Open', function() Game.open(useThing, useThing:getContainerId()) end)
-        menu:addOption('Open in new window', function() Game.open(useThing, Containers.getFreeContainerId()) end)
+        menu:addOption('Open', function() g_game.open(useThing, useThing:getContainerId()) end)
+        menu:addOption('Open in new window', function() g_game.open(useThing, Containers.getFreeContainerId()) end)
       else
-        menu:addOption('Open', function() Game.open(useThing, Containers.getFreeContainerId()) end)
+        menu:addOption('Open', function() g_game.open(useThing, Containers.getFreeContainerId()) end)
       end
     else
       if useThing:isMultiUse() then
-        menu:addOption('Use with ...', function() Game.startUseWith(useThing) end)
+        menu:addOption('Use with ...', function() g_game.startUseWith(useThing) end)
       else
-        menu:addOption('Use', function() Game.use(useThing) end)
+        menu:addOption('Use', function() g_game.use(useThing) end)
       end
     end
 
     if useThing:isRotateable() then
-      menu:addOption('Rotate', function() Game.rotate(useThing) end)
+      menu:addOption('Rotate', function() g_game.rotate(useThing) end)
     end
 
   end
@@ -123,38 +123,38 @@ function Game.createThingMenu(menuPosition, lookThing, useThing, creatureThing)
     menu:addSeparator()
 
     if creatureThing:asLocalPlayer() then
-      menu:addOption('Set Outfit', function() Game.requestOutfit() end)
+      menu:addOption('Set Outfit', function() g_game.requestOutfit() end)
 
       if creatureThing:asPlayer():isPartyMember() --[[and not fighting]] then
         if creatureThing:asPlayer():isPartyLeader() then
           if creatureThing:asPlayer():isPartySharedExperienceActive() then
-            menu:addOption('Disable Shared Experience', function() Game.partyShareExperience(false) end)
+            menu:addOption('Disable Shared Experience', function() g_game.partyShareExperience(false) end)
           else
-            menu:addOption('Enable Shared Experience', function() Game.partyShareExperience(true) end)
+            menu:addOption('Enable Shared Experience', function() g_game.partyShareExperience(true) end)
           end
         end
-        menu:addOption('Leave Party', function() Game.partyLeave() end)
+        menu:addOption('Leave Party', function() g_game.partyLeave() end)
       end
 
     else
-      local localPlayer = Game.getLocalPlayer()
+      local localPlayer = g_game.getLocalPlayer()
       if localPlayer then
-        if localPlayer:getAttackingCreature() ~= creatureThing then
-          menu:addOption('Attack', function() Game.attack(creatureThing) end)
+        if g_game.getAttackingCreature() ~= creatureThing then
+          menu:addOption('Attack', function() g_game.attack(creatureThing) end)
         else
-          menu:addOption('Stop Attack', function() Game.cancelAttack() end)
+          menu:addOption('Stop Attack', function() g_game.cancelAttack() end)
         end
 
-        if localPlayer:getFollowingCreature() ~= creatureThing then
-          menu:addOption('Follow', function() Game.follow(creatureThing) end)
+        if g_game.getFollowingCreature() ~= creatureThing then
+          menu:addOption('Follow', function() g_game.follow(creatureThing) end)
         else
-          menu:addOption('Stop Follow', function() Game.cancelFollow() end)
+          menu:addOption('Stop Follow', function() g_game.cancelFollow() end)
         end
 
         if creatureThing:asPlayer() then
           menu:addSeparator()
           menu:addOption('Message to ' .. creatureThing:getName(), function() print('message') end)
-          menu:addOption('Add to VIP list', function() Game.addVip(creatureThing:getName()) end)
+          menu:addOption('Add to VIP list', function() g_game.addVip(creatureThing:getName()) end)
           menu:addOption('Ignore ' .. creatureThing:getName(), function() print('ignore') end)
 
           local localPlayerShield = localPlayer:asCreature():getShield()
@@ -162,21 +162,21 @@ function Game.createThingMenu(menuPosition, lookThing, useThing, creatureThing)
 
           if localPlayerShield == ShieldNone or localPlayerShield == ShieldWhiteBlue then
             if creatureShield == ShieldWhiteYellow then
-              menu:addOption('Join ' .. creatureThing:getName() .. '\'s Party', function() Game.partyJoin(creatureThing:getId()) end)
+              menu:addOption('Join ' .. creatureThing:getName() .. '\'s Party', function() g_game.partyJoin(creatureThing:getId()) end)
             else
-              menu:addOption('Invite to Party', function() Game.partyInvite(creatureThing:getId()) end)
+              menu:addOption('Invite to Party', function() g_game.partyInvite(creatureThing:getId()) end)
             end
           elseif localPlayerShield == ShieldWhiteYellow then
             if creatureShield == ShieldWhiteBlue then
-              menu:addOption('Revoke ' .. creatureThing:getName() .. '\'s Invitation', function() Game.partyRevokeInvitation(creatureThing:getId()) end)
+              menu:addOption('Revoke ' .. creatureThing:getName() .. '\'s Invitation', function() g_game.partyRevokeInvitation(creatureThing:getId()) end)
             end
           elseif localPlayerShield == ShieldYellow or localPlayerShield == ShieldYellowSharedExp or localPlayerShield == ShieldYellowNoSharedExpBlink or localPlayerShield == ShieldYellowNoSharedExp then
             if creatureShield == ShieldWhiteBlue then
-              menu:addOption('Revoke ' .. creatureThing:getName() .. '\'s Invitation', function() Game.partyRevokeInvitation(creatureThing:getId()) end)
+              menu:addOption('Revoke ' .. creatureThing:getName() .. '\'s Invitation', function() g_game.partyRevokeInvitation(creatureThing:getId()) end)
             elseif creatureShield == ShieldBlue or creatureShield == ShieldBlueSharedExp or creatureShield == ShieldBlueNoSharedExpBlink or creatureShield == ShieldBlueNoSharedExp then
-              menu:addOption('Pass Leadership to ' .. creatureThing:getName(), function() Game.partyPassLeadership(creatureThing:getId()) end)
+              menu:addOption('Pass Leadership to ' .. creatureThing:getName(), function() g_game.partyPassLeadership(creatureThing:getId()) end)
             else
-              menu:addOption('Invite to Party', function() Game.partyInvite(creatureThing:getId()) end)
+              menu:addOption('Invite to Party', function() g_game.partyInvite(creatureThing:getId()) end)
             end
           end
         end

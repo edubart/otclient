@@ -107,12 +107,19 @@ protected:
     Outfit m_outfit;
     Light m_light;
     int m_speed;
-    uint8 m_skull, m_shield, m_emblem;
-    TexturePtr m_skullTexture, m_shieldTexture, m_emblemTexture;
-    bool m_showShieldTexture, m_shieldBlink;
+    uint8 m_skull;
+    uint8 m_shield;
+    uint8 m_emblem;
+    TexturePtr m_skullTexture;
+    TexturePtr m_shieldTexture;
+    TexturePtr m_emblemTexture;
+    bool m_showShieldTexture;
+    bool m_shieldBlink;
     bool m_passable;
-    Color m_timedSquareColor, m_staticSquareColor;
-    bool m_showTimedSquare, m_showStaticSquare;
+    Color m_timedSquareColor;
+    Color m_staticSquareColor;
+    bool m_showTimedSquare;
+    bool m_showStaticSquare;
 
     FontPtr m_informationFont;
     Color m_informationColor;

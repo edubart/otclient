@@ -9,7 +9,7 @@ local manaLabel
 
 -- public functions
 function HealthBar.create()
-  healthBarWindow = displayUI('healthbar.otui', { parent = Game.gameRightPanel })
+  healthBarWindow = displayUI('healthbar.otui', { parent = g_game.gameRightPanel })
   healthBarButton = TopMenu.addGameButton('healthBarButton', 'Healh Bar', 'healthbar.png', HealthBar.toggle)
   healthBarButton:setOn(true)
   healthBar = healthBarWindow:getChildById('healthBar')
@@ -53,7 +53,7 @@ function HealthBar.onManaChange(mana, maxMana)
   manaBar:setPercent(percent)
 end
 
-connect(Game, { onGameStart = HealthBar.create,
+connect(g_game, { onGameStart = HealthBar.create,
                 onGameEnd = HealthBar.destroy,
                 onHealthChange = HealthBar.onHealthChange,
                 onManaChange = HealthBar.onManaChange })

@@ -8,8 +8,8 @@ local gameButtonsPanel
 
 -- private functions
 local function onLogout()
-  if Game.isOnline() then
-    Game.safeLogout()
+  if g_game.isOnline() then
+    g_game.safeLogout()
   else
     exit()
   end
@@ -25,7 +25,7 @@ function TopMenu.init()
   TopMenu.addRightButton('logoutButton', 'Logout (Ctrl+Q)', '/core_styles/icons/logout.png', onLogout)
   Keyboard.bindKeyDown('Ctrl+Q', onLogout)
 
-  connect(Game, { onGameStart = TopMenu.showGameButtons,
+  connect(g_game, { onGameStart = TopMenu.showGameButtons,
                   onGameEnd = TopMenu.hideGameButtons })
 end
 
@@ -37,7 +37,7 @@ function TopMenu.terminate()
   topMenu:destroy()
   topMenu = nil
 
-  disconnect(Game, { onGameStart = TopMenu.showGameButtons,
+  disconnect(g_game, { onGameStart = TopMenu.showGameButtons,
                      onGameEnd = TopMenu.hideGameButtons })
 
   TopMenu = nil

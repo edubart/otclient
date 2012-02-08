@@ -50,34 +50,34 @@ void ProtocolGame::parseMessage(InputMessage& msg)
                 parseLoginError(msg);
                 break;
             case Proto::GameServerLoginAdvice:
-                parseFYIMessage(msg);
+                parseLoginAdvice(msg);
                 break;
             case Proto::GameServerLoginWait:
-                parseWaitList(msg);
+                parseLoginWait(msg);
                 break;
             case Proto::GameServerPing:
                 parsePing(msg);
                 break;
             //case Proto::GameServerChallange:
-            case Proto::GameServerDead:
+            case Proto::GameServerDeath:
                 parseDeath(msg);
                 break;
             case Proto::GameServerFullMap:
                 parseMapDescription(msg);
                 break;
             case Proto::GameServerMapTopRow:
-                parseMoveNorth(msg);
+                parseMapMoveNorth(msg);
                 break;
             case Proto::GameServerMapRightRow:
-                parseMoveEast(msg);
+                parseMapMoveEast(msg);
                 break;
             case Proto::GameServerMapBottomRow:
-                parseMoveSouth(msg);
+                parseMapMoveSouth(msg);
                 break;
             case Proto::GameServerMapLeftRow:
-                parseMoveWest(msg);
+                parseMapMoveWest(msg);
                 break;
-            case Proto::GameServerTileData:
+            case Proto::GameServerUpdateTile:
                 parseUpdateTile(msg);
                 break;
             case Proto::GameServerCreateOnMap:
@@ -114,7 +114,7 @@ void ProtocolGame::parseMessage(InputMessage& msg)
                 parseRemoveInventoryItem(msg);
                 break;
             case Proto::GameServerNpcOffer:
-                parseOpenShopWindow(msg);
+                parseNpcOffer(msg);
                 break;
             case Proto::GameServerPlayerGoods:
                 parsePlayerCash(msg);
@@ -210,47 +210,47 @@ void ProtocolGame::parseMessage(InputMessage& msg)
             case Proto::GameServerRuleViolationLock:
                 break;
             case Proto::GameServerOpenOwnChannel:
-                parseCreateOwnPrivateChannel(msg);
+                parseOpenOwnPrivateChannel(msg);
                 break;
             case Proto::GameServerCloseChannel:
                 parseCloseChannel(msg);
                 break;
-            case Proto::GameServerMessage:
+            case Proto::GameServerTextMessage:
                 parseTextMessage(msg);
                 break;
-            case Proto::GameServerSnapBack:
+            case Proto::GameServerCancelWalk:
                 parseCancelWalk(msg);
                 break;
             //case Proto::GameServerWait:
-            case Proto::GameServerTopFloor:
+            case Proto::GameServerFloorChangeUp:
                 parseFloorChangeUp(msg);
                 break;
-            case Proto::GameServerBottomFloor:
+            case Proto::GameServerFloorChangeDown:
                 parseFloorChangeDown(msg);
                 break;
             case Proto::GameServerOutfit:
-                parseOutfitWindow(msg);
+                parseOutfit(msg);
                 break;
-            case Proto::GameServerBuddyData:
-                parseVipState(msg);
+            case Proto::GameServerVipAdd:
+                parseVipAdd(msg);
                 break;
-            case Proto::GameServerBuddyLogin:
+            case Proto::GameServerVipLogin:
                 parseVipLogin(msg);
                 break;
-            case Proto::GameServerBuddyLogout:
+            case Proto::GameServerVipLogout:
                 parseVipLogout(msg);
                 break;
             case Proto::GameServerTutorialHint:
-                parseShowTutorial(msg);
+                parseTutorialHint(msg);
                 break;
             case Proto::GameServerAutomapFlag:
-                parseAddMarker(msg);
+                parseAutomapFlag(msg);
                 break;
             case Proto::GameServerQuestLog:
-                parseQuestList(msg);
+                parseQuestLog(msg);
                 break;
             case Proto::GameServerQuestLine:
-                parseQuestPartList(msg);
+                parseQuestLine(msg);
                 break;
             //case Proto::GameServerChannelEvent:
             //case Proto::GameServerObjectInfo:
@@ -269,16 +269,17 @@ void ProtocolGame::parseInitGame(InputMessage& msg)
 {
     uint playerId = msg.getU32();
     int serverBeat = msg.getU16();
-    int playerCanReportBugs = msg.getU8();
+    msg.getU8(); // can report bugs, ignored
 
     m_localPlayer = LocalPlayerPtr(new LocalPlayer);
     m_localPlayer->setId(playerId);
-    m_localPlayer->setCanReportBugs(playerCanReportBugs);
+
     g_game.processGameStart(m_localPlayer, serverBeat);
 }
 
 void ProtocolGame::parseGMActions(InputMessage& msg)
 {
+    // not used
     for(int i = 0; i < Proto::NumViolationReasons; ++i)
         msg.getU8();
 }
@@ -286,31 +287,37 @@ void ProtocolGame::parseGMActions(InputMessage& msg)
 void ProtocolGame::parseLoginError(InputMessage& msg)
 {
     std::string error = msg.getString();
+
     g_game.processLoginError(error);
 }
 
-void ProtocolGame::parseFYIMessage(InputMessage& msg)
+void ProtocolGame::parseLoginAdvice(InputMessage& msg)
 {
-    msg.getString(); // message
+    std::string message = msg.getString();
+
+    g_game.processLoginAdvice(message);
 }
 
-void ProtocolGame::parseWaitList(InputMessage& msg)
+void ProtocolGame::parseLoginWait(InputMessage& msg)
 {
-    msg.getString(); // message
-    msg.getU8();// + 1 // time
+    std::string message = msg.getString();
+    int time = msg.getU8();
+
+    g_game.processLoginWait(message, time);
 }
 
 void ProtocolGame::parsePing(InputMessage&)
 {
-    sendPing();
+    g_game.processPing();
 }
 
 void ProtocolGame::parseDeath(InputMessage& msg)
 {
+    int penality = 100;
 #if PROTOCOL==862
-    msg.getU8(); // 100 is a fair death. < 100 is a unfair death.
+    penality = msg.getU8();
 #endif
-    g_game.processDeath();
+    g_game.processDeath(penality);
 }
 
 void ProtocolGame::parseMapDescription(InputMessage& msg)
@@ -320,7 +327,7 @@ void ProtocolGame::parseMapDescription(InputMessage& msg)
     setMapDescription(msg, pos.x - Otc::AWARE_X_LEFT_TILES, pos.y - Otc::AWARE_Y_TOP_TILES, pos.z, Otc::AWARE_X_TILES, Otc::AWARE_Y_TILES);
 }
 
-void ProtocolGame::parseMoveNorth(InputMessage& msg)
+void ProtocolGame::parseMapMoveNorth(InputMessage& msg)
 {
     Position pos = g_map.getCentralPosition();
     pos.y--;
@@ -329,7 +336,7 @@ void ProtocolGame::parseMoveNorth(InputMessage& msg)
     g_map.setCentralPosition(pos);
 }
 
-void ProtocolGame::parseMoveEast(InputMessage& msg)
+void ProtocolGame::parseMapMoveEast(InputMessage& msg)
 {
     Position pos = g_map.getCentralPosition();
     pos.x++;
@@ -338,7 +345,7 @@ void ProtocolGame::parseMoveEast(InputMessage& msg)
     g_map.setCentralPosition(pos);
 }
 
-void ProtocolGame::parseMoveSouth(InputMessage& msg)
+void ProtocolGame::parseMapMoveSouth(InputMessage& msg)
 {
     Position pos = g_map.getCentralPosition();
     pos.y++;
@@ -347,7 +354,7 @@ void ProtocolGame::parseMoveSouth(InputMessage& msg)
     g_map.setCentralPosition(pos);
 }
 
-void ProtocolGame::parseMoveWest(InputMessage& msg)
+void ProtocolGame::parseMapMoveWest(InputMessage& msg)
 {
     Position pos = g_map.getCentralPosition();
     pos.x--;
@@ -383,12 +390,12 @@ void ProtocolGame::parseTileTransformThing(InputMessage& msg)
     int stackPos = msg.getU8();
 
     int thingId = msg.getU16();
-    assert(thingId != 0);
     if(thingId == 0x0061 || thingId == 0x0062 || thingId == 0x0063) {
         parseCreatureTurn(msg);
     } else {
         ThingPtr thing = internalGetItem(msg, thingId);
-        g_map.removeThingByPos(pos, stackPos);
+        if(!g_map.removeThingByPos(pos, stackPos))
+            logTraceError("could not remove thing");
         g_map.addThing(thing, pos, stackPos);
     }
 }
@@ -398,7 +405,8 @@ void ProtocolGame::parseTileRemoveThing(InputMessage& msg)
     Position pos = parsePosition(msg);
     int stackPos = msg.getU8();
 
-    g_map.removeThingByPos(pos, stackPos);
+    if(!g_map.removeThingByPos(pos, stackPos))
+        logTraceError("could not remove thing");
 }
 
 void ProtocolGame::parseCreatureMove(InputMessage& msg)
@@ -420,7 +428,8 @@ void ProtocolGame::parseCreatureMove(InputMessage& msg)
     }
 
     // update map tiles
-    g_map.removeThing(thing);
+    if(!g_map.removeThing(thing))
+        logTraceError("could not remove thing");
     g_map.addThing(thing, newPos);
 
     g_game.processCreatureMove(creature, oldPos, newPos);
@@ -435,20 +444,17 @@ void ProtocolGame::parseOpenContainer(InputMessage& msg)
     bool hasParent = (msg.getU8() != 0);
     int itemCount = msg.getU8();
 
-    std::vector<ItemPtr> items;
-    items.reserve(itemCount);
-    for(int i = 0; i < itemCount; i++) {
-        ItemPtr item = internalGetItem(msg);
-        items.push_back(item);
-    }
+    std::vector<ItemPtr> items(itemCount);
+    for(int i = 0; i < itemCount; i++)
+        items[i] = internalGetItem(msg);
 
-    g_lua.callGlobalField("Game", "onContainerOpen", containerId, itemId, name, capacity, hasParent, items);
+    g_game.processOpenContainer(containerId, itemId, name, capacity, hasParent, items);
 }
 
 void ProtocolGame::parseCloseContainer(InputMessage& msg)
 {
     int containerId = msg.getU8();
-    g_lua.callGlobalField("Game", "onContainerClose", containerId);
+    g_lua.callGlobalField("g_game", "onContainerClose", containerId);
 }
 
 void ProtocolGame::parseContainerAddItem(InputMessage& msg)
@@ -463,14 +469,14 @@ void ProtocolGame::parseContainerUpdateItem(InputMessage& msg)
     int containerId = msg.getU8();
     int slot = msg.getU8();
     ItemPtr item = internalGetItem(msg);
-    g_lua.callGlobalField("Game", "onContainerUpdateItem", containerId, slot, item);
+    g_lua.callGlobalField("g_game", "onContainerUpdateItem", containerId, slot, item);
 }
 
 void ProtocolGame::parseContainerRemoveItem(InputMessage& msg)
 {
     int containerId = msg.getU8();
     int slot = msg.getU8();
-    g_lua.callGlobalField("Game", "onContainerRemoveItem", containerId, slot);
+    g_lua.callGlobalField("g_game", "onContainerRemoveItem", containerId, slot);
 }
 
 void ProtocolGame::parseAddInventoryItem(InputMessage& msg)
@@ -486,7 +492,7 @@ void ProtocolGame::parseRemoveInventoryItem(InputMessage& msg)
     g_game.processInventoryChange(slot, ItemPtr());
 }
 
-void ProtocolGame::parseOpenShopWindow(InputMessage& msg)
+void ProtocolGame::parseNpcOffer(InputMessage& msg)
 {
     int listCount = msg.getU8();
     for(int i = 0; i < listCount; ++i) {
@@ -699,7 +705,7 @@ void ProtocolGame::parsePlayerSkills(InputMessage& msg)
             m_localPlayer->setSkill((Otc::Skill)skill, (Otc::SkillType)skillType, values[skillType]);
         }
 
-        g_lua.callGlobalField("Game", "onSkillChange", skill, values[Otc::SkillLevel], values[Otc::SkillPercent]);
+        g_lua.callGlobalField("g_game", "onSkillChange", skill, values[Otc::SkillLevel], values[Otc::SkillPercent]);
     }
 }
 
@@ -769,7 +775,7 @@ void ProtocolGame::parseChannelList(InputMessage& msg)
         channelList.push_back(std::make_tuple(id, name));
     }
 
-    g_lua.callGlobalField("Game", "onChannelList", channelList);
+    g_lua.callGlobalField("g_game", "onChannelList", channelList);
 }
 
 void ProtocolGame::parseOpenChannel(InputMessage& msg)
@@ -777,29 +783,29 @@ void ProtocolGame::parseOpenChannel(InputMessage& msg)
     int channelId = msg.getU16();
     std::string name = msg.getString();
 
-    g_lua.callGlobalField("Game", "onOpenChannel", channelId, name);
+    g_lua.callGlobalField("g_game", "onOpenChannel", channelId, name);
 }
 
 void ProtocolGame::parseOpenPrivateChannel(InputMessage& msg)
 {
     std::string name = msg.getString();
 
-    g_lua.callGlobalField("Game", "onOpenPrivateChannel", name);
+    g_lua.callGlobalField("g_game", "onOpenPrivateChannel", name);
 }
 
-void ProtocolGame::parseCreateOwnPrivateChannel(InputMessage& msg)
+void ProtocolGame::parseOpenOwnPrivateChannel(InputMessage& msg)
 {
     int id = msg.getU16(); // channel id
     std::string name = msg.getString(); // channel name
 
-    g_lua.callGlobalField("Game", "onOpenOwnPrivateChannel", id, name);
+    g_lua.callGlobalField("g_game", "onOpenOwnPrivateChannel", id, name);
 }
 
 void ProtocolGame::parseCloseChannel(InputMessage& msg)
 {
     int id = msg.getU16(); // channel id
 
-    g_lua.callGlobalField("Game", "onCloseChannel", id);
+    g_lua.callGlobalField("g_game", "onCloseChannel", id);
 }
 
 void ProtocolGame::parseTextMessage(InputMessage& msg)
@@ -855,7 +861,7 @@ void ProtocolGame::parseFloorChangeDown(InputMessage& msg)
     g_map.setCentralPosition(pos);
 }
 
-void ProtocolGame::parseOutfitWindow(InputMessage& msg)
+void ProtocolGame::parseOutfit(InputMessage& msg)
 {
     Outfit outfit = internalGetOutfit(msg);
 
@@ -875,45 +881,45 @@ void ProtocolGame::parseOutfitWindow(InputMessage& msg)
     creature->setDirection(Otc::South);
     creature->setOutfit(outfit);
 
-    g_lua.callGlobalField("Game", "onOpenOutfitWindow", creature, outfitList);
+    g_lua.callGlobalField("g_game", "onOpenOutfitWindow", creature, outfitList);
 }
 
-void ProtocolGame::parseVipState(InputMessage& msg)
+void ProtocolGame::parseVipAdd(InputMessage& msg)
 {
     uint id = msg.getU32();
     std::string name = msg.getString();
     bool online = msg.getU8() != 0;
 
-    g_lua.callGlobalField("Game", "onAddVip", id, name, online);
+    g_lua.callGlobalField("g_game", "onAddVip", id, name, online);
 }
 
 void ProtocolGame::parseVipLogin(InputMessage& msg)
 {
     uint id = msg.getU32();
 
-    g_lua.callGlobalField("Game", "onVipStateChange", id, true);
+    g_lua.callGlobalField("g_game", "onVipStateChange", id, true);
 }
 
 void ProtocolGame::parseVipLogout(InputMessage& msg)
 {
     uint id = msg.getU32();
 
-    g_lua.callGlobalField("Game", "onVipStateChange", id, false);
+    g_lua.callGlobalField("g_game", "onVipStateChange", id, false);
 }
 
-void ProtocolGame::parseShowTutorial(InputMessage& msg)
+void ProtocolGame::parseTutorialHint(InputMessage& msg)
 {
     msg.getU8(); // tutorial id
 }
 
-void ProtocolGame::parseAddMarker(InputMessage& msg)
+void ProtocolGame::parseAutomapFlag(InputMessage& msg)
 {
     parsePosition(msg); // position
     msg.getU8(); // icon
     msg.getString(); // message
 }
 
-void ProtocolGame::parseQuestList(InputMessage& msg)
+void ProtocolGame::parseQuestLog(InputMessage& msg)
 {
     int questsCount = msg.getU16();
     for(int i = 0; i < questsCount; i++) {
@@ -923,7 +929,7 @@ void ProtocolGame::parseQuestList(InputMessage& msg)
     }
 }
 
-void ProtocolGame::parseQuestPartList(InputMessage& msg)
+void ProtocolGame::parseQuestLine(InputMessage& msg)
 {
     msg.getU16(); // quest id
     int missionCount = msg.getU8();
