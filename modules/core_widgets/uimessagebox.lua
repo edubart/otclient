@@ -26,13 +26,14 @@ function UIMessageBox.display(title, message, flags)
   if flags == MessageBoxOk then
     buttonRight:setText('Ok')
     connect(buttonRight, { onClick = function(self) self:getParent():ok() end })
+    connect(messagebox, { onEnter = function(self) self:ok() end })
+    connect(messagebox, { onEscape = function(self) self:ok() end })
   elseif flags == MessageBoxCancel then
     buttonRight:setText('Cancel')
     connect(buttonRight, { onClick = function(self) self:getParent():cancel() end })
+    connect(messagebox, { onEnter = function(self) self:cancel() end })
+    connect(messagebox, { onEscape = function(self) self:cancel() end })
   end
-
-  connect(messagebox, { onEnter = function(self) self:destroy() end })
-  connect(messagebox, { onEscape = function(self) self:destroy() end })
 
   messagebox:lock()
 

@@ -8,7 +8,7 @@ local function onGameKeyPress(self, keyCode, keyboardModifiers)
       CharacterList.show()
       return true
     elseif keyCode == KeyQ then
-      Game.logout(false)
+      Game.safeLogout()
       return true
     end
   end
@@ -101,7 +101,7 @@ end
 
 local function onApplicationClose()
   if Game.isOnline() then
-    Game.logout(true)
+    Game.forceLogout()
   else
     exit()
   end

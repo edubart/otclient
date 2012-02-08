@@ -38,8 +38,8 @@ public:
                     const std::string& characterName);
     void cancelLogin();
     void logout(bool force);
-    void forceLogout() { logout(true); }
-    void cleanLogout() { logout(false); }
+    void forceLogout();
+    void safeLogout();
     void processLoginError(const std::string& error);
     void processConnectionError(const boost::system::error_code& error);
     void processGameStart(const LocalPlayerPtr& localPlayer, int serverBeat);

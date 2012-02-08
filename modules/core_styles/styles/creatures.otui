@@ -3,3 +3,6 @@ Creature < UICreature
   padding: 1
   image-source: /core_styles/images/panel_flat.png
   image-border: 1
+
+  UIWidget
+    id: lala

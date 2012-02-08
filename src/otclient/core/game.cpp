@@ -42,18 +42,26 @@ void Game::loginWorld(const std::string& account, const std::string& password, c
 
 void Game::cancelLogin()
 {
+    if(m_protocolGame)
+        m_protocolGame->sendLogout();
     processLogout();
 }
 
-void Game::logout(bool force)
+void Game::forceLogout()
 {
-    if(!m_protocolGame || !isOnline())
+    if(!isOnline())
         return;
 
     m_protocolGame->sendLogout();
+    processLogout();
+}
 
-    if(force)
-        processLogout();
+void Game::safeLogout()
+{
+    if(!isOnline())
+        return;
+
+    m_protocolGame->sendLogout();
 }
 
 void Game::processLoginError(const std::string& error)

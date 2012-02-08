@@ -41,7 +41,7 @@
 Creature::Creature() : Thing()
 {
     m_healthPercent = 0;
-    m_showVolatileSquare = false;
+    m_showTimedSquare = false;
     m_showStaticSquare = false;
     m_direction = Otc::South;
     m_walkAnimationPhase = 0;
@@ -68,8 +68,8 @@ void Creature::draw(const Point& dest, float scaleFactor, bool animate)
 {
     Point animationOffset = animate ? m_walkOffset : Point(0,0);
 
-    if(m_showVolatileSquare && animate) {
-        g_painter.setColor(m_volatileSquareColor);
+    if(m_showTimedSquare && animate) {
+        g_painter.setColor(m_timedSquareColor);
         g_painter.drawBoundingRect(Rect(dest + (animationOffset - getDisplacement() + 3)*scaleFactor, Size(28, 28)*scaleFactor), std::max((int)(2*scaleFactor), 1));
     }
 
@@ -482,15 +482,15 @@ void Creature::setEmblemTexture(const std::string& filename)
     m_emblemTexture = g_textures.getTexture(filename);
 }
 
-void Creature::addVolatileSquare(uint8 color)
+void Creature::addTimedSquare(uint8 color)
 {
-    m_showVolatileSquare = true;
-    m_volatileSquareColor = Color::from8bit(color);
+    m_showTimedSquare = true;
+    m_timedSquareColor = Color::from8bit(color);
 
     // schedule removal
     auto self = asCreature();
     g_dispatcher.scheduleEvent([self]() {
-        self->removeVolatileSquare();
+        self->removeTimedSquare();
     }, VOLATILE_SQUARE_DURATION);
 }
 

@@ -29,7 +29,7 @@ local function tryLogin(charInfo, tries)
   end
 
   if Game.isOnline() then
-    Game.logout(false)
+    Game.safeLogout()
     if tries == 1 then
       loadBox = displayCancelBox('Please wait', 'Loggin out...')
     end

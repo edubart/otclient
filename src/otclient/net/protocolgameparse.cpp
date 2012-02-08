@@ -579,7 +579,7 @@ void ProtocolGame::parseCreatureSquare(InputMessage& msg)
 
     CreaturePtr creature = g_map.getCreatureById(id);
     if(creature)
-        creature->addVolatileSquare(color);
+        creature->addTimedSquare(color);
 }
 
 void ProtocolGame::parseCreatureHealth(InputMessage& msg)

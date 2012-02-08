@@ -9,7 +9,7 @@ local gameButtonsPanel
 -- private functions
 local function onLogout()
   if Game.isOnline() then
-    Game.logout(false)
+    Game.safeLogout()
   else
     exit()
   end

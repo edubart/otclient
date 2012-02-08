@@ -58,8 +58,8 @@ public:
     void setEmblemTexture(const std::string& filename);
     void setPassable(bool passable) { m_passable = passable; }
 
-    void addVolatileSquare(uint8 color);
-    void removeVolatileSquare() { m_showVolatileSquare = false; }
+    void addTimedSquare(uint8 color);
+    void removeTimedSquare() { m_showTimedSquare = false; }
 
     void showStaticSquare(const Color& color) { m_showStaticSquare = true; m_staticSquareColor = color; }
     void hideStaticSquare() { m_showStaticSquare = false; }
@@ -109,8 +109,8 @@ protected:
     TexturePtr m_skullTexture, m_shieldTexture, m_emblemTexture;
     bool m_showShieldTexture, m_shieldBlink;
     bool m_passable;
-    Color m_volatileSquareColor, m_staticSquareColor;
-    bool m_showVolatileSquare, m_showStaticSquare;
+    Color m_timedSquareColor, m_staticSquareColor;
+    bool m_showTimedSquare, m_showStaticSquare;
 
     FontPtr m_informationFont;
     Color m_informationColor;
