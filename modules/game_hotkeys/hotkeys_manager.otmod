@@ -8,7 +8,7 @@ Module
     - client_tibiafiles
   
   onLoad: |
-    require 'hotkeys_manager'
+    dofile 'hotkeys_manager'
     HotkeysManager.init()
 
   onUnload: |

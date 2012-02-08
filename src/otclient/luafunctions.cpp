@@ -118,7 +118,9 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Thing>("isFullGround", &Thing::isFullGround);
 
     g_lua.registerClass<Creature, Thing>();
+    g_lua.bindClassMemberFunction<Creature>("getId", &Creature::getId);
     g_lua.bindClassMemberFunction<Creature>("getName", &Creature::getName);
+    g_lua.bindClassMemberFunction<Creature>("getHealthPercent", &Creature::getHealthPercent);
     g_lua.bindClassMemberFunction<Creature>("getShield", &Creature::getShield);
     g_lua.bindClassMemberFunction<Creature>("setOutfit", &Creature::setOutfit);
     g_lua.bindClassMemberFunction<Creature>("getOutfit", &Creature::getOutfit);

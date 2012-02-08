@@ -68,7 +68,6 @@ end
 function HotkeysManager.load()
   local hotkeySettings = Settings.getNode('HotkeysManager')
   
-  local label
   if hotkeySettings ~= nil then
     for i, v in pairs(hotkeySettings) do 
       HotkeysManager.addKeyCombo(nil, v.keyCombo, v)
@@ -99,7 +98,7 @@ function HotkeysManager.terminate()
   hotkeyLabelSelectedOnList = nil
   currentItemPreview = nil
   
-  hotkeyList = nil
+  hotkeyList = {}
   addHotkey = nil
   removeHotkey = nil
   hotkeyText = nil
@@ -201,6 +200,7 @@ function HotkeysManager.addHotkey()
   local widget
   
   messageBox = createWidget('MainWindow', hotkeysWindow)
+  messageBox:grabKeyboard()
   messageBox:setId('assignWindow')
   messageBox:setText('Button Assign')
   messageBox:setWidth(420)
