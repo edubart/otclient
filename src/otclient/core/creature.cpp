@@ -473,19 +473,19 @@ void Creature::setOutfit(const Outfit& outfit)
 void Creature::setSkull(uint8 skull)
 {
     m_skull = skull;
-    g_lua.callGlobalField("Creature","onSkullChange", asCreature(), m_skull);
+    callLuaField("onSkullChange", m_skull);
 }
 
 void Creature::setShield(uint8 shield)
 {
     m_shield = shield;
-    g_lua.callGlobalField("Creature","onShieldChange", asCreature(), m_shield);
+    callLuaField("onShieldChange", m_shield);
 }
 
 void Creature::setEmblem(uint8 emblem)
 {
     m_emblem = emblem;
-    g_lua.callGlobalField("Creature","onEmblemChange", asCreature(), m_emblem);
+    callLuaField("onEmblemChange", m_emblem);
 }
 
 void Creature::setSkullTexture(const std::string& filename)

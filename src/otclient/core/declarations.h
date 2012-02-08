@@ -26,6 +26,7 @@
 #include <otclient/global.h>
 
 class Map;
+class Game;
 class MapView;
 class Tile;
 class Thing;

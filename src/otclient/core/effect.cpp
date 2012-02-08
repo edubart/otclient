@@ -21,10 +21,7 @@
  */
 
 #include "effect.h"
-#include "thingstype.h"
 #include "map.h"
-#include "tile.h"
-#include <framework/core/clock.h>
 #include <framework/core/eventdispatcher.h>
 
 void Effect::draw(const Point& dest, float scaleFactor, bool animate)

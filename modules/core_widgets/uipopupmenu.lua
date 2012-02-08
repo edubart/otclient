@@ -30,9 +30,9 @@ end
 function UIPopupMenu:addOption(optionName, optionCallback)
   local optionWidget = createWidget(self:getStyleName() .. 'Button', self)
   local lastOptionWidget = self:getLastChild()
-  optionWidget.onClick = function()
+  optionWidget.onClick = function(self)
     optionCallback()
-    self:destroy()
+    self:getParent():destroy()
   end
   optionWidget:setText(optionName)
   local width = optionWidget:getTextSize().width + optionWidget:getMarginLeft() + optionWidget:getMarginRight() + 6

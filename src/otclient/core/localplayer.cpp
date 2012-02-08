@@ -156,5 +156,3 @@ void LocalPlayer::terminateWalk()
     Creature::terminateWalk();
     m_preWalking = false;
 }
-
-

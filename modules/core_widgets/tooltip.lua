@@ -44,7 +44,7 @@ function ToolTip.init()
   toolTipLabel = createWidget('Label', rootWidget)
   toolTipLabel:setId('toolTip')
   toolTipLabel:setBackgroundColor('#111111bb')
-  connect(toolTipLabel, { onMouseMove = moveToolTip })
+  toolTipLabel.onMouseMove = moveToolTip
 
   connect(UIWidget, {  onStyleApply = onWidgetStyleApply,
                        onHoverChange = onWidgetHoverChange})

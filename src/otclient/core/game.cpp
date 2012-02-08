@@ -64,7 +64,7 @@ void Game::processConnectionError(const boost::system::error_code& error)
 void Game::processDisconnect()
 {
     if(isOnline()) {
-        // only process logout event if a previous the player is known
+        // only process logout event if the player is known
         if(m_localPlayer->isKnown())
             processLogout();
 
@@ -86,7 +86,7 @@ void Game::processLoginError(const std::string& error)
 
 void Game::processLoginAdvice(const std::string& message)
 {
-    g_lua.callGlobalField("Game," "onLoginAdvice", message);
+    g_lua.callGlobalField("g_game", "onLoginAdvice", message);
 }
 
 void Game::processLoginWait(const std::string& message, int time)
@@ -113,7 +113,7 @@ void Game::processGameEnd()
 {
     g_lua.callGlobalField("g_game", "onGameEnd");
 
-    // reset game states
+    // reset game state
     resetGameStates();
 }
 
@@ -232,9 +232,7 @@ void Game::processOpenContainer(int containerId, int itemId, const std::string& 
 
 void Game::processContainerAddItem(int containerId, const ItemPtr& item)
 {
-    if(item)
-        item->setPosition(Position(65535, containerId + 0x40, 0));
-
+    item->setPosition(Position(65535, containerId + 0x40, 0));
     g_lua.callGlobalField("g_game", "onContainerAddItem", containerId, item);
 }
 

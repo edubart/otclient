@@ -21,6 +21,15 @@ end
 function connect(object, signalsAndSlots, pushFront)
   for signal,slot in pairs(signalsAndSlots) do
     if not object[signal] then
+      local mt = getmetatable(object)
+      if mt then
+        object[signal] = function(...)
+          return signalcall(mt[signal], ...)
+        end
+      end
+    end
+
+    if not object[signal] then
       object[signal] = slot
     elseif type(object[signal]) == 'function' then
       object[signal] = { object[signal] }
@@ -140,7 +149,7 @@ function signalcall(param, ...)
     return param(...)
   elseif type(param) == 'table' then
     for k,v in pairs(param) do
-      if param(...) then
+      if v(...) then
         return true
       end
     end
