@@ -174,6 +174,8 @@ bool Map::removeThing(const ThingPtr& thing)
     if(!thing)
         return false;
 
+    notificateTileUpdateToMapViews(thing->getPosition());
+
     if(MissilePtr missile = thing->asMissile()) {
         int z = missile->getPosition().z;
         auto it = std::find(m_floorMissiles[z].begin(), m_floorMissiles[z].end(), missile);
@@ -195,8 +197,6 @@ bool Map::removeThing(const ThingPtr& thing)
         }
     } else if(TilePtr tile = thing->getTile())
         return tile->removeThing(thing);
-
-    notificateTileUpdateToMapViews(thing->getPosition());
 
     return false;
 }
