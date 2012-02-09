@@ -56,10 +56,10 @@ public:
     void sendTurnEast();
     void sendTurnSouth();
     void sendTurnWest();
-    void sendMove(const Position& fromPos, int thingId, int stackpos, const Position& toPos, int count);
-    void sendInspectNpcTrade(int thingId, int count);
-    void sendBuyItem(int thingId, int count, int amount, bool ignoreCapacity, bool buyWithBackpack);
-    void sendSellItem(int thingId, int count, int amount, bool ignoreEquipped);
+    void sendMove(const Position& fromPos, int itemId, int stackpos, const Position& toPos, int count);
+    void sendInspectNpcTrade(int itemId, int count);
+    void sendBuyItem(int itemId, int count, int amount, bool ignoreCapacity, bool buyWithBackpack);
+    void sendSellItem(int itemId, int count, int amount, bool ignoreEquipped);
     void sendCloseNpcTrade();
     void sendRequestTrade(const Position& pos, int thingId, int stackpos, uint playerId);
     void sendInspectTrade(bool counterOffer, int index);
@@ -71,7 +71,7 @@ public:
     void sendRotateItem(const Position& pos, int thingId, int stackpos);
     void sendCloseContainer(int containerId);
     void sendUpContainer(int containerId);
-    void sendEditText(uint textId, const std::string& text);
+    void sendEditText(uint id, const std::string& text);
     void sendEditList(int listId, uint id, const std::string& text);
     void sendLook(const Position& position, int thingId, int stackpos);
     void sendTalk(Otc::SpeakType speakType, int channelId, const std::string& receiver, const std::string& message);
@@ -99,7 +99,7 @@ public:
     void sendAddVip(const std::string& name);
     void sendRemoveVip(uint playerId);
     void sendRequestQuestLog();
-    void sendRequestQuestLine(int questLine);
+    void sendRequestQuestLine(int questId);
 
 private:
     void sendLoginPacket(uint timestamp, uint8 unknown);
@@ -131,14 +131,14 @@ private:
     void parseContainerRemoveItem(InputMessage& msg);
     void parseAddInventoryItem(InputMessage& msg);
     void parseRemoveInventoryItem(InputMessage& msg);
-    void parseNpcOffer(InputMessage& msg);
-    void parsePlayerCash(InputMessage& msg);
-    void parseCloseShopWindow(InputMessage&);
+    void parseOpenNpcTrade(InputMessage& msg);
+    void parsePlayerGoods(InputMessage& msg);
+    void parseCloseNpcTrade(InputMessage&);
     void parseWorldLight(InputMessage& msg);
     void parseMagicEffect(InputMessage& msg);
     void parseAnimatedText(InputMessage& msg);
     void parseDistanceMissile(InputMessage& msg);
-    void parseCreatureSquare(InputMessage& msg);
+    void parseCreatureMark(InputMessage& msg);
     void parseCreatureHealth(InputMessage& msg);
     void parseCreatureLight(InputMessage& msg);
     void parseCreatureOutfit(InputMessage& msg);
@@ -146,11 +146,11 @@ private:
     void parseCreatureSkulls(InputMessage& msg);
     void parseCreatureShields(InputMessage& msg);
     void parseCreatureTurn(InputMessage& msg);
-    void parseItemTextWindow(InputMessage& msg);
-    void parseHouseTextWindow(InputMessage& msg);
+    void parseEditText(InputMessage& msg);
+    void parseEditList(InputMessage& msg);
     void parsePlayerStats(InputMessage& msg);
     void parsePlayerSkills(InputMessage& msg);
-    void parsePlayerIcons(InputMessage& msg);
+    void parsePlayerState(InputMessage& msg);
     void parsePlayerCancelAttack(InputMessage& msg);
     void parseCreatureSpeak(InputMessage& msg);
     void parseChannelList(InputMessage& msg);
@@ -158,13 +158,13 @@ private:
     void parseOpenPrivateChannel(InputMessage& msg);
     void parseOpenOwnPrivateChannel(InputMessage& msg);
     void parseCloseChannel(InputMessage& msg);
-    void parseSafeTradeRequest(InputMessage& msg);
-    void parseSafeTradeClose(InputMessage&);
+    void parseOpenTrade(InputMessage& msg);
+    void parseCloseTrade(InputMessage&);
     void parseTextMessage(InputMessage& msg);
     void parseCancelWalk(InputMessage& msg);
     void parseFloorChangeUp(InputMessage& msg);
     void parseFloorChangeDown(InputMessage& msg);
-    void parseOutfit(InputMessage& msg);
+    void parseOpenOutfitWindow(InputMessage& msg);
     void parseVipAdd(InputMessage& msg);
     void parseVipLogin(InputMessage& msg);
     void parseVipLogout(InputMessage& msg);

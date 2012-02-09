@@ -154,12 +154,6 @@ namespace Otc
         LastSkill
     };
 
-    enum SkillType {
-        SkillLevel = 0,
-        SkillPercent,
-        LastSkillType
-    };
-
     enum Direction {
         North = 0,
         East,
@@ -246,7 +240,7 @@ namespace Otc
         EmblemBlue
     };
 
-    enum PlayerIcons {
+    enum PlayerStates {
         IconNone = 0,
         IconPoison = 1,
         IconBurn = 2,

@@ -146,69 +146,6 @@ void Game::processPing()
     g_lua.callGlobalField("g_game", "onPing");
 }
 
-void Game::processPlayerStats(double health, double maxHealth,
-                              double freeCapacity, double experience,
-                              double level, double levelPercent,
-                              double mana, double maxMana,
-                              double magicLevel, double magicLevelPercent,
-                              double soul, double stamina)
-{
-    if(m_localPlayer->getHealth() != health ||
-       m_localPlayer->getMaxHealth() != maxHealth) {
-        m_localPlayer->setStatistic(Otc::Health, health);
-        m_localPlayer->setStatistic(Otc::MaxHealth, maxHealth);
-        g_lua.callGlobalField("g_game", "onHealthChange", health, maxHealth);
-
-        // cannot walk while dying
-        if(health == 0) {
-            if(m_localPlayer->isPreWalking())
-                m_localPlayer->stopWalk();
-            m_localPlayer->lockWalk();
-        }
-    }
-
-    if(m_localPlayer->getStatistic(Otc::FreeCapacity) != freeCapacity) {
-        m_localPlayer->setStatistic(Otc::FreeCapacity, freeCapacity);
-        g_lua.callGlobalField("g_game", "onFreeCapacityChange", freeCapacity);
-    }
-
-    if(m_localPlayer->getStatistic(Otc::Experience) != experience) {
-        m_localPlayer->setStatistic(Otc::Experience, experience);
-        g_lua.callGlobalField("g_game", "onExperienceChange", experience);
-    }
-
-    if(m_localPlayer->getStatistic(Otc::Level) != level ||
-       m_localPlayer->getStatistic(Otc::LevelPercent) != levelPercent) {
-        m_localPlayer->setStatistic(Otc::Level, level);
-        m_localPlayer->setStatistic(Otc::LevelPercent, levelPercent);
-        g_lua.callGlobalField("g_game", "onLevelChange", level, levelPercent);
-    }
-
-    if(m_localPlayer->getStatistic(Otc::Mana) != mana ||
-       m_localPlayer->getStatistic(Otc::MaxMana) != maxMana) {
-        m_localPlayer->setStatistic(Otc::Mana, mana);
-        m_localPlayer->setStatistic(Otc::MaxMana, maxMana);
-        g_lua.callGlobalField("g_game", "onManaChange", mana, maxMana);
-    }
-
-    if(m_localPlayer->getStatistic(Otc::MagicLevel) != magicLevel ||
-       m_localPlayer->getStatistic(Otc::MagicLevelPercent) != magicLevelPercent) {
-        m_localPlayer->setStatistic(Otc::MagicLevel, magicLevel);
-        m_localPlayer->setStatistic(Otc::MagicLevelPercent, magicLevelPercent);
-        g_lua.callGlobalField("g_game", "onMagicLevelChange", magicLevel, magicLevelPercent);
-    }
-
-    if(m_localPlayer->getStatistic(Otc::Soul) != soul) {
-        m_localPlayer->setStatistic(Otc::Soul, soul);
-        g_lua.callGlobalField("g_game", "onSoulChange", soul);
-    }
-
-    if(m_localPlayer->getStatistic(Otc::Stamina) != stamina) {
-        m_localPlayer->setStatistic(Otc::Stamina, stamina);
-        g_lua.callGlobalField("g_game", "onStaminaChange", stamina);
-    }
-}
-
 void Game::processTextMessage(const std::string& type, const std::string& message)
 {
     g_lua.callGlobalField("g_game","onTextMessage", type, message);
@@ -230,10 +167,25 @@ void Game::processOpenContainer(int containerId, int itemId, const std::string& 
     g_lua.callGlobalField("g_game", "onOpenContainer", containerId, itemId, name, capacity, hasParent, items);
 }
 
+void Game::processCloseContainer(int containerId)
+{
+    g_lua.callGlobalField("g_game", "onCloseContainer", containerId);
+}
+
 void Game::processContainerAddItem(int containerId, const ItemPtr& item)
 {
     item->setPosition(Position(65535, containerId + 0x40, 0));
     g_lua.callGlobalField("g_game", "onContainerAddItem", containerId, item);
+}
+
+void Game::processContainerUpdateItem(int containerId, int slot, const ItemPtr& item)
+{
+    g_lua.callGlobalField("g_game", "onContainerUpdateItem", containerId, slot, item);
+}
+
+void Game::processContainerRemoveItem(int containerId, int slot)
+{
+    g_lua.callGlobalField("g_game", "onContainerRemoveItem", containerId, slot);
 }
 
 void Game::processInventoryChange(int slot, const ItemPtr& item)
@@ -259,6 +211,95 @@ void Game::processCreatureTeleport(const CreaturePtr& creature)
     // locks the walk for a while when teleporting
     if(creature == m_localPlayer)
         m_localPlayer->lockWalk();
+}
+
+void Game::processChannelList(const std::vector<std::tuple<int, std::string>>& channelList)
+{
+    g_lua.callGlobalField("g_game", "onChannelList", channelList);
+}
+
+void Game::processOpenChannel(int channelId, const std::string& name)
+{
+    g_lua.callGlobalField("g_game", "onOpenChannel", channelId, name);
+}
+
+void Game::processOpenPrivateChannel(const std::string& name)
+{
+    g_lua.callGlobalField("g_game", "onOpenPrivateChannel", name);
+}
+
+void Game::processOpenOwnPrivateChannel(int channelId, const std::string& name)
+{
+    g_lua.callGlobalField("g_game", "onOpenOwnPrivateChannel", channelId, name);
+}
+
+void Game::processCloseChannel(int channelId)
+{
+    g_lua.callGlobalField("g_game", "onCloseChannel", channelId);
+}
+
+void Game::processVipAdd(uint id, const std::string& name, bool online)
+{
+    g_lua.callGlobalField("g_game", "onAddVip", id, name, online);
+}
+
+void Game::processVipStateChange(uint id, bool online)
+{
+    g_lua.callGlobalField("g_game", "onVipStateChange", id, online);
+}
+
+void Game::processOpenOutfitWindow(const Outfit& currentOufit, const std::vector<std::tuple<int, std::string, int>>& outfitList)
+{
+    CreaturePtr virtualCreature = CreaturePtr(new Creature);
+    virtualCreature->setDirection(Otc::South);
+    virtualCreature->setOutfit(currentOufit);
+
+    g_lua.callGlobalField("g_game", "onOpenOutfitWindow", virtualCreature, outfitList);
+}
+
+void Game::processOpenNpcTrade(const std::vector<std::tuple<ItemPtr, std::string, int, int, int>>& items)
+{
+    g_lua.callGlobalField("g_game", "onOpenNpcTrade", items);
+}
+
+void Game::processPlayerGoods(int money, const std::vector<std::tuple<ItemPtr, int>>& goods)
+{
+    g_lua.callGlobalField("g_game", "onPlayerGoods", goods);
+}
+
+void Game::processCloseNpcTrade()
+{
+    g_lua.callGlobalField("g_game", "onCloseNpcTrade");
+}
+
+void Game::processOpenTrade(const std::string& name, const std::vector<ItemPtr>& items)
+{
+    g_lua.callGlobalField("g_game", "onOpenTrade", name, items);
+}
+
+void Game::processCloseTrade()
+{
+    g_lua.callGlobalField("g_game", "onCloseTrade");
+}
+
+void Game::processEditText(int id, int itemId, int maxLength, const std::string& text, const std::string& writter, const std::string& date)
+{
+    g_lua.callGlobalField("g_game", "onEditText", id, itemId, maxLength, text, writter, date);
+}
+
+void Game::processEditList(int listId, int id, const std::string& text)
+{
+    g_lua.callGlobalField("g_game", "onEditList", listId, id, text);
+}
+
+void Game::processQuestLog(const std::vector<std::tuple<int, std::string, bool>>& questList)
+{
+    g_lua.callGlobalField("g_game", "onQuestLog", questList);
+}
+
+void Game::processQuestLine(int questId, const std::vector<std::tuple<std::string, std::string>>& questMissions)
+{
+    g_lua.callGlobalField("g_game", "onQuestLine", questId, questMissions);
 }
 
 void Game::processAttackCancel()
@@ -688,7 +729,7 @@ void Game::addVip(const std::string& name)
 
 void Game::removeVip(int playerId)
 {
-    if(!isOnline() || !checkBotProtection())
+    if(!canPerformGameAction())
         return;
     m_protocolGame->sendRemoveVip(playerId);
 }
@@ -715,9 +756,93 @@ void Game::setSafeFight(bool on)
 {
     if(!canPerformGameAction())
         return;
-
     m_safeFight = on;
     m_protocolGame->sendChangeFightModes(m_fightMode, m_chaseMode, m_safeFight);
+}
+
+
+void Game::inspectNpcTrade(const ItemPtr& item)
+{
+    if(!canPerformGameAction() || !item)
+        return;
+    m_protocolGame->sendInspectNpcTrade(item->getId(), item->getCount());
+}
+
+void Game::buyItem(const ItemPtr& item, int amount, bool ignoreCapacity, bool buyWithBackpack)
+{
+    if(!canPerformGameAction() || !item)
+        return;
+    m_protocolGame->sendBuyItem(item->getId(), item->getCount(), amount, ignoreCapacity, buyWithBackpack);
+}
+
+void Game::sellItem(const ItemPtr& item, int amount, bool ignoreEquipped)
+{
+    if(!canPerformGameAction() || !item)
+        return;
+    m_protocolGame->sendSellItem(item->getId(), item->getCount(), amount, ignoreEquipped);
+}
+
+void Game::closeNpcTrade()
+{
+    if(!canPerformGameAction())
+        return;
+    m_protocolGame->sendCloseNpcTrade();
+}
+
+void Game::requestTrade(const ItemPtr& item, const CreaturePtr& creature)
+{
+    if(!canPerformGameAction())
+        return;
+    m_protocolGame->sendRequestTrade(item->getPosition(), item->getId(), item->getStackpos(), creature->getId());
+}
+
+void Game::inspectTrade(bool counterOffer, int index)
+{
+    if(!canPerformGameAction())
+        return;
+    m_protocolGame->sendInspectTrade(counterOffer, index);
+}
+
+void Game::acceptTrade()
+{
+    if(!canPerformGameAction())
+        return;
+    m_protocolGame->sendAcceptTrade();
+}
+
+void Game::rejectTrade()
+{
+    if(!canPerformGameAction())
+        return;
+    m_protocolGame->sendRejectTrade();
+}
+
+void Game::editText(uint id, const std::string& text)
+{
+    if(!canPerformGameAction())
+        return;
+    m_protocolGame->sendEditText(id, text);
+}
+
+void Game::editList(int listId, uint id, const std::string& text)
+{
+    if(!canPerformGameAction())
+        return;
+    m_protocolGame->sendEditList(listId, id, text);
+}
+
+void Game::requestQuestLog()
+{
+    if(!canPerformGameAction())
+        return;
+    m_protocolGame->sendRequestQuestLog();
+}
+
+void Game::requestQuestLine(int questId)
+{
+    if(!canPerformGameAction())
+        return;
+    m_protocolGame->sendRequestQuestLine(questId);
 }
 
 bool Game::checkBotProtection()

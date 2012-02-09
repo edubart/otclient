@@ -128,6 +128,18 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassStaticFunction("g_game", "getChaseMode", std::bind(&Game::getChaseMode, &g_game));
     g_lua.bindClassStaticFunction("g_game", "getFightMode", std::bind(&Game::getFightMode, &g_game));
     g_lua.bindClassStaticFunction("g_game", "isSafeFight", std::bind(&Game::isSafeFight, &g_game));
+    g_lua.bindClassStaticFunction("g_game", "inspectNpcTrade", std::bind(&Game::inspectNpcTrade, &g_game, _1));
+    g_lua.bindClassStaticFunction("g_game", "buyItem", std::bind(&Game::buyItem, &g_game, _1, _2, _3, _4));
+    g_lua.bindClassStaticFunction("g_game", "sellItem", std::bind(&Game::sellItem, &g_game, _1, _2, _3));
+    g_lua.bindClassStaticFunction("g_game", "closeNpcTrade", std::bind(&Game::closeNpcTrade, &g_game));
+    g_lua.bindClassStaticFunction("g_game", "requestTrade", std::bind(&Game::requestTrade, &g_game, _1, _2));
+    g_lua.bindClassStaticFunction("g_game", "inspectTrade", std::bind(&Game::inspectTrade, &g_game, _1, _2));
+    g_lua.bindClassStaticFunction("g_game", "acceptTrade", std::bind(&Game::acceptTrade, &g_game));
+    g_lua.bindClassStaticFunction("g_game", "rejectTrade", std::bind(&Game::rejectTrade, &g_game));
+    g_lua.bindClassStaticFunction("g_game", "editText", std::bind(&Game::editText, &g_game, _1, _2));
+    g_lua.bindClassStaticFunction("g_game", "editList", std::bind(&Game::editList, &g_game, _1, _2, _3));
+    g_lua.bindClassStaticFunction("g_game", "requestQuestLog", std::bind(&Game::requestQuestLog, &g_game));
+    g_lua.bindClassStaticFunction("g_game", "requestQuestLine", std::bind(&Game::requestQuestLine, &g_game, _1));
     g_lua.bindClassStaticFunction("g_game", "canPerformGameAction", std::bind(&Game::canPerformGameAction, &g_game));
     g_lua.bindClassStaticFunction("g_game", "checkBotProtection", std::bind(&Game::checkBotProtection, &g_game));
     g_lua.bindClassStaticFunction("g_game", "isOnline", std::bind(&Game::isOnline, &g_game));
@@ -212,7 +224,25 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Creature>("isWalking", &Creature::isWalking);
     g_lua.registerClass<Npc, Creature>();
     g_lua.registerClass<Monster, Creature>();
+
     g_lua.registerClass<LocalPlayer, Player>();
+    g_lua.bindClassMemberFunction<LocalPlayer>("unlockWalk", &LocalPlayer::unlockWalk);
+    g_lua.bindClassMemberFunction<LocalPlayer>("lockWalk", &LocalPlayer::lockWalk);
+    g_lua.bindClassMemberFunction<LocalPlayer>("canWalk", &LocalPlayer::canWalk);
+    g_lua.bindClassMemberFunction<LocalPlayer>("setStates", &LocalPlayer::setStates);
+    g_lua.bindClassMemberFunction<LocalPlayer>("setSkill", &LocalPlayer::setSkill);
+    g_lua.bindClassMemberFunction<LocalPlayer>("setHealth", &LocalPlayer::setHealth);
+    g_lua.bindClassMemberFunction<LocalPlayer>("setFreeCapacity", &LocalPlayer::setFreeCapacity);
+    g_lua.bindClassMemberFunction<LocalPlayer>("setExperience", &LocalPlayer::setExperience);
+    g_lua.bindClassMemberFunction<LocalPlayer>("setLevel", &LocalPlayer::setLevel);
+    g_lua.bindClassMemberFunction<LocalPlayer>("setMana", &LocalPlayer::setMana);
+    g_lua.bindClassMemberFunction<LocalPlayer>("setMagicLevel", &LocalPlayer::setMagicLevel);
+    g_lua.bindClassMemberFunction<LocalPlayer>("setSoul", &LocalPlayer::setSoul);
+    g_lua.bindClassMemberFunction<LocalPlayer>("setStamina", &LocalPlayer::setStamina);
+    g_lua.bindClassMemberFunction<LocalPlayer>("setKnown", &LocalPlayer::setKnown);
+    g_lua.bindClassMemberFunction<LocalPlayer>("getStates", &LocalPlayer::getStates);
+    g_lua.bindClassMemberFunction<LocalPlayer>("getSkillLevel", &LocalPlayer::getSkillLevel);
+    g_lua.bindClassMemberFunction<LocalPlayer>("getSkillLevelPercent", &LocalPlayer::getSkillLevelPercent);
     g_lua.bindClassMemberFunction<LocalPlayer>("getHealth", &LocalPlayer::getHealth);
     g_lua.bindClassMemberFunction<LocalPlayer>("getMaxHealth", &LocalPlayer::getMaxHealth);
     g_lua.bindClassMemberFunction<LocalPlayer>("getFreeCapacity", &LocalPlayer::getFreeCapacity);
@@ -225,6 +255,9 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassMemberFunction<LocalPlayer>("getMagicLevelPercent", &LocalPlayer::getMagicLevelPercent);
     g_lua.bindClassMemberFunction<LocalPlayer>("getSoul", &LocalPlayer::getSoul);
     g_lua.bindClassMemberFunction<LocalPlayer>("getStamina", &LocalPlayer::getStamina);
+    g_lua.bindClassMemberFunction<LocalPlayer>("isKnown", &LocalPlayer::isKnown);
+    g_lua.bindClassMemberFunction<LocalPlayer>("isPreWalking", &LocalPlayer::isPreWalking);
+    g_lua.bindClassMemberFunction<LocalPlayer>("asLocalPlayer", &LocalPlayer::asLocalPlayer);
 
     g_lua.registerClass<Tile>();
     g_lua.bindClassMemberFunction<Tile>("clean", &Tile::clean);

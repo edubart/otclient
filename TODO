@@ -28,7 +28,7 @@ use hardware buffer
 use indices
 fix opacity and cached framebuffers conflict
 map zoom rendering could be optimized using framebuffer caches
-make low/medium/high settings for economizing graphics memory thus allowing client smoothily in smartphones
+make low/medium/high settings for economizing graphics memory thus allowing to run the client smoothily in smartphones
 
 == Lua
 make possible to bind non LuaObject derived classes on lua engine (for usage with Point,Rect,Color,Size)
@@ -41,7 +41,6 @@ port to MacOs and iphone
 multiline rich text widget
 move layout proprieties to widget style
 multiline text editor widget
-rework UIMessageBox, UIToolTip and UIInputBox
 fix style inheretance using a style translator
 find a way to add new widgets without focusing them
 review UI/style loader and make more error prone with more warnings
@@ -57,7 +56,6 @@ cache or preload otui files to avoid freezes because of hd reading
 change Align/Anchors lua API from enum to text
 
 == Client
-make possible to reload modules
 fix modules recursivity, it makes client crash
 implement left panel with dragging windows
 clean sprites cache periodically
@@ -79,4 +77,3 @@ edit texts
 trade window
 shop window
 battle window
-hotkeys window

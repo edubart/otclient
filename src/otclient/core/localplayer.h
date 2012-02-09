@@ -31,43 +31,54 @@ class LocalPlayer : public Player
         WALK_LOCK_INTERVAL = 250,
         PREWALK_TIMEOUT = 1000
     };
+
 public:
     LocalPlayer();
 
-    void setSkill(Otc::Skill skill, Otc::SkillType skillType, int value) { m_skills[skill][skillType] = value; }
-    void setStatistic(Otc::Statistic statistic, double value) { m_statistics[statistic] = value; }
-    void setIcons(int icons) { m_icons = icons; }
+    void unlockWalk() { m_walkLocked = false; }
+    void lockWalk();
+    bool canWalk(Otc::Direction direction);
+
+    void setStates(int states);
+    void setSkill(Otc::Skill skill, int level, int levelPercent);
+    void setHealth(double health, double maxHealth);
+    void setFreeCapacity(double freeCapacity);
+    void setExperience(double experience);
+    void setLevel(double level, double levelPercent);
+    void setMana(double mana, double maxMana);
+    void setMagicLevel(double magicLevel, double magicLevelPercent);
+    void setSoul(double soul);
+    void setStamina(double stamina);
     void setKnown(bool known) { m_known = known; }
 
-    int getSkill(Otc::Skill skill, Otc::SkillType skillType) { return m_skills[skill][skillType]; }
-    double getStatistic(Otc::Statistic statistic) { return m_statistics[statistic]; }
-    int getIcons() { return m_icons; }
+    int getStates() { return m_states; }
+    int getSkillLevel(Otc::Skill skill) { return m_skillsLevel[skill]; }
+    int getSkillLevelPercent(Otc::Skill skill) { return m_skillsLevelPercent[skill]; }
+    double getHealth() { return m_health; }
+    double getMaxHealth() { return m_maxHealth; }
+    double getFreeCapacity() { return m_freeCapacity; }
+    double getExperience() { return m_experience; }
+    double getLevel() { return m_level; }
+    double getLevelPercent() { return m_levelPercent; }
+    double getMana() { return m_mana; }
+    double getMaxMana() { return m_maxMana; }
+    double getMagicLevel() { return m_magicLevel; }
+    double getMagicLevelPercent() { return m_magicLevelPercent; }
+    double getSoul() { return m_soul; }
+    double getStamina() { return m_stamina; }
 
     bool isKnown() { return m_known; }
     bool isPreWalking() { return m_preWalking; }
 
-    void unlockWalk() { m_walkLocked = false; }
-    void lockWalk();
+    LocalPlayerPtr asLocalPlayer() { return std::static_pointer_cast<LocalPlayer>(shared_from_this()); }
+
+protected:
     void walk(const Position& oldPos, const Position& newPos);
     void preWalk(Otc::Direction direction);
-    bool canWalk(Otc::Direction direction);
     void cancelWalk(Otc::Direction direction = Otc::InvalidDirection);
     void stopWalk();
 
-    LocalPlayerPtr asLocalPlayer() { return std::static_pointer_cast<LocalPlayer>(shared_from_this()); }
-
-    double getHealth() { return getStatistic(Otc::Health); }
-    double getMaxHealth() { return getStatistic(Otc::MaxHealth); }
-    double getFreeCapacity() { return getStatistic(Otc::FreeCapacity); }
-    double getExperience() { return getStatistic(Otc::Experience); }
-    double getLevel() { return getStatistic(Otc::Level); }
-    double getLevelPercent() { return getStatistic(Otc::LevelPercent); }
-    double getMana() { return getStatistic(Otc::Mana); }
-    double getMaxMana() { return getStatistic(Otc::MaxMana); }
-    double getMagicLevel() { return getStatistic(Otc::MagicLevel); }
-    double getMagicLevelPercent() { return getStatistic(Otc::MagicLevelPercent); }
-    double getSoul() { return getStatistic(Otc::Soul); }
-    double getStamina() { return getStatistic(Otc::Stamina); }
+    friend class Game;
 
 protected:
     void updateWalkOffset(int totalPixelsWalked);
@@ -82,10 +93,24 @@ private:
     Position m_lastPrewalkDestionation;
     Timer m_walkLockTimer;
 
+    std::array<int, Otc::LastSkill> m_skillsLevel;
+    std::array<int, Otc::LastSkill> m_skillsLevelPercent;
+
     bool m_known;
-    int m_icons;
-    int m_skills[Otc::LastSkill][Otc::LastSkillType];
-    double m_statistics[Otc::LastStatistic];
+    int m_states;
+
+    double m_health;
+    double m_maxHealth;
+    double m_freeCapacity;
+    double m_experience;
+    double m_level;
+    double m_levelPercent;
+    double m_mana;
+    double m_maxMana;
+    double m_magicLevel;
+    double m_magicLevelPercent;
+    double m_soul;
+    double m_stamina;
 };
 
 #endif

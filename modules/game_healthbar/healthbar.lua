@@ -36,12 +36,12 @@ function HealthBar.toggle()
 end
 
 -- hooked events
-function HealthBar.onHealthChange(health, maxHealth)
+function HealthBar.onHealthChange(localPlayer, health, maxHealth)
   healthLabel:setText(health .. ' / ' .. maxHealth)
   healthBar:setPercent(health / maxHealth * 100)
 end
 
-function HealthBar.onManaChange(mana, maxMana)
+function HealthBar.onManaChange(localPlayer, mana, maxMana)
   manaLabel:setText(mana .. ' / ' .. maxMana)
 
   local percent
@@ -54,6 +54,6 @@ function HealthBar.onManaChange(mana, maxMana)
 end
 
 connect(g_game, { onGameStart = HealthBar.create,
-                onGameEnd = HealthBar.destroy,
-                onHealthChange = HealthBar.onHealthChange,
-                onManaChange = HealthBar.onManaChange })
+                onGameEnd = HealthBar.destroy })
+connect(LocalPlayer, { onHealthChange = HealthBar.onHealthChange,
+                       onManaChange = HealthBar.onManaChange })

@@ -54,7 +54,7 @@ function Containers.onOpenContainer(containerId, itemId, name, capacity, hasPare
   m_containers[containerId] = container
 end
 
-function Containers.onContainerClose(containerId)
+function Containers.onCloseContainer(containerId)
   local container = m_containers[containerId]
   if container then
     g_game.gameRightPanel:removeChild(container)
@@ -131,7 +131,7 @@ end
 connect(g_game, { onGameStart = Containers.clean,
                 onGameEnd = Containers.clean,
                 onOpenContainer = Containers.onOpenContainer,
-                onContainerClose = Containers.onContainerClose,
+                onCloseContainer = Containers.onCloseContainer,
                 onContainerAddItem = Containers.onContainerAddItem,
                 onContainerUpdateItem = Containers.onContainerUpdateItem,
                 onContainerRemoveItem = Containers.onContainerRemoveItem })

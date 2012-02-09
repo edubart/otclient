@@ -75,32 +75,32 @@ function Skills.onSkillButtonClick(button)
 end
 
 -- hooked events
-function Skills.onExperienceChange(value)
+function Skills.onExperienceChange(localPlayer, value)
   setSkillValue('experience', getNumberString(value))
 end
 
-function Skills.onLevelChange(value, percent)
+function Skills.onLevelChange(localPlayer, value, percent)
   setSkillValue('level', getNumberString(value))
   setSkillPercent('level', percent, 'You have ' .. (100 - percent) .. ' percent to go')
 end
 
-function Skills.onHealthChange(health, maxHealth)
+function Skills.onHealthChange(localPlayer, health, maxHealth)
   setSkillValue('health', getNumberString(health))
 end
 
-function Skills.onManaChange(mana, maxMana)
+function Skills.onManaChange(localPlayer, mana, maxMana)
   setSkillValue('mana', getNumberString(mana))
 end
 
-function Skills.onSoulChange(soul)
+function Skills.onSoulChange(localPlayer, soul)
   setSkillValue('soul', soul)
 end
 
-function Skills.onFreeCapacityChange(freeCapacity)
+function Skills.onFreeCapacityChange(localPlayer, freeCapacity)
   setSkillValue('capacity', freeCapacity)
 end
 
-function Skills.onStaminaChange(stamina)
+function Skills.onStaminaChange(localPlayer, stamina)
   local hours = math.floor(stamina / 60)
   local minutes = stamina % 60
   if minutes < 10 then
@@ -112,18 +112,20 @@ function Skills.onStaminaChange(stamina)
   setSkillPercent('stamina', percent, 'You have ' .. percent .. ' percent')
 end
 
-function Skills.onMagicLevelChange(value, percent)
+function Skills.onMagicLevelChange(localPlayer, value, percent)
   setSkillValue('magiclevel', value)
   setSkillPercent('magiclevel', percent, 'You have ' .. (100 - percent) .. ' percent to go')
 end
 
-function Skills.onSkillChange(id, level, percent)
+function Skills.onSkillChange(localPlayer, id, level, percent)
   setSkillValue('skillId' .. id, level)
   setSkillPercent('skillId' .. id, percent, 'You have ' .. (100 - percent) .. ' percent to go')
 end
 
 connect(g_game, { onGameStart = Skills.create,
-                onGameEnd = Skills.destroy,
+                onGameEnd = Skills.destroy })
+
+connect(LocalPlayer, {
                 onExperienceChange = Skills.onExperienceChange,
                 onLevelChange = Skills.onLevelChange,
                 onHealthChange = Skills.onHealthChange,

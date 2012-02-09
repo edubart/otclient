@@ -113,23 +113,23 @@ void ProtocolGame::parseMessage(InputMessage& msg)
             case Proto::GameServerDeleteInventory:
                 parseRemoveInventoryItem(msg);
                 break;
-            case Proto::GameServerNpcOffer:
-                parseNpcOffer(msg);
+            case Proto::GameServerOpenNpcTrade:
+                parseOpenNpcTrade(msg);
                 break;
             case Proto::GameServerPlayerGoods:
-                parsePlayerCash(msg);
+                parsePlayerGoods(msg);
                 break;
             case Proto::GameServerCloseNpcTrade:
-                parseCloseShopWindow(msg);
+                parseCloseNpcTrade(msg);
                 break;
-            case Proto::GameServerOwnOffer:
-                parseSafeTradeRequest(msg);
+            case Proto::GameServerOwnTrade:
+                parseOpenTrade(msg);
                 break;
-            case Proto::GameServerCounterOffer:
-                parseSafeTradeRequest(msg);
+            case Proto::GameServerCounterTrade:
+                parseOpenTrade(msg);
                 break;
             case Proto::GameServerCloseTrade:
-                parseSafeTradeClose(msg);
+                parseCloseTrade(msg);
                 break;
             case Proto::GameServerAmbient:
                 parseWorldLight(msg);
@@ -144,7 +144,7 @@ void ProtocolGame::parseMessage(InputMessage& msg)
                 parseDistanceMissile(msg);
                 break;
             case Proto::GameServerMarkCreature:
-                parseCreatureSquare(msg);
+                parseCreatureMark(msg);
                 break;
             //case Proto::GameServerTrappers
             case Proto::GameServerCreatureHealth:
@@ -167,10 +167,10 @@ void ProtocolGame::parseMessage(InputMessage& msg)
                 break;
             // case Proto::GameServerCreatureUnpass
             case Proto::GameServerEditText:
-                parseItemTextWindow(msg);
+                parseEditText(msg);
                 break;
             case Proto::GameServerEditList:
-                parseHouseTextWindow(msg);
+                parseEditList(msg);
                 break;
             case Proto::GameServerPlayerData:
                 parsePlayerStats(msg);
@@ -179,7 +179,7 @@ void ProtocolGame::parseMessage(InputMessage& msg)
                 parsePlayerSkills(msg);
                 break;
             case Proto::GameServerPlayerState:
-                parsePlayerIcons(msg);
+                parsePlayerState(msg);
                 break;
             case Proto::GameServerClearTarget:
                 parsePlayerCancelAttack(msg);
@@ -228,8 +228,8 @@ void ProtocolGame::parseMessage(InputMessage& msg)
             case Proto::GameServerFloorChangeDown:
                 parseFloorChangeDown(msg);
                 break;
-            case Proto::GameServerOutfit:
-                parseOutfit(msg);
+            case Proto::GameServerChooseOutfit:
+                parseOpenOutfitWindow(msg);
                 break;
             case Proto::GameServerVipAdd:
                 parseVipAdd(msg);
@@ -454,7 +454,7 @@ void ProtocolGame::parseOpenContainer(InputMessage& msg)
 void ProtocolGame::parseCloseContainer(InputMessage& msg)
 {
     int containerId = msg.getU8();
-    g_lua.callGlobalField("g_game", "onContainerClose", containerId);
+    g_game.processCloseContainer(containerId);
 }
 
 void ProtocolGame::parseContainerAddItem(InputMessage& msg)
@@ -469,14 +469,14 @@ void ProtocolGame::parseContainerUpdateItem(InputMessage& msg)
     int containerId = msg.getU8();
     int slot = msg.getU8();
     ItemPtr item = internalGetItem(msg);
-    g_lua.callGlobalField("g_game", "onContainerUpdateItem", containerId, slot, item);
+    g_game.processContainerUpdateItem(containerId, slot, item);
 }
 
 void ProtocolGame::parseContainerRemoveItem(InputMessage& msg)
 {
     int containerId = msg.getU8();
     int slot = msg.getU8();
-    g_lua.callGlobalField("g_game", "onContainerRemoveItem", containerId, slot);
+    g_game.processContainerRemoveItem(containerId, slot);
 }
 
 void ProtocolGame::parseAddInventoryItem(InputMessage& msg)
@@ -492,45 +492,65 @@ void ProtocolGame::parseRemoveInventoryItem(InputMessage& msg)
     g_game.processInventoryChange(slot, ItemPtr());
 }
 
-void ProtocolGame::parseNpcOffer(InputMessage& msg)
+void ProtocolGame::parseOpenNpcTrade(InputMessage& msg)
 {
+    std::vector<std::tuple<ItemPtr, std::string, int, int, int>> items;
     int listCount = msg.getU8();
     for(int i = 0; i < listCount; ++i) {
-        msg.getU16(); // item id
-        msg.getU8(); // runecharges
-        msg.getString(); // item name
-        msg.getU32(); // weight
-        msg.getU32(); // buy price
-        msg.getU32(); // sell price
+        int itemId = msg.getU16();
+        int countOrSubType = msg.getU8();
+
+        ItemPtr item = Item::create(itemId);
+        if(item->isStackable() || item->isFluidContainer() || item->isFluid())
+            item->setCountOrSubType(countOrSubType);
+
+        std::string name = msg.getString();
+        int weight = msg.getU32();
+        int buyPrice = msg.getU32();
+        int sellPrice = msg.getU32();
+
+        items.push_back(std::make_tuple(item, name, weight, buyPrice, sellPrice));
     }
+
+    g_game.processOpenNpcTrade(items);
 }
 
-void ProtocolGame::parsePlayerCash(InputMessage& msg)
+void ProtocolGame::parsePlayerGoods(InputMessage& msg)
 {
-    msg.getU32();
+    std::vector<std::tuple<ItemPtr, int>> goods;
+
+    int money = msg.getU32();
     int size = msg.getU8();
-
     for(int i = 0; i < size; i++) {
-        msg.getU16(); // itemid
-        msg.getU8(); // runecharges
+        int itemId = msg.getU16();
+        int count = msg.getU8();
+
+        goods.push_back(std::make_tuple(Item::create(itemId), count));
     }
+
+    g_game.processPlayerGoods(money, goods);
 }
 
-void ProtocolGame::parseCloseShopWindow(InputMessage&)
+void ProtocolGame::parseCloseNpcTrade(InputMessage&)
 {
+    g_game.processCloseNpcTrade();
 }
 
-void ProtocolGame::parseSafeTradeRequest(InputMessage& msg)
+void ProtocolGame::parseOpenTrade(InputMessage& msg)
 {
-    msg.getString(); // name
+    std::string name = msg.getString();
     int count = msg.getU8();
 
+    std::vector<ItemPtr> items(count);
     for(int i = 0; i < count; i++)
-        internalGetItem(msg);
+        items[i] = internalGetItem(msg);
+
+    g_game.processOpenTrade(name, items);
 }
 
-void ProtocolGame::parseSafeTradeClose(InputMessage&)
+void ProtocolGame::parseCloseTrade(InputMessage&)
 {
+    g_game.processCloseTrade();
 }
 
 void ProtocolGame::parseWorldLight(InputMessage& msg)
@@ -549,7 +569,6 @@ void ProtocolGame::parseMagicEffect(InputMessage& msg)
 
     EffectPtr effect = EffectPtr(new Effect());
     effect->setId(effectId);
-
     g_map.addThing(effect, pos);
 }
 
@@ -562,7 +581,6 @@ void ProtocolGame::parseAnimatedText(InputMessage& msg)
     AnimatedTextPtr animatedText = AnimatedTextPtr(new AnimatedText);
     animatedText->setColor(color);
     animatedText->setText(text);
-
     g_map.addThing(animatedText, position);
 }
 
@@ -578,7 +596,7 @@ void ProtocolGame::parseDistanceMissile(InputMessage& msg)
     g_map.addThing(missile, fromPos);
 }
 
-void ProtocolGame::parseCreatureSquare(InputMessage& msg)
+void ProtocolGame::parseCreatureMark(InputMessage& msg)
 {
     uint id = msg.getU32();
     int color = msg.getU8();
@@ -586,6 +604,8 @@ void ProtocolGame::parseCreatureSquare(InputMessage& msg)
     CreaturePtr creature = g_map.getCreatureById(id);
     if(creature)
         creature->addTimedSquare(color);
+    else
+        logTraceError("could not get greature");
 }
 
 void ProtocolGame::parseCreatureHealth(InputMessage& msg)
@@ -596,6 +616,8 @@ void ProtocolGame::parseCreatureHealth(InputMessage& msg)
     CreaturePtr creature = g_map.getCreatureById(id);
     if(creature)
         creature->setHealthPercent(healthPercent);
+    else
+        logTraceError("could not get greature");
 }
 
 void ProtocolGame::parseCreatureLight(InputMessage& msg)
@@ -609,6 +631,8 @@ void ProtocolGame::parseCreatureLight(InputMessage& msg)
     CreaturePtr creature = g_map.getCreatureById(id);
     if(creature)
         creature->setLight(light);
+    else
+        logTraceError("could not get greature");
 }
 
 void ProtocolGame::parseCreatureOutfit(InputMessage& msg)
@@ -619,6 +643,8 @@ void ProtocolGame::parseCreatureOutfit(InputMessage& msg)
     CreaturePtr creature = g_map.getCreatureById(id);
     if(creature)
         creature->setOutfit(outfit);
+    else
+        logTraceError("could not get greature");
 }
 
 void ProtocolGame::parseCreatureSpeed(InputMessage& msg)
@@ -629,6 +655,8 @@ void ProtocolGame::parseCreatureSpeed(InputMessage& msg)
     CreaturePtr creature = g_map.getCreatureById(id);
     if(creature)
         creature->setSpeed(speed);
+    else
+        logTraceError("could not get greature");
 }
 
 void ProtocolGame::parseCreatureSkulls(InputMessage& msg)
@@ -639,6 +667,8 @@ void ProtocolGame::parseCreatureSkulls(InputMessage& msg)
     CreaturePtr creature = g_map.getCreatureById(id);
     if(creature)
         creature->setSkull(skull);
+    else
+        logTraceError("could not get greature");
 }
 
 void ProtocolGame::parseCreatureShields(InputMessage& msg)
@@ -649,6 +679,8 @@ void ProtocolGame::parseCreatureShields(InputMessage& msg)
     CreaturePtr creature = g_map.getCreatureById(id);
     if(creature)
         creature->setShield(shield);
+    else
+        logTraceError("could not get greature");
 }
 
 void ProtocolGame::parseCreatureTurn(InputMessage& msg)
@@ -659,23 +691,29 @@ void ProtocolGame::parseCreatureTurn(InputMessage& msg)
     CreaturePtr creature = g_map.getCreatureById(id);
     if(creature)
         creature->turn(direction);
+    else
+        logTraceError("could not get greature");
 }
 
-void ProtocolGame::parseItemTextWindow(InputMessage& msg)
+void ProtocolGame::parseEditText(InputMessage& msg)
 {
-    msg.getU32(); // windowId
-    msg.getU16(); // itemid
-    msg.getU16(); // max length
-    msg.getString(); // text
-    msg.getString(); // writter
-    msg.getString(); // date
+    int id = msg.getU32();
+    int itemId = msg.getU16();
+    int maxLength = msg.getU16();
+    std::string text = msg.getString();
+    std::string writter = msg.getString();
+    std::string date = msg.getString();
+
+    g_game.processEditText(id, itemId, maxLength, text, writter, date);
 }
 
-void ProtocolGame::parseHouseTextWindow(InputMessage& msg)
+void ProtocolGame::parseEditList(InputMessage& msg)
 {
-    msg.getU8(); // unknown
-    msg.getU32(); // windowId
-    msg.getString(); // text
+    int listId = msg.getU8();
+    int id = msg.getU32();
+    const std::string& text = msg.getString();
+
+    g_game.processEditList(listId, id, text);
 }
 
 void ProtocolGame::parsePlayerStats(InputMessage& msg)
@@ -693,26 +731,30 @@ void ProtocolGame::parsePlayerStats(InputMessage& msg)
     double soul = msg.getU8();
     double stamina = msg.getU16();
 
-    g_game.processPlayerStats(health, maxHealth, freeCapacity, experience, level, levelPercent, mana, maxMana, magicLevel, magicLevelPercent, soul, stamina);
+    m_localPlayer->setHealth(health, maxHealth);
+    m_localPlayer->setFreeCapacity(freeCapacity);
+    m_localPlayer->setExperience(experience);
+    m_localPlayer->setLevel(level, levelPercent);
+    m_localPlayer->setMana(mana, maxMana);
+    m_localPlayer->setMagicLevel(magicLevel, magicLevelPercent);
+    m_localPlayer->setSoul(soul);
+    m_localPlayer->setStamina(stamina);
 }
 
 void ProtocolGame::parsePlayerSkills(InputMessage& msg)
 {
     for(int skill = 0; skill < Otc::LastSkill; skill++) {
-        int values[Otc::LastSkillType];
-        for(int skillType = 0; skillType < Otc::LastSkillType; skillType++) {
-            values[skillType] = msg.getU8();
-            m_localPlayer->setSkill((Otc::Skill)skill, (Otc::SkillType)skillType, values[skillType]);
-        }
+        int level = msg.getU8();
+        int levelPercent = msg.getU8();
 
-        g_lua.callGlobalField("g_game", "onSkillChange", skill, values[Otc::SkillLevel], values[Otc::SkillPercent]);
+        m_localPlayer->setSkill((Otc::Skill)skill, level, levelPercent);
     }
 }
 
-void ProtocolGame::parsePlayerIcons(InputMessage& msg)
+void ProtocolGame::parsePlayerState(InputMessage& msg)
 {
-    int icons = msg.getU16();
-    m_localPlayer->setIcons((Otc::PlayerIcons)icons);
+    int states = msg.getU16();
+    m_localPlayer->setStates((Otc::PlayerStates)states);
 }
 
 void ProtocolGame::parsePlayerCancelAttack(InputMessage& msg)
@@ -768,14 +810,14 @@ void ProtocolGame::parseCreatureSpeak(InputMessage& msg)
 void ProtocolGame::parseChannelList(InputMessage& msg)
 {
     int count = msg.getU8();
-    std::vector<std::tuple<int, std::string> > channelList(count);
+    std::vector<std::tuple<int, std::string>> channelList(count);
     for(int i = 0; i < count; i++) {
         int id = msg.getU16();
         std::string name = msg.getString();
         channelList.push_back(std::make_tuple(id, name));
     }
 
-    g_lua.callGlobalField("g_game", "onChannelList", channelList);
+    g_game.processChannelList(channelList);
 }
 
 void ProtocolGame::parseOpenChannel(InputMessage& msg)
@@ -783,29 +825,29 @@ void ProtocolGame::parseOpenChannel(InputMessage& msg)
     int channelId = msg.getU16();
     std::string name = msg.getString();
 
-    g_lua.callGlobalField("g_game", "onOpenChannel", channelId, name);
+    g_game.processOpenChannel(channelId, name);
 }
 
 void ProtocolGame::parseOpenPrivateChannel(InputMessage& msg)
 {
     std::string name = msg.getString();
 
-    g_lua.callGlobalField("g_game", "onOpenPrivateChannel", name);
+    g_game.processOpenPrivateChannel(name);
 }
 
 void ProtocolGame::parseOpenOwnPrivateChannel(InputMessage& msg)
 {
-    int id = msg.getU16(); // channel id
-    std::string name = msg.getString(); // channel name
+    int channelId = msg.getU16();
+    std::string name = msg.getString();
 
-    g_lua.callGlobalField("g_game", "onOpenOwnPrivateChannel", id, name);
+    g_game.processOpenOwnPrivateChannel(channelId, name);
 }
 
 void ProtocolGame::parseCloseChannel(InputMessage& msg)
 {
-    int id = msg.getU16(); // channel id
+    int channelId = msg.getU16();
 
-    g_lua.callGlobalField("g_game", "onCloseChannel", id);
+    g_game.processCloseChannel(channelId);
 }
 
 void ProtocolGame::parseTextMessage(InputMessage& msg)
@@ -861,27 +903,21 @@ void ProtocolGame::parseFloorChangeDown(InputMessage& msg)
     g_map.setCentralPosition(pos);
 }
 
-void ProtocolGame::parseOutfit(InputMessage& msg)
+void ProtocolGame::parseOpenOutfitWindow(InputMessage& msg)
 {
-    Outfit outfit = internalGetOutfit(msg);
+    Outfit currentOutfit = internalGetOutfit(msg);
 
-    typedef std::tuple<int, std::string, int> OutfitInfo;
-    std::vector<OutfitInfo> outfitList;
-
-    uint8 outfitCount = msg.getU8();
+    std::vector<std::tuple<int, std::string, int>> outfitList;
+    int outfitCount = msg.getU8();
     for(int i = 0; i < outfitCount; i++) {
-        uint16 outfitId = msg.getU16();
+        int outfitId = msg.getU16();
         std::string outfitName = msg.getString();
-        uint8 outfitAddons = msg.getU8();
+        int outfitAddons = msg.getU8();
 
-        outfitList.push_back(OutfitInfo(outfitId, outfitName, outfitAddons));
+        outfitList.push_back(std::make_tuple(outfitId, outfitName, outfitAddons));
     }
 
-    CreaturePtr creature = CreaturePtr(new Creature);
-    creature->setDirection(Otc::South);
-    creature->setOutfit(outfit);
-
-    g_lua.callGlobalField("g_game", "onOpenOutfitWindow", creature, outfitList);
+    g_game.processOpenOutfitWindow(currentOutfit, outfitList);
 }
 
 void ProtocolGame::parseVipAdd(InputMessage& msg)
@@ -890,30 +926,30 @@ void ProtocolGame::parseVipAdd(InputMessage& msg)
     std::string name = msg.getString();
     bool online = msg.getU8() != 0;
 
-    g_lua.callGlobalField("g_game", "onAddVip", id, name, online);
+    g_game.processVipAdd(id, name, online);
 }
 
 void ProtocolGame::parseVipLogin(InputMessage& msg)
 {
     uint id = msg.getU32();
-
-    g_lua.callGlobalField("g_game", "onVipStateChange", id, true);
+    g_game.processVipStateChange(id, true);
 }
 
 void ProtocolGame::parseVipLogout(InputMessage& msg)
 {
     uint id = msg.getU32();
-
-    g_lua.callGlobalField("g_game", "onVipStateChange", id, false);
+    g_game.processVipStateChange(id, false);
 }
 
 void ProtocolGame::parseTutorialHint(InputMessage& msg)
 {
+    // ignored
     msg.getU8(); // tutorial id
 }
 
 void ProtocolGame::parseAutomapFlag(InputMessage& msg)
 {
+    // ignored
     parsePosition(msg); // position
     msg.getU8(); // icon
     msg.getString(); // message
@@ -921,22 +957,30 @@ void ProtocolGame::parseAutomapFlag(InputMessage& msg)
 
 void ProtocolGame::parseQuestLog(InputMessage& msg)
 {
+    std::vector<std::tuple<int, std::string, bool>> questList;
     int questsCount = msg.getU16();
     for(int i = 0; i < questsCount; i++) {
-        msg.getU16(); // quest id
-        msg.getString(); // quest name
-        msg.getU8(); // quest state
+        int id = msg.getU16();
+        std::string name = msg.getString();
+        bool completed = msg.getU8();
+        questList.push_back(std::make_tuple(id, name, completed));
     }
+
+    g_game.processQuestLog(questList);
 }
 
 void ProtocolGame::parseQuestLine(InputMessage& msg)
 {
-    msg.getU16(); // quest id
+    std::vector<std::tuple<std::string, std::string>> questMissions;
+    int questId = msg.getU16();
     int missionCount = msg.getU8();
     for(int i = 0; i < missionCount; i++) {
-        msg.getString(); // quest name
-        msg.getString(); // quest description
+        std::string missionName = msg.getString();
+        std::string missionDescrition = msg.getString();
+        questMissions.push_back(std::make_tuple(missionName, missionDescrition));
     }
+
+    g_game.processQuestLine(questId, questMissions);
 }
 
 void ProtocolGame::setMapDescription(InputMessage& msg, int32 x, int32 y, int32 z, int32 width, int32 height)
@@ -1085,7 +1129,7 @@ ThingPtr ProtocolGame::internalGetThing(InputMessage& msg)
             g_map.addCreature(creature);
         }
 
-        uint8 healthPercent = msg.getU8();
+        int healthPercent = msg.getU8();
         Otc::Direction direction = (Otc::Direction)msg.getU8();
         Outfit outfit = internalGetOutfit(msg);
 
@@ -1097,8 +1141,9 @@ ThingPtr ProtocolGame::internalGetThing(InputMessage& msg)
         int skull = msg.getU8();
         int shield = msg.getU8();
 
+        // emblem is sent only when the creature is not known
         int emblem = -1;
-        if(thingId == 0x0061) // emblem is sent only in packet type 0x61
+        if(thingId == 0x0061)
             emblem = msg.getU8();
 
         bool passable = (msg.getU8() == 0);

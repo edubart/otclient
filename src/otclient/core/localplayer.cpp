@@ -28,13 +28,26 @@
 LocalPlayer::LocalPlayer()
 {
     m_preWalking = false;
-    m_known = false;
     m_walkLocked = false;
     m_lastPrewalkDone = true;
-    m_icons = 0;
+    m_known = false;
+    m_states = 0;
 
-    for(int i = 0; i < Otc::LastStatistic; ++i)
-        m_statistics[i] = -1; // sets an invalid value to ensure lua event will be sent
+    m_skillsLevel.fill(-1);
+    m_skillsLevelPercent.fill(-1);
+
+    m_health = -1;
+    m_maxHealth = -1;
+    m_freeCapacity = -1;
+    m_experience = -1;
+    m_level = -1;
+    m_levelPercent = -1;
+    m_mana = -1;
+    m_maxMana = -1;
+    m_magicLevel = -1;
+    m_magicLevelPercent = -1;
+    m_soul = -1;
+    m_stamina = -1;
 }
 
 void LocalPlayer::lockWalk()
@@ -45,6 +58,28 @@ void LocalPlayer::lockWalk()
 
     m_walkLocked = true;
     m_walkLockTimer.restart();
+}
+
+bool LocalPlayer::canWalk(Otc::Direction direction)
+{
+    // prewalk has a timeout, because for some reason that I don't know yet the server sometimes doesn't answer the prewalk
+    bool prewalkTimeouted = m_walking && m_preWalking && m_walkTimer.ticksElapsed() >= m_walkInterval + PREWALK_TIMEOUT;
+
+    // cannot walk while already walking
+    if(m_walking && !prewalkTimeouted)
+        return false;
+
+    // avoid doing more walks than wanted when receiving a lot of walks from server
+    if(!m_lastPrewalkDone && m_preWalking && !prewalkTimeouted)
+        return false;
+
+    // cannot walk while locked
+    if(m_walkLocked && m_walkLockTimer.ticksElapsed() <= WALK_LOCK_INTERVAL)
+        return false;
+    else
+        m_walkLocked = false;
+
+    return true;
 }
 
 void LocalPlayer::walk(const Position& oldPos, const Position& newPos)
@@ -74,28 +109,6 @@ void LocalPlayer::preWalk(Otc::Direction direction)
     m_lastPrewalkDone = false;
     m_lastPrewalkDestionation = newPos;
     Creature::walk(m_position, newPos);
-}
-
-bool LocalPlayer::canWalk(Otc::Direction direction)
-{
-    // prewalk has a timeout, because for some reason that I don't know yet the server sometimes doesn't answer the prewalk
-    bool prewalkTimeouted = m_walking && m_preWalking && m_walkTimer.ticksElapsed() >= m_walkInterval + PREWALK_TIMEOUT;
-
-    // cannot walk while already walking
-    if(m_walking && !prewalkTimeouted)
-        return false;
-
-    // avoid doing more walks than wanted when receiving a lot of walks from server
-    if(!m_lastPrewalkDone && m_preWalking && !prewalkTimeouted)
-        return false;
-
-    // cannot walk while locked
-    if(m_walkLocked && m_walkLockTimer.ticksElapsed() <= WALK_LOCK_INTERVAL)
-        return false;
-    else
-        m_walkLocked = false;
-
-    return true;
 }
 
 void LocalPlayer::cancelWalk(Otc::Direction direction)
@@ -155,4 +168,121 @@ void LocalPlayer::terminateWalk()
 {
     Creature::terminateWalk();
     m_preWalking = false;
+}
+
+void LocalPlayer::setStates(int states)
+{
+    if(m_states != states) {
+        int oldStates = m_states;
+        m_states = states;
+        callLuaField("onStatesChange", states, oldStates);
+    }
+}
+
+void LocalPlayer::setSkill(Otc::Skill skill, int level, int levelPercent)
+{
+    int oldLevel = m_skillsLevel[skill];
+    int oldLevelPercent = m_skillsLevelPercent[skill];
+
+    if(level != oldLevel && levelPercent != oldLevelPercent) {
+        m_skillsLevel[skill] = level;
+        m_skillsLevelPercent[skill] = levelPercent;
+
+        callLuaField("onSkillChange", skill, level, levelPercent, oldLevel, oldLevelPercent);
+    }
+}
+
+void LocalPlayer::setHealth(double health, double maxHealth)
+{
+    if(m_health != health || m_maxHealth != maxHealth) {
+        double oldHealth = m_health;
+        double oldMaxHealth = m_maxHealth;
+        m_health = health;
+        m_maxHealth = maxHealth;
+
+        callLuaField("onHealthChange", health, maxHealth, oldHealth, oldMaxHealth);
+
+        // cannot walk while dying
+        if(health == 0) {
+            if(isPreWalking())
+                stopWalk();
+            lockWalk();
+        }
+    }
+}
+
+void LocalPlayer::setFreeCapacity(double freeCapacity)
+{
+    if(m_freeCapacity != freeCapacity) {
+        double oldFreeCapacity = m_freeCapacity;
+        m_freeCapacity = freeCapacity;
+
+        callLuaField("onFreeCapacityChange", freeCapacity, oldFreeCapacity);
+    }
+}
+
+void LocalPlayer::setExperience(double experience)
+{
+    if(m_experience != experience) {
+        double oldExperience = m_experience;
+        m_experience = experience;
+
+        callLuaField("onExperienceChange", experience, oldExperience);
+    }
+}
+
+void LocalPlayer::setLevel(double level, double levelPercent)
+{
+    if(m_level != level || m_levelPercent != m_levelPercent) {
+        double oldLevel = m_level;
+        double oldLevelPercent = m_levelPercent;
+        m_level = level;
+        m_levelPercent = levelPercent;
+
+        callLuaField("onLevelChange", level, levelPercent, oldLevel, oldLevelPercent);
+    }
+}
+
+void LocalPlayer::setMana(double mana, double maxMana)
+{
+    if(m_mana != mana || m_maxMana != maxMana) {
+        double oldMana = m_mana;
+        double oldMaxMana;
+        m_mana = mana;
+        m_maxMana = maxMana;
+
+        callLuaField("onManaChange", mana, maxMana, oldMana, oldMaxMana);
+    }
+}
+
+void LocalPlayer::setMagicLevel(double magicLevel, double magicLevelPercent)
+{
+    if(m_magicLevel != magicLevel || m_magicLevelPercent != magicLevelPercent) {
+        double oldMagicLevel = m_magicLevel;
+        double oldMagicLevelPercent = m_magicLevelPercent;
+        m_magicLevel = magicLevel;
+        m_magicLevelPercent = magicLevelPercent;
+
+        callLuaField("onMagicLevelChange", magicLevel, magicLevelPercent, oldMagicLevel, oldMagicLevelPercent);
+    }
+}
+
+void LocalPlayer::setSoul(double soul)
+{
+    if(m_soul != soul) {
+        double oldSoul = m_soul;
+        m_soul = soul;
+
+        callLuaField("onSoulChange", soul, oldSoul);
+    }
+}
+
+void LocalPlayer::setStamina(double stamina)
+{
+    if(m_stamina != stamina) {
+        double oldStamina = m_stamina;
+        m_stamina = stamina;
+
+        callLuaField("onStaminaChange", stamina, oldStamina);
+    }
 }

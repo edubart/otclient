@@ -191,20 +191,20 @@ void ProtocolGame::sendMove(const Position& fromPos, int thingId, int stackpos, 
     send(msg);
 }
 
-void ProtocolGame::sendInspectNpcTrade(int thingId, int count)
+void ProtocolGame::sendInspectNpcTrade(int itemId, int count)
 {
     OutputMessage msg;
     msg.addU8(Proto::ClientInspectNpcTrade);
-    msg.addU16(thingId);
+    msg.addU16(itemId);
     msg.addU8(count);
     send(msg);
 }
 
-void ProtocolGame::sendBuyItem(int thingId, int count, int amount, bool ignoreCapacity, bool buyWithBackpack)
+void ProtocolGame::sendBuyItem(int itemId, int count, int amount, bool ignoreCapacity, bool buyWithBackpack)
 {
     OutputMessage msg;
     msg.addU8(Proto::ClientBuyItem);
-    msg.addU16(thingId);
+    msg.addU16(itemId);
     msg.addU8(count);
     msg.addU8(amount);
     msg.addU8(ignoreCapacity ? 0x01 : 0x00);
@@ -212,11 +212,11 @@ void ProtocolGame::sendBuyItem(int thingId, int count, int amount, bool ignoreCa
     send(msg);
 }
 
-void ProtocolGame::sendSellItem(int thingId, int count, int amount, bool ignoreEquipped)
+void ProtocolGame::sendSellItem(int itemId, int count, int amount, bool ignoreEquipped)
 {
     OutputMessage msg;
     msg.addU8(Proto::ClientSellItem);
-    msg.addU16(thingId);
+    msg.addU16(itemId);
     msg.addU8(count);
     msg.addU8(amount);
     msg.addU8(ignoreEquipped ? 0x01 : 0x00);
@@ -230,14 +230,14 @@ void ProtocolGame::sendCloseNpcTrade()
     send(msg);
 }
 
-void ProtocolGame::sendRequestTrade(const Position& pos, int thingId, int stackpos, uint playerId)
+void ProtocolGame::sendRequestTrade(const Position& pos, int thingId, int stackpos, uint creatureId)
 {
     OutputMessage msg;
     msg.addU8(Proto::ClientRequestTrade);
     addPosition(msg, pos);
     msg.addU16(thingId);
     msg.addU8(stackpos);
-    msg.addU32(playerId);
+    msg.addU32(creatureId);
     send(msg);
 }
 
@@ -325,11 +325,11 @@ void ProtocolGame::sendUpContainer(int containerId)
     send(msg);
 }
 
-void ProtocolGame::sendEditText(uint textId, const std::string& text)
+void ProtocolGame::sendEditText(uint id, const std::string& text)
 {
     OutputMessage msg;
     msg.addU8(Proto::ClientEditText);
-    msg.addU32(textId);
+    msg.addU32(id);
     msg.addString(text);
     send(msg);
 }
@@ -576,11 +576,11 @@ void ProtocolGame::sendRequestQuestLog()
     send(msg);
 }
 
-void ProtocolGame::sendRequestQuestLine(int questLine)
+void ProtocolGame::sendRequestQuestLine(int questId)
 {
     OutputMessage msg;
     msg.addU8(Proto::ClientRequestQuestLine);
-    msg.addU16(questLine);
+    msg.addU16(questId);
     send(msg);
 }
 

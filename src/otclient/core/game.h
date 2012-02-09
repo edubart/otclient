@@ -38,66 +38,6 @@ private:
     void resetGameStates();
 
 protected:
-
-    /*
-    void parseMapDescription(InputMessage& msg);
-    void parseMapMoveNorth(InputMessage& msg);
-    void parseMapMoveEast(InputMessage& msg);
-    void parseMapMoveSouth(InputMessage& msg);
-    void parseMapMoveWest(InputMessage& msg);
-    void parseUpdateTile(InputMessage& msg);
-    void parseTileAddThing(InputMessage& msg);
-    void parseTileTransformThing(InputMessage& msg);
-    void parseTileRemoveThing(InputMessage& msg);
-    void parseCreatureMove(InputMessage& msg);
-
-    void parseOpenContainer(InputMessage& msg);
-    void parseCloseContainer(InputMessage& msg);
-    void parseContainerAddItem(InputMessage& msg);
-    void parseContainerUpdateItem(InputMessage& msg);
-    void parseContainerRemoveItem(InputMessage& msg);
-
-    void parseAddInventoryItem(InputMessage& msg);
-    void parseRemoveInventoryItem(InputMessage& msg);
-
-    void parseNpcOffer(InputMessage& msg);
-    void parsePlayerCash(InputMessage& msg);
-    void parseCloseShopWindow(InputMessage&);
-
-    void parseWorldLight(InputMessage& msg);
-
-    void parseMagicEffect(InputMessage& msg);
-    void parseAnimatedText(InputMessage& msg);
-    void parseDistanceMissile(InputMessage& msg);
-
-    void parseCreatureSquare(InputMessage& msg);
-    void parseCreatureHealth(InputMessage& msg);
-    void parseCreatureLight(InputMessage& msg);
-    void parseCreatureOutfit(InputMessage& msg);
-    void parseCreatureSpeed(InputMessage& msg);
-    void parseCreatureSkulls(InputMessage& msg);
-    void parseCreatureShields(InputMessage& msg);
-    void parseCreatureTurn(InputMessage& msg);
-
-    void parseItemTextWindow(InputMessage& msg);
-    void parseHouseTextWindow(InputMessage& msg);
-    void parsePlayerStats(InputMessage& msg);
-    void parsePlayerSkills(InputMessage& msg);
-    void parsePlayerIcons(InputMessage& msg);
-    void parsePlayerCancelAttack(InputMessage& msg);
-    void parseCreatureSpeak(InputMessage& msg);
-    void parseCloseChannel(InputMessage& msg);
-    void parseSafeTradeRequest(InputMessage& msg);
-    void parseSafeTradeClose(InputMessage&);
-    void parseTextMessage(InputMessage& msg);
-    void parseCancelWalk(InputMessage& msg);
-    void parseFloorChangeUp(InputMessage& msg);
-    void parseFloorChangeDown(InputMessage& msg);
-    void parseOutfitWindow(InputMessage& msg);
-    void parseShowTutorial(InputMessage& msg);
-    void parseAddMarker(InputMessage& msg);
-    */
-
     void processConnectionError(const boost::system::error_code& error);
     void processDisconnect();
     void processPing();
@@ -119,11 +59,6 @@ protected:
                             double mana, double maxMana,
                             double magicLevel, double magicLevelPercent,
                             double soul, double stamina);
-    void processTextMessage(const std::string& type, const std::string& message);
-    void processCreatureSpeak(const std::string& name, int level, Otc::SpeakType type, const std::string& message, int channelId, const Position& creaturePos);
-
-    void processOpenContainer(int containerId, int itemId, const std::string& name, int capacity, bool hasParent, const std::vector<ItemPtr>& items);
-    void processContainerAddItem(int containerId, const ItemPtr& item);
 
     void processInventoryChange(int slot, const ItemPtr& item);
     void processCreatureMove(const CreaturePtr& creature, const Position& oldPos, const Position& newPos);
@@ -131,18 +66,47 @@ protected:
     void processAttackCancel();
     void processWalkCancel(Otc::Direction direction);
 
-    // processChannelList
-    // processOpenChannel
-    // processOpenPrivateChannel
-    // processOpenOwnPrivateChannel
+    // message related
+    void processTextMessage(const std::string& type, const std::string& message);
+    void processCreatureSpeak(const std::string& name, int level, Otc::SpeakType type, const std::string& message, int channelId, const Position& creaturePos);
 
-    // vip
-    // processVipList
-    // processVipLogin
-    // processVipLogout
+    // container related
+    void processOpenContainer(int containerId, int itemId, const std::string& name, int capacity, bool hasParent, const std::vector<ItemPtr>& items);
+    void processCloseContainer(int containerId);
+    void processContainerAddItem(int containerId, const ItemPtr& item);
+    void processContainerUpdateItem(int containerId, int slot, const ItemPtr& item);
+    void processContainerRemoveItem(int containerId, int slot);
 
-    // processQuestLog
-    // processQuestLine
+    // channel related
+    void processChannelList(const std::vector<std::tuple<int, std::string>>& channelList);
+    void processOpenChannel(int channelId, const std::string& name);
+    void processOpenPrivateChannel(const std::string& name);
+    void processOpenOwnPrivateChannel(int channelId, const std::string& name);
+    void processCloseChannel(int channelId);
+
+    // vip related
+    void processVipAdd(uint id, const std::string& name, bool online);
+    void processVipStateChange(uint id, bool online);
+
+    // outfit
+    void processOpenOutfitWindow(const Outfit& currentOufit, const std::vector<std::tuple<int, std::string, int>>& outfitList);
+
+    // npc trade
+    void processOpenNpcTrade(const std::vector<std::tuple<ItemPtr, std::string, int, int, int>>& items);
+    void processPlayerGoods(int money, const std::vector<std::tuple<ItemPtr, int>>& goods);
+    void processCloseNpcTrade();
+
+    // player trade
+    void processOpenTrade(const std::string& name, const std::vector<ItemPtr>& items);
+    void processCloseTrade();
+
+    // edit text/list
+    void processEditText(int id, int itemId, int maxLength, const std::string& text, const std::string& writter, const std::string& date);
+    void processEditList(int listId, int id, const std::string& text);
+
+    // questlog
+    void processQuestLog(const std::vector<std::tuple<int, std::string, bool>>& questList);
+    void processQuestLine(int questId, const std::vector<std::tuple<std::string, std::string>>& questMissions);
 
     friend class ProtocolGame;
     friend class Map;
@@ -225,24 +189,24 @@ public:
     bool isSafeFight() { return m_safeFight; }
 
     // npc trade related
-    //void inspectNpcTrade();
-    //void buyItem();
-    //void sellItem();
-    //void closeNpcTrade();
+    void inspectNpcTrade(const ItemPtr& item);
+    void buyItem(const ItemPtr& item, int amount, bool ignoreCapacity, bool buyWithBackpack);
+    void sellItem(const ItemPtr& item, int amount, bool ignoreEquipped);
+    void closeNpcTrade();
 
     // player trade related
-    //void requestTrade();
-    //void inspectTrade();
-    //void acceptTrade();
-    //void rejectTrade();
+    void requestTrade(const ItemPtr& item, const CreaturePtr& creature);
+    void inspectTrade(bool counterOffer, int index);
+    void acceptTrade();
+    void rejectTrade();
 
     // house window and editable items related
-    //void editText();
-    //void editList();
+    void editText(uint id, const std::string& text);
+    void editList(int listId, uint id, const std::string& text);
 
     // questlog related
-    //void requestQuestLog();
-    //void requestQuestLogLine();
+    void requestQuestLog();
+    void requestQuestLine(int questId);
 
     bool canPerformGameAction();
     bool checkBotProtection();
