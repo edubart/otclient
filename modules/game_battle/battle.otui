@@ -1,0 +1,91 @@
+BattleIcon < UICheckBox
+  size: 20 20
+  image-color: white
+  image-rect: 0 0 20 20
+
+  $hover !disabled:
+    color: #cccccc
+
+  $!checked:
+    image-clip: 0 0 20 20
+
+  $hover !checked:
+    image-clip: 0 40 20 20
+
+  $checked:
+    image-clip: 0 20 20 20
+
+  $hover checked:
+    image-clip: 0 60 20 20
+
+  $disabled:
+    image-color: #ffffff88
+
+BattlePlayers < BattleIcon
+  image-source: /game_battle/battle_players.png
+
+BattleNPCs < BattleIcon
+  image-source: /game_battle/battle_npcs.png
+  
+BattleMonsters < BattleIcon
+  image-source: /game_battle/battle_monsters.png
+
+BattleSkulls < BattleIcon
+  image-source: /game_battle/battle_skulls.png
+  
+BattleParty < BattleIcon
+  image-source: /game_battle/battle_party.png    
+    
+MiniWindow
+  id: battleWindow
+  text: Battle
+  height: 250
+    
+  BattlePlayers
+    id: hidePlayers
+    tooltip: Hide players
+    anchors.top: parent.top
+    anchors.right: next.left
+    margin-right: 5
+    
+  BattleNPCs
+    id: hideNPCs
+    tooltip: Hide Npc's
+    anchors.top: parent.top
+    anchors.right: next.left
+    margin-right: 5
+  
+  BattleMonsters
+    id: hideMonsters
+    tooltip: Hide monsters
+    anchors.top: parent.top
+    anchors.horizontalCenter: parent.horizontalCenter
+    
+  BattleSkulls
+    id: hideSkulls
+    tooltip: Hide non-skull players
+    anchors.top: prev.top
+    anchors.left: prev.right
+    margin-left: 5
+    
+  BattleParty
+    id: hideParty
+    tooltip: Hide party members
+    anchors.top: prev.top
+    anchors.left: prev.right
+    margin-left: 5
+    
+  HorizontalSeparator
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    margin-top: 5
+    
+  Panel
+    id: battlePanel
+    anchors.fill: parent
+    anchors.top: prev.bottom
+    margin-top: 5
+    layout: verticalBox
+    
+    

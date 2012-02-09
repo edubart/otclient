@@ -1,0 +1,7 @@
+Module
+  name: game_battle
+  description: Manage battle window
+  author: OTClient team
+  website: https://github.com/edubart/otclient
+  onLoad: |
+    dofile 'battle'
