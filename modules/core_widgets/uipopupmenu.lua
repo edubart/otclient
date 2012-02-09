@@ -1,6 +1,6 @@
 UIPopupMenu = extends(UIWidget)
 
-local displayedMenuList = {}
+local currentMenu
 
 function UIPopupMenu.create()
   local menu = UIPopupMenu.internalCreate()
@@ -17,10 +17,14 @@ function UIPopupMenu:display(pos)
     return
   end
 
+  if currentMenu then
+    currentMenu:destroy()
+  end
+
   displayUI(self, {x = pos.x, y = pos.y})
   self:grabMouse()
   self:grabKeyboard()
-  table.insert(displayedMenuList, self)
+  currentMenu = self
 end
 
 function UIPopupMenu:onGeometryChange()
@@ -44,7 +48,9 @@ function UIPopupMenu:addSeparator()
 end
 
 function UIPopupMenu:onDestroy()
-  table.removevalue(displayedMenuList, self)
+  if currentMenu == self then
+    currentMenu = nil
+  end
 end
 
 function UIPopupMenu:onMousePress(mousePos, mouseButton)
@@ -65,8 +71,8 @@ end
 
 -- close all menus when the window is resized
 local function onRootGeometryUpdate()
-  for i,menu in ipairs(displayedMenuList) do
-    menu:destroy()
+  if currentMenu then
+    currentMenu:destroy()
   end
 end
 connect(rootWidget, { onGeometryChange = onRootGeometryUpdate} )

@@ -79,7 +79,7 @@ void UIManager::inputEvent(const InputEvent& event)
         case Fw::MousePressInputEvent:
             m_mouseReceiver->propagateOnMousePress(event.mousePos, event.mouseButton);
             if(event.mouseButton == Fw::MouseLeftButton)
-                updatePressedWidget(m_rootWidget->recursiveGetChildByPos(event.mousePos), event.mousePos);
+                updatePressedWidget(m_mouseReceiver->recursiveGetChildByPos(event.mousePos), event.mousePos);
             break;
         case Fw::MouseReleaseInputEvent:
             m_mouseReceiver->propagateOnMouseRelease(event.mousePos, event.mouseButton);

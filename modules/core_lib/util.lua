@@ -22,7 +22,7 @@ function connect(object, signalsAndSlots, pushFront)
   for signal,slot in pairs(signalsAndSlots) do
     if not object[signal] then
       local mt = getmetatable(object)
-      if mt then
+      if mt and type(object) == 'userdata' then
         object[signal] = function(...)
           return signalcall(mt[signal], ...)
         end
