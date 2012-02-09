@@ -24,6 +24,7 @@ function UIMiniWindow:onDragEnter(mousePos)
   local oldPos = self:getPosition()
   self.movingReference = { x = mousePos.x - oldPos.x, y = mousePos.y - oldPos.y }
   self:setPosition(oldPos)
+  return true
 end
 
 function UIMiniWindow:onDragLeave(droppedWidget, mousePos)

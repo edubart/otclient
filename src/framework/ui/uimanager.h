@@ -39,7 +39,7 @@ public:
 
     void updatePressedWidget(const UIWidgetPtr& newPressedWidget, const Point& clickedPos = Point());
     void updateHoveredWidget();
-    void updateDraggingWidget(const UIWidgetPtr& draggingWidget, const Point& clickedPos);
+    void updateDraggingWidget(const UIWidgetPtr& draggingWidget, const Point& clickedPos = Point());
 
     bool importStyle(const std::string& file);
     void importStyleFromOTML(const OTMLNodePtr& styleNode);
@@ -78,6 +78,7 @@ private:
     UIWidgetPtr m_draggingWidget;
     UIWidgetPtr m_hoveredWidget;
     UIWidgetPtr m_pressedWidget;
+    Boolean<false> m_hoverUpdateScheduled;
     bool m_isOnInputEvent;
     Boolean<false> m_drawDebugBoxes;
     std::map<std::string, OTMLNodePtr> m_styles;

@@ -571,9 +571,6 @@ void UIWidget::grabMouse()
 
 void UIWidget::ungrabMouse()
 {
-    if(m_destroyed)
-        return;
-
     if(g_ui.getMouseReceiver() == asUIWidget())
         g_ui.resetMouseReceiver();
 }
@@ -588,9 +585,6 @@ void UIWidget::grabKeyboard()
 
 void UIWidget::ungrabKeyboard()
 {
-    if(m_destroyed)
-        return;
-
     if(g_ui.getKeyboardReceiver() == asUIWidget())
         g_ui.resetKeyboardReceiver();
 }
@@ -756,6 +750,7 @@ void UIWidget::setEnabled(bool enabled)
 
         updateState(Fw::DisabledState);
         updateState(Fw::ActiveState);
+        updateState(Fw::HoverState);
     }
 }
 
@@ -763,12 +758,6 @@ void UIWidget::setVisible(bool visible)
 {
     if(m_visible != visible) {
         m_visible = visible;
-
-        // visibility can change the current hovered widget
-        if(visible)
-            g_ui.onWidgetAppear(asUIWidget());
-        else
-            g_ui.onWidgetDisappear(asUIWidget());
 
         // hiding a widget make it lose focus
         if(!visible && isFocused()) {
@@ -780,6 +769,12 @@ void UIWidget::setVisible(bool visible)
         updateParentLayout();
 
         updateState(Fw::ActiveState);
+
+        // visibility can change the current hovered widget
+        if(visible)
+            g_ui.onWidgetAppear(asUIWidget());
+        else
+            g_ui.onWidgetDisappear(asUIWidget());
     }
 }
 
@@ -1033,7 +1028,7 @@ void UIWidget::updateState(Fw::WidgetState state)
                 }
             } while(widget = parent);
 
-            updateChildren = true;
+            updateChildren = newStatus != oldStatus;
             break;
         }
         case Fw::FocusState: {
@@ -1041,7 +1036,8 @@ void UIWidget::updateState(Fw::WidgetState state)
             break;
         }
         case Fw::HoverState: {
-            newStatus = (g_ui.getHoveredWidget() == asUIWidget());
+            updateChildren = true;
+            newStatus = (g_ui.getHoveredWidget() == asUIWidget() && isEnabled());
             break;
         }
         case Fw::PressedState: {
@@ -1054,7 +1050,6 @@ void UIWidget::updateState(Fw::WidgetState state)
         }
         case Fw::DisabledState: {
             bool enabled = true;
-            updateChildren = true;
             UIWidgetPtr widget = asUIWidget();
             do {
                 if(!widget->isExplicitlyEnabled()) {
@@ -1063,6 +1058,7 @@ void UIWidget::updateState(Fw::WidgetState state)
                 }
             } while(widget = widget->getParent());
             newStatus = !enabled;
+            updateChildren = newStatus != oldStatus;
             break;
         }
         case Fw::FirstState: {
@@ -1085,14 +1081,14 @@ void UIWidget::updateState(Fw::WidgetState state)
             return;
     }
 
-    if(setState(state, newStatus)) {
-        if(updateChildren) {
-            // do a backup of children list, because it may change while looping it
-            UIWidgetList children = m_children;
-            for(const UIWidgetPtr& child : children)
-                child->updateState(state);
-        }
+    if(updateChildren) {
+        // do a backup of children list, because it may change while looping it
+        UIWidgetList children = m_children;
+        for(const UIWidgetPtr& child : children)
+            child->updateState(state);
+    }
 
+    if(setState(state, newStatus)) {
         if(state == Fw::FocusState) {
             g_dispatcher.addEvent(std::bind(&UIWidget::onFocusChange, asUIWidget(), newStatus, m_lastFocusReason));
         } else if(state == Fw::HoverState)
@@ -1200,105 +1196,66 @@ void UIWidget::onStyleApply(const std::string& styleName, const OTMLNodePtr& sty
 
 void UIWidget::onGeometryChange(const Rect& oldRect, const Rect& newRect)
 {
-    if(m_destroyed)
-        return;
-
     callLuaField("onGeometryChange", oldRect, newRect);
 }
 
 void UIWidget::onFocusChange(bool focused, Fw::FocusReason reason)
 {
-    if(m_destroyed)
-        return;
-
     callLuaField("onFocusChange", focused, reason);
 }
 
 void UIWidget::onChildFocusChange(const UIWidgetPtr& focusedChild, const UIWidgetPtr& unfocusedChild, Fw::FocusReason reason)
 {
-    if(m_destroyed)
-        return;
-
     callLuaField("onChildFocusChange", focusedChild, unfocusedChild, reason);
 }
 
 void UIWidget::onHoverChange(bool hovered)
 {
-    if(m_destroyed)
-        return;
-
     callLuaField("onHoverChange", hovered);
 }
 
-void UIWidget::onDragEnter(const Point& mousePos)
+bool UIWidget::onDragEnter(const Point& mousePos)
 {
-    if(m_destroyed)
-        return;
-
-    callLuaField("onDragEnter", mousePos);
+    return callLuaField<bool>("onDragEnter", mousePos);
 }
 
 void UIWidget::onDragLeave(UIWidgetPtr droppedWidget, const Point& mousePos)
 {
-    if(m_destroyed)
-        return;
-
     callLuaField("onDragLeave", droppedWidget, mousePos);
 }
 
 bool UIWidget::onDragMove(const Point& mousePos, const Point& mouseMoved)
 {
-    if(m_destroyed)
-        return false;
-
     return callLuaField("onDragMove", mousePos, mouseMoved);
 }
 
 bool UIWidget::onDrop(UIWidgetPtr draggedWidget, const Point& mousePos)
 {
-    if(m_destroyed)
-        return false;
-
     return callLuaField<bool>("onDrop", draggedWidget, mousePos);
 }
 
 bool UIWidget::onKeyText(const std::string& keyText)
 {
-    if(m_destroyed)
-        return false;
-
     return callLuaField<bool>("onKeyText", keyText);
 }
 
 bool UIWidget::onKeyDown(uchar keyCode, int keyboardModifiers)
 {
-    if(m_destroyed)
-        return false;
-
     return callLuaField<bool>("onKeyDown", keyCode, keyboardModifiers);
 }
 
 bool UIWidget::onKeyPress(uchar keyCode, int keyboardModifiers, int autoRepeatTicks)
 {
-    if(m_destroyed)
-        return false;
-
     return callLuaField<bool>("onKeyPress", keyCode, keyboardModifiers, autoRepeatTicks);
 }
 
 bool UIWidget::onKeyUp(uchar keyCode, int keyboardModifiers)
 {
-    if(m_destroyed)
-        return false;
-
     return callLuaField<bool>("onKeyUp", keyCode, keyboardModifiers);
 }
 
 bool UIWidget::onMousePress(const Point& mousePos, Fw::MouseButton button)
 {
-    if(m_destroyed)
-        return false;
-
     if(button == Fw::MouseLeftButton) {
         if(m_clickTimer.running() && m_clickTimer.ticksElapsed() <= 500) {
             if(onDoubleClick(mousePos))
@@ -1315,41 +1272,26 @@ bool UIWidget::onMousePress(const Point& mousePos, Fw::MouseButton button)
 
 bool UIWidget::onMouseRelease(const Point& mousePos, Fw::MouseButton button)
 {
-    if(m_destroyed)
-        return false;
-
     return callLuaField<bool>("onMouseRelease", mousePos, button);
 }
 
 bool UIWidget::onMouseMove(const Point& mousePos, const Point& mouseMoved)
 {
-    if(m_destroyed)
-        return false;
-
     return callLuaField<bool>("onMouseMove", mousePos, mouseMoved);
 }
 
 bool UIWidget::onMouseWheel(const Point& mousePos, Fw::MouseWheelDirection direction)
 {
-    if(m_destroyed)
-        return false;
-
     return callLuaField<bool>("onMouseWheel", mousePos, direction);
 }
 
 bool UIWidget::onClick(const Point& mousePos)
 {
-    if(m_destroyed)
-        return false;
-
     return callLuaField<bool>("onClick", mousePos);
 }
 
 bool UIWidget::onDoubleClick(const Point& mousePos)
 {
-    if(m_destroyed)
-        return false;
-
     return callLuaField<bool>("onDoubleClick", mousePos);
 }
 

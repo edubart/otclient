@@ -25,6 +25,7 @@ end
 function UIWindow:onDragEnter(mousePos)
   self:breakAnchors()
   self.movingReference = { x = mousePos.x - self:getX(), y = mousePos.y - self:getY() }
+  return true
 end
 
 function UIWindow:onDragLeave(droppedWidget, mousePos)

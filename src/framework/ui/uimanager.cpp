@@ -26,6 +26,7 @@
 #include <framework/otml/otml.h>
 #include <framework/graphics/graphics.h>
 #include <framework/platform/platformwindow.h>
+#include <framework/core/eventdispatcher.h>
 
 UIManager g_ui;
 
@@ -78,8 +79,12 @@ void UIManager::inputEvent(const InputEvent& event)
             break;
         case Fw::MousePressInputEvent:
             m_mouseReceiver->propagateOnMousePress(event.mousePos, event.mouseButton);
-            if(event.mouseButton == Fw::MouseLeftButton)
-                updatePressedWidget(m_mouseReceiver->recursiveGetChildByPos(event.mousePos), event.mousePos);
+            if(event.mouseButton == Fw::MouseLeftButton && m_mouseReceiver->isVisible()) {
+                UIWidgetPtr pressedWidget = m_mouseReceiver->recursiveGetChildByPos(event.mousePos);
+                if(pressedWidget && !pressedWidget->isEnabled())
+                    pressedWidget = nullptr;
+                updatePressedWidget(pressedWidget, event.mousePos);
+            }
             break;
         case Fw::MouseReleaseInputEvent:
             m_mouseReceiver->propagateOnMouseRelease(event.mousePos, event.mouseButton);
@@ -123,74 +128,80 @@ void UIManager::updatePressedWidget(const UIWidgetPtr& newPressedWidget, const P
     if(oldPressedWidget) {
         oldPressedWidget->updateState(Fw::PressedState);
 
-        // when releasing mouse inside pressed widget area send onClick event
-        if(!clickedPos.isNull() && oldPressedWidget->containsPoint(clickedPos))
-            oldPressedWidget->onClick(clickedPos);
-        // must send mouse events even if the mouse is outside widget area when releasing a pressed widget
-        else
-            oldPressedWidget->onMouseRelease(clickedPos, Fw::MouseLeftButton);
+        if(oldPressedWidget->isEnabled()) {
+            // when releasing mouse inside pressed widget area send onClick event
+            if(!clickedPos.isNull() && oldPressedWidget->containsPoint(clickedPos)) {
+                // onMouseRelease will be already fired by mouseReceiver
+                oldPressedWidget->onClick(clickedPos);
+            // must send mouse events even if the mouse is outside widget area when releasing a pressed widget
+            } else
+                oldPressedWidget->onMouseRelease(clickedPos, Fw::MouseLeftButton);
+        }
     }
 }
 
 void UIManager::updateHoveredWidget()
 {
-    UIWidgetPtr hoveredWidget = m_rootWidget->recursiveGetChildByPos(g_window.getMousePosition());
-    if(hoveredWidget != m_hoveredWidget) {
-        UIWidgetPtr oldHovered = m_hoveredWidget;
-        m_hoveredWidget = hoveredWidget;
-        if(oldHovered)
-            oldHovered->updateState(Fw::HoverState);
-        if(hoveredWidget)
-            hoveredWidget->updateState(Fw::HoverState);
-    }
+    if(m_hoverUpdateScheduled)
+        return;
+
+    g_dispatcher.addEvent([this] {
+        if(!m_rootWidget)
+            return;
+
+        m_hoverUpdateScheduled = false;
+        UIWidgetPtr hoveredWidget = m_rootWidget->recursiveGetChildByPos(g_window.getMousePosition());
+        if(hoveredWidget && !hoveredWidget->isEnabled())
+            hoveredWidget = nullptr;
+
+        if(hoveredWidget != m_hoveredWidget) {
+            UIWidgetPtr oldHovered = m_hoveredWidget;
+            m_hoveredWidget = hoveredWidget;
+            if(oldHovered)
+                oldHovered->updateState(Fw::HoverState);
+            if(hoveredWidget)
+                hoveredWidget->updateState(Fw::HoverState);
+        }
+    });
+    m_hoverUpdateScheduled = true;
 }
 
 void UIManager::updateDraggingWidget(const UIWidgetPtr& draggingWidget, const Point& clickedPos)
 {
     UIWidgetPtr oldDraggingWidget = m_draggingWidget;
+    m_draggingWidget = nullptr;
     if(oldDraggingWidget) {
-        auto clickedChildren = m_rootWidget->recursiveGetChildrenByPos(clickedPos);
         UIWidgetPtr droppedWidget;
-        for(const UIWidgetPtr& child : clickedChildren) {
-            if(child->onDrop(oldDraggingWidget, clickedPos)) {
-                droppedWidget = child;
-                break;
+        if(!clickedPos.isNull()) {
+            auto clickedChildren = m_rootWidget->recursiveGetChildrenByPos(clickedPos);
+            for(const UIWidgetPtr& child : clickedChildren) {
+                if(child->onDrop(oldDraggingWidget, clickedPos)) {
+                    droppedWidget = child;
+                    break;
+                }
             }
         }
 
         oldDraggingWidget->onDragLeave(droppedWidget, clickedPos);
+        oldDraggingWidget->updateState(Fw::DraggingState);
     }
 
-    m_draggingWidget = draggingWidget;
-
-    if(oldDraggingWidget)
-        oldDraggingWidget->updateState(Fw::DraggingState);
-
     if(draggingWidget) {
-        draggingWidget->updateState(Fw::DraggingState);
-        draggingWidget->onDragEnter(clickedPos);
+        if(draggingWidget->onDragEnter(clickedPos)) {
+            m_draggingWidget = draggingWidget;
+            draggingWidget->updateState(Fw::DraggingState);
+        }
     }
 }
 
 void UIManager::onWidgetAppear(const UIWidgetPtr& widget)
 {
-    if(widget->getRootParent() != m_rootWidget || !widget->isVisible())
-        return;
-
-    if(widget->getRect().contains(g_window.getMousePosition()))
-        updateHoveredWidget();
+    updateHoveredWidget();
 }
 
 void UIManager::onWidgetDisappear(const UIWidgetPtr& widget)
 {
-    if(widget->getRootParent() != m_rootWidget || widget->isVisible())
-        return;
-
-    if(m_hoveredWidget == widget)
-        updateHoveredWidget();
-
-    if(m_pressedWidget == widget)
-        updatePressedWidget(nullptr);
+    updateHoveredWidget();
 }
 
 void UIManager::onWidgetDestroy(const UIWidgetPtr& widget)
@@ -207,6 +218,9 @@ void UIManager::onWidgetDestroy(const UIWidgetPtr& widget)
 
     if(m_pressedWidget == widget)
         updatePressedWidget(nullptr);
+
+    if(m_draggingWidget == widget)
+        updateDraggingWidget(nullptr);
 }
 
 bool UIManager::importStyle(const std::string& file)

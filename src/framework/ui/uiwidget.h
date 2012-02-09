@@ -170,7 +170,7 @@ protected:
     virtual void onFocusChange(bool focused, Fw::FocusReason reason);
     virtual void onChildFocusChange(const UIWidgetPtr& focusedChild, const UIWidgetPtr& unfocusedChild, Fw::FocusReason reason);
     virtual void onHoverChange(bool hovered);
-    virtual void onDragEnter(const Point& mousePos);
+    virtual bool onDragEnter(const Point& mousePos);
     virtual void onDragLeave(UIWidgetPtr droppedWidget, const Point& mousePos);
     virtual bool onDragMove(const Point& mousePos, const Point& mouseMoved);
     virtual bool onDrop(UIWidgetPtr draggedWidget, const Point& mousePos);

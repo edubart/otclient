@@ -2,7 +2,7 @@ function UIItem:onDragEnter(mousePos)
   if self:isVirtual() then return false end
 
   local item = self:getItem()
-  if not item then return true end
+  if not item then return false end
 
   self:setBorderWidth(1)
 
