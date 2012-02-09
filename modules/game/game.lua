@@ -27,12 +27,8 @@ local function onUseWithMouseRelease(self, mousePosition, mouseButton)
         end
       elseif clickedWidget:getClassName() == 'UIItem' and not clickedWidget:isVirtual() then
         g_game.useWith(g_game.selectedThing, clickedWidget:getItem())
-      elseif clickedWidget.isBattleButton or clickedWidget.battleButtonChild then
-        local battleButton = clickedWidget
-        if clickedWidget.battleButtonChild then
-          battleButton = clickedWidget:getParent()
-        end
-        g_game.useWith(g_game.selectedThing, battleButton.creature)
+      elseif clickedWidget.isBattleButton then
+        g_game.useWith(g_game.selectedThing, clickedWidget.creature)
       end
     end
   end

@@ -52,9 +52,6 @@ function Battle.create()
   mouseWidget = createWidget('UIButton')
   mouseWidget:setVisible(false)
   mouseWidget:setFocusable(false) 
-  
-  connect(UIWidget, { onHoverChange = Battle.onbattlePannelHoverChange,
-                      onMouseRelease = Battle.onMouseRelease } )
                 
   connect(Creature, { onSkullChange = Battle.checkCreatureSkull,
                       onEmblemChange = Battle.checkCreatureEmblem } )                      
@@ -83,9 +80,6 @@ function Battle.destroy()
   battleButton = nil
   battleWindow:destroy()
   battleWindow = nil
-  
-  disconnect(UIWidget, {  onHoverChange = Battle.onbattlePannelHoverChange,
-                          onMouseRelease = Battle.onMouseRelease } )
                 
   disconnect(Creature, {  onSkullChange = Battle.checkCreatureSkull,
                           onEmblemChange = Battle.checkCreatureEmblem } )                      
@@ -252,13 +246,20 @@ end
 
 function Battle.onMouseRelease(self, mousePosition, mouseButton)
   if mouseButton == MouseRightButton then
-    local clickedWidget = g_game.gameUi:recursiveGetChildByPos(mousePosition)
-    if clickedWidget then
-      if clickedWidget:getStyleName() == 'BattleButton' then
-        g_game.createThingMenu(mousePosition, nil, nil, clickedWidget.creature)
-        return true
+    g_game.createThingMenu(mousePosition, nil, nil, self.creature)
+    return true
+  elseif mouseButton == MouseLeftButton then
+    local modifiers = g_window.getKeyboardModifiers()
+    if modifiers == KeyboardShiftModifier then
+      g_game.look(self.creature)
+    else
+      if self.isTarget then
+        g_game.cancelAttack()
+      else
+        g_game.attack(self.creature)
       end
     end
+    return true
   end
 end
 
@@ -270,6 +271,7 @@ function Battle.removeCreature(creature)
       lastBattleButtonSwitched = nil
     end
   
+    battleButtonsByCreaturesList[creatureId].creature:hideStaticSquare()
     battleButtonsByCreaturesList[creatureId]:destroy()
     battleButtonsByCreaturesList[creatureId] = nil
   end
@@ -290,27 +292,10 @@ function Battle.setLifeBarPercent(battleButton, percent)
   lifeBarWidget:setBackgroundColor(color)
 end
 
-function Battle.onButtonClick(battleButton)
-  if battleButton then
-    if battleButton.isTarget then
-      g_game.cancelAttack()
-    else
-      g_game.attack(battleButton.creature)
-    end
-  end
-end
-
 function Battle.onbattlePannelHoverChange(widget, hovered)
-  if widget.isBattleButton or widget.battleButtonChild then
-    local battleButton = widget
-    if widget.battleButtonChild then
-      battleButton = widget:getParent()
-    end
-    
-    if battleButton then
-      battleButton.isHovered = hovered
-      Battle.checkBattleButton(battleButton)
-    end
+  if widget.isBattleButton then    
+    widget.isHovered = hovered
+    Battle.checkBattleButton(widget)
   end
 end
 

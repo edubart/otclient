@@ -4,7 +4,8 @@ BattleButton
   height: 20
   margin-top: 5
   fixed-size: true
-  @onClick: Battle.onButtonClick(self)
+  &onHoverChange: Battle.onbattlePannelHoverChange
+  &onMouseRelease: Battle.onMouseRelease
   &isBattleButton: true
   
   UICreature
@@ -12,29 +13,28 @@ BattleButton
     size: 20 20
     anchors.left: parent.left
     anchors.top: parent.top
-    @onClick: Battle.onButtonClick(parent)
-    &battleButtonChild: true
+    phantom: true
     
   UIWidget
     id: spacer
     width: 5
     anchors.left: creature.right
     anchors.top: creature.top
-    &battleButtonChild: true
+    phantom: true
     
   UIWidget
     id: skull
     height: 11
     anchors.left: spacer.right
     anchors.top: spacer.top
-    &battleButtonChild: true
+    phantom: true
     
   UIWidget
     id: emblem
     height: 11
     anchors.left: skull.right
     anchors.top: creature.top
-    &battleButtonChild: true
+    phantom: true
     
   LargerLabel
     id: label
@@ -42,8 +42,7 @@ BattleButton
     anchors.top: creature.top
     color: #888888
     margin-left: 2
-    @onClick: Battle.onButtonClick(parent)
-    &battleButtonChild: true
+    phantom: true
     
   ProgressBar
     id: lifeBar
@@ -52,5 +51,4 @@ BattleButton
     anchors.right: parent.right
     anchors.top: label.bottom
     margin-top: 2
-    @onClick: Battle.onButtonClick(parent)
-    &battleButtonChild: true
+    phantom: true
