@@ -160,6 +160,11 @@ void UIWidget::drawImage(const Rect& screenCoords)
     }
 
     m_imageTexture->setSmooth(m_imageSmooth);
+
+    // this will increase fps when rendering larger images, like the background, and improve image quality
+    if(m_imageSmooth && !m_imageTexture->hasMipmaps())
+        m_imageTexture->generateMipmaps();
+
     g_painter.setColor(m_imageColor);
     g_painter.drawTextureCoords(m_imageCoordsBuffer, m_imageTexture);
 }

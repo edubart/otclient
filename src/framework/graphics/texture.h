@@ -48,7 +48,8 @@ public:
     int getHeight() { return m_size.height(); }
     const Size& getSize() { return m_size; }
 
-    bool isEmpty() const { return m_textureId == 0; }
+    bool isEmpty() { return m_textureId == 0; }
+    bool hasMipmaps() { return m_hasMipmaps; }
 
 protected:
     void setupFilters();
@@ -56,7 +57,7 @@ protected:
 
     GLuint m_textureId;
     Size m_size;
-    Boolean<false> m_useMipmaps;
+    Boolean<false> m_hasMipmaps;
     Boolean<false> m_smooth;
 };
 

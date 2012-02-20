@@ -98,8 +98,8 @@ void Texture::generateMipmaps()
 {
     bind();
 
-    if(!m_useMipmaps) {
-        m_useMipmaps = true;
+    if(!m_hasMipmaps) {
+        m_hasMipmaps = true;
         setupFilters();
     }
 
@@ -141,8 +141,8 @@ void Texture::generateBilinearMipmaps(std::vector<uint8> inPixels)
 {
     bind();
 
-    if(!m_useMipmaps) {
-        m_useMipmaps = true;
+    if(!m_hasMipmaps) {
+        m_hasMipmaps = true;
         setupFilters();
     }
 
@@ -204,10 +204,10 @@ void Texture::setupFilters()
     GLint minFilter;
     GLint magFilter;
     if(m_smooth) {
-        minFilter = m_useMipmaps ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR;
+        minFilter = m_hasMipmaps ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR;
         magFilter = GL_LINEAR;
     } else {
-        minFilter = m_useMipmaps ? GL_NEAREST_MIPMAP_NEAREST : GL_NEAREST;
+        minFilter = m_hasMipmaps ? GL_NEAREST_MIPMAP_NEAREST : GL_NEAREST;
         magFilter = GL_NEAREST;
     }
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
