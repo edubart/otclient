@@ -32,10 +32,6 @@
 #define MAX_BACKTRACE_DEPTH 128
 #define DEMANGLE_BACKTRACE_SYMBOLS
 
-#ifndef REG_RIP
-#error fuck
-#endif
-
 void crashHandler(int signum, siginfo_t* info, void* secret)
 {
     logError("Application crashed");
