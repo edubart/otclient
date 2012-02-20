@@ -1,0 +1,11 @@
+Module
+  name: game_tibiafiles
+  description: Contains tibia spr and dat
+
+  @onLoad: |
+    if not g_thingsType.load('/game_tibiafiles/Tibia.dat') then
+      fatal("Unable to load dat file, please place a valid Tibia dat in modules/game_tibiafiles/Tibia.dat")
+    end
+    if not g_sprites.load('/game_tibiafiles/Tibia.spr') then
+      fatal("Unable to load spr file, please place a valid Tibia spr in modules/game_tibiafiles/Tibia.spr")
+    end

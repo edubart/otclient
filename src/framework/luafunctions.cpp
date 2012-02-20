@@ -386,15 +386,17 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Module>("load", &Module::load);
     g_lua.bindClassMemberFunction<Module>("unload", &Module::unload);
     g_lua.bindClassMemberFunction<Module>("reload", &Module::reload);
+    g_lua.bindClassMemberFunction<Module>("canReload", &Module::canReload);
     g_lua.bindClassMemberFunction<Module>("canUnload", &Module::canUnload);
     g_lua.bindClassMemberFunction<Module>("isLoaded", &Module::isLoaded);
+    g_lua.bindClassMemberFunction<Module>("isReloadble", &Module::isReloadable);
     g_lua.bindClassMemberFunction<Module>("getDescription", &Module::getDescription);
     g_lua.bindClassMemberFunction<Module>("getName", &Module::getName);
     g_lua.bindClassMemberFunction<Module>("getAuthor", &Module::getAuthor);
     g_lua.bindClassMemberFunction<Module>("getWebsite", &Module::getWebsite);
     g_lua.bindClassMemberFunction<Module>("getVersion", &Module::getVersion);
     g_lua.bindClassMemberFunction<Module>("isAutoLoad", &Module::isAutoLoad);
-    g_lua.bindClassMemberFunction<Module>("getAutoLoadAntecedence", &Module::getAutoLoadAntecedence);
+    g_lua.bindClassMemberFunction<Module>("getAutoLoadPriority", &Module::getAutoLoadPriority);
 
     // network manipulation via lua is disabled for a while
     /*
@@ -468,14 +470,10 @@ void Application::registerLuaFunctions()
     g_lua.bindClassStaticFunction("g_window", "hasFocus", std::bind(&PlatformWindow::hasFocus, &g_window));
 
     // Logger
-    g_lua.registerClass<Logger>();
-    g_lua.bindClassStaticFunction<Logger>("log", std::bind(&Logger::log, &g_logger, _1, _2));
-    g_lua.bindClassStaticFunction<Logger>("fireOldMessages", std::bind(&Logger::fireOldMessages, &g_logger));
-    g_lua.bindClassStaticFunction<Logger>("setOnLog", std::bind(&Logger::setOnLog, &g_logger, _1));
-
-    // Lua
-    g_lua.registerStaticClass("g_lua");
-    g_lua.bindClassStaticFunction("g_lua", "runScript", std::bind(&LuaInterface::runScript, &g_lua, _1));
+    g_lua.registerStaticClass("g_logger");
+    g_lua.bindClassStaticFunction("g_logger", "log", std::bind(&Logger::log, &g_logger, _1, _2));
+    g_lua.bindClassStaticFunction("g_logger", "fireOldMessages", std::bind(&Logger::fireOldMessages, &g_logger));
+    g_lua.bindClassStaticFunction("g_logger", "setOnLog", std::bind(&Logger::setOnLog, &g_logger, _1));
 
     // UI
     g_lua.registerStaticClass("g_ui");

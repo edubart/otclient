@@ -3,16 +3,14 @@ Module
   description: Create the about window
   author: OTClient team
   website: https://github.com/edubart/otclient
-  autoload: true
-  autoload-antecedence: 160
-  unloadable: true
+  reloadable: true
 
   dependencies:
     - client_topmenu
 
-  onLoad: |
+  @onLoad: |
     dofile 'about'
     About.init()
 
-  onUnload: |
+  @onUnload: |
     About.terminate()

@@ -46,19 +46,6 @@ function g_game.startUseWith(thing)
 end
 
 function g_game.createInterface()
-  Background.hide()
-  CharacterList.destroyLoadBox()
-  g_game.gameUi = displayUI('game.otui')
-
-  --Keyboard.bindKeyPress('Up', function() g_game.walk(North) end)
-  --Keyboard.bindKeyPress('Down', function() g_game.walk(South) end)
-  --Keyboard.bindKeyPress('Left', function() g_game.walk(West) end)
-  --Keyboard.bindKeyPress('Right', function() g_game.walk(East) end)
-
-  Keyboard.bindKeyPress('Ctrl+Shift+Up', function() g_game.forceWalk(North) end)
-  Keyboard.bindKeyPress('Ctrl+Shift+Down', function() g_game.forceWalk(South) end)
-  Keyboard.bindKeyPress('Ctrl+Shift+Left', function() g_game.forceWalk(West) end)
-  Keyboard.bindKeyPress('Ctrl+Shift+Right', function() g_game.forceWalk(East) end)
 
   rootWidget:moveChildToIndex(g_game.gameUi, 1)
   g_game.gameMapPanel = g_game.gameUi:getChildById('gameMapPanel')
@@ -89,17 +76,6 @@ function g_game.hide()
 end
 
 -- hooked events
-function g_game.onLoginError(message)
-  CharacterList.destroyLoadBox()
-  local errorBox = displayErrorBox("Login Error", "Login error: " .. message)
-  connect(errorBox, { onOk = CharacterList.show })
-end
-
-function g_game.onConnectionError(message)
-  CharacterList.destroyLoadBox()
-  local errorBox = displayErrorBox("Login Error", "Connection error: " .. message)
-  connect(errorBox, { onOk = CharacterList.show })
-end
 
 local function onApplicationClose()
   if g_game.isOnline() then

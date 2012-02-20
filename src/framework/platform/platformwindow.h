@@ -80,8 +80,8 @@ public:
     bool isKeyPressed(Fw::Key keyCode) { return m_keysState[keyCode]; }
 
     bool isVisible() { return m_visible; }
+    bool isMaximized() { return m_maximized; }
     bool isFullscreen() { return m_fullscreen; }
-    virtual bool isMaximized() = 0;
     bool hasFocus() { return m_focused; }
 
     void setOnClose(const SimpleCallback& onClose) { m_onClose = onClose; }
@@ -112,6 +112,7 @@ protected:
     Boolean<false> m_visible;
     Boolean<false> m_focused;
     Boolean<false> m_fullscreen;
+    Boolean<false> m_maximized;
 
     SimpleCallback m_onClose;
     OnResizeCallback m_onResize;

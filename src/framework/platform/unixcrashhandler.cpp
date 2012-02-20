@@ -20,13 +20,21 @@
  * THE SOFTWARE.
  */
 
+#define __USE_GNU
+
 #include "crashhandler.h"
 #include <framework/global.h>
-#include <execinfo.h>
 #include <framework/application.h>
+
+#include <execinfo.h>
+#include <ucontext.h>
 
 #define MAX_BACKTRACE_DEPTH 128
 #define DEMANGLE_BACKTRACE_SYMBOLS
+
+#ifndef REG_RIP
+#error fuck
+#endif
 
 void crashHandler(int signum, siginfo_t* info, void* secret)
 {
@@ -41,20 +49,8 @@ void crashHandler(int signum, siginfo_t* info, void* secret)
 
     std::stringstream ss;
     ss.flags(std::ios::hex | std::ios::showbase);
-#ifdef REG_EIP
-    ss <<
-    ss << "  at eip = " << context.uc_mcontext.gregs[REG_EIP] << std::endl;
-    ss << "     eax = " << context.uc_mcontext.gregs[REG_EAX] << std::endl;
-    ss << "     ebx = " << context.uc_mcontext.gregs[REG_EBX] << std::endl;
-    ss << "     ecx = " << context.uc_mcontext.gregs[REG_ECX] << std::endl;
-    ss << "     edx = " << context.uc_mcontext.gregs[REG_EDX] << std::endl;
-    ss << "     esi = " << context.uc_mcontext.gregs[REG_ESI] << std::endl;
-    ss << "     edi = " << context.uc_mcontext.gregs[REG_EDI] << std::endl;
-    ss << "     ebp = " << context.uc_mcontext.gregs[REG_EBP] << std::endl;
-    ss << "     esp = " << context.uc_mcontext.gregs[REG_ESP] << std::endl;
-    ss << "     efl = " << context.uc_mcontext.gregs[REG_EFL] << std::endl;
-    ss << std::endl;
-#elifdef REG_RIP
+
+#if __WORDSIZE == 64
     ss << "  at rip = " << context.uc_mcontext.gregs[REG_RIP] << std::endl;
     ss << "     rax = " << context.uc_mcontext.gregs[REG_RAX] << std::endl;
     ss << "     rbx = " << context.uc_mcontext.gregs[REG_RBX] << std::endl;
@@ -66,7 +62,20 @@ void crashHandler(int signum, siginfo_t* info, void* secret)
     ss << "     rsp = " << context.uc_mcontext.gregs[REG_RSP] << std::endl;
     ss << "     efl = " << context.uc_mcontext.gregs[REG_EFL] << std::endl;
     ss << std::endl;
+#else
+    ss << "  at eip = " << context.uc_mcontext.gregs[REG_EIP] << std::endl;
+    ss << "     eax = " << context.uc_mcontext.gregs[REG_EAX] << std::endl;
+    ss << "     ebx = " << context.uc_mcontext.gregs[REG_EBX] << std::endl;
+    ss << "     ecx = " << context.uc_mcontext.gregs[REG_ECX] << std::endl;
+    ss << "     edx = " << context.uc_mcontext.gregs[REG_EDX] << std::endl;
+    ss << "     esi = " << context.uc_mcontext.gregs[REG_ESI] << std::endl;
+    ss << "     edi = " << context.uc_mcontext.gregs[REG_EDI] << std::endl;
+    ss << "     ebp = " << context.uc_mcontext.gregs[REG_EBP] << std::endl;
+    ss << "     esp = " << context.uc_mcontext.gregs[REG_ESP] << std::endl;
+    ss << "     efl = " << context.uc_mcontext.gregs[REG_EFL] << std::endl;
+    ss << std::endl;
 #endif
+
     ss.flags(std::ios::dec);
     ss << "  backtrace:" << std::endl;
 

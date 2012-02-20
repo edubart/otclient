@@ -7,3 +7,4 @@ end
 function Mouse.restoreCursor()
   g_window.restoreMouseCursor()
 end
+

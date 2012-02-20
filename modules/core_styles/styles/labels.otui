@@ -5,8 +5,6 @@ Label < UILabel
   $disabled:
     color: #aaaaaa88
 
-LargerLabel < Label
-
 GameLabel < UILabel
   font: verdana-11px-antialised
   color: #aaaaaa

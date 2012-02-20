@@ -2,29 +2,29 @@ Options = {}
 
 local optionsWindow
 local optionsButton
+local options = { vsync = true,
+                  showfps = true,
+                  fullscreen = false,
+                  classicControl = false,
+                  showStatusMessagesInConsole = true,
+                  showEventMessagesInConsole = true,
+                  showInfoMessagesInConsole = true,
+                  showTimestampsInConsole = true,
+                  showLevelsInConsole = true,
+                  showPrivateMessagesInConsole = true }
 
 function Options.init()
-  -- load settings
-  local booleanOptions = { vsync = true,
-                           showfps = true,
-                           fullscreen = false,
-                           classicControl = false,
-                           showStatusMessagesInConsole = true,
-                           showEventMessagesInConsole = true,
-                           showInfoMessagesInConsole = true,
-                           showTimestampsInConsole = true,
-                           showLevelsInConsole = true,
-                           showPrivateMessagesInConsole = true,
-                           }
-
-  for k,v in pairs(booleanOptions) do
-    Settings.setDefault(k, v)
-    Options.changeOption(k, Settings.getBoolean(k))
+  -- load options
+  for k,v in pairs(options) do
+    if type(v) == 'boolean' then
+      Settings.setDefault(k, v)
+      Options.setOption(k, Settings.getBoolean(k))
+    end
   end
 
   optionsWindow = displayUI('options.otui')
-  optionsWindow:setVisible(false)
-  optionsButton = TopMenu.addButton('optionsButton', 'Options (Ctrl+O)', 'options.png', Options.toggle)
+  optionsWindow:hide()
+  optionsButton = TopMenu.addLeftButton('optionsButton', 'Options (Ctrl+O)', 'options.png', Options.toggle)
   Keyboard.bindKeyDown('Ctrl+O', Options.toggle)
 end
 
@@ -47,11 +47,11 @@ end
 
 function Options.show()
   optionsWindow:show()
-  optionsWindow:lock()
+  optionsWindow:raise()
+  optionsWindow:focus()
 end
 
 function Options.hide()
-  optionsWindow:unlock()
   optionsWindow:hide()
 end
 
@@ -59,20 +59,24 @@ function Options.openWebpage()
   displayErrorBox("Error", "Not implemented yet")
 end
 
--- private functions
-function Options.changeOption(key, status)
+function Options.setOption(key, value)
   if key == 'vsync' then
-    g_window.setVerticalSync(status)
+    g_window.setVerticalSync(value)
   elseif key == 'showfps' then
     addEvent(function()
       local frameCounter = rootWidget:recursiveGetChildById('frameCounter')
-      if frameCounter then frameCounter:setVisible(status) end
+      if frameCounter then frameCounter:setVisible(value) end
     end)
   elseif key == 'fullscreen' then
     addEvent(function()
-      g_window.setFullscreen(status)
+      g_window.setFullscreen(value)
     end)
   end
-  Settings.set(key, status)
-  Options[key] = status
+  Settings.set(key, value)
+  options[key] = value
 end
+
+function Options.getOption(key)
+  return options[key]
+end
+

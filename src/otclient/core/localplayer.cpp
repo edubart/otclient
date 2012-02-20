@@ -84,8 +84,6 @@ bool LocalPlayer::canWalk(Otc::Direction direction)
 
 void LocalPlayer::walk(const Position& oldPos, const Position& newPos)
 {
-    Otc::Direction direction = oldPos.getDirectionFromPosition(newPos);
-
     // a prewalk was going on
     if(m_preWalking) {
         // switch to normal walking

@@ -191,7 +191,8 @@ bool luavalue_cast(int index, std::function<void(Args...)>& func) {
             try {
                 if(g_lua.isFunction()) {
                     g_lua.polymorphicPush(args...);
-                    assert(g_lua.safeCall(sizeof...(Args)) == 0);
+                    int rets = g_lua.safeCall(sizeof...(Args));
+                    g_lua.pop(rets);
                 } else {
                     throw LuaException("attempt to call an expired lua function from C++,"
                                        "did you forget to hold a reference for that function?", 0);

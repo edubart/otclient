@@ -92,7 +92,7 @@ void PainterShaderProgram::setTexture(const TexturePtr& texture)
 
 void PainterShaderProgram::draw(const CoordsBuffer& coordsBuffer, DrawMode drawMode)
 {
-    assert(bind());
+    bind();
 
     setUniformValue(TIME_UNIFORM, (float)m_startTimer.timeElapsed());
 

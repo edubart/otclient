@@ -160,7 +160,6 @@ std::list<std::string> ResourceManager::listDirectoryFiles(const std::string& di
 
 std::string ResourceManager::checkPath(const std::string& path)
 {
-    /*
     std::string fullPath;
     if(boost::starts_with(path, "/"))
         fullPath = path;
@@ -170,10 +169,9 @@ std::string ResourceManager::checkPath(const std::string& path)
             fullPath += scriptPath + "/";
         fullPath += path;
     }
-    */
-    if(!(boost::starts_with(path, "/")))
+    if(!(boost::starts_with(fullPath, "/")))
         logTraceWarning("the following file path is not fully resolved: ", path);
-    return path;
+    return fullPath;
 }
 
 std::string ResourceManager::getBaseDir()

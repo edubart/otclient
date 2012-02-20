@@ -3,13 +3,12 @@ Module
   description: Terminal for executing lua functions
   author: OTClient team
   website: https://github.com/edubart/otclient
-  autoload: true
-  autoload-antecedence: 160
+  reloadable: true
 
-  onLoad: |
+  @onLoad: |
     dofile 'terminal'
     dofile 'commands'
     Terminal.init()
 
-  onUnload: |
+  @onUnload: |
     Terminal.terminate()

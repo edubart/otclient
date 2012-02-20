@@ -23,6 +23,14 @@
 #ifndef FRAMEWORK_GLOBAL_H
 #define FRAMEWORK_GLOBAL_H
 
+#if !(__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6))
+#error "sorry, you need gcc 4.6 or greater to compile"
+#endif
+
+#if !defined(__GXX_EXPERIMENTAL_CXX0X__)
+#error "sorry, you must enable C++0x to compile"
+#endif
+
 // common C/C++ headers
 #include "pch.h"
 

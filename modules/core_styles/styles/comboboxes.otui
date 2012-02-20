@@ -14,14 +14,14 @@ ComboBoxPopupMenuButton < UIButton
     color: #555555
 
 ComboBoxPopupMenuSeparator < UIWidget
-  image-source: /core_styles/images/combobox.png
+  image-source: /core_styles/styles/images/combobox.png
   image-repeated: true
   image-clip: 1 59 89 1
   height: 1
   phantom: true
 
 ComboBoxPopupMenu < UIPopupMenu
-  image-source: /core_styles/images/combobox.png
+  image-source: /core_styles/styles/images/combobox.png
   image-clip: 0 60 89 20
   image-border: 1
   image-border-top: 0
@@ -33,7 +33,7 @@ ComboBox < UIComboBox
   size: 86 20
   text-offset: 3 0
   text-align: left
-  image-source: /core_styles/images/combobox.png
+  image-source: /core_styles/styles/images/combobox.png
   image-border: 1
   image-border-right: 17
   image-clip: 0 0 89 20

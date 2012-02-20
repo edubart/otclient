@@ -166,7 +166,7 @@ void Item::draw(const Point& dest, float scaleFactor, bool animate)
         itemProgram = PainterShaderProgramPtr(new PainterShaderProgram);
         itemProgram->addShaderFromSourceCode(Shader::Vertex, glslMainWithTexCoordsVertexShader + glslPositionOnlyVertexShader);
         itemProgram->addShaderFromSourceFile(Shader::Fragment, "/game_shaders/item.frag");
-        assert(itemProgram->link());
+        itemProgram->link();
         //itemProgram->bindUniformLocation(ITEM_ID_UNIFORM, "itemId");
     }
     g_painter.setCustomProgram(itemProgram);

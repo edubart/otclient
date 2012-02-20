@@ -3,19 +3,11 @@ Module
   description: Create the game interface, where the ingame stuff starts
   author: OTClient team
   website: https://github.com/edubart/otclient
+  reloadable: true
 
   dependencies:
-    - game_healthbar
-    - game_inventory
-    - game_skills
-    - game_textmessage
-    - game_viplist
-    - game_console
-    - game_outfit
-    - game_containers
-    - game_combatcontrols
-    - game_hotkeys
-    - game_battle
+    - game_tibiafiles
+    //- game_shaders
 
   onLoad: |
     dofile 'game'

@@ -27,7 +27,7 @@ ModuleValueLabel < UILabel
   font: verdana-11px-antialised
   color: #aaaaaa
   text-offset: 3 0
-  image-source: /core_styles/images/panel_flat.png
+  image-source: /core_styles/styles/images/panel_flat.png
   image-border: 1
   height: 16
 
@@ -92,9 +92,9 @@ MainWindow
     //  id: moduleAutoload
 
     //ModuleInfoLabel
-    //  text: Autoload antecedence
+    //  text: Autoload priority
     //ModuleValueLabel
-    //  id: moduleLoadAntecedence
+    //  id: moduleLoadPriority
     //  text: 1000
 
     ModuleInfoLabel
@@ -118,7 +118,7 @@ MainWindow
     anchors.left: moduleInfo.left
     margin-top: 8
     text: Load
-    visible: false
+    enabled: false
     @onClick: ModuleManager.reloadCurrentModule()
 
   Button
@@ -128,6 +128,14 @@ MainWindow
     margin-left: 10
     margin-top: 8
     text: Unload
-    visible: false
+    enabled: false
     @onClick: ModuleManager.unloadCurrentModule()
+
+  Button
+    id: closeButton
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    text: Close
+    width: 60
+    @onClick: ModuleManager.hide()
 

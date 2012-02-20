@@ -90,7 +90,7 @@ void Creature::internalDrawOutfit(const Point& dest, float scaleFactor, bool ani
         outfitProgram = PainterShaderProgramPtr(new PainterShaderProgram);
         outfitProgram->addShaderFromSourceCode(Shader::Vertex, glslMainWithTexCoordsVertexShader + glslPositionOnlyVertexShader);
         outfitProgram->addShaderFromSourceFile(Shader::Fragment, "/game_shaders/outfit.frag");
-        assert(outfitProgram->link());
+        outfitProgram->link();
         outfitProgram->bindUniformLocation(HEAD_COLOR_UNIFORM, "headColor");
         outfitProgram->bindUniformLocation(BODY_COLOR_UNIFORM, "bodyColor");
         outfitProgram->bindUniformLocation(LEGS_COLOR_UNIFORM, "legsColor");

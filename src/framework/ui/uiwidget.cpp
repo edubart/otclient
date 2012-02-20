@@ -109,6 +109,11 @@ void UIWidget::addChild(const UIWidgetPtr& child)
         return;
     }
 
+    if(child->isDestroyed()) {
+        logWarning("attemp to add a destroyed child into a UIWidget");
+        return;
+    }
+
     if(hasChild(child)) {
         logWarning("attempt to add a child again into a UIWidget");
         return;
@@ -145,7 +150,10 @@ void UIWidget::insertChild(int index, const UIWidgetPtr& child)
 
     index = index <= 0 ? (m_children.size() + index) : index-1;
 
-    assert(index >= 0 && (uint)index <= m_children.size());
+    if(!(index >= 0 && (uint)index <= m_children.size())) {
+        logTraceError("attemp to insert a child in an invalid index");
+        return;
+    }
 
     // retrieve child by index
     auto it = m_children.begin() + index;
@@ -300,7 +308,11 @@ void UIWidget::lowerChild(UIWidgetPtr child)
 
     // remove and push child again
     auto it = std::find(m_children.begin(), m_children.end(), child);
-    assert(it != m_children.end());
+    if(it == m_children.end()) {
+        logTraceError("cannot find child");
+        return;
+    }
+
     m_children.erase(it);
     m_children.push_front(child);
     updateChildrenIndexStates();
@@ -316,7 +328,10 @@ void UIWidget::raiseChild(UIWidgetPtr child)
 
     // remove and push child again
     auto it = std::find(m_children.begin(), m_children.end(), child);
-    assert(it != m_children.end());
+    if(it == m_children.end()) {
+        logTraceError("cannot find child");
+        return;
+    }
     m_children.erase(it);
     m_children.push_back(child);
     updateChildrenIndexStates();
@@ -332,7 +347,10 @@ void UIWidget::moveChildToIndex(const UIWidgetPtr& child, int index)
 
     // remove and push child again
     auto it = std::find(m_children.begin(), m_children.end(), child);
-    assert(it != m_children.end());
+    if(it == m_children.end()) {
+        logTraceError("cannot find child");
+        return;
+    }
     m_children.erase(it);
     m_children.insert(m_children.begin() + index - 1, child);
     updateChildrenIndexStates();
@@ -346,7 +364,10 @@ void UIWidget::lockChild(const UIWidgetPtr& child)
     if(!child)
         return;
 
-    assert(hasChild(child));
+    if(!hasChild(child)) {
+        logTraceError("cannot find child");
+        return;
+    }
 
     // prevent double locks
     if(isChildLocked(child))
@@ -365,8 +386,6 @@ void UIWidget::lockChild(const UIWidgetPtr& child)
     // lock child focus
     if(child->isFocusable())
         focusChild(child, Fw::ActiveFocusReason);
-
-    raiseChild(child);
 }
 
 void UIWidget::unlockChild(const UIWidgetPtr& child)
@@ -377,7 +396,10 @@ void UIWidget::unlockChild(const UIWidgetPtr& child)
     if(!child)
         return;
 
-    assert(hasChild(child));
+    if(!hasChild(child)) {
+        logTraceError("cannot find child");
+        return;
+    }
 
     auto it = std::find(m_lockedChildren.begin(), m_lockedChildren.end(), child);
     if(it == m_lockedChildren.end())
@@ -408,8 +430,6 @@ void UIWidget::unlockChild(const UIWidgetPtr& child)
     if(lockedChild) {
         if(lockedChild->isFocusable())
             focusChild(lockedChild, Fw::ActiveFocusReason);
-
-        raiseChild(lockedChild);
     }
 }
 

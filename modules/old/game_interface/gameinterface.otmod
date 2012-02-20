@@ -1,0 +1,20 @@
+Module
+  name: game_interface
+  description: |
+    Create the game main interface (map and bottom/left/right panels),
+    any game module must use it to add ingame interfaces
+
+  author: OTClient team
+  website: https://github.com/edubart/otclient
+
+  onLoad: |
+    dofile 'uiminiwindow'
+    dofile 'uiminiwindowcontainer'
+    dofile 'uiitem'
+    dofile 'uimap'
+    dofile 'gameinterface'
+
+    GameInterface.init()
+
+  onUnload: |
+    GameInterface.terminate()

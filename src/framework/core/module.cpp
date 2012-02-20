@@ -56,6 +56,14 @@ bool Module::load()
     logInfo("Loaded module '", m_name, "'");
     g_modules.updateModuleLoadOrder(asModule());
 
+    for(const std::string& modName : m_loadLaterModules) {
+        ModulePtr dep = g_modules.getModule(modName);
+        if(!dep)
+            logError("Unable to find module '", modName, "' required by '", m_name, "'");
+        else if(!dep->isLoaded())
+            dep->load();
+    }
+
     return true;
 }
 
@@ -100,8 +108,8 @@ void Module::discover(const OTMLNodePtr& moduleNode)
     m_website = moduleNode->valueAt("website", none);
     m_version = moduleNode->valueAt("version", none);
     m_autoLoad = moduleNode->valueAt<bool>("autoload", false);
-    m_unloadable = moduleNode->valueAt<bool>("unloadable", true);
-    m_autoLoadAntecedence = moduleNode->valueAt<int>("autoload-antecedence", 9999);
+    m_reloadable = moduleNode->valueAt<bool>("reloadable", false);
+    m_autoLoadPriority = moduleNode->valueAt<int>("autoload-priority", 9999);
 
     if(OTMLNodePtr node = moduleNode->get("dependencies")) {
         for(const OTMLNodePtr& tmp : node->children())
@@ -109,16 +117,21 @@ void Module::discover(const OTMLNodePtr& moduleNode)
     }
 
     // set onLoad callback
-    if(OTMLNodePtr node = moduleNode->get("onLoad")) {
+    if(OTMLNodePtr node = moduleNode->get("@onLoad")) {
         g_lua.loadFunction(node->value(), "@" + node->source() + "[" + node->tag() + "]");
         g_lua.useValue();
         m_loadCallback = g_lua.polymorphicPop<SimpleCallback>();
     }
 
     // set onUnload callback
-    if(OTMLNodePtr node = moduleNode->get("onUnload")) {
+    if(OTMLNodePtr node = moduleNode->get("@onUnload")) {
         g_lua.loadFunction(node->value(), "@" + node->source() + "[" + node->tag() + "]");
         g_lua.useValue();
         m_unloadCallback = g_lua.polymorphicPop<SimpleCallback>();
+    }
+
+    if(OTMLNodePtr node = moduleNode->get("load-later")) {
+        for(const OTMLNodePtr& tmp : node->children())
+            m_loadLaterModules.push_back(tmp->value());
     }
 }

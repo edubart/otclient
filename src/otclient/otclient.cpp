@@ -43,8 +43,7 @@ void OTClient::init(const std::vector<std::string>& args)
     g_modules.ensureModuleLoaded("core_lib");
     // client modules 100-499
     g_modules.autoLoadModules(499);
-    g_modules.ensureModuleLoaded("client_main");
-    g_modules.ensureModuleLoaded("client_tibiafiles");
+    g_modules.ensureModuleLoaded("client");
     // game modules 500-999
     g_modules.autoLoadModules(999);
     g_modules.ensureModuleLoaded("game");

@@ -110,26 +110,27 @@ function Terminal.init()
   terminalWidget = displayUI('terminal.otui')
   terminalWidget:setVisible(false)
 
-  terminalButton = TopMenu.addButton('terminalButton', 'Terminal (Ctrl + T)', 'terminal.png', Terminal.toggle)
+  terminalButton = TopMenu.addLeftButton('terminalButton', 'Terminal (Ctrl + T)', 'terminal.png', Terminal.toggle)
   Keyboard.bindKeyDown('Ctrl+T', Terminal.toggle)
 
   commandHistory = Settings.getList('terminal-history')
 
   commandLineEdit = terminalWidget:getChildById('commandLineEdit')
-  Keyboard.bindKeyDown('Up', function() navigateCommand(1) end, commandLineEdit)
-  Keyboard.bindKeyDown('Down', function() navigateCommand(-1) end, commandLineEdit)
+  Keyboard.bindKeyPress('Up', function() navigateCommand(1) end, commandLineEdit)
+  Keyboard.bindKeyPress('Down', function() navigateCommand(-1) end, commandLineEdit)
   Keyboard.bindKeyDown('Tab', completeCommand, commandLineEdit)
   Keyboard.bindKeyDown('Enter', doCommand, commandLineEdit)
+  Keyboard.bindKeyDown('Escape', Terminal.hide, terminalWidget)
 
   terminalBuffer = terminalWidget:getChildById('terminalBuffer')
-  Logger.setOnLog(onLog)
-  Logger.fireOldMessages()
+  g_logger.setOnLog(onLog)
+  g_logger.fireOldMessages()
 end
 
 function Terminal.terminate()
   Settings.setList('terminal-history', commandHistory)
   Keyboard.unbindKeyDown('Ctrl+T')
-  Logger.setOnLog(nil)
+  g_logger.setOnLog(nil)
   terminalButton:destroy()
   terminalButton = nil
   commandLineEdit = nil
@@ -150,11 +151,11 @@ end
 
 function Terminal.show()
   terminalWidget:show()
-  terminalWidget:lock()
+  terminalWidget:raise()
+  terminalWidget:focus()
 end
 
 function Terminal.hide()
-  terminalWidget:unlock()
   terminalWidget:hide()
 end
 
@@ -178,7 +179,7 @@ function Terminal.executeCommand(command)
   if command == nil or #command == 0 then return end
 
   logLocked = true
-  Logger.log(LogInfo, '>> ' .. command)
+  g_logger.log(LogInfo, '>> ' .. command)
   logLocked = false
 
   -- detect and convert commands with simple syntax
@@ -210,7 +211,7 @@ function Terminal.executeCommand(command)
 
   -- check for syntax errors
   if not func then
-    Logger.log(LogError, 'incorrect lua syntax: ' .. err:sub(5))
+    g_logger.log(LogError, 'incorrect lua syntax: ' .. err:sub(5))
     return
   end
 
@@ -223,6 +224,6 @@ function Terminal.executeCommand(command)
     -- if the command returned a value, print it
     if ret then print(ret) end
   else
-    Logger.log(LogError, 'command failed: ' .. ret)
+    g_logger.log(LogError, 'command failed: ' .. ret)
   end
 end

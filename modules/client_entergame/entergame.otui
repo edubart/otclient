@@ -5,7 +5,7 @@ MainWindow
   @onEnter: EnterGame.doLogin()
   @onEscape: EnterGame.hide()
 
-  LargerLabel
+  Label
     text: Account name
     anchors.left: parent.left
     anchors.top: parent.top
@@ -17,7 +17,7 @@ MainWindow
     anchors.top: prev.bottom
     margin-top: 2
 
-  LargerLabel
+  Label
     text: Password
     anchors.left: prev.left
     anchors.top: prev.bottom
@@ -30,7 +30,7 @@ MainWindow
     anchors.top: prev.bottom
     margin-top: 2
 
-  LargerLabel
+  Label
     id: serverLabel
     width: 140
     text: Server
@@ -46,7 +46,7 @@ MainWindow
     anchors.top: serverLabel.bottom
     margin-top: 2
 
-  LargerLabel
+  Label
     id: portLabel
     text: Port
     width: 50

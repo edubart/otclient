@@ -42,7 +42,7 @@ public:
 
     int getMaxTextureSize();
     const Size& getViewportSize() { return m_viewportSize; }
-    TexturePtr getEmptyTexture() { return m_emptyTexture; }
+    TexturePtr& getEmptyTexture() { return m_emptyTexture; }
 
 private:
     Size m_viewportSize;

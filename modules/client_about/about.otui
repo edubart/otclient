@@ -3,6 +3,9 @@ MainWindow
   text: Info
   size: 244 221
 
+  @onEnter: About.hide()
+  @onEscape: About.hide()
+
   FlatPanel
     size: 208 129
     anchors.left: parent.left
@@ -52,4 +55,4 @@ MainWindow
     size: 46 24
     anchors.right: parent.right
     anchors.bottom: parent.bottom
-    @onClick: self:getParent():destroy()
+    @onClick: About.hide()

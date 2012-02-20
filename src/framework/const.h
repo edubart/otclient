@@ -30,7 +30,7 @@
 
 namespace Fw
 {
-    static const double pi = 3.14159265;
+    constexpr double pi = 3.14159265;
 
     // NOTE: AABBGGRR order
     enum GlobalColor : uint32 {

@@ -1,57 +1,13 @@
 rootWidget = g_ui.getRootWidget()
 
-function importStyle(otui)
-  g_ui.importStyle(resolvepath(otui, 2))
-end
+importStyle = g_ui.importStyle
+importFont = g_fonts.importFont
+setDefaultFont = g_fonts.setDefaultFont
 
-function importFont(otfont)
-  g_fonts.importFont(resolvepath(otfont, 2))
-end
+loadUI = g_ui.loadUI
 
-function setDefaultFont(font)
-  g_fonts.setDefaultFont(font)
-end
-
-function displayUI(arg1, options)
-  local widget
-  local parent
-  if options then parent = options.parent end
+function displayUI(otui, parent)
   parent = parent or rootWidget
-
-  -- display otui files
-  if type(arg1) == 'string' then
-    local otuiFilePath = resolvepath(arg1, 2)
-    widget = g_ui.loadUI(otuiFilePath, parent)
-  -- display already loaded widgets
-  else
-    widget = arg1
-    if parent:hasChild(widget) then
-      widget:focus()
-      widget:show()
-    else
-      parent:addChild(widget)
-      widget:show()
-    end
-  end
-
-  -- apply display options
-  if widget and options then
-    for option,value in pairs(options) do
-      if option == 'locked' and value then
-        widget:lock()
-      elseif option == 'visible' then
-        widget:setVisible(value)
-      elseif option == 'x' then
-        widget:setX(value)
-      elseif option == 'y' then
-        widget:setY(value)
-      end
-    end
-  end
-  return widget
-end
-
-function loadUI(otui, parent)
   local otuiFilePath = resolvepath(otui, 2)
   return g_ui.loadUI(otuiFilePath, parent)
 end
@@ -65,7 +21,7 @@ function createWidget(style, parent)
 
   local class = _G[className]
   if not class then
-    error('could not find widget class ' .. class)
+    error('could not find widget class ' .. className)
     return
   end
 
@@ -78,6 +34,28 @@ function createWidget(style, parent)
   end
   widget:setStyle(style)
   return widget
+end
+
+function scheduleEvent(callback, delay)
+  local event = g_dispatcher.scheduleEvent(callback, delay)
+
+  -- must hold a reference to the callback, otherwise it would be collected
+  event._callback = callback
+  return event
+end
+
+function addEvent(callback, front)
+  local event = g_dispatcher.addEvent(callback, front)
+  -- must hold a reference to the callback, otherwise it would be collected
+  event._callback = callback
+  return event
+end
+
+function removeEvent(event)
+  if event then
+    event:cancel()
+    event._callback = nil
+  end
 end
 
 function reloadModule(name)

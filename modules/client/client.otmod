@@ -1,0 +1,23 @@
+Module
+  name: client
+  description: Initialize the client and setups its main window
+  author: OTClient team
+  website: https://github.com/edubart/otclient
+  autoload: true
+  autoload-priority: 100
+
+  load-later:
+    - client_topmenu
+    - client_background
+    - client_about
+    - client_options
+    - client_terminal
+    - client_modulemanager
+    - client_entergame
+
+  @onLoad: |
+    dofile 'client'
+    Client.init()
+
+  @onUnload: |
+    Client.terminate()

@@ -20,14 +20,14 @@
  * THE SOFTWARE.
  */
 
-static int VERTEX_COORDS_ATTR = 0;
-static int TEXTURE_COORDS_ATTR = 1;
+const static int VERTEX_COORDS_ATTR = 0;
+const static int TEXTURE_COORDS_ATTR = 1;
 
-static int PROJECTION_MATRIX_UNIFORM = 0;
-static int TEXTURE_TRANSFORM_MATRIX_UNIFORM = 1;
-static int COLOR_UNIFORM = 2;
-static int OPACITY_UNIFORM = 3;
-static int TEXTURE_UNIFORM = 4;
+const static int PROJECTION_MATRIX_UNIFORM = 0;
+const static int TEXTURE_TRANSFORM_MATRIX_UNIFORM = 1;
+const static int COLOR_UNIFORM = 2;
+const static int OPACITY_UNIFORM = 3;
+const static int TEXTURE_UNIFORM = 4;
 
 static const std::string glslMainVertexShader = "\n\
     highp vec4 calculatePosition();\n\

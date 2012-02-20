@@ -13,7 +13,7 @@ OPTION(USE_OPENGL_ES2 "Use OpenGL ES 2.0 (for mobiles devices)" OFF)
 
 # set debug as default build type
 IF(NOT CMAKE_BUILD_TYPE)
-    SET(CMAKE_BUILD_TYPE Debug)
+    SET(CMAKE_BUILD_TYPE RelWithDebInfo)
 ENDIF(NOT CMAKE_BUILD_TYPE)
 
 # find needed libraries
@@ -36,17 +36,26 @@ FIND_PACKAGE(ZLIB REQUIRED)
 
 # setup compiler options
 IF(CMAKE_COMPILER_IS_GNUCXX)
-    SET(CXX_WARNS "-Wall -Wextra -Werror -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-unused-variable -Wno-switch -Wno-missing-field-initializers")
-    SET(CMAKE_CXX_FLAGS "-std=gnu++0x -pipe ${CXX_WARNS}")
-    SET(CMAKE_CXX_FLAGS_DEBUG "-O0 -g3 -ggdb3 -fno-inline")
-    SET(CMAKE_CXX_FLAGS_RELEASE "-O2")
-    SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O1 -g -ggdb -fno-inline")
-    SET(CMAKE_CXX_LINK_FLAGS "-static-libgcc -static-libstdc++ -Wl,--as-needed")
+    SET(CXX_WARNS "-Wall -Wextra -Werror -Wno-unused-parameter -Wno-unused-but-set-variable")
+    SET(CMAKE_CXX_FLAGS                "-std=gnu++0x -pipe ${CXX_WARNS}")
+    SET(CMAKE_C_FLAGS                  "-pipe ${CXX_WARNS}")
+    SET(CMAKE_CXX_FLAGS_DEBUG          "-O0 -g -ggdb")
+    SET(CMAKE_C_FLAGS_DEBUG            "-O0 -g -ggdb")
+    SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O1 -g -ggdb")
+    SET(CMAKE_C_FLAGS_RELWITHDEBINFO   "-O1 -g -ggdb")
+    SET(CMAKE_CXX_FLAGS_RELEASE        "-O2")
+    SET(CMAKE_C_FLAGS_RELEASE          "-O2")
+    SET(CMAKE_CXX_LINK_FLAGS           "-static-libgcc -static-libstdc++ -Wl,--as-needed")
 ENDIF(CMAKE_COMPILER_IS_GNUCXX)
 
 IF(CMAKE_BUILD_TYPE STREQUAL "Debug")
     ADD_DEFINITIONS(-DDEBUG)
 ENDIF(CMAKE_BUILD_TYPE STREQUAL "Debug")
+
+IF(CMAKE_BUILD_TYPE STREQUAL "Release")
+    # NDEBUG disable asserts
+    ADD_DEFINITIONS(-DNDEBUG)
+ENDIF(CMAKE_BUILD_TYPE STREQUAL "Release")
 
 MESSAGE(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
 IF(USE_OPENGL_ES2)
@@ -194,4 +203,5 @@ SET(framework_SOURCES ${framework_SOURCES}
 
     # framework third party
     ${CMAKE_CURRENT_LIST_DIR}/thirdparty/apngloader.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/thirdparty/lbitlib-5.2.0-backport4.c
 )

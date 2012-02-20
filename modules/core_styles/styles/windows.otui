@@ -5,7 +5,7 @@ Window < UIWindow
   color: white
   text-offset: 0 2
   text-align: top
-  image-source: /core_styles/images/window.png
+  image-source: /core_styles/styles/images/window.png
   image-border: 4
   image-border-top: 20
   opacity: 1
@@ -35,7 +35,7 @@ MiniWindow < UIMiniWindow
   margin-left: 6
   margin-right: 6
   move-policy: free updated
-  image-source: /core_styles/images/mini_window.png
+  image-source: /core_styles/styles/images/mini_window.png
   image-border: 4
   image-border-top: 23
   padding: 25 8 2 8

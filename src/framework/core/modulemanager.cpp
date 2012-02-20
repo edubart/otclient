@@ -40,17 +40,17 @@ void ModuleManager::discoverModules()
             if(boost::ends_with(moduleFile, ".otmod")) {
                 ModulePtr module = discoverModule("/" + moduleDir + "/" + moduleFile);
                 if(module && module->isAutoLoad())
-                    m_autoLoadModules.insert(make_pair(module->getAutoLoadAntecedence(), module));
+                    m_autoLoadModules.insert(make_pair(module->getAutoLoadPriority(), module));
             }
         }
     }
 }
 
-void ModuleManager::autoLoadModules(int maxAntecedence)
+void ModuleManager::autoLoadModules(int maxPriority)
 {
     for(auto& pair : m_autoLoadModules) {
         int priority = pair.first;
-        if(priority > maxAntecedence)
+        if(priority > maxPriority)
             break;
         ModulePtr module = pair.second;
         if(!module->isLoaded() && !module->load())

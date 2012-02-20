@@ -73,8 +73,6 @@ void Particle::update(double elapsedTime)
 
 void Particle::updatePosition(double elapsedTime)
 {
-    bool mustRedraw = false;
-
     if(m_ignorePhysicsAfter < 0 || m_elapsedTime < m_ignorePhysicsAfter ) {
         // update position
         PointF delta = m_velocity * elapsedTime;
@@ -83,7 +81,6 @@ void Particle::updatePosition(double elapsedTime)
         PointF position = m_position + delta;
 
         if(m_position != position) {
-            mustRedraw = true;
             m_position += delta;
         }
 
@@ -96,11 +93,8 @@ void Particle::updatePosition(double elapsedTime)
 
 void Particle::updateSize()
 {
-    bool mustRedraw = false;
-
     Size size = m_startSize + (m_finalSize - m_startSize) / m_duration * m_elapsedTime;
     if(m_size != size) {
-        mustRedraw = true;
         m_size = size;
     }
 
@@ -109,15 +103,12 @@ void Particle::updateSize()
 
 void Particle::updateColor()
 {
-    bool mustRedraw = false;
-
     if(m_elapsedTime < m_colorsStops[1]) {
         Color color = Color(m_colors[0].r() + (m_colors[1].r() - m_colors[0].r()) / (m_colorsStops[1] - m_colorsStops[0]) * (m_elapsedTime - m_colorsStops[0]),
                             m_colors[0].g() + (m_colors[1].g() - m_colors[0].g()) / (m_colorsStops[1] - m_colorsStops[0]) * (m_elapsedTime - m_colorsStops[0]),
                             m_colors[0].b() + (m_colors[1].b() - m_colors[0].b()) / (m_colorsStops[1] - m_colorsStops[0]) * (m_elapsedTime - m_colorsStops[0]),
                             m_colors[0].a() + (m_colors[1].a() - m_colors[0].a()) / (m_colorsStops[1] - m_colorsStops[0]) * (m_elapsedTime - m_colorsStops[0]));
         if(m_color != color) {
-            mustRedraw = true;
             m_color = color;
         }
     }
@@ -128,7 +119,6 @@ void Particle::updateColor()
         }
         else {
             if(m_color != m_colors[0]) {
-                mustRedraw = true;
                 m_color = m_colors[0];
             }
         }

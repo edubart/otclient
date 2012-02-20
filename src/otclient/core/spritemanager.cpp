@@ -57,7 +57,7 @@ void SpriteManager::unload()
 
 void SpriteManager::preloadSprites()
 {
-    // preload every 100 sprites, periodically
+    // preload every 50 sprites, periodically
     const int burst = 50;
     const int interval = 10;
     auto preload = [this](int start) {
@@ -138,7 +138,7 @@ TexturePtr SpriteManager::loadSpriteTexture(int id)
     return spriteTex;
 }
 
-TexturePtr SpriteManager::getSpriteTexture(int id)
+TexturePtr& SpriteManager::getSpriteTexture(int id)
 {
     if(id == 0)
         return g_graphics.getEmptyTexture();

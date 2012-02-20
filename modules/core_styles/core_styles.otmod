@@ -3,11 +3,16 @@ Module
   description: Contains ui styles used by other modules
   author: OTClient team
   website: https://github.com/edubart/otclient
-  reloadable: true
   autoload: true
-  autoload-antecedence: 20
+  autoload-priority: 20
 
-  onLoad: |
+  @onLoad: |
+    importFont 'fonts/verdana-11px-antialised'
+    importFont 'fonts/verdana-11px-monochrome'
+    importFont 'fonts/verdana-11px-rounded'
+    importFont 'fonts/terminus-14px-bold'
+    setDefaultFont 'verdana-11px-antialised'
+
     importStyle 'styles/buttons.otui'
     importStyle 'styles/labels.otui'
     importStyle 'styles/panels.otui'

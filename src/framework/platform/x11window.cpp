@@ -261,7 +261,8 @@ void X11Window::internalCreateWindow()
     Visual *vis;
     int depth;
     unsigned int attrsMask = CWEventMask;
-    XSetWindowAttributes attrs = {0};
+    XSetWindowAttributes attrs;
+    memset(&attrs, 0, sizeof(attrs));
 
     attrs.event_mask = KeyPressMask | KeyReleaseMask |
                        ButtonPressMask | ButtonReleaseMask | PointerMotionMask |
@@ -290,6 +291,8 @@ void X11Window::internalCreateWindow()
                              InputOutput,
                              vis,
                              attrsMask, &attrs);
+    m_visible = true;
+
     if(!m_window)
         logFatal("Unable to create X11 window!");
 
@@ -474,12 +477,9 @@ bool X11Window::isExtensionSupported(const char *ext)
 
 void X11Window::move(const Point& pos)
 {
-    bool wasVisible = isVisible();
-    if(!wasVisible)
-        show();
-    XMoveWindow(m_display, m_window, pos.x, pos.y);
-    if(!wasVisible)
-        hide();
+    m_position = pos;
+    if(m_visible)
+        XMoveWindow(m_display, m_window, m_position.x, m_position.y);
 }
 
 void X11Window::resize(const Size& size)
@@ -489,33 +489,45 @@ void X11Window::resize(const Size& size)
 
 void X11Window::show()
 {
+    m_visible = true;
     XMapWindow(m_display, m_window);
+    XMoveWindow(m_display, m_window, m_position.x, m_position.y);
+    XFlush(m_display);
+    if(m_maximized)
+        maximize();
+    if(m_fullscreen)
+        setFullscreen(true);
 }
 
 void X11Window::hide()
 {
+    m_visible = false;
     XUnmapWindow(m_display, m_window);
+    XFlush(m_display);
 }
 
 void X11Window::maximize()
 {
-    Atom wmState = XInternAtom(m_display, "_NET_WM_STATE", False);
-    Atom wmStateMaximizedVert = XInternAtom(m_display, "_NET_WM_STATE_MAXIMIZED_VERT", False);
-    Atom wmStateMaximizedHorz = XInternAtom(m_display, "_NET_WM_STATE_MAXIMIZED_HORZ", False);
+    if(m_visible) {
+        Atom wmState = XInternAtom(m_display, "_NET_WM_STATE", False);
+        Atom wmStateMaximizedVert = XInternAtom(m_display, "_NET_WM_STATE_MAXIMIZED_VERT", False);
+        Atom wmStateMaximizedHorz = XInternAtom(m_display, "_NET_WM_STATE_MAXIMIZED_HORZ", False);
 
-    XEvent e = {0};
-    e.xany.type = ClientMessage;
-    e.xclient.send_event = True;
-    e.xclient.message_type = wmState;
-    e.xclient.format = 32;
-    e.xclient.window = m_window;
-    e.xclient.data.l[0] = 1;
-    e.xclient.data.l[1] = wmStateMaximizedVert;
-    e.xclient.data.l[2] = wmStateMaximizedHorz;
-    e.xclient.data.l[3] = 0;
+        XEvent e = {0};
+        e.xany.type = ClientMessage;
+        e.xclient.send_event = True;
+        e.xclient.message_type = wmState;
+        e.xclient.format = 32;
+        e.xclient.window = m_window;
+        e.xclient.data.l[0] = 1;
+        e.xclient.data.l[1] = wmStateMaximizedVert;
+        e.xclient.data.l[2] = wmStateMaximizedHorz;
+        e.xclient.data.l[3] = 0;
 
-    XSendEvent(m_display, m_rootWindow, 0, SubstructureNotifyMask | SubstructureRedirectMask, &e);
-    XFlush(m_display);
+        XSendEvent(m_display, m_rootWindow, 0, SubstructureNotifyMask | SubstructureRedirectMask, &e);
+        XFlush(m_display);
+    }
+    m_maximized = true;
 }
 
 void X11Window::poll()
@@ -543,7 +555,7 @@ void X11Window::poll()
             // lookup keysym and translate it
             KeySym keysym;
             char buf[32];
-            int len = XLookupString(&xkey, buf, sizeof(buf), &keysym, 0);
+            XLookupString(&xkey, buf, sizeof(buf), &keysym, 0);
             Fw::Key keyCode = Fw::KeyUnknown;
 
             if(m_keyMap.find(keysym) != m_keyMap.end())
@@ -580,8 +592,41 @@ void X11Window::poll()
                     needsResizeUpdate = true;
                 }
 
+                // checks if the window is maximized
+                if(m_visible) {
+                    m_maximized = false;
+                    Atom wmState = XInternAtom(m_display, "_NET_WM_STATE", False);
+                    Atom wmStateMaximizedVert = XInternAtom(m_display, "_NET_WM_STATE_MAXIMIZED_VERT", False);
+                    Atom wmStateMaximizedHorz = XInternAtom(m_display, "_NET_WM_STATE_MAXIMIZED_HORZ", False);
+                    Atom actualType;
+                    ulong i, numItems, bytesAfter;
+                    uchar *propertyValue = NULL;
+                    int actualFormat;
+
+                    if(XGetWindowProperty(m_display, m_window, wmState,
+                                        0, 1024, False, XA_ATOM, &actualType,
+                                        &actualFormat, &numItems, &bytesAfter,
+                                        &propertyValue) == Success) {
+                        Atom *atoms = (Atom*)propertyValue;
+                        int maximizedMask = 0;
+
+                        for(i=0; i<numItems; ++i) {
+                            if(atoms[i] == wmStateMaximizedVert)
+                                maximizedMask |= 1;
+                            else if(atoms[i] == wmStateMaximizedHorz)
+                                maximizedMask |= 2;
+                        }
+
+                        if(maximizedMask == 3)
+                            m_maximized = true;
+
+                        XFree(propertyValue);
+                    }
+                }
+        
                 // updates window pos
-                m_position = newPos;
+                if(m_visible)
+                    m_position = newPos;
                 updateUnmaximizedCoords();
                 break;
             }
@@ -754,7 +799,8 @@ void X11Window::hideMouse()
 
     char bm[] = { 0, 0, 0, 0, 0, 0, 0, 0 };
     Pixmap pix = XCreateBitmapFromData(m_display, m_window, bm, 8, 8);
-    XColor black = {0};
+    XColor black;
+    memset(&black, 0, sizeof(black));
     black.flags = DoRed | DoGreen | DoBlue;
     m_cursor = XCreatePixmapCursor(m_display, pix, pix, &black, &black, 0, 0);
     XFreePixmap(m_display, pix);
@@ -843,7 +889,8 @@ void X11Window::setTitle(const std::string& title)
 
 void X11Window::setMinimumSize(const Size& minimumSize)
 {
-    XSizeHints sizeHints = {0};
+    XSizeHints sizeHints;
+    memset(&sizeHints, 0, sizeof(sizeHints));
     sizeHints.flags = PMinSize;
     sizeHints.min_width = minimumSize.width();
     sizeHints.min_height= minimumSize.height();
@@ -852,7 +899,7 @@ void X11Window::setMinimumSize(const Size& minimumSize)
 
 void X11Window::setFullscreen(bool fullscreen)
 {
-    if(m_fullscreen != fullscreen) {
+    if(m_visible) {
         Atom wmState = XInternAtom(m_display, "_NET_WM_STATE", False);
         Atom wmStateFullscreen = XInternAtom(m_display, "_NET_WM_STATE_FULLSCREEN", False);
 
@@ -869,9 +916,8 @@ void X11Window::setFullscreen(bool fullscreen)
 
         XSendEvent(m_display, m_rootWindow, False,  SubstructureRedirectMask | SubstructureNotifyMask, &xev);
         XFlush(m_display);
-
-        m_fullscreen = fullscreen;
     }
+    m_fullscreen = fullscreen;
 }
 
 void X11Window::setVerticalSync(bool enable)
@@ -1000,41 +1046,4 @@ std::string X11Window::getPlatformType()
 #else
     return "X11-EGL";
 #endif
-}
-
-bool X11Window::isMaximized()
-{
-    if(!m_display || !m_window)
-        return false;
-
-    Atom wmState = XInternAtom(m_display, "_NET_WM_STATE", False);
-    Atom wmStateMaximizedVert = XInternAtom(m_display, "_NET_WM_STATE_MAXIMIZED_VERT", False);
-    Atom wmStateMaximizedHorz = XInternAtom(m_display, "_NET_WM_STATE_MAXIMIZED_HORZ", False);
-    Atom actualType;
-    ulong i, numItems, bytesAfter;
-    uchar *propertyValue = NULL;
-    int actualFormat;
-    bool maximized = false;
-
-    if(XGetWindowProperty(m_display, m_window, wmState,
-                          0, 1024, False, XA_ATOM, &actualType,
-                          &actualFormat, &numItems, &bytesAfter,
-                          &propertyValue) == Success) {
-        Atom *atoms = (Atom*)propertyValue;
-        int maximizedMask = 0;
-
-        for(i=0; i<numItems; ++i) {
-            if(atoms[i] == wmStateMaximizedVert)
-                maximizedMask |= 1;
-            else if(atoms[i] == wmStateMaximizedHorz)
-                maximizedMask |= 2;
-        }
-
-        if(maximizedMask == 3)
-            maximized = true;
-
-        XFree(propertyValue);
-    }
-
-    return maximized;
 }

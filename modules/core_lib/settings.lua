@@ -32,7 +32,6 @@ function Settings.set(key, value)
   g_configs.set(key, convertSettingValue(value))
 end
 
-
 function Settings.setDefault(key, value)
   if Settings.exists(key) then return false end
   Settings.set(key, value)

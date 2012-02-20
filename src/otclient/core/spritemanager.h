@@ -38,7 +38,7 @@ public:
     uint32 getSignature() { return m_signature; }
     int getSpritesCount() { return m_spritesCount; }
 
-    TexturePtr getSpriteTexture(int id);
+    TexturePtr& getSpriteTexture(int id);
     bool isLoaded() { return m_loaded; }
 
 private:

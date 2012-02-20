@@ -3,15 +3,16 @@ Module
   description: Manage other modules
   author: OTClient team
   website: https://github.com/edubart/otclient
+  reloadable: true
   autoload: true
-  autoload-antecedence: 140
+  autoload-priority: 140
 
   dependencies:
     - client_topmenu
 
-  onLoad: |
+  @onLoad: |
     dofile 'modulemanager'
     ModuleManager.init()
 
-  onUnload: |
+  @onUnload: |
     ModuleManager.terminate()

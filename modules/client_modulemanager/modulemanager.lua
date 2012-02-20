@@ -16,8 +16,9 @@ function ModuleManager.init()
   Keyboard.bindKeyPress('Up', function() moduleList:focusPreviousChild(KeyboardFocusReason) end, moduleManagerWindow)
   Keyboard.bindKeyPress('Down', function() moduleList:focusNextChild(KeyboardFocusReason) end, moduleManagerWindow)
 
-  moduleManagerButton = TopMenu.addButton('moduleManagerButton', 'Module manager', 'modulemanager.png', ModuleManager.toggle)
+  moduleManagerButton = TopMenu.addLeftButton('moduleManagerButton', 'Module manager', 'modulemanager.png', ModuleManager.toggle)
 
+  -- refresh modules only after all modules are loaded
   addEvent(ModuleManager.listModules)
 end
 
@@ -36,8 +37,8 @@ end
 
 function ModuleManager.show()
   moduleManagerWindow:show()
-  moduleManagerWindow:focus()
   moduleManagerWindow:raise()
+  moduleManagerWindow:focus()
 end
 
 function ModuleManager.toggle()
@@ -98,8 +99,8 @@ function ModuleManager.updateModuleInfo(moduleName)
     website = module:getWebsite()
     version = module:getVersion()
     loaded = module:isLoaded()
+    canReload = module:canReload()
     canUnload = module:canUnload()
-    canReload = not loaded or canUnload
   end
 
   moduleManagerWindow:recursiveGetChildById('moduleName'):setText(name)
@@ -111,12 +112,10 @@ function ModuleManager.updateModuleInfo(moduleName)
 
   local reloadButton = moduleManagerWindow:recursiveGetChildById('moduleReloadButton')
   reloadButton:setEnabled(canReload)
-  reloadButton:setVisible(true)
   if loaded then reloadButton:setText('Reload')
   else reloadButton:setText('Load') end
 
   local unloadButton = moduleManagerWindow:recursiveGetChildById('moduleUnloadButton')
-  unloadButton:setVisible(true)
   unloadButton:setEnabled(canUnload)
 end
 
@@ -126,6 +125,7 @@ function ModuleManager.reloadCurrentModule()
     local module = g_modules.getModule(focusedChild:getText())
     if module then
       module:reload()
+      if ModuleManager == nil then return end
       ModuleManager.updateModuleInfo(module:getName())
       ModuleManager.refreshLoadedModules()
       ModuleManager.show()
@@ -139,6 +139,7 @@ function ModuleManager.unloadCurrentModule()
     local module = g_modules.getModule(focusedChild:getText())
     if module then
       module:unload()
+      if ModuleManager == nil then return end
       ModuleManager.updateModuleInfo(module:getName())
       ModuleManager.refreshLoadedModules()
     end

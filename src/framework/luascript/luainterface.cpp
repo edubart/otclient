@@ -26,6 +26,8 @@
 #include <framework/core/resourcemanager.h>
 #include <lua.hpp>
 
+#include <framework/thirdparty/lbitlib-5.2.0-backport4.h>
+
 LuaInterface g_lua;
 
 LuaInterface::LuaInterface()
@@ -590,6 +592,9 @@ void LuaInterface::createLuaState()
 
     // load lua standard libraries
     luaL_openlibs(L);
+    
+    // load bit32 lib for bitwise operations
+    luaopen_bit32(L);
 
     // creates weak table
     newTable();
@@ -812,7 +817,9 @@ void LuaInterface::getEnv(int index)
 void LuaInterface::setEnv(int index)
 {
     assert(hasIndex(index));
-    assert(lua_setfenv(L, index) == 1);
+    int ret;
+    ret = lua_setfenv(L, index);
+    assert(ret == 1);
 }
 
 void LuaInterface::getTable(int index)

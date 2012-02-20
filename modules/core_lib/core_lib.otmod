@@ -4,9 +4,9 @@ Module
   author: OTClient team
   website: https://github.com/edubart/otclient
   autoload: true
-  autoload-antecedence: 10
+  autoload-priority: 10
 
-  onLoad: |
+  @onLoad: |
     dofile 'ext/table'
     dofile 'ext/string'
     dofile 'ext/os'
@@ -17,9 +17,26 @@ Module
     dofile 'const'
     dofile 'util'
     dofile 'globals'
-    dofile 'dispatcher'
-    dofile 'effects'
     dofile 'settings'
     dofile 'keyboard'
     dofile 'mouse'
+
+    dofile 'ui/effects'
+    dofile 'ui/radiogroup'
+    dofile 'ui/tooltip'
+
+    dofile 'widgets/uiwidget'
+    dofile 'widgets/uibutton'
+    dofile 'widgets/uilabel'
+    dofile 'widgets/uicheckbox'
+    dofile 'widgets/uicombobox'
+    dofile 'widgets/uispinbox'
+    dofile 'widgets/uiprogressbar'
+    dofile 'widgets/uitabbar'
+    dofile 'widgets/uipopupmenu'
+    dofile 'widgets/uiwindow'
+    --dofile 'widgets/uiminiwindow'
+    --dofile 'widgets/uiminiwindowcontainer'
+    dofile 'widgets/uimessagebox'
+
 

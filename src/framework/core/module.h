@@ -37,8 +37,10 @@ public:
     void unload();
     bool reload();
 
-    bool canUnload() { return m_loaded && m_unloadable && !isDependent(); }
+    bool canUnload() { return m_loaded && m_reloadable && !isDependent(); }
+    bool canReload() { return m_reloadable && !isDependent(); }
     bool isLoaded() { return m_loaded; }
+    bool isReloadable() { return m_reloadable; }
     bool isDependent();
     bool hasDependency(const std::string& name);
 
@@ -48,7 +50,7 @@ public:
     std::string getWebsite() { return m_website; }
     std::string getVersion() { return m_version; }
     bool isAutoLoad() { return m_autoLoad; }
-    int getAutoLoadAntecedence() { return m_autoLoadAntecedence; }
+    int getAutoLoadPriority() { return m_autoLoadPriority; }
 
     ModulePtr asModule() { return std::static_pointer_cast<Module>(shared_from_this()); }
 
@@ -59,8 +61,8 @@ protected:
 private:
     Boolean<false> m_loaded;
     Boolean<false> m_autoLoad;
-    Boolean<true> m_unloadable;
-    int m_autoLoadAntecedence;
+    Boolean<false> m_reloadable;
+    int m_autoLoadPriority;
     std::string m_name;
     std::string m_description;
     std::string m_author;
@@ -69,6 +71,7 @@ private:
     SimpleCallback m_loadCallback;
     SimpleCallback m_unloadCallback;
     std::list<std::string> m_dependencies;
+    std::list<std::string> m_loadLaterModules;
 };
 
 #endif

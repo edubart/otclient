@@ -3,12 +3,11 @@ Module
   description: Create the top menu
   author: OTClient team
   website: https://github.com/edubart/otclient
-  autoload: true
-  autoload-antecedence: 120
+  reloadable: true
 
-  onLoad: |
+  @onLoad: |
     dofile 'topmenu'
     TopMenu.init()
 
-  onUnload: |
+  @onUnload: |
     TopMenu.terminate()

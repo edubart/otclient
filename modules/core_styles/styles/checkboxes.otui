@@ -6,7 +6,7 @@ CheckBox < UICheckBox
   image-color: #ffffffff
   image-rect: 0 0 12 12
   image-offset: 0 2
-  image-source: /core_styles/images/checkbox.png
+  image-source: /core_styles/styles/images/checkbox.png
 
   $hover !disabled:
     color: #cccccc
@@ -30,7 +30,7 @@ CheckBox < UICheckBox
 ColorBox < UICheckBox
   size: 16 16
   image-color: #ffffffff
-  image-source: /core_styles/images/colorbox.png
+  image-source: /core_styles/styles/images/colorbox.png
 
   $checked:
     image-clip: 16 0 16 16
@@ -44,16 +44,16 @@ ButtonBox < UICheckBox
   size: 106 24
   text-offset: 0 0
   text-align: center
-  image-source: /core_styles/images/button.png
+  image-source: /core_styles/styles/images/button.png
   image-color: white
   image-border: 5
 
   $hover !disabled:
-    image-source: /core_styles/images/button_hover.png
+    image-source: /core_styles/styles/images/button_hover.png
 
   $checked:
     text-offset: 1 1
-    image-source: /core_styles/images/button_down.png
+    image-source: /core_styles/styles/images/button_down.png
 
   $disabled:
     color: #f0ad4d88

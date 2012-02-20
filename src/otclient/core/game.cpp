@@ -407,6 +407,8 @@ void Game::forceWalk(Otc::Direction direction)
     case Otc::NorthWest:
         m_protocolGame->sendWalkNorthWest();
         break;
+    default:
+        break;
     }
 }
 
@@ -427,6 +429,8 @@ void Game::turn(Otc::Direction direction)
         break;
     case Otc::West:
         m_protocolGame->sendTurnWest();
+        break;
+    default:
         break;
     }
 }

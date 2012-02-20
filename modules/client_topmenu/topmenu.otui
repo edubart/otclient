@@ -1,6 +1,6 @@
 TopButton < UIButton
   size: 26 26
-  image-source: /core_styles/images/top_button.png
+  image-source: images/top_button.png
   image-clip: 0 0 26 26
   image-border: 3
   image-color: #ffffffff
@@ -17,62 +17,57 @@ TopButton < UIButton
     image-color: #ffffff44
     icon-color: #ffffff44
 
-GameTopButton < UIButton
+TopToggleButton < UICheckBox
   size: 26 26
-  image-source: /core_styles/images/top_button2.png
+  image-source: images/top_game_button.png
   image-clip: 26 0 26 26
   image-color: #ffffff22
-  icon-color: #ffffffff
   image-border: 3
+  icon-color: #ffffffff
 
-  $on:
+  $checked:
     image-clip: 0 0 26 26
     image-color: #ffffffff
     icon-color: #ffffffff
 
-TopLeftButton < TopButton
-TopRightButton < TopButton
+TopMenuButtonsPanel < Panel
+  layout:
+    type: horizontalBox
+    spacing: 4
+    fit-children: true
+  padding: 6 4
+
+TopPanel < Panel
+  height: 36
+  image-source: images/top_panel.png
+  image-repeated: true
+  focusable: false
+
 
 TopPanel
   id: topMenu
   anchors.top: parent.top
   anchors.left: parent.left
   anchors.right: parent.right
-  focusable: false
 
-  Panel
+  TopMenuButtonsPanel
     id: leftButtonsPanel
     anchors.top: parent.top
     anchors.bottom: parent.bottom
     anchors.left: parent.left
-    layout:
-      type: horizontalBox
-      spacing: 4
-      fit-children: true
-    padding: 6 4
 
-  Panel
+  TopMenuButtonsPanel
     id: gameButtonsPanel
     anchors.top: parent.top
     anchors.bottom: parent.bottom
     anchors.left: prev.right
     anchors.right: next.left
-    layout:
-      type: horizontalBox
-      spacing: 4
-    padding: 6 4
-    visible: false
 
-  Panel
+  TopMenuButtonsPanel
     id: rightButtonsPanel
     anchors.top: parent.top
     anchors.bottom: parent.bottom
     anchors.right: parent.right
-    layout:
-      type: horizontalBox
-      spacing: 4
-      fit-children: true
-    padding: 6 4
 
   FrameCounter
     id: frameCounter

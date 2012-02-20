@@ -39,12 +39,12 @@ void Painter::init()
     m_drawTexturedProgram = PainterShaderProgramPtr(new PainterShaderProgram);
     m_drawTexturedProgram->addShaderFromSourceCode(Shader::Vertex, glslMainWithTexCoordsVertexShader + glslPositionOnlyVertexShader);
     m_drawTexturedProgram->addShaderFromSourceCode(Shader::Fragment, glslMainFragmentShader + glslTextureSrcFragmentShader);
-    assert(m_drawTexturedProgram->link());
+    m_drawTexturedProgram->link();
 
     m_drawSolidColorProgram = PainterShaderProgramPtr(new PainterShaderProgram);
     m_drawSolidColorProgram->addShaderFromSourceCode(Shader::Vertex, glslMainVertexShader + glslPositionOnlyVertexShader);
     m_drawSolidColorProgram->addShaderFromSourceCode(Shader::Fragment, glslMainFragmentShader + glslSolidColorFragmentShader);
-    assert(m_drawSolidColorProgram->link());
+    m_drawSolidColorProgram->link();
 }
 
 void Painter::terminate()

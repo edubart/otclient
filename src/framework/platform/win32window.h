@@ -75,8 +75,6 @@ public:
     std::string getClipboardText();
     std::string getPlatformType();
 
-    bool isMaximized() { return m_maximized; }
-
 private:
     HWND m_window;
     HINSTANCE m_instance;
@@ -84,7 +82,6 @@ private:
     HGLRC m_glContext;
     HCURSOR m_cursor;
     HCURSOR m_defaultCursor;
-    bool m_maximized;
     Size m_minimumSize;
 };
 

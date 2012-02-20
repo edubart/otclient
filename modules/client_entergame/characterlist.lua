@@ -52,7 +52,27 @@ local function tryLogin(charInfo, tries)
   Settings.set('lastUsedCharacter', charInfo.characterName)
 end
 
+
+function onGameLoginError(message)
+  CharacterList.destroyLoadBox()
+  local errorBox = displayErrorBox("Login Error", "Login error: " .. message)
+  errorBox.onOk = CharacterList.show
+end
+
+function onGameConnectionError(message)
+  CharacterList.destroyLoadBox()
+  local errorBox = displayErrorBox("Login Error", "Connection error: " .. message)
+  errorBox.onOk = CharacterList.show
+end
+
 -- public functions
+function CharacterList.init()
+  connect(g_game, { onLoginError = onGameLoginError })
+  connect(g_game, { onConnectionError = onGameConnectionError })
+  connect(g_game, { onGameStart = CharacterList.destroyLoadBox })
+  connect(g_game, { onGameEnd = CharacterList.show })
+end
+
 function CharacterList.terminate()
   characterList = nil
   if charactersWindow then
@@ -60,6 +80,7 @@ function CharacterList.terminate()
     charactersWindow = nil
   end
   if loadBox then
+    g_game.cancelLogin()
     loadBox:destroy()
     loadBox = nil
   end
@@ -118,6 +139,7 @@ end
 function CharacterList.show()
   if not loadBox then
     charactersWindow:show()
+    charactersWindow:raise()
     charactersWindow:focus()
   end
 end

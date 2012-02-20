@@ -3,20 +3,15 @@ function print(...)
   for i,v in ipairs(arg) do
     msg = msg .. tostring(v) .. "\t"
   end
-  Logger.log(LogInfo, msg)
+  g_logger.log(LogInfo, msg)
 end
 
 function fatal(msg)
-  Logger.log(LogFatal, msg)
+  g_logger.log(LogFatal, msg)
 end
 
-function setonclose(func)
-  g_app.onClose = func
-end
-
-function exit()
-  g_app.exit()
-end
+exit = g_app.exit
+quit = g_app.exit
 
 function connect(object, signalsAndSlots, pushFront)
   for signal,slot in pairs(signalsAndSlots) do

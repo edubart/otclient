@@ -36,7 +36,6 @@ WIN32Window::WIN32Window()
     m_deviceContext = 0;
     m_glContext = 0;
     m_cursor = 0;
-    m_maximized = false;
     m_minimumSize = Size(600,480);
 
     m_keyMap[VK_ESCAPE] = Fw::KeyEscape;
@@ -675,7 +674,9 @@ void WIN32Window::setFullscreen(bool fullscreen)
         return;
 
     DWORD dwStyle = GetWindowLong(m_window, GWL_STYLE);
-    static WINDOWPLACEMENT wpPrev = { sizeof(wpPrev) };
+    static WINDOWPLACEMENT wpPrev;
+    wpPrev.length = sizeof(wpPrev);
+
     if(fullscreen) {
         GetWindowPlacement(m_window, &wpPrev);
         SetWindowLong(m_window, GWL_STYLE, dwStyle & ~WS_OVERLAPPEDWINDOW);

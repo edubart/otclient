@@ -59,11 +59,11 @@ end
 
 -- public functions
 function EnterGame.init()
-  enterGameButton = TopMenu.addButton('enterGameButton', 'Login (Ctrl + G)', '/core_styles/icons/login.png', EnterGame.openWindow)
-  Keyboard.bindKeyDown('Ctrl+G', EnterGame.openWindow)
-  motdButton = TopMenu.addButton('motdButton', 'Message of the day', '/core_styles/icons/motd.png', EnterGame.displayMotd)
-  motdButton:hide()
   enterGame = displayUI('entergame.otui')
+  enterGameButton = TopMenu.addLeftButton('enterGameButton', 'Login (Ctrl + G)', 'login.png', EnterGame.openWindow)
+  motdButton = TopMenu.addLeftButton('motdButton', 'Message of the day', 'motd.png', EnterGame.displayMotd)
+  motdButton:hide()
+  Keyboard.bindKeyDown('Ctrl+G', EnterGame.openWindow)
 
   local account = Settings.get('account')
   local password = Settings.get('password')
@@ -102,6 +102,7 @@ end
 
 function EnterGame.show()
   enterGame:show()
+  enterGame:raise()
   enterGame:focus()
 end
 

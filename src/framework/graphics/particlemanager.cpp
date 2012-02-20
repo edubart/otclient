@@ -30,7 +30,6 @@ bool ParticleManager::load(const std::string& filename)
 {
     try {
         OTMLDocumentPtr doc = OTMLDocument::parse(filename);
-        const OTMLNodePtr& node = doc->at("ParticleSystem");
         for(const OTMLNodePtr& node : doc->children()) {
             if(node->tag() == "ParticleSystem") {
                 ParticleSystemPtr particleSystem = ParticleSystemPtr(new ParticleSystem);

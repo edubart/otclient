@@ -64,6 +64,8 @@ public:
             pos.x--;
             pos.y--;
             break;
+        default:
+            break;
         }
         return pos;
     }
@@ -98,6 +100,8 @@ public:
         case Otc::NorthWest:
             pos.x++;
             pos.y++;
+            break;
+        default:
             break;
         }
         return pos;

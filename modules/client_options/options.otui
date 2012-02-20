@@ -1,6 +1,6 @@
 OptionCheckBox < CheckBox
-  @onCheckChange: Options.changeOption(self:getId(), self:isChecked())
-  @onSetup: self:setChecked(Options[self:getId()])
+  @onCheckChange: Options.setOption(self:getId(), self:isChecked())
+  @onSetup: self:setChecked(Options.getOption(self:getId()))
 
   $first:
     anchors.left: parent.left

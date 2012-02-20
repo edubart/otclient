@@ -41,10 +41,6 @@ function debugContainersItems()
   end
 end
 
-function quit()
-  exit()
-end
-
 function autoReloadModule(name)
   local function reloadEvent()
     reloadModule(name)

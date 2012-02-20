@@ -41,7 +41,6 @@
 #include <otclient/ui/uiitem.h>
 #include <otclient/ui/uicreature.h>
 #include <otclient/ui/uimap.h>
-#include <otclient/ui/uigame.h>
 #include <otclient/core/outfit.h>
 
 
@@ -309,8 +308,4 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIMap>("getTile", &UIMap::getTile);
     g_lua.bindClassMemberFunction<UIMap>("zoomIn", &UIMap::zoomIn);
     g_lua.bindClassMemberFunction<UIMap>("zoomOut", &UIMap::zoomOut);
-
-    g_lua.registerClass<UIGame, UIWidget>();
-    g_lua.bindClassStaticFunction<UIGame>("create", []{ return UIGamePtr(new UIGame); } );
-
 }

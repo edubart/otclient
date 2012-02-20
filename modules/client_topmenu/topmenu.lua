@@ -7,12 +7,25 @@ local rightButtonsPanel
 local gameButtonsPanel
 
 -- private functions
-local function onLogout()
-  if g_game.isOnline() then
-    g_game.safeLogout()
+local function addButton(id, description, icon, callback, panel, toggle)
+  local class
+  if toggle then
+    class = 'TopToggleButton'
   else
-    exit()
+    class = 'TopButton'
   end
+
+  local button = createWidget(class, panel)
+  button:setId(id)
+  button:setTooltip(description)
+  button:setIcon(resolvepath(icon, 3))
+
+  if toggle then
+    button.onCheckChange = callback
+  else
+    button.onClick = callback
+  end
+  return button
 end
 
 -- public functions
@@ -22,15 +35,11 @@ function TopMenu.init()
   rightButtonsPanel = topMenu:getChildById('rightButtonsPanel')
   gameButtonsPanel = topMenu:getChildById('gameButtonsPanel')
 
-  TopMenu.addRightButton('logoutButton', 'Logout (Ctrl+Q)', '/core_styles/icons/logout.png', onLogout)
-  Keyboard.bindKeyDown('Ctrl+Q', onLogout)
-
   connect(g_game, { onGameStart = TopMenu.showGameButtons,
-                  onGameEnd = TopMenu.hideGameButtons })
+                    onGameEnd = TopMenu.hideGameButtons })
 end
 
 function TopMenu.terminate()
-  Keyboard.unbindKeyDown('Ctrl+Q')
   leftButtonsPanel = nil
   rightButtonsPanel = nil
   gameButtonsPanel = nil
@@ -38,45 +47,33 @@ function TopMenu.terminate()
   topMenu = nil
 
   disconnect(g_game, { onGameStart = TopMenu.showGameButtons,
-                     onGameEnd = TopMenu.hideGameButtons })
+                       onGameEnd = TopMenu.hideGameButtons })
 
   TopMenu = nil
 end
 
-function TopMenu.addButton(id, description, icon, callback, right)
-  local panel
-  local class
-  if right then
-    panel = rightButtonsPanel
-    class = 'TopRightButton'
-  else
-    panel = leftButtonsPanel
-    class = 'TopLeftButton'
-  end
-
-  local button = createWidget(class, panel)
-  button:setId(id)
-  button:setTooltip(description)
-  button:setIcon(resolvepath(icon, 2))
-  button.onClick = callback
-  return button
-end
-
-function TopMenu.addGameButton(id, description, icon, callback)
-  local button = createWidget('GameTopButton', gameButtonsPanel)
-  button:setId(id)
-  button:setTooltip(description)
-  button:setIcon(resolvepath(icon, 2))
-  button.onClick = callback
-  return button
-end
-
 function TopMenu.addLeftButton(id, description, icon, callback)
-  return TopMenu.addButton(id, description, resolvepath(icon, 2), callback, false)
+  return addButton(id, description, icon, callback, leftButtonsPanel, false)
+end
+
+function TopMenu.addLeftToggleButton(id, description, icon, callback, right)
+  return addButton(id, description, icon, callback, leftButtonsPanel, true)
 end
 
 function TopMenu.addRightButton(id, description, icon, callback)
-  return TopMenu.addButton(id, description, resolvepath(icon, 2), callback, true)
+  return addButton(id, description, icon, callback, rightButtonsPanel, false)
+end
+
+function TopMenu.addRightToggleButton(id, description, icon, callback, right)
+  return addButton(id, description, icon, callback, rightButtonsPanel, true)
+end
+
+function TopMenu.addGameButton(id, description, icon, callback)
+  return addButton(id, description, icon, callback, gameButtonsPanel, false)
+end
+
+function TopMenu.addGameToggleButton(id, description, icon, callback, right)
+  return addButton(id, description, icon, callback, gameButtonsPanel, true)
 end
 
 function TopMenu.hideGameButtons()
@@ -90,3 +87,5 @@ end
 function TopMenu.getButton(id)
   return topMenu:recursiveGetChildById(id)
 end
+
+

@@ -113,6 +113,8 @@ void UIManager::inputEvent(const InputEvent& event)
         case Fw::MouseWheelInputEvent:
             m_mouseReceiver->propagateOnMouseWheel(event.mousePos, event.wheelDirection);
             break;
+        default:
+            break;
     };
     m_isOnInputEvent = false;
 }

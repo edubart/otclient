@@ -99,6 +99,7 @@ void Application::init(const std::vector<std::string>& args, int appFlags)
         g_ui.init();
 
         g_window.init();
+        g_window.hide();
         g_window.setOnResize(std::bind(&Application::resize, this, _1));
         g_window.setOnInputEvent(std::bind(&Application::inputEvent, this, _1));
         g_window.setOnClose(std::bind(&Application::close, this));
@@ -110,7 +111,7 @@ void Application::init(const std::vector<std::string>& args, int appFlags)
         resize(g_window.getSize());
 
         // display window when the application starts running
-        g_dispatcher.addEvent([]{ g_window.show(); });
+        //g_dispatcher.addEvent([]{ g_window.show(); });
     }
 
     if(m_appFlags & Fw::AppEnableModules)
@@ -168,6 +169,8 @@ void Application::run()
 
     // run the first poll
     poll();
+
+    g_lua.callGlobalField("g_app", "onRun");
 
     while(!m_stopping) {
         g_clock.updateTicks();

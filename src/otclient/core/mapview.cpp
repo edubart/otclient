@@ -47,7 +47,7 @@ MapView::MapView()
     m_shaderProgram = PainterShaderProgramPtr(new PainterShaderProgram);
     m_shaderProgram->addShaderFromSourceCode(Shader::Vertex, glslMainWithTexCoordsVertexShader + glslPositionOnlyVertexShader);
     m_shaderProgram->addShaderFromSourceFile(Shader::Fragment, "/game_shaders/map.frag");
-    assert(m_shaderProgram->link());
+    m_shaderProgram->link();
 }
 
 void MapView::draw(const Rect& rect)
@@ -117,7 +117,7 @@ void MapView::draw(const Rect& rect)
 
     float horizontalStretchFactor = rect.width() / (float)(m_visibleDimension.width() * m_tileSize);
     float verticalStretchFactor = rect.height() / (float)(m_visibleDimension.height() * m_tileSize);
-    Size tileStretchedSize = Size(m_tileSize * horizontalStretchFactor, m_tileSize * verticalStretchFactor);
+    //Size tileStretchedSize = Size(m_tileSize * horizontalStretchFactor, m_tileSize * verticalStretchFactor);
 
     // avoid drawing texts on map in far zoom outs
     if(m_viewRange == NEAR_VIEW) {
