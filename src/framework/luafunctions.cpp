@@ -505,7 +505,7 @@ void Application::registerLuaFunctions()
     g_lua.bindClassStaticFunction("g_fonts", "setDefaultFont", std::bind(&FontManager::setDefaultFont, &g_fonts, _1));
 
     // EventDispatcher
-    g_lua.registerStaticClass("g_dispatcher");
-    g_lua.bindClassStaticFunction("g_dispatcher", "addEvent", std::bind(&EventDispatcher::addEvent, &g_dispatcher, _1, _2));
-    g_lua.bindClassStaticFunction("g_dispatcher", "scheduleEvent", std::bind(&EventDispatcher::scheduleEvent, &g_dispatcher, _1, _2));
+    g_lua.registerStaticClass("g_eventDispatcher");
+    g_lua.bindClassStaticFunction("g_eventDispatcher", "addEvent", std::bind(&EventDispatcher::addEvent, &g_eventDispatcher, _1, _2));
+    g_lua.bindClassStaticFunction("g_eventDispatcher", "scheduleEvent", std::bind(&EventDispatcher::scheduleEvent, &g_eventDispatcher, _1, _2));
 }

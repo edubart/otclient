@@ -37,7 +37,7 @@ function createWidget(style, parent)
 end
 
 function scheduleEvent(callback, delay)
-  local event = g_dispatcher.scheduleEvent(callback, delay)
+  local event = g_eventDispatcher.scheduleEvent(callback, delay)
 
   -- must hold a reference to the callback, otherwise it would be collected
   event._callback = callback
@@ -45,7 +45,7 @@ function scheduleEvent(callback, delay)
 end
 
 function addEvent(callback, front)
-  local event = g_dispatcher.addEvent(callback, front)
+  local event = g_eventDispatcher.addEvent(callback, front)
   -- must hold a reference to the callback, otherwise it would be collected
   event._callback = callback
   return event

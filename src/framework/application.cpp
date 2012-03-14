@@ -46,7 +46,7 @@ void exitSignalHandler(int sig)
         case SIGINT:
             if(!signaled) {
                 signaled = true;
-                g_dispatcher.addEvent(std::bind(&Application::close, g_app));
+                g_eventDispatcher.addEvent(std::bind(&Application::close, g_app));
             }
             break;
     }
@@ -111,7 +111,7 @@ void Application::init(const std::vector<std::string>& args, int appFlags)
         resize(g_window.getSize());
 
         // display window when the application starts running
-        //g_dispatcher.addEvent([]{ g_window.show(); });
+        //g_eventDispatcher.addEvent([]{ g_window.show(); });
     }
 
     if(m_appFlags & Fw::AppEnableModules)
@@ -146,7 +146,7 @@ void Application::terminate()
     }
 
     // flush remaining dispatcher events
-    g_dispatcher.flush();
+    g_eventDispatcher.flush();
 
     // save configurations
     if(m_appFlags & Fw::AppEnableConfigs)
@@ -214,7 +214,7 @@ void Application::poll()
     }
 
     Connection::poll();
-    g_dispatcher.poll();
+    g_eventDispatcher.poll();
 }
 
 void Application::close()

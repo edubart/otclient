@@ -62,7 +62,7 @@ bool StaticText::addMessage(const std::string& name, Otc::SpeakType type, const 
     compose();
 
     auto self = asStaticText();
-    g_dispatcher.scheduleEvent([self]() {
+    g_eventDispatcher.scheduleEvent([self]() {
         self->removeMessage();
     }, std::max<int>(Otc::STATIC_DURATION_PER_CHARACTER * message.length(), Otc::MIN_STATIC_TEXT_DURATION));
 
@@ -76,7 +76,7 @@ void StaticText::removeMessage()
     if(m_messages.empty()) {
         // schedule removal
         auto self = asStaticText();
-        g_dispatcher.addEvent([self]() { g_map.removeThing(self); });
+        g_eventDispatcher.addEvent([self]() { g_map.removeThing(self); });
     } else
         compose();
 }

@@ -84,6 +84,6 @@ private:
     std::priority_queue<ScheduledEventPtr, std::vector<ScheduledEventPtr>, lessScheduledEvent> m_scheduledEventList;
 };
 
-extern EventDispatcher g_dispatcher;
+extern EventDispatcher g_eventDispatcher;
 
 #endif

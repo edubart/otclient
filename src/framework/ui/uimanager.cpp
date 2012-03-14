@@ -147,7 +147,7 @@ void UIManager::updateHoveredWidget()
     if(m_hoverUpdateScheduled)
         return;
 
-    g_dispatcher.addEvent([this] {
+    g_eventDispatcher.addEvent([this] {
         if(!m_rootWidget)
             return;
 

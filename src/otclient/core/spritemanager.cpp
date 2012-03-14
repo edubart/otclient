@@ -67,7 +67,7 @@ void SpriteManager::preloadSprites()
     };
 
     for(int i=1;i<=m_spritesCount;i+=burst)
-        g_dispatcher.scheduleEvent(std::bind(preload, i), (i/burst) * interval);
+        g_eventDispatcher.scheduleEvent(std::bind(preload, i), (i/burst) * interval);
 }
 
 TexturePtr SpriteManager::loadSpriteTexture(int id)

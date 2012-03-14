@@ -45,6 +45,8 @@ IF(CMAKE_COMPILER_IS_GNUCXX)
     SET(CMAKE_C_FLAGS_RELWITHDEBINFO   "-O1 -g -ggdb")
     SET(CMAKE_CXX_FLAGS_RELEASE        "-O2")
     SET(CMAKE_C_FLAGS_RELEASE          "-O2")
+    #SET(CMAKE_CXX_FLAGS_PERFORMANCE    "-Ofast -fomit-frame-pointer")
+    #SET(CMAKE_C_FLAGS_PERFORMANCE      "-Ofast -fomit-frame-pointer")
     SET(CMAKE_CXX_LINK_FLAGS           "${CMAKE_CXX_LINK_FLAGS} -static-libgcc -static-libstdc++ -Wl,--as-needed")
 ENDIF(CMAKE_COMPILER_IS_GNUCXX)
 

@@ -83,7 +83,7 @@ void UIVerticalLayout::internalUpdate()
 
     if(m_fitChildren && prefferedHeight != parentWidget->getHeight()) {
         // must set the preffered width later
-        g_dispatcher.addEvent([=] {
+        g_eventDispatcher.addEvent([=] {
             parentWidget->setHeight(prefferedHeight);
         });
     }

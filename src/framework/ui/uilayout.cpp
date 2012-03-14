@@ -44,7 +44,7 @@ void UILayout::updateLater()
         return;
 
     auto self = asUILayout();
-    g_dispatcher.addEvent([self] {
+    g_eventDispatcher.addEvent([self] {
         self->m_updateScheduled = false;
         self->update();
     });

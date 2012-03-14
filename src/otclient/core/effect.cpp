@@ -41,7 +41,7 @@ void Effect::startAnimation()
 
     // schedule removal
     auto self = asEffect();
-    g_dispatcher.scheduleEvent([self]() { g_map.removeThing(self); }, Otc::EFFECT_TICKS_PER_FRAME * getAnimationPhases());
+    g_eventDispatcher.scheduleEvent([self]() { g_map.removeThing(self); }, Otc::EFFECT_TICKS_PER_FRAME * getAnimationPhases());
 }
 
 void Effect::setId(uint32 id)

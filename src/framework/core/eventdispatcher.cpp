@@ -24,7 +24,7 @@
 
 #include <framework/core/clock.h>
 
-EventDispatcher g_dispatcher;
+EventDispatcher g_eventDispatcher;
 
 void EventDispatcher::flush()
 {

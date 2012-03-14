@@ -50,7 +50,7 @@ void AnimatedText::startAnimation()
 
     // schedule removal
     auto self = asAnimatedText();
-    g_dispatcher.scheduleEvent([self]() { g_map.removeThing(self); }, Otc::ANIMATED_TEXT_DURATION);
+    g_eventDispatcher.scheduleEvent([self]() { g_map.removeThing(self); }, Otc::ANIMATED_TEXT_DURATION);
 }
 
 void AnimatedText::setColor(int color)

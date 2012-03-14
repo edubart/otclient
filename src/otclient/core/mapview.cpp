@@ -347,7 +347,7 @@ void MapView::updateVisibleTilesCache(int start)
 
     if(stop) {
         // schedule next update continuation
-        m_updateTilesCacheEvent = g_dispatcher.addEvent(std::bind(&MapView::updateVisibleTilesCache, asMapView(), count));
+        m_updateTilesCacheEvent = g_eventDispatcher.addEvent(std::bind(&MapView::updateVisibleTilesCache, asMapView(), count));
     }
     if(start == 0)
         m_cachedFloorVisibleCreatures = g_map.getSpectators(cameraPosition, false);

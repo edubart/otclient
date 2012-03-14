@@ -650,7 +650,7 @@ void UIWidget::destroy()
 #ifdef DEBUG
     auto self = asUIWidget();
     if(self != g_ui.getRootWidget()) {
-        g_dispatcher.scheduleEvent([self] {
+        g_eventDispatcher.scheduleEvent([self] {
             g_lua.collectGarbage();
             if(self->getUseCount() != 1)
                 logWarning("widget '", self->getId(), "' destroyed but still have ", self->getUseCount()-1, " reference(s) left");
@@ -735,7 +735,7 @@ void UIWidget::setRect(const Rect& rect)
     // avoid massive update events
     if(!m_updateEventScheduled) {
         UIWidgetPtr self = asUIWidget();
-        g_dispatcher.addEvent([self, oldRect]() {
+        g_eventDispatcher.addEvent([self, oldRect]() {
             self->m_updateEventScheduled = false;
             if(oldRect != self->getRect())
                 self->onGeometryChange(oldRect, self->getRect());
@@ -1110,9 +1110,9 @@ void UIWidget::updateState(Fw::WidgetState state)
 
     if(setState(state, newStatus)) {
         if(state == Fw::FocusState) {
-            g_dispatcher.addEvent(std::bind(&UIWidget::onFocusChange, asUIWidget(), newStatus, m_lastFocusReason));
+            g_eventDispatcher.addEvent(std::bind(&UIWidget::onFocusChange, asUIWidget(), newStatus, m_lastFocusReason));
         } else if(state == Fw::HoverState)
-            g_dispatcher.addEvent(std::bind(&UIWidget::onHoverChange, asUIWidget(), newStatus));
+            g_eventDispatcher.addEvent(std::bind(&UIWidget::onHoverChange, asUIWidget(), newStatus));
     }
 }
 
@@ -1145,7 +1145,7 @@ void UIWidget::updateStyle()
 
     if(m_loadingStyle && !m_updateStyleScheduled) {
         UIWidgetPtr self = asUIWidget();
-        g_dispatcher.addEvent([self] {
+        g_eventDispatcher.addEvent([self] {
             self->m_updateStyleScheduled = false;
             self->updateStyle();
         });

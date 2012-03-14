@@ -56,9 +56,7 @@ inline uint32 getU32(std::istream& in) {
     return tmp;
 }
 
-/// Fill an ostream by concatenating args
-/// Usage:
-///   Fw::fill_ostream(stream, a1, a2, ..., aN);
+// fills an ostream by concatenating args
 inline void fillOstream(std::ostringstream&) { }
 template<class T, class... Args>
 void fillOstream(std::ostringstream& stream, const T& first, const Args&... rest) {
@@ -66,9 +64,7 @@ void fillOstream(std::ostringstream& stream, const T& first, const Args&... rest
     fillOstream(stream, rest...);
 }
 
-/// Makes a std::string by concatenating args
-/// Usage:
-///   std::string str = Fw::mkstr(a1, a2, ..., aN);
+// makes a std::string by concatenating args
 template<class... T>
 std::string mkstr(const T&... args) {
     std::ostringstream buf;
@@ -76,9 +72,10 @@ std::string mkstr(const T&... args) {
     return buf.str();
 }
 
+// throw a generic expcetion
 template<typename... T>
 void throwException(const T&... args) {
-    throw Exception(Fw::mkstr(args...));
+    throw Exception(mkstr(args...));
 }
 
 // used by dumper
@@ -91,9 +88,7 @@ struct dump_util {
     }
 };
 
-/// Utility for dumping variables
-/// Usage:
-///   Fw::dump << v1, v2, ..., vN;
+// utility for dumping variables
 struct dumper {
     dumper() { }
     template<class T>
@@ -104,9 +99,7 @@ struct dumper {
     }
 };
 
-/// Utility for printing messages into stdout
-/// Usage:
-///  Fw::print(v1, v2, ..., vN);
+// utility for printing messages into stdout
 template<class... T>
 void print(const T&... args) {
     std::ostringstream buf;
@@ -114,14 +107,13 @@ void print(const T&... args) {
     std::cout << buf.str();
 }
 
-/// Same as Fw::print but adds a new line at the end
 template<class... T>
 void println(const T&... args) {
     print(args...);
     std::cout << std::endl;
 }
 
-/// Demangle names for GNU g++ compiler
+// demangle names for GNU g++ compiler
 inline std::string demangleName(const char* name) {
     size_t len;
     int status;
@@ -134,15 +126,13 @@ inline std::string demangleName(const char* name) {
     return ret;
 }
 
-/// Returns the name of a type
-/// e.g. Fw::demangle_type<Foo*>() returns a string containing 'Foo*'
+// returns the name of a type
 template<typename T>
 std::string demangleType() {
     return demangleName(typeid(T).name());
 }
 
-/// Cast a type to another type
-/// @return whether the conversion was successful or not
+// cast a type to another type
 template<typename T, typename R>
 bool cast(const T& in, R& out) {
     std::stringstream ss;
@@ -194,9 +184,9 @@ inline bool cast(const bool& in, std::string& out) {
 }
 
 // used by safe_cast
-class CastException : public Exception {
+class cast_exception : public Exception {
 public:
-    virtual ~CastException() throw() { }
+    virtual ~cast_exception() throw() { }
     template<class T, class R>
     void setWhat() {
         m_what = mkstr("failed to cast value of type '", demangleType<T>(),
@@ -207,28 +197,24 @@ private:
     std::string m_what;
 };
 
-/// Cast a type to another type, any error throws a Fw::bad_cast_exception
-/// Usage:
-///   R r = Fw::safe_cast<R>(t);
+// cast a type to another type, any error throws a cast_exception
 template<typename R, typename T>
 R safeCast(const T& t) {
     R r;
     if(!cast(t, r)) {
-        CastException e;
+        cast_exception e;
         e.setWhat<T,R>();
         throw e;
     }
     return r;
 }
 
-/// Cast a type to another type, cast errors are ignored
-/// Usage:
-///   R r = Fw::unsafe_cast<R>(t);
+// cast a type to another type, cast errors are ignored
 template<typename R, typename T>
 R unsafeCast(const T& t, R def = R()) {
     try {
         return safeCast<R,T>(t);
-    } catch(CastException& e) {
+    } catch(cast_exception& e) {
         println("CAST ERROR: ", e.what());
         return def;
     }
@@ -271,7 +257,7 @@ std::vector<T> split(const std::string& str, const std::string& separators = " "
     boost::split(splitted, str, boost::is_any_of(std::string(separators)));
     std::vector<T> results(splitted.size());
     for(uint i=0;i<splitted.size();++i)
-        results[i] = Fw::safeCast<T>(splitted[i]);
+        results[i] = safeCast<T>(splitted[i]);
     return results;
 }
 
@@ -310,7 +296,5 @@ inline float randomRange<float>(float min, float max) {
 
 // shortcut for Fw::dump
 const static Fw::dumper dump;
-
-#define forever for(;;)
 
 #endif
