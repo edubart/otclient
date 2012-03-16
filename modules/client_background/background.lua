@@ -8,6 +8,11 @@ function Background.init()
   background = displayUI('background.otui')
   background:lower()
 
+  local clientVersionLabel = background:getChildById('clientVersionLabel')
+  clientVersionLabel:setText('OTClient ' .. g_app.getVersion() .. '\n' ..
+                             'Built on ' .. g_app.getBuildDate())
+  Effects.fadeIn(clientVersionLabel, 1500)
+
   connect(g_game, { onGameStart = Background.hide })
   connect(g_game, { onGameEnd = Background.show })
 end

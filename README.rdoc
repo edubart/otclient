@@ -29,6 +29,11 @@ http://otclient.info/tracker
 We encourage you to contribute to OTClient! Please check out
 {our website}[http://otclient.info/] for guidelines about how to proceed. Join us!
 
+== Contact
+
+You have 3 options, post at http://otclient.info/ , talk directly with us at #otclient irc.freenode.net or send
+an email directly to the project leader edub4rt@gmail.com
+
 == Authors
 
 * edubart (project creator and leader developer) <edub4rt@gmail.com>
@@ -37,5 +42,5 @@ We encourage you to contribute to OTClient! Please check out
 
 == License
 
-OTClient is made available under the MIT License
+OTClient is made available under the MIT License, thus this means that you can do whatever you want, commercial, non-commercial, closed or open.
 

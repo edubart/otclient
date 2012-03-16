@@ -9,7 +9,7 @@ Module
   load-later:
     - client_topmenu
     - client_background
-    - client_about
+    //- client_about
     - client_options
     - client_terminal
     - client_modulemanager

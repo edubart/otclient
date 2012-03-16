@@ -67,7 +67,7 @@ Application::~Application()
 void Application::init(const std::vector<std::string>& args, int appFlags)
 {
     m_appFlags = appFlags;
-    logInfo("Starting application...");
+    logInfo("Starting ", m_appName, " ", m_appVersion);
 
     // capture exit signals
     signal(SIGTERM, exitSignalHandler);

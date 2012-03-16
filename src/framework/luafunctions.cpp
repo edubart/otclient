@@ -418,6 +418,9 @@ void Application::registerLuaFunctions()
     g_lua.bindClassStaticFunction("g_app", "exit", std::bind(&Application::exit, g_app));
     g_lua.bindClassStaticFunction("g_app", "isRunning", std::bind(&Application::isRunning, g_app));
     g_lua.bindClassStaticFunction("g_app", "isStopping", std::bind(&Application::isStopping, g_app));
+    g_lua.bindClassStaticFunction("g_app", "getName", std::bind(&Application::getName, g_app));
+    g_lua.bindClassStaticFunction("g_app", "getVersion", std::bind(&Application::getVersion, g_app));
+    g_lua.bindClassStaticFunction("g_app", "getBuildDate", std::bind(&Application::getBuildDate, g_app));
 
     // ConfigManager
     g_lua.registerStaticClass("g_configs");

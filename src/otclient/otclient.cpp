@@ -26,14 +26,14 @@
 #include <framework/core/resourcemanager.h>
 #include "core/map.h"
 
-OTClient::OTClient(const std::string& appName) : Application(appName)
+OTClient::OTClient() : Application(Otc::AppCompactName)
 {
-
+    m_appVersion = Fw::formatString("%s%s", Otc::AppVersion, Otc::AppBuild);
+    m_appBuildDate = __DATE__;
 }
 
 void OTClient::init(const std::vector<std::string>& args)
 {
-    logInfo(Otc::AppName, " ", Otc::AppVersion);
     Application::init(args, Fw::AppEnableAll);
 
     g_modules.discoverModules();

@@ -80,6 +80,7 @@ function EnterGame.init()
   enterGame:getChildById('accountNameLineEdit'):focus()
 
   -- only open entergame when app starts
+  enterGame:hide()
   if not g_app.isRunning() then
     if #account > 0 and autologin then
       addEvent(EnterGame.doLogin)

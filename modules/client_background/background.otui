@@ -1,6 +1,6 @@
 Panel
   id: background
-  image-source: /client_background/background.png
+  image-source: /client_background/bg.png
   image-smooth: true
   image-fixed-ratio: true
   anchors.top: topMenu.bottom
@@ -9,3 +9,14 @@ Panel
   anchors.bottom: parent.bottom
   margin-top: 1
   focusable: false
+
+  UILabel
+    background-color: #00000099
+    id: clientVersionLabel
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    text-offset: 4 2
+    height: 32
+    width: 120
+    color: #ffffff
+    font: verdana-11px-monochrome

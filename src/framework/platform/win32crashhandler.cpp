@@ -46,7 +46,7 @@ LONG WINAPI crashHandler(EXCEPTION_POINTERS* exceptionPointers)
 
         SYSTEMTIME systemTime;
         GetSystemTime(&systemTime);
-        snprintf(fileName, 128, "%s_%02u-%02u-%04u_%02u-%02u-%02u.mdmp", g_app->getAppName().c_str(),
+        snprintf(fileName, 128, "%s_%02u-%02u-%04u_%02u-%02u-%02u.mdmp", g_app->getName().c_str(),
                 systemTime.wDay, systemTime.wMonth, systemTime.wYear,
                 systemTime.wHour, systemTime.wMinute, systemTime.wSecond);
 

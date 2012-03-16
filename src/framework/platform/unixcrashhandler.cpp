@@ -41,7 +41,7 @@ void crashHandler(int signum, siginfo_t* info, void* secret)
     char fileName[128];
     time(&tnow);
     tm *ts = localtime(&tnow);
-    strftime(fileName, 128, (g_app->getAppName() + "-crash_-%d-%m-%Y_%H:%M:%S.txt").c_str(), ts);
+    strftime(fileName, 128, (g_app->getName() + "-crash_-%d-%m-%Y_%H:%M:%S.txt").c_str(), ts);
 
     std::stringstream ss;
     ss.flags(std::ios::hex | std::ios::showbase);

@@ -113,6 +113,23 @@ void println(const T&... args) {
     std::cout << std::endl;
 }
 
+// useful std::string version of sprintf :)
+template<typename... Args>
+std::string formatString(const std::string& format, Args... args) {
+    int n, size = 1024;
+    std::string str;
+    while(true) {
+        str.resize(size);
+        n = snprintf(&str[0], size, format.c_str(), args...);
+        assert(n != -1);
+        if(n < size) {
+            str.resize(n);
+            return str;
+        }
+        size *= 2;
+    }
+}
+
 // demangle names for GNU g++ compiler
 inline std::string demangleName(const char* name) {
     size_t len;

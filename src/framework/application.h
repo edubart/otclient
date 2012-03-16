@@ -47,7 +47,9 @@ public:
 
     bool isRunning() { return m_running; }
     bool isStopping() { return m_stopping; }
-    const std::string& getAppName() { return m_appName; }
+    const std::string& getName() { return m_appName; }
+    const std::string& getVersion() { return m_appVersion; }
+    const std::string& getBuildDate() { return m_appBuildDate; }
 
 protected:
     virtual void render();
@@ -55,6 +57,8 @@ protected:
     virtual void inputEvent(const InputEvent& event);
 
     std::string m_appName;
+    std::string m_appVersion;
+    std::string m_appBuildDate;
     int m_appFlags;
     int m_pollCycleDelay;
     Boolean<false> m_running;

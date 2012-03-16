@@ -1,13 +1,13 @@
 Label < UILabel
   font: verdana-11px-antialised
-  color: #aaaaaa
+  color: #bbbbbb
 
   $disabled:
-    color: #aaaaaa88
+    color: #bbbbbb88
 
 GameLabel < UILabel
   font: verdana-11px-antialised
-  color: #aaaaaa
+  color: #bbbbbb
 
 FrameCounter < UIFrameCounter
   size: 68 16

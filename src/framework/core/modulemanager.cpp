@@ -64,7 +64,7 @@ void ModuleManager::discoverModulesPath()
     std::string possibleModulesDirs[] = { "modules",
                                           g_resources.getBaseDir() + "modules",
                                           g_resources.getBaseDir() + "../modules",
-                                          g_resources.getBaseDir() + "../share/" + g_app->getAppName() + "/modules",
+                                          g_resources.getBaseDir() + "../share/" + g_app->getName() + "/modules",
                                            "" };
     bool found = false;
     for(const std::string& dir : possibleModulesDirs) {
@@ -83,7 +83,7 @@ void ModuleManager::discoverModulesPath()
     std::string possibleAddonsDirs[] = { "addons",
                                          g_resources.getBaseDir() + "addons",
                                          g_resources.getBaseDir() + "../addons",
-                                         g_resources.getBaseDir() + "../addons/" + g_app->getAppName() + "/modules",
+                                         g_resources.getBaseDir() + "../addons/" + g_app->getName() + "/modules",
                                          "" };
     for(const std::string& dir : possibleAddonsDirs) {
         // try to add module directory
