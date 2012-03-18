@@ -165,7 +165,12 @@ void ProtocolGame::parseMessage(InputMessage& msg)
             case Proto::GameServerCreatureParty:
                 parseCreatureShields(msg);
                 break;
-            // case Proto::GameServerCreatureUnpass
+#if PROTOCOL>=870
+            case Proto::GameServerCreatureUnpass:
+                msg.getU32(); // creature id
+                msg.getU8(); // unpassable boolean
+                break;
+#endif
             case Proto::GameServerEditText:
                 parseEditText(msg);
                 break;
@@ -184,8 +189,14 @@ void ProtocolGame::parseMessage(InputMessage& msg)
             case Proto::GameServerClearTarget:
                 parsePlayerCancelAttack(msg);
                 break;
-            //case Proto::GameServerSpellDelay:
-            //case Proto::GameServerSpellGroupDelay:
+#if PROTOCOL>=870
+            case Proto::GameServerSpellDelay:
+            case Proto::GameServerSpellGroupDelay:
+                msg.getU16(); // spell id
+                msg.getU16(); // cooldown
+                msg.getU8(); // unknown
+                break;
+#endif
             case Proto::GameServerTalk:
                 parseCreatureSpeak(msg);
                 break;
@@ -309,12 +320,13 @@ void ProtocolGame::parseLoginWait(InputMessage& msg)
 void ProtocolGame::parsePing(InputMessage&)
 {
     g_game.processPing();
+    sendPingResponse();
 }
 
 void ProtocolGame::parseDeath(InputMessage& msg)
 {
     int penality = 100;
-#if PROTOCOL==862
+#if PROTOCOL>=862
     penality = msg.getU8();
 #endif
     g_game.processDeath(penality);
@@ -721,7 +733,11 @@ void ProtocolGame::parsePlayerStats(InputMessage& msg)
     double health = msg.getU16();
     double maxHealth = msg.getU16();
     double freeCapacity = msg.getU32() / 100.0;
+#if PROTOCOL >= 870
+    double experience = msg.getU64();
+#else
     double experience = msg.getU32();
+#endif
     double level = msg.getU16();
     double levelPercent = msg.getU8();
     double mana = msg.getU16();
@@ -917,6 +933,14 @@ void ProtocolGame::parseOpenOutfitWindow(InputMessage& msg)
         outfitList.push_back(std::make_tuple(outfitId, outfitName, outfitAddons));
     }
 
+#if PROTOCOL>=870
+    int mountCount = msg.getU8();
+    for(int i=0;i<mountCount;++i) {
+        msg.getU16(); // mount type
+        msg.getString(); // mount name
+    }
+#endif
+
     g_game.processOpenOutfitWindow(currentOutfit, outfitList);
 }
 
@@ -1062,6 +1086,9 @@ Outfit ProtocolGame::internalGetOutfit(InputMessage& msg)
         int legs = msg.getU8();
         int feet = msg.getU8();
         int addons = msg.getU8();
+#if PROTOCOL>=870
+        msg.getU16(); // mount
+#endif
 
         outfit.setId(id);
         outfit.setHead(head);

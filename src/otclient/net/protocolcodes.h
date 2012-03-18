@@ -25,7 +25,7 @@
 
 #include <otclient/global.h>
 
-#if PROTOCOL < 860 || PROTOCOL > 862
+#if PROTOCOL != 860 && PROTOCOL != 870 && PROTOCOL != 862 && PROTOCOL != 870
 #error "the supplied protocol version is not supported"
 #endif
 
@@ -47,10 +47,10 @@ namespace Proto {
     constexpr int ClientVersion = PROTOCOL;
     constexpr int PicSignature = 0x4E119CBF;
 
-#if PROTOCOL==860
-    constexpr int NumViolationReasons = 20;
-#elif PROTOCOL==861 || PROTOCOL==862
+#if PROTOCOL>=861
     constexpr int NumViolationReasons = 19;
+#elif PROTOCOL==860
+    constexpr int NumViolationReasons = 20;
 #endif
 
     enum OsTypes {
@@ -118,8 +118,10 @@ namespace Proto {
         GameServerPlayerSkills = 161,
         GameServerPlayerState = 162,
         GameServerClearTarget = 163,
+#if PROTOCOL>=870
         GameServerSpellDelay = 164,
         GameServerSpellGroupDelay = 165,
+#endif
         GameServerTalk = 170,
         GameServerChannels = 171,
         GameServerOpenChannel = 172,
@@ -209,7 +211,9 @@ namespace Proto {
         ClientRefreshContainer = 202,
         ClientRequestOutfit = 210,
         ClientChangeOutfit = 211,
-        //ClientMount = 212,
+#if PROTOCOL>=870
+        ClientMount = 212,
+#endif
         ClientAddVip = 220,
         ClientRemoveVip = 221,
         //ClientBugReport = 230,
@@ -221,7 +225,7 @@ namespace Proto {
     };
 
     enum ServerSpeakType {
-#if PROTOCOL==861 || PROTOCOL==862
+#if PROTOCOL>=861
         ServerSpeakSay = 1,
         ServerSpeakWhisper,
         ServerSpeakYell,
@@ -265,7 +269,7 @@ namespace Proto {
     };
 
     enum MessageTypes {
-#if PROTOCOL==862 || PROTOCOL==861
+#if PROTOCOL>=862
         MessageConsoleOrange = 13,
         MessageConsoleOrange2,
         MessageWarning,

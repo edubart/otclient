@@ -142,7 +142,6 @@ void Game::processDeath(int penality)
 
 void Game::processPing()
 {
-    m_protocolGame->sendPingResponse();
     g_lua.callGlobalField("g_game", "onPing");
 }
 
@@ -315,6 +314,10 @@ void Game::processWalkCancel(Otc::Direction direction)
 
 void Game::loginWorld(const std::string& account, const std::string& password, const std::string& worldHost, int worldPort, const std::string& characterName)
 {
+    if(m_protocolGame || isOnline()) {
+        logTraceError("unable to login into a world while already online or logging");
+        return;
+    }
     m_protocolGame = ProtocolGamePtr(new ProtocolGame);
     m_protocolGame->login(account, password, worldHost, (uint16)worldPort, characterName);
 }
@@ -333,7 +336,7 @@ void Game::forceLogout()
     if(!isOnline())
         return;
 
-    m_protocolGame->sendLogout();
+    //m_protocolGame->sendLogout();
     processDisconnect();
 }
 

@@ -55,13 +55,13 @@ end
 function onGameLoginError(message)
   CharacterList.destroyLoadBox()
   local errorBox = displayErrorBox("Login Error", "Login error: " .. message)
-  errorBox.onOk = CharacterList.show
+  errorBox.onOk = CharacterList.showAgain
 end
 
 function onGameConnectionError(message)
   CharacterList.destroyLoadBox()
   local errorBox = displayErrorBox("Login Error", "Connection error: " .. message)
-  errorBox.onOk = CharacterList.show
+  errorBox.onOk = CharacterList.showAgain
 end
 
 -- public functions
@@ -73,14 +73,14 @@ function CharacterList.init()
   connect(g_game, { onLoginError = onGameLoginError })
   connect(g_game, { onConnectionError = onGameConnectionError })
   connect(g_game, { onGameStart = CharacterList.destroyLoadBox })
-  connect(g_game, { onGameEnd = CharacterList.show })
+  connect(g_game, { onGameEnd = CharacterList.showAgain })
 end
 
 function CharacterList.terminate()
   disconnect(g_game, { onLoginError = onGameLoginError })
   disconnect(g_game, { onConnectionError = onGameConnectionError })
   disconnect(g_game, { onGameStart = CharacterList.destroyLoadBox })
-  disconnect(g_game, { onGameEnd = CharacterList.show })
+  disconnect(g_game, { onGameEnd = CharacterList.showAgain })
   characterList = nil
   charactersWindow:destroy()
   charactersWindow = nil
@@ -141,6 +141,12 @@ function CharacterList.show()
     charactersWindow:show()
     charactersWindow:raise()
     charactersWindow:focus()
+  end
+end
+
+function CharacterList.showAgain()
+  if characterList:hasChildren() then
+    CharacterList.show()
   end
 end
 
