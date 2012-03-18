@@ -3,5 +3,14 @@ Module
   description: Manage game text messages
   author: OTClient team
   website: https://github.com/edubart/otclient
-  onLoad: |
+  reloadable: true
+
+  dependecies:
+    - game
+
+  @onLoad: |
     dofile 'textmessage'
+    TextMessage.init()
+
+  @onUnload: |
+    TextMessage.terminate()

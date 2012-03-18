@@ -11,7 +11,10 @@ function Background.init()
   local clientVersionLabel = background:getChildById('clientVersionLabel')
   clientVersionLabel:setText('OTClient ' .. g_app.getVersion() .. '\n' ..
                              'Built on ' .. g_app.getBuildDate())
-  Effects.fadeIn(clientVersionLabel, 1500)
+
+  if not g_game.isOnline() then
+    Effects.fadeIn(clientVersionLabel, 1500)
+  end
 
   connect(g_game, { onGameStart = Background.hide })
   connect(g_game, { onGameEnd = Background.show })

@@ -17,7 +17,7 @@ local MessageTypes = {
 }
 
 local centerTextMessagePanel
-local centerLabel
+local bottomStatusLabel
 
 -- private functions
 local function displayMessage(msgtype, msg, time)
@@ -30,17 +30,17 @@ local function displayMessage(msgtype, msg, time)
   end
 
   if msgtype.labelId  then
-    local label = g_game.gameMapPanel:recursiveGetChildById(msgtype.labelId)
+    local label = GameInterface.getMapPanel():recursiveGetChildById(msgtype.labelId)
 
-    label:setVisible(true)
     label:setText(msg)
     label:setColor(msgtype.color)
-    label:resizeToText()
 
     if msgtype.wrap then
       label:setWidth(label:getParent():getWidth())
       label:wrapText()
       label:setHeight(label:getTextSize().height)
+    else
+      label:resizeToText()
     end
 
     if not time then
@@ -49,6 +49,7 @@ local function displayMessage(msgtype, msg, time)
       time = time * 1000
     end
     removeEvent(label.hideEvent)
+    addEvent(function() label:setVisible(true) end)
     label.hideEvent = scheduleEvent(function() label:setVisible(false) end, time)
   end
 end
@@ -64,10 +65,14 @@ local function createTextMessageLabel(id, parent)
 end
 
 -- public functions
+function TextMessage.init()
+  connect(g_game, { onDeath = TextMessage.displayDeadMessage,
+                    onTextMessage = TextMessage.display,
+                    onGameStart = TextMessage.clearMessages })
 
-function TextMessage.create()
-  centerTextMessagePanel = createWidget('Panel', g_game.gameMapPanel)
+  centerTextMessagePanel = createWidget('Panel', GameInterface.getMapPanel())
   centerTextMessagePanel:setId('centerTextMessagePanel')
+
   local layout = UIVerticalLayout.create(centerTextMessagePanel)
   layout:setFitChildren(true)
   centerTextMessagePanel:setLayout(layout)
@@ -78,11 +83,29 @@ function TextMessage.create()
   createTextMessageLabel('centerAdvance', centerTextMessagePanel)
   createTextMessageLabel('centerInfo', centerTextMessagePanel)
 
-  bottomStatusLabel = createTextMessageLabel('bottomStatus', g_game.gameMapPanel)
+  bottomStatusLabel = createTextMessageLabel('bottomStatus', GameInterface.getMapPanel())
   bottomStatusLabel:setHeight(16)
   bottomStatusLabel:addAnchor(AnchorBottom, 'parent', AnchorBottom)
   bottomStatusLabel:addAnchor(AnchorLeft, 'parent', AnchorLeft)
   bottomStatusLabel:addAnchor(AnchorRight, 'parent', AnchorRight)
+end
+
+function TextMessage.terminate()
+  disconnect(g_game, { onDeath = TextMessage.displayDeadMessage,
+                       onTextMessage = TextMessage.display,
+                       onGameStart = TextMessage.clearMessages })
+  centerTextMessagePanel:destroy()
+  centerTextMessagePanel = nil
+  bottomStatusLabel:destroy()
+  bottomStatusLabel = nil
+  TextMessage = nil
+end
+
+function TextMessage.clearMessages()
+  GameInterface.getMapPanel():recursiveGetChildById('centerWarning'):hide()
+  GameInterface.getMapPanel():recursiveGetChildById('centerAdvance'):hide()
+  GameInterface.getMapPanel():recursiveGetChildById('centerInfo'):hide()
+  GameInterface.getMapPanel():recursiveGetChildById('bottomStatus'):hide()
 end
 
 function TextMessage.displayStatus(msg, time)
@@ -100,18 +123,8 @@ function TextMessage.display(msgtypedesc, msg)
   end
 end
 
--- hooked events
-local function onGameDeath()
-  local advanceLabel = g_game.gameMapPanel:recursiveGetChildById('centerAdvance')
+function TextMessage.displayDeadMessage()
+  local advanceLabel = GameInterface.getMapPanel():recursiveGetChildById('centerAdvance')
   if advanceLabel:isVisible() then return end
   TextMessage.displayEventAdvance('You are dead.')
 end
-
-local function onGameTextMessage(msgtypedesc, msg)
-  TextMessage.display(msgtypedesc, msg)
-end
-
-connect(g_game, { onGameStart = TextMessage.create,
-                onGameEnd = TextMessage.destroy,
-                onDeath = onGameDeath,
-                onTextMessage = onGameTextMessage })

@@ -31,6 +31,10 @@ public:
     Player() { }
     virtual ~Player() { }
 
+    bool isPartyMember() { return (m_shield != 0); }
+    bool isPartyLeader() { return (m_shield & Otc::ShieldYellow); } 
+    bool isPartySharedExperienceActive() { return false; }
+
     PlayerPtr asPlayer() { return std::static_pointer_cast<Player>(shared_from_this()); }
 };
 

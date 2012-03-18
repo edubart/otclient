@@ -20,34 +20,4 @@
  * THE SOFTWARE.
  */
 
-#ifndef UIMAP_H
-#define UIMAP_H
-
-#include "declarations.h"
-#include <framework/ui/uiwidget.h>
-#include <otclient/core/tile.h>
-
-class UIMap : public UIWidget
-{
-public:
-    UIMap();
-    ~UIMap();
-
-    void draw();
-
-    void zoomIn();
-    void zoomOut();
-    void followCreature(const CreaturePtr& creature);
-    void setCameraPosition(const Position& pos);
-
-    TilePtr getTile(const Point& mousePos);
-
-protected:
-    virtual void onGeometryChange(const Rect& oldRect, const Rect& newRect);
-
-private:
-    MapViewPtr m_mapView;
-    Rect m_mapRect;
-};
-
-#endif
+#include "container.h"

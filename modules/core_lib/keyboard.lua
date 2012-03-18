@@ -70,8 +70,8 @@ local function onWidgetKeyDown(widget, keyCode, keyboardModifiers)
 end
 
 local function onWidgetKeyPress(widget, keyCode, keyboardModifiers, autoRepeatTicks)
-  local keyComboDesc = determineKeyComboDesc(keyCode, keyboardModifiers)
   if keyCode == KeyUnknown then return false end
+  local keyComboDesc = determineKeyComboDesc(keyCode, keyboardModifiers)
   local comboConf = widget.boundKeyPressCombos[keyComboDesc]
   if comboConf and (autoRepeatTicks >= comboConf.autoRepeatDelay or autoRepeatTicks == 0) and comboConf.callback then
     comboConf.callback()

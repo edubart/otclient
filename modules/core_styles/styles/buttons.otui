@@ -18,7 +18,7 @@ Button < UIButton
     color: #f0ad4d88
     image-color: #ffffff88
 
-ConsoleButton < UIButton
+TabButton < UIButton
   size: 20 20
   image-source: /core_styles/styles/images/tabbutton.png
   image-color: white

@@ -764,7 +764,6 @@ void Game::setSafeFight(bool on)
     m_protocolGame->sendChangeFightModes(m_fightMode, m_chaseMode, m_safeFight);
 }
 
-
 void Game::inspectNpcTrade(const ItemPtr& item)
 {
     if(!canPerformGameAction() || !item)

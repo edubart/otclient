@@ -30,24 +30,26 @@ end
 
 -- public functions
 function TopMenu.init()
+  connect(g_game, { onGameStart = TopMenu.showGameButtons,
+                    onGameEnd = TopMenu.hideGameButtons })
+
   topMenu = displayUI('topmenu.otui')
+
   leftButtonsPanel = topMenu:getChildById('leftButtonsPanel')
   rightButtonsPanel = topMenu:getChildById('rightButtonsPanel')
   gameButtonsPanel = topMenu:getChildById('gameButtonsPanel')
-
-  connect(g_game, { onGameStart = TopMenu.showGameButtons,
-                    onGameEnd = TopMenu.hideGameButtons })
 end
 
 function TopMenu.terminate()
+  disconnect(g_game, { onGameStart = TopMenu.showGameButtons,
+                       onGameEnd = TopMenu.hideGameButtons })
+
   leftButtonsPanel = nil
   rightButtonsPanel = nil
   gameButtonsPanel = nil
+
   topMenu:destroy()
   topMenu = nil
-
-  disconnect(g_game, { onGameStart = TopMenu.showGameButtons,
-                       onGameEnd = TopMenu.hideGameButtons })
 
   TopMenu = nil
 end

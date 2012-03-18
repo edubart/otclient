@@ -1,5 +1,12 @@
 Client = {}
 
+function Client.reloadScripts()
+  dofile 'otclientrc.lua'
+  reloadModules()
+  TextMessage.displayEventAdvance('All modules and scripts were reloaded.')
+  print('All modules and scripts were reloaded.')
+end
+
 function Client.init()
   g_window.setMinimumSize({ width = 600, height = 480 })
 

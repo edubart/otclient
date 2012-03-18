@@ -25,51 +25,51 @@ EmblemBlue = 3
 
 function getSkullImagePath(skullId)
   if skullId == SkullYellow then
-    return 'images/skull_yellow.png'
+    return 'icons/skull_yellow.png'
   elseif skullId == SkullGreen then
-    return 'images/skull_green.png'
+    return 'icons/skull_green.png'
   elseif skullId == SkullWhite then
-    return 'images/skull_white.png'
+    return 'icons/skull_white.png'
   elseif skullId == SkullRed then
-    return 'images/skull_red.png'
+    return 'icons/skull_red.png'
   elseif skullId == SkullBlack then
-    return 'images/skull_black.png'
+    return 'icons/skull_black.png'
   elseif skullId == SkullOrange then
-    return 'images/skull_orange.png'
+    return 'icons/skull_orange.png'
   end
 end
 
 function getShieldImagePathAndBlink(shieldId)
   if shieldId == ShieldWhiteYellow then
-    return 'images/shield_yellow_white.png', false
+    return 'icons/shield_yellow_white.png', false
   elseif shieldId == ShieldWhiteBlue then
-    return 'images/shield_blue_white.png', false
+    return 'icons/shield_blue_white.png', false
   elseif shieldId == ShieldBlue then
-    return 'images/shield_blue.png', false
+    return 'icons/shield_blue.png', false
   elseif shieldId == ShieldYellow then
-    return 'images/shield_yellow.png', false
+    return 'icons/shield_yellow.png', false
   elseif shieldId == ShieldBlueSharedExp then
-    return 'images/shield_blue_shared.png', false
+    return 'icons/shield_blue_shared.png', false
   elseif shieldId == ShieldYellowSharedExp then
-    return 'images/shield_yellow_shared.png', false
+    return 'icons/shield_yellow_shared.png', false
   elseif shieldId == ShieldBlueNoSharedExpBlink then
-    return 'images/shield_blue_not_shared.png', true
+    return 'icons/shield_blue_not_shared.png', true
   elseif shieldId == ShieldYellowNoSharedExpBlink then
-    return 'images/shield_yellow_not_shared.png', true
+    return 'icons/shield_yellow_not_shared.png', true
   elseif shieldId == ShieldBlueNoSharedExp then
-    return 'images/shield_blue_not_shared.png', false
+    return 'icons/shield_blue_not_shared.png', false
   elseif shieldId == ShieldYellowNoSharedExp then
-    return 'images/shield_yellow_not_shared.png', false
+    return 'icons/shield_yellow_not_shared.png', false
   end
 end
 
 function getEmblemImagePath(emblemId)
   if emblemId == EmblemGreen then
-    return 'images/emblem_green.png'
+    return 'icons/emblem_green.png'
   elseif emblemId == EmblemRed then
-    return 'images/emblem_red.png'
+    return 'icons/emblem_red.png'
   elseif emblemId == EmblemBlue then
-    return 'images/emblem_blue.png'
+    return 'icons/emblem_blue.png'
   end
 end
 

@@ -14,7 +14,7 @@ Panel
   id: consolePanel
   anchors.fill: parent
 
-  ConsoleButton
+  TabButton
     id: prevChannelButton
     icon: /core_styles/icons/leftarrow.png
     anchors.left: parent.left
@@ -30,7 +30,7 @@ Panel
     anchors.right: next.left
     margin-left: 5
 
-  ConsoleButton
+  TabButton
     id: nextChannelButton
     icon: /core_styles/icons/rightarrow.png
     anchors.right: next.left
@@ -38,7 +38,7 @@ Panel
     margin-right: 5
     margin-top: 6
 
-  ConsoleButton
+  TabButton
     id: closeChannelButton
     tooltip: Close this channel (Ctrl+E)
     icon: /core_styles/icons/closechannel.png
@@ -49,7 +49,7 @@ Panel
     margin-top: 6
     @onClick: Console.removeCurrentTab()
 
-  ConsoleButton
+  TabButton
     id: channelsButton
     tooltip: Open new channel (Ctrl+O)
     icon: /core_styles/icons/channels.png
@@ -71,7 +71,7 @@ Panel
     margin-top: 4
     focusable: false
 
-  ConsoleButton
+  TabButton
     id: sayModeButton
     icon: /core_styles/icons/say.png
     tooltip: Adjust volume
@@ -91,5 +91,4 @@ Panel
     margin-right: 6
     margin-left: 6
     margin-bottom: 6
-    always-active: true
-    focusable: false
+    shift-navigation: true

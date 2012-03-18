@@ -26,6 +26,7 @@
 #include <framework/graphics/graphics.h>
 #include "map.h"
 #include "tile.h"
+#include "game.h"
 
 Thing::Thing()
 {
@@ -51,6 +52,13 @@ int Thing::getStackPriority()
 const TilePtr& Thing::getTile()
 {
     return g_map.getTile(m_position);
+}
+
+ContainerPtr Thing::getParentContainer()
+{
+    if(m_position.x == 0xFFFF && m_position.y & 0x40)
+        return g_game.getContainer(m_position.z);
+    return nullptr;
 }
 
 int Thing::getStackpos()

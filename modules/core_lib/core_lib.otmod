@@ -10,10 +10,12 @@ Module
     dofile 'ext/table'
     dofile 'ext/string'
     dofile 'ext/os'
+
     dofile 'math/point'
     dofile 'math/size'
     dofile 'math/color'
     dofile 'math/rect'
+
     dofile 'const'
     dofile 'util'
     dofile 'globals'
@@ -35,8 +37,4 @@ Module
     dofile 'widgets/uitabbar'
     dofile 'widgets/uipopupmenu'
     dofile 'widgets/uiwindow'
-    --dofile 'widgets/uiminiwindow'
-    --dofile 'widgets/uiminiwindowcontainer'
     dofile 'widgets/uimessagebox'
-
-

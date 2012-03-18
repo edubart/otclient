@@ -4,4 +4,3 @@ ProgressBar < UIProgressBar
   border: 1 black
   image: /core_styles/styles/images/progressbar.png
   image-border: 1
-

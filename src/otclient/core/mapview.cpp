@@ -36,12 +36,17 @@
 
 MapView::MapView()
 {
+    m_viewRange = NEAR_VIEW;
+    m_lockedFirstVisibleFloor = -1;
+    m_cachedFirstVisibleFloor = 0;
+    m_cachedLastVisibleFloor = 7;
+    m_customCameraPosition.z = 7;
+
     Size frameBufferSize(std::min(g_graphics.getMaxTextureSize(), (int)DEFAULT_FRAMBUFFER_WIDTH),
                          std::min(g_graphics.getMaxTextureSize(), (int)DEFAULT_FRAMBUFFER_HEIGHT));
 
     m_framebuffer = FrameBufferPtr(new FrameBuffer(frameBufferSize));
     m_framebuffer->setClearColor(Fw::black);
-    m_lockedFirstVisibleFloor = -1;
     setVisibleDimension(Size(15, 11));
 
     m_shaderProgram = PainterShaderProgramPtr(new PainterShaderProgram);
@@ -374,7 +379,6 @@ void MapView::unlockFirstVisibleFloor()
 void MapView::followCreature(const CreaturePtr& creature)
 {
     m_followingCreature = creature;
-    m_customCameraPosition = Position();
     requestVisibleTilesCacheUpdate();
 }
 

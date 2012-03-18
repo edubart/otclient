@@ -1,4 +1,4 @@
-GameSidePanel < UIMiniWindowContainer
+GameSidePanel < Panel
   image-source: images/sidepanel.png
   image-border: 4
 
@@ -6,12 +6,12 @@ GameBottomPanel < Panel
   image-source: images/bottompanel.png
   image-border: 4
 
-GameMapPanel < UIMap
+GameMapPanel < UIGameMap
   padding: 4
   image-source: images/mappanel.png
   image-border: 4
 
-UIGame
+UIWidget
   id: gameRootPanel
   anchors.fill: parent
   anchors.top: topMenu.bottom
@@ -24,16 +24,24 @@ UIGame
     anchors.top: parent.top
     anchors.bottom: parent.bottom
 
+  GameSidePanel
+    id: gameLeftPanel
+    width: 190
+    layout: verticalBox
+    anchors.left: parent.left
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
+
   GameBottomPanel
     id: gameBottomPanel
     height: 170
-    anchors.left: parent.left
+    anchors.left: gameLeftPanel.right
     anchors.right: gameRightPanel.left
     anchors.bottom: parent.bottom
 
   GameMapPanel
     id: gameMapPanel
-    anchors.left: parent.left
+    anchors.left: gameLeftPanel.right
     anchors.right: gameRightPanel.left
     anchors.top: parent.top
     anchors.bottom: gameBottomPanel.top
@@ -43,4 +51,3 @@ UIGame
     id: mouseGrabber
     focusable: false
     visible: false
-

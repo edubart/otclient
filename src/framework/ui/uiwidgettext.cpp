@@ -51,6 +51,9 @@ void UIWidget::drawText(const Rect& screenCoords)
     if(m_text.length() == 0 || m_color.a() == 0)
         return;
 
+#if 0
+    //TODO: creating framebuffers on the fly was slowing down the render
+    // we should use vertex arrys instead of this method
     Size boxSize = screenCoords.size();
     if(boxSize != m_textCachedBoxSize || m_textMustRecache) {
         if(!m_textFramebuffer)
@@ -73,6 +76,11 @@ void UIWidget::drawText(const Rect& screenCoords)
 
     g_painter.setColor(m_color);
     m_textFramebuffer->draw(screenCoords);
+#else
+    Rect textRect = screenCoords;
+    textRect.translate(m_textOffset);
+    m_font->renderText(m_text, textRect, m_textAlign, m_color);
+#endif
 }
 
 void UIWidget::onTextChange(const std::string& text, const std::string& oldText)

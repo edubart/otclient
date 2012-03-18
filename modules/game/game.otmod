@@ -7,11 +7,26 @@ Module
 
   dependencies:
     - game_tibiafiles
+    - client_background
     //- game_shaders
 
-  onLoad: |
-    dofile 'game'
-    dofile 'thing'
+  load-later:
+    - game_textmessage
+    - game_console
+
+  @onLoad: |
+    importStyle 'styles/items.otui'
+    importStyle 'styles/creatures.otui'
+    importStyle 'styles/miniwindow.otui'
+    importStyle 'styles/countwindow.otui'
+
+    dofile 'const'
+
+    dofile 'widgets/uigamemap'
+
+    dofile 'gameinterface'
     dofile 'creature'
-    dofile 'player'
-    dofile 'map'
+    GameInterface.init()
+
+  @onUnload: |
+    GameInterface.terminate()

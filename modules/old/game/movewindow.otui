@@ -1,4 +1,4 @@
-MainWindow
+CountWindow < MainWindow
   text: Move Item
   size: 196 112
   @onEscape: self:destroy()

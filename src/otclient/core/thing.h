@@ -49,6 +49,7 @@ public:
     Position getPosition() { return m_position; }
     int getStackPriority();
     const TilePtr& getTile();
+    ContainerPtr getParentContainer();
     int getStackpos();
 
     ThingPtr asThing() { return std::static_pointer_cast<Thing>(shared_from_this()); }

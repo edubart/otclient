@@ -42,6 +42,7 @@ public:
     void setTextHidden(bool hidden);
     void setAlwaysActive(bool enable);
     void setValidCharacters(const std::string validCharacters) { m_validCharacters = validCharacters; }
+    void setShiftNavigation(bool enable) { m_shiftNavigation = enable; }
 
     void moveCursor(bool right);
     void appendText(std::string text);
@@ -55,6 +56,7 @@ public:
     bool isCursorEnabled() { return m_cursorPos != -1; }
     bool isAlwaysActive() { return m_alwaysActive; }
     bool isTextHidden() { return m_textHidden; }
+    bool isShiftNavigation() { return m_shiftNavigation; }
 
 protected:
     virtual void onTextChange(const std::string& text, const std::string& oldText);
@@ -77,6 +79,7 @@ private:
     int m_textHorizontalMargin;
     bool m_textHidden;
     bool m_alwaysActive;
+    bool m_shiftNavigation;
     std::string m_validCharacters;
 
     std::vector<Rect> m_glyphsCoords;

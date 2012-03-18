@@ -52,7 +52,6 @@ local function tryLogin(charInfo, tries)
   Settings.set('lastUsedCharacter', charInfo.characterName)
 end
 
-
 function onGameLoginError(message)
   CharacterList.destroyLoadBox()
   local errorBox = displayErrorBox("Login Error", "Login error: " .. message)
@@ -67,6 +66,10 @@ end
 
 -- public functions
 function CharacterList.init()
+  charactersWindow = displayUI('characterlist.otui')
+  charactersWindow:hide()
+  characterList = charactersWindow:getChildById('characterList')
+  charactersWindow.onKeyPress = onCharactersWindowKeyPress
   connect(g_game, { onLoginError = onGameLoginError })
   connect(g_game, { onConnectionError = onGameConnectionError })
   connect(g_game, { onGameStart = CharacterList.destroyLoadBox })
@@ -74,11 +77,13 @@ function CharacterList.init()
 end
 
 function CharacterList.terminate()
+  disconnect(g_game, { onLoginError = onGameLoginError })
+  disconnect(g_game, { onConnectionError = onGameConnectionError })
+  disconnect(g_game, { onGameStart = CharacterList.destroyLoadBox })
+  disconnect(g_game, { onGameEnd = CharacterList.show })
   characterList = nil
-  if charactersWindow then
-    charactersWindow:destroy()
-    charactersWindow = nil
-  end
+  charactersWindow:destroy()
+  charactersWindow = nil
   if loadBox then
     g_game.cancelLogin()
     loadBox:destroy()
@@ -88,14 +93,9 @@ function CharacterList.terminate()
 end
 
 function CharacterList.create(characters, premDays)
-  if charactersWindow then
-    charactersWindow:destroy()
-  end
-
-  charactersWindow = displayUI('characterlist.otui')
-  characterList = charactersWindow:getChildById('characterList')
+  CharacterList.show()
+  characterList:destroyChildren()
   local accountStatusLabel = charactersWindow:getChildById('accountStatusLabel')
-  connect(charactersWindow, {onKeyPress = onCharactersWindowKeyPress })
 
   local focusLabel
   for i,characterInfo in ipairs(characters) do

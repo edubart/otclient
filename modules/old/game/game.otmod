@@ -1,0 +1,17 @@
+Module
+  name: game
+  description: Create the game interface, where the ingame stuff starts
+  author: OTClient team
+  website: https://github.com/edubart/otclient
+  reloadable: true
+
+  dependencies:
+    - game_tibiafiles
+    //- game_shaders
+
+  onLoad: |
+    dofile 'game'
+    dofile 'thing'
+    dofile 'creature'
+    dofile 'player'
+    dofile 'map'

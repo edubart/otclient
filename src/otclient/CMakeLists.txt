@@ -31,6 +31,7 @@ SET(otclient_SOURCES ${otclient_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/core/thingstype.cpp
     ${CMAKE_CURRENT_LIST_DIR}/core/spritemanager.cpp
     ${CMAKE_CURRENT_LIST_DIR}/core/item.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/core/container.cpp
     ${CMAKE_CURRENT_LIST_DIR}/core/tile.cpp
     ${CMAKE_CURRENT_LIST_DIR}/core/thing.cpp
     ${CMAKE_CURRENT_LIST_DIR}/core/creature.cpp

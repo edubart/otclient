@@ -216,6 +216,7 @@ public:
     bool isAttacking() { return !!m_attackingCreature; }
     bool isFollowing() { return !!m_followingCreature; }
 
+    ContainerPtr getContainer(int index) { return m_containers[index]; }
     CreaturePtr getAttackingCreature() { return m_attackingCreature; }
     CreaturePtr getFollowingCreature() { return m_followingCreature; }
     int getServerBeat() { return m_serverBeat; }
@@ -231,6 +232,7 @@ private:
     CreaturePtr m_attackingCreature;
     CreaturePtr m_followingCreature;
     ProtocolGamePtr m_protocolGame;
+    std::map<int, ContainerPtr> m_containers;
     bool m_dead;
     int m_serverBeat;
     Otc::FightModes m_fightMode;

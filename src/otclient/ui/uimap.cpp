@@ -33,7 +33,6 @@ UIMap::UIMap()
     m_dragable = true;
     m_mapView = MapViewPtr(new MapView);
     g_map.addMapView(m_mapView);
-    m_mapView->followCreature(g_game.getLocalPlayer());
 }
 
 UIMap::~UIMap()
@@ -94,6 +93,11 @@ void UIMap::zoomOut()
 
     m_mapRect.resize(mapSize);
     m_mapRect.moveCenter(m_rect.center());
+}
+
+void UIMap::followCreature(const CreaturePtr& creature)
+{
+    m_mapView->followCreature(creature);
 }
 
 void UIMap::setCameraPosition(const Position& pos)

@@ -11,8 +11,8 @@ Panel
   focusable: false
 
   UILabel
-    background-color: #00000099
     id: clientVersionLabel
+    background-color: #00000099
     anchors.right: parent.right
     anchors.bottom: parent.bottom
     text-offset: 4 2

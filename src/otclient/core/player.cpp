@@ -20,17 +20,4 @@
  * THE SOFTWARE.
  */
 
-#ifndef UIGAME_H
-#define UIGAME_H
-
-#include "declarations.h"
-#include <framework/ui/uiwidget.h>
-
-class UIGame : public UIWidget
-{
-protected:
-    bool onKeyPress(uchar keyCode, int keyboardModifiers, int autoRepeatTicks);
-    bool onKeyText(const std::string& keyText);
-};
-
-#endif
+#include "player.h"

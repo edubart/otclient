@@ -76,9 +76,83 @@ function applyMessagePrefixies(name, level, message)
   return message
 end
 
+
+-- hooked events
+local function onCreatureSpeak(name, level, speaktype, message, channelId, creaturePos)
+  speaktype = SpeakTypes[speaktype]
+  if speaktype.hideInConsole then return end
+
+  message = applyMessagePrefixies(name, level, message)
+
+  if speaktype.private then
+    Console.addPrivateText(message, speaktype, name, false)
+  else
+    local channel = channels[channelId]
+
+    if channel then
+      Console.addText(message, speaktype, channel)
+    else
+      -- server sent a message on a channel that we are not aware of, must leave it
+      g_game.leaveChannel(channelId)
+    end
+  end
+end
+
+local function onOpenChannel(channelId, channelName)
+  Console.addChannel(channelName, channelId)
+end
+
+local function onOpenPrivateChannel(receiver)
+  local privateTab = Console.getTab(receiver)
+  if privateTab == nil then
+    Console.addTab(receiver, true)
+  end
+end
+
+local function doChannelListSubmit(channelsWindow)
+  local channelListPanel = channelsWindow:getChildById('channelList')
+  local openPrivateChannelWith = channelsWindow:getChildById('openPrivateChannelWith'):getText()
+  if openPrivateChannelWith ~= '' then
+    g_game.openPrivateChannel(openPrivateChannelWith)
+  else
+    local selectedChannelLabel = channelListPanel:getFocusedChild()
+    if not selectedChannelLabel then return end
+    g_game.joinChannel(selectedChannelLabel.channelId)
+  end
+  channelsWindow:destroy()
+end
+
+local function onChannelList(channelList)
+  local channelsWindow = displayUI('channelswindow.otui')
+  local channelListPanel = channelsWindow:getChildById('channelList')
+  channelsWindow.onEnter = function() doChannelListSubmit(channelsWindow) end
+  Keyboard.bindKeyPress('Down', function() channelListPanel:focusNextChild(KeyboardFocusReason) end, channelsWindow)
+  Keyboard.bindKeyPress('Up', function() channelListPanel:focusPreviousChild(KeyboardFocusReason) end, channelsWindow)
+
+  for k,v in pairs(channelList) do
+    local channelId = v[1]
+    local channelName = v[2]
+
+    if channelId ~= 0 and #channelName > 0 then
+      local label = createWidget('ChannelListLabel', channelListPanel)
+      label.channelId = channelId
+      label:setText(channelName)
+
+      label:setPhantom(false)
+      label.onDoubleClick = function() doChannelListSubmit(channelsWindow) end
+    end
+  end
+end
+
+
 -- public functions
-function Console.create()
-  consolePanel = displayUI('console.otui', g_game.gameBottomPanel)
+function Console.init()
+  connect(g_game, { onCreatureSpeak = onCreatureSpeak,
+                    onChannelList = onChannelList,
+                    onOpenChannel = onOpenChannel,
+                    onOpenPrivateChannel = onOpenPrivateChannel})
+
+  consolePanel = displayUI('console.otui', GameInterface.getBottomPanel())
   consoleLineEdit = consolePanel:getChildById('consoleLineEdit')
   consoleBuffer = consolePanel:getChildById('consoleBuffer')
   consoleTabBar = consolePanel:getChildById('consoleTabBar')
@@ -88,25 +162,42 @@ function Console.create()
   Console.addChannel('Default', 0)
   Console.addTab('Server Log', false)
 
-  Keyboard.bindKeyDown('Shift+Up', function() navigateMessageHistory(1) end, consolePanel)
-  Keyboard.bindKeyDown('Shift+Down', function() navigateMessageHistory(-1) end, consolePanel)
-  Keyboard.bindKeyDown('Tab', function() consoleTabBar:selectNextTab() end, consolePanel)
-  Keyboard.bindKeyDown('Shift+Tab', function() consoleTabBar:selectPrevTab() end, consolePanel)
+  Keyboard.bindKeyPress('Shift+Up', function() navigateMessageHistory(1) end, consolePanel)
+  Keyboard.bindKeyPress('Shift+Down', function() navigateMessageHistory(-1) end, consolePanel)
+  Keyboard.bindKeyPress('Tab', function() consoleTabBar:selectNextTab() end, consolePanel)
+  Keyboard.bindKeyPress('Shift+Tab', function() consoleTabBar:selectPrevTab() end, consolePanel)
   Keyboard.bindKeyDown('Enter', Console.sendCurrentMessage, consolePanel)
 
   -- apply buttom functions after loaded
-  connect(consolePanel:getChildById('nextChannelButton'), { onClick = function() consoleTabBar:selectNextTab() end } )
-  connect(consolePanel:getChildById('prevChannelButton'), { onClick = function() consoleTabBar:selectPrevTab() end } )
-  connect(consoleTabBar, { onTabChange = Console.onTabChange })
+  consolePanel:getChildById('nextChannelButton').onClick = function() consoleTabBar:selectNextTab() end
+  consolePanel:getChildById('prevChannelButton').onClick = function() consoleTabBar:selectPrevTab() end
+  consoleTabBar.onTabChange = Console.onTabChange
 
   -- tibia like hotkeys
   Keyboard.bindKeyDown('Ctrl+O', g_game.requestChannels)
   Keyboard.bindKeyDown('Ctrl+E', Console.removeCurrentTab)
 end
 
-function Console.destroy()
+function Console.terminate()
+  disconnect(g_game, { onCreatureSpeak = onCreatureSpeak,
+                       onChannelList = onChannelList,
+                       onOpenChannel = onOpenChannel,
+                       onOpenPrivateChannel = onOpenPrivateChannel })
+
+  for channelid, channelname in ipairs(channels) do
+    g_game.leaveChannel(channelid)
+  end
+
+  Keyboard.unbindKeyDown('Ctrl+O')
+  Keyboard.unbindKeyDown('Ctrl+E')
+
   consolePanel:destroy()
   consolePanel = nil
+  consoleLineEdit = nil
+  consoleBuffer = nil
+  consoleTabBar = nil
+
+  Console = nil
 end
 
 function Console.setLineEditText(text)
@@ -117,7 +208,7 @@ function Console.addTab(name, focus)
   local tab = consoleTabBar:addTab(name)
   if focus then
     consoleTabBar:selectTab(tab)
-  else
+  elseif name ~= 'Server Log' then
     consoleTabBar:blinkTab(tab)
   end
   return tab
@@ -299,75 +390,3 @@ function Console.sayModeChange(sayMode)
   buttom:setIcon(SayModes[sayMode].icon)
   buttom.sayMode = sayMode
 end
-
--- hooked events
-local function onCreatureSpeak(name, level, speaktype, message, channelId, creaturePos)
-  speaktype = SpeakTypes[speaktype]
-  if speaktype.hideInConsole then return end
-
-  message = applyMessagePrefixies(name, level, message)
-
-  if speaktype.private then
-    Console.addPrivateText(message, speaktype, name, false)
-  else
-    local channel = channels[channelId]
-
-    if channel then
-      Console.addText(message, speaktype, channel)
-    else
-      -- server sent a message on a channel that we are not aware of, must leave it
-      g_game.leaveChannel(channelId)
-    end
-  end
-end
-
-local function onOpenChannel(channelId, channelName)
-  Console.addChannel(channelName, channelId)
-end
-
-local function onOpenPrivateChannel(receiver)
-  local privateTab = Console.getTab(receiver)
-  if privateTab == nil then
-    Console.addTab(receiver, true)
-  end
-end
-
-local function doChannelListSubmit(channelsWindow)
-  local channelListPanel = channelsWindow:getChildById('channelList')
-  local openPrivateChannelWith = channelsWindow:getChildById('openPrivateChannelWith'):getText()
-  if openPrivateChannelWith ~= '' then
-    g_game.openPrivateChannel(openPrivateChannelWith)
-  else
-    local selectedChannelLabel = channelListPanel:getFocusedChild()
-    if not selectedChannelLabel then return end
-    g_game.joinChannel(selectedChannelLabel.channelId)
-  end
-  channelsWindow:destroy()
-end
-
-local function onChannelList(channelList)
-  local channelsWindow = displayUI('channelswindow.otui')
-  local channelListPanel = channelsWindow:getChildById('channelList')
-  connect(channelsWindow, { onEnter = function () doChannelListSubmit(channelsWindow) end } )
-
-  for k,v in pairs(channelList) do
-    local channelId = v[1]
-    local channelName = v[2]
-
-    if channelId ~= 0 and #channelName > 0 then
-      local label = createWidget('ChannelListLabel', channelListPanel)
-      label.channelId = channelId
-      label:setText(channelName)
-
-      label:setPhantom(false)
-      connect(label, { onDoubleClick = function () doChannelListSubmit(channelsWindow) end } )
-    end
-  end
-end
-
-connect(g_game, { onGameStart = Console.create,
-                onGameEnd = Console.destroy,
-                onCreatureSpeak = onCreatureSpeak,
-                onChannelList = onChannelList,
-                onOpenChannel = onOpenChannel,
-                onOpenPrivateChannel = onOpenPrivateChannel})

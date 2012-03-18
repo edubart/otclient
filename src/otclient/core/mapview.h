@@ -93,7 +93,6 @@ public:
     MapViewPtr asMapView() { return std::static_pointer_cast<MapView>(shared_from_this()); }
 
 private:
-    int m_drawFlags;
     int m_lockedFirstVisibleFloor;
     int m_cachedFirstVisibleFloor;
     int m_cachedLastVisibleFloor;
@@ -102,7 +101,6 @@ private:
     Size m_visibleDimension;
     Point m_virtualCenterOffset;
     Position m_customCameraPosition;
-    Position m_framebufferCenterPosition;
     Boolean<true> m_mustUpdateVisibleTilesCache;
     Boolean<true> m_mustDrawVisibleTilesCache;
     Boolean<true> m_mustCleanFramebuffer;

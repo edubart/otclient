@@ -219,10 +219,7 @@ void Application::poll()
 
 void Application::close()
 {
-    g_lua.getGlobalField("g_app", "onClose");
-    if(!g_lua.isNil())
-        g_lua.protectedCall();
-    else
+    if(!g_lua.callGlobalField<bool>("g_app", "onClose"))
         exit();
 }
 

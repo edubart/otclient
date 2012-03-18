@@ -319,7 +319,12 @@ UIWidgetPtr UIManager::loadUI(const std::string& file, const UIWidgetPtr& parent
         return nullptr;
     }
 }
+/*
+UIWidgetPtr UIManager::loadWidgetFromStyle()
+{
 
+}
+*/
 UIWidgetPtr UIManager::loadWidgetFromOTML(const OTMLNodePtr& widgetNode, const UIWidgetPtr& parent)
 {
     OTMLNodePtr originalStyleNode = getStyle(widgetNode->tag());

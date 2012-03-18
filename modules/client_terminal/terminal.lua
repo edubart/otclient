@@ -184,12 +184,8 @@ function Terminal.executeCommand(command)
 
   -- detect and convert commands with simple syntax
   local realCommand
-  if commandEnv[command] then
-    if type(commandEnv[command]) == "function" then
-      realCommand = command .. '()'
-    else
-      realCommand = 'print(' .. command .. ')'
-    end
+  if string.sub(command, 1, 1) == '=' then
+    realCommand = 'print(' .. string.sub(command,2) .. ')'
   else
     realCommand = command
   end

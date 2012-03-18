@@ -206,7 +206,7 @@ void UIWidget::removeChild(UIWidgetPtr child)
 
         g_ui.onWidgetDisappear(child);
     } else
-        logError("Attempt to remove an unknown child from a UIWidget");
+        logError("attempt to remove an unknown child from a UIWidget");
 }
 
 
@@ -637,11 +637,12 @@ void UIWidget::destroy()
 
     // remove itself from parent
     if(UIWidgetPtr parent = getParent()) {
-        if(parent->hasChild(asUIWidget()))
-            parent->removeChild(asUIWidget());
+        assert(parent->hasChild(asUIWidget()));
+        parent->removeChild(asUIWidget());
     }
 
     destroyChildren();
+    m_focusedChild = nullptr;
 
     callLuaField("onDestroy");
 
@@ -649,12 +650,13 @@ void UIWidget::destroy()
 
 #ifdef DEBUG
     auto self = asUIWidget();
+    g_lua.collectGarbage();
     if(self != g_ui.getRootWidget()) {
         g_eventDispatcher.scheduleEvent([self] {
             g_lua.collectGarbage();
             if(self->getUseCount() != 1)
                 logWarning("widget '", self->getId(), "' destroyed but still have ", self->getUseCount()-1, " reference(s) left");
-        }, 100);
+        }, 500);
     }
 #endif
 }
