@@ -33,7 +33,7 @@ Painter g_painter;
 void Painter::init()
 {
     setColor(Fw::white);
-    setOpacity(255);
+    setOpacity(1.0f);
     setCompositionMode(CompositionMode_Normal);
 
     m_drawTexturedProgram = PainterShaderProgramPtr(new PainterShaderProgram);

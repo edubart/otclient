@@ -30,41 +30,41 @@
 class Color
 {
 public:
-    Color() : m_rgba(0xFFFFFFFF) { }
-    Color(uint8 r, uint8 g, uint8 b, uint8 a = 0xFF) : m_r(r), m_g(g), m_b(b), m_a(a) { }
-    Color(const Color& other) : m_rgba(other.m_rgba) { }
-    Color(uint32 rgba) : m_rgba(rgba) { }
+    Color() : m_r(1.0f), m_g(1.0f), m_b(1.0f), m_a(1.0f) { }
+    Color(uint32 rgba) { setRGBA(rgba); }
+    Color(uint8 r, uint8 g, uint8 b, uint8 a = 0xFF) : m_r(r/255.0f), m_g(g/255.0f), m_b(b/255.0f), m_a(a/255.0f) { }
 
-    uint8 a() const { return m_a; }
-    uint8 b() const { return m_b; }
-    uint8 g() const { return m_g; }
-    uint8 r() const { return m_r; }
+    uint8 a() const { return m_a*255.0f; }
+    uint8 b() const { return m_b*255.0f; }
+    uint8 g() const { return m_g*255.0f; }
+    uint8 r() const { return m_r*255.0f; }
 
-    float aF() const { return m_a/255.0f; }
-    float bF() const { return m_b/255.0f; }
-    float gF() const { return m_g/255.0f; }
-    float rF() const { return m_r/255.0f; }
+    float aF() const { return m_a; }
+    float bF() const { return m_b; }
+    float gF() const { return m_g; }
+    float rF() const { return m_r; }
 
-    uint32 rgba() const { return m_rgba; }
+    uint32 rgba() const { return uint32(a() | b() << 8 | g() << 16 | r() << 24); }
 
-    const uint8* rgbaPtr() const { return (const uint8*)&m_rgba; }
+    void setRed(int r) { m_r = uint8(r)/255.0f; }
+    void setGreen(int g) { m_g = uint8(g)/255.0f; }
+    void setBlue(int b) { m_b = uint8(b)/255.0f; }
+    void setAlpha(int a) { m_a = uint8(a)/255.0f; }
 
-    void setRed(int r)  { m_r = r; }
-    void setGreen(int g) { m_g = g; }
-    void setBlue(int b) { m_b = b; }
-    void setAlpha(int a) { m_a = a; }
+    void setRed(float r) { m_r = r; }
+    void setGreen(float g) { m_g = g; }
+    void setBlue(float b) { m_b = b; }
+    void setAlpha(float a) { m_a = a; }
 
-    void setRed(float r) { setRed(int(r*255.0f)); }
-    void setGreen(float g) { setGreen(int(g*255.0f)); }
-    void setBlue(float b) { setBlue(int(b*255.0f)); }
-    void setAlpha(float a) { setAlpha(int(a*255.0f)); }
+    void setRGBA(uint8 r, uint8 g, uint8 b, uint8 a = 0xFF) { m_r = r/255.0f; m_g = g/255.0f; m_b = b/255.0f; m_a = a/255.0f; }
+    void setRGBA(uint32 rgba) { setRGBA((rgba >> 0) & 0xff, (rgba >> 8) & 0xff, (rgba >> 16) & 0xff, (rgba >> 24) & 0xff); }
 
-    void setRGBA(int r, int g, int b, int a = 0xFF) { m_r = r; m_g = g; m_b = b; m_a = a; }
-    void setRGBA(uint32 rgba) { rgba = rgba; }
+    Color& operator=(uint32_t rgba) { setRGBA(rgba); return *this; }
+    bool operator==(uint32_t rgba) const { return this->rgba() == rgba; }
 
-    Color& operator=(const Color& other) { m_rgba = other.m_rgba; return *this; }
-    bool operator==(const Color& other) const { return other.m_rgba == m_rgba; }
-    bool operator!=(const Color& other) const { return other.m_rgba != m_rgba; }
+    Color& operator=(const Color& other) { m_r = other.m_r; m_g = other.m_g; m_b = other.m_b; m_a = other.m_a; return *this; }
+    bool operator==(const Color& other) const { return other.m_r == m_r && other.m_g == m_g && other.m_b == m_b && other.m_a == m_a; }
+    bool operator!=(const Color& other) const { return other.m_r != m_r || other.m_g != m_g || other.m_b != m_b || other.m_a != m_a; }
 
     static Color from8bit(int color) {
         if(color >= 216 || color <= 0)
@@ -77,15 +77,10 @@ public:
     }
 
 private:
-    union {
-        uint32 m_rgba;
-        struct {
-            uint8 m_r;
-            uint8 m_g;
-            uint8 m_b;
-            uint8 m_a;
-        };
-    };
+    float m_r;
+    float m_g;
+    float m_b;
+    float m_a;
 };
 
 inline std::ostream& operator<<(std::ostream& out, const Color& color)

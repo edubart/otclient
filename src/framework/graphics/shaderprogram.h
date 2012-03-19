@@ -62,7 +62,7 @@ public:
     void setAttributeValue(const char *name, float x, float y) { glVertexAttrib2f(getAttributeLocation(name), x, y); }
     void setAttributeValue(const char *name, float x, float y, float z) { glVertexAttrib3f(getAttributeLocation(name), x, y, z); }
 
-    void setUniformValue(int location, const Color& color) { glUniform4f(m_uniformLocations[location], color.r() / 255.0f, color.g() / 255.0f, color.b() / 255.0f, color.a() / 255.0f); }
+    void setUniformValue(int location, const Color& color) { glUniform4f(m_uniformLocations[location], color.rF(), color.gF(), color.bF(), color.aF()); }
     void setUniformValue(int location, GLint value) { glUniform1i(m_uniformLocations[location], value); }
     void setUniformValue(int location, float value) { glUniform1f(m_uniformLocations[location], value); }
     void setUniformValue(int location, float x, float y) { glUniform2f(m_uniformLocations[location], x, y); }
@@ -70,7 +70,7 @@ public:
     void setUniformValue(int location, float x, float y, float z, float w) { glUniform4f(m_uniformLocations[location], x, y, z, w); }
     void setUniformValue(int location, const Matrix2& mat) { glUniformMatrix2fv(m_uniformLocations[location], 1, GL_FALSE, mat.data()); }
     void setUniformValue(int location, const Matrix3& mat) { glUniformMatrix3fv(m_uniformLocations[location], 1, GL_FALSE, mat.data()); }
-    void setUniformValue(const char *name, const Color& color) { glUniform4f(glGetUniformLocation(m_programId, name), color.r() / 255.0f, color.g() / 255.0f, color.b() / 255.0f, color.a() / 255.0f); }
+    void setUniformValue(const char *name, const Color& color) { glUniform4f(glGetUniformLocation(m_programId, name), color.rF(), color.gF(), color.bF(), color.aF()); }
     void setUniformValue(const char *name, GLint value) { glUniform1i(glGetUniformLocation(m_programId, name), value); }
     void setUniformValue(const char *name, float value) { glUniform1f(glGetUniformLocation(m_programId, name), value); }
     void setUniformValue(const char *name, float x, float y) { glUniform2f(glGetUniformLocation(m_programId, name), x, y); }
