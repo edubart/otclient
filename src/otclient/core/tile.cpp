@@ -100,6 +100,8 @@ void Tile::draw(const Point& dest, float scaleFactor, int drawFlags)
     if(drawFlags & Otc::DrawCreatures) {
         if(animate) {
             for(const CreaturePtr& creature : m_walkingCreatures) {
+                if(creature->isRemoved())
+                    continue;
                 creature->draw(Point(dest.x + ((creature->getPosition().x - m_position.x)*Otc::TILE_PIXELS - m_drawElevation)*scaleFactor,
                                      dest.y + ((creature->getPosition().y - m_position.y)*Otc::TILE_PIXELS - m_drawElevation)*scaleFactor), scaleFactor, animate);
 

@@ -4,6 +4,7 @@ CharacterList = { }
 local charactersWindow
 local loadBox
 local characterList
+local errorBox
 
 -- private functions
 local function onCharactersWindowKeyPress(self, keyCode, keyboardModifiers)
@@ -54,14 +55,20 @@ end
 
 function onGameLoginError(message)
   CharacterList.destroyLoadBox()
-  local errorBox = displayErrorBox("Login Error", "Login error: " .. message)
-  errorBox.onOk = CharacterList.showAgain
+  errorBox = displayErrorBox("Login Error", "Login error: " .. message)
+  errorBox.onOk = function()
+    errorBox = nil
+    CharacterList.showAgain()
+  end
 end
 
 function onGameConnectionError(message)
   CharacterList.destroyLoadBox()
-  local errorBox = displayErrorBox("Login Error", "Connection error: " .. message)
-  errorBox.onOk = CharacterList.showAgain
+  errorBox = displayErrorBox("Login Error", "Connection error: " .. message)
+  errorBox.onOk = function()
+    errorBox = nil
+    CharacterList.showAgain()
+  end
 end
 
 -- public functions
@@ -137,7 +144,7 @@ function CharacterList.destroy()
 end
 
 function CharacterList.show()
-  if not loadBox then
+  if not loadBox and not errorBox then
     charactersWindow:show()
     charactersWindow:raise()
     charactersWindow:focus()

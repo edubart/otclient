@@ -55,6 +55,7 @@ Creature::Creature() : Thing()
     m_emblem = Otc::EmblemNone;
     m_shieldBlink = false;
     m_showShieldTexture = true;
+    m_removed = false;
     m_informationFont = g_fonts.getFont("verdana-11px-rounded");
 }
 

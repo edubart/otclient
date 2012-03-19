@@ -109,8 +109,18 @@ void Map::save()
 
 void Map::clean()
 {
+    cleanDynamicThings();
     m_tiles.clear();
-    m_knownCreatures.clear();
+}
+
+void Map::cleanDynamicThings()
+{
+    for(const auto& pair : m_knownCreatures) {
+        const CreaturePtr& creature = pair.second;
+        removeThing(creature);
+        creature->setRemoved(true);
+    }
+
     for(int i=0;i<=Otc::MAX_Z;++i)
         m_floorMissiles[i].clear();
     m_animatedTexts.clear();
@@ -261,12 +271,14 @@ void Map::removeCreatureById(uint32 id)
 {
     if(id == 0)
         return;
+    if(CreaturePtr creature = m_knownCreatures[id])
+        creature->setRemoved(true);
     m_knownCreatures.erase(id);
 }
 
 void Map::setCentralPosition(const Position& centralPosition)
 {
-    bool teleported = !m_centralPosition.isInRange(centralPosition, 1,1);
+    bool teleported = !m_centralPosition.isInRange(centralPosition, 1, 1);
     m_centralPosition = centralPosition;
 
     // remove all creatures when teleporting, the server will resend them again

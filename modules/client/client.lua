@@ -1,7 +1,7 @@
 Client = {}
 
 function Client.reloadScripts()
-  dofile 'otclientrc.lua'
+  dofile '/otclientrc'
   reloadModules()
   TextMessage.displayEventAdvance('All modules and scripts were reloaded.')
   print('All modules and scripts were reloaded.')

@@ -59,6 +59,7 @@ public:
     void setShieldTexture(const std::string& filename, bool blink);
     void setEmblemTexture(const std::string& filename);
     void setPassable(bool passable) { m_passable = passable; }
+    void setRemoved(bool removed) { m_removed = removed; }
 
     void addTimedSquare(uint8 color);
     void removeTimedSquare() { m_showTimedSquare = false; }
@@ -88,6 +89,7 @@ public:
     virtual void stopWalk();
 
     bool isWalking() { return m_walking; }
+    bool isRemoved() { return m_removed; }
 
     CreaturePtr asCreature() { return std::static_pointer_cast<Creature>(shared_from_this()); }
 
@@ -120,6 +122,7 @@ protected:
     Color m_staticSquareColor;
     bool m_showTimedSquare;
     bool m_showStaticSquare;
+    bool m_removed;
 
     FontPtr m_informationFont;
     Color m_informationColor;

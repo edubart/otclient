@@ -70,6 +70,6 @@ void AnimatedTexture::processAnimation()
     AnimatedTexturePtr self = asAnimatedTexture();
 
     // continue to animate only if something still referencing this texture
-    if(self.use_count() > 2)
+    if(self.use_count() > 1)
         g_eventDispatcher.scheduleEvent(std::bind(&AnimatedTexture::processAnimation, self), m_framesDelay[m_currentFrame]);
 }

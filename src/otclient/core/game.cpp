@@ -115,6 +115,9 @@ void Game::processGameEnd()
 
     // reset game state
     resetGameStates();
+
+    // clean map creatures
+    g_map.cleanDynamicThings();
 }
 
 void Game::processLogin()
@@ -336,7 +339,7 @@ void Game::forceLogout()
     if(!isOnline())
         return;
 
-    //m_protocolGame->sendLogout();
+    m_protocolGame->sendLogout();
     processDisconnect();
 }
 
