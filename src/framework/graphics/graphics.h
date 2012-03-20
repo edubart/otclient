@@ -32,7 +32,7 @@ public:
     void init();
     void terminate();
 
-    bool isExtensionSupported(const char *extension);
+    bool hasFBO();
 
     void resize(const Size& size);
     void beginRender();

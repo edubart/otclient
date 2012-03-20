@@ -46,6 +46,7 @@ public:
     const Size& getSize() { return m_texture->getSize(); }
 
 private:
+    void internalCreate();
     void internalBind();
     void internalRelease();
 

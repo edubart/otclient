@@ -37,9 +37,8 @@ void Graphics::init()
         logFatal("Unable to init GLEW: ", glewGetErrorString(err));
     if(!GLEW_ARB_vertex_program || !GLEW_ARB_vertex_shader ||
        !GLEW_ARB_fragment_program || !GLEW_ARB_fragment_shader ||
-       !GLEW_ARB_framebuffer_object ||
-       !GLEW_ARB_multitexture)
-        logFatal("Your video driver is not supported");
+       !GLEW_ARB_texture_non_power_of_two || !GLEW_ARB_multitexture)
+        logFatal("Some OpenGL 2.0 extensions is not supported by your system graphics, please try updating your video drivers or buy a new hardware.");
 #endif
 
     glEnable(GL_BLEND);
@@ -59,11 +58,13 @@ void Graphics::terminate()
     m_emptyTexture.reset();
 }
 
-bool Graphics::isExtensionSupported(const char *extension)
+bool Graphics::hasFBO()
 {
-    std::string extensionsString = (const char*)glGetString(GL_EXTENSIONS);
-    auto extensions = Fw::split(extensionsString);
-    return std::find(extensions.begin(), extensions.end(), extension) != extensions.end();
+#ifndef OPENGL_ES2
+    return GLEW_ARB_framebuffer_object;
+#else
+    return true;
+#endif
 }
 
 void Graphics::resize(const Size& size)

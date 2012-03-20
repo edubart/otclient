@@ -25,30 +25,52 @@
 #include "texture.h"
 
 uint FrameBuffer::boundFbo = 0;
+std::vector<bool> auxBuffers;
 
 FrameBuffer::FrameBuffer()
 {
     m_clearColor = Color::alpha;
-
-    glGenFramebuffers(1, &m_fbo);
-    if(!m_fbo)
-        logFatal("Unable to create framebuffer object");
+    internalCreate();
 }
 
 FrameBuffer::FrameBuffer(const Size& size)
 {
     m_clearColor = Color::alpha;
-
-    glGenFramebuffers(1, &m_fbo);
-    if(!m_fbo)
-        logFatal("Unable to create framebuffer object");
-
+    internalCreate();
     resize(size);
+}
+
+void FrameBuffer::internalCreate()
+{
+    if(g_graphics.hasFBO()) {
+        glGenFramebuffers(1, &m_fbo);
+        if(!m_fbo)
+            logFatal("Unable to create framebuffer object");
+    } else { // use auxiliar buffers when FBOs are not supported
+        m_fbo = 0;
+        if(auxBuffers.size() == 0) {
+            int maxAuxs;
+            glGetIntegerv(GL_AUX_BUFFERS, &maxAuxs);
+            auxBuffers.resize(maxAuxs+1, false);
+        }
+        for(uint i=1;i<auxBuffers.size();++i) {
+            if(auxBuffers[i] == false) {
+                m_fbo = i;
+                auxBuffers[i] = true;
+            }
+        }
+        if(!m_fbo)
+            logFatal("There is no available auxiliar buffer for a new framebuffer");
+    }
 }
 
 FrameBuffer::~FrameBuffer()
 {
-    glDeleteFramebuffers(1, &m_fbo);
+    if(g_graphics.hasFBO()) {
+        glDeleteFramebuffers(1, &m_fbo);
+    } else {
+        auxBuffers[m_fbo] = false;
+    }
 }
 
 void FrameBuffer::resize(const Size& size)
@@ -59,15 +81,19 @@ void FrameBuffer::resize(const Size& size)
     if(m_texture && m_texture->getSize() == size)
         return;
 
-    internalBind();
     m_texture = TexturePtr(new Texture(size.width(), size.height(), 4));
     m_texture->setSmooth(true);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture->getId(), 0);
 
-    GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-    if(status != GL_FRAMEBUFFER_COMPLETE)
-        logFatal("Unable to setup framebuffer object");
-    internalRelease();
+    if(g_graphics.hasFBO()) {
+        internalBind();
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture->getId(), 0);
+
+        GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+        if(status != GL_FRAMEBUFFER_COMPLETE)
+            logFatal("Unable to setup framebuffer object");
+        internalRelease();
+    }
+
 }
 
 void FrameBuffer::bind(bool clear)
@@ -115,7 +141,15 @@ void FrameBuffer::internalBind()
     if(boundFbo == m_fbo)
         return;
     assert(boundFbo != m_fbo);
-    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+
+    if(g_graphics.hasFBO()) {
+        glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+    } else {
+        int buffer = GL_AUX0 + m_fbo - 1;
+        glDrawBuffer(buffer);
+        glReadBuffer(buffer);
+    }
+
     m_prevBoundFbo = boundFbo;
     boundFbo = m_fbo;
 }
@@ -123,6 +157,18 @@ void FrameBuffer::internalBind()
 void FrameBuffer::internalRelease()
 {
     assert(boundFbo == m_fbo);
-    glBindFramebuffer(GL_FRAMEBUFFER, m_prevBoundFbo);
+    if(g_graphics.hasFBO()) {
+        glBindFramebuffer(GL_FRAMEBUFFER, m_prevBoundFbo);
+    } else {
+        m_texture->bind();
+        glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, m_texture->getWidth(), m_texture->getHeight());
+
+        int buffer = GL_BACK;
+        if(m_prevBoundFbo != 0)
+            buffer = GL_AUX0 + m_fbo - 1;
+
+        glDrawBuffer(buffer);
+        glReadBuffer(buffer);
+    }
     boundFbo = m_prevBoundFbo;
 }

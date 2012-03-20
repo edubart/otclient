@@ -86,6 +86,10 @@ void CoordsBuffer::addRepeatedRects(const Rect& dest, const Rect& src)
 
 void CoordsBuffer::enableHardwareCaching(HardwareBuffer::UsagePattern usagePattern)
 {
+#ifndef OPENGL_ES2
+    if(!GL_ARB_vertex_buffer_object)
+        return;
+#endif
     m_hardwareCacheMode = usagePattern;
     m_hardwareCaching = true;
     m_hardwareCached = false;
