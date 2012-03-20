@@ -100,7 +100,7 @@ void CoordsBuffer::cacheVertexArrays()
     m_vertices.clear();
     m_textureCoords.clear();
 
-    for(int i=0;i<numDestRects;++i) {
+    for(register int i=0;i<numDestRects;++i) {
         m_vertices.addRect(m_destRects[i]);
         if(numSrcRects == numDestRects)
             m_textureCoords.addRect(m_srcRects[i]);

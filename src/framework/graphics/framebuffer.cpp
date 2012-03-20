@@ -28,7 +28,7 @@ uint FrameBuffer::boundFbo = 0;
 
 FrameBuffer::FrameBuffer()
 {
-    m_clearColor = Fw::alpha;
+    m_clearColor = Color::alpha;
 
     glGenFramebuffers(1, &m_fbo);
     if(!m_fbo)
@@ -37,7 +37,7 @@ FrameBuffer::FrameBuffer()
 
 FrameBuffer::FrameBuffer(const Size& size)
 {
-    m_clearColor = Fw::alpha;
+    m_clearColor = Color::alpha;
 
     glGenFramebuffers(1, &m_fbo);
     if(!m_fbo)

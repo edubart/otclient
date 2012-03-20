@@ -180,7 +180,7 @@ bool ParticleEmitter::load(const OTMLNodePtr& node)
     return true;
 }
 
-void ParticleEmitter::update(double elapsedTime)
+void ParticleEmitter::update(float elapsedTime)
 {
     // check if finished
     if(m_duration >= 0 && m_elapsedTime >= m_duration + m_delay) {

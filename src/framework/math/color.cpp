@@ -20,28 +20,25 @@
  * THE SOFTWARE.
  */
 
-#include "clock.h"
+#include "color.h"
 
-// for usleep
-#include <unistd.h>
-
-Clock g_clock;
-
-Clock::Clock()
-{
-    m_startupTime = std::chrono::high_resolution_clock::now();
-    m_currentTicks = 0;
-}
-
-ticks_t Clock::updateTicks()
-{
-    auto timeNow = std::chrono::high_resolution_clock::now();
-    m_currentTicks = std::chrono::duration_cast<std::chrono::milliseconds>(timeNow - m_startupTime).count();
-    m_currentTime = m_currentTicks/1000.0f;
-    return m_currentTicks;
-}
-
-void Clock::sleep(int ms)
-{
-    usleep(ms * 1000);
-}
+// NOTE: AABBGGRR order
+const Color Color::alpha      = 0x00000000;
+const Color Color::white      = 0xffffffff;
+const Color Color::black      = 0xff000000;
+const Color Color::red        = 0xff0000ff;
+const Color Color::darkRed    = 0xff000080;
+const Color Color::green      = 0xff00ff00;
+const Color Color::darkGreen  = 0xff008000;
+const Color Color::blue       = 0xffff0000;
+const Color Color::darkBlue   = 0xff800000;
+const Color Color::pink       = 0xffff00ff;
+const Color Color::darkPink   = 0xff800080;
+const Color Color::yellow     = 0xff00ffff;
+const Color Color::darkYellow = 0xff008080;
+const Color Color::teal       = 0xffffff00;
+const Color Color::darkTeal   = 0xff808000;
+const Color Color::gray       = 0xffa0a0a0;
+const Color Color::darkGray   = 0xff808080;
+const Color Color::lightGray  = 0xffc0c0c0;
+const Color Color::orange     = 0xffff8c00;

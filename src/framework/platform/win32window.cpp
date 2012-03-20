@@ -646,9 +646,9 @@ void WIN32Window::setMouseCursor(const std::string& file, const Point& hotSpot)
         uchar b = apng.pdata[i*4+2];
         uchar a = apng.pdata[i*4+3];
         Color color(r,g,b,a);
-        if(color == Fw::white) { //white
+        if(color == Color::white) { //white
             HSB_BIT_SET(xorMask, i);
-        } else if(color == Fw::alpha) { //alpha
+        } else if(color == Color::alpha) { //alpha
             HSB_BIT_SET(andMask, i);
         } //otherwise black
     }

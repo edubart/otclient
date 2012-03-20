@@ -33,7 +33,7 @@ ParticleAffector::ParticleAffector()
     m_elapsedTime = 0;
 }
 
-void ParticleAffector::update(double elapsedTime)
+void ParticleAffector::update(float elapsedTime)
 {
     if(m_duration >= 0 && m_elapsedTime >= m_duration + m_delay) {
         m_finished = true;
@@ -94,7 +94,7 @@ bool GravityAffector::load(const OTMLNodePtr& node)
     return true;
 }
 
-void GravityAffector::updateParticle(const ParticlePtr& particle, double elapsedTime)
+void GravityAffector::updateParticle(const ParticlePtr& particle, float elapsedTime)
 {
     if(!m_active)
         return;
@@ -126,7 +126,7 @@ bool AttractionAffector::load(const OTMLNodePtr& node)
     return true;
 }
 
-void AttractionAffector::updateParticle(const ParticlePtr& particle, double elapsedTime)
+void AttractionAffector::updateParticle(const ParticlePtr& particle, float elapsedTime)
 {
     if(!m_active)
         return;

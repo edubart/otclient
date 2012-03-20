@@ -864,9 +864,9 @@ void X11Window::setMouseCursor(const std::string& file, const Point& hotSpot)
         uchar b = apng.pdata[i*4+2];
         uchar a = apng.pdata[i*4+3];
         Color color(r,g,b,a);
-        if(color == Fw::white) { //background
+        if(color == Color::white) { //background
             LSB_BIT_SET(maskBits, i);
-        } else if(color == Fw::black) { //foreground
+        } else if(color == Color::black) { //foreground
             LSB_BIT_SET(mapBits, i);
             LSB_BIT_SET(maskBits, i);
         } //otherwise alpha

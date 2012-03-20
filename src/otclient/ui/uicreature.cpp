@@ -29,7 +29,7 @@ void UICreature::draw()
     drawSelf();
 
     if(m_creature) {
-        g_painter.setColor(Fw::white);
+        g_painter.setColor(Color::white);
         Rect drawRect = getChildrenRect();
         m_creature->drawOutfit(drawRect, !m_fixedCreatureSize);
     }

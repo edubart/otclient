@@ -34,15 +34,16 @@ public:
     void sleep(int ms);
 
     ticks_t ticks() { return m_currentTicks; }
-    ticks_t ticksElapsed(long prevTicks) { return ticks() - prevTicks; }
-    ticks_t ticksFor(int delay) { return ticks() + delay; }
+    ticks_t ticksElapsed(long prevTicks) { return m_currentTicks - prevTicks; }
+    ticks_t ticksFor(int delay) { return m_currentTicks + delay; }
 
-    double time() { return m_currentTicks/1000.0; }
-    double timeElapsed(double prevTime) { return time() - prevTime; }
-    double timeFor(double delay) { return time() + delay; }
+    float time() { return m_currentTime; }
+    float timeElapsed(float prevTime) { return m_currentTime - prevTime; }
+    float timeFor(float delay) { return m_currentTime + delay; }
 
 private:
     ticks_t m_currentTicks;
+    float m_currentTime;
     std::chrono::system_clock::time_point m_startupTime;
 };
 

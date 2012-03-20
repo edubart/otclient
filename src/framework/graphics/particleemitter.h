@@ -36,7 +36,7 @@ public:
 
     bool load(const OTMLNodePtr& node);
 
-    void update(double elapsedTime);
+    void update(float elapsedTime);
 
     bool hasFinished() { return m_finished; }
 
@@ -46,7 +46,7 @@ private:
     // self related
     Point m_position;
     float m_duration, m_delay;
-    double m_elapsedTime;
+    float m_elapsedTime;
     bool m_finished, m_active;
     float m_burstRate;
     int m_currentBurst, m_burstCount;

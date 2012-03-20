@@ -136,6 +136,7 @@ SET(framework_SOURCES ${framework_SOURCES}
 
     # framework util
     ${CMAKE_CURRENT_LIST_DIR}/util/utf8.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/math/color.cpp
 
     # framework core
     ${CMAKE_CURRENT_LIST_DIR}/core/logger.cpp

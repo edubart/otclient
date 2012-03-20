@@ -42,7 +42,7 @@ public:
 
 private:
     bool m_finished;
-    double m_lastUpdateTime;
+    float m_lastUpdateTime;
     std::list<ParticlePtr> m_particles;
     std::list<ParticleEmitterPtr> m_emitters;
     std::list<ParticleAffectorPtr> m_affectors;

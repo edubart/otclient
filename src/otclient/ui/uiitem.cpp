@@ -37,7 +37,7 @@ void UIItem::draw()
     if(m_item) {
         Point topLeft = m_rect.bottomRight() - Point(32, 32) + Point(m_padding.left, m_padding.top);
 
-        g_painter.setColor(Fw::white);
+        g_painter.setColor(Color::white);
         m_item->draw(topLeft, 1, true);
 
         if(m_font && m_item->isStackable() && m_item->getCount() > 1) {

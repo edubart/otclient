@@ -32,7 +32,7 @@ public:
     Particle(const Point& pos, const Size& startSize, const Size& finalSize, const PointF& velocity, const PointF& acceleration, float duration, float ignorePhysicsAfter, const std::vector<Color>& colors, const std::vector<float>& colorsStops, Painter::CompositionMode compositionMode = Painter::CompositionMode_Normal, TexturePtr texture = nullptr);
 
     void render();
-    void update(double elapsedTime);
+    void update(float elapsedTime);
 
     bool hasFinished() { return m_finished; }
 
@@ -44,7 +44,7 @@ public:
 
 private:
     void updateColor();
-    void updatePosition(double elapsedTime);
+    void updatePosition(float elapsedTime);
     void updateSize();
 
     Color m_color;
@@ -58,7 +58,7 @@ private:
     Rect m_rect;
     Painter::CompositionMode m_compositionMode;
     float m_duration, m_ignorePhysicsAfter;
-    double m_elapsedTime;
+    float m_elapsedTime;
     bool m_finished;
 };
 

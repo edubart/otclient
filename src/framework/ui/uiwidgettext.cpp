@@ -48,7 +48,7 @@ void UIWidget::parseTextStyle(const OTMLNodePtr& styleNode)
 
 void UIWidget::drawText(const Rect& screenCoords)
 {
-    if(m_text.length() == 0 || m_color.a() == 0)
+    if(m_text.length() == 0 || m_color.aF() == 0.0f)
         return;
 
 #if 0
@@ -66,7 +66,7 @@ void UIWidget::drawText(const Rect& screenCoords)
         virtualTextRect.translate(m_textOffset);
         g_painter.saveAndResetState();
         g_painter.setCompositionMode(Painter::CompositionMode_DestBlending);
-        m_font->renderText(m_text, virtualTextRect, m_textAlign, Fw::white);
+        m_font->renderText(m_text, virtualTextRect, m_textAlign, Color::white);
         g_painter.restoreSavedState();
         m_textFramebuffer->release();
 

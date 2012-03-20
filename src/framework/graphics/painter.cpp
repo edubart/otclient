@@ -32,7 +32,7 @@ Painter g_painter;
 
 void Painter::init()
 {
-    setColor(Fw::white);
+    setColor(Color::white);
     setOpacity(1.0f);
     setCompositionMode(CompositionMode_Normal);
 
@@ -67,14 +67,9 @@ void Painter::drawProgram(const PainterShaderProgramPtr& program, CoordsBuffer& 
 
 void Painter::drawTextureCoords(CoordsBuffer& coordsBuffer, const TexturePtr& texture)
 {
-    PainterShaderProgramPtr program = m_customProgram ? m_customProgram : m_drawTexturedProgram;
+    PainterShaderProgramPtr& program = m_customProgram ? m_customProgram : m_drawTexturedProgram;
     program->setTexture(texture);
     drawProgram(program, coordsBuffer);
-}
-
-void Painter::drawTexturedRect(const Rect& dest, const TexturePtr& texture)
-{
-    drawTexturedRect(dest, texture, Rect(Point(0,0), texture->getSize()));
 }
 
 void Painter::drawTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src)
@@ -153,7 +148,7 @@ void Painter::saveAndResetState()
     m_oldCompostionMode = m_compostionMode;
 
     releaseCustomProgram();
-    setColor(Fw::white);
+    setColor(Color::white);
     setOpacity(1);
     setCompositionMode(CompositionMode_Normal);
 }
@@ -166,7 +161,7 @@ void Painter::restoreSavedState()
     setCompositionMode(m_oldCompostionMode);
 
     m_oldCustomProgram = nullptr;
-    m_oldColor = Fw::white;
+    m_oldColor = Color::white;
     m_oldOpacity = 1;
     m_oldCompostionMode = CompositionMode_Normal;
 }

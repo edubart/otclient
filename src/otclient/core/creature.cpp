@@ -86,7 +86,7 @@ void Creature::draw(const Point& dest, float scaleFactor, bool animate)
 
 void Creature::internalDrawOutfit(const Point& dest, float scaleFactor, bool animateWalk, bool animateIdle, Otc::Direction direction)
 {
-    g_painter.setColor(Fw::white);
+    g_painter.setColor(Color::white);
     if(!outfitProgram) {
         outfitProgram = PainterShaderProgramPtr(new PainterShaderProgram);
         outfitProgram->addShaderFromSourceCode(Shader::Vertex, glslMainWithTexCoordsVertexShader + glslPositionOnlyVertexShader);
@@ -225,7 +225,7 @@ void Creature::drawInformation(const Point& point, bool useGray, const Rect& par
     healthRect.setWidth((m_healthPercent / 100.0) * 25);
 
     // draw
-    g_painter.setColor(Fw::black);
+    g_painter.setColor(Color::black);
     g_painter.drawFilledRect(backgroundRect);
 
     g_painter.setColor(fillColor);
@@ -235,15 +235,15 @@ void Creature::drawInformation(const Point& point, bool useGray, const Rect& par
         m_informationFont->renderText(m_name, textRect, Fw::AlignTopCenter, fillColor);
 
     if(m_skull != Otc::SkullNone && m_skullTexture) {
-        g_painter.setColor(Fw::white);
+        g_painter.setColor(Color::white);
         g_painter.drawTexturedRect(Rect(point.x + 12, point.y + 5, m_skullTexture->getSize()), m_skullTexture);
     }
     if(m_shield != Otc::ShieldNone && m_shieldTexture && m_showShieldTexture) {
-        g_painter.setColor(Fw::white);
+        g_painter.setColor(Color::white);
         g_painter.drawTexturedRect(Rect(point.x, point.y + 5, m_shieldTexture->getSize()), m_shieldTexture);
     }
     if(m_emblem != Otc::EmblemNone && m_emblemTexture) {
-        g_painter.setColor(Fw::white);
+        g_painter.setColor(Color::white);
         g_painter.drawTexturedRect(Rect(point.x + 12, point.y + 16, m_emblemTexture->getSize()), m_emblemTexture);
     }
 }
@@ -431,7 +431,7 @@ void Creature::setName(const std::string& name)
 
 void Creature::setHealthPercent(uint8 healthPercent)
 {
-    m_informationColor = Fw::black;
+    m_informationColor = Color::black;
 
     if(healthPercent > 92) {
         m_informationColor.setGreen(188);

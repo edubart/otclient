@@ -35,7 +35,7 @@ public:
 
     ticks_t startTicks() { return m_startTicks; }
     ticks_t ticksElapsed();
-    double timeElapsed() { return ticksElapsed()/1000.0; }
+    float timeElapsed() { return ticksElapsed()/1000.0f; }
 
     bool running() { return !m_stopped; }
 

@@ -887,7 +887,7 @@ void Game::setAttackingCreature(const CreaturePtr& creature)
     }
 
     if(creature) {
-        creature->showStaticSquare(Fw::red);
+        creature->showStaticSquare(Color::red);
         m_attackingCreature = creature;
     }
 
@@ -902,7 +902,7 @@ void Game::setFollowingCreature(const CreaturePtr& creature)
     }
 
     if(creature) {
-        creature->showStaticSquare(Fw::green);
+        creature->showStaticSquare(Color::green);
         m_followingCreature = creature;
     }
 

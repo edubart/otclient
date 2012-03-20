@@ -56,7 +56,7 @@ void Particle::render()
     }
 }
 
-void Particle::update(double elapsedTime)
+void Particle::update(float elapsedTime)
 {
     // check if finished
     if(m_duration >= 0 && m_elapsedTime >= m_duration) {
@@ -71,7 +71,7 @@ void Particle::update(double elapsedTime)
     m_elapsedTime += elapsedTime;
 }
 
-void Particle::updatePosition(double elapsedTime)
+void Particle::updatePosition(float elapsedTime)
 {
     if(m_ignorePhysicsAfter < 0 || m_elapsedTime < m_ignorePhysicsAfter ) {
         // update position

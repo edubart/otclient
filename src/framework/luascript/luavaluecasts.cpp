@@ -116,7 +116,7 @@ bool luavalue_cast(int index, Color& color)
     } else if(g_lua.isString()) {
         return Fw::cast(g_lua.toString(index), color);
     } else if(g_lua.isNil()) {
-        color = Fw::white;
+        color = Color::white;
         return true;
     }
     return false;

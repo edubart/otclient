@@ -70,7 +70,7 @@ void ParticleSystem::render()
 
 void ParticleSystem::update()
 {
-    static const double delay = 0.0166; // 60 updates/s
+    static const float delay = 0.0166; // 60 updates/s
 
     // check if finished
     if(m_particles.empty() && m_emitters.empty()) {
@@ -79,7 +79,7 @@ void ParticleSystem::update()
     }
 
     // check time
-    double elapsedTime = g_clock.timeElapsed(m_lastUpdateTime);
+    float elapsedTime = g_clock.timeElapsed(m_lastUpdateTime);
     if(elapsedTime < delay)
         return;
     m_lastUpdateTime = g_clock.time() - std::fmod(elapsedTime, delay);

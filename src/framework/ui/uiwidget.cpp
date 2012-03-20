@@ -60,7 +60,7 @@ void UIWidget::draw()
 void UIWidget::drawSelf()
 {
     // draw style components in order
-    if(m_backgroundColor.a() > 0) {
+    if(m_backgroundColor.aF() != 0.0f) {
         Rect backgroundDestRect = m_rect;
         backgroundDestRect.expand(-m_borderWidth.top, -m_borderWidth.right, -m_borderWidth.bottom, -m_borderWidth.left);
         drawBackground(m_rect);
@@ -92,10 +92,10 @@ void UIWidget::drawChildren()
 
             // debug draw box
             if(g_ui.isDrawingDebugBoxes()) {
-                g_painter.setColor(Fw::green);
+                g_painter.setColor(Color::green);
                 g_painter.drawBoundingRect(child->getRect());
             }
-            //g_fonts.getDefaultFont()->renderText(child->getId(), child->getPosition() + Point(2, 0), Fw::red);
+            //g_fonts.getDefaultFont()->renderText(child->getId(), child->getPosition() + Point(2, 0), Color::red);
 
             g_painter.setOpacity(oldOpacity);
         }

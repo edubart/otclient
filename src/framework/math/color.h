@@ -76,6 +76,26 @@ public:
         return Color(r, g, b);
     }
 
+    static const Color alpha;
+    static const Color white;
+    static const Color black;
+    static const Color red;
+    static const Color darkRed;
+    static const Color green;
+    static const Color darkGreen;
+    static const Color blue;
+    static const Color darkBlue;
+    static const Color pink;
+    static const Color darkPink;
+    static const Color yellow;
+    static const Color darkYellow;
+    static const Color teal;
+    static const Color darkTeal;
+    static const Color gray;
+    static const Color darkGray;
+    static const Color lightGray;
+    static const Color orange;
+
 private:
     float m_r;
     float m_g;
@@ -118,43 +138,43 @@ inline std::istream& operator>>(std::istream& in, Color& color)
         in >> tmp;
 
         if(tmp == "alpha") {
-            color = Fw::alpha;
+            color = Color::alpha;
         } else if(tmp == "black") {
-            color = Fw::black;
+            color = Color::black;
         } else if(tmp == "white") {
-            color = Fw::white;
+            color = Color::white;
         } else if(tmp == "red") {
-            color = Fw::red;
+            color = Color::red;
         } else if(tmp == "darkRed") {
-            color = Fw::darkRed;
+            color = Color::darkRed;
         } else if(tmp == "green") {
-            color = Fw::green;
+            color = Color::green;
         } else if(tmp == "darkGreen") {
-            color = Fw::darkGreen;
+            color = Color::darkGreen;
         } else if(tmp == "blue") {
-            color = Fw::blue;
+            color = Color::blue;
         } else if(tmp == "darkBlue") {
-            color = Fw::darkBlue;
+            color = Color::darkBlue;
         } else if(tmp == "pink") {
-            color = Fw::pink;
+            color = Color::pink;
         } else if(tmp == "darkPink") {
-            color = Fw::darkPink;
+            color = Color::darkPink;
         } else if(tmp == "yellow") {
-            color = Fw::yellow;
+            color = Color::yellow;
         } else if(tmp == "darkYellow") {
-            color = Fw::darkYellow;
+            color = Color::darkYellow;
         } else if(tmp == "teal") {
-            color = Fw::teal;
+            color = Color::teal;
         } else if(tmp == "darkTeal") {
-            color = Fw::darkTeal;
+            color = Color::darkTeal;
         } else if(tmp == "gray") {
-            color = Fw::gray;
+            color = Color::gray;
         } else if(tmp == "darkGray") {
-            color = Fw::darkGray;
+            color = Color::darkGray;
         } else if(tmp == "lightGray") {
-            color = Fw::lightGray;
+            color = Color::lightGray;
         } else if(tmp == "orange") {
-            color = Fw::orange;
+            color = Color::orange;
         } else {
             in.seekg(-tmp.length(), ios_base::cur);
         }

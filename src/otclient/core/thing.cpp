@@ -80,7 +80,7 @@ void Thing::internalDraw(const Point& dest, float scaleFactor, int w, int h, int
     int spriteId = getSpriteId(w, h, layer, xPattern, yPattern, zPattern, animationPhase);
     if(spriteId) {
         Rect drawRect(dest - getDisplacement()*scaleFactor, Size(scaledSize, scaledSize));
-        g_painter.setColor(Fw::white);
+        g_painter.setColor(Color::white);
         g_painter.drawTexturedRect(drawRect, g_sprites.getSpriteTexture(spriteId));
     }
 }

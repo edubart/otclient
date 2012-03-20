@@ -58,7 +58,7 @@ public:
 
 private:
     DrawMode m_drawMode;
-    Timer m_startTimer;
+    float m_startTime;
     std::array<std::tuple<int, int>, 4> m_textures;
 };
 

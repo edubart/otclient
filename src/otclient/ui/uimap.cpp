@@ -45,7 +45,7 @@ void UIMap::draw()
     drawSelf();
 
     // draw map border
-    g_painter.setColor(Fw::black);
+    g_painter.setColor(Color::black);
     g_painter.drawBoundingRect(m_mapRect.expanded(1));
 
     m_mapView->draw(m_mapRect);

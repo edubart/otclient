@@ -30,30 +30,7 @@
 
 namespace Fw
 {
-    constexpr double pi = 3.14159265;
-
-    // NOTE: AABBGGRR order
-    enum GlobalColor : uint32 {
-        alpha      = 0x00000000,
-        white      = 0xffffffff,
-        black      = 0xff000000,
-        red        = 0xff0000ff,
-        darkRed    = 0xff000080,
-        green      = 0xff00ff00,
-        darkGreen  = 0xff008000,
-        blue       = 0xffff0000,
-        darkBlue   = 0xff800000,
-        pink       = 0xffff00ff,
-        darkPink   = 0xff800080,
-        yellow     = 0xff00ffff,
-        darkYellow = 0xff008080,
-        teal       = 0xffffff00,
-        darkTeal   = 0xff808000,
-        gray       = 0xffa0a0a0,
-        darkGray   = 0xff808080,
-        lightGray  = 0xffc0c0c0,
-        orange     = 0xffff8c00
-    };
+    constexpr float pi = 3.14159265;
 
     enum Key : uint8 {
         KeyUnknown = 0,

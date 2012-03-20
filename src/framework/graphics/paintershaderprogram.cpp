@@ -29,6 +29,7 @@
 PainterShaderProgram::PainterShaderProgram()
 {
     m_textures.fill(std::make_tuple(-1, 0));
+    m_startTime = g_clock.time();
 }
 
 bool PainterShaderProgram::link()
@@ -44,7 +45,7 @@ bool PainterShaderProgram::link()
         bindUniformLocation(TIME_UNIFORM, "time");
         return true;
     }
-    m_startTimer.restart();
+    m_startTime = g_clock.time();
     return false;
 }
 
@@ -94,7 +95,7 @@ void PainterShaderProgram::draw(const CoordsBuffer& coordsBuffer, DrawMode drawM
 {
     bind();
 
-    setUniformValue(TIME_UNIFORM, (float)m_startTimer.timeElapsed());
+    setUniformValue(TIME_UNIFORM, g_clock.timeElapsed(m_startTime));
 
     int numVertices = coordsBuffer.getVertexCount();
     if(numVertices == 0)

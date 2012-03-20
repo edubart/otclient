@@ -46,7 +46,7 @@ MapView::MapView()
                          std::min(g_graphics.getMaxTextureSize(), (int)DEFAULT_FRAMBUFFER_HEIGHT));
 
     m_framebuffer = FrameBufferPtr(new FrameBuffer(frameBufferSize));
-    m_framebuffer->setClearColor(Fw::black);
+    m_framebuffer->setClearColor(Color::black);
     setVisibleDimension(Size(15, 11));
 
     m_shaderProgram = PainterShaderProgramPtr(new PainterShaderProgram);
@@ -106,7 +106,7 @@ void MapView::draw(const Rect& rect)
     }
 
     g_painter.setCustomProgram(m_shaderProgram);
-    g_painter.setColor(Fw::white);
+    g_painter.setColor(Color::white);
 
     Point drawOffset = ((m_drawDimension - m_visibleDimension - Size(1,1)).toPoint()/2) * m_tileSize;
     if(m_followingCreature)
@@ -175,7 +175,7 @@ void MapView::draw(const Rect& rect)
         Rect hRect(0, 0, 10, 2);
         vRect.moveCenter(rect.center());
         hRect.moveCenter(rect.center());
-        g_painter.setColor(Fw::white);
+        g_painter.setColor(Color::white);
         g_painter.drawFilledRect(vRect);
         g_painter.drawFilledRect(hRect);
     }

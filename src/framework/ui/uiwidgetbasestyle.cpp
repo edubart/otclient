@@ -33,10 +33,10 @@
 
 void UIWidget::initBaseStyle()
 {
-    m_backgroundColor = Fw::alpha;
-    m_borderColor.set(Fw::black);
-    m_iconColor = Fw::white;
-    m_color = Fw::white;
+    m_backgroundColor = Color::alpha;
+    m_borderColor.set(Color::black);
+    m_iconColor = Color::white;
+    m_color = Color::white;
     m_opacity = 1.0f;
 
     // generate an unique id, this is need because anchored layouts find widgets by id
@@ -312,7 +312,7 @@ void UIWidget::parseBaseStyle(const OTMLNodePtr& styleNode)
 
 void UIWidget::drawBackground(const Rect& screenCoords)
 {
-    if(m_backgroundColor.a() > 0) {
+    if(m_backgroundColor.aF() != 0.0f) {
         Rect drawRect = screenCoords;
         drawRect.translate(m_backgroundRect.topLeft());
         if(m_backgroundRect.isValid())
@@ -325,28 +325,28 @@ void UIWidget::drawBackground(const Rect& screenCoords)
 void UIWidget::drawBorder(const Rect& screenCoords)
 {
     // top
-    if(m_borderWidth.top > 0 && m_borderColor.top.a() > 0) {
+    if(m_borderWidth.top > 0 && m_borderColor.top.aF() != 0.0f) {
         g_painter.setColor(m_borderColor.top);
 
         Rect borderRect(screenCoords.topLeft(), screenCoords.width(), m_borderWidth.top);
         g_painter.drawFilledRect(borderRect);
     }
     // right
-    if(m_borderWidth.right > 0 && m_borderColor.right.a() > 0) {
+    if(m_borderWidth.right > 0 && m_borderColor.right.aF() != 0.0f) {
         g_painter.setColor(m_borderColor.right);
 
         Rect borderRect(screenCoords.topRight() - Point(m_borderWidth.right - 1, 0), m_borderWidth.right, screenCoords.height());
         g_painter.drawFilledRect(borderRect);
     }
     // bottom
-    if(m_borderWidth.bottom > 0 && m_borderColor.bottom.a() > 0) {
+    if(m_borderWidth.bottom > 0 && m_borderColor.bottom.aF() != 0.0f) {
         g_painter.setColor(m_borderColor.bottom);
 
         Rect borderRect(screenCoords.bottomLeft() - Point(0, m_borderWidth.bottom - 1), screenCoords.width(), m_borderWidth.bottom);
         g_painter.drawFilledRect(borderRect);
     }
     // left
-    if(m_borderWidth.left > 0 && m_borderColor.left.a() > 0) {
+    if(m_borderWidth.left > 0 && m_borderColor.left.aF() != 0.0f) {
         g_painter.setColor(m_borderColor.left);
 
         Rect borderRect(screenCoords.topLeft(), m_borderWidth.left, screenCoords.height());
@@ -356,7 +356,7 @@ void UIWidget::drawBorder(const Rect& screenCoords)
 
 void UIWidget::drawIcon(const Rect& screenCoords)
 {
-    if(m_icon && m_iconColor.a() > 0) {
+    if(m_icon && m_iconColor.aF() != 0.0f) {
         Rect drawRect;
         if(m_iconRect.isValid()) {
             drawRect = screenCoords;

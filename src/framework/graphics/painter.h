@@ -27,6 +27,7 @@
 #include <framework/util/databuffer.h>
 #include "coordsbuffer.h"
 #include "paintershaderprogram.h"
+#include "texture.h"
 
 class Painter
 {
@@ -44,8 +45,8 @@ public:
 
     void drawProgram(const PainterShaderProgramPtr& program, CoordsBuffer& coordsBuffer, PainterShaderProgram::DrawMode drawMode = PainterShaderProgram::Triangles);
     void drawTextureCoords(CoordsBuffer& coordsBuffer, const TexturePtr& texture);
-    void drawTexturedRect(const Rect& dest, const TexturePtr& texture);
     void drawTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src);
+    void drawTexturedRect(const Rect& dest, const TexturePtr& texture) { drawTexturedRect(dest, texture, Rect(Point(0,0), texture->getSize())); }
     void drawRepeatedTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src);
     void drawFilledRect(const Rect& dest);
     void drawBoundingRect(const Rect& dest, int innerLineWidth = 1);
