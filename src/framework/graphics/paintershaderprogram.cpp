@@ -79,41 +79,38 @@ void PainterShaderProgram::setTexture(const TexturePtr& texture)
     if(!texture)
         return;
 
-    float w = texture->getWidth();
-    float h = texture->getHeight();
-
-    Matrix2 textureTransformMatrix = { 1.0f/w,  0.0f,
-                                       0.0f,    1.0f/h };
-    textureTransformMatrix.transpose();
-
     bind();
     setUniformTexture(TEXTURE_UNIFORM, texture, 0);
-    setUniformValue(TEXTURE_TRANSFORM_MATRIX_UNIFORM, textureTransformMatrix);
+    setUniformValue(TEXTURE_TRANSFORM_MATRIX_UNIFORM, texture->getTransformMatrix());
 }
 
-void PainterShaderProgram::draw(const CoordsBuffer& coordsBuffer, DrawMode drawMode)
+void PainterShaderProgram::draw(CoordsBuffer& coordsBuffer, DrawMode drawMode)
 {
     bind();
 
     setUniformValue(TIME_UNIFORM, g_clock.timeElapsed(m_startTime));
 
-    int numVertices = coordsBuffer.getVertexCount();
-    if(numVertices == 0)
+    int vertexCount = coordsBuffer.getVertexCount();
+    if(vertexCount == 0)
         return;
 
-    bool mustDisableVertexArray = false;
-    if(coordsBuffer.getVertexCount() > 0) {
-        enableAttributeArray(PainterShaderProgram::VERTEX_COORDS_ATTR);
-        setAttributeArray(PainterShaderProgram::VERTEX_COORDS_ATTR, coordsBuffer.getVertices(), 2);
-        mustDisableVertexArray = true;
+    coordsBuffer.updateCaches();
+    bool hardwareCached = coordsBuffer.isHardwareCached();
+
+    enableAttributeArray(PainterShaderProgram::VERTEX_COORDS_ATTR);
+    if(hardwareCached)
+        coordsBuffer.getHardwareVertexBuffer()->bind();
+    setAttributeArray(PainterShaderProgram::VERTEX_COORDS_ATTR, hardwareCached ? 0 : coordsBuffer.getVertexBuffer(), 2);
+
+    if(coordsBuffer.getTextureVertexCount() != 0) {
+        enableAttributeArray(PainterShaderProgram::TEXTURE_COORDS_ATTR);
+        if(hardwareCached)
+            coordsBuffer.getHardwareTextureVertexBuffer()->bind();
+        setAttributeArray(PainterShaderProgram::TEXTURE_COORDS_ATTR, hardwareCached ? 0 : coordsBuffer.getTextureVertexBuffer(), 2);
     }
 
-    bool mustDisableTexCoordsArray = false;
-    if(coordsBuffer.getTextureCoordsCount() > 0) {
-        enableAttributeArray(PainterShaderProgram::TEXTURE_COORDS_ATTR);
-        setAttributeArray(PainterShaderProgram::TEXTURE_COORDS_ATTR, coordsBuffer.getTextureCoords(), 2);
-        mustDisableTexCoordsArray = true;
-    }
+    if(hardwareCached)
+        HardwareBuffer::unbind(HardwareBuffer::VertexBuffer);
 
     for(int i=0;i<(int)m_textures.size();++i) {
         int location = std::get<0>(m_textures[i]);
@@ -127,14 +124,11 @@ void PainterShaderProgram::draw(const CoordsBuffer& coordsBuffer, DrawMode drawM
     }
     glActiveTexture(GL_TEXTURE0);
 
-    glDrawArrays(drawMode, 0, numVertices);
+    glDrawArrays(drawMode, 0, vertexCount);
 
-    if(mustDisableVertexArray)
-        disableAttributeArray(PainterShaderProgram::VERTEX_COORDS_ATTR);
+    disableAttributeArray(PainterShaderProgram::VERTEX_COORDS_ATTR);
 
-    if(mustDisableTexCoordsArray)
+    if(coordsBuffer.getTextureVertexCount() != 0)
         disableAttributeArray(PainterShaderProgram::TEXTURE_COORDS_ATTR);
-
-    //release();
 }
 

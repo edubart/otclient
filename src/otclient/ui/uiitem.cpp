@@ -42,7 +42,8 @@ void UIItem::draw()
 
         if(m_font && m_item->isStackable() && m_item->getCount() > 1) {
             std::string count = Fw::tostring(m_item->getCount());
-            m_font->renderText(count, Rect(m_rect.topLeft(), m_rect.bottomRight() - Point(3, 0)), Fw::AlignBottomRight, Color(231, 231, 231));
+            g_painter.setColor(Color(231, 231, 231));
+            m_font->drawText(count, Rect(m_rect.topLeft(), m_rect.bottomRight() - Point(3, 0)), Fw::AlignBottomRight);
         }
 
         //m_font->renderText(Fw::unsafeCast<std::string>(m_item->getId()), m_rect);

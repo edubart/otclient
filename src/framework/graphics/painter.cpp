@@ -55,7 +55,6 @@ void Painter::terminate()
 
 void Painter::drawProgram(const PainterShaderProgramPtr& program, CoordsBuffer& coordsBuffer, PainterShaderProgram::DrawMode drawMode)
 {
-    coordsBuffer.cacheVertexArrays();
     if(coordsBuffer.getVertexCount() == 0)
         return;
 

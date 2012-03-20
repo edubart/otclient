@@ -61,20 +61,23 @@ void Font::load(const OTMLNodePtr& fontNode)
     }
 }
 
-void Font::renderText(const std::string& text,
-                      const Point& startPos,
-                      const Color& color)
+void Font::drawText(const std::string& text, const Point& startPos)
 {
     Size boxSize = g_graphics.getViewportSize() - startPos.toSize();
     Rect screenCoords(startPos, boxSize);
-    renderText(text, screenCoords, Fw::AlignTopLeft, color);
+    drawText(text, screenCoords, Fw::AlignTopLeft);
 }
 
+void Font::drawText(const std::string& text, const Rect& screenCoords, Fw::AlignmentFlag align)
+{
+    static CoordsBuffer coordsBuffer;
+    coordsBuffer.clear();
 
-void Font::renderText(const std::string& text,
-                      const Rect& screenCoords,
-                      Fw::AlignmentFlag align,
-                      const Color& color)
+    calculateDrawTextCoords(coordsBuffer, text, screenCoords, align);
+    g_painter.drawTextureCoords(coordsBuffer, m_texture);
+}
+
+void Font::calculateDrawTextCoords(CoordsBuffer& coordsBuffer, const std::string& text, const Rect& screenCoords, Fw::AlignmentFlag align)
 {
     // prevent glitches from invalid rects
     if(!screenCoords.isValid() || !m_texture)
@@ -85,8 +88,6 @@ void Font::renderText(const std::string& text,
     // map glyphs positions
     Size textBoxSize;
     const std::vector<Point>& glyphsPositions = calculateGlyphsPositions(text, align, &textBoxSize);
-
-    g_painter.setColor(color);
 
     for(int i = 0; i < textLenght; ++i) {
         int glyph = (uchar)text[i];
@@ -148,7 +149,7 @@ void Font::renderText(const std::string& text,
         }
 
         // render glyph
-        g_painter.drawTexturedRect(glyphScreenCoords, m_texture, glyphTextureCoords);
+        coordsBuffer.addRect(glyphScreenCoords, glyphTextureCoords);
     }
 }
 

@@ -30,6 +30,7 @@ void UIWidget::initText()
 {
     m_font = g_fonts.getDefaultFont();
     m_textAlign = Fw::AlignCenter;
+    m_textCoordsBuffer.enableHardwareCaching();
 }
 
 void UIWidget::parseTextStyle(const OTMLNodePtr& styleNode)
@@ -51,36 +52,16 @@ void UIWidget::drawText(const Rect& screenCoords)
     if(m_text.length() == 0 || m_color.aF() == 0.0f)
         return;
 
-#if 0
-    //TODO: creating framebuffers on the fly was slowing down the render
-    // we should use vertex arrys instead of this method
-    Size boxSize = screenCoords.size();
-    if(boxSize != m_textCachedBoxSize || m_textMustRecache) {
-        if(!m_textFramebuffer)
-            m_textFramebuffer = FrameBufferPtr(new FrameBuffer(boxSize));
-        else
-            m_textFramebuffer->resize(boxSize);
-
-        m_textFramebuffer->bind();
-        Rect virtualTextRect(0, 0, boxSize);
-        virtualTextRect.translate(m_textOffset);
-        g_painter.saveAndResetState();
-        g_painter.setCompositionMode(Painter::CompositionMode_DestBlending);
-        m_font->renderText(m_text, virtualTextRect, m_textAlign, Color::white);
-        g_painter.restoreSavedState();
-        m_textFramebuffer->release();
-
+    if(screenCoords != m_textCachedScreenCoords || m_textMustRecache) {
         m_textMustRecache = false;
-        m_textCachedBoxSize = boxSize;
+        m_textCachedScreenCoords = screenCoords;
+
+        m_textCoordsBuffer.clear();
+        m_font->calculateDrawTextCoords(m_textCoordsBuffer, m_text, screenCoords, m_textAlign);
     }
 
     g_painter.setColor(m_color);
-    m_textFramebuffer->draw(screenCoords);
-#else
-    Rect textRect = screenCoords;
-    textRect.translate(m_textOffset);
-    m_font->renderText(m_text, textRect, m_textAlign, m_color);
-#endif
+    g_painter.drawTextureCoords(m_textCoordsBuffer, m_font->getTexture());
 }
 
 void UIWidget::onTextChange(const std::string& text, const std::string& oldText)

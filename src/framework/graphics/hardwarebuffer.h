@@ -24,8 +24,46 @@
 #ifndef HARDWAREBUFFER_H
 #define HARDWAREBUFFER_H
 
+#include "declarations.h"
+
 class HardwareBuffer
 {
+public:
+    enum Type {
+        VertexBuffer = GL_ARRAY_BUFFER,
+        IndexBuffer  = GL_ELEMENT_ARRAY_BUFFER
+    };
+
+    enum UsagePattern {
+        StreamDraw          = GL_STREAM_DRAW,
+        StreamRead          = GL_STREAM_READ,
+        StreamCopy          = GL_STREAM_COPY,
+        StaticDraw          = GL_STATIC_DRAW,
+        StaticRead          = GL_STATIC_READ,
+        StaticCopy          = GL_STATIC_COPY,
+        DynamicDraw         = GL_DYNAMIC_DRAW,
+        DynamicRead         = GL_DYNAMIC_READ,
+        DynamicCopy         = GL_DYNAMIC_COPY
+    };
+
+    HardwareBuffer(Type type  ) {
+        m_type = type;
+        m_id = 0;
+        glGenBuffers(1, &m_id);
+        assert(m_id != 0);
+    }
+    ~HardwareBuffer() {
+        glDeleteBuffers(1, &m_id);
+    }
+
+    void bind() { glBindBuffer(m_type, m_id); }
+    static void unbind(Type type) { glBindBuffer(type, 0); }
+    void write(void *data, int count, UsagePattern usage) { glBufferData(m_type, count, data, usage); }
+    //void read(void *data, int count);
+
+private:
+    Type m_type;
+    GLuint m_id;
 };
 
 #endif

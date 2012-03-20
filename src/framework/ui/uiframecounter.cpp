@@ -47,7 +47,8 @@ void UIFrameCounter::draw()
     }
     m_frameCount++;
 
-    m_font->renderText(m_fpsText, m_rect, m_align, Color::white);
+    g_painter.setColor(Color::white);
+    m_font->drawText(m_fpsText, m_rect, m_align);
 }
 
 void UIFrameCounter::onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode)

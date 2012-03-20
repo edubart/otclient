@@ -26,6 +26,7 @@
 #include "declarations.h"
 
 #include <framework/otml/declarations.h>
+#include <framework/graphics/coordsbuffer.h>
 
 class Font
 {
@@ -36,15 +37,12 @@ public:
     void load(const OTMLNodePtr& fontNode);
 
     /// Simple text render starting at startPos
-    void renderText(const std::string& text,
-                    const Point& startPos,
-                    const Color& color = Color::white);
+    void drawText(const std::string& text, const Point& startPos);
 
     /// Advanced text render delimited by a screen region and alignment
-    void renderText(const std::string& text,
-                    const Rect& screenCoords,
-                    Fw::AlignmentFlag align = Fw::AlignTopLeft,
-                    const Color& color = Color::white);
+    void drawText(const std::string& text, const Rect& screenCoords, Fw::AlignmentFlag align = Fw::AlignTopLeft);
+
+    void calculateDrawTextCoords(CoordsBuffer& coordsBuffer, const std::string& text, const Rect& screenCoords, Fw::AlignmentFlag align = Fw::AlignTopLeft);
 
     /// Calculate glyphs positions to use on render, also calculates textBoxSize if wanted
     const std::vector<Point>& calculateGlyphsPositions(const std::string& text,

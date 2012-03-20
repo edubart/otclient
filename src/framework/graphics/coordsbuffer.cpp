@@ -22,26 +22,21 @@
 
 #include "coordsbuffer.h"
 
-void CoordsBuffer::clear()
+CoordsBuffer::CoordsBuffer()
 {
-    m_destRects.reset();
-    m_srcRects.reset();
-    m_textureCoords.clear();
-    m_vertices.clear();
-    m_updateCache = true;
+    m_hardwareCacheMode = HardwareBuffer::DynamicDraw;
+    m_hardwareVertexBuffer = nullptr;
+    m_hardwareTextureVertexBuffer = nullptr;
+    m_hardwareCached = false;
+    m_hardwareCaching = false;
 }
 
-void CoordsBuffer::addRect(const Rect& dest)
+CoordsBuffer::~CoordsBuffer()
 {
-    m_destRects << dest;
-    m_updateCache = true;
-}
-
-void CoordsBuffer::addRect(const Rect& dest, const Rect& src)
-{
-    m_destRects << dest;
-    m_srcRects << src;
-    m_updateCache = true;
+    if(m_hardwareVertexBuffer)
+        delete m_hardwareVertexBuffer;
+    if(m_hardwareTextureVertexBuffer)
+        delete m_hardwareTextureVertexBuffer;
 }
 
 void CoordsBuffer::addBoudingRect(const Rect& dest, int innerLineWidth)
@@ -58,7 +53,6 @@ void CoordsBuffer::addBoudingRect(const Rect& dest, int innerLineWidth)
     addRect(Rect(right - w + 1, top, w, height - w)); // right
     addRect(Rect(left + w, bottom - w + 1, width - w, w)); // bottom
     addRect(Rect(left, top + w, w, height - w)); // left
-    m_updateCache = true;
 }
 
 void CoordsBuffer::addRepeatedRects(const Rect& dest, const Rect& src)
@@ -83,28 +77,38 @@ void CoordsBuffer::addRepeatedRects(const Rect& dest, const Rect& src)
             }
 
             partialDest.translate(dest.topLeft());
-            m_destRects << partialDest;
-            m_srcRects << partialSrc;
+            m_vertexBuffer.addRect(partialDest);
+            m_textureVertexBuffer.addRect(partialSrc);
         }
     }
-    m_updateCache = true;
+    m_hardwareCached = false;
 }
 
-void CoordsBuffer::cacheVertexArrays()
+void CoordsBuffer::enableHardwareCaching(HardwareBuffer::UsagePattern usagePattern)
 {
-    if(!m_updateCache)
+    m_hardwareCacheMode = usagePattern;
+    m_hardwareCaching = true;
+    m_hardwareCached = false;
+}
+
+void CoordsBuffer::updateCaches()
+{
+    if(!m_hardwareCaching || m_hardwareCached)
         return;
 
-    int numDestRects = m_destRects.size();
-    int numSrcRects = m_srcRects.size();
-    m_vertices.clear();
-    m_textureCoords.clear();
-
-    for(register int i=0;i<numDestRects;++i) {
-        m_vertices.addRect(m_destRects[i]);
-        if(numSrcRects == numDestRects)
-            m_textureCoords.addRect(m_srcRects[i]);
+    if(m_vertexBuffer.vertexCount() > 0) {
+        if(!m_hardwareVertexBuffer && m_vertexBuffer.vertexCount() > 0)
+            m_hardwareVertexBuffer = new HardwareBuffer(HardwareBuffer::VertexBuffer);
+        m_hardwareVertexBuffer->bind();
+        m_hardwareVertexBuffer->write((void*)m_vertexBuffer.vertices(), m_vertexBuffer.size() * sizeof(float), m_hardwareCacheMode);
     }
 
-    m_updateCache = false;
+    if(m_textureVertexBuffer.vertexCount() > 0) {
+        if(!m_hardwareTextureVertexBuffer && m_textureVertexBuffer.vertexCount() > 0)
+            m_hardwareTextureVertexBuffer = new HardwareBuffer(HardwareBuffer::VertexBuffer);
+        m_hardwareTextureVertexBuffer->bind();
+        m_hardwareTextureVertexBuffer->write((void*)m_textureVertexBuffer.vertices(), m_textureVertexBuffer.size() * sizeof(float), m_hardwareCacheMode);
+    }
+
+    m_hardwareCached = true;
 }

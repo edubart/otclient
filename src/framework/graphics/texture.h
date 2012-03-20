@@ -47,6 +47,7 @@ public:
     int getWidth() { return m_size.width(); }
     int getHeight() { return m_size.height(); }
     const Size& getSize() { return m_size; }
+    const Matrix2& getTransformMatrix() { return m_transformMatrix; }
 
     bool isEmpty() { return m_textureId == 0; }
     bool hasMipmaps() { return m_hasMipmaps; }
@@ -57,6 +58,7 @@ protected:
 
     GLuint m_textureId;
     Size m_size;
+    Matrix2 m_transformMatrix;
     Boolean<false> m_hasMipmaps;
     Boolean<false> m_smooth;
 };

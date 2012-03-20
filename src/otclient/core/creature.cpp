@@ -232,7 +232,7 @@ void Creature::drawInformation(const Point& point, bool useGray, const Rect& par
     g_painter.drawFilledRect(healthRect);
 
     if(m_informationFont)
-        m_informationFont->renderText(m_name, textRect, Fw::AlignTopCenter, fillColor);
+        m_informationFont->drawText(m_name, textRect, Fw::AlignTopCenter);
 
     if(m_skull != Otc::SkullNone && m_skullTexture) {
         g_painter.setColor(Color::white);

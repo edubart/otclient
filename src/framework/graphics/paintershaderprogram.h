@@ -54,7 +54,7 @@ public:
     void setOpacity(float opacity);
     void setTexture(const TexturePtr& texture);
     void setUniformTexture(int location, const TexturePtr& texture, int index);
-    void draw(const CoordsBuffer& coordsBuffer, DrawMode drawMode = Triangles);
+    void draw(CoordsBuffer& coordsBuffer, DrawMode drawMode = Triangles);
 
 private:
     DrawMode m_drawMode;

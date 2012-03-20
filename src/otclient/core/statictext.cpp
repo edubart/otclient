@@ -40,7 +40,8 @@ void StaticText::draw(const Point& dest, const Rect& parentRect)
     // draw only if the real center is not too far from the parent center, or its a yell
     if((boundRect.center() - rect.center()).length() < parentRect.width() / 15 || isYell()) {
         //TODO: cache into a framebuffer
-        m_font->renderText(m_text, boundRect, Fw::AlignCenter, m_color);
+        g_painter.setColor(m_color);
+        m_font->drawText(m_text, boundRect, Fw::AlignCenter);
     }
 }
 

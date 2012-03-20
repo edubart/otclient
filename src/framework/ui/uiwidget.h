@@ -362,7 +362,7 @@ public:
 
 // image
 private:
-    void initImage() { }
+    void initImage();
     void parseImageStyle(const OTMLNodePtr& styleNode);
 
     void updateImageCache() { m_imageMustRecache = true; }
@@ -427,8 +427,8 @@ private:
     void parseTextStyle(const OTMLNodePtr& styleNode);
 
     Boolean<true> m_textMustRecache;
-    FrameBufferPtr m_textFramebuffer;
-    Size m_textCachedBoxSize;
+    CoordsBuffer m_textCoordsBuffer;
+    Rect m_textCachedScreenCoords;
 
 protected:
     void drawText(const Rect& screenCoords);
