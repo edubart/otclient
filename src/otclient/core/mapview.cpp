@@ -519,7 +519,7 @@ int MapView::getLastVisibleFloor()
 
     // view only underground floors when below sea level
     if(cameraPosition.z > Otc::SEA_FLOOR)
-        return cameraPosition.z + Otc::AWARE_UNDEGROUND_FLOOR_RANGE;
+        return std::min(cameraPosition.z + Otc::AWARE_UNDEGROUND_FLOOR_RANGE, (int)Otc::MAX_Z);
     else
         return Otc::SEA_FLOOR;
 }

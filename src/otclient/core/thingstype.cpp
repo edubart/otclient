@@ -115,12 +115,15 @@ void ThingsType::parseThingType(std::stringstream& fin, ThingType& thingType)
 
 ThingType *ThingsType::getThingType(uint16 id, Categories category)
 {
+    if(id == 0)
+        return &m_emptyThingType;
+
     if(category == Item)
         id -= 100;
     else if(category == Creature || category == Effect || category == Missile)
         id -= 1;
 
-    if(id == 0 || id >= m_things[category].size())
+    if(id >= m_things[category].size())
         return &m_emptyThingType;
     return &m_things[category][id];
 }

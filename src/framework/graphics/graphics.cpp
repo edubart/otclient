@@ -43,17 +43,9 @@ void Graphics::init()
        !GLEW_ARB_fragment_program || !GLEW_ARB_fragment_shader ||
        !GLEW_ARB_texture_non_power_of_two || !GLEW_ARB_multitexture)
         logFatal("Some OpenGL 2.0 extensions is not supported by your system graphics, please try updating your video drivers or buy a new hardware.");
-    m_useFBO = GLEW_ARB_framebuffer_object;
-    m_useBilinearFiltering = true;
-    m_generateMipmaps = true;
-    m_generateHardwareMipmaps = m_useFBO; // glGenerateMipmap is supported when FBO is
-    m_generateRealtimeMipmaps = m_generateHardwareMipmaps;
-#else
-    m_useFBO = true; // FBOs is always supported by mobile devices
-    m_useBilinearFiltering = true;
-    m_generateMipmaps = true;
-    m_generateHardwareMipmaps = true;
-    m_realtimeMipmapGeneration = false; // realtime mipmaps can be slow on mobile devices
+
+    m_useFBO = m_useFBO && GLEW_ARB_framebuffer_object;
+    m_generateHardwareMipmaps = m_generateHardwareMipmaps && m_useFBO; // glGenerateMipmap is supported when FBO is
 #endif
 
     glEnable(GL_BLEND);

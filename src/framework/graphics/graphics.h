@@ -52,10 +52,10 @@ private:
     Size m_viewportSize;
     TexturePtr m_emptyTexture;
 
-    Boolean<false> m_useFBO;
-    Boolean<false> m_useBilinearFiltering;
-    Boolean<false> m_generateMipmaps;
-    Boolean<false> m_generateHardwareMipmaps;
+    Boolean<true> m_useFBO;
+    Boolean<true> m_useBilinearFiltering;
+    Boolean<true> m_generateMipmaps;
+    Boolean<true> m_generateHardwareMipmaps;
     Boolean<false> m_generateRealtimeMipmaps;
 };
 
