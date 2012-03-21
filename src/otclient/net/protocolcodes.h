@@ -25,7 +25,7 @@
 
 #include <otclient/global.h>
 
-#if PROTOCOL != 860 && PROTOCOL != 870 && PROTOCOL != 862 && PROTOCOL != 870
+#if PROTOCOL != 860 && PROTOCOL != 861 && PROTOCOL != 862 && PROTOCOL != 870
 #error "the supplied protocol version is not supported"
 #endif
 

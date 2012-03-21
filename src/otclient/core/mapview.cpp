@@ -415,7 +415,6 @@ void MapView::setVisibleDimension(const Size& visibleDimension)
         // found a valid size
         if(candidateDrawSize.width() <= framebufferSize.width() && candidateDrawSize.height() <= framebufferSize.height()) {
             tileSize = candidateTileSize;
-            dump << candidateDrawSize << m_framebuffer->getSize() << tileSize;
             break;
         }
     }

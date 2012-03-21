@@ -28,6 +28,10 @@ Logger g_logger;
 
 void Logger::log(Fw::LogLevel level, const std::string& message)
 {
+    static bool ignoreLogs = false;
+    if(ignoreLogs)
+        return;
+
     const static std::string logPrefixes[] = { "", "", "WARNING: ", "ERROR: ", "FATAL ERROR: " };
 
     std::string outmsg = logPrefixes[level] + message;
@@ -41,6 +45,7 @@ void Logger::log(Fw::LogLevel level, const std::string& message)
 
     if(level == Fw::LogFatal) {
         g_window.displayFatalError(message);
+        ignoreLogs = true;
         exit(-1);
     }
 }
