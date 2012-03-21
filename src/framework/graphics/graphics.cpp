@@ -30,21 +30,34 @@ Graphics g_graphics;
 
 void Graphics::init()
 {
+    logInfo("GPU ", glGetString(GL_RENDERER));
+    logInfo("OpenGL ", glGetString(GL_VERSION));
+
 #ifndef OPENGL_ES2
     // init GL extensions
     GLenum err = glewInit();
     if(err != GLEW_OK)
         logFatal("Unable to init GLEW: ", glewGetErrorString(err));
+
     if(!GLEW_ARB_vertex_program || !GLEW_ARB_vertex_shader ||
        !GLEW_ARB_fragment_program || !GLEW_ARB_fragment_shader ||
        !GLEW_ARB_texture_non_power_of_two || !GLEW_ARB_multitexture)
         logFatal("Some OpenGL 2.0 extensions is not supported by your system graphics, please try updating your video drivers or buy a new hardware.");
+
+    m_useFBO = GLEW_ARB_framebuffer_object;
+    m_useBilinearFiltering = true;
+    m_generateMipmaps = true;
+    m_generateHardwareMipmaps = m_useFBO; // glGenerateMipmap is supported when FBO is
+    m_generateRealtimeMipmaps = m_generateHardwareMipmaps;
+#else
+    m_useFBO = true; // FBOs is always supported by mobile devices
+    m_useBilinearFiltering = true;
+    m_generateMipmaps = true;
+    m_generateHardwareMipmaps = true;
+    m_realtimeMipmapGeneration = false; // realtime mipmaps can be slow on mobile devices
 #endif
 
     glEnable(GL_BLEND);
-
-    logInfo("GPU ", glGetString(GL_RENDERER));
-    logInfo("OpenGL ", glGetString(GL_VERSION));
 
     m_emptyTexture = TexturePtr(new Texture);
 
@@ -56,15 +69,6 @@ void Graphics::terminate()
     g_fonts.releaseFonts();
     g_painter.terminate();
     m_emptyTexture.reset();
-}
-
-bool Graphics::hasFBO()
-{
-#ifndef OPENGL_ES2
-    return GLEW_ARB_framebuffer_object;
-#else
-    return true;
-#endif
 }
 
 void Graphics::resize(const Size& size)

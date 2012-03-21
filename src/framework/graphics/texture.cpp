@@ -99,6 +99,19 @@ uint Texture::internalLoadGLTexture(uchar *pixels, int channels, int width, int 
 
 void Texture::generateMipmaps()
 {
+    if(g_graphics.canGenerateHardwareMipmaps())
+        generateHardwareMipmaps();
+    else {
+        // fallback to software mipmaps generation, this can be slow
+        generateSoftwareMipmaps(getPixels());
+    }
+}
+
+void Texture::generateHardwareMipmaps()
+{
+    if(!g_graphics.canGenerateHardwareMipmaps())
+        return;
+
     bind();
 
     if(!m_hasMipmaps) {
@@ -111,6 +124,9 @@ void Texture::generateMipmaps()
 
 void Texture::setSmooth(bool smooth)
 {
+    if(smooth && !g_graphics.canUseBilinearFiltering())
+        return;
+
     if(smooth == m_smooth)
         return;
 
@@ -140,7 +156,7 @@ std::vector<uint8> Texture::getPixels()
     return pixels;
 }
 
-void Texture::generateBilinearMipmaps(std::vector<uint8> inPixels)
+void Texture::generateSoftwareMipmaps(std::vector<uint8> inPixels)
 {
     bind();
 
@@ -155,6 +171,7 @@ void Texture::generateBilinearMipmaps(std::vector<uint8> inPixels)
 
     int mipmap = 1;
     while(true) {
+        // this is a simple bilinear filtering algorithm, it combines every 4 pixels in one pixel
         for(int x=0;x<outSize.width();++x) {
             for(int y=0;y<outSize.height();++y) {
                 uint8 *inPixel[4];
@@ -180,13 +197,13 @@ void Texture::generateBilinearMipmaps(std::vector<uint8> inPixels)
                     usedPixels++;
                 }
 
+                // try to guess the alpha pixel more accurately
                 for(int i=0;i<4;++i) {
                     if(usedPixels > 0)
                         outPixel[i] = pixelsSum[i] / usedPixels;
                     else
                         outPixel[i] = 0;
                 }
-
                 outPixel[3] = pixelsSum[3]/4;
             }
         }

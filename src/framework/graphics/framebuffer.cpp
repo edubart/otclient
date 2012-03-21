@@ -23,6 +23,7 @@
 #include "framebuffer.h"
 #include "graphics.h"
 #include "texture.h"
+#include <framework/platform/platformwindow.h>
 
 uint FrameBuffer::boundFbo = 0;
 std::vector<bool> auxBuffers;
@@ -42,14 +43,14 @@ FrameBuffer::FrameBuffer(const Size& size)
 
 void FrameBuffer::internalCreate()
 {
-    if(g_graphics.hasFBO()) {
+    if(g_graphics.canUseFBO()) {
         glGenFramebuffers(1, &m_fbo);
         if(!m_fbo)
             logFatal("Unable to create framebuffer object");
     } else { // use auxiliar buffers when FBOs are not supported
         m_fbo = 0;
         if(auxBuffers.size() == 0) {
-            int maxAuxs;
+            int maxAuxs = 0;
             glGetIntegerv(GL_AUX_BUFFERS, &maxAuxs);
             auxBuffers.resize(maxAuxs+1, false);
         }
@@ -57,16 +58,17 @@ void FrameBuffer::internalCreate()
             if(auxBuffers[i] == false) {
                 m_fbo = i;
                 auxBuffers[i] = true;
+                break;
             }
         }
         if(!m_fbo)
-            logFatal("There is no available auxiliar buffer for a new framebuffer");
+            logFatal("There is no available auxiliar buffer for a new framebuffer, total AUXs: ", auxBuffers.size()-1);
     }
 }
 
 FrameBuffer::~FrameBuffer()
 {
-    if(g_graphics.hasFBO()) {
+    if(g_graphics.canUseFBO()) {
         glDeleteFramebuffers(1, &m_fbo);
     } else {
         auxBuffers[m_fbo] = false;
@@ -84,7 +86,7 @@ void FrameBuffer::resize(const Size& size)
     m_texture = TexturePtr(new Texture(size.width(), size.height(), 4));
     m_texture->setSmooth(true);
 
-    if(g_graphics.hasFBO()) {
+    if(g_graphics.canUseFBO()) {
         internalBind();
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture->getId(), 0);
 
@@ -121,11 +123,6 @@ void FrameBuffer::release()
     g_graphics.setViewportSize(m_oldViewportSize);
 }
 
-void FrameBuffer::generateMipmaps()
-{
-    m_texture->generateMipmaps();
-}
-
 void FrameBuffer::draw(const Rect& dest, const Rect& src)
 {
     g_painter.drawTexturedRect(dest, m_texture, src);
@@ -133,7 +130,10 @@ void FrameBuffer::draw(const Rect& dest, const Rect& src)
 
 void FrameBuffer::draw(const Rect& dest)
 {
-    g_painter.drawTexturedRect(dest, m_texture);
+    if(g_graphics.canUseFBO())
+        g_painter.drawTexturedRect(dest, m_texture);
+    else
+        g_painter.drawTexturedRect(dest, m_texture, Rect(0, 0, g_window.getSize()));
 }
 
 void FrameBuffer::internalBind()
@@ -142,7 +142,7 @@ void FrameBuffer::internalBind()
         return;
     assert(boundFbo != m_fbo);
 
-    if(g_graphics.hasFBO()) {
+    if(g_graphics.canUseFBO()) {
         glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
     } else {
         int buffer = GL_AUX0 + m_fbo - 1;
@@ -157,11 +157,13 @@ void FrameBuffer::internalBind()
 void FrameBuffer::internalRelease()
 {
     assert(boundFbo == m_fbo);
-    if(g_graphics.hasFBO()) {
+    if(g_graphics.canUseFBO()) {
         glBindFramebuffer(GL_FRAMEBUFFER, m_prevBoundFbo);
     } else {
         m_texture->bind();
-        glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, m_texture->getWidth(), m_texture->getHeight());
+
+        Size size = getSize();
+        glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, size.width(), size.height());
 
         int buffer = GL_BACK;
         if(m_prevBoundFbo != 0)
@@ -171,4 +173,15 @@ void FrameBuffer::internalRelease()
         glReadBuffer(buffer);
     }
     boundFbo = m_prevBoundFbo;
+}
+
+Size FrameBuffer::getSize()
+{
+    if(g_graphics.canUseFBO()) {
+        return m_texture->getSize();
+    } else {
+        // the buffer size is limited by the window size
+        return Size(std::min(m_texture->getWidth(), g_window.getWidth()),
+                    std::min(m_texture->getHeight(), g_window.getHeight()));
+    }
 }

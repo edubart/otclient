@@ -99,8 +99,12 @@ void MapView::draw(const Rect& rect)
                 }
             }
         }
-        m_framebuffer->generateMipmaps();
+
         m_framebuffer->release();
+
+        // generating mipmaps each frame can be slow in older cards
+        if(g_graphics.canGenerateRealtimeMipmaps())
+            m_framebuffer->getTexture()->generateHardwareMipmaps();
 
         m_mustDrawVisibleTilesCache = false;
     }
@@ -257,7 +261,7 @@ void MapView::updateVisibleTilesCache(int start)
         } else {
             static std::vector<Point> points;
             points.clear();
-            assert(m_drawDimension.width() % 2 == 0 && m_drawDimension.height() % 2 == 0);
+            //assert(m_drawDimension.width() % 2 == 0 && m_drawDimension.height() % 2 == 0);
             Point quadTopLeft(m_drawDimension.width()/2 - 1, m_drawDimension.height()/2 - 1);
             for(int step = 1; !(quadTopLeft.x < 0 && quadTopLeft.y < 0) && !stop; ++step) {
                 int quadWidth = std::min(2*step, m_drawDimension.width());
@@ -404,12 +408,14 @@ void MapView::setVisibleDimension(const Size& visibleDimension)
     int possiblesTileSizes[] = {32,16,8,4,2,1};
     int tileSize = 0;
     Size drawDimension = visibleDimension + Size(3,3);
+    Size framebufferSize = m_framebuffer->getSize();
     for(int candidateTileSize : possiblesTileSizes) {
         Size candidateDrawSize = drawDimension * candidateTileSize;
 
         // found a valid size
-        if(candidateDrawSize <= m_framebuffer->getSize()) {
+        if(candidateDrawSize.width() <= framebufferSize.width() && candidateDrawSize.height() <= framebufferSize.height()) {
             tileSize = candidateTileSize;
+            dump << candidateDrawSize << m_framebuffer->getSize() << tileSize;
             break;
         }
     }

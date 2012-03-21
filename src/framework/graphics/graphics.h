@@ -32,7 +32,11 @@ public:
     void init();
     void terminate();
 
-    bool hasFBO();
+    bool canUseFBO() { return m_useFBO; }
+    bool canUseBilinearFiltering() { return m_useBilinearFiltering; }
+    bool canGenerateMipmaps() { return m_generateMipmaps; }
+    bool canGenerateHardwareMipmaps() { return m_generateHardwareMipmaps; }
+    bool canGenerateRealtimeMipmaps() { return m_generateRealtimeMipmaps; }
 
     void resize(const Size& size);
     void beginRender();
@@ -47,6 +51,12 @@ public:
 private:
     Size m_viewportSize;
     TexturePtr m_emptyTexture;
+
+    Boolean<false> m_useFBO;
+    Boolean<false> m_useBilinearFiltering;
+    Boolean<false> m_generateMipmaps;
+    Boolean<false> m_generateHardwareMipmaps;
+    Boolean<false> m_generateRealtimeMipmaps;
 };
 
 extern Graphics g_graphics;

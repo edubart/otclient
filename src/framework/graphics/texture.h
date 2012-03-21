@@ -34,11 +34,14 @@ public:
 
     void bind() { glBindTexture(GL_TEXTURE_2D, m_textureId); }
 
+    /// Tries to generate mipmaps via hardware, otherwise fallback to software implementation
     void generateMipmaps();
+    /// Generate mipmaps via hardware
+    void generateHardwareMipmaps();
+    /// Generate mipmaps via software, which has a special algorithm for combining alpha pixels
+    void generateSoftwareMipmaps(std::vector<uint8> inPixels);
 
-    // generate bilinear mipmaps optimized for alpha textures
-    void generateBilinearMipmaps(std::vector<uint8> inPixels);
-
+    /// Activate texture altialising
     void setSmooth(bool smooth);
     GLuint getId()  { return m_textureId; }
 

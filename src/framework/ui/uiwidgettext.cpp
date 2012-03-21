@@ -57,7 +57,8 @@ void UIWidget::drawText(const Rect& screenCoords)
         m_textCachedScreenCoords = screenCoords;
 
         m_textCoordsBuffer.clear();
-        m_font->calculateDrawTextCoords(m_textCoordsBuffer, m_text, screenCoords, m_textAlign);
+
+        m_font->calculateDrawTextCoords(m_textCoordsBuffer, m_text, screenCoords.translated(m_textOffset), m_textAlign);
     }
 
     g_painter.setColor(m_color);

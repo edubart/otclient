@@ -36,14 +36,13 @@ public:
     void resize(const Size& size);
     void bind(bool clear = true);
     void release();
-    void generateMipmaps();
     void draw(const Rect& dest);
     void draw(const Rect& dest, const Rect& src);
 
     void setClearColor(const Color& color) { m_clearColor = color; }
 
     TexturePtr getTexture() { return m_texture; }
-    const Size& getSize() { return m_texture->getSize(); }
+    Size getSize();
 
 private:
     void internalCreate();
