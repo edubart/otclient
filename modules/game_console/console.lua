@@ -50,6 +50,7 @@ local channels
 local messageHistory = { }
 local currentMessageIndex = 0
 local MaxHistory = 1000
+local channelsWindow
 
 -- private functions
 local function navigateMessageHistory(step)
@@ -67,7 +68,7 @@ end
 
 function applyMessagePrefixies(name, level, message)
   if name then
-    if Options.showLevelsInConsole and level > 0 then
+    if Options.getOption('showLevelsInConsole') and level > 0 then
       message = name .. ' [' .. level .. ']: ' .. message
     else
       message = name .. ': ' .. message
@@ -109,7 +110,7 @@ local function onOpenPrivateChannel(receiver)
   end
 end
 
-local function doChannelListSubmit(channelsWindow)
+local function doChannelListSubmit()
   local channelListPanel = channelsWindow:getChildById('channelList')
   local openPrivateChannelWith = channelsWindow:getChildById('openPrivateChannelWith'):getText()
   if openPrivateChannelWith ~= '' then
@@ -119,13 +120,16 @@ local function doChannelListSubmit(channelsWindow)
     if not selectedChannelLabel then return end
     g_game.joinChannel(selectedChannelLabel.channelId)
   end
+
   channelsWindow:destroy()
 end
 
 local function onChannelList(channelList)
-  local channelsWindow = displayUI('channelswindow.otui')
+  if channelsWindow then channelsWindow:destroy() end
+  channelsWindow = displayUI('channelswindow.otui')
   local channelListPanel = channelsWindow:getChildById('channelList')
-  channelsWindow.onEnter = function() doChannelListSubmit(channelsWindow) end
+  channelsWindow.onEnter = doChannelListSubmit
+  channelsWindow.onDestroy = function() channelsWindow = nil end
   Keyboard.bindKeyPress('Down', function() channelListPanel:focusNextChild(KeyboardFocusReason) end, channelsWindow)
   Keyboard.bindKeyPress('Up', function() channelListPanel:focusPreviousChild(KeyboardFocusReason) end, channelsWindow)
 
@@ -139,7 +143,7 @@ local function onChannelList(channelList)
       label:setText(channelName)
 
       label:setPhantom(false)
-      label.onDoubleClick = function() doChannelListSubmit(channelsWindow) end
+      label.onDoubleClick = doChannelListSubmit
     end
   end
 end
@@ -150,7 +154,8 @@ function Console.init()
   connect(g_game, { onCreatureSpeak = onCreatureSpeak,
                     onChannelList = onChannelList,
                     onOpenChannel = onOpenChannel,
-                    onOpenPrivateChannel = onOpenPrivateChannel})
+                    onOpenPrivateChannel = onOpenPrivateChannel,
+                    onGameEnd = Console.clean })
 
   consolePanel = displayUI('console.otui', GameInterface.getBottomPanel())
   consoleLineEdit = consolePanel:getChildById('consoleLineEdit')
@@ -182,14 +187,23 @@ function Console.terminate()
   disconnect(g_game, { onCreatureSpeak = onCreatureSpeak,
                        onChannelList = onChannelList,
                        onOpenChannel = onOpenChannel,
-                       onOpenPrivateChannel = onOpenPrivateChannel })
+                       onOpenPrivateChannel = onOpenPrivateChannel,
+                       onGameEnd = Console.clean })
 
-  for channelid, channelname in ipairs(channels) do
-    g_game.leaveChannel(channelid)
+  for channelid, channelname in pairs(channels) do
+    if channelid ~= 0 then
+      g_game.leaveChannel(channelid)
+    end
   end
+  channels = {}
 
   Keyboard.unbindKeyDown('Ctrl+O')
   Keyboard.unbindKeyDown('Ctrl+E')
+
+  if channelsWindow then
+    channelsWindow:destroy()
+    channelsWindow = nil
+  end
 
   consolePanel:destroy()
   consolePanel = nil
@@ -198,6 +212,28 @@ function Console.terminate()
   consoleTabBar = nil
 
   Console = nil
+end
+
+function Console.debug()
+  print(#channels)
+end
+
+function Console.clean()
+  for channelid, channelname in pairs(channels) do
+    if channelid ~= 0 then
+      local tab = consoleTabBar:getTab(channelname)
+      consoleTabBar:removeTab(tab)
+    end
+  end
+  channels = {}
+
+  consoleTabBar:getTab('Default').tabPanel:destroyChildren()
+  consoleTabBar:getTab('Server Log').tabPanel:destroyChildren()
+
+  if channelsWindow then
+    channelsWindow:destroy()
+    channelsWindow = nil
+  end
 end
 
 function Console.setLineEditText(text)
@@ -260,7 +296,7 @@ function Console.addPrivateText(text, speaktype, name, isPrivateCommand)
 
   local privateTab = Console.getTab(name)
   if privateTab == nil then
-    if Options.showPrivateMessagesInConsole or (isPrivateCommand and not privateTab) then
+    if Options['showPrivateMessagesInConsole'] or (isPrivateCommand and not privateTab) then
       privateTab = Console.getTab('Default')
     else
       privateTab = Console.addTab(name, focus)
@@ -280,7 +316,7 @@ function Console.addText(text, speaktype, tabName)
 end
 
 function Console.addTabText(text, speaktype, tab)
-  if Options.showTimestampsInConsole then
+  if Options['showTimestampsInConsole'] then
     text = os.date('%H:%M') .. ' ' .. text
   end
 

@@ -2,16 +2,16 @@ UIComboBox = extends(UIWidget)
 
 function UIComboBox.create()
   local combobox = UIComboBox.internalCreate()
-  combobox.m_options = {}
-  combobox.m_currentIndex = -1
+  combobox.options = {}
+  combobox.currentIndex = -1
   return combobox
 end
 
 function UIComboBox:setCurrentOption(text)
-  if not self.m_options then return end
-  for i,v in ipairs(self.m_options) do
-    if v.text == text and self.m_currentIndex ~= i then
-      self.m_currentIndex = i
+  if not self.options then return end
+  for i,v in ipairs(self.options) do
+    if v.text == text and self.currentIndex ~= i then
+      self.currentIndex = i
       self:setText(text)
       self:onOptionChange(text, v.data)
       return
@@ -20,24 +20,24 @@ function UIComboBox:setCurrentOption(text)
 end
 
 function UIComboBox:setCurrentIndex(index)
-  if index >= 1 and index <= #self.m_options then
-    local v = self.m_options[index]
-    self.m_currentIndex = index
+  if index >= 1 and index <= #self.options then
+    local v = self.options[index]
+    self.currentIndex = index
     self:setText(v.text)
     self:onOptionChange(v.text, v.data)
   end
 end
 
 function UIComboBox:addOption(text, data)
-  table.insert(self.m_options, { text = text, data = data })
-  local index = #self.m_options
+  table.insert(self.options, { text = text, data = data })
+  local index = #self.options
   if index == 1 then self:setCurrentOption(text) end
   return index
 end
 
 function UIComboBox:onMousePress(mousePos, mouseButton)
   local menu = createWidget(self:getStyleName() .. 'PopupMenu', self)
-  for i,v in ipairs(self.m_options) do
+  for i,v in ipairs(self.options) do
     menu:addOption(v.text, function() self:setCurrentOption(v.text) end)
   end
   menu:setWidth(self:getWidth())
@@ -48,10 +48,10 @@ function UIComboBox:onMousePress(mousePos, mouseButton)
 end
 
 function UIComboBox:onMouseWheel(mousePos, direction)
-  if direction == MouseWheelUp and self.m_currentIndex > 1 then
-    self:setCurrentIndex(self.m_currentIndex - 1)
-  elseif direction == MouseWheelDown and self.m_currentIndex < #self.m_options then
-    self:setCurrentIndex(self.m_currentIndex + 1)
+  if direction == MouseWheelUp and self.currentIndex > 1 then
+    self:setCurrentIndex(self.currentIndex - 1)
+  elseif direction == MouseWheelDown and self.currentIndex < #self.options then
+    self:setCurrentIndex(self.currentIndex + 1)
   end
   return true
 end

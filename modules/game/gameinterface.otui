@@ -26,7 +26,7 @@ UIWidget
 
   GameSidePanel
     id: gameLeftPanel
-    width: 190
+    width: 0
     layout: verticalBox
     anchors.left: parent.left
     anchors.top: parent.top

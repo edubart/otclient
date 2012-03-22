@@ -1,84 +1,84 @@
 Outfit = {}
 
 -- private variables
-local window = nil
-local m_creature = nil
-local m_outfit = nil
-local m_outfits = nil
-local m_currentOutfit = 1
-local m_currentColor = nil
-local m_currentClothe = nil
+local outfitWindow
+local outfitCreature
+local outfit
+local outfits
+local currentOutfit = 1
+local currentColorBox
+local currentClotheButtonBox
 
 -- private functions
 local function onAddonCheckChange(addon, value)
   if addon:isChecked() then
-    m_outfit.addons = m_outfit.addons + value
+    outfit.addons = outfit.addons + value
   else
-    m_outfit.addons = m_outfit.addons - value
+    outfit.addons = outfit.addons - value
   end
-  m_creature:setOutfit(m_outfit)
+  outfitCreature:setOutfit(outfit)
 end
 
-local function onColorCheckChange(color)
-  if color == m_currentColor then
-    color.onCheckChange = nil
-    color:setChecked(true)
-    color.onCheckChange = onColorCheckChange
+local function onColorCheckChange(colorBox)
+  if colorBox == currentColorBox then
+    colorBox.onCheckChange = nil
+    colorBox:setChecked(true)
+    colorBox.onCheckChange = onColorCheckChange
   else
-    m_currentColor.onCheckChange = nil
-    m_currentColor:setChecked(false)
-    m_currentColor.onCheckChange = onColorCheckChange
+    currentColorBox.onCheckChange = nil
+    currentColorBox:setChecked(false)
+    currentColorBox.onCheckChange = onColorCheckChange
 
-    m_currentColor = color
+    currentColorBox = colorBox
 
-    if m_currentClothe:getId() == 'head' then
-      m_outfit.head = m_currentColor.colorId
-    elseif m_currentClothe:getId() == 'primary' then
-      m_outfit.body = m_currentColor.colorId
-    elseif m_currentClothe:getId() == 'secondary' then
-      m_outfit.legs = m_currentColor.colorId
-    elseif m_currentClothe:getId() == 'detail' then
-      m_outfit.feet = m_currentColor.colorId
+    if currentClotheButtonBox:getId() == 'head' then
+      outfit.head = currentColorBox.colorId
+    elseif currentClotheButtonBox:getId() == 'primary' then
+      outfit.body = currentColorBox.colorId
+    elseif currentClotheButtonBox:getId() == 'secondary' then
+      outfit.legs = currentColorBox.colorId
+    elseif currentClotheButtonBox:getId() == 'detail' then
+      outfit.feet = currentColorBox.colorId
     end
 
-    m_creature:setOutfit(m_outfit)
+    outfitCreature:setOutfit(outfit)
   end
 end
 
-local function onClotheCheckChange(clothe)
-  if clothe == m_currentClothe then
-    clothe.onCheckChange = nil
-    clothe:setChecked(true)
-    clothe.onCheckChange = onClotheCheckChange
+local function onClotheCheckChange(clotheButtonBox)
+  if clotheButtonBox == currentClotheButtonBox then
+    clotheButtonBox.onCheckChange = nil
+    clotheButtonBox:setChecked(true)
+    clotheButtonBox.onCheckChange = onClotheCheckChange
   else
-    m_currentClothe.onCheckChange = nil
-    m_currentClothe:setChecked(false)
-    m_currentClothe.onCheckChange = onClotheCheckChange
+    currentClotheButtonBox.onCheckChange = nil
+    currentClotheButtonBox:setChecked(false)
+    currentClotheButtonBox.onCheckChange = onClotheCheckChange
 
-    m_currentClothe = clothe
+    currentClotheButtonBox = clotheButtonBox
 
-    local color = 0
-    if m_currentClothe:getId() == 'head' then
-      color = m_outfit.head
-    elseif m_currentClothe:getId() == 'primary' then
-      color = m_outfit.body
-    elseif m_currentClothe:getId() == 'secondary' then
-      color = m_outfit.legs
-    elseif m_currentClothe:getId() == 'detail' then
-      color = m_outfit.feet
+    local colorId = 0
+    if currentClotheButtonBox:getId() == 'head' then
+      colorId = outfit.head
+    elseif currentClotheButtonBox:getId() == 'primary' then
+      colorId = outfit.body
+    elseif currentClotheButtonBox:getId() == 'secondary' then
+      colorId = outfit.legs
+    elseif currentClotheButtonBox:getId() == 'detail' then
+      colorId = outfit.feet
     end
-    window:getChildById('color' .. color):setChecked(true)
+    outfitWindow:recursiveGetChildById('colorBox' .. colorId):setChecked(true)
   end
 end
 
 local function update()
-  local nameWidget = window:getChildById('name')
-  nameWidget:setText(m_outfits[m_currentOutfit][2])
+  local nameWidget = outfitWindow:getChildById('outfitName')
+  nameWidget:setText(outfits[currentOutfit][2])
 
-  local availableAddons = m_outfits[m_currentOutfit][3]
-  local addon1 = window:getChildById('addon1')
-  local addon2 = window:getChildById('addon2')
-  local addon3 = window:getChildById('addon3')
+  local availableAddons = outfits[currentOutfit][3]
+  local addon1 = outfitWindow:getChildById('addon1')
+  local addon2 = outfitWindow:getChildById('addon2')
+  local addon3 = outfitWindow:getChildById('addon3')
   addon1:setChecked(false)
   addon2:setChecked(false)
   addon3:setChecked(false)
@@ -111,55 +111,63 @@ local function update()
     addon3:setEnabled(true)
   end
 
-  m_outfit.type = m_outfits[m_currentOutfit][1]
-  m_outfit.addons = 0
-  m_creature:setOutfit(m_outfit)
-
+  outfit.type = outfits[currentOutfit][1]
+  outfit.addons = 0
+  outfitCreature:setOutfit(outfit)
 end
 
 -- public functions
-function Outfit.create(creature, outfitList)
+function Outfit.init()
+  connect(g_game, { onOpenOutfitWindow = Outfit.create,
+                    onGameEnd = Outfit.destroy })
+end
+
+function Outfit.terminate()
+  disconnect(g_game, { onOpenOutfitWindow = Outfit.create,
+                       onGameEnd = Outfit.destroy })
   Outfit.destroy()
-  window = displayUI('outfit.otui')
-  window:lock()
+end
 
-  m_outfit = creature:getOutfit()
+function Outfit.create(creature, outfitList)
+  outfitCreature = creature
+  outfits = outfitList
+  Outfit.destroy()
 
-  m_currentClothe = window:getChildById('head')
-  window:getChildById('head').onCheckChange = onClotheCheckChange
-  window:getChildById('primary').onCheckChange = onClotheCheckChange
-  window:getChildById('secondary').onCheckChange = onClotheCheckChange
-  window:getChildById('detail').onCheckChange = onClotheCheckChange
+  outfitWindow = displayUI('outfit.otui')
+  --outfitWindow:lock()
 
-  local creatureWidget = window:getChildById('creature')
-  creatureWidget:setCreature(creature)
+  outfit = outfitCreature:getOutfit()
 
-  for i=0,18 do
-    for j=0,6 do
-      local color = createWidget('Color', window)
+  currentClotheButtonBox = outfitWindow:getChildById('head')
+  outfitWindow:getChildById('head').onCheckChange = onClotheCheckChange
+  outfitWindow:getChildById('primary').onCheckChange = onClotheCheckChange
+  outfitWindow:getChildById('secondary').onCheckChange = onClotheCheckChange
+  outfitWindow:getChildById('detail').onCheckChange = onClotheCheckChange
+
+  local outfitCreatureBox = outfitWindow:getChildById('outfitCreatureBox')
+  local colorBoxPanel = outfitWindow:getChildById('colorBoxPanel')
+  outfitCreatureBox:setCreature(outfitCreature)
+
+  for j=0,6 do
+    for i=0,18 do
+      local colorBox = createWidget('ColorBox', colorBoxPanel)
       local outfitColor = getOufitColor(j*19 + i)
-      color:setId('color' .. j*19+i)
-      color.colorId = j*19 + i
-      color:setImageColor(outfitColor)
-      color:setMarginTop(j * 3 + j * 14)
-      color:setMarginLeft(10 + i * 3 + i * 14)
+      colorBox:setImageColor(outfitColor)
+      colorBox:setId('colorBox' .. j*19+i)
+      colorBox.colorId = j*19 + i
 
-      if j*19 + i == m_outfit.head then
-        m_currentColor = color
-        color:setChecked(true)
+      if j*19 + i == outfit.head then
+        currentColorBox = colorBox
+        colorBox:setChecked(true)
       end
-
-      color.onCheckChange = onColorCheckChange
+      colorBox.onCheckChange = onColorCheckChange
     end
   end
 
-  m_creature = creature
-  m_outfits = outfitList
-
-  m_currentOutfit = 1
+  currentOutfit = 1
   for i=1,#outfitList do
-    if outfitList[i][1] == m_outfit.type then
-      m_currentOutfit = i
+    if outfitList[i][1] == outfit.type then
+      currentOutfit = i
       break
     end
   end
@@ -168,35 +176,33 @@ function Outfit.create(creature, outfitList)
 end
 
 function Outfit.destroy()
-  if window ~= nil then
-    window:destroy()
-    window = nil
+  if outfitWindow then
+    outfitWindow:destroy()
+    outfitWindow = nil
+    outfitCreature = nil
+    currentColorBox = nil
+    currentClotheButtonBox = nil
   end
 end
 
 function Outfit.accept()
-  g_game.changeOutfit(m_outfit)
+  g_game.changeOutfit(outfit)
   Outfit.destroy()
 end
 
 function Outfit.nextType()
-  m_currentOutfit = m_currentOutfit + 1
-  if m_currentOutfit > #m_outfits then
-    m_currentOutfit = 1
+  currentOutfit = currentOutfit + 1
+  if currentOutfit > #outfits then
+    currentOutfit = 1
   end
-
   update()
 end
 
 function Outfit.previousType()
-  m_currentOutfit = m_currentOutfit - 1
-  if m_currentOutfit <= 0 then
-    m_currentOutfit = #m_outfits
+  currentOutfit = currentOutfit - 1
+  if currentOutfit <= 0 then
+    currentOutfit = #outfits
   end
-
   update()
 end
 
--- hooked events
-connect(g_game, { onOpenOutfitWindow = Outfit.create,
-                onGameEnd = Outfit.destroy })

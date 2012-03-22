@@ -3,13 +3,13 @@ Module
   description: Manage client hotkeys
   author: OTClient team
   website: https://github.com/edubart/otclient
-  
+
   dependencies:
-    - client_tibiafiles
-  
-  onLoad: |
+    - game
+
+  @onLoad: |
     dofile 'hotkeys_manager'
     HotkeysManager.init()
 
-  onUnload: |
+  @onUnload: |
     HotkeysManager.terminate()

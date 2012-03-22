@@ -3,5 +3,6 @@ Module
   description: Displays health and mana points
   author: OTClient team
   website: https://github.com/edubart/otclient
-  onLoad: |
+
+  @onLoad: |
     dofile 'healthbar'

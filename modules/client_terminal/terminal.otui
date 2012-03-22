@@ -2,12 +2,11 @@ TerminalLabel < UILabel
   font: terminus-14px-bold
   height: 16
 
-Panel
-  id: terminalPanel
+UIWidget
+  id: terminalWidget
   background-color: #000000
   opacity: 0.85
   anchors.fill: parent
-  @onEscape: Terminal.hide()
 
   Panel
     id: terminalBuffer

@@ -3,5 +3,6 @@ Module
   description: Manage containers
   author: OTClient team
   website: https://github.com/edubart/otclient
-  onLoad: |
+
+  @onLoad: |
     dofile 'containers'

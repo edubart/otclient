@@ -207,6 +207,7 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Creature>("setEmblemTexture", &Creature::setEmblemTexture);
     g_lua.bindClassMemberFunction<Creature>("showStaticSquare", &Creature::showStaticSquare);
     g_lua.bindClassMemberFunction<Creature>("hideStaticSquare", &Creature::hideStaticSquare);
+    g_lua.bindClassMemberFunction<Creature>("isWalking", &Creature::isWalking);
     g_lua.bindClassMemberFunction<Creature>("asMonster", &Creature::asMonster);
     g_lua.bindClassMemberFunction<Creature>("asNpc", &Creature::asNpc);
 
@@ -220,7 +221,9 @@ void OTClient::registerLuaFunctions()
     g_lua.registerClass<AnimatedText, Thing>();
 
     g_lua.registerClass<Player, Creature>();
-    g_lua.bindClassMemberFunction<Creature>("isWalking", &Creature::isWalking);
+    g_lua.bindClassMemberFunction<Player>("isPartyMember", &LocalPlayer::isPartyMember);
+    g_lua.bindClassMemberFunction<Player>("isPartyLeader", &LocalPlayer::isPartyLeader);
+    g_lua.bindClassMemberFunction<Player>("isPartySharedExperienceActive", &LocalPlayer::isPartySharedExperienceActive);
     g_lua.registerClass<Npc, Creature>();
     g_lua.registerClass<Monster, Creature>();
 

@@ -50,7 +50,7 @@ end
 function CombatControls.init()
   combatControlsButton = TopMenu.addGameButton('combatControlsButton', 'Combat Controls', 'combatcontrols.png', CombatControls.toggle)
   combatControlsButton:setOn(true)
-  combatControlsWindow = loadUI('combatcontrols.otui')
+  combatControlsWindow = loadUI('combatcontrols.otui', GameInterface.getRightPanel())
 
   fightOffensiveBox = combatControlsWindow:getChildById('fightOffensiveBox')
   fightBalancedBox = combatControlsWindow:getChildById('fightBalancedBox')
@@ -101,7 +101,6 @@ function CombatControls.terminate()
 end
 
 function CombatControls.online()
-  g_game.gameRightPanel:addChild(combatControlsWindow)
   combatControlsWindow:setVisible(combatControlsButton:isOn())
 
   local fightMode = g_game.getFightMode()
@@ -121,7 +120,6 @@ function CombatControls.online()
 end
 
 function CombatControls.offline()
-  g_game.gameRightPanel:removeChild(combatControlsWindow)
 end
 
 function CombatControls.toggle()

@@ -1,5 +1,5 @@
 -- private variables
-local m_mouseGrabberWidget
+local mouseGrabberWidget
 
 -- private functions
 local function onGameKeyPress(self, keyCode, keyboardModifiers)
@@ -41,7 +41,7 @@ end
 -- public functions
 function g_game.startUseWith(thing)
   g_game.selectedThing = thing
-  m_mouseGrabberWidget:grabMouse()
+  mouseGrabberWidget:grabMouse()
   Mouse.setTargetCursor()
 end
 
@@ -49,11 +49,11 @@ function g_game.createInterface()
 
   rootWidget:moveChildToIndex(g_game.gameUi, 1)
   g_game.gameMapPanel = g_game.gameUi:getChildById('gameMapPanel')
-  g_game.gameRightPanel = g_game.gameUi:getChildById('gameRightPanel')
+  GameInterface.getRightPanel() = g_game.gameUi:getChildById('gameRightPanel')
   g_game.gameBottomPanel = g_game.gameUi:getChildById('gameBottomPanel')
-  m_mouseGrabberWidget = g_game.gameUi:getChildById('mouseGrabber')
+  mouseGrabberWidget = g_game.gameUi:getChildById('mouseGrabber')
   connect(g_game.gameUi, { onKeyPress = onGameKeyPress })
-  connect(m_mouseGrabberWidget, { onMouseRelease = onUseWithMouseRelease })
+  connect(mouseGrabberWidget, { onMouseRelease = onUseWithMouseRelease })
 end
 
 function g_game.destroyInterface()

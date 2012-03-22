@@ -13,6 +13,13 @@ Module
   load-later:
     - game_textmessage
     - game_console
+    - game_outfit
+    //- game_healthbar
+    //- game_inventory
+    //- game_combatcontrols
+    //- game_skills
+    //- game_viplist
+    //- game_hotkeys
 
   @onLoad: |
     importStyle 'styles/items.otui'

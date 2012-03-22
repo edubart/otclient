@@ -10,6 +10,7 @@ function Background.init()
 
   local clientVersionLabel = background:getChildById('clientVersionLabel')
   clientVersionLabel:setText('OTClient ' .. g_app.getVersion() .. '\n' ..
+                             'Rev  ' .. g_app.getBuildRevision() .. '\n' ..
                              'Built on ' .. g_app.getBuildDate())
 
   if not g_game.isOnline() then

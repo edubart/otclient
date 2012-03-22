@@ -15,8 +15,8 @@ Panel
     background-color: #00000099
     anchors.right: parent.right
     anchors.bottom: parent.bottom
-    text-offset: 4 2
-    height: 32
+    text-align: center
+    height: 48
     width: 120
     color: #ffffff
     font: verdana-11px-monochrome

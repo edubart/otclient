@@ -19,7 +19,7 @@ function g_game.processMouseAction(menuPosition, mouseButton, autoWalk, lookThin
     return true
   end
 
-  if not Options.classicControl then
+  if not Options.getOption('classicControl') then
     if keyboardModifiers == KeyboardNoModifier and mouseButton == MouseRightButton then
       g_game.createThingMenu(menuPosition, lookThing, useThing, creatureThing)
       return true

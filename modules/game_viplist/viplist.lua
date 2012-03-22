@@ -7,7 +7,7 @@ local addVipWindow
 
 -- public functions
 function VipList.create()
-  vipWindow = displayUI('viplist.otui', g_game.gameRightPanel)
+  vipWindow = displayUI('viplist.otui', GameInterface.getRightPanel())
   vipWindow:hide()
   vipButton = TopMenu.addGameButton('vipListButton', 'VIP list', 'viplist.png', VipList.toggle)
 end

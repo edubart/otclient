@@ -1,16 +1,16 @@
 Containers = {}
 
 -- private variables
-local m_containers = {}
+local containers = {}
 
 -- public functions
 function Containers.clean()
-  m_containers = {}
+  containers = {}
 end
 
 function Containers.getFreeContainerId()
   for i=0,15 do
-    if not m_containers[i] then
+    if not containers[i] then
       return i
     end
   end
@@ -19,12 +19,12 @@ end
 
 -- hooked events
 function Containers.onOpenContainer(containerId, itemId, name, capacity, hasParent, items)
-  local container = m_containers[containerId]
+  local container = containers[containerId]
   if container then
-    g_game.gameRightPanel:removeChild(container)
+    GameInterface.getRightPanel():removeChild(container)
   end
 
-  container = displayUI('container.otui', g_game.gameRightPanel)
+  container = displayUI('container.otui', GameInterface.getRightPanel())
   name = name:sub(1,1):upper() .. name:sub(2)
   container:setText(name)
 
@@ -51,19 +51,19 @@ function Containers.onOpenContainer(containerId, itemId, name, capacity, hasPare
     end
   end
 
-  m_containers[containerId] = container
+  containers[containerId] = container
 end
 
 function Containers.onCloseContainer(containerId)
-  local container = m_containers[containerId]
+  local container = containers[containerId]
   if container then
-    g_game.gameRightPanel:removeChild(container)
+    GameInterface.getRightPanel():removeChild(container)
   end
-  m_containers[containerId] = nil
+  containers[containerId] = nil
 end
 
 function Containers.onContainerAddItem(containerId, item)
-  local container = m_containers[containerId]
+  local container = containers[containerId]
   if not container or not item or container.itemCount >= container.capacity then return end
 
   local i = container.itemCount
@@ -92,7 +92,7 @@ function Containers.onContainerAddItem(containerId, item)
 end
 
 function Containers.onContainerUpdateItem(containerId, slot, item)
-  local container = m_containers[containerId]
+  local container = containers[containerId]
   if not container then return end
 
   local itemWidget = container:getChildByIndex(slot + 1)
@@ -102,7 +102,7 @@ function Containers.onContainerUpdateItem(containerId, slot, item)
 end
 
 function Containers.onContainerRemoveItem(containerId, slot)
-  local container = m_containers[containerId]
+  local container = containers[containerId]
   if not container then return end
 
   local itemWidget = container:getChildByIndex(slot+1)

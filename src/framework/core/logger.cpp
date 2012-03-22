@@ -44,6 +44,8 @@ void Logger::log(Fw::LogLevel level, const std::string& message)
 
     std::size_t now = std::time(NULL);
     m_logMessages.push_back(LogMessage(level, outmsg, now));
+    if(m_logMessages.size() > MAX_LOG_HISTORY)
+        m_logMessages.pop_front();
 
     if(m_onLog)
         m_onLog(level, outmsg, now);

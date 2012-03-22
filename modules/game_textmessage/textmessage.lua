@@ -24,7 +24,7 @@ local function displayMessage(msgtype, msg, time)
   if not g_game.isOnline() then return end
 
   if msgtype.consoleTab ~= nil then
-    if msgtype.consoleOption == nil or Options[msgtype.consoleOption] then
+    if msgtype.consoleOption == nil or Options.getOption(msgtype.consoleOption) then
       Console.addText(msg, msgtype, msgtype.consoleTab)
     end
   end
@@ -93,7 +93,7 @@ end
 function TextMessage.terminate()
   disconnect(g_game, { onDeath = TextMessage.displayDeadMessage,
                        onTextMessage = TextMessage.display,
-                       onGameStart = TextMessage.clearMessages })
+                       onGameEnd = TextMessage.clearMessages })
   centerTextMessagePanel:destroy()
   centerTextMessagePanel = nil
   bottomStatusLabel:destroy()

@@ -6,7 +6,7 @@ local inventoryButton
 
 -- public functions
 function Inventory.create()
-  inventoryWindow = displayUI('inventory.otui', g_game.gameRightPanel)
+  inventoryWindow = displayUI('inventory.otui', GameInterface.getRightPanel())
   inventoryButton = TopMenu.addGameButton('inventoryButton', 'Inventory (Ctrl+I)', 'inventory.png', Inventory.toggle)
   inventoryButton:setOn(true)
   Keyboard.bindKeyDown('Ctrl+I', Inventory.toggle)

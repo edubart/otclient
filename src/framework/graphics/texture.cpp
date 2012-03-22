@@ -171,7 +171,6 @@ void Texture::generateSoftwareMipmaps(std::vector<uint8> inPixels)
     Size outSize = inSize / 2;
     std::vector<uint8> outPixels(outSize.area()*4);
 
-    dump << "yeah";
     int mipmap = 1;
     while(true) {
         // this is a simple bilinear filtering algorithm, it combines every 4 pixels in one pixel

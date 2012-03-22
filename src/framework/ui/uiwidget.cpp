@@ -636,10 +636,8 @@ void UIWidget::destroy()
     g_ui.onWidgetDestroy(asUIWidget());
 
     // remove itself from parent
-    if(UIWidgetPtr parent = getParent()) {
-        assert(parent->hasChild(asUIWidget()));
+    if(UIWidgetPtr parent = getParent())
         parent->removeChild(asUIWidget());
-    }
 
     destroyChildren();
     m_focusedChild = nullptr;
@@ -649,15 +647,7 @@ void UIWidget::destroy()
     releaseLuaFieldsTable();
 
 #ifdef DEBUG
-    auto self = asUIWidget();
-    g_lua.collectGarbage();
-    if(self != g_ui.getRootWidget()) {
-        g_eventDispatcher.scheduleEvent([self] {
-            g_lua.collectGarbage();
-            if(self->getUseCount() != 1)
-                logWarning("widget '", self->getId(), "' destroyed but still have ", self->getUseCount()-1, " reference(s) left");
-        }, 500);
-    }
+    g_ui.addDestroyedWidget(asUIWidget());
 #endif
 }
 

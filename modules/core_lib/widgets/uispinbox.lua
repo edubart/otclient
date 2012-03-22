@@ -3,54 +3,54 @@ UISpinBox = extends(UILineEdit)
 function UISpinBox.create()
   local spinbox = UISpinBox.internalCreate()
   spinbox:setValidCharacters('0123456789')
-  spinbox.m_minimum = 0
-  spinbox.m_maximum = 0
+  spinbox.minimum = 0
+  spinbox.maximum = 0
   spinbox:setCurrentIndex(0)
   spinbox:setText("0")
   return spinbox
 end
 
 function UISpinBox:setCurrentIndex(index)
-  if index >= self.m_minimum and index <= self.m_maximum then
+  if index >= self.minimum and index <= self.maximum then
     if self:getText():len() > 0 then
       self:setText(index)
     end
-    self.m_currentIndex = index
+    self.currentIndex = index
     self:onIndexChange(index)
   end
 end
 
 function UISpinBox:setMinimum(minimum)
-  if minimum > self.m_maximum then
+  if minimum > self.maximum then
     print("[UISpinBox:setMinimum]: minimum value cant be greater than maximum")
     return false
   end
-  if self.m_currentIndex < minimum then
+  if self.currentIndex < minimum then
     self:setCurrentIndex(minimum)
   end
-  self.m_minimum = minimum
+  self.minimum = minimum
 end
 
 function UISpinBox:setMaximum(maximum)
-  if maximum < self.m_minimum then
+  if maximum < self.minimum then
     print("[UISpinBox:setMaximum]: maximum value cant be lower than minimum")
     return false
   end
-  if self.m_currentIndex > maximum then
+  if self.currentIndex > maximum then
     self:setCurrentIndex(maximum)
   end
-  self.m_maximum = maximum
+  self.maximum = maximum
 end
 
 function UISpinBox:getCurrentIndex()
-  return self.m_currentIndex
+  return self.currentIndex
 end
 
 function UISpinBox:onMouseWheel(mousePos, direction)
   if direction == MouseWheelUp then
-    self:setCurrentIndex(self.m_currentIndex + 1)
+    self:setCurrentIndex(self.currentIndex + 1)
   elseif direction == MouseWheelDown then
-    self:setCurrentIndex(self.m_currentIndex - 1)
+    self:setCurrentIndex(self.currentIndex - 1)
   end
   return true
 end
@@ -58,12 +58,12 @@ end
 function UISpinBox:onTextChange(text, oldText)
 
   if text:len() == 0 then
-    self:setCurrentIndex(self.m_minimum)
+    self:setCurrentIndex(self.minimum)
     return
   end
 
   local number = tonumber(text)
-  if not number or number > self.m_maximum or number < self.m_minimum then
+  if not number or number > self.maximum or number < self.minimum then
     self:setText(oldText)
     return
   end

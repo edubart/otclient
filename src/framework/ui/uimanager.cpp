@@ -225,6 +225,31 @@ void UIManager::onWidgetDestroy(const UIWidgetPtr& widget)
         updateDraggingWidget(nullptr);
 }
 
+void UIManager::addDestroyedWidget(const UIWidgetPtr& widget)
+{
+    static UIWidgetList destroyedWidgets;
+    static ScheduledEventPtr checkEvent;
+
+    if(widget == m_rootWidget)
+        return;
+
+    destroyedWidgets.push_back(widget);
+
+    if(checkEvent && !checkEvent->isExecuted())
+        return;
+
+    checkEvent = g_eventDispatcher.scheduleEvent([] {
+        g_lua.collectGarbage();
+        g_eventDispatcher.addEvent([] {
+            g_lua.collectGarbage();
+            for(const UIWidgetPtr& widget : destroyedWidgets) {
+                if(widget->getUseCount() != 1)
+                    logWarning("widget '", widget->getId(), "' destroyed but still have ", widget->getUseCount()-1, " reference(s) left");
+            }
+        });
+    }, 1000);
+}
+
 bool UIManager::importStyle(const std::string& file)
 {
     try {

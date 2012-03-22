@@ -9,7 +9,7 @@ local manaLabel
 
 -- public functions
 function HealthBar.create()
-  healthBarWindow = displayUI('healthbar.otui', g_game.gameRightPanel)
+  healthBarWindow = displayUI('healthbar.otui', GameInterface.getRightPanel())
   healthBarButton = TopMenu.addGameButton('healthBarButton', 'Healh Bar', 'healthbar.png', HealthBar.toggle)
   healthBarButton:setOn(true)
   healthBar = healthBarWindow:getChildById('healthBar')

@@ -68,6 +68,7 @@ protected:
     void onWidgetAppear(const UIWidgetPtr& widget);
     void onWidgetDisappear(const UIWidgetPtr& widget);
     void onWidgetDestroy(const UIWidgetPtr& widget);
+    void addDestroyedWidget(const UIWidgetPtr& widget);
 
     friend class UIWidget;
 

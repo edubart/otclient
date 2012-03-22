@@ -34,6 +34,10 @@ struct LogMessage {
 
 class Logger
 {
+    enum {
+        MAX_LOG_HISTORY = 1000
+    };
+
     typedef std::function<void(Fw::LogLevel, std::string, std::size_t)> OnLogCallback;
 
 public:

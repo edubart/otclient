@@ -42,7 +42,7 @@ end
 
 -- public functions
 function Skills.create()
-  skillsWindow = displayUI('skills.otui', g_game.gameRightPanel)
+  skillsWindow = displayUI('skills.otui', GameInterface.getRightPanel())
   skillsWindow:hide()
   skillsButton = TopMenu.addGameButton('skillsButton', 'Skills (Ctrl+S)', '/core_styles/icons/skills.png', Skills.toggle)
   Keyboard.bindKeyDown('Ctrl+S', Skills.toggle)

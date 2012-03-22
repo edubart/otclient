@@ -211,7 +211,7 @@ function GameInterface.processMouseAction(menuPosition, mouseButton, autoWalk, l
     return true
   end
 
-  if not Options.classicControl then
+  if not Options['classicControl'] then
     if keyboardModifiers == KeyboardNoModifier and mouseButton == MouseRightButton then
       GameInterface.createThingMenu(menuPosition, lookThing, useThing, creatureThing)
       return true
