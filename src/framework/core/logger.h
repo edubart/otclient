@@ -41,11 +41,13 @@ public:
     void logFunc(Fw::LogLevel level, const std::string& message, std::string prettyFunction);
 
     void fireOldMessages();
+    void setLogFile(const std::string& file);
     void setOnLog(const OnLogCallback& onLog) { m_onLog = onLog; }
 
 private:
     std::list<LogMessage> m_logMessages;
     OnLogCallback m_onLog;
+    std::ofstream m_outFile;
 };
 
 extern Logger g_logger;

@@ -37,6 +37,11 @@ void Logger::log(Fw::LogLevel level, const std::string& message)
     std::string outmsg = logPrefixes[level] + message;
     std::cout << outmsg << std::endl;
 
+    if(m_outFile.good()) {
+        m_outFile << outmsg << std::endl;
+        m_outFile.flush();
+    }
+
     std::size_t now = std::time(NULL);
     m_logMessages.push_back(LogMessage(level, outmsg, now));
 
@@ -71,4 +76,16 @@ void Logger::fireOldMessages()
         for(const LogMessage& logMessage : backup)
             m_onLog(logMessage.level, logMessage.message, logMessage.when);
     }
+}
+
+void Logger::setLogFile(const std::string& file)
+{
+    m_outFile.open(file.c_str(), std::ios::out | std::ios::app);
+    if(!m_outFile.is_open() || !m_outFile.good()) {
+        logError("Unable to save log to '", file, "'");
+        return;
+    }
+
+    m_outFile << "\n== application started at " << Fw::dateTimeString() << std::endl;
+    m_outFile.flush();
 }

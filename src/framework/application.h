@@ -49,7 +49,11 @@ public:
     bool isStopping() { return m_stopping; }
     const std::string& getName() { return m_appName; }
     const std::string& getVersion() { return m_appVersion; }
-    const std::string& getBuildDate() { return m_appBuildDate; }
+
+    std::string getBuildCompiler() { return BUILD_COMPILER; }
+    std::string getBuildDate() { return BUILD_DATE; }
+    std::string getBuildRevision() { return BUILD_REVISION; }
+    std::string getBuildType() { return BUILD_TYPE; }
 
 protected:
     virtual void render();

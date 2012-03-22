@@ -86,7 +86,6 @@ void Stacktrace(LPEXCEPTION_POINTERS e, std::stringstream& ss)
             break;
 
         dwModBase = SymGetModuleBase(process, sf.AddrPC.Offset);
-
         if(dwModBase)
             GetModuleFileName((HINSTANCE)dwModBase, modname, MAX_PATH);
         else
@@ -95,13 +94,10 @@ void Stacktrace(LPEXCEPTION_POINTERS e, std::stringstream& ss)
         pSym->SizeOfStruct = sizeof(IMAGEHLP_SYMBOL);
         pSym->MaxNameLength = MAX_PATH;
 
-        if(SymGetSymFromAddr(process, sf.AddrPC.Offset, &Disp, pSym)) {
-            // this is the code path taken on VC if debugging syms are found.
-            ss << Fw::formatString("    (%d) %s(%s+%#0lx) [0x%08lX]\n", count, modname, pSym->Name, Disp, sf.AddrPC.Offset);
-        } else {
-            // this is the code path taken on MinGW, and VC if no debugging syms are found.
-            ss << Fw::formatString("    (%d) %s [0x%08lX]\n", count, modname, sf.AddrPC.Offset);
-        }
+        if(SymGetSymFromAddr(process, sf.AddrPC.Offset, &Disp, pSym))
+            ss << Fw::formatString("    %d: %s(%s+%#0lx) [0x%08lX]\n", count, modname, pSym->Name, Disp, sf.AddrPC.Offset);
+        else
+            ss << Fw::formatString("    %d: %s [0x%08lX]\n", count, modname, sf.AddrPC.Offset);
         ++count;
     }
     GlobalFree(pSym);
@@ -109,40 +105,38 @@ void Stacktrace(LPEXCEPTION_POINTERS e, std::stringstream& ss)
 
 LONG CALLBACK ExceptionHandler(LPEXCEPTION_POINTERS e)
 {
-    char date[32];
-    time_t tnow;
-    time(&tnow);
-    tm *ts = localtime(&tnow);
-    strftime(date, 32, "%b %d %Y %H:%M:%S", ts);
-
     // generate crash report
     SymInitialize(GetCurrentProcess(), 0, TRUE);
     std::stringstream ss;
     ss << "== application crashed\n";
     ss << Fw::formatString("app name: %s\n", g_app->getName().c_str());
     ss << Fw::formatString("app version: %s\n", g_app->getVersion().c_str());
-    ss << Fw::formatString("app build date: %s\n", g_app->getBuildDate().c_str());
-    ss << Fw::formatString("crash date: %s\n", date);
+    ss << Fw::formatString("build compiler: %s\n", BUILD_COMPILER);
+    ss << Fw::formatString("build date: %s\n", BUILD_DATE);
+    ss << Fw::formatString("build type: %s\n", BUILD_TYPE);
+    ss << Fw::formatString("build revision: %s\n", BUILD_REVISION);
+    ss << Fw::formatString("crash date: %s\n", Fw::dateTimeString().c_str());
     ss << Fw::formatString("exception: %s (0x%08lx)\n", getExceptionName(e->ExceptionRecord->ExceptionCode), e->ExceptionRecord->ExceptionCode);
     ss << Fw::formatString("exception address: 0x%08lx\n", (long unsigned int)e->ExceptionRecord->ExceptionAddress);
-    ss << Fw::formatString("backtrace:\n");
+    ss << Fw::formatString("  backtrace:\n");
     Stacktrace(e, ss);
     ss << "\n";
     SymCleanup(GetCurrentProcess());
 
-    // write stacktrace to crash.txt
+    // print in stdout
+    logInfo(ss.str());
+
+    // write stacktrace to crash_report.txt
     char dir[MAX_PATH];
     GetCurrentDirectory(sizeof(dir) - 1, dir);
     std::string fileName = Fw::formatString("%s\\crash_report.txt", dir);
-
-
-    std::ofstream fout(fileName.c_str(), std::ios_base::out | std::ios_base::ate);
-    fout << ss.str();
-    fout.close();
-
-    // print in stdout
-    logInfo(ss.str());
-    logInfo("Crash report saved to file ", fileName);
+    std::ofstream fout(fileName.c_str(), std::ios::out | std::ios::app);
+    if(fout.is_open() && fout.good()) {
+        fout << ss.str();
+        fout.close();
+        logInfo("Crash report saved to file ", fileName);
+    } else
+        logError("Failed to save crash report!");
 
     // inform the user
     std::string msg = Fw::formatString("The application has crashed.\n\n"

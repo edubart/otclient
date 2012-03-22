@@ -47,7 +47,9 @@ void FrameBuffer::internalCreate()
         glGenFramebuffers(1, &m_fbo);
         if(!m_fbo)
             logFatal("Unable to create framebuffer object");
-    } else { // use auxiliar buffers when FBOs are not supported
+    }
+#ifndef OPENGL_ES2
+    else { // use auxiliar buffers when FBOs are not supported
         m_fbo = 0;
         if(auxBuffers.size() == 0) {
             int maxAuxs = 0;
@@ -64,15 +66,19 @@ void FrameBuffer::internalCreate()
         if(!m_fbo)
             logFatal("There is no available auxiliar buffer for a new framebuffer, total AUXs: ", auxBuffers.size()-1);
     }
+#endif
 }
 
 FrameBuffer::~FrameBuffer()
 {
     if(g_graphics.canUseFBO()) {
         glDeleteFramebuffers(1, &m_fbo);
-    } else {
+    }
+#ifndef OPENGL_ES2
+    else {
         auxBuffers[m_fbo] = false;
     }
+#endif
 }
 
 void FrameBuffer::resize(const Size& size)
@@ -130,10 +136,7 @@ void FrameBuffer::draw(const Rect& dest, const Rect& src)
 
 void FrameBuffer::draw(const Rect& dest)
 {
-    if(g_graphics.canUseFBO())
-        g_painter.drawTexturedRect(dest, m_texture);
-    else
-        g_painter.drawTexturedRect(dest, m_texture, Rect(0, 0, g_window.getSize()));
+    g_painter.drawTexturedRect(dest, m_texture, Rect(0,0, getSize()));
 }
 
 void FrameBuffer::internalBind()
@@ -144,11 +147,14 @@ void FrameBuffer::internalBind()
 
     if(g_graphics.canUseFBO()) {
         glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
-    } else {
+    }
+#ifndef OPENGL_ES2
+    else {
         int buffer = GL_AUX0 + m_fbo - 1;
         glDrawBuffer(buffer);
         glReadBuffer(buffer);
     }
+#endif
 
     m_prevBoundFbo = boundFbo;
     boundFbo = m_fbo;
@@ -159,7 +165,9 @@ void FrameBuffer::internalRelease()
     assert(boundFbo == m_fbo);
     if(g_graphics.canUseFBO()) {
         glBindFramebuffer(GL_FRAMEBUFFER, m_prevBoundFbo);
-    } else {
+    }
+#ifndef OPENGL_ES2
+    else {
         m_texture->bind();
 
         Size size = getSize();
@@ -172,16 +180,19 @@ void FrameBuffer::internalRelease()
         glDrawBuffer(buffer);
         glReadBuffer(buffer);
     }
+#endif
+
     boundFbo = m_prevBoundFbo;
 }
 
 Size FrameBuffer::getSize()
 {
-    if(g_graphics.canUseFBO()) {
-        return m_texture->getSize();
-    } else {
+#ifndef OPENGL_ES2
+    if(!g_graphics.canUseFBO()) {
         // the buffer size is limited by the window size
         return Size(std::min(m_texture->getWidth(), g_window.getWidth()),
                     std::min(m_texture->getHeight(), g_window.getHeight()));
     }
+#endif
+    return m_texture->getSize();
 }

@@ -290,6 +290,15 @@ inline std::string resolvePath(const std::string& file, std::string sourcePath) 
     return sourcePath + file;
 }
 
+inline std::string dateTimeString() {
+    char date[32];
+    std::time_t tnow;
+    std::time(&tnow);
+    std::tm *ts = std::localtime(&tnow);
+    std::strftime(date, 32, "%b %d %Y %H:%M:%S", ts);
+    return std::string(date);
+}
+
 template<typename T>
 T randomRange(T min, T max);
 

@@ -36,16 +36,17 @@ void crashHandler(int signum, siginfo_t* info, void* secret)
 {
     logError("Application crashed");
 
-    ucontext_t context = *(ucontext_t*)secret;
-    time_t tnow;
-    char fileName[128];
-    time(&tnow);
-    tm *ts = localtime(&tnow);
-    strftime(fileName, 128, (g_app->getName() + "-crash_-%d-%m-%Y_%H:%M:%S.txt").c_str(), ts);
-
     std::stringstream ss;
+    ss << Fw::formatString("app name: %s\n", g_app->getName().c_str());
+    ss << Fw::formatString("app version: %s\n", g_app->getVersion().c_str());
+    ss << Fw::formatString("build compiler: %s\n", BUILD_COMPILER);
+    ss << Fw::formatString("build date: %s\n", BUILD_DATE);
+    ss << Fw::formatString("build type: %s\n", BUILD_TYPE);
+    ss << Fw::formatString("build revision: %s\n", BUILD_REVISION);
+    ss << Fw::formatString("crash date: %s\n", Fw::dateTimeString().c_str());
     ss.flags(std::ios::hex | std::ios::showbase);
 
+    ucontext_t context = *(ucontext_t*)secret;
 #if __WORDSIZE == 64
     ss << "  at rip = " << context.uc_mcontext.gregs[REG_RIP] << std::endl;
     ss << "     rax = " << context.uc_mcontext.gregs[REG_RAX] << std::endl;
@@ -99,14 +100,21 @@ void crashHandler(int signum, siginfo_t* info, void* secret)
 
     logInfo(ss.str());
 
-    std::ofstream out(fileName);
-    out << ss.str();
-    out.close();
-    logInfo("Crash report saved to file ", fileName);
+    std::string fileName = "crash_report.txt";
+    std::ofstream fout(fileName.c_str(), std::ios::out | std::ios::app);
+    if(fout.is_open() && fout.good()) {
+        fout << "== application crashed\n";
+        fout << ss.str();
+        fout << "\n";
+        fout.close();
+        logInfo("Crash report saved to file ", fileName.c_str());
+    } else
+        logError("Failed to save crash report!");
 
     signal(SIGILL, SIG_DFL);
     signal(SIGSEGV, SIG_DFL);
     signal(SIGFPE, SIG_DFL);
+    signal(SIGABRT, SIG_DFL);
 }
 
 void installCrashHandler()
@@ -119,4 +127,5 @@ void installCrashHandler()
     sigaction(SIGILL, &sa, NULL);   // illegal instruction
     sigaction(SIGSEGV, &sa, NULL);  // segmentation fault
     sigaction(SIGFPE, &sa, NULL);   // floating-point exception
+    sigaction(SIGABRT, &sa, NULL);  // process aborted (asserts)
 }

@@ -22,18 +22,24 @@
 
 #include "otclient.h"
 #include <framework/core/modulemanager.h>
-#include "core/game.h"
 #include <framework/core/resourcemanager.h>
+#include "core/game.h"
 #include "core/map.h"
 
 OTClient::OTClient() : Application(Otc::AppCompactName)
 {
-    m_appVersion = Fw::formatString("%s%s", Otc::AppVersion, Otc::AppBuild);
-    m_appBuildDate = __DATE__;
+    m_appVersion = Otc::AppVersion;
 }
 
 void OTClient::init(const std::vector<std::string>& args)
 {
+    logInfo(Fw::formatString("%s %s (rev %s) built on %s",
+                             Otc::AppName,
+                             Otc::AppVersion,
+                             BUILD_REVISION,
+                             BUILD_DATE));
+
+    g_logger.setLogFile(Fw::formatString("%s.txt", Otc::AppCompactName));
     Application::init(args, Fw::AppEnableAll);
 
     g_modules.discoverModules();

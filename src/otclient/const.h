@@ -29,8 +29,7 @@ namespace Otc
 {
     constexpr const char* AppName = "OTClient";
     constexpr const char* AppCompactName = "otclient";
-    constexpr const char* AppVersion = "0.4.0";
-    constexpr const char* AppBuild = "_dev";
+    constexpr const char* AppVersion = "0.4.0_dev";
 
     enum {
         TILE_PIXELS = 32,

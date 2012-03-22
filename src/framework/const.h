@@ -28,6 +28,17 @@
 #define DEG_TO_RAD (acos(-1)/180.0)
 #define RAD_TO_DEC (180.0/acos(-1))
 
+#define BUILD_COMPILER "gcc "__VERSION__
+#define BUILD_DATE __DATE__
+
+#ifndef BUILD_REVISION
+#define BUILD_REVISION "custom"
+#endif
+
+#ifndef BUILD_TYPE
+#define BUILD_TYPE "unknown"
+#endif
+
 namespace Fw
 {
     constexpr float pi = 3.14159265;
