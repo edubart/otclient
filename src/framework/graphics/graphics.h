@@ -31,9 +31,11 @@ class Graphics
 public:
     void init();
     void terminate();
+    bool parseOption(const std::string& option);
 
     bool canUseFBO() { return m_useFBO; }
     bool canUseBilinearFiltering() { return m_useBilinearFiltering; }
+    bool canUseHardwareBuffers() { return m_useHardwareBuffers; }
     bool canGenerateMipmaps() { return m_generateMipmaps; }
     bool canGenerateHardwareMipmaps() { return m_generateHardwareMipmaps; }
     bool canGenerateRealtimeMipmaps() { return m_generateRealtimeMipmaps; }
@@ -53,6 +55,7 @@ private:
     TexturePtr m_emptyTexture;
 
     Boolean<true> m_useFBO;
+    Boolean<true> m_useHardwareBuffers;
     Boolean<true> m_useBilinearFiltering;
     Boolean<true> m_generateMipmaps;
     Boolean<true> m_generateHardwareMipmaps;

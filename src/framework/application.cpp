@@ -115,10 +115,15 @@ void Application::init(const std::vector<std::string>& args, int appFlags)
 
     if(m_appFlags & Fw::AppEnableModules)
         g_modules.discoverModulesPath();
+
+    m_initialized = true;
 }
 
 void Application::terminate()
 {
+    if(!m_initialized)
+        return;
+
     g_lua.callGlobalField("g_app", "onTerminate");
 
     // hide the window because there is no render anymore
@@ -162,6 +167,9 @@ void Application::terminate()
 
 void Application::run()
 {
+    if(!m_initialized)
+        return;
+
     ticks_t lastPollTicks = g_clock.updateTicks();
     m_stopping = false;
     m_running = true;

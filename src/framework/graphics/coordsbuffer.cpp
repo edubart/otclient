@@ -21,6 +21,7 @@
  */
 
 #include "coordsbuffer.h"
+#include "graphics.h"
 
 CoordsBuffer::CoordsBuffer()
 {
@@ -86,6 +87,9 @@ void CoordsBuffer::addRepeatedRects(const Rect& dest, const Rect& src)
 
 void CoordsBuffer::enableHardwareCaching(HardwareBuffer::UsagePattern usagePattern)
 {
+    if(!g_graphics.canUseHardwareBuffers())
+        return;
+
 #ifndef OPENGL_ES2
     if(!GL_ARB_vertex_buffer_object)
         return;

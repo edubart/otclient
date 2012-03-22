@@ -65,6 +65,7 @@ protected:
     std::string m_appBuildDate;
     int m_appFlags;
     int m_pollCycleDelay;
+    Boolean<false> m_initialized;
     Boolean<false> m_running;
     Boolean<false> m_stopping;
 };

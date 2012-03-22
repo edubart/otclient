@@ -62,6 +62,23 @@ void Graphics::terminate()
     m_emptyTexture.reset();
 }
 
+bool Graphics::parseOption(const std::string& option)
+{
+    if(option == "-no-fbos")
+        m_useFBO = false;
+    else if(option == "-no-mipmapping")
+        m_generateMipmaps = false;
+    else if(option == "-no-smoothing")
+        m_useBilinearFiltering = false;
+    else if(option == "-realtime-mipmapping")
+        m_generateRealtimeMipmaps = true;
+    else if(option == "-no-hardware-buffering")
+        m_useHardwareBuffers = false;
+    else
+        return false;
+    return true;
+}
+
 void Graphics::resize(const Size& size)
 {
     setViewportSize(size);

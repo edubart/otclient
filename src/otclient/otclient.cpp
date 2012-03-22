@@ -23,6 +23,7 @@
 #include "otclient.h"
 #include <framework/core/modulemanager.h>
 #include <framework/core/resourcemanager.h>
+#include <framework/graphics/graphics.h>
 #include "core/game.h"
 #include "core/map.h"
 
@@ -33,11 +34,49 @@ OTClient::OTClient() : Application(Otc::AppCompactName)
 
 void OTClient::init(const std::vector<std::string>& args)
 {
+    std::string startupOptions;
+    for(uint i=1;i<args.size();++i) {
+        const std::string& arg = args[i];
+        startupOptions += " ";
+        startupOptions += arg;
+
+        if(g_graphics.parseOption(arg))
+            continue;
+
+        if(arg == "-version" || arg == "--version" || arg == "-v") {
+            Fw::print(Otc::AppName, " ", Otc::AppVersion, "\n"
+                      "Buitt on: ", BUILD_DATE, "\n",
+                      "Revision: ", BUILD_REVISION, "\n",
+                      "Compiled by: ", BUILD_COMPILER, "\n",
+                      "Build type: ", BUILD_TYPE, "\n");
+            return;
+        } else if(arg == "-help" || arg == "--help" || arg == "-h") {
+            Fw::print("Usage: ", args[0], " [options]\n"
+                      "Options:\n"
+                      "  -help                   Display this information and exit\n"
+                      "  -version                Display version and exit\n"
+                      "\n"
+                      "  -no-fbos                Disable usage of opengl framebuffer objects\n"
+                      "  -no-mipmapping          Disable texture mipmaping\n"
+                      "  -no-smoothing           Disable texture smoothing (bilinear filter)\n"
+                      "  -no-hardware-buffering  Disable buffering vertex arrays in hardware\n"
+                      "  -realtime-mipmapping    Improve framebuffer smoothing quality by\n"
+                      "                          generating mipmaps in realtime when hardware\n"
+                      "                          mipmap generation implementation is available\n");
+            return;
+        } else {
+            Fw::println("Unrecognized option '", arg, "', please see -help for available options list");
+            return;
+        }
+    }
+
     logInfo(Fw::formatString("%s %s (rev %s) built on %s",
                              Otc::AppName,
                              Otc::AppVersion,
                              BUILD_REVISION,
                              BUILD_DATE));
+    if(startupOptions.length() > 0)
+        logInfo("Startup options:", startupOptions);
 
     g_logger.setLogFile(Fw::formatString("%s.txt", Otc::AppCompactName));
     Application::init(args, Fw::AppEnableAll);

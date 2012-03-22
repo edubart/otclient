@@ -103,7 +103,9 @@ void Texture::generateMipmaps()
         generateHardwareMipmaps();
     else {
         // fallback to software mipmaps generation, this can be slow
-        generateSoftwareMipmaps(getPixels());
+        //FIXME: disable because mipmaps size needs to be in base of 2,
+        //       and the current algorithmn does not support that
+        //generateSoftwareMipmaps(getPixels());
     }
 }
 
@@ -169,6 +171,7 @@ void Texture::generateSoftwareMipmaps(std::vector<uint8> inPixels)
     Size outSize = inSize / 2;
     std::vector<uint8> outPixels(outSize.area()*4);
 
+    dump << "yeah";
     int mipmap = 1;
     while(true) {
         // this is a simple bilinear filtering algorithm, it combines every 4 pixels in one pixel
