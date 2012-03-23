@@ -47,7 +47,8 @@ function ToolTip.init()
   addEvent(function()
     toolTipLabel = createWidget('Label', rootWidget)
     toolTipLabel:setId('toolTip')
-    toolTipLabel:setBackgroundColor('#111111bb')
+    toolTipLabel:setBackgroundColor('#111111cc')
+    toolTipLabel:setTextAlign(AlignCenter)
     toolTipLabel.onMouseMove = moveToolTip
   end)
 end

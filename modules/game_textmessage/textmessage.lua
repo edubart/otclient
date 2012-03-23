@@ -94,6 +94,10 @@ function TextMessage.terminate()
   disconnect(g_game, { onDeath = TextMessage.displayDeadMessage,
                        onTextMessage = TextMessage.display,
                        onGameEnd = TextMessage.clearMessages })
+  removeEvent(GameInterface.getMapPanel():recursiveGetChildById('centerWarning').hideEvent)
+  removeEvent(GameInterface.getMapPanel():recursiveGetChildById('centerAdvance').hideEvent)
+  removeEvent(GameInterface.getMapPanel():recursiveGetChildById('centerInfo').hideEvent)
+  removeEvent(GameInterface.getMapPanel():recursiveGetChildById('bottomStatus').hideEvent)
   centerTextMessagePanel:destroy()
   centerTextMessagePanel = nil
   bottomStatusLabel:destroy()

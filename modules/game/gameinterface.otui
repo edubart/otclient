@@ -38,6 +38,7 @@ UIWidget
     anchors.left: gameLeftPanel.right
     anchors.right: gameRightPanel.left
     anchors.bottom: parent.bottom
+    @onGeometryChange: self:getParent():getChildById('mapSplitter'):setGrow(self:getHeight() > 100)
 
   GameMapPanel
     id: gameMapPanel
@@ -46,6 +47,16 @@ UIWidget
     anchors.top: parent.top
     anchors.bottom: gameBottomPanel.top
     focusable: false
+    @onGeometryChange: self:getParent():getChildById('mapSplitter'):setShrink(self:getHeight() > 300)
+
+  UISplitter
+    id: mapSplitter
+    anchors.left: gameBottomPanel.left
+    anchors.right: gameBottomPanel.right
+    anchors.top: gameBottomPanel.top
+    attached-to: gameBottomPanel
+    height: 4
+    margin-top: -2
 
   UIWidget
     id: mouseGrabber

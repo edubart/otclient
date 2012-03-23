@@ -116,6 +116,8 @@ TilePtr UIMap::getTile(const Point& mousePos)
 
 void UIMap::onGeometryChange(const Rect& oldRect, const Rect& newRect)
 {
+    UIWidget::onGeometryChange(oldRect, newRect);
+
     Rect mapRect = getChildrenRect().expanded(-1);
     Size mapSize = m_mapView->getVisibleSize();
     mapSize.scale(mapRect.size(), Fw::KeepAspectRatio);

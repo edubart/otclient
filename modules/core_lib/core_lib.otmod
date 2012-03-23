@@ -38,3 +38,5 @@ Module
     dofile 'widgets/uipopupmenu'
     dofile 'widgets/uiwindow'
     dofile 'widgets/uimessagebox'
+    dofile 'widgets/uisplitter'
+
