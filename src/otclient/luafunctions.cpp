@@ -75,6 +75,7 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassStaticFunction("g_map", "getCreatureById", std::bind(&Map::getCreatureById, &g_map, _1));
     g_lua.bindClassStaticFunction("g_map", "removeCreatureById", std::bind(&Map::removeCreatureById, &g_map, _1));
     g_lua.bindClassStaticFunction("g_map", "getSpectators", std::bind(&Map::getSpectators, &g_map, _1, _2));
+    g_lua.bindClassStaticFunction("g_map", "findPath", std::bind(&Map::findPath, &g_map, _1, _2, _3));
 
     g_lua.registerStaticClass("g_game");
     g_lua.bindClassStaticFunction("g_game", "loginWorld", std::bind(&Game::loginWorld, &g_game, _1, _2, _3, _4, _5));

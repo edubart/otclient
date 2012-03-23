@@ -411,3 +411,111 @@ int Map::getLastAwareFloor()
     else
         return Otc::SEA_FLOOR;
 }
+
+// pathfinding using A* search algorithm
+// as described in http://en.wikipedia.org/wiki/A*_search_algorithm
+std::vector<Otc::Direction> Map::findPath(const Position& startPos, const Position& goalPos, int maxSteps)
+{
+    struct Node {
+        Node(const Position& pos) : cost(0), totalCost(0), steps(0), pos(pos), prev(nullptr), dir(Otc::InvalidDirection), evaluated(false) { }
+        bool operator<(const Node& other) const { return  totalCost < other.totalCost; }
+        float cost;
+        float totalCost;
+        int steps;
+        Position pos;
+        Node *prev;
+        Otc::Direction dir;
+        bool evaluated;
+    };
+
+    struct LessNode : std::binary_function<Node*, Node*, bool> {
+        bool operator()(Node* a, Node* b) const {
+            return b->totalCost < a->totalCost;
+        }
+    };
+
+    std::vector<Otc::Direction> dirs;
+
+    if(startPos == goalPos || startPos.z != goalPos.z || startPos.distance(goalPos) > maxSteps) {
+        return dirs;
+    }
+
+    auto estimateCost = [=](const Position& pos) { return pos.distance(goalPos); };
+    std::unordered_map<Position, Node*, PositionHasher> nodes;
+    std::priority_queue<Node*, std::vector<Node*>, LessNode> searchList;
+
+    Node *currentNode = new Node(startPos);
+    currentNode->pos = startPos;
+    Node *foundNode = nullptr;
+    while(currentNode && currentNode->steps < maxSteps) {
+        if(currentNode->pos == goalPos && (!foundNode || currentNode->cost < foundNode->cost))
+            foundNode = currentNode;
+
+        if(foundNode && currentNode->totalCost >= foundNode->cost)
+            break;
+
+        for(int i=-1;i<=1;++i) {
+            for(int j=-1;j<=1;++j) {
+                if(i == 0 && j == 0)
+                    continue;
+
+                Position neighborPos = currentNode->pos.translated(i, j);
+                const TilePtr& tile = getTile(neighborPos);
+                if(!tile || !tile->isWalkable())
+                    continue;
+
+                float walkFactor;
+                Otc::Direction walkDir = currentNode->pos.getDirectionFromPosition(neighborPos);
+                if(walkDir >= Otc::NorthEast)
+                    walkFactor = 3.0f;
+                else
+                    walkFactor = 1.0f;
+
+                float cost = currentNode->cost + (tile->getGroundSpeed() * walkFactor) / 100.0f;
+
+                Node *neighborNode;
+                if(nodes.find(neighborPos) == nodes.end()) {
+                    neighborNode = new Node(neighborPos);
+                    nodes[neighborPos] = neighborNode;
+                } else {
+                    neighborNode = nodes[neighborPos];
+                    if(neighborNode->cost < cost)
+                        continue;
+                }
+
+                neighborNode->prev = currentNode;
+                neighborNode->cost = cost;
+                neighborNode->steps = currentNode->steps + 1;
+                neighborNode->totalCost = neighborNode->cost + estimateCost(neighborPos);
+                neighborNode->dir = walkDir;
+                neighborNode->evaluated = false;
+                searchList.push(neighborNode);
+            }
+        }
+
+        currentNode->evaluated = true;
+        currentNode = nullptr;
+        while(searchList.size() > 0 && !currentNode) {
+            Node *node = searchList.top();
+            searchList.pop();
+
+            if(!node->evaluated)
+                currentNode = node;
+        }
+    }
+
+    if(foundNode) {
+        currentNode = foundNode;
+        while(currentNode) {
+            dirs.push_back(currentNode->dir);
+            currentNode = currentNode->prev;
+        }
+        dirs.pop_back();
+        std::reverse(dirs.begin(), dirs.end());
+    }
+
+    for(auto it : nodes)
+        delete it.second;
+
+    return dirs;
+}

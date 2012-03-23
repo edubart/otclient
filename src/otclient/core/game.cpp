@@ -372,15 +372,18 @@ void Game::walk(Otc::Direction direction)
     forceWalk(direction);
 }
 
-void Game::autoWalk(const std::vector<Otc::Direction>& dir)
+void Game::autoWalk(const std::vector<Otc::Direction>& dirs)
 {
     if(!canPerformGameAction())
+        return;
+
+    if(dirs.size() >= 255)
         return;
 
     if(isFollowing())
         cancelFollow();
 
-    m_protocolGame->sendAutoWalk(dir);
+    m_protocolGame->sendAutoWalk(dirs);
 }
 
 void Game::forceWalk(Otc::Direction direction)

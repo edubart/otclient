@@ -100,6 +100,7 @@ private:
     Size m_drawDimension;
     Size m_visibleDimension;
     Point m_virtualCenterOffset;
+    Point m_visibleCenterOffset;
     Position m_customCameraPosition;
     Boolean<true> m_mustUpdateVisibleTilesCache;
     Boolean<true> m_mustDrawVisibleTilesCache;

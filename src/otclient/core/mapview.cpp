@@ -425,6 +425,7 @@ void MapView::setVisibleDimension(const Size& visibleDimension)
     }
 
     Point virtualCenterOffset = (drawDimension/2 - Size(1,1)).toPoint();
+    Point visibleCenterOffset = virtualCenterOffset;
 
     ViewRange viewRange;
     if(tileSize >= 32 && visibleDimension.area() <= NEAR_VIEW_AREA)
@@ -446,6 +447,7 @@ void MapView::setVisibleDimension(const Size& visibleDimension)
     bool mustUpdate = (m_drawDimension != drawDimension ||
                        m_viewRange != viewRange ||
                        m_virtualCenterOffset != virtualCenterOffset ||
+                       m_visibleCenterOffset != visibleCenterOffset ||
                        m_tileSize != tileSize);
 
     m_visibleDimension = visibleDimension;
@@ -453,6 +455,7 @@ void MapView::setVisibleDimension(const Size& visibleDimension)
     m_tileSize = tileSize;
     m_viewRange = viewRange;
     m_virtualCenterOffset = virtualCenterOffset;
+    m_visibleCenterOffset = visibleCenterOffset;
 
     if(mustUpdate)
         requestVisibleTilesCacheUpdate();
@@ -550,7 +553,7 @@ TilePtr MapView::getTile(const Point& mousePos, const Rect& mapRect)
         tilePos2D += m_followingCreature->getWalkOffset() * scaleFactor;
     tilePos2D /= m_tileSize;
 
-    Position tilePos = Position(1 + (int)tilePos2D.x - m_virtualCenterOffset.x, 1 + (int)tilePos2D.y - m_virtualCenterOffset.y, 0) + cameraPosition;
+    Position tilePos = Position(1 + (int)tilePos2D.x - m_visibleCenterOffset.x, 1 + (int)tilePos2D.y - m_visibleCenterOffset.y, 0) + cameraPosition;
     if(!tilePos.isValid())
         return nullptr;
 

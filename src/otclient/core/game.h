@@ -123,7 +123,7 @@ public:
 
     // walk related
     void walk(Otc::Direction direction);
-    void autoWalk(const std::vector<Otc::Direction>& dir);
+    void autoWalk(const std::vector<Otc::Direction>& dirs);
     void forceWalk(Otc::Direction direction);
     void turn(Otc::Direction direction);
     void stop();

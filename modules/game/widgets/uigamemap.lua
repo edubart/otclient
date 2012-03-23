@@ -63,32 +63,11 @@ function UIGameMap:onMouseRelease(mousePosition, mouseButton)
   if GameInterface.processMouseAction(mousePosition, mouseButton, nil, tile:getTopLookThing(), tile:getTopUseThing(), tile:getTopCreature(), tile:getTopMultiUseThing()) then
     return true
   elseif mouseButton == MouseLeftButton then
-    local fromPos = g_game.getLocalPlayer():getPosition()
-    local toPos = tile:getPosition()
-    if fromPos.z ~= toPos.z then
+    local dirs = g_map.findPath(g_game.getLocalPlayer():getPosition(), tile:getPosition(), 255)
+    if #dirs == 0 then
       TextMessage.displayStatus('There is no way.')
       return true
     end
-
-    -- simple and stupid pathfinding algorithm
-    local dirs = {}
-    local pathPos = fromPos
-    while pathPos.x ~= toPos.x or pathPos.y ~= toPos.y do
-      if pathPos.x < toPos.x then
-        pathPos.x = pathPos.x + 1
-        table.insert(dirs, East)
-      elseif pathPos.x > toPos.x then
-        pathPos.x = pathPos.x - 1
-        table.insert(dirs, West)
-      elseif pathPos.y < toPos.y then
-        pathPos.y = pathPos.y + 1
-        table.insert(dirs, South)
-      else --if pathPos.y > toPos.y then
-        pathPos.y = pathPos.y - 1
-        table.insert(dirs, North)
-      end
-    end
-
     g_game.autoWalk(dirs)
     return true
   end

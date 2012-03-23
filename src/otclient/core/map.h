@@ -76,6 +76,8 @@ public:
     std::vector<AnimatedTextPtr> getAnimatedTexts() { return m_animatedTexts; }
     std::vector<StaticTextPtr> getStaticTexts() { return m_staticTexts; }
 
+    std::vector<Otc::Direction> findPath(const Position& start, const Position& goal, int maxSteps);
+
 private:
     std::unordered_map<Position, TilePtr, PositionHasher> m_tiles;
     std::map<uint32, CreaturePtr> m_knownCreatures;
