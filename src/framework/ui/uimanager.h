@@ -37,9 +37,9 @@ public:
     void resize(const Size& size);
     void inputEvent(const InputEvent& event);
 
-    void updatePressedWidget(const UIWidgetPtr& newPressedWidget, const Point& clickedPos = Point());
+    bool updatePressedWidget(const UIWidgetPtr& newPressedWidget, const Point& clickedPos = Point());
     void updateHoveredWidget();
-    void updateDraggingWidget(const UIWidgetPtr& draggingWidget, const Point& clickedPos = Point());
+    bool updateDraggingWidget(const UIWidgetPtr& draggingWidget, const Point& clickedPos = Point());
 
     bool importStyle(const std::string& file);
     void importStyleFromOTML(const OTMLNodePtr& styleNode);

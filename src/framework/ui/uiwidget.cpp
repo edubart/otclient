@@ -1235,9 +1235,9 @@ bool UIWidget::onDragEnter(const Point& mousePos)
     return callLuaField<bool>("onDragEnter", mousePos);
 }
 
-void UIWidget::onDragLeave(UIWidgetPtr droppedWidget, const Point& mousePos)
+bool UIWidget::onDragLeave(UIWidgetPtr droppedWidget, const Point& mousePos)
 {
-    callLuaField("onDragLeave", droppedWidget, mousePos);
+    return callLuaField<bool>("onDragLeave", droppedWidget, mousePos);
 }
 
 bool UIWidget::onDragMove(const Point& mousePos, const Point& mouseMoved)

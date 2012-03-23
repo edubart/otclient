@@ -86,18 +86,25 @@ void UIManager::inputEvent(const InputEvent& event)
                 updatePressedWidget(pressedWidget, event.mousePos);
             }
             break;
-        case Fw::MouseReleaseInputEvent:
-            m_mouseReceiver->propagateOnMouseRelease(event.mousePos, event.mouseButton);
+        case Fw::MouseReleaseInputEvent: {
+            bool accepted = false;
             if(event.mouseButton == Fw::MouseLeftButton) {
                 // release pressed widget
-                if(m_pressedWidget)
-                    updatePressedWidget(nullptr, event.mousePos);
+                if(m_pressedWidget) {
+                    if(updatePressedWidget(nullptr, event.mousePos))
+                        accepted = true;
+                }
 
                 // release dragging widget
-                if(m_draggingWidget)
-                    updateDraggingWidget(nullptr, event.mousePos);
+                if(m_draggingWidget) {
+                    if(updateDraggingWidget(nullptr, event.mousePos))
+                        accepted = true;
+                }
             }
+            if(!accepted)
+                m_mouseReceiver->propagateOnMouseRelease(event.mousePos, event.mouseButton);
             break;
+        }
         case Fw::MouseMoveInputEvent: {
             // start dragging when moves a pressed widget
             if(m_pressedWidget && m_pressedWidget->isDragable() && m_draggingWidget != m_pressedWidget)
@@ -119,8 +126,10 @@ void UIManager::inputEvent(const InputEvent& event)
     m_isOnInputEvent = false;
 }
 
-void UIManager::updatePressedWidget(const UIWidgetPtr& newPressedWidget, const Point& clickedPos)
+bool UIManager::updatePressedWidget(const UIWidgetPtr& newPressedWidget, const Point& clickedPos)
 {
+    bool accepted = false;
+
     UIWidgetPtr oldPressedWidget = m_pressedWidget;
     m_pressedWidget = newPressedWidget;
 
@@ -134,12 +143,14 @@ void UIManager::updatePressedWidget(const UIWidgetPtr& newPressedWidget, const P
             // when releasing mouse inside pressed widget area send onClick event
             if(!clickedPos.isNull() && oldPressedWidget->containsPoint(clickedPos)) {
                 // onMouseRelease will be already fired by mouseReceiver
-                oldPressedWidget->onClick(clickedPos);
+                accepted = oldPressedWidget->onClick(clickedPos);
             // must send mouse events even if the mouse is outside widget area when releasing a pressed widget
             } else
-                oldPressedWidget->onMouseRelease(clickedPos, Fw::MouseLeftButton);
+                accepted = oldPressedWidget->onMouseRelease(clickedPos, Fw::MouseLeftButton);
         }
     }
+
+    return accepted;
 }
 
 void UIManager::updateHoveredWidget()
@@ -168,8 +179,10 @@ void UIManager::updateHoveredWidget()
     m_hoverUpdateScheduled = true;
 }
 
-void UIManager::updateDraggingWidget(const UIWidgetPtr& draggingWidget, const Point& clickedPos)
+bool UIManager::updateDraggingWidget(const UIWidgetPtr& draggingWidget, const Point& clickedPos)
 {
+    bool accepted = false;
+
     UIWidgetPtr oldDraggingWidget = m_draggingWidget;
     m_draggingWidget = nullptr;
     if(oldDraggingWidget) {
@@ -184,7 +197,7 @@ void UIManager::updateDraggingWidget(const UIWidgetPtr& draggingWidget, const Po
             }
         }
 
-        oldDraggingWidget->onDragLeave(droppedWidget, clickedPos);
+        accepted = oldDraggingWidget->onDragLeave(droppedWidget, clickedPos);
         oldDraggingWidget->updateState(Fw::DraggingState);
     }
 
@@ -194,6 +207,8 @@ void UIManager::updateDraggingWidget(const UIWidgetPtr& draggingWidget, const Po
             draggingWidget->updateState(Fw::DraggingState);
         }
     }
+
+    return accepted;
 }
 
 void UIManager::onWidgetAppear(const UIWidgetPtr& widget)
