@@ -436,11 +436,9 @@ std::vector<Otc::Direction> Map::findPath(const Position& startPos, const Positi
 
     std::vector<Otc::Direction> dirs;
 
-    if(startPos == goalPos || startPos.z != goalPos.z || startPos.distance(goalPos) > maxSteps) {
+    if(startPos == goalPos || startPos.z != goalPos.z || startPos.distance(goalPos) > maxSteps)
         return dirs;
-    }
 
-    auto estimateCost = [=](const Position& pos) { return pos.distance(goalPos); };
     std::unordered_map<Position, Node*, PositionHasher> nodes;
     std::priority_queue<Node*, std::vector<Node*>, LessNode> searchList;
 
@@ -486,7 +484,7 @@ std::vector<Otc::Direction> Map::findPath(const Position& startPos, const Positi
                 neighborNode->prev = currentNode;
                 neighborNode->cost = cost;
                 neighborNode->steps = currentNode->steps + 1;
-                neighborNode->totalCost = neighborNode->cost + estimateCost(neighborPos);
+                neighborNode->totalCost = neighborNode->cost + neighborPos.distance(goalPos);
                 neighborNode->dir = walkDir;
                 neighborNode->evaluated = false;
                 searchList.push(neighborNode);

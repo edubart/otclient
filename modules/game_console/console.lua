@@ -226,6 +226,7 @@ function Console.clear()
     end
   end
   channels = {}
+  channels[0] = 'Default'
 
   consoleTabBar:getTab('Default').tabPanel:destroyChildren()
   consoleTabBar:getTab('Server Log').tabPanel:destroyChildren()
@@ -317,7 +318,7 @@ function Console.addText(text, speaktype, tabName)
 end
 
 function Console.addTabText(text, speaktype, tab)
-  if Options['showTimestampsInConsole'] then
+  if Options.getOption('showTimestampsInConsole') then
     text = os.date('%H:%M') .. ' ' .. text
   end
 
@@ -326,6 +327,7 @@ function Console.addTabText(text, speaktype, tab)
   label:setText(text)
   label:setColor(speaktype.color)
   consoleTabBar:blinkTab(tab)
+  print 'yeah'
 
   if panel:getChildCount() > 10 then
     panel:removeChild(panel:getFirstChild())
