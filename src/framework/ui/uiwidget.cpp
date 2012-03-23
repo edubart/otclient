@@ -714,6 +714,10 @@ void UIWidget::setLayout(const UILayoutPtr& layout)
 
 void UIWidget::setRect(const Rect& rect)
 {
+    if(rect.width() > 8192 || rect.height() > 8192) {
+        logError("attempt to set huge rect size (", rect,") for ", m_id);
+        return;
+    }
     // only update if the rect really changed
     Rect oldRect = m_rect;
     if(rect == oldRect)

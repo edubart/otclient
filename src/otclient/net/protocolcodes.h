@@ -49,7 +49,7 @@ namespace Proto {
 
 #if PROTOCOL>=861
     constexpr int NumViolationReasons = 19;
-#elif PROTOCOL==860
+#elif PROTOCOL>=860
     constexpr int NumViolationReasons = 20;
 #endif
 
@@ -246,7 +246,7 @@ namespace Proto {
         ServerSpeakRVRAnswer,
         ServerSpeakRVRContinue,
         ServerSpeakChannelRed2
-#elif PROTOCOL==860
+#elif PROTOCOL>=860
         ServerSpeakSay = 1,
         ServerSpeakWhisper,
         ServerSpeakYell,
@@ -269,7 +269,7 @@ namespace Proto {
     };
 
     enum MessageTypes {
-#if PROTOCOL>=862
+#if PROTOCOL>=861
         MessageConsoleOrange = 13,
         MessageConsoleOrange2,
         MessageWarning,
@@ -280,7 +280,7 @@ namespace Proto {
         MessageStatusSmall,
         MessageConsoleBlue,
         MessageConsoleRed
-#elif PROTOCOL==860
+#elif PROTOCOL>=860
         MessageConsoleRed = 18,
         MessageConsoleOrange,
         MessageConsoleOrange2,

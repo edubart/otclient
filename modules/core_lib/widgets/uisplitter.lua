@@ -3,8 +3,6 @@ UISplitter = extends(UIWidget)
 function UISplitter.create()
   local splitter = UISplitter.internalCreate()
   splitter:setFocusable(false)
-  splitter.canGrow = true
-  splitter.canShrink = true
   return splitter
 end
 
@@ -22,27 +20,23 @@ function UISplitter:onHoverChange(hovered)
   end
 end
 
-function UISplitter:getAttachedTo()
-  local parent = self:getParent()
-  if parent and self.attachedTo then
-    return parent:getChildById(self.attachedTo)
-  end
-end
 
 function UISplitter:onMouseMove(mousePos, mouseMoved)
   if self:isPressed() then
-    local deltay = mousePos.y - (self:getPosition().y + self:getHeight()/2)
-    local deltax = mousePos.x - (self:getPosition().x + self:getWidth()/2)
-    local attachedToWidget = self:getAttachedTo()
-    if not attachedToWidget then return end
     if self.vertical then
-      if deltay == 0 then return end
-      if not self.canGrow and deltay > 0 then return end
-      if not self.canShrink and deltay < 0 then return end
-      attachedToWidget:setHeight(attachedToWidget:getHeight() - deltay)
+      local delta = mousePos.y - self:getY()
+      local currentMargin = self:getMarginBottom()
+      local newMargin = self:canUpdateMargin(self:getMarginBottom() - delta)
+      if newMargin ~= currentMargin then
+        self.newMargin = newMargin
+        if not self.event or self.event:isExecuted() then
+          self.event = addEvent(function()
+            self:setMarginBottom(self.newMargin)
+          end)
+        end
+      end
     else
-      if deltax == 0 then return end
-      attachedToWidget:setWidth(attachedToWidget:getWidth() - deltax)
+      --TODO
     end
     return true
   end
@@ -56,15 +50,11 @@ function UISplitter:onMouseRelease(mousePos, mouseButton)
 end
 
 function UISplitter:onStyleApply(styleName, styleNode)
-  if styleNode['attached-to'] then
-    self.attachedTo = styleNode['attached-to']
+  if styleNode['relative-margin'] then
+    self.relativeMargin = styleNode['relative-margin']
   end
 end
 
-function UISplitter:setGrow(enabled)
-  self.canGrow = enabled
-end
-
-function UISplitter:setShrink(enabled)
-  self.canShrink = enabled
+function UISplitter:canUpdateMargin(newMargin)
+  return newMargin
 end
