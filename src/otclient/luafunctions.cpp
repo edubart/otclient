@@ -82,7 +82,7 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassStaticFunction("g_game", "forceLogout", std::bind(&Game::forceLogout, &g_game));
     g_lua.bindClassStaticFunction("g_game", "safeLogout", std::bind(&Game::safeLogout, &g_game));
     g_lua.bindClassStaticFunction("g_game", "walk", std::bind(&Game::walk, &g_game, _1));
-    g_lua.bindClassStaticFunction("g_game", "walkPath", std::bind(&Game::walkPath, &g_game, _1));
+    g_lua.bindClassStaticFunction("g_game", "autoWalk", std::bind(&Game::autoWalk, &g_game, _1));
     g_lua.bindClassStaticFunction("g_game", "forceWalk", std::bind(&Game::forceWalk, &g_game, _1));
     g_lua.bindClassStaticFunction("g_game", "turn", std::bind(&Game::turn, &g_game, _1));
     g_lua.bindClassStaticFunction("g_game", "stop", std::bind(&Game::stop, &g_game));

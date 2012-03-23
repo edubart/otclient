@@ -79,12 +79,44 @@ void ProtocolGame::sendPingResponse()
     send(msg);
 }
 
-void ProtocolGame::sendWalkPath(const std::vector<Otc::Direction>& path)
+void ProtocolGame::sendAutoWalk(const std::vector<Otc::Direction>& path)
 {
     OutputMessage msg;
+    msg.addU8(Proto::ClientAutoWalk);
     msg.addU8(path.size());
-    for(Otc::Direction dir : path)
-        msg.addU8(dir);
+    for(Otc::Direction dir : path) {
+        uint8 byte;
+        switch(dir) {
+            case Otc::East:
+                byte = 1;
+                break;
+            case Otc::NorthEast:
+                byte = 2;
+                break;
+            case Otc::North:
+                byte = 3;
+                break;
+            case Otc::NorthWest:
+                byte = 4;
+                break;
+            case Otc::West:
+                byte = 5;
+                break;
+            case Otc::SouthWest:
+                byte = 6;
+                break;
+            case Otc::South:
+                byte = 7;
+                break;
+            case Otc::SouthEast:
+                byte = 8;
+                break;
+            default:
+                byte = 0;
+                break;
+        }
+        msg.addU8(byte);
+    }
     send(msg);
 }
 

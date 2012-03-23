@@ -42,7 +42,7 @@ public:
 
     void sendLogout();
     void sendPingResponse();
-    void sendWalkPath(const std::vector<Otc::Direction>& path);
+    void sendAutoWalk(const std::vector<Otc::Direction>& path);
     void sendWalkNorth();
     void sendWalkEast();
     void sendWalkSouth();

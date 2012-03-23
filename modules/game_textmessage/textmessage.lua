@@ -113,7 +113,7 @@ function TextMessage.clearMessages()
 end
 
 function TextMessage.displayStatus(msg, time)
-  displayMessage(MessageTypes.warning, msg)
+  displayMessage(MessageTypes.statusSmall, msg)
 end
 
 function TextMessage.displayEventAdvance(msg, time)

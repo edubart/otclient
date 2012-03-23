@@ -155,7 +155,7 @@ namespace Proto {
         ClientEnterGame = 10,
         ClientLeaveGame = 20,
         ClientPingResponse = 30,
-        ClientWalkPath = 100,
+        ClientAutoWalk = 100,
         ClientWalkNorth = 101,
         ClientWalkEast = 102,
         ClientWalkSouth = 103,
