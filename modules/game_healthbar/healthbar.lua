@@ -8,17 +8,29 @@ local healthLabel
 local manaLabel
 
 -- public functions
-function HealthBar.create()
+function HealthBar.init()
+  connect(LocalPlayer, { onHealthChange = HealthBar.onHealthChange,
+                         onManaChange = HealthBar.onManaChange })
+
   healthBarWindow = displayUI('healthbar.otui', GameInterface.getRightPanel())
-  healthBarButton = TopMenu.addGameButton('healthBarButton', 'Healh Bar', 'healthbar.png', HealthBar.toggle)
+  healthBarButton = TopMenu.addGameToggleButton('healthBarButton', 'Healh Bar', 'healthbar.png', HealthBar.toggle)
   healthBarButton:setOn(true)
   healthBar = healthBarWindow:getChildById('healthBar')
   manaBar = healthBarWindow:getChildById('manaBar')
   healthLabel = healthBarWindow:getChildById('healthLabel')
   manaLabel = healthBarWindow:getChildById('manaLabel')
+
+  if g_game.isOnline() then
+    local localPlayer = g_game.getLocalPlayer()
+    HealthBar.onHealthChange(localPlayer, localPlayer:getHealth(), localPlayer:getMaxHealth())
+    HealthBar.onManaChange(localPlayer, localPlayer:getMana(), localPlayer:getMaxMana())
+  end
 end
 
-function HealthBar.destroy()
+function HealthBar.terminate()
+  disconnect(LocalPlayer, { onHealthChange = HealthBar.onHealthChange,
+                            onManaChange = HealthBar.onManaChange })
+
   healthBarWindow:destroy()
   healthBarWindow = nil
   healthBarButton:destroy()
@@ -53,7 +65,3 @@ function HealthBar.onManaChange(localPlayer, mana, maxMana)
   manaBar:setPercent(percent)
 end
 
-connect(g_game, { onGameStart = HealthBar.create,
-                onGameEnd = HealthBar.destroy })
-connect(LocalPlayer, { onHealthChange = HealthBar.onHealthChange,
-                       onManaChange = HealthBar.onManaChange })

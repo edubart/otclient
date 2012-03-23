@@ -3,7 +3,6 @@ Module
   description: Create the top menu
   author: OTClient team
   website: https://github.com/edubart/otclient
-  reloadable: true
 
   @onLoad: |
     dofile 'topmenu'

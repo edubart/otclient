@@ -41,14 +41,14 @@ local function setSkillPercent(id, percent, tooltip)
 end
 
 -- public functions
-function Skills.create()
+function Skills.init()
   skillsWindow = displayUI('skills.otui', GameInterface.getRightPanel())
   skillsWindow:hide()
   skillsButton = TopMenu.addGameButton('skillsButton', 'Skills (Ctrl+S)', '/core_styles/icons/skills.png', Skills.toggle)
   Keyboard.bindKeyDown('Ctrl+S', Skills.toggle)
 end
 
-function Skills.destroy()
+function Skills.terminate()
   Keyboard.unbindKeyDown('Ctrl+S')
   skillsButton:destroy()
   skillsButton = nil

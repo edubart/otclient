@@ -25,6 +25,7 @@ function Background.terminate()
   disconnect(g_game, { onGameStart = Background.hide })
   disconnect(g_game, { onGameEnd = Background.show })
 
+  Effects.cancelFade(background:getChildById('clientVersionLabel'))
   background:destroy()
   background = nil
 

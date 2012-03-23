@@ -25,6 +25,7 @@
 #include <otclient/luascript/luavaluecasts.h>
 #include <otclient/core/game.h>
 #include <otclient/core/tile.h>
+#include <otclient/core/container.h>
 #include <otclient/core/item.h>
 #include <otclient/core/effect.h>
 #include <otclient/core/missile.h>
@@ -161,6 +162,8 @@ void OTClient::registerLuaFunctions()
 
     g_lua.registerClass<ProtocolGame, Protocol>();
 
+    g_lua.registerClass<Container>();
+
     g_lua.registerClass<Thing>();
     g_lua.bindClassMemberFunction<Thing>("setId", &Thing::setId);
     g_lua.bindClassMemberFunction<Thing>("setPosition", &Thing::setPosition);
@@ -192,6 +195,7 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Thing>("isHookSouth", &Thing::isHookSouth);
     g_lua.bindClassMemberFunction<Thing>("isTranslucent", &Thing::isTranslucent);
     g_lua.bindClassMemberFunction<Thing>("isFullGround", &Thing::isFullGround);
+    g_lua.bindClassMemberFunction<Thing>("getParentContainer", &Thing::getParentContainer);
 
     g_lua.registerClass<Creature, Thing>();
     g_lua.bindClassMemberFunction<Creature>("getId", &Creature::getId);
@@ -221,9 +225,6 @@ void OTClient::registerLuaFunctions()
     g_lua.registerClass<AnimatedText, Thing>();
 
     g_lua.registerClass<Player, Creature>();
-    g_lua.bindClassMemberFunction<Player>("isPartyMember", &LocalPlayer::isPartyMember);
-    g_lua.bindClassMemberFunction<Player>("isPartyLeader", &LocalPlayer::isPartyLeader);
-    g_lua.bindClassMemberFunction<Player>("isPartySharedExperienceActive", &LocalPlayer::isPartySharedExperienceActive);
     g_lua.registerClass<Npc, Creature>();
     g_lua.registerClass<Monster, Creature>();
 

@@ -4,5 +4,13 @@ Module
   author: OTClient team
   website: https://github.com/edubart/otclient
 
+  dependecies:
+    - game
+
   @onLoad: |
     dofile 'inventory'
+    Inventory.init()
+
+  @onUnload: |
+    Inventory.terminate()
+

@@ -3,7 +3,6 @@ Module
   description: Terminal for executing lua functions
   author: OTClient team
   website: https://github.com/edubart/otclient
-  reloadable: true
 
   @onLoad: |
     dofile 'terminal'

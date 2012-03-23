@@ -105,7 +105,7 @@ function GameInterface.createThingMenu(menuPosition, lookThing, useThing, creatu
 
   if useThing then
     if useThing:isContainer() then
-      if useThing:isInsideContainer() then
+      if useThing:getParentContainer() then
         menu:addOption('Open', function() g_game.open(useThing, useThing:getContainerId()) end)
         menu:addOption('Open in new window', function() g_game.open(useThing, Containers.getFreeContainerId()) end)
       else
@@ -220,7 +220,7 @@ function GameInterface.processMouseAction(menuPosition, mouseButton, autoWalk, l
       return true
     elseif useThing and keyboardModifiers == KeyboardCtrlModifier and (mouseButton == MouseLeftButton or mouseButton == MouseRightButton) then
       if useThing:isContainer() then
-        if useThing:isInsideContainer() then
+        if useThing:getParentContainer() then
           g_game.open(useThing, useThing:getContainerId())
           return true
         else
@@ -245,7 +245,7 @@ function GameInterface.processMouseAction(menuPosition, mouseButton, autoWalk, l
         g_game.attack(multiUseThing:asCreature())
         return true
       elseif multiUseThing:isContainer() then
-        if multiUseThing:isInsideContainer() then
+        if multiUseThing:getParentContainer() then
           g_game.open(multiUseThing, multiUseThing:getContainerId())
           return true
         else

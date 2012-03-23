@@ -3,7 +3,6 @@ Module
   description: Manage chat window
   author: OTClient team
   website: https://github.com/edubart/otclient
-  reloadable: true
 
   dependecies:
     - game

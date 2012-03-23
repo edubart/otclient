@@ -33,8 +33,8 @@ UIWidget
     margin-bottom: 172
     height: 4
     margin-top: -2
-    background: red
     @canUpdateMargin: function(self, newMargin) return math.min(math.max(newMargin, 100), self:getParent():getHeight() - 300) end
+    @onGeometryChange: function(self) self:setMarginBottom(math.min(self:getParent():getHeight() - 300, self:getMarginBottom())) end
 
   GameBottomPanel
     id: gameBottomPanel
@@ -50,6 +50,7 @@ UIWidget
     anchors.right: parent.right
     anchors.top: parent.top
     anchors.bottom: parent.bottom
+    focusable: false
 
   GameSidePanel
     id: gameLeftPanel
@@ -58,6 +59,7 @@ UIWidget
     anchors.left: parent.left
     anchors.top: parent.top
     anchors.bottom: parent.bottom
+    focusable: false
 
   UIWidget
     id: mouseGrabber

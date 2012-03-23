@@ -6,3 +6,7 @@ Module
 
   @onLoad: |
     dofile 'skills'
+    Skills.init()
+
+  @onUnload: |
+    Skills.terminate()

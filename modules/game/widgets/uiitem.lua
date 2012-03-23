@@ -73,6 +73,6 @@ function UIItem:onMouseRelease(mousePosition, mouseButton)
 
   local item = self:getItem()
   if not item or not self:containsPoint(mousePosition) then return false end
-  return g_game.processMouseAction(mousePosition, mouseButton, nil, item, item, nil, item)
+  return GameInterface.processMouseAction(mousePosition, mouseButton, nil, item, item, nil, item)
 end
 

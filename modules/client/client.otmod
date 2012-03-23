@@ -5,6 +5,7 @@ Module
   website: https://github.com/edubart/otclient
   autoload: true
   autoload-priority: 100
+  reloadable: false
 
   load-later:
     - client_topmenu

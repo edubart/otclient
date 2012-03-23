@@ -32,7 +32,7 @@ ManaLabel < GameLabel
   margin-top: 2
   text: 0 / 0
 
-UIWindow
+BorderlessGameWindow
   id: healthManaPanel
   width: 192
   height: 34

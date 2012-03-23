@@ -3,7 +3,6 @@ Module
   description: Manages enter game and character list windows
   author: OTClient team
   website: https://github.com/edubart/otclient
-  reloadable: true
 
   dependencies:
     - client_topmenu

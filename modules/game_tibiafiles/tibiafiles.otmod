@@ -1,6 +1,7 @@
 Module
   name: game_tibiafiles
   description: Contains tibia spr and dat
+  reloadable: false
 
   @onLoad: |
     if not g_thingsType.load('/game_tibiafiles/Tibia.dat') then

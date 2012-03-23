@@ -19,12 +19,7 @@ local function addButton(id, description, icon, callback, panel, toggle)
   button:setId(id)
   button:setTooltip(description)
   button:setIcon(resolvepath(icon, 3))
-
-  if toggle then
-    button.onCheckChange = callback
-  else
-    button.onClick = callback
-  end
+  button.onClick = callback
   return button
 end
 
@@ -38,6 +33,10 @@ function TopMenu.init()
   leftButtonsPanel = topMenu:getChildById('leftButtonsPanel')
   rightButtonsPanel = topMenu:getChildById('rightButtonsPanel')
   gameButtonsPanel = topMenu:getChildById('gameButtonsPanel')
+
+  if g_game.isOnline() then
+    gameButtonsPanel:show()
+  end
 end
 
 function TopMenu.terminate()

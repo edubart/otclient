@@ -17,7 +17,7 @@ TopButton < UIButton
     image-color: #ffffff44
     icon-color: #ffffff44
 
-TopToggleButton < UICheckBox
+TopToggleButton < UIButton
   size: 26 26
   image-source: images/top_game_button.png
   image-clip: 26 0 26 26
@@ -25,7 +25,7 @@ TopToggleButton < UICheckBox
   image-border: 3
   icon-color: #ffffffff
 
-  $checked:
+  $on:
     image-clip: 0 0 26 26
     image-color: #ffffffff
     icon-color: #ffffffff
@@ -62,6 +62,7 @@ TopPanel
     anchors.bottom: parent.bottom
     anchors.left: prev.right
     anchors.right: next.left
+    visible: false
 
   TopMenuButtonsPanel
     id: rightButtonsPanel

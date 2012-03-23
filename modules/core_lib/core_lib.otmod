@@ -5,6 +5,7 @@ Module
   website: https://github.com/edubart/otclient
   autoload: true
   autoload-priority: 10
+  reloadable: false
 
   @onLoad: |
     dofile 'ext/table'

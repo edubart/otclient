@@ -18,3 +18,6 @@ MiniWindow < UIMiniWindow
   $on:
     height: 24
     image-border-bottom: 1
+
+BorderlessGameWindow < UIWindow
+  focusable: false

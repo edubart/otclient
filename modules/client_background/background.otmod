@@ -3,7 +3,6 @@ Module
   description: Handles the background of the login screen
   author: OTClient team
   website: https://github.com/edubart/otclient
-  reloadable: true
 
   dependencies:
     - client_topmenu

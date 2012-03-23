@@ -108,7 +108,7 @@ void Module::discover(const OTMLNodePtr& moduleNode)
     m_website = moduleNode->valueAt("website", none);
     m_version = moduleNode->valueAt("version", none);
     m_autoLoad = moduleNode->valueAt<bool>("autoload", false);
-    m_reloadable = moduleNode->valueAt<bool>("reloadable", false);
+    m_reloadable = moduleNode->valueAt<bool>("reloadable", true);
     m_autoLoadPriority = moduleNode->valueAt<int>("autoload-priority", 9999);
 
     if(OTMLNodePtr node = moduleNode->get("dependencies")) {

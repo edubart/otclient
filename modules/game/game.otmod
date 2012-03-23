@@ -3,7 +3,6 @@ Module
   description: Create the game interface, where the ingame stuff starts
   author: OTClient team
   website: https://github.com/edubart/otclient
-  reloadable: true
 
   dependencies:
     - game_tibiafiles
@@ -14,8 +13,8 @@ Module
     - game_textmessage
     - game_console
     - game_outfit
-    //- game_healthbar
-    //- game_inventory
+    - game_healthbar
+    - game_inventory
     //- game_combatcontrols
     //- game_skills
     //- game_viplist
@@ -30,9 +29,13 @@ Module
     dofile 'const'
 
     dofile 'widgets/uigamemap'
+    dofile 'widgets/uiitem'
+
+    dofile 'creature'
+    dofile 'player'
 
     dofile 'gameinterface'
-    dofile 'creature'
+
     GameInterface.init()
 
   @onUnload: |

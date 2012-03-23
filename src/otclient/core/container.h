@@ -25,7 +25,9 @@
 
 #include "declarations.h"
 
-class Container
+#include <framework/luascript/luaobject.h>
+
+class Container : public LuaObject
 {
 public:
     Container();

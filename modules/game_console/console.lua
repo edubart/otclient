@@ -155,7 +155,7 @@ function Console.init()
                     onChannelList = onChannelList,
                     onOpenChannel = onOpenChannel,
                     onOpenPrivateChannel = onOpenPrivateChannel,
-                    onGameEnd = Console.clean })
+                    onGameEnd = Console.clear })
 
   consolePanel = displayUI('console.otui', GameInterface.getBottomPanel())
   consoleLineEdit = consolePanel:getChildById('consoleLineEdit')
@@ -188,7 +188,7 @@ function Console.terminate()
                        onChannelList = onChannelList,
                        onOpenChannel = onOpenChannel,
                        onOpenPrivateChannel = onOpenPrivateChannel,
-                       onGameEnd = Console.clean })
+                       onGameEnd = Console.clear })
 
   for channelid, channelname in pairs(channels) do
     if channelid ~= 0 then
@@ -218,7 +218,7 @@ function Console.debug()
   print(#channels)
 end
 
-function Console.clean()
+function Console.clear()
   for channelid, channelname in pairs(channels) do
     if channelid ~= 0 then
       local tab = consoleTabBar:getTab(channelname)
@@ -229,6 +229,7 @@ function Console.clean()
 
   consoleTabBar:getTab('Default').tabPanel:destroyChildren()
   consoleTabBar:getTab('Server Log').tabPanel:destroyChildren()
+  consoleLineEdit:clearText()
 
   if channelsWindow then
     channelsWindow:destroy()

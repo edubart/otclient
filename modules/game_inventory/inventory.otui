@@ -1,4 +1,5 @@
-UIWindow
+BorderlessGameWindow
+  id: inventoryWindow
   width: 192
   height: 154
   margin-top: 10
@@ -93,9 +94,7 @@ UIWindow
     anchors.left: slot9.left
     anchors.right: slot9.right
     margin-top: 5
-
     text-align: center
-
     image-source: /core_styles/styles/images/panel_flat.png
     image-border: 1
 
@@ -106,9 +105,7 @@ UIWindow
     anchors.left: slot10.left
     anchors.right: slot10.right
     margin-top: 5
-
     text-align: center
-
     image-source: /core_styles/styles/images/panel_flat.png
     image-border: 1
 
