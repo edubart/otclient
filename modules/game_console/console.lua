@@ -327,7 +327,6 @@ function Console.addTabText(text, speaktype, tab)
   label:setText(text)
   label:setColor(speaktype.color)
   consoleTabBar:blinkTab(tab)
-  print 'yeah'
 
   if panel:getChildCount() > 10 then
     panel:removeChild(panel:getFirstChild())

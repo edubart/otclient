@@ -2,10 +2,9 @@
 High priority TODO in order (before first public disclose)
 
 multiline text edit
-remove UIGame
 move windows, navigate in containers
 complete miniwindow (close, minimize, resize, move)
-create and bind all game functions/events
+create and bind all game events
 player status icons (poison, etc)
 load modules from zip files
 display exit box when exiting from game
@@ -68,9 +67,7 @@ remake spr/dat using OTML and image files
 game/graphics window with options
 do lua game event calls from Game instead from GameProtocol
 
-auto walk
 minimap window
-
 login queue
 questlog
 edit texts
