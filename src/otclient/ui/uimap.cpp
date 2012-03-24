@@ -40,17 +40,15 @@ UIMap::~UIMap()
     g_map.removeMapView(m_mapView);
 }
 
-void UIMap::draw()
+void UIMap::drawSelf()
 {
-    drawSelf();
+    UIWidget::drawSelf();
 
     // draw map border
     g_painter.setColor(Color::black);
     g_painter.drawBoundingRect(m_mapRect.expanded(1));
 
     m_mapView->draw(m_mapRect);
-
-    drawChildren();
 }
 
 void UIMap::zoomIn()

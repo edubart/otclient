@@ -1,0 +1,30 @@
+VerticalScrollBar < UIScrollBar
+  width: 13
+  image-source: images/vscrollbar.png
+  image-clip: 0 39 13 32
+  image-border: 1
+
+  UIButton
+    id: upButton
+    anchors.top: parent.top
+    anchors.right: parent.right
+    image-source: images/vscrollbar.png
+    image-clip: 0 0 13 13
+    size: 13 13
+
+  UIButton
+    id: downButton
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    size: 13 13
+    image-source: images/vscrollbar.png
+    image-clip: 0 13 13 13
+
+  //UIButton
+    //id: middleButton
+    //anchors.top: parent.top
+    //anchors.right: parent.right
+    //size: 13 13
+    //margin-top: 30
+    //image-source: images/vscrollbar.png
+    //image-clip: 0 26 13 13

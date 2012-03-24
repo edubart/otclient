@@ -459,7 +459,7 @@ std::vector<Otc::Direction> Map::findPath(const Position& startPos, const Positi
 
                 Position neighborPos = currentNode->pos.translated(i, j);
                 const TilePtr& tile = getTile(neighborPos);
-                if(!tile || !tile->isWalkable())
+                if(!tile || (!tile->isPathable() && neighborPos != goalPos) || (!tile->isWalkable() && neighborPos == goalPos))
                     continue;
 
                 float walkFactor;

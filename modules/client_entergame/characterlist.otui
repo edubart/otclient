@@ -18,10 +18,16 @@ MainWindow
   TextList
     id: characterList
     anchors.fill: parent
-    anchors.bottom: next.top
+    anchors.bottom: accountStatusLabel.top
     margin-bottom: 5
     padding: 1
     focusable: false
+
+  VerticalScrollBar
+    attached-to: characterList
+    anchors.top: characterList.top
+    anchors.bottom: characterList.bottom
+    anchors.right: characterList.right
 
   Label
     id: accountStatusLabel

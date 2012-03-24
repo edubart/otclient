@@ -81,9 +81,9 @@ void UIWidget::parseBaseStyle(const OTMLNodePtr& styleNode)
         else if(node->tag() == "background-rect")
             setBackgroundRect(node->value<Rect>());
         else if(node->tag() == "icon")
-            setIcon(node->value());
+            setIcon(Fw::resolvePath(node->value(), node->source()));
         else if(node->tag() == "icon-source")
-            setIcon(node->value());
+            setIcon(Fw::resolvePath(node->value(), node->source()));
         else if(node->tag() == "icon-color")
             setIconColor(node->value<Color>());
         else if(node->tag() == "icon-offset-x")

@@ -30,9 +30,9 @@ UIItem::UIItem()
     m_dragable = true;
 }
 
-void UIItem::draw()
+void UIItem::drawSelf()
 {
-    drawSelf();
+    UIWidget::drawSelf();
 
     if(m_item) {
         Point topLeft = m_rect.bottomRight() - Point(32, 32) + Point(m_padding.left, m_padding.top);
@@ -48,9 +48,6 @@ void UIItem::draw()
 
         //m_font->renderText(Fw::unsafeCast<std::string>(m_item->getId()), m_rect);
     }
-
-
-    drawChildren();
 }
 
 void UIItem::setItemId(int id)

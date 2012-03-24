@@ -53,7 +53,7 @@ void UIManager::terminate()
 
 void UIManager::render()
 {
-    m_rootWidget->draw();
+    m_rootWidget->draw(m_rootWidget->getRect());
 }
 
 void UIManager::resize(const Size& size)
@@ -349,23 +349,24 @@ UIWidgetPtr UIManager::loadUI(const std::string& file, const UIWidgetPtr& parent
             else {
                 if(widget)
                     Fw::throwException("cannot have multiple main widgets in otui files");
-                widget = loadWidgetFromOTML(node, parent);
+                widget = createWidgetFromOTML(node, parent);
             }
         }
 
         return widget;
     } catch(Exception& e) {
-        logError("Failed to load UI from '", file, "': ", e.what());
+        logError("failed to load UI from '", file, "': ", e.what());
         return nullptr;
     }
 }
-/*
-UIWidgetPtr UIManager::loadWidgetFromStyle()
-{
 
+UIWidgetPtr UIManager::createWidgetFromStyle(const std::string& styleName, const UIWidgetPtr& parent)
+{
+    OTMLNodePtr node = OTMLNode::create(styleName);
+    return createWidgetFromOTML(node, parent);
 }
-*/
-UIWidgetPtr UIManager::loadWidgetFromOTML(const OTMLNodePtr& widgetNode, const UIWidgetPtr& parent)
+
+UIWidgetPtr UIManager::createWidgetFromOTML(const OTMLNodePtr& widgetNode, const UIWidgetPtr& parent)
 {
     OTMLNodePtr originalStyleNode = getStyle(widgetNode->tag());
     if(!originalStyleNode)
@@ -384,9 +385,11 @@ UIWidgetPtr UIManager::loadWidgetFromOTML(const OTMLNodePtr& widgetNode, const U
     if(widget) {
         widget->setStyleFromNode(styleNode);
 
-        for(const OTMLNodePtr& childNode : widgetNode->children()) {
-            if(!childNode->isUnique())
-                loadWidgetFromOTML(childNode, widget);
+        for(const OTMLNodePtr& childNode : styleNode->children()) {
+            if(!childNode->isUnique()) {
+                createWidgetFromOTML(childNode, widget);
+                styleNode->removeChild(childNode);
+            }
         }
     } else
         Fw::throwException("unable to create widget of type '", widgetType, "'");

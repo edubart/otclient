@@ -79,6 +79,7 @@ public:
     bool isNotMoveable() { return m_type->properties[ThingType::IsNotMovable]; }
     bool isNotWalkable() { return m_type->properties[ThingType::NotWalkable]; }
     bool isPickupable() { return m_type->properties[ThingType::IsPickupable]; }
+    bool isNotPathable() { return m_type->properties[ThingType::NotPathable]; }
     bool isIgnoreLook() { return m_type->properties[ThingType::IgnoreLook]; }
     bool isHangable() { return m_type->properties[ThingType::IsHangable]; }
     bool isHookSouth() { return m_type->properties[ThingType::HookSouth]; }

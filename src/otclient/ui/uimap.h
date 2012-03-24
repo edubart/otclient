@@ -33,7 +33,7 @@ public:
     UIMap();
     ~UIMap();
 
-    void draw();
+    void drawSelf();
 
     void zoomIn();
     void zoomOut();

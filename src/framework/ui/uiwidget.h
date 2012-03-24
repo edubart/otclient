@@ -49,14 +49,15 @@ public:
     virtual ~UIWidget();
 
 protected:
-    virtual void draw();
+    virtual void draw(const Rect& visibleRect);
     virtual void drawSelf();
-    virtual void drawChildren();
+    virtual void drawChildren(const Rect& visibleRect);
 
     friend class UIManager;
 
     std::string m_id;
     Rect m_rect;
+    Point m_virtualOffset;
     Boolean<true> m_enabled;
     Boolean<true> m_visible;
     Boolean<true> m_focusable;
@@ -121,6 +122,7 @@ public:
     void setFixedSize(bool fixed);
     void setLastFocusReason(Fw::FocusReason reason);
     void setAutoRepeatDelay(int delay) { m_autoRepeatDelay = delay; }
+    void setVirtualOffset(const Point& offset);
 
     bool isVisible();
     bool isChildLocked(const UIWidgetPtr& child);
@@ -240,6 +242,7 @@ public:
     int getChildCount() { return m_children.size(); }
     Fw::FocusReason getLastFocusReason() { return m_lastFocusReason; }
     int getAutoRepeatDelay() { return m_autoRepeatDelay; }
+    Point getVirtualOffset() { return m_virtualOffset; }
     std::string getStyleName() { return m_style->tag(); }
 
 

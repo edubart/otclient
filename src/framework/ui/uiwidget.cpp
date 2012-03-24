@@ -51,10 +51,22 @@ UIWidget::~UIWidget()
 #endif
 }
 
-void UIWidget::draw()
+void UIWidget::draw(const Rect& visibleRect)
 {
     drawSelf();
-    drawChildren();
+    if(m_children.size() > 0) {
+        bool clip = true;
+        if(this == g_ui.getRootWidget().get())
+            clip = false;
+
+        if(clip)
+            g_graphics.beginClipping(visibleRect);
+
+        drawChildren(visibleRect);
+
+        if(clip)
+            g_graphics.endClipping();
+    }
 }
 
 void UIWidget::drawSelf()
@@ -72,33 +84,35 @@ void UIWidget::drawSelf()
     drawText(m_rect);
 }
 
-void UIWidget::drawChildren()
+void UIWidget::drawChildren(const Rect& visibleRect)
 {
     // draw children
     for(const UIWidgetPtr& child : m_children) {
         // render only visible children with a valid rect inside parent rect
-        if(child->isExplicitlyVisible() &&
-           child->getRect().isValid() &&
-           child->getOpacity() > 0.0f &&
-           child->getRect().intersects(m_rect)) {
-            // store current graphics opacity
-            float oldOpacity = g_painter.getOpacity();
+        if(!child->isExplicitlyVisible() || !child->getRect().isValid() || child->getOpacity() == 0.0f)
+            continue;
 
-            // decrease to self opacity
-            if(child->getOpacity() < oldOpacity)
-                g_painter.setOpacity(child->getOpacity());
+        Rect childVisibleRect = visibleRect.intersection(child->getRect());
+        if(!childVisibleRect.isValid())
+            continue;
 
-            child->draw();
+        // store current graphics opacity
+        float oldOpacity = g_painter.getOpacity();
 
-            // debug draw box
-            if(g_ui.isDrawingDebugBoxes()) {
-                g_painter.setColor(Color::green);
-                g_painter.drawBoundingRect(child->getRect());
-            }
-            //g_fonts.getDefaultFont()->renderText(child->getId(), child->getPosition() + Point(2, 0), Color::red);
+        // decrease to self opacity
+        if(child->getOpacity() < oldOpacity)
+            g_painter.setOpacity(child->getOpacity());
 
-            g_painter.setOpacity(oldOpacity);
+        child->draw(childVisibleRect);
+
+        // debug draw box
+        if(g_ui.isDrawingDebugBoxes()) {
+            g_painter.setColor(Color::green);
+            g_painter.drawBoundingRect(child->getRect());
         }
+        //g_fonts.getDefaultFont()->renderText(child->getId(), child->getPosition() + Point(2, 0), Color::red);
+
+        g_painter.setOpacity(oldOpacity);
     }
 }
 
@@ -747,6 +761,7 @@ void UIWidget::setStyle(const std::string& styleName)
         logTraceError("unable to retrive style '", styleName, "': not a defined style");
         return;
     }
+    styleNode = styleNode->clone();
     applyStyle(styleNode);
     m_style = styleNode;
     updateStyle();
@@ -837,6 +852,13 @@ void UIWidget::setFixedSize(bool fixed)
 void UIWidget::setLastFocusReason(Fw::FocusReason reason)
 {
     m_lastFocusReason = reason;
+}
+
+void UIWidget::setVirtualOffset(const Point& offset)
+{
+    m_virtualOffset = offset;
+    if(m_layout)
+        m_layout->update();
 }
 
 bool UIWidget::isVisible()

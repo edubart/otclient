@@ -358,6 +358,19 @@ bool Tile::isWalkable()
     return true;
 }
 
+bool Tile::isPathable()
+{
+    if(!isWalkable())
+        return false;
+
+    for(const ThingPtr& thing : m_things) {
+        if(thing->isNotPathable())
+            return false;
+    }
+
+    return true;
+}
+
 bool Tile::isFullGround()
 {
     ItemPtr ground = getGround();

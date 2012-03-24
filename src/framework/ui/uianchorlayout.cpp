@@ -197,6 +197,7 @@ void UIAnchorLayout::updateWidget(const UIWidgetPtr& widget, UIAnchorGroup& anch
         }
     }
 
+    newRect.translate(-parentWidget->getVirtualOffset());
     widget->setRect(newRect);
     anchorGroup.setUpdated(true);
 }

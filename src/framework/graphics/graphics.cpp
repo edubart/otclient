@@ -49,6 +49,7 @@ void Graphics::init()
 #endif
 
     glEnable(GL_BLEND);
+    glDisable(GL_DEPTH_TEST);
 
     m_emptyTexture = TexturePtr(new Texture);
 
@@ -111,6 +112,29 @@ void Graphics::beginRender()
 
 void Graphics::endRender()
 {
+}
+
+void Graphics::beginClipping(const Rect& clipRect)
+{
+    // setup stencil buffer for writing
+    glClear(GL_STENCIL_BUFFER_BIT);
+    glEnable(GL_STENCIL_TEST);
+    glStencilFunc(GL_ALWAYS, 1, 1);
+    glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
+
+    // draw the clipping area into the stencil buffer
+    glColorMask(0, 0, 0, 0);
+    g_painter.drawFilledRect(clipRect);
+
+    // set stencil buffer for clippig
+    glColorMask(1, 1, 1, 1);
+    glStencilFunc(GL_EQUAL, 1, 1);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+}
+
+void Graphics::endClipping()
+{
+    glDisable(GL_STENCIL_TEST);
 }
 
 void Graphics::setViewportSize(const Size& size)

@@ -50,9 +50,10 @@ function UISplitter:onMouseRelease(mousePos, mouseButton)
 end
 
 function UISplitter:onStyleApply(styleName, styleNode)
-  if styleNode['relative-margin'] then
-    self.relativeMargin = styleNode['relative-margin']
-  end
+  --TODO: relative margins
+  --if styleNode['relative-margin'] then
+  ---  self.relativeMargin = styleNode['relative-margin']
+  --end
 end
 
 function UISplitter:canUpdateMargin(newMargin)

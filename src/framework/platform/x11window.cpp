@@ -367,6 +367,7 @@ void X11Window::internalChooseGLVisual()
         GLX_USE_GL,
         GLX_RGBA,
         GLX_DOUBLEBUFFER,
+        GLX_STENCIL_SIZE, 1,
         None
     };
 
@@ -379,6 +380,7 @@ void X11Window::internalChooseGLVisual()
     static int attrList[] = {
         //EGL_BUFFER_SIZE, 24,
         EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+        EGL_STENCIL_SIZE, 1,
         EGL_NONE
     };
 

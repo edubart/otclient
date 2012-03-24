@@ -30,7 +30,7 @@
 class UICreature : public UIWidget
 {
 public:
-    void draw();
+    void drawSelf();
 
     void setCreature(const CreaturePtr& creature) { m_creature = creature; }
     void setFixedCreatureSize(bool fixed) { m_fixedCreatureSize = fixed; }

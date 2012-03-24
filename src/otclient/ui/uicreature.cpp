@@ -24,17 +24,15 @@
 #include <framework/otml/otml.h>
 #include <framework/graphics/graphics.h>
 
-void UICreature::draw()
+void UICreature::drawSelf()
 {
-    drawSelf();
+    UIWidget::drawSelf();
 
     if(m_creature) {
         g_painter.setColor(Color::white);
         Rect drawRect = getChildrenRect();
         m_creature->drawOutfit(drawRect, !m_fixedCreatureSize);
     }
-
-    drawChildren();
 }
 
 void UICreature::onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode)

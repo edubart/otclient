@@ -46,8 +46,9 @@ public:
     OTMLNodePtr getStyle(const std::string& styleName);
     std::string getStyleClass(const std::string& styleName);
 
-    UIWidgetPtr loadUI(const std::string& file, const UIWidgetPtr& parent = nullptr);
-    UIWidgetPtr loadWidgetFromOTML(const OTMLNodePtr& widgetNode, const UIWidgetPtr& parent);
+    UIWidgetPtr loadUI(const std::string& file, const UIWidgetPtr& parent);
+    UIWidgetPtr createWidgetFromStyle(const std::string& styleName, const UIWidgetPtr& parent);
+    UIWidgetPtr createWidgetFromOTML(const OTMLNodePtr& widgetNode, const UIWidgetPtr& parent);
 
     void setMouseReceiver(const UIWidgetPtr& widget) { m_mouseReceiver = widget; }
     void setKeyboardReceiver(const UIWidgetPtr& widget) { m_keyboardReceiver = widget; }

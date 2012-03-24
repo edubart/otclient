@@ -306,16 +306,16 @@ void WIN32Window::internalChooseGLVisual()
                                          0,                          // No Accumulation Buffer
                                          0, 0, 0, 0,                 // Accumulation Bits Ignored
                                          16,                         // 16Bit Z-Buffer (Depth Buffer)
-                                         0,                          // No Stencil Buffer
+                                         1,                          // 1Bit Stencil Buffer
                                          0,                          // No Auxiliary Buffer
                                          PFD_MAIN_PLANE,             // Main Drawing Layer
                                          0,                          // Reserved
                                          0, 0, 0 };                  // Layer Masks Ignored
 
-    pixelFormat = ChoosePixelFormat(m_deviceContext, &pfd);
     if(!pixelFormat)
         logFatal("Could not find a suitable pixel format");
 
+    pfd.cStencilBits = 8;
     if(!SetPixelFormat(m_deviceContext, pixelFormat, &pfd))
         logFatal("Could not set the pixel format");
 }
