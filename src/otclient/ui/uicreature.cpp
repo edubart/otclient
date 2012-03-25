@@ -30,7 +30,7 @@ void UICreature::drawSelf()
 
     if(m_creature) {
         g_painter.setColor(Color::white);
-        Rect drawRect = getChildrenRect();
+        Rect drawRect = getClippingRect();
         m_creature->drawOutfit(drawRect, !m_fixedCreatureSize);
     }
 }

@@ -32,6 +32,7 @@ function UITabBar:addTab(text, panel)
   end
 
   local tab = createWidget(self:getStyleName() .. 'Button', self)
+  panel.isTab = true
   tab.tabPanel = panel
   tab.tabBar = self
   tab:setText(text)
@@ -68,8 +69,8 @@ end
 function UITabBar:selectTab(tab)
   if self.currentTab == tab then return end
   if self.contentWidget then
-    local selectedWidget = self.contentWidget:getFirstChild()
-    if selectedWidget then
+    local selectedWidget = self.contentWidget:getLastChild()
+    if selectedWidget and selectedWidget.isTab then
       self.contentWidget:removeChild(selectedWidget)
     end
     self.contentWidget:addChild(tab.tabPanel)

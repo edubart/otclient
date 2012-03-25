@@ -18,9 +18,12 @@ local function calcValues(self)
   end
 
   local range = self.maximum - self.minimum + 1
-  local proportion = math.max(range*(self.step/range), 1)/range
+  local proportion = math.min(math.max(range*(self.step/range), 1), range)/range
   local px = math.max(math.floor(proportion * pxrange), 10)
-  local offset = ((self.value / (range - 1)) - 0.5) * (pxrange - px)
+  local offset = 0
+  if range > 1 then
+    offset = (((self.value - self.minimum) / (range - 1)) - 0.5) * (pxrange - px)
+  end
 
   return range, pxrange, px, offset, center
 end
@@ -54,7 +57,7 @@ local function parseSliderPos(self, pos)
   end
   local range, pxrange, px, offset, center = calcValues(self)
   offset = math.min(math.max(point - center, -pxrange/2), pxrange/2)
-  local newvalue = math.floor(((offset / (pxrange - px)) + 0.5) * (range - 1))
+  local newvalue = math.floor(((offset / (pxrange - px)) + 0.5) * (range - 1)) + self.minimum
   self:setValue(newvalue)
 end
 

@@ -127,7 +127,7 @@ void UIAnchorLayout::updateWidget(const UIWidgetPtr& widget, UIAnchorGroup& anch
         // determine hooked widget edge point
         Rect hookedWidgetRect = hookedWidget->getRect();
         if(hookedWidget == parentWidget)
-            hookedWidgetRect = parentWidget->getChildrenRect();
+            hookedWidgetRect = parentWidget->getClippingRect();
 
         int point = 0;
         switch(anchor.getHookedEdge()) {

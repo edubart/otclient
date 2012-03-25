@@ -5,9 +5,30 @@ ConsoleLabel < UILabel
 
 ConsoleTabBar < TabBar
 ConsoleTabBarPanel < TabBarPanel
-  layout:
-    type: verticalBox
-    align-bottom: true
+  id: consoleTab
+
+  ScrollablePanel
+    id: consoleBuffer
+    // height = max lines * 14
+    anchors.fill: parent
+    margin-right: 12
+    vertical-scrollbar: consoleScrollBar
+    layout:
+      type: verticalBox
+      align-bottom: true
+    border-width: 1
+    border-color: #101317
+    background: #00000044
+    inverted-scroll: true
+    padding: 1
+
+  VerticalScrollBar
+    id: consoleScrollBar
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    step: 14
+
 ConsoleTabBarButton < TabBarButton
 
 Panel
@@ -60,15 +81,16 @@ Panel
     @onClick: g_game.requestChannels()
 
   Panel
-    id: consoleBuffer
+    id: consoleContentPanel
     anchors.top: prev.bottom
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.bottom: consoleLineEdit.top
-    margin-right: 6
     margin-left: 6
+    margin-right: 6
     margin-bottom: 4
     margin-top: 4
+    padding: 1
     focusable: false
 
   TabButton

@@ -87,22 +87,16 @@ void UIManager::inputEvent(const InputEvent& event)
             }
             break;
         case Fw::MouseReleaseInputEvent: {
-            bool accepted = false;
+            m_mouseReceiver->propagateOnMouseRelease(event.mousePos, event.mouseButton);
             if(event.mouseButton == Fw::MouseLeftButton) {
                 // release pressed widget
-                if(m_pressedWidget) {
-                    if(updatePressedWidget(nullptr, event.mousePos))
-                        accepted = true;
-                }
+                if(m_pressedWidget)
+                    updatePressedWidget(nullptr, event.mousePos);
 
                 // release dragging widget
-                if(m_draggingWidget) {
-                    if(updateDraggingWidget(nullptr, event.mousePos))
-                        accepted = true;
-                }
+                if(m_draggingWidget)
+                    updateDraggingWidget(nullptr, event.mousePos);
             }
-            if(!accepted)
-                m_mouseReceiver->propagateOnMouseRelease(event.mousePos, event.mouseButton);
             break;
         }
         case Fw::MouseMoveInputEvent: {
@@ -131,14 +125,7 @@ bool UIManager::updatePressedWidget(const UIWidgetPtr& newPressedWidget, const P
     bool accepted = false;
 
     UIWidgetPtr oldPressedWidget = m_pressedWidget;
-    m_pressedWidget = newPressedWidget;
-
-    if(newPressedWidget)
-        newPressedWidget->updateState(Fw::PressedState);
-
     if(oldPressedWidget) {
-        oldPressedWidget->updateState(Fw::PressedState);
-
         if(oldPressedWidget->isEnabled()) {
             // when releasing mouse inside pressed widget area send onClick event
             if(!clickedPos.isNull() && oldPressedWidget->containsPoint(clickedPos)) {
@@ -149,6 +136,14 @@ bool UIManager::updatePressedWidget(const UIWidgetPtr& newPressedWidget, const P
                 accepted = oldPressedWidget->onMouseRelease(clickedPos, Fw::MouseLeftButton);
         }
     }
+
+    m_pressedWidget = newPressedWidget;
+
+    if(newPressedWidget)
+        newPressedWidget->updateState(Fw::PressedState);
+
+    if(oldPressedWidget)
+        oldPressedWidget->updateState(Fw::PressedState);
 
     return accepted;
 }
@@ -363,7 +358,12 @@ UIWidgetPtr UIManager::loadUI(const std::string& file, const UIWidgetPtr& parent
 UIWidgetPtr UIManager::createWidgetFromStyle(const std::string& styleName, const UIWidgetPtr& parent)
 {
     OTMLNodePtr node = OTMLNode::create(styleName);
-    return createWidgetFromOTML(node, parent);
+    try {
+        return createWidgetFromOTML(node, parent);
+    } catch(Exception& e) {
+        logError("failed to create widget from style '", styleName, "': ", e.what());
+        return nullptr;
+    }
 }
 
 UIWidgetPtr UIManager::createWidgetFromOTML(const OTMLNodePtr& widgetNode, const UIWidgetPtr& parent)

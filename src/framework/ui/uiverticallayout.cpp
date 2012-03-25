@@ -45,8 +45,8 @@ void UIVerticalLayout::internalUpdate()
     if(m_alignBottom)
         std::reverse(widgets.begin(), widgets.end());
 
-    Rect childrenRect = parentWidget->getChildrenRect();
-    Point pos = (m_alignBottom) ? childrenRect.bottomLeft() : childrenRect.topLeft();
+    Rect clippingRect = parentWidget->getClippingRect();
+    Point pos = (m_alignBottom) ? clippingRect.bottomLeft() : clippingRect.topLeft();
     int prefferedHeight = 0;
     int gap;
 
@@ -62,15 +62,15 @@ void UIVerticalLayout::internalUpdate()
 
         if(widget->isFixedSize()) {
             // center it
-            pos.x = childrenRect.left() + (childrenRect.width() - (widget->getMarginLeft() + widget->getWidth() + widget->getMarginRight()))/2;
+            pos.x = clippingRect.left() + (clippingRect.width() - (widget->getMarginLeft() + widget->getWidth() + widget->getMarginRight()))/2;
             pos.x = std::max(pos.x, parentWidget->getX());
         } else {
             // expand width
-            size.setWidth(childrenRect.width() - (widget->getMarginLeft() + widget->getMarginRight()));
-            pos.x = childrenRect.left() + (childrenRect.width() - size.width())/2;
+            size.setWidth(clippingRect.width() - (widget->getMarginLeft() + widget->getMarginRight()));
+            pos.x = clippingRect.left() + (clippingRect.width() - size.width())/2;
         }
 
-        widget->setRect(Rect(pos, size));
+        widget->setRect(Rect(pos + parentWidget->getVirtualOffset(), size));
 
         gap = (m_alignBottom) ? -widget->getMarginTop() : (widget->getHeight() + widget->getMarginBottom());
         gap += m_spacing;

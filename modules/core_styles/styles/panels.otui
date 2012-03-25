@@ -1,6 +1,9 @@
 Panel < UIWidget
   phantom: true
 
+ScrollablePanel < UIScrollArea
+  phantom: true
+
 FlatPanel < Panel
   image-source: /core_styles/styles/images/panel_flat.png
   image-border: 1

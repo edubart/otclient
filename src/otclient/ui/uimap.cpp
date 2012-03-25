@@ -64,7 +64,7 @@ void UIMap::zoomIn()
 
     m_mapView->setVisibleDimension(Size(dimensionWidth, dimensionHeight));
 
-    Rect mapRect = getChildrenRect().expanded(-1);
+    Rect mapRect = getClippingRect().expanded(-1);
     Size mapSize = m_mapView->getVisibleSize();
     mapSize.scale(mapRect.size(), Fw::KeepAspectRatio);
 
@@ -85,7 +85,7 @@ void UIMap::zoomOut()
 
     m_mapView->setVisibleDimension(Size(dimensionWidth, dimensionHeight));
 
-    Rect mapRect = getChildrenRect().expanded(-1);
+    Rect mapRect = getClippingRect().expanded(-1);
     Size mapSize = m_mapView->getVisibleSize();
     mapSize.scale(mapRect.size(), Fw::KeepAspectRatio);
 
@@ -116,7 +116,7 @@ void UIMap::onGeometryChange(const Rect& oldRect, const Rect& newRect)
 {
     UIWidget::onGeometryChange(oldRect, newRect);
 
-    Rect mapRect = getChildrenRect().expanded(-1);
+    Rect mapRect = getClippingRect().expanded(-1);
     Size mapSize = m_mapView->getVisibleSize();
     mapSize.scale(mapRect.size(), Fw::KeepAspectRatio);
 

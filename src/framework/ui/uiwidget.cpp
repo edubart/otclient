@@ -57,7 +57,13 @@ void UIWidget::draw(const Rect& visibleRect)
         g_graphics.beginClipping(visibleRect);
 
     drawSelf();
-    drawChildren(visibleRect);
+
+    if(m_children.size() > 0) {
+        if(m_clipping)
+            g_graphics.beginClipping(visibleRect.intersection(getClippingRect()));
+
+        drawChildren(visibleRect);
+    }
 
     if(m_clipping)
         g_graphics.endClipping();
@@ -890,11 +896,27 @@ int UIWidget::getChildIndex(const UIWidgetPtr& child)
     return -1;
 }
 
-Rect UIWidget::getChildrenRect()
+Rect UIWidget::getClippingRect()
 {
     Rect rect = m_rect;
     rect.expand(-m_padding.top, -m_padding.right, -m_padding.bottom, -m_padding.left);
     return rect;
+}
+
+Rect UIWidget::getChildrenRect()
+{
+    Rect childrenRect;
+    for(const UIWidgetPtr& child : m_children) {
+        if(!child->isExplicitlyVisible() || !child->getRect().isValid() || child->getOpacity() == 0.0f)
+            continue;
+        if(!childrenRect.isValid())
+            childrenRect = child->getRect();
+        else
+            childrenRect = childrenRect.united(child->getRect());
+    }
+    if(!childrenRect.isValid())
+        childrenRect = getClippingRect();
+    return childrenRect;
 }
 
 UIAnchorLayoutPtr UIWidget::getAnchoredLayout()
@@ -1229,6 +1251,13 @@ void UIWidget::onStyleApply(const std::string& styleName, const OTMLNodePtr& sty
 void UIWidget::onGeometryChange(const Rect& oldRect, const Rect& newRect)
 {
     callLuaField("onGeometryChange", oldRect, newRect);
+}
+
+void UIWidget::onLayoutUpdate()
+{
+    callLuaField("onLayoutUpdate");
+    if(UIWidgetPtr parent = getParent())
+        parent->onLayoutUpdate();
 }
 
 void UIWidget::onFocusChange(bool focused, Fw::FocusReason reason)

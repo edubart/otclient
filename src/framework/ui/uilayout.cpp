@@ -21,6 +21,7 @@
  */
 
 #include "uilayout.h"
+#include "uiwidget.h"
 
 #include <framework/core/eventdispatcher.h>
 
@@ -29,9 +30,15 @@ void UILayout::update()
     if(m_updateDisabled)
         return;
 
-    assert(!m_updating);
+    if(m_updating) {
+        updateLater();
+        return;
+    }
+
     m_updating = true;
     internalUpdate();
+    if(UIWidgetPtr parentWidget = getParentWidget())
+        parentWidget->onLayoutUpdate();
     m_updating = false;
 }
 

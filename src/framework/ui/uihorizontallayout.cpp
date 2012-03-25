@@ -45,8 +45,8 @@ void UIHorizontalLayout::internalUpdate()
     if(m_alignRight)
         std::reverse(widgets.begin(), widgets.end());
 
-    Rect childrenRect = parentWidget->getChildrenRect();
-    Point pos = (m_alignRight) ? childrenRect.topRight() : childrenRect.topLeft();
+    Rect clippingRect = parentWidget->getClippingRect();
+    Point pos = (m_alignRight) ? clippingRect.topRight() : clippingRect.topLeft();
     int prefferedWidth = 0;
     int gap;
 
@@ -62,15 +62,15 @@ void UIHorizontalLayout::internalUpdate()
 
         if(widget->isFixedSize()) {
             // center it
-            pos.y = childrenRect.top() + (childrenRect.height() - (widget->getMarginTop() + widget->getHeight() + widget->getMarginBottom()))/2;
+            pos.y = clippingRect.top() + (clippingRect.height() - (widget->getMarginTop() + widget->getHeight() + widget->getMarginBottom()))/2;
             pos.y = std::max(pos.y, parentWidget->getY());
         } else {
             // expand height
-            size.setHeight(childrenRect.height() - (widget->getMarginTop() + widget->getMarginBottom()));
-            pos.y = childrenRect.top() + (childrenRect.height() - size.height())/2;
+            size.setHeight(clippingRect.height() - (widget->getMarginTop() + widget->getMarginBottom()));
+            pos.y = clippingRect.top() + (clippingRect.height() - size.height())/2;
         }
 
-        widget->setRect(Rect(pos, size));
+        widget->setRect(Rect(pos + parentWidget->getVirtualOffset(), size));
 
         gap = (m_alignRight) ? -widget->getMarginLeft() : (widget->getWidth() + widget->getMarginRight());
         gap += m_spacing;

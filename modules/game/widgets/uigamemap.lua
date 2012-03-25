@@ -57,22 +57,18 @@ function UIGameMap:onDrop(widget, mousePos)
   return true
 end
 
-function UIGameMap:onClick(mousePosition)
-  local tile = self:getTile(mousePosition)
-  if tile == nil then return false end
-  local dirs = g_map.findPath(g_game.getLocalPlayer():getPosition(), tile:getPosition(), 255)
-  if #dirs == 0 then
-    TextMessage.displayStatus('There is no way.')
-    return true
-  end
-  g_game.autoWalk(dirs)
-  return true
-end
-
 function UIGameMap:onMouseRelease(mousePosition, mouseButton)
   local tile = self:getTile(mousePosition)
   if tile == nil then return false end
   if GameInterface.processMouseAction(mousePosition, mouseButton, nil, tile:getTopLookThing(), tile:getTopUseThing(), tile:getTopCreature(), tile:getTopMultiUseThing()) then
+    return true
+  elseif mouseButton == MouseLeftButton and self:isPressed() then
+    local dirs = g_map.findPath(g_game.getLocalPlayer():getPosition(), tile:getPosition(), 255)
+    if #dirs == 0 then
+      TextMessage.displayStatus('There is no way.')
+      return true
+    end
+    g_game.autoWalk(dirs)
     return true
   end
   return false

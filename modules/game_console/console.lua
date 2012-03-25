@@ -43,7 +43,7 @@ local SayModes = {
 }
 
 local consolePanel
-local consoleBuffer
+local consoleContentPanel
 local consoleTabBar
 local consoleLineEdit
 local channels
@@ -51,6 +51,7 @@ local messageHistory = { }
 local currentMessageIndex = 0
 local MaxHistory = 1000
 local channelsWindow
+local MAX_LINES = 100
 
 -- private functions
 local function navigateMessageHistory(step)
@@ -159,9 +160,9 @@ function Console.init()
 
   consolePanel = displayUI('console.otui', GameInterface.getBottomPanel())
   consoleLineEdit = consolePanel:getChildById('consoleLineEdit')
-  consoleBuffer = consolePanel:getChildById('consoleBuffer')
+  consoleContentPanel = consolePanel:getChildById('consoleContentPanel')
   consoleTabBar = consolePanel:getChildById('consoleTabBar')
-  consoleTabBar:setContentWidget(consoleBuffer)
+  consoleTabBar:setContentWidget(consoleContentPanel)
   channels = {}
 
   Console.addChannel('Default', 0)
@@ -208,7 +209,7 @@ function Console.terminate()
   consolePanel:destroy()
   consolePanel = nil
   consoleLineEdit = nil
-  consoleBuffer = nil
+  consoleContentPanel = nil
   consoleTabBar = nil
 
   Console = nil
@@ -323,13 +324,15 @@ function Console.addTabText(text, speaktype, tab)
   end
 
   local panel = consoleTabBar:getTabPanel(tab)
-  local label = createWidget('ConsoleLabel', panel)
+  local consoleBuffer = panel:getChildById('consoleBuffer')
+  local label = createWidget('ConsoleLabel', consoleBuffer)
+  label:setId('consoleLabel' .. panel:getChildCount())
   label:setText(text)
   label:setColor(speaktype.color)
   consoleTabBar:blinkTab(tab)
 
-  if panel:getChildCount() > 10 then
-    panel:removeChild(panel:getFirstChild())
+  if consoleBuffer:getChildCount() > MAX_LINES then
+    consoleBuffer:getFirstChild():destroy()
   end
 end
 

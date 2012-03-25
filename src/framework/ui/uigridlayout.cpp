@@ -67,8 +67,8 @@ void UIGridLayout::internalUpdate()
     UIWidgetPtr parentWidget = getParentWidget();
     UIWidgetList widgets = parentWidget->getChildren();
 
-    Rect childrenRect = parentWidget->getChildrenRect();
-    Point topLeft = childrenRect.topLeft();
+    Rect clippingRect = parentWidget->getClippingRect();
+    Point topLeft = clippingRect.topLeft();
 
     int index = 0;
     for(const UIWidgetPtr& widget : widgets) {
