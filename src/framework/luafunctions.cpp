@@ -294,14 +294,15 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIWidget>("getImageBorderLeft", &UIWidget::getImageBorderLeft);
     g_lua.bindClassMemberFunction<UIWidget>("resizeToText", &UIWidget::resizeToText);
     g_lua.bindClassMemberFunction<UIWidget>("clearText", &UIWidget::clearText);
-    g_lua.bindClassMemberFunction<UIWidget>("wrapText", &UIWidget::wrapText);
     g_lua.bindClassMemberFunction<UIWidget>("setText", &UIWidget::setText);
     g_lua.bindClassMemberFunction<UIWidget>("setTextAlign", &UIWidget::setTextAlign);
     g_lua.bindClassMemberFunction<UIWidget>("setTextOffset", &UIWidget::setTextOffset);
+    g_lua.bindClassMemberFunction<UIWidget>("setTextWrap", &UIWidget::setTextWrap);
     g_lua.bindClassMemberFunction<UIWidget>("setFont", &UIWidget::setFont);
     g_lua.bindClassMemberFunction<UIWidget>("getText", &UIWidget::getText);
     g_lua.bindClassMemberFunction<UIWidget>("getTextAlign", &UIWidget::getTextAlign);
     g_lua.bindClassMemberFunction<UIWidget>("getTextOffset", &UIWidget::getTextOffset);
+    g_lua.bindClassMemberFunction<UIWidget>("getTextWrap", &UIWidget::getTextWrap);
     g_lua.bindClassMemberFunction<UIWidget>("getFont", &UIWidget::getFont);
     g_lua.bindClassMemberFunction<UIWidget>("getTextSize", &UIWidget::getTextSize);
 
@@ -502,6 +503,7 @@ void Application::registerLuaFunctions()
     g_lua.bindClassStaticFunction("g_ui", "createWidgetFromOTML", std::bind(&UIManager::createWidgetFromOTML, &g_ui, _1, _2));
     g_lua.bindClassStaticFunction("g_ui", "getRootWidget", std::bind(&UIManager::getRootWidget, &g_ui));
     g_lua.bindClassStaticFunction("g_ui", "getDraggingWidget", std::bind(&UIManager::getDraggingWidget, &g_ui));
+    g_lua.bindClassStaticFunction("g_ui", "getPressedWidget", std::bind(&UIManager::getPressedWidget, &g_ui));
     g_lua.bindClassStaticFunction("g_ui", "setDebugBoxesDrawing", std::bind(&UIManager::setDebugBoxesDrawing, &g_ui, _1));
     g_lua.bindClassStaticFunction("g_ui", "isDrawingDebugBoxes", std::bind(&UIManager::setDebugBoxesDrawing, &g_ui, _1));
 

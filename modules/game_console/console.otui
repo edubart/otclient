@@ -2,6 +2,9 @@ ConsoleLabel < UILabel
   font: verdana-11px-antialised
   height: 14
   color: yellow
+  margin-left: 2
+  text-wrap: true
+  text-auto-resize: true
 
 ConsoleTabBar < TabBar
 ConsoleTabBarPanel < TabBarPanel

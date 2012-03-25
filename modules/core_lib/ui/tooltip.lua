@@ -21,7 +21,7 @@ end
 
 local function onWidgetHoverChange(widget, hovered)
   if hovered then
-    if widget.tooltip then
+    if widget.tooltip and not Mouse.isPressed() then
       ToolTip.display(widget.tooltip)
       currentHoveredWidget = widget
     end

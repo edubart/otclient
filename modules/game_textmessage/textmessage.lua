@@ -37,7 +37,6 @@ local function displayMessage(msgtype, msg, time)
 
     if msgtype.wrap then
       label:setWidth(label:getParent():getWidth())
-      label:wrapText()
       label:setHeight(label:getTextSize().height)
     else
       label:resizeToText()

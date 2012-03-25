@@ -85,6 +85,7 @@ MainWindow
     ModuleValueLabel
       id: moduleDescription
       height: 100
+      text-wrap: true
 
     //ModuleInfoLabel
     //  text: Autoload

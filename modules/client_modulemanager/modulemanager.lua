@@ -105,7 +105,6 @@ function ModuleManager.updateModuleInfo(moduleName)
 
   moduleManagerWindow:recursiveGetChildById('moduleName'):setText(name)
   moduleManagerWindow:recursiveGetChildById('moduleDescription'):setText(description)
-  moduleManagerWindow:recursiveGetChildById('moduleDescription'):wrapText()
   moduleManagerWindow:recursiveGetChildById('moduleAuthor'):setText(author)
   moduleManagerWindow:recursiveGetChildById('moduleWebsite'):setText(website)
   moduleManagerWindow:recursiveGetChildById('moduleVersion'):setText(version)

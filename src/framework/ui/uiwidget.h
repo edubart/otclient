@@ -436,6 +436,7 @@ public:
 // text related
 private:
     void initText();
+    void updateText();
     void parseTextStyle(const OTMLNodePtr& styleNode);
 
     Boolean<true> m_textMustRecache;
@@ -449,25 +450,31 @@ protected:
     virtual void onFontChange(const std::string& font);
 
     std::string m_text;
+    std::string m_drawText;
     Fw::AlignmentFlag m_textAlign;
     Point m_textOffset;
+    Boolean<false> m_textWrap;
+    Boolean<false> m_textAutoResize;
     FontPtr m_font;
 
 public:
     void resizeToText() { setSize(getTextSize()); }
     void clearText() { setText(""); }
-    void wrapText();
 
     void setText(const std::string& text);
-    void setTextAlign(Fw::AlignmentFlag align) { m_textAlign = align; m_textMustRecache = true; }
-    void setTextOffset(const Point& offset) { m_textOffset = offset; m_textMustRecache = true; }
+    void setTextAlign(Fw::AlignmentFlag align) { m_textAlign = align; updateText(); }
+    void setTextOffset(const Point& offset) { m_textOffset = offset; updateText(); }
+    void setTextWrap(bool textWrap) { m_textWrap = textWrap; updateText(); }
+    void setTextAutoResize(bool textAutoResize) { m_textAutoResize = textAutoResize; updateText(); }
     void setFont(const std::string& fontName);
 
     std::string getText() { return m_text; }
+    std::string getDrawText() { return m_drawText; }
     Fw::AlignmentFlag getTextAlign() { return m_textAlign; }
     Point getTextOffset() { return m_textOffset; }
+    bool getTextWrap() { return m_textWrap; }
     std::string getFont() { return m_font->getName(); }
-    Size getTextSize() { return m_font->calculateTextRectSize(m_text); }
+    Size getTextSize() { return m_font->calculateTextRectSize(m_drawText); }
 };
 
 #endif

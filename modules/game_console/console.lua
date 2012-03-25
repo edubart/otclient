@@ -229,8 +229,14 @@ function Console.clear()
   channels = {}
   channels[0] = 'Default'
 
-  consoleTabBar:getTab('Default').tabPanel:destroyChildren()
-  consoleTabBar:getTab('Server Log').tabPanel:destroyChildren()
+  consoleTabBar:getTab('Default').tabPanel:getChildById('consoleBuffer'):destroyChildren()
+  consoleTabBar:getTab('Server Log').tabPanel:getChildById('consoleBuffer'):destroyChildren()
+
+  local npcTab = consoleTabBar:getTab('NPCs')
+  if npcTab then
+    consoleTabBar:removeTab(npcTab)
+  end
+
   consoleLineEdit:clearText()
 
   if channelsWindow then

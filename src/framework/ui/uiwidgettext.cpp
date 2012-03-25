@@ -33,6 +33,29 @@ void UIWidget::initText()
     m_textCoordsBuffer.enableHardwareCaching();
 }
 
+void UIWidget::updateText()
+{
+    if(m_textWrap && m_rect.isValid())
+        m_drawText = m_font->wrapText(m_text, getWidth() - m_textOffset.x);
+    else
+        m_drawText = m_text;
+
+    // update rect size
+    if(!m_rect.isValid()) {
+        Size textSize = getTextSize();
+        Size newSize = getSize();
+        if(newSize.width() <= 0)
+            newSize.setWidth(textSize.width());
+        if(newSize.height() <= 0)
+            newSize.setHeight(textSize.height());
+        setSize(newSize);
+    } else if(m_textAutoResize) {
+        setSize(getTextSize());
+    }
+
+    m_textMustRecache = true;
+}
+
 void UIWidget::parseTextStyle(const OTMLNodePtr& styleNode)
 {
     for(const OTMLNodePtr& node : styleNode->children()) {
@@ -42,6 +65,10 @@ void UIWidget::parseTextStyle(const OTMLNodePtr& styleNode)
             setTextAlign(Fw::translateAlignment(node->value()));
         else if(node->tag() == "text-offset")
             setTextOffset(node->value<Point>());
+        else if(node->tag() == "text-wrap")
+            setTextWrap(node->value<bool>());
+        else if(node->tag() == "text-auto-resize")
+            setTextAutoResize(node->value<bool>());
         else if(node->tag() == "font")
             setFont(node->value());
     }
@@ -49,7 +76,7 @@ void UIWidget::parseTextStyle(const OTMLNodePtr& styleNode)
 
 void UIWidget::drawText(const Rect& screenCoords)
 {
-    if(m_text.length() == 0 || m_color.aF() == 0.0f)
+    if(m_drawText.length() == 0 || m_color.aF() == 0.0f)
         return;
 
     if(screenCoords != m_textCachedScreenCoords || m_textMustRecache) {
@@ -58,7 +85,7 @@ void UIWidget::drawText(const Rect& screenCoords)
 
         m_textCoordsBuffer.clear();
 
-        m_font->calculateDrawTextCoords(m_textCoordsBuffer, m_text, screenCoords.translated(m_textOffset), m_textAlign);
+        m_font->calculateDrawTextCoords(m_textCoordsBuffer, m_drawText, screenCoords.translated(m_textOffset), m_textAlign);
     }
 
     g_painter.setColor(m_color);
@@ -75,11 +102,6 @@ void UIWidget::onFontChange(const std::string& font)
     callLuaField("onFontChange", font);
 }
 
-void UIWidget::wrapText()
-{
-    setText(m_font->wrapText(m_text, getWidth() - m_textOffset.x));
-}
-
 void UIWidget::setText(const std::string& text)
 {
     if(m_text == text)
@@ -87,25 +109,14 @@ void UIWidget::setText(const std::string& text)
 
     std::string oldText = m_text;
     m_text = text;
-
-    // update rect size
-    if(!m_rect.isValid()) {
-        Size textSize = m_font->calculateTextRectSize(m_text);
-        Size newSize = getSize();
-        if(newSize.width() <= 0)
-            newSize.setWidth(textSize.width());
-        if(newSize.height() <= 0)
-            newSize.setHeight(textSize.height());
-        setSize(newSize);
-    }
+    updateText();
 
     onTextChange(text, oldText);
-    m_textMustRecache = true;
 }
 
 void UIWidget::setFont(const std::string& fontName)
 {
     m_font = g_fonts.getFont(fontName);
+    updateText();
     onFontChange(fontName);
-    m_textMustRecache = true;
 }

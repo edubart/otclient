@@ -1251,13 +1251,14 @@ void UIWidget::onStyleApply(const std::string& styleName, const OTMLNodePtr& sty
 void UIWidget::onGeometryChange(const Rect& oldRect, const Rect& newRect)
 {
     callLuaField("onGeometryChange", oldRect, newRect);
+
+    if(m_textWrap && oldRect.size() != newRect.size())
+        updateText();
 }
 
 void UIWidget::onLayoutUpdate()
 {
     callLuaField("onLayoutUpdate");
-    if(UIWidgetPtr parent = getParent())
-        parent->onLayoutUpdate();
 }
 
 void UIWidget::onFocusChange(bool focused, Fw::FocusReason reason)
