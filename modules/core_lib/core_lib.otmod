@@ -41,4 +41,5 @@ Module
     dofile 'widgets/uimessagebox'
     dofile 'widgets/uisplitter'
     dofile 'widgets/uiscrollbar'
+    dofile 'widgets/uiscrollarea'
 

@@ -1,0 +1,28 @@
+Panel
+  OptionCheckBox
+    id: classicControl
+    text: Classic control
+
+  OptionCheckBox
+    id: showInfoMessagesInConsole
+    text: Show info messages in console
+
+  OptionCheckBox
+    id: showEventMessagesInConsole
+    text: Show event messages in console
+
+  OptionCheckBox
+    id: showStatusMessagesInConsole
+    text: Show status messages in console
+
+  OptionCheckBox
+    id: showTimestampsInConsole
+    text: Show timestamps in console
+
+  OptionCheckBox
+    id: showLevelsInConsole
+    text: Show levels in console
+
+  OptionCheckBox
+    id: showPrivateMessagesInConsole
+    text: Show private messages in console

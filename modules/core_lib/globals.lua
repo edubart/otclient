@@ -4,7 +4,10 @@ importStyle = g_ui.importStyle
 importFont = g_fonts.importFont
 setDefaultFont = g_fonts.setDefaultFont
 
-loadUI = g_ui.loadUI
+function loadUI(otui, parent)
+  local otuiFilePath = resolvepath(otui, 2)
+  return g_ui.loadUI(otuiFilePath, parent)
+end
 
 function displayUI(otui, parent)
   parent = parent or rootWidget
@@ -17,7 +20,6 @@ function createWidget(stylename, parent)
     parent = rootWidget:recursiveGetChildById(parent)
   end
   local widget = g_ui.createWidgetFromStyle(stylename, parent)
-  --widget:setStyle(stylename)
   return widget
 end
 
@@ -34,6 +36,26 @@ function addEvent(callback, front)
   -- must hold a reference to the callback, otherwise it would be collected
   event._callback = callback
   return event
+end
+
+
+function periodicalEvent(eventFunc, conditionFunc, delay, autoRepeatDelay)
+  delay = delay or 30
+  autoRepeatDelay = autoRepeatDelay or delay
+
+  local func
+  func = function()
+    if conditionFunc and not conditionFunc() then
+      func = nil
+      return
+    end
+    eventFunc()
+    scheduleEvent(func, delay)
+  end
+
+  scheduleEvent(function()
+    func()
+  end, autoRepeatDelay)
 end
 
 function removeEvent(event)

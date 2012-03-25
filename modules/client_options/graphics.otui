@@ -1,0 +1,32 @@
+Panel
+  OptionCheckBox
+    id: vsync
+    text: Enable vertical synchronization
+    tooltip: Limits FPS to 60
+
+  OptionCheckBox
+    id: showfps
+    text: Show frame rate
+
+  OptionCheckBox
+    id: fullscreen
+    text: Fullscreen
+
+  Label
+    text: Frame rate limit
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: prev.bottom
+    margin-top: 6
+
+  HorizontalScrollBar
+    id: frameRateScrollBar
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: prev.bottom
+    margin-top: 3
+    minimum: 0
+    maximum: 50
+    value: 0
+    step: 1
+    @onValueChange: g_app.setFrameSleep(self:getValue())

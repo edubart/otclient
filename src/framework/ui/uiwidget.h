@@ -41,6 +41,8 @@ struct EdgeGroup {
     T left;
 };
 
+// generate lua bindings for this class running:
+// ./tools/lua-binding-generator/generate_lua_bindings.lua src/framework/ui/uiwidget.h
 class UIWidget : public LuaObject
 {
 // widget core
@@ -65,6 +67,7 @@ protected:
     Boolean<false> m_phantom;
     Boolean<false> m_dragable;
     Boolean<false> m_destroyed;
+    Boolean<false> m_clipping;
     UILayoutPtr m_layout;
     UIWidgetWeakPtr m_parent;
     UIWidgetList m_children;
@@ -120,6 +123,7 @@ public:
     void setPhantom(bool phantom);
     void setDragable(bool dragable);
     void setFixedSize(bool fixed);
+    void setClipping(bool clipping) { m_clipping = clipping; }
     void setLastFocusReason(Fw::FocusReason reason);
     void setAutoRepeatDelay(int delay) { m_autoRepeatDelay = delay; }
     void setVirtualOffset(const Point& offset);
@@ -226,6 +230,7 @@ public:
     bool isPhantom() { return m_phantom; }
     bool isDragable() { return m_dragable; }
     bool isFixedSize() { return m_fixedSize; }
+    bool isClipping() { return m_clipping; }
     bool isDestroyed() { return m_destroyed; }
 
     bool hasChildren() { return m_children.size() > 0; }

@@ -53,20 +53,14 @@ UIWidget::~UIWidget()
 
 void UIWidget::draw(const Rect& visibleRect)
 {
+    if(m_clipping)
+        g_graphics.beginClipping(visibleRect);
+
     drawSelf();
-    if(m_children.size() > 0) {
-        bool clip = true;
-        if(this == g_ui.getRootWidget().get())
-            clip = false;
+    drawChildren(visibleRect);
 
-        if(clip)
-            g_graphics.beginClipping(visibleRect);
-
-        drawChildren(visibleRect);
-
-        if(clip)
-            g_graphics.endClipping();
-    }
+    if(m_clipping)
+        g_graphics.endClipping();
 }
 
 void UIWidget::drawSelf()
@@ -1325,12 +1319,20 @@ bool UIWidget::onMouseWheel(const Point& mousePos, Fw::MouseWheelDirection direc
 
 bool UIWidget::onClick(const Point& mousePos)
 {
-    return callLuaField<bool>("onClick", mousePos);
+    if(hasLuaField("onClick")) {
+        callLuaField("onClick", mousePos);
+        return true;
+    }
+    return false;
 }
 
 bool UIWidget::onDoubleClick(const Point& mousePos)
 {
-    return callLuaField<bool>("onDoubleClick", mousePos);
+    if(hasLuaField("onDoubleClick")) {
+        callLuaField("onDoubleClick", mousePos);
+        return true;
+    }
+    return false;
 }
 
 bool UIWidget::propagateOnKeyText(const std::string& keyText)

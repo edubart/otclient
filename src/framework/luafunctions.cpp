@@ -104,8 +104,10 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIWidget>("setPhantom", &UIWidget::setPhantom);
     g_lua.bindClassMemberFunction<UIWidget>("setDragable", &UIWidget::setDragable);
     g_lua.bindClassMemberFunction<UIWidget>("setFixedSize", &UIWidget::setFixedSize);
+    g_lua.bindClassMemberFunction<UIWidget>("setClipping", &UIWidget::setClipping);
     g_lua.bindClassMemberFunction<UIWidget>("setLastFocusReason", &UIWidget::setLastFocusReason);
     g_lua.bindClassMemberFunction<UIWidget>("setAutoRepeatDelay", &UIWidget::setAutoRepeatDelay);
+    g_lua.bindClassMemberFunction<UIWidget>("setVirtualOffset", &UIWidget::setVirtualOffset);
     g_lua.bindClassMemberFunction<UIWidget>("isVisible", &UIWidget::isVisible);
     g_lua.bindClassMemberFunction<UIWidget>("isChildLocked", &UIWidget::isChildLocked);
     g_lua.bindClassMemberFunction<UIWidget>("hasChild", &UIWidget::hasChild);
@@ -149,6 +151,7 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIWidget>("isPhantom", &UIWidget::isPhantom);
     g_lua.bindClassMemberFunction<UIWidget>("isDragable", &UIWidget::isDragable);
     g_lua.bindClassMemberFunction<UIWidget>("isFixedSize", &UIWidget::isFixedSize);
+    g_lua.bindClassMemberFunction<UIWidget>("isClipping", &UIWidget::isClipping);
     g_lua.bindClassMemberFunction<UIWidget>("isDestroyed", &UIWidget::isDestroyed);
     g_lua.bindClassMemberFunction<UIWidget>("hasChildren", &UIWidget::hasChildren);
     g_lua.bindClassMemberFunction<UIWidget>("containsPoint", &UIWidget::containsPoint);
@@ -163,6 +166,7 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIWidget>("getChildCount", &UIWidget::getChildCount);
     g_lua.bindClassMemberFunction<UIWidget>("getLastFocusReason", &UIWidget::getLastFocusReason);
     g_lua.bindClassMemberFunction<UIWidget>("getAutoRepeatDelay", &UIWidget::getAutoRepeatDelay);
+    g_lua.bindClassMemberFunction<UIWidget>("getVirtualOffset", &UIWidget::getVirtualOffset);
     g_lua.bindClassMemberFunction<UIWidget>("getStyleName", &UIWidget::getStyleName);
     g_lua.bindClassMemberFunction<UIWidget>("setX", &UIWidget::setX);
     g_lua.bindClassMemberFunction<UIWidget>("setY", &UIWidget::setY);
@@ -418,8 +422,12 @@ void Application::registerLuaFunctions()
     // Application
     g_lua.registerStaticClass("g_app");
     g_lua.bindClassStaticFunction("g_app", "exit", std::bind(&Application::exit, g_app));
+    g_lua.bindClassStaticFunction("g_app", "setFrameSleep", std::bind(&Application::setFrameSleep, g_app, _1));
+    g_lua.bindClassStaticFunction("g_app", "setPollCycleDelay", std::bind(&Application::setPollCycleDelay, g_app, _1));
     g_lua.bindClassStaticFunction("g_app", "isRunning", std::bind(&Application::isRunning, g_app));
     g_lua.bindClassStaticFunction("g_app", "isStopping", std::bind(&Application::isStopping, g_app));
+    g_lua.bindClassStaticFunction("g_app", "getFrameSleep", std::bind(&Application::getFrameSleep, g_app));
+    g_lua.bindClassStaticFunction("g_app", "getPollCycleDelay", std::bind(&Application::getPollCycleDelay, g_app));
     g_lua.bindClassStaticFunction("g_app", "getName", std::bind(&Application::getName, g_app));
     g_lua.bindClassStaticFunction("g_app", "getVersion", std::bind(&Application::getVersion, g_app));
     g_lua.bindClassStaticFunction("g_app", "getBuildCompiler", std::bind(&Application::getBuildCompiler, g_app));

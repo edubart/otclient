@@ -43,10 +43,13 @@ public:
     virtual void poll();
     virtual void close();
 
+    void setFrameSleep(int delay) { m_frameSleep = delay; }
     void setPollCycleDelay(int delay) { m_pollCycleDelay = delay; }
 
     bool isRunning() { return m_running; }
     bool isStopping() { return m_stopping; }
+    int getFrameSleep() { return m_frameSleep; }
+    int getPollCycleDelay() { return m_pollCycleDelay; }
     const std::string& getName() { return m_appName; }
     const std::string& getVersion() { return m_appVersion; }
 
@@ -64,6 +67,7 @@ protected:
     std::string m_appVersion;
     std::string m_appBuildDate;
     int m_appFlags;
+    int m_frameSleep;
     int m_pollCycleDelay;
     Boolean<false> m_initialized;
     Boolean<false> m_running;

@@ -15,3 +15,24 @@ end
 function Mouse.restoreCursor()
   g_window.restoreMouseCursor()
 end
+
+function Mouse.bindAutoPress(widget, callback)
+  connect(widget, { onMousePress = function(widget, mousePos, mouseButton)
+    callback()
+    periodicalEvent(function()
+      callback()
+    end, function()
+      return widget:isPressed()
+    end, 30, 300)
+    return true
+  end })
+end
+
+function Mouse.bindPressMove(widget, callback)
+  connect(widget, { onMouseMove = function(widget, mousePos, mouseMoved)
+    if widget:isPressed() then
+      callback(mousePos, mouseMoved)
+    end
+    return true
+  end })
+end

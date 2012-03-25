@@ -28,6 +28,7 @@ MainWindow
     anchors.top: characterList.top
     anchors.bottom: characterList.bottom
     anchors.right: characterList.right
+    maximum: 0
 
   Label
     id: accountStatusLabel

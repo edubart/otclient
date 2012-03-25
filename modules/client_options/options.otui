@@ -16,51 +16,24 @@ OptionCheckBox < CheckBox
 MainWindow
   id: optionsWindow
   text: Options
-  size: 286 250
+  size: 286 200
 
   @onEnter: Options.hide()
   @onEscape: Options.hide()
 
-  OptionCheckBox
-    id: vsync
-    text: Enable vertical synchronization
-    tooltip: Limits FPS to 60
+  TabBar
+    id: optionsTabBar
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.right: parent.right
 
-  OptionCheckBox
-    id: showfps
-    text: Show frame rate
-
-  OptionCheckBox
-    id: fullscreen
-    text: Fullscreen
-
-  OptionCheckBox
-    id: classicControl
-    text: Classic control
-
-  OptionCheckBox
-    id: showInfoMessagesInConsole
-    text: Show info messages in console
-
-  OptionCheckBox
-    id: showEventMessagesInConsole
-    text: Show event messages in console
-
-  OptionCheckBox
-    id: showStatusMessagesInConsole
-    text: Show status messages in console
-
-  OptionCheckBox
-    id: showTimestampsInConsole
-    text: Show timestamps in console
-
-  OptionCheckBox
-    id: showLevelsInConsole
-    text: Show levels in console
-
-  OptionCheckBox
-    id: showPrivateMessagesInConsole
-    text: Show private messages in console
+  Panel
+    id: optionsTabContent
+    anchors.top: optionsTabBar.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    margin-top: 10
 
   Button
     text: Ok

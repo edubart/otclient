@@ -57,6 +57,7 @@ Application::Application(const std::string& appName)
     g_app = this;
     m_appName = appName;
     m_pollCycleDelay = POLL_CYCLE_DELAY;
+    m_frameSleep = 0;
 }
 
 Application::~Application()
@@ -200,6 +201,9 @@ void Application::run()
             // sleeps until next poll to avoid massive cpu usage
             g_clock.sleep(POLL_CYCLE_DELAY+1);
         }
+
+        if(m_frameSleep > 0)
+            g_clock.sleep(m_frameSleep);
     }
 
     m_stopping = false;

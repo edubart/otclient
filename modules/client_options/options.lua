@@ -2,6 +2,7 @@ Options = {}
 
 local optionsWindow
 local optionsButton
+local optionsTabBar
 local options = { vsync = true,
                   showfps = true,
                   fullscreen = false,
@@ -22,18 +23,24 @@ function Options.init()
     end
   end
 
+  Keyboard.bindKeyDown('Ctrl+P', Options.toggle)
+
   optionsWindow = displayUI('options.otui')
   optionsWindow:hide()
   optionsButton = TopMenu.addLeftButton('optionsButton', 'Options (Ctrl+O)', 'options.png', Options.toggle)
-  Keyboard.bindKeyDown('Ctrl+O', Options.toggle)
+  optionsTabBar = optionsWindow:getChildById('optionsTabBar')
+  optionsTabBar:setContentWidget(optionsWindow:getChildById('optionsTabContent'))
+  optionsTabBar:addTab('General', loadUI('general.otui'))
+  optionsTabBar:addTab('Graphics', loadUI('graphics.otui'))
 end
 
 function Options.terminate()
-  Keyboard.unbindKeyDown('Ctrl+O')
+  Keyboard.unbindKeyDown('Ctrl+P')
   optionsWindow:destroy()
   optionsWindow = nil
   optionsButton:destroy()
   optionsButton = nil
+  optionsTabBar = nil
   Options = nil
 end
 
