@@ -59,6 +59,8 @@ local function createTextMessageLabel(id, parent)
   label:setTextAlign(AlignCenter)
   label:setId(id)
   label:setMarginBottom(2)
+  label:setTextWrap(true)
+  label:setTextAutoResize(true)
   label:setVisible(false)
   return label
 end

@@ -116,8 +116,11 @@ void UIManager::inputEvent(const InputEvent& event)
         }
         case Fw::MouseMoveInputEvent: {
             // start dragging when moving a pressed widget
-            if(m_pressedWidget && m_pressedWidget->isDragable() && m_draggingWidget != m_pressedWidget)
-                updateDraggingWidget(m_pressedWidget, event.mousePos - event.mouseMoved);
+            if(m_pressedWidget && m_pressedWidget->isDragable() && m_draggingWidget != m_pressedWidget) {
+                // only drags when moving more than 4 pixels
+                if((event.mousePos - m_pressedWidget->getLastClickPosition()).length() >= 4)
+                    updateDraggingWidget(m_pressedWidget, event.mousePos - event.mouseMoved);
+            }
 
             // mouse move can change hovered widgets
             updateHoveredWidget();

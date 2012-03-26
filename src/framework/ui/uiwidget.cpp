@@ -1323,6 +1323,7 @@ bool UIWidget::onMousePress(const Point& mousePos, Fw::MouseButton button)
             m_clickTimer.stop();
         } else
             m_clickTimer.restart();
+        m_lastClickPosition = mousePos;
     }
 
     if(hasLuaField("onMousePress"))

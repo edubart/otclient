@@ -50,7 +50,12 @@ void UIWidget::updateText()
             newSize.setHeight(textSize.height());
         setSize(newSize);
     } else if(m_textAutoResize) {
-        setSize(getTextSize());
+        Size textSize = getTextSize();
+        Size size = getSize();
+        if(textSize.width() > size.width())
+            size.setWidth(textSize.width());
+        size.setHeight(textSize.height());
+        setSize(size);
     }
 
     m_textMustRecache = true;

@@ -1,16 +1,21 @@
 TerminalLabel < UILabel
   font: terminus-14px-bold
   height: 16
+  text-wrap: true
+  text-auto-resize: true
 
-UIWidget
-  id: terminalWidget
+UIWindow
+  id: terminalWindow
   background-color: #000000
   opacity: 0.85
+  clipping: true
   anchors.fill: parent
 
   Panel
     id: terminalBuffer
-    layout: verticalBox
+    layout:
+      type: verticalBox
+      align-bottom: true
     focusable: false
     anchors.left: parent.left
     anchors.right: parent.right
@@ -35,3 +40,5 @@ UIWidget
     anchors.right: parent.right
     margin-left: 5
     font: terminus-14px-bold
+
+  

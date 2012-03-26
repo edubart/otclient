@@ -58,8 +58,8 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<ScheduledEvent>("ticks", &ScheduledEvent::ticks);
 
     // UIWidget
-    g_lua.registerClass<UIWidget>();
-    g_lua.bindClassStaticFunction<UIWidget>("create", []{ return UIWidgetPtr(new UIWidget); });
+
+    g_lua.registerClass<UIWidget>();    g_lua.bindClassStaticFunction<UIWidget>("create", []{ return UIWidgetPtr(new UIWidget); });
     g_lua.bindClassMemberFunction<UIWidget>("addChild", &UIWidget::addChild);
     g_lua.bindClassMemberFunction<UIWidget>("insertChild", &UIWidget::insertChild);
     g_lua.bindClassMemberFunction<UIWidget>("removeChild", &UIWidget::removeChild);
@@ -169,6 +169,7 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIWidget>("getAutoRepeatDelay", &UIWidget::getAutoRepeatDelay);
     g_lua.bindClassMemberFunction<UIWidget>("getVirtualOffset", &UIWidget::getVirtualOffset);
     g_lua.bindClassMemberFunction<UIWidget>("getStyleName", &UIWidget::getStyleName);
+    g_lua.bindClassMemberFunction<UIWidget>("getLastClickPosition", &UIWidget::getLastClickPosition);
     g_lua.bindClassMemberFunction<UIWidget>("setX", &UIWidget::setX);
     g_lua.bindClassMemberFunction<UIWidget>("setY", &UIWidget::setY);
     g_lua.bindClassMemberFunction<UIWidget>("setWidth", &UIWidget::setWidth);
@@ -298,8 +299,10 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIWidget>("setTextAlign", &UIWidget::setTextAlign);
     g_lua.bindClassMemberFunction<UIWidget>("setTextOffset", &UIWidget::setTextOffset);
     g_lua.bindClassMemberFunction<UIWidget>("setTextWrap", &UIWidget::setTextWrap);
+    g_lua.bindClassMemberFunction<UIWidget>("setTextAutoResize", &UIWidget::setTextAutoResize);
     g_lua.bindClassMemberFunction<UIWidget>("setFont", &UIWidget::setFont);
     g_lua.bindClassMemberFunction<UIWidget>("getText", &UIWidget::getText);
+    g_lua.bindClassMemberFunction<UIWidget>("getDrawText", &UIWidget::getDrawText);
     g_lua.bindClassMemberFunction<UIWidget>("getTextAlign", &UIWidget::getTextAlign);
     g_lua.bindClassMemberFunction<UIWidget>("getTextOffset", &UIWidget::getTextOffset);
     g_lua.bindClassMemberFunction<UIWidget>("getTextWrap", &UIWidget::getTextWrap);

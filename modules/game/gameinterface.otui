@@ -24,33 +24,12 @@ UIWidget
     anchors.bottom: gameBottomPanel.top
     focusable: false
 
-  UISplitter
-    id: mapSplitter
-    anchors.left: gameLeftPanel.right
-    anchors.right: gameRightPanel.left
-    anchors.bottom: parent.bottom
-    relative-margin: bottom
-    margin-bottom: 172
-    height: 4
-    margin-top: -2
-    @canUpdateMargin: function(self, newMargin) return math.min(math.max(newMargin, 100), self:getParent():getHeight() - 300) end
-    @onGeometryChange: function(self) self:setMarginBottom(math.min(self:getParent():getHeight() - 300, self:getMarginBottom())) end
-
   GameBottomPanel
     id: gameBottomPanel
     anchors.left: gameLeftPanel.right
     anchors.right: gameRightPanel.left
-    anchors.top: mapSplitter.top
+    anchors.top: bottomSplitter.top
     anchors.bottom: parent.bottom
-
-  GameSidePanel
-    id: gameRightPanel
-    width: 190
-    layout: verticalBox
-    anchors.right: parent.right
-    anchors.top: parent.top
-    anchors.bottom: parent.bottom
-    focusable: false
 
   GameSidePanel
     id: gameLeftPanel
@@ -60,6 +39,35 @@ UIWidget
     anchors.top: parent.top
     anchors.bottom: parent.bottom
     focusable: false
+
+  GameSidePanel
+    id: gameRightPanel
+    layout: verticalBox
+    anchors.left: rightSplitter.left
+    anchors.right: parent.right
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
+    focusable: false
+
+  Splitter
+    id: bottomSplitter
+    anchors.left: gameLeftPanel.right
+    anchors.right: gameRightPanel.left
+    anchors.bottom: parent.bottom
+    relative-margin: bottom
+    margin-bottom: 172
+    @canUpdateMargin: function(self, newMargin) return math.min(math.max(newMargin, 100), self:getParent():getHeight() - 300) end
+    @onGeometryChange: function(self) self:setMarginBottom(math.min(self:getParent():getHeight() - 300, self:getMarginBottom())) end
+
+  Splitter
+    id: rightSplitter
+    anchors.right: parent.right
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
+    relative-margin: right
+    margin-right: 190
+    @canUpdateMargin: function(self, newMargin) return math.min(math.max(newMargin, 150), self:getParent():getWidth() - 300) end
+    @onGeometryChange: function(self) self:setMarginRight(math.min(self:getParent():getWidth() - 300, self:getMarginRight())) end
 
   UIWidget
     id: mouseGrabber

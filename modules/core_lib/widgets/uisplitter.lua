@@ -3,6 +3,7 @@ UISplitter = extends(UIWidget)
 function UISplitter.create()
   local splitter = UISplitter.internalCreate()
   splitter:setFocusable(false)
+  splitter.relativeMargin = 'bottom'
   return splitter
 end
 
@@ -15,17 +16,22 @@ function UISplitter:onHoverChange(hovered)
       Mouse.setHorizontalCursor()
       self.vertical = false
     end
-  elseif not self:isPressed() then
-    Mouse.restoreCursor()
+    if not self:isPressed() then
+      Effects.fadeIn(self)
+    end
+  else
+    if not self:isPressed() then
+      Mouse.restoreCursor()
+      Effects.fadeOut(self)
+    end
   end
 end
 
-
 function UISplitter:onMouseMove(mousePos, mouseMoved)
   if self:isPressed() then
+    --local currentmargin, newmargin, delta
     if self.vertical then
-      local delta = mousePos.y - self:getY()
-      local currentMargin = self:getMarginBottom()
+      local delta = mousePos.y - self:getY() - self:getHeight()/2
       local newMargin = self:canUpdateMargin(self:getMarginBottom() - delta)
       if newMargin ~= currentMargin then
         self.newMargin = newMargin
@@ -36,7 +42,16 @@ function UISplitter:onMouseMove(mousePos, mouseMoved)
         end
       end
     else
-      --TODO
+      local delta = mousePos.x - self:getX() - self:getWidth()/2
+      local newMargin = self:canUpdateMargin(self:getMarginRight() - delta)
+      if newMargin ~= currentMargin then
+        self.newMargin = newMargin
+        if not self.event or self.event:isExecuted() then
+          self.event = addEvent(function()
+            self:setMarginRight(self.newMargin)
+          end)
+        end
+      end
     end
     return true
   end
@@ -45,14 +60,14 @@ end
 function UISplitter:onMouseRelease(mousePos, mouseButton)
   if not self:isHovered() then
     Mouse.restoreCursor()
+    Effects.fadeOut(self)
   end
 end
 
 function UISplitter:onStyleApply(styleName, styleNode)
-  --TODO: relative margins
-  --if styleNode['relative-margin'] then
-  ---  self.relativeMargin = styleNode['relative-margin']
-  --end
+  if styleNode['relative-margin'] then
+    self.relativeMargin = styleNode['relative-margin']
+  end
 end
 
 function UISplitter:canUpdateMargin(newMargin)

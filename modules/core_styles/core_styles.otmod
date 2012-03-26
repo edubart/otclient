@@ -29,3 +29,4 @@ Module
     importStyle 'styles/spinboxes.otui'
     importStyle 'styles/messageboxes.otui'
     importStyle 'styles/scrollbars.otui'
+    importStyle 'styles/splitters.otui'

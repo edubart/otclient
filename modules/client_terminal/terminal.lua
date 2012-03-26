@@ -9,7 +9,7 @@ local LabelHeight = 16
 local MaxHistory = 1000
 
 -- private variables
-local terminalWidget
+local terminalWindow
 local terminalButton
 local logLocked = false
 local commandEnv = newenv()
@@ -107,22 +107,36 @@ end
 
 -- public functions
 function Terminal.init()
-  terminalWidget = displayUI('terminal.otui')
-  terminalWidget:setVisible(false)
+  terminalWindow = displayUI('terminal.otui')
+  terminalWindow:setVisible(false)
+
+  local poped = false
+  terminalWindow.onDoubleClick = function(self)
+    if poped then
+      self:fill('parent')
+      poped = false
+    else
+      self:breakAnchors()
+      self:resize(g_window.getWidth()/2, g_window.getHeight()/2)
+      self:move(g_window.getWidth()/2, g_window.getHeight()/2)
+      poped = true
+    end
+  end
+  
 
   terminalButton = TopMenu.addLeftButton('terminalButton', 'Terminal (Ctrl + T)', 'terminal.png', Terminal.toggle)
   Keyboard.bindKeyDown('Ctrl+T', Terminal.toggle)
 
   commandHistory = Settings.getList('terminal-history')
 
-  commandLineEdit = terminalWidget:getChildById('commandLineEdit')
+  commandLineEdit = terminalWindow:getChildById('commandLineEdit')
   Keyboard.bindKeyPress('Up', function() navigateCommand(1) end, commandLineEdit)
   Keyboard.bindKeyPress('Down', function() navigateCommand(-1) end, commandLineEdit)
   Keyboard.bindKeyDown('Tab', completeCommand, commandLineEdit)
   Keyboard.bindKeyDown('Enter', doCommand, commandLineEdit)
-  Keyboard.bindKeyDown('Escape', Terminal.hide, terminalWidget)
+  Keyboard.bindKeyDown('Escape', Terminal.hide, terminalWindow)
 
-  terminalBuffer = terminalWidget:getChildById('terminalBuffer')
+  terminalBuffer = terminalWindow:getChildById('terminalBuffer')
   g_logger.setOnLog(onLog)
   g_logger.fireOldMessages()
 end
@@ -135,14 +149,14 @@ function Terminal.terminate()
   terminalButton = nil
   commandLineEdit = nil
   terminalBuffer = nil
-  terminalWidget:destroy()
-  terminalWidget = nil
+  terminalWindow:destroy()
+  terminalWindow = nil
   commandEnv = nil
   Terminal = nil
 end
 
 function Terminal.toggle()
-  if terminalWidget:isVisible() then
+  if terminalWindow:isVisible() then
     Terminal.hide()
   else
     Terminal.show()
@@ -150,13 +164,13 @@ function Terminal.toggle()
 end
 
 function Terminal.show()
-  terminalWidget:show()
-  terminalWidget:raise()
-  terminalWidget:focus()
+  terminalWindow:show()
+  terminalWindow:raise()
+  terminalWindow:focus()
 end
 
 function Terminal.hide()
-  terminalWidget:hide()
+  terminalWindow:hide()
 end
 
 function Terminal.addLine(text, color)

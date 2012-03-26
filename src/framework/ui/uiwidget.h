@@ -43,6 +43,7 @@ struct EdgeGroup {
 
 // generate lua bindings for this class running:
 // ./tools/lua-binding-generator/generate_lua_bindings.lua src/framework/ui/uiwidget.h
+
 class UIWidget : public LuaObject
 {
 // widget core
@@ -253,6 +254,7 @@ public:
     int getAutoRepeatDelay() { return m_autoRepeatDelay; }
     Point getVirtualOffset() { return m_virtualOffset; }
     std::string getStyleName() { return m_style->tag(); }
+    Point getLastClickPosition() { return m_lastClickPosition; }
 
 
 // base style
@@ -277,6 +279,7 @@ protected:
     EdgeGroup<int> m_padding;
     float m_opacity;
     int m_autoRepeatDelay;
+    Point m_lastClickPosition;
 
 public:
     void setX(int x) { move(x, getY()); }

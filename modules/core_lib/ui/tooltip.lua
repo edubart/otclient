@@ -74,12 +74,12 @@ function ToolTip.display(text)
   toolTipLabel:show()
   toolTipLabel:raise()
   toolTipLabel:enable()
+  Effects.fadeIn(toolTipLabel, 100)
   moveToolTip(toolTipLabel)
 end
 
 function ToolTip.hide()
-  
-  toolTipLabel:hide()
+  Effects.fadeOut(toolTipLabel, 100)
 end
 
 -- UIWidget extensions
