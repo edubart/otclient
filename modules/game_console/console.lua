@@ -215,10 +215,6 @@ function Console.terminate()
   Console = nil
 end
 
-function Console.debug()
-  print(#channels)
-end
-
 function Console.clear()
   for channelid, channelname in pairs(channels) do
     if channelid ~= 0 then

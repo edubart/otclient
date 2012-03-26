@@ -12,7 +12,6 @@ ConsoleTabBarPanel < TabBarPanel
 
   ScrollablePanel
     id: consoleBuffer
-    // height = max lines * 14
     anchors.fill: parent
     margin-right: 12
     vertical-scrollbar: consoleScrollBar

@@ -33,7 +33,9 @@ function UIScrollArea:updateScrollBars()
   if scrollbar then
     if self.inverted then
       scrollbar:setMinimum(-scrollheight)
+      scrollbar:setMaximum(0)
     else
+      scrollbar:setMinimum(0)
       scrollbar:setMaximum(scrollheight)
     end
   end
@@ -50,10 +52,8 @@ end
 
 function UIScrollArea:setVerticalScrollBar(scrollbar)
   self.verticalScrollBar = scrollbar
-  scrollbar:setMaximum(0)
   self.verticalScrollBar.onValueChange = function(scrollbar, value)
     local virtualOffset = self:getVirtualOffset()
-    if self.inverted then value = -value end
     virtualOffset.y = value
     self:setVirtualOffset(virtualOffset)
   end
@@ -71,4 +71,15 @@ end
 
 function UIScrollArea:onLayoutUpdate()
   self:updateScrollBars()
+end
+
+function UIScrollArea:onMouseWheel(mousePos, mouseWheel)
+  if self.verticalScrollBar then
+    if mouseWheel == MouseWheelUp then
+      self.verticalScrollBar:decrement()
+    else
+      self.verticalScrollBar:increment()
+    end
+  end
+  return true
 end

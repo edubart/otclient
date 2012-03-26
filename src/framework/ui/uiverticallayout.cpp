@@ -70,7 +70,7 @@ void UIVerticalLayout::internalUpdate()
             pos.x = clippingRect.left() + (clippingRect.width() - size.width())/2;
         }
 
-        widget->setRect(Rect(pos + parentWidget->getVirtualOffset(), size));
+        widget->setRect(Rect(pos - parentWidget->getVirtualOffset(), size));
 
         gap = (m_alignBottom) ? -widget->getMarginTop() : (widget->getHeight() + widget->getMarginBottom());
         gap += m_spacing;

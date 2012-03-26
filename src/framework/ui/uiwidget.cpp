@@ -244,12 +244,16 @@ void UIWidget::focusChild(const UIWidgetPtr& child, Fw::FocusReason reason)
         child->setLastFocusReason(reason);
         child->updateState(Fw::FocusState);
         child->updateState(Fw::ActiveState);
+
+        g_eventDispatcher.addEvent(std::bind(&UIWidget::onFocusChange, child, true, reason));
     }
 
     if(oldFocused) {
         oldFocused->setLastFocusReason(reason);
         oldFocused->updateState(Fw::FocusState);
         oldFocused->updateState(Fw::ActiveState);
+
+        g_eventDispatcher.addEvent(std::bind(&UIWidget::onFocusChange, oldFocused, false, reason));
     }
 
     onChildFocusChange(child, oldFocused, reason);
@@ -647,8 +651,6 @@ void UIWidget::destroy()
     setVisible(false);
     setEnabled(false);
 
-    g_ui.onWidgetDestroy(asUIWidget());
-
     // remove itself from parent
     if(UIWidgetPtr parent = getParent())
         parent->removeChild(asUIWidget());
@@ -660,9 +662,7 @@ void UIWidget::destroy()
 
     releaseLuaFieldsTable();
 
-#ifdef DEBUG
-    g_ui.addDestroyedWidget(asUIWidget());
-#endif
+    g_ui.onWidgetDestroy(asUIWidget());
 }
 
 void UIWidget::destroyChildren()
@@ -781,7 +781,6 @@ void UIWidget::setEnabled(bool enabled)
 
         updateState(Fw::DisabledState);
         updateState(Fw::ActiveState);
-        updateState(Fw::HoverState);
     }
 }
 
@@ -1090,7 +1089,6 @@ void UIWidget::updateState(Fw::WidgetState state)
             break;
         }
         case Fw::HoverState: {
-            updateChildren = true;
             newStatus = (g_ui.getHoveredWidget() == asUIWidget() && isEnabled());
             break;
         }
@@ -1143,10 +1141,10 @@ void UIWidget::updateState(Fw::WidgetState state)
     }
 
     if(setState(state, newStatus)) {
-        if(state == Fw::FocusState) {
-            g_eventDispatcher.addEvent(std::bind(&UIWidget::onFocusChange, asUIWidget(), newStatus, m_lastFocusReason));
-        } else if(state == Fw::HoverState)
-            g_eventDispatcher.addEvent(std::bind(&UIWidget::onHoverChange, asUIWidget(), newStatus));
+        // disabled widgets cannot have hover state
+        if(state == Fw::DisabledState && !newStatus && isHovered()) {
+            g_ui.updateHoveredWidget();
+        }
     }
 }
 
@@ -1288,7 +1286,7 @@ bool UIWidget::onDragLeave(UIWidgetPtr droppedWidget, const Point& mousePos)
 
 bool UIWidget::onDragMove(const Point& mousePos, const Point& mouseMoved)
 {
-    return callLuaField("onDragMove", mousePos, mouseMoved);
+    return callLuaField<bool>("onDragMove", mousePos, mouseMoved);
 }
 
 bool UIWidget::onDrop(UIWidgetPtr draggedWidget, const Point& mousePos)
@@ -1489,10 +1487,9 @@ bool UIWidget::propagateOnMousePress(const Point& mousePos, Fw::MouseButton butt
     return false;
 }
 
-bool UIWidget::propagateOnMouseRelease(const Point& mousePos, Fw::MouseButton button)
+void UIWidget::propagateOnMouseRelease(const Point& mousePos, Fw::MouseButton button, UIWidgetList& widgetList)
 {
     // do a backup of children list, because it may change while looping it
-    UIWidgetPtr clickedChild;
     for(const UIWidgetPtr& child : m_children) {
         // events on hidden or disabled widgets are discarded
         if(!child->isExplicitlyEnabled() || !child->isExplicitlyVisible())
@@ -1500,48 +1497,31 @@ bool UIWidget::propagateOnMouseRelease(const Point& mousePos, Fw::MouseButton bu
 
         // mouse press events only go to children that contains the mouse position
         if(child->containsPoint(mousePos) && child == getChildByPos(mousePos)) {
-            clickedChild = child;
+            child->propagateOnMouseRelease(mousePos, button, widgetList);
             break;
         }
     }
 
-    if(clickedChild) {
-        if(clickedChild->propagateOnMouseRelease(mousePos, button))
-            return true;
-    }
-
-    // only non phatom widgets receives mouse events
+    // only non phatom widgets receives mouse release events
     if(!isPhantom())
-        return onMouseRelease(mousePos, button);
-
-    return false;
+        widgetList.push_back(asUIWidget());
 }
 
-bool UIWidget::propagateOnMouseMove(const Point& mousePos, const Point& mouseMoved)
+void UIWidget::propagateOnMouseMove(const Point& mousePos, const Point& mouseMoved, UIWidgetList& widgetList)
 {
-    // do a backup of children list, because it may change while looping it
-    UIWidgetList children;
     for(const UIWidgetPtr& child : m_children) {
         // events on hidden or disabled widgets are discarded
         if(!child->isExplicitlyEnabled() || !child->isExplicitlyVisible())
             continue;
 
         // mouse move events go to all children
-        children.push_back(child);
+        child->propagateOnMouseMove(mousePos, mouseMoved, widgetList);
     }
-
-    for(const UIWidgetPtr& child : children) {
-        if(child->propagateOnMouseMove(mousePos, mouseMoved))
-            return true;
-    }
-
-    return onMouseMove(mousePos, mouseMoved);
+    widgetList.push_back(asUIWidget());
 }
 
-bool UIWidget::propagateOnMouseWheel(const Point& mousePos, Fw::MouseWheelDirection direction)
+void UIWidget::propagateOnMouseWheel(const Point& mousePos, Fw::MouseWheelDirection direction, UIWidgetList& widgetList)
 {
-    // do a backup of children list, because it may change while looping it
-    UIWidgetList children;
     for(const UIWidgetPtr& child : m_children) {
         // events on hidden or disabled widgets are discarded
         if(!child->isExplicitlyEnabled() || !child->isExplicitlyVisible())
@@ -1549,17 +1529,8 @@ bool UIWidget::propagateOnMouseWheel(const Point& mousePos, Fw::MouseWheelDirect
 
         // mouse wheel events only go to children that contains the mouse position
         if(child->containsPoint(mousePos) && child == getChildByPos(mousePos))
-            children.push_back(child);
+            child->propagateOnMouseWheel(mousePos, direction, widgetList);
     }
 
-    for(const UIWidgetPtr& child : children) {
-        if(child->propagateOnMouseWheel(mousePos, direction))
-            return true;
-    }
-
-    // only non phatom widgets receives mouse events
-    if(!isPhantom())
-        return onMouseWheel(mousePos, direction);
-    else
-        return false;
+    widgetList.push_back(asUIWidget());
 }

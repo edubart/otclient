@@ -17,7 +17,7 @@ function Mouse.restoreCursor()
 end
 
 function Mouse.isPressed()
-  return g_ui.getPressedWidget() == nil
+  return g_ui.getPressedWidget() ~= nil
 end
 
 function Mouse.bindAutoPress(widget, callback)

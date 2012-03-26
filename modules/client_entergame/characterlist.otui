@@ -22,13 +22,14 @@ MainWindow
     margin-bottom: 5
     padding: 1
     focusable: false
+    vertical-scrollbar: characterListScrollBar
 
   VerticalScrollBar
-    attached-to: characterList
+    id: characterListScrollBar
     anchors.top: characterList.top
     anchors.bottom: characterList.bottom
     anchors.right: characterList.right
-    maximum: 0
+    step: 14
 
   Label
     id: accountStatusLabel

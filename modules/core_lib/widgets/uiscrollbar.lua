@@ -22,7 +22,7 @@ local function calcValues(self)
   local px = math.max(math.floor(proportion * pxrange), 10)
   local offset = 0
   if range > 1 then
-    offset = (((self.value - self.minimum) / (range - 1)) - 0.5) * (pxrange - px)
+    offset = math.ceil((((self.value - self.minimum) / (range - 1)) - 0.5) * (pxrange - px))
   end
 
   return range, pxrange, px, offset, center
@@ -151,6 +151,15 @@ end
 
 function UIScrollBar:onGeometryChange()
   updateSlider(self)
+end
+
+function UIScrollBar:onMouseWheel(mousePos, mouseWheel)
+  if mouseWheel == MouseWheelUp then
+    self:decrement()
+  else
+    self:increment()
+  end
+  return true
 end
 
 function UIScrollBar:getMaximum() return self.maximum end

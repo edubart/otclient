@@ -46,7 +46,6 @@ function UISplitter:onMouseRelease(mousePos, mouseButton)
   if not self:isHovered() then
     Mouse.restoreCursor()
   end
-  self:ungrabMouse()
 end
 
 function UISplitter:onStyleApply(styleName, styleNode)

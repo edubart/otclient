@@ -70,7 +70,7 @@ void UIHorizontalLayout::internalUpdate()
             pos.y = clippingRect.top() + (clippingRect.height() - size.height())/2;
         }
 
-        widget->setRect(Rect(pos + parentWidget->getVirtualOffset(), size));
+        widget->setRect(Rect(pos - parentWidget->getVirtualOffset(), size));
 
         gap = (m_alignRight) ? -widget->getMarginLeft() : (widget->getWidth() + widget->getMarginRight());
         gap += m_spacing;

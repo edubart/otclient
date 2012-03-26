@@ -37,9 +37,9 @@ public:
     void resize(const Size& size);
     void inputEvent(const InputEvent& event);
 
-    bool updatePressedWidget(const UIWidgetPtr& newPressedWidget, const Point& clickedPos = Point());
-    void updateHoveredWidget();
+    void updatePressedWidget(const UIWidgetPtr& newPressedWidget, const Point& clickedPos = Point());
     bool updateDraggingWidget(const UIWidgetPtr& draggingWidget, const Point& clickedPos = Point());
+    void updateHoveredWidget();
 
     bool importStyle(const std::string& file);
     void importStyleFromOTML(const OTMLNodePtr& styleNode);
@@ -69,7 +69,6 @@ protected:
     void onWidgetAppear(const UIWidgetPtr& widget);
     void onWidgetDisappear(const UIWidgetPtr& widget);
     void onWidgetDestroy(const UIWidgetPtr& widget);
-    void addDestroyedWidget(const UIWidgetPtr& widget);
 
     friend class UIWidget;
 
