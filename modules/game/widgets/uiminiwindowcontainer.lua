@@ -7,6 +7,10 @@ function UIMiniWindowContainer.create()
   return container
 end
 
+function UIMiniWindowContainer:onDrop(widget, mousePos)
+  print 'drop'
+end
+
 function UIMiniWindowContainer:getClassName()
   return 'UIMiniWindowContainer'
 end

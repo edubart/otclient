@@ -902,19 +902,35 @@ Rect UIWidget::getClippingRect()
     return rect;
 }
 
+Rect UIWidget::getMarginRect()
+{
+    Rect rect = m_rect;
+    rect.expand(m_margin.top, m_margin.right, m_margin.bottom, m_margin.left);
+    return rect;
+}
+
 Rect UIWidget::getChildrenRect()
 {
     Rect childrenRect;
     for(const UIWidgetPtr& child : m_children) {
-        if(!child->isExplicitlyVisible() || !child->getRect().isValid() || child->getOpacity() == 0.0f)
+        if(!child->isExplicitlyVisible() || !child->getRect().isValid())
             continue;
+        Rect marginRect = child->getMarginRect();
         if(!childrenRect.isValid())
-            childrenRect = child->getRect();
+            childrenRect = marginRect;
         else
-            childrenRect = childrenRect.united(child->getRect());
+            childrenRect = childrenRect.united(marginRect);
     }
+
+    Rect myClippingRect = getClippingRect();
     if(!childrenRect.isValid())
-        childrenRect = getClippingRect();
+        childrenRect = myClippingRect;
+    else {
+        if(childrenRect.width() < myClippingRect.width())
+            childrenRect.setWidth(myClippingRect.width());
+        if(childrenRect.height() < myClippingRect.height())
+            childrenRect.setHeight(myClippingRect.height());
+    }
     return childrenRect;
 }
 

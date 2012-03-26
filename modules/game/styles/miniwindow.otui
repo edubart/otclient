@@ -10,14 +10,39 @@ MiniWindow < UIMiniWindow
   margin-left: 6
   margin-right: 6
   move-policy: free updated
-  image-source: /core_styles/styles/images/mini_window.png
+  image-source: /game/images/miniwindow.png
   image-border: 4
   image-border-top: 23
-  padding: 25 8 2 8
+  image-border-left: 23
 
   $on:
     height: 24
     image-border-bottom: 1
+
+  ResizeBorder
+    id: bottomResizeBorder
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    height: 2
+    margin-bottom: 1
+    minimum: 70
+
+  VerticalScrollBar
+    id: miniwindowScrollBar
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    step: 14
+    margin-top: 22
+    margin-right: 2
+    margin-bottom: 2
+    fade-effect: false
+
+MiniWindowContents < ScrollablePanel
+  anchors.fill: parent
+  padding: 25 21 2 8
+  vertical-scrollbar: miniwindowScrollBar
 
 BorderlessGameWindow < UIWindow
   focusable: false

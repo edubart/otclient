@@ -134,6 +134,7 @@ public:
     bool hasChild(const UIWidgetPtr& child);
     int getChildIndex(const UIWidgetPtr& child);
     Rect getClippingRect();
+    Rect getMarginRect();
     Rect getChildrenRect();
     UIAnchorLayoutPtr getAnchoredLayout();
     UIWidgetPtr getRootParent();

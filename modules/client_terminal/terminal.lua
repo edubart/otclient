@@ -114,11 +114,15 @@ function Terminal.init()
   terminalWindow.onDoubleClick = function(self)
     if poped then
       self:fill('parent')
+      self:getChildById('bottomResizeBorder'):disable()
+      self:getChildById('rightResizeBorder'):disable()
       poped = false
     else
       self:breakAnchors()
       self:resize(g_window.getWidth()/2, g_window.getHeight()/2)
       self:move(g_window.getWidth()/2, g_window.getHeight()/2)
+      self:getChildById('bottomResizeBorder'):enable()
+      self:getChildById('rightResizeBorder'):enable()
       poped = true
     end
   end

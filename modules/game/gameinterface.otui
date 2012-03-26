@@ -1,4 +1,4 @@
-GameSidePanel < Panel
+GameSidePanel < UIMiniWindowContainer
   image-source: images/sidepanel.png
   image-border: 4
 

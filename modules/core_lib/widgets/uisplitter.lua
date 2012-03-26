@@ -33,6 +33,7 @@ function UISplitter:onMouseMove(mousePos, mouseMoved)
     if self.vertical then
       local delta = mousePos.y - self:getY() - self:getHeight()/2
       local newMargin = self:canUpdateMargin(self:getMarginBottom() - delta)
+      local currentMargin = self:getMarginBottom()
       if newMargin ~= currentMargin then
         self.newMargin = newMargin
         if not self.event or self.event:isExecuted() then
@@ -44,6 +45,7 @@ function UISplitter:onMouseMove(mousePos, mouseMoved)
     else
       local delta = mousePos.x - self:getX() - self:getWidth()/2
       local newMargin = self:canUpdateMargin(self:getMarginRight() - delta)
+      local currentMargin = self:getMarginRight()
       if newMargin ~= currentMargin then
         self.newMargin = newMargin
         if not self.event or self.event:isExecuted() then

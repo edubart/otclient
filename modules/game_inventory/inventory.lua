@@ -13,7 +13,7 @@ function Inventory.init()
 
   Keyboard.bindKeyDown('Ctrl+I', Inventory.toggle)
 
-  inventoryWindow = displayUI('inventory.otui', GameInterface.getRightPanel())
+  inventoryWindow = displayUI('inventory.otui', GameInterface.getRightPanel()):getChildById('inventoryWindow')
   inventoryButton = TopMenu.addGameToggleButton('inventoryButton', 'Inventory (Ctrl+I)', 'inventory.png', Inventory.toggle)
   inventoryButton:setOn(true)
 

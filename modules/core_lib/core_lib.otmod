@@ -42,4 +42,5 @@ Module
     dofile 'widgets/uisplitter'
     dofile 'widgets/uiscrollbar'
     dofile 'widgets/uiscrollarea'
+    dofile 'widgets/uiresizeborder'
 

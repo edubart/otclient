@@ -30,6 +30,8 @@ Module
 
     dofile 'widgets/uigamemap'
     dofile 'widgets/uiitem'
+    dofile 'widgets/uiminiwindow'
+    dofile 'widgets/uiminiwindowcontainer'
 
     dofile 'creature'
     dofile 'player'

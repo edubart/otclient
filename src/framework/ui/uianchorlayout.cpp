@@ -155,6 +155,23 @@ void UIAnchorLayout::updateWidget(const UIWidgetPtr& widget, UIAnchorGroup& anch
                 break;
         }
 
+        if(hookedWidget == parentWidget) {
+            switch(anchor.getHookedEdge()) {
+                case Fw::AnchorLeft:
+                case Fw::AnchorRight:
+                case Fw::AnchorHorizontalCenter:
+                    point -= parentWidget->getVirtualOffset().x;
+                    break;
+                case Fw::AnchorBottom:
+                case Fw::AnchorTop:
+                case Fw::AnchorVerticalCenter:
+                    point -= parentWidget->getVirtualOffset().y;
+                    break;
+                default:
+                    break;
+            }
+        }
+
         switch(anchor.getAnchoredEdge()) {
             case Fw::AnchorHorizontalCenter:
                 newRect.moveHorizontalCenter(point + widget->getMarginLeft() - widget->getMarginRight());
@@ -197,7 +214,6 @@ void UIAnchorLayout::updateWidget(const UIWidgetPtr& widget, UIAnchorGroup& anch
         }
     }
 
-    newRect.translate(-parentWidget->getVirtualOffset());
     widget->setRect(newRect);
     anchorGroup.setUpdated(true);
 }
