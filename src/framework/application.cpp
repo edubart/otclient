@@ -171,7 +171,7 @@ void Application::run()
     if(!m_initialized)
         return;
 
-    ticks_t lastPollTicks = g_clock.updateTicks();
+    //ticks_t lastPollTicks = g_clock.updateTicks();
     m_stopping = false;
     m_running = true;
 
@@ -185,10 +185,10 @@ void Application::run()
 
         // poll events every POLL_CYCLE_DELAY
         // this delay exists to avoid massive polling thus increasing framerate
-        if(g_clock.ticksElapsed(lastPollTicks) >= m_pollCycleDelay) {
+        //if(g_clock.ticksElapsed(lastPollTicks) >= m_pollCycleDelay) {
             poll();
-            lastPollTicks = g_clock.ticks();
-        }
+        //    lastPollTicks = g_clock.ticks();
+        //}
 
         if(m_appFlags & Fw::AppEnableGraphics && g_window.isVisible()) {
             g_graphics.beginRender();
@@ -225,6 +225,7 @@ void Application::poll()
     }
 
     Connection::poll();
+    //g_eventDispatcher.poll(true);
     g_eventDispatcher.poll();
 }
 

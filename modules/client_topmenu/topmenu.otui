@@ -61,7 +61,6 @@ TopPanel
     anchors.top: parent.top
     anchors.bottom: parent.bottom
     anchors.left: prev.right
-    anchors.right: next.left
     visible: false
 
   TopMenuButtonsPanel

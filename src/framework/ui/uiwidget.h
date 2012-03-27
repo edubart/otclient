@@ -113,7 +113,7 @@ public:
     void setId(const std::string& id);
     void setParent(const UIWidgetPtr& parent);
     void setLayout(const UILayoutPtr& layout);
-    void setRect(const Rect& rect);
+    bool setRect(const Rect& rect);
     void setStyle(const std::string& styleName);
     void setStyleFromNode(const OTMLNodePtr& styleNode);
     void setEnabled(bool enabled);
@@ -240,6 +240,7 @@ public:
     bool isDestroyed() { return m_destroyed; }
 
     bool hasChildren() { return m_children.size() > 0; }
+    bool containsChildPoint(const Point& point) { return getClippingRect().contains(point); }
     bool containsPoint(const Point& point) { return m_rect.contains(point); }
 
     std::string getId() { return m_id; }

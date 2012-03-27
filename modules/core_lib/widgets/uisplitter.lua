@@ -9,6 +9,7 @@ end
 
 function UISplitter:onHoverChange(hovered)
   if hovered then
+    if g_ui.getDraggingWidget() then return end
     if self:getWidth() > self:getHeight() then
       Mouse.setVerticalCursor()
       self.vertical = true
@@ -16,13 +17,15 @@ function UISplitter:onHoverChange(hovered)
       Mouse.setHorizontalCursor()
       self.vertical = false
     end
+    self.hovering = true
     if not self:isPressed() then
       Effects.fadeIn(self)
     end
   else
-    if not self:isPressed() then
+    if not self:isPressed() and self.hovering then
       Mouse.restoreCursor()
       Effects.fadeOut(self)
+      self.hovering = false
     end
   end
 end
@@ -63,6 +66,7 @@ function UISplitter:onMouseRelease(mousePos, mouseButton)
   if not self:isHovered() then
     Mouse.restoreCursor()
     Effects.fadeOut(self)
+    self.hovering = false
   end
 end
 

@@ -73,7 +73,7 @@ class EventDispatcher
 {
 public:
     void flush();
-    void poll();
+    void poll(bool allEvents = false);
 
     EventPtr addEvent(const SimpleCallback& callback, bool pushFront = false);
     ScheduledEventPtr scheduleEvent(const SimpleCallback& callback, int delay);

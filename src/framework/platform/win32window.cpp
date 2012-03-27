@@ -312,6 +312,7 @@ void WIN32Window::internalChooseGLVisual()
                                          0,                          // Reserved
                                          0, 0, 0 };                  // Layer Masks Ignored
 
+    pixelFormat = ChoosePixelFormat(m_deviceContext, &pfd);
     if(!pixelFormat)
         logFatal("Could not find a suitable pixel format");
 

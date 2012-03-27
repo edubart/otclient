@@ -44,7 +44,7 @@ public:
     virtual UIGridLayoutPtr asUIGridLayout() { return nullptr; }
 
 protected:
-    void internalUpdate();
+    bool internalUpdate();
 
 private:
     Size m_cellSize;

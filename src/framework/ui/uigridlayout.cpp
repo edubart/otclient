@@ -62,8 +62,9 @@ void UIGridLayout::addWidget(const UIWidgetPtr& widget)
     update();
 }
 
-void UIGridLayout::internalUpdate()
+bool UIGridLayout::internalUpdate()
 {
+    bool changed = false;
     UIWidgetPtr parentWidget = getParentWidget();
     UIWidgetList widgets = parentWidget->getChildren();
 
@@ -80,12 +81,15 @@ void UIGridLayout::internalUpdate()
         Point virtualPos = Point(column * (m_cellSize.width() + m_cellSpacing), line * (m_cellSize.height() + m_cellSpacing));
         Point pos = topLeft + virtualPos;
 
-        widget->setRect(Rect(pos, m_cellSize));
+        if(widget->setRect(Rect(pos, m_cellSize)))
+            changed = true;
 
         index++;
 
         if(index >= m_numColumns * m_numLines)
             break;
     }
+
+    return changed;
 }
 

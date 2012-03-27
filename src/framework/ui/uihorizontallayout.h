@@ -37,7 +37,7 @@ public:
     UIHorizontalLayoutPtr asUIHorizontalLayout() { return std::static_pointer_cast<UIHorizontalLayout>(shared_from_this()); }
 
 protected:
-    void internalUpdate();
+    bool internalUpdate();
 
     Boolean<false> m_alignRight;
 };

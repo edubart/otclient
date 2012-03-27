@@ -726,16 +726,16 @@ void UIWidget::setLayout(const UILayoutPtr& layout)
     m_layout = layout;
 }
 
-void UIWidget::setRect(const Rect& rect)
+bool UIWidget::setRect(const Rect& rect)
 {
     if(rect.width() > 8192 || rect.height() > 8192) {
         logError("attempt to set huge rect size (", rect,") for ", m_id);
-        return;
+        return false;
     }
     // only update if the rect really changed
     Rect oldRect = m_rect;
     if(rect == oldRect)
-        return;
+        return false;
 
     m_rect = rect;
 
@@ -752,6 +752,8 @@ void UIWidget::setRect(const Rect& rect)
         });
         m_updateEventScheduled = true;
     }
+
+    return true;
 }
 
 void UIWidget::setStyle(const std::string& styleName)
@@ -978,6 +980,9 @@ UIWidgetPtr UIWidget::getChildById(const std::string& childId)
 
 UIWidgetPtr UIWidget::getChildByPos(const Point& childPos)
 {
+    if(!containsChildPoint(childPos))
+        return nullptr;
+
     for(auto it = m_children.rbegin(); it != m_children.rend(); ++it) {
         const UIWidgetPtr& child = (*it);
         if(child->isExplicitlyVisible() && child->containsPoint(childPos))
@@ -1010,6 +1015,9 @@ UIWidgetPtr UIWidget::recursiveGetChildById(const std::string& id)
 
 UIWidgetPtr UIWidget::recursiveGetChildByPos(const Point& childPos)
 {
+    if(!containsChildPoint(childPos))
+        return nullptr;
+
     for(auto it = m_children.rbegin(); it != m_children.rend(); ++it) {
         const UIWidgetPtr& child = (*it);
         if(child->isExplicitlyVisible() && child->containsPoint(childPos)) {
@@ -1026,6 +1034,9 @@ UIWidgetPtr UIWidget::recursiveGetChildByPos(const Point& childPos)
 UIWidgetList UIWidget::recursiveGetChildrenByPos(const Point& childPos)
 {
     UIWidgetList children;
+    if(!containsChildPoint(childPos))
+        return children;
+
     for(auto it = m_children.rbegin(); it != m_children.rend(); ++it) {
         const UIWidgetPtr& child = (*it);
         if(child->isExplicitlyVisible() && child->containsPoint(childPos)) {
@@ -1342,8 +1353,9 @@ bool UIWidget::onMousePress(const Point& mousePos, Fw::MouseButton button)
         m_lastClickPosition = mousePos;
     }
 
-    if(hasLuaField("onMousePress"))
+    if(hasLuaField("onMousePress")) {
         return callLuaField<bool>("onMousePress", mousePos, button);
+    }
     return true;
 }
 

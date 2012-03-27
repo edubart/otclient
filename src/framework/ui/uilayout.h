@@ -55,7 +55,7 @@ public:
     virtual UIGridLayoutPtr asUIGridLayout() { return nullptr; }
 
 protected:
-    virtual void internalUpdate() = 0;
+    virtual bool internalUpdate() = 0;
 
     Boolean<false> m_updateDisabled;
     Boolean<false> m_updating;

@@ -35,7 +35,7 @@ void EventDispatcher::flush()
         m_scheduledEventList.pop();
 }
 
-void EventDispatcher::poll()
+void EventDispatcher::poll(bool allEvents)
 {
     while(!m_scheduledEventList.empty()) {
         ScheduledEventPtr scheduledEvent = m_scheduledEventList.top();
@@ -45,12 +45,16 @@ void EventDispatcher::poll()
         scheduledEvent->execute();
     }
 
-    m_pollEventsSize = m_eventList.size();
-    for(int i=0;i<m_pollEventsSize;++i) {
-        EventPtr event = m_eventList.front();
-        m_eventList.pop_front();
-        event->execute();
-    }
+    do {
+        m_pollEventsSize = m_eventList.size();
+        if(m_pollEventsSize == 0)
+            break;
+        for(int i=0;i<m_pollEventsSize;++i) {
+            EventPtr event = m_eventList.front();
+            m_eventList.pop_front();
+            event->execute();
+        }
+    } while(allEvents);
 }
 
 ScheduledEventPtr EventDispatcher::scheduleEvent(const SimpleCallback& callback, int delay)

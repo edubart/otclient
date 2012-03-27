@@ -2,6 +2,7 @@ UIMiniWindow = extends(UIWindow)
 
 function UIMiniWindow.create()
   local miniwindow = UIMiniWindow.internalCreate()
+  miniwindow:setFocusable(false)
   return miniwindow
 end
 

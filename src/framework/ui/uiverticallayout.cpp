@@ -34,11 +34,13 @@ void UIVerticalLayout::applyStyle(const OTMLNodePtr& styleNode)
     }
 }
 
-void UIVerticalLayout::internalUpdate()
+bool UIVerticalLayout::internalUpdate()
 {
+    bool changed = false;
+
     UIWidgetPtr parentWidget = getParentWidget();
     if(!parentWidget)
-        return;
+        return false;
 
     UIWidgetList widgets = parentWidget->getChildren();
 
@@ -70,7 +72,8 @@ void UIVerticalLayout::internalUpdate()
             pos.x = clippingRect.left() + (clippingRect.width() - size.width())/2;
         }
 
-        widget->setRect(Rect(pos - parentWidget->getVirtualOffset(), size));
+        if(widget->setRect(Rect(pos - parentWidget->getVirtualOffset(), size)))
+            changed = true;
 
         gap = (m_alignBottom) ? -widget->getMarginTop() : (widget->getHeight() + widget->getMarginBottom());
         gap += m_spacing;
@@ -87,4 +90,6 @@ void UIVerticalLayout::internalUpdate()
             parentWidget->setHeight(prefferedHeight);
         });
     }
+
+    return changed;
 }

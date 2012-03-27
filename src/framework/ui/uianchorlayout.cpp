@@ -81,11 +81,11 @@ void UIAnchorLayout::removeWidget(const UIWidgetPtr& widget)
     removeAnchors(widget);
 }
 
-void UIAnchorLayout::updateWidget(const UIWidgetPtr& widget, UIAnchorGroup& anchorGroup)
+bool UIAnchorLayout::updateWidget(const UIWidgetPtr& widget, UIAnchorGroup& anchorGroup)
 {
     UIWidgetPtr parentWidget = getParentWidget();
     if(!parentWidget)
-        return;
+        return false;
 
     Rect newRect = widget->getRect();
     bool verticalMoved = false;
@@ -214,12 +214,17 @@ void UIAnchorLayout::updateWidget(const UIWidgetPtr& widget, UIAnchorGroup& anch
         }
     }
 
-    widget->setRect(newRect);
+    bool changed = false;
+    if(widget->setRect(newRect))
+        changed = true;
     anchorGroup.setUpdated(true);
+    return changed;
 }
 
-void UIAnchorLayout::internalUpdate()
+bool UIAnchorLayout::internalUpdate()
 {
+    bool changed = false;
+
     // reset all anchors groups update state
     for(auto& it : m_anchorsGroups) {
         UIAnchorGroup& anchorGroup = it.second;
@@ -230,7 +235,11 @@ void UIAnchorLayout::internalUpdate()
     for(auto& it : m_anchorsGroups) {
         const UIWidgetPtr& widget = it.first;
         UIAnchorGroup& anchorGroup = it.second;
-        if(!anchorGroup.isUpdated())
-            updateWidget(widget, anchorGroup);
+        if(!anchorGroup.isUpdated()) {
+            if(updateWidget(widget, anchorGroup))
+                changed = true;
+        }
     }
+
+    return changed;
 }

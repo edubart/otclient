@@ -35,16 +35,17 @@ void UIHorizontalLayout::applyStyle(const OTMLNodePtr& styleNode)
     }
 }
 
-void UIHorizontalLayout::internalUpdate()
+bool UIHorizontalLayout::internalUpdate()
 {
     UIWidgetPtr parentWidget = getParentWidget();
     if(!parentWidget)
-        return;
+        return false;
     UIWidgetList widgets = parentWidget->getChildren();
 
     if(m_alignRight)
         std::reverse(widgets.begin(), widgets.end());
 
+    bool changed = false;
     Rect clippingRect = parentWidget->getClippingRect();
     Point pos = (m_alignRight) ? clippingRect.topRight() : clippingRect.topLeft();
     int prefferedWidth = 0;
@@ -70,7 +71,8 @@ void UIHorizontalLayout::internalUpdate()
             pos.y = clippingRect.top() + (clippingRect.height() - size.height())/2;
         }
 
-        widget->setRect(Rect(pos - parentWidget->getVirtualOffset(), size));
+        if(widget->setRect(Rect(pos - parentWidget->getVirtualOffset(), size)))
+            changed = true;
 
         gap = (m_alignRight) ? -widget->getMarginLeft() : (widget->getWidth() + widget->getMarginRight());
         gap += m_spacing;
@@ -87,4 +89,6 @@ void UIHorizontalLayout::internalUpdate()
             parentWidget->setWidth(prefferedWidth);
         });
     }
+
+    return true;
 }

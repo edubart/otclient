@@ -75,10 +75,10 @@ public:
     UIAnchorLayoutPtr asUIAnchorLayout() { return std::static_pointer_cast<UIAnchorLayout>(shared_from_this()); }
 
 protected:
-    void internalUpdate();
+    bool internalUpdate();
 
 private:
-    void updateWidget(const UIWidgetPtr& widget, UIAnchorGroup& anchorGroup);
+    bool updateWidget(const UIWidgetPtr& widget, UIAnchorGroup& anchorGroup);
     std::map<UIWidgetPtr, UIAnchorGroup> m_anchorsGroups;
 };
 

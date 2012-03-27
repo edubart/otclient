@@ -37,7 +37,7 @@ public:
     UIVerticalLayoutPtr asUIVerticalLayout() { return std::static_pointer_cast<UIVerticalLayout>(shared_from_this()); }
 
 protected:
-    void internalUpdate();
+    bool internalUpdate();
 
     Boolean<false> m_alignBottom;
 };

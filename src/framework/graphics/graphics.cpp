@@ -49,7 +49,6 @@ void Graphics::init()
 #endif
 
     glEnable(GL_BLEND);
-    glDisable(GL_DEPTH_TEST);
 
     m_emptyTexture = TexturePtr(new Texture);
 
@@ -112,6 +111,16 @@ void Graphics::beginRender()
 
 void Graphics::endRender()
 {
+    /*
+    // this is a simple blur effect
+    static Timer timer;
+    if(timer.ticksElapsed() >= 20) {
+        glAccum(GL_MULT, 0.8);
+        glAccum(GL_ACCUM, 0.2);
+        timer.restart();
+    }
+    glAccum(GL_RETURN, 1);
+    */
 }
 
 void Graphics::beginClipping(const Rect& clipRect)
@@ -126,7 +135,7 @@ void Graphics::beginClipping(const Rect& clipRect)
     glColorMask(0, 0, 0, 0);
     g_painter.drawFilledRect(clipRect);
 
-    // set stencil buffer for clippig
+    // set stencil buffer for clipping
     glColorMask(1, 1, 1, 1);
     glStencilFunc(GL_EQUAL, 1, 1);
     glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);

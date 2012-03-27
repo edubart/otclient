@@ -19,14 +19,45 @@ MiniWindow < UIMiniWindow
     height: 24
     image-border-bottom: 1
 
+  UIButton
+    id: closeButton
+    anchors.top: parent.top
+    anchors.right: parent.right
+    margin-top: 5
+    margin-right: 5
+    size: 14 14
+    image-source: /game/images/miniwindowbuttons.png
+    image-clip: 14 0 14 14
+
+    $hover:
+      image-clip: 14 14 14 14
+
+    $pressed:
+      image-clip: 14 28 14 14
+
+  UIButton
+    id: minimizeButton
+    anchors.top: closeButton.top
+    anchors.right: closeButton.left
+    margin-right: 3
+    size: 14 14
+    image-source: /game/images/miniwindowbuttons.png
+    image-clip: 0 0 14 14
+
+    $hover:
+      image-clip: 0 14 14 14
+
+    $pressed:
+      image-clip: 0 28 14 14
+
   ResizeBorder
     id: bottomResizeBorder
     anchors.bottom: parent.bottom
     anchors.left: parent.left
     anchors.right: parent.right
-    height: 2
-    margin-bottom: 1
+    height: 1
     minimum: 70
+    background: #ffffff88
 
   VerticalScrollBar
     id: miniwindowScrollBar
@@ -37,7 +68,6 @@ MiniWindow < UIMiniWindow
     margin-top: 22
     margin-right: 2
     margin-bottom: 2
-    fade-effect: false
 
 MiniWindowContents < ScrollablePanel
   anchors.fill: parent
