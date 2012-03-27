@@ -55,7 +55,7 @@ MiniWindow < UIMiniWindow
     anchors.bottom: parent.bottom
     anchors.left: parent.left
     anchors.right: parent.right
-    height: 1
+    height: 4
     minimum: 70
     background: #ffffff88
 

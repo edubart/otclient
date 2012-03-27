@@ -287,6 +287,8 @@ void WIN32Window::internalCreateWindow()
     if(!m_window)
         logFatal("Unable to create window");
 
+    ShowWindow(m_window, SW_HIDE);
+
     m_deviceContext = GetDC(m_window);
     if(!m_deviceContext)
         logFatal("GetDC failed");
@@ -456,7 +458,7 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
             if(m_cursor)
                 SetCursor(m_cursor);
             else
-                SetCursor(m_defaultCursor);
+                DefWindowProc(hWnd, uMsg, wParam, lParam);
             break;
         }
         case WM_ACTIVATE: {
@@ -485,6 +487,7 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
             break;
         }
         case WM_LBUTTONDOWN: {
+            SetCapture(m_window);
             m_inputEvent.reset(Fw::MousePressInputEvent);
             m_inputEvent.mouseButton = Fw::MouseLeftButton;
             if(m_onInputEvent)
@@ -492,6 +495,7 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
             break;
         }
         case WM_LBUTTONUP: {
+            SetCapture(NULL);
             m_inputEvent.reset(Fw::MouseReleaseInputEvent);
             m_inputEvent.mouseButton = Fw::MouseLeftButton;
             if(m_onInputEvent)
@@ -499,6 +503,7 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
             break;
         }
         case WM_MBUTTONDOWN: {
+            SetCapture(m_window);
             m_inputEvent.reset(Fw::MousePressInputEvent);
             m_inputEvent.mouseButton = Fw::MouseMidButton;
             if(m_onInputEvent)
@@ -506,6 +511,7 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
             break;
         }
         case WM_MBUTTONUP: {
+            SetCapture(NULL);
             m_inputEvent.reset(Fw::MouseReleaseInputEvent);
             m_inputEvent.mouseButton = Fw::MouseMidButton;
             if(m_onInputEvent)
@@ -513,6 +519,7 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
             break;
         }
         case WM_RBUTTONDOWN: {
+            SetCapture(m_window);
             m_inputEvent.reset(Fw::MousePressInputEvent);
             m_inputEvent.mouseButton = Fw::MouseRightButton;
             if(m_onInputEvent)
@@ -520,6 +527,7 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
             break;
         }
         case WM_RBUTTONUP: {
+            SetCapture(NULL);
             m_inputEvent.reset(Fw::MouseReleaseInputEvent);
             m_inputEvent.mouseButton = Fw::MouseRightButton;
             if(m_onInputEvent)
@@ -528,7 +536,18 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
         }
         case WM_MOUSEMOVE: {
             m_inputEvent.reset(Fw::MouseMoveInputEvent);
+
             Point newMousePos(LOWORD(lParam), HIWORD(lParam));
+            if(newMousePos.x >= 32767)
+                newMousePos.x = 0;
+            else
+                newMousePos.x = std::min(newMousePos.x, m_size.width());
+
+            if(newMousePos.y >= 32767)
+                newMousePos.y = 0;
+            else
+                newMousePos.y = std::min(newMousePos.y, m_size.height());
+
             m_inputEvent.mouseMoved = newMousePos - m_inputEvent.mousePos;
             m_inputEvent.mousePos = newMousePos;
             if(m_onInputEvent)
@@ -564,10 +583,12 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
             }
 
             m_visible = !(wParam == SIZE_MINIMIZED);
-            m_size.setWidth(LOWORD(lParam));
-            m_size.setHeight(HIWORD(lParam));
+            if(m_visible) {
+                m_size.setWidth(LOWORD(lParam));
+                m_size.setHeight(HIWORD(lParam));
 
-            m_onResize(m_size);
+                m_onResize(m_size);
+            }
             break;
         }
         default:

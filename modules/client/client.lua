@@ -35,11 +35,11 @@ function Client.init()
   g_window.setIcon(resolvepath('clienticon.png'))
 
   -- show the only window after the first frame is rendered
-  addEvent(function()
-    addEvent(function()
+  scheduleEvent(function()
+    scheduleEvent(function()
         g_window.show()
-    end)
-  end)
+    end, 0)
+  end, 0)
 end
 
 function Client.terminate()

@@ -226,7 +226,7 @@ void Application::poll()
 
     Connection::poll();
     //g_eventDispatcher.poll(true);
-    g_eventDispatcher.poll();
+    g_eventDispatcher.poll(true);
 }
 
 void Application::close()
