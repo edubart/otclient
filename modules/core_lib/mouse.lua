@@ -1,19 +1,29 @@
 Mouse = {}
 
+local cursorChanged = true
+
 function Mouse.setTargetCursor()
   g_window.setMouseCursor('/core_styles/cursors/targetcursor.png', {x=9,y=9})
+  cursorChanged = true
 end
 
 function Mouse.setHorizontalCursor()
   g_window.setMouseCursor('/core_styles/cursors/horizontal.png', {x=9,y=4})
+  cursorChanged = true
 end
 
 function Mouse.setVerticalCursor()
   g_window.setMouseCursor('/core_styles/cursors/vertical.png', {x=4,y=9})
+  cursorChanged = true
 end
 
 function Mouse.restoreCursor()
   g_window.restoreMouseCursor()
+  cursorChanged = false
+end
+
+function Mouse.isCursorChanged()
+  return cursorChanged
 end
 
 function Mouse.isPressed()

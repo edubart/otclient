@@ -40,7 +40,9 @@ MainWindow
 
   LineEdit
     id: serverHostLineEdit
-    tooltip: Only protocol 8.6 is supported
+    tooltip: |-
+      Make sure that your client uses
+      the correct game protocol version
     anchors.left: serverLabel.left
     anchors.right: serverLabel.right
     anchors.top: serverLabel.bottom

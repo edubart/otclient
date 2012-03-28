@@ -9,7 +9,7 @@ end
 
 function UISplitter:onHoverChange(hovered)
   if hovered then
-    if g_ui.getDraggingWidget() then return end
+    if Mouse.isCursorChanged() or Mouse.isPressed() then return end
     if self:getWidth() > self:getHeight() then
       Mouse.setVerticalCursor()
       self.vertical = true

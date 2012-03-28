@@ -65,6 +65,7 @@ IF(CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInf
     OPTION(CRASH_HANDLER "Generate crash reports" ON)
 ELSE()
     MESSAGE(STATUS "Debug information: OFF")
+    OPTION(CRASH_HANDLER "Generate crash reports" OFF)
 ENDIF()
 
 IF(CMAKE_BUILD_TYPE STREQUAL "Release")
