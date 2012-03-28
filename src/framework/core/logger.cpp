@@ -47,8 +47,13 @@ void Logger::log(Fw::LogLevel level, const std::string& message)
     if(m_logMessages.size() > MAX_LOG_HISTORY)
         m_logMessages.pop_front();
 
-    if(m_onLog)
-        m_onLog(level, outmsg, now);
+    if(m_onLog) {
+        // schedule log callback, because this callback can run lua code that may affect the current state
+        g_eventDispatcher.addEvent([=] {
+            if(m_onLog)
+                m_onLog(level, outmsg, now);
+        });
+    }
 
     if(level == Fw::LogFatal) {
         g_window.displayFatalError(message);
