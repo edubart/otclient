@@ -49,7 +49,7 @@ void Graphics::init()
 #endif
 
     glEnable(GL_BLEND);
-    glClear(GL_ACCUM_BUFFER_BIT);
+    //glClear(GL_ACCUM_BUFFER_BIT);
 
     m_emptyTexture = TexturePtr(new Texture);
 
@@ -83,7 +83,7 @@ bool Graphics::parseOption(const std::string& option)
 void Graphics::resize(const Size& size)
 {
     setViewportSize(size);
-    glClear(GL_ACCUM_BUFFER_BIT);
+    //glClear(GL_ACCUM_BUFFER_BIT);
 
     // The projection matrix converts from Painter's coordinate system to GL's coordinate system
     //    * GL's viewport is 2x2, Painter's is width x height
@@ -114,13 +114,15 @@ void Graphics::beginRender()
 void Graphics::endRender()
 {
     // this is a simple blur effect
+    /*
     static Timer timer;
     if(timer.ticksElapsed() >= 10) {
-        glAccum(GL_MULT, 0.8);
-        glAccum(GL_ACCUM, 0.2);
+        glAccum(GL_MULT, 0.9);
+        glAccum(GL_ACCUM, 0.1);
         timer.restart();
     }
     glAccum(GL_RETURN, 1);
+    */
 }
 
 void Graphics::beginClipping(const Rect& clipRect)

@@ -306,7 +306,7 @@ void WIN32Window::internalChooseGLVisual()
                                          0,                          // No Alpha Buffer
                                          0,                          // Shift Bit Ignored
                                          0,                          // No Accumulation Buffer
-                                         8, 8, 8, 8,                 // Accumulation Bits Ignored
+                                         0, 0, 0, 0,                 // Accumulation Bits Ignored
                                          16,                         // 16Bit Z-Buffer (Depth Buffer)
                                          1,                          // 1Bit Stencil Buffer
                                          0,                          // No Auxiliary Buffer
@@ -555,8 +555,9 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
             break;
         }
         case WM_MOUSEWHEEL: {
+            m_inputEvent.reset(Fw::MouseWheelInputEvent);
             m_inputEvent.mouseButton = Fw::MouseMidButton;
-            m_inputEvent.wheelDirection = HIWORD(wParam) > 0 ? Fw::MouseWheelUp : Fw::MouseWheelDown;
+            m_inputEvent.wheelDirection = ((short)HIWORD(wParam)) > 0 ? Fw::MouseWheelUp : Fw::MouseWheelDown;
             if(m_onInputEvent)
                 m_onInputEvent(m_inputEvent);
             break;
