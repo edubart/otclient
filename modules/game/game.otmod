@@ -19,7 +19,7 @@ Module
     - game_combatcontrols
     - game_battle
     - game_viplist
-    //- game_hotkeys
+    - game_hotkeys
 
   @onLoad: |
     importStyle 'styles/items.otui'

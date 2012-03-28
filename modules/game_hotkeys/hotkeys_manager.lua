@@ -34,6 +34,7 @@ local hotkeyColors = {
 
 -- public functions
 function HotkeysManager.init()
+  print("PASSO HK INIT")
   hotkeysWindow = displayUI('hotkeys_manager.otui')
 
   hotkeysWindow:setVisible(false)
@@ -145,7 +146,7 @@ end
 function HotkeysManager.onChooseItemMouseRelease(self, mousePosition, mouseButton)
   local item = nil
   if mouseButton == MouseLeftButton then
-    local clickedWidget = g_game.gameUi:recursiveGetChildByPos(mousePosition, false)
+    local clickedWidget = GameInterface.getRootPanel():recursiveGetChildByPos(mousePosition, false)
     if clickedWidget then
       if clickedWidget:getClassName() == 'UIMap' then
         local tile = clickedWidget:getTile(mousePosition)
@@ -304,7 +305,7 @@ function HotkeysManager.call(keyCombo)
         end
       elseif hotKey.useType == HOTKEY_MANAGER_USEWITH then
         itemWidget:setItemId(hotKey.itemId)
-        g_game.startUseWith(itemWidget:getItem())
+        GameInterface.startUseWith(itemWidget:getItem())
       end
     end
   end

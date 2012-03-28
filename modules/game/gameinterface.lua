@@ -7,6 +7,7 @@ local gameRightPanel
 local gameLeftPanel
 local gameBottomPanel
 local logoutButton
+local m_mouseGrabberWidget
 
 function GameInterface.init()
   connect(g_game, { onGameStart = GameInterface.show }, true)
@@ -16,6 +17,9 @@ function GameInterface.init()
   gameRootPanel:hide()
   gameRootPanel:lower()
 
+  m_mouseGrabberWidget = gameRootPanel:getChildById('mouseGrabber')
+  connect(m_mouseGrabberWidget, { onMouseRelease = GameInterface.onUseWithMouseRelease })
+  
   gameMapPanel = gameRootPanel:getChildById('gameMapPanel')
   gameRightPanel = gameRootPanel:getChildById('gameRightPanel')
   gameLeftPanel = gameRootPanel:getChildById('gameLeftPanel')
@@ -56,6 +60,7 @@ end
 function GameInterface.terminate()
   disconnect(g_game, { onGameStart = GameInterface.show })
   disconnect(g_game, { onGameEnd = GameInterface.hide })
+  disconnect(m_mouseGrabberWidget, { onMouseRelease = onUseWithMouseRelease })
 
   logoutButton:destroy()
   logoutButton = nil
@@ -66,6 +71,8 @@ function GameInterface.terminate()
   gameLeftPanel = nil
   gameBottomPanel = nil
   GameInterface = nil
+  m_mouseGrabberWidget:destroy()
+  m_mouseGrabberWidget = nil
 end
 
 function GameInterface.show()
@@ -98,6 +105,33 @@ function GameInterface.tryLogout()
   end
 end
 
+function GameInterface.onUseWithMouseRelease(self, mousePosition, mouseButton)
+  if GameInterface.selectedThing == nil then return false end
+  if mouseButton == MouseLeftButton then
+    local clickedWidget = gameRootPanel:recursiveGetChildByPos(mousePosition, false)
+    if clickedWidget then
+      if clickedWidget:getClassName() == 'UIMap' then
+        local tile = clickedWidget:getTile(mousePosition)
+        if tile then
+          g_game.useWith(GameInterface.selectedThing, tile:getTopMultiUseThing())
+        end
+      elseif clickedWidget:getClassName() == 'UIItem' and not clickedWidget:isVirtual() then
+        g_game.useWith(GameInterface.selectedThing, clickedWidget:getItem())
+      end
+    end
+  end
+  GameInterface.selectedThing = nil
+  Mouse.restoreCursor()
+  self:ungrabMouse()
+  return true
+end
+
+function GameInterface.startUseWith(thing)
+  GameInterface.selectedThing = thing
+  m_mouseGrabberWidget:grabMouse()
+  Mouse.setTargetCursor()
+end
+
 function GameInterface.createThingMenu(menuPosition, lookThing, useThing, creatureThing)
   local menu = createWidget('PopupMenu')
 
@@ -115,7 +149,7 @@ function GameInterface.createThingMenu(menuPosition, lookThing, useThing, creatu
       end
     else
       if useThing:isMultiUse() then
-        menu:addOption('Use with ...', function() g_game.startUseWith(useThing) end)
+        menu:addOption('Use with ...', function() GameInterface.startUseWith(useThing) end)
       else
         menu:addOption('Use', function() g_game.use(useThing) end)
       end
@@ -230,7 +264,7 @@ function GameInterface.processMouseAction(menuPosition, mouseButton, autoWalk, l
         return true
         end
       elseif useThing:isMultiUse() then
-        g_game.startUseWith(useThing)
+        GameInterface.startUseWith(useThing)
         return true
       else
         g_game.use(useThing)
@@ -255,7 +289,7 @@ function GameInterface.processMouseAction(menuPosition, mouseButton, autoWalk, l
           return true
         end
       elseif multiUseThing:isMultiUse() then
-        g_game.startUseWith(multiUseThing)
+        GameInterface.startUseWith(useThing)
         return true
       else
         g_game.use(multiUseThing)
