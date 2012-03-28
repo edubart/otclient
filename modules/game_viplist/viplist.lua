@@ -7,16 +7,30 @@ local addVipWindow
 
 -- public functions
 function VipList.init()
+  connect(g_game, { onGameEnd = VipList.clear,
+                    onAddVip = VipList.onAddVip,
+                    onVipStateChange = VipList.onVipStateChange })
+
+
   vipWindow = displayUI('viplist.otui', GameInterface.getLeftPanel())
   vipButton = TopMenu.addGameToggleButton('vipListButton', 'VIP list', 'viplist.png', VipList.toggle)
   vipButton:setOn(true)
 end
 
 function VipList.terminate()
+  disconnect(g_game, { onGameEnd = VipList.clear,
+                       onAddVip = VipList.onAddVip,
+                       onVipStateChange = VipList.onVipStateChange })
+
   vipWindow:destroy()
   vipWindow = nil
   vipButton:destroy()
   vipButton = nil
+end
+
+function VipList.clear()
+  local vipList = vipWindow:getChildById('contentsPanel')
+  vipList:destroyChildren()
 end
 
 function VipList.toggle()
@@ -98,7 +112,7 @@ end
 function VipList.onVipListMousePress(widget, mousePos, mouseButton)
   if mouseButton ~= MouseRightButton then return end
 
-  local vipList = vipWindow:getChildById('vipList')
+  local vipList = vipWindow:getChildById('contentsPanel')
 
   local menu = createWidget('PopupMenu')
   menu:addOption('Add new VIP', function() VipList.createAddWindow() end)
@@ -110,7 +124,7 @@ end
 function VipList.onVipListLabelMousePress(widget, mousePos, mouseButton)
   if mouseButton ~= MouseRightButton then return end
 
-  local vipList = vipWindow:getChildById('vipList')
+  local vipList = vipWindow:getChildById('contentsPanel')
 
   local menu = createWidget('PopupMenu')
   menu:addOption('Add new VIP', function() VipList.createAddWindow() end)
@@ -121,9 +135,3 @@ function VipList.onVipListLabelMousePress(widget, mousePos, mouseButton)
 
   return true
 end
-
-
-connect(g_game, { onGameStart = VipList.create,
-                onGameEnd = VipList.destroy,
-                onAddVip = VipList.onAddVip,
-                onVipStateChange = VipList.onVipStateChange })
