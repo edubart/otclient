@@ -50,15 +50,6 @@ MiniWindow < UIMiniWindow
     $pressed:
       image-clip: 0 28 14 14
 
-  ResizeBorder
-    id: bottomResizeBorder
-    anchors.bottom: parent.bottom
-    anchors.left: parent.left
-    anchors.right: parent.right
-    height: 4
-    minimum: 70
-    background: #ffffff88
-
   VerticalScrollBar
     id: miniwindowScrollBar
     anchors.top: parent.top
@@ -67,11 +58,21 @@ MiniWindow < UIMiniWindow
     step: 14
     margin-top: 22
     margin-right: 2
-    margin-bottom: 2
+    margin-bottom: 3
+    pixels-scroll: true
+
+  ResizeBorder
+    id: bottomResizeBorder
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    height: 3
+    minimum: 70
+    background: #ffffff88
 
 MiniWindowContents < ScrollablePanel
   anchors.fill: parent
-  padding: 25 21 2 8
+  padding: 25 21 3 8
   vertical-scrollbar: miniwindowScrollBar
 
 BorderlessGameWindow < UIWindow

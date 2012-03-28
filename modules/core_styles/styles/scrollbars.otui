@@ -20,6 +20,7 @@ VerticalScrollBar < UIScrollBar
   image-source: images/scrollbar.png
   image-clip: 39 0 13 65
   image-border: 1
+  pixels-scroll: true
 
   UIButton
     id: decrementButton

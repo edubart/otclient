@@ -30,6 +30,7 @@ MainWindow
     anchors.bottom: characterList.bottom
     anchors.right: characterList.right
     step: 14
+    pixels-scroll: true
 
   Label
     id: accountStatusLabel

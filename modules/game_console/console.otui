@@ -30,6 +30,7 @@ ConsoleTabBarPanel < TabBarPanel
     anchors.bottom: parent.bottom
     anchors.right: parent.right
     step: 14
+    pixels-scroll: true
 
 ConsoleTabBarButton < TabBarButton
 

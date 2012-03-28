@@ -10,7 +10,7 @@ local function calcValues(self)
   if self.orientation == 'vertical' then
     pxrange = (self:getHeight() - decrementButton:getHeight() - decrementButton:getMarginTop() - decrementButton:getMarginBottom()
                                 - incrementButton:getHeight() - incrementButton:getMarginTop() - incrementButton:getMarginBottom())
-    center = self:getY() + self:getHeight() / 2
+    center = self:getY() + math.floor(self:getHeight() / 2)
   else -- horizontal
     pxrange = (self:getWidth() - decrementButton:getWidth() - decrementButton:getMarginLeft() - decrementButton:getMarginRight()
                                - incrementButton:getWidth() - incrementButton:getMarginLeft() - incrementButton:getMarginRight())
@@ -18,11 +18,33 @@ local function calcValues(self)
   end
 
   local range = self.maximum - self.minimum + 1
-  local proportion = math.min(math.max(range*(self.step/range), 1), range)/range
-  local px = math.max(math.floor(proportion * pxrange), 10)
+
+  local proportion
+
+  if self.pixelsScroll then
+    proportion = pxrange/(range+pxrange)
+  else
+    proportion = math.min(math.max(self.step, 1), range)/range
+  end
+
+  local px = math.max(proportion * pxrange, 10)
+  px = px - px % 2 + 1
+
   local offset = 0
-  if range > 1 then
-    offset = math.ceil((((self.value - self.minimum) / (range - 1)) - 0.5) * (pxrange - px))
+  if range == 0 or self.value == self.minimum then
+    if self.orientation == 'vertical' then
+      offset = -math.floor((self:getHeight() - px) / 2) + decrementButton:getMarginRect().height
+    else
+      offset = -math.floor((self:getWidth() - px) / 2) + decrementButton:getMarginRect().width
+    end
+  elseif range > 1 and self.value == self.maximum then
+    if self.orientation == 'vertical' then
+      offset = math.ceil((self:getHeight() - px) / 2) - incrementButton:getMarginRect().height
+    else
+      offset = math.ceil((self:getWidth() - px) / 2) - incrementButton:getMarginRect().width
+    end
+  elseif range > 1 then
+    offset = (((self.value - self.minimum) / (range - 1)) - 0.5) * (pxrange - px)
   end
 
   return range, pxrange, px, offset, center
@@ -71,6 +93,7 @@ function UIScrollBar.create()
   scrollbar.maximum = 0
   scrollbar.step = 1
   scrollbar.orientation = 'vertical'
+  scrollbar.pixelsScroll = false
   return scrollbar
 end
 
@@ -95,6 +118,8 @@ function UIScrollBar:onStyleApply(styleName, styleNode)
       self:setOrientation(value)
     elseif name == 'value' then
       self:setValue(value)
+    elseif name == 'pixels-scroll' then
+      self.pixelsScroll = true
     end
   end
 end
