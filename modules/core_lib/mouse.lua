@@ -1,6 +1,6 @@
 Mouse = {}
 
-local cursorChanged = true
+local cursorChanged = false
 
 function Mouse.setTargetCursor()
   g_window.setMouseCursor('/core_styles/cursors/targetcursor.png', {x=9,y=9})
