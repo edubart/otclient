@@ -77,8 +77,8 @@ public:
 
     bool isFollowingCreature() { return !!m_followingCreature; }
 
-    int getFirstVisibleFloor();
-    int getLastVisibleFloor();
+    int calcFirstVisibleFloor();
+    int calcLastVisibleFloor();
     Position getCameraPosition();
     TilePtr getTile(const Point& mousePos, const Rect& mapRect);
     Size getVisibleDimension() { return m_visibleDimension; }

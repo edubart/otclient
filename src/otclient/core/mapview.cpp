@@ -193,8 +193,10 @@ void MapView::updateVisibleTilesCache(int start)
             m_updateTilesCacheEvent = nullptr;
         }
 
-        m_cachedFirstVisibleFloor = getFirstVisibleFloor();
-        m_cachedLastVisibleFloor = getLastVisibleFloor();
+        m_cachedFirstVisibleFloor = calcFirstVisibleFloor();
+        m_cachedLastVisibleFloor = calcLastVisibleFloor();
+        assert(m_cachedFirstVisibleFloor >= 0 && m_cachedLastVisibleFloor >= 0 &&
+               m_cachedFirstVisibleFloor <= Otc::MAX_Z && m_cachedLastVisibleFloor <= Otc::MAX_Z);
 
         if(m_cachedLastVisibleFloor < m_cachedFirstVisibleFloor)
             m_cachedLastVisibleFloor = m_cachedFirstVisibleFloor;
@@ -461,70 +463,81 @@ void MapView::setVisibleDimension(const Size& visibleDimension)
         requestVisibleTilesCacheUpdate();
 }
 
-int MapView::getFirstVisibleFloor()
+int MapView::calcFirstVisibleFloor()
 {
+    int z = 7;
     // return forced first visible floor
-    if(m_lockedFirstVisibleFloor != -1)
-        return m_lockedFirstVisibleFloor;
+    if(m_lockedFirstVisibleFloor != -1) {
+        z = m_lockedFirstVisibleFloor;
+    } else {
+        Position cameraPosition = getCameraPosition();
 
-    Position cameraPosition = getCameraPosition();
+        // avoid rendering multifloors in far views
+        if(m_viewRange >= FAR_VIEW) {
+            z = cameraPosition.z;
+        } else {
+            // if nothing is limiting the view, the first visible floor is 0
+            int firstFloor = 0;
 
-    // avoid rendering multifloors in far views
-    if(m_viewRange >= FAR_VIEW)
-        return cameraPosition.z;
+            // limits to underground floors while under sea level
+            if(cameraPosition.z > Otc::SEA_FLOOR)
+                firstFloor = std::max(cameraPosition.z - Otc::AWARE_UNDEGROUND_FLOOR_RANGE, (int)Otc::UNDERGROUND_FLOOR);
 
-    // if nothing is limiting the view, the first visible floor is 0
-    int firstFloor = 0;
+            // loop in 3x3 tiles around the camera
+            for(int ix = -1; ix <= 1 && firstFloor < cameraPosition.z; ++ix) {
+                for(int iy = -1; iy <= 1 && firstFloor < cameraPosition.z; ++iy) {
+                    Position pos = cameraPosition.translated(ix, iy);
 
-    // limits to underground floors while under sea level
-    if(cameraPosition.z > Otc::SEA_FLOOR)
-        firstFloor = std::max(cameraPosition.z - Otc::AWARE_UNDEGROUND_FLOOR_RANGE, (int)Otc::UNDERGROUND_FLOOR);
+                    // process tiles that we can look through, e.g. windows, doors
+                    if((ix == 0 && iy == 0) || (/*(std::abs(ix) != std::abs(iy)) && */g_map.isLookPossible(pos))) {
+                        Position upperPos = pos;
+                        Position coveredPos = pos;
 
-    // loop in 3x3 tiles around the camera
-    for(int ix = -1; ix <= 1 && firstFloor < cameraPosition.z; ++ix) {
-        for(int iy = -1; iy <= 1 && firstFloor < cameraPosition.z; ++iy) {
-            Position pos = cameraPosition.translated(ix, iy);
+                        while(coveredPos.coveredUp() && upperPos.up() && upperPos.z >= firstFloor) {
+                            // check tiles physically above
+                            TilePtr tile = g_map.getTile(upperPos);
+                            if(tile && tile->limitsFloorsView()) {
+                                firstFloor = upperPos.z + 1;
+                                break;
+                            }
 
-            // process tiles that we can look through, e.g. windows, doors
-            if((ix == 0 && iy == 0) || (/*(std::abs(ix) != std::abs(iy)) && */g_map.isLookPossible(pos))) {
-                Position upperPos = pos;
-                Position coveredPos = pos;
-
-                while(coveredPos.coveredUp() && upperPos.up() && upperPos.z >= firstFloor) {
-                    // check tiles physically above
-                    TilePtr tile = g_map.getTile(upperPos);
-                    if(tile && tile->limitsFloorsView()) {
-                        firstFloor = upperPos.z + 1;
-                        break;
-                    }
-
-                    // check tiles geometrically above
-                    tile = g_map.getTile(coveredPos);
-                    if(tile && tile->limitsFloorsView()) {
-                        firstFloor = coveredPos.z + 1;
-                        break;
+                            // check tiles geometrically above
+                            tile = g_map.getTile(coveredPos);
+                            if(tile && tile->limitsFloorsView()) {
+                                firstFloor = coveredPos.z + 1;
+                                break;
+                            }
+                        }
                     }
                 }
             }
+
+            z = firstFloor;
         }
     }
 
-    return firstFloor;
+    z = std::min(std::max(z, 0), (int)Otc::MAX_Z);
+    return z;
 }
 
-int MapView::getLastVisibleFloor()
+int MapView::calcLastVisibleFloor()
 {
+    int z = 7;
+
     Position cameraPosition = getCameraPosition();
-
     // avoid rendering multifloors in far views
-    if(m_viewRange >= FAR_VIEW)
-        return cameraPosition.z;
+    if(m_viewRange >= FAR_VIEW) {
+        z = cameraPosition.z;
+    } else {
+        // view only underground floors when below sea level
+        if(cameraPosition.z > Otc::SEA_FLOOR)
+            z = cameraPosition.z + Otc::AWARE_UNDEGROUND_FLOOR_RANGE;
+        else
+            z = Otc::SEA_FLOOR;
+    }
 
-    // view only underground floors when below sea level
-    if(cameraPosition.z > Otc::SEA_FLOOR)
-        return std::min(cameraPosition.z + Otc::AWARE_UNDEGROUND_FLOOR_RANGE, (int)Otc::MAX_Z);
-    else
-        return Otc::SEA_FLOOR;
+    z = std::min(std::max(z, 0), (int)Otc::MAX_Z);
+    return z;
 }
 
 Position MapView::getCameraPosition()

@@ -45,19 +45,29 @@ void EventDispatcher::poll()
         scheduledEvent->execute();
     }
 
-    // execute events list up to 3 times, this is needed because some events can schedule new events that would
+    // execute events list up to 10 times, this is needed because some events can schedule new events that would
     // change the UIWidgets layout, in this case we must execute these new events before we continue rendering,
     // we can't loop until the event list is empty, because this could lead to infinite loops
     // if someone write a module with bad code
-    for(int i=0;i<3;++i) {
-        m_pollEventsSize = m_eventList.size();
-        if(m_pollEventsSize == 0)
+    m_pollEventsSize = m_eventList.size();
+    int count = 0;
+    while(m_pollEventsSize > 0) {
+        if(count > 50) {
+            static bool reported = false;
+            if(!reported)  {
+                logError("ATTENTION the event list is not getting empty, this could be caused by some bad code");
+                reported = true;
+            }
             break;
+        }
+
         for(int i=0;i<m_pollEventsSize;++i) {
             EventPtr event = m_eventList.front();
             m_eventList.pop_front();
             event->execute();
         }
+        m_pollEventsSize = m_eventList.size();
+        count++;
     }
 }
 

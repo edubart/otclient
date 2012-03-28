@@ -8,8 +8,10 @@ function UIMiniWindowContainer.create()
 end
 
 function UIMiniWindowContainer:onDrop(widget, mousePos)
-  widget:setParent(self)
-  return true
+  if widget:getClassName() == 'UIMiniWindow' then
+    widget:setParent(self)
+    return true
+  end
 end
 
 function UIMiniWindowContainer:getClassName()

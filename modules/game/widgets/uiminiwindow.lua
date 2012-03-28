@@ -73,3 +73,6 @@ function UIMiniWindow:onMinimize()
   end
 end
 
+function UIMiniWindow:getClassName()
+  return 'UIMiniWindow'
+end
