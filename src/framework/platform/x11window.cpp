@@ -367,6 +367,7 @@ void X11Window::internalChooseGLVisual()
         GLX_USE_GL,
         GLX_RGBA,
         GLX_DOUBLEBUFFER,
+        GLX_STENCIL_SIZE, 1,
         GLX_ACCUM_RED_SIZE, 8,
         GLX_ACCUM_GREEN_SIZE, 8,
         GLX_ACCUM_BLUE_SIZE, 8,

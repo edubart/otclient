@@ -115,7 +115,7 @@ void Graphics::endRender()
 {
     // this is a simple blur effect
     static Timer timer;
-    if(timer.ticksElapsed() >= 15) {
+    if(timer.ticksElapsed() >= 10) {
         glAccum(GL_MULT, 0.8);
         glAccum(GL_ACCUM, 0.2);
         timer.restart();

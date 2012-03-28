@@ -306,7 +306,7 @@ void WIN32Window::internalChooseGLVisual()
                                          0,                          // No Alpha Buffer
                                          0,                          // Shift Bit Ignored
                                          0,                          // No Accumulation Buffer
-                                         0, 0, 0, 0,                 // Accumulation Bits Ignored
+                                         8, 8, 8, 8,                 // Accumulation Bits Ignored
                                          16,                         // 16Bit Z-Buffer (Depth Buffer)
                                          1,                          // 1Bit Stencil Buffer
                                          0,                          // No Auxiliary Buffer
