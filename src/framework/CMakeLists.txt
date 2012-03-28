@@ -8,7 +8,6 @@ SET(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake;${CMAKE_MODULE_PATH}")
 
 # framework options
 OPTION(WINDOWS_CONSOLE "Enables console window on Windows platform" OFF)
-OPTION(CRASH_HANDLER "Generate crash reports" OFF)
 OPTION(USE_OPENGL_ES2 "Use OpenGL ES 2.0 (for mobiles devices)" OFF)
 SET(BUILD_REVISION "custom" CACHE "Git revision string (intended for releases)" STRING)
 
@@ -63,6 +62,7 @@ ENDIF()
 IF(CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
     ADD_DEFINITIONS(-DDEBUG)
     MESSAGE(STATUS "Debug information: ON")
+    OPTION(CRASH_HANDLER "Generate crash reports" ON)
 ELSE()
     MESSAGE(STATUS "Debug information: OFF")
 ENDIF()
