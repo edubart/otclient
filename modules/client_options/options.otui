@@ -1,13 +1,14 @@
 OptionCheckBox < CheckBox
   @onCheckChange: Options.setOption(self:getId(), self:isChecked())
   @onSetup: self:setChecked(Options.getOption(self:getId()))
+  height: 16
 
   $first:
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: parent.top
 
-  $middle:
+  $!first:
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: prev.bottom
@@ -16,7 +17,7 @@ OptionCheckBox < CheckBox
 MainWindow
   id: optionsWindow
   text: Options
-  size: 286 200
+  size: 286 230
 
   @onEnter: Options.hide()
   @onEscape: Options.hide()

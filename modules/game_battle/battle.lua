@@ -246,7 +246,7 @@ end
 
 function Battle.onMouseRelease(self, mousePosition, mouseButton)
   if mouseButton == MouseRightButton then
-    g_game.createThingMenu(mousePosition, nil, nil, self.creature)
+    GameInterface.createThingMenu(mousePosition, nil, nil, self.creature)
     return true
   elseif mouseButton == MouseLeftButton then
     local modifiers = g_window.getKeyboardModifiers()
