@@ -80,7 +80,7 @@ void UIManager::inputEvent(const InputEvent& event)
             break;
         case Fw::MousePressInputEvent:
             if(event.mouseButton == Fw::MouseLeftButton && m_mouseReceiver->isVisible()) {
-                UIWidgetPtr pressedWidget = m_mouseReceiver->recursiveGetChildByPos(event.mousePos);
+                UIWidgetPtr pressedWidget = m_mouseReceiver->recursiveGetChildByPos(event.mousePos, false);
                 if(pressedWidget && !pressedWidget->isEnabled())
                     pressedWidget = nullptr;
                 updatePressedWidget(pressedWidget, event.mousePos);
@@ -219,7 +219,7 @@ void UIManager::updateHoveredWidget()
             return;
 
         m_hoverUpdateScheduled = false;
-        UIWidgetPtr hoveredWidget = m_rootWidget->recursiveGetChildByPos(g_window.getMousePosition());
+        UIWidgetPtr hoveredWidget = m_rootWidget->recursiveGetChildByPos(g_window.getMousePosition(), false);
         if(hoveredWidget && !hoveredWidget->isEnabled())
             hoveredWidget = nullptr;
 

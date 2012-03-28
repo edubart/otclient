@@ -130,6 +130,7 @@ public:
     void setVirtualOffset(const Point& offset);
 
     bool isVisible();
+    bool isAnchored();
     bool isChildLocked(const UIWidgetPtr& child);
     bool hasChild(const UIWidgetPtr& child);
     int getChildIndex(const UIWidgetPtr& child);
@@ -144,7 +145,7 @@ public:
     UIWidgetPtr getChildByPos(const Point& childPos);
     UIWidgetPtr getChildByIndex(int index);
     UIWidgetPtr recursiveGetChildById(const std::string& id);
-    UIWidgetPtr recursiveGetChildByPos(const Point& childPos);
+    UIWidgetPtr recursiveGetChildByPos(const Point& childPos, bool wantsPhantom);
     UIWidgetList recursiveGetChildrenByPos(const Point& childPos);
     UIWidgetPtr backwardsGetWidgetById(const std::string& id);
 

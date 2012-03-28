@@ -6,13 +6,13 @@ local vipButton
 local addVipWindow
 
 -- public functions
-function VipList.create()
-  vipWindow = displayUI('viplist.otui', GameInterface.getRightPanel())
-  vipWindow:hide()
-  vipButton = TopMenu.addGameButton('vipListButton', 'VIP list', 'viplist.png', VipList.toggle)
+function VipList.init()
+  vipWindow = displayUI('viplist.otui', GameInterface.getLeftPanel())
+  vipButton = TopMenu.addGameToggleButton('vipListButton', 'VIP list', 'viplist.png', VipList.toggle)
+  vipButton:setOn(true)
 end
 
-function VipList.destroy()
+function VipList.terminate()
   vipWindow:destroy()
   vipWindow = nil
   vipButton:destroy()
@@ -41,7 +41,7 @@ end
 
 -- hooked events
 function VipList.onAddVip(id, name, online)
-  local vipList = vipWindow:getChildById('vipList')
+  local vipList = vipWindow:getChildById('contentsPanel')
 
   local label = createWidget('VipListLabel', nil)
   label:setId('vip' .. id)

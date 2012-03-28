@@ -7,9 +7,10 @@ MiniWindow
   id: vipWindow
   text: VIP List
   height: 100
+  icon: viplist.png
+  @onClose: VipList.toggle()
 
-  UIWidget
-    id: vipList
+  MiniWindowContents
     layout: verticalBox
     anchors.fill: parent
     &onMousePress: VipList.onVipListMousePress

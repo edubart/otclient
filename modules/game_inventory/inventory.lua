@@ -1,6 +1,7 @@
 Inventory = {}
 
 -- private variables
+local inventoryWindow
 local inventoryPanel
 local inventoryButton
 
@@ -13,7 +14,9 @@ function Inventory.init()
 
   Keyboard.bindKeyDown('Ctrl+I', Inventory.toggle)
 
-  inventoryPanel = displayUI('inventory.otui', GameInterface.getRightPanel()):getChildById('inventoryPanel')
+  inventoryWindow = displayUI('inventory.otui', GameInterface.getRightPanel())
+  inventoryWindow.onClose = Inventory.toggle
+  inventoryPanel = inventoryWindow:getChildById('contentsPanel')
   inventoryButton = TopMenu.addGameToggleButton('inventoryButton', 'Inventory (Ctrl+I)', 'inventory.png', Inventory.toggle)
   inventoryButton:setOn(true)
 
@@ -30,15 +33,16 @@ function Inventory.terminate()
 
   Keyboard.unbindKeyDown('Ctrl+I')
 
-  inventoryPanel:destroy()
-  inventoryPanel = nil
+  inventoryWindow:destroy()
   inventoryButton:destroy()
+  inventoryWindow = nil
   inventoryButton = nil
+  inventoryPanel = nil
 end
 
 function Inventory.toggle()
-  local visible = not inventoryPanel:isExplicitlyVisible()
-  inventoryPanel:setVisible(visible)
+  local visible = not inventoryWindow:isExplicitlyVisible()
+  inventoryWindow:setVisible(visible)
   inventoryButton:setOn(visible)
 end
 

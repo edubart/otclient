@@ -145,7 +145,7 @@ end
 function HotkeysManager.onChooseItemMouseRelease(self, mousePosition, mouseButton)
   local item = nil
   if mouseButton == MouseLeftButton then
-    local clickedWidget = g_game.gameUi:recursiveGetChildByPos(mousePosition)
+    local clickedWidget = g_game.gameUi:recursiveGetChildByPos(mousePosition, false)
     if clickedWidget then
       if clickedWidget:getClassName() == 'UIMap' then
         local tile = clickedWidget:getTile(mousePosition)

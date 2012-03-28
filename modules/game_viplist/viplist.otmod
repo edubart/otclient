@@ -6,3 +6,7 @@ Module
 
   @onLoad: |
     dofile 'viplist'
+    VipList.init()
+
+  @onUnload:
+    VipList.terminate()

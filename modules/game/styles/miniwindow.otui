@@ -1,23 +1,22 @@
 MiniWindow < UIMiniWindow
   font: verdana-11px-antialised
-  //icon: /core_styles/icons/login.png
   icon-rect: 4 4 16 16
   width: 192
   height: 200
   text-offset: 26 5
   text-align: topLeft
-  margin-top: 2
-  margin-left: 6
-  margin-right: 6
+  margin-bottom: 2
   move-policy: free updated
   image-source: /game/images/miniwindow.png
   image-border: 4
   image-border-top: 23
   image-border-left: 23
+  image-border-bottom: 4
+  focusable: false
+  &minimizedHeight: 24
 
   $on:
-    height: 24
-    image-border-bottom: 1
+    image-border-bottom: 2
 
   UIButton
     id: closeButton
@@ -27,13 +26,13 @@ MiniWindow < UIMiniWindow
     margin-right: 5
     size: 14 14
     image-source: /game/images/miniwindowbuttons.png
-    image-clip: 14 0 14 14
+    image-clip: 28 0 14 14
 
     $hover:
-      image-clip: 14 14 14 14
+      image-clip: 28 14 14 14
 
     $pressed:
-      image-clip: 14 28 14 14
+      image-clip: 28 28 14 14
 
   UIButton
     id: minimizeButton
@@ -49,6 +48,15 @@ MiniWindow < UIMiniWindow
 
     $pressed:
       image-clip: 0 28 14 14
+
+    $on:
+      image-clip: 14 0 14 14
+
+    $on hover:
+      image-clip: 14 14 14 14
+
+    $on pressed:
+      image-clip: 14 28 14 14
 
   VerticalScrollBar
     id: miniwindowScrollBar
@@ -67,14 +75,16 @@ MiniWindow < UIMiniWindow
     anchors.left: parent.left
     anchors.right: parent.right
     height: 3
-    minimum: 70
+    minimum: 64
     background: #ffffff88
 
 MiniWindowContents < ScrollablePanel
+  id: contentsPanel
   anchors.fill: parent
   margin-right: 14
-  padding: 25 8 3 8
+  padding: 25 6 6 6
   vertical-scrollbar: miniwindowScrollBar
 
 BorderlessGameWindow < UIWindow
   focusable: false
+  margin: 2

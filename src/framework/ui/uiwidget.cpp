@@ -635,7 +635,7 @@ void UIWidget::bindRectToParent()
     Rect boundRect = m_rect;
     UIWidgetPtr parent = getParent();
     if(parent) {
-        Rect parentRect = parent->getRect();
+        Rect parentRect = parent->getClippingRect();
         boundRect.bind(parentRect);
     }
 
@@ -872,6 +872,14 @@ bool UIWidget::isVisible()
         return asUIWidget() == g_ui.getRootWidget();
 }
 
+bool UIWidget::isAnchored()
+{
+    if(UIWidgetPtr parent = getParent())
+        if(UIAnchorLayoutPtr anchorLayout = parent->getAnchoredLayout())
+            return anchorLayout->hasAnchors(asUIWidget());
+    return false;
+}
+
 bool UIWidget::isChildLocked(const UIWidgetPtr& child)
 {
     auto it = std::find(m_lockedChildren.begin(), m_lockedChildren.end(), child);
@@ -1013,7 +1021,7 @@ UIWidgetPtr UIWidget::recursiveGetChildById(const std::string& id)
     return widget;
 }
 
-UIWidgetPtr UIWidget::recursiveGetChildByPos(const Point& childPos)
+UIWidgetPtr UIWidget::recursiveGetChildByPos(const Point& childPos, bool wantsPhantom)
 {
     if(!containsChildPoint(childPos))
         return nullptr;
@@ -1021,10 +1029,10 @@ UIWidgetPtr UIWidget::recursiveGetChildByPos(const Point& childPos)
     for(auto it = m_children.rbegin(); it != m_children.rend(); ++it) {
         const UIWidgetPtr& child = (*it);
         if(child->isExplicitlyVisible() && child->containsPoint(childPos)) {
-            UIWidgetPtr subChild = child->recursiveGetChildByPos(childPos);
+            UIWidgetPtr subChild = child->recursiveGetChildByPos(childPos, wantsPhantom);
             if(subChild)
                 return subChild;
-            else if(!child->isPhantom())
+            else if(wantsPhantom || !child->isPhantom())
                 return child;
         }
     }
@@ -1043,8 +1051,7 @@ UIWidgetList UIWidget::recursiveGetChildrenByPos(const Point& childPos)
             UIWidgetList subChildren = child->recursiveGetChildrenByPos(childPos);
             if(!subChildren.empty())
                 children.insert(children.end(), subChildren.begin(), subChildren.end());
-            else if(!child->isPhantom())
-                children.push_back(child);
+            children.push_back(child);
         }
     }
     return children;
@@ -1279,6 +1286,12 @@ void UIWidget::onGeometryChange(const Rect& oldRect, const Rect& newRect)
 
     if(m_textWrap && oldRect.size() != newRect.size())
         updateText();
+
+    // move children that is outside the parent rect to inside again
+    for(const UIWidgetPtr& child : m_children) {
+        if(!child->isAnchored())
+            child->bindRectToParent();
+    }
 }
 
 void UIWidget::onLayoutUpdate()

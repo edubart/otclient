@@ -37,8 +37,10 @@ void UILayout::update()
 
     m_updating = true;
     internalUpdate();
-    if(UIWidgetPtr parentWidget = getParentWidget())
+    if(UIWidgetPtr parentWidget = getParentWidget()) {
+        if(!parentWidget->isDestroyed())
             parentWidget->onLayoutUpdate();
+    }
     m_updating = false;
 }
 

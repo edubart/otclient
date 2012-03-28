@@ -2,12 +2,10 @@ MiniWindow
   id: inventoryMiniWindow
   text: Inventory
   icon: inventory.png
-  width: 192
-  height: 154
+  height: 180
+  @onClose: Inventory.toggle()
 
   MiniWindowContents
-    id: inventoryPanel
-
     Item
       // head
       id: slot1
@@ -37,7 +35,6 @@ MiniWindow
       anchors.top: prev.bottom
       anchors.horizontalCenter: prev.horizontalCenter
       margin-top: 5
-      margin-bottom: 10
       &position: {x=65535, y=8, z=0}
 
     Item

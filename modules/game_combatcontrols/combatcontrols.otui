@@ -19,25 +19,29 @@ ChaseModeBox < CombatBox
 SafeFightBox < CombatBox
   image-source: /game_combatcontrols/icons/safefight.png
 
-UIWindow
-  width: 130
-  height: 30
-  margin-top: 10
-  margin-left: 6
-  margin-right: 6
+MiniWindow
+  text: Combat Controls
+  icon: combatcontrols.png
+  height: 64
+  @onClose: CombatControls.toggle()
 
-  FightOffensiveBox
-    id: fightOffensiveBox
-    anchors.right: next.left
-  FightBalancedBox
-    id: fightBalancedBox
-    anchors.right: next.left
-  FightDefensiveBox
-    id: fightDefensiveBox
-    anchors.horizontalCenter: parent.horizontalCenter
-  ChaseModeBox
-    id: chaseModeBox
-    anchors.left: prev.right
-  SafeFightBox
-    id: safeFightBox
-    anchors.left: prev.right
+  MiniWindowContents
+    FightOffensiveBox
+      id: fightOffensiveBox
+      anchors.right: next.left
+      anchors.top: next.top
+    FightBalancedBox
+      id: fightBalancedBox
+      anchors.right: next.left
+      anchors.top: next.top
+    FightDefensiveBox
+      id: fightDefensiveBox
+      anchors.centerIn: parent
+    ChaseModeBox
+      id: chaseModeBox
+      anchors.left: prev.right
+      anchors.top: prev.top
+    SafeFightBox
+      id: safeFightBox
+      anchors.left: prev.right
+      anchors.top: prev.top

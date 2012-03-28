@@ -18,7 +18,7 @@ end
 local function onUseWithMouseRelease(self, mousePosition, mouseButton)
   if g_game.selectedThing == nil then return false end
   if mouseButton == MouseLeftButton then
-    local clickedWidget = g_game.gameUi:recursiveGetChildByPos(mousePosition)
+    local clickedWidget = g_game.gameUi:recursiveGetChildByPos(mousePosition, false)
     if clickedWidget then
       if clickedWidget:getClassName() == 'UIMap' then
         local tile = clickedWidget:getTile(mousePosition)

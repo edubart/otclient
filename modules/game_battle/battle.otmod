@@ -3,6 +3,12 @@ Module
   description: Manage battle window
   author: OTClient team
   website: https://github.com/edubart/otclient
+  icon: battle.png
 
   @onLoad: |
     dofile 'battle'
+    Battle.init()
+
+  @onUnload:
+    Battle.terminate()
+

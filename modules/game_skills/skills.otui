@@ -28,15 +28,16 @@ SkillPercentPanel < ProgressBar
   anchors.left: parent.left
   anchors.right: parent.right
   anchors.top: parent.top
-  tooltip: 0
+  phantom: false
 
 MiniWindow
   id: skillWindow
   text: Skills
   height: 350
+  icon: skills.png
+  @onClose: Skills.toggle()
 
-  Panel
-    id: skillPanel
+  MiniWindowContents
     anchors.fill: parent
     layout: verticalBox
 

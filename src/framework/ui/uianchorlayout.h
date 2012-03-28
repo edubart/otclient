@@ -66,6 +66,7 @@ public:
     void addAnchor(const UIWidgetPtr& anchoredWidget, Fw::AnchorEdge anchoredEdge,
                    const std::string& hookedWidgetId, Fw::AnchorEdge hookedEdge);
     void removeAnchors(const UIWidgetPtr& anchoredWidget);
+    bool hasAnchors(const UIWidgetPtr& anchoredWidget);
     void centerIn(const UIWidgetPtr& anchoredWidget, const std::string& hookedWidgetId);
     void fill(const UIWidgetPtr& anchoredWidget, const std::string& hookedWidgetId);
 

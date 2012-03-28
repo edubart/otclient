@@ -35,19 +35,19 @@ table.insert(lifeBarColors, {percentAbove = 3, color = '#3C0000' } )
 table.insert(lifeBarColors, {percentAbove = -1, color = '#4F0000' } )
 
 -- public functions
-function Battle.create()
+function Battle.init()
   battleWindow = displayUI('battle.otui', GameInterface.getRightPanel())
-  battleWindow:hide()
-  battleButton = TopMenu.addGameButton('battleButton', 'Battle (Ctrl+B)', '/game_battle/battle.png', Battle.toggle)
+  battleButton = TopMenu.addGameToggleButton('battleButton', 'Battle (Ctrl+B)', 'battle.png', Battle.toggle)
+  battleButton:setOn(true)
   Keyboard.bindKeyDown('Ctrl+B', Battle.toggle)
 
-  battlePannel = battleWindow:getChildById('battlePanel')
+  battlePanel = battleWindow:recursiveGetChildById('battlePanel')
 
-  hidePlayersButton = battleWindow:getChildById('hidePlayers')
-  hideNPCsButton = battleWindow:getChildById('hideNPCs')
-  hideMonstersButton = battleWindow:getChildById('hideMonsters')
-  hideSkullsButton = battleWindow:getChildById('hideSkulls')
-  hidePartyButton = battleWindow:getChildById('hideParty')
+  hidePlayersButton = battleWindow:recursiveGetChildById('hidePlayers')
+  hideNPCsButton = battleWindow:recursiveGetChildById('hideNPCs')
+  hideMonstersButton = battleWindow:recursiveGetChildById('hideMonsters')
+  hideSkullsButton = battleWindow:recursiveGetChildById('hideSkulls')
+  hidePartyButton = battleWindow:recursiveGetChildById('hideParty')
 
   mouseWidget = createWidget('UIButton')
   mouseWidget:setVisible(false)
@@ -63,9 +63,9 @@ function Battle.create()
   checkCreaturesEvent = scheduleEvent(Battle.checkCreatures, 200)
 end
 
-function Battle.destroy()
+function Battle.terminate()
   Keyboard.unbindKeyDown('Ctrl+B')
-  battlePannel = nil
+  battlePanel = nil
   lastBattleButtonTargeted = nil
   lastBattleButtonFollowed = nil
   battleButtonsByCreaturesList = {}
@@ -95,15 +95,15 @@ end
 
 function Battle.addAllCreatures()
   local spectators = {}
-	local player = g_game.getLocalPlayer()
-	if player then
-		creatures = g_map.getSpectators(player:getPosition(), false)
-		for i, creature in ipairs(creatures) do
-			if creature ~= player and Battle.doCreatureFitFilters(creature) then
-        table.insert(spectators, creature)
-			end
-		end
-	end
+    local player = g_game.getLocalPlayer()
+    if player then
+        creatures = g_map.getSpectators(player:getPosition(), false)
+        for i, creature in ipairs(creatures) do
+            if creature ~= player and Battle.doCreatureFitFilters(creature) then
+              table.insert(spectators, creature)
+            end
+        end
+    end
 
   for i, v in pairs(spectators) do
     Battle.addCreature(v)
@@ -176,7 +176,7 @@ function Battle.addCreature(creature)
   local creatureId = creature:getId()
 
   if battleButtonsByCreaturesList[creatureId] == nil then
-    local battleButton = displayUI('battleButton.otui', battlePanne)
+    local battleButton = displayUI('battleButton.otui', battlePanel)
     local creatureWidget = battleButton:getChildById('creature')
     local labelWidget = battleButton:getChildById('label')
     local lifeBarWidget = battleButton:getChildById('lifeBar')
@@ -292,7 +292,7 @@ function Battle.setLifeBarPercent(battleButton, percent)
   lifeBarWidget:setBackgroundColor(color)
 end
 
-function Battle.onbattlePannelHoverChange(widget, hovered)
+function Battle.onbattleButtonHoverChange(widget, hovered)
   if widget.isBattleButton then
     widget.isHovered = hovered
     Battle.checkBattleButton(widget)
@@ -345,6 +345,3 @@ function Battle.checkBattleButton(battleButton)
     lastBattleButtonSwitched = battleButton
   end
 end
-
-connect(g_game, { onGameStart = Battle.create,
-                  onGameEnd = Battle.destroy } )

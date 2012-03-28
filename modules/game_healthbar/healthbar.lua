@@ -12,13 +12,13 @@ function HealthBar.init()
   connect(LocalPlayer, { onHealthChange = HealthBar.onHealthChange,
                          onManaChange = HealthBar.onManaChange })
 
-  healthBarWindow = displayUI('healthbar.otui', GameInterface.getRightPanel())
+  healthBarWindow = displayUI('healthbar.otui', GameInterface.getLeftPanel())
   healthBarButton = TopMenu.addGameToggleButton('healthBarButton', 'Healh Bar', 'healthbar.png', HealthBar.toggle)
   healthBarButton:setOn(true)
-  healthBar = healthBarWindow:getChildById('healthBar')
-  manaBar = healthBarWindow:getChildById('manaBar')
-  healthLabel = healthBarWindow:getChildById('healthLabel')
-  manaLabel = healthBarWindow:getChildById('manaLabel')
+  healthBar = healthBarWindow:recursiveGetChildById('healthBar')
+  manaBar = healthBarWindow:recursiveGetChildById('manaBar')
+  healthLabel = healthBarWindow:recursiveGetChildById('healthLabel')
+  manaLabel = healthBarWindow:recursiveGetChildById('manaLabel')
 
   if g_game.isOnline() then
     local localPlayer = g_game.getLocalPlayer()
@@ -32,8 +32,8 @@ function HealthBar.terminate()
                             onManaChange = HealthBar.onManaChange })
 
   healthBarWindow:destroy()
-  healthBarWindow = nil
   healthBarButton:destroy()
+  healthBarWindow = nil
   healthBarButton = nil
   healthBar = nil
   manaBar = nil

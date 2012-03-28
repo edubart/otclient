@@ -53,7 +53,7 @@ TexturePtr TextureManager::getTexture(const std::string& textureFile)
             g_resources.loadFile(textureFile, fin);
             texture = loadPNG(fin);
         } catch(Exception& e) {
-            Fw::throwException("unable to load texture '", textureFile, "': ", e.what());
+            logError("unable to load texture '", textureFile, "': ", e.what());
         }
     }
 

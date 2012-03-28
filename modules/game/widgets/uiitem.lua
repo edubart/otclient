@@ -27,7 +27,7 @@ end
 function UIItem:onDrop(widget, mousePos)
   if self:isVirtual() then return false end
 
-  if not widget or not widget.currentDragThing then return true end
+  if not widget or not widget.currentDragThing then return false end
 
   local pos = self.position
   local count = widget.currentDragThing:getCount()

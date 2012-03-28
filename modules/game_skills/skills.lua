@@ -42,13 +42,37 @@ end
 
 -- public functions
 function Skills.init()
-  skillsWindow = displayUI('skills.otui', GameInterface.getRightPanel())
-  skillsWindow:hide()
-  skillsButton = TopMenu.addGameButton('skillsButton', 'Skills (Ctrl+S)', '/core_styles/icons/skills.png', Skills.toggle)
+  connect(LocalPlayer, {
+    onExperienceChange = Skills.onExperienceChange,
+    onLevelChange = Skills.onLevelChange,
+    onHealthChange = Skills.onHealthChange,
+    onManaChange = Skills.onManaChange,
+    onSoulChange = Skills.onSoulChange,
+    onFreeCapacityChange = Skills.onFreeCapacityChange,
+    onStaminaChange = Skills.onStaminaChange,
+    onMagicLevelChange = Skills.onMagicLevelChange,
+    onSkillChange = Skills.onSkillChange
+  })
+
+  skillsWindow = displayUI('skills.otui', GameInterface.getLeftPanel())
+  skillsButton = TopMenu.addGameToggleButton('skillsButton', 'Skills (Ctrl+S)', 'skills.png', Skills.toggle)
+  skillsButton:setOn(true)
   Keyboard.bindKeyDown('Ctrl+S', Skills.toggle)
 end
 
 function Skills.terminate()
+  disconnect(LocalPlayer, {
+    onExperienceChange = Skills.onExperienceChange,
+    onLevelChange = Skills.onLevelChange,
+    onHealthChange = Skills.onHealthChange,
+    onManaChange = Skills.onManaChange,
+    onSoulChange = Skills.onSoulChange,
+    onFreeCapacityChange = Skills.onFreeCapacityChange,
+    onStaminaChange = Skills.onStaminaChange,
+    onMagicLevelChange = Skills.onMagicLevelChange,
+    onSkillChange = Skills.onSkillChange
+  })
+
   Keyboard.unbindKeyDown('Ctrl+S')
   skillsButton:destroy()
   skillsButton = nil
@@ -122,16 +146,3 @@ function Skills.onSkillChange(localPlayer, id, level, percent)
   setSkillPercent('skillId' .. id, percent, 'You have ' .. (100 - percent) .. ' percent to go')
 end
 
-connect(g_game, { onGameStart = Skills.create,
-                onGameEnd = Skills.destroy })
-
-connect(LocalPlayer, {
-                onExperienceChange = Skills.onExperienceChange,
-                onLevelChange = Skills.onLevelChange,
-                onHealthChange = Skills.onHealthChange,
-                onManaChange = Skills.onManaChange,
-                onSoulChange = Skills.onSoulChange,
-                onFreeCapacityChange = Skills.onFreeCapacityChange,
-                onStaminaChange = Skills.onStaminaChange,
-                onMagicLevelChange = Skills.onMagicLevelChange,
-                onSkillChange = Skills.onSkillChange })

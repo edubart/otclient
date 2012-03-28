@@ -57,6 +57,11 @@ void UIAnchorLayout::removeAnchors(const UIWidgetPtr& anchoredWidget)
     update();
 }
 
+bool UIAnchorLayout::hasAnchors(const UIWidgetPtr& anchoredWidget)
+{
+    return m_anchorsGroups.find(anchoredWidget) != m_anchorsGroups.end();
+}
+
 void UIAnchorLayout::centerIn(const UIWidgetPtr& anchoredWidget, const std::string& hookedWidgetId)
 {
     addAnchor(anchoredWidget, Fw::AnchorHorizontalCenter, hookedWidgetId, Fw::AnchorHorizontalCenter);

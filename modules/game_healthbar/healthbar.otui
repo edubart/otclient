@@ -10,9 +10,10 @@ ManaBar < ProgressBar
   id: manaBar
   height: 15
   background-color: #4444ff
-  anchors.bottom: parent.bottom
+  anchors.top: prev.bottom
   anchors.left: parent.left
   anchors.right: parent.right
+  margin-top: 4
 
 HealthLabel < GameLabel
   id: healthLabel
@@ -32,16 +33,15 @@ ManaLabel < GameLabel
   margin-top: 2
   text: 0 / 0
 
-BorderlessGameWindow
-  id: healthManaPanel
-  width: 192
-  height: 34
-  margin-top: 10
-  margin-left: 6
-  margin-right: 6
-  move-policy: free updated
+MiniWindow
+  icon: healthbar.png
+  id: healthBarWindow
+  text: Health Bar
+  height: 64
+  @onClose: HealthBar.toggle()
 
-  HealthBar
-  HealthLabel
-  ManaBar
-  ManaLabel
+  MiniWindowContents
+    HealthBar
+    HealthLabel
+    ManaBar
+    ManaLabel

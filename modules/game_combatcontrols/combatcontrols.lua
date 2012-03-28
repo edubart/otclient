@@ -48,15 +48,15 @@ end
 
 -- public functions
 function CombatControls.init()
-  combatControlsButton = TopMenu.addGameButton('combatControlsButton', 'Combat Controls', 'combatcontrols.png', CombatControls.toggle)
+  combatControlsButton = TopMenu.addGameToggleButton('combatControlsButton', 'Combat Controls', 'combatcontrols.png', CombatControls.toggle)
   combatControlsButton:setOn(true)
   combatControlsWindow = loadUI('combatcontrols.otui', GameInterface.getRightPanel())
 
-  fightOffensiveBox = combatControlsWindow:getChildById('fightOffensiveBox')
-  fightBalancedBox = combatControlsWindow:getChildById('fightBalancedBox')
-  fightDefensiveBox = combatControlsWindow:getChildById('fightDefensiveBox')
-  chaseModeButton = combatControlsWindow:getChildById('chaseModeBox')
-  safeFightButton = combatControlsWindow:getChildById('safeFightBox')
+  fightOffensiveBox = combatControlsWindow:recursiveGetChildById('fightOffensiveBox')
+  fightBalancedBox = combatControlsWindow:recursiveGetChildById('fightBalancedBox')
+  fightDefensiveBox = combatControlsWindow:recursiveGetChildById('fightDefensiveBox')
+  chaseModeButton = combatControlsWindow:recursiveGetChildById('chaseModeBox')
+  safeFightButton = combatControlsWindow:recursiveGetChildById('safeFightBox')
 
   fightModeRadioGroup = RadioGroup.create()
   fightModeRadioGroup:addWidget(fightOffensiveBox)
