@@ -201,10 +201,8 @@ protected:
     bool propagateOnKeyDown(uchar keyCode, int keyboardModifiers);
     bool propagateOnKeyPress(uchar keyCode, int keyboardModifiers, int autoRepeatTicks);
     bool propagateOnKeyUp(uchar keyCode, int keyboardModifiers);
-    bool propagateOnMousePress(const Point& mousePos, Fw::MouseButton button);
-    void propagateOnMouseRelease(const Point& mousePos, Fw::MouseButton button, UIWidgetList& widgetList);
-    void propagateOnMouseMove(const Point& mousePos, const Point& mouseMoved, UIWidgetList& widgetList);
-    void propagateOnMouseWheel(const Point& mousePos, Fw::MouseWheelDirection direction, UIWidgetList& widgetList);
+    bool propagateOnMouseEvent(const Point& mousePos, UIWidgetList& widgetList);
+    bool propagateOnMouseMove(const Point& mousePos, const Point& mouseMoved, UIWidgetList& widgetList);
 
 
 // function shortcuts

@@ -1,7 +1,7 @@
 Inventory = {}
 
 -- private variables
-local inventoryWindow
+local inventoryPanel
 local inventoryButton
 
 -- public functions
@@ -13,7 +13,7 @@ function Inventory.init()
 
   Keyboard.bindKeyDown('Ctrl+I', Inventory.toggle)
 
-  inventoryWindow = displayUI('inventory.otui', GameInterface.getRightPanel()):getChildById('inventoryWindow')
+  inventoryPanel = displayUI('inventory.otui', GameInterface.getRightPanel()):getChildById('inventoryPanel')
   inventoryButton = TopMenu.addGameToggleButton('inventoryButton', 'Inventory (Ctrl+I)', 'inventory.png', Inventory.toggle)
   inventoryButton:setOn(true)
 
@@ -30,15 +30,15 @@ function Inventory.terminate()
 
   Keyboard.unbindKeyDown('Ctrl+I')
 
-  inventoryWindow:destroy()
-  inventoryWindow = nil
+  inventoryPanel:destroy()
+  inventoryPanel = nil
   inventoryButton:destroy()
   inventoryButton = nil
 end
 
 function Inventory.toggle()
-  local visible = not inventoryWindow:isExplicitlyVisible()
-  inventoryWindow:setVisible(visible)
+  local visible = not inventoryPanel:isExplicitlyVisible()
+  inventoryPanel:setVisible(visible)
   inventoryButton:setOn(visible)
 end
 
@@ -50,16 +50,16 @@ end
 
 -- hooked events
 function Inventory.onInventoryChange(slot, item)
-  local itemWidget = inventoryWindow:getChildById('slot' .. slot)
+  local itemWidget = inventoryPanel:getChildById('slot' .. slot)
   itemWidget:setItem(item)
 end
 
 function Inventory.onFreeCapacityChange(freeCapacity)
-  local widget = inventoryWindow:getChildById('capacity')
+  local widget = inventoryPanel:getChildById('capacity')
   widget:setText("Cap:\n" .. freeCapacity)
 end
 
 function Inventory.onSoulChange(soul)
-  local widget = inventoryWindow:getChildById('soul')
+  local widget = inventoryPanel:getChildById('soul')
   widget:setText("Soul:\n" .. soul)
 end

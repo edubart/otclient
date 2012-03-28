@@ -85,7 +85,16 @@ void UIManager::inputEvent(const InputEvent& event)
                     pressedWidget = nullptr;
                 updatePressedWidget(pressedWidget, event.mousePos);
             }
-            m_mouseReceiver->propagateOnMousePress(event.mousePos, event.mouseButton);
+
+            m_mouseReceiver->propagateOnMouseEvent(event.mousePos, widgetList);
+            for(const UIWidgetPtr& widget : widgetList) {
+                if(widget->isFocusable()) {
+                    if(UIWidgetPtr parent = widget->getParent())
+                        parent->focusChild(widget, Fw::MouseFocusReason);
+                }
+                widget->onMousePress(event.mousePos, event.mouseButton);
+            }
+
             break;
         case Fw::MouseReleaseInputEvent: {
             // release dragging widget
@@ -94,7 +103,7 @@ void UIManager::inputEvent(const InputEvent& event)
                 accepted = updateDraggingWidget(nullptr, event.mousePos);
 
             if(!accepted) {
-                m_mouseReceiver->propagateOnMouseRelease(event.mousePos, event.mouseButton, widgetList);
+                m_mouseReceiver->propagateOnMouseEvent(event.mousePos, widgetList);
 
                 // mouse release is always fired first on the pressed widget
                 if(m_pressedWidget) {
@@ -139,7 +148,7 @@ void UIManager::inputEvent(const InputEvent& event)
             break;
         }
         case Fw::MouseWheelInputEvent:
-            m_mouseReceiver->propagateOnMouseWheel(event.mousePos, event.wheelDirection, widgetList);
+            m_mouseReceiver->propagateOnMouseEvent(event.mousePos, widgetList);
             for(const UIWidgetPtr& widget : widgetList) {
                 if(widget->onMouseWheel(event.mousePos, event.wheelDirection))
                     break;

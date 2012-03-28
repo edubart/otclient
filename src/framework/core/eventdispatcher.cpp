@@ -35,7 +35,7 @@ void EventDispatcher::flush()
         m_scheduledEventList.pop();
 }
 
-void EventDispatcher::poll(bool allEvents)
+void EventDispatcher::poll()
 {
     while(!m_scheduledEventList.empty()) {
         ScheduledEventPtr scheduledEvent = m_scheduledEventList.top();
@@ -45,7 +45,11 @@ void EventDispatcher::poll(bool allEvents)
         scheduledEvent->execute();
     }
 
-    do {
+    // execute events list up to 3 times, this is needed because some events can schedule new events that would
+    // change the UIWidgets layout, in this case we must execute these new events before we continue rendering,
+    // we can't loop until the event list is empty, because this could lead to infinite loops
+    // if someone write a module with bad code
+    for(int i=0;i<3;++i) {
         m_pollEventsSize = m_eventList.size();
         if(m_pollEventsSize == 0)
             break;
@@ -54,7 +58,7 @@ void EventDispatcher::poll(bool allEvents)
             m_eventList.pop_front();
             event->execute();
         }
-    } while(allEvents);
+    }
 }
 
 ScheduledEventPtr EventDispatcher::scheduleEvent(const SimpleCallback& callback, int delay)
@@ -68,8 +72,10 @@ ScheduledEventPtr EventDispatcher::scheduleEvent(const SimpleCallback& callback,
 EventPtr EventDispatcher::addEvent(const SimpleCallback& callback, bool pushFront)
 {
     EventPtr event(new Event(callback));
+    // front pushing is a way to execute an event before others
     if(pushFront) {
         m_eventList.push_front(event);
+        // the poll event list only grows when pushing into front
         m_pollEventsSize++;
     } else
         m_eventList.push_back(event);

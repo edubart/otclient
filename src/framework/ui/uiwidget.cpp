@@ -1483,83 +1483,36 @@ bool UIWidget::propagateOnKeyUp(uchar keyCode, int keyboardModifiers)
     return onKeyUp(keyCode, keyboardModifiers);
 }
 
-bool UIWidget::propagateOnMousePress(const Point& mousePos, Fw::MouseButton button)
+bool UIWidget::propagateOnMouseEvent(const Point& mousePos, UIWidgetList& widgetList)
 {
-    // do a backup of children list, because it may change while looping it
-    UIWidgetPtr clickedChild;
-    for(const UIWidgetPtr& child : m_children) {
-        // events on hidden or disabled widgets are discarded
-        if(!child->isExplicitlyEnabled() || !child->isExplicitlyVisible())
-            continue;
-
-        // mouse press events only go to children that contains the mouse position
-        if(child->containsPoint(mousePos) && child == getChildByPos(mousePos)) {
-            clickedChild = child;
-            break;
+    bool ret = false;
+    if(containsChildPoint(mousePos)) {
+        for(auto it = m_children.rbegin(); it != m_children.rend(); ++it) {
+            const UIWidgetPtr& child = *it;
+            if(child->isExplicitlyEnabled() && child->isExplicitlyVisible() && child->containsPoint(mousePos)) {
+                if(child->propagateOnMouseEvent(mousePos, widgetList)) {
+                    ret = true;
+                    break;
+                }
+            }
         }
     }
 
-    if(clickedChild) {
-        // focusable child gains focus when clicked
-        if(clickedChild->isFocusable())
-            focusChild(clickedChild, Fw::MouseFocusReason);
-
-        // stop propagating if the child accept the event
-        if(clickedChild->propagateOnMousePress(mousePos, button))
-            return true;
-    }
-
-    // only non phatom widgets receives mouse events
-    if(!isPhantom())
-        return onMousePress(mousePos, button);
-
-    return false;
-}
-
-void UIWidget::propagateOnMouseRelease(const Point& mousePos, Fw::MouseButton button, UIWidgetList& widgetList)
-{
-    // do a backup of children list, because it may change while looping it
-    for(const UIWidgetPtr& child : m_children) {
-        // events on hidden or disabled widgets are discarded
-        if(!child->isExplicitlyEnabled() || !child->isExplicitlyVisible())
-            continue;
-
-        // mouse press events only go to children that contains the mouse position
-        if(child->containsPoint(mousePos) && child == getChildByPos(mousePos)) {
-            child->propagateOnMouseRelease(mousePos, button, widgetList);
-            break;
-        }
-    }
-
-    // only non phatom widgets receives mouse release events
-    if(!isPhantom())
-        widgetList.push_back(asUIWidget());
-}
-
-void UIWidget::propagateOnMouseMove(const Point& mousePos, const Point& mouseMoved, UIWidgetList& widgetList)
-{
-    for(const UIWidgetPtr& child : m_children) {
-        // events on hidden or disabled widgets are discarded
-        if(!child->isExplicitlyEnabled() || !child->isExplicitlyVisible())
-            continue;
-
-        // mouse move events go to all children
-        child->propagateOnMouseMove(mousePos, mouseMoved, widgetList);
-    }
     widgetList.push_back(asUIWidget());
+
+    if(!isPhantom())
+        ret = true;
+    return ret;
 }
 
-void UIWidget::propagateOnMouseWheel(const Point& mousePos, Fw::MouseWheelDirection direction, UIWidgetList& widgetList)
+bool UIWidget::propagateOnMouseMove(const Point& mousePos, const Point& mouseMoved, UIWidgetList& widgetList)
 {
-    for(const UIWidgetPtr& child : m_children) {
-        // events on hidden or disabled widgets are discarded
-        if(!child->isExplicitlyEnabled() || !child->isExplicitlyVisible())
-            continue;
-
-        // mouse wheel events only go to children that contains the mouse position
-        if(child->containsPoint(mousePos) && child == getChildByPos(mousePos))
-            child->propagateOnMouseWheel(mousePos, direction, widgetList);
+    for(auto it = m_children.begin(); it != m_children.end(); ++it) {
+        const UIWidgetPtr& child = *it;
+        if(child->isExplicitlyVisible() && child->isExplicitlyEnabled())
+            child->propagateOnMouseMove(mousePos, mouseMoved, widgetList);
     }
 
     widgetList.push_back(asUIWidget());
+    return true;
 }

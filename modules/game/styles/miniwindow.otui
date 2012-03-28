@@ -72,7 +72,8 @@ MiniWindow < UIMiniWindow
 
 MiniWindowContents < ScrollablePanel
   anchors.fill: parent
-  padding: 25 21 3 8
+  margin-right: 14
+  padding: 25 8 3 8
   vertical-scrollbar: miniwindowScrollBar
 
 BorderlessGameWindow < UIWindow

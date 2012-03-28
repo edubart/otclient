@@ -1,11 +1,12 @@
 MiniWindow
+  id: inventoryMiniWindow
   text: Inventory
   icon: inventory.png
   width: 192
   height: 154
 
   MiniWindowContents
-    id: inventoryWindow
+    id: inventoryPanel
 
     Item
       // head

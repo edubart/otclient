@@ -429,11 +429,9 @@ void Application::registerLuaFunctions()
     g_lua.registerStaticClass("g_app");
     g_lua.bindClassStaticFunction("g_app", "exit", std::bind(&Application::exit, g_app));
     g_lua.bindClassStaticFunction("g_app", "setFrameSleep", std::bind(&Application::setFrameSleep, g_app, _1));
-    g_lua.bindClassStaticFunction("g_app", "setPollCycleDelay", std::bind(&Application::setPollCycleDelay, g_app, _1));
     g_lua.bindClassStaticFunction("g_app", "isRunning", std::bind(&Application::isRunning, g_app));
     g_lua.bindClassStaticFunction("g_app", "isStopping", std::bind(&Application::isStopping, g_app));
     g_lua.bindClassStaticFunction("g_app", "getFrameSleep", std::bind(&Application::getFrameSleep, g_app));
-    g_lua.bindClassStaticFunction("g_app", "getPollCycleDelay", std::bind(&Application::getPollCycleDelay, g_app));
     g_lua.bindClassStaticFunction("g_app", "getName", std::bind(&Application::getName, g_app));
     g_lua.bindClassStaticFunction("g_app", "getVersion", std::bind(&Application::getVersion, g_app));
     g_lua.bindClassStaticFunction("g_app", "getBuildCompiler", std::bind(&Application::getBuildCompiler, g_app));

@@ -56,7 +56,6 @@ Application::Application(const std::string& appName)
 {
     g_app = this;
     m_appName = appName;
-    m_pollCycleDelay = POLL_CYCLE_DELAY;
     m_frameSleep = 0;
 }
 
@@ -181,14 +180,11 @@ void Application::run()
     g_lua.callGlobalField("g_app", "onRun");
 
     while(!m_stopping) {
+        // only update the current time once per frame to gain performance
         g_clock.updateTicks();
 
-        // poll events every POLL_CYCLE_DELAY
-        // this delay exists to avoid massive polling thus increasing framerate
-        //if(g_clock.ticksElapsed(lastPollTicks) >= m_pollCycleDelay) {
-            poll();
-        //    lastPollTicks = g_clock.ticks();
-        //}
+        // poll all events before rendering
+        poll();
 
         if(m_appFlags & Fw::AppEnableGraphics && g_window.isVisible()) {
             g_graphics.beginRender();
@@ -218,15 +214,14 @@ void Application::exit()
 
 void Application::poll()
 {
-    // poll input events
     if(m_appFlags & Fw::AppEnableGraphics) {
+        // poll input events
         g_window.poll();
-        g_particleManager.update();
+        //g_particleManager.update();
     }
 
     Connection::poll();
-    //g_eventDispatcher.poll(true);
-    g_eventDispatcher.poll(true);
+    g_eventDispatcher.poll();
 }
 
 void Application::close()
@@ -237,10 +232,10 @@ void Application::close()
 
 void Application::render()
 {
-    // everything is rendered by UI components
+    // everything is rendered by UI components, even the game
     g_ui.render();
 
-    g_particleManager.render();
+    //g_particleManager.render();
 }
 
 void Application::resize(const Size& size)
