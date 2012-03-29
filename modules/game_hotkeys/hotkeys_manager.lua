@@ -34,7 +34,6 @@ local hotkeyColors = {
 
 -- public functions
 function HotkeysManager.init()
-  print("PASSO HK INIT")
   hotkeysWindow = displayUI('hotkeys_manager.otui')
 
   hotkeysWindow:setVisible(false)
@@ -131,14 +130,12 @@ function HotkeysManager.show()
   if g_game.isOnline() then
     hotkeysWindow:grabKeyboard()
     hotkeysWindow:show()
-    hotkeysWindow:lock()
     hotkeysWindow:raise()
   end
 end
 
 function HotkeysManager.hide()
   hotkeysWindow:ungrabKeyboard()
-  hotkeysWindow:unlock()
   hotkeysWindow:hide()
 end
 
@@ -201,7 +198,7 @@ end
 function HotkeysManager.addHotkey()
   local widget
 
-  messageBox = createWidget('MainWindow', hotkeysWindow)
+  messageBox = createWidget('MainWindow', rootWidget)
   messageBox:grabKeyboard()
   messageBox:setId('assignWindow')
   messageBox:setText('Button Assign')
@@ -449,11 +446,11 @@ end
 
 function HotkeysManager.hotkeyCapture(widget, keyCode, keyboardModifiers)
   local keyCombo = determineKeyComboDesc(keyCode, keyboardModifiers)
-  local comboPreview = hotkeysWindow:getChildById('assignWindow'):getChildById('comboPreview')
+  local comboPreview = rootWidget:getChildById('assignWindow'):getChildById('comboPreview')
   comboPreview:setText('Current hotkey to add: '.. keyCombo)
   comboPreview.keyCombo = keyCombo
   comboPreview:resizeToText()
-  hotkeysWindow:getChildById('assignWindow'):getChildById('addButton'):enable()
+  rootWidget:getChildById('assignWindow'):getChildById('addButton'):enable()
 
   return true
 end
