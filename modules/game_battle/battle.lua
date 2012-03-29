@@ -270,7 +270,10 @@ function Battle.removeCreature(creature)
     if lastBattleButtonSwitched == battleButtonsByCreaturesList[creatureId] then
       lastBattleButtonSwitched = nil
     end
-
+    
+    if battleButtonsByCreaturesList[creatureId].isTarget then
+      g_game.cancelAttack()
+    end
     battleButtonsByCreaturesList[creatureId].creature:hideStaticSquare()
     battleButtonsByCreaturesList[creatureId]:destroy()
     battleButtonsByCreaturesList[creatureId] = nil
