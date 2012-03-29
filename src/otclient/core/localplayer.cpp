@@ -182,7 +182,7 @@ void LocalPlayer::setSkill(Otc::Skill skill, int level, int levelPercent)
     int oldLevel = m_skillsLevel[skill];
     int oldLevelPercent = m_skillsLevelPercent[skill];
 
-    if(level != oldLevel && levelPercent != oldLevelPercent) {
+    if(level != oldLevel || levelPercent != oldLevelPercent) {
         m_skillsLevel[skill] = level;
         m_skillsLevelPercent[skill] = levelPercent;
 

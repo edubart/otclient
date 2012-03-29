@@ -315,14 +315,16 @@ void Game::processWalkCancel(Otc::Direction direction)
     m_localPlayer->cancelWalk(direction);
 }
 
-void Game::loginWorld(const std::string& account, const std::string& password, const std::string& worldHost, int worldPort, const std::string& characterName)
+void Game::loginWorld(const std::string& account, const std::string& password, const std::string& worldName, const std::string& worldHost, int worldPort, const std::string& characterName)
 {
     if(m_protocolGame || isOnline()) {
         logTraceError("unable to login into a world while already online or logging");
         return;
     }
+
     m_protocolGame = ProtocolGamePtr(new ProtocolGame);
     m_protocolGame->login(account, password, worldHost, (uint16)worldPort, characterName);
+    m_worldName = worldName;
 }
 
 void Game::cancelLogin()

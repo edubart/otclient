@@ -78,7 +78,7 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassStaticFunction("g_map", "findPath", std::bind(&Map::findPath, &g_map, _1, _2, _3));
 
     g_lua.registerStaticClass("g_game");
-    g_lua.bindClassStaticFunction("g_game", "loginWorld", std::bind(&Game::loginWorld, &g_game, _1, _2, _3, _4, _5));
+    g_lua.bindClassStaticFunction("g_game", "loginWorld", std::bind(&Game::loginWorld, &g_game, _1, _2, _3, _4, _5, _6));
     g_lua.bindClassStaticFunction("g_game", "cancelLogin", std::bind(&Game::cancelLogin, &g_game));
     g_lua.bindClassStaticFunction("g_game", "forceLogout", std::bind(&Game::forceLogout, &g_game));
     g_lua.bindClassStaticFunction("g_game", "safeLogout", std::bind(&Game::safeLogout, &g_game));
@@ -153,6 +153,7 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassStaticFunction("g_game", "getLocalPlayer", std::bind(&Game::getLocalPlayer, &g_game));
     g_lua.bindClassStaticFunction("g_game", "getProtocolGame", std::bind(&Game::getProtocolGame, &g_game));
     g_lua.bindClassStaticFunction("g_game", "getProtocolVersion", std::bind(&Game::getProtocolVersion, &g_game));
+    g_lua.bindClassStaticFunction("g_game", "getWorldName", std::bind(&Game::getWorldName, &g_game));
 
     g_lua.bindGlobalFunction("getOufitColor", Outfit::getColor);
 

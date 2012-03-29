@@ -40,7 +40,7 @@ local function tryLogin(charInfo, tries)
 
   CharacterList.destroyLoadBox()
 
-  g_game.loginWorld(EnterGame.account, EnterGame.password, charInfo.worldHost, charInfo.worldPort, charInfo.characterName)
+  g_game.loginWorld(EnterGame.account, EnterGame.password, charInfo.worldName, charInfo.worldHost, charInfo.worldPort, charInfo.characterName)
 
   loadBox = displayCancelBox('Please wait', 'Connecting to game server...')
   connect(loadBox, { onCancel = function()

@@ -20,23 +20,17 @@ end
 
 local function setSkillValue(id, value)
   local skill = skillsWindow:recursiveGetChildById(id)
-
-  if skill then
-    local widget = skill:getChildById('value')
-    widget:setText(value)
-  end
+  local widget = skill:getChildById('value')
+  widget:setText(value)
 end
 
 local function setSkillPercent(id, percent, tooltip)
   local skill = skillsWindow:recursiveGetChildById(id)
+  local widget = skill:getChildById('percent')
+  widget:setPercent(percent)
 
-  if skill then
-    local widget = skill:getChildById('percent')
-    widget:setPercent(percent)
-
-    if tooltip then
-      widget:setTooltip(tooltip)
-    end
+  if tooltip then
+    widget:setTooltip(tooltip)
   end
 end
 

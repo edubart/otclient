@@ -114,7 +114,8 @@ protected:
 public:
     // login related
     void loginWorld(const std::string& account,
-                    const std::string& password,
+                        const std::string& password,
+                        const std::string& worldName,
                     const std::string& worldHost, int worldPort,
                     const std::string& characterName);
     void cancelLogin();
@@ -223,6 +224,7 @@ public:
     LocalPlayerPtr getLocalPlayer() { return m_localPlayer; }
     ProtocolGamePtr getProtocolGame() { return m_protocolGame; }
     int getProtocolVersion() { return PROTOCOL; }
+    std::string getWorldName() { return m_worldName; }
 
 private:
     void setAttackingCreature(const CreaturePtr& creature);
@@ -238,6 +240,7 @@ private:
     Otc::FightModes m_fightMode;
     Otc::ChaseModes m_chaseMode;
     bool m_safeFight;
+    std::string m_worldName;
 };
 
 extern Game g_game;

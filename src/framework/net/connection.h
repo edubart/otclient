@@ -36,7 +36,7 @@ class Connection : public std::enable_shared_from_this<Connection>, boost::nonco
     enum {
         READ_TIMEOUT = 30,
         WRITE_TIMEOUT = 30,
-        SEND_INTERVAL = 10,
+        SEND_INTERVAL = 1,
         SEND_BUFFER_SIZE = 65536,
         RECV_BUFFER_SIZE = 65536
     };

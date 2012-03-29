@@ -7,7 +7,7 @@ local gameRightPanel
 local gameLeftPanel
 local gameBottomPanel
 local logoutButton
-local m_mouseGrabberWidget
+local mouseGrabberWidget
 
 function GameInterface.init()
   connect(g_game, { onGameStart = GameInterface.show }, true)
@@ -17,9 +17,9 @@ function GameInterface.init()
   gameRootPanel:hide()
   gameRootPanel:lower()
 
-  m_mouseGrabberWidget = gameRootPanel:getChildById('mouseGrabber')
-  connect(m_mouseGrabberWidget, { onMouseRelease = GameInterface.onUseWithMouseRelease })
-  
+  mouseGrabberWidget = gameRootPanel:getChildById('mouseGrabber')
+  mouseGrabberWidget.onMouseRelease = GameInterface.onUseWithMouseRelease
+
   gameMapPanel = gameRootPanel:getChildById('gameMapPanel')
   gameRightPanel = gameRootPanel:getChildById('gameRightPanel')
   gameLeftPanel = gameRootPanel:getChildById('gameLeftPanel')
@@ -60,7 +60,6 @@ end
 function GameInterface.terminate()
   disconnect(g_game, { onGameStart = GameInterface.show })
   disconnect(g_game, { onGameEnd = GameInterface.hide })
-  disconnect(m_mouseGrabberWidget, { onMouseRelease = onUseWithMouseRelease })
 
   logoutButton:destroy()
   logoutButton = nil
@@ -70,9 +69,8 @@ function GameInterface.terminate()
   gameRightPanel = nil
   gameLeftPanel = nil
   gameBottomPanel = nil
+  mouseGrabberWidget = nil
   GameInterface = nil
-  m_mouseGrabberWidget:destroy()
-  m_mouseGrabberWidget = nil
 end
 
 function GameInterface.show()
@@ -128,7 +126,7 @@ end
 
 function GameInterface.startUseWith(thing)
   GameInterface.selectedThing = thing
-  m_mouseGrabberWidget:grabMouse()
+  mouseGrabberWidget:grabMouse()
   Mouse.setTargetCursor()
 end
 
