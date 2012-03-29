@@ -5,8 +5,6 @@ function UIItem:onDragEnter(mousePos)
   if not item then return false end
 
   self:setBorderWidth(1)
-
-  self.parsed = false
   self.currentDragThing = item
   Mouse.setTargetCursor()
   return true
@@ -14,11 +12,7 @@ end
 
 function UIItem:onDragLeave(droppedWidget, mousePos)
   if self:isVirtual() then return false end
-
-  if not self.parsed then
-    self.currentDragThing = nil
-  end
-
+  self.currentDragThing = nil
   Mouse.restoreCursor()
   self:setBorderWidth(0)
   return true
@@ -29,24 +23,12 @@ function UIItem:onDrop(widget, mousePos)
 
   if not widget or not widget.currentDragThing then return false end
 
-  local pos = self.position
-  local count = widget.currentDragThing:getCount()
-  if widget.currentDragThing:isStackable() and count > 1 then
-    widget.parsed = true
-    local countWindow = createWidget('CountWindow', rootWidget)
-    local spinbox = moveWindow:getChildById('spinbox')
-    spinbox:setMaximum(count)
-    spinbox:setMinimum(1)
-    spinbox:setCurrentIndex(count)
-
-    local okButton = moveWindow:getChildById('buttonOk')
-    okButton.onClick = function()
-      g_game.move(widget.currentDragThing, pos, spinbox:getCurrentIndex()) okButton:getParent():destroy()
-      widget.currentDragThing = nil
-    end
-    moveWindow.onEnter = okButton.onClick
+  local item = widget.currentDragThing
+  local toPos = self.position
+  if item:isStackable() and item:getCount() > 1 then
+    GameInterface.moveStackableItem(item, toPos)
   else
-    g_game.move(widget.currentDragThing, pos, 1)
+    g_game.move(item, toPos, 1)
   end
 
   self:setBorderWidth(0)

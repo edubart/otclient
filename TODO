@@ -1,35 +1,16 @@
-====================================================
-High priority TODO in order (before first public disclose)
-
-multiline text edit
-move windows, navigate in containers
-complete miniwindow (close, minimize, resize, move)
-create and bind all game events
-player status icons (poison, etc)
-load modules from zip files
-display exit box when exiting from game
-scrollbar and scrollable widgets
-
-====================================================
-Low priority TODO
-
 == Core
-review directories loading search
-load modules from zip packages
 create a class for reading binary files
 rework lua/c++ logger
-replace autoload-antencedence with load-before/load-after
 
 == Graphics
-use CoordsBuffer in font
-cache renders into framebuffers
-use hardware buffer
-use indices
-fix opacity and cached framebuffers conflict
 map zoom rendering could be optimized using framebuffer caches
-make low/medium/high settings for economizing graphics memory thus allowing to run the client smoothily in smartphones
+implement graphics options menu
 
-== Lua
+== Modules
+fix modules recursivity, it makes client crash
+load modules from zip packages
+
+== Lua engine
 make possible to bind non LuaObject derived classes on lua engine (for usage with Point,Rect,Color,Size)
 review usage of x,y/width,height in lua instead of point/size
 
@@ -37,40 +18,34 @@ review usage of x,y/width,height in lua instead of point/size
 port to MacOs and iphone
 
 == UI
+review anchors API, add possibility to get/remove anchors
 multiline rich text widget
 move layout proprieties to widget style
 multiline text editor widget
-fix style inheretance using a style translator
+fix style inheritance using a style translator
 find a way to add new widgets without focusing them
 review UI/style loader and make more error prone with more warnings
 reapply anchor styles when adding new childs
-ui text selection
-find styles by scope
 make set of background/icon/image width alone work
 check for recursive anchors and print a error instead of crashing
-make api to enable/disable capture of events to avoid massive event processing
+make api to enable/disable capture of events like mouseMove to avoid massive event processing
 review style apply system
-rework widgets rendering order
-cache or preload otui files to avoid freezes because of hd reading
+review widgets rendering order, consider adding z-index
 change Align/Anchors lua API from enum to text
 
-== Client
-fix modules recursivity, it makes client crash
-implement left panel with dragging windows
+== Game
 clean sprites cache periodically
 create a shader manager
 find a way to load map rendering styles
 move redering of creatures names, skulls, etc to UI
-make protocol class compatible with old tibia protocols
 handle corrupt errors in dat/spr
 remake spr/dat using OTML and image files
-game/graphics window with options
-do lua game event calls from Game instead from GameProtocol
 
+== Game modules
 minimap window
 login queue
 questlog
 edit texts
 trade window
 shop window
-battle window
+

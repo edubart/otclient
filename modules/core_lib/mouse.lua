@@ -26,8 +26,9 @@ function Mouse.isCursorChanged()
   return cursorChanged
 end
 
-function Mouse.isPressed()
-  return g_ui.getPressedWidget() ~= nil
+function Mouse.isPressed(button)
+  if not button then button = MouseLeftButton end
+  return g_window.isMouseButtonPressed(button)
 end
 
 function Mouse.bindAutoPress(widget, callback)

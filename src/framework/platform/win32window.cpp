@@ -490,6 +490,7 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
             SetCapture(m_window);
             m_inputEvent.reset(Fw::MousePressInputEvent);
             m_inputEvent.mouseButton = Fw::MouseLeftButton;
+            m_mouseButtonStates[Fw::MouseLeftButton] = true;
             if(m_onInputEvent)
                 m_onInputEvent(m_inputEvent);
             break;
@@ -498,6 +499,7 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
             SetCapture(NULL);
             m_inputEvent.reset(Fw::MouseReleaseInputEvent);
             m_inputEvent.mouseButton = Fw::MouseLeftButton;
+            m_mouseButtonStates[Fw::MouseLeftButton] = false;
             if(m_onInputEvent)
                 m_onInputEvent(m_inputEvent);
             break;
@@ -506,6 +508,7 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
             SetCapture(m_window);
             m_inputEvent.reset(Fw::MousePressInputEvent);
             m_inputEvent.mouseButton = Fw::MouseMidButton;
+            m_mouseButtonStates[Fw::MouseMidButton] = true;
             if(m_onInputEvent)
                 m_onInputEvent(m_inputEvent);
             break;
@@ -514,6 +517,7 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
             SetCapture(NULL);
             m_inputEvent.reset(Fw::MouseReleaseInputEvent);
             m_inputEvent.mouseButton = Fw::MouseMidButton;
+            m_mouseButtonStates[Fw::MouseMidButton] = false;
             if(m_onInputEvent)
                 m_onInputEvent(m_inputEvent);
             break;
@@ -522,6 +526,7 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
             SetCapture(m_window);
             m_inputEvent.reset(Fw::MousePressInputEvent);
             m_inputEvent.mouseButton = Fw::MouseRightButton;
+            m_mouseButtonStates[Fw::MouseRightButton] = true;
             if(m_onInputEvent)
                 m_onInputEvent(m_inputEvent);
             break;
@@ -530,6 +535,7 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
             SetCapture(NULL);
             m_inputEvent.reset(Fw::MouseReleaseInputEvent);
             m_inputEvent.mouseButton = Fw::MouseRightButton;
+            m_mouseButtonStates[Fw::MouseRightButton] = false;
             if(m_onInputEvent)
                 m_onInputEvent(m_inputEvent);
             break;

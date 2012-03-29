@@ -180,9 +180,17 @@ end
 
 function UIScrollBar:onMouseWheel(mousePos, mouseWheel)
   if mouseWheel == MouseWheelUp then
-    self:decrement()
+    if self.orientation == 'vertical' then
+      self:decrement()
+    else
+      self:increment()
+    end
   else
-    self:increment()
+    if self.orientation == 'vertical' then
+      self:increment()
+    else
+      self:decrement()
+    end
   end
   return true
 end

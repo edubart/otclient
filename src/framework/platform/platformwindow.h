@@ -77,8 +77,9 @@ public:
     int getY() { return m_position.y; }
     Point getMousePosition() { return m_inputEvent.mousePos; }
     int getKeyboardModifiers() { return m_inputEvent.keyboardModifiers; }
-    bool isKeyPressed(Fw::Key keyCode) { return m_keysState[keyCode]; }
 
+    bool isKeyPressed(Fw::Key keyCode) { return m_keysState[keyCode]; }
+    bool isMouseButtonPressed(Fw::MouseButton mouseButton) { return m_mouseButtonStates[mouseButton]; }
     bool isVisible() { return m_visible; }
     bool isMaximized() { return m_maximized; }
     bool isFullscreen() { return m_fullscreen; }
@@ -107,6 +108,7 @@ protected:
     Size m_unmaximizedSize;
     Point m_unmaximizedPos;
     InputEvent m_inputEvent;
+    Boolean<false> m_mouseButtonStates[4];
 
     Boolean<false> m_created;
     Boolean<false> m_visible;

@@ -104,6 +104,9 @@ void PlatformWindow::releaseAllKeys()
 
         processKeyUp(keyCode);
     }
+
+    for(int i=0;i<4;++i)
+        m_mouseButtonStates[i] = false;
 }
 
 void PlatformWindow::fireKeysPress()
@@ -133,3 +136,4 @@ void PlatformWindow::fireKeysPress()
         }
     }
 }
+

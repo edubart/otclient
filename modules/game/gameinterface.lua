@@ -202,8 +202,9 @@ function GameInterface.createThingMenu(menuPosition, lookThing, useThing, creatu
 
         if creatureThing:asPlayer() then
           menu:addSeparator()
-          menu:addOption('Message to ' .. creatureThing:getName(), function() print('message') end)
-          menu:addOption('Add to VIP list', function() g_game.addVip(creatureThing:getName()) end)
+          local creatureName = creatureThing:getName()
+          menu:addOption('Message to ' .. creatureName, function() g_game.openPrivateChannel(creatureName) end)
+          menu:addOption('Add to VIP list', function() g_game.addVip(creatureName) end)
 
           local localPlayerShield = localPlayer:asCreature():getShield()
           local creatureShield = creatureThing:getShield()
@@ -308,6 +309,31 @@ function GameInterface.processMouseAction(menuPosition, mouseButton, autoWalk, l
   end
 
   return false
+end
+
+function GameInterface.moveStackableItem(item, toPos)
+  local count = item:getCount()
+
+  local countWindow = createWidget('CountWindow', rootWidget)
+  local spinbox = countWindow:getChildById('countSpinBox')
+  local scrollbar = countWindow:getChildById('countScrollBar')
+  spinbox:setMaximum(count)
+  spinbox:setMinimum(1)
+  spinbox:setValue(count)
+  scrollbar:setMaximum(count)
+  scrollbar:setMinimum(1)
+  scrollbar:setValue(count)
+  scrollbar.onValueChange = function(self, value) spinbox:setValue(value) end
+  spinbox.onValueChange = function(self, value) scrollbar:setValue(value) end
+
+  local okButton = countWindow:getChildById('buttonOk')
+  local moveFunc = function()
+    g_game.move(item, toPos, spinbox:getValue())
+    okButton:getParent():destroy()
+  end
+
+  countWindow.onEnter = moveFunc
+  okButton.onClick = moveFunc
 end
 
 function GameInterface.getRootPanel()

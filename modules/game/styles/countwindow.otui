@@ -12,17 +12,17 @@ CountWindow < MainWindow
     margin-top: 2
 
   SpinBox
-    id: spinbox
+    id: countSpinBox
     anchors.left: prev.right
     anchors.right: parent.right
     anchors.top: parent.top
 
-  HorizontalSeparator
-    id: separator
+  HorizontalScrollBar
+    id: countScrollBar
     anchors.left: parent.left
     anchors.right: parent.right
-    anchors.bottom: next.top
-    margin-bottom: 10
+    anchors.top: prev.bottom
+    margin-top: 8
 
   Button
     id: buttonOk
@@ -30,7 +30,7 @@ CountWindow < MainWindow
     width: 64
     anchors.right: next.left
     anchors.bottom: parent.bottom
-    margin-right: 10
+    margin-right: 5
 
   Button
     id: buttonCancel

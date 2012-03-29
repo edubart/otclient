@@ -37,7 +37,7 @@ function HotkeysManager.init()
   hotkeysWindow = displayUI('hotkeys_manager.otui')
 
   hotkeysWindow:setVisible(false)
-  hotkeysButton = TopMenu.addLeftButton('hotkeysButton', 'Hotkeys (Ctrl+K)', '/game_hotkeys/icon.png', HotkeysManager.toggle)
+  hotkeysButton = TopMenu.addGameButton('hotkeysButton', 'Hotkeys (Ctrl+K)', '/game_hotkeys/icon.png', HotkeysManager.toggle)
   Keyboard.bindKeyDown('Ctrl+K', HotkeysManager.toggle)
 
   currentHotkeysList = hotkeysWindow:getChildById('currentHotkeys')

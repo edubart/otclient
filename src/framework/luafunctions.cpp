@@ -484,6 +484,7 @@ void Application::registerLuaFunctions()
     g_lua.bindClassStaticFunction("g_window", "getMousePosition", std::bind(&PlatformWindow::getMousePosition, &g_window));
     g_lua.bindClassStaticFunction("g_window", "getKeyboardModifiers", std::bind(&PlatformWindow::getKeyboardModifiers, &g_window));
     g_lua.bindClassStaticFunction("g_window", "isKeyPressed", std::bind(&PlatformWindow::isKeyPressed, &g_window, _1));
+    g_lua.bindClassStaticFunction("g_window", "isMouseButtonPressed", std::bind(&PlatformWindow::isMouseButtonPressed, &g_window, _1));
     g_lua.bindClassStaticFunction("g_window", "isVisible", std::bind(&PlatformWindow::isVisible, &g_window));
     g_lua.bindClassStaticFunction("g_window", "isFullscreen", std::bind(&PlatformWindow::isFullscreen, &g_window));
     g_lua.bindClassStaticFunction("g_window", "isMaximized", std::bind(&PlatformWindow::isMaximized, &g_window));

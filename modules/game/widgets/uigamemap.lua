@@ -13,17 +13,13 @@ function UIGameMap:onDragEnter(mousePos)
   local thing = tile:getTopMoveThing()
   if not thing then return false end
 
-  self.parsed = false
   self.currentDragThing = thing
   Mouse.setTargetCursor()
   return true
 end
 
 function UIGameMap:onDragLeave(droppedWidget, mousePos)
-  if not self.parsed then
-    self.currentDragThing = nil
-  end
-
+  self.currentDragThing = nil
   Mouse.restoreCursor()
   return true
 end
@@ -34,33 +30,34 @@ function UIGameMap:onDrop(widget, mousePos)
   local tile = self:getTile(mousePos)
   if not tile then return false end
 
-  local count = widget.currentDragThing:getCount()
-  if widget.currentDragThing:isStackable() and count > 1 then
-    widget.parsed = true
-    local moveWindow = createWidget('CountWindow', rootWidget)
-    local spinbox = moveWindow:getChildById('spinbox')
-    spinbox:setMaximum(count)
-    spinbox:setMinimum(1)
-    spinbox:setCurrentIndex(count)
-
-    local okButton = moveWindow:getChildById('buttonOk')
-    okButton.onClick = function()
-      g_game.move(widget.currentDragThing, tile:getPosition(), spinbox:getCurrentIndex())
-      okButton:getParent():destroy()
-      widget.currentDragThing = nil
-    end
-    moveWindow.onEnter = okButton.onClick
+  local item = widget.currentDragThing
+  local toPos = tile:getPosition()
+  if item:isStackable() and item:getCount() > 1 then
+    GameInterface.moveStackableItem(item, toPos)
   else
-    g_game.move(widget.currentDragThing, tile:getPosition(), 1)
+    g_game.move(item, toPos, 1)
   end
 
   return true
 end
 
 function UIGameMap:onMouseRelease(mousePosition, mouseButton)
+  if self.cancelNextRelease then
+    self.cancelNextRelease = false
+    return true
+  end
+
   local tile = self:getTile(mousePosition)
   if tile == nil then return false end
-  if GameInterface.processMouseAction(mousePosition, mouseButton, nil, tile:getTopLookThing(), tile:getTopUseThing(), tile:getTopCreature(), tile:getTopMultiUseThing()) then
+
+  if Options.getOption('classicControl') and
+     ((Mouse.isPressed(MouseLeftButton) and mouseButton == MouseRightButton) or
+      (Mouse.isPressed(MouseRightButton) and mouseButton == MouseLeftButton)) then
+    local tile = self:getTile(mousePosition)
+    g_game.look(tile:getTopLookThing())
+    self.cancelNextRelease = true
+    return true
+  elseif GameInterface.processMouseAction(mousePosition, mouseButton, nil, tile:getTopLookThing(), tile:getTopUseThing(), tile:getTopCreature(), tile:getTopMultiUseThing()) then
     return true
   elseif mouseButton == MouseLeftButton and self:isPressed() then
     local dirs = g_map.findPath(g_game.getLocalPlayer():getPosition(), tile:getPosition(), 255)

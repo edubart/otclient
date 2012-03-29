@@ -39,7 +39,7 @@ BattleParty < BattleIcon
 MiniWindow
   id: battleWindow
   text: Battle
-  height: 100
+  height: 166
   icon: battle.png
   @onClose: Battle.toggle()
 
