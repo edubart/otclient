@@ -92,7 +92,8 @@ void UIManager::inputEvent(const InputEvent& event)
                     if(UIWidgetPtr parent = widget->getParent())
                         parent->focusChild(widget, Fw::MouseFocusReason);
                 }
-                widget->onMousePress(event.mousePos, event.mouseButton);
+                if(widget->onMousePress(event.mousePos, event.mouseButton))
+                    break;
             }
 
             break;
