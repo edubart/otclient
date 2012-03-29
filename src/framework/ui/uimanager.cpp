@@ -88,10 +88,7 @@ void UIManager::inputEvent(const InputEvent& event)
 
             m_mouseReceiver->propagateOnMouseEvent(event.mousePos, widgetList);
             for(const UIWidgetPtr& widget : widgetList) {
-                if(widget->isFocusable()) {
-                    if(UIWidgetPtr parent = widget->getParent())
-                        parent->focusChild(widget, Fw::MouseFocusReason);
-                }
+                widget->recursiveFocus(Fw::MouseFocusReason);
                 if(widget->onMousePress(event.mousePos, event.mouseButton))
                     break;
             }

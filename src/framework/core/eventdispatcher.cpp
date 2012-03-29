@@ -23,6 +23,7 @@
 #include "eventdispatcher.h"
 
 #include <framework/core/clock.h>
+#include "timer.h"
 
 EventDispatcher g_eventDispatcher;
 
@@ -53,10 +54,10 @@ void EventDispatcher::poll()
     int count = 0;
     while(m_pollEventsSize > 0) {
         if(count > 50) {
-            static bool reported = false;
-            if(!reported)  {
+            static Timer reportTimer;
+            if(reportTimer.running() && reportTimer.ticksElapsed() > 250) {
                 logError("ATTENTION the event list is not getting empty, this could be caused by some bad code");
-                reported = true;
+                reportTimer.restart();
             }
             break;
         }

@@ -753,7 +753,6 @@ void Game::setChaseMode(Otc::ChaseModes chaseMode)
 {
     if(!canPerformGameAction())
         return;
-
     m_chaseMode = chaseMode;
     m_protocolGame->sendChangeFightModes(m_fightMode, m_chaseMode, m_safeFight);
 }
@@ -762,7 +761,6 @@ void Game::setFightMode(Otc::FightModes fightMode)
 {
     if(!canPerformGameAction())
         return;
-
     m_fightMode = fightMode;
     m_protocolGame->sendChangeFightModes(m_fightMode, m_chaseMode, m_safeFight);
 }
@@ -886,30 +884,16 @@ bool Game::canPerformGameAction()
 
 void Game::setAttackingCreature(const CreaturePtr& creature)
 {
-    if(m_attackingCreature) {
-        m_attackingCreature->hideStaticSquare();
-        m_attackingCreature = nullptr;
-    }
+    CreaturePtr oldCreature = m_attackingCreature;
+    m_attackingCreature = creature;
 
-    if(creature) {
-        creature->showStaticSquare(Color::red);
-        m_attackingCreature = creature;
-    }
-
-    g_lua.callGlobalField("g_game", "onAttackingCreatureChange", creature);
+    g_lua.callGlobalField("g_game", "onAttackingCreatureChange", creature, oldCreature);
 }
 
 void Game::setFollowingCreature(const CreaturePtr& creature)
 {
-    if(m_followingCreature) {
-        m_followingCreature->hideStaticSquare();
-        m_followingCreature = nullptr;
-    }
+    CreaturePtr oldCreature = m_followingCreature;
+    m_followingCreature = creature;
 
-    if(creature) {
-        creature->showStaticSquare(Color::green);
-        m_followingCreature = creature;
-    }
-
-    g_lua.callGlobalField("g_game", "onFollowingCreatureChange", creature);
+    g_lua.callGlobalField("g_game", "onFollowingCreatureChange", creature, oldCreature);
 }

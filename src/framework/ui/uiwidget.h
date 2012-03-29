@@ -100,6 +100,7 @@ public:
     void lock();
     void unlock();
     void focus();
+    void recursiveFocus(Fw::FocusReason reason);
     void lower();
     void raise();
     void grabMouse();

@@ -579,6 +579,18 @@ void UIWidget::focus()
         parent->focusChild(asUIWidget(), Fw::ActiveFocusReason);
 }
 
+void UIWidget::recursiveFocus(Fw::FocusReason reason)
+{
+    if(m_destroyed)
+        return;
+
+    if(UIWidgetPtr parent = getParent()) {
+        if(m_focusable)
+            parent->focusChild(asUIWidget(), reason);
+        parent->recursiveFocus(reason);
+    }
+}
+
 void UIWidget::lower()
 {
     if(m_destroyed)
