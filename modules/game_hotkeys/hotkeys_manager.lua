@@ -321,6 +321,7 @@ function HotkeysManager.checkSelectedHotkey(focused)
         hotkeyText:setText(hotkeyLabelSelectedOnList.value)
 
         if hotkeyLabelSelectedOnList.value ~= '' then
+          sendAutomatically:setChecked(hotkeyLabelSelectedOnList.autoSend)
           sendAutomatically:enable()
         else
           sendAutomatically:disable()
@@ -431,7 +432,7 @@ function HotkeysManager.onHotkeyTextChange(id, value)
     else
       sendAutomatically:disable()
       sendAutomatically:setChecked(false)
-    end
+    end 
   end
 end
 
