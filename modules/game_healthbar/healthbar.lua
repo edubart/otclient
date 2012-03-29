@@ -91,12 +91,10 @@ end
 
 function HealthBar.onStatesChange(localPlayer, now, old)
   local bitsChanged = bit32.bxor(now, old)
-  print("HealthBar.onStatesChange 1 " .. bitsChanged)
   for i = 1, 32 do
     local pow = math.pow(2, i-1)
     if pow > bitsChanged then break end
     local bitChanged = bit32.band(bitsChanged, pow)
-    print("HealthBar.onStatesChange 2 " .. bitChanged .. " " .. bitsChanged .. " " .. pow)
     if bitChanged ~= 0 then
       HealthBar.toggleIcon(bitChanged)
     end
