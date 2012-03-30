@@ -237,7 +237,6 @@ void LocalPlayer::setLevel(double level, double levelPercent)
         m_level = level;
         m_levelPercent = levelPercent;
 
-        dump << "yeah";
         callLuaField("onLevelChange", level, levelPercent, oldLevel, oldLevelPercent);
     }
 }

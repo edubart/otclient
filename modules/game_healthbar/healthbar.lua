@@ -30,7 +30,7 @@ function HealthBar.init()
   connect(LocalPlayer, { onHealthChange = HealthBar.onHealthChange,
                          onManaChange = HealthBar.onManaChange,
                          onStatesChange = HealthBar.onStatesChange })
-                         
+
   connect(g_game, { onGameEnd = HealthBar.offline })
 
   healthBarWindow = displayUI('healthbar.otui', GameInterface.getLeftPanel())
@@ -52,7 +52,7 @@ function HealthBar.terminate()
   disconnect(LocalPlayer, { onHealthChange = HealthBar.onHealthChange,
                             onManaChange = HealthBar.onManaChange,
                             onStatesChange = HealthBar.onStatesChange })
-                            
+
   disconnect(g_game, { onGameEnd = HealthBar.offline })
 
   healthBarWindow:destroy()
@@ -69,6 +69,10 @@ function HealthBar.toggle()
   local visible = not healthBarWindow:isExplicitlyVisible()
   healthBarWindow:setVisible(visible)
   healthBarButton:setOn(visible)
+end
+
+function HealthBar.offline()
+  healthBarWindow:recursiveGetChildById('conditions_content'):destroyChildren()
 end
 
 -- hooked events
@@ -113,11 +117,5 @@ function HealthBar.toggleIcon(bitChanged)
     icon:setImageSource(Icons[bitChanged].path)
     icon:setTooltip(Icons[bitChanged].tooltip)
   end
-end
-
-function HealthBar.offline()
-  local conditionsContent = healthBarWindow:recursiveGetChildById('conditions_content')
-  local count = conditionsContent:getChildCount()  
-  for i = count, 1, -1 do conditionsContent:getChildByIndex(i):destroy() end
 end
 
