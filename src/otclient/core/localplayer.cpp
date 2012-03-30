@@ -231,12 +231,13 @@ void LocalPlayer::setExperience(double experience)
 
 void LocalPlayer::setLevel(double level, double levelPercent)
 {
-    if(m_level != level || m_levelPercent != m_levelPercent) {
+    if(m_level != level || m_levelPercent != levelPercent) {
         double oldLevel = m_level;
         double oldLevelPercent = m_levelPercent;
         m_level = level;
         m_levelPercent = levelPercent;
 
+        dump << "yeah";
         callLuaField("onLevelChange", level, levelPercent, oldLevel, oldLevelPercent);
     }
 }
