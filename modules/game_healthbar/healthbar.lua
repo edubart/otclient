@@ -14,7 +14,7 @@ Icons[256] = { tooltip = 'You are drowing', path = '/game_healthbar/icons/drowni
 Icons[512] = { tooltip = 'You are freezing', path = '/game_healthbar/icons/freezing.png', id = 'condition_freezing' }
 Icons[1024] = { tooltip = 'You are dazzled', path = '/game_healthbar/icons/dazzled.png', id = 'condition_dazzled' }
 Icons[2048] = { tooltip = 'You are cursed', path = '/game_healthbar/icons/cursed.png', id = 'condition_cursed' }
-Icons[4096] = { tooltip = 'You are strenghtened', path = '/game_healthbar/icons/strengthened.png', id = 'condition_strengthened' }
+Icons[4096] = { tooltip = 'You are strengthened', path = '/game_healthbar/icons/strengthened.png', id = 'condition_strengthened' }
 Icons[8192] = { tooltip = 'You may not logout or enter a protection zone', path = '/game_healthbar/icons/protection_zone_block.png', id = 'condition_protection_zone_block' }
 Icons[16384] = { tooltip = 'You are within a protection zone', path = '/game_healthbar/icons/protection_zone.png', id = 'condition_protection_zone' }
 

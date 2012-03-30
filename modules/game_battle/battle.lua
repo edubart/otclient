@@ -57,7 +57,8 @@ function Battle.init()
                       onEmblemChange = Battle.checkCreatureEmblem } )
 
   connect(g_game, { onAttackingCreatureChange = Battle.onAttack,
-                    onFollowingCreatureChange = Battle.onFollow } )
+                    onFollowingCreatureChange = Battle.onFollow,
+                    onGameEnd = Battle.removeAllCreatures } )
 
   addEvent(Battle.addAllCreatures)
   checkCreaturesEvent = scheduleEvent(Battle.checkCreatures, 200)
@@ -132,7 +133,7 @@ function Battle.doCreatureFitFilters(creature)
   return true
 end
 
-function Battle.checkCreatures()
+function Battle.checkCreatures(forceRecheck)
   local player = g_game.getLocalPlayer()
   if player then
     local spectators = {}
@@ -169,7 +170,9 @@ function Battle.checkCreatures()
       Battle.removeCreature(v)
     end
   end
-  checkCreaturesEvent = scheduleEvent(Battle.checkCreatures, 500)
+  if not forceRecheck then
+    checkCreaturesEvent = scheduleEvent(Battle.checkCreatures, 500)
+  end
 end
 
 function Battle.addCreature(creature)
@@ -263,6 +266,12 @@ function Battle.onMouseRelease(self, mousePosition, mouseButton)
   end
 end
 
+function Battle.removeAllCreatures()
+  for i, v in pairs(battleButtonsByCreaturesList) do
+    Battle.removeCreature(v.creature)
+  end
+end
+
 function Battle.removeCreature(creature)
   local creatureId = creature:getId()
 
@@ -303,6 +312,7 @@ function Battle.onbattleButtonHoverChange(widget, hovered)
 end
 
 function Battle.onAttack(creature)
+  Battle.checkCreatures(true) --Force recheck
   local battleButton = creature and battleButtonsByCreaturesList[creature:getId()] or lastBattleButtonSwitched
   if battleButton then
     battleButton.isTarget = creature and true or false
@@ -311,6 +321,7 @@ function Battle.onAttack(creature)
 end
 
 function Battle.onFollow(creature)
+  Battle.checkCreatures(true) --Force recheck
   local battleButton = creature and battleButtonsByCreaturesList[creature:getId()] or lastBattleButtonSwitched
   if battleButton then
     battleButton.isFollowed = creature and true or false
