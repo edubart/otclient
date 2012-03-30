@@ -22,6 +22,7 @@
 
 #include "texturemanager.h"
 #include "animatedtexture.h"
+#include "graphics.h"
 
 #include <framework/core/resourcemanager.h>
 #include <framework/thirdparty/apngloader.h>
@@ -54,6 +55,7 @@ TexturePtr TextureManager::getTexture(const std::string& textureFile)
             texture = loadPNG(fin);
         } catch(Exception& e) {
             logError("unable to load texture '", textureFile, "': ", e.what());
+            texture = g_graphics.getEmptyTexture();
         }
     }
 

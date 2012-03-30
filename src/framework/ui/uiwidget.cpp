@@ -245,7 +245,7 @@ void UIWidget::focusChild(const UIWidgetPtr& child, Fw::FocusReason reason)
         child->updateState(Fw::FocusState);
         child->updateState(Fw::ActiveState);
 
-        g_eventDispatcher.addEvent(std::bind(&UIWidget::onFocusChange, child, true, reason));
+        child->onFocusChange(true, reason);
     }
 
     if(oldFocused) {
@@ -253,7 +253,7 @@ void UIWidget::focusChild(const UIWidgetPtr& child, Fw::FocusReason reason)
         oldFocused->updateState(Fw::FocusState);
         oldFocused->updateState(Fw::ActiveState);
 
-        g_eventDispatcher.addEvent(std::bind(&UIWidget::onFocusChange, oldFocused, false, reason));
+        oldFocused->onFocusChange(false, reason);
     }
 
     onChildFocusChange(child, oldFocused, reason);
