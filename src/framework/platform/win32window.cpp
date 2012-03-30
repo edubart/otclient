@@ -156,11 +156,13 @@ WIN32Window::WIN32Window()
     */
 
     // keypad
+    /*
     m_keyMap[VK_ADD] = Fw::KeyPlus;
     m_keyMap[VK_SUBTRACT] = Fw::KeyMinus;
     m_keyMap[VK_DECIMAL] = Fw::KeyPeriod;
     m_keyMap[VK_DIVIDE] = Fw::KeySlash;
     m_keyMap[VK_MULTIPLY] = Fw::KeyAsterisk;
+    */
 
     m_keyMap[VK_OEM_1] = Fw::KeySemicolon;
     m_keyMap[VK_OEM_2] = Fw::KeySlash;
@@ -170,7 +172,7 @@ WIN32Window::WIN32Window()
     m_keyMap[VK_OEM_6] = Fw::KeyRightBracket;
     m_keyMap[VK_OEM_7] = Fw::KeyApostrophe;
     m_keyMap[VK_OEM_MINUS] = Fw::KeyMinus;
-    m_keyMap[VK_OEM_PLUS] = Fw::KeyPlus;
+    m_keyMap[VK_OEM_PLUS] = Fw::KeyEqual;
     m_keyMap[VK_OEM_COMMA] = Fw::KeyComma;
     m_keyMap[VK_OEM_PERIOD] = Fw::KeyPeriod;
 

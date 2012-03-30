@@ -155,11 +155,13 @@ X11Window::X11Window()
     m_keyMap[XK_asciitilde] = Fw::KeyTilde;
 
     // keypad
+    /*
     m_keyMap[XK_KP_Add] = Fw::KeyPlus;
     m_keyMap[XK_KP_Subtract] = Fw::KeyMinus;
     m_keyMap[XK_KP_Decimal] = Fw::KeyPeriod;
     m_keyMap[XK_KP_Divide] = Fw::KeySlash;
     m_keyMap[XK_KP_Multiply] = Fw::KeyAsterisk;
+    */
     m_keyMap[XK_KP_Enter] = Fw::KeyEnter;
 
     // keypad with numlock off
