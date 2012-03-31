@@ -10,9 +10,9 @@ local enterGameButton
 
 -- private functions
 local function clearAccountFields()
-  enterGame:getChildById('accountNameLineEdit'):clearText()
-  enterGame:getChildById('accountPasswordLineEdit'):clearText()
-  enterGame:getChildById('accountNameLineEdit'):focus()
+  enterGame:getChildById('accountNameTextEdit'):clearText()
+  enterGame:getChildById('accountPasswordTextEdit'):clearText()
+  enterGame:getChildById('accountNameTextEdit'):focus()
   Settings.remove('account')
   Settings.remove('password')
 end
@@ -71,13 +71,13 @@ function EnterGame.init()
   local port = Settings.get('port')
   local autologin = Settings.getBoolean('autologin')
 
-  enterGame:getChildById('accountNameLineEdit'):setText(account)
-  enterGame:getChildById('accountPasswordLineEdit'):setText(password)
-  enterGame:getChildById('serverHostLineEdit'):setText(host)
-  enterGame:getChildById('serverPortLineEdit'):setText(port)
+  enterGame:getChildById('accountNameTextEdit'):setText(account)
+  enterGame:getChildById('accountPasswordTextEdit'):setText(password)
+  enterGame:getChildById('serverHostTextEdit'):setText(host)
+  enterGame:getChildById('serverPortTextEdit'):setText(port)
   enterGame:getChildById('autoLoginBox'):setChecked(autologin)
   enterGame:getChildById('rememberPasswordBox'):setChecked(#account > 0)
-  enterGame:getChildById('accountNameLineEdit'):focus()
+  enterGame:getChildById('accountNameTextEdit'):focus()
 
   -- only open entergame when app starts
   enterGame:hide()
@@ -120,10 +120,10 @@ function EnterGame.openWindow()
 end
 
 function EnterGame.doLogin()
-  EnterGame.account = enterGame:getChildById('accountNameLineEdit'):getText()
-  EnterGame.password = enterGame:getChildById('accountPasswordLineEdit'):getText()
-  EnterGame.host = enterGame:getChildById('serverHostLineEdit'):getText()
-  EnterGame.port = tonumber(enterGame:getChildById('serverPortLineEdit'):getText())
+  EnterGame.account = enterGame:getChildById('accountNameTextEdit'):getText()
+  EnterGame.password = enterGame:getChildById('accountPasswordTextEdit'):getText()
+  EnterGame.host = enterGame:getChildById('serverHostTextEdit'):getText()
+  EnterGame.port = tonumber(enterGame:getChildById('serverPortTextEdit'):getText())
   EnterGame.hide()
 
   Settings.set('host', EnterGame.host)

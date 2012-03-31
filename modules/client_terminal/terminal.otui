@@ -32,8 +32,8 @@ UIWindow
     font: terminus-14px-bold
     text: >>
 
-  UILineEdit
-    id: commandLineEdit
+  UITextEdit
+    id: commandTextEdit
     height: 16
     anchors.bottom: parent.bottom
     anchors.left: commandSymbolLabel.right

@@ -47,6 +47,8 @@ void Game::resetGameStates()
     m_safeFight = true;
     m_followingCreature = nullptr;
     m_attackingCreature = nullptr;
+    m_containers.clear();
+    m_worldName = "";
 }
 
 void Game::processConnectionError(const boost::system::error_code& error)

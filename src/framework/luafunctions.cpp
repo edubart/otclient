@@ -363,27 +363,29 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIAnchorLayout>("centerIn", &UIAnchorLayout::centerIn);
     g_lua.bindClassMemberFunction<UIAnchorLayout>("fill", &UIAnchorLayout::fill);
 
-    // UILineEdit
-    g_lua.registerClass<UILineEdit, UIWidget>();
-    g_lua.bindClassStaticFunction<UILineEdit>("create", []{ return UILineEditPtr(new UILineEdit); } );
-    g_lua.bindClassMemberFunction<UILineEdit>("setTextHorizontalMargin", &UILineEdit::setTextHorizontalMargin);
-    g_lua.bindClassMemberFunction<UILineEdit>("setCursorPos", &UILineEdit::setCursorPos);
-    g_lua.bindClassMemberFunction<UILineEdit>("setCursorEnabled", &UILineEdit::setCursorEnabled);
-    g_lua.bindClassMemberFunction<UILineEdit>("setTextHidden", &UILineEdit::setTextHidden);
-    g_lua.bindClassMemberFunction<UILineEdit>("setAlwaysActive", &UILineEdit::setAlwaysActive);
-    g_lua.bindClassMemberFunction<UILineEdit>("setValidCharacters", &UILineEdit::setValidCharacters);
-    g_lua.bindClassMemberFunction<UILineEdit>("setShiftNavigation", &UILineEdit::setShiftNavigation);
-    g_lua.bindClassMemberFunction<UILineEdit>("moveCursor", &UILineEdit::moveCursor);
-    g_lua.bindClassMemberFunction<UILineEdit>("appendText", &UILineEdit::appendText);
-    g_lua.bindClassMemberFunction<UILineEdit>("removeCharacter", &UILineEdit::removeCharacter);
-    g_lua.bindClassMemberFunction<UILineEdit>("getDisplayedText", &UILineEdit::getDisplayedText);
-    g_lua.bindClassMemberFunction<UILineEdit>("getTextPos", &UILineEdit::getTextPos);
-    g_lua.bindClassMemberFunction<UILineEdit>("getTextHorizontalMargin", &UILineEdit::getTextHorizontalMargin);
-    g_lua.bindClassMemberFunction<UILineEdit>("getCursorPos", &UILineEdit::getCursorPos);
-    g_lua.bindClassMemberFunction<UILineEdit>("isCursorEnabled", &UILineEdit::isCursorEnabled);
-    g_lua.bindClassMemberFunction<UILineEdit>("isAlwaysActive", &UILineEdit::isAlwaysActive);
-    g_lua.bindClassMemberFunction<UILineEdit>("isTextHidden", &UILineEdit::isTextHidden);
-    g_lua.bindClassMemberFunction<UILineEdit>("isShiftNavigation", &UILineEdit::isShiftNavigation);
+    // UITextEdit
+    g_lua.registerClass<UITextEdit, UIWidget>();
+    g_lua.bindClassStaticFunction<UITextEdit>("create", []{ return UITextEditPtr(new UITextEdit); } );
+    g_lua.bindClassMemberFunction<UITextEdit>("setTextHorizontalMargin", &UITextEdit::setTextHorizontalMargin);
+    g_lua.bindClassMemberFunction<UITextEdit>("setCursorPos", &UITextEdit::setCursorPos);
+    g_lua.bindClassMemberFunction<UITextEdit>("setCursorEnabled", &UITextEdit::setCursorEnabled);
+    g_lua.bindClassMemberFunction<UITextEdit>("setTextHidden", &UITextEdit::setTextHidden);
+    g_lua.bindClassMemberFunction<UITextEdit>("setAlwaysActive", &UITextEdit::setAlwaysActive);
+    g_lua.bindClassMemberFunction<UITextEdit>("setValidCharacters", &UITextEdit::setValidCharacters);
+    g_lua.bindClassMemberFunction<UITextEdit>("setShiftNavigation", &UITextEdit::setShiftNavigation);
+    g_lua.bindClassMemberFunction<UITextEdit>("setMultiline", &UITextEdit::setMultiline);
+    g_lua.bindClassMemberFunction<UITextEdit>("moveCursor", &UITextEdit::moveCursor);
+    g_lua.bindClassMemberFunction<UITextEdit>("appendText", &UITextEdit::appendText);
+    g_lua.bindClassMemberFunction<UITextEdit>("removeCharacter", &UITextEdit::removeCharacter);
+    g_lua.bindClassMemberFunction<UITextEdit>("getDisplayedText", &UITextEdit::getDisplayedText);
+    g_lua.bindClassMemberFunction<UITextEdit>("getTextPos", &UITextEdit::getTextPos);
+    g_lua.bindClassMemberFunction<UITextEdit>("getTextHorizontalMargin", &UITextEdit::getTextHorizontalMargin);
+    g_lua.bindClassMemberFunction<UITextEdit>("getCursorPos", &UITextEdit::getCursorPos);
+    g_lua.bindClassMemberFunction<UITextEdit>("isCursorEnabled", &UITextEdit::isCursorEnabled);
+    g_lua.bindClassMemberFunction<UITextEdit>("isAlwaysActive", &UITextEdit::isAlwaysActive);
+    g_lua.bindClassMemberFunction<UITextEdit>("isTextHidden", &UITextEdit::isTextHidden);
+    g_lua.bindClassMemberFunction<UITextEdit>("isShiftNavigation", &UITextEdit::isShiftNavigation);
+    g_lua.bindClassMemberFunction<UITextEdit>("isMultiline", &UITextEdit::isMultiline);
 
     // UIFrameCounter
     g_lua.registerClass<UIFrameCounter, UIWidget>();

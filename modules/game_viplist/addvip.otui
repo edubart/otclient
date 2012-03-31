@@ -10,7 +10,7 @@ MainWindow
     anchors.left: parent.left
     anchors.right: parent.right
 
-  LineEdit
+  TextEdit
     id: name
     anchors.top: prev.bottom
     anchors.left: parent.left

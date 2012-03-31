@@ -18,7 +18,7 @@ Module
     importStyle 'styles/labels.otui'
     importStyle 'styles/panels.otui'
     importStyle 'styles/separators.otui'
-    importStyle 'styles/lineedits.otui'
+    importStyle 'styles/textedits.otui'
     importStyle 'styles/checkboxes.otui'
     importStyle 'styles/progressbars.otui'
     importStyle 'styles/tabbars.otui'

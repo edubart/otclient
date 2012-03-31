@@ -45,6 +45,9 @@ void Font::load(const OTMLNodePtr& fontNode)
     } else
         calculateGlyphsWidthsAutomatically(glyphSize);
 
+    // new line actually has a size that will be useful in multiline algorithm
+    m_glyphsSize[(uchar)'\n'] = Size(1, m_glyphHeight);
+
     // read custom widths
     if(OTMLNodePtr node = fontNode->get("glyph-widths")) {
         for(const OTMLNodePtr& child : node->children())

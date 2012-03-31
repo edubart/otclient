@@ -13,7 +13,7 @@ local terminalWindow
 local terminalButton
 local logLocked = false
 local commandEnv = newenv()
-local commandLineEdit
+local commandTextEdit
 local terminalBuffer
 local commandHistory = { }
 local currentHistoryIndex = 0
@@ -25,18 +25,18 @@ local function navigateCommand(step)
     currentHistoryIndex = math.min(math.max(currentHistoryIndex + step, 0), numCommands)
     if currentHistoryIndex > 0 then
       local command = commandHistory[numCommands - currentHistoryIndex + 1]
-      commandLineEdit:setText(command)
+      commandTextEdit:setText(command)
     else
-      commandLineEdit:clearText()
+      commandTextEdit:clearText()
     end
   end
 end
 
 local function completeCommand()
-  local cursorPos = commandLineEdit:getCursorPos()
+  local cursorPos = commandTextEdit:getCursorPos()
   if cursorPos == 0 then return end
 
-  local commandBegin = commandLineEdit:getText():sub(1, cursorPos)
+  local commandBegin = commandTextEdit:getText():sub(1, cursorPos)
   local possibleCommands = {}
 
   -- create a list containing all globals
@@ -52,7 +52,7 @@ local function completeCommand()
 
   -- complete command with one match
   if #possibleCommands == 1 then
-    commandLineEdit:setText(possibleCommands[1])
+    commandTextEdit:setText(possibleCommands[1])
   -- show command matches
   elseif #possibleCommands > 0 then
     print('>> ' .. commandBegin)
@@ -75,7 +75,7 @@ local function completeCommand()
         commandBegin = expandedComplete
       end
     end
-    commandLineEdit:setText(commandBegin)
+    commandTextEdit:setText(commandBegin)
 
     for i,v in ipairs(possibleCommands) do
       print(v)
@@ -84,11 +84,11 @@ local function completeCommand()
 end
 
 local function doCommand()
-  local currentCommand = commandLineEdit:getText()
+  local currentCommand = commandTextEdit:getText()
   Terminal.executeCommand(currentCommand)
 
-  if commandLineEdit then
-    commandLineEdit:clearText()
+  if commandTextEdit then
+    commandTextEdit:clearText()
   end
   return true
 end
@@ -133,11 +133,11 @@ function Terminal.init()
 
   commandHistory = Settings.getList('terminal-history')
 
-  commandLineEdit = terminalWindow:getChildById('commandLineEdit')
-  Keyboard.bindKeyPress('Up', function() navigateCommand(1) end, commandLineEdit)
-  Keyboard.bindKeyPress('Down', function() navigateCommand(-1) end, commandLineEdit)
-  Keyboard.bindKeyDown('Tab', completeCommand, commandLineEdit)
-  Keyboard.bindKeyDown('Enter', doCommand, commandLineEdit)
+  commandTextEdit = terminalWindow:getChildById('commandTextEdit')
+  Keyboard.bindKeyPress('Up', function() navigateCommand(1) end, commandTextEdit)
+  Keyboard.bindKeyPress('Down', function() navigateCommand(-1) end, commandTextEdit)
+  Keyboard.bindKeyDown('Tab', completeCommand, commandTextEdit)
+  Keyboard.bindKeyDown('Enter', doCommand, commandTextEdit)
   Keyboard.bindKeyDown('Escape', Terminal.hide, terminalWindow)
 
   terminalBuffer = terminalWindow:getChildById('terminalBuffer')
@@ -151,7 +151,7 @@ function Terminal.terminate()
   g_logger.setOnLog(nil)
   terminalButton:destroy()
   terminalButton = nil
-  commandLineEdit = nil
+  commandTextEdit = nil
   terminalBuffer = nil
   terminalWindow:destroy()
   terminalWindow = nil

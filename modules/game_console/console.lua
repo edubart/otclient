@@ -45,7 +45,7 @@ local SayModes = {
 local consolePanel
 local consoleContentPanel
 local consoleTabBar
-local consoleLineEdit
+local consoleTextEdit
 local channels
 local messageHistory = { }
 local currentMessageIndex = 0
@@ -60,9 +60,9 @@ local function navigateMessageHistory(step)
     currentMessageIndex = math.min(math.max(currentMessageIndex + step, 0), numCommands)
     if currentMessageIndex > 0 then
       local command = messageHistory[numCommands - currentMessageIndex + 1]
-      consoleLineEdit:setText(command)
+      consoleTextEdit:setText(command)
     else
-      consoleLineEdit:clearText()
+      consoleTextEdit:clearText()
     end
   end
 end
@@ -159,7 +159,7 @@ function Console.init()
                     onGameEnd = Console.clear })
 
   consolePanel = displayUI('console.otui', GameInterface.getBottomPanel())
-  consoleLineEdit = consolePanel:getChildById('consoleLineEdit')
+  consoleTextEdit = consolePanel:getChildById('consoleTextEdit')
   consoleContentPanel = consolePanel:getChildById('consoleContentPanel')
   consoleTabBar = consolePanel:getChildById('consoleTabBar')
   consoleTabBar:setContentWidget(consoleContentPanel)
@@ -208,7 +208,7 @@ function Console.terminate()
 
   consolePanel:destroy()
   consolePanel = nil
-  consoleLineEdit = nil
+  consoleTextEdit = nil
   consoleContentPanel = nil
   consoleTabBar = nil
 
@@ -233,7 +233,7 @@ function Console.clear()
     consoleTabBar:removeTab(npcTab)
   end
 
-  consoleLineEdit:clearText()
+  consoleTextEdit:clearText()
 
   if channelsWindow then
     channelsWindow:destroy()
@@ -241,8 +241,8 @@ function Console.clear()
   end
 end
 
-function Console.setLineEditText(text)
-  consoleLineEdit:setText(text)
+function Console.setTextEditText(text)
+  consoleTextEdit:setText(text)
 end
 
 function Console.addTab(name, focus)
@@ -339,9 +339,9 @@ function Console.addTabText(text, speaktype, tab)
 end
 
 function Console.sendCurrentMessage()
-  local message = consoleLineEdit:getText()
+  local message = consoleTextEdit:getText()
   if #message == 0 then return end
-  consoleLineEdit:clearText()
+  consoleTextEdit:clearText()
 
   -- get current channel
   local tab = Console.getCurrentTab()
@@ -365,7 +365,7 @@ function Console.sendCurrentMessage()
     if chatCommandInitial == chatCommandEnd then
       chatCommandPrivateRepeat = false
       if chatCommandInitial == "*" then
-        consoleLineEdit:setText('*'.. chatCommandPrivate .. '* ')
+        consoleTextEdit:setText('*'.. chatCommandPrivate .. '* ')
       end
       message = chatCommandMessage:trim()
       chatCommandPrivateReady = true

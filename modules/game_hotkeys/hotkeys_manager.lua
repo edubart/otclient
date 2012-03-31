@@ -290,7 +290,7 @@ function HotkeysManager.call(keyCombo)
       if hotKey.autoSend then
         g_game.talk(hotKey.value)
       else
-        Console.setLineEditText(hotKey.value)
+        Console.setTextEditText(hotKey.value)
       end
     elseif hotKey.itemId ~= nil then
       if hotKey.useType == HOTKEY_MANAGER_USEONSELF then

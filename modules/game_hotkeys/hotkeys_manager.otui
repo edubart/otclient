@@ -68,7 +68,7 @@ MainWindow
     anchors.top: prev.bottom
     margin-top: 20
 
-  LineEdit
+  TextEdit
     id: hotkeyText
     enabled: false
     anchors.left: parent.left

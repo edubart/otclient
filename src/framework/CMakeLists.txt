@@ -209,7 +209,7 @@ SET(framework_SOURCES ${framework_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/ui/uiwidgetimage.cpp
     ${CMAKE_CURRENT_LIST_DIR}/ui/uiwidgettext.cpp
     ${CMAKE_CURRENT_LIST_DIR}/ui/uiwidgetbasestyle.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/ui/uilineedit.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/ui/uitextedit.cpp
     ${CMAKE_CURRENT_LIST_DIR}/ui/uiboxlayout.cpp
     ${CMAKE_CURRENT_LIST_DIR}/ui/uihorizontallayout.cpp
     ${CMAKE_CURRENT_LIST_DIR}/ui/uiverticallayout.cpp

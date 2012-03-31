@@ -1,4 +1,4 @@
-UISpinBox = extends(UILineEdit)
+UISpinBox = extends(UITextEdit)
 
 function UISpinBox.create()
   local spinbox = UISpinBox.internalCreate()

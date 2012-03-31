@@ -10,8 +10,8 @@ MainWindow
     anchors.left: parent.left
     anchors.top: parent.top
 
-  LineEdit
-    id: accountNameLineEdit
+  TextEdit
+    id: accountNameTextEdit
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: prev.bottom
@@ -23,8 +23,8 @@ MainWindow
     anchors.top: prev.bottom
     margin-top: 8
 
-  PasswordLineEdit
-    id: accountPasswordLineEdit
+  PasswordTextEdit
+    id: accountPasswordTextEdit
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: prev.bottom
@@ -38,8 +38,8 @@ MainWindow
     anchors.top: prev.bottom
     margin-top: 8
 
-  LineEdit
-    id: serverHostLineEdit
+  TextEdit
+    id: serverHostTextEdit
     tooltip: |-
       Make sure that your client uses
       the correct game protocol version
@@ -56,8 +56,8 @@ MainWindow
     anchors.top: serverLabel.top
     margin-left: 10
 
-  LineEdit
-    id: serverPortLineEdit
+  TextEdit
+    id: serverPortTextEdit
     text: 7171
     anchors.left: portLabel.left
     anchors.right: portLabel.right

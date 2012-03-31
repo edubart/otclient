@@ -27,7 +27,7 @@
 
 class UIManager;
 class UIWidget;
-class UILineEdit;
+class UITextEdit;
 class UIFrameCounter;
 class UILayout;
 class UIBoxLayout;
@@ -39,7 +39,7 @@ class UIAnchorLayout;
 typedef std::shared_ptr<UIWidget> UIWidgetPtr;
 typedef std::weak_ptr<UIWidget> UIWidgetWeakPtr;
 
-typedef std::shared_ptr<UILineEdit> UILineEditPtr;
+typedef std::shared_ptr<UITextEdit> UITextEditPtr;
 typedef std::shared_ptr<UIFrameCounter> UIFrameCounterPtr;
 typedef std::shared_ptr<UILayout> UILayoutPtr;
 typedef std::shared_ptr<UIBoxLayout> UIBoxLayoutPtr;

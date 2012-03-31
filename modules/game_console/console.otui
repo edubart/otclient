@@ -88,7 +88,7 @@ Panel
     anchors.top: prev.bottom
     anchors.left: parent.left
     anchors.right: parent.right
-    anchors.bottom: consoleLineEdit.top
+    anchors.bottom: consoleTextEdit.top
     margin-left: 6
     margin-right: 6
     margin-bottom: 4
@@ -108,8 +108,8 @@ Panel
     margin-bottom: 6
     @onClick: Console.sayModeChange()
 
-  LineEdit
-    id: consoleLineEdit
+  TextEdit
+    id: consoleTextEdit
     anchors.left: sayModeButton.right
     anchors.right: parent.right
     anchors.bottom: parent.bottom
