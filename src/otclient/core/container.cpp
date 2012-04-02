@@ -21,3 +21,80 @@
  */
 
 #include "container.h"
+#include "item.h"
+
+Container::Container()
+{
+    m_id = -1;
+    m_itemId = 0;
+    m_capacity = 20;
+    m_name = "Container";
+    m_hasParent = false;
+}
+
+void Container::open(const ContainerPtr& previousContainer)
+{
+    callLuaField("onOpen", previousContainer);
+}
+
+void Container::close()
+{
+    callLuaField("onClose");
+}
+
+void Container::addItem(const ItemPtr& item)
+{
+    m_items.push_front(item);
+    updateItemsPositions();
+
+    callLuaField("onAddItem", 0, item);
+}
+
+void Container::addItems(const std::vector<ItemPtr>& items)
+{
+    for(const ItemPtr& item : items)
+        m_items.push_back(item);
+    updateItemsPositions();
+}
+
+void Container::updateItem(int slot, const ItemPtr& item)
+{
+    if(slot < 0 || slot >= (int)m_items.size()) {
+        logTraceError("slot not found");
+        return;
+    }
+
+    ItemPtr oldItem = m_items[slot];
+    m_items[slot] = item;
+    item->setPosition(getSlotPosition(slot));
+
+    callLuaField("onUpdateItem", slot, item, oldItem);
+}
+
+void Container::removeItem(int slot)
+{
+    if(slot < 0 || slot >= (int)m_items.size()) {
+        logTraceError("slot not found");
+        return;
+    }
+
+    ItemPtr item = m_items[slot];
+    m_items.erase(m_items.begin() + slot);
+
+    updateItemsPositions();
+
+    callLuaField("onRemoveItem", slot, item);
+}
+
+ItemPtr Container::getItem(int slot)
+{
+    if(slot < 0 || slot >= (int)m_items.size())
+        return nullptr;
+    return m_items[slot];
+}
+
+void Container::updateItemsPositions()
+{
+    for(int slot = 0; slot < (int)m_items.size(); ++slot)
+        m_items[slot]->setPosition(getSlotPosition(slot));
+}

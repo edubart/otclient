@@ -95,7 +95,8 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassStaticFunction("g_game", "useInventoryItem", std::bind(&Game::useInventoryItem, &g_game, _1));
     g_lua.bindClassStaticFunction("g_game", "useInventoryItemWith", std::bind(&Game::useInventoryItemWith, &g_game, _1, _2));
     g_lua.bindClassStaticFunction("g_game", "open", std::bind(&Game::open, &g_game, _1, _2));
-    g_lua.bindClassStaticFunction("g_game", "upContainer", std::bind(&Game::upContainer, &g_game, _1));
+    g_lua.bindClassStaticFunction("g_game", "openParent", std::bind(&Game::openParent, &g_game, _1));
+    g_lua.bindClassStaticFunction("g_game", "close", std::bind(&Game::close, &g_game, _1));
     g_lua.bindClassStaticFunction("g_game", "refreshContainer", std::bind(&Game::refreshContainer, &g_game));
     g_lua.bindClassStaticFunction("g_game", "attack", std::bind(&Game::attack, &g_game, _1));
     g_lua.bindClassStaticFunction("g_game", "cancelAttack", std::bind(&Game::cancelAttack, &g_game));
@@ -147,6 +148,8 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassStaticFunction("g_game", "isDead", std::bind(&Game::isDead, &g_game));
     g_lua.bindClassStaticFunction("g_game", "isAttacking", std::bind(&Game::isAttacking, &g_game));
     g_lua.bindClassStaticFunction("g_game", "isFollowing", std::bind(&Game::isFollowing, &g_game));
+    g_lua.bindClassStaticFunction("g_game", "getContainer", std::bind(&Game::getContainer, &g_game, _1));
+    g_lua.bindClassStaticFunction("g_game", "getContainers", std::bind(&Game::getContainers, &g_game));
     g_lua.bindClassStaticFunction("g_game", "getAttackingCreature", std::bind(&Game::getAttackingCreature, &g_game));
     g_lua.bindClassStaticFunction("g_game", "getFollowingCreature", std::bind(&Game::getFollowingCreature, &g_game));
     g_lua.bindClassStaticFunction("g_game", "getServerBeat", std::bind(&Game::getServerBeat, &g_game));
@@ -165,6 +168,26 @@ void OTClient::registerLuaFunctions()
     g_lua.registerClass<ProtocolGame, Protocol>();
 
     g_lua.registerClass<Container>();
+    g_lua.bindClassStaticFunction<Container>("create", []{ return ContainerPtr(new Container); });
+    g_lua.bindClassMemberFunction<Container>("open", &Container::open);
+    g_lua.bindClassMemberFunction<Container>("close", &Container::close);
+    g_lua.bindClassMemberFunction<Container>("addItem", &Container::addItem);
+    g_lua.bindClassMemberFunction<Container>("addItems", &Container::addItems);
+    g_lua.bindClassMemberFunction<Container>("updateItem", &Container::updateItem);
+    g_lua.bindClassMemberFunction<Container>("removeItem", &Container::removeItem);
+    g_lua.bindClassMemberFunction<Container>("getItem", &Container::getItem);
+    g_lua.bindClassMemberFunction<Container>("getSlotPosition", &Container::getSlotPosition);
+    g_lua.bindClassMemberFunction<Container>("setId", &Container::setId);
+    g_lua.bindClassMemberFunction<Container>("setCapacity", &Container::setCapacity);
+    g_lua.bindClassMemberFunction<Container>("setName", &Container::setName);
+    g_lua.bindClassMemberFunction<Container>("setItemId", &Container::setItemId);
+    g_lua.bindClassMemberFunction<Container>("setHasParent", &Container::setHasParent);
+    g_lua.bindClassMemberFunction<Container>("getName", &Container::getName);
+    g_lua.bindClassMemberFunction<Container>("getId", &Container::getId);
+    g_lua.bindClassMemberFunction<Container>("getCapacity", &Container::getCapacity);
+    g_lua.bindClassMemberFunction<Container>("getItemsCount", &Container::getItemsCount);
+    g_lua.bindClassMemberFunction<Container>("getItemId", &Container::getItemId);
+    g_lua.bindClassMemberFunction<Container>("hasParent", &Container::hasParent);
 
     g_lua.registerClass<Thing>();
     g_lua.bindClassMemberFunction<Thing>("setId", &Thing::setId);

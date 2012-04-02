@@ -3,7 +3,7 @@ MiniWindow < UIMiniWindow
   icon-rect: 4 4 16 16
   width: 192
   height: 200
-  text-offset: 26 5
+  text-offset: 24 5
   text-align: topLeft
   margin-bottom: 2
   move-policy: free updated
@@ -82,7 +82,7 @@ MiniWindowContents < ScrollablePanel
   id: contentsPanel
   anchors.fill: parent
   margin-right: 14
-  padding: 25 6 6 6
+  padding: 24 3 3 5
   vertical-scrollbar: miniwindowScrollBar
 
 BorderlessGameWindow < UIWindow

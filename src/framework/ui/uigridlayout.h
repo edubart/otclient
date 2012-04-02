@@ -40,6 +40,9 @@ public:
     void setCellSpacing(int spacing) { m_cellSpacing = spacing; update(); }
     void setNumColumns(int columns) { m_numColumns = columns; update(); }
     void setNumLines(int lines) { m_numLines = lines; update(); }
+    void setAutoSpacing(bool enable) { m_autoSpacing = enable; update(); }
+    void setFitChildren(bool enable) { m_fitChildren = enable; update(); }
+    void setFlow(bool enable) { m_flow = enable; update(); }
 
     virtual UIGridLayoutPtr asUIGridLayout() { return nullptr; }
 
@@ -51,6 +54,9 @@ private:
     int m_cellSpacing;
     int m_numColumns;
     int m_numLines;
+    Boolean<false> m_autoSpacing;
+    Boolean<false> m_fitChildren;
+    Boolean<false> m_flow;
 };
 
 #endif

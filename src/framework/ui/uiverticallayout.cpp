@@ -49,7 +49,7 @@ bool UIVerticalLayout::internalUpdate()
 
     Rect clippingRect = parentWidget->getClippingRect();
     Point pos = (m_alignBottom) ? clippingRect.bottomLeft() : clippingRect.topLeft();
-    int prefferedHeight = 0;
+    int preferredHeight = 0;
     int gap;
 
     for(const UIWidgetPtr& widget : widgets) {
@@ -60,7 +60,7 @@ bool UIVerticalLayout::internalUpdate()
 
         gap = (m_alignBottom) ? -(widget->getMarginBottom()+widget->getHeight()) : widget->getMarginTop();
         pos.y += gap;
-        prefferedHeight += gap;
+        preferredHeight += gap;
 
         if(widget->isFixedSize()) {
             // center it
@@ -78,16 +78,16 @@ bool UIVerticalLayout::internalUpdate()
         gap = (m_alignBottom) ? -widget->getMarginTop() : (widget->getHeight() + widget->getMarginBottom());
         gap += m_spacing;
         pos.y += gap;
-        prefferedHeight += gap;
+        preferredHeight += gap;
     }
 
-    prefferedHeight -= m_spacing;
-    prefferedHeight += parentWidget->getPaddingTop() + parentWidget->getPaddingBottom();
+    preferredHeight -= m_spacing;
+    preferredHeight += parentWidget->getPaddingTop() + parentWidget->getPaddingBottom();
 
-    if(m_fitChildren && prefferedHeight != parentWidget->getHeight()) {
-        // must set the preffered width later
+    if(m_fitChildren && preferredHeight != parentWidget->getHeight()) {
+        // must set the preferred width later
         g_eventDispatcher.addEvent([=] {
-            parentWidget->setHeight(prefferedHeight);
+            parentWidget->setHeight(preferredHeight);
         });
     }
 

@@ -135,6 +135,13 @@ void push_luavalue(const std::deque<T>& vec);
 template<typename T>
 bool luavalue_cast(int index, std::deque<T>& vec);
 
+// map
+template<class K, class V>
+void push_luavalue(const std::map<K, V>& map);
+
+template<class K, class V>
+bool luavalue_cast(int index, std::map<K, V>& map);
+
 // tuple
 template<typename... Args>
 void push_luavalue(const std::tuple<Args...>& tuple);
@@ -292,6 +299,34 @@ bool luavalue_cast(int index, std::deque<T>& vec)
             T value;
             if(luavalue_cast(-1, value))
                 vec.push_back(value);
+            g_lua.pop();
+        }
+        return true;
+    }
+    return false;
+}
+
+template<class K, class V>
+void push_luavalue(const std::map<K, V>& map)
+{
+    g_lua.newTable();
+    for(auto& it : map) {
+        push_luavalue(it.first);
+        push_luavalue(it.second);
+        g_lua.rawSet();
+    }
+}
+
+template<class K, class V>
+bool luavalue_cast(int index, std::map<K, V>& map)
+{
+    if(g_lua.isTable(index)) {
+        g_lua.pushNil();
+        while(g_lua.next(index < 0 ? index-1 : index)) {
+            K key;
+            V value;
+            if(luavalue_cast(-1, value) && luavalue_cast(-2, key))
+                map[key] = value;
             g_lua.pop();
         }
         return true;

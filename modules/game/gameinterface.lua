@@ -140,10 +140,10 @@ function GameInterface.createThingMenu(menuPosition, lookThing, useThing, creatu
   if useThing then
     if useThing:isContainer() then
       if useThing:getParentContainer() then
-        menu:addOption('Open', function() g_game.open(useThing, useThing:getContainerId()) end)
-        menu:addOption('Open in new window', function() g_game.open(useThing, Containers.getFreeContainerId()) end)
+        menu:addOption('Open', function() g_game.open(useThing, useThing:getParentContainer()) end)
+        menu:addOption('Open in new window', function() g_game.open(useThing, nil) end)
       else
-        menu:addOption('Open', function() g_game.open(useThing, Containers.getFreeContainerId()) end)
+        menu:addOption('Open', function() g_game.open(useThing, nil) end)
       end
     else
       if useThing:isMultiUse() then
@@ -256,10 +256,10 @@ function GameInterface.processMouseAction(menuPosition, mouseButton, autoWalk, l
     elseif useThing and keyboardModifiers == KeyboardCtrlModifier and (mouseButton == MouseLeftButton or mouseButton == MouseRightButton) then
       if useThing:isContainer() then
         if useThing:getParentContainer() then
-          g_game.open(useThing, useThing:getContainerId())
+          g_game.open(useThing, useThing:getParentContainer())
           return true
         else
-          g_game.open(useThing, Containers.getFreeContainerId())
+          g_game.open(useThing, nil)
         return true
         end
       elseif useThing:isMultiUse() then
@@ -281,10 +281,10 @@ function GameInterface.processMouseAction(menuPosition, mouseButton, autoWalk, l
         return true
       elseif multiUseThing:isContainer() then
         if multiUseThing:getParentContainer() then
-          g_game.open(multiUseThing, multiUseThing:getContainerId())
+          g_game.open(multiUseThing, multiUseThing:getParentContainer())
           return true
         else
-          g_game.open(multiUseThing, Containers.getFreeContainerId())
+          g_game.open(multiUseThing, nil)
           return true
         end
       elseif multiUseThing:isMultiUse() then

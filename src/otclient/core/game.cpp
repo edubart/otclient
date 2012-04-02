@@ -25,6 +25,7 @@
 #include "map.h"
 #include "tile.h"
 #include "creature.h"
+#include "container.h"
 #include "statictext.h"
 #include <framework/core/eventdispatcher.h>
 #include <framework/ui/uimanager.h>
@@ -166,30 +167,73 @@ void Game::processCreatureSpeak(const std::string& name, int level, Otc::SpeakTy
     g_lua.callGlobalField("g_game", "onCreatureSpeak", name, level, type, message, channelId, creaturePos);
 }
 
-void Game::processOpenContainer(int containerId, int itemId, const std::string& name, int capacity, bool hasParent, const std::vector< ItemPtr >& items)
+void Game::processOpenContainer(int containerId, int itemId, const std::string& name, int capacity, bool hasParent, const std::vector<ItemPtr>& items)
 {
-    g_lua.callGlobalField("g_game", "onOpenContainer", containerId, itemId, name, capacity, hasParent, items);
+    ContainerPtr previousContainer = getContainer(containerId);
+    ContainerPtr container = ContainerPtr(new Container());
+    container->setId(containerId);
+    container->setCapacity(capacity);
+    container->setName(name);
+    container->setItemId(itemId);
+    container->setHasParent(hasParent);
+    m_containers[containerId] = container;
+    container->addItems(items);
+
+    container->open(previousContainer);
+    if(previousContainer)
+        previousContainer->close();
 }
 
 void Game::processCloseContainer(int containerId)
 {
-    g_lua.callGlobalField("g_game", "onCloseContainer", containerId);
+    ContainerPtr container = getContainer(containerId);
+    if(!container) {
+        logTraceError("container not found");
+        return;
+    }
+
+    auto it = m_containers.find(container->getId());
+    if(it == m_containers.end() || it->second != container) {
+        logTraceError("invalid container");
+        return;
+    }
+
+    m_containers.erase(it);
+
+    container->close();
 }
 
 void Game::processContainerAddItem(int containerId, const ItemPtr& item)
 {
-    item->setPosition(Position(65535, containerId + 0x40, 0));
-    g_lua.callGlobalField("g_game", "onContainerAddItem", containerId, item);
+    ContainerPtr container = getContainer(containerId);
+    if(!container) {
+        logTraceError("container not found");
+        return;
+    }
+
+    container->addItem(item);
 }
 
 void Game::processContainerUpdateItem(int containerId, int slot, const ItemPtr& item)
 {
-    g_lua.callGlobalField("g_game", "onContainerUpdateItem", containerId, slot, item);
+    ContainerPtr container = getContainer(containerId);
+    if(!container) {
+        logTraceError("container not found");
+        return;
+    }
+
+    container->updateItem(slot, item);
 }
 
 void Game::processContainerRemoveItem(int containerId, int slot)
 {
-    g_lua.callGlobalField("g_game", "onContainerRemoveItem", containerId, slot);
+    ContainerPtr container = getContainer(containerId);
+    if(!container) {
+        logTraceError("container not found");
+        return;
+    }
+
+    container->removeItem(slot);
 }
 
 void Game::processInventoryChange(int slot, const ItemPtr& item)
@@ -542,19 +586,37 @@ void Game::useInventoryItemWith(int itemId, const ThingPtr& toThing)
         m_protocolGame->sendUseItemWith(pos, itemId, 0, toThing->getPosition(), toThing->getId(), toThing->getStackpos());
 }
 
-void Game::open(const ItemPtr& item, int containerId)
+void Game::open(const ItemPtr& item, const ContainerPtr& previousContainer)
 {
     if(!canPerformGameAction() || !item)
         return;
 
-    m_protocolGame->sendUseItem(item->getPosition(), item->getId(), item->getStackpos(), containerId);
+    int id = 0;
+    if(!previousContainer) {
+        // find a free container id
+        while(m_containers.find(id) != m_containers.end())
+            id++;
+    } else {
+        id = previousContainer->getId();
+    }
+
+    m_protocolGame->sendUseItem(item->getPosition(), item->getId(), item->getStackpos(), id);
 }
 
-void Game::upContainer(int containerId)
+void Game::openParent(const ContainerPtr& container)
 {
     if(!canPerformGameAction())
         return;
-    m_protocolGame->sendUpContainer(containerId);
+
+    m_protocolGame->sendUpContainer(container->getId());
+}
+
+void Game::close(const ContainerPtr& container)
+{
+    if(!canPerformGameAction())
+        return;
+
+    m_protocolGame->sendCloseContainer(container->getId());
 }
 
 void Game::refreshContainer()

@@ -35,18 +35,17 @@ void UIItem::drawSelf()
     UIWidget::drawSelf();
 
     if(m_item) {
-        Point topLeft = m_rect.bottomRight() - Point(32, 32) + Point(m_padding.left, m_padding.top);
+        Rect drawRect = getClippingRect();
+        float scaleFactor = std::min(drawRect.width() / 32.0f, drawRect.height() / 32.0f);
 
         g_painter.setColor(Color::white);
-        m_item->draw(topLeft, 1, true);
+        m_item->draw(drawRect.topLeft(), scaleFactor, true);
 
         if(m_font && m_item->isStackable() && m_item->getCount() > 1) {
             std::string count = Fw::tostring(m_item->getCount());
             g_painter.setColor(Color(231, 231, 231));
             m_font->drawText(count, Rect(m_rect.topLeft(), m_rect.bottomRight() - Point(3, 0)), Fw::AlignBottomRight);
         }
-
-        //m_font->renderText(Fw::unsafeCast<std::string>(m_item->getId()), m_rect);
     }
 }
 

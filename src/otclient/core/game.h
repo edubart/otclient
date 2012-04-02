@@ -139,8 +139,9 @@ public:
     void useInventoryItemWith(int itemId, const ThingPtr& toThing);
 
     // container related
-    void open(const ItemPtr& item, int containerId);
-    void upContainer(int containerId);
+    void open(const ItemPtr& item, const ContainerPtr& previousContainer);
+    void openParent(const ContainerPtr& container);
+    void close(const ContainerPtr& container);
     void refreshContainer();
 
     // attack/follow related
@@ -218,6 +219,7 @@ public:
     bool isFollowing() { return !!m_followingCreature; }
 
     ContainerPtr getContainer(int index) { return m_containers[index]; }
+    std::map<int, ContainerPtr> getContainers() { return m_containers; }
     CreaturePtr getAttackingCreature() { return m_attackingCreature; }
     CreaturePtr getFollowingCreature() { return m_followingCreature; }
     int getServerBeat() { return m_serverBeat; }

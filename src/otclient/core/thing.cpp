@@ -56,8 +56,10 @@ const TilePtr& Thing::getTile()
 
 ContainerPtr Thing::getParentContainer()
 {
-    if(m_position.x == 0xFFFF && m_position.y & 0x40)
-        return g_game.getContainer(m_position.z);
+    if(m_position.x == 0xffff && m_position.y & 0x40) {
+        int containerId = m_position.y ^ 0x40;
+        return g_game.getContainer(containerId);
+    }
     return nullptr;
 }
 

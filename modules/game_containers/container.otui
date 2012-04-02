@@ -1,11 +1,35 @@
-MiniWindow
-  size: 200 221
+ContainerWindow < MiniWindow
+  height: 150
 
-  layout:
-    type: grid
-    cell-size: 34 34
-    cell-spacing: 5
-    num-columns: 4
-    num-lines: 5
+  UIItem
+    id: containerItemWidget
+    virtual: true
+    item-id: 3253
+    size: 32 32
+    anchors.top: parent.top
+    anchors.left: parent.left
+    margin-top: -6
+    margin-left: -6
 
+  UIButton
+    id: upButton
+    anchors.top: minimizeButton.top
+    anchors.right: minimizeButton.left
+    margin-right: 3
+    size: 14 14
+    image-source: /game/images/miniwindowbuttons.png
+    image-clip: 42 0 14 14
 
+    $hover:
+      image-clip: 42 14 14 14
+
+    $pressed:
+      image-clip: 42 28 14 14
+
+  MiniWindowContents
+    padding: 27 6 6 8
+    layout:
+      type: grid
+      cell-size: 34 34
+      flow: true
+      auto-spacing: true

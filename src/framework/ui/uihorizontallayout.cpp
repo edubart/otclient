@@ -48,7 +48,7 @@ bool UIHorizontalLayout::internalUpdate()
     bool changed = false;
     Rect clippingRect = parentWidget->getClippingRect();
     Point pos = (m_alignRight) ? clippingRect.topRight() : clippingRect.topLeft();
-    int prefferedWidth = 0;
+    int preferredWidth = 0;
     int gap;
 
     for(const UIWidgetPtr& widget : widgets) {
@@ -59,7 +59,7 @@ bool UIHorizontalLayout::internalUpdate()
 
         gap = (m_alignRight) ? -(widget->getMarginRight()+widget->getWidth()) : widget->getMarginLeft();
         pos.x += gap;
-        prefferedWidth += gap;
+        preferredWidth += gap;
 
         if(widget->isFixedSize()) {
             // center it
@@ -77,16 +77,16 @@ bool UIHorizontalLayout::internalUpdate()
         gap = (m_alignRight) ? -widget->getMarginLeft() : (widget->getWidth() + widget->getMarginRight());
         gap += m_spacing;
         pos.x += gap;
-        prefferedWidth += gap;
+        preferredWidth += gap;
     }
 
-    prefferedWidth -= m_spacing;
-    prefferedWidth += parentWidget->getPaddingLeft() + parentWidget->getPaddingRight();
+    preferredWidth -= m_spacing;
+    preferredWidth += parentWidget->getPaddingLeft() + parentWidget->getPaddingRight();
 
-    if(m_fitChildren && prefferedWidth != parentWidget->getWidth()) {
-        // must set the preffered width later
+    if(m_fitChildren && preferredWidth != parentWidget->getWidth()) {
+        // must set the preferred width later
         g_eventDispatcher.addEvent([=] {
-            parentWidget->setWidth(prefferedWidth);
+            parentWidget->setWidth(preferredWidth);
         });
     }
 

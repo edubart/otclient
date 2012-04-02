@@ -23,12 +23,14 @@
 #include "uigridlayout.h"
 #include "uiwidget.h"
 
+#include <framework/core/eventdispatcher.h>
+
 UIGridLayout::UIGridLayout(UIWidgetPtr parentWidget): UILayout(parentWidget)
 {
     m_cellSize = Size(16,16);
     m_cellSpacing = 0;
     m_numColumns = 1;
-    m_numLines = 1;
+    m_numLines = 0;
 }
 
 void UIGridLayout::applyStyle(const OTMLNodePtr& styleNode)
@@ -49,6 +51,12 @@ void UIGridLayout::applyStyle(const OTMLNodePtr& styleNode)
             setNumColumns(node->value<int>());
         else if(node->tag() == "num-lines")
             setNumLines(node->value<int>());
+        else if(node->tag() == "fit-children")
+            setFitChildren(node->value<bool>());
+        else if(node->tag() == "auto-spacing")
+            setAutoSpacing(node->value<bool>());
+        else if(node->tag() == "flow")
+            setFlow(node->value<bool>());
     }
 }
 
@@ -71,23 +79,41 @@ bool UIGridLayout::internalUpdate()
     Rect clippingRect = parentWidget->getClippingRect();
     Point topLeft = clippingRect.topLeft();
 
+    int numColumns = m_numColumns;
+    if(m_flow && m_cellSize.width() > 0)
+        numColumns = clippingRect.width() / (m_cellSize.width() + m_cellSpacing);
+
+    int cellSpacing = m_cellSpacing;
+    if(m_autoSpacing && numColumns > 1)
+        cellSpacing = (clippingRect.width() - numColumns * m_cellSize.width()) / (numColumns - 1);
+
     int index = 0;
+    int preferredHeight = 0;
     for(const UIWidgetPtr& widget : widgets) {
         if(!widget->isExplicitlyVisible())
             continue;
 
-        int line = index / m_numColumns;
-        int column = index % m_numColumns;
-        Point virtualPos = Point(column * (m_cellSize.width() + m_cellSpacing), line * (m_cellSize.height() + m_cellSpacing));
-        Point pos = topLeft + virtualPos;
+        int line = index / numColumns;
+        int column = index % numColumns;
+        Point virtualPos = Point(column * (m_cellSize.width() + cellSpacing), line * (m_cellSize.height() + cellSpacing));
+        preferredHeight = virtualPos.y + m_cellSize.height();
+        Point pos = topLeft + virtualPos - parentWidget->getVirtualOffset();
 
         if(widget->setRect(Rect(pos, m_cellSize)))
             changed = true;
 
         index++;
 
-        if(index >= m_numColumns * m_numLines)
+        if(m_numLines > 0 && index >= m_numColumns * m_numLines)
             break;
+    }
+    preferredHeight += parentWidget->getPaddingTop() + parentWidget->getPaddingBottom();
+
+    if(m_fitChildren && preferredHeight != parentWidget->getHeight()) {
+        // must set the preferred height later
+        g_eventDispatcher.addEvent([=] {
+            parentWidget->setHeight(preferredHeight);
+        });
     }
 
     return changed;

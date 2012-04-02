@@ -17,8 +17,9 @@ Module
     - game_skills
     - game_inventory
     - game_combatcontrols
-    - game_battle
+    - game_containers
     - game_viplist
+    - game_battle
     - game_hotkeys
 
   @onLoad: |
