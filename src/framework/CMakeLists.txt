@@ -9,6 +9,7 @@ SET(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake;${CMAKE_MODULE_PATH}")
 # framework options
 OPTION(WINDOWS_CONSOLE "Enables console window on Windows platform" OFF)
 OPTION(USE_OPENGL_ES2 "Use OpenGL ES 2.0 (for mobiles devices)" OFF)
+OPTION(CRASH_HANDLER "Generate crash reports" ON)
 SET(BUILD_REVISION "custom" CACHE "Git revision string (intended for releases)" STRING)
 
 # set debug as default build type
@@ -36,15 +37,19 @@ FIND_PACKAGE(ZLIB REQUIRED)
 
 # setup compiler options
 SET(CXX_WARNS "-Wall -Wextra -Werror -Wno-unused-parameter -Wno-unused-but-set-variable")
-SET(CMAKE_CXX_FLAGS                "${CMAKE_CXX_FLAGS} ${CXX_WARNS} -std=gnu++0x -pipe")
-SET(CMAKE_C_FLAGS                  "${CMAKE_C_FLAGS} ${CXX_WARNS} -pipe")
-SET(CMAKE_CXX_FLAGS_DEBUG          "-O0 -ggdb")
-SET(CMAKE_C_FLAGS_DEBUG            "-O0 -ggdb")
-SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O1 -ggdb")
-SET(CMAKE_C_FLAGS_RELWITHDEBINFO   "-O1 -ggdb")
-SET(CMAKE_CXX_FLAGS_RELEASE        "-Ofast -fomit-frame-pointer")
-SET(CMAKE_C_FLAGS_RELEASE          "-Ofast -fomit-frame-pointer")
-SET(CMAKE_CXX_LINK_FLAGS           "${CMAKE_CXX_LINK_FLAGS} -static-libgcc -static-libstdc++ -Wl,--as-needed")
+SET(CMAKE_CXX_FLAGS                   "${CMAKE_CXX_FLAGS} ${CXX_WARNS} -std=gnu++0x -pipe")
+SET(CMAKE_C_FLAGS                     "${CMAKE_C_FLAGS} ${CXX_WARNS} -pipe")
+SET(CMAKE_CXX_FLAGS_DEBUG             "-O0 -ggdb")
+SET(CMAKE_C_FLAGS_DEBUG               "-O0 -ggdb")
+SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO    "-O1 -ggdb")
+SET(CMAKE_C_FLAGS_RELWITHDEBINFO      "-O1 -ggdb")
+SET(CMAKE_CXX_FLAGS_RELEASE           "-O2")
+SET(CMAKE_C_FLAGS_RELEASE             "-O2")
+SET(CMAKE_CXX_FLAGS_RELFORPERFORMANCE "-Ofast")
+SET(CMAKE_C_FLAGS_RELFORPERFORMANCE   "-Ofast")
+SET(CMAKE_CXX_FLAGS_RELFORSIZE        "-Os")
+SET(CMAKE_C_FLAGS_RELFORSIZE          "-Os")
+SET(CMAKE_CXX_LINK_FLAGS              "${CMAKE_CXX_LINK_FLAGS} -static-libgcc -static-libstdc++ -Wl,--as-needed")
 
 MESSAGE(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
 ADD_DEFINITIONS(-DBUILD_TYPE="${CMAKE_BUILD_TYPE}")
@@ -60,22 +65,16 @@ ENDIF()
 
 
 IF(CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
-    ADD_DEFINITIONS(-DDEBUG)
     MESSAGE(STATUS "Debug information: ON")
-    OPTION(CRASH_HANDLER "Generate crash reports" ON)
+    ADD_DEFINITIONS(-DDEBUG)
 ELSE()
     MESSAGE(STATUS "Debug information: OFF")
-    OPTION(CRASH_HANDLER "Generate crash reports" OFF)
-ENDIF()
 
-IF(CMAKE_BUILD_TYPE STREQUAL "Release")
     # NDEBUG disable asserts
-    ADD_DEFINITIONS(-DNDEBUG)
+    #ADD_DEFINITIONS(-DNDEBUG)
+
     # strip all debug information
     SET(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -s")
-    IF(CRASH_HANDLER)
-        MESSAGE(SEND_ERROR "Crash handler cannot be enabled in release mode.")
-    ENDIF()
 ENDIF()
 
 IF(CRASH_HANDLER)

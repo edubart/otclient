@@ -4,6 +4,9 @@ PROJECT(otclient)
 INCLUDE(src/framework/CMakeLists.txt)
 INCLUDE(src/otclient/CMakeLists.txt)
 
+# functions map for reading backtraces
+SET(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -Wl,-Map=otclient.map")
+
 OPTION(USE_PCH "Use precompiled header (speed up compile)" OFF)
 
 SET(executable_SOURCES src/main.cpp)
