@@ -6,8 +6,6 @@ ENDIF(${CMAKE_MAJOR_VERSION} EQUAL 2 AND ${CMAKE_MINOR_VERSION} EQUAL 6)
 # add framework cmake modules
 SET(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake;${CMAKE_MODULE_PATH}")
 
-# framework options
-OPTION(WINDOWS_CONSOLE "Enables console window on Windows platform" OFF)
 OPTION(USE_OPENGL_ES2 "Use OpenGL ES 2.0 (for mobiles devices)" OFF)
 OPTION(CRASH_HANDLER "Generate crash reports" ON)
 SET(BUILD_REVISION "custom" CACHE "Git revision string (intended for releases)" STRING)
@@ -85,6 +83,8 @@ ELSE()
 ENDIF()
 
 IF(WIN32)
+    OPTION(WINDOWS_CONSOLE "Enables console window on Windows platform" OFF)
+
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mthreads")
     ADD_DEFINITIONS(-D_WIN32_WINNT=0x0501)
     SET(ADDITIONAL_LIBRARIES ws2_32 mswsock imagehlp)
@@ -158,6 +158,7 @@ SET(framework_SOURCES ${framework_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/core/module.cpp
     ${CMAKE_CURRENT_LIST_DIR}/core/clock.cpp
     ${CMAKE_CURRENT_LIST_DIR}/core/timer.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/core/filestream.cpp
 
     # framework net
     ${CMAKE_CURRENT_LIST_DIR}/net/connection.cpp

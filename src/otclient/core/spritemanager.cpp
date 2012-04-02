@@ -23,6 +23,7 @@
 #include "spritemanager.h"
 #include <framework/core/resourcemanager.h>
 #include <framework/core/eventdispatcher.h>
+#include <framework/core/filestream.h>
 #include <framework/graphics/graphics.h>
 
 SpriteManager g_sprites;
@@ -36,9 +37,12 @@ SpriteManager::SpriteManager()
 bool SpriteManager::load(const std::string& file)
 {
     try {
-        g_resources.loadFile(file, m_fin);
-        m_signature = Fw::getU32(m_fin);
-        m_spritesCount = Fw::getU16(m_fin);
+        m_spritesFile = g_resources.openFile(file);
+        if(!m_spritesFile)
+            return false;
+
+        m_signature = m_spritesFile->getU32();
+        m_spritesCount = m_spritesFile->getU16();
         m_sprites.resize(m_spritesCount);
         m_loaded = true;
         return true;
@@ -72,23 +76,22 @@ void SpriteManager::preloadSprites()
 
 TexturePtr SpriteManager::loadSpriteTexture(int id)
 {
-    m_fin.seekg(((id-1) * 4) + 6, std::ios_base::beg);
+    m_spritesFile->seek(((id-1) * 4) + 6);
 
-    uint32 spriteAddress = Fw::getU32(m_fin);
+    uint32 spriteAddress = m_spritesFile->getU32();
 
     // no sprite? return an empty texture
     if(spriteAddress == 0)
         return g_graphics.getEmptyTexture();
 
-    m_fin.seekg(spriteAddress, std::ios_base::beg);
-    assert(m_fin.good());
+    m_spritesFile->seek(spriteAddress);
 
     // skip color key
-    Fw::getU8(m_fin);
-    Fw::getU8(m_fin);
-    Fw::getU8(m_fin);
+    m_spritesFile->getU8();
+    m_spritesFile->getU8();
+    m_spritesFile->getU8();
 
-    uint16 pixelDataSize = Fw::getU16(m_fin);
+    uint16 pixelDataSize = m_spritesFile->getU16();
 
     static std::vector<uint8> pixels(4096);
     int writePos = 0;
@@ -96,9 +99,8 @@ TexturePtr SpriteManager::loadSpriteTexture(int id)
 
     // decompress pixels
     while(read < pixelDataSize) {
-        uint16 transparentPixels, coloredPixels;
-        m_fin.read((char*)&transparentPixels, 2);
-        m_fin.read((char*)&coloredPixels, 2);
+        uint16 transparentPixels = m_spritesFile->getU16();
+        uint16 coloredPixels = m_spritesFile->getU16();
 
         if(writePos + transparentPixels*4 + coloredPixels*3 >= 4096)
             return g_graphics.getEmptyTexture();
@@ -112,9 +114,9 @@ TexturePtr SpriteManager::loadSpriteTexture(int id)
         }
 
         for(int i = 0; i < coloredPixels; i++) {
-            pixels[writePos + 0] = Fw::getU8(m_fin);
-            pixels[writePos + 1] = Fw::getU8(m_fin);
-            pixels[writePos + 2] = Fw::getU8(m_fin);
+            pixels[writePos + 0] = m_spritesFile->getU8();
+            pixels[writePos + 1] = m_spritesFile->getU8();
+            pixels[writePos + 2] = m_spritesFile->getU8();
             pixels[writePos + 3] = 0xFF;
 
             writePos += 4;

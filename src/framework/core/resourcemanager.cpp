@@ -21,6 +21,7 @@
  */
 
 #include "resourcemanager.h"
+#include "filestream.h"
 
 #include <framework/application.h>
 #include <framework/luascript/luainterface.h>
@@ -114,7 +115,7 @@ std::string ResourceManager::loadFile(const std::string& fileName)
 
 bool ResourceManager::saveFile(const std::string& fileName, const uchar* data, uint size)
 {
-    PHYSFS_file* file = PHYSFS_openWrite(checkPath(fileName).c_str());
+    PHYSFS_file* file = PHYSFS_openWrite(fileName.c_str());
     if(!file)
         return false;
 
@@ -139,6 +140,37 @@ bool ResourceManager::saveFile(const std::string& fileName, std::iostream& in)
 bool ResourceManager::saveFile(const std::string& fileName, const std::string& data)
 {
     return saveFile(fileName, (const uchar*)data.c_str(), data.size());
+}
+
+FileStreamPtr ResourceManager::openFile(const std::string& fileName)
+{
+    std::string fullPath = checkPath(fileName);
+    PHYSFS_File* file = PHYSFS_openRead(fullPath.c_str());
+    if(!file) {
+        logTraceError("unable to open file '", fullPath, "': ", PHYSFS_getLastError());
+        return nullptr;
+    }
+    return FileStreamPtr(new FileStream(fullPath, file));
+}
+
+FileStreamPtr ResourceManager::appendFile(const std::string& fileName)
+{
+    PHYSFS_File* file = PHYSFS_openAppend(fileName.c_str());
+    if(!file) {
+        logTraceError("failed to append file '", fileName, "': ", PHYSFS_getLastError());
+        return nullptr;
+    }
+    return FileStreamPtr(new FileStream(fileName, file));
+}
+
+FileStreamPtr ResourceManager::createFile(const std::string& fileName)
+{
+    PHYSFS_File* file = PHYSFS_openWrite(fileName.c_str());
+    if(!file) {
+        logTraceError("failed to create file '", fileName, "': ", PHYSFS_getLastError());
+        return nullptr;
+    }
+    return FileStreamPtr(new FileStream(fileName, file));
 }
 
 bool ResourceManager::deleteFile(const std::string& fileName)

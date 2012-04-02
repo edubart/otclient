@@ -41,11 +41,13 @@ public:
 
     void loadFile(const std::string& fileName, std::iostream& out);
     std::string loadFile(const std::string& fileName);
-
     bool saveFile(const std::string& fileName, const uchar* data, uint size);
     bool saveFile(const std::string& fileName, const std::string& data);
     bool saveFile(const std::string& fileName, std::iostream& in);
 
+    FileStreamPtr openFile(const std::string& fileName);
+    FileStreamPtr appendFile(const std::string& fileName);
+    FileStreamPtr createFile(const std::string& fileName);
     bool deleteFile(const std::string& fileName);
 
     std::list<std::string> listDirectoryFiles(const std::string& directoryPath = "");

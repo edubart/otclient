@@ -20,21 +20,45 @@
  * THE SOFTWARE.
  */
 
-#ifndef FRAMEWORK_CORE_DECLARATIONS_H
-#define FRAMEWORK_CORE_DECLARATIONS_H
+#ifndef FILESTREAM_H
+#define FILESTREAM_H
 
-#include <framework/global.h>
+#include "declarations.h"
 
-class ModuleManager;
-class ResourceManager;
-class Module;
-class Event;
-class ScheduledEvent;
-class FileStream;
+struct PHYSFS_File;
 
-typedef std::shared_ptr<Module> ModulePtr;
-typedef std::shared_ptr<Event> EventPtr;
-typedef std::shared_ptr<ScheduledEvent> ScheduledEventPtr;
-typedef std::shared_ptr<FileStream> FileStreamPtr;
+class FileStream
+{
+protected:
+    FileStream(const std::string& name, PHYSFS_File *fileHandle);
+
+    friend class ResourceManager;
+
+public:
+    ~FileStream();
+
+    void close();
+    void flush();
+    void write(void *buffer, uint count);
+    void read(void *buffer, uint count);
+    void seek(uint pos);
+    int size();
+    std::string name() { return m_name; }
+
+    std::string readAll();
+
+    uint8 getU8();
+    uint16 getU16();
+    uint32 getU32();
+    uint64 getU64();
+    void addU8(uint8 v);
+    void addU16(uint8 v);
+    void addU32(uint8 v);
+    void addU64(uint8 v);
+
+private:
+    std::string m_name;
+    PHYSFS_File *m_fileHandle;
+};
 
 #endif

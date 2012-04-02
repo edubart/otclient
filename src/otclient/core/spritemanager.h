@@ -23,7 +23,7 @@
 #ifndef SPRITEMANAGER_H
 #define SPRITEMANAGER_H
 
-#include "declarations.h"
+#include <framework/core/declarations.h>
 #include <framework/graphics/texture.h>
 
 class SpriteManager
@@ -47,9 +47,9 @@ private:
     Boolean<false> m_loaded;
     uint32 m_signature;
     int m_spritesCount;
-    std::stringstream m_fin;
     std::vector<TexturePtr> m_sprites;
     TexturePtr m_transparentSprite;
+    FileStreamPtr m_spritesFile;
 };
 
 extern SpriteManager g_sprites;
