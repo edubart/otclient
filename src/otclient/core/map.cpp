@@ -444,6 +444,7 @@ std::vector<Otc::Direction> Map::findPath(const Position& startPos, const Positi
 
     Node *currentNode = new Node(startPos);
     currentNode->pos = startPos;
+    nodes[startPos] = currentNode;
     Node *foundNode = nullptr;
     while(currentNode && currentNode->steps < maxSteps) {
         if(currentNode->pos == goalPos && (!foundNode || currentNode->cost < foundNode->cost))
