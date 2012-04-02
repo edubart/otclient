@@ -69,6 +69,9 @@ MiniWindow < UIMiniWindow
     margin-bottom: 3
     pixels-scroll: true
 
+    $disabled:
+      width: 0
+
   ResizeBorder
     id: bottomResizeBorder
     anchors.bottom: parent.bottom
@@ -81,8 +84,8 @@ MiniWindow < UIMiniWindow
 MiniWindowContents < ScrollablePanel
   id: contentsPanel
   anchors.fill: parent
-  margin-right: 14
-  padding: 24 3 3 5
+  anchors.right: miniwindowScrollBar.left
+  padding: 24 5 3 5
   vertical-scrollbar: miniwindowScrollBar
 
 BorderlessGameWindow < UIWindow
