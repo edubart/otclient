@@ -42,7 +42,6 @@ void Graphics::init()
     const char *requiredExtensions[] = {
         "GL_ARB_vertex_program",
         "GL_ARB_vertex_shader",
-        "GL_ARB_fragment_program",
         "GL_ARB_fragment_shader",
         "GL_ARB_texture_non_power_of_two",
         "GL_ARB_multitexture"
@@ -58,7 +57,10 @@ void Graphics::init()
     }
 
     if(unsupported)
-        logFatal("The following OpenGL 2.0 extensions are not supported by your system graphics, please try updating your video drivers or buy a new hardware:\n", ss.str());
+        logFatal("The following OpenGL 2.0 extensions are not supported by your system graphics, please try updating your video drivers or buy a new hardware:\n",
+                 ss.str(),
+                 "Graphics card: ", glGetString(GL_RENDERER),
+                 "\nOpenGL driver: ", glGetString(GL_VERSION));
 
     m_useFBO = m_useFBO && GLEW_ARB_framebuffer_object;
     m_generateHardwareMipmaps = m_generateHardwareMipmaps && m_useFBO; // glGenerateMipmap is supported when FBO is

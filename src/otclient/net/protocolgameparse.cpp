@@ -278,6 +278,7 @@ void ProtocolGame::parseMessage(InputMessage& msg)
 
 void ProtocolGame::parseInitGame(InputMessage& msg)
 {
+    logTraceDebug();
     uint playerId = msg.getU32();
     int serverBeat = msg.getU16();
     msg.getU8(); // can report bugs, ignored
@@ -291,6 +292,7 @@ void ProtocolGame::parseInitGame(InputMessage& msg)
 void ProtocolGame::parseGMActions(InputMessage& msg)
 {
     // not used
+    logTraceDebug();
     for(int i = 0; i < Proto::NumViolationReasons; ++i)
         msg.getU8();
 }
@@ -747,18 +749,28 @@ void ProtocolGame::parsePlayerStats(InputMessage& msg)
     double soul = msg.getU8();
     double stamina = msg.getU16();
 
+    if(!m_localPlayer) {
+        logTraceError("there is no local player");
+        return;
+    }
+
     m_localPlayer->setHealth(health, maxHealth);
     m_localPlayer->setFreeCapacity(freeCapacity);
     m_localPlayer->setExperience(experience);
     m_localPlayer->setLevel(level, levelPercent);
     m_localPlayer->setMana(mana, maxMana);
     m_localPlayer->setMagicLevel(magicLevel, magicLevelPercent);
-    m_localPlayer->setSoul(soul);
     m_localPlayer->setStamina(stamina);
+    m_localPlayer->setSoul(soul);
 }
 
 void ProtocolGame::parsePlayerSkills(InputMessage& msg)
 {
+    if(!m_localPlayer) {
+        logTraceError("there is no local player");
+        return;
+    }
+
     for(int skill = 0; skill < Otc::LastSkill; skill++) {
         int level = msg.getU8();
         int levelPercent = msg.getU8();
@@ -769,6 +781,11 @@ void ProtocolGame::parsePlayerSkills(InputMessage& msg)
 
 void ProtocolGame::parsePlayerState(InputMessage& msg)
 {
+    if(!m_localPlayer) {
+        logTraceError("there is no local player");
+        return;
+    }
+
     int states = msg.getU16();
     m_localPlayer->setStates((Otc::PlayerStates)states);
 }
