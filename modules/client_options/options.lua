@@ -12,7 +12,7 @@ local options = { vsync = true,
                   showInfoMessagesInConsole = true,
                   showTimestampsInConsole = true,
                   showLevelsInConsole = true,
-                  showPrivateMessagesInConsole = true }
+                  showPrivateMessagesInConsole = false }
 
 function Options.init()
   -- load options
