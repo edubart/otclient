@@ -123,6 +123,8 @@ void Connection::write(uint8* buffer, uint16 size)
 
     if(!m_sendEvent || m_sendEvent->isExecuted() || m_sendEvent->isCanceled()) {
         auto weakSelf = ConnectionWeakPtr(shared_from_this());
+
+        // wait 1 ms to do the real send
         m_sendEvent = g_eventDispatcher.scheduleEvent([=] {
             if(!weakSelf.lock())
                 return;

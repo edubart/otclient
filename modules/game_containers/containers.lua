@@ -1,4 +1,5 @@
 Containers = {}
+
 local function refreshContainerItems(container)
   for slot=0,container:getCapacity()-1 do
     local itemWidget = container.itemsPanel:getChildById('item' .. slot)
@@ -48,22 +49,22 @@ local function onContainerOpen(container, previousContainer)
 end
 
 local function onContainerClose(container)
-  local containerWindow = container.window
-  if containerWindow then
-    containerWindow:destroy()
-  end
+  if container.window then container.window:destroy() end
 end
 
 local function onContainerAddItem(container, slot, item)
+  if not container.window then return end
   refreshContainerItems(container)
 end
 
 local function onContainerUpdateItem(container, slot, item, oldItem)
+  if not container.window then return end
   local itemWidget = container.itemsPanel:getChildById('item' .. slot)
   itemWidget:setItem(item)
 end
 
 local function onContainerRemoveItem(container, slot, item)
+  if not container.window then return end
   refreshContainerItems(container)
 end
 
@@ -75,6 +76,9 @@ function Containers.init()
                        onAddItem = onContainerAddItem,
                        onUpdateItem = onContainerUpdateItem,
                        onRemoveItem = onContainerRemoveItem })
+  connect(Game, { onGameEnd = Containers.clean() })
+
+  Containers.reloadContainers()
 end
 
 function Containers.terminate()
@@ -83,8 +87,23 @@ function Containers.terminate()
                           onAddItem = onContainerAddItem,
                           onUpdateItem = onContainerUpdateItem,
                           onRemoveItem = onContainerRemoveItem })
+  disconnect(Game, { onGameEnd = Containers.clean() })
+  Containers = nil
+end
+
+function Containers.reloadContainers()
+  Containers.clean()
+  for containerid,container in pairs(g_game.getContainers()) do
+    onContainerOpen(container)
+  end
 end
 
 function Containers.clean()
-
+  for containerid,container in pairs(g_game.getContainers()) do
+    if container.window then
+      container.window:destroy()
+      container.window = nil
+      container.itemsPnale = nil
+    end
+  end
 end

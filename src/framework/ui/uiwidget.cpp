@@ -1300,10 +1300,10 @@ void UIWidget::onGeometryChange(const Rect& oldRect, const Rect& newRect)
         updateText();
 
     // move children that is outside the parent rect to inside again
-    //for(const UIWidgetPtr& child : m_children) {
-        //if(!child->isAnchored())
-            //child->bindRectToParent();
-    //}
+    for(const UIWidgetPtr& child : m_children) {
+        if(!child->isAnchored())
+            child->bindRectToParent();
+    }
 }
 
 void UIWidget::onLayoutUpdate()

@@ -48,7 +48,11 @@ void Game::resetGameStates()
     m_safeFight = true;
     m_followingCreature = nullptr;
     m_attackingCreature = nullptr;
+
+    for(auto& it : m_containers)
+        (it.second)->close();
     m_containers.clear();
+
     m_worldName = "";
 }
 

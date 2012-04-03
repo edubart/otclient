@@ -107,6 +107,12 @@ void Protocol::internalRecvHeader(uint8* buffer, uint16 size)
 
 void Protocol::internalRecvData(uint8* buffer, uint16 size)
 {
+    // process data only if really connected
+    if(!isConnected()) {
+        logTraceError("received data while disconnected");
+        return;
+    }
+
     memcpy(m_inputMessage.getBuffer() + InputMessage::CHECKSUM_POS, buffer, size);
 
     if(m_checksumEnabled) {
