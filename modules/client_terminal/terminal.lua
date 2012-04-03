@@ -126,7 +126,6 @@ function Terminal.init()
       poped = true
     end
   end
-  
 
   terminalButton = TopMenu.addLeftButton('terminalButton', 'Terminal (Ctrl + T)', 'terminal.png', Terminal.toggle)
   Keyboard.bindKeyDown('Ctrl+T', Terminal.toggle)

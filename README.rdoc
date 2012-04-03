@@ -31,14 +31,8 @@ We encourage you to contribute to OTClient! Please check out
 
 == Contact
 
-You have 3 options, post at http://otclient.info/ , talk directly with us at #otclient irc.freenode.net or send
+You have 3 options, use the forum at http://otclient.info/ , talk directly with us at #otclient irc.freenode.net or send
 an email directly to the project leader edub4rt@gmail.com
-
-== Authors
-
-* edubart (project creator and leader developer) <edub4rt@gmail.com>
-* baxnie (official developer) <henrique_santiago93@hotmail.com>
-* andrefaramir (official developer) <andre_faramir@hotmail.com>
 
 == License
 

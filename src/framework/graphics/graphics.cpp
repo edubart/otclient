@@ -39,10 +39,26 @@ void Graphics::init()
     if(err != GLEW_OK)
         logFatal("Unable to init GLEW: ", glewGetErrorString(err));
 
-    if(!GLEW_ARB_vertex_program || !GLEW_ARB_vertex_shader ||
-       !GLEW_ARB_fragment_program || !GLEW_ARB_fragment_shader ||
-       !GLEW_ARB_texture_non_power_of_two || !GLEW_ARB_multitexture)
-        logFatal("Some OpenGL 2.0 extensions is not supported by your system graphics, please try updating your video drivers or buy a new hardware.");
+    const char *requiredExtensions[] = {
+        "GL_ARB_vertex_program",
+        "GL_ARB_vertex_shader",
+        "GL_ARB_fragment_program",
+        "GL_ARB_fragment_shader",
+        "GL_ARB_texture_non_power_of_two",
+        "GL_ARB_multitexture"
+    };
+
+    std::stringstream ss;
+    bool unsupported = false;
+    for(auto ext : requiredExtensions) {
+        if(!glewIsSupported(ext)) {
+            ss << ext << std::endl;
+            unsupported = true;
+        }
+    }
+
+    if(unsupported)
+        logFatal("The following OpenGL 2.0 extensions are not supported by your system graphics, please try updating your video drivers or buy a new hardware:\n", ss.str());
 
     m_useFBO = m_useFBO && GLEW_ARB_framebuffer_object;
     m_generateHardwareMipmaps = m_generateHardwareMipmaps && m_useFBO; // glGenerateMipmap is supported when FBO is
