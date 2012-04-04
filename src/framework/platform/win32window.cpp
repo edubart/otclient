@@ -406,7 +406,7 @@ void WIN32Window::poll()
     fireKeysPress();
 
     MSG msg;
-    if(PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
+    while(PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
