@@ -51,10 +51,25 @@ function UIItem:onHoverChange(hovered)
 end
 
 function UIItem:onMouseRelease(mousePosition, mouseButton)
+  if self.cancelNextRelease then
+    self.cancelNextRelease = false
+    return true
+  end
+
   if self:isVirtual() then return false end
 
   local item = self:getItem()
   if not item or not self:containsPoint(mousePosition) then return false end
-  return GameInterface.processMouseAction(mousePosition, mouseButton, nil, item, item, nil, item)
+
+  if Options.getOption('classicControl') and
+     ((Mouse.isPressed(MouseLeftButton) and mouseButton == MouseRightButton) or
+      (Mouse.isPressed(MouseRightButton) and mouseButton == MouseLeftButton)) then
+    g_game.look(item)
+    self.cancelNextRelease = true
+    return true
+  elseif GameInterface.processMouseAction(mousePosition, mouseButton, nil, item, item, nil, item) then
+    return true
+  end
+  return false
 end
 
