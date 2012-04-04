@@ -104,6 +104,12 @@ namespace luabinder
         };
     }
 
+    /// Bind a customized function
+    inline
+    LuaCppFunction bind_fun(const std::function<int(LuaInterface*)>& f) {
+        return f;
+    }
+
     /// Bind a std::function
     template<typename Ret, typename... Args>
     LuaCppFunction bind_fun(const std::function<Ret(Args...)>& f) {
@@ -132,13 +138,6 @@ namespace luabinder
     typename std::enable_if<std::is_class<Lambda>::value, LuaCppFunction>::type bind_fun(const Lambda& f) {
         typedef decltype(&Lambda::operator()) F;
         return bind_lambda_fun<F>::call(f);
-    }
-
-    /// Bind a customized functions
-    template<>
-    inline
-    LuaCppFunction bind_fun(const std::function<int(LuaInterface*)>& f) {
-        return f;
     }
 
     /// Convert to C++ functions pointers to std::function then bind
