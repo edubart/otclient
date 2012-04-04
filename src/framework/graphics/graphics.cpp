@@ -62,7 +62,15 @@ void Graphics::init()
                  "Graphics card: ", glGetString(GL_RENDERER),
                  "\nOpenGL driver: ", glGetString(GL_VERSION));
 
-    m_useFBO = m_useFBO && GLEW_ARB_framebuffer_object;
+    if(GLEW_EXT_framebuffer_object && !GLEW_ARB_framebuffer_object) {
+        glGenFramebuffers = glGenFramebuffersEXT;
+        glDeleteFramebuffers = glDeleteFramebuffersEXT;
+        glBindFramebuffer = glBindFramebufferEXT;
+        glFramebufferTexture2D = glFramebufferTexture2DEXT;
+        glCheckFramebufferStatus = glCheckFramebufferStatusEXT;
+    }
+
+    m_useFBO = m_useFBO && (GLEW_ARB_framebuffer_object || GLEW_EXT_framebuffer_object);
     m_generateHardwareMipmaps = m_generateHardwareMipmaps && m_useFBO; // glGenerateMipmap is supported when FBO is
 #endif
 

@@ -278,7 +278,6 @@ void ProtocolGame::parseMessage(InputMessage& msg)
 
 void ProtocolGame::parseInitGame(InputMessage& msg)
 {
-    logTraceDebug();
     uint playerId = msg.getU32();
     int serverBeat = msg.getU16();
     msg.getU8(); // can report bugs, ignored
@@ -292,7 +291,6 @@ void ProtocolGame::parseInitGame(InputMessage& msg)
 void ProtocolGame::parseGMActions(InputMessage& msg)
 {
     // not used
-    logTraceDebug();
     for(int i = 0; i < Proto::NumViolationReasons; ++i)
         msg.getU8();
 }
