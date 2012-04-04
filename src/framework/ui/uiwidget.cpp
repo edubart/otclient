@@ -54,19 +54,19 @@ UIWidget::~UIWidget()
 void UIWidget::draw(const Rect& visibleRect)
 {
     if(m_clipping)
-        g_graphics.beginClipping(visibleRect);
+        g_painter.setClipRect(visibleRect);
 
     drawSelf();
 
     if(m_children.size() > 0) {
         if(m_clipping)
-            g_graphics.beginClipping(visibleRect.intersection(getClippingRect()));
+            g_painter.setClipRect(visibleRect.intersection(getClippingRect()));
 
         drawChildren(visibleRect);
     }
 
     if(m_clipping)
-        g_graphics.endClipping();
+        g_painter.resetClipRect();
 }
 
 void UIWidget::drawSelf()

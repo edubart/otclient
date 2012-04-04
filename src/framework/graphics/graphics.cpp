@@ -152,17 +152,6 @@ void Graphics::endRender()
     */
 }
 
-void Graphics::beginClipping(const Rect& clipRect)
-{
-    glEnable(GL_SCISSOR_TEST);
-    glScissor(clipRect.left(), m_viewportSize.height() - clipRect.bottom() - 1, clipRect.width(), clipRect.height());
-}
-
-void Graphics::endClipping()
-{
-    glDisable(GL_SCISSOR_TEST);
-}
-
 void Graphics::setViewportSize(const Size& size)
 {
     glViewport(0, 0, size.width(), size.height());

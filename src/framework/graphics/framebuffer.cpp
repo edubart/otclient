@@ -105,13 +105,13 @@ void FrameBuffer::clear(const Color& color, const Rect& rect)
 {
     bool clip = rect.isValid();
     if(clip)
-        g_graphics.beginClipping(Rect(0, 0, m_texture->getSize()));
+        g_painter.setClipRect(Rect(0, 0, m_texture->getSize()));
 
     glClearColor(color.rF(), color.gF(), color.bF(), color.aF());
     glClear(GL_COLOR_BUFFER_BIT);
 
     if(clip)
-        g_graphics.endClipping();
+        g_painter.resetClipRect();
 }
 
 void FrameBuffer::bind()

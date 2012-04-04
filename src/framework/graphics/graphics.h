@@ -44,9 +44,6 @@ public:
     void beginRender();
     void endRender();
 
-    void beginClipping(const Rect& clipRect);
-    void endClipping();
-
     void setViewportSize(const Size& size);
 
     int getMaxTextureSize();

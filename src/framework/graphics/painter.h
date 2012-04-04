@@ -57,6 +57,10 @@ public:
     void setOpacity(float opacity) { m_opacity = opacity; }
     float getOpacity() { return m_opacity; }
 
+    void setClipRect(const Rect& clipRect);
+    Rect getClipRect() { return m_clipRect; }
+    void resetClipRect() { setClipRect(Rect()); }
+
     void setCustomProgram(PainterShaderProgramPtr program);
     void releaseCustomProgram() { m_customProgram = nullptr; }
     void setCompositionMode(CompositionMode compositionMode);
@@ -77,11 +81,13 @@ private:
     float m_opacity;
     CompositionMode m_compostionMode;
     CoordsBuffer m_coordsBuffer;
+    Rect m_clipRect;
 
     PainterShaderProgramPtr m_oldCustomProgram;
     Matrix3 m_oldProjectionMatrix;
     Color m_oldColor;
     float m_oldOpacity;
+    Rect m_oldClipRect;
     CompositionMode m_oldCompostionMode;
 };
 

@@ -183,10 +183,12 @@ void Creature::drawOutfit(const Rect& destRect, bool resize)
     if(!outfitBuffer)
         outfitBuffer = FrameBufferPtr(new FrameBuffer(Size(2*Otc::TILE_PIXELS, 2*Otc::TILE_PIXELS)));
 
+    g_painter.saveAndResetState();
     outfitBuffer->bind();
     outfitBuffer->clear(Color::alpha);
     internalDrawOutfit(Point(Otc::TILE_PIXELS,Otc::TILE_PIXELS) + getDisplacement(), 1, false, true, Otc::South);
     outfitBuffer->release();
+    g_painter.restoreSavedState();
 
     if(resize) {
         Rect srcRect;

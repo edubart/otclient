@@ -138,6 +138,17 @@ void Painter::setCompositionMode(Painter::CompositionMode compositionMode)
     m_compostionMode = compositionMode;
 }
 
+void Painter::setClipRect(const Rect& clipRect)
+{
+    if(clipRect.isValid()) {
+        glEnable(GL_SCISSOR_TEST);
+        glScissor(clipRect.left(), g_graphics.getViewportSize().height() - clipRect.bottom() - 1, clipRect.width(), clipRect.height());
+        m_clipRect = clipRect;
+    } else {
+        glDisable(GL_SCISSOR_TEST);
+    }
+}
+
 void Painter::saveAndResetState()
 {
     m_oldCustomProgram = m_customProgram;
@@ -145,8 +156,10 @@ void Painter::saveAndResetState()
     m_oldColor = m_color;
     m_oldOpacity = m_opacity;
     m_oldCompostionMode = m_compostionMode;
+    m_oldClipRect = m_clipRect;
 
     releaseCustomProgram();
+    resetClipRect();
     setColor(Color::white);
     setOpacity(1);
     setCompositionMode(CompositionMode_Normal);
@@ -158,9 +171,11 @@ void Painter::restoreSavedState()
     setColor(m_oldColor);
     setOpacity(m_oldOpacity);
     setCompositionMode(m_oldCompostionMode);
+    setClipRect(m_oldClipRect);
 
     m_oldCustomProgram = nullptr;
     m_oldColor = Color::white;
     m_oldOpacity = 1;
     m_oldCompostionMode = CompositionMode_Normal;
+    m_oldClipRect = Rect();
 }
