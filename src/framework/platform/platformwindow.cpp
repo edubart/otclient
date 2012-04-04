@@ -45,18 +45,25 @@ void PlatformWindow::updateUnmaximizedCoords()
 
 void PlatformWindow::processKeyDown(Fw::Key keyCode)
 {
-    if(keyCode == Fw::KeyUnknown || m_keysState[keyCode])
+    if(keyCode == Fw::KeyUnknown)
+        return;
+
+    if(keyCode == Fw::KeyCtrl) {
+        m_inputEvent.keyboardModifiers |= Fw::KeyboardCtrlModifier;
+        return;
+    } else if(keyCode == Fw::KeyAlt) {
+        m_inputEvent.keyboardModifiers |= Fw::KeyboardAltModifier;
+        return;
+    } else if(keyCode == Fw::KeyShift) {
+        m_inputEvent.keyboardModifiers |= Fw::KeyboardShiftModifier;
+        return;
+    }
+
+    if(m_keysState[keyCode])
         return;
 
     m_keysState[keyCode] = true;
     m_lastKeysPress[keyCode] = -1;
-
-    if(keyCode == Fw::KeyCtrl)
-        m_inputEvent.keyboardModifiers |= Fw::KeyboardCtrlModifier;
-    else if(keyCode == Fw::KeyAlt)
-        m_inputEvent.keyboardModifiers |= Fw::KeyboardAltModifier;
-    else if(keyCode == Fw::KeyShift)
-        m_inputEvent.keyboardModifiers |= Fw::KeyboardShiftModifier;
 
     m_inputEvent.reset(Fw::KeyDownInputEvent);
     m_inputEvent.type = Fw::KeyDownInputEvent;
@@ -75,17 +82,24 @@ void PlatformWindow::processKeyDown(Fw::Key keyCode)
 
 void PlatformWindow::processKeyUp(Fw::Key keyCode)
 {
-    if(keyCode == Fw::KeyUnknown || !m_keysState[keyCode])
+    if(keyCode == Fw::KeyUnknown)
+        return;
+
+    if(keyCode == Fw::KeyCtrl) {
+        m_inputEvent.keyboardModifiers &= ~Fw::KeyboardCtrlModifier;
+        return;
+    } else if(keyCode == Fw::KeyAlt) {
+        m_inputEvent.keyboardModifiers &= ~Fw::KeyboardAltModifier;
+        return;
+    } else if(keyCode == Fw::KeyShift) {
+        m_inputEvent.keyboardModifiers &= ~Fw::KeyboardShiftModifier;
+        return;
+    }
+
+    if(!m_keysState[keyCode])
         return;
 
     m_keysState[keyCode] = false;
-
-    if(keyCode == Fw::KeyCtrl)
-        m_inputEvent.keyboardModifiers &= ~Fw::KeyboardCtrlModifier;
-    else if(keyCode == Fw::KeyAlt)
-        m_inputEvent.keyboardModifiers &= ~Fw::KeyboardAltModifier;
-    else if(keyCode == Fw::KeyShift)
-        m_inputEvent.keyboardModifiers &= ~Fw::KeyboardShiftModifier;
 
     if(m_onInputEvent) {
         m_inputEvent.reset(Fw::KeyUpInputEvent);

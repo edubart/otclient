@@ -446,14 +446,29 @@ Fw::Key WIN32Window::retranslateVirtualKey(WPARAM wParam, LPARAM lParam)
         }
     }
 
+    Fw::Key key = Fw::KeyUnknown;
     if(m_keyMap.find(wParam) != m_keyMap.end())
-        return m_keyMap[wParam];
+        key = m_keyMap[wParam];
 
-    return Fw::KeyUnknown;
+    // actually ignore alt/ctrl/shift keys, they is states are already stored in m_inputEvent.keyboardModifiers
+    if(key == Fw::KeyAlt || key == Fw::KeyCtrl || key == Fw::KeyShift)
+        key = Fw::KeyUnknown;
+
+    return key;
 }
+
+#define IsKeyDown(a) (GetKeyState(a) & 0x80)
 
 LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+    m_inputEvent.keyboardModifiers = 0;
+    if(IsKeyDown(VK_CONTROL))
+        m_inputEvent.keyboardModifiers |= Fw::KeyboardCtrlModifier;
+    if(IsKeyDown(VK_SHIFT))
+        m_inputEvent.keyboardModifiers |= Fw::KeyboardShiftModifier;
+    if(IsKeyDown(VK_MENU))
+        m_inputEvent.keyboardModifiers |= Fw::KeyboardAltModifier;
+
     switch(uMsg)
     {
         case WM_SETCURSOR: {
