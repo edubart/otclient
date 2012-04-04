@@ -40,7 +40,7 @@ typedef int32_t int32;
 typedef int16_t int16;
 typedef int8_t int8;
 
-typedef int64 ticks_t;
+typedef long ticks_t;
 
 typedef std::function<void()> SimpleCallback;
 typedef std::function<bool()> BooleanCallback;

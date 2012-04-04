@@ -68,10 +68,11 @@ void Graphics::init()
         glBindFramebuffer = glBindFramebufferEXT;
         glFramebufferTexture2D = glFramebufferTexture2DEXT;
         glCheckFramebufferStatus = glCheckFramebufferStatusEXT;
+        glGenerateMipmap = glGenerateMipmapEXT;
     }
 
     m_useFBO = m_useFBO && (GLEW_ARB_framebuffer_object || GLEW_EXT_framebuffer_object);
-    m_generateHardwareMipmaps = m_generateHardwareMipmaps && GLEW_ARB_framebuffer_object; // glGenerateMipmap is supported when GLEW_ARB_framebuffer_object is
+    m_generateHardwareMipmaps = m_generateHardwareMipmaps; // glGenerateMipmap is supported when framebuffers are
 #endif
 
     glEnable(GL_BLEND);
