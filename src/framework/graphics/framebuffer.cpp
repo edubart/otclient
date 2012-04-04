@@ -30,13 +30,11 @@ std::vector<bool> auxBuffers;
 
 FrameBuffer::FrameBuffer()
 {
-    m_clearColor = Color::alpha;
     internalCreate();
 }
 
 FrameBuffer::FrameBuffer(const Size& size)
 {
-    m_clearColor = Color::alpha;
     internalCreate();
     resize(size);
 }
@@ -101,10 +99,22 @@ void FrameBuffer::resize(const Size& size)
             logFatal("Unable to setup framebuffer object");
         internalRelease();
     }
-
 }
 
-void FrameBuffer::bind(bool clear)
+void FrameBuffer::clear(const Color& color, const Rect& rect)
+{
+    bool clip = rect.isValid();
+    if(clip)
+        g_graphics.beginClipping(Rect(0, 0, m_texture->getSize()));
+
+    glClearColor(color.rF(), color.gF(), color.bF(), color.aF());
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    if(clip)
+        g_graphics.endClipping();
+}
+
+void FrameBuffer::bind()
 {
     internalBind();
     Matrix3 projectionMatrix = { 2.0f/m_texture->getWidth(),  0.0f,                         0.0f,
@@ -115,11 +125,6 @@ void FrameBuffer::bind(bool clear)
     m_oldViewportSize = g_graphics.getViewportSize();
     g_painter.setProjectionMatrix(projectionMatrix);
     g_graphics.setViewportSize(m_texture->getSize());
-
-    if(clear) {
-        glClearColor(m_clearColor.rF(), m_clearColor.gF(), m_clearColor.bF(), m_clearColor.aF());
-        glClear(GL_COLOR_BUFFER_BIT);
-    }
 }
 
 void FrameBuffer::release()

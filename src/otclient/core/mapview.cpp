@@ -45,7 +45,6 @@ MapView::MapView()
                          std::min(g_graphics.getMaxTextureSize(), (int)DEFAULT_FRAMBUFFER_HEIGHT));
 
     m_framebuffer = FrameBufferPtr(new FrameBuffer(frameBufferSize));
-    m_framebuffer->setClearColor(Color::black);
     setVisibleDimension(Size(15, 11));
 
     m_shaderProgram = PainterShaderProgramPtr(new PainterShaderProgram);
@@ -77,7 +76,12 @@ void MapView::draw(const Rect& rect)
         drawFlags = Otc::DrawGround;
 
     if(m_mustDrawVisibleTilesCache || (drawFlags & Otc::DrawAnimations)) {
-        m_framebuffer->bind(m_mustCleanFramebuffer);
+        m_framebuffer->bind();
+
+        if(m_mustCleanFramebuffer) {
+            Rect clearRect = Rect(0, 0, m_drawDimension * m_tileSize);
+            m_framebuffer->clear(Color::black, clearRect);
+        }
 
         auto it = m_cachedVisibleTiles.begin();
         auto end = m_cachedVisibleTiles.end();

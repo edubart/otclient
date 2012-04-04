@@ -145,6 +145,7 @@ std::vector<uint8> Texture::getPixels()
     // NOTE: this can be slow, but its the only way to get pixels from a texture in OpenGL ES
     FrameBufferPtr fb(new FrameBuffer(m_size));
     fb->bind();
+    fb->clear(Fw::alpha);
     g_painter.saveAndResetState();
     g_painter.drawTexturedRect(Rect(0,0,m_size), shared_from_this());
     glReadPixels(0, 0, m_size.width(), m_size.height(), GL_RGBA, GL_UNSIGNED_BYTE, &pixels[0]);

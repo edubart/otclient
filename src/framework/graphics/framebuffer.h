@@ -34,12 +34,11 @@ public:
     virtual ~FrameBuffer();
 
     void resize(const Size& size);
-    void bind(bool clear = true);
+    void bind();
+    void clear(const Color& color = Color::black, const Rect& rect = Rect());
     void release();
     void draw(const Rect& dest);
     void draw(const Rect& dest, const Rect& src);
-
-    void setClearColor(const Color& color) { m_clearColor = color; }
 
     TexturePtr getTexture() { return m_texture; }
     Size getSize();
@@ -55,7 +54,6 @@ private:
     Size m_oldViewportSize;
     uint m_fbo;
     uint m_prevBoundFbo;
-    Color m_clearColor;
 
     static uint boundFbo;
 };

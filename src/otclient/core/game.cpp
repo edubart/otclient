@@ -316,7 +316,7 @@ void Game::processOpenNpcTrade(const std::vector<std::tuple<ItemPtr, std::string
 
 void Game::processPlayerGoods(int money, const std::vector<std::tuple<ItemPtr, int>>& goods)
 {
-    g_lua.callGlobalField("g_game", "onPlayerGoods", goods);
+    g_lua.callGlobalField("g_game", "onPlayerGoods", money, goods);
 }
 
 void Game::processCloseNpcTrade()

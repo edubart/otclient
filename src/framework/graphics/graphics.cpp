@@ -73,10 +73,11 @@ void Graphics::init()
 
     m_useFBO = m_useFBO && (GLEW_ARB_framebuffer_object || GLEW_EXT_framebuffer_object);
     m_generateHardwareMipmaps = m_generateHardwareMipmaps; // glGenerateMipmap is supported when framebuffers are
+
 #endif
 
     glEnable(GL_BLEND);
-    //glClear(GL_ACCUM_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT);
 
     m_emptyTexture = TexturePtr(new Texture);
 
@@ -110,7 +111,6 @@ bool Graphics::parseOption(const std::string& option)
 void Graphics::resize(const Size& size)
 {
     setViewportSize(size);
-    //glClear(GL_ACCUM_BUFFER_BIT);
 
     // The projection matrix converts from Painter's coordinate system to GL's coordinate system
     //    * GL's viewport is 2x2, Painter's is width x height
@@ -134,8 +134,8 @@ void Graphics::resize(const Size& size)
 
 void Graphics::beginRender()
 {
-    glClearColor(0, 0, 0, 1);
-    glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    //glClearColor(0, 0, 0, 1);
+    //glClear(GL_COLOR_BUFFER_BIT);
 }
 
 void Graphics::endRender()
@@ -154,32 +154,13 @@ void Graphics::endRender()
 
 void Graphics::beginClipping(const Rect& clipRect)
 {
-    static uint8 depth = 0;
-
-    depth++;
-    if(depth == 0) {
-        glClear(GL_STENCIL_BUFFER_BIT);
-        depth = 1;
-    }
-
-    // setup stencil buffer for writing
-    glEnable(GL_STENCIL_TEST);
-    glStencilFunc(GL_ALWAYS, depth, 1);
-    glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
-
-    // draw the clipping area into the stencil buffer
-    glColorMask(0, 0, 0, 0);
-    g_painter.drawFilledRect(clipRect);
-
-    // set stencil buffer for clipping
-    glColorMask(1, 1, 1, 1);
-    glStencilFunc(GL_EQUAL, depth, 0xff);
-    glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(clipRect.left(), m_viewportSize.height() - clipRect.bottom() - 1, clipRect.width(), clipRect.height());
 }
 
 void Graphics::endClipping()
 {
-    glDisable(GL_STENCIL_TEST);
+    glDisable(GL_SCISSOR_TEST);
 }
 
 void Graphics::setViewportSize(const Size& size)
