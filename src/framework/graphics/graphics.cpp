@@ -135,7 +135,7 @@ void Graphics::resize(const Size& size)
 void Graphics::beginRender()
 {
     glClearColor(0, 0, 0, 1);
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 }
 
 void Graphics::endRender()
@@ -154,10 +154,17 @@ void Graphics::endRender()
 
 void Graphics::beginClipping(const Rect& clipRect)
 {
+    static uint8 depth = 0;
+
+    depth++;
+    if(depth == 0) {
+        glClear(GL_STENCIL_BUFFER_BIT);
+        depth = 1;
+    }
+
     // setup stencil buffer for writing
-    glClear(GL_STENCIL_BUFFER_BIT);
     glEnable(GL_STENCIL_TEST);
-    glStencilFunc(GL_ALWAYS, 1, 1);
+    glStencilFunc(GL_ALWAYS, depth, 1);
     glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
 
     // draw the clipping area into the stencil buffer
@@ -166,7 +173,7 @@ void Graphics::beginClipping(const Rect& clipRect)
 
     // set stencil buffer for clipping
     glColorMask(1, 1, 1, 1);
-    glStencilFunc(GL_EQUAL, 1, 1);
+    glStencilFunc(GL_EQUAL, depth, 0xff);
     glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
 }
 
