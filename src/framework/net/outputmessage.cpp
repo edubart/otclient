@@ -44,7 +44,7 @@ void OutputMessage::addU8(uint8 value)
 void OutputMessage::addU16(uint16 value)
 {
     checkWrite(2);
-    *(uint16_t*)(m_buffer + m_writePos) = value;
+    Fw::writeLE16(m_buffer + m_writePos, value);
     m_writePos += 2;
     m_messageSize += 2;
 }
@@ -52,7 +52,7 @@ void OutputMessage::addU16(uint16 value)
 void OutputMessage::addU32(uint32 value)
 {
     checkWrite(4);
-    *(uint32*)(m_buffer + m_writePos) = value;
+    Fw::writeLE32(m_buffer + m_writePos, value);
     m_writePos += 4;
     m_messageSize += 4;
 }
@@ -60,7 +60,7 @@ void OutputMessage::addU32(uint32 value)
 void OutputMessage::addU64(uint64 value)
 {
     checkWrite(8);
-    *(uint64*)(m_buffer + m_writePos) = value;
+    Fw::writeLE64(m_buffer + m_writePos, value);
     m_writePos += 8;
     m_messageSize += 8;
 }

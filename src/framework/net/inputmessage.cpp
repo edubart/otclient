@@ -47,7 +47,7 @@ uint8 InputMessage::getU8(bool peek)
 uint16 InputMessage::getU16(bool peek)
 {
     checkRead(2);
-    uint16 v = *(uint16_t*)(m_buffer + m_readPos);
+    uint16 v = Fw::readLE16(m_buffer + m_readPos);
 
     if(!peek)
         m_readPos += 2;
@@ -58,7 +58,7 @@ uint16 InputMessage::getU16(bool peek)
 uint32 InputMessage::getU32(bool peek)
 {
     checkRead(4);
-    uint32 v = *(uint32*)(m_buffer + m_readPos);
+    uint32 v = Fw::readLE32(m_buffer + m_readPos);
 
     if(!peek)
         m_readPos += 4;
@@ -69,7 +69,7 @@ uint32 InputMessage::getU32(bool peek)
 uint64 InputMessage::getU64(bool peek)
 {
     checkRead(8);
-    uint64 v = *(uint64*)(m_buffer + m_readPos);
+    uint64 v = Fw::readLE64(m_buffer + m_readPos);
 
     if(!peek)
         m_readPos += 8;
