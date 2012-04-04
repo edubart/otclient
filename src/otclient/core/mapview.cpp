@@ -80,7 +80,11 @@ void MapView::draw(const Rect& rect)
 
         if(m_mustCleanFramebuffer) {
             Rect clearRect = Rect(0, 0, m_drawDimension * m_tileSize);
-            m_framebuffer->clear(Color::black, clearRect);
+
+            // drawing a black rect is actually faster than FrameBuffer::clear()
+            g_painter.setColor(Color::black);
+            g_painter.drawFilledRect(clearRect);
+            g_painter.setColor(Color::white);
         }
 
         auto it = m_cachedVisibleTiles.begin();
