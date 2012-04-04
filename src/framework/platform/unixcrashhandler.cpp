@@ -59,7 +59,7 @@ void crashHandler(int signum, siginfo_t* info, void* secret)
     ss << "     rsp = " << context.uc_mcontext.gregs[REG_RSP] << std::endl;
     ss << "     efl = " << context.uc_mcontext.gregs[REG_EFL] << std::endl;
     ss << std::endl;
-#else
+#elif defined(REG_EIP)
     ss << "  at eip = " << context.uc_mcontext.gregs[REG_EIP] << std::endl;
     ss << "     eax = " << context.uc_mcontext.gregs[REG_EAX] << std::endl;
     ss << "     ebx = " << context.uc_mcontext.gregs[REG_EBX] << std::endl;
