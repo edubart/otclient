@@ -119,6 +119,8 @@ void PlatformWindow::releaseAllKeys()
         processKeyUp(keyCode);
     }
 
+    m_inputEvent.keyboardModifiers = 0;
+
     for(int i=0;i<4;++i)
         m_mouseButtonStates[i] = false;
 }

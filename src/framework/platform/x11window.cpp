@@ -773,6 +773,7 @@ void X11Window::poll()
                 break;
             case FocusIn:
                 m_focused = true;
+                releaseAllKeys();
                 break;
             case FocusOut:
                 m_focused = false;
@@ -1008,7 +1009,7 @@ std::string X11Window::getClipboardText()
 
     std::string clipboardText;
     if(ownerWindow != None) {
-        XConvertSelection(m_display, clipboard, XA_STRING, 0, ownerWindow, CurrentTime);
+        XConvertSelection(m_display, clipboard, XA_STRING, XA_PRIMARY, ownerWindow, CurrentTime);
         XFlush(m_display);
 
         // hack to wait SelectioNotify event, otherwise we will get wrong clipboard pastes
@@ -1018,33 +1019,17 @@ std::string X11Window::getClipboardText()
         // check for data
         Atom type;
         int format;
-        ulong numItems, bytesLeft, dummy;
+        ulong len, bytesLeft;
         uchar *data;
         XGetWindowProperty(m_display, ownerWindow,
-                            XA_STRING,
-                            0, 0, 0,
-                            AnyPropertyType,
+                            XA_PRIMARY, 0, 10000000L, 0, XA_STRING,
                             &type,
                             &format,
-                            &numItems,
+                            &len,
                             &bytesLeft,
                             &data);
-        if(bytesLeft > 0)  {
-            // get the data get
-            int result = XGetWindowProperty(m_display, ownerWindow,
-                                            XA_STRING,
-                                            0,
-                                            bytesLeft,
-                                            0,
-                                            AnyPropertyType,
-                                            &type,
-                                            &format,
-                                            &numItems,
-                                            &dummy,
-                                            &data);
-            if(result == Success)
-                clipboardText = Fw::utf8StringToLatin1(data);
-            XFree(data);
+        if(len > 0) {
+            clipboardText = Fw::utf8StringToLatin1(data);
         }
     }
 
