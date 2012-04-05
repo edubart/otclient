@@ -76,7 +76,7 @@ void UIWidget::parseImageStyle(const OTMLNodePtr& styleNode)
 
 void UIWidget::drawImage(const Rect& screenCoords)
 {
-    if(!m_imageTexture || m_imageColor.aF() == 0.0f || !screenCoords.isValid())
+    if(!m_imageTexture || !screenCoords.isValid())
         return;
 
     // cache vertex buffers

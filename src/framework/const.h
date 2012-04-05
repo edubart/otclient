@@ -42,6 +42,7 @@
 namespace Fw
 {
     constexpr float pi = 3.14159265;
+    constexpr float MIN_ALPHA = 0.003f;
 
     enum Key : uint8 {
         KeyUnknown = 0,

@@ -30,6 +30,7 @@ PainterShaderProgram::PainterShaderProgram()
 {
     m_textures.fill(std::make_tuple(-1, 0));
     m_startTime = g_clock.time();
+    m_lastTexture = -1;
 }
 
 bool PainterShaderProgram::link()
@@ -72,6 +73,7 @@ void PainterShaderProgram::setUniformTexture(int location, const TexturePtr& tex
     assert(index >= 0 && index <= 1);
 
     m_textures[index] = std::make_tuple(location, texture ? texture->getId() : 0);
+    m_lastTexture = std::max(m_lastTexture, index);
 }
 
 void PainterShaderProgram::setTexture(const TexturePtr& texture)
@@ -102,7 +104,8 @@ void PainterShaderProgram::draw(CoordsBuffer& coordsBuffer, DrawMode drawMode)
         coordsBuffer.getHardwareVertexBuffer()->bind();
     setAttributeArray(PainterShaderProgram::VERTEX_COORDS_ATTR, hardwareCached ? 0 : coordsBuffer.getVertexBuffer(), 2);
 
-    if(coordsBuffer.getTextureVertexCount() != 0) {
+    bool hasTexture = coordsBuffer.getTextureVertexCount() != 0;
+    if(hasTexture) {
         enableAttributeArray(PainterShaderProgram::TEXTURE_COORDS_ATTR);
         if(hardwareCached)
             coordsBuffer.getHardwareTextureVertexBuffer()->bind();
@@ -112,23 +115,21 @@ void PainterShaderProgram::draw(CoordsBuffer& coordsBuffer, DrawMode drawMode)
     if(hardwareCached)
         HardwareBuffer::unbind(HardwareBuffer::VertexBuffer);
 
-    for(int i=0;i<(int)m_textures.size();++i) {
+    for(int i=m_lastTexture;i>=0;--i) {
         int location = std::get<0>(m_textures[i]);
-        if(location == -1)
-            break;
-        int id = std::get<1>(m_textures[i]);
+        uint id = std::get<1>(m_textures[i]);
         setUniformValue(location, i);
 
-        glActiveTexture(GL_TEXTURE0+i);
+        if(m_lastTexture > 0)
+            glActiveTexture(GL_TEXTURE0+i);
         glBindTexture(GL_TEXTURE_2D, id);
     }
-    glActiveTexture(GL_TEXTURE0);
 
     glDrawArrays(drawMode, 0, vertexCount);
 
     disableAttributeArray(PainterShaderProgram::VERTEX_COORDS_ATTR);
 
-    if(coordsBuffer.getTextureVertexCount() != 0)
+    if(hasTexture)
         disableAttributeArray(PainterShaderProgram::TEXTURE_COORDS_ATTR);
 }
 

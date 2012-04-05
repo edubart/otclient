@@ -57,6 +57,6 @@ vec4 calcOutfitPixel()
 */
 void main()
 {
-    gl_FragColor = calcOutfitPixel() * color * opacity;
+    gl_FragColor = calcOutfitPixel();
 }
 

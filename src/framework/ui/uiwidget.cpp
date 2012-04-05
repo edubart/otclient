@@ -72,7 +72,7 @@ void UIWidget::draw(const Rect& visibleRect)
 void UIWidget::drawSelf()
 {
     // draw style components in order
-    if(m_backgroundColor.aF() != 0.0f) {
+    if(m_backgroundColor.aF() > Fw::MIN_ALPHA) {
         Rect backgroundDestRect = m_rect;
         backgroundDestRect.expand(-m_borderWidth.top, -m_borderWidth.right, -m_borderWidth.bottom, -m_borderWidth.left);
         drawBackground(m_rect);
@@ -89,7 +89,7 @@ void UIWidget::drawChildren(const Rect& visibleRect)
     // draw children
     for(const UIWidgetPtr& child : m_children) {
         // render only visible children with a valid rect inside parent rect
-        if(!child->isExplicitlyVisible() || !child->getRect().isValid() || child->getOpacity() == 0.0f)
+        if(!child->isExplicitlyVisible() || !child->getRect().isValid() || child->getOpacity() < Fw::MIN_ALPHA)
             continue;
 
         Rect childVisibleRect = visibleRect.intersection(child->getRect());

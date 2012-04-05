@@ -69,4 +69,26 @@ extern Logger g_logger;
 #define logTraceWarning(...) g_logger.logFunc(Fw::LogWarning, Fw::mkstr(__VA_ARGS__), __PRETTY_FUNCTION__)
 #define logTraceError(...) g_logger.logFunc(Fw::LogError, Fw::mkstr(__VA_ARGS__), __PRETTY_FUNCTION__)
 
+#define logTraceCounter() { \
+    static int __count = 0; \
+    static Timer __timer; \
+    __count++; \
+    if(__timer.ticksElapsed() >= 1000) { \
+        logTraceDebug(__count); \
+        __count = 0; \
+        __timer.restart(); \
+    } \
+}
+
+#define logTraceFrameCounter() { \
+    static int __count = 0; \
+    static Timer __timer; \
+    __count++; \
+    if(__timer.ticksElapsed() > 0) { \
+        logTraceDebug(__count); \
+        __count = 0; \
+        __timer.restart(); \
+    } \
+}
+
 #endif

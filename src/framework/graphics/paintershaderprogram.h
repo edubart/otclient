@@ -59,7 +59,8 @@ public:
 private:
     DrawMode m_drawMode;
     float m_startTime;
-    std::array<std::tuple<int, int>, 4> m_textures;
+    std::array<std::tuple<int, uint>, 4> m_textures;
+    int m_lastTexture;
 };
 
 #endif
