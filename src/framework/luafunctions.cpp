@@ -73,6 +73,7 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIWidget>("unlockChild", &UIWidget::unlockChild);
     g_lua.bindClassMemberFunction<UIWidget>("applyStyle", &UIWidget::applyStyle);
     g_lua.bindClassMemberFunction<UIWidget>("addAnchor", &UIWidget::addAnchor);
+    g_lua.bindClassMemberFunction<UIWidget>("removeAnchor", &UIWidget::removeAnchor);
     g_lua.bindClassMemberFunction<UIWidget>("fill", &UIWidget::fill);
     g_lua.bindClassMemberFunction<UIWidget>("centerIn", &UIWidget::centerIn);
     g_lua.bindClassMemberFunction<UIWidget>("breakAnchors", &UIWidget::breakAnchors);

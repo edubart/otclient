@@ -278,20 +278,24 @@ void UIWidget::parseBaseStyle(const OTMLNodePtr& styleNode)
             } else {
                 Fw::AnchorEdge anchoredEdge = Fw::translateAnchorEdge(what);
 
-                std::vector<std::string> split = Fw::split(node->value(), ".");
-                if(split.size() != 2)
-                    throw OTMLException(node, "invalid anchor description");
+                if(node->value() == "none") {
+                    removeAnchor(anchoredEdge);
+                } else {
+                    std::vector<std::string> split = Fw::split(node->value(), ".");
+                    if(split.size() != 2)
+                        throw OTMLException(node, "invalid anchor description");
 
-                std::string hookedWidgetId = split[0];
-                Fw::AnchorEdge hookedEdge = Fw::translateAnchorEdge(split[1]);
+                    std::string hookedWidgetId = split[0];
+                    Fw::AnchorEdge hookedEdge = Fw::translateAnchorEdge(split[1]);
 
-                if(anchoredEdge == Fw::AnchorNone)
-                    throw OTMLException(node, "invalid anchor edge");
+                    if(anchoredEdge == Fw::AnchorNone)
+                        throw OTMLException(node, "invalid anchor edge");
 
-                if(hookedEdge == Fw::AnchorNone)
-                    throw OTMLException(node, "invalid anchor target edge");
+                    if(hookedEdge == Fw::AnchorNone)
+                        throw OTMLException(node, "invalid anchor target edge");
 
-                addAnchor(anchoredEdge, hookedWidgetId, hookedEdge);
+                    addAnchor(anchoredEdge, hookedWidgetId, hookedEdge);
+                }
             }
         // lua functions
         } else if(boost::starts_with(node->tag(), "@")) {

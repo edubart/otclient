@@ -92,6 +92,7 @@ public:
     void unlockChild(const UIWidgetPtr& child);
     void applyStyle(const OTMLNodePtr& styleNode);
     void addAnchor(Fw::AnchorEdge anchoredEdge, const std::string& hookedWidgetId, Fw::AnchorEdge hookedEdge);
+    void removeAnchor(Fw::AnchorEdge anchoredEdge);
     void fill(const std::string& hookedWidgetId);
     void centerIn(const std::string& hookedWidgetId);
     void breakAnchors();

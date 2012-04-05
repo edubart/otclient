@@ -489,6 +489,11 @@ void UIWidget::addAnchor(Fw::AnchorEdge anchoredEdge, const std::string& hookedW
         logError("cannot add anchors to widget ", m_id, ": the parent doesn't use anchors layout");
 }
 
+void UIWidget::removeAnchor(Fw::AnchorEdge anchoredEdge)
+{
+    addAnchor(anchoredEdge, "none", Fw::AnchorNone);
+}
+
 void UIWidget::centerIn(const std::string& hookedWidgetId)
 {
     if(m_destroyed)
