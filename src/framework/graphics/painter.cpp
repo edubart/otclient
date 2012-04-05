@@ -143,10 +143,10 @@ void Painter::setClipRect(const Rect& clipRect)
     if(clipRect.isValid()) {
         glEnable(GL_SCISSOR_TEST);
         glScissor(clipRect.left(), g_graphics.getViewportSize().height() - clipRect.bottom() - 1, clipRect.width(), clipRect.height());
-        m_clipRect = clipRect;
     } else {
         glDisable(GL_SCISSOR_TEST);
     }
+    m_clipRect = clipRect;
 }
 
 void Painter::saveAndResetState()

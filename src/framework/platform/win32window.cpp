@@ -687,16 +687,12 @@ void WIN32Window::setMouseCursor(const std::string& file, const Point& hotSpot)
     std::vector<uchar> xorMask(numbytes, 0);
 
     for(int i=0;i<numbits;++i) {
-        uchar r = apng.pdata[i*4+0];
-        uchar g = apng.pdata[i*4+1];
-        uchar b = apng.pdata[i*4+2];
-        uchar a = apng.pdata[i*4+3];
-        Color color(r,g,b,a);
-        if(color == Color::white) { //white
+        uint32 rgba = Fw::readLE32(apng.pdata + i*4);
+        if(rgba == 0xffffffff) { //white
             HSB_BIT_SET(xorMask, i);
-        } else if(color == Color::alpha) { //alpha
+        } else if(rgba == 0x00000000) { //alpha
             HSB_BIT_SET(andMask, i);
-        } //otherwise black
+        } // otherwise 0xff000000 => black
     }
     free_apng(&apng);
 

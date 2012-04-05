@@ -632,7 +632,7 @@ void X11Window::poll()
                         XFree(propertyValue);
                     }
                 }
-        
+
                 // updates window pos
                 if(m_visible)
                     m_position = newPos;
@@ -794,6 +794,7 @@ void X11Window::poll()
 void X11Window::swapBuffers()
 {
 #ifndef OPENGL_ES2
+    glFinish();
     glXSwapBuffers(m_display, m_window);
 #else
     eglSwapBuffers(m_eglDisplay, m_eglSurface);
@@ -872,17 +873,13 @@ void X11Window::setMouseCursor(const std::string& file, const Point& hotSpot)
     std::vector<uchar> maskBits(numbytes, 0);
 
     for(int i=0;i<numbits;++i) {
-        uchar r = apng.pdata[i*4+0];
-        uchar g = apng.pdata[i*4+1];
-        uchar b = apng.pdata[i*4+2];
-        uchar a = apng.pdata[i*4+3];
-        Color color(r,g,b,a);
-        if(color == Color::white) { //background
+        uint32 rgba = Fw::readLE32(apng.pdata + i*4);
+        if(rgba == 0xffffffff) { //white, background
             LSB_BIT_SET(maskBits, i);
-        } else if(color == Color::black) { //foreground
+        } else if(rgba == 0xff000000) { //black, foreground
             LSB_BIT_SET(mapBits, i);
             LSB_BIT_SET(maskBits, i);
-        } //otherwise alpha
+        } //otherwise 0x00000000 => alpha
     }
     free_apng(&apng);
 

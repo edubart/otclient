@@ -1,9 +1,0 @@
-trying to walking while following doesn't cancel de walk
-attacked/followed creatures are not cleared when it goes out of range
-hotkeys works while windows are locked, it shouldnt
-some animated hits are displayed as 2 hits instead of one
-skulls is rendering outside map bounds
-paste on x11 platform does not work correctly when doing ctrl+c in google chrome
-party options does not work when relogging inside a party
-
-when the player gets disconnected it isn't removed from the map
