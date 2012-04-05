@@ -92,7 +92,7 @@ void Item::draw(const Point& dest, float scaleFactor, bool animate)
         if(tile) {
             if(tile->mustHookSouth())
                 xPattern = getNumPatternsX() >= 2 ? 1 : 0;
-            else if(tile->mustHookSouth())
+            else if(tile->mustHookEast())
                 xPattern = getNumPatternsX() >= 3 ? 2 : 0;
         }
     } else if(isFluid() || isFluidContainer()) {

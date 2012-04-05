@@ -338,6 +338,12 @@ ThingPtr Tile::getTopMultiUseThing()
         }
     }
 
+    for(uint i = 0; i < m_things.size(); ++i) {
+        ThingPtr thing = m_things[i];
+        if(!thing->isGround() && !thing->isGroundBorder() && !thing->isOnTop())
+            return thing;
+    }
+
     return m_things[0];
 }
 
