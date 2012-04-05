@@ -49,8 +49,11 @@ void Game::resetGameStates()
     m_followingCreature = nullptr;
     m_attackingCreature = nullptr;
 
-    for(auto& it : m_containers)
-        (it.second)->close();
+    for(auto& it : m_containers) {
+        const ContainerPtr& container = it.second;
+        if(container)
+            container->close();
+    }
     m_containers.clear();
 
     m_worldName = "";
@@ -196,14 +199,7 @@ void Game::processCloseContainer(int containerId)
         return;
     }
 
-    auto it = m_containers.find(container->getId());
-    if(it == m_containers.end() || it->second != container) {
-        logTraceError("invalid container");
-        return;
-    }
-
-    m_containers.erase(it);
-
+    m_containers[containerId] = nullptr;
     container->close();
 }
 
@@ -598,7 +594,7 @@ void Game::open(const ItemPtr& item, const ContainerPtr& previousContainer)
     int id = 0;
     if(!previousContainer) {
         // find a free container id
-        while(m_containers.find(id) != m_containers.end())
+        while(m_containers[id] != nullptr)
             id++;
     } else {
         id = previousContainer->getId();
