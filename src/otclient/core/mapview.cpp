@@ -76,6 +76,7 @@ void MapView::draw(const Rect& rect)
         drawFlags = Otc::DrawGround;
 
     if(m_mustDrawVisibleTilesCache || (drawFlags & Otc::DrawAnimations)) {
+        g_painter.saveAndResetState();
         m_framebuffer->bind();
 
         if(m_mustCleanFramebuffer) {
@@ -107,7 +108,15 @@ void MapView::draw(const Rect& rect)
             }
         }
 
+        /*
+        // debug source area
+        g_painter.setColor(Color(255,255,255,100));
+        Point drawOffset = ((m_drawDimension - m_visibleDimension - Size(1,1)).toPoint()/2) * m_tileSize;
+        g_painter.drawFilledRect(Rect(drawOffset, m_visibleDimension * m_tileSize));
+        */
+
         m_framebuffer->release();
+        g_painter.restoreSavedState();
 
         // generating mipmaps each frame can be slow in older cards
         if(g_graphics.canGenerateRealtimeMipmaps())
@@ -117,14 +126,12 @@ void MapView::draw(const Rect& rect)
     }
 
     g_painter.setCustomProgram(m_shaderProgram);
-    g_painter.setColor(Color::white);
 
     Point drawOffset = ((m_drawDimension - m_visibleDimension - Size(1,1)).toPoint()/2) * m_tileSize;
     if(m_followingCreature)
         drawOffset += m_followingCreature->getWalkOffset() * scaleFactor;
     Rect srcRect = Rect(drawOffset, m_visibleDimension * m_tileSize);
     m_framebuffer->draw(rect, srcRect);
-
     g_painter.releaseCustomProgram();
 
     // this could happen if the player position is not known yet
@@ -238,6 +245,10 @@ void MapView::updateVisibleTilesCache(int start)
             for(int diagonal = 0; diagonal < numDiagonals && !stop; ++diagonal) {
                 // loop current diagonal tiles
                 for(int iy = std::min(diagonal, m_drawDimension.width() - 1), ix = std::max(diagonal - m_drawDimension.width() + 1, 0); iy >= 0 && ix < m_drawDimension.width() && !stop; --iy, ++ix) {
+                    // skip bottom tiles that are outside the draw dimension
+                    if(iy >= m_drawDimension.height())
+                        continue;
+
                     // only start really looking tiles in the desired start
                     if(count < start) {
                         count++;
@@ -364,9 +375,8 @@ void MapView::updateVisibleTilesCache(int start)
     }
 
     if(stop) {
-        // schedule next update continuation
-        // scheduling an event with delay 0 ensures that the its execution will be after next frame render
-        m_updateTilesCacheEvent = g_eventDispatcher.scheduleEvent(std::bind(&MapView::updateVisibleTilesCache, asMapView(), count), 0);
+        // schedule next update continuation to avoid freezes
+        m_updateTilesCacheEvent = g_eventDispatcher.scheduleEvent(std::bind(&MapView::updateVisibleTilesCache, asMapView(), count), 1);
     }
     if(start == 0)
         m_cachedFloorVisibleCreatures = g_map.getSpectators(cameraPosition, false);
@@ -374,7 +384,7 @@ void MapView::updateVisibleTilesCache(int start)
 
 void MapView::onTileUpdate(const Position& pos)
 {
-    //if(m_viewRange == NEAR_VIEW)
+    //if(m_viewRange <= FAR_VIEW)
         requestVisibleTilesCacheUpdate();
 }
 
@@ -446,13 +456,6 @@ void MapView::setVisibleDimension(const Size& visibleDimension)
         viewRange = FAR_VIEW;
     else
         viewRange = HUGE_VIEW;
-
-    // draw actually more than what is needed to avoid massive recalculations on far views
-    if(viewRange >= FAR_VIEW) {
-        Size oldDimension = drawDimension;
-        drawDimension = (m_framebuffer->getSize() / tileSize);
-        virtualCenterOffset += (drawDimension - oldDimension).toPoint() / 2;
-    }
 
     bool mustUpdate = (m_drawDimension != drawDimension ||
                        m_viewRange != viewRange ||

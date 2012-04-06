@@ -335,6 +335,7 @@ void OTClient::registerLuaFunctions()
     g_lua.registerClass<UIMap, UIWidget>();
     g_lua.bindClassStaticFunction<UIMap>("create", []{ return UIMapPtr(new UIMap); } );
     g_lua.bindClassMemberFunction<UIMap>("followCreature", &UIMap::followCreature);
+    g_lua.bindClassMemberFunction<UIMap>("setCameraPosition", &UIMap::setCameraPosition);
     g_lua.bindClassMemberFunction<UIMap>("getTile", &UIMap::getTile);
     g_lua.bindClassMemberFunction<UIMap>("zoomIn", &UIMap::zoomIn);
     g_lua.bindClassMemberFunction<UIMap>("zoomOut", &UIMap::zoomOut);
