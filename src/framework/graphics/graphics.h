@@ -38,7 +38,6 @@ public:
     bool canUseHardwareBuffers() { return m_useHardwareBuffers; }
     bool canGenerateMipmaps() { return m_generateMipmaps; }
     bool canGenerateHardwareMipmaps() { return m_generateHardwareMipmaps; }
-    bool canGenerateRealtimeMipmaps() { return m_generateRealtimeMipmaps; }
 
     void resize(const Size& size);
     void beginRender();
@@ -59,7 +58,6 @@ private:
     Boolean<true> m_useBilinearFiltering;
     Boolean<true> m_generateMipmaps;
     Boolean<true> m_generateHardwareMipmaps;
-    Boolean<false> m_generateRealtimeMipmaps;
 };
 
 extern Graphics g_graphics;

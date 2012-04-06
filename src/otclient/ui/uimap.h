@@ -27,6 +27,8 @@
 #include <framework/ui/uiwidget.h>
 #include <otclient/core/tile.h>
 
+#include <otclient/core/mapview.h>
+
 class UIMap : public UIWidget
 {
 public:
@@ -35,19 +37,55 @@ public:
 
     void drawSelf();
 
-    void zoomIn();
-    void zoomOut();
-    void followCreature(const CreaturePtr& creature);
-    void setCameraPosition(const Position& pos);
+    bool setZoom(int zoom);
+    bool zoomIn();
+    bool zoomOut();
+    void followCreature(const CreaturePtr& creature) { m_mapView->followCreature(creature); }
 
+    void setCameraPosition(const Position& pos) { m_mapView->setCameraPosition(pos); }
+    void setMaxZoomIn(int maxZoomIn) { m_maxZoomIn = maxZoomIn; }
+    void setMaxZoomOut(int maxZoomOut) { m_maxZoomOut = maxZoomOut; }
+    void setMultifloor(bool enable) { m_mapView->setMultifloor(enable); }
+    void setVisibleDimension(const Size& visibleDimension);
+    void setViewMode(MapView::ViewMode viewMode)  { m_mapView->setViewMode(viewMode); }
+    void setAutoViewMode(bool enable) { m_mapView->setAutoViewMode(enable); }
+    void setDrawFlags(Otc::DrawFlags drawFlags) { m_mapView->setDrawFlags(drawFlags); }
+    void setDrawTexts(bool enable) { m_mapView->setDrawTexts(enable); }
+    void setDrawMinimapColors(bool enable) { m_mapView->setDrawMinimapColors(enable); }
+    void setAnimated(bool enable) { m_mapView->setAnimated(enable); }
+    void setKeepAspectRatio(bool enable);
+
+    bool isMultifloor() { return m_mapView->isMultifloor(); }
+    bool isAutoViewModeEnabled() { return m_mapView->isAutoViewModeEnabled(); }
+    bool isDrawingTexts() { return m_mapView->isDrawingTexts(); }
+    bool isDrawingMinimapColors() { return m_mapView->isDrawingMinimapColors(); }
+    bool isAnimating() { return m_mapView->isAnimating(); }
+    float isKeepAspectRatioEnabled() { return m_aspectRatio != 0.0f; }
+
+    Size getVisibleDimension() { return m_mapView->getVisibleDimension(); }
+    MapView::ViewMode getViewMode() { return m_mapView->getViewMode(); }
+    CreaturePtr getFollowingCreature() { return m_mapView->getFollowingCreature(); }
+    Otc::DrawFlags getDrawFlags() { return m_mapView->getDrawFlags(); }
+    Position getCameraPosition() { return m_mapView->getCameraPosition(); }
     TilePtr getTile(const Point& mousePos);
+    int getMaxZoomIn() { return m_maxZoomIn; }
+    int getMaxZoomOut() { return m_maxZoomOut; }
+    int getZoom() { return m_zoom; }
 
 protected:
+    virtual void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode);
     virtual void onGeometryChange(const Rect& oldRect, const Rect& newRect);
 
 private:
+    void updateVisibleDimension();
+    void updateMapSize();
+
+    int m_zoom;
     MapViewPtr m_mapView;
     Rect m_mapRect;
+    float m_aspectRatio;
+    int m_maxZoomIn;
+    int m_maxZoomOut;
 };
 
 #endif

@@ -265,6 +265,19 @@ int Tile::getGroundSpeed()
     return groundSpeed;
 }
 
+Color Tile::getMinimapColor()
+{
+    Color color = Color::black;
+    for(const ThingPtr& thing : m_things) {
+        if(!thing->isGround() && !thing->isGroundBorder() && !thing->isOnBottom() && !thing->isOnTop())
+            break;
+        int c = thing->getMinimapColor();
+        if(c != 0)
+            color = Color::from8bit(c);
+    }
+    return color;
+}
+
 ThingPtr Tile::getTopLookThing()
 {
     if(isEmpty())

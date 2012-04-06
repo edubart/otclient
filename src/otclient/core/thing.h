@@ -104,6 +104,7 @@ public:
     int getAnimationPhases() { return m_type->dimensions[ThingType::AnimationPhases]; }
     int getGroundSpeed() { return m_type->parameters[ThingType::GroundSpeed]; }
     int getElevation() { return m_type->parameters[ThingType::Elevation]; }
+    int getMinimapColor() { return m_type->parameters[ThingType::MiniMapColor]; }
 
     int getSpriteId(int w = 0, int h = 0, int layer = 0,
                     int xPattern = 0, int yPattern = 0, int zPattern = 0,

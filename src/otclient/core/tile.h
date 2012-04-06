@@ -57,6 +57,7 @@ public:
     const std::vector<ThingPtr>& getThings() { return m_things; }
     ItemPtr getGround();
     int getGroundSpeed();
+    Color getMinimapColor();
     int getThingCount() { return m_things.size() + m_effects.size(); }
     bool isPathable();
     bool isWalkable();

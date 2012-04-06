@@ -1,0 +1,15 @@
+Module
+  name: game_minimap
+  description: Manage minimap
+  author: OTClient team
+  website: https://github.com/edubart/otclient
+
+  dependecies:
+    - game
+
+  @onLoad: |
+    dofile 'minimap'
+    Minimap.init()
+
+  @onUnload:
+    Minimap.terminate()

@@ -33,6 +33,8 @@ public:
     Color() : m_r(1.0f), m_g(1.0f), m_b(1.0f), m_a(1.0f) { }
     Color(uint32 rgba) { setRGBA(rgba); }
     Color(uint8 r, uint8 g, uint8 b, uint8 a = 0xFF) : m_r(r/255.0f), m_g(g/255.0f), m_b(b/255.0f), m_a(a/255.0f) { }
+    Color(int r, int g, int b, int a = 0xFF) : m_r(r/255.0f), m_g(g/255.0f), m_b(b/255.0f), m_a(a/255.0f) { }
+    Color(float r, float g, float b, float a = 1.0f) : m_r(r), m_g(g), m_b(b), m_a(a) { }
 
     uint8 a() const { return m_a*255.0f; }
     uint8 b() const { return m_b*255.0f; }

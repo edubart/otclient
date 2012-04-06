@@ -76,6 +76,8 @@ void Graphics::init()
 
 #endif
 
+    glHint(GL_LINE_SMOOTH_HINT,GL_NICEST);
+    glHint(GL_PERSPECTIVE_CORRECTION_HINT,GL_NICEST);
     glEnable(GL_BLEND);
     glClear(GL_COLOR_BUFFER_BIT);
 
@@ -99,8 +101,6 @@ bool Graphics::parseOption(const std::string& option)
         m_generateMipmaps = false;
     else if(option == "-no-smoothing")
         m_useBilinearFiltering = false;
-    else if(option == "-realtime-mipmapping")
-        m_generateRealtimeMipmaps = true;
     else if(option == "-no-hardware-buffering")
         m_useHardwareBuffers = false;
     else

@@ -20,6 +20,7 @@ Module
     - game_containers
     - game_viplist
     - game_battle
+    - game_minimap
     - game_hotkeys
 
   @onLoad: |
