@@ -1,6 +1,6 @@
 CountWindow < MainWindow
   id: countWindow
-  text: Move Staackable Item
+  text: Move Stackable Item
   size: 196 112
   @onEscape: self:destroy()
 

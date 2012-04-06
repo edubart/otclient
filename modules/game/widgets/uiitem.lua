@@ -25,6 +25,10 @@ function UIItem:onDrop(widget, mousePos)
 
   local item = widget.currentDragThing
   local toPos = self.position
+
+  local itemPos = item:getPosition()
+  if itemPos.x == self.position.x and itemPos.y == self.position.y and itemPos.z == self.position.z then return false end
+
   if item:isStackable() and item:getCount() > 1 then
     GameInterface.moveStackableItem(item, toPos)
   else

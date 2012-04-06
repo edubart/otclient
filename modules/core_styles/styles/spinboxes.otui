@@ -2,6 +2,7 @@ SpinBox < UISpinBox
   font: verdana-11px-antialised
   color: #aaaaaa
   size: 86 20
+  text-offset: 0 3
   text-margin: 3
   image-source: /core_styles/styles/images/panel_flat.png
   image-border: 1
