@@ -16,6 +16,7 @@ MainWindow
 
   TextList
     id: channelList
+    vertical-scrollbar: channelsScrollBar
     anchors.fill: parent
     anchors.bottom: next.top
     margin-bottom: 10
@@ -54,3 +55,11 @@ MainWindow
     anchors.right: parent.right
     anchors.bottom: parent.bottom
     @onClick: self:getParent():destroy()
+
+  VerticalScrollBar
+    id: channelsScrollBar
+    anchors.top: channelList.top
+    anchors.bottom: channelList.bottom
+    anchors.right: channelList.right
+    step: 14
+    pixels-scroll: true

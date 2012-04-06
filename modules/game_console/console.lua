@@ -267,14 +267,14 @@ function Console.removeCurrentTab()
   local tab = consoleTabBar:getCurrentTab()
   if tab:getText() == "Default" or tab:getText() == "Server Log" then return end
 
-  consoleTabBar:removeTab(tab)
-
   -- notificate the server that we are leaving the channel
   if tab.channelId then
     g_game.leaveChannel(tab.channelId)
   elseif tab:getText() == "NPCs" then
     g_game.closeNpcChannel()
   end
+
+  consoleTabBar:removeTab(tab)
 end
 
 function Console.getTab(name)
