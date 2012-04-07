@@ -41,12 +41,10 @@ SET(CMAKE_CXX_FLAGS_DEBUG             "-O0 -ggdb")
 SET(CMAKE_C_FLAGS_DEBUG               "-O0 -ggdb")
 SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO    "-O1 -ggdb")
 SET(CMAKE_C_FLAGS_RELWITHDEBINFO      "-O1 -ggdb")
-SET(CMAKE_CXX_FLAGS_RELEASE           "-O2 -ffast-math")
-SET(CMAKE_C_FLAGS_RELEASE             "-O2 -ffast-math")
-SET(CMAKE_CXX_FLAGS_RELFORPERFORMANCE "-Ofast -fomit-frame-pointer")
-SET(CMAKE_C_FLAGS_RELFORPERFORMANCE   "-Ofast -fomit-frame-pointer")
-SET(CMAKE_CXX_FLAGS_RELFORSIZE        "-Os")
-SET(CMAKE_C_FLAGS_RELFORSIZE          "-Os")
+SET(CMAKE_CXX_FLAGS_RELEASE           "-Os -ffast-math")
+SET(CMAKE_C_FLAGS_RELEASE             "-Os -ffast-math")
+SET(CMAKE_CXX_FLAGS_RELFORPERFORMANCE "-Ofast -mmmx -msse -msse2")
+SET(CMAKE_C_FLAGS_RELFORPERFORMANCE   "-Ofast -mmmx -msse -msse2")
 SET(CMAKE_CXX_LINK_FLAGS              "${CMAKE_CXX_LINK_FLAGS} -static-libgcc -static-libstdc++ -Wl,--as-needed")
 
 MESSAGE(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
@@ -69,7 +67,7 @@ ELSE()
     MESSAGE(STATUS "Debug information: OFF")
 
     # NDEBUG disable asserts
-    #ADD_DEFINITIONS(-DNDEBUG)
+    ADD_DEFINITIONS(-DNDEBUG)
 
     # strip all debug information
     SET(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -s")
