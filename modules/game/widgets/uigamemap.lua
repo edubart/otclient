@@ -60,6 +60,7 @@ function UIGameMap:onMouseRelease(mousePosition, mouseButton)
      ((Mouse.isPressed(MouseLeftButton) and mouseButton == MouseRightButton) or
       (Mouse.isPressed(MouseRightButton) and mouseButton == MouseLeftButton)) then
     local tile = self:getTile(mousePosition)
+    print(tile:getTopLookThing():getId())
     g_game.look(tile:getTopLookThing())
     self.cancelNextRelease = true
     return true

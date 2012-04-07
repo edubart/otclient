@@ -1383,10 +1383,10 @@ bool UIWidget::onMousePress(const Point& mousePos, Fw::MouseButton button)
         m_lastClickPosition = mousePos;
     }
 
-    if(hasLuaField("onMousePress")) {
+    if(hasLuaField("onMousePress"))
         return callLuaField<bool>("onMousePress", mousePos, button);
-    }
-    return true;
+
+    return false;
 }
 
 bool UIWidget::onMouseRelease(const Point& mousePos, Fw::MouseButton button)
