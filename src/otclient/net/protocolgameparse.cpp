@@ -841,7 +841,7 @@ void ProtocolGame::parseCreatureSpeak(InputMessage& msg)
 void ProtocolGame::parseChannelList(InputMessage& msg)
 {
     int count = msg.getU8();
-    std::vector<std::tuple<int, std::string>> channelList(count);
+    std::vector<std::tuple<int, std::string>> channelList;
     for(int i = 0; i < count; i++) {
         int id = msg.getU16();
         std::string name = msg.getString();
