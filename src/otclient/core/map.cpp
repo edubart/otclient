@@ -291,9 +291,13 @@ void Map::setCentralPosition(const Position& centralPosition)
     } else {
         for(const auto& pair : m_knownCreatures) {
             const CreaturePtr& creature = pair.second;
-            if(!isAwareOfPosition(creature->getPosition())) {
-                removeThing(creature);
+            if(creature) {
+                if(!isAwareOfPosition(creature->getPosition())) {
+                    removeThing(creature);
+                }
             }
+            else
+                logTraceError("invalid creature");
         }
     }
 }

@@ -111,6 +111,16 @@ local function onOpenPrivateChannel(receiver)
   end
 end
 
+local function onCloseChannel(channelId)
+  local channel = channels[channelId]
+  if channel then
+    local tab = Console.getTab(channel)
+    if tab then
+      consoleTabBar:removeTab(tab)
+    end
+  end
+end
+
 local function doChannelListSubmit()
   local channelListPanel = channelsWindow:getChildById('channelList')
   local openPrivateChannelWith = channelsWindow:getChildById('openPrivateChannelWith'):getText()
@@ -156,6 +166,7 @@ function Console.init()
                     onChannelList = onChannelList,
                     onOpenChannel = onOpenChannel,
                     onOpenPrivateChannel = onOpenPrivateChannel,
+                    onCloseChannel = onCloseChannel,
                     onGameEnd = Console.clear })
 
   consolePanel = displayUI('console.otui', GameInterface.getBottomPanel())
@@ -189,6 +200,7 @@ function Console.terminate()
                        onChannelList = onChannelList,
                        onOpenChannel = onOpenChannel,
                        onOpenPrivateChannel = onOpenPrivateChannel,
+                       onCloseChannel = onCloseChannel,
                        onGameEnd = Console.clear })
 
   for channelid, channelname in pairs(channels) do
