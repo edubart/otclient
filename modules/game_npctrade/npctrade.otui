@@ -1,0 +1,237 @@
+NPCOfferLabel < Label
+  anchors.left: prev.right
+  anchors.top: prev.top
+  margin-left: 5
+  text-auto-resize: true
+
+NPCPanel < ScrollablePanel
+  image-source: /core_styles/styles/images/panel_flat.png
+  image-border: 1
+  
+NPCItemBox < UICheckBox  
+  border-width: 1
+  border-color: #000000 
+  @onCheckChange: NPCTrade.setItem(self)
+  
+  Item
+    id: item
+    phantom: true
+    anchors.top: parent.top
+    anchors.horizontalCenter: parent.horizontalCenter
+    margin-top: 2
+    
+  Label
+    id: nameLabel
+    phantom: true
+    text: cavalo
+    anchors.top: prev.bottom
+    anchors.horizontalCenter: parent.horizontalCenter
+    text-auto-resize: true
+    margin-top: 5
+    
+  Label
+    id: weightLabel
+    phantom: true
+    text: 8.00 oz
+    anchors.top: prev.bottom
+    anchors.horizontalCenter: parent.horizontalCenter
+    text-auto-resize: true
+    margin-top: 5
+    
+  Label
+    id: priceLabel
+    phantom: true
+    text: 200 gold
+    anchors.top: prev.bottom
+    anchors.horizontalCenter: parent.horizontalCenter
+    text-auto-resize: true
+    margin-top: 5
+
+  $checked:    
+    border-color: #FFFFFF 
+    
+  $hover !checked:
+    border-color: #AAAAAA  
+
+MainWindow
+  id: npcWindow
+  text: NPC Trade
+  size: 550 550
+
+  @onEscape: NPCTrade.hide()
+
+  TabButton
+    id: buyTab
+    tooltip: List of items that you're able to buy
+    text: Buy
+    anchors.left: parent.left
+    anchors.right: parent.horizontalCenter
+    anchors.top: parent.top
+    margin-right: 5
+    margin-top: 5
+    @onCheckChange: NPCTrade.setList(self, self:isChecked())
+
+  TabButton
+    id: sellTab
+    tooltip: List of items that you're able to sell
+    text: Sell
+    anchors.left: parent.horizontalCenter
+    anchors.right: parent.right
+    anchors.top: parent.top
+    margin-left: 5
+    margin-top: 5
+    @onCheckChange: NPCTrade.setList(self, self:isChecked())
+    
+  Label
+    id: searchLabel
+    text: Search:
+    anchors.left: parent.left
+    anchors.top: prev.bottom
+    text-auto-resize: true
+    margin-top: 5
+    margin-left: 2
+    
+  TextEdit
+    id: searchText
+    width: 200
+    anchors.left: prev.right
+    anchors.top: prev.top
+    margin-left: 5
+    @onTextChange: NPCTrade.searchFilter(self:getText())    
+    
+  NPCPanel
+    height: 250
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: prev.bottom
+    margin-top: 5 
+      
+    VerticalScrollBar
+      id: itemsPanelListScrollBar
+      anchors.top: parent.top
+      anchors.bottom: parent.bottom
+      anchors.right: parent.right
+      step: 14
+      pixels-scroll: true
+      
+    NPCPanel
+      id: itemsPanel
+      height: 250
+      anchors.left: parent.left
+      anchors.right: prev.left
+      anchors.top: parent.top
+      anchors.bottom: parent.bottom
+      vertical-scrollbar: itemsPanelListScrollBar
+      layout:
+        type: grid
+        cell-size: 160 90
+        flow: true
+        auto-spacing: true   
+  
+  FlatPanel
+    id: setupPanel
+    height: 150
+    enabled: false
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: prev.bottom
+    margin-top: 5
+  
+    Label
+      id: quantityLabel
+      text: Quantity
+      anchors.left: parent.left
+      anchors.top: parent.top
+      text-auto-resize: true
+      margin-top: 5
+      margin-left: 2
+
+    NPCOfferLabel
+      id: quantity
+  
+    HorizontalScrollBar
+      id: quantityScroll
+      anchors.left: parent.left
+      anchors.right: parent.right
+      anchors.top: prev.bottom
+      margin-top: 2
+      minimum: 1
+      maximum: 100
+      value: 1
+      step: 1
+      @onValueChange: NPCTrade.setQuantity(self:getValue())
+
+    Label
+      id: nameLabel
+      text: Name
+      anchors.left: parent.left
+      anchors.top: prev.bottom
+      text-auto-resize: true
+      margin-top: 5
+      margin-left: 2
+      
+    NPCOfferLabel
+      id: name
+
+    Label
+      id: priceLabel
+      text: Price
+      anchors.left: parent.left
+      anchors.top: prev.bottom
+      text-auto-resize: true
+      margin-top: 5
+      margin-left: 2
+      
+    NPCOfferLabel
+      id: price
+      
+    Label
+      id: moneyLabel
+      text: Money
+      anchors.left: parent.left
+      anchors.top: prev.bottom
+      text-auto-resize: true
+      margin-top: 5
+      margin-left: 2   
+      
+    NPCOfferLabel
+      id: money
+      
+    Label
+      id: weightLabel
+      text: Weight
+      anchors.left: parent.left
+      anchors.top: prev.bottom
+      text-auto-resize: true
+      margin-top: 5
+      margin-left: 2
+      
+    NPCOfferLabel
+      id: weight
+  
+    Label
+      id: capacityLabel
+      text: Capacity
+      anchors.left: parent.left
+      anchors.top: prev.bottom
+      text-auto-resize: true
+      margin-top: 5
+      margin-left: 2
+      
+    NPCOfferLabel
+      id: capacity
+      
+    Button
+      id: setupButton
+      text: Buy
+      width: 64
+      anchors.horizontalCenter: parent.horizontalCenter
+      anchors.top: prev.bottom
+      @onClick: NPCTrade.setupButton()
+  
+  Button
+    text: Close
+    width: 64
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    @onClick: NPCTrade.hide()

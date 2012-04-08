@@ -1,0 +1,13 @@
+void processOpenNpcTrade(const std::vector<std::tuple<ItemPtr, std::string, int, int, int>>& items);
+    void processPlayerGoods(int money, const std::vector<std::tuple<ItemPtr, int>>& goods);
+    void processCloseNpcTrade();
+
+g_lua.callGlobalField("g_game", "onOpenNpcTrade", items);
+    g_lua.callGlobalField("g_game", "onPlayerGoods", goods);
+    g_lua.callGlobalField("g_game", "onCloseNpcTrade");
+
+ // npc trade related
+    void inspectNpcTrade(const ItemPtr& item);
+    void buyItem(const ItemPtr& item, int amount, bool ignoreCapacity, bool buyWithBackpack);
+    void sellItem(const ItemPtr& item, int amount, bool ignoreEquipped);
+    void closeNpcTrade();

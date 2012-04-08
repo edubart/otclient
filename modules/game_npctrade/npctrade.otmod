@@ -1,0 +1,15 @@
+Module
+  name: game_npctrade
+  description: NPC trade interface
+  author: OTClient team
+  website: https://github.com/edubart/otclient
+
+  dependencies:
+    - game
+
+  @onLoad: |
+    dofile 'npctrade'
+    NPCTrade.init()
+
+  @onUnload: |
+    NPCTrade.terminate()

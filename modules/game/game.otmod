@@ -22,6 +22,7 @@ Module
     - game_battle
     - game_minimap
     - game_hotkeys
+    - game_npctrade
 
   @onLoad: |
     importStyle 'styles/items.otui'
