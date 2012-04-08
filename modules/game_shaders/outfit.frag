@@ -2,9 +2,9 @@ uniform float opacity; // painter opacity
 uniform vec4 color; // painter color
 uniform float time; // time in seconds since shader linkage
 
-uniform sampler2D texture; // outfit texture
-varying vec2 textureCoords; // outfit texture coords
-uniform sampler2D maskTexture; // outfit color mask
+uniform sampler2D tex0; // outfit texture
+uniform sampler2D tex1; // outfit color mask
+varying vec2 texCoord; // outfit texture coords
 
 uniform vec4 headColor;
 uniform vec4 bodyColor;
@@ -14,8 +14,8 @@ uniform vec4 feetColor;
 
 vec4 calcOutfitPixel()
 {
-    vec4 pixel = texture2D(texture, textureCoords);
-    vec4 maskColor = texture2D(maskTexture, textureCoords);
+    vec4 pixel = texture2D(tex0, texCoord);
+    vec4 maskColor = texture2D(tex1, texCoord);
 
     vec4 outColor = vec4(1.0, 1.0, 1.0, 1.0);
     if(maskColor.r > 0.1 && maskColor.g > 0.1)

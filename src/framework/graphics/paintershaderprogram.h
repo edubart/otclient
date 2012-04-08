@@ -30,14 +30,17 @@
 class PainterShaderProgram : public ShaderProgram
 {
     enum {
-        VERTEX_COORDS_ATTR = 0,
-        TEXTURE_COORDS_ATTR = 1,
+        VERTEX_ATTR = 0,
+        TEXCOORD_ATTR = 1,
         PROJECTION_MATRIX_UNIFORM = 0,
         TEXTURE_TRANSFORM_MATRIX_UNIFORM = 1,
         COLOR_UNIFORM = 2,
         OPACITY_UNIFORM = 3,
-        TEXTURE_UNIFORM = 4,
-        TIME_UNIFORM = 5
+        TIME_UNIFORM = 4,
+        TEX0_UNIFORM = 5,
+        TEX1_UNIFORM = 6,
+        //TEX2_UNIFORM = 7,
+        //TEX3_UNIFORM = 8,
     };
 public:
     enum DrawMode {
@@ -52,14 +55,20 @@ public:
     void setProjectionMatrix(const Matrix3& projectionMatrix);
     void setColor(const Color& color);
     void setOpacity(float opacity);
-    void setTexture(const TexturePtr& texture);
+    void setTexture(const TexturePtr& texture, int index = 0);
     void setUniformTexture(int location, const TexturePtr& texture, int index);
     void draw(CoordsBuffer& coordsBuffer, DrawMode drawMode = Triangles);
 
 private:
     DrawMode m_drawMode;
     float m_startTime;
-    std::array<std::tuple<int, uint>, 4> m_textures;
+    TexturePtr m_textures[2];
+
+    Color m_color;
+    float m_opacity;
+    Matrix3 m_projectionMatrix;
+    Matrix2 m_textureTransformMatrix;
+    float m_time;
     int m_lastTexture;
 };
 

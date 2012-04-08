@@ -41,7 +41,7 @@ public:
     void removeAllShaders();
     virtual bool link();
     bool bind();
-    void release();
+    static void release();
     std::string log();
 
     void disableAttributeArray(int location) { glDisableVertexAttribArray(location); }

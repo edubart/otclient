@@ -77,8 +77,10 @@ void Painter::drawTexturedRect(const Rect& dest, const TexturePtr& texture, cons
         return;
 
     m_coordsBuffer.clear();
-    m_coordsBuffer.addRect(dest, src);
-    drawTextureCoords(m_coordsBuffer, texture);
+    m_coordsBuffer.addQuad(dest, src);
+    PainterShaderProgramPtr& program = m_customProgram ? m_customProgram : m_drawTexturedProgram;
+    program->setTexture(texture);
+    drawProgram(program, m_coordsBuffer, PainterShaderProgram::TriangleStrip);
 }
 
 void Painter::drawRepeatedTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src)

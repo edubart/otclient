@@ -28,69 +28,99 @@
 
 PainterShaderProgram::PainterShaderProgram()
 {
-    m_textures.fill(std::make_tuple(-1, 0));
     m_startTime = g_clock.time();
+    m_opacity = 1;
+    m_color = Color::white;
+    m_time = 0;
     m_lastTexture = -1;
 }
 
 bool PainterShaderProgram::link()
 {
-    bindAttributeLocation(VERTEX_COORDS_ATTR, "vertexCoord");
-    bindAttributeLocation(TEXTURE_COORDS_ATTR, "textureCoord");
+    m_startTime = g_clock.time();
+    bindAttributeLocation(VERTEX_ATTR, "a_vertex");
+    bindAttributeLocation(TEXCOORD_ATTR, "a_texCoord");
     if(ShaderProgram::link()) {
         bindUniformLocation(PROJECTION_MATRIX_UNIFORM, "projectionMatrix");
-        bindUniformLocation(TEXTURE_TRANSFORM_MATRIX_UNIFORM, "textureTransformMatrix");
+        bindUniformLocation(TEXTURE_TRANSFORM_MATRIX_UNIFORM, "texTransformMatrix");
         bindUniformLocation(COLOR_UNIFORM, "color");
         bindUniformLocation(OPACITY_UNIFORM, "opacity");
-        bindUniformLocation(TEXTURE_UNIFORM, "texture");
         bindUniformLocation(TIME_UNIFORM, "time");
+        bindUniformLocation(TEX0_UNIFORM, "tex0");
+        bindUniformLocation(TEX1_UNIFORM, "tex1");
+
+        bind();
+        setUniformValue(PROJECTION_MATRIX_UNIFORM, m_projectionMatrix);
+        setUniformValue(TEXTURE_TRANSFORM_MATRIX_UNIFORM, m_textureTransformMatrix);
+        setUniformValue(COLOR_UNIFORM, m_color);
+        setUniformValue(OPACITY_UNIFORM, m_opacity);
+        setUniformValue(TIME_UNIFORM, m_time);
+        setUniformValue(TEX0_UNIFORM, 0);
+        setUniformValue(TEX1_UNIFORM, 1);
         return true;
     }
-    m_startTime = g_clock.time();
     return false;
 }
 
 void PainterShaderProgram::setProjectionMatrix(const Matrix3& projectionMatrix)
 {
+    if(projectionMatrix == m_projectionMatrix)
+        return;
+
     bind();
     setUniformValue(PROJECTION_MATRIX_UNIFORM, projectionMatrix);
+    m_projectionMatrix = projectionMatrix;
 }
 
 void PainterShaderProgram::setColor(const Color& color)
 {
+    if(color == m_color)
+        return;
+
     bind();
     setUniformValue(COLOR_UNIFORM, color);
+    m_color = color;
 }
 
 void PainterShaderProgram::setOpacity(float opacity)
 {
-    bind();
-    setUniformValue(OPACITY_UNIFORM, opacity);
-}
-
-void PainterShaderProgram::setUniformTexture(int location, const TexturePtr& texture, int index)
-{
-    assert(index >= 0 && index <= 1);
-
-    m_textures[index] = std::make_tuple(location, texture ? texture->getId() : 0);
-    m_lastTexture = std::max(m_lastTexture, index);
-}
-
-void PainterShaderProgram::setTexture(const TexturePtr& texture)
-{
-    if(!texture)
+    if(m_opacity == opacity)
         return;
 
     bind();
-    setUniformTexture(TEXTURE_UNIFORM, texture, 0);
-    setUniformValue(TEXTURE_TRANSFORM_MATRIX_UNIFORM, texture->getTransformMatrix());
+    setUniformValue(OPACITY_UNIFORM, opacity);
+    m_opacity = opacity;
+}
+
+void PainterShaderProgram::setTexture(const TexturePtr& texture, int index)
+{
+    assert(index >= 0 && index <= 1);
+
+    if(m_textures[index] == texture)
+        return;
+
+    m_textures[index] = texture;
+    m_lastTexture = std::max(m_lastTexture, index);
+
+    if(texture && index == 0) {
+        const Matrix2& textureTransformMatrix = texture->getTransformMatrix();
+        if(m_textureTransformMatrix != textureTransformMatrix) {
+            bind();
+            setUniformValue(TEXTURE_TRANSFORM_MATRIX_UNIFORM, textureTransformMatrix);
+            m_textureTransformMatrix = textureTransformMatrix;
+        }
+    }
 }
 
 void PainterShaderProgram::draw(CoordsBuffer& coordsBuffer, DrawMode drawMode)
 {
     bind();
 
-    setUniformValue(TIME_UNIFORM, g_clock.timeElapsed(m_startTime));
+    float time = g_clock.timeElapsed(m_startTime);
+    if(m_time != time) {
+        setUniformValue(TIME_UNIFORM, time);
+        m_time = time;
+    }
 
     int vertexCount = coordsBuffer.getVertexCount();
     if(vertexCount == 0)
@@ -99,37 +129,36 @@ void PainterShaderProgram::draw(CoordsBuffer& coordsBuffer, DrawMode drawMode)
     coordsBuffer.updateCaches();
     bool hardwareCached = coordsBuffer.isHardwareCached();
 
-    enableAttributeArray(PainterShaderProgram::VERTEX_COORDS_ATTR);
+    enableAttributeArray(PainterShaderProgram::VERTEX_ATTR);
     if(hardwareCached)
         coordsBuffer.getHardwareVertexBuffer()->bind();
-    setAttributeArray(PainterShaderProgram::VERTEX_COORDS_ATTR, hardwareCached ? 0 : coordsBuffer.getVertexBuffer(), 2);
+    setAttributeArray(PainterShaderProgram::VERTEX_ATTR, hardwareCached ? 0 : coordsBuffer.getVertexBuffer(), 2);
 
     bool hasTexture = coordsBuffer.getTextureVertexCount() != 0;
     if(hasTexture) {
-        enableAttributeArray(PainterShaderProgram::TEXTURE_COORDS_ATTR);
+        enableAttributeArray(PainterShaderProgram::TEXCOORD_ATTR);
         if(hardwareCached)
             coordsBuffer.getHardwareTextureVertexBuffer()->bind();
-        setAttributeArray(PainterShaderProgram::TEXTURE_COORDS_ATTR, hardwareCached ? 0 : coordsBuffer.getTextureVertexBuffer(), 2);
+        setAttributeArray(PainterShaderProgram::TEXCOORD_ATTR, hardwareCached ? 0 : coordsBuffer.getTextureVertexBuffer(), 2);
     }
 
     if(hardwareCached)
         HardwareBuffer::unbind(HardwareBuffer::VertexBuffer);
 
-    for(int i=m_lastTexture;i>=0;--i) {
-        int location = std::get<0>(m_textures[i]);
-        uint id = std::get<1>(m_textures[i]);
-        setUniformValue(location, i);
-
-        if(m_lastTexture > 0)
-            glActiveTexture(GL_TEXTURE0+i);
-        glBindTexture(GL_TEXTURE_2D, id);
+    if(m_lastTexture == 0) {
+        glBindTexture(GL_TEXTURE_2D, m_textures[0] ? m_textures[0]->getId() : 0);
+    } else {
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, m_textures[1] ? m_textures[1]->getId() : 0);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, m_textures[0] ? m_textures[0]->getId() : 0);
     }
 
     glDrawArrays(drawMode, 0, vertexCount);
 
-    disableAttributeArray(PainterShaderProgram::VERTEX_COORDS_ATTR);
+    disableAttributeArray(PainterShaderProgram::VERTEX_ATTR);
 
     if(hasTexture)
-        disableAttributeArray(PainterShaderProgram::TEXTURE_COORDS_ATTR);
+        disableAttributeArray(PainterShaderProgram::TEXCOORD_ATTR);
 }
 

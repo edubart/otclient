@@ -44,6 +44,7 @@ void UIFrameCounter::drawSelf()
         m_fpsText = Fw::formatString("FPS: %d", m_frameCount);
         m_lastFrameTicks = g_clock.ticks();
         m_frameCount = 0;
+        dump << m_fpsText;
     }
     m_frameCount++;
 

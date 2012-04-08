@@ -109,8 +109,10 @@ bool ShaderProgram::bind()
 
 void ShaderProgram::release()
 {
-    m_currentProgram = 0;
-    glUseProgram(0);
+    if(m_currentProgram != 0) {
+        m_currentProgram = 0;
+        glUseProgram(0);
+    }
 }
 
 std::string ShaderProgram::log()

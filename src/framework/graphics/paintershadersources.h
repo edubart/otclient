@@ -20,15 +20,6 @@
  * THE SOFTWARE.
  */
 
-const static int VERTEX_COORDS_ATTR = 0;
-const static int TEXTURE_COORDS_ATTR = 1;
-
-const static int PROJECTION_MATRIX_UNIFORM = 0;
-const static int TEXTURE_TRANSFORM_MATRIX_UNIFORM = 1;
-const static int COLOR_UNIFORM = 2;
-const static int OPACITY_UNIFORM = 3;
-const static int TEXTURE_UNIFORM = 4;
-
 static const std::string glslMainVertexShader = "\n\
     highp vec4 calculatePosition();\n\
     void main() {\n\
@@ -36,21 +27,21 @@ static const std::string glslMainVertexShader = "\n\
     }\n";
 
 static const std::string glslMainWithTexCoordsVertexShader = "\n\
-    attribute highp vec2 textureCoord;\n\
-    uniform highp mat2 textureTransformMatrix;\n\
-    varying highp vec2 textureCoords;\n\
+    attribute highp vec2 a_texCoord;\n\
+    uniform highp mat2 texTransformMatrix;\n\
+    varying highp vec2 texCoord;\n\
     highp vec4 calculatePosition();\n\
     void main()\n\
     {\n\
         gl_Position = calculatePosition();\n\
-        textureCoords = textureTransformMatrix * textureCoord;\n\
+        texCoord = texTransformMatrix * a_texCoord;\n\
     }\n";
 
 static std::string glslPositionOnlyVertexShader = "\n\
-    attribute highp vec2 vertexCoord;\n\
+    attribute highp vec2 a_vertex;\n\
     uniform highp mat3 projectionMatrix;\n\
     highp vec4 calculatePosition() {\n\
-        return vec4(projectionMatrix * vec3(vertexCoord.xy, 1), 1);\n\
+        return vec4(projectionMatrix * vec3(a_vertex.xy, 1), 1);\n\
     }\n";
 
 static const std::string glslMainFragmentShader = "\n\
@@ -62,11 +53,11 @@ static const std::string glslMainFragmentShader = "\n\
     }\n";
 
 static const std::string glslTextureSrcFragmentShader = "\n\
-    varying mediump vec2 textureCoords;\n\
+    varying mediump vec2 texCoord;\n\
     uniform lowp vec4 color;\n\
-    uniform sampler2D texture;\n\
+    uniform sampler2D tex0;\n\
     lowp vec4 calculatePixel() {\n\
-        return texture2D(texture, textureCoords) * color;\n\
+        return texture2D(tex0, texCoord) * color;\n\
     }\n";
 
 static const std::string glslSolidColorFragmentShader = "\n\

@@ -170,8 +170,8 @@ void Item::draw(const Point& dest, float scaleFactor, bool animate)
         itemProgram->bindUniformLocation(ITEM_ID_UNIFORM, "itemId");
     }
     g_painter.setCustomProgram(itemProgram);
-    itemProgram->bind();
-    itemProgram->setUniformValue(ITEM_ID_UNIFORM, (int)m_id);
+    //itemProgram->bind();
+    //itemProgram->setUniformValue(ITEM_ID_UNIFORM, (int)m_id);
 
     // now we can draw the item
     internalDraw(dest, scaleFactor, xPattern, yPattern, zPattern, animationPhase);

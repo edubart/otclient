@@ -47,6 +47,11 @@ public:
         m_textureVertexBuffer.addRect(src);
         m_hardwareCached = false;
     }
+    void addQuad(const Rect& dest, const Rect& src) {
+        m_vertexBuffer.addQuad(dest);
+        m_textureVertexBuffer.addQuad(src);
+        m_hardwareCached = false;
+    }
 
     void addBoudingRect(const Rect& dest, int innerLineWidth);
     void addRepeatedRects(const Rect& dest, const Rect& src);

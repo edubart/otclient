@@ -46,7 +46,7 @@ uint Texture::internalLoadGLTexture(uchar *pixels, int channels, int width, int 
 {
     m_size.resize(width, height);
     m_transformMatrix = { 1.0f/width,  0.0f,
-                               0.0f,        1.0f/height };
+                          0.0f,        1.0f/height };
 
     // gets max texture size supported by the driver
     static GLint maxTexSize = -1;

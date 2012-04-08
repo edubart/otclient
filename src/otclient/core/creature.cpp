@@ -96,7 +96,6 @@ void Creature::internalDrawOutfit(const Point& dest, float scaleFactor, bool ani
         outfitProgram->bindUniformLocation(BODY_COLOR_UNIFORM, "bodyColor");
         outfitProgram->bindUniformLocation(LEGS_COLOR_UNIFORM, "legsColor");
         outfitProgram->bindUniformLocation(FEET_COLOR_UNIFORM, "feetColor");
-        outfitProgram->bindUniformLocation(MASK_TEXTURE_UNIFORM, "maskTexture");
     }
 
     int xPattern = 0, yPattern = 0, zPattern = 0;
@@ -141,7 +140,7 @@ void Creature::internalDrawOutfit(const Point& dest, float scaleFactor, bool ani
                         int maskId = getSpriteId(w, h, 1, xPattern, yPattern, zPattern, animationPhase);
                         maskTex = g_sprites.getSpriteTexture(maskId);
                     }
-                    outfitProgram->setUniformTexture(MASK_TEXTURE_UNIFORM, maskTex, 1);
+                    outfitProgram->setTexture(maskTex, 1);
 
                     internalDraw(dest + (-Point(w,h)*Otc::TILE_PIXELS)*scaleFactor,
                                  scaleFactor, w, h, xPattern, yPattern, zPattern, 0, animationPhase);
