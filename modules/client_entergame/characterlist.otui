@@ -41,6 +41,7 @@ MainWindow
     anchors.right: parent.right
     anchors.bottom: separator.top
     margin-bottom: 5
+    text-auto-resize: true
 
   HorizontalSeparator
     id: separator

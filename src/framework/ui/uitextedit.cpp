@@ -37,6 +37,7 @@ UITextEdit::UITextEdit()
     m_alwaysActive = false;
     m_shiftNavigation = false;
     m_multiline = false;
+    m_maxLength = 0;
     blinkCursor();
 }
 
@@ -281,6 +282,9 @@ void UITextEdit::appendText(std::string text)
         boost::replace_all(text, "\r", "    ");
 
         if(text.length() > 0) {
+            // only add text if textedit can add it
+            if(m_maxLength > 0 && m_text.length() + text.length() > m_maxLength)
+                return;
 
             // only ignore text append if it contains invalid characters
             if(m_validCharacters.size() > 0) {
@@ -306,6 +310,9 @@ void UITextEdit::appendCharacter(char c)
         return;
 
     if(m_cursorPos >= 0) {
+        if(m_maxLength > 0 && m_text.length() + 1 > m_maxLength)
+            return;
+
         if(m_validCharacters.size() > 0 && m_validCharacters.find(c) == std::string::npos)
             return;
 
@@ -416,6 +423,8 @@ void UITextEdit::onStyleApply(const std::string& styleName, const OTMLNodePtr& s
             setShiftNavigation(node->value<bool>());
         else if(node->tag() == "multiline")
             setMultiline(node->value<bool>());
+        else if(node->tag() == "max-length")
+            setMaxLength(node->value<int>());
     }
 }
 

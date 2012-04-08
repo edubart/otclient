@@ -44,6 +44,7 @@ public:
     void setValidCharacters(const std::string validCharacters) { m_validCharacters = validCharacters; }
     void setShiftNavigation(bool enable) { m_shiftNavigation = enable; }
     void setMultiline(bool enable) { m_multiline = enable; }
+    void setMaxLength(uint maxLength) { m_maxLength = maxLength; }
 
     void moveCursor(bool right);
     void appendText(std::string text);
@@ -84,6 +85,7 @@ private:
     bool m_shiftNavigation;
     bool m_multiline;
     std::string m_validCharacters;
+    uint m_maxLength;
 
     std::vector<Rect> m_glyphsCoords;
     std::vector<Rect> m_glyphsTexCoords;
