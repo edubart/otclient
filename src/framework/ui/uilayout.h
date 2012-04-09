@@ -30,7 +30,7 @@
 class UILayout : public LuaObject
 {
 public:
-    UILayout(UIWidgetPtr parentWidget) : m_parentWidget(parentWidget) { }
+    UILayout(UIWidgetPtr parentWidget) : m_parentWidget(parentWidget) { m_updateDisabled = 0; }
 
     void update();
     void updateLater();
@@ -38,13 +38,13 @@ public:
     virtual void applyStyle(const OTMLNodePtr& styleNode) { }
     virtual void addWidget(const UIWidgetPtr& widget) = 0;
     virtual void removeWidget(const UIWidgetPtr& widget) = 0;
-    void disableUpdates() { m_updateDisabled = true; }
-    void enableUpdates() { m_updateDisabled = false; }
+    void disableUpdates() { m_updateDisabled++; }
+    void enableUpdates() { m_updateDisabled = std::max(m_updateDisabled-1,0); }
 
     void setParent(UIWidgetPtr parentWidget) { m_parentWidget = parentWidget; }
     UIWidgetPtr getParentWidget() { return m_parentWidget.lock(); }
 
-    bool isUpdateDisabled() { return m_updateDisabled; }
+    bool isUpdateDisabled() { return m_updateDisabled > 0; }
     bool isUpdating() { return m_updating; }
 
     UILayoutPtr asUILayout() { return std::static_pointer_cast<UILayout>(shared_from_this()); }
@@ -57,7 +57,7 @@ public:
 protected:
     virtual bool internalUpdate() = 0;
 
-    Boolean<false> m_updateDisabled;
+    int m_updateDisabled;
     Boolean<false> m_updating;
     Boolean<false> m_updateScheduled;
     UIWidgetWeakPtr m_parentWidget;

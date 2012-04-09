@@ -28,6 +28,20 @@
 void UILayout::update()
 {
     //logTraceCounter();
+    UIWidgetPtr parentWidget = getParentWidget();
+    if(!parentWidget || parentWidget->isDestroyed())
+        return;
+
+    /*
+    UIWidgetPtr parent = parentWidget;
+    do {
+        UILayoutPtr ownerLayout = parent->getLayout();
+        if(ownerLayout && ownerLayout->isUpdateDisabled())
+            return;
+        parent = parent->getParent();
+    } while(parent);
+    */
+
     if(m_updateDisabled)
         return;
 
@@ -35,10 +49,6 @@ void UILayout::update()
         updateLater();
         return;
     }
-
-    UIWidgetPtr parentWidget = getParentWidget();
-    if(!parentWidget || parentWidget->isDestroyed())
-        return;
 
     m_updating = true;
     internalUpdate();
