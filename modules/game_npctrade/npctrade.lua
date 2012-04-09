@@ -201,7 +201,7 @@ function NPCTrade.onOpenNpcTrade(items)
   NPCTrade.show()
 end
 
-function NPCTrade.swithBuyWithBackpack()
+function NPCTrade.switchBuyWithBackpack()
   buyWithBackpack = not buyWithBackpack 
   if offerSelected then
     priceLabel:setText(NPCTrade.getOfferPrice(offerSelected) .. " gold")
@@ -215,7 +215,7 @@ function NPCTrade.itemPopup(self, mousePosition, mouseButton)
     menu:addOption('Look', function() return g_game.inspectNpcTrade(self.offer[1]) end)
     menu:addSeparator()
     if setupButton:getText() == 'Buy' then
-      menu:addOption((buyWithBackpack and 'Buy no backpack' or 'Buy with backpack'), NPCTrade.swithBuyWithBackpack)
+      menu:addOption((buyWithBackpack and 'Buy no backpack' or 'Buy with backpack'), NPCTrade.switchBuyWithBackpack)
       menu:addOption((ignoreCapacity and 'Consider capacity' or 'Ignore capacity'), function() ignoreCapacity = not ignoreCapacity return true end)
     else
       menu:addOption((ignoreEquipped and 'Consider equipped' or 'Ignore equipped'), function() ignoreEquipped = not ignoreEquipped return true end)
@@ -227,6 +227,9 @@ end
 function NPCTrade.createItemsOnPanel()
   NPCTrade.resetSetup()
   
+  local layout = itemsPanel:getLayout()
+  layout:disableUpdates()
+  
   offerSelected = nil
   itemsPanel:destroyChildren()
 
@@ -237,7 +240,7 @@ function NPCTrade.createItemsOnPanel()
   
   for i, v in pairs(cacheItems) do
     local price = NPCTrade.getOfferPrice(v)
-    if price >= 0 then
+    if price > 0 then
       local itemBox = createWidget('NPCItemBox', itemsPanel)
       itemBox.offer = v
       itemBox:getChildById('item'):setItem(v[1])
@@ -251,6 +254,9 @@ function NPCTrade.createItemsOnPanel()
       radioItems:addWidget(itemBox)
     end
   end
+  
+  layout:enableUpdates()
+  layout:update()
 end
 
 function NPCTrade.searchFilter(filter)
@@ -312,8 +318,3 @@ end
 function NPCTrade.onCloseNpcTrade()
   NPCTrade.hide()
 end
-
--- void inspectNpcTrade(const ItemPtr& item);
--- void buyItem(const ItemPtr& item, int amount, bool ignoreCapacity, bool buyWithBackpack);
--- void sellItem(const ItemPtr& item, int amount, bool ignoreEquipped);
--- void closeNpcTrade();
