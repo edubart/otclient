@@ -52,6 +52,7 @@ function NPCTrade.init()
   radioTabs:addWidget(buyTab)
   radioTabs:addWidget(sellTab)
   radioTabs:selectWidget(buyTab)
+  radioTabs.onSelectionChange = NPCTrade.setList
   
   connect(g_game, { onOpenNpcTrade = NPCTrade.onOpenNpcTrade,
                     onPlayerGoods = NPCTrade.onPlayerGoods,
@@ -99,9 +100,11 @@ function NPCTrade.hide()
   npcWindow:hide()
 end
 
-function NPCTrade.setList(widget, checked)
-  setupButton:setText(widget:getText())
-  widget:setOn(checked)
+function NPCTrade.setList(radioTabs, selected, deselected) 
+  print("PASSO SETLIST")
+  setupButton:setText(selected:getText())
+  selected:setOn(true)
+  deselected:setOn(false)
   NPCTrade.createItemsOnPanel()
   
   NPCTrade.resetSetup()
@@ -224,11 +227,11 @@ function NPCTrade.itemPopup(self, mousePosition, mouseButton)
   end
 end
 
-function NPCTrade.createItemsOnPanel()
-  NPCTrade.resetSetup()
-  
+function NPCTrade.createItemsOnPanel()  
   local layout = itemsPanel:getLayout()
   layout:disableUpdates()
+  
+  NPCTrade.resetSetup()
   
   offerSelected = nil
   itemsPanel:destroyChildren()

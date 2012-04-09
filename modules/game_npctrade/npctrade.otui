@@ -64,12 +64,13 @@ MainWindow
     id: buyTab
     tooltip: List of items that you're able to buy
     text: Buy
+    checked: true
+    on: true
     anchors.left: parent.left
     anchors.right: parent.horizontalCenter
     anchors.top: parent.top
     margin-right: 5
     margin-top: 5
-    @onCheckChange: NPCTrade.setList(self, self:isChecked())
 
   TabButton
     id: sellTab
@@ -80,7 +81,6 @@ MainWindow
     anchors.top: parent.top
     margin-left: 5
     margin-top: 5
-    @onCheckChange: NPCTrade.setList(self, self:isChecked())
     
   Label
     id: searchLabel
