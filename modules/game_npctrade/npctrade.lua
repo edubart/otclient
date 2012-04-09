@@ -101,7 +101,6 @@ function NPCTrade.hide()
 end
 
 function NPCTrade.setList(radioTabs, selected, deselected) 
-  print("PASSO SETLIST")
   setupButton:setText(selected:getText())
   selected:setOn(true)
   deselected:setOn(false)
