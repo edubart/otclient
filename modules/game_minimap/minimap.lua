@@ -34,11 +34,12 @@ function Minimap.init()
   Keyboard.bindKeyDown('Ctrl+M', Minimap.toggle)
 
   minimapButton = TopMenu.addGameToggleButton('minimapButton', 'Minimap (Ctrl+M)', 'minimap.png', Minimap.toggle)
-  minimapButton:setOn(true)
+  minimapButton:setOn(false)
 
   minimapWidget = loadUI('minimap.otui', GameInterface.getMapPanel())
   minimapWidget.onMouseRelease = onMinimapMouseRelease
   minimapWidget.onMouseWheel = onMinimapMouseWheel
+  minimapWidget:hide()
 end
 
 function Minimap.terminate()
