@@ -24,6 +24,7 @@ local cacheGoods
 local buyWithBackpack = false
 local ignoreCapacity = false
 local ignoreEquipped = true
+local showOnlyHolding = false
 
 -- public functions
 function NPCTrade.init()
@@ -221,6 +222,7 @@ function NPCTrade.itemPopup(self, mousePosition, mouseButton)
       menu:addOption((ignoreCapacity and 'Consider capacity' or 'Ignore capacity'), function() ignoreCapacity = not ignoreCapacity return true end)
     else
       menu:addOption((ignoreEquipped and 'Consider equipped' or 'Ignore equipped'), function() ignoreEquipped = not ignoreEquipped return true end)
+      menu:addOption((showOnlyHolding and 'Show all items' or 'Show only holding items'), function() showOnlyHolding = not showOnlyHolding NPCTrade.refreshFilters() return true end)
     end
     menu:display(mousePosition)
   end
@@ -261,18 +263,35 @@ function NPCTrade.createItemsOnPanel()
   layout:update()
 end
 
-function NPCTrade.searchFilter(filter)
+function NPCTrade.extraFilters(widget, showOnlyHolding)
+  if setupButton:getText() == 'Sell' then    
+    if not showOnlyHolding or cacheGoods[widget.offer[1]:getId()] then
+      return true
+    else
+      return false
+    end
+  end
+  
+  return true
+end
+
+function NPCTrade.refreshFilters()
+  local filter = searchText:getText()
   local items = itemsPanel:getChildCount()
   for i = 1, items do
     local itemWidget = itemsPanel:getChildByIndex(i)
     if filter ~= "" then
-      if string.find(itemWidget.offer[2], filter) then
+      if string.find(itemWidget.offer[2], filter) and NPCTrade.extraFilters(itemWidget, showOnlyHolding) then
         itemWidget:show()
       else
         itemWidget:hide()
       end
     else
-      itemWidget:show()
+      if NPCTrade.extraFilters(itemWidget, showOnlyHolding) then
+        itemWidget:show()
+      else
+        itemWidget:hide()
+      end
     end
   end
 end

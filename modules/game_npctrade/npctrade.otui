@@ -97,7 +97,7 @@ MainWindow
     anchors.left: prev.right
     anchors.top: prev.top
     margin-left: 5
-    @onTextChange: NPCTrade.searchFilter(self:getText())    
+    @onTextChange: NPCTrade.refreshFilters()
     
   NPCPanel
     height: 250
