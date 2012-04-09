@@ -33,6 +33,7 @@ PainterShaderProgram::PainterShaderProgram()
     m_color = Color::white;
     m_time = 0;
     m_lastTexture = -1;
+    m_textures.fill(0);
 }
 
 bool PainterShaderProgram::link()
@@ -57,6 +58,9 @@ bool PainterShaderProgram::link()
         setUniformValue(TIME_UNIFORM, m_time);
         setUniformValue(TEX0_UNIFORM, 0);
         setUniformValue(TEX1_UNIFORM, 1);
+
+        enableAttributeArray(PainterShaderProgram::VERTEX_ATTR);
+        enableAttributeArray(PainterShaderProgram::TEXCOORD_ATTR);
         return true;
     }
     return false;
@@ -96,10 +100,12 @@ void PainterShaderProgram::setTexture(const TexturePtr& texture, int index)
 {
     assert(index >= 0 && index <= 1);
 
-    if(m_textures[index] == texture)
+    uint texId = texture ? texture->getId() : 0;
+
+    if(m_textures[index] == texId)
         return;
 
-    m_textures[index] = texture;
+    m_textures[index] = texId;
     m_lastTexture = std::max(m_lastTexture, index);
 
     if(texture && index == 0) {
@@ -129,14 +135,12 @@ void PainterShaderProgram::draw(CoordsBuffer& coordsBuffer, DrawMode drawMode)
     coordsBuffer.updateCaches();
     bool hardwareCached = coordsBuffer.isHardwareCached();
 
-    enableAttributeArray(PainterShaderProgram::VERTEX_ATTR);
     if(hardwareCached)
         coordsBuffer.getHardwareVertexBuffer()->bind();
     setAttributeArray(PainterShaderProgram::VERTEX_ATTR, hardwareCached ? 0 : coordsBuffer.getVertexBuffer(), 2);
 
     bool hasTexture = coordsBuffer.getTextureVertexCount() != 0;
     if(hasTexture) {
-        enableAttributeArray(PainterShaderProgram::TEXCOORD_ATTR);
         if(hardwareCached)
             coordsBuffer.getHardwareTextureVertexBuffer()->bind();
         setAttributeArray(PainterShaderProgram::TEXCOORD_ATTR, hardwareCached ? 0 : coordsBuffer.getTextureVertexBuffer(), 2);
@@ -146,19 +150,14 @@ void PainterShaderProgram::draw(CoordsBuffer& coordsBuffer, DrawMode drawMode)
         HardwareBuffer::unbind(HardwareBuffer::VertexBuffer);
 
     if(m_lastTexture == 0) {
-        glBindTexture(GL_TEXTURE_2D, m_textures[0] ? m_textures[0]->getId() : 0);
+        glBindTexture(GL_TEXTURE_2D, m_textures[0]);
     } else {
         glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, m_textures[1] ? m_textures[1]->getId() : 0);
+        glBindTexture(GL_TEXTURE_2D, m_textures[1]);
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, m_textures[0] ? m_textures[0]->getId() : 0);
+        glBindTexture(GL_TEXTURE_2D, m_textures[0]);
     }
 
     glDrawArrays(drawMode, 0, vertexCount);
-
-    disableAttributeArray(PainterShaderProgram::VERTEX_ATTR);
-
-    if(hasTexture)
-        disableAttributeArray(PainterShaderProgram::TEXCOORD_ATTR);
 }
 

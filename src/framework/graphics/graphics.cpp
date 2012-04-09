@@ -76,8 +76,6 @@ void Graphics::init()
 
 #endif
 
-    glHint(GL_LINE_SMOOTH_HINT,GL_NICEST);
-    glHint(GL_PERSPECTIVE_CORRECTION_HINT,GL_NICEST);
     glEnable(GL_BLEND);
     glClear(GL_COLOR_BUFFER_BIT);
 

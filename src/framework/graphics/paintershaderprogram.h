@@ -62,7 +62,7 @@ public:
 private:
     DrawMode m_drawMode;
     float m_startTime;
-    TexturePtr m_textures[2];
+    std::array<uint, 2> m_textures;
 
     Color m_color;
     float m_opacity;

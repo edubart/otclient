@@ -61,7 +61,7 @@ public:
     Rect getClipRect() { return m_clipRect; }
     void resetClipRect() { setClipRect(Rect()); }
 
-    void setCustomProgram(PainterShaderProgramPtr program);
+    void setCustomProgram(const PainterShaderProgramPtr& program);
     void releaseCustomProgram() { m_customProgram = nullptr; }
     void setCompositionMode(CompositionMode compositionMode);
     void resetCompositionMode() { setCompositionMode(CompositionMode_Normal); }

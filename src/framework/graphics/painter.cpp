@@ -113,7 +113,7 @@ void Painter::drawBoundingRect(const Rect& dest, int innerLineWidth)
     drawProgram(m_customProgram ? m_customProgram : m_drawSolidColorProgram, m_coordsBuffer);
 }
 
-void Painter::setCustomProgram(PainterShaderProgramPtr program)
+void Painter::setCustomProgram(const PainterShaderProgramPtr& program)
 {
     m_customProgram = program;
 }
@@ -142,6 +142,9 @@ void Painter::setCompositionMode(Painter::CompositionMode compositionMode)
 
 void Painter::setClipRect(const Rect& clipRect)
 {
+    if(m_clipRect == clipRect)
+        return;
+
     if(clipRect.isValid()) {
         glEnable(GL_SCISSOR_TEST);
         glScissor(clipRect.left(), g_graphics.getViewportSize().height() - clipRect.bottom() - 1, clipRect.width(), clipRect.height());
