@@ -74,6 +74,9 @@ bool UIGridLayout::internalUpdate()
 {
     bool changed = false;
     UIWidgetPtr parentWidget = getParentWidget();
+    if(!parentWidget)
+        return false;
+
     UIWidgetList widgets = parentWidget->getChildren();
 
     Rect clippingRect = parentWidget->getClippingRect();

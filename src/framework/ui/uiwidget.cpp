@@ -659,21 +659,19 @@ void UIWidget::bindRectToParent()
     setRect(boundRect);
 }
 
-void UIWidget::destroy()
+void UIWidget::internalDestroy()
 {
-    if(m_destroyed)
-        logWarning("attempt to destroy widget '", m_id, "' two times");
-
     m_destroyed = true;
-    setVisible(false);
-    setEnabled(false);
-
-    // remove itself from parent
-    if(UIWidgetPtr parent = getParent())
-        parent->removeChild(asUIWidget());
-
-    destroyChildren();
+    m_visible = false;
+    m_enabled = false;
+    m_parent.reset();
     m_focusedChild = nullptr;
+    m_layout = nullptr;
+    m_lockedChildren.clear();
+
+    for(const UIWidgetPtr& child : m_children)
+        child->internalDestroy();
+    m_children.clear();
 
     callLuaField("onDestroy");
 
@@ -682,10 +680,31 @@ void UIWidget::destroy()
     g_ui.onWidgetDestroy(asUIWidget());
 }
 
+void UIWidget::destroy()
+{
+    if(m_destroyed)
+        logWarning("attempt to destroy widget '", m_id, "' two times");
+
+    // hold itself reference
+    UIWidgetPtr self = asUIWidget();
+    m_destroyed = true;
+
+    // remove itself from parent
+    if(UIWidgetPtr parent = getParent())
+        parent->removeChild(self);
+    internalDestroy();
+}
+
 void UIWidget::destroyChildren()
 {
+    UILayoutPtr layout = getLayout();
+    if(layout)
+        layout->disableUpdates();
+
     while(!m_children.empty())
-        getFirstChild()->destroy();
+        m_children[0]->destroy();
+
+    layout->enableUpdates();
 }
 
 void UIWidget::setId(const std::string& id)

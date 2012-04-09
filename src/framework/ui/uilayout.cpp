@@ -27,6 +27,7 @@
 
 void UILayout::update()
 {
+    //logTraceCounter();
     if(m_updateDisabled)
         return;
 
@@ -35,12 +36,13 @@ void UILayout::update()
         return;
     }
 
+    UIWidgetPtr parentWidget = getParentWidget();
+    if(!parentWidget || parentWidget->isDestroyed())
+        return;
+
     m_updating = true;
     internalUpdate();
-    if(UIWidgetPtr parentWidget = getParentWidget()) {
-        if(!parentWidget->isDestroyed())
-            parentWidget->onLayoutUpdate();
-    }
+    parentWidget->onLayoutUpdate();
     m_updating = false;
 }
 

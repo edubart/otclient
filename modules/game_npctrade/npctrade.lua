@@ -59,7 +59,7 @@ function NPCTrade.init()
 end
 
 function NPCTrade.terminate()
-  radioTabs:destroy()
+  --radioTabs:destroy()
   radioTabs = nil
   npcWindow:destroy()
   npcWindow = nil
@@ -229,7 +229,10 @@ function NPCTrade.createItemsOnPanel()
   
   offerSelected = nil
   itemsPanel:destroyChildren()
-  
+
+  if radioItems then
+    radioItems:destroy()
+  end
   radioItems = RadioGroup.create()
   
   for i, v in pairs(cacheItems) do

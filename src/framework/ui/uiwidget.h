@@ -164,6 +164,7 @@ protected:
     bool hasState(Fw::WidgetState state);
 
 private:
+    void internalDestroy();
     void updateState(Fw::WidgetState state);
     void updateStates();
     void updateChildrenIndexStates();
