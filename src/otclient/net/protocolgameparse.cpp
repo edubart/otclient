@@ -510,11 +510,11 @@ void ProtocolGame::parseOpenNpcTrade(InputMessage& msg)
     int listCount = msg.getU8();
     for(int i = 0; i < listCount; ++i) {
         int itemId = msg.getU16();
-        int countOrSubType = msg.getU8();
+        int subType = msg.getU8();
 
         ItemPtr item = Item::create(itemId);
-        if(item->isStackable() || item->isFluidContainer() || item->isFluid())
-            item->setCountOrSubType(countOrSubType);
+        if(item->isFluidContainer() || item->isFluid())
+            item->setSubType(subType);
 
         std::string name = msg.getString();
         int weight = msg.getU32();

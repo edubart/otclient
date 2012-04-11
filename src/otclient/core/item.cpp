@@ -42,8 +42,11 @@ ItemPtr Item::create(int id)
     ItemPtr item = ItemPtr(new Item);
     if(id < g_thingsType.getFirstItemId() || id > g_thingsType.getMaxItemid())
         logTraceError("invalid item id ", id);
-    else
+    else {
         item->setId(id);
+        if(item->isStackable())
+            item->setCount(1);
+    }
     return item;
 }
 
