@@ -109,6 +109,7 @@ function NPCTrade.setList(radioTabs, selected, deselected)
   
   NPCTrade.resetSetup()
   NPCTrade.refreshItemsPanel()
+  NPCTrade.refreshFilters()
 end
 
 function NPCTrade.resetSetup()

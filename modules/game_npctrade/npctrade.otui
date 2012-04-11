@@ -23,7 +23,6 @@ NPCItemBox < UICheckBox
   Label
     id: nameLabel
     phantom: true
-    text: cavalo
     anchors.top: prev.bottom
     anchors.horizontalCenter: parent.horizontalCenter
     text-auto-resize: true
@@ -32,7 +31,6 @@ NPCItemBox < UICheckBox
   Label
     id: weightLabel
     phantom: true
-    text: 8.00 oz
     anchors.top: prev.bottom
     anchors.horizontalCenter: parent.horizontalCenter
     text-auto-resize: true
@@ -41,7 +39,6 @@ NPCItemBox < UICheckBox
   Label
     id: priceLabel
     phantom: true
-    text: 200 gold
     anchors.top: prev.bottom
     anchors.horizontalCenter: parent.horizontalCenter
     text-auto-resize: true
