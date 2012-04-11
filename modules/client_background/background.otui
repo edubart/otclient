@@ -18,5 +18,6 @@ Panel
     text-align: center
     text-auto-resize: true
     width: 120
+    padding: 2
     color: #ffffff
     font: verdana-11px-monochrome

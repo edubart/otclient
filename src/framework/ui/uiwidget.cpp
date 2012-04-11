@@ -1318,8 +1318,6 @@ void UIWidget::onStyleApply(const std::string& styleName, const OTMLNodePtr& sty
 
 void UIWidget::onGeometryChange(const Rect& oldRect, const Rect& newRect)
 {
-    callLuaField("onGeometryChange", oldRect, newRect);
-
     if(m_textWrap && oldRect.size() != newRect.size())
         updateText();
 
@@ -1328,6 +1326,8 @@ void UIWidget::onGeometryChange(const Rect& oldRect, const Rect& newRect)
         if(!child->isAnchored())
             child->bindRectToParent();
     }
+
+    callLuaField("onGeometryChange", oldRect, newRect);
 }
 
 void UIWidget::onLayoutUpdate()

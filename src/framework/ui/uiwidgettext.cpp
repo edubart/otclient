@@ -41,20 +41,14 @@ void UIWidget::updateText()
         m_drawText = m_text;
 
     // update rect size
-    if(!m_rect.isValid()) {
-        Size textSize = getTextSize();
-        Size newSize = getSize();
-        if(newSize.width() <= 0)
-            newSize.setWidth(textSize.width());
-        if(newSize.height() <= 0)
-            newSize.setHeight(textSize.height());
-        setSize(newSize);
-    } else if(m_textAutoResize) {
-        Size textSize = getTextSize();
+    if(!m_rect.isValid() || m_textAutoResize) {
+        Size textBoxSize = getTextSize();
+        textBoxSize += Size(m_padding.left + m_padding.right, m_padding.top + m_padding.left);
         Size size = getSize();
-        if(textSize.width() > size.width())
-            size.setWidth(textSize.width());
-        size.setHeight(textSize.height());
+        if(size.width() <= 0 || (m_textAutoResize && !m_textWrap))
+            size.setWidth(textBoxSize.width());
+        if(size.height() <= 0 || m_textAutoResize)
+            size.setHeight(textBoxSize.height());
         setSize(size);
     }
 
