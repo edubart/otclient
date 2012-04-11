@@ -55,7 +55,8 @@ function NPCTrade.init()
   radioTabs:selectWidget(buyTab)
   radioTabs.onSelectionChange = NPCTrade.setList
   
-  connect(g_game, { onOpenNpcTrade = NPCTrade.onOpenNpcTrade,
+  connect(g_game, { onGameEnd = NPCTrade.hide,
+                    onOpenNpcTrade = NPCTrade.onOpenNpcTrade,
                     onPlayerGoods = NPCTrade.onPlayerGoods,
                     onCloseNpcTrade = NPCTrade.onCloseNpcTrade } )
 end
