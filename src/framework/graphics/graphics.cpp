@@ -28,16 +28,27 @@
 
 Graphics g_graphics;
 
+void oglDebugCallback(unsigned int source, unsigned int type, unsigned int id, unsigned int severity, int length, const char* message, void* userParam)
+{
+    logWarning("OGL: ", message);
+}
+
 void Graphics::init()
 {
     logInfo("GPU ", glGetString(GL_RENDERER));
     logInfo("OpenGL ", glGetString(GL_VERSION));
+
 
 #ifndef OPENGL_ES2
     // init GL extensions
     GLenum err = glewInit();
     if(err != GLEW_OK)
         logFatal("Unable to init GLEW: ", glewGetErrorString(err));
+
+#ifndef NDEBUG
+    if(GLEW_ARB_debug_output)
+        glDebugMessageCallbackARB(oglDebugCallback, NULL);
+#endif
 
     const char *requiredExtensions[] = {
         "GL_ARB_vertex_program",

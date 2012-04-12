@@ -29,6 +29,7 @@
 
 X11Window::X11Window()
 {
+    m_fbConfig = 0;
     m_display = 0;
     m_visual = 0;
     m_window = 0;
@@ -366,27 +367,24 @@ void X11Window::internalChooseGLVisual()
 {
 #ifndef OPENGL_ES2
     static int attrList[] = {
-        GLX_USE_GL,
-        GLX_RGBA,
-        GLX_DOUBLEBUFFER,
-        //GLX_STENCIL_SIZE, 8,
-        /*
-        GLX_ACCUM_RED_SIZE, 8,
-        GLX_ACCUM_GREEN_SIZE, 8,
-        GLX_ACCUM_BLUE_SIZE, 8,
-        GLX_ACCUM_ALPHA_SIZE, 8,
-        */
+        GLX_RENDER_TYPE, GLX_RGBA_BIT,
+        GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT,
+        GLX_DOUBLEBUFFER, True,
         None
     };
 
-    m_visual = glXChooseVisual(m_display, m_screen, attrList);
+    int nelements;
+    m_fbConfig = glXChooseFBConfig(m_display, m_screen, attrList, &nelements);
+    if(!m_fbConfig)
+        logFatal("Couldn't choose RGBA, double buffered fbconfig");
+
+    m_visual = glXGetVisualFromFBConfig(m_display, *m_fbConfig);
     if(!m_visual)
         logFatal("Couldn't choose RGBA, double buffered visual");
 
     m_rootWindow = RootWindow(m_display, m_visual->screen);
 #else
     static int attrList[] = {
-        //EGL_BUFFER_SIZE, 24,
         EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
         //EGL_STENCIL_SIZE, 8,
         EGL_NONE
@@ -406,7 +404,21 @@ void X11Window::internalChooseGLVisual()
 void X11Window::internalCreateGLContext()
 {
 #ifndef OPENGL_ES2
-    m_glxContext = glXCreateContext(m_display, m_visual, NULL, True);
+    typedef GLXContext (*GLXCREATECONTEXTATTRIBSARBPROC)(Display*, GLXFBConfig, GLXContext, Bool, const int*);
+    GLXCREATECONTEXTATTRIBSARBPROC glXCreateContextAttribsARB = NULL;
+    glXCreateContextAttribsARB = (GLXCREATECONTEXTATTRIBSARBPROC)glXGetProcAddress((const GLubyte*) "glXCreateContextAttribsARB");
+    if(glXCreateContextAttribsARB) {
+        int attrs[] = {
+#ifndef NDEBUG
+            GLX_CONTEXT_FLAGS_ARB, GLX_CONTEXT_DEBUG_BIT_ARB,
+#endif
+            None
+        };
+        m_glxContext = glXCreateContextAttribsARB(m_display, *m_fbConfig, NULL, True, attrs);
+    } else
+        m_glxContext = glXCreateContext(m_display, m_visual, NULL, True);
+
+    //m_glxContext = glXCreateContext(m_display, m_visual, NULL, True);
     if(!m_glxContext)
         logFatal("Unable to create GLX context");
 

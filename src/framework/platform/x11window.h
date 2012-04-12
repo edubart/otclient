@@ -82,6 +82,7 @@ public:
     bool isMaximized();
 
 private:
+    GLXFBConfig *m_fbConfig;
     Display *m_display;
     XVisualInfo *m_visual;
     Window m_window;
