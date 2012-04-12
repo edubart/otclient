@@ -368,8 +368,9 @@ void X11Window::internalChooseGLVisual()
 #ifndef OPENGL_ES2
     static int attrList[] = {
         GLX_RENDER_TYPE, GLX_RGBA_BIT,
-        GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT,
         GLX_DOUBLEBUFFER, True,
+        //GLX_DEPTH_SIZE, 24,
+        //GLX_STENCIL_SIZE, 8,
         None
     };
 
@@ -404,18 +405,18 @@ void X11Window::internalChooseGLVisual()
 void X11Window::internalCreateGLContext()
 {
 #ifndef OPENGL_ES2
+#ifdef DEBUG_OPENGL
     typedef GLXContext (*GLXCREATECONTEXTATTRIBSARBPROC)(Display*, GLXFBConfig, GLXContext, Bool, const int*);
     GLXCREATECONTEXTATTRIBSARBPROC glXCreateContextAttribsARB = NULL;
     glXCreateContextAttribsARB = (GLXCREATECONTEXTATTRIBSARBPROC)glXGetProcAddress((const GLubyte*) "glXCreateContextAttribsARB");
     if(glXCreateContextAttribsARB) {
         int attrs[] = {
-#ifndef NDEBUG
             GLX_CONTEXT_FLAGS_ARB, GLX_CONTEXT_DEBUG_BIT_ARB,
-#endif
             None
         };
         m_glxContext = glXCreateContextAttribsARB(m_display, *m_fbConfig, NULL, True, attrs);
     } else
+#endif
         m_glxContext = glXCreateContext(m_display, m_visual, NULL, True);
 
     //m_glxContext = glXCreateContext(m_display, m_visual, NULL, True);

@@ -45,7 +45,7 @@ void Graphics::init()
     if(err != GLEW_OK)
         logFatal("Unable to init GLEW: ", glewGetErrorString(err));
 
-#ifndef NDEBUG
+#ifdef DEBUG_OPENGL
     if(GLEW_ARB_debug_output)
         glDebugMessageCallbackARB(oglDebugCallback, NULL);
 #endif
