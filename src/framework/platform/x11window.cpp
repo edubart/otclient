@@ -29,7 +29,6 @@
 
 X11Window::X11Window()
 {
-    m_fbConfig = 0;
     m_display = 0;
     m_visual = 0;
     m_window = 0;
@@ -43,6 +42,7 @@ X11Window::X11Window()
     m_size = Size(600,480);
 
 #ifndef OPENGL_ES2
+    m_fbConfig = 0;
     m_glxContext = 0;
 #else
     m_eglConfig = 0;
@@ -419,7 +419,6 @@ void X11Window::internalCreateGLContext()
 #endif
         m_glxContext = glXCreateContext(m_display, m_visual, NULL, True);
 
-    //m_glxContext = glXCreateContext(m_display, m_visual, NULL, True);
     if(!m_glxContext)
         logFatal("Unable to create GLX context");
 
@@ -481,7 +480,7 @@ void *X11Window::getExtensionProcAddress(const char *ext)
     return (void *)glXGetProcAddressARB((const GLubyte*)ext);
 #else
     //TODO
-    return false;
+    return NULL;
 #endif
 }
 

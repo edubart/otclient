@@ -82,7 +82,6 @@ public:
     bool isMaximized();
 
 private:
-    GLXFBConfig *m_fbConfig;
     Display *m_display;
     XVisualInfo *m_visual;
     Window m_window;
@@ -97,6 +96,7 @@ private:
 
 #ifndef OPENGL_ES2
     GLXContext m_glxContext;
+    GLXFBConfig *m_fbConfig;
 #else
     EGLConfig m_eglConfig;
     EGLContext m_eglContext;
