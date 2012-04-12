@@ -35,6 +35,7 @@ void Painter::init()
     setColor(Color::white);
     setOpacity(1.0f);
     setCompositionMode(CompositionMode_Normal);
+    releaseCustomProgram();
 
     m_drawTexturedProgram = PainterShaderProgramPtr(new PainterShaderProgram);
     m_drawTexturedProgram->addShaderFromSourceCode(Shader::Vertex, glslMainWithTexCoordsVertexShader + glslPositionOnlyVertexShader);
@@ -53,7 +54,7 @@ void Painter::terminate()
     m_drawSolidColorProgram.reset();
 }
 
-void Painter::drawProgram(const PainterShaderProgramPtr& program, CoordsBuffer& coordsBuffer, PainterShaderProgram::DrawMode drawMode)
+void Painter::drawProgram(PainterShaderProgram *program, CoordsBuffer& coordsBuffer, PainterShaderProgram::DrawMode drawMode)
 {
     if(coordsBuffer.getVertexCount() == 0)
         return;
@@ -66,7 +67,7 @@ void Painter::drawProgram(const PainterShaderProgramPtr& program, CoordsBuffer& 
 
 void Painter::drawTextureCoords(CoordsBuffer& coordsBuffer, const TexturePtr& texture)
 {
-    PainterShaderProgramPtr& program = m_customProgram ? m_customProgram : m_drawTexturedProgram;
+    PainterShaderProgram *program = m_customProgram ? m_customProgram : m_drawTexturedProgram.get();
     program->setTexture(texture);
     drawProgram(program, coordsBuffer);
 }
@@ -78,7 +79,7 @@ void Painter::drawTexturedRect(const Rect& dest, const TexturePtr& texture, cons
 
     m_coordsBuffer.clear();
     m_coordsBuffer.addQuad(dest, src);
-    PainterShaderProgramPtr& program = m_customProgram ? m_customProgram : m_drawTexturedProgram;
+    PainterShaderProgram *program = m_customProgram ? m_customProgram : m_drawTexturedProgram.get();
     program->setTexture(texture);
     drawProgram(program, m_coordsBuffer, PainterShaderProgram::TriangleStrip);
 }
@@ -100,7 +101,7 @@ void Painter::drawFilledRect(const Rect& dest)
 
     m_coordsBuffer.clear();
     m_coordsBuffer.addRect(dest);
-    drawProgram(m_customProgram ? m_customProgram : m_drawSolidColorProgram, m_coordsBuffer);
+    drawProgram(m_customProgram ? m_customProgram : m_drawSolidColorProgram.get(), m_coordsBuffer);
 }
 
 void Painter::drawBoundingRect(const Rect& dest, int innerLineWidth)
@@ -110,12 +111,7 @@ void Painter::drawBoundingRect(const Rect& dest, int innerLineWidth)
 
     m_coordsBuffer.clear();
     m_coordsBuffer.addBoudingRect(dest, innerLineWidth);
-    drawProgram(m_customProgram ? m_customProgram : m_drawSolidColorProgram, m_coordsBuffer);
-}
-
-void Painter::setCustomProgram(const PainterShaderProgramPtr& program)
-{
-    m_customProgram = program;
+    drawProgram(m_customProgram ? m_customProgram : m_drawSolidColorProgram.get(), m_coordsBuffer);
 }
 
 void Painter::setCompositionMode(Painter::CompositionMode compositionMode)
@@ -172,7 +168,7 @@ void Painter::saveAndResetState()
 
 void Painter::restoreSavedState()
 {
-    setCustomProgram(m_oldCustomProgram);
+    m_customProgram = m_oldCustomProgram;
     setColor(m_oldColor);
     setOpacity(m_oldOpacity);
     setCompositionMode(m_oldCompostionMode);

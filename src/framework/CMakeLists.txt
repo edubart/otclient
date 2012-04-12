@@ -94,10 +94,6 @@ IF(WIN32)
         ${CMAKE_CURRENT_LIST_DIR}/platform/win32window.cpp
         ${CMAKE_CURRENT_LIST_DIR}/platform/win32crashhandler.cpp)
 
-    IF(CRASH_HANDLER)
-        SET(ADDITIONAL_LIBRARIES ${ADDITIONAL_LIBRARIES} imagehlp)
-    ENDIF()
-
     IF(WINDOWS_CONSOLE)
         MESSAGE(STATUS "Windows console: ON")
     ELSE()

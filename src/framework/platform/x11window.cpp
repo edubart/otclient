@@ -793,11 +793,23 @@ void X11Window::poll()
 
 void X11Window::swapBuffers()
 {
+#if 0
+    auto now = std::chrono::high_resolution_clock::now();
+    auto gpuStart = now;
+    static decltype(now) cpuStart;
+    int cpu = std::chrono::duration_cast<std::chrono::nanoseconds>(now - cpuStart).count();
+#endif
 #ifndef OPENGL_ES2
     glFinish();
     glXSwapBuffers(m_display, m_window);
 #else
     eglSwapBuffers(m_eglDisplay, m_eglSurface);
+#endif
+#if 0
+    now = std::chrono::high_resolution_clock::now();
+    int gpu = std::chrono::duration_cast<std::chrono::nanoseconds>(now - gpuStart).count();
+    cpuStart = now;
+    dump << "cpu" << cpu << "gpu" << gpu;
 #endif
 }
 

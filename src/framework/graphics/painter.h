@@ -43,7 +43,7 @@ public:
     void init();
     void terminate();
 
-    void drawProgram(const PainterShaderProgramPtr& program, CoordsBuffer& coordsBuffer, PainterShaderProgram::DrawMode drawMode = PainterShaderProgram::Triangles);
+    void drawProgram(PainterShaderProgram *program, CoordsBuffer& coordsBuffer, PainterShaderProgram::DrawMode drawMode = PainterShaderProgram::Triangles);
     void drawTextureCoords(CoordsBuffer& coordsBuffer, const TexturePtr& texture);
     void drawTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src);
     void drawTexturedRect(const Rect& dest, const TexturePtr& texture) { drawTexturedRect(dest, texture, Rect(Point(0,0), texture->getSize())); }
@@ -61,7 +61,7 @@ public:
     Rect getClipRect() { return m_clipRect; }
     void resetClipRect() { setClipRect(Rect()); }
 
-    void setCustomProgram(const PainterShaderProgramPtr& program);
+    void setCustomProgram(const PainterShaderProgramPtr& program) { m_customProgram = program.get(); }
     void releaseCustomProgram() { m_customProgram = nullptr; }
     void setCompositionMode(CompositionMode compositionMode);
     void resetCompositionMode() { setCompositionMode(CompositionMode_Normal); }
@@ -75,7 +75,7 @@ public:
 private:
     PainterShaderProgramPtr m_drawTexturedProgram;
     PainterShaderProgramPtr m_drawSolidColorProgram;
-    PainterShaderProgramPtr m_customProgram;
+    PainterShaderProgram *m_customProgram;
     Matrix3 m_projectionMatrix;
     Color m_color;
     float m_opacity;
@@ -83,7 +83,7 @@ private:
     CoordsBuffer m_coordsBuffer;
     Rect m_clipRect;
 
-    PainterShaderProgramPtr m_oldCustomProgram;
+    PainterShaderProgram *m_oldCustomProgram;
     Matrix3 m_oldProjectionMatrix;
     Color m_oldColor;
     float m_oldOpacity;
