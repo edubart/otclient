@@ -20,46 +20,23 @@
  * THE SOFTWARE.
  */
 
-#ifndef PCH_H
-#define PCH_H
+#ifndef SOUNDBUFFER_H
+#define SOUNDBUFFER_H
 
-// common C headers
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-#include <cassert>
-#include <ctime>
-#include <cmath>
-#include <csignal>
+#include "declarations.h"
 
-// common STL headers
-#include <iostream>
-#include <sstream>
-#include <fstream>
-#include <string>
-#include <vector>
-#include <list>
-#include <queue>
-#include <deque>
-#include <stack>
-#include <map>
-#include <algorithm>
-#include <exception>
-#include <memory>
-#include <type_traits>
-#include <tuple>
-#include <functional>
-#include <typeinfo>
-#include <array>
-#include <iomanip>
-#include <unordered_map>
-#include <random>
-#include <chrono>
-#include <thread>
-#include <mutex>
-#include <atomic>
+class SoundBuffer
+{
+public:
+    SoundBuffer();
+    ~SoundBuffer();
 
-// boost utilities
-#include <boost/algorithm/string.hpp>
+    bool loadSoundFile(const SoundFilePtr& soundFile);
+
+    int getBufferId() { return m_bufferId; }
+
+private:
+    ALuint m_bufferId;
+};
 
 #endif

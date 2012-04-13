@@ -35,7 +35,7 @@ public:
     Application(const std::string& appName);
     ~Application();
 
-    virtual void init(const std::vector<std::string>& args, int appFlags);
+    virtual void init(const std::vector<std::string>& args);
     virtual void registerLuaFunctions();
     virtual void terminate();
     virtual void run();
@@ -64,7 +64,6 @@ protected:
     std::string m_appName;
     std::string m_appVersion;
     std::string m_appBuildDate;
-    int m_appFlags;
     int m_frameSleep;
     Boolean<false> m_initialized;
     Boolean<false> m_running;

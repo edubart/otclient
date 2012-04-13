@@ -600,19 +600,26 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
             switch(wParam) {
                 case SIZE_MAXIMIZED:
                     m_maximized = true;
+                    m_visible = true;
                     break;
                 case SIZE_RESTORED:
                     m_maximized = false;
+                    m_visible = true;
+                    break;
+                case SIZE_MINIMIZED:
+                    m_visible = false;
                     break;
             }
 
-            m_visible = !(wParam == SIZE_MINIMIZED);
-            if(m_visible) {
-                m_size.setWidth(LOWORD(lParam));
-                m_size.setHeight(HIWORD(lParam));
+            Size size;
+            size.setWidth(std::max(std::min((int)LOWORD(lParam), 7680), m_minimumSize.width()));
+            size.setHeight(std::max(std::min((int)HIWORD(lParam), 4320), m_minimumSize.height()));
 
+            if(m_visible && m_size != size) {
+                m_size = size;
                 m_onResize(m_size);
             }
+
             break;
         }
         default:

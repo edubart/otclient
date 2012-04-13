@@ -33,6 +33,7 @@
 #include <framework/graphics/graphics.h>
 #include <framework/graphics/particlemanager.h>
 #include <framework/graphics/painter.h>
+#include <framework/sound/soundmanager.h>
 #include <framework/luascript/luainterface.h>
 #include <framework/platform/crashhandler.h>
 
@@ -64,10 +65,8 @@ Application::~Application()
     g_app = nullptr;
 }
 
-void Application::init(const std::vector<std::string>& args, int appFlags)
+void Application::init(const std::vector<std::string>& args)
 {
-    m_appFlags = appFlags;
-
     // capture exit signals
     signal(SIGTERM, exitSignalHandler);
     signal(SIGINT, exitSignalHandler);
@@ -83,38 +82,36 @@ void Application::init(const std::vector<std::string>& args, int appFlags)
     // initialize resources
     g_resources.init(args[0].c_str());
 
-    if(m_appFlags & Fw::AppEnableConfigs) {
-        // setup configs write directory
-        if(!g_resources.setupWriteDir(m_appName))
-            logError("Could not setup write directory");
+    // setup configs write directory
+    if(!g_resources.setupWriteDir(m_appName))
+        logError("Could not setup write directory");
 
-        // load configs
-        if(!g_configs.load("/config.otml"))
-            logInfo("Using default configurations.");
-    }
+    // load configs
+    if(!g_configs.load("/config.otml"))
+        logInfo("Using default configurations.");
 
     // setup platform window
-    if(m_appFlags & Fw::AppEnableGraphics) {
-        g_ui.init();
+    g_ui.init();
 
-        g_window.init();
-        g_window.hide();
-        g_window.setOnResize(std::bind(&Application::resize, this, _1));
-        g_window.setOnInputEvent(std::bind(&Application::inputEvent, this, _1));
-        g_window.setOnClose(std::bind(&Application::close, this));
+    g_window.init();
+    g_window.hide();
+    g_window.setOnResize(std::bind(&Application::resize, this, _1));
+    g_window.setOnInputEvent(std::bind(&Application::inputEvent, this, _1));
+    g_window.setOnClose(std::bind(&Application::close, this));
 
-        // initialize graphics
-        g_graphics.init();
+    // initialize graphics
+    g_graphics.init();
 
-        // fire first resize
-        resize(g_window.getSize());
+    // initialize sound
+    g_sounds.init();
 
-        // display window when the application starts running
-        //g_eventDispatcher.addEvent([]{ g_window.show(); });
-    }
+    // fire first resize
+    resize(g_window.getSize());
 
-    if(m_appFlags & Fw::AppEnableModules)
-        g_modules.discoverModulesPath();
+    // display window when the application starts running
+    //g_eventDispatcher.addEvent([]{ g_window.show(); });
+
+    g_modules.discoverModulesPath();
 
     m_initialized = true;
 }
@@ -127,12 +124,10 @@ void Application::terminate()
     g_lua.callGlobalField("g_app", "onTerminate");
 
     // hide the window because there is no render anymore
-    if(m_appFlags & Fw::AppEnableGraphics)
-        g_window.hide();
+    g_window.hide();
 
     // run modules unload events
-    if(m_appFlags & Fw::AppEnableModules)
-        g_modules.unloadModules();
+    g_modules.unloadModules();
 
     // release remaining lua object references
     g_lua.collectGarbage();
@@ -144,17 +139,17 @@ void Application::terminate()
     Connection::terminate();
 
     // terminate graphics
-    if(m_appFlags & Fw::AppEnableGraphics) {
-        g_ui.terminate();
-        g_window.terminate();
-    }
+    g_ui.terminate();
+    g_window.terminate();
+
+    // terminate sound
+    g_sounds.terminate();
 
     // flush remaining dispatcher events
     g_eventDispatcher.flush();
 
     // save configurations
-    if(m_appFlags & Fw::AppEnableConfigs)
-        g_configs.save();
+    g_configs.save();
 
     // release resources
     g_resources.terminate();
@@ -186,7 +181,7 @@ void Application::run()
         // poll all events before rendering
         poll();
 
-        if(m_appFlags & Fw::AppEnableGraphics && g_window.isVisible()) {
+        if(g_window.isVisible()) {
             g_graphics.beginRender();
             render();
             g_graphics.endRender();
@@ -214,11 +209,9 @@ void Application::exit()
 
 void Application::poll()
 {
-    if(m_appFlags & Fw::AppEnableGraphics) {
-        // poll input events
-        g_window.poll();
-        //g_particleManager.update();
-    }
+    // poll input events
+    g_window.poll();
+    //g_particleManager.update();
 
     Connection::poll();
     g_eventDispatcher.poll();

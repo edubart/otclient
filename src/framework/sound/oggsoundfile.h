@@ -20,46 +20,31 @@
  * THE SOFTWARE.
  */
 
-#ifndef PCH_H
-#define PCH_H
+#ifndef OGGSOUNDFILE_H
+#define OGGSOUNDFILE_H
 
-// common C headers
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-#include <cassert>
-#include <ctime>
-#include <cmath>
-#include <csignal>
+#include "soundfile.h"
 
-// common STL headers
-#include <iostream>
-#include <sstream>
-#include <fstream>
-#include <string>
-#include <vector>
-#include <list>
-#include <queue>
-#include <deque>
-#include <stack>
-#include <map>
-#include <algorithm>
-#include <exception>
-#include <memory>
-#include <type_traits>
-#include <tuple>
-#include <functional>
-#include <typeinfo>
-#include <array>
-#include <iomanip>
-#include <unordered_map>
-#include <random>
-#include <chrono>
-#include <thread>
-#include <mutex>
-#include <atomic>
+#include <vorbis/vorbisfile.h>
 
-// boost utilities
-#include <boost/algorithm/string.hpp>
+class OggSoundFile : public SoundFile
+{
+public:
+    OggSoundFile(const FileStreamPtr& fileStream);
+    virtual ~OggSoundFile();
+
+    bool prepareOgg();
+
+    int read(void *buffer, int bufferSize);
+    void reset();
+
+private:
+    static size_t cb_read(void* ptr, size_t size, size_t nmemb, void* source);
+    static int cb_seek(void* source, ogg_int64_t offset, int whence);
+    static int cb_close(void* source);
+    static long cb_tell(void* source);
+
+    OggVorbis_File m_vorbisFile;
+};
 
 #endif

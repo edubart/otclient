@@ -20,33 +20,50 @@
  * THE SOFTWARE.
  */
 
-#include "clock.h"
+#include "soundfile.h"
+#include "oggsoundfile.h"
+#include <framework/core/resourcemanager.h>
 
-// for usleep
-#include <unistd.h>
-
-Clock g_clock;
-
-Clock::Clock()
+SoundFile::SoundFile(const FileStreamPtr& fileStream)
 {
-    m_startupTime = std::chrono::high_resolution_clock::now();
-    m_currentTicks = 0;
-}
-ticks_t Clock::updateTicks()
-{
-    m_currentTicks = asyncTicks();
-    m_currentTime = m_currentTicks/1000.0f;
-    return m_currentTicks;
+    m_file = fileStream;
 }
 
-ticks_t Clock::asyncTicks()
+SoundFilePtr SoundFile::loadSoundFile(const std::string& filename)
 {
-    auto timeNow = std::chrono::high_resolution_clock::now();
-    return std::chrono::duration_cast<std::chrono::milliseconds>(timeNow - m_startupTime).count();
+    FileStreamPtr file = g_resources.openFile(filename);
+    if(!file) {
+        logTraceError("unable to open ", filename);
+        return nullptr;
+    }
+
+    char magic[4];
+    file->read(magic, 4);
+    file->seek(0);
+
+    SoundFilePtr soundFile;
+    if(strncmp(magic, "OggS", 4) == 0) {
+        OggSoundFilePtr oggSoundFile = OggSoundFilePtr(new OggSoundFile(file));
+        if(oggSoundFile->prepareOgg())
+            soundFile = oggSoundFile;
+    } else
+        logError("unknown sound file format ", filename);
+
+    return soundFile;
 }
 
-
-void Clock::sleep(int ms)
+ALenum SoundFile::getSampleFormat()
 {
-    usleep(ms * 1000);
+    if(m_channels == 2) {
+        if(m_bps == 16)
+            return AL_FORMAT_STEREO16;
+        else if(m_bps == 8)
+            return AL_FORMAT_STEREO8;
+    } else if(m_channels == 1) {
+        if(m_bps == 16)
+            return AL_FORMAT_MONO16;
+        else if(m_bps == 8)
+            return AL_FORMAT_MONO8;
+    }
+    return AL_UNDETERMINED;
 }

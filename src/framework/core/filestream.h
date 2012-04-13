@@ -37,12 +37,13 @@ protected:
 public:
     ~FileStream();
 
-    void close();
-    void flush();
-    void write(void *buffer, uint count);
-    void read(void *buffer, uint count);
-    void seek(uint pos);
+    bool close();
+    bool flush();
+    bool write(void *buffer, int count);
+    int read(void *buffer, int size, int nmemb = 1);
+    bool seek(int pos);
     int size();
+    int tell();
     std::string name() { return m_name; }
 
     std::string readAll();

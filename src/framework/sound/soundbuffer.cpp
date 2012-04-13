@@ -20,46 +20,45 @@
  * THE SOFTWARE.
  */
 
-#ifndef PCH_H
-#define PCH_H
+#include "soundbuffer.h"
+#include "soundfile.h"
 
-// common C headers
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-#include <cassert>
-#include <ctime>
-#include <cmath>
-#include <csignal>
+#include <framework/util/databuffer.h>
 
-// common STL headers
-#include <iostream>
-#include <sstream>
-#include <fstream>
-#include <string>
-#include <vector>
-#include <list>
-#include <queue>
-#include <deque>
-#include <stack>
-#include <map>
-#include <algorithm>
-#include <exception>
-#include <memory>
-#include <type_traits>
-#include <tuple>
-#include <functional>
-#include <typeinfo>
-#include <array>
-#include <iomanip>
-#include <unordered_map>
-#include <random>
-#include <chrono>
-#include <thread>
-#include <mutex>
-#include <atomic>
+SoundBuffer::SoundBuffer()
+{
+    m_bufferId = 0;
+    alGenBuffers(1, &m_bufferId);
+    assert(alGetError() == AL_NO_ERROR);
+}
 
-// boost utilities
-#include <boost/algorithm/string.hpp>
+SoundBuffer::~SoundBuffer()
+{
+    alDeleteBuffers(1, &m_bufferId);
+    assert(alGetError() == AL_NO_ERROR);
+}
 
-#endif
+bool SoundBuffer::loadSoundFile(const SoundFilePtr& soundFile)
+{
+    ALenum format = soundFile->getSampleFormat();
+    if(format == AL_UNDETERMINED) {
+        logError("unable to determine sample format for '", soundFile->getName(), "'");
+        return false;
+    }
+
+    DataBuffer<char> samples(soundFile->getSize());
+    int read = soundFile->read(&samples[0], soundFile->getSize());
+    if(read <= 0) {
+        logError("unable to fill audio buffer data for '", soundFile->getName(), "'");
+        return false;
+    }
+
+    alBufferData(m_bufferId, format, &samples[0], soundFile->getSize(), soundFile->getRate());
+    ALenum err = alGetError();
+    if(err != AL_NO_ERROR) {
+        logError("unable to fill audio buffer data for '", soundFile->getName(), "': ", alGetString(err));
+        return false;
+    }
+
+    return true;
+}

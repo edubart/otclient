@@ -35,43 +35,63 @@ FileStream::~FileStream()
     close();
 }
 
-void FileStream::close()
+bool FileStream::close()
 {
     if(m_fileHandle) {
         if(PHYSFS_isInit() && PHYSFS_close(m_fileHandle) == 0)
             logTraceError("operation failed on '", m_name, "': ", PHYSFS_getLastError());
 
         m_fileHandle = nullptr;
+        return true;
     }
+    return false;
 }
 
-void FileStream::flush()
+bool FileStream::flush()
 {
-    if(PHYSFS_flush(m_fileHandle) == 0)
+    if(PHYSFS_flush(m_fileHandle) == 0) {
         logTraceError("operation failed on '", m_name, "': ", PHYSFS_getLastError());
+        return false;
+    }
+    return true;
 }
 
-void FileStream::read(void *buffer, uint count)
+int FileStream::read(void *buffer, int size, int nmemb)
 {
-    if(PHYSFS_read(m_fileHandle, buffer, 1, count) != count)
+    int res = PHYSFS_read(m_fileHandle, buffer, size, nmemb);
+    if(res == -1) {
         logTraceError("operation failed on '", m_name, "': ", PHYSFS_getLastError());
+        return 0;
+    }
+    return res;
 }
 
-void FileStream::write(void *buffer, uint count)
+bool FileStream::write(void *buffer, int count)
 {
-    if(PHYSFS_write(m_fileHandle, buffer, 1, count) != count)
+    if(PHYSFS_write(m_fileHandle, buffer, 1, count) != count) {
         logTraceError("operation failed on '", m_name, "': ", PHYSFS_getLastError());
+        return false;
+    }
+    return true;
 }
 
-void FileStream::seek(uint pos)
+bool FileStream::seek(int pos)
 {
-    if(PHYSFS_seek(m_fileHandle, pos) == 0)
+    if(PHYSFS_seek(m_fileHandle, pos) == 0) {
         logTraceError("operation failed on '", m_name, "': ", PHYSFS_getLastError());
+        return false;
+    }
+    return true;
 }
 
 int FileStream::size()
 {
     return PHYSFS_fileLength(m_fileHandle);
+}
+
+int FileStream::tell()
+{
+    return PHYSFS_tell(m_fileHandle);
 }
 
 uint8 FileStream::getU8()

@@ -35,6 +35,8 @@ FIND_PACKAGE(Lua REQUIRED)
 FIND_PACKAGE(PhysFS REQUIRED)
 FIND_PACKAGE(GMP REQUIRED)
 FIND_PACKAGE(ZLIB REQUIRED)
+FIND_PACKAGE(OpenAL REQUIRED)
+FIND_PACKAGE(VorbisFile REQUIRED)
 
 # setup compiler options
 SET(CXX_WARNS "-Wall -Wextra -Werror -Wno-unused-parameter -Wno-unused-but-set-variable")
@@ -114,23 +116,26 @@ ENDIF()
 INCLUDE_DIRECTORIES(
     ${Boost_INCLUDE_DIRS}
     ${OPENGL_INCLUDE_DIR}
+    ${OPENAL_INCLUDE_DIR}
     ${LUA_INCLUDE_DIR}
     ${PHYSFS_INCLUDE_DIR}
     ${GMP_INCLUDE_DIR}
     ${ZLIB_INCLUDE_DIR}
+    ${VORBISFILE_INCLUDE_DIR}
     "${CMAKE_CURRENT_LIST_DIR}/.."
 )
 
 SET(framework_LIBRARIES
     ${Boost_LIBRARIES}
     ${OPENGL_LIBRARIES}
+    ${OPENAL_LIBRARY}
     ${LUA_LIBRARIES}
     ${PHYSFS_LIBRARY}
     ${GMP_LIBRARY}
     ${ZLIB_LIBRARY}
+    ${VORBISFILE_LIBRARY}
     ${ADDITIONAL_LIBRARIES}
 )
-
 
 SET(framework_SOURCES ${framework_SOURCES}
     # framework
@@ -181,6 +186,14 @@ SET(framework_SOURCES ${framework_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/graphics/shaderprogram.cpp
     ${CMAKE_CURRENT_LIST_DIR}/graphics/paintershaderprogram.cpp
     ${CMAKE_CURRENT_LIST_DIR}/graphics/coordsbuffer.cpp
+
+    # framework sound
+    ${CMAKE_CURRENT_LIST_DIR}/sound/soundsource.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/sound/soundbuffer.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/sound/soundfile.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/sound/soundmanager.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/sound/oggsoundfile.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/sound/streamsoundsource.cpp
 
     # framework otml
     ${CMAKE_CURRENT_LIST_DIR}/otml/otmldocument.cpp

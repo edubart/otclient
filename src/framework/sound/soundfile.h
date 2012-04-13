@@ -20,46 +20,36 @@
  * THE SOFTWARE.
  */
 
-#ifndef PCH_H
-#define PCH_H
+#ifndef SOUNDFILE_H
+#define SOUNDFILE_H
 
-// common C headers
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-#include <cassert>
-#include <ctime>
-#include <cmath>
-#include <csignal>
+#include "declarations.h"
+#include <framework/core/filestream.h>
 
-// common STL headers
-#include <iostream>
-#include <sstream>
-#include <fstream>
-#include <string>
-#include <vector>
-#include <list>
-#include <queue>
-#include <deque>
-#include <stack>
-#include <map>
-#include <algorithm>
-#include <exception>
-#include <memory>
-#include <type_traits>
-#include <tuple>
-#include <functional>
-#include <typeinfo>
-#include <array>
-#include <iomanip>
-#include <unordered_map>
-#include <random>
-#include <chrono>
-#include <thread>
-#include <mutex>
-#include <atomic>
+class SoundFile
+{
+public:
+    SoundFile(const FileStreamPtr& fileStream);
+    virtual ~SoundFile() { }
+    static SoundFilePtr loadSoundFile(const std::string& filename);
 
-// boost utilities
-#include <boost/algorithm/string.hpp>
+    virtual int read(void *buffer, int bufferSize) = 0;
+    virtual void reset() = 0;
+
+    ALenum getSampleFormat();
+
+    int getChannels() { return m_channels; }
+    int getRate() { return m_rate; }
+    int getBps() { return m_bps; }
+    int getSize() { return m_size; }
+    std::string getName() { return m_file ? m_file->name() : std::string(); }
+
+protected:
+    FileStreamPtr m_file;
+    int m_channels;
+    int m_rate;
+    int m_bps;
+    int m_size;
+};
 
 #endif

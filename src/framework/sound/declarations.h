@@ -20,46 +20,25 @@
  * THE SOFTWARE.
  */
 
-#ifndef PCH_H
-#define PCH_H
+#ifndef FRAMEWORK_SOUND_DECLARATIONS_H
+#define FRAMEWORK_SOUND_DECLARATIONS_H
 
-// common C headers
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-#include <cassert>
-#include <ctime>
-#include <cmath>
-#include <csignal>
+#include <framework/global.h>
 
-// common STL headers
-#include <iostream>
-#include <sstream>
-#include <fstream>
-#include <string>
-#include <vector>
-#include <list>
-#include <queue>
-#include <deque>
-#include <stack>
-#include <map>
-#include <algorithm>
-#include <exception>
-#include <memory>
-#include <type_traits>
-#include <tuple>
-#include <functional>
-#include <typeinfo>
-#include <array>
-#include <iomanip>
-#include <unordered_map>
-#include <random>
-#include <chrono>
-#include <thread>
-#include <mutex>
-#include <atomic>
+#include <AL/al.h>
+#include <AL/alc.h>
 
-// boost utilities
-#include <boost/algorithm/string.hpp>
+class SoundManager;
+class SoundSource;
+class SoundBuffer;
+class SoundFile;
+class StreamSoundSource;
+class OggSoundFile;
+
+typedef std::shared_ptr<SoundSource> SoundSourcePtr;
+typedef std::shared_ptr<SoundFile> SoundFilePtr;
+typedef std::shared_ptr<SoundBuffer> SoundBufferPtr;
+typedef std::shared_ptr<StreamSoundSource> StreamSoundSourcePtr;
+typedef std::shared_ptr<OggSoundFile> OggSoundFilePtr;
 
 #endif

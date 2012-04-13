@@ -20,46 +20,41 @@
  * THE SOFTWARE.
  */
 
-#ifndef PCH_H
-#define PCH_H
+#ifndef STREAMSOUNDSOURCE_H
+#define STREAMSOUNDSOURCE_H
 
-// common C headers
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-#include <cassert>
-#include <ctime>
-#include <cmath>
-#include <csignal>
+#include "soundsource.h"
 
-// common STL headers
-#include <iostream>
-#include <sstream>
-#include <fstream>
-#include <string>
-#include <vector>
-#include <list>
-#include <queue>
-#include <deque>
-#include <stack>
-#include <map>
-#include <algorithm>
-#include <exception>
-#include <memory>
-#include <type_traits>
-#include <tuple>
-#include <functional>
-#include <typeinfo>
-#include <array>
-#include <iomanip>
-#include <unordered_map>
-#include <random>
-#include <chrono>
-#include <thread>
-#include <mutex>
-#include <atomic>
+class StreamSoundSource : public SoundSource
+{
+    enum {
+        STREAM_BUFFER_SIZE = 1024 * 500,
+        STREAM_FRAGMENTS = 5,
+        STREAM_FRAGMENT_SIZE = STREAM_BUFFER_SIZE / STREAM_FRAGMENTS
+    };
 
-// boost utilities
-#include <boost/algorithm/string.hpp>
+public:
+    enum FadeState { NoFading, FadingOn, FadingOff };
+
+    StreamSoundSource();
+    virtual ~StreamSoundSource();
+
+    void setSoundFile(const SoundFilePtr& soundFile);
+
+    void setFading(FadeState state, float fadetime);
+    FadeState getFadeState() {  return m_fadeState; }
+
+    void update();
+
+private:
+    bool fillBufferAndQueue(ALuint buffer);
+
+    SoundFilePtr m_soundFile;
+    std::array<SoundBufferPtr,STREAM_FRAGMENTS> m_buffers;
+    FadeState m_fadeState;
+    float m_fadeStartTime;
+    float m_fadeTime;
+    Boolean<false> m_looping;
+};
 
 #endif

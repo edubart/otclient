@@ -33,10 +33,12 @@ public:
     ticks_t updateTicks();
     void sleep(int ms);
 
+    ticks_t asyncTicks();
     ticks_t ticks() { return m_currentTicks; }
     ticks_t ticksElapsed(long prevTicks) { return m_currentTicks - prevTicks; }
     ticks_t ticksFor(int delay) { return m_currentTicks + delay; }
 
+    float asyncTime() { return asyncTicks()/1000.0f; }
     float time() { return m_currentTime; }
     float timeElapsed(float prevTime) { return m_currentTime - prevTime; }
     float timeFor(float delay) { return m_currentTime + delay; }

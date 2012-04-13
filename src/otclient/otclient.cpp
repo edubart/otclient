@@ -79,7 +79,7 @@ void OTClient::init(const std::vector<std::string>& args)
         logInfo("Startup options:", startupOptions);
 
     g_logger.setLogFile(Fw::formatString("%s.txt", Otc::AppCompactName));
-    Application::init(args, Fw::AppEnableAll);
+    Application::init(args);
 
     g_modules.discoverModules();
 
