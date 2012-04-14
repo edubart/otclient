@@ -108,37 +108,38 @@ void StreamSoundSource::update()
 bool StreamSoundSource::fillBufferAndQueue(ALuint buffer)
 {
     // fill buffer
-    static DataBuffer<char> bufferData(STREAM_FRAGMENT_SIZE);
+    static DataBuffer<char> bufferData(2*STREAM_FRAGMENT_SIZE);
     ALenum format = m_soundFile->getSampleFormat();
+
+    int maxRead = STREAM_FRAGMENT_SIZE;
+    if(m_downMix != NoDownMix)
+        maxRead *= 2;
 
     int bytesRead = 0;
     do {
-        bytesRead += m_soundFile->read(&bufferData[bytesRead], STREAM_FRAGMENT_SIZE - bytesRead);
+        bytesRead += m_soundFile->read(&bufferData[bytesRead], maxRead - bytesRead);
 
         // end of sound file
-        if(bytesRead < STREAM_FRAGMENT_SIZE) {
+        if(bytesRead < maxRead) {
             if(m_looping)
                 m_soundFile->reset();
             else
                 break;
         }
-    } while(bytesRead < STREAM_FRAGMENT_SIZE);
-
-    bool done = bytesRead >= STREAM_FRAGMENT_SIZE;
-
-    if(m_downMix != NoDownMix) {
-        if(format == AL_FORMAT_STEREO16) {
-            if(bytesRead > 0) {
-                uint16_t *data = (uint16_t*)bufferData.data();
-                bytesRead /= 2;
-                for(int i=0;i<bytesRead;i++)
-                    data[i] = data[2*i + (m_downMix == DownMixLeft ? 0 : 1)];
-            }
-            format = AL_FORMAT_MONO16;
-        }
-    }
+    } while(bytesRead < maxRead);
 
     if(bytesRead > 0) {
+        if(m_downMix != NoDownMix) {
+            if(format == AL_FORMAT_STEREO16) {
+                assert(bytesRead % 2 == 0);
+                bytesRead /= 2;
+                uint16_t *data = (uint16_t*)bufferData.data();
+                for(int i=0;i<bytesRead/2;i++)
+                    data[i] = data[2*i + (m_downMix == DownMixLeft ? 0 : 1)];
+                format = AL_FORMAT_MONO16;
+            }
+        }
+
         alBufferData(buffer, format, &bufferData[0], bytesRead, m_soundFile->getRate());
         ALenum err = alGetError();
         if(err != AL_NO_ERROR)
@@ -151,7 +152,7 @@ bool StreamSoundSource::fillBufferAndQueue(ALuint buffer)
     }
 
     // return false if there aren't more buffers to fill
-    return done;
+    return bytesRead >= STREAM_FRAGMENT_SIZE;
 }
 
 void StreamSoundSource::downMix(StreamSoundSource::DownMix downMix)

@@ -61,7 +61,7 @@ void SoundManager::terminate()
     m_musicEnabled = false;
     m_soundEnabled = false;
 
-    alcMakeContextCurrent(NULL);
+    alcMakeContextCurrent(nullptr);
 
     if(m_context) {
         alcDestroyContext(m_context);
