@@ -32,30 +32,54 @@ StreamSoundSource::StreamSoundSource()
     for(auto& buffer : m_buffers)
         buffer = SoundBufferPtr(new SoundBuffer);
     m_fadeState = NoFading;
+    m_downMix = NoDownMix;
 }
 
 StreamSoundSource::~StreamSoundSource()
 {
     stop();
-
-    ALint queued;
-    alGetSourcei(m_sourceId, AL_BUFFERS_QUEUED, &queued);
-    for(int i = 0; i < queued; ++i) {
-        ALuint buffer;
-        alSourceUnqueueBuffers(m_sourceId, 1, &buffer);
-    }
-    m_buffers.fill(nullptr);
 }
 
 void StreamSoundSource::setSoundFile(const SoundFilePtr& soundFile)
 {
     m_soundFile = soundFile;
+}
 
+void StreamSoundSource::play()
+{
+    if(!m_soundFile) {
+        logError("there is not sound file to play the stream");
+        return;
+    }
+
+    queueBuffers();
+
+    SoundSource::play();
+}
+
+void StreamSoundSource::stop()
+{
+    SoundSource::stop();
+    unqueueBuffers();
+}
+
+void StreamSoundSource::queueBuffers()
+{
     ALint queued;
     alGetSourcei(m_sourceId, AL_BUFFERS_QUEUED, &queued);
     for(int i = 0; i < STREAM_FRAGMENTS - queued; ++i) {
         if(!fillBufferAndQueue(m_buffers[i]->getBufferId()))
             break;
+    }
+}
+
+void StreamSoundSource::unqueueBuffers()
+{
+    ALint queued;
+    alGetSourcei(m_sourceId, AL_BUFFERS_QUEUED, &queued);
+    for(int i = 0; i < queued; ++i) {
+        ALuint buffer;
+        alSourceUnqueueBuffers(m_sourceId, 1, &buffer);
     }
 }
 
@@ -76,9 +100,8 @@ void StreamSoundSource::update()
         if(processed == 0 || !m_looping)
             return;
 
-        // we might have to restart the source if we had a buffer underrun
-        //log_info << "Restarting audio source because of buffer underrun" << std::endl;
-        //play();
+        logTraceError("restarting audio source because of buffer underrun");
+        play();
     }
 
     float realTime = g_clock.asyncTime();
@@ -104,7 +127,8 @@ void StreamSoundSource::update()
 bool StreamSoundSource::fillBufferAndQueue(ALuint buffer)
 {
     // fill buffer
-    DataBuffer<char> bufferData(STREAM_FRAGMENT_SIZE);
+    static DataBuffer<char> bufferData(STREAM_FRAGMENT_SIZE);
+    ALenum format = m_soundFile->getSampleFormat();
 
     int bytesRead = 0;
     do {
@@ -119,8 +143,21 @@ bool StreamSoundSource::fillBufferAndQueue(ALuint buffer)
         }
     } while(bytesRead < STREAM_FRAGMENT_SIZE);
 
+    bool done = bytesRead >= STREAM_FRAGMENT_SIZE;
+
+    if(m_downMix != NoDownMix) {
+        if(format == AL_FORMAT_STEREO16) {
+            if(bytesRead > 0) {
+                uint16_t *data = (uint16_t*)bufferData.data();
+                bytesRead /= 2;
+                for(int i=0;i<bytesRead;i++)
+                    data[i] = data[2*i + (m_downMix == DownMixLeft ? 0 : 1)];
+            }
+            format = AL_FORMAT_MONO16;
+        }
+    }
+
     if(bytesRead > 0) {
-        ALenum format = m_soundFile->getSampleFormat();
         alBufferData(buffer, format, &bufferData[0], bytesRead, m_soundFile->getRate());
         ALenum err = alGetError();
         if(err != AL_NO_ERROR)
@@ -133,7 +170,22 @@ bool StreamSoundSource::fillBufferAndQueue(ALuint buffer)
     }
 
     // return false if there aren't more buffers to fill
-    return bytesRead >= STREAM_FRAGMENT_SIZE;
+    return done;
+}
+
+void StreamSoundSource::downMix(StreamSoundSource::DownMix downMix)
+{
+    if(!m_soundFile) {
+        logError("down mix must be set after setting a sound file");
+        return;
+    }
+
+    if(m_soundFile->getSampleFormat() != AL_FORMAT_STEREO16) {
+        logError("can only downmix 16 bit stereo audio files");
+        return;
+    }
+
+    m_downMix = downMix;
 }
 
 void StreamSoundSource::setFading(FadeState state, float fadeTime)

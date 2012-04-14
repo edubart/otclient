@@ -33,9 +33,11 @@ SoundSource::SoundSource()
 
 SoundSource::~SoundSource()
 {
-    stop();
-    alDeleteSources(1, &m_sourceId);
-    assert(alGetError() == AL_NO_ERROR);
+    if(m_sourceId != 0) {
+        stop();
+        alDeleteSources(1, &m_sourceId);
+        assert(alGetError() == AL_NO_ERROR);
+    }
 }
 
 void SoundSource::play()
@@ -92,4 +94,14 @@ void SoundSource::setGain(float gain)
 void SoundSource::setPitch(float pitch)
 {
     alSourcef(m_sourceId, AL_PITCH, pitch);
+}
+
+void SoundSource::setPosition(const Point& pos)
+{
+    alSource3f(m_sourceId, AL_POSITION, pos.x, pos.y, 0);
+}
+
+void SoundSource::setVelocity(const Point& velocity)
+{
+    alSource3f(m_sourceId, AL_VELOCITY, velocity.x, velocity.y, 0);
 }

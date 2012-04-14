@@ -20,49 +20,36 @@
  * THE SOFTWARE.
  */
 
-#ifndef STREAMSOUNDSOURCE_H
-#define STREAMSOUNDSOURCE_H
+#ifndef COMBINEDSOUNDSOURCE_H
+#define COMBINEDSOUNDSOURCE_H
 
 #include "soundsource.h"
 
-class StreamSoundSource : public SoundSource
+class CombinedSoundSource : public SoundSource
 {
-    enum {
-        STREAM_BUFFER_SIZE = 1024 * 500,
-        STREAM_FRAGMENTS = 5,
-        STREAM_FRAGMENT_SIZE = STREAM_BUFFER_SIZE / STREAM_FRAGMENTS
-    };
-
 public:
-    enum DownMix { NoDownMix, DownMixLeft, DownMixRight };
-    enum FadeState { NoFading, FadingOn, FadingOff };
+    CombinedSoundSource();
 
-    StreamSoundSource();
-    virtual ~StreamSoundSource();
+    void addSource(const SoundSourcePtr& source);
+    std::vector<SoundSourcePtr> getSources() { return m_sources; }
 
     void play();
     void stop();
+    bool isPlaying();
 
-    void setSoundFile(const SoundFilePtr& soundFile);
+    void setLooping(bool looping);
+    void setRelative(bool relative);
+    void setReferenceDistance(float distance);
+    void setGain(float gain);
+    void setPitch(float pitch);
+    void setPosition(const Point& pos);
+    void setVelocity(const Point& velocity);
 
-    void downMix(DownMix downMix);
-    void setFading(FadeState state, float fadetime);
-    FadeState getFadeState() {  return m_fadeState; }
-
-    void update();
+protected:
+    virtual void update();
 
 private:
-    void queueBuffers();
-    void unqueueBuffers();
-    bool fillBufferAndQueue(ALuint buffer);
-
-    SoundFilePtr m_soundFile;
-    std::array<SoundBufferPtr,STREAM_FRAGMENTS> m_buffers;
-    DownMix m_downMix;
-    FadeState m_fadeState;
-    float m_fadeStartTime;
-    float m_fadeTime;
-    Boolean<false> m_looping;
+    std::vector<SoundSourcePtr> m_sources;
 };
 
 #endif

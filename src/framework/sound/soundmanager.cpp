@@ -25,6 +25,7 @@
 #include "soundbuffer.h"
 #include "soundfile.h"
 #include "streamsoundsource.h"
+#include "combinedsoundsource.h"
 
 #include <framework/core/clock.h>
 #include <framework/core/eventdispatcher.h>
@@ -124,7 +125,7 @@ void SoundManager::preload(const std::string& filename)
         return;
 
     SoundBufferPtr buffer = SoundBufferPtr(new SoundBuffer);
-    if(buffer->loadSoundFile(soundFile))
+    if(buffer->fillBuffer(soundFile))
         m_buffers[filename] = buffer;
 }
 
@@ -186,30 +187,53 @@ void SoundManager::stopMusic(float fadetime)
 
 SoundSourcePtr SoundManager::createSoundSource(const std::string& filename)
 {
-    SoundSourcePtr soundSource;
+    SoundSourcePtr source;
 
     auto it = m_buffers.find(filename);
     if(it != m_buffers.end()) {
-        soundSource = SoundSourcePtr(new SoundSource);
-        soundSource->setBuffer(it->second);
+        source = SoundSourcePtr(new SoundSource);
+        source->setBuffer(it->second);
     } else {
         SoundFilePtr soundFile = SoundFile::loadSoundFile(filename);
         if(!soundFile)
             return nullptr;
 
         if(soundFile->getSize() <= MAX_CACHE_SIZE) {
-            soundSource = SoundSourcePtr(new SoundSource);
+            source = SoundSourcePtr(new SoundSource);
             SoundBufferPtr buffer = SoundBufferPtr(new SoundBuffer);
-            buffer->loadSoundFile(soundFile);
-            soundSource->setBuffer(buffer);
+            buffer->fillBuffer(soundFile);
+            source->setBuffer(buffer);
             m_buffers[filename] = buffer;
             logWarning("uncached sound '", filename, "' requested to be played");
         } else {
-            StreamSoundSourcePtr streamSoundSource(new StreamSoundSource);
-            streamSoundSource->setSoundFile(soundFile);
-            soundSource = streamSoundSource;
+            StreamSoundSourcePtr streamSource(new StreamSoundSource);
+            streamSource->setSoundFile(soundFile);
+            source = streamSource;
+
+#ifdef __linux
+            // due to OpenAL implementation bug stereo buffers are always downmixed to mono on linux systems
+            // this is hack to work around the issue
+            // solution taken from http://opensource.creative.com/pipermail/openal/2007-April/010355.html
+            if(soundFile->getSampleFormat() == AL_FORMAT_STEREO16) {
+                CombinedSoundSourcePtr combinedSource(new CombinedSoundSource);
+
+                streamSource->downMix(StreamSoundSource::DownMixLeft);
+                streamSource->setRelative(true);
+                streamSource->setPosition(Point(-128, 0));
+                combinedSource->addSource(streamSource);
+
+                streamSource = StreamSoundSourcePtr(new StreamSoundSource);
+                streamSource->setSoundFile(SoundFile::loadSoundFile(filename));
+                streamSource->downMix(StreamSoundSource::DownMixRight);
+                streamSource->setRelative(true);
+                streamSource->setPosition(Point(128,0));
+                combinedSource->addSource(streamSource);
+
+                source = combinedSource;
+            }
+#endif
         }
     }
 
-    return soundSource;
+    return source;
 }

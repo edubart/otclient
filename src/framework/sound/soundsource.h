@@ -27,27 +27,31 @@
 
 class SoundSource
 {
+protected:
+    SoundSource(ALuint sourceId) : m_sourceId(sourceId) { }
+
 public:
     SoundSource();
     virtual ~SoundSource();
 
-    void play();
-    void stop();
+    virtual void play();
+    virtual void stop();
+    virtual bool isPlaying();
 
-    bool isPlaying();
-
-    void setBuffer(const SoundBufferPtr& buffer);
     virtual void setLooping(bool looping);
-    void setRelative(bool relative);
-    void setReferenceDistance(float distance);
-    void setGain(float gain);
-    void setPitch(float pitch);
-
-    // TODO: velocity, position
+    virtual void setRelative(bool relative);
+    virtual void setReferenceDistance(float distance);
+    virtual void setGain(float gain);
+    virtual void setPitch(float pitch);
+    virtual void setPosition(const Point& pos);
+    virtual void setVelocity(const Point& velocity);
 
 protected:
+    void setBuffer(const SoundBufferPtr& buffer);
+
     virtual void update() { }
     friend class SoundManager;
+    friend class CombinedSoundSource;
 
     ALuint m_sourceId;
     SoundBufferPtr m_buffer;

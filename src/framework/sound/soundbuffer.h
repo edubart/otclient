@@ -25,15 +25,18 @@
 
 #include "declarations.h"
 
+#include <framework/util/databuffer.h>
+
 class SoundBuffer
 {
 public:
     SoundBuffer();
     ~SoundBuffer();
 
-    bool loadSoundFile(const SoundFilePtr& soundFile);
+    bool fillBuffer(const SoundFilePtr& soundFile);
+    bool fillBuffer(ALenum sampleFormat, const DataBuffer<char>& data, int size, int rate);
 
-    int getBufferId() { return m_bufferId; }
+    ALuint getBufferId() { return m_bufferId; }
 
 private:
     ALuint m_bufferId;

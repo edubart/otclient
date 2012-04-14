@@ -203,6 +203,7 @@ SET(framework_SOURCES ${framework_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/sound/soundmanager.cpp
     ${CMAKE_CURRENT_LIST_DIR}/sound/oggsoundfile.cpp
     ${CMAKE_CURRENT_LIST_DIR}/sound/streamsoundsource.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/sound/combinedsoundsource.cpp
 
     # framework otml
     ${CMAKE_CURRENT_LIST_DIR}/otml/otmldocument.cpp
