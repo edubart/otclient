@@ -34,10 +34,16 @@ function Client.init()
   g_window.setTitle('OTClient')
   g_window.setIcon(resolvepath('clienticon.png'))
 
+
   -- show the only window after the first frame is rendered
   scheduleEvent(function()
     scheduleEvent(function()
         g_window.show()
+
+        -- play startup music
+        g_sounds.playMusic("startup.ogg", 3)
+        connect(g_game, { onGameStart = function() g_sounds.stopMusic(3) end })
+        connect(g_game, { onGameEnd= function() g_sounds.playMusic("startup.ogg", 3) end })
     end, 0)
   end, 0)
 end

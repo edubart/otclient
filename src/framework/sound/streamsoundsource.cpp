@@ -25,13 +25,11 @@
 #include "soundfile.h"
 
 #include <framework/util/databuffer.h>
-#include <framework/core/clock.h>
 
 StreamSoundSource::StreamSoundSource()
 {
     for(auto& buffer : m_buffers)
         buffer = SoundBufferPtr(new SoundBuffer);
-    m_fadeState = NoFading;
     m_downMix = NoDownMix;
 }
 
@@ -85,6 +83,8 @@ void StreamSoundSource::unqueueBuffers()
 
 void StreamSoundSource::update()
 {
+    SoundSource::update();
+
     ALint processed = 0;
     alGetSourcei(m_sourceId, AL_BUFFERS_PROCESSED, &processed);
     for(ALint i = 0; i < processed; ++i) {
@@ -102,25 +102,6 @@ void StreamSoundSource::update()
 
         logTraceError("restarting audio source because of buffer underrun");
         play();
-    }
-
-    float realTime = g_clock.asyncTime();
-    if(m_fadeState == FadingOn) {
-        float time = realTime - m_fadeStartTime;
-        if(time >= m_fadeTime) {
-            setGain(1.0);
-            m_fadeState = NoFading;
-        } else {
-            setGain(time / m_fadeTime);
-        }
-    } else if(m_fadeState == FadingOff) {
-        float time = realTime - m_fadeStartTime;
-        if(time >= m_fadeTime) {
-            stop();
-            m_fadeState = NoFading;
-        } else {
-            setGain((m_fadeTime - time) / m_fadeTime);
-        }
     }
 }
 
@@ -186,11 +167,4 @@ void StreamSoundSource::downMix(StreamSoundSource::DownMix downMix)
     }
 
     m_downMix = downMix;
-}
-
-void StreamSoundSource::setFading(FadeState state, float fadeTime)
-{
-    m_fadeState = state;
-    m_fadeTime = fadeTime;
-    m_fadeStartTime = g_clock.asyncTime();
 }

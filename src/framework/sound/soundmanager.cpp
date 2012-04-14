@@ -49,12 +49,6 @@ void SoundManager::init()
 
     m_musicEnabled = true;
     m_soundEnabled = true;
-
-    /*
-    g_eventDispatcher.scheduleEvent([this] {
-        play("/1.ogg");
-    }, 10);
-    */
 }
 
 void SoundManager::terminate()
@@ -160,12 +154,12 @@ void SoundManager::enableMusic(bool enable)
     m_musicEnabled = enable;
 
     if(enable)
-        playMusic(m_currentMusic);
+        playMusic(m_currentMusic, 3.0f);
     else
         m_musicSource = nullptr;
 }
 
-void SoundManager::playMusic(const std::string& filename, bool fade)
+void SoundManager::playMusic(const std::string& filename, float fadetime)
 {
     if(m_currentMusic == filename && m_musicSource)
         return;
@@ -178,11 +172,31 @@ void SoundManager::playMusic(const std::string& filename, bool fade)
         m_musicSource = nullptr;
         return;
     }
+
+    m_musicSource = createSoundSource(filename);
+    if(!m_musicSource) {
+        logError("unable to play '", filename, "'");
+        return;
+    }
+
+    m_musicSource->setRelative(true);
+
+    if(fadetime > 0) {
+        m_musicSource->setGain(0);
+        m_musicSource->setFading(StreamSoundSource::FadingOn, fadetime);
+    }
+
+    m_musicSource->play();
 }
 
 void SoundManager::stopMusic(float fadetime)
 {
-
+    if(m_musicSource) {
+        if(fadetime > 0)
+            m_musicSource->setFading(StreamSoundSource::FadingOff, 3.0f);
+        else
+            m_musicSource->stop();
+    }
 }
 
 SoundSourcePtr SoundManager::createSoundSource(const std::string& filename)

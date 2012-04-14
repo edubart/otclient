@@ -94,6 +94,12 @@ void CombinedSoundSource::setVelocity(const Point& velocity)
         source->setVelocity(velocity);
 }
 
+void CombinedSoundSource::setFading(SoundSource::FadeState state, float fadetime)
+{
+    for(const SoundSourcePtr& source : m_sources)
+        source->setFading(state, fadetime);
+}
+
 void CombinedSoundSource::update()
 {
     for(const SoundSourcePtr& source : m_sources)

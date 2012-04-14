@@ -44,6 +44,7 @@ public:
     void setPitch(float pitch);
     void setPosition(const Point& pos);
     void setVelocity(const Point& velocity);
+    void setFading(FadeState state, float fadetime);
 
 protected:
     virtual void update();

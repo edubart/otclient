@@ -78,7 +78,7 @@ for line in io.lines(cppclassheader) do
             bindline = '    g_lua.bindClassStaticFunction("' .. luaclassname .. '", "' .. funcname .. '", ' ..
                       'std::bind(&' .. cppclassname .. "::" .. funcname .. ', &' .. cppclassinstance
             for i=1,numargs do
-              bindline = bindline .. ', _' .. i
+              bindline = bindline .. ', std::placeholders::_' .. i
             end
             bindline = bindline .. '));'
           else

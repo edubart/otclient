@@ -35,7 +35,6 @@ class StreamSoundSource : public SoundSource
 
 public:
     enum DownMix { NoDownMix, DownMixLeft, DownMixRight };
-    enum FadeState { NoFading, FadingOn, FadingOff };
 
     StreamSoundSource();
     virtual ~StreamSoundSource();
@@ -46,8 +45,6 @@ public:
     void setSoundFile(const SoundFilePtr& soundFile);
 
     void downMix(DownMix downMix);
-    void setFading(FadeState state, float fadetime);
-    FadeState getFadeState() {  return m_fadeState; }
 
     void update();
 
@@ -59,9 +56,6 @@ private:
     SoundFilePtr m_soundFile;
     std::array<SoundBufferPtr,STREAM_FRAGMENTS> m_buffers;
     DownMix m_downMix;
-    FadeState m_fadeState;
-    float m_fadeStartTime;
-    float m_fadeTime;
     Boolean<false> m_looping;
 };
 

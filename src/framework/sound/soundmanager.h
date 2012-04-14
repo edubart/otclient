@@ -29,22 +29,20 @@ class SoundManager
 {
     enum {
         MAX_CACHE_SIZE = 100000,
-        POLL_DELAY = 300
+        POLL_DELAY = 100
     };
 
 public:
     void init();
     void terminate();
-
     void poll();
 
     void preload(const std::string& filename);
-
     void enableSound(bool enable);
     void play(const std::string& filename);
 
     void enableMusic(bool enable);
-    void playMusic(const std::string& filename, bool fade = false);
+    void playMusic(const std::string& filename, float fadetime);
     void stopMusic(float fadetime = 0);
 
     bool isMusicEnabled() { return m_musicEnabled; }
@@ -53,12 +51,13 @@ public:
     std::string getCurrentMusic() { return m_currentMusic; }
 
 private:
+    StreamSoundSourcePtr createStreamSoundSource(const std::string& filename);
     SoundSourcePtr createSoundSource(const std::string& filename);
     ALuint loadFileIntoBuffer(const SoundFilePtr& soundFile);
 
     std::map<std::string, SoundBufferPtr> m_buffers;
     std::vector<SoundSourcePtr> m_sources;
-    StreamSoundSourcePtr m_musicSource;
+    SoundSourcePtr m_musicSource;
     ALCdevice *m_device;
     ALCcontext *m_context;
     Boolean<false> m_musicEnabled;

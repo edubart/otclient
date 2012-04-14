@@ -23,9 +23,15 @@
 #include "soundsource.h"
 #include "soundbuffer.h"
 
+#include <framework/core/clock.h>
+
 SoundSource::SoundSource()
 {
     m_sourceId = 0;
+    m_fadeState = NoFading;
+    m_fadeTime = 0;
+    m_fadeStartTime = 0;
+
     alGenSources(1, &m_sourceId);
     assert(alGetError() == AL_NO_ERROR);
     setReferenceDistance(128);
@@ -104,4 +110,44 @@ void SoundSource::setPosition(const Point& pos)
 void SoundSource::setVelocity(const Point& velocity)
 {
     alSource3f(m_sourceId, AL_VELOCITY, velocity.x, velocity.y, 0);
+}
+
+void SoundSource::setFading(FadeState state, float fadeTime)
+{
+    float now = g_clock.time();
+    if(m_fadeState != NoFading) {
+        float elapsed = now - m_fadeStartTime;
+        float add;
+        if(m_fadeState == FadingOn)
+            add = -(1-(elapsed / m_fadeTime))*fadeTime;
+        else
+            add = -(elapsed / m_fadeTime)*fadeTime;
+        m_fadeStartTime = now + add;
+    } else
+        m_fadeStartTime = now;
+
+    m_fadeState = state;
+    m_fadeTime = fadeTime;
+}
+
+void SoundSource::update()
+{
+    float now = g_clock.time();
+    if(m_fadeState == FadingOn) {
+        float elapsed = now - m_fadeStartTime;
+        if(elapsed >= m_fadeTime) {
+            setGain(1.0);
+            m_fadeState = NoFading;
+        } else {
+            setGain(elapsed / m_fadeTime);
+        }
+    } else if(m_fadeState == FadingOff) {
+        float time = now - m_fadeStartTime;
+        if(time >= m_fadeTime) {
+            stop();
+            m_fadeState = NoFading;
+        } else {
+            setGain((m_fadeTime - time) / m_fadeTime);
+        }
+    }
 }

@@ -31,6 +31,8 @@ protected:
     SoundSource(ALuint sourceId) : m_sourceId(sourceId) { }
 
 public:
+    enum FadeState { NoFading, FadingOn, FadingOff };
+
     SoundSource();
     virtual ~SoundSource();
 
@@ -45,16 +47,20 @@ public:
     virtual void setPitch(float pitch);
     virtual void setPosition(const Point& pos);
     virtual void setVelocity(const Point& velocity);
+    virtual void setFading(FadeState state, float fadetime);
 
 protected:
     void setBuffer(const SoundBufferPtr& buffer);
 
-    virtual void update() { }
+    virtual void update();
     friend class SoundManager;
     friend class CombinedSoundSource;
 
     ALuint m_sourceId;
     SoundBufferPtr m_buffer;
+    FadeState m_fadeState;
+    float m_fadeStartTime;
+    float m_fadeTime;
 };
 
 #endif

@@ -32,6 +32,7 @@
 #include <framework/platform/platformwindow.h>
 #include <framework/core/modulemanager.h>
 #include <framework/core/module.h>
+#include <framework/sound/soundmanager.h>
 
 void Application::registerLuaFunctions()
 {
@@ -530,6 +531,19 @@ void Application::registerLuaFunctions()
     g_lua.bindClassStaticFunction("g_fonts", "importFont", std::bind(&FontManager::importFont, &g_fonts, std::placeholders::_1));
     g_lua.bindClassStaticFunction("g_fonts", "fontExists", std::bind(&FontManager::fontExists, &g_fonts, std::placeholders::_1));
     g_lua.bindClassStaticFunction("g_fonts", "setDefaultFont", std::bind(&FontManager::setDefaultFont, &g_fonts, std::placeholders::_1));
+
+    // SoundManager
+    g_lua.registerStaticClass("g_sounds");
+    g_lua.bindClassStaticFunction("g_sounds", "preload", std::bind(&SoundManager::preload, &g_sounds, std::placeholders::_1));
+    g_lua.bindClassStaticFunction("g_sounds", "enableSound", std::bind(&SoundManager::enableSound, &g_sounds, std::placeholders::_1));
+    g_lua.bindClassStaticFunction("g_sounds", "play", std::bind(&SoundManager::play, &g_sounds, std::placeholders::_1));
+    g_lua.bindClassStaticFunction("g_sounds", "enableMusic", std::bind(&SoundManager::enableMusic, &g_sounds, std::placeholders::_1));
+    g_lua.bindClassStaticFunction("g_sounds", "playMusic", std::bind(&SoundManager::playMusic, &g_sounds, std::placeholders::_1, std::placeholders::_2));
+    g_lua.bindClassStaticFunction("g_sounds", "stopMusic", std::bind(&SoundManager::stopMusic, &g_sounds, std::placeholders::_1));
+    g_lua.bindClassStaticFunction("g_sounds", "isMusicEnabled", std::bind(&SoundManager::isMusicEnabled, &g_sounds));
+    g_lua.bindClassStaticFunction("g_sounds", "isSoundEnabled", std::bind(&SoundManager::isSoundEnabled, &g_sounds));
+    g_lua.bindClassStaticFunction("g_sounds", "isAudioEnabled", std::bind(&SoundManager::isAudioEnabled, &g_sounds));
+    g_lua.bindClassStaticFunction("g_sounds", "getCurrentMusic", std::bind(&SoundManager::getCurrentMusic, &g_sounds));
 
     // EventDispatcher
     g_lua.registerStaticClass("g_eventDispatcher");
