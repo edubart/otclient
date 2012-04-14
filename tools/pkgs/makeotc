@@ -1,0 +1,74 @@
+#!/bin/bash
+# generates a otclient zip package for win32
+# by edubart :)
+
+protocol=860
+gitroot="git://github.com/edubart/otclient.git"
+gitname="otclient"
+mingw32="i486-mingw32"
+spr_folder="$HOME/projects/otclient/modules/game_tibiafiles"
+upload_to="root@myserver.com:/var/www/downloads/"
+pkg_suffix="-snapshot-`date +%Y%m%d`-protocol${protocol}-win32"
+use_spr=false
+upload=false
+make_jobs=8
+
+srcdir=`pwd`
+if [ -d $gitname ]; then
+    cd $gitname
+    git pull || exit
+else
+    git clone $gitroot || exit
+    cd $gitname
+fi
+
+gitdir=`pwd`
+revision=`git describe --dirty --always`
+
+#rm -rf build
+if [ -d build ]; then
+    cd build
+else
+    mkdir -p build
+    cd build
+
+    cmake -DCMAKE_TOOLCHAIN_FILE=$gitdir/src/framework/cmake/${mingw32}_toolchain.cmake \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DBUILD_REVISION=$revision \
+          -DPROTOCOL=$protocol \
+          .. || exit
+fi
+
+make -j${make_jobs} || exit
+
+
+pkgdir="$gitname$pkg_suffix"
+pkgzip="$pkgdir.zip"
+
+cd $srcdir
+rm -rf $pkgdir
+mkdir $pkgdir
+cd $pkgdir
+
+cp -R $gitdir/modules .
+cp $gitdir/build/$gitname.exe $gitname.exe
+cp $gitdir/build/$gitname.map $gitname.map
+cp $gitdir/LICENSE .
+cp $gitdir/README.rdoc .
+
+if $use_spr; then
+    cp $dat_folder/*.spr modules/game_tibiafiles/
+    cp $dat_folder/*.dat modules/game_tibiafiles/
+fi
+
+cd $srcdir
+rm -f $pkgzip
+zip -9 -qr $pkgzip $pkgdir
+
+echo "Package generated to $pkgzip"
+
+if $upload; then
+    scp $srcdir/$pkgzip $upload_to
+fi
+
+
