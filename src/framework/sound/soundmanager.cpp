@@ -33,8 +33,6 @@ SoundManager g_sounds;
 
 void SoundManager::init()
 {
-    m_run = false;
-
     m_device = alcOpenDevice(NULL);
     if(!m_device) {
         logError("unable to open audio device");
@@ -46,27 +44,20 @@ void SoundManager::init()
         logError("unable to create audio context: ", alcGetString(m_device, alcGetError(m_device)));
         return;
     }
-
     alcMakeContextCurrent(m_context);
-    m_thread = std::thread(std::bind(&SoundManager::audioThread, &g_sounds));
-    while(!m_run)
-        g_clock.sleep(1);
 
     m_musicEnabled = true;
     m_soundEnabled = true;
 
     /*
     g_eventDispatcher.scheduleEvent([this] {
-        play("/test.ogg");
+        play("/1.ogg");
     }, 10);
     */
 }
 
 void SoundManager::terminate()
 {
-    m_run = false;
-    m_thread.join();
-
     m_sources.clear();
     m_buffers.clear();
     m_musicSource = nullptr;
@@ -88,25 +79,14 @@ void SoundManager::terminate()
     }
 }
 
-void SoundManager::audioThread()
+void SoundManager::poll()
 {
-    m_run = true;
-    while(m_run) {
-        //TODO: use condition variable
-        g_clock.sleep(30);
-        update();
-    }
-}
-
-void SoundManager::update()
-{
-    std::lock_guard<std::recursive_mutex> lock(m_mutex);
-
     static ticks_t lastUpdate = 0;
-    ticks_t now = g_clock.asyncTicks();
+    ticks_t now = g_clock.ticks();
 
-    if(now - lastUpdate < 300)
+    if(now - lastUpdate < POLL_DELAY)
         return;
+
     lastUpdate = now;
 
     for(auto it = m_sources.begin(); it != m_sources.end();) {
@@ -133,8 +113,6 @@ void SoundManager::update()
 
 void SoundManager::preload(const std::string& filename)
 {
-    std::lock_guard<std::recursive_mutex> lock(m_mutex);
-
     auto it = m_buffers.find(filename);
     if(it != m_buffers.end())
         return;
@@ -152,16 +130,12 @@ void SoundManager::preload(const std::string& filename)
 
 void SoundManager::enableSound(bool enable)
 {
-    std::lock_guard<std::recursive_mutex> lock(m_mutex);
-
     if(!isAudioEnabled())
         return;
 }
 
 void SoundManager::play(const std::string& filename)
 {
-    std::lock_guard<std::recursive_mutex> lock(m_mutex);
-
     if(!m_soundEnabled)
         return;
 
@@ -179,8 +153,6 @@ void SoundManager::play(const std::string& filename)
 
 void SoundManager::enableMusic(bool enable)
 {
-    std::lock_guard<std::recursive_mutex> lock(m_mutex);
-
     if(!isAudioEnabled())
         return;
 
@@ -194,8 +166,6 @@ void SoundManager::enableMusic(bool enable)
 
 void SoundManager::playMusic(const std::string& filename, bool fade)
 {
-    std::lock_guard<std::recursive_mutex> lock(m_mutex);
-
     if(m_currentMusic == filename && m_musicSource)
         return;
     m_currentMusic = filename;
@@ -211,7 +181,7 @@ void SoundManager::playMusic(const std::string& filename, bool fade)
 
 void SoundManager::stopMusic(float fadetime)
 {
-    std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
 }
 
 SoundSourcePtr SoundManager::createSoundSource(const std::string& filename)

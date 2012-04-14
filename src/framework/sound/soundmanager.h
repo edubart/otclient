@@ -28,16 +28,15 @@
 class SoundManager
 {
     enum {
-        MAX_CACHE_SIZE = 10000000
+        MAX_CACHE_SIZE = 100000,
+        POLL_DELAY = 300
     };
 
 public:
     void init();
     void terminate();
 
-    void audioThread();
-
-    void update();
+    void poll();
 
     void preload(const std::string& filename);
 
@@ -62,9 +61,6 @@ private:
     StreamSoundSourcePtr m_musicSource;
     ALCdevice *m_device;
     ALCcontext *m_context;
-    std::thread m_thread;
-    std::atomic<bool> m_run;
-    std::recursive_mutex m_mutex;
     Boolean<false> m_musicEnabled;
     Boolean<false> m_soundEnabled;
     std::string m_currentMusic;

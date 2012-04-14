@@ -209,6 +209,8 @@ void Application::exit()
 
 void Application::poll()
 {
+    g_sounds.poll();
+
     // poll input events
     g_window.poll();
     //g_particleManager.update();
