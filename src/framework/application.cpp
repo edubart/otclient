@@ -95,8 +95,8 @@ void Application::init(const std::vector<std::string>& args)
 
     g_window.init();
     g_window.hide();
-    g_window.setOnResize(std::bind(&Application::resize, this, _1));
-    g_window.setOnInputEvent(std::bind(&Application::inputEvent, this, _1));
+    g_window.setOnResize(std::bind(&Application::resize, this, std::placeholders::_1));
+    g_window.setOnInputEvent(std::bind(&Application::inputEvent, this, std::placeholders::_1));
     g_window.setOnClose(std::bind(&Application::close, this));
 
     // initialize graphics

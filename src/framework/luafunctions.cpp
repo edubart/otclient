@@ -431,7 +431,7 @@ void Application::registerLuaFunctions()
     // Application
     g_lua.registerStaticClass("g_app");
     g_lua.bindClassStaticFunction("g_app", "exit", std::bind(&Application::exit, g_app));
-    g_lua.bindClassStaticFunction("g_app", "setFrameSleep", std::bind(&Application::setFrameSleep, g_app, _1));
+    g_lua.bindClassStaticFunction("g_app", "setFrameSleep", std::bind(&Application::setFrameSleep, g_app, std::placeholders::_1));
     g_lua.bindClassStaticFunction("g_app", "isRunning", std::bind(&Application::isRunning, g_app));
     g_lua.bindClassStaticFunction("g_app", "isStopping", std::bind(&Application::isStopping, g_app));
     g_lua.bindClassStaticFunction("g_app", "getFrameSleep", std::bind(&Application::getFrameSleep, g_app));
@@ -444,33 +444,33 @@ void Application::registerLuaFunctions()
 
     // ConfigManager
     g_lua.registerStaticClass("g_configs");
-    g_lua.bindClassStaticFunction("g_configs", "set", std::bind(&ConfigManager::set, &g_configs, _1, _2));
-    g_lua.bindClassStaticFunction("g_configs", "setList", std::bind(&ConfigManager::setList, &g_configs, _1, _2));
-    g_lua.bindClassStaticFunction("g_configs", "get", std::bind(&ConfigManager::get, &g_configs, _1));
-    g_lua.bindClassStaticFunction("g_configs", "getList", std::bind(&ConfigManager::getList, &g_configs, _1));
-    g_lua.bindClassStaticFunction("g_configs", "exists", std::bind(&ConfigManager::exists, &g_configs, _1));
-    g_lua.bindClassStaticFunction("g_configs", "remove", std::bind(&ConfigManager::remove, &g_configs, _1));
-    g_lua.bindClassStaticFunction("g_configs", "setNode", std::bind(&ConfigManager::setNode, &g_configs, _1, _2));
-    g_lua.bindClassStaticFunction("g_configs", "addNode", std::bind(&ConfigManager::addNode, &g_configs, _1, _2));
-    g_lua.bindClassStaticFunction("g_configs", "getNode", std::bind(&ConfigManager::getNode, &g_configs, _1));
+    g_lua.bindClassStaticFunction("g_configs", "set", std::bind(&ConfigManager::set, &g_configs, std::placeholders::_1, std::placeholders::_2));
+    g_lua.bindClassStaticFunction("g_configs", "setList", std::bind(&ConfigManager::setList, &g_configs, std::placeholders::_1, std::placeholders::_2));
+    g_lua.bindClassStaticFunction("g_configs", "get", std::bind(&ConfigManager::get, &g_configs, std::placeholders::_1));
+    g_lua.bindClassStaticFunction("g_configs", "getList", std::bind(&ConfigManager::getList, &g_configs, std::placeholders::_1));
+    g_lua.bindClassStaticFunction("g_configs", "exists", std::bind(&ConfigManager::exists, &g_configs, std::placeholders::_1));
+    g_lua.bindClassStaticFunction("g_configs", "remove", std::bind(&ConfigManager::remove, &g_configs, std::placeholders::_1));
+    g_lua.bindClassStaticFunction("g_configs", "setNode", std::bind(&ConfigManager::setNode, &g_configs, std::placeholders::_1, std::placeholders::_2));
+    g_lua.bindClassStaticFunction("g_configs", "addNode", std::bind(&ConfigManager::addNode, &g_configs, std::placeholders::_1, std::placeholders::_2));
+    g_lua.bindClassStaticFunction("g_configs", "getNode", std::bind(&ConfigManager::getNode, &g_configs, std::placeholders::_1));
 
     // PlatformWindow
     g_lua.registerStaticClass("g_window");
-    g_lua.bindClassStaticFunction("g_window", "move", std::bind(&PlatformWindow::move, &g_window, _1));
-    g_lua.bindClassStaticFunction("g_window", "resize", std::bind(&PlatformWindow::resize, &g_window, _1));
+    g_lua.bindClassStaticFunction("g_window", "move", std::bind(&PlatformWindow::move, &g_window, std::placeholders::_1));
+    g_lua.bindClassStaticFunction("g_window", "resize", std::bind(&PlatformWindow::resize, &g_window, std::placeholders::_1));
     g_lua.bindClassStaticFunction("g_window", "show", std::bind(&PlatformWindow::show, &g_window));
     g_lua.bindClassStaticFunction("g_window", "hide", std::bind(&PlatformWindow::hide, &g_window));
     g_lua.bindClassStaticFunction("g_window", "maximize", std::bind(&PlatformWindow::maximize, &g_window));
     g_lua.bindClassStaticFunction("g_window", "restoreMouseCursor", std::bind(&PlatformWindow::restoreMouseCursor, &g_window));
     g_lua.bindClassStaticFunction("g_window", "showMouse", std::bind(&PlatformWindow::showMouse, &g_window));
     g_lua.bindClassStaticFunction("g_window", "hideMouse", std::bind(&PlatformWindow::hideMouse, &g_window));
-    g_lua.bindClassStaticFunction("g_window", "setTitle", std::bind(&PlatformWindow::setTitle, &g_window, _1));
-    g_lua.bindClassStaticFunction("g_window", "setMouseCursor", std::bind(&PlatformWindow::setMouseCursor, &g_window, _1, _2));
-    g_lua.bindClassStaticFunction("g_window", "setMinimumSize", std::bind(&PlatformWindow::setMinimumSize, &g_window, _1));
-    g_lua.bindClassStaticFunction("g_window", "setFullscreen", std::bind(&PlatformWindow::setFullscreen, &g_window, _1));
-    g_lua.bindClassStaticFunction("g_window", "setVerticalSync", std::bind(&PlatformWindow::setVerticalSync, &g_window, _1));
-    g_lua.bindClassStaticFunction("g_window", "setIcon", std::bind(&PlatformWindow::setIcon, &g_window, _1));
-    g_lua.bindClassStaticFunction("g_window", "setClipboardText", std::bind(&PlatformWindow::setClipboardText, &g_window, _1));
+    g_lua.bindClassStaticFunction("g_window", "setTitle", std::bind(&PlatformWindow::setTitle, &g_window, std::placeholders::_1));
+    g_lua.bindClassStaticFunction("g_window", "setMouseCursor", std::bind(&PlatformWindow::setMouseCursor, &g_window, std::placeholders::_1, std::placeholders::_2));
+    g_lua.bindClassStaticFunction("g_window", "setMinimumSize", std::bind(&PlatformWindow::setMinimumSize, &g_window, std::placeholders::_1));
+    g_lua.bindClassStaticFunction("g_window", "setFullscreen", std::bind(&PlatformWindow::setFullscreen, &g_window, std::placeholders::_1));
+    g_lua.bindClassStaticFunction("g_window", "setVerticalSync", std::bind(&PlatformWindow::setVerticalSync, &g_window, std::placeholders::_1));
+    g_lua.bindClassStaticFunction("g_window", "setIcon", std::bind(&PlatformWindow::setIcon, &g_window, std::placeholders::_1));
+    g_lua.bindClassStaticFunction("g_window", "setClipboardText", std::bind(&PlatformWindow::setClipboardText, &g_window, std::placeholders::_1));
     g_lua.bindClassStaticFunction("g_window", "getDisplaySize", std::bind(&PlatformWindow::getDisplaySize, &g_window));
     g_lua.bindClassStaticFunction("g_window", "getClipboardText", std::bind(&PlatformWindow::getClipboardText, &g_window));
     g_lua.bindClassStaticFunction("g_window", "getPlatformType", std::bind(&PlatformWindow::getPlatformType, &g_window));
@@ -486,8 +486,8 @@ void Application::registerLuaFunctions()
     g_lua.bindClassStaticFunction("g_window", "getY", std::bind(&PlatformWindow::getY, &g_window));
     g_lua.bindClassStaticFunction("g_window", "getMousePosition", std::bind(&PlatformWindow::getMousePosition, &g_window));
     g_lua.bindClassStaticFunction("g_window", "getKeyboardModifiers", std::bind(&PlatformWindow::getKeyboardModifiers, &g_window));
-    g_lua.bindClassStaticFunction("g_window", "isKeyPressed", std::bind(&PlatformWindow::isKeyPressed, &g_window, _1));
-    g_lua.bindClassStaticFunction("g_window", "isMouseButtonPressed", std::bind(&PlatformWindow::isMouseButtonPressed, &g_window, _1));
+    g_lua.bindClassStaticFunction("g_window", "isKeyPressed", std::bind(&PlatformWindow::isKeyPressed, &g_window, std::placeholders::_1));
+    g_lua.bindClassStaticFunction("g_window", "isMouseButtonPressed", std::bind(&PlatformWindow::isMouseButtonPressed, &g_window, std::placeholders::_1));
     g_lua.bindClassStaticFunction("g_window", "isVisible", std::bind(&PlatformWindow::isVisible, &g_window));
     g_lua.bindClassStaticFunction("g_window", "isFullscreen", std::bind(&PlatformWindow::isFullscreen, &g_window));
     g_lua.bindClassStaticFunction("g_window", "isMaximized", std::bind(&PlatformWindow::isMaximized, &g_window));
@@ -495,44 +495,44 @@ void Application::registerLuaFunctions()
 
     // Logger
     g_lua.registerStaticClass("g_logger");
-    g_lua.bindClassStaticFunction("g_logger", "log", std::bind(&Logger::log, &g_logger, _1, _2));
+    g_lua.bindClassStaticFunction("g_logger", "log", std::bind(&Logger::log, &g_logger, std::placeholders::_1, std::placeholders::_2));
     g_lua.bindClassStaticFunction("g_logger", "fireOldMessages", std::bind(&Logger::fireOldMessages, &g_logger));
-    g_lua.bindClassStaticFunction("g_logger", "setOnLog", std::bind(&Logger::setOnLog, &g_logger, _1));
+    g_lua.bindClassStaticFunction("g_logger", "setOnLog", std::bind(&Logger::setOnLog, &g_logger, std::placeholders::_1));
 
     // UI
     g_lua.registerStaticClass("g_ui");
-    g_lua.bindClassStaticFunction("g_ui", "importStyle", std::bind(&UIManager::importStyle, &g_ui, _1));
-    g_lua.bindClassStaticFunction("g_ui", "getStyle", std::bind(&UIManager::getStyle, &g_ui, _1));
-    g_lua.bindClassStaticFunction("g_ui", "getStyleClass", std::bind(&UIManager::getStyleClass, &g_ui, _1));
-    g_lua.bindClassStaticFunction("g_ui", "loadUI", std::bind(&UIManager::loadUI, &g_ui, _1, _2));
-    g_lua.bindClassStaticFunction("g_ui", "createWidgetFromStyle", std::bind(&UIManager::createWidgetFromStyle, &g_ui, _1, _2));
-    g_lua.bindClassStaticFunction("g_ui", "createWidgetFromOTML", std::bind(&UIManager::createWidgetFromOTML, &g_ui, _1, _2));
+    g_lua.bindClassStaticFunction("g_ui", "importStyle", std::bind(&UIManager::importStyle, &g_ui, std::placeholders::_1));
+    g_lua.bindClassStaticFunction("g_ui", "getStyle", std::bind(&UIManager::getStyle, &g_ui, std::placeholders::_1));
+    g_lua.bindClassStaticFunction("g_ui", "getStyleClass", std::bind(&UIManager::getStyleClass, &g_ui, std::placeholders::_1));
+    g_lua.bindClassStaticFunction("g_ui", "loadUI", std::bind(&UIManager::loadUI, &g_ui, std::placeholders::_1, std::placeholders::_2));
+    g_lua.bindClassStaticFunction("g_ui", "createWidgetFromStyle", std::bind(&UIManager::createWidgetFromStyle, &g_ui, std::placeholders::_1, std::placeholders::_2));
+    g_lua.bindClassStaticFunction("g_ui", "createWidgetFromOTML", std::bind(&UIManager::createWidgetFromOTML, &g_ui, std::placeholders::_1, std::placeholders::_2));
     g_lua.bindClassStaticFunction("g_ui", "getRootWidget", std::bind(&UIManager::getRootWidget, &g_ui));
     g_lua.bindClassStaticFunction("g_ui", "getDraggingWidget", std::bind(&UIManager::getDraggingWidget, &g_ui));
     g_lua.bindClassStaticFunction("g_ui", "getPressedWidget", std::bind(&UIManager::getPressedWidget, &g_ui));
-    g_lua.bindClassStaticFunction("g_ui", "setDebugBoxesDrawing", std::bind(&UIManager::setDebugBoxesDrawing, &g_ui, _1));
-    g_lua.bindClassStaticFunction("g_ui", "isDrawingDebugBoxes", std::bind(&UIManager::setDebugBoxesDrawing, &g_ui, _1));
+    g_lua.bindClassStaticFunction("g_ui", "setDebugBoxesDrawing", std::bind(&UIManager::setDebugBoxesDrawing, &g_ui, std::placeholders::_1));
+    g_lua.bindClassStaticFunction("g_ui", "isDrawingDebugBoxes", std::bind(&UIManager::setDebugBoxesDrawing, &g_ui, std::placeholders::_1));
 
     // ModuleManager
     g_lua.registerStaticClass("g_modules");
     g_lua.bindClassStaticFunction("g_modules", "discoverModulesPath", std::bind(&ModuleManager::discoverModulesPath, &g_modules));
     g_lua.bindClassStaticFunction("g_modules", "discoverModules", std::bind(&ModuleManager::discoverModules, &g_modules));
-    g_lua.bindClassStaticFunction("g_modules", "autoLoadModules", std::bind(&ModuleManager::autoLoadModules, &g_modules, _1));
-    g_lua.bindClassStaticFunction("g_modules", "discoverModule", std::bind(&ModuleManager::discoverModule, &g_modules, _1));
-    g_lua.bindClassStaticFunction("g_modules", "ensureModuleLoaded", std::bind(&ModuleManager::ensureModuleLoaded, &g_modules, _1));
+    g_lua.bindClassStaticFunction("g_modules", "autoLoadModules", std::bind(&ModuleManager::autoLoadModules, &g_modules, std::placeholders::_1));
+    g_lua.bindClassStaticFunction("g_modules", "discoverModule", std::bind(&ModuleManager::discoverModule, &g_modules, std::placeholders::_1));
+    g_lua.bindClassStaticFunction("g_modules", "ensureModuleLoaded", std::bind(&ModuleManager::ensureModuleLoaded, &g_modules, std::placeholders::_1));
     g_lua.bindClassStaticFunction("g_modules", "unloadModules", std::bind(&ModuleManager::unloadModules, &g_modules));
     g_lua.bindClassStaticFunction("g_modules", "reloadModules", std::bind(&ModuleManager::reloadModules, &g_modules));
-    g_lua.bindClassStaticFunction("g_modules", "getModule", std::bind(&ModuleManager::getModule, &g_modules, _1));
+    g_lua.bindClassStaticFunction("g_modules", "getModule", std::bind(&ModuleManager::getModule, &g_modules, std::placeholders::_1));
     g_lua.bindClassStaticFunction("g_modules", "getModules", std::bind(&ModuleManager::getModules, &g_modules));
 
     // FontManager
     g_lua.registerStaticClass("g_fonts");
-    g_lua.bindClassStaticFunction("g_fonts", "importFont", std::bind(&FontManager::importFont, &g_fonts, _1));
-    g_lua.bindClassStaticFunction("g_fonts", "fontExists", std::bind(&FontManager::fontExists, &g_fonts, _1));
-    g_lua.bindClassStaticFunction("g_fonts", "setDefaultFont", std::bind(&FontManager::setDefaultFont, &g_fonts, _1));
+    g_lua.bindClassStaticFunction("g_fonts", "importFont", std::bind(&FontManager::importFont, &g_fonts, std::placeholders::_1));
+    g_lua.bindClassStaticFunction("g_fonts", "fontExists", std::bind(&FontManager::fontExists, &g_fonts, std::placeholders::_1));
+    g_lua.bindClassStaticFunction("g_fonts", "setDefaultFont", std::bind(&FontManager::setDefaultFont, &g_fonts, std::placeholders::_1));
 
     // EventDispatcher
     g_lua.registerStaticClass("g_eventDispatcher");
-    g_lua.bindClassStaticFunction("g_eventDispatcher", "addEvent", std::bind(&EventDispatcher::addEvent, &g_eventDispatcher, _1, _2));
-    g_lua.bindClassStaticFunction("g_eventDispatcher", "scheduleEvent", std::bind(&EventDispatcher::scheduleEvent, &g_eventDispatcher, _1, _2));
+    g_lua.bindClassStaticFunction("g_eventDispatcher", "addEvent", std::bind(&EventDispatcher::addEvent, &g_eventDispatcher, std::placeholders::_1, std::placeholders::_2));
+    g_lua.bindClassStaticFunction("g_eventDispatcher", "scheduleEvent", std::bind(&EventDispatcher::scheduleEvent, &g_eventDispatcher, std::placeholders::_1, std::placeholders::_2));
 }

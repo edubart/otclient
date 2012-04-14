@@ -38,6 +38,7 @@
 #include "const.h"
 
 // additional utilities
+#include "util/compiler.h"
 #include "util/types.h"
 #include "util/tools.h"
 #include "math/point.h"
@@ -48,8 +49,5 @@
 
 // logger
 #include "core/logger.h"
-
-// easy typing for _1, _2, ...
-using namespace std::placeholders;
 
 #endif

@@ -20,27 +20,30 @@
  * THE SOFTWARE.
  */
 
-#ifndef FRAMEWORK_SOUND_DECLARATIONS_H
-#define FRAMEWORK_SOUND_DECLARATIONS_H
+#ifndef __COMPILER_H__
+#define __COMPILER_H__
 
-#include <framework/global.h>
+// hack to enable std::thread on mingw32 4.6
+#if !defined(_GLIBCXX_HAS_GTHREADS) && defined(__GNUG__)
+#include <boost/thread/thread.hpp>
+#include <boost/thread/mutex.hpp>
+#include <boost/thread/recursive_mutex.hpp>
+#include <boost/thread/locks.hpp>
+#include <boost/thread/condition_variable.hpp>
+namespace std {
+  using boost::thread;
 
-#define AL_LIBTYPE_STATIC
+  using boost::mutex;
+  using boost::timed_mutex;
+  using boost::recursive_mutex;
+  using boost::recursive_timed_mutex;
 
-#include <AL/al.h>
-#include <AL/alc.h>
+  using boost::lock_guard;
+  using boost::unique_lock;
 
-class SoundManager;
-class SoundSource;
-class SoundBuffer;
-class SoundFile;
-class StreamSoundSource;
-class OggSoundFile;
-
-typedef std::shared_ptr<SoundSource> SoundSourcePtr;
-typedef std::shared_ptr<SoundFile> SoundFilePtr;
-typedef std::shared_ptr<SoundBuffer> SoundBufferPtr;
-typedef std::shared_ptr<StreamSoundSource> StreamSoundSourcePtr;
-typedef std::shared_ptr<OggSoundFile> OggSoundFilePtr;
+  using boost::condition_variable;
+  using boost::condition_variable_any;
+}
+#endif
 
 #endif

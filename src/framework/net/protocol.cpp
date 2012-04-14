@@ -37,7 +37,7 @@ Protocol::~Protocol()
 void Protocol::connect(const std::string& host, uint16 port)
 {
     m_connection = ConnectionPtr(new Connection);
-    m_connection->setErrorCallback(std::bind(&Protocol::onError, asProtocol(),  _1));
+    m_connection->setErrorCallback(std::bind(&Protocol::onError, asProtocol(), std::placeholders::_1));
     m_connection->connect(host, port, std::bind(&Protocol::onConnect, asProtocol()));
 }
 
@@ -89,7 +89,7 @@ void Protocol::recv()
     m_inputMessage.reset();
 
     if(m_connection)
-        m_connection->read(InputMessage::HEADER_LENGTH, std::bind(&Protocol::internalRecvHeader, asProtocol(),  _1,  _2));
+        m_connection->read(InputMessage::HEADER_LENGTH, std::bind(&Protocol::internalRecvHeader, asProtocol(), std::placeholders::_1,  std::placeholders::_2));
 }
 
 void Protocol::internalRecvHeader(uint8* buffer, uint16 size)
@@ -102,7 +102,7 @@ void Protocol::internalRecvHeader(uint8* buffer, uint16 size)
 
     // schedule read for message data
     if(m_connection)
-        m_connection->read(dataSize, std::bind(&Protocol::internalRecvData, asProtocol(),  _1,  _2));
+        m_connection->read(dataSize, std::bind(&Protocol::internalRecvData, asProtocol(), std::placeholders::_1,  std::placeholders::_2));
 }
 
 void Protocol::internalRecvData(uint8* buffer, uint16 size)
