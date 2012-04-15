@@ -34,7 +34,6 @@ function Client.init()
   g_window.setTitle('OTClient')
   g_window.setIcon(resolvepath('clienticon.png'))
 
-
   -- show the only window after the first frame is rendered
   scheduleEvent(function()
     scheduleEvent(function()

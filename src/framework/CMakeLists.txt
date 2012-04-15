@@ -60,10 +60,10 @@ SET(CMAKE_C_FLAGS_RELFORPERFORMANCE   "-Ofast -mmmx -msse -msse2")
 SET(CMAKE_CXX_LINK_FLAGS              "${CMAKE_CXX_LINK_FLAGS} -static-libgcc -static-libstdc++ -Wl,--as-needed")
 
 MESSAGE(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
-ADD_DEFINITIONS(-DBUILD_TYPE="${CMAKE_BUILD_TYPE}")
+ADD_DEFINITIONS(-D"BUILD_TYPE=\\\"${CMAKE_BUILD_TYPE}\\\"")
 
-ADD_DEFINITIONS(-DBUILD_REVISION="${BUILD_REVISION}")
 MESSAGE(STATUS "Build revision: ${BUILD_REVISION}")
+ADD_DEFINITIONS(-D"BUILD_REVISION=\\\"${BUILD_REVISION}\\\"")
 
 IF(USE_OPENGL_ES2)
     MESSAGE(STATUS "Renderer: OpenGL ES 2.0")
@@ -236,5 +236,5 @@ SET(framework_SOURCES ${framework_SOURCES}
 
     # framework third party
     ${CMAKE_CURRENT_LIST_DIR}/thirdparty/apngloader.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/thirdparty/lbitlib-5.2.0-backport4.c
+    ${CMAKE_CURRENT_LIST_DIR}/thirdparty/lbitlib-5.2.0-backport4.cpp
 )

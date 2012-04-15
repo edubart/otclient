@@ -25,8 +25,6 @@
 
 struct lua_State;
 
-extern "C" {
 int luaopen_bit32 (lua_State *L);
-};
 
 #endif

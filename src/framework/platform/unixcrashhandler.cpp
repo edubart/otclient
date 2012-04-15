@@ -20,11 +20,13 @@
  * THE SOFTWARE.
  */
 
-#define __USE_GNU
-
 #include "crashhandler.h"
 #include <framework/global.h>
 #include <framework/application.h>
+
+#ifndef __USE_GNU
+#define __USE_GNU
+#endif
 
 #include <execinfo.h>
 #include <ucontext.h>
