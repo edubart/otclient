@@ -43,6 +43,9 @@ extern "C" {
 @@ LUA_UNSIGNED is the integral type used by lua_pushunsigned/lua_tounsigned.
 ** It must have at least 32 bits.
 */
+#ifndef LUAI_INT32
+#define LUAI_INT32 int
+#endif
 #define LUA_UNSIGNED    unsigned LUAI_INT32
 
 #if defined(LUA_NUMBER_DOUBLE) && !defined(LUA_ANSI)    /* { */
@@ -154,8 +157,8 @@ static lua_Unsigned luaL_checkunsigned (lua_State *L, int arg) {
 /* ----- Lua 5.2 luaL_newlib() compatibility: ----- */
 
 #define LUAMOD_API  LUALIB_API
-#define LUA_BITLIBNAME "bit32"
-#define luaL_newlib(x, y) luaL_register(x, LUA_BITLIBNAME, y)
+#define LUA_BIT32LIBNAME "bit32"
+#define luaL_newlib(x, y) luaL_register(x, LUA_BIT32LIBNAME, y)
 
 /* ----- avoid a 'symbol redefined' warning below ----- */
 
