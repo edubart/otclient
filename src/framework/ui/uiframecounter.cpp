@@ -47,7 +47,7 @@ void UIFrameCounter::drawSelf()
     }
     m_frameCount++;
 
-    g_painter.setColor(Color::white);
+    g_painter->setColor(Color::white);
     m_font->drawText(m_fpsText, m_rect, m_align);
 }
 

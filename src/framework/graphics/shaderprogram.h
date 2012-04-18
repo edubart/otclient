@@ -44,8 +44,8 @@ public:
     static void release();
     std::string log();
 
-    void disableAttributeArray(int location) { glDisableVertexAttribArray(location); }
-    void enableAttributeArray(int location) { glEnableVertexAttribArray(location); }
+    static void disableAttributeArray(int location) { glDisableVertexAttribArray(location); }
+    static void enableAttributeArray(int location) { glEnableVertexAttribArray(location); }
     void disableAttributeArray(const char *name) { glDisableVertexAttribArray(getAttributeLocation(name)); }
     void enableAttributeArray(const char *name) { glEnableVertexAttribArray(getAttributeLocation(name)); }
 

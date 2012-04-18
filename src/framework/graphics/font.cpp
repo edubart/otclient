@@ -77,7 +77,7 @@ void Font::drawText(const std::string& text, const Rect& screenCoords, Fw::Align
     coordsBuffer.clear();
 
     calculateDrawTextCoords(coordsBuffer, text, screenCoords, align);
-    g_painter.drawTextureCoords(coordsBuffer, m_texture);
+    g_painter->drawTextureCoords(coordsBuffer, m_texture);
 }
 
 void Font::calculateDrawTextCoords(CoordsBuffer& coordsBuffer, const std::string& text, const Rect& screenCoords, Fw::AlignmentFlag align)

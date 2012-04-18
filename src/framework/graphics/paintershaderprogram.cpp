@@ -32,8 +32,6 @@ PainterShaderProgram::PainterShaderProgram()
     m_opacity = 1;
     m_color = Color::white;
     m_time = 0;
-    m_lastTexture = -1;
-    m_textures.fill(0);
 }
 
 bool PainterShaderProgram::link()
@@ -43,7 +41,7 @@ bool PainterShaderProgram::link()
     bindAttributeLocation(TEXCOORD_ATTR, "a_texCoord");
     if(ShaderProgram::link()) {
         bindUniformLocation(PROJECTION_MATRIX_UNIFORM, "projectionMatrix");
-        bindUniformLocation(TEXTURE_TRANSFORM_MATRIX_UNIFORM, "texTransformMatrix");
+        bindUniformLocation(TEXTURE_MATRIX_UNIFORM, "textureMatrix");
         bindUniformLocation(COLOR_UNIFORM, "color");
         bindUniformLocation(OPACITY_UNIFORM, "opacity");
         bindUniformLocation(TIME_UNIFORM, "time");
@@ -52,15 +50,13 @@ bool PainterShaderProgram::link()
 
         bind();
         setUniformValue(PROJECTION_MATRIX_UNIFORM, m_projectionMatrix);
-        setUniformValue(TEXTURE_TRANSFORM_MATRIX_UNIFORM, m_textureTransformMatrix);
+        setUniformValue(TEXTURE_MATRIX_UNIFORM, m_textureMatrix);
         setUniformValue(COLOR_UNIFORM, m_color);
         setUniformValue(OPACITY_UNIFORM, m_opacity);
         setUniformValue(TIME_UNIFORM, m_time);
         setUniformValue(TEX0_UNIFORM, 0);
         setUniformValue(TEX1_UNIFORM, 1);
-
-        enableAttributeArray(PainterShaderProgram::VERTEX_ATTR);
-        enableAttributeArray(PainterShaderProgram::TEXCOORD_ATTR);
+        release();
         return true;
     }
     return false;
@@ -74,6 +70,16 @@ void PainterShaderProgram::setProjectionMatrix(const Matrix3& projectionMatrix)
     bind();
     setUniformValue(PROJECTION_MATRIX_UNIFORM, projectionMatrix);
     m_projectionMatrix = projectionMatrix;
+}
+
+void PainterShaderProgram::setTextureMatrix(const Matrix2& textureMatrix)
+{
+    if(textureMatrix == m_textureMatrix)
+        return;
+
+    bind();
+    setUniformValue(TEXTURE_MATRIX_UNIFORM, textureMatrix);
+    m_textureMatrix = textureMatrix;
 }
 
 void PainterShaderProgram::setColor(const Color& color)
@@ -96,68 +102,13 @@ void PainterShaderProgram::setOpacity(float opacity)
     m_opacity = opacity;
 }
 
-void PainterShaderProgram::setTexture(const TexturePtr& texture, int index)
+void PainterShaderProgram::updateTime()
 {
-    assert(index >= 0 && index <= 1);
-
-    uint texId = texture ? texture->getId() : 0;
-
-    if(m_textures[index] == texId)
-        return;
-
-    m_textures[index] = texId;
-    m_lastTexture = std::max(m_lastTexture, index);
-
-    if(texture && index == 0) {
-        const Matrix2& textureTransformMatrix = texture->getTransformMatrix();
-        if(m_textureTransformMatrix != textureTransformMatrix) {
-            bind();
-            setUniformValue(TEXTURE_TRANSFORM_MATRIX_UNIFORM, textureTransformMatrix);
-            m_textureTransformMatrix = textureTransformMatrix;
-        }
-    }
-}
-
-void PainterShaderProgram::draw(CoordsBuffer& coordsBuffer, DrawMode drawMode)
-{
-    bind();
-
     float time = g_clock.timeElapsed(m_startTime);
-    if(m_time != time) {
-        setUniformValue(TIME_UNIFORM, time);
-        m_time = time;
-    }
-
-    int vertexCount = coordsBuffer.getVertexCount();
-    if(vertexCount == 0)
+    if(m_time == time)
         return;
 
-    coordsBuffer.updateCaches();
-    bool hardwareCached = coordsBuffer.isHardwareCached();
-
-    if(hardwareCached)
-        coordsBuffer.getHardwareVertexBuffer()->bind();
-    setAttributeArray(PainterShaderProgram::VERTEX_ATTR, hardwareCached ? 0 : coordsBuffer.getVertexBuffer(), 2);
-
-    bool hasTexture = coordsBuffer.getTextureVertexCount() != 0;
-    if(hasTexture) {
-        if(hardwareCached)
-            coordsBuffer.getHardwareTextureVertexBuffer()->bind();
-        setAttributeArray(PainterShaderProgram::TEXCOORD_ATTR, hardwareCached ? 0 : coordsBuffer.getTextureVertexBuffer(), 2);
-    }
-
-    if(hardwareCached)
-        HardwareBuffer::unbind(HardwareBuffer::VertexBuffer);
-
-    if(m_lastTexture == 0) {
-        glBindTexture(GL_TEXTURE_2D, m_textures[0]);
-    } else {
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, m_textures[1]);
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, m_textures[0]);
-    }
-
-    glDrawArrays(drawMode, 0, vertexCount);
+    bind();
+    setUniformValue(TIME_UNIFORM, time);
+    m_time = time;
 }
-

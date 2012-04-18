@@ -99,20 +99,23 @@ uint Texture::internalLoadGLTexture(uchar *pixels, int channels, int width, int 
 
 void Texture::generateMipmaps()
 {
-    if(g_graphics.canGenerateHardwareMipmaps())
-        generateHardwareMipmaps();
-    else {
+    if(!generateHardwareMipmaps()) {
         // fallback to software mipmaps generation, this can be slow
-        //FIXME: disable because mipmaps size needs to be in base of 2,
+        //FIXME: disabled because mipmaps size needs to be in base of 2,
         //       and the current algorithmn does not support that
         //generateSoftwareMipmaps(getPixels());
     }
 }
 
-void Texture::generateHardwareMipmaps()
+bool Texture::generateHardwareMipmaps()
 {
-    if(!g_graphics.canGenerateHardwareMipmaps())
-        return;
+    if(!g_graphics.canUseHardwareMipmaps())
+        return false;
+
+#ifndef OPENGL_ES2
+    if(!GLEW_ARB_framebuffer_object)
+        return false;
+#endif
 
     bind();
 
@@ -122,6 +125,7 @@ void Texture::generateHardwareMipmaps()
     }
 
     glGenerateMipmap(GL_TEXTURE_2D);
+    return true;
 }
 
 void Texture::setSmooth(bool smooth)
@@ -146,10 +150,10 @@ std::vector<uint8> Texture::getPixels()
     FrameBufferPtr fb(new FrameBuffer(m_size));
     fb->bind();
     fb->clear(Color::alpha);
-    g_painter.saveAndResetState();
-    g_painter.drawTexturedRect(Rect(0,0,m_size), shared_from_this());
+    g_painter->saveAndResetState();
+    g_painter->drawTexturedRect(Rect(0,0,m_size), shared_from_this());
     glReadPixels(0, 0, m_size.width(), m_size.height(), GL_RGBA, GL_UNSIGNED_BYTE, &pixels[0]);
-    g_painter.restoreSavedState();
+    g_painter->restoreSavedState();
     fb->release();
 #else
     // copy pixels from opengl memory

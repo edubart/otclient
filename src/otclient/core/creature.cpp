@@ -34,7 +34,7 @@
 #include <framework/core/clock.h>
 
 #include <framework/graphics/paintershaderprogram.h>
-#include <framework/graphics/paintershadersources.h>
+#include <framework/graphics/painterogl2_shadersources.h>
 #include <framework/graphics/texturemanager.h>
 #include <framework/graphics/framebuffer.h>
 #include "spritemanager.h"
@@ -59,25 +59,27 @@ Creature::Creature() : Thing()
     m_informationFont = g_fonts.getFont("verdana-11px-rounded");
 }
 
+/*
 PainterShaderProgramPtr outfitProgram;
 int HEAD_COLOR_UNIFORM = 10;
 int BODY_COLOR_UNIFORM = 11;
 int LEGS_COLOR_UNIFORM = 12;
 int FEET_COLOR_UNIFORM = 13;
 int MASK_TEXTURE_UNIFORM = 14;
+*/
 
 void Creature::draw(const Point& dest, float scaleFactor, bool animate)
 {
     Point animationOffset = animate ? m_walkOffset : Point(0,0);
 
     if(m_showTimedSquare && animate) {
-        g_painter.setColor(m_timedSquareColor);
-        g_painter.drawBoundingRect(Rect(dest + (animationOffset - getDisplacement() + 3)*scaleFactor, Size(28, 28)*scaleFactor), std::max((int)(2*scaleFactor), 1));
+        g_painter->setColor(m_timedSquareColor);
+        g_painter->drawBoundingRect(Rect(dest + (animationOffset - getDisplacement() + 3)*scaleFactor, Size(28, 28)*scaleFactor), std::max((int)(2*scaleFactor), 1));
     }
 
     if(m_showStaticSquare && animate) {
-        g_painter.setColor(m_staticSquareColor);
-        g_painter.drawBoundingRect(Rect(dest + (animationOffset - getDisplacement() + 1)*scaleFactor, Size(Otc::TILE_PIXELS, Otc::TILE_PIXELS)*scaleFactor), std::max((int)(2*scaleFactor), 1));
+        g_painter->setColor(m_staticSquareColor);
+        g_painter->drawBoundingRect(Rect(dest + (animationOffset - getDisplacement() + 1)*scaleFactor, Size(Otc::TILE_PIXELS, Otc::TILE_PIXELS)*scaleFactor), std::max((int)(2*scaleFactor), 1));
     }
 
     internalDrawOutfit(dest + animationOffset * scaleFactor, scaleFactor, animate, animate, m_direction);
@@ -86,7 +88,8 @@ void Creature::draw(const Point& dest, float scaleFactor, bool animate)
 
 void Creature::internalDrawOutfit(const Point& dest, float scaleFactor, bool animateWalk, bool animateIdle, Otc::Direction direction)
 {
-    g_painter.setColor(Color::white);
+    g_painter->setColor(Color::white);
+    /*
     if(!outfitProgram) {
         outfitProgram = PainterShaderProgramPtr(new PainterShaderProgram);
         outfitProgram->addShaderFromSourceCode(Shader::Vertex, glslMainWithTexCoordsVertexShader + glslPositionOnlyVertexShader);
@@ -97,6 +100,7 @@ void Creature::internalDrawOutfit(const Point& dest, float scaleFactor, bool ani
         outfitProgram->bindUniformLocation(LEGS_COLOR_UNIFORM, "legsColor");
         outfitProgram->bindUniformLocation(FEET_COLOR_UNIFORM, "feetColor");
     }
+    */
 
     int xPattern = 0, yPattern = 0, zPattern = 0;
 
@@ -124,13 +128,15 @@ void Creature::internalDrawOutfit(const Point& dest, float scaleFactor, bool ani
             if(yPattern > 0 && !(m_outfit.getAddons() & (1 << (yPattern-1))))
                 continue;
 
-            g_painter.setCustomProgram(outfitProgram);
+            /*
+            g_painter->setShaderProgram(outfitProgram);
 
             outfitProgram->bind();
             outfitProgram->setUniformValue(HEAD_COLOR_UNIFORM, m_outfit.getHeadColor());
             outfitProgram->setUniformValue(BODY_COLOR_UNIFORM, m_outfit.getBodyColor());
             outfitProgram->setUniformValue(LEGS_COLOR_UNIFORM, m_outfit.getLegsColor());
             outfitProgram->setUniformValue(FEET_COLOR_UNIFORM, m_outfit.getFeetColor());
+            */
 
             for(int h = 0; h < getDimensionHeight(); h++) {
                 for(int w = 0; w < getDimensionWidth(); w++) {
@@ -140,14 +146,14 @@ void Creature::internalDrawOutfit(const Point& dest, float scaleFactor, bool ani
                         int maskId = getSpriteId(w, h, 1, xPattern, yPattern, zPattern, animationPhase);
                         maskTex = g_sprites.getSpriteTexture(maskId);
                     }
-                    outfitProgram->setTexture(maskTex, 1);
+                    //outfitProgram->setTexture(maskTex, 1);
 
                     internalDraw(dest + (-Point(w,h)*Otc::TILE_PIXELS)*scaleFactor,
                                  scaleFactor, w, h, xPattern, yPattern, zPattern, 0, animationPhase);
                 }
             }
 
-            g_painter.releaseCustomProgram();
+            //g_painter->resetShaderProgram();
         }
     // outfit is a creature imitating an item or the invisible effect
     } else  {
@@ -182,12 +188,12 @@ void Creature::drawOutfit(const Rect& destRect, bool resize)
     if(!outfitBuffer)
         outfitBuffer = FrameBufferPtr(new FrameBuffer(Size(2*Otc::TILE_PIXELS, 2*Otc::TILE_PIXELS)));
 
-    g_painter.saveAndResetState();
+    g_painter->saveAndResetState();
     outfitBuffer->bind();
     outfitBuffer->clear(Color::alpha);
     internalDrawOutfit(Point(Otc::TILE_PIXELS,Otc::TILE_PIXELS) + getDisplacement(), 1, false, true, Otc::South);
     outfitBuffer->release();
-    g_painter.restoreSavedState();
+    g_painter->restoreSavedState();
 
     if(resize) {
         Rect srcRect;
@@ -227,26 +233,26 @@ void Creature::drawInformation(const Point& point, bool useGray, const Rect& par
     healthRect.setWidth((m_healthPercent / 100.0) * 25);
 
     // draw
-    g_painter.setColor(Color::black);
-    g_painter.drawFilledRect(backgroundRect);
+    g_painter->setColor(Color::black);
+    g_painter->drawFilledRect(backgroundRect);
 
-    g_painter.setColor(fillColor);
-    g_painter.drawFilledRect(healthRect);
+    g_painter->setColor(fillColor);
+    g_painter->drawFilledRect(healthRect);
 
     if(m_informationFont)
         m_informationFont->drawText(m_name, textRect, Fw::AlignTopCenter);
 
     if(m_skull != Otc::SkullNone && m_skullTexture) {
-        g_painter.setColor(Color::white);
-        g_painter.drawTexturedRect(Rect(point.x + 12, point.y + 5, m_skullTexture->getSize()), m_skullTexture);
+        g_painter->setColor(Color::white);
+        g_painter->drawTexturedRect(Rect(point.x + 12, point.y + 5, m_skullTexture->getSize()), m_skullTexture);
     }
     if(m_shield != Otc::ShieldNone && m_shieldTexture && m_showShieldTexture) {
-        g_painter.setColor(Color::white);
-        g_painter.drawTexturedRect(Rect(point.x, point.y + 5, m_shieldTexture->getSize()), m_shieldTexture);
+        g_painter->setColor(Color::white);
+        g_painter->drawTexturedRect(Rect(point.x, point.y + 5, m_shieldTexture->getSize()), m_shieldTexture);
     }
     if(m_emblem != Otc::EmblemNone && m_emblemTexture) {
-        g_painter.setColor(Color::white);
-        g_painter.drawTexturedRect(Rect(point.x + 12, point.y + 16, m_emblemTexture->getSize()), m_emblemTexture);
+        g_painter->setColor(Color::white);
+        g_painter->drawTexturedRect(Rect(point.x + 12, point.y + 16, m_emblemTexture->getSize()), m_emblemTexture);
     }
 }
 

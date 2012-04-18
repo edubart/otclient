@@ -21,6 +21,8 @@
  */
 
 #include "fontmanager.h"
+#include "painterogl1.h"
+#include "painterogl2.h"
 
 #include <framework/graphics/graphics.h>
 #include <framework/graphics/texture.h>
@@ -31,6 +33,11 @@ Graphics g_graphics;
 void oglDebugCallback(unsigned int source, unsigned int type, unsigned int id, unsigned int severity, int length, const char* message, void* userParam)
 {
     logWarning("OGL: ", message);
+}
+
+Graphics::Graphics()
+{
+    m_maxTextureSize = -1;
 }
 
 void Graphics::init()
@@ -50,29 +57,7 @@ void Graphics::init()
         glDebugMessageCallbackARB(oglDebugCallback, NULL);
 #endif
 
-    const char *requiredExtensions[] = {
-        "GL_ARB_vertex_program",
-        "GL_ARB_vertex_shader",
-        "GL_ARB_fragment_shader",
-        "GL_ARB_texture_non_power_of_two",
-        "GL_ARB_multitexture"
-    };
-
-    std::stringstream ss;
-    bool unsupported = false;
-    for(auto ext : requiredExtensions) {
-        if(!glewIsSupported(ext)) {
-            ss << ext << std::endl;
-            unsupported = true;
-        }
-    }
-
-    if(unsupported)
-        logFatal("The following OpenGL 2.0 extensions are not supported by your system graphics, please try updating your video drivers or buy a new hardware:\n",
-                 ss.str(),
-                 "Graphics card: ", glGetString(GL_RENDERER),
-                 "\nOpenGL driver: ", glGetString(GL_VERSION));
-
+    // overwrite framebuffer API if needed
     if(GLEW_EXT_framebuffer_object && !GLEW_ARB_framebuffer_object) {
         glGenFramebuffers = glGenFramebuffersEXT;
         glDeleteFramebuffers = glDeleteFramebuffersEXT;
@@ -82,39 +67,103 @@ void Graphics::init()
         glGenerateMipmap = glGenerateMipmapEXT;
     }
 
-    m_useFBO = m_useFBO && (GLEW_ARB_framebuffer_object || GLEW_EXT_framebuffer_object);
-    m_generateHardwareMipmaps = m_generateHardwareMipmaps; // glGenerateMipmap is supported when framebuffers are
+    // opengl 1 is always supported
+    g_painterOGL1 = new PainterOGL1;
 
+    // opengl 2 is only supported in newer hardware
+    if(GLEW_VERSION_2_0)
+        g_painterOGL2 = new PainterOGL2;
+#else
+    g_painterOGL2 = new PainterOGL2;
 #endif
 
-    glEnable(GL_BLEND);
-    glClear(GL_COLOR_BUFFER_BIT);
+    // determine max texture size
+    static GLint maxTextureSize = -1;
+    if(maxTextureSize == -1)
+        glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
+    if(m_maxTextureSize == -1 || m_maxTextureSize > maxTextureSize)
+        m_maxTextureSize = maxTextureSize;
 
+    //glClear(GL_COLOR_BUFFER_BIT);
+    //m_prefferedPainterEngine = Painter_OpenGL1;
+
+    selectPainterEngine(m_prefferedPainterEngine);
     m_emptyTexture = TexturePtr(new Texture);
 
-    g_painter.init();
 }
 
 void Graphics::terminate()
 {
     g_fonts.releaseFonts();
-    g_painter.terminate();
+
+    if(g_painterOGL1) {
+        delete g_painterOGL1;
+        g_painterOGL1 = nullptr;
+    }
+
+    if(g_painterOGL2) {
+        delete g_painterOGL2;
+        g_painterOGL2 = nullptr;
+    }
+
+    g_painter = nullptr;
+
     m_emptyTexture.reset();
 }
 
 bool Graphics::parseOption(const std::string& option)
 {
-    if(option == "-no-fbos")
+    if(option == "-no-draw-arrays")
+        m_useDrawArrays = false;
+    else if(option == "-no-fbos")
         m_useFBO = false;
-    else if(option == "-no-mipmapping")
-        m_generateMipmaps = false;
-    else if(option == "-no-smoothing")
+    else if(option == "-no-mipmaps")
+        m_useMipmaps = false;
+    else if(option == "-no-hardware-mipmaps")
+        m_useHardwareMipmaps = false;
+    else if(option == "-no-smooth")
         m_useBilinearFiltering = false;
-    else if(option == "-no-hardware-buffering")
+    else if(option == "-no-hardware-buffers")
         m_useHardwareBuffers = false;
+    else if(option == "-no-non-power-of-two-textures")
+        m_useNonPowerOfTwoTextures = false;
+    else if(option == "-opengl1")
+        m_prefferedPainterEngine = Painter_OpenGL1;
+    else if(option == "-opengl2")
+        m_prefferedPainterEngine = Painter_OpenGL2;
     else
         return false;
     return true;
+}
+
+bool Graphics::selectPainterEngine(PainterEngine painterEngine)
+{
+    // always prefer OpenGL 2 over OpenGL 1
+    if(g_painterOGL2 && (painterEngine == Painter_OpenGL2 || painterEngine == Painter_Any))
+        g_painter = g_painterOGL2;
+    // fallback to OpenGL 1 in older hardwares
+    else if(g_painterOGL1 && (painterEngine == Painter_OpenGL1 || painterEngine == Painter_Any))
+        g_painter = g_painterOGL1;
+    else
+        logFatal("Neither OpenGL 1.0 nor OpenGL 2.0 painter engine is supported by your platform, "
+                 "try updating your graphics drivers or your hardware and then run again.");
+
+    // switch painters GL state
+    if(g_painter)
+        g_painter->unbind();
+    g_painter->bind();
+
+    if(painterEngine == Painter_Any)
+        return true;
+    return getPainterEngine() == painterEngine;
+}
+
+Graphics::PainterEngine Graphics::getPainterEngine()
+{
+    if(g_painter == g_painterOGL2)
+        return Painter_OpenGL2;
+    else
+        return Painter_OpenGL1;
 }
 
 void Graphics::resize(const Size& size)
@@ -128,17 +177,21 @@ void Graphics::resize(const Size& size)
     //
     // This results in the Projection matrix below.
     //
-    //                Projection Matrix                   Painter Coord   GL Coord
-    // ------------------------------------------------     ---------     ---------
-    // | 2.0 / width  |      0.0      |     -1.0      |     |   x   |     |   x'  |
-    // |     0.0      | -2.0 / height |      1.0      |  *  |   y   |  =  |   y'  |
-    // |     0.0      |      0.0      |      0.0      |     |   1   |     |   0   |
-    // ------------------------------------------------     ---------     ---------
-    Matrix3 projectionMatrix = { 2.0f/size.width(),  0.0f,                -1.0f,
-                                 0.0f,              -2.0f/size.height(),   1.0f,
-                                 0.0f,               0.0f,                 0.0f };
-    projectionMatrix.transpose();
-    g_painter.setProjectionMatrix(projectionMatrix);
+    //                                    Projection Matrix
+    //   Painter Coord     ------------------------------------------------        GL Coord
+    //   -------------     | 2.0 / width  |      0.0      |      0.0      |     ---------------
+    //   |  x  y  1  |  *  |     0.0      | -2.0 / height |      0.0      |  =  |  x'  y'  1  |
+    //   -------------     |    -1.0      |      1.0      |      1.0      |     ---------------
+    //                     ------------------------------------------------
+    Matrix3 projectionMatrix = { 2.0f/size.width(),  0.0f,                 0.0f,
+                                 0.0f,              -2.0f/size.height(),   0.0f,
+                                -1.0f,               1.0f,                 1.0f };
+
+    if(g_painterOGL1)
+        g_painterOGL1->setProjectionMatrix(projectionMatrix);
+
+    if(g_painterOGL2)
+        g_painterOGL2->setProjectionMatrix(projectionMatrix);
 }
 
 void Graphics::beginRender()
@@ -149,16 +202,6 @@ void Graphics::beginRender()
 
 void Graphics::endRender()
 {
-    // this is a simple blur effect
-    /*
-    static Timer timer;
-    if(timer.ticksElapsed() >= 10) {
-        glAccum(GL_MULT, 0.9);
-        glAccum(GL_ACCUM, 0.1);
-        timer.restart();
-    }
-    glAccum(GL_RETURN, 1);
-    */
 }
 
 void Graphics::setViewportSize(const Size& size)
@@ -167,10 +210,71 @@ void Graphics::setViewportSize(const Size& size)
     m_viewportSize = size;
 }
 
-int Graphics::getMaxTextureSize()
+bool Graphics::canUseDrawArrays()
 {
-    static GLint maxTexSize = -1;
-    if(maxTexSize == -1)
-        glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTexSize);
-    return maxTexSize;
+#ifndef OPENGL_ES2
+    if(!GLEW_VERSION_1_1)
+        return false;
+#else
+    return false;
+#endif
+    return m_useDrawArrays;
+}
+
+bool Graphics::canUseShaders()
+{
+#ifndef OPENGL_ES2
+    if(GLEW_ARB_vertex_program && GLEW_ARB_vertex_shader && GLEW_ARB_fragment_shader)
+        return true;
+#else
+    return true;
+#endif
+    return false;
+}
+
+bool Graphics::canUseFBO()
+{
+#ifndef OPENGL_ES2
+    if(!GLEW_ARB_framebuffer_object || !GLEW_EXT_framebuffer_object)
+        return false;
+#endif
+    return m_useFBO;
+}
+
+bool Graphics::canUseBilinearFiltering()
+{
+    return m_useBilinearFiltering;
+}
+
+bool Graphics::canUseHardwareBuffers()
+{
+#ifndef OPENGL_ES2
+    if(!GLEW_ARB_vertex_buffer_object)
+        return false;
+#endif
+    return m_useHardwareBuffers;
+}
+
+bool Graphics::canUseNonPowerOfTwoTextures()
+{
+#ifndef OPENGL_ES2
+    if(!GLEW_ARB_texture_non_power_of_two)
+        return false;
+#endif
+    return m_useNonPowerOfTwoTextures;
+}
+
+bool Graphics::canUseMipmaps()
+{
+    return m_useMipmaps;
+}
+
+bool Graphics::canUseHardwareMipmaps()
+{
+#ifndef OPENGL_ES2
+    // glGenerateMipmap is supported when framebuffers are too
+    if(!GLEW_ARB_framebuffer_object || !GLEW_EXT_framebuffer_object)
+        return false;
+#endif
+    return m_useHardwareMipmaps;
 }

@@ -49,9 +49,10 @@ void UIMap::drawSelf()
     UIWidget::drawSelf();
 
     // draw map border
-    g_painter.setColor(Color::black);
-    g_painter.drawBoundingRect(m_mapRect.expanded(1));
+    g_painter->setColor(Color::black);
+    g_painter->drawBoundingRect(m_mapRect.expanded(1));
 
+    g_painter->setColor(Color::white);
     m_mapView->draw(m_mapRect);
 }
 

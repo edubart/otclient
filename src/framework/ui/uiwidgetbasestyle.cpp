@@ -323,8 +323,8 @@ void UIWidget::drawBackground(const Rect& screenCoords)
         drawRect.translate(m_backgroundRect.topLeft());
         if(m_backgroundRect.isValid())
             drawRect.resize(m_backgroundRect.size());
-        g_painter.setColor(m_backgroundColor);
-        g_painter.drawFilledRect(drawRect);
+        g_painter->setColor(m_backgroundColor);
+        g_painter->drawFilledRect(drawRect);
     }
 }
 
@@ -332,31 +332,31 @@ void UIWidget::drawBorder(const Rect& screenCoords)
 {
     // top
     if(m_borderWidth.top > 0) {
-        g_painter.setColor(m_borderColor.top);
+        g_painter->setColor(m_borderColor.top);
 
         Rect borderRect(screenCoords.topLeft(), screenCoords.width(), m_borderWidth.top);
-        g_painter.drawFilledRect(borderRect);
+        g_painter->drawFilledRect(borderRect);
     }
     // right
     if(m_borderWidth.right > 0) {
-        g_painter.setColor(m_borderColor.right);
+        g_painter->setColor(m_borderColor.right);
 
         Rect borderRect(screenCoords.topRight() - Point(m_borderWidth.right - 1, 0), m_borderWidth.right, screenCoords.height());
-        g_painter.drawFilledRect(borderRect);
+        g_painter->drawFilledRect(borderRect);
     }
     // bottom
     if(m_borderWidth.bottom > 0) {
-        g_painter.setColor(m_borderColor.bottom);
+        g_painter->setColor(m_borderColor.bottom);
 
         Rect borderRect(screenCoords.bottomLeft() - Point(0, m_borderWidth.bottom - 1), screenCoords.width(), m_borderWidth.bottom);
-        g_painter.drawFilledRect(borderRect);
+        g_painter->drawFilledRect(borderRect);
     }
     // left
     if(m_borderWidth.left > 0) {
-        g_painter.setColor(m_borderColor.left);
+        g_painter->setColor(m_borderColor.left);
 
         Rect borderRect(screenCoords.topLeft(), m_borderWidth.left, screenCoords.height());
-        g_painter.drawFilledRect(borderRect);
+        g_painter->drawFilledRect(borderRect);
     }
 }
 
@@ -372,8 +372,8 @@ void UIWidget::drawIcon(const Rect& screenCoords)
             drawRect.resize(m_icon->getSize());
             drawRect.moveCenter(screenCoords.center());
         }
-        g_painter.setColor(m_iconColor);
-        g_painter.drawTexturedRect(drawRect, m_icon);
+        g_painter->setColor(m_iconColor);
+        g_painter->drawTexturedRect(drawRect, m_icon);
     }
 }
 

@@ -21,162 +21,132 @@
  */
 
 #include "painter.h"
-#include "texture.h"
-#include "paintershadersources.h"
-#include "paintershaderprogram.h"
-#include "shaderprogram.h"
 #include "graphics.h"
-#include "vertexarray.h"
 
-Painter g_painter;
+Painter *g_painter = nullptr;
 
-void Painter::init()
+Painter::Painter()
 {
-    setColor(Color::white);
-    setOpacity(1.0f);
-    setCompositionMode(CompositionMode_Normal);
-    releaseCustomProgram();
-
-    m_drawTexturedProgram = PainterShaderProgramPtr(new PainterShaderProgram);
-    m_drawTexturedProgram->addShaderFromSourceCode(Shader::Vertex, glslMainWithTexCoordsVertexShader + glslPositionOnlyVertexShader);
-    m_drawTexturedProgram->addShaderFromSourceCode(Shader::Fragment, glslMainFragmentShader + glslTextureSrcFragmentShader);
-    m_drawTexturedProgram->link();
-
-    m_drawSolidColorProgram = PainterShaderProgramPtr(new PainterShaderProgram);
-    m_drawSolidColorProgram->addShaderFromSourceCode(Shader::Vertex, glslMainVertexShader + glslPositionOnlyVertexShader);
-    m_drawSolidColorProgram->addShaderFromSourceCode(Shader::Fragment, glslMainFragmentShader + glslSolidColorFragmentShader);
-    m_drawSolidColorProgram->link();
+    m_glTextureId = 0;
+    m_oldStateIndex = 0;
+    m_color = Color::white;
+    m_opacity = 1.0f;
+    m_compositionMode = CompositionMode_Normal;
+    m_shaderProgram = nullptr;
+    m_texture = nullptr;
 }
 
-void Painter::terminate()
+void Painter::resetState()
 {
-    m_drawTexturedProgram.reset();
-    m_drawSolidColorProgram.reset();
+    resetColor();
+    resetOpacity();
+    resetCompositionMode();
+    resetClipRect();
+    resetShaderProgram();
+    resetTexture();
 }
 
-void Painter::drawProgram(PainterShaderProgram *program, CoordsBuffer& coordsBuffer, PainterShaderProgram::DrawMode drawMode)
+void Painter::refreshState()
 {
-    if(coordsBuffer.getVertexCount() == 0)
-        return;
-
-    program->setProjectionMatrix(m_projectionMatrix);
-    program->setOpacity(m_opacity);
-    program->setColor(m_color);
-    program->draw(coordsBuffer, drawMode);
+    updateGlCompositionMode();
+    updateGlClipRect();
+    updateGlTexture();
 }
 
-void Painter::drawTextureCoords(CoordsBuffer& coordsBuffer, const TexturePtr& texture)
+void Painter::saveAndResetState()
 {
-    PainterShaderProgram *program = m_customProgram ? m_customProgram : m_drawTexturedProgram.get();
-    program->setTexture(texture);
-    drawProgram(program, coordsBuffer);
+    assert(m_oldStateIndex<10);
+    m_olderStates[m_oldStateIndex].projectionMatrix = m_projectionMatrix;
+    m_olderStates[m_oldStateIndex].textureMatrix = m_textureMatrix;
+    m_olderStates[m_oldStateIndex].color = m_color;
+    m_olderStates[m_oldStateIndex].opacity = m_opacity;
+    m_olderStates[m_oldStateIndex].compositionMode = m_compositionMode;
+    m_olderStates[m_oldStateIndex].clipRect = m_clipRect;
+    m_olderStates[m_oldStateIndex].shaderProgram = m_shaderProgram;
+    m_olderStates[m_oldStateIndex].texture = m_texture;
+    m_oldStateIndex++;
+    resetState();
 }
 
-void Painter::drawTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src)
+void Painter::restoreSavedState()
 {
-    if(dest.isEmpty() || src.isEmpty() || !texture->getId())
-        return;
-
-    m_coordsBuffer.clear();
-    m_coordsBuffer.addQuad(dest, src);
-    PainterShaderProgram *program = m_customProgram ? m_customProgram : m_drawTexturedProgram.get();
-    program->setTexture(texture);
-    drawProgram(program, m_coordsBuffer, PainterShaderProgram::TriangleStrip);
-}
-
-void Painter::drawRepeatedTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src)
-{
-    if(dest.isEmpty() || src.isEmpty() || !texture->getId())
-        return;
-
-    m_coordsBuffer.clear();
-    m_coordsBuffer.addRepeatedRects(dest, src);
-    drawTextureCoords(m_coordsBuffer, texture);
-}
-
-void Painter::drawFilledRect(const Rect& dest)
-{
-    if(dest.isEmpty())
-        return;
-
-    m_coordsBuffer.clear();
-    m_coordsBuffer.addRect(dest);
-    drawProgram(m_customProgram ? m_customProgram : m_drawSolidColorProgram.get(), m_coordsBuffer);
-}
-
-void Painter::drawBoundingRect(const Rect& dest, int innerLineWidth)
-{
-    if(dest.isEmpty() || innerLineWidth == 0)
-        return;
-
-    m_coordsBuffer.clear();
-    m_coordsBuffer.addBoudingRect(dest, innerLineWidth);
-    drawProgram(m_customProgram ? m_customProgram : m_drawSolidColorProgram.get(), m_coordsBuffer);
+    m_oldStateIndex--;
+    setProjectionMatrix(m_olderStates[m_oldStateIndex].projectionMatrix);
+    setTextureMatrix(m_olderStates[m_oldStateIndex].textureMatrix);
+    setColor(m_olderStates[m_oldStateIndex].color);
+    setOpacity(m_olderStates[m_oldStateIndex].opacity);
+    setCompositionMode(m_olderStates[m_oldStateIndex].compositionMode);
+    setClipRect(m_olderStates[m_oldStateIndex].clipRect);
+    setShaderProgram(m_olderStates[m_oldStateIndex].shaderProgram);
+    setTexture(m_olderStates[m_oldStateIndex].texture);
 }
 
 void Painter::setCompositionMode(Painter::CompositionMode compositionMode)
 {
-    switch(compositionMode) {
-    case CompositionMode_Normal:
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        break;
-    case CompositionMode_Multiply:
-        glBlendFunc(GL_DST_COLOR, GL_ONE_MINUS_SRC_ALPHA);
-        break;
-    case CompositionMode_Add:
-        glBlendFunc(GL_ONE, GL_ONE);
-        break;
-    case CompositionMode_Replace:
-        glBlendFunc(GL_ONE, GL_ZERO);
-        break;
-    case CompositionMode_DestBlending:
-        glBlendFunc(GL_ONE_MINUS_DST_ALPHA, GL_DST_ALPHA);
-        break;
-    }
-    m_compostionMode = compositionMode;
+    if(m_compositionMode == compositionMode)
+        return;
+    m_compositionMode = compositionMode;
+    updateGlCompositionMode();
 }
 
 void Painter::setClipRect(const Rect& clipRect)
 {
     if(m_clipRect == clipRect)
         return;
+    m_clipRect = clipRect;
+    updateGlClipRect();
+}
 
-    if(clipRect.isValid()) {
+void Painter::setTexture(Texture* texture)
+{
+    if(m_texture == texture)
+        return;
+
+    m_texture = texture;
+
+    if(texture) {
+        m_glTextureId = texture->getId();
+        setTextureMatrix(texture->getTransformMatrix());
+    } else
+        m_glTextureId = 0;
+    m_texture = texture;
+
+    updateGlTexture();
+}
+
+void Painter::updateGlTexture()
+{
+    glBindTexture(GL_TEXTURE_2D, m_glTextureId);
+}
+
+void Painter::updateGlCompositionMode()
+{
+    glEnable(GL_BLEND);
+    switch(m_compositionMode) {
+        case CompositionMode_Normal:
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            break;
+        case CompositionMode_Multiply:
+            glBlendFunc(GL_DST_COLOR, GL_ONE_MINUS_SRC_ALPHA);
+            break;
+        case CompositionMode_Add:
+            glBlendFunc(GL_ONE, GL_ONE);
+            break;
+        case CompositionMode_Replace:
+            glBlendFunc(GL_ONE, GL_ZERO);
+            break;
+        case CompositionMode_DestBlending:
+            glBlendFunc(GL_ONE_MINUS_DST_ALPHA, GL_DST_ALPHA);
+            break;
+    }
+}
+
+void Painter::updateGlClipRect()
+{
+    if(m_clipRect.isValid()) {
         glEnable(GL_SCISSOR_TEST);
-        glScissor(clipRect.left(), g_graphics.getViewportSize().height() - clipRect.bottom() - 1, clipRect.width(), clipRect.height());
+        glScissor(m_clipRect.left(), g_graphics.getViewportSize().height() - m_clipRect.bottom() - 1, m_clipRect.width(), m_clipRect.height());
     } else {
         glDisable(GL_SCISSOR_TEST);
     }
-    m_clipRect = clipRect;
-}
-
-void Painter::saveAndResetState()
-{
-    m_oldCustomProgram = m_customProgram;
-    m_oldProjectionMatrix = m_projectionMatrix;
-    m_oldColor = m_color;
-    m_oldOpacity = m_opacity;
-    m_oldCompostionMode = m_compostionMode;
-    m_oldClipRect = m_clipRect;
-
-    releaseCustomProgram();
-    resetClipRect();
-    setColor(Color::white);
-    setOpacity(1);
-    setCompositionMode(CompositionMode_Normal);
-}
-
-void Painter::restoreSavedState()
-{
-    m_customProgram = m_oldCustomProgram;
-    setColor(m_oldColor);
-    setOpacity(m_oldOpacity);
-    setCompositionMode(m_oldCompostionMode);
-    setClipRect(m_oldClipRect);
-
-    m_oldCustomProgram = nullptr;
-    m_oldColor = Color::white;
-    m_oldOpacity = 1;
-    m_oldCompostionMode = CompositionMode_Normal;
-    m_oldClipRect = Rect();
 }

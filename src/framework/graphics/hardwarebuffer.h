@@ -40,7 +40,7 @@ public:
         DynamicDraw         = GL_DYNAMIC_DRAW
     };
 
-    HardwareBuffer(Type type  ) {
+    HardwareBuffer(Type type) {
         m_type = type;
         m_id = 0;
         glGenBuffers(1, &m_id);
@@ -53,7 +53,6 @@ public:
     void bind() { glBindBuffer(m_type, m_id); }
     static void unbind(Type type) { glBindBuffer(type, 0); }
     void write(void *data, int count, UsagePattern usage) { glBufferData(m_type, count, data, usage); }
-    //void read(void *data, int count);
 
 private:
     Type m_type;

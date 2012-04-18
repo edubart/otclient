@@ -24,7 +24,6 @@
 #define PAINTER_H
 
 #include "declarations.h"
-#include <framework/util/databuffer.h>
 #include "coordsbuffer.h"
 #include "paintershaderprogram.h"
 #include "texture.h"
@@ -39,58 +38,90 @@ public:
         CompositionMode_Replace,
         CompositionMode_DestBlending
     };
+    enum DrawMode {
+        Triangles = GL_TRIANGLES,
+        TriangleStrip = GL_TRIANGLE_STRIP
+    };
 
-    void init();
-    void terminate();
+    struct PainterState {
+        Matrix3 projectionMatrix;
+        Matrix2 textureMatrix;
+        Color color;
+        float opacity;
+        Painter::CompositionMode compositionMode;
+        Rect clipRect;
+        Texture *texture;
+        PainterShaderProgram *shaderProgram;
+    };
 
-    void drawProgram(PainterShaderProgram *program, CoordsBuffer& coordsBuffer, PainterShaderProgram::DrawMode drawMode = PainterShaderProgram::Triangles);
-    void drawTextureCoords(CoordsBuffer& coordsBuffer, const TexturePtr& texture);
-    void drawTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src);
-    void drawTexturedRect(const Rect& dest, const TexturePtr& texture) { drawTexturedRect(dest, texture, Rect(Point(0,0), texture->getSize())); }
-    void drawRepeatedTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src);
-    void drawFilledRect(const Rect& dest);
-    void drawBoundingRect(const Rect& dest, int innerLineWidth = 1);
+    Painter();
+    virtual ~Painter() { }
 
-    void setColor(const Color& color) { m_color = color; }
-    Color getColor() { return m_color; }
+    virtual void bind() { refreshState(); }
+    virtual void unbind() { }
 
-    void setOpacity(float opacity) { m_opacity = opacity; }
-    float getOpacity() { return m_opacity; }
-
-    void setClipRect(const Rect& clipRect);
-    Rect getClipRect() { return m_clipRect; }
-    void resetClipRect() { setClipRect(Rect()); }
-
-    void setCustomProgram(const PainterShaderProgramPtr& program) { m_customProgram = program.get(); }
-    void releaseCustomProgram() { m_customProgram = nullptr; }
-    void setCompositionMode(CompositionMode compositionMode);
-    void resetCompositionMode() { setCompositionMode(CompositionMode_Normal); }
-
-    void setProjectionMatrix(const Matrix3& projectionMatrix) { m_projectionMatrix = projectionMatrix; }
-    Matrix3 getProjectionMatrix() { return m_projectionMatrix; }
-
+    void resetState();
+    virtual void refreshState();
     void saveAndResetState();
     void restoreSavedState();
 
-private:
-    PainterShaderProgramPtr m_drawTexturedProgram;
-    PainterShaderProgramPtr m_drawSolidColorProgram;
-    PainterShaderProgram *m_customProgram;
+    virtual void drawCoords(CoordsBuffer& coordsBuffer, DrawMode drawMode = Triangles) = 0;
+    virtual void drawTextureCoords(CoordsBuffer& coordsBuffer, const TexturePtr& texture) = 0;
+    virtual void drawTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src) = 0;
+    void drawTexturedRect(const Rect& dest, const TexturePtr& texture) { drawTexturedRect(dest, texture, Rect(Point(0,0), texture->getSize())); }
+    virtual void drawRepeatedTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src) = 0;
+    virtual void drawFilledRect(const Rect& dest) = 0;
+    virtual void drawBoundingRect(const Rect& dest, int innerLineWidth = 1) = 0;
+
+    virtual void setProjectionMatrix(const Matrix3& projectionMatrix) { m_projectionMatrix = projectionMatrix; }
+    virtual void setTextureMatrix(const Matrix2& textureMatrix) { m_textureMatrix = textureMatrix; }
+    virtual void setColor(const Color& color) { m_color = color; }
+    virtual void setOpacity(float opacity) { m_opacity = opacity; }
+    virtual void setCompositionMode(CompositionMode compositionMode);
+    virtual void setClipRect(const Rect& clipRect);
+    virtual void setShaderProgram(PainterShaderProgram *shaderProgram) { m_shaderProgram = shaderProgram; }
+    virtual void setTexture(Texture *texture);
+
+    void setShaderProgram(const PainterShaderProgramPtr& shaderProgram) { setShaderProgram(shaderProgram.get()); }
+    void setTexture(const TexturePtr& texture) { setTexture(texture.get()); }
+
+    Matrix3 getProjectionMatrix() { return m_projectionMatrix; }
+    Matrix2 getTextureMatrix() { return m_textureMatrix; }
+    Color getColor() { return m_color; }
+    float getOpacity() { return m_opacity; }
+    CompositionMode getCompositionMode() { return m_compositionMode; }
+    Rect getClipRect() { return m_clipRect; }
+    PainterShaderProgram *getShaderProgram() { return m_shaderProgram; }
+
+    void resetColor() { setColor(Color::white); }
+    void resetOpacity() { setOpacity(1.0f); }
+    void resetClipRect() { setClipRect(Rect()); }
+    void resetCompositionMode() { setCompositionMode(CompositionMode_Normal); }
+    void resetShaderProgram() { setShaderProgram(nullptr); }
+    void resetTexture() { setTexture(nullptr); }
+
+protected:
+    void updateGlTexture();
+    void updateGlCompositionMode();
+    void updateGlClipRect();
+
+    CoordsBuffer m_coordsBuffer;
+
     Matrix3 m_projectionMatrix;
+    Matrix2 m_textureMatrix;
     Color m_color;
     float m_opacity;
-    CompositionMode m_compostionMode;
-    CoordsBuffer m_coordsBuffer;
+    CompositionMode m_compositionMode;
     Rect m_clipRect;
+    Texture *m_texture;
+    PainterShaderProgram *m_shaderProgram;
 
-    PainterShaderProgram *m_oldCustomProgram;
-    Matrix3 m_oldProjectionMatrix;
-    Color m_oldColor;
-    float m_oldOpacity;
-    Rect m_oldClipRect;
-    CompositionMode m_oldCompostionMode;
+    PainterState m_olderStates[10];
+    int m_oldStateIndex;
+
+    GLuint m_glTextureId;
 };
 
-extern Painter g_painter;
+extern Painter *g_painter;
 
 #endif

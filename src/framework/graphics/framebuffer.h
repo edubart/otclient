@@ -50,7 +50,6 @@ private:
 
     TexturePtr m_texture;
     TexturePtr m_screenBackup;
-    Matrix3 m_oldProjectionMatrix;
     Size m_oldViewportSize;
     uint m_fbo;
     uint m_prevBoundFbo;

@@ -137,7 +137,7 @@ TexturePtr SpriteManager::loadSpriteTexture(int id)
     TexturePtr spriteTex(new Texture(32, 32, 4, &pixels[0]));
     spriteTex->setSmooth(true);
 
-    if(g_graphics.canGenerateMipmaps())
+    if(g_graphics.canUseMipmaps())
         spriteTex->generateSoftwareMipmaps(pixels);
 
     return spriteTex;

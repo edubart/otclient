@@ -20,41 +20,29 @@
  * THE SOFTWARE.
  */
 
-#ifndef TYPES_H
-#define TYPES_H
 
-#include <stdint.h>
-#include <functional>
+#ifndef PAINTERSHADERMANAGER_H
+#define PAINTERSHADERMANAGER_H
 
-// easy handwriting types
-typedef unsigned char uchar;
-typedef unsigned short ushort;
-typedef unsigned int uint;
-typedef unsigned long ulong;
-typedef uint64_t uint64;
-typedef uint32_t uint32;
-typedef uint16_t uint16;
-typedef uint8_t uint8;
-typedef int64_t int64;
-typedef int32_t int32;
-typedef int16_t int16;
-typedef int8_t int8;
+#include "paintershaderprogram.h"
 
-// note that on 32 bit platforms the max ticks will overflow for values above 2,147,483,647
-// thus this means that the app may cause unknown behavior after running 24 days without restarting
-typedef long ticks_t;
+class PainterShaderManager
+{
+public:
+    void init();
+    void terminate();
 
-typedef std::function<void()> SimpleCallback;
+    PainterShaderProgramPtr createShader();
+    PainterShaderProgramPtr createTexturedFragmentShader(const std::string& shaderFile);
 
-// boolean with default value initializer
-template<bool def>
-struct Boolean {
-    Boolean() : v(def) { }
-    operator bool &() { return v; }
-    operator bool const &() const { return v; }
-    bool& operator=(const bool& o) { v = o; return v; }
+    const PainterShaderProgramPtr& getDrawTexturedProgram() { return m_drawTexturedProgram; }
+    const PainterShaderProgramPtr& getDrawSolidColorProgram() { return m_drawSolidColorProgram; }
+
 private:
-    bool v;
+    PainterShaderProgramPtr m_drawTexturedProgram;
+    PainterShaderProgramPtr m_drawSolidColorProgram;
 };
+
+extern PainterShaderManager g_shaders;
 
 #endif

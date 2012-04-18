@@ -20,41 +20,38 @@
  * THE SOFTWARE.
  */
 
-#ifndef TYPES_H
-#define TYPES_H
+#ifndef PAINTEROGL2_H
+#define PAINTEROGL2_H
 
-#include <stdint.h>
-#include <functional>
+#include "painter.h"
 
-// easy handwriting types
-typedef unsigned char uchar;
-typedef unsigned short ushort;
-typedef unsigned int uint;
-typedef unsigned long ulong;
-typedef uint64_t uint64;
-typedef uint32_t uint32;
-typedef uint16_t uint16;
-typedef uint8_t uint8;
-typedef int64_t int64;
-typedef int32_t int32;
-typedef int16_t int16;
-typedef int8_t int8;
+/**
+ * Painter using OpenGL 2.0 programmable rendering pipeline,
+ * compatible with OpenGL ES 2.0. Only recent cards support
+ * this painter engine.
+ */
+class PainterOGL2 : public Painter
+{
+public:
+    PainterOGL2();
+    ~PainterOGL2();
 
-// note that on 32 bit platforms the max ticks will overflow for values above 2,147,483,647
-// thus this means that the app may cause unknown behavior after running 24 days without restarting
-typedef long ticks_t;
+    void bind();
+    void unbind();
 
-typedef std::function<void()> SimpleCallback;
+    void drawCoords(CoordsBuffer& coordsBuffer, DrawMode drawMode = Triangles);
+    void drawTextureCoords(CoordsBuffer& coordsBuffer, const TexturePtr& texture);
+    void drawTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src);
+    void drawRepeatedTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src);
+    void drawFilledRect(const Rect& dest);
+    void drawBoundingRect(const Rect& dest, int innerLineWidth = 1);
 
-// boolean with default value initializer
-template<bool def>
-struct Boolean {
-    Boolean() : v(def) { }
-    operator bool &() { return v; }
-    operator bool const &() const { return v; }
-    bool& operator=(const bool& o) { v = o; return v; }
+    void setDrawProgram(PainterShaderProgram *drawProgram) { m_drawProgram = drawProgram; }
+
 private:
-    bool v;
+    PainterShaderProgram *m_drawProgram;
 };
+
+extern PainterOGL2 *g_painterOGL2;
 
 #endif

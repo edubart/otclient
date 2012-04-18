@@ -41,12 +41,12 @@ void UIItem::drawSelf()
         dest += (1 - scaleFactor)*32;
         dest += m_item->getDisplacement() * scaleFactor;
 
-        g_painter.setColor(Color::white);
+        g_painter->setColor(Color::white);
         m_item->draw(dest, scaleFactor, true);
 
         if(m_font && m_item->isStackable() && m_item->getCount() > 1) {
             std::string count = Fw::tostring(m_item->getCount());
-            g_painter.setColor(Color(231, 231, 231));
+            g_painter->setColor(Color(231, 231, 231));
             m_font->drawText(count, Rect(m_rect.topLeft(), m_rect.bottomRight() - Point(3, 0)), Fw::AlignBottomRight);
         }
         //m_font->drawText(Fw::tostring(m_item->getId()), m_rect, Fw::AlignBottomRight);

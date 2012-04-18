@@ -36,15 +36,16 @@ public:
 
     /// Tries to generate mipmaps via hardware, otherwise fallback to software implementation
     void generateMipmaps();
-    /// Generate mipmaps via hardware
-    void generateHardwareMipmaps();
+    /// Generate mipmaps via hardware if supported
+    bool generateHardwareMipmaps();
     /// Generate mipmaps via software, which has a special algorithm for combining alpha pixels
     void generateSoftwareMipmaps(std::vector<uint8> inPixels);
 
-    /// Activate texture altialising
+    /// Activate texture anti-aliasing giving a better look when they are resized
     void setSmooth(bool smooth);
     GLuint getId()  { return m_textureId; }
 
+    /// Return actual texture pixels
     std::vector<uint8> getPixels();
 
     int getWidth() { return m_size.width(); }

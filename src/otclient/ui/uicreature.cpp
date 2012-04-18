@@ -29,7 +29,7 @@ void UICreature::drawSelf()
     UIWidget::drawSelf();
 
     if(m_creature) {
-        g_painter.setColor(Color::white);
+        g_painter->setColor(Color::white);
         Rect drawRect = getClippingRect();
         m_creature->drawOutfit(drawRect, !m_fixedCreatureSize);
     }

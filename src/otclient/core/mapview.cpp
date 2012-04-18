@@ -24,8 +24,7 @@
 
 #include <framework/graphics/graphics.h>
 #include <framework/graphics/framebuffer.h>
-#include <framework/graphics/paintershaderprogram.h>
-#include <framework/graphics/paintershadersources.h>
+#include <framework/graphics/paintershadermanager.h>
 #include "creature.h"
 #include "map.h"
 #include "tile.h"
@@ -33,8 +32,6 @@
 #include "animatedtext.h"
 #include "missile.h"
 #include <framework/core/eventdispatcher.h>
-
-//int AWARE_AREA_UNIFORM = 10;
 
 MapView::MapView()
 {
@@ -47,11 +44,7 @@ MapView::MapView()
     m_framebuffer = FrameBufferPtr(new FrameBuffer());
     setVisibleDimension(Size(15, 11));
 
-    m_shaderProgram = PainterShaderProgramPtr(new PainterShaderProgram);
-    m_shaderProgram->addShaderFromSourceCode(Shader::Vertex, glslMainWithTexCoordsVertexShader + glslPositionOnlyVertexShader);
-    m_shaderProgram->addShaderFromSourceFile(Shader::Fragment, "/game_shaders/map.frag");
-    m_shaderProgram->link();
-    //m_shaderProgram->bindUniformLocation(AWARE_AREA_UNIFORM, "awareArea");
+    m_shaderProgram = g_shaders.createTexturedFragmentShader("/game_shaders/map.frag");
 }
 
 void MapView::draw(const Rect& rect)
@@ -78,16 +71,15 @@ void MapView::draw(const Rect& rect)
 
     Size tileSize = Size(1,1) * m_tileSize;
     if(m_mustDrawVisibleTilesCache || (drawFlags & Otc::DrawAnimations)) {
-        g_painter.saveAndResetState();
         m_framebuffer->bind();
 
         if(m_mustCleanFramebuffer) {
             Rect clearRect = Rect(0, 0, m_drawDimension * m_tileSize);
 
             // drawing a black rect is actually faster than FrameBuffer::clear()
-            g_painter.setColor(Color::black);
-            g_painter.drawFilledRect(clearRect);
-            g_painter.setColor(Color::white);
+            g_painter->setColor(Color::black);
+            g_painter->drawFilledRect(clearRect);
+            g_painter->setColor(Color::white);
 
            // m_framebuffer->clear(Color::black);
         }
@@ -105,8 +97,8 @@ void MapView::draw(const Rect& rect)
                 if(!m_drawMinimapColors)
                     tile->draw(transformPositionTo2D(tile->getPosition()), scaleFactor, drawFlags);
                 else {
-                    g_painter.setColor(tile->getMinimapColor());
-                    g_painter.drawFilledRect(Rect(transformPositionTo2D(tile->getPosition()), tileSize));
+                    g_painter->setColor(tile->getMinimapColor());
+                    g_painter->drawFilledRect(Rect(transformPositionTo2D(tile->getPosition()), tileSize));
                 }
             }
 
@@ -118,7 +110,6 @@ void MapView::draw(const Rect& rect)
         }
 
         m_framebuffer->release();
-        g_painter.restoreSavedState();
 
         // generating mipmaps each frame can be slow in older cards
         //m_framebuffer->getTexture()->generateHardwareMipmaps();
@@ -126,7 +117,7 @@ void MapView::draw(const Rect& rect)
         m_mustDrawVisibleTilesCache = false;
     }
 
-    g_painter.setCustomProgram(m_shaderProgram);
+    //g_painter->setShaderProgram(m_shaderProgram);
 
     Point drawOffset = ((m_drawDimension - m_visibleDimension - Size(1,1)).toPoint()/2) * m_tileSize;
     if(m_followingCreature)
@@ -139,39 +130,20 @@ void MapView::draw(const Rect& rect)
     drawOffset.y += (srcVisible.height() - srcSize.height()) / 2;
     Rect srcRect = Rect(drawOffset, srcSize);
 
-    /*
-    // pass aware area to the shader program
-    Rect awareRect;
-    if(m_followingCreature) {
-        Point awareOffset = transformPositionTo2D(m_followingCreature->getPosition().translated(-Otc::AWARE_X_LEFT_TILES + 1, -Otc::AWARE_Y_TOP_TILES + 1));
-        awareOffset += m_followingCreature->getWalkOffset() * scaleFactor;
-
-        awareRect.setTopLeft(awareOffset);
-        awareRect.resize(Otc::VISIBLE_X_TILES * m_tileSize, Otc::VISIBLE_Y_TILES * m_tileSize);
-    }
-
-    m_shaderProgram->bind();
-    m_shaderProgram->setUniformValue(AWARE_AREA_UNIFORM,
-                                     awareRect.left()/(float)m_framebuffer->getSize().width(),
-                                     awareRect.top()/(float)m_framebuffer->getSize().height(),
-                                     awareRect.right()/(float)m_framebuffer->getSize().width(),
-                                     awareRect.bottom()/(float)m_framebuffer->getSize().height());
-                                     */
-
 #if 0
     // debug source area
-    g_painter.saveAndResetState();
+    g_painter->saveAndResetState();
     m_framebuffer->bind();
-    g_painter.setColor(Color::green);
-    g_painter.drawBoundingRect(srcRect, 2);
+    g_painter->setColor(Color::green);
+    g_painter->drawBoundingRect(srcRect, 2);
     m_framebuffer->release();
-    g_painter.restoreSavedState();
+    g_painter->restoreSavedState();
     m_framebuffer->draw(rect);
 #else
     m_framebuffer->draw(rect, srcRect);
 #endif
 
-    g_painter.releaseCustomProgram();
+    g_painter->resetShaderProgram();
 
     // this could happen if the player position is not known yet
     if(!cameraPosition.isValid())
@@ -231,9 +203,9 @@ void MapView::draw(const Rect& rect)
         Rect hRect(0, 0, 10, 2);
         vRect.moveCenter(rect.center());
         hRect.moveCenter(rect.center());
-        g_painter.setColor(Color::white);
-        g_painter.drawFilledRect(vRect);
-        g_painter.drawFilledRect(hRect);
+        g_painter->setColor(Color::white);
+        g_painter->drawFilledRect(vRect);
+        g_painter->drawFilledRect(hRect);
     }
 }
 

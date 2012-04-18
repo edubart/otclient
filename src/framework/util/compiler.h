@@ -23,7 +23,16 @@
 #ifndef __COMPILER_H__
 #define __COMPILER_H__
 
+#if !(__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6))
+#error "sorry, you need gcc 4.6 or greater to compile"
+#endif
+
+#if !defined(__GXX_EXPERIMENTAL_CXX0X__)
+#error "sorry, you must enable C++0x to compile"
+#endif
+
 // hack to enable std::thread on mingw32 4.6
+/*
 #if !defined(_GLIBCXX_HAS_GTHREADS) && defined(__GNUG__)
 #include <boost/thread/thread.hpp>
 #include <boost/thread/mutex.hpp>
@@ -45,5 +54,6 @@ namespace std {
   using boost::condition_variable_any;
 }
 #endif
+*/
 
 #endif

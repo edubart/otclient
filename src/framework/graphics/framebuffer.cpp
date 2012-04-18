@@ -105,43 +105,44 @@ void FrameBuffer::clear(const Color& color, const Rect& rect)
 {
     bool clip = rect.isValid();
     if(clip)
-        g_painter.setClipRect(Rect(0, 0, m_texture->getSize()));
+        g_painter->setClipRect(Rect(0, 0, m_texture->getSize()));
 
     glClearColor(color.rF(), color.gF(), color.bF(), color.aF());
     glClear(GL_COLOR_BUFFER_BIT);
 
     if(clip)
-        g_painter.resetClipRect();
+        g_painter->resetClipRect();
 }
 
 void FrameBuffer::bind()
 {
     internalBind();
+
     Matrix3 projectionMatrix = { 2.0f/m_texture->getWidth(),  0.0f,                         0.0f,
                                  0.0f,                        2.0f/m_texture->getHeight(),  0.0f,
-                                -1.0f,                       -1.0f,                         0.0f };
+                                -1.0f,                       -1.0f,                         1.0f };
+    g_painter->saveAndResetState();
+    g_painter->setProjectionMatrix(projectionMatrix);
 
-    m_oldProjectionMatrix = g_painter.getProjectionMatrix();
     m_oldViewportSize = g_graphics.getViewportSize();
-    g_painter.setProjectionMatrix(projectionMatrix);
     g_graphics.setViewportSize(m_texture->getSize());
 }
 
 void FrameBuffer::release()
 {
     internalRelease();
-    g_painter.setProjectionMatrix(m_oldProjectionMatrix);
+    g_painter->restoreSavedState();
     g_graphics.setViewportSize(m_oldViewportSize);
 }
 
 void FrameBuffer::draw(const Rect& dest, const Rect& src)
 {
-    g_painter.drawTexturedRect(dest, m_texture, src);
+    g_painter->drawTexturedRect(dest, m_texture, src);
 }
 
 void FrameBuffer::draw(const Rect& dest)
 {
-    g_painter.drawTexturedRect(dest, m_texture, Rect(0,0, getSize()));
+    g_painter->drawTexturedRect(dest, m_texture, Rect(0,0, getSize()));
 }
 
 void FrameBuffer::internalBind()

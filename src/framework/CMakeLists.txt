@@ -189,6 +189,8 @@ SET(framework_SOURCES ${framework_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/graphics/fontmanager.cpp
     ${CMAKE_CURRENT_LIST_DIR}/graphics/graphics.cpp
     ${CMAKE_CURRENT_LIST_DIR}/graphics/painter.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/graphics/painterogl1.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/graphics/painterogl2.cpp
     ${CMAKE_CURRENT_LIST_DIR}/graphics/texture.cpp
     ${CMAKE_CURRENT_LIST_DIR}/graphics/framebuffer.cpp
     ${CMAKE_CURRENT_LIST_DIR}/graphics/animatedtexture.cpp
@@ -201,6 +203,7 @@ SET(framework_SOURCES ${framework_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/graphics/shader.cpp
     ${CMAKE_CURRENT_LIST_DIR}/graphics/shaderprogram.cpp
     ${CMAKE_CURRENT_LIST_DIR}/graphics/paintershaderprogram.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/graphics/paintershadermanager.cpp
     ${CMAKE_CURRENT_LIST_DIR}/graphics/coordsbuffer.cpp
 
     # framework sound

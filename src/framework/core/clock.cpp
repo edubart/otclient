@@ -45,7 +45,6 @@ ticks_t Clock::asyncTicks()
     return std::chrono::duration_cast<std::chrono::milliseconds>(timeNow - m_startupTime).count();
 }
 
-
 void Clock::sleep(int ms)
 {
     usleep(ms * 1000);

@@ -26,18 +26,18 @@
 CoordsBuffer::CoordsBuffer()
 {
     m_hardwareCacheMode = HardwareBuffer::DynamicDraw;
-    m_hardwareVertexBuffer = nullptr;
-    m_hardwareTextureVertexBuffer = nullptr;
+    m_hardwareVertexArray = nullptr;
+    m_hardwareTextureCoordArray = nullptr;
     m_hardwareCached = false;
     m_hardwareCaching = false;
 }
 
 CoordsBuffer::~CoordsBuffer()
 {
-    if(m_hardwareVertexBuffer)
-        delete m_hardwareVertexBuffer;
-    if(m_hardwareTextureVertexBuffer)
-        delete m_hardwareTextureVertexBuffer;
+    if(m_hardwareVertexArray)
+        delete m_hardwareVertexArray;
+    if(m_hardwareTextureCoordArray)
+        delete m_hardwareTextureCoordArray;
 }
 
 void CoordsBuffer::addBoudingRect(const Rect& dest, int innerLineWidth)
@@ -78,8 +78,8 @@ void CoordsBuffer::addRepeatedRects(const Rect& dest, const Rect& src)
             }
 
             partialDest.translate(dest.topLeft());
-            m_vertexBuffer.addRect(partialDest);
-            m_textureVertexBuffer.addRect(partialSrc);
+            m_vertexArray.addRect(partialDest);
+            m_textureCoordArray.addRect(partialSrc);
         }
     }
     m_hardwareCached = false;
@@ -90,10 +90,6 @@ void CoordsBuffer::enableHardwareCaching(HardwareBuffer::UsagePattern usagePatte
     if(!g_graphics.canUseHardwareBuffers())
         return;
 
-#ifndef OPENGL_ES2
-    if(!GL_ARB_vertex_buffer_object)
-        return;
-#endif
     m_hardwareCacheMode = usagePattern;
     m_hardwareCaching = true;
     m_hardwareCached = false;
@@ -104,18 +100,18 @@ void CoordsBuffer::updateCaches()
     if(!m_hardwareCaching || m_hardwareCached)
         return;
 
-    if(m_vertexBuffer.vertexCount() > 0) {
-        if(!m_hardwareVertexBuffer && m_vertexBuffer.vertexCount() > 0)
-            m_hardwareVertexBuffer = new HardwareBuffer(HardwareBuffer::VertexBuffer);
-        m_hardwareVertexBuffer->bind();
-        m_hardwareVertexBuffer->write((void*)m_vertexBuffer.vertices(), m_vertexBuffer.size() * sizeof(float), m_hardwareCacheMode);
+    if(m_vertexArray.vertexCount() > 0) {
+        if(!m_hardwareVertexArray && m_vertexArray.vertexCount() > 0)
+            m_hardwareVertexArray = new HardwareBuffer(HardwareBuffer::VertexBuffer);
+        m_hardwareVertexArray->bind();
+        m_hardwareVertexArray->write((void*)m_vertexArray.vertices(), m_vertexArray.size() * sizeof(float), m_hardwareCacheMode);
     }
 
-    if(m_textureVertexBuffer.vertexCount() > 0) {
-        if(!m_hardwareTextureVertexBuffer && m_textureVertexBuffer.vertexCount() > 0)
-            m_hardwareTextureVertexBuffer = new HardwareBuffer(HardwareBuffer::VertexBuffer);
-        m_hardwareTextureVertexBuffer->bind();
-        m_hardwareTextureVertexBuffer->write((void*)m_textureVertexBuffer.vertices(), m_textureVertexBuffer.size() * sizeof(float), m_hardwareCacheMode);
+    if(m_textureCoordArray.vertexCount() > 0) {
+        if(!m_hardwareTextureCoordArray && m_textureCoordArray.vertexCount() > 0)
+            m_hardwareTextureCoordArray = new HardwareBuffer(HardwareBuffer::VertexBuffer);
+        m_hardwareTextureCoordArray->bind();
+        m_hardwareTextureCoordArray->write((void*)m_textureCoordArray.vertices(), m_textureCoordArray.size() * sizeof(float), m_hardwareCacheMode);
     }
 
     m_hardwareCached = true;

@@ -23,13 +23,7 @@
 #ifndef FRAMEWORK_GLOBAL_H
 #define FRAMEWORK_GLOBAL_H
 
-#if !(__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6))
-#error "sorry, you need gcc 4.6 or greater to compile"
-#endif
-
-#if !defined(__GXX_EXPERIMENTAL_CXX0X__)
-#error "sorry, you must enable C++0x to compile"
-#endif
+#include "util/compiler.h"
 
 // common C/C++ headers
 #include "pch.h"
@@ -38,7 +32,6 @@
 #include "const.h"
 
 // additional utilities
-#include "util/compiler.h"
 #include "util/types.h"
 #include "util/tools.h"
 #include "math/point.h"

@@ -29,35 +29,53 @@
 class Graphics
 {
 public:
+    Graphics();
+
+    enum PainterEngine {
+        Painter_Any,
+        Painter_OpenGL1,
+        Painter_OpenGL2
+    };
+
     void init();
     void terminate();
     bool parseOption(const std::string& option);
 
-    bool canUseFBO() { return m_useFBO; }
-    bool canUseBilinearFiltering() { return m_useBilinearFiltering; }
-    bool canUseHardwareBuffers() { return m_useHardwareBuffers; }
-    bool canGenerateMipmaps() { return m_generateMipmaps; }
-    bool canGenerateHardwareMipmaps() { return m_generateHardwareMipmaps; }
-
+    bool selectPainterEngine(PainterEngine painterEngine);
+    PainterEngine getPainterEngine();
+ 
     void resize(const Size& size);
     void beginRender();
     void endRender();
 
     void setViewportSize(const Size& size);
 
-    int getMaxTextureSize();
+    int getMaxTextureSize() { return m_maxTextureSize; }
     const Size& getViewportSize() { return m_viewportSize; }
     TexturePtr& getEmptyTexture() { return m_emptyTexture; }
+
+    bool canUseDrawArrays();
+    bool canUseShaders();
+    bool canUseFBO();
+    bool canUseBilinearFiltering();
+    bool canUseHardwareBuffers();
+    bool canUseNonPowerOfTwoTextures();
+    bool canUseMipmaps();
+    bool canUseHardwareMipmaps();
 
 private:
     Size m_viewportSize;
     TexturePtr m_emptyTexture;
 
+    int m_maxTextureSize;
+    Boolean<true> m_useDrawArrays;
     Boolean<true> m_useFBO;
     Boolean<true> m_useHardwareBuffers;
     Boolean<true> m_useBilinearFiltering;
-    Boolean<true> m_generateMipmaps;
-    Boolean<true> m_generateHardwareMipmaps;
+    Boolean<true> m_useNonPowerOfTwoTextures;
+    Boolean<true> m_useMipmaps;
+    Boolean<true> m_useHardwareMipmaps;
+    PainterEngine m_prefferedPainterEngine;
 };
 
 extern Graphics g_graphics;

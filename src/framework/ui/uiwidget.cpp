@@ -54,19 +54,19 @@ UIWidget::~UIWidget()
 void UIWidget::draw(const Rect& visibleRect)
 {
     if(m_clipping)
-        g_painter.setClipRect(visibleRect);
+        g_painter->setClipRect(visibleRect);
 
     drawSelf();
 
     if(m_children.size() > 0) {
         if(m_clipping)
-            g_painter.setClipRect(visibleRect.intersection(getClippingRect()));
+            g_painter->setClipRect(visibleRect.intersection(getClippingRect()));
 
         drawChildren(visibleRect);
     }
 
     if(m_clipping)
-        g_painter.resetClipRect();
+        g_painter->resetClipRect();
 }
 
 void UIWidget::drawSelf()
@@ -97,22 +97,22 @@ void UIWidget::drawChildren(const Rect& visibleRect)
             continue;
 
         // store current graphics opacity
-        float oldOpacity = g_painter.getOpacity();
+        float oldOpacity = g_painter->getOpacity();
 
         // decrease to self opacity
         if(child->getOpacity() < oldOpacity)
-            g_painter.setOpacity(child->getOpacity());
+            g_painter->setOpacity(child->getOpacity());
 
         child->draw(childVisibleRect);
 
         // debug draw box
         if(g_ui.isDrawingDebugBoxes()) {
-            g_painter.setColor(Color::green);
-            g_painter.drawBoundingRect(child->getRect());
+            g_painter->setColor(Color::green);
+            g_painter->drawBoundingRect(child->getRect());
         }
         //g_fonts.getDefaultFont()->renderText(child->getId(), child->getPosition() + Point(2, 0), Color::red);
 
-        g_painter.setOpacity(oldOpacity);
+        g_painter->setOpacity(oldOpacity);
     }
 }
 

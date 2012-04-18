@@ -33,23 +33,23 @@ public:
     ~CoordsBuffer();
 
     void clear() {
-        m_textureVertexBuffer.clear();
-        m_vertexBuffer.clear();
+        m_textureCoordArray.clear();
+        m_vertexArray.clear();
         m_hardwareCached = false;
     }
 
     void addRect(const Rect& dest) {
-        m_vertexBuffer.addRect(dest);
+        m_vertexArray.addRect(dest);
         m_hardwareCached = false;
     }
     void addRect(const Rect& dest, const Rect& src) {
-        m_vertexBuffer.addRect(dest);
-        m_textureVertexBuffer.addRect(src);
+        m_vertexArray.addRect(dest);
+        m_textureCoordArray.addRect(src);
         m_hardwareCached = false;
     }
     void addQuad(const Rect& dest, const Rect& src) {
-        m_vertexBuffer.addQuad(dest);
-        m_textureVertexBuffer.addQuad(src);
+        m_vertexArray.addQuad(dest);
+        m_textureCoordArray.addQuad(src);
         m_hardwareCached = false;
     }
 
@@ -60,20 +60,20 @@ public:
     void updateCaches();
     bool isHardwareCached() { return m_hardwareCached; }
 
-    float *getVertexBuffer() const { return m_vertexBuffer.vertices(); }
-    float *getTextureVertexBuffer() const { return m_textureVertexBuffer.vertices(); }
-    int getVertexCount() const { return m_vertexBuffer.vertexCount(); }
-    int getTextureVertexCount() const { return m_textureVertexBuffer.vertexCount(); }
+    float *getVertexArray() const { return m_vertexArray.vertices(); }
+    float *getTextureCoordArray() const { return m_textureCoordArray.vertices(); }
+    int getVertexCount() const { return m_vertexArray.vertexCount(); }
+    int getTextureCoordCount() const { return m_textureCoordArray.vertexCount(); }
 
-    HardwareBuffer *getHardwareVertexBuffer() { return m_hardwareVertexBuffer; }
-    HardwareBuffer *getHardwareTextureVertexBuffer() { return m_hardwareTextureVertexBuffer; }
+    HardwareBuffer *getHardwareVertexArray() { return m_hardwareVertexArray; }
+    HardwareBuffer *getHardwareTextureCoordArray() { return m_hardwareTextureCoordArray; }
 
 private:
-    HardwareBuffer *m_hardwareVertexBuffer;
-    HardwareBuffer *m_hardwareTextureVertexBuffer;
+    HardwareBuffer *m_hardwareVertexArray;
+    HardwareBuffer *m_hardwareTextureCoordArray;
     HardwareBuffer::UsagePattern m_hardwareCacheMode;
-    VertexArray m_vertexBuffer;
-    VertexArray m_textureVertexBuffer;
+    VertexArray m_vertexArray;
+    VertexArray m_textureCoordArray;
     bool m_hardwareCached;
     bool m_hardwareCaching;
 };

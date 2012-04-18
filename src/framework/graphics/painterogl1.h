@@ -20,51 +20,54 @@
  * THE SOFTWARE.
  */
 
-#ifndef PAINTERSHADER_H
-#define PAINTERSHADER_H
+#ifndef PAINTEROGL1_H
+#define PAINTEROGL1_H
 
-#include "shaderprogram.h"
-#include "coordsbuffer.h"
-#include <framework/core/timer.h>
+#include "painter.h"
 
-class PainterShaderProgram : public ShaderProgram
+/**
+ * Painter using OpenGL 1.0 fixed-function rendering pipeline,
+ * compatible with OpenGL ES 1.0 and intended to be used on
+ * older graphics cards. Shaders are not available
+ * for this painter engine.
+ */
+class PainterOGL1 : public Painter
 {
-protected:
-    enum {
-        VERTEX_ATTR = 0,
-        TEXCOORD_ATTR = 1,
-        PROJECTION_MATRIX_UNIFORM = 0,
-        TEXTURE_MATRIX_UNIFORM = 1,
-        COLOR_UNIFORM = 2,
-        OPACITY_UNIFORM = 3,
-        TIME_UNIFORM = 4,
-        TEX0_UNIFORM = 5,
-        TEX1_UNIFORM = 6,
-        //TEX2_UNIFORM = 7,
-        //TEX3_UNIFORM = 8,
+public:
+    enum MatrixMode {
+        MatrixProjection = GL_PROJECTION,
+        MatrixTexture = GL_TEXTURE
     };
 
-    friend class PainterOGL2;
+    PainterOGL1();
 
-public:
-    PainterShaderProgram();
+    void bind();
+    void unbind();
 
-    bool link();
+    void refreshState();
 
+    void drawCoords(CoordsBuffer& coordsBuffer, DrawMode drawMode = Triangles);
+    void drawTextureCoords(CoordsBuffer& coordsBuffer, const TexturePtr& texture);
+    void drawTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src);
+    void drawRepeatedTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src);
+    void drawFilledRect(const Rect& dest);
+    void drawBoundingRect(const Rect& dest, int innerLineWidth);
+
+    void setMatrixMode(MatrixMode matrixMode);
     void setProjectionMatrix(const Matrix3& projectionMatrix);
     void setTextureMatrix(const Matrix2& textureMatrix);
     void setColor(const Color& color);
     void setOpacity(float opacity);
-    void updateTime();
 
 private:
-    float m_startTime;
+    void updateGlColor();
+    void updateGlMatrixMode();
+    void updateGlProjectionMatrix();
+    void updateGlTextureMatrix();
 
-    Color m_color;
-    float m_opacity;
-    Matrix3 m_projectionMatrix;
-    Matrix2 m_textureMatrix;
-    float m_time;
+    GLenum m_matrixMode;
 };
+
+extern PainterOGL1 *g_painterOGL1;
 
 #endif

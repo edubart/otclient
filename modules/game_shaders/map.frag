@@ -5,6 +5,7 @@ uniform sampler2D tex0; // map texture
 varying vec2 texCoord; // map texture coords
 //uniform vec4 awareArea;
 
+
 void main()
 {
     gl_FragColor = texture2D(tex0, texCoord);
@@ -82,5 +83,23 @@ void main()
         color.rgb *= 1 - (min((dist - start)/range, 1.0) * (2.0 - endFactor));
     }
     gl_FragColor = color;
+}
+*/
+/*
+void main()
+{
+   vec4 sum = vec4(0);
+   vec2 texcoord = texCoord;
+   int j;
+   int i;
+
+   for( i= -4 ;i < 4; i++)
+   {
+        for (j = -4; j < 4; j++)
+        {
+            sum += texture2D(tex0, texcoord + vec2(j, i)*0.0025) * 0.0125;
+        }
+   }
+   gl_FragColor = texture2D(tex0, texCoord) + sum;
 }
 */

@@ -40,7 +40,7 @@ void AnimatedText::draw(const Point& dest, const Rect& visibleRect)
 
     if(visibleRect.contains(rect)) {
         //TODO: cache into a framebuffer
-        g_painter.setColor(m_color);
+        g_painter->setColor(m_color);
         m_font->drawText(m_text, rect, Fw::AlignLeft);
     }
 }
