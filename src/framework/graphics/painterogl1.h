@@ -28,7 +28,7 @@
 #include "painter.h"
 
 /**
- * Painter using OpenGL 1.0 fixed-function rendering pipeline,
+ * Painter using OpenGL 1.1 fixed-function rendering pipeline,
  * compatible with OpenGL ES 1.0 and intended to be used on
  * older graphics cards. Shaders are not available
  * for this painter engine.

@@ -24,19 +24,19 @@
 #ifndef GLUTIL_H
 #define GLUTIL_H
 
-#include <GLES2/gl2.h>
 #if OPENGL_ES==2
 #include <GLES2/gl2.h>
 #elif OPENGL_ES==1
+#include <GLES2/gl2.h>
 #include <GLES/gl.h>
 
-// define OpenGL 2.0 API just to make compile, it wont actually be used
+// define OpenGL ES 2.0 API just to make compile, it wont actually be used
 inline void glBindFramebuffer (GLenum target, GLuint framebuffer) { }
 inline void glDeleteFramebuffers (GLsizei n, const GLuint* framebuffers) { }
 inline void glFramebufferTexture2D (GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level) { }
 inline void glGenFramebuffers (GLsizei n, GLuint* framebuffers) { }
 inline void glGenerateMipmap (GLenum target) { }
-inline GLenum GL_APIENTRY glCheckFramebufferStatus (GLenum target) { return GL_NONE; }
+inline GLenum GL_APIENTRY glCheckFramebufferStatus (GLenum target) { return 0; }
 inline GLuint glCreateShader (GLenum type) { return 0; }
 inline void glDeleteShader (GLuint shader) { }
 inline void glCompileShader (GLuint shader) { }
@@ -85,6 +85,8 @@ inline void glVertexAttrib3fv (GLuint indx, const GLfloat* values) { }
 inline void glVertexAttrib4f (GLuint indx, GLfloat x, GLfloat y, GLfloat z, GLfloat w) { }
 inline void glVertexAttrib4fv (GLuint indx, const GLfloat* values) { }
 inline void glVertexAttribPointer (GLuint indx, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const GLvoid* ptr) { }
+inline void glEnableVertexAttribArray (GLuint index) { }
+inline void glDisableVertexAttribArray (GLuint index) { }
 
 #else
 #define GLEW_STATIC

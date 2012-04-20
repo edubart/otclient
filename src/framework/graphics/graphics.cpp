@@ -270,7 +270,12 @@ bool Graphics::canUseBilinearFiltering()
 
 bool Graphics::canUseHardwareBuffers()
 {
-#ifndef OPENGL_ES
+#if OPENGL_ES==2
+    return true;
+#elif OPENGL_ES==1
+    // OpenGL ES 1.1 supports it but OpenGL ES 1.0 not
+    return false;
+#else
     // vertex buffer objects is supported by OpenGL 1.5
     if(!GLEW_ARB_vertex_buffer_object)
         return false;

@@ -45,18 +45,39 @@ Texture::~Texture()
 uint Texture::internalLoadGLTexture(uchar *pixels, int channels, int width, int height)
 {
     m_size.resize(width, height);
-    m_transformMatrix = { 1.0f/width,  0.0f,
-                          0.0f,        1.0f/height };
 
-    // gets max texture size supported by the driver
-    static GLint maxTexSize = -1;
-    if(maxTexSize == -1)
-        glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTexSize);
+    // convert texture pixel data to power of two size, only required for OpenGL 1.5 or older
+    Size glSize;
+    std::vector<uint8> tmp;
+    if(!g_graphics.canUseNonPowerOfTwoTextures()) {
+        int glWidth = 1;
+        while(glWidth < width)
+            glWidth = glWidth << 1;
+
+        int glHeight = 1;
+        while(glHeight < height)
+            glHeight = glHeight << 1;
+
+        if(m_size != glSize && pixels) {
+            tmp.resize(glHeight*glWidth*channels, 0);
+            for(int y=0; y<height; ++y)
+                for(int x=0; x<width; ++x)
+                    for(int i=0; i<channels; ++i)
+                        tmp[y*glWidth*channels+x*channels+i] = pixels[y*width*channels+x*channels+i];
+            pixels = &tmp[0];
+        }
+
+        glSize.resize(glWidth, glHeight);
+    } else
+        glSize = m_size;
+
+    m_transformMatrix = { 1.0f/glSize.width(),  0.0f,
+                          0.0f,                 1.0f/glSize.height() };
 
     // checks texture max size
-    if(width > maxTexSize || height > maxTexSize) {
+    if(std::max(glSize.width(), glSize.height()) > g_graphics.getMaxTextureSize()) {
         logError("loading texture with size ", width, "x", height, " failed, "
-                 "the maximum size allowed by the graphics card is ", maxTexSize, "x", maxTexSize, ",",
+                 "the maximum size allowed by the graphics card is ", g_graphics.getMaxTextureSize(), "x", g_graphics.getMaxTextureSize(), ",",
                  "to prevent crashes the texture will be displayed as a blank texture");
         //TODO: make a workaround, could be bilinear scaling the texture
         return 0;
@@ -87,7 +108,7 @@ uint Texture::internalLoadGLTexture(uchar *pixels, int channels, int width, int 
     }
 
     // load pixels into gl memory
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_size.width(), m_size.height(), 0, format, GL_UNSIGNED_BYTE, pixels);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, glSize.width(), glSize.height(), 0, format, GL_UNSIGNED_BYTE, pixels);
 
     GLint texParam = GL_REPEAT;
     if(g_graphics.canUseClampToEdge())
@@ -104,7 +125,7 @@ uint Texture::internalLoadGLTexture(uchar *pixels, int channels, int width, int 
 void Texture::bind()
 {
     // must reset painter texture state
-    //g_painter->setTexture(this);
+    g_painter->setTexture(this);
     glBindTexture(GL_TEXTURE_2D, m_textureId);
 }
 
