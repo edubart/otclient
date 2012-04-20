@@ -71,7 +71,7 @@ private:
     int m_maxTextureSize;
     Boolean<true> m_useDrawArrays;
     Boolean<true> m_useFBO;
-    Boolean<true> m_useHardwareBuffers;
+    Boolean<false> m_useHardwareBuffers;
     Boolean<true> m_useBilinearFiltering;
     Boolean<true> m_useNonPowerOfTwoTextures;
     Boolean<true> m_useMipmaps;
