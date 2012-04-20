@@ -32,7 +32,7 @@ Texture::Texture()
 Texture::Texture(int width, int height, int channels, uchar *pixels)
 {
     // generate opengl texture
-    m_textureId = internalLoadGLTexture(pixels, channels, width, height);
+    internalLoadGLTexture(pixels, channels, width, height);
 }
 
 Texture::~Texture()
@@ -66,7 +66,8 @@ uint Texture::internalLoadGLTexture(uchar *pixels, int channels, int width, int 
     GLuint id;
     glGenTextures(1, &id);
     assert(id != 0);
-    glBindTexture(GL_TEXTURE_2D, id);
+    m_textureId = id;
+    bind();
 
     // detect pixels GL format
     GLenum format = 0;
@@ -88,13 +89,23 @@ uint Texture::internalLoadGLTexture(uchar *pixels, int channels, int width, int 
     // load pixels into gl memory
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_size.width(), m_size.height(), 0, format, GL_UNSIGNED_BYTE, pixels);
 
-    // disable texture border
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    GLint texParam = GL_REPEAT;
+    if(g_graphics.canUseClampToEdge())
+        texParam = GL_CLAMP_TO_EDGE; // disable texture borders by default
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, texParam);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, texParam);
 
     setupFilters();
 
     return id;
+}
+
+void Texture::bind()
+{
+    // must reset painter texture state
+    //g_painter->setTexture(this);
+    glBindTexture(GL_TEXTURE_2D, m_textureId);
 }
 
 void Texture::generateMipmaps()
@@ -111,11 +122,6 @@ bool Texture::generateHardwareMipmaps()
 {
     if(!g_graphics.canUseHardwareMipmaps())
         return false;
-
-#ifndef OPENGL_ES2
-    if(!GLEW_ARB_framebuffer_object)
-        return false;
-#endif
 
     bind();
 
@@ -139,28 +145,6 @@ void Texture::setSmooth(bool smooth)
     m_smooth = smooth;
     bind();
     setupFilters();
-}
-
-std::vector<uint8> Texture::getPixels()
-{
-    std::vector<uint8> pixels(m_size.area()*4, 0);
-#ifdef OPENGL_ES2
-    // hack to copy pixels from opengl memory in opengl es
-    // NOTE: this can be slow, but its the only way to get pixels from a texture in OpenGL ES
-    FrameBufferPtr fb(new FrameBuffer(m_size));
-    fb->bind();
-    fb->clear(Color::alpha);
-    g_painter->saveAndResetState();
-    g_painter->drawTexturedRect(Rect(0,0,m_size), shared_from_this());
-    glReadPixels(0, 0, m_size.width(), m_size.height(), GL_RGBA, GL_UNSIGNED_BYTE, &pixels[0]);
-    g_painter->restoreSavedState();
-    fb->release();
-#else
-    // copy pixels from opengl memory
-    glBindTexture(GL_TEXTURE_2D, m_textureId);
-    glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, &pixels[0]);
-#endif
-    return pixels;
 }
 
 void Texture::generateSoftwareMipmaps(std::vector<uint8> inPixels)

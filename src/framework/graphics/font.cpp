@@ -23,6 +23,7 @@
 #include "font.h"
 #include "texturemanager.h"
 #include "graphics.h"
+#include "image.h"
 
 #include <framework/otml/otml.h>
 
@@ -42,8 +43,9 @@ void Font::load(const OTMLNodePtr& fontNode)
     if(OTMLNodePtr node = fontNode->get("fixed-glyph-width")) {
         for(int glyph = m_firstGlyph; glyph < 256; ++glyph)
             m_glyphsSize[glyph] = Size(node->value<int>(), m_glyphHeight);
-    } else
-        calculateGlyphsWidthsAutomatically(glyphSize);
+    } else {
+        calculateGlyphsWidthsAutomatically(Image::load(textureFile), glyphSize);
+    }
 
     // new line actually has a size that will be useful in multiline algorithm
     m_glyphsSize[(uchar)'\n'] = Size(1, m_glyphHeight);
@@ -247,10 +249,10 @@ Size Font::calculateTextRectSize(const std::string& text)
     return size;
 }
 
-void Font::calculateGlyphsWidthsAutomatically(const Size& glyphSize)
+void Font::calculateGlyphsWidthsAutomatically(const ImagePtr& image, const Size& glyphSize)
 {
-    int numHorizontalGlyphs = m_texture->getSize().width() / glyphSize.width();
-    auto texturePixels = m_texture->getPixels();
+    int numHorizontalGlyphs = image->getSize().width() / glyphSize.width();
+    auto texturePixels = image->getPixels();
 
     // small AI to auto calculate pixels widths
     for(int glyph = m_firstGlyph; glyph< 256; ++glyph) {
@@ -266,7 +268,7 @@ void Font::calculateGlyphsWidthsAutomatically(const Size& glyphSize)
 
             // check if all vertical pixels are alpha
             for(int y = glyphCoords.top(); y <= glyphCoords.bottom(); ++y) {
-                if(texturePixels[(y * m_texture->getSize().width() * 4) + (x*4) + 3] != 0) {
+                if(texturePixels[(y * image->getSize().width() * 4) + (x*4) + 3] != 0) {
                     columnFilledPixels++;
                     foundAnything = true;
                 }

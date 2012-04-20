@@ -64,7 +64,7 @@ public:
 
 private:
     /// Calculates each font character by inspecting font bitmap
-    void calculateGlyphsWidthsAutomatically(const Size& glyphSize);
+    void calculateGlyphsWidthsAutomatically(const ImagePtr& image, const Size& glyphSize);
 
     std::string m_name;
     int m_glyphHeight;

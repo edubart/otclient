@@ -46,7 +46,7 @@ Shader::~Shader()
 
 bool Shader::compileSourceCode(const std::string& sourceCode)
 {
-#ifndef OPENGL_ES2
+#ifndef OPENGL_ES
     static const char *qualifierDefines =
         "#define lowp\n"
         "#define mediump\n"
@@ -65,7 +65,7 @@ bool Shader::compileSourceCode(const std::string& sourceCode)
     glShaderSource(m_shaderId, 1, &c_source, NULL);
     glCompileShader(m_shaderId);
 
-    int res;
+    int res = GL_FALSE;
     glGetShaderiv(m_shaderId, GL_COMPILE_STATUS, &res);
     return (res == GL_TRUE);
 }
@@ -79,7 +79,7 @@ bool Shader::compileSourceFile(const std::string& sourceFile)
 std::string Shader::log()
 {
     std::string infoLog;
-    GLint infoLogLength;
+    GLint infoLogLength = 0;
     glGetShaderiv(m_shaderId, GL_INFO_LOG_LENGTH, &infoLogLength);
     if(infoLogLength > 1) {
         std::vector<char> buf(infoLogLength);

@@ -23,6 +23,8 @@
 #ifndef PAINTEROGL1_H
 #define PAINTEROGL1_H
 
+#define PAINTER_OGL1
+
 #include "painter.h"
 
 /**
@@ -35,8 +37,8 @@ class PainterOGL1 : public Painter
 {
 public:
     enum MatrixMode {
-        MatrixProjection = GL_PROJECTION,
-        MatrixTexture = GL_TEXTURE
+        MatrixProjection = 0x1701, //GL_PROJECTION
+        MatrixTexture = 0x1702, //GL_TEXTURE
     };
 
     PainterOGL1();
@@ -66,6 +68,7 @@ private:
     void updateGlTextureMatrix();
 
     GLenum m_matrixMode;
+    Boolean<false> m_textureEnabled;
 };
 
 extern PainterOGL1 *g_painterOGL1;

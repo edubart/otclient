@@ -23,6 +23,8 @@
 #ifndef PAINTEROGL2_H
 #define PAINTEROGL2_H
 
+#define PAINTER_OGL2
+
 #include "painter.h"
 
 /**

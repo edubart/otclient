@@ -63,10 +63,13 @@ void PainterOGL1::drawCoords(CoordsBuffer& coordsBuffer, DrawMode drawMode)
         return;
 
     bool textured = coordsBuffer.getTextureCoordCount() != 0;
-    if(textured)
-        glEnable(GL_TEXTURE_2D);
-    else
-        glDisable(GL_TEXTURE_2D);
+    if(textured != m_textureEnabled) {
+        if(textured)
+            glEnable(GL_TEXTURE_2D);
+        else
+            glDisable(GL_TEXTURE_2D);
+        m_textureEnabled = textured;
+    }
 
     // use vertex arrays if possible, much faster
     if(g_graphics.canUseDrawArrays()) {
@@ -95,7 +98,9 @@ void PainterOGL1::drawCoords(CoordsBuffer& coordsBuffer, DrawMode drawMode)
 
         // draw the element in coords buffers
         glDrawArrays(drawMode, 0, vertexCount);
-    } else {
+    }
+#ifndef OPENGL_ES
+    else {
         int verticesSize = vertexCount*2;
         float *vertices = coordsBuffer.getVertexArray();
         float *texCoords = coordsBuffer.getTextureCoordArray();
@@ -111,6 +116,7 @@ void PainterOGL1::drawCoords(CoordsBuffer& coordsBuffer, DrawMode drawMode)
         }
         glEnd();
     }
+#endif
 }
 
 void PainterOGL1::drawTextureCoords(CoordsBuffer& coordsBuffer, const TexturePtr& texture)

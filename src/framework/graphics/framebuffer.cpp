@@ -26,7 +26,6 @@
 #include <framework/platform/platformwindow.h>
 
 uint FrameBuffer::boundFbo = 0;
-std::vector<bool> auxBuffers;
 
 FrameBuffer::FrameBuffer()
 {
@@ -41,42 +40,19 @@ FrameBuffer::FrameBuffer(const Size& size)
 
 void FrameBuffer::internalCreate()
 {
+    m_prevBoundFbo = 0;
+    m_fbo = 0;
     if(g_graphics.canUseFBO()) {
         glGenFramebuffers(1, &m_fbo);
         if(!m_fbo)
             logFatal("Unable to create framebuffer object");
     }
-#ifndef OPENGL_ES2
-    else { // use auxiliar buffers when FBOs are not supported
-        m_fbo = 0;
-        if(auxBuffers.size() == 0) {
-            int maxAuxs = 0;
-            glGetIntegerv(GL_AUX_BUFFERS, &maxAuxs);
-            auxBuffers.resize(maxAuxs+1, false);
-        }
-        for(uint i=1;i<auxBuffers.size();++i) {
-            if(auxBuffers[i] == false) {
-                m_fbo = i;
-                auxBuffers[i] = true;
-                break;
-            }
-        }
-        if(!m_fbo)
-            logFatal("There is no available auxiliar buffer for a new framebuffer, total AUXs: ", auxBuffers.size()-1);
-    }
-#endif
 }
 
 FrameBuffer::~FrameBuffer()
 {
-    if(g_graphics.canUseFBO()) {
+    if(m_fbo != 0)
         glDeleteFramebuffers(1, &m_fbo);
-    }
-#ifndef OPENGL_ES2
-    else {
-        auxBuffers[m_fbo] = false;
-    }
-#endif
 }
 
 void FrameBuffer::resize(const Size& size)
@@ -90,7 +66,7 @@ void FrameBuffer::resize(const Size& size)
     m_texture = TexturePtr(new Texture(size.width(), size.height(), 4));
     m_texture->setSmooth(true);
 
-    if(g_graphics.canUseFBO()) {
+    if(m_fbo) {
         internalBind();
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture->getId(), 0);
 
@@ -98,6 +74,8 @@ void FrameBuffer::resize(const Size& size)
         if(status != GL_FRAMEBUFFER_COMPLETE)
             logFatal("Unable to setup framebuffer object");
         internalRelease();
+    } else {
+        m_screenBackup = TexturePtr(new Texture(size.width(), size.height(), 4));
     }
 }
 
@@ -147,58 +125,43 @@ void FrameBuffer::draw(const Rect& dest)
 
 void FrameBuffer::internalBind()
 {
-    if(boundFbo == m_fbo)
-        return;
-    assert(boundFbo != m_fbo);
-
-    if(g_graphics.canUseFBO()) {
+    if(m_fbo) {
+        assert(boundFbo != m_fbo);
         glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+        m_prevBoundFbo = boundFbo;
+        boundFbo = m_fbo;
+    } else {
+        // backup screen color buffer into a texture
+        m_screenBackup->bind();
+        Size size = getSize();
+        glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, size.width(), size.height());
     }
-#ifndef OPENGL_ES2
-    else {
-        int buffer = GL_AUX0 + m_fbo - 1;
-        glDrawBuffer(buffer);
-        glReadBuffer(buffer);
-    }
-#endif
-
-    m_prevBoundFbo = boundFbo;
-    boundFbo = m_fbo;
 }
 
 void FrameBuffer::internalRelease()
 {
-    assert(boundFbo == m_fbo);
-    if(g_graphics.canUseFBO()) {
+    if(m_fbo) {
+        assert(boundFbo == m_fbo);
         glBindFramebuffer(GL_FRAMEBUFFER, m_prevBoundFbo);
-    }
-#ifndef OPENGL_ES2
-    else {
-        m_texture->bind();
-
+        boundFbo = m_prevBoundFbo;
+    } else {
         Size size = getSize();
+
+        // copy the drawn color buffer into the framebuffer texture
+        m_texture->bind();
         glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, size.width(), size.height());
 
-        int buffer = GL_BACK;
-        if(m_prevBoundFbo != 0)
-            buffer = GL_AUX0 + m_fbo - 1;
-
-        glDrawBuffer(buffer);
-        glReadBuffer(buffer);
+        // restore screen original content
+        g_painter->drawTexturedRect(Rect(0, 0, size), m_screenBackup, Rect(0, 0, size));
     }
-#endif
-
-    boundFbo = m_prevBoundFbo;
 }
 
 Size FrameBuffer::getSize()
 {
-#ifndef OPENGL_ES2
-    if(!g_graphics.canUseFBO()) {
+    if(m_fbo == 0) {
         // the buffer size is limited by the window size
         return Size(std::min(m_texture->getWidth(), g_window.getWidth()),
                     std::min(m_texture->getHeight(), g_window.getHeight()));
     }
-#endif
     return m_texture->getSize();
 }

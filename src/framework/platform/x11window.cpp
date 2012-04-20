@@ -41,14 +41,14 @@ X11Window::X11Window()
     m_wmDelete = 0;
     m_size = Size(600,480);
 
-#ifndef OPENGL_ES2
-    m_fbConfig = 0;
-    m_glxContext = 0;
-#else
+#ifdef OPENGL_ES
     m_eglConfig = 0;
     m_eglContext = 0;
     m_eglDisplay = 0;
     m_eglSurface = 0;
+#else
+    m_fbConfig = 0;
+    m_glxContext = 0;
 #endif
 
     m_keyMap[XK_Escape] = Fw::KeyEscape;
@@ -350,27 +350,43 @@ bool X11Window::internalSetupWindowInput()
 
 void X11Window::internalCheckGL()
 {
-#ifndef OPENGL_ES2
-    if(!glXQueryExtension(m_display, NULL, NULL))
-        logFatal("GLX not supported");
-#else
+#ifdef OPENGL_ES
     m_eglDisplay = eglGetDisplay((EGLNativeDisplayType)m_display);
     if(m_eglDisplay == EGL_NO_DISPLAY)
         logFatal("EGL not supported");
 
     if(!eglInitialize(m_eglDisplay, NULL, NULL))
         logFatal("Unable to initialize EGL");
+#else
+    if(!glXQueryExtension(m_display, NULL, NULL))
+        logFatal("GLX not supported");
 #endif
 }
 
 void X11Window::internalChooseGLVisual()
 {
-#ifndef OPENGL_ES2
+#ifdef OPENGL_ES
+    static int attrList[] = {
+#if OPENGL_ES==2
+        EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+#else
+        EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT,
+#endif
+        EGL_NONE
+    };
+
+    EGLint numConfig;
+    if(!eglChooseConfig(m_eglDisplay, attrList, &m_eglConfig, 1, &numConfig))
+        logFatal("Failed to choose EGL config");
+
+    if(numConfig != 1)
+        logWarning("Didn't got the exact EGL config");
+
+    m_rootWindow = DefaultRootWindow(m_display);
+#else
     static int attrList[] = {
         GLX_RENDER_TYPE, GLX_RGBA_BIT,
         GLX_DOUBLEBUFFER, True,
-        //GLX_DEPTH_SIZE, 24,
-        //GLX_STENCIL_SIZE, 8,
         None
     };
 
@@ -384,67 +400,38 @@ void X11Window::internalChooseGLVisual()
         logFatal("Couldn't choose RGBA, double buffered visual");
 
     m_rootWindow = RootWindow(m_display, m_visual->screen);
-#else
-    static int attrList[] = {
-        EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-        //EGL_STENCIL_SIZE, 8,
-        EGL_NONE
-    };
-
-    EGLint numConfig;
-    if(!eglChooseConfig(m_eglDisplay, attrList, &m_eglConfig, 1, &numConfig))
-        logFatal("Failed to choose EGL config");
-
-    if(numConfig != 1)
-        logWarning("Didn't got the exact EGL config");
-
-    m_rootWindow = DefaultRootWindow(m_display);
 #endif
 }
 
 void X11Window::internalCreateGLContext()
 {
-#ifndef OPENGL_ES2
-#ifdef DEBUG_OPENGL
-    typedef GLXContext (*GLXCREATECONTEXTATTRIBSARBPROC)(Display*, GLXFBConfig, GLXContext, Bool, const int*);
-    GLXCREATECONTEXTATTRIBSARBPROC glXCreateContextAttribsARB = NULL;
-    glXCreateContextAttribsARB = (GLXCREATECONTEXTATTRIBSARBPROC)glXGetProcAddress((const GLubyte*) "glXCreateContextAttribsARB");
-    if(glXCreateContextAttribsARB) {
-        int attrs[] = {
-            GLX_CONTEXT_FLAGS_ARB, GLX_CONTEXT_DEBUG_BIT_ARB,
-            None
-        };
-        m_glxContext = glXCreateContextAttribsARB(m_display, *m_fbConfig, NULL, True, attrs);
-    } else
-#endif
-        m_glxContext = glXCreateContext(m_display, m_visual, NULL, True);
-
-    if(!m_glxContext)
-        logFatal("Unable to create GLX context");
-
-    if(!glXIsDirect(m_display, m_glxContext))
-        logWarning("GL direct rendering is not possible");
-#else
+#ifdef OPENGL_ES
     EGLint attrList[] = {
+#if OPENGL_ES==2
         EGL_CONTEXT_CLIENT_VERSION, 2,
+#else
+        EGL_CONTEXT_CLIENT_VERSION, 1,
+#endif
         EGL_NONE
     };
 
     m_eglContext = eglCreateContext(m_eglDisplay, m_eglConfig, EGL_NO_CONTEXT, attrList);
     if(m_eglContext == EGL_NO_CONTEXT )
         logFatal("Unable to create EGL context: ", eglGetError());
+#else
+    m_glxContext = glXCreateContext(m_display, m_visual, NULL, True);
+
+    if(!m_glxContext)
+        logFatal("Unable to create GLX context");
+
+    if(!glXIsDirect(m_display, m_glxContext))
+        logWarning("GL direct rendering is not possible");
 #endif
 }
 
 void X11Window::internalDestroyGLContext()
 {
-#ifndef OPENGL_ES2
-    if(m_glxContext) {
-        glXMakeCurrent(m_display, None, NULL);
-        glXDestroyContext(m_display, m_glxContext);
-        m_glxContext = 0;
-    }
-#else
+#ifdef OPENGL_ES
     if(m_eglDisplay) {
         if(m_eglContext) {
             eglDestroyContext(m_eglDisplay, m_eglContext);
@@ -457,41 +444,48 @@ void X11Window::internalDestroyGLContext()
         eglTerminate(m_eglDisplay);
         m_eglDisplay = 0;
     }
+#else
+    if(m_glxContext) {
+        glXMakeCurrent(m_display, None, NULL);
+        glXDestroyContext(m_display, m_glxContext);
+        m_glxContext = 0;
+    }
 #endif
 }
 
 void X11Window::internalConnectGLContext()
 {
-#ifndef OPENGL_ES2
-    if(!glXMakeCurrent(m_display, m_window, m_glxContext))
-        logFatal("Unable to set GLX context on X11 window");
-#else
+#ifdef OPENGL_ES
     m_eglSurface = eglCreateWindowSurface(m_eglDisplay, m_eglConfig, m_window, NULL);
     if(m_eglSurface == EGL_NO_SURFACE)
         logFatal("Unable to create EGL surface: ", eglGetError());
     if(!eglMakeCurrent(m_eglDisplay, m_eglSurface, m_eglSurface, m_eglContext))
         logFatal("Unable to connect EGL context into X11 window");
+#else
+    if(!glXMakeCurrent(m_display, m_window, m_glxContext))
+        logFatal("Unable to set GLX context on X11 window");
 #endif
 }
 
 void *X11Window::getExtensionProcAddress(const char *ext)
 {
-#ifndef OPENGL_ES2
-    return (void *)glXGetProcAddressARB((const GLubyte*)ext);
-#else
+#ifdef OPENGL_ES
     //TODO
     return NULL;
+#else
+    return (void *)glXGetProcAddressARB((const GLubyte*)ext);
 #endif
 }
 
 bool X11Window::isExtensionSupported(const char *ext)
 {
-#ifndef OPENGL_ES2
+#ifdef OPENGL_ES
+    //TODO
+    return false;
+#else
     const char *exts = glXQueryExtensionsString(m_display, m_screen);
     if(strstr(exts, ext))
         return true;
-#else
-    //TODO
 #endif
     return false;
 }
@@ -805,23 +799,11 @@ void X11Window::poll()
 
 void X11Window::swapBuffers()
 {
-#if 0
-    auto now = std::chrono::high_resolution_clock::now();
-    auto gpuStart = now;
-    static decltype(now) cpuStart;
-    int cpu = std::chrono::duration_cast<std::chrono::nanoseconds>(now - cpuStart).count();
-#endif
-#ifndef OPENGL_ES2
+#ifdef OPENGL_ES
+    eglSwapBuffers(m_eglDisplay, m_eglSurface);
+#else
     glFinish();
     glXSwapBuffers(m_display, m_window);
-#else
-    eglSwapBuffers(m_eglDisplay, m_eglSurface);
-#endif
-#if 0
-    now = std::chrono::high_resolution_clock::now();
-    int gpu = std::chrono::duration_cast<std::chrono::nanoseconds>(now - gpuStart).count();
-    cpuStart = now;
-    dump << "cpu" << cpu << "gpu" << gpu;
 #endif
 }
 
@@ -956,7 +938,9 @@ void X11Window::setFullscreen(bool fullscreen)
 
 void X11Window::setVerticalSync(bool enable)
 {
-#ifndef OPENGL_ES2
+#ifdef OPENGL_ES
+    //TODO
+#else
     typedef GLint (*glSwapIntervalProc)(GLint);
     glSwapIntervalProc glSwapInterval = NULL;
 
@@ -967,8 +951,6 @@ void X11Window::setVerticalSync(bool enable)
 
     if(glSwapInterval)
         glSwapInterval(enable ? 1 : 0);
-#else
-    //TODO
 #endif
 }
 
@@ -1059,7 +1041,7 @@ std::string X11Window::getClipboardText()
 
 std::string X11Window::getPlatformType()
 {
-#ifndef OPENGL_ES2
+#ifndef OPENGL_ES
     return "X11-GLX";
 #else
     return "X11-EGL";

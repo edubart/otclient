@@ -7,7 +7,7 @@ INCLUDE(src/otclient/CMakeLists.txt)
 # functions map for reading backtraces
 SET(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -Wl,-Map=otclient.map")
 
-OPTION(USE_PCH "Use precompiled header (speed up compile)" OFF)
+OPTION(PCH "Use precompiled header (speed up compile)" OFF)
 
 SET(executable_SOURCES src/main.cpp)
 
@@ -27,13 +27,13 @@ ADD_EXECUTABLE(otclient ${framework_SOURCES} ${otclient_SOURCES} ${executable_SO
 # target link libraries
 TARGET_LINK_LIBRARIES(otclient ${framework_LIBRARIES})
 
-IF(USE_PCH)
+IF(PCH)
     FIND_PACKAGE(PCHSupport REQUIRED)
     ADD_PRECOMPILED_HEADER(otclient ${CMAKE_CURRENT_SOURCE_DIR}/src/framework/pch.h)
     MESSAGE(STATUS "Use precompiled header: ON")
-ELSEIF(USE_PCH)
+ELSE()
     MESSAGE(STATUS "Use precompiled header: OFF")
-ENDIF(USE_PCH)
+ENDIF()
 
 # installation
 SET(DATA_INSTALL_DIR share/otclient)

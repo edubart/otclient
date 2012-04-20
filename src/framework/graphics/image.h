@@ -20,49 +20,28 @@
  * THE SOFTWARE.
  */
 
-#ifndef TEXTURE_H
-#define TEXTURE_H
+#ifndef IMAGE_H
+#define IMAGE_H
 
 #include "declarations.h"
+#include <framework/util/databuffer.h>
 
-class Texture : public std::enable_shared_from_this<Texture>
+class Image
 {
 public:
-    Texture();
-    Texture(int width, int height, int channels, uchar* pixels = NULL);
-    virtual ~Texture();
+    Image(const Size& size, int bpp, uint8 *pixels);
 
-    void bind();
+    static ImagePtr load(const std::string& file);
+    static ImagePtr loadPNG(const std::string& file);
 
-    /// Tries to generate mipmaps via hardware, otherwise fallback to software implementation
-    void generateMipmaps();
-    /// Generate mipmaps via hardware if supported
-    bool generateHardwareMipmaps();
-    /// Generate mipmaps via software, which has a special algorithm for combining alpha pixels
-    void generateSoftwareMipmaps(std::vector<uint8> inPixels);
-
-    /// Activate texture anti-aliasing giving a better look when they are resized
-    void setSmooth(bool smooth);
-
-    GLuint getId()  { return m_textureId; }
-
-    int getWidth() { return m_size.width(); }
-    int getHeight() { return m_size.height(); }
+    const std::vector<uint8>& getPixels() { return m_pixels; }
     const Size& getSize() { return m_size; }
-    const Matrix2& getTransformMatrix() { return m_transformMatrix; }
+    int getBpp() { return m_bpp; }
 
-    bool isEmpty() { return m_textureId == 0; }
-    bool hasMipmaps() { return m_hasMipmaps; }
-
-protected:
-    void setupFilters();
-    GLuint internalLoadGLTexture(uchar* pixels, int channels, int w, int h);
-
-    GLuint m_textureId;
+private:
+    std::vector<uint8> m_pixels;
     Size m_size;
-    Matrix2 m_transformMatrix;
-    Boolean<false> m_hasMipmaps;
-    Boolean<false> m_smooth;
+    int m_bpp;
 };
 
 #endif

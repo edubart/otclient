@@ -42,7 +42,6 @@ public:
     bool parseOption(const std::string& option);
 
     bool selectPainterEngine(PainterEngine painterEngine);
-    PainterEngine getPainterEngine();
  
     void resize(const Size& size);
     void beginRender();
@@ -53,6 +52,7 @@ public:
     int getMaxTextureSize() { return m_maxTextureSize; }
     const Size& getViewportSize() { return m_viewportSize; }
     TexturePtr& getEmptyTexture() { return m_emptyTexture; }
+    PainterEngine getPainterEngine() { return m_selectedPainterEngine; }
 
     bool canUseDrawArrays();
     bool canUseShaders();
@@ -62,6 +62,7 @@ public:
     bool canUseNonPowerOfTwoTextures();
     bool canUseMipmaps();
     bool canUseHardwareMipmaps();
+    bool canUseClampToEdge();
 
 private:
     Size m_viewportSize;
@@ -75,7 +76,9 @@ private:
     Boolean<true> m_useNonPowerOfTwoTextures;
     Boolean<true> m_useMipmaps;
     Boolean<true> m_useHardwareMipmaps;
+    Boolean<true> m_useClampToEdge;
     PainterEngine m_prefferedPainterEngine;
+    PainterEngine m_selectedPainterEngine;
 };
 
 extern Graphics g_graphics;

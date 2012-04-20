@@ -21,8 +21,15 @@
  */
 
 #include "fontmanager.h"
+
+#if OPENGL_ES==2
+#include "painterogl2.h"
+#elif OPENGL_ES==1
+#include "painterogl1.h"
+#else
 #include "painterogl1.h"
 #include "painterogl2.h"
+#endif
 
 #include <framework/graphics/graphics.h>
 #include <framework/graphics/texture.h>
@@ -30,14 +37,10 @@
 
 Graphics g_graphics;
 
-void oglDebugCallback(unsigned int source, unsigned int type, unsigned int id, unsigned int severity, int length, const char* message, void* userParam)
-{
-    logWarning("OGL: ", message);
-}
-
 Graphics::Graphics()
 {
     m_maxTextureSize = -1;
+    m_selectedPainterEngine = Painter_Any;
 }
 
 void Graphics::init()
@@ -45,17 +48,15 @@ void Graphics::init()
     logInfo("GPU ", glGetString(GL_RENDERER));
     logInfo("OpenGL ", glGetString(GL_VERSION));
 
-
-#ifndef OPENGL_ES2
+#if OPENGL_ES==2
+    g_painterOGL2 = new PainterOGL2;
+#elif OPENGL_ES==1
+    g_painterOGL1 = new PainterOGL1;
+#else
     // init GL extensions
     GLenum err = glewInit();
     if(err != GLEW_OK)
         logFatal("Unable to init GLEW: ", glewGetErrorString(err));
-
-#ifdef DEBUG_OPENGL
-    if(GLEW_ARB_debug_output)
-        glDebugMessageCallbackARB(oglDebugCallback, NULL);
-#endif
 
     // overwrite framebuffer API if needed
     if(GLEW_EXT_framebuffer_object && !GLEW_ARB_framebuffer_object) {
@@ -73,8 +74,6 @@ void Graphics::init()
     // opengl 2 is only supported in newer hardware
     if(GLEW_VERSION_2_0)
         g_painterOGL2 = new PainterOGL2;
-#else
-    g_painterOGL2 = new PainterOGL2;
 #endif
 
     // determine max texture size
@@ -83,9 +82,6 @@ void Graphics::init()
         glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
     if(m_maxTextureSize == -1 || m_maxTextureSize > maxTextureSize)
         m_maxTextureSize = maxTextureSize;
-
-    //glClear(GL_COLOR_BUFFER_BIT);
-    //m_prefferedPainterEngine = Painter_OpenGL1;
 
     selectPainterEngine(m_prefferedPainterEngine);
     m_emptyTexture = TexturePtr(new Texture);
@@ -96,15 +92,19 @@ void Graphics::terminate()
 {
     g_fonts.releaseFonts();
 
-    if(g_painterOGL1) {
-        delete g_painterOGL1;
-        g_painterOGL1 = nullptr;
-    }
-
+#ifdef PAINTER_OGL2
     if(g_painterOGL2) {
         delete g_painterOGL2;
         g_painterOGL2 = nullptr;
     }
+#endif
+
+#ifdef PAINTER_OGL1
+    if(g_painterOGL1) {
+        delete g_painterOGL1;
+        g_painterOGL1 = nullptr;
+    }
+#endif
 
     g_painter = nullptr;
 
@@ -127,6 +127,8 @@ bool Graphics::parseOption(const std::string& option)
         m_useHardwareBuffers = false;
     else if(option == "-no-non-power-of-two-textures")
         m_useNonPowerOfTwoTextures = false;
+    else if(option == "-no-clamp-to-edge")
+        m_useClampToEdge = false;
     else if(option == "-opengl1")
         m_prefferedPainterEngine = Painter_OpenGL1;
     else if(option == "-opengl2")
@@ -138,13 +140,26 @@ bool Graphics::parseOption(const std::string& option)
 
 bool Graphics::selectPainterEngine(PainterEngine painterEngine)
 {
+    bool found = false;
+#ifdef PAINTER_OGL2
     // always prefer OpenGL 2 over OpenGL 1
-    if(g_painterOGL2 && (painterEngine == Painter_OpenGL2 || painterEngine == Painter_Any))
+    if(!found && g_painterOGL2 && (painterEngine == Painter_OpenGL2 || painterEngine == Painter_Any)) {
+        m_selectedPainterEngine = Painter_OpenGL2;
         g_painter = g_painterOGL2;
+        found = true;
+    }
+#endif
+
+#ifdef PAINTER_OGL1
     // fallback to OpenGL 1 in older hardwares
-    else if(g_painterOGL1 && (painterEngine == Painter_OpenGL1 || painterEngine == Painter_Any))
+    if(!found && g_painterOGL1 && (painterEngine == Painter_OpenGL1 || painterEngine == Painter_Any)) {
+        m_selectedPainterEngine = Painter_OpenGL1;
         g_painter = g_painterOGL1;
-    else
+        found = true;
+    }
+#endif
+
+    if(!found)
         logFatal("Neither OpenGL 1.0 nor OpenGL 2.0 painter engine is supported by your platform, "
                  "try updating your graphics drivers or your hardware and then run again.");
 
@@ -156,14 +171,6 @@ bool Graphics::selectPainterEngine(PainterEngine painterEngine)
     if(painterEngine == Painter_Any)
         return true;
     return getPainterEngine() == painterEngine;
-}
-
-Graphics::PainterEngine Graphics::getPainterEngine()
-{
-    if(g_painter == g_painterOGL2)
-        return Painter_OpenGL2;
-    else
-        return Painter_OpenGL1;
 }
 
 void Graphics::resize(const Size& size)
@@ -187,11 +194,15 @@ void Graphics::resize(const Size& size)
                                  0.0f,              -2.0f/size.height(),   0.0f,
                                 -1.0f,               1.0f,                 1.0f };
 
+#ifdef PAINTER_OGL1
     if(g_painterOGL1)
         g_painterOGL1->setProjectionMatrix(projectionMatrix);
+#endif
 
+#ifdef PAINTER_OGL2
     if(g_painterOGL2)
         g_painterOGL2->setProjectionMatrix(projectionMatrix);
+#endif
 }
 
 void Graphics::beginRender()
@@ -212,43 +223,55 @@ void Graphics::setViewportSize(const Size& size)
 
 bool Graphics::canUseDrawArrays()
 {
-#ifndef OPENGL_ES2
+#ifdef OPENGL_ES
+    return true;
+#else
+    // glDrawArrays is supported by OpenGL 1.1
     if(!GLEW_VERSION_1_1)
         return false;
-#else
-    return false;
-#endif
     return m_useDrawArrays;
+#endif
 }
 
 bool Graphics::canUseShaders()
 {
-#ifndef OPENGL_ES2
+#if OPENGL_ES==2
+    return true;
+#elif OPENGL_ES==1
+    return false;
+#else
+    // fragment and vertex programs are supported by OpenGL 2.0
     if(GLEW_ARB_vertex_program && GLEW_ARB_vertex_shader && GLEW_ARB_fragment_shader)
         return true;
-#else
-    return true;
-#endif
     return false;
+#endif
 }
 
 bool Graphics::canUseFBO()
 {
-#ifndef OPENGL_ES2
+#if OPENGL_ES==2
+    return m_useFBO;
+#elif OPENGL_ES==1
+    return false;
+#else
+    // FBOs are supported by OpenGL 3.0
+    // or by OpenGL 2.0 with EXT_framebuffer_object (most of the OpenGL 2.0 implementations have this extension)
     if(!GLEW_ARB_framebuffer_object || !GLEW_EXT_framebuffer_object)
         return false;
-#endif
     return m_useFBO;
+#endif
 }
 
 bool Graphics::canUseBilinearFiltering()
 {
+    // bilinear filtering is supported by any OpenGL implementation
     return m_useBilinearFiltering;
 }
 
 bool Graphics::canUseHardwareBuffers()
 {
-#ifndef OPENGL_ES2
+#ifndef OPENGL_ES
+    // vertex buffer objects is supported by OpenGL 1.5
     if(!GLEW_ARB_vertex_buffer_object)
         return false;
 #endif
@@ -257,24 +280,46 @@ bool Graphics::canUseHardwareBuffers()
 
 bool Graphics::canUseNonPowerOfTwoTextures()
 {
-#ifndef OPENGL_ES2
+#if OPENGL_ES==2
+    return m_useNonPowerOfTwoTextures;
+#elif OPENGL_ES==1
+    return false;
+#else
+    // power of two textures is supported by OpenGL 2.0
     if(!GLEW_ARB_texture_non_power_of_two)
         return false;
-#endif
     return m_useNonPowerOfTwoTextures;
+#endif
 }
 
 bool Graphics::canUseMipmaps()
 {
+    // mipmaps is supported by any OpenGL implementation
     return m_useMipmaps;
 }
 
 bool Graphics::canUseHardwareMipmaps()
 {
-#ifndef OPENGL_ES2
-    // glGenerateMipmap is supported when framebuffers are too
+#if OPENGL_ES==2
+    return m_useHardwareMipmaps;
+#elif OPENGL_ES==1
+    return false;
+#else
+    // glGenerateMipmap is supported when FBOs are
     if(!GLEW_ARB_framebuffer_object || !GLEW_EXT_framebuffer_object)
         return false;
-#endif
     return m_useHardwareMipmaps;
+#endif
+}
+
+bool Graphics::canUseClampToEdge()
+{
+#ifdef OPENGL_ES
+    return m_useClampToEdge;
+#else
+    // GL_CLAMP_TO_EDGE is present in OpenGL 1.2
+    if(!GLEW_VERSION_1_2)
+        return false;
+    return m_useClampToEdge;
+#endif
 }

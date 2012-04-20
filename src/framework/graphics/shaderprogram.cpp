@@ -87,7 +87,7 @@ bool ShaderProgram::link()
 
     glLinkProgram(m_programId);
 
-    GLint value;
+    GLint value = GL_FALSE;
     glGetProgramiv(m_programId, GL_LINK_STATUS, &value);
     m_linked = (value != GL_FALSE);
 
@@ -118,7 +118,7 @@ void ShaderProgram::release()
 std::string ShaderProgram::log()
 {
     std::string infoLog;
-    GLint infoLogLength;
+    GLint infoLogLength = 0;
     glGetProgramiv(m_programId, GL_INFO_LOG_LENGTH, &infoLogLength);
     if(infoLogLength > 1) {
         std::vector<char> buf(infoLogLength);

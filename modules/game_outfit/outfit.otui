@@ -23,7 +23,7 @@ Window
     anchors.top: outfitName.bottom
     anchors.left: outfitName.left
     margin-top: 5
-    padding: 16 4 4 16
+    padding: 4 4 4 4
     fixed-creature-size: true
 
   Panel

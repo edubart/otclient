@@ -184,27 +184,33 @@ void Creature::internalDrawOutfit(const Point& dest, float scaleFactor, bool ani
 
 void Creature::drawOutfit(const Rect& destRect, bool resize)
 {
-    static FrameBufferPtr outfitBuffer;
-    if(!outfitBuffer)
-        outfitBuffer = FrameBufferPtr(new FrameBuffer(Size(2*Otc::TILE_PIXELS, 2*Otc::TILE_PIXELS)));
+    if(g_graphics.canUseFBO()) {
+        static FrameBufferPtr outfitBuffer;
+        if(!outfitBuffer)
+            outfitBuffer = FrameBufferPtr(new FrameBuffer(Size(2*Otc::TILE_PIXELS, 2*Otc::TILE_PIXELS)));
 
-    g_painter->saveAndResetState();
-    outfitBuffer->bind();
-    outfitBuffer->clear(Color::alpha);
-    internalDrawOutfit(Point(Otc::TILE_PIXELS,Otc::TILE_PIXELS) + getDisplacement(), 1, false, true, Otc::South);
-    outfitBuffer->release();
-    g_painter->restoreSavedState();
+        g_painter->saveAndResetState();
+        outfitBuffer->bind();
+        outfitBuffer->clear(Color::alpha);
+        internalDrawOutfit(Point(Otc::TILE_PIXELS,Otc::TILE_PIXELS) + getDisplacement(), 1, false, true, Otc::South);
+        outfitBuffer->release();
+        g_painter->restoreSavedState();
 
-    if(resize) {
         Rect srcRect;
-        srcRect.resize(getExactSize(), getExactSize());
-        srcRect.moveBottomRight(Point(2*Otc::TILE_PIXELS, 2*Otc::TILE_PIXELS));
+        if(resize)
+            srcRect.resize(getExactSize(), getExactSize());
+        else
+            srcRect.resize(2*Otc::TILE_PIXELS*0.75f, 2*Otc::TILE_PIXELS*0.75f);
+        srcRect.moveBottomRight(Point(2*Otc::TILE_PIXELS - 1, 2*Otc::TILE_PIXELS - 1));
         outfitBuffer->draw(destRect, srcRect);
     } else {
-        Rect dest = destRect;
-        dest.expandTop(Otc::TILE_PIXELS);
-        dest.expandLeft(Otc::TILE_PIXELS);
-        outfitBuffer->draw(dest);
+        float scaleFactor;
+        if(resize)
+            scaleFactor = destRect.width() / (float)getExactSize();
+        else
+            scaleFactor = destRect.width() / (float)(2*Otc::TILE_PIXELS*0.75f);
+        Point dest = destRect.bottomRight() - (Point(Otc::TILE_PIXELS,Otc::TILE_PIXELS) - getDisplacement())*scaleFactor;
+        internalDrawOutfit(dest, scaleFactor, false, true, Otc::South);
     }
 }
 

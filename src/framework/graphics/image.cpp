@@ -20,40 +20,45 @@
  * THE SOFTWARE.
  */
 
-#ifndef FRAMEWORK_GRAPHICS_DECLARATIONS_H
-#define FRAMEWORK_GRAPHICS_DECLARATIONS_H
 
-#include <framework/global.h>
-#include "glutil.h"
+#include "image.h"
 
-class Texture;
-class Image;
-class AnimatedTexture;
-class Font;
-class FrameBuffer;
-class Shader;
-class ShaderProgram;
-class PainterShaderProgram;
-class Particle;
-class ParticleEmitter;
-class ParticleAffector;
-class ParticleSystem;
+#include <framework/core/resourcemanager.h>
+#include <framework/thirdparty/apngloader.h>
 
-typedef std::weak_ptr<Texture> TextureWeakPtr;
-typedef std::weak_ptr<ParticleSystem> ParticleSystemWeakPtr;
+Image::Image(const Size& size, int bpp, uint8 *pixels)
+{
+    m_size = size;
+    m_bpp = bpp;
+    m_pixels.resize(size.area() * bpp);
+    memcpy(&m_pixels[0], pixels, m_pixels.size());
+}
 
-typedef std::shared_ptr<Image> ImagePtr;
-typedef std::shared_ptr<Texture> TexturePtr;
-typedef std::shared_ptr<AnimatedTexture> AnimatedTexturePtr;
-typedef std::shared_ptr<Font> FontPtr;
-typedef std::shared_ptr<FrameBuffer> FrameBufferPtr;
-typedef std::shared_ptr<Shader> ShaderPtr;
-typedef std::shared_ptr<ShaderProgram> ShaderProgramPtr;
-typedef std::shared_ptr<PainterShaderProgram> PainterShaderProgramPtr;
-typedef std::shared_ptr<Particle> ParticlePtr;
-typedef std::shared_ptr<ParticleEmitter> ParticleEmitterPtr;
-typedef std::shared_ptr<ParticleAffector> ParticleAffectorPtr;
-typedef std::shared_ptr<ParticleSystem> ParticleSystemPtr;
-typedef std::vector<ShaderPtr> ShaderList;
+ImagePtr Image::load(const std::string& file)
+{
+    ImagePtr image;
+    try {
+        // currently only png images are supported
+        if(!boost::ends_with(file, ".png"))
+            Fw::throwException("image file format no supported");
 
-#endif
+        // load image file data
+        image = loadPNG(file);
+    } catch(Exception& e) {
+        logError("unable to load image '", file, "': ", e.what());
+    }
+    return image;
+}
+
+ImagePtr Image::loadPNG(const std::string& file)
+{
+    std::stringstream fin;
+    g_resources.loadFile(file, fin);
+    ImagePtr image;
+    apng_data apng;
+    if(load_apng(fin, &apng) == 0) {
+        image = ImagePtr(new Image(Size(apng.width, apng.height), apng.bpp, apng.pdata));
+        free_apng(&apng);
+    }
+    return image;
+}
