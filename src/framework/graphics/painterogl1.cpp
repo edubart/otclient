@@ -192,6 +192,9 @@ void PainterOGL1::setProjectionMatrix(const Matrix3& projectionMatrix)
 
 void PainterOGL1::setTextureMatrix(const Matrix2& textureMatrix)
 {
+    // avoid re-updating texture matrix
+    if(m_textureMatrix == textureMatrix)
+        return;
     m_textureMatrix = textureMatrix;
     updateGlTextureMatrix();
 }
