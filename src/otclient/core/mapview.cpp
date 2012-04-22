@@ -155,10 +155,10 @@ void MapView::draw(const Rect& rect)
     // avoid drawing texts on map in far zoom outs
     if(m_viewMode == NEAR_VIEW && m_drawTexts) {
         for(const CreaturePtr& creature : m_cachedFloorVisibleCreatures) {
+            Point creatureOffset = Point(16 - creature->getDisplacementX(), -3 - creature->getDisplacementY());
             Position pos = creature->getPosition();
-
             Point p = transformPositionTo2D(pos) - drawOffset;
-            p += (creature->getDrawOffset() + Point(8, -10)) * scaleFactor;
+            p += (creature->getDrawOffset() + creatureOffset) * scaleFactor;
             p.x = p.x * horizontalStretchFactor;
             p.y = p.y * verticalStretchFactor;
             p += rect.topLeft();
