@@ -802,7 +802,6 @@ void X11Window::swapBuffers()
 #ifdef OPENGL_ES
     eglSwapBuffers(m_eglDisplay, m_eglSurface);
 #else
-    glFinish();
     glXSwapBuffers(m_display, m_window);
 #endif
 }

@@ -213,6 +213,7 @@ void Graphics::beginRender()
 
 void Graphics::endRender()
 {
+    glFlush();
 }
 
 void Graphics::setViewportSize(const Size& size)
