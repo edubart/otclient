@@ -52,6 +52,7 @@ local currentMessageIndex = 0
 local MaxHistory = 1000
 local channelsWindow
 local MAX_LINES = 100
+local ownPrivateName
 
 -- private functions
 local function navigateMessageHistory(step)
@@ -108,11 +109,12 @@ local function onOpenChannel(channelId, channelName)
   Console.addChannel(channelName, channelId)
 end
 
-local function onOpenPrivateChannel(receiver)
-  local privateTab = Console.getTab(receiver)
+local function onOpenPrivateChannel(channelId, channelName)
+  local privateTab = Console.getTab(channelName)
   if privateTab == nil then
-    Console.addTab(receiver, true)
+    Console.addChannel(channelName, channelId, true)
   end
+  ownPrivateName = channelName
 end
 
 local function onCloseChannel(channelId)
@@ -121,7 +123,7 @@ local function onCloseChannel(channelId)
     local tab = Console.getTab(channel)
     if tab then
       consoleTabBar:removeTab(tab)
-    end
+    end    
   end
 end
 
@@ -133,7 +135,11 @@ local function doChannelListSubmit()
   else
     local selectedChannelLabel = channelListPanel:getFocusedChild()
     if not selectedChannelLabel then return end
-    g_game.joinChannel(selectedChannelLabel.channelId)
+    if selectedChannelLabel.channelId == 0xFFFF then
+      g_game.openOwnChannel()
+    else
+      g_game.joinChannel(selectedChannelLabel.channelId)
+    end
   end
 
   channelsWindow:destroy()
@@ -169,7 +175,7 @@ function Console.init()
   connect(g_game, { onCreatureSpeak = onCreatureSpeak,
                     onChannelList = onChannelList,
                     onOpenChannel = onOpenChannel,
-                    onOpenPrivateChannel = onOpenPrivateChannel,
+                    onOpenOwnPrivateChannel = onOpenPrivateChannel,
                     onCloseChannel = onCloseChannel,
                     onGameEnd = Console.clear })
 
@@ -203,7 +209,7 @@ function Console.terminate()
   disconnect(g_game, { onCreatureSpeak = onCreatureSpeak,
                        onChannelList = onChannelList,
                        onOpenChannel = onOpenChannel,
-                       onOpenPrivateChannel = onOpenPrivateChannel,
+                       onOpenOwnPrivateChannel = onOpenPrivateChannel,
                        onCloseChannel = onCloseChannel,
                        onGameEnd = Console.clear })
 
@@ -229,6 +235,8 @@ function Console.terminate()
   consoleTabBar = nil
 
   Console = nil
+  
+  ownPrivateName = nil
 end
 
 function Console.clear()
@@ -446,4 +454,9 @@ function Console.sayModeChange(sayMode)
 
   buttom:setIcon(SayModes[sayMode].icon)
   buttom.sayMode = sayMode
+end
+
+function Console.getOwnPrivateTab()
+  if not ownPrivateName then return end
+  return Console.getTab(ownPrivateName)
 end
