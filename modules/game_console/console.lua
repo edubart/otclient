@@ -148,7 +148,7 @@ local function onChannelList(channelList)
     local channelId = v[1]
     local channelName = v[2]
 
-    if channelId ~= 0 and #channelName > 0 then
+    if #channelName > 0 then
       local label = createWidget('ChannelListLabel', channelListPanel)
       label.channelId = channelId
       label:setText(channelName)

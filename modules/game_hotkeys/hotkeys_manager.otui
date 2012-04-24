@@ -22,13 +22,22 @@ MainWindow
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: parent.top
-
+    
+  VerticalScrollBar
+    id: currentHotkeysScrollBar
+    height: 150
+    anchors.top: parent.top
+    anchors.right: parent.right
+    step: 14
+    pixels-scroll: true
+    
   TextList
     id: currentHotkeys
+    vertical-scrollbar: currentHotkeysScrollBar    
     anchors.left: parent.left
-    anchors.right: parent.right
-    anchors.top: prev.bottom
-    height: 150
+    anchors.right: prev.left
+    anchors.top: prev.top
+    anchors.bottom: prev.bottom
     margin-top: 2
     padding: 1
     focusable: false

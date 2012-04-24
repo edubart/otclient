@@ -286,7 +286,7 @@ end
 function HotkeysManager.call(keyCombo)
   if g_game.isOnline() then
     local hotKey = hotkeyList[keyCombo]
-    if hotKey.itemId == nil and hotKey.value ~= '' then
+    if hotKey ~= nil and hotKey.itemId == nil and hotKey.value ~= '' then
       if hotKey.autoSend then
         g_game.talk(hotKey.value)
       else
