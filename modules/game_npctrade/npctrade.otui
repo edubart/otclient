@@ -85,7 +85,7 @@ MainWindow
     anchors.left: parent.left
     anchors.top: prev.bottom
     text-auto-resize: true
-    margin-top: 5
+    margin-top: 7
     margin-left: 2
     
   TextEdit
@@ -93,6 +93,7 @@ MainWindow
     width: 200
     anchors.left: prev.right
     anchors.top: prev.top
+    margin-top: -2
     margin-left: 5
     @onTextChange: NPCTrade.refreshFilters()
     
@@ -136,7 +137,7 @@ MainWindow
   
     Label
       id: quantityLabel
-      text: Quantity
+      text: Quantity:
       anchors.left: parent.left
       anchors.top: parent.top
       text-auto-resize: true
@@ -160,60 +161,60 @@ MainWindow
 
     Label
       id: nameLabel
-      text: Name
+      text: Name:
       anchors.left: parent.left
       anchors.top: prev.bottom
-      text-auto-resize: true
       margin-top: 5
       margin-left: 2
+      width: 64
       
     NPCOfferLabel
       id: name
 
     Label
       id: priceLabel
-      text: Price
+      text: Price:
       anchors.left: parent.left
       anchors.top: prev.bottom
-      text-auto-resize: true
       margin-top: 5
       margin-left: 2
+      width: 64
       
     NPCOfferLabel
       id: price
       
     Label
       id: moneyLabel
-      text: Money
+      text: Money:
       anchors.left: parent.left
       anchors.top: prev.bottom
-      text-auto-resize: true
       margin-top: 5
-      margin-left: 2   
+      margin-left: 2
+      width: 64
       
     NPCOfferLabel
       id: money
       
     Label
       id: weightLabel
-      text: Weight
+      text: Weight:
       anchors.left: parent.left
       anchors.top: prev.bottom
-      text-auto-resize: true
       margin-top: 5
       margin-left: 2
+      width: 64
       
     NPCOfferLabel
       id: weight
   
     Label
       id: capacityLabel
-      text: Capacity
+      text: Capacity:
       anchors.left: parent.left
       anchors.top: prev.bottom
-      text-auto-resize: true
       margin-top: 5
       margin-left: 2
+      width: 64
       
     NPCOfferLabel
       id: capacity
@@ -232,3 +233,4 @@ MainWindow
     anchors.right: parent.right
     anchors.bottom: parent.bottom
     @onClick: NPCTrade.hide()
+
