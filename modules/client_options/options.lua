@@ -24,6 +24,7 @@ function Options.init()
   end
 
   Keyboard.bindKeyDown('Ctrl+P', Options.toggle)
+  Keyboard.bindKeyDown('Ctrl+F', function() Options.toggleOption('fullscreen') end)
 
   optionsWindow = displayUI('options.otui')
   optionsWindow:hide()
@@ -64,6 +65,10 @@ end
 
 function Options.openWebpage()
   displayErrorBox("Error", "Not implemented yet")
+end
+
+function Options.toggleOption(key)
+  Options.setOption(key, not Options.getOption(key))
 end
 
 function Options.setOption(key, value)

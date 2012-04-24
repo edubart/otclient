@@ -202,6 +202,7 @@ function Console.init()
   Keyboard.bindKeyPress('Tab', function() consoleTabBar:selectNextTab() end, consolePanel)
   Keyboard.bindKeyPress('Shift+Tab', function() consoleTabBar:selectPrevTab() end, consolePanel)
   Keyboard.bindKeyDown('Enter', Console.sendCurrentMessage, consolePanel)
+  Keyboard.bindKeyPress('Ctrl+A', function() consoleTextEdit:clearText() end, consolePanel)
 
   -- apply buttom functions after loaded
   consolePanel:getChildById('nextChannelButton').onClick = function() consoleTabBar:selectNextTab() end

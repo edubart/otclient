@@ -51,6 +51,7 @@ function GameInterface.init()
   Keyboard.bindKeyPress('Escape', function() g_game.cancelAttackAndFollow() end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
   Keyboard.bindKeyPress('Ctrl+=', function() gameMapPanel:zoomIn() end, gameRootPanel, 250)
   Keyboard.bindKeyPress('Ctrl+-', function() gameMapPanel:zoomOut() end, gameRootPanel, 250)
+  Keyboard.bindKeyDown('Ctrl+Q', GameInterface.tryLogout, gameRootPanel)
 
   if g_game.isOnline() then
     GameInterface.show()
