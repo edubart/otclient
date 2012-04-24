@@ -76,6 +76,9 @@ void Graphics::init()
         g_painterOGL2 = new PainterOGL2;
 #endif
 
+    // blending is always enabled
+    glEnable(GL_BLEND);
+
     // determine max texture size
     static GLint maxTextureSize = -1;
     if(maxTextureSize == -1)
@@ -213,7 +216,6 @@ void Graphics::beginRender()
 
 void Graphics::endRender()
 {
-    glFlush();
 }
 
 void Graphics::setViewportSize(const Size& size)
