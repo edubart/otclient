@@ -133,10 +133,10 @@ void PainterOGL1::drawTexturedRect(const Rect& dest, const TexturePtr& texture, 
     if(dest.isEmpty() || src.isEmpty() || !texture->getId())
         return;
 
+    setTexture(texture.get());
+
     m_coordsBuffer.clear();
     m_coordsBuffer.addQuad(dest, src);
-
-    setTexture(texture.get());
     drawCoords(m_coordsBuffer, TriangleStrip);
 }
 
@@ -145,10 +145,10 @@ void PainterOGL1::drawRepeatedTexturedRect(const Rect& dest, const TexturePtr& t
     if(dest.isEmpty() || src.isEmpty() || !texture->getId())
         return;
 
+    setTexture(texture.get());
+
     m_coordsBuffer.clear();
     m_coordsBuffer.addRepeatedRects(dest, src);
-
-    setTexture(texture.get());
     drawCoords(m_coordsBuffer);
 }
 
@@ -157,10 +157,10 @@ void PainterOGL1::drawFilledRect(const Rect& dest)
     if(dest.isEmpty())
         return;
 
+    setTexture(nullptr);
+
     m_coordsBuffer.clear();
     m_coordsBuffer.addRect(dest);
-
-    setTexture(nullptr);
     drawCoords(m_coordsBuffer);
 }
 
@@ -169,10 +169,10 @@ void PainterOGL1::drawBoundingRect(const Rect& dest, int innerLineWidth)
     if(dest.isEmpty() || innerLineWidth == 0)
         return;
 
+    setTexture(nullptr);
+
     m_coordsBuffer.clear();
     m_coordsBuffer.addBoudingRect(dest, innerLineWidth);
-
-    setTexture(nullptr);
     drawCoords(m_coordsBuffer);
 }
 

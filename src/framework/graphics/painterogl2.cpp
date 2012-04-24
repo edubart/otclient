@@ -113,11 +113,11 @@ void PainterOGL2::drawTexturedRect(const Rect& dest, const TexturePtr& texture, 
     if(dest.isEmpty() || src.isEmpty() || !texture->getId())
         return;
 
-    m_coordsBuffer.clear();
-    m_coordsBuffer.addQuad(dest, src);
-
     setDrawProgram(m_shaderProgram ? m_shaderProgram : g_shaders.getDrawTexturedProgram().get());
     setTexture(texture);
+
+    m_coordsBuffer.clear();
+    m_coordsBuffer.addQuad(dest, src);
     drawCoords(m_coordsBuffer, TriangleStrip);
 }
 
@@ -126,11 +126,11 @@ void PainterOGL2::drawRepeatedTexturedRect(const Rect& dest, const TexturePtr& t
     if(dest.isEmpty() || src.isEmpty() || !texture->getId())
         return;
 
-    m_coordsBuffer.clear();
-    m_coordsBuffer.addRepeatedRects(dest, src);
-
     setDrawProgram(m_shaderProgram ? m_shaderProgram : g_shaders.getDrawTexturedProgram().get());
     setTexture(texture);
+
+    m_coordsBuffer.clear();
+    m_coordsBuffer.addRepeatedRects(dest, src);
     drawCoords(m_coordsBuffer);
 }
 
@@ -139,10 +139,10 @@ void PainterOGL2::drawFilledRect(const Rect& dest)
     if(dest.isEmpty())
         return;
 
+    setDrawProgram(m_shaderProgram ? m_shaderProgram : g_shaders.getDrawSolidColorProgram().get());
+
     m_coordsBuffer.clear();
     m_coordsBuffer.addRect(dest);
-
-    setDrawProgram(m_shaderProgram ? m_shaderProgram : g_shaders.getDrawSolidColorProgram().get());
     drawCoords(m_coordsBuffer);
 }
 
@@ -151,9 +151,9 @@ void PainterOGL2::drawBoundingRect(const Rect& dest, int innerLineWidth)
     if(dest.isEmpty() || innerLineWidth == 0)
         return;
 
+    setDrawProgram(m_shaderProgram ? m_shaderProgram : g_shaders.getDrawSolidColorProgram().get());
+
     m_coordsBuffer.clear();
     m_coordsBuffer.addBoudingRect(dest, innerLineWidth);
-
-    setDrawProgram(m_shaderProgram ? m_shaderProgram : g_shaders.getDrawSolidColorProgram().get());
     drawCoords(m_coordsBuffer);
 }
