@@ -18,7 +18,7 @@ function GameInterface.init()
   gameRootPanel:lower()
 
   mouseGrabberWidget = gameRootPanel:getChildById('mouseGrabber')
-  mouseGrabberWidget.onMouseRelease = GameInterface.onUseWithMouseRelease
+  mouseGrabberWidget.onMouseRelease = GameInterface.onMouseGrabberRelease
 
   gameMapPanel = gameRootPanel:getChildById('gameMapPanel')
   gameRightPanel = gameRootPanel:getChildById('gameRightPanel')
@@ -104,28 +104,54 @@ function GameInterface.tryLogout()
   end
 end
 
-function GameInterface.onUseWithMouseRelease(self, mousePosition, mouseButton)
+function GameInterface.onMouseGrabberRelease(self, mousePosition, mouseButton)
   if GameInterface.selectedThing == nil then return false end
   if mouseButton == MouseLeftButton then
     local clickedWidget = gameRootPanel:recursiveGetChildByPos(mousePosition, false)
     if clickedWidget then
-      if clickedWidget:getClassName() == 'UIMap' then
-        local tile = clickedWidget:getTile(mousePosition)
-        if tile then
-          g_game.useWith(GameInterface.selectedThing, tile:getTopMultiUseThing())
-        end
-      elseif clickedWidget:getClassName() == 'UIItem' and not clickedWidget:isVirtual() then
-        g_game.useWith(GameInterface.selectedThing, clickedWidget:getItem())
+      if GameInterface.selectedType == 'use' then
+        GameInterface.onUseWith(clickedWidget, mousePosition)
+      elseif GameInterface.selectedType == 'trade' then
+        GameInterface.onTradeWith(clickedWidget, mousePosition)
       end
     end
   end
+
   GameInterface.selectedThing = nil
   Mouse.restoreCursor()
   self:ungrabMouse()
   return true
 end
 
+function GameInterface.onUseWith(clickedWidget, mousePosition)
+  if clickedWidget:getClassName() == 'UIMap' then
+    local tile = clickedWidget:getTile(mousePosition)
+    if tile then
+      g_game.useWith(GameInterface.selectedThing, tile:getTopMultiUseThing())
+    elseif clickedWidget:getClassName() == 'UIItem' and not clickedWidget:isVirtual() then
+      g_game.useWith(GameInterface.selectedThing, clickedWidget:getItem())
+    end
+  end
+end
+
+function GameInterface.onTradeWith(clickedWidget, mousePosition)
+  if clickedWidget:getClassName() == 'UIMap' then
+    local tile = clickedWidget:getTile(mousePosition)
+    if tile then
+      g_game.requestTrade(GameInterface.selectedThing, tile:getTopCreature())
+    end
+  end
+end
+
 function GameInterface.startUseWith(thing)
+  GameInterface.selectedType = 'use'
+  GameInterface.selectedThing = thing
+  mouseGrabberWidget:grabMouse()
+  Mouse.setTargetCursor()
+end
+
+function GameInterface.startTradeWith(thing)
+  GameInterface.selectedType = 'trade'
   GameInterface.selectedThing = thing
   mouseGrabberWidget:grabMouse()
   Mouse.setTargetCursor()
@@ -162,7 +188,7 @@ function GameInterface.createThingMenu(menuPosition, lookThing, useThing, creatu
 
   if lookThing and not lookThing:asCreature() and not lookThing:isNotMoveable() and lookThing:isPickupable() then
     menu:addSeparator()
-    menu:addOption('Trade with ...', function() print('trade with') end)
+    menu:addOption('Trade with ...', function() GameInterface.startTradeWith(lookThing) end)
   end
 
   if lookThing then
