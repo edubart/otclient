@@ -416,11 +416,12 @@ void WIN32Window::poll()
 
 Fw::Key WIN32Window::retranslateVirtualKey(WPARAM wParam, LPARAM lParam)
 {
-    if(!(((HIWORD(lParam) >> 8) & 0xFF) & 1)) {
-        // ignore numpad keys when numlock is on
-        if((wParam >= VK_NUMPAD0 && wParam <= VK_NUMPAD9) || wParam == VK_SEPARATOR)
-            return Fw::KeyUnknown;
+    // ignore numpad keys when numlock is on
+    if((wParam >= VK_NUMPAD0 && wParam <= VK_NUMPAD9) || wParam == VK_SEPARATOR)
+        return Fw::KeyUnknown;
 
+    // lParam will have this state when receiving insert,end,down,etc presses from numpad
+    if(!(((HIWORD(lParam) >> 8) & 0xFF) & 1)) {
         // retranslate numpad keys
         switch(wParam) {
             case VK_INSERT:
@@ -475,7 +476,7 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
             if(m_cursor)
                 SetCursor(m_cursor);
             else
-                DefWindowProc(hWnd, uMsg, wParam, lParam);
+                return DefWindowProc(hWnd, uMsg, wParam, lParam);
             break;
         }
         case WM_ACTIVATE: {
@@ -501,6 +502,19 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
         }
         case WM_KEYUP: {
             processKeyUp(retranslateVirtualKey(wParam, lParam));
+            break;
+        }
+        case WM_SYSKEYUP:
+        case WM_SYSKEYDOWN: {
+            // F10 is the shortcut key to enter a windows menu, this is a workaround to get F10 working
+            if(wParam != VK_F10)
+                return DefWindowProc(hWnd, uMsg, wParam, lParam);
+            else {
+                if(uMsg == WM_SYSKEYUP)
+                    processKeyUp(retranslateVirtualKey(wParam, lParam));
+                else
+                    processKeyDown(retranslateVirtualKey(wParam, lParam));
+            }
             break;
         }
         case WM_LBUTTONDOWN: {
