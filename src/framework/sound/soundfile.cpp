@@ -37,6 +37,9 @@ SoundFilePtr SoundFile::loadSoundFile(const std::string& filename)
         return nullptr;
     }
 
+    // cache file buffer to avoid lags from hard drive
+    file->cache();
+
     char magic[4];
     file->read(magic, 4);
     file->seek(0);

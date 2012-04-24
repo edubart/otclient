@@ -28,6 +28,9 @@
 
 class CoordsBuffer
 {
+    enum {
+        CACHE_MIN_VERTICES_COUNT = 48
+    };
 public:
     CoordsBuffer();
     ~CoordsBuffer();

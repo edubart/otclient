@@ -62,7 +62,12 @@ void PainterOGL1::drawCoords(CoordsBuffer& coordsBuffer, DrawMode drawMode)
     if(vertexCount == 0)
         return;
 
-    bool textured = coordsBuffer.getTextureCoordCount() != 0;
+    bool textured = coordsBuffer.getTextureCoordCount() != 0 && m_texture;
+
+    // skip drawing of empty textures
+    if(textured && m_texture->isEmpty())
+        return;
+
     if(textured != m_textureEnabled) {
         if(textured)
             glEnable(GL_TEXTURE_2D);
@@ -121,7 +126,7 @@ void PainterOGL1::drawCoords(CoordsBuffer& coordsBuffer, DrawMode drawMode)
 
 void PainterOGL1::drawTextureCoords(CoordsBuffer& coordsBuffer, const TexturePtr& texture)
 {
-    if(!texture->getId())
+    if(texture->isEmpty())
         return;
 
     setTexture(texture.get());
@@ -130,7 +135,7 @@ void PainterOGL1::drawTextureCoords(CoordsBuffer& coordsBuffer, const TexturePtr
 
 void PainterOGL1::drawTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src)
 {
-    if(dest.isEmpty() || src.isEmpty() || !texture->getId())
+    if(dest.isEmpty() || src.isEmpty() || texture->isEmpty())
         return;
 
     setTexture(texture.get());
@@ -142,7 +147,7 @@ void PainterOGL1::drawTexturedRect(const Rect& dest, const TexturePtr& texture, 
 
 void PainterOGL1::drawRepeatedTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src)
 {
-    if(dest.isEmpty() || src.isEmpty() || !texture->getId())
+    if(dest.isEmpty() || src.isEmpty() || texture->isEmpty())
         return;
 
     setTexture(texture.get());

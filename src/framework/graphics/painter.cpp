@@ -104,25 +104,27 @@ void Painter::setTexture(Texture* texture)
 
     m_texture = texture;
 
+    GLuint glTextureId;
     if(texture) {
         setTextureMatrix(texture->getTransformMatrix());
+        glTextureId = texture->getId();
+    } else
+        glTextureId = 0;
 
-        GLuint glTextureId = texture->getId();
-        if(glTextureId != m_glTextureId) {
-            m_glTextureId = glTextureId;
-            updateGlTexture();
-        }
+    if(m_glTextureId != glTextureId) {
+        m_glTextureId = glTextureId;
+        updateGlTexture();
     }
 }
 
 void Painter::updateGlTexture()
 {
-    glBindTexture(GL_TEXTURE_2D, m_glTextureId);
+    if(m_glTextureId != 0)
+        glBindTexture(GL_TEXTURE_2D, m_glTextureId);
 }
 
 void Painter::updateGlCompositionMode()
 {
-    glEnable(GL_BLEND);
     switch(m_compositionMode) {
         case CompositionMode_Normal:
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

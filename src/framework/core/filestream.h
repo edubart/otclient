@@ -37,6 +37,7 @@ protected:
 public:
     ~FileStream();
 
+    void cache();
     bool close();
     bool flush();
     bool write(void *buffer, int count);
@@ -60,6 +61,9 @@ public:
 private:
     std::string m_name;
     PHYSFS_File *m_fileHandle;
+
+    std::vector<uint8_t> m_cacheBuffer;
+    uint m_cacheReadPos;
 };
 
 #endif

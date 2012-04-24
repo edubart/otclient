@@ -100,7 +100,13 @@ void CoordsBuffer::updateCaches()
     if(!m_hardwareCaching || m_hardwareCached)
         return;
 
-    if(m_vertexArray.vertexCount() > 0) {
+    int vertexCount = m_vertexArray.vertexCount();
+
+    // there is only performance improvement when caching a lot of vertices
+    if(vertexCount < CACHE_MIN_VERTICES_COUNT)
+        return;
+
+    if(vertexCount > 0) {
         if(!m_hardwareVertexArray && m_vertexArray.vertexCount() > 0)
             m_hardwareVertexArray = new HardwareBuffer(HardwareBuffer::VertexBuffer);
         m_hardwareVertexArray->bind();

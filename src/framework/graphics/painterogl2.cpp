@@ -62,7 +62,11 @@ void PainterOGL2::drawCoords(CoordsBuffer& coordsBuffer, DrawMode drawMode)
     if(vertexCount == 0)
         return;
 
-    bool textured = coordsBuffer.getTextureCoordCount() > 0;
+    bool textured = coordsBuffer.getTextureCoordCount() > 0 && m_texture;
+
+    // skip drawing of empty textures
+    if(textured && m_texture->isEmpty())
+        return;
 
     // update shader with the current painter state
     m_drawProgram->bind();
@@ -100,7 +104,7 @@ void PainterOGL2::drawCoords(CoordsBuffer& coordsBuffer, DrawMode drawMode)
 
 void PainterOGL2::drawTextureCoords(CoordsBuffer& coordsBuffer, const TexturePtr& texture)
 {
-    if(!texture->getId())
+    if(texture->isEmpty())
         return;
 
     setDrawProgram(m_shaderProgram ? m_shaderProgram : g_shaders.getDrawTexturedProgram().get());
@@ -110,7 +114,7 @@ void PainterOGL2::drawTextureCoords(CoordsBuffer& coordsBuffer, const TexturePtr
 
 void PainterOGL2::drawTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src)
 {
-    if(dest.isEmpty() || src.isEmpty() || !texture->getId())
+    if(dest.isEmpty() || src.isEmpty() || texture->isEmpty())
         return;
 
     setDrawProgram(m_shaderProgram ? m_shaderProgram : g_shaders.getDrawTexturedProgram().get());
@@ -123,7 +127,7 @@ void PainterOGL2::drawTexturedRect(const Rect& dest, const TexturePtr& texture, 
 
 void PainterOGL2::drawRepeatedTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src)
 {
-    if(dest.isEmpty() || src.isEmpty() || !texture->getId())
+    if(dest.isEmpty() || src.isEmpty() || texture->isEmpty())
         return;
 
     setDrawProgram(m_shaderProgram ? m_shaderProgram : g_shaders.getDrawTexturedProgram().get());

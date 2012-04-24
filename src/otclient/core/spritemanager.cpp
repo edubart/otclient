@@ -41,6 +41,9 @@ bool SpriteManager::load(const std::string& file)
         if(!m_spritesFile)
             return false;
 
+        // cache file buffer to avoid lags from hard drive
+        m_spritesFile->cache();
+
         m_signature = m_spritesFile->getU32();
         m_spritesCount = m_spritesFile->getU16();
         m_sprites.resize(m_spritesCount);
