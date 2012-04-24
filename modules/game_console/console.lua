@@ -81,6 +81,7 @@ end
 
 -- hooked events
 local function onCreatureSpeak(name, level, speaktype, message, channelId, creaturePos)
+  local defaultMessage = speaktype < 3 and true or false
   speaktype = SpeakTypes[speaktype]
   if speaktype.hideInConsole then return end
 
@@ -89,8 +90,11 @@ local function onCreatureSpeak(name, level, speaktype, message, channelId, creat
   if speaktype.private then
     Console.addPrivateText(message, speaktype, name, false)
   else
-    local channel = channels[channelId]
-
+    local channel = 'Default'
+    if not defaultMessage then
+      channel = channels[channelId]
+    end
+    
     if channel then
       Console.addText(message, speaktype, channel)
     else
@@ -176,7 +180,7 @@ function Console.init()
   consoleTabBar:setContentWidget(consoleContentPanel)
   channels = {}
 
-  Console.addChannel('Default', 0)
+  Console.addTab('Default', true)
   Console.addTab('Server Log', false)
 
   Keyboard.bindKeyPress('Shift+Up', function() navigateMessageHistory(1) end, consolePanel)
@@ -229,13 +233,11 @@ end
 
 function Console.clear()
   for channelid, channelname in pairs(channels) do
-    if channelid ~= 0 then
-      local tab = consoleTabBar:getTab(channelname)
-      consoleTabBar:removeTab(tab)
-    end
+    local tab = consoleTabBar:getTab(channelname)
+    consoleTabBar:removeTab(tab)
   end
+  
   channels = {}
-  channels[0] = 'Default'
 
   consoleTabBar:getTab('Default').tabPanel:getChildById('consoleBuffer'):destroyChildren()
   consoleTabBar:getTab('Server Log').tabPanel:getChildById('consoleBuffer'):destroyChildren()
@@ -400,10 +402,10 @@ function Console.sendCurrentMessage()
     tab = Console.getTab('Default')
     name = 'Default'
   end
+  
   local speaktypedesc
-
-  if tab.channelId and not chatCommandPrivateReady then
-    if tab.channelId == 0 then
+  if (tab.channelId or name == 'Default') and not chatCommandPrivateReady then
+    if name == 'Default' then
       speaktypedesc = chatCommandSayMode or SayModes[consolePanel:getChildById('sayModeButton').sayMode].speakTypeDesc
       if speaktypedesc ~= 'say' then Console.sayModeChange(2) end -- head back to say mode
     else
