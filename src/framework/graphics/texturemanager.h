@@ -28,7 +28,7 @@
 class TextureManager
 {
 public:
-    TexturePtr getTexture(const std::string& textureFile);
+    TexturePtr getTexture(const std::string& fileName);
 
     static TexturePtr loadPNG(std::stringstream& file);
 

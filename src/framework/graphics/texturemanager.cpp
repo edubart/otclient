@@ -29,12 +29,15 @@
 
 TextureManager g_textures;
 
-TexturePtr TextureManager::getTexture(const std::string& textureFile)
+TexturePtr TextureManager::getTexture(const std::string& fileName)
 {
     TexturePtr texture;
 
+    // before must resolve filename to full path
+    std::string filePath = g_resources.resolvePath(fileName);
+
     // check if the texture is already loaded
-    auto it = m_textures.find(textureFile);
+    auto it = m_textures.find(filePath);
     if(it != m_textures.end()) {
         if(it->second.expired())
             m_textures.erase(it);
@@ -46,17 +49,18 @@ TexturePtr TextureManager::getTexture(const std::string& textureFile)
     if(!texture) {
         try {
             // currently only png textures are supported
-            if(!boost::ends_with(textureFile, ".png"))
+            if(!boost::ends_with(filePath, ".png"))
                 Fw::throwException("texture file format no supported");
 
             // load texture file data
             std::stringstream fin;
-            g_resources.loadFile(textureFile, fin);
+            g_resources.loadFile(filePath, fin);
             texture = loadPNG(fin);
         } catch(Exception& e) {
-            logError("unable to load texture '", textureFile, "': ", e.what());
+            logError("unable to load texture '", fileName, "': ", e.what());
             texture = g_graphics.getEmptyTexture();
         }
+        m_textures[filePath] = texture;
     }
 
     return texture;

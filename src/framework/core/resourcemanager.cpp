@@ -68,7 +68,7 @@ bool ResourceManager::addToSearchPath(const std::string& path, bool insertInFron
 
 void ResourceManager::searchAndAddPackages(const std::string& packagesDir, const std::string& packageExt, bool append)
 {
-    auto files = listDirectoryFiles(checkPath(packagesDir));
+    auto files = listDirectoryFiles(resolvePath(packagesDir));
     for(const std::string& file : files) {
         if(boost::ends_with(file, packageExt))
             addToSearchPath(packagesDir + "/" + file, !append);
@@ -77,17 +77,17 @@ void ResourceManager::searchAndAddPackages(const std::string& packagesDir, const
 
 bool ResourceManager::fileExists(const std::string& fileName)
 {
-    return (PHYSFS_exists(checkPath(fileName).c_str()) && !PHYSFS_isDirectory(checkPath(fileName).c_str()));
+    return (PHYSFS_exists(resolvePath(fileName).c_str()) && !PHYSFS_isDirectory(resolvePath(fileName).c_str()));
 }
 
 bool ResourceManager::directoryExists(const std::string& directoryName)
 {
-    return (PHYSFS_isDirectory(checkPath(directoryName).c_str()));
+    return (PHYSFS_isDirectory(resolvePath(directoryName).c_str()));
 }
 
 void ResourceManager::loadFile(const std::string& fileName, std::iostream& out)
 {
-    std::string fullPath = checkPath(fileName);
+    std::string fullPath = resolvePath(fileName);
     out.clear(std::ios::goodbit);
     PHYSFS_file* file = PHYSFS_openRead(fullPath.c_str());
     if(!file) {
@@ -144,7 +144,7 @@ bool ResourceManager::saveFile(const std::string& fileName, const std::string& d
 
 FileStreamPtr ResourceManager::openFile(const std::string& fileName)
 {
-    std::string fullPath = checkPath(fileName);
+    std::string fullPath = resolvePath(fileName);
     PHYSFS_File* file = PHYSFS_openRead(fullPath.c_str());
     if(!file) {
         logTraceError("unable to open file '", fullPath, "': ", PHYSFS_getLastError());
@@ -175,13 +175,13 @@ FileStreamPtr ResourceManager::createFile(const std::string& fileName)
 
 bool ResourceManager::deleteFile(const std::string& fileName)
 {
-    return PHYSFS_delete(checkPath(fileName).c_str()) != 0;
+    return PHYSFS_delete(resolvePath(fileName).c_str()) != 0;
 }
 
 std::list<std::string> ResourceManager::listDirectoryFiles(const std::string& directoryPath)
 {
     std::list<std::string> files;
-    auto rc = PHYSFS_enumerateFiles(checkPath(directoryPath).c_str());
+    auto rc = PHYSFS_enumerateFiles(resolvePath(directoryPath).c_str());
 
     for(int i = 0; rc[i] != NULL; i++)
         files.push_back(rc[i]);
@@ -190,7 +190,7 @@ std::list<std::string> ResourceManager::listDirectoryFiles(const std::string& di
     return files;
 }
 
-std::string ResourceManager::checkPath(const std::string& path)
+std::string ResourceManager::resolvePath(const std::string& path)
 {
     std::string fullPath;
     if(boost::starts_with(path, "/"))
@@ -203,6 +203,7 @@ std::string ResourceManager::checkPath(const std::string& path)
     }
     if(!(boost::starts_with(fullPath, "/")))
         logTraceWarning("the following file path is not fully resolved: ", path);
+    boost::replace_all(fullPath, "//", "/");
     return fullPath;
 }
 
