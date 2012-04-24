@@ -109,7 +109,14 @@ local function onOpenChannel(channelId, channelName)
   Console.addChannel(channelName, channelId)
 end
 
-local function onOpenPrivateChannel(channelId, channelName)
+local function onOpenPrivateChannel(receiver)
+  local privateTab = Console.getTab(receiver)
+  if privateTab == nil then
+    Console.addTab(receiver)
+  end
+end
+
+local function onOpenOwnPrivateChannel(channelId, channelName)
   local privateTab = Console.getTab(channelName)
   if privateTab == nil then
     Console.addChannel(channelName, channelId, true)
@@ -123,7 +130,7 @@ local function onCloseChannel(channelId)
     local tab = Console.getTab(channel)
     if tab then
       consoleTabBar:removeTab(tab)
-    end    
+    end
   end
 end
 
@@ -175,7 +182,8 @@ function Console.init()
   connect(g_game, { onCreatureSpeak = onCreatureSpeak,
                     onChannelList = onChannelList,
                     onOpenChannel = onOpenChannel,
-                    onOpenOwnPrivateChannel = onOpenPrivateChannel,
+                    onOpenPrivateChannel = onOpenPrivateChannel,
+                    onOpenOwnPrivateChannel = onOpenOwnPrivateChannel,
                     onCloseChannel = onCloseChannel,
                     onGameEnd = Console.clear })
 
@@ -209,6 +217,7 @@ function Console.terminate()
   disconnect(g_game, { onCreatureSpeak = onCreatureSpeak,
                        onChannelList = onChannelList,
                        onOpenChannel = onOpenChannel,
+                       onOpenPrivateChannel = onOpenPrivateChannel,
                        onOpenOwnPrivateChannel = onOpenPrivateChannel,
                        onCloseChannel = onCloseChannel,
                        onGameEnd = Console.clear })
