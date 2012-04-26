@@ -9,6 +9,7 @@ MainWindow
     text: Account name
     anchors.left: parent.left
     anchors.top: parent.top
+    text-auto-resize: true
 
   TextEdit
     id: accountNameTextEdit
@@ -22,6 +23,7 @@ MainWindow
     anchors.left: prev.left
     anchors.top: prev.bottom
     margin-top: 8
+    text-auto-resize: true
 
   PasswordTextEdit
     id: accountPasswordTextEdit
@@ -32,11 +34,11 @@ MainWindow
 
   Label
     id: serverLabel
-    width: 140
     text: Server
     anchors.left: prev.left
     anchors.top: prev.bottom
     margin-top: 8
+    text-auto-resize: true
 
   TextEdit
     id: serverHostTextEdit
@@ -44,25 +46,25 @@ MainWindow
       Make sure that your client uses
       the correct game protocol version
     anchors.left: serverLabel.left
-    anchors.right: serverLabel.right
     anchors.top: serverLabel.bottom
     margin-top: 2
+    width: 140
 
   Label
     id: portLabel
     text: Port
-    width: 50
-    anchors.left: serverLabel.right
+    anchors.left: serverHostTextEdit.right
     anchors.top: serverLabel.top
     margin-left: 10
+    text-auto-resize: true
 
   TextEdit
     id: serverPortTextEdit
     text: 7171
     anchors.left: portLabel.left
-    anchors.right: portLabel.right
     anchors.top: portLabel.bottom
     margin-top: 2
+    width: 55
 
   CheckBox
     id: rememberPasswordBox

@@ -9,6 +9,7 @@ Module
 
   load-later:
     - client_topmenu
+    - client_locales
     - client_background
     //- client_about
     - client_options

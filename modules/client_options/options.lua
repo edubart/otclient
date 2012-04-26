@@ -28,7 +28,7 @@ function Options.init()
 
   optionsWindow = displayUI('options.otui')
   optionsWindow:hide()
-  optionsButton = TopMenu.addLeftButton('optionsButton', 'Options (Ctrl+O)', 'options.png', Options.toggle)
+  optionsButton = TopMenu.addLeftButton('optionsButton', tr('Options') .. ' (Ctrl+O)', 'options.png', Options.toggle)
   optionsTabBar = optionsWindow:getChildById('optionsTabBar')
   optionsTabBar:setContentWidget(optionsWindow:getChildById('optionsTabContent'))
   optionsTabBar:addTab('General', loadUI('general.otui'))
