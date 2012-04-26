@@ -8,14 +8,8 @@ Module
   reloadable: false
 
   @onLoad: |
-    dofile 'ext/table'
-    dofile 'ext/string'
-    dofile 'ext/os'
-
-    dofile 'math/point'
-    dofile 'math/size'
-    dofile 'math/color'
-    dofile 'math/rect'
+    dofiles 'ext'
+    dofiles 'math'
 
     dofile 'const'
     dofile 'util'
@@ -25,23 +19,6 @@ Module
     dofile 'mouse'
     dofile 'string'
 
-    dofile 'ui/effects'
-    dofile 'ui/radiogroup'
-    dofile 'ui/tooltip'
-
-    dofile 'widgets/uiwidget'
-    dofile 'widgets/uibutton'
-    dofile 'widgets/uilabel'
-    dofile 'widgets/uicheckbox'
-    dofile 'widgets/uicombobox'
-    dofile 'widgets/uispinbox'
-    dofile 'widgets/uiprogressbar'
-    dofile 'widgets/uitabbar'
-    dofile 'widgets/uipopupmenu'
-    dofile 'widgets/uiwindow'
-    dofile 'widgets/uimessagebox'
-    dofile 'widgets/uisplitter'
-    dofile 'widgets/uiscrollbar'
-    dofile 'widgets/uiscrollarea'
-    dofile 'widgets/uiresizeborder'
+    dofiles 'ui'
+    dofiles 'widgets'
 

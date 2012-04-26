@@ -536,6 +536,24 @@ int LuaInterface::luaScriptRunner(lua_State* L)
     }
 }
 
+int LuaInterface::luaScriptsRunner(lua_State* L)
+{
+    std::string directory = g_lua.popString();
+
+    for(const std::string& fileName : g_resources.listDirectoryFiles(directory)) {
+        if(!boost::ends_with(fileName, ".lua"))
+            continue;
+
+        try {
+            g_lua.loadScript(directory + "/" + fileName);
+            g_lua.call(0, 0);
+        } catch(LuaException& e) {
+            logError("failed to load script file '", fileName, "' :'", e.what());
+        }
+    }
+    return 0;
+}
+
 int LuaInterface::luaErrorHandler(lua_State* L)
 {
     // pops the error message
@@ -614,6 +632,10 @@ void LuaInterface::createLuaState()
     // replace dofile
     pushCFunction(&LuaInterface::luaScriptRunner);
     setGlobal("dofile");
+
+    // dofiles
+    pushCFunction(&LuaInterface::luaScriptsRunner);
+    setGlobal("dofiles");
 }
 
 void LuaInterface::closeLuaState()

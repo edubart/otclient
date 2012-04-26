@@ -1,3 +1,5 @@
+if not UIWindow then dofile 'uiwindow' end
+
 UIMessageBox = extends(UIWindow)
 
 MessageBoxOk = 1

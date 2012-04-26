@@ -188,6 +188,8 @@ private:
     static int luaScriptLoader(lua_State* L);
     /// Run scripts requested by lua 'dofile'
     static int luaScriptRunner(lua_State* L);
+    /// Run scripts requested by lua 'dofiles'
+    static int luaScriptsRunner(lua_State* L);
     /// Handle lua errors from safeCall
     static int luaErrorHandler(lua_State* L);
     /// Handle bound cpp functions callbacks
