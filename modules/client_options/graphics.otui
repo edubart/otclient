@@ -1,19 +1,19 @@
 Panel
   OptionCheckBox
     id: vsync
-    text: Enable vertical synchronization
-    tooltip: Limits FPS to 60
+    !text: tr('Enable vertical synchronization')
+    !tooltip: tr('Limits FPS to 60')
 
   OptionCheckBox
     id: showfps
-    text: Show frame rate
+    !text: tr('Show frame rate')
 
   OptionCheckBox
     id: fullscreen
-    text: Fullscreen
+    !text: tr('Fullscreen')
 
   Label
-    text: Frame rate limit
+    !text: tr('Frame rate limit')
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: prev.bottom

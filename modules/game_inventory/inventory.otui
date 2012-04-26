@@ -1,6 +1,6 @@
 MiniWindow
   id: inventoryMiniWindow
-  text: Inventory
+  !text: tr('Inventory')
   icon: inventory.png
   height: 180
   @onClose: Inventory.toggle()

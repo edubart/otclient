@@ -32,7 +32,7 @@ SkillPercentPanel < ProgressBar
 
 MiniWindow
   id: skillWindow
-  text: Skills
+  !text: tr('Skills')
   height: 350
   icon: skills.png
   @onClose: Skills.toggle()
@@ -45,13 +45,13 @@ MiniWindow
       id: experience
       height: 15
       SkillNameLabel
-        text: Experience
+        !text: tr('Experience')
       SkillValueLabel
 
     SkillButton
       id: level
       SkillNameLabel
-        text: Level
+        !text: tr('Level')
       SkillValueLabel
       SkillPercentPanel
         background-color: red
@@ -60,41 +60,41 @@ MiniWindow
       id: health
       height: 15
       SkillNameLabel
-        text: Hit Points
+        !text: tr('Hit Points')
       SkillValueLabel
 
     SkillButton
       id: mana
       height: 15
       SkillNameLabel
-        text: Mana
+        !text: tr('Mana')
       SkillValueLabel
 
     SkillButton
       id: soul
       height: 15
       SkillNameLabel
-        text: Soul Points
+        !text: tr('Soul Points')
       SkillValueLabel
 
     SkillButton
       id: capacity
       height: 15
       SkillNameLabel
-        text: Capacity
+        !text: tr('Capacity')
       SkillValueLabel
 
     SkillButton
       id: stamina
       SkillNameLabel
-        text: Stamina
+        !text: tr('Stamina')
       SkillValueLabel
       SkillPercentPanel
 
     SkillButton
       id: magiclevel
       SkillNameLabel
-        text: Magic Level
+        !text: tr('Magic Level')
       SkillValueLabel
       SkillPercentPanel
         background-color: red
@@ -102,14 +102,14 @@ MiniWindow
     SkillButton
       id: skillId0
       SkillNameLabel
-        text: Fist Fighting
+        !text: tr('Fist Fighting')
       SkillValueLabel
       SkillPercentPanel
 
     SkillButton
       id: skillId1
       SkillNameLabel
-        text: Club Fighting
+        !text: tr('Club Fighting')
       SkillValueLabel
       SkillPercentPanel
 
@@ -117,35 +117,35 @@ MiniWindow
       id: skillId2
 
       SkillNameLabel
-        text: Sword Fighting
+        !text: tr('Sword Fighting')
       SkillValueLabel
       SkillPercentPanel
 
     SkillButton
       id: skillId3
       SkillNameLabel
-        text: Axe Fighting
+        !text: tr('Axe Fighting')
       SkillValueLabel
       SkillPercentPanel
 
     SkillButton
       id: skillId4
       SkillNameLabel
-        text: Distance Fighting
+        !text: tr('Distance Fighting')
       SkillValueLabel
       SkillPercentPanel
 
     SkillButton
       id: skillId5
       SkillNameLabel
-        text: Shielding
+        !text: tr('Shielding')
       SkillValueLabel
       SkillPercentPanel
 
     SkillButton
       id: skillId6
       SkillNameLabel
-        text: Fishing
+        !text: tr('Fishing')
       SkillValueLabel
       SkillPercentPanel
 

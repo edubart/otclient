@@ -10,7 +10,7 @@ ChannelListLabel < Label
 
 MainWindow
   id: channelsWindow
-  text: Channels
+  !text: tr('Channels')
   size: 250 238
   @onEscape: self:destroy()
 
@@ -25,7 +25,7 @@ MainWindow
 
   Label
     id: openPrivateChannelWithLabel
-    text: Open a private message channel:
+    !text: tr('Open a private message channel:')
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.bottom: next.top
@@ -41,7 +41,7 @@ MainWindow
 
   Button
     id: buttonOpen
-    text: Open
+    !text: tr('Open')
     width: 64
     anchors.right: next.left
     anchors.bottom: parent.bottom
@@ -50,7 +50,7 @@ MainWindow
 
   Button
     id: buttonCancel
-    text: Cancel
+    !text: tr('Cancel')
     width: 64
     anchors.right: parent.right
     anchors.bottom: parent.bottom

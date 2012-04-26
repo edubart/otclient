@@ -5,7 +5,7 @@ VipListLabel < GameLabel
 
 MiniWindow
   id: vipWindow
-  text: VIP List
+  !text: tr('VIP List')
   height: 100
   icon: viplist.png
   @onClose: VipList.toggle()

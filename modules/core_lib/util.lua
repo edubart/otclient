@@ -1,9 +1,13 @@
 function print(...)
   local msg = ""
-  for i,v in ipairs(arg) do
+  for i,v in ipairs({...}) do
     msg = msg .. tostring(v) .. "\t"
   end
   g_logger.log(LogInfo, msg)
+end
+
+function warning(msg)
+  g_logger.log(LogWarning, msg)
 end
 
 function fatal(msg)

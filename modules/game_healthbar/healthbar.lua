@@ -2,21 +2,21 @@ HealthBar = {}
 
 -- constants
 local Icons = {}
-Icons[1] = { tooltip = 'You are poisoned', path = '/game_healthbar/icons/poisoned.png', id = 'condition_poisoned' }
-Icons[2] = { tooltip = 'You are burning', path = '/game_healthbar/icons/burning.png', id = 'condition_burning' }
-Icons[4] = { tooltip = 'You are electrified', path = '/game_healthbar/icons/electrified.png', id = 'condition_electrified' }
-Icons[8] = { tooltip = 'You are freezing', path = '/game_healthbar/icons/drunk.png', id = 'condition_drunk' }
-Icons[16] = { tooltip = 'You are protected by a magic shield', path = '/game_healthbar/icons/magic_shield.png', id = 'condition_magic_shield' }
-Icons[32] = { tooltip = 'You are paralysed', path = '/game_healthbar/icons/slowed.png', id = 'condition_slowed' }
-Icons[64] = { tooltip = 'You are hasted', path = '/game_healthbar/icons/haste.png', id = 'condition_haste' }
-Icons[128] = { tooltip = 'You may not logout during a fight', path = '/game_healthbar/icons/logout_block.png', id = 'condition_logout_block' }
-Icons[256] = { tooltip = 'You are drowing', path = '/game_healthbar/icons/drowning.png', id = 'condition_drowning' }
-Icons[512] = { tooltip = 'You are freezing', path = '/game_healthbar/icons/freezing.png', id = 'condition_freezing' }
-Icons[1024] = { tooltip = 'You are dazzled', path = '/game_healthbar/icons/dazzled.png', id = 'condition_dazzled' }
-Icons[2048] = { tooltip = 'You are cursed', path = '/game_healthbar/icons/cursed.png', id = 'condition_cursed' }
-Icons[4096] = { tooltip = 'You are strengthened', path = '/game_healthbar/icons/strengthened.png', id = 'condition_strengthened' }
-Icons[8192] = { tooltip = 'You may not logout or enter a protection zone', path = '/game_healthbar/icons/protection_zone_block.png', id = 'condition_protection_zone_block' }
-Icons[16384] = { tooltip = 'You are within a protection zone', path = '/game_healthbar/icons/protection_zone.png', id = 'condition_protection_zone' }
+Icons[1] = { tooltip = tr('You are poisoned'), path = '/game_healthbar/icons/poisoned.png', id = 'condition_poisoned' }
+Icons[2] = { tooltip = tr('You are burning'), path = '/game_healthbar/icons/burning.png', id = 'condition_burning' }
+Icons[4] = { tooltip = tr('You are electrified'), path = '/game_healthbar/icons/electrified.png', id = 'condition_electrified' }
+Icons[8] = { tooltip = tr('You are freezing'), path = '/game_healthbar/icons/drunk.png', id = 'condition_drunk' }
+Icons[16] = { tooltip = tr('You are protected by a magic shield'), path = '/game_healthbar/icons/magic_shield.png', id = 'condition_magic_shield' }
+Icons[32] = { tooltip = tr('You are paralysed'), path = '/game_healthbar/icons/slowed.png', id = 'condition_slowed' }
+Icons[64] = { tooltip = tr('You are hasted'), path = '/game_healthbar/icons/haste.png', id = 'condition_haste' }
+Icons[128] = { tooltip = tr('You may not logout during a fight'), path = '/game_healthbar/icons/logout_block.png', id = 'condition_logout_block' }
+Icons[256] = { tooltip = tr('You are drowing'), path = '/game_healthbar/icons/drowning.png', id = 'condition_drowning' }
+Icons[512] = { tooltip = tr('You are freezing'), path = '/game_healthbar/icons/freezing.png', id = 'condition_freezing' }
+Icons[1024] = { tooltip = tr('You are dazzled'), path = '/game_healthbar/icons/dazzled.png', id = 'condition_dazzled' }
+Icons[2048] = { tooltip = tr('You are cursed'), path = '/game_healthbar/icons/cursed.png', id = 'condition_cursed' }
+Icons[4096] = { tooltip = tr('You are strengthened'), path = '/game_healthbar/icons/strengthened.png', id = 'condition_strengthened' }
+Icons[8192] = { tooltip = tr('You may not logout or enter a protection zone'), path = '/game_healthbar/icons/protection_zone_block.png', id = 'condition_protection_zone_block' }
+Icons[16384] = { tooltip = tr('You are within a protection zone'), path = '/game_healthbar/icons/protection_zone.png', id = 'condition_protection_zone' }
 
 -- private variables
 local healthBarWindow
@@ -34,7 +34,7 @@ function HealthBar.init()
   connect(g_game, { onGameEnd = HealthBar.offline })
 
   healthBarWindow = displayUI('healthbar.otui', GameInterface.getLeftPanel())
-  healthBarButton = TopMenu.addGameToggleButton('healthBarButton', 'Healh Bar', 'healthbar.png', HealthBar.toggle)
+  healthBarButton = TopMenu.addGameToggleButton('healthBarButton', tr('Health Bar'), 'healthbar.png', HealthBar.toggle)
   healthBarButton:setOn(true)
   healthBar = healthBarWindow:recursiveGetChildById('healthBar')
   manaBar = healthBarWindow:recursiveGetChildById('manaBar')

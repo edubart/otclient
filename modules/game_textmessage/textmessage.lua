@@ -5,14 +5,14 @@ importStyle 'textmessage.otui'
 
 -- private variables
 local MessageTypes = {
-  consoleRed      = { color = '#F55E5E', consoleTab = 'Default' },
-  consoleOrange   = { color = '#FE6500', consoleTab = 'Default' },
-  consoleBlue     = { color = '#9F9DFD', consoleTab = 'Default' },
-  warning         = { color = '#F55E5E', consoleTab = 'Server Log', labelId = 'centerWarning', wrap = true },
-  infoDescription = { color = '#00EB00', consoleTab = 'Server Log', labelId = 'centerInfo', consoleOption = 'showInfoMessagesInConsole', wrap = true },
-  eventAdvance    = { color = '#FFFFFF', consoleTab = 'Server Log', labelId = 'centerAdvance', consoleOption = 'showEventMessagesInConsole', wrap = true },
-  eventDefault    = { color = '#FFFFFF', consoleTab = 'Server Log', labelId = 'bottomStatus', consoleOption = 'showEventMessagesInConsole' },
-  statusDefault   = { color = '#FFFFFF', consoleTab = 'Server Log', labelId = 'bottomStatus', consoleOption = 'showStatusMessagesInConsole' },
+  consoleRed      = { color = '#F55E5E', consoleTab = tr('Default') },
+  consoleOrange   = { color = '#FE6500', consoleTab = tr('Default') },
+  consoleBlue     = { color = '#9F9DFD', consoleTab = tr('Default') },
+  warning         = { color = '#F55E5E', consoleTab = tr('Server Log'), labelId = 'centerWarning', wrap = true },
+  infoDescription = { color = '#00EB00', consoleTab = tr('Server Log'), labelId = 'centerInfo', consoleOption = 'showInfoMessagesInConsole', wrap = true },
+  eventAdvance    = { color = '#FFFFFF', consoleTab = tr('Server Log'), labelId = 'centerAdvance', consoleOption = 'showEventMessagesInConsole', wrap = true },
+  eventDefault    = { color = '#FFFFFF', consoleTab = tr('Server Log'), labelId = 'bottomStatus', consoleOption = 'showEventMessagesInConsole' },
+  statusDefault   = { color = '#FFFFFF', consoleTab = tr('Server Log'), labelId = 'bottomStatus', consoleOption = 'showStatusMessagesInConsole' },
   statusSmall     = { color = '#FFFFFF', labelId = 'bottomStatus' },
 }
 

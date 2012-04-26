@@ -38,7 +38,7 @@ BattleParty < BattleIcon
 
 MiniWindow
   id: battleWindow
-  text: Battle
+  !text: tr('Battle')
   height: 166
   icon: battle.png
   @onClose: Battle.toggle()
@@ -46,34 +46,34 @@ MiniWindow
   MiniWindowContents
     BattlePlayers
       id: hidePlayers
-      tooltip: Hide players
+      !tooltip: tr('Hide players')
       anchors.top: parent.top
       anchors.right: next.left
       margin-right: 5
 
     BattleNPCs
       id: hideNPCs
-      tooltip: Hide Npc's
+      !tooltip: tr('Hide Npcs')
       anchors.top: parent.top
       anchors.right: next.left
       margin-right: 5
 
     BattleMonsters
       id: hideMonsters
-      tooltip: Hide monsters
+      !tooltip: tr('Hide monsters')
       anchors.top: parent.top
       anchors.horizontalCenter: parent.horizontalCenter
 
     BattleSkulls
       id: hideSkulls
-      tooltip: Hide non-skull players
+      !tooltip: tr('Hide non-skull players')
       anchors.top: prev.top
       anchors.left: prev.right
       margin-left: 5
 
     BattleParty
       id: hideParty
-      tooltip: Hide party members
+      !tooltip: tr('Hide party members')
       anchors.top: prev.top
       anchors.left: prev.right
       margin-left: 5

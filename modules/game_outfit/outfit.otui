@@ -1,5 +1,5 @@
 Window
-  text: Select Outfit
+  !text: tr('Select Outfit')
   size: 550 280
   padding: 0 0 0 0
 
@@ -11,7 +11,7 @@ Window
 
   Label
     id: outfitName
-    text: Outfit Name
+    !text: tr('Outfit Name')
     width: 100
     anchors.top: parent.top
     anchors.left: parent.left
@@ -43,7 +43,7 @@ Window
 
   ButtonBox
     id: head
-    text: Head
+    !text: tr('Head')
     anchors.top: outfitCreatureBox.top
     anchors.left: outfitCreatureBox.right
     margin-left: 10
@@ -52,21 +52,21 @@ Window
 
   ButtonBox
     id: primary
-    text: Primary
+    !text: tr('Primary')
     anchors.top: prev.bottom
     anchors.left: prev.left
     width: 90
 
   ButtonBox
     id: secondary
-    text: Secondary
+    !text: tr('Secondary')
     anchors.top: prev.bottom
     anchors.left: prev.left
     width: 90
 
   ButtonBox
     id: detail
-    text: Detail
+    !text: tr('Detail')
     anchors.top: prev.bottom
     anchors.left: prev.left
     width: 90
@@ -91,7 +91,7 @@ Window
 
   CheckBox
     id: addon1
-    text: Addon 1
+    !text: tr('Addon 1')
     enabled: false
     margin-top: 6
     width: 100
@@ -100,7 +100,7 @@ Window
 
   CheckBox
     id: addon2
-    text: Addon 2
+    !text: tr('Addon 2')
     enabled: false
     margin-top: 2
     width: 100
@@ -109,7 +109,7 @@ Window
 
   CheckBox
     id: addon3
-    text: Addon 3
+    !text: tr('Addon 3')
     enabled: false
     margin-top: 2
     width: 100
@@ -126,7 +126,7 @@ Window
 
   Button
     id: outfitOkButton
-    text: Ok
+    !text: tr('Ok')
     width: 64
     anchors.right: next.left
     anchors.bottom: parent.bottom
@@ -136,7 +136,7 @@ Window
 
   Button
     id: outfitCancelButton
-    text: Cancel
+    !text: tr('Cancel')
     width: 64
     anchors.right: parent.right
     anchors.bottom: parent.bottom

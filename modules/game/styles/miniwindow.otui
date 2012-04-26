@@ -6,7 +6,6 @@ MiniWindow < UIMiniWindow
   text-offset: 24 5
   text-align: topLeft
   margin-bottom: 2
-  move-policy: free updated
   image-source: /game/images/miniwindow.png
   image-border: 4
   image-border-top: 23

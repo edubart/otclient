@@ -42,7 +42,7 @@ ConditionWidget < UIWidget
 MiniWindow
   icon: healthbar.png
   id: healthBarWindow
-  text: Health Bar
+  !text: tr('Health Bar')
   height: 86
   @onClose: HealthBar.toggle()
 

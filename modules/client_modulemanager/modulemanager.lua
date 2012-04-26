@@ -16,7 +16,7 @@ function ModuleManager.init()
   Keyboard.bindKeyPress('Up', function() moduleList:focusPreviousChild(KeyboardFocusReason) end, moduleManagerWindow)
   Keyboard.bindKeyPress('Down', function() moduleList:focusNextChild(KeyboardFocusReason) end, moduleManagerWindow)
 
-  moduleManagerButton = TopMenu.addLeftButton('moduleManagerButton', 'Module manager', 'modulemanager.png', ModuleManager.toggle)
+  moduleManagerButton = TopMenu.addLeftButton('moduleManagerButton', tr('Module Manager'), 'modulemanager.png', ModuleManager.toggle)
 
   -- refresh modules only after all modules are loaded
   addEvent(ModuleManager.listModules)

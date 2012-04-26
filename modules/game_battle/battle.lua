@@ -37,7 +37,7 @@ table.insert(lifeBarColors, {percentAbove = -1, color = '#4F0000' } )
 -- public functions
 function Battle.init()
   battleWindow = displayUI('battle.otui', GameInterface.getLeftPanel())
-  battleButton = TopMenu.addGameToggleButton('battleButton', 'Battle (Ctrl+B)', 'battle.png', Battle.toggle)
+  battleButton = TopMenu.addGameToggleButton('battleButton', tr('Battle') .. ' (Ctrl+B)', 'battle.png', Battle.toggle)
   battleButton:setOn(true)
   Keyboard.bindKeyDown('Ctrl+B', Battle.toggle)
 

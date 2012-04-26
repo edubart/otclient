@@ -3,8 +3,9 @@ Client = {}
 function Client.reloadScripts()
   dofile '/otclientrc'
   reloadModules()
-  TextMessage.displayEventAdvance('All modules and scripts were reloaded.')
-  print('All modules and scripts were reloaded.')
+  local message = tr('All modules and scripts were reloaded.')
+  TextMessage.displayEventAdvance(message)
+  print(message)
 end
 
 function Client.init()

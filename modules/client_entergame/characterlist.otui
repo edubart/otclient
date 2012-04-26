@@ -51,7 +51,7 @@ MainWindow
   //CheckBox
   //  id: charAutoLoginBox
   //  !text: tr('Auto login')
-  //  tooltip: Auto login selected character on next charlist load
+  //  !tooltip: tr('Auto login selected character on next charlist load')
   //  anchors.left: parent.left
   //  anchors.right: parent.right
   //  anchors.bottom: next.top

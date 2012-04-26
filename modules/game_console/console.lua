@@ -91,7 +91,7 @@ local function onCreatureSpeak(name, level, speaktype, message, channelId, creat
   if speaktype.private then
     Console.addPrivateText(message, speaktype, name, false)
   else
-    local channel = 'Default'
+    local channel = tr('Default')
     if not defaultMessage then
       channel = channels[channelId]
     end
@@ -177,7 +177,7 @@ local function onChannelList(channelList)
 end
 
 local function onGameStart()
-  local tab = Console.getTab('Default')
+  local tab = Console.getTab(tr('Default'))
   if tab then
     addEvent(function() consoleTabBar:selectTab(tab) end, false)
   end
@@ -201,8 +201,8 @@ function Console.init()
   consoleTabBar:setContentWidget(consoleContentPanel)
   channels = {}
 
-  Console.addTab('Default', true)
-  Console.addTab('Server Log', false)
+  Console.addTab(tr('Default'), true)
+  Console.addTab(tr('Server Log'), false)
 
   Keyboard.bindKeyPress('Shift+Up', function() navigateMessageHistory(1) end, consolePanel)
   Keyboard.bindKeyPress('Shift+Down', function() navigateMessageHistory(-1) end, consolePanel)
@@ -265,8 +265,8 @@ function Console.clear()
   
   channels = {}
 
-  consoleTabBar:getTab('Default').tabPanel:getChildById('consoleBuffer'):destroyChildren()
-  consoleTabBar:getTab('Server Log').tabPanel:getChildById('consoleBuffer'):destroyChildren()
+  consoleTabBar:getTab(tr('Default')).tabPanel:getChildById('consoleBuffer'):destroyChildren()
+  consoleTabBar:getTab(tr('Server Log')).tabPanel:getChildById('consoleBuffer'):destroyChildren()
 
   local npcTab = consoleTabBar:getTab('NPCs')
   if npcTab then
@@ -289,14 +289,14 @@ function Console.addTab(name, focus)
   local tab = consoleTabBar:addTab(name)
   if focus then
     consoleTabBar:selectTab(tab)
-  elseif name ~= 'Server Log' then
+  elseif name ~= tr('Server Log') then
     consoleTabBar:blinkTab(tab)
   end
   return tab
 end
 
 function Console.onTabChange(tabBar, tab)
-  if tab:getText() == "Default" or tab:getText() == "Server Log" then
+  if tab:getText() == tr('Default') or tab:getText() == tr('Server Log') then
     consolePanel:getChildById('closeChannelButton'):disable()
   else
     consolePanel:getChildById('closeChannelButton'):enable()
@@ -305,7 +305,7 @@ end
 
 function Console.removeCurrentTab()
   local tab = consoleTabBar:getCurrentTab()
-  if tab:getText() == "Default" or tab:getText() == "Server Log" then return end
+  if tab:getText() == tr('Default') or tab:getText() == tr('Server Log') then return end
 
   -- notificate the server that we are leaving the channel
   if tab.channelId then
@@ -342,7 +342,7 @@ function Console.addPrivateText(text, speaktype, name, isPrivateCommand)
   local privateTab = Console.getTab(name)
   if privateTab == nil then
     if Options['showPrivateMessagesInConsole'] or (isPrivateCommand and not privateTab) then
-      privateTab = Console.getTab('Default')
+      privateTab = Console.getTab(tr('Default'))
     else
       privateTab = Console.addTab(name, focus)
     end
@@ -424,14 +424,14 @@ function Console.sendCurrentMessage()
 
   -- when talking on server log, the message goes to default channel
   local name = tab:getText()
-  if name == 'Server Log' then
-    tab = Console.getTab('Default')
-    name = 'Default'
+  if name == tr('Server Log') then
+    tab = Console.getTab(tr('Default'))
+    name = tr('Default')
   end
   
   local speaktypedesc
-  if (tab.channelId or name == 'Default') and not chatCommandPrivateReady then
-    if name == 'Default' then
+  if (tab.channelId or name == tr('Default')) and not chatCommandPrivateReady then
+    if name == tr('Default') then
       speaktypedesc = chatCommandSayMode or SayModes[consolePanel:getChildById('sayModeButton').sayMode].speakTypeDesc
       if speaktypedesc ~= 'say' then Console.sayModeChange(2) end -- head back to say mode
     else

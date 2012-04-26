@@ -17,7 +17,7 @@ function Inventory.init()
   inventoryWindow = displayUI('inventory.otui', GameInterface.getRightPanel())
   inventoryWindow.onClose = Inventory.toggle
   inventoryPanel = inventoryWindow:getChildById('contentsPanel')
-  inventoryButton = TopMenu.addGameToggleButton('inventoryButton', 'Inventory (Ctrl+I)', 'inventory.png', Inventory.toggle)
+  inventoryButton = TopMenu.addGameToggleButton('inventoryButton', tr('Inventory') .. ' (Ctrl+I)', 'inventory.png', Inventory.toggle)
   inventoryButton:setOn(true)
 
   if g_game.isOnline() then

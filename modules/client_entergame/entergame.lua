@@ -24,7 +24,7 @@ local function onError(protocol, message, connectionError)
   if not connectionError then
     clearAccountFields()
   end
-  local errorBox = displayErrorBox('Login Error', message)
+  local errorBox = displayErrorBox(tr('Login Error'), message)
   connect(errorBox, { onOk = EnterGame.show })
 end
 
@@ -51,7 +51,7 @@ local function onCharacterList(protocol, characters, premDays)
   local lastMotdNumber = Settings.getNumber("motd")
   if motdNumber and motdNumber ~= lastMotdNumber then
     Settings.set("motd", motdNumber)
-    local motdBox = displayInfoBox("Message of the day", motdMessage)
+    local motdBox = displayInfoBox(tr('Message of the day'), motdMessage)
     connect(motdBox, { onOk = CharacterList.show })
     CharacterList.hide()
   end
@@ -60,8 +60,8 @@ end
 -- public functions
 function EnterGame.init()
   enterGame = displayUI('entergame.otui')
-  enterGameButton = TopMenu.addLeftButton('enterGameButton', 'Login (Ctrl + G)', 'login.png', EnterGame.openWindow)
-  motdButton = TopMenu.addLeftButton('motdButton', 'Message of the day', 'motd.png', EnterGame.displayMotd)
+  enterGameButton = TopMenu.addLeftButton('enterGameButton', tr('Login') .. ' (Ctrl + G)', 'login.png', EnterGame.openWindow)
+  motdButton = TopMenu.addLeftButton('motdButton', tr('Message of the day'), 'motd.png', EnterGame.displayMotd)
   motdButton:hide()
   Keyboard.bindKeyDown('Ctrl+G', EnterGame.openWindow)
 
@@ -133,7 +133,7 @@ function EnterGame.doLogin()
   protocolLogin.onMotd = onMotd
   protocolLogin.onCharacterList = onCharacterList
 
-  loadBox = displayCancelBox('Please wait', 'Connecting to login server...')
+  loadBox = displayCancelBox(tr('Please wait'), tr('Connecting to login server...'))
   connect(loadBox, { onCancel = function(msgbox)
                                   loadBox = nil
                                   protocolLogin:cancelLogin()
@@ -144,5 +144,5 @@ function EnterGame.doLogin()
 end
 
 function EnterGame.displayMotd()
-  displayInfoBox('Message of the day', motdMessage)
+  displayInfoBox(tr('Message of the day'), motdMessage)
 end

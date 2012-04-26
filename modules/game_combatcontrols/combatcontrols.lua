@@ -48,7 +48,7 @@ end
 
 -- public functions
 function CombatControls.init()
-  combatControlsButton = TopMenu.addGameToggleButton('combatControlsButton', 'Combat Controls', 'combatcontrols.png', CombatControls.toggle)
+  combatControlsButton = TopMenu.addGameToggleButton('combatControlsButton', tr('Combat Controls'), 'combatcontrols.png', CombatControls.toggle)
   combatControlsButton:setOn(true)
   combatControlsWindow = loadUI('combatcontrols.otui', GameInterface.getRightPanel())
 

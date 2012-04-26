@@ -16,7 +16,7 @@ OptionCheckBox < CheckBox
 
 MainWindow
   id: optionsWindow
-  text: Options
+  !text: tr('Options')
   size: 286 230
 
   @onEnter: Options.hide()
@@ -37,7 +37,7 @@ MainWindow
     margin-top: 10
 
   Button
-    text: Ok
+    !text: tr('Ok')
     width: 64
     anchors.right: parent.right
     anchors.bottom: parent.bottom

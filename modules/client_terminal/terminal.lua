@@ -127,7 +127,7 @@ function Terminal.init()
     end
   end
 
-  terminalButton = TopMenu.addLeftButton('terminalButton', 'Terminal (Ctrl + T)', 'terminal.png', Terminal.toggle)
+  terminalButton = TopMenu.addLeftButton('terminalButton', tr('Terminal') .. ' (Ctrl + T)', 'terminal.png', Terminal.toggle)
   Keyboard.bindKeyDown('Ctrl+T', Terminal.toggle)
 
   commandHistory = Settings.getList('terminal-history')

@@ -10,7 +10,7 @@ function onMinimapMouseRelease(self, mousePosition, mouseButton)
   if tile and mouseButton == MouseLeftButton and self:isPressed() then
     local dirs = g_map.findPath(g_game.getLocalPlayer():getPosition(), tile:getPosition(), 255)
     if #dirs == 0 then
-      TextMessage.displayStatus('There is no way.')
+      TextMessage.displayStatus(tr('There is no way.'))
       return true
     end
     g_game.autoWalk(dirs)
@@ -33,7 +33,7 @@ function Minimap.init()
   connect(g_game, { onLogin = Minimap.reset })
   Keyboard.bindKeyDown('Ctrl+M', Minimap.toggle)
 
-  minimapButton = TopMenu.addGameToggleButton('minimapButton', 'Minimap (Ctrl+M)', 'minimap.png', Minimap.toggle)
+  minimapButton = TopMenu.addGameToggleButton('minimapButton', tr('Minimap') .. ' (Ctrl+M)', 'minimap.png', Minimap.toggle)
   minimapButton:setOn(false)
 
   minimapWidget = loadUI('minimap.otui', GameInterface.getMapPanel())

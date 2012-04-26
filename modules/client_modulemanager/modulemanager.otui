@@ -34,7 +34,7 @@ ModuleValueLabel < UILabel
 MainWindow
   id: moduleManagerWindow
   size: 480 450
-  text: Module Manager
+  !text: tr('Module Manager')
 
   @onEscape: ModuleManager.hide()
 
@@ -54,7 +54,7 @@ MainWindow
     anchors.left: moduleList.left
     margin-top: 8
     width: 80
-    text: Refresh
+    !text: tr('Refresh')
     @onClick: ModuleManager.refreshModules()
 
   Button
@@ -63,7 +63,7 @@ MainWindow
     anchors.right: moduleList.right
     margin-top: 8
     width: 80
-    text: Reload All
+    !text: tr('Reload All')
     @onClick: ModuleManager.reloadAllModules()
 
   Panel
@@ -76,40 +76,40 @@ MainWindow
     height: 265
 
     ModuleInfoLabel
-      text: Module name
+      !text: tr('Module name')
     ModuleValueLabel
       id: moduleName
 
     ModuleInfoLabel
-      text: Description
+      !text: tr('Description')
     ModuleValueLabel
       id: moduleDescription
       height: 100
       text-wrap: true
 
     //ModuleInfoLabel
-    //  text: Autoload
+    //  !text: tr('Autoload')
     //ModuleValueLabel
     //  id: moduleAutoload
 
     //ModuleInfoLabel
-    //  text: Autoload priority
+    //  !text: tr('Autoload priority')
     //ModuleValueLabel
     //  id: moduleLoadPriority
     //  text: 1000
 
     ModuleInfoLabel
-      text: Author
+      !text: tr('Author')
     ModuleValueLabel
       id: moduleAuthor
 
     ModuleInfoLabel
-      text: Website
+      !text: tr('Website')
     ModuleValueLabel
       id: moduleWebsite
 
     ModuleInfoLabel
-      text: Version
+      !text: tr('Version')
     ModuleValueLabel
       id: moduleVersion
 
@@ -118,7 +118,7 @@ MainWindow
     anchors.top: moduleInfo.bottom
     anchors.left: moduleInfo.left
     margin-top: 8
-    text: Load
+    !text: tr('Load')
     enabled: false
     @onClick: ModuleManager.reloadCurrentModule()
 
@@ -128,7 +128,7 @@ MainWindow
     anchors.right: moduleInfo.right
     margin-left: 10
     margin-top: 8
-    text: Unload
+    !text: tr('Unload')
     enabled: false
     @onClick: ModuleManager.unloadCurrentModule()
 
@@ -136,7 +136,7 @@ MainWindow
     id: closeButton
     anchors.bottom: parent.bottom
     anchors.right: parent.right
-    text: Close
+    !text: tr('Close')
     width: 60
     @onClick: ModuleManager.hide()
 

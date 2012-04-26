@@ -161,40 +161,40 @@ function GameInterface.createThingMenu(menuPosition, lookThing, useThing, creatu
   local menu = createWidget('PopupMenu')
 
   if lookThing then
-    menu:addOption('Look', function() g_game.look(lookThing) end)
+    menu:addOption(tr('Look'), function() g_game.look(lookThing) end)
   end
 
   if useThing then
     if useThing:isContainer() then
       if useThing:getParentContainer() then
-        menu:addOption('Open', function() g_game.open(useThing, useThing:getParentContainer()) end)
-        menu:addOption('Open in new window', function() g_game.open(useThing, nil) end)
+        menu:addOption(tr('Open'), function() g_game.open(useThing, useThing:getParentContainer()) end)
+        menu:addOption(tr('Open in new window'), function() g_game.open(useThing, nil) end)
       else
-        menu:addOption('Open', function() g_game.open(useThing, nil) end)
+        menu:addOption(tr('Open'), function() g_game.open(useThing, nil) end)
       end
     else
       if useThing:isMultiUse() then
-        menu:addOption('Use with ...', function() GameInterface.startUseWith(useThing) end)
+        menu:addOption(tr('Use with ...'), function() GameInterface.startUseWith(useThing) end)
       else
-        menu:addOption('Use', function() g_game.use(useThing) end)
+        menu:addOption(tr('Use'), function() g_game.use(useThing) end)
       end
     end
 
     if useThing:isRotateable() then
-      menu:addOption('Rotate', function() g_game.rotate(useThing) end)
+      menu:addOption(tr('Rotate'), function() g_game.rotate(useThing) end)
     end
 
   end
 
   if lookThing and not lookThing:asCreature() and not lookThing:isNotMoveable() and lookThing:isPickupable() then
     menu:addSeparator()
-    menu:addOption('Trade with ...', function() GameInterface.startTradeWith(lookThing) end)
+    menu:addOption(tr('Trade with ...'), function() GameInterface.startTradeWith(lookThing) end)
   end
 
   if lookThing then
     local parentContainer = lookThing:getParentContainer()
     if parentContainer and parentContainer:hasParent() then
-      menu:addOption('Move up', function() g_game.moveToParentContainer(lookThing, lookThing:getCount()) end)
+      menu:addOption(tr('Move up'), function() g_game.moveToParentContainer(lookThing, lookThing:getCount()) end)
     end
   end
 
@@ -202,64 +202,64 @@ function GameInterface.createThingMenu(menuPosition, lookThing, useThing, creatu
     menu:addSeparator()
 
     if creatureThing:asLocalPlayer() then
-      menu:addOption('Set Outfit', function() g_game.requestOutfit() end)
+      menu:addOption(tr('Set Outfit'), function() g_game.requestOutfit() end)
 
       if creatureThing:isPartyMember() --[[and not fighting]] then
         if creatureThing:isPartyLeader() then
           if creatureThing:isPartySharedExperienceActive() then
-            menu:addOption('Disable Shared Experience', function() g_game.partyShareExperience(false) end)
+            menu:addOption(tr('Disable Shared Experience'), function() g_game.partyShareExperience(false) end)
           else
-            menu:addOption('Enable Shared Experience', function() g_game.partyShareExperience(true) end)
+            menu:addOption(tr('Enable Shared Experience'), function() g_game.partyShareExperience(true) end)
           end
         end
-        menu:addOption('Leave Party', function() g_game.partyLeave() end)
+        menu:addOption(tr('Leave Party'), function() g_game.partyLeave() end)
       end
 
     else
       local localPlayer = g_game.getLocalPlayer()
       if localPlayer then
         if g_game.getAttackingCreature() ~= creatureThing then
-          menu:addOption('Attack', function() g_game.attack(creatureThing) end)
+          menu:addOption(tr('Attack'), function() g_game.attack(creatureThing) end)
         else
-          menu:addOption('Stop Attack', function() g_game.cancelAttack() end)
+          menu:addOption(tr('Stop Attack'), function() g_game.cancelAttack() end)
         end
 
         if g_game.getFollowingCreature() ~= creatureThing then
-          menu:addOption('Follow', function() g_game.follow(creatureThing) end)
+          menu:addOption(tr('Follow'), function() g_game.follow(creatureThing) end)
         else
-          menu:addOption('Stop Follow', function() g_game.cancelFollow() end)
+          menu:addOption(tr('Stop Follow'), function() g_game.cancelFollow() end)
         end
 
         if creatureThing:asPlayer() then
           menu:addSeparator()
           local creatureName = creatureThing:getName()
-          menu:addOption('Message to ' .. creatureName, function() g_game.openPrivateChannel(creatureName) end)
+          menu:addOption(tr('Message to %s', creatureName), function() g_game.openPrivateChannel(creatureName) end)
           if Console.getOwnPrivateTab() then
-            menu:addOption('Invite to private chat', function() g_game.inviteToOwnChannel(creatureName) end)
-            menu:addOption('Exclude from private chat', function() g_game.excludeFromOwnChannel(creatureName) end) -- [TODO] must be removed after message's popup labels been implemented
+            menu:addOption(tr('Invite to private chat'), function() g_game.inviteToOwnChannel(creatureName) end)
+            menu:addOption(tr('Exclude from private chat'), function() g_game.excludeFromOwnChannel(creatureName) end) -- [TODO] must be removed after message's popup labels been implemented
           end
-          menu:addOption('Add to VIP list', function() g_game.addVip(creatureName) end)
+          menu:addOption(tr('Add to VIP list'), function() g_game.addVip(creatureName) end)
 
           local localPlayerShield = localPlayer:asCreature():getShield()
           local creatureShield = creatureThing:getShield()
 
           if localPlayerShield == ShieldNone or localPlayerShield == ShieldWhiteBlue then
             if creatureShield == ShieldWhiteYellow then
-              menu:addOption('Join ' .. creatureThing:getName() .. '\'s Party', function() g_game.partyJoin(creatureThing:getId()) end)
+              menu:addOption(tr('Join %s\'s Party', creatureThing:getName()), function() g_game.partyJoin(creatureThing:getId()) end)
             else
-              menu:addOption('Invite to Party', function() g_game.partyInvite(creatureThing:getId()) end)
+              menu:addOption(tr('Invite to Party'), function() g_game.partyInvite(creatureThing:getId()) end)
             end
           elseif localPlayerShield == ShieldWhiteYellow then
             if creatureShield == ShieldWhiteBlue then
-              menu:addOption('Revoke ' .. creatureThing:getName() .. '\'s Invitation', function() g_game.partyRevokeInvitation(creatureThing:getId()) end)
+              menu:addOption(tr('Revoke %s\'s Invitation', creatureThing:getName()), function() g_game.partyRevokeInvitation(creatureThing:getId()) end)
             end
           elseif localPlayerShield == ShieldYellow or localPlayerShield == ShieldYellowSharedExp or localPlayerShield == ShieldYellowNoSharedExpBlink or localPlayerShield == ShieldYellowNoSharedExp then
             if creatureShield == ShieldWhiteBlue then
-              menu:addOption('Revoke ' .. creatureThing:getName() .. '\'s Invitation', function() g_game.partyRevokeInvitation(creatureThing:getId()) end)
+              menu:addOption(tr('Revoke %s\'s Invitation', creatureThing:getName()), function() g_game.partyRevokeInvitation(creatureThing:getId()) end)
             elseif creatureShield == ShieldBlue or creatureShield == ShieldBlueSharedExp or creatureShield == ShieldBlueNoSharedExpBlink or creatureShield == ShieldBlueNoSharedExp then
-              menu:addOption('Pass Leadership to ' .. creatureThing:getName(), function() g_game.partyPassLeadership(creatureThing:getId()) end)
+              menu:addOption(tr('Pass Leadership to %s'), function() g_game.partyPassLeadership(creatureThing:getId()) end)
             else
-              menu:addOption('Invite to Party', function() g_game.partyInvite(creatureThing:getId()) end)
+              menu:addOption(tr('Invite to Party'), function() g_game.partyInvite(creatureThing:getId()) end)
             end
           end
         end
@@ -267,7 +267,7 @@ function GameInterface.createThingMenu(menuPosition, lookThing, useThing, creatu
     end
 
     menu:addSeparator()
-    menu:addOption('Copy Name', function() g_window.setClipboardText(creatureThing:getName()) end)
+    menu:addOption(tr('Copy Name'), function() g_window.setClipboardText(creatureThing:getName()) end)
 
   end
 

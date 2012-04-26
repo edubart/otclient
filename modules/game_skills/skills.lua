@@ -36,7 +36,7 @@ function Skills.init()
   })
 
   skillsWindow = displayUI('skills.otui', GameInterface.getLeftPanel())
-  skillsButton = TopMenu.addGameToggleButton('skillsButton', 'Skills (Ctrl+S)', 'skills.png', Skills.toggle)
+  skillsButton = TopMenu.addGameToggleButton('skillsButton', tr('Skills') .. ' (Ctrl+S)', 'skills.png', Skills.toggle)
   skillsButton:setOn(true)
   Keyboard.bindKeyDown('Ctrl+S', Skills.toggle)
 end
@@ -86,7 +86,7 @@ end
 
 function Skills.onLevelChange(localPlayer, value, percent)
   setSkillValue('level', tr(value))
-  setSkillPercent('level', percent, 'You have ' .. (100 - percent) .. ' percent to go')
+  setSkillPercent('level', percent, tr('You have %s percent to go', 100 - percent))
 end
 
 function Skills.onHealthChange(localPlayer, health, maxHealth)
@@ -114,16 +114,16 @@ function Skills.onStaminaChange(localPlayer, stamina)
   local percent = 100 * stamina / (42 * 60) -- max is 42 hours
 
   setSkillValue('stamina', hours .. ":" .. minutes)
-  setSkillPercent('stamina', percent, 'You have ' .. percent .. ' percent')
+  setSkillPercent('stamina', percent, tr('You have %s percent', percent))
 end
 
 function Skills.onMagicLevelChange(localPlayer, value, percent)
   setSkillValue('magiclevel', value)
-  setSkillPercent('magiclevel', percent, 'You have ' .. (100 - percent) .. ' percent to go')
+  setSkillPercent('magiclevel', percent, tr('You have %s percent to go', 100 - percent))
 end
 
 function Skills.onSkillChange(localPlayer, id, level, percent)
   setSkillValue('skillId' .. id, level)
-  setSkillPercent('skillId' .. id, percent, 'You have ' .. (100 - percent) .. ' percent to go')
+  setSkillPercent('skillId' .. id, percent, tr('You have %s percent to go', 100 - percent))
 end
 

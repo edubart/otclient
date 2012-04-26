@@ -89,16 +89,17 @@ void MapView::draw(const Rect& rect)
         for(int z=m_cachedLastVisibleFloor;z>=m_cachedFirstVisibleFloor;--z) {
             while(it != end) {
                 const TilePtr& tile = *it;
-                if(tile->getPosition().z != z)
+                Position tilePos = tile->getPosition();
+                if(tilePos.z != z)
                     break;
                 else
                     ++it;
 
                 if(!m_drawMinimapColors)
-                    tile->draw(transformPositionTo2D(tile->getPosition()), scaleFactor, drawFlags);
+                    tile->draw(transformPositionTo2D(tilePos), scaleFactor, drawFlags);
                 else {
                     g_painter->setColor(tile->getMinimapColor());
-                    g_painter->drawFilledRect(Rect(transformPositionTo2D(tile->getPosition()), tileSize));
+                    g_painter->drawFilledRect(Rect(transformPositionTo2D(tilePos), tileSize));
                 }
             }
 

@@ -10,7 +10,7 @@ HotkeyListLabel < UILabel
 
 MainWindow
   id: hotkeysWindow
-  text: Hotkeys
+  !text: tr('Hotkeys')
   size: 340 460
 
   @onEnter: HotkeysManager.hide()
@@ -18,11 +18,11 @@ MainWindow
 
   Label
     id: currentHotkeysLabel
-    text: Current hotkeys:
+    !text: tr('Current hotkeys:')
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: parent.top
-    
+
   VerticalScrollBar
     id: currentHotkeysScrollBar
     height: 150
@@ -30,7 +30,7 @@ MainWindow
     anchors.right: parent.right
     step: 14
     pixels-scroll: true
-    
+
   TextList
     id: currentHotkeys
     vertical-scrollbar: currentHotkeysScrollBar    
@@ -43,7 +43,7 @@ MainWindow
     focusable: false
 
   Label
-    text: Manage hotkeys:
+    !text: tr('Manage hotkeys:')
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: prev.bottom
@@ -51,7 +51,7 @@ MainWindow
 
   Button
     id: addHotkey
-    text: Add
+    !text: tr('Add')
     width: 64
     anchors.left: parent.left
     anchors.top: prev.bottom
@@ -60,7 +60,7 @@ MainWindow
 
   Button
     id: removeHotkey
-    text: Remove
+    !text: tr('Remove')
     width: 64
     enabled: false
     anchors.left: prev.right
@@ -70,7 +70,7 @@ MainWindow
 
   Label
     id: hotKeyTextLabel
-    text: Edit hotkey text:
+    !text: tr('Edit hotkey text:')
     enable: false
     anchors.left: parent.left
     anchors.right: parent.right
@@ -88,7 +88,7 @@ MainWindow
 
   CheckBox
     id: sendAutomatically
-    text: Send automatically
+    !text: tr('Send automatically')
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: prev.bottom
@@ -105,7 +105,7 @@ MainWindow
 
   Button
     id: selectObjectButton
-    text: Select object
+    !text: tr('Select object')
     width: 128
     enabled: false
     anchors.left: prev.right
@@ -115,7 +115,7 @@ MainWindow
 
   Button
     id: clearObjectButton
-    text: Clear object
+    !text: tr('Clear object')
     width: 128
     enabled: false
     anchors.left: prev.left
@@ -126,7 +126,7 @@ MainWindow
 
   ButtonBox
     id: useOnSelf
-    text: Use on yourself
+    !text: tr('Use on yourself')
     width: 128
     enabled: false
     anchors.left: selectObjectButton.right
@@ -138,7 +138,7 @@ MainWindow
 
   ButtonBox
     id: useOnTarget
-    text: Use on target
+    !text: tr('Use on target')
     width: 128
     enabled: false
     anchors.left: prev.left
@@ -150,7 +150,7 @@ MainWindow
 
   ButtonBox
     id: useWith
-    text: With crosshair
+    !text: tr('With crosshair')
     width: 128
     enabled: false
     anchors.left: prev.left
@@ -161,7 +161,7 @@ MainWindow
     @onCheckChange: HotkeysManager.changeUseType(HOTKEY_MANAGER_USEWITH, self:isChecked())
 
   Button
-    text: Close
+    !text: tr('Close')
     width: 64
     anchors.right: parent.right
     anchors.bottom: parent.bottom

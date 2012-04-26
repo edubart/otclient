@@ -13,7 +13,7 @@ function VipList.init()
 
 
   vipWindow = displayUI('viplist.otui', GameInterface.getLeftPanel())
-  vipButton = TopMenu.addGameToggleButton('vipListButton', 'VIP list', 'viplist.png', VipList.toggle)
+  vipButton = TopMenu.addGameToggleButton('vipListButton', tr('VIP list'), 'viplist.png', VipList.toggle)
   vipButton:setOn(true)
 end
 
@@ -127,10 +127,10 @@ function VipList.onVipListLabelMousePress(widget, mousePos, mouseButton)
   local vipList = vipWindow:getChildById('contentsPanel')
 
   local menu = createWidget('PopupMenu')
-  menu:addOption('Add new VIP', function() VipList.createAddWindow() end)
-  menu:addOption('Remove ' .. widget:getText(), function() if widget then g_game.removeVip(widget:getId():sub(4)) vipList:removeChild(widget) end end)
+  menu:addOption(tr('Add new VIP'), function() VipList.createAddWindow() end)
+  menu:addOption(tr('Remove %s', widget:getText()), function() if widget then g_game.removeVip(widget:getId():sub(4)) vipList:removeChild(widget) end end)
   menu:addSeparator()
-  menu:addOption('Copy Name', function() g_window.setClipboardText(widget:getText()) end)
+  menu:addOption(tr('Copy Name'), function() g_window.setClipboardText(widget:getText()) end)
   menu:display(mousePos)
 
   return true

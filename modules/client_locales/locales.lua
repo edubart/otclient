@@ -12,12 +12,12 @@ function Locales.init()
   Locales.installLocales('locales')
 
   local userLocaleName = Settings.get('locale')
-  if not userLocaleName or not Locales.setLocale(userLocaleName) then
-    print('Locale ' .. userLocaleName .. ' is not loaded. Using default. ' .. defaultLocaleName)
-    if not Locales.setLocale(defaultLocaleName) then
-      fatal('Default locale could not be loaded. Re-install the program.')
-      return
-    end
+  if userLocaleName then
+    print('Using configurated locale: ' .. userLocaleName)
+    Locales.setLocale(userLocaleName)
+  else
+    print('Using default locale: ' .. defaultLocaleName)
+    Locales.setLocale(defaultLocaleName)
     Settings.set('locale', defaultLocaleName)
   end
 
@@ -33,14 +33,8 @@ function Locales.terminate()
 end
 
 function Locales.installLocale(locale)
-  if not locale then
-    print('Coult not install locale.')
-    return false
-  end
-
-  if not locale.name then
-    printf('Coult not install locale.')
-    return false
+  if not locale or not locale.name then
+    error('Unable to install locale.')
   end
 
   local installedLocale = installedLocales[locale.name]
@@ -62,13 +56,10 @@ end
 
 function Locales.setLocale(name)
   local locale = installedLocales[name]
-  if locale then
-    currentLocale = locale
-    return true
+  if not locale then
+    error("Locale " .. name .. ' does not exist.')
   end
-
-  print("Locale " .. name .. ' does not exist.')
-  return false
+  currentLocale = locale
 end
 
 function tr(text, ...)
@@ -86,11 +77,13 @@ function tr(text, ...)
       return out:reverse()
     elseif tostring(text) then
       local translation = currentLocale.translation[text]
-      if translation then
-        return string.format(translation, ...)
-      elseif currentLocale.name ~= defaultLocaleName then
-        print('WARNING: \"' .. text .. '\" could not be translated.')
+      if not translation then
+        if currentLocale.name ~= defaultLocaleName then
+          warning('Unable to translate: \"' .. text .. '\"')
+        end
+        translation = text
       end
+      return string.format(translation, ...)
     end
   end
   return text

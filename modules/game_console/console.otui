@@ -64,7 +64,7 @@ Panel
 
   TabButton
     id: closeChannelButton
-    tooltip: Close this channel (Ctrl+E)
+    !tooltip: tr('Close this channel') .. ' (Ctrl+E)'
     icon: /core_styles/icons/closechannel.png
     anchors.right: next.left
     anchors.top: parent.top
@@ -75,7 +75,7 @@ Panel
 
   TabButton
     id: channelsButton
-    tooltip: Open new channel (Ctrl+O)
+    !tooltip: tr('Open new channel') .. ' (Ctrl+O)'
     icon: /core_styles/icons/channels.png
     anchors.right: parent.right
     anchors.top: parent.top
@@ -99,7 +99,7 @@ Panel
   TabButton
     id: sayModeButton
     icon: /core_styles/icons/say.png
-    tooltip: Adjust volume
+    !tooltip: tr('Adjust volume')
     &sayMode: 2
     size: 20 20
     anchors.left: parent.left

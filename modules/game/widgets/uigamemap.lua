@@ -68,7 +68,7 @@ function UIGameMap:onMouseRelease(mousePosition, mouseButton)
   elseif mouseButton == MouseLeftButton and self:isPressed() then
     local dirs = g_map.findPath(g_game.getLocalPlayer():getPosition(), tile:getPosition(), 255)
     if #dirs == 0 then
-      TextMessage.displayStatus('There is no way.')
+      TextMessage.displayStatus(tr('There is no way.'))
       return true
     end
     g_game.autoWalk(dirs)

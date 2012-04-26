@@ -1,11 +1,11 @@
 CountWindow < MainWindow
   id: countWindow
-  text: Move Stackable Item
+  !text: tr('Move Stackable Item')
   size: 196 112
   @onEscape: self:destroy()
 
   Label
-    text: Amount:
+    !text: tr('Amount:')
     width: 64
     anchors.left: parent.left
     anchors.top: parent.top
@@ -26,7 +26,7 @@ CountWindow < MainWindow
 
   Button
     id: buttonOk
-    text: Ok
+    !text: tr('Ok')
     width: 64
     anchors.right: next.left
     anchors.bottom: parent.bottom
@@ -34,7 +34,7 @@ CountWindow < MainWindow
 
   Button
     id: buttonCancel
-    text: Cancel
+    !text: tr('Cancel')
     width: 64
     anchors.right: parent.right
     anchors.bottom: parent.bottom

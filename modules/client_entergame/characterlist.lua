@@ -25,14 +25,14 @@ local function tryLogin(charInfo, tries)
 
   if tries > 4 then
     CharacterList.destroyLoadBox()
-    displayErrorBox('Error', 'Could not logout.')
+    displayErrorBox(tr('Error'), tr('Unable to logout.'))
     return
   end
 
   if g_game.isOnline() then
     g_game.safeLogout()
     if tries == 1 then
-      loadBox = displayCancelBox('Please wait', 'Loggin out...')
+      loadBox = displayCancelBox(tr('Please wait'), tr('Loggin out...'))
     end
     scheduleEvent(function() tryLogin(charInfo, tries+1) end, 250)
     return
@@ -42,7 +42,7 @@ local function tryLogin(charInfo, tries)
 
   g_game.loginWorld(EnterGame.account, EnterGame.password, charInfo.worldName, charInfo.worldHost, charInfo.worldPort, charInfo.characterName)
 
-  loadBox = displayCancelBox('Please wait', 'Connecting to game server...')
+  loadBox = displayCancelBox(tr('Please wait'), tr('Connecting to game server...'))
   connect(loadBox, { onCancel = function()
                                   loadBox = nil
                                   g_game.cancelLogin()
@@ -55,7 +55,7 @@ end
 
 function onGameLoginError(message)
   CharacterList.destroyLoadBox()
-  errorBox = displayErrorBox("Login Error", "Login error: " .. message)
+  errorBox = displayErrorBox(tr("Login Error"), message)
   errorBox.onOk = function()
     errorBox = nil
     CharacterList.showAgain()
@@ -64,7 +64,7 @@ end
 
 function onGameConnectionError(message)
   CharacterList.destroyLoadBox()
-  errorBox = displayErrorBox("Login Error", "Connection error: " .. message)
+  errorBox = displayErrorBox(tr("Login Error"), message)
   errorBox.onOk = function()
     errorBox = nil
     CharacterList.showAgain()
@@ -128,7 +128,7 @@ function CharacterList.create(characters, premDays)
   characterList:focusChild(focusLabel, ActiveFocusReason)
 
   if premDays > 0 then
-    accountStatusLabel:setText("Account Status:\nPremium Account (" .. premDays .. ' days left)')
+    accountStatusLabel:setText(tr("Account Status:\nPremium Account (%s) days left", premDays))
   end
 end
 
@@ -173,7 +173,7 @@ function CharacterList.doLogin()
     CharacterList.hide()
     tryLogin(charInfo)
   else
-    displayErrorBox('Error', 'You must select a character to login!')
+    displayErrorBox(tr('Error'), tr('You must select a character to login!'))
   end
 end
 
