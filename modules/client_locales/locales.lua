@@ -5,20 +5,11 @@ local defaultLocaleName = 'en-us'
 local installedLocales
 local currentLocale
 
--- hooked functions
-function UIWidget:onTextChange(text, oldText)
-  local translation = tr(text)
-  if translation ~= text then
-    self:setText(translation)
-  end
-end
-
 -- public functions
 function Locales.init()
   installedLocales = {}
 
-  dofile('en-us')
-  dofile('pt-br')
+  Locales.installLocales('locales')
 
   local userLocaleName = Settings.get('locale')
   if not userLocaleName or not Locales.setLocale(userLocaleName) then
@@ -30,7 +21,7 @@ function Locales.init()
     Settings.set('locale', defaultLocaleName)
   end
 
-  -- create combobox
+  -- add event for creating combobox
   --for key,value in pairs(installedLocales) do
     -- add elements
   --end
@@ -52,7 +43,21 @@ function Locales.installLocale(locale)
     return false
   end
 
-  installedLocales[locale.name] = locale
+  local installedLocale = installedLocales[locale.name]
+  if installedLocale then
+    -- combine translations replacing with new if already exists
+    for word,translation in pairs(locale.translation) do
+      installedLocale.translation[word] = translation
+    end
+  else
+    installedLocales[locale.name] = locale
+
+    -- update combobox
+  end
+end
+
+function Locales.installLocales(directory)
+  dofiles(directory)
 end
 
 function Locales.setLocale(name)
@@ -69,11 +74,22 @@ end
 function tr(text, ...)
   if currentLocale then
     if tonumber(text) then
-      -- todo: add some dots etc
+      -- todo: use locale information to calculate this. also detect floating numbers
+      local out = ''
+      local number = tostring(text):reverse()
+      for i=1,#number do
+        out = out .. number:sub(i, i)
+        if i % 3 == 0 and i ~= #number then
+          out = out .. ','
+        end
+      end
+      return out:reverse()
     elseif tostring(text) then
       local translation = currentLocale.translation[text]
       if translation then
         return string.format(translation, ...)
+      elseif currentLocale.name ~= defaultLocaleName then
+        print('WARNING: \"' .. text .. '\" could not be translated.')
       end
     end
   end

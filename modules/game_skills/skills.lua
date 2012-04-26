@@ -5,19 +5,6 @@ local skillsWindow
 local skillsButton
 
 -- private functions
-local function getNumberString(number)
-  local out = ''
-  number = tostring(number):reverse()
-  for i=1,#number do
-    out = out .. number:sub(i, i)
-    if i % 3 == 0 and i ~= #number then
-      out = out .. ','
-    end
-  end
-  out = out:reverse()
-  return out
-end
-
 local function setSkillValue(id, value)
   local skill = skillsWindow:recursiveGetChildById(id)
   local widget = skill:getChildById('value')
@@ -94,20 +81,20 @@ end
 
 -- hooked events
 function Skills.onExperienceChange(localPlayer, value)
-  setSkillValue('experience', getNumberString(value))
+  setSkillValue('experience', tr(value))
 end
 
 function Skills.onLevelChange(localPlayer, value, percent)
-  setSkillValue('level', getNumberString(value))
+  setSkillValue('level', tr(value))
   setSkillPercent('level', percent, 'You have ' .. (100 - percent) .. ' percent to go')
 end
 
 function Skills.onHealthChange(localPlayer, health, maxHealth)
-  setSkillValue('health', getNumberString(health))
+  setSkillValue('health', tr(health))
 end
 
 function Skills.onManaChange(localPlayer, mana, maxMana)
-  setSkillValue('mana', getNumberString(mana))
+  setSkillValue('mana', tr(mana))
 end
 
 function Skills.onSoulChange(localPlayer, soul)

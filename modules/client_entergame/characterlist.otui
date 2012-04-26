@@ -10,7 +10,7 @@ CharacterListLabel < Label
 
 MainWindow
   id: charactersWindow
-  text: Character List
+  !text: tr('Character List')
   size: 250 248
   @onEnter: CharacterList.doLogin()
   @onEscape: CharacterList.destroy()
@@ -34,9 +34,7 @@ MainWindow
 
   Label
     id: accountStatusLabel
-    text: |-
-      Account Status:
-      Free Account
+    !text: tr('Account Status:\nFree Account')
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.bottom: separator.top
@@ -52,7 +50,7 @@ MainWindow
 
   //CheckBox
   //  id: charAutoLoginBox
-  //  text: Auto login
+  //  !text: tr('Auto login')
   //  tooltip: Auto login selected character on next charlist load
   //  anchors.left: parent.left
   //  anchors.right: parent.right
@@ -63,7 +61,7 @@ MainWindow
 
   Button
     id: buttonOk
-    text: Ok
+    !text: tr('Ok')
     width: 64
     anchors.right: next.left
     anchors.bottom: parent.bottom
@@ -72,7 +70,7 @@ MainWindow
 
   Button
     id: buttonCancel
-    text: Cancel
+    !text: tr('Cancel')
     width: 64
     anchors.right: parent.right
     anchors.bottom: parent.bottom

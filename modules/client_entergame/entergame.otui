@@ -1,12 +1,12 @@
 MainWindow
   id: enterGame
-  text: Enter Game
+  !text: tr('Enter Game')
   size: 236 240
   @onEnter: EnterGame.doLogin()
   @onEscape: EnterGame.hide()
 
   Label
-    text: Account name
+    !text: tr('Account name')
     anchors.left: parent.left
     anchors.top: parent.top
     text-auto-resize: true
@@ -19,7 +19,7 @@ MainWindow
     margin-top: 2
 
   Label
-    text: Password
+    !text: tr('Password')
     anchors.left: prev.left
     anchors.top: prev.bottom
     margin-top: 8
@@ -34,7 +34,7 @@ MainWindow
 
   Label
     id: serverLabel
-    text: Server
+    !text: tr('Server')
     anchors.left: prev.left
     anchors.top: prev.bottom
     margin-top: 8
@@ -42,9 +42,7 @@ MainWindow
 
   TextEdit
     id: serverHostTextEdit
-    tooltip: |-
-      Make sure that your client uses
-      the correct game protocol version
+    !tooltip: tr('Make sure that your client uses\nthe correct game protocol version')
     anchors.left: serverLabel.left
     anchors.top: serverLabel.bottom
     margin-top: 2
@@ -52,7 +50,7 @@ MainWindow
 
   Label
     id: portLabel
-    text: Port
+    !text: tr('Port')
     anchors.left: serverHostTextEdit.right
     anchors.top: serverLabel.top
     margin-left: 10
@@ -68,8 +66,8 @@ MainWindow
 
   CheckBox
     id: rememberPasswordBox
-    text: Remember password
-    tooltip: Remember account and password when starts otclient
+    !text: tr('Remember password')
+    !tooltip: tr('Remember account and password when starts otclient')
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: prev.bottom
@@ -79,15 +77,15 @@ MainWindow
   CheckBox
     id: autoLoginBox
     enabled: false
-    text: Auto login
-    tooltip: Open charlist automatically when starting otclient
+    !text: tr('Auto login')
+    !tooltip: tr('Open charlist automatically when starting otclient')
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: prev.bottom
     margin-top: 2
 
   Button
-    text: Ok
+    !text: tr('Ok')
     width: 64
     anchors.right: next.left
     anchors.bottom: parent.bottom
@@ -95,7 +93,7 @@ MainWindow
     @onClick: EnterGame.doLogin()
 
   Button
-    text: Cancel
+    !text: tr('Cancel')
     width: 64
     anchors.right: parent.right
     anchors.bottom: parent.bottom
