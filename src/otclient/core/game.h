@@ -132,6 +132,7 @@ public:
     // item related
     void look(const ThingPtr& thing);
     void move(const ThingPtr &thing, const Position& toPos, int count);
+    void moveToParentContainer(const ThingPtr& thing, int count);
     void rotate(const ThingPtr& thing);
     void use(const ThingPtr& thing);
     void useWith(const ItemPtr& fromThing, const ThingPtr& toThing);

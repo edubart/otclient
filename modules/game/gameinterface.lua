@@ -194,8 +194,7 @@ function GameInterface.createThingMenu(menuPosition, lookThing, useThing, creatu
   if lookThing then
     local parentContainer = lookThing:getParentContainer()
     if parentContainer and parentContainer:hasParent() then
-      local pos = lookThing:getPosition()
-      menu:addOption('Move up', function() g_game.move(lookThing, { x=pos.x, y=pos.y, z=254 }, lookThing:getCount()) end)
+      menu:addOption('Move up', function() g_game.moveToParentContainer(lookThing, lookThing:getCount()) end)
     end
   end
 

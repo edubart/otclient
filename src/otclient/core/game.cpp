@@ -521,6 +521,15 @@ void Game::move(const ThingPtr& thing, const Position& toPos, int count)
     m_protocolGame->sendMove(thing->getPosition(), thing->getId(), thing->getStackpos(), toPos, count);
 }
 
+void Game::moveToParentContainer(const ThingPtr& thing, int count)
+{
+    if(!canPerformGameAction() || !thing || count <= 0)
+        return;
+
+    Position position = thing->getPosition();
+    move(thing, Position(position.x, position.y, 254), count);
+}
+
 void Game::rotate(const ThingPtr& thing)
 {
     if(!canPerformGameAction() || !thing)
@@ -927,7 +936,7 @@ bool Game::checkBotProtection()
     // accepts calls comming from a stacktrace containing only C++ functions,
     // if the stacktrace contains a lua function, then only accept if the engine is processing an input event
     if(g_lua.isInCppCallback() && !g_ui.isOnInputEvent()) {
-        logError("caught a lua call to a bot protected game function, the call was canceled");
+        logError(g_lua.traceback("caught a lua call to a bot protected game function, the call was canceled"));
         return false;
     }
 #endif

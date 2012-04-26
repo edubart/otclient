@@ -176,6 +176,12 @@ local function onChannelList(channelList)
   end
 end
 
+local function onGameStart()
+  local tab = Console.getTab('Default')
+  if tab then
+    addEvent(function() consoleTabBar:selectTab(tab) end, false)
+  end
+end
 
 -- public functions
 function Console.init()
@@ -185,6 +191,7 @@ function Console.init()
                     onOpenPrivateChannel = onOpenPrivateChannel,
                     onOpenOwnPrivateChannel = onOpenOwnPrivateChannel,
                     onCloseChannel = onCloseChannel,
+                    onGameStart = onGameStart,
                     onGameEnd = Console.clear })
 
   consolePanel = displayUI('console.otui', GameInterface.getBottomPanel())
@@ -221,6 +228,7 @@ function Console.terminate()
                        onOpenPrivateChannel = onOpenPrivateChannel,
                        onOpenOwnPrivateChannel = onOpenPrivateChannel,
                        onCloseChannel = onCloseChannel,
+                       onGameStart = onGameStart,
                        onGameEnd = Console.clear })
 
   for channelid, channelname in pairs(channels) do

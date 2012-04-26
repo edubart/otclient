@@ -89,6 +89,7 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassStaticFunction("g_game", "stop", std::bind(&Game::stop, &g_game));
     g_lua.bindClassStaticFunction("g_game", "look", std::bind(&Game::look, &g_game, std::placeholders::_1));
     g_lua.bindClassStaticFunction("g_game", "move", std::bind(&Game::move, &g_game, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+    g_lua.bindClassStaticFunction("g_game", "moveToParentContainer", std::bind(&Game::moveToParentContainer, &g_game, std::placeholders::_1, std::placeholders::_2));
     g_lua.bindClassStaticFunction("g_game", "rotate", std::bind(&Game::rotate, &g_game, std::placeholders::_1));
     g_lua.bindClassStaticFunction("g_game", "use", std::bind(&Game::use, &g_game, std::placeholders::_1));
     g_lua.bindClassStaticFunction("g_game", "useWith", std::bind(&Game::useWith, &g_game, std::placeholders::_1, std::placeholders::_2));
