@@ -261,28 +261,19 @@ void Font::calculateGlyphsWidthsAutomatically(const ImagePtr& image, const Size&
                             glyphSize.width(),
                             m_glyphHeight);
         int width = glyphSize.width();
-        int lastColumnFilledPixels = 0;
-        bool foundAnything = false;
         for(int x = glyphCoords.left(); x <= glyphCoords.right(); ++x) {
-            int columnFilledPixels = 0;
-
+            int filledPixels = 0;
             // check if all vertical pixels are alpha
             for(int y = glyphCoords.top(); y <= glyphCoords.bottom(); ++y) {
-                if(texturePixels[(y * image->getSize().width() * 4) + (x*4) + 3] != 0) {
-                    columnFilledPixels++;
-                    foundAnything = true;
-                }
+                if(texturePixels[(y * image->getSize().width() * 4) + (x*4) + 3] != 0)
+                    filledPixels++;
             }
-
-            // if all pixels were alpha we found the width
-            if(columnFilledPixels == 0 && foundAnything) {
-                width = x - glyphCoords.left();
+            if(filledPixels > 0) {
+                width = x - glyphCoords.left() + 1;
                 width += m_glyphSpacing.width();
-                if(m_glyphHeight >= 16 && lastColumnFilledPixels >= m_glyphHeight/3)
+                if(m_glyphHeight >= 16 && filledPixels >= m_glyphHeight/3)
                     width += 1;
-                break;
             }
-            lastColumnFilledPixels = columnFilledPixels;
         }
         // store glyph size
         m_glyphsSize[glyph].resize(width, m_glyphHeight);
