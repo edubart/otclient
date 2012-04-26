@@ -31,8 +31,8 @@ function Options.init()
   optionsButton = TopMenu.addLeftButton('optionsButton', tr('Options'), 'options.png', Options.toggle)
   optionsTabBar = optionsWindow:getChildById('optionsTabBar')
   optionsTabBar:setContentWidget(optionsWindow:getChildById('optionsTabContent'))
-  optionsTabBar:addTab('General', loadUI('general.otui'))
-  optionsTabBar:addTab('Graphics', loadUI('graphics.otui'))
+  optionsTabBar:addTab(tr('General'), loadUI('general.otui'))
+  optionsTabBar:addTab(tr('Graphics'), loadUI('graphics.otui'))
 end
 
 function Options.terminate()

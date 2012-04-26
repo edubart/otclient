@@ -1,8 +1,9 @@
 locale = {
-	name = 'en-us',
+  name = 'en-us',
+  languageName = 'English',
 
-	-- Translations not needed. en-us is already default.
-	translation = {}
+  -- Translations not needed. en-us is already default.
+  translation = {}
 }
 
 Locales.installLocale(locale)

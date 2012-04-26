@@ -115,7 +115,7 @@ function VipList.onVipListMousePress(widget, mousePos, mouseButton)
   local vipList = vipWindow:getChildById('contentsPanel')
 
   local menu = createWidget('PopupMenu')
-  menu:addOption('Add new VIP', function() VipList.createAddWindow() end)
+  menu:addOption(tr('Add new VIP'), function() VipList.createAddWindow() end)
   menu:display(mousePos)
 
   return true

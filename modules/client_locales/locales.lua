@@ -4,6 +4,14 @@ Locales = { }
 local defaultLocaleName = 'en-us'
 local installedLocales
 local currentLocale
+local localeComboBox
+
+-- private functions
+local function onLocaleComboBoxOptionChange(self, optionText, optionData)
+  Locales.setLocale(optionData)
+  Settings.set('locale', optionData)
+  reloadModules()
+end
 
 -- public functions
 function Locales.init()
@@ -21,15 +29,20 @@ function Locales.init()
     Settings.set('locale', defaultLocaleName)
   end
 
-  -- add event for creating combobox
-  --for key,value in pairs(installedLocales) do
-    -- add elements
-  --end
+  addEvent( function()
+              localeComboBox = createWidget('ComboBox', rootWidget:recursiveGetChildById('rightButtonsPanel'))
+              for key,value in pairs(installedLocales) do
+                localeComboBox:addOption(value.languageName, value.name)
+              end
+              localeComboBox:setCurrentOption(currentLocale.languageName)
+              localeComboBox.onOptionChange = onLocaleComboBoxOptionChange
+            end, false)
 end
 
 function Locales.terminate()
   installedLocales = nil
   currentLocale = nil
+  localeComboBox = nil
 end
 
 function Locales.installLocale(locale)

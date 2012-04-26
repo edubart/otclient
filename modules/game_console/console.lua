@@ -106,7 +106,7 @@ local function onCreatureSpeak(name, level, speaktype, message, channelId, creat
 end
 
 local function onOpenChannel(channelId, channelName)
-  Console.addChannel(channelName, channelId)
+  Console.addChannel(tr(channelName), channelId)
 end
 
 local function onOpenPrivateChannel(receiver)
