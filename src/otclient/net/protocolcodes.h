@@ -69,7 +69,7 @@ namespace Proto {
 
     enum GameServerOpts {
         GameServerInitGame = 10,
-        GameServerGMActions = 11, // deprecated in last tibia
+        GameServerGMActions = 11, // deprecated in last tibia?
         GameServerLoginError = 20,
         GameServerLoginAdvice = 21,
         GameServerLoginWait = 22,
