@@ -1,5 +1,5 @@
 -- TIP: to find all possible translations in the modules directory use the following command
--- find \( -name "*.lua" -o -name "*.otui" \) -exec grep -oE "tr\\("(\\\\"|[^"])*"" {} \; -exec grep -oE "tr\\(\"(\\\\\"|[^\"])*\nil {} \; | sort | uniq | sed "s/^tr(.\(.*\).$/[\"\1\"] = nil,/"
+-- find \( -name "*.lua" -o -name "*.otui" \) -exec grep -oE "tr\\('(\\\\'|[^'])*'" {} \; -exec grep -oE "tr\\(\"(\\\\\"|[^\"])*" {} \; | sort | uniq | sed "s/^tr(.\(.*\).$/[\"\1\"] = nil,/"
 
 Locales = { }
 

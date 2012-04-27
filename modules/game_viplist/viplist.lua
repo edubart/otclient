@@ -115,7 +115,7 @@ function VipList.onVipStateChange(id, online)
   local vipList = vipWindow:getChildById('contentsPanel')
   local label = vipList:getChildById('vip' .. id)
   local text = label:getText()
-  vipList:removeChild(label)
+  label:destroy()
 
   VipList.onAddVip(id, text, online)
 end

@@ -46,6 +46,7 @@ else
     cmake -DCMAKE_TOOLCHAIN_FILE=$gitdir/src/framework/cmake/${platform}_toolchain.cmake \
           -DCMAKE_BUILD_TYPE=Release \
           -DBUILD_REVISION=$revision \
+          -DBOT_PROTECTION=OFF \
           -DPROTOCOL=$protocol \
           .. || exit
 fi
