@@ -5,14 +5,21 @@ for that it uses LUA scripting for all game interface functionality and configur
 similar to CSS for the client interface design. OTClient works with a modular system, this means
 that each functionality is a separated module, giving the possibility to users modify and customize
 anything easily. Users can also create new mods and extend game interface for their own purposes.
-OTClient is written in C++2011, the upcoming C++ standard.
+OTClient is written in C++2011, the upcoming C++ standard and heavily scripted in lua.
+
+== Features
+
+Beyond of it's flexibility with scripts, otclient comes with tons of other features that make possible
+the creation of new stuff in otserv to extend tibia capabilities, these include, sound system, graphics effects
+with shaders, particle engines, modules and addons system, animated textures, styleable user interface and a
+OpenGL 1.1/2.0 ES engine that make possible to run on mobile platforms like Android, iPhone and iPad.
 
 == Download
 
 Daily snapshots of otclient master branch compiled for Windows and protocol 860 is available
-in the {downloads section}[https://github.com/edubart/otclient/downloads] of the project github page.
+in the {downloads section}[https://github.com/edubart/otclient/downloads] of the project's github page.
 For any other platform or protocol you will need to compile the source code. Currently Linux/Windows
-platforms and protocols 860/861/862 is supported.
+platforms and protocols 860/861/862 are supported.
 
 == Compiling
 
@@ -40,8 +47,10 @@ We are currently needing help in the following areas:
 * Designing new UI themes or improving the current one
 * Translating the client to other languages
 * Documenting lua APIs and creating tutorials
-* Creating new modules in lua and improving the current ones
+* Scripting in lua new modules or improving the current ones
+* Porting otclient to other otserv protocols (8.54, 8.7, 9.x, etc)
 * Spreading otclient project over the web and bring it to new possible contributors
+* Testing the client itself to report bugs and missing features in our bug tracker
 
 == Contact
 
