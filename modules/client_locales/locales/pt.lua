@@ -1,8 +1,5 @@
--- to find all possible translations in the source code use the following command:
--- find \( -name "*.lua" -o -name "*.otui" \) -exec grep -oE "tr\\("(\\\\"|[^"])*"" {} \; -exec grep -oE "tr\\(\"(\\\\\"|[^\"])*\nil {} \; | sort | uniq | sed "s/^tr(.\(.*\).$/[\"\1\"] = nil,/"
-
 locale = {
-  name = "pt-br",
+  name = "pt",
   languageName = "Português",
 
   -- As traduções devem vir sempre em ordem alfabética.
@@ -198,8 +195,6 @@ locale = {
     ["You may not logout or enter a protection zone"] = "Você não pode sair ou entrar em uma zona de proteção",
     ["You must select a character to login!"] = "Você deve selecionar um personagem para entrar!",
   }
-
-  -- Adicionar informações de números. 1.000  100,00  1.000,00 etc.
 }
 
 Locales.installLocale(locale)

@@ -1,7 +1,10 @@
+-- TIP: to find all possible translations in the modules directory use the following command
+-- find \( -name "*.lua" -o -name "*.otui" \) -exec grep -oE "tr\\("(\\\\"|[^"])*"" {} \; -exec grep -oE "tr\\(\"(\\\\\"|[^\"])*\nil {} \; | sort | uniq | sed "s/^tr(.\(.*\).$/[\"\1\"] = nil,/"
+
 Locales = { }
 
 -- private variables
-local defaultLocaleName = 'en-us'
+local defaultLocaleName = 'en'
 local installedLocales
 local currentLocale
 local localeComboBox
@@ -20,15 +23,14 @@ function Locales.init()
   Locales.installLocales('locales')
 
   local userLocaleName = Settings.get('locale')
-  if userLocaleName then
+  if userLocaleName and Locales.setLocale(userLocaleName)then
     print('Using configurated locale: ' .. userLocaleName)
-    Locales.setLocale(userLocaleName)
   else
     print('Using default locale: ' .. defaultLocaleName)
     Locales.setLocale(defaultLocaleName)
     Settings.set('locale', defaultLocaleName)
   end
---[[
+
   addEvent( function()
               localeComboBox = createWidget('ComboBox', rootWidget:recursiveGetChildById('rightButtonsPanel'))
               for key,value in pairs(installedLocales) do
@@ -37,7 +39,6 @@ function Locales.init()
               localeComboBox:setCurrentOption(currentLocale.languageName)
               localeComboBox.onOptionChange = onLocaleComboBoxOptionChange
             end, false)
-            ]]--
 end
 
 function Locales.terminate()
@@ -71,9 +72,11 @@ end
 function Locales.setLocale(name)
   local locale = installedLocales[name]
   if not locale then
-    error("Locale " .. name .. ' does not exist.')
+    warning("Locale " .. name .. ' does not exist.')
+    return false
   end
   currentLocale = locale
+  return true
 end
 
 function tr(text, ...)
