@@ -617,7 +617,7 @@ void Game::open(const ItemPtr& item, const ContainerPtr& previousContainer)
 
 void Game::openParent(const ContainerPtr& container)
 {
-    if(!canPerformGameAction())
+    if(!canPerformGameAction() || !container)
         return;
 
     m_protocolGame->sendUpContainer(container->getId());
@@ -625,7 +625,7 @@ void Game::openParent(const ContainerPtr& container)
 
 void Game::close(const ContainerPtr& container)
 {
-    if(!canPerformGameAction())
+    if(!canPerformGameAction() || !container)
         return;
 
     m_protocolGame->sendCloseContainer(container->getId());
@@ -879,7 +879,7 @@ void Game::closeNpcTrade()
 
 void Game::requestTrade(const ItemPtr& item, const CreaturePtr& creature)
 {
-    if(!canPerformGameAction())
+    if(!canPerformGameAction() || !item || !creature)
         return;
     m_protocolGame->sendRequestTrade(item->getPosition(), item->getId(), item->getStackpos(), creature->getId());
 }
