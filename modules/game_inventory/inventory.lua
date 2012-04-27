@@ -9,7 +9,7 @@ local inventoryButton
 function Inventory.init()
   connect(LocalPlayer, { onInventoryChange = Inventory.onInventoryChange,
                          onFreeCapacityChange = Inventory.onFreeCapacityChange })
-  connect(g_game, { onGameEnd = Inventory.clear })
+  connect(g_game, { onGameStart = Inventory.refresh })
 
   Keyboard.bindKeyDown('Ctrl+I', Inventory.toggle)
 
@@ -25,7 +25,7 @@ end
 function Inventory.terminate()
   disconnect(LocalPlayer, { onInventoryChange = Inventory.onInventoryChange,
                          onFreeCapacityChange = Inventory.onFreeCapacityChange })
-  disconnect(g_game, { onGameEnd = Inventory.clear })
+  disconnect(g_game, { onGameStart = Inventory.refresh })
 
   Keyboard.unbindKeyDown('Ctrl+I')
 
@@ -40,10 +40,12 @@ end
 
 function Inventory.refresh()
   local player = g_game.getLocalPlayer()
-  if not player then return end
-
   for i=1,10 do
-    Inventory.onInventoryChange(player, i, player:getInventoryItem(i))
+    if player then
+      Inventory.onInventoryChange(player, i, player:getInventoryItem(i))
+    else
+      Inventory.onInventoryChange(player, i, nil)
+    end
   end
 end
 
