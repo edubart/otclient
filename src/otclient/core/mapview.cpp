@@ -81,7 +81,7 @@ void MapView::draw(const Rect& rect)
             g_painter->drawFilledRect(clearRect);
             g_painter->setColor(Color::white);
 
-           // m_framebuffer->clear(Color::black);
+            // m_framebuffer->clear(Color::black);
         }
 
         auto it = m_cachedVisibleTiles.begin();
@@ -131,6 +131,8 @@ void MapView::draw(const Rect& rect)
     drawOffset.y += (srcVisible.height() - srcSize.height()) / 2;
     Rect srcRect = Rect(drawOffset, srcSize);
 
+    g_painter->setColor(Color::white);
+    g_painter->setCompositionMode(Painter::CompositionMode_Replace);
 #if 0
     // debug source area
     g_painter->saveAndResetState();
@@ -144,6 +146,7 @@ void MapView::draw(const Rect& rect)
     m_framebuffer->draw(rect, srcRect);
 #endif
 
+    g_painter->resetCompositionMode();
     g_painter->resetShaderProgram();
 
     // this could happen if the player position is not known yet

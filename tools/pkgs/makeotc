@@ -36,20 +36,16 @@ fi
 gitdir=`pwd`
 revision=`git describe --dirty --always`
 
-#rm -rf build
-if [ -d build ]; then
-    cd build
-else
-    mkdir -p build
-    cd build
+rm -rf build
+mkdir build
+cd build
 
-    cmake -DCMAKE_TOOLCHAIN_FILE=$gitdir/src/framework/cmake/${platform}_toolchain.cmake \
-          -DCMAKE_BUILD_TYPE=Release \
-          -DBUILD_REVISION=$revision \
-          -DBOT_PROTECTION=OFF \
-          -DPROTOCOL=$protocol \
-          .. || exit
-fi
+cmake -DCMAKE_TOOLCHAIN_FILE=$gitdir/src/framework/cmake/${platform}_toolchain.cmake \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DBUILD_REVISION=$revision \
+        -DBOT_PROTECTION=OFF \
+        -DPROTOCOL=$protocol \
+        .. || exit
 
 make "-j${make_jobs}" || exit
 

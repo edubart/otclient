@@ -158,7 +158,7 @@ uint8 FileStream::getU8()
         if(PHYSFS_read(m_fileHandle, &v, 1, 1) != 1)
             logTraceError("operation failed on '", m_name, "': ", PHYSFS_getLastError());
     } else {
-        if(m_cacheReadPos+1 >= m_cacheBuffer.size()) {
+        if(m_cacheReadPos+1 > m_cacheBuffer.size()) {
             logTraceError("operation failed on '", m_name, "': reached file eof");
             return 0;
         }
@@ -176,7 +176,7 @@ uint16 FileStream::getU16()
         if(PHYSFS_readULE16(m_fileHandle, &v) == 0)
             logTraceError("operation failed on '", m_name, "': ", PHYSFS_getLastError());
     } else {
-        if(m_cacheReadPos+2 >= m_cacheBuffer.size()) {
+        if(m_cacheReadPos+2 > m_cacheBuffer.size()) {
             logTraceError("operation failed on '", m_name, "': reached file eof");
             return 0;
         }
@@ -194,7 +194,7 @@ uint32 FileStream::getU32()
         if(PHYSFS_readULE32(m_fileHandle, &v) == 0)
             logTraceError("operation failed on '", m_name, "': ", PHYSFS_getLastError());
     } else {
-        if(m_cacheReadPos+4 >= m_cacheBuffer.size()) {
+        if(m_cacheReadPos+4 > m_cacheBuffer.size()) {
             logTraceError("operation failed on '", m_name, "': reached file eof");
             return 0;
         }
@@ -212,7 +212,7 @@ uint64 FileStream::getU64()
         if(PHYSFS_readULE64(m_fileHandle, (PHYSFS_uint64*)&v) == 0)
             logTraceError("operation failed on '", m_name, "': ", PHYSFS_getLastError());
     } else {
-        if(m_cacheReadPos+8 >= m_cacheBuffer.size()) {
+        if(m_cacheReadPos+8 > m_cacheBuffer.size()) {
             logTraceError("operation failed on '", m_name, "': reached file eof");
             return 0;
         }
