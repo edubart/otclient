@@ -5,10 +5,13 @@ Module
   website: https://github.com/edubart/otclient
   icon: battle.png
 
+  dependencies:
+    - game
+
   @onLoad: |
     dofile 'battle'
     Battle.init()
 
-  @onUnload:
+  @onUnload: |
     Battle.terminate()
 

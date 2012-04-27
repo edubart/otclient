@@ -281,13 +281,15 @@ void UIManager::onWidgetDestroy(const UIWidgetPtr& widget)
 
     checkEvent = g_eventDispatcher.scheduleEvent([] {
         g_lua.collectGarbage();
-        g_eventDispatcher.addEvent([] {
+        UIWidgetList backupList = destroyedWidgets;
+        destroyedWidgets.clear();
+        g_eventDispatcher.scheduleEvent([backupList] {
             g_lua.collectGarbage();
-            for(const UIWidgetPtr& widget : destroyedWidgets) {
+            for(const UIWidgetPtr& widget : backupList) {
                 if(widget->getUseCount() != 1)
                     logWarning("widget '", widget->getId(), "' destroyed but still have ", widget->getUseCount()-1, " reference(s) left");
             }
-        });
+        }, 1);
     }, 1000);
 #endif
 }

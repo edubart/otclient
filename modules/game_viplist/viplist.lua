@@ -26,6 +26,8 @@ function VipList.terminate()
   vipWindow = nil
   vipButton:destroy()
   vipButton = nil
+
+  VipList = nil
 end
 
 function VipList.clear()

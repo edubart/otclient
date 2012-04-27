@@ -8,7 +8,7 @@ end
 local function tabBlink(tab)
   if not tab.blinking then return end
   tab:setOn(not tab:isOn())
-  scheduleEvent(function() tabBlink(tab) end, 500)
+  tab.blinkEvent = scheduleEvent(function() tabBlink(tab) end, 500)
 end
 
 -- public functions
@@ -29,12 +29,14 @@ end
 function UITabBar:addTab(text, panel)
   if panel == nil then
     panel = createWidget(self:getStyleName() .. 'Panel')
+    panel:setId('tabPanel')
   end
 
   local tab = createWidget(self:getStyleName() .. 'Button', self)
   panel.isTab = true
   tab.tabPanel = panel
   tab.tabBar = self
+  tab:setId('tab')
   tab:setText(text)
   tab:setWidth(tab:getTextSize().width + tab:getPaddingLeft() + tab:getPaddingRight())
   tab.onClick = onTabClick
@@ -55,6 +57,9 @@ function UITabBar:removeTab(tab)
     self:selectPrevTab()
   end
   table.remove(self.tabs, index)
+  if tab.blinkEvent then
+    removeEvent(tab.blinkEvent)
+  end
   tab:destroy()
 end
 

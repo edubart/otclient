@@ -131,5 +131,5 @@ end
 function TextMessage.displayDeadMessage()
   local advanceLabel = GameInterface.getMapPanel():recursiveGetChildById('centerAdvance')
   if advanceLabel:isVisible() then return end
-  TextMessage.displayEventAdvance('You are dead.')
+  TextMessage.displayEventAdvance(tr('You are dead.'))
 end

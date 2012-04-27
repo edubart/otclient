@@ -43,13 +43,15 @@ function Minimap.init()
 end
 
 function Minimap.terminate()
-  Keyboard.unbindKeyDown('Ctrl+M')
   disconnect(g_game, { onLogin = Minimap.reset })
+  Keyboard.unbindKeyDown('Ctrl+M')
 
   minimapWidget:destroy()
   minimapWidget = nil
   minimapButton:destroy()
   minimapButton = nil
+
+  Minimap = nil
 end
 
 function Minimap.toggle()

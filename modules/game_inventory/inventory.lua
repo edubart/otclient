@@ -38,6 +38,8 @@ function Inventory.terminate()
   inventoryWindow = nil
   inventoryButton = nil
   inventoryPanel = nil
+
+  Inventory = nil
 end
 
 function Inventory.toggle()

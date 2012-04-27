@@ -126,6 +126,8 @@ function Outfit.terminate()
   disconnect(g_game, { onOpenOutfitWindow = Outfit.create,
                        onGameEnd = Outfit.destroy })
   Outfit.destroy()
+
+  Outfit = nil
 end
 
 function Outfit.create(creature, outfitList)

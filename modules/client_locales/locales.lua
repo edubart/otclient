@@ -28,7 +28,7 @@ function Locales.init()
     Locales.setLocale(defaultLocaleName)
     Settings.set('locale', defaultLocaleName)
   end
-
+--[[
   addEvent( function()
               localeComboBox = createWidget('ComboBox', rootWidget:recursiveGetChildById('rightButtonsPanel'))
               for key,value in pairs(installedLocales) do
@@ -37,6 +37,7 @@ function Locales.init()
               localeComboBox:setCurrentOption(currentLocale.languageName)
               localeComboBox.onOptionChange = onLocaleComboBoxOptionChange
             end, false)
+            ]]--
 end
 
 function Locales.terminate()

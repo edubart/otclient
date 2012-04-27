@@ -8,8 +8,8 @@ Module
   reloadable: false
 
   load-later:
-    - client_topmenu
     - client_locales
+    - client_topmenu
     - client_background
     //- client_about
     - client_options

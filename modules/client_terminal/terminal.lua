@@ -177,19 +177,19 @@ function Terminal.hide()
 end
 
 function Terminal.addLine(text, color)
-  -- create new line label
-  local numLines = terminalBuffer:getChildCount() + 1
-  local label = createWidget('TerminalLabel', terminalBuffer)
-  label:setId('terminalLabel' .. numLines)
-  label:setText(text)
-  label:setColor(color)
-
   -- delete old lines if needed
+  local numLines = terminalBuffer:getChildCount() + 1
   if numLines > MaxLogLines then
     terminalBuffer:getChildByIndex(1):destroy()
   else
     terminalBuffer:setHeight(terminalBuffer:getHeight() + LabelHeight)
   end
+
+  -- create new line label
+  local label = createWidget('TerminalLabel', terminalBuffer)
+  label:setId('terminalLabel' .. numLines)
+  label:setText(text)
+  label:setColor(color)
 end
 
 function Terminal.executeCommand(command)

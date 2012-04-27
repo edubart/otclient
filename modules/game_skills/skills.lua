@@ -59,6 +59,8 @@ function Skills.terminate()
   skillsButton = nil
   skillsWindow:destroy()
   skillsWindow = nil
+
+  Skills = nil
 end
 
 function Skills.toggle()

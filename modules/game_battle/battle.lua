@@ -81,11 +81,15 @@ function Battle.terminate()
   battleButton = nil
   battleWindow:destroy()
   battleWindow = nil
+  mouseWidget:destroy()
+  mouseWidget = nil
 
   disconnect(Creature, {  onSkullChange = Battle.checkCreatureSkull,
                           onEmblemChange = Battle.checkCreatureEmblem } )
 
   disconnect(g_game, {    onAttackingCreatureChange = Battle.onAttack } )
+
+  Battle = nil
 end
 
 function Battle.toggle()

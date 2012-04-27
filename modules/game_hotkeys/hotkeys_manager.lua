@@ -116,6 +116,8 @@ function HotkeysManager.terminate()
   hotkeysWindow = nil
   hotkeysButton:destroy()
   hotkeysButton = nil
+
+  HotkeysManager = nil
 end
 
 function HotkeysManager.toggle()

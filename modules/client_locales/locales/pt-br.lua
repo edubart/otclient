@@ -182,6 +182,7 @@ locale = {
     ["You are burning"] = "Você está queimando",
     ["You are cursed"] = "Você está amaldiçoado",
     ["You are dazzled"] = "Você está deslumbrado",
+    ["You are dead."] = "Você está morto.",
     ["You are drowing"] = "Você está se afogando",
     ["You are electrified"] = "Você está eletrificado",
     ["You are freezing"] = "Você está congelando",

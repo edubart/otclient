@@ -4,12 +4,12 @@ Module
   author: OTClient team
   website: https://github.com/edubart/otclient
 
-  dependecies:
+  dependencies:
     - game
 
   @onLoad: |
     dofile 'minimap'
     Minimap.init()
 
-  @onUnload:
+  @onUnload: |
     Minimap.terminate()

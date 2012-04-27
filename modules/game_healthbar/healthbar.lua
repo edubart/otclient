@@ -63,6 +63,8 @@ function HealthBar.terminate()
   manaBar = nil
   healthLabel = nil
   manaLabel = nil
+
+  HealthBar = nil
 end
 
 function HealthBar.toggle()

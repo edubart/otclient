@@ -8,5 +8,5 @@ Module
     dofile 'viplist'
     VipList.init()
 
-  @onUnload:
+  @onUnload: |
     VipList.terminate()

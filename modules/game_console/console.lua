@@ -42,17 +42,18 @@ local SayModes = {
   [3] = { speakTypeDesc = 'yell', icon = '/core_styles/icons/yell.png' }
 }
 
+local MAX_HISTORY = 1000
+local MAX_LINES = 100
+
 local consolePanel
 local consoleContentPanel
 local consoleTabBar
 local consoleTextEdit
 local channels
-local messageHistory = { }
-local currentMessageIndex = 0
-local MaxHistory = 1000
 local channelsWindow
-local MAX_LINES = 100
 local ownPrivateName
+local messageHistory = {}
+local currentMessageIndex = 0
 
 -- private functions
 local function navigateMessageHistory(step)
@@ -252,9 +253,9 @@ function Console.terminate()
   consoleContentPanel = nil
   consoleTabBar = nil
 
-  Console = nil
-  
   ownPrivateName = nil
+
+  Console = nil
 end
 
 function Console.clear()
@@ -418,7 +419,7 @@ function Console.sendCurrentMessage()
   -- add new command to history
   currentMessageIndex = 0
   table.insert(messageHistory, originalMessage)
-  if #messageHistory > MaxHistory then
+  if #messageHistory > MAX_HISTORY then
     table.remove(messageHistory, 1)
   end
 

@@ -33,15 +33,15 @@ local WEIGHT_UNIT = 'oz'
 function NPCTrade.init()
   cacheItems = {}
   cacheGoods = {}
-  
+
   npcWindow = displayUI('npctrade.otui')
   npcWindow:setVisible(false)
-  
+
   itemsPanel = npcWindow:recursiveGetChildById('itemsPanel')
   buyTab = npcWindow:getChildById('buyTab')
   sellTab = npcWindow:getChildById('sellTab')
   searchText = npcWindow:getChildById('searchText')
-  
+
   setupPanel = npcWindow:recursiveGetChildById('setupPanel')
   quantityLabel = setupPanel:getChildById('quantity')
   quantityScroll = setupPanel:getChildById('quantityScroll')
@@ -51,13 +51,13 @@ function NPCTrade.init()
   weightLabel = setupPanel:getChildById('weight')
   capacityLabel = setupPanel:getChildById('capacity')
   setupButton = setupPanel:getChildById('setupButton')
-  
+
   radioTabs = RadioGroup.create()
   radioTabs:addWidget(buyTab)
   radioTabs:addWidget(sellTab)
   radioTabs:selectWidget(buyTab)
   radioTabs.onSelectionChange = NPCTrade.setList
-  
+
   connect(g_game, { onGameEnd = NPCTrade.hide,
                     onOpenNpcTrade = NPCTrade.onOpenNpcTrade,
                     onPlayerGoods = NPCTrade.onPlayerGoods,
@@ -73,7 +73,7 @@ function NPCTrade.terminate()
   buyButton = nil
   sellButton = nil
   searchText = nil
-  
+
   setupPanel = nil
   quantityLabel = nil
   quantityScroll = nil
@@ -84,14 +84,18 @@ function NPCTrade.terminate()
   capacityLabel = nil
   offerSelected = nil
   setupButton = nil
-  
+
   cacheItems = nil
   cacheGoods = nil
-  
+  buyTab = nil
+  sellTab = nil
+
   disconnect(g_game, {  onGameEnd = NPCTrade.hide,
                         onOpenNpcTrade = NPCTrade.onOpenNpcTrade,
                         onPlayerGoods = NPCTrade.onPlayerGoods,
                         onCloseNpcTrade = NPCTrade.onCloseNpcTrade } )
+
+  NPCTrade = nil
 end
 
 -- private functions
@@ -106,12 +110,12 @@ function NPCTrade.hide()
   npcWindow:hide()
 end
 
-function NPCTrade.setList(radioTabs, selected, deselected) 
+function NPCTrade.setList(radioTabs, selected, deselected)
   setupButton:setText(selected:getText())
   selected:setOn(true)
   deselected:setOn(false)
   NPCTrade.createItemsOnPanel()
-  
+
   NPCTrade.resetSetup()
   NPCTrade.refreshItemsPanel()
   NPCTrade.refreshFilters()
@@ -140,7 +144,7 @@ function NPCTrade.updateSetup()
         if cacheGoods[offerSelected[1]:getId()] then -- list might be empty.
           quantityScroll:setMaximum(math.max(0, math.min(100, cacheGoods[offerSelected[1]:getId()])))
         end
-      end 
+      end
     else
       NPCTrade.resetSetup()
     end
@@ -174,11 +178,11 @@ function NPCTrade.setItem(widget)
   weightLabel:setText(string.format('%.2f', offer[3]/100) .. ' ' .. WEIGHT_UNIT)
   priceLabel:setText(price .. ' ' .. CURRENCY)
   capacityLabel:setText(string.format('%.2f', freeCapacity) .. ' ' .. WEIGHT_UNIT)
-  
+
   quantityLabel:setText(1)
   quantityScroll:setValue(1)
-  NPCTrade.updateSetup()  
-  
+  NPCTrade.updateSetup()
+
   setupPanel:enable()
 end
 
@@ -186,7 +190,7 @@ function NPCTrade.setQuantity(quantity)
   if quantityLabel and offerSelected then
     local price = NPCTrade.getOfferPrice(offerSelected)
     quantityLabel:setText(quantity)
-    weightLabel:setText(string.format('%.2f', offerSelected[3]*quantity/100) .. ' ' .. WEIGHT_UNIT) 
+    weightLabel:setText(string.format('%.2f', offerSelected[3]*quantity/100) .. ' ' .. WEIGHT_UNIT)
     priceLabel:setText(price .. ' ' .. CURRENCY)
   end
 end
@@ -208,14 +212,14 @@ function NPCTrade.onOpenNpcTrade(items)
   -- item[5] = sellPrice
 
   cacheItems = items
-  
+
   NPCTrade.createItemsOnPanel()
-  
+
   NPCTrade.show()
 end
 
 function NPCTrade.switchBuyWithBackpack()
-  buyWithBackpack = not buyWithBackpack 
+  buyWithBackpack = not buyWithBackpack
   if offerSelected then
     priceLabel:setText(NPCTrade.getOfferPrice(offerSelected) .. ' ' .. CURRENCY)
   end
@@ -238,12 +242,12 @@ function NPCTrade.itemPopup(self, mousePosition, mouseButton)
   end
 end
 
-function NPCTrade.createItemsOnPanel()  
+function NPCTrade.createItemsOnPanel()
   local layout = itemsPanel:getLayout()
   layout:disableUpdates()
-  
+
   NPCTrade.resetSetup()
-  
+
   offerSelected = nil
   itemsPanel:destroyChildren()
 
@@ -251,7 +255,7 @@ function NPCTrade.createItemsOnPanel()
     radioItems:destroy()
   end
   radioItems = RadioGroup.create()
-  
+
   for i, v in pairs(cacheItems) do
     local price = NPCTrade.getOfferPrice(v)
     if price > 0 then
@@ -260,28 +264,28 @@ function NPCTrade.createItemsOnPanel()
       itemBox:getChildById('item'):setItem(v[1])
       itemBox:getChildById('nameLabel'):setText(v[2])
       itemBox:getChildById('weightLabel'):setText(string.format('%.2f', v[3]/100) .. ' ' .. WEIGHT_UNIT)
-      itemBox:getChildById('priceLabel'):setText(price .. ' ' .. CURRENCY)      
-      
+      itemBox:getChildById('priceLabel'):setText(price .. ' ' .. CURRENCY)
+
       itemBox.onMouseRelease = NPCTrade.itemPopup
       itemBox:getChildById('item').onMouseRelease = function (self, mousePosition, mouseButton) NPCTrade.itemPopup(itemBox, mousePosition, mouseButton) end
-      
+
       radioItems:addWidget(itemBox)
     end
   end
-  
+
   layout:enableUpdates()
   layout:update()
 end
 
 function NPCTrade.extraFilters(widget, showOnlyHolding)
-  if setupButton:getText() == tr('Sell') then    
+  if setupButton:getText() == tr('Sell') then
     if not showOnlyHolding or cacheGoods[widget.offer[1]:getId()] then
       return true
     else
       return false
     end
   end
-  
+
   return true
 end
 
@@ -332,16 +336,16 @@ end
 
 function NPCTrade.onPlayerGoods(money, goods)
   moneyGoods = money
-  
+
   moneyLabel:setText(money .. ' ' .. CURRENCY)
   local freeCapacity = g_game.getLocalPlayer():getFreeCapacity()
   capacityLabel:setText(string.format('%.2f', freeCapacity) .. ' ' .. WEIGHT_UNIT)
-  
+
   cacheGoods = {}
   for i,v in pairs(goods) do
     cacheGoods[v[1]:getId()] = v[2]
   end
-  
+
   NPCTrade.refreshItemsPanel()
   NPCTrade.updateSetup()
 end

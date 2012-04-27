@@ -4,6 +4,9 @@ Module
   author: OTClient team
   website: https://github.com/edubart/otclient
 
+  dependencies:
+    - game
+
   @onLoad: |
     dofile 'combatcontrols'
     CombatControls.init()
