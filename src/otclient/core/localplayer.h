@@ -50,6 +50,7 @@ public:
     void setSoul(double soul);
     void setStamina(double stamina);
     void setKnown(bool known) { m_known = known; }
+    void setInventoryItem(Otc::Inventory inventory, const ItemPtr& item);
 
     int getStates() { return m_states; }
     int getSkillLevel(Otc::Skill skill) { return m_skillsLevel[skill]; }
@@ -66,6 +67,7 @@ public:
     double getMagicLevelPercent() { return m_magicLevelPercent; }
     double getSoul() { return m_soul; }
     double getStamina() { return m_stamina; }
+    ItemPtr getInventoryItem(Otc::Inventory inventory) { return m_inventoryItems[inventory]; }
 
     bool isKnown() { return m_known; }
     bool isPreWalking() { return m_preWalking; }
@@ -92,6 +94,7 @@ private:
     bool m_walkLocked;
     Position m_lastPrewalkDestionation;
     Timer m_walkLockTimer;
+    ItemPtr m_inventoryItems[Otc::LastInventory];
 
     std::array<int, Otc::LastSkill> m_skillsLevel;
     std::array<int, Otc::LastSkill> m_skillsLevelPercent;

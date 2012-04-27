@@ -15,6 +15,8 @@ function VipList.init()
   vipWindow = displayUI('viplist.otui', GameInterface.getLeftPanel())
   vipButton = TopMenu.addGameToggleButton('vipListButton', tr('VIP list'), 'viplist.png', VipList.toggle)
   vipButton:setOn(true)
+
+  VipList.refresh()
 end
 
 function VipList.terminate()
@@ -28,6 +30,13 @@ function VipList.terminate()
   vipButton = nil
 
   VipList = nil
+end
+
+function VipList.refresh()
+  VipList.clear()
+  for id,vip in pairs(g_game.getVips()) do
+    VipList.onAddVip(id, unpack(vip))
+  end
 end
 
 function VipList.clear()

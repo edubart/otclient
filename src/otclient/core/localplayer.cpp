@@ -284,3 +284,13 @@ void LocalPlayer::setStamina(double stamina)
         callLuaField("onStaminaChange", stamina, oldStamina);
     }
 }
+
+void LocalPlayer::setInventoryItem(Otc::Inventory inventory, const ItemPtr& item)
+{
+    if(m_inventoryItems[inventory] != item) {
+        ItemPtr oldItem = m_inventoryItems[inventory];
+        m_inventoryItems[inventory] = item;
+
+        callLuaField("onInventoryChange", inventory, item, oldItem);
+    }
+}

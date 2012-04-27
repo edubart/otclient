@@ -36,6 +36,7 @@ UIMap::UIMap()
     m_aspectRatio = 0.0f;
     m_maxZoomIn = 3;
     m_maxZoomOut = 512;
+    m_mapRect.resize(1,1);
     g_map.addMapView(m_mapView);
 }
 
@@ -58,7 +59,8 @@ void UIMap::drawSelf()
 
 bool UIMap::setZoom(int zoom)
 {
-    //TODO
+    m_zoom = std::min(std::max(zoom, m_maxZoomIn), m_maxZoomOut);
+    updateVisibleDimension();
     return false;
 }
 

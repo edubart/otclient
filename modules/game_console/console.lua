@@ -113,7 +113,7 @@ end
 local function onOpenPrivateChannel(receiver)
   local privateTab = Console.getTab(receiver)
   if privateTab == nil then
-    Console.addTab(receiver)
+    Console.addTab(receiver, true)
   end
 end
 

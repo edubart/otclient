@@ -154,6 +154,21 @@ namespace Otc
         LastSkill
     };
 
+    enum Inventory {
+        NoInventory = 0,
+        Head,
+        Neck,
+        Bag,
+        Armor,
+        RightHand,
+        LeftHand,
+        Legs,
+        Feet,
+        Ring,
+        Ammo,
+        LastInventory
+    };
+
     enum Direction {
         North = 0,
         East,

@@ -3,6 +3,7 @@ Minimap = {}
 -- private variables
 local minimapWidget
 local minimapButton
+local DEFAULT_ZOOM = 45
 
 -- private functions
 function onMinimapMouseRelease(self, mousePosition, mouseButton)
@@ -40,6 +41,8 @@ function Minimap.init()
   minimapWidget.onMouseRelease = onMinimapMouseRelease
   minimapWidget.onMouseWheel = onMinimapMouseWheel
   minimapWidget:hide()
+
+  Minimap.reset()
 end
 
 function Minimap.terminate()
@@ -61,7 +64,9 @@ function Minimap.toggle()
 end
 
 function Minimap.reset()
-  minimapWidget:followCreature(g_game.getLocalPlayer())
-  for i=1,10 do minimapWidget:zoomOut() end
+  local player = g_game.getLocalPlayer()
+  if not player then return end
+  minimapWidget:followCreature(player)
+  minimapWidget:setZoom(DEFAULT_ZOOM)
 end
 

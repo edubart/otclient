@@ -151,6 +151,7 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassStaticFunction("g_game", "isFollowing", std::bind(&Game::isFollowing, &g_game));
     g_lua.bindClassStaticFunction("g_game", "getContainer", std::bind(&Game::getContainer, &g_game, std::placeholders::_1));
     g_lua.bindClassStaticFunction("g_game", "getContainers", std::bind(&Game::getContainers, &g_game));
+    g_lua.bindClassStaticFunction("g_game", "getVips", std::bind(&Game::getVips, &g_game));
     g_lua.bindClassStaticFunction("g_game", "getAttackingCreature", std::bind(&Game::getAttackingCreature, &g_game));
     g_lua.bindClassStaticFunction("g_game", "getFollowingCreature", std::bind(&Game::getFollowingCreature, &g_game));
     g_lua.bindClassStaticFunction("g_game", "getServerBeat", std::bind(&Game::getServerBeat, &g_game));
@@ -272,6 +273,7 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassMemberFunction<LocalPlayer>("setSoul", &LocalPlayer::setSoul);
     g_lua.bindClassMemberFunction<LocalPlayer>("setStamina", &LocalPlayer::setStamina);
     g_lua.bindClassMemberFunction<LocalPlayer>("setKnown", &LocalPlayer::setKnown);
+    g_lua.bindClassMemberFunction<LocalPlayer>("setInventoryItem", &LocalPlayer::setInventoryItem);
     g_lua.bindClassMemberFunction<LocalPlayer>("getStates", &LocalPlayer::getStates);
     g_lua.bindClassMemberFunction<LocalPlayer>("getSkillLevel", &LocalPlayer::getSkillLevel);
     g_lua.bindClassMemberFunction<LocalPlayer>("getSkillLevelPercent", &LocalPlayer::getSkillLevelPercent);
@@ -287,6 +289,7 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassMemberFunction<LocalPlayer>("getMagicLevelPercent", &LocalPlayer::getMagicLevelPercent);
     g_lua.bindClassMemberFunction<LocalPlayer>("getSoul", &LocalPlayer::getSoul);
     g_lua.bindClassMemberFunction<LocalPlayer>("getStamina", &LocalPlayer::getStamina);
+    g_lua.bindClassMemberFunction<LocalPlayer>("getInventoryItem", &LocalPlayer::getInventoryItem);
     g_lua.bindClassMemberFunction<LocalPlayer>("isKnown", &LocalPlayer::isKnown);
     g_lua.bindClassMemberFunction<LocalPlayer>("isPreWalking", &LocalPlayer::isPreWalking);
     g_lua.bindClassMemberFunction<LocalPlayer>("asLocalPlayer", &LocalPlayer::asLocalPlayer);

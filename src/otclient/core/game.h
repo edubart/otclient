@@ -29,6 +29,8 @@
 #include <otclient/core/outfit.h>
 #include <framework/core/timer.h>
 
+typedef std::tuple<std::string, bool> Vip;
+
 class Game
 {
 public:
@@ -221,6 +223,7 @@ public:
 
     ContainerPtr getContainer(int index) { return m_containers[index]; }
     std::map<int, ContainerPtr> getContainers() { return m_containers; }
+    std::map<int, Vip> getVips() { return m_vips; }
     CreaturePtr getAttackingCreature() { return m_attackingCreature; }
     CreaturePtr getFollowingCreature() { return m_followingCreature; }
     int getServerBeat() { return m_serverBeat; }
@@ -238,6 +241,8 @@ private:
     CreaturePtr m_followingCreature;
     ProtocolGamePtr m_protocolGame;
     std::map<int, ContainerPtr> m_containers;
+    std::map<int, Vip> m_vips;
+
     bool m_dead;
     int m_serverBeat;
     Otc::FightModes m_fightMode;

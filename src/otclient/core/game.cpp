@@ -55,6 +55,7 @@ void Game::resetGameStates()
             container->close();
     }
     m_containers.clear();
+    m_vips.clear();
 
     m_worldName = "";
 }
@@ -241,7 +242,7 @@ void Game::processInventoryChange(int slot, const ItemPtr& item)
     if(item)
         item->setPosition(Position(65535, slot, 0));
 
-    g_lua.callGlobalField("g_game","onInventoryChange", slot, item);
+    m_localPlayer->setInventoryItem((Otc::Inventory)slot, item);
 }
 
 void Game::processCreatureMove(const CreaturePtr& creature, const Position& oldPos, const Position& newPos)
@@ -288,11 +289,13 @@ void Game::processCloseChannel(int channelId)
 
 void Game::processVipAdd(uint id, const std::string& name, bool online)
 {
+    m_vips[id] = Vip(name, online);
     g_lua.callGlobalField("g_game", "onAddVip", id, name, online);
 }
 
 void Game::processVipStateChange(uint id, bool online)
 {
+    std::get<1>(m_vips[id]) = online;
     g_lua.callGlobalField("g_game", "onVipStateChange", id, online);
 }
 

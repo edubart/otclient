@@ -39,6 +39,8 @@ function Skills.init()
   skillsButton = TopMenu.addGameToggleButton('skillsButton', tr('Skills') .. ' (Ctrl+S)', 'skills.png', Skills.toggle)
   skillsButton:setOn(true)
   Keyboard.bindKeyDown('Ctrl+S', Skills.toggle)
+
+  Skills.refresh()
 end
 
 function Skills.terminate()
@@ -61,6 +63,24 @@ function Skills.terminate()
   skillsWindow = nil
 
   Skills = nil
+end
+
+function Skills.refresh()
+  local player = g_game.getLocalPlayer()
+  if not player then return end
+
+  Skills.onExperienceChange(player, player:getExperience())
+  Skills.onLevelChange(player, player:getLevel(), player:getLevelPercent())
+  Skills.onHealthChange(player, player:getHealth(), player:getMaxHealth())
+  Skills.onManaChange(player, player:getMana(), player:getMaxMana())
+  Skills.onSoulChange(player, player:getSoul())
+  Skills.onFreeCapacityChange(player, player:getFreeCapacity())
+  Skills.onStaminaChange(player, player:getStamina())
+  Skills.onMagicLevelChange(player, player:getMagicLevel(), player:getMagicLevelPercent())
+
+  for i=0,6 do
+    Skills.onSkillChange(player, i, player:getSkillLevel(i), player:getSkillLevelPercent(i))
+  end
 end
 
 function Skills.toggle()
