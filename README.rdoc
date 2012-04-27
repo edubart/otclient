@@ -7,17 +7,24 @@ that each functionality is a separated module, giving the possibility to users m
 anything easily. Users can also create new mods and extend game interface for their own purposes.
 OTClient is written in C++2011, the upcoming C++ standard.
 
-== Getting Started
+== Download
+
+Daily snapshots of otclient master branch compiled for Windows and protocol 860 is available
+in the {downloads section}[https://github.com/edubart/otclient/downloads] of the project github page.
+For any other platform or protocol you will need to compile the source code. Currently Linux/Windows
+platforms and protocols 860/861/862 is supported.
+
+== Compiling
 
 In short, if you need to compile OTClient, follow these tutorials:
-* {Compiling on Windows}[http://otclient.info/page/articles.html/_/general/compiling-on-windows-r9]
-* {Compiling on Ubuntu}[http://otclient.info/page/articles.html/_/general/compiling-on-ubuntu-r12]
-Checkout our website at {http://otclient.info}[http://otclient.info/] for tutorials and more information
+* {Compiling on Windows}[http://otclient.info/index.php?app=ccs&module=pages&section=pages&id=2&record=9]
+* {Compiling on Ubuntu}[http://otclient.info/index.php?app=ccs&module=pages&section=pages&id=2&record=12]
 
 == Need help?
 
+Checkout our website at {http://otclient.info}[http://otclient.info/] for tutorials and more information.
 If you have any questions or are looking for more information, please feel free to ask on our official
-forum at http://otclient.info
+forum at http://otclient.info or talk with us at #otclient irc.freenode.net
 
 == Bugs
 
@@ -29,12 +36,25 @@ http://otclient.info/tracker
 We encourage you to contribute to OTClient! Please check out
 {our website}[http://otclient.info/] for guidelines about how to proceed. Join us!
 
+We are currently needing help in the following areas:
+* Designing new UI themes or improving the current one
+* Translating the client to other languages
+* Documenting lua APIs and creating tutorials
+* Creating new modules in lua and improving the current ones
+* Spreading otclient project over the web and bring it to new possible contributors
+
 == Contact
 
-You have 3 options, use the forum at http://otclient.info/ , talk directly with us at #otclient irc.freenode.net or send
-an email directly to the project leader edub4rt@gmail.com
+You have 3 options, use the forum at http://otclient.info , talk directly with us at
+#otclient irc.freenode.net or send an email directly to the project leader edub4rt@gmail.com
 
 == License
 
-OTClient is made available under the MIT License, thus this means that you can do whatever you want, commercial, non-commercial, closed or open.
+OTClient is made available under the MIT License, thus this means that you are free
+to do whatever you want, commercial, non-commercial, closed or open.
 
+
+== Donate
+
+OTClient needs your support, if you really like and use it, please donate. We might prioritize features
+requests from who donate, in this case you can send an email to the project leader.
