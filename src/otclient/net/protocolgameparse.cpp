@@ -165,12 +165,9 @@ void ProtocolGame::parseMessage(InputMessage& msg)
             case Proto::GameServerCreatureParty:
                 parseCreatureShields(msg);
                 break;
-#if PROTOCOL>=870
             case Proto::GameServerCreatureUnpass:
-                msg.getU32(); // creature id
-                msg.getU8(); // unpassable boolean
+                parseCreatureUnpass(msg);
                 break;
-#endif
             case Proto::GameServerEditText:
                 parseEditText(msg);
                 break;
@@ -510,7 +507,7 @@ void ProtocolGame::parseOpenNpcTrade(InputMessage& msg)
     int listCount = msg.getU8();
     for(int i = 0; i < listCount; ++i) {
         ItemPtr item = Item::create(msg.getU16());
-        item->setSubType(msg.getU8());
+        item->setCountOrSubType(msg.getU8());
 
         std::string name = msg.getString();
         int weight = msg.getU32();
@@ -686,6 +683,18 @@ void ProtocolGame::parseCreatureShields(InputMessage& msg)
     CreaturePtr creature = g_map.getCreatureById(id);
     if(creature)
         creature->setShield(shield);
+    else
+        logTraceError("could not get greature");
+}
+
+void ProtocolGame::parseCreatureUnpass(InputMessage& msg)
+{
+    uint id = msg.getU32();
+    bool unpass = msg.getU8();
+
+    CreaturePtr creature = g_map.getCreatureById(id);
+    if(creature)
+        creature->setPassable(!unpass);
     else
         logTraceError("could not get greature");
 }

@@ -85,7 +85,7 @@ void Item::draw(const Point& dest, float scaleFactor, bool animate)
         } else if(m_countOrSubType < 50) {
             xPattern = 2;
             yPattern = 1;
-        } else if(m_countOrSubType <= 100) {
+        } else {
             xPattern = 3;
             yPattern = 1;
         }

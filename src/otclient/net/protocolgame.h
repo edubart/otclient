@@ -145,6 +145,7 @@ private:
     void parseCreatureSpeed(InputMessage& msg);
     void parseCreatureSkulls(InputMessage& msg);
     void parseCreatureShields(InputMessage& msg);
+    void parseCreatureUnpass(InputMessage& msg);
     void parseCreatureTurn(InputMessage& msg);
     void parseEditText(InputMessage& msg);
     void parseEditList(InputMessage& msg);
