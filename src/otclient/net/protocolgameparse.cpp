@@ -506,8 +506,11 @@ void ProtocolGame::parseOpenNpcTrade(InputMessage& msg)
     std::vector<std::tuple<ItemPtr, std::string, int, int, int>> items;
     int listCount = msg.getU8();
     for(int i = 0; i < listCount; ++i) {
-        ItemPtr item = Item::create(msg.getU16());
-        item->setCountOrSubType(msg.getU8());
+        uint16 itemId = msg.getU16();
+        uint8 count = msg.getU8();
+
+        ItemPtr item = Item::create(itemId);
+        item->setCountOrSubType(count);
 
         std::string name = msg.getString();
         int weight = msg.getU32();

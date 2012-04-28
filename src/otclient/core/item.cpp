@@ -73,7 +73,10 @@ void Item::draw(const Point& dest, float scaleFactor, bool animate)
         yPattern = m_position.y % getNumPatternsY();
         zPattern = m_position.z % getNumPatternsZ();
     } else if(isStackable() && getNumPatternsX() == 4 && getNumPatternsY() == 2) {
-        if(m_countOrSubType < 5) {
+        if(m_countOrSubType <= 0) {
+            xPattern = 0;
+            yPattern = 0;
+        } else if(m_countOrSubType < 5) {
             xPattern = m_countOrSubType-1;
             yPattern = 0;
         } else if(m_countOrSubType < 10) {
