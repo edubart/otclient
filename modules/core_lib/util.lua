@@ -6,6 +6,10 @@ function print(...)
   g_logger.log(LogInfo, msg)
 end
 
+function info(msg)
+  g_logger.log(LogInfo, msg)
+end
+
 function warning(msg)
   g_logger.log(LogWarning, msg)
 end
