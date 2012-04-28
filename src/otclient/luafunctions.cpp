@@ -44,7 +44,6 @@
 #include <otclient/ui/uimap.h>
 #include <otclient/core/outfit.h>
 
-
 void OTClient::registerLuaFunctions()
 {
     Application::registerLuaFunctions();
@@ -59,6 +58,7 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassStaticFunction("g_sprites", "isLoaded", std::bind(&SpriteManager::isLoaded, &g_sprites));
     g_lua.bindClassStaticFunction("g_sprites", "getSignature", std::bind(&SpriteManager::getSignature, &g_sprites));
     g_lua.bindClassStaticFunction("g_sprites", "preloadSprites", std::bind(&SpriteManager::preloadSprites, &g_sprites));
+    g_lua.bindClassStaticFunction("g_sprites", "export", std::bind(&SpriteManager::exportSprites, &g_sprites));
 
     g_lua.registerStaticClass("g_map");
     g_lua.bindClassStaticFunction("g_map", "isLookPossible", std::bind(&Map::isLookPossible, &g_map, std::placeholders::_1));

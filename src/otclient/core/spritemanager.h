@@ -25,6 +25,21 @@
 
 #include <framework/core/declarations.h>
 #include <framework/graphics/texture.h>
+#include <png.h>
+
+#define SPRITE_WIDTH 32
+#define SPRITE_HEIGHT 32
+#define SPRITE_CHANNELS 4
+#define SPRITE_SIZE SPRITE_WIDTH*SPRITE_HEIGHT*SPRITE_CHANNELS
+
+/*
+    Compression levels:
+        None = 0
+        Fastest = 1
+        Best = 9
+*/
+
+#define PNG_COMPRESSION 6
 
 class SpriteManager
 {
@@ -37,6 +52,8 @@ public:
 
     uint32 getSignature() { return m_signature; }
     int getSpritesCount() { return m_spritesCount; }
+
+    bool exportSprites();
 
     TexturePtr& getSpriteTexture(int id);
     bool isLoaded() { return m_loaded; }

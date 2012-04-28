@@ -52,8 +52,8 @@ void exitSignalHandler(int sig)
             break;
     }
 }
-
 Application::Application(const std::string& appName)
+
 {
     g_app = this;
     m_appName = appName;

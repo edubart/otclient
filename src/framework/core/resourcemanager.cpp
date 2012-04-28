@@ -117,7 +117,10 @@ bool ResourceManager::saveFile(const std::string& fileName, const uchar* data, u
 {
     PHYSFS_file* file = PHYSFS_openWrite(fileName.c_str());
     if(!file)
+    {
+        logError(PHYSFS_getLastError());
         return false;
+    }
 
     PHYSFS_write(file, (void*)data, size, 1);
     PHYSFS_close(file);
