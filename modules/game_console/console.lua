@@ -96,12 +96,12 @@ local function onCreatureSpeak(name, level, speaktype, message, channelId, creat
     if not defaultMessage then
       channel = channels[channelId]
     end
-    
+
     if channel then
       Console.addText(message, speaktype, channel)
     else
-      -- server sent a message on a channel that we are not aware of, must leave it
-      g_game.leaveChannel(channelId)
+      -- server sent a message on a channel that is not open
+      warning('message in channel id ', channelId, ' which is unknown, this is a server bug, relogin if you want to see messages in this channel')
     end
   end
 end
