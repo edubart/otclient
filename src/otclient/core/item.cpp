@@ -34,7 +34,7 @@
 Item::Item() : Thing()
 {
     m_id = 0;
-    m_countOrSubType = 0;
+    m_countOrSubType = 1;
 }
 
 ItemPtr Item::create(int id)
@@ -44,8 +44,6 @@ ItemPtr Item::create(int id)
         logTraceError("invalid item id ", id);
     else {
         item->setId(id);
-        if(item->isStackable())
-            item->setCount(1);
     }
     return item;
 }
@@ -194,20 +192,4 @@ void Item::setId(uint32 id)
     }
     m_id = id;
     m_type = g_thingsType.getThingType(m_id, ThingsType::Item);
-}
-
-int Item::getCount()
-{
-    if(isStackable())
-        return m_countOrSubType;
-    else
-        return 1;
-}
-
-int Item::getSubType()
-{
-    if(isFluid() || isFluidContainer())
-        return m_countOrSubType;
-    else
-        return 0;
 }

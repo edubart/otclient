@@ -509,18 +509,13 @@ void ProtocolGame::parseOpenNpcTrade(InputMessage& msg)
     std::vector<std::tuple<ItemPtr, std::string, int, int, int>> items;
     int listCount = msg.getU8();
     for(int i = 0; i < listCount; ++i) {
-        int itemId = msg.getU16();
-        int subType = msg.getU8();
-
-        ItemPtr item = Item::create(itemId);
-        if(item->isFluidContainer() || item->isFluid())
-            item->setSubType(subType);
+        ItemPtr item = Item::create(msg.getU16());
+        item->setSubType(msg.getU8());
 
         std::string name = msg.getString();
         int weight = msg.getU32();
         int buyPrice = msg.getU32();
         int sellPrice = msg.getU32();
-
         items.push_back(std::make_tuple(item, name, weight, buyPrice, sellPrice));
     }
 

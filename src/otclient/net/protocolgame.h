@@ -58,8 +58,8 @@ public:
     void sendTurnWest();
     void sendMove(const Position& fromPos, int itemId, int stackpos, const Position& toPos, int count);
     void sendInspectNpcTrade(int itemId, int count);
-    void sendBuyItem(int itemId, int count, int amount, bool ignoreCapacity, bool buyWithBackpack);
-    void sendSellItem(int itemId, int count, int amount, bool ignoreEquipped);
+    void sendBuyItem(int itemId, int subType, int amount, bool ignoreCapacity, bool buyWithBackpack);
+    void sendSellItem(int itemId, int subType, int amount, bool ignoreEquipped);
     void sendCloseNpcTrade();
     void sendRequestTrade(const Position& pos, int thingId, int stackpos, uint playerId);
     void sendInspectTrade(bool counterOffer, int index);

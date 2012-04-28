@@ -232,24 +232,24 @@ void ProtocolGame::sendInspectNpcTrade(int itemId, int count)
     send(msg);
 }
 
-void ProtocolGame::sendBuyItem(int itemId, int count, int amount, bool ignoreCapacity, bool buyWithBackpack)
+void ProtocolGame::sendBuyItem(int itemId, int subType, int amount, bool ignoreCapacity, bool buyWithBackpack)
 {
     OutputMessage msg;
     msg.addU8(Proto::ClientBuyItem);
     msg.addU16(itemId);
-    msg.addU8(count);
+    msg.addU8(subType);
     msg.addU8(amount);
     msg.addU8(ignoreCapacity ? 0x01 : 0x00);
     msg.addU8(buyWithBackpack ? 0x01 : 0x00);
     send(msg);
 }
 
-void ProtocolGame::sendSellItem(int itemId, int count, int amount, bool ignoreEquipped)
+void ProtocolGame::sendSellItem(int itemId, int subType, int amount, bool ignoreEquipped)
 {
     OutputMessage msg;
     msg.addU8(Proto::ClientSellItem);
     msg.addU16(itemId);
-    msg.addU8(count);
+    msg.addU8(subType);
     msg.addU8(amount);
     msg.addU8(ignoreEquipped ? 0x01 : 0x00);
     send(msg);

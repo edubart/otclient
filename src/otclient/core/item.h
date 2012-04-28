@@ -36,13 +36,13 @@ public:
     void draw(const Point& dest, float scaleFactor, bool animate);
 
     void setId(uint32 id);
-    void setCountOrSubType(uint8 value) { m_countOrSubType = value; }
-    void setCount(int count) { setCountOrSubType(count); }
-    void setSubType(int subType) { setCountOrSubType(subType); }
+    void setCountOrSubType(int value) { m_countOrSubType = value; }
+    void setCount(int count) { m_countOrSubType = count; }
+    void setSubType(int subType) { m_countOrSubType = subType; }
 
-    uint8 getCountOrSubType() { return m_countOrSubType; }
-    int getSubType();
-    int getCount();
+    int getCountOrSubType() { return m_countOrSubType; }
+    int getSubType() { return m_countOrSubType; }
+    int getCount() { return m_countOrSubType; }
     uint32 getId() { return m_id; }
 
     ItemPtr asItem() { return std::static_pointer_cast<Item>(shared_from_this()); }
