@@ -201,9 +201,6 @@ end
 
 -- public functions
 function NPCTrade.init()
-  cacheItems = {}
-  cacheGoods = {}
-
   npcWindow = displayUI('npctrade.otui')
   npcWindow:setVisible(false)
 
@@ -292,6 +289,7 @@ function NPCTrade.show()
 
     npcWindow:show()
     npcWindow:raise()
+    npcWindow:focus()
   end
 end
 
