@@ -278,27 +278,18 @@ void Map::removeCreatureById(uint32 id)
 
 void Map::setCentralPosition(const Position& centralPosition)
 {
-    bool teleported = !m_centralPosition.isInRange(centralPosition, 1, 1);
     m_centralPosition = centralPosition;
 
-    // remove all creatures when teleporting, the server will resend them again
-    if(teleported) {
-        for(const auto& pair : m_knownCreatures) {
-            const CreaturePtr& creature = pair.second;
-            removeThing(creature);
-        }
     // remove creatures from tiles that we are not aware anymore
-    } else {
-        for(const auto& pair : m_knownCreatures) {
-            const CreaturePtr& creature = pair.second;
-            if(creature) {
-                if(!isAwareOfPosition(creature->getPosition())) {
-                    removeThing(creature);
-                }
+    for(const auto& pair : m_knownCreatures) {
+        const CreaturePtr& creature = pair.second;
+        if(creature) {
+            if(!isAwareOfPosition(creature->getPosition())) {
+                removeThing(creature);
             }
-            else
-                logTraceError("invalid creature");
         }
+        else
+            logTraceError("invalid creature");
     }
 }
 
