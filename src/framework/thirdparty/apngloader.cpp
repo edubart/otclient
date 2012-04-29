@@ -557,7 +557,7 @@ int load_apng(std::stringstream& file, struct apng_data *apng)
     unsigned char * pImg2;
     unsigned char * pDst1;
     unsigned char * pDst2;
-    unsigned int  * frames_delay;
+    unsigned short* frames_delay;
 
     file.read((char*)sig, 8);
     if(!file.eof() && memcmp(sig, png_sign, 8) == 0) {
@@ -677,7 +677,7 @@ int load_apng(std::stringstream& file, struct apng_data *apng)
                     frames = read32(file);
                     if(frames_delay)
                         free(frames_delay);
-                    frames_delay = (unsigned int*)malloc(frames*sizeof(int));
+                    frames_delay = (unsigned short*)malloc(frames*sizeof(int));
                     loops  = read32(file);
                     crc = read32(file);
                     if (pOut1)
@@ -860,6 +860,279 @@ int load_apng(std::stringstream& file, struct apng_data *apng)
         return -1;
 
     return 0;
+}
+
+void write_chunk(std::ostream& f, const char* name, unsigned char* data, unsigned int length)
+{
+    unsigned int crc = crc32(0, Z_NULL, 0);
+    unsigned int len = swap32(length);
+
+    f.write((char*)&len, 4);
+    f.write(name, 4);
+    crc = crc32(crc, (const Bytef*)name, 4);
+
+    if(data != NULL && length > 0) {
+        f.write((char*)data, length);
+        crc = crc32(crc, data, length);
+    }
+
+    crc = swap32(crc);
+    f.write((char*)&crc, 4);
+}
+
+void write_IDATs(std::ostream& f, unsigned char* data, unsigned int length, unsigned int idat_size)
+{
+    unsigned int z_cmf = data[0];
+
+    if((z_cmf & 0x0f) == 8 && (z_cmf & 0xf0) <= 0x70) {
+        if(length >= 2) {
+            unsigned int z_cinfo = z_cmf >> 4;
+            unsigned int half_z_window_size = 1 << (z_cinfo + 7);
+
+            while(idat_size <= half_z_window_size && half_z_window_size >= 256) {
+                z_cinfo--;
+                half_z_window_size >>= 1;
+            }
+
+            z_cmf = (z_cmf & 0x0f) | (z_cinfo << 4);
+
+            if(data[0] != (unsigned char)z_cmf) {
+                data[0] = (unsigned char)z_cmf;
+                data[1] &= 0xe0;
+                data[1] += (unsigned char)(0x1f - ((z_cmf << 8) + data[1]) % 0x1f);
+            }
+        }
+    }
+
+    while(length > 0) {
+        unsigned int ds = length;
+
+        if(ds > PNG_ZBUF_SIZE)
+            ds = PNG_ZBUF_SIZE;
+
+        write_chunk(f, "IDAT", data, ds);
+
+        data += ds;
+        length -= ds;
+    }
+}
+
+void save_png(std::stringstream& f, int width, int height, int channels, unsigned char *pixels)
+{
+    unsigned int bpp = 4;
+    unsigned char coltype = 0;
+
+    if(channels == 3)
+        coltype = 2;
+    else if (channels == 2)
+        coltype = 4;
+    else if (channels == 4)
+        coltype = 6;
+
+    struct IHDR {
+        unsigned int    mWidth;
+        unsigned int    mHeight;
+        unsigned char   mDepth;
+        unsigned char   mColorType;
+        unsigned char   mCompression;
+        unsigned char   mFilterMethod;
+        unsigned char   mInterlaceMethod;
+    } ihdr = { swap32(width), swap32(height), 8, coltype, 0, 0, 0 };
+
+    z_stream        zstream1;
+    z_stream        zstream2;
+    unsigned int    i, j;
+
+    unsigned int rowbytes  = width * bpp;
+    unsigned int idat_size = (rowbytes + 1) * height;
+    unsigned int zbuf_size = idat_size + ((idat_size + 7) >> 3) + ((idat_size + 63) >> 6) + 11;
+
+    unsigned char* row_buf   = (unsigned char*)malloc(rowbytes + 1);
+    unsigned char* sub_row   = (unsigned char*)malloc(rowbytes + 1);
+    unsigned char* up_row    = (unsigned char*)malloc(rowbytes + 1);
+    unsigned char* avg_row   = (unsigned char*)malloc(rowbytes + 1);
+    unsigned char* paeth_row = (unsigned char*)malloc(rowbytes + 1);
+    unsigned char* zbuf1     = (unsigned char*)malloc(zbuf_size);
+    unsigned char* zbuf2     = (unsigned char*)malloc(zbuf_size);
+
+    if(!row_buf || !sub_row || !up_row || !avg_row || !paeth_row || !zbuf1 || !zbuf2)
+        return;
+
+    row_buf[0]   = 0;
+    sub_row[0]   = 1;
+    up_row[0]    = 2;
+    avg_row[0]   = 3;
+    paeth_row[0] = 4;
+
+    zstream1.data_type = Z_BINARY;
+    zstream1.zalloc    = Z_NULL;
+    zstream1.zfree     = Z_NULL;
+    zstream1.opaque    = Z_NULL;
+    deflateInit2(&zstream1, Z_BEST_COMPRESSION, 8, 15, 8, Z_DEFAULT_STRATEGY);
+
+    zstream2.data_type = Z_BINARY;
+    zstream2.zalloc    = Z_NULL;
+    zstream2.zfree     = Z_NULL;
+    zstream2.opaque    = Z_NULL;
+    deflateInit2(&zstream2, Z_BEST_COMPRESSION, 8, 15, 8, Z_FILTERED);
+
+    int a, b, c, pa, pb, pc, p, v;
+    unsigned char* prev;
+    unsigned char* row;
+
+    f.write((char*)png_sign, 8);
+    write_chunk(f, "IHDR", (unsigned char*)(&ihdr), 13);
+
+    if(palsize > 0)
+        write_chunk(f, "PLTE", (unsigned char*)(&pal), palsize * 3);
+
+    if(trnssize > 0)
+        write_chunk(f, "tRNS", trns, trnssize);
+
+    zstream1.next_out  = zbuf1;
+    zstream1.avail_out = zbuf_size;
+    zstream2.next_out  = zbuf2;
+    zstream2.avail_out = zbuf_size;
+
+    prev = NULL;
+    row  = pixels;
+
+    for(j = 0; j < (unsigned int)height; j++) {
+        unsigned char* out;
+        unsigned int    sum = 0;
+        unsigned char* best_row = row_buf;
+        unsigned int    mins = ((unsigned int)(-1)) >> 1;
+
+        out = row_buf + 1;
+
+        for(i = 0; i < rowbytes; i++) {
+            v = out[i] = row[i];
+            sum += (v < 128) ? v : 256 - v;
+        }
+
+        mins = sum;
+
+        sum = 0;
+        out = sub_row + 1;
+
+        for(i = 0; i < bpp; i++) {
+            v = out[i] = row[i];
+            sum += (v < 128) ? v : 256 - v;
+        }
+
+        for(i = bpp; i < rowbytes; i++) {
+            v = out[i] = row[i] - row[i - bpp];
+            sum += (v < 128) ? v : 256 - v;
+
+            if(sum > mins) break;
+        }
+
+        if(sum < mins) {
+            mins = sum;
+            best_row = sub_row;
+        }
+
+        if(prev) {
+            sum = 0;
+            out = up_row + 1;
+
+            for(i = 0; i < rowbytes; i++) {
+                v = out[i] = row[i] - prev[i];
+                sum += (v < 128) ? v : 256 - v;
+
+                if(sum > mins) break;
+            }
+
+            if(sum < mins) {
+                mins = sum;
+                best_row = up_row;
+            }
+
+            sum = 0;
+            out = avg_row + 1;
+
+            for(i = 0; i < bpp; i++) {
+                v = out[i] = row[i] - prev[i] / 2;
+                sum += (v < 128) ? v : 256 - v;
+            }
+
+            for(i = bpp; i < rowbytes; i++) {
+                v = out[i] = row[i] - (prev[i] + row[i - bpp]) / 2;
+                sum += (v < 128) ? v : 256 - v;
+
+                if(sum > mins) break;
+            }
+
+            if(sum < mins) {
+                mins = sum;
+                best_row = avg_row;
+            }
+
+            sum = 0;
+            out = paeth_row + 1;
+
+            for(i = 0; i < bpp; i++) {
+                v = out[i] = row[i] - prev[i];
+                sum += (v < 128) ? v : 256 - v;
+            }
+
+            for(i = bpp; i < rowbytes; i++) {
+                a = row[i - bpp];
+                b = prev[i];
+                c = prev[i - bpp];
+                p = b - c;
+                pc = a - c;
+                pa = abs(p);
+                pb = abs(pc);
+                pc = abs(p + pc);
+                p = (pa <= pb && pa <= pc) ? a : (pb <= pc) ? b : c;
+                v = out[i] = row[i] - p;
+                sum += (v < 128) ? v : 256 - v;
+
+                if(sum > mins) break;
+            }
+
+            if(sum < mins) {
+                best_row = paeth_row;
+            }
+        }
+
+        zstream1.next_in = row_buf;
+        zstream1.avail_in = rowbytes + 1;
+        deflate(&zstream1, Z_NO_FLUSH);
+
+        zstream2.next_in = best_row;
+        zstream2.avail_in = rowbytes + 1;
+        deflate(&zstream2, Z_NO_FLUSH);
+
+        prev = row;
+        row += rowbytes;
+    }
+
+    deflate(&zstream1, Z_FINISH);
+    deflate(&zstream2, Z_FINISH);
+
+    if(zstream1.total_out <= zstream2.total_out)
+        write_IDATs(f, zbuf1, zstream1.total_out, idat_size);
+    else
+        write_IDATs(f, zbuf2, zstream2.total_out, idat_size);
+
+    deflateReset(&zstream1);
+    zstream1.data_type = Z_BINARY;
+    deflateReset(&zstream2);
+    zstream2.data_type = Z_BINARY;
+
+    write_chunk(f, "IEND", 0, 0);
+
+    deflateEnd(&zstream1);
+    deflateEnd(&zstream2);
+    free(zbuf1);
+    free(zbuf2);
+    free(row_buf);
+    free(sub_row);
+    free(up_row);
+    free(avg_row);
+    free(paeth_row);
 }
 
 void free_apng(struct apng_data *apng)

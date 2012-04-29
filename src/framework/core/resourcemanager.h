@@ -50,6 +50,7 @@ public:
     FileStreamPtr createFile(const std::string& fileName);
     bool deleteFile(const std::string& fileName);
 
+    bool makeDir(const std::string directory);
     std::list<std::string> listDirectoryFiles(const std::string& directoryPath = "");
 
     std::string resolvePath(const std::string& path);

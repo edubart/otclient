@@ -181,6 +181,12 @@ bool ResourceManager::deleteFile(const std::string& fileName)
     return PHYSFS_delete(resolvePath(fileName).c_str()) != 0;
 }
 
+
+bool ResourceManager::makeDir(const std::string directory)
+{
+    return PHYSFS_mkdir(directory.c_str());
+}
+
 std::list<std::string> ResourceManager::listDirectoryFiles(const std::string& directoryPath)
 {
     std::list<std::string> files;

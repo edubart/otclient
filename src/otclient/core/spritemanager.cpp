@@ -25,6 +25,7 @@
 #include <framework/core/eventdispatcher.h>
 #include <framework/core/filestream.h>
 #include <framework/graphics/graphics.h>
+#include <framework/thirdparty/apngloader.h>
 #include <physfs.h>
 
 SpriteManager g_sprites;
@@ -166,6 +167,8 @@ TexturePtr& SpriteManager::getSpriteTexture(int id)
 
 bool SpriteManager::exportSprites()
 {
+    g_resources.makeDir("sprites");
+    std::stringstream ss;
 
     for(volatile int i = 1; i <= m_spritesCount; i++) {
         m_spritesFile->seek(((i-1) * 4) + 6);
@@ -225,57 +228,10 @@ bool SpriteManager::exportSprites()
         }
 
         // We should get the OTClient and export to that folder...
-        std::string fileName = Fw::formatString("%s/otclient/sprites/%d.png", PHYSFS_getUserDir(), i);
-        FILE *pFile = fopen(fileName.c_str(), "wb");
-
-        if(!pFile)
-            return false;
-
-        png_structp pPng = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-        if(!pPng) {
-            fclose(pFile);
-            return false;
-        }
-
-        png_infop pPngInfo = png_create_info_struct(pPng);
-        if(!pPngInfo) {
-            fclose(pFile);
-            png_destroy_write_struct(&pPng, NULL);
-            return false;
-        }
-
-        if(setjmp(png_jmpbuf(pPng))) {
-            fclose(pFile);
-            png_destroy_write_struct(&pPng, &pPngInfo);
-            return false;
-        }
-
-        png_init_io(pPng, pFile);
-        png_set_compression_level(pPng, PNG_COMPRESSION);
-
-        int bitDepthPerChannel = SPRITE_CHANNELS/4*8;
-        int colorType = PNG_COLOR_TYPE_RGB_ALPHA;
-
-        png_set_IHDR(pPng, pPngInfo, SPRITE_WIDTH, SPRITE_HEIGHT, bitDepthPerChannel, colorType,
-                     PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
-
-        png_write_info(pPng, pPngInfo);
-
-        if(bitDepthPerChannel == 16) // Reverse endian order (PNG is Big Endian)
-            png_set_swap(pPng);
-
-        int bytesPerRow = SPRITE_WIDTH*SPRITE_CHANNELS;
-        uint8* pImgData = pixels;
-
-        for(int row=0; row < SPRITE_HEIGHT; row++) {  // Write non-interlaced buffer
-            png_write_row(pPng, pImgData);
-            pImgData += bytesPerRow;
-        }
-
-        png_write_end(pPng, NULL);
-        png_destroy_write_struct(&pPng, &pPngInfo);
-
-        fclose(pFile);
+        std::string fileName = Fw::formatString("sprites/%d.png", i);
+        ss.str("");
+        save_png(ss, SPRITE_WIDTH, SPRITE_HEIGHT, SPRITE_CHANNELS, pixels);
+        g_resources.saveFile(fileName, ss);
     }
 
     return true;
