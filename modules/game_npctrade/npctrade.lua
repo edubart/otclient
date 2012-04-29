@@ -148,13 +148,15 @@ local function refreshTradeItems()
   for key,item in pairs(currentTradeItems) do
     local itemBox = createWidget('NPCItemBox', itemsPanel)
     itemBox.item = item
-    itemBox:getChildById('item'):setItem(item.ptr)
-    itemBox:getChildById('nameLabel'):setText(item.name)
-    itemBox:getChildById('weightLabel'):setText(string.format('%.2f', item.weight) .. ' ' .. WEIGHT_UNIT)
-    itemBox:getChildById('priceLabel'):setText(item.price .. ' ' .. CURRENCY)
+    
+    local name = item.name
+    local weight = string.format('%.2f', item.weight) .. ' ' .. WEIGHT_UNIT
+    local price = item.price .. ' ' .. CURRENCY
+    itemBox:setText(name .. '\n' .. weight .. '\n' .. price)
 
-    itemBox.onMouseRelease = NPCTrade.itemPopup
-    itemBox:getChildById('item').onMouseRelease = function(self, mousePosition, mouseButton) NPCTrade.itemPopup(itemBox, mousePosition, mouseButton) end
+    local itemWidget = itemBox:getChildById('item')
+    itemWidget:setItem(item.ptr)
+    itemWidget.onMouseRelease = NPCTrade.itemPopup
 
     radioItems:addWidget(itemBox)
   end
@@ -344,9 +346,11 @@ end
 function NPCTrade.itemPopup(self, mousePosition, mouseButton)
   if mouseButton == MouseRightButton then
     local menu = createWidget('PopupMenu')
-    menu:addOption(tr('Look'), function() return g_game.inspectNpcTrade(self.offer[1]) end)
+    menu:addOption(tr('Look'), function() return g_game.inspectNpcTrade(self:getItem()) end)
     menu:display(mousePosition)
+    return true
   end
+  return false
 end
 
 function NPCTrade.onBuyWithBackpackChange()
