@@ -4,21 +4,17 @@ NPCOfferLabel < Label
   margin-left: 5
   text-auto-resize: true
 
-NPCPanel < ScrollablePanel
-  image-source: /core_styles/styles/images/panel_flat.png
-  image-border: 1
-
 NPCItemBox < UICheckBox
   border-width: 1
   border-color: #000000 
-  @onCheckChange: NPCTrade.setItem(self)
+  @onCheckChange: NPCTrade.onItemBoxChecked(self)
 
   Item
     id: item
     phantom: true
     anchors.top: parent.top
     anchors.horizontalCenter: parent.horizontalCenter
-    margin-top: 2
+    margin-top: 3
 
   Label
     id: nameLabel
@@ -26,7 +22,7 @@ NPCItemBox < UICheckBox
     anchors.top: prev.bottom
     anchors.horizontalCenter: parent.horizontalCenter
     text-auto-resize: true
-    margin-top: 5
+    margin-top: 3
 
   Label
     id: weightLabel
@@ -34,7 +30,7 @@ NPCItemBox < UICheckBox
     anchors.top: prev.bottom
     anchors.horizontalCenter: parent.horizontalCenter
     text-auto-resize: true
-    margin-top: 5
+    margin-top: 3
 
   Label
     id: priceLabel
@@ -42,7 +38,7 @@ NPCItemBox < UICheckBox
     anchors.top: prev.bottom
     anchors.horizontalCenter: parent.horizontalCenter
     text-auto-resize: true
-    margin-top: 5
+    margin-top: 3
 
   $checked:    
     border-color: #FFFFFF 
@@ -53,7 +49,7 @@ NPCItemBox < UICheckBox
 MainWindow
   id: npcWindow
   !text: tr('NPC Trade')
-  size: 550 550
+  size: 550 515
 
   @onEscape: NPCTrade.hide()
 
@@ -79,40 +75,24 @@ MainWindow
     margin-left: 5
     margin-top: 5
 
-  Label
-    id: searchLabel
-    !text: tr('Search:')
-    anchors.left: parent.left
-    anchors.top: prev.bottom
-    text-auto-resize: true
-    margin-top: 7
-    margin-left: 2
-
-  TextEdit
-    id: searchText
-    width: 200
-    anchors.left: prev.right
-    anchors.top: prev.top
-    margin-top: -2
-    margin-left: 5
-    @onTextChange: NPCTrade.refreshFilters()
-
-  NPCPanel
+  Panel
     height: 250
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: prev.bottom
-    margin-top: 5 
+    margin-top: 10
+    image-source: /core_styles/styles/images/panel_flat.png
+    image-border: 1
 
     VerticalScrollBar
       id: itemsPanelListScrollBar
       anchors.top: parent.top
       anchors.bottom: parent.bottom
       anchors.right: parent.right
-      step: 14
+      step: 16
       pixels-scroll: true
 
-    NPCPanel
+    ScrollablePanel
       id: itemsPanel
       height: 250
       anchors.left: parent.left
@@ -120,6 +100,8 @@ MainWindow
       anchors.top: parent.top
       anchors.bottom: parent.bottom
       vertical-scrollbar: itemsPanelListScrollBar
+      margin-left: 5
+      margin-right: 5
       layout:
         type: grid
         cell-size: 160 90
@@ -128,21 +110,76 @@ MainWindow
 
   FlatPanel
     id: setupPanel
-    height: 150
+    height: 140
     enabled: false
     anchors.left: parent.left
-    anchors.right: parent.right
+    anchors.right: parent.horizontalCenter
     anchors.top: prev.bottom
-    margin-top: 5
+    margin-top: 10
+    margin-right: 5
 
     Label
-      id: quantityLabel
-      !text: tr('Quantity:')
+      !text: tr('Name:')
       anchors.left: parent.left
       anchors.top: parent.top
-      text-auto-resize: true
       margin-top: 5
-      margin-left: 2
+      margin-left: 5
+      width: 85
+
+    NPCOfferLabel
+      id: name
+
+    Label
+      !text: tr('Price:')
+      anchors.left: parent.left
+      anchors.top: prev.bottom
+      margin-top: 5
+      margin-left: 5
+      width: 85
+
+    NPCOfferLabel
+      id: price
+
+    Label
+      !text: tr('Your Money:')
+      anchors.left: parent.left
+      anchors.top: prev.bottom
+      margin-top: 5
+      margin-left: 5
+      width: 85
+
+    NPCOfferLabel
+      id: money
+
+    Label
+      !text: tr('Weight:')
+      anchors.left: parent.left
+      anchors.top: prev.bottom
+      margin-top: 5
+      margin-left: 5
+      width: 85
+
+    NPCOfferLabel
+      id: weight
+
+    Label
+      !text: tr('Your Capacity:')
+      anchors.left: parent.left
+      anchors.top: prev.bottom
+      margin-top: 5
+      margin-left: 5
+      width: 85
+
+    NPCOfferLabel
+      id: capacity
+
+    Label
+      !text: tr('Quantity:')
+      anchors.left: parent.left
+      anchors.top: prev.bottom
+      margin-top: 5
+      margin-left: 5
+      width: 85
 
     NPCOfferLabel
       id: quantity
@@ -152,80 +189,92 @@ MainWindow
       anchors.left: parent.left
       anchors.right: parent.right
       anchors.top: prev.bottom
-      margin-top: 2
+      margin-top: 5
+      margin-left: 5
+      margin-right: 5
       minimum: 1
       maximum: 100
-      value: 1
       step: 1
-      @onValueChange: NPCTrade.setQuantity(self:getValue())
+      @onValueChange: NPCTrade.onQuantityValueChange(self:getValue())
+
+  FlatPanel
+    id: buyOptions
+    height: 140
+    anchors.top: prev.top
+    anchors.left: parent.horizontalCenter
+    anchors.right: parent.right
+    margin-left: 5
 
     Label
-      id: nameLabel
-      !text: tr('Name:')
+      id: searchLabel
+      !text: tr('Search:')
       anchors.left: parent.left
-      anchors.top: prev.bottom
-      margin-top: 5
-      margin-left: 2
-      width: 64
+      anchors.top: parent.top
+      text-auto-resize: true
+      margin-top: 7
+      margin-left: 5
 
-    NPCOfferLabel
-      id: name
+    TextEdit
+      id: searchText
+      anchors.left: prev.right
+      anchors.top: prev.top
+      anchors.right: parent.right
+      margin-top: -2
+      margin-left: 5
+      margin-right: 5
+      @onTextChange: NPCTrade.onSearchTextChange()
 
-    Label
-      id: priceLabel
-      !text: tr('Price:')
+    CheckBox
+      id: buyWithBackpack
+      !text: tr('Buy with backpack')
+      anchors.top: searchText.bottom
       anchors.left: parent.left
-      anchors.top: prev.bottom
+      anchors.right: parent.right
+      margin-left: 5
       margin-top: 5
-      margin-left: 2
-      width: 64
+      @onCheckChange: NPCTrade.onBuyWithBackpackChange()
 
-    NPCOfferLabel
-      id: price
-
-    Label
-      id: moneyLabel
-      !text: tr('Money:')
+    CheckBox
+      id: ignoreCapacity
+      !text: tr('Ignore capacity')
+      anchors.top: prev.bottom
       anchors.left: parent.left
-      anchors.top: prev.bottom
+      anchors.right: parent.right
+      margin-left: 5
       margin-top: 5
-      margin-left: 2
-      width: 64
+      @onCheckChange: NPCTrade.onIgnoreCapacityChange()
 
-    NPCOfferLabel
-      id: money
-
-    Label
-      id: weightLabel
-      !text: tr('Weight:')
+    CheckBox
+      id: ignoreEquipped
+      !text: tr('Ignore equipped')
+      anchors.top: searchText.bottom
       anchors.left: parent.left
-      anchors.top: prev.bottom
+      anchors.right: parent.right
+      margin-left: 5
       margin-top: 5
-      margin-left: 2
-      width: 64
+      visible: false
+      checked: true
+      @onCheckChange: NPCTrade.onIgnoreEquippedChange()
 
-    NPCOfferLabel
-      id: weight
-
-    Label
-      id: capacityLabel
-      !text: tr('Capacity:')
+    CheckBox
+      id: showAllItems
+      !text: tr('Show all items')
+      anchors.top: prev.bottom
       anchors.left: parent.left
-      anchors.top: prev.bottom
+      anchors.right: parent.right
+      margin-left: 5
       margin-top: 5
-      margin-left: 2
-      width: 64
+      visible: false
+      @onCheckChange: NPCTrade.onShowAllItemsChange()
 
-    NPCOfferLabel
-      id: capacity
-
-    Button
-      id: setupButton
-      !text: tr('Buy')
-      width: 64
-      anchors.horizontalCenter: parent.horizontalCenter
-      anchors.top: prev.bottom
-      @onClick: NPCTrade.setupButton()
+  Button
+    id: tradeButton
+    !text: tr('Buy')
+    width: 64
+    anchors.right: next.left
+    anchors.bottom: parent.bottom
+    margin-right: 10
+    @onClick: NPCTrade.onTradeClick()
 
   Button
     !text: tr('Close')
@@ -233,4 +282,3 @@ MainWindow
     anchors.right: parent.right
     anchors.bottom: parent.bottom
     @onClick: NPCTrade.hide()
-
