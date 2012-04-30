@@ -188,10 +188,10 @@ void ProtocolGame::parseMessage(InputMessage& msg)
                 break;
 #if PROTOCOL>=870
             case Proto::GameServerSpellDelay:
+                parseSpellDelay(msg);
+                break;
             case Proto::GameServerSpellGroupDelay:
-                msg.getU16(); // spell id
-                msg.getU16(); // cooldown
-                msg.getU8(); // unknown
+                parseSpellGroupDelay(msg);
                 break;
 #endif
             case Proto::GameServerTalk:
@@ -207,15 +207,16 @@ void ProtocolGame::parseMessage(InputMessage& msg)
                 parseOpenPrivateChannel(msg);
                 break;
             case Proto::GameServerRuleViolationChannel:
-                msg.getU16();
+                parseRuleViolationChannel(msg);
                 break;
             case Proto::GameServerRuleViolationRemove:
-                msg.getString();
+                parseRuleViolationRemove(msg);
                 break;
             case Proto::GameServerRuleViolationCancel:
-                msg.getString();
+                parseRuleViolationCancel(msg);
                 break;
             case Proto::GameServerRuleViolationLock:
+                parseRuleViolationLock(msg);
                 break;
             case Proto::GameServerOpenOwnChannel:
                 parseOpenOwnPrivateChannel(msg);
@@ -277,19 +278,20 @@ void ProtocolGame::parseInitGame(InputMessage& msg)
 {
     uint playerId = msg.getU32();
     int serverBeat = msg.getU16();
-    msg.getU8(); // can report bugs, ignored
+    bool canReportBugs = msg.getU8();
 
     m_localPlayer = LocalPlayerPtr(new LocalPlayer);
     m_localPlayer->setId(playerId);
 
-    g_game.processGameStart(m_localPlayer, serverBeat);
+    g_game.processGameStart(m_localPlayer, serverBeat, canReportBugs);
 }
 
 void ProtocolGame::parseGMActions(InputMessage& msg)
 {
-    // not used
+    std::vector<uint8> actions;
     for(int i = 0; i < Proto::NumViolationReasons; ++i)
-        msg.getU8();
+        actions.push_back(msg.getU8());
+    g_game.processGMActions(actions);
 }
 
 void ProtocolGame::parseLoginError(InputMessage& msg)
@@ -754,19 +756,12 @@ void ProtocolGame::parsePlayerStats(InputMessage& msg)
     double soul = msg.getU8();
     double stamina = msg.getU16();
 
-    if(!m_localPlayer) {
-        logTraceError("there is no local player");
-        return;
-    }
-
-    m_localPlayer->setHealth(health, maxHealth);
-    m_localPlayer->setFreeCapacity(freeCapacity);
-    m_localPlayer->setExperience(experience);
-    m_localPlayer->setLevel(level, levelPercent);
-    m_localPlayer->setMana(mana, maxMana);
-    m_localPlayer->setMagicLevel(magicLevel, magicLevelPercent);
-    m_localPlayer->setStamina(stamina);
-    m_localPlayer->setSoul(soul);
+    g_game.processPlayerStats(health, maxHealth,
+                              freeCapacity, experience,
+                              level, levelPercent,
+                              mana, maxMana,
+                              magicLevel, magicLevelPercent,
+                              soul, stamina);
 }
 
 void ProtocolGame::parsePlayerSkills(InputMessage& msg)
@@ -801,9 +796,25 @@ void ProtocolGame::parsePlayerCancelAttack(InputMessage& msg)
     g_game.processAttackCancel();
 }
 
+
+void ProtocolGame::parseSpellDelay(InputMessage& msg)
+{
+    msg.getU16(); // spell id
+    msg.getU16(); // cooldown
+    msg.getU8(); // unknown
+}
+
+void ProtocolGame::parseSpellGroupDelay(InputMessage& msg)
+{
+    msg.getU16(); // spell id
+    msg.getU16(); // cooldown
+    msg.getU8(); // unknown
+}
+
 void ProtocolGame::parseCreatureSpeak(InputMessage& msg)
 {
-    msg.getU32(); // unkSpeak
+    msg.getU32(); // unknown
+
     std::string name = msg.getString();
     int level = msg.getU16();
     int serverType = msg.getU8();
@@ -886,6 +897,33 @@ void ProtocolGame::parseCloseChannel(InputMessage& msg)
     int channelId = msg.getU16();
 
     g_game.processCloseChannel(channelId);
+}
+
+
+void ProtocolGame::parseRuleViolationChannel(InputMessage& msg)
+{
+    int channelId = msg.getU16();
+
+    g_game.processRuleViolationChannel(channelId);
+}
+
+void ProtocolGame::parseRuleViolationRemove(InputMessage& msg)
+{
+    std::string name = msg.getString();
+
+    g_game.processRuleViolationRemove(name);
+}
+
+void ProtocolGame::parseRuleViolationCancel(InputMessage& msg)
+{
+    std::string name = msg.getString();
+
+    g_game.processRuleViolationCancel(name);
+}
+
+void ProtocolGame::parseRuleViolationLock(InputMessage& msg)
+{
+    g_game.processRuleViolationLock();
 }
 
 void ProtocolGame::parseTextMessage(InputMessage& msg)
@@ -989,8 +1027,8 @@ void ProtocolGame::parseVipLogout(InputMessage& msg)
 
 void ProtocolGame::parseTutorialHint(InputMessage& msg)
 {
-    // ignored
-    msg.getU8(); // tutorial id
+    int id = msg.getU8(); // tutorial id
+    g_game.processTutorialHint(id);
 }
 
 void ProtocolGame::parseAutomapFlag(InputMessage& msg)

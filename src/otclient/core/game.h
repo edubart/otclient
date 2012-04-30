@@ -51,10 +51,11 @@ protected:
     void processLogin();
     void processLogout();
 
-    void processGameStart(const LocalPlayerPtr& localPlayer, int serverBeat);
+    void processGameStart(const LocalPlayerPtr& localPlayer, int serverBeat, bool canReportBugs);
     void processGameEnd();
     void processDeath(int penality);
 
+    void processGMActions(const std::vector<uint8>& actions);
     void processPlayerStats(double health, double maxHealth,
                             double freeCapacity, double experience,
                             double level, double levelPercent,
@@ -86,9 +87,19 @@ protected:
     void processOpenOwnPrivateChannel(int channelId, const std::string& name);
     void processCloseChannel(int channelId);
 
+    // rule violations
+    void processRuleViolationChannel(int channelId);
+    void processRuleViolationRemove(const std::string& name);
+    void processRuleViolationCancel(const std::string& name);
+    void processRuleViolationLock();
+
     // vip related
     void processVipAdd(uint id, const std::string& name, bool online);
     void processVipStateChange(uint id, bool online);
+
+    // tutorial hint
+    void processTutorialHint(int id);
+    void processAutomapFlag(const Position& pos, int icon, const std::string& message);
 
     // outfit
     void processOpenOutfitWindow(const Outfit& currentOufit, const std::vector<std::tuple<int, std::string, int>>& outfitList);
@@ -209,11 +220,17 @@ public:
     void editText(uint id, const std::string& text);
     void editList(int listId, uint id, const std::string& text);
 
+    // reports
+    void reportBug(const std::string& comment);
+    void reportRuleVilation(const std::string& target, int reason, int action, const std::string& comment, const std::string& statement, int statementId, bool ipBanishment);
+    void debugReport(const std::string& a, const std::string& b, const std::string& c, const std::string& d);
+
     // questlog related
     void requestQuestLog();
     void requestQuestLine(int questId);
 
     bool canPerformGameAction();
+    bool canReportBugs() { return m_canReportBugs; }
     bool checkBotProtection();
 
     bool isOnline() { return !!m_localPlayer; }
@@ -231,6 +248,7 @@ public:
     ProtocolGamePtr getProtocolGame() { return m_protocolGame; }
     int getProtocolVersion() { return PROTOCOL; }
     std::string getWorldName() { return m_worldName; }
+    std::vector<uint8> getGMActions() { return m_gmActions; }
 
 private:
     void setAttackingCreature(const CreaturePtr& creature);
@@ -248,6 +266,8 @@ private:
     Otc::FightModes m_fightMode;
     Otc::ChaseModes m_chaseMode;
     bool m_safeFight;
+    bool m_canReportBugs;
+    std::vector<uint8> m_gmActions;
     std::string m_worldName;
 };
 

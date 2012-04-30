@@ -69,7 +69,7 @@ namespace Proto {
 
     enum GameServerOpts {
         GameServerInitGame = 10,
-        GameServerGMActions = 11, // deprecated in last tibia?
+        GameServerGMActions = 11,
         GameServerLoginError = 20,
         GameServerLoginAdvice = 21,
         GameServerLoginWait = 22,
@@ -101,7 +101,7 @@ namespace Proto {
         GameServerCloseTrade = 127,
         GameServerAmbient = 130,
         GameServerGraphicalEffect = 131,
-        GameServerTextEffect = 132, // deprecated in last tibia
+        GameServerTextEffect = 132,
         GameServerMissleEffect = 133,
         GameServerMarkCreature = 134,
         GameServerTrappers = 135,
@@ -118,18 +118,16 @@ namespace Proto {
         GameServerPlayerSkills = 161,
         GameServerPlayerState = 162,
         GameServerClearTarget = 163,
-#if PROTOCOL>=870
         GameServerSpellDelay = 164,
         GameServerSpellGroupDelay = 165,
-#endif
         GameServerTalk = 170,
         GameServerChannels = 171,
         GameServerOpenChannel = 172,
         GameServerOpenPrivateChannel = 173,
-        GameServerRuleViolationChannel = 174, // deprecated in last tibia
-        GameServerRuleViolationRemove = 175, // deprecated in last tibia
-        GameServerRuleViolationCancel = 176, // deprecated in last tibia
-        GameServerRuleViolationLock = 177, // deprecated in last tibia
+        GameServerRuleViolationChannel = 174,
+        GameServerRuleViolationRemove = 175,
+        GameServerRuleViolationCancel = 176,
+        GameServerRuleViolationLock = 177,
         GameServerOpenOwnChannel = 178,
         GameServerCloseChannel = 179,
         GameServerTextMessage = 180,
@@ -216,8 +214,9 @@ namespace Proto {
 #endif
         ClientAddVip = 220,
         ClientRemoveVip = 221,
-        //ClientBugReport = 230,
-        //ClientErrorFileEntry = 232,
+        ClientBugReport = 230,
+        ClientRuleViolation= 231,
+        ClientDebugReport = 232,
         ClientRequestQuestLog = 240,
         ClientRequestQuestLine = 241,
         //ClientRuleViolationReport = 242,

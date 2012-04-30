@@ -43,6 +43,7 @@ void Game::resetGameStates()
 {
     m_dead = false;
     m_serverBeat = 50;
+    m_canReportBugs = false;
     m_fightMode = Otc::FightBalanced;
     m_chaseMode = Otc::DontChase;
     m_safeFight = true;
@@ -56,6 +57,7 @@ void Game::resetGameStates()
     }
     m_containers.clear();
     m_vips.clear();
+    m_gmActions.clear();
 
     m_worldName = "";
 }
@@ -105,13 +107,14 @@ void Game::processLoginWait(const std::string& message, int time)
     g_lua.callGlobalField("g_game", "onLoginWait", message, time);
 }
 
-void Game::processGameStart(const LocalPlayerPtr& localPlayer, int serverBeat)
+void Game::processGameStart(const LocalPlayerPtr& localPlayer, int serverBeat, bool canReportBugs)
 {
     // reset the new game state
     resetGameStates();
 
     m_localPlayer = localPlayer;
     m_serverBeat = serverBeat;
+    m_canReportBugs = canReportBugs;
 
     // synchronize fight modes with the server
     m_protocolGame->sendChangeFightModes(m_fightMode, m_chaseMode, m_safeFight);
@@ -151,7 +154,35 @@ void Game::processDeath(int penality)
     m_dead = true;
     m_localPlayer->stopWalk();
 
-    g_lua.callGlobalField("g_game","onDeath", penality);
+    g_lua.callGlobalField("g_game", "onDeath", penality);
+}
+
+void Game::processGMActions(const std::vector<uint8>& actions)
+{
+    m_gmActions = actions;
+    g_lua.callGlobalField("g_game", "onGMActions", actions);
+}
+
+void Game::processPlayerStats(double health, double maxHealth,
+                              double freeCapacity, double experience,
+                              double level, double levelPercent,
+                              double mana, double maxMana,
+                              double magicLevel, double magicLevelPercent,
+                              double soul, double stamina)
+{
+    if(!m_localPlayer) {
+        logTraceError("there is no local player");
+        return;
+    }
+
+    m_localPlayer->setHealth(health, maxHealth);
+    m_localPlayer->setFreeCapacity(freeCapacity);
+    m_localPlayer->setExperience(experience);
+    m_localPlayer->setLevel(level, levelPercent);
+    m_localPlayer->setMana(mana, maxMana);
+    m_localPlayer->setMagicLevel(magicLevel, magicLevelPercent);
+    m_localPlayer->setStamina(stamina);
+    m_localPlayer->setSoul(soul);
 }
 
 void Game::processPing()
@@ -287,6 +318,26 @@ void Game::processCloseChannel(int channelId)
     g_lua.callGlobalField("g_game", "onCloseChannel", channelId);
 }
 
+void Game::processRuleViolationChannel(int channelId)
+{
+    g_lua.callGlobalField("g_game", "onRuleViolationChannel", channelId);
+}
+
+void Game::processRuleViolationRemove(const std::string& name)
+{
+    g_lua.callGlobalField("g_game", "onRuleViolationRemove", name);
+}
+
+void Game::processRuleViolationCancel(const std::string& name)
+{
+    g_lua.callGlobalField("g_game", "onRuleViolationCancel", name);
+}
+
+void Game::processRuleViolationLock()
+{
+    g_lua.callGlobalField("g_game", "onRuleViolationLock");
+}
+
 void Game::processVipAdd(uint id, const std::string& name, bool online)
 {
     m_vips[id] = Vip(name, online);
@@ -297,6 +348,16 @@ void Game::processVipStateChange(uint id, bool online)
 {
     std::get<1>(m_vips[id]) = online;
     g_lua.callGlobalField("g_game", "onVipStateChange", id, online);
+}
+
+void Game::processTutorialHint(int id)
+{
+    g_lua.callGlobalField("g_game", "onTutorialHint", id);
+}
+
+void Game::processAutomapFlag(const Position& pos, int icon, const std::string& message)
+{
+
 }
 
 void Game::processOpenOutfitWindow(const Outfit& currentOufit, const std::vector<std::tuple<int, std::string, int>>& outfitList)
@@ -917,6 +978,25 @@ void Game::editList(int listId, uint id, const std::string& text)
     if(!canPerformGameAction())
         return;
     m_protocolGame->sendEditList(listId, id, text);
+}
+
+void Game::reportBug(const std::string& comment)
+{
+    if(!canPerformGameAction())
+        return;
+    m_protocolGame->sendBugReport(comment);
+}
+
+void Game::reportRuleVilation(const std::string& target, int reason, int action, const std::string& comment, const std::string& statement, int statementId, bool ipBanishment)
+{
+    if(!canPerformGameAction())
+        return;
+    m_protocolGame->sendRuleVilation(target, reason, action, comment, statement, statementId, ipBanishment);
+}
+
+void Game::debugReport(const std::string& a, const std::string& b, const std::string& c, const std::string& d)
+{
+    m_protocolGame->sendDebugReport(a, b, c, d);
 }
 
 void Game::requestQuestLog()

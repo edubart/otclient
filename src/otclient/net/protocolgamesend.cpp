@@ -601,6 +601,39 @@ void ProtocolGame::sendRemoveVip(uint playerId)
     send(msg);
 }
 
+void ProtocolGame::sendBugReport(const std::string& comment)
+{
+    OutputMessage msg;
+    msg.addU8(Proto::ClientBugReport);
+    msg.addString(comment);
+    send(msg);
+}
+
+void ProtocolGame::sendRuleVilation(const std::string& target, int reason, int action, const std::string& comment, const std::string& statement, int statementId, bool ipBanishment)
+{
+    OutputMessage msg;
+    msg.addU8(Proto::ClientRuleViolation);
+    msg.addString(target);
+    msg.addU8(reason);
+    msg.addU8(action);
+    msg.addString(comment);
+    msg.addString(statement);
+    msg.addU16(statementId);
+    msg.addU8(ipBanishment);
+    send(msg);
+}
+
+void ProtocolGame::sendDebugReport(const std::string& a, const std::string& b, const std::string& c, const std::string& d)
+{
+    OutputMessage msg;
+    msg.addU8(Proto::ClientDebugReport);
+    msg.addString(a);
+    msg.addString(b);
+    msg.addString(c);
+    msg.addString(d);
+    send(msg);
+}
+
 void ProtocolGame::sendRequestQuestLog()
 {
     OutputMessage msg;

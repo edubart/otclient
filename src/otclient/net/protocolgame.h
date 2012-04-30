@@ -98,6 +98,9 @@ public:
     void sendChangeOutfit(const Outfit& outfit);
     void sendAddVip(const std::string& name);
     void sendRemoveVip(uint playerId);
+    void sendBugReport(const std::string& comment);
+    void sendRuleVilation(const std::string& target, int reason, int action, const std::string& comment, const std::string& statement, int statementId, bool ipBanishment);
+    void sendDebugReport(const std::string& a, const std::string& b, const std::string& c, const std::string& d);
     void sendRequestQuestLog();
     void sendRequestQuestLine(int questId);
 
@@ -153,12 +156,18 @@ private:
     void parsePlayerSkills(InputMessage& msg);
     void parsePlayerState(InputMessage& msg);
     void parsePlayerCancelAttack(InputMessage& msg);
+    void parseSpellDelay(InputMessage& msg);
+    void parseSpellGroupDelay(InputMessage& msg);
     void parseCreatureSpeak(InputMessage& msg);
     void parseChannelList(InputMessage& msg);
     void parseOpenChannel(InputMessage& msg);
     void parseOpenPrivateChannel(InputMessage& msg);
     void parseOpenOwnPrivateChannel(InputMessage& msg);
     void parseCloseChannel(InputMessage& msg);
+    void parseRuleViolationChannel(InputMessage& msg);
+    void parseRuleViolationRemove(InputMessage& msg);
+    void parseRuleViolationCancel(InputMessage& msg);
+    void parseRuleViolationLock(InputMessage& msg);
     void parseOpenTrade(InputMessage& msg);
     void parseCloseTrade(InputMessage&);
     void parseTextMessage(InputMessage& msg);
