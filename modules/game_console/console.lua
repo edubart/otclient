@@ -99,7 +99,7 @@ local function onCreatureSpeak(name, level, speaktype, message, channelId, creat
 
     if channel then
       Console.addText(message, speaktype, channel)
-    else
+    elseif channelid ~= 0 then
       -- server sent a message on a channel that is not open
       warning('message in channel id ' .. channelId .. ' which is unknown, this is a server bug, relogin if you want to see messages in this channel')
     end
