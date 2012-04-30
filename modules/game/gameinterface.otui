@@ -44,7 +44,7 @@ UIWidget
   GameSidePanel
     id: gameRightPanel
     layout: verticalBox
-    anchors.left: rightSplitter.left
+    width: 190
     anchors.right: parent.right
     anchors.top: parent.top
     anchors.bottom: parent.bottom
@@ -59,17 +59,6 @@ UIWidget
     margin-bottom: 172
     @canUpdateMargin: function(self, newMargin) return math.max(math.min(newMargin, self:getParent():getHeight() - 300), 100) end
     @onGeometryChange: function(self) self:setMarginBottom(math.min(math.max(self:getParent():getHeight() - 300, 100), self:getMarginBottom())) end
-
-  Splitter
-    id: rightSplitter
-    anchors.right: parent.right
-    anchors.top: parent.top
-    anchors.bottom: parent.bottom
-    relative-margin: right
-    margin-right: 190
-    enabled: false
-    @canUpdateMargin: function(self, newMargin) return math.max(math.min(newMargin, self:getParent():getWidth() - 300), 150) end
-    @onGeometryChange: function(self) self:setMarginRight(math.min(math.max(self:getParent():getWidth() - 300, 150), self:getMarginRight())) end
 
   UIWidget
     id: mouseGrabber

@@ -5,7 +5,6 @@ MiniWindow < UIMiniWindow
   height: 200
   text-offset: 24 5
   text-align: topLeft
-  margin-bottom: 2
   image-source: /game/images/miniwindow.png
   image-border: 4
   image-border-top: 23
@@ -84,7 +83,8 @@ MiniWindowContents < ScrollablePanel
   id: contentsPanel
   anchors.fill: parent
   anchors.right: miniwindowScrollBar.left
-  padding: 24 5 3 5
+  margin-top: 19
+  padding: 3 5 3 5
   vertical-scrollbar: miniwindowScrollBar
 
 BorderlessGameWindow < UIWindow

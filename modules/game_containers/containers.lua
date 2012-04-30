@@ -24,6 +24,10 @@ local function onContainerOpen(container, previousContainer)
     containerWindow:hide()
   end
 
+  -- this disables scrollbar auto hiding
+  local scrollbar = containerWindow:getChildById('miniwindowScrollBar')
+  scrollbar:mergeStyle({ ['$disabled'] = { ['width'] = scrollbar:getWidth() } })
+
   local upButton = containerWindow:getChildById('upButton')
   upButton.onClick = function()
     g_game.openParent(container)
@@ -41,6 +45,7 @@ local function onContainerOpen(container, previousContainer)
     local itemWidget = createWidget('Item', containerPanel)
     itemWidget:setId('item' .. slot)
     itemWidget:setItem(container:getItem(slot))
+    itemWidget:setMargin(3)
     itemWidget.position = container:getSlotPosition(slot)
   end
 

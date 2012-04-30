@@ -27,9 +27,10 @@ ContainerWindow < MiniWindow
       image-clip: 42 28 14 14
 
   MiniWindowContents
-    padding: 27 6 6 8
+    padding-right: 0
     layout:
       type: grid
-      cell-size: 34 34
+      cell-size: 40 40
       flow: true
-      auto-spacing: true
+      cell-spacing: 0
+

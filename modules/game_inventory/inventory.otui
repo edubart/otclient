@@ -11,6 +11,7 @@ MiniWindow
       id: slot1
       anchors.top: parent.top
       anchors.horizontalCenter: parent.horizontalCenter
+      margin-top: 4
       &position: {x=65535, y=1, z=0}
 
     Item

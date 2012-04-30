@@ -6,6 +6,7 @@ Button < UIButton
   image-color: white
   image-source: /core_styles/styles/images/button.png
   image-border: 5
+  padding: 5 10 5 10
 
   $hover !disabled:
     image-source: /core_styles/styles/images/button_hover.png

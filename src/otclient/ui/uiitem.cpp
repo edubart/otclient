@@ -38,7 +38,6 @@ void UIItem::drawSelf()
         Rect drawRect = getClippingRect();
         Point dest = drawRect.topLeft();
         float scaleFactor = std::min(drawRect.width() / (float)m_item->getExactSize(), drawRect.height() / (float)m_item->getExactSize());
-        dest += (1 - scaleFactor)*32;
         dest += m_item->getDisplacement() * scaleFactor;
 
         g_painter->setColor(Color::white);

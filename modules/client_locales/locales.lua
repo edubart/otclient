@@ -24,7 +24,7 @@ function Locales.init()
 
   local userLocaleName = Settings.get('locale')
   if userLocaleName and Locales.setLocale(userLocaleName)then
-    print('Using configurated locale: ' .. userLocaleName)
+    print('Using configured locale: ' .. userLocaleName)
   else
     print('Using default locale: ' .. defaultLocaleName)
     Locales.setLocale(defaultLocaleName)

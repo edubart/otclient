@@ -50,6 +50,7 @@ MiniWindow
       anchors.top: parent.top
       anchors.right: next.left
       margin-right: 5
+      margin-top: 3
 
     BattleNPCs
       id: hideNPCs
@@ -57,12 +58,14 @@ MiniWindow
       anchors.top: parent.top
       anchors.right: next.left
       margin-right: 5
+      margin-top: 3
 
     BattleMonsters
       id: hideMonsters
       !tooltip: tr('Hide monsters')
       anchors.top: parent.top
       anchors.horizontalCenter: parent.horizontalCenter
+      margin-top: 3
 
     BattleSkulls
       id: hideSkulls

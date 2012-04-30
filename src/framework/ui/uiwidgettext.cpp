@@ -43,7 +43,7 @@ void UIWidget::updateText()
     // update rect size
     if(!m_rect.isValid() || m_textAutoResize) {
         Size textBoxSize = getTextSize();
-        textBoxSize += Size(m_padding.left + m_padding.right, m_padding.top + m_padding.left);
+        textBoxSize += Size(m_padding.left + m_padding.right, m_padding.top + m_padding.bottom);
         Size size = getSize();
         if(size.width() <= 0 || (m_textAutoResize && !m_textWrap))
             size.setWidth(textBoxSize.width());

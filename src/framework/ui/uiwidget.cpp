@@ -458,6 +458,13 @@ void UIWidget::unlockChild(const UIWidgetPtr& child)
     }
 }
 
+void UIWidget::mergeStyle(const OTMLNodePtr& styleNode)
+{
+    applyStyle(styleNode);
+    m_style->merge(styleNode);
+    updateStyle();
+}
+
 void UIWidget::applyStyle(const OTMLNodePtr& styleNode)
 {
     if(m_destroyed)

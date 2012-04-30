@@ -101,8 +101,10 @@ bool UIGridLayout::internalUpdate()
         Point virtualPos = Point(column * (m_cellSize.width() + cellSpacing), line * (m_cellSize.height() + cellSpacing));
         preferredHeight = virtualPos.y + m_cellSize.height();
         Point pos = topLeft + virtualPos - parentWidget->getVirtualOffset();
+        Rect dest = Rect(pos, m_cellSize);
+        dest.expand(-widget->getMarginTop(), -widget->getMarginRight(), -widget->getMarginBottom(), -widget->getMarginLeft());
 
-        if(widget->setRect(Rect(pos, m_cellSize)))
+        if(widget->setRect(dest))
             changed = true;
 
         index++;

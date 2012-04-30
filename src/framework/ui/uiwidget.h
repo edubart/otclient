@@ -90,6 +90,7 @@ public:
     void moveChildToIndex(const UIWidgetPtr& child, int index);
     void lockChild(const UIWidgetPtr& child);
     void unlockChild(const UIWidgetPtr& child);
+    void mergeStyle(const OTMLNodePtr& styleNode);
     void applyStyle(const OTMLNodePtr& styleNode);
     void addAnchor(Fw::AnchorEdge anchoredEdge, const std::string& hookedWidgetId, Fw::AnchorEdge hookedEdge);
     void removeAnchor(Fw::AnchorEdge anchoredEdge);

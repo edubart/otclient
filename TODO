@@ -1,51 +1,78 @@
-== Core
-create a class for reading binary files
+== MODULES
+game_shaders (with shader manager)
+game_map (with save/load/options)
+game_minimap (with all tibia functionality)
+game_playertrade
+game_textbooks
+game_questlog
+game_ruleviolations
+
+== NOTABLE FEATURES
+make left panel optional
+must close last container when opening a new containers
+add options "Copy Text", "Copy Name", "Message" in console labels with a popupmenu
+move chat tabs
+save/load mini windows states/location when restarting the client
+graphics options menu
+load modules from zip files
+manual autoload setting in module manager
+complete a smarter miniwindow moving/resizing
+make miniwindow borderless on double click
+
+== BEFORE RELEASE
+polish interface skin
+new optional skin
+send otclient/system information to a third party server
+
+== LATER FEATURES
+reload spr/dat while ingame
+create and bind new game events
+text selection
+login queue
+port to MacOs and iphone
+allow multiple Map and Game instances ?
+
+== MINOR FEATURES
+display exit box when exiting from game
+case insensitive npctrade
+load modules from zip packages
+move up/down in lineedits
+select characters in lineedits
+scrolling multiline edit
+mouse wheel lineedits
+
+== OPTIMIZATIONS AND REWORKS
+* game
+do not redraw in MapView far zoom
+map zoom rendering could be optimized using framebuffer caches
+multisample option in map view
+move redering of creatures names, skulls, etc to UI and scripts
+clean sprites cache periodically
+handle corrupt errors in dat/spr
+
+* framework
+rework Settings/g_configs
+platform cursor cache
+replace onKey events with Hotkeys.bind
+add -no-sound option
 rework lua/c++ logger
 
-== Graphics
-map zoom rendering could be optimized using framebuffer caches
-implement graphics options menu
+* ui
+rework hover => onWidgetVisibilityChange onWidgetEnableChange onWidgetMove onAppear onDisappear
+reset dragging widget on destruction/visibility change/enable change
+cancel layout changes on non visible widgets (acts like it doesn't exist)
+add more anchors warnings to make creation of OTUIs easier
+review UI/style loader and make more error prone with more warnings
+change Align/Anchors lua API from enum to text
+review widgets rendering order, consider adding z-index
+reapply anchor styles when adding new childs
+style inheritance using a style translator
+find a way to add new widgets without focusing them
+make set of background/icon/image width alone work
+make api to enable/disable capture of events like mouseMove to avoid massive event processing
+move layout proprieties to widget style
+terminate rework of ui events propagation  (for Key events)
 
-== Modules
-fix modules recursivity, it makes client crash
-load modules from zip packages
-
-== Lua engine
+* lua engine
 make possible to bind non LuaObject derived classes on lua engine (for usage with Point,Rect,Color,Size)
 review usage of x,y/width,height in lua instead of point/size
-
-== Platform
-port to MacOs and iphone
-
-== UI
-review anchors API, add possibility to get/remove anchors
-multiline rich text widget
-move layout proprieties to widget style
-multiline text editor widget
-fix style inheritance using a style translator
-find a way to add new widgets without focusing them
-review UI/style loader and make more error prone with more warnings
-reapply anchor styles when adding new childs
-make set of background/icon/image width alone work
-check for recursive anchors and print a error instead of crashing
-make api to enable/disable capture of events like mouseMove to avoid massive event processing
-review style apply system
-review widgets rendering order, consider adding z-index
-change Align/Anchors lua API from enum to text
-
-== Game
-clean sprites cache periodically
-create a shader manager
-find a way to load map rendering styles
-move redering of creatures names, skulls, etc to UI
-handle corrupt errors in dat/spr
-remake spr/dat using OTML and image files
-
-== Game modules
-minimap window
-login queue
-questlog
-edit texts
-trade window
-shop window
-

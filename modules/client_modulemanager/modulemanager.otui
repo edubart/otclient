@@ -26,14 +26,15 @@ ModuleInfoLabel < Label
 ModuleValueLabel < UILabel
   font: verdana-11px-antialised
   color: #aaaaaa
-  text-offset: 3 0
+  text-offset: 2 3
+  padding-bottom: 5
   image-source: /core_styles/styles/images/panel_flat.png
   image-border: 1
-  height: 16
+  height: 20
 
 MainWindow
   id: moduleManagerWindow
-  size: 480 450
+  size: 450 450
   !text: tr('Module Manager')
 
   @onEscape: ModuleManager.hide()
@@ -43,36 +44,47 @@ MainWindow
     anchors.top: parent.top
     anchors.left: parent.left
     anchors.bottom: parent.bottom
-    width: 180
+    width: 190
     padding: 1
     focusable: false
     margin-bottom: 30
+    vertical-scrollbar: moduleListScrollBar
+
+  VerticalScrollBar
+    id: moduleListScrollBar
+    anchors.top: moduleList.top
+    anchors.bottom: moduleList.bottom
+    anchors.left: moduleList.right
+    step: 14
+    pixels-scroll: true
 
   Button
     id: refreshModulesButton
     anchors.top: moduleList.bottom
     anchors.left: moduleList.left
     margin-top: 8
-    width: 80
     !text: tr('Refresh')
+    text-auto-resize: true
     @onClick: ModuleManager.refreshModules()
 
   Button
     id: reloadAllModulesButton
     anchors.top: moduleList.bottom
-    anchors.right: moduleList.right
+    anchors.right: moduleListScrollBar.right
     margin-top: 8
-    width: 80
     !text: tr('Reload All')
+    text-auto-resize: true
     @onClick: ModuleManager.reloadAllModules()
 
   Panel
     id: moduleInfo
-    anchors.left: moduleList.right
+    anchors.left: moduleListScrollBar.right
     anchors.top: parent.top
     anchors.right: parent.right
     margin: 0 5 5 15
-    layout: verticalBox
+    layout:
+      type: verticalBox
+      fit-children: true
     height: 265
 
     ModuleInfoLabel
@@ -84,8 +96,8 @@ MainWindow
       !text: tr('Description')
     ModuleValueLabel
       id: moduleDescription
-      height: 100
       text-wrap: true
+      height: 100
 
     //ModuleInfoLabel
     //  !text: tr('Autoload')
@@ -105,7 +117,7 @@ MainWindow
 
     ModuleInfoLabel
       !text: tr('Website')
-    ModuleValueLabel
+    TextEdit
       id: moduleWebsite
 
     ModuleInfoLabel
@@ -120,6 +132,7 @@ MainWindow
     margin-top: 8
     !text: tr('Load')
     enabled: false
+    width: 90
     @onClick: ModuleManager.reloadCurrentModule()
 
   Button
@@ -130,6 +143,7 @@ MainWindow
     margin-top: 8
     !text: tr('Unload')
     enabled: false
+    width: 90
     @onClick: ModuleManager.unloadCurrentModule()
 
   Button
@@ -137,6 +151,6 @@ MainWindow
     anchors.bottom: parent.bottom
     anchors.right: parent.right
     !text: tr('Close')
-    width: 60
+    width: 90
     @onClick: ModuleManager.hide()
 

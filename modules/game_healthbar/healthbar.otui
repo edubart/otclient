@@ -5,6 +5,7 @@ HealthBar < ProgressBar
   anchors.top: parent.top
   anchors.left: parent.left
   anchors.right: parent.right
+  margin-top: 3
 
 ManaBar < ProgressBar
   id: manaBar
