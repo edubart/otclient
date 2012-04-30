@@ -139,6 +139,9 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassStaticFunction("g_game", "inspectTrade", std::bind(&Game::inspectTrade, &g_game, std::placeholders::_1, std::placeholders::_2));
     g_lua.bindClassStaticFunction("g_game", "acceptTrade", std::bind(&Game::acceptTrade, &g_game));
     g_lua.bindClassStaticFunction("g_game", "rejectTrade", std::bind(&Game::rejectTrade, &g_game));
+    g_lua.bindClassStaticFunction("g_game", "reportBug", std::bind(&Game::reportBug, &g_game, std::placeholders::_1));
+    g_lua.bindClassStaticFunction("g_game", "reportRuleVilation", std::bind(&Game::reportRuleVilation, &g_game, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4, std::placeholders::_5, std::placeholders::_6, std::placeholders::_7));
+    g_lua.bindClassStaticFunction("g_game", "debugReport", std::bind(&Game::debugReport, &g_game, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4));
     g_lua.bindClassStaticFunction("g_game", "editText", std::bind(&Game::editText, &g_game, std::placeholders::_1, std::placeholders::_2));
     g_lua.bindClassStaticFunction("g_game", "editList", std::bind(&Game::editList, &g_game, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
     g_lua.bindClassStaticFunction("g_game", "requestQuestLog", std::bind(&Game::requestQuestLog, &g_game));
@@ -160,6 +163,7 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassStaticFunction("g_game", "getProtocolGame", std::bind(&Game::getProtocolGame, &g_game));
     g_lua.bindClassStaticFunction("g_game", "getProtocolVersion", std::bind(&Game::getProtocolVersion, &g_game));
     g_lua.bindClassStaticFunction("g_game", "getWorldName", std::bind(&Game::getWorldName, &g_game));
+    g_lua.bindClassStaticFunction("g_game", "getGMActions", std::bind(&Game::getGMActions, &g_game));
 
     g_lua.bindGlobalFunction("getOufitColor", Outfit::getColor);
 
