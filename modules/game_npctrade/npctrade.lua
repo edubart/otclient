@@ -148,7 +148,7 @@ local function refreshTradeItems()
   for key,item in pairs(currentTradeItems) do
     local itemBox = createWidget('NPCItemBox', itemsPanel)
     itemBox.item = item
-    
+
     local name = item.name
     local weight = string.format('%.2f', item.weight) .. ' ' .. WEIGHT_UNIT
     local price = item.price .. ' ' .. CURRENCY

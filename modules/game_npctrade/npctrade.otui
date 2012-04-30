@@ -19,7 +19,7 @@ NPCItemBox < UICheckBox
     anchors.horizontalCenter: parent.horizontalCenter
     margin-top: 5
 
-  $checked:    
+  $checked:
     border-color: #ffffff
 
   $hover !checked:
