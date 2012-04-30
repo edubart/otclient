@@ -199,6 +199,67 @@ local function refreshPlayerGoods()
   end
 end
 
+-- hooked functions
+local function onOpenNpcTrade(items)
+  tradeItems[BUY] = {}
+  tradeItems[SELL] = {}
+
+  for key,item in pairs(items) do
+    local newItem = {}
+    newItem.ptr = item[1]
+    newItem.name = item[2]
+    newItem.weight = item[3] / 100
+
+    if item[4] >= 0 then
+      newItem.price = item[4]
+      table.insert(tradeItems[BUY], newItem)
+    elseif item[5] >= 0 then
+      newItem.price = item[5]
+      table.insert(tradeItems[SELL], newItem)
+    else
+      error("server error: item name " .. item[1] .. " has neither buy or sell price.")
+    end
+  end
+
+  refreshTradeItems()
+  addEvent(NPCTrade.show) -- player goods has not been parsed yet
+end
+
+local function onCloseNpcTrade()
+  NPCTrade.hide()
+end
+
+local function onPlayerGoods(money, items)
+  playerMoney = money
+
+  playerItems = {}
+  for key,item in pairs(items) do
+    local id = item[1]:getId()
+    if not playerItems[id] then
+      playerItems[id] = item[2]
+    else
+      playerItems[id] = playerItems[id] + item[2]
+    end
+  end
+
+  refreshPlayerGoods()
+end
+
+local function onFreeCapacityChange(localPlayer, freeCapacity, oldFreeCapacity)
+  playerFreeCapacity = freeCapacity
+
+  if npcWindow:isVisible() then
+    refreshPlayerGoods()
+  end
+end
+
+local function onInventoryChange(inventory, item, oldeItem)
+  if selectedItem then
+    refreshItem(selectedItem)
+  end
+end
+
+
 -- public functions
 function NPCTrade.init()
   npcWindow = displayUI('npctrade.otui')
@@ -236,12 +297,12 @@ function NPCTrade.init()
   end
 
   connect(g_game, { onGameEnd = NPCTrade.hide,
-                    onOpenNpcTrade = NPCTrade.onOpenNpcTrade,
-                    onCloseNpcTrade = NPCTrade.onCloseNpcTrade,
-                    onPlayerGoods = NPCTrade.onPlayerGoods } )
+                    onOpenNpcTrade = onOpenNpcTrade,
+                    onCloseNpcTrade = onCloseNpcTrade,
+                    onPlayerGoods = onPlayerGoods } )
 
-  connect(LocalPlayer, { onFreeCapacityChange = NPCTrade.onFreeCapacityChange,
-                         onInventoryChange = NPCTrade.onInventoryChange } )
+  connect(LocalPlayer, { onFreeCapacityChange = onFreeCapacityChange,
+                         onInventoryChange = onInventoryChange } )
 end
 
 function NPCTrade.terminate()
@@ -268,13 +329,12 @@ function NPCTrade.terminate()
   tradeButton = nil
 
   disconnect(g_game, {  onGameEnd = NPCTrade.hide,
-                        onOpenNpcTrade = NPCTrade.onOpenNpcTrade,
-                        onCloseNpcTrade = NPCTrade.onCloseNpcTrade,
-                        onPlayerGoods = NPCTrade.onPlayerGoods,
-                        onFreeCapacityChange = NPCTrade.onFreeCapacityChange } )
+                        onOpenNpcTrade = onOpenNpcTrade,
+                        onCloseNpcTrade = onCloseNpcTrade,
+                        onPlayerGoods = onPlayerGoods } )
 
-  disconnect(LocalPlayer, { onFreeCapacityChange = NPCTrade.onFreeCapacityChange,
-                            onInventoryChange = NPCTrade.onInventoryChange } )
+  disconnect(LocalPlayer, { onFreeCapacityChange = onFreeCapacityChange,
+                            onInventoryChange = onInventoryChange } )
 
   NPCTrade = nil
 end
@@ -367,64 +427,4 @@ end
 
 function NPCTrade.onShowAllItemsChange()
   refreshPlayerGoods()
-end
-
--- hooked functions
-function NPCTrade.onOpenNpcTrade(items)
-  tradeItems[BUY] = {}
-  tradeItems[SELL] = {}
-
-  for key,item in pairs(items) do
-    local newItem = {}
-    newItem.ptr = item[1]
-    newItem.name = item[2]
-    newItem.weight = item[3] / 100
-
-    if item[4] >= 0 then
-      newItem.price = item[4]
-      table.insert(tradeItems[BUY], newItem)
-    elseif item[5] >= 0 then
-      newItem.price = item[5]
-      table.insert(tradeItems[SELL], newItem)
-    else
-      error("server error: item name " .. item[1] .. " has neither buy or sell price.")
-    end
-  end
-
-  refreshTradeItems()
-  addEvent(NPCTrade.show) -- player goods has not been parsed yet
-end
-
-function NPCTrade.onCloseNpcTrade()
-  NPCTrade.hide()
-end
-
-function NPCTrade.onPlayerGoods(money, items)
-  playerMoney = money
-
-  playerItems = {}
-  for key,item in pairs(items) do
-    local id = item[1]:getId()
-    if not playerItems[id] then
-      playerItems[id] = item[2]
-    else
-      playerItems[id] = playerItems[id] + item[2]
-    end
-  end
-
-  refreshPlayerGoods()
-end
-
-function NPCTrade.onFreeCapacityChange(localPlayer, freeCapacity, oldFreeCapacity)
-  playerFreeCapacity = freeCapacity
-
-  if npcWindow:isVisible() then
-    refreshPlayerGoods()
-  end
-end
-
-function NPCTrade.onInventoryChange(inventory, item, oldeItem)
-  if selectedItem then
-    refreshItem(selectedItem)
-  end
 end
