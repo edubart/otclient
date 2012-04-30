@@ -2,7 +2,6 @@
 modules recursivity makes client crash, it should generate a warning
 
 == P1 BUGS (affects game play)
-private channels are not closed when switching characters
 sometimes minimap desync Z pos
 follow and autowalk doesn't cancel when walking via hotkeys
 

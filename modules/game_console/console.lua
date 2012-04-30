@@ -80,7 +80,6 @@ function applyMessagePrefixies(name, level, message)
   return message
 end
 
-
 -- hooked events
 local function onCreatureSpeak(name, level, speaktype, message, channelId, creaturePos)
   local defaultMessage = speaktype < 3 and true or false
@@ -107,12 +106,13 @@ local function onCreatureSpeak(name, level, speaktype, message, channelId, creat
 end
 
 local function onOpenChannel(channelId, channelName)
-  Console.addChannel(tr(channelName), channelId)
+  Console.addChannel(channelName, channelId)
 end
 
 local function onOpenPrivateChannel(receiver)
   local privateTab = Console.getTab(receiver)
   if privateTab == nil then
+    channels[receiver] = receiver
     Console.addTab(receiver, true)
   end
 end
@@ -120,6 +120,7 @@ end
 local function onOpenOwnPrivateChannel(channelId, channelName)
   local privateTab = Console.getTab(channelName)
   if privateTab == nil then
+    --channels[channelId] = channelName (this should be tested)
     Console.addChannel(channelName, channelId, true)
   end
   ownPrivateName = channelName

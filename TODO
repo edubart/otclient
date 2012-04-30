@@ -34,7 +34,6 @@ allow multiple Map and Game instances ?
 
 == MINOR FEATURES
 display exit box when exiting from game
-case insensitive npctrade
 load modules from zip packages
 move up/down in lineedits
 select characters in lineedits

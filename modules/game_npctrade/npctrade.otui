@@ -6,7 +6,7 @@ NPCOfferLabel < Label
 
 NPCItemBox < UICheckBox
   border-width: 1
-  border-color: #000000 
+  border-color: #000000
   color: #aaaaaa
   text-align: center
   text-offset: 0 20
@@ -88,7 +88,7 @@ MainWindow
         type: grid
         cell-size: 160 90
         flow: true
-        auto-spacing: true   
+        auto-spacing: true
 
   FlatPanel
     id: setupPanel
