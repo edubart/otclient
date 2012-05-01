@@ -1,0 +1,52 @@
+MissionLabel < Label
+  font: verdana-11px-monochrome
+  background-color: alpha
+  text-offset: 2 0
+  focusable: true
+
+  $focus:
+    background-color: #ffffff22
+    color: #ffffff
+
+QuestLineWindow < MainWindow
+  id: questLineWindow
+  !text: tr('Quest Log')
+  size: 500 400
+  @onEscape: self:destroy()
+
+  TextList
+    id: missionList
+    anchors.fill: parent
+    anchors.bottom: none
+    width: 200
+    height: 200
+    padding: 1
+    focusable: false
+    margin-right: 20
+    vertical-scrollbar: missionListScrollBar
+
+  VerticalScrollBar
+    id: missionListScrollBar
+    anchors.top: missionList.top
+    anchors.bottom: missionList.bottom
+    anchors.left: missionList.right
+    step: 14
+    pixels-scroll: true
+
+  FlatLabel
+    id: missionDescription
+    anchors.top: missionList.bottom
+    anchors.left: parent.left
+    anchors.right: missionListScrollBar.right
+    anchors.bottom: parent.bottom
+    margin-bottom: 30
+    margin-top: 10
+    text-wrap: true
+
+  Button
+    id: closeButton
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    !text: tr('Close')
+    width: 90
+    @onClick: self:getParent():destroy()

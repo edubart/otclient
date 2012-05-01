@@ -89,24 +89,10 @@ MiniWindow
       &position: {x=65535, y=10, z=0}
 
     GameLabel
-      id: soul
-      anchors.top: slot9.bottom
-      anchors.bottom: slot8.bottom
-      anchors.left: slot9.left
-      anchors.right: slot9.right
-      margin-top: 5
-      text-align: center
-      image-source: /core_styles/styles/images/panel_flat.png
-      image-border: 1
-
-    GameLabel
       id: capacity
+      height: 30
       anchors.top: slot10.bottom
-      anchors.bottom: slot8.bottom
       anchors.left: slot10.left
-      anchors.right: slot10.right
       margin-top: 5
       text-align: center
-      image-source: /core_styles/styles/images/panel_flat.png
-      image-border: 1
 

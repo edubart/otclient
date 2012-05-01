@@ -1,1 +1,51 @@
+QuestLabel < Label
+  font: verdana-11px-monochrome
+  background-color: alpha
+  text-offset: 2 0
+  focusable: true
+  color: #cccccc
+
+  $focus:
+    color: #ffffff
+
+  $on:
+    background-color: #006600
+  $!on:
+    background-color: #660000
+
+  $on focus:
+    background-color: #004400
+  $!on focus:
+    background-color: #440000
+
 QuestLogWindow < MainWindow
+  id: questLogWindow
+  !text: tr('Quest Log')
+  size: 500 400
+  @onEscape: self:destroy()
+
+  TextList
+    id: questList
+    anchors.fill: parent
+    width: 190
+    padding: 1
+    focusable: false
+    margin-bottom: 30
+    margin-right: 20
+    vertical-scrollbar: questListScrollBar
+
+  VerticalScrollBar
+    id: questListScrollBar
+    anchors.top: questList.top
+    anchors.bottom: questList.bottom
+    anchors.left: questList.right
+    step: 14
+    pixels-scroll: true
+
+  Button
+    id: closeButton
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    !text: tr('Close')
+    width: 90
+    @onClick: self:getParent():destroy()

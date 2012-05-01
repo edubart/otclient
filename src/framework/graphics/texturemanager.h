@@ -33,7 +33,7 @@ public:
     static TexturePtr loadPNG(std::stringstream& file);
 
 private:
-    std::map<std::string, TextureWeakPtr> m_textures;
+    std::unordered_map<std::string, TextureWeakPtr> m_textures;
 };
 
 extern TextureManager g_textures;

@@ -82,7 +82,7 @@ private:
     Boolean<false> m_hoverUpdateScheduled;
     bool m_isOnInputEvent;
     Boolean<false> m_drawDebugBoxes;
-    std::map<std::string, OTMLNodePtr> m_styles;
+    std::unordered_map<std::string, OTMLNodePtr> m_styles;
 };
 
 extern UIManager g_ui;

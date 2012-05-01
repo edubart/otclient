@@ -60,7 +60,7 @@ local function onGameEditList(id, doorId, text)
   textEdit:setMaxLength(8192)
   textEdit:setText(text)
   textEdit:setEnabled(true)
-  description:setText(tr('Enter one text per line.'))
+  description:setText(tr('Enter one name per line.'))
   textWindow:setText(tr('Edit List'))
 
   okButton.onClick = function()

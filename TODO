@@ -3,8 +3,6 @@ game_shaders (with shader manager)
 game_map (with save/load/options)
 game_minimap (with all tibia functionality)
 game_playertrade
-game_textbooks
-game_questlog
 game_ruleviolations
 
 == NOTABLE FEATURES
