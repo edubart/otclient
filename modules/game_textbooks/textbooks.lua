@@ -3,7 +3,7 @@ TextBooks = {}
 local function onGameEditText(id, itemId, maxLength, text, writter, time)
   local textWindow = createWidget('TextWindow', rootWidget)
 
-  local writeable = maxLength ~= #text
+  local writeable = (maxLength ~= #text) and maxLength > 0
   local textItem = textWindow:getChildById('textItem')
   local description = textWindow:getChildById('description')
   local textEdit = textWindow:getChildById('text')
@@ -33,13 +33,40 @@ local function onGameEditText(id, itemId, maxLength, text, writter, time)
   end
 
   description:setText(desc)
+
+  if not writeable then
+    textWindow:setText(tr('Show Text'))
+    cancelButton:hide()
+  else
+    textWindow:setText(tr('Edit Text'))
+  end
+
   okButton.onClick = function()
-    g_game.editText(id, textEdit:getText())
+    if writeable then
+      g_game.editText(id, textEdit:getText())
+    end
     textWindow:destroy()
   end
 end
 
-local function onGameEditList(listId, id, text)
+local function onGameEditList(id, doorId, text)
+  local textWindow = createWidget('TextWindow', rootWidget)
+
+  local textEdit = textWindow:getChildById('text')
+  local description = textWindow:getChildById('description')
+  local okButton = textWindow:getChildById('okButton')
+  local cancelButton = textWindow:getChildById('cancelButton')
+
+  textEdit:setMaxLength(8192)
+  textEdit:setText(text)
+  textEdit:setEnabled(true)
+  description:setText(tr('Enter one text per line.'))
+  textWindow:setText(tr('Edit List'))
+
+  okButton.onClick = function()
+    g_game.editList(id, doorId, textEdit:getText())
+    textWindow:destroy()
+  end
 end
 
 function TextBooks.init()

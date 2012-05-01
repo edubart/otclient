@@ -366,11 +366,11 @@ void ProtocolGame::sendEditText(uint id, const std::string& text)
     send(msg);
 }
 
-void ProtocolGame::sendEditList(int listId, uint id, const std::string& text)
+void ProtocolGame::sendEditList(uint id, int doorId, const std::string& text)
 {
     OutputMessage msg;
     msg.addU8(Proto::ClientEditList);
-    msg.addU8(listId);
+    msg.addU8(doorId);
     msg.addU32(id);
     msg.addString(text);
     send(msg);

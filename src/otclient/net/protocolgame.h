@@ -72,7 +72,7 @@ public:
     void sendCloseContainer(int containerId);
     void sendUpContainer(int containerId);
     void sendEditText(uint id, const std::string& text);
-    void sendEditList(int listId, uint id, const std::string& text);
+    void sendEditList(uint id, int doorId, const std::string& text);
     void sendLook(const Position& position, int thingId, int stackpos);
     void sendTalk(Otc::SpeakType speakType, int channelId, const std::string& receiver, const std::string& message);
     void sendRequestChannels();

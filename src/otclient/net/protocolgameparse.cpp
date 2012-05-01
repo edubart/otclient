@@ -718,7 +718,7 @@ void ProtocolGame::parseCreatureTurn(InputMessage& msg)
 
 void ProtocolGame::parseEditText(InputMessage& msg)
 {
-    int id = msg.getU32();
+    uint id = msg.getU32();
     int itemId = msg.getU16();
     int maxLength = msg.getU16();
     std::string text = msg.getString();
@@ -730,11 +730,11 @@ void ProtocolGame::parseEditText(InputMessage& msg)
 
 void ProtocolGame::parseEditList(InputMessage& msg)
 {
-    int listId = msg.getU8();
-    int id = msg.getU32();
+    int doorId = msg.getU8();
+    uint id = msg.getU32();
     const std::string& text = msg.getString();
 
-    g_game.processEditList(listId, id, text);
+    g_game.processEditList(id, doorId, text);
 }
 
 void ProtocolGame::parsePlayerStats(InputMessage& msg)

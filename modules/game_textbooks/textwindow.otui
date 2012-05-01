@@ -1,13 +1,12 @@
 TextWindow < MainWindow
   id: textWindow
-  !text: tr('Edit Text')
   size: 280 280
   @onEscape: self:destroy()
 
   UIItem
     id: textItem
     virtual: true
-    item-id: 2816
+    item-id: 173
     size: 32 32
     anchors.top: parent.top
     anchors.left: parent.left

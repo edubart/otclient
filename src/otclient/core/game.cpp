@@ -394,14 +394,14 @@ void Game::processCloseTrade()
     g_lua.callGlobalField("g_game", "onCloseTrade");
 }
 
-void Game::processEditText(int id, int itemId, int maxLength, const std::string& text, const std::string& writter, const std::string& date)
+void Game::processEditText(uint id, int itemId, int maxLength, const std::string& text, const std::string& writter, const std::string& date)
 {
     g_lua.callGlobalField("g_game", "onEditText", id, itemId, maxLength, text, writter, date);
 }
 
-void Game::processEditList(int listId, int id, const std::string& text)
+void Game::processEditList(uint id, int doorId, const std::string& text)
 {
-    g_lua.callGlobalField("g_game", "onEditList", listId, id, text);
+    g_lua.callGlobalField("g_game", "onEditList", id, doorId, text);
 }
 
 void Game::processQuestLog(const std::vector<std::tuple<int, std::string, bool>>& questList)
@@ -973,11 +973,11 @@ void Game::editText(uint id, const std::string& text)
     m_protocolGame->sendEditText(id, text);
 }
 
-void Game::editList(int listId, uint id, const std::string& text)
+void Game::editList(uint id, int doorId, const std::string& text)
 {
     if(!canPerformGameAction())
         return;
-    m_protocolGame->sendEditList(listId, id, text);
+    m_protocolGame->sendEditList(id, doorId, text);
 }
 
 void Game::reportBug(const std::string& comment)

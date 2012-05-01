@@ -114,8 +114,8 @@ protected:
     void processCloseTrade();
 
     // edit text/list
-    void processEditText(int id, int itemId, int maxLength, const std::string& text, const std::string& writter, const std::string& date);
-    void processEditList(int listId, int id, const std::string& text);
+    void processEditText(uint id, int itemId, int maxLength, const std::string& text, const std::string& writter, const std::string& date);
+    void processEditList(uint id, int doorId, const std::string& text);
 
     // questlog
     void processQuestLog(const std::vector<std::tuple<int, std::string, bool>>& questList);
@@ -218,7 +218,7 @@ public:
 
     // house window and editable items related
     void editText(uint id, const std::string& text);
-    void editList(int listId, uint id, const std::string& text);
+    void editList(uint id, int doorId, const std::string& text);
 
     // reports
     void reportBug(const std::string& comment);
