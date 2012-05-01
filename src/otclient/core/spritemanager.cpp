@@ -26,7 +26,6 @@
 #include <framework/core/filestream.h>
 #include <framework/graphics/graphics.h>
 #include <framework/thirdparty/apngloader.h>
-#include <physfs.h>
 
 SpriteManager g_sprites;
 

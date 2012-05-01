@@ -25,7 +25,6 @@
 
 #include <framework/core/declarations.h>
 #include <framework/graphics/texture.h>
-#include <png.h>
 
 class SpriteManager
 {

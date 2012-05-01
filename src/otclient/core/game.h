@@ -110,7 +110,8 @@ protected:
     void processCloseNpcTrade();
 
     // player trade
-    void processOpenTrade(const std::string& name, const std::vector<ItemPtr>& items);
+    void processOwnTrade(const std::string& name, const std::vector<ItemPtr>& items);
+    void processCounterTrade(const std::string& name, const std::vector<ItemPtr>& items);
     void processCloseTrade();
 
     // edit text/list

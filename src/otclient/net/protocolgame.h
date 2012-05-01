@@ -168,7 +168,8 @@ private:
     void parseRuleViolationRemove(InputMessage& msg);
     void parseRuleViolationCancel(InputMessage& msg);
     void parseRuleViolationLock(InputMessage& msg);
-    void parseOpenTrade(InputMessage& msg);
+    void parseOwnTrade(InputMessage& msg);
+    void parseCounterTrade(InputMessage& msg);
     void parseCloseTrade(InputMessage&);
     void parseTextMessage(InputMessage& msg);
     void parseCancelWalk(InputMessage& msg);

@@ -123,10 +123,10 @@ void ProtocolGame::parseMessage(InputMessage& msg)
                 parseCloseNpcTrade(msg);
                 break;
             case Proto::GameServerOwnTrade:
-                parseOpenTrade(msg);
+                parseOwnTrade(msg);
                 break;
             case Proto::GameServerCounterTrade:
-                parseOpenTrade(msg);
+                parseCounterTrade(msg);
                 break;
             case Proto::GameServerCloseTrade:
                 parseCloseTrade(msg);
@@ -545,7 +545,7 @@ void ProtocolGame::parseCloseNpcTrade(InputMessage&)
     g_game.processCloseNpcTrade();
 }
 
-void ProtocolGame::parseOpenTrade(InputMessage& msg)
+void ProtocolGame::parseOwnTrade(InputMessage& msg)
 {
     std::string name = msg.getString();
     int count = msg.getU8();
@@ -554,7 +554,19 @@ void ProtocolGame::parseOpenTrade(InputMessage& msg)
     for(int i = 0; i < count; i++)
         items[i] = internalGetItem(msg);
 
-    g_game.processOpenTrade(name, items);
+    g_game.processOwnTrade(name, items);
+}
+
+void ProtocolGame::parseCounterTrade(InputMessage& msg)
+{
+    std::string name = msg.getString();
+    int count = msg.getU8();
+
+    std::vector<ItemPtr> items(count);
+    for(int i = 0; i < count; i++)
+        items[i] = internalGetItem(msg);
+
+    g_game.processCounterTrade(name, items);
 }
 
 void ProtocolGame::parseCloseTrade(InputMessage&)

@@ -384,9 +384,14 @@ void Game::processCloseNpcTrade()
     g_lua.callGlobalField("g_game", "onCloseNpcTrade");
 }
 
-void Game::processOpenTrade(const std::string& name, const std::vector<ItemPtr>& items)
+void Game::processOwnTrade(const std::string& name, const std::vector<ItemPtr>& items)
 {
-    g_lua.callGlobalField("g_game", "onOpenTrade", name, items);
+    g_lua.callGlobalField("g_game", "onOwnTrade", name, items);
+}
+
+void Game::processCounterTrade(const std::string& name, const std::vector<ItemPtr>& items)
+{
+    g_lua.callGlobalField("g_game", "onCounterTrade", name, items);
 }
 
 void Game::processCloseTrade()
