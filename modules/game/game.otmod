@@ -23,6 +23,9 @@ Module
     - game_minimap
     - game_hotkeys
     - game_npctrade
+    - game_textbooks
+    - game_playertrade
+    - game_questlog
 
   @onLoad: |
     importStyle 'styles/items.otui'

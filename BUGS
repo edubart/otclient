@@ -1,5 +1,6 @@
 == CRASHS
 modules recursivity makes client crash, it should generate a warning
+anchors recursivity makes the client crash
 
 == P1 BUGS (affects game play)
 sometimes minimap desync Z pos
@@ -7,7 +8,6 @@ follow and autowalk doesn't cancel when walking via hotkeys
 
 == P2 BUGS
 battle sometimes doesn't clear attacked/followed creatures when they go out of range
-if you move a backpack to left panel, and resize it, client will go into a infinite loop resizing the backpack switching 4,5 columns
 when looking from floor 5 in floor 7, sometimes a tile have 2 invisible grounds in floor 6 that should be ignored
 
 == P3 BUGS

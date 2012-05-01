@@ -55,6 +55,7 @@ public:
     int getTextPos(Point pos);
     int getTextHorizontalMargin() { return m_textHorizontalMargin; }
     int getCursorPos() { return m_cursorPos; }
+    uint getMaxLength() { return m_maxLength; }
     bool isCursorEnabled() { return m_cursorPos != -1; }
     bool isAlwaysActive() { return m_alwaysActive; }
     bool isTextHidden() { return m_textHidden; }

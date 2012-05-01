@@ -1,0 +1,47 @@
+TextWindow < MainWindow
+  id: textWindow
+  !text: tr('Edit Text')
+  size: 280 280
+  @onEscape: self:destroy()
+
+  UIItem
+    id: textItem
+    virtual: true
+    item-id: 2816
+    size: 32 32
+    anchors.top: parent.top
+    anchors.left: parent.left
+
+  Label
+    id: description
+    anchors.top: parent.top
+    anchors.left: textItem.right
+    anchors.right: parent.right
+    anchors.bottom: text.top
+    text-align: left
+    margin-left: 8
+    margin-bottom: 10
+
+  MultilineTextEdit
+    id: text
+    anchors.fill: parent
+    anchors.top: textItem.bottom
+    margin-top: 30
+    margin-bottom: 30
+
+  Button
+    id: cancelButton
+    !text: tr('Cancel')
+    anchors.top: next.top
+    anchors.right: next.left
+    margin-right: 8
+    width: 60
+    @onClick: self:getParent():destroy()
+
+  Button
+    id: okButton
+    !text: tr('Ok')
+    anchors.top: text.bottom
+    anchors.right: text.right
+    margin-top: 10
+    width: 60

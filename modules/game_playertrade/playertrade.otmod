@@ -1,0 +1,15 @@
+Module
+  name: game_playertrade
+  description: Allow to trade items with players
+  author: OTClient team
+  website: https://github.com/edubart/otclient
+
+  dependencies:
+    - game
+
+  @onLoad: |
+    dofile 'playertrade'
+    PlayerTrade.init()
+
+  @onUnload: |
+    PlayerTrade.terminate()

@@ -1,0 +1,15 @@
+Module
+  name: game_textbooks
+  description: Allow to edit text books and lists
+  author: OTClient team
+  website: https://github.com/edubart/otclient
+
+  dependencies:
+    - game
+
+  @onLoad: |
+    dofile 'textbooks'
+    TextBooks.init()
+
+  @onUnload: |
+    TextBooks.terminate()

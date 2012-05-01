@@ -357,7 +357,7 @@ void Game::processTutorialHint(int id)
 
 void Game::processAutomapFlag(const Position& pos, int icon, const std::string& message)
 {
-
+    g_lua.callGlobalField("g_game", "onAutomapFlag", pos, icon, message);
 }
 
 void Game::processOpenOutfitWindow(const Outfit& currentOufit, const std::vector<std::tuple<int, std::string, int>>& outfitList)
