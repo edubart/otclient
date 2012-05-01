@@ -1,8 +1,8 @@
 Module
   name: game_questlog
   description: View game quests status
-  author: OTClient team
-  website: https://github.com/edubart/otclient
+  author: edubart
+  website: www.otclient.info
 
   dependencies:
     - game

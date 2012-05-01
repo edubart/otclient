@@ -1,8 +1,8 @@
 Module
   name: game_npctrade
   description: NPC trade interface
-  author: OTClient team
-  website: https://github.com/edubart/otclient
+  author: andrefaramir, baxnie
+  website: www.otclient.info
 
   dependencies:
     - game

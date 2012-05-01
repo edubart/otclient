@@ -1,8 +1,8 @@
 Module
   name: client_entergame
   description: Manages enter game and character list windows
-  author: OTClient team
-  website: https://github.com/edubart/otclient
+  author: edubart
+  website: www.otclient.info
 
   dependencies:
     - client_topmenu

@@ -1,8 +1,8 @@
 Module
   name: client_terminal
   description: Terminal for executing lua functions
-  author: OTClient team
-  website: https://github.com/edubart/otclient
+  author: edubart
+  website: www.otclient.info
 
   @onLoad: |
     dofile 'terminal'

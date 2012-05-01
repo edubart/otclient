@@ -1,8 +1,8 @@
 Module
   name: client_modulemanager
   description: Manage other modules
-  author: OTClient team
-  website: https://github.com/edubart/otclient
+  author: edubart
+  website: www.otclient.info
 
   dependencies:
     - client_topmenu

@@ -1,8 +1,8 @@
 Module
   name: client_locales
   description: Translates texts to selected language
-  author: OTClient team
-  website: https://github.com/edubart/otclient
+  author: baxnie
+  website: www.otclient.info
 
   dependencies:
     - client_topmenu

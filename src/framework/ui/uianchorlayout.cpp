@@ -86,11 +86,19 @@ void UIAnchorLayout::removeWidget(const UIWidgetPtr& widget)
     removeAnchors(widget);
 }
 
-bool UIAnchorLayout::updateWidget(const UIWidgetPtr& widget, UIAnchorGroup& anchorGroup)
+bool UIAnchorLayout::updateWidget(const UIWidgetPtr& widget, UIAnchorGroup& anchorGroup, UIWidgetPtr first)
 {
     UIWidgetPtr parentWidget = getParentWidget();
     if(!parentWidget)
         return false;
+
+    if(first == widget) {
+        logError("child '", widget->getId(), "' of parent widget '", parentWidget->getId(), "' is recursively anchored to itself, please fix this");
+        return false;
+    }
+
+    if(!first)
+        first = widget;
 
     Rect newRect = widget->getRect();
     bool verticalMoved = false;
@@ -125,7 +133,7 @@ bool UIAnchorLayout::updateWidget(const UIWidgetPtr& widget, UIAnchorGroup& anch
             if(it != m_anchorsGroups.end()) {
                 UIAnchorGroup& hookedAnchorGroup = it->second;
                 if(!hookedAnchorGroup.isUpdated())
-                    updateWidget(hookedWidget, hookedAnchorGroup);
+                    updateWidget(hookedWidget, hookedAnchorGroup, first);
             }
         }
 

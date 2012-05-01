@@ -1,8 +1,8 @@
 Module
   name: game_ruleviolation
-  description: Rule violation interface
-  author: OTClient team
-  website: https://github.com/edubart/otclient
+  description: Rule violation interface (Ctrl+Y)
+  author: andrefaramir
+  website: www.otclient.info
 
   dependencies:
     - game

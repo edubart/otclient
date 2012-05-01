@@ -1,6 +1,5 @@
 == CRASHS
 modules recursivity makes client crash, it should generate a warning
-anchors recursivity makes the client crash
 
 == P1 BUGS (affects game play)
 sometimes minimap desync Z pos

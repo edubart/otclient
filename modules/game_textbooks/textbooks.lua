@@ -15,15 +15,15 @@ local function onGameEditText(id, itemId, maxLength, text, writter, time)
   textEdit:setText(text)
   textEdit:setEnabled(writeable)
 
-  local desc = tr('You read the following')
+  local desc = ''
   if #writter > 0 then
-    desc = desc .. tr(', written by \n%s\n', writter)
+    desc = tr('You read the following, written by \n%s\n', writter)
 
     if #time > 0 then
       desc = desc .. tr('on %s.\n', time)
     end
   elseif #time > 0 then
-    desc = desc .. tr(', written on %s.\n', time)
+    desc = tr('You read the following, written on %s.\n', time)
   end
 
   if #text == 0 and not writeable then

@@ -2,7 +2,7 @@ Module
   name: core_styles
   description: Contains ui styles used by other modules
   author: OTClient team
-  website: https://github.com/edubart/otclient
+  website: www.otclient.info
   autoload: true
   autoload-priority: 20
   reloadable: false

@@ -4,9 +4,6 @@ local questLogButton
 local questLogWindow
 local questLineWindow
 
--- g_game.requestQuestLog()
--- g_game.requestQuestLine(questId)
-
 local function onGameQuestLog(quests)
   QuestLog.destroyWindows()
 
@@ -84,4 +81,7 @@ function QuestLog.terminate()
   disconnect(g_game, { onQuestLine= onGameQuestLine })
 
   QuestLog.destroyWindows()
+
+  questLogButton:destroy()
+  questLogButton = nil
 end

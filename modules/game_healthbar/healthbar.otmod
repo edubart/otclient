@@ -1,8 +1,8 @@
 Module
   name: game_healthbar
   description: Displays health and mana points
-  author: OTClient team
-  website: https://github.com/edubart/otclient
+  author: edubart
+  website: www.otclient.info
 
   dependencies:
     - game

@@ -13,7 +13,7 @@ Beyond of it's flexibility with scripts, otclient comes with tons of other featu
 the creation of new client side stuff in otserv that was not possible before. These include,
 sound system, graphics effects with shaders, particle engines, modules/addons system, animated textures,
 styleable user interface, transparency, multi language, in game lua terminal, an OpenGL 1.1/2.0 ES engine that make possible to
-run on mobile platforms like Android, iPhone and iPad and much more. Otclient is also flexible enough to
+run on mobile platforms like Androi/iPhon/iPad and much more. Otclient is also flexible enough to
 create tibia tools like map editors just using scripts, because it wasn't designed to be just a
 client, instead otclient was designed to be a combination of a framework and tibia APIs.
 
@@ -50,7 +50,7 @@ We are currently needing help in the following areas:
 * Designing new UI themes or improving the current one
 * Translating the client to other languages
 * Documenting lua APIs and creating tutorials
-* Scripting in lua new modules or improving the current ones
+* Scripting with lua new modules or improving the current ones
 * Porting otclient to other otserv protocols (8.54, 8.7, 9.x, etc)
 * Spreading otclient project over the web and bring it to new possible contributors
 * Testing the client itself to report bugs and missing features in our bug tracker

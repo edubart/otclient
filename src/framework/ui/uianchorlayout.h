@@ -79,7 +79,7 @@ protected:
     bool internalUpdate();
 
 private:
-    bool updateWidget(const UIWidgetPtr& widget, UIAnchorGroup& anchorGroup);
+    bool updateWidget(const UIWidgetPtr& widget, UIAnchorGroup& anchorGroup, UIWidgetPtr first = nullptr);
     std::map<UIWidgetPtr, UIAnchorGroup> m_anchorsGroups;
 };
 

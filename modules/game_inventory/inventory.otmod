@@ -1,8 +1,8 @@
 Module
   name: game_inventory
   description: View local player equipments window
-  author: OTClient team
-  website: https://github.com/edubart/otclient
+  author: baxnie, edubart
+  website: www.otclient.info
 
   dependencies:
     - game

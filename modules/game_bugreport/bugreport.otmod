@@ -1,0 +1,15 @@
+Module
+  name: game_bugreport
+  description: Bug report interface (Ctrl+Z)
+  author: edubart
+  website: www.otclient.info
+
+  dependencies:
+    - game
+
+  @onLoad: |
+    dofile 'bugreport'
+    BugReport.init()
+
+  @onUnload: |
+    BugReport.terminate()

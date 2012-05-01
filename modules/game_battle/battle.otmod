@@ -1,8 +1,8 @@
 Module
   name: game_battle
   description: Manage battle window
-  author: OTClient team
-  website: https://github.com/edubart/otclient
+  author: andrefaramir
+  website: www.otclient.info
   icon: battle.png
 
   dependencies:

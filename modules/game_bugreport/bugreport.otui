@@ -1,0 +1,40 @@
+BugReportWindow < MainWindow
+  !text: tr('Report Bug')
+  size: 280 250
+  &onEnter: BugReport.doReport
+  @onEscape: self:hide()
+
+  Label
+    id: bugLabel
+    !text: tr('Please use this dialog to only report bugs. Do not report rule violations here!')
+    text-wrap: true
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    height: 32
+
+  MultilineTextEdit
+    id: bugTextEdit
+    anchors.top: bugLabel.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: sendButton.top
+    margin-top: 4
+    margin-bottom: 8
+
+  Button
+    id: sendButton
+    !text: tr('Send')
+    anchors.bottom: cancelButton.bottom
+    anchors.right: cancelButton.left
+    margin-right: 10
+    width: 80
+    &onClick: BugReport.doReport
+
+  Button
+    id: cancelButton
+    !text: tr('Cancel')
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    width: 80
+    @onClick: self:getParent():hide()

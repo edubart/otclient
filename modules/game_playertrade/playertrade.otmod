@@ -1,8 +1,8 @@
 Module
   name: game_playertrade
   description: Allow to trade items with players
-  author: OTClient team
-  website: https://github.com/edubart/otclient
+  author: edubart
+  website: www.otclient.info
 
   dependencies:
     - game

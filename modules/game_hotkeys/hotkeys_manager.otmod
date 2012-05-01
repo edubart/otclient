@@ -1,8 +1,8 @@
 Module
   name: game_hotkeys
   description: Manage client hotkeys
-  author: OTClient team
-  website: https://github.com/edubart/otclient
+  author: andrefaramir
+  website: www.otclient.info
 
   dependencies:
     - game

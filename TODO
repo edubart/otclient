@@ -3,12 +3,10 @@ game_shaders (with shader manager)
 game_map (with save/load/options)
 game_minimap (with all tibia functionality)
 game_playertrade
-game_ruleviolations
 
 == NOTABLE FEATURES
 make left panel optional
 must close last container when opening a new containers
-add options "Copy Text", "Copy Name", "Message" in console labels with a popupmenu
 move chat tabs
 save/load mini windows states/location when restarting the client
 graphics options menu

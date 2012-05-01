@@ -1,8 +1,8 @@
 Module
   name: client
   description: Initialize the client and setups its main window
-  author: OTClient team
-  website: https://github.com/edubart/otclient
+  author: edubart
+  website: www.otclient.info
   autoload: true
   autoload-priority: 100
   reloadable: false
