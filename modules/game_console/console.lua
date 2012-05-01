@@ -89,7 +89,7 @@ local function onCreatureSpeak(name, level, speaktype, message, channelId, creat
   message = applyMessagePrefixies(name, level, message)
 
   if speaktype.private then
-    Console.addPrivateText(message, speaktype, name, false)
+    Console.addPrivateText(message, speaktype, name, false, name)
   else
     local channel = tr('Default')
     if not defaultMessage then
@@ -97,7 +97,7 @@ local function onCreatureSpeak(name, level, speaktype, message, channelId, creat
     end
 
     if channel then
-      Console.addText(message, speaktype, channel)
+      Console.addText(message, speaktype, channel, name)
     elseif channelId ~= 0 then
       -- server sent a message on a channel that is not open
       warning('message in channel id ' .. channelId .. ' which is unknown, this is a server bug, relogin if you want to see messages in this channel')
@@ -334,7 +334,7 @@ function Console.addChannel(name, id)
   return tab
 end
 
-function Console.addPrivateText(text, speaktype, name, isPrivateCommand)
+function Console.addPrivateText(text, speaktype, name, isPrivateCommand, creatureName)
   local focus = false
   if speaktype.speakType == SpeakPrivateNpcToPlayer then
     name = 'NPCs'
@@ -352,17 +352,17 @@ function Console.addPrivateText(text, speaktype, name, isPrivateCommand)
   elseif focus then
     consoleTabBar:selectTab(privateTab)
   end
-  Console.addTabText(text, speaktype, privateTab)
+  Console.addTabText(text, speaktype, privateTab, creatureName)
 end
 
-function Console.addText(text, speaktype, tabName)
+function Console.addText(text, speaktype, tabName, creatureName)
   local tab = Console.getTab(tabName)
   if tab ~= nil then
-    Console.addTabText(text, speaktype, tab)
+    Console.addTabText(text, speaktype, tab, creatureName)
   end
 end
 
-function Console.addTabText(text, speaktype, tab)
+function Console.addTabText(text, speaktype, tab, creatureName)
   if Options.getOption('showTimestampsInConsole') then
     text = os.date('%H:%M') .. ' ' .. text
   end
@@ -375,8 +375,38 @@ function Console.addTabText(text, speaktype, tab)
   label:setColor(speaktype.color)
   consoleTabBar:blinkTab(tab)
 
+  label.onMouseRelease = function (self, mousePos, mouseButton) Console.popupMenu(mousePos, mouseButton, creatureName, text) end
+  
   if consoleBuffer:getChildCount() > MAX_LINES then
     consoleBuffer:getFirstChild():destroy()
+  end
+end
+
+function Console.popupMenu(mousePos, mouseButton, creatureName, text)
+  if mouseButton == MouseRightButton then
+    local menu = createWidget('PopupMenu')
+    if creatureName then
+      if creatureName ~= g_game.getLocalPlayer():getName() then
+        menu:addOption(tr('Message to ' .. creatureName), function () g_game.openPrivateChannel(creatureName) end)
+        menu:addOption(tr('Add to VIP list'), function () g_game.addVip(creatureName) end) --TODO not show if creature already in vip
+        -- TODO ignore creatureName
+        menu:addSeparator()
+      end
+      --TODO select all
+      menu:addOption(tr('Copy message'), function () g_window.setClipboardText(text) end)
+      
+      if RuleViolation.hasWindowAccess() then
+        menu:addSeparator()
+        menu:addOption(tr('Rule Violation'), function() RuleViolation.show(creatureName, text:match('.+%:%s(.+)')) end)
+      end
+      
+      menu:addSeparator()
+      menu:addOption(tr('Copy name'), function () g_window.setClipboardText(creatureName) end)
+    else
+      --TODO select all
+      menu:addOption(tr('Copy message'), function () g_window.setClipboardText(text) end)
+    end
+    menu:display(mousePos)
   end
 end
 
@@ -419,9 +449,11 @@ function Console.sendCurrentMessage()
 
   -- add new command to history
   currentMessageIndex = 0
-  table.insert(messageHistory, originalMessage)
-  if #messageHistory > MAX_HISTORY then
-    table.remove(messageHistory, 1)
+  if #messageHistory == 0 or messageHistory[#messageHistory] ~= originalMessage then
+    table.insert(messageHistory, originalMessage)
+    if #messageHistory > MAX_HISTORY then
+      table.remove(messageHistory, 1)
+    end
   end
 
   -- when talking on server log, the message goes to default channel
@@ -460,7 +492,7 @@ function Console.sendCurrentMessage()
     g_game.talkPrivate(speaktype.speakType, name, message)
 
     message = applyMessagePrefixies(player:getName(), player:getLevel(), message)
-    Console.addPrivateText(message, speaktype, name, isPrivateCommand)
+    Console.addPrivateText(message, speaktype, name, isPrivateCommand, g_game:getLocalPlayer():getName())
   end
 end
 

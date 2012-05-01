@@ -26,6 +26,7 @@ Module
     - game_textbooks
     - game_playertrade
     - game_questlog
+    - game_ruleviolation
 
   @onLoad: |
     importStyle 'styles/items.otui'

@@ -211,9 +211,11 @@ function Terminal.executeCommand(command)
   currentHistoryIndex = 0
 
   -- add new command to history
-  table.insert(commandHistory, command)
-  if #commandHistory > MaxHistory then
-    table.remove(commandHistory, 1)
+  if #commandHistory == 0 or commandHistory[#commandHistory] ~= command then
+    table.insert(commandHistory, command)
+    if #commandHistory > MaxHistory then
+      table.remove(commandHistory, 1)
+    end
   end
 
   -- add command line

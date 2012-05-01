@@ -29,7 +29,7 @@ local function displayMessage(msgtype, msg, time)
     end
   end
 
-  if msgtype.labelId  then
+  if msgtype.labelId then
     local label = GameInterface.getMapPanel():recursiveGetChildById(msgtype.labelId)
 
     label:setText(msg)

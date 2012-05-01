@@ -1,0 +1,120 @@
+RVListLabel < Label
+  background-color: alpha
+  text-offset: 2 0
+  focusable: true
+  @onFocusChange: function (self, focused) RuleViolation.onSelectReason(self, focused) end
+  
+  $focus:
+    background-color: #ffffff22
+    color: #ffffff
+
+RVLabel < Label
+  anchors.left: parent.left
+  anchors.right: parent.right
+  
+  $first:
+    anchors.top: parent.top
+  
+  $!first:
+    margin-top: 10
+    anchors.top: prev.bottom
+
+RVTextEdit < TextEdit
+  margin-top: 2
+  anchors.left: parent.left
+  anchors.right: parent.right
+  
+  $first:
+    anchors.top: parent.top
+  
+  $!first:
+    anchors.top: prev.bottom
+    
+MainWindow
+  id: ruleViolationWindow
+  size: 400 445
+  text: Rule Violation  
+  
+  RVLabel
+    !text: tr('Name:')
+    
+  RVTextEdit
+    id: nameText
+    
+  RVLabel
+    !text: tr('Statement:')
+  
+  RVTextEdit
+    id: statementText
+    enabled: false
+  
+  RVLabel
+    !text: tr('Reason:')
+  
+  TextList
+    id: reasonList
+    height: 100
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    margin-top: 2
+    focusable: false
+    vertical-scrollbar: reasonListScrollBar
+
+  VerticalScrollBar
+    id: reasonListScrollBar
+    anchors.top: reasonList.top
+    anchors.bottom: reasonList.bottom
+    anchors.right: reasonList.right
+    step: 14
+    pixels-scroll: true  
+    
+  RVLabel
+    !text: tr('Action:')
+  
+  TextList
+    id: actionList
+    height: 60
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    margin-top: 2
+    focusable: false
+    vertical-scrollbar: actionListScrollBar
+
+  VerticalScrollBar
+    id: actionListScrollBar
+    anchors.top: actionList.top
+    anchors.bottom: actionList.bottom
+    anchors.right: actionList.right
+    step: 14
+    pixels-scroll: true  
+  
+  CheckBox
+    id: ipBanCheckBox
+    !text: tr('IP Address Banishment')
+    margin-top: 10
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+  
+  RVLabel
+    !text: tr('Comment:')
+  
+  RVTextEdit
+    id: commentText
+  
+  Button
+    !text: tr('Cancel')
+    width: 64
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    @onClick: RuleViolation.hide()
+    
+  Button
+    !text: tr('Ok')
+    width: 64
+    margin-right: 5
+    anchors.right: prev.left
+    anchors.bottom: parent.bottom    
+    @onClick: RuleViolation.report()

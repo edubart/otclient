@@ -1,0 +1,15 @@
+Module
+  name: game_ruleviolation
+  description: Rule violation interface
+  author: OTClient team
+  website: https://github.com/edubart/otclient
+
+  dependencies:
+    - game
+
+  @onLoad: |
+    dofile 'ruleviolation'
+    RuleViolation.init()
+
+  @onUnload: |
+    RuleViolation.terminate()

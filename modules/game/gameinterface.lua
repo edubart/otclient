@@ -266,6 +266,11 @@ function GameInterface.createThingMenu(menuPosition, lookThing, useThing, creatu
       end
     end
 
+    if RuleViolation.hasWindowAccess() then
+      menu:addSeparator()
+      menu:addOption(tr('Rule Violation'), function() RuleViolation.show(creatureThing:getName()) end)
+    end
+    
     menu:addSeparator()
     menu:addOption(tr('Copy Name'), function() g_window.setClipboardText(creatureThing:getName()) end)
 
