@@ -40,7 +40,6 @@ public:
     void setCursorPos(int pos);
     void setCursorEnabled(bool enable);
     void setTextHidden(bool hidden);
-    void setAlwaysActive(bool enable);
     void setValidCharacters(const std::string validCharacters) { m_validCharacters = validCharacters; }
     void setShiftNavigation(bool enable) { m_shiftNavigation = enable; }
     void setMultiline(bool enable) { m_multiline = enable; }
@@ -57,7 +56,6 @@ public:
     int getCursorPos() { return m_cursorPos; }
     uint getMaxLength() { return m_maxLength; }
     bool isCursorEnabled() { return m_cursorPos != -1; }
-    bool isAlwaysActive() { return m_alwaysActive; }
     bool isTextHidden() { return m_textHidden; }
     bool isShiftNavigation() { return m_shiftNavigation; }
     bool isMultiline() { return m_multiline; }
@@ -82,7 +80,6 @@ private:
     ticks_t m_cursorTicks;
     int m_textHorizontalMargin;
     bool m_textHidden;
-    bool m_alwaysActive;
     bool m_shiftNavigation;
     bool m_multiline;
     std::string m_validCharacters;

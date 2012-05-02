@@ -492,7 +492,7 @@ function Console.sendCurrentMessage()
     g_game.talkPrivate(speaktype.speakType, name, message)
 
     message = applyMessagePrefixies(player:getName(), player:getLevel(), message)
-    Console.addPrivateText(message, speaktype, name, isPrivateCommand, g_game:getLocalPlayer():getName())
+    Console.addPrivateText(message, speaktype, name, isPrivateCommand, g_game.getLocalPlayer():getName())
   end
 end
 

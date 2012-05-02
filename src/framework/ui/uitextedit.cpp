@@ -34,7 +34,6 @@ UITextEdit::UITextEdit()
     m_startRenderPos = 0;
     m_textHorizontalMargin = 0;
     m_textHidden = false;
-    m_alwaysActive = false;
     m_shiftNavigation = false;
     m_multiline = false;
     m_maxLength = 0;
@@ -58,7 +57,7 @@ void UITextEdit::drawSelf()
         g_painter->drawTexturedRect(m_glyphsCoords[i], texture, m_glyphsTexCoords[i]);
 
     // render cursor
-    if(isExplicitlyEnabled() && (isActive() || m_alwaysActive) && m_cursorPos >= 0) {
+    if(isExplicitlyEnabled() && isActive() && m_cursorPos >= 0) {
         assert(m_cursorPos <= textLength);
         // draw every 333ms
         const int delay = 333;
@@ -268,11 +267,6 @@ void UITextEdit::setTextHidden(bool hidden)
     update();
 }
 
-void UITextEdit::setAlwaysActive(bool enable)
-{
-    m_alwaysActive = enable;
-}
-
 void UITextEdit::appendText(std::string text)
 {
     if(m_cursorPos >= 0) {
@@ -417,8 +411,6 @@ void UITextEdit::onStyleApply(const std::string& styleName, const OTMLNodePtr& s
             setTextHidden(node->value<bool>());
         else if(node->tag() == "text-margin")
             setTextHorizontalMargin(node->value<int>());
-        else if(node->tag() == "always-active")
-            setAlwaysActive(node->value<bool>());
         else if(node->tag() == "shift-navigation")
             setShiftNavigation(node->value<bool>());
         else if(node->tag() == "multiline")
@@ -436,7 +428,7 @@ void UITextEdit::onGeometryChange(const Rect& oldRect, const Rect& newRect)
 
 void UITextEdit::onFocusChange(bool focused, Fw::FocusReason reason)
 {
-    if(focused && !m_alwaysActive) {
+    if(focused) {
         if(reason == Fw::KeyboardFocusReason)
             setCursorPos(m_text.length());
         else

@@ -373,7 +373,6 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UITextEdit>("setCursorPos", &UITextEdit::setCursorPos);
     g_lua.bindClassMemberFunction<UITextEdit>("setCursorEnabled", &UITextEdit::setCursorEnabled);
     g_lua.bindClassMemberFunction<UITextEdit>("setTextHidden", &UITextEdit::setTextHidden);
-    g_lua.bindClassMemberFunction<UITextEdit>("setAlwaysActive", &UITextEdit::setAlwaysActive);
     g_lua.bindClassMemberFunction<UITextEdit>("setValidCharacters", &UITextEdit::setValidCharacters);
     g_lua.bindClassMemberFunction<UITextEdit>("setShiftNavigation", &UITextEdit::setShiftNavigation);
     g_lua.bindClassMemberFunction<UITextEdit>("setMultiline", &UITextEdit::setMultiline);
@@ -387,7 +386,6 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UITextEdit>("getCursorPos", &UITextEdit::getCursorPos);
     g_lua.bindClassMemberFunction<UITextEdit>("getMaxLength", &UITextEdit::getMaxLength);
     g_lua.bindClassMemberFunction<UITextEdit>("isCursorEnabled", &UITextEdit::isCursorEnabled);
-    g_lua.bindClassMemberFunction<UITextEdit>("isAlwaysActive", &UITextEdit::isAlwaysActive);
     g_lua.bindClassMemberFunction<UITextEdit>("isTextHidden", &UITextEdit::isTextHidden);
     g_lua.bindClassMemberFunction<UITextEdit>("isShiftNavigation", &UITextEdit::isShiftNavigation);
     g_lua.bindClassMemberFunction<UITextEdit>("isMultiline", &UITextEdit::isMultiline);

@@ -1,4 +1,18 @@
 class UIWidget
+    # Declares the API that the object belongs to. Does not display in
+    # output, but useful for performing queries (+yardoc --query+). Any text is
+    # allowable in this tag, and there are no predefined values.
+    #
+    # @!macro yard.tag.transitive
+    # @note The special name +@api private+ does display a notice in
+    #   documentation if it is listed, letting users know that the
+    #   method is not to be used by external components.
+    # @example
+    #   class Post
+    #     # @api private
+    #     def reset_table!; table.flush end
+    #   end
+    define_tag "API Visibility",     :api
 end
 
 class g_game
