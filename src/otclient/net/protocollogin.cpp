@@ -55,8 +55,8 @@ void ProtocolLogin::onRecv(InputMessage& inputMessage)
 {
     try {
         while(!inputMessage.eof()) {
-            int opt = inputMessage.getU8();
-            switch(opt) {
+            int opcode = inputMessage.getU8();
+            switch(opcode) {
             case Proto::LoginServerError:
                 parseError(inputMessage);
                 break;
@@ -70,7 +70,7 @@ void ProtocolLogin::onRecv(InputMessage& inputMessage)
                 parseCharacterList(inputMessage);
                 break;
             default:
-                Fw::throwException("unknown opt byte ", opt);
+                Fw::throwException("unknown opt byte ", opcode);
                 break;
             }
         }

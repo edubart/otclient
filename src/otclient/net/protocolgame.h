@@ -103,6 +103,7 @@ public:
     void sendDebugReport(const std::string& a, const std::string& b, const std::string& c, const std::string& d);
     void sendRequestQuestLog();
     void sendRequestQuestLine(int questId);
+    void sendExtendedOpcode(uint8 opcode, const std::string& buffer);
 
 private:
     void sendLoginPacket(uint timestamp, uint8 unknown);
@@ -183,6 +184,7 @@ private:
     void parseAutomapFlag(InputMessage& msg);
     void parseQuestLog(InputMessage& msg);
     void parseQuestLine(InputMessage& msg);
+    void parseExtendedOpcode(InputMessage& msg);
 
     void setMapDescription(InputMessage& msg, int x, int y, int z, int width, int height);
     void setFloorDescription(InputMessage& msg, int x, int y, int z, int width, int height, int offset, int* skipTiles);

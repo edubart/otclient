@@ -1,3 +1,6 @@
+class UIWidget
+end
+
 class g_game
   def self.login() end
   def self.logout() end

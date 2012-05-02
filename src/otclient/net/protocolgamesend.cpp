@@ -649,6 +649,15 @@ void ProtocolGame::sendRequestQuestLine(int questId)
     send(msg);
 }
 
+void ProtocolGame::sendExtendedOpcode(uint8 opcode, const std::string& buffer)
+{
+    OutputMessage msg;
+    msg.addU8(Proto::ClientExtendedOpcode);
+    msg.addU8(opcode);
+    msg.addString(buffer);
+    send(msg);
+}
+
 void ProtocolGame::addPosition(OutputMessage& msg, const Position& position)
 {
     msg.addU16(position.x);

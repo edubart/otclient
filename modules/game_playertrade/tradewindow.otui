@@ -1,0 +1,38 @@
+TradeWindow < MiniWindow
+  !text: tr('Trade')
+  height: 150
+
+  UIItem
+    id: tradeItem
+    virtual: true
+    item-id: 3253
+    size: 32 32
+    anchors.top: parent.top
+    anchors.left: parent.left
+    margin-top: -6
+    margin-left: -6
+
+  MiniWindowContents
+    padding: 6
+
+    FlatPanel
+      id: ownTradeContainer
+      anchors.fill: parent
+      anchors.right: parent.horizontalCenter
+      margin-right: 2
+      layout:
+        type: grid
+        cell-size: 40 40
+        flow: true
+        cell-spacing: 0
+
+    FlatPanel
+      id: counterTradeContainer
+      anchors.fill: parent
+      anchors.left: parent.horizontalCenter
+      margin-left: 2
+      layout:
+        type: grid
+        cell-size: 40 40
+        flow: true
+        cell-spacing: 0

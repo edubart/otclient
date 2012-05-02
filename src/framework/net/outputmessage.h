@@ -49,8 +49,8 @@ public:
     void addU16(uint16 value);
     void addU32(uint32 value);
     void addU64(uint64 value);
-    void addString(const char* value);
-    void addString(const std::string &value);
+    void addString(const char* value, int length);
+    void addString(const std::string& value);
     void addPaddingBytes(int bytes, uint8 byte = 0);
 
     uint8* getBuffer() { return m_buffer; }

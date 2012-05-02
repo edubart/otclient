@@ -65,21 +65,20 @@ void OutputMessage::addU64(uint64 value)
     m_messageSize += 8;
 }
 
-void OutputMessage::addString(const char* value)
+void OutputMessage::addString(const char* value, int length)
 {
-    size_t stringLength = strlen(value);
-    if(stringLength > 65535)
+    if(length > 65535)
         throw NetworkException("[OutputMessage::addString] string length > 65535");
-    checkWrite(stringLength + 2);
-    addU16(stringLength);
-    strcpy((char*)(m_buffer + m_writePos), value);
-    m_writePos += stringLength;
-    m_messageSize += stringLength;
+    checkWrite(length + 2);
+    addU16(length);
+    memcpy((char*)(m_buffer + m_writePos), value, length);
+    m_writePos += length;
+    m_messageSize += length;
 }
 
-void OutputMessage::addString(const std::string &value)
+void OutputMessage::addString(const std::string& value)
 {
-    addString(value.c_str());
+    addString(value.c_str(), value.length());
 }
 
 void OutputMessage::addPaddingBytes(int bytes, uint8 byte)

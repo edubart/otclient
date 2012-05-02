@@ -37,9 +37,9 @@ void ProtocolGame::parseMessage(InputMessage& msg)
 {
     try {
         while(!msg.eof()) {
-            int opt = msg.getU8();
+            int opcode = msg.getU8();
 
-            switch(opt) {
+            switch(opcode) {
             case Proto::GameServerInitGame:
                 parseInitGame(msg);
                 break;
@@ -264,8 +264,11 @@ void ProtocolGame::parseMessage(InputMessage& msg)
             //case Proto::GameServerChannelEvent:
             //case Proto::GameServerObjectInfo:
             //case Proto::GameServerPlayerInventory:
+            case Proto::GameServerExtendedOpcode: // additional opcode used by otclient
+                parseExtendedOpcode(msg);
+                break;
             default:
-                Fw::throwException("unknown opt byte ", (int)opt);
+                Fw::throwException("unknown opcode ", opcode);
                 break;
             }
         }
@@ -1077,6 +1080,14 @@ void ProtocolGame::parseQuestLine(InputMessage& msg)
     }
 
     g_game.processQuestLine(questId, questMissions);
+}
+
+void ProtocolGame::parseExtendedOpcode(InputMessage& msg)
+{
+    int opcode = msg.getU8();
+    std::string buffer = msg.getString();
+
+    callLuaField("onExtendedOpcode", opcode, buffer);
 }
 
 void ProtocolGame::setMapDescription(InputMessage& msg, int32 x, int32 y, int32 z, int32 width, int32 height)

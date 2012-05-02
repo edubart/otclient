@@ -145,7 +145,8 @@ namespace Proto {
         GameServerQuestLine = 241,
         GameServerChannelEvent = 243,
         GameServerObjectInfo = 244,
-        GameServerPlayerInventory = 245
+        GameServerPlayerInventory = 245,
+        GameServerExtendedOpcode = 254 // otclient only
     };
 
     enum ClientOpts {
@@ -221,6 +222,7 @@ namespace Proto {
         ClientRequestQuestLine = 241,
         //ClientRuleViolationReport = 242,
         //ClientGetObjectInfo = 243
+        ClientExtendedOpcode = 254 // otclient only
     };
 
     enum ServerSpeakType {
