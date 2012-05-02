@@ -213,7 +213,7 @@ Defines background color
 {taghead:text-auto-resize Boolean}
 {taghead:font Font}
 
-# UITextEdit
+## UITextEdit
 {taghead:text-margin}
 {taghead:always-active}
 {taghead:shift-navigation}
