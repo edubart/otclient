@@ -445,8 +445,6 @@ void ProtocolGame::parseCreatureMove(InputMessage& msg)
     if(!g_map.removeThing(thing))
         logTraceError("could not remove thing");
     g_map.addThing(thing, newPos);
-
-    //g_game.processCreatureMove(creature, oldPos, newPos);
 }
 
 void ProtocolGame::parseOpenContainer(InputMessage& msg)
@@ -629,7 +627,7 @@ void ProtocolGame::parseCreatureMark(InputMessage& msg)
     if(creature)
         creature->addTimedSquare(color);
     else
-        logTraceError("could not get greature");
+        logTraceError("could not get creature");
 }
 
 void ProtocolGame::parseCreatureHealth(InputMessage& msg)
@@ -641,7 +639,7 @@ void ProtocolGame::parseCreatureHealth(InputMessage& msg)
     if(creature)
         creature->setHealthPercent(healthPercent);
     else
-        logTraceError("could not get greature");
+        logTraceError("could not get creature");
 }
 
 void ProtocolGame::parseCreatureLight(InputMessage& msg)
@@ -656,7 +654,7 @@ void ProtocolGame::parseCreatureLight(InputMessage& msg)
     if(creature)
         creature->setLight(light);
     else
-        logTraceError("could not get greature");
+        logTraceError("could not get creature");
 }
 
 void ProtocolGame::parseCreatureOutfit(InputMessage& msg)
@@ -668,7 +666,7 @@ void ProtocolGame::parseCreatureOutfit(InputMessage& msg)
     if(creature)
         creature->setOutfit(outfit);
     else
-        logTraceError("could not get greature");
+        logTraceError("could not get creature");
 }
 
 void ProtocolGame::parseCreatureSpeed(InputMessage& msg)
@@ -680,7 +678,7 @@ void ProtocolGame::parseCreatureSpeed(InputMessage& msg)
     if(creature)
         creature->setSpeed(speed);
     else
-        logTraceError("could not get greature");
+        logTraceError("could not get creature");
 }
 
 void ProtocolGame::parseCreatureSkulls(InputMessage& msg)
@@ -692,7 +690,7 @@ void ProtocolGame::parseCreatureSkulls(InputMessage& msg)
     if(creature)
         creature->setSkull(skull);
     else
-        logTraceError("could not get greature");
+        logTraceError("could not get creature");
 }
 
 void ProtocolGame::parseCreatureShields(InputMessage& msg)
@@ -704,7 +702,7 @@ void ProtocolGame::parseCreatureShields(InputMessage& msg)
     if(creature)
         creature->setShield(shield);
     else
-        logTraceError("could not get greature");
+        logTraceError("could not get creature");
 }
 
 void ProtocolGame::parseCreatureUnpass(InputMessage& msg)
@@ -716,7 +714,7 @@ void ProtocolGame::parseCreatureUnpass(InputMessage& msg)
     if(creature)
         creature->setPassable(!unpass);
     else
-        logTraceError("could not get greature");
+        logTraceError("could not get creature");
 }
 
 void ProtocolGame::parseCreatureTurn(InputMessage& msg)
@@ -728,7 +726,7 @@ void ProtocolGame::parseCreatureTurn(InputMessage& msg)
     if(creature)
         creature->turn(direction);
     else
-        logTraceError("could not get greature");
+        logTraceError("could not get creature");
 }
 
 void ProtocolGame::parseEditText(InputMessage& msg)
@@ -1233,10 +1231,12 @@ ThingPtr ProtocolGame::internalGetThing(InputMessage& msg)
             else
                 logTraceError("creature id is invalid");
 
-            creature->setId(id);
-            creature->setName(name);
+            if(creature) {
+                creature->setId(id);
+                creature->setName(name);
 
-            g_map.addCreature(creature);
+                g_map.addCreature(creature);
+            }
         }
 
         int healthPercent = msg.getU8();

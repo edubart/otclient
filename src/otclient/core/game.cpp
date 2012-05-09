@@ -479,9 +479,8 @@ void Game::walk(Otc::Direction direction)
         return;
 
     // only do prewalks to walkable tiles
-    TilePtr fromTile = m_localPlayer->getTile();
     TilePtr toTile = g_map.getTile(m_localPlayer->getPosition().translatedToDirection(direction));
-    if(toTile && toTile->isWalkable()/* && fromTile && fromTile->hasThing(m_localPlayer)*/)
+    if(toTile && toTile->isWalkable())
         m_localPlayer->preWalk(direction);
     else
         m_localPlayer->lockWalk();

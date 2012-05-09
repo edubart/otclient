@@ -120,6 +120,7 @@ void Map::cleanDynamicThings()
         removeThing(creature);
         creature->setRemoved(true);
     }
+    m_knownCreatures.clear();
 
     for(int i=0;i<=Otc::MAX_Z;++i)
         m_floorMissiles[i].clear();
@@ -296,9 +297,9 @@ void Map::setCentralPosition(const Position& centralPosition)
             logTraceError("invalid creature");
     }
 
-    // this fixes local player position when the local player is removed fro the map,
-    // the local player is removed from the map when there are too many creatures on his tile
-    // so there is not enough stackpos to the server send him
+    // this fixes local player position when the local player is removed from the map,
+    // the local player is removed from the map when there are too many creatures on his tile,
+    // so there is no enough stackpos to the server send him
     g_eventDispatcher.addEvent([this] {
         LocalPlayerPtr localPlayer = g_game.getLocalPlayer();
         if(!localPlayer || localPlayer->getPosition() == m_centralPosition)
