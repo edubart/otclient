@@ -88,7 +88,6 @@ void Creature::draw(const Point& dest, float scaleFactor, bool animate)
 
 void Creature::internalDrawOutfit(const Point& dest, float scaleFactor, bool animateWalk, bool animateIdle, Otc::Direction direction)
 {
-    g_painter->setColor(Color::white);
     /*
     if(!outfitProgram) {
         outfitProgram = PainterShaderProgramPtr(new PainterShaderProgram);
@@ -141,15 +140,32 @@ void Creature::internalDrawOutfit(const Point& dest, float scaleFactor, bool ani
             for(int h = 0; h < getDimensionHeight(); h++) {
                 for(int w = 0; w < getDimensionWidth(); w++) {
                     // setup texture outfit mask
+                    /*
                     TexturePtr maskTex;
-                    if(getLayers() > 1) {
-                        int maskId = getSpriteId(w, h, 1, xPattern, yPattern, zPattern, animationPhase);
-                        maskTex = g_sprites.getSpriteTexture(maskId);
-                    }
-                    //outfitProgram->setTexture(maskTex, 1);
+                    if(getLayers() > 1)
+                        maskTex = m_type->getSprite(w, h, 1, xPattern, yPattern, zPattern, animationPhase);
 
-                    internalDraw(dest + (-Point(w,h)*Otc::TILE_PIXELS)*scaleFactor,
-                                 scaleFactor, w, h, xPattern, yPattern, zPattern, 0, animationPhase);
+                    outfitProgram->setTexture(maskTex, 1);
+                    */
+
+                    Point p = dest + (-Point(w,h)*Otc::TILE_PIXELS)*scaleFactor;
+                    m_type->draw(p, scaleFactor, w, h, xPattern, yPattern, zPattern, 0, animationPhase);
+
+                    if(getLayers() > 1) {
+                        g_painter->setCompositionMode(Painter::CompositionMode_Multiply);
+
+                        g_painter->setColor(m_outfit.getHeadColor());
+                        m_type->drawMask(p, scaleFactor, w, h, xPattern, yPattern, zPattern, 1, animationPhase, ThingType::YellowMask);
+                        g_painter->setColor(m_outfit.getBodyColor());
+                        m_type->drawMask(p, scaleFactor, w, h, xPattern, yPattern, zPattern, 1, animationPhase, ThingType::RedMask);
+                        g_painter->setColor(m_outfit.getLegsColor());
+                        m_type->drawMask(p, scaleFactor, w, h, xPattern, yPattern, zPattern, 1, animationPhase, ThingType::GreenMask);
+                        g_painter->setColor(m_outfit.getFeetColor());
+                        m_type->drawMask(p, scaleFactor, w, h, xPattern, yPattern, zPattern, 1, animationPhase, ThingType::BlueMask);
+
+                        g_painter->resetColor();
+                        g_painter->resetCompositionMode();
+                    }
                 }
             }
 
@@ -178,7 +194,7 @@ void Creature::internalDrawOutfit(const Point& dest, float scaleFactor, bool ani
         if(m_outfit.getCategory() == ThingsType::Effect)
             animationPhase = std::min(animationPhase+1, getAnimationPhases());
 
-        internalDraw(dest, scaleFactor, 0, 0, 0, animationPhase);
+        m_type->draw(dest, scaleFactor, 0, 0, 0, animationPhase);
     }
 }
 

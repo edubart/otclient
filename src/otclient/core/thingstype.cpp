@@ -71,46 +71,47 @@ void ThingsType::parseThingType(std::stringstream& fin, ThingType& thingType)
         if(property == ThingType::LastPropertyValue)
             break;
 
-        thingType.properties[property] = true;
+        thingType.m_properties[property] = true;
 
         if(property == ThingType::IsGround)
-            thingType.parameters[ThingType::GroundSpeed] = Fw::getU16(fin);
+            thingType.m_parameters[ThingType::GroundSpeed] = Fw::getU16(fin);
         else if(property == ThingType::IsWritable || property == ThingType::IsWritableOnce)
-            thingType.parameters[ThingType::MaxTextLenght] = Fw::getU16(fin);
+            thingType.m_parameters[ThingType::MaxTextLenght] = Fw::getU16(fin);
         else if(property == ThingType::HasLight) {
-            thingType.parameters[ThingType::LightLevel] = Fw::getU16(fin);
-            thingType.parameters[ThingType::LightColor] = Fw::getU16(fin);
+            thingType.m_parameters[ThingType::LightLevel] = Fw::getU16(fin);
+            thingType.m_parameters[ThingType::LightColor] = Fw::getU16(fin);
         }
         else if(property == ThingType::HasDisplacement) {
-            thingType.parameters[ThingType::DisplacementX] = Fw::getU16(fin);
-            thingType.parameters[ThingType::DisplacementY] = Fw::getU16(fin);
+            thingType.m_parameters[ThingType::DisplacementX] = Fw::getU16(fin);
+            thingType.m_parameters[ThingType::DisplacementY] = Fw::getU16(fin);
         }
         else if(property == ThingType::HasElevation)
-            thingType.parameters[ThingType::Elevation] = Fw::getU16(fin);
+            thingType.m_parameters[ThingType::Elevation] = Fw::getU16(fin);
         else if(property == ThingType::MiniMap)
-            thingType.parameters[ThingType::MiniMapColor] = Fw::getU16(fin);
+            thingType.m_parameters[ThingType::MiniMapColor] = Fw::getU16(fin);
         else if(property == ThingType::LensHelp)
-            thingType.parameters[ThingType::LensHelpParameter] = Fw::getU16(fin);
+            thingType.m_parameters[ThingType::LensHelpParameter] = Fw::getU16(fin);
         else if(property == ThingType::Cloth)
-            thingType.parameters[ThingType::ClothSlot] = Fw::getU16(fin);
+            thingType.m_parameters[ThingType::ClothSlot] = Fw::getU16(fin);
     }
 
     int totalSprites = 1;
     for(int i = 0; i < ThingType::LastDimension; ++i) {
-        if(i == ThingType::ExactSize && thingType.dimensions[ThingType::Width] <= 1 && thingType.dimensions[ThingType::Height] <= 1) {
-            thingType.dimensions[i] = 32;
+        if(i == ThingType::ExactSize && thingType.m_dimensions[ThingType::Width] <= 1 && thingType.m_dimensions[ThingType::Height] <= 1) {
+            thingType.m_dimensions[i] = 32;
             continue;
         }
 
-        thingType.dimensions[i] = Fw::getU8(fin);
+        thingType.m_dimensions[i] = Fw::getU8(fin);
 
         if(i != ThingType::ExactSize)
-            totalSprites *= thingType.dimensions[i];
+            totalSprites *= thingType.m_dimensions[i];
     }
 
-    thingType.sprites.resize(totalSprites);
+    thingType.m_spritesIndex.resize(totalSprites);
+    thingType.m_sprites.resize(totalSprites);
     for(int i = 0; i < totalSprites; i++)
-        thingType.sprites[i] = Fw::getU16(fin);
+        thingType.m_spritesIndex[i] = Fw::getU16(fin);
 }
 
 ThingType *ThingsType::getThingType(uint16 id, Categories category)

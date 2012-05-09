@@ -23,10 +23,16 @@
 #include "texture.h"
 #include "graphics.h"
 #include "framebuffer.h"
+#include "image.h"
 
 Texture::Texture()
 {
     m_textureId = 0;
+}
+
+Texture::Texture(const ImagePtr& image)
+{
+    internalLoadGLTexture(image->getPixelData(), image->getBpp(), image->getWidth(), image->getHeight());
 }
 
 Texture::Texture(int width, int height, int channels, uchar *pixels)

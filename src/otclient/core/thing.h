@@ -65,55 +65,48 @@ public:
     virtual StaticTextPtr asStaticText() { return nullptr; }
 
     // type related
-    bool isGround() { return m_type->properties[ThingType::IsGround]; }
-    bool isFullGround() { return m_type->properties[ThingType::IsFullGround]; }
-    bool isTranslucent() { return m_type->properties[ThingType::IsTranslucent]; }
-    bool isGroundBorder() { return m_type->properties[ThingType::IsGroundBorder]; }
-    bool isOnBottom() { return m_type->properties[ThingType::IsOnBottom]; }
-    bool isOnTop() { return m_type->properties[ThingType::IsOnTop]; }
-    bool isDontHide() { return m_type->properties[ThingType::DontHide]; }
-    bool isContainer() { return m_type->properties[ThingType::IsContainer]; }
-    bool isForceUse() { return m_type->properties[ThingType::IsForceUse]; }
-    bool isMultiUse() { return m_type->properties[ThingType::IsMultiUse]; }
-    bool isRotateable() { return m_type->properties[ThingType::IsRotateable]; }
-    bool isNotMoveable() { return m_type->properties[ThingType::IsNotMovable]; }
-    bool isNotWalkable() { return m_type->properties[ThingType::NotWalkable]; }
-    bool isPickupable() { return m_type->properties[ThingType::IsPickupable]; }
-    bool isNotPathable() { return m_type->properties[ThingType::NotPathable]; }
-    bool isIgnoreLook() { return m_type->properties[ThingType::IgnoreLook]; }
-    bool isHangable() { return m_type->properties[ThingType::IsHangable]; }
-    bool isHookSouth() { return m_type->properties[ThingType::HookSouth]; }
-    bool isHookEast() { return m_type->properties[ThingType::HookEast]; }
-    bool isStackable() { return m_type->properties[ThingType::IsStackable]; }
-    bool isAnimateAlways() { return m_type->properties[ThingType::AnimateAlways]; }
-    bool isLyingCorpse() { return m_type->properties[ThingType::IsLyingCorpse]; }
-    bool blocksProjectile() { return m_type->properties[ThingType::BlockProjectile]; }
-    bool isFluid() { return m_type->properties[ThingType::IsFluid]; }
-    bool isFluidContainer() { return m_type->properties[ThingType::IsFluidContainer]; }
-    Size getDimension() { return Size(m_type->dimensions[ThingType::Width], m_type->dimensions[ThingType::Height]); }
-    int getDimensionWidth() { return m_type->dimensions[ThingType::Width]; }
-    int getDimensionHeight() { return m_type->dimensions[ThingType::Height]; }
-    int getExactSize() { return m_type->dimensions[ThingType::ExactSize]; }
-    Point getDisplacement() { return Point(m_type->parameters[ThingType::DisplacementX], m_type->parameters[ThingType::DisplacementY]); }
-    int getNumPatternsX() { return m_type->dimensions[ThingType::PatternX]; }
-    int getNumPatternsY() { return m_type->dimensions[ThingType::PatternY]; }
-    int getNumPatternsZ() { return m_type->dimensions[ThingType::PatternZ]; }
-    int getDisplacementX() { return m_type->parameters[ThingType::DisplacementX]; }
-    int getDisplacementY() { return m_type->parameters[ThingType::DisplacementY]; }
-    int getLayers() { return m_type->dimensions[ThingType::Layers]; }
-    int getAnimationPhases() { return m_type->dimensions[ThingType::AnimationPhases]; }
-    int getGroundSpeed() { return m_type->parameters[ThingType::GroundSpeed]; }
-    int getElevation() { return m_type->parameters[ThingType::Elevation]; }
-    int getMinimapColor() { return m_type->parameters[ThingType::MiniMapColor]; }
-
-    int getSpriteId(int w = 0, int h = 0, int layer = 0,
-                    int xPattern = 0, int yPattern = 0, int zPattern = 0,
-                    int animation = 0) { return m_type->getSpriteId(w, h, layer, xPattern, yPattern, zPattern, animation); }
+    bool isGround() { return m_type->getProperty(ThingType::IsGround); }
+    bool isFullGround() { return m_type->getProperty(ThingType::IsFullGround); }
+    bool isTranslucent() { return m_type->getProperty(ThingType::IsTranslucent); }
+    bool isGroundBorder() { return m_type->getProperty(ThingType::IsGroundBorder); }
+    bool isOnBottom() { return m_type->getProperty(ThingType::IsOnBottom); }
+    bool isOnTop() { return m_type->getProperty(ThingType::IsOnTop); }
+    bool isDontHide() { return m_type->getProperty(ThingType::DontHide); }
+    bool isContainer() { return m_type->getProperty(ThingType::IsContainer); }
+    bool isForceUse() { return m_type->getProperty(ThingType::IsForceUse); }
+    bool isMultiUse() { return m_type->getProperty(ThingType::IsMultiUse); }
+    bool isRotateable() { return m_type->getProperty(ThingType::IsRotateable); }
+    bool isNotMoveable() { return m_type->getProperty(ThingType::IsNotMovable); }
+    bool isNotWalkable() { return m_type->getProperty(ThingType::NotWalkable); }
+    bool isPickupable() { return m_type->getProperty(ThingType::IsPickupable); }
+    bool isNotPathable() { return m_type->getProperty(ThingType::NotPathable); }
+    bool isIgnoreLook() { return m_type->getProperty(ThingType::IgnoreLook); }
+    bool isHangable() { return m_type->getProperty(ThingType::IsHangable); }
+    bool isHookSouth() { return m_type->getProperty(ThingType::HookSouth); }
+    bool isHookEast() { return m_type->getProperty(ThingType::HookEast); }
+    bool isStackable() { return m_type->getProperty(ThingType::IsStackable); }
+    bool isAnimateAlways() { return m_type->getProperty(ThingType::AnimateAlways); }
+    bool isLyingCorpse() { return m_type->getProperty(ThingType::IsLyingCorpse); }
+    bool blocksProjectile() { return m_type->getProperty(ThingType::BlockProjectile); }
+    bool isFluid() { return m_type->getProperty(ThingType::IsFluid); }
+    bool isFluidContainer() { return m_type->getProperty(ThingType::IsFluidContainer); }
+    Size getDimension() { return Size(m_type->getDimension(ThingType::Width), m_type->getDimension(ThingType::Height)); }
+    int getDimensionWidth() { return m_type->getDimension(ThingType::Width); }
+    int getDimensionHeight() { return m_type->getDimension(ThingType::Height); }
+    int getExactSize() { return m_type->getDimension(ThingType::ExactSize); }
+    Point getDisplacement() { return Point(m_type->getParameter(ThingType::DisplacementX), m_type->getParameter(ThingType::DisplacementY)); }
+    int getNumPatternsX() { return m_type->getDimension(ThingType::PatternX); }
+    int getNumPatternsY() { return m_type->getDimension(ThingType::PatternY); }
+    int getNumPatternsZ() { return m_type->getDimension(ThingType::PatternZ); }
+    int getDisplacementX() { return m_type->getParameter(ThingType::DisplacementX); }
+    int getDisplacementY() { return m_type->getParameter(ThingType::DisplacementY); }
+    int getLayers() { return m_type->getDimension(ThingType::Layers); }
+    int getAnimationPhases() { return m_type->getDimension(ThingType::AnimationPhases); }
+    int getGroundSpeed() { return m_type->getParameter(ThingType::GroundSpeed); }
+    int getElevation() { return m_type->getParameter(ThingType::Elevation); }
+    int getMinimapColor() { return m_type->getParameter(ThingType::MiniMapColor); }
 
 protected:
-    void internalDraw(const Point& dest, float scaleFactor, int w, int h, int xPattern, int yPattern, int zPattern, int layer, int animationPhase);
-    void internalDraw(const Point& dest, float scaleFactor, int xPattern, int yPattern, int zPattern, int animationPhase);
-
     Position m_position;
     ThingType *m_type;
 };

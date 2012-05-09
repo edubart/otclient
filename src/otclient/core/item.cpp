@@ -181,7 +181,7 @@ void Item::draw(const Point& dest, float scaleFactor, bool animate)
     */
 
     // now we can draw the item
-    internalDraw(dest, scaleFactor, xPattern, yPattern, zPattern, animationPhase);
+    m_type->draw(dest, scaleFactor, xPattern, yPattern, zPattern, animationPhase);
 
     // release draw shader
     g_painter->resetShaderProgram();

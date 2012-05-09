@@ -41,6 +41,8 @@ class Effect;
 class Missile;
 class AnimatedText;
 class StaticText;
+class ThingType;
+class ThingsType;
 
 typedef std::shared_ptr<MapView> MapViewPtr;
 typedef std::shared_ptr<Tile> TilePtr;

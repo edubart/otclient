@@ -1,9 +1,5 @@
 PlayerTrade = {}
 
--- g_game.inspectTrade(counterOffer, index)
--- g_game.acceptTrade()
--- g_game.rejectTrade()
-
 local tradeWindow
 
 local function createTrade()

@@ -29,13 +29,19 @@
 class Image
 {
 public:
-    Image(const Size& size, int bpp, uint8 *pixels);
+    Image(const Size& size, int bpp = 4, uint8 *pixels = nullptr);
 
     static ImagePtr load(const std::string& file);
     static ImagePtr loadPNG(const std::string& file);
 
-    const std::vector<uint8>& getPixels() { return m_pixels; }
+    void overwriteMask(const Color& maskedColor, const Color& insideColor = Color::white, const Color& outsideColor = Color::alpha);
+
+    std::vector<uint8>& getPixels() { return m_pixels; }
+    uint8* getPixelData() { return &m_pixels[0]; }
+    int getPixelCount() { return m_size.area(); }
     const Size& getSize() { return m_size; }
+    int getWidth() { return m_size.width(); }
+    int getHeight() { return m_size.height(); }
     int getBpp() { return m_bpp; }
 
 private:

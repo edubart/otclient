@@ -32,7 +32,7 @@ void Effect::draw(const Point& dest, float scaleFactor, bool animate)
     int animationPhase = 0;
     if(animate)
         animationPhase = std::min((int)(m_animationTimer.ticksElapsed() / Otc::EFFECT_TICKS_PER_FRAME), getAnimationPhases() - 1);
-    internalDraw(dest, scaleFactor, 0, 0, 0, animationPhase);
+    m_type->draw(dest, scaleFactor, 0, 0, 0, animationPhase);
 }
 
 void Effect::startAnimation()

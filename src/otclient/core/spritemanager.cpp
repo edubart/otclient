@@ -22,10 +22,8 @@
 
 #include "spritemanager.h"
 #include <framework/core/resourcemanager.h>
-#include <framework/core/eventdispatcher.h>
 #include <framework/core/filestream.h>
-#include <framework/graphics/graphics.h>
-#include <framework/thirdparty/apngloader.h>
+#include <framework/graphics/image.h>
 
 SpriteManager g_sprites;
 
@@ -47,7 +45,6 @@ bool SpriteManager::load(const std::string& file)
 
         m_signature = m_spritesFile->getU32();
         m_spritesCount = m_spritesFile->getU16();
-        m_sprites.resize(m_spritesCount);
         m_loaded = true;
         return true;
     } catch(Exception& e) {
@@ -58,35 +55,22 @@ bool SpriteManager::load(const std::string& file)
 
 void SpriteManager::unload()
 {
-    m_sprites.clear();
     m_spritesCount = 0;
     m_signature = 0;
 }
 
-void SpriteManager::preloadSprites()
+ImagePtr SpriteManager::getSpriteImage(int id)
 {
-    // preload every 50 sprites, periodically
-    const int burst = 50;
-    const int interval = 10;
-    auto preload = [this](int start) {
-        for(int i=start;i<start+burst && i<=m_spritesCount;++i) {
-            loadSpriteTexture(i);
-        }
-    };
+    if(id == 0)
+        return nullptr;
 
-    for(int i=1;i<=m_spritesCount;i+=burst)
-        g_eventDispatcher.scheduleEvent(std::bind(preload, i), (i/burst) * interval);
-}
-
-TexturePtr SpriteManager::loadSpriteTexture(int id)
-{
     m_spritesFile->seek(((id-1) * 4) + 6);
 
     uint32 spriteAddress = m_spritesFile->getU32();
 
     // no sprite? return an empty texture
     if(spriteAddress == 0)
-        return g_graphics.getEmptyTexture();
+        return nullptr;
 
     m_spritesFile->seek(spriteAddress);
 
@@ -97,7 +81,14 @@ TexturePtr SpriteManager::loadSpriteTexture(int id)
 
     uint16 pixelDataSize = m_spritesFile->getU16();
 
-    static std::vector<uint8> pixels(SPRITE_SIZE);
+    enum {
+        SPRITE_SIZE = 32,
+        SPRITE_DATA_SIZE = SPRITE_SIZE*SPRITE_SIZE*4
+    };
+
+    ImagePtr image(new Image(Size(SPRITE_SIZE, SPRITE_SIZE)));
+
+    uint8 *pixels = image->getPixelData();
     int writePos = 0;
     int read = 0;
 
@@ -106,8 +97,10 @@ TexturePtr SpriteManager::loadSpriteTexture(int id)
         uint16 transparentPixels = m_spritesFile->getU16();
         uint16 coloredPixels = m_spritesFile->getU16();
 
-        if(writePos + transparentPixels*4 + coloredPixels*3 >= SPRITE_SIZE)
-            return g_graphics.getEmptyTexture();
+        if(writePos + transparentPixels*4 + coloredPixels*3 >= SPRITE_DATA_SIZE) {
+            logWarning("corrupt sprite id ", id);
+            return nullptr;
+        }
 
         for(int i = 0; i < transparentPixels; i++) {
             pixels[writePos + 0] = 0x00;
@@ -130,7 +123,7 @@ TexturePtr SpriteManager::loadSpriteTexture(int id)
     }
 
     // fill remaining pixels with alpha
-    while(writePos < SPRITE_SIZE) {
+    while(writePos < SPRITE_DATA_SIZE) {
         pixels[writePos + 0] = 0x00;
         pixels[writePos + 1] = 0x00;
         pixels[writePos + 2] = 0x00;
@@ -138,100 +131,6 @@ TexturePtr SpriteManager::loadSpriteTexture(int id)
         writePos += 4;
     }
 
-    TexturePtr spriteTex(new Texture(32, 32, 4, &pixels[0]));
-    spriteTex->setSmooth(true);
-
-    if(g_graphics.canUseMipmaps())
-        spriteTex->generateSoftwareMipmaps(pixels);
-
-    return spriteTex;
+    return image;
 }
 
-TexturePtr& SpriteManager::getSpriteTexture(int id)
-{
-    if(id == 0)
-        return g_graphics.getEmptyTexture();
-
-    assert(id > 0 && id <= m_spritesCount);
-
-    // load sprites on demand
-    TexturePtr& sprite = m_sprites[id-1];
-    if(!sprite)
-        sprite = loadSpriteTexture(id);
-
-    //TODO: release unused sprites textures after X seconds
-    // to avoid massive texture allocations
-    return sprite;
-}
-
-bool SpriteManager::exportSprites()
-{
-    g_resources.makeDir("sprites");
-    std::stringstream ss;
-
-    for(volatile int i = 1; i <= m_spritesCount; i++) {
-        m_spritesFile->seek(((i-1) * 4) + 6);
-
-        uint32 spriteAddress = m_spritesFile->getU32();
-        if(spriteAddress == 0)
-            continue;
-
-        m_spritesFile->seek(spriteAddress);
-
-        // skip color key
-        m_spritesFile->getU8();
-        m_spritesFile->getU8();
-        m_spritesFile->getU8();
-
-        uint16 pixelDataSize = m_spritesFile->getU16();
-
-        uchar pixels[SPRITE_SIZE];
-        int writePos = 0;
-        int read = 0;
-
-        // decompress pixels
-        while(read < pixelDataSize) {
-            uint16 transparentPixels = m_spritesFile->getU16();
-            uint16 coloredPixels = m_spritesFile->getU16();
-
-            if(writePos + transparentPixels*4 + coloredPixels*3 >= SPRITE_SIZE)
-                return false; // skip the whole process or just ignore this sprite?
-
-            for(int i = 0; i < transparentPixels; i++) {
-                pixels[writePos + 0] = 0x00;
-                pixels[writePos + 1] = 0x00;
-                pixels[writePos + 2] = 0x00;
-                pixels[writePos + 3] = 0x00;
-                writePos += 4;
-            }
-
-            for(int i = 0; i < coloredPixels; i++) {
-                pixels[writePos + 0] = m_spritesFile->getU8();
-                pixels[writePos + 1] = m_spritesFile->getU8();
-                pixels[writePos + 2] = m_spritesFile->getU8();
-                pixels[writePos + 3] = 0xFF;
-
-                writePos += 4;
-            }
-
-            read += 4 + (3 * coloredPixels);
-        }
-
-        // fill remaining pixels with alpha
-        while(writePos < SPRITE_SIZE) {
-            pixels[writePos + 0] = 0x00;
-            pixels[writePos + 1] = 0x00;
-            pixels[writePos + 2] = 0x00;
-            pixels[writePos + 3] = 0x00;
-            writePos += 4;
-        }
-
-        // We should get the OTClient and export to that folder...
-        std::string fileName = Fw::formatString("sprites/%d.png", i);
-        ss.str("");
-        save_png(ss, SPRITE_WIDTH, SPRITE_HEIGHT, SPRITE_CHANNELS, pixels);
-        g_resources.saveFile(fileName, ss);
-    }
-
-    return true;
-}

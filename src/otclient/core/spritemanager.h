@@ -24,40 +24,26 @@
 #define SPRITEMANAGER_H
 
 #include <framework/core/declarations.h>
-#include <framework/graphics/texture.h>
+#include <framework/graphics/declarations.h>
 
 class SpriteManager
 {
-    enum {
-        SPRITE_WIDTH=32,
-        SPRITE_HEIGHT=32,
-        SPRITE_CHANNELS=4,
-        SPRITE_SIZE=SPRITE_WIDTH*SPRITE_HEIGHT*SPRITE_CHANNELS
-    };
-
 public:
     SpriteManager();
 
     bool load(const std::string& file);
     void unload();
-    void preloadSprites();
 
     uint32 getSignature() { return m_signature; }
     int getSpritesCount() { return m_spritesCount; }
 
-    bool exportSprites();
-
-    TexturePtr& getSpriteTexture(int id);
+    ImagePtr getSpriteImage(int id);
     bool isLoaded() { return m_loaded; }
 
 private:
-    TexturePtr loadSpriteTexture(int id);
-
     Boolean<false> m_loaded;
     uint32 m_signature;
     int m_spritesCount;
-    std::vector<TexturePtr> m_sprites;
-    TexturePtr m_transparentSprite;
     FileStreamPtr m_spritesFile;
 };
 

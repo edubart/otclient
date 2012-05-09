@@ -31,7 +31,8 @@ Image::Image(const Size& size, int bpp, uint8 *pixels)
     m_size = size;
     m_bpp = bpp;
     m_pixels.resize(size.area() * bpp);
-    memcpy(&m_pixels[0], pixels, m_pixels.size());
+    if(pixels)
+        memcpy(&m_pixels[0], pixels, m_pixels.size());
 }
 
 ImagePtr Image::load(const std::string& file)
@@ -61,4 +62,24 @@ ImagePtr Image::loadPNG(const std::string& file)
         free_apng(&apng);
     }
     return image;
+}
+
+void Image::overwriteMask(const Color& maskedColor, const Color& insideColor, const Color& outsideColor)
+{
+    assert(m_bpp == 4);
+
+    for(int p=0;p<getPixelCount();p++) {
+        uint8& r = m_pixels[p*4 + 0];
+        uint8& g = m_pixels[p*4 + 1];
+        uint8& b = m_pixels[p*4 + 2];
+        uint8& a = m_pixels[p*4 + 3];
+
+        Color pixelColor(r,g,b,a);
+        Color writeColor = (pixelColor == maskedColor) ? insideColor : outsideColor;
+
+        r = writeColor.r();
+        g = writeColor.g();
+        b = writeColor.b();
+        a = writeColor.a();
+    }
 }

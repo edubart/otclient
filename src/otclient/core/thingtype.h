@@ -25,16 +25,11 @@
 
 #include "declarations.h"
 
+#include <framework/graphics/declarations.h>
+
 struct ThingType
 {
-    ThingType() {
-        // fill default values
-        dimensions.fill(0);
-        properties.fill(false);
-        parameters.fill(0);
-    }
-
-    enum Dimensions {
+    enum Dimension {
         Width = 0,
         Height,
         ExactSize,
@@ -45,10 +40,8 @@ struct ThingType
         AnimationPhases,
         LastDimension
     };
-    std::array<int, LastDimension> dimensions;
-    std::vector<int> sprites;
 
-    enum Properties {
+    enum Property {
         IsGround = 0,
         IsGroundBorder,
         IsOnBottom,
@@ -86,9 +79,8 @@ struct ThingType
         LastProperty,
         LastPropertyValue = 255
     };
-    std::array<bool, LastProperty> properties;
 
-    enum Parameters {
+    enum Parameter {
         GroundSpeed = 0,
         Fluid,
         MaxTextLenght,
@@ -102,23 +94,49 @@ struct ThingType
         Elevation,
         LastParameter
     };
-    std::array<int, LastParameter> parameters;
 
-    int getSpriteId(int w, int h, int l, int x, int y, int z, int a)
-    {
-        int sprIndex = ((((((a % dimensions[ThingType::AnimationPhases])
-                        * dimensions[ThingType::PatternZ] + z)
-                        * dimensions[ThingType::PatternY] + y)
-                        * dimensions[ThingType::PatternX] + x)
-                        * dimensions[ThingType::Layers] + l)
-                        * dimensions[ThingType::Height] + h)
-                        * dimensions[ThingType::Width] + w;
+    enum SpriteMask {
+        YellowMask = 0,
+        RedMask,
+        GreenMask,
+        BlueMask,
+        LastMask
+    };
 
-        if(sprIndex >= 0 && sprIndex < (int)sprites.size())
-            return sprites[sprIndex];
+    ThingType();
 
-        return 0;
+    void draw(const Point& dest, float scaleFactor, int w, int h, int xPattern, int yPattern, int zPattern, int layer, int animationPhase);
+    void draw(const Point& dest, float scaleFactor, int xPattern, int yPattern, int zPattern, int animationPhase);
+    void drawMask(const Point& dest, float scaleFactor, int w, int h, int xPattern, int yPattern, int zPattern, int layer, int animationPhase, SpriteMask mask);
+
+    TexturePtr& getSprite(int w, int h, int l, int x, int y, int z, int a);
+    TexturePtr& getSpriteMask(int w, int h, int l, int x, int y, int z, int a, SpriteMask mask);
+
+    bool getProperty(Property property) { return m_properties[property]; }
+    int getParameter(Parameter param) { return m_parameters[param]; }
+    int getDimension(Dimension dimension) { return m_dimensions[dimension]; }
+
+private:
+    uint getSpriteIndex(int w, int h, int l, int x, int y, int z, int a) {
+        uint index = ((((((a % m_dimensions[ThingType::AnimationPhases])
+            * m_dimensions[ThingType::PatternZ] + z)
+            * m_dimensions[ThingType::PatternY] + y)
+            * m_dimensions[ThingType::PatternX] + x)
+            * m_dimensions[ThingType::Layers] + l)
+            * m_dimensions[ThingType::Height] + h)
+            * m_dimensions[ThingType::Width] + w;
+        assert(index < m_sprites.size());
+        return index;
     }
+
+    std::array<int, LastDimension> m_dimensions;
+    std::array<int, LastParameter> m_parameters;
+    std::array<bool, LastProperty> m_properties;
+    std::vector<int> m_spritesIndex;
+    std::vector<TexturePtr> m_sprites;
+    std::vector<std::array<TexturePtr, LastMask>> m_spritesMask;
+
+    friend class ThingsType;
 };
 
 typedef std::vector<ThingType> ThingTypeList;

@@ -28,6 +28,7 @@ SET(otclient_SOURCES ${otclient_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/core/game.cpp
     ${CMAKE_CURRENT_LIST_DIR}/core/map.cpp
     ${CMAKE_CURRENT_LIST_DIR}/core/mapview.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/core/thingtype.cpp
     ${CMAKE_CURRENT_LIST_DIR}/core/thingstype.cpp
     ${CMAKE_CURRENT_LIST_DIR}/core/spritemanager.cpp
     ${CMAKE_CURRENT_LIST_DIR}/core/item.cpp

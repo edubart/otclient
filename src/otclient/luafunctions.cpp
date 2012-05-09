@@ -55,10 +55,10 @@ void OTClient::registerLuaFunctions()
 
     g_lua.registerStaticClass("g_sprites");
     g_lua.bindClassStaticFunction("g_sprites", "load", std::bind(&SpriteManager::load, &g_sprites, std::placeholders::_1));
+    g_lua.bindClassStaticFunction("g_sprites", "unload", std::bind(&SpriteManager::unload, &g_sprites));
     g_lua.bindClassStaticFunction("g_sprites", "isLoaded", std::bind(&SpriteManager::isLoaded, &g_sprites));
     g_lua.bindClassStaticFunction("g_sprites", "getSignature", std::bind(&SpriteManager::getSignature, &g_sprites));
-    g_lua.bindClassStaticFunction("g_sprites", "preloadSprites", std::bind(&SpriteManager::preloadSprites, &g_sprites));
-    g_lua.bindClassStaticFunction("g_sprites", "export", std::bind(&SpriteManager::exportSprites, &g_sprites));
+    g_lua.bindClassStaticFunction("g_sprites", "getSpritesCount", std::bind(&SpriteManager::getSpritesCount, &g_sprites));
 
     g_lua.registerStaticClass("g_map");
     g_lua.bindClassStaticFunction("g_map", "isLookPossible", std::bind(&Map::isLookPossible, &g_map, std::placeholders::_1));

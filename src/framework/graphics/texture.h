@@ -29,6 +29,7 @@ class Texture : public std::enable_shared_from_this<Texture>
 {
 public:
     Texture();
+    Texture(const ImagePtr& image);
     Texture(int width, int height, int channels, uchar* pixels = NULL);
     virtual ~Texture();
 
