@@ -279,8 +279,7 @@ void Game::processInventoryChange(int slot, const ItemPtr& item)
 void Game::processCreatureMove(const CreaturePtr& creature, const Position& oldPos, const Position& newPos)
 {
     // animate walk
-    if(oldPos.isInRange(newPos, 1, 1))
-        creature->walk(oldPos, newPos);
+    creature->walk(oldPos, newPos);
 }
 
 void Game::processCreatureTeleport(const CreaturePtr& creature)
@@ -480,8 +479,9 @@ void Game::walk(Otc::Direction direction)
         return;
 
     // only do prewalks to walkable tiles
+    TilePtr fromTile = m_localPlayer->getTile();
     TilePtr toTile = g_map.getTile(m_localPlayer->getPosition().translatedToDirection(direction));
-    if(toTile && toTile->isWalkable())
+    if(toTile && toTile->isWalkable()/* && fromTile && fromTile->hasThing(m_localPlayer)*/)
         m_localPlayer->preWalk(direction);
     else
         m_localPlayer->lockWalk();

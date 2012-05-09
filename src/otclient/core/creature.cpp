@@ -290,6 +290,9 @@ void Creature::turn(Otc::Direction direction)
 
 void Creature::walk(const Position& oldPos, const Position& newPos)
 {
+    if(oldPos == newPos)
+        return;
+
     // get walk direction
     Otc::Direction direction = oldPos.getDirectionFromPosition(newPos);
 
@@ -492,6 +495,7 @@ void Creature::setHealthPercent(uint8 healthPercent)
 
 void Creature::setDirection(Otc::Direction direction)
 {
+    assert(direction != Otc::InvalidDirection);
     m_direction = direction;
 }
 

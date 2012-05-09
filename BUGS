@@ -5,9 +5,19 @@ modules recursivity makes client crash, it should generate a warning
 sometimes minimap desync Z pos
 follow and autowalk doesn't cancel when walking via hotkeys
 
+when walking on a tile with too many creatures, the following errors occurrs:
+ERROR: [ProtocolGame::parseCreatureHealth] could not get greature
+ERROR: [ProtocolGame::parseCreatureHealth] could not get greature
+ERROR: [Map::setCentralPosition] invalid creature
+ERROR: [Map::setCentralPosition] invalid creature
+ERROR: [Map::setCentralPosition] invalid creature
+ERROR: [Map::setCentralPosition] invalid creature
+
+
 == P2 BUGS
 battle sometimes doesn't clear attacked/followed creatures when they go out of range
 when looking from floor 5 in floor 7, sometimes a tile have 2 invisible grounds in floor 6 that should be ignored
+invisible creatures name offset is incorrect
 
 == P3 BUGS
 widgets may have been destroyed when adding event in onSetup (UIResizeBorder), generating invalid events

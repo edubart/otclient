@@ -446,7 +446,7 @@ void ProtocolGame::parseCreatureMove(InputMessage& msg)
         logTraceError("could not remove thing");
     g_map.addThing(thing, newPos);
 
-    g_game.processCreatureMove(creature, oldPos, newPos);
+    //g_game.processCreatureMove(creature, oldPos, newPos);
 }
 
 void ProtocolGame::parseOpenContainer(InputMessage& msg)
@@ -1269,7 +1269,6 @@ ThingPtr ProtocolGame::internalGetThing(InputMessage& msg)
             if(emblem != -1)
                 creature->setEmblem(emblem);
             creature->setPassable(passable);
-            creature->setDirection(direction);
 
             // now that the local player is known, we can schedule login event
             if(creature == m_localPlayer && !m_localPlayer->isKnown()) {

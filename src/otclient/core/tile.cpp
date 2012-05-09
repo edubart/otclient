@@ -221,6 +221,11 @@ ThingPtr Tile::getThing(int stackPos)
     return nullptr;
 }
 
+bool Tile::hasThing(const ThingPtr& thing)
+{
+    return std::find(m_things.begin(), m_things.end(), thing) != m_things.end();
+}
+
 int Tile::getThingStackpos(const ThingPtr& thing)
 {
     for(uint stackpos = 0; stackpos < m_things.size(); ++stackpos)

@@ -132,15 +132,10 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
     if(!thing)
         return;
 
+    Position oldPos = thing->getPosition();
     TilePtr tile = getOrCreateTile(pos);
 
-    if(CreaturePtr creature = thing->asCreature()) {
-        Position oldPos = thing->getPosition();
-        tile->addThing(thing, stackPos);
-
-        if(oldPos.isValid() && !oldPos.isInRange(pos,1,1))
-            g_game.processCreatureTeleport(creature);
-    } else if(MissilePtr missile = thing->asMissile()) {
+    if(MissilePtr missile = thing->asMissile()) {
         m_floorMissiles[pos.z].push_back(missile);
     } else if(AnimatedTextPtr animatedText = thing->asAnimatedText()) {
         m_animatedTexts.push_back(animatedText);
@@ -168,6 +163,15 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
 
     thing->startAnimation();
     thing->setPosition(pos);
+
+    if(CreaturePtr creature = thing->asCreature()) {
+        if(oldPos != pos) {
+            if(oldPos.isInRange(pos,1,1))
+                g_game.processCreatureMove(creature, oldPos, pos);
+            else
+                g_game.processCreatureTeleport(creature);
+        }
+    }
 
     notificateTileUpdateToMapViews(pos);
 }
@@ -291,6 +295,19 @@ void Map::setCentralPosition(const Position& centralPosition)
         else
             logTraceError("invalid creature");
     }
+
+    // this fixes local player position when the local player is removed fro the map,
+    // the local player is removed from the map when there are too many creatures on his tile
+    // so there is not enough stackpos to the server send him
+    g_eventDispatcher.addEvent([this] {
+        LocalPlayerPtr localPlayer = g_game.getLocalPlayer();
+        if(!localPlayer || localPlayer->getPosition() == m_centralPosition)
+            return;
+        TilePtr tile = getTile(localPlayer->getPosition());
+        if(!tile || tile->hasThing(localPlayer))
+            return;
+        localPlayer->setPosition(m_centralPosition);
+    });
 }
 
 std::vector<CreaturePtr> Map::getSpectators(const Position& centerPos, bool multiFloor)
