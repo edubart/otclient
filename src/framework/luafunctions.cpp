@@ -45,6 +45,7 @@ void Application::registerLuaFunctions()
     g_lua.bindGlobalFunction("pointtostring", [](const Point& v) { return Fw::tostring(v); });
     g_lua.bindGlobalFunction("colortostring", [](const Color& v) { return Fw::tostring(v); });
     g_lua.bindGlobalFunction("sizetostring", [](const Size& v) { return Fw::tostring(v); });
+    g_lua.bindGlobalFunction("getticks", []() { return g_clock.asyncTicks(); });
 
     // Event
     g_lua.registerClass<Event>();
@@ -334,7 +335,7 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UILayout>("asUIGridLayout", &UILayout::asUIGridLayout);
 
     // UIBoxLayout
-    g_lua.registerClass<UIBoxLayout>();
+    g_lua.registerClass<UIBoxLayout, UILayout>();
     g_lua.bindClassMemberFunction<UIBoxLayout>("setSpacing", &UIBoxLayout::setSpacing);
     g_lua.bindClassMemberFunction<UIBoxLayout>("setFitChildren", &UIBoxLayout::setFitChildren);
 

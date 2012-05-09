@@ -8,29 +8,22 @@ end
 
 function RadioGroup:destroy()
   for k,widget in pairs(self.widgets) do
-    widget.onMousePress = nil
+    widget.onClick = nil
   end
   self.widgets = {}
 end
 
 function RadioGroup:addWidget(widget)
   table.insert(self.widgets, widget)
-  widget.onMousePress = function(widget) self:selectWidget(widget) end
+  widget.onClick = function(widget) self:selectWidget(widget) end
 end
 
 function RadioGroup:removeWidget(widget)
   if self.selectedWidget == widget then
     self:selectWidget(nil)
   end
-  widget.onMousePress = nil
+  widget.onClick = nil
   table.removevalue(self.widgets, widget)
-end
-
-function RadioGroup:destroy()
-  for k,widget in pairs(self.widgets) do
-    widget.onMousePress = nil
-  end
-  self.widgets = {}
 end
 
 function RadioGroup:selectWidget(selectedWidget)

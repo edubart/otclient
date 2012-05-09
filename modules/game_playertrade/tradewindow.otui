@@ -15,24 +15,70 @@ TradeWindow < MiniWindow
   MiniWindowContents
     padding: 6
 
-    FlatPanel
+    ScrollableFlatPanel
       id: ownTradeContainer
-      anchors.fill: parent
-      anchors.right: parent.horizontalCenter
-      margin-right: 2
+      anchors.left: parent.left
+      anchors.top: tradeScrollBar.top
+      anchors.right: tradeScrollBar.left
+      anchors.bottom: tradeScrollBar.bottom
       layout:
         type: grid
-        cell-size: 40 40
+        cell-size: 36 36
+        flow: true
+        cell-spacing: 0
+      vertical-scrollbar: tradeScrollBar
+
+    ScrollableFlatPanel
+      id: counterTradeContainer
+      anchors.right: parent.right
+      anchors.top: tradeScrollBar.top
+      anchors.left: tradeScrollBar.right
+      anchors.bottom: tradeScrollBar.bottom
+      layout:
+        type: grid
+        cell-size: 36 36
         flow: true
         cell-spacing: 0
 
-    FlatPanel
-      id: counterTradeContainer
-      anchors.fill: parent
+    VerticalScrollBar
+      id: tradeScrollBar
+      anchors.top: parent.top
+      anchors.bottom: acceptButton.top
+      anchors.horizontalCenter: parent.horizontalCenter
+      margin-top: 14
+      margin-bottom: 4
+      step: 14
+      pixels-scroll: true
+
+    Label
+      id: ownTradeLabel
+      anchors.bottom: ownTradeContainer.top
+      anchors.left: ownTradeContainer.left
+      anchors.right: ownTradeContainer.right
+      margin-bottom: 2
+
+    Label
+      id: counterTradeLabel
+      anchors.bottom: counterTradeContainer.top
+      anchors.left: counterTradeContainer.left
+      anchors.right: counterTradeContainer.right
+      margin-bottom: 2
+
+    Button
+      !text: tr('Accept')
+      id: acceptButton
+      anchors.bottom: parent.bottom
+      anchors.left: parent.left
+      anchors.right: parent.horizontalCenter
+      margin-right: 2
+      enabled: false
+      @onClick: g_game.acceptTrade(); self:disable()
+
+    Button
+      !text: tr('Reject')
+      id: rejectButton
+      anchors.bottom: parent.bottom
+      anchors.right: parent.right
       anchors.left: parent.horizontalCenter
       margin-left: 2
-      layout:
-        type: grid
-        cell-size: 40 40
-        flow: true
-        cell-spacing: 0
+      @onClick: g_game.rejectTrade()
