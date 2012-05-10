@@ -29,6 +29,10 @@
 class Tile : public LuaObject
 {
 public:
+    enum {
+        MAX_THINGS = 10
+    };
+
     Tile(const Position& position);
 
     void draw(const Point& dest, float scaleFactor, int drawFlags);

@@ -181,6 +181,9 @@ ThingPtr Tile::addThing(const ThingPtr& thing, int stackPos)
         oldObject = m_things[stackPos];
     m_things.insert(m_things.begin() + stackPos, thing);
 
+    if(m_things.size() > MAX_THINGS)
+        removeThing(m_things[MAX_THINGS]);
+
     return oldObject;
 }
 
