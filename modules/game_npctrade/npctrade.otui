@@ -99,6 +99,7 @@ MainWindow
     anchors.top: prev.bottom
     margin-top: 10
     margin-right: 5
+    image-color: #ffffff88
 
     Label
       !text: tr('Name:')
@@ -186,6 +187,7 @@ MainWindow
     anchors.left: parent.horizontalCenter
     anchors.right: parent.right
     margin-left: 5
+    image-color: #ffffff88
 
     Label
       id: searchLabel

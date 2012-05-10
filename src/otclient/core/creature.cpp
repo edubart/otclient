@@ -41,21 +41,17 @@
 
 Creature::Creature() : Thing()
 {
-    m_healthPercent = 0;
-    m_showTimedSquare = false;
-    m_showStaticSquare = false;
+    m_id = 0;
+    m_healthPercent = 100;
+    m_speed = 200;
     m_direction = Otc::South;
     m_walkAnimationPhase = 0;
-    m_walking = false;
     m_walkInterval = 0;
     m_walkAnimationInterval = 0;
     m_walkTurnDirection = Otc::InvalidDirection;
     m_skull = Otc::SkullNone;
     m_shield = Otc::ShieldNone;
     m_emblem = Otc::EmblemNone;
-    m_shieldBlink = false;
-    m_showShieldTexture = true;
-    m_removed = false;
     m_informationFont = g_fonts.getFont("verdana-11px-rounded");
 }
 
@@ -304,16 +300,14 @@ void Creature::walk(const Position& oldPos, const Position& newPos)
     m_walkTimer.restart();
 
     // calculates walk interval
-    float interval = 1000;
     int groundSpeed = 0;
-
     TilePtr oldTile = g_map.getTile(oldPos);
     if(oldTile)
         groundSpeed = oldTile->getGroundSpeed();
 
-    if(groundSpeed != 0)
+    float interval = 1000;
+    if(groundSpeed > 0 && m_speed > 0)
         interval = (1000.0f * groundSpeed) / m_speed;
-
     interval = std::ceil(interval / g_game.getServerBeat()) * g_game.getServerBeat();
 
     m_walkAnimationInterval = interval;

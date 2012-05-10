@@ -22,7 +22,7 @@ local function onFightModeChange(self, selectedFightButton)
   else
     fightMode = FightDefensive
   end
-  if g_game.getFightMode ~= fightMode then
+  if g_game.getFightMode() ~= fightMode then
     g_game.setFightMode(fightMode)
   end
 end

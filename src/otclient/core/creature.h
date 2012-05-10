@@ -115,14 +115,14 @@ protected:
     TexturePtr m_skullTexture;
     TexturePtr m_shieldTexture;
     TexturePtr m_emblemTexture;
-    bool m_showShieldTexture;
-    bool m_shieldBlink;
-    bool m_passable;
+    Boolean<true> m_showShieldTexture;
+    Boolean<false> m_shieldBlink;
+    Boolean<false> m_passable;
     Color m_timedSquareColor;
     Color m_staticSquareColor;
-    bool m_showTimedSquare;
-    bool m_showStaticSquare;
-    bool m_removed;
+    Boolean<false> m_showTimedSquare;
+    Boolean<false> m_showStaticSquare;
+    Boolean<false> m_removed;
 
     FontPtr m_informationFont;
     Color m_informationColor;
@@ -133,7 +133,7 @@ protected:
     TilePtr m_walkingTile;
     int m_walkInterval;
     int m_walkAnimationInterval;
-    bool m_walking;
+    Boolean<false> m_walking;
     ScheduledEventPtr m_walkUpdateEvent;
     Point m_walkOffset;
     Otc::Direction m_walkTurnDirection;
