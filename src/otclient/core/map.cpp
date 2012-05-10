@@ -307,7 +307,16 @@ void Map::setCentralPosition(const Position& centralPosition)
         TilePtr tile = localPlayer->getTile();
         if(tile && tile->hasThing(localPlayer))
             return;
-        localPlayer->setPosition(m_centralPosition);
+
+        Position oldPos = localPlayer->getPosition();
+        Position pos = m_centralPosition;
+        localPlayer->setPosition(pos);
+        if(oldPos != pos) {
+            if(oldPos.isInRange(pos,1,1))
+                g_game.processCreatureMove(localPlayer, oldPos, pos);
+            else
+                g_game.processCreatureTeleport(localPlayer);
+        }
     });
 }
 
