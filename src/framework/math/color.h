@@ -65,8 +65,8 @@ public:
     bool operator==(uint32_t rgba) const { return this->rgba() == rgba; }
 
     Color& operator=(const Color& other) { m_r = other.m_r; m_g = other.m_g; m_b = other.m_b; m_a = other.m_a; return *this; }
-    bool operator==(const Color& other) const { return other.m_r == m_r && other.m_g == m_g && other.m_b == m_b && other.m_a == m_a; }
-    bool operator!=(const Color& other) const { return other.m_r != m_r || other.m_g != m_g || other.m_b != m_b || other.m_a != m_a; }
+    bool operator==(const Color& other) const { return other.rgba() == rgba(); }
+    bool operator!=(const Color& other) const { return other.rgba() != rgba(); }
 
     static Color from8bit(int color) {
         if(color >= 216 || color <= 0)
