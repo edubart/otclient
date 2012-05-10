@@ -8,7 +8,6 @@ MiniWindow < UIMiniWindow
   image-source: /game/images/miniwindow.png
   image-border: 4
   image-border-top: 23
-  image-border-left: 23
   image-border-bottom: 4
   focusable: false
   &minimizedHeight: 24

@@ -77,10 +77,6 @@ void Game::processConnectionError(const boost::system::error_code& error)
 void Game::processDisconnect()
 {
     if(isOnline()) {
-        // only process logout event if the player is known
-        if(m_localPlayer->isKnown())
-            processLogout();
-
         m_localPlayer = nullptr;
 
         processGameEnd();
@@ -119,7 +115,7 @@ void Game::processGameStart(const LocalPlayerPtr& localPlayer, int serverBeat, b
     // synchronize fight modes with the server
     m_protocolGame->sendChangeFightModes(m_fightMode, m_chaseMode, m_safeFight);
 
-    // NOTE: the entire map description and local player informations is not known yet
+    // NOTE: the entire map description and local player information is not known yet
     g_lua.callGlobalField("g_game", "onGameStart");
 }
 
@@ -132,21 +128,6 @@ void Game::processGameEnd()
 
     // clean map creatures
     g_map.cleanDynamicThings();
-}
-
-void Game::processLogin()
-{
-    // the game could be offline if the login was canceled
-    if(!isOnline())
-        return;
-
-    // by now the local player must be known
-    g_lua.callGlobalField("g_game", "onLogin", m_localPlayer);
-}
-
-void Game::processLogout()
-{
-    g_lua.callGlobalField("g_game", "onLogout", m_localPlayer);
 }
 
 void Game::processDeath(int penality)
@@ -1034,12 +1015,11 @@ bool Game::canPerformGameAction()
 {
     // we can only perform game actions if we meet these conditions:
     // - the local player exists
-    // - the local player is known
     // - the local player is not dead
     // - we have a game protocol
     // - the game protocol is connected
     // - its not a bot action
-    return m_localPlayer && m_localPlayer->isKnown() && !m_dead && m_protocolGame && m_protocolGame->isConnected() && checkBotProtection();
+    return m_localPlayer && !m_dead && m_protocolGame && m_protocolGame->isConnected() && checkBotProtection();
 }
 
 void Game::setAttackingCreature(const CreaturePtr& creature)

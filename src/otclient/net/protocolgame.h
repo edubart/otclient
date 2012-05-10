@@ -31,9 +31,6 @@
 class ProtocolGame : public Protocol
 {
 public:
-    ProtocolGame();
-
-public:
     void login(const std::string& accountName, const std::string& accountPassword, const std::string& host, uint16 port, const std::string& characterName);
 
     void onConnect();
@@ -198,7 +195,7 @@ private:
     Position parsePosition(InputMessage& msg);
 
 private:
-    bool m_waitingLoginPacket;
+    Boolean<false> m_waitingLoginPacket;
     std::string m_accountName;
     std::string m_accountPassword;
     std::string m_characterName;

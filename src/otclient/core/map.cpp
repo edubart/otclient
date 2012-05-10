@@ -304,8 +304,8 @@ void Map::setCentralPosition(const Position& centralPosition)
         LocalPlayerPtr localPlayer = g_game.getLocalPlayer();
         if(!localPlayer || localPlayer->getPosition() == m_centralPosition)
             return;
-        TilePtr tile = getTile(localPlayer->getPosition());
-        if(!tile || tile->hasThing(localPlayer))
+        TilePtr tile = localPlayer->getTile();
+        if(tile && tile->hasThing(localPlayer))
             return;
         localPlayer->setPosition(m_centralPosition);
     });

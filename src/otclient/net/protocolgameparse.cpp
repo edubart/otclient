@@ -1270,11 +1270,8 @@ ThingPtr ProtocolGame::internalGetThing(InputMessage& msg)
                 creature->setEmblem(emblem);
             creature->setPassable(passable);
 
-            // now that the local player is known, we can schedule login event
-            if(creature == m_localPlayer && !m_localPlayer->isKnown()) {
+            if(creature == m_localPlayer && !m_localPlayer->isKnown())
                 m_localPlayer->setKnown(true);
-                g_eventDispatcher.addEvent([] { g_game.processLogin(); });
-            }
         }
 
         thing = creature;

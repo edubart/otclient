@@ -1,23 +1,23 @@
 Button < UIButton
   font: verdana-11px-antialised
   color: #f0ad4dff
-  size: 106 24
+  size: 106 22
   text-offset: 0 0
-  image-color: white
   image-source: /core_styles/styles/images/button.png
-  image-border: 5
+  image-color: white
+  image-clip: 0 0 20 20
+  image-border: 2
   padding: 5 10 5 10
 
   $hover !disabled:
-    image-source: /core_styles/styles/images/button_hover.png
+    image-clip: 0 20 20 20
 
   $pressed:
+    image-clip: 0 40 20 20
     text-offset: 1 1
-    image-source: /core_styles/styles/images/button_down.png
 
   $disabled:
     color: #f0ad4d88
-    image-color: #ffffff88
 
 TabButton < UIButton
   size: 20 20

@@ -48,9 +48,6 @@ protected:
     void processLoginAdvice(const std::string& message);
     void processLoginWait(const std::string& message, int time);
 
-    void processLogin();
-    void processLogout();
-
     void processGameStart(const LocalPlayerPtr& localPlayer, int serverBeat, bool canReportBugs);
     void processGameEnd();
     void processDeath(int penality);

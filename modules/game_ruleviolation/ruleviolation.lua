@@ -57,7 +57,7 @@ function RuleViolation.loadReasons()
 end
 
 function RuleViolation.init()  
-  connect(g_game, { onLogin = RuleViolation.loadReasons })
+  connect(g_game, { onGMActions = RuleViolation.loadReasons })
 
   ruleViolationWindow = displayUI('ruleviolation.otui')
   ruleViolationWindow:setVisible(false)
@@ -73,7 +73,7 @@ function RuleViolation.init()
 end
 
 function RuleViolation.terminate()
-  disconnect(g_game, { onLogin = RuleViolation.loadReasons })
+  disconnect(g_game, { onGMActions = RuleViolation.loadReasons })
 
   ruleViolationWindow:destroy()
   ruleViolationWindow = nil

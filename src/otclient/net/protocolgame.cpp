@@ -25,11 +25,6 @@
 #include <otclient/core/player.h>
 #include <otclient/core/item.h>
 
-ProtocolGame::ProtocolGame()
-{
-    m_waitingLoginPacket = false;
-}
-
 void ProtocolGame::login(const std::string& accountName, const std::string& accountPassword, const std::string& host, uint16 port, const std::string& characterName)
 {
     if(accountName.empty() || accountPassword.empty()) {

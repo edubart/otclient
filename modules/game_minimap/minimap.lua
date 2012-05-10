@@ -31,7 +31,7 @@ end
 
 -- public functions
 function Minimap.init()
-  connect(g_game, { onLogin = Minimap.reset })
+  connect(g_game, { onGameStart = Minimap.reset })
   Keyboard.bindKeyDown('Ctrl+M', Minimap.toggle)
 
   minimapButton = TopMenu.addGameToggleButton('minimapButton', tr('Minimap') .. ' (Ctrl+M)', 'minimap.png', Minimap.toggle)
@@ -46,7 +46,7 @@ function Minimap.init()
 end
 
 function Minimap.terminate()
-  disconnect(g_game, { onLogin = Minimap.reset })
+  disconnect(g_game, { onGameStart = Minimap.reset })
   Keyboard.unbindKeyDown('Ctrl+M')
 
   minimapWidget:destroy()

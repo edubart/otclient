@@ -34,13 +34,14 @@ move up/down in lineedits
 select characters in lineedits
 scrolling multiline edit
 mouse wheel lineedits
+onMapKnown event
 
 == OPTIMIZATIONS AND REWORKS
 * game
 do not redraw in MapView far zoom
 map zoom rendering could be optimized using framebuffer caches
 multisample option in map view
-move redering of creatures names, skulls, etc to UI and scripts
+move rendering of creatures names, skulls, etc to UI and scripts
 clean sprites cache periodically
 handle corrupt errors in dat/spr
 
