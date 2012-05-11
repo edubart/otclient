@@ -25,7 +25,12 @@
 
 #include <otclient/global.h>
 
-#if PROTOCOL != 860 && PROTOCOL != 861 && PROTOCOL != 862 && PROTOCOL != 870 && PROTOCOL != 810
+#if PROTOCOL != 810 && \
+    PROTOCOL != 854 && \
+    PROTOCOL != 860 && \
+    PROTOCOL != 861 && \
+    PROTOCOL != 862 && \
+    PROTOCOL != 870
 #error "the supplied protocol version is not supported"
 #endif
 
@@ -47,10 +52,10 @@ namespace Proto {
     constexpr int ClientVersion = PROTOCOL;
     constexpr int PicSignature = 0x4E119CBF;
 
-#if PROTOCOL>=861
-    constexpr int NumViolationReasons = 19;
-#elif PROTOCOL>=860
+#if PROTOCOL>=860
     constexpr int NumViolationReasons = 20;
+#elif PROTOCOL>=854
+    constexpr int NumViolationReasons = 19;
 #elif PROTOCOL>=810
     constexpr int NumViolationReasons = 32;
 #endif
@@ -247,7 +252,7 @@ namespace Proto {
         ServerSpeakRVRAnswer,
         ServerSpeakRVRContinue,
         ServerSpeakChannelRed2
-#elif PROTOCOL>=860
+#elif PROTOCOL>=854
         ServerSpeakSay = 1,
         ServerSpeakWhisper,
         ServerSpeakYell,
@@ -263,7 +268,9 @@ namespace Proto {
         ServerSpeakChannelRed,
         ServerSpeakPrivateRed,
         ServerSpeakChannelOrange,
+        // 16 ??
         ServerSpeakChannelRed2 = 17,
+        // 18 ??
         ServerSpeakMonsterSay = 19,
         ServerSpeakMonsterYell
 #elif PROTOCOL>=810
@@ -304,7 +311,7 @@ namespace Proto {
         MessageStatusSmall,
         MessageConsoleBlue,
         MessageConsoleRed
-#elif PROTOCOL>=860
+#elif PROTOCOL>=854
         MessageConsoleRed = 18,
         MessageConsoleOrange,
         MessageConsoleOrange2,

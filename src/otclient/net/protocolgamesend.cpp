@@ -50,7 +50,7 @@ void ProtocolGame::sendLoginPacket(uint timestamp, uint8 unknown)
     msg.addU8(0); // is gm set?
     paddingBytes -= 17;
 
-#if PROTOCOL>=860
+#if PROTOCOL>=854
     enableChecksum();
 
     msg.addString(m_accountName);
@@ -60,7 +60,7 @@ void ProtocolGame::sendLoginPacket(uint timestamp, uint8 unknown)
     msg.addU32(timestamp);
     msg.addU8(unknown);
     paddingBytes -= 11 + m_accountName.length() + m_characterName.length() + m_accountPassword.length();
-#elif PROTOCOL>=810
+#else // PROTOCOL>=810
     msg.addU32(Fw::fromstring<uint32>(m_accountName));
     msg.addString(m_characterName);
     msg.addString(m_accountPassword);

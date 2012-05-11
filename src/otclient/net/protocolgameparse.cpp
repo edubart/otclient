@@ -398,7 +398,7 @@ void ProtocolGame::parseTileAddThing(InputMessage& msg)
     Position pos = parsePosition(msg);
     int stackPos = -1;
 
-#if PROTOCOL>=860
+#if PROTOCOL>=854
     stackPos = msg.getU8();
 #endif
 
@@ -762,7 +762,7 @@ void ProtocolGame::parsePlayerStats(InputMessage& msg)
 {
     double health = msg.getU16();
     double maxHealth = msg.getU16();
-#if PROTOCOL>=860
+#if PROTOCOL>=854
     double freeCapacity = msg.getU32() / 100.0;
 #else
     double freeCapacity = msg.getU16() / 100.0;
@@ -1272,7 +1272,7 @@ ThingPtr ProtocolGame::internalGetThing(InputMessage& msg)
         int emblem = -1;
         bool passable = false;
 
-#if PROTOCOL>=860
+#if PROTOCOL>=854
         if(thingId == 0x0061)
             emblem = msg.getU8();
 

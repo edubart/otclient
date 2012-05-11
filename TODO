@@ -35,6 +35,7 @@ select characters in lineedits
 scrolling multiline edit
 mouse wheel lineedits
 onMapKnown event
+save different account/pasword/server for each otclient protocol version
 
 == OPTIMIZATIONS AND REWORKS
 * game

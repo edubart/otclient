@@ -110,7 +110,7 @@ void ProtocolLogin::sendLoginPacket()
     msg.addU32(m_xteaKey[3]);
     paddingBytes -= 16;
 
-#if PROTOCOL>=860
+#if PROTOCOL>=854
     enableChecksum();
 
     msg.addString(m_accountName);

@@ -43,7 +43,7 @@ void ProtocolGame::onConnect()
 {
     recv();
 
-#if PROTOCOL>=860
+#if PROTOCOL>=854
     m_waitingLoginPacket = true;
 #else
     sendLoginPacket(0, 0);

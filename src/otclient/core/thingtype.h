@@ -50,7 +50,7 @@ struct ThingType
         IsStackable,
         IsForceUse,
         IsMultiUse,
-#if PROTOCOL<=810
+#if PROTOCOL<=854
         IsRune,
 #endif
         IsWritable,
