@@ -29,7 +29,8 @@ OutputMessage::OutputMessage()
 
 void OutputMessage::reset()
 {
-    m_writePos = DATA_POS;
+    m_writePos = MAX_HEADER_SIZE;
+    m_headerPos = MAX_HEADER_SIZE;
     m_messageSize = 0;
 }
 
@@ -89,6 +90,23 @@ void OutputMessage::addPaddingBytes(int bytes, uint8 byte)
     memset((void*)&m_buffer[m_writePos], byte, bytes);
     m_writePos += bytes;
     m_messageSize += bytes;
+}
+
+void OutputMessage::writeChecksum()
+{
+    uint32 checksum = Fw::getAdlerChecksum(m_buffer + m_headerPos, m_messageSize);
+    assert(m_headerPos - 4 >= 0);
+    m_headerPos -= 4;
+    Fw::writeLE32(m_buffer + m_headerPos, checksum);
+    m_messageSize += 4;
+}
+
+void OutputMessage::writeMessageSize()
+{
+    assert(m_headerPos - 2 >= 0);
+    m_headerPos -= 2;
+    Fw::writeLE16(m_buffer + m_headerPos, m_messageSize);
+    m_messageSize += 2;
 }
 
 bool OutputMessage::canWrite(int bytes)

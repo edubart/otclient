@@ -37,7 +37,9 @@ void ProtocolGame::sendLoginPacket(uint timestamp, uint8 unknown)
 
     msg.addU16(Proto::ClientVersion);
 
+    int paddingBytes = 128;
     msg.addU8(0); // first RSA byte must be 0
+    paddingBytes -= 1;
 
     // xtea key
     generateXteaKey();
@@ -45,20 +47,32 @@ void ProtocolGame::sendLoginPacket(uint timestamp, uint8 unknown)
     msg.addU32(m_xteaKey[1]);
     msg.addU32(m_xteaKey[2]);
     msg.addU32(m_xteaKey[3]);
-
     msg.addU8(0); // is gm set?
+    paddingBytes -= 17;
+
+#if PROTOCOL>=860
+    enableChecksum();
+
     msg.addString(m_accountName);
     msg.addString(m_characterName);
     msg.addString(m_accountPassword);
 
     msg.addU32(timestamp);
     msg.addU8(unknown);
+    paddingBytes -= 11 + m_accountName.length() + m_characterName.length() + m_accountPassword.length();
+#elif PROTOCOL>=810
+    msg.addU32(Fw::fromstring<uint32>(m_accountName));
+    msg.addString(m_characterName);
+    msg.addString(m_accountPassword);
+
+    paddingBytes -= 8 + m_characterName.length() + m_accountPassword.length();
+#endif
 
     // complete the 128 bytes for rsa encryption with zeros
-    msg.addPaddingBytes(128 - (29 + m_accountName.length() + m_characterName.length() + m_accountPassword.length()));
+    msg.addPaddingBytes(paddingBytes);
 
     // encrypt with RSA
-    Rsa::encrypt((char*)msg.getBuffer() + 6 + msg.getMessageSize() - 128, 128, Proto::RSA);
+    Rsa::encrypt((char*)msg.getWriteBuffer() - 128, 128, Proto::RSA);
 
     send(msg);
 

@@ -24,36 +24,35 @@
 #include "spritemanager.h"
 #include "thing.h"
 #include <framework/core/resourcemanager.h>
+#include <framework/core/filestream.h>
 
 ThingsType g_thingsType;
 ThingType ThingsType::m_emptyThingType;
 
 bool ThingsType::load(const std::string& file)
 {
-    try {
-        std::stringstream fin;
-        g_resources.loadFile(file, fin);
-
-        m_signature = Fw::getU32(fin);
-
-        int numThings[LastCategory];
-        for(int i = 0; i < LastCategory; ++i)
-            numThings[i] = Fw::getU16(fin);
-
-        numThings[Item] -= 99;
-
-        for(int i = 0; i < LastCategory; ++i) {
-            m_things[i].resize(numThings[i]);
-            for(int id = 0; id < numThings[i]; ++id)
-                parseThingType(fin, m_things[i][id]);
-        }
-
-        m_loaded = true;
-        return true;
-    } catch(Exception& e) {
-        logError("Failed to load dat from '", file, "': ", e.what());
+    FileStreamPtr fin = g_resources.openFile(file);
+    if(!fin) {
+        logError("unable to open dat file '", file, "'");
         return false;
     }
+
+    m_signature = fin->getU32();
+
+    int numThings[LastCategory];
+    for(int i = 0; i < LastCategory; ++i)
+        numThings[i] = fin->getU16();
+
+    numThings[Item] -= 99;
+
+    for(int i = 0; i < LastCategory; ++i) {
+        m_things[i].resize(numThings[i]);
+        for(int id = 0; id < numThings[i]; ++id)
+            parseThingType(fin, m_things[i][id]);
+    }
+
+    m_loaded = true;
+    return true;
 }
 
 void ThingsType::unload()
@@ -62,37 +61,39 @@ void ThingsType::unload()
         m_things[i].clear();
 }
 
-void ThingsType::parseThingType(std::stringstream& fin, ThingType& thingType)
+void ThingsType::parseThingType(const FileStreamPtr& fin, ThingType& thingType)
 {
-    assert(fin.good());
-
     while(true) {
-        int property = Fw::getU8(fin);
+        int property = fin->getU8();
         if(property == ThingType::LastPropertyValue)
             break;
 
         thingType.m_properties[property] = true;
 
         if(property == ThingType::IsGround)
-            thingType.m_parameters[ThingType::GroundSpeed] = Fw::getU16(fin);
+            thingType.m_parameters[ThingType::GroundSpeed] = fin->getU16();
         else if(property == ThingType::IsWritable || property == ThingType::IsWritableOnce)
-            thingType.m_parameters[ThingType::MaxTextLenght] = Fw::getU16(fin);
+            thingType.m_parameters[ThingType::MaxTextLenght] = fin->getU16();
         else if(property == ThingType::HasLight) {
-            thingType.m_parameters[ThingType::LightLevel] = Fw::getU16(fin);
-            thingType.m_parameters[ThingType::LightColor] = Fw::getU16(fin);
+            thingType.m_parameters[ThingType::LightLevel] = fin->getU16();
+            thingType.m_parameters[ThingType::LightColor] = fin->getU16();
         }
         else if(property == ThingType::HasDisplacement) {
-            thingType.m_parameters[ThingType::DisplacementX] = Fw::getU16(fin);
-            thingType.m_parameters[ThingType::DisplacementY] = Fw::getU16(fin);
+            thingType.m_parameters[ThingType::DisplacementX] = fin->getU16();
+            thingType.m_parameters[ThingType::DisplacementY] = fin->getU16();
         }
         else if(property == ThingType::HasElevation)
-            thingType.m_parameters[ThingType::Elevation] = Fw::getU16(fin);
+            thingType.m_parameters[ThingType::Elevation] = fin->getU16();
         else if(property == ThingType::MiniMap)
-            thingType.m_parameters[ThingType::MiniMapColor] = Fw::getU16(fin);
+            thingType.m_parameters[ThingType::MiniMapColor] = fin->getU16();
         else if(property == ThingType::LensHelp)
-            thingType.m_parameters[ThingType::LensHelpParameter] = Fw::getU16(fin);
+            thingType.m_parameters[ThingType::LensHelpParameter] = fin->getU16();
         else if(property == ThingType::Cloth)
-            thingType.m_parameters[ThingType::ClothSlot] = Fw::getU16(fin);
+            thingType.m_parameters[ThingType::ClothSlot] = fin->getU16();
+#if PROTOCOL<=810
+        else if(property == ThingType::IsRune)
+            thingType.m_properties[ThingType::IsStackable] = true;
+#endif
     }
 
     int totalSprites = 1;
@@ -102,7 +103,7 @@ void ThingsType::parseThingType(std::stringstream& fin, ThingType& thingType)
             continue;
         }
 
-        thingType.m_dimensions[i] = Fw::getU8(fin);
+        thingType.m_dimensions[i] = fin->getU8();
 
         if(i != ThingType::ExactSize)
             totalSprites *= thingType.m_dimensions[i];
@@ -111,7 +112,7 @@ void ThingsType::parseThingType(std::stringstream& fin, ThingType& thingType)
     thingType.m_spritesIndex.resize(totalSprites);
     thingType.m_sprites.resize(totalSprites);
     for(int i = 0; i < totalSprites; i++)
-        thingType.m_spritesIndex[i] = Fw::getU16(fin);
+        thingType.m_spritesIndex[i] = fin->getU16();
 }
 
 ThingType *ThingsType::getThingType(uint16 id, Categories category)

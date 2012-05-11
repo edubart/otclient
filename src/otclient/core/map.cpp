@@ -269,16 +269,22 @@ CreaturePtr Map::getCreatureById(uint32 id)
     LocalPlayerPtr localPlayer = g_game.getLocalPlayer();
     if(localPlayer && localPlayer->getId() == id)
         return localPlayer;
-    return m_knownCreatures[id];
+    auto it = m_knownCreatures.find(id);
+    if(it == m_knownCreatures.end())
+        return nullptr;
+    return it->second;
 }
 
 void Map::removeCreatureById(uint32 id)
 {
     if(id == 0)
         return;
-    if(CreaturePtr creature = m_knownCreatures[id])
-        creature->setRemoved(true);
-    m_knownCreatures.erase(id);
+
+    auto it = m_knownCreatures.find(id);
+    if(it != m_knownCreatures.end())
+        it->second->setRemoved(true);
+
+    m_knownCreatures.erase(it);
 }
 
 void Map::setCentralPosition(const Position& centralPosition)
@@ -288,13 +294,8 @@ void Map::setCentralPosition(const Position& centralPosition)
     // remove creatures from tiles that we are not aware anymore
     for(const auto& pair : m_knownCreatures) {
         const CreaturePtr& creature = pair.second;
-        if(creature) {
-            if(!isAwareOfPosition(creature->getPosition())) {
-                removeThing(creature);
-            }
-        }
-        else
-            logTraceError("invalid creature");
+        if(!isAwareOfPosition(creature->getPosition()))
+            removeThing(creature);
     }
 
     // this fixes local player position when the local player is removed from the map,

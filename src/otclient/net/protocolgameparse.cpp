@@ -35,9 +35,12 @@
 
 void ProtocolGame::parseMessage(InputMessage& msg)
 {
+    int opcode = 0;
+    int prevOpcode = 0;
+
     try {
         while(!msg.eof()) {
-            int opcode = msg.getU8();
+            opcode = msg.getU8();
 
             switch(opcode) {
             case Proto::GameServerInitGame:
@@ -268,12 +271,13 @@ void ProtocolGame::parseMessage(InputMessage& msg)
                 parseExtendedOpcode(msg);
                 break;
             default:
-                Fw::throwException("unknown opcode ", opcode);
+                Fw::throwException("unknown opcode ", opcode, ", previous opcode is ", prevOpcode);
                 break;
             }
+            prevOpcode = opcode;
         }
     } catch(Exception& e) {
-        logTraceError(e.what());
+        logError("Network exception (", msg.getUnreadSize(), " bytes unread, last opcode is ", opcode, ", prev opcode is ", prevOpcode, "): ", e.what());
     }
 }
 
@@ -392,7 +396,11 @@ void ProtocolGame::parseUpdateTile(InputMessage& msg)
 void ProtocolGame::parseTileAddThing(InputMessage& msg)
 {
     Position pos = parsePosition(msg);
-    int stackPos = msg.getU8();
+    int stackPos = -1;
+
+#if PROTOCOL>=860
+    stackPos = msg.getU8();
+#endif
 
     ThingPtr thing = internalGetThing(msg);
     g_map.addThing(thing, pos, stackPos);
@@ -754,8 +762,12 @@ void ProtocolGame::parsePlayerStats(InputMessage& msg)
 {
     double health = msg.getU16();
     double maxHealth = msg.getU16();
+#if PROTOCOL>=860
     double freeCapacity = msg.getU32() / 100.0;
-#if PROTOCOL >= 870
+#else
+    double freeCapacity = msg.getU16() / 100.0;
+#endif
+#if PROTOCOL>=870
     double experience = msg.getU64();
 #else
     double experience = msg.getU32();
@@ -805,7 +817,9 @@ void ProtocolGame::parsePlayerState(InputMessage& msg)
 
 void ProtocolGame::parsePlayerCancelAttack(InputMessage& msg)
 {
+#if PROTOCOL>=860
     msg.getU32(); // unknown
+#endif
     g_game.processAttackCancel();
 }
 
@@ -830,11 +844,11 @@ void ProtocolGame::parseCreatureSpeak(InputMessage& msg)
 
     std::string name = msg.getString();
     int level = msg.getU16();
-    int serverType = msg.getU8();
+    int speakType = msg.getU8();
     int channelId = 0;
     Position creaturePos;
 
-    switch(serverType) {
+    switch(speakType) {
         case Proto::ServerSpeakSay:
         case Proto::ServerSpeakWhisper:
         case Proto::ServerSpeakYell:
@@ -859,12 +873,12 @@ void ProtocolGame::parseCreatureSpeak(InputMessage& msg)
             msg.getU32();
             break;
         default:
-            logTraceError("unknown speak type ", serverType);
+            logTraceError("unknown speak type ", speakType);
             break;
     }
 
     std::string message = msg.getString();
-    Otc::SpeakType type = Proto::translateSpeakTypeFromServer(serverType);
+    Otc::SpeakType type = Proto::translateSpeakTypeFromServer(speakType);
 
     g_game.processCreatureSpeak(name, level, type, message, channelId, creaturePos);
 }
@@ -1140,8 +1154,8 @@ void ProtocolGame::setTileDescription(InputMessage& msg, Position position)
 
     int stackPos = 0;
     while(true) {
-        int inspectTileId = msg.getU16(true);
-        if(inspectTileId >= 0xFF00)
+        int inspectItemId = msg.getU16(true);
+        if(inspectItemId >= 0xFF00)
             return;
         else {
             if(stackPos >= 10)
@@ -1159,8 +1173,8 @@ Outfit ProtocolGame::internalGetOutfit(InputMessage& msg)
 {
     Outfit outfit;
 
-    int id = msg.getU16();
-    if(id != 0) {
+    int lookType = msg.getU16();
+    if(lookType != 0) {
         outfit.setCategory(ThingsType::Creature);
         int head = msg.getU8();
         int body = msg.getU8();
@@ -1171,7 +1185,7 @@ Outfit ProtocolGame::internalGetOutfit(InputMessage& msg)
         msg.getU16(); // mount
 #endif
 
-        outfit.setId(id);
+        outfit.setId(lookType);
         outfit.setHead(head);
         outfit.setBody(body);
         outfit.setLegs(legs);
@@ -1179,14 +1193,14 @@ Outfit ProtocolGame::internalGetOutfit(InputMessage& msg)
         outfit.setAddons(addons);
     }
     else {
-        int id = msg.getU16();
-        if(id == 0) {
+        int lookTypeEx = msg.getU16();
+        if(lookTypeEx == 0) {
             outfit.setCategory(ThingsType::Effect);
             outfit.setId(13);
         }
         else {
             outfit.setCategory(ThingsType::Item);
-            outfit.setId(id);
+            outfit.setId(lookTypeEx);
         }
     }
 
@@ -1198,7 +1212,10 @@ ThingPtr ProtocolGame::internalGetThing(InputMessage& msg)
     ThingPtr thing;
 
     int thingId = msg.getU16();
-    assert(thingId != 0);
+    if(thingId == 0) {
+        Fw::throwException("[ProtocolGame::internalGetThing] thingId == 0");
+    }
+
     if(thingId == 0x0061 || thingId == 0x0062) { // add new creature
         CreaturePtr creature;
 
@@ -1253,10 +1270,14 @@ ThingPtr ProtocolGame::internalGetThing(InputMessage& msg)
 
         // emblem is sent only when the creature is not known
         int emblem = -1;
+        bool passable = false;
+
+#if PROTOCOL>=860
         if(thingId == 0x0061)
             emblem = msg.getU8();
 
-        bool passable = (msg.getU8() == 0);
+        passable = (msg.getU8() == 0);
+#endif
 
         if(creature) {
             creature->setHealthPercent(healthPercent);
@@ -1277,8 +1298,9 @@ ThingPtr ProtocolGame::internalGetThing(InputMessage& msg)
         thing = creature;
     } else if(thingId == 0x0063) { // creature turn
         parseCreatureTurn(msg);
-    } else // item
+    } else { // item
         thing = internalGetItem(msg, thingId);
+    }
 
     return thing;
 }

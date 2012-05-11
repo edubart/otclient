@@ -50,6 +50,9 @@ struct ThingType
         IsStackable,
         IsForceUse,
         IsMultiUse,
+#if PROTOCOL<=810
+        IsRune,
+#endif
         IsWritable,
         IsWritableOnce,
         IsFluidContainer,

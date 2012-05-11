@@ -34,11 +34,7 @@ class OutputMessage : public LuaObject
 public:
     enum {
         BUFFER_MAXSIZE = 1024,
-        HEADER_POS = 0,
-        HEADER_LENGTH = 2,
-        CHECKSUM_POS = 2,
-        CHECKSUM_LENGTH = 4,
-        DATA_POS = 6
+        MAX_HEADER_SIZE = 8
     };
 
     OutputMessage();
@@ -53,15 +49,19 @@ public:
     void addString(const std::string& value);
     void addPaddingBytes(int bytes, uint8 byte = 0);
 
-    uint8* getBuffer() { return m_buffer; }
+    uint8* getWriteBuffer() { return m_buffer + m_writePos; }
+    uint8* getHeaderBuffer() { return m_buffer + m_headerPos; }
+    uint8* getDataBuffer() { return m_buffer + MAX_HEADER_SIZE; }
     uint16 getMessageSize() { return m_messageSize; }
-    void setMessageSize(uint16 messageSize) { m_messageSize = messageSize; }
-    void setWritePos(uint16 writePos) { m_writePos = writePos; }
+
+    void writeChecksum();
+    void writeMessageSize();
 
 private:
     bool canWrite(int bytes);
     void checkWrite(int bytes);
 
+    uint16 m_headerPos;
     uint16 m_writePos;
     uint16 m_messageSize;
     uint8 m_buffer[BUFFER_MAXSIZE];

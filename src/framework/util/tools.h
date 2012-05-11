@@ -326,6 +326,22 @@ inline float randomRange<float>(float min, float max) {
     return min + (max - min)*dis(gen);
 }
 
+inline uint32 getAdlerChecksum(uint8* buffer, uint16 size) {
+    register uint32 a = 1, b = 0, tlen;
+    while(size > 0) {
+        tlen = size > 5552 ? 5552 : size;
+        size -= tlen;
+        do {
+            a += *buffer++;
+            b += a;
+        } while (--tlen);
+
+        a %= 65521;
+        b %= 65521;
+    }
+    return (b << 16) | a;
+}
+
 }
 
 // shortcut for Fw::dump

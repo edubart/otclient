@@ -24,6 +24,7 @@
 #define DATMANAGER_H
 
 #include <framework/global.h>
+#include <framework/core/declarations.h>
 #include "thingtype.h"
 
 class ThingsType
@@ -41,7 +42,7 @@ public:
     bool load(const std::string& file);
     void unload();
 
-    void parseThingType(std::stringstream& fin, ThingType& thingType);
+    void parseThingType(const FileStreamPtr& fin, ThingType& thingType);
 
     ThingType *getEmptyThingType() { return &m_emptyThingType; }
     ThingType *getThingType(uint16 id, Categories category);

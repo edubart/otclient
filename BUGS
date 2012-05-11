@@ -4,6 +4,7 @@ modules recursivity makes client crash, it should generate a warning
 == P1 BUGS (affects game play)
 sometimes minimap desync Z pos
 follow and autowalk doesn't cancel when walking via hotkeys
+when reading invalid spr/dat the client crashs
 
 when walking on a tile with too many creatures, the following errors occurrs:
 ERROR: [ProtocolGame::parseCreatureHealth] could not get greature

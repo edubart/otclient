@@ -32,7 +32,6 @@ void ProtocolGame::login(const std::string& accountName, const std::string& acco
         return;
     }
 
-    m_waitingLoginPacket = true;
     m_accountName = accountName;
     m_accountPassword = accountPassword;
     m_characterName = characterName;
@@ -43,17 +42,26 @@ void ProtocolGame::login(const std::string& accountName, const std::string& acco
 void ProtocolGame::onConnect()
 {
     recv();
+
+#if PROTOCOL>=860
+    m_waitingLoginPacket = true;
+#else
+    sendLoginPacket(0, 0);
+#endif
 }
 
 void ProtocolGame::onRecv(InputMessage& inputMessage)
 {
+    // only for protocol >= 860
     if(m_waitingLoginPacket) {
         inputMessage.skipBytes(3);
         uint32 timestamp = inputMessage.getU32();
         uint8 unknown = inputMessage.getU8();
 
         m_waitingLoginPacket = false;
+
         enableChecksum();
+
         sendLoginPacket(timestamp, unknown);
         recv();
     }

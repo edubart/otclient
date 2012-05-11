@@ -44,6 +44,7 @@ multisample option in map view
 move rendering of creatures names, skulls, etc to UI and scripts
 clean sprites cache periodically
 handle corrupt errors in dat/spr
+throw exceptions when fail to read a file
 
 * framework
 rework Settings/g_configs

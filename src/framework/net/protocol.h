@@ -64,7 +64,6 @@ protected:
 private:
     bool xteaDecrypt(InputMessage& inputMessage);
     void xteaEncrypt(OutputMessage& outputMessage);
-    uint32 getAdlerChecksum(uint8* buffer, uint16 size);
 
     bool m_checksumEnabled;
     bool m_xteaEncryptionEnabled;

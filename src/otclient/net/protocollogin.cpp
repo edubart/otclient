@@ -28,11 +28,6 @@
 #include <otclient/core/thingstype.h>
 #include <otclient/core/spritemanager.h>
 
-ProtocolLogin::ProtocolLogin()
-{
-    enableChecksum();
-}
-
 void ProtocolLogin::login(const std::string& host, int port, const std::string& accountName, const std::string& accountPassword)
 {
     if(accountName.empty() || accountPassword.empty()) {
@@ -88,33 +83,49 @@ void ProtocolLogin::onError(const boost::system::error_code& error)
 
 void ProtocolLogin::sendLoginPacket()
 {
-    OutputMessage oMsg;
+    OutputMessage msg;
 
-    oMsg.addU8(Proto::ClientEnterAccount);
-    oMsg.addU16(Proto::OsLinux);
-    oMsg.addU16(Proto::ClientVersion);
+    msg.addU8(Proto::ClientEnterAccount);
+#ifdef WIN32
+    msg.addU16(Proto::OsWindows);
+#else
+    msg.addU16(Proto::OsLinux);
+#endif
+    msg.addU16(Proto::ClientVersion);
 
-    oMsg.addU32(g_thingsType.getSignature()); // data signature
-    oMsg.addU32(g_sprites.getSignature()); // sprite signature
-    oMsg.addU32(Proto::PicSignature); // pic signature
+    msg.addU32(g_thingsType.getSignature()); // data signature
+    msg.addU32(g_sprites.getSignature()); // sprite signature
+    msg.addU32(Proto::PicSignature); // pic signature
 
-    oMsg.addU8(0); // first RSA byte must be 0
+    int paddingBytes = 128;
+    msg.addU8(0); // first RSA byte must be 0
+    paddingBytes -= 1;
 
     // xtea key
     generateXteaKey();
-    oMsg.addU32(m_xteaKey[0]);
-    oMsg.addU32(m_xteaKey[1]);
-    oMsg.addU32(m_xteaKey[2]);
-    oMsg.addU32(m_xteaKey[3]);
 
-    oMsg.addString(m_accountName);
-    oMsg.addString(m_accountPassword);
+    msg.addU32(m_xteaKey[0]);
+    msg.addU32(m_xteaKey[1]);
+    msg.addU32(m_xteaKey[2]);
+    msg.addU32(m_xteaKey[3]);
+    paddingBytes -= 16;
 
-    // complete the 128 bytes for rsa encryption with zeros
-    oMsg.addPaddingBytes(128 - (21 + m_accountName.length() + m_accountPassword.length()));
-    Rsa::encrypt((char*)oMsg.getBuffer() + InputMessage::DATA_POS + oMsg.getMessageSize() - 128, 128, Proto::RSA);
+#if PROTOCOL>=860
+    enableChecksum();
 
-    send(oMsg);
+    msg.addString(m_accountName);
+    msg.addString(m_accountPassword);
+    paddingBytes -= 4 + m_accountName.length() + m_accountPassword.length();
+#elif PROTOCOL>=810
+    msg.addU32(Fw::fromstring<uint32>(m_accountName));
+    msg.addString(m_accountPassword);
+    paddingBytes -= 6 + m_accountPassword.length();
+#endif
+
+    msg.addPaddingBytes(paddingBytes); // complete the 128 bytes for rsa encryption with zeros
+    Rsa::encrypt((char*)msg.getWriteBuffer() - 128, 128, Proto::RSA);
+
+    send(msg);
     enableXteaEncryption();
     recv();
 }

@@ -25,7 +25,7 @@
 
 #include <otclient/global.h>
 
-#if PROTOCOL != 860 && PROTOCOL != 861 && PROTOCOL != 862 && PROTOCOL != 870
+#if PROTOCOL != 860 && PROTOCOL != 861 && PROTOCOL != 862 && PROTOCOL != 870 && PROTOCOL != 810
 #error "the supplied protocol version is not supported"
 #endif
 
@@ -51,6 +51,8 @@ namespace Proto {
     constexpr int NumViolationReasons = 19;
 #elif PROTOCOL>=860
     constexpr int NumViolationReasons = 20;
+#elif PROTOCOL>=810
+    constexpr int NumViolationReasons = 32;
 #endif
 
     enum OsTypes {
@@ -210,9 +212,7 @@ namespace Proto {
         ClientRefreshContainer = 202,
         ClientRequestOutfit = 210,
         ClientChangeOutfit = 211,
-#if PROTOCOL>=870
-        ClientMount = 212,
-#endif
+        ClientMount = 212, // 870
         ClientAddVip = 220,
         ClientRemoveVip = 221,
         ClientBugReport = 230,
@@ -242,7 +242,7 @@ namespace Proto {
         ServerSpeakMonsterSay,
         ServerSpeakMonsterYell,
 
-        // removed
+        // unsupported
         ServerSpeakRVRChannel = 255,
         ServerSpeakRVRAnswer,
         ServerSpeakRVRContinue,
@@ -266,6 +266,29 @@ namespace Proto {
         ServerSpeakChannelRed2 = 17,
         ServerSpeakMonsterSay = 19,
         ServerSpeakMonsterYell
+#elif PROTOCOL>=810
+        ServerSpeakSay = 1,
+        ServerSpeakWhisper,
+        ServerSpeakYell,
+        ServerSpeakPrivate,
+        ServerSpeakChannelYellow,
+        ServerSpeakRVRChannel,
+        ServerSpeakRVRAnswer,
+        ServerSpeakRVRContinue,
+        ServerSpeakBroadcast,
+        ServerSpeakChannelRed,
+        ServerSpeakPrivateRed,
+        ServerSpeakChannelOrange,
+        // 13 ??
+        ServerSpeakChannelRed2 = 14,
+        // 15 ??
+        ServerSpeakMonsterSay = 16,
+        ServerSpeakMonsterYell,
+
+        // unsupported
+        ServerSpeakPrivatePlayerToNpc = 255,
+        ServerSpeakPrivateNpcToPlayer,
+        ServerSpeakChannelWhite
 #endif
     };
 
@@ -289,9 +312,22 @@ namespace Proto {
         MessageEventAdvance,
         MessageEventDefault,
         MessageStatusDefault,
-        MessageInfoDescription ,
+        MessageInfoDescription,
         MessageStatusSmall,
         MessageConsoleBlue
+#elif PROTOCOL>=810
+        MessageWarning = 18,
+        MessageEventAdvance,
+        MessageEventDefault,
+        MessageStatusDefault,
+        MessageInfoDescription,
+        MessageStatusSmall,
+        MessageConsoleBlue,
+        MessageConsoleRed,
+
+        // unsupported
+        MessageConsoleOrange = 255,
+        MessageConsoleOrange2,
 #endif
     };
 

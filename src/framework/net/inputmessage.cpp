@@ -29,8 +29,28 @@ InputMessage::InputMessage()
 
 void InputMessage::reset()
 {
-    m_readPos = 0;
-    m_messageSize = 2;
+    m_messageSize = 0;
+    m_readPos = MAX_HEADER_SIZE;
+    m_headerPos = MAX_HEADER_SIZE;
+}
+
+void InputMessage::setHeaderSize(uint16 size)
+{
+    m_headerPos = MAX_HEADER_SIZE - size;
+    m_readPos = m_headerPos;
+}
+
+void InputMessage::fillBuffer(uint8 *buffer, uint16 size)
+{
+    memcpy(m_buffer + m_readPos, buffer, size);
+    m_messageSize += size;
+}
+
+bool InputMessage::readChecksum()
+{
+    uint32_t receivedCheck = getU32();
+    uint32 checksum = Fw::getAdlerChecksum(m_buffer + m_readPos, getUnreadSize());
+    return receivedCheck == checksum;
 }
 
 uint8 InputMessage::getU8(bool peek)
@@ -88,7 +108,7 @@ std::string InputMessage::getString()
 
 bool InputMessage::canRead(int bytes)
 {
-    if((m_readPos + bytes > m_messageSize) || (m_readPos + bytes > BUFFER_MAXSIZE))
+    if((m_readPos - m_headerPos + bytes > m_messageSize) || (m_readPos + bytes > BUFFER_MAXSIZE))
         return false;
     return true;
 }
