@@ -196,6 +196,7 @@ private:
 
 private:
     Boolean<false> m_waitingLoginPacket;
+    Boolean<true> m_firstPacket;
     std::string m_accountName;
     std::string m_accountPassword;
     std::string m_characterName;

@@ -52,6 +52,20 @@ namespace Proto {
     constexpr int ClientVersion = PROTOCOL;
     constexpr int PicSignature = 0x4E119CBF;
 
+    enum OsTypes {
+        OsWindows = 1,
+        OsLinux = 2,
+        OsMac = 3
+    };
+
+#ifdef OSTYPE
+    constexpr int ClientOs = OSTYPE;
+#elif defined WIN32
+    constexpr int ClientOs = OsWindows;
+#else
+    constexpr int ClientOs = OsLinux;
+#endif
+
 #if PROTOCOL>=860
     constexpr int NumViolationReasons = 20;
 #elif PROTOCOL>=854
@@ -59,13 +73,6 @@ namespace Proto {
 #elif PROTOCOL>=810
     constexpr int NumViolationReasons = 32;
 #endif
-
-    enum OsTypes {
-        OsWindows = 1,
-        OsLinux = 2,
-        OsMac = 3,
-        OsBrowser = 4
-    };
 
     enum LoginServerOpts {
         LoginServerError = 10,

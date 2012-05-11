@@ -28,13 +28,7 @@ void ProtocolGame::sendLoginPacket(uint timestamp, uint8 unknown)
     OutputMessage msg;
 
     msg.addU8(Proto::ClientEnterGame);
-
-#ifdef WIN32
-    msg.addU16(Proto::OsWindows);
-#else
-    msg.addU16(Proto::OsLinux);
-#endif
-
+    msg.addU16(Proto::ClientOs);
     msg.addU16(Proto::ClientVersion);
 
     int paddingBytes = 128;

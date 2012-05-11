@@ -49,6 +49,7 @@ void Game::resetGameStates()
     m_safeFight = true;
     m_followingCreature = nullptr;
     m_attackingCreature = nullptr;
+    m_localPlayer = nullptr;
 
     for(auto& it : m_containers) {
         const ContainerPtr& container = it.second;
@@ -76,11 +77,8 @@ void Game::processConnectionError(const boost::system::error_code& error)
 
 void Game::processDisconnect()
 {
-    if(isOnline()) {
-        m_localPlayer = nullptr;
-
+    if(isOnline())
         processGameEnd();
-    }
 
     if(m_protocolGame) {
         m_protocolGame->disconnect();
@@ -142,28 +140,6 @@ void Game::processGMActions(const std::vector<uint8>& actions)
 {
     m_gmActions = actions;
     g_lua.callGlobalField("g_game", "onGMActions", actions);
-}
-
-void Game::processPlayerStats(double health, double maxHealth,
-                              double freeCapacity, double experience,
-                              double level, double levelPercent,
-                              double mana, double maxMana,
-                              double magicLevel, double magicLevelPercent,
-                              double soul, double stamina)
-{
-    if(!m_localPlayer) {
-        logTraceError("there is no local player");
-        return;
-    }
-
-    m_localPlayer->setHealth(health, maxHealth);
-    m_localPlayer->setFreeCapacity(freeCapacity);
-    m_localPlayer->setExperience(experience);
-    m_localPlayer->setLevel(level, levelPercent);
-    m_localPlayer->setMana(mana, maxMana);
-    m_localPlayer->setMagicLevel(magicLevel, magicLevelPercent);
-    m_localPlayer->setStamina(stamina);
-    m_localPlayer->setSoul(soul);
 }
 
 void Game::processPing()

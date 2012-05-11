@@ -42,6 +42,12 @@ void ProtocolGame::parseMessage(InputMessage& msg)
         while(!msg.eof()) {
             opcode = msg.getU8();
 
+            if(m_firstPacket) {
+                if(opcode != Proto::GameServerInitGame)
+                    logWarning("first server network opcode is not GameServerInitGame");
+                m_firstPacket = false;
+            }
+
             switch(opcode) {
             case Proto::GameServerInitGame:
                 parseInitGame(msg);
@@ -271,7 +277,7 @@ void ProtocolGame::parseMessage(InputMessage& msg)
                 parseExtendedOpcode(msg);
                 break;
             default:
-                Fw::throwException("unknown opcode ", opcode, ", previous opcode is ", prevOpcode);
+                Fw::throwException("unknown opcode");
                 break;
             }
             prevOpcode = opcode;
@@ -287,9 +293,7 @@ void ProtocolGame::parseInitGame(InputMessage& msg)
     int serverBeat = msg.getU16();
     bool canReportBugs = msg.getU8();
 
-    m_localPlayer = LocalPlayerPtr(new LocalPlayer);
     m_localPlayer->setId(playerId);
-
     g_game.processGameStart(m_localPlayer, serverBeat, canReportBugs);
 }
 
@@ -595,7 +599,12 @@ void ProtocolGame::parseWorldLight(InputMessage& msg)
 void ProtocolGame::parseMagicEffect(InputMessage& msg)
 {
     Position pos = parsePosition(msg);
+#if PROTOCOL>=854
+    // newer tibia decreased the max effects number, why???
     int effectId = msg.getU8();
+#else
+    int effectId = msg.getU16();
+#endif
 
     EffectPtr effect = EffectPtr(new Effect());
     effect->setId(effectId);
@@ -781,12 +790,14 @@ void ProtocolGame::parsePlayerStats(InputMessage& msg)
     double soul = msg.getU8();
     double stamina = msg.getU16();
 
-    g_game.processPlayerStats(health, maxHealth,
-                              freeCapacity, experience,
-                              level, levelPercent,
-                              mana, maxMana,
-                              magicLevel, magicLevelPercent,
-                              soul, stamina);
+    m_localPlayer->setHealth(health, maxHealth);
+    m_localPlayer->setFreeCapacity(freeCapacity);
+    m_localPlayer->setExperience(experience);
+    m_localPlayer->setLevel(level, levelPercent);
+    m_localPlayer->setMana(mana, maxMana);
+    m_localPlayer->setMagicLevel(magicLevel, magicLevelPercent);
+    m_localPlayer->setStamina(stamina);
+    m_localPlayer->setSoul(soul);
 }
 
 void ProtocolGame::parsePlayerSkills(InputMessage& msg)

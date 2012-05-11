@@ -24,6 +24,7 @@
 #include <otclient/core/game.h>
 #include <otclient/core/player.h>
 #include <otclient/core/item.h>
+#include <otclient/core/localplayer.h>
 
 void ProtocolGame::login(const std::string& accountName, const std::string& accountPassword, const std::string& host, uint16 port, const std::string& characterName)
 {
@@ -42,6 +43,9 @@ void ProtocolGame::login(const std::string& accountName, const std::string& acco
 void ProtocolGame::onConnect()
 {
     recv();
+
+    // must create local player before parsing anything
+    m_localPlayer = LocalPlayerPtr(new LocalPlayer);
 
 #if PROTOCOL>=854
     m_waitingLoginPacket = true;

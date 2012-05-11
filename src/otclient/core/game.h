@@ -53,13 +53,6 @@ protected:
     void processDeath(int penality);
 
     void processGMActions(const std::vector<uint8>& actions);
-    void processPlayerStats(double health, double maxHealth,
-                            double freeCapacity, double experience,
-                            double level, double levelPercent,
-                            double mana, double maxMana,
-                            double magicLevel, double magicLevelPercent,
-                            double soul, double stamina);
-
     void processInventoryChange(int slot, const ItemPtr& item);
     void processCreatureMove(const CreaturePtr& creature, const Position& oldPos, const Position& newPos);
     void processCreatureTeleport(const CreaturePtr& creature);
