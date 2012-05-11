@@ -266,9 +266,6 @@ void Map::addCreature(const CreaturePtr& creature)
 
 CreaturePtr Map::getCreatureById(uint32 id)
 {
-    LocalPlayerPtr localPlayer = g_game.getLocalPlayer();
-    if(localPlayer && localPlayer->getId() == id)
-        return localPlayer;
     auto it = m_knownCreatures.find(id);
     if(it == m_knownCreatures.end())
         return nullptr;

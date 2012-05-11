@@ -376,10 +376,7 @@ void Creature::updateWalkingTile()
 
             // only render creatures where bottom right is inside tile rect
             if(virtualTileRect.contains(virtualCreatureRect.bottomRight())) {
-                const TilePtr& tile = g_map.getTile(m_position.translated(xi, yi, 0));
-                if(!tile)
-                    continue;
-                newWalkingTile = tile;
+                newWalkingTile = g_map.getOrCreateTile(m_position.translated(xi, yi, 0));
             }
         }
     }

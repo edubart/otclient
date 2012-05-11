@@ -388,6 +388,7 @@ void ProtocolGame::parseMapMoveWest(InputMessage& msg)
 void ProtocolGame::parseUpdateTile(InputMessage& msg)
 {
     Position tilePos = parsePosition(msg);
+    g_map.cleanTile(tilePos);
     int thingId = msg.getU16(true);
     if(thingId == 0xFF01) {
         msg.getU16();
@@ -1161,8 +1162,6 @@ void ProtocolGame::setFloorDescription(InputMessage& msg, int32 x, int32 y, int3
 
 void ProtocolGame::setTileDescription(InputMessage& msg, Position position)
 {
-    g_map.cleanTile(position);
-
     int stackPos = 0;
     while(true) {
         int inspectItemId = msg.getU16(true);
