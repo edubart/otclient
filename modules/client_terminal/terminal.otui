@@ -1,6 +1,5 @@
 TerminalLabel < UILabel
   font: terminus-14px-bold
-  height: 16
   text-wrap: true
   text-auto-resize: true
 
@@ -24,13 +23,13 @@ UIWindow
 
   UILabel
     id: commandSymbolLabel
-    size: 20 16
+    size: 12 16
     fixed-size: true
     anchors.bottom: parent.bottom
     anchors.left: parent.left
     margin-left: 2
     font: terminus-14px-bold
-    text: >>
+    text: >
 
   UITextEdit
     id: commandTextEdit

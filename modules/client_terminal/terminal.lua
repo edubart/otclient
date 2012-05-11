@@ -196,7 +196,7 @@ function Terminal.executeCommand(command)
   if command == nil or #command == 0 then return end
 
   logLocked = true
-  g_logger.log(LogInfo, '>> ' .. command)
+  g_logger.log(LogInfo, '> ' .. command)
   logLocked = false
 
   -- detect and convert commands with simple syntax
@@ -219,7 +219,7 @@ function Terminal.executeCommand(command)
   end
 
   -- add command line
-  Terminal.addLine(">> " .. command, "#ffffff")
+  --Terminal.addLine(">> " .. command, "#ffffff")
 
   -- load command buffer
   local func, err = loadstring(realCommand, "@")
