@@ -42,7 +42,7 @@ public:
     bool load(const std::string& file);
     void unload();
 
-    void parseThingType(const FileStreamPtr& fin, ThingType& thingType);
+    bool parseThingType(const FileStreamPtr& fin, ThingType& thingType);
 
     ThingType *getEmptyThingType() { return &m_emptyThingType; }
     ThingType *getThingType(uint16 id, Categories category);

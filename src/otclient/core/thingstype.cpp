@@ -47,8 +47,12 @@ bool ThingsType::load(const std::string& file)
 
     for(int i = 0; i < LastCategory; ++i) {
         m_things[i].resize(numThings[i]);
-        for(int id = 0; id < numThings[i]; ++id)
-            parseThingType(fin, m_things[i][id]);
+        for(int id = 0; id < numThings[i]; ++id) {
+            if(!parseThingType(fin, m_things[i][id])) {
+                logError("corrupt or dat file");
+                return false;
+            }
+        }
     }
 
     m_loaded = true;
@@ -61,18 +65,24 @@ void ThingsType::unload()
         m_things[i].clear();
 }
 
-void ThingsType::parseThingType(const FileStreamPtr& fin, ThingType& thingType)
+bool ThingsType::parseThingType(const FileStreamPtr& fin, ThingType& thingType)
 {
-    while(true) {
+    bool done = false;
+    for(int i=0;i<ThingType::LastProperty;++i) {
         int property = fin->getU8();
         if(property == ThingType::LastPropertyValue) {
+            done = true;
             break;
         }
 
         thingType.m_properties[property] = true;
 
-        if(property == ThingType::IsGround)
-            thingType.m_parameters[ThingType::GroundSpeed] = fin->getU16();
+        if(property == ThingType::IsGround) {
+            int speed = fin->getU16();
+            if(speed == 0)
+                speed = 100;
+            thingType.m_parameters[ThingType::GroundSpeed] = speed;
+        }
         else if(property == ThingType::IsWritable || property == ThingType::IsWritableOnce)
             thingType.m_parameters[ThingType::MaxTextLenght] = fin->getU16();
         else if(property == ThingType::HasLight) {
@@ -107,23 +117,36 @@ void ThingsType::parseThingType(const FileStreamPtr& fin, ThingType& thingType)
 #endif
     }
 
+    if(!done)
+        return false;
+
     int totalSprites = 1;
     for(int i = 0; i < ThingType::LastDimension; ++i) {
-        if(i == ThingType::ExactSize && thingType.m_dimensions[ThingType::Width] <= 1 && thingType.m_dimensions[ThingType::Height] <= 1) {
-            thingType.m_dimensions[i] = 32;
-            continue;
+        int value;
+        if(i == ThingType::ExactSize) {
+            if(thingType.m_dimensions[ThingType::Width] <= 1 && thingType.m_dimensions[ThingType::Height] <= 1)
+                value = 32;
+            else
+                value = std::min((int)fin->getU8(), std::max(thingType.m_dimensions[ThingType::Width] * 32, thingType.m_dimensions[ThingType::Height] * 32));
+        } else {
+            value = fin->getU8();
+            if(value == 0)
+                return false;
+            totalSprites *= value;
         }
 
-        thingType.m_dimensions[i] = fin->getU8();
-
-        if(i != ThingType::ExactSize)
-            totalSprites *= thingType.m_dimensions[i];
+        thingType.m_dimensions[i] = value;
     }
+
+    if(totalSprites > 4096)
+        return false;
 
     thingType.m_spritesIndex.resize(totalSprites);
     thingType.m_sprites.resize(totalSprites);
     for(int i = 0; i < totalSprites; i++)
         thingType.m_spritesIndex[i] = fin->getU16();
+
+    return true;
 }
 
 ThingType *ThingsType::getThingType(uint16 id, Categories category)
