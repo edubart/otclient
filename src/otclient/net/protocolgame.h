@@ -103,7 +103,7 @@ public:
     void sendExtendedOpcode(uint8 opcode, const std::string& buffer);
 
 private:
-    void sendLoginPacket(uint timestamp, uint8 unknown);
+    void sendLoginPacket(uint challangeTimestamp, uint8 challangeRandom);
 
     // Parse Messages
     void parseMessage(InputMessage& msg);
@@ -113,7 +113,8 @@ private:
     void parseLoginError(InputMessage& msg);
     void parseLoginAdvice(InputMessage& msg);
     void parseLoginWait(InputMessage& msg);
-    void parsePing(InputMessage&);
+    void parsePing(InputMessage& msg);
+    void parseChallange(InputMessage& msg);
     void parseDeath(InputMessage& msg);
     void parseMapDescription(InputMessage& msg);
     void parseMapMoveNorth(InputMessage& msg);
@@ -150,6 +151,7 @@ private:
     void parseCreatureTurn(InputMessage& msg);
     void parseEditText(InputMessage& msg);
     void parseEditList(InputMessage& msg);
+    void parsePlayerInfo(InputMessage& msg);
     void parsePlayerStats(InputMessage& msg);
     void parsePlayerSkills(InputMessage& msg);
     void parsePlayerState(InputMessage& msg);
@@ -198,8 +200,7 @@ private:
     Position parsePosition(InputMessage& msg);
 
 private:
-    Boolean<false> m_waitingLoginPacket;
-    Boolean<true> m_firstPacket;
+    Boolean<false> m_gameInitialized;
     std::string m_accountName;
     std::string m_accountPassword;
     std::string m_characterName;

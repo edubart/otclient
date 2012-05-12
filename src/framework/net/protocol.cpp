@@ -124,9 +124,17 @@ void Protocol::internalRecvData(uint8* buffer, uint16 size)
         return;
     }
 
-    if(m_xteaEncryptionEnabled && !xteaDecrypt(m_inputMessage)) {
-        logTraceError("failed to decrypt message");
-        return;
+    if(m_xteaEncryptionEnabled) {
+        if(!xteaDecrypt(m_inputMessage)) {
+            logTraceError("failed to decrypt message");
+            return;
+        }
+    } else {
+        int size = m_inputMessage.getU16();
+        if(size != m_inputMessage.getUnreadSize()) {
+            logTraceError("invalid message size");
+            return;
+        }
     }
 
     onRecv(m_inputMessage);

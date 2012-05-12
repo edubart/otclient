@@ -53,6 +53,7 @@ public:
     uint16 getU16();
     uint32 getU32();
     uint64 getU64();
+    std::string getString();
     void addU8(uint8 v);
     void addU16(uint8 v);
     void addU32(uint8 v);

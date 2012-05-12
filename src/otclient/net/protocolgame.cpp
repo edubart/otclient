@@ -42,37 +42,22 @@ void ProtocolGame::login(const std::string& accountName, const std::string& acco
 
 void ProtocolGame::onConnect()
 {
-    recv();
-
     // must create local player before parsing anything
     m_localPlayer = LocalPlayerPtr(new LocalPlayer);
 
 #if PROTOCOL>=854
-    m_waitingLoginPacket = true;
+    enableChecksum();
 #else
     sendLoginPacket(0, 0);
 #endif
+
+    recv();
 }
 
 void ProtocolGame::onRecv(InputMessage& inputMessage)
 {
-    // only for protocol >= 860
-    if(m_waitingLoginPacket) {
-        inputMessage.skipBytes(3);
-        uint32 timestamp = inputMessage.getU32();
-        uint8 unknown = inputMessage.getU8();
-
-        m_waitingLoginPacket = false;
-
-        enableChecksum();
-
-        sendLoginPacket(timestamp, unknown);
-        recv();
-    }
-    else {
-        parseMessage(inputMessage);
-        recv();
-    }
+    parseMessage(inputMessage);
+    recv();
 }
 
 void ProtocolGame::onError(const boost::system::error_code& error)

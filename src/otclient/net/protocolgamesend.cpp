@@ -23,7 +23,7 @@
 #include "protocolgame.h"
 #include <framework/net/rsa.h>
 
-void ProtocolGame::sendLoginPacket(uint timestamp, uint8 unknown)
+void ProtocolGame::sendLoginPacket(uint challangeTimestamp, uint8 challangeRandom)
 {
     OutputMessage msg;
 
@@ -48,12 +48,15 @@ void ProtocolGame::sendLoginPacket(uint timestamp, uint8 unknown)
     enableChecksum();
 
     msg.addString(m_accountName);
+    paddingBytes -= 2 + m_accountName.length();
     msg.addString(m_characterName);
+    paddingBytes -= 2 + m_characterName.length();
     msg.addString(m_accountPassword);
+    paddingBytes -= 2 + m_accountPassword.length();
 
-    msg.addU32(timestamp);
-    msg.addU8(unknown);
-    paddingBytes -= 11 + m_accountName.length() + m_characterName.length() + m_accountPassword.length();
+    msg.addU32(challangeTimestamp);
+    msg.addU8(challangeRandom);
+    paddingBytes -= 5;
 #else // PROTOCOL>=810
     msg.addU32(Fw::fromstring<uint32>(m_accountName));
     msg.addString(m_characterName);

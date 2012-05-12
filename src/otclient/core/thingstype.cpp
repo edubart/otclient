@@ -65,8 +65,9 @@ void ThingsType::parseThingType(const FileStreamPtr& fin, ThingType& thingType)
 {
     while(true) {
         int property = fin->getU8();
-        if(property == ThingType::LastPropertyValue)
+        if(property == ThingType::LastPropertyValue) {
             break;
+        }
 
         thingType.m_properties[property] = true;
 
@@ -93,6 +94,16 @@ void ThingsType::parseThingType(const FileStreamPtr& fin, ThingType& thingType)
 #if PROTOCOL<=810
         else if(property == ThingType::IsRune)
             thingType.m_properties[ThingType::IsStackable] = true;
+#endif
+#if PROTOCOL>=944
+        else if(property == ThingType::Market) {
+            fin->getU16(); // category
+            fin->getU16(); // trade as
+            fin->getU16(); // show as
+            fin->getString(); // name
+            fin->getU16(); // restrict profession
+            fin->getU16(); // level
+        }
 #endif
     }
 

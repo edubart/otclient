@@ -46,14 +46,14 @@ public:
     void setId(int id) { m_id = id; }
     void setCapacity(int capacity) { m_capacity = capacity; }
     void setName(std::string name) { m_name = name; }
-    void setItemId(uint16 itemId) { m_itemId = itemId; }
+    void setContainerItem(const ItemPtr& containerItem) { m_containerItem = containerItem; }
     void setHasParent(bool hasParent) { m_hasParent = hasParent; }
 
     std::string getName() { return m_name; }
     int getId() { return m_id; }
     int getCapacity() { return m_capacity; }
     int getItemsCount() { return m_items.size(); }
-    uint16 getItemId() { return m_itemId; }
+    ItemPtr getContainerItem() { return m_containerItem; }
     bool hasParent() { return m_hasParent; }
 
 private:
@@ -61,7 +61,7 @@ private:
 
     int m_id;
     int m_capacity;
-    uint16 m_itemId;
+    ItemPtr m_containerItem;
     std::string m_name;
     bool m_hasParent;
     std::deque<ItemPtr> m_items;

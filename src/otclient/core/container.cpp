@@ -26,7 +26,6 @@
 Container::Container()
 {
     m_id = -1;
-    m_itemId = 0;
     m_capacity = 20;
     m_name = "Container";
     m_hasParent = false;

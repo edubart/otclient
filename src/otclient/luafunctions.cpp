@@ -187,13 +187,13 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Container>("setId", &Container::setId);
     g_lua.bindClassMemberFunction<Container>("setCapacity", &Container::setCapacity);
     g_lua.bindClassMemberFunction<Container>("setName", &Container::setName);
-    g_lua.bindClassMemberFunction<Container>("setItemId", &Container::setItemId);
+    g_lua.bindClassMemberFunction<Container>("setContainerItem", &Container::setContainerItem);
     g_lua.bindClassMemberFunction<Container>("setHasParent", &Container::setHasParent);
     g_lua.bindClassMemberFunction<Container>("getName", &Container::getName);
     g_lua.bindClassMemberFunction<Container>("getId", &Container::getId);
     g_lua.bindClassMemberFunction<Container>("getCapacity", &Container::getCapacity);
     g_lua.bindClassMemberFunction<Container>("getItemsCount", &Container::getItemsCount);
-    g_lua.bindClassMemberFunction<Container>("getItemId", &Container::getItemId);
+    g_lua.bindClassMemberFunction<Container>("getContainerItem", &Container::getContainerItem);
     g_lua.bindClassMemberFunction<Container>("hasParent", &Container::hasParent);
 
     g_lua.registerClass<Thing>();

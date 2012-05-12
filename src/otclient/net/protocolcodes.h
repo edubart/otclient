@@ -25,13 +25,11 @@
 
 #include <otclient/global.h>
 
-#if PROTOCOL != 810 && \
-    PROTOCOL != 854 && \
-    PROTOCOL != 860 && \
-    PROTOCOL != 861 && \
-    PROTOCOL != 862 && \
-    PROTOCOL != 870 && \
-    PROTOCOL != 910
+#if !(PROTOCOL == 810) && \
+    !(PROTOCOL == 854) && \
+    !(PROTOCOL >= 860 && PROTOCOL <= 862) && \
+    !(PROTOCOL >= 870 && PROTOCOL <= 871) && \
+    !(PROTOCOL >= 910 && PROTOCOL <= 953)
 #error "the supplied protocol version is not supported"
 #endif
 
@@ -50,8 +48,8 @@ namespace Proto {
                           "07119674283982419152118103759076030616683978566631413";
 #endif
 
+    constexpr int PicSignature = 0x4F8C231A; // 953 pic signature
     constexpr int ClientVersion = PROTOCOL;
-    constexpr int PicSignature = 0x4E119CBF;
 
     enum OsTypes {
         OsLinux = 1,
@@ -89,7 +87,13 @@ namespace Proto {
         GameServerLoginError                = 20,
         GameServerLoginAdvice               = 21,
         GameServerLoginWait                 = 22,
+#if PROTOCOL>=953
+        GameServerPing                      = 29,
+        GameServerPingBack                  = 30,
+#else
+        GameServerPingBack                  = 29,
         GameServerPing                      = 30,
+#endif
         GameServerChallange                 = 31,
         GameServerDeath                     = 40,
         GameServerFullMap                   = 100,
@@ -130,6 +134,7 @@ namespace Proto {
         GameServerCreatureUnpass            = 146,
         GameServerEditText                  = 150,
         GameServerEditList                  = 151,
+        GameServerPlayerDataBasic           = 159,
         GameServerPlayerData                = 160,
         GameServerPlayerSkills              = 161,
         GameServerPlayerState               = 162,
@@ -162,6 +167,14 @@ namespace Proto {
         GameServerChannelEvent              = 243,
         GameServerObjectInfo                = 244, // 910
         GameServerPlayerInventory           = 245, // 910
+        GameServerMarketEnter               = 246, // 944
+        GameServerMarketLeave               = 247, // 944
+        GameServerMarketBrowseItem          = 248, // 944
+        GameServerMarketAcceptOffer         = 249, // 944
+        GameServerMarketOwnOffers           = 250, // 944
+        GameServerMarketCancelOffer         = 251, // 944
+        GameServerMarketBrowseOwnHistory    = 252, // 944
+        GameServerMarketMarketDetail        = 253, // 944
         GameServerExtendedOpcode            = 254  // otclient only
     };
 
@@ -236,6 +249,11 @@ namespace Proto {
         ClientRequestQuestLine              = 241,
         ClientRuleViolationReport           = 242, // 910
         ClientGetObjectInfo                 = 243, // 910
+        ClientMarketLeave                   = 244, // 944
+        ClientMarketBrowse                  = 245, // 944
+        ClientMarketCreateOffer             = 246, // 944
+        ClientMarketCancelOffer             = 247, // 944
+        ClientMarketAcceptOffer             = 248, // 944
         ClientExtendedOpcode                = 254  // otclient only
     };
 

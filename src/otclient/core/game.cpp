@@ -163,14 +163,14 @@ void Game::processCreatureSpeak(const std::string& name, int level, Otc::SpeakTy
     g_lua.callGlobalField("g_game", "onCreatureSpeak", name, level, type, message, channelId, creaturePos);
 }
 
-void Game::processOpenContainer(int containerId, int itemId, const std::string& name, int capacity, bool hasParent, const std::vector<ItemPtr>& items)
+void Game::processOpenContainer(int containerId, const ItemPtr& containerItem, const std::string& name, int capacity, bool hasParent, const std::vector<ItemPtr>& items)
 {
     ContainerPtr previousContainer = getContainer(containerId);
     ContainerPtr container = ContainerPtr(new Container());
     container->setId(containerId);
     container->setCapacity(capacity);
     container->setName(name);
-    container->setItemId(itemId);
+    container->setContainerItem(containerItem);
     container->setHasParent(hasParent);
     m_containers[containerId] = container;
     container->addItems(items);

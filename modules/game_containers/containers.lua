@@ -38,7 +38,7 @@ local function onContainerOpen(container, previousContainer)
   name = name:sub(1,1):upper() .. name:sub(2)
   containerWindow:setText(name)
 
-  containerItemWidget:setItemId(container:getItemId())
+  containerItemWidget:setItem(container:getContainerItem())
 
   containerPanel:destroyChildren()
   for slot=0,container:getCapacity()-1 do

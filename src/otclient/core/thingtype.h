@@ -78,7 +78,7 @@ struct ThingType
         IsFullGround,
         IgnoreLook,
         Cloth,
-        Animation,
+        Market,
         LastProperty,
         LastPropertyValue = 255
     };

@@ -2,6 +2,7 @@
 modules recursivity makes client crash, it should generate a warning
 
 == P1 BUGS (affects game play)
+in some situations creatures may disappears while walking
 sometimes minimap desync Z pos
 follow and autowalk doesn't cancel when walking via hotkeys
 when reading invalid spr/dat the client crashs
@@ -27,5 +28,4 @@ hotkeys works while windows are locked, it shouldn't
 skulls is rendering outside map bounds
 party options does not work when re-logging inside a party
 sometimes we can still view hits from above/bottom floors from a fight that is not visible
-must removeThing in protocol parseTileAdd when stackpos is greater than 11
-
+scroll does not follow characerlist selection when changing focus with up/down arrows

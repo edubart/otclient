@@ -41,13 +41,9 @@ void ProtocolGame::parseMessage(InputMessage& msg)
     try {
         while(!msg.eof()) {
             opcode = msg.getU8();
-            //dump << opcode;
 
-            if(m_firstPacket) {
-                if(opcode != Proto::GameServerInitGame)
-                    logWarning("first server network opcode is not GameServerInitGame");
-                m_firstPacket = false;
-            }
+            if(!m_gameInitialized && opcode >= Proto::GameServerFullMap)
+                logWarning("first game network opcode is not GameServerInitGame");
 
             switch(opcode) {
             case Proto::GameServerInitGame:
@@ -67,6 +63,12 @@ void ProtocolGame::parseMessage(InputMessage& msg)
                 break;
             case Proto::GameServerPing:
                 parsePing(msg);
+                break;
+            case Proto::GameServerPingBack:
+                // nothing todo
+                break;
+            case Proto::GameServerChallange:
+                parseChallange(msg);
                 break;
             case Proto::GameServerDeath:
                 parseDeath(msg);
@@ -261,22 +263,37 @@ void ProtocolGame::parseMessage(InputMessage& msg)
                 parseQuestLine(msg);
                 break;
 #if PROTOCOL>=870
-            case Proto::GameServerSpellDelay: // 870 only
+            case Proto::GameServerSpellDelay:
                 parseSpellDelay(msg);
                 break;
-            case Proto::GameServerSpellGroupDelay: // 870 only
+            case Proto::GameServerSpellGroupDelay:
                 parseSpellGroupDelay(msg);
                 break;
 #endif
 #if PROTOCOL>=910
-            case Proto::GameServerChannelEvent:  // 910 only
+            case Proto::GameServerPlayerDataBasic:
+                parsePlayerInfo(msg);
+                break;
+            case Proto::GameServerChannelEvent:
                 parseChannelEvent(msg);
                 break;
-            case Proto::GameServerObjectInfo:  // 910 only
+            case Proto::GameServerObjectInfo:
                 parseObjectInfo(msg);
                 break;
-            case Proto::GameServerPlayerInventory: // 910 only
+            case Proto::GameServerPlayerInventory:
                 parsePlayerInventory(msg);
+                break;
+#endif
+#if PROTOCOL>=944
+            case Proto::GameServerMarketEnter:
+            case Proto::GameServerMarketLeave:
+            case Proto::GameServerMarketBrowseItem:
+            case Proto::GameServerMarketAcceptOffer:
+            case Proto::GameServerMarketOwnOffers:
+            case Proto::GameServerMarketCancelOffer:
+            case Proto::GameServerMarketBrowseOwnHistory:
+            case Proto::GameServerMarketMarketDetail:
+                //TODO
                 break;
 #endif
             // additional opcode used by otclient only
@@ -284,7 +301,6 @@ void ProtocolGame::parseMessage(InputMessage& msg)
                 parseExtendedOpcode(msg);
                 break;
             // not handled yet
-            //case Proto::GameServerChallange:
             //case Proto::GameServerTrappers
             //case Proto::GameServerWait:
             default:
@@ -300,6 +316,7 @@ void ProtocolGame::parseMessage(InputMessage& msg)
 
 void ProtocolGame::parseInitGame(InputMessage& msg)
 {
+    m_gameInitialized = true;
     uint playerId = msg.getU32();
     int serverBeat = msg.getU16();
     bool canReportBugs = msg.getU8();
@@ -338,10 +355,17 @@ void ProtocolGame::parseLoginWait(InputMessage& msg)
     g_game.processLoginWait(message, time);
 }
 
-void ProtocolGame::parsePing(InputMessage&)
+void ProtocolGame::parsePing(InputMessage& msg)
 {
     g_game.processPing();
     sendPingResponse();
+}
+
+void ProtocolGame::parseChallange(InputMessage& msg)
+{
+    uint32 timestamp = msg.getU32();
+    uint8 random = msg.getU8();
+    sendLoginPacket(timestamp, random);
 }
 
 void ProtocolGame::parseDeath(InputMessage& msg)
@@ -474,7 +498,11 @@ void ProtocolGame::parseCreatureMove(InputMessage& msg)
 void ProtocolGame::parseOpenContainer(InputMessage& msg)
 {
     int containerId = msg.getU8();
-    int itemId = msg.getU16();
+#if PROTOCOL>=920
+    ItemPtr containerItem = internalGetItem(msg);
+#else
+    ItemPtr containerItem = Item::create(msg.getU16());
+#endif
     std::string name = msg.getString();
     int capacity = msg.getU8();
     bool hasParent = (msg.getU8() != 0);
@@ -484,7 +512,7 @@ void ProtocolGame::parseOpenContainer(InputMessage& msg)
     for(int i = 0; i < itemCount; i++)
         items[i] = internalGetItem(msg);
 
-    g_game.processOpenContainer(containerId, itemId, name, capacity, hasParent, items);
+    g_game.processOpenContainer(containerId, containerItem, name, capacity, hasParent, items);
 }
 
 void ProtocolGame::parseCloseContainer(InputMessage& msg)
@@ -778,6 +806,16 @@ void ProtocolGame::parseEditList(InputMessage& msg)
     const std::string& text = msg.getString();
 
     g_game.processEditList(id, doorId, text);
+}
+
+void ProtocolGame::parsePlayerInfo(InputMessage& msg)
+{
+    msg.getU8(); // is premium?
+    msg.getU8(); // profession
+    int numSpells = msg.getU16();
+    for(int i=0;i<numSpells;++i) {
+        msg.getU16(); // spell
+    }
 }
 
 void ProtocolGame::parsePlayerStats(InputMessage& msg)

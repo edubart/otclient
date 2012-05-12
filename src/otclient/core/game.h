@@ -64,7 +64,7 @@ protected:
     void processCreatureSpeak(const std::string& name, int level, Otc::SpeakType type, const std::string& message, int channelId, const Position& creaturePos);
 
     // container related
-    void processOpenContainer(int containerId, int itemId, const std::string& name, int capacity, bool hasParent, const std::vector<ItemPtr>& items);
+    void processOpenContainer(int containerId, const ItemPtr& containerItem, const std::string& name, int capacity, bool hasParent, const std::vector<ItemPtr>& items);
     void processCloseContainer(int containerId);
     void processContainerAddItem(int containerId, const ItemPtr& item);
     void processContainerUpdateItem(int containerId, int slot, const ItemPtr& item);

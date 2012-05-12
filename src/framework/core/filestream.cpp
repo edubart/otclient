@@ -223,6 +223,32 @@ uint64 FileStream::getU64()
     return v;
 }
 
+std::string FileStream::getString()
+{
+    std::string str;
+    int len = getU16();
+    if(len > 0 && len < 8192) {
+        char buffer[8192];
+        if(m_fileHandle) {
+            if(PHYSFS_read(m_fileHandle, buffer, 1, len) == 0)
+                logTraceError("operation failed on '", m_name, "': ", PHYSFS_getLastError());
+            else
+                str = std::string(buffer, len);
+        } else {
+            if(m_cacheReadPos+len > m_cacheBuffer.size()) {
+                logTraceError("operation failed on '", m_name, "': reached file eof");
+                return 0;
+            }
+
+            str = std::string((char*)&m_cacheBuffer[m_cacheReadPos], len);
+            m_cacheReadPos += len;
+        }
+    } else {
+        logTraceError("operation failed on '", m_name, "': ", PHYSFS_getLastError());
+    }
+    return str;
+}
+
 void FileStream::addU8(uint8 v)
 {
     if(PHYSFS_write(m_fileHandle, &v, 1, 1) != 1)
