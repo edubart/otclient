@@ -30,7 +30,8 @@
     PROTOCOL != 860 && \
     PROTOCOL != 861 && \
     PROTOCOL != 862 && \
-    PROTOCOL != 870
+    PROTOCOL != 870 && \
+    PROTOCOL != 910
 #error "the supplied protocol version is not supported"
 #endif
 
@@ -53,9 +54,10 @@ namespace Proto {
     constexpr int PicSignature = 0x4E119CBF;
 
     enum OsTypes {
-        OsWindows = 1,
-        OsLinux = 2,
-        OsMac = 3
+        OsLinux = 1,
+        OsWindows = 2,
+        OsFlash = 3,
+        OsMac = 4
     };
 
 #ifdef OSTYPE
@@ -82,169 +84,196 @@ namespace Proto {
     };
 
     enum GameServerOpts {
-        GameServerInitGame = 10,
-        GameServerGMActions = 11,
-        GameServerLoginError = 20,
-        GameServerLoginAdvice = 21,
-        GameServerLoginWait = 22,
-        GameServerPing = 30,
-        GameServerChallange = 31,
-        GameServerDeath = 40,
-        GameServerFullMap = 100,
-        GameServerMapTopRow = 101,
-        GameServerMapRightRow = 102,
-        GameServerMapBottomRow = 103,
-        GameServerMapLeftRow = 104,
-        GameServerUpdateTile = 105,
-        GameServerCreateOnMap = 106,
-        GameServerChangeOnMap = 107,
-        GameServerDeleteOnMap = 108,
-        GameServerMoveCreature = 109,
-        GameServerOpenContainer = 110,
-        GameServerCloseContainer = 111,
-        GameServerCreateContainer = 112,
-        GameServerChangeInContainer = 113,
-        GameServerDeleteInContainer = 114,
-        GameServerSetInventory = 120,
-        GameServerDeleteInventory = 121,
-        GameServerOpenNpcTrade = 122,
-        GameServerPlayerGoods = 123,
-        GameServerCloseNpcTrade = 124,
-        GameServerOwnTrade = 125,
-        GameServerCounterTrade = 126,
-        GameServerCloseTrade = 127,
-        GameServerAmbient = 130,
-        GameServerGraphicalEffect = 131,
-        GameServerTextEffect = 132,
-        GameServerMissleEffect = 133,
-        GameServerMarkCreature = 134,
-        GameServerTrappers = 135,
-        GameServerCreatureHealth = 140,
-        GameServerCreatureLight = 141,
-        GameServerCreatureOutfit = 142,
-        GameServerCreatureSpeed = 143,
-        GameServerCreatureSkull = 144,
-        GameServerCreatureParty = 145,
-        GameServerCreatureUnpass = 146,
-        GameServerEditText = 150,
-        GameServerEditList = 151,
-        GameServerPlayerData = 160,
-        GameServerPlayerSkills = 161,
-        GameServerPlayerState = 162,
-        GameServerClearTarget = 163,
-        GameServerSpellDelay = 164,
-        GameServerSpellGroupDelay = 165,
-        GameServerTalk = 170,
-        GameServerChannels = 171,
-        GameServerOpenChannel = 172,
-        GameServerOpenPrivateChannel = 173,
-        GameServerRuleViolationChannel = 174,
-        GameServerRuleViolationRemove = 175,
-        GameServerRuleViolationCancel = 176,
-        GameServerRuleViolationLock = 177,
-        GameServerOpenOwnChannel = 178,
-        GameServerCloseChannel = 179,
-        GameServerTextMessage = 180,
-        GameServerCancelWalk = 181,
-        GameServerWait = 182,
-        GameServerFloorChangeUp = 190,
-        GameServerFloorChangeDown = 191,
-        GameServerChooseOutfit = 200,
-        GameServerVipAdd = 210,
-        GameServerVipLogin = 211,
-        GameServerVipLogout = 212,
-        GameServerTutorialHint = 220,
-        GameServerAutomapFlag = 221,
-        GameServerQuestLog = 240,
-        GameServerQuestLine = 241,
-        GameServerChannelEvent = 243,
-        GameServerObjectInfo = 244,
-        GameServerPlayerInventory = 245,
-        GameServerExtendedOpcode = 254 // otclient only
+        GameServerInitGame                  = 10,
+        GameServerGMActions                 = 11,
+        GameServerLoginError                = 20,
+        GameServerLoginAdvice               = 21,
+        GameServerLoginWait                 = 22,
+        GameServerPing                      = 30,
+        GameServerChallange                 = 31,
+        GameServerDeath                     = 40,
+        GameServerFullMap                   = 100,
+        GameServerMapTopRow                 = 101,
+        GameServerMapRightRow               = 102,
+        GameServerMapBottomRow              = 103,
+        GameServerMapLeftRow                = 104,
+        GameServerUpdateTile                = 105,
+        GameServerCreateOnMap               = 106,
+        GameServerChangeOnMap               = 107,
+        GameServerDeleteOnMap               = 108,
+        GameServerMoveCreature              = 109,
+        GameServerOpenContainer             = 110,
+        GameServerCloseContainer            = 111,
+        GameServerCreateContainer           = 112,
+        GameServerChangeInContainer         = 113,
+        GameServerDeleteInContainer         = 114,
+        GameServerSetInventory              = 120,
+        GameServerDeleteInventory           = 121,
+        GameServerOpenNpcTrade              = 122,
+        GameServerPlayerGoods               = 123,
+        GameServerCloseNpcTrade             = 124,
+        GameServerOwnTrade                  = 125,
+        GameServerCounterTrade              = 126,
+        GameServerCloseTrade                = 127,
+        GameServerAmbient                   = 130,
+        GameServerGraphicalEffect           = 131,
+        GameServerTextEffect                = 132,
+        GameServerMissleEffect              = 133,
+        GameServerMarkCreature              = 134,
+        GameServerTrappers                  = 135,
+        GameServerCreatureHealth            = 140,
+        GameServerCreatureLight             = 141,
+        GameServerCreatureOutfit            = 142,
+        GameServerCreatureSpeed             = 143,
+        GameServerCreatureSkull             = 144,
+        GameServerCreatureParty             = 145,
+        GameServerCreatureUnpass            = 146,
+        GameServerEditText                  = 150,
+        GameServerEditList                  = 151,
+        GameServerPlayerData                = 160,
+        GameServerPlayerSkills              = 161,
+        GameServerPlayerState               = 162,
+        GameServerClearTarget               = 163,
+        GameServerSpellDelay                = 164, // 870
+        GameServerSpellGroupDelay           = 165, // 870
+        GameServerTalk                      = 170,
+        GameServerChannels                  = 171,
+        GameServerOpenChannel               = 172,
+        GameServerOpenPrivateChannel        = 173,
+        GameServerRuleViolationChannel      = 174,
+        GameServerRuleViolationRemove       = 175,
+        GameServerRuleViolationCancel       = 176,
+        GameServerRuleViolationLock         = 177,
+        GameServerOpenOwnChannel            = 178,
+        GameServerCloseChannel              = 179,
+        GameServerTextMessage               = 180,
+        GameServerCancelWalk                = 181,
+        GameServerWait                      = 182,
+        GameServerFloorChangeUp             = 190,
+        GameServerFloorChangeDown           = 191,
+        GameServerChooseOutfit              = 200,
+        GameServerVipAdd                    = 210,
+        GameServerVipLogin                  = 211,
+        GameServerVipLogout                 = 212,
+        GameServerTutorialHint              = 220,
+        GameServerAutomapFlag               = 221,
+        GameServerQuestLog                  = 240,
+        GameServerQuestLine                 = 241,
+        GameServerChannelEvent              = 243,
+        GameServerObjectInfo                = 244, // 910
+        GameServerPlayerInventory           = 245, // 910
+        GameServerExtendedOpcode            = 254  // otclient only
     };
 
     enum ClientOpts {
-        ClientEnterAccount = 1,
-        ClientEnterGame = 10,
-        ClientLeaveGame = 20,
-        ClientPingResponse = 30,
-        ClientAutoWalk = 100,
-        ClientWalkNorth = 101,
-        ClientWalkEast = 102,
-        ClientWalkSouth = 103,
-        ClientWalkWest = 104,
-        ClientStop = 105,
-        ClientWalkNorthEast = 106,
-        ClientWalkSouthEast = 107,
-        ClientWalkSouthWest = 108,
-        ClientWalkNorthWest = 109,
-        ClientTurnNorth = 111,
-        ClientTurnEast = 112,
-        ClientTurnSouth = 113,
-        ClientTurnWest = 114,
-        //ClientEquipObject = 119,
-        ClientMove = 120,
-        ClientInspectNpcTrade = 121,
-        ClientBuyItem = 122,
-        ClientSellItem = 123,
-        ClientCloseNpcTrade = 124,
-        ClientRequestTrade = 125,
-        ClientInspectTrade = 126,
-        ClientAcceptTrade = 127,
-        ClientRejectTrade = 128,
-        ClientUseItem = 130,
-        ClientUseItemWith = 131,
-        ClientUseOnCreature = 132,
-        ClientRotateItem = 133,
-        ClientCloseContainer = 135,
-        ClientUpContainer = 136,
-        ClientEditText = 137,
-        ClientEditList = 138,
-        ClientLook = 140,
-        ClientTalk = 150,
-        ClientRequestChannels = 151,
-        ClientJoinChannel = 152,
-        ClientLeaveChannel = 153,
-        ClientOpenPrivateChannel = 154,
-        ClientCloseNpcChannel = 158,
-        ClientChangeFightModes = 160,
-        ClientAttack = 161,
-        ClientFollow = 162,
-        ClientInviteToParty = 163,
-        ClientJoinParty = 164,
-        ClientRevokeInvitation = 165,
-        ClientPassLeadership = 166,
-        ClientLeaveParty = 167,
-        ClientShareExperience = 168,
-        ClientDisbandParty = 169,
-        ClientOpenOwnChannel = 170,
-        ClientInviteToOwnChannel = 171,
-        ClientExcludeFromOwnChannel = 172,
-        ClientCancelAttackAndFollow = 190,
-        ClientRefreshContainer = 202,
-        ClientRequestOutfit = 210,
-        ClientChangeOutfit = 211,
-        ClientMount = 212, // 870
-        ClientAddVip = 220,
-        ClientRemoveVip = 221,
-        ClientBugReport = 230,
-        ClientRuleViolation= 231,
-        ClientDebugReport = 232,
-        ClientRequestQuestLog = 240,
-        ClientRequestQuestLine = 241,
-        //ClientRuleViolationReport = 242,
-        //ClientGetObjectInfo = 243
-        ClientExtendedOpcode = 254 // otclient only
+        ClientEnterAccount                  = 1,
+        ClientEnterGame                     = 10,
+        ClientLeaveGame                     = 20,
+        ClientPingResponse                  = 30,
+        ClientAutoWalk                      = 100,
+        ClientWalkNorth                     = 101,
+        ClientWalkEast                      = 102,
+        ClientWalkSouth                     = 103,
+        ClientWalkWest                      = 104,
+        ClientStop                          = 105,
+        ClientWalkNorthEast                 = 106,
+        ClientWalkSouthEast                 = 107,
+        ClientWalkSouthWest                 = 108,
+        ClientWalkNorthWest                 = 109,
+        ClientTurnNorth                     = 111,
+        ClientTurnEast                      = 112,
+        ClientTurnSouth                     = 113,
+        ClientTurnWest                      = 114,
+        ClientEquipObject                   = 119, // 910
+        ClientMove                          = 120,
+        ClientInspectNpcTrade               = 121,
+        ClientBuyItem                       = 122,
+        ClientSellItem                      = 123,
+        ClientCloseNpcTrade                 = 124,
+        ClientRequestTrade                  = 125,
+        ClientInspectTrade                  = 126,
+        ClientAcceptTrade                   = 127,
+        ClientRejectTrade                   = 128,
+        ClientUseItem                       = 130,
+        ClientUseItemWith                   = 131,
+        ClientUseOnCreature                 = 132,
+        ClientRotateItem                    = 133,
+        ClientCloseContainer                = 135,
+        ClientUpContainer                   = 136,
+        ClientEditText                      = 137,
+        ClientEditList                      = 138,
+        ClientLook                          = 140,
+        ClientTalk                          = 150,
+        ClientRequestChannels               = 151,
+        ClientJoinChannel                   = 152,
+        ClientLeaveChannel                  = 153,
+        ClientOpenPrivateChannel            = 154,
+        ClientCloseNpcChannel               = 158,
+        ClientChangeFightModes              = 160,
+        ClientAttack                        = 161,
+        ClientFollow                        = 162,
+        ClientInviteToParty                 = 163,
+        ClientJoinParty                     = 164,
+        ClientRevokeInvitation              = 165,
+        ClientPassLeadership                = 166,
+        ClientLeaveParty                    = 167,
+        ClientShareExperience               = 168,
+        ClientDisbandParty                  = 169,
+        ClientOpenOwnChannel                = 170,
+        ClientInviteToOwnChannel            = 171,
+        ClientExcludeFromOwnChannel         = 172,
+        ClientCancelAttackAndFollow         = 190,
+        ClientRefreshContainer              = 202,
+        ClientRequestOutfit                 = 210,
+        ClientChangeOutfit                  = 211,
+        ClientMount                         = 212, // 870
+        ClientAddVip                        = 220,
+        ClientRemoveVip                     = 221,
+        ClientBugReport                     = 230,
+        ClientRuleViolation                 = 231,
+        ClientDebugReport                   = 232,
+        ClientRequestQuestLog               = 240,
+        ClientRequestQuestLine              = 241,
+        ClientRuleViolationReport           = 242, // 910
+        ClientGetObjectInfo                 = 243, // 910
+        ClientExtendedOpcode                = 254  // otclient only
     };
 
     enum ServerSpeakType {
-#if PROTOCOL>=861
+#if PROTOCOL>=910
+        ServerSpeakSay = 1,
+        ServerSpeakWhisper,
+        ServerSpeakYell,
+        ServerSpeakPrivateFrom,         // new
+        ServerSpeakPrivateTo,           // new
+        ServerSpeakChannelManagement,   // new
+        ServerSpeakChannelYellow,
+        ServerSpeakChannelOrange,
+        ServerSpeakSpell,               // new
+        ServerSpeakPrivatePlayerToNpc,
+        ServerSpeakPrivateNpcToPlayer,
+        ServerSpeakBroadcast,
+        ServerSpeakChannelRed,
+        ServerSpeakPrivateRedFrom,      // new
+        ServerSpeakPrivateRedTo,        // new
+        // 16 - 33 ??
+        ServerSpeakMonsterSay = 34,
+        ServerSpeakMonsterYell,
+
+        // unsupported
+        ServerSpeakRVRChannel = 255,
+        ServerSpeakRVRAnswer,
+        ServerSpeakRVRContinue,
+        ServerSpeakChannelRed2,
+        ServerSpeakChannelWhite
+#elif PROTOCOL>=861
         ServerSpeakSay = 1,
         ServerSpeakWhisper,
         ServerSpeakYell,
         ServerSpeakPrivatePlayerToNpc,
         ServerSpeakPrivateNpcToPlayer,
-        ServerSpeakPrivate,
+        ServerSpeakPrivateTo,
+        ServerSpeakPrivateFrom = ServerSpeakPrivateTo,
         ServerSpeakChannelYellow,
         ServerSpeakChannelWhite,
         ServerSpeakBroadcast,
@@ -265,7 +294,8 @@ namespace Proto {
         ServerSpeakYell,
         ServerSpeakPrivatePlayerToNpc,
         ServerSpeakPrivateNpcToPlayer,
-        ServerSpeakPrivate,
+        ServerSpeakPrivateTo,
+        ServerSpeakPrivateFrom = ServerSpeakPrivateTo,
         ServerSpeakChannelYellow,
         ServerSpeakChannelWhite,
         ServerSpeakRVRChannel,
@@ -273,7 +303,8 @@ namespace Proto {
         ServerSpeakRVRContinue,
         ServerSpeakBroadcast,
         ServerSpeakChannelRed,
-        ServerSpeakPrivateRed,
+        ServerSpeakPrivateRedTo,
+        ServerSpeakPrivateRedFrom = ServerSpeakPrivateRedTo,
         ServerSpeakChannelOrange,
         // 16 ??
         ServerSpeakChannelRed2 = 17,
@@ -284,14 +315,16 @@ namespace Proto {
         ServerSpeakSay = 1,
         ServerSpeakWhisper,
         ServerSpeakYell,
-        ServerSpeakPrivate,
+        ServerSpeakPrivateTo,
+        ServerSpeakPrivateFrom = ServerSpeakPrivateTo,
         ServerSpeakChannelYellow,
         ServerSpeakRVRChannel,
         ServerSpeakRVRAnswer,
         ServerSpeakRVRContinue,
         ServerSpeakBroadcast,
         ServerSpeakChannelRed,
-        ServerSpeakPrivateRed,
+        ServerSpeakPrivateRedTo,
+        ServerSpeakPrivateRedFrom = ServerSpeakPrivateRedTo,
         ServerSpeakChannelOrange,
         // 13 ??
         ServerSpeakChannelRed2 = 14,
@@ -307,7 +340,39 @@ namespace Proto {
     };
 
     enum MessageTypes {
-#if PROTOCOL>=861
+#if PROTOCOL>=910
+        // 1-3 ??
+        MessageConsoleBlue = 4,         // old
+        // 5-11 ??
+        MessageConsoleRed = 12,         // old
+        // 13-15 ??
+        MessageStatusDefault = 16,      // old
+        MessageWarning,                 // old
+        MessageEventAdvance,            // old
+        MessageStatusSmall,             // old
+        MessageInfoDescription,         // old
+        MessageDamageDealt,             // new
+        MessageDamageReceived,          // new
+        MessageHealed,                  // new
+        MessageExperience,              // new
+        MessageDamageOthers,            // new
+        MessageHealedOthers,            // new
+        MessageExperienceOthers,        // new
+        MessageEventDefault,            // old
+        MessageLoot,                    // new
+        MessageTradeNpc,                // unused
+        MessageChannelGuild,            // new
+        MessagePartyManagment,          // unused
+        MessageParty,                   // unused
+        MessageEventOrange,             // old
+        MessageConsoleOrange,           // old
+        MessageReport,                  // unused
+        MessageHotkeyUse,               // unused
+        MessageTutorialHint,            // unused
+
+        // unsupported
+        MessageConsoleOrange2 = 255
+#elif PROTOCOL>=861
         MessageConsoleOrange = 13,
         MessageConsoleOrange2,
         MessageWarning,
@@ -345,6 +410,12 @@ namespace Proto {
 #endif
     };
 
+    enum CreatureType {
+        CreatureTypePlayer = 0,
+        CreatureTypeMonster,
+        CreatureTypeNpc
+    };
+
     enum CreaturesIdRange {
         PlayerStartId = 0x10000000,
         PlayerEndId = 0x40000000,
@@ -367,10 +438,10 @@ namespace Proto {
             case Proto::ServerSpeakChannelRed: return Otc::SpeakChannelRed;
             case Proto::ServerSpeakChannelRed2: return Otc::SpeakChannelRed;
             case Proto::ServerSpeakChannelOrange: return Otc::SpeakChannelOrange;
-            case Proto::ServerSpeakPrivate: return Otc::SpeakPrivate;
+            case Proto::ServerSpeakPrivateTo: return Otc::SpeakPrivate;
             case Proto::ServerSpeakPrivatePlayerToNpc: return Otc::SpeakPrivate;
             case Proto::ServerSpeakBroadcast: return Otc::SpeakBroadcast;
-            case Proto::ServerSpeakPrivateRed: return Otc::SpeakPrivateRed;
+            case Proto::ServerSpeakPrivateRedTo: return Otc::SpeakPrivateRed;
             default:
                 logError("unknown protocol speak type ", type);
                 return Otc::SpeakSay;
@@ -383,8 +454,8 @@ namespace Proto {
             case Otc::SpeakWhisper: return Proto::ServerSpeakWhisper;
             case Otc::SpeakYell: return Proto::ServerSpeakYell;
             case Otc::SpeakBroadcast: return Proto::ServerSpeakBroadcast;
-            case Otc::SpeakPrivate: return Proto::ServerSpeakPrivate;
-            case Otc::SpeakPrivateRed: return Proto::ServerSpeakPrivateRed;
+            case Otc::SpeakPrivate: return Proto::ServerSpeakPrivateFrom;
+            case Otc::SpeakPrivateRed: return Proto::ServerSpeakPrivateRedFrom;
             case Otc::SpeakPrivatePlayerToNpc: return Proto::ServerSpeakPrivatePlayerToNpc;
             case Otc::SpeakPrivateNpcToPlayer: return Proto::ServerSpeakPrivateNpcToPlayer;
             case Otc::SpeakChannelYellow: return Proto::ServerSpeakChannelYellow;

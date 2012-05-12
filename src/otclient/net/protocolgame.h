@@ -181,6 +181,9 @@ private:
     void parseAutomapFlag(InputMessage& msg);
     void parseQuestLog(InputMessage& msg);
     void parseQuestLine(InputMessage& msg);
+    void parseChannelEvent(InputMessage& msg);
+    void parseObjectInfo(InputMessage& msg);
+    void parsePlayerInventory(InputMessage& msg);
     void parseExtendedOpcode(InputMessage& msg);
 
     void setMapDescription(InputMessage& msg, int x, int y, int z, int width, int height);

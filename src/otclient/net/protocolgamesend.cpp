@@ -406,8 +406,8 @@ void ProtocolGame::sendTalk(Otc::SpeakType speakType, int channelId, const std::
     msg.addU8(serverSpeakType);
 
     switch(serverSpeakType) {
-    case Proto::ServerSpeakPrivate:
-    case Proto::ServerSpeakPrivateRed:
+    case Proto::ServerSpeakPrivateFrom:
+    case Proto::ServerSpeakPrivateRedFrom:
         msg.addString(receiver);
         break;
     case Proto::ServerSpeakChannelYellow:
@@ -530,7 +530,9 @@ void ProtocolGame::sendShareExperience(bool active, int unknown)
     OutputMessage msg;
     msg.addU8(Proto::ClientShareExperience);
     msg.addU8(active ? 0x01 : 0x00);
+#if PROTOCOL<910
     msg.addU8(unknown);
+#endif
     send(msg);
 }
 

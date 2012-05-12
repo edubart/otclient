@@ -41,6 +41,7 @@ void ProtocolGame::parseMessage(InputMessage& msg)
     try {
         while(!msg.eof()) {
             opcode = msg.getU8();
+            //dump << opcode;
 
             if(m_firstPacket) {
                 if(opcode != Proto::GameServerInitGame)
@@ -67,7 +68,6 @@ void ProtocolGame::parseMessage(InputMessage& msg)
             case Proto::GameServerPing:
                 parsePing(msg);
                 break;
-            //case Proto::GameServerChallange:
             case Proto::GameServerDeath:
                 parseDeath(msg);
                 break;
@@ -155,7 +155,6 @@ void ProtocolGame::parseMessage(InputMessage& msg)
             case Proto::GameServerMarkCreature:
                 parseCreatureMark(msg);
                 break;
-            //case Proto::GameServerTrappers
             case Proto::GameServerCreatureHealth:
                 parseCreatureHealth(msg);
                 break;
@@ -195,14 +194,6 @@ void ProtocolGame::parseMessage(InputMessage& msg)
             case Proto::GameServerClearTarget:
                 parsePlayerCancelAttack(msg);
                 break;
-#if PROTOCOL>=870
-            case Proto::GameServerSpellDelay:
-                parseSpellDelay(msg);
-                break;
-            case Proto::GameServerSpellGroupDelay:
-                parseSpellGroupDelay(msg);
-                break;
-#endif
             case Proto::GameServerTalk:
                 parseCreatureSpeak(msg);
                 break;
@@ -239,7 +230,6 @@ void ProtocolGame::parseMessage(InputMessage& msg)
             case Proto::GameServerCancelWalk:
                 parseCancelWalk(msg);
                 break;
-            //case Proto::GameServerWait:
             case Proto::GameServerFloorChangeUp:
                 parseFloorChangeUp(msg);
                 break;
@@ -270,12 +260,33 @@ void ProtocolGame::parseMessage(InputMessage& msg)
             case Proto::GameServerQuestLine:
                 parseQuestLine(msg);
                 break;
-            //case Proto::GameServerChannelEvent:
-            //case Proto::GameServerObjectInfo:
-            //case Proto::GameServerPlayerInventory:
-            case Proto::GameServerExtendedOpcode: // additional opcode used by otclient
+#if PROTOCOL>=870
+            case Proto::GameServerSpellDelay: // 870 only
+                parseSpellDelay(msg);
+                break;
+            case Proto::GameServerSpellGroupDelay: // 870 only
+                parseSpellGroupDelay(msg);
+                break;
+#endif
+#if PROTOCOL>=910
+            case Proto::GameServerChannelEvent:  // 910 only
+                parseChannelEvent(msg);
+                break;
+            case Proto::GameServerObjectInfo:  // 910 only
+                parseObjectInfo(msg);
+                break;
+            case Proto::GameServerPlayerInventory: // 910 only
+                parsePlayerInventory(msg);
+                break;
+#endif
+            // additional opcode used by otclient only
+            case Proto::GameServerExtendedOpcode:
                 parseExtendedOpcode(msg);
                 break;
+            // not handled yet
+            //case Proto::GameServerChallange:
+            //case Proto::GameServerTrappers
+            //case Proto::GameServerWait:
             default:
                 Fw::throwException("unknown opcode");
                 break;
@@ -520,6 +531,12 @@ void ProtocolGame::parseRemoveInventoryItem(InputMessage& msg)
 void ProtocolGame::parseOpenNpcTrade(InputMessage& msg)
 {
     std::vector<std::tuple<ItemPtr, std::string, int, int, int>> items;
+    std::string npcName;
+
+#if PROTOCOL>=910
+    npcName = msg.getString();
+#endif
+
     int listCount = msg.getU8();
     for(int i = 0; i < listCount; ++i) {
         uint16 itemId = msg.getU16();
@@ -600,12 +617,7 @@ void ProtocolGame::parseWorldLight(InputMessage& msg)
 void ProtocolGame::parseMagicEffect(InputMessage& msg)
 {
     Position pos = parsePosition(msg);
-#if PROTOCOL>=854
-    // newer tibia decreased the max effects number, why???
     int effectId = msg.getU8();
-#else
-    int effectId = msg.getU16();
-#endif
 
     EffectPtr effect = EffectPtr(new Effect());
     effect->setId(effectId);
@@ -777,6 +789,9 @@ void ProtocolGame::parsePlayerStats(InputMessage& msg)
 #else
     double freeCapacity = msg.getU16() / 100.0;
 #endif
+#if PROTOCOL>=910
+    msg.getU32(); // total capacity
+#endif
 #if PROTOCOL>=870
     double experience = msg.getU64();
 #else
@@ -787,6 +802,9 @@ void ProtocolGame::parsePlayerStats(InputMessage& msg)
     double mana = msg.getU16();
     double maxMana = msg.getU16();
     double magicLevel = msg.getU8();
+#if PROTOCOL>=910
+    msg.getU8(); // base magic level
+#endif
     double magicLevelPercent = msg.getU8();
     double soul = msg.getU8();
     double stamina = msg.getU16();
@@ -799,17 +817,22 @@ void ProtocolGame::parsePlayerStats(InputMessage& msg)
     m_localPlayer->setMagicLevel(magicLevel, magicLevelPercent);
     m_localPlayer->setStamina(stamina);
     m_localPlayer->setSoul(soul);
+
+#if PROTOCOL>=910
+    int speed = msg.getU16();
+    msg.getU16(); // regeneration time
+
+    m_localPlayer->setSpeed(speed);
+#endif
 }
 
 void ProtocolGame::parsePlayerSkills(InputMessage& msg)
 {
-    if(!m_localPlayer) {
-        logTraceError("there is no local player");
-        return;
-    }
-
     for(int skill = 0; skill < Otc::LastSkill; skill++) {
         int level = msg.getU8();
+#if PROTOCOL>=910
+        msg.getU8(); // base
+#endif
         int levelPercent = msg.getU8();
 
         m_localPlayer->setSkill((Otc::Skill)skill, level, levelPercent);
@@ -818,13 +841,8 @@ void ProtocolGame::parsePlayerSkills(InputMessage& msg)
 
 void ProtocolGame::parsePlayerState(InputMessage& msg)
 {
-    if(!m_localPlayer) {
-        logTraceError("there is no local player");
-        return;
-    }
-
     int states = msg.getU16();
-    m_localPlayer->setStates((Otc::PlayerStates)states);
+    m_localPlayer->setStates(states);
 }
 
 void ProtocolGame::parsePlayerCancelAttack(InputMessage& msg)
@@ -852,7 +870,7 @@ void ProtocolGame::parseSpellGroupDelay(InputMessage& msg)
 
 void ProtocolGame::parseCreatureSpeak(InputMessage& msg)
 {
-    msg.getU32(); // unknown
+    msg.getU32(); // channel statement guid
 
     std::string name = msg.getString();
     int level = msg.getU16();
@@ -876,16 +894,18 @@ void ProtocolGame::parseCreatureSpeak(InputMessage& msg)
         case Proto::ServerSpeakChannelOrange:
             channelId = msg.getU16();
             break;
-        case Proto::ServerSpeakPrivate:
+        case Proto::ServerSpeakPrivateFrom:
         case Proto::ServerSpeakPrivatePlayerToNpc:
         case Proto::ServerSpeakBroadcast:
-        case Proto::ServerSpeakPrivateRed:
+        case Proto::ServerSpeakPrivateRedFrom:
             break;
         case Proto::ServerSpeakRVRChannel:
             msg.getU32();
             break;
+        //case Proto::ServerSpeakChannelManagement:
+        //case Proto::ServerSpeakSpell:
         default:
-            logTraceError("unknown speak type ", speakType);
+            Fw::throwException("unknown speak type ", speakType);
             break;
     }
 
@@ -1106,6 +1126,23 @@ void ProtocolGame::parseQuestLine(InputMessage& msg)
     g_game.processQuestLine(questId, questMissions);
 }
 
+void ProtocolGame::parseChannelEvent(InputMessage& msg)
+{
+    msg.getU16(); // channel id
+    msg.getString(); // player name
+    msg.getU8(); // event type
+}
+
+void ProtocolGame::parseObjectInfo(InputMessage& msg)
+{
+    //TODO
+}
+
+void ProtocolGame::parsePlayerInventory(InputMessage& msg)
+{
+    //TODO
+}
+
 void ProtocolGame::parseExtendedOpcode(InputMessage& msg)
 {
     int opcode = msg.getU8();
@@ -1162,11 +1199,16 @@ void ProtocolGame::setFloorDescription(InputMessage& msg, int32 x, int32 y, int3
 
 void ProtocolGame::setTileDescription(InputMessage& msg, Position position)
 {
+#if PROTOCOL>=910
+    msg.getU16(); // environment effect
+#endif
+
     int stackPos = 0;
     while(true) {
         int inspectItemId = msg.getU16(true);
-        if(inspectItemId >= 0xFF00)
+        if(inspectItemId >= 0xFF00) {
             return;
+        }
         else {
             if(stackPos >= 10)
                 logTraceError("too many things, stackpos=", stackPos, " pos=", position);
@@ -1222,9 +1264,8 @@ ThingPtr ProtocolGame::internalGetThing(InputMessage& msg)
     ThingPtr thing;
 
     int thingId = msg.getU16();
-    if(thingId == 0) {
-        Fw::throwException("[ProtocolGame::internalGetThing] thingId == 0");
-    }
+    if(thingId == 0)
+        Fw::throwException("thingId == 0");
 
     if(thingId == 0x0061 || thingId == 0x0062) { // add new creature
         CreaturePtr creature;
@@ -1240,6 +1281,18 @@ ThingPtr ProtocolGame::internalGetThing(InputMessage& msg)
         } else if(thingId == 0x0061) { //creature is not known
             uint removeId = msg.getU32();
             uint id = msg.getU32();
+
+            int creatureType;
+#if PROTOCOL>=910
+            creatureType = msg.getU8();
+#else
+            if(id >= Proto::PlayerStartId && id < Proto::PlayerEndId)
+                creatureType = Proto::CreatureTypePlayer;
+            else if(id >= Proto::MonsterStartId && id < Proto::MonsterEndId)
+                creatureType = Proto::CreatureTypeMonster;
+            else
+                creatureType = Proto::CreatureTypeNpc;
+#endif
             std::string name = msg.getString();
 
             if(name.length() > 0) // every creature name must start with a capital letter
@@ -1249,14 +1302,14 @@ ThingPtr ProtocolGame::internalGetThing(InputMessage& msg)
 
             if(id == m_localPlayer->getId())
                 creature = m_localPlayer;
-            else if(id >= Proto::PlayerStartId && id < Proto::PlayerEndId)
+            else if(creatureType == Proto::CreatureTypePlayer)
                 creature = PlayerPtr(new Player);
-            else if(id >= Proto::MonsterStartId && id < Proto::MonsterEndId)
+            else if(creatureType == Proto::CreatureTypeMonster)
                 creature = MonsterPtr(new Monster);
-            else if(id >= Proto::NpcStartId && id < Proto::NpcEndId)
+            else if(creatureType == Proto::CreatureTypeNpc)
                 creature = NpcPtr(new Npc);
             else
-                logTraceError("creature id is invalid");
+                logTraceError("creature type is invalid");
 
             if(creature) {
                 creature->setId(id);
@@ -1321,8 +1374,19 @@ ItemPtr ProtocolGame::internalGetItem(InputMessage& msg, int id)
         id = msg.getU16();
 
     ItemPtr item = Item::create(id);
+    if(item->getId() == 0)
+        Fw::throwException("unable to create item with invalid id");
+
     if(item->isStackable() || item->isFluidContainer() || item->isFluid())
         item->setCountOrSubType(msg.getU8());
+
+#if PROTOCOL>=910
+    if(item->getAnimationPhases() > 1) {
+        // 0xfe => random phase
+        // 0xff => async?
+        msg.getU8();
+    }
+#endif
 
     return item;
 }

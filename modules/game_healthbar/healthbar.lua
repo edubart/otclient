@@ -17,6 +17,8 @@ Icons[2048] = { tooltip = tr('You are cursed'), path = '/game_healthbar/icons/cu
 Icons[4096] = { tooltip = tr('You are strengthened'), path = '/game_healthbar/icons/strengthened.png', id = 'condition_strengthened' }
 Icons[8192] = { tooltip = tr('You may not logout or enter a protection zone'), path = '/game_healthbar/icons/protection_zone_block.png', id = 'condition_protection_zone_block' }
 Icons[16384] = { tooltip = tr('You are within a protection zone'), path = '/game_healthbar/icons/protection_zone.png', id = 'condition_protection_zone' }
+Icons[32768] = { tooltip = tr('You are bleeding'), path = '/game_healthbar/icons/bleeding.png', id = 'condition_bleeding' }
+Icons[65536] = { tooltip = tr('You are hungry'), path = '/game_healthbar/icons/hungry.png', id = 'condition_hungry' }
 
 -- private variables
 local healthBarWindow
