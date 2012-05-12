@@ -162,7 +162,6 @@ private:
     void parseCreatureSkulls(InputMessage& msg);
     void parseCreatureShields(InputMessage& msg);
     void parseCreatureUnpass(InputMessage& msg);
-    void parseCreatureTurn(InputMessage& msg);
     void parseEditText(InputMessage& msg);
     void parseEditList(InputMessage& msg);
     void parsePlayerInfo(InputMessage& msg);
@@ -209,6 +208,7 @@ private:
     void setTileDescription(InputMessage& msg, Position position);
 
     Outfit internalGetOutfit(InputMessage& msg);
+    CreaturePtr internalGetCreature(InputMessage& msg, int type = 0);
     ThingPtr internalGetThing(InputMessage& msg);
     ItemPtr internalGetItem(InputMessage& msg, int id = 0);
 

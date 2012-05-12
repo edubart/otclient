@@ -455,11 +455,8 @@ void ProtocolGame::parseTileTransformThing(InputMessage& msg)
     Position pos = parsePosition(msg);
     int stackPos = msg.getU8();
 
-    int thingId = msg.getU16();
-    if(thingId == 0x0061 || thingId == 0x0062 || thingId == 0x0063) {
-        parseCreatureTurn(msg);
-    } else {
-        ThingPtr thing = internalGetItem(msg, thingId);
+    ThingPtr thing = internalGetThing(msg);
+    if(thing) {
         if(!g_map.removeThingByPos(pos, stackPos))
             logTraceError("could not remove thing");
         g_map.addThing(thing, pos, stackPos);
@@ -502,11 +499,7 @@ void ProtocolGame::parseCreatureMove(InputMessage& msg)
 void ProtocolGame::parseOpenContainer(InputMessage& msg)
 {
     int containerId = msg.getU8();
-#if PROTOCOL>=920
     ItemPtr containerItem = internalGetItem(msg);
-#else
-    ItemPtr containerItem = Item::create(msg.getU16());
-#endif
     std::string name = msg.getString();
     int capacity = msg.getU8();
     bool hasParent = (msg.getU8() != 0);
@@ -796,18 +789,6 @@ void ProtocolGame::parseCreatureUnpass(InputMessage& msg)
         logTraceError("could not get creature");
 }
 
-void ProtocolGame::parseCreatureTurn(InputMessage& msg)
-{
-    uint id = msg.getU32();
-    Otc::Direction direction = (Otc::Direction)msg.getU8();
-
-    CreaturePtr creature = g_map.getCreatureById(id);
-    if(creature)
-        creature->turn(direction);
-    else
-        logTraceError("could not get creature");
-}
-
 void ProtocolGame::parseEditText(InputMessage& msg)
 {
     uint id = msg.getU32();
@@ -997,6 +978,15 @@ void ProtocolGame::parseOpenChannel(InputMessage& msg)
 {
     int channelId = msg.getU16();
     std::string name = msg.getString();
+
+#if PROTOCOL>=944
+    int joinedPlayers = msg.getU16();
+    for(int i=0;i<joinedPlayers;++i)
+        msg.getString(); // player name
+    int invitedPlayers = msg.getU16();
+    for(int i=0;i<invitedPlayers;++i)
+        msg.getString(); // player name
+#endif
 
     g_game.processOpenChannel(channelId, name);
 }
@@ -1285,8 +1275,7 @@ void ProtocolGame::setTileDescription(InputMessage& msg, Position position)
                 logTraceError("too many things, stackpos=", stackPos, " pos=", position);
 
             ThingPtr thing = internalGetThing(msg);
-            if(thing)
-                g_map.addThing(thing, position, -1);
+            g_map.addThing(thing, position, -1);
         }
         stackPos++;
     }
@@ -1304,9 +1293,6 @@ Outfit ProtocolGame::internalGetOutfit(InputMessage& msg)
         int legs = msg.getU8();
         int feet = msg.getU8();
         int addons = msg.getU8();
-#if PROTOCOL>=870
-        msg.getU16(); // mount
-#endif
 
         outfit.setId(lookType);
         outfit.setHead(head);
@@ -1327,6 +1313,10 @@ Outfit ProtocolGame::internalGetOutfit(InputMessage& msg)
         }
     }
 
+#if PROTOCOL>=870
+    msg.getU16(); // mount
+#endif
+
     return outfit;
 }
 
@@ -1334,23 +1324,36 @@ ThingPtr ProtocolGame::internalGetThing(InputMessage& msg)
 {
     ThingPtr thing;
 
-    int thingId = msg.getU16();
-    if(thingId == 0)
-        Fw::throwException("thingId == 0");
+    int id = msg.getU16();
 
-    if(thingId == 0x0061 || thingId == 0x0062) { // add new creature
-        CreaturePtr creature;
+    if(id == 0)
+        Fw::throwException("invalid thing id");
+    else if(id == Proto::UnknownCreature || id == Proto::OutdatedCreature || id == Proto::Creature)
+        thing = internalGetCreature(msg, id);
+    else // item
+        thing = internalGetItem(msg, id);
 
-        if(thingId == 0x0062) { //creature is known
+    return thing;
+}
+
+CreaturePtr ProtocolGame::internalGetCreature(InputMessage& msg, int type)
+{
+    if(type == 0)
+        type = msg.getU16();
+
+    CreaturePtr creature;
+    bool known = (type != Proto::UnknownCreature);
+
+    if(type == Proto::OutdatedCreature || type == Proto::UnknownCreature) {
+        if(known) {
             uint id = msg.getU32();
-
-            CreaturePtr knownCreature = g_map.getCreatureById(id);
-            if(knownCreature)
-                creature = knownCreature;
-            else
+            creature = g_map.getCreatureById(id);
+            if(!creature)
                 logTraceError("server said that a creature is known, but it's not");
-        } else if(thingId == 0x0061) { //creature is not known
+        } else {
             uint removeId = msg.getU32();
+            g_map.removeCreatureById(removeId);
+
             uint id = msg.getU32();
 
             int creatureType;
@@ -1364,12 +1367,12 @@ ThingPtr ProtocolGame::internalGetThing(InputMessage& msg)
             else
                 creatureType = Proto::CreatureTypeNpc;
 #endif
+
             std::string name = msg.getString();
 
-            if(name.length() > 0) // every creature name must start with a capital letter
+            // every creature name must start with a capital letter
+            if(name.length() > 0)
                 name[0] = toupper(name[0]);
-
-            g_map.removeCreatureById(removeId);
 
             if(id == m_localPlayer->getId())
                 creature = m_localPlayer;
@@ -1407,7 +1410,7 @@ ThingPtr ProtocolGame::internalGetThing(InputMessage& msg)
         bool passable = false;
 
 #if PROTOCOL>=854
-        if(thingId == 0x0061)
+        if(!known)
             emblem = msg.getU8();
 
         passable = (msg.getU8() == 0);
@@ -1428,15 +1431,23 @@ ThingPtr ProtocolGame::internalGetThing(InputMessage& msg)
             if(creature == m_localPlayer && !m_localPlayer->isKnown())
                 m_localPlayer->setKnown(true);
         }
+    } else if(type == Proto::Creature) {
+        uint id = msg.getU32();
+        Otc::Direction direction = (Otc::Direction)msg.getU8();
+#if PROTOCOL>=953
+        msg.getU8(); // passable
+#endif
 
-        thing = creature;
-    } else if(thingId == 0x0063) { // creature turn
-        parseCreatureTurn(msg);
-    } else { // item
-        thing = internalGetItem(msg, thingId);
+        creature = g_map.getCreatureById(id);
+        if(creature)
+            creature->turn(direction);
+        else
+            logTraceError("invalid creature");
+    } else {
+        Fw::throwException("invalid creature opcode");
     }
 
-    return thing;
+    return creature;
 }
 
 ItemPtr ProtocolGame::internalGetItem(InputMessage& msg, int id)

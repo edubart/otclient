@@ -81,6 +81,12 @@ namespace Proto {
         LoginServerCharacterList = 100
     };
 
+    enum CreatureOpcode {
+        UnknownCreature = 97,
+        OutdatedCreature = 98,
+        Creature = 99
+    };
+
     enum GameServerOpcodes {
         GameServerInitGame                  = 10,
         GameServerGMActions                 = 11,
