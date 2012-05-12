@@ -146,6 +146,8 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassStaticFunction("g_game", "editList", std::bind(&Game::editList, &g_game, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
     g_lua.bindClassStaticFunction("g_game", "requestQuestLog", std::bind(&Game::requestQuestLog, &g_game));
     g_lua.bindClassStaticFunction("g_game", "requestQuestLine", std::bind(&Game::requestQuestLine, &g_game, std::placeholders::_1));
+    g_lua.bindClassStaticFunction("g_game", "equipItem", std::bind(&Game::equipItem, &g_game, std::placeholders::_1));
+    g_lua.bindClassStaticFunction("g_game", "mount", std::bind(&Game::mount, &g_game, std::placeholders::_1));
     g_lua.bindClassStaticFunction("g_game", "canPerformGameAction", std::bind(&Game::canPerformGameAction, &g_game));
     g_lua.bindClassStaticFunction("g_game", "canReportBugs", std::bind(&Game::canReportBugs, &g_game));
     g_lua.bindClassStaticFunction("g_game", "checkBotProtection", std::bind(&Game::checkBotProtection, &g_game));

@@ -42,8 +42,8 @@ void ProtocolGame::parseMessage(InputMessage& msg)
         while(!msg.eof()) {
             opcode = msg.getU8();
 
-            if(!m_gameInitialized && opcode >= Proto::GameServerFullMap)
-                logWarning("first game network opcode is not GameServerInitGame");
+            if(!m_gameInitialized && opcode >= Proto::GameServerFirstGameOpcode)
+                logWarning("received a game opcode from the server, but the game is not initialized yet, this is a server side bug");
 
             switch(opcode) {
             case Proto::GameServerInitGame:
@@ -65,7 +65,7 @@ void ProtocolGame::parseMessage(InputMessage& msg)
                 parsePing(msg);
                 break;
             case Proto::GameServerPingBack:
-                // nothing todo
+                parsePingBack(msg);
                 break;
             case Proto::GameServerChallange:
                 parseChallange(msg);
@@ -157,6 +157,9 @@ void ProtocolGame::parseMessage(InputMessage& msg)
             case Proto::GameServerMarkCreature:
                 parseCreatureMark(msg);
                 break;
+            case Proto::GameServerTrappers:
+                parseTrappers(msg);
+                break;
             case Proto::GameServerCreatureHealth:
                 parseCreatureHealth(msg);
                 break;
@@ -232,6 +235,9 @@ void ProtocolGame::parseMessage(InputMessage& msg)
             case Proto::GameServerCancelWalk:
                 parseCancelWalk(msg);
                 break;
+            case Proto::GameServerWalkWait:
+                parseWalkWait(msg);
+                break;
             case Proto::GameServerFloorChangeUp:
                 parseFloorChangeUp(msg);
                 break;
@@ -262,47 +268,40 @@ void ProtocolGame::parseMessage(InputMessage& msg)
             case Proto::GameServerQuestLine:
                 parseQuestLine(msg);
                 break;
-#if PROTOCOL>=870
+            // PROTOCOL>=870
             case Proto::GameServerSpellDelay:
                 parseSpellDelay(msg);
                 break;
             case Proto::GameServerSpellGroupDelay:
                 parseSpellGroupDelay(msg);
                 break;
-#endif
-#if PROTOCOL>=910
+            case Proto::GameServerMultiUseDelay:
+                parseMultiUseDelay(msg);
+                break;
+            // PROTOCOL>=910
             case Proto::GameServerPlayerDataBasic:
                 parsePlayerInfo(msg);
                 break;
             case Proto::GameServerChannelEvent:
                 parseChannelEvent(msg);
                 break;
-            case Proto::GameServerObjectInfo:
-                parseObjectInfo(msg);
+            case Proto::GameServerItemInfo:
+                parseItemInfo(msg);
                 break;
             case Proto::GameServerPlayerInventory:
                 parsePlayerInventory(msg);
                 break;
-#endif
-#if PROTOCOL>=944
+            // PROTOCOL>=944
+            /*
             case Proto::GameServerMarketEnter:
             case Proto::GameServerMarketLeave:
-            case Proto::GameServerMarketBrowseItem:
-            case Proto::GameServerMarketAcceptOffer:
-            case Proto::GameServerMarketOwnOffers:
-            case Proto::GameServerMarketCancelOffer:
-            case Proto::GameServerMarketBrowseOwnHistory:
-            case Proto::GameServerMarketMarketDetail:
-                //TODO
-                break;
-#endif
-            // additional opcode used by otclient only
+            case Proto::GameServerMarketDetail:
+            case Proto::GameServerMarketBrowse:
+            */
+            // otclient ONLY
             case Proto::GameServerExtendedOpcode:
                 parseExtendedOpcode(msg);
                 break;
-            // not handled yet
-            //case Proto::GameServerTrappers
-            //case Proto::GameServerWait:
             default:
                 Fw::throwException("unknown opcode");
                 break;
@@ -358,7 +357,12 @@ void ProtocolGame::parseLoginWait(InputMessage& msg)
 void ProtocolGame::parsePing(InputMessage& msg)
 {
     g_game.processPing();
-    sendPingResponse();
+    sendPingBack();
+}
+
+void ProtocolGame::parsePingBack(InputMessage& msg)
+{
+    // nothing to do
 }
 
 void ProtocolGame::parseChallange(InputMessage& msg)
@@ -688,6 +692,23 @@ void ProtocolGame::parseCreatureMark(InputMessage& msg)
         logTraceError("could not get creature");
 }
 
+void ProtocolGame::parseTrappers(InputMessage& msg)
+{
+    int numTrappers = msg.getU8();
+
+    if(numTrappers > 8)
+        logTraceError("too many trappers");
+
+    for(int i=0;i<numTrappers;++i) {
+        uint id = msg.getU32();
+        CreaturePtr creature = g_map.getCreatureById(id);
+        if(creature) {
+            //TODO: set creature as trapper
+        } else
+            logTraceError("could not get creature");
+    }
+}
+
 void ProtocolGame::parseCreatureHealth(InputMessage& msg)
 {
     uint id = msg.getU32();
@@ -814,7 +835,7 @@ void ProtocolGame::parsePlayerInfo(InputMessage& msg)
     msg.getU8(); // profession
     int numSpells = msg.getU16();
     for(int i=0;i<numSpells;++i) {
-        msg.getU16(); // spell
+        msg.getU16(); // spell id
     }
 }
 
@@ -904,6 +925,12 @@ void ProtocolGame::parseSpellGroupDelay(InputMessage& msg)
     msg.getU16(); // spell id
     msg.getU16(); // cooldown
     msg.getU8(); // unknown
+}
+
+
+void ProtocolGame::parseMultiUseDelay(InputMessage& msg)
+{
+    //TODO
 }
 
 void ProtocolGame::parseCreatureSpeak(InputMessage& msg)
@@ -1040,6 +1067,12 @@ void ProtocolGame::parseCancelWalk(InputMessage& msg)
     g_game.processWalkCancel(direction);
 }
 
+void ProtocolGame::parseWalkWait(InputMessage& msg)
+{
+    //TODO: implement walk wait time
+    msg.getU16(); // time
+}
+
 void ProtocolGame::parseFloorChangeUp(InputMessage& msg)
 {
     Position pos = g_map.getCentralPosition();
@@ -1171,7 +1204,7 @@ void ProtocolGame::parseChannelEvent(InputMessage& msg)
     msg.getU8(); // event type
 }
 
-void ProtocolGame::parseObjectInfo(InputMessage& msg)
+void ProtocolGame::parseItemInfo(InputMessage& msg)
 {
     //TODO
 }

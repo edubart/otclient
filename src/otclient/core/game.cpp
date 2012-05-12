@@ -974,6 +974,20 @@ void Game::requestQuestLine(int questId)
     m_protocolGame->sendRequestQuestLine(questId);
 }
 
+void Game::equipItem(const ItemPtr& item)
+{
+    if(!canPerformGameAction())
+        return;
+    m_protocolGame->sendEquipItem(item->getId(), item->getCountOrSubType());
+}
+
+void Game::mount(bool mount)
+{
+    if(!canPerformGameAction())
+        return;
+    m_protocolGame->sendMount(mount);
+}
+
 bool Game::checkBotProtection()
 {
 #ifdef BOT_PROTECTION

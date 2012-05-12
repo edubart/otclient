@@ -81,7 +81,7 @@ namespace Proto {
         LoginServerCharacterList = 100
     };
 
-    enum GameServerOpts {
+    enum GameServerOpcodes {
         GameServerInitGame                  = 10,
         GameServerGMActions                 = 11,
         GameServerLoginError                = 20,
@@ -96,6 +96,18 @@ namespace Proto {
 #endif
         GameServerChallange                 = 31,
         GameServerDeath                     = 40,
+
+        // all in game opcodes must be equal or greater than 50
+        GameServerFirstGameOpcode           = 50,
+
+        // NOTE: add any custom opcodes in this range
+        // 50 - 97
+
+        // otclient ONLY
+        GameServerExtendedP2POpcode         = 98,
+        GameServerExtendedOpcode            = 99,
+
+        // original tibia ONLY
         GameServerFullMap                   = 100,
         GameServerMapTopRow                 = 101,
         GameServerMapRightRow               = 102,
@@ -134,13 +146,14 @@ namespace Proto {
         GameServerCreatureUnpass            = 146,
         GameServerEditText                  = 150,
         GameServerEditList                  = 151,
-        GameServerPlayerDataBasic           = 159,
+        GameServerPlayerDataBasic           = 159, // 910
         GameServerPlayerData                = 160,
         GameServerPlayerSkills              = 161,
         GameServerPlayerState               = 162,
         GameServerClearTarget               = 163,
         GameServerSpellDelay                = 164, // 870
         GameServerSpellGroupDelay           = 165, // 870
+        GameServerMultiUseDelay             = 166, // 870
         GameServerTalk                      = 170,
         GameServerChannels                  = 171,
         GameServerOpenChannel               = 172,
@@ -153,7 +166,7 @@ namespace Proto {
         GameServerCloseChannel              = 179,
         GameServerTextMessage               = 180,
         GameServerCancelWalk                = 181,
-        GameServerWait                      = 182,
+        GameServerWalkWait                  = 182,
         GameServerFloorChangeUp             = 190,
         GameServerFloorChangeDown           = 191,
         GameServerChooseOutfit              = 200,
@@ -164,25 +177,33 @@ namespace Proto {
         GameServerAutomapFlag               = 221,
         GameServerQuestLog                  = 240,
         GameServerQuestLine                 = 241,
-        GameServerChannelEvent              = 243,
-        GameServerObjectInfo                = 244, // 910
+        GameServerChannelEvent              = 243, // 910
+        GameServerItemInfo                  = 244, // 910
         GameServerPlayerInventory           = 245, // 910
         GameServerMarketEnter               = 246, // 944
         GameServerMarketLeave               = 247, // 944
-        GameServerMarketBrowseItem          = 248, // 944
-        GameServerMarketAcceptOffer         = 249, // 944
-        GameServerMarketOwnOffers           = 250, // 944
-        GameServerMarketCancelOffer         = 251, // 944
-        GameServerMarketBrowseOwnHistory    = 252, // 944
-        GameServerMarketMarketDetail        = 253, // 944
-        GameServerExtendedOpcode            = 254  // otclient only
+        GameServerMarketDetail              = 248, // 944
+        GameServerMarketBrowse              = 249, // 944
     };
 
-    enum ClientOpts {
+    enum ClientOpcodes {
         ClientEnterAccount                  = 1,
         ClientEnterGame                     = 10,
         ClientLeaveGame                     = 20,
-        ClientPingResponse                  = 30,
+        ClientPing                          = 29,
+        ClientPingBack                      = 30,
+
+        // all in game opcodes must be equal or greater than 50
+        ClientFirstGameOpcode               = 50,
+
+        // NOTE: add any custom opcodes in this range
+        // 50 - 97
+
+        // otclient ONLY
+        ClientExtendedP2POpcode             = 98,
+        ClientExtendedOpcode                = 99,
+
+        // original tibia ONLY
         ClientAutoWalk                      = 100,
         ClientWalkNorth                     = 101,
         ClientWalkEast                      = 102,
@@ -197,7 +218,7 @@ namespace Proto {
         ClientTurnEast                      = 112,
         ClientTurnSouth                     = 113,
         ClientTurnWest                      = 114,
-        ClientEquipObject                   = 119, // 910
+        ClientEquipItem                     = 119, // 910
         ClientMove                          = 120,
         ClientInspectNpcTrade               = 121,
         ClientBuyItem                       = 122,
@@ -247,14 +268,13 @@ namespace Proto {
         ClientDebugReport                   = 232,
         ClientRequestQuestLog               = 240,
         ClientRequestQuestLine              = 241,
-        ClientRuleViolationReport           = 242, // 910
-        ClientGetObjectInfo                 = 243, // 910
+        ClientNewRuleViolation              = 242, // 910
+        ClientRequestItemInfo               = 243, // 910
         ClientMarketLeave                   = 244, // 944
         ClientMarketBrowse                  = 245, // 944
-        ClientMarketCreateOffer             = 246, // 944
-        ClientMarketCancelOffer             = 247, // 944
-        ClientMarketAcceptOffer             = 248, // 944
-        ClientExtendedOpcode                = 254  // otclient only
+        ClientMarketCreate                  = 246, // 944
+        ClientMarketCancel                  = 247, // 944
+        ClientMarketAccept                  = 248, // 944
     };
 
     enum ServerSpeakType {
@@ -274,7 +294,7 @@ namespace Proto {
         ServerSpeakChannelRed,
         ServerSpeakPrivateRedFrom,      // new
         ServerSpeakPrivateRedTo,        // new
-        // 16 - 33 ??
+        // 16 - 33
         ServerSpeakMonsterSay = 34,
         ServerSpeakMonsterYell,
 
@@ -324,9 +344,9 @@ namespace Proto {
         ServerSpeakPrivateRedTo,
         ServerSpeakPrivateRedFrom = ServerSpeakPrivateRedTo,
         ServerSpeakChannelOrange,
-        // 16 ??
+        // 16
         ServerSpeakChannelRed2 = 17,
-        // 18 ??
+        // 18
         ServerSpeakMonsterSay = 19,
         ServerSpeakMonsterYell
 #elif PROTOCOL>=810
@@ -344,9 +364,9 @@ namespace Proto {
         ServerSpeakPrivateRedTo,
         ServerSpeakPrivateRedFrom = ServerSpeakPrivateRedTo,
         ServerSpeakChannelOrange,
-        // 13 ??
+        // 13
         ServerSpeakChannelRed2 = 14,
-        // 15 ??
+        // 15
         ServerSpeakMonsterSay = 16,
         ServerSpeakMonsterYell,
 
@@ -359,11 +379,11 @@ namespace Proto {
 
     enum MessageTypes {
 #if PROTOCOL>=910
-        // 1-3 ??
+        // 1-3
         MessageConsoleBlue = 4,         // old
-        // 5-11 ??
+        // 5-11
         MessageConsoleRed = 12,         // old
-        // 13-15 ??
+        // 13-15
         MessageStatusDefault = 16,      // old
         MessageWarning,                 // old
         MessageEventAdvance,            // old

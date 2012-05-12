@@ -38,7 +38,8 @@ public:
     void onError(const boost::system::error_code& error);
 
     void sendLogout();
-    void sendPingResponse();
+    void sendPing();
+    void sendPingBack();
     void sendAutoWalk(const std::vector<Otc::Direction>& path);
     void sendWalkNorth();
     void sendWalkEast();
@@ -53,6 +54,7 @@ public:
     void sendTurnEast();
     void sendTurnSouth();
     void sendTurnWest();
+    void sendEquipItem(int itemId, int countOrSubType);
     void sendMove(const Position& fromPos, int itemId, int stackpos, const Position& toPos, int count);
     void sendInspectNpcTrade(int itemId, int count);
     void sendBuyItem(int itemId, int subType, int amount, bool ignoreCapacity, bool buyWithBackpack);
@@ -93,6 +95,7 @@ public:
     void sendRefreshContainer();
     void sendRequestOutfit();
     void sendChangeOutfit(const Outfit& outfit);
+    void sendMount(bool mount);
     void sendAddVip(const std::string& name);
     void sendRemoveVip(uint playerId);
     void sendBugReport(const std::string& comment);
@@ -100,6 +103,15 @@ public:
     void sendDebugReport(const std::string& a, const std::string& b, const std::string& c, const std::string& d);
     void sendRequestQuestLog();
     void sendRequestQuestLine(int questId);
+    void sendNewNewRuleViolation(int reason, int action, const std::string& characterName, const std::string& comment, const std::string& translation);
+    void sendRequestItemInfo(int itemId, int index);
+    /*
+    void sendMarketLeave();
+    void sendMarketBrowse();
+    void sendMarketCreate();
+    void sendMarketCancel();
+    void sendMarketAccept();
+    */
     void sendExtendedOpcode(uint8 opcode, const std::string& buffer);
 
 private:
@@ -114,6 +126,7 @@ private:
     void parseLoginAdvice(InputMessage& msg);
     void parseLoginWait(InputMessage& msg);
     void parsePing(InputMessage& msg);
+    void parsePingBack(InputMessage& msg);
     void parseChallange(InputMessage& msg);
     void parseDeath(InputMessage& msg);
     void parseMapDescription(InputMessage& msg);
@@ -141,6 +154,7 @@ private:
     void parseAnimatedText(InputMessage& msg);
     void parseDistanceMissile(InputMessage& msg);
     void parseCreatureMark(InputMessage& msg);
+    void parseTrappers(InputMessage& msg);
     void parseCreatureHealth(InputMessage& msg);
     void parseCreatureLight(InputMessage& msg);
     void parseCreatureOutfit(InputMessage& msg);
@@ -158,6 +172,7 @@ private:
     void parsePlayerCancelAttack(InputMessage& msg);
     void parseSpellDelay(InputMessage& msg);
     void parseSpellGroupDelay(InputMessage& msg);
+    void parseMultiUseDelay(InputMessage& msg);
     void parseCreatureSpeak(InputMessage& msg);
     void parseChannelList(InputMessage& msg);
     void parseOpenChannel(InputMessage& msg);
@@ -173,6 +188,7 @@ private:
     void parseCloseTrade(InputMessage&);
     void parseTextMessage(InputMessage& msg);
     void parseCancelWalk(InputMessage& msg);
+    void parseWalkWait(InputMessage& msg);
     void parseFloorChangeUp(InputMessage& msg);
     void parseFloorChangeDown(InputMessage& msg);
     void parseOpenOutfitWindow(InputMessage& msg);
@@ -184,7 +200,7 @@ private:
     void parseQuestLog(InputMessage& msg);
     void parseQuestLine(InputMessage& msg);
     void parseChannelEvent(InputMessage& msg);
-    void parseObjectInfo(InputMessage& msg);
+    void parseItemInfo(InputMessage& msg);
     void parsePlayerInventory(InputMessage& msg);
     void parseExtendedOpcode(InputMessage& msg);
 

@@ -23,6 +23,19 @@
 #include "protocolgame.h"
 #include <framework/net/rsa.h>
 
+/*
+        ClientEquipObject
+        ClientRefreshContainer
+        ClientMount
+        ClientRuleViolationReport
+        ClientGetItemInfo
+        ClientMarketLeave
+        ClientMarketBrowse
+        ClientMarketCreate
+        ClientMarketCancel
+        ClientMarketAccept
+        ClientExtendedOpcode                = 254  // otclient only
+        */
 void ProtocolGame::sendLoginPacket(uint challangeTimestamp, uint8 challangeRandom)
 {
     OutputMessage msg;
@@ -83,10 +96,17 @@ void ProtocolGame::sendLogout()
     send(msg);
 }
 
-void ProtocolGame::sendPingResponse()
+void ProtocolGame::sendPing()
 {
     OutputMessage msg;
-    msg.addU8(Proto::ClientPingResponse);
+    msg.addU8(Proto::ClientPing);
+    send(msg);
+}
+
+void ProtocolGame::sendPingBack()
+{
+    OutputMessage msg;
+    msg.addU8(Proto::ClientPingBack);
     send(msg);
 }
 
@@ -219,6 +239,15 @@ void ProtocolGame::sendTurnWest()
 {
     OutputMessage msg;
     msg.addU8(Proto::ClientTurnWest);
+    send(msg);
+}
+
+void ProtocolGame::sendEquipItem(int itemId, int countOrSubType)
+{
+    OutputMessage msg;
+    msg.addU8(Proto::ClientEquipItem);
+    msg.addU16(itemId);
+    msg.addU8(countOrSubType);
     send(msg);
 }
 
@@ -587,14 +616,20 @@ void ProtocolGame::sendChangeOutfit(const Outfit& outfit)
 {
     OutputMessage msg;
     msg.addU8(Proto::ClientChangeOutfit);
-
     msg.addU16(outfit.getId());
     msg.addU8(outfit.getHead());
     msg.addU8(outfit.getBody());
     msg.addU8(outfit.getLegs());
     msg.addU8(outfit.getFeet());
     msg.addU8(outfit.getAddons());
+    send(msg);
+}
 
+void ProtocolGame::sendMount(bool mount)
+{
+    OutputMessage msg;
+    msg.addU8(Proto::ClientMount);
+    msg.addU8(mount);
     send(msg);
 }
 
@@ -659,6 +694,28 @@ void ProtocolGame::sendRequestQuestLine(int questId)
     OutputMessage msg;
     msg.addU8(Proto::ClientRequestQuestLine);
     msg.addU16(questId);
+    send(msg);
+}
+
+void ProtocolGame::sendNewNewRuleViolation(int reason, int action, const std::string& characterName, const std::string& comment, const std::string& translation)
+{
+    OutputMessage msg;
+    msg.addU8(Proto::ClientNewRuleViolation);
+    msg.addU8(reason);
+    msg.addU8(action);
+    msg.addString(characterName);
+    msg.addString(comment);
+    msg.addString(translation);
+    send(msg);
+}
+
+void ProtocolGame::sendRequestItemInfo(int itemId, int index)
+{
+    OutputMessage msg;
+    msg.addU8(Proto::ClientRequestItemInfo);
+    msg.addU8(1); // count, 1 for just one item
+    msg.addU16(itemId);
+    msg.addU8(index);
     send(msg);
 }
 

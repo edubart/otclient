@@ -220,6 +220,15 @@ public:
     void requestQuestLog();
     void requestQuestLine(int questId);
 
+    // 870 only
+    void equipItem(const ItemPtr& item);
+    void mount(bool mount);
+
+    // 910 only
+    //void requestItemInfo();
+    //void reportRuleViolation2();
+    // TODO: market related
+
     bool canPerformGameAction();
     bool canReportBugs() { return m_canReportBugs; }
     bool checkBotProtection();
