@@ -450,7 +450,7 @@ void Game::autoWalk(const std::vector<Otc::Direction>& dirs)
     if(!canPerformGameAction())
         return;
 
-    if(dirs.size() >= 255)
+    if(dirs.size() > 255)
         return;
 
     if(isFollowing())
