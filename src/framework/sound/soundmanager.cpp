@@ -224,7 +224,7 @@ SoundSourcePtr SoundManager::createSoundSource(const std::string& filename)
             streamSource->setSoundFile(soundFile);
             source = streamSource;
 
-#if defined __linux && !defined OPENGLES
+#if defined __linux && !defined OPENGL_ES
             // due to OpenAL implementation bug, stereo buffers are always downmixed to mono on linux systems
             // this is hack to work around the issue
             // solution taken from http://opensource.creative.com/pipermail/openal/2007-April/010355.html
