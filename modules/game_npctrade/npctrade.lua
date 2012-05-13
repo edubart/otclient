@@ -210,10 +210,10 @@ local function onOpenNpcTrade(items)
     newItem.name = item[2]
     newItem.weight = item[3] / 100
 
-    if item[4] >= 0 then
+    if item[4] > 0 then
       newItem.price = item[4]
       table.insert(tradeItems[BUY], newItem)
-    elseif item[5] >= 0 then
+    elseif item[5] > 0 then
       newItem.price = item[5]
       table.insert(tradeItems[SELL], newItem)
     else

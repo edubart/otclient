@@ -21,6 +21,7 @@
  */
 
 #include "thingtype.h"
+#include "thingstype.h"
 #include "spritemanager.h"
 
 #include <framework/graphics/graphics.h>
@@ -34,23 +35,20 @@ ThingType::ThingType()
     m_properties.fill(false);
 }
 
-void ThingType::draw(const Point& dest, float scaleFactor, int w, int h, int xPattern, int yPattern, int zPattern, int layer, int animationPhase)
+void ThingType::draw(const Point& dest, float scaleFactor, int layer, int xPattern, int yPattern, int zPattern, int animationPhase)
 {
-    int scaledSize = Otc::TILE_PIXELS * scaleFactor;
+    const TexturePtr& texture = getTexture(animationPhase); // rects might not be calculated yet.
+
+    int frameIndex = getTextureIndex(layer, xPattern, yPattern, zPattern);
+    Point textureOffset = m_texturesFramesOffsets[animationPhase][frameIndex];
+    Rect textureRect = m_texturesFramesRects[animationPhase][frameIndex];
 
     Point displacement(m_parameters[DisplacementX], m_parameters[DisplacementY]);
+    Rect screenRect(dest - displacement - Point(32 * m_dimensions[Width] * scaleFactor, 32 * m_dimensions[Height] * scaleFactor) + Point(32, 32) + textureOffset,
+                    textureRect.size() * scaleFactor);
 
-    Rect drawRect(dest - displacement*scaleFactor, Size(scaledSize, scaledSize));
     g_painter->setColor(Color::white);
-    g_painter->drawTexturedRect(drawRect, getSprite(w, h, layer, xPattern, yPattern, zPattern, animationPhase));
-}
-
-void ThingType::draw(const Point& dest, float scaleFactor, int xPattern, int yPattern, int zPattern, int animationPhase)
-{
-    for(int l = 0; l < m_dimensions[Layers]; ++l)
-        for(int w = 0; w < m_dimensions[Width]; ++w)
-            for(int h = 0; h < m_dimensions[Height]; ++h)
-                draw(dest - Point(w,h)*Otc::TILE_PIXELS*scaleFactor, scaleFactor, w, h, xPattern, yPattern, zPattern, l, animationPhase);
+    g_painter->drawTexturedRect(screenRect, texture, textureRect);
 }
 
 void ThingType::drawMask(const Point& dest, float scaleFactor, int w, int h, int xPattern, int yPattern, int zPattern, int layer, int animationPhase, ThingType::SpriteMask mask)
@@ -61,26 +59,6 @@ void ThingType::drawMask(const Point& dest, float scaleFactor, int w, int h, int
 
     Rect drawRect(dest - displacement*scaleFactor, Size(scaledSize, scaledSize));
     g_painter->drawTexturedRect(drawRect, getSpriteMask(w, h, layer, xPattern, yPattern, zPattern, animationPhase, mask));
-}
-
-TexturePtr& ThingType::getSprite(int w, int h, int l, int x, int y, int z, int a)
-{
-    uint index = getSpriteIndex(w,h,l,x,y,z,a);
-    TexturePtr& spriteTexture = m_sprites[index];
-    if(!spriteTexture) {
-        ImagePtr spriteImage = g_sprites.getSpriteImage(m_spritesIndex[index]);
-        if(!spriteImage)
-            spriteTexture = g_graphics.getEmptyTexture();
-        else {
-            spriteTexture = TexturePtr(new Texture(spriteImage));
-            spriteTexture->setSmooth(true);
-
-            if(g_graphics.canUseMipmaps())
-                spriteTexture->generateSoftwareMipmaps(spriteImage->getPixels());
-        }
-    }
-
-    return spriteTexture;
 }
 
 TexturePtr& ThingType::getSpriteMask(int w, int h, int l, int x, int y, int z, int a, ThingType::SpriteMask mask)
@@ -107,4 +85,104 @@ TexturePtr& ThingType::getSpriteMask(int w, int h, int l, int x, int y, int z, i
     }
 
     return maskTexture;
+}
+
+TexturePtr& ThingType::getTexture(int animationPhase)
+{
+    TexturePtr& animationPhaseTexture = m_textures[animationPhase];
+    if(!animationPhaseTexture) {
+
+        int textureLayers = m_dimensions[Layers];
+        if(m_category != ThingsType::Creature) // we dont need layers in texture. they can be 'rendered' now.
+            textureLayers = 1;
+
+        int indexSize = textureLayers * m_dimensions[PatternX] * m_dimensions[PatternY] * m_dimensions[PatternZ];
+        Size textureSize = getBestDimension(m_dimensions[Width], m_dimensions[Height], indexSize);
+        ImagePtr fullImage = ImagePtr(new Image(textureSize * 32));
+
+        m_texturesFramesRects[animationPhase].resize(indexSize);
+        m_texturesFramesOffsets[animationPhase].resize(indexSize);
+
+        for(int z = 0; z < m_dimensions[PatternZ]; ++z) {
+            for(int y = 0; y < m_dimensions[PatternY]; ++y) {
+                for(int x = 0; x < m_dimensions[PatternX]; ++x) {
+                    for(int l = 0; l < m_dimensions[Layers]; ++l) {
+
+                        int frameIndex = getTextureIndex(l % textureLayers, x, y, z);
+                        Point framePos = Point(frameIndex % (textureSize.width() / m_dimensions[Width]) * m_dimensions[Width],
+                                               frameIndex / (textureSize.width() / m_dimensions[Width]) * m_dimensions[Height]) * 32;
+
+                        for(int h = 0; h < m_dimensions[Height]; ++h) {
+                            for(int w = 0; w < m_dimensions[Width]; ++w) {
+                                uint spriteIndex = getSpriteIndex(w, h, l, x, y, z, animationPhase);
+                                ImagePtr spriteImage = g_sprites.getSpriteImage(m_spritesIndex[spriteIndex]);
+                                if(spriteImage) {
+                                    Point spritePos = Point(m_dimensions[Width]  - w - 1,
+                                                            m_dimensions[Height] - h - 1) * 32;
+
+                                    fullImage->append(framePos + spritePos, spriteImage);
+                                }
+                            }
+                        }
+
+                        Rect drawRect(framePos + Point(m_dimensions[Width], m_dimensions[Height]) * 32, framePos);
+                        for(int x = framePos.x; x < framePos.x + m_dimensions[Width] * 32; ++x) {
+                            for(int y = framePos.y; y < framePos.y + m_dimensions[Height] * 32; ++y) {
+                                uint8 *p = fullImage->getPixel(x,y);
+                                if(p[3] != 0x00) {
+                                    drawRect.setTop(std::min(y, (int)drawRect.top()));
+                                    drawRect.setLeft(std::min(x, (int)drawRect.left()));
+                                    drawRect.setBottom(std::max(y, (int)drawRect.bottom()));
+                                    drawRect.setRight(std::max(x, (int)drawRect.right()));
+                                }
+                            }
+                        }
+
+                        m_texturesFramesRects[animationPhase][frameIndex] = drawRect;
+                        m_texturesFramesOffsets[animationPhase][frameIndex] = drawRect.topLeft() - framePos;
+                    }
+                }
+            }
+        }
+        animationPhaseTexture = TexturePtr(new Texture(fullImage));
+        animationPhaseTexture->setSmooth(true);
+
+        //if(g_graphics.canUseMipmaps())
+            //animationPhaseTexture->generateSoftwareMipmaps(fullImage->getPixels());
+    }
+    return animationPhaseTexture;
+}
+
+Size ThingType::getBestDimension(int w, int h, int count)
+{
+    const int MAX = 16;
+
+    int k = 1;
+    while(k < w)
+        k<<=1;
+    w = k;
+
+    k = 1;
+    while(k < h)
+        k<<=1;
+    h = k;
+
+    int numSprites = w*h*count;
+    assert(numSprites <= MAX*MAX);
+    assert(w <= MAX);
+    assert(h <= MAX);
+
+    Size bestDimension = Size(MAX, MAX);
+    for(int i=w;i<=MAX;i<<=1) {
+        for(int j=h;j<=MAX;j<<=1) {
+            Size candidateDimension = Size(i, j);
+            if(candidateDimension.area() < numSprites)
+                continue;
+            if((candidateDimension.area() < bestDimension.area()) ||
+               (candidateDimension.area() == bestDimension.area() && candidateDimension.width() + candidateDimension.height() < bestDimension.width() + bestDimension.height()))
+                bestDimension = candidateDimension;
+        }
+    }
+
+    return bestDimension;
 }

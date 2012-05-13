@@ -133,6 +133,7 @@ void Creature::internalDrawOutfit(const Point& dest, float scaleFactor, bool ani
             outfitProgram->setUniformValue(FEET_COLOR_UNIFORM, m_outfit.getFeetColor());
             */
 
+            m_type->draw(dest, scaleFactor, 0, xPattern, yPattern, zPattern, animationPhase);
             for(int h = 0; h < getDimensionHeight(); h++) {
                 for(int w = 0; w < getDimensionWidth(); w++) {
                     // setup texture outfit mask
@@ -145,7 +146,6 @@ void Creature::internalDrawOutfit(const Point& dest, float scaleFactor, bool ani
                     */
 
                     Point p = dest + (-Point(w,h)*Otc::TILE_PIXELS)*scaleFactor;
-                    m_type->draw(p, scaleFactor, w, h, xPattern, yPattern, zPattern, 0, animationPhase);
 
                     if(getLayers() > 1) {
                         g_painter->setCompositionMode(Painter::CompositionMode_Multiply);
@@ -190,7 +190,7 @@ void Creature::internalDrawOutfit(const Point& dest, float scaleFactor, bool ani
         if(m_outfit.getCategory() == ThingsType::Effect)
             animationPhase = std::min(animationPhase+1, getAnimationPhases());
 
-        m_type->draw(dest, scaleFactor, 0, 0, 0, animationPhase);
+        m_type->draw(dest, scaleFactor, 0, 0, 0, 0, animationPhase);
     }
 }
 

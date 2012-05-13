@@ -83,3 +83,23 @@ void Image::overwriteMask(const Color& maskedColor, const Color& insideColor, co
         a = writeColor.a();
     }
 }
+
+void Image::append(const Point& dest, const ImagePtr& other)
+{
+    if(!other)
+        return;
+
+    uint8* otherPixels = other->getPixelData();
+    for(int p = 0; p < other->getPixelCount(); ++p) {
+        int x = p % other->getWidth();
+        int y = p / other->getWidth();
+        int pos = ((dest.y + y) * m_size.width() + (dest.x + x)) * 4;
+
+        if(otherPixels[p*4+3] == 0xFF) {
+            m_pixels[pos+0] = otherPixels[p*4+0];
+            m_pixels[pos+1] = otherPixels[p*4+1];
+            m_pixels[pos+2] = otherPixels[p*4+2];
+            m_pixels[pos+3] = otherPixels[p*4+3];
+        }
+    }
+}

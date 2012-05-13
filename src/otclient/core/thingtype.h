@@ -24,8 +24,8 @@
 #define THINGATTRIBUTES_H
 
 #include "declarations.h"
-
 #include <framework/graphics/declarations.h>
+#include <framework/graphics/coordsbuffer.h>
 
 struct ThingType
 {
@@ -108,18 +108,20 @@ struct ThingType
 
     ThingType();
 
-    void draw(const Point& dest, float scaleFactor, int w, int h, int xPattern, int yPattern, int zPattern, int layer, int animationPhase);
-    void draw(const Point& dest, float scaleFactor, int xPattern, int yPattern, int zPattern, int animationPhase);
+    void draw(const Point& dest, float scaleFactor, int layer, int xPattern, int yPattern, int zPattern, int animationPhase);
     void drawMask(const Point& dest, float scaleFactor, int w, int h, int xPattern, int yPattern, int zPattern, int layer, int animationPhase, SpriteMask mask);
 
     TexturePtr& getSprite(int w, int h, int l, int x, int y, int z, int a);
     TexturePtr& getSpriteMask(int w, int h, int l, int x, int y, int z, int a, SpriteMask mask);
+    TexturePtr& getTexture(int animationPhase);
 
     bool getProperty(Property property) { return m_properties[property]; }
     int getParameter(Parameter param) { return m_parameters[param]; }
     int getDimension(Dimension dimension) { return m_dimensions[dimension]; }
 
 private:
+    Size getBestDimension(int w, int h, int count);
+
     uint getSpriteIndex(int w, int h, int l, int x, int y, int z, int a) {
         uint index = ((((((a % m_dimensions[ThingType::AnimationPhases])
             * m_dimensions[ThingType::PatternZ] + z)
@@ -128,16 +130,27 @@ private:
             * m_dimensions[ThingType::Layers] + l)
             * m_dimensions[ThingType::Height] + h)
             * m_dimensions[ThingType::Width] + w;
-        assert(index < m_sprites.size());
+        assert(index < m_spritesIndex.size());
         return index;
     }
 
+    uint getTextureIndex(int l, int x, int y, int z) {
+        return ((l
+                * m_dimensions[ThingType::PatternZ] + z)
+                * m_dimensions[ThingType::PatternY] + y)
+                * m_dimensions[ThingType::PatternX] + x;
+    }
+
+    int m_category;
     std::array<int, LastDimension> m_dimensions;
     std::array<int, LastParameter> m_parameters;
     std::array<bool, LastProperty> m_properties;
     std::vector<int> m_spritesIndex;
-    std::vector<TexturePtr> m_sprites;
     std::vector<std::array<TexturePtr, LastMask>> m_spritesMask;
+
+    std::vector<TexturePtr> m_textures;
+    std::vector<std::vector<Rect> > m_texturesFramesRects;
+    std::vector<std::vector<Point> > m_texturesFramesOffsets;
 
     friend class ThingsType;
 };

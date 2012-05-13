@@ -35,6 +35,7 @@ public:
     static ImagePtr loadPNG(const std::string& file);
 
     void overwriteMask(const Color& maskedColor, const Color& insideColor = Color::white, const Color& outsideColor = Color::alpha);
+    void append(const Point& dest, const ImagePtr &other);
 
     std::vector<uint8>& getPixels() { return m_pixels; }
     uint8* getPixelData() { return &m_pixels[0]; }
@@ -43,6 +44,7 @@ public:
     int getWidth() { return m_size.width(); }
     int getHeight() { return m_size.height(); }
     int getBpp() { return m_bpp; }
+    uint8* getPixel(int x, int y) { return &m_pixels[(y * m_size.width() + x) * 4]; }
 
 private:
     std::vector<uint8> m_pixels;

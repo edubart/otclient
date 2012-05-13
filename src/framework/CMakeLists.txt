@@ -13,7 +13,7 @@ SET(BUILD_REVISION "custom" CACHE "Git revision string (intended for releases)" 
 
 # set debug as default build type
 IF(NOT CMAKE_BUILD_TYPE)
-    SET(CMAKE_BUILD_TYPE RelWithDebInfo)
+    SET(CMAKE_BUILD_TYPE Debug)
 ENDIF()
 
 # setup compiler options

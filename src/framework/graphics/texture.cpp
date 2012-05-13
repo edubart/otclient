@@ -142,6 +142,7 @@ void Texture::generateMipmaps()
         //FIXME: disabled because mipmaps size needs to be in base of 2,
         //       and the current algorithmn does not support that
         //generateSoftwareMipmaps(getPixels());
+        logTraceError("non power of 2.");
     }
 }
 

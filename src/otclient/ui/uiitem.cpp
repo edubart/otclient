@@ -53,6 +53,7 @@ void UIItem::drawSelf()
             g_painter->setColor(Color(231, 231, 231));
             m_font->drawText(count, Rect(m_rect.topLeft(), m_rect.bottomRight() - Point(3, 0)), Fw::AlignBottomRight);
         }
+        // debug, show item id
         //m_font->drawText(Fw::tostring(m_item->getId()), m_rect, Fw::AlignBottomRight);
     }
 }

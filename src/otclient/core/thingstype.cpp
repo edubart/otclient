@@ -48,6 +48,7 @@ bool ThingsType::load(const std::string& file)
     for(int i = 0; i < LastCategory; ++i) {
         m_things[i].resize(numThings[i]);
         for(int id = 0; id < numThings[i]; ++id) {
+            m_things[i][id].m_category = i;
             if(!parseThingType(fin, m_things[i][id])) {
                 logError("corrupt or dat file");
                 return false;
@@ -142,9 +143,12 @@ bool ThingsType::parseThingType(const FileStreamPtr& fin, ThingType& thingType)
         return false;
 
     thingType.m_spritesIndex.resize(totalSprites);
-    thingType.m_sprites.resize(totalSprites);
     for(int i = 0; i < totalSprites; i++)
         thingType.m_spritesIndex[i] = fin->getU16();
+
+    thingType.m_textures.resize(thingType.m_dimensions[ThingType::AnimationPhases]);
+    thingType.m_texturesFramesRects.resize(thingType.m_dimensions[ThingType::AnimationPhases]);
+    thingType.m_texturesFramesOffsets.resize(thingType.m_dimensions[ThingType::AnimationPhases]);
 
     return true;
 }
