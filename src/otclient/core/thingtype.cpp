@@ -37,14 +37,14 @@ ThingType::ThingType()
 
 void ThingType::draw(const Point& dest, float scaleFactor, int layer, int xPattern, int yPattern, int zPattern, int animationPhase)
 {
-    const TexturePtr& texture = getTexture(animationPhase); // rects might not be calculated yet.
+    const TexturePtr& texture = getTexture(animationPhase); // texture might not exists, neither its rects.
 
     int frameIndex = getTextureIndex(layer, xPattern, yPattern, zPattern);
     Point textureOffset = m_texturesFramesOffsets[animationPhase][frameIndex];
     Rect textureRect = m_texturesFramesRects[animationPhase][frameIndex];
 
     Point displacement(m_parameters[DisplacementX], m_parameters[DisplacementY]);
-    Rect screenRect(dest - displacement - Point(32 * m_dimensions[Width] * scaleFactor, 32 * m_dimensions[Height] * scaleFactor) + Point(32, 32) + textureOffset,
+    Rect screenRect(dest + (-displacement + textureOffset - Point(m_dimensions[Width] - 1, m_dimensions[Height] - 1) * Otc::TILE_PIXELS) * scaleFactor,
                     textureRect.size() * scaleFactor);
 
     g_painter->setColor(Color::white);
@@ -98,7 +98,7 @@ TexturePtr& ThingType::getTexture(int animationPhase)
 
         int indexSize = textureLayers * m_dimensions[PatternX] * m_dimensions[PatternY] * m_dimensions[PatternZ];
         Size textureSize = getBestDimension(m_dimensions[Width], m_dimensions[Height], indexSize);
-        ImagePtr fullImage = ImagePtr(new Image(textureSize * 32));
+        ImagePtr fullImage = ImagePtr(new Image(textureSize * Otc::TILE_PIXELS));
 
         m_texturesFramesRects[animationPhase].resize(indexSize);
         m_texturesFramesOffsets[animationPhase].resize(indexSize);
@@ -110,7 +110,7 @@ TexturePtr& ThingType::getTexture(int animationPhase)
 
                         int frameIndex = getTextureIndex(l % textureLayers, x, y, z);
                         Point framePos = Point(frameIndex % (textureSize.width() / m_dimensions[Width]) * m_dimensions[Width],
-                                               frameIndex / (textureSize.width() / m_dimensions[Width]) * m_dimensions[Height]) * 32;
+                                               frameIndex / (textureSize.width() / m_dimensions[Width]) * m_dimensions[Height]) * Otc::TILE_PIXELS;
 
                         for(int h = 0; h < m_dimensions[Height]; ++h) {
                             for(int w = 0; w < m_dimensions[Width]; ++w) {
@@ -118,16 +118,16 @@ TexturePtr& ThingType::getTexture(int animationPhase)
                                 ImagePtr spriteImage = g_sprites.getSpriteImage(m_spritesIndex[spriteIndex]);
                                 if(spriteImage) {
                                     Point spritePos = Point(m_dimensions[Width]  - w - 1,
-                                                            m_dimensions[Height] - h - 1) * 32;
+                                                            m_dimensions[Height] - h - 1) * Otc::TILE_PIXELS;
 
                                     fullImage->append(framePos + spritePos, spriteImage);
                                 }
                             }
                         }
 
-                        Rect drawRect(framePos + Point(m_dimensions[Width], m_dimensions[Height]) * 32, framePos);
-                        for(int x = framePos.x; x < framePos.x + m_dimensions[Width] * 32; ++x) {
-                            for(int y = framePos.y; y < framePos.y + m_dimensions[Height] * 32; ++y) {
+                        Rect drawRect(framePos + Point(m_dimensions[Width], m_dimensions[Height]) * Otc::TILE_PIXELS, framePos);
+                        for(int x = framePos.x; x < framePos.x + m_dimensions[Width] * Otc::TILE_PIXELS; ++x) {
+                            for(int y = framePos.y; y < framePos.y + m_dimensions[Height] * Otc::TILE_PIXELS; ++y) {
                                 uint8 *p = fullImage->getPixel(x,y);
                                 if(p[3] != 0x00) {
                                     drawRect.setTop(std::min(y, (int)drawRect.top()));
