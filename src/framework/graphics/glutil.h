@@ -27,8 +27,21 @@
 #if OPENGL_ES==2
 #include <GLES2/gl2.h>
 #elif OPENGL_ES==1
-#include <GLES2/gl2.h>
 #include <GLES/gl.h>
+
+#define GL_FRAMEBUFFER                    0x8D40
+#define GL_COLOR_ATTACHMENT0              0x8CE0
+#define GL_FRAMEBUFFER_COMPLETE           0x8CD5
+#define GL_STREAM_DRAW                    0x88E0
+#define GL_STATIC_DRAW                    0x88E4
+#define GL_DYNAMIC_DRAW                   0x88E8
+#define GL_FRAGMENT_SHADER                0x8B30
+#define GL_VERTEX_SHADER                  0x8B31
+#define GL_COMPILE_STATUS                 0x8B81
+#define GL_INFO_LOG_LENGTH                0x8B84
+#define GL_LINK_STATUS                    0x8B82
+
+typedef char             GLchar;
 
 // define OpenGL ES 2.0 API just to make compile, it wont actually be used
 inline void glBindFramebuffer (GLenum target, GLuint framebuffer) { }
