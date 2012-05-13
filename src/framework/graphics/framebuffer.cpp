@@ -152,7 +152,9 @@ void FrameBuffer::internalRelease()
         glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, size.width(), size.height());
 
         // restore screen original content
+        glDisable(GL_BLEND);
         g_painter->drawTexturedRect(Rect(0, 0, size), m_screenBackup, Rect(0, 0, size));
+        glEnable(GL_BLEND);
     }
 }
 
