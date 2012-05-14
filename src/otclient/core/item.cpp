@@ -68,7 +68,7 @@ void Item::draw(const Point& dest, float scaleFactor, bool animate)
 
     // determine x,y,z patterns
     int xPattern = 0, yPattern = 0, zPattern = 0;
-    if(isGround()) {
+    if(isGround() || isOnBottom()) {
         xPattern = m_position.x % getNumPatternsX();
         yPattern = m_position.y % getNumPatternsY();
         zPattern = m_position.z % getNumPatternsZ();
