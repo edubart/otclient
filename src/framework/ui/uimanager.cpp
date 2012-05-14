@@ -63,7 +63,6 @@ void UIManager::resize(const Size& size)
 
 void UIManager::inputEvent(const InputEvent& event)
 {
-    m_isOnInputEvent = true;
     UIWidgetList widgetList;
     switch(event.type) {
         case Fw::KeyTextInputEvent:
@@ -155,7 +154,6 @@ void UIManager::inputEvent(const InputEvent& event)
         default:
             break;
     };
-    m_isOnInputEvent = false;
 }
 
 void UIManager::updatePressedWidget(const UIWidgetPtr& newPressedWidget, const Point& clickedPos)

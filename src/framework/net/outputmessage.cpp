@@ -21,6 +21,7 @@
  */
 
 #include <framework/net/outputmessage.h>
+#include "rsa.h"
 
 OutputMessage::OutputMessage()
 {
@@ -66,20 +67,16 @@ void OutputMessage::addU64(uint64 value)
     m_messageSize += 8;
 }
 
-void OutputMessage::addString(const char* value, int length)
+void OutputMessage::addString(const std::string& buffer)
 {
-    if(length > 65535)
-        throw NetworkException("[OutputMessage::addString] string length > 65535");
-    checkWrite(length + 2);
-    addU16(length);
-    memcpy((char*)(m_buffer + m_writePos), value, length);
-    m_writePos += length;
-    m_messageSize += length;
-}
-
-void OutputMessage::addString(const std::string& value)
-{
-    addString(value.c_str(), value.length());
+    int len = buffer.length();
+    if(len > MAX_STRING_LENGTH)
+        throw NetworkException("string length > MAX_STRING_LENGTH");
+    checkWrite(len + 2);
+    addU16(len);
+    memcpy((char*)(m_buffer + m_writePos), buffer.c_str(), len);
+    m_writePos += len;
+    m_messageSize += len;
 }
 
 void OutputMessage::addPaddingBytes(int bytes, uint8 byte)
@@ -90,6 +87,11 @@ void OutputMessage::addPaddingBytes(int bytes, uint8 byte)
     memset((void*)&m_buffer[m_writePos], byte, bytes);
     m_writePos += bytes;
     m_messageSize += bytes;
+}
+
+void OutputMessage::encryptRSA(int size, const std::string& key)
+{
+    RSA::encrypt((char*)m_buffer + m_writePos - size, size, key.c_str());
 }
 
 void OutputMessage::writeChecksum()

@@ -175,6 +175,19 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassMemberFunction<ProtocolLogin>("cancelLogin", &ProtocolLogin::cancelLogin);
 
     g_lua.registerClass<ProtocolGame, Protocol>();
+    g_lua.bindClassStaticFunction<ProtocolGame>("create", []{ return ProtocolGamePtr(new ProtocolGame); });
+    g_lua.bindClassMemberFunction<ProtocolGame>("login", &ProtocolGame::login);
+    g_lua.bindClassMemberFunction<ProtocolGame>("send", &ProtocolGame::send);
+    g_lua.bindClassMemberFunction<ProtocolGame>("sendExtendedOpcode", &ProtocolGame::sendExtendedOpcode);
+    g_lua.bindClassMemberFunction<ProtocolGame>("addPosition", &ProtocolGame::addPosition);
+    g_lua.bindClassMemberFunction<ProtocolGame>("setMapDescription", &ProtocolGame::setMapDescription);
+    g_lua.bindClassMemberFunction<ProtocolGame>("setFloorDescription", &ProtocolGame::setFloorDescription);
+    g_lua.bindClassMemberFunction<ProtocolGame>("setTileDescription", &ProtocolGame::setTileDescription);
+    g_lua.bindClassMemberFunction<ProtocolGame>("getOutfit", &ProtocolGame::getOutfit);
+    g_lua.bindClassMemberFunction<ProtocolGame>("getThing", &ProtocolGame::getThing);
+    g_lua.bindClassMemberFunction<ProtocolGame>("getCreature", &ProtocolGame::getCreature);
+    g_lua.bindClassMemberFunction<ProtocolGame>("getItem", &ProtocolGame::getItem);
+    g_lua.bindClassMemberFunction<ProtocolGame>("getPosition", &ProtocolGame::getPosition);
 
     g_lua.registerClass<Container>();
     g_lua.bindClassStaticFunction<Container>("create", []{ return ContainerPtr(new Container); });
@@ -255,7 +268,6 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Item>("getCount", &Item::getCount);
     g_lua.bindClassMemberFunction<Item>("getId", &Item::getId);
     g_lua.bindClassMemberFunction<Item>("isStackable", &Item::isStackable);
-
 
     g_lua.registerClass<Effect, Thing>();
     g_lua.registerClass<Missile, Thing>();

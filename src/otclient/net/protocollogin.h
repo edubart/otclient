@@ -38,7 +38,7 @@ public:
     void cancelLogin() { disconnect(); }
 
     void onConnect();
-    void onRecv(InputMessage& inputMessage);
+    void onRecv(const InputMessagePtr& inputMessage);
     void onError(const boost::system::error_code& error);
 
     ProtocolLoginPtr asProtocolLogin() { return std::static_pointer_cast<ProtocolLogin>(shared_from_this()); }
@@ -46,9 +46,9 @@ public:
 private:
     void sendLoginPacket();
 
-    void parseError(InputMessage& inputMessage);
-    void parseMOTD(InputMessage& inputMessage);
-    void parseCharacterList(InputMessage& inputMessage);
+    void parseError(const InputMessagePtr& inputMessage);
+    void parseMOTD(const InputMessagePtr& inputMessage);
+    void parseCharacterList(const InputMessagePtr& inputMessage);
 
     std::string m_accountName, m_accountPassword;
 

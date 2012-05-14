@@ -269,7 +269,7 @@ public:
     void pushNumber(double v);
     void pushBoolean(bool v);
     void pushCString(const char* v);
-    void pushString(const std::string& v) { pushCString(v.c_str()); }
+    void pushString(const std::string& v);
     void pushLightUserdata(void* p);
     void pushThread();
     void pushValue(int index = -1);

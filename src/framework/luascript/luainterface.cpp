@@ -610,7 +610,7 @@ void LuaInterface::createLuaState()
 
     // load lua standard libraries
     luaL_openlibs(L);
-    
+
     // load bit32 lib for bitwise operations
     luaopen_bit32(L);
 
@@ -998,6 +998,11 @@ void LuaInterface::pushCString(const char* v)
     lua_pushstring(L, v);
 }
 
+void LuaInterface::pushString(const std::string& v)
+{
+    lua_pushlstring(L, v.c_str(), v.length());
+}
+
 void LuaInterface::pushLightUserdata(void* p)
 {
     lua_pushlightuserdata(L, p);
@@ -1121,9 +1126,10 @@ std::string LuaInterface::toString(int index)
 {
     assert(hasIndex(index));
     std::string str;
-    const char *c_str = lua_tostring(L, index);
-    if(c_str)
-        str = c_str;
+    size_t len;
+    const char *c_str = lua_tolstring(L, index, &len);
+    if(c_str && len > 0)
+        str.assign(c_str, len);
     return str;
 }
 

@@ -397,6 +397,11 @@ void Application::registerLuaFunctions()
 
     // Protocol
     g_lua.registerClass<Protocol>();
+    //g_lua.bindClassMemberFunction<Protocol>("connect", &Protocol::connect);
+    g_lua.bindClassMemberFunction<Protocol>("disconnect", &Protocol::disconnect);
+    g_lua.bindClassMemberFunction<Protocol>("isConnected", &Protocol::isConnected);
+    g_lua.bindClassMemberFunction<Protocol>("isConnecting", &Protocol::isConnecting);
+    g_lua.bindClassMemberFunction<Protocol>("send", &Protocol::send);
 
     // Module
     g_lua.registerClass<Module>();
@@ -415,20 +420,31 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Module>("isAutoLoad", &Module::isAutoLoad);
     g_lua.bindClassMemberFunction<Module>("getAutoLoadPriority", &Module::getAutoLoadPriority);
 
-    // network manipulation via lua is disabled for a while
-    /*
+    // InputMessage
+    g_lua.registerClass<InputMessage>();
+    g_lua.bindClassStaticFunction<InputMessage>("create", []{ return InputMessagePtr(new InputMessage); });
+    g_lua.bindClassMemberFunction<InputMessage>("skipBytes", &InputMessage::skipBytes);
+    g_lua.bindClassMemberFunction<InputMessage>("getU8", &InputMessage::getU8);
+    g_lua.bindClassMemberFunction<InputMessage>("getU16", &InputMessage::getU16);
+    g_lua.bindClassMemberFunction<InputMessage>("getU32", &InputMessage::getU32);
+    g_lua.bindClassMemberFunction<InputMessage>("getU64", &InputMessage::getU64);
+    g_lua.bindClassMemberFunction<InputMessage>("getString", &InputMessage::getString);
+    g_lua.bindClassMemberFunction<InputMessage>("decryptRSA", &InputMessage::decryptRSA);
+    g_lua.bindClassMemberFunction<InputMessage>("getReadSize", &InputMessage::getReadSize);
+    g_lua.bindClassMemberFunction<InputMessage>("getUnreadSize", &InputMessage::getUnreadSize);
+    g_lua.bindClassMemberFunction<InputMessage>("eof", &InputMessage::eof);
+
     // OutputMessage
     g_lua.registerClass<OutputMessage>();
-    g_lua.bindClassStaticFunction<OutputMessage>("new", []{ return OutputMessagePtr(new OutputMessage); });
+    g_lua.bindClassStaticFunction<OutputMessage>("create", []{ return OutputMessagePtr(new OutputMessage); });
     g_lua.bindClassMemberFunction<OutputMessage>("reset", &OutputMessage::reset);
     g_lua.bindClassMemberFunction<OutputMessage>("addU8", &OutputMessage::addU8);
     g_lua.bindClassMemberFunction<OutputMessage>("addU16", &OutputMessage::addU16);
     g_lua.bindClassMemberFunction<OutputMessage>("addU32", &OutputMessage::addU32);
     g_lua.bindClassMemberFunction<OutputMessage>("addU64", &OutputMessage::addU64);
-    g_lua.bindClassMemberFunction<OutputMessage>("addString", (void(OutputMessage::*)(const std::string&))&OutputMessage::addString);
-
-    g_lua.bindClassStaticFunction<Protocol>("send", [](const ProtocolPtr proto, OutputMessagePtr msg) { proto->send(*msg.get()); });
-    */
+    g_lua.bindClassMemberFunction<OutputMessage>("addString", &OutputMessage::addString);
+    g_lua.bindClassMemberFunction<OutputMessage>("addPaddingBytes", &OutputMessage::addPaddingBytes);
+    g_lua.bindClassMemberFunction<OutputMessage>("encryptRSA", &OutputMessage::encryptRSA);
 
     // Application
     g_lua.registerStaticClass("g_app");

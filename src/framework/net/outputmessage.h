@@ -27,13 +27,12 @@
 #include "networkexception.h"
 #include <framework/luascript/luaobject.h>
 
-typedef std::shared_ptr<OutputMessage> OutputMessagePtr;
-
 class OutputMessage : public LuaObject
 {
 public:
     enum {
         BUFFER_MAXSIZE = 1024,
+        MAX_STRING_LENGTH = 65536,
         MAX_HEADER_SIZE = 8
     };
 
@@ -45,10 +44,12 @@ public:
     void addU16(uint16 value);
     void addU32(uint32 value);
     void addU64(uint64 value);
-    void addString(const char* value, int length);
-    void addString(const std::string& value);
+    void addString(const std::string& buffer);
     void addPaddingBytes(int bytes, uint8 byte = 0);
 
+    void encryptRSA(int size, const std::string& key);
+
+protected:
     uint8* getWriteBuffer() { return m_buffer + m_writePos; }
     uint8* getHeaderBuffer() { return m_buffer + m_headerPos; }
     uint8* getDataBuffer() { return m_buffer + MAX_HEADER_SIZE; }
@@ -56,6 +57,8 @@ public:
 
     void writeChecksum();
     void writeMessageSize();
+
+    friend class Protocol;
 
 private:
     bool canWrite(int bytes);

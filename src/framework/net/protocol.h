@@ -41,33 +41,34 @@ public:
     bool isConnected();
     bool isConnecting();
 
-    void send(OutputMessage& outputMessage);
-    void recv();
-
-    void internalRecvHeader(uint8* buffer, uint16 size);
-    void internalRecvData(uint8* buffer, uint16 size);
-
-    virtual void onConnect() = 0;
-    virtual void onRecv(InputMessage& inputMessage) = 0;
-    virtual void onError(const boost::system::error_code& err) = 0;
+    virtual void send(const OutputMessagePtr& outputMessage);
 
     ProtocolPtr asProtocol() { return std::static_pointer_cast<Protocol>(shared_from_this()); }
 
 protected:
+    void recv();
+
+    virtual void onConnect() = 0;
+    virtual void onRecv(const InputMessagePtr& inputMessage) = 0;
+    virtual void onError(const boost::system::error_code& err) = 0;
+
     void enableChecksum() { m_checksumEnabled = true; }
     void enableXteaEncryption() { m_xteaEncryptionEnabled = true; }
     void generateXteaKey();
 
     uint32 m_xteaKey[4];
-    InputMessage m_inputMessage;
 
 private:
-    bool xteaDecrypt(InputMessage& inputMessage);
-    void xteaEncrypt(OutputMessage& outputMessage);
+    void internalRecvHeader(uint8* buffer, uint16 size);
+    void internalRecvData(uint8* buffer, uint16 size);
+
+    bool xteaDecrypt(const InputMessagePtr& inputMessage);
+    void xteaEncrypt(const OutputMessagePtr& outputMessage);
 
     bool m_checksumEnabled;
     bool m_xteaEncryptionEnabled;
     ConnectionPtr m_connection;
+    InputMessagePtr m_inputMessage;
 };
 
 #endif

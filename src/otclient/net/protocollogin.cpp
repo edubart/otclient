@@ -22,7 +22,6 @@
 
 #include "protocollogin.h"
 #include <framework/net/outputmessage.h>
-#include <framework/net/rsa.h>
 #include <framework/luascript/luainterface.h>
 #include <boost/bind.hpp>
 #include <otclient/core/thingstype.h>
@@ -46,23 +45,23 @@ void ProtocolLogin::onConnect()
     sendLoginPacket();
 }
 
-void ProtocolLogin::onRecv(InputMessage& inputMessage)
+void ProtocolLogin::onRecv(const InputMessagePtr& msg)
 {
     try {
-        while(!inputMessage.eof()) {
-            int opcode = inputMessage.getU8();
+        while(!msg->eof()) {
+            int opcode = msg->getU8();
             switch(opcode) {
             case Proto::LoginServerError:
-                parseError(inputMessage);
+                parseError(msg);
                 break;
             case Proto::LoginServerMotd:
-                parseMOTD(inputMessage);
+                parseMOTD(msg);
                 break;
             case Proto::LoginServerUpdateNeeded:
                 callLuaField("onError", "Client needs update.");
                 break;
             case Proto::LoginServerCharacterList:
-                parseCharacterList(inputMessage);
+                parseCharacterList(msg);
                 break;
             default:
                 Fw::throwException("unknown opt byte ", opcode);
@@ -83,76 +82,76 @@ void ProtocolLogin::onError(const boost::system::error_code& error)
 
 void ProtocolLogin::sendLoginPacket()
 {
-    OutputMessage msg;
+    OutputMessagePtr msg(new OutputMessage);
 
-    msg.addU8(Proto::ClientEnterAccount);
-    msg.addU16(Proto::ClientOs);
-    msg.addU16(Proto::ClientVersion);
+    msg->addU8(Proto::ClientEnterAccount);
+    msg->addU16(Proto::ClientOs);
+    msg->addU16(Proto::ClientVersion);
 
-    msg.addU32(g_thingsType.getSignature()); // data signature
-    msg.addU32(g_sprites.getSignature()); // sprite signature
-    msg.addU32(Proto::PicSignature); // pic signature
+    msg->addU32(g_thingsType.getSignature()); // data signature
+    msg->addU32(g_sprites.getSignature()); // sprite signature
+    msg->addU32(Proto::PicSignature); // pic signature
 
     int paddingBytes = 128;
-    msg.addU8(0); // first RSA byte must be 0
+    msg->addU8(0); // first RSA byte must be 0
     paddingBytes -= 1;
 
     // xtea key
     generateXteaKey();
 
-    msg.addU32(m_xteaKey[0]);
-    msg.addU32(m_xteaKey[1]);
-    msg.addU32(m_xteaKey[2]);
-    msg.addU32(m_xteaKey[3]);
+    msg->addU32(m_xteaKey[0]);
+    msg->addU32(m_xteaKey[1]);
+    msg->addU32(m_xteaKey[2]);
+    msg->addU32(m_xteaKey[3]);
     paddingBytes -= 16;
 
 #if PROTOCOL>=854
     enableChecksum();
 
-    msg.addString(m_accountName);
-    msg.addString(m_accountPassword);
+    msg->addString(m_accountName);
+    msg->addString(m_accountPassword);
     paddingBytes -= 4 + m_accountName.length() + m_accountPassword.length();
 #elif PROTOCOL>=810
-    msg.addU32(Fw::fromstring<uint32>(m_accountName));
-    msg.addString(m_accountPassword);
+    msg->addU32(Fw::fromstring<uint32>(m_accountName));
+    msg->addString(m_accountPassword);
     paddingBytes -= 6 + m_accountPassword.length();
 #endif
 
-    msg.addPaddingBytes(paddingBytes); // complete the 128 bytes for rsa encryption with zeros
-    Rsa::encrypt((char*)msg.getWriteBuffer() - 128, 128, Proto::RSA);
+    msg->addPaddingBytes(paddingBytes); // complete the 128 bytes for rsa encryption with zeros
+    msg->encryptRSA(128, Proto::RSA);
 
     send(msg);
     enableXteaEncryption();
     recv();
 }
 
-void ProtocolLogin::parseError(InputMessage& inputMessage)
+void ProtocolLogin::parseError(const InputMessagePtr& msg)
 {
-    std::string error = inputMessage.getString();
+    std::string error = msg->getString();
     callLuaField("onError", error, false);
 }
 
-void ProtocolLogin::parseMOTD(InputMessage& inputMessage)
+void ProtocolLogin::parseMOTD(const InputMessagePtr& msg)
 {
-    std::string motd = inputMessage.getString();
+    std::string motd = msg->getString();
     callLuaField("onMotd", motd);
 }
 
-void ProtocolLogin::parseCharacterList(InputMessage& inputMessage)
+void ProtocolLogin::parseCharacterList(const InputMessagePtr& msg)
 {
     typedef std::tuple<std::string, std::string, std::string, int> CharacterInfo;
     typedef std::vector<CharacterInfo> CharaterList;
     CharaterList charList;
 
-    int numCharacters = inputMessage.getU8();
+    int numCharacters = msg->getU8();
     for(int i = 0; i < numCharacters; ++i) {
-        std::string name = inputMessage.getString();
-        std::string world = inputMessage.getString();
-        uint32 ip = inputMessage.getU32();
-        uint16 port = inputMessage.getU16();
+        std::string name = msg->getString();
+        std::string world = msg->getString();
+        uint32 ip = msg->getU32();
+        uint16 port = msg->getU16();
         charList.push_back(CharacterInfo(name, world, Fw::ip2str(ip), port));
     }
-    int premDays = inputMessage.getU16();
+    int premDays = msg->getU16();
 
     callLuaField("onCharacterList", charList, premDays);
 }

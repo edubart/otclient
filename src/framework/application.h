@@ -47,6 +47,7 @@ public:
 
     bool isRunning() { return m_running; }
     bool isStopping() { return m_stopping; }
+    bool isOnInputEvent() { return m_onInputEvent; }
     int getFrameSleep() { return m_frameSleep; }
     const std::string& getName() { return m_appName; }
     const std::string& getVersion() { return m_appVersion; }
@@ -68,6 +69,7 @@ protected:
     Boolean<false> m_initialized;
     Boolean<false> m_running;
     Boolean<false> m_stopping;
+    Boolean<false> m_onInputEvent;
 };
 
 extern Application *g_app;

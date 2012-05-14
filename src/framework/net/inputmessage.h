@@ -25,8 +25,9 @@
 
 #include "declarations.h"
 #include "networkexception.h"
+#include <framework/luascript/luaobject.h>
 
-class InputMessage
+class InputMessage : public LuaObject
 {
 public:
     enum {
@@ -36,32 +37,38 @@ public:
 
     InputMessage();
 
-    void reset();
-
-    void fillBuffer(uint8 *buffer, uint16 size);
-    uint16 readSize() { return getU16(); }
-    bool readChecksum();
-
-    void setHeaderSize(uint16 size);
-    void setMessageSize(uint16 size) { m_messageSize = size; }
-
     void skipBytes(uint16 bytes) { m_readPos += bytes; }
-
     uint8 getU8(bool peek = false);
     uint16 getU16(bool peek = false);
     uint32 getU32(bool peek = false);
     uint64 getU64(bool peek = false);
     std::string getString();
 
+    void decryptRSA(int size, const std::string& p, const std::string& q, const std::string& d);
+
+    int getReadSize() { return m_readPos - m_headerPos; }
+    int getUnreadSize() { return m_messageSize - (m_readPos - m_headerPos); }
+
+    bool eof() { return (m_readPos - m_headerPos) >= m_messageSize; }
+
+protected:
+    void reset();
+
+    void fillBuffer(uint8 *buffer, uint16 size);
+
+    void setHeaderSize(uint16 size);
+    void setMessageSize(uint16 size) { m_messageSize = size; }
+
     uint8* getReadBuffer() { return m_buffer + m_readPos; }
     uint8* getHeaderBuffer() { return m_buffer + m_headerPos; }
     uint8* getDataBuffer() { return m_buffer + MAX_HEADER_SIZE; }
     uint16 getHeaderSize() { return (MAX_HEADER_SIZE - m_headerPos); }
     uint16 getMessageSize() { return m_messageSize; }
-    int getReadSize() { return m_readPos - m_headerPos; }
-    int getUnreadSize() { return m_messageSize - (m_readPos - m_headerPos); }
 
-    bool eof() { return (m_readPos - m_headerPos) >= m_messageSize; }
+    uint16 readSize() { return getU16(); }
+    bool readChecksum();
+
+    friend class Protocol;
 
 private:
     bool canRead(int bytes);

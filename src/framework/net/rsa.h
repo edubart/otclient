@@ -24,22 +24,11 @@
 #define RSA_H
 
 #include <framework/global.h>
-#include <gmp.h>
 
-class Rsa
+namespace RSA
 {
-public:
-    Rsa();
-    ~Rsa();
-
-    void setKey(const char* p, const char* q, const char* d);
-    bool decrypt(char* msg, int32_t size);
-    static void encrypt(char* msg, int32_t size, const char* key);
-
-protected:
-    bool m_keySet;
-
-    mpz_t m_p, m_q, m_u, m_d, m_dp, m_dq, m_mod;
+    void encrypt(char *msg, int size, const char *key);
+    void decrypt(char *msg, int size, const char *p, const char *q, const char *d);
 };
 
 #endif

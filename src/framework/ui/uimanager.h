@@ -62,7 +62,6 @@ public:
     UIWidgetPtr getPressedWidget() { return m_pressedWidget; }
     UIWidgetPtr getRootWidget() { return m_rootWidget; }
 
-    bool isOnInputEvent() { return m_isOnInputEvent; }
     bool isDrawingDebugBoxes() { return m_drawDebugBoxes; }
 
 protected:
@@ -80,7 +79,6 @@ private:
     UIWidgetPtr m_hoveredWidget;
     UIWidgetPtr m_pressedWidget;
     Boolean<false> m_hoverUpdateScheduled;
-    bool m_isOnInputEvent;
     Boolean<false> m_drawDebugBoxes;
     std::unordered_map<std::string, OTMLNodePtr> m_styles;
 };

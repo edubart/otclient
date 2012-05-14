@@ -28,12 +28,14 @@
 
 namespace asio = boost::asio;
 
-class Connection;
 class InputMessage;
 class OutputMessage;
+class Connection;
 class Protocol;
 class Server;
 
+typedef std::shared_ptr<InputMessage> InputMessagePtr;
+typedef std::shared_ptr<OutputMessage> OutputMessagePtr;
 typedef std::shared_ptr<Connection> ConnectionPtr;
 typedef std::weak_ptr<Connection> ConnectionWeakPtr;
 typedef std::shared_ptr<Protocol> ProtocolPtr;

@@ -32,11 +32,18 @@ class ProtocolGame : public Protocol
 {
 public:
     void login(const std::string& accountName, const std::string& accountPassword, const std::string& host, uint16 port, const std::string& characterName);
+    void send(const OutputMessagePtr& outputMessage);
+    void sendExtendedOpcode(uint8 opcode, const std::string& buffer);
 
+protected:
     void onConnect();
-    void onRecv(InputMessage& inputMessage);
+    void onRecv(const InputMessagePtr& inputMessage);
     void onError(const boost::system::error_code& error);
 
+    friend class Game;
+
+protected:
+    void sendLoginPacket(uint challangeTimestamp, uint8 challangeRandom);
     void sendLogout();
     void sendPing();
     void sendPingBack();
@@ -105,115 +112,105 @@ public:
     void sendRequestQuestLine(int questId);
     void sendNewNewRuleViolation(int reason, int action, const std::string& characterName, const std::string& comment, const std::string& translation);
     void sendRequestItemInfo(int itemId, int index);
-    /*
-    void sendMarketLeave();
-    void sendMarketBrowse();
-    void sendMarketCreate();
-    void sendMarketCancel();
-    void sendMarketAccept();
-    */
-    void sendExtendedOpcode(uint8 opcode, const std::string& buffer);
+
+public:
+    void addPosition(const OutputMessagePtr& msg, const Position& position);
 
 private:
-    void sendLoginPacket(uint challangeTimestamp, uint8 challangeRandom);
+    void parseMessage(const InputMessagePtr& msg);
+    void parseInitGame(const InputMessagePtr& msg);
+    void parseGMActions(const InputMessagePtr& msg);
+    void parseLoginError(const InputMessagePtr& msg);
+    void parseLoginAdvice(const InputMessagePtr& msg);
+    void parseLoginWait(const InputMessagePtr& msg);
+    void parsePing(const InputMessagePtr& msg);
+    void parsePingBack(const InputMessagePtr& msg);
+    void parseChallange(const InputMessagePtr& msg);
+    void parseDeath(const InputMessagePtr& msg);
+    void parseMapDescription(const InputMessagePtr& msg);
+    void parseMapMoveNorth(const InputMessagePtr& msg);
+    void parseMapMoveEast(const InputMessagePtr& msg);
+    void parseMapMoveSouth(const InputMessagePtr& msg);
+    void parseMapMoveWest(const InputMessagePtr& msg);
+    void parseUpdateTile(const InputMessagePtr& msg);
+    void parseTileAddThing(const InputMessagePtr& msg);
+    void parseTileTransformThing(const InputMessagePtr& msg);
+    void parseTileRemoveThing(const InputMessagePtr& msg);
+    void parseCreatureMove(const InputMessagePtr& msg);
+    void parseOpenContainer(const InputMessagePtr& msg);
+    void parseCloseContainer(const InputMessagePtr& msg);
+    void parseContainerAddItem(const InputMessagePtr& msg);
+    void parseContainerUpdateItem(const InputMessagePtr& msg);
+    void parseContainerRemoveItem(const InputMessagePtr& msg);
+    void parseAddInventoryItem(const InputMessagePtr& msg);
+    void parseRemoveInventoryItem(const InputMessagePtr& msg);
+    void parseOpenNpcTrade(const InputMessagePtr& msg);
+    void parsePlayerGoods(const InputMessagePtr& msg);
+    void parseCloseNpcTrade(const InputMessagePtr&);
+    void parseWorldLight(const InputMessagePtr& msg);
+    void parseMagicEffect(const InputMessagePtr& msg);
+    void parseAnimatedText(const InputMessagePtr& msg);
+    void parseDistanceMissile(const InputMessagePtr& msg);
+    void parseCreatureMark(const InputMessagePtr& msg);
+    void parseTrappers(const InputMessagePtr& msg);
+    void parseCreatureHealth(const InputMessagePtr& msg);
+    void parseCreatureLight(const InputMessagePtr& msg);
+    void parseCreatureOutfit(const InputMessagePtr& msg);
+    void parseCreatureSpeed(const InputMessagePtr& msg);
+    void parseCreatureSkulls(const InputMessagePtr& msg);
+    void parseCreatureShields(const InputMessagePtr& msg);
+    void parseCreatureUnpass(const InputMessagePtr& msg);
+    void parseEditText(const InputMessagePtr& msg);
+    void parseEditList(const InputMessagePtr& msg);
+    void parsePlayerInfo(const InputMessagePtr& msg);
+    void parsePlayerStats(const InputMessagePtr& msg);
+    void parsePlayerSkills(const InputMessagePtr& msg);
+    void parsePlayerState(const InputMessagePtr& msg);
+    void parsePlayerCancelAttack(const InputMessagePtr& msg);
+    void parseSpellDelay(const InputMessagePtr& msg);
+    void parseSpellGroupDelay(const InputMessagePtr& msg);
+    void parseMultiUseDelay(const InputMessagePtr& msg);
+    void parseCreatureSpeak(const InputMessagePtr& msg);
+    void parseChannelList(const InputMessagePtr& msg);
+    void parseOpenChannel(const InputMessagePtr& msg);
+    void parseOpenPrivateChannel(const InputMessagePtr& msg);
+    void parseOpenOwnPrivateChannel(const InputMessagePtr& msg);
+    void parseCloseChannel(const InputMessagePtr& msg);
+    void parseRuleViolationChannel(const InputMessagePtr& msg);
+    void parseRuleViolationRemove(const InputMessagePtr& msg);
+    void parseRuleViolationCancel(const InputMessagePtr& msg);
+    void parseRuleViolationLock(const InputMessagePtr& msg);
+    void parseOwnTrade(const InputMessagePtr& msg);
+    void parseCounterTrade(const InputMessagePtr& msg);
+    void parseCloseTrade(const InputMessagePtr&);
+    void parseTextMessage(const InputMessagePtr& msg);
+    void parseCancelWalk(const InputMessagePtr& msg);
+    void parseWalkWait(const InputMessagePtr& msg);
+    void parseFloorChangeUp(const InputMessagePtr& msg);
+    void parseFloorChangeDown(const InputMessagePtr& msg);
+    void parseOpenOutfitWindow(const InputMessagePtr& msg);
+    void parseVipAdd(const InputMessagePtr& msg);
+    void parseVipLogin(const InputMessagePtr& msg);
+    void parseVipLogout(const InputMessagePtr& msg);
+    void parseTutorialHint(const InputMessagePtr& msg);
+    void parseAutomapFlag(const InputMessagePtr& msg);
+    void parseQuestLog(const InputMessagePtr& msg);
+    void parseQuestLine(const InputMessagePtr& msg);
+    void parseChannelEvent(const InputMessagePtr& msg);
+    void parseItemInfo(const InputMessagePtr& msg);
+    void parsePlayerInventory(const InputMessagePtr& msg);
+    void parseExtendedOpcode(const InputMessagePtr& msg);
 
-    // Parse Messages
-    void parseMessage(InputMessage& msg);
+public:
+    void setMapDescription(const InputMessagePtr& msg, int x, int y, int z, int width, int height);
+    int setFloorDescription(const InputMessagePtr& msg, int x, int y, int z, int width, int height, int offset, int skip);
+    void setTileDescription(const InputMessagePtr& msg, Position position);
 
-    void parseInitGame(InputMessage& msg);
-    void parseGMActions(InputMessage& msg);
-    void parseLoginError(InputMessage& msg);
-    void parseLoginAdvice(InputMessage& msg);
-    void parseLoginWait(InputMessage& msg);
-    void parsePing(InputMessage& msg);
-    void parsePingBack(InputMessage& msg);
-    void parseChallange(InputMessage& msg);
-    void parseDeath(InputMessage& msg);
-    void parseMapDescription(InputMessage& msg);
-    void parseMapMoveNorth(InputMessage& msg);
-    void parseMapMoveEast(InputMessage& msg);
-    void parseMapMoveSouth(InputMessage& msg);
-    void parseMapMoveWest(InputMessage& msg);
-    void parseUpdateTile(InputMessage& msg);
-    void parseTileAddThing(InputMessage& msg);
-    void parseTileTransformThing(InputMessage& msg);
-    void parseTileRemoveThing(InputMessage& msg);
-    void parseCreatureMove(InputMessage& msg);
-    void parseOpenContainer(InputMessage& msg);
-    void parseCloseContainer(InputMessage& msg);
-    void parseContainerAddItem(InputMessage& msg);
-    void parseContainerUpdateItem(InputMessage& msg);
-    void parseContainerRemoveItem(InputMessage& msg);
-    void parseAddInventoryItem(InputMessage& msg);
-    void parseRemoveInventoryItem(InputMessage& msg);
-    void parseOpenNpcTrade(InputMessage& msg);
-    void parsePlayerGoods(InputMessage& msg);
-    void parseCloseNpcTrade(InputMessage&);
-    void parseWorldLight(InputMessage& msg);
-    void parseMagicEffect(InputMessage& msg);
-    void parseAnimatedText(InputMessage& msg);
-    void parseDistanceMissile(InputMessage& msg);
-    void parseCreatureMark(InputMessage& msg);
-    void parseTrappers(InputMessage& msg);
-    void parseCreatureHealth(InputMessage& msg);
-    void parseCreatureLight(InputMessage& msg);
-    void parseCreatureOutfit(InputMessage& msg);
-    void parseCreatureSpeed(InputMessage& msg);
-    void parseCreatureSkulls(InputMessage& msg);
-    void parseCreatureShields(InputMessage& msg);
-    void parseCreatureUnpass(InputMessage& msg);
-    void parseEditText(InputMessage& msg);
-    void parseEditList(InputMessage& msg);
-    void parsePlayerInfo(InputMessage& msg);
-    void parsePlayerStats(InputMessage& msg);
-    void parsePlayerSkills(InputMessage& msg);
-    void parsePlayerState(InputMessage& msg);
-    void parsePlayerCancelAttack(InputMessage& msg);
-    void parseSpellDelay(InputMessage& msg);
-    void parseSpellGroupDelay(InputMessage& msg);
-    void parseMultiUseDelay(InputMessage& msg);
-    void parseCreatureSpeak(InputMessage& msg);
-    void parseChannelList(InputMessage& msg);
-    void parseOpenChannel(InputMessage& msg);
-    void parseOpenPrivateChannel(InputMessage& msg);
-    void parseOpenOwnPrivateChannel(InputMessage& msg);
-    void parseCloseChannel(InputMessage& msg);
-    void parseRuleViolationChannel(InputMessage& msg);
-    void parseRuleViolationRemove(InputMessage& msg);
-    void parseRuleViolationCancel(InputMessage& msg);
-    void parseRuleViolationLock(InputMessage& msg);
-    void parseOwnTrade(InputMessage& msg);
-    void parseCounterTrade(InputMessage& msg);
-    void parseCloseTrade(InputMessage&);
-    void parseTextMessage(InputMessage& msg);
-    void parseCancelWalk(InputMessage& msg);
-    void parseWalkWait(InputMessage& msg);
-    void parseFloorChangeUp(InputMessage& msg);
-    void parseFloorChangeDown(InputMessage& msg);
-    void parseOpenOutfitWindow(InputMessage& msg);
-    void parseVipAdd(InputMessage& msg);
-    void parseVipLogin(InputMessage& msg);
-    void parseVipLogout(InputMessage& msg);
-    void parseTutorialHint(InputMessage& msg);
-    void parseAutomapFlag(InputMessage& msg);
-    void parseQuestLog(InputMessage& msg);
-    void parseQuestLine(InputMessage& msg);
-    void parseChannelEvent(InputMessage& msg);
-    void parseItemInfo(InputMessage& msg);
-    void parsePlayerInventory(InputMessage& msg);
-    void parseExtendedOpcode(InputMessage& msg);
-
-    void setMapDescription(InputMessage& msg, int x, int y, int z, int width, int height);
-    void setFloorDescription(InputMessage& msg, int x, int y, int z, int width, int height, int offset, int* skipTiles);
-    void setTileDescription(InputMessage& msg, Position position);
-
-    Outfit internalGetOutfit(InputMessage& msg);
-    CreaturePtr internalGetCreature(InputMessage& msg, int type = 0);
-    ThingPtr internalGetThing(InputMessage& msg);
-    ItemPtr internalGetItem(InputMessage& msg, int id = 0);
-
-    void addPosition(OutputMessage& msg, const Position& position);
-    Position parsePosition(InputMessage& msg);
+    Outfit getOutfit(const InputMessagePtr& msg);
+    ThingPtr getThing(const InputMessagePtr& msg);
+    CreaturePtr getCreature(const InputMessagePtr& msg, int type = 0);
+    ItemPtr getItem(const InputMessagePtr& msg, int id = 0);
+    Position getPosition(const InputMessagePtr& msg);
 
 private:
     Boolean<false> m_gameInitialized;

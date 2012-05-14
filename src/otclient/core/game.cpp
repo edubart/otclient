@@ -29,6 +29,7 @@
 #include "statictext.h"
 #include <framework/core/eventdispatcher.h>
 #include <framework/ui/uimanager.h>
+#include <framework/application.h>
 #include <otclient/luascript/luavaluecasts.h>
 #include <otclient/net/protocolgame.h>
 
@@ -993,7 +994,7 @@ bool Game::checkBotProtection()
 #ifdef BOT_PROTECTION
     // accepts calls comming from a stacktrace containing only C++ functions,
     // if the stacktrace contains a lua function, then only accept if the engine is processing an input event
-    if(g_lua.isInCppCallback() && !g_ui.isOnInputEvent()) {
+    if(g_lua.isInCppCallback() && !g_app->isOnInputEvent()) {
         logError(g_lua.traceback("caught a lua call to a bot protected game function, the call was canceled"));
         return false;
     }

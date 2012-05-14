@@ -221,8 +221,10 @@ void Application::poll()
 
 void Application::close()
 {
+    m_onInputEvent = true;
     if(!g_lua.callGlobalField<bool>("g_app", "onClose"))
         exit();
+    m_onInputEvent = false;
 }
 
 void Application::render()
@@ -235,11 +237,15 @@ void Application::render()
 
 void Application::resize(const Size& size)
 {
+    m_onInputEvent = true;
     g_graphics.resize(size);
     g_ui.resize(size);
+    m_onInputEvent = false;
 }
 
 void Application::inputEvent(const InputEvent& event)
 {
+    m_onInputEvent = true;
     g_ui.inputEvent(event);
+    m_onInputEvent = false;
 }

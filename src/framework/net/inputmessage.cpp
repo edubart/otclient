@@ -21,6 +21,7 @@
  */
 
 #include "inputmessage.h"
+#include "rsa.h"
 
 InputMessage::InputMessage()
 {
@@ -104,6 +105,11 @@ std::string InputMessage::getString()
     char* v = (char*)(m_buffer + m_readPos);
     m_readPos += stringLength;
     return std::string(v, stringLength);
+}
+
+void InputMessage::decryptRSA(int size, const std::string& p, const std::string& q, const std::string& d)
+{
+    RSA::decrypt((char*)m_buffer + m_readPos, size, p.c_str(), q.c_str(), d.c_str());
 }
 
 bool InputMessage::canRead(int bytes)

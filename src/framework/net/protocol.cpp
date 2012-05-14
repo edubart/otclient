@@ -27,6 +27,7 @@ Protocol::Protocol()
 {
     m_xteaEncryptionEnabled = false;
     m_checksumEnabled = false;
+    m_inputMessage = InputMessagePtr(new InputMessage);
 }
 
 Protocol::~Protocol()
@@ -63,7 +64,7 @@ bool Protocol::isConnecting()
     return false;
 }
 
-void Protocol::send(OutputMessage& outputMessage)
+void Protocol::send(const OutputMessagePtr& outputMessage)
 {
     // encrypt
     if(m_xteaEncryptionEnabled)
@@ -71,19 +72,19 @@ void Protocol::send(OutputMessage& outputMessage)
 
     // write checksum
     if(m_checksumEnabled)
-        outputMessage.writeChecksum();
+        outputMessage->writeChecksum();
 
     // wirte message size
-    outputMessage.writeMessageSize();
+    outputMessage->writeMessageSize();
 
     // send
     if(m_connection)
-        m_connection->write(outputMessage.getHeaderBuffer(), outputMessage.getMessageSize());
+        m_connection->write(outputMessage->getHeaderBuffer(), outputMessage->getMessageSize());
 }
 
 void Protocol::recv()
 {
-    m_inputMessage.reset();
+    m_inputMessage->reset();
 
     // first update message header size
     int headerSize = 2; // 2 bytes for message size
@@ -91,7 +92,7 @@ void Protocol::recv()
         headerSize += 4; // 4 bytes for checksum
     if(m_xteaEncryptionEnabled)
         headerSize += 2; // 2 bytes for XTEA encrypted message size
-    m_inputMessage.setHeaderSize(headerSize);
+    m_inputMessage->setHeaderSize(headerSize);
 
     // read the first 2 bytes which contain the message size
     if(m_connection)
@@ -101,8 +102,8 @@ void Protocol::recv()
 void Protocol::internalRecvHeader(uint8* buffer, uint16 size)
 {
     // read message size
-    m_inputMessage.fillBuffer(buffer, size);
-    uint16 remainingSize = m_inputMessage.readSize();
+    m_inputMessage->fillBuffer(buffer, size);
+    uint16 remainingSize = m_inputMessage->readSize();
 
     // read remaining message data
     if(m_connection)
@@ -117,9 +118,9 @@ void Protocol::internalRecvData(uint8* buffer, uint16 size)
         return;
     }
 
-    m_inputMessage.fillBuffer(buffer, size);
+    m_inputMessage->fillBuffer(buffer, size);
 
-    if(m_checksumEnabled && !m_inputMessage.readChecksum()) {
+    if(m_checksumEnabled && !m_inputMessage->readChecksum()) {
         logTraceError("got a network message with invalid checksum");
         return;
     }
@@ -130,8 +131,8 @@ void Protocol::internalRecvData(uint8* buffer, uint16 size)
             return;
         }
     } else {
-        int size = m_inputMessage.getU16();
-        if(size != m_inputMessage.getUnreadSize()) {
+        int size = m_inputMessage->getU16();
+        if(size != m_inputMessage->getUnreadSize()) {
             logTraceError("invalid message size");
             return;
         }
@@ -150,15 +151,15 @@ void Protocol::generateXteaKey()
     m_xteaKey[3] = unif(eng);
 }
 
-bool Protocol::xteaDecrypt(InputMessage& inputMessage)
+bool Protocol::xteaDecrypt(const InputMessagePtr& inputMessage)
 {
-    uint16 encryptedSize = inputMessage.getUnreadSize();
+    uint16 encryptedSize = inputMessage->getUnreadSize();
     if(encryptedSize % 8 != 0) {
         logTraceError("invalid encrypted network message");
         return false;
     }
 
-    uint32 *buffer = (uint32*)(inputMessage.getReadBuffer());
+    uint32 *buffer = (uint32*)(inputMessage->getReadBuffer());
     int readPos = 0;
 
     while(readPos < encryptedSize/4) {
@@ -175,31 +176,31 @@ bool Protocol::xteaDecrypt(InputMessage& inputMessage)
         readPos = readPos + 2;
     }
 
-    uint16 decryptedSize = inputMessage.getU16() + 2;
+    uint16 decryptedSize = inputMessage->getU16() + 2;
     int sizeDelta = decryptedSize - encryptedSize;
     if(sizeDelta > 0 || -sizeDelta > encryptedSize) {
         logTraceError("invalid decrypted a network message");
         return false;
     }
 
-    inputMessage.setMessageSize(inputMessage.getMessageSize() + sizeDelta);
+    inputMessage->setMessageSize(inputMessage->getMessageSize() + sizeDelta);
     return true;
 }
 
-void Protocol::xteaEncrypt(OutputMessage& outputMessage)
+void Protocol::xteaEncrypt(const OutputMessagePtr& outputMessage)
 {
-    outputMessage.writeMessageSize();
-    uint16 encryptedSize = outputMessage.getMessageSize();
+    outputMessage->writeMessageSize();
+    uint16 encryptedSize = outputMessage->getMessageSize();
 
     //add bytes until reach 8 multiple
     if((encryptedSize % 8) != 0) {
         uint16 n = 8 - (encryptedSize % 8);
-        outputMessage.addPaddingBytes(n);
+        outputMessage->addPaddingBytes(n);
         encryptedSize += n;
     }
 
     int readPos = 0;
-    uint32 *buffer = (uint32*)(outputMessage.getDataBuffer() - 2);
+    uint32 *buffer = (uint32*)(outputMessage->getDataBuffer() - 2);
     while(readPos < encryptedSize / 4) {
         uint32 v0 = buffer[readPos], v1 = buffer[readPos + 1];
         uint32 delta = 0x61C88647;

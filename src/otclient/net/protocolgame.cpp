@@ -54,7 +54,7 @@ void ProtocolGame::onConnect()
     recv();
 }
 
-void ProtocolGame::onRecv(InputMessage& inputMessage)
+void ProtocolGame::onRecv(const InputMessagePtr& inputMessage)
 {
     parseMessage(inputMessage);
     recv();

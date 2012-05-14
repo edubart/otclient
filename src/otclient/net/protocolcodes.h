@@ -55,15 +55,17 @@ namespace Proto {
         OsLinux = 1,
         OsWindows = 2,
         OsFlash = 3,
-        OsMac = 4
+        OsOtclientLinux = 10,
+        OsOtclientWindows = 11,
+        OsOtclientMac = 12,
     };
 
 #ifdef OSTYPE
     constexpr int ClientOs = OSTYPE;
 #elif defined WIN32
-    constexpr int ClientOs = OsWindows;
+    constexpr int ClientOs = OsOtclientWindows;
 #else
-    constexpr int ClientOs = OsLinux;
+    constexpr int ClientOs = OsOtclientLinux;
 #endif
 
 #if PROTOCOL>=860
@@ -107,10 +109,9 @@ namespace Proto {
         GameServerFirstGameOpcode           = 50,
 
         // NOTE: add any custom opcodes in this range
-        // 50 - 97
+        // 51 - 99
 
         // otclient ONLY
-        GameServerExtendedP2POpcode         = 98,
         GameServerExtendedOpcode            = 99,
 
         // original tibia ONLY
@@ -203,10 +204,9 @@ namespace Proto {
         ClientFirstGameOpcode               = 50,
 
         // NOTE: add any custom opcodes in this range
-        // 50 - 97
+        // 50 - 98
 
         // otclient ONLY
-        ClientExtendedP2POpcode             = 98,
         ClientExtendedOpcode                = 99,
 
         // original tibia ONLY
