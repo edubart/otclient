@@ -108,11 +108,11 @@ namespace Proto {
         // all in game opcodes must be equal or greater than 50
         GameServerFirstGameOpcode           = 50,
 
+        // otclient ONLY
+        GameServerExtendedOpcode            = 50,
+
         // NOTE: add any custom opcodes in this range
         // 51 - 99
-
-        // otclient ONLY
-        GameServerExtendedOpcode            = 99,
 
         // original tibia ONLY
         GameServerFullMap                   = 100,
@@ -203,11 +203,11 @@ namespace Proto {
         // all in game opcodes must be equal or greater than 50
         ClientFirstGameOpcode               = 50,
 
-        // NOTE: add any custom opcodes in this range
-        // 50 - 98
-
         // otclient ONLY
-        ClientExtendedOpcode                = 99,
+        ClientExtendedOpcode                = 50,
+
+        // NOTE: add any custom opcodes in this range
+        // 51 - 99
 
         // original tibia ONLY
         ClientAutoWalk                      = 100,

@@ -30,28 +30,16 @@ InputMessage::InputMessage()
 
 void InputMessage::reset()
 {
-    m_messageSize = 0;
     m_readPos = MAX_HEADER_SIZE;
     m_headerPos = MAX_HEADER_SIZE;
 }
 
-void InputMessage::setHeaderSize(uint16 size)
+void InputMessage::setBuffer(const std::string& buffer)
 {
-    m_headerPos = MAX_HEADER_SIZE - size;
-    m_readPos = m_headerPos;
-}
-
-void InputMessage::fillBuffer(uint8 *buffer, uint16 size)
-{
-    memcpy(m_buffer + m_readPos, buffer, size);
-    m_messageSize += size;
-}
-
-bool InputMessage::readChecksum()
-{
-    uint32_t receivedCheck = getU32();
-    uint32 checksum = Fw::getAdlerChecksum(m_buffer + m_readPos, getUnreadSize());
-    return receivedCheck == checksum;
+    memcpy(m_buffer + MAX_HEADER_SIZE, buffer.c_str(), buffer.size());
+    m_readPos = MAX_HEADER_SIZE;
+    m_headerPos = MAX_HEADER_SIZE;
+    m_messageSize = buffer.size();
 }
 
 uint8 InputMessage::getU8(bool peek)
@@ -110,6 +98,25 @@ std::string InputMessage::getString()
 void InputMessage::decryptRSA(int size, const std::string& p, const std::string& q, const std::string& d)
 {
     RSA::decrypt((char*)m_buffer + m_readPos, size, p.c_str(), q.c_str(), d.c_str());
+}
+
+void InputMessage::fillBuffer(uint8 *buffer, uint16 size)
+{
+    memcpy(m_buffer + m_readPos, buffer, size);
+    m_messageSize += size;
+}
+
+void InputMessage::setHeaderSize(uint16 size)
+{
+    m_headerPos = MAX_HEADER_SIZE - size;
+    m_readPos = m_headerPos;
+}
+
+bool InputMessage::readChecksum()
+{
+    uint32_t receivedCheck = getU32();
+    uint32 checksum = Fw::getAdlerChecksum(m_buffer + m_readPos, getUnreadSize());
+    return receivedCheck == checksum;
 }
 
 bool InputMessage::canRead(int bytes)

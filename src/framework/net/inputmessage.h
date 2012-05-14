@@ -37,6 +37,8 @@ public:
 
     InputMessage();
 
+    void setBuffer(const std::string& buffer);
+
     void skipBytes(uint16 bytes) { m_readPos += bytes; }
     uint8 getU8(bool peek = false);
     uint16 getU16(bool peek = false);
@@ -53,7 +55,6 @@ public:
 
 protected:
     void reset();
-
     void fillBuffer(uint8 *buffer, uint16 size);
 
     void setHeaderSize(uint16 size);
