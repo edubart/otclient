@@ -1,0 +1,12 @@
+Module
+  name: gamelib_extended
+  description: Manage client extended messages
+  author: baxnie
+  website: www.otclient.info
+
+  @onLoad: |
+    dofile 'extended'
+    Extended.init()
+
+  @onUnload: |
+    Extended.terminate()

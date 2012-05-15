@@ -5,6 +5,7 @@ Module
   website: www.otclient.info
 
   dependencies:
+    - gamelib_extended
     - game_tibiafiles
     - client_background
     //- game_shaders
