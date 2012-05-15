@@ -430,9 +430,14 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<InputMessage>("getU32", &InputMessage::getU32);
     g_lua.bindClassMemberFunction<InputMessage>("getU64", &InputMessage::getU64);
     g_lua.bindClassMemberFunction<InputMessage>("getString", &InputMessage::getString);
+    g_lua.bindClassMemberFunction<InputMessage>("peekU8", &InputMessage::peekU8);
+    g_lua.bindClassMemberFunction<InputMessage>("peekU16", &InputMessage::peekU16);
+    g_lua.bindClassMemberFunction<InputMessage>("peekU32", &InputMessage::peekU32);
+    g_lua.bindClassMemberFunction<InputMessage>("peekU64", &InputMessage::peekU64);
     g_lua.bindClassMemberFunction<InputMessage>("decryptRSA", &InputMessage::decryptRSA);
     g_lua.bindClassMemberFunction<InputMessage>("getReadSize", &InputMessage::getReadSize);
     g_lua.bindClassMemberFunction<InputMessage>("getUnreadSize", &InputMessage::getUnreadSize);
+    g_lua.bindClassMemberFunction<InputMessage>("getMessageSize", &InputMessage::getMessageSize);
     g_lua.bindClassMemberFunction<InputMessage>("eof", &InputMessage::eof);
 
     // OutputMessage
@@ -447,6 +452,7 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<OutputMessage>("addString", &OutputMessage::addString);
     g_lua.bindClassMemberFunction<OutputMessage>("addPaddingBytes", &OutputMessage::addPaddingBytes);
     g_lua.bindClassMemberFunction<OutputMessage>("encryptRSA", &OutputMessage::encryptRSA);
+    g_lua.bindClassMemberFunction<OutputMessage>("getMessageSize", &OutputMessage::getMessageSize);
 
     // Application
     g_lua.registerStaticClass("g_app");

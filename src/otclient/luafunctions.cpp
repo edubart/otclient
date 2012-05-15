@@ -177,7 +177,7 @@ void OTClient::registerLuaFunctions()
     g_lua.registerClass<ProtocolGame, Protocol>();
     g_lua.bindClassStaticFunction<ProtocolGame>("create", []{ return ProtocolGamePtr(new ProtocolGame); });
     g_lua.bindClassMemberFunction<ProtocolGame>("login", &ProtocolGame::login);
-    g_lua.bindClassMemberFunction<ProtocolGame>("send", &ProtocolGame::send);
+    g_lua.bindClassMemberFunction<ProtocolGame>("safeSend", &ProtocolGame::safeSend);
     g_lua.bindClassMemberFunction<ProtocolGame>("sendExtendedOpcode", &ProtocolGame::sendExtendedOpcode);
     g_lua.bindClassMemberFunction<ProtocolGame>("addPosition", &ProtocolGame::addPosition);
     g_lua.bindClassMemberFunction<ProtocolGame>("setMapDescription", &ProtocolGame::setMapDescription);

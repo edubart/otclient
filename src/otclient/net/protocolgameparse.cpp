@@ -431,7 +431,7 @@ void ProtocolGame::parseMapMoveWest(const InputMessagePtr& msg)
 void ProtocolGame::parseUpdateTile(const InputMessagePtr& msg)
 {
     Position tilePos = getPosition(msg);
-    int thingId = msg->getU16(true);
+    int thingId = msg->peekU16();
     if(thingId == 0xFF01) {
         msg->getU16();
     } else {
@@ -1249,7 +1249,7 @@ int ProtocolGame::setFloorDescription(const InputMessagePtr& msg, int x, int y, 
             g_map.cleanTile(tilePos);
 
             if(skip == 0) {
-                int tileOpt = msg->getU16(true);
+                int tileOpt = msg->peekU16();
                 if(tileOpt >= 0xFF00)
                     skip = (msg->getU16() & 0xFF);
                 else {
@@ -1274,7 +1274,7 @@ void ProtocolGame::setTileDescription(const InputMessagePtr& msg, Position posit
 
     int stackPos = 0;
     while(true) {
-        int inspectItemId = msg->getU16(true);
+        int inspectItemId = msg->peekU16();
         if(inspectItemId >= 0xFF00) {
             return;
         }

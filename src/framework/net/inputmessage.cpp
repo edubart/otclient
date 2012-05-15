@@ -30,6 +30,7 @@ InputMessage::InputMessage()
 
 void InputMessage::reset()
 {
+    m_messageSize = 0;
     m_readPos = MAX_HEADER_SIZE;
     m_headerPos = MAX_HEADER_SIZE;
 }
@@ -42,47 +43,35 @@ void InputMessage::setBuffer(const std::string& buffer)
     m_messageSize = buffer.size();
 }
 
-uint8 InputMessage::getU8(bool peek)
+uint8 InputMessage::getU8()
 {
     checkRead(1);
     uint8 v = m_buffer[m_readPos];
-
-    if(!peek)
-        m_readPos += 1;
-
+    m_readPos += 1;
     return v;
 }
 
-uint16 InputMessage::getU16(bool peek)
+uint16 InputMessage::getU16()
 {
     checkRead(2);
     uint16 v = Fw::readLE16(m_buffer + m_readPos);
-
-    if(!peek)
-        m_readPos += 2;
-
+    m_readPos += 2;
     return v;
 }
 
-uint32 InputMessage::getU32(bool peek)
+uint32 InputMessage::getU32()
 {
     checkRead(4);
     uint32 v = Fw::readLE32(m_buffer + m_readPos);
-
-    if(!peek)
-        m_readPos += 4;
-
+    m_readPos += 4;
     return v;
 }
 
-uint64 InputMessage::getU64(bool peek)
+uint64 InputMessage::getU64()
 {
     checkRead(8);
     uint64 v = Fw::readLE64(m_buffer + m_readPos);
-
-    if(!peek)
-        m_readPos += 8;
-
+    m_readPos += 8;
     return v;
 }
 

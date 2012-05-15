@@ -32,7 +32,7 @@ class ProtocolGame : public Protocol
 {
 public:
     void login(const std::string& accountName, const std::string& accountPassword, const std::string& host, uint16 port, const std::string& characterName);
-    void send(const OutputMessagePtr& outputMessage);
+    void safeSend(const OutputMessagePtr& outputMessage);
     void sendExtendedOpcode(uint8 opcode, const std::string& buffer);
 
 protected:

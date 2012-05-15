@@ -51,11 +51,12 @@ public:
 
     void encryptRSA(int size, const std::string& key);
 
+    uint16 getMessageSize() { return m_messageSize; }
+
 protected:
     uint8* getWriteBuffer() { return m_buffer + m_writePos; }
     uint8* getHeaderBuffer() { return m_buffer + m_headerPos; }
     uint8* getDataBuffer() { return m_buffer + MAX_HEADER_SIZE; }
-    uint16 getMessageSize() { return m_messageSize; }
 
     void writeChecksum();
     void writeMessageSize();

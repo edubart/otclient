@@ -23,7 +23,7 @@
 #include "protocolgame.h"
 #include <otclient/core/game.h>
 
-void ProtocolGame::send(const OutputMessagePtr& outputMessage)
+void ProtocolGame::safeSend(const OutputMessagePtr& outputMessage)
 {
     // avoid usage of automated sends (bot modules)
     if(!g_game.checkBotProtection())
@@ -37,7 +37,7 @@ void ProtocolGame::sendExtendedOpcode(uint8 opcode, const std::string& buffer)
     msg->addU8(Proto::ClientExtendedOpcode);
     msg->addU8(opcode);
     msg->addString(buffer);
-    send(msg);
+    safeSend(msg);
 }
 
 void ProtocolGame::sendLoginPacket(uint challangeTimestamp, uint8 challangeRandom)
