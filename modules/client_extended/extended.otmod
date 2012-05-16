@@ -1,6 +1,6 @@
 Module
-  name: gamelib_extended
-  description: Manage client extended messages
+  name: client_extended
+  description: Manage client extended messages callbacks
   author: baxnie
   website: www.otclient.info
 

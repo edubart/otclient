@@ -232,6 +232,8 @@ public:
     bool canPerformGameAction();
     bool canReportBugs() { return m_canReportBugs; }
     bool checkBotProtection();
+    void enableBotCall() { m_denyBotCall = false; }
+    void disableBotCall() { m_denyBotCall = true; }
 
     bool isOnline() { return !!m_localPlayer; }
     bool isDead() { return m_dead; }
@@ -261,6 +263,7 @@ private:
     std::map<int, ContainerPtr> m_containers;
     std::map<int, Vip> m_vips;
 
+    bool m_denyBotCall;
     bool m_dead;
     int m_serverBeat;
     Otc::FightModes m_fightMode;

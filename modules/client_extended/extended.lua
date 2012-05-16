@@ -7,7 +7,7 @@ local callbacks = {}
 local function onExtendedOpcode(protocol, opcode, buffer)
   local callback = callbacks[opcode]
   if callback then
-    callback(opcode, buffer)
+    callback(protocol, opcode, buffer)
   end
 end
 

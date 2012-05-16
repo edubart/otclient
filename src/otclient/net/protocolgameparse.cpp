@@ -1212,11 +1212,13 @@ void ProtocolGame::parseExtendedOpcode(const InputMessagePtr& msg)
     int opcode = msg->getU8();
     std::string buffer = msg->getString();
 
+#ifdef EXTENDED_OPCODE
     try {
         callLuaField("onExtendedOpcode", opcode, buffer);
     } catch(Exception& e) {
         logError("Network exception in extended opcode ", opcode, ": ", e.what());
     }
+#endif
 }
 
 void ProtocolGame::setMapDescription(const InputMessagePtr& msg, int x, int y, int z, int width, int height)

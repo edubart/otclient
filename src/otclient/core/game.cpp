@@ -42,6 +42,11 @@ Game::Game()
 
 void Game::resetGameStates()
 {
+#ifdef BOT_PROTECTION
+    m_denyBotCall = true;
+#else
+    m_denyBotCall = false;
+#endif
     m_dead = false;
     m_serverBeat = 50;
     m_canReportBugs = false;
@@ -114,8 +119,10 @@ void Game::processGameStart(const LocalPlayerPtr& localPlayer, int serverBeat, b
     // synchronize fight modes with the server
     m_protocolGame->sendChangeFightModes(m_fightMode, m_chaseMode, m_safeFight);
 
-    // NOTE: the entire map description and local player information is not known yet
+    // NOTE: the entire map description and local player information is not known yet (bot call is allowed here)
+    enableBotCall();
     g_lua.callGlobalField("g_game", "onGameStart");
+    disableBotCall();
 }
 
 void Game::processGameEnd()
@@ -991,14 +998,12 @@ void Game::mount(bool mount)
 
 bool Game::checkBotProtection()
 {
-#ifdef BOT_PROTECTION
     // accepts calls comming from a stacktrace containing only C++ functions,
     // if the stacktrace contains a lua function, then only accept if the engine is processing an input event
-    if(g_lua.isInCppCallback() && !g_app->isOnInputEvent()) {
+    if(g_lua.isInCppCallback() && !g_app->isOnInputEvent() && m_denyBotCall) {
         logError(g_lua.traceback("caught a lua call to a bot protected game function, the call was canceled"));
         return false;
     }
-#endif
     return true;
 }
 

@@ -10,10 +10,33 @@ local currentLocale
 local localeComboBox
 
 -- private functions
+local function sendLocale(localeName)
+  local protocolGame = g_game.getProtocolGame()
+  if protocolGame then
+    protocolGame:sendExtendedOpcode(0, localeName)
+    return true
+  end
+  return false
+end
+
 local function onLocaleComboBoxOptionChange(self, optionText, optionData)
-  Locales.setLocale(optionData)
-  Settings.set('locale', optionData)
-  reloadModules()
+  if Locales.setLocale(optionData) then
+    Settings.set('locale', optionData)
+    sendLocale(currentLocale.name)
+    reloadModules()
+  end
+end
+
+-- hooked functions
+local function onGameStart()
+  sendLocale(currentLocale.name)
+end
+
+local function onServerSetLocale(protocol, opcode, buffer)
+  local locale = installedLocales[buffer]
+  if locale then
+    localeComboBox:setCurrentOption(locale.languageName)
+  end
 end
 
 -- public functions
@@ -24,9 +47,9 @@ function Locales.init()
 
   local userLocaleName = Settings.get('locale')
   if userLocaleName and Locales.setLocale(userLocaleName)then
-    print('Using configured locale: ' .. userLocaleName)
+    info('Using configured locale: ' .. userLocaleName)
   else
-    print('Using default locale: ' .. defaultLocaleName)
+    info('Using default locale: ' .. defaultLocaleName)
     Locales.setLocale(defaultLocaleName)
     Settings.set('locale', defaultLocaleName)
   end
@@ -39,12 +62,17 @@ function Locales.init()
               localeComboBox:setCurrentOption(currentLocale.languageName)
               localeComboBox.onOptionChange = onLocaleComboBoxOptionChange
             end, false)
+
+  Extended.register(0, onServerSetLocale)
+  connect(g_game, { onGameStart = onGameStart })
 end
 
 function Locales.terminate()
   installedLocales = nil
   currentLocale = nil
   localeComboBox = nil
+  Extended.unregister(0)
+  disconnect(g_game, { onGameStart = onGameStart })
 end
 
 function Locales.installLocale(locale)

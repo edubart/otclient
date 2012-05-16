@@ -33,11 +33,13 @@ void ProtocolGame::safeSend(const OutputMessagePtr& outputMessage)
 
 void ProtocolGame::sendExtendedOpcode(uint8 opcode, const std::string& buffer)
 {
+#ifdef EXTENDED_OPCODE
     OutputMessagePtr msg(new OutputMessage);
     msg->addU8(Proto::ClientExtendedOpcode);
     msg->addU8(opcode);
     msg->addString(buffer);
     safeSend(msg);
+#endif
 }
 
 void ProtocolGame::sendLoginPacket(uint challangeTimestamp, uint8 challangeRandom)

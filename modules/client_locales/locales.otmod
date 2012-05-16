@@ -5,6 +5,7 @@ Module
   website: www.otclient.info
 
   dependencies:
+    - client_extended
     - client_topmenu
 
   @onLoad: |
