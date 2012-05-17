@@ -105,7 +105,7 @@ namespace Proto {
         GameServerChallange                 = 31,
         GameServerDeath                     = 40,
 
-        // all in game opcodes must be equal or greater than 50
+        // all in game opcodes must be greater than 50
         GameServerFirstGameOpcode           = 50,
 
         // otclient ONLY

@@ -46,7 +46,7 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
             if(callLuaField<bool>("onOpcode", opcode, msg))
                 continue;
 
-            if(!m_gameInitialized && opcode >= Proto::GameServerFirstGameOpcode)
+            if(!m_gameInitialized && opcode > Proto::GameServerFirstGameOpcode)
                 logWarning("received a game opcode from the server, but the game is not initialized yet, this is a server side bug");
 
             switch(opcode) {
@@ -1212,13 +1212,16 @@ void ProtocolGame::parseExtendedOpcode(const InputMessagePtr& msg)
     int opcode = msg->getU8();
     std::string buffer = msg->getString();
 
-#ifdef EXTENDED_OPCODE
-    try {
-        callLuaField("onExtendedOpcode", opcode, buffer);
-    } catch(Exception& e) {
-        logError("Network exception in extended opcode ", opcode, ": ", e.what());
+    if(opcode == 0) {
+        m_enableSendExtendedOpcode = true;
     }
-#endif
+    else {
+        try {
+            callLuaField("onExtendedOpcode", opcode, buffer);
+        } catch(Exception& e) {
+            logError("Network exception in extended opcode ", opcode, ": ", e.what());
+        }
+    }
 }
 
 void ProtocolGame::setMapDescription(const InputMessagePtr& msg, int x, int y, int z, int width, int height)

@@ -13,7 +13,7 @@ local localeComboBox
 local function sendLocale(localeName)
   local protocolGame = g_game.getProtocolGame()
   if protocolGame then
-    protocolGame:sendExtendedOpcode(0, localeName)
+    protocolGame:sendExtendedOpcode(1, localeName)
     return true
   end
   return false
@@ -63,7 +63,7 @@ function Locales.init()
               localeComboBox.onOptionChange = onLocaleComboBoxOptionChange
             end, false)
 
-  Extended.register(0, onServerSetLocale)
+  Extended.register(1, onServerSetLocale)
   connect(g_game, { onGameStart = onGameStart })
 end
 
@@ -71,7 +71,7 @@ function Locales.terminate()
   installedLocales = nil
   currentLocale = nil
   localeComboBox = nil
-  Extended.unregister(0)
+  Extended.unregister(1)
   disconnect(g_game, { onGameStart = onGameStart })
 end
 
