@@ -30,7 +30,7 @@
 class Event : public LuaObject
 {
 public:
-    Event(const SimpleCallback& callback) : m_callback(callback), m_canceled(false), m_executed(false) { }
+    Event(const std::function<void()>& callback) : m_callback(callback), m_canceled(false), m_executed(false) { }
 
     void execute() {
         if(!m_canceled && !m_executed && m_callback) {
@@ -44,7 +44,7 @@ public:
     bool isExecuted() { return m_executed; }
 
 protected:
-    SimpleCallback m_callback;
+    std::function<void()> m_callback;
     bool m_canceled;
     bool m_executed;
 };
@@ -52,7 +52,7 @@ protected:
 class ScheduledEvent : public Event
 {
 public:
-    ScheduledEvent(const SimpleCallback& callback, int delay) : Event(callback) {
+    ScheduledEvent(const std::function<void()>& callback, int delay) : Event(callback) {
         m_ticks = g_clock.ticksFor(delay);
     }
 
@@ -75,8 +75,8 @@ public:
     void flush();
     void poll();
 
-    EventPtr addEvent(const SimpleCallback& callback, bool pushFront = false);
-    ScheduledEventPtr scheduleEvent(const SimpleCallback& callback, int delay);
+    EventPtr addEvent(const std::function<void()>& callback, bool pushFront = false);
+    ScheduledEventPtr scheduleEvent(const std::function<void()>& callback, int delay);
 
 private:
     std::list<EventPtr> m_eventList;

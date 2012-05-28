@@ -23,8 +23,6 @@
 #ifndef OTCLIENT_CONST_H
 #define OTCLIENT_CONST_H
 
-#include <framework/math/color.h>
-
 namespace Otc
 {
     constexpr const char* AppName = "OTClient";

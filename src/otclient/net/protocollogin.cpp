@@ -64,11 +64,11 @@ void ProtocolLogin::onRecv(const InputMessagePtr& msg)
                 parseCharacterList(msg);
                 break;
             default:
-                Fw::throwException("unknown opt byte ", opcode);
+                stdext::throw_exception(stdext::format("unknown opcode %d", opcode));
                 break;
             }
         }
-    } catch(Exception& e) {
+    } catch(stdext::exception& e) {
         logTraceError(e.what());
     }
     disconnect();
@@ -112,7 +112,7 @@ void ProtocolLogin::sendLoginPacket()
     msg->addString(m_accountPassword);
     paddingBytes -= 4 + m_accountName.length() + m_accountPassword.length();
 #elif PROTOCOL>=810
-    msg->addU32(Fw::fromstring<uint32>(m_accountName));
+    msg->addU32(stdext::from_string<uint32>(m_accountName));
     msg->addString(m_accountPassword);
     paddingBytes -= 6 + m_accountPassword.length();
 #endif
@@ -149,7 +149,7 @@ void ProtocolLogin::parseCharacterList(const InputMessagePtr& msg)
         std::string world = msg->getString();
         uint32 ip = msg->getU32();
         uint16 port = msg->getU16();
-        charList.push_back(CharacterInfo(name, world, Fw::ip2str(ip), port));
+        charList.push_back(CharacterInfo(name, world, stdext::ip_to_string(ip), port));
     }
     int premDays = msg->getU16();
 

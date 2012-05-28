@@ -23,8 +23,8 @@
 #ifndef COLOR_H
 #define COLOR_H
 
-#include "../util/types.h"
-#include "../util/tools.h"
+#include "../stdext/types.h"
+#include "../stdext/cast.h"
 #include "../const.h"
 
 class Color
@@ -126,11 +126,11 @@ inline std::istream& operator>>(std::istream& in, Color& color)
         in >> tmp;
 
         if(tmp.length() == 6 || tmp.length() == 8) {
-            color.setRed((uint8)Fw::hex2dec(tmp.substr(0, 2)));
-            color.setGreen((uint8)Fw::hex2dec(tmp.substr(2, 2)));
-            color.setBlue((uint8)Fw::hex2dec(tmp.substr(4, 2)));
+            color.setRed((uint8)stdext::hex_to_dec(tmp.substr(0, 2)));
+            color.setGreen((uint8)stdext::hex_to_dec(tmp.substr(2, 2)));
+            color.setBlue((uint8)stdext::hex_to_dec(tmp.substr(4, 2)));
             if(tmp.length() == 8)
-                color.setAlpha((uint8)Fw::hex2dec(tmp.substr(6, 2)));
+                color.setAlpha((uint8)stdext::hex_to_dec(tmp.substr(6, 2)));
             else
                 color.setAlpha(255);
         } else

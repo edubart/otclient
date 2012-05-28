@@ -38,7 +38,7 @@ bool ParticleManager::load(const std::string& filename)
             }
         }
         return true;
-    } catch(Exception& e) {
+    } catch(stdext::exception& e) {
         logError("could not load particles: ", e.what());
         return false;
     }

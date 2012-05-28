@@ -23,7 +23,6 @@
 #include "x11window.h"
 #include <framework/core/resourcemanager.h>
 #include <framework/thirdparty/apngloader.h>
-#include <framework/util/utf8.h>
 
 #define LSB_BIT_SET(p, n) (p[(n)/8] |= (1 <<((n)%8)))
 
@@ -878,7 +877,7 @@ void X11Window::setMouseCursor(const std::string& file, const Point& hotSpot)
     std::vector<uchar> maskBits(numbytes, 0);
 
     for(int i=0;i<numbits;++i) {
-        uint32 rgba = Fw::readLE32(apng.pdata + i*4);
+        uint32 rgba = stdext::readLE32(apng.pdata + i*4);
         if(rgba == 0xffffffff) { //white, background
             LSB_BIT_SET(maskBits, i);
         } else if(rgba == 0xff000000) { //black, foreground
@@ -1031,7 +1030,7 @@ std::string X11Window::getClipboardText()
                             &bytesLeft,
                             &data);
         if(len > 0) {
-            clipboardText = Fw::utf8StringToLatin1(data);
+            clipboardText = stdext::utf8StringToLatin1(data);
         }
     }
 

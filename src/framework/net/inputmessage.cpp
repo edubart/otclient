@@ -54,7 +54,7 @@ uint8 InputMessage::getU8()
 uint16 InputMessage::getU16()
 {
     checkRead(2);
-    uint16 v = Fw::readLE16(m_buffer + m_readPos);
+    uint16 v = stdext::readLE16(m_buffer + m_readPos);
     m_readPos += 2;
     return v;
 }
@@ -62,7 +62,7 @@ uint16 InputMessage::getU16()
 uint32 InputMessage::getU32()
 {
     checkRead(4);
-    uint32 v = Fw::readLE32(m_buffer + m_readPos);
+    uint32 v = stdext::readLE32(m_buffer + m_readPos);
     m_readPos += 4;
     return v;
 }
@@ -70,7 +70,7 @@ uint32 InputMessage::getU32()
 uint64 InputMessage::getU64()
 {
     checkRead(8);
-    uint64 v = Fw::readLE64(m_buffer + m_readPos);
+    uint64 v = stdext::readLE64(m_buffer + m_readPos);
     m_readPos += 8;
     return v;
 }
@@ -104,7 +104,7 @@ void InputMessage::setHeaderSize(uint16 size)
 bool InputMessage::readChecksum()
 {
     uint32_t receivedCheck = getU32();
-    uint32 checksum = Fw::getAdlerChecksum(m_buffer + m_readPos, getUnreadSize());
+    uint32 checksum = stdext::generate_adler_checksum(m_buffer + m_readPos, getUnreadSize());
     return receivedCheck == checksum;
 }
 

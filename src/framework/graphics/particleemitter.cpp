@@ -25,7 +25,6 @@
 #include "particlesystem.h"
 #include <framework/core/clock.h>
 #include <framework/graphics/texturemanager.h>
-#include <framework/util/tools.h>
 
 ParticleEmitter::ParticleEmitter(const ParticleSystemPtr& parent)
 {
@@ -152,9 +151,9 @@ bool ParticleEmitter::load(const OTMLNodePtr& node)
             m_pFinalSize = childNode->value<Size>();
 
         else if(childNode->tag() == "particle-colors")
-            m_pColors = Fw::split<Color>(childNode->value());
+            m_pColors = stdext::split<Color>(childNode->value());
         else if(childNode->tag() == "particle-colors-stops")
-            m_pColorsStops = Fw::split<float>(childNode->value());
+            m_pColorsStops = stdext::split<float>(childNode->value());
         else if(childNode->tag() == "particle-texture")
             m_pTexture = g_textures.getTexture(childNode->value());
         else if(childNode->tag() == "particle-composition-mode") {
@@ -196,23 +195,23 @@ void ParticleEmitter::update(float elapsedTime)
         for(int b = m_currentBurst; b < currentBurst; ++b) {
 
             // every burst created at same position.
-            float pRadius = Fw::randomRange(m_pMinPositionRadius, m_pMaxPositionRadius);
-            float pAngle = Fw::randomRange(m_pMinPositionAngle, m_pMaxPositionAngle);
+            float pRadius = stdext::random_range(m_pMinPositionRadius, m_pMaxPositionRadius);
+            float pAngle = stdext::random_range(m_pMinPositionAngle, m_pMaxPositionAngle);
 
             Point pPosition = m_position + Point(pRadius * cos(pAngle), pRadius * sin(pAngle));
 
             for(int p = 0; p < m_burstCount; ++p) {
 
-                float pDuration = Fw::randomRange(m_pMinDuration, m_pMaxDuration);
+                float pDuration = stdext::random_range(m_pMinDuration, m_pMaxDuration);
 
                 // particles initial velocity
-                float pVelocityAbs = Fw::randomRange(m_pMinVelocity, m_pMaxVelocity);
-                float pVelocityAngle = Fw::randomRange(m_pMinVelocityAngle, m_pMaxVelocityAngle);
+                float pVelocityAbs = stdext::random_range(m_pMinVelocity, m_pMaxVelocity);
+                float pVelocityAngle = stdext::random_range(m_pMinVelocityAngle, m_pMaxVelocityAngle);
                 PointF pVelocity(pVelocityAbs * cos(pVelocityAngle), pVelocityAbs * sin(pVelocityAngle));
 
                 // particles initial acceleration
-                float pAccelerationAbs = Fw::randomRange(m_pMinAcceleration, m_pMaxAcceleration);
-                float pAccelerationAngle = Fw::randomRange(m_pMinAccelerationAngle, m_pMaxAccelerationAngle);
+                float pAccelerationAbs = stdext::random_range(m_pMinAcceleration, m_pMaxAcceleration);
+                float pAccelerationAngle = stdext::random_range(m_pMinAccelerationAngle, m_pMaxAccelerationAngle);
                 PointF pAcceleration(pAccelerationAbs * cos(pAccelerationAngle), pAccelerationAbs * sin(pAccelerationAngle));
 
                 ParticleSystemPtr particleSystem = m_parent.lock();

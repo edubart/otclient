@@ -46,7 +46,7 @@ void LuaInterface::init()
     createLuaState();
 
     // check if demangle_type is working as expected
-    assert(Fw::demangleType<LuaObject>() == "LuaObject");
+    assert(stdext::demangle_type<LuaObject>() == "LuaObject");
 
     // register LuaObject, the base of all other objects
     registerClass<LuaObject>();
@@ -163,12 +163,12 @@ void LuaInterface::registerClassMemberField(const std::string& className,
 
     if(getFunction) {
         pushCppFunction(getFunction);
-        setField(Fw::mkstr("get_", field));
+        setField(stdext::mkstr("get_", field));
     }
 
     if(setFunction) {
         pushCppFunction(setFunction);
-        setField(Fw::mkstr("set_", field));
+        setField(stdext::mkstr("set_", field));
     }
 
     pop();
@@ -310,7 +310,7 @@ void LuaInterface::loadScript(const std::string& fileName)
         std::string buffer = g_resources.loadFile(filePath);
         std::string source = "@" + filePath;
         loadBuffer(buffer, source);
-    } catch(Exception& e) {
+    } catch(stdext::exception& e) {
         throw LuaException(e.what());
     }
 }
@@ -324,9 +324,9 @@ void LuaInterface::loadFunction(const std::string& buffer, const std::string& so
 
     std::string buf;
     if(boost::starts_with(buffer, "function"))
-        buf = Fw::mkstr("__func = ", buffer);
+        buf = stdext::mkstr("__func = ", buffer);
     else
-        buf = Fw::mkstr("__func = function(self)\n", buffer,"\nend");
+        buf = stdext::mkstr("__func = function(self)\n", buffer,"\nend");
 
     loadBuffer(buf, source);
     safeCall();
@@ -343,7 +343,7 @@ void LuaInterface::evaluateExpression(const std::string& expression, const std::
 {
     // evaluates the expression
     if(!expression.empty()) {
-        std::string buffer = Fw::mkstr("__exp = (", expression, ")");
+        std::string buffer = stdext::mkstr("__exp = (", expression, ")");
         loadBuffer(buffer, source);
         safeCall();
 
@@ -1019,7 +1019,7 @@ void LuaInterface::pushObject(const LuaObjectPtr& obj)
     new(newUserdata(sizeof(LuaObjectPtr))) LuaObjectPtr(obj);
 
     // set the userdata metatable
-    getGlobal(Fw::mkstr(obj->getClassName(), "_mt"));
+    getGlobal(stdext::mkstr(obj->getClassName(), "_mt"));
     assert(!isNil());
     setMetatable();
 }

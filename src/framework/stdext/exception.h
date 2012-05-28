@@ -20,22 +20,33 @@
  * THE SOFTWARE.
  */
 
-#ifndef EXCEPTION_H
-#define EXCEPTION_H
+#ifndef STDEXT_EXCEPTION_H
+#define STDEXT_EXCEPTION_H
 
 #include <exception>
+#include <string>
 
-class Exception : public std::exception
+namespace stdext {
+
+class exception : public std::exception
 {
 public:
-    Exception() { }
-    Exception(const std::string& what) : m_what(what) { }
-    virtual ~Exception() throw() { };
+    exception() { }
+    exception(const std::string& what) : m_what(what) { }
+    virtual ~exception() throw() { };
 
     virtual const char* what() const throw() { return m_what.c_str(); }
 
 protected:
     std::string m_what;
 };
+
+/// Throws a generic exception
+template<typename... T>
+void throw_exception(const std::string& what) {
+    throw exception(what);
+}
+
+}
 
 #endif

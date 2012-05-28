@@ -50,13 +50,13 @@ TexturePtr TextureManager::getTexture(const std::string& fileName)
         try {
             // currently only png textures are supported
             if(!boost::ends_with(filePath, ".png"))
-                Fw::throwException("texture file format no supported");
+                stdext::throw_exception("texture file format no supported");
 
             // load texture file data
             std::stringstream fin;
             g_resources.loadFile(filePath, fin);
             texture = loadPNG(fin);
-        } catch(Exception& e) {
+        } catch(stdext::exception& e) {
             logError("unable to load texture '", fileName, "': ", e.what());
             texture = g_graphics.getEmptyTexture();
         }

@@ -37,14 +37,14 @@
 void Application::registerLuaFunctions()
 {
     // conversion globals
-    g_lua.bindGlobalFunction("torect", [](const std::string& v) { return Fw::fromstring<Rect>(v); });
-    g_lua.bindGlobalFunction("topoint", [](const std::string& v) { return Fw::fromstring<Point>(v); });
-    g_lua.bindGlobalFunction("tocolor", [](const std::string& v) { return Fw::fromstring<Color>(v); });
-    g_lua.bindGlobalFunction("tosize", [](const std::string& v) { return Fw::fromstring<Size>(v); });
-    g_lua.bindGlobalFunction("recttostring", [](const Rect& v) { return Fw::tostring(v); });
-    g_lua.bindGlobalFunction("pointtostring", [](const Point& v) { return Fw::tostring(v); });
-    g_lua.bindGlobalFunction("colortostring", [](const Color& v) { return Fw::tostring(v); });
-    g_lua.bindGlobalFunction("sizetostring", [](const Size& v) { return Fw::tostring(v); });
+    g_lua.bindGlobalFunction("torect", [](const std::string& v) { return stdext::from_string<Rect>(v); });
+    g_lua.bindGlobalFunction("topoint", [](const std::string& v) { return stdext::from_string<Point>(v); });
+    g_lua.bindGlobalFunction("tocolor", [](const std::string& v) { return stdext::from_string<Color>(v); });
+    g_lua.bindGlobalFunction("tosize", [](const std::string& v) { return stdext::from_string<Size>(v); });
+    g_lua.bindGlobalFunction("recttostring", [](const Rect& v) { return stdext::to_string(v); });
+    g_lua.bindGlobalFunction("pointtostring", [](const Point& v) { return stdext::to_string(v); });
+    g_lua.bindGlobalFunction("colortostring", [](const Color& v) { return stdext::to_string(v); });
+    g_lua.bindGlobalFunction("sizetostring", [](const Size& v) { return stdext::to_string(v); });
 
     // Event
     g_lua.registerClass<Event>();

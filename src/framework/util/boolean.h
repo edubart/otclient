@@ -20,17 +20,18 @@
  * THE SOFTWARE.
  */
 
-#ifndef UTF8_H
-#define UTF8_H
+#ifndef BOOLEAN_H
+#define BOOLEAN_H
 
-#include "types.h"
-#include <string>
-
-namespace Fw {
-
-char utf8CharToLatin1(uchar *utf8, int *read);
-std::string utf8StringToLatin1(uchar *utf8);
-
+/// Boolean with default value
+template<bool def>
+struct Boolean {
+    Boolean() : v(def) { }
+    operator bool &() { return v; }
+    operator bool const &() const { return v; }
+    bool& operator=(const bool& o) { v = o; return v; }
+private:
+    bool v;
 };
 
 #endif

@@ -39,6 +39,8 @@ void ProtocolGame::sendExtendedOpcode(uint8 opcode, const std::string& buffer)
         msg->addU8(opcode);
         msg->addString(buffer);
         safeSend(msg);
+    } else {
+        logError("unable to send extended opcode ", (int)opcode, ", extended opcodes are not enabled");
     }
 }
 
@@ -77,7 +79,7 @@ void ProtocolGame::sendLoginPacket(uint challangeTimestamp, uint8 challangeRando
     msg->addU8(challangeRandom);
     paddingBytes -= 5;
 #else // PROTOCOL>=810
-    msg->addU32(Fw::fromstring<uint32>(m_accountName));
+    msg->addU32(stdext::from_string<uint32>(m_accountName));
     msg->addString(m_characterName);
     msg->addString(m_accountPassword);
 

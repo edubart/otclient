@@ -120,14 +120,14 @@ void Module::discover(const OTMLNodePtr& moduleNode)
     if(OTMLNodePtr node = moduleNode->get("@onLoad")) {
         g_lua.loadFunction(node->value(), "@" + node->source() + "[" + node->tag() + "]");
         g_lua.useValue();
-        m_loadCallback = g_lua.polymorphicPop<SimpleCallback>();
+        m_loadCallback = g_lua.polymorphicPop<std::function<void()>>();
     }
 
     // set onUnload callback
     if(OTMLNodePtr node = moduleNode->get("@onUnload")) {
         g_lua.loadFunction(node->value(), "@" + node->source() + "[" + node->tag() + "]");
         g_lua.useValue();
-        m_unloadCallback = g_lua.polymorphicPop<SimpleCallback>();
+        m_unloadCallback = g_lua.polymorphicPop<std::function<void()>>();
     }
 
     if(OTMLNodePtr node = moduleNode->get("load-later")) {

@@ -20,41 +20,33 @@
  * THE SOFTWARE.
  */
 
-#ifndef TYPES_H
-#define TYPES_H
+#ifndef STDEXT_DEMANGLE_H
+#define STDEXT_DEMANGLE_H
 
-#include <stdint.h>
-#include <functional>
+#include <cxxabi.h>
+#include <string>
 
-// easy handwriting types
-typedef unsigned char uchar;
-typedef unsigned short ushort;
-typedef unsigned int uint;
-typedef unsigned long ulong;
-typedef uint64_t uint64;
-typedef uint32_t uint32;
-typedef uint16_t uint16;
-typedef uint8_t uint8;
-typedef int64_t int64;
-typedef int32_t int32;
-typedef int16_t int16;
-typedef int8_t int8;
+namespace stdext {
 
-// note that on 32 bit platforms the max ticks will overflow for values above 2,147,483,647
-// thus this means that the app may cause unknown behavior after running 24 days without restarting
-typedef long ticks_t;
+/// Demangle names for GNU g++ compiler
+inline std::string demangle_name(const char* name) {
+    size_t len;
+    int status;
+    std::string ret;
+    char* demangled = abi::__cxa_demangle(name, 0, &len, &status);
+    if(demangled) {
+        ret = demangled;
+        free(demangled);
+    }
+    return ret;
+}
 
-typedef std::function<void()> SimpleCallback;
+/// Returns the name of a type
+template<typename T>
+std::string demangle_type() {
+    return demangle_name(typeid(T).name());
+}
 
-// boolean with default value initializer
-template<bool def>
-struct Boolean {
-    Boolean() : v(def) { }
-    operator bool &() { return v; }
-    operator bool const &() const { return v; }
-    bool& operator=(const bool& o) { v = o; return v; }
-private:
-    bool v;
-};
+}
 
 #endif

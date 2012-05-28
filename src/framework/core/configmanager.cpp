@@ -44,7 +44,7 @@ bool ConfigManager::load(const std::string& file)
         if(confsDoc)
             m_confsDoc = confsDoc;
         return true;
-    } catch(Exception& e) {
+    } catch(stdext::exception& e) {
         logError("could not load configurations: ", e.what());
         return false;
     }

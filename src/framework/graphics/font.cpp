@@ -30,7 +30,7 @@
 void Font::load(const OTMLNodePtr& fontNode)
 {
     OTMLNodePtr textureNode = fontNode->at("texture");
-    std::string textureFile = Fw::resolvePath(textureNode->value(), textureNode->source());
+    std::string textureFile = stdext::resolve_path(textureNode->value(), textureNode->source());
     Size glyphSize = fontNode->valueAt<Size>("glyph-size");
     m_glyphHeight = fontNode->valueAt<int>("height");
     m_yOffset = fontNode->valueAt("y-offset", 0);
@@ -53,7 +53,7 @@ void Font::load(const OTMLNodePtr& fontNode)
     // read custom widths
     if(OTMLNodePtr node = fontNode->get("glyph-widths")) {
         for(const OTMLNodePtr& child : node->children())
-            m_glyphsSize[Fw::safeCast<int>(child->tag())].setWidth(child->value<int>());
+            m_glyphsSize[stdext::safe_cast<int>(child->tag())].setWidth(child->value<int>());
     }
 
     // calculate glyphs texture coords
@@ -285,7 +285,7 @@ std::string Font::wrapText(const std::string& text, int maxWidth)
     std::string outText;
     std::string line;
     std::vector<std::string> words;
-    std::vector<std::string> wordsSplit = Fw::split(text);
+    std::vector<std::string> wordsSplit = stdext::split(text);
 
     // break huge words into small ones
     for(uint i=0;i<wordsSplit.size();++i) {

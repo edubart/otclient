@@ -708,7 +708,7 @@ void WIN32Window::setMouseCursor(const std::string& file, const Point& hotSpot)
     std::vector<uchar> xorMask(numbytes, 0);
 
     for(int i=0;i<numbits;++i) {
-        uint32 rgba = Fw::readLE32(apng.pdata + i*4);
+        uint32 rgba = stdext::readLE32(apng.pdata + i*4);
         if(rgba == 0xffffffff) { //white
             HSB_BIT_SET(xorMask, i);
         } else if(rgba == 0x00000000) { //alpha
@@ -846,7 +846,7 @@ std::string WIN32Window::getClipboardText()
     if(hglb) {
         LPTSTR lptstr = (LPTSTR)GlobalLock(hglb);
         if(lptstr) {
-            text = Fw::utf8StringToLatin1((uchar*)lptstr);
+            text = stdext::utf8StringToLatin1((uchar*)lptstr);
             GlobalUnlock(hglb);
         }
     }

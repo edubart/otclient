@@ -41,7 +41,7 @@ void UIFrameCounter::drawSelf()
     UIWidget::drawSelf();
 
     if(g_clock.ticksElapsed(m_lastFrameTicks) >= 1000) {
-        m_fpsText = Fw::formatString("FPS: %d", m_frameCount);
+        m_fpsText = stdext::format("FPS: %d", m_frameCount);
         m_lastFrameTicks = g_clock.ticks();
         m_frameCount = 0;
     }

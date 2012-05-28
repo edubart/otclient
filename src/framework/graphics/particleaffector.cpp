@@ -71,8 +71,8 @@ bool ParticleAffector::load(const OTMLNodePtr& node)
             maxDuration = childNode->value<float>();
     }
 
-    m_delay = Fw::randomRange(minDelay, maxDelay);
-    m_duration = Fw::randomRange(minDuration, maxDuration);
+    m_delay = stdext::random_range(minDelay, maxDelay);
+    m_duration = stdext::random_range(minDuration, maxDuration);
 
     return true;
 }

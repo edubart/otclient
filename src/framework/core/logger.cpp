@@ -93,6 +93,6 @@ void Logger::setLogFile(const std::string& file)
         return;
     }
 
-    m_outFile << "\n== application started at " << Fw::dateTimeString() << std::endl;
+    m_outFile << "\n== application started at " << stdext::date_time_string() << std::endl;
     m_outFile.flush();
 }

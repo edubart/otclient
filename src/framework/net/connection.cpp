@@ -54,14 +54,14 @@ void Connection::terminate()
     g_ioService.stop();
 }
 
-void Connection::connect(const std::string& host, uint16 port, const SimpleCallback& connectCallback)
+void Connection::connect(const std::string& host, uint16 port, const std::function<void()>& connectCallback)
 {
     m_connected = false;
     m_connecting = true;
     m_error.clear();
     m_connectCallback = connectCallback;
 
-    asio::ip::tcp::resolver::query query(host, Fw::unsafeCast<std::string>(port));
+    asio::ip::tcp::resolver::query query(host, stdext::unsafe_cast<std::string>(port));
 
     auto weakSelf = ConnectionWeakPtr(shared_from_this());
     m_resolver.async_resolve(query, [=](const boost::system::error_code& error, asio::ip::tcp::resolver::iterator endpointIterator) {

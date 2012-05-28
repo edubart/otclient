@@ -300,7 +300,7 @@ bool UIManager::importStyle(const std::string& file)
         for(const OTMLNodePtr& styleNode : doc->children())
             importStyleFromOTML(styleNode);
         return true;
-    } catch(Exception& e) {
+    } catch(stdext::exception& e) {
         logError("Failed to import UI styles from '", file, "': ", e.what());
         return false;
     }
@@ -330,7 +330,7 @@ void UIManager::importStyleFromOTML(const OTMLNodePtr& styleNode)
 
     OTMLNodePtr originalStyle = getStyle(base);
     if(!originalStyle)
-        Fw::throwException("base style '", base, "' is not defined");
+        stdext::throw_exception(stdext::format("base style '%s', is not defined", base));
     OTMLNodePtr style = originalStyle->clone();
     style->merge(styleNode);
     style->setTag(name);
@@ -375,13 +375,13 @@ UIWidgetPtr UIManager::loadUI(const std::string& file, const UIWidgetPtr& parent
                 importStyleFromOTML(node);
             else {
                 if(widget)
-                    Fw::throwException("cannot have multiple main widgets in otui files");
+                    stdext::throw_exception("cannot have multiple main widgets in otui files");
                 widget = createWidgetFromOTML(node, parent);
             }
         }
 
         return widget;
-    } catch(Exception& e) {
+    } catch(stdext::exception& e) {
         logError("failed to load UI from '", file, "': ", e.what());
         return nullptr;
     }
@@ -392,7 +392,7 @@ UIWidgetPtr UIManager::createWidgetFromStyle(const std::string& styleName, const
     OTMLNodePtr node = OTMLNode::create(styleName);
     try {
         return createWidgetFromOTML(node, parent);
-    } catch(Exception& e) {
+    } catch(stdext::exception& e) {
         logError("failed to create widget from style '", styleName, "': ", e.what());
         return nullptr;
     }
@@ -402,7 +402,7 @@ UIWidgetPtr UIManager::createWidgetFromOTML(const OTMLNodePtr& widgetNode, const
 {
     OTMLNodePtr originalStyleNode = getStyle(widgetNode->tag());
     if(!originalStyleNode)
-        Fw::throwException("'", widgetNode->tag(), "' is not a defined style");
+        stdext::throw_exception(stdext::format("'%s' is not a defined style", widgetNode->tag()));
 
     OTMLNodePtr styleNode = originalStyleNode->clone();
     styleNode->merge(widgetNode);
@@ -424,7 +424,7 @@ UIWidgetPtr UIManager::createWidgetFromOTML(const OTMLNodePtr& widgetNode, const
             }
         }
     } else
-        Fw::throwException("unable to create widget of type '", widgetType, "'");
+        stdext::throw_exception(stdext::format("unable to create widget of type '%s'", widgetType));
 
     return widget;
 }

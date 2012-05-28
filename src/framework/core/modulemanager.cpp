@@ -104,7 +104,7 @@ ModulePtr ModuleManager::discoverModule(const std::string& moduleFile)
 
         std::string name = moduleNode->valueAt("name");
         //if(getModule(name))
-        //    Fw::throwException("module '", name, "' already exists, cannot have duplicate module names");
+        //    stdext::throw_exception("module '", name, "' already exists, cannot have duplicate module names");
 
         bool push = false;
         module = getModule(name);
@@ -117,7 +117,7 @@ ModulePtr ModuleManager::discoverModule(const std::string& moduleFile)
         // not loaded modules are always in back
         if(push)
             m_modules.push_back(module);
-    } catch(Exception& e) {
+    } catch(stdext::exception& e) {
         logError("Unable to discover module from file '", moduleFile, "': ", e.what());
     }
     return module;

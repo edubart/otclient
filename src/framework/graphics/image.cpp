@@ -41,11 +41,11 @@ ImagePtr Image::load(const std::string& file)
     try {
         // currently only png images are supported
         if(!boost::ends_with(file, ".png"))
-            Fw::throwException("image file format no supported");
+            stdext::throw_exception("image file format no supported");
 
         // load image file data
         image = loadPNG(file);
-    } catch(Exception& e) {
+    } catch(stdext::exception& e) {
         logError("unable to load image '", file, "': ", e.what());
     }
     return image;

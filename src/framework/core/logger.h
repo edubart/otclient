@@ -57,17 +57,17 @@ private:
 extern Logger g_logger;
 
 // specialized logging
-#define logDebug(...) g_logger.log(Fw::LogDebug, Fw::mkstr(__VA_ARGS__))
-#define logInfo(...) g_logger.log(Fw::LogInfo, Fw::mkstr(__VA_ARGS__))
-#define logWarning(...) g_logger.log(Fw::LogWarning, Fw::mkstr(__VA_ARGS__))
-#define logError(...) g_logger.log(Fw::LogError, Fw::mkstr(__VA_ARGS__))
-#define logFatal(...) g_logger.log(Fw::LogFatal, Fw::mkstr(__VA_ARGS__))
+#define logDebug(...) g_logger.log(Fw::LogDebug, stdext::mkstr(__VA_ARGS__))
+#define logInfo(...) g_logger.log(Fw::LogInfo, stdext::mkstr(__VA_ARGS__))
+#define logWarning(...) g_logger.log(Fw::LogWarning, stdext::mkstr(__VA_ARGS__))
+#define logError(...) g_logger.log(Fw::LogError, stdext::mkstr(__VA_ARGS__))
+#define logFatal(...) g_logger.log(Fw::LogFatal, stdext::mkstr(__VA_ARGS__))
 
 #define logTrace() g_logger.logFunc(Fw::LogDebug, "", __PRETTY_FUNCTION__)
-#define logTraceDebug(...) g_logger.logFunc(Fw::LogDebug, Fw::mkstr(__VA_ARGS__), __PRETTY_FUNCTION__)
-#define logTraceInfo(...) g_logger.logFunc(Fw::LogInfo, Fw::mkstr(__VA_ARGS__), __PRETTY_FUNCTION__)
-#define logTraceWarning(...) g_logger.logFunc(Fw::LogWarning, Fw::mkstr(__VA_ARGS__), __PRETTY_FUNCTION__)
-#define logTraceError(...) g_logger.logFunc(Fw::LogError, Fw::mkstr(__VA_ARGS__), __PRETTY_FUNCTION__)
+#define logTraceDebug(...) g_logger.logFunc(Fw::LogDebug, stdext::mkstr(__VA_ARGS__), __PRETTY_FUNCTION__)
+#define logTraceInfo(...) g_logger.logFunc(Fw::LogInfo, stdext::mkstr(__VA_ARGS__), __PRETTY_FUNCTION__)
+#define logTraceWarning(...) g_logger.logFunc(Fw::LogWarning, stdext::mkstr(__VA_ARGS__), __PRETTY_FUNCTION__)
+#define logTraceError(...) g_logger.logFunc(Fw::LogError, stdext::mkstr(__VA_ARGS__), __PRETTY_FUNCTION__)
 
 #define logTraceCounter() { \
     static int __count = 0; \

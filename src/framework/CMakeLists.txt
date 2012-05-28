@@ -170,8 +170,7 @@ SET(framework_SOURCES ${framework_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/luafunctions.cpp
 
     # framework util
-    ${CMAKE_CURRENT_LIST_DIR}/util/utf8.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/math/color.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/util/color.cpp
 
     # framework core
     ${CMAKE_CURRENT_LIST_DIR}/core/logger.cpp

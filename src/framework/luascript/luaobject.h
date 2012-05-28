@@ -70,7 +70,7 @@ public:
     /// Returns the derived class name, its the same name used in Lua
     virtual std::string getClassName() const {
         // TODO: this could be cached for more performance
-        return Fw::demangleName(typeid(*this).name());
+        return stdext::demangle_name(typeid(*this).name());
     }
 
     LuaObjectPtr asLuaObject() { return shared_from_this(); }

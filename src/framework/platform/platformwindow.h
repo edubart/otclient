@@ -85,7 +85,7 @@ public:
     bool isFullscreen() { return m_fullscreen; }
     bool hasFocus() { return m_focused; }
 
-    void setOnClose(const SimpleCallback& onClose) { m_onClose = onClose; }
+    void setOnClose(const std::function<void()>& onClose) { m_onClose = onClose; }
     void setOnResize(const OnResizeCallback& onResize) { m_onResize = onResize; }
     void setOnInputEvent(const OnInputEventCallback& onInputEvent) { m_onInputEvent = onInputEvent; }
 
@@ -116,7 +116,7 @@ protected:
     Boolean<false> m_fullscreen;
     Boolean<false> m_maximized;
 
-    SimpleCallback m_onClose;
+    std::function<void()> m_onClose;
     OnResizeCallback m_onResize;
     OnInputEventCallback m_onInputEvent;
 };

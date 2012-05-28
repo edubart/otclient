@@ -181,7 +181,7 @@ void OTMLParser::parseNode(const std::string& data)
 
     node->setUnique(dotsPos != std::string::npos);
     node->setTag(tag);
-    node->setSource(doc->source() + ":" + Fw::unsafeCast<std::string>(nodeLine));
+    node->setSource(doc->source() + ":" + stdext::unsafe_cast<std::string>(nodeLine));
 
     // ~ is considered the null value
     if(value == "~")

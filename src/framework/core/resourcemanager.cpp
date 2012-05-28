@@ -43,7 +43,7 @@ void ResourceManager::terminate()
 bool ResourceManager::setupWriteDir(const std::string& appWriteDirName)
 {
     std::string userDir = PHYSFS_getUserDir();
-    std::string dirName = Fw::mkstr(".", appWriteDirName);
+    std::string dirName = stdext::mkstr(".", appWriteDirName);
     std::string writeDir = userDir + dirName;
     if(!PHYSFS_setWriteDir(writeDir.c_str())) {
         if(!PHYSFS_setWriteDir(userDir.c_str()))
@@ -92,7 +92,7 @@ void ResourceManager::loadFile(const std::string& fileName, std::iostream& out)
     PHYSFS_file* file = PHYSFS_openRead(fullPath.c_str());
     if(!file) {
         out.clear(std::ios::failbit);
-        Fw::throwException("failed to load file '", fullPath.c_str(), "': ", PHYSFS_getLastError());
+        stdext::throw_exception(stdext::format("failed to load file '%s': %s", fullPath.c_str(), PHYSFS_getLastError()));
     } else {
         int fileSize = PHYSFS_fileLength(file);
         if(fileSize > 0) {

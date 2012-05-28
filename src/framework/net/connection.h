@@ -48,7 +48,7 @@ public:
     static void poll();
     static void terminate();
 
-    void connect(const std::string& host, uint16 port, const SimpleCallback& connectCallback);
+    void connect(const std::string& host, uint16 port, const std::function<void()>& connectCallback);
     void close();
 
     void write(uint8* buffer, uint16 size);
@@ -68,7 +68,7 @@ protected:
     void onTimeout(const boost::system::error_code& error);
     void handleError(const boost::system::error_code& error);
 
-    SimpleCallback m_connectCallback;
+    std::function<void()> m_connectCallback;
     ErrorCallback m_errorCallback;
     RecvCallback m_recvCallback;
 

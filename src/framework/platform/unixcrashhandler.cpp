@@ -39,13 +39,13 @@ void crashHandler(int signum, siginfo_t* info, void* secret)
     logError("Application crashed");
 
     std::stringstream ss;
-    ss << Fw::formatString("app name: %s\n", g_app->getName().c_str());
-    ss << Fw::formatString("app version: %s\n", g_app->getVersion().c_str());
-    ss << Fw::formatString("build compiler: %s\n", BUILD_COMPILER);
-    ss << Fw::formatString("build date: %s\n", BUILD_DATE);
-    ss << Fw::formatString("build type: %s\n", BUILD_TYPE);
-    ss << Fw::formatString("build revision: %s\n", BUILD_REVISION);
-    ss << Fw::formatString("crash date: %s\n", Fw::dateTimeString().c_str());
+    ss << stdext::format("app name: %s\n", g_app->getName());
+    ss << stdext::format("app version: %s\n", g_app->getVersion());
+    ss << stdext::format("build compiler: %s\n", BUILD_COMPILER);
+    ss << stdext::format("build date: %s\n", BUILD_DATE);
+    ss << stdext::format("build type: %s\n", BUILD_TYPE);
+    ss << stdext::format("build revision: %s\n", BUILD_REVISION);
+    ss << stdext::format("crash date: %s\n", stdext::date_time_string());
     ss.flags(std::ios::hex | std::ios::showbase);
 
     ucontext_t context = *(ucontext_t*)secret;
@@ -92,7 +92,7 @@ void crashHandler(int signum, siginfo_t* info, void* secret)
                 demanglePos++;
                 int len = std::min(line.find_first_of("+", demanglePos), line.find_first_of(")", demanglePos)) - demanglePos;
                 std::string funcName = line.substr(demanglePos, len);
-                line.replace(demanglePos, len, Fw::demangleName(funcName.c_str()));
+                line.replace(demanglePos, len, stdext::demangle_name(funcName.c_str()));
             }
 #endif
             ss << "    " << i-1 << ": " << line << std::endl;

@@ -20,23 +20,38 @@
  * THE SOFTWARE.
  */
 
-#ifndef OTMLEXCEPTION_H
-#define OTMLEXCEPTION_H
+#ifndef STDEXT_DUMPER_H
+#define STDEXT_DUMPER_H
 
-#include "declarations.h"
+#include <iostream>
 
-/// All OTML errors throw this exception
-class OTMLException : public stdext::exception
-{
-public:
-    OTMLException(const OTMLNodePtr& node, const std::string& error);
-    OTMLException(const OTMLDocumentPtr& doc, const std::string& error, int line = -1);
-    virtual ~OTMLException() throw() { };
+namespace stdext {
 
-    virtual const char* what() const throw() { return m_what.c_str(); }
+namespace dumper {
 
-protected:
-    std::string m_what;
+struct dumper_dummy {
+    ~dumper_dummy() { std::cout << std::endl; }
+    template<class T>
+    dumper_dummy& operator<<(const T& v) {
+        std::cout << v << " ";
+        return *this;
+    }
 };
+
+struct dumper_util {
+    dumper_util() { }
+    template<class T>
+    dumper_dummy operator<<(const T& v) const {
+        dumper_dummy d;
+        d << v;
+        return d;
+    }
+};
+
+}
+
+const static dumper::dumper_util dump;
+
+}
 
 #endif

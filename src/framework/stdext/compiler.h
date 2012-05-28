@@ -20,8 +20,8 @@
  * THE SOFTWARE.
  */
 
-#ifndef __COMPILER_H__
-#define __COMPILER_H__
+#ifndef STDEXT_COMPILER_H
+#define STDEXT_COMPILER_H
 
 #if !(__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6))
 #error "sorry, you need gcc 4.6 or greater to compile"

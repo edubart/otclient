@@ -107,8 +107,8 @@ protected:
 template<typename T>
 T OTMLNode::value() {
     T ret;
-    if(!Fw::cast(m_value, ret))
-        throw OTMLException(shared_from_this(), Fw::mkstr("failed to cast node value to type '", Fw::demangleType<T>(), "'"));
+    if(!stdext::cast(m_value, ret))
+        throw OTMLException(shared_from_this(), stdext::mkstr("failed to cast node value to type '", stdext::demangle_type<T>(), "'"));
     return ret;
 }
 
@@ -141,7 +141,7 @@ T OTMLNode::valueAtIndex(int childIndex, const T& def) {
 
 template<typename T>
 void OTMLNode::write(const T& v) {
-    m_value = Fw::safeCast<std::string>(v);
+    m_value = stdext::safe_cast<std::string>(v);
 }
 
 template<typename T>

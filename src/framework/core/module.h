@@ -68,8 +68,8 @@ private:
     std::string m_author;
     std::string m_website;
     std::string m_version;
-    SimpleCallback m_loadCallback;
-    SimpleCallback m_unloadCallback;
+    std::function<void()> m_loadCallback;
+    std::function<void()> m_unloadCallback;
     std::list<std::string> m_dependencies;
     std::list<std::string> m_loadLaterModules;
 };

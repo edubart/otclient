@@ -72,7 +72,7 @@ void EventDispatcher::poll()
     }
 }
 
-ScheduledEventPtr EventDispatcher::scheduleEvent(const SimpleCallback& callback, int delay)
+ScheduledEventPtr EventDispatcher::scheduleEvent(const std::function<void()>& callback, int delay)
 {
     assert(delay >= 0);
     ScheduledEventPtr scheduledEvent(new ScheduledEvent(callback, delay));
@@ -80,7 +80,7 @@ ScheduledEventPtr EventDispatcher::scheduleEvent(const SimpleCallback& callback,
     return scheduledEvent;
 }
 
-EventPtr EventDispatcher::addEvent(const SimpleCallback& callback, bool pushFront)
+EventPtr EventDispatcher::addEvent(const std::function<void()>& callback, bool pushFront)
 {
     EventPtr event(new Event(callback));
     // front pushing is a way to execute an event before others

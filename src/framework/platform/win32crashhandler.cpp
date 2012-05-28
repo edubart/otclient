@@ -95,9 +95,9 @@ void Stacktrace(LPEXCEPTION_POINTERS e, std::stringstream& ss)
         pSym->MaxNameLength = MAX_PATH;
 
         if(SymGetSymFromAddr(process, sf.AddrPC.Offset, &Disp, pSym))
-            ss << Fw::formatString("    %d: %s(%s+%#0lx) [0x%08lX]\n", count, modname, pSym->Name, Disp, sf.AddrPC.Offset);
+            ss << stdext::format("    %d: %s(%s+%#0lx) [0x%08lX]\n", count, modname, pSym->Name, Disp, sf.AddrPC.Offset);
         else
-            ss << Fw::formatString("    %d: %s [0x%08lX]\n", count, modname, sf.AddrPC.Offset);
+            ss << stdext::format("    %d: %s [0x%08lX]\n", count, modname, sf.AddrPC.Offset);
         ++count;
     }
     GlobalFree(pSym);
@@ -109,16 +109,16 @@ LONG CALLBACK ExceptionHandler(LPEXCEPTION_POINTERS e)
     SymInitialize(GetCurrentProcess(), 0, TRUE);
     std::stringstream ss;
     ss << "== application crashed\n";
-    ss << Fw::formatString("app name: %s\n", g_app->getName().c_str());
-    ss << Fw::formatString("app version: %s\n", g_app->getVersion().c_str());
-    ss << Fw::formatString("build compiler: %s\n", BUILD_COMPILER);
-    ss << Fw::formatString("build date: %s\n", BUILD_DATE);
-    ss << Fw::formatString("build type: %s\n", BUILD_TYPE);
-    ss << Fw::formatString("build revision: %s\n", BUILD_REVISION);
-    ss << Fw::formatString("crash date: %s\n", Fw::dateTimeString().c_str());
-    ss << Fw::formatString("exception: %s (0x%08lx)\n", getExceptionName(e->ExceptionRecord->ExceptionCode), e->ExceptionRecord->ExceptionCode);
-    ss << Fw::formatString("exception address: 0x%08lx\n", (long unsigned int)e->ExceptionRecord->ExceptionAddress);
-    ss << Fw::formatString("  backtrace:\n");
+    ss << stdext::format("app name: %s\n", g_app->getName().c_str());
+    ss << stdext::format("app version: %s\n", g_app->getVersion().c_str());
+    ss << stdext::format("build compiler: %s\n", BUILD_COMPILER);
+    ss << stdext::format("build date: %s\n", BUILD_DATE);
+    ss << stdext::format("build type: %s\n", BUILD_TYPE);
+    ss << stdext::format("build revision: %s\n", BUILD_REVISION);
+    ss << stdext::format("crash date: %s\n", stdext::date_time_string().c_str());
+    ss << stdext::format("exception: %s (0x%08lx)\n", getExceptionName(e->ExceptionRecord->ExceptionCode), e->ExceptionRecord->ExceptionCode);
+    ss << stdext::format("exception address: 0x%08lx\n", (long unsigned int)e->ExceptionRecord->ExceptionAddress);
+    ss << stdext::format("  backtrace:\n");
     Stacktrace(e, ss);
     ss << "\n";
     SymCleanup(GetCurrentProcess());
@@ -129,7 +129,7 @@ LONG CALLBACK ExceptionHandler(LPEXCEPTION_POINTERS e)
     // write stacktrace to crash_report.txt
     char dir[MAX_PATH];
     GetCurrentDirectory(sizeof(dir) - 1, dir);
-    std::string fileName = Fw::formatString("%s\\crash_report.txt", dir);
+    std::string fileName = stdext::format("%s\\crash_report.txt", dir);
     std::ofstream fout(fileName.c_str(), std::ios::out | std::ios::app);
     if(fout.is_open() && fout.good()) {
         fout << ss.str();
@@ -139,7 +139,7 @@ LONG CALLBACK ExceptionHandler(LPEXCEPTION_POINTERS e)
         logError("Failed to save crash report!");
 
     // inform the user
-    std::string msg = Fw::formatString("The application has crashed.\n\n"
+    std::string msg = stdext::format("The application has crashed.\n\n"
                                        "A crash report has been written to:\n"
                                        "%s", fileName.c_str());
     MessageBox(NULL, msg.c_str(), "Application crashed", 0);

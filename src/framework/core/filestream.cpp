@@ -181,7 +181,7 @@ uint16 FileStream::getU16()
             return 0;
         }
 
-        v = Fw::readLE16(&m_cacheBuffer[m_cacheReadPos]);
+        v = stdext::readLE16(&m_cacheBuffer[m_cacheReadPos]);
         m_cacheReadPos += 2;
     }
     return v;
@@ -199,7 +199,7 @@ uint32 FileStream::getU32()
             return 0;
         }
 
-        v = Fw::readLE32(&m_cacheBuffer[m_cacheReadPos]);
+        v = stdext::readLE32(&m_cacheBuffer[m_cacheReadPos]);
         m_cacheReadPos += 4;
     }
     return v;
@@ -217,7 +217,7 @@ uint64 FileStream::getU64()
             return 0;
         }
 
-        v = Fw::readLE64(&m_cacheBuffer[m_cacheReadPos]);
+        v = stdext::readLE64(&m_cacheBuffer[m_cacheReadPos]);
         m_cacheReadPos += 8;
     }
     return v;

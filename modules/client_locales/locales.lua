@@ -107,6 +107,7 @@ function Locales.setLocale(name)
   return true
 end
 
+-- global function used to translate texts
 function tr(text, ...)
   if currentLocale then
     if tonumber(text) then

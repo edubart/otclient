@@ -479,7 +479,7 @@ void UIWidget::applyStyle(const OTMLNodePtr& styleNode)
         for(const OTMLNodePtr& node : styleNode->children()) {
             if(node->tag()[0] == '!') {
                 std::string tag = node->tag().substr(1);
-                std::string code = Fw::formatString("tostring(%s)", node->value().c_str());
+                std::string code = stdext::format("tostring(%s)", node->value().c_str());
                 std::string origin = "@" + node->source() + "[" + node->tag() + "]";
                 g_lua.evaluateExpression(code, origin);
                 std::string value = g_lua.popString();
@@ -499,7 +499,7 @@ void UIWidget::applyStyle(const OTMLNodePtr& styleNode)
                 focus();
         }
         m_firstOnStyle = false;
-    } catch(Exception& e) {
+    } catch(stdext::exception& e) {
         logError("Failed to apply style to widget '", m_id, "' style: ", e.what());
     }
     m_loadingStyle = false;

@@ -307,12 +307,12 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
                 parseExtendedOpcode(msg);
                 break;
             default:
-                Fw::throwException("unknown opcode");
+                stdext::throw_exception("unknown opcode");
                 break;
             }
             prevOpcode = opcode;
         }
-    } catch(Exception& e) {
+    } catch(stdext::exception& e) {
         logError("Network exception (", msg->getUnreadSize(), " bytes unread, last opcode is ", opcode, ", prev opcode is ", prevOpcode, "): ", e.what());
     }
 }
@@ -954,7 +954,7 @@ void ProtocolGame::parseCreatureSpeak(const InputMessagePtr& msg)
         //case Proto::ServerSpeakChannelManagement:
         //case Proto::ServerSpeakSpell:
         default:
-            Fw::throwException("unknown speak type ", speakType);
+            stdext::throw_exception(stdext::format("unknown speak type %d", speakType));
             break;
     }
 
@@ -1218,7 +1218,7 @@ void ProtocolGame::parseExtendedOpcode(const InputMessagePtr& msg)
     else {
         try {
             callLuaField("onExtendedOpcode", opcode, buffer);
-        } catch(Exception& e) {
+        } catch(stdext::exception& e) {
             logError("Network exception in extended opcode ", opcode, ": ", e.what());
         }
     }
@@ -1340,7 +1340,7 @@ ThingPtr ProtocolGame::getThing(const InputMessagePtr& msg)
     int id = msg->getU16();
 
     if(id == 0)
-        Fw::throwException("invalid thing id");
+        stdext::throw_exception("invalid thing id");
     else if(id == Proto::UnknownCreature || id == Proto::OutdatedCreature || id == Proto::Creature)
         thing = getCreature(msg, id);
     else // item
@@ -1457,7 +1457,7 @@ CreaturePtr ProtocolGame::getCreature(const InputMessagePtr& msg, int type)
         else
             logTraceError("invalid creature");
     } else {
-        Fw::throwException("invalid creature opcode");
+        stdext::throw_exception("invalid creature opcode");
     }
 
     return creature;
@@ -1470,7 +1470,7 @@ ItemPtr ProtocolGame::getItem(const InputMessagePtr& msg, int id)
 
     ItemPtr item = Item::create(id);
     if(item->getId() == 0)
-        Fw::throwException("unable to create item with invalid id");
+        stdext::throw_exception("unable to create item with invalid id");
 
     if(item->isStackable() || item->isFluidContainer() || item->isFluid())
         item->setCountOrSubType(msg->getU8());

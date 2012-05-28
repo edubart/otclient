@@ -20,23 +20,27 @@
  * THE SOFTWARE.
  */
 
-#ifndef OTMLEXCEPTION_H
-#define OTMLEXCEPTION_H
+#ifndef STDEXT_TYPES_H
+#define STDEXT_TYPES_H
 
-#include "declarations.h"
+#include <stdint.h>
 
-/// All OTML errors throw this exception
-class OTMLException : public stdext::exception
-{
-public:
-    OTMLException(const OTMLNodePtr& node, const std::string& error);
-    OTMLException(const OTMLDocumentPtr& doc, const std::string& error, int line = -1);
-    virtual ~OTMLException() throw() { };
+// easy handwriting types
+typedef unsigned char uchar;
+typedef unsigned short ushort;
+typedef unsigned int uint;
+typedef unsigned long ulong;
+typedef uint64_t uint64;
+typedef uint32_t uint32;
+typedef uint16_t uint16;
+typedef uint8_t uint8;
+typedef int64_t int64;
+typedef int32_t int32;
+typedef int16_t int16;
+typedef int8_t int8;
 
-    virtual const char* what() const throw() { return m_what.c_str(); }
-
-protected:
-    std::string m_what;
-};
+// note that on 32 bit platforms the max ticks will overflow for values above 2,147,483,647
+// thus this means that the app may cause unknown behavior after running 24 days without restarting
+typedef long ticks_t;
 
 #endif

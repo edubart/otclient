@@ -23,7 +23,7 @@
 #ifndef FRAMEWORK_GLOBAL_H
 #define FRAMEWORK_GLOBAL_H
 
-#include "util/compiler.h"
+#include "stdext/compiler.h"
 
 // common C/C++ headers
 #include "pch.h"
@@ -31,14 +31,16 @@
 // global constants
 #include "const.h"
 
+// stdext which includes additional C++ algorithms
+#include "stdext/stdext.h"
+
 // additional utilities
-#include "util/types.h"
-#include "util/tools.h"
-#include "math/point.h"
-#include "math/color.h"
-#include "math/rect.h"
-#include "math/size.h"
-#include "math/matrix.h"
+#include "util/point.h"
+#include "util/color.h"
+#include "util/rect.h"
+#include "util/size.h"
+#include "util/matrix.h"
+#include "util/boolean.h"
 
 // logger
 #include "core/logger.h"

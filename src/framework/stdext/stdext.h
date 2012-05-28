@@ -20,39 +20,16 @@
  * THE SOFTWARE.
  */
 
-#include "utf8.h"
+#ifndef STDEXT_H
+#define STDEXT_H
 
-#include <string>
-#include <cstring>
+#include "compiler.h"
+#include "types.h"
+#include "exception.h"
+#include "demangle.h"
+#include "cast.h"
+#include "math.h"
+#include "string.h"
+#include "dumper.h"
 
-char Fw::utf8CharToLatin1(uchar *utf8, int *read)
-{
-    char c = '?';
-    uchar opt1 = utf8[0];
-    *read = 1;
-    if(opt1 == 0xc3) {
-        *read = 2;
-        uchar opt2 = utf8[1];
-        c = 64 + opt2;
-    } else if(opt1 == 0xc2) {
-        *read = 2;
-        uchar opt2 = utf8[1];
-        if(opt2 > 0xa1 && opt2 < 0xbb)
-            c = opt2;
-    } else if(opt1 < 0xc2) {
-        c = opt1;
-    }
-    return c;
-}
-
-std::string Fw::utf8StringToLatin1(uchar *utf8) {
-    std::string out;
-    int len = strlen((char*)utf8);
-    for(int i=0; i<len;) {
-        int read = 0;
-        uchar *utf8char = &utf8[i];
-        out += Fw::utf8CharToLatin1(utf8char, &read);
-        i += read;
-    }
-    return out;
-}
+#endif

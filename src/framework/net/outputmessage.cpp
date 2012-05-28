@@ -46,7 +46,7 @@ void OutputMessage::addU8(uint8 value)
 void OutputMessage::addU16(uint16 value)
 {
     checkWrite(2);
-    Fw::writeLE16(m_buffer + m_writePos, value);
+    stdext::writeLE16(m_buffer + m_writePos, value);
     m_writePos += 2;
     m_messageSize += 2;
 }
@@ -54,7 +54,7 @@ void OutputMessage::addU16(uint16 value)
 void OutputMessage::addU32(uint32 value)
 {
     checkWrite(4);
-    Fw::writeLE32(m_buffer + m_writePos, value);
+    stdext::writeLE32(m_buffer + m_writePos, value);
     m_writePos += 4;
     m_messageSize += 4;
 }
@@ -62,7 +62,7 @@ void OutputMessage::addU32(uint32 value)
 void OutputMessage::addU64(uint64 value)
 {
     checkWrite(8);
-    Fw::writeLE64(m_buffer + m_writePos, value);
+    stdext::writeLE64(m_buffer + m_writePos, value);
     m_writePos += 8;
     m_messageSize += 8;
 }
@@ -96,10 +96,10 @@ void OutputMessage::encryptRSA(int size, const std::string& key)
 
 void OutputMessage::writeChecksum()
 {
-    uint32 checksum = Fw::getAdlerChecksum(m_buffer + m_headerPos, m_messageSize);
+    uint32 checksum = stdext::generate_adler_checksum(m_buffer + m_headerPos, m_messageSize);
     assert(m_headerPos - 4 >= 0);
     m_headerPos -= 4;
-    Fw::writeLE32(m_buffer + m_headerPos, checksum);
+    stdext::writeLE32(m_buffer + m_headerPos, checksum);
     m_messageSize += 4;
 }
 
@@ -107,7 +107,7 @@ void OutputMessage::writeMessageSize()
 {
     assert(m_headerPos - 2 >= 0);
     m_headerPos -= 2;
-    Fw::writeLE16(m_buffer + m_headerPos, m_messageSize);
+    stdext::writeLE16(m_buffer + m_headerPos, m_messageSize);
     m_messageSize += 2;
 }
 

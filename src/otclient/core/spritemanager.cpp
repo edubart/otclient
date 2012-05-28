@@ -47,7 +47,7 @@ bool SpriteManager::load(const std::string& file)
         m_spritesCount = m_spritesFile->getU16();
         m_loaded = true;
         return true;
-    } catch(Exception& e) {
+    } catch(stdext::exception& e) {
         logError("Failed to load sprites from '", file, "': ", e.what());
         return false;
     }

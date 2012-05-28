@@ -41,7 +41,7 @@ void UIWidget::initBaseStyle()
 
     // generate an unique id, this is need because anchored layouts find widgets by id
     static unsigned long id = 1;
-    m_id = Fw::mkstr("widget", id++);
+    m_id = stdext::mkstr("widget", id++);
 }
 
 void UIWidget::parseBaseStyle(const OTMLNodePtr& styleNode)
@@ -81,9 +81,9 @@ void UIWidget::parseBaseStyle(const OTMLNodePtr& styleNode)
         else if(node->tag() == "background-rect")
             setBackgroundRect(node->value<Rect>());
         else if(node->tag() == "icon")
-            setIcon(Fw::resolvePath(node->value(), node->source()));
+            setIcon(stdext::resolve_path(node->value(), node->source()));
         else if(node->tag() == "icon-source")
-            setIcon(Fw::resolvePath(node->value(), node->source()));
+            setIcon(stdext::resolve_path(node->value(), node->source()));
         else if(node->tag() == "icon-color")
             setIconColor(node->value<Color>());
         else if(node->tag() == "icon-offset-x")
@@ -123,10 +123,10 @@ void UIWidget::parseBaseStyle(const OTMLNodePtr& styleNode)
         else if(node->tag() == "clipping")
             setClipping(node->value<bool>());
         else if(node->tag() == "border") {
-            auto split = Fw::split(node->value(), " ");
+            auto split = stdext::split(node->value(), " ");
             if(split.size() == 2) {
-                setBorderWidth(Fw::safeCast<int>(split[0]));
-                setBorderColor(Fw::safeCast<Color>(split[1]));
+                setBorderWidth(stdext::safe_cast<int>(split[0]));
+                setBorderColor(stdext::safe_cast<Color>(split[1]));
             } else
             throw OTMLException(node, "border param must have its width followed by its color");
         }
@@ -163,27 +163,27 @@ void UIWidget::parseBaseStyle(const OTMLNodePtr& styleNode)
             std::vector<std::string> split;
             boost::split(split, marginDesc, boost::is_any_of(std::string(" ")));
             if(split.size() == 4) {
-                setMarginTop(Fw::safeCast<int>(split[0]));
-                setMarginRight(Fw::safeCast<int>(split[1]));
-                setMarginBottom(Fw::safeCast<int>(split[2]));
-                setMarginLeft(Fw::safeCast<int>(split[3]));
+                setMarginTop(stdext::safe_cast<int>(split[0]));
+                setMarginRight(stdext::safe_cast<int>(split[1]));
+                setMarginBottom(stdext::safe_cast<int>(split[2]));
+                setMarginLeft(stdext::safe_cast<int>(split[3]));
             } else if(split.size() == 3) {
-                int marginTop = Fw::safeCast<int>(split[0]);
-                int marginHorizontal = Fw::safeCast<int>(split[1]);
-                int marginBottom = Fw::safeCast<int>(split[2]);
+                int marginTop = stdext::safe_cast<int>(split[0]);
+                int marginHorizontal = stdext::safe_cast<int>(split[1]);
+                int marginBottom = stdext::safe_cast<int>(split[2]);
                 setMarginTop(marginTop);
                 setMarginRight(marginHorizontal);
                 setMarginBottom(marginBottom);
                 setMarginLeft(marginHorizontal);
             } else if(split.size() == 2) {
-                int marginVertical = Fw::safeCast<int>(split[0]);
-                int marginHorizontal = Fw::safeCast<int>(split[1]);
+                int marginVertical = stdext::safe_cast<int>(split[0]);
+                int marginHorizontal = stdext::safe_cast<int>(split[1]);
                 setMarginTop(marginVertical);
                 setMarginRight(marginHorizontal);
                 setMarginBottom(marginVertical);
                 setMarginLeft(marginHorizontal);
             } else if(split.size() == 1) {
-                int margin = Fw::safeCast<int>(split[0]);
+                int margin = stdext::safe_cast<int>(split[0]);
                 setMarginTop(margin);
                 setMarginRight(margin);
                 setMarginBottom(margin);
@@ -203,27 +203,27 @@ void UIWidget::parseBaseStyle(const OTMLNodePtr& styleNode)
             std::vector<std::string> split;
             boost::split(split, paddingDesc, boost::is_any_of(std::string(" ")));
             if(split.size() == 4) {
-                setPaddingTop(Fw::safeCast<int>(split[0]));
-                setPaddingRight(Fw::safeCast<int>(split[1]));
-                setPaddingBottom(Fw::safeCast<int>(split[2]));
-                setPaddingLeft(Fw::safeCast<int>(split[3]));
+                setPaddingTop(stdext::safe_cast<int>(split[0]));
+                setPaddingRight(stdext::safe_cast<int>(split[1]));
+                setPaddingBottom(stdext::safe_cast<int>(split[2]));
+                setPaddingLeft(stdext::safe_cast<int>(split[3]));
             } else if(split.size() == 3) {
-                int paddingTop = Fw::safeCast<int>(split[0]);
-                int paddingHorizontal = Fw::safeCast<int>(split[1]);
-                int paddingBottom = Fw::safeCast<int>(split[2]);
+                int paddingTop = stdext::safe_cast<int>(split[0]);
+                int paddingHorizontal = stdext::safe_cast<int>(split[1]);
+                int paddingBottom = stdext::safe_cast<int>(split[2]);
                 setPaddingTop(paddingTop);
                 setPaddingRight(paddingHorizontal);
                 setPaddingBottom(paddingBottom);
                 setPaddingLeft(paddingHorizontal);
             } else if(split.size() == 2) {
-                int paddingVertical = Fw::safeCast<int>(split[0]);
-                int paddingHorizontal = Fw::safeCast<int>(split[1]);
+                int paddingVertical = stdext::safe_cast<int>(split[0]);
+                int paddingHorizontal = stdext::safe_cast<int>(split[1]);
                 setPaddingTop(paddingVertical);
                 setPaddingRight(paddingHorizontal);
                 setPaddingBottom(paddingVertical);
                 setPaddingLeft(paddingHorizontal);
             } else if(split.size() == 1) {
-                int padding = Fw::safeCast<int>(split[0]);
+                int padding = stdext::safe_cast<int>(split[0]);
                 setPaddingTop(padding);
                 setPaddingRight(padding);
                 setPaddingBottom(padding);
@@ -281,7 +281,7 @@ void UIWidget::parseBaseStyle(const OTMLNodePtr& styleNode)
                 if(node->value() == "none") {
                     removeAnchor(anchoredEdge);
                 } else {
-                    std::vector<std::string> split = Fw::split(node->value(), ".");
+                    std::vector<std::string> split = stdext::split(node->value(), ".");
                     if(split.size() != 2)
                         throw OTMLException(node, "invalid anchor description");
 

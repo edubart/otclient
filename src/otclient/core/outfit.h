@@ -23,7 +23,7 @@
 #ifndef OUTFIT_H
 #define OUTFIT_H
 
-#include <framework/math/color.h>
+#include <framework/util/color.h>
 #include <otclient/core/thingstype.h>
 
 class Outfit

@@ -24,8 +24,8 @@
 #define POSITION_H
 
 #include <otclient/const.h>
-#include <framework/util/types.h>
-#include <framework/math/point.h>
+#include <framework/stdext/types.h>
+#include <framework/util/point.h>
 
 class Position
 {
