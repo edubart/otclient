@@ -51,7 +51,10 @@ T from_string(const std::string& str, T def = T()) { return unsafe_cast<T, std::
 
 /// Cast non-class types like int, char, float, double and pointers
 template<typename T>
-typename std::enable_if<std::is_integral<T>::value || std::is_pointer<T>::value || std::is_floating_point<T>::value, T>::type sprintf_cast(const T& t) { return t; }
+typename std::enable_if<std::is_integral<T>::value ||
+                        std::is_pointer<T>::value ||
+                        std::is_floating_point<T>::value ||
+                        std::is_enum<T>::value, T>::type sprintf_cast(const T& t) { return t; }
 
 /// Cast any class or struct convertible to std::string
 inline const char *sprintf_cast(const std::string& s) { return s.c_str(); }

@@ -82,9 +82,10 @@ uint Texture::internalLoadGLTexture(uchar *pixels, int channels, int width, int 
 
     // checks texture max size
     if(std::max(glSize.width(), glSize.height()) > g_graphics.getMaxTextureSize()) {
-        logError("loading texture with size ", width, "x", height, " failed, "
-                 "the maximum size allowed by the graphics card is ", g_graphics.getMaxTextureSize(), "x", g_graphics.getMaxTextureSize(), ",",
-                 "to prevent crashes the texture will be displayed as a blank texture");
+        logError("loading texture with size %dx%d failed, "
+                 "the maximum size allowed by the graphics card is %dx%d,"
+                 "to prevent crashes the texture will be displayed as a blank texture",
+                 width, height, g_graphics.getMaxTextureSize(), g_graphics.getMaxTextureSize());
         //TODO: make a workaround, could be bilinear scaling the texture
         return 0;
     }

@@ -70,7 +70,7 @@ void ModuleManager::discoverModulesPath()
     for(const std::string& dir : possibleModulesDirs) {
         // try to add module directory
         if(g_resources.addToSearchPath(dir, false)) {
-            logInfo("Using modules directory '", dir.c_str(), "'");
+            logInfo("Using modules directory '%s'", dir.c_str());
             found = true;
             break;
         }
@@ -88,7 +88,7 @@ void ModuleManager::discoverModulesPath()
     for(const std::string& dir : possibleAddonsDirs) {
         // try to add module directory
         if(g_resources.addToSearchPath(dir, true)) {
-            logInfo("Using addons directory '", dir.c_str(), "'");
+            logInfo("Using addons directory '%s'", dir.c_str());
             found = true;
             break;
         }
@@ -103,8 +103,6 @@ ModulePtr ModuleManager::discoverModule(const std::string& moduleFile)
         OTMLNodePtr moduleNode = doc->at("Module");
 
         std::string name = moduleNode->valueAt("name");
-        //if(getModule(name))
-        //    stdext::throw_exception("module '", name, "' already exists, cannot have duplicate module names");
 
         bool push = false;
         module = getModule(name);
@@ -118,7 +116,7 @@ ModulePtr ModuleManager::discoverModule(const std::string& moduleFile)
         if(push)
             m_modules.push_back(module);
     } catch(stdext::exception& e) {
-        logError("Unable to discover module from file '", moduleFile, "': ", e.what());
+        logError("Unable to discover module from file '%s': %s", moduleFile, e.what());
     }
     return module;
 }
@@ -127,7 +125,7 @@ void ModuleManager::ensureModuleLoaded(const std::string& moduleName)
 {
     ModulePtr module = g_modules.getModule(moduleName);
     if(!module || !module->load())
-        logFatal("Unable to load '", moduleName, "' module");
+        logFatal("Unable to load '%s' module", moduleName);
 }
 
 void ModuleManager::unloadModules()

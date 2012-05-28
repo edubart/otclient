@@ -72,15 +72,15 @@ void OTClient::init(const std::vector<std::string>& args)
         }
     }
 
-    logInfo(stdext::format(
+    logInfo(
         "%s %s (rev %s) built on %s",
         Otc::AppName,
         Otc::AppVersion,
         BUILD_REVISION,
-        BUILD_DATE));
+        BUILD_DATE);
 
     if(startupOptions.length() > 0)
-        logInfo("Startup options:", startupOptions);
+        logInfo("Startup options: %s", startupOptions);
 
     g_logger.setLogFile(stdext::format("%s.txt", Otc::AppCompactName));
     Application::init(args);
@@ -104,7 +104,7 @@ void OTClient::init(const std::vector<std::string>& args)
         try {
             g_lua.runScript("/otclientrc.lua");
         } catch(LuaException& e) {
-            logError("failed to load otclientrc.lua: ", e.what());
+            logError("failed to load otclientrc.lua: %s", e.what());
         }
     }
 }

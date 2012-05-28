@@ -42,7 +42,7 @@ void SoundManager::init()
 
     m_context = alcCreateContext(m_device, NULL);
     if(!m_context) {
-        logError("unable to create audio context: ", alcGetString(m_device, alcGetError(m_device)));
+        logError("unable to create audio context: %s", alcGetString(m_device, alcGetError(m_device)));
         return;
     }
     alcMakeContextCurrent(m_context);
@@ -136,7 +136,7 @@ void SoundManager::play(const std::string& filename)
 
     SoundSourcePtr soundSource = createSoundSource(filename);
     if(!soundSource) {
-        logError("unable to play '", filename, "'");
+        logError("unable to play '%s'", filename);
         return;
     }
 
@@ -175,7 +175,7 @@ void SoundManager::playMusic(const std::string& filename, float fadetime)
 
     m_musicSource = createSoundSource(filename);
     if(!m_musicSource) {
-        logError("unable to play '", filename, "'");
+        logError("unable to play '%s'", filename);
         return;
     }
 
@@ -218,7 +218,7 @@ SoundSourcePtr SoundManager::createSoundSource(const std::string& filename)
             buffer->fillBuffer(soundFile);
             source->setBuffer(buffer);
             m_buffers[filename] = buffer;
-            logWarning("uncached sound '", filename, "' requested to be played");
+            logWarning("uncached sound '%s' requested to be played", filename);
         } else {
             StreamSoundSourcePtr streamSource(new StreamSoundSource);
             streamSource->setSoundFile(soundFile);

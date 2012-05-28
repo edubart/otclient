@@ -229,6 +229,18 @@ public:
     //void reportRuleViolation2();
     // TODO: market related
 
+    // dynamic support for game features
+    void enableFeature(Otc::GameFeature feature) { m_features.set(feature, true); }
+    void disableFeature(Otc::GameFeature feature) { m_features.set(feature, false); }
+    void setFeature(Otc::GameFeature feature) { m_features.set(feature, false); }
+    bool getFeature(Otc::GameFeature feature) { return m_features.test(feature); }
+
+    void setClientVersion(int clientVersion);
+    int getClientVersion() { return m_clientVersion; }
+
+    void setRSA(const std::string& rsa);
+    std::string getRSA() { return m_rsa; }
+
     bool canPerformGameAction();
     bool canReportBugs() { return m_canReportBugs; }
     bool checkBotProtection();
@@ -272,6 +284,9 @@ private:
     bool m_canReportBugs;
     std::vector<uint8> m_gmActions;
     std::string m_worldName;
+    std::bitset<Otc::LastGameFeature> m_features;
+    int m_clientVersion;
+    std::string m_rsa;
 };
 
 extern Game g_game;

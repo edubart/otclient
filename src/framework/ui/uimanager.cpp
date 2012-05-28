@@ -285,7 +285,7 @@ void UIManager::onWidgetDestroy(const UIWidgetPtr& widget)
             g_lua.collectGarbage();
             for(const UIWidgetPtr& widget : backupList) {
                 if(widget->getUseCount() != 1)
-                    logWarning("widget '", widget->getId(), "' destroyed but still have ", widget->getUseCount()-1, " reference(s) left");
+                    logWarning("widget '%s' destroyed but still have %d reference(s) left", widget->getId(), widget->getUseCount()-1);
             }
         }, 1);
     }, 1000);
@@ -301,7 +301,7 @@ bool UIManager::importStyle(const std::string& file)
             importStyleFromOTML(styleNode);
         return true;
     } catch(stdext::exception& e) {
-        logError("Failed to import UI styles from '", file, "': ", e.what());
+        logError("Failed to import UI styles from '%s': %s", file, e.what());
         return false;
     }
 }
@@ -325,7 +325,7 @@ void UIManager::importStyleFromOTML(const OTMLNodePtr& styleNode)
     /*
     auto it = m_styles.find(name);
     if(it != m_styles.end())
-        logWarning("style '", name, "' is being redefined");
+        logWarning("style '%s' is being redefined", name);
     */
 
     OTMLNodePtr originalStyle = getStyle(base);
@@ -382,7 +382,7 @@ UIWidgetPtr UIManager::loadUI(const std::string& file, const UIWidgetPtr& parent
 
         return widget;
     } catch(stdext::exception& e) {
-        logError("failed to load UI from '", file, "': ", e.what());
+        logError("failed to load UI from '%s': %s", file, e.what());
         return nullptr;
     }
 }
@@ -393,7 +393,7 @@ UIWidgetPtr UIManager::createWidgetFromStyle(const std::string& styleName, const
     try {
         return createWidgetFromOTML(node, parent);
     } catch(stdext::exception& e) {
-        logError("failed to create widget from style '", styleName, "': ", e.what());
+        logError("failed to create widget from style '%s': %s", styleName, e.what());
         return nullptr;
     }
 }

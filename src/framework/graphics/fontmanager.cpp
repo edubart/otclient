@@ -48,8 +48,6 @@ bool FontManager::importFont(std::string fontFile)
         OTMLNodePtr fontNode = doc->at("Font");
 
         std::string name = fontNode->valueAt("name");
-        //if(fontExists(name))
-        //    stdext::throw_exception("font '", name, "' already exists, cannot have duplicate font names");
 
         // remove any font with the same name
         for(auto it = m_fonts.begin(); it != m_fonts.end(); ++it) {
@@ -69,7 +67,7 @@ bool FontManager::importFont(std::string fontFile)
 
         return true;
     } catch(stdext::exception& e) {
-        logError("Unable to load font from file '", fontFile, "': ", e.what());
+        logError("Unable to load font from file '%s': %s", fontFile, e.what());
         return false;
     }
 }
@@ -92,7 +90,7 @@ FontPtr FontManager::getFont(const std::string& fontName)
     }
 
     // when not found, fallback to default font
-    logError("font '", fontName, "' not found");
+    logError("font '%s' not found", fontName);
     return getDefaultFont();
 }
 

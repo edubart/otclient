@@ -40,7 +40,7 @@ void ProtocolGame::sendExtendedOpcode(uint8 opcode, const std::string& buffer)
         msg->addString(buffer);
         safeSend(msg);
     } else {
-        logError("unable to send extended opcode ", (int)opcode, ", extended opcodes are not enabled");
+        logError("Unable to send extended opcode %d, extended opcodes are not enabled", opcode);
     }
 }
 
@@ -65,26 +65,26 @@ void ProtocolGame::sendLoginPacket(uint challangeTimestamp, uint8 challangeRando
     msg->addU8(0); // is gm set?
     paddingBytes -= 17;
 
-#if PROTOCOL>=854
-    enableChecksum();
+    if(g_game.getFeature(Otc::GameProtocolChecksum))
+        enableChecksum();
 
-    msg->addString(m_accountName);
-    paddingBytes -= 2 + m_accountName.length();
-    msg->addString(m_characterName);
-    paddingBytes -= 2 + m_characterName.length();
-    msg->addString(m_accountPassword);
-    paddingBytes -= 2 + m_accountPassword.length();
+    if(g_game.getFeature(Otc::GameAccountNames)) {
+        msg->addString(m_accountName);
+        msg->addString(m_characterName);
+        msg->addString(m_accountPassword);
+        paddingBytes -= 6 + m_accountName.length() + m_characterName.length() + m_accountPassword.length();
+    } else {
+        msg->addU32(stdext::from_string<uint32>(m_accountName));
+        msg->addString(m_characterName);
+        msg->addString(m_accountPassword);
+        paddingBytes -= 8 + m_characterName.length() + m_accountPassword.length();
+    }
 
-    msg->addU32(challangeTimestamp);
-    msg->addU8(challangeRandom);
-    paddingBytes -= 5;
-#else // PROTOCOL>=810
-    msg->addU32(stdext::from_string<uint32>(m_accountName));
-    msg->addString(m_characterName);
-    msg->addString(m_accountPassword);
-
-    paddingBytes -= 8 + m_characterName.length() + m_accountPassword.length();
-#endif
+    if(g_game.getFeature(Otc::GameChallangeOnLogin)) {
+        msg->addU32(challangeTimestamp);
+        msg->addU8(challangeRandom);
+        paddingBytes -= 5;
+    }
 
     // complete the 128 bytes for rsa encryption with zeros
     msg->addPaddingBytes(paddingBytes);

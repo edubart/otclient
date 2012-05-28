@@ -108,7 +108,7 @@ template<typename T>
 T OTMLNode::value() {
     T ret;
     if(!stdext::cast(m_value, ret))
-        throw OTMLException(shared_from_this(), stdext::mkstr("failed to cast node value to type '", stdext::demangle_type<T>(), "'"));
+        throw OTMLException(shared_from_this(), stdext::mkstr("failed to cast node value to type '%s'", stdext::demangle_type<T>()));
     return ret;
 }
 

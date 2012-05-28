@@ -45,8 +45,8 @@ Graphics::Graphics()
 
 void Graphics::init()
 {
-    logInfo("GPU ", glGetString(GL_RENDERER));
-    logInfo("OpenGL ", glGetString(GL_VERSION));
+    logInfo("GPU %s", glGetString(GL_RENDERER));
+    logInfo("OpenGL %s", glGetString(GL_VERSION));
 
 #if OPENGL_ES==2
     g_painterOGL2 = new PainterOGL2;
@@ -56,7 +56,7 @@ void Graphics::init()
     // init GL extensions
     GLenum err = glewInit();
     if(err != GLEW_OK)
-        logFatal("Unable to init GLEW: ", glewGetErrorString(err));
+        logFatal("Unable to init GLEW: %s", glewGetErrorString(err));
 
     // overwrite framebuffer API if needed
     if(GLEW_EXT_framebuffer_object && !GLEW_ARB_framebuffer_object) {

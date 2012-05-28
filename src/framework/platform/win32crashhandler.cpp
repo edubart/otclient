@@ -134,14 +134,15 @@ LONG CALLBACK ExceptionHandler(LPEXCEPTION_POINTERS e)
     if(fout.is_open() && fout.good()) {
         fout << ss.str();
         fout.close();
-        logInfo("Crash report saved to file ", fileName);
+        logInfo("Crash report saved to file %s", fileName);
     } else
         logError("Failed to save crash report!");
 
     // inform the user
-    std::string msg = stdext::format("The application has crashed.\n\n"
-                                       "A crash report has been written to:\n"
-                                       "%s", fileName.c_str());
+    std::string msg = stdext::format(
+        "The application has crashed.\n\n"
+        "A crash report has been written to:\n"
+        "%s", fileName.c_str());
     MessageBox(NULL, msg.c_str(), "Application crashed", 0);
 
     // this seems to silently close the application

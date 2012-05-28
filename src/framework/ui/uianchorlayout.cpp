@@ -93,7 +93,7 @@ bool UIAnchorLayout::updateWidget(const UIWidgetPtr& widget, UIAnchorGroup& anch
         return false;
 
     if(first == widget) {
-        logError("child '", widget->getId(), "' of parent widget '", parentWidget->getId(), "' is recursively anchored to itself, please fix this");
+        logError("child '%s' of parent widget '%s' is recursively anchored to itself, please fix this", widget->getId(), parentWidget->getId());
         return false;
     }
 

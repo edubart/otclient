@@ -41,7 +41,7 @@ void UIWidget::initBaseStyle()
 
     // generate an unique id, this is need because anchored layouts find widgets by id
     static unsigned long id = 1;
-    m_id = stdext::mkstr("widget", id++);
+    m_id = stdext::format("widget %d", id++);
 }
 
 void UIWidget::parseBaseStyle(const OTMLNodePtr& styleNode)

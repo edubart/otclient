@@ -48,7 +48,7 @@ void FileStream::cache()
     m_cacheBuffer.resize(size);
     int res = PHYSFS_read(m_fileHandle, &m_cacheBuffer[0], size, 1);
     if(res == -1)
-        logTraceError("operation failed on '", m_name, "': ", PHYSFS_getLastError());
+        logTraceError("operation failed on '%s': %s", m_name, PHYSFS_getLastError());
 
     PHYSFS_close(m_fileHandle);
     m_fileHandle = nullptr;
@@ -58,7 +58,7 @@ bool FileStream::close()
 {
     if(m_fileHandle) {
         if(PHYSFS_isInit() && PHYSFS_close(m_fileHandle) == 0)
-            logTraceError("operation failed on '", m_name, "': ", PHYSFS_getLastError());
+            logTraceError("operation failed on '%s': %s", m_name, PHYSFS_getLastError());
 
         m_fileHandle = nullptr;
         return true;
@@ -75,7 +75,7 @@ bool FileStream::flush()
         return false;
 
     if(PHYSFS_flush(m_fileHandle) == 0) {
-        logTraceError("operation failed on '", m_name, "': ", PHYSFS_getLastError());
+        logTraceError("operation failed on '%s': %s", m_name, PHYSFS_getLastError());
         return false;
     }
     return true;
@@ -86,7 +86,7 @@ int FileStream::read(void *buffer, int size, int nmemb)
     if(m_fileHandle) {
         int res = PHYSFS_read(m_fileHandle, buffer, size, nmemb);
         if(res == -1) {
-            logTraceError("operation failed on '", m_name, "': ", PHYSFS_getLastError());
+            logTraceError("operation failed on '%s': %s", m_name, PHYSFS_getLastError());
             return 0;
         }
         return res;
@@ -111,7 +111,7 @@ bool FileStream::write(void *buffer, int count)
         return false;
 
     if(PHYSFS_write(m_fileHandle, buffer, 1, count) != count) {
-        logTraceError("operation failed on '", m_name, "': ", PHYSFS_getLastError());
+        logTraceError("operation failed on '%s': %s", m_name, PHYSFS_getLastError());
         return false;
     }
 
@@ -122,12 +122,12 @@ bool FileStream::seek(int pos)
 {
     if(m_fileHandle) {
         if(PHYSFS_seek(m_fileHandle, pos) == 0) {
-            logTraceError("operation failed on '", m_name, "': ", PHYSFS_getLastError());
+            logTraceError("operation failed on '%s': %s", m_name, PHYSFS_getLastError());
             return false;
         }
     } else {
         if(pos > (int)m_cacheBuffer.size() || pos < 0) {
-            logTraceError("operation failed on '", m_name, "': seek pos cannot be greater than file length");
+            logTraceError("operation failed on '%s': seek pos cannot be greater than file length", m_name);
             return false;
         }
         m_cacheReadPos = pos;
@@ -156,10 +156,10 @@ uint8 FileStream::getU8()
     uint8 v = 0;
     if(m_fileHandle) {
         if(PHYSFS_read(m_fileHandle, &v, 1, 1) != 1)
-            logTraceError("operation failed on '", m_name, "': ", PHYSFS_getLastError());
+            logTraceError("operation failed on '%s': %s", m_name, PHYSFS_getLastError());
     } else {
         if(m_cacheReadPos+1 > m_cacheBuffer.size()) {
-            logTraceError("operation failed on '", m_name, "': reached file eof");
+            logTraceError("operation failed on '%s': reached file eof", m_name);
             return 0;
         }
 
@@ -174,10 +174,10 @@ uint16 FileStream::getU16()
     uint16 v = 0;
     if(m_fileHandle) {
         if(PHYSFS_readULE16(m_fileHandle, &v) == 0)
-            logTraceError("operation failed on '", m_name, "': ", PHYSFS_getLastError());
+            logTraceError("operation failed on '%s': %s", m_name, PHYSFS_getLastError());
     } else {
         if(m_cacheReadPos+2 > m_cacheBuffer.size()) {
-            logTraceError("operation failed on '", m_name, "': reached file eof");
+            logTraceError("operation failed on '%s': reached file eof", m_name);
             return 0;
         }
 
@@ -192,10 +192,10 @@ uint32 FileStream::getU32()
     uint32 v = 0;
     if(m_fileHandle) {
         if(PHYSFS_readULE32(m_fileHandle, &v) == 0)
-            logTraceError("operation failed on '", m_name, "': ", PHYSFS_getLastError());
+            logTraceError("operation failed on '%s': %s", m_name, PHYSFS_getLastError());
     } else {
         if(m_cacheReadPos+4 > m_cacheBuffer.size()) {
-            logTraceError("operation failed on '", m_name, "': reached file eof");
+            logTraceError("operation failed on '%s': reached file eof", m_name);
             return 0;
         }
 
@@ -210,10 +210,10 @@ uint64 FileStream::getU64()
     uint64 v = 0;
     if(m_fileHandle) {
         if(PHYSFS_readULE64(m_fileHandle, (PHYSFS_uint64*)&v) == 0)
-            logTraceError("operation failed on '", m_name, "': ", PHYSFS_getLastError());
+            logTraceError("operation failed on '%s': %s", m_name, PHYSFS_getLastError());
     } else {
         if(m_cacheReadPos+8 > m_cacheBuffer.size()) {
-            logTraceError("operation failed on '", m_name, "': reached file eof");
+            logTraceError("operation failed on '%s': reached file eof", m_name);
             return 0;
         }
 
@@ -231,12 +231,12 @@ std::string FileStream::getString()
         char buffer[8192];
         if(m_fileHandle) {
             if(PHYSFS_read(m_fileHandle, buffer, 1, len) == 0)
-                logTraceError("operation failed on '", m_name, "': ", PHYSFS_getLastError());
+                logTraceError("operation failed on '%s': %s", m_name, PHYSFS_getLastError());
             else
                 str = std::string(buffer, len);
         } else {
             if(m_cacheReadPos+len > m_cacheBuffer.size()) {
-                logTraceError("operation failed on '", m_name, "': reached file eof");
+                logTraceError("operation failed on '%s': reached file eof", m_name);
                 return 0;
             }
 
@@ -244,7 +244,7 @@ std::string FileStream::getString()
             m_cacheReadPos += len;
         }
     } else {
-        logTraceError("operation failed on '", m_name, "': ", PHYSFS_getLastError());
+        logTraceError("operation failed on '%s': %s", m_name, PHYSFS_getLastError());
     }
     return str;
 }
@@ -252,23 +252,23 @@ std::string FileStream::getString()
 void FileStream::addU8(uint8 v)
 {
     if(PHYSFS_write(m_fileHandle, &v, 1, 1) != 1)
-        logTraceError("operation failed on '", m_name, "': ", PHYSFS_getLastError());
+        logTraceError("operation failed on '%s': %s", m_name, PHYSFS_getLastError());
 }
 
 void FileStream::addU16(uint8 v)
 {
     if(PHYSFS_writeULE16(m_fileHandle, v) == 0)
-        logTraceError("operation failed on '", m_name, "': ", PHYSFS_getLastError());
+        logTraceError("operation failed on '%s': %s", m_name, PHYSFS_getLastError());
 }
 
 void FileStream::addU32(uint8 v)
 {
     if(PHYSFS_writeULE32(m_fileHandle, v) == 0)
-        logTraceError("operation failed on '", m_name, "': ", PHYSFS_getLastError());
+        logTraceError("operation failed on '%s': %s", m_name, PHYSFS_getLastError());
 }
 
 void FileStream::addU64(uint8 v)
 {
     if(PHYSFS_writeULE64(m_fileHandle, v) == 0)
-        logTraceError("operation failed on '", m_name, "': ", PHYSFS_getLastError());
+        logTraceError("operation failed on '%s': %s", m_name, PHYSFS_getLastError());
 }

@@ -170,11 +170,11 @@ ThingPtr Tile::addThing(const ThingPtr& thing, int stackPos)
         int priority = thing->getStackPriority();
         for(stackPos = 0; stackPos < (int)m_things.size(); ++stackPos) {
             int otherPriority = m_things[stackPos]->getStackPriority();
-#if PROTOCOL<=810
-            // older protocols stores creatures in reverse order
-            if(priority == 4 && otherPriority == 4)
-                break;
-#endif
+            if(!g_game.getFeature(Otc::GameReverseCreatureStack)) {
+                // older protocols stores creatures in reverse order
+                if(priority == 4 && otherPriority == 4)
+                    break;
+            }
             if(otherPriority > priority)
                 break;
         }

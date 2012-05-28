@@ -143,12 +143,12 @@ bool StreamSoundSource::fillBufferAndQueue(ALuint buffer)
         alBufferData(buffer, format, &bufferData[0], bytesRead, m_soundFile->getRate());
         ALenum err = alGetError();
         if(err != AL_NO_ERROR)
-            logError("unable to refill audio buffer for '", m_soundFile->getName(), "': ", alGetString(err));
+            logError("unable to refill audio buffer for '%s': %s", m_soundFile->getName(), alGetString(err));
 
         alSourceQueueBuffers(m_sourceId, 1, &buffer);
         err = alGetError();
         if(err != AL_NO_ERROR)
-            logError("unable to queue audio buffer for '", m_soundFile->getName(), "': ", alGetString(err));
+            logError("unable to queue audio buffer for '%s': %s", m_soundFile->getName(), alGetString(err));
     }
 
     // return false if there aren't more buffers to fill

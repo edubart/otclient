@@ -45,11 +45,11 @@ void ProtocolGame::onConnect()
     // must create local player before parsing anything
     m_localPlayer = LocalPlayerPtr(new LocalPlayer);
 
-#if PROTOCOL>=854
-    enableChecksum();
-#else
-    sendLoginPacket(0, 0);
-#endif
+    if(g_game.getFeature(Otc::GameProtocolChecksum))
+        enableChecksum();
+
+    if(!g_game.getFeature(Otc::GameChallangeOnLogin))
+        sendLoginPacket(0, 0);
 
     recv();
 }

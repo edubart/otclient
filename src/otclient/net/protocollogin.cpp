@@ -26,6 +26,7 @@
 #include <boost/bind.hpp>
 #include <otclient/core/thingstype.h>
 #include <otclient/core/spritemanager.h>
+#include <otclient/core/game.h>
 
 void ProtocolLogin::login(const std::string& host, int port, const std::string& accountName, const std::string& accountPassword)
 {
@@ -105,17 +106,18 @@ void ProtocolLogin::sendLoginPacket()
     msg->addU32(m_xteaKey[3]);
     paddingBytes -= 16;
 
-#if PROTOCOL>=854
-    enableChecksum();
+    if(g_game.getFeature(Otc::GameProtocolChecksum))
+        enableChecksum();
 
-    msg->addString(m_accountName);
-    msg->addString(m_accountPassword);
-    paddingBytes -= 4 + m_accountName.length() + m_accountPassword.length();
-#elif PROTOCOL>=810
-    msg->addU32(stdext::from_string<uint32>(m_accountName));
-    msg->addString(m_accountPassword);
-    paddingBytes -= 6 + m_accountPassword.length();
-#endif
+    if(g_game.getFeature(Otc::GameAccountNames)) {
+        msg->addString(m_accountName);
+        msg->addString(m_accountPassword);
+        paddingBytes -= 4 + m_accountName.length() + m_accountPassword.length();
+    } else {
+        msg->addU32(stdext::from_string<uint32>(m_accountName));
+        msg->addString(m_accountPassword);
+        paddingBytes -= 6 + m_accountPassword.length();
+    }
 
     msg->addPaddingBytes(paddingBytes); // complete the 128 bytes for rsa encryption with zeros
     msg->encryptRSA(128, Proto::RSA);

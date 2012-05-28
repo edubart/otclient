@@ -47,7 +47,7 @@ UIWidget::~UIWidget()
 {
 #ifdef DEBUG
     if(!m_destroyed)
-        logWarning("widget '", m_id, "' was not explicitly destroyed");
+        logWarning("widget '%s' was not explicitly destroyed", m_id);
 #endif
 }
 
@@ -500,7 +500,7 @@ void UIWidget::applyStyle(const OTMLNodePtr& styleNode)
         }
         m_firstOnStyle = false;
     } catch(stdext::exception& e) {
-        logError("Failed to apply style to widget '", m_id, "' style: ", e.what());
+        logError("failed to apply style to widget '%s': %s", m_id, e.what());
     }
     m_loadingStyle = false;
 }
@@ -513,7 +513,7 @@ void UIWidget::addAnchor(Fw::AnchorEdge anchoredEdge, const std::string& hookedW
     if(UIAnchorLayoutPtr anchorLayout = getAnchoredLayout())
         anchorLayout->addAnchor(asUIWidget(), anchoredEdge, hookedWidgetId, hookedEdge);
     else
-        logError("cannot add anchors to widget ", m_id, ": the parent doesn't use anchors layout");
+        logError("cannot add anchors to widget '%s': the parent doesn't use anchors layout", m_id);
 }
 
 void UIWidget::removeAnchor(Fw::AnchorEdge anchoredEdge)
@@ -530,7 +530,7 @@ void UIWidget::centerIn(const std::string& hookedWidgetId)
         anchorLayout->addAnchor(asUIWidget(), Fw::AnchorHorizontalCenter, hookedWidgetId, Fw::AnchorHorizontalCenter);
         anchorLayout->addAnchor(asUIWidget(), Fw::AnchorVerticalCenter, hookedWidgetId, Fw::AnchorVerticalCenter);
     } else
-        logError("cannot add anchors to widget ", m_id, ": the parent doesn't use anchors layout");
+        logError("cannot add anchors to widget '%s': the parent doesn't use anchors layout", m_id);
 }
 
 void UIWidget::fill(const std::string& hookedWidgetId)
@@ -544,7 +544,7 @@ void UIWidget::fill(const std::string& hookedWidgetId)
         anchorLayout->addAnchor(asUIWidget(), Fw::AnchorTop, hookedWidgetId, Fw::AnchorTop);
         anchorLayout->addAnchor(asUIWidget(), Fw::AnchorBottom, hookedWidgetId, Fw::AnchorBottom);
     } else
-        logError("cannot add anchors to widget ", m_id, ": the parent doesn't use anchors layout");
+        logError("cannot add anchors to widget '%s': the parent doesn't use anchors layout", m_id);
 }
 
 void UIWidget::breakAnchors()
@@ -710,7 +710,7 @@ void UIWidget::internalDestroy()
 void UIWidget::destroy()
 {
     if(m_destroyed)
-        logWarning("attempt to destroy widget '", m_id, "' two times");
+        logWarning("attempt to destroy widget '%s' two times", m_id);
 
     // hold itself reference
     UIWidgetPtr self = asUIWidget();
@@ -799,7 +799,7 @@ void UIWidget::setLayout(const UILayoutPtr& layout)
 bool UIWidget::setRect(const Rect& rect)
 {
     if(rect.width() > 8192 || rect.height() > 8192) {
-        logError("attempt to set huge rect size (", rect,") for ", m_id);
+        logError("attempt to set huge rect size (%s) for %s", stdext::to_string(rect), m_id);
         return false;
     }
     // only update if the rect really changed
@@ -830,7 +830,7 @@ void UIWidget::setStyle(const std::string& styleName)
 {
     OTMLNodePtr styleNode = g_ui.getStyle(styleName);
     if(!styleNode) {
-        logTraceError("unable to retrive style '", styleName, "': not a defined style");
+        logTraceError("unable to retrieve style '%s': not a defined style", styleName);
         return;
     }
     styleNode = styleNode->clone();

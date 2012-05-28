@@ -416,7 +416,7 @@ void X11Window::internalCreateGLContext()
 
     m_eglContext = eglCreateContext(m_eglDisplay, m_eglConfig, EGL_NO_CONTEXT, attrList);
     if(m_eglContext == EGL_NO_CONTEXT )
-        logFatal("Unable to create EGL context: ", eglGetError());
+        logFatal("Unable to create EGL context: %s", eglGetError());
 #else
     m_glxContext = glXCreateContext(m_display, m_visual, NULL, True);
 
@@ -457,7 +457,7 @@ void X11Window::internalConnectGLContext()
 #ifdef OPENGL_ES
     m_eglSurface = eglCreateWindowSurface(m_eglDisplay, m_eglConfig, m_window, NULL);
     if(m_eglSurface == EGL_NO_SURFACE)
-        logFatal("Unable to create EGL surface: ", eglGetError());
+        logFatal("Unable to create EGL surface: %s", eglGetError());
     if(!eglMakeCurrent(m_eglDisplay, m_eglSurface, m_eglSurface, m_eglContext))
         logFatal("Unable to connect EGL context into X11 window");
 #else
@@ -841,7 +841,7 @@ void X11Window::setMouseCursor(const std::string& file, const Point& hotSpot)
 
     apng_data apng;
     if(load_apng(fin, &apng) != 0) {
-        logTraceError("unable to load png file ", file);
+        logTraceError("unable to load png file %s", file);
         return;
     }
 

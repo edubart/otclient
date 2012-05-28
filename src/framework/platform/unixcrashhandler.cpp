@@ -109,7 +109,7 @@ void crashHandler(int signum, siginfo_t* info, void* secret)
         fout << ss.str();
         fout << "\n";
         fout.close();
-        logInfo("Crash report saved to file ", fileName.c_str());
+        logInfo("Crash report saved to file %s", fileName.c_str());
     } else
         logError("Failed to save crash report!");
 

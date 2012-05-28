@@ -205,7 +205,7 @@ bool luavalue_cast(int index, std::function<void(Args...)>& func) {
                                        "did you forget to hold a reference for that function?", 0);
                 }
             } catch(LuaException& e) {
-                logError("lua function callback failed: ", e.what());
+                logError("lua function callback failed: %s", e.what());
             }
         };
         return true;
@@ -239,7 +239,7 @@ luavalue_cast(int index, std::function<Ret(Args...)>& func) {
                                        "did you forget to hold a reference for that function?", 0);
                 }
             } catch(LuaException& e) {
-                logError("lua function callback failed: ", e.what());
+                logError("lua function callback failed: %s", e.what());
             }
             return Ret();
         };

@@ -680,7 +680,7 @@ void WIN32Window::setMouseCursor(const std::string& file, const Point& hotSpot)
 
     apng_data apng;
     if(load_apng(fin, &apng) != 0) {
-        logTraceError("unable to load png file ", file);
+        logTraceError("unable to load png file %s", file);
         return;
     }
 

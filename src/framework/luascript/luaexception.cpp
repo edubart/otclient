@@ -33,21 +33,21 @@ void LuaException::generateLuaErrorMessage(const std::string& error, int traceLe
 {
     // append trace level to error message
     if(traceLevel >= 0)
-        m_what = stdext::mkstr("LUA ERROR: ", g_lua.traceback(error, traceLevel));
+        m_what = stdext::format("LUA ERROR: %s", g_lua.traceback(error, traceLevel));
     else
-        m_what = stdext::mkstr("LUA ERROR: ", error);
+        m_what = stdext::format("LUA ERROR: %s", error);
 }
 
 LuaBadNumberOfArgumentsException::LuaBadNumberOfArgumentsException(int expected, int got)
 {
     std::string error = "attempt to call a function with wrong number of arguments";
     if(expected >= 0 && got >= 0)
-        error = stdext::mkstr(error, " (expected ", expected, ", but got ", got, ")");
+        error = stdext::format("%s (expected %d, but got %d)", error, expected, got);
     generateLuaErrorMessage(error, 1);
 }
 
 LuaBadValueCastException::LuaBadValueCastException(const std::string& luaTypeName, const std::string& cppTypeName)
 {
-    std::string error = stdext::mkstr("attempt to cast a '", luaTypeName, "' lua value to '", cppTypeName, "'");
+    std::string error = stdext::format("attempt to cast a '%s' lua value to '%s'", luaTypeName, cppTypeName);
     generateLuaErrorMessage(error, 0);
 }

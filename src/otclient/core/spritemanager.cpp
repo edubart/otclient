@@ -48,7 +48,7 @@ bool SpriteManager::load(const std::string& file)
         m_loaded = true;
         return true;
     } catch(stdext::exception& e) {
-        logError("Failed to load sprites from '", file, "': ", e.what());
+        logError("Failed to load sprites from '%s': %s", file, e.what());
         return false;
     }
 }
@@ -98,7 +98,7 @@ ImagePtr SpriteManager::getSpriteImage(int id)
         uint16 coloredPixels = m_spritesFile->getU16();
 
         if(writePos + transparentPixels*4 + coloredPixels*3 >= SPRITE_DATA_SIZE) {
-            logWarning("corrupt sprite id ", id);
+            logWarning("corrupt sprite id %d", id);
             return nullptr;
         }
 

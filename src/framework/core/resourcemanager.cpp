@@ -43,7 +43,7 @@ void ResourceManager::terminate()
 bool ResourceManager::setupWriteDir(const std::string& appWriteDirName)
 {
     std::string userDir = PHYSFS_getUserDir();
-    std::string dirName = stdext::mkstr(".", appWriteDirName);
+    std::string dirName = stdext::format(".%s", appWriteDirName);
     std::string writeDir = userDir + dirName;
     if(!PHYSFS_setWriteDir(writeDir.c_str())) {
         if(!PHYSFS_setWriteDir(userDir.c_str()))
@@ -150,7 +150,7 @@ FileStreamPtr ResourceManager::openFile(const std::string& fileName)
     std::string fullPath = resolvePath(fileName);
     PHYSFS_File* file = PHYSFS_openRead(fullPath.c_str());
     if(!file) {
-        logTraceError("unable to open file '", fullPath, "': ", PHYSFS_getLastError());
+        logTraceError("unable to open file '%s': %s", fullPath, PHYSFS_getLastError());
         return nullptr;
     }
     return FileStreamPtr(new FileStream(fullPath, file));
@@ -160,7 +160,7 @@ FileStreamPtr ResourceManager::appendFile(const std::string& fileName)
 {
     PHYSFS_File* file = PHYSFS_openAppend(fileName.c_str());
     if(!file) {
-        logTraceError("failed to append file '", fileName, "': ", PHYSFS_getLastError());
+        logTraceError("failed to append file '%s': %s", fileName, PHYSFS_getLastError());
         return nullptr;
     }
     return FileStreamPtr(new FileStream(fileName, file));
@@ -170,7 +170,7 @@ FileStreamPtr ResourceManager::createFile(const std::string& fileName)
 {
     PHYSFS_File* file = PHYSFS_openWrite(fileName.c_str());
     if(!file) {
-        logTraceError("failed to create file '", fileName, "': ", PHYSFS_getLastError());
+        logTraceError("failed to create file '%s': %s", fileName, PHYSFS_getLastError());
         return nullptr;
     }
     return FileStreamPtr(new FileStream(fileName, file));
@@ -211,7 +211,7 @@ std::string ResourceManager::resolvePath(const std::string& path)
         fullPath += path;
     }
     if(!(boost::starts_with(fullPath, "/")))
-        logTraceWarning("the following file path is not fully resolved: ", path);
+        logTraceWarning("the following file path is not fully resolved: %s", path);
     boost::replace_all(fullPath, "//", "/");
     return fullPath;
 }

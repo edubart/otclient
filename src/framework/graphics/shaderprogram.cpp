@@ -48,7 +48,7 @@ bool ShaderProgram::addShader(const ShaderPtr& shader) {
 bool ShaderProgram::addShaderFromSourceCode(Shader::ShaderType shaderType, const std::string& sourceCode) {
     ShaderPtr shader(new Shader(shaderType));
     if(!shader->compileSourceCode(sourceCode)) {
-        logError("failed to compile shader: ", shader->log());
+        logError("failed to compile shader: %s", shader->log());
         return false;
     }
     return addShader(shader);
@@ -57,7 +57,7 @@ bool ShaderProgram::addShaderFromSourceCode(Shader::ShaderType shaderType, const
 bool ShaderProgram::addShaderFromSourceFile(Shader::ShaderType shaderType, const std::string& sourceFile) {
     ShaderPtr shader(new Shader(shaderType));
     if(!shader->compileSourceFile(sourceFile)) {
-        logError("failed to compile shader: ", shader->log());
+        logError("failed to compile shader: %s", shader->log());
         return false;
     }
     return addShader(shader);

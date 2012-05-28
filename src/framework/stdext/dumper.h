@@ -54,4 +54,6 @@ const static dumper::dumper_util dump;
 
 }
 
+using stdext::dump;
+
 #endif

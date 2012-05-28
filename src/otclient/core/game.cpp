@@ -38,6 +38,7 @@ Game g_game;
 Game::Game()
 {
     resetGameStates();
+    setClientVersion(860);
 }
 
 void Game::resetGameStates()
@@ -1016,6 +1017,59 @@ bool Game::canPerformGameAction()
     // - the game protocol is connected
     // - its not a bot action
     return m_localPlayer && !m_dead && m_protocolGame && m_protocolGame->isConnected() && checkBotProtection();
+}
+
+void Game::setClientVersion(int clientVersion)
+{
+    if(isOnline()) {
+        logError("Unable to change client version while online");
+        return;
+    }
+
+    //TODO: check supported versions
+
+    m_features.reset();
+
+    if(clientVersion >= 854) {
+        enableFeature(Otc::GameProtocolChecksum);
+        enableFeature(Otc::GameAccountNames);
+        enableFeature(Otc::GameChallangeOnLogin);
+        enableFeature(Otc::GameStackposOnTileAddThing);
+        enableFeature(Otc::GameDoubleFreeCapacity);
+        enableFeature(Otc::GameCreatureAdditionalInfo);
+        enableFeature(Otc::GameReverseCreatureStack);
+    }
+
+    if(clientVersion >= 860) {
+        enableFeature(Otc::GameIdOnCancelAttack);
+    }
+
+    if(clientVersion >= 862) {
+        enableFeature(Otc::GamePenalityOnDeath);
+    }
+
+    if(clientVersion >= 870) {
+        enableFeature(Otc::GameDoubleExperience);
+        enableFeature(Otc::GamePlayerMounts);
+    }
+
+    if(clientVersion >= 910) {
+        enableFeature(Otc::GameNameOnNpcTrade);
+        enableFeature(Otc::GameTotalCapacity);
+        enableFeature(Otc::GameSkillsBase);
+        enableFeature(Otc::GameAdditionalPlayerStats);
+        enableFeature(Otc::GameChannelPlayerList);
+        enableFeature(Otc::GameEnvironmentEffect);
+        enableFeature(Otc::GameCreatureType);
+        enableFeature(Otc::GameItemAnimationPhase);
+    }
+
+    if(clientVersion >= 953) {
+        enableFeature(Otc::GameCreaturePassableInfo);
+        enableFeature(Otc::GameTrucatedPingOpcode);
+    }
+
+    m_clientVersion = clientVersion;
 }
 
 void Game::setAttackingCreature(const CreaturePtr& creature)

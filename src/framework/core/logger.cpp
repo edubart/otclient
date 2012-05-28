@@ -89,7 +89,7 @@ void Logger::setLogFile(const std::string& file)
 {
     m_outFile.open(file.c_str(), std::ios::out | std::ios::app);
     if(!m_outFile.is_open() || !m_outFile.good()) {
-        logError("Unable to save log to '", file, "'");
+        logError("Unable to save log to '%s'", file);
         return;
     }
 

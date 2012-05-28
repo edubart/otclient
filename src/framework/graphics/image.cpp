@@ -46,7 +46,7 @@ ImagePtr Image::load(const std::string& file)
         // load image file data
         image = loadPNG(file);
     } catch(stdext::exception& e) {
-        logError("unable to load image '", file, "': ", e.what());
+        logError("unable to load image '%s': %s", file, e.what());
     }
     return image;
 }

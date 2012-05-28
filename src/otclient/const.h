@@ -288,6 +288,32 @@ namespace Otc
         SpeakMonsterSay,
         SpeakMonsterYell
     };
+
+    enum GameFeature {
+        GameExtendedOpcode = 0,
+        GameProtocolChecksum,
+        GameAccountNames,
+        GameChallangeOnLogin,
+        GameStackposOnTileAddThing,
+        GamePenalityOnDeath,
+        GameNameOnNpcTrade,
+        GameDoubleFreeCapacity,
+        GameDoubleExperience,
+        GameTotalCapacity,
+        GameSkillsBase,
+        GameAdditionalPlayerStats,
+        GameIdOnCancelAttack,
+        GameChannelPlayerList,
+        GamePlayerMounts,
+        GameEnvironmentEffect,
+        GameCreatureType,
+        GameCreatureAdditionalInfo,
+        GameCreaturePassableInfo,
+        GameItemAnimationPhase,
+        GameTrucatedPingOpcode,
+        GameReverseCreatureStack,
+        LastGameFeature
+    };
 }
 
 #endif

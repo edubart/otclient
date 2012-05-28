@@ -163,12 +163,12 @@ void LuaInterface::registerClassMemberField(const std::string& className,
 
     if(getFunction) {
         pushCppFunction(getFunction);
-        setField(stdext::mkstr("get_", field));
+        setField(stdext::format("get_%s", field));
     }
 
     if(setFunction) {
         pushCppFunction(setFunction);
-        setField(stdext::mkstr("set_", field));
+        setField(stdext::format("set_%s", field));
     }
 
     pop();
@@ -324,9 +324,9 @@ void LuaInterface::loadFunction(const std::string& buffer, const std::string& so
 
     std::string buf;
     if(boost::starts_with(buffer, "function"))
-        buf = stdext::mkstr("__func = ", buffer);
+        buf = stdext::format("__func = %s", buffer);
     else
-        buf = stdext::mkstr("__func = function(self)\n", buffer,"\nend");
+        buf = stdext::format("__func = function(self)\n%s\nend", buffer);
 
     loadBuffer(buf, source);
     safeCall();
@@ -343,7 +343,7 @@ void LuaInterface::evaluateExpression(const std::string& expression, const std::
 {
     // evaluates the expression
     if(!expression.empty()) {
-        std::string buffer = stdext::mkstr("__exp = (", expression, ")");
+        std::string buffer = stdext::format("__exp = (%s)", expression);
         loadBuffer(buffer, source);
         safeCall();
 
@@ -480,7 +480,7 @@ int LuaInterface::protectedCall(int numArgs, int requestedResults)
             throw LuaException("attempt to call a non function value", 0);
         }
     } catch(LuaException &e) {
-        logError("protected lua call failed: ", e.what());
+        logError("protected lua call failed: %s", e.what());
     }
 
     // pushes nil values if needed
@@ -515,7 +515,7 @@ int LuaInterface::luaScriptLoader(lua_State* L)
         g_lua.loadScript(fileName);
         return 1;
     } catch(LuaException& e) {
-        logError("failed to load script file '", fileName, "' :'", e.what());
+        logError("failed to load script file '%s': %s", fileName, e.what());
         return 0;
     }
 }
@@ -531,7 +531,7 @@ int LuaInterface::luaScriptRunner(lua_State* L)
         g_lua.call(0, LUA_MULTRET);
         return g_lua.stackSize();
     } catch(LuaException& e) {
-        logError("failed to load script file '", fileName, "' :'", e.what());
+        logError("failed to load script file '%s': %s", fileName, e.what());
         return 0;
     }
 }
@@ -548,7 +548,7 @@ int LuaInterface::luaScriptsRunner(lua_State* L)
             g_lua.loadScript(directory + "/" + fileName);
             g_lua.call(0, 0);
         } catch(LuaException& e) {
-            logError("failed to load script file '", fileName, "' :'", e.what());
+            logError("failed to load script file '%s': %s", fileName, e.what());
         }
     }
     return 0;
@@ -583,7 +583,7 @@ int LuaInterface::luaCppFunctionCallback(lua_State* L)
         g_lua.m_cppCallbackDepth--;
         assert(numRets == g_lua.stackSize());
     } catch(LuaException &e) {
-        logError("lua cpp callback failed: ", e.what());
+        logError("lua cpp callback failed: %s", e.what());
     }
 
     return numRets;
@@ -1019,7 +1019,7 @@ void LuaInterface::pushObject(const LuaObjectPtr& obj)
     new(newUserdata(sizeof(LuaObjectPtr))) LuaObjectPtr(obj);
 
     // set the userdata metatable
-    getGlobal(stdext::mkstr(obj->getClassName(), "_mt"));
+    getGlobal(stdext::format("%s_mt", obj->getClassName()));
     assert(!isNil());
     setMetatable();
 }

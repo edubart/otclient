@@ -39,6 +39,7 @@
 #include <string>
 #include <vector>
 #include <list>
+#include <bitset>
 #include <queue>
 #include <deque>
 #include <stack>

@@ -68,14 +68,6 @@ namespace Proto {
     constexpr int ClientOs = OsOtclientLinux;
 #endif
 
-#if PROTOCOL>=860
-    constexpr int NumViolationReasons = 20;
-#elif PROTOCOL>=854
-    constexpr int NumViolationReasons = 19;
-#elif PROTOCOL>=810
-    constexpr int NumViolationReasons = 32;
-#endif
-
     enum LoginServerOpts {
         LoginServerError = 10,
         LoginServerMotd = 20,
@@ -95,13 +87,8 @@ namespace Proto {
         GameServerLoginError                = 20,
         GameServerLoginAdvice               = 21,
         GameServerLoginWait                 = 22,
-#if PROTOCOL>=953
-        GameServerPing                      = 29,
-        GameServerPingBack                  = 30,
-#else
         GameServerPingBack                  = 29,
         GameServerPing                      = 30,
-#endif
         GameServerChallange                 = 31,
         GameServerDeath                     = 40,
 
@@ -488,7 +475,7 @@ namespace Proto {
             case Proto::ServerSpeakBroadcast: return Otc::SpeakBroadcast;
             case Proto::ServerSpeakPrivateRedTo: return Otc::SpeakPrivateRed;
             default:
-                logError("unknown protocol speak type ", type);
+                logError("unknown protocol speak type %d", type);
                 return Otc::SpeakSay;
         }
     }
@@ -510,7 +497,7 @@ namespace Proto {
             case Otc::SpeakMonsterSay: return Proto::ServerSpeakMonsterSay;
             case Otc::SpeakMonsterYell: return Proto::ServerSpeakMonsterYell;
             default:
-                logError("unknown protocol speak type desc ", type);
+                logError("unknown protocol speak type desc %d", type);
                 return Proto::ServerSpeakSay;
         }
     }
@@ -528,7 +515,7 @@ namespace Proto {
             case Proto::MessageConsoleBlue: return "consoleBlue";
             case Proto::MessageConsoleRed: return "consoleRed";
             default:
-                logError("unknown protocol text message type ", type);
+                logError("unknown protocol text message type %d", type);
                 return "unknown";
         }
     }

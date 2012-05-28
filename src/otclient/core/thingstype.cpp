@@ -33,7 +33,7 @@ bool ThingsType::load(const std::string& file)
 {
     FileStreamPtr fin = g_resources.openFile(file);
     if(!fin) {
-        logError("unable to open dat file '", file, "'");
+        logError("unable to open dat file '%s'", file);
         return false;
     }
 
@@ -106,7 +106,6 @@ bool ThingsType::parseThingType(const FileStreamPtr& fin, ThingType& thingType)
         else if(property == ThingType::IsRune)
             thingType.m_properties[ThingType::IsStackable] = true;
 #endif
-#if PROTOCOL>=944
         else if(property == ThingType::Market) {
             fin->getU16(); // category
             fin->getU16(); // trade as
@@ -115,7 +114,6 @@ bool ThingsType::parseThingType(const FileStreamPtr& fin, ThingType& thingType)
             fin->getU16(); // restrict profession
             fin->getU16(); // level
         }
-#endif
     }
 
     if(!done)

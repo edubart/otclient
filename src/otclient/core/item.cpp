@@ -41,7 +41,7 @@ ItemPtr Item::create(int id)
 {
     ItemPtr item = ItemPtr(new Item);
     if(id < g_thingsType.getFirstItemId() || id > g_thingsType.getMaxItemid())
-        logTraceError("invalid item id ", id);
+        logTraceError("invalid item id %d", id);
     else {
         item->setId(id);
     }
@@ -190,7 +190,7 @@ void Item::draw(const Point& dest, float scaleFactor, bool animate)
 void Item::setId(uint32 id)
 {
     if(id < g_thingsType.getFirstItemId() || id > g_thingsType.getMaxItemid()) {
-        logTraceError("invalid item id ", id);
+        logTraceError("invalid item id %d", id);
         return;
     }
     m_id = id;
