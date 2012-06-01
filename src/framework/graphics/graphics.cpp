@@ -330,3 +330,14 @@ bool Graphics::canUseClampToEdge()
     return m_useClampToEdge;
 #endif
 }
+
+bool Graphics::canUseBlendFuncSeparate()
+{
+#ifdef OPENGL_ES
+    return true;
+#else
+    if(!GLEW_VERSION_1_4)
+        return false;
+    return true;
+#endif
+}

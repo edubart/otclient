@@ -157,6 +157,7 @@ void FrameBuffer::internalRelease()
         // restore screen original content
         g_painter->setCompositionMode(Painter::CompositionMode_Replace);
         g_painter->drawTexturedRect(screenRect, m_screenBackup, screenRect);
+        g_painter->resetCompositionMode();
     }
 }
 

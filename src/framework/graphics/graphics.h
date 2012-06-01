@@ -63,6 +63,7 @@ public:
     bool canUseMipmaps();
     bool canUseHardwareMipmaps();
     bool canUseClampToEdge();
+    bool canUseBlendFuncSeparate();
 
 private:
     Size m_viewportSize;

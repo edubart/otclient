@@ -304,7 +304,7 @@ void WIN32Window::internalChooseGLVisual()
                                          PFD_TYPE_RGBA,
                                          32,                         // Select Our Color Depth
                                          0, 0, 0, 0, 0, 0,           // Color Bits Ignored
-                                         1,                          // Alpha Buffer Bits
+                                         8,                          // Alpha Buffer Bits
                                          0,                          // Shift Bit Ignored
                                          0,                          // No Accumulation Buffer
                                          0, 0, 0, 0,                 // Accumulation Bits Ignored
