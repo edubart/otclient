@@ -371,6 +371,7 @@ void X11Window::internalChooseGLVisual()
 #else
         EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT,
 #endif
+        EGL_ALPHA_SIZE, 1,
         EGL_NONE
     };
 
@@ -386,6 +387,7 @@ void X11Window::internalChooseGLVisual()
     static int attrList[] = {
         GLX_RENDER_TYPE, GLX_RGBA_BIT,
         GLX_DOUBLEBUFFER, True,
+        GLX_ALPHA_SIZE, 1,
         None
     };
 

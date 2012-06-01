@@ -35,7 +35,7 @@ public:
     UIMap();
     ~UIMap();
 
-    void drawSelf();
+    void drawSelf(bool foregroundPane);
 
     bool setZoom(int zoom);
     bool zoomIn();

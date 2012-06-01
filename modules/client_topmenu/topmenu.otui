@@ -69,9 +69,19 @@ TopPanel
     anchors.bottom: parent.bottom
     anchors.right: parent.right
 
-  FrameCounter
+  UILabel
+    size: 68 16
+    text-align: right
+    color: white
     id: frameCounter
     anchors.top: parent.top
     anchors.right: prev.left
     margin-top: 8
     margin-right: 5
+    @onSetup: |
+      local updateFunc
+      updateFunc = function()
+        self:setText('FPS: ' .. g_app.getBackgroundPaneFps())
+        scheduleEvent(updateFunc, 250)
+      end
+      updateFunc()

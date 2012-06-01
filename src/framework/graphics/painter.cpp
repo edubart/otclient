@@ -53,7 +53,7 @@ void Painter::refreshState()
     updateGlTexture();
 }
 
-void Painter::saveAndResetState()
+void Painter::saveState()
 {
     assert(m_oldStateIndex<10);
     m_olderStates[m_oldStateIndex].projectionMatrix = m_projectionMatrix;
@@ -65,6 +65,11 @@ void Painter::saveAndResetState()
     m_olderStates[m_oldStateIndex].shaderProgram = m_shaderProgram;
     m_olderStates[m_oldStateIndex].texture = m_texture;
     m_oldStateIndex++;
+}
+
+void Painter::saveAndResetState()
+{
+    saveState();
     resetState();
 }
 

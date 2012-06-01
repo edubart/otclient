@@ -57,7 +57,7 @@ Application::Application(const std::string& appName)
 {
     g_app = this;
     m_appName = appName;
-    m_frameSleep = 0;
+    m_foregroundFrameCounter.setMaxFps(60);
 }
 
 Application::~Application()
@@ -157,6 +157,8 @@ void Application::terminate()
     // terminate script environment
     g_lua.terminate();
 
+    m_foreground = nullptr;
+
     logInfo("Application ended successfully.");
 }
 
@@ -182,19 +184,70 @@ void Application::run()
         poll();
 
         if(g_window.isVisible()) {
-            g_graphics.beginRender();
-            render();
-            g_graphics.endRender();
+            // the otclient's screen consists of two panes
+            // background pane - high updated and animated pane (where the game are stuff happens)
+            // foreground pane - steady pane with few animated stuff (UI)
+            bool redraw = false;
+            bool updateForeground = false;
 
-            // update screen pixels
-            g_window.swapBuffers();
+            if(m_backgroundFrameCounter.shouldProcessNextFrame()) {
+                redraw = true;
+
+                if(m_mustRepaint || m_foregroundFrameCounter.shouldProcessNextFrame()) {
+                    m_mustRepaint = false;
+                    updateForeground = true;
+                }
+            }
+
+            if(redraw) {
+                g_graphics.beginRender();
+
+                Rect viewportRect(0, 0, g_graphics.getViewportSize());
+
+                // draw the foreground into a texture
+                if(updateForeground) {
+                    m_foregroundFrameCounter.processNextFrame();
+
+                    // draw foreground
+                    g_ui.render(true);
+
+                    // copy the foreground to a texture
+                    m_foreground->copyFromScreen(viewportRect);
+                }
+
+                // draw background (animated stuff)
+                m_backgroundFrameCounter.processNextFrame();
+                g_ui.render(false);
+
+                // transform projection matrix to render upside down
+                Matrix3 projectionMatrix = g_painter->getProjectionMatrix();
+                projectionMatrix(2,2) *= -1.0f;
+                projectionMatrix(3,2) *= -1.0f;
+
+                // draw the foreground (steady stuff)
+                g_painter->saveAndResetState();
+                g_painter->setProjectionMatrix(projectionMatrix);
+                g_painter->drawTexturedRect(viewportRect, m_foreground, viewportRect);
+                g_painter->restoreSavedState();
+
+                g_graphics.endRender();
+
+                // update screen pixels
+                g_window.swapBuffers();
+            }
+
+            m_backgroundFrameCounter.update();
+            m_foregroundFrameCounter.update();
+
+            int sleepMicros = std::min(m_backgroundFrameCounter.getMaximumSleepMicros(), m_foregroundFrameCounter.getMaximumSleepMicros());
+            if(sleepMicros >= AdaptativeFrameCounter::MINIMUM_MICROS_SLEEP) {
+                stdext::microsleep(AdaptativeFrameCounter::MINIMUM_MICROS_SLEEP);
+            }
+
         } else {
             // sleeps until next poll to avoid massive cpu usage
             g_clock.sleep(POLL_CYCLE_DELAY+1);
         }
-
-        if(m_frameSleep > 0)
-            g_clock.sleep(m_frameSleep);
     }
 
     m_stopping = false;
@@ -227,20 +280,15 @@ void Application::close()
     m_onInputEvent = false;
 }
 
-void Application::render()
-{
-    // everything is rendered by UI components, even the game
-    g_ui.render();
-
-    //g_particleManager.render();
-}
-
 void Application::resize(const Size& size)
 {
     m_onInputEvent = true;
     g_graphics.resize(size);
     g_ui.resize(size);
     m_onInputEvent = false;
+
+    m_foreground = TexturePtr(new Texture(size.width(), size.height()));
+    m_mustRepaint = true;
 }
 
 void Application::inputEvent(const InputEvent& event)

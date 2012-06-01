@@ -30,7 +30,7 @@
 class UICreature : public UIWidget
 {
 public:
-    void drawSelf();
+    void drawSelf(bool foregroundPane);
 
     void setCreature(const CreaturePtr& creature) { m_creature = creature; }
     void setFixedCreatureSize(bool fixed) { m_fixedCreatureSize = fixed; }

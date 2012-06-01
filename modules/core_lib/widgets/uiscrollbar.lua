@@ -89,8 +89,8 @@ function UIScrollBar.create()
   local scrollbar = UIScrollBar.internalCreate()
   scrollbar:setFocusable(false)
   scrollbar.value = 0
-  scrollbar.minimum = 0
-  scrollbar.maximum = 0
+  scrollbar.minimum = -999999
+  scrollbar.maximum = 999999
   scrollbar.step = 1
   scrollbar.orientation = 'vertical'
   scrollbar.pixelsScroll = false
@@ -98,6 +98,8 @@ function UIScrollBar.create()
 end
 
 function UIScrollBar:onSetup()
+  self.setupDone = true
+  signalcall(self.onValueChange, self, self.value)
   addEvent(function()
     Mouse.bindAutoPress(self:getChildById('decrementButton'), function() self:decrement() end)
     Mouse.bindAutoPress(self:getChildById('incrementButton'), function() self:increment() end)
@@ -163,7 +165,9 @@ function UIScrollBar:setValue(value)
   local delta = value - self.value
   self.value = value
   updateSlider(self)
-  signalcall(self.onValueChange, self, value, delta)
+  if self.setupDone then
+    signalcall(self.onValueChange, self, value, delta)
+  end
 end
 
 function UIScrollBar:setStep(step)

@@ -31,5 +31,6 @@
 #include "math.h"
 #include "string.h"
 #include "dumper.h"
+#include "time.h"
 
 #endif

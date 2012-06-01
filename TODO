@@ -36,6 +36,7 @@ scrolling multiline edit
 mouse wheel lineedits
 onMapKnown event
 save different account/pasword/server for each otclient protocol version
+dont store textures upsidedown
 
 == OPTIMIZATIONS AND REWORKS
 * game

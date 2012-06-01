@@ -27,6 +27,7 @@
 #include <framework/graphics/graphics.h>
 #include <framework/platform/platformwindow.h>
 #include <framework/core/eventdispatcher.h>
+#include <framework/application.h>
 
 UIManager g_ui;
 
@@ -51,9 +52,9 @@ void UIManager::terminate()
     m_pressedWidget = nullptr;
 }
 
-void UIManager::render()
+void UIManager::render(bool foregroundPane)
 {
-    m_rootWidget->draw(m_rootWidget->getRect());
+    m_rootWidget->draw(m_rootWidget->getRect(), foregroundPane);
 }
 
 void UIManager::resize(const Size& size)

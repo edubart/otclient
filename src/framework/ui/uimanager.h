@@ -33,7 +33,7 @@ public:
     void init();
     void terminate();
 
-    void render();
+    void render(bool foregroundPane);
     void resize(const Size& size);
     void inputEvent(const InputEvent& event);
 

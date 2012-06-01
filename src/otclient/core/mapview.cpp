@@ -77,11 +77,13 @@ void MapView::draw(const Rect& rect)
             Rect clearRect = Rect(0, 0, m_drawDimension * m_tileSize);
 
             // drawing a black rect is actually faster than FrameBuffer::clear()
+            /*
             g_painter->setColor(Color::black);
             g_painter->drawFilledRect(clearRect);
             g_painter->setColor(Color::white);
+            */
 
-            // m_framebuffer->clear(Color::black);
+            m_framebuffer->clear(Color::black);
         }
 
         auto it = m_cachedVisibleTiles.begin();
@@ -131,6 +133,7 @@ void MapView::draw(const Rect& rect)
     drawOffset.y += (srcVisible.height() - srcSize.height()) / 2;
     Rect srcRect = Rect(drawOffset, srcSize);
 
+    g_painter->saveState();
     g_painter->setColor(Color::white);
     g_painter->setCompositionMode(Painter::CompositionMode_Replace);
 #if 0
@@ -146,8 +149,8 @@ void MapView::draw(const Rect& rect)
     m_framebuffer->draw(rect, srcRect);
 #endif
 
-    g_painter->resetCompositionMode();
-    g_painter->resetShaderProgram();
+    g_painter->restoreSavedState();
+    //g_painter->resetShaderProgram();
 
     // this could happen if the player position is not known yet
     if(!cameraPosition.isValid())

@@ -62,6 +62,7 @@ public:
 
     void resetState();
     virtual void refreshState();
+    void saveState();
     void saveAndResetState();
     void restoreSavedState();
 

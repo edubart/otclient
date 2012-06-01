@@ -24,9 +24,12 @@
 #include <framework/otml/otml.h>
 #include <framework/graphics/graphics.h>
 
-void UICreature::drawSelf()
+void UICreature::drawSelf(bool foregroundPane)
 {
-    UIWidget::drawSelf();
+    if(!foregroundPane)
+        return;
+
+    UIWidget::drawSelf(foregroundPane);
 
     if(m_creature) {
         g_painter->setColor(Color::white);

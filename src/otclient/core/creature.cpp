@@ -148,6 +148,7 @@ void Creature::internalDrawOutfit(const Point& dest, float scaleFactor, bool ani
                     Point p = dest + (-Point(w,h)*Otc::TILE_PIXELS)*scaleFactor;
 
                     if(getLayers() > 1) {
+                        g_painter->saveState();
                         g_painter->setCompositionMode(Painter::CompositionMode_Multiply);
 
                         g_painter->setColor(m_outfit.getHeadColor());
@@ -159,8 +160,7 @@ void Creature::internalDrawOutfit(const Point& dest, float scaleFactor, bool ani
                         g_painter->setColor(m_outfit.getFeetColor());
                         m_type->drawMask(p, scaleFactor, w, h, xPattern, yPattern, zPattern, 1, animationPhase, ThingType::BlueMask);
 
-                        g_painter->resetColor();
-                        g_painter->resetCompositionMode();
+                        g_painter->restoreSavedState();
                     }
                 }
             }

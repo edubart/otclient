@@ -50,9 +50,10 @@ void Particle::render()
     if(!m_texture)
         g_painter->drawFilledRect(m_rect);
     else {
+        g_painter->saveState();
         g_painter->setCompositionMode(m_compositionMode);
         g_painter->drawTexturedRect(m_rect, m_texture);
-        g_painter->setCompositionMode(Painter::CompositionMode_Normal);
+        g_painter->restoreSavedState();
     }
 }
 

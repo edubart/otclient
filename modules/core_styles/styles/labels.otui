@@ -20,7 +20,3 @@ FlatLabel < UILabel
 GameLabel < UILabel
   font: verdana-11px-antialised
   color: #bbbbbb
-
-FrameCounter < UIFrameCounter
-  size: 68 16
-  align: right

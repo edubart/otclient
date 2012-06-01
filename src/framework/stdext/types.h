@@ -39,8 +39,6 @@ typedef int32_t int32;
 typedef int16_t int16;
 typedef int8_t int8;
 
-// note that on 32 bit platforms the max ticks will overflow for values above 2,147,483,647
-// thus this means that the app may cause unknown behavior after running 24 days without restarting
-typedef long ticks_t;
+typedef int64_t ticks_t;
 
 #endif

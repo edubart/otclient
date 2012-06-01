@@ -24,6 +24,8 @@
 #define APPLICATION_H
 
 #include <framework/core/inputevent.h>
+#include <framework/core/adaptativeframecounter.h>
+#include <framework/graphics/declarations.h>
 
 class Application
 {
@@ -43,33 +45,40 @@ public:
     virtual void poll();
     virtual void close();
 
-    void setFrameSleep(int delay) { m_frameSleep = delay; }
+    bool willRepaint() { return m_mustRepaint; }
+    void repaint() { m_mustRepaint = true; }
+
+    void setForegroundPaneMaxFps(int maxFps) { m_foregroundFrameCounter.setMaxFps(maxFps); }
+    void setBackgroundPaneMaxFps(int maxFps) { m_backgroundFrameCounter.setMaxFps(maxFps); }
 
     bool isRunning() { return m_running; }
     bool isStopping() { return m_stopping; }
     bool isOnInputEvent() { return m_onInputEvent; }
-    int getFrameSleep() { return m_frameSleep; }
     const std::string& getName() { return m_appName; }
     const std::string& getVersion() { return m_appVersion; }
 
+    int getForegroundPaneFps() { return m_foregroundFrameCounter.getLastFps(); }
+    int getBackgroundPaneFps() { return m_backgroundFrameCounter.getLastFps(); }
     std::string getBuildCompiler() { return BUILD_COMPILER; }
     std::string getBuildDate() { return BUILD_DATE; }
     std::string getBuildRevision() { return BUILD_REVISION; }
     std::string getBuildType() { return BUILD_TYPE; }
 
 protected:
-    virtual void render();
     virtual void resize(const Size& size);
     virtual void inputEvent(const InputEvent& event);
 
     std::string m_appName;
     std::string m_appVersion;
     std::string m_appBuildDate;
-    int m_frameSleep;
     Boolean<false> m_initialized;
     Boolean<false> m_running;
     Boolean<false> m_stopping;
     Boolean<false> m_onInputEvent;
+    Boolean<false> m_mustRepaint;
+    AdaptativeFrameCounter m_backgroundFrameCounter;
+    AdaptativeFrameCounter m_foregroundFrameCounter;
+    TexturePtr m_foreground;
 };
 
 extern Application *g_app;

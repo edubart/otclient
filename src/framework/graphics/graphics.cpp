@@ -88,7 +88,6 @@ void Graphics::init()
 
     selectPainterEngine(m_prefferedPainterEngine);
     m_emptyTexture = TexturePtr(new Texture);
-
 }
 
 void Graphics::terminate()

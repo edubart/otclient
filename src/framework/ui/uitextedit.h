@@ -30,7 +30,7 @@ class UITextEdit : public UIWidget
 public:
     UITextEdit();
 
-    virtual void drawSelf();
+    void drawSelf(bool foregroundPane);
 
 private:
     void update();

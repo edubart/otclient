@@ -37,6 +37,7 @@ public:
     void bind();
     void clear(const Color& color = Color::black, const Rect& rect = Rect());
     void release();
+    void draw();
     void draw(const Rect& dest);
     void draw(const Rect& dest, const Rect& src);
 

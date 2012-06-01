@@ -129,6 +129,12 @@ uint Texture::internalLoadGLTexture(uchar *pixels, int channels, int width, int 
     return id;
 }
 
+void Texture::copyFromScreen(const Rect& screenRect)
+{
+    bind();
+    glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, screenRect.x(), screenRect.y(), screenRect.width(), screenRect.height());
+}
+
 void Texture::bind()
 {
     // must reset painter texture state

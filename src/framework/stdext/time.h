@@ -20,43 +20,22 @@
  * THE SOFTWARE.
  */
 
-#include "uiframecounter.h"
-#include "uitranslator.h"
-#include <framework/graphics/font.h>
-#include <framework/otml/otmlnode.h>
-#include <framework/core/clock.h>
-#include <framework/graphics/graphics.h>
+#ifndef STDEXT_TIME_H
+#define STDEXT_TIME_H
 
-UIFrameCounter::UIFrameCounter()
-{
-    m_focusable = false;
-    m_phantom = true;
-    m_align = Fw::AlignLeft;
-    m_lastFrameTicks = g_clock.ticks();
-    m_frameCount = 0;
+#include "types.h"
+#include <chrono>
+#include <unistd.h>
+
+namespace stdext {
+
+const static std::chrono::system_clock::time_point startup_time = std::chrono::high_resolution_clock::now();
+inline ticks_t millis() { return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - startup_time).count(); }
+inline ticks_t micros() { return std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - startup_time).count(); }
+inline void millisleep(uint32 ms) { usleep(ms * 1000); };
+inline void microsleep(uint32 us) { usleep(us); };
+
 }
 
-void UIFrameCounter::drawSelf()
-{
-    UIWidget::drawSelf();
+#endif
 
-    if(g_clock.ticksElapsed(m_lastFrameTicks) >= 1000) {
-        m_fpsText = stdext::format("FPS: %d", m_frameCount);
-        m_lastFrameTicks = g_clock.ticks();
-        m_frameCount = 0;
-    }
-    m_frameCount++;
-
-    g_painter->setColor(Color::white);
-    m_font->drawText(m_fpsText, m_rect, m_align);
-}
-
-void UIFrameCounter::onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode)
-{
-    UIWidget::onStyleApply(styleName, styleNode);
-
-    for(const OTMLNodePtr& node : styleNode->children()) {
-        if(node->tag() == "align")
-            setAlign(Fw::translateAlignment(node->value()));
-    }
-}

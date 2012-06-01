@@ -30,6 +30,7 @@
 #include <framework/graphics/graphics.h>
 #include <framework/platform/platformwindow.h>
 #include <framework/graphics/texturemanager.h>
+#include <framework/application.h>
 
 UIWidget::UIWidget()
 {
@@ -51,26 +52,29 @@ UIWidget::~UIWidget()
 #endif
 }
 
-void UIWidget::draw(const Rect& visibleRect)
+void UIWidget::draw(const Rect& visibleRect, bool foregroundPane)
 {
     if(m_clipping)
         g_painter->setClipRect(visibleRect);
 
-    drawSelf();
+    drawSelf(foregroundPane);
 
     if(m_children.size() > 0) {
         if(m_clipping)
             g_painter->setClipRect(visibleRect.intersection(getClippingRect()));
 
-        drawChildren(visibleRect);
+        drawChildren(visibleRect, foregroundPane);
     }
 
     if(m_clipping)
         g_painter->resetClipRect();
 }
 
-void UIWidget::drawSelf()
+void UIWidget::drawSelf(bool foregroundPane)
 {
+    if(!foregroundPane)
+        return;
+
     // draw style components in order
     if(m_backgroundColor.aF() > Fw::MIN_ALPHA) {
         Rect backgroundDestRect = m_rect;
@@ -84,7 +88,7 @@ void UIWidget::drawSelf()
     drawText(m_rect);
 }
 
-void UIWidget::drawChildren(const Rect& visibleRect)
+void UIWidget::drawChildren(const Rect& visibleRect, bool foregroundPane)
 {
     // draw children
     for(const UIWidgetPtr& child : m_children) {
@@ -103,10 +107,10 @@ void UIWidget::drawChildren(const Rect& visibleRect)
         if(child->getOpacity() < oldOpacity)
             g_painter->setOpacity(child->getOpacity());
 
-        child->draw(childVisibleRect);
+        child->draw(childVisibleRect, foregroundPane);
 
         // debug draw box
-        if(g_ui.isDrawingDebugBoxes()) {
+        if(foregroundPane && g_ui.isDrawingDebugBoxes()) {
             g_painter->setColor(Color::green);
             g_painter->drawBoundingRect(child->getRect());
         }
@@ -807,6 +811,7 @@ bool UIWidget::setRect(const Rect& rect)
     if(rect == oldRect)
         return false;
 
+    g_app->repaint();
     m_rect = rect;
 
     // updates own layout

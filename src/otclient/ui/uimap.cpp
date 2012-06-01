@@ -45,16 +45,24 @@ UIMap::~UIMap()
     g_map.removeMapView(m_mapView);
 }
 
-void UIMap::drawSelf()
+void UIMap::drawSelf(bool foregroundPane)
 {
-    UIWidget::drawSelf();
+    if(foregroundPane) {
+        UIWidget::drawSelf(foregroundPane);
 
-    // draw map border
-    g_painter->setColor(Color::black);
-    g_painter->drawBoundingRect(m_mapRect.expanded(1));
+        // draw map border
+        g_painter->setColor(Color::black);
+        g_painter->drawBoundingRect(m_mapRect.expanded(1));
 
-    g_painter->setColor(Color::white);
-    m_mapView->draw(m_mapRect);
+        g_painter->saveState();
+        g_painter->setCompositionMode(Painter::CompositionMode_Replace);
+        g_painter->setColor(Color::alpha);
+        g_painter->drawFilledRect(m_mapRect);
+        g_painter->restoreSavedState();
+    } else {
+        g_painter->setColor(Color::white);
+        m_mapView->draw(m_mapRect);
+    }
 }
 
 bool UIMap::setZoom(int zoom)

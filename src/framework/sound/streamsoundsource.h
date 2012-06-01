@@ -28,7 +28,7 @@
 class StreamSoundSource : public SoundSource
 {
     enum {
-        STREAM_BUFFER_SIZE = 1024 * 500,
+        STREAM_BUFFER_SIZE = 1024 * 100,
         STREAM_FRAGMENTS = 5,
         STREAM_FRAGMENT_SIZE = STREAM_BUFFER_SIZE / STREAM_FRAGMENTS
     };

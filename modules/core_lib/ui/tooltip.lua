@@ -6,7 +6,7 @@ local currentHoveredWidget
 
 -- private functions
 local function moveToolTip(tooltip)
-  if not tooltip:isVisible() then return end
+  if not tooltip:isVisible() or tooltip:getOpacity() < 0.1 then return end
 
   local pos = g_window.getMousePosition()
   pos.y = pos.y + 1
@@ -49,6 +49,7 @@ function ToolTip.init()
     toolTipLabel:setId('toolTip')
     toolTipLabel:setBackgroundColor('#111111cc')
     toolTipLabel:setTextAlign(AlignCenter)
+    toolTipLabel:hide()
     toolTipLabel.onMouseMove = moveToolTip
   end)
 end

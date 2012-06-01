@@ -75,7 +75,7 @@ void FrameBuffer::resize(const Size& size)
             logFatal("Unable to setup framebuffer object");
         internalRelease();
     } else {
-        m_screenBackup = TexturePtr(new Texture(size.width(), size.height(), 4));
+        m_screenBackup = TexturePtr(new Texture(size.width(), size.height()));
     }
 }
 
@@ -113,6 +113,12 @@ void FrameBuffer::release()
     g_graphics.setViewportSize(m_oldViewportSize);
 }
 
+void FrameBuffer::draw()
+{
+    Rect rect(0,0, getSize());
+    g_painter->drawTexturedRect(rect, m_texture, rect);
+}
+
 void FrameBuffer::draw(const Rect& dest, const Rect& src)
 {
     g_painter->drawTexturedRect(dest, m_texture, src);
@@ -132,9 +138,7 @@ void FrameBuffer::internalBind()
         boundFbo = m_fbo;
     } else {
         // backup screen color buffer into a texture
-        m_screenBackup->bind();
-        Size size = getSize();
-        glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, size.width(), size.height());
+        m_screenBackup->copyFromScreen(Rect(0, 0, getSize()));
     }
 }
 
@@ -145,16 +149,14 @@ void FrameBuffer::internalRelease()
         glBindFramebuffer(GL_FRAMEBUFFER, m_prevBoundFbo);
         boundFbo = m_prevBoundFbo;
     } else {
-        Size size = getSize();
+        Rect screenRect(0, 0, getSize());
 
         // copy the drawn color buffer into the framebuffer texture
-        m_texture->bind();
-        glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, size.width(), size.height());
+        m_texture->copyFromScreen(screenRect);
 
         // restore screen original content
-        glDisable(GL_BLEND);
-        g_painter->drawTexturedRect(Rect(0, 0, size), m_screenBackup, Rect(0, 0, size));
-        glEnable(GL_BLEND);
+        g_painter->setCompositionMode(Painter::CompositionMode_Replace);
+        g_painter->drawTexturedRect(screenRect, m_screenBackup, screenRect);
     }
 }
 

@@ -390,11 +390,6 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UITextEdit>("isShiftNavigation", &UITextEdit::isShiftNavigation);
     g_lua.bindClassMemberFunction<UITextEdit>("isMultiline", &UITextEdit::isMultiline);
 
-    // UIFrameCounter
-    g_lua.registerClass<UIFrameCounter, UIWidget>();
-    g_lua.bindClassStaticFunction<UIFrameCounter>("create", []{ return UIFrameCounterPtr(new UIFrameCounter); } );
-    g_lua.bindClassMemberFunction<UIFrameCounter>("getFrameCount", &UIFrameCounter::getFrameCount);
-
     // Protocol
     g_lua.registerClass<Protocol>();
     //g_lua.bindClassMemberFunction<Protocol>("connect", &Protocol::connect);
@@ -457,10 +452,23 @@ void Application::registerLuaFunctions()
     // Application
     g_lua.registerStaticClass("g_app");
     g_lua.bindClassStaticFunction("g_app", "exit", std::bind(&Application::exit, g_app));
-    g_lua.bindClassStaticFunction("g_app", "setFrameSleep", std::bind(&Application::setFrameSleep, g_app, std::placeholders::_1));
+    g_lua.bindClassStaticFunction("g_app", "setForegroundPaneMaxFps", std::bind(&Application::setForegroundPaneMaxFps, g_app, std::placeholders::_1));
+    g_lua.bindClassStaticFunction("g_app", "setBackgroundPaneMaxFps", std::bind(&Application::setBackgroundPaneMaxFps, g_app, std::placeholders::_1));
     g_lua.bindClassStaticFunction("g_app", "isRunning", std::bind(&Application::isRunning, g_app));
     g_lua.bindClassStaticFunction("g_app", "isStopping", std::bind(&Application::isStopping, g_app));
-    g_lua.bindClassStaticFunction("g_app", "getFrameSleep", std::bind(&Application::getFrameSleep, g_app));
+    g_lua.bindClassStaticFunction("g_app", "isOnInputEvent", std::bind(&Application::isOnInputEvent, g_app));
+    g_lua.bindClassStaticFunction("g_app", "getName", std::bind(&Application::getName, g_app));
+    g_lua.bindClassStaticFunction("g_app", "getVersion", std::bind(&Application::getVersion, g_app));
+    g_lua.bindClassStaticFunction("g_app", "getForegroundPaneFps", std::bind(&Application::getForegroundPaneFps, g_app));
+    g_lua.bindClassStaticFunction("g_app", "getBackgroundPaneFps", std::bind(&Application::getBackgroundPaneFps, g_app));
+    g_lua.bindClassStaticFunction("g_app", "getBuildCompiler", std::bind(&Application::getBuildCompiler, g_app));
+    g_lua.bindClassStaticFunction("g_app", "getBuildDate", std::bind(&Application::getBuildDate, g_app));
+    g_lua.bindClassStaticFunction("g_app", "getBuildRevision", std::bind(&Application::getBuildRevision, g_app));
+    g_lua.bindClassStaticFunction("g_app", "getBuildType", std::bind(&Application::getBuildType, g_app));
+
+    g_lua.bindClassStaticFunction("g_app", "exit", std::bind(&Application::exit, g_app));
+    g_lua.bindClassStaticFunction("g_app", "isRunning", std::bind(&Application::isRunning, g_app));
+    g_lua.bindClassStaticFunction("g_app", "isStopping", std::bind(&Application::isStopping, g_app));
     g_lua.bindClassStaticFunction("g_app", "getName", std::bind(&Application::getName, g_app));
     g_lua.bindClassStaticFunction("g_app", "getVersion", std::bind(&Application::getVersion, g_app));
     g_lua.bindClassStaticFunction("g_app", "getBuildCompiler", std::bind(&Application::getBuildCompiler, g_app));

@@ -25,7 +25,6 @@
 #include <framework/application.h>
 #include <framework/thirdparty/apngloader.h>
 #include <framework/core/resourcemanager.h>
-#include <framework/util/utf8.h>
 
 #define HSB_BIT_SET(p, n) (p[(n)/8] |= (128 >>((n)%8)))
 
@@ -305,7 +304,7 @@ void WIN32Window::internalChooseGLVisual()
                                          PFD_TYPE_RGBA,
                                          32,                         // Select Our Color Depth
                                          0, 0, 0, 0, 0, 0,           // Color Bits Ignored
-                                         0,                          // No Alpha Buffer
+                                         1,                          // Alpha Buffer Bits
                                          0,                          // Shift Bit Ignored
                                          0,                          // No Accumulation Buffer
                                          0, 0, 0, 0,                 // Accumulation Bits Ignored

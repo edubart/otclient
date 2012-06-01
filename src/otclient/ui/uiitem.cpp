@@ -30,9 +30,12 @@ UIItem::UIItem()
     m_dragable = true;
 }
 
-void UIItem::drawSelf()
+void UIItem::drawSelf(bool foregroundPane)
 {
-    UIWidget::drawSelf();
+    if(!foregroundPane)
+        return;
+
+    UIWidget::drawSelf(foregroundPane);
 
     if(m_item) {
         Rect drawRect = getClippingRect();

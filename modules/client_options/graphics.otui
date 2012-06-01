@@ -13,20 +13,60 @@ Panel
     !text: tr('Fullscreen')
 
   Label
-    !text: tr('Frame rate limit')
+    id: backgroundFrameRateLimitLabel
+    !text: tr('Background pane framerate limit: %s', 'max')
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: prev.bottom
     margin-top: 6
 
   HorizontalScrollBar
-    id: frameRateScrollBar
+    id: backgroundFrameRateScrollBar
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: prev.bottom
     margin-top: 3
-    minimum: 0
-    maximum: 50
-    value: 0
+    minimum: 10
+    maximum: 201
+    value: 201
     step: 1
-    @onValueChange: g_app.setFrameSleep(self:getValue())
+    @onValueChange: |
+      local value = self:getValue()
+      local text = value
+      if value == self:getMaximum() then
+        text = 'max'
+        value = 0
+      end
+
+      self:getParent():getChildById('backgroundFrameRateLimitLabel'):setText(tr('Background pane framerate limit: %s', text))
+      g_app.setBackgroundPaneMaxFps(value)
+
+  Label
+    id: foregroundFrameRateLimitLabel
+    !text: tr('Foreground pane framerate limit: %s', '8')
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: prev.bottom
+    margin-top: 6
+
+  HorizontalScrollBar
+    id: foregroundFrameRateScrollBar
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: prev.bottom
+    margin-top: 3
+    minimum: 1
+    maximum: 61
+    value: 8
+    step: 1
+    @onValueChange: |
+      local value = self:getValue()
+      local text = value
+      if value == self:getMaximum() then
+        text = 'max'
+        value = 0
+      end
+
+      self:getParent():getChildById('foregroundFrameRateLimitLabel'):setText(tr('Foreground pane framerate limit: %s', text))
+      g_app.setForegroundPaneMaxFps(value)
+

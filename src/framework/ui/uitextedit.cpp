@@ -40,8 +40,11 @@ UITextEdit::UITextEdit()
     blinkCursor();
 }
 
-void UITextEdit::drawSelf()
+void UITextEdit::drawSelf(bool foregroundPane)
 {
+    if(!foregroundPane)
+        return;
+
     drawBackground(m_rect);
     drawBorder(m_rect);
     drawImage(m_rect);
