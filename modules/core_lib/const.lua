@@ -12,7 +12,10 @@ LogWarning = 2
 LogError = 3
 LogFatal = 4
 
+MouseFocusReason = 0
+KeyboardFocusReason = 1
 ActiveFocusReason = 2
+OtherFocusReason = 3
 
 KeyboardNoModifier = 0
 KeyboardCtrlModifier = 1
