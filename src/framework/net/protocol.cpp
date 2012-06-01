@@ -114,26 +114,26 @@ void Protocol::internalRecvData(uint8* buffer, uint16 size)
 {
     // process data only if really connected
     if(!isConnected()) {
-        logTraceError("received data while disconnected");
+        g_logger.traceError("received data while disconnected");
         return;
     }
 
     m_inputMessage->fillBuffer(buffer, size);
 
     if(m_checksumEnabled && !m_inputMessage->readChecksum()) {
-        logTraceError("got a network message with invalid checksum");
+        g_logger.traceError("got a network message with invalid checksum");
         return;
     }
 
     if(m_xteaEncryptionEnabled) {
         if(!xteaDecrypt(m_inputMessage)) {
-            logTraceError("failed to decrypt message");
+            g_logger.traceError("failed to decrypt message");
             return;
         }
     } else {
         int size = m_inputMessage->getU16();
         if(size != m_inputMessage->getUnreadSize()) {
-            logTraceError("invalid message size");
+            g_logger.traceError("invalid message size");
             return;
         }
     }
@@ -155,7 +155,7 @@ bool Protocol::xteaDecrypt(const InputMessagePtr& inputMessage)
 {
     uint16 encryptedSize = inputMessage->getUnreadSize();
     if(encryptedSize % 8 != 0) {
-        logTraceError("invalid encrypted network message");
+        g_logger.traceError("invalid encrypted network message");
         return false;
     }
 
@@ -179,7 +179,7 @@ bool Protocol::xteaDecrypt(const InputMessagePtr& inputMessage)
     uint16 decryptedSize = inputMessage->getU16() + 2;
     int sizeDelta = decryptedSize - encryptedSize;
     if(sizeDelta > 0 || -sizeDelta > encryptedSize) {
-        logTraceError("invalid decrypted a network message");
+        g_logger.traceError("invalid decrypted a network message");
         return false;
     }
 

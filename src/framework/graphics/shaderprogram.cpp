@@ -30,7 +30,7 @@ ShaderProgram::ShaderProgram()
     m_programId = glCreateProgram();
     m_uniformLocations.fill(-1);
     if(!m_programId)
-        logFatal("Unable to create GL shader program");
+        g_logger.fatal("Unable to create GL shader program");
 }
 
 ShaderProgram::~ShaderProgram()
@@ -48,7 +48,7 @@ bool ShaderProgram::addShader(const ShaderPtr& shader) {
 bool ShaderProgram::addShaderFromSourceCode(Shader::ShaderType shaderType, const std::string& sourceCode) {
     ShaderPtr shader(new Shader(shaderType));
     if(!shader->compileSourceCode(sourceCode)) {
-        logError("failed to compile shader: %s", shader->log());
+        g_logger.error(stdext::format("failed to compile shader: %s", shader->log()));
         return false;
     }
     return addShader(shader);
@@ -57,7 +57,7 @@ bool ShaderProgram::addShaderFromSourceCode(Shader::ShaderType shaderType, const
 bool ShaderProgram::addShaderFromSourceFile(Shader::ShaderType shaderType, const std::string& sourceFile) {
     ShaderPtr shader(new Shader(shaderType));
     if(!shader->compileSourceFile(sourceFile)) {
-        logError("failed to compile shader: %s", shader->log());
+        g_logger.error(stdext::format("failed to compile shader: %s", shader->log()));
         return false;
     }
     return addShader(shader);
@@ -92,7 +92,7 @@ bool ShaderProgram::link()
     m_linked = (value != GL_FALSE);
 
     if(!m_linked)
-        logTraceWarning(log());
+        g_logger.traceWarning(log());
     return m_linked;
 }
 

@@ -45,8 +45,8 @@ Graphics::Graphics()
 
 void Graphics::init()
 {
-    logInfo("GPU %s", glGetString(GL_RENDERER));
-    logInfo("OpenGL %s", glGetString(GL_VERSION));
+    g_logger.info(stdext::format("GPU %s", glGetString(GL_RENDERER)));
+    g_logger.info(stdext::format("OpenGL %s", glGetString(GL_VERSION)));
 
 #if OPENGL_ES==2
     g_painterOGL2 = new PainterOGL2;
@@ -56,7 +56,7 @@ void Graphics::init()
     // init GL extensions
     GLenum err = glewInit();
     if(err != GLEW_OK)
-        logFatal("Unable to init GLEW: %s", glewGetErrorString(err));
+        g_logger.fatal(stdext::format("Unable to init GLEW: %s", glewGetErrorString(err)));
 
     // overwrite framebuffer API if needed
     if(GLEW_EXT_framebuffer_object && !GLEW_ARB_framebuffer_object) {
@@ -162,7 +162,7 @@ bool Graphics::selectPainterEngine(PainterEngine painterEngine)
 #endif
 
     if(!found)
-        logFatal("Neither OpenGL 1.0 nor OpenGL 2.0 painter engine is supported by your platform, "
+        g_logger.fatal("Neither OpenGL 1.0 nor OpenGL 2.0 painter engine is supported by your platform, "
                  "try updating your graphics drivers or your hardware and then run again.");
 
     // switch painters GL state

@@ -56,7 +56,7 @@ void EventDispatcher::poll()
         if(count > 50) {
             static Timer reportTimer;
             if(reportTimer.running() && reportTimer.ticksElapsed() > 250) {
-                logError("ATTENTION the event list is not getting empty, this could be caused by some bad code");
+                g_logger.error("ATTENTION the event list is not getting empty, this could be caused by some bad code");
                 reportTimer.restart();
             }
             break;

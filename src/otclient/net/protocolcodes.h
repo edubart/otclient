@@ -475,7 +475,7 @@ namespace Proto {
             case Proto::ServerSpeakBroadcast: return Otc::SpeakBroadcast;
             case Proto::ServerSpeakPrivateRedTo: return Otc::SpeakPrivateRed;
             default:
-                logError("unknown protocol speak type %d", type);
+                g_logger.error(stdext::format("unknown protocol speak type %d", type));
                 return Otc::SpeakSay;
         }
     }
@@ -497,7 +497,7 @@ namespace Proto {
             case Otc::SpeakMonsterSay: return Proto::ServerSpeakMonsterSay;
             case Otc::SpeakMonsterYell: return Proto::ServerSpeakMonsterYell;
             default:
-                logError("unknown protocol speak type desc %d", type);
+                g_logger.error(stdext::format("unknown protocol speak type desc %d", type));
                 return Proto::ServerSpeakSay;
         }
     }
@@ -515,7 +515,7 @@ namespace Proto {
             case Proto::MessageConsoleBlue: return "consoleBlue";
             case Proto::MessageConsoleRed: return "consoleRed";
             default:
-                logError("unknown protocol text message type %d", type);
+                g_logger.error(stdext::format("unknown protocol text message type %d", type));
                 return "unknown";
         }
     }

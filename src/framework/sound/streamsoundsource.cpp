@@ -46,7 +46,7 @@ void StreamSoundSource::setSoundFile(const SoundFilePtr& soundFile)
 void StreamSoundSource::play()
 {
     if(!m_soundFile) {
-        logError("there is not sound file to play the stream");
+        g_logger.error("there is not sound file to play the stream");
         return;
     }
 
@@ -100,7 +100,7 @@ void StreamSoundSource::update()
         if(processed == 0 || !m_looping)
             return;
 
-        logTraceError("restarting audio source because of buffer underrun");
+        g_logger.traceError("restarting audio source because of buffer underrun");
         play();
     }
 }
@@ -143,12 +143,12 @@ bool StreamSoundSource::fillBufferAndQueue(ALuint buffer)
         alBufferData(buffer, format, &bufferData[0], bytesRead, m_soundFile->getRate());
         ALenum err = alGetError();
         if(err != AL_NO_ERROR)
-            logError("unable to refill audio buffer for '%s': %s", m_soundFile->getName(), alGetString(err));
+            g_logger.error(stdext::format("unable to refill audio buffer for '%s': %s", m_soundFile->getName(), alGetString(err)));
 
         alSourceQueueBuffers(m_sourceId, 1, &buffer);
         err = alGetError();
         if(err != AL_NO_ERROR)
-            logError("unable to queue audio buffer for '%s': %s", m_soundFile->getName(), alGetString(err));
+            g_logger.error(stdext::format("unable to queue audio buffer for '%s': %s", m_soundFile->getName(), alGetString(err)));
     }
 
     // return false if there aren't more buffers to fill
@@ -158,12 +158,12 @@ bool StreamSoundSource::fillBufferAndQueue(ALuint buffer)
 void StreamSoundSource::downMix(StreamSoundSource::DownMix downMix)
 {
     if(!m_soundFile) {
-        logError("down mix must be set after setting a sound file");
+        g_logger.error("down mix must be set after setting a sound file");
         return;
     }
 
     if(m_soundFile->getSampleFormat() != AL_FORMAT_STEREO16) {
-        logError("can only downmix 16 bit stereo audio files");
+        g_logger.error("can only downmix 16 bit stereo audio files");
         return;
     }
 

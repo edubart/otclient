@@ -59,7 +59,7 @@ void Container::addItems(const std::vector<ItemPtr>& items)
 void Container::updateItem(int slot, const ItemPtr& item)
 {
     if(slot < 0 || slot >= (int)m_items.size()) {
-        logTraceError("slot not found");
+        g_logger.traceError("slot not found");
         return;
     }
 
@@ -73,7 +73,7 @@ void Container::updateItem(int slot, const ItemPtr& item)
 void Container::removeItem(int slot)
 {
     if(slot < 0 || slot >= (int)m_items.size()) {
-        logTraceError("slot not found");
+        g_logger.traceError("slot not found");
         return;
     }
 

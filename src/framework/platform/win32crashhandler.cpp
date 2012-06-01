@@ -124,7 +124,7 @@ LONG CALLBACK ExceptionHandler(LPEXCEPTION_POINTERS e)
     SymCleanup(GetCurrentProcess());
 
     // print in stdout
-    logInfo(ss.str());
+    g_logger.info(ss.str());
 
     // write stacktrace to crash_report.txt
     char dir[MAX_PATH];
@@ -134,9 +134,9 @@ LONG CALLBACK ExceptionHandler(LPEXCEPTION_POINTERS e)
     if(fout.is_open() && fout.good()) {
         fout << ss.str();
         fout.close();
-        logInfo("Crash report saved to file %s", fileName);
+        g_logger.info("Crash report saved to file %s", fileName);
     } else
-        logError("Failed to save crash report!");
+        g_logger.error("Failed to save crash report!");
 
     // inform the user
     std::string msg = stdext::format(

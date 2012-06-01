@@ -106,7 +106,7 @@ void StaticText::compose()
         text += " says:\n";
         m_color = Color(95, 247, 247);
     } else {
-        logWarning("Unknown speak type: %d", m_messageType);
+        g_logger.warning(stdext::format("Unknown speak type: %d", m_messageType));
     }
 
     for(uint i = 0; i < m_messages.size(); ++i) {

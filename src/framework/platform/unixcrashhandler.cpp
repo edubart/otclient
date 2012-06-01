@@ -36,7 +36,7 @@
 
 void crashHandler(int signum, siginfo_t* info, void* secret)
 {
-    logError("Application crashed");
+    g_logger.error("Application crashed");
 
     std::stringstream ss;
     ss << stdext::format("app name: %s\n", g_app->getName());
@@ -100,7 +100,7 @@ void crashHandler(int signum, siginfo_t* info, void* secret)
         free(tracebackBuffer);
     }
 
-    logInfo(ss.str());
+    g_logger.info(ss.str());
 
     std::string fileName = "crash_report.txt";
     std::ofstream fout(fileName.c_str(), std::ios::out | std::ios::app);
@@ -109,9 +109,9 @@ void crashHandler(int signum, siginfo_t* info, void* secret)
         fout << ss.str();
         fout << "\n";
         fout.close();
-        logInfo("Crash report saved to file %s", fileName.c_str());
+        g_logger.info(stdext::format("Crash report saved to file %s", fileName.c_str()));
     } else
-        logError("Failed to save crash report!");
+        g_logger.error("Failed to save crash report!");
 
     signal(SIGILL, SIG_DFL);
     signal(SIGSEGV, SIG_DFL);

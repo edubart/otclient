@@ -67,7 +67,7 @@ bool FontManager::importFont(std::string fontFile)
 
         return true;
     } catch(stdext::exception& e) {
-        logError("Unable to load font from file '%s': %s", fontFile, e.what());
+        g_logger.error(stdext::format("Unable to load font from file '%s': %s", fontFile, e.what()));
         return false;
     }
 }
@@ -90,7 +90,7 @@ FontPtr FontManager::getFont(const std::string& fontName)
     }
 
     // when not found, fallback to default font
-    logError("font '%s' not found", fontName);
+    g_logger.error(stdext::format("font '%s' not found", fontName));
     return getDefaultFont();
 }
 

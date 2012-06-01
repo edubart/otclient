@@ -45,7 +45,7 @@ void FrameBuffer::internalCreate()
     if(g_graphics.canUseFBO()) {
         glGenFramebuffers(1, &m_fbo);
         if(!m_fbo)
-            logFatal("Unable to create framebuffer object");
+            g_logger.fatal("Unable to create framebuffer object");
     }
 }
 
@@ -72,7 +72,7 @@ void FrameBuffer::resize(const Size& size)
 
         GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
         if(status != GL_FRAMEBUFFER_COMPLETE)
-            logFatal("Unable to setup framebuffer object");
+            g_logger.fatal("Unable to setup framebuffer object");
         internalRelease();
     } else {
         m_screenBackup = TexturePtr(new Texture(size.width(), size.height()));

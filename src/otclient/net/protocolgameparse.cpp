@@ -47,7 +47,7 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
                 continue;
 
             if(!m_gameInitialized && opcode > Proto::GameServerFirstGameOpcode)
-                logWarning("received a game opcode from the server, but the game is not initialized yet, this is a server side bug");
+                g_logger.warning("received a game opcode from the server, but the game is not initialized yet, this is a server side bug");
 
             switch(opcode) {
             case Proto::GameServerInitGame:
@@ -319,8 +319,8 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
             prevOpcode = opcode;
         }
     } catch(stdext::exception& e) {
-        logError("Network exception (%d bytes unread, last opcode is %d, prev opcode is %d): %s",
-                 msg->getUnreadSize(), opcode, prevOpcode, e.what());
+        g_logger.error(stdext::format("Network exception (%d bytes unread, last opcode is %d, prev opcode is %d): %s",
+                 msg->getUnreadSize(), opcode, prevOpcode, e.what()));
     }
 }
 
@@ -476,7 +476,7 @@ void ProtocolGame::parseTileTransformThing(const InputMessagePtr& msg)
     ThingPtr thing = getThing(msg);
     if(thing) {
         if(!g_map.removeThingByPos(pos, stackPos))
-            logTraceError("could not remove thing");
+            g_logger.traceError("could not remove thing");
         g_map.addThing(thing, pos, stackPos);
     }
 }
@@ -487,7 +487,7 @@ void ProtocolGame::parseTileRemoveThing(const InputMessagePtr& msg)
     int stackPos = msg->getU8();
 
     if(!g_map.removeThingByPos(pos, stackPos))
-        logTraceError("could not remove thing");
+        g_logger.traceError("could not remove thing");
 }
 
 void ProtocolGame::parseCreatureMove(const InputMessagePtr& msg)
@@ -498,19 +498,19 @@ void ProtocolGame::parseCreatureMove(const InputMessagePtr& msg)
 
     ThingPtr thing = g_map.getThing(oldPos, oldStackpos);
     if(!thing) {
-        logTraceError("could not get thing");
+        g_logger.traceError("could not get thing");
         return;
     }
 
     CreaturePtr creature = thing->asCreature();
     if(!creature) {
-        logTraceError("thing is not a creature");
+        g_logger.traceError("thing is not a creature");
         return;
     }
 
     // update map tiles
     if(!g_map.removeThing(thing))
-        logTraceError("could not remove thing");
+        g_logger.traceError("could not remove thing");
     g_map.addThing(thing, newPos);
 }
 
@@ -699,7 +699,7 @@ void ProtocolGame::parseCreatureMark(const InputMessagePtr& msg)
     if(creature)
         creature->addTimedSquare(color);
     else
-        logTraceError("could not get creature");
+        g_logger.traceError("could not get creature");
 }
 
 void ProtocolGame::parseTrappers(const InputMessagePtr& msg)
@@ -707,7 +707,7 @@ void ProtocolGame::parseTrappers(const InputMessagePtr& msg)
     int numTrappers = msg->getU8();
 
     if(numTrappers > 8)
-        logTraceError("too many trappers");
+        g_logger.traceError("too many trappers");
 
     for(int i=0;i<numTrappers;++i) {
         uint id = msg->getU32();
@@ -715,7 +715,7 @@ void ProtocolGame::parseTrappers(const InputMessagePtr& msg)
         if(creature) {
             //TODO: set creature as trapper
         } else
-            logTraceError("could not get creature");
+            g_logger.traceError("could not get creature");
     }
 }
 
@@ -728,7 +728,7 @@ void ProtocolGame::parseCreatureHealth(const InputMessagePtr& msg)
     if(creature)
         creature->setHealthPercent(healthPercent);
     else
-        logTraceError("could not get creature");
+        g_logger.traceError("could not get creature");
 }
 
 void ProtocolGame::parseCreatureLight(const InputMessagePtr& msg)
@@ -743,7 +743,7 @@ void ProtocolGame::parseCreatureLight(const InputMessagePtr& msg)
     if(creature)
         creature->setLight(light);
     else
-        logTraceError("could not get creature");
+        g_logger.traceError("could not get creature");
 }
 
 void ProtocolGame::parseCreatureOutfit(const InputMessagePtr& msg)
@@ -755,7 +755,7 @@ void ProtocolGame::parseCreatureOutfit(const InputMessagePtr& msg)
     if(creature)
         creature->setOutfit(outfit);
     else
-        logTraceError("could not get creature");
+        g_logger.traceError("could not get creature");
 }
 
 void ProtocolGame::parseCreatureSpeed(const InputMessagePtr& msg)
@@ -767,7 +767,7 @@ void ProtocolGame::parseCreatureSpeed(const InputMessagePtr& msg)
     if(creature)
         creature->setSpeed(speed);
     else
-        logTraceError("could not get creature");
+        g_logger.traceError("could not get creature");
 }
 
 void ProtocolGame::parseCreatureSkulls(const InputMessagePtr& msg)
@@ -779,7 +779,7 @@ void ProtocolGame::parseCreatureSkulls(const InputMessagePtr& msg)
     if(creature)
         creature->setSkull(skull);
     else
-        logTraceError("could not get creature");
+        g_logger.traceError("could not get creature");
 }
 
 void ProtocolGame::parseCreatureShields(const InputMessagePtr& msg)
@@ -791,7 +791,7 @@ void ProtocolGame::parseCreatureShields(const InputMessagePtr& msg)
     if(creature)
         creature->setShield(shield);
     else
-        logTraceError("could not get creature");
+        g_logger.traceError("could not get creature");
 }
 
 void ProtocolGame::parseCreatureUnpass(const InputMessagePtr& msg)
@@ -803,7 +803,7 @@ void ProtocolGame::parseCreatureUnpass(const InputMessagePtr& msg)
     if(creature)
         creature->setPassable(!unpass);
     else
-        logTraceError("could not get creature");
+        g_logger.traceError("could not get creature");
 }
 
 void ProtocolGame::parseEditText(const InputMessagePtr& msg)
@@ -1238,7 +1238,7 @@ void ProtocolGame::parseExtendedOpcode(const InputMessagePtr& msg)
         try {
             callLuaField("onExtendedOpcode", opcode, buffer);
         } catch(stdext::exception& e) {
-            logError("Network exception in extended opcode %d: %s", opcode, e.what());
+            g_logger.error(stdext::format("Network exception in extended opcode %d: %s", opcode, e.what()));
         }
     }
 }
@@ -1304,7 +1304,7 @@ void ProtocolGame::setTileDescription(const InputMessagePtr& msg, Position posit
         }
         else {
             if(stackPos >= 10)
-                logTraceError("too many things, stackpos=%d, pos=%s", stackPos, stdext::to_string(position));
+                g_logger.traceError(stdext::format("too many things, stackpos=%d, pos=%s", stackPos, stdext::to_string(position)));
 
             ThingPtr thing = getThing(msg);
             g_map.addThing(thing, position, -1);
@@ -1380,7 +1380,7 @@ CreaturePtr ProtocolGame::getCreature(const InputMessagePtr& msg, int type)
             uint id = msg->getU32();
             creature = g_map.getCreatureById(id);
             if(!creature)
-                logTraceError("server said that a creature is known, but it's not");
+                g_logger.traceError("server said that a creature is known, but it's not");
         } else {
             uint removeId = msg->getU32();
             g_map.removeCreatureById(removeId);
@@ -1414,7 +1414,7 @@ CreaturePtr ProtocolGame::getCreature(const InputMessagePtr& msg, int type)
             else if(creatureType == Proto::CreatureTypeNpc)
                 creature = NpcPtr(new Npc);
             else
-                logTraceError("creature type is invalid");
+                g_logger.traceError("creature type is invalid");
 
             if(creature) {
                 creature->setId(id);
@@ -1467,7 +1467,7 @@ CreaturePtr ProtocolGame::getCreature(const InputMessagePtr& msg, int type)
         creature = g_map.getCreatureById(id);
 
         if(!creature)
-            logTraceError("invalid creature");
+            g_logger.traceError("invalid creature");
 
         Otc::Direction direction = (Otc::Direction)msg->getU8();
         if(creature)

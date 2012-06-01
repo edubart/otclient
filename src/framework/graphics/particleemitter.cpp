@@ -172,7 +172,7 @@ bool ParticleEmitter::load(const OTMLNodePtr& node)
         m_pColorsStops.push_back(0);
 
     if(m_pColors.size() != m_pColorsStops.size()) {
-        logError("particle colors must be equal to colorstops-1");
+        g_logger.error(stdext::format("particle colors must be equal to colorstops-1"));
         return false;
     }
 

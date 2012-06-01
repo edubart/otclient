@@ -70,7 +70,7 @@ int Thing::getStackpos()
     else if(const TilePtr& tile = getTile())
         return tile->getThingStackpos(asThing());
     else {
-        logTraceError("got a thing with invalid stackpos");
+        g_logger.traceError("got a thing with invalid stackpos");
         return -1;
     }
 }

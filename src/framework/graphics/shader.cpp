@@ -36,7 +36,7 @@ Shader::Shader(Shader::ShaderType shaderType)
     }
 
     if(!m_shaderId)
-        logFatal("Unable to create GL shader");
+        g_logger.fatal("Unable to create GL shader");
 }
 
 Shader::~Shader()

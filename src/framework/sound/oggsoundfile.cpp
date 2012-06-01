@@ -39,7 +39,7 @@ bool OggSoundFile::prepareOgg()
 
     vorbis_info* vi = ov_info(&m_vorbisFile, -1);
     if(!vi) {
-        logError("ogg file not supported: %s", m_file->name());
+        g_logger.error(stdext::format("ogg file not supported: %s", m_file->name()));
         return false;
     }
 

@@ -193,7 +193,7 @@ void Game::processCloseContainer(int containerId)
 {
     ContainerPtr container = getContainer(containerId);
     if(!container) {
-        logTraceError("container not found");
+        g_logger.traceError("container not found");
         return;
     }
 
@@ -205,7 +205,7 @@ void Game::processContainerAddItem(int containerId, const ItemPtr& item)
 {
     ContainerPtr container = getContainer(containerId);
     if(!container) {
-        logTraceError("container not found");
+        g_logger.traceError("container not found");
         return;
     }
 
@@ -216,7 +216,7 @@ void Game::processContainerUpdateItem(int containerId, int slot, const ItemPtr& 
 {
     ContainerPtr container = getContainer(containerId);
     if(!container) {
-        logTraceError("container not found");
+        g_logger.traceError("container not found");
         return;
     }
 
@@ -227,7 +227,7 @@ void Game::processContainerRemoveItem(int containerId, int slot)
 {
     ContainerPtr container = getContainer(containerId);
     if(!container) {
-        logTraceError("container not found");
+        g_logger.traceError("container not found");
         return;
     }
 
@@ -398,7 +398,7 @@ void Game::processWalkCancel(Otc::Direction direction)
 void Game::loginWorld(const std::string& account, const std::string& password, const std::string& worldName, const std::string& worldHost, int worldPort, const std::string& characterName)
 {
     if(m_protocolGame || isOnline()) {
-        logTraceError("unable to login into a world while already online or logging");
+        g_logger.traceError("unable to login into a world while already online or logging");
         return;
     }
 
@@ -1002,7 +1002,7 @@ bool Game::checkBotProtection()
     // accepts calls comming from a stacktrace containing only C++ functions,
     // if the stacktrace contains a lua function, then only accept if the engine is processing an input event
     if(g_lua.isInCppCallback() && !g_app->isOnInputEvent() && m_denyBotCall) {
-        logError(g_lua.traceback("caught a lua call to a bot protected game function, the call was canceled"));
+        g_logger.error(g_lua.traceback("caught a lua call to a bot protected game function, the call was canceled"));
         return false;
     }
     return true;
@@ -1022,7 +1022,7 @@ bool Game::canPerformGameAction()
 void Game::setClientVersion(int clientVersion)
 {
     if(isOnline()) {
-        logError("Unable to change client version while online");
+        g_logger.error("Unable to change client version while online");
         return;
     }
 

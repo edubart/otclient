@@ -44,6 +44,12 @@ public:
     void log(Fw::LogLevel level, const std::string& message);
     void logFunc(Fw::LogLevel level, const std::string& message, std::string prettyFunction);
 
+    void debug(const std::string& what) { log(Fw::LogDebug, what); }
+    void info(const std::string& what) { log(Fw::LogInfo, what); }
+    void warning(const std::string& what) { log(Fw::LogWarning, what); }
+    void error(const std::string& what) { log(Fw::LogError, what); }
+    void fatal(const std::string& what) { log(Fw::LogError, what); }
+
     void fireOldMessages();
     void setLogFile(const std::string& file);
     void setOnLog(const OnLogCallback& onLog) { m_onLog = onLog; }
@@ -56,18 +62,11 @@ private:
 
 extern Logger g_logger;
 
-// specialized logging
-#define logDebug(...) g_logger.log(Fw::LogDebug, stdext::format(__VA_ARGS__))
-#define logInfo(...) g_logger.log(Fw::LogInfo, stdext::format(__VA_ARGS__))
-#define logWarning(...) g_logger.log(Fw::LogWarning, stdext::format(__VA_ARGS__))
-#define logError(...) g_logger.log(Fw::LogError, stdext::format(__VA_ARGS__))
-#define logFatal(...) g_logger.log(Fw::LogFatal, stdext::format(__VA_ARGS__))
-
-#define logTrace() g_logger.logFunc(Fw::LogDebug, "", __PRETTY_FUNCTION__)
-#define logTraceDebug(...) g_logger.logFunc(Fw::LogDebug, stdext::format(__VA_ARGS__), __PRETTY_FUNCTION__)
-#define logTraceInfo(...) g_logger.logFunc(Fw::LogInfo, stdext::format(__VA_ARGS__), __PRETTY_FUNCTION__)
-#define logTraceWarning(...) g_logger.logFunc(Fw::LogWarning, stdext::format(__VA_ARGS__), __PRETTY_FUNCTION__)
-#define logTraceError(...) g_logger.logFunc(Fw::LogError, stdext::format(__VA_ARGS__), __PRETTY_FUNCTION__)
+#define trace() logFunc(Fw::LogDebug, "", __PRETTY_FUNCTION__)
+#define traceDebug(a) logFunc(Fw::LogDebug, a, __PRETTY_FUNCTION__)
+#define traceInfo(a) logFunc(Fw::LogInfo, a, __PRETTY_FUNCTION__)
+#define traceWarning(a) logFunc(Fw::LogWarning, a, __PRETTY_FUNCTION__)
+#define traceError(a) logFunc(Fw::LogError, a, __PRETTY_FUNCTION__)
 
 #define logTraceCounter() { \
     static int __count = 0; \

@@ -48,7 +48,7 @@ UIWidget::~UIWidget()
 {
 #ifdef DEBUG
     if(!m_destroyed)
-        logWarning("widget '%s' was not explicitly destroyed", m_id);
+        g_logger.warning(stdext::format("widget '%s' was not explicitly destroyed", m_id));
 #endif
 }
 
@@ -123,17 +123,17 @@ void UIWidget::drawChildren(const Rect& visibleRect, bool foregroundPane)
 void UIWidget::addChild(const UIWidgetPtr& child)
 {
     if(!child) {
-        logWarning("attempt to add a null child into a UIWidget");
+        g_logger.warning("attempt to add a null child into a UIWidget");
         return;
     }
 
     if(child->isDestroyed()) {
-        logWarning("attemp to add a destroyed child into a UIWidget");
+        g_logger.warning("attemp to add a destroyed child into a UIWidget");
         return;
     }
 
     if(hasChild(child)) {
-        logWarning("attempt to add a child again into a UIWidget");
+        g_logger.warning("attempt to add a child again into a UIWidget");
         return;
     }
 
@@ -164,19 +164,19 @@ void UIWidget::addChild(const UIWidgetPtr& child)
 void UIWidget::insertChild(int index, const UIWidgetPtr& child)
 {
     if(!child) {
-        logWarning("attempt to insert a null child into a UIWidget");
+        g_logger.warning("attempt to insert a null child into a UIWidget");
         return;
     }
 
     if(hasChild(child)) {
-        logWarning("attempt to insert a child again into a UIWidget");
+        g_logger.warning("attempt to insert a child again into a UIWidget");
         return;
     }
 
     index = index <= 0 ? (m_children.size() + index) : index-1;
 
     if(!(index >= 0 && (uint)index <= m_children.size())) {
-        logTraceError("attemp to insert a child in an invalid index");
+        g_logger.traceError("attemp to insert a child in an invalid index");
         return;
     }
 
@@ -231,7 +231,7 @@ void UIWidget::removeChild(UIWidgetPtr child)
 
         g_ui.onWidgetDisappear(child);
     } else
-        logError("attempt to remove an unknown child from a UIWidget");
+        g_logger.error("attempt to remove an unknown child from a UIWidget");
 }
 
 
@@ -244,7 +244,7 @@ void UIWidget::focusChild(const UIWidgetPtr& child, Fw::FocusReason reason)
         return;
 
     if(child && !hasChild(child)) {
-        logError("attempt to focus an unknown child in a UIWidget");
+        g_logger.error("attempt to focus an unknown child in a UIWidget");
         return;
     }
 
@@ -338,7 +338,7 @@ void UIWidget::lowerChild(UIWidgetPtr child)
     // remove and push child again
     auto it = std::find(m_children.begin(), m_children.end(), child);
     if(it == m_children.end()) {
-        logTraceError("cannot find child");
+        g_logger.traceError("cannot find child");
         return;
     }
 
@@ -358,7 +358,7 @@ void UIWidget::raiseChild(UIWidgetPtr child)
     // remove and push child again
     auto it = std::find(m_children.begin(), m_children.end(), child);
     if(it == m_children.end()) {
-        logTraceError("cannot find child");
+        g_logger.traceError("cannot find child");
         return;
     }
     m_children.erase(it);
@@ -377,7 +377,7 @@ void UIWidget::moveChildToIndex(const UIWidgetPtr& child, int index)
     // remove and push child again
     auto it = std::find(m_children.begin(), m_children.end(), child);
     if(it == m_children.end()) {
-        logTraceError("cannot find child");
+        g_logger.traceError("cannot find child");
         return;
     }
     m_children.erase(it);
@@ -394,7 +394,7 @@ void UIWidget::lockChild(const UIWidgetPtr& child)
         return;
 
     if(!hasChild(child)) {
-        logTraceError("cannot find child");
+        g_logger.traceError("cannot find child");
         return;
     }
 
@@ -426,7 +426,7 @@ void UIWidget::unlockChild(const UIWidgetPtr& child)
         return;
 
     if(!hasChild(child)) {
-        logTraceError("cannot find child");
+        g_logger.traceError("cannot find child");
         return;
     }
 
@@ -504,7 +504,7 @@ void UIWidget::applyStyle(const OTMLNodePtr& styleNode)
         }
         m_firstOnStyle = false;
     } catch(stdext::exception& e) {
-        logError("failed to apply style to widget '%s': %s", m_id, e.what());
+        g_logger.error(stdext::format("failed to apply style to widget '%s': %s", m_id, e.what()));
     }
     m_loadingStyle = false;
 }
@@ -517,7 +517,7 @@ void UIWidget::addAnchor(Fw::AnchorEdge anchoredEdge, const std::string& hookedW
     if(UIAnchorLayoutPtr anchorLayout = getAnchoredLayout())
         anchorLayout->addAnchor(asUIWidget(), anchoredEdge, hookedWidgetId, hookedEdge);
     else
-        logError("cannot add anchors to widget '%s': the parent doesn't use anchors layout", m_id);
+        g_logger.error(stdext::format("cannot add anchors to widget '%s': the parent doesn't use anchors layout", m_id));
 }
 
 void UIWidget::removeAnchor(Fw::AnchorEdge anchoredEdge)
@@ -534,7 +534,7 @@ void UIWidget::centerIn(const std::string& hookedWidgetId)
         anchorLayout->addAnchor(asUIWidget(), Fw::AnchorHorizontalCenter, hookedWidgetId, Fw::AnchorHorizontalCenter);
         anchorLayout->addAnchor(asUIWidget(), Fw::AnchorVerticalCenter, hookedWidgetId, Fw::AnchorVerticalCenter);
     } else
-        logError("cannot add anchors to widget '%s': the parent doesn't use anchors layout", m_id);
+        g_logger.error(stdext::format("cannot add anchors to widget '%s': the parent doesn't use anchors layout", m_id));
 }
 
 void UIWidget::fill(const std::string& hookedWidgetId)
@@ -548,7 +548,7 @@ void UIWidget::fill(const std::string& hookedWidgetId)
         anchorLayout->addAnchor(asUIWidget(), Fw::AnchorTop, hookedWidgetId, Fw::AnchorTop);
         anchorLayout->addAnchor(asUIWidget(), Fw::AnchorBottom, hookedWidgetId, Fw::AnchorBottom);
     } else
-        logError("cannot add anchors to widget '%s': the parent doesn't use anchors layout", m_id);
+        g_logger.error(stdext::format("cannot add anchors to widget '%s': the parent doesn't use anchors layout", m_id));
 }
 
 void UIWidget::breakAnchors()
@@ -714,7 +714,7 @@ void UIWidget::internalDestroy()
 void UIWidget::destroy()
 {
     if(m_destroyed)
-        logWarning("attempt to destroy widget '%s' two times", m_id);
+        g_logger.warning(stdext::format("attempt to destroy widget '%s' two times", m_id));
 
     // hold itself reference
     UIWidgetPtr self = asUIWidget();
@@ -803,7 +803,7 @@ void UIWidget::setLayout(const UILayoutPtr& layout)
 bool UIWidget::setRect(const Rect& rect)
 {
     if(rect.width() > 8192 || rect.height() > 8192) {
-        logError("attempt to set huge rect size (%s) for %s", stdext::to_string(rect), m_id);
+        g_logger.error(stdext::format("attempt to set huge rect size (%s) for %s", stdext::to_string(rect), m_id));
         return false;
     }
     // only update if the rect really changed
@@ -835,7 +835,7 @@ void UIWidget::setStyle(const std::string& styleName)
 {
     OTMLNodePtr styleNode = g_ui.getStyle(styleName);
     if(!styleNode) {
-        logTraceError("unable to retrieve style '%s': not a defined style", styleName);
+        g_logger.traceError(stdext::format("unable to retrieve style '%s': not a defined style", styleName));
         return;
     }
     styleNode = styleNode->clone();

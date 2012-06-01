@@ -33,7 +33,7 @@ bool ThingsType::load(const std::string& file)
 {
     FileStreamPtr fin = g_resources.openFile(file);
     if(!fin) {
-        logError("unable to open dat file '%s'", file);
+        g_logger.error(stdext::format("unable to open dat file '%s'", file));
         return false;
     }
 
@@ -50,7 +50,7 @@ bool ThingsType::load(const std::string& file)
         for(int id = 0; id < numThings[i]; ++id) {
             m_things[i][id].m_category = i;
             if(!parseThingType(fin, m_things[i][id])) {
-                logError("corrupt or dat file");
+                g_logger.error("corrupt or dat file");
                 return false;
             }
         }

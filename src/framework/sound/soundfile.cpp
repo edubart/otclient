@@ -33,7 +33,7 @@ SoundFilePtr SoundFile::loadSoundFile(const std::string& filename)
 {
     FileStreamPtr file = g_resources.openFile(filename);
     if(!file) {
-        logTraceError("unable to open %s", filename);
+        g_logger.traceError(stdext::format("unable to open %s", filename));
         return nullptr;
     }
 
@@ -50,7 +50,7 @@ SoundFilePtr SoundFile::loadSoundFile(const std::string& filename)
         if(oggSoundFile->prepareOgg())
             soundFile = oggSoundFile;
     } else
-        logError("unknown sound file format %s", filename);
+        g_logger.error(stdext::format("unknown sound file format %s", filename));
 
     return soundFile;
 }

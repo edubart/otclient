@@ -253,7 +253,7 @@ void X11Window::internalOpenDisplay()
 {
     m_display = XOpenDisplay(NULL);
     if(!m_display)
-        logFatal("Unable to open X11 display");
+        g_logger.fatal("Unable to open X11 display");
     m_screen = DefaultScreen(m_display);
 }
 
@@ -295,7 +295,7 @@ void X11Window::internalCreateWindow()
     m_visible = true;
 
     if(!m_window)
-        logFatal("Unable to create X11 window!");
+        g_logger.fatal("Unable to create X11 window!");
 
     // ensure window input focus
     XWMHints hints;
@@ -311,7 +311,7 @@ void X11Window::internalCreateWindow()
     XSetWMProtocols(m_display, m_window, &m_wmDelete , 1);
 
     if(!internalSetupWindowInput())
-        logWarning("Input of special keys may be messed up, because window input initialization failed");
+        g_logger.warning("Input of special keys may be messed up, because window input initialization failed");
 
     internalConnectGLContext();
 }
@@ -327,20 +327,20 @@ bool X11Window::internalSetupWindowInput()
 
     //  create input context (to have better key input handling)
     if(!XSupportsLocale()) {
-        logError("X11 doesn't support the current locale");
+        g_logger.error("X11 doesn't support the current locale");
         return false;
     }
 
     XSetLocaleModifiers("");
     m_xim = XOpenIM(m_display, NULL, NULL, NULL);
     if(!m_xim) {
-        logError("XOpenIM failed");
+        g_logger.error("XOpenIM failed");
         return false;
     }
 
     m_xic = XCreateIC(m_xim, XNInputStyle, XIMPreeditNothing | XIMStatusNothing, XNClientWindow, m_window, NULL);
     if(!m_xic) {
-        logError("Unable to create the input context");
+        g_logger.error("Unable to create the input context");
         return false;
     }
 
@@ -352,13 +352,13 @@ void X11Window::internalCheckGL()
 #ifdef OPENGL_ES
     m_eglDisplay = eglGetDisplay((EGLNativeDisplayType)m_display);
     if(m_eglDisplay == EGL_NO_DISPLAY)
-        logFatal("EGL not supported");
+        g_logger.fatal("EGL not supported");
 
     if(!eglInitialize(m_eglDisplay, NULL, NULL))
-        logFatal("Unable to initialize EGL");
+        g_logger.fatal("Unable to initialize EGL");
 #else
     if(!glXQueryExtension(m_display, NULL, NULL))
-        logFatal("GLX not supported");
+        g_logger.fatal("GLX not supported");
 #endif
 }
 
@@ -377,10 +377,10 @@ void X11Window::internalChooseGLVisual()
 
     EGLint numConfig;
     if(!eglChooseConfig(m_eglDisplay, attrList, &m_eglConfig, 1, &numConfig))
-        logFatal("Failed to choose EGL config");
+        g_logger.fatal("Failed to choose EGL config");
 
     if(numConfig != 1)
-        logWarning("Didn't got the exact EGL config");
+        g_logger.warning("Didn't got the exact EGL config");
 
     m_rootWindow = DefaultRootWindow(m_display);
 #else
@@ -394,11 +394,11 @@ void X11Window::internalChooseGLVisual()
     int nelements;
     m_fbConfig = glXChooseFBConfig(m_display, m_screen, attrList, &nelements);
     if(!m_fbConfig)
-        logFatal("Couldn't choose RGBA, double buffered fbconfig");
+        g_logger.fatal("Couldn't choose RGBA, double buffered fbconfig");
 
     m_visual = glXGetVisualFromFBConfig(m_display, *m_fbConfig);
     if(!m_visual)
-        logFatal("Couldn't choose RGBA, double buffered visual");
+        g_logger.fatal("Couldn't choose RGBA, double buffered visual");
 
     m_rootWindow = RootWindow(m_display, m_visual->screen);
 #endif
@@ -418,15 +418,15 @@ void X11Window::internalCreateGLContext()
 
     m_eglContext = eglCreateContext(m_eglDisplay, m_eglConfig, EGL_NO_CONTEXT, attrList);
     if(m_eglContext == EGL_NO_CONTEXT )
-        logFatal("Unable to create EGL context: %s", eglGetError());
+        g_logger.fatal("Unable to create EGL context: %s", eglGetError());
 #else
     m_glxContext = glXCreateContext(m_display, m_visual, NULL, True);
 
     if(!m_glxContext)
-        logFatal("Unable to create GLX context");
+        g_logger.fatal("Unable to create GLX context");
 
     if(!glXIsDirect(m_display, m_glxContext))
-        logWarning("GL direct rendering is not possible");
+        g_logger.warning("GL direct rendering is not possible");
 #endif
 }
 
@@ -459,12 +459,12 @@ void X11Window::internalConnectGLContext()
 #ifdef OPENGL_ES
     m_eglSurface = eglCreateWindowSurface(m_eglDisplay, m_eglConfig, m_window, NULL);
     if(m_eglSurface == EGL_NO_SURFACE)
-        logFatal("Unable to create EGL surface: %s", eglGetError());
+        g_logger.fatal("Unable to create EGL surface: %s", eglGetError());
     if(!eglMakeCurrent(m_eglDisplay, m_eglSurface, m_eglSurface, m_eglContext))
-        logFatal("Unable to connect EGL context into X11 window");
+        g_logger.fatal("Unable to connect EGL context into X11 window");
 #else
     if(!glXMakeCurrent(m_display, m_window, m_glxContext))
-        logFatal("Unable to set GLX context on X11 window");
+        g_logger.fatal("Unable to set GLX context on X11 window");
 #endif
 }
 
@@ -712,7 +712,7 @@ void X11Window::poll()
                     break;
                 std::string text = buf;
 
-                //logDebug("char: ", buf[0], " code: ", (int)((uchar)buf[0]));
+                //g_logger.debug("char: ", buf[0], " code: ", (int)((uchar)buf[0]));
 
                 if(m_onInputEvent && text.length() > 0) {
                     m_inputEvent.reset(Fw::KeyTextInputEvent);
@@ -843,18 +843,18 @@ void X11Window::setMouseCursor(const std::string& file, const Point& hotSpot)
 
     apng_data apng;
     if(load_apng(fin, &apng) != 0) {
-        logTraceError("unable to load png file %s", file);
+        g_logger.traceError(stdext::format("unable to load png file %s", file));
         return;
     }
 
     if(apng.bpp != 4) {
-        logError("the cursor png must have 4 channels");
+        g_logger.error("the cursor png must have 4 channels");
         free_apng(&apng);
         return;
     }
 
     if(apng.width != 32|| apng.height != 32) {
-        logError("the cursor png must have 32x32 dimension");
+        g_logger.error("the cursor png must have 32x32 dimension");
         free_apng(&apng);
         return;
     }
@@ -961,12 +961,12 @@ void X11Window::setIcon(const std::string& iconFile)
 
     apng_data apng;
     if(load_apng(fin, &apng) != 0) {
-        logError("Unable to load window icon");
+        g_logger.error("Unable to load window icon");
         return;
     }
 
     if(apng.bpp != 4) {
-        logError("Could not set window icon, icon image must have 4 channels");
+        g_logger.error("Could not set window icon, icon image must have 4 channels");
         free_apng(&apng);
         return;
     }
@@ -985,7 +985,7 @@ void X11Window::setIcon(const std::string& iconFile)
 
     Atom property = XInternAtom(m_display, "_NET_WM_ICON", 0);
     if(!XChangeProperty(m_display, m_window, property, XA_CARDINAL, 32, PropModeReplace, (const unsigned char*)&iconData[0], iconData.size()))
-        logError("Couldn't set app icon");
+        g_logger.error("Couldn't set app icon");
 
     free_apng(&apng);
 }

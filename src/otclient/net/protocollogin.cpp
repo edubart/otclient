@@ -70,7 +70,7 @@ void ProtocolLogin::onRecv(const InputMessagePtr& msg)
             }
         }
     } catch(stdext::exception& e) {
-        logTraceError(e.what());
+        g_logger.error(stdext::format("Network exception in login protocol: %s", e.what()));
     }
     disconnect();
 }

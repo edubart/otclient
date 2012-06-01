@@ -84,11 +84,11 @@ void Application::init(const std::vector<std::string>& args)
 
     // setup configs write directory
     if(!g_resources.setupWriteDir(m_appName))
-        logError("Could not setup write directory");
+        g_logger.error("Could not setup write directory");
 
     // load configs
     if(!g_configs.load("/config.otml"))
-        logInfo("Using default configurations.");
+        g_logger.info("Using default configurations.");
 
     // setup platform window
     g_ui.init();
@@ -159,7 +159,7 @@ void Application::terminate()
 
     m_foreground = nullptr;
 
-    logInfo("Application ended successfully.");
+    g_logger.info("Application ended successfully.");
 }
 
 void Application::run()
@@ -256,7 +256,7 @@ void Application::run()
 
 void Application::exit()
 {
-    logInfo("Exiting application..");
+    g_logger.info("Exiting application..");
     m_stopping = true;
 }
 

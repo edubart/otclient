@@ -54,7 +54,7 @@ void ModuleManager::autoLoadModules(int maxPriority)
             break;
         ModulePtr module = pair.second;
         if(!module->isLoaded() && !module->load())
-            logFatal("A required module has failed to load, cannot continue to run.");
+            g_logger.fatal("A required module has failed to load, cannot continue to run.");
     }
 }
 
@@ -70,14 +70,14 @@ void ModuleManager::discoverModulesPath()
     for(const std::string& dir : possibleModulesDirs) {
         // try to add module directory
         if(g_resources.addToSearchPath(dir, false)) {
-            logInfo("Using modules directory '%s'", dir.c_str());
+            g_logger.info(stdext::format("Using modules directory '%s'", dir.c_str()));
             found = true;
             break;
         }
     }
 
     if(!found)
-        logFatal("Could not find modules directory");
+        g_logger.fatal("Could not find modules directory");
 
     // search for addons directory
     std::string possibleAddonsDirs[] = { "addons",
@@ -88,7 +88,7 @@ void ModuleManager::discoverModulesPath()
     for(const std::string& dir : possibleAddonsDirs) {
         // try to add module directory
         if(g_resources.addToSearchPath(dir, true)) {
-            logInfo("Using addons directory '%s'", dir.c_str());
+            g_logger.info(stdext::format("Using addons directory '%s'", dir.c_str()));
             found = true;
             break;
         }
@@ -116,7 +116,7 @@ ModulePtr ModuleManager::discoverModule(const std::string& moduleFile)
         if(push)
             m_modules.push_back(module);
     } catch(stdext::exception& e) {
-        logError("Unable to discover module from file '%s': %s", moduleFile, e.what());
+        g_logger.error(stdext::format("Unable to discover module from file '%s': %s", moduleFile, e.what()));
     }
     return module;
 }
@@ -125,7 +125,7 @@ void ModuleManager::ensureModuleLoaded(const std::string& moduleName)
 {
     ModulePtr module = g_modules.getModule(moduleName);
     if(!module || !module->load())
-        logFatal("Unable to load '%s' module", moduleName);
+        g_logger.fatal(stdext::format("Unable to load '%s' module", moduleName));
 }
 
 void ModuleManager::unloadModules()

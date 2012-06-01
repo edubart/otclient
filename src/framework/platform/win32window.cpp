@@ -203,15 +203,15 @@ void WIN32Window::terminate()
 {
     if(m_glContext) {
         if(!wglMakeCurrent(NULL, NULL))
-            logError("Release of dc and rc failed.");
+            g_logger.error("Release of dc and rc failed.");
         if(!wglDeleteContext(m_glContext))
-            logError("Release rendering context failed.");
+            g_logger.error("Release rendering context failed.");
         m_glContext = NULL;
     }
 
     if(m_deviceContext) {
         if(!ReleaseDC(m_window, m_deviceContext))
-            logError("Release device context failed.");
+            g_logger.error("Release device context failed.");
         m_deviceContext = NULL;
     }
 
@@ -222,13 +222,13 @@ void WIN32Window::terminate()
 
     if(m_window) {
         if(!DestroyWindow(m_window))
-            logError("ERROR: Destroy window failed.");
+            g_logger.error("ERROR: Destroy window failed.");
         m_window = NULL;
     }
 
     if(m_instance) {
         if(!UnregisterClassA(g_app->getName().c_str(), m_instance))
-            logError("UnregisterClassA failed");
+            g_logger.error("UnregisterClassA failed");
         m_instance = NULL;
     }
 }
@@ -256,7 +256,7 @@ void WIN32Window::internalRegisterWindowClass()
     wc.lpszClassName    = g_app->getName().c_str();
 
     if(!RegisterClassA(&wc))
-        logFatal("Failed to register the window class.");
+        g_logger.fatal("Failed to register the window class.");
 }
 
 void WIN32Window::internalCreateWindow()
@@ -286,13 +286,13 @@ void WIN32Window::internalCreateWindow()
                                NULL);
 
     if(!m_window)
-        logFatal("Unable to create window");
+        g_logger.fatal("Unable to create window");
 
     ShowWindow(m_window, SW_HIDE);
 
     m_deviceContext = GetDC(m_window);
     if(!m_deviceContext)
-        logFatal("GetDC failed");
+        g_logger.fatal("GetDC failed");
 }
 
 void WIN32Window::internalChooseGLVisual()
@@ -317,20 +317,20 @@ void WIN32Window::internalChooseGLVisual()
 
     pixelFormat = ChoosePixelFormat(m_deviceContext, &pfd);
     if(!pixelFormat)
-        logFatal("Could not find a suitable pixel format");
+        g_logger.fatal("Could not find a suitable pixel format");
 
     pfd.cStencilBits = 8;
     if(!SetPixelFormat(m_deviceContext, pixelFormat, &pfd))
-        logFatal("Could not set the pixel format");
+        g_logger.fatal("Could not set the pixel format");
 }
 
 void WIN32Window::internalCreateGLContext()
 {
     if(!(m_glContext = wglCreateContext(m_deviceContext)))
-        logFatal("Unable to create GL context");
+        g_logger.fatal("Unable to create GL context");
 
     if(!wglMakeCurrent(m_deviceContext, m_glContext))
-        logFatal("Unable to set GLX context on WIN32 window");
+        g_logger.fatal("Unable to set GLX context on WIN32 window");
 }
 
 bool WIN32Window::isExtensionSupported(const char *ext)
@@ -679,18 +679,18 @@ void WIN32Window::setMouseCursor(const std::string& file, const Point& hotSpot)
 
     apng_data apng;
     if(load_apng(fin, &apng) != 0) {
-        logTraceError("unable to load png file %s", file);
+        g_logger.traceError(stdext::format("unable to load png file %s", file));
         return;
     }
 
     if(apng.bpp != 4) {
-        logError("the cursor png must have 4 channels");
+        g_logger.error("the cursor png must have 4 channels");
         free_apng(&apng);
         return;
     }
 
     if(apng.width != 32|| apng.height != 32) {
-        logError("the cursor png must have 32x32 dimension");
+        g_logger.error("the cursor png must have 32x32 dimension");
         free_apng(&apng);
         return;
     }
@@ -774,7 +774,7 @@ void WIN32Window::setIcon(const std::string& pngIcon)
     g_resources.loadFile(pngIcon, fin);
     if(load_apng(fin, &apng) == 0) {
         if(apng.bpp != 4) {
-            logError("could not set app icon, icon image must have 4 channels");
+            g_logger.error("could not set app icon, icon image must have 4 channels");
             free_apng(&apng);
         }
 
@@ -807,7 +807,7 @@ void WIN32Window::setIcon(const std::string& pngIcon)
 
         free_apng(&apng);
     } else
-        logError("could not load app icon");
+        g_logger.error("could not load app icon");
 }
 
 void WIN32Window::setClipboardText(const std::string& text)

@@ -480,7 +480,7 @@ int LuaInterface::protectedCall(int numArgs, int requestedResults)
             throw LuaException("attempt to call a non function value", 0);
         }
     } catch(LuaException &e) {
-        logError("protected lua call failed: %s", e.what());
+        g_logger.error(stdext::format("protected lua call failed: %s", e.what()));
     }
 
     // pushes nil values if needed
@@ -515,7 +515,7 @@ int LuaInterface::luaScriptLoader(lua_State* L)
         g_lua.loadScript(fileName);
         return 1;
     } catch(LuaException& e) {
-        logError("failed to load script file '%s': %s", fileName, e.what());
+        g_logger.error(stdext::format("failed to load script file '%s': %s", fileName, e.what()));
         return 0;
     }
 }
@@ -531,7 +531,7 @@ int LuaInterface::luaScriptRunner(lua_State* L)
         g_lua.call(0, LUA_MULTRET);
         return g_lua.stackSize();
     } catch(LuaException& e) {
-        logError("failed to load script file '%s': %s", fileName, e.what());
+        g_logger.error(stdext::format("failed to load script file '%s': %s", fileName, e.what()));
         return 0;
     }
 }
@@ -548,7 +548,7 @@ int LuaInterface::luaScriptsRunner(lua_State* L)
             g_lua.loadScript(directory + "/" + fileName);
             g_lua.call(0, 0);
         } catch(LuaException& e) {
-            logError("failed to load script file '%s': %s", fileName, e.what());
+            g_logger.error(stdext::format("failed to load script file '%s': %s", fileName, e.what()));
         }
     }
     return 0;
@@ -583,7 +583,7 @@ int LuaInterface::luaCppFunctionCallback(lua_State* L)
         g_lua.m_cppCallbackDepth--;
         assert(numRets == g_lua.stackSize());
     } catch(LuaException &e) {
-        logError("lua cpp callback failed: %s", e.what());
+        g_logger.error(stdext::format("lua cpp callback failed: %s", e.what()));
     }
 
     return numRets;
@@ -606,7 +606,7 @@ void LuaInterface::createLuaState()
     // creates lua state
     L = luaL_newstate();
     if(!L)
-        logFatal("Unable to create lua state");
+        g_logger.fatal("Unable to create lua state");
 
     // load lua standard libraries
     luaL_openlibs(L);
@@ -779,7 +779,6 @@ void LuaInterface::getStackFunction(int level)
 void LuaInterface::getRef(int ref)
 {
     lua_rawgeti(L, LUA_REGISTRYINDEX, ref);
-    //logTraceDebug(ref);
 }
 
 void LuaInterface::getWeakRef(int weakRef)

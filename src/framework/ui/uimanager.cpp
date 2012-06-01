@@ -286,7 +286,7 @@ void UIManager::onWidgetDestroy(const UIWidgetPtr& widget)
             g_lua.collectGarbage();
             for(const UIWidgetPtr& widget : backupList) {
                 if(widget->getUseCount() != 1)
-                    logWarning("widget '%s' destroyed but still have %d reference(s) left", widget->getId(), widget->getUseCount()-1);
+                    g_logger.warning(stdext::format("widget '%s' destroyed but still have %d reference(s) left", widget->getId(), widget->getUseCount()-1));
             }
         }, 1);
     }, 1000);
@@ -302,7 +302,7 @@ bool UIManager::importStyle(const std::string& file)
             importStyleFromOTML(styleNode);
         return true;
     } catch(stdext::exception& e) {
-        logError("Failed to import UI styles from '%s': %s", file, e.what());
+        g_logger.error(stdext::format("Failed to import UI styles from '%s': %s", file, e.what()));
         return false;
     }
 }
@@ -326,7 +326,7 @@ void UIManager::importStyleFromOTML(const OTMLNodePtr& styleNode)
     /*
     auto it = m_styles.find(name);
     if(it != m_styles.end())
-        logWarning("style '%s' is being redefined", name);
+        g_logger.warning("style '%s' is being redefined", name);
     */
 
     OTMLNodePtr originalStyle = getStyle(base);
@@ -383,7 +383,7 @@ UIWidgetPtr UIManager::loadUI(const std::string& file, const UIWidgetPtr& parent
 
         return widget;
     } catch(stdext::exception& e) {
-        logError("failed to load UI from '%s': %s", file, e.what());
+        g_logger.error(stdext::format("failed to load UI from '%s': %s", file, e.what()));
         return nullptr;
     }
 }
@@ -394,7 +394,7 @@ UIWidgetPtr UIManager::createWidgetFromStyle(const std::string& styleName, const
     try {
         return createWidgetFromOTML(node, parent);
     } catch(stdext::exception& e) {
-        logError("failed to create widget from style '%s': %s", styleName, e.what());
+        g_logger.error(stdext::format("failed to create widget from style '%s': %s", styleName, e.what()));
         return nullptr;
     }
 }

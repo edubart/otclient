@@ -45,7 +45,7 @@ bool ConfigManager::load(const std::string& file)
             m_confsDoc = confsDoc;
         return true;
     } catch(stdext::exception& e) {
-        logError("Unable to load configuration file: %s", e.what());
+        g_logger.error(stdext::format("Unable to load configuration file: %s", e.what()));
         return false;
     }
 }

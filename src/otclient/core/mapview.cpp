@@ -413,7 +413,7 @@ void MapView::updateGeometry(const Size& visibleDimension, const Size& optimized
     }
 
     if(tileSize == 0) {
-        logTraceError("reached max zoom out");
+        g_logger.traceError("reached max zoom out");
         return;
     }
 
@@ -478,12 +478,12 @@ void MapView::setVisibleDimension(const Size& visibleDimension)
         return;
 
     if(visibleDimension.width() % 2 != 1 || visibleDimension.height() % 2 != 1) {
-        logTraceError("visible dimension must be odd");
+        g_logger.traceError("visible dimension must be odd");
         return;
     }
 
     if(visibleDimension < Size(3,3)) {
-        logTraceError("reach max zoom in");
+        g_logger.traceError("reach max zoom in");
         return;
     }
 

@@ -82,10 +82,10 @@ uint Texture::internalLoadGLTexture(uchar *pixels, int channels, int width, int 
 
     // checks texture max size
     if(std::max(glSize.width(), glSize.height()) > g_graphics.getMaxTextureSize()) {
-        logError("loading texture with size %dx%d failed, "
+        g_logger.error(stdext::format("loading texture with size %dx%d failed, "
                  "the maximum size allowed by the graphics card is %dx%d,"
                  "to prevent crashes the texture will be displayed as a blank texture",
-                 width, height, g_graphics.getMaxTextureSize(), g_graphics.getMaxTextureSize());
+                 width, height, g_graphics.getMaxTextureSize(), g_graphics.getMaxTextureSize()));
         //TODO: make a workaround, could be bilinear scaling the texture
         return 0;
     }
@@ -149,7 +149,7 @@ void Texture::generateMipmaps()
         //FIXME: disabled because mipmaps size needs to be in base of 2,
         //       and the current algorithmn does not support that
         //generateSoftwareMipmaps(getPixels());
-        logTraceError("non power of 2.");
+        g_logger.traceError("non power of 2.");
     }
 }
 

@@ -39,12 +39,12 @@ bool Module::load()
     for(const std::string& depName : m_dependencies) {
         ModulePtr dep = g_modules.getModule(depName);
         if(!dep) {
-            logError("Unable to load module '%s' because dependency '%s' was not found", m_name, depName);
+            g_logger.error(stdext::format("Unable to load module '%s' because dependency '%s' was not found", m_name, depName));
             return false;
         }
 
         if(!dep->isLoaded() && !dep->load()) {
-            logError("Unable to load module '%s' because dependency '%s' has failed to load", m_name, depName);
+            g_logger.error(stdext::format("Unable to load module '%s' because dependency '%s' has failed to load", m_name, depName));
             return false;
         }
     }
@@ -53,13 +53,13 @@ bool Module::load()
         m_loadCallback();
 
     m_loaded = true;
-    logInfo("Loaded module '%s'", m_name);
+    g_logger.info(stdext::format("Loaded module '%s'", m_name));
     g_modules.updateModuleLoadOrder(asModule());
 
     for(const std::string& modName : m_loadLaterModules) {
         ModulePtr dep = g_modules.getModule(modName);
         if(!dep)
-            logError("Unable to find module '%s' required by '%s'", modName, m_name);
+            g_logger.error(stdext::format("Unable to find module '%s' required by '%s'", modName, m_name));
         else if(!dep->isLoaded())
             dep->load();
     }
@@ -73,7 +73,7 @@ void Module::unload()
         if(m_unloadCallback)
             m_unloadCallback();
         m_loaded = false;
-        logInfo("Unloaded module '%s'", m_name);
+        g_logger.info(stdext::format("Unloaded module '%s'", m_name));
         g_modules.updateModuleLoadOrder(asModule());
     }
 }
