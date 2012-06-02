@@ -302,13 +302,13 @@ void WIN32Window::internalChooseGLVisual()
                                          1,
                                          PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER,
                                          PFD_TYPE_RGBA,
-                                         32,                         // Select Our Color Depth
-                                         0, 0, 0, 0, 0, 0,           // Color Bits Ignored
+                                         24,                         // Select Our Color Depth
+                                         8, 0, 8, 0, 8, 0,           // Color Bits Ignored
                                          8,                          // Alpha Buffer Bits
                                          0,                          // Shift Bit Ignored
                                          0,                          // No Accumulation Buffer
                                          0, 0, 0, 0,                 // Accumulation Bits Ignored
-                                         16,                         // 16Bit Z-Buffer (Depth Buffer)
+                                         0,                          // Z-Buffer (Depth Buffer)
                                          0,                          // No Stencil Buffer
                                          0,                          // No Auxiliary Buffer
                                          PFD_MAIN_PLANE,             // Main Drawing Layer

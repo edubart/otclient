@@ -271,9 +271,9 @@ void Texture::setupFilters()
 void Texture::setupTranformMatrix()
 {
     if(m_upsideDown) {
-        m_transformMatrix = { 1.0f/m_glSize.width(),  0.0f,                    0.0f,
-                              0.0f,                  -1.0f/m_glSize.height(),  0.0f,
-                              0.0f,                   1.0f,                    1.0f };
+        m_transformMatrix = { 1.0f/m_glSize.width(),  0.0f,                                     0.0f,
+                              0.0f,                  -1.0f/m_glSize.height(),                   0.0f,
+                              0.0f,                   m_size.height()/(float)m_glSize.height(), 1.0f };
     } else {
         m_transformMatrix = { 1.0f/m_glSize.width(),  0.0f,                    0.0f,
                               0.0f,                   1.0f/m_glSize.height(),  0.0f,
