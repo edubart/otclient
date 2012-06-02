@@ -48,7 +48,7 @@ public:
     void info(const std::string& what) { log(Fw::LogInfo, what); }
     void warning(const std::string& what) { log(Fw::LogWarning, what); }
     void error(const std::string& what) { log(Fw::LogError, what); }
-    void fatal(const std::string& what) { log(Fw::LogError, what); }
+    void fatal(const std::string& what) { log(Fw::LogFatal, what); }
 
     void fireOldMessages();
     void setLogFile(const std::string& file);

@@ -70,8 +70,8 @@ TopPanel
     anchors.right: parent.right
 
   UILabel
-    size: 68 16
     text-align: right
+    text-auto-resize: true
     color: white
     id: frameCounter
     anchors.top: parent.top

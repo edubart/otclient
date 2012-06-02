@@ -25,6 +25,7 @@
 #include <framework/graphics/fontmanager.h>
 #include <framework/graphics/painter.h>
 #include <framework/graphics/framebuffer.h>
+#include <framework/application.h>
 
 void UIWidget::initText()
 {
@@ -93,6 +94,7 @@ void UIWidget::drawText(const Rect& screenCoords)
 
 void UIWidget::onTextChange(const std::string& text, const std::string& oldText)
 {
+    g_app->repaint();
     callLuaField("onTextChange", text, oldText);
 }
 

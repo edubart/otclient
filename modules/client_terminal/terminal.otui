@@ -14,7 +14,7 @@ UIWindow
     id: terminalBuffer
     layout:
       type: verticalBox
-      align-bottom: true
+      fit-children: true
     focusable: false
     anchors.left: parent.left
     anchors.right: parent.right

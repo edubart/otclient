@@ -181,8 +181,6 @@ function Terminal.addLine(text, color)
   local numLines = terminalBuffer:getChildCount() + 1
   if numLines > MaxLogLines then
     terminalBuffer:getChildByIndex(1):destroy()
-  else
-    terminalBuffer:setHeight(terminalBuffer:getHeight() + LabelHeight)
   end
 
   -- create new line label

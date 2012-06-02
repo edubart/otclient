@@ -302,7 +302,7 @@ void WIN32Window::internalChooseGLVisual()
                                          1,
                                          PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER,
                                          PFD_TYPE_RGBA,
-                                         24,                         // Select Our Color Depth
+                                         32,                         // Select Our Color Depth
                                          8, 0, 8, 0, 8, 0,           // Color Bits Ignored
                                          8,                          // Alpha Buffer Bits
                                          0,                          // Shift Bit Ignored

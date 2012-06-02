@@ -80,8 +80,9 @@ void Logger::fireOldMessages()
 {
     if(m_onLog) {
         auto backup = m_logMessages;
-        for(const LogMessage& logMessage : backup)
+        for(const LogMessage& logMessage : backup) {
             m_onLog(logMessage.level, logMessage.message, logMessage.when);
+        }
     }
 }
 

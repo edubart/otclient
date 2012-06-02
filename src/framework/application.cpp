@@ -201,6 +201,9 @@ void Application::run()
             if(redraw) {
                 g_graphics.beginRender();
 
+                glClearColor(0,0,0,0);
+                glClear(GL_COLOR_BUFFER_BIT);
+
                 Rect viewportRect(0, 0, g_graphics.getViewportSize());
 
                 // draw the foreground into a texture
@@ -214,8 +217,8 @@ void Application::run()
                     m_foreground->copyFromScreen(viewportRect);
                 }
 
-                //glClearColor(0,0,0,0);
-                //glClear(GL_COLOR_BUFFER_BIT);
+                glClearColor(0,0,0,0);
+                glClear(GL_COLOR_BUFFER_BIT);
 
                 // draw background (animated stuff)
                 m_backgroundFrameCounter.processNextFrame();
@@ -223,6 +226,7 @@ void Application::run()
 
                 // draw the foreground (steady stuff)
                 g_painter->setColor(Color::white);
+                g_painter->setOpacity(1.0);
                 g_painter->drawTexturedRect(viewportRect, m_foreground, viewportRect);
 
                 g_graphics.endRender();

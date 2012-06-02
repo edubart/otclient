@@ -811,7 +811,6 @@ bool UIWidget::setRect(const Rect& rect)
     if(rect == oldRect)
         return false;
 
-    g_app->repaint();
     m_rect = rect;
 
     // updates own layout
@@ -1353,6 +1352,8 @@ void UIWidget::onStyleApply(const std::string& styleName, const OTMLNodePtr& sty
     parseBaseStyle(styleNode);
     parseImageStyle(styleNode);
     parseTextStyle(styleNode);
+
+    g_app->repaint();
 }
 
 void UIWidget::onGeometryChange(const Rect& oldRect, const Rect& newRect)
@@ -1367,6 +1368,8 @@ void UIWidget::onGeometryChange(const Rect& oldRect, const Rect& newRect)
     }
 
     callLuaField("onGeometryChange", oldRect, newRect);
+
+    g_app->repaint();
 }
 
 void UIWidget::onLayoutUpdate()

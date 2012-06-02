@@ -87,11 +87,16 @@ void Graphics::init()
     */
 
     // determine max texture size
-    static GLint maxTextureSize = -1;
-    if(maxTextureSize == -1)
-        glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
+    GLint maxTextureSize = 0;
+    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
     if(m_maxTextureSize == -1 || m_maxTextureSize > maxTextureSize)
         m_maxTextureSize = maxTextureSize;
+
+    // check if we have alpha channel in the color buffer, because we need alpha channel for glCopyTexSubImage2D
+    GLint alphaBits = 0;
+    glGetIntegerv(GL_ALPHA_BITS, &alphaBits);
+    if(alphaBits <= 0)
+        g_logger.fatal("OpenGL visual doesn't have an alpha buffer");
 
     selectPainterEngine(m_prefferedPainterEngine);
     m_emptyTexture = TexturePtr(new Texture);

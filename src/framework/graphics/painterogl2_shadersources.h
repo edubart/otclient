@@ -34,7 +34,7 @@ static const std::string glslMainWithTexCoordsVertexShader = "\n\
     void main()\n\
     {\n\
         gl_Position = calculatePosition();\n\
-        texCoord = textureMatrix * vec3(a_texCoord,1);\n\
+        texCoord = (textureMatrix * vec3(a_texCoord,1)).xy;\n\
     }\n";
 
 static std::string glslPositionOnlyVertexShader = "\n\

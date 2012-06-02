@@ -387,7 +387,10 @@ void X11Window::internalChooseGLVisual()
     static int attrList[] = {
         GLX_RENDER_TYPE, GLX_RGBA_BIT,
         GLX_DOUBLEBUFFER, True,
-        GLX_ALPHA_SIZE, 1,
+        GLX_RED_SIZE, 8,
+        GLX_GREEN_SIZE, 8,
+        GLX_BLUE_SIZE, 8,
+        GLX_ALPHA_SIZE, 8,
         None
     };
 
