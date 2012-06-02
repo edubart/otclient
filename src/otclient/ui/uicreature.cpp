@@ -33,7 +33,7 @@ void UICreature::drawSelf(bool foregroundPane)
 
     if(m_creature) {
         g_painter->setColor(Color::white);
-        Rect drawRect = getClippingRect();
+        Rect drawRect = getPaddingRect();
         m_creature->drawOutfit(drawRect, !m_fixedCreatureSize);
     }
 }

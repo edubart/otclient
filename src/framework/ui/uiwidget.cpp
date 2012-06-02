@@ -61,7 +61,7 @@ void UIWidget::draw(const Rect& visibleRect, bool foregroundPane)
 
     if(m_children.size() > 0) {
         if(m_clipping)
-            g_painter->setClipRect(visibleRect.intersection(getClippingRect()));
+            g_painter->setClipRect(visibleRect.intersection(getPaddingRect()));
 
         drawChildren(visibleRect, foregroundPane);
     }
@@ -683,7 +683,7 @@ void UIWidget::bindRectToParent()
     Rect boundRect = m_rect;
     UIWidgetPtr parent = getParent();
     if(parent) {
-        Rect parentRect = parent->getClippingRect();
+        Rect parentRect = parent->getPaddingRect();
         boundRect.bind(parentRect);
     }
 
@@ -980,7 +980,7 @@ int UIWidget::getChildIndex(const UIWidgetPtr& child)
     return -1;
 }
 
-Rect UIWidget::getClippingRect()
+Rect UIWidget::getPaddingRect()
 {
     Rect rect = m_rect;
     rect.expand(-m_padding.top, -m_padding.right, -m_padding.bottom, -m_padding.left);
@@ -1007,7 +1007,7 @@ Rect UIWidget::getChildrenRect()
             childrenRect = childrenRect.united(marginRect);
     }
 
-    Rect myClippingRect = getClippingRect();
+    Rect myClippingRect = getPaddingRect();
     if(!childrenRect.isValid())
         childrenRect = myClippingRect;
     else {

@@ -134,7 +134,7 @@ LONG CALLBACK ExceptionHandler(LPEXCEPTION_POINTERS e)
     if(fout.is_open() && fout.good()) {
         fout << ss.str();
         fout.close();
-        g_logger.info("Crash report saved to file %s", fileName);
+        g_logger.info(stdext::format("Crash report saved to file %s", fileName));
     } else
         g_logger.error("Failed to save crash report!");
 

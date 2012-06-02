@@ -137,7 +137,7 @@ public:
     bool isChildLocked(const UIWidgetPtr& child);
     bool hasChild(const UIWidgetPtr& child);
     int getChildIndex(const UIWidgetPtr& child);
-    Rect getClippingRect();
+    Rect getPaddingRect();
     Rect getMarginRect();
     Rect getChildrenRect();
     UIAnchorLayoutPtr getAnchoredLayout();
@@ -243,7 +243,7 @@ public:
     bool isDestroyed() { return m_destroyed; }
 
     bool hasChildren() { return m_children.size() > 0; }
-    bool containsChildPoint(const Point& point) { return getClippingRect().contains(point); }
+    bool containsChildPoint(const Point& point) { return getPaddingRect().contains(point); }
     bool containsPoint(const Point& point) { return m_rect.contains(point); }
 
     std::string getId() { return m_id; }

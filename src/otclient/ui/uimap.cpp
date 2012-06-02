@@ -159,7 +159,7 @@ void UIMap::updateVisibleDimension()
 
 void UIMap::updateMapSize()
 {
-    Rect clippingRect = getClippingRect();
+    Rect clippingRect = getPaddingRect();
     Size mapSize;
     if(m_aspectRatio != 0.0f) {
         Rect mapRect = clippingRect.expanded(-1);

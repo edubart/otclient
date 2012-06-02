@@ -35,10 +35,10 @@ local function onGameQuestLine(questId, questMissions)
   local missionList = questLineWindow:getChildById('missionList')
   local missionDescription = questLineWindow:getChildById('missionDescription')
 
-  missionList.onChildFocusChange = function(self, focusedChild)
+  connect(missionList, { onChildFocusChange = function(self, focusedChild)
     if focusedChild == nil then return end
     missionDescription:setText(focusedChild.description)
-  end
+  end })
 
   for i,questMission in pairs(questMissions) do
     local name, description = unpack(questMission)

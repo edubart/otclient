@@ -126,11 +126,13 @@ function UIScrollBar:onStyleApply(styleName, styleNode)
   end
 end
 
-function UIScrollBar:decrement()
+function UIScrollBar:decrement(count)
+  count = count or self.step
   self:setValue(self.value - self.step)
 end
 
-function UIScrollBar:increment()
+function UIScrollBar:increment(count)
+  count = count or self.step
   self:setValue(self.value + self.step)
 end
 

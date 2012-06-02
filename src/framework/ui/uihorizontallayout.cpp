@@ -46,7 +46,7 @@ bool UIHorizontalLayout::internalUpdate()
         std::reverse(widgets.begin(), widgets.end());
 
     bool changed = false;
-    Rect clippingRect = parentWidget->getClippingRect();
+    Rect clippingRect = parentWidget->getPaddingRect();
     Point pos = (m_alignRight) ? clippingRect.topRight() : clippingRect.topLeft();
     int preferredWidth = 0;
     int gap;

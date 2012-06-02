@@ -79,7 +79,7 @@ bool UIGridLayout::internalUpdate()
 
     UIWidgetList widgets = parentWidget->getChildren();
 
-    Rect clippingRect = parentWidget->getClippingRect();
+    Rect clippingRect = parentWidget->getPaddingRect();
     Point topLeft = clippingRect.topLeft();
 
     int numColumns = m_numColumns;

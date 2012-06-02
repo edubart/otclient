@@ -26,8 +26,8 @@ end
 
 function UIScrollArea:updateScrollBars()
   local offset = { x = 0, y = 0 }
-  local scrollheight = math.max(self:getChildrenRect().height - self:getClippingRect().height, 0)
-  local scrollwidth = math.max(self:getChildrenRect().width - self:getClippingRect().width, 0)
+  local scrollheight = math.max(self:getChildrenRect().height - self:getPaddingRect().height, 0)
+  local scrollwidth = math.max(self:getChildrenRect().width - self:getPaddingRect().width, 0)
 
   local scrollbar = self.verticalScrollBar
   if scrollbar then
@@ -82,4 +82,19 @@ function UIScrollArea:onMouseWheel(mousePos, mouseWheel)
     end
   end
   return true
+end
+
+function UIScrollArea:onChildFocusChange(focusedChild, oldFocused, reason)
+  if focusedChild and (reason == MouseFocusReason or reason == KeyboardFocusReason) then
+    local paddingRect = self:getPaddingRect()
+    local delta = paddingRect.y - focusedChild:getY()
+    if delta > 0 then
+      self.verticalScrollBar:decrement(delta)
+    end
+
+    delta = (focusedChild:getY() + focusedChild:getHeight()) - (paddingRect.y + paddingRect.height)
+    if delta > 0 then
+      self.verticalScrollBar:increment(delta)
+    end
+  end
 end

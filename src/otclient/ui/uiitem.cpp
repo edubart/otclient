@@ -38,7 +38,7 @@ void UIItem::drawSelf(bool foregroundPane)
     UIWidget::drawSelf(foregroundPane);
 
     if(m_item) {
-        Rect drawRect = getClippingRect();
+        Rect drawRect = getPaddingRect();
         Point dest = drawRect.topLeft();
 
         int exactSize = m_item->getExactSize();

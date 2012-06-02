@@ -47,7 +47,7 @@ bool UIVerticalLayout::internalUpdate()
     if(m_alignBottom)
         std::reverse(widgets.begin(), widgets.end());
 
-    Rect clippingRect = parentWidget->getClippingRect();
+    Rect clippingRect = parentWidget->getPaddingRect();
     Point pos = (m_alignBottom) ? clippingRect.bottomLeft() : clippingRect.topLeft();
     int preferredHeight = 0;
     int gap;
