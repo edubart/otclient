@@ -43,6 +43,8 @@ void PainterShaderManager::init()
     m_drawSolidColorProgram->addShaderFromSourceCode(Shader::Vertex, glslMainVertexShader + glslPositionOnlyVertexShader);
     m_drawSolidColorProgram->addShaderFromSourceCode(Shader::Fragment, glslMainFragmentShader + glslSolidColorFragmentShader);
     m_drawSolidColorProgram->link();
+
+    PainterShaderProgram::release();
 }
 
 void PainterShaderManager::terminate()

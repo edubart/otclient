@@ -527,6 +527,12 @@ void Application::registerLuaFunctions()
     g_lua.bindClassStaticFunction("g_window", "isMaximized", std::bind(&PlatformWindow::isMaximized, &g_window));
     g_lua.bindClassStaticFunction("g_window", "hasFocus", std::bind(&PlatformWindow::hasFocus, &g_window));
 
+    // Graphics
+    g_lua.registerStaticClass("g_graphics");
+    g_lua.bindClassStaticFunction("g_graphics", "isPainterEngineAvailable", std::bind(&Graphics::isPainterEngineAvailable, &g_graphics, std::placeholders::_1));
+    g_lua.bindClassStaticFunction("g_graphics", "selectPainterEngine", std::bind(&Graphics::selectPainterEngine, &g_graphics, std::placeholders::_1));
+    g_lua.bindClassStaticFunction("g_graphics", "getPainterEngine", std::bind(&Graphics::getPainterEngine, &g_graphics));
+
     // Logger
     g_lua.registerStaticClass("g_logger");
     g_lua.bindClassStaticFunction("g_logger", "log", std::bind(&Logger::log, &g_logger, std::placeholders::_1, std::placeholders::_2));

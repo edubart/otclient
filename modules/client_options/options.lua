@@ -13,6 +13,33 @@ local options = { vsync = true,
                   showTimestampsInConsole = true,
                   showLevelsInConsole = true,
                   showPrivateMessagesInConsole = false }
+local generalPanel
+local graphicsPanel
+
+local function setupGraphicsEngines()
+  local enginesRadioGroup = RadioGroup.create()
+  local ogl1 = graphicsPanel:getChildById('opengl1')
+  local ogl2 = graphicsPanel:getChildById('opengl2')
+  enginesRadioGroup:addWidget(ogl1)
+  enginesRadioGroup:addWidget(ogl2)
+
+  if g_graphics.getPainterEngine() == 2 then
+    enginesRadioGroup:selectWidget(ogl2)
+  else
+    enginesRadioGroup:selectWidget(ogl1)
+  end
+
+  ogl1:setEnabled(g_graphics.isPainterEngineAvailable(1))
+  ogl2:setEnabled(g_graphics.isPainterEngineAvailable(2))
+
+  enginesRadioGroup.onSelectionChange = function(self, selected)
+    if selected == ogl1 then
+      g_graphics.selectPainterEngine(1)
+    elseif selected == ogl2 then
+      g_graphics.selectPainterEngine(2)
+    end
+  end
+end
 
 function Options.init()
   -- load options
@@ -31,8 +58,14 @@ function Options.init()
   optionsButton = TopMenu.addLeftButton('optionsButton', tr('Options') .. ' (Ctrl+P)', 'options.png', Options.toggle)
   optionsTabBar = optionsWindow:getChildById('optionsTabBar')
   optionsTabBar:setContentWidget(optionsWindow:getChildById('optionsTabContent'))
-  optionsTabBar:addTab(tr('General'), loadUI('general.otui'))
-  optionsTabBar:addTab(tr('Graphics'), loadUI('graphics.otui'))
+
+  generalPanel = loadUI('general.otui')
+  optionsTabBar:addTab(tr('General'), generalPanel)
+
+  graphicsPanel = loadUI('graphics.otui')
+  optionsTabBar:addTab(tr('Graphics'), graphicsPanel)
+
+  setupGraphicsEngines()
 end
 
 function Options.terminate()
@@ -43,6 +76,8 @@ function Options.terminate()
   optionsButton:destroy()
   optionsButton = nil
   optionsTabBar = nil
+  generalPanel = nil
+  graphicsPanel = nil
   Options = nil
 end
 

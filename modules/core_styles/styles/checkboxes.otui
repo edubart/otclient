@@ -57,5 +57,5 @@ ButtonBox < UICheckBox
     color: #80c7f8
 
   $disabled:
-    color: #f0ad4d88
+    color: #666666ff
     image-color: #ffffff88

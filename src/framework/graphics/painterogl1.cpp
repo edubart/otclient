@@ -192,7 +192,8 @@ void PainterOGL1::setMatrixMode(PainterOGL1::MatrixMode matrixMode)
 void PainterOGL1::setProjectionMatrix(const Matrix3& projectionMatrix)
 {
     m_projectionMatrix = projectionMatrix;
-    updateGlProjectionMatrix();
+    if(g_painter == this)
+        updateGlProjectionMatrix();
 }
 
 void PainterOGL1::setTextureMatrix(const Matrix3& textureMatrix)

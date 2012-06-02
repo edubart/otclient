@@ -53,7 +53,7 @@ bool Module::load()
         m_loadCallback();
 
     m_loaded = true;
-    g_logger.info(stdext::format("Loaded module '%s'", m_name));
+    //g_logger.info(stdext::format("Loaded module '%s'", m_name));
     g_modules.updateModuleLoadOrder(asModule());
 
     for(const std::string& modName : m_loadLaterModules) {
@@ -73,7 +73,7 @@ void Module::unload()
         if(m_unloadCallback)
             m_unloadCallback();
         m_loaded = false;
-        g_logger.info(stdext::format("Unloaded module '%s'", m_name));
+        //g_logger.info(stdext::format("Unloaded module '%s'", m_name));
         g_modules.updateModuleLoadOrder(asModule());
     }
 }

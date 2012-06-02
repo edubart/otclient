@@ -152,39 +152,53 @@ bool Graphics::parseOption(const std::string& option)
     return true;
 }
 
+bool Graphics::isPainterEngineAvailable(Graphics::PainterEngine painterEngine)
+{
+#ifdef PAINTER_OGL2
+    if(g_painterOGL2 && painterEngine == Painter_OpenGL2)
+        return true;
+#endif
+
+#ifdef PAINTER_OGL1
+    if(g_painterOGL1 && painterEngine == Painter_OpenGL1)
+        return true;
+#endif
+    return false;
+}
+
 bool Graphics::selectPainterEngine(PainterEngine painterEngine)
 {
-    bool found = false;
+    Painter *painter = nullptr;
 #ifdef PAINTER_OGL2
     // always prefer OpenGL 2 over OpenGL 1
-    if(!found && g_painterOGL2 && (painterEngine == Painter_OpenGL2 || painterEngine == Painter_Any)) {
+    if(!painter && g_painterOGL2 && (painterEngine == Painter_OpenGL2 || painterEngine == Painter_Any)) {
         m_selectedPainterEngine = Painter_OpenGL2;
-        g_painter = g_painterOGL2;
-        found = true;
+        painter = g_painterOGL2;
     }
 #endif
 
 #ifdef PAINTER_OGL1
     // fallback to OpenGL 1 in older hardwares
-    if(!found && g_painterOGL1 && (painterEngine == Painter_OpenGL1 || painterEngine == Painter_Any)) {
+    if(!painter && g_painterOGL1 && (painterEngine == Painter_OpenGL1 || painterEngine == Painter_Any)) {
         m_selectedPainterEngine = Painter_OpenGL1;
-        g_painter = g_painterOGL1;
-        found = true;
+        painter = g_painterOGL1;
     }
 #endif
 
-    if(!found)
-        g_logger.fatal("Neither OpenGL 1.0 nor OpenGL 2.0 painter engine is supported by your platform, "
-                 "try updating your graphics drivers or your hardware and then run again.");
-
     // switch painters GL state
-    if(g_painter)
-        g_painter->unbind();
-    g_painter->bind();
+    if(painter && painter != g_painter) {
+        if(g_painter)
+            g_painter->unbind();
+        painter->bind();
+        g_painter = painter;
 
-    if(painterEngine == Painter_Any)
-        return true;
-    return getPainterEngine() == painterEngine;
+        if(painterEngine == Painter_Any)
+            return true;
+    } else
+        g_logger.fatal("Neither OpenGL 1.0 nor OpenGL 2.0 painter engine is supported by your platform, "
+                       "try updating your graphics drivers or your hardware and then run again.");
+
+    return m_selectedPainterEngine == painterEngine;
 }
 
 void Graphics::resize(const Size& size)

@@ -1,4 +1,25 @@
 Panel
+  Label
+    !text: tr('Graphics Engine:')
+    anchors.left: parent.left
+    anchors.top: parent.top
+
+  ButtonBox
+    anchors.left: prev.right
+    anchors.verticalCenter: prev.verticalCenter
+    id: opengl1
+    text: OpenGL 1
+    size: 80 20
+    margin-left: 6
+
+  ButtonBox
+    anchors.left: prev.right
+    anchors.verticalCenter: prev.verticalCenter
+    id: opengl2
+    text: OpenGL 2
+    size: 80 20
+    margin-left: 4
+
   OptionCheckBox
     id: vsync
     !text: tr('Enable vertical synchronization')

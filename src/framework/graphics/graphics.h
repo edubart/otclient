@@ -32,7 +32,7 @@ public:
     Graphics();
 
     enum PainterEngine {
-        Painter_Any,
+        Painter_Any = 0,
         Painter_OpenGL1,
         Painter_OpenGL2
     };
@@ -41,8 +41,10 @@ public:
     void terminate();
     bool parseOption(const std::string& option);
 
+    bool isPainterEngineAvailable(PainterEngine painterEngine);
     bool selectPainterEngine(PainterEngine painterEngine);
- 
+    PainterEngine getPainterEngine() { return m_selectedPainterEngine; }
+
     void resize(const Size& size);
     void beginRender();
     void endRender();
@@ -52,7 +54,6 @@ public:
     int getMaxTextureSize() { return m_maxTextureSize; }
     const Size& getViewportSize() { return m_viewportSize; }
     TexturePtr& getEmptyTexture() { return m_emptyTexture; }
-    PainterEngine getPainterEngine() { return m_selectedPainterEngine; }
 
     bool canUseDrawArrays();
     bool canUseShaders();
