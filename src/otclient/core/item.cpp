@@ -68,11 +68,7 @@ void Item::draw(const Point& dest, float scaleFactor, bool animate)
 
     // determine x,y,z patterns
     int xPattern = 0, yPattern = 0, zPattern = 0;
-    if(isGround() || isOnBottom()) {
-        xPattern = m_position.x % getNumPatternsX();
-        yPattern = m_position.y % getNumPatternsY();
-        zPattern = m_position.z % getNumPatternsZ();
-    } else if(isStackable() && getNumPatternsX() == 4 && getNumPatternsY() == 2) {
+    if(isStackable() && getNumPatternsX() == 4 && getNumPatternsY() == 2) {
         if(m_countOrSubType <= 0) {
             xPattern = 0;
             yPattern = 0;
@@ -164,6 +160,10 @@ void Item::draw(const Point& dest, float scaleFactor, bool animate)
 
         xPattern = (color % 4) % getNumPatternsX();
         yPattern = (color / 4) % getNumPatternsY();
+    } else if(isGround() || isOnBottom()) {
+        xPattern = m_position.x % getNumPatternsX();
+        yPattern = m_position.y % getNumPatternsY();
+        zPattern = m_position.z % getNumPatternsZ();
     }
 
     // setup item drawing shader
