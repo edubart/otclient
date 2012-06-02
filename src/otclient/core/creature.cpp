@@ -105,7 +105,7 @@ void Creature::internalDrawOutfit(const Point& dest, float scaleFactor, bool ani
 
         if(isAnimateAlways() && animateIdle) {
             int ticksPerFrame = 1000 / getAnimationPhases();
-            animationPhase = (g_clock.ticks() % (ticksPerFrame * getAnimationPhases())) / ticksPerFrame;
+            animationPhase = (g_clock.millis() % (ticksPerFrame * getAnimationPhases())) / ticksPerFrame;
         }
 
         // xPattern => creature direction
@@ -182,7 +182,7 @@ void Creature::internalDrawOutfit(const Point& dest, float scaleFactor, bool ani
 
         if(animationPhases > 1) {
             if(animateIdle)
-                animationPhase = (g_clock.ticks() % (animateTicks * animationPhases)) / animateTicks;
+                animationPhase = (g_clock.millis() % (animateTicks * animationPhases)) / animateTicks;
             else
                 animationPhase = animationPhases-1;
         }

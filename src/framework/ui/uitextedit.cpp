@@ -64,7 +64,8 @@ void UITextEdit::drawSelf(bool foregroundPane)
         assert(m_cursorPos <= textLength);
         // draw every 333ms
         const int delay = 333;
-        if(g_clock.ticksElapsed(m_cursorTicks) <= delay) {
+        int elapsed = g_clock.millis() - m_cursorTicks;
+        if(elapsed <= delay) {
             Rect cursorRect;
             // when cursor is at 0 or is the first visible element
             if(m_cursorPos == 0 || m_cursorPos == m_startRenderPos)
@@ -72,8 +73,8 @@ void UITextEdit::drawSelf(bool foregroundPane)
             else
                 cursorRect = Rect(m_glyphsCoords[m_cursorPos-1].right(), m_glyphsCoords[m_cursorPos-1].top(), 1, m_font->getGlyphHeight());
             g_painter->drawFilledRect(cursorRect);
-        } else if(g_clock.ticksElapsed(m_cursorTicks) >= 2*delay) {
-            m_cursorTicks = g_clock.ticks();
+        } else if(elapsed >= 2*delay) {
+            m_cursorTicks = g_clock.millis();
         }
     }
 }
@@ -512,5 +513,5 @@ bool UITextEdit::onMousePress(const Point& mousePos, Fw::MouseButton button)
 
 void UITextEdit::blinkCursor()
 {
-    m_cursorTicks = g_clock.ticks();
+    m_cursorTicks = g_clock.millis();
 }

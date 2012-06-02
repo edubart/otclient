@@ -61,7 +61,7 @@ void Item::draw(const Point& dest, float scaleFactor, bool animate)
     int animationPhase = 0;
     if(getAnimationPhases() > 1) {
         if(animate)
-            animationPhase = (g_clock.ticks() % (Otc::ITEM_TICKS_PER_FRAME * getAnimationPhases())) / Otc::ITEM_TICKS_PER_FRAME;
+            animationPhase = (g_clock.millis() % (Otc::ITEM_TICKS_PER_FRAME * getAnimationPhases())) / Otc::ITEM_TICKS_PER_FRAME;
         else
             animationPhase = getAnimationPhases()-1;
     }
@@ -184,7 +184,7 @@ void Item::draw(const Point& dest, float scaleFactor, bool animate)
     m_type->draw(dest, scaleFactor, 0, xPattern, yPattern, zPattern, animationPhase);
 
     // release draw shader
-    g_painter->resetShaderProgram();
+    //g_painter->resetShaderProgram();
 }
 
 void Item::setId(uint32 id)

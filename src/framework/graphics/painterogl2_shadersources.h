@@ -28,13 +28,13 @@ static const std::string glslMainVertexShader = "\n\
 
 static const std::string glslMainWithTexCoordsVertexShader = "\n\
     attribute highp vec2 a_texCoord;\n\
-    uniform highp mat2 textureMatrix;\n\
+    uniform highp mat3 textureMatrix;\n\
     varying highp vec2 texCoord;\n\
     highp vec4 calculatePosition();\n\
     void main()\n\
     {\n\
         gl_Position = calculatePosition();\n\
-        texCoord = textureMatrix * a_texCoord;\n\
+        texCoord = textureMatrix * vec3(a_texCoord,1);\n\
     }\n";
 
 static std::string glslPositionOnlyVertexShader = "\n\

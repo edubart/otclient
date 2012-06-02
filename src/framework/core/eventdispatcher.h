@@ -53,11 +53,11 @@ class ScheduledEvent : public Event
 {
 public:
     ScheduledEvent(const std::function<void()>& callback, int delay) : Event(callback) {
-        m_ticks = g_clock.ticksFor(delay);
+        m_ticks = g_clock.millis() + delay;
     }
 
     int ticks() const { return m_ticks; }
-    int reamaningTicks() const { return m_ticks - g_clock.ticks(); }
+    int reamaningTicks() const { return m_ticks - g_clock.millis(); }
 
 private:
     ticks_t m_ticks;

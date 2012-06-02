@@ -57,7 +57,7 @@ public:
 
     void setMatrixMode(MatrixMode matrixMode);
     void setProjectionMatrix(const Matrix3& projectionMatrix);
-    void setTextureMatrix(const Matrix2& textureMatrix);
+    void setTextureMatrix(const Matrix3& textureMatrix);
     void setColor(const Color& color);
     void setOpacity(float opacity);
 

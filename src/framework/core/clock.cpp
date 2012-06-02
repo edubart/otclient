@@ -22,30 +22,18 @@
 
 #include "clock.h"
 
-// for usleep
-#include <unistd.h>
-
 Clock g_clock;
 
 Clock::Clock()
 {
-    m_startupTime = std::chrono::high_resolution_clock::now();
-    m_currentTicks = 0;
-}
-ticks_t Clock::updateTicks()
-{
-    m_currentTicks = asyncTicks();
-    m_currentTime = m_currentTicks/1000.0f;
-    return m_currentTicks;
+    m_currentMicros = 0;
+    m_currentMillis = 0;
+    m_currentSeconds = 0;
 }
 
-ticks_t Clock::asyncTicks()
+void Clock::update()
 {
-    auto timeNow = std::chrono::high_resolution_clock::now();
-    return std::chrono::duration_cast<std::chrono::milliseconds>(timeNow - m_startupTime).count();
-}
-
-void Clock::sleep(int ms)
-{
-    usleep(ms * 1000);
+    m_currentMicros = stdext::micros();
+    m_currentMillis = m_currentMicros / 1000;
+    m_currentSeconds = m_currentMicros / 1000000.0f;
 }

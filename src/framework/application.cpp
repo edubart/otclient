@@ -167,7 +167,6 @@ void Application::run()
     if(!m_initialized)
         return;
 
-    //ticks_t lastPollTicks = g_clock.updateTicks();
     m_stopping = false;
     m_running = true;
 
@@ -176,10 +175,10 @@ void Application::run()
 
     g_lua.callGlobalField("g_app", "onRun");
 
-    while(!m_stopping) {
-        // only update the current time once per frame to gain performance
-        g_clock.updateTicks();
+    // first clock update
+    g_clock.update();
 
+    while(!m_stopping) {
         // poll all events before rendering
         poll();
 
@@ -215,26 +214,25 @@ void Application::run()
                     m_foreground->copyFromScreen(viewportRect);
                 }
 
+                //glClearColor(0,0,0,0);
+                //glClear(GL_COLOR_BUFFER_BIT);
+
                 // draw background (animated stuff)
                 m_backgroundFrameCounter.processNextFrame();
                 g_ui.render(false);
 
-                // transform projection matrix to render upside down
-                Matrix3 projectionMatrix = g_painter->getProjectionMatrix();
-                projectionMatrix(2,2) *= -1.0f;
-                projectionMatrix(3,2) *= -1.0f;
-
                 // draw the foreground (steady stuff)
-                g_painter->saveAndResetState();
-                g_painter->setProjectionMatrix(projectionMatrix);
+                g_painter->setColor(Color::white);
                 g_painter->drawTexturedRect(viewportRect, m_foreground, viewportRect);
-                g_painter->restoreSavedState();
 
                 g_graphics.endRender();
 
                 // update screen pixels
                 g_window.swapBuffers();
             }
+
+            // only update the current time once per frame to gain performance
+            g_clock.update();
 
             m_backgroundFrameCounter.update();
             m_foregroundFrameCounter.update();
@@ -246,7 +244,8 @@ void Application::run()
 
         } else {
             // sleeps until next poll to avoid massive cpu usage
-            g_clock.sleep(POLL_CYCLE_DELAY+1);
+            stdext::millisleep(POLL_CYCLE_DELAY+1);
+            g_clock.update();
         }
     }
 
@@ -288,6 +287,7 @@ void Application::resize(const Size& size)
     m_onInputEvent = false;
 
     m_foreground = TexturePtr(new Texture(size.width(), size.height()));
+    m_foreground->setUpsideDown(true);
     m_mustRepaint = true;
 }
 

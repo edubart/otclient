@@ -27,7 +27,7 @@
 ParticleSystem::ParticleSystem()
 {
     m_finished = false;
-    m_lastUpdateTime = g_clock.time();
+    m_lastUpdateTime = g_clock.seconds();
 }
 
 bool ParticleSystem::load(const OTMLNodePtr& node)
@@ -79,10 +79,10 @@ void ParticleSystem::update()
     }
 
     // check time
-    float elapsedTime = g_clock.timeElapsed(m_lastUpdateTime);
+    float elapsedTime = g_clock.seconds() - m_lastUpdateTime;
     if(elapsedTime < delay)
         return;
-    m_lastUpdateTime = g_clock.time() - std::fmod(elapsedTime, delay);
+    m_lastUpdateTime = g_clock.seconds() - std::fmod(elapsedTime, delay);
 
     for(int i = 0; i < elapsedTime / delay; ++i) {
 

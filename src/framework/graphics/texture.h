@@ -46,26 +46,30 @@ public:
 
     /// Activate texture anti-aliasing giving a better look when they are resized
     void setSmooth(bool smooth);
+    void setUpsideDown(bool upsideDown);
 
     GLuint getId()  { return m_textureId; }
 
     int getWidth() { return m_size.width(); }
     int getHeight() { return m_size.height(); }
     const Size& getSize() { return m_size; }
-    const Matrix2& getTransformMatrix() { return m_transformMatrix; }
+    const Matrix3& getTransformMatrix() { return m_transformMatrix; }
 
     bool isEmpty() { return m_textureId == 0; }
     bool hasMipmaps() { return m_hasMipmaps; }
 
 protected:
     void setupFilters();
+    void setupTranformMatrix();
     GLuint internalLoadGLTexture(uchar* pixels, int channels, int w, int h);
 
     GLuint m_textureId;
     Size m_size;
-    Matrix2 m_transformMatrix;
+    Size m_glSize;
+    Matrix3 m_transformMatrix;
     Boolean<false> m_hasMipmaps;
     Boolean<false> m_smooth;
+    Boolean<false> m_upsideDown;
 };
 
 #endif

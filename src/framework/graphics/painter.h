@@ -45,7 +45,7 @@ public:
 
     struct PainterState {
         Matrix3 projectionMatrix;
-        Matrix2 textureMatrix;
+        Matrix3 textureMatrix;
         Color color;
         float opacity;
         Painter::CompositionMode compositionMode;
@@ -75,7 +75,7 @@ public:
     virtual void drawBoundingRect(const Rect& dest, int innerLineWidth = 1) = 0;
 
     virtual void setProjectionMatrix(const Matrix3& projectionMatrix) { m_projectionMatrix = projectionMatrix; }
-    virtual void setTextureMatrix(const Matrix2& textureMatrix) { m_textureMatrix = textureMatrix; }
+    virtual void setTextureMatrix(const Matrix3& textureMatrix) { m_textureMatrix = textureMatrix; }
     virtual void setColor(const Color& color) { m_color = color; }
     virtual void setOpacity(float opacity) { m_opacity = opacity; }
     virtual void setCompositionMode(CompositionMode compositionMode);
@@ -87,7 +87,7 @@ public:
     void setTexture(const TexturePtr& texture) { setTexture(texture.get()); }
 
     Matrix3 getProjectionMatrix() { return m_projectionMatrix; }
-    Matrix2 getTextureMatrix() { return m_textureMatrix; }
+    Matrix3 getTextureMatrix() { return m_textureMatrix; }
     Color getColor() { return m_color; }
     float getOpacity() { return m_opacity; }
     CompositionMode getCompositionMode() { return m_compositionMode; }
@@ -109,7 +109,7 @@ protected:
     CoordsBuffer m_coordsBuffer;
 
     Matrix3 m_projectionMatrix;
-    Matrix2 m_textureMatrix;
+    Matrix3 m_textureMatrix;
     Color m_color;
     float m_opacity;
     CompositionMode m_compositionMode;

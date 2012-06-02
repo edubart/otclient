@@ -52,7 +52,7 @@ public:
     bool link();
 
     void setProjectionMatrix(const Matrix3& projectionMatrix);
-    void setTextureMatrix(const Matrix2& textureMatrix);
+    void setTextureMatrix(const Matrix3& textureMatrix);
     void setColor(const Color& color);
     void setOpacity(float opacity);
     void updateTime();
@@ -63,7 +63,7 @@ private:
     Color m_color;
     float m_opacity;
     Matrix3 m_projectionMatrix;
-    Matrix2 m_textureMatrix;
+    Matrix3 m_textureMatrix;
     float m_time;
 };
 

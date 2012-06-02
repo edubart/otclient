@@ -48,6 +48,7 @@ clean sprites cache periodically
 handle corrupt errors in dat/spr
 throw exceptions when fail to read a file
 fix C++ exceptions messages inside onExtendedOpcode
+rework outfit masks drawing
 
 * framework
 rework Settings/g_configs

@@ -74,8 +74,8 @@ void PlatformWindow::processKeyDown(Fw::Key keyCode)
 
         m_inputEvent.reset(Fw::KeyPressInputEvent);
         m_inputEvent.keyCode = keyCode;
-        m_lastKeysPress[keyCode] = g_clock.ticks();
-        m_firstKeysPress[keyCode] = g_clock.ticks();
+        m_lastKeysPress[keyCode] = g_clock.millis();
+        m_firstKeysPress[keyCode] = g_clock.millis();
         m_onInputEvent(m_inputEvent);
     }
 }
@@ -141,14 +141,14 @@ void PlatformWindow::fireKeysPress()
 
         ticks_t lastPressTicks = m_lastKeysPress[keyCode];
         ticks_t firstKeyPress = m_firstKeysPress[keyCode];
-        if(g_clock.ticksElapsed(lastPressTicks) >= KEY_PRESS_REPEAT_INTERVAL) {
+        if(g_clock.millis() - lastPressTicks >= KEY_PRESS_REPEAT_INTERVAL) {
             if(m_onInputEvent) {
                 m_inputEvent.reset(Fw::KeyPressInputEvent);
                 m_inputEvent.keyCode = keyCode;
-                m_inputEvent.autoRepeatTicks = g_clock.ticksElapsed(firstKeyPress);
+                m_inputEvent.autoRepeatTicks = g_clock.millis() - firstKeyPress;
                 m_onInputEvent(m_inputEvent);
             }
-            m_lastKeysPress[keyCode] = g_clock.ticks();
+            m_lastKeysPress[keyCode] = g_clock.millis();
         }
     }
 }

@@ -21,6 +21,7 @@
  */
 
 #include "adaptativeframecounter.h"
+#include "clock.h"
 
 AdaptativeFrameCounter::AdaptativeFrameCounter()
 {
@@ -35,8 +36,8 @@ AdaptativeFrameCounter::AdaptativeFrameCounter()
     m_maxFps = 0;
     m_sleepMicros = 0;
     m_mediumFrameDelay = 0;
-    m_lastFpsUpdate = stdext::micros();
-    m_lastPartialFpsUpdate = stdext::micros();
+    m_lastFpsUpdate = g_clock.micros();
+    m_lastPartialFpsUpdate = g_clock.micros();
 }
 
 bool AdaptativeFrameCounter::shouldProcessNextFrame()
@@ -44,7 +45,7 @@ bool AdaptativeFrameCounter::shouldProcessNextFrame()
     if(m_maxFps == 0)
         return true;
 
-    ticks_t now = stdext::micros();
+    ticks_t now = g_clock.micros();
     if(now - m_lastFrame < m_bestFrameDelay)
         return false;
     return true;
@@ -52,7 +53,7 @@ bool AdaptativeFrameCounter::shouldProcessNextFrame()
 
 void AdaptativeFrameCounter::processNextFrame()
 {
-    ticks_t now = stdext::micros();
+    ticks_t now = g_clock.micros();
     m_frames++;
     m_partialFrames++;
     m_frameDelaySum += now - m_lastFrame;
@@ -61,7 +62,7 @@ void AdaptativeFrameCounter::processNextFrame()
 
 void AdaptativeFrameCounter::update()
 {
-    ticks_t now = stdext::micros();
+    ticks_t now = g_clock.micros();
     ticks_t delta = now - m_lastPartialFpsUpdate;
     if(delta > 41000 && m_partialFrames > 0) {
         m_partialFps = m_partialFrames / (delta / 1000000.0f);
@@ -101,7 +102,7 @@ int AdaptativeFrameCounter::getMaximumSleepMicros()
 {
     if(m_maxFps == 0)
         return 0;
-    return m_lastFrame + m_bestFrameDelay - stdext::micros();
+    return m_lastFrame + m_bestFrameDelay - g_clock.micros();
 }
 
 float AdaptativeFrameCounter::getFrameDelayHit()

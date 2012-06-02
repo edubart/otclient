@@ -30,23 +30,16 @@ class Clock
 public:
     Clock();
 
-    ticks_t updateTicks();
-    void sleep(int ms);
+    void update();
 
-    ticks_t asyncTicks();
-    ticks_t ticks() { return m_currentTicks; }
-    ticks_t ticksElapsed(ticks_t prevTicks) { return m_currentTicks - prevTicks; }
-    ticks_t ticksFor(int delay) { return m_currentTicks + delay; }
-
-    float asyncTime() { return asyncTicks()/1000.0f; }
-    float time() { return m_currentTime; }
-    float timeElapsed(float prevTime) { return m_currentTime - prevTime; }
-    float timeFor(float delay) { return m_currentTime + delay; }
+    ticks_t micros() { return m_currentMicros; }
+    ticks_t millis() { return m_currentMillis; }
+    float seconds() { return m_currentSeconds; }
 
 private:
-    ticks_t m_currentTicks;
-    float m_currentTime;
-    std::chrono::system_clock::time_point m_startupTime;
+    ticks_t m_currentMicros;
+    ticks_t m_currentMillis;
+    float m_currentSeconds;
 };
 
 extern Clock g_clock;

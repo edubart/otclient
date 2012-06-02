@@ -28,7 +28,7 @@
 
 PainterShaderProgram::PainterShaderProgram()
 {
-    m_startTime = g_clock.time();
+    m_startTime = g_clock.seconds();
     m_opacity = 1;
     m_color = Color::white;
     m_time = 0;
@@ -36,7 +36,7 @@ PainterShaderProgram::PainterShaderProgram()
 
 bool PainterShaderProgram::link()
 {
-    m_startTime = g_clock.time();
+    m_startTime = g_clock.seconds();
     bindAttributeLocation(VERTEX_ATTR, "a_vertex");
     bindAttributeLocation(TEXCOORD_ATTR, "a_texCoord");
     if(ShaderProgram::link()) {
@@ -72,7 +72,7 @@ void PainterShaderProgram::setProjectionMatrix(const Matrix3& projectionMatrix)
     m_projectionMatrix = projectionMatrix;
 }
 
-void PainterShaderProgram::setTextureMatrix(const Matrix2& textureMatrix)
+void PainterShaderProgram::setTextureMatrix(const Matrix3& textureMatrix)
 {
     if(textureMatrix == m_textureMatrix)
         return;
@@ -104,7 +104,7 @@ void PainterShaderProgram::setOpacity(float opacity)
 
 void PainterShaderProgram::updateTime()
 {
-    float time = g_clock.timeElapsed(m_startTime);
+    float time = g_clock.seconds() - m_startTime;
     if(m_time == time)
         return;
 

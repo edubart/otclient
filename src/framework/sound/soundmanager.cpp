@@ -77,7 +77,7 @@ void SoundManager::terminate()
 void SoundManager::poll()
 {
     static ticks_t lastUpdate = 0;
-    ticks_t now = g_clock.ticks();
+    ticks_t now = g_clock.millis();
 
     if(now - lastUpdate < POLL_DELAY)
         return;

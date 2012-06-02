@@ -79,6 +79,13 @@ void Graphics::init()
     // blending is always enabled
     glEnable(GL_BLEND);
 
+    // face culling may improve performance
+    /*
+    glCullFace(GL_BACK);
+    glFrontFace(GL_CW);
+    glEnable(GL_CULL_FACE);
+    */
+
     // determine max texture size
     static GLint maxTextureSize = -1;
     if(maxTextureSize == -1)

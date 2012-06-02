@@ -26,11 +26,11 @@
 
 void Timer::restart()
 {
-    m_startTicks = g_clock.ticks();
+    m_startTicks = g_clock.millis();
     m_stopped = false;
 }
 
 ticks_t Timer::ticksElapsed()
 {
-    return g_clock.ticks() - m_startTicks;
+    return g_clock.millis() - m_startTicks;
 }

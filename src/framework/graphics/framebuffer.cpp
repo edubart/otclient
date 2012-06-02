@@ -65,6 +65,7 @@ void FrameBuffer::resize(const Size& size)
 
     m_texture = TexturePtr(new Texture(size.width(), size.height(), 4));
     m_texture->setSmooth(true);
+    m_texture->setUpsideDown(true);
 
     if(m_fbo) {
         internalBind();
@@ -97,8 +98,8 @@ void FrameBuffer::bind()
     internalBind();
 
     Matrix3 projectionMatrix = { 2.0f/m_texture->getWidth(),  0.0f,                         0.0f,
-                                 0.0f,                        2.0f/m_texture->getHeight(),  0.0f,
-                                -1.0f,                       -1.0f,                         1.0f };
+                                 0.0f,                       -2.0f/m_texture->getHeight(),  0.0f,
+                                -1.0f,                        1.0f,                         1.0f };
     g_painter->saveAndResetState();
     g_painter->setProjectionMatrix(projectionMatrix);
 

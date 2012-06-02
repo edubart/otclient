@@ -195,7 +195,7 @@ void PainterOGL1::setProjectionMatrix(const Matrix3& projectionMatrix)
     updateGlProjectionMatrix();
 }
 
-void PainterOGL1::setTextureMatrix(const Matrix2& textureMatrix)
+void PainterOGL1::setTextureMatrix(const Matrix3& textureMatrix)
 {
     // avoid re-updating texture matrix
     if(m_textureMatrix == textureMatrix)
@@ -246,10 +246,10 @@ void PainterOGL1::updateGlProjectionMatrix()
 void PainterOGL1::updateGlTextureMatrix()
 {
     float glTextureMatrix[] = {
-        m_textureMatrix(1,1), m_textureMatrix(1,2),             0.0f,               0.0f,
-        m_textureMatrix(2,1), m_textureMatrix(2,2),             0.0f,               0.0f,
-                        0.0f,                 0.0f,             1.0f,               0.0f,
-                        0.0f,                 0.0f,             0.0f,               1.0f,
+        m_textureMatrix(1,1), m_textureMatrix(1,2),             0.0f,                 0.0f,
+        m_textureMatrix(2,1), m_textureMatrix(2,2),             0.0f,                 0.0f,
+                        0.0f,                 0.0f,             1.0f,                 0.0f,
+        m_textureMatrix(3,1), m_textureMatrix(3,2),             0.0f, m_textureMatrix(3,3),
     };
 
     setMatrixMode(MatrixTexture);

@@ -53,7 +53,6 @@ uint Texture::internalLoadGLTexture(uchar *pixels, int channels, int width, int 
     m_size.resize(width, height);
 
     // convert texture pixel data to power of two size, only required for OpenGL 1.5 or older
-    Size glSize;
     std::vector<uint8> tmp;
     if(!g_graphics.canUseNonPowerOfTwoTextures()) {
         int glWidth = 1;
@@ -64,7 +63,7 @@ uint Texture::internalLoadGLTexture(uchar *pixels, int channels, int width, int 
         while(glHeight < height)
             glHeight = glHeight << 1;
 
-        if(m_size != glSize && pixels) {
+        if(m_size != m_glSize && pixels) {
             tmp.resize(glHeight*glWidth*channels, 0);
             for(int y=0; y<height; ++y)
                 for(int x=0; x<width; ++x)
@@ -73,15 +72,14 @@ uint Texture::internalLoadGLTexture(uchar *pixels, int channels, int width, int 
             pixels = &tmp[0];
         }
 
-        glSize.resize(glWidth, glHeight);
+        m_glSize.resize(glWidth, glHeight);
     } else
-        glSize = m_size;
+        m_glSize = m_size;
 
-    m_transformMatrix = { 1.0f/glSize.width(),  0.0f,
-                          0.0f,                 1.0f/glSize.height() };
+    setupTranformMatrix();
 
     // checks texture max size
-    if(std::max(glSize.width(), glSize.height()) > g_graphics.getMaxTextureSize()) {
+    if(std::max(m_glSize.width(), m_glSize.height()) > g_graphics.getMaxTextureSize()) {
         g_logger.error(stdext::format("loading texture with size %dx%d failed, "
                  "the maximum size allowed by the graphics card is %dx%d,"
                  "to prevent crashes the texture will be displayed as a blank texture",
@@ -115,7 +113,7 @@ uint Texture::internalLoadGLTexture(uchar *pixels, int channels, int width, int 
     }
 
     // load pixels into gl memory
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, glSize.width(), glSize.height(), 0, format, GL_UNSIGNED_BYTE, pixels);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_glSize.width(), m_glSize.height(), 0, format, GL_UNSIGNED_BYTE, pixels);
 
     GLint texParam = GL_REPEAT;
     if(g_graphics.canUseClampToEdge())
@@ -180,6 +178,14 @@ void Texture::setSmooth(bool smooth)
     m_smooth = smooth;
     bind();
     setupFilters();
+}
+
+void Texture::setUpsideDown(bool upsideDown)
+{
+    if(m_upsideDown == upsideDown)
+        return;
+    m_upsideDown = upsideDown;
+    setupTranformMatrix();
 }
 
 void Texture::generateSoftwareMipmaps(std::vector<uint8> inPixels)
@@ -260,4 +266,17 @@ void Texture::setupFilters()
     }
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
+}
+
+void Texture::setupTranformMatrix()
+{
+    if(m_upsideDown) {
+        m_transformMatrix = { 1.0f/m_glSize.width(),  0.0f,                    0.0f,
+                              0.0f,                  -1.0f/m_glSize.height(),  0.0f,
+                              0.0f,                   1.0f,                    1.0f };
+    } else {
+        m_transformMatrix = { 1.0f/m_glSize.width(),  0.0f,                    0.0f,
+                              0.0f,                   1.0f/m_glSize.height(),  0.0f,
+                              0.0f,                   0.0f,                    1.0f };
+    }
 }
