@@ -86,6 +86,9 @@ bool UIGridLayout::internalUpdate()
     if(m_flow && m_cellSize.width() > 0)
         numColumns = clippingRect.width() / (m_cellSize.width() + m_cellSpacing);
 
+    if(numColumns <= 0)
+        numColumns = 1;
+
     int cellSpacing = m_cellSpacing;
     if(m_autoSpacing && numColumns > 1)
         cellSpacing = (clippingRect.width() - numColumns * m_cellSize.width()) / (numColumns - 1);
