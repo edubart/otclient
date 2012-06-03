@@ -70,12 +70,12 @@ void Creature::draw(const Point& dest, float scaleFactor, bool animate)
 
     if(m_showTimedSquare && animate) {
         g_painter->setColor(m_timedSquareColor);
-        g_painter->drawBoundingRect(Rect(dest + (animationOffset - getDisplacement() + 3)*scaleFactor, Size(28, 28)*scaleFactor), std::max((int)(2*scaleFactor), 1));
+        g_painter->drawBoundingRect(Rect(dest + (animationOffset - getDisplacement() + 2)*scaleFactor, Size(28, 28)*scaleFactor), std::max((int)(2*scaleFactor), 1));
     }
 
     if(m_showStaticSquare && animate) {
         g_painter->setColor(m_staticSquareColor);
-        g_painter->drawBoundingRect(Rect(dest + (animationOffset - getDisplacement() + 1)*scaleFactor, Size(Otc::TILE_PIXELS, Otc::TILE_PIXELS)*scaleFactor), std::max((int)(2*scaleFactor), 1));
+        g_painter->drawBoundingRect(Rect(dest + (animationOffset - getDisplacement())*scaleFactor, Size(Otc::TILE_PIXELS, Otc::TILE_PIXELS)*scaleFactor), std::max((int)(2*scaleFactor), 1));
     }
 
     internalDrawOutfit(dest + animationOffset * scaleFactor, scaleFactor, animate, animate, m_direction);
