@@ -66,6 +66,7 @@ private:
     void updateGlMatrixMode();
     void updateGlProjectionMatrix();
     void updateGlTextureMatrix();
+    void updateGlTextureState();
 
     GLenum m_matrixMode;
     Boolean<false> m_textureEnabled;

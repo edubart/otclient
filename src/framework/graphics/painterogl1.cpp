@@ -38,6 +38,7 @@ void PainterOGL1::refreshState()
     updateGlMatrixMode();
     updateGlProjectionMatrix();
     updateGlTextureMatrix();
+    updateGlTextureState();
 }
 
 void PainterOGL1::bind()
@@ -46,14 +47,14 @@ void PainterOGL1::bind()
 
     // vertex and texture coord arrays are always enabled
     // to avoid massive enable/disables, thus improving frame rate
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-    glEnableClientState(GL_VERTEX_ARRAY);
+    if(g_graphics.canUseDrawArrays())
+        glEnableClientState(GL_VERTEX_ARRAY);
 }
 
 void PainterOGL1::unbind()
 {
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    if(g_graphics.canUseDrawArrays())
+        glDisableClientState(GL_VERTEX_ARRAY);
 }
 
 void PainterOGL1::drawCoords(CoordsBuffer& coordsBuffer, DrawMode drawMode)
@@ -69,11 +70,8 @@ void PainterOGL1::drawCoords(CoordsBuffer& coordsBuffer, DrawMode drawMode)
         return;
 
     if(textured != m_textureEnabled) {
-        if(textured)
-            glEnable(GL_TEXTURE_2D);
-        else
-            glDisable(GL_TEXTURE_2D);
         m_textureEnabled = textured;
+        updateGlTextureState();
     }
 
     // use vertex arrays if possible, much faster
@@ -255,4 +253,17 @@ void PainterOGL1::updateGlTextureMatrix()
 
     setMatrixMode(MatrixTexture);
     glLoadMatrixf(glTextureMatrix);
+}
+
+void PainterOGL1::updateGlTextureState()
+{
+    if(m_textureEnabled) {
+        glEnable(GL_TEXTURE_2D);
+        if(g_graphics.canUseDrawArrays())
+            glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    } else {
+        glDisable(GL_TEXTURE_2D);
+        if(g_graphics.canUseDrawArrays())
+            glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    }
 }
