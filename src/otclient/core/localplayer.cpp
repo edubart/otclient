@@ -24,12 +24,14 @@
 #include "map.h"
 #include "game.h"
 #include "tile.h"
+#include <framework/core/eventdispatcher.h>
 
 LocalPlayer::LocalPlayer()
 {
     m_preWalking = false;
     m_walkLocked = false;
     m_lastPrewalkDone = true;
+    m_autoWalking = false;
     m_known = false;
     m_states = 0;
 
@@ -95,8 +97,15 @@ void LocalPlayer::walk(const Position& oldPos, const Position& newPos)
         // was to another direction, replace the walk
         } else
             Creature::walk(oldPos, newPos);
-    } else
+    }
+    // no prewalk was going on, this must be an server side automated walk
+    else {
+        m_autoWalking = true;
+        if(m_autoWalkEndEvent)
+            m_autoWalkEndEvent->cancel();
+
         Creature::walk(oldPos, newPos);
+    }
 }
 
 void LocalPlayer::preWalk(Otc::Direction direction)
@@ -104,6 +113,10 @@ void LocalPlayer::preWalk(Otc::Direction direction)
     // start walking to direction
     Position newPos = m_position.translatedToDirection(direction);
     m_preWalking = true;
+
+    if(m_autoWalkEndEvent)
+        m_autoWalkEndEvent->cancel();
+
     m_lastPrewalkDone = false;
     m_lastPrewalkDestionation = newPos;
     Creature::walk(m_position, newPos);
@@ -124,7 +137,7 @@ void LocalPlayer::cancelWalk(Otc::Direction direction)
 
 void LocalPlayer::stopWalk()
 {
-    Creature::stopWalk();
+    Creature::stopWalk(); // will call terminateWalk
     m_lastPrewalkDone = true;
     m_lastPrewalkDestionation = Position();
 }
@@ -166,6 +179,16 @@ void LocalPlayer::terminateWalk()
 {
     Creature::terminateWalk();
     m_preWalking = false;
+
+    auto self = asLocalPlayer();
+
+    if(m_autoWalking) {
+        if(m_autoWalkEndEvent)
+            m_autoWalkEndEvent->cancel();
+        m_autoWalkEndEvent = g_eventDispatcher.scheduleEvent([self] {
+            self->m_autoWalking = false;
+        }, 100);
+    }
 }
 
 void LocalPlayer::setStates(int states)

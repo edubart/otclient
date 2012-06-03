@@ -49,7 +49,6 @@ void Game::resetGameStates()
     m_denyBotCall = false;
 #endif
     m_dead = false;
-    m_autoWalking = false;
     m_serverBeat = 50;
     m_canReportBugs = false;
     m_fightMode = Otc::FightBalanced;
@@ -255,9 +254,8 @@ void Game::processCreatureTeleport(const CreaturePtr& creature)
     creature->stopWalk();
 
     // locks the walk for a while when teleporting
-    if(creature == m_localPlayer) {
+    if(creature == m_localPlayer)
         m_localPlayer->lockWalk();
-    }
 }
 
 void Game::processChannelList(const std::vector<std::tuple<int, std::string>>& channelList)
@@ -394,12 +392,10 @@ void Game::processAttackCancel()
 
 void Game::processWalkCancel(Otc::Direction direction)
 {
-    m_localPlayer->cancelWalk(direction);
+    if(m_localPlayer->isAutoWalking())
+        m_protocolGame->sendStop();
 
-    if(m_autoWalking) {
-        m_protocolGame->sendAutoWalk(std::vector<Otc::Direction>());
-        m_autoWalking = false;
-    }
+    m_localPlayer->cancelWalk(direction);
 }
 
 void Game::loginWorld(const std::string& account, const std::string& password, const std::string& worldName, const std::string& worldHost, int worldPort, const std::string& characterName)
@@ -445,19 +441,20 @@ void Game::walk(Otc::Direction direction)
     if(!canPerformGameAction())
         return;
 
+    // must cancel follow before any new walk
     if(isFollowing())
         cancelFollow();
 
-    if(m_autoWalking) {
-        m_protocolGame->sendAutoWalk(std::vector<Otc::Direction>(1, direction));
-        m_autoWalking = false;
+    // msut cancel auto walking and wait next try
+    if(m_localPlayer->isAutoWalking()) {
+        m_protocolGame->sendStop();
         return;
     }
 
     if(!m_localPlayer->canWalk(direction))
         return;
 
-    // only do prewalks to walkable tiles
+    // only do prewalks to walkable tiles (like grounds and not walls)
     TilePtr toTile = g_map.getTile(m_localPlayer->getPosition().translatedToDirection(direction));
     if(toTile && toTile->isWalkable())
         m_localPlayer->preWalk(direction);
@@ -472,28 +469,23 @@ void Game::autoWalk(const std::vector<Otc::Direction>& dirs)
     if(!canPerformGameAction())
         return;
 
-    if(dirs.size() == 1 && !m_autoWalking) {
+    // protocol limits walk path up to 255 directions
+    if(dirs.size() > 255) {
+        g_logger.error("Auto walk path too great, the maximum number of directions is 255");
+        return;
+    }
+
+    // actually do a normal walking when dirs have size == 1
+    if(dirs.size() == 1) {
         walk(dirs.front());
         return;
     }
 
-    if(dirs.size() > 255)
-        return;
-
+    // must cancel follow before any new walk
     if(isFollowing())
         cancelFollow();
 
     m_protocolGame->sendAutoWalk(dirs);
-    m_autoWalking = true;
-}
-
-void Game::stopAutoWalk()
-{
-    if(!canPerformGameAction())
-        return;
-
-    m_protocolGame->sendAutoWalk(std::vector<Otc::Direction>());
-    m_autoWalking = false;
 }
 
 void Game::forceWalk(Otc::Direction direction)
@@ -563,7 +555,6 @@ void Game::stop()
         cancelFollow();
 
     m_protocolGame->sendStop();
-    m_autoWalking = false;
 }
 
 void Game::look(const ThingPtr& thing)

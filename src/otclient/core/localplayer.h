@@ -71,6 +71,7 @@ public:
 
     bool isKnown() { return m_known; }
     bool isPreWalking() { return m_preWalking; }
+    bool isAutoWalking() { return m_autoWalking; }
 
     LocalPlayerPtr asLocalPlayer() { return std::static_pointer_cast<LocalPlayer>(shared_from_this()); }
 
@@ -92,9 +93,11 @@ private:
     bool m_preWalking;
     bool m_lastPrewalkDone;
     bool m_walkLocked;
+    bool m_autoWalking;
     Position m_lastPrewalkDestionation;
     Timer m_walkLockTimer;
     ItemPtr m_inventoryItems[Otc::LastInventory];
+    ScheduledEventPtr m_autoWalkEndEvent;
 
     std::array<int, Otc::LastSkill> m_skillsLevel;
     std::array<int, Otc::LastSkill> m_skillsLevelPercent;
