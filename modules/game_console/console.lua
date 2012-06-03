@@ -234,7 +234,7 @@ function Console.terminate()
                        onGameEnd = Console.clear })
 
   for channelid, channelname in pairs(channels) do
-    if channelid ~= 0 then
+    if tonumber(channelid) and tonumber(channelid) ~= 0 then
       g_game.leaveChannel(channelid)
     end
   end
