@@ -329,6 +329,8 @@ CreaturePtr Tile::getTopCreature()
         else if(thing->asCreature() && !thing->asLocalPlayer())
             return thing->asCreature();
     }
+    if(!creature && !m_walkingCreatures.empty())
+        creature = m_walkingCreatures.back();
     return creature;
 }
 
