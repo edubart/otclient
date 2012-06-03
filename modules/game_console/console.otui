@@ -19,7 +19,7 @@ ConsoleTabBarPanel < TabBarPanel
       type: verticalBox
       align-bottom: true
     border-width: 1
-    border-color: #101317
+    border-color: #202327
     background: #00000044
     inverted-scroll: true
     padding: 1

@@ -261,7 +261,7 @@ void X11Window::internalCreateWindow()
 {
     Visual *vis;
     int depth;
-    unsigned int attrsMask = CWEventMask;
+    unsigned int attrsMask;
     XSetWindowAttributes attrs;
     memset(&attrs, 0, sizeof(attrs));
 
@@ -270,19 +270,18 @@ void X11Window::internalCreateWindow()
                        ExposureMask | VisibilityChangeMask |
                        StructureNotifyMask | FocusChangeMask;
 
-    if(m_visual) {
-        m_colormap = XCreateColormap(m_display, m_rootWindow, m_visual->visual, AllocNone);
-        attrs.colormap = m_colormap;
-        attrs.border_pixel = 0;
-        attrsMask |= CWBorderPixel | CWColormap;
-        vis = m_visual->visual;
-        depth = m_visual->depth;
-    } else {
-        attrs.override_redirect = False;
-        attrsMask |= CWOverrideRedirect;
-        depth = CopyFromParent;
-        vis = CopyFromParent;
-    }
+    m_colormap = XCreateColormap(m_display, m_rootWindow, m_visual->visual, AllocNone);
+    attrs.colormap = m_colormap;
+    attrs.border_pixel = 0;
+    attrs.override_redirect = False;
+    vis = m_visual->visual;
+    depth = m_visual->depth;
+    attrsMask = CWEventMask | CWBorderPixel | CWColormap;
+
+#ifdef OPENGL_ES
+    attrs.override_redirect = False;
+    attrsMask |= CWOverrideRedirect;
+#endif
 
     updateUnmaximizedCoords();
     m_window = XCreateWindow(m_display, m_rootWindow,
@@ -371,16 +370,32 @@ void X11Window::internalChooseGLVisual()
 #else
         EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT,
 #endif
-        EGL_ALPHA_SIZE, 1,
+        EGL_RED_SIZE, 4,
+        EGL_GREEN_SIZE, 4,
+        EGL_BLUE_SIZE, 4,
+        EGL_ALPHA_SIZE, 4,
         EGL_NONE
     };
 
     EGLint numConfig;
+    XVisualInfo visTemplate;
+    int numVisuals;
+
     if(!eglChooseConfig(m_eglDisplay, attrList, &m_eglConfig, 1, &numConfig))
         g_logger.fatal("Failed to choose EGL config");
 
     if(numConfig != 1)
         g_logger.warning("Didn't got the exact EGL config");
+
+    EGLint vid;
+    if(!eglGetConfigAttrib(m_eglDisplay, m_eglConfig, EGL_NATIVE_VISUAL_ID, &vid))
+        g_logger.fatal("Unable to get visual EGL visual id");
+
+    memset(&visTemplate, 0, sizeof(visTemplate));
+    visTemplate.visualid = vid;
+    m_visual = XGetVisualInfo(m_display, VisualIDMask, &visTemplate, &numVisuals);
+    if(!m_visual)
+        g_logger.fatal("Couldn't choose RGBA, double buffered visual");
 
     m_rootWindow = DefaultRootWindow(m_display);
 #else
@@ -421,7 +436,7 @@ void X11Window::internalCreateGLContext()
 
     m_eglContext = eglCreateContext(m_eglDisplay, m_eglConfig, EGL_NO_CONTEXT, attrList);
     if(m_eglContext == EGL_NO_CONTEXT )
-        g_logger.fatal("Unable to create EGL context: %s", eglGetError());
+        g_logger.fatal(stdext::format("Unable to create EGL context: %s", eglGetError()));
 #else
     m_glxContext = glXCreateContext(m_display, m_visual, NULL, True);
 
@@ -462,7 +477,7 @@ void X11Window::internalConnectGLContext()
 #ifdef OPENGL_ES
     m_eglSurface = eglCreateWindowSurface(m_eglDisplay, m_eglConfig, m_window, NULL);
     if(m_eglSurface == EGL_NO_SURFACE)
-        g_logger.fatal("Unable to create EGL surface: %s", eglGetError());
+        g_logger.fatal(stdext::format("Unable to create EGL surface: %s", eglGetError()));
     if(!eglMakeCurrent(m_eglDisplay, m_eglSurface, m_eglSurface, m_eglContext))
         g_logger.fatal("Unable to connect EGL context into X11 window");
 #else

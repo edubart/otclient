@@ -77,6 +77,7 @@ void FrameBuffer::resize(const Size& size)
         internalRelease();
     } else {
         m_screenBackup = TexturePtr(new Texture(size.width(), size.height()));
+        m_screenBackup->setUpsideDown(true);
     }
 }
 
