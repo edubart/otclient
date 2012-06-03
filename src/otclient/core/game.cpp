@@ -49,6 +49,7 @@ void Game::resetGameStates()
     m_denyBotCall = false;
 #endif
     m_dead = false;
+    m_autoWalking = false;
     m_serverBeat = 50;
     m_canReportBugs = false;
     m_fightMode = Otc::FightBalanced;
@@ -254,8 +255,9 @@ void Game::processCreatureTeleport(const CreaturePtr& creature)
     creature->stopWalk();
 
     // locks the walk for a while when teleporting
-    if(creature == m_localPlayer)
+    if(creature == m_localPlayer) {
         m_localPlayer->lockWalk();
+    }
 }
 
 void Game::processChannelList(const std::vector<std::tuple<int, std::string>>& channelList)
@@ -393,6 +395,11 @@ void Game::processAttackCancel()
 void Game::processWalkCancel(Otc::Direction direction)
 {
     m_localPlayer->cancelWalk(direction);
+
+    if(m_autoWalking) {
+        m_protocolGame->sendAutoWalk(std::vector<Otc::Direction>());
+        m_autoWalking = false;
+    }
 }
 
 void Game::loginWorld(const std::string& account, const std::string& password, const std::string& worldName, const std::string& worldHost, int worldPort, const std::string& characterName)
@@ -441,6 +448,12 @@ void Game::walk(Otc::Direction direction)
     if(isFollowing())
         cancelFollow();
 
+    if(m_autoWalking) {
+        m_protocolGame->sendAutoWalk(std::vector<Otc::Direction>(1, direction));
+        m_autoWalking = false;
+        return;
+    }
+
     if(!m_localPlayer->canWalk(direction))
         return;
 
@@ -459,6 +472,11 @@ void Game::autoWalk(const std::vector<Otc::Direction>& dirs)
     if(!canPerformGameAction())
         return;
 
+    if(dirs.size() == 1 && !m_autoWalking) {
+        walk(dirs.front());
+        return;
+    }
+
     if(dirs.size() > 255)
         return;
 
@@ -466,6 +484,16 @@ void Game::autoWalk(const std::vector<Otc::Direction>& dirs)
         cancelFollow();
 
     m_protocolGame->sendAutoWalk(dirs);
+    m_autoWalking = true;
+}
+
+void Game::stopAutoWalk()
+{
+    if(!canPerformGameAction())
+        return;
+
+    m_protocolGame->sendAutoWalk(std::vector<Otc::Direction>());
+    m_autoWalking = false;
 }
 
 void Game::forceWalk(Otc::Direction direction)
@@ -535,6 +563,7 @@ void Game::stop()
         cancelFollow();
 
     m_protocolGame->sendStop();
+    m_autoWalking = false;
 }
 
 void Game::look(const ThingPtr& thing)

@@ -129,6 +129,7 @@ public:
     // walk related
     void walk(Otc::Direction direction);
     void autoWalk(const std::vector<Otc::Direction>& dirs);
+    void stopAutoWalk();
     void forceWalk(Otc::Direction direction);
     void turn(Otc::Direction direction);
     void stop();
@@ -277,6 +278,7 @@ private:
 
     bool m_denyBotCall;
     bool m_dead;
+    bool m_autoWalking;
     int m_serverBeat;
     Otc::FightModes m_fightMode;
     Otc::ChaseModes m_chaseMode;

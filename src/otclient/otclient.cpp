@@ -98,6 +98,7 @@ void OTClient::init(const std::vector<std::string>& args)
     g_modules.ensureModuleLoaded("game");
     // addons 1000-9999
     g_modules.autoLoadModules(9999);
+    g_map.load();
 
     // load otclientrc.lua
     if(g_resources.fileExists("/otclientrc.lua")) {

@@ -48,6 +48,7 @@ handle corrupt errors in dat/spr
 throw exceptions when fail to read a file
 fix C++ exceptions messages inside onExtendedOpcode
 rework outfit masks drawing
+complete rework on autowalk
 
 * framework
 rework Settings/g_configs
