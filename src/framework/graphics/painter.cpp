@@ -86,6 +86,12 @@ void Painter::restoreSavedState()
     setTexture(m_olderStates[m_oldStateIndex].texture);
 }
 
+void Painter::clearScreen()
+{
+    glClearColor(0,0,0,1);
+    glClear(GL_COLOR_BUFFER_BIT);
+}
+
 void Painter::setCompositionMode(Painter::CompositionMode compositionMode)
 {
     if(m_compositionMode == compositionMode)

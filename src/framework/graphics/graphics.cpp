@@ -86,10 +86,6 @@ void Graphics::init()
     glEnable(GL_CULL_FACE);
     */
 
-    // clear color buffer
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
-
     // determine max texture size
     GLint maxTextureSize = 0;
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
