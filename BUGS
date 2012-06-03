@@ -28,4 +28,3 @@ hotkeys works while windows are locked, it shouldn't
 skulls is rendering outside map bounds
 party options does not work when re-logging inside a party
 sometimes we can still view hits from above/bottom floors from a fight that is not visible
-scroll does not follow characerlist selection when changing focus with up/down arrows

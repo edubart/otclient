@@ -691,8 +691,13 @@ void Game::refreshContainer()
 
 void Game::attack(const CreaturePtr& creature)
 {
-    if(!canPerformGameAction() || creature == m_localPlayer || creature == m_attackingCreature)
+    if(!canPerformGameAction() || creature == m_localPlayer)
         return;
+
+    if(creature == m_attackingCreature) {
+        cancelAttack();
+        return;
+    }
 
     m_localPlayer->lockWalk();
 

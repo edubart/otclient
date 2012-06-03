@@ -5,11 +5,11 @@ ContainerWindow < MiniWindow
     id: containerItemWidget
     virtual: true
     item-id: 3253
-    size: 32 32
+    size: 16 16
     anchors.top: parent.top
     anchors.left: parent.left
-    margin-top: -6
-    margin-left: -6
+    margin-top: 4
+    margin-left: 4
 
   UIButton
     id: upButton

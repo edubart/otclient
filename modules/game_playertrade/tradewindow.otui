@@ -6,49 +6,70 @@ TradeWindow < MiniWindow
     id: tradeItem
     virtual: true
     item-id: 3253
-    size: 32 32
+    size: 16 16
     anchors.top: parent.top
     anchors.left: parent.left
-    margin-top: -6
-    margin-left: -6
+    margin-top: 4
+    margin-left: 4
 
   MiniWindowContents
     padding: 6
 
     ScrollableFlatPanel
       id: ownTradeContainer
-      anchors.left: parent.left
-      anchors.top: tradeScrollBar.top
-      anchors.right: tradeScrollBar.left
-      anchors.bottom: tradeScrollBar.bottom
-      layout:
-        type: grid
-        cell-size: 36 36
-        flow: true
-        cell-spacing: 0
-      vertical-scrollbar: tradeScrollBar
-
-    ScrollableFlatPanel
-      id: counterTradeContainer
-      anchors.right: parent.right
-      anchors.top: tradeScrollBar.top
-      anchors.left: tradeScrollBar.right
-      anchors.bottom: tradeScrollBar.bottom
-      layout:
-        type: grid
-        cell-size: 36 36
-        flow: true
-        cell-spacing: 0
-
-    VerticalScrollBar
-      id: tradeScrollBar
       anchors.top: parent.top
       anchors.bottom: acceptButton.top
-      anchors.horizontalCenter: parent.horizontalCenter
+      anchors.left: parent.left
+      anchors.right: ownTradeScrollBar.left
+      margin-top: 14
+      margin-bottom: 4
+      padding: 2
+      layout:
+        type: grid
+        cell-size: 36 36
+        flow: true
+        cell-spacing: 0
+      vertical-scrollbar: ownTradeScrollBar
+
+    VerticalScrollBar
+      id: ownTradeScrollBar
+      anchors.top: parent.top
+      anchors.bottom: acceptButton.top
+      anchors.right: counterTradeContainer.left
       margin-top: 14
       margin-bottom: 4
       step: 14
       pixels-scroll: true
+      $disabled:
+        width: 0
+
+    ScrollableFlatPanel
+      id: counterTradeContainer
+      anchors.top: parent.top
+      anchors.bottom: acceptButton.top
+      anchors.left: parent.horizontalCenter
+      anchors.right: counterTradeScrollBar.left
+      margin-top: 14
+      margin-bottom: 4
+      padding: 2
+      layout:
+        type: grid
+        cell-size: 36 36
+        flow: true
+        cell-spacing: 0
+      vertical-scrollbar: counterTradeScrollBar
+
+    VerticalScrollBar
+      id: counterTradeScrollBar
+      anchors.top: parent.top
+      anchors.bottom: acceptButton.top
+      anchors.right: parent.right
+      margin-top: 14
+      margin-bottom: 4
+      step: 14
+      pixels-scroll: true
+      $disabled:
+        width: 0
 
     Label
       id: ownTradeLabel

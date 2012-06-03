@@ -26,19 +26,21 @@ QuestLogWindow < MainWindow
 
   TextList
     id: questList
-    anchors.fill: parent
-    width: 190
+    anchors.top: parent.top
+    anchors.bottom: closeButton.top
+    anchors.left: parent.left
+    anchors.right: questListScrollBar.left
+    margin-bottom: 10
     padding: 1
     focusable: false
-    margin-bottom: 30
-    margin-right: 20
     vertical-scrollbar: questListScrollBar
 
   VerticalScrollBar
     id: questListScrollBar
-    anchors.top: questList.top
-    anchors.bottom: questList.bottom
-    anchors.left: questList.right
+    anchors.top: parent.top
+    anchors.bottom: closeButton.top
+    anchors.right: parent.right
+    margin-bottom: 10
     step: 14
     pixels-scroll: true
 

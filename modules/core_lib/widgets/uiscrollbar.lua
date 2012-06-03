@@ -128,12 +128,12 @@ end
 
 function UIScrollBar:decrement(count)
   count = count or self.step
-  self:setValue(self.value - self.step)
+  self:setValue(self.value - count)
 end
 
 function UIScrollBar:increment(count)
   count = count or self.step
-  self:setValue(self.value + self.step)
+  self:setValue(self.value + count)
 end
 
 function UIScrollBar:setMaximum(maximum)
