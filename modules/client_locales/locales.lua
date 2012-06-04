@@ -46,10 +46,10 @@ function Locales.init()
   Locales.installLocales('locales')
 
   local userLocaleName = Settings.get('locale')
-  if userLocaleName and Locales.setLocale(userLocaleName)then
-    info('Using configured locale: ' .. userLocaleName)
+  if userLocaleName and Locales.setLocale(userLocaleName) then
+    --info('Using configured locale: ' .. userLocaleName)
   else
-    info('Using default locale: ' .. defaultLocaleName)
+    --info('Using default locale: ' .. defaultLocaleName)
     Locales.setLocale(defaultLocaleName)
     Settings.set('locale', defaultLocaleName)
   end

@@ -77,7 +77,7 @@ end
 
 function HotkeysManager.save()
   local hotkeySettings = {}
-  for i = 1, currentHotkeysList:getChildCount() do
+  for i=1, currentHotkeysList:getChildCount() do
     local child = currentHotkeysList:getChildByIndex(i)
     table.insert(hotkeySettings, {keyCombo = child.keyCombo,
                                   autoSend = child.autoSend,
@@ -85,6 +85,7 @@ function HotkeysManager.save()
                                   useType = child.useType,
                                   value = child.value})
   end
+
   Settings.setNode('HotkeysManager', hotkeySettings)
 end
 
@@ -311,6 +312,7 @@ function HotkeysManager.call(keyCombo)
 end
 
 function HotkeysManager.checkSelectedHotkey(focused)
+  if not focused then return end
   if hotkeysManagerLoaded then
     hotkeyLabelSelectedOnList = focused
 

@@ -43,11 +43,7 @@ Game::Game()
 
 void Game::resetGameStates()
 {
-#ifdef BOT_PROTECTION
-    m_denyBotCall = true;
-#else
     m_denyBotCall = false;
-#endif
     m_dead = false;
     m_serverBeat = 50;
     m_canReportBugs = false;
@@ -66,8 +62,6 @@ void Game::resetGameStates()
     m_containers.clear();
     m_vips.clear();
     m_gmActions.clear();
-
-    m_worldName = "";
 }
 
 void Game::processConnectionError(const boost::system::error_code& error)
@@ -132,6 +126,9 @@ void Game::processGameEnd()
 
     // reset game state
     resetGameStates();
+
+    m_worldName = "";
+    m_characterName = "";
 
     // clean map creatures
     g_map.cleanDynamicThings();
@@ -407,6 +404,7 @@ void Game::loginWorld(const std::string& account, const std::string& password, c
 
     m_protocolGame = ProtocolGamePtr(new ProtocolGame);
     m_protocolGame->login(account, password, worldHost, (uint16)worldPort, characterName);
+    m_characterName = characterName;
     m_worldName = worldName;
 }
 
@@ -1024,12 +1022,14 @@ void Game::mount(bool mount)
 
 bool Game::checkBotProtection()
 {
+#ifdef BOT_PROTECTION
     // accepts calls comming from a stacktrace containing only C++ functions,
     // if the stacktrace contains a lua function, then only accept if the engine is processing an input event
-    if(g_lua.isInCppCallback() && !g_app->isOnInputEvent() && m_denyBotCall) {
+    if(m_denyBotCall && g_lua.isInCppCallback() && !g_app->isOnInputEvent()) {
         g_logger.error(g_lua.traceback("caught a lua call to a bot protected game function, the call was canceled"));
         return false;
     }
+#endif
     return true;
 }
 

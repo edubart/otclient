@@ -244,8 +244,6 @@ public:
     bool canPerformGameAction();
     bool canReportBugs() { return m_canReportBugs; }
     bool checkBotProtection();
-    void enableBotCall() { m_denyBotCall = false; }
-    void disableBotCall() { m_denyBotCall = true; }
 
     bool isOnline() { return !!m_localPlayer; }
     bool isDead() { return m_dead; }
@@ -261,8 +259,13 @@ public:
     LocalPlayerPtr getLocalPlayer() { return m_localPlayer; }
     ProtocolGamePtr getProtocolGame() { return m_protocolGame; }
     int getProtocolVersion() { return PROTOCOL; }
+    std::string getCharacterName() { return m_characterName; }
     std::string getWorldName() { return m_worldName; }
     std::vector<uint8> getGMActions() { return m_gmActions; }
+
+protected:
+    void enableBotCall() { m_denyBotCall = false; }
+    void disableBotCall() { m_denyBotCall = true; }
 
 private:
     void setAttackingCreature(const CreaturePtr& creature);
@@ -283,6 +286,7 @@ private:
     bool m_safeFight;
     bool m_canReportBugs;
     std::vector<uint8> m_gmActions;
+    std::string m_characterName;
     std::string m_worldName;
     std::bitset<Otc::LastGameFeature> m_features;
     int m_clientVersion;

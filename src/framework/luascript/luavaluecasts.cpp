@@ -252,7 +252,7 @@ void push_luavalue(const OTMLNodePtr& node)
         int currentIndex = 1;
         for(const OTMLNodePtr& cnode : node->children()) {
             push_otml_subnode_luavalue(cnode);
-            if(cnode->isUnique()) {
+            if(cnode->isUnique() && !cnode->tag().empty()) {
                 g_lua.setField(cnode->tag());
             } else
                 g_lua.rawSeti(currentIndex++);

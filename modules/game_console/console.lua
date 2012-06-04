@@ -386,7 +386,7 @@ function Console.popupMenu(mousePos, mouseButton, creatureName, text)
   if mouseButton == MouseRightButton then
     local menu = createWidget('PopupMenu')
     if creatureName then
-      if creatureName ~= g_game.getLocalPlayer():getName() then
+      if creatureName ~= g_game.getCharacterName() then
         menu:addOption(tr('Message to ' .. creatureName), function () g_game.openPrivateChannel(creatureName) end)
         menu:addOption(tr('Add to VIP list'), function () g_game.addVip(creatureName) end) --TODO not show if creature already in vip
         -- TODO ignore creatureName
@@ -492,7 +492,7 @@ function Console.sendCurrentMessage()
     g_game.talkPrivate(speaktype.speakType, name, message)
 
     message = applyMessagePrefixies(player:getName(), player:getLevel(), message)
-    Console.addPrivateText(message, speaktype, name, isPrivateCommand, g_game.getLocalPlayer():getName())
+    Console.addPrivateText(message, speaktype, name, isPrivateCommand, g_game.getCharacterName())
   end
 end
 

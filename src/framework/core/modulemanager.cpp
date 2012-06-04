@@ -70,7 +70,7 @@ void ModuleManager::discoverModulesPath()
     for(const std::string& dir : possibleModulesDirs) {
         // try to add module directory
         if(g_resources.addToSearchPath(dir, false)) {
-            g_logger.info(stdext::format("Using modules directory '%s'", dir.c_str()));
+            //g_logger.info(stdext::format("Using modules directory '%s'", dir.c_str()));
             found = true;
             break;
         }
@@ -88,7 +88,7 @@ void ModuleManager::discoverModulesPath()
     for(const std::string& dir : possibleAddonsDirs) {
         // try to add module directory
         if(g_resources.addToSearchPath(dir, true)) {
-            g_logger.info(stdext::format("Using addons directory '%s'", dir.c_str()));
+            //g_logger.info(stdext::format("Using addons directory '%s'", dir.c_str()));
             found = true;
             break;
         }

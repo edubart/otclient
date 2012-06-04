@@ -70,6 +70,7 @@ TopPanel
     anchors.right: parent.right
 
   UILabel
+    id: frameCounter
     text-align: right
     text-auto-resize: true
     color: white
@@ -81,7 +82,7 @@ TopPanel
     @onSetup: |
       local updateFunc
       updateFunc = function()
-        self:setText('FPS: ' .. g_app.getBackgroundPaneFps())
+        rootWidget:recursiveGetChildById('frameCounter'):setText('FPS: ' .. g_app.getBackgroundPaneFps())
         scheduleEvent(updateFunc, 250)
       end
       updateFunc()

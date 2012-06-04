@@ -164,6 +164,7 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassStaticFunction("g_game", "getLocalPlayer", std::bind(&Game::getLocalPlayer, &g_game));
     g_lua.bindClassStaticFunction("g_game", "getProtocolGame", std::bind(&Game::getProtocolGame, &g_game));
     g_lua.bindClassStaticFunction("g_game", "getProtocolVersion", std::bind(&Game::getProtocolVersion, &g_game));
+    g_lua.bindClassStaticFunction("g_game", "getCharacterName", std::bind(&Game::getCharacterName, &g_game));
     g_lua.bindClassStaticFunction("g_game", "getWorldName", std::bind(&Game::getWorldName, &g_game));
     g_lua.bindClassStaticFunction("g_game", "getGMActions", std::bind(&Game::getGMActions, &g_game));
 
