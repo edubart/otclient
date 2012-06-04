@@ -21,7 +21,7 @@
  */
 
 #include "inputmessage.h"
-#include "rsa.h"
+#include <framework/util/rsa.h>
 
 InputMessage::InputMessage()
 {
@@ -105,7 +105,7 @@ void InputMessage::setHeaderSize(uint16 size)
 bool InputMessage::readChecksum()
 {
     uint32_t receivedCheck = getU32();
-    uint32 checksum = stdext::generate_adler_checksum(m_buffer + m_readPos, getUnreadSize());
+    uint32 checksum = stdext::adler32(m_buffer + m_readPos, getUnreadSize());
     return receivedCheck == checksum;
 }
 

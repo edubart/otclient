@@ -161,7 +161,7 @@ inline std::string date_time_string() {
 }
 
 /// Convert decimal to hexadecimal
-inline std::string dec_to_hex(unsigned int num) {
+inline std::string dec_to_hex(uint64 num) {
     std::string str;
     std::ostringstream o;
     o << std::hex << num;
@@ -170,8 +170,8 @@ inline std::string dec_to_hex(unsigned int num) {
 }
 
 /// Convert hexadecimal to decimal
-inline unsigned int hex_to_dec(const std::string& str) {
-    unsigned int num;
+inline uint64 hex_to_dec(const std::string& str) {
+    uint64 num;
     std::istringstream i(str);
     i >> std::hex >> num;
     return num;

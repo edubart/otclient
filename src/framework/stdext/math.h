@@ -28,7 +28,7 @@
 
 namespace stdext {
 
-inline uint32 generate_adler_checksum(uint8 *buffer, uint16 size) {
+inline uint32 adler32(const uint8 *buffer, uint16 size) {
     register uint32 a = 1, b = 0, tlen;
     while(size > 0) {
         tlen = size > 5552 ? 5552 : size;
@@ -57,9 +57,9 @@ inline uint32 to_power_of_two(uint32 v) {
     return r;
 }
 
-inline uint16 readLE16(uchar *addr) { return (uint16)addr[1] << 8 | addr[0]; }
-inline uint32 readLE32(uchar *addr) { return (uint32)readLE16(addr + 2) << 16 | readLE16(addr); }
-inline uint64 readLE64(uchar *addr) { return (uint64)readLE32(addr + 4) << 32 | readLE32(addr); }
+inline uint16 readLE16(const uchar *addr) { return (uint16)addr[1] << 8 | addr[0]; }
+inline uint32 readLE32(const uchar *addr) { return (uint32)readLE16(addr + 2) << 16 | readLE16(addr); }
+inline uint64 readLE64(const uchar *addr) { return (uint64)readLE32(addr + 4) << 32 | readLE32(addr); }
 
 inline void writeLE16(uchar *addr, uint16 value) { addr[1] = value >> 8; addr[0] = (uint8)value; }
 inline void writeLE32(uchar *addr, uint32 value) { writeLE16(addr + 2, value >> 16); writeLE16(addr, (uint16)value); }

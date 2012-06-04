@@ -3,8 +3,6 @@ EnterGame = { }
 -- private variables
 local loadBox
 local enterGame
-local motdNumber
-local motdMessage
 local motdButton
 local enterGameButton
 
@@ -29,15 +27,15 @@ local function onError(protocol, message, connectionError)
 end
 
 local function onMotd(protocol, motd)
-  motdNumber = tonumber(motd:sub(0, motd:find("\n")))
-  motdMessage = motd:sub(motd:find("\n") + 1, #motd)
+  G.motdNumber = tonumber(motd:sub(0, motd:find("\n")))
+  G.motdMessage = motd:sub(motd:find("\n") + 1, #motd)
   motdButton:show()
 end
 
 local function onCharacterList(protocol, characters, premDays)
   if enterGame:getChildById('rememberPasswordBox'):isChecked() then
-    Settings.set('account', EnterGame.account)
-    Settings.set('password', EnterGame.password)
+    Settings.set('account', g_crypt.encrypt(G.account))
+    Settings.set('password', g_crypt.encrypt(G.password))
     Settings.set('autologin', enterGame:getChildById('autoLoginBox'):isChecked())
   else
     clearAccountFields()
@@ -47,11 +45,12 @@ local function onCharacterList(protocol, characters, premDays)
   loadBox = nil
 
   CharacterList.create(characters, premDays)
+  CharacterList.show()
 
   local lastMotdNumber = Settings.getNumber("motd")
-  if motdNumber and motdNumber ~= lastMotdNumber then
+  if G.motdNumber and G.motdNumber ~= lastMotdNumber then
     Settings.set("motd", motdNumber)
-    local motdBox = displayInfoBox(tr('Message of the day'), motdMessage)
+    local motdBox = displayInfoBox(tr('Message of the day'), G.motdMessage)
     connect(motdBox, { onOk = CharacterList.show })
     CharacterList.hide()
   end
@@ -65,8 +64,12 @@ function EnterGame.init()
   motdButton:hide()
   Keyboard.bindKeyDown('Ctrl+G', EnterGame.openWindow)
 
-  local account = Settings.get('account')
-  local password = Settings.get('password')
+  if G.motdNumber then
+    motdButton:show()
+  end
+
+  local account = g_crypt.decrypt(Settings.get('account'))
+  local password = g_crypt.decrypt(Settings.get('password'))
   local host = Settings.get('host')
   local port = Settings.get('port')
   local autologin = Settings.getBoolean('autologin')
@@ -119,14 +122,14 @@ function EnterGame.openWindow()
 end
 
 function EnterGame.doLogin()
-  EnterGame.account = enterGame:getChildById('accountNameTextEdit'):getText()
-  EnterGame.password = enterGame:getChildById('accountPasswordTextEdit'):getText()
-  EnterGame.host = enterGame:getChildById('serverHostTextEdit'):getText()
-  EnterGame.port = tonumber(enterGame:getChildById('serverPortTextEdit'):getText())
+  G.account = enterGame:getChildById('accountNameTextEdit'):getText()
+  G.password = enterGame:getChildById('accountPasswordTextEdit'):getText()
+  G.host = enterGame:getChildById('serverHostTextEdit'):getText()
+  G.port = tonumber(enterGame:getChildById('serverPortTextEdit'):getText())
   EnterGame.hide()
 
-  Settings.set('host', EnterGame.host)
-  Settings.set('port', EnterGame.port)
+  Settings.set('host', G.host)
+  Settings.set('port', G.port)
 
   local protocolLogin = ProtocolLogin.create()
   protocolLogin.onError = onError
@@ -140,9 +143,9 @@ function EnterGame.doLogin()
                                   EnterGame.show()
                                 end })
 
-  protocolLogin:login(EnterGame.host, EnterGame.port, EnterGame.account, EnterGame.password)
+  protocolLogin:login(G.host, G.port, G.account, G.password)
 end
 
 function EnterGame.displayMotd()
-  displayInfoBox(tr('Message of the day'), motdMessage)
+  displayInfoBox(tr('Message of the day'), G.motdMessage)
 end

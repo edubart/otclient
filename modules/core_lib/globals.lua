@@ -4,6 +4,9 @@ importStyle = g_ui.importStyle
 importFont = g_fonts.importFont
 setDefaultFont = g_fonts.setDefaultFont
 
+-- G is used as a global table to save variables in memory between reloads
+G = G or {}
+
 function loadUI(otui, parent)
   local otuiFilePath = resolvepath(otui, 2)
   return g_ui.loadUI(otuiFilePath, parent)

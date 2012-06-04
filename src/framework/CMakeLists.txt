@@ -171,6 +171,8 @@ SET(framework_SOURCES ${framework_SOURCES}
 
     # framework util
     ${CMAKE_CURRENT_LIST_DIR}/util/color.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/util/crypt.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/util/rsa.cpp
 
     # framework core
     ${CMAKE_CURRENT_LIST_DIR}/core/adaptativeframecounter.cpp
@@ -189,7 +191,6 @@ SET(framework_SOURCES ${framework_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/net/inputmessage.cpp
     ${CMAKE_CURRENT_LIST_DIR}/net/outputmessage.cpp
     ${CMAKE_CURRENT_LIST_DIR}/net/protocol.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/net/rsa.cpp
     ${CMAKE_CURRENT_LIST_DIR}/net/server.cpp
 
     # framework platform

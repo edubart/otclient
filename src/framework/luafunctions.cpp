@@ -33,6 +33,7 @@
 #include <framework/core/modulemanager.h>
 #include <framework/core/module.h>
 #include <framework/sound/soundmanager.h>
+#include <framework/util/crypt.h>
 
 void Application::registerLuaFunctions()
 {
@@ -45,6 +46,10 @@ void Application::registerLuaFunctions()
     g_lua.bindGlobalFunction("pointtostring", [](const Point& v) { return stdext::to_string(v); });
     g_lua.bindGlobalFunction("colortostring", [](const Color& v) { return stdext::to_string(v); });
     g_lua.bindGlobalFunction("sizetostring", [](const Size& v) { return stdext::to_string(v); });
+
+    g_lua.registerStaticClass("g_crypt");
+    g_lua.bindClassStaticFunction("g_crypt", "encrypt", Crypt::encrypt);
+    g_lua.bindClassStaticFunction("g_crypt", "decrypt", Crypt::decrypt);
 
     // Event
     g_lua.registerClass<Event>();

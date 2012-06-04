@@ -40,7 +40,7 @@ local function tryLogin(charInfo, tries)
 
   CharacterList.destroyLoadBox()
 
-  g_game.loginWorld(EnterGame.account, EnterGame.password, charInfo.worldName, charInfo.worldHost, charInfo.worldPort, charInfo.characterName)
+  g_game.loginWorld(G.account, G.password, charInfo.worldName, charInfo.worldHost, charInfo.worldPort, charInfo.characterName)
 
   loadBox = displayCancelBox(tr('Please wait'), tr('Connecting to game server...'))
   connect(loadBox, { onCancel = function()
@@ -81,6 +81,10 @@ function CharacterList.init()
   connect(g_game, { onConnectionError = onGameConnectionError })
   connect(g_game, { onGameStart = CharacterList.destroyLoadBox })
   connect(g_game, { onGameEnd = CharacterList.showAgain })
+
+  if G.characters then
+    CharacterList.create(G.characters, G.premDays)
+  end
 end
 
 function CharacterList.terminate()
@@ -100,7 +104,9 @@ function CharacterList.terminate()
 end
 
 function CharacterList.create(characters, premDays)
-  CharacterList.show()
+  G.characters = characters
+  G.premDays = premDays
+
   characterList:destroyChildren()
   local accountStatusLabel = charactersWindow:getChildById('accountStatusLabel')
 

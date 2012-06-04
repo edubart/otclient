@@ -21,7 +21,7 @@
  */
 
 #include <framework/net/outputmessage.h>
-#include "rsa.h"
+#include <framework/util/rsa.h>
 
 OutputMessage::OutputMessage()
 {
@@ -96,7 +96,7 @@ void OutputMessage::encryptRSA(int size, const std::string& key)
 
 void OutputMessage::writeChecksum()
 {
-    uint32 checksum = stdext::generate_adler_checksum(m_buffer + m_headerPos, m_messageSize);
+    uint32 checksum = stdext::adler32(m_buffer + m_headerPos, m_messageSize);
     assert(m_headerPos - 4 >= 0);
     m_headerPos -= 4;
     stdext::writeLE32(m_buffer + m_headerPos, checksum);
