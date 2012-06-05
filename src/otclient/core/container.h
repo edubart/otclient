@@ -29,26 +29,20 @@
 
 class Container : public LuaObject
 {
-public:
-    Container();
+protected:
+    Container(int id, int capacity, const std::string& name, const ItemPtr& containerItem, bool hasParent);
 
+public:
     ItemPtr getItem(int slot);
     std::deque<ItemPtr> getItems() { return m_items; }
-
+    int getItemsCount() { return m_items.size(); }
     Position getSlotPosition(int slot) { return Position(0xffff, m_id | 0x40, slot); }
-
-    void setId(int id) { m_id = id; }
-    void setCapacity(int capacity) { m_capacity = capacity; }
-    void setName(std::string name) { m_name = name; }
-    void setContainerItem(const ItemPtr& containerItem) { m_containerItem = containerItem; }
-    void setHasParent(bool hasParent) { m_hasParent = hasParent; }
-
-    std::string getName() { return m_name; }
     int getId() { return m_id; }
     int getCapacity() { return m_capacity; }
-    int getItemsCount() { return m_items.size(); }
     ItemPtr getContainerItem() { return m_containerItem; }
+    std::string getName() { return m_name; }
     bool hasParent() { return m_hasParent; }
+    bool isClosed() { return m_closed; }
 
 protected:
     void onOpen(const ContainerPtr& previousContainer);
@@ -68,6 +62,7 @@ private:
     ItemPtr m_containerItem;
     std::string m_name;
     bool m_hasParent;
+    bool m_closed;
     std::deque<ItemPtr> m_items;
 };
 

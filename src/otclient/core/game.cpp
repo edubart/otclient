@@ -173,12 +173,7 @@ void Game::processCreatureSpeak(const std::string& name, int level, Otc::SpeakTy
 void Game::processOpenContainer(int containerId, const ItemPtr& containerItem, const std::string& name, int capacity, bool hasParent, const std::vector<ItemPtr>& items)
 {
     ContainerPtr previousContainer = getContainer(containerId);
-    ContainerPtr container = ContainerPtr(new Container());
-    container->setId(containerId);
-    container->setCapacity(capacity);
-    container->setName(name);
-    container->setContainerItem(containerItem);
-    container->setHasParent(hasParent);
+    ContainerPtr container = ContainerPtr(new Container(containerId, capacity, name, containerItem, hasParent));
     m_containers[containerId] = container;
     container->onAddItems(items);
 

@@ -23,12 +23,14 @@
 #include "container.h"
 #include "item.h"
 
-Container::Container()
+Container::Container(int id, int capacity, const std::string& name, const ItemPtr& containerItem, bool hasParent)
 {
-    m_id = -1;
-    m_capacity = 20;
-    m_name = "Container";
-    m_hasParent = false;
+    m_id = id;
+    m_capacity = capacity;
+    m_name = name;
+    m_containerItem = containerItem;
+    m_hasParent = hasParent;
+    m_closed = false;
 }
 
 ItemPtr Container::getItem(int slot)
@@ -45,6 +47,7 @@ void Container::onOpen(const ContainerPtr& previousContainer)
 
 void Container::onClose()
 {
+    m_closed = true;
     callLuaField("onClose");
 }
 

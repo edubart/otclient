@@ -187,21 +187,16 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassMemberFunction<ProtocolGame>("getPosition", &ProtocolGame::getPosition);
 
     g_lua.registerClass<Container>();
-    g_lua.bindClassStaticFunction<Container>("create", []{ return ContainerPtr(new Container); });
     g_lua.bindClassMemberFunction<Container>("getItem", &Container::getItem);
     g_lua.bindClassMemberFunction<Container>("getItems", &Container::getItems);
+    g_lua.bindClassMemberFunction<Container>("getItemsCount", &Container::getItemsCount);
     g_lua.bindClassMemberFunction<Container>("getSlotPosition", &Container::getSlotPosition);
-    g_lua.bindClassMemberFunction<Container>("setId", &Container::setId);
-    g_lua.bindClassMemberFunction<Container>("setCapacity", &Container::setCapacity);
-    g_lua.bindClassMemberFunction<Container>("setName", &Container::setName);
-    g_lua.bindClassMemberFunction<Container>("setContainerItem", &Container::setContainerItem);
-    g_lua.bindClassMemberFunction<Container>("setHasParent", &Container::setHasParent);
     g_lua.bindClassMemberFunction<Container>("getName", &Container::getName);
     g_lua.bindClassMemberFunction<Container>("getId", &Container::getId);
     g_lua.bindClassMemberFunction<Container>("getCapacity", &Container::getCapacity);
-    g_lua.bindClassMemberFunction<Container>("getItemsCount", &Container::getItemsCount);
     g_lua.bindClassMemberFunction<Container>("getContainerItem", &Container::getContainerItem);
     g_lua.bindClassMemberFunction<Container>("hasParent", &Container::hasParent);
+    g_lua.bindClassMemberFunction<Container>("isClosed", &Container::isClosed);
 
     g_lua.registerClass<Thing>();
     g_lua.bindClassMemberFunction<Thing>("setId", &Thing::setId);
