@@ -46,6 +46,7 @@ void Application::registerLuaFunctions()
     g_lua.bindGlobalFunction("pointtostring", [](const Point& v) { return stdext::to_string(v); });
     g_lua.bindGlobalFunction("colortostring", [](const Color& v) { return stdext::to_string(v); });
     g_lua.bindGlobalFunction("sizetostring", [](const Size& v) { return stdext::to_string(v); });
+    g_lua.bindGlobalFunction("iptostring", [](int v) { return stdext::ip_to_string(v); });
 
     g_lua.registerStaticClass("g_crypt");
     g_lua.bindClassStaticFunction("g_crypt", "encrypt", Crypt::encrypt);
@@ -397,11 +398,17 @@ void Application::registerLuaFunctions()
 
     // Protocol
     g_lua.registerClass<Protocol>();
-    //g_lua.bindClassMemberFunction<Protocol>("connect", &Protocol::connect);
+    g_lua.bindClassStaticFunction<Protocol>("create", []{ return ProtocolPtr(new Protocol); });
+    g_lua.bindClassMemberFunction<Protocol>("connect", &Protocol::connect);
     g_lua.bindClassMemberFunction<Protocol>("disconnect", &Protocol::disconnect);
     g_lua.bindClassMemberFunction<Protocol>("isConnected", &Protocol::isConnected);
     g_lua.bindClassMemberFunction<Protocol>("isConnecting", &Protocol::isConnecting);
-    g_lua.bindClassMemberFunction<Protocol>("send", &Protocol::send);
+    g_lua.bindClassMemberFunction<Protocol>("send", &Protocol::send); // must change to safeSend
+    g_lua.bindClassMemberFunction<Protocol>("recv", &Protocol::recv);
+    g_lua.bindClassMemberFunction<Protocol>("getXteaKey", &Protocol::getXteaKey);
+    g_lua.bindClassMemberFunction<Protocol>("generateXteaKey", &Protocol::generateXteaKey);
+    g_lua.bindClassMemberFunction<Protocol>("enableXteaEncryption", &Protocol::enableXteaEncryption);
+    g_lua.bindClassMemberFunction<Protocol>("enableChecksum", &Protocol::enableChecksum);
 
     // Module
     g_lua.registerClass<Module>();

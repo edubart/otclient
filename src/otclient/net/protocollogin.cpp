@@ -28,41 +28,19 @@
 #include <otclient/core/spritemanager.h>
 #include <otclient/core/game.h>
 
-void ProtocolLogin::login(const std::string& host, int port, const std::string& accountName, const std::string& accountPassword)
-{
-    if(accountName.empty() || accountPassword.empty()) {
-        callLuaField("onError", "You must enter an account name and password.");
-        return;
-    }
-
-    m_accountName = accountName;
-    m_accountPassword = accountPassword;
-
-    connect(host, port);
-}
-
-void ProtocolLogin::onConnect()
-{
-    sendLoginPacket();
-}
-
 void ProtocolLogin::onRecv(const InputMessagePtr& msg)
 {
     try {
         while(!msg->eof()) {
             int opcode = msg->getU8();
+
+            // try to parse in lua first
+            if(callLuaField<bool>("onOpcode", opcode, msg))
+                continue;
+
             switch(opcode) {
-            case Proto::LoginServerError:
-                parseError(msg);
-                break;
-            case Proto::LoginServerMotd:
-                parseMOTD(msg);
-                break;
             case Proto::LoginServerUpdateNeeded:
                 callLuaField("onError", "Client needs update.");
-                break;
-            case Proto::LoginServerCharacterList:
-                parseCharacterList(msg);
                 break;
             default:
                 stdext::throw_exception(stdext::format("unknown opcode %d", opcode));
@@ -125,35 +103,4 @@ void ProtocolLogin::sendLoginPacket()
     send(msg);
     enableXteaEncryption();
     recv();
-}
-
-void ProtocolLogin::parseError(const InputMessagePtr& msg)
-{
-    std::string error = msg->getString();
-    callLuaField("onError", error, false);
-}
-
-void ProtocolLogin::parseMOTD(const InputMessagePtr& msg)
-{
-    std::string motd = msg->getString();
-    callLuaField("onMotd", motd);
-}
-
-void ProtocolLogin::parseCharacterList(const InputMessagePtr& msg)
-{
-    typedef std::tuple<std::string, std::string, std::string, int> CharacterInfo;
-    typedef std::vector<CharacterInfo> CharaterList;
-    CharaterList charList;
-
-    int numCharacters = msg->getU8();
-    for(int i = 0; i < numCharacters; ++i) {
-        std::string name = msg->getString();
-        std::string world = msg->getString();
-        uint32 ip = msg->getU32();
-        uint16 port = msg->getU16();
-        charList.push_back(CharacterInfo(name, world, stdext::ip_to_string(ip), port));
-    }
-    int premDays = msg->getU16();
-
-    callLuaField("onCharacterList", charList, premDays);
 }

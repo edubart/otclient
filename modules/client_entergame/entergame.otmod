@@ -8,6 +8,7 @@ Module
     - client_topmenu
 
   @onLoad: |
+    dofile 'protocollogin'
     dofile 'entergame'
     dofile 'characterlist'
     EnterGame.init()

@@ -46,10 +46,6 @@ public:
 private:
     void sendLoginPacket();
 
-    void parseError(const InputMessagePtr& inputMessage);
-    void parseMOTD(const InputMessagePtr& inputMessage);
-    void parseCharacterList(const InputMessagePtr& inputMessage);
-
     std::string m_accountName, m_accountPassword;
 
 };

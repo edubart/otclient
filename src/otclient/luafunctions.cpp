@@ -167,13 +167,10 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassStaticFunction("g_game", "getCharacterName", std::bind(&Game::getCharacterName, &g_game));
     g_lua.bindClassStaticFunction("g_game", "getWorldName", std::bind(&Game::getWorldName, &g_game));
     g_lua.bindClassStaticFunction("g_game", "getGMActions", std::bind(&Game::getGMActions, &g_game));
+    g_lua.bindClassStaticFunction("g_game", "getClientVersion", std::bind(&Game::getClientVersion, &g_game));
+    g_lua.bindClassStaticFunction("g_game", "getFeature", std::bind(&Game::getFeature, &g_game, std::placeholders::_1));
 
     g_lua.bindGlobalFunction("getOufitColor", Outfit::getColor);
-
-    g_lua.registerClass<ProtocolLogin, Protocol>();
-    g_lua.bindClassStaticFunction<ProtocolLogin>("create", &ProtocolLogin::create);
-    g_lua.bindClassMemberFunction<ProtocolLogin>("login", &ProtocolLogin::login);
-    g_lua.bindClassMemberFunction<ProtocolLogin>("cancelLogin", &ProtocolLogin::cancelLogin);
 
     g_lua.registerClass<ProtocolGame, Protocol>();
     g_lua.bindClassStaticFunction<ProtocolGame>("create", []{ return ProtocolGamePtr(new ProtocolGame); });

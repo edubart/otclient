@@ -151,6 +151,15 @@ void Protocol::generateXteaKey()
     m_xteaKey[3] = unif(eng);
 }
 
+std::vector<int> Protocol::getXteaKey()
+{
+    std::vector<int> xteaKey;
+    xteaKey.resize(4);
+    for(int i = 0; i < 4; ++i)
+        xteaKey[i] = m_xteaKey[i];
+    return xteaKey;
+}
+
 bool Protocol::xteaDecrypt(const InputMessagePtr& inputMessage)
 {
     uint16 encryptedSize = inputMessage->getUnreadSize();
@@ -214,4 +223,9 @@ void Protocol::xteaEncrypt(const OutputMessagePtr& outputMessage)
         buffer[readPos] = v0; buffer[readPos + 1] = v1;
         readPos = readPos + 2;
     }
+}
+
+void Protocol::onConnect()
+{
+    callLuaField("onConnect");
 }
