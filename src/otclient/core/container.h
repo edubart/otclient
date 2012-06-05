@@ -32,14 +32,8 @@ class Container : public LuaObject
 public:
     Container();
 
-    void open(const ContainerPtr& previousContainer);
-    void close();
-
-    void addItem(const ItemPtr& item);
-    void addItems(const std::vector<ItemPtr>& items);
-    void updateItem(int slot, const ItemPtr& item);
-    void removeItem(int slot);
     ItemPtr getItem(int slot);
+    std::deque<ItemPtr> getItems() { return m_items; }
 
     Position getSlotPosition(int slot) { return Position(0xffff, m_id | 0x40, slot); }
 
@@ -55,6 +49,16 @@ public:
     int getItemsCount() { return m_items.size(); }
     ItemPtr getContainerItem() { return m_containerItem; }
     bool hasParent() { return m_hasParent; }
+
+protected:
+    void onOpen(const ContainerPtr& previousContainer);
+    void onClose();
+    void onAddItem(const ItemPtr& item);
+    void onAddItems(const std::vector<ItemPtr>& items);
+    void onUpdateItem(int slot, const ItemPtr& item);
+    void onRemoveItem(int slot);
+
+    friend class Game;
 
 private:
     void updateItemsPositions();

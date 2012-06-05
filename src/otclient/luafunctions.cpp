@@ -192,13 +192,8 @@ void OTClient::registerLuaFunctions()
 
     g_lua.registerClass<Container>();
     g_lua.bindClassStaticFunction<Container>("create", []{ return ContainerPtr(new Container); });
-    g_lua.bindClassMemberFunction<Container>("open", &Container::open);
-    g_lua.bindClassMemberFunction<Container>("close", &Container::close);
-    g_lua.bindClassMemberFunction<Container>("addItem", &Container::addItem);
-    g_lua.bindClassMemberFunction<Container>("addItems", &Container::addItems);
-    g_lua.bindClassMemberFunction<Container>("updateItem", &Container::updateItem);
-    g_lua.bindClassMemberFunction<Container>("removeItem", &Container::removeItem);
     g_lua.bindClassMemberFunction<Container>("getItem", &Container::getItem);
+    g_lua.bindClassMemberFunction<Container>("getItems", &Container::getItems);
     g_lua.bindClassMemberFunction<Container>("getSlotPosition", &Container::getSlotPosition);
     g_lua.bindClassMemberFunction<Container>("setId", &Container::setId);
     g_lua.bindClassMemberFunction<Container>("setCapacity", &Container::setCapacity);

@@ -57,7 +57,7 @@ void Game::resetGameStates()
     for(auto& it : m_containers) {
         const ContainerPtr& container = it.second;
         if(container)
-            container->close();
+            container->onClose();
     }
     m_containers.clear();
     m_vips.clear();
@@ -180,11 +180,11 @@ void Game::processOpenContainer(int containerId, const ItemPtr& containerItem, c
     container->setContainerItem(containerItem);
     container->setHasParent(hasParent);
     m_containers[containerId] = container;
-    container->addItems(items);
+    container->onAddItems(items);
 
-    container->open(previousContainer);
+    container->onOpen(previousContainer);
     if(previousContainer)
-        previousContainer->close();
+        previousContainer->onClose();
 }
 
 void Game::processCloseContainer(int containerId)
@@ -196,7 +196,7 @@ void Game::processCloseContainer(int containerId)
     }
 
     m_containers[containerId] = nullptr;
-    container->close();
+    container->onClose();
 }
 
 void Game::processContainerAddItem(int containerId, const ItemPtr& item)
@@ -207,7 +207,7 @@ void Game::processContainerAddItem(int containerId, const ItemPtr& item)
         return;
     }
 
-    container->addItem(item);
+    container->onAddItem(item);
 }
 
 void Game::processContainerUpdateItem(int containerId, int slot, const ItemPtr& item)
@@ -218,7 +218,7 @@ void Game::processContainerUpdateItem(int containerId, int slot, const ItemPtr& 
         return;
     }
 
-    container->updateItem(slot, item);
+    container->onUpdateItem(slot, item);
 }
 
 void Game::processContainerRemoveItem(int containerId, int slot)
@@ -229,7 +229,7 @@ void Game::processContainerRemoveItem(int containerId, int slot)
         return;
     }
 
-    container->removeItem(slot);
+    container->onRemoveItem(slot);
 }
 
 void Game::processInventoryChange(int slot, const ItemPtr& item)
