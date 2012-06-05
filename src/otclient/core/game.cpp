@@ -108,6 +108,7 @@ void Game::processGameStart(const LocalPlayerPtr& localPlayer, int serverBeat, b
     resetGameStates();
 
     m_localPlayer = localPlayer;
+    m_localPlayer->setName(m_characterName);
     m_serverBeat = serverBeat;
     m_canReportBugs = canReportBugs;
 
