@@ -48,7 +48,6 @@ function RuleViolation.loadReasons()
   local actions = g_game.getGMActions()
   for reason, actionFlags in pairs(actions) do
     local label = createWidget('RVListLabel', reasonsTextList)
-    print("LOAD REASON: " .. tostring(reason) .. " " .. tostring(actionFlags))
     label:setText(rvreasons[reason])
     label.reasonId = reason
     label.actionFlags = actionFlags
