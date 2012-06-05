@@ -91,6 +91,9 @@ void OutputMessage::addPaddingBytes(int bytes, uint8 byte)
 
 void OutputMessage::encryptRSA(int size, const std::string& key)
 {
+    if(m_writePos - size < 0)
+        throw NetworkException("writePos - size < 0");
+
     RSA::encrypt((char*)m_buffer + m_writePos - size, size, key.c_str());
 }
 

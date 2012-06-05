@@ -37,7 +37,6 @@
 #include <otclient/core/map.h>
 #include <otclient/core/thingstype.h>
 #include <otclient/core/spritemanager.h>
-#include <otclient/net/protocollogin.h>
 #include <otclient/net/protocolgame.h>
 #include <otclient/ui/uiitem.h>
 #include <otclient/ui/uicreature.h>

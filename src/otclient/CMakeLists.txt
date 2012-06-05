@@ -57,7 +57,6 @@ SET(otclient_SOURCES ${otclient_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/ui/uimap.cpp
 
     # otclient net
-    ${CMAKE_CURRENT_LIST_DIR}/net/protocollogin.cpp
     ${CMAKE_CURRENT_LIST_DIR}/net/protocolgame.cpp
     ${CMAKE_CURRENT_LIST_DIR}/net/protocolgamesend.cpp
     ${CMAKE_CURRENT_LIST_DIR}/net/protocolgameparse.cpp

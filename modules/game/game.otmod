@@ -38,6 +38,8 @@ Module
 
     dofile 'const'
 
+    dofile 'protocollogin'
+
     dofile 'widgets/uigamemap'
     dofile 'widgets/uiitem'
     dofile 'widgets/uiminiwindow'

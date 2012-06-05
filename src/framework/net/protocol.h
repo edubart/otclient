@@ -54,8 +54,8 @@ public:
 
 protected:
     virtual void onConnect();
-    virtual void onRecv(const InputMessagePtr& inputMessage) {}
-    virtual void onError(const boost::system::error_code& err) {}
+    virtual void onRecv(const InputMessagePtr& inputMessage);
+    virtual void onError(const boost::system::error_code& err);
 
     uint32 m_xteaKey[4];
 
