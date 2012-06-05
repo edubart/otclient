@@ -659,7 +659,11 @@ void ProtocolGame::parseWorldLight(const InputMessagePtr& msg)
 void ProtocolGame::parseMagicEffect(const InputMessagePtr& msg)
 {
     Position pos = getPosition(msg);
-    int effectId = msg->getU8();
+    int effectId;
+    if(g_game.getFeature(Otc::GameMagicEffectU16))
+        effectId = msg->getU16();
+    else
+        effectId = msg->getU8();
 
     EffectPtr effect = EffectPtr(new Effect());
     effect->setId(effectId);

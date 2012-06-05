@@ -312,6 +312,7 @@ namespace Otc
         GameItemAnimationPhase,
         GameTrucatedPingOpcode,
         GameReverseCreatureStack,
+        GameMagicEffectU16,
         LastGameFeature
     };
 }

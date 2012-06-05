@@ -1,0 +1,44 @@
+MainWindow
+  id: waitingWindow
+  !text: tr('Waiting List')
+  size: 260 160
+  @onEscape: CharacterList.cancelWait()
+
+  Label
+    id: infoLabel
+    anchors.top: parent.top
+    anchors.bottom: progressBar.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    text-wrap: true
+
+  ProgressBar
+    id: progressBar
+    height: 15
+    background-color: #4444ff
+    anchors.bottom: timeLabel.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    margin-bottom: 10
+
+  Label
+    id: timeLabel
+    anchors.bottom: separator.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    margin-bottom: 10
+
+  HorizontalSeparator
+    id: separator
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: next.top
+    margin-bottom: 10
+
+  Button
+    id: buttonCancel
+    !text: tr('Cancel')
+    width: 64
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    @onClick: CharacterList.cancelWait()

@@ -50,7 +50,7 @@ void ProtocolGame::sendLoginPacket(uint challangeTimestamp, uint8 challangeRando
 
     msg->addU8(Proto::ClientEnterGame);
     msg->addU16(Proto::ClientOs);
-    msg->addU16(Proto::ClientVersion);
+    msg->addU16(g_game.getClientVersion());
 
     int paddingBytes = 128;
     msg->addU8(0); // first RSA byte must be 0

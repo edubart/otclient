@@ -5,21 +5,9 @@ local charactersWindow
 local loadBox
 local characterList
 local errorBox
+local waitingWindow
 
 -- private functions
-local function onCharactersWindowKeyPress(self, keyCode, keyboardModifiers)
-  if keyboardModifiers == KeyboardNoModifier then
-    if keyCode == KeyUp then
-      characterList:focusPreviousChild(KeyboardFocusReason)
-      return true
-    elseif keyCode == KeyDown or keyCode == KeyTab then
-      characterList:focusNextChild(KeyboardFocusReason)
-      return true
-    end
-  end
-  return false
-end
-
 local function tryLogin(charInfo, tries)
   tries = tries or 1
 
@@ -53,6 +41,67 @@ local function tryLogin(charInfo, tries)
   Settings.set('lastUsedCharacter', charInfo.characterName)
 end
 
+local function updateWait()
+  if waitingWindow then
+    if waitingWindow.elapsedTime <= waitingWindow.totalTime then
+      local percent = (waitingWindow.elapsedTime / waitingWindow.totalTime) * 100
+      local timeStr = string.format("%.0f", (waitingWindow.totalTime - waitingWindow.elapsedTime))
+
+      local progressBar = waitingWindow:getChildById('progressBar')
+      progressBar:setPercent(percent)
+
+      local label = waitingWindow:getChildById('timeLabel')
+      label:setText('Trying to reconnect in ' .. timeStr .. ' seconds.')
+
+      waitingWindow.elapsedTime = waitingWindow.elapsedTime + (waitingWindow.totalTime / 100)
+      scheduleEvent(updateWait, (waitingWindow.totalTime / 100) * 1000)
+    end
+  end
+end
+
+local function resendWait()
+  if waitingWindow then
+    waitingWindow:destroy()
+    waitingWindow = nil
+
+    if charactersWindow then
+      local selected = charactersWindow:getChildById('characterList'):getFocusedChild()
+      if selected then
+        local charInfo = { worldHost = selected.worldHost,
+                           worldPort = selected.worldPort,
+                           characterName = selected.characterName }
+        tryLogin(charInfo)
+      end
+    end
+  end
+end
+
+local function onLoginWait(message, time)
+  waitingWindow = displayUI('waitinglist.otui')
+
+  local label = waitingWindow:getChildById('infoLabel')
+  label:setText(message)
+
+  waitingWindow.elapsedTime = 0
+  waitingWindow.totalTime = time
+
+  scheduleEvent(updateWait, 0)
+  scheduleEvent(resendWait, time * 1000)
+end
+
+local function onCharactersWindowKeyPress(self, keyCode, keyboardModifiers)
+  if keyboardModifiers == KeyboardNoModifier then
+    if keyCode == KeyUp then
+      characterList:focusPreviousChild(KeyboardFocusReason)
+      return true
+    elseif keyCode == KeyDown or keyCode == KeyTab then
+      characterList:focusNextChild(KeyboardFocusReason)
+      return true
+    end
+  end
+  return false
+end
+
 function onGameLoginError(message)
   CharacterList.destroyLoadBox()
   errorBox = displayErrorBox(tr("Login Error"), message)
@@ -80,6 +129,7 @@ function CharacterList.init()
   connect(g_game, { onLoginError = onGameLoginError })
   connect(g_game, { onConnectionError = onGameConnectionError })
   connect(g_game, { onGameStart = CharacterList.destroyLoadBox })
+  connect(g_game, { onLoginWait = onLoginWait })
   connect(g_game, { onGameEnd = CharacterList.showAgain })
 
   if G.characters then
@@ -91,6 +141,7 @@ function CharacterList.terminate()
   disconnect(g_game, { onLoginError = onGameLoginError })
   disconnect(g_game, { onConnectionError = onGameConnectionError })
   disconnect(g_game, { onGameStart = CharacterList.destroyLoadBox })
+  disconnect(g_game, { onLoginWait = onLoginWait })
   disconnect(g_game, { onGameEnd = CharacterList.showAgain })
   characterList = nil
   charactersWindow:destroy()
@@ -187,5 +238,14 @@ function CharacterList.destroyLoadBox()
   if loadBox then
     loadBox:destroy()
     loadBox = nil
+  end
+end
+
+function CharacterList.cancelWait()
+  if waitingWindow then
+    waitingWindow:destroy()
+    waitingWindow = nil
+    CharacterList.destroyLoadBox()
+    CharacterList.showAgain()
   end
 end
