@@ -90,16 +90,16 @@ void MapView::draw(const Rect& rect)
                     ++it;
 
                 if(!m_drawMinimapColors)
-                    tile->draw(transformPositionTo2D(tilePos), scaleFactor, drawFlags);
+                    tile->draw(transformPositionTo2D(tilePos, cameraPosition), scaleFactor, drawFlags);
                 else {
                     g_painter->setColor(tile->getMinimapColor());
-                    g_painter->drawFilledRect(Rect(transformPositionTo2D(tilePos), tileSize));
+                    g_painter->drawFilledRect(Rect(transformPositionTo2D(tilePos, cameraPosition), tileSize));
                 }
             }
 
             if(drawFlags & Otc::DrawMissiles && !m_drawMinimapColors) {
                 for(const MissilePtr& missile : g_map.getFloorMissiles(z)) {
-                    missile->draw(transformPositionTo2D(missile->getPosition()), scaleFactor, drawFlags & Otc::DrawAnimations);
+                    missile->draw(transformPositionTo2D(missile->getPosition(), cameraPosition), scaleFactor, drawFlags & Otc::DrawAnimations);
                 }
             }
         }
@@ -156,7 +156,7 @@ void MapView::draw(const Rect& rect)
         for(const CreaturePtr& creature : m_cachedFloorVisibleCreatures) {
             Point creatureOffset = Point(16 - creature->getDisplacementX(), -3 - creature->getDisplacementY());
             Position pos = creature->getPosition();
-            Point p = transformPositionTo2D(pos) - drawOffset;
+            Point p = transformPositionTo2D(pos, cameraPosition) - drawOffset;
             p += (creature->getDrawOffset() + creatureOffset) * scaleFactor;
             p.x = p.x * horizontalStretchFactor;
             p.y = p.y * verticalStretchFactor;
@@ -169,10 +169,10 @@ void MapView::draw(const Rect& rect)
             Position pos = staticText->getPosition();
 
             // ony draw static texts from current camera floor, unless yells
-            if(pos.z != getCameraPosition().z && !staticText->isYell())
+            if(pos.z != cameraPosition.z && !staticText->isYell())
                 continue;
 
-            Point p = transformPositionTo2D(pos) - drawOffset;
+            Point p = transformPositionTo2D(pos, cameraPosition) - drawOffset;
             p.x = p.x * horizontalStretchFactor;
             p.y = p.y * verticalStretchFactor;
             p += rect.topLeft();
@@ -190,7 +190,7 @@ void MapView::draw(const Rect& rect)
             if(pos.z != cameraPosition.z && g_map.isCovered(pos, m_cachedFirstVisibleFloor))
                 continue;
 
-            Point p = transformPositionTo2D(pos) - drawOffset;
+            Point p = transformPositionTo2D(pos, cameraPosition) - drawOffset;
             p.x = p.x * horizontalStretchFactor;
             p.y = p.y * verticalStretchFactor;
             p += rect.topLeft();
@@ -648,10 +648,3 @@ TilePtr MapView::getTile(const Point& mousePos, const Rect& mapRect)
     return tile;
 }
 
-
-Point MapView::transformPositionTo2D(const Position& position)
-{
-    Position cameraPosition = getCameraPosition();
-    return Point((m_virtualCenterOffset.x + (position.x - cameraPosition.x) - (cameraPosition.z - position.z)) * m_tileSize,
-                 (m_virtualCenterOffset.y + (position.y - cameraPosition.y) - (cameraPosition.z - position.z)) * m_tileSize);
-}

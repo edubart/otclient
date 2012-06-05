@@ -30,6 +30,7 @@
 
 ThingType::ThingType()
 {
+    m_category = 0;
     m_dimensions.fill(0);
     m_parameters.fill(0);
     m_properties.fill(false);
@@ -47,7 +48,6 @@ void ThingType::draw(const Point& dest, float scaleFactor, int layer, int xPatte
     Rect screenRect(dest + (-displacement + textureOffset - Point(m_dimensions[Width] - 1, m_dimensions[Height] - 1) * Otc::TILE_PIXELS) * scaleFactor,
                     textureRect.size() * scaleFactor);
 
-    g_painter->setColor(Color::white);
     g_painter->drawTexturedRect(screenRect, texture, textureRect);
 }
 

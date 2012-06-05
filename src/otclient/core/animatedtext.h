@@ -39,6 +39,7 @@ public:
     void setText(const std::string& text);
 
     AnimatedTextPtr asAnimatedText() { return std::static_pointer_cast<AnimatedText>(shared_from_this()); }
+    bool isAnimatedText() { return true; }
 
 private:
     FontPtr m_font;

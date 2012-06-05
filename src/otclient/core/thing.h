@@ -64,6 +64,17 @@ public:
     virtual AnimatedTextPtr asAnimatedText() { return nullptr; }
     virtual StaticTextPtr asStaticText() { return nullptr; }
 
+    virtual bool isItem() { return false; }
+    virtual bool isEffect() { return false; }
+    virtual bool isMissile() { return false; }
+    virtual bool isCreature() { return false; }
+    virtual bool isNpc() { return false; }
+    virtual bool isMonster() { return false; }
+    virtual bool isPlayer() { return false; }
+    virtual bool isLocalPlayer() { return false; }
+    virtual bool isAnimatedText() { return false; }
+    virtual bool isStaticText() { return false; }
+
     // type related
     bool isGround() { return m_type->getProperty(ThingType::IsGround); }
     bool isFullGround() { return m_type->getProperty(ThingType::IsFullGround); }

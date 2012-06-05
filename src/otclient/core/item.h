@@ -46,6 +46,7 @@ public:
     uint32 getId() { return m_id; }
 
     ItemPtr asItem() { return std::static_pointer_cast<Item>(shared_from_this()); }
+    bool isItem() { return true; }
 
 private:
     uint16 m_id;

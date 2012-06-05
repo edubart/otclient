@@ -32,6 +32,7 @@ public:
     virtual ~Player() { }
 
     PlayerPtr asPlayer() { return std::static_pointer_cast<Player>(shared_from_this()); }
+    bool isPlayer() { return true; }
 };
 
 #endif

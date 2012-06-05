@@ -74,6 +74,7 @@ public:
     bool isAutoWalking() { return m_autoWalking; }
 
     LocalPlayerPtr asLocalPlayer() { return std::static_pointer_cast<LocalPlayer>(shared_from_this()); }
+    bool isLocalPlayer() { return true; }
 
 protected:
     void walk(const Position& oldPos, const Position& newPos);

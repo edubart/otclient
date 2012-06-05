@@ -228,6 +228,14 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Thing>("asLocalPlayer", &Thing::asLocalPlayer);
     g_lua.bindClassMemberFunction<Thing>("asAnimatedText", &Thing::asAnimatedText);
     g_lua.bindClassMemberFunction<Thing>("asStaticText", &Thing::asStaticText);
+    g_lua.bindClassMemberFunction<Thing>("isItem", &Thing::isItem);
+    g_lua.bindClassMemberFunction<Thing>("isCreature", &Thing::isCreature);
+    g_lua.bindClassMemberFunction<Thing>("isEffect", &Thing::isEffect);
+    g_lua.bindClassMemberFunction<Thing>("isMissile", &Thing::isMissile);
+    g_lua.bindClassMemberFunction<Thing>("isPlayer", &Thing::isPlayer);
+    g_lua.bindClassMemberFunction<Thing>("isLocalPlayer", &Thing::isLocalPlayer);
+    g_lua.bindClassMemberFunction<Thing>("isAnimatedText", &Thing::isAnimatedText);
+    g_lua.bindClassMemberFunction<Thing>("isStaticText", &Thing::isStaticText);
     g_lua.bindClassMemberFunction<Thing>("isGround", &Thing::isGround);
     g_lua.bindClassMemberFunction<Thing>("isGroundBorder", &Thing::isGroundBorder);
     g_lua.bindClassMemberFunction<Thing>("isOnBottom", &Thing::isOnBottom);

@@ -44,6 +44,7 @@ public:
     uint32 getId() { return m_id; }
 
     MissilePtr asMissile() { return std::static_pointer_cast<Missile>(shared_from_this()); }
+    bool isMissile() { return true; }
 
 private:
     Timer m_animationTimer;

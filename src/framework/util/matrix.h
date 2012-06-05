@@ -170,11 +170,7 @@ bool Matrix<N,M,T>::operator==(const Matrix<N,M,T>& other) const
 template<int N, int M, typename T>
 bool Matrix<N,M,T>::operator!=(const Matrix<N,M,T>& other) const
 {
-    for(int i=0;i<N;++i)
-        for(int j=0;j<M;++j)
-            if(m[i][j] != other.m[i][j])
-            return true;
-    return false;
+    return !(*this == other);
 }
 
 template<int N, int M, typename T>
@@ -198,6 +194,17 @@ std::istream& operator>>(std::istream& in, Matrix<N,M,T>& mat)
         for(int j=0;j<M;++j)
             in >> mat(i,j);
         return in;
+}
+
+// faster comparing for 3x3 matrixes
+template<>
+inline bool Matrix<3,3,float>::operator==(const Matrix<3,3,float>& other) const
+{
+    return m[0][0] == other.m[0][0] && m[1][1] == other.m[1][1] &&
+           m[2][1] == other.m[2][1] && m[2][0] == other.m[2][0] &&
+           m[1][2] == other.m[1][2] && m[0][2] == other.m[0][2] &&
+           m[1][0] == other.m[1][0] && m[0][1] == other.m[0][1] &&
+           m[2][2] == other.m[2][2];
 }
 
 typedef Matrix<4,4> Matrix4x4;

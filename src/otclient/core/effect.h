@@ -36,7 +36,9 @@ public:
     void startAnimation();
 
     uint32 getId() { return m_id; }
+
     EffectPtr asEffect() { return std::static_pointer_cast<Effect>(shared_from_this()); }
+    bool isEffect() { return true; }
 
 private:
     Timer m_animationTimer;

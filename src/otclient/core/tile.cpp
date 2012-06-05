@@ -65,7 +65,7 @@ void Tile::draw(const Point& dest, float scaleFactor, int drawFlags)
         // now common items in reverse order
         for(auto it = m_things.rbegin(); it != m_things.rend(); ++it) {
             const ThingPtr& thing = *it;
-            if(thing->isOnTop() || thing->isOnBottom() || thing->isGroundBorder() || thing->isGround() || thing->asCreature())
+            if(thing->isOnTop() || thing->isOnBottom() || thing->isGroundBorder() || thing->isGround() || thing->isCreature())
                 break;
             thing->draw(dest - m_drawElevation*scaleFactor, scaleFactor, animate);
 
@@ -109,7 +109,10 @@ void Tile::draw(const Point& dest, float scaleFactor, int drawFlags)
         }
 
         for(auto it = m_things.rbegin(); it != m_things.rend(); ++it) {
-            CreaturePtr creature = (*it)->asCreature();
+            const ThingPtr& thing = *it;
+            if(!thing->isCreature())
+                continue;
+            CreaturePtr creature = thing->asCreature();
             if(creature && (!creature->isWalking() || !animate))
                 creature->draw(dest - m_drawElevation*scaleFactor, scaleFactor, animate);
         }
@@ -312,7 +315,7 @@ ThingPtr Tile::getTopUseThing()
 
     for(uint i = 0; i < m_things.size(); ++i) {
         ThingPtr thing = m_things[i];
-        if(thing->isForceUse() || (!thing->isGround() && !thing->isGroundBorder() && !thing->isOnBottom() && !thing->isOnTop() && !thing->asCreature()))
+        if(thing->isForceUse() || (!thing->isGround() && !thing->isGroundBorder() && !thing->isOnBottom() && !thing->isOnTop() && !thing->isCreature()))
             return thing;
     }
 
@@ -326,7 +329,7 @@ CreaturePtr Tile::getTopCreature()
         ThingPtr thing = m_things[i];
         if(thing->asLocalPlayer()) // return local player if there is no other creature
             creature = thing->asCreature();
-        else if(thing->asCreature() && !thing->asLocalPlayer())
+        else if(thing->isCreature() && !thing->isLocalPlayer())
             return thing->asCreature();
     }
     if(!creature && !m_walkingCreatures.empty())
@@ -341,7 +344,7 @@ ThingPtr Tile::getTopMoveThing()
 
     for(uint i = 0; i < m_things.size(); ++i) {
         ThingPtr thing = m_things[i];
-        if(!thing->isGround() && !thing->isGroundBorder() && !thing->isOnBottom() && !thing->isOnTop() && !thing->asCreature()) {
+        if(!thing->isGround() && !thing->isGroundBorder() && !thing->isOnBottom() && !thing->isOnTop() && !thing->isCreature()) {
             if(i > 0 && thing->isNotMoveable())
                 return m_things[i-1];
             return thing;

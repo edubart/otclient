@@ -92,6 +92,7 @@ public:
     bool isRemoved() { return m_removed; }
 
     CreaturePtr asCreature() { return std::static_pointer_cast<Creature>(shared_from_this()); }
+    bool isCreature() { return true; }
 
 protected:
     virtual void updateWalkAnimation(int totalPixelsWalked);
@@ -142,11 +143,13 @@ protected:
 class Npc : public Creature {
 public:
     NpcPtr asNpc() { return std::static_pointer_cast<Npc>(shared_from_this()); }
+    bool isNpc() { return true; }
 };
 
 class Monster : public Creature {
 public:
     MonsterPtr asMonster() { return std::static_pointer_cast<Monster>(shared_from_this()); }
+    bool isMonster() { return true; }
 };
 
 #endif

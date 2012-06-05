@@ -32,8 +32,8 @@ void UICreature::drawSelf(bool foregroundPane)
     UIWidget::drawSelf(foregroundPane);
 
     if(m_creature) {
-        g_painter->setColor(Color::white);
         Rect drawRect = getPaddingRect();
+        g_painter->setColor(Color::white);
         m_creature->drawOutfit(drawRect, !m_fixedCreatureSize);
     }
 }

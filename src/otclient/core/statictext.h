@@ -43,6 +43,7 @@ public:
     void removeMessage();
 
     StaticTextPtr asStaticText() { return std::static_pointer_cast<StaticText>(shared_from_this()); }
+    bool isStaticText() { return true; }
 
 private:
     void compose();

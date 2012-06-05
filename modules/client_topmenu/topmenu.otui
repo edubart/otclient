@@ -85,4 +85,4 @@ TopPanel
         rootWidget:recursiveGetChildById('frameCounter'):setText('FPS: ' .. g_app.getBackgroundPaneFps())
         scheduleEvent(updateFunc, 250)
       end
-      updateFunc()
+      addEvent(updateFunc)
