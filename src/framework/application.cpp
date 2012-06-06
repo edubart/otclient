@@ -208,7 +208,7 @@ void Application::run()
                     m_foregroundFrameCounter.processNextFrame();
 
                     // draw foreground
-                    g_painter->clearScreen();
+                    g_painter->clear(Color::black);
                     g_ui.render(true);
 
                     // copy the foreground to a texture

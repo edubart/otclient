@@ -235,8 +235,7 @@ void Graphics::resize(const Size& size)
 
 void Graphics::beginRender()
 {
-    //glClearColor(0, 0, 0, 1);
-    //glClear(GL_COLOR_BUFFER_BIT);
+    //g_painter->clear(Color::black);
 }
 
 void Graphics::endRender()

@@ -24,7 +24,6 @@
 #define INPUTMESSAGE_H
 
 #include "declarations.h"
-#include "networkexception.h"
 #include <framework/luascript/luaobject.h>
 
 class InputMessage : public LuaObject
@@ -79,6 +78,7 @@ protected:
 private:
     bool canRead(int bytes);
     void checkRead(int bytes);
+    void checkWrite(int bytes);
 
     uint16 m_headerPos;
     uint16 m_readPos;

@@ -86,10 +86,19 @@ void Painter::restoreSavedState()
     setTexture(m_olderStates[m_oldStateIndex].texture);
 }
 
-void Painter::clearScreen()
+void Painter::clear(const Color& color)
 {
-    glClearColor(0,0,0,1);
+    glClearColor(color.rF(), color.gF(), color.bF(), color.aF());
     glClear(GL_COLOR_BUFFER_BIT);
+}
+
+void Painter::clearRect(const Color& color, const Rect& rect)
+{
+    Rect oldClipRect = m_clipRect;
+    setClipRect(rect);
+    glClearColor(color.rF(), color.gF(), color.bF(), color.aF());
+    glClear(GL_COLOR_BUFFER_BIT);
+    setClipRect(oldClipRect);
 }
 
 void Painter::setCompositionMode(Painter::CompositionMode compositionMode)

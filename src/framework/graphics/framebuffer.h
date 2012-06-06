@@ -35,7 +35,6 @@ public:
 
     void resize(const Size& size);
     void bind();
-    void clear(const Color& color = Color::black, const Rect& rect = Rect());
     void release();
     void draw();
     void draw(const Rect& dest);

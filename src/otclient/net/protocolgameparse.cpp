@@ -319,8 +319,8 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
             prevOpcode = opcode;
         }
     } catch(stdext::exception& e) {
-        g_logger.error(stdext::format("Network exception (%d bytes unread, last opcode is %d, prev opcode is %d): %s",
-                 msg->getUnreadSize(), opcode, prevOpcode, e.what()));
+        g_logger.error(stdext::format("ProtocolGame parse message exception (%d bytes unread, last opcode is %d, prev opcode is %d): %s",
+                                      msg->getUnreadSize(), opcode, prevOpcode, e.what()));
     }
 }
 
@@ -1235,16 +1235,10 @@ void ProtocolGame::parseExtendedOpcode(const InputMessagePtr& msg)
     int opcode = msg->getU8();
     std::string buffer = msg->getString();
 
-    if(opcode == 0) {
+    if(opcode == 0)
         m_enableSendExtendedOpcode = true;
-    }
-    else {
-        try {
-            callLuaField("onExtendedOpcode", opcode, buffer);
-        } catch(stdext::exception& e) {
-            g_logger.error(stdext::format("Network exception in extended opcode %d: %s", opcode, e.what()));
-        }
-    }
+    else
+         callLuaField("onExtendedOpcode", opcode, buffer);
 }
 
 void ProtocolGame::setMapDescription(const InputMessagePtr& msg, int x, int y, int z, int width, int height)

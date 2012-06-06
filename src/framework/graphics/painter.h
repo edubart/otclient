@@ -65,7 +65,9 @@ public:
     void saveState();
     void saveAndResetState();
     void restoreSavedState();
-    void clearScreen();
+
+    void clear(const Color& color);
+    void clearRect(const Color& color, const Rect& rect);
 
     virtual void drawCoords(CoordsBuffer& coordsBuffer, DrawMode drawMode = Triangles) = 0;
     virtual void drawTextureCoords(CoordsBuffer& coordsBuffer, const TexturePtr& texture) = 0;

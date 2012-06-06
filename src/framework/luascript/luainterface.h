@@ -153,6 +153,11 @@ public:
     /// @return the generated traceback message
     std::string traceback(const std::string& errorMessage = "", int level = 0);
 
+    /// Throw a lua error if inside a lua call or generates an C++ stdext::exception
+    /// @param message is the error message wich will be displayed before the error traceback
+    /// @exception stdext::exception is thrown with the error message if the error is not captured by lua
+    void throwError(const std::string& message);
+
     /// Searches for the source of the current running function
     std::string getCurrentSourcePath(int level = 0);
 
@@ -167,7 +172,7 @@ public:
     /// if any error occurs it will be reported to stdout and returns 0 results
     /// @param requestedResults is the number of results requested to pushes onto the stack,
     /// if supplied, the call will always pushes that number of results, even if it fails
-    int protectedCall(int numArgs = 0, int requestedResults = -1);
+    int signalCall(int numArgs = 0, int requestedResults = -1);
 
     /// @brief Creates a new environment table
     /// The new environment table is redirected to the global environment (aka _G),
@@ -207,7 +212,7 @@ public:
 
     int pcall(int numArgs = 0, int numRets = 0, int errorFuncIndex = 0);
     void call(int numArgs = 0, int numRets = 0);
-    void throwError();
+    void error();
 
     int ref();
     int weakRef();
@@ -398,7 +403,7 @@ int LuaInterface::callGlobalField(const std::string& global, const std::string& 
     g_lua.getGlobalField(global, field);
     if(!g_lua.isNil()) {
         g_lua.polymorphicPush(args...);
-        return g_lua.protectedCall(sizeof...(args));
+        return g_lua.signalCall(sizeof...(args));
     } else
         g_lua.pop(1);
     return 0;

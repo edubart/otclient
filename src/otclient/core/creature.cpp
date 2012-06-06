@@ -71,15 +71,16 @@ void Creature::draw(const Point& dest, float scaleFactor, bool animate)
     if(m_showTimedSquare && animate) {
         g_painter->setColor(m_timedSquareColor);
         g_painter->drawBoundingRect(Rect(dest + (animationOffset - getDisplacement() + 2)*scaleFactor, Size(28, 28)*scaleFactor), std::max((int)(2*scaleFactor), 1));
+        g_painter->setColor(Color::white);
     }
 
     if(m_showStaticSquare && animate) {
         g_painter->setColor(m_staticSquareColor);
         g_painter->drawBoundingRect(Rect(dest + (animationOffset - getDisplacement())*scaleFactor, Size(Otc::TILE_PIXELS, Otc::TILE_PIXELS)*scaleFactor), std::max((int)(2*scaleFactor), 1));
+        g_painter->setColor(Color::white);
     }
 
     internalDrawOutfit(dest + animationOffset * scaleFactor, scaleFactor, animate, animate, m_direction);
-
 }
 
 void Creature::internalDrawOutfit(const Point& dest, float scaleFactor, bool animateWalk, bool animateIdle, Otc::Direction direction)
@@ -202,7 +203,7 @@ void Creature::drawOutfit(const Rect& destRect, bool resize)
             outfitBuffer = FrameBufferPtr(new FrameBuffer(Size(2*Otc::TILE_PIXELS, 2*Otc::TILE_PIXELS)));
 
         outfitBuffer->bind();
-        outfitBuffer->clear(Color::alpha);
+        g_painter->clear(Color::alpha);
         internalDrawOutfit(Point(Otc::TILE_PIXELS,Otc::TILE_PIXELS) + getDisplacement(), 1, false, true, Otc::South);
         outfitBuffer->release();
 

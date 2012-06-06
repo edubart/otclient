@@ -24,7 +24,6 @@
 #define OUTPUTMESSAGE_H
 
 #include "declarations.h"
-#include "networkexception.h"
 #include <framework/luascript/luaobject.h>
 
 class OutputMessage : public LuaObject

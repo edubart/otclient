@@ -94,7 +94,7 @@ int LuaObject::callLuaField(const std::string& field, const T&... args) {
         // the first argument is always this object (self)
         g_lua.insert(-2);
         g_lua.polymorphicPush(args...);
-        return g_lua.protectedCall(1 + sizeof...(args));
+        return g_lua.signalCall(1 + sizeof...(args));
     } else {
         g_lua.pop(2);
     }

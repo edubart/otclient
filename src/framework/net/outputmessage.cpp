@@ -71,7 +71,7 @@ void OutputMessage::addString(const std::string& buffer)
 {
     int len = buffer.length();
     if(len > MAX_STRING_LENGTH)
-        throw NetworkException("string length > MAX_STRING_LENGTH");
+        g_lua.throwError(stdext::format("string length > %d", MAX_STRING_LENGTH));
     checkWrite(len + 2);
     addU16(len);
     memcpy((char*)(m_buffer + m_writePos), buffer.c_str(), len);
@@ -91,8 +91,8 @@ void OutputMessage::addPaddingBytes(int bytes, uint8 byte)
 
 void OutputMessage::encryptRSA(int size, const std::string& key)
 {
-    if(m_writePos - size < 0)
-        throw NetworkException("writePos - size < 0");
+    if(m_messageSize < size)
+        g_lua.throwError("insufficient bytes in buffer to encrypt");
 
     RSA::encrypt((char*)m_buffer + m_writePos - size, size, key.c_str());
 }
@@ -124,5 +124,5 @@ bool OutputMessage::canWrite(int bytes)
 void OutputMessage::checkWrite(int bytes)
 {
     if(!canWrite(bytes))
-        throw NetworkException("OutputMessage max buffer size reached");
+        g_lua.throwError("OutputMessage max buffer size reached");
 }

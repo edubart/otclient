@@ -81,27 +81,15 @@ void FrameBuffer::resize(const Size& size)
     }
 }
 
-void FrameBuffer::clear(const Color& color, const Rect& rect)
-{
-    bool clip = rect.isValid();
-    if(clip)
-        g_painter->setClipRect(Rect(0, 0, m_texture->getSize()));
-
-    glClearColor(color.rF(), color.gF(), color.bF(), color.aF());
-    glClear(GL_COLOR_BUFFER_BIT);
-
-    if(clip)
-        g_painter->resetClipRect();
-}
-
 void FrameBuffer::bind()
 {
+    g_painter->saveAndResetState();
+
     internalBind();
 
     Matrix3 projectionMatrix = { 2.0f/m_texture->getWidth(),  0.0f,                         0.0f,
                                  0.0f,                       -2.0f/m_texture->getHeight(),  0.0f,
                                 -1.0f,                        1.0f,                         1.0f };
-    g_painter->saveAndResetState();
     g_painter->setProjectionMatrix(projectionMatrix);
 
     m_oldViewportSize = g_graphics.getViewportSize();
@@ -111,8 +99,8 @@ void FrameBuffer::bind()
 void FrameBuffer::release()
 {
     internalRelease();
-    g_painter->restoreSavedState();
     g_graphics.setViewportSize(m_oldViewportSize);
+    g_painter->restoreSavedState();
 }
 
 void FrameBuffer::draw()
@@ -157,9 +145,10 @@ void FrameBuffer::internalRelease()
         m_texture->copyFromScreen(screenRect);
 
         // restore screen original content
+        Painter::CompositionMode oldComposition = g_painter->getCompositionMode();
         g_painter->setCompositionMode(Painter::CompositionMode_Replace);
         g_painter->drawTexturedRect(screenRect, m_screenBackup, screenRect);
-        g_painter->resetCompositionMode();
+        g_painter->setCompositionMode(oldComposition);
     }
 }
 

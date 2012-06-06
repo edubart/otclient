@@ -37,10 +37,12 @@ void InputMessage::reset()
 
 void InputMessage::setBuffer(const std::string& buffer)
 {
-    memcpy(m_buffer + MAX_HEADER_SIZE, buffer.c_str(), buffer.size());
+    int len = buffer.size();
+    checkWrite(MAX_HEADER_SIZE + len);
+    memcpy(m_buffer + MAX_HEADER_SIZE, buffer.c_str(), len);
     m_readPos = MAX_HEADER_SIZE;
     m_headerPos = MAX_HEADER_SIZE;
-    m_messageSize = buffer.size();
+    m_messageSize = len;
 }
 
 uint8 InputMessage::getU8()
@@ -92,19 +94,21 @@ void InputMessage::decryptRSA(int size, const std::string& p, const std::string&
 
 void InputMessage::fillBuffer(uint8 *buffer, uint16 size)
 {
+    checkWrite(m_readPos + size);
     memcpy(m_buffer + m_readPos, buffer, size);
     m_messageSize += size;
 }
 
 void InputMessage::setHeaderSize(uint16 size)
 {
+    assert(MAX_HEADER_SIZE - size >= 0);
     m_headerPos = MAX_HEADER_SIZE - size;
     m_readPos = m_headerPos;
 }
 
 bool InputMessage::readChecksum()
 {
-    uint32_t receivedCheck = getU32();
+    uint32 receivedCheck = getU32();
     uint32 checksum = stdext::adler32(m_buffer + m_readPos, getUnreadSize());
     return receivedCheck == checksum;
 }
@@ -115,10 +119,14 @@ bool InputMessage::canRead(int bytes)
         return false;
     return true;
 }
-
 void InputMessage::checkRead(int bytes)
 {
     if(!canRead(bytes))
-        throw NetworkException("InputMessage eof reached");
+        g_lua.throwError("InputMessage eof reached");
 }
 
+void InputMessage::checkWrite(int bytes)
+{
+    if(bytes > BUFFER_MAXSIZE)
+        g_lua.throwError("InputMessage max buffer size reached");
+}

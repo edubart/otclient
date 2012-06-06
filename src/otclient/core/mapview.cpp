@@ -75,7 +75,7 @@ void MapView::draw(const Rect& rect)
 
         if(m_mustCleanFramebuffer) {
             Rect clearRect = Rect(0, 0, m_drawDimension * m_tileSize);
-            m_framebuffer->clear(Color::black, clearRect);
+            g_painter->clearRect(Color::black, clearRect);
         }
 
         auto it = m_cachedVisibleTiles.begin();

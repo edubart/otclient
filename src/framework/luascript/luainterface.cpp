@@ -197,7 +197,7 @@ int LuaInterface::luaObjectGetEvent(LuaInterface* lua)
     lua->remove(-2); // remove obj fieldmethods
     if(!lua->isNil()) { // is the get method not nil?
         lua->insert(-2); // moves obj to the top
-        lua->protectedCall(1, 1); // calls get method, arguments: obj
+        lua->signalCall(1, 1); // calls get method, arguments: obj
         return 1;
     }
     lua->pop(); // pops the nil get method
@@ -242,7 +242,7 @@ int LuaInterface::luaObjectSetEvent(LuaInterface* lua)
     if(!lua->isNil()) { // is the set method not nil?
         lua->insert(-3); // moves func to -3
         lua->insert(-2); // moves obj to -2, and value to -1
-        lua->protectedCall(2, 0); // calls set method, arguments: obj, value
+        lua->signalCall(2, 0); // calls set method, arguments: obj, value
         return 0;
     }
     lua->pop(); // pops the nil set method
@@ -373,6 +373,15 @@ std::string LuaInterface::traceback(const std::string& errorMessage, int level)
     return popString();
 }
 
+void LuaInterface::throwError(const std::string& message)
+{
+    if(isInCppCallback()) {
+        pushString(message);
+        error();
+    } else
+        throw stdext::exception(message);
+}
+
 std::string LuaInterface::getCurrentSourcePath(int level)
 {
     std::string path;
@@ -425,7 +434,7 @@ int LuaInterface::safeCall(int numArgs)
     return (stackSize() + numArgs + 1) - previousStackSize;
 }
 
-int LuaInterface::protectedCall(int numArgs, int requestedResults)
+int LuaInterface::signalCall(int numArgs, int requestedResults)
 {
     int numRets = 0;
     int funcIndex = -numArgs-1;
@@ -683,7 +692,7 @@ void LuaInterface::call(int numArgs, int numRets)
     lua_call(L, numArgs, numRets);
 }
 
-void LuaInterface::throwError()
+void LuaInterface::error()
 {
     assert(hasIndex(-1));
     lua_error(L);
