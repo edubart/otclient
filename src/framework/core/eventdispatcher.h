@@ -32,7 +32,7 @@ class Event : public LuaObject
 public:
     Event(const std::function<void()>& callback) : m_callback(callback), m_canceled(false), m_executed(false) { }
 
-    void execute() {
+    virtual void execute() {
         if(!m_canceled && !m_executed && m_callback) {
             m_callback();
             m_executed = true;
@@ -52,15 +52,42 @@ protected:
 class ScheduledEvent : public Event
 {
 public:
-    ScheduledEvent(const std::function<void()>& callback, int delay) : Event(callback) {
+    ScheduledEvent(const std::function<void()>& callback, int delay, int maxCycles) : Event(callback) {
         m_ticks = g_clock.millis() + delay;
+        m_delay = delay;
+        m_maxCycles = maxCycles;
+        m_cyclesExecuted = 0;
+    }
+
+    void execute() {
+        if(!m_canceled && m_callback && (m_maxCycles == 0 || m_cyclesExecuted < m_maxCycles)) {
+            m_callback();
+            m_executed = true;
+        }
+        m_cyclesExecuted++;
+    }
+
+    bool nextCycle() {
+        if(m_canceled)
+            return false;
+        if(m_maxCycles == 0 || m_cyclesExecuted < m_maxCycles) {
+            m_ticks += m_delay;
+            return true;
+        }
+        return false;
     }
 
     int ticks() const { return m_ticks; }
     int reamaningTicks() const { return m_ticks - g_clock.millis(); }
+    int delay() const { return m_delay; }
+    int cyclesExecuted() { return m_cyclesExecuted; }
+    int maxCycles() { return m_maxCycles; }
 
 private:
     ticks_t m_ticks;
+    int m_delay;
+    int m_maxCycles;
+    int m_cyclesExecuted;
 };
 
 struct lessScheduledEvent : std::binary_function<ScheduledEventPtr, ScheduledEventPtr&, bool> {
@@ -77,6 +104,7 @@ public:
 
     EventPtr addEvent(const std::function<void()>& callback, bool pushFront = false);
     ScheduledEventPtr scheduleEvent(const std::function<void()>& callback, int delay);
+    ScheduledEventPtr cycleEvent(const std::function<void()>& callback, int delay);
 
 private:
     std::list<EventPtr> m_eventList;

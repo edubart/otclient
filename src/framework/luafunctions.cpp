@@ -61,8 +61,12 @@ void Application::registerLuaFunctions()
 
     // ScheduledEvent
     g_lua.registerClass<ScheduledEvent, Event>();
-    g_lua.bindClassMemberFunction<ScheduledEvent>("reamaningTicks", &ScheduledEvent::reamaningTicks);
+    g_lua.bindClassMemberFunction<ScheduledEvent>("nextCycle", &ScheduledEvent::nextCycle);
     g_lua.bindClassMemberFunction<ScheduledEvent>("ticks", &ScheduledEvent::ticks);
+    g_lua.bindClassMemberFunction<ScheduledEvent>("reamaningTicks", &ScheduledEvent::reamaningTicks);
+    g_lua.bindClassMemberFunction<ScheduledEvent>("delay", &ScheduledEvent::delay);
+    g_lua.bindClassMemberFunction<ScheduledEvent>("cyclesExecuted", &ScheduledEvent::cyclesExecuted);
+    g_lua.bindClassMemberFunction<ScheduledEvent>("maxCycles", &ScheduledEvent::maxCycles);
 
     // UIWidget
     g_lua.registerClass<UIWidget>();
@@ -600,4 +604,5 @@ void Application::registerLuaFunctions()
     g_lua.registerStaticClass("g_eventDispatcher");
     g_lua.bindClassStaticFunction("g_eventDispatcher", "addEvent", std::bind(&EventDispatcher::addEvent, &g_eventDispatcher, std::placeholders::_1, std::placeholders::_2));
     g_lua.bindClassStaticFunction("g_eventDispatcher", "scheduleEvent", std::bind(&EventDispatcher::scheduleEvent, &g_eventDispatcher, std::placeholders::_1, std::placeholders::_2));
+    g_lua.bindClassStaticFunction("g_eventDispatcher", "cycleEvent", std::bind(&EventDispatcher::cycleEvent, &g_eventDispatcher, std::placeholders::_1, std::placeholders::_2));
 }

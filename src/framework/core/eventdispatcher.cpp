@@ -44,6 +44,9 @@ void EventDispatcher::poll()
             break;
         m_scheduledEventList.pop();
         scheduledEvent->execute();
+
+        if(scheduledEvent->nextCycle())
+            m_scheduledEventList.push(scheduledEvent);
     }
 
     // execute events list up to 10 times, this is needed because some events can schedule new events that would
@@ -75,7 +78,15 @@ void EventDispatcher::poll()
 ScheduledEventPtr EventDispatcher::scheduleEvent(const std::function<void()>& callback, int delay)
 {
     assert(delay >= 0);
-    ScheduledEventPtr scheduledEvent(new ScheduledEvent(callback, delay));
+    ScheduledEventPtr scheduledEvent(new ScheduledEvent(callback, delay, 1));
+    m_scheduledEventList.push(scheduledEvent);
+    return scheduledEvent;
+}
+
+ScheduledEventPtr EventDispatcher::cycleEvent(const std::function<void()>& callback, int delay)
+{
+    assert(delay > 0);
+    ScheduledEventPtr scheduledEvent(new ScheduledEvent(callback, delay, 0));
     m_scheduledEventList.push(scheduledEvent);
     return scheduledEvent;
 }

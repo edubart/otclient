@@ -41,6 +41,13 @@ function addEvent(callback, front)
   return event
 end
 
+function cycleEvent(callback, front)
+  local event = g_eventDispatcher.cycleEvent(callback, front)
+  -- must hold a reference to the callback, otherwise it would be collected
+  event._callback = callback
+  return event
+end
+
 
 function periodicalEvent(eventFunc, conditionFunc, delay, autoRepeatDelay)
   delay = delay or 30

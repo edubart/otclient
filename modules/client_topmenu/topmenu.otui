@@ -80,9 +80,6 @@ TopPanel
     margin-top: 8
     margin-right: 5
     @onSetup: |
-      local updateFunc
-      updateFunc = function()
+      cycleEvent(function()
         rootWidget:recursiveGetChildById('frameCounter'):setText('FPS: ' .. g_app.getBackgroundPaneFps())
-        scheduleEvent(updateFunc, 250)
-      end
-      addEvent(updateFunc)
+      end, 250)
