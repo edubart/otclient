@@ -974,42 +974,50 @@ void* LuaInterface::popUpvalueUserdata()
 void LuaInterface::pushNil()
 {
     lua_pushnil(L);
+    checkStack();
 }
 
 void LuaInterface::pushInteger(int v)
 {
     lua_pushinteger(L, v);
+    checkStack();
 }
 
 void LuaInterface::pushNumber(double v)
 {
     lua_pushnumber(L, v);
+    checkStack();
 }
 
 void LuaInterface::pushBoolean(bool v)
 {
     lua_pushboolean(L, v);
+    checkStack();
 }
 
 void LuaInterface::pushCString(const char* v)
 {
     assert(v);
     lua_pushstring(L, v);
+    checkStack();
 }
 
 void LuaInterface::pushString(const std::string& v)
 {
     lua_pushlstring(L, v.c_str(), v.length());
+    checkStack();
 }
 
 void LuaInterface::pushLightUserdata(void* p)
 {
     lua_pushlightuserdata(L, p);
+    checkStack();
 }
 
 void LuaInterface::pushThread()
 {
     lua_pushthread(L);
+    checkStack();
 }
 
 void LuaInterface::pushObject(const LuaObjectPtr& obj)
@@ -1026,6 +1034,7 @@ void LuaInterface::pushObject(const LuaObjectPtr& obj)
 void LuaInterface::pushCFunction(LuaCFunction func, int n)
 {
     lua_pushcclosure(L, func, n);
+    checkStack();
 }
 
 void LuaInterface::pushCppFunction(const LuaCppFunction& func)
@@ -1047,6 +1056,7 @@ void LuaInterface::pushValue(int index)
 {
     assert(hasIndex(index));
     lua_pushvalue(L, index);
+    checkStack();
 }
 
 bool LuaInterface::isNil(int index)

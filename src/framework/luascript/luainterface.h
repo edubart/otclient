@@ -221,6 +221,7 @@ public:
     void remove(int index);
     bool next(int index = -2);
 
+    void checkStack() { assert(getTop() <= 20); }
     void getStackFunction(int level = 0);
 
     void getRef(int ref);
