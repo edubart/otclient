@@ -857,4 +857,3 @@ std::string WIN32Window::getPlatformType()
 {
     return "WIN32-WGL";
 }
-

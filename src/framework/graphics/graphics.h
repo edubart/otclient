@@ -55,6 +55,11 @@ public:
     const Size& getViewportSize() { return m_viewportSize; }
     TexturePtr& getEmptyTexture() { return m_emptyTexture; }
 
+    std::string getVendor() { return (const char*)glGetString(GL_VENDOR); }
+    std::string getRenderer() { return (const char*)glGetString(GL_RENDERER); }
+    std::string getVersion() { return (const char*)glGetString(GL_VERSION); }
+    std::string getExtensions() { return (const char*)glGetString(GL_EXTENSIONS); }
+
     bool canUseDrawArrays();
     bool canUseShaders();
     bool canUseFBO();

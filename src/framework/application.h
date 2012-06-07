@@ -59,6 +59,8 @@ public:
 
     int getForegroundPaneFps() { return m_foregroundFrameCounter.getLastFps(); }
     int getBackgroundPaneFps() { return m_backgroundFrameCounter.getLastFps(); }
+    int getForegroundPaneMaxFps() { return m_foregroundFrameCounter.getMaxFps(); }
+    int getBackgroundPaneMaxFps() { return m_backgroundFrameCounter.getMaxFps(); }
     std::string getBuildCompiler() { return BUILD_COMPILER; }
     std::string getBuildDate() { return BUILD_DATE; }
     std::string getBuildRevision() { return BUILD_REVISION; }

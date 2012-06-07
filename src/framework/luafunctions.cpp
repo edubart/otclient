@@ -477,6 +477,8 @@ void Application::registerLuaFunctions()
     g_lua.bindClassStaticFunction("g_app", "getVersion", std::bind(&Application::getVersion, g_app));
     g_lua.bindClassStaticFunction("g_app", "getForegroundPaneFps", std::bind(&Application::getForegroundPaneFps, g_app));
     g_lua.bindClassStaticFunction("g_app", "getBackgroundPaneFps", std::bind(&Application::getBackgroundPaneFps, g_app));
+    g_lua.bindClassStaticFunction("g_app", "getForegroundPaneMaxFps", std::bind(&Application::getForegroundPaneMaxFps, g_app));
+    g_lua.bindClassStaticFunction("g_app", "getBackgroundPaneMaxFps", std::bind(&Application::getBackgroundPaneMaxFps, g_app));
     g_lua.bindClassStaticFunction("g_app", "getBuildCompiler", std::bind(&Application::getBuildCompiler, g_app));
     g_lua.bindClassStaticFunction("g_app", "getBuildDate", std::bind(&Application::getBuildDate, g_app));
     g_lua.bindClassStaticFunction("g_app", "getBuildRevision", std::bind(&Application::getBuildRevision, g_app));
@@ -548,6 +550,10 @@ void Application::registerLuaFunctions()
     g_lua.bindClassStaticFunction("g_graphics", "isPainterEngineAvailable", std::bind(&Graphics::isPainterEngineAvailable, &g_graphics, std::placeholders::_1));
     g_lua.bindClassStaticFunction("g_graphics", "selectPainterEngine", std::bind(&Graphics::selectPainterEngine, &g_graphics, std::placeholders::_1));
     g_lua.bindClassStaticFunction("g_graphics", "getPainterEngine", std::bind(&Graphics::getPainterEngine, &g_graphics));
+    g_lua.bindClassStaticFunction("g_graphics", "getViewportSize", std::bind(&Graphics::getViewportSize, &g_graphics));
+    g_lua.bindClassStaticFunction("g_graphics", "getVendor", std::bind(&Graphics::getVendor, &g_graphics));
+    g_lua.bindClassStaticFunction("g_graphics", "getRenderer", std::bind(&Graphics::getRenderer, &g_graphics));
+    g_lua.bindClassStaticFunction("g_graphics", "getVersion", std::bind(&Graphics::getVersion, &g_graphics));
 
     // Logger
     g_lua.registerStaticClass("g_logger");
