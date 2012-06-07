@@ -21,11 +21,16 @@ SET(CXX_WARNS "-Wall -Wextra -Werror -Wno-unused-parameter -Wno-unused-but-set-v
 SET(CMAKE_CXX_FLAGS                   "${CMAKE_CXX_FLAGS} ${CXX_WARNS} -std=gnu++0x -pipe")
 SET(CMAKE_CXX_FLAGS_DEBUG             "-O0 -ggdb")
 SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO    "-O1 -ggdb")
-SET(CMAKE_CXX_FLAGS_RELEASE           "-Ofast -fomit-frame-pointer -mmmx -msse -msse2 -mfpmath=sse")
+
+# -ffast-math => has historical behaviour that may cause the app to work incorrectly or crash
+# -msse -msse2 -mfpmath=sse => I have experienced crashs with these optimizations on some windows machines
+#SET(CMAKE_CXX_FLAGS_RELEASE           "-O3 -ffast-math -msse -msse2 -mfpmath=sse")
+SET(CMAKE_CXX_FLAGS_RELEASE           "-O3")
+
 SET(CMAKE_CXX_LINK_FLAGS              "${CMAKE_CXX_LINK_FLAGS} -static-libgcc -static-libstdc++ -Wl,--as-needed")
 
 IF(CMAKE_BUILD_TYPE STREQUAL "Release")
-    SET(CMAKE_CXX_LINK_FLAGS              "${CMAKE_CXX_LINK_FLAGS} -Wl,-O1,--sort-common,--relax,-s")
+    SET(CMAKE_CXX_LINK_FLAGS              "${CMAKE_CXX_LINK_FLAGS} -Wl,-s")
 ENDIF()
 
 MESSAGE(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
