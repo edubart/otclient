@@ -3,7 +3,7 @@ Options = {}
 local optionsWindow
 local optionsButton
 local optionsTabBar
-local options = { vsync = true,
+local options = { vsync = false,
                   showfps = true,
                   fullscreen = false,
                   classicControl = false,
