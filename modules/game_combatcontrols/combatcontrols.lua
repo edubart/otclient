@@ -11,7 +11,7 @@ local safeFightButton
 local fightModeRadioGroup
 
 -- private functions
-local function onFightModeChange(self, selectedFightButton)
+local function onSetFightMode(self, selectedFightButton)
   if selectedFightButton == nil then return end
   local buttonId = selectedFightButton:getId()
   local fightMode
@@ -22,28 +22,21 @@ local function onFightModeChange(self, selectedFightButton)
   else
     fightMode = FightDefensive
   end
-  if g_game.getFightMode() ~= fightMode then
-    g_game.setFightMode(fightMode)
-  end
+  g_game.setFightMode(fightMode)
 end
 
-local function onChaseModeChange(self, checked)
+local function onSetChaseMode(self, checked)
   local chaseMode
   if checked then
     chaseMode = ChaseOpponent
   else
     chaseMode = DontChase
   end
-  if g_game.getChaseMode() ~= chaseMode then
-    g_game.setChaseMode(chaseMode)
-  end
+  g_game.setChaseMode(chaseMode)
 end
 
-local function onSafeFightChange(self, checked)
-  local safeFight = not checked
-  if g_game.isSafeFight() ~= safeFight then
-    g_game.setSafeFight(not checked)
-  end
+local function onSetSafeFight(self, checked)
+  g_game.setSafeFight(not checked)
 end
 
 -- public functions
@@ -63,11 +56,16 @@ function CombatControls.init()
   fightModeRadioGroup:addWidget(fightBalancedBox)
   fightModeRadioGroup:addWidget(fightDefensiveBox)
 
-  connect(fightModeRadioGroup, { onSelectionChange = onFightModeChange })
-  connect(chaseModeButton, { onCheckChange = onChaseModeChange })
-  connect(safeFightButton, { onCheckChange = onSafeFightChange })
-  connect(g_game, { onGameStart = CombatControls.online })
-  connect(g_game, { onGameEnd = CombatControls.offline })
+  connect(fightModeRadioGroup, { onSelectionChange = onSetFightMode })
+  connect(chaseModeButton, { onCheckChange = onSetChaseMode })
+  connect(safeFightButton, { onCheckChange = onSetSafeFight })
+  connect(g_game, {
+    onGameStart = CombatControls.online,
+    onGameEnd = CombatControls.offline,
+    onFightModeChange = CombatControls.update,
+    onChaseModeChange = CombatControls.update,
+    onSafeFightChange = CombatControls.update
+  })
 
   if g_game.isOnline() then
     CombatControls.online()
@@ -94,15 +92,18 @@ function CombatControls.terminate()
   combatControlsWindow:destroy()
   combatControlsWindow = nil
 
-  disconnect(g_game, { onGameStart = CombatControls.online })
-  disconnect(g_game, { onGameEnd = CombatControls.offline })
+  disconnect(g_game, {
+    onGameStart = CombatControls.online,
+    onGameEnd = CombatControls.offline,
+    onFightModeChange = CombatControls.update,
+    onChaseModeChange = CombatControls.update,
+    onSafeFightChange = CombatControls.update
+  })
 
   CombatControls = nil
 end
 
-function CombatControls.online()
-  combatControlsWindow:setVisible(combatControlsButton:isOn())
-
+function CombatControls.update()
   local fightMode = g_game.getFightMode()
   if fightMode == FightOffensive then
     fightModeRadioGroup:selectWidget(fightOffensiveBox)
@@ -117,6 +118,11 @@ function CombatControls.online()
 
   local safeFight = g_game.isSafeFight()
   safeFightButton:setChecked(not safeFight)
+end
+
+function CombatControls.online()
+  combatControlsWindow:setVisible(combatControlsButton:isOn())
+  CombatControls.update()
 end
 
 function CombatControls.offline()

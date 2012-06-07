@@ -487,6 +487,9 @@ void Game::forceWalk(Otc::Direction direction)
     if(!canPerformGameAction())
         return;
 
+    // always cancel chasing attacks
+    setChaseMode(Otc::DontChase);
+
     switch(direction) {
     case Otc::North:
         m_protocolGame->sendWalkNorth();
@@ -879,24 +882,33 @@ void Game::setChaseMode(Otc::ChaseModes chaseMode)
 {
     if(!canPerformGameAction())
         return;
+    if(m_chaseMode == chaseMode)
+        return;
     m_chaseMode = chaseMode;
     m_protocolGame->sendChangeFightModes(m_fightMode, m_chaseMode, m_safeFight);
+    g_lua.callGlobalField("g_game", "onChaseModeChange", chaseMode);
 }
 
 void Game::setFightMode(Otc::FightModes fightMode)
 {
     if(!canPerformGameAction())
         return;
+    if(m_fightMode == fightMode)
+        return;
     m_fightMode = fightMode;
     m_protocolGame->sendChangeFightModes(m_fightMode, m_chaseMode, m_safeFight);
+    g_lua.callGlobalField("g_game", "onFightModeChange", fightMode);
 }
 
 void Game::setSafeFight(bool on)
 {
     if(!canPerformGameAction())
         return;
+    if(m_safeFight == on)
+        return;
     m_safeFight = on;
     m_protocolGame->sendChangeFightModes(m_fightMode, m_chaseMode, m_safeFight);
+    g_lua.callGlobalField("g_game", "onSafeFightChange", on);
 }
 
 void Game::inspectNpcTrade(const ItemPtr& item)
