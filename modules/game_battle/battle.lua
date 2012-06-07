@@ -256,8 +256,7 @@ function Battle.onMouseRelease(self, mousePosition, mouseButton)
     GameInterface.createThingMenu(mousePosition, nil, nil, self.creature)
     return true
   elseif mouseButton == MouseLeftButton then
-    local modifiers = g_window.getKeyboardModifiers()
-    if modifiers == KeyboardShiftModifier then
+    if Keyboard.isShiftPressed() then
       g_game.look(self.creature)
     else
       if self.isTarget then

@@ -68,9 +68,18 @@ end
 function HotkeysManager.load()
   local hotkeySettings = Settings.getNode('HotkeysManager')
 
+  local hasCombos = false
   if hotkeySettings ~= nil then
     for i, v in pairs(hotkeySettings) do
       HotkeysManager.addKeyCombo(nil, v.keyCombo, v)
+      hasCombos = true
+    end
+  end
+
+  -- add default F keys combos
+  if not hasCombos then
+    for i=1,12 do
+      HotkeysManager.addKeyCombo(nil, 'F' .. i, nil)
     end
   end
 end

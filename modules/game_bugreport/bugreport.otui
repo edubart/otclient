@@ -8,10 +8,10 @@ BugReportWindow < MainWindow
     id: bugLabel
     !text: tr('Please use this dialog to only report bugs. Do not report rule violations here!')
     text-wrap: true
+    text-auto-resize: true
     anchors.top: parent.top
     anchors.left: parent.left
     anchors.right: parent.right
-    height: 32
 
   MultilineTextEdit
     id: bugTextEdit

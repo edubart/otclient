@@ -134,3 +134,19 @@ function Keyboard.unbindKeyPress(keyComboDesc, widget)
     widget.boundKeyPressCombos[keyComboDesc] = nil
   end
 end
+
+function Keyboard.getModifiers()
+  return g_window.getKeyboardModifiers()
+end
+
+function Keyboard.isCtrlPressed()
+  return bit32.band(g_window.getKeyboardModifiers(), KeyboardCtrlModifier) ~= 0
+end
+
+function Keyboard.isAltPressed()
+  return bit32.band(g_window.getKeyboardModifiers(), KeyboardAltModifier) ~= 0
+end
+
+function Keyboard.isShiftPressed()
+  return bit32.band(g_window.getKeyboardModifiers(), KeyboardShiftModifier) ~= 0
+end

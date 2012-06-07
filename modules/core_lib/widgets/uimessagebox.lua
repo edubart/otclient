@@ -19,7 +19,7 @@ function UIMessageBox.display(title, message, flags)
   messageLabel:setText(message)
   messageLabel:resizeToText()
 
-  messagebox:setWidth(math.max(messageLabel:getWidth() + 48, messagebox:getWidth()))
+  messagebox:setWidth(math.max(messageLabel:getWidth() + 48, messagebox:getTextSize().width + 20))
   messagebox:setHeight(math.max(messageLabel:getHeight() + 64, messagebox:getHeight()))
 
   -- setup messagebox first button

@@ -52,6 +52,7 @@ function GameInterface.init()
   Keyboard.bindKeyPress('Ctrl+=', function() gameMapPanel:zoomIn() end, gameRootPanel, 250)
   Keyboard.bindKeyPress('Ctrl+-', function() gameMapPanel:zoomOut() end, gameRootPanel, 250)
   Keyboard.bindKeyDown('Ctrl+Q', GameInterface.tryLogout, gameRootPanel)
+  Keyboard.bindKeyDown('Ctrl+L', GameInterface.tryLogout, gameRootPanel)
 
   if g_game.isOnline() then
     GameInterface.show()
@@ -280,7 +281,7 @@ function GameInterface.createThingMenu(menuPosition, lookThing, useThing, creatu
 end
 
 function GameInterface.processMouseAction(menuPosition, mouseButton, autoWalk, lookThing, useThing, creatureThing, multiUseThing)
-  local keyboardModifiers = g_window.getKeyboardModifiers()
+  local keyboardModifiers = Keyboard.getModifiers()
 
   if autoWalk and keyboardModifiers == KeyboardNoModifier and mouseButton == MouseLeftButton then
     -- todo auto walk
@@ -351,8 +352,15 @@ function GameInterface.processMouseAction(menuPosition, mouseButton, autoWalk, l
 end
 
 function GameInterface.moveStackableItem(item, toPos)
-  local count = item:getCount()
+  if Keyboard.isCtrlPressed() then
+    g_game.move(item, toPos, item:getCount())
+    return
+  elseif Keyboard.isShiftPressed() then
+    g_game.move(item, toPos, 1)
+    return
+  end
 
+  local count = item:getCount()
   local countWindow = createWidget('CountWindow', rootWidget)
   local spinbox = countWindow:getChildById('countSpinBox')
   local scrollbar = countWindow:getChildById('countScrollBar')

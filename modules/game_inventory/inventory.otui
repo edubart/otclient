@@ -95,4 +95,5 @@ MiniWindow
       anchors.left: slot10.left
       margin-top: 5
       text-align: center
+      text-auto-resize: true
 
