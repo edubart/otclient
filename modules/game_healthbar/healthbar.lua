@@ -47,6 +47,7 @@ function HealthBar.init()
     local localPlayer = g_game.getLocalPlayer()
     HealthBar.onHealthChange(localPlayer, localPlayer:getHealth(), localPlayer:getMaxHealth())
     HealthBar.onManaChange(localPlayer, localPlayer:getMana(), localPlayer:getMaxMana())
+    HealthBar.onStatesChange(localPlayer, localPlayer:getStates(), 0)
   end
 end
 
@@ -98,6 +99,8 @@ function HealthBar.onManaChange(localPlayer, mana, maxMana)
 end
 
 function HealthBar.onStatesChange(localPlayer, now, old)
+  if now == old then return end
+  
   local bitsChanged = bit32.bxor(now, old)
   for i = 1, 32 do
     local pow = math.pow(2, i-1)
