@@ -35,7 +35,14 @@ void UIItem::drawSelf(bool foregroundPane)
     if(!foregroundPane)
         return;
 
-    UIWidget::drawSelf(foregroundPane);
+    // draw style components in order
+    if(m_backgroundColor.aF() > Fw::MIN_ALPHA) {
+        Rect backgroundDestRect = m_rect;
+        backgroundDestRect.expand(-m_borderWidth.top, -m_borderWidth.right, -m_borderWidth.bottom, -m_borderWidth.left);
+        drawBackground(m_rect);
+    }
+
+    drawImage(m_rect);
 
     if(m_item) {
         Rect drawRect = getPaddingRect();
@@ -59,6 +66,10 @@ void UIItem::drawSelf(bool foregroundPane)
         // debug, show item id
         //m_font->drawText(stdext::to_string(m_item->getId()), m_rect, Fw::AlignBottomRight);
     }
+
+    drawBorder(m_rect);
+    drawIcon(m_rect);
+    drawText(m_rect);
 }
 
 void UIItem::setItemId(int id)
