@@ -83,6 +83,8 @@ TopPanel
       cycleEvent(function()
         local frameCounter = rootWidget:recursiveGetChildById('frameCounter')
         if frameCounter then
-          frameCounter:setText('FPS: ' .. g_app.getBackgroundPaneFps())
+          local text = 'FPS: ' .. g_app.getBackgroundPaneFps()
+          frameCounter:setText(text)
+          --print(text)
         end
       end, 250)

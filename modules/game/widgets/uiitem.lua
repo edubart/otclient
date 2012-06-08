@@ -41,6 +41,7 @@ end
 
 function UIItem:onHoverChange(hovered)
   UIWidget.onHoverChange(self, hovered)
+
   if self:isVirtual() then return end
 
   local draggingWidget = g_ui.getDraggingWidget()

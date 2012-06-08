@@ -70,6 +70,7 @@ public:
     bool canUseHardwareMipmaps();
     bool canUseClampToEdge();
     bool canUseBlendFuncSeparate();
+    bool canCacheBackbuffer();
 
 private:
     Size m_viewportSize;
@@ -84,6 +85,7 @@ private:
     Boolean<true> m_useMipmaps;
     Boolean<true> m_useHardwareMipmaps;
     Boolean<true> m_useClampToEdge;
+    Boolean<true> m_cacheBackbuffer;
     PainterEngine m_prefferedPainterEngine;
     PainterEngine m_selectedPainterEngine;
 };

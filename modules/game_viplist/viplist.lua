@@ -12,14 +12,17 @@ function VipList.init()
                     onVipStateChange = VipList.onVipStateChange })
 
 
+  Keyboard.bindKeyDown('Ctrl+P', VipList.toggle)
+
   vipWindow = displayUI('viplist.otui', GameInterface.getLeftPanel())
-  vipButton = TopMenu.addGameToggleButton('vipListButton', tr('VIP list'), 'viplist.png', VipList.toggle)
+  vipButton = TopMenu.addGameToggleButton('vipListButton', tr('VIP list') .. ' (Ctrl+P)', 'viplist.png', VipList.toggle)
   vipButton:setOn(true)
 
   VipList.refresh()
 end
 
 function VipList.terminate()
+  Keyboard.unbindKeyDown('Ctrl+P')
   disconnect(g_game, { onGameEnd = VipList.clear,
                        onAddVip = VipList.onAddVip,
                        onVipStateChange = VipList.onVipStateChange })

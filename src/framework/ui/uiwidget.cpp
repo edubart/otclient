@@ -52,27 +52,27 @@ UIWidget::~UIWidget()
 #endif
 }
 
-void UIWidget::draw(const Rect& visibleRect, bool foregroundPane)
+void UIWidget::draw(const Rect& visibleRect, Fw::DrawPane drawPane)
 {
     if(m_clipping)
         g_painter->setClipRect(visibleRect);
 
-    drawSelf(foregroundPane);
+    drawSelf(drawPane);
 
     if(m_children.size() > 0) {
         if(m_clipping)
             g_painter->setClipRect(visibleRect.intersection(getPaddingRect()));
 
-        drawChildren(visibleRect, foregroundPane);
+        drawChildren(visibleRect, drawPane);
     }
 
     if(m_clipping)
         g_painter->resetClipRect();
 }
 
-void UIWidget::drawSelf(bool foregroundPane)
+void UIWidget::drawSelf(Fw::DrawPane drawPane)
 {
-    if(!foregroundPane)
+    if((drawPane & Fw::ForegroundPane) == 0)
         return;
 
     // draw style components in order
@@ -88,7 +88,7 @@ void UIWidget::drawSelf(bool foregroundPane)
     drawText(m_rect);
 }
 
-void UIWidget::drawChildren(const Rect& visibleRect, bool foregroundPane)
+void UIWidget::drawChildren(const Rect& visibleRect, Fw::DrawPane drawPane)
 {
     // draw children
     for(const UIWidgetPtr& child : m_children) {
@@ -107,10 +107,10 @@ void UIWidget::drawChildren(const Rect& visibleRect, bool foregroundPane)
         if(child->getOpacity() < oldOpacity)
             g_painter->setOpacity(child->getOpacity());
 
-        child->draw(childVisibleRect, foregroundPane);
+        child->draw(childVisibleRect, drawPane);
 
         // debug draw box
-        if(foregroundPane && g_ui.isDrawingDebugBoxes()) {
+        if(g_ui.isDrawingDebugBoxes() && drawPane & Fw::ForegroundPane) {
             g_painter->setColor(Color::green);
             g_painter->drawBoundingRect(child->getRect());
         }
@@ -497,7 +497,10 @@ void UIWidget::applyStyle(const OTMLNodePtr& styleNode)
         callLuaField("onStyleApply", styleNode->tag(), styleNode);
 
         if(m_firstOnStyle) {
-            callLuaField("onSetup");
+            auto self = asUIWidget();
+            g_eventDispatcher.addEvent([self] {
+                self->callLuaField("onSetup");
+            });
             // always focus new child
             if(isFocusable() && isExplicitlyVisible() && isExplicitlyEnabled())
                 focus();

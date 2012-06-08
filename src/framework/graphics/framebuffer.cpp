@@ -63,7 +63,7 @@ void FrameBuffer::resize(const Size& size)
     if(m_texture && m_texture->getSize() == size)
         return;
 
-    m_texture = TexturePtr(new Texture(size.width(), size.height(), 4));
+    m_texture = TexturePtr(new Texture(size));
     m_texture->setSmooth(true);
     m_texture->setUpsideDown(true);
 
@@ -76,8 +76,10 @@ void FrameBuffer::resize(const Size& size)
             g_logger.fatal("Unable to setup framebuffer object");
         internalRelease();
     } else {
-        m_screenBackup = TexturePtr(new Texture(size.width(), size.height()));
-        m_screenBackup->setUpsideDown(true);
+        if(m_backuping) {
+            m_screenBackup = TexturePtr(new Texture(size));
+            m_screenBackup->setUpsideDown(true);
+        }
     }
 }
 
@@ -126,7 +128,7 @@ void FrameBuffer::internalBind()
         glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
         m_prevBoundFbo = boundFbo;
         boundFbo = m_fbo;
-    } else {
+    } else if(m_backuping) {
         // backup screen color buffer into a texture
         m_screenBackup->copyFromScreen(Rect(0, 0, getSize()));
     }
@@ -145,10 +147,12 @@ void FrameBuffer::internalRelease()
         m_texture->copyFromScreen(screenRect);
 
         // restore screen original content
-        Painter::CompositionMode oldComposition = g_painter->getCompositionMode();
-        g_painter->setCompositionMode(Painter::CompositionMode_Replace);
-        g_painter->drawTexturedRect(screenRect, m_screenBackup, screenRect);
-        g_painter->setCompositionMode(oldComposition);
+        if(m_backuping) {
+            Painter::CompositionMode oldComposition = g_painter->getCompositionMode();
+            g_painter->setCompositionMode(Painter::CompositionMode_Replace);
+            g_painter->drawTexturedRect(screenRect, m_screenBackup, screenRect);
+            g_painter->setCompositionMode(oldComposition);
+        }
     }
 }
 

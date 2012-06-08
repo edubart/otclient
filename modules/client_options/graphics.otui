@@ -35,7 +35,7 @@ Panel
 
   Label
     id: backgroundFrameRateLimitLabel
-    !text: tr('Background pane framerate limit: %s', 'max')
+    !text: tr('Game framerate limit: %s', 'max')
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: prev.bottom
@@ -59,12 +59,12 @@ Panel
         value = 0
       end
 
-      self:getParent():getChildById('backgroundFrameRateLimitLabel'):setText(tr('Background pane framerate limit: %s', text))
+      self:getParent():getChildById('backgroundFrameRateLimitLabel'):setText(tr('Game framerate limit: %s', text))
       g_app.setBackgroundPaneMaxFps(value)
 
   Label
     id: foregroundFrameRateLimitLabel
-    !text: tr('Foreground pane framerate limit: %s', '8')
+    !text: tr('Interface framerate limit: %s', '24')
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: prev.bottom
@@ -78,7 +78,7 @@ Panel
     margin-top: 3
     minimum: 1
     maximum: 61
-    value: 8
+    value: 61
     step: 1
     @onValueChange: |
       local value = self:getValue()
@@ -88,6 +88,6 @@ Panel
         value = 0
       end
 
-      self:getParent():getChildById('foregroundFrameRateLimitLabel'):setText(tr('Foreground pane framerate limit: %s', text))
+      self:getParent():getChildById('foregroundFrameRateLimitLabel'):setText(tr('Interface framerate limit: %s', text))
       g_app.setForegroundPaneMaxFps(value)
 

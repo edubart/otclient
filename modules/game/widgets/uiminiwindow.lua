@@ -6,10 +6,8 @@ function UIMiniWindow.create()
 end
 
 function UIMiniWindow:onSetup()
-  addEvent(function()
-    self:getChildById('closeButton').onClick = function() signalcall(self.onClose, self) end
-    self:getChildById('minimizeButton').onClick = function() signalcall(self.onMinimize, self) end
-  end)
+  self:getChildById('closeButton').onClick = function() signalcall(self.onClose, self) end
+  self:getChildById('minimizeButton').onClick = function() signalcall(self.onMinimize, self) end
 end
 
 function UIMiniWindow:onDragEnter(mousePos)

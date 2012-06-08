@@ -262,6 +262,12 @@ namespace Fw
         DraggingState = 2048,
         LastWidgetState = 4096
     };
+
+    enum DrawPane {
+        ForegroundPane = 1,
+        BackgroundPane = 2,
+        BothPanes = 3
+    };
 }
 
 #endif

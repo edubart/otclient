@@ -30,9 +30,9 @@ UIItem::UIItem()
     m_dragable = true;
 }
 
-void UIItem::drawSelf(bool foregroundPane)
+void UIItem::drawSelf(Fw::DrawPane drawPane)
 {
-    if(!foregroundPane)
+    if((drawPane & Fw::ForegroundPane) == 0)
         return;
 
     // draw style components in order

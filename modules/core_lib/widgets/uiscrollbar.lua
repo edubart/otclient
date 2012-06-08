@@ -63,10 +63,11 @@ local function updateSlider(self)
     slider:setMarginLeft(offset)
   end
 
-  if self.maximum == self.minimum then
-    self:disable()
-  else
-    self:enable()
+  local status = (self.maximum ~= self.minimum)
+
+  self:setOn(status)
+  for _i,child in pairs(self:getChildren()) do
+    child:setEnabled(status)
   end
 end
 
@@ -100,12 +101,10 @@ end
 function UIScrollBar:onSetup()
   self.setupDone = true
   signalcall(self.onValueChange, self, self.value)
-  addEvent(function()
-    Mouse.bindAutoPress(self:getChildById('decrementButton'), function() self:decrement() end)
-    Mouse.bindAutoPress(self:getChildById('incrementButton'), function() self:increment() end)
-    Mouse.bindPressMove(self:getChildById('sliderButton'), function(mousePos, mouseMoved) parseSliderPos(self, mousePos) end)
-    updateSlider(self)
-  end)
+  Mouse.bindAutoPress(self:getChildById('decrementButton'), function() self:decrement() end)
+  Mouse.bindAutoPress(self:getChildById('incrementButton'), function() self:increment() end)
+  Mouse.bindPressMove(self:getChildById('sliderButton'), function(mousePos, mouseMoved) parseSliderPos(self, mousePos) end)
+  updateSlider(self)
 end
 
 function UIScrollBar:onStyleApply(styleName, styleNode)

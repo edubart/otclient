@@ -45,21 +45,25 @@ UIMap::~UIMap()
     g_map.removeMapView(m_mapView);
 }
 
-void UIMap::drawSelf(bool foregroundPane)
+void UIMap::drawSelf(Fw::DrawPane drawPane)
 {
-    if(foregroundPane) {
-        UIWidget::drawSelf(foregroundPane);
+    UIWidget::drawSelf(drawPane);
 
+    if(drawPane & Fw::ForegroundPane) {
         // draw map border
         g_painter->setColor(Color::black);
         g_painter->drawBoundingRect(m_mapRect.expanded(1));
 
-        g_painter->saveState();
-        g_painter->setCompositionMode(Painter::CompositionMode_Replace);
-        g_painter->setColor(Color::alpha);
-        g_painter->drawFilledRect(m_mapRect);
-        g_painter->restoreSavedState();
-    } else {
+        if(drawPane != Fw::BothPanes) {
+            g_painter->saveState();
+            g_painter->setCompositionMode(Painter::CompositionMode_Replace);
+            g_painter->setColor(Color::alpha);
+            g_painter->drawFilledRect(m_mapRect);
+            g_painter->restoreSavedState();
+        }
+    }
+
+    if(drawPane & Fw::BackgroundPane) {
         g_painter->setColor(Color::white);
         m_mapView->draw(m_mapRect);
     }

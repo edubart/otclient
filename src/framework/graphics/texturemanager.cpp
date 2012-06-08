@@ -23,6 +23,7 @@
 #include "texturemanager.h"
 #include "animatedtexture.h"
 #include "graphics.h"
+#include "image.h"
 
 #include <framework/core/resourcemanager.h>
 #include <framework/thirdparty/apngloader.h>
@@ -75,10 +76,13 @@ TexturePtr TextureManager::loadPNG(std::stringstream& file)
     apng_data apng;
     if(load_apng(file, &apng) == 0) {
         if(apng.num_frames > 1) { // animated texture
-            uchar *framesdata = apng.pdata + (apng.first_frame * apng.width * apng.height * apng.bpp);
-            texture = TexturePtr(new AnimatedTexture(apng.width, apng.height, apng.bpp, apng.num_frames, framesdata, (int*)apng.frames_delay));
-        } else
-            texture = TexturePtr(new Texture(apng.width, apng.height, apng.bpp, apng.pdata));
+            //uchar *framesdata = apng.pdata + (apng.first_frame * apng.width * apng.height * apng.bpp);
+            //texture = TexturePtr(new AnimatedTexture(apng.width, apng.height, apng.bpp, apng.num_frames, framesdata, (int*)apng.frames_delay));
+            g_logger.error("animated textures is disabled for a while");
+        } else {
+            ImagePtr image = ImagePtr(new Image(Size(apng.width, apng.height), apng.bpp, apng.pdata));
+            texture = TexturePtr(new Texture(image));
+        }
         free_apng(&apng);
     }
 

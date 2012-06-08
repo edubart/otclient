@@ -44,6 +44,7 @@ local SayModes = {
 
 local MAX_HISTORY = 1000
 local MAX_LINES = 100
+local HELP_CHANNEL = 9
 
 local consolePanel
 local consoleContentPanel
@@ -221,6 +222,7 @@ function Console.init()
   -- tibia like hotkeys
   Keyboard.bindKeyDown('Ctrl+O', g_game.requestChannels)
   Keyboard.bindKeyDown('Ctrl+E', Console.removeCurrentTab)
+  Keyboard.bindKeyDown('Ctrl+H', Console.openHelp)
 end
 
 function Console.terminate()
@@ -242,6 +244,7 @@ function Console.terminate()
 
   Keyboard.unbindKeyDown('Ctrl+O')
   Keyboard.unbindKeyDown('Ctrl+E')
+  Keyboard.unbindKeyDown('Ctrl+H')
 
   if channelsWindow then
     channelsWindow:destroy()
@@ -285,6 +288,10 @@ end
 
 function Console.setTextEditText(text)
   consoleTextEdit:setText(text)
+end
+
+function Console.openHelp()
+  g_game.joinChannel(HELP_CHANNEL)
 end
 
 function Console.addTab(name, focus)

@@ -51,20 +51,45 @@ void OTClient::init(const std::vector<std::string>& args)
                 "Compiled by: ", BUILD_COMPILER, "\n",
                 "Build type: ", BUILD_TYPE, "\n");
             return;
-        } else if(arg == "-help" || arg == "--help" || arg == "-h") {
+            /*
+             *     if(option == "-no-draw-arrays")
+        m_useDrawArrays = false;
+    else if(option == "-no-fbos")
+        m_useFBO = false;
+    else if(option == "-no-mipmaps")
+        m_useMipmaps = false;
+    else if(option == "-no-hardware-mipmaps")
+        m_useHardwareMipmaps = false;
+    else if(option == "-no-smooth")
+        m_useBilinearFiltering = false;
+    else if(option == "-hardware-buffers")
+        m_useHardwareBuffers = true;
+    else if(option == "-no-non-power-of-two-textures")
+        m_useNonPowerOfTwoTextures = false;
+    else if(option == "-no-clamp-to-edge")
+        m_useClampToEdge = false;
+    else if(option == "-no-backbuffer-cache")
+        m_cacheBackbuffer = false;
+    else if(option == "-opengl1")
+        m_prefferedPainterEngine = Painter_OpenGL1;
+    else if(option == "-opengl2")
+        */
+        } else if(arg == "-help" || arg == "--help" || arg == "-h" || arg == "-?" || arg == "/?") {
             stdext::print(
                 "Usage: ", args[0], " [options]\n"
                 "Options:\n"
-                "  -help                   Display this information and exit\n"
-                "  -version                Display version and exit\n"
-                "\n"
-                "  -no-fbos                Disable usage of opengl framebuffer objects\n"
-                "  -no-mipmapping          Disable texture mipmaping\n"
-                "  -no-smoothing           Disable texture smoothing (bilinear filter)\n"
-                "  -no-hardware-buffering  Disable buffering vertex arrays in hardware\n"
-                "  -realtime-mipmapping    Improve framebuffer smoothing quality by\n"
-                "                          generating mipmaps in realtime when hardware\n"
-                "                          mipmap generation implementation is available\n");
+                "  -help                            Display this information and exit\n"
+                "  -version                         Display version and exit\n"
+                "  \n"
+                "  -no-fbos                         Disable usage of opengl framebuffer objects\n"
+                "  -no-mipmaps                      Disable texture mipmaping\n"
+                "  -no-smooth                       Disable texture smoothing (bilinear filter)\n"
+                "  -no-non-power-of-two-textures    Use only power of two textures\n"
+                "  -no-clamp-to-edge                Don't use GL_CLAMP_TO_EDGE\n"
+                "  -no-backbuffer-cache             Don't allow backbuffer caching\n"
+                "  -hardware-buffers                Cache vertex arrays in hardware\n"
+                "  -opengl1                         Use OpenGL 1.x painter\n"
+                "  -opengl2                         Use OpenGL 2.0 painter\n");
             return;
         } else {
             stdext::println("Unrecognized option '", arg, "', please see -help for available options list");

@@ -41,9 +41,9 @@ UITextEdit::UITextEdit()
     blinkCursor();
 }
 
-void UITextEdit::drawSelf(bool foregroundPane)
+void UITextEdit::drawSelf(Fw::DrawPane drawPane)
 {
-    if(!foregroundPane)
+    if((drawPane & Fw::ForegroundPane) == 0)
         return;
 
     drawBackground(m_rect);

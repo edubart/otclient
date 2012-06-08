@@ -92,12 +92,6 @@ void Graphics::init()
     if(m_maxTextureSize == -1 || m_maxTextureSize > maxTextureSize)
         m_maxTextureSize = maxTextureSize;
 
-    // check if we have alpha channel in the color buffer, because we need alpha channel for glCopyTexSubImage2D
-    GLint alphaBits = 0;
-    glGetIntegerv(GL_ALPHA_BITS, &alphaBits);
-    if(alphaBits <= 0)
-        g_logger.fatal("OpenGL visual doesn't have an alpha buffer");
-
     selectPainterEngine(m_prefferedPainterEngine);
     m_emptyTexture = TexturePtr(new Texture);
 }
@@ -143,6 +137,8 @@ bool Graphics::parseOption(const std::string& option)
         m_useNonPowerOfTwoTextures = false;
     else if(option == "-no-clamp-to-edge")
         m_useClampToEdge = false;
+    else if(option == "-no-backbuffer-cache")
+        m_cacheBackbuffer = false;
     else if(option == "-opengl1")
         m_prefferedPainterEngine = Painter_OpenGL1;
     else if(option == "-opengl2")
@@ -366,5 +362,18 @@ bool Graphics::canUseBlendFuncSeparate()
     if(!GLEW_VERSION_1_4)
         return false;
     return true;
+#endif
+}
+
+bool Graphics::canCacheBackbuffer()
+{
+#if OPENGL_ES==2
+    return m_cacheBackbuffer;
+#elif OPENGL_ES==1
+    return false;
+#else
+    if(!GLEW_VERSION_1_4)
+        return false;
+    return m_cacheBackbuffer;
 #endif
 }

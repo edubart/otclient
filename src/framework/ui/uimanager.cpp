@@ -52,9 +52,9 @@ void UIManager::terminate()
     m_pressedWidget = nullptr;
 }
 
-void UIManager::render(bool foregroundPane)
+void UIManager::render(Fw::DrawPane drawPane)
 {
-    m_rootWidget->draw(m_rootWidget->getRect(), foregroundPane);
+    m_rootWidget->draw(m_rootWidget->getRect(), drawPane);
 }
 
 void UIManager::resize(const Size& size)

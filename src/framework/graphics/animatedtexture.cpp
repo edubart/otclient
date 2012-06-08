@@ -24,7 +24,7 @@
 #include "graphics.h"
 
 #include <framework/core/eventdispatcher.h>
-
+/*
 AnimatedTexture::AnimatedTexture(int width, int height, int channels, int numFrames, uchar *framesPixels, int *framesDelay) :
     Texture(),
     m_numFrames(numFrames)
@@ -48,7 +48,7 @@ AnimatedTexture::AnimatedTexture(int width, int height, int channels, int numFra
 AnimatedTexture::~AnimatedTexture()
 {
     glDeleteTextures(m_numFrames, &m_framesTextureId[0]);
-    m_textureId = 0;
+    m_id = 0;
 }
 
 void AnimatedTexture::enableBilinearFilter()
@@ -65,7 +65,7 @@ void AnimatedTexture::processAnimation()
     m_currentFrame++;
     if(m_currentFrame >= m_numFrames)
         m_currentFrame = 0;
-    m_textureId = m_framesTextureId[m_currentFrame];
+    m_id = m_framesTextureId[m_currentFrame];
 
     AnimatedTexturePtr self = asAnimatedTexture();
 
@@ -73,3 +73,4 @@ void AnimatedTexture::processAnimation()
     if(self.use_count() > 1)
         g_eventDispatcher.scheduleEvent(std::bind(&AnimatedTexture::processAnimation, self), m_framesDelay[m_currentFrame]);
 }
+*/

@@ -319,7 +319,6 @@ void WIN32Window::internalChooseGLVisual()
     if(!pixelFormat)
         g_logger.fatal("Could not find a suitable pixel format");
 
-    pfd.cStencilBits = 8;
     if(!SetPixelFormat(m_deviceContext, pixelFormat, &pfd))
         g_logger.fatal("Could not set the pixel format");
 }

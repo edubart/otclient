@@ -554,6 +554,7 @@ void Application::registerLuaFunctions()
     g_lua.registerStaticClass("g_graphics");
     g_lua.bindClassStaticFunction("g_graphics", "isPainterEngineAvailable", std::bind(&Graphics::isPainterEngineAvailable, &g_graphics, std::placeholders::_1));
     g_lua.bindClassStaticFunction("g_graphics", "selectPainterEngine", std::bind(&Graphics::selectPainterEngine, &g_graphics, std::placeholders::_1));
+    g_lua.bindClassStaticFunction("g_graphics", "canCacheBackbuffer", std::bind(&Graphics::canCacheBackbuffer, &g_graphics));
     g_lua.bindClassStaticFunction("g_graphics", "getPainterEngine", std::bind(&Graphics::getPainterEngine, &g_graphics));
     g_lua.bindClassStaticFunction("g_graphics", "getViewportSize", std::bind(&Graphics::getViewportSize, &g_graphics));
     g_lua.bindClassStaticFunction("g_graphics", "getVendor", std::bind(&Graphics::getVendor, &g_graphics));

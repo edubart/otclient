@@ -40,8 +40,11 @@ public:
     void draw(const Rect& dest);
     void draw(const Rect& dest, const Rect& src);
 
+    void setBackuping(bool enabled) { m_backuping = enabled; }
+
     TexturePtr getTexture() { return m_texture; }
     Size getSize();
+    bool isBackuping() { return m_backuping; }
 
 private:
     void internalCreate();
@@ -53,6 +56,7 @@ private:
     Size m_oldViewportSize;
     uint m_fbo;
     uint m_prevBoundFbo;
+    Boolean<true> m_backuping;
 
     static uint boundFbo;
 };

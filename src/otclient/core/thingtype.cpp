@@ -76,11 +76,7 @@ TexturePtr& ThingType::getSpriteMask(int w, int h, int l, int x, int y, int z, i
             static Color maskColors[LastMask] = { Color::yellow, Color::red, Color::green, Color::blue };
             maskImage->overwriteMask(maskColors[mask]);
 
-            maskTexture = TexturePtr(new Texture(maskImage));
-            maskTexture->setSmooth(true);
-
-            if(g_graphics.canUseMipmaps())
-                maskTexture->generateSoftwareMipmaps(maskImage->getPixels());
+            maskTexture = TexturePtr(new Texture(maskImage, true));
         }
     }
 
@@ -120,7 +116,7 @@ TexturePtr& ThingType::getTexture(int animationPhase)
                                     Point spritePos = Point(m_dimensions[Width]  - w - 1,
                                                             m_dimensions[Height] - h - 1) * Otc::TILE_PIXELS;
 
-                                    fullImage->append(framePos + spritePos, spriteImage);
+                                    fullImage->blit(framePos + spritePos, spriteImage);
                                 }
                             }
                         }
@@ -139,16 +135,12 @@ TexturePtr& ThingType::getTexture(int animationPhase)
                         }
 
                         m_texturesFramesRects[animationPhase][frameIndex] = drawRect;
-                        m_texturesFramesOffsets[animationPhase][frameIndex] = drawRect.topLeft() - framePos;
+                        m_texturesFramesOffsets[animationPhase][frameIndex] = drawRect.topLeft() - framePos + Point(1,1);
                     }
                 }
             }
         }
-        animationPhaseTexture = TexturePtr(new Texture(fullImage));
-        animationPhaseTexture->setSmooth(true);
-
-        //if(g_graphics.canUseMipmaps())
-            //animationPhaseTexture->generateSoftwareMipmaps(fullImage->getPixels());
+        animationPhaseTexture = TexturePtr(new Texture(fullImage, true));
     }
     return animationPhaseTexture;
 }

@@ -31,7 +31,7 @@ class UIItem : public UIWidget
 {
 public:
     UIItem();
-    void drawSelf(bool foregroundPane);
+    void drawSelf(Fw::DrawPane drawPane);
 
     void setItemId(int id);
     void setItemCount(int count) { if(m_item) m_item->setCount(count); }

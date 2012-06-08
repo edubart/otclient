@@ -30,7 +30,7 @@ Image::Image(const Size& size, int bpp, uint8 *pixels)
 {
     m_size = size;
     m_bpp = bpp;
-    m_pixels.resize(size.area() * bpp);
+    m_pixels.resize(size.area() * bpp, 0);
     if(pixels)
         memcpy(&m_pixels[0], pixels, m_pixels.size());
 }
@@ -84,8 +84,10 @@ void Image::overwriteMask(const Color& maskedColor, const Color& insideColor, co
     }
 }
 
-void Image::append(const Point& dest, const ImagePtr& other)
+void Image::blit(const Point& dest, const ImagePtr& other)
 {
+    assert(m_bpp == 4);
+
     if(!other)
         return;
 
@@ -103,3 +105,109 @@ void Image::append(const Point& dest, const ImagePtr& other)
         }
     }
 }
+
+void Image::paste(const ImagePtr& other)
+{
+    assert(m_bpp == 4);
+
+    if(!other)
+        return;
+
+    uint8* otherPixels = other->getPixelData();
+    for(int p = 0; p < other->getPixelCount(); ++p) {
+        int x = p % other->getWidth();
+        int y = p / other->getWidth();
+        int pos = (y * m_size.width() + x) * 4;
+
+        m_pixels[pos+0] = otherPixels[p*4+0];
+        m_pixels[pos+1] = otherPixels[p*4+1];
+        m_pixels[pos+2] = otherPixels[p*4+2];
+        m_pixels[pos+3] = otherPixels[p*4+3];
+    }
+}
+
+bool Image::nextMipmap()
+{
+    assert(m_bpp == 4);
+    assert(stdext::is_power_of_two(m_size.width()) && stdext::is_power_of_two(m_size.height()));
+
+    if(m_size.width() == 1 || m_size.height() == 1)
+        return false;
+
+    Size size = m_size / 2;
+    std::vector<uint8> pixels(size.area()*4, 0xFF);
+    m_pixels = pixels;
+    m_size = size;
+    return true;
+}
+
+/*
+ *
+
+void Texture::generateSoftwareMipmaps(std::vector<uint8> inPixels)
+{
+    bind();
+
+    assert(stdext::is_power_of_two(m_glSize.width()) && stdext::is_power_of_two(m_glSize.height()));
+
+    Size inSize = m_glSize;
+    Size outSize = inSize / 2;
+    std::vector<uint8> outPixels;
+
+    int mipmap = 1;
+    while(true) {
+        outPixels.resize(outSize.area()*4, 0);
+
+        // this is a simple bilinear filtering algorithm, it combines every 4 pixels in one pixel
+        for(int x=0;x<outSize.width();++x) {
+            for(int y=0;y<outSize.height();++y) {
+                uint8 *inPixel[4];
+                inPixel[0] = &inPixels[((y*2)*inSize.width() + (x*2))*4];
+                inPixel[1] = &inPixels[((y*2)*inSize.width() + (x*2)+1)*4];
+                inPixel[2] = &inPixels[((y*2+1)*inSize.width() + (x*2))*4];
+                inPixel[3] = &inPixels[((y*2+1)*inSize.width() + (x*2)+1)*4];
+                uint8 *outPixel = &outPixels[(y*outSize.width() + x)*4];
+
+                int pixelsSum[4];
+                for(int i=0;i<4;++i)
+                    pixelsSum[i] = 0;
+
+                int usedPixels = 0;
+                for(int j=0;j<4;++j) {
+                    // ignore colors of complete alpha pixels
+                    if(inPixel[j][3] < 16)
+                        continue;
+
+                    for(int i=0;i<4;++i)
+                        pixelsSum[i] += inPixel[j][i];
+
+                    usedPixels++;
+                }
+
+                // try to guess the alpha pixel more accurately
+                for(int i=0;i<4;++i) {
+                    if(usedPixels > 0)
+                        outPixel[i] = pixelsSum[i] / usedPixels;
+                    else
+                        outPixel[i] = 0;
+                }
+                outPixel[3] = pixelsSum[3]/4;
+            }
+        }
+
+        glTexImage2D(GL_TEXTURE_2D, mipmap++, GL_RGBA, outSize.width(), outSize.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, &outPixels[0]);
+
+        if(inSize.width() == 1 || inSize.height() == 1)
+            break;
+
+        inPixels = std::move(outPixels);
+        inSize /= 2;
+        outSize /= 2;
+    }
+
+    if(!m_hasMipmaps) {
+        m_hasMipmaps = true;
+        setupFilters();
+    }
+}
+*/

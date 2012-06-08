@@ -35,7 +35,9 @@ public:
     static ImagePtr loadPNG(const std::string& file);
 
     void overwriteMask(const Color& maskedColor, const Color& insideColor = Color::white, const Color& outsideColor = Color::alpha);
-    void append(const Point& dest, const ImagePtr &other);
+    void blit(const Point& dest, const ImagePtr& other);
+    void paste(const ImagePtr& other);
+    bool nextMipmap();
 
     std::vector<uint8>& getPixels() { return m_pixels; }
     uint8* getPixelData() { return &m_pixels[0]; }

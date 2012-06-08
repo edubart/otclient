@@ -39,6 +39,14 @@ local function setupGraphicsEngines()
       g_graphics.selectPainterEngine(2)
     end
   end
+
+  local foregroundFrameRateScrollBar = graphicsPanel:getChildById('foregroundFrameRateScrollBar')
+  local foregroundFrameRateLimitLabel = graphicsPanel:getChildById('foregroundFrameRateLimitLabel')
+  if not g_graphics.canCacheBackbuffer() then
+    foregroundFrameRateScrollBar:setValue(61)
+    foregroundFrameRateScrollBar:disable()
+    foregroundFrameRateLimitLabel:disable()
+  end
 end
 
 function Options.init()
@@ -50,12 +58,12 @@ function Options.init()
     end
   end
 
-  Keyboard.bindKeyDown('Ctrl+P', Options.toggle)
+  Keyboard.bindKeyDown('Ctrl+D', Options.toggle)
   Keyboard.bindKeyDown('Ctrl+F', function() Options.toggleOption('fullscreen') end)
 
   optionsWindow = displayUI('options.otui')
   optionsWindow:hide()
-  optionsButton = TopMenu.addLeftButton('optionsButton', tr('Options') .. ' (Ctrl+P)', 'options.png', Options.toggle)
+  optionsButton = TopMenu.addLeftButton('optionsButton', tr('Options') .. ' (Ctrl+D)', 'options.png', Options.toggle)
   optionsTabBar = optionsWindow:getChildById('optionsTabBar')
   optionsTabBar:setContentWidget(optionsWindow:getChildById('optionsTabContent'))
 
@@ -69,7 +77,7 @@ function Options.init()
 end
 
 function Options.terminate()
-  Keyboard.unbindKeyDown('Ctrl+P')
+  Keyboard.unbindKeyDown('Ctrl+D')
   Keyboard.unbindKeyDown('Ctrl+F')
   optionsWindow:destroy()
   optionsWindow = nil

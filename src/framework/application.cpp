@@ -167,6 +167,7 @@ void Application::run()
     if(!m_initialized)
         return;
 
+    bool cacheForeground = true;
     m_stopping = false;
     m_running = true;
 
@@ -189,6 +190,15 @@ void Application::run()
             bool redraw = false;
             bool updateForeground = false;
 
+            bool canCacheForeground = g_graphics.canCacheBackbuffer() && m_foregroundFrameCounter.getMaxFps() != 0;
+            if(cacheForeground != canCacheForeground) {
+                cacheForeground = canCacheForeground;
+                if(cacheForeground)
+                    glColorMask(1,1,1,1);
+                else
+                    glColorMask(1,1,1,0);
+            }
+
             if(m_backgroundFrameCounter.shouldProcessNextFrame()) {
                 redraw = true;
 
@@ -201,28 +211,34 @@ void Application::run()
             if(redraw) {
                 g_graphics.beginRender();
 
-                Rect viewportRect(0, 0, g_graphics.getViewportSize());
+                if(cacheForeground) {
+                    Rect viewportRect(0, 0, g_graphics.getViewportSize());
 
-                // draw the foreground into a texture
-                if(updateForeground) {
+                    // draw the foreground into a texture
+                    if(updateForeground) {
+                        m_foregroundFrameCounter.processNextFrame();
+
+                        // draw foreground
+                        g_painter->clear(Color::black);
+                        g_ui.render(Fw::ForegroundPane);
+
+                        // copy the foreground to a texture
+                        m_foreground->copyFromScreen(viewportRect);
+                    }
+
+                    // draw background (animated stuff)
+                    m_backgroundFrameCounter.processNextFrame();
+                    g_ui.render(Fw::BackgroundPane);
+
+                    // draw the foreground (steady stuff)
+                    g_painter->setColor(Color::white);
+                    g_painter->setOpacity(1.0);
+                    g_painter->drawTexturedRect(viewportRect, m_foreground, viewportRect);
+                } else {
                     m_foregroundFrameCounter.processNextFrame();
-
-                    // draw foreground
-                    g_painter->clear(Color::black);
-                    g_ui.render(true);
-
-                    // copy the foreground to a texture
-                    m_foreground->copyFromScreen(viewportRect);
+                    m_backgroundFrameCounter.processNextFrame();
+                    g_ui.render(Fw::BothPanes);
                 }
-
-                // draw background (animated stuff)
-                m_backgroundFrameCounter.processNextFrame();
-                g_ui.render(false);
-
-                // draw the foreground (steady stuff)
-                g_painter->setColor(Color::white);
-                g_painter->setOpacity(1.0);
-                g_painter->drawTexturedRect(viewportRect, m_foreground, viewportRect);
 
                 g_graphics.endRender();
 
@@ -237,9 +253,8 @@ void Application::run()
             m_foregroundFrameCounter.update();
 
             int sleepMicros = std::min(m_backgroundFrameCounter.getMaximumSleepMicros(), m_foregroundFrameCounter.getMaximumSleepMicros());
-            if(sleepMicros >= AdaptativeFrameCounter::MINIMUM_MICROS_SLEEP) {
+            if(sleepMicros >= AdaptativeFrameCounter::MINIMUM_MICROS_SLEEP)
                 stdext::microsleep(AdaptativeFrameCounter::MINIMUM_MICROS_SLEEP);
-            }
 
         } else {
             // sleeps until next poll to avoid massive cpu usage
@@ -285,8 +300,10 @@ void Application::resize(const Size& size)
     g_ui.resize(size);
     m_onInputEvent = false;
 
-    m_foreground = TexturePtr(new Texture(size.width(), size.height()));
-    m_foreground->setUpsideDown(true);
+    if(g_graphics.canCacheBackbuffer()) {
+        m_foreground = TexturePtr(new Texture(size));
+        m_foreground->setUpsideDown(true);
+    }
     m_mustRepaint = true;
 }
 

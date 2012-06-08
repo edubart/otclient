@@ -24,7 +24,7 @@
 #define ANIMATEDTEXTURE_H
 
 #include "texture.h"
-
+/*
 class AnimatedTexture : public Texture
 {
 public:
@@ -43,5 +43,5 @@ private:
     int m_currentFrame;
     ticks_t m_lastAnimCheckTicks;
 };
-
+*/
 #endif

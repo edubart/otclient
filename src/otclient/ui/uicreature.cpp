@@ -24,12 +24,12 @@
 #include <framework/otml/otml.h>
 #include <framework/graphics/graphics.h>
 
-void UICreature::drawSelf(bool foregroundPane)
+void UICreature::drawSelf(Fw::DrawPane drawPane)
 {
-    if(!foregroundPane)
+    if((drawPane & Fw::ForegroundPane) == 0)
         return;
 
-    UIWidget::drawSelf(foregroundPane);
+    UIWidget::drawSelf(drawPane);
 
     if(m_creature) {
         Rect drawRect = getPaddingRect();

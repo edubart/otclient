@@ -29,41 +29,35 @@ class Texture : public std::enable_shared_from_this<Texture>
 {
 public:
     Texture();
-    Texture(const ImagePtr& image);
-    Texture(int width, int height, int channels = 4, uchar* pixels = NULL);
+    Texture(const Size& size);
+    Texture(const ImagePtr& image, bool buildMipmaps = false);
     virtual ~Texture();
 
-    void copyFromScreen(const Rect& screenRect);
-
     void bind();
+    void copyFromScreen(const Rect& screenRect);
+    bool buildHardwareMipmaps();
 
-    /// Tries to generate mipmaps via hardware, otherwise fallback to software implementation
-    void generateMipmaps();
-    /// Generate mipmaps via hardware if supported
-    bool generateHardwareMipmaps();
-    /// Generate mipmaps via software, which has a special algorithm for combining alpha pixels
-    void generateSoftwareMipmaps(std::vector<uint8> inPixels);
-
-    /// Activate texture anti-aliasing giving a better look when they are resized
     void setSmooth(bool smooth);
     void setUpsideDown(bool upsideDown);
 
-    GLuint getId()  { return m_textureId; }
-
+    GLuint getId()  { return m_id; }
     int getWidth() { return m_size.width(); }
     int getHeight() { return m_size.height(); }
     const Size& getSize() { return m_size; }
+    const Size& getGlSize() { return m_glSize; }
     const Matrix3& getTransformMatrix() { return m_transformMatrix; }
-
-    bool isEmpty() { return m_textureId == 0; }
+    bool isEmpty() { return m_id == 0; }
     bool hasMipmaps() { return m_hasMipmaps; }
 
 protected:
+    void createTexture();
+    bool setupSize(const Size& size, bool forcePowerOfTwo = false);
+    void setupWrap();
     void setupFilters();
     void setupTranformMatrix();
-    GLuint internalLoadGLTexture(uchar* pixels, int channels, int w, int h);
+    void setupPixels(int level, const Size& size, uchar *pixels, int channels = 4);
 
-    GLuint m_textureId;
+    GLuint m_id;
     Size m_size;
     Size m_glSize;
     Matrix3 m_transformMatrix;

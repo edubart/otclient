@@ -52,9 +52,9 @@ public:
     virtual ~UIWidget();
 
 protected:
-    virtual void draw(const Rect& visibleRect, bool foregroundPane);
-    virtual void drawSelf(bool foregroundPane);
-    virtual void drawChildren(const Rect& visibleRect, bool foregroundPane);
+    virtual void draw(const Rect& visibleRect, Fw::DrawPane drawPane);
+    virtual void drawSelf(Fw::DrawPane drawPane);
+    virtual void drawChildren(const Rect& visibleRect, Fw::DrawPane drawPane);
 
     friend class UIManager;
 
