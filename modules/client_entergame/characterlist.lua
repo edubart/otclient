@@ -6,6 +6,8 @@ local loadBox
 local characterList
 local errorBox
 local waitingWindow
+local updateWaitEvent
+local resendWaitEvent
 
 -- private functions
 local function tryLogin(charInfo, tries)
@@ -41,11 +43,12 @@ local function tryLogin(charInfo, tries)
   Settings.set('lastUsedCharacter', charInfo.characterName)
 end
 
-local function updateWait()
+local function updateWait(timeStart, timeEnd)
   if waitingWindow then
-    if waitingWindow.elapsedTime <= waitingWindow.totalTime then
-      local percent = (waitingWindow.elapsedTime / waitingWindow.totalTime) * 100
-      local timeStr = string.format("%.0f", (waitingWindow.totalTime - waitingWindow.elapsedTime))
+    local time = g_clock.seconds()
+    if time <= timeEnd then
+      local percent = ((time - timeStart) / (timeEnd - timeStart)) * 100
+      local timeStr = string.format("%.0f", timeEnd - time)
 
       local progressBar = waitingWindow:getChildById('progressBar')
       progressBar:setPercent(percent)
@@ -53,9 +56,14 @@ local function updateWait()
       local label = waitingWindow:getChildById('timeLabel')
       label:setText('Trying to reconnect in ' .. timeStr .. ' seconds.')
 
-      waitingWindow.elapsedTime = waitingWindow.elapsedTime + (waitingWindow.totalTime / 100)
-      scheduleEvent(updateWait, (waitingWindow.totalTime / 100) * 1000)
+      updateWaitEvent = scheduleEvent(function() updateWait(timeStart, timeEnd) end, 1000 * progressBar:getPercentPixels() / 100 * (timeEnd - timeStart))
+      return true
     end
+  end
+
+  if updateWaitEvent then
+    updateWaitEvent:cancel()
+    updateWaitEvent = nil
   end
 end
 
@@ -63,6 +71,11 @@ local function resendWait()
   if waitingWindow then
     waitingWindow:destroy()
     waitingWindow = nil
+
+    if updateWaitEvent then
+      updateWaitEvent:cancel()
+      updateWaitEvent = nil
+    end
 
     if charactersWindow then
       local selected = charactersWindow:getChildById('characterList'):getFocusedChild()
@@ -77,16 +90,15 @@ local function resendWait()
 end
 
 local function onLoginWait(message, time)
+  CharacterList.destroyLoadBox()
+
   waitingWindow = displayUI('waitinglist.otui')
 
   local label = waitingWindow:getChildById('infoLabel')
   label:setText(message)
 
-  waitingWindow.elapsedTime = 0
-  waitingWindow.totalTime = time
-
-  scheduleEvent(updateWait, 0)
-  scheduleEvent(resendWait, time * 1000)
+  updateWaitEvent = scheduleEvent(function() updateWait(g_clock.seconds(), g_clock.seconds() + time) end, 0)
+  resendWaitEvent = scheduleEvent(resendWait, time * 1000)
 end
 
 local function onCharactersWindowKeyPress(self, keyCode, keyboardModifiers)
@@ -151,6 +163,22 @@ function CharacterList.terminate()
     loadBox:destroy()
     loadBox = nil
   end
+
+  if waitingWindow then
+    waitingWindow:destroy()
+    waitingWindow = nil
+  end
+
+  if updateWaitEvent then
+    updateWaitEvent:cancel()
+    updateWaitEvent = nil
+  end
+
+  if resendWaitEvent then
+    resendWaitEvent:cancel()
+    resendWaitEvent = nil
+  end
+
   CharacterList = nil
 end
 
@@ -245,7 +273,18 @@ function CharacterList.cancelWait()
   if waitingWindow then
     waitingWindow:destroy()
     waitingWindow = nil
-    CharacterList.destroyLoadBox()
-    CharacterList.showAgain()
   end
+
+  if updateWaitEvent then
+      updateWaitEvent:cancel()
+      updateWaitEvent = nil
+  end
+
+  if resendWaitEvent then
+    resendWaitEvent:cancel()
+    resendWaitEvent = nil
+  end
+
+  CharacterList.destroyLoadBox()
+  CharacterList.showAgain()
 end

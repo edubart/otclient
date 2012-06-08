@@ -52,6 +52,11 @@ void Application::registerLuaFunctions()
     g_lua.bindClassStaticFunction("g_crypt", "encrypt", Crypt::encrypt);
     g_lua.bindClassStaticFunction("g_crypt", "decrypt", Crypt::decrypt);
 
+    g_lua.registerStaticClass("g_clock");
+    g_lua.bindClassStaticFunction("g_clock", "micros", std::bind(&Clock::micros, &g_clock));
+    g_lua.bindClassStaticFunction("g_clock", "millis", std::bind(&Clock::millis, &g_clock));
+    g_lua.bindClassStaticFunction("g_clock", "seconds", std::bind(&Clock::seconds, &g_clock));
+
     // Event
     g_lua.registerClass<Event>();
     g_lua.bindClassMemberFunction<Event>("cancel", &Event::cancel);
