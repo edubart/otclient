@@ -1,15 +1,22 @@
-CenterLabel < GameLabel
+CenterLabel < UILabel
   font: verdana-11px-rounded
-  height: 64
   text-align: center
   text-wrap: true
-  anchors.centerIn: parent
-  size: 360 264
-
-BottomLabel < GameLabel
-  font: verdana-11px-rounded
-  height: 16
-  text-align: center
+  text-auto-resize: true
   margin-bottom: 2
-  anchors.bottom: parent.bottom
+  visible: false
+
+TopCenterLabel < UILabel
+  font: verdana-11px-rounded
+  text-align: center
+  text-wrap: true
+  visible: false
+  anchors.top: parent.top
+  anchors.bottom: centerTextMessagePanel.top
   anchors.horizontalCenter: parent.horizontalCenter
+  width: 360
+
+BottomLabel < CenterLabel
+  anchors.bottom: parent.bottom
+  anchors.left: parent.left
+  anchors.right: parent.right

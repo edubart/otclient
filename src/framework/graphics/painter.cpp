@@ -162,9 +162,8 @@ void Painter::updateGlCompositionMode()
         case CompositionMode_Normal:
             if(g_graphics.canUseBlendFuncSeparate())
                 glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
-            else {
+            else
                 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            }
             break;
         case CompositionMode_Multiply:
             glBlendFunc(GL_DST_COLOR, GL_ONE_MINUS_SRC_ALPHA);

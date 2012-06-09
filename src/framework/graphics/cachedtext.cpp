@@ -55,6 +55,8 @@ void CachedText::update()
 
 void CachedText::wrapText(int maxWidth)
 {
-    if(m_font)
+    if(m_font) {
         m_text = m_font->wrapText(m_text, maxWidth);
+        update();
+    }
 }

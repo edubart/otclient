@@ -8,16 +8,18 @@ local MessageTypes = {
   consoleRed      = { color = '#F55E5E', consoleTab = tr('Default') },
   consoleOrange   = { color = '#FE6500', consoleTab = tr('Default') },
   consoleBlue     = { color = '#9F9DFD', consoleTab = tr('Default') },
-  warning         = { color = '#F55E5E', consoleTab = tr('Server Log'), labelId = 'centerWarning', wrap = true },
-  infoDescription = { color = '#00EB00', consoleTab = tr('Server Log'), labelId = 'centerInfo', consoleOption = 'showInfoMessagesInConsole', wrap = true },
-  eventAdvance    = { color = '#FFFFFF', consoleTab = tr('Server Log'), labelId = 'centerAdvance', consoleOption = 'showEventMessagesInConsole', wrap = true },
+  warning         = { color = '#F55E5E', consoleTab = tr('Server Log'), labelId = 'centerWarning' },
+  infoDescription = { color = '#00EB00', consoleTab = tr('Server Log'), labelId = 'centerInfo', consoleOption = 'showInfoMessagesInConsole' },
+  eventAdvance    = { color = '#FFFFFF', consoleTab = tr('Server Log'), labelId = 'centerAdvance', consoleOption = 'showEventMessagesInConsole' },
   eventDefault    = { color = '#FFFFFF', consoleTab = tr('Server Log'), labelId = 'bottomStatus', consoleOption = 'showEventMessagesInConsole' },
   statusDefault   = { color = '#FFFFFF', consoleTab = tr('Server Log'), labelId = 'bottomStatus', consoleOption = 'showStatusMessagesInConsole' },
   statusSmall     = { color = '#FFFFFF', labelId = 'bottomStatus' },
+  private         = { color = '#5FF7F7', labelId = 'centerPrivate' }
 }
 
 local centerTextMessagePanel
 local bottomStatusLabel
+local privateLabel
 
 -- private functions
 local function displayMessage(msgtype, msg, time)
@@ -35,13 +37,6 @@ local function displayMessage(msgtype, msg, time)
     label:setText(msg)
     label:setColor(msgtype.color)
 
-    if msgtype.wrap then
-      label:setWidth(label:getParent():getWidth())
-      label:setHeight(label:getTextSize().height)
-    else
-      label:resizeToText()
-    end
-
     if not time then
       time = math.max(#msg * 100, 4000)
     else
@@ -53,15 +48,10 @@ local function displayMessage(msgtype, msg, time)
   end
 end
 
-local function createTextMessageLabel(id, parent)
-  local label = createWidget('UILabel', parent)
+local function createTextMessageLabel(id, parent, class)
+  local label = createWidget(class, parent)
   label:setFont('verdana-11px-rounded')
-  label:setTextAlign(AlignCenter)
   label:setId(id)
-  label:setMarginBottom(2)
-  label:setTextWrap(true)
-  label:setTextAutoResize(true)
-  label:setVisible(false)
   return label
 end
 
@@ -80,15 +70,12 @@ function TextMessage.init()
   centerTextMessagePanel:setWidth(360)
   centerTextMessagePanel:centerIn('parent')
 
-  createTextMessageLabel('centerWarning', centerTextMessagePanel)
-  createTextMessageLabel('centerAdvance', centerTextMessagePanel)
-  createTextMessageLabel('centerInfo', centerTextMessagePanel)
+  createTextMessageLabel('centerWarning', centerTextMessagePanel, 'CenterLabel')
+  createTextMessageLabel('centerAdvance', centerTextMessagePanel, 'CenterLabel')
+  createTextMessageLabel('centerInfo', centerTextMessagePanel, 'CenterLabel')
 
-  bottomStatusLabel = createTextMessageLabel('bottomStatus', GameInterface.getMapPanel())
-  bottomStatusLabel:setHeight(16)
-  bottomStatusLabel:addAnchor(AnchorBottom, 'parent', AnchorBottom)
-  bottomStatusLabel:addAnchor(AnchorLeft, 'parent', AnchorLeft)
-  bottomStatusLabel:addAnchor(AnchorRight, 'parent', AnchorRight)
+  privateLabel = createTextMessageLabel('centerPrivate', GameInterface.getMapPanel(), 'TopCenterLabel')
+  bottomStatusLabel = createTextMessageLabel('bottomStatus', GameInterface.getMapPanel(), 'BottomLabel')
 end
 
 function TextMessage.terminate()
@@ -98,11 +85,14 @@ function TextMessage.terminate()
   removeEvent(GameInterface.getMapPanel():recursiveGetChildById('centerWarning').hideEvent)
   removeEvent(GameInterface.getMapPanel():recursiveGetChildById('centerAdvance').hideEvent)
   removeEvent(GameInterface.getMapPanel():recursiveGetChildById('centerInfo').hideEvent)
+  removeEvent(GameInterface.getMapPanel():recursiveGetChildById('centerPrivate').hideEvent)
   removeEvent(GameInterface.getMapPanel():recursiveGetChildById('bottomStatus').hideEvent)
   centerTextMessagePanel:destroy()
-  centerTextMessagePanel = nil
   bottomStatusLabel:destroy()
+  privateLabel:destroy()
+  centerTextMessagePanel = nil
   bottomStatusLabel = nil
+  privateLabel = nil
   TextMessage = nil
 end
 
@@ -110,6 +100,7 @@ function TextMessage.clearMessages()
   GameInterface.getMapPanel():recursiveGetChildById('centerWarning'):hide()
   GameInterface.getMapPanel():recursiveGetChildById('centerAdvance'):hide()
   GameInterface.getMapPanel():recursiveGetChildById('centerInfo'):hide()
+  GameInterface.getMapPanel():recursiveGetChildById('centerPrivate'):hide()
   GameInterface.getMapPanel():recursiveGetChildById('bottomStatus'):hide()
 end
 
@@ -119,6 +110,10 @@ end
 
 function TextMessage.displayEventAdvance(msg, time)
   displayMessage(MessageTypes.eventAdvance, msg, time)
+end
+
+function TextMessage.displayPrivate(msg, time)
+  displayMessage(MessageTypes.private, msg, time)
 end
 
 function TextMessage.display(msgtypedesc, msg)

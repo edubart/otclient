@@ -125,9 +125,8 @@ void MapView::draw(const Rect& rect)
     drawOffset.y += (srcVisible.height() - srcSize.height()) / 2;
     Rect srcRect = Rect(drawOffset, srcSize);
 
-    g_painter->saveState();
     g_painter->setColor(Color::white);
-    g_painter->setCompositionMode(Painter::CompositionMode_Replace);
+    glDisable(GL_BLEND);
 #if 0
     // debug source area
     g_painter->saveAndResetState();
@@ -140,7 +139,7 @@ void MapView::draw(const Rect& rect)
 #else
     m_framebuffer->draw(rect, srcRect);
 #endif
-    g_painter->restoreSavedState();
+    glEnable(GL_BLEND);
 
     //g_painter->resetShaderProgram();
 

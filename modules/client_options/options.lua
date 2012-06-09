@@ -12,7 +12,8 @@ local options = { vsync = false,
                   showInfoMessagesInConsole = true,
                   showTimestampsInConsole = true,
                   showLevelsInConsole = true,
-                  showPrivateMessagesInConsole = false }
+                  showPrivateMessagesInConsole = false,
+                  showPrivateMessagesOnScreen = true }
 local generalPanel
 local graphicsPanel
 

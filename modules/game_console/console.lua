@@ -87,10 +87,13 @@ local function onCreatureSpeak(name, level, speaktype, message, channelId, creat
   speaktype = SpeakTypes[speaktype]
   if speaktype.hideInConsole then return end
 
-  message = applyMessagePrefixies(name, level, message)
+  local composedMessage = applyMessagePrefixies(name, level, message)
 
   if speaktype.private then
-    Console.addPrivateText(message, speaktype, name, false, name)
+    Console.addPrivateText(composedMessage, speaktype, name, false, name)
+    if Options.getOption('showPrivateMessagesOnScreen') then
+      TextMessage.displayPrivate(name .. ':\n' .. message)
+    end
   else
     local channel = tr('Default')
     if not defaultMessage then
@@ -98,7 +101,7 @@ local function onCreatureSpeak(name, level, speaktype, message, channelId, creat
     end
 
     if channel then
-      Console.addText(message, speaktype, channel, name)
+      Console.addText(composedMessage, speaktype, channel, name)
     elseif channelId ~= 0 then
       -- server sent a message on a channel that is not open
       warning('message in channel id ' .. channelId .. ' which is unknown, this is a server bug, relogin if you want to see messages in this channel')
@@ -350,7 +353,7 @@ function Console.addPrivateText(text, speaktype, name, isPrivateCommand, creatur
 
   local privateTab = Console.getTab(name)
   if privateTab == nil then
-    if Options['showPrivateMessagesInConsole'] or (isPrivateCommand and not privateTab) then
+    if (Options.getOption('showPrivateMessagesInConsole') and not focus) or (isPrivateCommand and not privateTab) then
       privateTab = Console.getTab(tr('Default'))
     else
       privateTab = Console.addTab(name, focus)
@@ -383,7 +386,7 @@ function Console.addTabText(text, speaktype, tab, creatureName)
   consoleTabBar:blinkTab(tab)
 
   label.onMouseRelease = function (self, mousePos, mouseButton) Console.popupMenu(mousePos, mouseButton, creatureName, text) end
-  
+
   if consoleBuffer:getChildCount() > MAX_LINES then
     consoleBuffer:getFirstChild():destroy()
   end
@@ -469,7 +472,7 @@ function Console.sendCurrentMessage()
     tab = Console.getTab(tr('Default'))
     name = tr('Default')
   end
-  
+
   local speaktypedesc
   if (tab.channelId or name == tr('Default')) and not chatCommandPrivateReady then
     if name == tr('Default') then

@@ -55,11 +55,10 @@ void UIMap::drawSelf(Fw::DrawPane drawPane)
         g_painter->drawBoundingRect(m_mapRect.expanded(1));
 
         if(drawPane != Fw::BothPanes) {
-            g_painter->saveState();
-            g_painter->setCompositionMode(Painter::CompositionMode_Replace);
+            glDisable(GL_BLEND);
             g_painter->setColor(Color::alpha);
             g_painter->drawFilledRect(m_mapRect);
-            g_painter->restoreSavedState();
+            glEnable(GL_BLEND);
         }
     }
 

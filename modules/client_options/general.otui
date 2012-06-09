@@ -26,3 +26,7 @@ Panel
   OptionCheckBox
     id: showPrivateMessagesInConsole
     !text: tr('Show private messages in console')
+
+  OptionCheckBox
+    id: showPrivateMessagesOnScreen
+    !text: tr('Show private messages on screen')

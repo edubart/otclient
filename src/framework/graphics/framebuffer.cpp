@@ -148,10 +148,10 @@ void FrameBuffer::internalRelease()
 
         // restore screen original content
         if(m_backuping) {
-            Painter::CompositionMode oldComposition = g_painter->getCompositionMode();
-            g_painter->setCompositionMode(Painter::CompositionMode_Replace);
+            glDisable(GL_BLEND);
+            g_painter->setColor(Color::white);
             g_painter->drawTexturedRect(screenRect, m_screenBackup, screenRect);
-            g_painter->setCompositionMode(oldComposition);
+            glEnable(GL_BLEND);
         }
     }
 }
