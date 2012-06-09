@@ -53,6 +53,7 @@ function GameInterface.init()
   Keyboard.bindKeyPress('Ctrl+-', function() gameMapPanel:zoomOut() end, gameRootPanel, 250)
   Keyboard.bindKeyDown('Ctrl+Q', GameInterface.tryLogout, gameRootPanel)
   Keyboard.bindKeyDown('Ctrl+L', GameInterface.tryLogout, gameRootPanel)
+  Keyboard.bindKeyDown('Ctrl+W', function() g_map.cleanTexts() TextMessage.clearMessages() end, gameRootPanel)
 
   if g_game.isOnline() then
     GameInterface.show()

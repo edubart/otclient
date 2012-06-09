@@ -167,7 +167,6 @@ void Application::run()
     if(!m_initialized)
         return;
 
-    bool cacheForeground = true;
     m_stopping = false;
     m_running = true;
 
@@ -190,14 +189,7 @@ void Application::run()
             bool redraw = false;
             bool updateForeground = false;
 
-            bool canCacheForeground = g_graphics.canCacheBackbuffer() && m_foregroundFrameCounter.getMaxFps() != 0;
-            if(cacheForeground != canCacheForeground) {
-                cacheForeground = canCacheForeground;
-                if(cacheForeground)
-                    glColorMask(1,1,1,1);
-                else
-                    glColorMask(1,1,1,0);
-            }
+            bool cacheForeground = g_graphics.canCacheBackbuffer() && m_foregroundFrameCounter.getMaxFps() != 0;
 
             if(m_backgroundFrameCounter.shouldProcessNextFrame()) {
                 redraw = true;
@@ -219,11 +211,15 @@ void Application::run()
                         m_foregroundFrameCounter.processNextFrame();
 
                         // draw foreground
-                        g_painter->clear(Color::black);
+                        g_painter->setAlphaWriting(true);
+                        g_painter->clear(Color::alpha);
                         g_ui.render(Fw::ForegroundPane);
 
                         // copy the foreground to a texture
                         m_foreground->copyFromScreen(viewportRect);
+
+                        g_painter->clear(Color::black);
+                        g_painter->setAlphaWriting(false);
                     }
 
                     // draw background (animated stuff)

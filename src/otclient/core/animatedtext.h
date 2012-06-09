@@ -26,6 +26,7 @@
 #include "thing.h"
 #include <framework/graphics/fontmanager.h>
 #include <framework/core/timer.h>
+#include <framework/graphics/cachedtext.h>
 
 class AnimatedText : public Thing
 {
@@ -42,11 +43,9 @@ public:
     bool isAnimatedText() { return true; }
 
 private:
-    FontPtr m_font;
-    Size m_textSize;
-    std::string m_text;
     Color m_color;
     Timer m_animationTimer;
+    CachedText m_cachedText;
 };
 
 #endif

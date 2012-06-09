@@ -62,7 +62,6 @@ Texture::Texture(const ImagePtr& image, bool buildMipmaps)
 
     bind();
 
-    /*
     if(buildMipmaps) {
         int level = 0;
         do {
@@ -70,7 +69,6 @@ Texture::Texture(const ImagePtr& image, bool buildMipmaps)
         } while(glImage->nextMipmap());
         m_hasMipmaps = true;
     } else
-        */
         setupPixels(0, glImage->getSize(), glImage->getPixelData(), glImage->getBpp());
 
     setupWrap();

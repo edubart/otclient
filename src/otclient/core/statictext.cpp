@@ -28,20 +28,21 @@
 
 StaticText::StaticText()
 {
-    m_font = g_fonts.getFont("verdana-11px-rounded");
+    m_cachedText.setFont(g_fonts.getFont("verdana-11px-rounded"));
+    m_cachedText.setAlign(Fw::AlignCenter);
 }
 
 void StaticText::draw(const Point& dest, const Rect& parentRect)
 {
-    Rect rect = Rect(dest - Point(m_textSize.width() / 2, m_textSize.height()) + Point(20, 5), m_textSize);
+    Size textSize = m_cachedText.getTextSize();
+    Rect rect = Rect(dest - Point(textSize.width() / 2, textSize.height()) + Point(20, 5), textSize);
     Rect boundRect = rect;
     boundRect.bind(parentRect);
 
     // draw only if the real center is not too far from the parent center, or its a yell
     if((boundRect.center() - rect.center()).length() < parentRect.width() / 15 || isYell()) {
-        //TODO: cache into a framebuffer
         g_painter->setColor(m_color);
-        m_font->drawText(m_text, boundRect, Fw::AlignCenter);
+        m_cachedText.draw(boundRect);
     }
 }
 
@@ -116,6 +117,6 @@ void StaticText::compose()
             text += "\n";
     }
 
-    m_text = m_font->wrapText(text, Otc::MAX_STATIC_TEXT_WIDTH);
-    m_textSize = m_font->calculateTextRectSize(m_text);
+    m_cachedText.setText(text);
+    m_cachedText.wrapText(Otc::MAX_STATIC_TEXT_WIDTH);
 }

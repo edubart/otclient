@@ -41,8 +41,15 @@ void ThingType::draw(const Point& dest, float scaleFactor, int layer, int xPatte
     const TexturePtr& texture = getTexture(animationPhase); // texture might not exists, neither its rects.
 
     int frameIndex = getTextureIndex(layer, xPattern, yPattern, zPattern);
-    Point textureOffset = m_texturesFramesOffsets[animationPhase][frameIndex];
-    Rect textureRect = m_texturesFramesRects[animationPhase][frameIndex];
+    Point textureOffset;
+    Rect textureRect;
+
+    if(scaleFactor != 1.0f) {
+        textureRect = m_texturesFramesOriginRects[animationPhase][frameIndex];
+    } else {
+        textureOffset = m_texturesFramesOffsets[animationPhase][frameIndex];
+        textureRect = m_texturesFramesRects[animationPhase][frameIndex];
+    }
 
     Point displacement(m_parameters[DisplacementX], m_parameters[DisplacementY]);
     Rect screenRect(dest + (-displacement + textureOffset - Point(m_dimensions[Width] - 1, m_dimensions[Height] - 1) * Otc::TILE_PIXELS) * scaleFactor,
@@ -51,68 +58,45 @@ void ThingType::draw(const Point& dest, float scaleFactor, int layer, int xPatte
     g_painter->drawTexturedRect(screenRect, texture, textureRect);
 }
 
-void ThingType::drawMask(const Point& dest, float scaleFactor, int w, int h, int xPattern, int yPattern, int zPattern, int layer, int animationPhase, ThingType::SpriteMask mask)
-{
-    int scaledSize = Otc::TILE_PIXELS * scaleFactor;
-
-    Point displacement(m_parameters[DisplacementX], m_parameters[DisplacementY]);
-
-    Rect drawRect(dest - displacement*scaleFactor, Size(scaledSize, scaledSize));
-    g_painter->drawTexturedRect(drawRect, getSpriteMask(w, h, layer, xPattern, yPattern, zPattern, animationPhase, mask));
-}
-
-TexturePtr& ThingType::getSpriteMask(int w, int h, int l, int x, int y, int z, int a, ThingType::SpriteMask mask)
-{
-    if(m_spritesMask.size() == 0)
-        m_spritesMask.resize(m_spritesIndex.size());
-
-    uint index = getSpriteIndex(w,h,l,x,y,z,a);
-    TexturePtr& maskTexture = m_spritesMask[index][mask];
-    if(!maskTexture) {
-        ImagePtr maskImage = g_sprites.getSpriteImage(m_spritesIndex[index]);
-        if(!maskImage)
-            maskTexture = g_graphics.getEmptyTexture();
-        else {
-            static Color maskColors[LastMask] = { Color::yellow, Color::red, Color::green, Color::blue };
-            maskImage->overwriteMask(maskColors[mask]);
-
-            maskTexture = TexturePtr(new Texture(maskImage, true));
-        }
-    }
-
-    return maskTexture;
-}
-
 TexturePtr& ThingType::getTexture(int animationPhase)
 {
     TexturePtr& animationPhaseTexture = m_textures[animationPhase];
     if(!animationPhaseTexture) {
-
-        int textureLayers = m_dimensions[Layers];
-        if(m_category != ThingsType::Creature) // we dont need layers in texture. they can be 'rendered' now.
-            textureLayers = 1;
+        // we don't need layers in common items, they will be pre-drawn
+        int textureLayers = 1;
+        int numLayers = m_dimensions[Layers];
+        if(m_category == ThingsType::Creature && m_dimensions[Layers] >= 2) {
+             // 5 layers: outfit base, red mask, green mask, blue mask, yellow mask
+            textureLayers = 5;
+            numLayers = 5;
+        }
 
         int indexSize = textureLayers * m_dimensions[PatternX] * m_dimensions[PatternY] * m_dimensions[PatternZ];
         Size textureSize = getBestDimension(m_dimensions[Width], m_dimensions[Height], indexSize);
         ImagePtr fullImage = ImagePtr(new Image(textureSize * Otc::TILE_PIXELS));
 
         m_texturesFramesRects[animationPhase].resize(indexSize);
+        m_texturesFramesOriginRects[animationPhase].resize(indexSize);
         m_texturesFramesOffsets[animationPhase].resize(indexSize);
 
         for(int z = 0; z < m_dimensions[PatternZ]; ++z) {
             for(int y = 0; y < m_dimensions[PatternY]; ++y) {
                 for(int x = 0; x < m_dimensions[PatternX]; ++x) {
-                    for(int l = 0; l < m_dimensions[Layers]; ++l) {
-
+                    for(int l = 0; l < numLayers; ++l) {
+                        bool spriteMask = (m_category == ThingsType::Creature && l > 0);
                         int frameIndex = getTextureIndex(l % textureLayers, x, y, z);
                         Point framePos = Point(frameIndex % (textureSize.width() / m_dimensions[Width]) * m_dimensions[Width],
                                                frameIndex / (textureSize.width() / m_dimensions[Width]) * m_dimensions[Height]) * Otc::TILE_PIXELS;
 
                         for(int h = 0; h < m_dimensions[Height]; ++h) {
                             for(int w = 0; w < m_dimensions[Width]; ++w) {
-                                uint spriteIndex = getSpriteIndex(w, h, l, x, y, z, animationPhase);
+                                uint spriteIndex = getSpriteIndex(w, h, spriteMask ? 1 : l, x, y, z, animationPhase);
                                 ImagePtr spriteImage = g_sprites.getSpriteImage(m_spritesIndex[spriteIndex]);
                                 if(spriteImage) {
+                                    if(spriteMask) {
+                                        static Color maskColors[] = { Color::red, Color::green, Color::blue, Color::yellow };
+                                        spriteImage->overwriteMask(maskColors[l - 1]);
+                                    }
                                     Point spritePos = Point(m_dimensions[Width]  - w - 1,
                                                             m_dimensions[Height] - h - 1) * Otc::TILE_PIXELS;
 
@@ -121,33 +105,35 @@ TexturePtr& ThingType::getTexture(int animationPhase)
                             }
                         }
 
-                        Rect drawRect(framePos + Point(m_dimensions[Width], m_dimensions[Height]) * Otc::TILE_PIXELS, framePos);
+                        Rect drawRect(framePos + Point(m_dimensions[Width], m_dimensions[Height]) * Otc::TILE_PIXELS - Point(1,1), framePos);
                         for(int x = framePos.x; x < framePos.x + m_dimensions[Width] * Otc::TILE_PIXELS; ++x) {
                             for(int y = framePos.y; y < framePos.y + m_dimensions[Height] * Otc::TILE_PIXELS; ++y) {
                                 uint8 *p = fullImage->getPixel(x,y);
                                 if(p[3] != 0x00) {
-                                    drawRect.setTop(std::min(y, (int)drawRect.top()));
-                                    drawRect.setLeft(std::min(x, (int)drawRect.left()));
+                                    drawRect.setTop   (std::min(y, (int)drawRect.top()));
+                                    drawRect.setLeft  (std::min(x, (int)drawRect.left()));
                                     drawRect.setBottom(std::max(y, (int)drawRect.bottom()));
-                                    drawRect.setRight(std::max(x, (int)drawRect.right()));
+                                    drawRect.setRight (std::max(x, (int)drawRect.right()));
                                 }
                             }
                         }
 
                         m_texturesFramesRects[animationPhase][frameIndex] = drawRect;
-                        m_texturesFramesOffsets[animationPhase][frameIndex] = drawRect.topLeft() - framePos + Point(1,1);
+                        m_texturesFramesOriginRects[animationPhase][frameIndex] = Rect(framePos, Size(m_dimensions[Width], m_dimensions[Height]) * Otc::TILE_PIXELS);
+                        m_texturesFramesOffsets[animationPhase][frameIndex] = drawRect.topLeft() - framePos;
                     }
                 }
             }
         }
         animationPhaseTexture = TexturePtr(new Texture(fullImage, true));
+        animationPhaseTexture->setSmooth(true);
     }
     return animationPhaseTexture;
 }
 
 Size ThingType::getBestDimension(int w, int h, int count)
 {
-    const int MAX = 16;
+    const int MAX = 32;
 
     int k = 1;
     while(k < w)

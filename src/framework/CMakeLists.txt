@@ -197,6 +197,7 @@ SET(framework_SOURCES ${framework_SOURCES}
 
     # framework graphics
     ${CMAKE_CURRENT_LIST_DIR}/graphics/font.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/graphics/cachedtext.cpp
     ${CMAKE_CURRENT_LIST_DIR}/graphics/fontmanager.cpp
     ${CMAKE_CURRENT_LIST_DIR}/graphics/graphics.cpp
     ${CMAKE_CURRENT_LIST_DIR}/graphics/painter.cpp

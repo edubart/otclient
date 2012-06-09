@@ -34,6 +34,7 @@ Painter::Painter()
     m_compositionMode = CompositionMode_Normal;
     m_shaderProgram = nullptr;
     m_texture = nullptr;
+    m_alphaWriting = false;
 }
 
 void Painter::resetState()
@@ -44,6 +45,7 @@ void Painter::resetState()
     resetClipRect();
     resetShaderProgram();
     resetTexture();
+    resetAlphaWriting();
 }
 
 void Painter::refreshState()
@@ -51,6 +53,7 @@ void Painter::refreshState()
     updateGlCompositionMode();
     updateGlClipRect();
     updateGlTexture();
+    updateGlAlphaWriting();
 }
 
 void Painter::saveState()
@@ -64,6 +67,7 @@ void Painter::saveState()
     m_olderStates[m_oldStateIndex].clipRect = m_clipRect;
     m_olderStates[m_oldStateIndex].shaderProgram = m_shaderProgram;
     m_olderStates[m_oldStateIndex].texture = m_texture;
+    m_olderStates[m_oldStateIndex].alphaWriting = m_alphaWriting;
     m_oldStateIndex++;
 }
 
@@ -137,6 +141,15 @@ void Painter::setTexture(Texture* texture)
     }
 }
 
+void Painter::setAlphaWriting(bool enable)
+{
+    if(m_alphaWriting == enable)
+        return;
+
+    m_alphaWriting = enable;
+    updateGlAlphaWriting();
+}
+
 void Painter::updateGlTexture()
 {
     if(m_glTextureId != 0)
@@ -176,4 +189,12 @@ void Painter::updateGlClipRect()
     } else {
         glDisable(GL_SCISSOR_TEST);
     }
+}
+
+void Painter::updateGlAlphaWriting()
+{
+    if(m_alphaWriting)
+        glColorMask(1,1,1,1);
+    else
+        glColorMask(1,1,1,0);
 }

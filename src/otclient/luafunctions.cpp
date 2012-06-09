@@ -68,6 +68,7 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassStaticFunction("g_map", "removeThingByPos", std::bind(&Map::removeThingByPos, &g_map, std::placeholders::_1, std::placeholders::_2));
     g_lua.bindClassStaticFunction("g_map", "removeThing", std::bind(&Map::removeThing, &g_map, std::placeholders::_1));
     g_lua.bindClassStaticFunction("g_map", "cleanTile", std::bind(&Map::cleanTile, &g_map, std::placeholders::_1));
+    g_lua.bindClassStaticFunction("g_map", "cleanTexts", std::bind(&Map::cleanTexts, &g_map));
     g_lua.bindClassStaticFunction("g_map", "getTile", std::bind(&Map::getTile, &g_map, std::placeholders::_1));
     g_lua.bindClassStaticFunction("g_map", "setCentralPosition", std::bind(&Map::setCentralPosition, &g_map, std::placeholders::_1));
     g_lua.bindClassStaticFunction("g_map", "getCentralPosition", std::bind(&Map::getCentralPosition, &g_map));

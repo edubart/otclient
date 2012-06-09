@@ -146,6 +146,7 @@ bool ThingsType::parseThingType(const FileStreamPtr& fin, ThingType& thingType)
 
     thingType.m_textures.resize(thingType.m_dimensions[ThingType::AnimationPhases]);
     thingType.m_texturesFramesRects.resize(thingType.m_dimensions[ThingType::AnimationPhases]);
+    thingType.m_texturesFramesOriginRects.resize(thingType.m_dimensions[ThingType::AnimationPhases]);
     thingType.m_texturesFramesOffsets.resize(thingType.m_dimensions[ThingType::AnimationPhases]);
 
     return true;

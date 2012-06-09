@@ -28,6 +28,7 @@
 #include <framework/core/declarations.h>
 #include <framework/core/timer.h>
 #include <framework/graphics/fontmanager.h>
+#include <framework/graphics/cachedtext.h>
 
 class Creature : public Thing
 {
@@ -104,7 +105,6 @@ protected:
 
     uint32 m_id;
     std::string m_name;
-    Size m_nameSize;
     uint8 m_healthPercent;
     Otc::Direction m_direction;
     Outfit m_outfit;
@@ -124,8 +124,7 @@ protected:
     Boolean<false> m_showTimedSquare;
     Boolean<false> m_showStaticSquare;
     Boolean<false> m_removed;
-
-    FontPtr m_informationFont;
+    CachedText m_nameCache;
     Color m_informationColor;
 
     // walk related

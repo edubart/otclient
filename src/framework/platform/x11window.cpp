@@ -370,10 +370,10 @@ void X11Window::internalChooseGLVisual()
 #else
         EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT,
 #endif
-        EGL_RED_SIZE, 5,
-        EGL_GREEN_SIZE, 6,
-        EGL_BLUE_SIZE, 5,
-        EGL_ALPHA_SIZE, 0,
+        EGL_RED_SIZE, 4,
+        EGL_GREEN_SIZE, 4,
+        EGL_BLUE_SIZE, 4,
+        EGL_ALPHA_SIZE, 4,
         EGL_NONE
     };
 

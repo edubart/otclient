@@ -99,10 +99,10 @@ struct ThingType
     };
 
     enum SpriteMask {
-        YellowMask = 0,
-        RedMask,
+        RedMask = 1,
         GreenMask,
         BlueMask,
+        YellowMask,
         LastMask
     };
 
@@ -146,10 +146,10 @@ private:
     std::array<int, LastParameter> m_parameters;
     std::array<bool, LastProperty> m_properties;
     std::vector<int> m_spritesIndex;
-    std::vector<std::array<TexturePtr, LastMask>> m_spritesMask;
 
     std::vector<TexturePtr> m_textures;
     std::vector<std::vector<Rect> > m_texturesFramesRects;
+    std::vector<std::vector<Rect> > m_texturesFramesOriginRects;
     std::vector<std::vector<Point> > m_texturesFramesOffsets;
 
     friend class ThingsType;

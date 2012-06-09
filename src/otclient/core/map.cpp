@@ -124,6 +124,12 @@ void Map::cleanDynamicThings()
 
     for(int i=0;i<=Otc::MAX_Z;++i)
         m_floorMissiles[i].clear();
+
+    cleanTexts();
+}
+
+void Map::cleanTexts()
+{
     m_animatedTexts.clear();
     m_staticTexts.clear();
 }

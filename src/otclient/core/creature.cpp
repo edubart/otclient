@@ -52,7 +52,8 @@ Creature::Creature() : Thing()
     m_skull = Otc::SkullNone;
     m_shield = Otc::ShieldNone;
     m_emblem = Otc::EmblemNone;
-    m_informationFont = g_fonts.getFont("verdana-11px-rounded");
+    m_nameCache.setFont(g_fonts.getFont("verdana-11px-rounded"));
+    m_nameCache.setAlign(Fw::AlignTopCenter);
 }
 
 /*
@@ -85,21 +86,6 @@ void Creature::draw(const Point& dest, float scaleFactor, bool animate)
 
 void Creature::internalDrawOutfit(const Point& dest, float scaleFactor, bool animateWalk, bool animateIdle, Otc::Direction direction)
 {
-    /*
-    if(!outfitProgram) {
-        outfitProgram = PainterShaderProgramPtr(new PainterShaderProgram);
-        outfitProgram->addShaderFromSourceCode(Shader::Vertex, glslMainWithTexCoordsVertexShader + glslPositionOnlyVertexShader);
-        outfitProgram->addShaderFromSourceFile(Shader::Fragment, "/game_shaders/outfit.frag");
-        outfitProgram->link();
-        outfitProgram->bindUniformLocation(HEAD_COLOR_UNIFORM, "headColor");
-        outfitProgram->bindUniformLocation(BODY_COLOR_UNIFORM, "bodyColor");
-        outfitProgram->bindUniformLocation(LEGS_COLOR_UNIFORM, "legsColor");
-        outfitProgram->bindUniformLocation(FEET_COLOR_UNIFORM, "feetColor");
-    }
-    */
-
-    int xPattern = 0, yPattern = 0, zPattern = 0;
-
     // outfit is a real creature
     if(m_outfit.getCategory() == ThingsType::Creature) {
         int animationPhase = animateWalk ? m_walkAnimationPhase : 0;
@@ -110,6 +96,7 @@ void Creature::internalDrawOutfit(const Point& dest, float scaleFactor, bool ani
         }
 
         // xPattern => creature direction
+        int xPattern;
         if(direction == Otc::NorthEast || direction == Otc::SouthEast)
             xPattern = Otc::East;
         else if(direction == Otc::NorthWest || direction == Otc::SouthWest)
@@ -118,55 +105,29 @@ void Creature::internalDrawOutfit(const Point& dest, float scaleFactor, bool ani
             xPattern = direction;
 
         // yPattern => creature addon
-        for(yPattern = 0; yPattern < getNumPatternsY(); yPattern++) {
+        for(int yPattern = 0; yPattern < getNumPatternsY(); yPattern++) {
 
-            // continue if we dont have this addon.
+            // continue if we dont have this addon
             if(yPattern > 0 && !(m_outfit.getAddons() & (1 << (yPattern-1))))
                 continue;
 
-            /*
-            g_painter->setShaderProgram(outfitProgram);
+            m_type->draw(dest, scaleFactor, 0, xPattern, yPattern, 0, animationPhase);
 
-            outfitProgram->bind();
-            outfitProgram->setUniformValue(HEAD_COLOR_UNIFORM, m_outfit.getHeadColor());
-            outfitProgram->setUniformValue(BODY_COLOR_UNIFORM, m_outfit.getBodyColor());
-            outfitProgram->setUniformValue(LEGS_COLOR_UNIFORM, m_outfit.getLegsColor());
-            outfitProgram->setUniformValue(FEET_COLOR_UNIFORM, m_outfit.getFeetColor());
-            */
-
-            m_type->draw(dest, scaleFactor, 0, xPattern, yPattern, zPattern, animationPhase);
-            for(int h = 0; h < getDimensionHeight(); h++) {
-                for(int w = 0; w < getDimensionWidth(); w++) {
-                    // setup texture outfit mask
-                    /*
-                    TexturePtr maskTex;
-                    if(getLayers() > 1)
-                        maskTex = m_type->getSprite(w, h, 1, xPattern, yPattern, zPattern, animationPhase);
-
-                    outfitProgram->setTexture(maskTex, 1);
-                    */
-
-                    Point p = dest + (-Point(w,h)*Otc::TILE_PIXELS)*scaleFactor;
-
-                    if(getLayers() > 1) {
-                        g_painter->saveState();
-                        g_painter->setCompositionMode(Painter::CompositionMode_Multiply);
-
-                        g_painter->setColor(m_outfit.getHeadColor());
-                        m_type->drawMask(p, scaleFactor, w, h, xPattern, yPattern, zPattern, 1, animationPhase, ThingType::YellowMask);
-                        g_painter->setColor(m_outfit.getBodyColor());
-                        m_type->drawMask(p, scaleFactor, w, h, xPattern, yPattern, zPattern, 1, animationPhase, ThingType::RedMask);
-                        g_painter->setColor(m_outfit.getLegsColor());
-                        m_type->drawMask(p, scaleFactor, w, h, xPattern, yPattern, zPattern, 1, animationPhase, ThingType::GreenMask);
-                        g_painter->setColor(m_outfit.getFeetColor());
-                        m_type->drawMask(p, scaleFactor, w, h, xPattern, yPattern, zPattern, 1, animationPhase, ThingType::BlueMask);
-
-                        g_painter->restoreSavedState();
-                    }
-                }
+            if(getLayers() > 1) {
+                Color oldColor = g_painter->getColor();
+                Painter::CompositionMode oldComposition = g_painter->getCompositionMode();
+                g_painter->setCompositionMode(Painter::CompositionMode_Multiply);
+                g_painter->setColor(m_outfit.getHeadColor());
+                m_type->draw(dest, scaleFactor, ThingType::YellowMask, xPattern, yPattern, 0, animationPhase);
+                g_painter->setColor(m_outfit.getBodyColor());
+                m_type->draw(dest, scaleFactor, ThingType::RedMask, xPattern, yPattern, 0, animationPhase);
+                g_painter->setColor(m_outfit.getLegsColor());
+                m_type->draw(dest, scaleFactor, ThingType::GreenMask, xPattern, yPattern, 0, animationPhase);
+                g_painter->setColor(m_outfit.getFeetColor());
+                m_type->draw(dest, scaleFactor, ThingType::BlueMask, xPattern, yPattern, 0, animationPhase);
+                g_painter->setColor(oldColor);
+                g_painter->setCompositionMode(oldComposition);
             }
-
-            //g_painter->resetShaderProgram();
         }
     // outfit is a creature imitating an item or the invisible effect
     } else  {
@@ -203,6 +164,7 @@ void Creature::drawOutfit(const Rect& destRect, bool resize)
             outfitBuffer = FrameBufferPtr(new FrameBuffer(Size(2*Otc::TILE_PIXELS, 2*Otc::TILE_PIXELS)));
 
         outfitBuffer->bind();
+        g_painter->setAlphaWriting(true);
         g_painter->clear(Color::alpha);
         internalDrawOutfit(Point(Otc::TILE_PIXELS,Otc::TILE_PIXELS) + getDisplacement(), 1, false, true, Otc::South);
         outfitBuffer->release();
@@ -236,7 +198,8 @@ void Creature::drawInformation(const Point& point, bool useGray, const Rect& par
     Rect backgroundRect = Rect(point.x-(13.5), point.y, 27, 4);
     backgroundRect.bind(parentRect);
 
-    Rect textRect = Rect(point.x - m_nameSize.width() / 2.0, point.y-12, m_nameSize);
+    Size nameSize = m_nameCache.getTextSize();
+    Rect textRect = Rect(point.x - nameSize.width() / 2.0, point.y-12, nameSize);
     textRect.bind(parentRect);
 
     // distance them
@@ -256,8 +219,7 @@ void Creature::drawInformation(const Point& point, bool useGray, const Rect& par
     g_painter->setColor(fillColor);
     g_painter->drawFilledRect(healthRect);
 
-    if(m_informationFont)
-        m_informationFont->drawText(m_name, textRect, Fw::AlignTopCenter);
+    m_nameCache.draw(textRect);
 
     if(m_skull != Otc::SkullNone && m_skullTexture) {
         g_painter->setColor(Color::white);
@@ -447,8 +409,7 @@ void Creature::terminateWalk()
 
 void Creature::setName(const std::string& name)
 {
-    if(m_informationFont)
-        m_nameSize = m_informationFont->calculateTextRectSize(name);
+    m_nameCache.setText(name);
     m_name = name;
 }
 

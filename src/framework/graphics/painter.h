@@ -52,6 +52,7 @@ public:
         Rect clipRect;
         Texture *texture;
         PainterShaderProgram *shaderProgram;
+        bool alphaWriting;
     };
 
     Painter();
@@ -85,6 +86,7 @@ public:
     virtual void setClipRect(const Rect& clipRect);
     virtual void setShaderProgram(PainterShaderProgram *shaderProgram) { m_shaderProgram = shaderProgram; }
     virtual void setTexture(Texture *texture);
+    void setAlphaWriting(bool enable);
 
     void setShaderProgram(const PainterShaderProgramPtr& shaderProgram) { setShaderProgram(shaderProgram.get()); }
     void setTexture(const TexturePtr& texture) { setTexture(texture.get()); }
@@ -96,6 +98,7 @@ public:
     CompositionMode getCompositionMode() { return m_compositionMode; }
     Rect getClipRect() { return m_clipRect; }
     PainterShaderProgram *getShaderProgram() { return m_shaderProgram; }
+    bool getAlphaWriting() { return m_alphaWriting; }
 
     void resetColor() { setColor(Color::white); }
     void resetOpacity() { setOpacity(1.0f); }
@@ -103,11 +106,13 @@ public:
     void resetCompositionMode() { setCompositionMode(CompositionMode_Normal); }
     void resetShaderProgram() { setShaderProgram(nullptr); }
     void resetTexture() { setTexture(nullptr); }
+    void resetAlphaWriting() { setAlphaWriting(false); }
 
 protected:
     void updateGlTexture();
     void updateGlCompositionMode();
     void updateGlClipRect();
+    void updateGlAlphaWriting();
 
     CoordsBuffer m_coordsBuffer;
 
@@ -119,6 +124,7 @@ protected:
     Rect m_clipRect;
     Texture *m_texture;
     PainterShaderProgram *m_shaderProgram;
+    bool m_alphaWriting;
 
     PainterState m_olderStates[10];
     int m_oldStateIndex;

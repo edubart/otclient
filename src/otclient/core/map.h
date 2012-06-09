@@ -38,6 +38,7 @@ public:
     void save();
     void clean();
     void cleanDynamicThings();
+    void cleanTexts();
 
     // thing related
     void addThing(const ThingPtr& thing, const Position& pos, int stackPos = -1);

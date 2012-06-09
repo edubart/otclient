@@ -28,20 +28,22 @@
 
 AnimatedText::AnimatedText()
 {
-    m_font = g_fonts.getFont("verdana-11px-rounded");
+    m_cachedText.setFont(g_fonts.getFont("verdana-11px-rounded"));
+    m_cachedText.setAlign(Fw::AlignLeft);
 }
 
 void AnimatedText::draw(const Point& dest, const Rect& visibleRect)
 {
     Point p = dest;
-    p.x += 20 - m_textSize.width() / 2;
+    Size textSize = m_cachedText.getTextSize();
+    p.x += 20 - textSize.width() / 2;
     p.y += (-20 * m_animationTimer.ticksElapsed()) / Otc::ANIMATED_TEXT_DURATION;
-    Rect rect(p, m_textSize);
+    Rect rect(p, textSize);
 
     if(visibleRect.contains(rect)) {
         //TODO: cache into a framebuffer
         g_painter->setColor(m_color);
-        m_font->drawText(m_text, rect, Fw::AlignLeft);
+        m_cachedText.draw(rect);
     }
 }
 
@@ -61,6 +63,5 @@ void AnimatedText::setColor(int color)
 
 void AnimatedText::setText(const std::string& text)
 {
-    m_textSize = m_font->calculateTextRectSize(text);
-    m_text = text;
+    m_cachedText.setText(text);
 }

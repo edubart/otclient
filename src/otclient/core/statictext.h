@@ -24,6 +24,7 @@
 #define STATICTEXT_H
 
 #include "thing.h"
+#include <framework/graphics/cachedtext.h>
 #include <framework/graphics/fontmanager.h>
 
 class StaticText : public Thing
@@ -48,13 +49,12 @@ public:
 private:
     void compose();
 
-    FontPtr m_font;
-    Size m_textSize;
     Boolean<false> m_yell;
     std::vector<std::string> m_messages;
-    std::string m_name, m_text;
+    std::string m_name;
     Otc::SpeakType m_messageType;
     Color m_color;
+    CachedText m_cachedText;
 };
 
 #endif
