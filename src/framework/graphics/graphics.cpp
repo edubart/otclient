@@ -85,6 +85,9 @@ void Graphics::init()
     if(m_maxTextureSize == -1 || m_maxTextureSize > maxTextureSize)
         m_maxTextureSize = maxTextureSize;
 
+    m_alphaBits = 0;
+    glGetIntegerv(GL_ALPHA_BITS, &m_alphaBits);
+
     selectPainterEngine(m_prefferedPainterEngine);
     m_emptyTexture = TexturePtr(new Texture);
 }
@@ -360,6 +363,8 @@ bool Graphics::canUseBlendFuncSeparate()
 
 bool Graphics::canCacheBackbuffer()
 {
+    if(!m_alphaBits)
+        return false;
 #if OPENGL_ES==2
     return m_cacheBackbuffer;
 #elif OPENGL_ES==1

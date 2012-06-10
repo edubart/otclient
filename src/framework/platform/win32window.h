@@ -36,13 +36,8 @@ struct WindowProcProxy;
 class WIN32Window : public PlatformWindow
 {
     void internalCreateWindow();
-    void internalRegisterWindowClass();
-
-    void internalCheckGL();
-    void internalChooseGLVisual();
     void internalCreateGLContext();
     void internalDestroyGLContext();
-    void internalConnectGLContext();
 
     void *getExtensionProcAddress(const char *ext);
     bool isExtensionSupported(const char *ext);

@@ -77,6 +77,7 @@ private:
     TexturePtr m_emptyTexture;
 
     int m_maxTextureSize;
+    int m_alphaBits;
     Boolean<true> m_useDrawArrays;
     Boolean<true> m_useFBO;
     Boolean<false> m_useHardwareBuffers;
