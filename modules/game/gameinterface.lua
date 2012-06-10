@@ -259,7 +259,7 @@ function GameInterface.createThingMenu(menuPosition, lookThing, useThing, creatu
             if creatureShield == ShieldWhiteBlue then
               menu:addOption(tr('Revoke %s\'s Invitation', creatureThing:getName()), function() g_game.partyRevokeInvitation(creatureThing:getId()) end)
             elseif creatureShield == ShieldBlue or creatureShield == ShieldBlueSharedExp or creatureShield == ShieldBlueNoSharedExpBlink or creatureShield == ShieldBlueNoSharedExp then
-              menu:addOption(tr('Pass Leadership to %s'), function() g_game.partyPassLeadership(creatureThing:getId()) end)
+              menu:addOption(tr('Pass Leadership to %s', creatureThing:getName()), function() g_game.partyPassLeadership(creatureThing:getId()) end)
             else
               menu:addOption(tr('Invite to Party'), function() g_game.partyInvite(creatureThing:getId()) end)
             end

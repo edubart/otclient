@@ -33,9 +33,17 @@ WIN32Window::WIN32Window()
     m_window = 0;
     m_instance = 0;
     m_deviceContext = 0;
-    m_glContext = 0;
     m_cursor = 0;
     m_minimumSize = Size(600,480);
+
+#ifdef OPENGL_ES
+    m_eglConfig = 0;
+    m_eglContext = 0;
+    m_eglDisplay = 0;
+    m_eglSurface = 0;
+#else
+    m_wglContext = 0;
+#endif
 
     m_keyMap[VK_ESCAPE] = Fw::KeyEscape;
     m_keyMap[VK_TAB] = Fw::KeyTab;
@@ -194,20 +202,16 @@ void WIN32Window::init()
     m_instance = GetModuleHandle(NULL);
 
     internalRegisterWindowClass();
+    internalCheckGL();
     internalCreateWindow();
     internalChooseGLVisual();
     internalCreateGLContext();
+    internalConnectGLContext();
 }
 
 void WIN32Window::terminate()
 {
-    if(m_glContext) {
-        if(!wglMakeCurrent(NULL, NULL))
-            g_logger.error("Release of dc and rc failed.");
-        if(!wglDeleteContext(m_glContext))
-            g_logger.error("Release rendering context failed.");
-        m_glContext = NULL;
-    }
+    internalDestroyGLContext();
 
     if(m_deviceContext) {
         if(!ReleaseDC(m_window, m_deviceContext))
@@ -295,8 +299,41 @@ void WIN32Window::internalCreateWindow()
         g_logger.fatal("GetDC failed");
 }
 
+void WIN32Window::internalCheckGL()
+{
+#ifdef OPENGL_ES
+    m_eglDisplay = eglGetDisplay(GetDC(m_window));
+    if(m_eglDisplay == EGL_NO_DISPLAY)
+        g_logger.fatal("EGL not supported");
+
+    if(!eglInitialize(m_eglDisplay, NULL, NULL))
+        g_logger.fatal("Unable to initialize EGL");
+#endif
+}
+
 void WIN32Window::internalChooseGLVisual()
 {
+#ifdef OPENGL_ES
+    static int attrList[] = {
+#if OPENGL_ES==2
+        EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+#else
+        EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT,
+#endif
+        EGL_RED_SIZE, 5,
+        EGL_GREEN_SIZE, 6,
+        EGL_BLUE_SIZE, 5,
+        EGL_NONE
+    };
+
+    EGLint numConfig;
+
+    if(!eglChooseConfig(m_eglDisplay, attrList, &m_eglConfig, 1, &numConfig))
+        g_logger.fatal("Failed to choose EGL config");
+
+    if(numConfig != 1)
+        g_logger.warning("Didn't got the exact EGL config");
+#else
     uint pixelFormat;
     static PIXELFORMATDESCRIPTOR pfd = { sizeof(PIXELFORMATDESCRIPTOR),
                                          1,
@@ -321,19 +358,76 @@ void WIN32Window::internalChooseGLVisual()
 
     if(!SetPixelFormat(m_deviceContext, pixelFormat, &pfd))
         g_logger.fatal("Could not set the pixel format");
+#endif
 }
 
 void WIN32Window::internalCreateGLContext()
 {
-    if(!(m_glContext = wglCreateContext(m_deviceContext)))
+#ifdef OPENGL_ES
+    EGLint attrList[] = {
+#if OPENGL_ES==2
+        EGL_CONTEXT_CLIENT_VERSION, 2,
+#else
+        EGL_CONTEXT_CLIENT_VERSION, 1,
+#endif
+        EGL_NONE, EGL_NONE
+    };
+
+    m_eglContext = eglCreateContext(m_eglDisplay, m_eglConfig, EGL_NO_CONTEXT, attrList);
+    if(m_eglContext == EGL_NO_CONTEXT )
+        g_logger.fatal(stdext::format("Unable to create EGL context: %s", eglGetError()));
+#else
+    if(!(m_wglContext = wglCreateContext(m_deviceContext)))
         g_logger.fatal("Unable to create GL context");
 
-    if(!wglMakeCurrent(m_deviceContext, m_glContext))
+    if(!wglMakeCurrent(m_deviceContext, m_wglContext))
         g_logger.fatal("Unable to set GLX context on WIN32 window");
+#endif
+}
+
+void WIN32Window::internalDestroyGLContext()
+{
+#ifdef OPENGL_ES
+    if(m_eglDisplay) {
+        if(m_eglContext) {
+            eglDestroyContext(m_eglDisplay, m_eglContext);
+            m_eglContext = 0;
+        }
+        if(m_eglSurface) {
+            eglDestroySurface(m_eglDisplay, m_eglSurface);
+            m_eglSurface = 0;
+        }
+        eglTerminate(m_eglDisplay);
+        m_eglDisplay = 0;
+    }
+#else
+    if(m_wglContext) {
+        if(!wglMakeCurrent(NULL, NULL))
+            g_logger.error("Release of dc and rc failed.");
+        if(!wglDeleteContext(m_wglContext))
+            g_logger.error("Release rendering context failed.");
+        m_wglContext = NULL;
+    }
+#endif
+}
+
+void WIN32Window::internalConnectGLContext()
+{
+#ifdef OPENGL_ES
+    m_eglSurface = eglCreateWindowSurface(m_eglDisplay, m_eglConfig, m_window, NULL);
+    if(m_eglSurface == EGL_NO_SURFACE)
+        g_logger.fatal(stdext::format("Unable to create EGL surface: %s", eglGetError()));
+    if(!eglMakeCurrent(m_eglDisplay, m_eglSurface, m_eglSurface, m_eglContext))
+        g_logger.fatal("Unable to connect EGL context into X11 window");
+#endif
 }
 
 bool WIN32Window::isExtensionSupported(const char *ext)
 {
+#ifdef OPENGL_ES
+    //TODO
+    return false;
+#else
     typedef const char* (WINAPI * wglGetExtensionsStringProc)();
     wglGetExtensionsStringProc wglGetExtensionsString = (wglGetExtensionsStringProc)getExtensionProcAddress("wglGetExtensionsStringEXT");
     if(!wglGetExtensionsString)
@@ -344,11 +438,17 @@ bool WIN32Window::isExtensionSupported(const char *ext)
         return true;
 
     return false;
+#endif
 }
 
 void *WIN32Window::getExtensionProcAddress(const char *ext)
 {
+#ifdef OPENGL_ES
+    //TODO
+    return NULL;
+#else
     return (void*)wglGetProcAddress(ext);
+#endif
 }
 
 void WIN32Window::move(const Point& pos)
@@ -755,6 +855,9 @@ void WIN32Window::setFullscreen(bool fullscreen)
 
 void WIN32Window::setVerticalSync(bool enable)
 {
+#ifdef OPENGL_ES
+    //TODO
+#else
     if(!isExtensionSupported("WGL_EXT_swap_control"))
         return;
 
@@ -764,6 +867,7 @@ void WIN32Window::setVerticalSync(bool enable)
         return;
 
     wglSwapInterval(enable ? 1 : 0);
+#endif
 }
 
 void WIN32Window::setIcon(const std::string& pngIcon)
@@ -854,5 +958,9 @@ std::string WIN32Window::getClipboardText()
 
 std::string WIN32Window::getPlatformType()
 {
+#ifdef OPENGL_ES
     return "WIN32-WGL";
+#else
+    return "WIN32-EGL";
+#endif
 }

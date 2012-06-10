@@ -27,6 +27,10 @@
 
 #include <windows.h>
 
+#ifdef OPENGL_ES
+#include <EGL/egl.h>
+#endif
+
 struct WindowProcProxy;
 
 class WIN32Window : public PlatformWindow
@@ -34,8 +38,11 @@ class WIN32Window : public PlatformWindow
     void internalCreateWindow();
     void internalRegisterWindowClass();
 
+    void internalCheckGL();
     void internalChooseGLVisual();
     void internalCreateGLContext();
+    void internalDestroyGLContext();
+    void internalConnectGLContext();
 
     void *getExtensionProcAddress(const char *ext);
     bool isExtensionSupported(const char *ext);
@@ -79,10 +86,18 @@ private:
     HWND m_window;
     HINSTANCE m_instance;
     HDC m_deviceContext;
-    HGLRC m_glContext;
     HCURSOR m_cursor;
     HCURSOR m_defaultCursor;
     Size m_minimumSize;
+
+#ifdef OPENGL_ES
+    EGLConfig m_eglConfig;
+    EGLContext m_eglContext;
+    EGLDisplay m_eglDisplay;
+    EGLSurface m_eglSurface;
+#else
+    HGLRC m_wglContext;
+#endif
 };
 
 #endif
