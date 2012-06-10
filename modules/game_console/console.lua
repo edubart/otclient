@@ -357,6 +357,7 @@ function Console.addPrivateText(text, speaktype, name, isPrivateCommand, creatur
       privateTab = Console.getTab(tr('Default'))
     else
       privateTab = Console.addTab(name, focus)
+      channels[name] = name
     end
     privateTab.npcChat = speaktype.npcChat
   elseif focus then
