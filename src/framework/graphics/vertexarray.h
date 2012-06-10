@@ -30,6 +30,11 @@ class VertexArray
 {
 public:
     inline void addVertex(float x, float y) { m_buffer << x << y; }
+    inline void addTriangle(const Point& a, const Point& b, const Point& c) {
+        addVertex(a.x, a.y);
+        addVertex(b.x, b.y);
+        addVertex(c.x, c.y);
+    }
     inline void addRect(const Rect& rect) {
         float top = rect.top();
         float right = rect.right()+1;

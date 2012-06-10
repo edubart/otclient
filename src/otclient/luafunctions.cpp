@@ -41,6 +41,7 @@
 #include <otclient/ui/uiitem.h>
 #include <otclient/ui/uicreature.h>
 #include <otclient/ui/uimap.h>
+#include <otclient/ui/uiprogressrect.h>
 #include <otclient/core/outfit.h>
 
 void OTClient::registerLuaFunctions()
@@ -389,4 +390,9 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIMap>("getMaxZoomIn", &UIMap::getMaxZoomIn);
     g_lua.bindClassMemberFunction<UIMap>("getMaxZoomOut", &UIMap::getMaxZoomOut);
     g_lua.bindClassMemberFunction<UIMap>("getZoom", &UIMap::getZoom);
+
+    g_lua.registerClass<UIProgressRect, UIWidget>();
+    g_lua.bindClassStaticFunction<UIProgressRect>("create", []{ return UIProgressRectPtr(new UIProgressRect); } );
+    g_lua.bindClassMemberFunction<UIProgressRect>("setPercent", &UIProgressRect::setPercent);
+    g_lua.bindClassMemberFunction<UIProgressRect>("getPercent", &UIProgressRect::getPercent);
 }

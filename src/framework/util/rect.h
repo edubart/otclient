@@ -60,6 +60,10 @@ public:
     TPoint<T> bottomRight() const { return TPoint<T>(x2, y2); }
     TPoint<T> topRight() const { return TPoint<T>(x2, y1); }
     TPoint<T> bottomLeft() const { return TPoint<T>(x1, y2); }
+    TPoint<T> topCenter() const { return TPoint<T>((x1+x2)/2, y1); }
+    TPoint<T> bottomCenter() const { return TPoint<T>((x1+x2)/2, y2); }
+    TPoint<T> centerLeft() const { return TPoint<T>(x1, (y1+y2)/2); }
+    TPoint<T> centerRight() const { return TPoint<T>(x2, (y1+y2)/2); }
     TPoint<T> center() const { return TPoint<T>((x1+x2)/2, (y1+y2)/2); }
     T width() const { return  x2 - x1 + 1; }
     T height() const { return  y2 - y1 + 1; }

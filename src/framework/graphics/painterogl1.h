@@ -53,6 +53,7 @@ public:
     void drawTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src);
     void drawRepeatedTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src);
     void drawFilledRect(const Rect& dest);
+    void drawFilledTriangle(const Point& a, const Point& b, const Point& c);
     void drawBoundingRect(const Rect& dest, int innerLineWidth);
 
     void setMatrixMode(MatrixMode matrixMode);

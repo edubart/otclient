@@ -76,6 +76,7 @@ public:
     void drawTexturedRect(const Rect& dest, const TexturePtr& texture) { drawTexturedRect(dest, texture, Rect(Point(0,0), texture->getSize())); }
     virtual void drawRepeatedTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src) = 0;
     virtual void drawFilledRect(const Rect& dest) = 0;
+    virtual void drawFilledTriangle(const Point& a, const Point& b, const Point& c) = 0;
     virtual void drawBoundingRect(const Rect& dest, int innerLineWidth = 1) = 0;
 
     virtual void setProjectionMatrix(const Matrix3& projectionMatrix) { m_projectionMatrix = projectionMatrix; }

@@ -41,6 +41,10 @@ public:
         m_hardwareCached = false;
     }
 
+    void addTriangle(const Point& a, const Point& b, const Point& c) {
+        m_vertexArray.addTriangle(a, b, c);
+        m_hardwareCached = false;
+    }
     void addRect(const Rect& dest) {
         m_vertexArray.addRect(dest);
         m_hardwareCached = false;

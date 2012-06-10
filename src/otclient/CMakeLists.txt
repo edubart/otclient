@@ -55,6 +55,7 @@ SET(otclient_SOURCES ${otclient_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/ui/uiitem.cpp
     ${CMAKE_CURRENT_LIST_DIR}/ui/uicreature.cpp
     ${CMAKE_CURRENT_LIST_DIR}/ui/uimap.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/ui/uiprogressrect.cpp
 
     # otclient net
     ${CMAKE_CURRENT_LIST_DIR}/net/protocolgame.cpp

@@ -4,3 +4,7 @@ ProgressBar < UIProgressBar
   border: 1 black
   image-source: /core_styles/styles/images/progressbar.png
   image-border: 1
+
+ProgressRect < UIProgressRect
+  anchors.fill: parent
+  background-color: #00000044

@@ -150,6 +150,18 @@ void PainterOGL2::drawFilledRect(const Rect& dest)
     drawCoords(m_coordsBuffer);
 }
 
+void PainterOGL2::drawFilledTriangle(const Point& a, const Point& b, const Point& c)
+{
+    if(a == b || a == c || b == c)
+        return;
+
+    setDrawProgram(m_shaderProgram ? m_shaderProgram : g_shaders.getDrawSolidColorProgram().get());
+
+    m_coordsBuffer.clear();
+    m_coordsBuffer.addTriangle(a, b, c);
+    drawCoords(m_coordsBuffer);
+}
+
 void PainterOGL2::drawBoundingRect(const Rect& dest, int innerLineWidth)
 {
     if(dest.isEmpty() || innerLineWidth == 0)

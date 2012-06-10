@@ -167,6 +167,18 @@ void PainterOGL1::drawFilledRect(const Rect& dest)
     drawCoords(m_coordsBuffer);
 }
 
+void PainterOGL1::drawFilledTriangle(const Point& a, const Point& b, const Point& c)
+{
+    if(a == b || a == c || b == c)
+        return;
+
+    setTexture(nullptr);
+
+    m_coordsBuffer.clear();
+    m_coordsBuffer.addTriangle(a, b, c);
+    drawCoords(m_coordsBuffer);
+}
+
 void PainterOGL1::drawBoundingRect(const Rect& dest, int innerLineWidth)
 {
     if(dest.isEmpty() || innerLineWidth == 0)

@@ -20,20 +20,26 @@
  * THE SOFTWARE.
  */
 
-#ifndef OTCLIENT_UI_DECLARATIONS_H
-#define OTCLIENT_UI_DECLARATIONS_H
+#ifndef UIPROGRESSRECT_H
+#define UIPROGRESSRECT_H
 
-#include <otclient/global.h>
-#include <framework/ui/declarations.h>
+#include "declarations.h"
+#include <framework/ui/uiwidget.h>
+#include <otclient/core/item.h>
 
-class UIItem;
-class UICreature;
-class UIMap;
-class UIProgressRect;
+class UIProgressRect : public UIWidget
+{
+public:
+    UIProgressRect();
+    void drawSelf(Fw::DrawPane drawPane);
 
-typedef std::shared_ptr<UIItem> UIItemPtr;
-typedef std::shared_ptr<UICreature> UICreaturePtr;
-typedef std::shared_ptr<UIMap> UIMapPtr;
-typedef std::shared_ptr<UIProgressRect> UIProgressRectPtr;
+    void setPercent(float percent);
+    float getPercent() { return m_percent; }
+
+protected:
+    void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode);
+
+    float m_percent;
+};
 
 #endif
