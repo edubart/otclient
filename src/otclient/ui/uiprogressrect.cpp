@@ -75,6 +75,11 @@ void UIProgressRect::drawSelf(Fw::DrawPane drawPane)
         Point var = Point(std::max(m_percent - 87.5, 0.0) * (drawRect.horizontalCenter() - drawRect.left()) / 12.5, 0);
         g_painter->drawFilledTriangle(drawRect.center(), drawRect.topCenter(), drawRect.topLeft() + var);
     }
+
+    drawImage(m_rect);
+    drawBorder(m_rect);
+    drawIcon(m_rect);
+    drawText(m_rect);
 }
 
 void UIProgressRect::setPercent(float percent)

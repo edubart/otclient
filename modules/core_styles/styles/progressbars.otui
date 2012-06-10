@@ -7,4 +7,7 @@ ProgressBar < UIProgressBar
 
 ProgressRect < UIProgressRect
   anchors.fill: parent
-  background-color: #00000044
+  phantom: true
+  color: white
+  background-color: #00000088
+  font: verdana-11px-rounded
