@@ -129,11 +129,14 @@ protected:
 
     // walk related
     int m_walkAnimationPhase;
+    int m_footStep;
     Timer m_walkTimer;
+    Timer m_footTimer;
     TilePtr m_walkingTile;
     int m_walkInterval;
     int m_walkAnimationInterval;
     Boolean<false> m_walking;
+    Boolean<false> m_footStepDrawn;
     ScheduledEventPtr m_walkUpdateEvent;
     Point m_walkOffset;
     Otc::Direction m_walkTurnDirection;

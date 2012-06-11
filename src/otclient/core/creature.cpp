@@ -54,6 +54,7 @@ Creature::Creature() : Thing()
     m_emblem = Otc::EmblemNone;
     m_nameCache.setFont(g_fonts.getFont("verdana-11px-rounded"));
     m_nameCache.setAlign(Fw::AlignTopCenter);
+    m_footStep = 0;
 }
 
 /*
@@ -82,6 +83,7 @@ void Creature::draw(const Point& dest, float scaleFactor, bool animate)
     }
 
     internalDrawOutfit(dest + animationOffset * scaleFactor, scaleFactor, animate, animate, m_direction);
+    m_footStepDrawn = true;
 }
 
 void Creature::internalDrawOutfit(const Point& dest, float scaleFactor, bool animateWalk, bool animateIdle, Otc::Direction direction)
@@ -304,10 +306,15 @@ void Creature::updateWalkAnimation(int totalPixelsWalked)
     if(m_outfit.getCategory() != ThingsType::Creature)
         return;
 
-    if(totalPixelsWalked == 32 || totalPixelsWalked == 0 || getAnimationPhases() <= 1)
+    int footAnimPhases = getAnimationPhases() - 1;
+    if(totalPixelsWalked == 32 || footAnimPhases == 0)
         m_walkAnimationPhase = 0;
-    else if(getAnimationPhases() > 1)
-        m_walkAnimationPhase = 1 + ((totalPixelsWalked * 4) / Otc::TILE_PIXELS) % (getAnimationPhases() - 1);
+    else if(m_footStepDrawn && m_footTimer.ticksElapsed() >= m_walkAnimationInterval / 4 ) {
+        m_footStep++;
+        m_walkAnimationPhase = 1 + (m_footStep % footAnimPhases);
+        m_footStepDrawn = false;
+        m_footTimer.restart();
+    }
 }
 
 void Creature::updateWalkOffset(int totalPixelsWalked)
