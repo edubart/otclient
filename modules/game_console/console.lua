@@ -55,6 +55,7 @@ local channelsWindow
 local ownPrivateName
 local messageHistory = {}
 local currentMessageIndex = 0
+local ignoreNpcMessages = false
 
 -- private functions
 local function navigateMessageHistory(step)
@@ -83,6 +84,7 @@ end
 
 -- hooked events
 local function onCreatureSpeak(name, level, speaktype, message, channelId, creaturePos)
+  if ignoreNpcMessages and speaktype == SpeakPrivateNpcToPlayer then return end
   local defaultMessage = speaktype < 3 and true or false
   speaktype = SpeakTypes[speaktype]
   if speaktype.hideInConsole then return end
@@ -522,4 +524,8 @@ end
 function Console.getOwnPrivateTab()
   if not ownPrivateName then return end
   return Console.getTab(ownPrivateName)
+end
+
+function Console.ignoreNpcMessages(ignore)
+  ignoreNpcMessages = state
 end
