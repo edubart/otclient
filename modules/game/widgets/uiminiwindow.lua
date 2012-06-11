@@ -29,7 +29,7 @@ end
 
 function UIMiniWindow:onDragMove(mousePos, mouseMoved)
   local oldMousePosY = mousePos.y - mouseMoved.y
-  local children = rootWidget:recursiveGetChildrenByPos(mousePos)
+  local children = rootWidget:recursiveGetChildrenByMarginPos(mousePos)
   local overAnyWidget = false
   for i=1,#children do
     local child = children[i]
@@ -42,27 +42,26 @@ function UIMiniWindow:onDragMove(mousePos, mouseMoved)
       end
 
       if self.movedWidget then
-        self.widgetSetMargin(self.movedWidget, self.widgetGetMargin(self.movedWidget) - 10)
+        self.setMovedChildMargin(0)
+        self.setMovedChildMargin = nil
       end
 
       if mousePos.y < childCenterY then
-        self.widgetSetMargin = child.setMarginTop
-        self.widgetGetMargin = child.getMarginTop
+        self.setMovedChildMargin = function(v) child:setMarginTop(v) end
         self.movedIndex = 0
       else
-        self.widgetSetMargin = child.setMarginBottom
-        self.widgetGetMargin = child.getMarginBottom
+        self.setMovedChildMargin = function(v) child:setMarginBottom(v) end
         self.movedIndex = 1
       end
 
-      self.widgetSetMargin(child, self.widgetGetMargin(child) + 10)
       self.movedWidget = child
+      self.setMovedChildMargin(self:getHeight())
       break
     end
   end
 
   if not overAnyWidget and self.movedWidget then
-    self.widgetSetMargin(self.movedWidget, self.widgetGetMargin(self.movedWidget) - 10)
+    self.setMovedChildMargin(0)
     self.movedWidget = nil
   end
 
@@ -80,10 +79,9 @@ end
 
 function UIMiniWindow:onDragLeave(droppedWidget, mousePos)
   if self.movedWidget then
-    self.widgetSetMargin(self.movedWidget, self.widgetGetMargin(self.movedWidget) - 10)
+    self.setMovedChildMargin(0)
     self.movedWidget = nil
-    self.widgetSetMargin = nil
-    self.widgetGetMargin = nil
+    self.setMovedChildMargin = nil
     self.movedIndex = nil
   end
 end

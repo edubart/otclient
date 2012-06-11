@@ -150,6 +150,7 @@ public:
     UIWidgetPtr recursiveGetChildById(const std::string& id);
     UIWidgetPtr recursiveGetChildByPos(const Point& childPos, bool wantsPhantom);
     UIWidgetList recursiveGetChildrenByPos(const Point& childPos);
+    UIWidgetList recursiveGetChildrenByMarginPos(const Point& childPos);
     UIWidgetPtr backwardsGetWidgetById(const std::string& id);
 
     UIWidgetPtr asUIWidget() { return std::static_pointer_cast<UIWidget>(shared_from_this()); }
@@ -243,7 +244,8 @@ public:
     bool isDestroyed() { return m_destroyed; }
 
     bool hasChildren() { return m_children.size() > 0; }
-    bool containsChildPoint(const Point& point) { return getPaddingRect().contains(point); }
+    bool containsMarginPoint(const Point& point) { return getMarginRect().contains(point); }
+    bool containsPaddingPoint(const Point& point) { return getPaddingRect().contains(point); }
     bool containsPoint(const Point& point) { return m_rect.contains(point); }
 
     std::string getId() { return m_id; }

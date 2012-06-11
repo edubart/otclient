@@ -1065,7 +1065,7 @@ UIWidgetPtr UIWidget::getChildById(const std::string& childId)
 
 UIWidgetPtr UIWidget::getChildByPos(const Point& childPos)
 {
-    if(!containsChildPoint(childPos))
+    if(!containsPaddingPoint(childPos))
         return nullptr;
 
     for(auto it = m_children.rbegin(); it != m_children.rend(); ++it) {
@@ -1100,7 +1100,7 @@ UIWidgetPtr UIWidget::recursiveGetChildById(const std::string& id)
 
 UIWidgetPtr UIWidget::recursiveGetChildByPos(const Point& childPos, bool wantsPhantom)
 {
-    if(!containsChildPoint(childPos))
+    if(!containsPaddingPoint(childPos))
         return nullptr;
 
     for(auto it = m_children.rbegin(); it != m_children.rend(); ++it) {
@@ -1119,13 +1119,31 @@ UIWidgetPtr UIWidget::recursiveGetChildByPos(const Point& childPos, bool wantsPh
 UIWidgetList UIWidget::recursiveGetChildrenByPos(const Point& childPos)
 {
     UIWidgetList children;
-    if(!containsChildPoint(childPos))
+    if(!containsPaddingPoint(childPos))
         return children;
 
     for(auto it = m_children.rbegin(); it != m_children.rend(); ++it) {
         const UIWidgetPtr& child = (*it);
         if(child->isExplicitlyVisible() && child->containsPoint(childPos)) {
             UIWidgetList subChildren = child->recursiveGetChildrenByPos(childPos);
+            if(!subChildren.empty())
+                children.insert(children.end(), subChildren.begin(), subChildren.end());
+            children.push_back(child);
+        }
+    }
+    return children;
+}
+
+UIWidgetList UIWidget::recursiveGetChildrenByMarginPos(const Point& childPos)
+{
+    UIWidgetList children;
+    if(!containsPaddingPoint(childPos))
+        return children;
+
+    for(auto it = m_children.rbegin(); it != m_children.rend(); ++it) {
+        const UIWidgetPtr& child = (*it);
+        if(child->isExplicitlyVisible() && child->containsMarginPoint(childPos)) {
+            UIWidgetList subChildren = child->recursiveGetChildrenByMarginPos(childPos);
             if(!subChildren.empty())
                 children.insert(children.end(), subChildren.begin(), subChildren.end());
             children.push_back(child);
@@ -1580,7 +1598,7 @@ bool UIWidget::propagateOnKeyUp(uchar keyCode, int keyboardModifiers)
 bool UIWidget::propagateOnMouseEvent(const Point& mousePos, UIWidgetList& widgetList)
 {
     bool ret = false;
-    if(containsChildPoint(mousePos)) {
+    if(containsPaddingPoint(mousePos)) {
         for(auto it = m_children.rbegin(); it != m_children.rend(); ++it) {
             const UIWidgetPtr& child = *it;
             if(child->isExplicitlyEnabled() && child->isExplicitlyVisible() && child->containsPoint(mousePos)) {
