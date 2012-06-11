@@ -527,5 +527,5 @@ function Console.getOwnPrivateTab()
 end
 
 function Console.ignoreNpcMessages(ignore)
-  ignoreNpcMessages = state
+  ignoreNpcMessages = ignore
 end
