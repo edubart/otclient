@@ -27,6 +27,48 @@ function UIMiniWindow:onDragEnter(mousePos)
   return true
 end
 
+function UIMiniWindow:onDragMove(mousePos, mouseMoved)
+  local oldMousePosY = mousePos.y - mouseMoved.y
+  local children = rootWidget:recursiveGetChildrenByPos(mousePos)
+  local overAnyWidget = false
+  for i=1,#children do
+    local child = children[i]
+    if child:getParent():getClassName() == 'UIMiniWindowContainer' then
+      overAnyWidget = true
+
+      local childCenterY = child:getY() + child:getHeight() / 2
+      if child == self.movedWidget and mousePos.y < childCenterY and oldMousePosY < childCenterY then
+        break
+      end
+
+      if self.movedWidget then
+        self.widgetSetMargin(self.movedWidget, self.widgetGetMargin(self.movedWidget) - 10)
+      end
+
+      if mousePos.y < childCenterY then
+        self.widgetSetMargin = child.setMarginTop
+        self.widgetGetMargin = child.getMarginTop
+        self.movedIndex = 0
+      else
+        self.widgetSetMargin = child.setMarginBottom
+        self.widgetGetMargin = child.getMarginBottom
+        self.movedIndex = 1
+      end
+
+      self.widgetSetMargin(child, self.widgetGetMargin(child) + 10)
+      self.movedWidget = child
+      break
+    end
+  end
+
+  if not overAnyWidget and self.movedWidget then
+    self.widgetSetMargin(self.movedWidget, self.widgetGetMargin(self.movedWidget) - 10)
+    self.movedWidget = nil
+  end
+
+  return UIWindow.onDragMove(self, mousePos, mouseMoved)
+end
+
 function UIMiniWindow:onMousePress()
   local parent = self:getParent()
   if not parent then return false end
@@ -37,7 +79,13 @@ function UIMiniWindow:onMousePress()
 end
 
 function UIMiniWindow:onDragLeave(droppedWidget, mousePos)
-  -- TODO: drop on other interfaces
+  if self.movedWidget then
+    self.widgetSetMargin(self.movedWidget, self.widgetGetMargin(self.movedWidget) - 10)
+    self.movedWidget = nil
+    self.widgetSetMargin = nil
+    self.widgetGetMargin = nil
+    self.movedIndex = nil
+  end
 end
 
 function UIMiniWindow:onFocusChange(focused)
