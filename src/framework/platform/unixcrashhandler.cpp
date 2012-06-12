@@ -20,6 +20,8 @@
  * THE SOFTWARE.
  */
 
+#ifdef __linux
+
 #include "crashhandler.h"
 #include <framework/global.h>
 #include <framework/application.h>
@@ -131,3 +133,5 @@ void installCrashHandler()
     sigaction(SIGFPE, &sa, NULL);   // floating-point exception
     sigaction(SIGABRT, &sa, NULL);  // process aborted (asserts)
 }
+
+#endif

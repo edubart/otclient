@@ -129,7 +129,7 @@ protected:
 
     // walk related
     int m_walkAnimationPhase;
-    int m_footStep;
+    uint m_footStep;
     Timer m_walkTimer;
     Timer m_footTimer;
     TilePtr m_walkingTile;

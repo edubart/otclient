@@ -20,6 +20,8 @@
  * THE SOFTWARE.
  */
 
+#ifdef __linux
+
 #include "x11window.h"
 #include <framework/core/resourcemanager.h>
 #include <framework/thirdparty/apngloader.h>
@@ -1065,3 +1067,5 @@ std::string X11Window::getPlatformType()
     return "X11-EGL";
 #endif
 }
+
+#endif

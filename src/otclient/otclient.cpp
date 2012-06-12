@@ -51,29 +51,6 @@ void OTClient::init(const std::vector<std::string>& args)
                 "Compiled by: ", BUILD_COMPILER, "\n",
                 "Build type: ", BUILD_TYPE, "\n");
             return;
-            /*
-             *     if(option == "-no-draw-arrays")
-        m_useDrawArrays = false;
-    else if(option == "-no-fbos")
-        m_useFBO = false;
-    else if(option == "-no-mipmaps")
-        m_useMipmaps = false;
-    else if(option == "-no-hardware-mipmaps")
-        m_useHardwareMipmaps = false;
-    else if(option == "-no-smooth")
-        m_useBilinearFiltering = false;
-    else if(option == "-hardware-buffers")
-        m_useHardwareBuffers = true;
-    else if(option == "-no-non-power-of-two-textures")
-        m_useNonPowerOfTwoTextures = false;
-    else if(option == "-no-clamp-to-edge")
-        m_useClampToEdge = false;
-    else if(option == "-no-backbuffer-cache")
-        m_cacheBackbuffer = false;
-    else if(option == "-opengl1")
-        m_prefferedPainterEngine = Painter_OpenGL1;
-    else if(option == "-opengl2")
-        */
         } else if(arg == "-help" || arg == "--help" || arg == "-h" || arg == "-?" || arg == "/?") {
             stdext::print(
                 "Usage: ", args[0], " [options]\n"

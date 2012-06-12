@@ -26,39 +26,76 @@ ENDIF(BOT_PROTECTION)
 
 SET(otclient_SOURCES ${otclient_SOURCES}
     # otclient
-    ${CMAKE_CURRENT_LIST_DIR}/otclient.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/const.h
+    ${CMAKE_CURRENT_LIST_DIR}/global.h
     ${CMAKE_CURRENT_LIST_DIR}/luafunctions.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/otclient.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/otclient.h
 
-    # otclient luascript
-    ${CMAKE_CURRENT_LIST_DIR}/luascript/luavaluecasts.cpp
-
-    # otclient core
-    ${CMAKE_CURRENT_LIST_DIR}/core/game.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/core/map.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/core/mapview.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/core/thingtype.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/core/thingstype.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/core/spritemanager.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/core/item.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/core/container.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/core/tile.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/core/thing.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/core/creature.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/core/effect.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/core/missile.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/core/localplayer.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/core/outfit.cpp
+    # core
     ${CMAKE_CURRENT_LIST_DIR}/core/animatedtext.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/core/animatedtext.h
+    ${CMAKE_CURRENT_LIST_DIR}/core/container.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/core/container.h
+    ${CMAKE_CURRENT_LIST_DIR}/core/creature.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/core/creature.h
+    ${CMAKE_CURRENT_LIST_DIR}/core/declarations.h
+    ${CMAKE_CURRENT_LIST_DIR}/core/effect.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/core/effect.h
+    ${CMAKE_CURRENT_LIST_DIR}/core/game.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/core/game.h
+    ${CMAKE_CURRENT_LIST_DIR}/core/gameshadermanager.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/core/gameshadermanager.h
+    ${CMAKE_CURRENT_LIST_DIR}/core/item.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/core/item.h
+    ${CMAKE_CURRENT_LIST_DIR}/core/localplayer.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/core/localplayer.h
+    ${CMAKE_CURRENT_LIST_DIR}/core/map.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/core/map.h
+    ${CMAKE_CURRENT_LIST_DIR}/core/mapview.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/core/mapview.h
+    ${CMAKE_CURRENT_LIST_DIR}/core/missile.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/core/missile.h
+    ${CMAKE_CURRENT_LIST_DIR}/core/outfit.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/core/outfit.h
+    ${CMAKE_CURRENT_LIST_DIR}/core/player.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/core/player.h
+    ${CMAKE_CURRENT_LIST_DIR}/core/spritemanager.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/core/spritemanager.h
     ${CMAKE_CURRENT_LIST_DIR}/core/statictext.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/core/statictext.h
+    ${CMAKE_CURRENT_LIST_DIR}/core/thing.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/core/thing.h
+    ${CMAKE_CURRENT_LIST_DIR}/core/thingstype.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/core/thingstype.h
+    ${CMAKE_CURRENT_LIST_DIR}/core/thingtype.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/core/thingtype.h
+    ${CMAKE_CURRENT_LIST_DIR}/core/tile.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/core/tile.h
 
-    # otclient ui
-    ${CMAKE_CURRENT_LIST_DIR}/ui/uiitem.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/ui/uicreature.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/ui/uimap.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/ui/uiprogressrect.cpp
+    # lua
+    ${CMAKE_CURRENT_LIST_DIR}/luascript/luavaluecasts.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/luascript/luavaluecasts.h
 
-    # otclient net
+    # net
+    ${CMAKE_CURRENT_LIST_DIR}/net/declarations.h
+    ${CMAKE_CURRENT_LIST_DIR}/net/protocolcodes.h
     ${CMAKE_CURRENT_LIST_DIR}/net/protocolgame.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/net/protocolgamesend.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/net/protocolgame.h
     ${CMAKE_CURRENT_LIST_DIR}/net/protocolgameparse.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/net/protocolgamesend.cpp
+
+    # ui
+    ${CMAKE_CURRENT_LIST_DIR}/ui/declarations.h
+    ${CMAKE_CURRENT_LIST_DIR}/ui/uicreature.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/ui/uicreature.h
+    ${CMAKE_CURRENT_LIST_DIR}/ui/uiitem.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/ui/uiitem.h
+    ${CMAKE_CURRENT_LIST_DIR}/ui/uimap.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/ui/uimap.h
+    ${CMAKE_CURRENT_LIST_DIR}/ui/uiprogressrect.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/ui/uiprogressrect.h
+
+    # util
+    ${CMAKE_CURRENT_LIST_DIR}/util/position.h
 )

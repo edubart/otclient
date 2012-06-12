@@ -20,6 +20,8 @@
  * THE SOFTWARE.
  */
 
+#ifndef OPENGL_ES
+
 #include "painterogl1.h"
 #include "graphics.h"
 
@@ -279,3 +281,5 @@ void PainterOGL1::updateGlTextureState()
             glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     }
 }
+
+#endif

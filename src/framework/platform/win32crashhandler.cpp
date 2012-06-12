@@ -20,6 +20,8 @@
  * THE SOFTWARE.
  */
 
+#ifdef WIN32
+
 #include "crashhandler.h"
 #include <framework/global.h>
 #include <framework/application.h>
@@ -156,3 +158,5 @@ void installCrashHandler()
 {
     SetUnhandledExceptionFilter(ExceptionHandler);
 }
+
+#endif

@@ -20,6 +20,8 @@
  * THE SOFTWARE.
  */
 
+#ifdef WIN32
+
 #include "win32window.h"
 
 #include <framework/application.h>
@@ -950,3 +952,5 @@ std::string WIN32Window::getPlatformType()
     return "WIN32-EGL";
 #endif
 }
+
+#endif
