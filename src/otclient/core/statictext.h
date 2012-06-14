@@ -50,7 +50,7 @@ private:
     void compose();
 
     Boolean<false> m_yell;
-    std::vector<std::string> m_messages;
+    std::deque<std::string> m_messages;
     std::string m_name;
     Otc::SpeakType m_messageType;
     Color m_color;

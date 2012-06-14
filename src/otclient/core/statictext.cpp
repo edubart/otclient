@@ -54,13 +54,15 @@ bool StaticText::addMessage(const std::string& name, Otc::SpeakType type, const 
         m_name = name;
         m_messageType = type;
     }
-    else {
+    else if(m_messages.size() > 20) {
+        // to many messages, ignore to avoid lag
+        return false;
+    } else {
         // we can only add another message if it follows these conditions
         if(m_name != name || m_messageType != type)
             return false;
     }
 
-    m_messages.push_back(message);
     compose();
 
     auto self = asStaticText();
@@ -73,7 +75,7 @@ bool StaticText::addMessage(const std::string& name, Otc::SpeakType type, const 
 
 void StaticText::removeMessage()
 {
-    m_messages.erase(m_messages.begin());
+    m_messages.pop_front();
 
     if(m_messages.empty()) {
         // schedule removal
