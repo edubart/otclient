@@ -63,6 +63,7 @@ bool StaticText::addMessage(const std::string& name, Otc::SpeakType type, const 
             return false;
     }
 
+    m_messages.push_back(message);
     compose();
 
     auto self = asStaticText();
