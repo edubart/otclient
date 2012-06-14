@@ -201,10 +201,8 @@ void Application::run()
             }
 
             if(redraw) {
-                g_graphics.beginRender();
-
                 if(cacheForeground) {
-                    Rect viewportRect(0, 0, g_graphics.getViewportSize());
+                    Rect viewportRect(0, 0, g_painter->getResolution());
 
                     // draw the foreground into a texture
                     if(updateForeground) {
@@ -235,8 +233,6 @@ void Application::run()
                     m_backgroundFrameCounter.processNextFrame();
                     g_ui.render(Fw::BothPanes);
                 }
-
-                g_graphics.endRender();
 
                 // update screen pixels
                 g_window.swapBuffers();

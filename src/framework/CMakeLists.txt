@@ -16,12 +16,17 @@ IF(NOT CMAKE_BUILD_TYPE)
     SET(CMAKE_BUILD_TYPE RelWithDebInfo)
 ENDIF()
 
-# setup compiler options
-SET(CXX_WARNS "-Wall -Wextra -Werror -Wno-unused-parameter -Wno-unused-but-set-variable")
-SET(CMAKE_CXX_FLAGS                   "${CMAKE_CXX_FLAGS} ${CXX_WARNS} -std=gnu++0x -pipe")
+IF(CMAKE_SIZEOF_VOID_P EQUAL 8)
+    SET(ARCH_FLAGS "-m64 -march=x86-64 -mtune=generic")
+ELSE()
+    SET(ARCH_FLAGS "-m32 -march=i686 -mtune=generic")
+ENDIF()
+SET(WARNS_FLAGS "-Wall -Wextra -Werror -Wno-unused-parameter -Wno-unused-but-set-variable")
+SET(SECURE_FLAGS "-fstack-protector --param=ssp-buffer-size=4 -D_FORTIFY_SOURCE=2")
+SET(CMAKE_CXX_FLAGS                   "${CMAKE_CXX_FLAGS} ${CXX_WARNS} ${SECURE_FLAGS} ${ARCH_FLAGS} -std=gnu++0x -pipe")
 SET(CMAKE_CXX_FLAGS_DEBUG             "-O0 -ggdb")
 SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO    "-O1 -ggdb -fno-omit-frame-pointer")
-SET(CMAKE_CXX_FLAGS_RELEASE           "-O3")
+SET(CMAKE_CXX_FLAGS_RELEASE           "-O2")
 
 SET(CMAKE_CXX_LINK_FLAGS              "${CMAKE_CXX_LINK_FLAGS} -static-libgcc -static-libstdc++ -Wl,--as-needed")
 
@@ -222,8 +227,6 @@ SET(framework_SOURCES ${framework_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/graphics/painterogl2.cpp
     ${CMAKE_CURRENT_LIST_DIR}/graphics/painterogl2.h
     ${CMAKE_CURRENT_LIST_DIR}/graphics/painterogl2_shadersources.h
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/paintershadermanager.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/paintershadermanager.h
     ${CMAKE_CURRENT_LIST_DIR}/graphics/paintershaderprogram.cpp
     ${CMAKE_CURRENT_LIST_DIR}/graphics/paintershaderprogram.h
     ${CMAKE_CURRENT_LIST_DIR}/graphics/particleaffector.cpp

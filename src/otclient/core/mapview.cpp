@@ -24,13 +24,13 @@
 
 #include <framework/graphics/graphics.h>
 #include <framework/graphics/framebuffer.h>
-#include <framework/graphics/paintershadermanager.h>
 #include "creature.h"
 #include "map.h"
 #include "tile.h"
 #include "statictext.h"
 #include "animatedtext.h"
 #include "missile.h"
+#include "shadermanager.h"
 #include <framework/core/eventdispatcher.h>
 
 MapView::MapView()
@@ -44,7 +44,7 @@ MapView::MapView()
     m_framebuffer = FrameBufferPtr(new FrameBuffer());
     setVisibleDimension(Size(15, 11));
 
-    m_shaderProgram = g_shaders.createTexturedFragmentShader("/game_shaders/map.frag");
+    m_shader = g_shaders.getDefaultMapShader();
 }
 
 void MapView::draw(const Rect& rect)
@@ -109,12 +109,11 @@ void MapView::draw(const Rect& rect)
         m_framebuffer->release();
 
         // generating mipmaps each frame can be slow in older cards
-        //m_framebuffer->getTexture()->generateHardwareMipmaps();
+        //m_framebuffer->getTexture()->buildHardwareMipmaps();
 
         m_mustDrawVisibleTilesCache = false;
     }
 
-    //g_painter->setShaderProgram(m_shaderProgram);
 
     Point drawOffset = ((m_drawDimension - m_visibleDimension - Size(1,1)).toPoint()/2) * m_tileSize;
     if(m_followingCreature)
@@ -129,6 +128,7 @@ void MapView::draw(const Rect& rect)
 
     g_painter->setColor(Color::white);
     glDisable(GL_BLEND);
+    g_painter->setShaderProgram(m_shader);
 #if 0
     // debug source area
     g_painter->saveAndResetState();
@@ -141,9 +141,9 @@ void MapView::draw(const Rect& rect)
 #else
     m_framebuffer->draw(rect, srcRect);
 #endif
+    g_painter->resetShaderProgram();
     glEnable(GL_BLEND);
 
-    //g_painter->resetShaderProgram();
 
     // this could happen if the player position is not known yet
     if(!cameraPosition.isValid())

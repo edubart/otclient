@@ -62,6 +62,8 @@ public:
     void setColor(const Color& color);
     void setOpacity(float opacity);
 
+    bool hasShaders() { return false; }
+
 private:
     void updateGlColor();
     void updateGlMatrixMode();

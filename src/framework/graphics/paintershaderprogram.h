@@ -40,11 +40,12 @@ protected:
         TIME_UNIFORM = 4,
         TEX0_UNIFORM = 5,
         TEX1_UNIFORM = 6,
-        //TEX2_UNIFORM = 7,
-        //TEX3_UNIFORM = 8,
+        RESOLUTION_UNIFORM = 7,
     };
 
     friend class PainterOGL2;
+
+    virtual void setupUniforms();
 
 public:
     PainterShaderProgram();
@@ -55,7 +56,11 @@ public:
     void setTextureMatrix(const Matrix3& textureMatrix);
     void setColor(const Color& color);
     void setOpacity(float opacity);
+    void setResolution(const Size& resolution);
     void updateTime();
+
+    void addMultiTexture(const std::string& file);
+    void bindMultiTextures();
 
 private:
     float m_startTime;
@@ -64,7 +69,9 @@ private:
     float m_opacity;
     Matrix3 m_projectionMatrix;
     Matrix3 m_textureMatrix;
+    Size m_resolution;
     float m_time;
+    std::vector<TexturePtr> m_multiTextures;
 };
 
 #endif

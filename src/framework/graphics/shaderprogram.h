@@ -24,12 +24,14 @@
 #define SHADERPROGRAM_H
 
 #include "shader.h"
+#include <framework/luascript/luaobject.h>
 
-class ShaderProgram
+class ShaderProgram : public LuaObject
 {
     enum {
         MAX_UNIFORM_LOCATIONS = 30
     };
+
 public:
     ShaderProgram();
     ~ShaderProgram();

@@ -51,6 +51,7 @@ public:
 private:
     uint16 m_id;
     uint8 m_countOrSubType;
+    PainterShaderProgramPtr m_shaderProgram;
 };
 
 #endif

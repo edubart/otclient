@@ -25,16 +25,16 @@
 #include "spritemanager.h"
 #include "thing.h"
 #include "tile.h"
+#include "shadermanager.h"
 #include <framework/core/clock.h>
 #include <framework/core/eventdispatcher.h>
 #include <framework/graphics/graphics.h>
-#include <framework/graphics/paintershaderprogram.h>
-#include <framework/graphics/painterogl2_shadersources.h>
 
 Item::Item() : Thing()
 {
     m_id = 0;
     m_countOrSubType = 1;
+    m_shaderProgram = g_shaders.getDefaultItemShader();
 }
 
 ItemPtr Item::create(int id)
@@ -48,10 +48,6 @@ ItemPtr Item::create(int id)
     return item;
 }
 
-/*
-PainterShaderProgramPtr itemProgram;
-int ITEM_ID_UNIFORM = 10;
-*/
 void Item::draw(const Point& dest, float scaleFactor, bool animate)
 {
     if(m_id == 0)
@@ -166,25 +162,18 @@ void Item::draw(const Point& dest, float scaleFactor, bool animate)
         zPattern = m_position.z % getNumPatternsZ();
     }
 
-    // setup item drawing shader
-    /*
-    if(!itemProgram) {
-        itemProgram = PainterShaderProgramPtr(new PainterShaderProgram);
-        itemProgram->addShaderFromSourceCode(Shader::Vertex, glslMainWithTexCoordsVertexShader + glslPositionOnlyVertexShader);
-        itemProgram->addShaderFromSourceFile(Shader::Fragment, "/game_shaders/item.frag");
-        itemProgram->link();
-        itemProgram->bindUniformLocation(ITEM_ID_UNIFORM, "itemId");
-    }
-    g_painter->setShaderProgram(itemProgram);
-    //itemProgram->bind();
-    //itemProgram->setUniformValue(ITEM_ID_UNIFORM, (int)m_id);
-    */
+    bool useShader = g_painter->hasShaders() && m_shaderProgram;
+    if(useShader) {
+        m_shaderProgram->bind();
+        m_shaderProgram->setUniformValue(ShaderManager::ITEM_ID_UNIFORM, (int)m_id);
 
-    // now we can draw the item
+        g_painter->setShaderProgram(m_shaderProgram);
+    }
+
     m_type->draw(dest, scaleFactor, 0, xPattern, yPattern, zPattern, animationPhase);
 
-    // release draw shader
-    //g_painter->resetShaderProgram();
+    if(useShader)
+        g_painter->resetShaderProgram();
 }
 
 void Item::setId(uint32 id)

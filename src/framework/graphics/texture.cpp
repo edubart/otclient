@@ -124,6 +124,16 @@ void Texture::setSmooth(bool smooth)
     setupFilters();
 }
 
+void Texture::setRepeat(bool repeat)
+{
+    if(m_repeat == repeat)
+        return;
+
+    m_repeat = repeat;
+    bind();
+    setupWrap();
+}
+
 void Texture::setUpsideDown(bool upsideDown)
 {
     if(m_upsideDown == upsideDown)
@@ -163,9 +173,11 @@ bool Texture::setupSize(const Size& size, bool forcePowerOfTwo)
 
 void Texture::setupWrap()
 {
-    GLint texParam = GL_REPEAT;
-    if(g_graphics.canUseClampToEdge())
-        texParam = GL_CLAMP_TO_EDGE; // disable texture borders by default
+    GLint texParam;
+    if(!m_repeat && g_graphics.canUseClampToEdge())
+        texParam = GL_CLAMP_TO_EDGE;
+    else
+        texParam = GL_REPEAT;
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, texParam);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, texParam);

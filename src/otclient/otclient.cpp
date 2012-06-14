@@ -26,6 +26,7 @@
 #include <framework/graphics/graphics.h>
 #include "core/game.h"
 #include "core/map.h"
+#include "core/shadermanager.h"
 
 OTClient::OTClient() : Application(Otc::AppCompactName)
 {
@@ -87,6 +88,8 @@ void OTClient::init(const std::vector<std::string>& args)
     g_logger.setLogFile(stdext::format("%s.txt", Otc::AppCompactName));
     Application::init(args);
 
+    g_shaders.init();
+
     g_modules.discoverModules();
 
     // core modules 0-99
@@ -109,4 +112,10 @@ void OTClient::init(const std::vector<std::string>& args)
             g_logger.error(stdext::format("failed to load otclientrc.lua: %s", e.what()));
         }
     }
+}
+
+void OTClient::terminate()
+{
+    g_shaders.terminate();
+    Application::terminate();
 }

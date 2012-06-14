@@ -86,22 +86,13 @@ void FrameBuffer::resize(const Size& size)
 void FrameBuffer::bind()
 {
     g_painter->saveAndResetState();
-
     internalBind();
-
-    Matrix3 projectionMatrix = { 2.0f/m_texture->getWidth(),  0.0f,                         0.0f,
-                                 0.0f,                       -2.0f/m_texture->getHeight(),  0.0f,
-                                -1.0f,                        1.0f,                         1.0f };
-    g_painter->setProjectionMatrix(projectionMatrix);
-
-    m_oldViewportSize = g_graphics.getViewportSize();
-    g_graphics.setViewportSize(m_texture->getSize());
+    g_painter->setResolution(m_texture->getSize());
 }
 
 void FrameBuffer::release()
 {
     internalRelease();
-    g_graphics.setViewportSize(m_oldViewportSize);
     g_painter->restoreSavedState();
 }
 

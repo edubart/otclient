@@ -22,7 +22,9 @@
 
 #include "painterogl2.h"
 #include "texture.h"
-#include "paintershadermanager.h"
+#include "graphics.h"
+#include "painterogl2_shadersources.h"
+#include <framework/platform/platformwindow.h>
 
 PainterOGL2 *g_painterOGL2 = nullptr;
 
@@ -31,12 +33,25 @@ PainterOGL2::PainterOGL2()
     m_drawProgram = nullptr;
     resetState();
 
-    g_shaders.init();
+    m_drawTexturedProgram = PainterShaderProgramPtr(new PainterShaderProgram);
+    assert(m_drawTexturedProgram);
+    m_drawTexturedProgram->addShaderFromSourceCode(Shader::Vertex, glslMainWithTexCoordsVertexShader + glslPositionOnlyVertexShader);
+    m_drawTexturedProgram->addShaderFromSourceCode(Shader::Fragment, glslMainFragmentShader + glslTextureSrcFragmentShader);
+    m_drawTexturedProgram->link();
+
+    m_drawSolidColorProgram = PainterShaderProgramPtr(new PainterShaderProgram);
+    assert(m_drawSolidColorProgram);
+    m_drawSolidColorProgram->addShaderFromSourceCode(Shader::Vertex, glslMainVertexShader + glslPositionOnlyVertexShader);
+    m_drawSolidColorProgram->addShaderFromSourceCode(Shader::Fragment, glslMainFragmentShader + glslSolidColorFragmentShader);
+    m_drawSolidColorProgram->link();
+
+    PainterShaderProgram::release();
 }
 
 PainterOGL2::~PainterOGL2()
 {
-    g_shaders.terminate();
+    m_drawTexturedProgram = nullptr;
+    m_drawSolidColorProgram = nullptr;
 }
 
 void PainterOGL2::bind()
@@ -71,10 +86,13 @@ void PainterOGL2::drawCoords(CoordsBuffer& coordsBuffer, DrawMode drawMode)
     // update shader with the current painter state
     m_drawProgram->bind();
     m_drawProgram->setProjectionMatrix(m_projectionMatrix);
-    if(textured)
+    if(textured) {
         m_drawProgram->setTextureMatrix(m_textureMatrix);
+        m_drawProgram->bindMultiTextures();
+    }
     m_drawProgram->setOpacity(m_opacity);
     m_drawProgram->setColor(m_color);
+    m_drawProgram->setResolution(m_resolution);
     m_drawProgram->updateTime();
 
     // update coords buffer hardware caches if enabled
@@ -107,7 +125,7 @@ void PainterOGL2::drawTextureCoords(CoordsBuffer& coordsBuffer, const TexturePtr
     if(texture->isEmpty())
         return;
 
-    setDrawProgram(m_shaderProgram ? m_shaderProgram : g_shaders.getDrawTexturedProgram().get());
+    setDrawProgram(m_shaderProgram ? m_shaderProgram : m_drawTexturedProgram.get());
     setTexture(texture);
     drawCoords(coordsBuffer);
 }
@@ -117,7 +135,7 @@ void PainterOGL2::drawTexturedRect(const Rect& dest, const TexturePtr& texture, 
     if(dest.isEmpty() || src.isEmpty() || texture->isEmpty())
         return;
 
-    setDrawProgram(m_shaderProgram ? m_shaderProgram : g_shaders.getDrawTexturedProgram().get());
+    setDrawProgram(m_shaderProgram ? m_shaderProgram : m_drawTexturedProgram.get());
     setTexture(texture);
 
     m_coordsBuffer.clear();
@@ -130,7 +148,7 @@ void PainterOGL2::drawRepeatedTexturedRect(const Rect& dest, const TexturePtr& t
     if(dest.isEmpty() || src.isEmpty() || texture->isEmpty())
         return;
 
-    setDrawProgram(m_shaderProgram ? m_shaderProgram : g_shaders.getDrawTexturedProgram().get());
+    setDrawProgram(m_shaderProgram ? m_shaderProgram : m_drawTexturedProgram.get());
     setTexture(texture);
 
     m_coordsBuffer.clear();
@@ -143,7 +161,7 @@ void PainterOGL2::drawFilledRect(const Rect& dest)
     if(dest.isEmpty())
         return;
 
-    setDrawProgram(m_shaderProgram ? m_shaderProgram : g_shaders.getDrawSolidColorProgram().get());
+    setDrawProgram(m_shaderProgram ? m_shaderProgram : m_drawSolidColorProgram.get());
 
     m_coordsBuffer.clear();
     m_coordsBuffer.addRect(dest);
@@ -155,7 +173,7 @@ void PainterOGL2::drawFilledTriangle(const Point& a, const Point& b, const Point
     if(a == b || a == c || b == c)
         return;
 
-    setDrawProgram(m_shaderProgram ? m_shaderProgram : g_shaders.getDrawSolidColorProgram().get());
+    setDrawProgram(m_shaderProgram ? m_shaderProgram : m_drawSolidColorProgram.get());
 
     m_coordsBuffer.clear();
     m_coordsBuffer.addTriangle(a, b, c);
@@ -167,7 +185,7 @@ void PainterOGL2::drawBoundingRect(const Rect& dest, int innerLineWidth)
     if(dest.isEmpty() || innerLineWidth == 0)
         return;
 
-    setDrawProgram(m_shaderProgram ? m_shaderProgram : g_shaders.getDrawSolidColorProgram().get());
+    setDrawProgram(m_shaderProgram ? m_shaderProgram : m_drawSolidColorProgram.get());
 
     m_coordsBuffer.clear();
     m_coordsBuffer.addBoudingRect(dest, innerLineWidth);

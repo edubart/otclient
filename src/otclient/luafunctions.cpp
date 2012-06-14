@@ -37,6 +37,7 @@
 #include <otclient/core/map.h>
 #include <otclient/core/thingstype.h>
 #include <otclient/core/spritemanager.h>
+#include <otclient/core/shadermanager.h>
 #include <otclient/net/protocolgame.h>
 #include <otclient/ui/uiitem.h>
 #include <otclient/ui/uicreature.h>
@@ -170,6 +171,16 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassStaticFunction("g_game", "getGMActions", std::bind(&Game::getGMActions, &g_game));
     g_lua.bindClassStaticFunction("g_game", "getClientVersion", std::bind(&Game::getClientVersion, &g_game));
     g_lua.bindClassStaticFunction("g_game", "getFeature", std::bind(&Game::getFeature, &g_game, std::placeholders::_1));
+
+    g_lua.registerStaticClass("g_shaders");
+    g_lua.bindClassStaticFunction("g_shaders", "createShader", std::bind(&ShaderManager::createShader, &g_shaders, std::placeholders::_1));
+    g_lua.bindClassStaticFunction("g_shaders", "createFragmentShader", std::bind(&ShaderManager::createFragmentShader, &g_shaders, std::placeholders::_1, std::placeholders::_2));
+    g_lua.bindClassStaticFunction("g_shaders", "createFragmentShaderFromCode", std::bind(&ShaderManager::createFragmentShaderFromCode, &g_shaders, std::placeholders::_1, std::placeholders::_2));
+    g_lua.bindClassStaticFunction("g_shaders", "createItemShader", std::bind(&ShaderManager::createItemShader, &g_shaders, std::placeholders::_1, std::placeholders::_2));
+    g_lua.bindClassStaticFunction("g_shaders", "createMapShader", std::bind(&ShaderManager::createMapShader, &g_shaders, std::placeholders::_1, std::placeholders::_2));
+    g_lua.bindClassStaticFunction("g_shaders", "getDefaultItemShader", std::bind(&ShaderManager::getDefaultItemShader, &g_shaders));
+    g_lua.bindClassStaticFunction("g_shaders", "getDefaultMapShader", std::bind(&ShaderManager::getDefaultMapShader, &g_shaders));
+    g_lua.bindClassStaticFunction("g_shaders", "getShader", std::bind(&ShaderManager::getShader, &g_shaders, std::placeholders::_1));
 
     g_lua.bindGlobalFunction("getOufitColor", Outfit::getColor);
 
@@ -375,6 +386,7 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIMap>("setDrawMinimapColors", &UIMap::setDrawMinimapColors);
     g_lua.bindClassMemberFunction<UIMap>("setAnimated", &UIMap::setAnimated);
     g_lua.bindClassMemberFunction<UIMap>("setKeepAspectRatio", &UIMap::setKeepAspectRatio);
+    g_lua.bindClassMemberFunction<UIMap>("setMapShader", &UIMap::setMapShader);
     g_lua.bindClassMemberFunction<UIMap>("isMultifloor", &UIMap::isMultifloor);
     g_lua.bindClassMemberFunction<UIMap>("isAutoViewModeEnabled", &UIMap::isAutoViewModeEnabled);
     g_lua.bindClassMemberFunction<UIMap>("isDrawingTexts", &UIMap::isDrawingTexts);
@@ -390,6 +402,7 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIMap>("getMaxZoomIn", &UIMap::getMaxZoomIn);
     g_lua.bindClassMemberFunction<UIMap>("getMaxZoomOut", &UIMap::getMaxZoomOut);
     g_lua.bindClassMemberFunction<UIMap>("getZoom", &UIMap::getZoom);
+    g_lua.bindClassMemberFunction<UIMap>("getMapShader", &UIMap::getMapShader);
 
     g_lua.registerClass<UIProgressRect, UIWidget>();
     g_lua.bindClassStaticFunction<UIProgressRect>("create", []{ return UIProgressRectPtr(new UIProgressRect); } );

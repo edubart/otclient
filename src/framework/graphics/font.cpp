@@ -68,7 +68,7 @@ void Font::load(const OTMLNodePtr& fontNode)
 
 void Font::drawText(const std::string& text, const Point& startPos)
 {
-    Size boxSize = g_graphics.getViewportSize() - startPos.toSize();
+    Size boxSize = g_painter->getResolution() - startPos.toSize();
     Rect screenCoords(startPos, boxSize);
     drawText(text, screenCoords, Fw::AlignTopLeft);
 }

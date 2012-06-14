@@ -8,7 +8,6 @@ Module
     - client_extended
     - game_tibiafiles
     - client_background
-    //- game_shaders
 
   load-later:
     - game_textmessage
@@ -29,6 +28,7 @@ Module
     - game_questlog
     - game_ruleviolation
     - game_bugreport
+    - game_shaders
 
   @onLoad: |
     importStyle 'styles/items.otui'

@@ -51,8 +51,12 @@ public:
 
     void setDrawProgram(PainterShaderProgram *drawProgram) { m_drawProgram = drawProgram; }
 
+    bool hasShaders() { return true; }
+
 private:
     PainterShaderProgram *m_drawProgram;
+    PainterShaderProgramPtr m_drawTexturedProgram;
+    PainterShaderProgramPtr m_drawSolidColorProgram;
 };
 
 extern PainterOGL2 *g_painterOGL2;

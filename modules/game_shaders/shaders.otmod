@@ -1,0 +1,15 @@
+Module
+  name: game_shaders
+  description: Manage game shaders
+  author: edubart
+  website: www.otclient.info
+
+  dependencies:
+    - game
+
+  @onLoad: |
+    dofile 'shaders'
+    Shaders.init()
+
+  @onUnload: |
+    Shaders.terminate()

@@ -1,0 +1,15 @@
+ShadersPanel < UIWidget
+  focusable: false
+
+  anchors.top: parent.top
+  anchors.left: parent.left
+  border-color: red
+  border-width: 1
+
+  width: 100
+  layout:
+    type: verticalBox
+    fit-children: true
+
+  ComboBox
+    id: mapComboBox

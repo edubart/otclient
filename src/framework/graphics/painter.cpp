@@ -54,6 +54,7 @@ void Painter::refreshState()
     updateGlClipRect();
     updateGlTexture();
     updateGlAlphaWriting();
+    updateGlViewport();
 }
 
 void Painter::saveState()
@@ -68,6 +69,7 @@ void Painter::saveState()
     m_olderStates[m_oldStateIndex].shaderProgram = m_shaderProgram;
     m_olderStates[m_oldStateIndex].texture = m_texture;
     m_olderStates[m_oldStateIndex].alphaWriting = m_alphaWriting;
+    m_olderStates[m_oldStateIndex].resolution = m_resolution;
     m_oldStateIndex++;
 }
 
@@ -88,6 +90,7 @@ void Painter::restoreSavedState()
     setClipRect(m_olderStates[m_oldStateIndex].clipRect);
     setShaderProgram(m_olderStates[m_oldStateIndex].shaderProgram);
     setTexture(m_olderStates[m_oldStateIndex].texture);
+    setResolution(m_olderStates[m_oldStateIndex].resolution);
 }
 
 void Painter::clear(const Color& color)
@@ -150,6 +153,36 @@ void Painter::setAlphaWriting(bool enable)
     updateGlAlphaWriting();
 }
 
+void Painter::setResolution(const Size& resolution)
+{
+    if(m_resolution == resolution)
+        return;
+
+
+    // The projection matrix converts from Painter's coordinate system to GL's coordinate system
+    //    * GL's viewport is 2x2, Painter's is width x height
+    //    * GL has +y -> -y going from bottom -> top, Painter is the other way round
+    //    * GL has [0,0] in the center, Painter has it in the top-left
+    //
+    // This results in the Projection matrix below.
+    //
+    //                                    Projection Matrix
+    //   Painter Coord     ------------------------------------------------        GL Coord
+    //   -------------     | 2.0 / width  |      0.0      |      0.0      |     ---------------
+    //   |  x  y  1  |  *  |     0.0      | -2.0 / height |      0.0      |  =  |  x'  y'  1  |
+    //   -------------     |    -1.0      |      1.0      |      1.0      |     ---------------
+
+    Matrix3 projectionMatrix = { 2.0f/resolution.width(),  0.0f,                      0.0f,
+                                 0.0f,                    -2.0f/resolution.height(),  0.0f,
+                                -1.0f,                     1.0f,                      1.0f };
+
+    m_resolution = resolution;
+
+    setProjectionMatrix(projectionMatrix);
+    if(g_painter == this)
+        updateGlViewport();
+}
+
 void Painter::updateGlTexture()
 {
     if(m_glTextureId != 0)
@@ -184,7 +217,7 @@ void Painter::updateGlClipRect()
 {
     if(m_clipRect.isValid()) {
         glEnable(GL_SCISSOR_TEST);
-        glScissor(m_clipRect.left(), g_graphics.getViewportSize().height() - m_clipRect.bottom() - 1, m_clipRect.width(), m_clipRect.height());
+        glScissor(m_clipRect.left(), m_resolution.height() - m_clipRect.bottom() - 1, m_clipRect.width(), m_clipRect.height());
     } else {
         glDisable(GL_SCISSOR_TEST);
     }
@@ -196,4 +229,9 @@ void Painter::updateGlAlphaWriting()
         glColorMask(1,1,1,1);
     else
         glColorMask(1,1,1,0);
+}
+
+void Painter::updateGlViewport()
+{
+    glViewport(0, 0, m_resolution.width(), m_resolution.height());
 }

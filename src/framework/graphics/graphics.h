@@ -46,8 +46,6 @@ public:
     PainterEngine getPainterEngine() { return m_selectedPainterEngine; }
 
     void resize(const Size& size);
-    void beginRender();
-    void endRender();
 
     void setViewportSize(const Size& size);
 

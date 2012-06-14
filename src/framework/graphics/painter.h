@@ -53,6 +53,7 @@ public:
         Texture *texture;
         PainterShaderProgram *shaderProgram;
         bool alphaWriting;
+        Size resolution;
     };
 
     Painter();
@@ -91,6 +92,7 @@ public:
 
     void setShaderProgram(const PainterShaderProgramPtr& shaderProgram) { setShaderProgram(shaderProgram.get()); }
     void setTexture(const TexturePtr& texture) { setTexture(texture.get()); }
+    void setResolution(const Size& resolution);
 
     Matrix3 getProjectionMatrix() { return m_projectionMatrix; }
     Matrix3 getTextureMatrix() { return m_textureMatrix; }
@@ -100,6 +102,7 @@ public:
     Rect getClipRect() { return m_clipRect; }
     PainterShaderProgram *getShaderProgram() { return m_shaderProgram; }
     bool getAlphaWriting() { return m_alphaWriting; }
+    Size getResolution() { return m_resolution; };
 
     void resetColor() { setColor(Color::white); }
     void resetOpacity() { setOpacity(1.0f); }
@@ -109,11 +112,14 @@ public:
     void resetTexture() { setTexture(nullptr); }
     void resetAlphaWriting() { setAlphaWriting(false); }
 
+    virtual bool hasShaders() = 0;
+
 protected:
     void updateGlTexture();
     void updateGlCompositionMode();
     void updateGlClipRect();
     void updateGlAlphaWriting();
+    void updateGlViewport();
 
     CoordsBuffer m_coordsBuffer;
 
@@ -126,6 +132,7 @@ protected:
     Texture *m_texture;
     PainterShaderProgram *m_shaderProgram;
     bool m_alphaWriting;
+    Size m_resolution;
 
     PainterState m_olderStates[10];
     int m_oldStateIndex;

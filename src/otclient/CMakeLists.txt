@@ -44,8 +44,8 @@ SET(otclient_SOURCES ${otclient_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/core/effect.h
     ${CMAKE_CURRENT_LIST_DIR}/core/game.cpp
     ${CMAKE_CURRENT_LIST_DIR}/core/game.h
-    ${CMAKE_CURRENT_LIST_DIR}/core/gameshadermanager.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/core/gameshadermanager.h
+    ${CMAKE_CURRENT_LIST_DIR}/core/shadermanager.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/core/shadermanager.h
     ${CMAKE_CURRENT_LIST_DIR}/core/item.cpp
     ${CMAKE_CURRENT_LIST_DIR}/core/item.h
     ${CMAKE_CURRENT_LIST_DIR}/core/localplayer.cpp

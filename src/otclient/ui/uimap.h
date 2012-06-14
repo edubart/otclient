@@ -54,6 +54,7 @@ public:
     void setDrawMinimapColors(bool enable) { m_mapView->setDrawMinimapColors(enable); }
     void setAnimated(bool enable) { m_mapView->setAnimated(enable); }
     void setKeepAspectRatio(bool enable);
+    void setMapShader(const PainterShaderProgramPtr& shader) { m_mapView->setShader(shader); }
 
     bool isMultifloor() { return m_mapView->isMultifloor(); }
     bool isAutoViewModeEnabled() { return m_mapView->isAutoViewModeEnabled(); }
@@ -71,6 +72,7 @@ public:
     int getMaxZoomIn() { return m_maxZoomIn; }
     int getMaxZoomOut() { return m_maxZoomOut; }
     int getZoom() { return m_zoom; }
+    PainterShaderProgramPtr getMapShader() { return m_mapView->getShader(); }
 
 protected:
     virtual void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode);

@@ -38,6 +38,7 @@ public:
     bool buildHardwareMipmaps();
 
     void setSmooth(bool smooth);
+    void setRepeat(bool repeat);
     void setUpsideDown(bool upsideDown);
 
     GLuint getId()  { return m_id; }
@@ -47,6 +48,7 @@ public:
     const Size& getGlSize() { return m_glSize; }
     const Matrix3& getTransformMatrix() { return m_transformMatrix; }
     bool isEmpty() { return m_id == 0; }
+    bool hasRepeat() { return m_repeat; }
     bool hasMipmaps() { return m_hasMipmaps; }
 
 protected:
@@ -64,6 +66,7 @@ protected:
     Boolean<false> m_hasMipmaps;
     Boolean<false> m_smooth;
     Boolean<false> m_upsideDown;
+    Boolean<false> m_repeat;
 };
 
 #endif

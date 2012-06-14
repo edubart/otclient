@@ -24,7 +24,9 @@
 #include "painter.h"
 #include "texture.h"
 #include "texturemanager.h"
+#include "graphics.h"
 #include <framework/core/clock.h>
+#include <framework/platform/platformwindow.h>
 
 PainterShaderProgram::PainterShaderProgram()
 {
@@ -34,28 +36,35 @@ PainterShaderProgram::PainterShaderProgram()
     m_time = 0;
 }
 
+void PainterShaderProgram::setupUniforms()
+{
+    bindUniformLocation(PROJECTION_MATRIX_UNIFORM, "u_ProjectionMatrix");
+    bindUniformLocation(TEXTURE_MATRIX_UNIFORM, "u_TextureMatrix");
+    bindUniformLocation(COLOR_UNIFORM, "u_Color");
+    bindUniformLocation(OPACITY_UNIFORM, "u_Opacity");
+    bindUniformLocation(TIME_UNIFORM, "u_Time");
+    bindUniformLocation(TEX0_UNIFORM, "u_Tex0");
+    bindUniformLocation(TEX1_UNIFORM, "u_Tex1");
+    bindUniformLocation(RESOLUTION_UNIFORM, "u_Resolution");
+
+    setUniformValue(PROJECTION_MATRIX_UNIFORM, m_projectionMatrix);
+    setUniformValue(TEXTURE_MATRIX_UNIFORM, m_textureMatrix);
+    setUniformValue(COLOR_UNIFORM, m_color);
+    setUniformValue(OPACITY_UNIFORM, m_opacity);
+    setUniformValue(TIME_UNIFORM, m_time);
+    setUniformValue(TEX0_UNIFORM, 0);
+    setUniformValue(TEX1_UNIFORM, 1);
+    setUniformValue(RESOLUTION_UNIFORM, (float)m_resolution.width(), (float)m_resolution.height());
+}
+
 bool PainterShaderProgram::link()
 {
     m_startTime = g_clock.seconds();
-    bindAttributeLocation(VERTEX_ATTR, "a_vertex");
-    bindAttributeLocation(TEXCOORD_ATTR, "a_texCoord");
+    bindAttributeLocation(VERTEX_ATTR, "a_Vertex");
+    bindAttributeLocation(TEXCOORD_ATTR, "a_TexCoord");
     if(ShaderProgram::link()) {
-        bindUniformLocation(PROJECTION_MATRIX_UNIFORM, "projectionMatrix");
-        bindUniformLocation(TEXTURE_MATRIX_UNIFORM, "textureMatrix");
-        bindUniformLocation(COLOR_UNIFORM, "color");
-        bindUniformLocation(OPACITY_UNIFORM, "opacity");
-        bindUniformLocation(TIME_UNIFORM, "time");
-        bindUniformLocation(TEX0_UNIFORM, "tex0");
-        bindUniformLocation(TEX1_UNIFORM, "tex1");
-
         bind();
-        setUniformValue(PROJECTION_MATRIX_UNIFORM, m_projectionMatrix);
-        setUniformValue(TEXTURE_MATRIX_UNIFORM, m_textureMatrix);
-        setUniformValue(COLOR_UNIFORM, m_color);
-        setUniformValue(OPACITY_UNIFORM, m_opacity);
-        setUniformValue(TIME_UNIFORM, m_time);
-        setUniformValue(TEX0_UNIFORM, 0);
-        setUniformValue(TEX1_UNIFORM, 1);
+        setupUniforms();
         release();
         return true;
     }
@@ -102,6 +111,16 @@ void PainterShaderProgram::setOpacity(float opacity)
     m_opacity = opacity;
 }
 
+void PainterShaderProgram::setResolution(const Size& resolution)
+{
+    if(m_resolution == resolution)
+        return;
+
+    bind();
+    setUniformValue(RESOLUTION_UNIFORM, (float)resolution.width(), (float)resolution.height());
+    m_resolution = resolution;
+}
+
 void PainterShaderProgram::updateTime()
 {
     float time = g_clock.seconds() - m_startTime;
@@ -111,4 +130,33 @@ void PainterShaderProgram::updateTime()
     bind();
     setUniformValue(TIME_UNIFORM, time);
     m_time = time;
+}
+
+void PainterShaderProgram::addMultiTexture(const std::string& file)
+{
+    if(m_multiTextures.size() > 3)
+        g_logger.error("cannot add more multi textures to shader, the max is 3");
+
+    TexturePtr texture = g_textures.getTexture(file);
+    if(!texture)
+        return;
+
+    texture->setSmooth(true);
+    texture->setRepeat(true);
+
+    m_multiTextures.push_back(texture);
+}
+
+void PainterShaderProgram::bindMultiTextures()
+{
+    if(m_multiTextures.size() == 0)
+        return;
+
+    int i=1;
+    for(const TexturePtr& tex : m_multiTextures) {
+        glActiveTexture(GL_TEXTURE0 + 1);
+        glBindTexture(GL_TEXTURE_2D, tex->getId());
+    }
+
+    glActiveTexture(GL_TEXTURE0);
 }

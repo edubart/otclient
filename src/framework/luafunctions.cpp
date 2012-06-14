@@ -473,6 +473,10 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<OutputMessage>("encryptRSA", &OutputMessage::encryptRSA);
     g_lua.bindClassMemberFunction<OutputMessage>("getMessageSize", &OutputMessage::getMessageSize);
 
+    g_lua.registerClass<ShaderProgram>();
+    g_lua.registerClass<PainterShaderProgram>();
+    g_lua.bindClassMemberFunction<PainterShaderProgram>("addMultiTexture", &PainterShaderProgram::addMultiTexture);
+
     // Application
     g_lua.registerStaticClass("g_app");
     g_lua.bindClassStaticFunction("g_app", "exit", std::bind(&Application::exit, g_app));

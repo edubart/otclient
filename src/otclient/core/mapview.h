@@ -103,6 +103,9 @@ public:
     void setAnimated(bool animated) { m_animated = animated; requestVisibleTilesCacheUpdate(); }
     bool isAnimating() { return m_animated; }
 
+    void setShader(const PainterShaderProgramPtr& shader) { m_shader = shader; }
+    PainterShaderProgramPtr getShader() { return m_shader; }
+
     // get tile
     TilePtr getTile(const Point& mousePos, const Rect& mapRect);
 
@@ -139,7 +142,7 @@ private:
     EventPtr m_updateTilesCacheEvent;
     CreaturePtr m_followingCreature;
     FrameBufferPtr m_framebuffer;
-    PainterShaderProgramPtr m_shaderProgram;
+    PainterShaderProgramPtr m_shader;
     ViewMode m_viewMode;
     Otc::DrawFlags m_drawFlags;
 };

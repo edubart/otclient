@@ -43,6 +43,7 @@ class AnimatedText;
 class StaticText;
 class ThingType;
 class ThingsType;
+class ItemShader;
 
 typedef std::shared_ptr<MapView> MapViewPtr;
 typedef std::shared_ptr<Tile> TilePtr;
@@ -58,6 +59,7 @@ typedef std::shared_ptr<Effect> EffectPtr;
 typedef std::shared_ptr<Missile> MissilePtr;
 typedef std::shared_ptr<AnimatedText> AnimatedTextPtr;
 typedef std::shared_ptr<StaticText> StaticTextPtr;
+typedef std::shared_ptr<ItemShader> ItemShaderPtr;
 
 typedef std::vector<ThingPtr> ThingList;
 

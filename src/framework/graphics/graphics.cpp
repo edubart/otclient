@@ -195,49 +195,16 @@ bool Graphics::selectPainterEngine(PainterEngine painterEngine)
 
 void Graphics::resize(const Size& size)
 {
-    setViewportSize(size);
-
-    // The projection matrix converts from Painter's coordinate system to GL's coordinate system
-    //    * GL's viewport is 2x2, Painter's is width x height
-    //    * GL has +y -> -y going from bottom -> top, Painter is the other way round
-    //    * GL has [0,0] in the center, Painter has it in the top-left
-    //
-    // This results in the Projection matrix below.
-    //
-    //                                    Projection Matrix
-    //   Painter Coord     ------------------------------------------------        GL Coord
-    //   -------------     | 2.0 / width  |      0.0      |      0.0      |     ---------------
-    //   |  x  y  1  |  *  |     0.0      | -2.0 / height |      0.0      |  =  |  x'  y'  1  |
-    //   -------------     |    -1.0      |      1.0      |      1.0      |     ---------------
-    //                     ------------------------------------------------
-    Matrix3 projectionMatrix = { 2.0f/size.width(),  0.0f,                 0.0f,
-                                 0.0f,              -2.0f/size.height(),   0.0f,
-                                -1.0f,               1.0f,                 1.0f };
-
+    m_viewportSize = size;
 #ifdef PAINTER_OGL1
     if(g_painterOGL1)
-        g_painterOGL1->setProjectionMatrix(projectionMatrix);
+        g_painterOGL1->setResolution(size);
 #endif
 
 #ifdef PAINTER_OGL2
     if(g_painterOGL2)
-        g_painterOGL2->setProjectionMatrix(projectionMatrix);
+        g_painterOGL2->setResolution(size);
 #endif
-}
-
-void Graphics::beginRender()
-{
-    //g_painter->clear(Color::black);
-}
-
-void Graphics::endRender()
-{
-}
-
-void Graphics::setViewportSize(const Size& size)
-{
-    glViewport(0, 0, size.width(), size.height());
-    m_viewportSize = size;
 }
 
 bool Graphics::canUseDrawArrays()
