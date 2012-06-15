@@ -170,8 +170,8 @@ void MapView::draw(const Rect& rect)
             Position pos = staticText->getPosition();
 
             // ony draw static texts from current camera floor, unless yells
-            if(pos.z != cameraPosition.z && !staticText->isYell())
-                continue;
+            //if(pos.z != cameraPosition.z && !staticText->isYell())
+            //    continue;
 
             Point p = transformPositionTo2D(pos, cameraPosition) - drawOffset;
             p.x = p.x * horizontalStretchFactor;

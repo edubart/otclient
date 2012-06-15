@@ -60,6 +60,7 @@ void Painter::refreshState()
 void Painter::saveState()
 {
     assert(m_oldStateIndex<10);
+    m_olderStates[m_oldStateIndex].resolution = m_resolution;
     m_olderStates[m_oldStateIndex].projectionMatrix = m_projectionMatrix;
     m_olderStates[m_oldStateIndex].textureMatrix = m_textureMatrix;
     m_olderStates[m_oldStateIndex].color = m_color;
@@ -69,7 +70,6 @@ void Painter::saveState()
     m_olderStates[m_oldStateIndex].shaderProgram = m_shaderProgram;
     m_olderStates[m_oldStateIndex].texture = m_texture;
     m_olderStates[m_oldStateIndex].alphaWriting = m_alphaWriting;
-    m_olderStates[m_oldStateIndex].resolution = m_resolution;
     m_oldStateIndex++;
 }
 
@@ -82,6 +82,7 @@ void Painter::saveAndResetState()
 void Painter::restoreSavedState()
 {
     m_oldStateIndex--;
+    setResolution(m_olderStates[m_oldStateIndex].resolution);
     setProjectionMatrix(m_olderStates[m_oldStateIndex].projectionMatrix);
     setTextureMatrix(m_olderStates[m_oldStateIndex].textureMatrix);
     setColor(m_olderStates[m_oldStateIndex].color);
@@ -90,7 +91,7 @@ void Painter::restoreSavedState()
     setClipRect(m_olderStates[m_oldStateIndex].clipRect);
     setShaderProgram(m_olderStates[m_oldStateIndex].shaderProgram);
     setTexture(m_olderStates[m_oldStateIndex].texture);
-    setResolution(m_olderStates[m_oldStateIndex].resolution);
+    setAlphaWriting(m_olderStates[m_oldStateIndex].alphaWriting);
 }
 
 void Painter::clear(const Color& color)

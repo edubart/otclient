@@ -1,17 +1,23 @@
 Shaders = {}
 
 local HOTKEY = 'Ctrl+X'
-local SHADERS = {
-  ['Default'] = 'shaders/default.frag',
-  ['Bloom'] = 'shaders/bloom.frag',
-  ['Sepia'] = 'shaders/sepia.frag',
-  ['Grayscale'] = 'shaders/grayscale.frag',
-  ['Pulse'] = 'shaders/pulse.frag',
-  ['Old Tv'] = 'shaders/oldtv.frag',
-  ['Fog'] = 'shaders/fog.frag',
-  ['Party'] = 'shaders/party.frag',
-  ['Radial Blur'] = 'shaders/radialblur.frag',
-  ['Zomg'] = 'shaders/zomg.frag',
+local MAP_SHADERS = {
+  { name = 'Default', frag = 'shaders/default.frag' },
+  { name = 'Bloom', frag = 'shaders/bloom.frag'},
+  { name = 'Sepia', frag ='shaders/sepia.frag' },
+  { name = 'Grayscale', frag ='shaders/grayscale.frag' },
+  { name = 'Pulse', frag = 'shaders/pulse.frag' },
+  { name = 'Old Tv', frag = 'shaders/oldtv.frag' },
+  { name = 'Fog', frag = 'shaders/fog.frag', tex1 = 'images/clouds.png' },
+  { name = 'Party', frag = 'shaders/party.frag' },
+  { name = 'Radial Blur', frag ='shaders/radialblur.frag' },
+  { name = 'Zomg', frag ='shaders/zomg.frag' },
+  { name = 'Heat', frag ='shaders/heat.frag' },
+  { name = 'Noise', frag ='shaders/noise.frag' },
+}
+
+local ITEM_SHADERS = {
+  { name = 'Fake 3D', vert = 'shaders/fake3d.vert' }
 }
 
 local shadersPanel
@@ -29,16 +35,19 @@ function Shaders.init()
   mapComboBox.onOptionChange = function(combobox, option)
     local map = GameInterface.getMapPanel()
     map:setMapShader(g_shaders.getShader(option))
-    print(option)
   end
 
-  for name,file in pairs(SHADERS) do
-    local shader = g_shaders.createFragmentShader(name, file)
-    mapComboBox:addOption(name)
+  for _i,opts in pairs(MAP_SHADERS) do
+    local shader = g_shaders.createFragmentShader(opts.name, opts.frag)
 
-    if name == 'Fog' then
-      shader:addMultiTexture('images/clouds.png')
+    if opts.tex1 then
+      shader:addMultiTexture(opts.tex1)
     end
+    if opts.tex2 then
+      shader:addMultiTexture(opts.tex2)
+    end
+
+    mapComboBox:addOption(opts.name)
   end
 
   local map = GameInterface.getMapPanel()

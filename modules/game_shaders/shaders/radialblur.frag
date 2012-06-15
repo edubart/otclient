@@ -8,8 +8,7 @@ const float sampleStrength = 2.2;
 void main(void)
 {
     // some sample positions
-    float samples[10] =
-    float[](-0.08,-0.05,-0.03,-0.02,-0.01,0.01,0.02,0.03,0.05,0.08);
+    float samples[] = { -0.08,-0.05,-0.03,-0.02,-0.01,0.01,0.02,0.03,0.05,0.08 };
 
     // 0.5,0.5 is the center of the screen
     // so substracting v_TexCoord from it will result in

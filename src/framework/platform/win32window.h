@@ -38,6 +38,7 @@ class WIN32Window : public PlatformWindow
     void internalCreateWindow();
     void internalCreateGLContext();
     void internalDestroyGLContext();
+    void internalRestoreGLContext();
 
     void *getExtensionProcAddress(const char *ext);
     bool isExtensionSupported(const char *ext);

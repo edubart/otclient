@@ -26,6 +26,7 @@
 #include "thing.h"
 #include <framework/graphics/cachedtext.h>
 #include <framework/graphics/fontmanager.h>
+#include <framework/core/timer.h>
 
 class StaticText : public Thing
 {
@@ -41,12 +42,13 @@ public:
     bool isYell() { return m_messageType == Otc::SpeakYell || m_messageType == Otc::SpeakMonsterYell; }
 
     bool addMessage(const std::string& name, Otc::SpeakType type, const std::string& message);
-    void removeMessage();
 
     StaticTextPtr asStaticText() { return std::static_pointer_cast<StaticText>(shared_from_this()); }
     bool isStaticText() { return true; }
 
 private:
+    void update();
+    void scheduleUpdate();
     void compose();
 
     Boolean<false> m_yell;
@@ -55,6 +57,7 @@ private:
     Otc::SpeakType m_messageType;
     Color m_color;
     CachedText m_cachedText;
+    ScheduledEventPtr m_updateEvent;
 };
 
 #endif

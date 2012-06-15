@@ -14,7 +14,7 @@ TopCenterLabel < UILabel
   anchors.top: parent.top
   anchors.bottom: centerTextMessagePanel.top
   anchors.horizontalCenter: parent.horizontalCenter
-  width: 360
+  width: 275
 
 BottomLabel < CenterLabel
   anchors.bottom: parent.bottom

@@ -49,7 +49,7 @@ void ShaderManager::terminate()
 PainterShaderProgramPtr ShaderManager::createShader(const std::string& name)
 {
     if(!g_graphics.canUseShaders()) {
-        g_logger.error(stdext::format("unable to create shader, shaders are not supported"));
+        g_logger.error(stdext::format("unable to create shader '%s', shaders are not supported", name));
         return nullptr;
     }
 

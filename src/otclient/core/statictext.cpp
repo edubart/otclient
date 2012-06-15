@@ -40,50 +40,63 @@ void StaticText::draw(const Point& dest, const Rect& parentRect)
     boundRect.bind(parentRect);
 
     // draw only if the real center is not too far from the parent center, or its a yell
-    if((boundRect.center() - rect.center()).length() < parentRect.width() / 15 || isYell()) {
+    //if(g_map.isAwareOfPosition(m_position) || isYell()) {
         g_painter->setColor(m_color);
         m_cachedText.draw(boundRect);
-    }
+    //}
 }
 
 bool StaticText::addMessage(const std::string& name, Otc::SpeakType type, const std::string& message)
 {
     //TODO: this could be moved to lua
-    // First message
+    // first message
     if(m_messages.size() == 0) {
         m_name = name;
         m_messageType = type;
     }
-    else if(m_messages.size() > 20) {
-        // to many messages, ignore to avoid lag
+    // check if we can really own the message
+    else if(m_name != name || m_messageType != type) {
         return false;
-    } else {
-        // we can only add another message if it follows these conditions
-        if(m_name != name || m_messageType != type)
-            return false;
+    }
+    // too many messages
+    else if(m_messages.size() > 10) {
+        m_messages.pop_front();
+        m_updateEvent->cancel();
+        m_updateEvent = nullptr;
     }
 
     m_messages.push_back(message);
     compose();
 
-    auto self = asStaticText();
-    g_eventDispatcher.scheduleEvent([self]() {
-        self->removeMessage();
-    }, std::max<int>(Otc::STATIC_DURATION_PER_CHARACTER * message.length(), Otc::MIN_STATIC_TEXT_DURATION));
+    if(!m_updateEvent)
+        scheduleUpdate();
 
     return true;
 }
 
-void StaticText::removeMessage()
+void StaticText::update()
 {
     m_messages.pop_front();
-
     if(m_messages.empty()) {
         // schedule removal
         auto self = asStaticText();
         g_eventDispatcher.addEvent([self]() { g_map.removeThing(self); });
-    } else
+    } else {
         compose();
+        scheduleUpdate();
+    }
+}
+
+void StaticText::scheduleUpdate()
+{
+    int len = m_messages.front().length();
+    int delay = std::max(Otc::STATIC_DURATION_PER_CHARACTER * len, (int)Otc::MIN_STATIC_TEXT_DURATION);
+
+    auto self = asStaticText();
+    m_updateEvent = g_eventDispatcher.scheduleEvent([self]() {
+        self->m_updateEvent = nullptr;
+        self->update();
+    }, delay);
 }
 
 void StaticText::compose()
@@ -121,5 +134,5 @@ void StaticText::compose()
     }
 
     m_cachedText.setText(text);
-    m_cachedText.wrapText(Otc::MAX_STATIC_TEXT_WIDTH);
+    m_cachedText.wrapText(275);
 }

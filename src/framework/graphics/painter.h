@@ -44,6 +44,7 @@ public:
     };
 
     struct PainterState {
+        Size resolution;
         Matrix3 projectionMatrix;
         Matrix3 textureMatrix;
         Color color;
@@ -53,7 +54,6 @@ public:
         Texture *texture;
         PainterShaderProgram *shaderProgram;
         bool alphaWriting;
-        Size resolution;
     };
 
     Painter();

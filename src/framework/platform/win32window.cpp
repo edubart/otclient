@@ -205,6 +205,7 @@ void WIN32Window::init()
 
     internalCreateWindow();
     internalCreateGLContext();
+    internalRestoreGLContext();
 }
 
 void WIN32Window::terminate()
@@ -253,7 +254,7 @@ void WIN32Window::internalCreateWindow()
     wc.hInstance        = m_instance;
     wc.hIcon            = LoadIcon(NULL, IDI_WINLOGO);
     wc.hCursor          = m_defaultCursor;
-    wc.hbrBackground    = (HBRUSH)GetStockObject(BLACK_BRUSH);
+    wc.hbrBackground    = (HBRUSH)GetStockObject(WHITE_BRUSH);
     wc.lpszMenuName     = NULL;
     wc.lpszClassName    = g_app->getName().c_str();
 
@@ -344,8 +345,6 @@ void WIN32Window::internalCreateGLContext()
     if(m_eglContext == EGL_NO_CONTEXT )
         g_logger.fatal(stdext::format("Unable to create EGL context: %s", eglGetError()));
 
-    if(!eglMakeCurrent(m_eglDisplay, m_eglSurface, m_eglSurface, m_eglContext))
-        g_logger.fatal("Unable to make current EGL context");
 #else
     uint pixelFormat;
     static PIXELFORMATDESCRIPTOR pfd = { sizeof(PIXELFORMATDESCRIPTOR),
@@ -374,9 +373,6 @@ void WIN32Window::internalCreateGLContext()
 
     if(!(m_wglContext = wglCreateContext(m_deviceContext)))
         g_logger.fatal("Unable to create GL context");
-
-    if(!wglMakeCurrent(m_deviceContext, m_wglContext))
-        g_logger.fatal("Unable to set GLX context on WIN32 window");
 #endif
 }
 
@@ -403,6 +399,17 @@ void WIN32Window::internalDestroyGLContext()
             g_logger.error("Release rendering context failed.");
         m_wglContext = NULL;
     }
+#endif
+}
+
+void WIN32Window::internalRestoreGLContext()
+{
+#ifdef OPENGL_ES
+    if(!eglMakeCurrent(m_eglDisplay, m_eglSurface, m_eglSurface, m_eglContext))
+        g_logger.fatal("Unable to make current EGL context");
+#else
+    if(!wglMakeCurrent(m_deviceContext, m_wglContext))
+        g_logger.fatal("Unable to make current WGL context");
 #endif
 }
 
@@ -706,6 +713,9 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
                     m_visible = false;
                     break;
             }
+
+            if(m_visible && m_deviceContext)
+                internalRestoreGLContext();
 
             Size size;
             size.setWidth(std::max(std::min((int)LOWORD(lParam), 7680), m_minimumSize.width()));
