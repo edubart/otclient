@@ -576,6 +576,7 @@ void Application::registerLuaFunctions()
 
     // UI
     g_lua.registerStaticClass("g_ui");
+    g_lua.bindClassStaticFunction("g_ui", "clearStyles", std::bind(&UIManager::clearStyles, &g_ui));
     g_lua.bindClassStaticFunction("g_ui", "importStyle", std::bind(&UIManager::importStyle, &g_ui, std::placeholders::_1));
     g_lua.bindClassStaticFunction("g_ui", "getStyle", std::bind(&UIManager::getStyle, &g_ui, std::placeholders::_1));
     g_lua.bindClassStaticFunction("g_ui", "getStyleClass", std::bind(&UIManager::getStyleClass, &g_ui, std::placeholders::_1));

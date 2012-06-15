@@ -41,6 +41,7 @@ public:
     bool updateDraggingWidget(const UIWidgetPtr& draggingWidget, const Point& clickedPos = Point());
     void updateHoveredWidget();
 
+    void clearStyles();
     bool importStyle(const std::string& file);
     void importStyleFromOTML(const OTMLNodePtr& styleNode);
     OTMLNodePtr getStyle(const std::string& styleName);

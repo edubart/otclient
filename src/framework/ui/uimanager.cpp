@@ -293,6 +293,11 @@ void UIManager::onWidgetDestroy(const UIWidgetPtr& widget)
 #endif
 }
 
+void UIManager::clearStyles()
+{
+    m_styles.clear();
+}
+
 bool UIManager::importStyle(const std::string& file)
 {
     try {
@@ -317,9 +322,18 @@ void UIManager::importStyleFromOTML(const OTMLNodePtr& styleNode)
 
     std::string name = split[0];
     std::string base = split[1];
+    bool unique = false;
 
     boost::trim(name);
     boost::trim(base);
+
+    if(name[0] == '#') {
+        name = name.substr(1);
+        unique = true;
+
+        styleNode->setTag(name);
+        styleNode->writeAt("__unique", true);
+    }
 
     // TODO: styles must be searched by widget scopes, in that way this warning could be fixed
     // this warning is disabled because many ppl was complening about it
@@ -329,13 +343,16 @@ void UIManager::importStyleFromOTML(const OTMLNodePtr& styleNode)
         g_logger.warning("style '%s' is being redefined", name);
     */
 
-    OTMLNodePtr originalStyle = getStyle(base);
-    if(!originalStyle)
-        stdext::throw_exception(stdext::format("base style '%s', is not defined", base));
-    OTMLNodePtr style = originalStyle->clone();
-    style->merge(styleNode);
-    style->setTag(name);
-    m_styles[name] = style;
+    OTMLNodePtr oldStyle = m_styles[name];
+    if(!oldStyle || oldStyle->valueAt("__unique", false) || unique) {
+        OTMLNodePtr originalStyle = getStyle(base);
+        if(!originalStyle)
+            stdext::throw_exception(stdext::format("base style '%s', is not defined", base));
+        OTMLNodePtr style = originalStyle->clone();
+        style->merge(styleNode);
+        style->setTag(name);
+        m_styles[name] = style;
+    }
 }
 
 OTMLNodePtr UIManager::getStyle(const std::string& styleName)
