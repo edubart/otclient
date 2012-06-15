@@ -244,9 +244,9 @@ void Application::run()
             m_backgroundFrameCounter.update();
             m_foregroundFrameCounter.update();
 
-            int sleepMicros = std::min(m_backgroundFrameCounter.getMaximumSleepMicros(), m_foregroundFrameCounter.getMaximumSleepMicros());
+            int sleepMicros = m_backgroundFrameCounter.getMaximumSleepMicros();
             if(sleepMicros >= AdaptativeFrameCounter::MINIMUM_MICROS_SLEEP)
-                stdext::microsleep(AdaptativeFrameCounter::MINIMUM_MICROS_SLEEP);
+                stdext::microsleep(sleepMicros);
 
         } else {
             // sleeps until next poll to avoid massive cpu usage
