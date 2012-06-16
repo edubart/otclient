@@ -20,14 +20,14 @@
  * THE SOFTWARE.
  */
 
-#include "font.h"
+#include "bitmapfont.h"
 #include "texturemanager.h"
 #include "graphics.h"
 #include "image.h"
 
 #include <framework/otml/otml.h>
 
-void Font::load(const OTMLNodePtr& fontNode)
+void BitmapFont::load(const OTMLNodePtr& fontNode)
 {
     OTMLNodePtr textureNode = fontNode->at("texture");
     std::string textureFile = stdext::resolve_path(textureNode->value(), textureNode->source());
@@ -66,14 +66,14 @@ void Font::load(const OTMLNodePtr& fontNode)
     }
 }
 
-void Font::drawText(const std::string& text, const Point& startPos)
+void BitmapFont::drawText(const std::string& text, const Point& startPos)
 {
     Size boxSize = g_painter->getResolution() - startPos.toSize();
     Rect screenCoords(startPos, boxSize);
     drawText(text, screenCoords, Fw::AlignTopLeft);
 }
 
-void Font::drawText(const std::string& text, const Rect& screenCoords, Fw::AlignmentFlag align)
+void BitmapFont::drawText(const std::string& text, const Rect& screenCoords, Fw::AlignmentFlag align)
 {
     static CoordsBuffer coordsBuffer;
     coordsBuffer.clear();
@@ -82,7 +82,7 @@ void Font::drawText(const std::string& text, const Rect& screenCoords, Fw::Align
     g_painter->drawTextureCoords(coordsBuffer, m_texture);
 }
 
-void Font::calculateDrawTextCoords(CoordsBuffer& coordsBuffer, const std::string& text, const Rect& screenCoords, Fw::AlignmentFlag align)
+void BitmapFont::calculateDrawTextCoords(CoordsBuffer& coordsBuffer, const std::string& text, const Rect& screenCoords, Fw::AlignmentFlag align)
 {
     // prevent glitches from invalid rects
     if(!screenCoords.isValid() || !m_texture)
@@ -158,7 +158,7 @@ void Font::calculateDrawTextCoords(CoordsBuffer& coordsBuffer, const std::string
     }
 }
 
-const std::vector<Point>& Font::calculateGlyphsPositions(const std::string& text,
+const std::vector<Point>& BitmapFont::calculateGlyphsPositions(const std::string& text,
                                                          Fw::AlignmentFlag align,
                                                          Size *textBoxSize) const
 {
@@ -242,14 +242,14 @@ const std::vector<Point>& Font::calculateGlyphsPositions(const std::string& text
     return glyphsPositions;
 }
 
-Size Font::calculateTextRectSize(const std::string& text)
+Size BitmapFont::calculateTextRectSize(const std::string& text)
 {
     Size size;
     calculateGlyphsPositions(text, Fw::AlignTopLeft, &size);
     return size;
 }
 
-void Font::calculateGlyphsWidthsAutomatically(const ImagePtr& image, const Size& glyphSize)
+void BitmapFont::calculateGlyphsWidthsAutomatically(const ImagePtr& image, const Size& glyphSize)
 {
     int numHorizontalGlyphs = image->getSize().width() / glyphSize.width();
     auto texturePixels = image->getPixels();
@@ -280,7 +280,7 @@ void Font::calculateGlyphsWidthsAutomatically(const ImagePtr& image, const Size&
     }
 }
 
-std::string Font::wrapText(const std::string& text, int maxWidth)
+std::string BitmapFont::wrapText(const std::string& text, int maxWidth)
 {
     std::string outText;
     std::string line;

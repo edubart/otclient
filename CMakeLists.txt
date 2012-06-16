@@ -28,8 +28,8 @@ ADD_EXECUTABLE(otclient ${framework_SOURCES} ${otclient_SOURCES} ${executable_SO
 TARGET_LINK_LIBRARIES(otclient ${framework_LIBRARIES})
 
 IF(PCH)
-    FIND_PACKAGE(PCHSupport REQUIRED)
-    ADD_PRECOMPILED_HEADER(otclient ${CMAKE_CURRENT_SOURCE_DIR}/src/framework/pch.h)
+    include(cotire)
+    cotire(otclient)
     MESSAGE(STATUS "Use precompiled header: ON")
 ELSE()
     MESSAGE(STATUS "Use precompiled header: OFF")

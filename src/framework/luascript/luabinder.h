@@ -95,7 +95,7 @@ namespace luabinder
     template<typename Ret, typename F, typename Tuple>
     LuaCppFunction bind_fun_specializer(const F& f) {
         enum { N = std::tuple_size<Tuple>::value };
-        return [=](LuaInterface* lua) {
+        return [=](LuaInterface* lua) -> int {
             if(lua->stackSize() != N)
                 throw LuaBadNumberOfArgumentsException(N, lua->stackSize());
             Tuple tuple;
@@ -248,7 +248,7 @@ namespace luabinder
     template<typename C>
     LuaCppFunction bind_mem_fun(int (C::*f)(LuaInterface*)) {
         auto mf = std::mem_fn(f);
-        return [=](LuaInterface* lua) {
+        return [=](LuaInterface* lua) -> int {
             auto obj = lua->castValue<std::shared_ptr<C>>(1);
             lua->remove(1);
             return mf(obj, lua);

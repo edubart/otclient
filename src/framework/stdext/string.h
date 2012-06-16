@@ -37,10 +37,6 @@
 
 namespace stdext {
 
-// casts declaration, definition will be included at the end of the file
-template<typename R, typename T> R safe_cast(const T& t);
-template<typename R, typename T> R unsafe_cast(const T& t, R def = R());
-
 /// Convert any type to std::string
 template<typename T>
 std::string to_string(const T& t) { return unsafe_cast<std::string, T>(t); }

@@ -29,7 +29,7 @@ FontManager g_fonts;
 
 FontManager::FontManager()
 {
-    m_defaultFont = FontPtr(new Font("emptyfont"));
+    m_defaultFont = BitmapFontPtr(new BitmapFont("emptyfont"));
 }
 
 void FontManager::releaseFonts()
@@ -57,7 +57,7 @@ bool FontManager::importFont(std::string fontFile)
             }
         }
 
-        FontPtr font(new Font(name));
+        BitmapFontPtr font(new BitmapFont(name));
         font->load(fontNode);
         m_fonts.push_back(font);
 
@@ -74,17 +74,17 @@ bool FontManager::importFont(std::string fontFile)
 
 bool FontManager::fontExists(const std::string& fontName)
 {
-    for(const FontPtr& font : m_fonts) {
+    for(const BitmapFontPtr& font : m_fonts) {
         if(font->getName() == fontName)
             return true;
     }
     return false;
 }
 
-FontPtr FontManager::getFont(const std::string& fontName)
+BitmapFontPtr FontManager::getFont(const std::string& fontName)
 {
     // find font by name
-    for(const FontPtr& font : m_fonts) {
+    for(const BitmapFontPtr& font : m_fonts) {
         if(font->getName() == fontName)
             return font;
     }

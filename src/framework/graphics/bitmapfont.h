@@ -20,18 +20,18 @@
  * THE SOFTWARE.
  */
 
-#ifndef FONT_H
-#define FONT_H
+#ifndef BITMAPFONT_H
+#define BITMAPFONT_H
 
 #include "declarations.h"
 
 #include <framework/otml/declarations.h>
 #include <framework/graphics/coordsbuffer.h>
 
-class Font
+class BitmapFont
 {
 public:
-    Font(const std::string& name) : m_name(name) { }
+    BitmapFont(const std::string& name) : m_name(name) { }
 
     /// Load font from otml node
     void load(const OTMLNodePtr& fontNode);

@@ -23,7 +23,7 @@
 #include "cachedtext.h"
 #include "painter.h"
 #include "fontmanager.h"
-#include "font.h"
+#include "bitmapfont.h"
 
 CachedText::CachedText()
 {

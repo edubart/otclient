@@ -27,7 +27,7 @@
 #include <framework/luascript/luaobject.h>
 #include <framework/graphics/declarations.h>
 #include <framework/otml/otmlnode.h>
-#include <framework/graphics/font.h>
+#include <framework/graphics/bitmapfont.h>
 #include <framework/graphics/coordsbuffer.h>
 #include <framework/core/timer.h>
 
@@ -465,7 +465,7 @@ protected:
     Point m_textOffset;
     Boolean<false> m_textWrap;
     Boolean<false> m_textAutoResize;
-    FontPtr m_font;
+    BitmapFontPtr m_font;
 
 public:
     void resizeToText() { setSize(getTextSize()); }

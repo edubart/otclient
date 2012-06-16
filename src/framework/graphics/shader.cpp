@@ -78,6 +78,7 @@ bool Shader::compileSourceFile(const std::string& sourceFile)
     } catch(stdext::exception& e) {
         g_logger.error(stdext::format("unable to load shader source form file: %s", sourceFile));
     }
+    return false;
 }
 
 std::string Shader::log()

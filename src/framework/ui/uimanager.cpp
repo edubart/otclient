@@ -335,16 +335,15 @@ void UIManager::importStyleFromOTML(const OTMLNodePtr& styleNode)
         styleNode->writeAt("__unique", true);
     }
 
-    // TODO: styles must be searched by widget scopes, in that way this warning could be fixed
-    // this warning is disabled because many ppl was complening about it
-    /*
-    auto it = m_styles.find(name);
-    if(it != m_styles.end())
-        g_logger.warning("style '%s' is being redefined", name);
-    */
+    // Warn about redefined styles
+    if(!g_app->isRunning() && !unique) {
+        auto it = m_styles.find(name);
+        if(it != m_styles.end())
+            g_logger.warning(stdext::format("style '%s' is being redefined", name));
+    }
 
     OTMLNodePtr oldStyle = m_styles[name];
-    if(!oldStyle || oldStyle->valueAt("__unique", false) || unique) {
+    if(!oldStyle || !oldStyle->valueAt("__unique", false) || unique) {
         OTMLNodePtr originalStyle = getStyle(base);
         if(!originalStyle)
             stdext::throw_exception(stdext::format("base style '%s', is not defined", base));

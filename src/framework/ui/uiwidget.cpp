@@ -1208,7 +1208,7 @@ void UIWidget::updateState(Fw::WidgetState state)
                     newStatus = false;
                     break;
                 }
-            } while(widget = parent);
+            } while((widget = parent));
 
             updateChildren = newStatus != oldStatus;
             break;
@@ -1237,7 +1237,7 @@ void UIWidget::updateState(Fw::WidgetState state)
                     enabled = false;
                     break;
                 }
-            } while(widget = widget->getParent());
+            } while((widget = widget->getParent()));
             newStatus = !enabled;
             updateChildren = newStatus != oldStatus;
             break;

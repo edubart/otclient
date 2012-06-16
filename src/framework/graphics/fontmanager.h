@@ -23,7 +23,7 @@
 #ifndef FONTMANAGER_H
 #define FONTMANAGER_H
 
-#include "font.h"
+#include "bitmapfont.h"
 
 class FontManager
 {
@@ -37,14 +37,14 @@ public:
     bool importFont(std::string fontFile);
 
     bool fontExists(const std::string& fontName);
-    FontPtr getFont(const std::string& fontName);
-    FontPtr getDefaultFont() { return m_defaultFont; }
+    BitmapFontPtr getFont(const std::string& fontName);
+    BitmapFontPtr getDefaultFont() { return m_defaultFont; }
 
     void setDefaultFont(const std::string& fontName) { m_defaultFont = getFont(fontName); }
 
 private:
-    std::vector<FontPtr> m_fonts;
-    FontPtr m_defaultFont;
+    std::vector<BitmapFontPtr> m_fonts;
+    BitmapFontPtr m_defaultFont;
 };
 
 extern FontManager g_fonts;

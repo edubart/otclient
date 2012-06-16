@@ -207,8 +207,8 @@ SET(framework_SOURCES ${framework_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/graphics/coordsbuffer.cpp
     ${CMAKE_CURRENT_LIST_DIR}/graphics/coordsbuffer.h
     ${CMAKE_CURRENT_LIST_DIR}/graphics/declarations.h
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/font.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/font.h
+    ${CMAKE_CURRENT_LIST_DIR}/graphics/bitmapfont.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/graphics/bitmapfont.h
     ${CMAKE_CURRENT_LIST_DIR}/graphics/fontmanager.cpp
     ${CMAKE_CURRENT_LIST_DIR}/graphics/fontmanager.h
     ${CMAKE_CURRENT_LIST_DIR}/graphics/framebuffer.cpp

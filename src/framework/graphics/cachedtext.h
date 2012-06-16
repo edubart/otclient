@@ -34,13 +34,13 @@ public:
     void draw(const Rect& rect);
 
     void wrapText(int maxWidth);
-    void setFont(const FontPtr& font) { m_font = font; update(); }
+    void setFont(const BitmapFontPtr& font) { m_font = font; update(); }
     void setText(const std::string& text) { m_text = text; update(); }
     void setAlign(Fw::AlignmentFlag align) { m_align = align; update(); }
 
     Size getTextSize() { return m_textSize; }
     std::string getText() { return m_text; }
-    FontPtr getFont() { return m_font; }
+    BitmapFontPtr getFont() { return m_font; }
     Fw::AlignmentFlag getAlign() { return m_align; }
 
 private:
@@ -51,7 +51,7 @@ private:
     Boolean<true> m_textMustRecache;
     CoordsBuffer m_textCoordsBuffer;
     Rect m_textCachedScreenCoords;
-    FontPtr m_font;
+    BitmapFontPtr m_font;
     Fw::AlignmentFlag m_align;
 };
 

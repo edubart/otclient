@@ -375,3 +375,5 @@ int luaopen_bit32 (lua_State *L) {
   return 1;
 }
 
+#undef trim
+

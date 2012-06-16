@@ -23,6 +23,11 @@
 #ifndef STDEXT_CAST_H
 #define STDEXT_CAST_H
 
+namespace stdext {
+template<typename R, typename T> R safe_cast(const T& t);
+template<typename R, typename T> R unsafe_cast(const T& t, R def = R());
+}
+
 #include "string.h"
 #include "exception.h"
 #include "demangle.h"
@@ -107,7 +112,7 @@ R safe_cast(const T& t) {
 
 // cast a type to another type, cast errors are ignored
 template<typename R, typename T>
-R unsafe_cast(const T& t, R def = R()) {
+R unsafe_cast(const T& t, R def) {
     try {
         return safe_cast<R,T>(t);
     } catch(cast_exception& e) {
