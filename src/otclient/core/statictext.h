@@ -33,7 +33,7 @@ class StaticText : public Thing
 public:
     StaticText();
 
-    void draw(const Point& dest, const Rect& parentRect);
+    void drawText(const Point& dest, const Rect& parentRect);
 
     std::string getName() { return m_name; }
     Otc::SpeakType getMessageType() { return m_messageType; }

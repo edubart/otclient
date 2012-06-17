@@ -27,8 +27,9 @@
 #include <framework/graphics/declarations.h>
 #include <framework/graphics/coordsbuffer.h>
 
-struct ThingType
+class ThingType
 {
+public:
     enum Dimension {
         Width = 0,
         Height,

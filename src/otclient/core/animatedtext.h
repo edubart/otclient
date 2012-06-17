@@ -33,7 +33,7 @@ class AnimatedText : public Thing
 public:
     AnimatedText();
 
-    void draw(const Point& dest, const Rect& visibleRect);
+    void drawText(const Point& dest, const Rect& visibleRect);
     void startAnimation();
 
     void setColor(int color);

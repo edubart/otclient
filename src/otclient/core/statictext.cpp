@@ -32,7 +32,7 @@ StaticText::StaticText()
     m_cachedText.setAlign(Fw::AlignCenter);
 }
 
-void StaticText::draw(const Point& dest, const Rect& parentRect)
+void StaticText::drawText(const Point& dest, const Rect& parentRect)
 {
     Size textSize = m_cachedText.getTextSize();
     Rect rect = Rect(dest - Point(textSize.width() / 2, textSize.height()) + Point(20, 5), textSize);

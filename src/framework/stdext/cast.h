@@ -93,7 +93,7 @@ public:
     void update_what() {
         m_what = format("failed to cast value of type '%s' to type '%s'", demangle_type<T>(), demangle_type<R>());
     }
-    virtual const char* what() { return m_what.c_str(); }
+    virtual const char* what() const throw() { return m_what.c_str(); }
 private:
     std::string m_what;
 };

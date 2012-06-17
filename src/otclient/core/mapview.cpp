@@ -177,7 +177,7 @@ void MapView::draw(const Rect& rect)
             p.x = p.x * horizontalStretchFactor;
             p.y = p.y * verticalStretchFactor;
             p += rect.topLeft();
-            staticText->draw(p, rect);
+            staticText->drawText(p, rect);
         }
 
         for(const AnimatedTextPtr& animatedText : g_map.getAnimatedTexts()) {
@@ -195,7 +195,7 @@ void MapView::draw(const Rect& rect)
             p.x = p.x * horizontalStretchFactor;
             p.y = p.y * verticalStretchFactor;
             p += rect.topLeft();
-            animatedText->draw(p, rect);
+            animatedText->drawText(p, rect);
         }
     } else if(m_viewMode > NEAR_VIEW) {
         // draw a cross in the center instead of our creature

@@ -32,7 +32,7 @@ AnimatedText::AnimatedText()
     m_cachedText.setAlign(Fw::AlignLeft);
 }
 
-void AnimatedText::draw(const Point& dest, const Rect& visibleRect)
+void AnimatedText::drawText(const Point& dest, const Rect& visibleRect)
 {
     Point p = dest;
     Size textSize = m_cachedText.getTextSize();
