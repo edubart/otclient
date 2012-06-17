@@ -29,7 +29,7 @@
 
 namespace stdext {
 
-const static std::chrono::system_clock::time_point startup_time = std::chrono::high_resolution_clock::now();
+const static auto startup_time = std::chrono::high_resolution_clock::now();
 inline ticks_t millis() { return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - startup_time).count(); }
 inline ticks_t micros() { return std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - startup_time).count(); }
 inline void millisleep(uint32 ms) { usleep(ms * 1000); };

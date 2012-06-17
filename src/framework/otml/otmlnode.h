@@ -33,17 +33,17 @@ public:
     static OTMLNodePtr create(std::string tag = "", bool unique = false);
     static OTMLNodePtr create(std::string tag, std::string value);
 
-    std::string tag() const { return m_tag; }
-    int size() const { return m_children.size(); }
-    OTMLNodePtr parent() const { return m_parent.lock(); }
-    std::string source() const { return m_source; }
+    std::string tag() { return m_tag; }
+    int size() { return m_children.size(); }
+    OTMLNodePtr parent() { return m_parent.lock(); }
+    std::string source() { return m_source; }
 
-    bool isUnique() const { return m_unique; }
-    bool isNull() const { return m_null; }
+    bool isUnique() { return m_unique; }
+    bool isNull() { return m_null; }
 
-    bool hasTag() const { return !m_tag.empty(); }
-    bool hasValue() const { return !m_value.empty(); }
-    bool hasChildren() const;
+    bool hasTag() { return !m_tag.empty(); }
+    bool hasValue() { return !m_value.empty(); }
+    bool hasChildren();
     bool hasChildAt(const std::string& childTag) { return !!get(childTag); }
     bool hasChildAtIndex(int childIndex) { return !!getIndex(childIndex); }
 
@@ -54,8 +54,8 @@ public:
     void setParent(const OTMLNodePtr& parent) { m_parent = parent; }
     void setSource(const std::string& source) { m_source = source; }
 
-    OTMLNodePtr get(const std::string& childTag) const;
-    OTMLNodePtr getIndex(int childIndex) const;
+    OTMLNodePtr get(const std::string& childTag);
+    OTMLNodePtr getIndex(int childIndex);
 
     OTMLNodePtr at(const std::string& childTag);
     OTMLNodePtr atIndex(int childIndex);
@@ -67,8 +67,8 @@ public:
     void merge(const OTMLNodePtr& node);
     void clear();
 
-    OTMLNodeList children() const;
-    OTMLNodePtr clone() const;
+    OTMLNodeList children();
+    OTMLNodePtr clone();
 
     template<typename T = std::string>
     T value();

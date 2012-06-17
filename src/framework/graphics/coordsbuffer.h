@@ -67,10 +67,10 @@ public:
     void updateCaches();
     bool isHardwareCached() { return m_hardwareCached; }
 
-    float *getVertexArray() const { return m_vertexArray.vertices(); }
-    float *getTextureCoordArray() const { return m_textureCoordArray.vertices(); }
-    int getVertexCount() const { return m_vertexArray.vertexCount(); }
-    int getTextureCoordCount() const { return m_textureCoordArray.vertexCount(); }
+    float *getVertexArray() { return m_vertexArray.vertices(); }
+    float *getTextureCoordArray() { return m_textureCoordArray.vertices(); }
+    int getVertexCount() { return m_vertexArray.vertexCount(); }
+    int getTextureCoordCount() { return m_textureCoordArray.vertexCount(); }
 
     HardwareBuffer *getHardwareVertexArray() { return m_hardwareVertexArray; }
     HardwareBuffer *getHardwareTextureCoordArray() { return m_hardwareTextureCoordArray; }

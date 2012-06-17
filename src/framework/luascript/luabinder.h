@@ -55,7 +55,7 @@ namespace luabinder
     template<>
     struct pack_values_into_tuple<0> {
         template<typename Tuple>
-        static void call(Tuple &tuple, LuaInterface* lua) { }
+        static void call(Tuple& tuple, LuaInterface* lua) { }
     };
 
     /// C++ function caller that can push results to lua
@@ -135,7 +135,7 @@ namespace luabinder
     };
 
     template<typename Lambda>
-    typename std::enable_if<std::is_class<Lambda>::value, LuaCppFunction>::type bind_fun(const Lambda& f) {
+    typename std::enable_if<std::is_constructible<decltype(&Lambda::operator())>::value, LuaCppFunction>::type bind_fun(const Lambda& f) {
         typedef decltype(&Lambda::operator()) F;
         return bind_lambda_fun<F>::call(f);
     }
@@ -146,102 +146,58 @@ namespace luabinder
         return bind_fun(std::function<Ret(Args...)>(f));
     }
 
-    // a tuple_element that works with the next algorithm
-    template<std::size_t __i, typename _Tp>
-        struct tuple_element;
-    template<std::size_t __i, typename _Head, typename... _Tail>
-        struct tuple_element<__i, std::tuple<_Head, _Tail...> >
-        : tuple_element<__i - 1, std::tuple<_Tail...> > { };
-    template<typename _Head, typename... _Tail>
-        struct tuple_element<0, std::tuple<_Head, _Tail...> > { typedef _Head type; };
-    template<typename _Head>
-        struct tuple_element<-1,std::tuple<_Head>> { typedef void type; };
-    template<std::size_t __i>
-        struct tuple_element<__i,std::tuple<>> { typedef void type; };
-
-    template<typename Enable, int N, typename ArgsTuple, typename HoldersTuple, typename... Args>
-    struct get_holded_tuple;
-
-    // some dirty stuff to extract arguments from std::bind holders
-    template<int N, typename ArgsTuple, typename HoldersTuple, typename... Args>
-    struct get_holded_tuple<
-                            typename std::enable_if<
-                                (N > 0 && std::is_placeholder<
-                                        typename tuple_element<N-1, HoldersTuple>::type
-                                        >::value > 0), void
-                                 >::type, N, ArgsTuple, HoldersTuple, Args...> {
-        typedef typename std::tuple_element<N-1, HoldersTuple>::type holder_type;
-        typedef typename tuple_element<std::is_placeholder<holder_type>::value-1, ArgsTuple>::type _arg_type;
-        typedef typename remove_const_ref<_arg_type>::type arg_type;
-        typedef typename get_holded_tuple<void, N-1, ArgsTuple, HoldersTuple, arg_type, Args...>::type type;
-    };
-    template<int N, typename ArgsTuple, typename HoldersTuple, typename... Args>
-    struct get_holded_tuple<typename std::enable_if<(N > 0 && std::is_placeholder<typename tuple_element<N-1, HoldersTuple>::type>::value == 0), void>::type, N, ArgsTuple, HoldersTuple, Args...> {
-        typedef typename get_holded_tuple<void, N-1, ArgsTuple, HoldersTuple, Args...>::type type;
-    };
-    template<typename ArgsTuple, typename HoldersTuple, typename... Args>
-    struct get_holded_tuple<void, 0, ArgsTuple, HoldersTuple, Args...> {
-        typedef typename std::tuple<Args...> type;
-    };
-
-    /// Rebind functions already bound by std::bind handling it's placeholders
-    template<typename Ret, typename... Args, typename... Holders>
-    LuaCppFunction bind_fun(const std::_Bind<Ret (*(Holders...))(Args...)>& f) {
-        typedef typename std::tuple<Args...> ArgsTuple;
-        typedef typename std::tuple<Holders...> HoldersTuple;
-        typedef typename get_holded_tuple<void, sizeof...(Holders), ArgsTuple, HoldersTuple>::type Tuple;
-        return bind_fun_specializer<typename remove_const_ref<Ret>::type,
-                                    decltype(f),
-                                    Tuple>(f);
+    /// Create member function lambdas
+    template<typename Ret, typename C, typename... Args>
+    std::function<Ret(const std::shared_ptr<C>&, const Args&...)> make_mem_func(Ret (C::* f)(Args...)) {
+        auto mf = std::mem_fn(f);
+        return [=](const std::shared_ptr<C>& obj, const Args&... args) mutable -> Ret {
+            if(!obj)
+                throw LuaException("failed to call a member function because the passed object is nil");
+            return mf(obj.get(), args...);
+        };
+    }
+    template<typename C, typename... Args>
+    std::function<void(const std::shared_ptr<C>&, const Args&...)> make_mem_func(void (C::* f)(Args...)) {
+        auto mf = std::mem_fn(f);
+        return [=](const std::shared_ptr<C>& obj, const Args&... args) mutable -> void {
+            if(!obj)
+                throw LuaException("failed to call a member function because the passed object is nil");
+            mf(obj.get(), args...);
+        };
     }
 
-    /// Rebind member functions already bound by std::bind handling it's placeholders
-    template<typename Obj, typename Ret, typename... Args, typename... Holders>
-    LuaCppFunction bind_fun(const std::_Bind<std::_Mem_fn<Ret (Obj::*)(Args...)>(Obj*, Holders...)>& f) {
-        typedef typename std::tuple<Args...> ArgsTuple;
-        typedef typename std::tuple<Holders...> HoldersTuple;
-        typedef typename get_holded_tuple<void, sizeof...(Holders), ArgsTuple, HoldersTuple>::type Tuple;
-        return bind_fun_specializer<typename remove_const_ref<Ret>::type,
-                                    decltype(f),
-                                    Tuple>(f);
+    /// Create member function lambdas for singleton classes
+    template<typename Ret, typename C, typename... Args>
+    std::function<Ret(const Args&...)> make_mem_func_singleton(Ret (C::* f)(Args...), C* instance) {
+        auto mf = std::mem_fn(f);
+        return [=](Args... args) mutable -> Ret { return mf(instance, args...); };
+    }
+    template<typename C, typename... Args>
+    std::function<void(const Args&...)> make_mem_func_singleton(void (C::* f)(Args...), C* instance) {
+        auto mf = std::mem_fn(f);
+        return [=](Args... args) mutable -> void { mf(instance, args...); };
     }
 
-    template<typename Obj, typename Ret, typename... Args, typename... Holders>
-    LuaCppFunction bind_fun(const std::_Bind<std::_Mem_fn<Ret (Obj::*)(Args...) const>(Obj*, Holders...)>& f) {
-        typedef typename std::tuple<Args...> ArgsTuple;
-        typedef typename std::tuple<Holders...> HoldersTuple;
-        typedef typename get_holded_tuple<void, sizeof...(Holders), ArgsTuple, HoldersTuple>::type Tuple;
-        return bind_fun_specializer<typename remove_const_ref<Ret>::type,
-                                    decltype(f),
-                                    Tuple>(f);
-    }
-
-    /// Bind customized functions already bound by std::bind
-    template<typename Obj>
-    LuaCppFunction bind_fun(const std::_Bind<std::_Mem_fn<int (Obj::*)(LuaInterface*)>(Obj*, std::_Placeholder<1>)>& f) {
-        return f;
-    }
-    inline
-    LuaCppFunction bind_fun(const std::_Bind<int (*(std::_Placeholder<1>))(LuaInterface*)>& f) {
-        return f;
-    }
 
     /// Bind member functions
     template<typename C, typename Ret, class FC, typename... Args>
-    LuaCppFunction bind_mem_fun(Ret (FC::*f)(Args...)) {
-        auto mf = std::mem_fn(f);
-        typedef typename std::tuple<std::shared_ptr<C>, typename remove_const_ref<Args>::type...> Tuple;
+    LuaCppFunction bind_mem_fun(Ret (FC::* f)(Args...)) {
+        typedef typename std::tuple<std::shared_ptr<FC>, typename remove_const_ref<Args>::type...> Tuple;
+        auto lambda = make_mem_func<Ret,FC>(f);
         return bind_fun_specializer<typename remove_const_ref<Ret>::type,
-                                    decltype(mf),
-                                    Tuple>(mf);
+                                    decltype(lambda),
+                                    Tuple>(lambda);
     }
+
+    /// Bind singleton member functions
     template<typename C, typename Ret, class FC, typename... Args>
-    LuaCppFunction bind_mem_fun(Ret (FC::*f)(Args...) const) {
-        auto mf = std::mem_fn(f);
-        typedef typename std::tuple<std::shared_ptr<C>, typename remove_const_ref<Args>::type...> Tuple;
+    LuaCppFunction bind_singleton_mem_fun(Ret (FC::*f)(Args...), C *instance) {
+        typedef typename std::tuple<typename remove_const_ref<Args>::type...> Tuple;
+        assert(instance);
+        auto lambda = make_mem_func_singleton<Ret,FC>(f, static_cast<FC*>(instance));
         return bind_fun_specializer<typename remove_const_ref<Ret>::type,
-                                    decltype(mf),
-                                    Tuple>(mf);
+                                    decltype(lambda),
+                                    Tuple>(lambda);
     }
 
     /// Bind customized member functions

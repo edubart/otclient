@@ -77,9 +77,9 @@ public:
         return false;
     }
 
-    int ticks() const { return m_ticks; }
-    int reamaningTicks() const { return m_ticks - g_clock.millis(); }
-    int delay() const { return m_delay; }
+    int ticks() { return m_ticks; }
+    int reamaningTicks() { return m_ticks - g_clock.millis(); }
+    int delay() { return m_delay; }
     int cyclesExecuted() { return m_cyclesExecuted; }
     int maxCycles() { return m_maxCycles; }
 
@@ -91,7 +91,7 @@ private:
 };
 
 struct lessScheduledEvent : std::binary_function<ScheduledEventPtr, ScheduledEventPtr&, bool> {
-    bool operator()(const ScheduledEventPtr& a, const ScheduledEventPtr& b) const {
+    bool operator()(const ScheduledEventPtr& a, const ScheduledEventPtr& b) {
         return  b->ticks() < a->ticks();
     }
 };

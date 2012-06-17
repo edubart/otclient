@@ -160,7 +160,7 @@ void BitmapFont::calculateDrawTextCoords(CoordsBuffer& coordsBuffer, const std::
 
 const std::vector<Point>& BitmapFont::calculateGlyphsPositions(const std::string& text,
                                                          Fw::AlignmentFlag align,
-                                                         Size *textBoxSize) const
+                                                         Size *textBoxSize)
 {
     // for performance reasons we use statics vectors that are allocated on demand
     static std::vector<Point> glyphsPositions(1);

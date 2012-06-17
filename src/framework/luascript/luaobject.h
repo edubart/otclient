@@ -68,7 +68,7 @@ public:
     int getUseCount();
 
     /// Returns the derived class name, its the same name used in Lua
-    std::string getClassName() const {
+    std::string getClassName() {
         // TODO: this could be cached for more performance
         return stdext::demangle_name(typeid(*this).name());
     }

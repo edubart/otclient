@@ -56,10 +56,10 @@ public:
     int getAddons() const { return m_addons; }
     ThingsType::Categories getCategory() const { return m_category; }
 
-    Color getHeadColor() { return m_headColor; }
-    Color getBodyColor() { return m_bodyColor; }
-    Color getLegsColor() { return m_legsColor; }
-    Color getFeetColor() { return m_feetColor; }
+    Color getHeadColor() const { return m_headColor; }
+    Color getBodyColor() const { return m_bodyColor; }
+    Color getLegsColor() const { return m_legsColor; }
+    Color getFeetColor() const { return m_feetColor; }
 
 private:
     ThingsType::Categories m_category;

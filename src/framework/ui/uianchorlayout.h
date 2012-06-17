@@ -49,8 +49,8 @@ public:
     UIAnchorGroup() : m_updated(true) { }
 
     void addAnchor(const UIAnchor& anchor);
-    const UIAnchorList& getAnchors() const { return m_anchors; }
-    bool isUpdated() const { return m_updated; }
+    const UIAnchorList& getAnchors() { return m_anchors; }
+    bool isUpdated() { return m_updated; }
     void setUpdated(bool updated) { m_updated = updated; }
 
 private:

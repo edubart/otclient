@@ -41,7 +41,7 @@ OTMLNodePtr OTMLNode::create(std::string tag, std::string value)
     return node;
 }
 
-bool OTMLNode::hasChildren() const
+bool OTMLNode::hasChildren()
 {
     int count = 0;
     for(const OTMLNodePtr& child : m_children) {
@@ -51,7 +51,7 @@ bool OTMLNode::hasChildren() const
     return count > 0;
 }
 
-OTMLNodePtr OTMLNode::get(const std::string& childTag) const
+OTMLNodePtr OTMLNode::get(const std::string& childTag)
 {
     for(const OTMLNodePtr& child : m_children) {
         if(child->tag() == childTag && !child->isNull())
@@ -60,7 +60,7 @@ OTMLNodePtr OTMLNode::get(const std::string& childTag) const
     return nullptr;
 }
 
-OTMLNodePtr OTMLNode::getIndex(int childIndex) const
+OTMLNodePtr OTMLNode::getIndex(int childIndex)
 {
     if(childIndex < size() && childIndex >= 0)
         return m_children[childIndex];
@@ -174,7 +174,7 @@ void OTMLNode::clear()
     m_children.clear();
 }
 
-OTMLNodeList OTMLNode::children() const
+OTMLNodeList OTMLNode::children()
 {
     OTMLNodeList children;
     for(const OTMLNodePtr& child : m_children)
@@ -183,7 +183,7 @@ OTMLNodeList OTMLNode::children() const
     return children;
 }
 
-OTMLNodePtr OTMLNode::clone() const
+OTMLNodePtr OTMLNode::clone()
 {
     OTMLNodePtr myClone(new OTMLNode);
     myClone->setTag(m_tag);

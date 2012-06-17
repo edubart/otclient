@@ -42,7 +42,7 @@ public:
     void registerFunctions();
 
     // functions that will register all script stuff in lua global environment
-    void registerStaticClass(const std::string& className);
+    void registerSingletonClass(const std::string& className);
     void registerClass(const std::string& className, const std::string& baseClass = "LuaObject");
 
     void registerClassStaticFunction(const std::string& className,
@@ -85,6 +85,11 @@ public:
     }
 
     // methods for binding functions
+    template<class C, typename F>
+    void bindSingletonFunction(const std::string& functionName, F C::*function, C *instance);
+    template<class C, typename F>
+    void bindSingletonFunction(const std::string& className, const std::string& functionName, F C::*function, C *instance);
+
     template<class C, typename F>
     void bindClassStaticFunction(const std::string& functionName, const F& function);
     template<typename F>
@@ -340,6 +345,17 @@ void LuaInterface::polymorphicPush(T v, Args... args) {
 }
 
 // next templates must be defined after above includes
+
+template<class C, typename F>
+void LuaInterface::bindSingletonFunction(const std::string& functionName, F C::*function, C *instance) {
+    registerClassStaticFunction<C>(functionName, luabinder::bind_singleton_mem_fun(function, instance));
+}
+
+template<class C, typename F>
+void LuaInterface::bindSingletonFunction(const std::string& className, const std::string& functionName, F C::*function, C *instance) {
+    registerClassStaticFunction(className, functionName, luabinder::bind_singleton_mem_fun(function, instance));
+}
+
 template<class C, typename F>
 void LuaInterface::bindClassStaticFunction(const std::string& functionName, const F& function) {
     registerClassStaticFunction<C>(functionName, luabinder::bind_fun(function));

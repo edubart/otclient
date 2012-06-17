@@ -47,20 +47,20 @@ public:
     /// Calculate glyphs positions to use on render, also calculates textBoxSize if wanted
     const std::vector<Point>& calculateGlyphsPositions(const std::string& text,
                                                        Fw::AlignmentFlag align = Fw::AlignTopLeft,
-                                                       Size* textBoxSize = NULL) const;
+                                                       Size* textBoxSize = NULL);
 
     /// Simulate render and calculate text size
     Size calculateTextRectSize(const std::string& text);
 
     std::string wrapText(const std::string& text, int maxWidth);
 
-    std::string getName() const { return m_name; }
-    int getGlyphHeight() const { return m_glyphHeight; }
-    const Rect* getGlyphsTextureCoords() const { return m_glyphsTextureCoords; }
-    const Size* getGlyphsSize() const { return m_glyphsSize; }
-    const TexturePtr& getTexture() const { return m_texture; }
-    int getYOffset() const { return m_yOffset; }
-    Size getGlyphSpacing() const { return m_glyphSpacing; }
+    std::string getName() { return m_name; }
+    int getGlyphHeight() { return m_glyphHeight; }
+    const Rect* getGlyphsTextureCoords() { return m_glyphsTextureCoords; }
+    const Size* getGlyphsSize() { return m_glyphsSize; }
+    const TexturePtr& getTexture() { return m_texture; }
+    int getYOffset() { return m_yOffset; }
+    Size getGlyphSpacing() { return m_glyphSpacing; }
 
 private:
     /// Calculates each font character by inspecting font bitmap

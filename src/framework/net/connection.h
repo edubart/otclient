@@ -57,9 +57,9 @@ public:
 
     void setErrorCallback(const ErrorCallback& errorCallback) { m_errorCallback = errorCallback; }
 
-    boost::system::error_code getError() const { return m_error; }
-    bool isConnecting() const { return m_connecting; }
-    bool isConnected() const { return m_connected; }
+    boost::system::error_code getError() { return m_error; }
+    bool isConnecting() { return m_connecting; }
+    bool isConnected() { return m_connected; }
 
 protected:
     void onConnect(const boost::system::error_code& error);

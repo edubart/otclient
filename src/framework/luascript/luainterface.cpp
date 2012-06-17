@@ -66,7 +66,7 @@ void LuaInterface::terminate()
     closeLuaState();
 }
 
-void LuaInterface::registerStaticClass(const std::string& className)
+void LuaInterface::registerSingletonClass(const std::string& className)
 {
     newTable();
     pushValue();
