@@ -25,7 +25,6 @@ local shadersPanel
 function Shaders.init()
   importStyle 'shaders.otui'
 
-
   Keyboard.bindKeyDown(HOTKEY, Shaders.toggle)
 
   shadersPanel = createWidget('ShadersPanel', GameInterface.getMapPanel())
@@ -36,6 +35,8 @@ function Shaders.init()
     local map = GameInterface.getMapPanel()
     map:setMapShader(g_shaders.getShader(option))
   end
+
+  if not g_graphics.canUseShaders() then return end
 
   for _i,opts in pairs(MAP_SHADERS) do
     local shader = g_shaders.createFragmentShader(opts.name, opts.frag)

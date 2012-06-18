@@ -40,10 +40,10 @@ function Client.init()
     scheduleEvent(function()
         g_window.show()
 
-        -- play startup music
-        --g_sounds.playMusic("startup.ogg", 3)
-        --connect(g_game, { onGameStart = function() g_sounds.stopMusic(3) end })
-        --connect(g_game, { onGameEnd= function() g_sounds.playMusic("startup.ogg", 3) end })
+        -- Play startup music (The Silver Tree, by Mattias Westlund)
+        g_sounds.playMusic("startup.ogg", 3)
+        connect(g_game, { onGameStart = function() g_sounds.stopMusic(3) end })
+        connect(g_game, { onGameEnd= function() g_sounds.playMusic("startup.ogg", 3) end })
     end, 0)
   end, 0)
 end

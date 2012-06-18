@@ -23,6 +23,8 @@
 #include "painter.h"
 #include "graphics.h"
 
+#include <framework/platform/platformwindow.h>
+
 Painter *g_painter = nullptr;
 
 Painter::Painter()
@@ -35,6 +37,7 @@ Painter::Painter()
     m_shaderProgram = nullptr;
     m_texture = nullptr;
     m_alphaWriting = false;
+    setResolution(g_window.getSize());
 }
 
 void Painter::resetState()
@@ -50,11 +53,11 @@ void Painter::resetState()
 
 void Painter::refreshState()
 {
+    updateGlViewport();
     updateGlCompositionMode();
     updateGlClipRect();
     updateGlTexture();
     updateGlAlphaWriting();
-    updateGlViewport();
 }
 
 void Painter::saveState()

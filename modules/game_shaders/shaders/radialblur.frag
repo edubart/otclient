@@ -7,9 +7,6 @@ const float sampleStrength = 2.2;
 
 void main(void)
 {
-    // some sample positions
-    float samples[] = { -0.08,-0.05,-0.03,-0.02,-0.01,0.01,0.02,0.03,0.05,0.08 };
-
     // 0.5,0.5 is the center of the screen
     // so substracting v_TexCoord from it will result in
     // a vector pointing to the middle of the screen
@@ -29,8 +26,16 @@ void main(void)
 
     // take 10 additional blur samples in the direction towards
     // the center of the screen
-    for(int i = 0; i < 10; i++)
-        sum += texture2D(u_Tex0, v_TexCoord + dir * samples[i] * sampleDist);
+    sum += texture2D(u_Tex0, v_TexCoord - 0.08 * dir * sampleDist);
+    sum += texture2D(u_Tex0, v_TexCoord - 0.05 * dir * sampleDist);
+    sum += texture2D(u_Tex0, v_TexCoord - 0.03 * dir * sampleDist);
+    sum += texture2D(u_Tex0, v_TexCoord - 0.02 * dir * sampleDist);
+    sum += texture2D(u_Tex0, v_TexCoord - 0.01 * dir * sampleDist);
+    sum += texture2D(u_Tex0, v_TexCoord + 0.01 * dir * sampleDist);
+    sum += texture2D(u_Tex0, v_TexCoord + 0.02 * dir * sampleDist);
+    sum += texture2D(u_Tex0, v_TexCoord + 0.03 * dir * sampleDist);
+    sum += texture2D(u_Tex0, v_TexCoord + 0.05 * dir * sampleDist);
+    sum += texture2D(u_Tex0, v_TexCoord + 0.08 * dir * sampleDist);
 
     // we have taken eleven samples
     sum *= 1.0/11.0;
@@ -42,4 +47,4 @@ void main(void)
 
     //Blend the original color with the averaged pixels
     gl_FragColor = mix(color, sum, t);
-} 
+}

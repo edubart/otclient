@@ -1,6 +1,6 @@
 local skin = {
 	name = 'Example',
-	
+
 	styles = {
 		'topmenu.otui'
 	}

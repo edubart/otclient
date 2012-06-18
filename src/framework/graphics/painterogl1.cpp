@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef OPENGL_ES
+#if !defined(OPENGL_ES) || OPENGL_ES==1
 
 #include "painterogl1.h"
 #include "graphics.h"
