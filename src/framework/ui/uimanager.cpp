@@ -278,7 +278,7 @@ void UIManager::onWidgetDestroy(const UIWidgetPtr& widget)
     if(m_checkEvent && !m_checkEvent->isExecuted())
         return;
 
-    m_checkEvent = g_eventDispatcher.scheduleEvent([] {
+    m_checkEvent = g_eventDispatcher.scheduleEvent([this] {
         g_lua.collectGarbage();
         UIWidgetList backupList = m_destroyedWidgets;
         m_destroyedWidgets.clear();

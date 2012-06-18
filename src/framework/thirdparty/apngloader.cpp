@@ -917,7 +917,7 @@ void write_IDATs(std::ostream& f, unsigned char* data, unsigned int length, unsi
     }
 }
 
-void save_png(std::stringstream& f, int width, int height, int channels, unsigned char *pixels)
+void save_png(std::stringstream& f, unsigned int width, unsigned int height, int channels, unsigned char *pixels)
 {
     unsigned int bpp = 4;
     unsigned char coltype = 0;
