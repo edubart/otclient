@@ -100,7 +100,8 @@ void PainterOGL2::drawCoords(CoordsBuffer& coordsBuffer, DrawMode drawMode)
             m_drawProgram->setAttributeArray(PainterShaderProgram::TEXCOORD_ATTR, nullptr, 2);
         } else
             m_drawProgram->setAttributeArray(PainterShaderProgram::TEXCOORD_ATTR, coordsBuffer.getTextureCoordArray(), 2);
-    }
+    } else
+        PainterShaderProgram::disableAttributeArray(PainterShaderProgram::TEXCOORD_ATTR);
 
     // set vertex array
     if(hardwareCached) {
@@ -112,6 +113,9 @@ void PainterOGL2::drawCoords(CoordsBuffer& coordsBuffer, DrawMode drawMode)
 
     // draw the element in coords buffers
     glDrawArrays(drawMode, 0, vertexCount);
+
+    if(!textured)
+        PainterShaderProgram::enableAttributeArray(PainterShaderProgram::TEXCOORD_ATTR);
 }
 
 void PainterOGL2::drawTextureCoords(CoordsBuffer& coordsBuffer, const TexturePtr& texture)
