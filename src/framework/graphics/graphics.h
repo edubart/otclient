@@ -51,13 +51,13 @@ public:
 
     int getMaxTextureSize() { return m_maxTextureSize; }
     const Size& getViewportSize() { return m_viewportSize; }
-    TexturePtr& getEmptyTexture() { return m_emptyTexture; }
 
     std::string getVendor() { return (const char*)glGetString(GL_VENDOR); }
     std::string getRenderer() { return (const char*)glGetString(GL_RENDERER); }
     std::string getVersion() { return (const char*)glGetString(GL_VERSION); }
     std::string getExtensions() { return (const char*)glGetString(GL_EXTENSIONS); }
 
+    bool ok() { return m_ok; }
     bool canUseDrawArrays();
     bool canUseShaders();
     bool canUseFBO();
@@ -72,10 +72,10 @@ public:
 
 private:
     Size m_viewportSize;
-    TexturePtr m_emptyTexture;
 
     int m_maxTextureSize;
     int m_alphaBits;
+    Boolean<false> m_ok;
     Boolean<true> m_useDrawArrays;
     Boolean<true> m_useFBO;
     Boolean<false> m_useHardwareBuffers;

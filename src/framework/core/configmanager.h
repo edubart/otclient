@@ -32,6 +32,7 @@ public:
     ConfigManager();
     bool load(const std::string& file);
     bool save();
+    void clear();
 
     void set(const std::string& key, const std::string& value);
     void setList(const std::string& key, const std::vector<std::string>& list);

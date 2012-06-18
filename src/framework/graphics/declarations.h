@@ -27,11 +27,13 @@
 #include "glutil.h"
 
 class Texture;
+class TextureManager;
 class Image;
 class AnimatedTexture;
 class BitmapFont;
 class CachedText;
 class FrameBuffer;
+class FrameBufferManager;
 class Shader;
 class ShaderProgram;
 class PainterShaderProgram;

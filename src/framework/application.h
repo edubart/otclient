@@ -39,6 +39,7 @@ public:
 
     virtual void init(const std::vector<std::string>& args);
     virtual void registerLuaFunctions();
+    virtual void deinit();
     virtual void terminate();
     virtual void run();
     virtual void exit();
@@ -53,6 +54,7 @@ public:
 
     bool isRunning() { return m_running; }
     bool isStopping() { return m_stopping; }
+    bool isTermianted() { return m_terminated; }
     bool isOnInputEvent() { return m_onInputEvent; }
     const std::string& getName() { return m_appName; }
     const std::string& getVersion() { return m_appVersion; }
@@ -76,6 +78,7 @@ protected:
     Boolean<false> m_initialized;
     Boolean<false> m_running;
     Boolean<false> m_stopping;
+    Boolean<false> m_terminated;
     Boolean<false> m_onInputEvent;
     Boolean<false> m_mustRepaint;
     AdaptativeFrameCounter m_backgroundFrameCounter;

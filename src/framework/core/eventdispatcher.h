@@ -31,14 +31,24 @@ class Event : public LuaObject
 {
 public:
     Event(const std::function<void()>& callback) : m_callback(callback), m_canceled(false), m_executed(false) { }
+    virtual ~Event() {
+        // assure that we lost callback refs
+        assert(m_callback == nullptr);
+    }
 
     virtual void execute() {
         if(!m_canceled && !m_executed && m_callback) {
             m_callback();
             m_executed = true;
         }
+
+        // reset callback to free object refs
+        m_callback = nullptr;
     }
-    void cancel() { m_canceled = true; }
+    void cancel() {
+        m_canceled = true;
+        m_callback = nullptr;
+    }
 
     bool isCanceled() { return m_canceled; }
     bool isExecuted() { return m_executed; }
@@ -63,17 +73,21 @@ public:
         if(!m_canceled && m_callback && (m_maxCycles == 0 || m_cyclesExecuted < m_maxCycles)) {
             m_callback();
             m_executed = true;
+            // callback may be used in the next cycle
+        } else {
+            // reset callback to free object refs
+            m_callback = nullptr;
         }
         m_cyclesExecuted++;
     }
 
     bool nextCycle() {
-        if(m_canceled)
-            return false;
-        if(m_maxCycles == 0 || m_cyclesExecuted < m_maxCycles) {
+        if(m_callback && !m_canceled && (m_maxCycles == 0 || m_cyclesExecuted < m_maxCycles)) {
             m_ticks += m_delay;
             return true;
         }
+        // reset callback to free object refs
+        m_callback = nullptr;
         return false;
     }
 
@@ -109,6 +123,7 @@ public:
 private:
     std::list<EventPtr> m_eventList;
     int m_pollEventsSize;
+    Boolean<false> m_disabled;
     std::priority_queue<ScheduledEventPtr, std::vector<ScheduledEventPtr>, lessScheduledEvent> m_scheduledEventList;
 };
 

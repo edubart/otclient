@@ -35,6 +35,8 @@ LuaInterface::LuaInterface()
     L = nullptr;
     m_cppCallbackDepth = 0;
     m_weakTableRef = 0;
+    m_totalObjRefs = 0;
+    m_totalFuncRefs = 0;
 }
 
 LuaInterface::~LuaInterface()
@@ -64,6 +66,8 @@ void LuaInterface::terminate()
 {
     // close lua state, it will release all objects
     closeLuaState();
+    assert(m_totalFuncRefs == 0);
+    assert(m_totalObjRefs == 0);
 }
 
 void LuaInterface::registerSingletonClass(const std::string& className)
@@ -280,6 +284,7 @@ int LuaInterface::luaObjectCollectEvent(LuaInterface* lua)
 
     // resets pointer to decrease object use count
     objPtr->reset();
+    g_lua.m_totalObjRefs--;
     return 0;
 }
 
@@ -603,6 +608,7 @@ int LuaInterface::luaCollectCppFunction(lua_State* L)
     auto funcPtr = static_cast<LuaCppFunctionPtr*>(g_lua.popUserdata());
     assert(funcPtr);
     funcPtr->reset();
+    g_lua.m_totalFuncRefs--;
     return 0;
 }
 
@@ -1033,6 +1039,7 @@ void LuaInterface::pushObject(const LuaObjectPtr& obj)
 {
     // fills a new userdata with a new LuaObjectPtr pointer
     new(newUserdata(sizeof(LuaObjectPtr))) LuaObjectPtr(obj);
+    m_totalObjRefs++;
 
     // set the userdata metatable
     getGlobal(stdext::format("%s_mt", obj->getClassName()));
@@ -1050,6 +1057,7 @@ void LuaInterface::pushCppFunction(const LuaCppFunction& func)
 {
     // create a pointer to func (this pointer will hold the function existence)
     new(newUserdata(sizeof(LuaCppFunctionPtr))) LuaCppFunctionPtr(new LuaCppFunction(func));
+    m_totalFuncRefs++;
 
     // sets the userdata __gc metamethod, needed to free the function pointer when it gets collected
     newTable();

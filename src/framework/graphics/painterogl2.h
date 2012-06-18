@@ -36,7 +36,6 @@ class PainterOGL2 : public Painter
 {
 public:
     PainterOGL2();
-    ~PainterOGL2();
 
     void bind();
     void unbind();

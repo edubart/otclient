@@ -329,6 +329,8 @@ private:
     lua_State* L;
     int m_weakTableRef;
     int m_cppCallbackDepth;
+    int m_totalObjRefs;
+    int m_totalFuncRefs;
 };
 
 extern LuaInterface g_lua;

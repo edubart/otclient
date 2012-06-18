@@ -36,7 +36,7 @@
 #include <framework/graphics/paintershaderprogram.h>
 #include <framework/graphics/painterogl2_shadersources.h>
 #include <framework/graphics/texturemanager.h>
-#include <framework/graphics/framebuffer.h>
+#include <framework/graphics/framebuffermanager.h>
 #include "spritemanager.h"
 
 Creature::Creature() : Thing()
@@ -161,10 +161,8 @@ void Creature::internalDrawOutfit(const Point& dest, float scaleFactor, bool ani
 void Creature::drawOutfit(const Rect& destRect, bool resize)
 {
     if(g_graphics.canUseFBO()) {
-        static FrameBufferPtr outfitBuffer;
-        if(!outfitBuffer)
-            outfitBuffer = FrameBufferPtr(new FrameBuffer(Size(2*Otc::TILE_PIXELS, 2*Otc::TILE_PIXELS)));
-
+        const FrameBufferPtr& outfitBuffer = g_framebuffers.getTemporaryFrameBuffer();
+        outfitBuffer->resize(Size(2*Otc::TILE_PIXELS, 2*Otc::TILE_PIXELS));
         outfitBuffer->bind();
         g_painter->setAlphaWriting(true);
         g_painter->clear(Color::alpha);

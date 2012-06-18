@@ -28,9 +28,12 @@
 
 class FrameBuffer
 {
-public:
+protected:
     FrameBuffer();
-    FrameBuffer(const Size& size);
+
+    friend class FrameBufferManager;
+
+public:
     virtual ~FrameBuffer();
 
     void resize(const Size& size);

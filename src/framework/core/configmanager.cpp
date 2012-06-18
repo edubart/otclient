@@ -57,6 +57,11 @@ bool ConfigManager::save()
     return m_confsDoc->save(m_fileName);
 }
 
+void ConfigManager::clear()
+{
+    m_confsDoc->clear();
+}
+
 void ConfigManager::set(const std::string& key, const std::string& value)
 {
     if(key == "") {

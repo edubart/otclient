@@ -50,6 +50,7 @@ public:
     };
 
     MapView();
+    ~MapView();
     void draw(const Rect& rect);
 
 private:

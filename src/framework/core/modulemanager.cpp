@@ -28,6 +28,12 @@
 
 ModuleManager g_modules;
 
+void ModuleManager::clear()
+{
+    m_modules.clear();
+    m_autoLoadModules.clear();
+}
+
 void ModuleManager::discoverModules()
 {
     // remove modules that are not loaded

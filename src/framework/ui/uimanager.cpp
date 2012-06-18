@@ -50,6 +50,9 @@ void UIManager::terminate()
     m_draggingWidget = nullptr;
     m_hoveredWidget = nullptr;
     m_pressedWidget = nullptr;
+    m_styles.clear();
+    m_destroyedWidgets.clear();
+    m_checkEvent = nullptr;
 }
 
 void UIManager::render(Fw::DrawPane drawPane)
@@ -266,22 +269,19 @@ void UIManager::onWidgetDestroy(const UIWidgetPtr& widget)
     if(m_draggingWidget == widget)
         updateDraggingWidget(nullptr);
 
-#ifdef DEBUG
-    static UIWidgetList destroyedWidgets;
-    static ScheduledEventPtr checkEvent;
-
-    if(widget == m_rootWidget)
+#ifndef DEBUG
+    if(widget == m_rootWidget || !m_rootWidget)
         return;
 
-    destroyedWidgets.push_back(widget);
+    m_destroyedWidgets.push_back(widget);
 
-    if(checkEvent && !checkEvent->isExecuted())
+    if(m_checkEvent && !m_checkEvent->isExecuted())
         return;
 
-    checkEvent = g_eventDispatcher.scheduleEvent([] {
+    m_checkEvent = g_eventDispatcher.scheduleEvent([] {
         g_lua.collectGarbage();
-        UIWidgetList backupList = destroyedWidgets;
-        destroyedWidgets.clear();
+        UIWidgetList backupList = m_destroyedWidgets;
+        m_destroyedWidgets.clear();
         g_eventDispatcher.scheduleEvent([backupList] {
             g_lua.collectGarbage();
             for(const UIWidgetPtr& widget : backupList) {

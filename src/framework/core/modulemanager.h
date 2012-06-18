@@ -28,6 +28,8 @@
 class ModuleManager
 {
 public:
+    void clear();
+
     void discoverModulesPath();
     void discoverModules();
     void autoLoadModules(int maxPriority);

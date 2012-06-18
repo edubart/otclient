@@ -23,19 +23,15 @@
 #include "framebuffer.h"
 #include "graphics.h"
 #include "texture.h"
+
 #include <framework/platform/platformwindow.h>
+#include <framework/application.h>
 
 uint FrameBuffer::boundFbo = 0;
 
 FrameBuffer::FrameBuffer()
 {
     internalCreate();
-}
-
-FrameBuffer::FrameBuffer(const Size& size)
-{
-    internalCreate();
-    resize(size);
 }
 
 void FrameBuffer::internalCreate()
@@ -51,14 +47,14 @@ void FrameBuffer::internalCreate()
 
 FrameBuffer::~FrameBuffer()
 {
-    if(m_fbo != 0)
+    assert(!g_app->isTermianted());
+    if(g_graphics.ok() && m_fbo != 0)
         glDeleteFramebuffers(1, &m_fbo);
 }
 
 void FrameBuffer::resize(const Size& size)
 {
-    if(!size.isValid())
-        return;
+    assert(size.isValid());
 
     if(m_texture && m_texture->getSize() == size)
         return;

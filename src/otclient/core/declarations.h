@@ -62,5 +62,6 @@ typedef std::shared_ptr<StaticText> StaticTextPtr;
 typedef std::shared_ptr<ItemShader> ItemShaderPtr;
 
 typedef std::vector<ThingPtr> ThingList;
+typedef std::vector<ThingType> ThingTypeList;
 
 #endif

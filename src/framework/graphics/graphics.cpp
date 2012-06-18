@@ -33,6 +33,8 @@
 
 #include <framework/graphics/graphics.h>
 #include <framework/graphics/texture.h>
+#include "texturemanager.h"
+#include "framebuffermanager.h"
 #include <framework/platform/platformwindow.h>
 
 Graphics g_graphics;
@@ -88,13 +90,19 @@ void Graphics::init()
     m_alphaBits = 0;
     glGetIntegerv(GL_ALPHA_BITS, &m_alphaBits);
 
+    m_ok = true;
+
     selectPainterEngine(m_prefferedPainterEngine);
-    m_emptyTexture = TexturePtr(new Texture);
+
+    g_textures.init();
+    g_framebuffers.init();
 }
 
 void Graphics::terminate()
 {
-    g_fonts.releaseFonts();
+    g_fonts.terminate();
+    g_framebuffers.terminate();
+    g_textures.terminate();
 
 #ifdef PAINTER_OGL2
     if(g_painterOGL2) {
@@ -112,7 +120,7 @@ void Graphics::terminate()
 
     g_painter = nullptr;
 
-    m_emptyTexture.reset();
+    m_ok = false;
 }
 
 bool Graphics::parseOption(const std::string& option)

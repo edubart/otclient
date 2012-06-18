@@ -44,6 +44,7 @@ void ShaderManager::terminate()
 {
     m_defaultItemShader = nullptr;
     m_defaultMapShader = nullptr;
+    m_shaders.clear();
 }
 
 PainterShaderProgramPtr ShaderManager::createShader(const std::string& name)

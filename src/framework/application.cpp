@@ -116,11 +116,8 @@ void Application::init(const std::vector<std::string>& args)
     m_initialized = true;
 }
 
-void Application::terminate()
+void Application::deinit()
 {
-    if(!m_initialized)
-        return;
-
     g_lua.callGlobalField("g_app", "onTerminate");
 
     // hide the window because there is no render anymore
@@ -128,6 +125,7 @@ void Application::terminate()
 
     // run modules unload events
     g_modules.unloadModules();
+    g_modules.clear();
 
     // release remaining lua object references
     g_lua.collectGarbage();
@@ -135,18 +133,19 @@ void Application::terminate()
     // poll remaining events
     poll();
 
+    // destroy any remaining widget
+    g_ui.terminate();
+}
+
+void Application::terminate()
+{
+    assert(m_initialized);
+
     // terminate network
     Connection::terminate();
 
-    // terminate graphics
-    g_ui.terminate();
-    g_window.terminate();
-
     // terminate sound
     g_sounds.terminate();
-
-    // flush remaining dispatcher events
-    g_eventDispatcher.flush();
 
     // save configurations
     g_configs.save();
@@ -157,15 +156,22 @@ void Application::terminate()
     // terminate script environment
     g_lua.terminate();
 
+    // flush remaining dispatcher events
+    g_eventDispatcher.flush();
+
+    // terminate graphics
     m_foreground = nullptr;
+    g_graphics.terminate();
+    g_window.terminate();
 
     g_logger.info("Application ended successfully.");
+
+    m_terminated = true;
 }
 
 void Application::run()
 {
-    if(!m_initialized)
-        return;
+    assert(m_initialized);
 
     m_stopping = false;
     m_running = true;

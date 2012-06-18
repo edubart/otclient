@@ -40,15 +40,8 @@ public:
         DynamicDraw         = GL_DYNAMIC_DRAW
     };
 
-    HardwareBuffer(Type type) {
-        m_type = type;
-        m_id = 0;
-        glGenBuffers(1, &m_id);
-        assert(m_id != 0);
-    }
-    ~HardwareBuffer() {
-        glDeleteBuffers(1, &m_id);
-    }
+    HardwareBuffer(Type type);
+    ~HardwareBuffer();
 
     void bind() { glBindBuffer(m_type, m_id); }
     static void unbind(Type type) { glBindBuffer(type, 0); }

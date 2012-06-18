@@ -30,6 +30,26 @@
 
 TextureManager g_textures;
 
+void TextureManager::init()
+{
+    m_emptyTexture = TexturePtr(new Texture);
+}
+
+void TextureManager::terminate()
+{
+#ifndef NDEBUG
+    // check for leaks
+    int refs = 0;
+    for(const auto& it : m_textures)
+        if(it.second.use_count() > 1)
+            refs++;
+    if(refs > 0)
+        g_logger.debug(stdext::format("%d textures references left", refs));
+#endif
+    m_textures.clear();
+    m_emptyTexture = nullptr;
+}
+
 TexturePtr TextureManager::getTexture(const std::string& fileName)
 {
     TexturePtr texture;
@@ -59,7 +79,7 @@ TexturePtr TextureManager::getTexture(const std::string& fileName)
             texture = loadPNG(fin);
         } catch(stdext::exception& e) {
             g_logger.error(stdext::format("unable to load texture '%s': %s", fileName, e.what()));
-            texture = g_graphics.getEmptyTexture();
+            texture = g_textures.getEmptyTexture();
         }
 
         if(texture)

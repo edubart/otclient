@@ -46,6 +46,7 @@ UIWidget::UIWidget()
 
 UIWidget::~UIWidget()
 {
+    assert(!g_app->isTermianted());
 #ifdef DEBUG
     if(!m_destroyed)
         g_logger.warning(stdext::format("widget '%s' was not explicitly destroyed", m_id));

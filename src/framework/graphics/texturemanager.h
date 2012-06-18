@@ -28,12 +28,17 @@
 class TextureManager
 {
 public:
-    TexturePtr getTexture(const std::string& fileName);
+    void init();
+    void terminate();
 
-    static TexturePtr loadPNG(std::stringstream& file);
+    TexturePtr getTexture(const std::string& fileName);
+    const TexturePtr& getEmptyTexture() { return m_emptyTexture; }
 
 private:
+    TexturePtr loadPNG(std::stringstream& file);
+
     std::unordered_map<std::string, TextureWeakPtr> m_textures;
+    TexturePtr m_emptyTexture;
 };
 
 extern TextureManager g_textures;

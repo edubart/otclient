@@ -20,15 +20,27 @@
  * THE SOFTWARE.
  */
 
-#include <otclient/otclient.h>
 
-int main(int argc, const char* argv[])
+#ifndef FRAMEBUFFERMANAGER_H
+#define FRAMEBUFFERMANAGER_H
+
+#include "framebuffer.h"
+
+class FrameBufferManager
 {
-    std::vector<std::string> args(argv, argv + argc);
-    OTClient app;
-    app.init(args);
-    app.run();
-    app.deinit();
-    app.terminate();
-    return 0;
-}
+public:
+    void init();
+    void terminate();
+    void clear();
+
+    FrameBufferPtr createFrameBuffer();
+    const FrameBufferPtr& getTemporaryFrameBuffer() { return m_temporaryFramebuffer; }
+
+protected:
+    FrameBufferPtr m_temporaryFramebuffer;
+    std::vector<FrameBufferPtr> m_framebuffers;
+};
+
+extern FrameBufferManager g_framebuffers;
+
+#endif

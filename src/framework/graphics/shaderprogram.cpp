@@ -21,6 +21,9 @@
  */
 
 #include "shaderprogram.h"
+#include "graphics.h"
+
+#include <framework/application.h>
 
 GLuint ShaderProgram::m_currentProgram = 0;
 
@@ -35,7 +38,9 @@ ShaderProgram::ShaderProgram()
 
 ShaderProgram::~ShaderProgram()
 {
-    glDeleteProgram(m_programId);
+    assert(!g_app->isTermianted());
+    if(g_graphics.ok())
+        glDeleteProgram(m_programId);
 }
 
 bool ShaderProgram::addShader(const ShaderPtr& shader) {

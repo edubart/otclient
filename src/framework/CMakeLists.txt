@@ -213,9 +213,12 @@ SET(framework_SOURCES ${framework_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/graphics/fontmanager.h
     ${CMAKE_CURRENT_LIST_DIR}/graphics/framebuffer.cpp
     ${CMAKE_CURRENT_LIST_DIR}/graphics/framebuffer.h
+    ${CMAKE_CURRENT_LIST_DIR}/graphics/framebuffermanager.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/graphics/framebuffermanager.h
     ${CMAKE_CURRENT_LIST_DIR}/graphics/glutil.h
     ${CMAKE_CURRENT_LIST_DIR}/graphics/graphics.cpp
     ${CMAKE_CURRENT_LIST_DIR}/graphics/graphics.h
+    ${CMAKE_CURRENT_LIST_DIR}/graphics/hardwarebuffer.cpp
     ${CMAKE_CURRENT_LIST_DIR}/graphics/hardwarebuffer.h
     ${CMAKE_CURRENT_LIST_DIR}/graphics/image.cpp
     ${CMAKE_CURRENT_LIST_DIR}/graphics/image.h

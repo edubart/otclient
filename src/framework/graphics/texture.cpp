@@ -25,6 +25,8 @@
 #include "framebuffer.h"
 #include "image.h"
 
+#include <framework/application.h>
+
 Texture::Texture()
 {
     m_id = 0;
@@ -77,8 +79,9 @@ Texture::Texture(const ImagePtr& image, bool buildMipmaps)
 
 Texture::~Texture()
 {
+    assert(!g_app->isTermianted());
     // free texture from gl memory
-    if(m_id > 0)
+    if(g_graphics.ok() && m_id != 0)
         glDeleteTextures(1, &m_id);
 }
 

@@ -32,10 +32,10 @@ FontManager::FontManager()
     m_defaultFont = BitmapFontPtr(new BitmapFont("emptyfont"));
 }
 
-void FontManager::releaseFonts()
+void FontManager::terminate()
 {
-    m_defaultFont.reset();
     m_fonts.clear();
+    m_defaultFont = nullptr;
 }
 
 bool FontManager::importFont(std::string fontFile)

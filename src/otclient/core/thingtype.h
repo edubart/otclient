@@ -156,6 +156,4 @@ private:
     friend class ThingsType;
 };
 
-typedef std::vector<ThingType> ThingTypeList;
-
 #endif

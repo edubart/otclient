@@ -117,5 +117,7 @@ void OTClient::init(const std::vector<std::string>& args)
 void OTClient::terminate()
 {
     g_shaders.terminate();
+    g_map.clean();
+    g_thingsType.unload();
     Application::terminate();
 }

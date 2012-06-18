@@ -48,12 +48,6 @@ PainterOGL2::PainterOGL2()
     PainterShaderProgram::release();
 }
 
-PainterOGL2::~PainterOGL2()
-{
-    m_drawTexturedProgram = nullptr;
-    m_drawSolidColorProgram = nullptr;
-}
-
 void PainterOGL2::bind()
 {
     Painter::bind();

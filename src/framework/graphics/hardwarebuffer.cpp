@@ -20,15 +20,24 @@
  * THE SOFTWARE.
  */
 
-#include <otclient/otclient.h>
+#include "hardwarebuffer.h"
+#include "graphics.h"
 
-int main(int argc, const char* argv[])
+#include <framework/application.h>
+#include <framework/core/logger.h>
+
+HardwareBuffer::HardwareBuffer(Type type)
 {
-    std::vector<std::string> args(argv, argv + argc);
-    OTClient app;
-    app.init(args);
-    app.run();
-    app.deinit();
-    app.terminate();
-    return 0;
+    m_type = type;
+    m_id = 0;
+    glGenBuffers(1, &m_id);
+    if(!m_id)
+        g_logger.fatal("Unable to create hardware buffer.");
+}
+
+HardwareBuffer::~HardwareBuffer()
+{
+    assert(!g_app->isTermianted());
+    if(g_graphics.ok())
+        glDeleteBuffers(1, &m_id);
 }

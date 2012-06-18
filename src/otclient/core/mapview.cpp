@@ -22,8 +22,6 @@
 
 #include "mapview.h"
 
-#include <framework/graphics/graphics.h>
-#include <framework/graphics/framebuffer.h>
 #include "creature.h"
 #include "map.h"
 #include "tile.h"
@@ -31,7 +29,11 @@
 #include "animatedtext.h"
 #include "missile.h"
 #include "shadermanager.h"
+
+#include <framework/graphics/graphics.h>
+#include <framework/graphics/framebuffermanager.h>
 #include <framework/core/eventdispatcher.h>
+#include <framework/application.h>
 
 MapView::MapView()
 {
@@ -41,10 +43,15 @@ MapView::MapView()
     m_cachedLastVisibleFloor = 7;
     m_optimizedSize = Size(Otc::AWARE_X_TILES, Otc::AWARE_Y_TILES) * Otc::TILE_PIXELS;
 
-    m_framebuffer = FrameBufferPtr(new FrameBuffer());
+    m_framebuffer = g_framebuffers.createFrameBuffer();
     setVisibleDimension(Size(15, 11));
 
     m_shader = g_shaders.getDefaultMapShader();
+}
+
+MapView::~MapView()
+{
+    assert(!g_app->isTermianted());
 }
 
 void MapView::draw(const Rect& rect)

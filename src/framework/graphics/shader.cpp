@@ -21,6 +21,9 @@
  */
 
 #include "shader.h"
+#include "graphics.h"
+
+#include <framework/application.h>
 #include <framework/core/resourcemanager.h>
 
 Shader::Shader(Shader::ShaderType shaderType)
@@ -41,7 +44,9 @@ Shader::Shader(Shader::ShaderType shaderType)
 
 Shader::~Shader()
 {
-    glDeleteShader(m_shaderId);
+    assert(!g_app->isTermianted());
+    if(g_graphics.ok())
+        glDeleteShader(m_shaderId);
 }
 
 bool Shader::compileSourceCode(const std::string& sourceCode)
