@@ -8,6 +8,7 @@ Module
   reloadable: false
 
   load-later:
+    - client_skins
     - client_locales
     - client_topmenu
     - client_background

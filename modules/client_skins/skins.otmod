@@ -1,0 +1,12 @@
+Module
+  name: client_skins
+  description: Changes modules styles
+  author: baxnie
+  website: www.otclient.info
+
+  @onLoad: |
+    dofile 'skins'
+    Skins.init()
+
+  @onUnload: |
+    Skins.terminate()
