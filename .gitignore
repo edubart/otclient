@@ -14,7 +14,7 @@ Makefile
 *.dat
 *.kdev*
 *.cbp
-CMakeLists.txt.user
+CMakeLists.txt.user*
 /modules/myconfig.otml
 /modules/myotclientrc.lua
 !.gitignore
