@@ -1,5 +1,5 @@
 Creature < UICreature
   size: 80 80
   padding: 1
-  image-source: /core_styles/styles/images/panel_flat.png
+  image-source: /images/panel_flat.png
   image-border: 1

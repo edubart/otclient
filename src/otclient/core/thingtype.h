@@ -112,8 +112,6 @@ public:
     void draw(const Point& dest, float scaleFactor, int layer, int xPattern, int yPattern, int zPattern, int animationPhase);
     void drawMask(const Point& dest, float scaleFactor, int w, int h, int xPattern, int yPattern, int zPattern, int layer, int animationPhase, SpriteMask mask);
 
-    TexturePtr& getSprite(int w, int h, int l, int x, int y, int z, int a);
-    TexturePtr& getSpriteMask(int w, int h, int l, int x, int y, int z, int a, SpriteMask mask);
     TexturePtr& getTexture(int animationPhase);
 
     bool getProperty(Property property) { return m_properties[property]; }

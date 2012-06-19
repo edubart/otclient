@@ -77,6 +77,7 @@ void ModuleManager::discoverModulesPath()
         // try to add module directory
         if(g_resources.addToSearchPath(dir, false)) {
             //g_logger.info(stdext::format("Using modules directory '%s'", dir.c_str()));
+            m_modulesPath = dir;
             found = true;
             break;
         }

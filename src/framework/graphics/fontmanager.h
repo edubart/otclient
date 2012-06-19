@@ -31,6 +31,7 @@ public:
     FontManager();
 
     void terminate();
+    void clearFonts();
 
     bool importFont(std::string fontFile);
 

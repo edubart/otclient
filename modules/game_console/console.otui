@@ -40,7 +40,7 @@ Panel
 
   TabButton
     id: prevChannelButton
-    icon: /core_styles/icons/leftarrow.png
+    icon: icons/leftarrow.png
     anchors.left: parent.left
     anchors.top: parent.top
     margin-left: 6
@@ -56,7 +56,7 @@ Panel
 
   TabButton
     id: nextChannelButton
-    icon: /core_styles/icons/rightarrow.png
+    icon: icons/rightarrow.png
     anchors.right: next.left
     anchors.top: parent.top
     margin-right: 5
@@ -65,7 +65,7 @@ Panel
   TabButton
     id: closeChannelButton
     !tooltip: tr('Close this channel') .. ' (Ctrl+E)'
-    icon: /core_styles/icons/closechannel.png
+    icon: icons/closechannel.png
     anchors.right: next.left
     anchors.top: parent.top
     enabled: false
@@ -76,7 +76,7 @@ Panel
   TabButton
     id: channelsButton
     !tooltip: tr('Open new channel') .. ' (Ctrl+O)'
-    icon: /core_styles/icons/channels.png
+    icon: icons/channels.png
     anchors.right: parent.right
     anchors.top: parent.top
     margin-right: 5
@@ -98,7 +98,7 @@ Panel
 
   TabButton
     id: sayModeButton
-    icon: /core_styles/icons/say.png
+    icon: icons/say.png
     !tooltip: tr('Adjust volume')
     &sayMode: 2
     size: 20 20

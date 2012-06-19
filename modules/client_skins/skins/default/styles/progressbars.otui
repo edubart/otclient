@@ -2,7 +2,7 @@ ProgressBar < UIProgressBar
   height: 16
   background-color: red
   border: 1 black
-  image-source: /core_styles/styles/images/progressbar.png
+  image-source: /images/progressbar.png
   image-border: 1
 
 ProgressRect < UIProgressRect

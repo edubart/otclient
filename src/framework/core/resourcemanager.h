@@ -34,6 +34,7 @@ public:
     bool setupWriteDir(const std::string& appWriteDirName);
 
     bool addToSearchPath(const std::string& path, bool insertInFront = true);
+    bool removeFromSearchPath(const std::string& path);
     void searchAndAddPackages(const std::string& packagesDir, const std::string& packagesExt, bool append);
 
     bool fileExists(const std::string& fileName);

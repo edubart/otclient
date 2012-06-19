@@ -66,6 +66,13 @@ bool ResourceManager::addToSearchPath(const std::string& path, bool insertInFron
     return true;
 }
 
+bool ResourceManager::removeFromSearchPath(const std::string& path)
+{
+    if(!PHYSFS_removeFromSearchPath(path.c_str()))
+        return false;
+    return true;
+}
+
 void ResourceManager::searchAndAddPackages(const std::string& packagesDir, const std::string& packageExt, bool append)
 {
     auto files = listDirectoryFiles(resolvePath(packagesDir));

@@ -37,9 +37,9 @@ local SpeakTypes = {
 }
 
 local SayModes = {
-  [1] = { speakTypeDesc = 'whisper', icon = '/core_styles/icons/whisper.png' },
-  [2] = { speakTypeDesc = 'say', icon = '/core_styles/icons/say.png' },
-  [3] = { speakTypeDesc = 'yell', icon = '/core_styles/icons/yell.png' }
+  [1] = { speakTypeDesc = 'whisper', icon = 'icons/whisper.png' },
+  [2] = { speakTypeDesc = 'say', icon = 'icons/say.png' },
+  [3] = { speakTypeDesc = 'yell', icon = 'icons/yell.png' }
 }
 
 local MAX_HISTORY = 1000

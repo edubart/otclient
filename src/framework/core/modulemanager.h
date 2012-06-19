@@ -37,6 +37,7 @@ public:
     void ensureModuleLoaded(const std::string& moduleName);
     void unloadModules();
     void reloadModules();
+    std::string getModulesPath() { return m_modulesPath; }
 
     ModulePtr getModule(const std::string& moduleName);
     std::deque<ModulePtr> getModules() { return m_modules; }
@@ -47,6 +48,7 @@ protected:
     friend class Module;
 
 private:
+    std::string m_modulesPath;
     std::deque<ModulePtr> m_modules;
     std::multimap<int, ModulePtr> m_autoLoadModules;
 };

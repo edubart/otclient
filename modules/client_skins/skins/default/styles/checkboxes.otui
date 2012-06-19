@@ -1,12 +1,13 @@
 CheckBox < UICheckBox
   size: 16 16
   text-align: left
+  text: aa
   text-offset: 16 0
   color: #aaaaaa
   image-color: #ffffffff
   image-rect: 0 0 12 12
   image-offset: 0 2
-  image-source: /core_styles/styles/images/checkbox.png
+  image-source: /images/checkbox.png
 
   $hover !disabled:
     color: #cccccc
@@ -30,7 +31,7 @@ CheckBox < UICheckBox
 ColorBox < UICheckBox
   size: 16 16
   image-color: #ffffffff
-  image-source: /core_styles/styles/images/colorbox.png
+  image-source: /images/colorbox.png
 
   $checked:
     image-clip: 16 0 16 16
@@ -44,7 +45,7 @@ ButtonBox < UICheckBox
   size: 106 22
   text-offset: 0 0
   text-align: center
-  image-source: /core_styles/styles/images/tabbutton.png
+  image-source: /images/tabbutton.png
   image-color: white
   image-clip: 0 0 20 20
   image-border: 2

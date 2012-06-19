@@ -11,7 +11,7 @@ FlatLabel < UILabel
   size: 86 20
   text-offset: 3 3
   text-margin: 3
-  image-source: /core_styles/styles/images/panel_flat.png
+  image-source: /images/panel_flat.png
   image-border: 1
 
   $disabled:

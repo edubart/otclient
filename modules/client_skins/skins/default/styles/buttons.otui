@@ -3,7 +3,7 @@ Button < UIButton
   color: #f0ad4dff
   size: 106 22
   text-offset: 0 0
-  image-source: /core_styles/styles/images/button.png
+  image-source: /images/button.png
   image-color: white
   image-clip: 0 0 20 20
   image-border: 2
@@ -21,7 +21,7 @@ Button < UIButton
 
 TabButton < UIButton
   size: 20 20
-  image-source: /core_styles/styles/images/tabbutton.png
+  image-source: /images/tabbutton.png
   image-color: white
   image-clip: 0 0 20 20
   image-border: 2

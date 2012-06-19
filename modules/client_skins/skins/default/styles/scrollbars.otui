@@ -2,7 +2,7 @@ ScrollBarSlider < UIButton
   id: sliderButton
   anchors.centerIn: parent
   size: 13 13
-  image-source: images/scrollbar.png
+  image-source: /images/scrollbar.png
   image-clip: 0 26 13 13
   image-border: 2
   image-color: #ffffffff
@@ -17,7 +17,7 @@ VerticalScrollBar < UIScrollBar
   orientation: vertical
   width: 13
   height: 39
-  image-source: images/scrollbar.png
+  image-source: /images/scrollbar.png
   image-clip: 39 0 13 65
   image-border: 1
   pixels-scroll: true
@@ -26,7 +26,7 @@ VerticalScrollBar < UIScrollBar
     id: decrementButton
     anchors.top: parent.top
     anchors.left: parent.left
-    image-source: images/scrollbar.png
+    image-source: /images/scrollbar.png
     image-clip: 0 0 13 13
     image-color: #ffffffff
     size: 13 13
@@ -42,7 +42,7 @@ VerticalScrollBar < UIScrollBar
     anchors.bottom: parent.bottom
     anchors.right: parent.right
     size: 13 13
-    image-source: images/scrollbar.png
+    image-source: /images/scrollbar.png
     image-clip: 0 13 13 13
     image-color: #ffffffff
     $hover:
@@ -58,7 +58,7 @@ HorizontalScrollBar < UIScrollBar
   orientation: horizontal
   height: 13
   width: 39
-  image-source: images/scrollbar.png
+  image-source: /images/scrollbar.png
   image-clip: 0 65 52 13
   image-border: 1
 
@@ -66,7 +66,7 @@ HorizontalScrollBar < UIScrollBar
     id: decrementButton
     anchors.top: parent.top
     anchors.left: parent.left
-    image-source: images/scrollbar.png
+    image-source: /images/scrollbar.png
     image-clip: 0 39 13 13
     image-color: #ffffffff
     size: 13 13
@@ -82,7 +82,7 @@ HorizontalScrollBar < UIScrollBar
     anchors.bottom: parent.bottom
     anchors.right: parent.right
     size: 13 13
-    image-source: images/scrollbar.png
+    image-source: /images/scrollbar.png
     image-clip: 0 52 13 13
     image-color: #ffffffff
     $hover:

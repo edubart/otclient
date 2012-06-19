@@ -23,13 +23,11 @@ ModuleInfoLabel < Label
     margin-top: 5
   margin-bottom: 2
 
-ModuleValueLabel < UILabel
+ModuleValueLabel < FlatLabel
   font: verdana-11px-antialised
   color: #aaaaaa
   text-offset: 2 3
   padding-bottom: 5
-  image-source: /core_styles/styles/images/panel_flat.png
-  image-border: 1
   height: 20
 
 MainWindow

@@ -34,6 +34,7 @@
 #include <framework/core/module.h>
 #include <framework/sound/soundmanager.h>
 #include <framework/util/crypt.h>
+#include <framework/core/resourcemanager.h>
 
 void Application::registerLuaFunctions()
 {
@@ -601,9 +602,11 @@ void Application::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_modules", "reloadModules", &ModuleManager::reloadModules, &g_modules);
     g_lua.bindSingletonFunction("g_modules", "getModule", &ModuleManager::getModule, &g_modules);
     g_lua.bindSingletonFunction("g_modules", "getModules", &ModuleManager::getModules, &g_modules);
+    g_lua.bindSingletonFunction("g_modules", "getModulesPath", &ModuleManager::getModulesPath, &g_modules);
 
     // FontManager
     g_lua.registerSingletonClass("g_fonts");
+    g_lua.bindSingletonFunction("g_fonts", "clearFonts", &FontManager::clearFonts, &g_fonts);
     g_lua.bindSingletonFunction("g_fonts", "importFont", &FontManager::importFont, &g_fonts);
     g_lua.bindSingletonFunction("g_fonts", "fontExists", &FontManager::fontExists, &g_fonts);
     g_lua.bindSingletonFunction("g_fonts", "setDefaultFont", &FontManager::setDefaultFont, &g_fonts);
@@ -626,4 +629,15 @@ void Application::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_eventDispatcher", "addEvent", &EventDispatcher::addEvent, &g_eventDispatcher);
     g_lua.bindSingletonFunction("g_eventDispatcher", "scheduleEvent", &EventDispatcher::scheduleEvent, &g_eventDispatcher);
     g_lua.bindSingletonFunction("g_eventDispatcher", "cycleEvent", &EventDispatcher::cycleEvent, &g_eventDispatcher);
+
+    // ResourceManager
+    g_lua.registerSingletonClass("g_resources");
+    g_lua.bindSingletonFunction("g_resources", "addToSearchPath", &ResourceManager::addToSearchPath, &g_resources);
+    g_lua.bindSingletonFunction("g_resources", "removeFromSearchPath", &ResourceManager::removeFromSearchPath, &g_resources);
+    g_lua.bindSingletonFunction("g_resources", "fileExists", &ResourceManager::fileExists, &g_resources);
+
+    // LuaInterface
+    g_lua.registerSingletonClass("g_lua");
+    g_lua.bindSingletonFunction("g_lua", "getCurrentSourcePath", &LuaInterface::getCurrentSourcePath, &g_lua);
+
 }

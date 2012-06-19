@@ -57,14 +57,12 @@ MainWindow
     margin-left: 5
     margin-top: 5
 
-  Panel
+  FlatPanel
     height: 250
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: prev.bottom
     margin-top: 10
-    image-source: /core_styles/styles/images/panel_flat.png
-    image-border: 1
 
     VerticalScrollBar
       id: itemsPanelListScrollBar

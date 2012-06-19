@@ -120,7 +120,7 @@ void PainterOGL2::drawCoords(CoordsBuffer& coordsBuffer, DrawMode drawMode)
 
 void PainterOGL2::drawTextureCoords(CoordsBuffer& coordsBuffer, const TexturePtr& texture)
 {
-    if(texture->isEmpty())
+    if(texture && texture->isEmpty())
         return;
 
     setDrawProgram(m_shaderProgram ? m_shaderProgram : m_drawTexturedProgram.get());

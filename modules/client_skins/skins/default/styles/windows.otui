@@ -5,7 +5,7 @@ Window < UIWindow
   color: white
   text-offset: 0 4
   text-align: top
-  image-source: /core_styles/styles/images/window.png
+  image-source: /images/window.png
   image-border: 5
   image-border-top: 22
   opacity: 1
