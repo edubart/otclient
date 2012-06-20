@@ -30,3 +30,7 @@ Panel
   OptionCheckBox
     id: showPrivateMessagesOnScreen
     !text: tr('Show private messages on screen')
+
+  OptionCheckBox
+    id: enableMusic
+    !text: tr('Enable music')

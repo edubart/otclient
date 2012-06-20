@@ -480,7 +480,6 @@ void Application::registerLuaFunctions()
 
     // Application
     g_lua.registerSingletonClass("g_app");
-    g_lua.bindSingletonFunction("g_app", "exit", &Application::exit, &g_app);
     g_lua.bindSingletonFunction("g_app", "setForegroundPaneMaxFps", &Application::setForegroundPaneMaxFps, &g_app);
     g_lua.bindSingletonFunction("g_app", "setBackgroundPaneMaxFps", &Application::setBackgroundPaneMaxFps, &g_app);
     g_lua.bindSingletonFunction("g_app", "setName", &Application::setName, &g_app);

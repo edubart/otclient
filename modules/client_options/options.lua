@@ -13,7 +13,8 @@ local options = { vsync = false,
                   showTimestampsInConsole = true,
                   showLevelsInConsole = true,
                   showPrivateMessagesInConsole = false,
-                  showPrivateMessagesOnScreen = true }
+                  showPrivateMessagesOnScreen = true,
+                  enableMusic = true }
 local generalPanel
 local graphicsPanel
 
@@ -124,6 +125,10 @@ function Options.setOption(key, value)
     addEvent(function()
       g_window.setFullscreen(value)
     end)
+  elseif key == 'enableMusic' then
+    addEvent(function()
+      g_sounds.enableMusic(value)
+    end)
   end
   Settings.set(key, value)
   options[key] = value
@@ -132,4 +137,3 @@ end
 function Options.getOption(key)
   return options[key]
 end
-

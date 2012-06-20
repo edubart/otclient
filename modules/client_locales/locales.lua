@@ -45,8 +45,8 @@ function Locales.init()
 
   Locales.installLocales('locales')
 
-  local userLocaleName = Settings.get('locale')
-  if userLocaleName and Locales.setLocale(userLocaleName) then
+  local userLocaleName = Settings.get('locale', 'false')
+  if userLocaleName ~= 'false' and Locales.setLocale(userLocaleName) then
     pdebug('Using configured locale: ' .. userLocaleName)
   else
     pdebug('Using default locale: ' .. defaultLocaleName)
@@ -82,14 +82,16 @@ function Locales.installLocale(locale)
 
   local installedLocale = installedLocales[locale.name]
   if installedLocale then
-    -- combine translations replacing with new if already exists
     for word,translation in pairs(locale.translation) do
       installedLocale.translation[word] = translation
     end
   else
     installedLocales[locale.name] = locale
-
-    -- update combobox
+    if localeComboBox then
+      localeComboBox.onOptionChange = nil
+      localeComboBox:addOption(locale.languageName, locale.name)
+      localeComboBox.onOptionChange = onLocaleComboBoxOptionChange
+    end
   end
 end
 

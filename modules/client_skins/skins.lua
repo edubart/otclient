@@ -29,8 +29,8 @@ function Skins.init()
     g_resources.addToSearchPath(getSkinPath(defaultSkinName), 0)
   end
 
-  local userSkinName = Settings.get('skin')
-  if userSkinName and Skins.setSkin(userSkinName) then
+  local userSkinName = Settings.get('skin', 'false')
+  if userSkinName ~= 'false' and Skins.setSkin(userSkinName) then
     pdebug('Using configured skin: ' .. userSkinName)
   else
     pdebug('Using default skin: ' .. defaultSkinName)
