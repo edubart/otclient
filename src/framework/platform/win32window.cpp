@@ -230,7 +230,7 @@ void WIN32Window::terminate()
     }
 
     if(m_instance) {
-        if(!UnregisterClassA(g_app.getName().c_str(), m_instance))
+        if(!UnregisterClassA(g_app.getCompactName().c_str(), m_instance))
             g_logger.error("UnregisterClassA failed");
         m_instance = NULL;
     }
@@ -256,7 +256,7 @@ void WIN32Window::internalCreateWindow()
     wc.hCursor          = m_defaultCursor;
     wc.hbrBackground    = (HBRUSH)GetStockObject(WHITE_BRUSH);
     wc.lpszMenuName     = NULL;
-    wc.lpszClassName    = g_app.getName().c_str();
+    wc.lpszClassName    = g_app.getCompactName().c_str();
 
     if(!RegisterClassA(&wc))
         g_logger.fatal("Failed to register the window class.");
@@ -272,7 +272,7 @@ void WIN32Window::internalCreateWindow()
 
     updateUnmaximizedCoords();
     m_window = CreateWindowExA(dwExStyle,
-                               g_app.getName().c_str(),
+                               g_app.getCompactName().c_str(),
                                NULL,
                                dwStyle,
                                windowRect.left,

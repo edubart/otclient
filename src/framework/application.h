@@ -36,7 +36,7 @@ class Application
 public:
     Application();
 
-    void init(const std::vector<std::string>& args);
+    void init(const std::string& compactName, const std::vector<std::string>& args);
     void deinit();
     void terminate();
     void run();

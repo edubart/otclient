@@ -61,7 +61,7 @@ Application::Application()
     m_foregroundFrameCounter.setMaxFps(60);
 }
 
-void Application::init(const std::vector<std::string>& args)
+void Application::init(const std::string& compactName, const std::vector<std::string>& args)
 {
     // capture exit signals
     signal(SIGTERM, exitSignalHandler);
@@ -70,6 +70,8 @@ void Application::init(const std::vector<std::string>& args)
 #ifdef CRASH_HANDLER
     installCrashHandler();
 #endif
+
+    m_appCompactName = compactName;
 
     std::string startupOptions;
     for(uint i=1;i<args.size();++i) {

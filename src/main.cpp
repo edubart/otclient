@@ -30,11 +30,11 @@ int main(int argc, const char* argv[])
     std::vector<std::string> args(argv, argv + argc);
 
     // initialize application framework and otclient
-    g_app.init(args);
+    g_app.init("otclient", args);
     g_otclient.init(args);
 
     // find script init.lua and run it
-    g_resources.discoverWorkDir("otclient", "init.lua");
+    g_resources.discoverWorkDir(g_app.getCompactName(), "init.lua");
     if(!g_lua.safeRunScript(g_resources.getWorkDir() + "init.lua"))
         g_logger.fatal("Unable to run script init.lua!");
 

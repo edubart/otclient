@@ -117,11 +117,7 @@ protected:
 
 public:
     // login related
-    void loginWorld(const std::string& account,
-                        const std::string& password,
-                        const std::string& worldName,
-                    const std::string& worldHost, int worldPort,
-                    const std::string& characterName);
+    void loginWorld(const std::string& account, const std::string& password, const std::string& worldName, const std::string& worldHost, int worldPort, const std::string& characterName);
     void cancelLogin();
     void forceLogout();
     void safeLogout();
