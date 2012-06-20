@@ -96,6 +96,7 @@ function GameInterface.tryExit()
   if g_game.isOnline() then
     g_game.forceLogout()
     scheduleEvent(exit, 10)
+    return true
   end
 end
 

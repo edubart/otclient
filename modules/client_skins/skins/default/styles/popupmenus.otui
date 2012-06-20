@@ -17,7 +17,7 @@ PopupMenuButton < UIButton
 PopupMenuSeparator < UIWidget
   margin-left: 2
   margin-right: 2
-  image-source: images/menubox.png
+  image-source: /images/menubox.png
   image-border-left: 1
   image-border-right: 1
   image-clip: 0 0 32 2
@@ -26,7 +26,7 @@ PopupMenuSeparator < UIWidget
 
 PopupMenu < UIPopupMenu
   width: 50
-  image-source: images/menubox.png
+  image-source: /images/menubox.png
   image-border: 3
   padding-top: 3
   padding-bottom: 3
