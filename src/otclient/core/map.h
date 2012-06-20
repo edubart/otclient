@@ -34,8 +34,8 @@ public:
     void removeMapView(const MapViewPtr& mapView);
     void notificateTileUpdateToMapViews(const Position& pos);
 
-    void load();
-    void save();
+    bool load(const std::string& fileName);
+    void save(const std::string& fileName);
     void clean();
     void cleanDynamicThings();
     void cleanTexts();

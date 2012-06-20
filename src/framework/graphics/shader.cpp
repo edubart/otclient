@@ -44,7 +44,7 @@ Shader::Shader(Shader::ShaderType shaderType)
 
 Shader::~Shader()
 {
-    assert(!g_app->isTermianted());
+    assert(!g_app.isTermianted());
     if(g_graphics.ok())
         glDeleteShader(m_shaderId);
 }

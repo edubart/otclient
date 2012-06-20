@@ -25,7 +25,7 @@ function GameInterface.init()
   gameLeftPanel = gameRootPanel:getChildById('gameLeftPanel')
   gameBottomPanel = gameRootPanel:getChildById('gameBottomPanel')
 
-  logoutButton = TopMenu.addRightButton('logoutButton', 'Logout', 'images/logout.png', GameInterface.tryLogout)
+  logoutButton = TopMenu.addRightButton('logoutButton', 'Logout', '/images/logout.png', GameInterface.tryLogout)
   logoutButton:hide()
 
   Keyboard.bindKeyPress('Up', function() g_game.walk(North) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)

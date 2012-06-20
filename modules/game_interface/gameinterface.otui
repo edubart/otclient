@@ -1,15 +1,15 @@
 GameSidePanel < UIMiniWindowContainer
-  image-source: images/sidepanel.png
+  image-source: /images/sidepanel.png
   image-border: 4
   padding: 4
 
 GameBottomPanel < Panel
-  image-source: images/bottompanel.png
+  image-source: /images/bottompanel.png
   image-border: 4
 
 GameMapPanel < UIGameMap
   padding: 4
-  image-source: images/mappanel.png
+  image-source: /images/mappanel.png
   image-border: 4
 
 UIWidget

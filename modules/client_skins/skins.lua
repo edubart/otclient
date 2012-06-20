@@ -15,7 +15,8 @@ local function onSkinComboBoxOptionChange(self, optionText, optionData)
 end
 
 local function getSkinPath(name)
-  return g_modules.getModulesPath() .. g_lua.getCurrentSourcePath(0) .. '/skins/' .. string.lower(name) .. '/'
+  local current = getfsrcpath()
+  return g_resources.getRealDir(current) .. current .. '/skins/' .. string.lower(name)
 end
 
 -- public functions
@@ -30,9 +31,9 @@ function Skins.init()
 
   local userSkinName = Settings.get('skin')
   if userSkinName and Skins.setSkin(userSkinName) then
-    info('Using configured skin: ' .. userSkinName)
+    pdebug('Using configured skin: ' .. userSkinName)
   else
-    info('Using default skin: ' .. defaultSkinName)
+    pdebug('Using default skin: ' .. defaultSkinName)
     Skins.setSkin(defaultSkinName)
     Settings.set('skin', defaultSkinName)
   end
@@ -65,7 +66,7 @@ function Skins.installSkin(skin)
   end
 
   if installedSkins[skin.name] then
-    warning(skin.name .. ' has been replaced.')
+    pwarning(skin.name .. ' has been replaced.')
   end
 
   installedSkins[skin.name] = skin
@@ -79,12 +80,12 @@ end
 function Skins.setSkin(name)
   local skin = installedSkins[name]
   if not skin then
-    warning("Skin " .. name .. ' does not exist.')
+    pwarning("Skin " .. name .. ' does not exist.')
     return false
   end
 
   g_fonts.clearFonts()
-  g_ui.clearStyles() 
+  g_ui.clearStyles()
 
   if name ~= defaultSkinName then
     local defaultSkin = installedSkins[defaultSkinName]

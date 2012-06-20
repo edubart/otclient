@@ -292,6 +292,17 @@ int LuaInterface::luaObjectCollectEvent(LuaInterface* lua)
 ///////////////////////////////////////////////////////////////////////////////
 
 
+bool LuaInterface::safeRunScript(const std::string& fileName)
+{
+    try {
+        runScript(fileName);
+        return true;
+    } catch(LuaException& e) {
+        g_logger.error(stdext::format("Failed to load script '%s': %s", fileName, e.what()));
+        return false;
+    }
+}
+
 void LuaInterface::runScript(const std::string& fileName)
 {
     loadScript(fileName);
@@ -312,7 +323,7 @@ void LuaInterface::loadScript(const std::string& fileName)
         filePath = getCurrentSourcePath() + "/" + filePath;
 
     try {
-        std::string buffer = g_resources.loadFile(filePath);
+        std::string buffer = g_resources.loadFile(fileName);
         std::string source = "@" + filePath;
         loadBuffer(buffer, source);
     } catch(stdext::exception& e) {

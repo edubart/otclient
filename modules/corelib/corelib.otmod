@@ -1,10 +1,8 @@
 Module
-  name: core_lib
+  name: corelib
   description: Contains core lua classes, functions and constants used by other modules
   author: OTClient team
   website: www.otclient.info
-  autoload: true
-  autoload-priority: 10
   reloadable: false
 
   @onLoad: |

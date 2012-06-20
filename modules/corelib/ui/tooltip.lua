@@ -45,7 +45,7 @@ function ToolTip.init()
                        onHoverChange = onWidgetHoverChange})
 
   addEvent(function()
-    toolTipLabel = createWidget('Label', rootWidget)
+    toolTipLabel = createWidget('UILabel', rootWidget)
     toolTipLabel:setId('toolTip')
     toolTipLabel:setBackgroundColor('#111111cc')
     toolTipLabel:setTextAlign(AlignCenter)

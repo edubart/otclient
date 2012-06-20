@@ -52,13 +52,15 @@ void Map::notificateTileUpdateToMapViews(const Position& pos)
         mapView->onTileUpdate(pos);
 }
 
-void Map::load()
+bool Map::load(const std::string& fileName)
 {
-    if(!g_resources.fileExists("/map.otcmap"))
-        return;
+    if(!g_resources.fileExists(fileName)) {
+        g_logger.error(stdext::format("Unable to load map '%s'", fileName));
+        return false;
+    }
 
     std::stringstream in;
-    g_resources.loadFile("/map.otcmap", in);
+    g_resources.loadFile(fileName, in);
 
     while(!in.eof()) {
         Position pos;
@@ -77,9 +79,11 @@ void Map::load()
             in.read((char*)&id, sizeof(id));
         }
     }
+
+    return true;
 }
 
-void Map::save()
+void Map::save(const std::string& fileName)
 {
     std::stringstream out;
 
@@ -104,7 +108,7 @@ void Map::save()
         out.write((char*)&id, sizeof(id));
     }
 
-    g_resources.saveFile("/map.otcmap", out);
+    g_resources.saveFile(fileName, out);
 }
 
 void Map::clean()

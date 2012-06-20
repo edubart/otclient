@@ -34,29 +34,31 @@ class Application
     };
 
 public:
-    Application(const std::string& appName);
-    ~Application();
+    Application();
 
-    virtual void init(const std::vector<std::string>& args);
-    virtual void registerLuaFunctions();
-    virtual void deinit();
-    virtual void terminate();
-    virtual void run();
-    virtual void exit();
-    virtual void poll();
-    virtual void close();
+    void init(const std::vector<std::string>& args);
+    void deinit();
+    void terminate();
+    void run();
+    void exit();
+    void poll();
+    void close();
 
     bool willRepaint() { return m_mustRepaint; }
     void repaint() { m_mustRepaint = true; }
 
     void setForegroundPaneMaxFps(int maxFps) { m_foregroundFrameCounter.setMaxFps(maxFps); }
     void setBackgroundPaneMaxFps(int maxFps) { m_backgroundFrameCounter.setMaxFps(maxFps); }
+    void setName(const std::string& name) { m_appName = name; }
+    void setCompactName(const std::string& compactName) { m_appCompactName = compactName; }
+    void setVersion(const std::string& version) { m_appVersion = version; }
 
     bool isRunning() { return m_running; }
     bool isStopping() { return m_stopping; }
     bool isTermianted() { return m_terminated; }
     bool isOnInputEvent() { return m_onInputEvent; }
     const std::string& getName() { return m_appName; }
+    const std::string& getCompactName() { return m_appCompactName; }
     const std::string& getVersion() { return m_appVersion; }
 
     int getForegroundPaneFps() { return m_foregroundFrameCounter.getLastFps(); }
@@ -67,14 +69,17 @@ public:
     std::string getBuildDate() { return BUILD_DATE; }
     std::string getBuildRevision() { return BUILD_REVISION; }
     std::string getBuildType() { return BUILD_TYPE; }
+    std::string getStartupOptions() { return m_startupOptions; }
 
 protected:
-    virtual void resize(const Size& size);
-    virtual void inputEvent(const InputEvent& event);
+    void resize(const Size& size);
+    void inputEvent(const InputEvent& event);
+    void registerLuaFunctions();
 
     std::string m_appName;
+    std::string m_appCompactName;
     std::string m_appVersion;
-    std::string m_appBuildDate;
+    std::string m_startupOptions;
     Boolean<false> m_initialized;
     Boolean<false> m_running;
     Boolean<false> m_stopping;
@@ -86,7 +91,7 @@ protected:
     TexturePtr m_foreground;
 };
 
-extern Application *g_app;
+extern Application g_app;
 
 #endif
 

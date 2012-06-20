@@ -6,7 +6,7 @@ Module
   icon: battle.png
 
   dependencies:
-    - game
+    - game_interface
 
   @onLoad: |
     dofile 'battle'

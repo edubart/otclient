@@ -15,7 +15,9 @@ function translateKeyCombo(keyCombo)
 end
 
 local function retranslateKeyComboDesc(keyComboDesc)
-  if keyComboDesc == nil then return nil end
+  if keyComboDesc == nil then
+    error('Unable to translate key combo \'' .. keyComboDesc .. '\'')
+  end
   local keyCombo = {}
   for i,currentKeyDesc in ipairs(keyComboDesc:split('+')) do
     for keyCode, keyDesc in pairs(KeyCodeDescs) do
@@ -97,11 +99,7 @@ function Keyboard.bindKeyDown(keyComboDesc, callback, widget)
   widget = widget or rootWidget
   connectKeyDownEvent(widget)
   local keyComboDesc = retranslateKeyComboDesc(keyComboDesc)
-  if keyComboDesc then
-    widget.boundKeyDownCombos[keyComboDesc] = callback
-  else
-    error('key combo \'' .. keyComboDesc .. '\' is failed')
-  end
+  widget.boundKeyDownCombos[keyComboDesc] = callback
 end
 
 function Keyboard.bindKeyPress(keyComboDesc, callback, widget, autoRepeatDelay)
@@ -109,12 +107,8 @@ function Keyboard.bindKeyPress(keyComboDesc, callback, widget, autoRepeatDelay)
   widget = widget or rootWidget
   connectKeyPressEvent(widget)
   local keyComboDesc = retranslateKeyComboDesc(keyComboDesc)
-  if keyComboDesc then
-    widget.boundKeyPressCombos[keyComboDesc] = { callback = callback, autoRepeatDelay = autoRepeatDelay }
-    widget:setAutoRepeatDelay(math.min(autoRepeatDelay, widget:getAutoRepeatDelay()))
-  else
-    error('key combo \'' .. keyComboDesc .. '\' is failed')
-  end
+  widget.boundKeyPressCombos[keyComboDesc] = { callback = callback, autoRepeatDelay = autoRepeatDelay }
+  widget:setAutoRepeatDelay(math.min(autoRepeatDelay, widget:getAutoRepeatDelay()))
 end
 
 function Keyboard.unbindKeyDown(keyComboDesc, widget)

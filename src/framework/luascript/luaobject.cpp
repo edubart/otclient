@@ -31,7 +31,7 @@ LuaObject::LuaObject() : m_fieldsTableRef(-1)
 
 LuaObject::~LuaObject()
 {
-    assert(!g_app->isTermianted());
+    assert(!g_app.isTermianted());
     releaseLuaFieldsTable();
 }
 

@@ -106,7 +106,7 @@ local function onCreatureSpeak(name, level, speaktype, message, channelId, creat
       Console.addText(composedMessage, speaktype, channel, name)
     elseif channelId ~= 0 then
       -- server sent a message on a channel that is not open
-      warning('message in channel id ' .. channelId .. ' which is unknown, this is a server bug, relogin if you want to see messages in this channel')
+      pwarning('message in channel id ' .. channelId .. ' which is unknown, this is a server bug, relogin if you want to see messages in this channel')
     end
   end
 end
@@ -272,7 +272,7 @@ function Console.clear()
     local tab = consoleTabBar:getTab(channelname)
     consoleTabBar:removeTab(tab)
   end
-  
+
   channels = {}
 
   consoleTabBar:getTab(tr('Default')).tabPanel:getChildById('consoleBuffer'):destroyChildren()
@@ -407,12 +407,12 @@ function Console.popupMenu(mousePos, mouseButton, creatureName, text)
       end
       --TODO select all
       menu:addOption(tr('Copy message'), function () g_window.setClipboardText(text) end)
-      
+
       if RuleViolation.hasWindowAccess() then
         menu:addSeparator()
         menu:addOption(tr('Rule Violation'), function() RuleViolation.show(creatureName, text:match('.+%:%s(.+)')) end)
       end
-      
+
       menu:addSeparator()
       menu:addOption(tr('Copy name'), function () g_window.setClipboardText(creatureName) end)
     else

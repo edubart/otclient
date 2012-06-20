@@ -20,8 +20,8 @@
  * THE SOFTWARE.
  */
 
+#include "application.h"
 #include <framework/luascript/luainterface.h>
-#include <framework/application.h>
 #include <framework/graphics/fontmanager.h>
 #include <framework/ui/ui.h>
 #include <framework/net/protocol.h>
@@ -480,35 +480,41 @@ void Application::registerLuaFunctions()
 
     // Application
     g_lua.registerSingletonClass("g_app");
-    g_lua.bindSingletonFunction("g_app", "exit", &Application::exit, g_app);
-    g_lua.bindSingletonFunction("g_app", "setForegroundPaneMaxFps", &Application::setForegroundPaneMaxFps, g_app);
-    g_lua.bindSingletonFunction("g_app", "setBackgroundPaneMaxFps", &Application::setBackgroundPaneMaxFps, g_app);
-    g_lua.bindSingletonFunction("g_app", "isRunning", &Application::isRunning, g_app);
-    g_lua.bindSingletonFunction("g_app", "isStopping", &Application::isStopping, g_app);
-    g_lua.bindSingletonFunction("g_app", "isOnInputEvent", &Application::isOnInputEvent, g_app);
-    g_lua.bindSingletonFunction("g_app", "getName", &Application::getName, g_app);
-    g_lua.bindSingletonFunction("g_app", "getVersion", &Application::getVersion, g_app);
-    g_lua.bindSingletonFunction("g_app", "getForegroundPaneFps", &Application::getForegroundPaneFps, g_app);
-    g_lua.bindSingletonFunction("g_app", "getBackgroundPaneFps", &Application::getBackgroundPaneFps, g_app);
-    g_lua.bindSingletonFunction("g_app", "getForegroundPaneMaxFps", &Application::getForegroundPaneMaxFps, g_app);
-    g_lua.bindSingletonFunction("g_app", "getBackgroundPaneMaxFps", &Application::getBackgroundPaneMaxFps, g_app);
-    g_lua.bindSingletonFunction("g_app", "getBuildCompiler", &Application::getBuildCompiler, g_app);
-    g_lua.bindSingletonFunction("g_app", "getBuildDate", &Application::getBuildDate, g_app);
-    g_lua.bindSingletonFunction("g_app", "getBuildRevision", &Application::getBuildRevision, g_app);
-    g_lua.bindSingletonFunction("g_app", "getBuildType", &Application::getBuildType, g_app);
-
-    g_lua.bindSingletonFunction("g_app", "exit", &Application::exit, g_app);
-    g_lua.bindSingletonFunction("g_app", "isRunning", &Application::isRunning, g_app);
-    g_lua.bindSingletonFunction("g_app", "isStopping", &Application::isStopping, g_app);
-    g_lua.bindSingletonFunction("g_app", "getName", &Application::getName, g_app);
-    g_lua.bindSingletonFunction("g_app", "getVersion", &Application::getVersion, g_app);
-    g_lua.bindSingletonFunction("g_app", "getBuildCompiler", &Application::getBuildCompiler, g_app);
-    g_lua.bindSingletonFunction("g_app", "getBuildDate", &Application::getBuildDate, g_app);
-    g_lua.bindSingletonFunction("g_app", "getBuildRevision", &Application::getBuildRevision, g_app);
-    g_lua.bindSingletonFunction("g_app", "getBuildType", &Application::getBuildType, g_app);
+    g_lua.bindSingletonFunction("g_app", "exit", &Application::exit, &g_app);
+    g_lua.bindSingletonFunction("g_app", "setForegroundPaneMaxFps", &Application::setForegroundPaneMaxFps, &g_app);
+    g_lua.bindSingletonFunction("g_app", "setBackgroundPaneMaxFps", &Application::setBackgroundPaneMaxFps, &g_app);
+    g_lua.bindSingletonFunction("g_app", "setName", &Application::setName, &g_app);
+    g_lua.bindSingletonFunction("g_app", "setCompactName", &Application::setCompactName, &g_app);
+    g_lua.bindSingletonFunction("g_app", "setVersion", &Application::setVersion, &g_app);
+    g_lua.bindSingletonFunction("g_app", "isRunning", &Application::isRunning, &g_app);
+    g_lua.bindSingletonFunction("g_app", "isStopping", &Application::isStopping, &g_app);
+    g_lua.bindSingletonFunction("g_app", "isOnInputEvent", &Application::isOnInputEvent, &g_app);
+    g_lua.bindSingletonFunction("g_app", "getName", &Application::getName, &g_app);
+    g_lua.bindSingletonFunction("g_app", "getCompactName", &Application::getName, &g_app);
+    g_lua.bindSingletonFunction("g_app", "getVersion", &Application::getVersion, &g_app);
+    g_lua.bindSingletonFunction("g_app", "getForegroundPaneFps", &Application::getForegroundPaneFps, &g_app);
+    g_lua.bindSingletonFunction("g_app", "getBackgroundPaneFps", &Application::getBackgroundPaneFps, &g_app);
+    g_lua.bindSingletonFunction("g_app", "getForegroundPaneMaxFps", &Application::getForegroundPaneMaxFps, &g_app);
+    g_lua.bindSingletonFunction("g_app", "getBackgroundPaneMaxFps", &Application::getBackgroundPaneMaxFps, &g_app);
+    g_lua.bindSingletonFunction("g_app", "getBuildCompiler", &Application::getBuildCompiler, &g_app);
+    g_lua.bindSingletonFunction("g_app", "getBuildDate", &Application::getBuildDate, &g_app);
+    g_lua.bindSingletonFunction("g_app", "getBuildRevision", &Application::getBuildRevision, &g_app);
+    g_lua.bindSingletonFunction("g_app", "getBuildType", &Application::getBuildType, &g_app);
+    g_lua.bindSingletonFunction("g_app", "exit", &Application::exit, &g_app);
+    g_lua.bindSingletonFunction("g_app", "isRunning", &Application::isRunning, &g_app);
+    g_lua.bindSingletonFunction("g_app", "isStopping", &Application::isStopping, &g_app);
+    g_lua.bindSingletonFunction("g_app", "getName", &Application::getName, &g_app);
+    g_lua.bindSingletonFunction("g_app", "getCompactName", &Application::getCompactName, &g_app);
+    g_lua.bindSingletonFunction("g_app", "getVersion", &Application::getVersion, &g_app);
+    g_lua.bindSingletonFunction("g_app", "getBuildCompiler", &Application::getBuildCompiler, &g_app);
+    g_lua.bindSingletonFunction("g_app", "getBuildDate", &Application::getBuildDate, &g_app);
+    g_lua.bindSingletonFunction("g_app", "getBuildRevision", &Application::getBuildRevision, &g_app);
+    g_lua.bindSingletonFunction("g_app", "getBuildType", &Application::getBuildType, &g_app);
 
     // ConfigManager
     g_lua.registerSingletonClass("g_configs");
+    g_lua.bindSingletonFunction("g_configs", "load", &ConfigManager::load, &g_configs);
+    g_lua.bindSingletonFunction("g_configs", "save", &ConfigManager::save, &g_configs);
     g_lua.bindSingletonFunction("g_configs", "set", &ConfigManager::set, &g_configs);
     g_lua.bindSingletonFunction("g_configs", "setList", &ConfigManager::setList, &g_configs);
     g_lua.bindSingletonFunction("g_configs", "get", &ConfigManager::get, &g_configs);
@@ -574,7 +580,13 @@ void Application::registerLuaFunctions()
     g_lua.registerSingletonClass("g_logger");
     g_lua.bindSingletonFunction("g_logger", "log", &Logger::log, &g_logger);
     g_lua.bindSingletonFunction("g_logger", "fireOldMessages", &Logger::fireOldMessages, &g_logger);
+    g_lua.bindSingletonFunction("g_logger", "setLogFile", &Logger::setLogFile, &g_logger);
     g_lua.bindSingletonFunction("g_logger", "setOnLog", &Logger::setOnLog, &g_logger);
+    g_lua.bindSingletonFunction("g_logger", "debug", &Logger::debug, &g_logger);
+    g_lua.bindSingletonFunction("g_logger", "info", &Logger::info, &g_logger);
+    g_lua.bindSingletonFunction("g_logger", "warning", &Logger::warning, &g_logger);
+    g_lua.bindSingletonFunction("g_logger", "error", &Logger::error, &g_logger);
+    g_lua.bindSingletonFunction("g_logger", "fatal", &Logger::fatal, &g_logger);
 
     // UI
     g_lua.registerSingletonClass("g_ui");
@@ -593,7 +605,6 @@ void Application::registerLuaFunctions()
 
     // ModuleManager
     g_lua.registerSingletonClass("g_modules");
-    g_lua.bindSingletonFunction("g_modules", "discoverModulesPath", &ModuleManager::discoverModulesPath, &g_modules);
     g_lua.bindSingletonFunction("g_modules", "discoverModules", &ModuleManager::discoverModules, &g_modules);
     g_lua.bindSingletonFunction("g_modules", "autoLoadModules", &ModuleManager::autoLoadModules, &g_modules);
     g_lua.bindSingletonFunction("g_modules", "discoverModule", &ModuleManager::discoverModule, &g_modules);
@@ -602,7 +613,6 @@ void Application::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_modules", "reloadModules", &ModuleManager::reloadModules, &g_modules);
     g_lua.bindSingletonFunction("g_modules", "getModule", &ModuleManager::getModule, &g_modules);
     g_lua.bindSingletonFunction("g_modules", "getModules", &ModuleManager::getModules, &g_modules);
-    g_lua.bindSingletonFunction("g_modules", "getModulesPath", &ModuleManager::getModulesPath, &g_modules);
 
     // FontManager
     g_lua.registerSingletonClass("g_fonts");
@@ -633,11 +643,9 @@ void Application::registerLuaFunctions()
     // ResourceManager
     g_lua.registerSingletonClass("g_resources");
     g_lua.bindSingletonFunction("g_resources", "addToSearchPath", &ResourceManager::addToSearchPath, &g_resources);
+    g_lua.bindSingletonFunction("g_resources", "setupWriteDir", &ResourceManager::setupWriteDir, &g_resources);
     g_lua.bindSingletonFunction("g_resources", "removeFromSearchPath", &ResourceManager::removeFromSearchPath, &g_resources);
     g_lua.bindSingletonFunction("g_resources", "fileExists", &ResourceManager::fileExists, &g_resources);
-
-    // LuaInterface
-    g_lua.registerSingletonClass("g_lua");
-    g_lua.bindSingletonFunction("g_lua", "getCurrentSourcePath", &LuaInterface::getCurrentSourcePath, &g_lua);
-
+    g_lua.bindSingletonFunction("g_resources", "getRealDir", &ResourceManager::getRealDir, &g_resources);
+    g_lua.bindSingletonFunction("g_resources", "getWorkDir", &ResourceManager::getWorkDir, &g_resources);
 }

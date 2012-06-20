@@ -94,7 +94,7 @@ void UIWidget::drawText(const Rect& screenCoords)
 
 void UIWidget::onTextChange(const std::string& text, const std::string& oldText)
 {
-    g_app->repaint();
+    g_app.repaint();
     callLuaField("onTextChange", text, oldText);
 }
 

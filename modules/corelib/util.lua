@@ -6,17 +6,26 @@ function print(...)
   g_logger.log(LogInfo, msg)
 end
 
-function info(msg)
+function pinfo(msg)
   g_logger.log(LogInfo, msg)
 end
 
-function warning(msg)
+function perror(msg)
+  g_logger.log(LogError, msg)
+end
+
+function pwarning(msg)
   g_logger.log(LogWarning, msg)
+end
+
+function pdebug(msg)
+  g_logger.log(LogDebug, msg)
 end
 
 function fatal(msg)
   g_logger.log(LogFatal, msg)
 end
+
 
 exit = g_app.exit
 quit = g_app.exit
@@ -160,4 +169,8 @@ function signalcall(param, ...)
     error('attempt to call a non function value')
   end
   return false
+end
+
+function tr(s)
+  return s
 end

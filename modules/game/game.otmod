@@ -1,15 +1,16 @@
 Module
   name: game
-  description: Create the game interface, where the ingame stuff starts
+  description: Contains game related classes
   author: OTClient team
   website: www.otclient.info
 
   dependencies:
     - client_extended
-    - game_tibiafiles
     - client_background
+    - game_tibiafiles
 
   load-later:
+    - game_interface
     - game_textmessage
     - game_console
     - game_outfit
@@ -31,26 +32,9 @@ Module
     - game_shaders
 
   @onLoad: |
-    importStyle 'styles/items.otui'
-    importStyle 'styles/creatures.otui'
-    importStyle 'styles/miniwindow.otui'
-    importStyle 'styles/countwindow.otui'
-
     dofile 'const'
 
     dofile 'protocollogin'
 
-    dofile 'widgets/uigamemap'
-    dofile 'widgets/uiitem'
-    dofile 'widgets/uiminiwindow'
-    dofile 'widgets/uiminiwindowcontainer'
-
     dofile 'creature'
     dofile 'player'
-
-    dofile 'gameinterface'
-
-    GameInterface.init()
-
-  @onUnload: |
-    GameInterface.terminate()

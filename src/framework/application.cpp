@@ -37,7 +37,7 @@
 #include <framework/luascript/luainterface.h>
 #include <framework/platform/crashhandler.h>
 
-Application *g_app = nullptr;
+Application g_app;
 
 void exitSignalHandler(int sig)
 {
@@ -53,16 +53,12 @@ void exitSignalHandler(int sig)
     }
 }
 
-Application::Application(const std::string& appName)
+Application::Application()
 {
-    g_app = this;
-    m_appName = appName;
+    m_appName = "application";
+    m_appCompactName = "app";
+    m_appVersion = "none";
     m_foregroundFrameCounter.setMaxFps(60);
-}
-
-Application::~Application()
-{
-    g_app = nullptr;
 }
 
 void Application::init(const std::vector<std::string>& args)
@@ -75,24 +71,28 @@ void Application::init(const std::vector<std::string>& args)
     installCrashHandler();
 #endif
 
-    // initialize lua
-    g_lua.init();
-    registerLuaFunctions();
+    std::string startupOptions;
+    for(uint i=1;i<args.size();++i) {
+        const std::string& arg = args[i];
+        startupOptions += " ";
+        startupOptions += arg;
+    }
+    if(startupOptions.length() > 0)
+        g_logger.info(stdext::format("Startup options: %s", startupOptions));
+
+    m_startupOptions = startupOptions;
 
     // initialize resources
     g_resources.init(args[0].c_str());
 
-    // setup configs write directory
-    if(!g_resources.setupWriteDir(m_appName))
-        g_logger.error("Could not setup write directory");
+    // initialize lua
+    g_lua.init();
+    registerLuaFunctions();
 
-    // load configs
-    if(!g_configs.load("/config.otml"))
-        g_logger.info("Using default configurations.");
-
-    // setup platform window
+    // initialize ui
     g_ui.init();
 
+    // setup platform window
     g_window.init();
     g_window.hide();
     g_window.setOnResize(std::bind(&Application::resize, this, std::placeholders::_1));
@@ -105,13 +105,8 @@ void Application::init(const std::vector<std::string>& args)
     // initialize sound
     g_sounds.init();
 
-    // fire first resize
+    // fire first resize event
     resize(g_window.getSize());
-
-    // display window when the application starts running
-    //g_eventDispatcher.addEvent([]{ g_window.show(); });
-
-    g_modules.discoverModulesPath();
 
     m_initialized = true;
 }
@@ -132,14 +127,14 @@ void Application::deinit()
 
     // poll remaining events
     poll();
-
-    // destroy any remaining widget
-    g_ui.terminate();
 }
 
 void Application::terminate()
 {
     assert(m_initialized);
+
+    // destroy any remaining widget
+    g_ui.terminate();
 
     // terminate network
     Connection::terminate();
@@ -164,7 +159,7 @@ void Application::terminate()
     g_graphics.terminate();
     g_window.terminate();
 
-    g_logger.info("Application ended successfully.");
+    g_logger.debug("Application ended successfully.");
 
     m_terminated = true;
 }
@@ -183,6 +178,9 @@ void Application::run()
 
     // first clock update
     g_clock.update();
+
+    // show the application window
+    g_window.show();
 
     while(!m_stopping) {
         // poll all events before rendering

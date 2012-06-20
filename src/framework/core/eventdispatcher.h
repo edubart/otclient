@@ -33,7 +33,7 @@ public:
     Event(const std::function<void()>& callback) : m_callback(callback), m_canceled(false), m_executed(false) { }
     virtual ~Event() {
         // assure that we lost callback refs
-        assert(m_callback == nullptr);
+        //assert(m_callback == nullptr);
     }
 
     virtual void execute() {

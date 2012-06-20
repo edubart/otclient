@@ -1,6 +1,6 @@
 Item < UIItem
   size: 34 34
   padding: 1
-  image-source: /game/images/item.png
+  image-source: /images/item.png
   font: verdana-11px-rounded
   border-color: white

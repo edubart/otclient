@@ -24,94 +24,55 @@
 #include <framework/core/modulemanager.h>
 #include <framework/core/resourcemanager.h>
 #include <framework/graphics/graphics.h>
-#include "core/game.h"
-#include "core/map.h"
-#include "core/shadermanager.h"
+#include <otclient/core/game.h>
+#include <otclient/core/map.h>
+#include <otclient/core/shadermanager.h>
+#include <framework/core/configmanager.h>
 
-OTClient::OTClient() : Application(Otc::AppCompactName)
-{
-    m_appVersion = Otc::AppVersion;
-}
+OTClient g_otclient;
 
 void OTClient::init(const std::vector<std::string>& args)
 {
-    std::string startupOptions;
-    for(uint i=1;i<args.size();++i) {
-        const std::string& arg = args[i];
-        startupOptions += " ";
-        startupOptions += arg;
-
-        if(g_graphics.parseOption(arg))
-            continue;
-
-        if(arg == "-version" || arg == "--version" || arg == "-v") {
-            stdext::print(
-                Otc::AppName, " ", Otc::AppVersion, "\n"
-                "Buitt on: ", BUILD_DATE, "\n",
-                "Revision: ", BUILD_REVISION, "\n",
-                "Compiled by: ", BUILD_COMPILER, "\n",
-                "Build type: ", BUILD_TYPE, "\n");
-            return;
-        } else if(arg == "-help" || arg == "--help" || arg == "-h" || arg == "-?" || arg == "/?") {
-            stdext::print(
-                "Usage: ", args[0], " [options]\n"
-                "Options:\n"
-                "  -help                            Display this information and exit\n"
-                "  -version                         Display version and exit\n"
-                "  \n"
-                "  -no-fbos                         Disable usage of opengl framebuffer objects\n"
-                "  -no-mipmaps                      Disable texture mipmaping\n"
-                "  -no-smooth                       Disable texture smoothing (bilinear filter)\n"
-                "  -no-non-power-of-two-textures    Use only power of two textures\n"
-                "  -no-clamp-to-edge                Don't use GL_CLAMP_TO_EDGE\n"
-                "  -no-backbuffer-cache             Don't allow backbuffer caching\n"
-                "  -hardware-buffers                Cache vertex arrays in hardware\n"
-                "  -opengl1                         Use OpenGL 1.x painter\n"
-                "  -opengl2                         Use OpenGL 2.0 painter\n");
-            return;
-        } else {
-            stdext::println("Unrecognized option '", arg, "', please see -help for available options list");
-            return;
-        }
-    }
-
-    g_logger.info(stdext::format(
-        "%s %s (rev %s) built on %s",
-        Otc::AppName,
-        Otc::AppVersion,
-        BUILD_REVISION,
-        BUILD_DATE));
-
-    if(startupOptions.length() > 0)
-        g_logger.info(stdext::format("Startup options: %s", startupOptions));
-
-    g_logger.setLogFile(stdext::format("%s.txt", Otc::AppCompactName));
-    Application::init(args);
+    // register needed lua functions
+    registerLuaFunctions();
 
     g_shaders.init();
 
-    g_modules.discoverModules();
+    //TODO: restore options
+/*
+    if(g_graphics.parseOption(arg))
+        continue;
 
-    // core modules 0-99
-    g_modules.autoLoadModules(99);
-    g_modules.ensureModuleLoaded("core_lib");
-    // client modules 100-499
-    g_modules.autoLoadModules(499);
-    g_modules.ensureModuleLoaded("client");
-    // game modules 500-999
-    g_modules.autoLoadModules(999);
-    g_modules.ensureModuleLoaded("game");
-    // addons 1000-9999
-    g_modules.autoLoadModules(9999);
-
-    // load otclientrc.lua
-    if(g_resources.fileExists("/otclientrc.lua")) {
-        try {
-            g_lua.runScript("/otclientrc.lua");
-        } catch(LuaException& e) {
-            g_logger.error(stdext::format("failed to load otclientrc.lua: %s", e.what()));
-        }
+    if(arg == "-version" || arg == "--version" || arg == "-v") {
+        stdext::print(
+            m_appName, " ", m_appVersion, "\n"
+            "Buitt on: ", BUILD_DATE, "\n",
+            "Revision: ", BUILD_REVISION, "\n",
+            "Compiled by: ", BUILD_COMPILER, "\n",
+            "Build type: ", BUILD_TYPE, "\n");
+        return;
+    } else if(arg == "-help" || arg == "--help" || arg == "-h" || arg == "-?" || arg == "/?") {
+        stdext::print(
+            "Usage: ", args[0], " [options]\n"
+            "Options:\n"
+            "  -help                            Display this information and exit\n"
+            "  -version                         Display version and exit\n"
+            "  \n"
+            "  -no-fbos                         Disable usage of opengl framebuffer objects\n"
+            "  -no-mipmaps                      Disable texture mipmaping\n"
+            "  -no-smooth                       Disable texture smoothing (bilinear filter)\n"
+            "  -no-non-power-of-two-textures    Use only power of two textures\n"
+            "  -no-clamp-to-edge                Don't use GL_CLAMP_TO_EDGE\n"
+            "  -no-backbuffer-cache             Don't allow backbuffer caching\n"
+            "  -hardware-buffers                Cache vertex arrays in hardware\n"
+            "  -opengl1                         Use OpenGL 1.x painter\n"
+            "  -opengl2                         Use OpenGL 2.0 painter\n");
+        return;
+    } else {
+        stdext::println("Unrecognized option '", arg, "', please see -help for available options list");
+        return;
     }
+    */
 }
 
 void OTClient::terminate()
@@ -119,5 +80,4 @@ void OTClient::terminate()
     g_shaders.terminate();
     g_map.clean();
     g_thingsType.unload();
-    Application::terminate();
 }

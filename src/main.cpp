@@ -20,15 +20,32 @@
  * THE SOFTWARE.
  */
 
-#include <otclient/otclient.h>
+#include "framework/application.h"
+#include "framework/luascript/luainterface.h"
+#include "framework/core/resourcemanager.h"
+#include "otclient/otclient.h"
 
 int main(int argc, const char* argv[])
 {
     std::vector<std::string> args(argv, argv + argc);
-    OTClient app;
-    app.init(args);
-    app.run();
-    app.deinit();
-    app.terminate();
+
+    // initialize application framework and otclient
+    g_app.init(args);
+    g_otclient.init(args);
+
+    // find script init.lua and run it
+    g_resources.discoverWorkDir("otclient", "init.lua");
+    if(!g_lua.safeRunScript(g_resources.getWorkDir() + "init.lua"))
+        g_logger.fatal("Unable to run script init.lua!");
+
+    // the run application main loop
+    g_app.run();
+
+    // unload modules
+    g_app.deinit();
+
+    // terminate everything and free memory
+    g_otclient.terminate();
+    g_app.terminate();
     return 0;
 }

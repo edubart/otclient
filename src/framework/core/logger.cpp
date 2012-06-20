@@ -28,6 +28,11 @@ Logger g_logger;
 
 void Logger::log(Fw::LogLevel level, const std::string& message)
 {
+#ifdef NDEBUG
+    if(level == Fw::LogDebug)
+        return;
+#endif
+
     static bool ignoreLogs = false;
     if(ignoreLogs)
         return;

@@ -336,7 +336,7 @@ void UIManager::importStyleFromOTML(const OTMLNodePtr& styleNode)
     }
 
     // Warn about redefined styles
-    if(!g_app->isRunning() && !unique) {
+    if(!g_app.isRunning() && !unique) {
         auto it = m_styles.find(name);
         if(it != m_styles.end())
             g_logger.warning(stdext::format("style '%s' is being redefined", name));

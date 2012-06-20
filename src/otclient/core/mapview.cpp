@@ -51,7 +51,7 @@ MapView::MapView()
 
 MapView::~MapView()
 {
-    assert(!g_app->isTermianted());
+    assert(!g_app.isTermianted());
 }
 
 void MapView::draw(const Rect& rect)

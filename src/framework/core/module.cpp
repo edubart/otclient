@@ -53,7 +53,7 @@ bool Module::load()
         m_loadCallback();
 
     m_loaded = true;
-    //g_logger.info(stdext::format("Loaded module '%s'", m_name));
+    g_logger.debug(stdext::format("Loaded module '%s'", m_name));
     g_modules.updateModuleLoadOrder(asModule());
 
     for(const std::string& modName : m_loadLaterModules) {

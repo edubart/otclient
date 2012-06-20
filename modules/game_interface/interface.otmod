@@ -1,0 +1,21 @@
+Module
+  name: game_interface
+  description: Create the game interface, where the ingame stuff starts
+  author: OTClient team
+  website: www.otclient.info
+
+  @onLoad: |
+    importStyle 'styles/items.otui'
+    importStyle 'styles/creatures.otui'
+    importStyle 'styles/miniwindow.otui'
+    importStyle 'styles/countwindow.otui'
+
+    dofile 'widgets/uigamemap'
+    dofile 'widgets/uiitem'
+
+    dofile 'gameinterface'
+
+    GameInterface.init()
+
+  @onUnload: |
+    GameInterface.terminate()

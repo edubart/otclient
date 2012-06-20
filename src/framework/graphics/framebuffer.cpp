@@ -47,7 +47,7 @@ void FrameBuffer::internalCreate()
 
 FrameBuffer::~FrameBuffer()
 {
-    assert(!g_app->isTermianted());
+    assert(!g_app.isTermianted());
     if(g_graphics.ok() && m_fbo != 0)
         glDeleteFramebuffers(1, &m_fbo);
 }

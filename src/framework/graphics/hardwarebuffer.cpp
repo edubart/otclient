@@ -37,7 +37,7 @@ HardwareBuffer::HardwareBuffer(Type type)
 
 HardwareBuffer::~HardwareBuffer()
 {
-    assert(!g_app->isTermianted());
+    assert(!g_app.isTermianted());
     if(g_graphics.ok())
         glDeleteBuffers(1, &m_id);
 }

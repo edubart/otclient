@@ -9,7 +9,9 @@ SET(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -Wl,-Map=otclient.map")
 
 OPTION(PCH "Use precompiled header (speed up compile)" OFF)
 
-SET(executable_SOURCES src/main.cpp)
+SET(executable_SOURCES
+    src/main.cpp
+)
 
 # add executable icon for win32 platforms
 IF(WIN32)

@@ -47,9 +47,9 @@ function Locales.init()
 
   local userLocaleName = Settings.get('locale')
   if userLocaleName and Locales.setLocale(userLocaleName) then
-    --info('Using configured locale: ' .. userLocaleName)
+    pdebug('Using configured locale: ' .. userLocaleName)
   else
-    --info('Using default locale: ' .. defaultLocaleName)
+    pdebug('Using default locale: ' .. defaultLocaleName)
     Locales.setLocale(defaultLocaleName)
     Settings.set('locale', defaultLocaleName)
   end
@@ -100,7 +100,7 @@ end
 function Locales.setLocale(name)
   local locale = installedLocales[name]
   if not locale then
-    warning("Locale " .. name .. ' does not exist.')
+    pwarning("Locale " .. name .. ' does not exist.')
     return false
   end
   currentLocale = locale
@@ -125,7 +125,7 @@ function tr(text, ...)
       local translation = currentLocale.translation[text]
       if not translation then
         if currentLocale.name ~= defaultLocaleName then
-          warning('Unable to translate: \"' .. text .. '\"')
+          pwarning('Unable to translate: \"' .. text .. '\"')
         end
         translation = text
       end

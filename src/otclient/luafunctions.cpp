@@ -47,8 +47,6 @@
 
 void OTClient::registerLuaFunctions()
 {
-    Application::registerLuaFunctions();
-
     g_lua.registerSingletonClass("g_thingsType");
     g_lua.bindSingletonFunction("g_thingsType", "load", &ThingsType::load, &g_thingsType);
     g_lua.bindSingletonFunction("g_thingsType", "isLoaded", &ThingsType::isLoaded, &g_thingsType);
@@ -78,6 +76,8 @@ void OTClient::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_map", "removeCreatureById", &Map::removeCreatureById, &g_map);
     g_lua.bindSingletonFunction("g_map", "getSpectators", &Map::getSpectators, &g_map);
     g_lua.bindSingletonFunction("g_map", "findPath", &Map::findPath, &g_map);
+    g_lua.bindSingletonFunction("g_map", "load", &Map::load, &g_map);
+    g_lua.bindSingletonFunction("g_map", "save", &Map::save, &g_map);
 
     g_lua.registerSingletonClass("g_game");
     g_lua.bindSingletonFunction("g_game", "loginWorld", &Game::loginWorld, &g_game);
@@ -327,6 +327,7 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Tile>("addThing", &Tile::addThing);
     g_lua.bindClassMemberFunction<Tile>("getThing", &Tile::getThing);
     g_lua.bindClassMemberFunction<Tile>("getThingStackpos", &Tile::getThingStackpos);
+    g_lua.bindClassMemberFunction<Tile>("getThingCount", &Tile::getThingCount);
     g_lua.bindClassMemberFunction<Tile>("getTopThing", &Tile::getTopThing);
     g_lua.bindClassMemberFunction<Tile>("removeThing", &Tile::removeThing);
     g_lua.bindClassMemberFunction<Tile>("getTopLookThing", &Tile::getTopLookThing);

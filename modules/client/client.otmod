@@ -3,8 +3,6 @@ Module
   description: Initialize the client and setups its main window
   author: edubart
   website: www.otclient.info
-  autoload: true
-  autoload-priority: 100
   reloadable: false
 
   load-later:

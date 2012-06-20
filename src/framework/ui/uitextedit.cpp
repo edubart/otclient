@@ -253,7 +253,7 @@ void UITextEdit::setCursorPos(int pos)
         else
             m_cursorPos = pos;
         update();
-        g_app->repaint();
+        g_app.repaint();
     }
 }
 
@@ -516,5 +516,5 @@ bool UITextEdit::onMousePress(const Point& mousePos, Fw::MouseButton button)
 void UITextEdit::blinkCursor()
 {
     m_cursorTicks = g_clock.millis();
-    g_app->repaint();
+    g_app.repaint();
 }

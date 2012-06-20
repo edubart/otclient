@@ -5,7 +5,7 @@ MiniWindow < UIMiniWindow
   height: 200
   text-offset: 24 5
   text-align: topLeft
-  image-source: /game/images/miniwindow.png
+  image-source: /images/miniwindow.png
   image-border: 4
   image-border-top: 23
   image-border-bottom: 4
@@ -22,7 +22,7 @@ MiniWindow < UIMiniWindow
     margin-top: 5
     margin-right: 5
     size: 14 14
-    image-source: /game/images/miniwindowbuttons.png
+    image-source: /images/miniwindowbuttons.png
     image-clip: 28 0 14 14
 
     $hover:
@@ -37,7 +37,7 @@ MiniWindow < UIMiniWindow
     anchors.right: closeButton.left
     margin-right: 3
     size: 14 14
-    image-source: /game/images/miniwindowbuttons.png
+    image-source: /images/miniwindowbuttons.png
     image-clip: 0 0 14 14
 
     $hover:

@@ -31,6 +31,7 @@ public:
     void init(const char *argv0);
     void terminate();
 
+    void discoverWorkDir(const std::string& appName, const std::string& existentFile);
     bool setupWriteDir(const std::string& appWriteDirName);
 
     bool addToSearchPath(const std::string& path, bool insertInFront = true);
@@ -55,7 +56,13 @@ public:
     std::list<std::string> listDirectoryFiles(const std::string& directoryPath = "");
 
     std::string resolvePath(const std::string& path);
+    std::string getRealDir(const std::string& path);
     std::string getBaseDir();
+    std::string getWorkDir() { return m_workDir; }
+
+private:
+    std::string m_workDir;
+    Boolean<false> m_hasSearchPath;
 };
 
 extern ResourceManager g_resources;

@@ -38,7 +38,7 @@ ShaderProgram::ShaderProgram()
 
 ShaderProgram::~ShaderProgram()
 {
-    assert(!g_app->isTermianted());
+    assert(!g_app.isTermianted());
     if(g_graphics.ok())
         glDeleteProgram(m_programId);
 }

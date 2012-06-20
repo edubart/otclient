@@ -5,7 +5,7 @@ Module
   website: www.otclient.info
 
   dependencies:
-    - game
+    - game_interface
 
   @onLoad: |
     dofile 'bugreport'

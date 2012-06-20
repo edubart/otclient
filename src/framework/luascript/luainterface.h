@@ -132,6 +132,9 @@ private:
     static int luaObjectCollectEvent(LuaInterface* lua);
 
 public:
+    /// Loads and runs a script, any errors are printed to stdout and returns false
+    bool safeRunScript(const std::string& fileName);
+
     /// Loads and runs a script
     /// @exception LuaException is thrown on any lua error
     void runScript(const std::string& fileName);

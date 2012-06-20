@@ -41,8 +41,8 @@ void crashHandler(int signum, siginfo_t* info, void* secret)
     g_logger.error("Application crashed");
 
     std::stringstream ss;
-    ss << stdext::format("app name: %s\n", g_app->getName());
-    ss << stdext::format("app version: %s\n", g_app->getVersion());
+    ss << stdext::format("app name: %s\n", g_app.getName());
+    ss << stdext::format("app version: %s\n", g_app.getVersion());
     ss << stdext::format("build compiler: %s\n", BUILD_COMPILER);
     ss << stdext::format("build date: %s\n", BUILD_DATE);
     ss << stdext::format("build type: %s\n", BUILD_TYPE);

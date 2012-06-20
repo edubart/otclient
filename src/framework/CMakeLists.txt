@@ -10,11 +10,7 @@ OPTION(CRASH_HANDLER "Generate crash reports" ON)
 OPTION(LUAJIT "Use lua jit" OFF)
 SET(OPENGLES "OFF" CACHE "Use OpenGL ES 1.0 or 2.0 (for mobiles devices)" STRING)
 SET(BUILD_REVISION "custom" CACHE "Git revision string (intended for releases)" STRING)
-
-# set debug as default build type
-IF(NOT CMAKE_BUILD_TYPE)
-    SET(CMAKE_BUILD_TYPE RelWithDebInfo)
-ENDIF()
+SET(CMAKE_BUILD_TYPE "RelWithDebInfo" CACHE "Build type (Release, MinSizeRel, RelWithDebInfo or Debug)" STRING)
 
 IF(CMAKE_SIZEOF_VOID_P EQUAL 8)
     SET(ARCH_FLAGS "-m64 -march=x86-64 -mtune=generic")
@@ -26,10 +22,11 @@ SET(CMAKE_CXX_FLAGS                   "${CMAKE_CXX_FLAGS} ${WARNS_FLAGS} ${ARCH_
 SET(CMAKE_CXX_FLAGS_DEBUG             "-O0 -ggdb")
 SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO    "-O1 -ggdb -fno-omit-frame-pointer")
 SET(CMAKE_CXX_FLAGS_RELEASE           "-O2")
+SET(CMAKE_CXX_FLAGS_MINSIZEREL        "-Os")
 
 SET(CMAKE_CXX_LINK_FLAGS              "${CMAKE_CXX_LINK_FLAGS} -static-libgcc -static-libstdc++ -Wl,--as-needed")
 
-IF(CMAKE_BUILD_TYPE STREQUAL "Release")
+IF(CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "MinSizeRel")
     SET(CMAKE_CXX_LINK_FLAGS              "${CMAKE_CXX_LINK_FLAGS} -Wl,-s")
 ENDIF()
 

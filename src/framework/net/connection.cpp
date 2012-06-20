@@ -41,7 +41,7 @@ Connection::Connection() :
 
 Connection::~Connection()
 {
-    assert(!g_app->isTermianted());
+    assert(!g_app.isTermianted());
     close();
 }
 

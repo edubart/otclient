@@ -64,44 +64,6 @@ void ModuleManager::autoLoadModules(int maxPriority)
     }
 }
 
-void ModuleManager::discoverModulesPath()
-{
-    // search for modules directory
-    std::string possibleModulesDirs[] = { "modules",
-                                          g_resources.getBaseDir() + "modules",
-                                          g_resources.getBaseDir() + "../modules",
-                                          g_resources.getBaseDir() + "../share/" + g_app->getName() + "/modules",
-                                           "" };
-    bool found = false;
-    for(const std::string& dir : possibleModulesDirs) {
-        // try to add module directory
-        if(g_resources.addToSearchPath(dir, false)) {
-            //g_logger.info(stdext::format("Using modules directory '%s'", dir.c_str()));
-            m_modulesPath = dir;
-            found = true;
-            break;
-        }
-    }
-
-    if(!found)
-        g_logger.fatal("Could not find modules directory");
-
-    // search for addons directory
-    std::string possibleAddonsDirs[] = { "addons",
-                                         g_resources.getBaseDir() + "addons",
-                                         g_resources.getBaseDir() + "../addons",
-                                         g_resources.getBaseDir() + "../share/" + g_app->getName() + "/addons",
-                                         "" };
-    for(const std::string& dir : possibleAddonsDirs) {
-        // try to add module directory
-        if(g_resources.addToSearchPath(dir, true)) {
-            //g_logger.info(stdext::format("Using addons directory '%s'", dir.c_str()));
-            found = true;
-            break;
-        }
-    }
-}
-
 ModulePtr ModuleManager::discoverModule(const std::string& moduleFile)
 {
     ModulePtr module;
