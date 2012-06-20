@@ -10,7 +10,10 @@ OPTION(CRASH_HANDLER "Generate crash reports" ON)
 OPTION(LUAJIT "Use lua jit" OFF)
 SET(OPENGLES "OFF" CACHE "Use OpenGL ES 1.0 or 2.0 (for mobiles devices)" STRING)
 SET(BUILD_REVISION "custom" CACHE "Git revision string (intended for releases)" STRING)
-SET(CMAKE_BUILD_TYPE "RelWithDebInfo" CACHE "Build type (Release, MinSizeRel, RelWithDebInfo or Debug)" STRING)
+
+IF(NOT CMAKE_BUILD_TYPE)
+    SET(CMAKE_BUILD_TYPE "RelWithDebInfo")
+ENDIF()
 
 IF(CMAKE_SIZEOF_VOID_P EQUAL 8)
     SET(ARCH_FLAGS "-m64 -march=x86-64 -mtune=generic")

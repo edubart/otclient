@@ -181,8 +181,9 @@ void Application::run()
     // first clock update
     g_clock.update();
 
-    // show the application window
-    g_window.show();
+    // show the application only after we draw some frames
+    g_eventDispatcher.scheduleEvent([] { g_window.show(); }, 10);
+
 
     while(!m_stopping) {
         // poll all events before rendering
