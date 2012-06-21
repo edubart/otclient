@@ -324,7 +324,13 @@ SET(framework_SOURCES ${framework_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/thirdparty/apngloader.cpp
     ${CMAKE_CURRENT_LIST_DIR}/thirdparty/apngloader.h
     ${CMAKE_CURRENT_LIST_DIR}/thirdparty/lbitlib-5.2.0-backport4.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/thirdparty/lbitlib-5.2.0-backport4.h
+	${CMAKE_CURRENT_LIST_DIR}/thirdparty/lbitlib-5.2.0-backport4.h
+	${CMAKE_CURRENT_LIST_DIR}/thirdparty/tinyxml.cpp
+	${CMAKE_CURRENT_LIST_DIR}/thirdparty/tinyxml.h
+	${CMAKE_CURRENT_LIST_DIR}/thirdparty/tinystr.cpp
+	${CMAKE_CURRENT_LIST_DIR}/thirdparty/tinystr.h
+	${CMAKE_CURRENT_LIST_DIR}/thirdparty/tinyxmlerror.cpp
+	${CMAKE_CURRENT_LIST_DIR}/thirdparty/tinyxmlparser.cpp
 
     # ui
     ${CMAKE_CURRENT_LIST_DIR}/ui/declarations.h

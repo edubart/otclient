@@ -59,6 +59,7 @@ public:
     void addU32(uint8 v);
     void addU64(uint8 v);
 
+	uint8 readNode(uint8 &oldNode, uint32 &type);
 private:
     std::string m_name;
     PHYSFS_File *m_fileHandle;

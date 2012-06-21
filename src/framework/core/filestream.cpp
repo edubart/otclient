@@ -249,6 +249,30 @@ std::string FileStream::getString()
     return str;
 }
 
+uint8 FileStream::readNode(uint8 &oldNode, uint32 &type)
+{
+	if (!oldNode) {
+		if ((oldNode = getU8()) == 0xFE) {
+			type = getU32();
+			return oldNode;
+		} else {
+			dump << "Failed to read new node.";
+			return 0;
+		}
+	}
+
+	assert(getU8() == 0xFF);
+	if ((oldNode = getU8()) == 0xFE) {
+		type = getU32();
+		return oldNode;
+	} else {
+		dump << "Failed to read node with old type: " << type;
+		return 0;
+	}
+
+	return 0;
+}
+
 void FileStream::addU8(uint8 v)
 {
     if(PHYSFS_write(m_fileHandle, &v, 1, 1) != 1)

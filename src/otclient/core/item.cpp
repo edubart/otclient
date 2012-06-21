@@ -26,9 +26,11 @@
 #include "thing.h"
 #include "tile.h"
 #include "shadermanager.h"
+
 #include <framework/core/clock.h>
 #include <framework/core/eventdispatcher.h>
 #include <framework/graphics/graphics.h>
+#include <framework/core/filestream.h>
 
 Item::Item() : Thing()
 {
@@ -184,4 +186,73 @@ void Item::setId(uint32 id)
     }
     m_id = id;
     m_type = g_thingsType.getThingType(m_id, ThingsType::Item);
+}
+
+
+
+bool Item::unserializeAttr(FileStreamPtr fin)
+{
+	uint8 attrType;
+	while ((attrType = fin->getU8()) != 0)
+		readAttr((AttrTypes_t)attrType, fin);
+
+	return true;
+}
+
+void Item::readAttr(AttrTypes_t attrType, FileStreamPtr fin)
+{
+	switch (attrType) {
+	case ATTR_COUNT:
+		setSubType(fin->getU8());
+		break;
+	case ATTR_ACTION_ID:
+		setActionId(fin->getU16());
+		break;
+	case ATTR_UNIQUE_ID:
+		setUniqueId(fin->getU16());
+		break;
+	case ATTR_NAME:
+		setName(fin->getString());
+		break;
+	case ATTR_ARTICLE:
+		fin->getString();
+	case ATTR_ATTACK: // \/ not needed.
+	case ATTR_EXTRAATTACK:
+	case ATTR_DEFENSE:
+	case ATTR_EXTRADEFENSE:
+	case ATTR_ARMOR:
+	case ATTR_ATTACKSPEED:
+	case ATTR_HPPITCHANCE:
+	case ATTR_DURATION:
+		fin->getU32();
+		break;
+	case ATTR_SCRIPTPROTECTED:
+	case ATTR_DUALWIELD:
+	case ATTR_DECAYING_STATE:
+	case ATTR_HPPOUSEDOORID:
+		fin->getU8();
+		break;
+	case ATTR_TEXT:
+		setText(fin->getString());
+		break;
+	case ATTR_WRITTENDATE:
+		fin->getU32();
+		break;
+	case ATTR_WRITTENBY:
+		fin->getString();
+		break;
+	case ATTR_DESC:
+		setDescription(fin->getString());
+		break;
+	case ATTR_RUNE_CHARGES:
+		fin->getU8();
+		break;
+	case ATTR_TELE_DEST: // Teleport should read that.
+	case ATTR_SLEEPERGUID: // Bed should read that.
+	case ATTR_SLEEPSTART:
+	case ATTR_CONTAINER_ITEMS:
+	case ATTR_ATTRIBUTE_MAP:
+	default:
+		break;
+	}
 }

@@ -26,6 +26,26 @@
 #include "declarations.h"
 #include <framework/luascript/luaobject.h>
 
+enum tileflags_t
+{
+	TILESTATE_NONE = 0,
+	TILESTATE_PROTECTIONZONE = 1 << 0,
+	TILESTATE_TRASHED = 1 << 1,
+	TILESTATE_OPTIONALZONE = 1 << 2,
+	TILESTATE_NOLOGOUT = 1 << 3,
+	TILESTATE_HPPARDCOREZONE = 1 << 4,
+	TILESTATE_REFRESH = 1 << 5,
+
+	// internal usage
+	TILESTATE_HOUSE = 1 << 6,
+	TILESTATE_TELEPORT = 1 << 17,
+	TILESTATE_MAGICFIELD = 1 << 18,
+	TILESTATE_MAILBOX = 1 << 19,
+	TILESTATE_TRASHHOLDER = 1 << 20,
+	TILESTATE_BED = 1 << 21,
+	TILESTATE_DEPOT = 1 << 22
+};
+
 class Tile : public LuaObject
 {
 public:
@@ -78,6 +98,7 @@ public:
     bool canErase();
 
     TilePtr asTile() { return std::static_pointer_cast<Tile>(shared_from_this()); }
+	void setFlags(tileflags_t flags) { m_flags |= (uint32)flags; }
 
 private:
     std::vector<CreaturePtr> m_walkingCreatures;
@@ -85,6 +106,7 @@ private:
     std::vector<ThingPtr> m_things;
     Position m_position;
     uint8 m_drawElevation;
+	uint32 m_flags;
 };
 
 #endif

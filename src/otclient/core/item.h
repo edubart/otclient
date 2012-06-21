@@ -26,6 +26,47 @@
 #include <framework/global.h>
 #include "thing.h"
 
+enum AttrTypes_t {
+	ATTR_END = 0,
+	//ATTR_DESCRIPTION = 1,
+	//ATTR_EXT_FILE = 2,
+	ATTR_TILE_FLAGS = 3,
+	ATTR_ACTION_ID = 4,
+	ATTR_UNIQUE_ID = 5,
+	ATTR_TEXT = 6,
+	ATTR_DESC = 7,
+	ATTR_TELE_DEST = 8,
+	ATTR_ITEM = 9,
+	ATTR_DEPOT_ID = 10,
+	//ATTR_EXT_SPAWN_FILE = 11,
+	ATTR_RUNE_CHARGES = 12,
+	//ATTR_EXT_HPPOUSE_FILE = 13,
+	ATTR_HPPOUSEDOORID = 14,
+	ATTR_COUNT = 15,
+	ATTR_DURATION = 16,
+	ATTR_DECAYING_STATE = 17,
+	ATTR_WRITTENDATE = 18,
+	ATTR_WRITTENBY = 19,
+	ATTR_SLEEPERGUID = 20,
+	ATTR_SLEEPSTART = 21,
+	ATTR_CHARGES = 22,
+	ATTR_CONTAINER_ITEMS = 23,
+	ATTR_NAME = 30,
+	ATTR_PLURALNAME = 31,
+	ATTR_ATTACK = 33,
+	ATTR_EXTRAATTACK = 34,
+	ATTR_DEFENSE = 35,
+	ATTR_EXTRADEFENSE = 36,
+	ATTR_ARMOR = 37,
+	ATTR_ATTACKSPEED = 38,
+	ATTR_HPPITCHANCE = 39,
+	ATTR_SHOOTRANGE = 40,
+	ATTR_ARTICLE = 41,
+	ATTR_SCRIPTPROTECTED = 42,
+	ATTR_DUALWIELD = 43,
+	ATTR_ATTRIBUTE_MAP = 128
+};
+
 class Item : public Thing
 {
 public:
@@ -39,18 +80,33 @@ public:
     void setCountOrSubType(int value) { m_countOrSubType = value; }
     void setCount(int count) { m_countOrSubType = count; }
     void setSubType(int subType) { m_countOrSubType = subType; }
+	void setActionId(int actionId) { m_actionId = actionId; }
+	void setUniqueId(int uniqueId) { m_uniqueId = uniqueId; }
+	void setName(const std::string &name) { m_name = name; }
+	void setText(const std::string &text) { m_text = text; }
+	void setDescription(const std::string &description) { m_description = description; }
 
     int getCountOrSubType() { return m_countOrSubType; }
     int getSubType() { return m_countOrSubType; }
     int getCount() { return m_countOrSubType; }
     uint32 getId() { return m_id; }
+	std::string getName() { return m_name; }
 
     ItemPtr asItem() { return std::static_pointer_cast<Item>(shared_from_this()); }
     bool isItem() { return true; }
 
+	// TODO: These should be abstract and declared in i.e containers, doors, etc.
+	bool unserializeAttr(FileStreamPtr fin);
+	bool unserializeItemNode(FileStreamPtr fin, uint8) { return unserializeAttr(fin); }
+	void readAttr(AttrTypes_t attrType, FileStreamPtr fin);
+
+	bool isMovable() { return false; }
+
 private:
     uint16 m_id;
     uint8 m_countOrSubType;
+	uint32 m_actionId, m_uniqueId;
+	std::string m_name, m_text, m_description;
     PainterShaderProgramPtr m_shaderProgram;
 };
 

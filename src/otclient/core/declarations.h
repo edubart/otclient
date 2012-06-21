@@ -44,11 +44,13 @@ class StaticText;
 class ThingType;
 class ThingsType;
 class ItemShader;
+class ItemData;
 
 typedef std::shared_ptr<MapView> MapViewPtr;
 typedef std::shared_ptr<Tile> TilePtr;
 typedef std::shared_ptr<Thing> ThingPtr;
 typedef std::shared_ptr<Item> ItemPtr;
+typedef std::shared_ptr<ItemData> ItemDataPtr;
 typedef std::shared_ptr<Container> ContainerPtr;
 typedef std::shared_ptr<Creature> CreaturePtr;
 typedef std::shared_ptr<Monster> MonsterPtr;
@@ -63,5 +65,6 @@ typedef std::shared_ptr<ItemShader> ItemShaderPtr;
 
 typedef std::vector<ThingPtr> ThingList;
 typedef std::vector<ThingType> ThingTypeList;
+typedef std::vector<ItemDataPtr> ItemDataList;
 
 #endif

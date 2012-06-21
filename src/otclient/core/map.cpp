@@ -27,10 +27,12 @@
 #include "item.h"
 #include "missile.h"
 #include "statictext.h"
+#include "itemloader.h"
 
 #include <framework/core/eventdispatcher.h>
 #include "mapview.h"
 #include <framework/core/resourcemanager.h>
+#include <framework/core/filestream.h>
 
 Map g_map;
 
@@ -54,32 +56,221 @@ void Map::notificateTileUpdateToMapViews(const Position& pos)
 
 bool Map::load(const std::string& fileName)
 {
-    if(!g_resources.fileExists(fileName)) {
-        g_logger.error(stdext::format("Unable to load map '%s'", fileName));
-        return false;
-    }
+	FileStreamPtr fin = g_resources.openFile(fileName);
+	if (!fin) {
+		g_logger.error(stdext::format("Unable to load map '%s'", fileName));
+		return false;
+	}
 
-    std::stringstream in;
-    g_resources.loadFile(fileName, in);
+	if (!g_itemLoader.isLoaded()) {
+		g_logger.error(stdext::format("OTB and XML are not loaded yet to load a map."));
+		return false;
+	}
 
-    while(!in.eof()) {
-        Position pos;
-        in.read((char*)&pos, sizeof(pos));
+	uint32 type = 0;
+	uint8 root = fin->readNode(root, type);
 
-        uint16 id;
-        in.read((char*)&id, sizeof(id));
-        while(id != 0xFFFF) {
-            ItemPtr item = Item::create(id);
-            if(item->isStackable() || item->isFluidContainer() || item->isFluid()) {
-                uint8 countOrSubType;
-                in.read((char*)&countOrSubType, sizeof(countOrSubType));
-                item->setCountOrSubType(countOrSubType);
-            }
-            addThing(item, pos, 255);
-            in.read((char*)&id, sizeof(id));
-        }
-    }
+	uint32 headerVersion = fin->getU32();
+	if (!headerVersion || headerVersion > 3) {
+		g_logger.error("Unknown OTBM version detected.");
+		return false;
+	}
 
+	uint32 headerMajorItems = fin->getU32();
+	if (headerMajorItems < 3) {
+		g_logger.error("This map needs to be upgraded.");
+		return false;
+	}
+
+	if (headerMajorItems > g_itemLoader.dwMajorVersion) {
+		g_logger.error("This map was saved with different OTB version.");
+		return false;
+	}
+
+	uint32_t headerMinorItems =  fin->getU32();
+	if (headerMinorItems > g_itemLoader.dwMinorVersion)
+		g_logger.warning("This map needs an updated OTB.");
+
+	uint8 node = fin->readNode(root, type);
+	if (type != OTBM_MAP_DATA) {
+		g_logger.error("Could not read data node.");
+		return false;
+	}
+
+	std::string tmp;
+	uint8 attribute;
+	while ((attribute = fin->getU8())) {
+		tmp = fin->getString();
+		switch (attribute) {
+		case OTBM_ATTR_DESCRIPTION:
+			if (!m_description.empty())
+				m_description += "\n" + tmp;
+			else
+				m_description = tmp;
+			break;
+		case OTBM_ATTR_SPAWN_FILE:
+			m_spawnFile = fileName.substr(0, fileName.rfind('/') + 1) + tmp;
+			break;
+		case OTBM_ATTR_HOUSE_FILE:
+			m_houseFile = fileName.substr(0, fileName.rfind('/') + 1) + tmp;
+			break;
+		default:
+			g_logger.error(stdext::format("Invalid attribute '%c'", attribute));
+			break;
+		}
+	}
+
+	dump << m_description;
+
+	uint8 nodeMapData;
+	do {
+		nodeMapData = fin->readNode(node, type);
+
+		if (type == OTBM_TILE_AREA) {
+			uint16 baseX = fin->getU16(), baseY = fin->getU16();
+			uint8 pz = fin->getU8();
+
+			uint8 nodeTile;
+			do {
+				nodeTile = fin->readNode(nodeMapData, type);
+
+				if (type == OTBM_TILE || type == OTBM_HOUSETILE) {
+					TilePtr tile = 0;
+					ItemPtr ground = 0;
+					uint32 flags = 0;
+
+					uint16 px = baseX + fin->getU16(), py = fin->getU16();
+					Position pos(px, py, pz);
+
+					// TODO: Houses.
+					if (type ==  OTBM_HOUSETILE) {
+						uint32 hId = fin->getU32();
+
+						tile = createTile(pos);
+						// TODO: add it to house.
+					}
+
+					uint8 tileAttr;
+					while ((tileAttr = fin->getU8())) {
+						switch (tileAttr) {
+						case OTBM_ATTR_TILE_FLAGS: {
+							uint32 _flags = fin->getU32();
+
+							if ((_flags & TILESTATE_PROTECTIONZONE) == TILESTATE_PROTECTIONZONE)
+								flags |= TILESTATE_PROTECTIONZONE;
+							else if ((_flags & TILESTATE_OPTIONALZONE) == TILESTATE_OPTIONALZONE)
+								flags |= TILESTATE_OPTIONALZONE;
+							else if ((_flags & TILESTATE_HPPARDCOREZONE) == TILESTATE_HPPARDCOREZONE)
+								flags |= TILESTATE_HPPARDCOREZONE;
+
+							if ((_flags & TILESTATE_NOLOGOUT) == TILESTATE_NOLOGOUT)
+								flags |= TILESTATE_NOLOGOUT;
+
+							if ((_flags & TILESTATE_REFRESH) == TILESTATE_REFRESH)
+								flags |= TILESTATE_REFRESH;
+							break;
+						} case OTBM_ATTR_ITEM: {
+							ItemPtr item = Item::create(fin->getU16());
+							if (!item) {
+								g_logger.error(stdext::format("failed to create new item at tile pos %d, %d, %d", px, py, pz));
+								return false;
+							}
+
+							if (tile) {
+								tile->addThing(item);
+							} else if (item->isGround()) {
+								ground = item;
+							} else {
+								tile = createTile(pos);
+								tile->addThing(ground);
+								tile->addThing(item);
+							}
+						} default: {
+							g_logger.error(stdext::format("invalid tile attribute at pos %d, %d, %d", px, py, pz));
+							return false;
+						}
+						}
+					}
+
+					uint8 nodeItem;
+					do {
+						nodeItem = fin->readNode(nodeTile, type);
+
+						if (type == OTBM_ITEM) {
+							ItemPtr item = Item::create(fin->getU16());
+							if (!item) {
+								g_logger.error(stdext::format("failed to create new item at pos %d, %d, %d", px, py, pz));
+								return false;
+							}
+
+							if (item->unserializeItemNode(fin, nodeItem)) {
+								if (/* house  && */item->isMovable()) {
+									g_logger.warning(stdext::format("Movable item found in house: %d at pos %d %d %d", item->getId(),
+																	px, py, pz));
+									item = 0;
+								} else if (tile) {
+									tile->addThing(item);
+								} else if (item->isGround()) {
+									ground = item;
+								} else {
+									tile = createTile(pos);
+									tile->addThing(ground);
+									tile->addThing(item);
+								}
+							} else {
+								g_logger.error(stdext::format("failed to unserialize item with %d at pos %d %d %d", item->getId(),
+															  px, py, pz));
+								return false;
+							}
+						} else {
+							g_logger.error(stdext::format("Unknown item node type %d", type));
+							return false;
+						}
+					} while (nodeItem);
+
+					if (!tile) {
+						tile = createTile(pos);
+						tile->addThing(ground);
+					}
+
+					tile->setFlags((tileflags_t)flags);
+				} else {
+					g_logger.error(stdext::format("Unknown tile node type %d", type));
+					return false;
+				}
+			} while (nodeTile);
+		} else if (type == OTBM_TOWNS) {
+			uint8 nodeTown;
+			do {
+				nodeTown = fin->readNode(nodeMapData, type);
+
+				if (type == OTBM_TOWN) {
+					uint32 townId = fin->getU32();
+					std::string townName = fin->getString();
+
+					Position townCoords(fin->getU16(), fin->getU16(), fin->getU8());
+				} else {
+					g_logger.error(stdext::format("Unknown town node type %d", type));
+					return false;
+				}
+			} while (nodeTown);
+		} else if (type == OTBM_WAYPOINTS && headerVersion > 1) {
+			uint8 nodeWaypoint;
+			do {
+				nodeWaypoint = fin->readNode(nodeMapData, type);
+
+				if (type == OTBM_WAYPOINT) {
+					std::string name = fin->getString();
+					Position waypointPos(fin->getU16(), fin->getU16(), fin->getU8());
+				}
+			} while (nodeWaypoint);
+		} else {
+			g_logger.error(stdext::format("Unknown map node %d", type));
+			return false;
+		}
+	} while (nodeMapData);
+
+	// TODO: Load house & spawns.
     return true;
 }
 
