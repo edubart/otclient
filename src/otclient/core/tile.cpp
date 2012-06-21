@@ -22,7 +22,7 @@
 
 #include "tile.h"
 #include "item.h"
-#include "thingstype.h"
+#include "thingtypemanager.h"
 #include "map.h"
 #include "game.h"
 #include "localplayer.h"
@@ -70,8 +70,8 @@ void Tile::draw(const Point& dest, float scaleFactor, int drawFlags)
             thing->draw(dest - m_drawElevation*scaleFactor, scaleFactor, animate);
 
             if(thing->isLyingCorpse()) {
-                redrawPreviousTopW = std::max(thing->getDimensionWidth(), redrawPreviousTopW);
-                redrawPreviousTopH = std::max(thing->getDimensionHeight(), redrawPreviousTopH);
+                redrawPreviousTopW = std::max(thing->getWidth(), redrawPreviousTopW);
+                redrawPreviousTopH = std::max(thing->getHeight(), redrawPreviousTopH);
             }
 
             m_drawElevation += thing->getElevation();
@@ -425,7 +425,7 @@ bool Tile::isFullyOpaque()
 bool Tile::isLookPossible()
 {
     for(const ThingPtr& thing : m_things) {
-        if(thing->blocksProjectile())
+        if(thing->blockProjectile())
             return false;
     }
     return true;

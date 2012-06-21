@@ -27,7 +27,6 @@
 #include "item.h"
 #include "missile.h"
 #include "statictext.h"
-#include "itemloader.h"
 
 #include <framework/core/eventdispatcher.h>
 #include "mapview.h"
@@ -35,6 +34,11 @@
 #include <framework/core/filestream.h>
 
 Map g_map;
+
+void Map::terminate()
+{
+    clean();
+}
 
 void Map::addMapView(const MapViewPtr& mapView)
 {
@@ -54,7 +58,7 @@ void Map::notificateTileUpdateToMapViews(const Position& pos)
         mapView->onTileUpdate(pos);
 }
 
-bool Map::loadOTBM(const std::string& fileName)
+bool Map::loadOtbm(const std::string& fileName)
 {
     FileStreamPtr fin = g_resources.openFile(fileName);
     if (!fin) {
@@ -62,13 +66,13 @@ bool Map::loadOTBM(const std::string& fileName)
         return false;
     }
 
-    if (!g_itemLoader.isLoaded()) {
+    if (!g_things.isOtbLoaded() || !g_things.isXmlLoaded()) {
         g_logger.error(stdext::format("OTB and XML are not loaded yet to load a map."));
         return false;
     }
 
     uint32 type = 0;
-    uint8 root = fin->readNode(root, type);
+    uint8 root = fin->readFirstNode(type);
 
     uint32 headerVersion = fin->getU32();
     if (!headerVersion || headerVersion > 3) {
@@ -82,16 +86,16 @@ bool Map::loadOTBM(const std::string& fileName)
         return false;
     }
 
-    if (headerMajorItems > g_itemLoader.dwMajorVersion) {
+    if (headerMajorItems > g_things.getOtbMajorVersion()) {
         g_logger.error("This map was saved with different OTB version.");
         return false;
     }
 
     uint32_t headerMinorItems =  fin->getU32();
-    if (headerMinorItems > g_itemLoader.dwMinorVersion)
+    if (headerMinorItems > g_things.getOtbMinorVersion())
         g_logger.warning("This map needs an updated OTB.");
 
-    uint8 node = fin->readNode(root, type);
+    uint8 node = fin->readNextNode(root, type);
     if (type != OTBM_MAP_DATA) {
         g_logger.error("Could not read data node.");
         return false;
@@ -124,7 +128,7 @@ bool Map::loadOTBM(const std::string& fileName)
 
     uint8 nodeMapData;
     do {
-        nodeMapData = fin->readNode(node, type);
+        nodeMapData = fin->readNextNode(node, type);
 
         if (type == OTBM_TILE_AREA) {
             uint16 baseX = fin->getU16(), baseY = fin->getU16();
@@ -132,7 +136,7 @@ bool Map::loadOTBM(const std::string& fileName)
 
             uint8 nodeTile;
             do {
-                nodeTile = fin->readNode(nodeMapData, type);
+                nodeTile = fin->readNextNode(nodeMapData, type);
 
                 if (type == OTBM_TILE || type == OTBM_HOUSETILE) {
                     TilePtr tile = 0;
@@ -194,7 +198,7 @@ bool Map::loadOTBM(const std::string& fileName)
 
                     uint8 nodeItem;
                     do {
-                        nodeItem = fin->readNode(nodeTile, type);
+                        nodeItem = fin->readNextNode(nodeTile, type);
 
                         if (type == OTBM_ITEM) {
                             ItemPtr item = Item::create(fin->getU16());
@@ -204,8 +208,8 @@ bool Map::loadOTBM(const std::string& fileName)
                             }
 
                             if (item->unserializeItemNode(fin, nodeItem)) {
-                                if (/* house  && */item->isMovable()) {
-                                    g_logger.warning(stdext::format("Movable item found in house: %d at pos %d %d %d", item->getId(),
+                                if (/* house  && */item->isMoveable()) {
+                                    g_logger.warning(stdext::format("Moveable item found in house: %d at pos %d %d %d", item->getId(),
                                                                     px, py, pz));
                                     item = 0;
                                 } else if (tile) {
@@ -242,7 +246,7 @@ bool Map::loadOTBM(const std::string& fileName)
         } else if (type == OTBM_TOWNS) {
             uint8 nodeTown;
             do {
-                nodeTown = fin->readNode(nodeMapData, type);
+                nodeTown = fin->readNextNode(nodeMapData, type);
 
                 if (type == OTBM_TOWN) {
                     uint32 townId = fin->getU32();
@@ -257,7 +261,7 @@ bool Map::loadOTBM(const std::string& fileName)
         } else if (type == OTBM_WAYPOINTS && headerVersion > 1) {
             uint8 nodeWaypoint;
             do {
-                nodeWaypoint = fin->readNode(nodeMapData, type);
+                nodeWaypoint = fin->readNextNode(nodeMapData, type);
 
                 if (type == OTBM_WAYPOINT) {
                     std::string name = fin->getString();
@@ -274,7 +278,7 @@ bool Map::loadOTBM(const std::string& fileName)
     return true;
 }
 
-bool Map::loadOTCM(const std::string& fileName)
+bool Map::loadOtcm(const std::string& fileName)
 {
     if(!g_resources.fileExists(fileName)) {
         g_logger.error(stdext::format("Unable to load map '%s'", fileName));
@@ -305,7 +309,7 @@ bool Map::loadOTCM(const std::string& fileName)
     return true;
 }
 
-void Map::saveOTCM(const std::string& fileName)
+void Map::saveOtcm(const std::string& fileName)
 {
     std::stringstream out;
 

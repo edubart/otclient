@@ -7,8 +7,8 @@ local function sendLoginPacket(protocol)
   msg:addU16(1) -- todo: ClientOs
   msg:addU16(g_game.getClientVersion())
 
-  msg:addU32(g_thingsType.getSignature())
-  msg:addU32(g_sprites.getSignature())
+  msg:addU32(g_things.getDatSignature())
+  msg:addU32(g_sprites.getSprSignature())
   msg:addU32(0) -- todo: pic signature
 
   local paddingBytes = 128

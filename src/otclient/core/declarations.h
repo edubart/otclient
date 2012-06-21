@@ -41,16 +41,13 @@ class Effect;
 class Missile;
 class AnimatedText;
 class StaticText;
-class ThingType;
-class ThingsType;
-class ItemShader;
-class ItemData;
+class ThingTypeDat;
+class ThingTypeOtb;
 
 typedef std::shared_ptr<MapView> MapViewPtr;
 typedef std::shared_ptr<Tile> TilePtr;
 typedef std::shared_ptr<Thing> ThingPtr;
 typedef std::shared_ptr<Item> ItemPtr;
-typedef std::shared_ptr<ItemData> ItemDataPtr;
 typedef std::shared_ptr<Container> ContainerPtr;
 typedef std::shared_ptr<Creature> CreaturePtr;
 typedef std::shared_ptr<Monster> MonsterPtr;
@@ -61,10 +58,11 @@ typedef std::shared_ptr<Effect> EffectPtr;
 typedef std::shared_ptr<Missile> MissilePtr;
 typedef std::shared_ptr<AnimatedText> AnimatedTextPtr;
 typedef std::shared_ptr<StaticText> StaticTextPtr;
-typedef std::shared_ptr<ItemShader> ItemShaderPtr;
+typedef std::shared_ptr<ThingTypeDat> ThingTypeDatPtr;
+typedef std::shared_ptr<ThingTypeOtb> ThingTypeOtbPtr;
 
 typedef std::vector<ThingPtr> ThingList;
-typedef std::vector<ThingType> ThingTypeList;
-typedef std::vector<ItemDataPtr> ItemDataList;
+typedef std::vector<ThingTypeDatPtr> ThingTypeDatList;
+typedef std::vector<ThingTypeOtbPtr> ThingTypeOtbList;
 
 #endif

@@ -137,7 +137,7 @@ bool FileStream::seek(int pos)
 
 int FileStream::size()
 {
-    if(m_fileHandle) 
+    if(m_fileHandle)
         return PHYSFS_fileLength(m_fileHandle);
     else
         return m_cacheBuffer.size();
@@ -249,28 +249,30 @@ std::string FileStream::getString()
     return str;
 }
 
-uint8 FileStream::readNode(uint8 &oldNode, uint32 &type)
+uint8 FileStream::readFirstNode(uint32& type)
 {
-    if (!oldNode) {
-        if ((oldNode = getU8()) == 0xFE) {
-            type = getU32();
-            return oldNode;
-        } else {
-            dump << "Failed to read new node.";
-            return 0;
-        }
-    }
+    dump << "first";
+    uint8 node = getU8();
+    if(node != NODE_START)
+        stdext::throw_exception("failed to read first node");
+    type = getU32();
+    return node;
+}
 
-    assert(getU8() == 0xFF);
-    if ((oldNode = getU8()) == 0xFE) {
-        type = getU32();
-        return oldNode;
-    } else {
-        dump << "Failed to read node with old type: " << type;
-        return 0;
-    }
+uint8 FileStream::readNextNode(uint8 oldNode, uint32& type)
+{
+    dump << "next";
+    // end of old node
+    if(getU8() != NODE_END)
+        stdext::throw_exception("node not ended");
 
-    return 0;
+    // next node
+    uint8 node = getU8();
+    if(oldNode != NODE_START)
+        stdext::throw_exception("invalid node start");
+
+    type = getU32();
+    return node;
 }
 
 void FileStream::addU8(uint8 v)

@@ -29,6 +29,12 @@ struct PHYSFS_File;
 
 class FileStream
 {
+    enum  {
+        NODE_START = 0xFE,
+        NODE_END = 0xFF,
+        ESCAPE_CHAR = 0xFD,
+    };
+
 protected:
     FileStream(const std::string& name, PHYSFS_File *fileHandle);
 
@@ -59,7 +65,9 @@ public:
     void addU32(uint8 v);
     void addU64(uint8 v);
 
-    uint8 readNode(uint8 &oldNode, uint32 &type);
+    uint8 readFirstNode(uint32& type);
+    uint8 readNextNode(uint8 oldNode, uint32& type);
+
 private:
     std::string m_name;
     PHYSFS_File *m_fileHandle;

@@ -22,7 +22,7 @@
 
 #include "thing.h"
 #include "spritemanager.h"
-#include "thingstype.h"
+#include "thingtypemanager.h"
 #include <framework/graphics/graphics.h>
 #include "map.h"
 #include "tile.h"
@@ -30,7 +30,8 @@
 
 Thing::Thing()
 {
-    m_type = g_thingsType.getEmptyThingType();
+    m_datType = g_things.getNullDatType();
+    m_otbType = g_things.getNullOtbType();
 }
 
 int Thing::getStackPriority()

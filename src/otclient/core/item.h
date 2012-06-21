@@ -100,7 +100,7 @@ public:
     bool unserializeItemNode(FileStreamPtr fin, uint8) { return unserializeAttr(fin); }
     void readAttr(AttrTypes_t attrType, FileStreamPtr fin);
 
-    bool isMovable() { return false; }
+    bool isMoveable() { return false; }
 
 private:
     uint16 m_id;

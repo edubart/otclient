@@ -27,6 +27,7 @@
 #include <otclient/core/game.h>
 #include <otclient/core/map.h>
 #include <otclient/core/shadermanager.h>
+#include "core/spritemanager.h"
 #include <framework/core/configmanager.h>
 
 OTClient g_otclient;
@@ -37,6 +38,7 @@ void OTClient::init(const std::vector<std::string>& args)
     registerLuaFunctions();
 
     g_shaders.init();
+    g_things.init();
 
     //TODO: restore options
 /*
@@ -77,7 +79,8 @@ void OTClient::init(const std::vector<std::string>& args)
 
 void OTClient::terminate()
 {
+    g_map.terminate();
+    g_things.terminate();
+    g_sprites.termiante();
     g_shaders.terminate();
-    g_map.clean();
-    g_thingsType.unload();
 }

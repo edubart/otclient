@@ -21,7 +21,7 @@
  */
 
 #include "item.h"
-#include "thingstype.h"
+#include "thingtypemanager.h"
 #include "spritemanager.h"
 #include "thing.h"
 #include "tile.h"
@@ -42,11 +42,7 @@ Item::Item() : Thing()
 ItemPtr Item::create(int id)
 {
     ItemPtr item = ItemPtr(new Item);
-    if(id < g_thingsType.getFirstItemId() || id > g_thingsType.getMaxItemid())
-        g_logger.traceError(stdext::format("invalid item id %d", id));
-    else {
-        item->setId(id);
-    }
+    item->setId(id);
     return item;
 }
 
@@ -66,7 +62,7 @@ void Item::draw(const Point& dest, float scaleFactor, bool animate)
 
     // determine x,y,z patterns
     int xPattern = 0, yPattern = 0, zPattern = 0;
-    if(isStackable() && getNumPatternsX() == 4 && getNumPatternsY() == 2) {
+    if(isStackable() && getNumPatternX() == 4 && getNumPatternY() == 2) {
         if(m_countOrSubType <= 0) {
             xPattern = 0;
             yPattern = 0;
@@ -90,9 +86,9 @@ void Item::draw(const Point& dest, float scaleFactor, bool animate)
         const TilePtr& tile = getTile();
         if(tile) {
             if(tile->mustHookSouth())
-                xPattern = getNumPatternsX() >= 2 ? 1 : 0;
+                xPattern = getNumPatternX() >= 2 ? 1 : 0;
             else if(tile->mustHookEast())
-                xPattern = getNumPatternsX() >= 3 ? 2 : 0;
+                xPattern = getNumPatternX() >= 3 ? 2 : 0;
         }
     } else if(isFluid() || isFluidContainer()) {
         int color = Otc::FluidTransparent;
@@ -156,12 +152,12 @@ void Item::draw(const Point& dest, float scaleFactor, bool animate)
                 break;
         }
 
-        xPattern = (color % 4) % getNumPatternsX();
-        yPattern = (color / 4) % getNumPatternsY();
+        xPattern = (color % 4) % getNumPatternX();
+        yPattern = (color / 4) % getNumPatternY();
     } else if(isGround() || isOnBottom()) {
-        xPattern = m_position.x % getNumPatternsX();
-        yPattern = m_position.y % getNumPatternsY();
-        zPattern = m_position.z % getNumPatternsZ();
+        xPattern = m_position.x % getNumPatternX();
+        yPattern = m_position.y % getNumPatternY();
+        zPattern = m_position.z % getNumPatternZ();
     }
 
     bool useShader = g_painter->hasShaders() && m_shaderProgram;
@@ -172,7 +168,7 @@ void Item::draw(const Point& dest, float scaleFactor, bool animate)
         g_painter->setShaderProgram(m_shaderProgram);
     }
 
-    m_type->draw(dest, scaleFactor, 0, xPattern, yPattern, zPattern, animationPhase);
+    m_datType->draw(dest, scaleFactor, 0, xPattern, yPattern, zPattern, animationPhase);
 
     if(useShader)
         g_painter->resetShaderProgram();
@@ -180,15 +176,9 @@ void Item::draw(const Point& dest, float scaleFactor, bool animate)
 
 void Item::setId(uint32 id)
 {
-    if(id < g_thingsType.getFirstItemId() || id > g_thingsType.getMaxItemid()) {
-        g_logger.traceError(stdext::format("invalid item id %d", id));
-        return;
-    }
+    m_datType = g_things.getDatType(id, DatItemCategory);
     m_id = id;
-    m_type = g_thingsType.getThingType(m_id, ThingsType::Item);
 }
-
-
 
 bool Item::unserializeAttr(FileStreamPtr fin)
 {

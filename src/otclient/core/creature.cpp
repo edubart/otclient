@@ -21,7 +21,7 @@
  */
 
 #include "creature.h"
-#include "thingstype.h"
+#include "thingtypemanager.h"
 #include "localplayer.h"
 #include "map.h"
 #include "tile.h"
@@ -89,7 +89,7 @@ void Creature::draw(const Point& dest, float scaleFactor, bool animate)
 void Creature::internalDrawOutfit(const Point& dest, float scaleFactor, bool animateWalk, bool animateIdle, Otc::Direction direction)
 {
     // outfit is a real creature
-    if(m_outfit.getCategory() == ThingsType::Creature) {
+    if(m_outfit.getCategory() == DatCreatureCategory) {
         int animationPhase = animateWalk ? m_walkAnimationPhase : 0;
 
         if(isAnimateAlways() && animateIdle) {
@@ -107,26 +107,26 @@ void Creature::internalDrawOutfit(const Point& dest, float scaleFactor, bool ani
             xPattern = direction;
 
         // yPattern => creature addon
-        for(int yPattern = 0; yPattern < getNumPatternsY(); yPattern++) {
+        for(int yPattern = 0; yPattern < getNumPatternY(); yPattern++) {
 
             // continue if we dont have this addon
             if(yPattern > 0 && !(m_outfit.getAddons() & (1 << (yPattern-1))))
                 continue;
 
-            m_type->draw(dest, scaleFactor, 0, xPattern, yPattern, 0, animationPhase);
+            m_datType->draw(dest, scaleFactor, 0, xPattern, yPattern, 0, animationPhase);
 
             if(getLayers() > 1) {
                 Color oldColor = g_painter->getColor();
                 Painter::CompositionMode oldComposition = g_painter->getCompositionMode();
                 g_painter->setCompositionMode(Painter::CompositionMode_Multiply);
                 g_painter->setColor(m_outfit.getHeadColor());
-                m_type->draw(dest, scaleFactor, ThingType::YellowMask, xPattern, yPattern, 0, animationPhase);
+                m_datType->draw(dest, scaleFactor, DatYellowMask, xPattern, yPattern, 0, animationPhase);
                 g_painter->setColor(m_outfit.getBodyColor());
-                m_type->draw(dest, scaleFactor, ThingType::RedMask, xPattern, yPattern, 0, animationPhase);
+                m_datType->draw(dest, scaleFactor, DatRedMask, xPattern, yPattern, 0, animationPhase);
                 g_painter->setColor(m_outfit.getLegsColor());
-                m_type->draw(dest, scaleFactor, ThingType::GreenMask, xPattern, yPattern, 0, animationPhase);
+                m_datType->draw(dest, scaleFactor, DatGreenMask, xPattern, yPattern, 0, animationPhase);
                 g_painter->setColor(m_outfit.getFeetColor());
-                m_type->draw(dest, scaleFactor, ThingType::BlueMask, xPattern, yPattern, 0, animationPhase);
+                m_datType->draw(dest, scaleFactor, DatBlueMask, xPattern, yPattern, 0, animationPhase);
                 g_painter->setColor(oldColor);
                 g_painter->setCompositionMode(oldComposition);
             }
@@ -139,7 +139,7 @@ void Creature::internalDrawOutfit(const Point& dest, float scaleFactor, bool ani
 
         // when creature is an effect we cant render the first and last animation phase,
         // instead we should loop in the phases between
-        if(m_outfit.getCategory() == ThingsType::Effect) {
+        if(m_outfit.getCategory() == DatEffectCategory) {
             animationPhases = std::max(1, animationPhases-2);
             animateTicks = Otc::INVISIBLE_TICKS_PER_FRAME;
         }
@@ -151,10 +151,10 @@ void Creature::internalDrawOutfit(const Point& dest, float scaleFactor, bool ani
                 animationPhase = animationPhases-1;
         }
 
-        if(m_outfit.getCategory() == ThingsType::Effect)
+        if(m_outfit.getCategory() == DatEffectCategory)
             animationPhase = std::min(animationPhase+1, getAnimationPhases());
 
-        m_type->draw(dest, scaleFactor, 0, 0, 0, 0, animationPhase);
+        m_datType->draw(dest, scaleFactor, 0, 0, 0, 0, animationPhase);
     }
 }
 
@@ -301,7 +301,7 @@ void Creature::stopWalk()
 void Creature::updateWalkAnimation(int totalPixelsWalked)
 {
     // update outfit animation
-    if(m_outfit.getCategory() != ThingsType::Creature)
+    if(m_outfit.getCategory() != DatCreatureCategory)
         return;
 
     int footAnimPhases = getAnimationPhases() - 1;
@@ -459,7 +459,7 @@ void Creature::setOutfit(const Outfit& outfit)
 {
     m_walkAnimationPhase = 0; // might happen when player is walking and outfit is changed.
     m_outfit = outfit;
-    m_type = g_thingsType.getThingType(outfit.getId(), outfit.getCategory());
+    m_datType = g_things.getDatType(outfit.getId(), outfit.getCategory());
 }
 
 void Creature::setSkull(uint8 skull)

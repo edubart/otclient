@@ -20,32 +20,49 @@
  * THE SOFTWARE.
  */
 
-#include "effect.h"
-#include "map.h"
-#include <framework/core/eventdispatcher.h>
 
-void Effect::draw(const Point& dest, float scaleFactor, bool animate)
+#include "thingtypeotb.h"
+
+#include <framework/core/filestream.h>
+
+ThingTypeOtb::ThingTypeOtb()
 {
-    if(m_id == 0)
-        return;
-
-    int animationPhase = 0;
-    if(animate)
-        animationPhase = std::min((int)(m_animationTimer.ticksElapsed() / Otc::EFFECT_TICKS_PER_FRAME), getAnimationPhases() - 1);
-    m_datType->draw(dest, scaleFactor, 0, 0, 0, 0, animationPhase);
+    m_category = OtbInvalidCateogry;
 }
 
-void Effect::startAnimation()
+void ThingTypeOtb::unserialize(OtbCategory category, const FileStreamPtr& fin)
 {
-    m_animationTimer.restart();
+    m_null = false;
+    m_category = category;
+    fin->getU32(); // skip flags
 
-    // schedule removal
-    auto self = asEffect();
-    g_eventDispatcher.scheduleEvent([self]() { g_map.removeThing(self); }, Otc::EFFECT_TICKS_PER_FRAME * getAnimationPhases());
-}
+    bool done = false;
+    for(int i=0;i<OtbLastAttrib; ++i) {
+        int attr = fin->getU8();
 
-void Effect::setId(uint32 id)
-{
-    m_id = id;
-    m_datType = g_things.getDatType(m_id, DatEffectCategory);
+        if(attr == 0) {
+            done = true;
+            break;
+        }
+
+        uint16 len = fin->getU16();
+
+        switch(attr) {
+            case OtbAttribServerId:
+                m_serverId = fin->getU16();
+                break;
+            case OtbAttribClientId:
+                m_clientId = fin->getU16();
+                break;
+            case OtbAttribSpeed:
+                fin->getU16(); // skip speed
+                break;
+            default:
+                fin->seek(len); // skip attribute
+                break;
+        }
+    }
+
+    if(!done)
+        stdext::throw_exception("failed to unserialize otb type, corrupt otb?");
 }

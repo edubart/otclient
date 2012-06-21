@@ -48,8 +48,6 @@ SET(otclient_SOURCES ${otclient_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/core/shadermanager.h
     ${CMAKE_CURRENT_LIST_DIR}/core/item.cpp
     ${CMAKE_CURRENT_LIST_DIR}/core/item.h
-    ${CMAKE_CURRENT_LIST_DIR}/core/itemloader.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/core/itemloader.h
     ${CMAKE_CURRENT_LIST_DIR}/core/localplayer.cpp
     ${CMAKE_CURRENT_LIST_DIR}/core/localplayer.h
     ${CMAKE_CURRENT_LIST_DIR}/core/map.cpp
@@ -68,10 +66,12 @@ SET(otclient_SOURCES ${otclient_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/core/statictext.h
     ${CMAKE_CURRENT_LIST_DIR}/core/thing.cpp
     ${CMAKE_CURRENT_LIST_DIR}/core/thing.h
-    ${CMAKE_CURRENT_LIST_DIR}/core/thingstype.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/core/thingstype.h
-    ${CMAKE_CURRENT_LIST_DIR}/core/thingtype.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/core/thingtype.h
+    ${CMAKE_CURRENT_LIST_DIR}/core/thingtypemanager.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/core/thingtypemanager.h
+    ${CMAKE_CURRENT_LIST_DIR}/core/thingtypedat.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/core/thingtypedat.h
+    ${CMAKE_CURRENT_LIST_DIR}/core/thingtypeotb.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/core/thingtypeotb.h
     ${CMAKE_CURRENT_LIST_DIR}/core/tile.cpp
     ${CMAKE_CURRENT_LIST_DIR}/core/tile.h
 

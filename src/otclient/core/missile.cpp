@@ -21,7 +21,7 @@
  */
 
 #include "missile.h"
-#include "thingstype.h"
+#include "thingtypemanager.h"
 #include "map.h"
 #include "tile.h"
 #include <framework/core/clock.h>
@@ -63,7 +63,7 @@ void Missile::draw(const Point& dest, float scaleFactor, bool animate)
     }
 
     float fraction = m_animationTimer.ticksElapsed() / m_duration;
-    m_type->draw(dest + m_delta * fraction * scaleFactor, scaleFactor, 0, xPattern, yPattern, 0, 0);
+    m_datType->draw(dest + m_delta * fraction * scaleFactor, scaleFactor, 0, xPattern, yPattern, 0, 0);
 }
 
 void Missile::setPath(const Position& fromPosition, const Position& toPosition)
@@ -84,5 +84,5 @@ void Missile::setPath(const Position& fromPosition, const Position& toPosition)
 void Missile::setId(uint32 id)
 {
     m_id = id;
-    m_type = g_thingsType.getThingType(m_id, ThingsType::Missile);
+    m_datType = g_things.getDatType(m_id, DatMissileCategory);
 }

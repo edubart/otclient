@@ -35,7 +35,7 @@
 #include <otclient/core/player.h>
 #include <otclient/core/localplayer.h>
 #include <otclient/core/map.h>
-#include <otclient/core/thingstype.h>
+#include <otclient/core/thingtypemanager.h>
 #include <otclient/core/spritemanager.h>
 #include <otclient/core/shadermanager.h>
 #include <otclient/net/protocolgame.h>
@@ -47,16 +47,17 @@
 
 void OTClient::registerLuaFunctions()
 {
-    g_lua.registerSingletonClass("g_thingsType");
-    g_lua.bindSingletonFunction("g_thingsType", "load", &ThingsType::load, &g_thingsType);
-    g_lua.bindSingletonFunction("g_thingsType", "isLoaded", &ThingsType::isLoaded, &g_thingsType);
-    g_lua.bindSingletonFunction("g_thingsType", "getSignature", &ThingsType::getSignature, &g_thingsType);
+    g_lua.registerSingletonClass("g_things");
+    g_lua.bindSingletonFunction("g_things", "loadDat", &ThingTypeManager::loadDat, &g_things);
+    g_lua.bindSingletonFunction("g_things", "loadOtb", &ThingTypeManager::loadOtb, &g_things);
+    g_lua.bindSingletonFunction("g_things", "loadXml", &ThingTypeManager::loadXml, &g_things);
+    g_lua.bindSingletonFunction("g_things", "getDatSignature", &ThingTypeManager::getDatSignature, &g_things);
 
     g_lua.registerSingletonClass("g_sprites");
-    g_lua.bindSingletonFunction("g_sprites", "load", &SpriteManager::load, &g_sprites);
+    g_lua.bindSingletonFunction("g_sprites", "loadSpr", &SpriteManager::loadSpr, &g_sprites);
     g_lua.bindSingletonFunction("g_sprites", "unload", &SpriteManager::unload, &g_sprites);
     g_lua.bindSingletonFunction("g_sprites", "isLoaded", &SpriteManager::isLoaded, &g_sprites);
-    g_lua.bindSingletonFunction("g_sprites", "getSignature", &SpriteManager::getSignature, &g_sprites);
+    g_lua.bindSingletonFunction("g_sprites", "getSprSignature", &SpriteManager::getSignature, &g_sprites);
     g_lua.bindSingletonFunction("g_sprites", "getSpritesCount", &SpriteManager::getSpritesCount, &g_sprites);
 
     g_lua.registerSingletonClass("g_map");
@@ -76,10 +77,10 @@ void OTClient::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_map", "removeCreatureById", &Map::removeCreatureById, &g_map);
     g_lua.bindSingletonFunction("g_map", "getSpectators", &Map::getSpectators, &g_map);
     g_lua.bindSingletonFunction("g_map", "findPath", &Map::findPath, &g_map);
-    g_lua.bindSingletonFunction("g_map", "loadOTBM", &Map::loadOTBM, &g_map);
-    //g_lua.bindSingletonFunction("g_map", "saveOTBM", &Map::save, &g_map);
-    g_lua.bindSingletonFunction("g_map", "loadOTCM", &Map::loadOTCM, &g_map);
-    g_lua.bindSingletonFunction("g_map", "saveOTCM", &Map::saveOTCM, &g_map);
+    g_lua.bindSingletonFunction("g_map", "loadOtbm", &Map::loadOtbm, &g_map);
+    //g_lua.bindSingletonFunction("g_map", "saveOtbm", &Map::saveOtbm, &g_map);
+    g_lua.bindSingletonFunction("g_map", "loadOtcm", &Map::loadOtcm, &g_map);
+    g_lua.bindSingletonFunction("g_map", "saveOtcm", &Map::saveOtcm, &g_map);
 
     g_lua.registerSingletonClass("g_game");
     g_lua.bindSingletonFunction("g_game", "loginWorld", &Game::loginWorld, &g_game);

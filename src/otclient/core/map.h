@@ -78,15 +78,17 @@ enum OTBM_NodeTypes_t
 class Map
 {
 public:
+    void terminate();
+
     void addMapView(const MapViewPtr& mapView);
     void removeMapView(const MapViewPtr& mapView);
     void notificateTileUpdateToMapViews(const Position& pos);
 
-    bool loadOTCM(const std::string& fileName);
-    void saveOTCM(const std::string& fileName);
+    bool loadOtcm(const std::string& fileName);
+    void saveOtcm(const std::string& fileName);
 
-    bool loadOTBM(const std::string& fileName);
-    //void saveOTBM(const std::string& fileName);
+    bool loadOtbm(const std::string& fileName);
+    //void saveOtbm(const std::string& fileName);
 
     void clean();
     void cleanDynamicThings();

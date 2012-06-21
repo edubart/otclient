@@ -23,7 +23,7 @@
 #include "protocolgame.h"
 
 #include <otclient/core/localplayer.h>
-#include <otclient/core/thingstype.h>
+#include <otclient/core/thingtypemanager.h>
 #include <otclient/core/game.h>
 #include <otclient/core/map.h>
 #include <otclient/core/item.h>
@@ -1317,7 +1317,7 @@ Outfit ProtocolGame::getOutfit(const InputMessagePtr& msg)
 
     int lookType = msg->getU16();
     if(lookType != 0) {
-        outfit.setCategory(ThingsType::Creature);
+        outfit.setCategory(DatCreatureCategory);
         int head = msg->getU8();
         int body = msg->getU8();
         int legs = msg->getU8();
@@ -1334,11 +1334,11 @@ Outfit ProtocolGame::getOutfit(const InputMessagePtr& msg)
     else {
         int lookTypeEx = msg->getU16();
         if(lookTypeEx == 0) {
-            outfit.setCategory(ThingsType::Effect);
+            outfit.setCategory(DatEffectCategory);
             outfit.setId(13);
         }
         else {
-            outfit.setCategory(ThingsType::Item);
+            outfit.setCategory(DatItemCategory);
             outfit.setId(lookTypeEx);
         }
     }
@@ -1492,7 +1492,7 @@ ItemPtr ProtocolGame::getItem(const InputMessagePtr& msg, int id)
 
     ItemPtr item = Item::create(id);
     if(item->getId() == 0)
-        stdext::throw_exception("unable to create item with invalid id");
+        stdext::throw_exception("unable to create item with invalid id 0");
 
     if(item->isStackable() || item->isFluidContainer() || item->isFluid())
         item->setCountOrSubType(msg->getU8());

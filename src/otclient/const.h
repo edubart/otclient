@@ -84,7 +84,7 @@ namespace Otc
         DatFluidContainer,
         DatSplash,
         DatBlockWalk,
-        DatNotMovable,
+        DatNotMoveable,
         DatBlockProjectile,
         DatBlockPathFind,
         DatPickupable,

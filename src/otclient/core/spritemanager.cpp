@@ -33,7 +33,12 @@ SpriteManager::SpriteManager()
     m_signature = 0;
 }
 
-bool SpriteManager::load(const std::string& file)
+void SpriteManager::termiante()
+{
+    unload();
+}
+
+bool SpriteManager::loadSpr(const std::string& file)
 {
     try {
         m_spritesFile = g_resources.openFile(file);
@@ -61,6 +66,11 @@ void SpriteManager::unload()
 
 ImagePtr SpriteManager::getSpriteImage(int id)
 {
+    enum {
+        SPRITE_SIZE = 32,
+        SPRITE_DATA_SIZE = SPRITE_SIZE*SPRITE_SIZE*4
+    };
+
     if(id == 0)
         return nullptr;
 
@@ -80,11 +90,6 @@ ImagePtr SpriteManager::getSpriteImage(int id)
     m_spritesFile->getU8();
 
     uint16 pixelDataSize = m_spritesFile->getU16();
-
-    enum {
-        SPRITE_SIZE = 32,
-        SPRITE_DATA_SIZE = SPRITE_SIZE*SPRITE_SIZE*4
-    };
 
     ImagePtr image(new Image(Size(SPRITE_SIZE, SPRITE_SIZE)));
 

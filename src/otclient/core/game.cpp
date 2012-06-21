@@ -605,7 +605,7 @@ void Game::use(const ThingPtr& thing)
 
 void Game::useInventoryItem(int itemId)
 {
-    if(!canPerformGameAction() || !g_thingsType.isValidItemId(itemId))
+    if(!canPerformGameAction() || !g_things.isValidDatId(itemId, DatItemCategory))
         return;
 
     Position pos = Position(0xFFFF, 0, 0); // means that is a item in inventory
