@@ -48,6 +48,8 @@ SET(otclient_SOURCES ${otclient_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/core/shadermanager.h
     ${CMAKE_CURRENT_LIST_DIR}/core/item.cpp
     ${CMAKE_CURRENT_LIST_DIR}/core/item.h
+    ${CMAKE_CURRENT_LIST_DIR}/core/itemloader.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/core/itemloader.h
     ${CMAKE_CURRENT_LIST_DIR}/core/localplayer.cpp
     ${CMAKE_CURRENT_LIST_DIR}/core/localplayer.h
     ${CMAKE_CURRENT_LIST_DIR}/core/map.cpp
