@@ -25,7 +25,6 @@
 
 #include "declarations.h"
 #include "thingtypedat.h"
-#include "thingtypeotb.h"
 #include <framework/luascript/luaobject.h>
 
 struct Light
@@ -135,7 +134,6 @@ public:
 protected:
     Position m_position;
     ThingTypeDatPtr m_datType;
-    ThingTypeOtbPtr m_otbType;
 };
 
 #endif

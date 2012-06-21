@@ -25,6 +25,7 @@
 
 #include <framework/global.h>
 #include "thing.h"
+#include "thingtypeotb.h"
 
 enum AttrTypes_t {
     ATTR_END = 0,
@@ -73,10 +74,12 @@ public:
     Item();
 
     static ItemPtr create(int id);
+    static ItemPtr createFromOtb(int id);
 
     void draw(const Point& dest, float scaleFactor, bool animate);
 
     void setId(uint32 id);
+    void setOtbId(uint16 id);
     void setCountOrSubType(int value) { m_countOrSubType = value; }
     void setCount(int count) { m_countOrSubType = count; }
     void setSubType(int subType) { m_countOrSubType = subType; }
@@ -108,6 +111,7 @@ private:
     uint32 m_actionId, m_uniqueId;
     std::string m_name, m_text, m_description;
     PainterShaderProgramPtr m_shaderProgram;
+    ThingTypeOtbPtr m_otbType;
 };
 
 #endif

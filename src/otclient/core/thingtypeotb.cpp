@@ -28,37 +28,45 @@
 ThingTypeOtb::ThingTypeOtb()
 {
     m_category = OtbInvalidCateogry;
+    m_serverId = 0;
+    m_clientId = 0;
 }
 
-void ThingTypeOtb::unserialize(OtbCategory category, const FileStreamPtr& fin)
+void ThingTypeOtb::unserialize(const FileStreamPtr& fin)
 {
     m_null = false;
-    m_category = category;
+
+    uint8 zero = fin->getU8();
+    assert(zero == 0);
+    m_category = (OtbCategory)fin->getU8();
+
     fin->getU32(); // skip flags
 
     bool done = false;
     for(int i=0;i<OtbLastAttrib; ++i) {
         int attr = fin->getU8();
-
         if(attr == 0) {
+            done = true;
+            break;
+        } else if(attr == 0xFF) {
+            fin->seek(fin->tell() - 1);
             done = true;
             break;
         }
 
-        uint16 len = fin->getU16();
+        int len = fin->getU16();
 
         switch(attr) {
             case OtbAttribServerId:
                 m_serverId = fin->getU16();
+                assert(len == 2);
                 break;
             case OtbAttribClientId:
                 m_clientId = fin->getU16();
-                break;
-            case OtbAttribSpeed:
-                fin->getU16(); // skip speed
+                assert(len == 2);
                 break;
             default:
-                fin->seek(len); // skip attribute
+                fin->skip(len); // skip attribute
                 break;
         }
     }

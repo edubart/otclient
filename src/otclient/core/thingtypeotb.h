@@ -84,7 +84,8 @@ class ThingTypeOtb : public LuaObject
 public:
     ThingTypeOtb();
 
-    void unserialize(OtbCategory category, const FileStreamPtr& fin);
+    void unserialize(const FileStreamPtr& fin);
+    void unserializeXML();
 
     uint16 getServerId() { return m_serverId; }
     uint16 getClientId() { return m_clientId; }

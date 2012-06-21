@@ -23,12 +23,12 @@
 #ifndef STATICTEXT_H
 #define STATICTEXT_H
 
-#include "thing.h"
 #include <framework/graphics/cachedtext.h>
 #include <framework/graphics/fontmanager.h>
 #include <framework/core/timer.h>
+#include <framework/luascript/luaobject.h>
 
-class StaticText : public Thing
+class StaticText : public LuaObject
 {
 public:
     StaticText();

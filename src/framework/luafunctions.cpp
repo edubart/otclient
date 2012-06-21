@@ -521,7 +521,7 @@ void Application::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_configs", "exists", &ConfigManager::exists, &g_configs);
     g_lua.bindSingletonFunction("g_configs", "remove", &ConfigManager::remove, &g_configs);
     g_lua.bindSingletonFunction("g_configs", "setNode", &ConfigManager::setNode, &g_configs);
-    g_lua.bindSingletonFunction("g_configs", "addNode", &ConfigManager::addNode, &g_configs);
+    g_lua.bindSingletonFunction("g_configs", "mergeNode", &ConfigManager::mergeNode, &g_configs);
     g_lua.bindSingletonFunction("g_configs", "getNode", &ConfigManager::getNode, &g_configs);
 
     // PlatformWindow

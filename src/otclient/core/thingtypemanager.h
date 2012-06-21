@@ -40,6 +40,7 @@ public:
     bool loadXml(const std::string& file);
 
     void addOtbType(const ThingTypeOtbPtr& otbType);
+    ThingTypeOtbPtr findOtbForClientId(uint16 id);
 
     ThingTypeDatPtr& getNullDatType() { return m_nullDatType; }
     ThingTypeOtbPtr& getNullOtbType() { return m_nullOtbType; }

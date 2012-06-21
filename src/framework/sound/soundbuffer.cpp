@@ -46,7 +46,7 @@ bool SoundBuffer::fillBuffer(const SoundFilePtr& soundFile)
 
     DataBuffer<char> samples(soundFile->getSize());
     int read = soundFile->read(&samples[0], soundFile->getSize());
-    if(read <= 0) {
+    if(read == 0) {
         g_logger.error(stdext::format("unable to fill audio buffer data for '%s'", soundFile->getName()));
         return false;
     }

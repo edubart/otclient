@@ -45,7 +45,7 @@ bool ConfigManager::load(const std::string& file)
             m_confsDoc = confsDoc;
         return true;
     } catch(stdext::exception& e) {
-        g_logger.error(stdext::format("Unable to parse configuration file '%s'", e.what()));
+        g_logger.error(stdext::format("Unable to parse configuration file '%s': ", e.what()));
         return false;
     }
 }
@@ -121,10 +121,10 @@ void ConfigManager::remove(const std::string& key)
 void ConfigManager::setNode(const std::string& key, const OTMLNodePtr& node)
 {
     remove(key);
-    addNode(key, node);
+    mergeNode(key, node);
 }
 
-void ConfigManager::addNode(const std::string& key, const OTMLNodePtr& node)
+void ConfigManager::mergeNode(const std::string& key, const OTMLNodePtr& node)
 {
     OTMLNodePtr clone = node->clone();
     node->setTag(key);

@@ -87,17 +87,14 @@ int OggSoundFile::cb_seek(void* source, ogg_int64_t offset, int whence)
     FileStream *file = static_cast<FileStream*>(source);
     switch(whence) {
         case SEEK_SET:
-            if(file->seek(offset))
-                return 0;
-            break;
+            file->seek(offset);
+            return 0;
         case SEEK_CUR:
-            if(file->seek(file->tell() + offset))
-                return 0;
-            break;
+            file->seek(file->tell() + offset);
+            return 0;
         case SEEK_END:
-            if(file->seek(file->size() + offset))
-                return 0;
-            break;
+            file->seek(file->size() + offset);
+            return 0;
     }
     return -1;
 }

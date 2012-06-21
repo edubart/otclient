@@ -62,6 +62,7 @@ void SpriteManager::unload()
 {
     m_spritesCount = 0;
     m_signature = 0;
+    m_spritesFile = nullptr;
 }
 
 ImagePtr SpriteManager::getSpriteImage(int id)

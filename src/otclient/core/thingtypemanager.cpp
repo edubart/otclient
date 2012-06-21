@@ -94,6 +94,7 @@ bool ThingTypeManager::loadDat(const std::string& file)
 
 bool ThingTypeManager::loadOtb(const std::string& file)
 {
+    /*
     try {
         FileStreamPtr fin = g_resources.openFile(file);
         if (!fin)
@@ -102,21 +103,19 @@ bool ThingTypeManager::loadOtb(const std::string& file)
         m_otbVersion = fin->getU32();
 
         uint32 type = 0;
-        uint8 node = fin->readFirstNode(type);
+        uint8 node = 0;
+        fin->readNode(node, type);
 
         fin->getU32(); // flags
 
-        uint8 version = fin->getU8();
-        if(fin->getU8() == 0x01) { // version
-            fin->getU8(); // length
-            m_otbMajorVersion = fin->getU32();
-            m_otbMinorVersion = fin->getU32();
-            fin->getU32(); // build number
-        }
+        m_otbMajorVersion = fin->getU32();
+        m_otbMinorVersion = fin->getU32();
+        fin->getU32(); // build number
+        fin->skip(128);
 
-        while((node = fin->readNextNode(node, type))) {
+        while(fin->readNode(node, type)) {
             ThingTypeOtbPtr otbType(new ThingTypeOtb);
-            otbType->unserialize((OtbCategory)type, fin);
+            otbType->unserialize(fin);
             addOtbType(otbType);
         }
 
@@ -126,109 +125,115 @@ bool ThingTypeManager::loadOtb(const std::string& file)
         g_logger.error(stdext::format("failed to load otb '%s': %s", file, e.what()));
         return false;
     }
+    */
+    return false;
 }
 
 bool ThingTypeManager::loadXml(const std::string& file)
 {
     /*
-    TiXmlDocument doc(name.c_str());
-    if (!doc.LoadFile()) {
-        g_logger.error(stdext::format("failed to load xml '%s'", name));
-        return false;
-    }
+    try {
+        TiXmlDocument doc(file.c_str());
+        if (!doc.LoadFile()) {
+            g_logger.error(stdext::format("failed to load xml '%s'", file));
+            return false;
+        }
 
-    TiXmlElement* root = doc.FirstChildElement();
-    if (!root) {
-        g_logger.error("invalid xml root");
-        return false;
-    }
+        TiXmlElement* root = doc.FirstChildElement();
+        if (!root) {
+            g_logger.error("invalid xml root");
+            return false;
+        }
 
-    if (root->ValueTStr() != "items") {
-        g_logger.error("invalid xml tag name, should be 'items'");
-        return false;
-    }
+        if (root->ValueTStr() != "items") {
+            g_logger.error("invalid xml tag name, should be 'items'");
+            return false;
+        }
 
-    for (TiXmlElement *element = root->FirstChildElement(); element; element = element->NextSiblingElement()) {
-        if (element->ValueTStr() != "item")
-            continue;
+        for (TiXmlElement *element = root->FirstChildElement(); element; element = element->NextSiblingElement()) {
+            if (element->ValueTStr() != "item")
+                continue;
 
-        std::string name = element->Attribute("id");
-        if (name.empty())
-            continue;
+            std::string name = element->Attribute("id");
+            if (name.empty())
+                continue;
 
-        uint16 id = stdext::unsafe_cast<uint16>(element->Attribute("id"));
-        uint16 idEx = 0;
-        if (!id) {
-            bool found = false;
-            // fallback into reading fromid and toid
-            uint16 fromid = stdext::unsafe_cast<uint16>(element->Attribute("fromid"));
-            uint16 toid = stdext::unsafe_cast<uint16>(element->Attribute("toid"));
-            ThingTypeOtbPtr iType;
-            for (int __id = fromid; __id < toid; ++__id) {
-                if (!(iType = getType(__id)))
+            uint16 id = stdext::unsafe_cast<uint16>(element->Attribute("id"));
+            uint16 idEx = 0;
+            if (!id) {
+                bool found = false;
+                // fallback into reading fromid and toid
+                uint16 fromid = stdext::unsafe_cast<uint16>(element->Attribute("fromid"));
+                uint16 toid = stdext::unsafe_cast<uint16>(element->Attribute("toid"));
+                ThingTypeOtbPtr iType;
+                for (int __id = fromid; __id < toid; ++__id) {
+                    if (!(iType = getType(__id)))
+                        continue;
+
+                    iType->name = name;
+                    idEx = iType->id == fromid ? fromid : toid;
+                    found = true;
+                }
+
+                if (!found)
+                    continue;
+            }
+
+            ThingTypeOtbPtr otbType = getType(id);
+            if (!otbType) {
+                otbType = ThingTypeOtbPtr(new ItemData);
+                otbType->id = idEx ? idEx : id;
+                otbType->name = name;
+                addType(otbType->id, otbType);
+            }
+
+            otbType->name = name;
+
+            for (TiXmlElement *attr = element->FirstChildElement(); attr; attr = attr->NextSiblingElement()) {
+                if (attr->ValueTStr() != "attribute")
                     continue;
 
-                iType->name = name;
-                idEx = iType->id == fromid ? fromid : toid;
-                found = true;
-            }
-
-            if (!found)
-                continue;
-        }
-
-        ThingTypeOtbPtr iType = getType(id);
-        if (!iType) {
-            iType = ThingTypeOtbPtr(new ItemData);
-            iType->id = idEx ? idEx : id;
-            iType->name = name;
-            addType(iType->id, iType);
-        }
-
-        iType->name = name;
-
-        for (TiXmlElement *attr = element->FirstChildElement(); attr; attr = attr->NextSiblingElement()) {
-            if (attr->ValueTStr() != "attribute")
-                continue;
-
-            std::string key = attr->Attribute("key");
-            std::string value = attr->Attribute("value");
-            if (key == "type") {
-                if (value == "magicfield")
-                    iType->category = IsMagicField;
-                else if (value == "key")
-                    iType->category = IsKey;
-                else if (value == "depot")
-                    iType->isDepot = true;
-                else if (value == "teleport")
-                    iType->category = IsTeleport;
-                else if (value == "bed")
-                    iType->isBed = true;
-                else if (value == "door")
-                    iType->category = IsDoor;
-            } else if (key == "name") {
-                iType->name = value;
-            } else if (key == "description") {
-                iType->description = value;
-            } else if (key == "weight") {
-                iType->weight = stdext::unsafe_cast<double>(stdext::unsafe_cast<double>(value) / 100.f);
-            } else if (key == "containerSize") {
-                int containerSize = stdext::unsafe_cast<int>(value);
-                if (containerSize)
-                    iType->containerSize = containerSize;
-                iType->category = IsContainer;
-            } else if (key == "writeable") {
-                if (!value.empty())
-                    iType->category = IsWritable;
-            } else if (key == "maxTextLen") {
-                iType->maxTextLength = stdext::unsafe_cast<int>(value);
-            } else if (key == "charges") {
-                iType->charges = stdext::unsafe_cast<int>(value);
+                std::string key = attr->Attribute("key");
+                std::string value = attr->Attribute("value");
+                if (key == "type") {
+                    if (value == "magicfield")
+                        otbType->category = IsMagicField;
+                    else if (value == "key")
+                        otbType->category = IsKey;
+                    else if (value == "depot")
+                        otbType->isDepot = true;
+                    else if (value == "teleport")
+                        otbType->category = IsTeleport;
+                    else if (value == "bed")
+                        otbType->isBed = true;
+                    else if (value == "door")
+                        otbType->category = IsDoor;
+                } else if (key == "name") {
+                    otbType->name = value;
+                } else if (key == "description") {
+                    otbType->description = value;
+                } else if (key == "weight") {
+                    otbType->weight = stdext::unsafe_cast<double>(stdext::unsafe_cast<double>(value) / 100.f);
+                } else if (key == "containerSize") {
+                    int containerSize = stdext::unsafe_cast<int>(value);
+                    if (containerSize)
+                        otbType->containerSize = containerSize;
+                    otbType->category = IsContainer;
+                } else if (key == "writeable") {
+                    if (!value.empty())
+                        otbType->category = IsWritable;
+                } else if (key == "maxTextLen") {
+                    otbType->maxTextLength = stdext::unsafe_cast<int>(value);
+                } else if (key == "charges") {
+                    otbType->charges = stdext::unsafe_cast<int>(value);
+                }
             }
         }
+
+        doc.Clear();
+    } catch(stdext::exception& e) {
+
     }
-
-    doc.Clear();
     return true;
     */
     return false;
@@ -240,6 +245,15 @@ void ThingTypeManager::addOtbType(const ThingTypeOtbPtr& otbType)
     if(m_otbTypes.size() <= id)
         m_otbTypes.resize(id+1, m_nullOtbType);
     m_otbTypes[id] = otbType;
+}
+
+ThingTypeOtbPtr ThingTypeManager::findOtbForClientId(uint16 id)
+{
+    for(const ThingTypeOtbPtr& otbType : m_otbTypes) {
+        if(otbType->getClientId() == id)
+            return otbType;
+    }
+    return m_nullOtbType;
 }
 
 ThingTypeDatPtr ThingTypeManager::getDatType(uint16 id, DatCategory category)

@@ -37,12 +37,20 @@ Item::Item() : Thing()
     m_id = 0;
     m_countOrSubType = 1;
     m_shaderProgram = g_shaders.getDefaultItemShader();
+    m_otbType = g_things.getNullOtbType();
 }
 
 ItemPtr Item::create(int id)
 {
     ItemPtr item = ItemPtr(new Item);
     item->setId(id);
+    return item;
+}
+
+ItemPtr Item::createFromOtb(int id)
+{
+    ItemPtr item = ItemPtr(new Item);
+    item->setOtbId(id);
     return item;
 }
 
@@ -177,7 +185,15 @@ void Item::draw(const Point& dest, float scaleFactor, bool animate)
 void Item::setId(uint32 id)
 {
     m_datType = g_things.getDatType(id, DatItemCategory);
-    m_id = id;
+    m_otbType = g_things.findOtbForClientId(id);
+    m_id = m_datType->getId();
+}
+
+void Item::setOtbId(uint16 id)
+{
+    m_otbType = g_things.getOtbType(id);
+    m_datType = g_things.getDatType(m_otbType->getClientId(), DatItemCategory);
+    m_id = m_datType->getId();
 }
 
 bool Item::unserializeAttr(FileStreamPtr fin)

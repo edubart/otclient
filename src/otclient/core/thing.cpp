@@ -31,7 +31,6 @@
 Thing::Thing()
 {
     m_datType = g_things.getNullDatType();
-    m_otbType = g_things.getNullOtbType();
 }
 
 int Thing::getStackPriority()

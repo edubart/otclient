@@ -29,26 +29,17 @@ struct PHYSFS_File;
 
 class FileStream
 {
-    enum  {
-        NODE_START = 0xFE,
-        NODE_END = 0xFF,
-        ESCAPE_CHAR = 0xFD,
-    };
-
-protected:
-    FileStream(const std::string& name, PHYSFS_File *fileHandle);
-
-    friend class ResourceManager;
-
 public:
+    FileStream(const std::string& name, PHYSFS_File *fileHandle);
     ~FileStream();
 
     void cache();
-    bool close();
-    bool flush();
-    bool write(void *buffer, int count);
-    int read(void *buffer, int size, int nmemb = 1);
-    bool seek(int pos);
+    void close();
+    void flush();
+    void write(void *buffer, uint count);
+    int read(void *buffer, uint size, uint nmemb = 1);
+    void seek(uint pos);
+    void skip(uint len);
     int size();
     int tell();
     std::string name() { return m_name; }
@@ -60,20 +51,21 @@ public:
     uint32 getU32();
     uint64 getU64();
     std::string getString();
+
     void addU8(uint8 v);
     void addU16(uint8 v);
     void addU32(uint8 v);
     void addU64(uint8 v);
 
-    uint8 readFirstNode(uint32& type);
-    uint8 readNextNode(uint8 oldNode, uint32& type);
-
 private:
+    void checkWrite();
+    void throwError(const std::string& message);
+
     std::string m_name;
     PHYSFS_File *m_fileHandle;
 
-    std::vector<uint8_t> m_cacheBuffer;
-    uint m_cacheReadPos;
+    std::vector<uint8_t> m_data;
+    uint m_pos;
 };
 
 #endif
