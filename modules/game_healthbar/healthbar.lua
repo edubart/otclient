@@ -35,7 +35,7 @@ function HealthBar.init()
 
   connect(g_game, { onGameEnd = HealthBar.offline })
 
-  healthBarWindow = displayUI('healthbar.otui', GameInterface.getLeftPanel())
+  healthBarWindow = displayUI('healthbar.otui', GameInterface.getRightPanel())
   healthBarButton = TopMenu.addGameToggleButton('healthBarButton', tr('Health Bar'), 'healthbar.png', HealthBar.toggle)
   healthBarButton:setOn(true)
   healthBar = healthBarWindow:recursiveGetChildById('healthBar')
@@ -71,9 +71,17 @@ function HealthBar.terminate()
 end
 
 function HealthBar.toggle()
-  local visible = not healthBarWindow:isExplicitlyVisible()
-  healthBarWindow:setVisible(visible)
-  healthBarButton:setOn(visible)
+  if healthBarButton:isOn() then
+    healthBarWindow:close()
+    healthBarButton:setOn(false)
+  else
+    healthBarWindow:open()
+    healthBarButton:setOn(true)
+  end
+end
+
+function HealthBar.onMiniWindowClose()
+  healthBarButton:setOn(false)
 end
 
 function HealthBar.offline()

@@ -40,6 +40,11 @@ UIWidget
     anchors.top: parent.top
     anchors.bottom: parent.bottom
     focusable: false
+    visible: true
+    on: true
+    $!on:
+      width: 0
+      visible: false
 
   GameSidePanel
     id: gameRightPanel
@@ -49,6 +54,7 @@ UIWidget
     anchors.top: parent.top
     anchors.bottom: parent.bottom
     focusable: false
+    on: true
 
   Splitter
     id: bottomSplitter

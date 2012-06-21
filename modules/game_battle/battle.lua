@@ -36,7 +36,7 @@ table.insert(lifeBarColors, {percentAbove = -1, color = '#4F0000' } )
 
 -- public functions
 function Battle.init()
-  battleWindow = displayUI('battle.otui', GameInterface.getLeftPanel())
+  battleWindow = displayUI('battle.otui', GameInterface.getRightPanel())
   battleButton = TopMenu.addGameToggleButton('battleButton', tr('Battle') .. ' (Ctrl+B)', 'battle.png', Battle.toggle)
   battleButton:setOn(true)
   Keyboard.bindKeyDown('Ctrl+B', Battle.toggle)
@@ -93,9 +93,17 @@ function Battle.terminate()
 end
 
 function Battle.toggle()
-  local visible = not battleWindow:isExplicitlyVisible()
-  battleWindow:setVisible(visible)
-  battleButton:setOn(visible)
+  if battleButton:isOn() then
+    battleWindow:close()
+    battleButton:setOn(false)
+  else
+    battleWindow:open()
+    battleButton:setOn(true)
+  end
+end
+
+function Battle.onMiniWindowClose()
+  battleButton:setOn(false)
 end
 
 function Battle.addAllCreatures()

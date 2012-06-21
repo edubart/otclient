@@ -14,7 +14,7 @@ function VipList.init()
 
   Keyboard.bindKeyDown('Ctrl+P', VipList.toggle)
 
-  vipWindow = displayUI('viplist.otui', GameInterface.getLeftPanel())
+  vipWindow = displayUI('viplist.otui', GameInterface.getRightPanel())
   vipButton = TopMenu.addGameToggleButton('vipListButton', tr('VIP list') .. ' (Ctrl+P)', 'viplist.png', VipList.toggle)
   vipButton:setOn(true)
 
@@ -48,9 +48,17 @@ function VipList.clear()
 end
 
 function VipList.toggle()
-  local visible = not vipWindow:isExplicitlyVisible()
-  vipWindow:setVisible(visible)
-  vipButton:setOn(visible)
+  if vipButton:isOn() then
+    vipWindow:close()
+    vipButton:setOn(false)
+  else
+    vipWindow:open()
+    vipButton:setOn(true)
+  end
+end
+
+function VipList.onMiniWindowClose()
+  vipButton:setOn(false)
 end
 
 function VipList.createAddWindow()

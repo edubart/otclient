@@ -375,6 +375,11 @@ void UIWidget::moveChildToIndex(const UIWidgetPtr& child, int index)
     if(!child)
         return;
 
+    if((uint)index - 1 > m_children.size()) {
+        g_logger.error(stdext::format("moving %s to index %d on %s", child->getId(), index, m_id));
+        return;
+    }
+
     // remove and push child again
     auto it = std::find(m_children.begin(), m_children.end(), child);
     if(it == m_children.end()) {
@@ -384,6 +389,7 @@ void UIWidget::moveChildToIndex(const UIWidgetPtr& child, int index)
     m_children.erase(it);
     m_children.insert(m_children.begin() + index - 1, child);
     updateChildrenIndexStates();
+    updateLayout();
 }
 
 void UIWidget::lockChild(const UIWidgetPtr& child)
@@ -751,7 +757,10 @@ void UIWidget::destroyChildren()
 
 void UIWidget::setId(const std::string& id)
 {
-    m_id = id;
+    if(id != m_id) {
+        m_id = id;
+        callLuaField("onIdChange", id);
+    }
 }
 
 void UIWidget::setParent(const UIWidgetPtr& parent)
@@ -885,6 +894,8 @@ void UIWidget::setVisible(bool visible)
             g_ui.onWidgetAppear(asUIWidget());
         else
             g_ui.onWidgetDisappear(asUIWidget());
+
+        callLuaField("onVisibilityChange", visible);
     }
 }
 

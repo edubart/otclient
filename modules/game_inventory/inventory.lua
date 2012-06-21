@@ -14,7 +14,6 @@ function Inventory.init()
   Keyboard.bindKeyDown('Ctrl+I', Inventory.toggle)
 
   inventoryWindow = displayUI('inventory.otui', GameInterface.getRightPanel())
-  inventoryWindow.onClose = Inventory.toggle
   inventoryPanel = inventoryWindow:getChildById('contentsPanel')
   inventoryButton = TopMenu.addGameToggleButton('inventoryButton', tr('Inventory') .. ' (Ctrl+I)', 'inventory.png', Inventory.toggle)
   inventoryButton:setOn(true)
@@ -50,9 +49,17 @@ function Inventory.refresh()
 end
 
 function Inventory.toggle()
-  local visible = not inventoryWindow:isExplicitlyVisible()
-  inventoryWindow:setVisible(visible)
-  inventoryButton:setOn(visible)
+  if inventoryButton:isOn() then
+    inventoryWindow:close()
+    inventoryButton:setOn(false)
+  else
+    inventoryWindow:open()
+    inventoryButton:setOn(true)
+  end
+end
+
+function Inventory.onMiniWindowClose()
+  inventoryButton:setOn(false)
 end
 
 -- hooked events

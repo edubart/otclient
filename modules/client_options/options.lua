@@ -14,7 +14,8 @@ local options = { vsync = false,
                   showLevelsInConsole = true,
                   showPrivateMessagesInConsole = false,
                   showPrivateMessagesOnScreen = true,
-                  enableMusic = true }
+                  enableMusic = true,
+                  showLeftPanel = false }
 local generalPanel
 local graphicsPanel
 
@@ -128,6 +129,10 @@ function Options.setOption(key, value)
   elseif key == 'enableMusic' then
     addEvent(function()
       g_sounds.enableMusic(value)
+    end)
+  elseif key == 'showLeftPanel' then
+    addEvent(function()
+      GameInterface.getLeftPanel():setOn(value)
     end)
   end
   Settings.set(key, value)

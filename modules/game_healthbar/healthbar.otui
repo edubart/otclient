@@ -45,7 +45,7 @@ MiniWindow
   id: healthBarWindow
   !text: tr('Health Bar')
   height: 86
-  @onClose: HealthBar.toggle()
+  @onClose: HealthBar.onMiniWindowClose()
 
   MiniWindowContents
     HealthBar
@@ -61,4 +61,3 @@ MiniWindow
       margin-top: 5      
       anchors.top: prev.bottom
       anchors.horizontalcenter: parent.horizontalcenter
-      

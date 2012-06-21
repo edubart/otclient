@@ -20,10 +20,11 @@ SafeFightBox < CombatBox
   image-source: /game_combatcontrols/icons/safefight.png
 
 MiniWindow
+  id: combatControlsWindow
   !text: tr('Combat Controls')
   icon: combatcontrols.png
   height: 64
-  @onClose: CombatControls.toggle()
+  @onClose: CombatControls.onMiniWindowClose()
 
   MiniWindowContents
     FightOffensiveBox

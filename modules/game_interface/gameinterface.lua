@@ -9,6 +9,15 @@ local gameBottomPanel
 local logoutButton
 local mouseGrabberWidget
 
+local function onLeftPanelVisibilityChange(leftPanel, visible)
+  if not visible then
+    local children = leftPanel:getChildren()
+    for i=1,#children do
+      children[i]:setParent(gameRightPanel)
+    end
+  end
+end
+
 function GameInterface.init()
   connect(g_game, { onGameStart = GameInterface.show }, true)
   connect(g_game, { onGameEnd = GameInterface.hide }, true)
@@ -24,6 +33,7 @@ function GameInterface.init()
   gameRightPanel = gameRootPanel:getChildById('gameRightPanel')
   gameLeftPanel = gameRootPanel:getChildById('gameLeftPanel')
   gameBottomPanel = gameRootPanel:getChildById('gameBottomPanel')
+  connect(gameLeftPanel, { onVisibilityChange = onLeftPanelVisibilityChange })
 
   logoutButton = TopMenu.addRightButton('logoutButton', 'Logout', '/images/logout.png', GameInterface.tryLogout)
   logoutButton:hide()
@@ -63,6 +73,7 @@ end
 function GameInterface.terminate()
   disconnect(g_game, { onGameStart = GameInterface.show })
   disconnect(g_game, { onGameEnd = GameInterface.hide })
+  disconnect(gameLeftPanel, { onVisibilityChange = onLeftPanelVisibilityChange })
 
   logoutButton:destroy()
   logoutButton = nil

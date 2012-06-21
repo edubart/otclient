@@ -33,9 +33,9 @@ SkillPercentPanel < ProgressBar
 MiniWindow
   id: skillWindow
   !text: tr('Skills')
-  height: 350
+  height: 150
   icon: skills.png
-  @onClose: Skills.toggle()
+  @onClose: Skills.onMiniWindowClose()
 
   MiniWindowContents
     anchors.fill: parent

@@ -35,7 +35,7 @@ function Skills.init()
     onSkillChange = Skills.onSkillChange
   })
 
-  skillsWindow = displayUI('skills.otui', GameInterface.getLeftPanel())
+  skillsWindow = displayUI('skills.otui', GameInterface.getRightPanel())
   skillsButton = TopMenu.addGameToggleButton('skillsButton', tr('Skills') .. ' (Ctrl+S)', 'skills.png', Skills.toggle)
   skillsButton:setOn(true)
   Keyboard.bindKeyDown('Ctrl+S', Skills.toggle)
@@ -84,9 +84,17 @@ function Skills.refresh()
 end
 
 function Skills.toggle()
-  local visible = not skillsWindow:isExplicitlyVisible()
-  skillsWindow:setVisible(visible)
-  skillsButton:setOn(visible)
+  if skillsButton:isOn() then
+    skillsWindow:close()
+    skillsButton:setOn(false)
+  else
+    skillsWindow:open()
+    skillsButton:setOn(true)
+  end
+end
+
+function Skills.onMiniWindowClose()
+  skillsButton:setOn(false)
 end
 
 function Skills.onSkillButtonClick(button)

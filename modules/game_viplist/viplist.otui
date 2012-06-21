@@ -8,7 +8,7 @@ MiniWindow
   !text: tr('VIP List')
   height: 100
   icon: viplist.png
-  @onClose: VipList.toggle()
+  @onClose: VipList.onMiniWindowClose()
 
   MiniWindowContents
     layout: verticalBox

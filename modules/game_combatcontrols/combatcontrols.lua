@@ -129,8 +129,15 @@ function CombatControls.offline()
 end
 
 function CombatControls.toggle()
-  local visible = not combatControlsWindow:isExplicitlyVisible()
-  combatControlsWindow:setVisible(visible)
-  combatControlsButton:setOn(visible)
+  if combatControlsButton:isOn() then
+    combatControlsWindow:close()
+    combatControlsButton:setOn(false)
+  else
+    combatControlsWindow:open()
+    combatControlsButton:setOn(true)
+  end
 end
 
+function CombatControls.onMiniWindowClose()
+  combatControlsButton:setOn(false)
+end

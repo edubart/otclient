@@ -80,12 +80,24 @@ function UIResizeBorder:onStyleApply(styleName, styleNode)
   end
 end
 
+function UIResizeBorder:onVisibilityChange(visible)
+  if visible and self.maximum == self.minimum then
+    self:hide()
+  end
+end
+
 function UIResizeBorder:setMaximum(maximum)
   self.maximum  = maximum
+  if self.maximum == self.minimum then
+    self:hide()
+  end
 end
 
 function UIResizeBorder:setMinimum(minimum)
   self.minimum = minimum
+  if self.maximum == self.minimum then
+    self:hide()
+  end
 end
 
 function UIResizeBorder:getMaximum() return self.maximum end

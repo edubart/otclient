@@ -34,3 +34,7 @@ Panel
   OptionCheckBox
     id: enableMusic
     !text: tr('Enable music')
+
+  OptionCheckBox
+    id: showLeftPanel
+    !text: tr('Show left panel')
