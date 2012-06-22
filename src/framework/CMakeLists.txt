@@ -113,10 +113,6 @@ IF(WIN32)
     # fix boost thread linkage
     ADD_DEFINITIONS(-DBOOST_THREAD_USE_LIB)
 
-    SET(framework_SOURCES ${framework_SOURCES}
-        ${CMAKE_CURRENT_LIST_DIR}/platform/win32window.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/platform/win32crashhandler.cpp)
-
     IF(WINDOWS_CONSOLE)
         MESSAGE(STATUS "Windows console: ON")
     ELSE()
@@ -126,11 +122,7 @@ IF(WIN32)
 ELSE()
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
     SET(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -rdynamic")
-
     SET(ADDITIONAL_LIBRARIES X11 dl)
-    SET(framework_SOURCES ${framework_SOURCES}
-        ${CMAKE_CURRENT_LIST_DIR}/platform/x11window.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/platform/unixcrashhandler.cpp)
 ENDIF()
 
 

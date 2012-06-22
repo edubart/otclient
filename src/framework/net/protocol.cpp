@@ -32,6 +32,7 @@ Protocol::Protocol()
 
 Protocol::~Protocol()
 {
+    assert(!g_app.isTermianted());
     disconnect();
 }
 
@@ -80,6 +81,9 @@ void Protocol::send(const OutputMessagePtr& outputMessage)
     // send
     if(m_connection)
         m_connection->write(outputMessage->getHeaderBuffer(), outputMessage->getMessageSize());
+
+    // reset message to allow reuse
+    outputMessage->reset();
 }
 
 void Protocol::recv()
