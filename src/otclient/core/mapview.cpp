@@ -101,7 +101,11 @@ void MapView::draw(const Rect& rect)
                 if(!m_drawMinimapColors)
                     tile->draw(transformPositionTo2D(tilePos, cameraPosition), scaleFactor, drawFlags);
                 else {
-                    g_painter->setColor(tile->getMinimapColor());
+                    uint8 c = tile->getMinimapColorByte();
+                    if(c == 0)
+                        continue;
+
+                    g_painter->setColor(Color::from8bit(c));
                     g_painter->drawFilledRect(Rect(transformPositionTo2D(tilePos, cameraPosition), tileSize));
                 }
             }
@@ -399,22 +403,28 @@ void MapView::updateVisibleTilesCache(int start)
 
 void MapView::updateGeometry(const Size& visibleDimension, const Size& optimizedSize)
 {
-    int possiblesTileSizes[] = {1,2,4,8,16,32};
     int tileSize = 0;
     Size bufferSize;
-    for(int candidateTileSize : possiblesTileSizes) {
-        bufferSize = (visibleDimension + Size(3,3)) * candidateTileSize;
-        if(bufferSize.width() > g_graphics.getMaxTextureSize() || bufferSize.height() > g_graphics.getMaxTextureSize())
-            break;
 
-        tileSize = candidateTileSize;
-        if(optimizedSize.width() < bufferSize.width() - 3*candidateTileSize && optimizedSize.height() < bufferSize.height() - 3*candidateTileSize)
-            break;
-    }
+    if(!m_drawMinimapColors) {
+        int possiblesTileSizes[] = {1,2,4,8,16,32};
+        for(int candidateTileSize : possiblesTileSizes) {
+            bufferSize = (visibleDimension + Size(3,3)) * candidateTileSize;
+            if(bufferSize.width() > g_graphics.getMaxTextureSize() || bufferSize.height() > g_graphics.getMaxTextureSize())
+                break;
 
-    if(tileSize == 0) {
-        g_logger.traceError("reached max zoom out");
-        return;
+            tileSize = candidateTileSize;
+            if(optimizedSize.width() < bufferSize.width() - 3*candidateTileSize && optimizedSize.height() < bufferSize.height() - 3*candidateTileSize)
+                break;
+        }
+
+        if(tileSize == 0) {
+            g_logger.traceError("reached max zoom out");
+            return;
+        }
+    } else {
+        tileSize = 1;
+        bufferSize = visibleDimension + Size(3,3);
     }
 
     Size drawDimension = visibleDimension + Size(3,3);
@@ -456,8 +466,13 @@ void MapView::updateGeometry(const Size& visibleDimension, const Size& optimized
 
 void MapView::onTileUpdate(const Position& pos)
 {
-    //if(m_viewMode <= FAR_VIEW)
+    if(!m_drawMinimapColors)
         requestVisibleTilesCacheUpdate();
+}
+
+void MapView::onMapCenterChange(const Position& pos)
+{
+    requestVisibleTilesCacheUpdate();
 }
 
 void MapView::lockFirstVisibleFloor(int firstVisibleFloor)
@@ -654,5 +669,16 @@ TilePtr MapView::getTile(const Point& mousePos, const Rect& mapRect)
         return nullptr;
 
     return tile;
+}
+
+void MapView::setDrawMinimapColors(bool enable)
+{
+    if(m_drawMinimapColors == enable)
+        return;
+    m_drawMinimapColors = enable;
+    updateGeometry(m_visibleDimension, m_optimizedSize);
+    requestVisibleTilesCacheUpdate();
+    m_smooth = !enable;
+    m_framebuffer->setSmooth(m_smooth);
 }
 

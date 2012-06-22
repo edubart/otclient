@@ -61,7 +61,7 @@ public:
     bool isDrawingTexts() { return m_mapView->isDrawingTexts(); }
     bool isDrawingMinimapColors() { return m_mapView->isDrawingMinimapColors(); }
     bool isAnimating() { return m_mapView->isAnimating(); }
-    float isKeepAspectRatioEnabled() { return m_aspectRatio != 0.0f; }
+    bool isKeepAspectRatioEnabled() { return m_aspectRatio != 0.0f; }
 
     Size getVisibleDimension() { return m_mapView->getVisibleDimension(); }
     MapView::ViewMode getViewMode() { return m_mapView->getViewMode(); }

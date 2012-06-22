@@ -5,9 +5,6 @@ Module
   website: www.otclient.info
 
   @onLoad: |
-    importStyle 'styles/items.otui'
-    importStyle 'styles/creatures.otui'
-    importStyle 'styles/miniwindow.otui'
     importStyle 'styles/countwindow.otui'
 
     dofile 'widgets/uigamemap'

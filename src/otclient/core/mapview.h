@@ -61,6 +61,7 @@ private:
 
 protected:
     void onTileUpdate(const Position& pos);
+    void onMapCenterChange(const Position& pos);
 
     friend class Map;
 
@@ -99,7 +100,7 @@ public:
     void setDrawTexts(bool enable) { m_drawTexts = enable; }
     bool isDrawingTexts() { return m_drawTexts; }
 
-    void setDrawMinimapColors(bool enable) { m_drawMinimapColors = enable; requestVisibleTilesCacheUpdate(); }
+    void setDrawMinimapColors(bool enable);
     bool isDrawingMinimapColors() { return m_drawMinimapColors; }
 
     void setAnimated(bool animated) { m_animated = animated; requestVisibleTilesCacheUpdate(); }
@@ -138,6 +139,7 @@ private:
     Boolean<true> m_animated;
     Boolean<true> m_autoViewMode;
     Boolean<true> m_drawTexts;
+    Boolean<true> m_smooth;
     Boolean<false> m_drawMinimapColors;
     std::vector<TilePtr> m_cachedVisibleTiles;
     std::vector<CreaturePtr> m_cachedFloorVisibleCreatures;

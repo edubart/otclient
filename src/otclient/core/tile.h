@@ -82,7 +82,7 @@ public:
     const std::vector<ThingPtr>& getThings() { return m_things; }
     ItemPtr getGround();
     int getGroundSpeed();
-    Color getMinimapColor();
+    uint8 getMinimapColorByte() { return m_minimapColorByte; }
     int getThingCount() { return m_things.size() + m_effects.size(); }
     bool isPathable();
     bool isWalkable();
@@ -101,12 +101,15 @@ public:
     void setFlags(tileflags_t flags) { m_flags |= (uint32)flags; }
 
 private:
+    void update();
+
     std::vector<CreaturePtr> m_walkingCreatures;
     std::vector<EffectPtr> m_effects; // leave this outside m_things because it has no stackpos.
     std::vector<ThingPtr> m_things;
     Position m_position;
     uint8 m_drawElevation;
     uint32 m_flags;
+    uint8 m_minimapColorByte;
 };
 
 #endif

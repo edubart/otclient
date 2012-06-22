@@ -34,6 +34,7 @@ Tile::Tile(const Position& position)
 {
     m_drawElevation = 0;
     m_position = position;
+    m_minimapColorByte = 0;
 }
 
 void Tile::draw(const Point& dest, float scaleFactor, int drawFlags)
@@ -192,6 +193,7 @@ ThingPtr Tile::addThing(const ThingPtr& thing, int stackPos)
     if(m_things.size() > MAX_THINGS)
         removeThing(m_things[MAX_THINGS]);
 
+    update();
     return oldObject;
 }
 
@@ -217,10 +219,8 @@ bool Tile::removeThing(ThingPtr thing)
     }
 
     // reset values managed by this tile
-    if(removed) {
-        //thing->setDrawOffset(0);
-        //thing->setStackpos(0);
-    }
+    if(removed)
+        update();
 
     return removed;
 }
@@ -279,19 +279,6 @@ int Tile::getGroundSpeed()
     if(ItemPtr ground = getGround())
         groundSpeed = ground->getGroundSpeed();
     return groundSpeed;
-}
-
-Color Tile::getMinimapColor()
-{
-    Color color = Color::black;
-    for(const ThingPtr& thing : m_things) {
-        if(!thing->isGround() && !thing->isGroundBorder() && !thing->isOnBottom() && !thing->isOnTop())
-            break;
-        int c = thing->getMinimapColor();
-        if(c != 0)
-            color = Color::from8bit(c);
-    }
-    return color;
 }
 
 ThingPtr Tile::getTopLookThing()
@@ -493,3 +480,14 @@ bool Tile::canErase()
     return m_walkingCreatures.empty() && m_effects.empty() && m_things.empty();
 }
 
+void Tile::update()
+{
+    m_minimapColorByte = 0;
+    for(const ThingPtr& thing : m_things) {
+        if(!thing->isGround() && !thing->isGroundBorder() && !thing->isOnBottom() && !thing->isOnTop())
+            break;
+        uint8 c = thing->getMinimapColor();
+        if(c != 0)
+            m_minimapColorByte = c;
+    }
+}

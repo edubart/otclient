@@ -3,7 +3,9 @@ Minimap = {}
 -- private variables
 local minimapWidget
 local minimapButton
+local minimapWindow
 local DEFAULT_ZOOM = 45
+minimapFirstLoad = true
 
 -- private functions
 function onMinimapMouseRelease(self, mousePosition, mouseButton)
@@ -37,30 +39,58 @@ function Minimap.init()
   minimapButton = TopMenu.addGameToggleButton('minimapButton', tr('Minimap') .. ' (Ctrl+M)', 'minimap.png', Minimap.toggle)
   minimapButton:setOn(false)
 
-  minimapWidget = loadUI('minimap.otui', GameInterface.getMapPanel())
+  minimapWindow = loadUI('minimap.otui', GameInterface.getRightPanel())
+  minimapWindow:setOn(true)
+
+  minimapWidget = minimapWindow:recursiveGetChildById('minimap')
+  minimapWidget:setAutoViewMode(false)
+  minimapWidget:setViewMode(1) -- mid view
+  minimapWidget:setDrawMinimapColors(true)
+  minimapWidget:setMultifloor(false)
+  minimapWidget:setKeepAspectRatio(false)
   minimapWidget.onMouseRelease = onMinimapMouseRelease
   minimapWidget.onMouseWheel = onMinimapMouseWheel
-  minimapWidget:hide()
 
   Minimap.reset()
+
+  -- load only the first time (avoid load/save between reloads)
+  if minimapFirstLoad then
+    minimapFirstLoad = false
+    if g_resources.fileExists('/minimap.otcm') then
+      if g_game.isOnline() then
+        perror('cannot load minimap while online')
+      else
+        g_map.loadOtcm('/minimap.otcm')
+      end
+    end
+
+    -- save only when closing the client
+    connect(g_app, { onTerminate = function()
+      g_map.saveOtcm('/minimap.otcm')
+    end})
+  end
 end
 
 function Minimap.terminate()
   disconnect(g_game, { onGameStart = Minimap.reset })
   Keyboard.unbindKeyDown('Ctrl+M')
 
-  minimapWidget:destroy()
+  minimapWindow:destroy()
+  minimapWindow = nil
   minimapWidget = nil
-  minimapButton:destroy()
   minimapButton = nil
-
   Minimap = nil
 end
 
 function Minimap.toggle()
-  local visible = not minimapWidget:isExplicitlyVisible()
-  minimapWidget:setVisible(visible)
-  minimapButton:setOn(visible)
+  local visible = not minimapWindow:isExplicitlyVisible()
+  if visible then
+    minimapWindow:open()
+    minimapButton:setOn(true)
+  else
+    minimapWindow:close()
+    minimapButton:setOn(false)
+  end
 end
 
 function Minimap.reset()

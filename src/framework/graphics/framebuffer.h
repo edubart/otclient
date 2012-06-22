@@ -44,10 +44,12 @@ public:
     void draw(const Rect& dest, const Rect& src);
 
     void setBackuping(bool enabled) { m_backuping = enabled; }
+    void setSmooth(bool enabled) { m_smooth = enabled; }
 
     TexturePtr getTexture() { return m_texture; }
     Size getSize();
     bool isBackuping() { return m_backuping; }
+    bool isSmooth() { return m_smooth; }
 
 private:
     void internalCreate();
@@ -60,6 +62,7 @@ private:
     uint m_fbo;
     uint m_prevBoundFbo;
     Boolean<true> m_backuping;
+    Boolean<true> m_smooth;
 
     static uint boundFbo;
 };

@@ -556,6 +556,9 @@ void Map::setCentralPosition(const Position& centralPosition)
                 g_game.processCreatureTeleport(localPlayer);
         }
     });
+
+    for(const MapViewPtr& mapView : m_mapViews)
+        mapView->onMapCenterChange(centralPosition);
 }
 
 std::vector<CreaturePtr> Map::getSpectators(const Position& centerPos, bool multiFloor)

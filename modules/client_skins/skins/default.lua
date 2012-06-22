@@ -25,7 +25,10 @@ local skin = {
     'spinboxes.otui',
     'messageboxes.otui',
     'scrollbars.otui',
-    'splitters.otui'
+    'splitters.otui',
+    'miniwindow.otui',
+    'items.otui',
+    'creatures.otui'
   }
 }
 

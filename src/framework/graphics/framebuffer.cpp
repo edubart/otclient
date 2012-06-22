@@ -60,7 +60,7 @@ void FrameBuffer::resize(const Size& size)
         return;
 
     m_texture = TexturePtr(new Texture(size));
-    m_texture->setSmooth(true);
+    m_texture->setSmooth(m_smooth);
     m_texture->setUpsideDown(true);
 
     if(m_fbo) {

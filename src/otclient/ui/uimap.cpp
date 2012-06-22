@@ -101,8 +101,10 @@ void UIMap::setVisibleDimension(const Size& visibleDimension)
 {
     m_mapView->setVisibleDimension(visibleDimension);
 
-    if(m_aspectRatio != 0.0f)
+    if(m_aspectRatio != 0.0f) {
         m_aspectRatio = visibleDimension.ratio();
+        updateMapSize();
+    }
 }
 
 void UIMap::setKeepAspectRatio(bool enable)
@@ -111,6 +113,7 @@ void UIMap::setKeepAspectRatio(bool enable)
         m_aspectRatio = getVisibleDimension().ratio();
     else
         m_aspectRatio = 0.0f;
+    updateMapSize();
 }
 
 TilePtr UIMap::getTile(const Point& mousePos)

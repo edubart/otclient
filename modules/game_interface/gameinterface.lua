@@ -65,6 +65,15 @@ function GameInterface.init()
   Keyboard.bindKeyDown('Ctrl+L', GameInterface.tryLogout, gameRootPanel)
   Keyboard.bindKeyDown('Ctrl+W', function() g_map.cleanTexts() TextMessage.clearMessages() end, gameRootPanel)
 
+  Keyboard.bindKeyDown('Ctrl+.', function()
+    if gameMapPanel:isKeepAspectRatioEnabled() then
+      gameMapPanel:setKeepAspectRatio(false)
+    else
+      gameMapPanel:setKeepAspectRatio(true)
+      gameMapPanel:setVisibleDimension({ width = 15, height = 11 })
+    end
+  end)
+
   if g_game.isOnline() then
     GameInterface.show()
   end

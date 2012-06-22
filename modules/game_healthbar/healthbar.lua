@@ -85,7 +85,7 @@ function HealthBar.onMiniWindowClose()
 end
 
 function HealthBar.offline()
-  healthBarWindow:recursiveGetChildById('conditions_content'):destroyChildren()
+  healthBarWindow:recursiveGetChildById('conditionPanel'):destroyChildren()
 end
 
 -- hooked events
@@ -121,7 +121,7 @@ function HealthBar.onStatesChange(localPlayer, now, old)
 end
 
 function HealthBar.toggleIcon(bitChanged)
-  local content = healthBarWindow:recursiveGetChildById('conditions_content')
+  local content = healthBarWindow:recursiveGetChildById('conditionPanel')
   
   local icon = content:getChildById(Icons[bitChanged].id)
   if icon then

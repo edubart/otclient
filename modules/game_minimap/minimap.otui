@@ -1,21 +1,11 @@
-UIMap
-  id: minimap
-  anchors.top: parent.top
-  anchors.right: parent.right
-  size: 256 192
-  margin-top: 2
-  margin-right: 2
-  border-width: 1
-  border-color: #888888
-  padding: 1
-  //draw-minimap-colors: true
-  multifloor: false
-  draw-texts: false
+MiniWindow
+  id: minimapWindow
+  !text: tr('Minimap')
+  height: 150
+  icon: minimap.png
 
-  CheckBox
-    anchors.top: parent.top
-    anchors.right: parent.right
-    margin-top: 2
-    margin-right: 2
-    size: 16 16
-    @onCheckChange: self:getParent():setDrawMinimapColors(self:isChecked())
+  MiniWindowContents
+    padding: 3
+    UIMap
+      id: minimap
+      anchors.fill: parent

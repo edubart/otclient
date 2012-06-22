@@ -36,10 +36,10 @@ ManaLabel < GameLabel
 
 ConditionWidget < UIWidget
   size: 18 18
-  
+
   $!first:
     margin-left: 5
-  
+
 MiniWindow
   icon: healthbar.png
   id: healthBarWindow
@@ -53,11 +53,11 @@ MiniWindow
     ManaBar
     ManaLabel
     Panel
-      id: conditions_content
+      id: conditionPanel
       layout:
         type: horizontalBox
         fit-children: true
       height: 18
-      margin-top: 5      
+      margin-top: 5
       anchors.top: prev.bottom
       anchors.horizontalcenter: parent.horizontalcenter
