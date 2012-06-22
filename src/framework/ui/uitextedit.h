@@ -25,6 +25,7 @@
 
 #include "uiwidget.h"
 
+// @bindclass
 class UITextEdit : public UIWidget
 {
 public:

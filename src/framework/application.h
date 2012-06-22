@@ -27,6 +27,7 @@
 #include <framework/core/adaptativeframecounter.h>
 #include <framework/graphics/declarations.h>
 
+//@bindsingleton g_app
 class Application
 {
     enum {

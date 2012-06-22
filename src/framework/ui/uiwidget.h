@@ -41,9 +41,7 @@ struct EdgeGroup {
     T left;
 };
 
-// generate lua bindings for this class running:
-// ./tools/lua-binding-generator/generate_lua_bindings.lua src/framework/ui/uiwidget.h
-
+// @bindclass
 class UIWidget : public LuaObject
 {
 // widget core

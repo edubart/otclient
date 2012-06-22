@@ -63,7 +63,7 @@ void StreamSoundSource::stop()
 
 void StreamSoundSource::queueBuffers()
 {
-    ALint queued;
+    int queued;
     alGetSourcei(m_sourceId, AL_BUFFERS_QUEUED, &queued);
     for(int i = 0; i < STREAM_FRAGMENTS - queued; ++i) {
         if(!fillBufferAndQueue(m_buffers[i]->getBufferId()))
@@ -73,10 +73,10 @@ void StreamSoundSource::queueBuffers()
 
 void StreamSoundSource::unqueueBuffers()
 {
-    ALint queued;
+    int queued;
     alGetSourcei(m_sourceId, AL_BUFFERS_QUEUED, &queued);
     for(int i = 0; i < queued; ++i) {
-        ALuint buffer;
+        uint buffer;
         alSourceUnqueueBuffers(m_sourceId, 1, &buffer);
     }
 }
@@ -85,10 +85,10 @@ void StreamSoundSource::update()
 {
     SoundSource::update();
 
-    ALint processed = 0;
+    int processed = 0;
     alGetSourcei(m_sourceId, AL_BUFFERS_PROCESSED, &processed);
-    for(ALint i = 0; i < processed; ++i) {
-        ALuint buffer;
+    for(int i = 0; i < processed; ++i) {
+        uint buffer;
         alSourceUnqueueBuffers(m_sourceId, 1, &buffer);
         //SoundManager::check_al_error("Couldn't unqueue audio buffer: ");
 
@@ -105,7 +105,7 @@ void StreamSoundSource::update()
     }
 }
 
-bool StreamSoundSource::fillBufferAndQueue(ALuint buffer)
+bool StreamSoundSource::fillBufferAndQueue(uint buffer)
 {
     // fill buffer
     static DataBuffer<char> bufferData(2*STREAM_FRAGMENT_SIZE);

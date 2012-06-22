@@ -32,6 +32,7 @@ struct LogMessage {
     std::size_t when;
 };
 
+// @bindsingleton g_logger
 class Logger
 {
     enum {

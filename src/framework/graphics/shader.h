@@ -40,11 +40,11 @@ public:
     bool compileSourceFile(const std::string& sourceFile);
     std::string log();
 
-    GLuint getShaderId() { return m_shaderId; }
+    uint getShaderId() { return m_shaderId; }
     ShaderType getShaderType() { return m_shaderType; }
 
 private:
-    GLuint m_shaderId;
+    uint m_shaderId;
     ShaderType m_shaderType;
 };
 

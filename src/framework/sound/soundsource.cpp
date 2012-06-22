@@ -65,7 +65,7 @@ void SoundSource::stop()
 
 bool SoundSource::isPlaying()
 {
-    ALint state = AL_PLAYING;
+    int state = AL_PLAYING;
     alGetSourcei(m_sourceId, AL_SOURCE_STATE, &state);
     return state != AL_STOPPED;
 }

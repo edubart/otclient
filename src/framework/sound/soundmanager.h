@@ -25,6 +25,7 @@
 
 #include "declarations.h"
 
+//@bindsingleton g_sounds
 class SoundManager
 {
     enum {
@@ -53,7 +54,7 @@ public:
 private:
     StreamSoundSourcePtr createStreamSoundSource(const std::string& filename);
     SoundSourcePtr createSoundSource(const std::string& filename);
-    ALuint loadFileIntoBuffer(const SoundFilePtr& soundFile);
+    uint loadFileIntoBuffer(const SoundFilePtr& soundFile);
 
     std::map<std::string, SoundBufferPtr> m_buffers;
     std::vector<SoundSourcePtr> m_sources;

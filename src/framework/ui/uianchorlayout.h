@@ -58,6 +58,7 @@ private:
     bool m_updated;
 };
 
+// @bindclass
 class UIAnchorLayout : public UILayout
 {
 public:

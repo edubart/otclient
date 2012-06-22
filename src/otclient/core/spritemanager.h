@@ -26,6 +26,7 @@
 #include <framework/core/declarations.h>
 #include <framework/graphics/declarations.h>
 
+//@bindsingleton g_sprites
 class SpriteManager
 {
 public:

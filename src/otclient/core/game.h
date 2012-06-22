@@ -31,6 +31,7 @@
 
 typedef std::tuple<std::string, bool> Vip;
 
+//@bindsingleton g_game
 class Game
 {
 public:

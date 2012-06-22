@@ -75,6 +75,7 @@ enum OTBM_NodeTypes_t
     OTBM_WAYPOINT = 16
 };
 
+//@bindsingleton g_map
 class Map
 {
 public:

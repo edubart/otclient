@@ -25,10 +25,13 @@
 
 #include "declarations.h"
 
+// @bindsingleton g_resources
 class ResourceManager
 {
 public:
+    // @dontbind
     void init(const char *argv0);
+    // @dontbind
     void terminate();
 
     void discoverWorkDir(const std::string& appName, const std::string& existentFile);
@@ -41,10 +44,13 @@ public:
     bool fileExists(const std::string& fileName);
     bool directoryExists(const std::string& directoryName);
 
+    // @dontbind
     void loadFile(const std::string& fileName, std::iostream& out);
     std::string loadFile(const std::string& fileName);
+    // @dontbind
     bool saveFile(const std::string& fileName, const uchar* data, uint size);
     bool saveFile(const std::string& fileName, const std::string& data);
+    // @dontbind
     bool saveFile(const std::string& fileName, std::iostream& in);
 
     FileStreamPtr openFile(const std::string& fileName);

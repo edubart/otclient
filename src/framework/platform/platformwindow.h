@@ -27,6 +27,7 @@
 #include <framework/core/inputevent.h>
 #include <framework/core/timer.h>
 
+//@bindsingleton g_window
 class PlatformWindow
 {
     enum {

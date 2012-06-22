@@ -30,6 +30,7 @@
 #include <framework/graphics/fontmanager.h>
 #include <framework/graphics/cachedtext.h>
 
+// @bindclass
 class Creature : public Thing
 {
 public:
@@ -142,13 +143,17 @@ protected:
     Otc::Direction m_walkTurnDirection;
 };
 
-class Npc : public Creature {
+// @bindclass
+class Npc : public Creature
+{
 public:
     NpcPtr asNpc() { return std::static_pointer_cast<Npc>(shared_from_this()); }
     bool isNpc() { return true; }
 };
 
-class Monster : public Creature {
+// @bindclass
+class Monster : public Creature
+{
 public:
     MonsterPtr asMonster() { return std::static_pointer_cast<Monster>(shared_from_this()); }
     bool isMonster() { return true; }

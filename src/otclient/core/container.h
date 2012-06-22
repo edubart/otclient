@@ -27,6 +27,7 @@
 
 #include <framework/luascript/luaobject.h>
 
+// @bindclass
 class Container : public LuaObject
 {
 protected:

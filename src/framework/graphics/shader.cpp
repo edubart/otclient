@@ -89,7 +89,7 @@ bool Shader::compileSourceFile(const std::string& sourceFile)
 std::string Shader::log()
 {
     std::string infoLog;
-    GLint infoLogLength = 0;
+    int infoLogLength = 0;
     glGetShaderiv(m_shaderId, GL_INFO_LOG_LENGTH, &infoLogLength);
     if(infoLogLength > 1) {
         std::vector<char> buf(infoLogLength);

@@ -49,7 +49,7 @@ public:
 
 private:
     Type m_type;
-    GLuint m_id;
+    uint m_id;
 };
 
 #endif

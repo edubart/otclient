@@ -137,7 +137,7 @@ protected:
     PainterState m_olderStates[10];
     int m_oldStateIndex;
 
-    GLuint m_glTextureId;
+    uint m_glTextureId;
 };
 
 extern Painter *g_painter;

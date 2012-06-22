@@ -26,10 +26,12 @@
 #include "declarations.h"
 #include <framework/otml/declarations.h>
 
+// @bindsingleton g_configs
 class ConfigManager
 {
 public:
     ConfigManager();
+
     bool load(const std::string& file);
     bool save();
     void clear();

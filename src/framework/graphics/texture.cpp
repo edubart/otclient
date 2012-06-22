@@ -176,7 +176,7 @@ bool Texture::setupSize(const Size& size, bool forcePowerOfTwo)
 
 void Texture::setupWrap()
 {
-    GLint texParam;
+    int texParam;
     if(!m_repeat && g_graphics.canUseClampToEdge())
         texParam = GL_CLAMP_TO_EDGE;
     else
@@ -188,8 +188,8 @@ void Texture::setupWrap()
 
 void Texture::setupFilters()
 {
-    GLint minFilter;
-    GLint magFilter;
+    int minFilter;
+    int magFilter;
     if(m_smooth) {
         minFilter = m_hasMipmaps ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR;
         magFilter = GL_LINEAR;

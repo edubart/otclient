@@ -27,6 +27,7 @@
 #include <framework/core/timer.h>
 #include "thing.h"
 
+// @bindclass
 class Missile : public Thing
 {
     enum {

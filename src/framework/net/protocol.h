@@ -29,6 +29,7 @@
 
 #include <framework/luascript/luaobject.h>
 
+// @bindclass
 class Protocol : public LuaObject
 {
 public:

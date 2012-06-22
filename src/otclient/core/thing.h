@@ -33,6 +33,7 @@ struct Light
     uint8 color;
 };
 
+// @bindclass
 class Thing : public LuaObject
 {
 public:

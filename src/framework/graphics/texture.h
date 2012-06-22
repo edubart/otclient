@@ -41,7 +41,7 @@ public:
     void setRepeat(bool repeat);
     void setUpsideDown(bool upsideDown);
 
-    GLuint getId()  { return m_id; }
+    uint getId()  { return m_id; }
     int getWidth() { return m_size.width(); }
     int getHeight() { return m_size.height(); }
     const Size& getSize() { return m_size; }
@@ -59,7 +59,7 @@ protected:
     void setupTranformMatrix();
     void setupPixels(int level, const Size& size, uchar *pixels, int channels = 4);
 
-    GLuint m_id;
+    uint m_id;
     Size m_size;
     Size m_glSize;
     Matrix3 m_transformMatrix;

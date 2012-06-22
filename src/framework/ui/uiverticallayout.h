@@ -25,6 +25,7 @@
 
 #include "uiboxlayout.h"
 
+// @bindclass
 class UIVerticalLayout : public UIBoxLayout
 {
 public:

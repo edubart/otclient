@@ -24,10 +24,12 @@
 #define FILESTREAM_H
 
 #include "declarations.h"
+#include <framework/luascript/luaobject.h>
 
 struct PHYSFS_File;
 
-class FileStream
+// @bindclass
+class FileStream : public LuaObject
 {
 public:
     FileStream(const std::string& name, PHYSFS_File *fileHandle);
@@ -43,8 +45,6 @@ public:
     int size();
     int tell();
     std::string name() { return m_name; }
-
-    std::string readAll();
 
     uint8 getU8();
     uint16 getU16();

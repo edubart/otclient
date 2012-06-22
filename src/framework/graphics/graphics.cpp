@@ -82,7 +82,7 @@ void Graphics::init()
     glEnable(GL_BLEND);
 
     // determine max texture size
-    GLint maxTextureSize = 0;
+    int maxTextureSize = 0;
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
     if(m_maxTextureSize == -1 || m_maxTextureSize > maxTextureSize)
         m_maxTextureSize = maxTextureSize;

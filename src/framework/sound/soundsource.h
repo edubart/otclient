@@ -28,7 +28,7 @@
 class SoundSource
 {
 protected:
-    SoundSource(ALuint sourceId) : m_sourceId(sourceId) { }
+    SoundSource(uint sourceId) : m_sourceId(sourceId) { }
 
 public:
     enum FadeState { NoFading, FadingOn, FadingOff };
@@ -56,7 +56,7 @@ protected:
     friend class SoundManager;
     friend class CombinedSoundSource;
 
-    ALuint m_sourceId;
+    uint m_sourceId;
     SoundBufferPtr m_buffer;
     FadeState m_fadeState;
     float m_fadeStartTime;

@@ -25,7 +25,7 @@
 
 #include <framework/application.h>
 
-GLuint ShaderProgram::m_currentProgram = 0;
+uint ShaderProgram::m_currentProgram = 0;
 
 ShaderProgram::ShaderProgram()
 {
@@ -92,7 +92,7 @@ bool ShaderProgram::link()
 
     glLinkProgram(m_programId);
 
-    GLint value = GL_FALSE;
+    int value = GL_FALSE;
     glGetProgramiv(m_programId, GL_LINK_STATUS, &value);
     m_linked = (value != GL_FALSE);
 
@@ -123,7 +123,7 @@ void ShaderProgram::release()
 std::string ShaderProgram::log()
 {
     std::string infoLog;
-    GLint infoLogLength = 0;
+    int infoLogLength = 0;
     glGetProgramiv(m_programId, GL_INFO_LOG_LENGTH, &infoLogLength);
     if(infoLogLength > 1) {
         std::vector<char> buf(infoLogLength);

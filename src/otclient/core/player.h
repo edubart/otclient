@@ -25,6 +25,7 @@
 
 #include "creature.h"
 
+// @bindclass
 class Player : public Creature
 {
 public:

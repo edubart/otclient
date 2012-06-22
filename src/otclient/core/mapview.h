@@ -28,6 +28,7 @@
 #include <framework/luascript/luaobject.h>
 #include <framework/core/declarations.h>
 
+// @bindclass
 class MapView : public LuaObject
 {
     enum {

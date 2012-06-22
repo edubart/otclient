@@ -27,6 +27,7 @@
 #include <framework/core/inputevent.h>
 #include <framework/otml/declarations.h>
 
+//@bindsingleton g_ui
 class UIManager
 {
 public:

@@ -26,6 +26,7 @@
 #include "declarations.h"
 #include <framework/luascript/luaobject.h>
 
+// @bindclass
 class InputMessage : public LuaObject
 {
 public:

@@ -26,6 +26,7 @@
 #include "clock.h"
 #include "scheduledevent.h"
 
+// @bindsingleton g_eventDispatcher
 class EventDispatcher
 {
 public:

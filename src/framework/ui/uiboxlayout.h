@@ -25,6 +25,7 @@
 
 #include "uilayout.h"
 
+// @bindclass
 class UIBoxLayout : public UILayout
 {
 public:

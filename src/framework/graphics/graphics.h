@@ -26,6 +26,7 @@
 #include "declarations.h"
 #include "painter.h"
 
+// @bindsingleton g_graphics
 class Graphics
 {
 public:
@@ -37,8 +38,11 @@ public:
         Painter_OpenGL2
     };
 
+    // @dontbind
     void init();
+    // @dontbind
     void terminate();
+
     bool parseOption(const std::string& option);
 
     bool isPainterEngineAvailable(PainterEngine painterEngine);
@@ -46,8 +50,6 @@ public:
     PainterEngine getPainterEngine() { return m_selectedPainterEngine; }
 
     void resize(const Size& size);
-
-    void setViewportSize(const Size& size);
 
     int getMaxTextureSize() { return m_maxTextureSize; }
     const Size& getViewportSize() { return m_viewportSize; }

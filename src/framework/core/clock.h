@@ -25,6 +25,7 @@
 
 #include "declarations.h"
 
+// @bindsingleton g_clock
 class Clock
 {
 public:

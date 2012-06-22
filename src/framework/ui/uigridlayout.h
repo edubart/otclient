@@ -25,6 +25,7 @@
 
 #include <framework/ui/uilayout.h>
 
+// @bindclass
 class UIGridLayout : public UILayout
 {
 public:

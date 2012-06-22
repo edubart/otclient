@@ -135,7 +135,7 @@ void Painter::setTexture(Texture* texture)
 
     m_texture = texture;
 
-    GLuint glTextureId;
+    uint glTextureId;
     if(texture) {
         setTextureMatrix(texture->getTransformMatrix());
         glTextureId = texture->getId();

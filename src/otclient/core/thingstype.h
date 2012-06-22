@@ -27,6 +27,7 @@
 #include <framework/core/declarations.h>
 #include "thingtype.h"
 
+//@bindsingleton g_thingsType
 class ThingsType
 {
 public:

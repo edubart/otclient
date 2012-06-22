@@ -28,6 +28,7 @@
 #include <framework/otml/declarations.h>
 #include <framework/luascript/luaobject.h>
 
+// @bindclass
 class Module : public LuaObject
 {
 public:
@@ -52,6 +53,7 @@ public:
     bool isAutoLoad() { return m_autoLoad; }
     int getAutoLoadPriority() { return m_autoLoadPriority; }
 
+    // @dontbind
     ModulePtr asModule() { return std::static_pointer_cast<Module>(shared_from_this()); }
 
 protected:

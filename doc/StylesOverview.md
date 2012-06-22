@@ -1,4 +1,4 @@
-# @title Style Tags Overview
+# Style Tags Overview
 
 ## Style Overview
 This document describes how style tags can be specified, how they affect your

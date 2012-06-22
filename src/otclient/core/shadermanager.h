@@ -20,12 +20,13 @@
  * THE SOFTWARE.
  */
 
-#ifndef GAMESHADERS_H
-#define GAMESHADERS_H
+#ifndef SHADERMANAGER_H
+#define SHADERMANAGER_H
 
 #include "declarations.h"
 #include <framework/graphics/paintershaderprogram.h>
 
+//@bindsingleton g_shaders
 class ShaderManager
 {
 public:

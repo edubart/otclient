@@ -68,6 +68,7 @@ enum AttrTypes_t {
     ATTR_ATTRIBUTE_MAP = 128
 };
 
+// @bindclass
 class Item : public Thing
 {
 public:
