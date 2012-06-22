@@ -1,11 +1,16 @@
-# Try to find the zlib librairy
-#  ZLIB_FOUND - system has zlib
-#  ZLIB_INCLUDE_DIR - the zlib include directory
-#  ZLIB_LIBRARY - the zlib library
+# Try to find the ZLIB library
+#  ZLIB_FOUND - system has ZLIB
+#  ZLIB_INCLUDE_DIR - the ZLIB include directory
+#  ZLIB_LIBRARY - the ZLIB library
 
 FIND_PATH(ZLIB_INCLUDE_DIR NAMES zlib.h)
-FIND_LIBRARY(ZLIB_LIBRARY NAMES libz.a libzlib.a zlib1.a z zlib zdll zlib1)
+SET(_ZLIB_STATIC_LIBS libz.a libzlib.a zlib1.a)
+SET(_ZLIB_SHARED_LIBS z.dll zlib.dll zdll.dll zlib1.dll z zlib zdll zlib1)
+IF(USE_STATIC_LIBS)
+    FIND_LIBRARY(ZLIB_LIBRARY NAMES ${_ZLIB_STATIC_LIBS} ${_ZLIB_SHARED_LIBS})
+ELSE()
+    FIND_LIBRARY(ZLIB_LIBRARY NAMES ${_ZLIB_SHARED_LIBS} ${_ZLIB_STATIC_LIBS})
+ENDIF()
 INCLUDE(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(ZLIB DEFAULT_MSG ZLIB_LIBRARY ZLIB_INCLUDE_DIR)
 MARK_AS_ADVANCED(ZLIB_LIBRARY ZLIB_INCLUDE_DIR)
-

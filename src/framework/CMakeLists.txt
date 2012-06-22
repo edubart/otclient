@@ -8,6 +8,8 @@ SET(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake;${CMAKE_MODULE_PATH}")
 
 OPTION(CRASH_HANDLER "Generate crash reports" ON)
 OPTION(LUAJIT "Use lua jit" OFF)
+OPTION(USE_STATIC_LIBS "Don't use shared libraries (dlls)" ON)
+
 SET(OPENGLES "OFF" CACHE "Use OpenGL ES 1.0 or 2.0 (for mobiles devices)" STRING)
 SET(BUILD_REVISION "custom" CACHE "Git revision string (intended for releases)" STRING)
 
@@ -26,12 +28,14 @@ SET(CMAKE_CXX_FLAGS                   "${CMAKE_CXX_FLAGS} ${WARNS_FLAGS} ${ARCH_
 SET(CMAKE_CXX_FLAGS_DEBUG             "-O0 -ggdb")
 SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO    "-O1 -ggdb -fno-omit-frame-pointer")
 SET(CMAKE_CXX_FLAGS_RELEASE           "-O2")
+SET(CMAKE_CXX_FLAGS_PERFORMANCE       "-Ofast -mmxx -msee -msee2")
 SET(CMAKE_CXX_FLAGS_MINSIZEREL        "-Os")
 
-SET(CMAKE_CXX_LINK_FLAGS              "${CMAKE_CXX_LINK_FLAGS} -static-libgcc -static-libstdc++ -Wl,--as-needed")
-
-IF(CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "MinSizeRel")
-    SET(CMAKE_CXX_LINK_FLAGS              "${CMAKE_CXX_LINK_FLAGS} -Wl,-s")
+IF(USE_STATIC_LIBS)
+    SET(CMAKE_CXX_LINK_FLAGS "-static-libgcc -static-libstdc++")
+    MESSAGE("Link to static libraries: ON")
+ELSE()
+    MESSAGE("Link to static libraries: OFF")
 ENDIF()
 
 MESSAGE(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
@@ -70,7 +74,7 @@ MESSAGE(STATUS "OpenGL ES: " ${OPENGLES})
 IF(LUAJIT)
     FIND_PACKAGE(LuaJIT REQUIRED)
     SET(LUA_INCLUDE_DIR ${LUAJIT_INCLUDE_DIR})
-    SET(LUA_LIBRARIES ${LUAJIT_LIBRARIES})
+    SET(LUA_LIBRARY ${LUAJIT_LIBRARY})
 ELSE()
     FIND_PACKAGE(Lua REQUIRED)
 ENDIF()
@@ -94,7 +98,7 @@ ELSE()
     ADD_DEFINITIONS(-DNDEBUG)
 
     # strip all debug information
-    SET(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -s")
+    SET(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -Wl,--as-needed -Wl,-s")
 ENDIF()
 
 IF(CRASH_HANDLER)
@@ -140,7 +144,7 @@ INCLUDE_DIRECTORIES(
 
 SET(framework_LIBRARIES
     ${Boost_LIBRARIES}
-    ${LUA_LIBRARIES}
+    ${LUA_LIBRARY}
     ${PHYSFS_LIBRARY}
     ${GMP_LIBRARY}
     ${ZLIB_LIBRARY}

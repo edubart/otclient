@@ -1,4 +1,4 @@
-# Try to find the OpenGLES2 librairy
+# Try to find the OpenGLES2 library
 #  OPENGLES1_FOUND - system has OpenGL ES 1.0
 #  OPENGLES1_INCLUDE_DIR - the OpenGL ES 1.0 include directory
 #  OPENGLES1_LIBRARY - the OpenGL ES 1.0 library

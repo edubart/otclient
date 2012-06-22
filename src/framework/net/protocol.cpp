@@ -22,6 +22,7 @@
 
 #include "protocol.h"
 #include "connection.h"
+#include <framework/application.h>
 
 Protocol::Protocol()
 {

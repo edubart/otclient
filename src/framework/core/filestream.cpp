@@ -205,12 +205,12 @@ std::string FileStream::getString()
         char buffer[8192];
         if(m_fileHandle) {
             if(PHYSFS_read(m_fileHandle, buffer, 1, len) == 0)
-                g_logger.traceError(stdext::format("operation failed on '%s': %s", m_name, PHYSFS_getLastError()));
+                throwError("read failed");
             else
                 str = std::string(buffer, len);
         } else {
             if(m_pos+len > m_data.size()) {
-                g_logger.traceError(stdext::format("operation failed on '%s': reached file eof", m_name));
+                throwError("read failed");
                 return 0;
             }
 
@@ -249,7 +249,10 @@ void FileStream::addU64(uint8 v)
 void FileStream::throwError(const std::string& message)
 {
     std::string completeMessage = stdext::format("in file '%s': %s", m_name, message);
-    if(m_fileHandle)
-        completeMessage += std::string(": ") + PHYSFS_getLastError();
+    if(m_fileHandle) {
+        const char *errorMessage = PHYSFS_getLastError();
+        if(errorMessage)
+            completeMessage += std::string(": ") + errorMessage;
+    }
     stdext::throw_exception(completeMessage);
 }
