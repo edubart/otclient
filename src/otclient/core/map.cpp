@@ -317,13 +317,13 @@ void Map::saveOtcm(const std::string& fileName)
 {
     std::stringstream out;
 
+    uint16 id;
     for(auto& pair : m_tiles) {
         Position pos = pair.first;
         TilePtr tile = pair.second;
         if(!tile || tile->isEmpty())
             continue;
         out.write((char*)&pos, sizeof(pos));
-        uint16 id;
         for(const ThingPtr& thing : tile->getThings()) {
             if(ItemPtr item = thing->asItem()) {
                 id = item->getId();
@@ -334,9 +334,9 @@ void Map::saveOtcm(const std::string& fileName)
                 }
             }
         }
-        id = 0xFFFF;
-        out.write((char*)&id, sizeof(id));
     }
+    id = 0xFFFF;
+    out.write((char*)&id, sizeof(id));
 
     g_resources.saveFile(fileName, out);
 }

@@ -192,7 +192,7 @@ bool Protocol::xteaDecrypt(const InputMessagePtr& inputMessage)
     uint16 decryptedSize = inputMessage->getU16() + 2;
     int sizeDelta = decryptedSize - encryptedSize;
     if(sizeDelta > 0 || -sizeDelta > encryptedSize) {
-        g_logger.traceError("invalid decrypted a network message");
+        g_logger.traceError("invalid decrypted network message");
         return false;
     }
 

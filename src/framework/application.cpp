@@ -47,7 +47,7 @@ void exitSignalHandler(int sig)
         case SIGINT:
             if(!signaled) {
                 signaled = true;
-                g_eventDispatcher.addEvent(std::bind(&Application::close, g_app));
+                g_eventDispatcher.addEvent(std::bind(&Application::close, &g_app));
             }
             break;
     }
@@ -59,6 +59,7 @@ Application::Application()
     m_appCompactName = "app";
     m_appVersion = "none";
     m_foregroundFrameCounter.setMaxFps(60);
+    m_stopping = false;
 }
 
 void Application::init(const std::string& compactName, const std::vector<std::string>& args)
@@ -170,7 +171,6 @@ void Application::run()
 {
     assert(m_initialized);
 
-    m_stopping = false;
     m_running = true;
 
     // run the first poll
