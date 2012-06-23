@@ -40,13 +40,13 @@ public:
     bool loadXml(const std::string& file);
 
     void addOtbType(const ThingTypeOtbPtr& otbType);
-    ThingTypeOtbPtr findOtbForClientId(uint16 id);
+    const ThingTypeOtbPtr& findOtbForClientId(uint16 id);
 
-    ThingTypeDatPtr& getNullDatType() { return m_nullDatType; }
-    ThingTypeOtbPtr& getNullOtbType() { return m_nullOtbType; }
+    const ThingTypeDatPtr& getNullDatType() { return m_nullDatType; }
+    const ThingTypeOtbPtr& getNullOtbType() { return m_nullOtbType; }
 
-    ThingTypeDatPtr getDatType(uint16 id, DatCategory category);
-    ThingTypeOtbPtr getOtbType(uint16 id);
+    const ThingTypeDatPtr& getDatType(uint16 id, DatCategory category);
+    const ThingTypeOtbPtr& getOtbType(uint16 id);
 
     uint32 getDatSignature() { return m_datSignature; }
     uint32 getOtbVersion() { return m_otbVersion; }

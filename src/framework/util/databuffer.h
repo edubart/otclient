@@ -27,42 +27,75 @@ template<class T>
 class DataBuffer
 {
 public:
-    DataBuffer(int res = 64) {
-        m_capacity = res;
-        m_buffer = new T[m_capacity];
-        m_size = 0;
+    DataBuffer(uint res = 64) :
+        m_size(0),
+        m_capacity(res),
+        m_buffer(new T[m_capacity]) { }
+    ~DataBuffer() {
+        if(m_buffer)
+            delete[] m_buffer;
     }
-    ~DataBuffer() { delete[] m_buffer; }
 
     inline void reset() { m_size = 0; }
-    inline bool isEmpty() const { return m_size == 0; }
+    inline void clear() {
+        m_size = 0;
+        m_capacity = 0;
+        delete[] m_buffer;
+        m_buffer = nullptr;
+    }
 
-    inline int size() const { return m_size; }
+    inline bool empty() const { return m_size == 0; }
+    inline uint size() const { return m_size; }
     inline T *data() const { return m_buffer; }
 
-    inline const T& at(int i) const { return m_buffer[i]; }
+    inline const T& at(uint i) const { return m_buffer[i]; }
     inline const T& last() const { return m_buffer[m_size-1]; }
     inline const T& first() const { return m_buffer[0]; }
-    inline const T& operator[](int i) const { return m_buffer[i]; }
-    inline T& operator[](int i) { return m_buffer[i]; }
+    inline const T& operator[](uint i) const { return m_buffer[i]; }
+    inline T& operator[](uint i) { return m_buffer[i]; }
 
-    inline void add(const T &t) {
-        if(m_size >= m_capacity) {
-            m_capacity *= 2;
-            T *buffer = new T[m_capacity];
-            for(int i=0;i<m_size;++i)
+    inline void reserve(uint n) {
+        if(n > m_capacity) {
+            T *buffer = new T[n];
+            for(uint i=0;i<m_size;++i)
                 buffer[i] = m_buffer[i];
-            delete[] m_buffer;
+            if(m_buffer)
+                delete[] m_buffer;
             m_buffer = buffer;
+            m_capacity = n;
         }
-        m_buffer[m_size++] = t;
+    }
+
+    inline void resize(uint n, T def = T()) {
+        if(n == m_size)
+            return;
+        reserve(n);
+        for(uint i=m_size;i<n;++i)
+            m_buffer[i] = def;
+        m_size = n;
+    }
+
+    inline void grow(uint n) {
+        if(n <= m_size)
+            return;
+        if(n > m_capacity) {
+            uint newcapacity = m_capacity;
+            do { newcapacity *= 2; } while(newcapacity < n);
+            reserve(newcapacity);
+        }
+        m_size = n;
+    }
+
+    inline void add(const T& v) {
+        grow(m_size + 1);
+        m_buffer[m_size-1] = v;
     }
 
     inline DataBuffer &operator<<(const T &t) { add(t); return *this; }
 
 private:
-    int m_size;
-    int m_capacity;
+    uint m_size;
+    uint m_capacity;
     T *m_buffer;
 };
 

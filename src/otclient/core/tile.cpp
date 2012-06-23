@@ -30,11 +30,12 @@
 #include <otclient/net/protocolgame.h>
 #include <framework/graphics/fontmanager.h>
 
-Tile::Tile(const Position& position)
+Tile::Tile(const Position& position) :
+    m_position(position),
+    m_drawElevation(0),
+    m_flags(0),
+    m_minimapColorByte(0)
 {
-    m_drawElevation = 0;
-    m_position = position;
-    m_minimapColorByte = 0;
 }
 
 void Tile::draw(const Point& dest, float scaleFactor, int drawFlags)

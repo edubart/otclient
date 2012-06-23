@@ -25,6 +25,7 @@
 
 #include "declarations.h"
 #include <framework/luascript/luaobject.h>
+#include <framework/util/databuffer.h>
 
 struct PHYSFS_File;
 
@@ -32,7 +33,7 @@ struct PHYSFS_File;
 class FileStream : public LuaObject
 {
 public:
-    FileStream(const std::string& name, PHYSFS_File *fileHandle);
+    FileStream(const std::string& name, PHYSFS_File *fileHandle, bool writeable);
     ~FileStream();
 
     void cache();
@@ -64,9 +65,11 @@ private:
 
     std::string m_name;
     PHYSFS_File *m_fileHandle;
-
-    std::vector<uint8_t> m_data;
     uint m_pos;
+    bool m_writeable;
+    bool m_caching;
+
+    DataBuffer<uint8_t> m_data;
 };
 
 #endif

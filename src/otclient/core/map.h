@@ -76,7 +76,7 @@ enum OTBM_NodeTypes_t
 };
 
 enum {
-    OTCM_SIGNATURE = 0x12345678,
+    OTCM_SIGNATURE = 0x4D43544F,
     OTCM_VERSION = 1,
 };
 

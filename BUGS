@@ -1,5 +1,6 @@
 == CRASHS
 modules recursivity makes client crash, it should generate a warning
+boost::asio makes the client crash in rarely conditions when trying to connect but internet is offline
 
 == P1 BUGS (affects game play)
 in some situations creatures may disappears while walking

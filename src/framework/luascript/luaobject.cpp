@@ -25,7 +25,8 @@
 
 #include <framework/application.h>
 
-LuaObject::LuaObject() : m_fieldsTableRef(-1)
+LuaObject::LuaObject() :
+    m_fieldsTableRef(-1)
 {
 }
 

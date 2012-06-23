@@ -116,10 +116,10 @@ void Application::init(const std::string& compactName, const std::vector<std::st
 
 void Application::deinit()
 {
-    g_lua.callGlobalField("g_app", "onTerminate");
-
     // hide the window because there is no render anymore
     g_window.hide();
+
+    g_lua.callGlobalField("g_app", "onTerminate");
 
     // run modules unload events
     g_modules.unloadModules();

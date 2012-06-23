@@ -28,9 +28,9 @@
 #include "tile.h"
 #include "game.h"
 
-Thing::Thing()
+Thing::Thing() :
+    m_datType(g_things.getNullDatType())
 {
-    m_datType = g_things.getNullDatType();
 }
 
 int Thing::getStackPriority()

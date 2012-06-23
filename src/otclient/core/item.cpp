@@ -32,12 +32,14 @@
 #include <framework/graphics/graphics.h>
 #include <framework/core/filestream.h>
 
-Item::Item() : Thing()
+Item::Item() :
+    m_id(0),
+    m_countOrSubType(1),
+    m_actionId(0),
+    m_uniqueId(0),
+    m_shaderProgram(g_shaders.getDefaultItemShader()),
+    m_otbType(g_things.getNullOtbType())
 {
-    m_id = 0;
-    m_countOrSubType = 1;
-    m_shaderProgram = g_shaders.getDefaultItemShader();
-    m_otbType = g_things.getNullOtbType();
 }
 
 ItemPtr Item::create(int id)

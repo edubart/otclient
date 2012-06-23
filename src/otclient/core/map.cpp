@@ -286,12 +286,16 @@ bool Map::loadOtcm(const std::string& fileName)
 {
     try {
         FileStreamPtr fin = g_resources.openFile(fileName);
+        fin->cache();
 
         uint32 signature = fin->getU32();
         if(signature != OTCM_SIGNATURE)
             stdext::throw_exception("invalid otcm file");
 
+        uint16 start = fin->getU16();
         uint16 version = fin->getU16();
+        fin->getU32(); // flags
+
         switch(version) {
             case 1: {
                 fin->getString(); // description
@@ -309,8 +313,11 @@ bool Map::loadOtcm(const std::string& fileName)
                 break;
         }
 
+        fin->seek(start);
+
         while(true) {
             Position pos;
+
             pos.x = fin->getU16();
             pos.y = fin->getU16();
             pos.z = fin->getU8();
@@ -338,6 +345,7 @@ bool Map::loadOtcm(const std::string& fileName)
         }
 
         fin->close();
+
         return true;
     } catch(stdext::exception& e) {
         g_logger.error(stdext::format("failed to load OTCM map: %s", e.what()));
@@ -348,17 +356,34 @@ bool Map::loadOtcm(const std::string& fileName)
 void Map::saveOtcm(const std::string& fileName)
 {
     try {
-        FileStreamPtr fin = g_resources.createFile(fileName);
+        g_clock.update();
 
+        FileStreamPtr fin = g_resources.createFile(fileName);
+        fin->cache();
+
+        //TODO: compression flag with zlib
+        uint32 flags = 0;
+
+        // header
         fin->addU32(OTCM_SIGNATURE);
+        fin->addU16(0); // data start, will be overwritten later
         fin->addU16(OTCM_VERSION);
-        fin->addString("OTCM 1.0");
+        fin->addU32(flags);
+
+        // version 1 header
+        fin->addString("OTCM 1.0"); // map description
         fin->addU32(g_things.getDatSignature());
         fin->addU16(g_game.getProtocolVersion());
         fin->addString(g_game.getWorldName());
 
+        // go back and rewrite where the map data starts
+        uint32 start = fin->tell();
+        fin->seek(4);
+        fin->addU16(start);
+        fin->seek(start);
+
         for(auto& pair : m_tiles) {
-            TilePtr tile = pair.second;
+            const TilePtr& tile = pair.second;
             if(!tile || tile->isEmpty())
                 continue;
 
@@ -424,14 +449,18 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
     if(!thing)
         return;
 
-    Position oldPos = thing->getPosition();
     TilePtr tile = getOrCreateTile(pos);
 
-    if(MissilePtr missile = thing->asMissile()) {
-        m_floorMissiles[pos.z].push_back(missile);
-    } else if(AnimatedTextPtr animatedText = thing->asAnimatedText()) {
-        m_animatedTexts.push_back(animatedText);
-    } else if(StaticTextPtr staticText = thing->asStaticText()) {
+    Position oldPos = thing->getPosition();
+
+    if(thing->isItem() || thing->isCreature() || thing->isEffect()) {
+        tile->addThing(thing, stackPos);
+    } else if(thing->isMissile()) {
+        m_floorMissiles[pos.z].push_back(thing->asMissile());
+    } else if(thing->isAnimatedText()) {
+        m_animatedTexts.push_back(thing->asAnimatedText());
+    } else if(thing->isStaticText()) {
+        StaticTextPtr staticText = thing->asStaticText();
         bool mustAdd = true;
         for(auto it = m_staticTexts.begin(), end = m_staticTexts.end(); it != end; ++it) {
             StaticTextPtr cStaticText = *it;
@@ -449,14 +478,13 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
 
         if(mustAdd)
             m_staticTexts.push_back(staticText);
-    } else {
-        tile->addThing(thing, stackPos);
     }
 
     thing->startAnimation();
     thing->setPosition(pos);
 
-    if(CreaturePtr creature = thing->asCreature()) {
+    if(thing->isCreature()) {
+        CreaturePtr creature = thing->asCreature();
         if(oldPos != pos) {
             if(oldPos.isInRange(pos,1,1))
                 g_game.processCreatureMove(creature, oldPos, pos);

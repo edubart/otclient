@@ -209,7 +209,7 @@ FileStreamPtr ResourceManager::openFile(const std::string& fileName)
         g_logger.error(stdext::format("unable to open file '%s': %s", fullPath, PHYSFS_getLastError()));
         return nullptr;
     }
-    return FileStreamPtr(new FileStream(fullPath, file));
+    return FileStreamPtr(new FileStream(fullPath, file, false));
 }
 
 FileStreamPtr ResourceManager::appendFile(const std::string& fileName)
@@ -219,7 +219,7 @@ FileStreamPtr ResourceManager::appendFile(const std::string& fileName)
         g_logger.error(stdext::format("failed to append file '%s': %s", fileName, PHYSFS_getLastError()));
         return nullptr;
     }
-    return FileStreamPtr(new FileStream(fileName, file));
+    return FileStreamPtr(new FileStream(fileName, file, true));
 }
 
 FileStreamPtr ResourceManager::createFile(const std::string& fileName)
@@ -229,7 +229,7 @@ FileStreamPtr ResourceManager::createFile(const std::string& fileName)
         g_logger.error(stdext::format("failed to create file '%s': %s", fileName, PHYSFS_getLastError()));
         return nullptr;
     }
-    return FileStreamPtr(new FileStream(fileName, file));
+    return FileStreamPtr(new FileStream(fileName, file, true));
 }
 
 bool ResourceManager::deleteFile(const std::string& fileName)

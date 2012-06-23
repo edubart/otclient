@@ -44,8 +44,8 @@ public:
     PainterShaderProgramPtr createItemShader(const std::string& name, const std::string& file);
     PainterShaderProgramPtr createMapShader(const std::string& name, const std::string& file) { return createFragmentShader(name, file); }
 
-    PainterShaderProgramPtr getDefaultItemShader() { return m_defaultItemShader; }
-    PainterShaderProgramPtr getDefaultMapShader() { return m_defaultMapShader; }
+    const PainterShaderProgramPtr& getDefaultItemShader() { return m_defaultItemShader; }
+    const PainterShaderProgramPtr& getDefaultMapShader() { return m_defaultMapShader; }
 
     PainterShaderProgramPtr getShader(const std::string& name);
 

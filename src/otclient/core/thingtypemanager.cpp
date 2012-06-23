@@ -247,16 +247,20 @@ void ThingTypeManager::addOtbType(const ThingTypeOtbPtr& otbType)
     m_otbTypes[id] = otbType;
 }
 
-ThingTypeOtbPtr ThingTypeManager::findOtbForClientId(uint16 id)
+const ThingTypeOtbPtr& ThingTypeManager::findOtbForClientId(uint16 id)
 {
+    if(m_otbTypes.empty())
+        return m_nullOtbType;
+
     for(const ThingTypeOtbPtr& otbType : m_otbTypes) {
         if(otbType->getClientId() == id)
             return otbType;
     }
+
     return m_nullOtbType;
 }
 
-ThingTypeDatPtr ThingTypeManager::getDatType(uint16 id, DatCategory category)
+const ThingTypeDatPtr& ThingTypeManager::getDatType(uint16 id, DatCategory category)
 {
     if(category >= DatLastCategory || id >= m_datTypes[category].size()) {
         g_logger.error(stdext::format("invalid thing type client id %d in category %d", id, category));
@@ -265,7 +269,7 @@ ThingTypeDatPtr ThingTypeManager::getDatType(uint16 id, DatCategory category)
     return m_datTypes[category][id];
 }
 
-ThingTypeOtbPtr ThingTypeManager::getOtbType(uint16 id)
+const ThingTypeOtbPtr& ThingTypeManager::getOtbType(uint16 id)
 {
     if(id >= m_otbTypes.size()) {
         g_logger.error(stdext::format("invalid thing type server id %d", id));
