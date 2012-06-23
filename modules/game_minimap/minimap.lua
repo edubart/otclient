@@ -37,10 +37,9 @@ function Minimap.init()
   Keyboard.bindKeyDown('Ctrl+M', Minimap.toggle)
 
   minimapButton = TopMenu.addGameToggleButton('minimapButton', tr('Minimap') .. ' (Ctrl+M)', 'minimap.png', Minimap.toggle)
-  minimapButton:setOn(false)
+  minimapButton:setOn(true)
 
   minimapWindow = loadUI('minimap.otui', GameInterface.getRightPanel())
-  minimapWindow:setOn(true)
 
   minimapWidget = minimapWindow:recursiveGetChildById('minimap')
   minimapWidget:setAutoViewMode(false)

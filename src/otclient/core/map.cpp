@@ -284,61 +284,112 @@ bool Map::loadOtbm(const std::string& fileName)
 
 bool Map::loadOtcm(const std::string& fileName)
 {
-    if(!g_resources.fileExists(fileName)) {
-        g_logger.error(stdext::format("Unable to load map '%s'", fileName));
+    try {
+        FileStreamPtr fin = g_resources.openFile(fileName);
+
+        uint32 signature = fin->getU32();
+        if(signature != OTCM_SIGNATURE)
+            stdext::throw_exception("invalid otcm file");
+
+        uint16 version = fin->getU16();
+        switch(version) {
+            case 1: {
+                fin->getString(); // description
+                uint32 datSignature = fin->getU32();
+                fin->getU16(); // protocol version
+                fin->getString(); // world name
+
+                if(datSignature != g_things.getDatSignature())
+                    g_logger.warning("otcm map loaded is was created with a different dat signature");
+
+                break;
+            }
+            default:
+                stdext::throw_exception("otcm version not supported");
+                break;
+        }
+
+        while(true) {
+            Position pos;
+            pos.x = fin->getU16();
+            pos.y = fin->getU16();
+            pos.z = fin->getU8();
+
+            // end of file
+            if(!pos.isValid())
+                break;
+
+            while(true) {
+                uint16 id = fin->getU16();
+
+                // end of tile
+                if(id == 0xFFFF)
+                    break;
+
+                uint8 countOrSubType = fin->getU8();
+
+                ItemPtr item = Item::create(id);
+                if(item->isStackable() || item->isFluidContainer() || item->isFluid())
+                    item->setCountOrSubType(countOrSubType);
+
+                if(item->isValid())
+                    addThing(item, pos, 255);
+            }
+        }
+
+        fin->close();
+        return true;
+    } catch(stdext::exception& e) {
+        g_logger.error(stdext::format("failed to load OTCM map: %s", e.what()));
         return false;
     }
-
-    std::stringstream in;
-    g_resources.loadFile(fileName, in);
-
-    while(!in.eof()) {
-        Position pos;
-        in.read((char*)&pos, sizeof(pos));
-
-        uint16 id;
-        in.read((char*)&id, sizeof(id));
-        while(id != 0xFFFF) {
-            ItemPtr item = Item::create(id);
-            if(item->isStackable() || item->isFluidContainer() || item->isFluid()) {
-                uint8 countOrSubType;
-                in.read((char*)&countOrSubType, sizeof(countOrSubType));
-                item->setCountOrSubType(countOrSubType);
-            }
-            addThing(item, pos, 255);
-            in.read((char*)&id, sizeof(id));
-        }
-    }
-
-    return true;
 }
 
 void Map::saveOtcm(const std::string& fileName)
 {
-    std::stringstream out;
+    try {
+        FileStreamPtr fin = g_resources.createFile(fileName);
 
-    uint16 id;
-    for(auto& pair : m_tiles) {
-        Position pos = pair.first;
-        TilePtr tile = pair.second;
-        if(!tile || tile->isEmpty())
-            continue;
-        out.write((char*)&pos, sizeof(pos));
-        for(const ThingPtr& thing : tile->getThings()) {
-            if(ItemPtr item = thing->asItem()) {
-                id = item->getId();
-                out.write((char*)&id, sizeof(id));
-                if(item->isStackable() || item->isFluidContainer() || item->isFluid()) {
-                    uint8 countOrSubType = item->getCountOrSubType();
-                    out.write((char*)&countOrSubType, sizeof(countOrSubType));
-                }
+        fin->addU32(OTCM_SIGNATURE);
+        fin->addU16(OTCM_VERSION);
+        fin->addString("OTCM 1.0");
+        fin->addU32(g_things.getDatSignature());
+        fin->addU16(g_game.getProtocolVersion());
+        fin->addString(g_game.getWorldName());
+
+        for(auto& pair : m_tiles) {
+            TilePtr tile = pair.second;
+            if(!tile || tile->isEmpty())
+                continue;
+
+            Position pos = pair.first;
+            fin->addU16(pos.x);
+            fin->addU16(pos.y);
+            fin->addU8(pos.z);
+
+            const auto& list = tile->getThings();
+            auto first = std::find_if(list.begin(), list.end(), [](const ThingPtr& thing) { return thing->isItem(); });
+            for(auto it = first, end = list.end(); it != end; ++it) {
+                ItemPtr item = (*it)->asItem();
+                fin->addU16(item->getId());
+                fin->addU8(item->getCountOrSubType());
             }
-        }
-    }
-    id = 0xFFFF;
-    out.write((char*)&id, sizeof(id));
 
-    g_resources.saveFile(fileName, out);
+            // end of tile
+            fin->addU16(0xFFFF);
+        }
+
+        // end of file
+        Position invalidPos;
+        fin->addU16(invalidPos.x);
+        fin->addU16(invalidPos.y);
+        fin->addU8(invalidPos.z);
+
+        fin->flush();
+        fin->close();
+    } catch(stdext::exception& e) {
+        g_logger.error(stdext::format("failed to save OTCM map: %s", e.what()));
+    }
 }
 
 void Map::clean()
@@ -582,6 +633,7 @@ std::vector<CreaturePtr> Map::getSpectatorsInRangeEx(const Position& centerPos, 
         maxZRange = Otc::MAX_Z;
     }
 
+    //TODO: optimize
     //TODO: get creatures from other floors corretly
     //TODO: delivery creatures in distance order
 

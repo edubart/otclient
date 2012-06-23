@@ -75,6 +75,11 @@ enum OTBM_NodeTypes_t
     OTBM_WAYPOINT = 16
 };
 
+enum {
+    OTCM_SIGNATURE = 0x12345678,
+    OTCM_VERSION = 1,
+};
+
 //@bindsingleton g_map
 class Map
 {

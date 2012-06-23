@@ -48,9 +48,8 @@ void FileStream::cache()
     PHYSFS_seek(m_fileHandle, 0);
     int size = PHYSFS_fileLength(m_fileHandle);
     m_data.resize(size);
-    int res = PHYSFS_read(m_fileHandle, &m_data[0], size, 1);
-    if(res == -1)
-        throwError("unable to read file data");
+    if(PHYSFS_read(m_fileHandle, &m_data[0], size, 1) == -1)
+        throwError("unable to read file data", true);
 
     close();
 }
@@ -59,7 +58,7 @@ void FileStream::close()
 {
     if(m_fileHandle) {
         if(!PHYSFS_close(m_fileHandle))
-            throwError("close failed");
+            throwError("close failed", true);
         m_fileHandle = nullptr;
     } else {
         m_data.clear();
@@ -70,7 +69,7 @@ void FileStream::close()
 void FileStream::flush()
 {
     if(m_fileHandle && PHYSFS_flush(m_fileHandle) == 0)
-        throwError("flush failed");
+        throwError("flush failed", true);
 }
 
 int FileStream::read(void *buffer, uint32 size, uint32 nmemb)
@@ -78,7 +77,7 @@ int FileStream::read(void *buffer, uint32 size, uint32 nmemb)
     if(m_fileHandle) {
         int res = PHYSFS_read(m_fileHandle, buffer, size, nmemb);
         if(res == -1)
-            throwError("read failed");
+            throwError("read failed", true);
         return res;
     } else {
         uint maxReadPos = m_data.size()-1;
@@ -95,17 +94,17 @@ int FileStream::read(void *buffer, uint32 size, uint32 nmemb)
     }
 }
 
-void FileStream::write(void *buffer, uint32 count)
+void FileStream::write(const void *buffer, uint32 count)
 {
     if(PHYSFS_write(m_fileHandle, buffer, 1, count) != count)
-        throwError("write failed");
+        throwError("write failed", true);
 }
 
 void FileStream::seek(uint32 pos)
 {
     if(m_fileHandle) {
         if(!PHYSFS_seek(m_fileHandle, pos))
-            throwError("seek failed");
+            throwError("seek failed", true);
     } else {
         if(pos > m_data.size())
             throwError("seek failed");
@@ -139,7 +138,7 @@ uint8 FileStream::getU8()
     uint8 v = 0;
     if(m_fileHandle) {
         if(PHYSFS_read(m_fileHandle, &v, 1, 1) != 1)
-            throwError("read failed");
+            throwError("read failed", true);
     } else {
         if(m_pos+1 > m_data.size())
             throwError("read failed");
@@ -155,7 +154,7 @@ uint16 FileStream::getU16()
     uint16 v = 0;
     if(m_fileHandle) {
         if(PHYSFS_readULE16(m_fileHandle, &v) == 0)
-            throwError("read failed");
+            throwError("read failed", true);
     } else {
         if(m_pos+2 > m_data.size())
             throwError("read failed");
@@ -171,7 +170,7 @@ uint32 FileStream::getU32()
     uint32 v = 0;
     if(m_fileHandle) {
         if(PHYSFS_readULE32(m_fileHandle, &v) == 0)
-            throwError("read failed");
+            throwError("read failed", true);
     } else {
         if(m_pos+4 > m_data.size())
             throwError("read failed");
@@ -187,7 +186,7 @@ uint64 FileStream::getU64()
     uint64 v = 0;
     if(m_fileHandle) {
         if(PHYSFS_readULE64(m_fileHandle, (PHYSFS_uint64*)&v) == 0)
-            throwError("read failed");
+            throwError("read failed", true);
     } else {
         if(m_pos+8 > m_data.size())
             throwError("read failed");
@@ -200,12 +199,12 @@ uint64 FileStream::getU64()
 std::string FileStream::getString()
 {
     std::string str;
-    int len = getU16();
+    uint16 len = getU16();
     if(len > 0 && len < 8192) {
         char buffer[8192];
         if(m_fileHandle) {
             if(PHYSFS_read(m_fileHandle, buffer, 1, len) == 0)
-                throwError("read failed");
+                throwError("read failed", true);
             else
                 str = std::string(buffer, len);
         } else {
@@ -217,42 +216,45 @@ std::string FileStream::getString()
             str = std::string((char*)&m_data[m_pos], len);
             m_pos += len;
         }
-    } else {
-    }
+    } else if(len != 0)
+        throwError("read failed because string is too big");
     return str;
 }
 
 void FileStream::addU8(uint8 v)
 {
     if(PHYSFS_write(m_fileHandle, &v, 1, 1) != 1)
-        throwError("write failed");
+        throwError("write failed", true);
 }
 
-void FileStream::addU16(uint8 v)
+void FileStream::addU16(uint16 v)
 {
     if(PHYSFS_writeULE16(m_fileHandle, v) == 0)
-        throwError("write failed");
+        throwError("write failed", true);
 }
 
-void FileStream::addU32(uint8 v)
+void FileStream::addU32(uint32 v)
 {
     if(PHYSFS_writeULE32(m_fileHandle, v) == 0)
-        throwError("write failed");
+        throwError("write failed", true);
 }
 
-void FileStream::addU64(uint8 v)
+void FileStream::addU64(uint64 v)
 {
     if(PHYSFS_writeULE64(m_fileHandle, v) == 0)
-        throwError("write failed");
+        throwError("write failed", true);
 }
 
-void FileStream::throwError(const std::string& message)
+void FileStream::addString(const std::string& v)
+{
+    addU16(v.length());
+    write(v.c_str(), v.length());
+}
+
+void FileStream::throwError(const std::string& message, bool physfsError)
 {
     std::string completeMessage = stdext::format("in file '%s': %s", m_name, message);
-    if(m_fileHandle) {
-        const char *errorMessage = PHYSFS_getLastError();
-        if(errorMessage)
-            completeMessage += std::string(": ") + errorMessage;
-    }
+    if(physfsError)
+        completeMessage += std::string(": ") + PHYSFS_getLastError();
     stdext::throw_exception(completeMessage);
 }

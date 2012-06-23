@@ -151,9 +151,14 @@ void UIMap::onGeometryChange(const Rect& oldRect, const Rect& newRect)
 void UIMap::updateVisibleDimension()
 {
     int dimensionHeight = m_zoom;
+
+    float ratio = 1;
+    if(!m_mapRect.isEmpty())
+        ratio = m_mapRect.size().ratio();
+
     if(dimensionHeight % 2 == 0)
         dimensionHeight += 1;
-    int dimensionWidth = m_zoom * m_mapRect.size().ratio();
+    int dimensionWidth = m_zoom * ratio;
     if(dimensionWidth % 2 == 0)
         dimensionWidth += 1;
 

@@ -253,6 +253,16 @@ ThingPtr Tile::getTopThing()
     return m_things[m_things.size() - 1];
 }
 
+std::vector<ItemPtr> Tile::getItems()
+{
+    std::vector<ItemPtr> items;
+    for(const ThingPtr& thing : m_things) {
+        if(ItemPtr item = thing->asItem())
+            items.push_back(item);
+    }
+    return items;
+}
+
 std::vector<CreaturePtr> Tile::getCreatures()
 {
     std::vector<CreaturePtr> creatures;

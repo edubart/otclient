@@ -38,7 +38,7 @@ public:
     void cache();
     void close();
     void flush();
-    void write(void *buffer, uint count);
+    void write(const void *buffer, uint count);
     int read(void *buffer, uint size, uint nmemb = 1);
     void seek(uint pos);
     void skip(uint len);
@@ -53,13 +53,14 @@ public:
     std::string getString();
 
     void addU8(uint8 v);
-    void addU16(uint8 v);
-    void addU32(uint8 v);
-    void addU64(uint8 v);
+    void addU16(uint16 v);
+    void addU32(uint32 v);
+    void addU64(uint64 v);
+    void addString(const std::string& v);
 
 private:
     void checkWrite();
-    void throwError(const std::string& message);
+    void throwError(const std::string& message, bool physfsError = false);
 
     std::string m_name;
     PHYSFS_File *m_fileHandle;

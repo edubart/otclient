@@ -78,6 +78,7 @@ public:
 
     const Position& getPosition() { return m_position; }
     int getDrawElevation() { return m_drawElevation; }
+    std::vector<ItemPtr> getItems();
     std::vector<CreaturePtr> getCreatures();
     const std::vector<ThingPtr>& getThings() { return m_things; }
     ItemPtr getGround();

@@ -95,6 +95,7 @@ public:
     int getCount() { return m_countOrSubType; }
     uint32 getId() { return m_id; }
     std::string getName() { return m_name; }
+    bool isValid();
 
     ItemPtr asItem() { return std::static_pointer_cast<Item>(shared_from_this()); }
     bool isItem() { return true; }
@@ -103,8 +104,6 @@ public:
     bool unserializeAttr(FileStreamPtr fin);
     bool unserializeItemNode(FileStreamPtr fin, uint8) { return unserializeAttr(fin); }
     void readAttr(AttrTypes_t attrType, FileStreamPtr fin);
-
-    bool isMoveable() { return false; }
 
 private:
     uint16 m_id;

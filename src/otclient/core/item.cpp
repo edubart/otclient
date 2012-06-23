@@ -196,6 +196,11 @@ void Item::setOtbId(uint16 id)
     m_id = m_datType->getId();
 }
 
+bool Item::isValid()
+{
+    return g_things.isValidDatId(m_id, DatItemCategory);
+}
+
 bool Item::unserializeAttr(FileStreamPtr fin)
 {
     uint8 attrType;
