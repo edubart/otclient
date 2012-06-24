@@ -36,6 +36,7 @@ MiniWindow
   height: 150
   icon: skills.png
   @onClose: Skills.onMiniWindowClose()
+  &save: true
 
   MiniWindowContents
     anchors.fill: parent

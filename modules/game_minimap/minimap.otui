@@ -3,6 +3,8 @@ MiniWindow
   !text: tr('Minimap')
   height: 150
   icon: minimap.png
+  @onClose: Minimap.onMiniWindowClose()
+  &save: true
 
   MiniWindowContents
     padding: 3

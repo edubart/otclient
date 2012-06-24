@@ -54,29 +54,46 @@ function UIMiniWindowContainer:scheduleInsert(widget, index)
     if oldParent ~= self then
       oldParent:removeChild(widget)
       self:insertChild(index, widget)
-    else
-      self:swapInsert(widget, index)
-    end
 
-    while true do
-      local placed = false
-      for nIndex,nWidget in pairs(self.scheduledWidgets) do
-        if nIndex - 1 <= self:getChildCount() then
-          self:insertChild(nIndex, nWidget)
-          self.scheduledWidgets[nIndex] = nil
-          placed = true
-          break
+      while true do
+        local placed = false
+        for nIndex,nWidget in pairs(self.scheduledWidgets) do
+          if nIndex - 1 <= self:getChildCount() then
+            self:insertChild(nIndex, nWidget)
+            self.scheduledWidgets[nIndex] = nil
+            placed = true
+            break
+          end
         end
+        if not placed then break end
       end
-      if not placed then break end
+
+    end
+  end
+end
+
+function UIMiniWindowContainer:order()
+  local children = self:getChildren()
+  for i=1,#children do
+    if not children[i].miniLoaded then return end
+  end
+
+  for i=1,#children do
+    if children[i].miniIndex then
+      self:swapInsert(children[i], children[i].miniIndex)
     end
   end
 end
 
 function UIMiniWindowContainer:saveChildren()
   local children = self:getChildren()
+  local ignoreIndex = 0
   for i=1,#children do
-    children[i]:saveParentIndex(self:getId(), i)
+    if children[i].save then
+      children[i]:saveParentIndex(self:getId(), i - ignoreIndex)
+    else
+      ignoreIndex = ignoreIndex + 1
+    end
   end
 end
 

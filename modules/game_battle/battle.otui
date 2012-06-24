@@ -42,6 +42,7 @@ MiniWindow
   height: 166
   icon: battle.png
   @onClose: Battle.onMiniWindowClose()
+  &save: true
 
   MiniWindowContents
     BattlePlayers

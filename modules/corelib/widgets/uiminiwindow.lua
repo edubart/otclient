@@ -75,6 +75,8 @@ function UIMiniWindow:onSetup()
       end
     end
 
+  local oldParent = self:getParent()
+
   local settings = Settings.getNode('MiniWindows')
   if settings then
     local selfSettings = settings[self:getId()]
@@ -83,6 +85,7 @@ function UIMiniWindow:onSetup()
         local parent = rootWidget:recursiveGetChildById(selfSettings.parentId)
         if parent then
           if parent:getClassName() == 'UIMiniWindowContainer' and selfSettings.index and parent:isOn() then
+            self.miniIndex = selfSettings.index
             parent:scheduleInsert(self, selfSettings.index)
           elseif selfSettings.position then
             self:setParent(parent)
@@ -100,6 +103,17 @@ function UIMiniWindow:onSetup()
         self:close(true)
       end
     end
+  end
+
+  local newParent = self:getParent()
+
+  self.miniLoaded = true
+
+  if oldParent and oldParent:getClassName() == 'UIMiniWindowContainer' then
+    oldParent:order()
+  end
+  if newParent and newParent:getClassName() == 'UIMiniWindowContainer' and newParent ~= oldParent then
+    newParent:order()
   end
 end
 
@@ -199,6 +213,8 @@ function UIMiniWindow:onFocusChange(focused)
 end
 
 function UIMiniWindow:setSettings(data)
+  if not self.save then return end
+
   local settings = Settings.getNode('MiniWindows')
   if not settings then
     settings = {}

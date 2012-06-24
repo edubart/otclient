@@ -46,6 +46,7 @@ MiniWindow
   !text: tr('Health Bar')
   height: 86
   @onClose: HealthBar.onMiniWindowClose()
+  &save: true
 
   MiniWindowContents
     HealthBar

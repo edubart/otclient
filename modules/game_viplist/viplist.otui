@@ -9,6 +9,7 @@ MiniWindow
   height: 100
   icon: viplist.png
   @onClose: VipList.onMiniWindowClose()
+  &save: true
 
   MiniWindowContents
     layout: verticalBox

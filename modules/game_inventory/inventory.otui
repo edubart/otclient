@@ -4,6 +4,7 @@ MiniWindow
   icon: inventory.png
   height: 180
   @onClose: Inventory.onMiniWindowClose()
+  &save: true
 
   MiniWindowContents
     Item

@@ -83,14 +83,17 @@ function Minimap.terminate()
 end
 
 function Minimap.toggle()
-  local visible = not minimapWindow:isExplicitlyVisible()
-  if visible then
-    minimapWindow:open()
-    minimapButton:setOn(true)
-  else
+  if minimapButton:isOn() then
     minimapWindow:close()
     minimapButton:setOn(false)
+  else
+    minimapWindow:open()
+    minimapButton:setOn(true)
   end
+end
+
+function Minimap.onMiniWindowClose()
+  minimapButton:setOn(false)
 end
 
 function Minimap.reset()
