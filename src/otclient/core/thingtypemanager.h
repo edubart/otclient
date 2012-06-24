@@ -49,7 +49,6 @@ public:
     const ThingTypeOtbPtr& getOtbType(uint16 id);
 
     uint32 getDatSignature() { return m_datSignature; }
-    uint32 getOtbVersion() { return m_otbVersion; }
     uint32 getOtbMajorVersion() { return m_otbMajorVersion; }
     uint32 getOtbMinorVersion() { return m_otbMinorVersion; }
 
@@ -71,7 +70,6 @@ private:
     bool m_xmlLoaded;
     bool m_otbLoaded;
 
-    uint32 m_otbVersion;
     uint32 m_otbMinorVersion;
     uint32 m_otbMajorVersion;
     uint32 m_datSignature;

@@ -35,9 +35,10 @@ enum {
 class BinaryTree : public std::enable_shared_from_this<BinaryTree>
 {
 public:
-    BinaryTree(const BinaryTreePtr& parent = nullptr) : m_type(0), m_pos(0), m_parent(parent) { }
+    BinaryTree(const BinaryTreePtr& parent = nullptr) : m_pos(0), m_parent(parent) { }
 
     void unserialize(const FileStreamPtr& fin);
+    void serialize(const FileStreamPtr& fin);
 
     void seek(uint pos);
     void skip(uint len) { seek(tell() + len); }
@@ -52,12 +53,9 @@ public:
 
     BinaryTreeVec getChildren() { return m_children; }
     BinaryTreePtr getParent() { return m_parent.lock(); }
-    uint32 getType() { return m_type; }
     bool canRead() { return m_pos < m_buffer.size(); }
 
 private:
-    void setParent(const BinaryTreePtr& parent) { m_parent = parent; }
-    uint m_type;
     uint m_pos;
 
     BinaryTreeVec m_children;

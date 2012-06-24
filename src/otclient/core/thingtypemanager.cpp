@@ -39,12 +39,9 @@ void ThingTypeManager::init()
 {
     m_nullDatType = ThingTypeDatPtr(new ThingTypeDat);
     m_nullOtbType = ThingTypeOtbPtr(new ThingTypeOtb);
-    m_otbVersion = 0;
     m_datSignature = 0;
-    m_otbVersion = 0;
     m_otbMinorVersion = 0;
     m_otbMajorVersion = 0;
-    m_datSignature = 0;
     m_datLoaded = false;
     m_xmlLoaded = false;
     m_otbLoaded = false;
@@ -97,14 +94,16 @@ bool ThingTypeManager::loadOtb(const std::string& file)
 {
     try {
         FileStreamPtr fin = g_resources.openFile(file);
-        if (!fin)
-            stdext::throw_exception("unable to open file");
 
-        m_otbVersion = fin->getU32();
-        if (m_otbVersion != 0x00)
-            stdext::throw_exception("invalid file version");
+        uint signature = fin->getU32();
+        if(signature != 0)
+            stdext::throw_exception("invalid otb file");
 
         BinaryTreePtr root = fin->getBinaryTree();
+
+        signature = root->getU32();
+        if(signature != 0)
+            stdext::throw_exception("invalid otb file");
 
         root->getU32(); // flags
 

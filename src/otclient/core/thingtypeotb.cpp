@@ -37,11 +37,9 @@ void ThingTypeOtb::unserialize(const BinaryTreePtr& node)
 {
     m_null = false;
 
-    uint8 zero = node->getU8();
-    assert(zero == 0);
     m_category = (OtbCategory)node->getU8();
 
-    node->getU32(); // skip flags
+    node->getU32(); // flags
 
     while(node->canRead()) {
         uint8 attr = node->getU8();

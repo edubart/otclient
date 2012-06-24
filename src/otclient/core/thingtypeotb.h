@@ -28,7 +28,8 @@
 #include <framework/luascript/luaobject.h>
 
 enum OtbCategory {
-    OtbGround = 0,
+    OtbInvalidCateogry = 0,
+    OtbGround,
     OtbContainer,
     OtbWeapon,
     OtbAmmunition,
@@ -41,8 +42,7 @@ enum OtbCategory {
     OtbSplash,
     OtbFluid,
     OtbDoor,
-    OtbLastCategory,
-    OtbInvalidCateogry = OtbLastCategory
+    OtbLastCategory
 };
 
 enum OtbAttrib {

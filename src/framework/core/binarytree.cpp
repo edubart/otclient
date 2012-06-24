@@ -25,8 +25,6 @@
 
 void BinaryTree::unserialize(const FileStreamPtr& fin)
 {
-    m_type = fin->getU32();
-
     while(true) {
         uint8 byte = fin->getU8();
         switch(byte) {
@@ -46,6 +44,11 @@ void BinaryTree::unserialize(const FileStreamPtr& fin)
                 break;
         }
     }
+}
+
+void BinaryTree::serialize(const FileStreamPtr& fin)
+{
+
 }
 
 void BinaryTree::seek(uint pos)
