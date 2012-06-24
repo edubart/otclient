@@ -128,10 +128,10 @@ LONG CALLBACK ExceptionHandler(LPEXCEPTION_POINTERS e)
     // print in stdout
     g_logger.info(ss.str());
 
-    // write stacktrace to crash_report.txt
+    // write stacktrace to crashreport.log
     char dir[MAX_PATH];
     GetCurrentDirectory(sizeof(dir) - 1, dir);
-    std::string fileName = stdext::format("%s\\crash_report.txt", dir);
+    std::string fileName = stdext::format("%s\\crashreport.log", dir);
     std::ofstream fout(fileName.c_str(), std::ios::out | std::ios::app);
     if(fout.is_open() && fout.good()) {
         fout << ss.str();

@@ -104,7 +104,7 @@ void crashHandler(int signum, siginfo_t* info, void* secret)
 
     g_logger.info(ss.str());
 
-    std::string fileName = "crash_report.txt";
+    std::string fileName = "crash_report.log";
     std::ofstream fout(fileName.c_str(), std::ios::out | std::ios::app);
     if(fout.is_open() && fout.good()) {
         fout << "== application crashed\n";

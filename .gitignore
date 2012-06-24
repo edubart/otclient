@@ -17,6 +17,9 @@ Makefile
 *~
 *.kate-swap
 CMakeLists.txt.user*
+items.xml
+items.otb
+*.log
 /modules/myconfig.otml
 /modules/myotclientrc.lua
 !.gitignore
