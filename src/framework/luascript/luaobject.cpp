@@ -26,7 +26,8 @@
 #include <framework/application.h>
 
 LuaObject::LuaObject() :
-    m_fieldsTableRef(-1)
+    m_fieldsTableRef(-1),
+    m_metatableRef(-1)
 {
 }
 
@@ -34,6 +35,11 @@ LuaObject::~LuaObject()
 {
     assert(!g_app.isTermianted());
     releaseLuaFieldsTable();
+
+    if(m_metatableRef != -1) {
+        g_lua.unref(m_metatableRef);
+        m_metatableRef = -1;
+    }
 }
 
 bool LuaObject::hasLuaField(const std::string& field)
@@ -79,6 +85,17 @@ void LuaObject::luaGetField(const std::string& key)
     } else {
         g_lua.pushNil();
     }
+}
+
+void LuaObject::luaGetMetatable()
+{
+    if(m_metatableRef == -1) {
+        // set the userdata metatable
+        g_lua.getGlobal(stdext::format("%s_mt", getClassName()));
+        m_metatableRef = g_lua.ref();
+    }
+
+    g_lua.getRef(m_metatableRef);
 }
 
 void LuaObject::luaGetFieldsTable()

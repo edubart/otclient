@@ -1052,8 +1052,7 @@ void LuaInterface::pushObject(const LuaObjectPtr& obj)
     new(newUserdata(sizeof(LuaObjectPtr))) LuaObjectPtr(obj);
     m_totalObjRefs++;
 
-    // set the userdata metatable
-    getGlobal(stdext::format("%s_mt", obj->getClassName()));
+    obj->luaGetMetatable();
     assert(!isNil());
     setMetatable();
 }

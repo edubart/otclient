@@ -61,6 +61,9 @@ public:
     /// Gets a field from this lua object, the result is pushed onto the stack
     void luaGetField(const std::string& key);
 
+    /// Get object's metatable
+    void luaGetMetatable();
+
     /// Gets the table containing all stored fields of this lua object, the result is pushed onto the stack
     void luaGetFieldsTable();
 
@@ -78,6 +81,7 @@ public:
 
 private:
     int m_fieldsTableRef;
+    int m_metatableRef;
 };
 
 #include "luainterface.h"

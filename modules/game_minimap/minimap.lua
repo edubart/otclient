@@ -74,6 +74,7 @@ function Minimap.terminate()
   disconnect(g_game, { onGameStart = Minimap.reset })
   Keyboard.unbindKeyDown('Ctrl+M')
 
+  minimapButton:destroy()
   minimapWindow:destroy()
   minimapWindow = nil
   minimapWidget = nil
