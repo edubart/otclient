@@ -31,10 +31,16 @@ class Module;
 class Event;
 class ScheduledEvent;
 class FileStream;
+class BinaryTree;
 
 typedef std::shared_ptr<Module> ModulePtr;
 typedef std::shared_ptr<Event> EventPtr;
 typedef std::shared_ptr<ScheduledEvent> ScheduledEventPtr;
 typedef std::shared_ptr<FileStream> FileStreamPtr;
+typedef std::shared_ptr<BinaryTree> BinaryTreePtr;
+
+typedef std::weak_ptr<BinaryTree> BinaryTreeWeakPtr;
+
+typedef std::vector<BinaryTreePtr> BinaryTreeVec;
 
 #endif

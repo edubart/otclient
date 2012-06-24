@@ -52,12 +52,15 @@ public:
     uint32 getU32();
     uint64 getU64();
     std::string getString();
+    BinaryTreePtr getBinaryTree();
 
     void addU8(uint8 v);
     void addU16(uint16 v);
     void addU32(uint32 v);
     void addU64(uint64 v);
     void addString(const std::string& v);
+
+    FileStreamPtr asFileStream() { return std::static_pointer_cast<FileStream>(shared_from_this()); }
 
 private:
     void checkWrite();

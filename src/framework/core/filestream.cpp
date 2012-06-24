@@ -21,6 +21,7 @@
  */
 
 #include "filestream.h"
+#include "binarytree.h"
 #include <framework/application.h>
 
 #include <physfs.h>
@@ -244,6 +245,17 @@ std::string FileStream::getString()
     } else if(len != 0)
         throwError("read failed because string is too big");
     return str;
+}
+
+BinaryTreePtr FileStream::getBinaryTree()
+{
+    BinaryTreePtr root = BinaryTreePtr(new BinaryTree);
+    uint8 byte = getU8();
+    if(byte == BINARYTREE_NODE_START)
+        root->unserialize(asFileStream());
+    else
+        stdext::throw_exception(stdext::format("failed to read node start (getFirstNode): %d", byte));
+    return root;
 }
 
 void FileStream::addU8(uint8 v)

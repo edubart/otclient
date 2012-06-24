@@ -46,3 +46,5 @@ g_modules.autoLoadModules(9999)
 if g_resources.fileExists("/otclientrc.lua") then
     dofile("/otclientrc.lua")
 end
+
+g_things.loadOtb('/items.otb')

@@ -28,6 +28,7 @@
 
 #include <framework/core/resourcemanager.h>
 #include <framework/core/filestream.h>
+#include <framework/core/binarytree.h>
 
 #define TIXML_USE_STL // use STL strings instead.
 #include <framework/thirdparty/tinyxml.h>
@@ -94,29 +95,27 @@ bool ThingTypeManager::loadDat(const std::string& file)
 
 bool ThingTypeManager::loadOtb(const std::string& file)
 {
-    /*
     try {
         FileStreamPtr fin = g_resources.openFile(file);
         if (!fin)
             stdext::throw_exception("unable to open file");
 
         m_otbVersion = fin->getU32();
+        if (m_otbVersion != 0x00)
+            stdext::throw_exception("invalid file version");
 
-        uint32 type = 0;
-        uint8 node = 0;
-        fin->readNode(node, type);
+        BinaryTreePtr root = fin->getBinaryTree();
 
-        fin->getU32(); // flags
+        root->getU32(); // flags
 
-        m_otbMajorVersion = fin->getU32();
-        m_otbMinorVersion = fin->getU32();
-        fin->getU32(); // build number
-        fin->skip(128);
+        m_otbMajorVersion = root->getU32();
+        m_otbMinorVersion = root->getU32();
+        root->getU32(); // build number
+        root->skip(128); // description
 
-        while(fin->readNode(node, type)) {
+        for(const BinaryTreePtr& node : root->getChildren()) {
             ThingTypeOtbPtr otbType(new ThingTypeOtb);
-            otbType->unserialize(fin);
-            addOtbType(otbType);
+            otbType->unserialize(node);
         }
 
         m_otbLoaded = true;
@@ -125,8 +124,6 @@ bool ThingTypeManager::loadOtb(const std::string& file)
         g_logger.error(stdext::format("failed to load otb '%s': %s", file, e.what()));
         return false;
     }
-    */
-    return false;
 }
 
 bool ThingTypeManager::loadXml(const std::string& file)

@@ -165,6 +165,8 @@ SET(framework_SOURCES ${framework_SOURCES}
     # core
     ${CMAKE_CURRENT_LIST_DIR}/core/adaptativeframecounter.cpp
     ${CMAKE_CURRENT_LIST_DIR}/core/adaptativeframecounter.h
+    ${CMAKE_CURRENT_LIST_DIR}/core/binarytree.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/core/binarytree.h
     ${CMAKE_CURRENT_LIST_DIR}/core/clock.cpp
     ${CMAKE_CURRENT_LIST_DIR}/core/clock.h
     ${CMAKE_CURRENT_LIST_DIR}/core/configmanager.cpp

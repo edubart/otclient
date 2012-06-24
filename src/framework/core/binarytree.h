@@ -20,47 +20,49 @@
  * THE SOFTWARE.
  */
 
+#ifndef BINARYTREE_H
+#define BINARYTREE_H
 
-#include "thingtypeotb.h"
+#include "declarations.h"
+#include <framework/util/databuffer.h>
 
-#include <framework/core/filestream.h>
-#include <framework/core/binarytree.h>
+enum {
+    BINARYTREE_ESCAPE_CHAR = 0xFD,
+    BINARYTREE_NODE_START = 0xFE,
+    BINARYTREE_NODE_END = 0xFF
+};
 
-ThingTypeOtb::ThingTypeOtb()
+class BinaryTree : public std::enable_shared_from_this<BinaryTree>
 {
-    m_category = OtbInvalidCateogry;
-    m_serverId = 0;
-    m_clientId = 0;
-}
+public:
+    BinaryTree(const BinaryTreePtr& parent = nullptr) : m_type(0), m_pos(0), m_parent(parent) { }
 
-void ThingTypeOtb::unserialize(const BinaryTreePtr& node)
-{
-    m_null = false;
+    void unserialize(const FileStreamPtr& fin);
 
-    uint8 zero = node->getU8();
-    assert(zero == 0);
-    m_category = (OtbCategory)node->getU8();
+    void seek(uint pos);
+    void skip(uint len) { seek(tell() + len); }
+    uint tell() { return m_pos; }
+    uint size() { return m_buffer.size(); }
 
-    node->getU32(); // skip flags
+    uint8 getU8();
+    uint16 getU16();
+    uint32 getU32();
+    uint64 getU64();
+    std::string getString();
 
-    while(node->canRead()) {
-        uint8 attr = node->getU8();
-        if(attr == 0 || attr == 0xFF)
-            break;
+    BinaryTreeVec getChildren() { return m_children; }
+    BinaryTreePtr getParent() { return m_parent.lock(); }
+    uint32 getType() { return m_type; }
+    bool canRead() { return m_pos < m_buffer.size(); }
 
-        uint16 len = node->getU16();
-        switch(attr) {
-            case OtbAttribServerId:
-                m_serverId = node->getU16();
-                assert(len == 2);
-                break;
-            case OtbAttribClientId:
-                m_clientId = node->getU16();
-                assert(len == 2);
-                break;
-            default:
-                node->skip(len); // skip attribute
-                break;
-        }
-    }
-}
+private:
+    void setParent(const BinaryTreePtr& parent) { m_parent = parent; }
+    uint m_type;
+    uint m_pos;
+
+    BinaryTreeVec m_children;
+    BinaryTreeWeakPtr m_parent;
+    DataBuffer<uint8> m_buffer;
+};
+
+#endif
