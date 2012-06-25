@@ -202,6 +202,11 @@ void LocalPlayer::setStates(int states)
 
 void LocalPlayer::setSkill(Otc::Skill skill, int level, int levelPercent)
 {
+    if(skill >= Otc::LastSkill) {
+        g_logger.traceError("invalid skill");
+        return;
+    }
+
     int oldLevel = m_skillsLevel[skill];
     int oldLevelPercent = m_skillsLevelPercent[skill];
 
@@ -310,6 +315,11 @@ void LocalPlayer::setStamina(double stamina)
 
 void LocalPlayer::setInventoryItem(Otc::Inventory inventory, const ItemPtr& item)
 {
+    if(inventory >= Otc::LastInventory) {
+        g_logger.traceError("invalid slot");
+        return;
+    }
+
     if(m_inventoryItems[inventory] != item) {
         ItemPtr oldItem = m_inventoryItems[inventory];
         m_inventoryItems[inventory] = item;
