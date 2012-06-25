@@ -122,11 +122,11 @@ bool InputMessage::canRead(int bytes)
 void InputMessage::checkRead(int bytes)
 {
     if(!canRead(bytes))
-        g_lua.throwError("InputMessage eof reached");
+        throw stdext::exception("InputMessage eof reached");
 }
 
 void InputMessage::checkWrite(int bytes)
 {
     if(bytes > BUFFER_MAXSIZE)
-        g_lua.throwError("InputMessage max buffer size reached");
+        throw stdext::exception("InputMessage max buffer size reached");
 }

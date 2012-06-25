@@ -94,8 +94,6 @@ bool ThingTypeManager::loadOtb(const std::string& file)
 {
     try {
         FileStreamPtr fin = g_resources.openFile(file);
-        if(!fin)
-            stdext::throw_exception("unable to open file");
 
         uint signature = fin->getU32();
         if(signature != 0)

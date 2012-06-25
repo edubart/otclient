@@ -607,8 +607,12 @@ int LuaInterface::luaCppFunctionCallback(lua_State* L)
         numRets = (*(funcPtr->get()))(&g_lua);
         g_lua.m_cppCallbackDepth--;
         assert(numRets == g_lua.stackSize());
-    } catch(LuaException &e) {
-        g_logger.error(stdext::format("lua cpp callback failed: %s", e.what()));
+    } catch(stdext::exception &e) {
+        // cleanup stack
+        while(g_lua.stackSize() > 0)
+            g_lua.pop();
+        numRets = 0;
+        g_logger.error(stdext::format("C++ call failed: %s", g_lua.traceback(e.what())));
     }
 
     return numRets;

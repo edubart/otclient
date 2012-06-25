@@ -172,8 +172,7 @@ std::string ResourceManager::loadFile(const std::string& fileName)
 bool ResourceManager::saveFile(const std::string& fileName, const uchar* data, uint size)
 {
     PHYSFS_file* file = PHYSFS_openWrite(fileName.c_str());
-    if(!file)
-    {
+    if(!file) {
         g_logger.error(PHYSFS_getLastError());
         return false;
     }
@@ -205,30 +204,24 @@ FileStreamPtr ResourceManager::openFile(const std::string& fileName)
 {
     std::string fullPath = resolvePath(fileName);
     PHYSFS_File* file = PHYSFS_openRead(fullPath.c_str());
-    if(!file) {
-        g_logger.error(stdext::format("unable to open file '%s': %s", fullPath, PHYSFS_getLastError()));
-        return nullptr;
-    }
+    if(!file)
+        stdext::throw_exception(stdext::format("unable to open file '%s': %s", fullPath, PHYSFS_getLastError()));
     return FileStreamPtr(new FileStream(fullPath, file, false));
 }
 
 FileStreamPtr ResourceManager::appendFile(const std::string& fileName)
 {
     PHYSFS_File* file = PHYSFS_openAppend(fileName.c_str());
-    if(!file) {
-        g_logger.error(stdext::format("failed to append file '%s': %s", fileName, PHYSFS_getLastError()));
-        return nullptr;
-    }
+    if(!file)
+        stdext::throw_exception(stdext::format("failed to append file '%s': %s", fileName, PHYSFS_getLastError()));
     return FileStreamPtr(new FileStream(fileName, file, true));
 }
 
 FileStreamPtr ResourceManager::createFile(const std::string& fileName)
 {
     PHYSFS_File* file = PHYSFS_openWrite(fileName.c_str());
-    if(!file) {
-        g_logger.error(stdext::format("failed to create file '%s': %s", fileName, PHYSFS_getLastError()));
-        return nullptr;
-    }
+    if(!file)
+        stdext::throw_exception(stdext::format("failed to create file '%s': %s", fileName, PHYSFS_getLastError()));
     return FileStreamPtr(new FileStream(fileName, file, true));
 }
 
@@ -236,7 +229,6 @@ bool ResourceManager::deleteFile(const std::string& fileName)
 {
     return PHYSFS_delete(resolvePath(fileName).c_str()) != 0;
 }
-
 
 bool ResourceManager::makeDir(const std::string directory)
 {
