@@ -1,3 +1,4 @@
+-- @docclass
 UIComboBox = extends(UIWidget)
 
 function UIComboBox.create()
@@ -36,7 +37,7 @@ function UIComboBox:addOption(text, data)
 end
 
 function UIComboBox:onMousePress(mousePos, mouseButton)
-  local menu = createWidget(self:getStyleName() .. 'PopupMenu')
+  local menu = g_ui.createWidget(self:getStyleName() .. 'PopupMenu')
   menu:setId(self:getId() .. 'PopupMenu')
   for i,v in ipairs(self.options) do
     menu:addOption(v.text, function() self:setCurrentOption(v.text) end)

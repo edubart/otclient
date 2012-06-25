@@ -6,14 +6,14 @@ function UIItem:onDragEnter(mousePos)
 
   self:setBorderWidth(1)
   self.currentDragThing = item
-  Mouse.setTargetCursor()
+  g_mouse.setTargetCursor()
   return true
 end
 
 function UIItem:onDragLeave(droppedWidget, mousePos)
   if self:isVirtual() then return false end
   self.currentDragThing = nil
-  Mouse.restoreCursor()
+  g_mouse.restoreCursor()
   self:setBorderWidth(0)
   return true
 end
@@ -68,8 +68,8 @@ function UIItem:onMouseRelease(mousePosition, mouseButton)
   if not item or not self:containsPoint(mousePosition) then return false end
 
   if Options.getOption('classicControl') and
-     ((Mouse.isPressed(MouseLeftButton) and mouseButton == MouseRightButton) or
-      (Mouse.isPressed(MouseRightButton) and mouseButton == MouseLeftButton)) then
+     ((g_mouse.isPressed(MouseLeftButton) and mouseButton == MouseRightButton) or
+      (g_mouse.isPressed(MouseRightButton) and mouseButton == MouseLeftButton)) then
     g_game.look(item)
     self.cancelNextRelease = true
     return true

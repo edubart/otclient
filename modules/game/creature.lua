@@ -1,3 +1,7 @@
+-- @docclass Creature
+
+-- @docconsts @{
+
 SkullNone = 0
 SkullYellow = 1
 SkullGreen = 2
@@ -22,6 +26,8 @@ EmblemNone = 0
 EmblemGreen = 1
 EmblemRed = 2
 EmblemBlue = 3
+
+-- @}
 
 function getSkullImagePath(skullId)
   if skullId == SkullYellow then

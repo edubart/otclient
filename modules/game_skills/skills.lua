@@ -35,10 +35,10 @@ function Skills.init()
     onSkillChange = Skills.onSkillChange
   })
 
-  skillsWindow = displayUI('skills.otui', GameInterface.getRightPanel())
+  skillsWindow = g_ui.loadUI('skills.otui', GameInterface.getRightPanel())
   skillsButton = TopMenu.addGameToggleButton('skillsButton', tr('Skills') .. ' (Ctrl+S)', 'skills.png', Skills.toggle)
   skillsButton:setOn(true)
-  Keyboard.bindKeyDown('Ctrl+S', Skills.toggle)
+  g_keyboard.bindKeyDown('Ctrl+S', Skills.toggle)
 
   Skills.refresh()
 end
@@ -56,7 +56,7 @@ function Skills.terminate()
     onSkillChange = Skills.onSkillChange
   })
 
-  Keyboard.unbindKeyDown('Ctrl+S')
+  g_keyboard.unbindKeyDown('Ctrl+S')
   skillsButton:destroy()
   skillsButton = nil
   skillsWindow:destroy()

@@ -34,9 +34,9 @@ function debugContainersItems()
   function UIItem:onHoverChange(hovered)
     if hovered then
       local item = self:getItem()
-      if item then ToolTip.display(item:getId()) end
+      if item then g_tooltip.display(item:getId()) end
     else
-      ToolTip.hide()
+      g_tooltip.hide()
     end
   end
 end

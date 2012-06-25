@@ -107,7 +107,7 @@ end
 
 -- public functions
 function Terminal.init()
-  terminalWindow = displayUI('terminal.otui')
+  terminalWindow = g_ui.displayUI('terminal.otui')
   terminalWindow:setVisible(false)
 
   local poped = false
@@ -128,16 +128,16 @@ function Terminal.init()
   end
 
   terminalButton = TopMenu.addLeftButton('terminalButton', tr('Terminal') .. ' (Ctrl + T)', 'terminal.png', Terminal.toggle)
-  Keyboard.bindKeyDown('Ctrl+T', Terminal.toggle)
+  g_keyboard.bindKeyDown('Ctrl+T', Terminal.toggle)
 
-  commandHistory = Settings.getList('terminal-history')
+  commandHistory = g_settings.getList('terminal-history')
 
   commandTextEdit = terminalWindow:getChildById('commandTextEdit')
-  Keyboard.bindKeyPress('Up', function() navigateCommand(1) end, commandTextEdit)
-  Keyboard.bindKeyPress('Down', function() navigateCommand(-1) end, commandTextEdit)
-  Keyboard.bindKeyDown('Tab', completeCommand, commandTextEdit)
-  Keyboard.bindKeyDown('Enter', doCommand, commandTextEdit)
-  Keyboard.bindKeyDown('Escape', Terminal.hide, terminalWindow)
+  g_keyboard.bindKeyPress('Up', function() navigateCommand(1) end, commandTextEdit)
+  g_keyboard.bindKeyPress('Down', function() navigateCommand(-1) end, commandTextEdit)
+  g_keyboard.bindKeyDown('Tab', completeCommand, commandTextEdit)
+  g_keyboard.bindKeyDown('Enter', doCommand, commandTextEdit)
+  g_keyboard.bindKeyDown('Escape', Terminal.hide, terminalWindow)
 
   terminalBuffer = terminalWindow:getChildById('terminalBuffer')
   g_logger.setOnLog(onLog)
@@ -145,8 +145,8 @@ function Terminal.init()
 end
 
 function Terminal.terminate()
-  Settings.setList('terminal-history', commandHistory)
-  Keyboard.unbindKeyDown('Ctrl+T')
+  g_settings.setList('terminal-history', commandHistory)
+  g_keyboard.unbindKeyDown('Ctrl+T')
   g_logger.setOnLog(nil)
   terminalButton:destroy()
   terminalButton = nil
@@ -184,7 +184,7 @@ function Terminal.addLine(text, color)
   end
 
   -- create new line label
-  local label = createWidget('TerminalLabel', terminalBuffer)
+  local label = g_ui.createWidget('TerminalLabel', terminalBuffer)
   label:setId('terminalLabel' .. numLines)
   label:setText(text)
   label:setColor(color)

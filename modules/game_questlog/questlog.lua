@@ -7,13 +7,13 @@ local questLineWindow
 local function onGameQuestLog(quests)
   QuestLog.destroyWindows()
 
-  questLogWindow = createWidget('QuestLogWindow', rootWidget)
+  questLogWindow = g_ui.createWidget('QuestLogWindow', rootWidget)
   local questList = questLogWindow:getChildById('questList')
 
   for i,questEntry in pairs(quests) do
     local id, name, completed = unpack(questEntry)
 
-    local questLabel = createWidget('QuestLabel', questList)
+    local questLabel = g_ui.createWidget('QuestLabel', questList)
     questLabel:setOn(completed)
     questLabel:setText(name)
     questLabel.onDoubleClick = function()
@@ -31,7 +31,7 @@ local function onGameQuestLine(questId, questMissions)
   if questLogWindow then questLogWindow:hide() end
   if questLineWindow then questLineWindow:destroy() end
 
-  questLineWindow = createWidget('QuestLineWindow', rootWidget)
+  questLineWindow = g_ui.createWidget('QuestLineWindow', rootWidget)
   local missionList = questLineWindow:getChildById('missionList')
   local missionDescription = questLineWindow:getChildById('missionDescription')
 
@@ -43,7 +43,7 @@ local function onGameQuestLine(questId, questMissions)
   for i,questMission in pairs(questMissions) do
     local name, description = unpack(questMission)
 
-    local missionLabel = createWidget('MissionLabel', missionList)
+    local missionLabel = g_ui.createWidget('MissionLabel', missionList)
     missionLabel:setText(name)
     missionLabel.description = description
   end
@@ -55,8 +55,8 @@ local function onGameQuestLine(questId, questMissions)
 end
 
 function QuestLog.init()
-  importStyle 'questlogwindow.otui'
-  importStyle 'questlinewindow.otui'
+  g_ui.importStyle('questlogwindow.otui')
+  g_ui.importStyle('questlinewindow.otui')
 
   questLogButton = TopMenu.addGameButton('questLogButton', tr('Quest Log'), 'questlog.png', function() g_game.requestQuestLog() end)
 

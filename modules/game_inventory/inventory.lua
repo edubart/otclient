@@ -11,9 +11,9 @@ function Inventory.init()
                          onFreeCapacityChange = Inventory.onFreeCapacityChange })
   connect(g_game, { onGameStart = Inventory.refresh })
 
-  Keyboard.bindKeyDown('Ctrl+I', Inventory.toggle)
+  g_keyboard.bindKeyDown('Ctrl+I', Inventory.toggle)
 
-  inventoryWindow = displayUI('inventory.otui', GameInterface.getRightPanel())
+  inventoryWindow = g_ui.loadUI('inventory.otui', GameInterface.getRightPanel())
   inventoryPanel = inventoryWindow:getChildById('contentsPanel')
   inventoryButton = TopMenu.addGameToggleButton('inventoryButton', tr('Inventory') .. ' (Ctrl+I)', 'inventory.png', Inventory.toggle)
   inventoryButton:setOn(true)
@@ -26,7 +26,7 @@ function Inventory.terminate()
                          onFreeCapacityChange = Inventory.onFreeCapacityChange })
   disconnect(g_game, { onGameStart = Inventory.refresh })
 
-  Keyboard.unbindKeyDown('Ctrl+I')
+  g_keyboard.unbindKeyDown('Ctrl+I')
 
   inventoryWindow:destroy()
   inventoryButton:destroy()

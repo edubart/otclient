@@ -5,7 +5,7 @@ local background
 
 -- public functions
 function Background.init()
-  background = displayUI('background.otui')
+  background = g_ui.displayUI('background.otui')
   background:lower()
 
   local clientVersionLabel = background:getChildById('clientVersionLabel')
@@ -15,7 +15,7 @@ function Background.init()
                              'Built on ' .. g_app.getBuildDate())
 
   if not g_game.isOnline() then
-    Effects.fadeIn(clientVersionLabel, 1500)
+    g_effects.fadeIn(clientVersionLabel, 1500)
   end
 
   connect(g_game, { onGameStart = Background.hide })
@@ -26,7 +26,7 @@ function Background.terminate()
   disconnect(g_game, { onGameStart = Background.hide })
   disconnect(g_game, { onGameEnd = Background.show })
 
-  Effects.cancelFade(background:getChildById('clientVersionLabel'))
+  g_effects.cancelFade(background:getChildById('clientVersionLabel'))
   background:destroy()
   background = nil
 

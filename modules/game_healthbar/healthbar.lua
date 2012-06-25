@@ -35,7 +35,7 @@ function HealthBar.init()
 
   connect(g_game, { onGameEnd = HealthBar.offline })
 
-  healthBarWindow = displayUI('healthbar.otui', GameInterface.getRightPanel())
+  healthBarWindow = g_ui.loadUI('healthbar.otui', GameInterface.getRightPanel())
   healthBarButton = TopMenu.addGameToggleButton('healthBarButton', tr('Health Bar'), 'healthbar.png', HealthBar.toggle)
   healthBarButton:setOn(true)
   healthBar = healthBarWindow:recursiveGetChildById('healthBar')
@@ -108,7 +108,7 @@ end
 
 function HealthBar.onStatesChange(localPlayer, now, old)
   if now == old then return end
-  
+
   local bitsChanged = bit32.bxor(now, old)
   for i = 1, 32 do
     local pow = math.pow(2, i-1)
@@ -122,12 +122,12 @@ end
 
 function HealthBar.toggleIcon(bitChanged)
   local content = healthBarWindow:recursiveGetChildById('conditionPanel')
-  
+
   local icon = content:getChildById(Icons[bitChanged].id)
   if icon then
     icon:destroy()
   else
-    icon = createWidget('ConditionWidget', content)
+    icon = g_ui.createWidget('ConditionWidget', content)
     icon:setId(Icons[bitChanged].id)
     icon:setImageSource(Icons[bitChanged].path)
     icon:setTooltip(Icons[bitChanged].tooltip)

@@ -594,7 +594,8 @@ void Application::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_ui", "getStyle", &UIManager::getStyle, &g_ui);
     g_lua.bindSingletonFunction("g_ui", "getStyleClass", &UIManager::getStyleClass, &g_ui);
     g_lua.bindSingletonFunction("g_ui", "loadUI", &UIManager::loadUI, &g_ui);
-    g_lua.bindSingletonFunction("g_ui", "createWidgetFromStyle", &UIManager::createWidgetFromStyle, &g_ui);
+    g_lua.bindSingletonFunction("g_ui", "displayUI", &UIManager::displayUI, &g_ui);
+    g_lua.bindSingletonFunction("g_ui", "createWidget", &UIManager::createWidget, &g_ui);
     g_lua.bindSingletonFunction("g_ui", "createWidgetFromOTML", &UIManager::createWidgetFromOTML, &g_ui);
     g_lua.bindSingletonFunction("g_ui", "getRootWidget", &UIManager::getRootWidget, &g_ui);
     g_lua.bindSingletonFunction("g_ui", "getDraggingWidget", &UIManager::getDraggingWidget, &g_ui);
@@ -634,10 +635,10 @@ void Application::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_sounds", "getCurrentMusic", &SoundManager::getCurrentMusic, &g_sounds);
 
     // EventDispatcher
-    g_lua.registerSingletonClass("g_eventDispatcher");
-    g_lua.bindSingletonFunction("g_eventDispatcher", "addEvent", &EventDispatcher::addEvent, &g_eventDispatcher);
-    g_lua.bindSingletonFunction("g_eventDispatcher", "scheduleEvent", &EventDispatcher::scheduleEvent, &g_eventDispatcher);
-    g_lua.bindSingletonFunction("g_eventDispatcher", "cycleEvent", &EventDispatcher::cycleEvent, &g_eventDispatcher);
+    g_lua.registerSingletonClass("g_dispatcher");
+    g_lua.bindSingletonFunction("g_dispatcher", "addEvent", &EventDispatcher::addEvent, &g_dispatcher);
+    g_lua.bindSingletonFunction("g_dispatcher", "scheduleEvent", &EventDispatcher::scheduleEvent, &g_dispatcher);
+    g_lua.bindSingletonFunction("g_dispatcher", "cycleEvent", &EventDispatcher::cycleEvent, &g_dispatcher);
 
     // ResourceManager
     g_lua.registerSingletonClass("g_resources");

@@ -162,19 +162,19 @@ end
 
 local function onChannelList(channelList)
   if channelsWindow then channelsWindow:destroy() end
-  channelsWindow = displayUI('channelswindow.otui')
+  channelsWindow = g_ui.displayUI('channelswindow.otui')
   local channelListPanel = channelsWindow:getChildById('channelList')
   channelsWindow.onEnter = doChannelListSubmit
   channelsWindow.onDestroy = function() channelsWindow = nil end
-  Keyboard.bindKeyPress('Down', function() channelListPanel:focusNextChild(KeyboardFocusReason) end, channelsWindow)
-  Keyboard.bindKeyPress('Up', function() channelListPanel:focusPreviousChild(KeyboardFocusReason) end, channelsWindow)
+  g_keyboard.bindKeyPress('Down', function() channelListPanel:focusNextChild(KeyboardFocusReason) end, channelsWindow)
+  g_keyboard.bindKeyPress('Up', function() channelListPanel:focusPreviousChild(KeyboardFocusReason) end, channelsWindow)
 
   for k,v in pairs(channelList) do
     local channelId = v[1]
     local channelName = v[2]
 
     if #channelName > 0 then
-      local label = createWidget('ChannelListLabel', channelListPanel)
+      local label = g_ui.createWidget('ChannelListLabel', channelListPanel)
       label.channelId = channelId
       label:setText(channelName)
 
@@ -202,7 +202,7 @@ function Console.init()
                     onGameStart = onGameStart,
                     onGameEnd = Console.clear })
 
-  consolePanel = displayUI('console.otui', GameInterface.getBottomPanel())
+  consolePanel = g_ui.loadUI('console.otui', GameInterface.getBottomPanel())
   consoleTextEdit = consolePanel:getChildById('consoleTextEdit')
   consoleContentPanel = consolePanel:getChildById('consoleContentPanel')
   consoleTabBar = consolePanel:getChildById('consoleTabBar')
@@ -212,12 +212,12 @@ function Console.init()
   Console.addTab(tr('Default'), true)
   Console.addTab(tr('Server Log'), false)
 
-  Keyboard.bindKeyPress('Shift+Up', function() navigateMessageHistory(1) end, consolePanel)
-  Keyboard.bindKeyPress('Shift+Down', function() navigateMessageHistory(-1) end, consolePanel)
-  Keyboard.bindKeyPress('Tab', function() consoleTabBar:selectNextTab() end, consolePanel)
-  Keyboard.bindKeyPress('Shift+Tab', function() consoleTabBar:selectPrevTab() end, consolePanel)
-  Keyboard.bindKeyDown('Enter', Console.sendCurrentMessage, consolePanel)
-  Keyboard.bindKeyPress('Ctrl+A', function() consoleTextEdit:clearText() end, consolePanel)
+  g_keyboard.bindKeyPress('Shift+Up', function() navigateMessageHistory(1) end, consolePanel)
+  g_keyboard.bindKeyPress('Shift+Down', function() navigateMessageHistory(-1) end, consolePanel)
+  g_keyboard.bindKeyPress('Tab', function() consoleTabBar:selectNextTab() end, consolePanel)
+  g_keyboard.bindKeyPress('Shift+Tab', function() consoleTabBar:selectPrevTab() end, consolePanel)
+  g_keyboard.bindKeyDown('Enter', Console.sendCurrentMessage, consolePanel)
+  g_keyboard.bindKeyPress('Ctrl+A', function() consoleTextEdit:clearText() end, consolePanel)
 
   -- apply buttom functions after loaded
   consolePanel:getChildById('nextChannelButton').onClick = function() consoleTabBar:selectNextTab() end
@@ -225,9 +225,9 @@ function Console.init()
   consoleTabBar.onTabChange = Console.onTabChange
 
   -- tibia like hotkeys
-  Keyboard.bindKeyDown('Ctrl+O', g_game.requestChannels)
-  Keyboard.bindKeyDown('Ctrl+E', Console.removeCurrentTab)
-  Keyboard.bindKeyDown('Ctrl+H', Console.openHelp)
+  g_keyboard.bindKeyDown('Ctrl+O', g_game.requestChannels)
+  g_keyboard.bindKeyDown('Ctrl+E', Console.removeCurrentTab)
+  g_keyboard.bindKeyDown('Ctrl+H', Console.openHelp)
 end
 
 function Console.terminate()
@@ -247,9 +247,9 @@ function Console.terminate()
   end
   channels = {}
 
-  Keyboard.unbindKeyDown('Ctrl+O')
-  Keyboard.unbindKeyDown('Ctrl+E')
-  Keyboard.unbindKeyDown('Ctrl+H')
+  g_keyboard.unbindKeyDown('Ctrl+O')
+  g_keyboard.unbindKeyDown('Ctrl+E')
+  g_keyboard.unbindKeyDown('Ctrl+H')
 
   if channelsWindow then
     channelsWindow:destroy()
@@ -382,7 +382,7 @@ function Console.addTabText(text, speaktype, tab, creatureName)
 
   local panel = consoleTabBar:getTabPanel(tab)
   local consoleBuffer = panel:getChildById('consoleBuffer')
-  local label = createWidget('ConsoleLabel', consoleBuffer)
+  local label = g_ui.createWidget('ConsoleLabel', consoleBuffer)
   label:setId('consoleLabel' .. panel:getChildCount())
   label:setText(text)
   label:setColor(speaktype.color)
@@ -397,7 +397,7 @@ end
 
 function Console.popupMenu(mousePos, mouseButton, creatureName, text)
   if mouseButton == MouseRightButton then
-    local menu = createWidget('PopupMenu')
+    local menu = g_ui.createWidget('PopupMenu')
     if creatureName then
       if creatureName ~= g_game.getCharacterName() then
         menu:addOption(tr('Message to ' .. creatureName), function () g_game.openPrivateChannel(creatureName) end)

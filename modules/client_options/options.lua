@@ -20,7 +20,7 @@ local generalPanel
 local graphicsPanel
 
 local function setupGraphicsEngines()
-  local enginesRadioGroup = RadioGroup.create()
+  local enginesRadioGroup = UIRadioGroup.create()
   local ogl1 = graphicsPanel:getChildById('opengl1')
   local ogl2 = graphicsPanel:getChildById('opengl2')
   enginesRadioGroup:addWidget(ogl1)
@@ -56,32 +56,32 @@ function Options.init()
   -- load options
   for k,v in pairs(options) do
     if type(v) == 'boolean' then
-      Settings.setDefault(k, v)
-      Options.setOption(k, Settings.getBoolean(k))
+      g_settings.setDefault(k, v)
+      Options.setOption(k, g_settings.getBoolean(k))
     end
   end
 
-  Keyboard.bindKeyDown('Ctrl+D', Options.toggle)
-  Keyboard.bindKeyDown('Ctrl+F', function() Options.toggleOption('fullscreen') end)
+  g_keyboard.bindKeyDown('Ctrl+D', Options.toggle)
+  g_keyboard.bindKeyDown('Ctrl+F', function() Options.toggleOption('fullscreen') end)
 
-  optionsWindow = displayUI('options.otui')
+  optionsWindow = g_ui.displayUI('options.otui')
   optionsWindow:hide()
   optionsButton = TopMenu.addLeftButton('optionsButton', tr('Options') .. ' (Ctrl+D)', 'options.png', Options.toggle)
   optionsTabBar = optionsWindow:getChildById('optionsTabBar')
   optionsTabBar:setContentWidget(optionsWindow:getChildById('optionsTabContent'))
 
-  generalPanel = loadUI('general.otui')
+  generalPanel = g_ui.loadUI('general.otui')
   optionsTabBar:addTab(tr('General'), generalPanel)
 
-  graphicsPanel = loadUI('graphics.otui')
+  graphicsPanel = g_ui.loadUI('graphics.otui')
   optionsTabBar:addTab(tr('Graphics'), graphicsPanel)
 
   setupGraphicsEngines()
 end
 
 function Options.terminate()
-  Keyboard.unbindKeyDown('Ctrl+D')
-  Keyboard.unbindKeyDown('Ctrl+F')
+  g_keyboard.unbindKeyDown('Ctrl+D')
+  g_keyboard.unbindKeyDown('Ctrl+F')
   optionsWindow:destroy()
   optionsWindow = nil
   optionsButton:destroy()
@@ -135,7 +135,7 @@ function Options.setOption(key, value)
       GameInterface.getLeftPanel():setOn(value)
     end)
   end
-  Settings.set(key, value)
+  g_settings.set(key, value)
   options[key] = value
 end
 

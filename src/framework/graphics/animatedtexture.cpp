@@ -42,7 +42,7 @@ AnimatedTexture::AnimatedTexture(int width, int height, int channels, int numFra
         m_framesDelay[i] = framesDelay[i];
     }
     m_currentFrame = -1;
-    g_eventDispatcher.scheduleEvent(std::bind(&AnimatedTexture::processAnimation, this), 0);
+    g_dispatcher.scheduleEvent(std::bind(&AnimatedTexture::processAnimation, this), 0);
 }
 
 AnimatedTexture::~AnimatedTexture()
@@ -71,6 +71,6 @@ void AnimatedTexture::processAnimation()
 
     // continue to animate only if something still referencing this texture
     if(self.use_count() > 1)
-        g_eventDispatcher.scheduleEvent(std::bind(&AnimatedTexture::processAnimation, self), m_framesDelay[m_currentFrame]);
+        g_dispatcher.scheduleEvent(std::bind(&AnimatedTexture::processAnimation, self), m_framesDelay[m_currentFrame]);
 }
 */

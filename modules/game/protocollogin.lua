@@ -1,3 +1,4 @@
+-- @docclass
 ProtocolLogin = extends(Protocol)
 
 -- private functions

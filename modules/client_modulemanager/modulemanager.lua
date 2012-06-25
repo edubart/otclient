@@ -5,7 +5,7 @@ local moduleManagerButton
 local moduleList
 
 function ModuleManager.init()
-  moduleManagerWindow = displayUI('modulemanager.otui')
+  moduleManagerWindow = g_ui.displayUI('modulemanager.otui')
   moduleManagerWindow:hide()
   moduleList = moduleManagerWindow:getChildById('moduleList')
   connect(moduleList, { onChildFocusChange = function(self, focusedChild)
@@ -13,8 +13,8 @@ function ModuleManager.init()
                           ModuleManager.updateModuleInfo(focusedChild:getText())
                         end })
 
-  Keyboard.bindKeyPress('Up', function() moduleList:focusPreviousChild(KeyboardFocusReason) end, moduleManagerWindow)
-  Keyboard.bindKeyPress('Down', function() moduleList:focusNextChild(KeyboardFocusReason) end, moduleManagerWindow)
+  g_keyboard.bindKeyPress('Up', function() moduleList:focusPreviousChild(KeyboardFocusReason) end, moduleManagerWindow)
+  g_keyboard.bindKeyPress('Down', function() moduleList:focusNextChild(KeyboardFocusReason) end, moduleManagerWindow)
 
   moduleManagerButton = TopMenu.addLeftButton('moduleManagerButton', tr('Module Manager'), 'modulemanager.png', ModuleManager.toggle)
 
@@ -61,7 +61,7 @@ function ModuleManager.listModules()
 
   local modules = g_modules.getModules()
   for i,module in ipairs(modules) do
-    local label = createWidget('ModuleListLabel', moduleList)
+    local label = g_ui.createWidget('ModuleListLabel', moduleList)
     label:setText(module:getName())
     label:setOn(module:isLoaded())
   end
@@ -146,7 +146,7 @@ function ModuleManager.unloadCurrentModule()
 end
 
 function ModuleManager.reloadAllModules()
-  g_modules.reloadModules()
+  g_modules.g_modules.reloadModules()
   ModuleManager.refreshLoadedModules()
   ModuleManager.show()
 end

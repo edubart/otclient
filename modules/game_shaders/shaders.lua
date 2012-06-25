@@ -23,11 +23,11 @@ local ITEM_SHADERS = {
 local shadersPanel
 
 function Shaders.init()
-  importStyle 'shaders.otui'
+  g_ui.importStyle('shaders.otui')
 
-  Keyboard.bindKeyDown(HOTKEY, Shaders.toggle)
+  g_keyboard.bindKeyDown(HOTKEY, Shaders.toggle)
 
-  shadersPanel = createWidget('ShadersPanel', GameInterface.getMapPanel())
+  shadersPanel = g_ui.createWidget('ShadersPanel', GameInterface.getMapPanel())
   shadersPanel:hide()
 
   local mapComboBox = shadersPanel:getChildById('mapComboBox')
@@ -56,7 +56,7 @@ function Shaders.init()
 end
 
 function Shaders.terminate()
-  Keyboard.unbindKeyDown(HOTKEY)
+  g_keyboard.unbindKeyDown(HOTKEY)
   shadersPanel:destroy()
   shadersPanel = nil
 end

@@ -1,3 +1,4 @@
+-- @docclass
 UIWindow = extends(UIWidget)
 
 function UIWindow.create()

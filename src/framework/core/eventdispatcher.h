@@ -26,7 +26,7 @@
 #include "clock.h"
 #include "scheduledevent.h"
 
-// @bindsingleton g_eventDispatcher
+// @bindsingleton g_dispatcher
 class EventDispatcher
 {
 public:
@@ -44,6 +44,6 @@ private:
     std::priority_queue<ScheduledEventPtr, std::vector<ScheduledEventPtr>, lessScheduledEvent> m_scheduledEventList;
 };
 
-extern EventDispatcher g_eventDispatcher;
+extern EventDispatcher g_dispatcher;
 
 #endif

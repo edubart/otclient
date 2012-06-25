@@ -1,3 +1,4 @@
+-- @docclass
 UILabel = extends(UIWidget)
 
 function UILabel.create()

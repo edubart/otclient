@@ -127,7 +127,7 @@ void Connection::write(uint8* buffer, uint16 size)
         auto weakSelf = ConnectionWeakPtr(shared_from_this());
 
         // wait 1 ms to do the real send
-        m_sendEvent = g_eventDispatcher.scheduleEvent([=] {
+        m_sendEvent = g_dispatcher.scheduleEvent([=] {
             if(!weakSelf.lock())
                 return;
             //m_writeTimer.cancel();

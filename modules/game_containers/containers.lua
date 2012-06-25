@@ -14,7 +14,7 @@ local function onContainerOpen(container, previousContainer)
     previousContainer.window = nil
     previousContainer.itemsPanel = nil
   else
-    containerWindow = createWidget('ContainerWindow', GameInterface.getRightPanel())
+    containerWindow = g_ui.createWidget('ContainerWindow', GameInterface.getRightPanel())
   end
   containerWindow:setId('container' .. container:getId())
   local containerPanel = containerWindow:getChildById('contentsPanel')
@@ -42,7 +42,7 @@ local function onContainerOpen(container, previousContainer)
 
   containerPanel:destroyChildren()
   for slot=0,container:getCapacity()-1 do
-    local itemWidget = createWidget('Item', containerPanel)
+    local itemWidget = g_ui.createWidget('Item', containerPanel)
     itemWidget:setId('item' .. slot)
     itemWidget:setItem(container:getItem(slot))
     itemWidget:setMargin(3)
@@ -74,7 +74,7 @@ local function onContainerRemoveItem(container, slot, item)
 end
 
 function Containers.init()
-  importStyle 'container.otui'
+  g_ui.importStyle('container.otui')
 
   connect(Container, { onOpen = onContainerOpen,
                        onClose = onContainerClose,

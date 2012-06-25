@@ -1,24 +1,25 @@
-RadioGroup = newclass()
+-- @docclass
+UIRadioGroup = newclass()
 
-function RadioGroup.create()
-  local radiogroup = RadioGroup.internalCreate()
+function UIRadioGroup.create()
+  local radiogroup = UIRadioGroup.internalCreate()
   radiogroup.widgets = {}
   return radiogroup
 end
 
-function RadioGroup:destroy()
+function UIRadioGroup:destroy()
   for k,widget in pairs(self.widgets) do
     widget.onClick = nil
   end
   self.widgets = {}
 end
 
-function RadioGroup:addWidget(widget)
+function UIRadioGroup:addWidget(widget)
   table.insert(self.widgets, widget)
   widget.onClick = function(widget) self:selectWidget(widget) end
 end
 
-function RadioGroup:removeWidget(widget)
+function UIRadioGroup:removeWidget(widget)
   if self.selectedWidget == widget then
     self:selectWidget(nil)
   end
@@ -26,7 +27,7 @@ function RadioGroup:removeWidget(widget)
   table.removevalue(self.widgets, widget)
 end
 
-function RadioGroup:selectWidget(selectedWidget)
+function UIRadioGroup:selectWidget(selectedWidget)
   if selectedWidget == self.selectedWidget then return end
 
   local previousSelectedWidget = self.selectedWidget

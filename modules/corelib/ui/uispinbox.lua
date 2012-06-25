@@ -1,3 +1,4 @@
+-- @docclass
 UISpinBox = extends(UITextEdit)
 
 function UISpinBox.create()
@@ -30,7 +31,7 @@ function UISpinBox:onTextChange(text, oldText)
     self:setText(oldText)
     return
   end
-  
+
   self:setValue(number)
 end
 

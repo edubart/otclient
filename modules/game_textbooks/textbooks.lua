@@ -1,7 +1,7 @@
 TextBooks = {}
 
 local function onGameEditText(id, itemId, maxLength, text, writter, time)
-  local textWindow = createWidget('TextWindow', rootWidget)
+  local textWindow = g_ui.createWidget('TextWindow', rootWidget)
 
   local writeable = (maxLength ~= #text) and maxLength > 0
   local textItem = textWindow:getChildById('textItem')
@@ -50,7 +50,7 @@ local function onGameEditText(id, itemId, maxLength, text, writter, time)
 end
 
 local function onGameEditList(id, doorId, text)
-  local textWindow = createWidget('TextWindow', rootWidget)
+  local textWindow = g_ui.createWidget('TextWindow', rootWidget)
 
   local textEdit = textWindow:getChildById('text')
   local description = textWindow:getChildById('description')
@@ -70,7 +70,7 @@ local function onGameEditList(id, doorId, text)
 end
 
 function TextBooks.init()
-  importStyle 'textwindow.otui'
+  g_ui.importStyle('textwindow.otui')
 
   connect(g_game, { onEditText = onGameEditText })
   connect(g_game, { onEditList = onGameEditList })

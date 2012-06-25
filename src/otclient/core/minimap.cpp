@@ -20,32 +20,6 @@
  * THE SOFTWARE.
  */
 
-#include "effect.h"
-#include "map.h"
-#include <framework/core/eventdispatcher.h>
 
-void Effect::draw(const Point& dest, float scaleFactor, bool animate)
-{
-    if(m_id == 0)
-        return;
+#include "minimap.h"
 
-    int animationPhase = 0;
-    if(animate)
-        animationPhase = std::min((int)(m_animationTimer.ticksElapsed() / Otc::EFFECT_TICKS_PER_FRAME), getAnimationPhases() - 1);
-    m_datType->draw(dest, scaleFactor, 0, 0, 0, 0, animationPhase);
-}
-
-void Effect::startAnimation()
-{
-    m_animationTimer.restart();
-
-    // schedule removal
-    auto self = asEffect();
-    g_dispatcher.scheduleEvent([self]() { g_map.removeThing(self); }, Otc::EFFECT_TICKS_PER_FRAME * getAnimationPhases());
-}
-
-void Effect::setId(uint32 id)
-{
-    m_id = id;
-    m_datType = g_things.getDatType(m_id, DatEffectCategory);
-}

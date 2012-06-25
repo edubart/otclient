@@ -9,8 +9,8 @@ local skinComboBox
 -- private functions
 local function onSkinComboBoxOptionChange(self, optionText, optionData)
   if Skins.setSkin(optionText) then
-    Settings.set('skin', optionText)
-    reloadModules()
+    g_settings.set('skin', optionText)
+    g_modules.reloadModules()
   end
 end
 
@@ -29,17 +29,17 @@ function Skins.init()
     g_resources.addToSearchPath(getSkinPath(defaultSkinName), 0)
   end
 
-  local userSkinName = Settings.get('skin', 'false')
+  local userSkinName = g_settings.get('skin', 'false')
   if userSkinName ~= 'false' and Skins.setSkin(userSkinName) then
     pdebug('Using configured skin: ' .. userSkinName)
   else
     pdebug('Using default skin: ' .. defaultSkinName)
     Skins.setSkin(defaultSkinName)
-    Settings.set('skin', defaultSkinName)
+    g_settings.set('skin', defaultSkinName)
   end
 
   addEvent( function()
-              skinComboBox = createWidget('ComboBox', rootWidget:recursiveGetChildById('rightButtonsPanel'))
+              skinComboBox = g_ui.createWidget('ComboBox', rootWidget:recursiveGetChildById('rightButtonsPanel'))
               for key,value in pairs(installedSkins) do
                 skinComboBox:addOption(value.name)
               end

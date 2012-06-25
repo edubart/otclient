@@ -21,9 +21,9 @@ end
 
 local function onLocaleComboBoxOptionChange(self, optionText, optionData)
   if Locales.setLocale(optionData) then
-    Settings.set('locale', optionData)
+    g_settings.set('locale', optionData)
     sendLocale(currentLocale.name)
-    reloadModules()
+    g_modules.reloadModules()
   end
 end
 
@@ -45,17 +45,17 @@ function Locales.init()
 
   Locales.installLocales('locales')
 
-  local userLocaleName = Settings.get('locale', 'false')
+  local userLocaleName = g_settings.get('locale', 'false')
   if userLocaleName ~= 'false' and Locales.setLocale(userLocaleName) then
     pdebug('Using configured locale: ' .. userLocaleName)
   else
     pdebug('Using default locale: ' .. defaultLocaleName)
     Locales.setLocale(defaultLocaleName)
-    Settings.set('locale', defaultLocaleName)
+    g_settings.set('locale', defaultLocaleName)
   end
 
   addEvent( function()
-              localeComboBox = createWidget('ComboBox', rootWidget:recursiveGetChildById('rightButtonsPanel'))
+              localeComboBox = g_ui.createWidget('ComboBox', rootWidget:recursiveGetChildById('rightButtonsPanel'))
               for key,value in pairs(installedLocales) do
                 localeComboBox:addOption(value.languageName, value.name)
               end

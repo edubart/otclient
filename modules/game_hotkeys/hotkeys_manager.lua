@@ -34,11 +34,11 @@ local hotkeyColors = {
 
 -- public functions
 function HotkeysManager.init()
-  hotkeysWindow = displayUI('hotkeys_manager.otui')
+  hotkeysWindow = g_ui.displayUI('hotkeys_manager.otui')
 
   hotkeysWindow:setVisible(false)
   hotkeysButton = TopMenu.addGameButton('hotkeysButton', tr('Hotkeys') .. ' (Ctrl+K)', '/game_hotkeys/icon.png', HotkeysManager.toggle)
-  Keyboard.bindKeyDown('Ctrl+K', HotkeysManager.toggle)
+  g_keyboard.bindKeyDown('Ctrl+K', HotkeysManager.toggle)
 
   currentHotkeysList = hotkeysWindow:getChildById('currentHotkeys')
   currentItemPreview = hotkeysWindow:getChildById('itemPreview')
@@ -53,7 +53,7 @@ function HotkeysManager.init()
   useOnTarget = hotkeysWindow:getChildById('useOnTarget')
   useWith = hotkeysWindow:getChildById('useWith')
 
-  itemWidget = createWidget('UIItem')
+  itemWidget = g_ui.createWidget('UIItem')
   itemWidget:setVirtual(true)
   itemWidget:setVisible(false)
   itemWidget:setFocusable(false)
@@ -66,7 +66,7 @@ function HotkeysManager.init()
 end
 
 function HotkeysManager.load()
-  local hotkeySettings = Settings.getNode('HotkeysManager')
+  local hotkeySettings = g_settings.getNode('HotkeysManager')
 
   local hasCombos = false
   if hotkeySettings ~= nil then
@@ -79,7 +79,7 @@ function HotkeysManager.load()
   -- add default F keys combos
   if not hasCombos then
     for i=1,12 do
-      HotkeysManager.addKeyCombo(nil, 'F' .. i, nil)
+      HotkeysManager.addKeyCombo(nil, 'F' .. i)
     end
   end
 end
@@ -95,13 +95,13 @@ function HotkeysManager.save()
                                   value = child.value})
   end
 
-  Settings.setNode('HotkeysManager', hotkeySettings)
+  g_settings.setNode('HotkeysManager', hotkeySettings)
 end
 
 function HotkeysManager.terminate()
   hotkeysManagerLoaded = false
 
-  Keyboard.unbindKeyDown('Ctrl+K')
+  g_keyboard.unbindKeyDown('Ctrl+K')
   HotkeysManager.save()
 
   currentHotkeysList = nil
@@ -179,20 +179,20 @@ function HotkeysManager.onChooseItemMouseRelease(self, mousePosition, mouseButto
     HotkeysManager:show()
   end
 
-  Mouse.restoreCursor()
+  g_mouse.restoreCursor()
   self:ungrabMouse()
   self:destroy()
 end
 
 function HotkeysManager.startChooseItem()
-  local mouseGrabberWidget = createWidget('UIWidget')
+  local mouseGrabberWidget = g_ui.createWidget('UIWidget')
   mouseGrabberWidget:setVisible(false)
   mouseGrabberWidget:setFocusable(false)
 
   connect(mouseGrabberWidget, { onMouseRelease = HotkeysManager.onChooseItemMouseRelease })
 
   mouseGrabberWidget:grabMouse()
-  Mouse.setTargetCursor()
+  g_mouse.setTargetCursor()
 
   HotkeysManager:hide()
 end
@@ -210,7 +210,7 @@ end
 function HotkeysManager.addHotkey()
   local widget
 
-  messageBox = createWidget('MainWindow', rootWidget)
+  messageBox = g_ui.createWidget('MainWindow', rootWidget)
   messageBox:grabKeyboard()
   messageBox:setId('assignWindow')
   messageBox:setText(tr('Button Assign'))
@@ -218,13 +218,13 @@ function HotkeysManager.addHotkey()
   messageBox:setHeight(140)
   messageBox:setDragable(false)
 
-  widget = createWidget('Label', messageBox)
+  widget = g_ui.createWidget('Label', messageBox)
   widget:setText(tr('Please, press the key you wish to add onto your hotkeys manager'))
   widget:resizeToText()
   widget:addAnchor(AnchorHorizontalCenter, 'parent', AnchorHorizontalCenter)
   widget:addAnchor(AnchorTop, 'parent', AnchorTop)
 
-  widget = createWidget('Label', messageBox)
+  widget = g_ui.createWidget('Label', messageBox)
   widget:setId('comboPreview')
   widget:setText(tr('Current hotkey to add: %s', 'none'))
   widget.keyCombo = ''
@@ -233,7 +233,7 @@ function HotkeysManager.addHotkey()
   widget:addAnchor(AnchorTop, 'prev', AnchorBottom)
   widget:setMarginTop(20)
 
-  widget = createWidget('Button', messageBox)
+  widget = g_ui.createWidget('Button', messageBox)
   widget:setId('cancelButton')
   widget:setText(tr('Cancel'))
   widget:setWidth(64)
@@ -244,7 +244,7 @@ function HotkeysManager.addHotkey()
                       self:getParent():destroy()
                     end
 
-  widget = createWidget('Button', messageBox)
+  widget = g_ui.createWidget('Button', messageBox)
   widget:setId('addButton')
   widget:setText(tr('Add'))
   widget:setWidth(64)
@@ -263,7 +263,7 @@ end
 function HotkeysManager.addKeyCombo(messageBox, keyCombo, keySettings)
   local label = nil
   if currentHotkeysList:getChildById(keyCombo) == nil then
-    local label = createWidget('HotkeyListLabel', currentHotkeysList)
+    local label = g_ui.createWidget('HotkeyListLabel', currentHotkeysList)
     label:setId(keyCombo)
     label:setColor(hotkeyColors.text)
     label:setText(keyCombo..': ')
@@ -286,7 +286,7 @@ function HotkeysManager.addKeyCombo(messageBox, keyCombo, keySettings)
     HotkeysManager.checkSelectedHotkey(label)
 
     hotkeyList[keyCombo] = label
-    Keyboard.bindKeyPress(keyCombo, function () HotkeysManager.call(keyCombo) end, nil, 350)
+    g_keyboard.bindKeyPress(keyCombo, function () HotkeysManager.call(keyCombo) end, nil, 350)
   end
 
   if messageBox then
@@ -430,7 +430,7 @@ end
 function HotkeysManager.removeHotkey()
   if hotkeyLabelSelectedOnList ~= nil then
     hotkeyList[hotkeyLabelSelectedOnList.keyCombo] = nil
-    Keyboard.unbindKeyPress(hotkeyLabelSelectedOnList.keyCombo)
+    g_keyboard.unbindKeyPress(hotkeyLabelSelectedOnList.keyCombo)
     hotkeyLabelSelectedOnList:destroy()
   end
 end
@@ -445,7 +445,7 @@ function HotkeysManager.onHotkeyTextChange(id, value)
     else
       sendAutomatically:disable()
       sendAutomatically:setChecked(false)
-    end 
+    end
   end
 end
 

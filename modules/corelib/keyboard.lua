@@ -1,4 +1,5 @@
-Keyboard = {}
+-- @docclass
+g_keyboard = {}
 
 -- private functions
 function translateKeyCombo(keyCombo)
@@ -95,14 +96,14 @@ local function connectKeyPressEvent(widget)
 end
 
 -- public functions
-function Keyboard.bindKeyDown(keyComboDesc, callback, widget)
+function g_keyboard.bindKeyDown(keyComboDesc, callback, widget)
   widget = widget or rootWidget
   connectKeyDownEvent(widget)
   local keyComboDesc = retranslateKeyComboDesc(keyComboDesc)
   widget.boundKeyDownCombos[keyComboDesc] = callback
 end
 
-function Keyboard.bindKeyPress(keyComboDesc, callback, widget, autoRepeatDelay)
+function g_keyboard.bindKeyPress(keyComboDesc, callback, widget, autoRepeatDelay)
   autoRepeatDelay = autoRepeatDelay or 500
   widget = widget or rootWidget
   connectKeyPressEvent(widget)
@@ -111,7 +112,7 @@ function Keyboard.bindKeyPress(keyComboDesc, callback, widget, autoRepeatDelay)
   widget:setAutoRepeatDelay(math.min(autoRepeatDelay, widget:getAutoRepeatDelay()))
 end
 
-function Keyboard.unbindKeyDown(keyComboDesc, widget)
+function g_keyboard.unbindKeyDown(keyComboDesc, widget)
   widget = widget or rootWidget
   if widget.boundKeyDownCombos == nil then return end
   local keyComboDesc = retranslateKeyComboDesc(keyComboDesc)
@@ -120,7 +121,7 @@ function Keyboard.unbindKeyDown(keyComboDesc, widget)
   end
 end
 
-function Keyboard.unbindKeyPress(keyComboDesc, widget)
+function g_keyboard.unbindKeyPress(keyComboDesc, widget)
   widget = widget or rootWidget
   if widget.boundKeyPressCombos == nil then return end
   local keyComboDesc = retranslateKeyComboDesc(keyComboDesc)
@@ -129,18 +130,18 @@ function Keyboard.unbindKeyPress(keyComboDesc, widget)
   end
 end
 
-function Keyboard.getModifiers()
+function g_keyboard.getModifiers()
   return g_window.getKeyboardModifiers()
 end
 
-function Keyboard.isCtrlPressed()
+function g_keyboard.isCtrlPressed()
   return bit32.band(g_window.getKeyboardModifiers(), KeyboardCtrlModifier) ~= 0
 end
 
-function Keyboard.isAltPressed()
+function g_keyboard.isAltPressed()
   return bit32.band(g_window.getKeyboardModifiers(), KeyboardAltModifier) ~= 0
 end
 
-function Keyboard.isShiftPressed()
+function g_keyboard.isShiftPressed()
   return bit32.band(g_window.getKeyboardModifiers(), KeyboardShiftModifier) ~= 0
 end

@@ -25,7 +25,7 @@
 #include <framework/core/clock.h>
 #include "timer.h"
 
-EventDispatcher g_eventDispatcher;
+EventDispatcher g_dispatcher;
 
 
 void EventDispatcher::flush()

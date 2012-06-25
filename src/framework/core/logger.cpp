@@ -54,7 +54,7 @@ void Logger::log(Fw::LogLevel level, const std::string& message)
 
     if(m_onLog) {
         // schedule log callback, because this callback can run lua code that may affect the current state
-        g_eventDispatcher.addEvent([=] {
+        g_dispatcher.addEvent([=] {
             if(m_onLog)
                 m_onLog(level, outmsg, now);
         });

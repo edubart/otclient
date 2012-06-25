@@ -286,6 +286,9 @@ bool Map::loadOtcm(const std::string& fileName)
 {
     try {
         FileStreamPtr fin = g_resources.openFile(fileName);
+        if(!fin)
+            stdext::throw_exception("unable to open file");
+
         fin->cache();
 
         uint32 signature = fin->getU32();
@@ -617,7 +620,7 @@ void Map::setCentralPosition(const Position& centralPosition)
     // this fixes local player position when the local player is removed from the map,
     // the local player is removed from the map when there are too many creatures on his tile,
     // so there is no enough stackpos to the server send him
-    g_eventDispatcher.addEvent([this] {
+    g_dispatcher.addEvent([this] {
         LocalPlayerPtr localPlayer = g_game.getLocalPlayer();
         if(!localPlayer || localPlayer->getPosition() == m_centralPosition)
             return;

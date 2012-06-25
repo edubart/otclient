@@ -1,4 +1,5 @@
-ToolTip = {}
+-- @docclass
+g_tooltip = {}
 
 -- private variables
 local toolTipLabel
@@ -21,13 +22,13 @@ end
 
 local function onWidgetHoverChange(widget, hovered)
   if hovered then
-    if widget.tooltip and not Mouse.isPressed() then
-      ToolTip.display(widget.tooltip)
+    if widget.tooltip and not g_mouse.isPressed() then
+      g_tooltip.display(widget.tooltip)
       currentHoveredWidget = widget
     end
   else
     if widget == currentHoveredWidget then
-      ToolTip:hide()
+      g_tooltip.hide()
       currentHoveredWidget = nil
     end
   end
@@ -40,12 +41,12 @@ local function onWidgetStyleApply(widget, styleName, styleNode)
 end
 
 -- public functions
-function ToolTip.init()
+function g_tooltip.init()
   connect(UIWidget, {  onStyleApply = onWidgetStyleApply,
                        onHoverChange = onWidgetHoverChange})
 
   addEvent(function()
-    toolTipLabel = createWidget('UILabel', rootWidget)
+    toolTipLabel = g_ui.createWidget('UILabel', rootWidget)
     toolTipLabel:setId('toolTip')
     toolTipLabel:setBackgroundColor('#111111cc')
     toolTipLabel:setTextAlign(AlignCenter)
@@ -54,7 +55,7 @@ function ToolTip.init()
   end)
 end
 
-function ToolTip.terminate()
+function g_tooltip.terminate()
   disconnect(UIWidget, { onStyleApply = onWidgetStyleApply,
                          onHoverChange = onWidgetHoverChange })
 
@@ -62,10 +63,10 @@ function ToolTip.terminate()
   toolTipLabel:destroy()
   toolTipLabel = nil
 
-  ToolTip = nil
+  g_tooltip = nil
 end
 
-function ToolTip.display(text)
+function g_tooltip.display(text)
   if text == nil then return end
   if not toolTipLabel then return end
 
@@ -75,13 +76,16 @@ function ToolTip.display(text)
   toolTipLabel:show()
   toolTipLabel:raise()
   toolTipLabel:enable()
-  Effects.fadeIn(toolTipLabel, 100)
+  g_effects.fadeIn(toolTipLabel, 100)
   moveToolTip(toolTipLabel)
 end
 
-function ToolTip.hide()
-  Effects.fadeOut(toolTipLabel, 100)
+function g_tooltip.hide()
+  g_effects.fadeOut(toolTipLabel, 100)
 end
+
+
+-- @docclass UIWidget @{
 
 -- UIWidget extensions
 function UIWidget:setTooltip(text)
@@ -92,5 +96,7 @@ function UIWidget:getTooltip()
   return self.tooltip
 end
 
-ToolTip.init()
-connect(g_app, { onTerminate = ToolTip.terminate })
+-- @}
+
+g_tooltip.init()
+connect(g_app, { onTerminate = g_tooltip.terminate })

@@ -1,7 +1,7 @@
 TextMessage = {}
 
 -- require styles
-importStyle 'textmessage.otui'
+g_ui.importStyle('textmessage.otui')
 
 -- private variables
 local MessageTypes = {
@@ -49,7 +49,7 @@ local function displayMessage(msgtype, msg, time)
 end
 
 local function createTextMessageLabel(id, parent, class)
-  local label = createWidget(class, parent)
+  local label = g_ui.createWidget(class, parent)
   label:setFont('verdana-11px-rounded')
   label:setId(id)
   return label
@@ -61,7 +61,7 @@ function TextMessage.init()
                     onTextMessage = TextMessage.display,
                     onGameStart = TextMessage.clearMessages })
 
-  centerTextMessagePanel = createWidget('Panel', GameInterface.getMapPanel())
+  centerTextMessagePanel = g_ui.createWidget('Panel', GameInterface.getMapPanel())
   centerTextMessagePanel:setId('centerTextMessagePanel')
 
   local layout = UIVerticalLayout.create(centerTextMessagePanel)

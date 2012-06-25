@@ -5,18 +5,18 @@ local bugTextEdit
 local HOTKEY = 'Ctrl+Z'
 
 function BugReport.init()
-  importStyle 'bugreport.otui'
+  g_ui.importStyle('bugreport.otui')
 
-  bugReportWindow = createWidget('BugReportWindow', rootWidget)
+  bugReportWindow = g_ui.createWidget('BugReportWindow', rootWidget)
   bugReportWindow:hide()
 
   bugTextEdit = bugReportWindow:getChildById('bugTextEdit')
 
-  Keyboard.bindKeyDown(HOTKEY, BugReport.show)
+  g_keyboard.bindKeyDown(HOTKEY, BugReport.show)
 end
 
 function BugReport.terminate()
-  Keyboard.unbindKeyDown(HOTKEY)
+  g_keyboard.unbindKeyDown(HOTKEY)
   bugReportWindow:destroy()
   bugReportWindow = nil
   bugTextEdit = nil

@@ -1,3 +1,4 @@
+-- @docclass
 UIPopupMenu = extends(UIWidget)
 
 local currentMenu
@@ -33,7 +34,7 @@ function UIPopupMenu:onGeometryChange()
 end
 
 function UIPopupMenu:addOption(optionName, optionCallback)
-  local optionWidget = createWidget(self:getStyleName() .. 'Button', self)
+  local optionWidget = g_ui.createWidget(self:getStyleName() .. 'Button', self)
   local lastOptionWidget = self:getLastChild()
   optionWidget.onClick = function(self)
     optionCallback()
@@ -45,7 +46,7 @@ function UIPopupMenu:addOption(optionName, optionCallback)
 end
 
 function UIPopupMenu:addSeparator()
-  createWidget(self:getStyleName() .. 'Separator', self)
+  g_ui.createWidget(self:getStyleName() .. 'Separator', self)
 end
 
 function UIPopupMenu:onDestroy()

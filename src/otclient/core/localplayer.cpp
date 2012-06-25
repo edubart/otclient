@@ -185,7 +185,7 @@ void LocalPlayer::terminateWalk()
     if(m_autoWalking) {
         if(m_autoWalkEndEvent)
             m_autoWalkEndEvent->cancel();
-        m_autoWalkEndEvent = g_eventDispatcher.scheduleEvent([self] {
+        m_autoWalkEndEvent = g_dispatcher.scheduleEvent([self] {
             self->m_autoWalking = false;
         }, 100);
     }

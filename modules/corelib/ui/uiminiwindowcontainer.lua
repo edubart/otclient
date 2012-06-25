@@ -1,3 +1,4 @@
+-- @docclass
 UIMiniWindowContainer = extends(UIWidget)
 
 function UIMiniWindowContainer.create()
@@ -25,7 +26,7 @@ function UIMiniWindowContainer:onDrop(widget, mousePos)
   	else
   		self:addChild(widget)
   	end
-    
+
     return true
   end
 end

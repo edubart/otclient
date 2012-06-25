@@ -1,3 +1,5 @@
+-- @docfuncs @{
+
 function print(...)
   local msg = ""
   for i,v in ipairs({...}) do
@@ -26,9 +28,13 @@ function fatal(msg)
   g_logger.log(LogFatal, msg)
 end
 
+function exit()
+  g_app.exit()
+end
 
-exit = g_app.exit
-quit = g_app.exit
+function quit()
+  g_app.quit()
+end
 
 function connect(object, signalsAndSlots, pushFront)
   for signal,slot in pairs(signalsAndSlots) do
@@ -151,6 +157,7 @@ function toboolean(str)
 end
 
 local oldtonumber = tonumber
+
 function tonumber(v)
   if v == nil then return 0 end
   return oldtonumber(v)
@@ -174,3 +181,5 @@ end
 function tr(s)
   return s
 end
+
+-- @}

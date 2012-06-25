@@ -40,7 +40,7 @@ local function tryLogin(charInfo, tries)
                                 end })
 
   -- save last used character
-  Settings.set('lastUsedCharacter', charInfo.characterName)
+  g_settings.set('lastUsedCharacter', charInfo.characterName)
 end
 
 local function updateWait(timeStart, timeEnd)
@@ -92,7 +92,7 @@ end
 local function onLoginWait(message, time)
   CharacterList.destroyLoadBox()
 
-  waitingWindow = displayUI('waitinglist.otui')
+  waitingWindow = g_ui.loadUI('waitinglist.otui')
 
   local label = waitingWindow:getChildById('infoLabel')
   label:setText(message)
@@ -134,7 +134,7 @@ end
 
 -- public functions
 function CharacterList.init()
-  charactersWindow = displayUI('characterlist.otui')
+  charactersWindow = g_ui.displayUI('characterlist.otui')
   charactersWindow:hide()
   characterList = charactersWindow:getChildById('characterList')
   charactersWindow.onKeyPress = onCharactersWindowKeyPress
@@ -196,7 +196,7 @@ function CharacterList.create(characters, premDays)
     local worldHost = characterInfo[3]
     local worldIp = characterInfo[4]
 
-    local label = createWidget('CharacterListLabel', characterList)
+    local label = g_ui.createWidget('CharacterListLabel', characterList)
     label:setText(characterName .. '  (' .. worldName .. ')')
     label:setPhantom(false)
     label.characterName = characterName
@@ -205,7 +205,7 @@ function CharacterList.create(characters, premDays)
 
     connect(label, { onDoubleClick = function () CharacterList.doLogin() return true end } )
 
-    if i == 1 or Settings.get('lastUsedCharacter') == characterName then
+    if i == 1 or g_settings.get('lastUsedCharacter') == characterName then
       focusLabel = label
     end
   end

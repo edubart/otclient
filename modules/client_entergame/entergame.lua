@@ -11,8 +11,8 @@ local function clearAccountFields()
   enterGame:getChildById('accountNameTextEdit'):clearText()
   enterGame:getChildById('accountPasswordTextEdit'):clearText()
   enterGame:getChildById('accountNameTextEdit'):focus()
-  Settings.remove('account')
-  Settings.remove('password')
+  g_settings.remove('account')
+  g_settings.remove('password')
 end
 
 local function onError(protocol, message, connectionError)
@@ -34,9 +34,9 @@ end
 
 local function onCharacterList(protocol, characters, premDays)
   if enterGame:getChildById('rememberPasswordBox'):isChecked() then
-    Settings.set('account', g_crypt.encrypt(G.account))
-    Settings.set('password', g_crypt.encrypt(G.password))
-    Settings.set('autologin', enterGame:getChildById('autoLoginBox'):isChecked())
+    g_settings.set('account', g_crypt.encrypt(G.account))
+    g_settings.set('password', g_crypt.encrypt(G.password))
+    g_settings.set('autologin', enterGame:getChildById('autoLoginBox'):isChecked())
   else
     clearAccountFields()
   end
@@ -47,9 +47,9 @@ local function onCharacterList(protocol, characters, premDays)
   CharacterList.create(characters, premDays)
   CharacterList.show()
 
-  local lastMotdNumber = Settings.getNumber("motd")
+  local lastMotdNumber = g_settings.getNumber("motd")
   if G.motdNumber and G.motdNumber ~= lastMotdNumber then
-    Settings.set("motd", motdNumber)
+    g_settings.set("motd", motdNumber)
     local motdBox = displayInfoBox(tr('Message of the day'), G.motdMessage)
     connect(motdBox, { onOk = CharacterList.show })
     CharacterList.hide()
@@ -58,21 +58,21 @@ end
 
 -- public functions
 function EnterGame.init()
-  enterGame = displayUI('entergame.otui')
+  enterGame = g_ui.displayUI('entergame.otui')
   enterGameButton = TopMenu.addLeftButton('enterGameButton', tr('Login') .. ' (Ctrl + G)', 'login.png', EnterGame.openWindow)
   motdButton = TopMenu.addLeftButton('motdButton', tr('Message of the day'), 'motd.png', EnterGame.displayMotd)
   motdButton:hide()
-  Keyboard.bindKeyDown('Ctrl+G', EnterGame.openWindow)
+  g_keyboard.bindKeyDown('Ctrl+G', EnterGame.openWindow)
 
   if G.motdNumber then
     motdButton:show()
   end
 
-  local account = g_crypt.decrypt(Settings.get('account'))
-  local password = g_crypt.decrypt(Settings.get('password'))
-  local host = Settings.get('host')
-  local port = Settings.get('port')
-  local autologin = Settings.getBoolean('autologin')
+  local account = g_crypt.decrypt(g_settings.get('account'))
+  local password = g_crypt.decrypt(g_settings.get('password'))
+  local host = g_settings.get('host')
+  local port = g_settings.get('port')
+  local autologin = g_settings.getBoolean('autologin')
 
   enterGame:getChildById('accountNameTextEdit'):setText(account)
   enterGame:getChildById('accountPasswordTextEdit'):setText(password)
@@ -93,7 +93,7 @@ function EnterGame.init()
 end
 
 function EnterGame.terminate()
-  Keyboard.unbindKeyDown('Ctrl+G')
+  g_keyboard.unbindKeyDown('Ctrl+G')
   enterGame:destroy()
   enterGame = nil
   enterGameButton:destroy()
@@ -128,8 +128,8 @@ function EnterGame.doLogin()
   G.port = tonumber(enterGame:getChildById('serverPortTextEdit'):getText())
   EnterGame.hide()
 
-  Settings.set('host', G.host)
-  Settings.set('port', G.port)
+  g_settings.set('host', G.host)
+  g_settings.set('port', G.port)
 
   local protocolLogin = ProtocolLogin.create()
   protocolLogin.onError = onError

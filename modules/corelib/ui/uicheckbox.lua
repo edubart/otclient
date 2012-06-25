@@ -1,3 +1,4 @@
+-- @docclass
 UICheckBox = extends(UIWidget)
 
 function UICheckBox.create()

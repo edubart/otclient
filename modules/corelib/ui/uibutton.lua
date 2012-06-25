@@ -1,3 +1,4 @@
+-- @docclass
 UIButton = extends(UIWidget)
 
 function UIButton.create()

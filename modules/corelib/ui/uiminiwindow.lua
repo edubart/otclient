@@ -1,3 +1,4 @@
+-- @docclass
 UIMiniWindow = extends(UIWindow)
 
 function UIMiniWindow.create()
@@ -77,7 +78,7 @@ function UIMiniWindow:onSetup()
 
   local oldParent = self:getParent()
 
-  local settings = Settings.getNode('MiniWindows')
+  local settings = g_settings.getNode('MiniWindows')
   if settings then
     local selfSettings = settings[self:getId()]
     if selfSettings then
@@ -215,7 +216,7 @@ end
 function UIMiniWindow:setSettings(data)
   if not self.save then return end
 
-  local settings = Settings.getNode('MiniWindows')
+  local settings = g_settings.getNode('MiniWindows')
   if not settings then
     settings = {}
   end
@@ -229,7 +230,7 @@ function UIMiniWindow:setSettings(data)
     settings[id][key] = value
   end
 
-  Settings.setNode('MiniWindows', settings)
+  g_settings.setNode('MiniWindows', settings)
 end
 
 function UIMiniWindow:saveParentPosition(parentId, position)

@@ -1,3 +1,4 @@
+-- @docclass
 UIScrollArea = extends(UIWidget)
 
 -- public functions

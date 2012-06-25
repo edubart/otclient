@@ -1,3 +1,5 @@
+-- @docclass UIWidget
+
 function UIWidget:setMargin(...)
   local params = {...}
   if #params == 1 then

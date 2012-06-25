@@ -1,5 +1,6 @@
 if not UIWindow then dofile 'uiwindow' end
 
+-- @docclass
 UIMessageBox = extends(UIWindow)
 
 MessageBoxOk = 1
@@ -15,7 +16,7 @@ function UIMessageBox.display(title, message, flags)
   messagebox:setStyle('MessageBoxWindow')
   messagebox:setText(title)
 
-  local messageLabel = createWidget('MessageBoxLabel', messagebox)
+  local messageLabel = g_ui.createWidget('MessageBoxLabel', messagebox)
   messageLabel:setText(message)
   messageLabel:resizeToText()
 
@@ -23,7 +24,7 @@ function UIMessageBox.display(title, message, flags)
   messagebox:setHeight(math.max(messageLabel:getHeight() + 64, messagebox:getHeight()))
 
   -- setup messagebox first button
-  local buttonRight = createWidget('MessageBoxRightButton', messagebox)
+  local buttonRight = g_ui.createWidget('MessageBoxRightButton', messagebox)
 
   if flags == MessageBoxOk then
     buttonRight:setText('Ok')

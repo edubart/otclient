@@ -36,10 +36,10 @@ table.insert(lifeBarColors, {percentAbove = -1, color = '#4F0000' } )
 
 -- public functions
 function Battle.init()
-  battleWindow = displayUI('battle.otui', GameInterface.getRightPanel())
+  battleWindow = g_ui.loadUI('battle.otui', GameInterface.getRightPanel())
   battleButton = TopMenu.addGameToggleButton('battleButton', tr('Battle') .. ' (Ctrl+B)', 'battle.png', Battle.toggle)
   battleButton:setOn(true)
-  Keyboard.bindKeyDown('Ctrl+B', Battle.toggle)
+  g_keyboard.bindKeyDown('Ctrl+B', Battle.toggle)
 
   battlePanel = battleWindow:recursiveGetChildById('battlePanel')
 
@@ -49,7 +49,7 @@ function Battle.init()
   hideSkullsButton = battleWindow:recursiveGetChildById('hideSkulls')
   hidePartyButton = battleWindow:recursiveGetChildById('hideParty')
 
-  mouseWidget = createWidget('UIButton')
+  mouseWidget = g_ui.createWidget('UIButton')
   mouseWidget:setVisible(false)
   mouseWidget:setFocusable(false)
 
@@ -65,7 +65,7 @@ function Battle.init()
 end
 
 function Battle.terminate()
-  Keyboard.unbindKeyDown('Ctrl+B')
+  g_keyboard.unbindKeyDown('Ctrl+B')
   battlePanel = nil
   lastBattleButtonTargeted = nil
   lastBattleButtonFollowed = nil
@@ -191,7 +191,7 @@ function Battle.addCreature(creature)
   local creatureId = creature:getId()
 
   if battleButtonsByCreaturesList[creatureId] == nil then
-    local battleButton = displayUI('battleButton.otui', battlePanel)
+    local battleButton = g_ui.loadUI('battleButton.otui', battlePanel)
     local creatureWidget = battleButton:getChildById('creature')
     local labelWidget = battleButton:getChildById('label')
     local lifeBarWidget = battleButton:getChildById('lifeBar')
@@ -264,7 +264,7 @@ function Battle.onMouseRelease(self, mousePosition, mouseButton)
     GameInterface.createThingMenu(mousePosition, nil, nil, self.creature)
     return true
   elseif mouseButton == MouseLeftButton then
-    if Keyboard.isShiftPressed() then
+    if g_keyboard.isShiftPressed() then
       g_game.look(self.creature)
     else
       if self.isTarget then

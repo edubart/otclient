@@ -15,7 +15,7 @@ local function addButton(id, description, icon, callback, panel, toggle)
     class = 'TopButton'
   end
 
-  local button = createWidget(class, panel)
+  local button = g_ui.createWidget(class, panel)
   button:setId(id)
   button:setTooltip(description)
   button:setIcon(resolvepath(icon, 3))
@@ -28,7 +28,7 @@ function TopMenu.init()
   connect(g_game, { onGameStart = TopMenu.showGameButtons,
                     onGameEnd = TopMenu.hideGameButtons })
 
-  topMenu = displayUI('topmenu.otui')
+  topMenu = g_ui.displayUI('topmenu.otui')
 
   leftButtonsPanel = topMenu:getChildById('leftButtonsPanel')
   rightButtonsPanel = topMenu:getChildById('rightButtonsPanel')

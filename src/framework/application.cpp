@@ -47,7 +47,7 @@ void exitSignalHandler(int sig)
         case SIGINT:
             if(!signaled) {
                 signaled = true;
-                g_eventDispatcher.addEvent(std::bind(&Application::close, &g_app));
+                g_dispatcher.addEvent(std::bind(&Application::close, &g_app));
             }
             break;
     }
@@ -155,7 +155,7 @@ void Application::terminate()
     g_lua.terminate();
 
     // flush remaining dispatcher events
-    g_eventDispatcher.flush();
+    g_dispatcher.flush();
 
     // terminate graphics
     m_foreground = nullptr;
@@ -182,7 +182,7 @@ void Application::run()
     g_clock.update();
 
     // show the application only after we draw some frames
-    g_eventDispatcher.scheduleEvent([] { g_window.show(); }, 10);
+    g_dispatcher.scheduleEvent([] { g_window.show(); }, 10);
 
 
     while(!m_stopping) {
@@ -281,7 +281,7 @@ void Application::poll()
     //g_particleManager.update();
 
     Connection::poll();
-    g_eventDispatcher.poll();
+    g_dispatcher.poll();
 }
 
 void Application::close()

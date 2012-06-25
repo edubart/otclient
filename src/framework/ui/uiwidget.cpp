@@ -505,7 +505,7 @@ void UIWidget::applyStyle(const OTMLNodePtr& styleNode)
 
         if(m_firstOnStyle) {
             auto self = asUIWidget();
-            g_eventDispatcher.addEvent([self] {
+            g_dispatcher.addEvent([self] {
                 self->callLuaField("onSetup");
             });
             // always focus new child
@@ -832,7 +832,7 @@ bool UIWidget::setRect(const Rect& rect)
     // avoid massive update events
     if(!m_updateEventScheduled) {
         UIWidgetPtr self = asUIWidget();
-        g_eventDispatcher.addEvent([self, oldRect]() {
+        g_dispatcher.addEvent([self, oldRect]() {
             self->m_updateEventScheduled = false;
             if(oldRect != self->getRect())
                 self->onGeometryChange(oldRect, self->getRect());
@@ -1318,7 +1318,7 @@ void UIWidget::updateStyle()
 
     if(m_loadingStyle && !m_updateStyleScheduled) {
         UIWidgetPtr self = asUIWidget();
-        g_eventDispatcher.addEvent([self] {
+        g_dispatcher.addEvent([self] {
             self->m_updateStyleScheduled = false;
             self->updateStyle();
         });

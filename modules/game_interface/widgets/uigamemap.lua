@@ -16,13 +16,13 @@ function UIGameMap:onDragEnter(mousePos)
   if not thing then return false end
 
   self.currentDragThing = thing
-  Mouse.setTargetCursor()
+  g_mouse.setTargetCursor()
   return true
 end
 
 function UIGameMap:onDragLeave(droppedWidget, mousePos)
   self.currentDragThing = nil
-  Mouse.restoreCursor()
+  g_mouse.restoreCursor()
   return true
 end
 
@@ -57,8 +57,8 @@ function UIGameMap:onMouseRelease(mousePosition, mouseButton)
   if tile == nil then return false end
 
   if Options.getOption('classicControl') and
-     ((Mouse.isPressed(MouseLeftButton) and mouseButton == MouseRightButton) or
-      (Mouse.isPressed(MouseRightButton) and mouseButton == MouseLeftButton)) then
+     ((g_mouse.isPressed(MouseLeftButton) and mouseButton == MouseRightButton) or
+      (g_mouse.isPressed(MouseRightButton) and mouseButton == MouseLeftButton)) then
     local tile = self:getTile(mousePosition)
     g_game.look(tile:getTopLookThing())
     self.cancelNextRelease = true

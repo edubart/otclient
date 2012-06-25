@@ -96,8 +96,12 @@ namespace luabinder
     LuaCppFunction bind_fun_specializer(const F& f) {
         enum { N = std::tuple_size<Tuple>::value };
         return [=](LuaInterface* lua) -> int {
-            if(lua->stackSize() != N)
-                throw LuaBadNumberOfArgumentsException(N, lua->stackSize());
+            while(lua->stackSize() != N) {
+                if(lua->stackSize() < N)
+                    g_lua.pushNil();
+                else
+                    g_lua.pop();
+            }
             Tuple tuple;
             pack_values_into_tuple<N>::call(tuple, lua);
             return expand_fun_arguments<N,Ret>::call(tuple, f, lua);

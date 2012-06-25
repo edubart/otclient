@@ -78,7 +78,7 @@ void Missile::setPath(const Position& fromPosition, const Position& toPosition)
 
     // schedule removal
     auto self = asMissile();
-    g_eventDispatcher.scheduleEvent([self]() { g_map.removeThing(self); }, m_duration);
+    g_dispatcher.scheduleEvent([self]() { g_map.removeThing(self); }, m_duration);
 }
 
 void Missile::setId(uint32 id)

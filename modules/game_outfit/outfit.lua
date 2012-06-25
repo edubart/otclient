@@ -135,7 +135,7 @@ function Outfit.create(creature, outfitList)
   outfits = outfitList
   Outfit.destroy()
 
-  outfitWindow = displayUI('outfit.otui')
+  outfitWindow = g_ui.displayUI('outfit.otui')
   --outfitWindow:lock()
 
   outfit = outfitCreature:getOutfit()
@@ -152,7 +152,7 @@ function Outfit.create(creature, outfitList)
 
   for j=0,6 do
     for i=0,18 do
-      local colorBox = createWidget('ColorBox', colorBoxPanel)
+      local colorBox = g_ui.createWidget('ColorBox', colorBoxPanel)
       local outfitColor = getOufitColor(j*19 + i)
       colorBox:setImageColor(outfitColor)
       colorBox:setId('colorBox' .. j*19+i)

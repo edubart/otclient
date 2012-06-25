@@ -214,7 +214,7 @@ void UIManager::updateHoveredWidget()
     if(m_hoverUpdateScheduled)
         return;
 
-    g_eventDispatcher.addEvent([this] {
+    g_dispatcher.addEvent([this] {
         if(!m_rootWidget)
             return;
 
@@ -278,11 +278,11 @@ void UIManager::onWidgetDestroy(const UIWidgetPtr& widget)
     if(m_checkEvent && !m_checkEvent->isExecuted())
         return;
 
-    m_checkEvent = g_eventDispatcher.scheduleEvent([this] {
+    m_checkEvent = g_dispatcher.scheduleEvent([this] {
         g_lua.collectGarbage();
         UIWidgetList backupList = m_destroyedWidgets;
         m_destroyedWidgets.clear();
-        g_eventDispatcher.scheduleEvent([backupList] {
+        g_dispatcher.scheduleEvent([backupList] {
             g_lua.collectGarbage();
             for(const UIWidgetPtr& widget : backupList) {
                 if(widget->getUseCount() != 1)
@@ -404,7 +404,7 @@ UIWidgetPtr UIManager::loadUI(const std::string& file, const UIWidgetPtr& parent
     }
 }
 
-UIWidgetPtr UIManager::createWidgetFromStyle(const std::string& styleName, const UIWidgetPtr& parent)
+UIWidgetPtr UIManager::createWidget(const std::string& styleName, const UIWidgetPtr& parent)
 {
     OTMLNodePtr node = OTMLNode::create(styleName);
     try {

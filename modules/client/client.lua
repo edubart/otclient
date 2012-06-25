@@ -1,7 +1,7 @@
 Client = {}
 
 function Client.reloadScripts()
-  reloadModules()
+  g_modules.reloadModules()
   dofile '/otclientrc'
   local message = tr('All modules and scripts were reloaded.')
   TextMessage.displayEventAdvance(message)
@@ -17,18 +17,18 @@ function Client.init()
   else
     -- window size
     local size = { width = 800, height = 600 }
-    size = Settings.getSize('window-size', size)
+    size = g_settings.getSize('window-size', size)
     g_window.resize(size)
 
     -- window position, default is the screen center
     local displaySize = g_window.getDisplaySize()
     local defaultPos = { x = (displaySize.width - size.width)/2,
                          y = (displaySize.height - size.height)/2 }
-    local pos = Settings.getPoint('window-pos', defaultPos)
+    local pos = g_settings.getPoint('window-pos', defaultPos)
     g_window.move(pos)
 
     -- window maximized?
-    local maximized = Settings.getBoolean('window-maximized', false)
+    local maximized = g_settings.getBoolean('window-maximized', false)
     if maximized then g_window.maximize() end
   end
 
@@ -47,8 +47,8 @@ end
 
 function Client.terminate()
   -- save window configs
-  Settings.set('window-size', g_window.getUnmaximizedSize())
-  Settings.set('window-pos', g_window.getUnmaximizedPos())
-  Settings.set('window-maximized', g_window.isMaximized())
+  g_settings.set('window-size', g_window.getUnmaximizedSize())
+  g_settings.set('window-pos', g_window.getUnmaximizedPos())
+  g_settings.set('window-maximized', g_window.isMaximized())
   Client = nil
 end

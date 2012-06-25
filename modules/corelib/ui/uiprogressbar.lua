@@ -1,3 +1,4 @@
+-- @docclass
 UIProgressBar = extends(UIWidget)
 
 function UIProgressBar.create()

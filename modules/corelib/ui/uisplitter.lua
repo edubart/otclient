@@ -1,3 +1,4 @@
+-- @docclass
 UISplitter = extends(UIWidget)
 
 function UISplitter.create()
@@ -9,22 +10,22 @@ end
 
 function UISplitter:onHoverChange(hovered)
   if hovered then
-    if Mouse.isCursorChanged() or Mouse.isPressed() then return end
+    if g_mouse.isCursorChanged() or g_mouse.isPressed() then return end
     if self:getWidth() > self:getHeight() then
-      Mouse.setVerticalCursor()
+      g_mouse.setVerticalCursor()
       self.vertical = true
     else
-      Mouse.setHorizontalCursor()
+      g_mouse.setHorizontalCursor()
       self.vertical = false
     end
     self.hovering = true
     if not self:isPressed() then
-      Effects.fadeIn(self)
+      g_effects.fadeIn(self)
     end
   else
     if not self:isPressed() and self.hovering then
-      Mouse.restoreCursor()
-      Effects.fadeOut(self)
+      g_mouse.restoreCursor()
+      g_effects.fadeOut(self)
       self.hovering = false
     end
   end
@@ -64,8 +65,8 @@ end
 
 function UISplitter:onMouseRelease(mousePos, mouseButton)
   if not self:isHovered() then
-    Mouse.restoreCursor()
-    Effects.fadeOut(self)
+    g_mouse.restoreCursor()
+    g_effects.fadeOut(self)
     self.hovering = false
   end
 end

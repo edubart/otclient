@@ -76,3 +76,8 @@ terminate rework of ui events propagation  (for Key events)
 * lua engine
 make possible to bind non LuaObject derived classes on lua engine (for usage with Point,Rect,Color,Size)
 review usage of x,y/width,height in lua instead of point/size
+
+* modules system
+use one isolated environment for each module
+
+

@@ -368,7 +368,7 @@ void Creature::nextWalkUpdate()
     // schedules next update
     if(m_walking) {
         auto self = asCreature();
-        m_walkUpdateEvent = g_eventDispatcher.scheduleEvent([self] {
+        m_walkUpdateEvent = g_dispatcher.scheduleEvent([self] {
             self->m_walkUpdateEvent = nullptr;
             self->nextWalkUpdate();
         }, m_walkAnimationInterval / 32);
@@ -492,7 +492,7 @@ void Creature::setShieldTexture(const std::string& filename, bool blink)
 
     if(blink && !m_shieldBlink) {
         auto self = asCreature();
-        g_eventDispatcher.scheduleEvent([self]() {
+        g_dispatcher.scheduleEvent([self]() {
             self->updateShield();
         }, SHIELD_BLINK_TICKS);
     }
@@ -512,7 +512,7 @@ void Creature::addTimedSquare(uint8 color)
 
     // schedule removal
     auto self = asCreature();
-    g_eventDispatcher.scheduleEvent([self]() {
+    g_dispatcher.scheduleEvent([self]() {
         self->removeTimedSquare();
     }, VOLATILE_SQUARE_DURATION);
 }
@@ -523,7 +523,7 @@ void Creature::updateShield()
 
     if(m_shield != Otc::ShieldNone && m_shieldBlink) {
         auto self = asCreature();
-        g_eventDispatcher.scheduleEvent([self]() {
+        g_dispatcher.scheduleEvent([self]() {
             self->updateShield();
         }, SHIELD_BLINK_TICKS);
     }

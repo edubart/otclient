@@ -12,9 +12,9 @@ function VipList.init()
                     onVipStateChange = VipList.onVipStateChange })
 
 
-  Keyboard.bindKeyDown('Ctrl+P', VipList.toggle)
+  g_keyboard.bindKeyDown('Ctrl+P', VipList.toggle)
 
-  vipWindow = displayUI('viplist.otui', GameInterface.getRightPanel())
+  vipWindow = g_ui.loadUI('viplist.otui', GameInterface.getRightPanel())
   vipButton = TopMenu.addGameToggleButton('vipListButton', tr('VIP list') .. ' (Ctrl+P)', 'viplist.png', VipList.toggle)
   vipButton:setOn(true)
 
@@ -22,7 +22,7 @@ function VipList.init()
 end
 
 function VipList.terminate()
-  Keyboard.unbindKeyDown('Ctrl+P')
+  g_keyboard.unbindKeyDown('Ctrl+P')
   disconnect(g_game, { onGameEnd = VipList.clear,
                        onAddVip = VipList.onAddVip,
                        onVipStateChange = VipList.onVipStateChange })
@@ -62,7 +62,7 @@ function VipList.onMiniWindowClose()
 end
 
 function VipList.createAddWindow()
-  addVipWindow = displayUI('addvip.otui')
+  addVipWindow = g_ui.displayUI('addvip.otui')
 end
 
 function VipList.destroyAddWindow()
@@ -79,7 +79,7 @@ end
 function VipList.onAddVip(id, name, online)
   local vipList = vipWindow:getChildById('contentsPanel')
 
-  local label = createWidget('VipListLabel', nil)
+  local label = g_ui.createWidget('VipListLabel')
   label:setId('vip' .. id)
   label:setText(name)
 
@@ -136,7 +136,7 @@ function VipList.onVipListMousePress(widget, mousePos, mouseButton)
 
   local vipList = vipWindow:getChildById('contentsPanel')
 
-  local menu = createWidget('PopupMenu')
+  local menu = g_ui.createWidget('PopupMenu')
   menu:addOption(tr('Add new VIP'), function() VipList.createAddWindow() end)
   menu:display(mousePos)
 
@@ -148,7 +148,7 @@ function VipList.onVipListLabelMousePress(widget, mousePos, mouseButton)
 
   local vipList = vipWindow:getChildById('contentsPanel')
 
-  local menu = createWidget('PopupMenu')
+  local menu = g_ui.createWidget('PopupMenu')
   menu:addOption(tr('Add new VIP'), function() VipList.createAddWindow() end)
   menu:addOption(tr('Remove %s', widget:getText()), function() if widget then g_game.removeVip(widget:getId():sub(4)) vipList:removeChild(widget) end end)
   menu:addSeparator()

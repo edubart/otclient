@@ -3,7 +3,7 @@ PlayerTrade = {}
 local tradeWindow
 
 local function createTrade()
-  tradeWindow = createWidget('TradeWindow', GameInterface.getRightPanel())
+  tradeWindow = g_ui.createWidget('TradeWindow', GameInterface.getRightPanel())
   tradeWindow.onClose = function()
     g_game.rejectTrade()
     tradeWindow:hide()
@@ -32,7 +32,7 @@ local function fillTrade(name, items, counter)
   label:setText(name)
 
   for index,item in ipairs(items) do
-    local itemWidget = createWidget('Item', tradeContainer)
+    local itemWidget = g_ui.createWidget('Item', tradeContainer)
     itemWidget:setItem(item)
     itemWidget:setVirtual(true)
     itemWidget:setMargin(1)
@@ -57,7 +57,7 @@ local function onGameCloseTrade()
 end
 
 function PlayerTrade.init()
-  importStyle 'tradewindow.otui'
+  g_ui.importStyle('tradewindow.otui')
 
   connect(g_game, { onOwnTrade = onGameOwnTrade,
                     onCounterTrade = onGameCounterTrade,

@@ -19,10 +19,12 @@ local function onLeftPanelVisibilityChange(leftPanel, visible)
 end
 
 function GameInterface.init()
+  g_ui.importStyle('styles/countwindow.otui')
+
   connect(g_game, { onGameStart = GameInterface.show }, true)
   connect(g_game, { onGameEnd = GameInterface.hide }, true)
 
-  gameRootPanel = displayUI('gameinterface.otui')
+  gameRootPanel = g_ui.displayUI('gameinterface.otui')
   gameRootPanel:hide()
   gameRootPanel:lower()
 
@@ -38,34 +40,34 @@ function GameInterface.init()
   logoutButton = TopMenu.addRightButton('logoutButton', 'Logout', '/images/logout.png', GameInterface.tryLogout)
   logoutButton:hide()
 
-  Keyboard.bindKeyPress('Up', function() g_game.walk(North) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
-  Keyboard.bindKeyPress('Right', function() g_game.walk(East) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
-  Keyboard.bindKeyPress('Down', function() g_game.walk(South) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
-  Keyboard.bindKeyPress('Left', function() g_game.walk(West) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
-  Keyboard.bindKeyPress('Numpad8', function() g_game.walk(North) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
-  Keyboard.bindKeyPress('Numpad9', function() g_game.walk(NorthEast) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
-  Keyboard.bindKeyPress('Numpad6', function() g_game.walk(East) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
-  Keyboard.bindKeyPress('Numpad3', function() g_game.walk(SouthEast) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
-  Keyboard.bindKeyPress('Numpad2', function() g_game.walk(South) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
-  Keyboard.bindKeyPress('Numpad1', function() g_game.walk(SouthWest) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
-  Keyboard.bindKeyPress('Numpad4', function() g_game.walk(West) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
-  Keyboard.bindKeyPress('Numpad7', function() g_game.walk(NorthWest) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
-  Keyboard.bindKeyPress('Ctrl+Up', function() g_game.turn(North) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
-  Keyboard.bindKeyPress('Ctrl+Right', function() g_game.turn(East) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
-  Keyboard.bindKeyPress('Ctrl+Down', function() g_game.turn(South) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
-  Keyboard.bindKeyPress('Ctrl+Left', function() g_game.turn(West) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
-  Keyboard.bindKeyPress('Ctrl+Numpad8', function() g_game.turn(North) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
-  Keyboard.bindKeyPress('Ctrl+Numpad6', function() g_game.turn(East) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
-  Keyboard.bindKeyPress('Ctrl+Numpad2', function() g_game.turn(South) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
-  Keyboard.bindKeyPress('Ctrl+Numpad4', function() g_game.turn(West) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
-  Keyboard.bindKeyPress('Escape', function() g_game.cancelAttackAndFollow() end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
-  Keyboard.bindKeyPress('Ctrl+=', function() gameMapPanel:zoomIn() end, gameRootPanel, 250)
-  Keyboard.bindKeyPress('Ctrl+-', function() gameMapPanel:zoomOut() end, gameRootPanel, 250)
-  Keyboard.bindKeyDown('Ctrl+Q', GameInterface.tryLogout, gameRootPanel)
-  Keyboard.bindKeyDown('Ctrl+L', GameInterface.tryLogout, gameRootPanel)
-  Keyboard.bindKeyDown('Ctrl+W', function() g_map.cleanTexts() TextMessage.clearMessages() end, gameRootPanel)
+  g_keyboard.bindKeyPress('Up', function() g_game.walk(North) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
+  g_keyboard.bindKeyPress('Right', function() g_game.walk(East) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
+  g_keyboard.bindKeyPress('Down', function() g_game.walk(South) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
+  g_keyboard.bindKeyPress('Left', function() g_game.walk(West) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
+  g_keyboard.bindKeyPress('Numpad8', function() g_game.walk(North) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
+  g_keyboard.bindKeyPress('Numpad9', function() g_game.walk(NorthEast) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
+  g_keyboard.bindKeyPress('Numpad6', function() g_game.walk(East) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
+  g_keyboard.bindKeyPress('Numpad3', function() g_game.walk(SouthEast) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
+  g_keyboard.bindKeyPress('Numpad2', function() g_game.walk(South) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
+  g_keyboard.bindKeyPress('Numpad1', function() g_game.walk(SouthWest) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
+  g_keyboard.bindKeyPress('Numpad4', function() g_game.walk(West) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
+  g_keyboard.bindKeyPress('Numpad7', function() g_game.walk(NorthWest) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
+  g_keyboard.bindKeyPress('Ctrl+Up', function() g_game.turn(North) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
+  g_keyboard.bindKeyPress('Ctrl+Right', function() g_game.turn(East) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
+  g_keyboard.bindKeyPress('Ctrl+Down', function() g_game.turn(South) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
+  g_keyboard.bindKeyPress('Ctrl+Left', function() g_game.turn(West) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
+  g_keyboard.bindKeyPress('Ctrl+Numpad8', function() g_game.turn(North) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
+  g_keyboard.bindKeyPress('Ctrl+Numpad6', function() g_game.turn(East) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
+  g_keyboard.bindKeyPress('Ctrl+Numpad2', function() g_game.turn(South) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
+  g_keyboard.bindKeyPress('Ctrl+Numpad4', function() g_game.turn(West) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
+  g_keyboard.bindKeyPress('Escape', function() g_game.cancelAttackAndFollow() end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
+  g_keyboard.bindKeyPress('Ctrl+=', function() gameMapPanel:zoomIn() end, gameRootPanel, 250)
+  g_keyboard.bindKeyPress('Ctrl+-', function() gameMapPanel:zoomOut() end, gameRootPanel, 250)
+  g_keyboard.bindKeyDown('Ctrl+Q', GameInterface.tryLogout, gameRootPanel)
+  g_keyboard.bindKeyDown('Ctrl+L', GameInterface.tryLogout, gameRootPanel)
+  g_keyboard.bindKeyDown('Ctrl+W', function() g_map.cleanTexts() TextMessage.clearMessages() end, gameRootPanel)
 
-  Keyboard.bindKeyDown('Ctrl+.', function()
+  g_keyboard.bindKeyDown('Ctrl+.', function()
     if gameMapPanel:isKeepAspectRatioEnabled() then
       gameMapPanel:setKeepAspectRatio(false)
     else
@@ -141,7 +143,7 @@ function GameInterface.onMouseGrabberRelease(self, mousePosition, mouseButton)
   end
 
   GameInterface.selectedThing = nil
-  Mouse.restoreCursor()
+  g_mouse.restoreCursor()
   self:ungrabMouse()
   return true
 end
@@ -170,18 +172,18 @@ function GameInterface.startUseWith(thing)
   GameInterface.selectedType = 'use'
   GameInterface.selectedThing = thing
   mouseGrabberWidget:grabMouse()
-  Mouse.setTargetCursor()
+  g_mouse.setTargetCursor()
 end
 
 function GameInterface.startTradeWith(thing)
   GameInterface.selectedType = 'trade'
   GameInterface.selectedThing = thing
   mouseGrabberWidget:grabMouse()
-  Mouse.setTargetCursor()
+  g_mouse.setTargetCursor()
 end
 
 function GameInterface.createThingMenu(menuPosition, lookThing, useThing, creatureThing)
-  local menu = createWidget('PopupMenu')
+  local menu = g_ui.createWidget('PopupMenu')
 
   if lookThing then
     menu:addOption(tr('Look'), function() g_game.look(lookThing) end)
@@ -191,9 +193,9 @@ function GameInterface.createThingMenu(menuPosition, lookThing, useThing, creatu
     if useThing:isContainer() then
       if useThing:getParentContainer() then
         menu:addOption(tr('Open'), function() g_game.open(useThing, useThing:getParentContainer()) end)
-        menu:addOption(tr('Open in new window'), function() g_game.open(useThing, nil) end)
+        menu:addOption(tr('Open in new window'), function() g_game.open(useThing) end)
       else
-        menu:addOption(tr('Open'), function() g_game.open(useThing, nil) end)
+        menu:addOption(tr('Open'), function() g_game.open(useThing) end)
       end
     else
       if useThing:isMultiUse() then
@@ -303,7 +305,7 @@ function GameInterface.createThingMenu(menuPosition, lookThing, useThing, creatu
 end
 
 function GameInterface.processMouseAction(menuPosition, mouseButton, autoWalk, lookThing, useThing, creatureThing, multiUseThing)
-  local keyboardModifiers = Keyboard.getModifiers()
+  local keyboardModifiers = g_keyboard.getModifiers()
 
   if autoWalk and keyboardModifiers == KeyboardNoModifier and mouseButton == MouseLeftButton then
     -- todo auto walk
@@ -323,7 +325,7 @@ function GameInterface.processMouseAction(menuPosition, mouseButton, autoWalk, l
           g_game.open(useThing, useThing:getParentContainer())
           return true
         else
-          g_game.open(useThing, nil)
+          g_game.open(useThing)
         return true
         end
       elseif useThing:isMultiUse() then
@@ -348,7 +350,7 @@ function GameInterface.processMouseAction(menuPosition, mouseButton, autoWalk, l
           g_game.open(multiUseThing, multiUseThing:getParentContainer())
           return true
         else
-          g_game.open(multiUseThing, nil)
+          g_game.open(multiUseThing)
           return true
         end
       elseif multiUseThing:isMultiUse() then
@@ -374,16 +376,16 @@ function GameInterface.processMouseAction(menuPosition, mouseButton, autoWalk, l
 end
 
 function GameInterface.moveStackableItem(item, toPos)
-  if Keyboard.isCtrlPressed() then
+  if g_keyboard.isCtrlPressed() then
     g_game.move(item, toPos, item:getCount())
     return
-  elseif Keyboard.isShiftPressed() then
+  elseif g_keyboard.isShiftPressed() then
     g_game.move(item, toPos, 1)
     return
   end
 
   local count = item:getCount()
-  local countWindow = createWidget('CountWindow', rootWidget)
+  local countWindow = g_ui.createWidget('CountWindow', rootWidget)
   local spinbox = countWindow:getChildById('countSpinBox')
   local scrollbar = countWindow:getChildById('countScrollBar')
   spinbox:setMaximum(count)

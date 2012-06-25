@@ -85,7 +85,7 @@ bool UIHorizontalLayout::internalUpdate()
 
     if(m_fitChildren && preferredWidth != parentWidget->getWidth()) {
         // must set the preferred width later
-        g_eventDispatcher.addEvent([=] {
+        g_dispatcher.addEvent([=] {
             parentWidget->setWidth(preferredWidth);
         });
     }

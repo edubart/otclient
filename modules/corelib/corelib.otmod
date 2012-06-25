@@ -6,8 +6,9 @@ Module
   reloadable: false
 
   @onLoad: |
-    dofiles 'ext'
-    dofiles 'math'
+    dofile 'math'
+    dofile 'string'
+    dofile 'table'
 
     dofile 'const'
     dofile 'util'
@@ -17,5 +18,3 @@ Module
     dofile 'mouse'
 
     dofiles 'ui'
-    dofiles 'widgets'
-

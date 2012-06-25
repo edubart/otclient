@@ -47,26 +47,26 @@ function RuleViolation.loadReasons()
 
   local actions = g_game.getGMActions()
   for reason, actionFlags in pairs(actions) do
-    local label = createWidget('RVListLabel', reasonsTextList)
+    local label = g_ui.createWidget('RVListLabel', reasonsTextList)
     label:setText(rvreasons[reason])
     label.reasonId = reason
     label.actionFlags = actionFlags
   end
-  
+
   if not RuleViolation.hasWindowAccess() and ruleViolationWindow:isVisible() then RuleViolation.hide() end
 end
 
-function RuleViolation.init()  
+function RuleViolation.init()
   connect(g_game, { onGMActions = RuleViolation.loadReasons })
 
-  ruleViolationWindow = displayUI('ruleviolation.otui')
+  ruleViolationWindow = g_ui.displayUI('ruleviolation.otui')
   ruleViolationWindow:setVisible(false)
-  
+
   reasonsTextList = ruleViolationWindow:getChildById('reasonList')
   actionsTextList = ruleViolationWindow:getChildById('actionList')
-  
-  Keyboard.bindKeyDown('Ctrl+Y', RuleViolation.show)
-  
+
+  g_keyboard.bindKeyDown('Ctrl+Y', RuleViolation.show)
+
   if g_game.isOnline() then
     RuleViolation.loadReasons()
   end
@@ -77,7 +77,7 @@ function RuleViolation.terminate()
 
   ruleViolationWindow:destroy()
   ruleViolationWindow = nil
-  
+
   reasonsTextList = nil
   actionsTextList = nil
 end
@@ -87,11 +87,11 @@ function RuleViolation.show(target, statement)
     if target then
       ruleViolationWindow:getChildById('nameText'):setText(target)
     end
-    
+
     if statement then
       ruleViolationWindow:getChildById('statementText'):setText(statement)
     end
-  
+
     ruleViolationWindow:show()
     ruleViolationWindow:raise()
   end
@@ -108,7 +108,7 @@ function RuleViolation.onSelectReason(reasonLabel, focused)
     for actionBaseFlag = 0, #rvactions do
       actionFlagString = rvactions[actionBaseFlag]
       if bit32.band(reasonLabel.actionFlags, math.pow(2, actionBaseFlag)) > 0 then
-        local label = createWidget('RVListLabel', actionsTextList)
+        local label = g_ui.createWidget('RVListLabel', actionsTextList)
         label:setText(actionFlagString)
         label.actionId = actionBaseFlag
       end

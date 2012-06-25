@@ -1,3 +1,4 @@
+-- @docclass
 UITabBar = extends(UIWidget)
 
 -- private functions
@@ -28,11 +29,11 @@ end
 
 function UITabBar:addTab(text, panel)
   if panel == nil then
-    panel = createWidget(self:getStyleName() .. 'Panel')
+    panel = g_ui.createWidget(self:getStyleName() .. 'Panel')
     panel:setId('tabPanel')
   end
 
-  local tab = createWidget(self:getStyleName() .. 'Button', self)
+  local tab = g_ui.createWidget(self:getStyleName() .. 'Button', self)
   panel.isTab = true
   tab.tabPanel = panel
   tab.tabBar = self

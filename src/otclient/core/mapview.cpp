@@ -394,7 +394,7 @@ void MapView::updateVisibleTilesCache(int start)
 
     if(stop) {
         // schedule next update continuation to avoid freezes
-        m_updateTilesCacheEvent = g_eventDispatcher.scheduleEvent(std::bind(&MapView::updateVisibleTilesCache, asMapView(), count), 1);
+        m_updateTilesCacheEvent = g_dispatcher.scheduleEvent(std::bind(&MapView::updateVisibleTilesCache, asMapView(), count), 1);
     }
 
     if(start == 0 && m_drawTexts && m_viewMode <= NEAR_VIEW)

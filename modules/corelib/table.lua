@@ -1,3 +1,5 @@
+-- @docclass table
+
 function table.dump(t, depth)
   if not depth then depth = 0 end
   for k,v in pairs(t) do

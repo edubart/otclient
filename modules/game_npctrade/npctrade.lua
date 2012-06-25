@@ -142,11 +142,11 @@ local function refreshTradeItems()
   if radioItems then
     radioItems:destroy()
   end
-  radioItems = RadioGroup.create()
+  radioItems = UIRadioGroup.create()
 
   local currentTradeItems = tradeItems[getCurrentTradeType()]
   for key,item in pairs(currentTradeItems) do
-    local itemBox = createWidget('NPCItemBox', itemsPanel)
+    local itemBox = g_ui.createWidget('NPCItemBox', itemsPanel)
     itemBox.item = item
 
     local name = item.name
@@ -262,7 +262,7 @@ end
 
 -- public functions
 function NPCTrade.init()
-  npcWindow = displayUI('npctrade.otui')
+  npcWindow = g_ui.displayUI('npctrade.otui')
   npcWindow:setVisible(false)
 
   itemsPanel = npcWindow:recursiveGetChildById('itemsPanel')
@@ -286,7 +286,7 @@ function NPCTrade.init()
   buyTab = npcWindow:getChildById('buyTab')
   sellTab = npcWindow:getChildById('sellTab')
 
-  radioTabs = RadioGroup.create()
+  radioTabs = UIRadioGroup.create()
   radioTabs:addWidget(buyTab)
   radioTabs:addWidget(sellTab)
   radioTabs:selectWidget(buyTab)
@@ -403,7 +403,7 @@ end
 
 function NPCTrade.itemPopup(self, mousePosition, mouseButton)
   if mouseButton == MouseRightButton then
-    local menu = createWidget('PopupMenu')
+    local menu = g_ui.createWidget('PopupMenu')
     menu:addOption(tr('Look'), function() return g_game.inspectNpcTrade(self:getItem()) end)
     menu:display(mousePosition)
     return true

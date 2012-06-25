@@ -34,12 +34,12 @@ end
 -- public functions
 function Minimap.init()
   connect(g_game, { onGameStart = Minimap.reset })
-  Keyboard.bindKeyDown('Ctrl+M', Minimap.toggle)
+  g_keyboard.bindKeyDown('Ctrl+M', Minimap.toggle)
 
   minimapButton = TopMenu.addGameToggleButton('minimapButton', tr('Minimap') .. ' (Ctrl+M)', 'minimap.png', Minimap.toggle)
   minimapButton:setOn(true)
 
-  minimapWindow = loadUI('minimap.otui', GameInterface.getRightPanel())
+  minimapWindow = g_ui.loadUI('minimap.otui', GameInterface.getRightPanel())
 
   minimapWidget = minimapWindow:recursiveGetChildById('minimap')
   minimapWidget:setAutoViewMode(false)
@@ -72,7 +72,7 @@ end
 
 function Minimap.terminate()
   disconnect(g_game, { onGameStart = Minimap.reset })
-  Keyboard.unbindKeyDown('Ctrl+M')
+  g_keyboard.unbindKeyDown('Ctrl+M')
 
   minimapButton:destroy()
   minimapWindow:destroy()
