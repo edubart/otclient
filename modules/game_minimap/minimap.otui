@@ -10,4 +10,53 @@ MiniWindow
     padding: 3
     UIMap
       id: minimap
-      anchors.fill: parent
+      anchors.left: parent.left
+      anchors.top: parent.top
+      size: 110 110
+      
+    UIButton
+      id: compass
+      image-source: /game_minimap/compass.png
+      anchors.left: minimap.right
+      anchors.top: minimap.top
+      size: 60 60
+      margin-left: 5
+      @onClick: function(...) Minimap.compassClick(...) end
+      
+    Button
+      id: zoomOut
+      text: -
+      size: 20 20
+      anchors.left: minimap.right
+      anchors.top: compass.bottom
+      margin-top: 5
+      margin-left: 15
+      @onClick: Minimap.onButtonClick(self:getId())
+      
+    Button
+      id: zoomIn
+      text: +
+      size: 20 20
+      anchors.left: zoomOut.left
+      anchors.top: zoomOut.bottom
+      margin-top: 2
+      @onClick: Minimap.onButtonClick(self:getId())
+      
+    Button
+      id: levelUp
+      text: /\
+      size: 20 20
+      anchors.left: zoomOut.right
+      anchors.top: zoomOut.top
+      margin-left: 2
+      @onClick: Minimap.onButtonClick(self:getId())
+      
+    Button
+      id: levelDown
+      text: \/
+      size: 20 20
+      anchors.left: zoomIn.right
+      anchors.top: zoomIn.top
+      margin-left: 2
+      @onClick: Minimap.onButtonClick(self:getId())
+      
