@@ -47,4 +47,3 @@ if g_resources.fileExists("/otclientrc.lua") then
     dofile("/otclientrc.lua")
 end
 
-g_things.loadOtb('/lalal.otb')
