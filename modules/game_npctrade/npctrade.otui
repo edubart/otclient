@@ -247,6 +247,7 @@ MainWindow
       margin-left: 5
       margin-top: 5
       visible: false
+      checked: true
       @onCheckChange: NPCTrade.onShowAllItemsChange()
 
   Button

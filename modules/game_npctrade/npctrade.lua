@@ -24,6 +24,7 @@ local tradeButton
 local buyTab
 local sellTab
 
+local showCapacity = true
 local buyWithBackpack
 local ignoreCapacity
 local ignoreEquipped
@@ -149,10 +150,16 @@ local function refreshTradeItems()
     local itemBox = g_ui.createWidget('NPCItemBox', itemsPanel)
     itemBox.item = item
 
+    local text = ''
     local name = item.name
-    local weight = string.format('%.2f', item.weight) .. ' ' .. WEIGHT_UNIT
+    text = text .. name
+    if showCapacity then
+      local weight = string.format('%.2f', item.weight) .. ' ' .. WEIGHT_UNIT
+      text = text .. '\n' .. weight
+    end
     local price = item.price .. ' ' .. CURRENCY
-    itemBox:setText(name .. '\n' .. weight .. '\n' .. price)
+    text = text .. '\n' .. price
+    itemBox:setText(text)
 
     local itemWidget = itemBox:getChildById('item')
     itemWidget:setItem(item.ptr)
@@ -427,4 +434,12 @@ end
 
 function NPCTrade.onShowAllItemsChange()
   refreshPlayerGoods()
+end
+
+function NPCTrade.setCurrency(currency)
+  CURRENCY = currency
+end
+
+function NPCTrade.showCapacity(state)
+  showCapacity = state
 end
