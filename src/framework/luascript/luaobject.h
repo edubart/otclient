@@ -37,9 +37,12 @@ public:
     /// if any lua error occurs, it will be reported to stdout and return 0 results
     /// @return the number of results
     template<typename... T>
-    int callLuaField(const std::string& field, const T&... args);
+    int luaCallField(const std::string& field, const T&... args);
+
     template<typename R, typename... T>
     R callLuaField(const std::string& field, const T&... args);
+    template<typename... T>
+    void callLuaField(const std::string& field, const T&... args);
 
     /// Returns true if the lua field exists
     bool hasLuaField(const std::string& field);
@@ -87,7 +90,7 @@ private:
 #include "luainterface.h"
 
 template<typename... T>
-int LuaObject::callLuaField(const std::string& field, const T&... args) {
+int LuaObject::luaCallField(const std::string& field, const T&... args) {
     // note that the field must be retrieved from this object lua value
     // to force using the __index metamethod of it's metatable
     // so cannot use LuaObject::getField here
@@ -109,13 +112,20 @@ int LuaObject::callLuaField(const std::string& field, const T&... args) {
 template<typename R, typename... T>
 R LuaObject::callLuaField(const std::string& field, const T&... args) {
     R result;
-    int rets = callLuaField(field, args...);
+    int rets = luaCallField(field, args...);
     if(rets > 0) {
         assert(rets == 1);
         result = g_lua.polymorphicPop<R>();
     } else
         result = R();
     return result;
+}
+
+template<typename... T>
+void LuaObject::callLuaField(const std::string& field, const T&... args) {
+    int rets = luaCallField(field, args...);
+    if(rets > 0)
+        g_lua.pop(rets);
 }
 
 template<typename T>
