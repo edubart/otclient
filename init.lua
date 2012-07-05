@@ -12,9 +12,12 @@ g_logger.setLogFile(g_resources.getWorkDir() .. g_app.getCompactName() .. ".log"
 -- print first terminal message
 g_logger.info(g_app.getName() .. ' ' .. g_app.getVersion() .. ' (rev ' .. g_app.getBuildRevision() .. ') built on ' .. g_app.getBuildDate())
 
+--add base folder to search path
+g_resources.addToSearchPath(g_resources.getWorkDir())
+
 -- add modules directory to the search path
 if not g_resources.addToSearchPath(g_resources.getWorkDir() .. "modules", true) then
-    g_logger.fatal("Unable to add modules directory to the search path.")
+  g_logger.fatal("Unable to add modules directory to the search path.")
 end
 
 -- try to add addons path too
@@ -44,6 +47,5 @@ g_modules.ensureModuleLoaded("game")
 g_modules.autoLoadModules(9999)
 
 if g_resources.fileExists("/otclientrc.lua") then
-    dofile("/otclientrc.lua")
+  dofile("/otclientrc.lua")
 end
-

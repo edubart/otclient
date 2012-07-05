@@ -21,6 +21,7 @@ CMakeLists.txt.user*
 *.otb
 *.otbm
 *.log
+*.bak
 /modules/myconfig.otml
 /modules/myotclientrc.lua
 !.gitignore

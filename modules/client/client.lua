@@ -34,6 +34,7 @@ function Client.init()
 
   g_window.setTitle('OTClient')
   g_window.setIcon(resolvepath('clienticon.png'))
+  g_keyboard.bindKeyDown('Ctrl+Shift+R', Client.reloadScripts)
 
   addEvent(function()
     scheduleEvent(function()

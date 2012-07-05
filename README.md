@@ -1,4 +1,4 @@
-== What is OTClient?
+### What is OTClient?
 
 OTClient is an alternative Tibia client for usage with otserv. It aims to be complete and flexible,
 for that it uses LUA scripting for all game interface functionality and configurations files with a syntax
@@ -7,7 +7,7 @@ that each functionality is a separated module, giving the possibility to users m
 anything easily. Users can also create new mods and extend game interface for their own purposes.
 OTClient is written in C++2011, the upcoming C++ standard and heavily scripted in lua.
 
-== Features
+### Features
 
 Beyond of it's flexibility with scripts, otclient comes with tons of other features that make possible
 the creation of new client side stuff in otserv that was not possible before. These include,
@@ -17,34 +17,33 @@ run on mobile platforms like Androi/iPhon/iPad and much more. Otclient is also f
 create tibia tools like map editors just using scripts, because it wasn't designed to be just a
 client, instead otclient was designed to be a combination of a framework and tibia APIs.
 
-== Download
+### Download
 
 Daily snapshots of otclient master branch compiled for Windows and protocol 860 is available
 in the {downloads section}[https://github.com/edubart/otclient/downloads] of the project's github page.
 For any other platform or protocol you will need to compile the source code. Currently Linux/Windows
 platforms and protocols 860/861/862 are supported.
 
-== Compiling
+### Compiling
 
 In short, if you need to compile OTClient, follow these tutorials:
-* {Compiling on Windows}[http://otclient.info/index.php?app=ccs&module=pages&section=pages&id=2&record=9]
-* {Compiling on Ubuntu}[http://otclient.info/index.php?app=ccs&module=pages&section=pages&id=2&record=12]
+* [Compiling on Windows](http://otclient.info/index.php?app=ccs&module=pages&section=pages&id=2&record=9)
+* [Compiling on Ubuntu](http://otclient.info/index.php?app=ccs&module=pages&section=pages&id=2&record=12)
 
-== Need help?
+### Need help?
 
-Checkout our website at {http://otclient.info}[http://otclient.info/] for tutorials and more information.
+Checkout our website at <http://otclient.info> for tutorials and more information.
 If you have any questions or are looking for more information, please feel free to ask on our official
-forum at http://otclient.info or talk with us at #otclient irc.freenode.net
+forum at <http://otclient.info> or talk with us at #otclient irc.freenode.net
 
-== Bugs
+### Bugs
 
-Have found a bug? Please create an issue in our bug tracker
-http://otclient.info/tracker
+Have found a bug? Please create an issue in our [bug tracker](http://otclient.info/tracker)
 
-== Contributing
+### Contributing
 
 We encourage you to contribute to OTClient! Please check out
-{our website}[http://otclient.info/] for guidelines about how to proceed. Join us!
+[our website](http://otclient.info/) for guidelines about how to proceed. Join us!
 
 We are currently needing help in the following areas:
 * Designing new UI themes or improving the current one
@@ -55,18 +54,18 @@ We are currently needing help in the following areas:
 * Spreading otclient project over the web and bring it to new possible contributors
 * Testing the client itself to report bugs and missing features in our bug tracker
 
-== Contact
+### Contact
 
-You have 3 options, use the forum at http://otclient.info , talk directly with us at
-#otclient irc.freenode.net or send an email directly to the project leader edub4rt@gmail.com
+You have 3 options, use the forum at http://otclient.info , talk directly with us at #otclient irc.freenode.net
+or send an email directly to the project leader edub4rt@gmail.com
 
-== License
+### License
 
 OTClient is made available under the MIT License, thus this means that you are free
 to do whatever you want, commercial, non-commercial, closed or open.
 
 
-== Donate
+### Donate
 
 OTClient needs your support, if you really like and use it, please donate. Anyone can donate
 by clicking the Donate button in otclient website. We might prioritize features
