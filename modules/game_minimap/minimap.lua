@@ -11,7 +11,7 @@ minimapFirstLoad = true
 function onMinimapMouseRelease(self, mousePosition, mouseButton)
   local tile = self:getTile(mousePosition)
   if tile and mouseButton == MouseLeftButton and self:isPressed() then
-    local dirs = g_map.findPath(g_game.getLocalPlayer():getPosition(), tile:getPosition(), 255)
+    local dirs = g_map.findPath(g_game.getLocalPlayer():getPosition(), tile:getPosition(), 127)
     if #dirs == 0 then
       TextMessage.displayStatus(tr('There is no way.'))
       return true
@@ -47,8 +47,8 @@ function Minimap.init()
   minimapWidget:setMultifloor(false)
   minimapWidget:setKeepAspectRatio(false)
   minimapWidget.onMouseRelease = onMinimapMouseRelease
-  minimapWidget.onMouseWheel = onMinimapMouseWheel  
-  
+  minimapWidget.onMouseWheel = onMinimapMouseWheel
+
   Minimap.reset()
 
   -- load only the first time (avoid load/save between reloads)
@@ -127,7 +127,7 @@ function Minimap.compassClick(self, mousePos)
       break
     end
   end
-  
+
   if center then
     local player = g_game.getLocalPlayer()
     if not player then return end

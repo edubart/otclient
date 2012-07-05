@@ -28,11 +28,11 @@
 #include <otclient/core/outfit.h>
 
 // outfit
-void push_luavalue(const Outfit& outfit);
+int push_luavalue(const Outfit& outfit);
 bool luavalue_cast(int index, Outfit& outfit);
 
 // position
-void push_luavalue(const Position& pos);
+int push_luavalue(const Position& pos);
 bool luavalue_cast(int index, Position& pos);
 
 #endif

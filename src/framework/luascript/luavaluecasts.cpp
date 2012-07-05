@@ -25,9 +25,10 @@
 #include <framework/otml/otmlnode.h>
 
 // bool
-void push_luavalue(bool b)
+int push_luavalue(bool b)
 {
     g_lua.pushBoolean(b);
+    return 1;
 }
 
 bool luavalue_cast(int index, bool& b)
@@ -37,9 +38,10 @@ bool luavalue_cast(int index, bool& b)
 }
 
 // int
-void push_luavalue(int i)
+int push_luavalue(int i)
 {
     g_lua.pushInteger(i);
+    return 1;
 }
 
 bool luavalue_cast(int index, int& i)
@@ -51,9 +53,10 @@ bool luavalue_cast(int index, int& i)
 }
 
 // double
-void push_luavalue(double d)
+int push_luavalue(double d)
 {
     g_lua.pushNumber(d);
+    return 1;
 }
 
 bool luavalue_cast(int index, double& d)
@@ -65,14 +68,16 @@ bool luavalue_cast(int index, double& d)
 }
 
 // string
-void push_luavalue(const char* cstr)
+int push_luavalue(const char* cstr)
 {
     g_lua.pushCString(cstr);
+    return 1;
 }
 
-void push_luavalue(const std::string& str)
+int push_luavalue(const std::string& str)
 {
     g_lua.pushString(str);
+    return 1;
 }
 
 bool luavalue_cast(int index, std::string& str)
@@ -82,13 +87,14 @@ bool luavalue_cast(int index, std::string& str)
 }
 
 // lua cpp function
-void push_luavalue(const LuaCppFunction& func)
+int push_luavalue(const LuaCppFunction& func)
 {
     g_lua.pushCppFunction(func);
+    return 1;
 }
 
 // color
-void push_luavalue(const Color& color)
+int push_luavalue(const Color& color)
 {
     g_lua.newTable();
     g_lua.pushInteger(color.r());
@@ -99,6 +105,7 @@ void push_luavalue(const Color& color)
     g_lua.setField("b");
     g_lua.pushInteger(color.a());
     g_lua.setField("a");
+    return 1;
 }
 
 bool luavalue_cast(int index, Color& color)
@@ -123,7 +130,7 @@ bool luavalue_cast(int index, Color& color)
 }
 
 // rect
-void push_luavalue(const Rect& rect)
+int push_luavalue(const Rect& rect)
 {
     g_lua.newTable();
     g_lua.pushInteger(rect.x());
@@ -134,6 +141,7 @@ void push_luavalue(const Rect& rect)
     g_lua.setField("width");
     g_lua.pushInteger(rect.height());
     g_lua.setField("height");
+    return 1;
 }
 
 bool luavalue_cast(int index, Rect& rect)
@@ -158,13 +166,14 @@ bool luavalue_cast(int index, Rect& rect)
 }
 
 // point
-void push_luavalue(const Point& point)
+int push_luavalue(const Point& point)
 {
     g_lua.newTable();
     g_lua.pushInteger(point.x);
     g_lua.setField("x");
     g_lua.pushInteger(point.y);
     g_lua.setField("y");
+    return 1;
 }
 
 bool luavalue_cast(int index, Point& point)
@@ -185,13 +194,14 @@ bool luavalue_cast(int index, Point& point)
 }
 
 // size
-void push_luavalue(const Size& size)
+int push_luavalue(const Size& size)
 {
     g_lua.newTable();
     g_lua.pushInteger(size.width());
     g_lua.setField("width");
     g_lua.pushInteger(size.height());
     g_lua.setField("height");
+    return 1;
 }
 
 bool luavalue_cast(int index, Size& size)
@@ -245,7 +255,7 @@ void push_otml_subnode_luavalue(const OTMLNodePtr& node)
         g_lua.pushNil();
 }
 
-void push_luavalue(const OTMLNodePtr& node)
+int push_luavalue(const OTMLNodePtr& node)
 {
     if(node) {
         g_lua.newTable();
@@ -259,6 +269,7 @@ void push_luavalue(const OTMLNodePtr& node)
         }
     } else
         g_lua.pushNil();
+    return 1;
 }
 
 bool luavalue_cast(int index, OTMLNodePtr& node)

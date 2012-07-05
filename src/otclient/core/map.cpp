@@ -758,10 +758,11 @@ int Map::getLastAwareFloor()
         return Otc::SEA_FLOOR;
 }
 
-// pathfinding using A* search algorithm
-// as described in http://en.wikipedia.org/wiki/A*_search_algorithm
-std::vector<Otc::Direction> Map::findPath(const Position& startPos, const Position& goalPos, int maxSteps)
+std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const Position& startPos, const Position& goalPos, int maxSteps)
 {
+    // pathfinding using A* search algorithm
+    // as described in http://en.wikipedia.org/wiki/A*_search_algorithm
+
     struct Node {
         Node(const Position& pos) : cost(0), totalCost(0), steps(0), pos(pos), prev(nullptr), dir(Otc::InvalidDirection), evaluated(false) { }
         bool operator<(const Node& other) const { return  totalCost < other.totalCost; }
@@ -780,10 +781,26 @@ std::vector<Otc::Direction> Map::findPath(const Position& startPos, const Positi
         }
     };
 
-    std::vector<Otc::Direction> dirs;
+    std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> ret;
+    std::vector<Otc::Direction>& dirs = std::get<0>(ret);
+    Otc::PathFindResult& result = std::get<1>(ret);
 
-    if(startPos == goalPos || startPos.z != goalPos.z || startPos.distance(goalPos) > maxSteps)
-        return dirs;
+    result = Otc::PATHFIND_OK;
+
+    if(startPos == goalPos) {
+        result = Otc::PATHFIND_SAME_POSITION;
+        return ret;
+    }
+
+    if(startPos.z != goalPos.z) {
+        result = Otc::PATHFIND_IMPOSSIBLE;
+        return ret;
+    }
+
+    if(startPos.distance(goalPos) > maxSteps) {
+        result = Otc::PATHFIND_TOO_FAR;
+        return ret;
+    }
 
     std::unordered_map<Position, Node*, PositionHasher> nodes;
     std::priority_queue<Node*, std::vector<Node*>, LessNode> searchList;
@@ -857,10 +874,11 @@ std::vector<Otc::Direction> Map::findPath(const Position& startPos, const Positi
         }
         dirs.pop_back();
         std::reverse(dirs.begin(), dirs.end());
-    }
+    } else
+        result = Otc::PATHFIND_NO_WAY;
 
     for(auto it : nodes)
         delete it.second;
 
-    return dirs;
+    return ret;
 }

@@ -316,8 +316,8 @@ public:
 
     /// Pushes any type onto the stack
     template<typename T, typename... Args>
-    void polymorphicPush(T v, Args... args);
-    void polymorphicPush() { }
+    int polymorphicPush(T v, Args... args);
+    int polymorphicPush() { return 0; }
 
     /// Casts a value from stack to any type
     /// @exception LuaBadValueCastException thrown if the cast fails
@@ -344,9 +344,9 @@ extern LuaInterface g_lua;
 #include "luavaluecasts.h"
 
 template<typename T, typename... Args>
-void LuaInterface::polymorphicPush(T v, Args... args) {
-    push_luavalue(v);
-    polymorphicPush(args...);
+int LuaInterface::polymorphicPush(T v, Args... args) {
+    int r = push_luavalue(v);
+    return r + polymorphicPush(args...);
 }
 
 // next templates must be defined after above includes
@@ -423,8 +423,8 @@ template<typename... T>
 int LuaInterface::callGlobalField(const std::string& global, const std::string& field, const T&... args) {
     g_lua.getGlobalField(global, field);
     if(!g_lua.isNil()) {
-        g_lua.polymorphicPush(args...);
-        return g_lua.signalCall(sizeof...(args));
+        int numArgs = g_lua.polymorphicPush(args...);
+        return g_lua.signalCall(numArgs);
     } else
         g_lua.pop(1);
     return 0;

@@ -101,8 +101,8 @@ int LuaObject::luaCallField(const std::string& field, const T&... args) {
     if(!g_lua.isNil()) {
         // the first argument is always this object (self)
         g_lua.insert(-2);
-        g_lua.polymorphicPush(args...);
-        return g_lua.signalCall(1 + sizeof...(args));
+        int numArgs = g_lua.polymorphicPush(args...);
+        return g_lua.signalCall(1 + numArgs);
     } else {
         g_lua.pop(2);
     }

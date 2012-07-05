@@ -311,6 +311,14 @@ namespace Otc
         GameMagicEffectU16,
         LastGameFeature
     };
+
+    enum PathFindResult {
+        PATHFIND_OK = 0,
+        PATHFIND_SAME_POSITION,
+        PATHFIND_IMPOSSIBLE,
+        PATHFIND_TOO_FAR,
+        PATHFIND_NO_WAY,
+    };
 }
 
 #endif

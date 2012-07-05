@@ -371,7 +371,7 @@ function GameInterface.processMouseAction(menuPosition, mouseButton, autoWalkPos
   end
 
   if autoWalkPos and keyboardModifiers == KeyboardNoModifier and mouseButton == MouseLeftButton then
-    local dirs = g_map.findPath(g_game.getLocalPlayer():getPosition(), autoWalkPos, 255)
+    local dirs = g_map.findPath(g_game.getLocalPlayer():getPosition(), autoWalkPos, 127)
     if #dirs == 0 then
       TextMessage.displayStatus(tr('There is no way.'))
       return true

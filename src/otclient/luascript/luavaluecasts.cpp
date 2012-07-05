@@ -23,7 +23,7 @@
 #include "luavaluecasts.h"
 #include <framework/luascript/luainterface.h>
 
-void push_luavalue(const Outfit& outfit)
+int push_luavalue(const Outfit& outfit)
 {
     g_lua.newTable();
     g_lua.pushInteger(outfit.getId());
@@ -38,6 +38,7 @@ void push_luavalue(const Outfit& outfit)
     g_lua.setField("legs");
     g_lua.pushInteger(outfit.getFeet());
     g_lua.setField("feet");
+    return 1;
 }
 
 bool luavalue_cast(int index, Outfit& outfit)
@@ -60,7 +61,7 @@ bool luavalue_cast(int index, Outfit& outfit)
     return false;
 }
 
-void push_luavalue(const Position& pos)
+int push_luavalue(const Position& pos)
 {
     if(pos.isValid()) {
         g_lua.newTable();
@@ -72,6 +73,7 @@ void push_luavalue(const Position& pos)
         g_lua.setField("z");
     } else
         g_lua.pushNil();
+    return 1;
 }
 
 bool luavalue_cast(int index, Position& pos)

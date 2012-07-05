@@ -63,8 +63,8 @@ namespace luabinder
     typename std::enable_if<!std::is_void<Ret>::value, int>::type
     call_fun_and_push_result(const F& f, LuaInterface* lua, const Args&... args) {
         Ret ret = f(args...);
-        lua->polymorphicPush(ret);
-        return 1;
+        int numRets = lua->polymorphicPush(ret);
+        return numRets;
     }
 
     /// C++ void function caller
