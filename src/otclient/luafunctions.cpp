@@ -256,6 +256,7 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Thing>("getParentContainer", &Thing::getParentContainer);
 
     g_lua.registerClass<Creature, Thing>();
+    g_lua.bindClassStaticFunction<Creature>("create", []{ return CreaturePtr(new Creature); });
     g_lua.bindClassMemberFunction<Creature>("getId", &Creature::getId);
     g_lua.bindClassMemberFunction<Creature>("getName", &Creature::getName);
     g_lua.bindClassMemberFunction<Creature>("getHealthPercent", &Creature::getHealthPercent);
@@ -264,6 +265,7 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Creature>("getEmblem", &Creature::getEmblem);
     g_lua.bindClassMemberFunction<Creature>("setOutfit", &Creature::setOutfit);
     g_lua.bindClassMemberFunction<Creature>("getOutfit", &Creature::getOutfit);
+    g_lua.bindClassMemberFunction<Creature>("setDirection", &Creature::setDirection);
     g_lua.bindClassMemberFunction<Creature>("setSkullTexture", &Creature::setSkullTexture);
     g_lua.bindClassMemberFunction<Creature>("setShieldTexture", &Creature::setShieldTexture);
     g_lua.bindClassMemberFunction<Creature>("setEmblemTexture", &Creature::setEmblemTexture);

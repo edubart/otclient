@@ -304,13 +304,8 @@ function GameInterface.createThingMenu(menuPosition, lookThing, useThing, creatu
   menu:display(menuPosition)
 end
 
-function GameInterface.processMouseAction(menuPosition, mouseButton, autoWalk, lookThing, useThing, creatureThing, multiUseThing)
+function GameInterface.processMouseAction(menuPosition, mouseButton, autoWalkPos, lookThing, useThing, creatureThing, multiUseThing)
   local keyboardModifiers = g_keyboard.getModifiers()
-
-  if autoWalk and keyboardModifiers == KeyboardNoModifier and mouseButton == MouseLeftButton then
-    -- todo auto walk
-    return true
-  end
 
   if not Options.getOption('classicControl') then
     if keyboardModifiers == KeyboardNoModifier and mouseButton == MouseRightButton then
@@ -341,7 +336,7 @@ function GameInterface.processMouseAction(menuPosition, mouseButton, autoWalk, l
       return true
     end
   else
-    if multiUseThing and keyboardModifiers == KeyboardNoModifier and mouseButton == MouseRightButton then
+    if multiUseThing and keyboardModifiers == KeyboardNoModifier and mouseButton == MouseRightButton and not g_mouse.isPressed(MouseLeftButton) then
       if multiUseThing:asCreature() then
         g_game.attack(multiUseThing:asCreature())
         return true
@@ -363,6 +358,9 @@ function GameInterface.processMouseAction(menuPosition, mouseButton, autoWalk, l
     elseif lookThing and keyboardModifiers == KeyboardShiftModifier and (mouseButton == MouseLeftButton or mouseButton == MouseRightButton) then
       g_game.look(lookThing)
       return true
+    elseif lookThing and ((g_mouse.isPressed(MouseLeftButton) and mouseButton == MouseRightButton) or (g_mouse.isPressed(MouseRightButton) and mouseButton == MouseLeftButton)) then
+       g_game.look(lookThing)
+      return true
     elseif useThing and keyboardModifiers == KeyboardCtrlModifier and (mouseButton == MouseLeftButton or mouseButton == MouseRightButton) then
       GameInterface.createThingMenu(menuPosition, lookThing, useThing, creatureThing)
       return true
@@ -370,6 +368,16 @@ function GameInterface.processMouseAction(menuPosition, mouseButton, autoWalk, l
       g_game.attack(creatureThing)
       return true
     end
+  end
+
+  if autoWalkPos and keyboardModifiers == KeyboardNoModifier and mouseButton == MouseLeftButton then
+    local dirs = g_map.findPath(g_game.getLocalPlayer():getPosition(), autoWalkPos, 255)
+    if #dirs == 0 then
+      TextMessage.displayStatus(tr('There is no way.'))
+      return true
+    end
+    g_game.autoWalk(dirs)
+    return true
   end
 
   return false

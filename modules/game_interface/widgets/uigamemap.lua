@@ -47,6 +47,10 @@ function UIGameMap:onDrop(widget, mousePos)
   return true
 end
 
+function UIGameMap:onMousePress()
+  self.cancelNextRelease = false
+end
+
 function UIGameMap:onMouseRelease(mousePosition, mouseButton)
   if self.cancelNextRelease then
     self.cancelNextRelease = false
@@ -56,23 +60,24 @@ function UIGameMap:onMouseRelease(mousePosition, mouseButton)
   local tile = self:getTile(mousePosition)
   if tile == nil then return false end
 
-  if Options.getOption('classicControl') and
-     ((g_mouse.isPressed(MouseLeftButton) and mouseButton == MouseRightButton) or
-      (g_mouse.isPressed(MouseRightButton) and mouseButton == MouseLeftButton)) then
-    local tile = self:getTile(mousePosition)
-    g_game.look(tile:getTopLookThing())
-    self.cancelNextRelease = true
-    return true
-  elseif GameInterface.processMouseAction(mousePosition, mouseButton, nil, tile:getTopLookThing(), tile:getTopUseThing(), tile:getTopCreature(), tile:getTopMultiUseThing()) then
-    return true
-  elseif mouseButton == MouseLeftButton and self:isPressed() then
-    local dirs = g_map.findPath(g_game.getLocalPlayer():getPosition(), tile:getPosition(), 255)
-    if #dirs == 0 then
-      TextMessage.displayStatus(tr('There is no way.'))
-      return true
-    end
-    g_game.autoWalk(dirs)
-    return true
+  local localPlayerPos = g_game.getLocalPlayer():getPosition()
+  local autoWalkPos = tile:getPosition()
+  if autoWalkPos.z ~= localPlayerPos.z then
+    local dz = autoWalkPos.z - localPlayerPos.z
+    autoWalkPos.x = autoWalkPos.x + dz
+    autoWalkPos.y = autoWalkPos.y + dz
+    autoWalkPos.z = localPlayerPos.z
   end
-  return false
+
+  local lookThing = tile:getTopLookThing()
+  local useThing = tile:getTopUseThing()
+  local creatureThing = tile:getTopCreature()
+  local multiUseThing = tile:getTopMultiUseThing()
+
+  local ret = GameInterface.processMouseAction(mousePosition, mouseButton, autoWalkPos, lookThing, useThing, creatureThing, multiUseThing)
+  if ret then
+    self.cancelNextRelease = true
+  end
+
+  return ret
 end
