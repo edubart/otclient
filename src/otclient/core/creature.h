@@ -25,12 +25,12 @@
 
 #include "thing.h"
 #include "outfit.h"
+#include "mapview.h"
 #include <framework/core/declarations.h>
 #include <framework/core/timer.h>
 #include <framework/graphics/fontmanager.h>
 #include <framework/graphics/cachedtext.h>
 
-// @bindclass
 class Creature : public Thing
 {
 public:
@@ -42,10 +42,12 @@ public:
     Creature();
 
     virtual void draw(const Point& dest, float scaleFactor, bool animate);
+    virtual void drawLight(const Point& dest, float scaleFactor, bool animate, MapView* mapview);
 
     void internalDrawOutfit(const Point& dest, float scaleFactor, bool animateWalk, bool animateIdle, Otc::Direction direction);
     void drawOutfit(const Rect& destRect, bool resize);
     void drawInformation(const Point& point, bool useGray, const Rect& parentRect);
+
 
     void setId(uint32 id) { m_id = id; }
     void setName(const std::string& name);
@@ -143,17 +145,13 @@ protected:
     Otc::Direction m_walkTurnDirection;
 };
 
-// @bindclass
-class Npc : public Creature
-{
+class Npc : public Creature {
 public:
     NpcPtr asNpc() { return std::static_pointer_cast<Npc>(shared_from_this()); }
     bool isNpc() { return true; }
 };
 
-// @bindclass
-class Monster : public Creature
-{
+class Monster : public Creature {
 public:
     MonsterPtr asMonster() { return std::static_pointer_cast<Monster>(shared_from_this()); }
     bool isMonster() { return true; }
