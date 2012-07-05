@@ -4,7 +4,7 @@
 -- setup application name and version
 g_app.setName('OTClient')
 g_app.setCompactName('otclient')
-g_app.setVersion('0.4.0_dev')
+g_app.setVersion('0.5.0_dev')
 
 -- setup logger
 g_logger.setLogFile(g_resources.getWorkDir() .. g_app.getCompactName() .. ".log")
