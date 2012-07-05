@@ -186,7 +186,7 @@ bool Graphics::selectPainterEngine(PainterEngine painterEngine)
 #endif
 
     // switch painters GL state
-    if(painter && painter != g_painter) {
+    if(painter) {
         if(g_painter)
             g_painter->unbind();
         painter->bind();

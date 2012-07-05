@@ -1,21 +1,28 @@
 Options = {}
 
+local defaultOptions = {
+  vsync = false,
+  showfps = true,
+  fullscreen = false,
+  classicControl = false,
+  showStatusMessagesInConsole = true,
+  showEventMessagesInConsole = true,
+  showInfoMessagesInConsole = true,
+  showTimestampsInConsole = true,
+  showLevelsInConsole = true,
+  showPrivateMessagesInConsole = false,
+  showPrivateMessagesOnScreen = true,
+  enableMusic = true,
+  showLeftPanel = false,
+  foregroundFrameRate = 61,
+  backgroundFrameRate = 201,
+  painterEngine = 0
+}
+
 local optionsWindow
 local optionsButton
 local optionsTabBar
-local options = { vsync = false,
-                  showfps = true,
-                  fullscreen = false,
-                  classicControl = false,
-                  showStatusMessagesInConsole = true,
-                  showEventMessagesInConsole = true,
-                  showInfoMessagesInConsole = true,
-                  showTimestampsInConsole = true,
-                  showLevelsInConsole = true,
-                  showPrivateMessagesInConsole = false,
-                  showPrivateMessagesOnScreen = true,
-                  enableMusic = true,
-                  showLeftPanel = false }
+local options = {}
 local generalPanel
 local graphicsPanel
 
@@ -37,27 +44,26 @@ local function setupGraphicsEngines()
 
   enginesRadioGroup.onSelectionChange = function(self, selected)
     if selected == ogl1 then
-      g_graphics.selectPainterEngine(1)
+      Options.setOption('painterEngine', 1)
     elseif selected == ogl2 then
-      g_graphics.selectPainterEngine(2)
+      Options.setOption('painterEngine', 2)
     end
   end
 
-  local foregroundFrameRateScrollBar = graphicsPanel:getChildById('foregroundFrameRateScrollBar')
-  local foregroundFrameRateLimitLabel = graphicsPanel:getChildById('foregroundFrameRateLimitLabel')
   if not g_graphics.canCacheBackbuffer() then
-    foregroundFrameRateScrollBar:setValue(61)
-    foregroundFrameRateScrollBar:disable()
-    foregroundFrameRateLimitLabel:disable()
+    graphicsPanel:getChildById('foregroundFrameRateScrollBar'):disable()
+    graphicsPanel:getChildById('foregroundFrameRateLimitLabel'):disable()
   end
 end
 
 function Options.init()
   -- load options
-  for k,v in pairs(options) do
+  for k,v in pairs(defaultOptions) do
+    g_settings.setDefault(k, v)
     if type(v) == 'boolean' then
-      g_settings.setDefault(k, v)
       Options.setOption(k, g_settings.getBoolean(k))
+    elseif type(v) == 'number' then
+      Options.setOption(k, g_settings.getNumber(k))
     end
   end
 
@@ -115,6 +121,7 @@ function Options.toggleOption(key)
 end
 
 function Options.setOption(key, value)
+  if options[key] == value then return end
   if key == 'vsync' then
     g_window.setVerticalSync(value)
   elseif key == 'showfps' then
@@ -123,17 +130,33 @@ function Options.setOption(key, value)
       if frameCounter then frameCounter:setVisible(value) end
     end)
   elseif key == 'fullscreen' then
-    addEvent(function()
-      g_window.setFullscreen(value)
-    end)
+    g_window.setFullscreen(value)
   elseif key == 'enableMusic' then
-    addEvent(function()
-      g_sounds.enableMusic(value)
-    end)
+    g_sounds.enableMusic(value)
   elseif key == 'showLeftPanel' then
     addEvent(function()
       GameInterface.getLeftPanel():setOn(value)
     end)
+  elseif key == 'backgroundFrameRate' then
+    local text = value
+    if value <= 0 or value >= 201 then
+      text = 'max'
+      value = 0
+    end
+
+    if graphicsPanel then graphicsPanel:getChildById('backgroundFrameRateLabel'):setText(tr('Game framerate limit: %s', text)) end
+    g_app.setBackgroundPaneMaxFps(value)
+  elseif key == 'foregroundFrameRate' then
+      local text = value
+      if value <= 0 or value >= 61 then
+        text = 'max'
+        value = 0
+      end
+
+      if graphicsPanel then graphicsPanel:getChildById('foregroundFrameRateLabel'):setText(tr('Interface framerate limit: %s', text)) end
+      g_app.setForegroundPaneMaxFps(value)
+  elseif key == 'painterEngine' then
+    g_graphics.selectPainterEngine(value)
   end
   g_settings.set(key, value)
   options[key] = value
@@ -142,3 +165,5 @@ end
 function Options.getOption(key)
   return options[key]
 end
+
+

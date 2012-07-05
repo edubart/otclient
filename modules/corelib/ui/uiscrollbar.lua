@@ -101,7 +101,7 @@ end
 
 function UIScrollBar:onSetup()
   self.setupDone = true
-  signalcall(self.onValueChange, self, self.value)
+  --signalcall(self.onValueChange, self, self.value)
   g_mouse.bindAutoPress(self:getChildById('decrementButton'), function() self:decrement() end)
   g_mouse.bindAutoPress(self:getChildById('incrementButton'), function() self:increment() end)
   g_mouse.bindPressMove(self:getChildById('sliderButton'), function(mousePos, mouseMoved) parseSliderPos(self, mousePos) end)

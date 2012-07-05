@@ -1,3 +1,12 @@
+FrameRateScrollbar < HorizontalScrollBar
+  step: 1
+  @onValueChange: Options.setOption(self:getId(), self:getValue())
+  @onSetup: |
+    UIScrollBar.onSetup(self)
+    local value = Options.getOption(self:getId())
+    if value == 0 then value = self:getMaximum() end
+    self:setValue(value)
+
 Panel
   Label
     !text: tr('Graphics Engine:')
@@ -34,60 +43,51 @@ Panel
     !text: tr('Fullscreen')
 
   Label
-    id: backgroundFrameRateLimitLabel
+    id: backgroundFrameRateLabel
     !text: tr('Game framerate limit: %s', 'max')
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: prev.bottom
     margin-top: 6
+    @onSetup: |
+      local value = Options.getOption('backgroundFrameRate')
+      local text = value
+      if value <= 0 or value >= 201 then
+        text = 'max'
+      end
 
-  HorizontalScrollBar
-    id: backgroundFrameRateScrollBar
+      self:setText(tr('Game framerate limit: %s', text))
+
+  FrameRateScrollbar
+    id: backgroundFrameRate
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: prev.bottom
     margin-top: 3
     minimum: 10
     maximum: 201
-    value: 201
-    step: 1
-    @onValueChange: |
-      local value = self:getValue()
-      local text = value
-      if value == self:getMaximum() then
-        text = 'max'
-        value = 0
-      end
-
-      self:getParent():getChildById('backgroundFrameRateLimitLabel'):setText(tr('Game framerate limit: %s', text))
-      g_app.setBackgroundPaneMaxFps(value)
 
   Label
-    id: foregroundFrameRateLimitLabel
-    !text: tr('Interface framerate limit: %s', '24')
+    id: foregroundFrameRateLabel
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: prev.bottom
     margin-top: 6
+    @onSetup: |
+      local value = Options.getOption('foregroundFrameRate')
+      local text = value
+      if value <= 0 or value >= 61 then
+        text = 'max'
+      end
 
-  HorizontalScrollBar
-    id: foregroundFrameRateScrollBar
+      self:setText(tr('Interface framerate limit: %s', text))
+
+  FrameRateScrollbar
+    id: foregroundFrameRate
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: prev.bottom
     margin-top: 3
     minimum: 1
     maximum: 61
-    value: 61
-    step: 1
-    @onValueChange: |
-      local value = self:getValue()
-      local text = value
-      if value == self:getMaximum() then
-        text = 'max'
-        value = 0
-      end
-
-      self:getParent():getChildById('foregroundFrameRateLimitLabel'):setText(tr('Interface framerate limit: %s', text))
-      g_app.setForegroundPaneMaxFps(value)
 
