@@ -1,11 +1,11 @@
 ### What is OTClient?
 
-OTClient is an alternative Tibia client for usage with otserv. It aims to be complete and flexible,
+Otclient is an alternative Tibia client for usage with otserv. It aims to be complete and flexible,
 for that it uses LUA scripting for all game interface functionality and configurations files with a syntax
-similar to CSS for the client interface design. OTClient works with a modular system, this means
+similar to CSS for the client interface design. Otclient works with a modular system, this means
 that each functionality is a separated module, giving the possibility to users modify and customize
 anything easily. Users can also create new mods and extend game interface for their own purposes.
-OTClient is written in C++2011, the upcoming C++ standard and heavily scripted in lua.
+Otclient is written in C++2011, the upcoming C++ standard and heavily scripted in lua.
 
 ### Features
 
