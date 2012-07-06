@@ -29,6 +29,10 @@ local skin = {
     'miniwindow.otui',
     'items.otui',
     'creatures.otui'
+  },
+
+  particles = {
+    'shiny.otps'
   }
 }
 

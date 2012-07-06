@@ -24,20 +24,24 @@
 #define PARTICLEMANAGER_H
 
 #include "declarations.h"
-#include "particlesystem.h"
-#include "particleaffector.h"
+#include "particleeffect.h"
 
-class ParticleManager {
+class ParticleManager
+{
 public:
-    bool load(const std::string& filename);
+    bool importParticle(const std::string& file);
+    ParticleEffectPtr createEffect(const std::string& name);
+    void terminate();
 
-    void render();
     void update();
 
+    std::map<std::string, ParticleEffectTypePtr> getEffectsTypes() { return m_effectsTypes; }
+
 private:
-    std::list<ParticleSystemPtr> m_systems;
+    std::list<ParticleEffectPtr> m_effects;
+    std::map<std::string, ParticleEffectTypePtr> m_effectsTypes;
 };
 
-extern ParticleManager g_particleManager;
+extern ParticleManager g_particles;
 
 #endif

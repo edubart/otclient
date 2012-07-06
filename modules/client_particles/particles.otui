@@ -1,0 +1,130 @@
+ParticlesListLabel < Label
+  font: verdana-11px-monochrome
+  background-color: alpha
+  text-offset: 2 0
+  focusable: true
+
+  $focus:
+    background-color: #ffffff22
+    color: #ffffff
+
+MainWindow
+  id: particlesWindow
+  !text: tr('Particles Manager')
+  size: 450 450
+  visible: false
+  @onEscape: Particles.hide()
+
+  TextList
+    id: particlesList
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.bottom: separator.top
+    width: 128
+    padding: 1
+    focusable: false
+    margin-bottom: 10
+    vertical-scrollbar: particlesListScrollBar
+
+  VerticalScrollBar
+    id: particlesListScrollBar
+    anchors.top: particlesList.top
+    anchors.bottom: particlesList.bottom
+    anchors.left: particlesList.right
+    step: 14
+    pixels-scroll: true
+
+  Label
+    !text: tr('Name')
+    anchors.top: parent.top
+    anchors.left: prev.right
+    margin-left: 10
+
+  FlatLabel
+    id: name
+    anchors.top: prev.bottom
+    anchors.left: prev.left
+    anchors.right: parent.right
+    margin-top: 3
+
+  Label
+    !text: tr('Location')
+    anchors.top: prev.bottom
+    anchors.left: prev.left
+    margin-top: 10
+
+  FlatLabel
+    id: location
+    anchors.top: prev.bottom
+    anchors.left: prev.left
+    anchors.right: parent.right
+    margin-top: 3
+
+  Label
+    !text: tr('Description')
+    anchors.top: prev.bottom
+    anchors.left: prev.left
+    margin-top: 10
+
+  FlatLabel
+    id: description
+    anchors.top: prev.bottom
+    anchors.left: prev.left
+    anchors.right: parent.right
+    margin-top: 3
+
+  Label
+    !text: tr('Preview')
+    anchors.top: prev.bottom
+    anchors.left: prev.left
+    margin-top: 10
+
+  ParticlesFlatPanel
+    id: preview
+    margin-top: 3
+    margin-bottom: 10
+    anchors.top: prev.bottom
+    anchors.bottom: next.top
+    anchors.left: prev.left
+    anchors.right: parent.right
+
+    reference: 10 10
+
+  Button
+    id: startButton
+    !text: tr('Start')
+    width: 64
+    anchors.bottom: separator.top
+    anchors.left: location.left
+    margin-bottom: 10
+
+  Button
+    id: pauseButton
+    !text: tr('Pause')
+    width: 64
+    anchors.bottom: prev.bottom
+    anchors.left: prev.right
+    margin-left: 5
+
+  Button
+    id: reloadButton
+    !text: tr('Reload')
+    width: 64
+    anchors.bottom: separator.top
+    anchors.right: parent.right
+    margin-bottom: 10
+
+  HorizontalSeparator
+    id: separator
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: next.top
+    margin-bottom: 10
+
+  Button
+    id: closeButton
+    !text: tr('Close')
+    width: 64
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    @onClick: Particles.hide()

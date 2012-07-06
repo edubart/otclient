@@ -186,13 +186,16 @@ SpeakChannelOrange = 12
 SpeakMonsterSay = 13
 SpeakMonsterYell = 14
 
-
 FightOffensive = 1
 FightBalanced = 2
 FightDefensive = 3
 
 DontChase = 0
 ChaseOpponent = 1
+
+ExtendedActivate = 0
+ExtendedLocales = 1
+ExtendedParticles = 2
 
 -- @}
 

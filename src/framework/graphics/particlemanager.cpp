@@ -24,43 +24,56 @@
 #include <framework/core/resourcemanager.h>
 #include <framework/otml/otml.h>
 
-ParticleManager g_particleManager;
+ParticleManager g_particles;
 
-bool ParticleManager::load(const std::string& filename)
+bool ParticleManager::importParticle(const std::string& file)
 {
     try {
-        OTMLDocumentPtr doc = OTMLDocument::parse(filename);
+        OTMLDocumentPtr doc = OTMLDocument::parse(file);
         for(const OTMLNodePtr& node : doc->children()) {
-            if(node->tag() == "ParticleSystem") {
-                ParticleSystemPtr particleSystem = ParticleSystemPtr(new ParticleSystem);
-                particleSystem->load(node);
-                m_systems.push_back(particleSystem);
+            if(node->tag() == "Effect") {
+                ParticleEffectTypePtr particleEffectType = ParticleEffectTypePtr(new ParticleEffectType);
+                if(particleEffectType->load(node)) {
+                    particleEffectType->setFile(g_resources.resolvePath(file));
+                    m_effectsTypes[particleEffectType->getName()] = particleEffectType;
+                }
+            }
+            else if(node->tag() == "Particle") {
+                // nothing yet
             }
         }
         return true;
     } catch(stdext::exception& e) {
-        g_logger.error(stdext::format("could not load particles: %s", e.what()));
+        g_logger.error(stdext::format("could not load particles file %s: %s", file, e.what()));
         return false;
     }
 }
 
-void ParticleManager::render()
+ParticleEffectPtr ParticleManager::createEffect(const std::string& name)
 {
-    for(auto it = m_systems.begin(), end = m_systems.end(); it != end; ++it)
-        (*it)->render();
+    ParticleEffectPtr particleEffect = ParticleEffectPtr(new ParticleEffect);
+    if(particleEffect->load(m_effectsTypes[name]))
+        return particleEffect;
+    return nullptr;
+}
+
+void ParticleManager::terminate()
+{
+    m_effects.clear();
+    m_effectsTypes.clear();
 }
 
 void ParticleManager::update()
 {
-    for(auto it = m_systems.begin(), end = m_systems.end(); it != end;) {
-        const ParticleSystemPtr& particleSystem = *it;
+    for(auto it = m_effects.begin(), end = m_effects.end(); it != end;) {
+        const ParticleEffectPtr& particleEffect = *it;
 
-        if(particleSystem->hasFinished()) {
-            it = m_systems.erase(it);
+        if(particleEffect->hasFinished()) {
+            it = m_effects.erase(it);
             continue;
         }
 
-        particleSystem->update();
+        particleEffect->update();
         ++it;
     }
 }

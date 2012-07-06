@@ -20,34 +20,49 @@
  * THE SOFTWARE.
  */
 
-#ifndef FRAMEWORK_UI_DECLARATIONS_H
-#define FRAMEWORK_UI_DECLARATIONS_H
+#ifndef PARTICLEEFFECT_H
+#define PARTICLEEFFECT_H
 
-#include <framework/global.h>
+#include "declarations.h"
+#include "particlesystem.h"
+#include <framework/luascript/luaobject.h>
+#include <framework/otml/otml.h>
 
-class UIManager;
-class UIWidget;
-class UITextEdit;
-class UILayout;
-class UIBoxLayout;
-class UIHorizontalLayout;
-class UIVerticalLayout;
-class UIGridLayout;
-class UIAnchorLayout;
-class UIParticles;
+class ParticleEffectType : public LuaObject
+{
+public:
+    ParticleEffectType();
 
-typedef std::shared_ptr<UIWidget> UIWidgetPtr;
-typedef std::weak_ptr<UIWidget> UIWidgetWeakPtr;
+    bool load(const OTMLNodePtr& node);
 
-typedef std::shared_ptr<UIParticles> UIParticlesPtr;
-typedef std::shared_ptr<UITextEdit> UITextEditPtr;
-typedef std::shared_ptr<UILayout> UILayoutPtr;
-typedef std::shared_ptr<UIBoxLayout> UIBoxLayoutPtr;
-typedef std::shared_ptr<UIHorizontalLayout> UIHorizontalLayoutPtr;
-typedef std::shared_ptr<UIVerticalLayout> UIVerticalLayoutPtr;
-typedef std::shared_ptr<UIGridLayout> UIGridLayoutPtr;
-typedef std::shared_ptr<UIAnchorLayout> UIAnchorLayoutPtr;
+    void setName(const std::string& name) { m_name = name; }
+    void setFile(const std::string& file) { m_file = file; }
+    void setDescription(const std::string& description) { m_description = description; }
 
-typedef std::deque<UIWidgetPtr> UIWidgetList;
+    std::string getName() { return m_name; }
+    std::string getFile() { return m_file; }
+    std::string getDescription() { return m_description; }
+    OTMLNodePtr getNode() { return m_node; }
+
+private:
+    std::string m_name;
+    std::string m_file;
+    std::string m_description;
+    OTMLNodePtr m_node;
+};
+
+class ParticleEffect : public LuaObject
+{
+public:
+    ParticleEffect() {}
+
+    bool load(const ParticleEffectTypePtr& effectType);
+    bool hasFinished() { return m_systems.size() == 0; }
+    void render();
+    void update();
+
+private:
+    std::vector<ParticleSystemPtr> m_systems;
+};
 
 #endif

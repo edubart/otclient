@@ -20,34 +20,35 @@
  * THE SOFTWARE.
  */
 
-#ifndef FRAMEWORK_UI_DECLARATIONS_H
-#define FRAMEWORK_UI_DECLARATIONS_H
+#include "uiparticles.h"
+#include <framework/graphics/particlemanager.h>
 
-#include <framework/global.h>
+void UIParticles::drawSelf(Fw::DrawPane drawPane)
+{
+    if((drawPane & Fw::ForegroundPane) == 0)
+        return;
 
-class UIManager;
-class UIWidget;
-class UITextEdit;
-class UILayout;
-class UIBoxLayout;
-class UIHorizontalLayout;
-class UIVerticalLayout;
-class UIGridLayout;
-class UIAnchorLayout;
-class UIParticles;
+    for(auto it = m_effects.begin(), end = m_effects.end(); it != end; ++it)
+        (*it)->render();
+}
 
-typedef std::shared_ptr<UIWidget> UIWidgetPtr;
-typedef std::weak_ptr<UIWidget> UIWidgetWeakPtr;
+void UIParticles::onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode)
+{
+    UIWidget::onStyleApply(styleName, styleNode);
 
-typedef std::shared_ptr<UIParticles> UIParticlesPtr;
-typedef std::shared_ptr<UITextEdit> UITextEditPtr;
-typedef std::shared_ptr<UILayout> UILayoutPtr;
-typedef std::shared_ptr<UIBoxLayout> UIBoxLayoutPtr;
-typedef std::shared_ptr<UIHorizontalLayout> UIHorizontalLayoutPtr;
-typedef std::shared_ptr<UIVerticalLayout> UIVerticalLayoutPtr;
-typedef std::shared_ptr<UIGridLayout> UIGridLayoutPtr;
-typedef std::shared_ptr<UIAnchorLayout> UIAnchorLayoutPtr;
+    /*for(const OTMLNodePtr& node : styleNode->children()) {
+        if(node->tag() == "reference")
+            setItemId(node->value<int>());
+        else if(node->tag() == "item-count")
+            setItemCount(node->value<int>());
+        else if(node->tag() == "virtual")
+            setVirtual(node->value<bool>());
+    }*/
+}
 
-typedef std::deque<UIWidgetPtr> UIWidgetList;
-
-#endif
+void UIParticles::addEffect(const std::string& name)
+{
+    ParticleEffectPtr effect = g_particles.createEffect(name);
+    if(effect)
+        m_effects.push_back(effect);
+}

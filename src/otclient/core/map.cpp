@@ -68,7 +68,7 @@ bool Map::loadOtbm(const std::string& fileName)
     }
 
     if (!g_things.isOtbLoaded() || !g_things.isXmlLoaded()) {
-        g_logger.error(stdext::format("OTB and XML are not loaded yet to load a map."));
+        g_logger.error("OTB and XML are not loaded yet to load a map.");
         return false;
     }
 

@@ -31,5 +31,6 @@
 #include "uiverticallayout.h"
 #include "uigridlayout.h"
 #include "uianchorlayout.h"
+#include "uiparticles.h"
 
 #endif

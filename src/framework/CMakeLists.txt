@@ -229,6 +229,8 @@ SET(framework_SOURCES ${framework_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/graphics/particle.cpp
     ${CMAKE_CURRENT_LIST_DIR}/graphics/particleemitter.cpp
     ${CMAKE_CURRENT_LIST_DIR}/graphics/particleemitter.h
+    ${CMAKE_CURRENT_LIST_DIR}/graphics/particleeffect.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/graphics/particleeffect.h
     ${CMAKE_CURRENT_LIST_DIR}/graphics/particle.h
     ${CMAKE_CURRENT_LIST_DIR}/graphics/particlemanager.cpp
     ${CMAKE_CURRENT_LIST_DIR}/graphics/particlemanager.h
@@ -350,6 +352,8 @@ SET(framework_SOURCES ${framework_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/ui/uilayout.h
     ${CMAKE_CURRENT_LIST_DIR}/ui/uimanager.cpp
     ${CMAKE_CURRENT_LIST_DIR}/ui/uimanager.h
+    ${CMAKE_CURRENT_LIST_DIR}/ui/uiparticles.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/ui/uiparticles.h
     ${CMAKE_CURRENT_LIST_DIR}/ui/uirichtext.cpp
     ${CMAKE_CURRENT_LIST_DIR}/ui/uirichtext.h
     ${CMAKE_CURRENT_LIST_DIR}/ui/uitextedit.cpp

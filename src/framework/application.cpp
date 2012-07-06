@@ -136,6 +136,9 @@ void Application::terminate()
 {
     assert(m_initialized);
 
+    // destroy particles
+    g_particles.terminate();
+
     // destroy any remaining widget
     g_ui.terminate();
 
@@ -278,7 +281,7 @@ void Application::poll()
 
     // poll input events
     g_window.poll();
-    //g_particleManager.update();
+    //g_particles.update();
 
     Connection::poll();
     g_dispatcher.poll();

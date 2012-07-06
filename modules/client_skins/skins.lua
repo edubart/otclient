@@ -110,15 +110,25 @@ end
 function Skins.loadSkin(skin)
   local lowerName = string.lower(skin.name)
 
-  for i=1,#skin.fonts do
-    g_fonts.importFont('skins/' .. lowerName .. '/fonts/' .. skin.fonts[i])
+  if skin.fonts then
+    for i=1,#skin.fonts do
+      g_fonts.importFont('skins/' .. lowerName .. '/fonts/' .. skin.fonts[i])
 
-    if i == 1 then
-      g_fonts.setDefaultFont(skin.fonts[i])
+      if i == 1 then
+        g_fonts.setDefaultFont(skin.fonts[i])
+      end
     end
   end
 
-  for i=1,#skin.styles do
-    g_ui.importStyle('skins/' .. lowerName .. '/styles/' .. skin.styles[i])
+  if skin.styles then
+    for i=1,#skin.styles do
+      g_ui.importStyle('skins/' .. lowerName .. '/styles/' .. skin.styles[i])
+    end
+  end
+
+  if skin.particles then
+    for i=1,#skin.particles do
+      g_particles.importParticle('skins/' .. lowerName .. '/particles/' .. skin.particles[i])
+    end
   end
 end

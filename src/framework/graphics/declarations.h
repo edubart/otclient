@@ -41,6 +41,8 @@ class Particle;
 class ParticleEmitter;
 class ParticleAffector;
 class ParticleSystem;
+class ParticleEffect;
+class ParticleEffectType;
 
 typedef std::weak_ptr<Texture> TextureWeakPtr;
 typedef std::weak_ptr<ParticleSystem> ParticleSystemWeakPtr;
@@ -58,6 +60,8 @@ typedef std::shared_ptr<Particle> ParticlePtr;
 typedef std::shared_ptr<ParticleEmitter> ParticleEmitterPtr;
 typedef std::shared_ptr<ParticleAffector> ParticleAffectorPtr;
 typedef std::shared_ptr<ParticleSystem> ParticleSystemPtr;
+typedef std::shared_ptr<ParticleEffect> ParticleEffectPtr;
+typedef std::shared_ptr<ParticleEffectType> ParticleEffectTypePtr;
 typedef std::vector<ShaderPtr> ShaderList;
 
 #endif

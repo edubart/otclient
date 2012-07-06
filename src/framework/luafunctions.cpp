@@ -35,6 +35,7 @@
 #include <framework/sound/soundmanager.h>
 #include <framework/util/crypt.h>
 #include <framework/core/resourcemanager.h>
+#include <framework/graphics/particlemanager.h>
 
 void Application::registerLuaFunctions()
 {
@@ -648,4 +649,21 @@ void Application::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_resources", "fileExists", &ResourceManager::fileExists, &g_resources);
     g_lua.bindSingletonFunction("g_resources", "getRealDir", &ResourceManager::getRealDir, &g_resources);
     g_lua.bindSingletonFunction("g_resources", "getWorkDir", &ResourceManager::getWorkDir, &g_resources);
+
+    // ParticleManager
+    g_lua.registerSingletonClass("g_particles");
+    g_lua.bindSingletonFunction("g_particles", "importParticle", &ParticleManager::importParticle, &g_particles);
+    g_lua.bindSingletonFunction("g_particles", "getEffectsTypes", &ParticleManager::getEffectsTypes, &g_particles);
+
+    // ParticleEffect
+    g_lua.registerClass<ParticleEffectType>();
+    g_lua.bindClassStaticFunction<ParticleEffectType>("create", []{ return ParticleEffectTypePtr(new ParticleEffectType); });
+    g_lua.bindClassMemberFunction<ParticleEffectType>("getName", &ParticleEffectType::getName);
+    g_lua.bindClassMemberFunction<ParticleEffectType>("getFile", &ParticleEffectType::getFile);
+    g_lua.bindClassMemberFunction<ParticleEffectType>("getDescription", &ParticleEffectType::getDescription);
+
+    // UIParticles
+    g_lua.registerClass<UIParticles, UIWidget>();
+    g_lua.bindClassStaticFunction<UIParticles>("create", []{ return UIParticlesPtr(new UIParticles); } );
+    g_lua.bindClassMemberFunction<UIParticles>("addEffect", &UIParticles::addEffect);
 }

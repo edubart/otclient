@@ -1,0 +1,17 @@
+Module
+  name: client_particles
+  description: Manages particles systems
+  author: baxnie
+  website: www.otclient.info
+
+  dependencies:
+    - client_extended
+    - client_locales
+    - client_topmenu
+
+  @onLoad: |
+    dofile 'particles'
+    Particles.init()
+
+  @onUnload: |
+    Particles.terminate()

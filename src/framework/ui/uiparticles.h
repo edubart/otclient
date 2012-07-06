@@ -20,34 +20,23 @@
  * THE SOFTWARE.
  */
 
-#ifndef FRAMEWORK_UI_DECLARATIONS_H
-#define FRAMEWORK_UI_DECLARATIONS_H
+#ifndef UIPARTICLES_H
+#define UIPARTICLES_H
 
-#include <framework/global.h>
+#include <framework/graphics/particleeffect.h>
+#include <framework/ui/uiwidget.h>
 
-class UIManager;
-class UIWidget;
-class UITextEdit;
-class UILayout;
-class UIBoxLayout;
-class UIHorizontalLayout;
-class UIVerticalLayout;
-class UIGridLayout;
-class UIAnchorLayout;
-class UIParticles;
+class UIParticles : public UIWidget
+{
+public:
+    void drawSelf(Fw::DrawPane drawPane);
 
-typedef std::shared_ptr<UIWidget> UIWidgetPtr;
-typedef std::weak_ptr<UIWidget> UIWidgetWeakPtr;
+    void addEffect(const std::string& name);
 
-typedef std::shared_ptr<UIParticles> UIParticlesPtr;
-typedef std::shared_ptr<UITextEdit> UITextEditPtr;
-typedef std::shared_ptr<UILayout> UILayoutPtr;
-typedef std::shared_ptr<UIBoxLayout> UIBoxLayoutPtr;
-typedef std::shared_ptr<UIHorizontalLayout> UIHorizontalLayoutPtr;
-typedef std::shared_ptr<UIVerticalLayout> UIVerticalLayoutPtr;
-typedef std::shared_ptr<UIGridLayout> UIGridLayoutPtr;
-typedef std::shared_ptr<UIAnchorLayout> UIAnchorLayoutPtr;
+    void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode);
 
-typedef std::deque<UIWidgetPtr> UIWidgetList;
+private:
+    std::vector<ParticleEffectPtr> m_effects;
+};
 
-#endif
+#endif // UIPARTICLES_H
