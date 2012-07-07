@@ -4,6 +4,10 @@ Panel
     !text: tr('Classic control')
 
   OptionCheckBox
+    id: autoChaseOverride
+    !text: tr('Allow auto chase override')
+
+  OptionCheckBox
     id: showInfoMessagesInConsole
     !text: tr('Show info messages in console')
 

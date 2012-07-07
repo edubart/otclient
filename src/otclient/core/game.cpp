@@ -161,7 +161,9 @@ void Game::processTextMessage(const std::string& type, const std::string& messag
 
 void Game::processCreatureSpeak(const std::string& name, int level, Otc::SpeakType type, const std::string& message, int channelId, const Position& creaturePos)
 {
-    if(creaturePos.isValid() && (type == Otc::SpeakSay || type == Otc::SpeakWhisper || type == Otc::SpeakYell || type == Otc::SpeakMonsterSay || type == Otc::SpeakMonsterYell)) {
+    if(creaturePos.isValid() && (type == Otc::SpeakSay || type == Otc::SpeakWhisper || type == Otc::SpeakYell
+        || type == Otc::SpeakMonsterSay || type == Otc::SpeakMonsterYell || type == Otc::SpeakPrivateNpcToPlayer))
+    {
         StaticTextPtr staticText = StaticTextPtr(new StaticText);
         staticText->addMessage(name, type, message);
         g_map.addThing(staticText, creaturePos);
@@ -456,6 +458,8 @@ void Game::walk(Otc::Direction direction)
         m_localPlayer->lockWalk();
 
     forceWalk(direction);
+
+    g_lua.callGlobalField("g_game", "onWalk", direction);
 }
 
 void Game::autoWalk(const std::vector<Otc::Direction>& dirs)
@@ -487,15 +491,14 @@ void Game::autoWalk(const std::vector<Otc::Direction>& dirs)
     nextDirs.erase(nextDirs.begin());
     if(nextDirs.size() > 0)
         m_protocolGame->sendAutoWalk(nextDirs);
+
+    g_lua.callGlobalField("g_game", "onAutoWalk", direction);
 }
 
 void Game::forceWalk(Otc::Direction direction)
 {
     if(!canPerformGameAction())
         return;
-
-    // always cancel chasing attacks
-    setChaseMode(Otc::DontChase);
 
     switch(direction) {
     case Otc::North:
