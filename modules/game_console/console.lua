@@ -94,7 +94,9 @@ local function onCreatureSpeak(name, level, speaktype, message, channelId, creat
   if speaktype.private then
     Console.addPrivateText(composedMessage, speaktype, name, false, name)
     if Options.getOption('showPrivateMessagesOnScreen') then
-      TextMessage.displayPrivate(name .. ':\n' .. message)
+	  if(speaktype.speakType ~= SpeakPrivateNpcToPlayer) then
+        TextMessage.displayPrivate(name .. ':\n' .. message)
+	  end
     end
   else
     local channel = tr('Default')

@@ -25,3 +25,4 @@ CMakeLists.txt.user*
 /modules/myconfig.otml
 /modules/myotclientrc.lua
 !.gitignore
+otclient.map
