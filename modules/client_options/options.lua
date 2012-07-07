@@ -5,6 +5,7 @@ local defaultOptions = {
   showfps = true,
   fullscreen = false,
   classicControl = false,
+  autoChaseOverride = true,
   showStatusMessagesInConsole = true,
   showEventMessagesInConsole = true,
   showInfoMessagesInConsole = true,
@@ -144,7 +145,9 @@ function Options.setOption(key, value)
       value = 0
     end
 
-    if graphicsPanel then graphicsPanel:getChildById('backgroundFrameRateLabel'):setText(tr('Game framerate limit: %s', text)) end
+    if graphicsPanel then 
+	  graphicsPanel:getChildById('backgroundFrameRateLabel'):setText(tr('Game framerate limit: %s', text))
+	end
     g_app.setBackgroundPaneMaxFps(value)
   elseif key == 'foregroundFrameRate' then
       local text = value
@@ -153,7 +156,9 @@ function Options.setOption(key, value)
         value = 0
       end
 
-      if graphicsPanel then graphicsPanel:getChildById('foregroundFrameRateLabel'):setText(tr('Interface framerate limit: %s', text)) end
+      if graphicsPanel then
+	    graphicsPanel:getChildById('foregroundFrameRateLabel'):setText(tr('Interface framerate limit: %s', text))
+	  end
       g_app.setForegroundPaneMaxFps(value)
   elseif key == 'painterEngine' then
     g_graphics.selectPainterEngine(value)

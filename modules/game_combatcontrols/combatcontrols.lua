@@ -64,7 +64,8 @@ function CombatControls.init()
     onGameEnd = CombatControls.offline,
     onFightModeChange = CombatControls.update,
     onChaseModeChange = CombatControls.update,
-    onSafeFightChange = CombatControls.update
+    onSafeFightChange = CombatControls.update,
+    onWalk = CombatControls.check
   })
 
   if g_game.isOnline() then
@@ -97,7 +98,8 @@ function CombatControls.terminate()
     onGameEnd = CombatControls.offline,
     onFightModeChange = CombatControls.update,
     onChaseModeChange = CombatControls.update,
-    onSafeFightChange = CombatControls.update
+    onSafeFightChange = CombatControls.update,
+    onWalk = CombatControls.check
   })
 
   CombatControls = nil
@@ -118,6 +120,14 @@ function CombatControls.update()
 
   local safeFight = g_game.isSafeFight()
   safeFightButton:setChecked(not safeFight)
+end
+
+function CombatControls.check()
+  if(Options.getOption('autoChaseOverride')) then
+    if(g_game.isAttacking() and g_game.getChaseMode() == ChaseOpponent) then
+      g_game.setChaseMode(DontChase)
+    end
+  end
 end
 
 function CombatControls.online()
