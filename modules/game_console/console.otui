@@ -74,6 +74,17 @@ Panel
     @onClick: Console.removeCurrentTab()
 
   TabButton
+    id: clearChannelButton
+    icon: /core_styles/icons/clearchannel.png
+    anchors.right: next.left
+    anchors.top: parent.top
+    margin-right: 5
+    margin-top: 6
+    @onClick: |
+      local consoleTabBar = self:getParent():getChildById('consoleTabBar')
+      consoleTabBar:getCurrentTab().tabPanel:getChildById('consoleBuffer'):destroyChildren()
+
+  TabButton
     id: channelsButton
     !tooltip: tr('Open new channel') .. ' (Ctrl+O)'
     icon: icons/channels.png
