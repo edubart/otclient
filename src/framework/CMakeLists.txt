@@ -11,7 +11,8 @@ OPTION(LUAJIT "Use lua jit" OFF)
 OPTION(USE_STATIC_LIBS "Don't use shared libraries (dlls)" ON)
 
 SET(OPENGLES "OFF" CACHE "Use OpenGL ES 1.0 or 2.0 (for mobiles devices)" STRING)
-SET(BUILD_REVISION "custom" CACHE "Git revision string (intended for releases)" STRING)
+SET(BUILD_COMMIT "custom" CACHE "Git commit string (intended for releases)" STRING)
+SET(BUILD_REVISION "0" CACHE "Git revision string (intended for releases)" STRING)
 
 IF(NOT CMAKE_BUILD_TYPE)
     SET(CMAKE_BUILD_TYPE "RelWithDebInfo")
@@ -40,6 +41,9 @@ ENDIF()
 
 MESSAGE(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
 ADD_DEFINITIONS(-D"BUILD_TYPE=\\\"${CMAKE_BUILD_TYPE}\\\"")
+
+MESSAGE(STATUS "Build commit: ${BUILD_COMMIT}")
+ADD_DEFINITIONS(-D"BUILD_COMMIT=\\\"${BUILD_COMMIT}\\\"")
 
 MESSAGE(STATUS "Build revision: ${BUILD_REVISION}")
 ADD_DEFINITIONS(-D"BUILD_REVISION=\\\"${BUILD_REVISION}\\\"")

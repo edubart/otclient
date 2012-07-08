@@ -49,7 +49,7 @@ void OTClient::init(const std::vector<std::string>& args)
         stdext::print(
             m_appName, " ", m_appVersion, "\n"
             "Buitt on: ", BUILD_DATE, "\n",
-            "Revision: ", BUILD_REVISION, "\n",
+            "Commit: ", BUILD_COMMIT, "\n",
             "Compiled by: ", BUILD_COMPILER, "\n",
             "Build type: ", BUILD_TYPE, "\n");
         return;

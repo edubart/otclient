@@ -499,17 +499,9 @@ void Application::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_app", "getBuildCompiler", &Application::getBuildCompiler, &g_app);
     g_lua.bindSingletonFunction("g_app", "getBuildDate", &Application::getBuildDate, &g_app);
     g_lua.bindSingletonFunction("g_app", "getBuildRevision", &Application::getBuildRevision, &g_app);
+    g_lua.bindSingletonFunction("g_app", "getBuildCommit", &Application::getBuildCommit, &g_app);
     g_lua.bindSingletonFunction("g_app", "getBuildType", &Application::getBuildType, &g_app);
     g_lua.bindSingletonFunction("g_app", "exit", &Application::exit, &g_app);
-    g_lua.bindSingletonFunction("g_app", "isRunning", &Application::isRunning, &g_app);
-    g_lua.bindSingletonFunction("g_app", "isStopping", &Application::isStopping, &g_app);
-    g_lua.bindSingletonFunction("g_app", "getName", &Application::getName, &g_app);
-    g_lua.bindSingletonFunction("g_app", "getCompactName", &Application::getCompactName, &g_app);
-    g_lua.bindSingletonFunction("g_app", "getVersion", &Application::getVersion, &g_app);
-    g_lua.bindSingletonFunction("g_app", "getBuildCompiler", &Application::getBuildCompiler, &g_app);
-    g_lua.bindSingletonFunction("g_app", "getBuildDate", &Application::getBuildDate, &g_app);
-    g_lua.bindSingletonFunction("g_app", "getBuildRevision", &Application::getBuildRevision, &g_app);
-    g_lua.bindSingletonFunction("g_app", "getBuildType", &Application::getBuildType, &g_app);
 
     // ConfigManager
     g_lua.registerSingletonClass("g_configs");

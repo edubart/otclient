@@ -29,8 +29,12 @@
 #define BUILD_COMPILER "gcc " __VERSION__
 #define BUILD_DATE __DATE__
 
+    #ifndef BUILD_COMMIT
+#define BUILD_COMMIT "custom"
+#endif
+
 #ifndef BUILD_REVISION
-#define BUILD_REVISION "custom"
+#define BUILD_REVISION "0"
 #endif
 
 #ifndef BUILD_TYPE

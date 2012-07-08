@@ -116,7 +116,7 @@ LONG CALLBACK ExceptionHandler(LPEXCEPTION_POINTERS e)
     ss << stdext::format("build compiler: %s\n", BUILD_COMPILER);
     ss << stdext::format("build date: %s\n", BUILD_DATE);
     ss << stdext::format("build type: %s\n", BUILD_TYPE);
-    ss << stdext::format("build revision: %s\n", BUILD_REVISION);
+    ss << stdext::format("build revision: %s (%s)\n", BUILD_REVISION, BUILD_COMMIT);
     ss << stdext::format("crash date: %s\n", stdext::date_time_string().c_str());
     ss << stdext::format("exception: %s (0x%08lx)\n", getExceptionName(e->ExceptionRecord->ExceptionCode), e->ExceptionRecord->ExceptionCode);
     ss << stdext::format("exception address: 0x%08lx\n", (long unsigned int)e->ExceptionRecord->ExceptionAddress);

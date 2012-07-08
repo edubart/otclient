@@ -69,6 +69,7 @@ public:
     std::string getBuildCompiler() { return BUILD_COMPILER; }
     std::string getBuildDate() { return BUILD_DATE; }
     std::string getBuildRevision() { return BUILD_REVISION; }
+    std::string getBuildCommit() { return BUILD_COMMIT; }
     std::string getBuildType() { return BUILD_TYPE; }
     std::string getStartupOptions() { return m_startupOptions; }
 

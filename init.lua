@@ -1,16 +1,11 @@
 -- this is the first file executed when the application starts
 -- we have to load the first modules form here
 
--- setup application name and version
-g_app.setName('OTClient')
-g_app.setCompactName('otclient')
-g_app.setVersion('0.5.0_dev')
-
 -- setup logger
 g_logger.setLogFile(g_resources.getWorkDir() .. g_app.getCompactName() .. ".log")
 
 -- print first terminal message
-g_logger.info(g_app.getName() .. ' ' .. g_app.getVersion() .. ' (rev ' .. g_app.getBuildRevision() .. ') built on ' .. g_app.getBuildDate())
+g_logger.info(g_app.getName() .. ' ' .. g_app.getVersion() .. ' rev ' .. g_app.getBuildRevision() .. ' (' .. g_app.getBuildCommit() .. ') built on ' .. g_app.getBuildDate())
 
 --add base folder to search path
 g_resources.addToSearchPath(g_resources.getWorkDir())

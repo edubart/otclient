@@ -34,7 +34,8 @@ else
 fi
 
 gitdir=`pwd`
-revision=`git describe --dirty --always`
+revision=`git rev-list --all | wc -l`
+commit=`git describe --dirty --always`
 
 rm -rf build
 mkdir build
@@ -43,6 +44,7 @@ cd build
 cmake -DCMAKE_TOOLCHAIN_FILE=$gitdir/src/framework/cmake/${platform}_toolchain.cmake \
         -DCMAKE_BUILD_TYPE=Release \
         -DBUILD_REVISION=$revision \
+        -DBUILD_COMMIT=$commit \
         -DBOT_PROTECTION=OFF \
         -DPROTOCOL=$protocol \
         .. || exit
