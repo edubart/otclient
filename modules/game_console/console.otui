@@ -75,7 +75,7 @@ Panel
 
   TabButton
     id: clearChannelButton
-    icon: /core_styles/icons/clearchannel.png
+    icon: icons/clearchannel.png
     anchors.right: next.left
     anchors.top: parent.top
     margin-right: 5
