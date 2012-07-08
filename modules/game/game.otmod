@@ -11,6 +11,8 @@ Module
 
   load-later:
     - game_interface
+    - game_hotkeys
+    - game_questlog
     - game_textmessage
     - game_console
     - game_outfit
@@ -22,11 +24,9 @@ Module
     - game_viplist
     - game_battle
     - game_minimap
-    - game_hotkeys
     - game_npctrade
     - game_textbooks
     - game_playertrade
-    - game_questlog
     - game_ruleviolation
     - game_bugreport
     - game_shaders

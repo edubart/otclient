@@ -8,7 +8,7 @@ Module
   load-later:
     - client_skins
     - client_locales
-    - client_particles
+    //- client_particles
     - client_topmenu
     - client_background
     //- client_about
