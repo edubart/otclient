@@ -34,9 +34,9 @@ SET(CMAKE_CXX_FLAGS_MINSIZEREL        "-Os")
 
 IF(USE_STATIC_LIBS)
     SET(CMAKE_CXX_LINK_FLAGS "-static-libgcc -static-libstdc++")
-    MESSAGE("Link to static libraries: ON")
+    MESSAGE(STATUS "Link to static libraries: ON")
 ELSE()
-    MESSAGE("Link to static libraries: OFF")
+    MESSAGE(STATUS "Link to static libraries: OFF")
 ENDIF()
 
 MESSAGE(STATUS "Build type: " ${CMAKE_BUILD_TYPE})

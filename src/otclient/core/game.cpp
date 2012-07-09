@@ -64,13 +64,13 @@ void Game::resetGameStates()
     m_gmActions.clear();
 }
 
-void Game::processConnectionError(const boost::system::error_code& error)
+void Game::processConnectionError(const boost::system::error_code& ec)
 {
     // connection errors only have meaning if we still have a protocol
     if(m_protocolGame) {
         // eof = end of file, a clean disconnect
-        if(error != asio::error::eof)
-            g_lua.callGlobalField("g_game", "onConnectionError", error.message());
+        if(ec != asio::error::eof)
+            g_lua.callGlobalField("g_game", "onConnectionError", ec.message(), ec.value());
 
         processDisconnect();
     }

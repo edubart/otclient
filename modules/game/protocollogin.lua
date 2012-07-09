@@ -60,7 +60,7 @@ function ProtocolLogin:onRecv(msg)
     elseif opcode == LoginServerMotd then
       self:parseMotd(msg)
     elseif opcode == LoginServerUpdateNeeded then
-      signalcall(self.onError, self, "Client needs update.", false)
+      signalcall(self.onError, self, "Client needs update.")
     elseif opcode == LoginServerCharacterList then
       self:parseCharacterList(msg)
     else
@@ -77,7 +77,7 @@ end
 
 function ProtocolLogin:login(host, port, accountName, accountPassword)
   if string.len(accountName) == 0 or string.len(accountPassword) == 0 then
-    signalcall(self.onError, self, "You must enter an account name and password.", false)
+    signalcall(self.onError, self, "You must enter an account name and password.")
     return
   end
 
@@ -94,7 +94,7 @@ end
 
 function ProtocolLogin:parseError(msg)
   local errorMessage = msg:getString()
-  signalcall(self.onError, self, errorMessage, false)
+  signalcall(self.onError, self, errorMessage)
 end
 
 function ProtocolLogin:parseMotd(msg)

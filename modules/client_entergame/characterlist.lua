@@ -123,7 +123,7 @@ function onGameLoginError(message)
   end
 end
 
-function onGameConnectionError(message)
+function onGameConnectionError(code, message)
   CharacterList.destroyLoadBox()
   errorBox = displayErrorBox(tr("Login Error"), message)
   errorBox.onOk = function()

@@ -42,6 +42,8 @@ void ProtocolGame::login(const std::string& accountName, const std::string& acco
 
 void ProtocolGame::onConnect()
 {
+    Protocol::onConnect();
+
     // must create local player before parsing anything
     m_localPlayer = LocalPlayerPtr(new LocalPlayer);
 
@@ -56,12 +58,16 @@ void ProtocolGame::onConnect()
 
 void ProtocolGame::onRecv(const InputMessagePtr& inputMessage)
 {
+    //Protocol::onConnect(inputMessage);
+
     parseMessage(inputMessage);
     recv();
 }
 
 void ProtocolGame::onError(const boost::system::error_code& error)
 {
+    Protocol::onError(error);
+
     g_game.processConnectionError(error);
 }
 

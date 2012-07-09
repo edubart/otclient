@@ -7,21 +7,14 @@ local motdButton
 local enterGameButton
 
 -- private functions
-local function clearAccountFields()
-  enterGame:getChildById('accountNameTextEdit'):clearText()
-  enterGame:getChildById('accountPasswordTextEdit'):clearText()
-  enterGame:getChildById('accountNameTextEdit'):focus()
-  g_settings.remove('account')
-  g_settings.remove('password')
-end
-
-local function onError(protocol, message, connectionError)
+local function onError(protocol, message, errorCode)
   loadBox:destroy()
   loadBox = nil
 
-  if not connectionError then
-    clearAccountFields()
+  if not errorCode then
+    EnterGame.clearAccountFields()
   end
+
   local errorBox = displayErrorBox(tr('Login Error'), message)
   connect(errorBox, { onOk = EnterGame.show })
 end
@@ -38,7 +31,7 @@ local function onCharacterList(protocol, characters, premDays)
     g_settings.set('password', g_crypt.encrypt(G.password))
     g_settings.set('autologin', enterGame:getChildById('autoLoginBox'):isChecked())
   else
-    clearAccountFields()
+    EnterGame.clearAccountFields()
   end
 
   loadBox:destroy()
@@ -121,6 +114,15 @@ function EnterGame.openWindow()
   elseif not CharacterList.isVisible() then
     EnterGame.show()
   end
+end
+
+
+function EnterGame.clearAccountFields()
+  enterGame:getChildById('accountNameTextEdit'):clearText()
+  enterGame:getChildById('accountPasswordTextEdit'):clearText()
+  enterGame:getChildById('accountNameTextEdit'):focus()
+  g_settings.remove('account')
+  g_settings.remove('password')
 end
 
 function EnterGame.doLogin()
