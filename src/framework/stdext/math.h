@@ -63,7 +63,7 @@ inline uint64 readLE64(const uchar *addr) { return (uint64)readLE32(addr + 4) <<
 
 inline void writeLE16(uchar *addr, uint16 value) { addr[1] = value >> 8; addr[0] = (uint8)value; }
 inline void writeLE32(uchar *addr, uint32 value) { writeLE16(addr + 2, value >> 16); writeLE16(addr, (uint16)value); }
-inline void writeLE64(uchar *addr, uint64 value) { writeLE16(addr + 4, value >> 32); writeLE32(addr, (uint32)value); }
+inline void writeLE64(uchar *addr, uint64 value) { writeLE32(addr + 4, value >> 32); writeLE32(addr, (uint32)value); }
 
 template<typename T>
 T random_range(T min, T max);
