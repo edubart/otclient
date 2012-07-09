@@ -490,7 +490,7 @@ void Application::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_app", "isStopping", &Application::isStopping, &g_app);
     g_lua.bindSingletonFunction("g_app", "isOnInputEvent", &Application::isOnInputEvent, &g_app);
     g_lua.bindSingletonFunction("g_app", "getName", &Application::getName, &g_app);
-    g_lua.bindSingletonFunction("g_app", "getCompactName", &Application::getName, &g_app);
+    g_lua.bindSingletonFunction("g_app", "getCompactName", &Application::getCompactName, &g_app);
     g_lua.bindSingletonFunction("g_app", "getVersion", &Application::getVersion, &g_app);
     g_lua.bindSingletonFunction("g_app", "getForegroundPaneFps", &Application::getForegroundPaneFps, &g_app);
     g_lua.bindSingletonFunction("g_app", "getBackgroundPaneFps", &Application::getBackgroundPaneFps, &g_app);
