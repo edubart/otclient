@@ -74,6 +74,8 @@ function EnterGame.init()
   local port = g_settings.get('port')
   local autologin = g_settings.getBoolean('autologin')
 
+  if port == nil or port == 0 then port = 7171 end
+
   enterGame:getChildById('accountNameTextEdit'):setText(account)
   enterGame:getChildById('accountPasswordTextEdit'):setText(password)
   enterGame:getChildById('serverHostTextEdit'):setText(host)
@@ -84,7 +86,7 @@ function EnterGame.init()
 
   -- only open entergame when app starts
   if not g_app.isRunning() then
-    if #account > 0 and autologin then
+    if #host > 0 and #password > 0 and #account > 0 and autologin then
       addEvent(EnterGame.doLogin)
     end
   else
@@ -127,6 +129,12 @@ function EnterGame.doLogin()
   G.host = enterGame:getChildById('serverHostTextEdit'):getText()
   G.port = tonumber(enterGame:getChildById('serverPortTextEdit'):getText())
   EnterGame.hide()
+
+  if G.host == '' or G.port == nil or G.port == 0 then
+    local errorBox = displayErrorBox(tr('Login Error'), tr('Enter a valid server host and port to login.'))
+    connect(errorBox, { onOk = EnterGame.show })
+    return
+  end
 
   g_settings.set('host', G.host)
   g_settings.set('port', G.port)
