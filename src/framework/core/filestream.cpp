@@ -254,7 +254,7 @@ BinaryTreePtr FileStream::getBinaryTree()
     if(byte == BINARYTREE_NODE_START)
         root->unserialize(asFileStream());
     else
-        stdext::throw_exception(stdext::format("failed to read node start (getFirstNode): %d", byte));
+        stdext::throw_exception(stdext::format("failed to read node start (getBinaryTree): %d", byte));
     return root;
 }
 

@@ -31,6 +31,7 @@
 #include <framework/core/eventdispatcher.h>
 #include <framework/graphics/graphics.h>
 #include <framework/core/filestream.h>
+#include <framework/core/binarytree.h>
 
 Item::Item() :
     m_id(0),
@@ -203,7 +204,7 @@ bool Item::isValid()
     return g_things.isValidDatId(m_id, DatItemCategory);
 }
 
-bool Item::unserializeAttr(FileStreamPtr fin)
+bool Item::unserializeAttr(const BinaryTreePtr &fin)
 {
     uint8 attrType;
     while ((attrType = fin->getU8()) != 0)
@@ -212,7 +213,7 @@ bool Item::unserializeAttr(FileStreamPtr fin)
     return true;
 }
 
-void Item::readAttr(AttrTypes_t attrType, FileStreamPtr fin)
+void Item::readAttr(AttrTypes_t attrType, const BinaryTreePtr &fin)
 {
     switch (attrType) {
     case ATTR_COUNT:
@@ -268,4 +269,14 @@ void Item::readAttr(AttrTypes_t attrType, FileStreamPtr fin)
     default:
         break;
     }
+}
+
+bool Item::isMoveable()
+{
+    if (m_datType)
+        return !m_datType->isNotMoveable();
+
+    g_logger.warning(stdext::format(
+                         "Invalid dat type for item %d", m_id));
+    return false;
 }

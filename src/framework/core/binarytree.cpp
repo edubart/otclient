@@ -93,3 +93,14 @@ uint64 BinaryTree::getU64()
     m_pos += 8;
     return v;
 }
+
+std::string BinaryTree::getString()
+{
+    uint16 len = getU16();
+    if (len == 0 || len > 8192)
+        stdext::throw_exception("failed to get string from binary tree - invalid size read.");
+
+    std::string ret((char *)&m_buffer[m_pos], len);
+    m_pos += len;
+    return ret;
+}

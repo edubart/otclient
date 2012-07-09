@@ -101,9 +101,10 @@ public:
     bool isItem() { return true; }
 
     // TODO: These should be abstract and declared in i.e containers, doors, etc.
-    bool unserializeAttr(FileStreamPtr fin);
-    bool unserializeItemNode(FileStreamPtr fin, uint8) { return unserializeAttr(fin); }
-    void readAttr(AttrTypes_t attrType, FileStreamPtr fin);
+    bool unserializeAttr(const BinaryTreePtr &fin);
+    bool unserializeItemNode(const BinaryTreePtr &fin) { return unserializeAttr(fin); }
+    void readAttr(AttrTypes_t attrType, const BinaryTreePtr &fin);
+    bool isMoveable();
 
 private:
     uint16 m_id;
