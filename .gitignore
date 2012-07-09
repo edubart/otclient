@@ -16,6 +16,7 @@ Makefile
 *.cbp
 *~
 *.kate-swap
+*.autosave
 CMakeLists.txt.user*
 *.xml
 *.otb
