@@ -30,9 +30,6 @@
 #include <framework/core/filestream.h>
 #include <framework/core/binarytree.h>
 
-#define TIXML_USE_STL // use STL strings instead.
-#include <framework/thirdparty/tinyxml.h>
-
 ThingTypeManager g_things;
 
 void ThingTypeManager::init()
@@ -112,9 +109,11 @@ bool ThingTypeManager::loadOtb(const std::string& file)
         root->getU32(); // build number
         root->skip(128); // description
 
+        m_otbTypes.resize(root->getChildren().size(), m_nullOtbType);
         for(const BinaryTreePtr& node : root->getChildren()) {
             ThingTypeOtbPtr otbType(new ThingTypeOtb);
             otbType->unserialize(node);
+            addOtbType(otbType);
         }
 
         m_otbLoaded = true;

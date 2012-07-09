@@ -45,14 +45,14 @@ Item::Item() :
 
 ItemPtr Item::create(int id)
 {
-    ItemPtr item = ItemPtr(new Item);
+    ItemPtr item(new Item);
     item->setId(id);
     return item;
 }
 
 ItemPtr Item::createFromOtb(int id)
 {
-    ItemPtr item = ItemPtr(new Item);
+    ItemPtr item(new Item);
     item->setOtbId(id);
     return item;
 }
@@ -204,70 +204,71 @@ bool Item::isValid()
     return g_things.isValidDatId(m_id, DatItemCategory);
 }
 
-bool Item::unserializeAttr(const BinaryTreePtr &fin)
+void Item::unserializeItem(const BinaryTreePtr &in)
 {
-    uint8 attrType;
-    while ((attrType = fin->getU8()) != 0)
-        readAttr((AttrTypes_t)attrType, fin);
+    // Yet another TODO.
+    while (in->canRead()) {
+        uint8 attrType = in->getU8();
+        if (attrType == 0)
+            break;
 
-    return true;
-}
-
-void Item::readAttr(AttrTypes_t attrType, const BinaryTreePtr &fin)
-{
-    switch (attrType) {
-    case ATTR_COUNT:
-        setSubType(fin->getU8());
-        break;
-    case ATTR_ACTION_ID:
-        setActionId(fin->getU16());
-        break;
-    case ATTR_UNIQUE_ID:
-        setUniqueId(fin->getU16());
-        break;
-    case ATTR_NAME:
-        setName(fin->getString());
-        break;
-    case ATTR_ARTICLE:
-        fin->getString();
-    case ATTR_ATTACK: // \/ not needed.
-    case ATTR_EXTRAATTACK:
-    case ATTR_DEFENSE:
-    case ATTR_EXTRADEFENSE:
-    case ATTR_ARMOR:
-    case ATTR_ATTACKSPEED:
-    case ATTR_HPPITCHANCE:
-    case ATTR_DURATION:
-        fin->getU32();
-        break;
-    case ATTR_SCRIPTPROTECTED:
-    case ATTR_DUALWIELD:
-    case ATTR_DECAYING_STATE:
-    case ATTR_HPPOUSEDOORID:
-        fin->getU8();
-        break;
-    case ATTR_TEXT:
-        setText(fin->getString());
-        break;
-    case ATTR_WRITTENDATE:
-        fin->getU32();
-        break;
-    case ATTR_WRITTENBY:
-        fin->getString();
-        break;
-    case ATTR_DESC:
-        setDescription(fin->getString());
-        break;
-    case ATTR_RUNE_CHARGES:
-        fin->getU8();
-        break;
-    case ATTR_TELE_DEST: // Teleport should read that.
-    case ATTR_SLEEPERGUID: // Bed should read that.
-    case ATTR_SLEEPSTART:
-    case ATTR_CONTAINER_ITEMS:
-    case ATTR_ATTRIBUTE_MAP:
-    default:
-        break;
+        switch ((AttrTypes_t)attrType) {
+            case ATTR_COUNT:
+                setSubType(in->getU8());
+                break;
+            case ATTR_CHARGES:
+                setSubType(in->getU16());
+                break;
+            case ATTR_ACTION_ID:
+                setActionId(in->getU16());
+                break;
+            case ATTR_UNIQUE_ID:
+                setUniqueId(in->getU16());
+                break;
+            case ATTR_NAME:
+                setName(in->getString());
+                break;
+            case ATTR_ARTICLE: // ?
+            case ATTR_WRITTENBY:
+            case ATTR_DESC:
+                in->getString();
+                break;
+            case ATTR_ATTACK:
+            case ATTR_EXTRAATTACK:
+            case ATTR_DEFENSE:
+            case ATTR_EXTRADEFENSE:
+            case ATTR_ARMOR:
+            case ATTR_ATTACKSPEED:
+            case ATTR_HITCHANCE:
+            case ATTR_DURATION:
+            case ATTR_WRITTENDATE:
+            case ATTR_SLEEPERGUID:
+            case ATTR_SLEEPSTART:
+            case ATTR_CONTAINER_ITEMS:
+            case ATTR_ATTRIBUTE_MAP:
+                in->skip(4);
+                break;
+            case ATTR_SCRIPTPROTECTED:
+            case ATTR_DUALWIELD:
+            case ATTR_DECAYING_STATE:
+            case ATTR_HOUSEDOORID:
+            case ATTR_RUNE_CHARGES:
+                in->skip(1);
+                break;
+            case ATTR_TEXT:
+                setText(in->getString());
+                break;
+            case ATTR_DEPOT_ID:
+                in->skip(2); // trolol
+                break;
+            case ATTR_TELE_DEST:
+            {
+                Position pos(in->getU16(), in->getU16(), in->getU8());
+                break;
+            }
+            default:
+                stdext::throw_exception(stdext::format("invalid item attribute %d", (int)attrType));
+        }
     }
 }
 

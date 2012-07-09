@@ -31,3 +31,10 @@ function Player:isPartySharedExperienceActive()
           shield == ShieldBlueNoSharedExpBlink or
           shield == ShieldBlueNoSharedExp)
 end
+
+function Player:hasVip(creatureName)
+  for id, vip in pairs(g_game.getVips()) do
+    if (vip[1] == creatureName) then return true end
+  end
+  return false
+end

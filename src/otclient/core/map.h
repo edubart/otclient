@@ -42,7 +42,7 @@ enum OTBM_AttrTypes_t
     OTBM_ATTR_SPAWN_FILE = 11,
     OTBM_ATTR_RUNE_CHARGES = 12,
     OTBM_ATTR_HOUSE_FILE = 13,
-    OTBM_ATTR_HPPOUSEDOORID = 14,
+    OTBM_ATTR_HOUSEDOORID = 14,
     OTBM_ATTR_COUNT = 15,
     OTBM_ATTR_DURATION = 16,
     OTBM_ATTR_DECAYING_STATE = 17,
@@ -77,7 +77,7 @@ enum OTBM_NodeTypes_t
 
 enum {
     OTCM_SIGNATURE = 0x4D43544F,
-    OTCM_VERSION = 1,
+    OTCM_VERSION = 1
 };
 
 //@bindsingleton g_map
@@ -93,7 +93,7 @@ public:
     bool loadOtcm(const std::string& fileName);
     void saveOtcm(const std::string& fileName);
 
-    bool loadOtbm(const std::string& fileName);
+    void loadOtbm(const std::string& fileName, bool display = false/* temporary*/);
     //void saveOtbm(const std::string& fileName);
 
     void clean();
@@ -106,7 +106,7 @@ public:
     bool removeThingByPos(const Position& pos, int stackPos);
 
     // tile related
-    TilePtr createTile(const Position& pos);
+    TilePtr createTile(const Position& pos, const ItemPtr &g = nullptr);
     const TilePtr& getTile(const Position& pos);
     TilePtr getOrCreateTile(const Position& pos);
     void cleanTile(const Position& pos);
@@ -146,6 +146,7 @@ private:
     std::vector<AnimatedTextPtr> m_animatedTexts;
     std::vector<StaticTextPtr> m_staticTexts;
     std::vector<MapViewPtr> m_mapViews;
+    std::unordered_map<Position, std::string, PositionHasher> m_waypoints;
 
     Light m_light;
     Position m_centralPosition;

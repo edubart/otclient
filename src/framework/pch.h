@@ -63,4 +63,8 @@
 // boost utilities
 #include <boost/algorithm/string.hpp>
 
+// tiny XML
+#define TIXML_USE_STL
+#include <framework/thirdparty/tinyxml.h>
+
 #endif

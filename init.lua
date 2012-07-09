@@ -45,7 +45,7 @@ if g_resources.fileExists("/otclientrc.lua") then
   dofile("/otclientrc.lua")
 end
 
---g_things.loadOtb("/items.otb")
---g_map.loadOtbm("/forgotten.otbm")
+g_things.loadOtb("/items.otb")
+g_map.loadOtbm("/forgotten.otbm")
 
 

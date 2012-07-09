@@ -74,6 +74,10 @@ SET(otclient_SOURCES ${otclient_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/core/thingtypeotb.h
     ${CMAKE_CURRENT_LIST_DIR}/core/tile.cpp
     ${CMAKE_CURRENT_LIST_DIR}/core/tile.h
+    ${CMAKE_CURRENT_LIST_DIR}/core/houses.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/core/houses.h
+    ${CMAKE_CURRENT_LIST_DIR}/core/towns.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/core/towns.h
 
     # lua
     ${CMAKE_CURRENT_LIST_DIR}/luascript/luavaluecasts.cpp
