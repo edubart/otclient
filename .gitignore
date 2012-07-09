@@ -23,8 +23,11 @@ CMakeLists.txt.user*
 *.otbm
 *.log
 *.bak
-/modules/myconfig.otml
-/modules/myotclientrc.lua
+*.swp
+config.otml
+/modules/otclientrc.lua
 !.gitignore
 otclient.map
 otclient.layout
+TODO
+LOCALTODO
