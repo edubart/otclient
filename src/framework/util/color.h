@@ -134,7 +134,7 @@ inline std::istream& operator>>(std::istream& in, Color& color)
             else
                 color.setAlpha(255);
         } else
-            in.seekg(-tmp.length()-1, ios_base::cur);
+            in.seekg(-(std::istream::streampos)tmp.length()-1, ios_base::cur);
     } else {
         in.unget();
         in >> tmp;
