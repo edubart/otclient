@@ -54,6 +54,7 @@ local channels
 local channelsWindow
 local ownPrivateName
 local messageHistory = {}
+local lastChannels = {}
 local currentMessageIndex = 0
 local ignoreNpcMessages = false
 
@@ -191,6 +192,10 @@ local function onGameStart()
   if tab then
     addEvent(function() consoleTabBar:selectTab(tab) end, false)
   end
+  for _, channelid in pairs(lastChannels) do
+    g_game.joinChannel(channelid)
+  end
+  lastChannels = {}
 end
 
 -- public functions
@@ -270,7 +275,9 @@ function Console.terminate()
 end
 
 function Console.clear()
+  lastChannels = {}
   for channelid, channelname in pairs(channels) do
+    table.insert(lastChannels, tonumber(channelid))
     local tab = consoleTabBar:getTab(channelname)
     consoleTabBar:removeTab(tab)
   end
