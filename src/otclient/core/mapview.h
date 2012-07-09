@@ -89,6 +89,7 @@ public:
     // camera related
     void followCreature(const CreaturePtr& creature);
     CreaturePtr getFollowingCreature() { return m_followingCreature; }
+    bool isFollowingCreature() { return m_followingCreature && m_follow; }
 
     void setCameraPosition(const Position& pos);
     Position getCameraPosition();
@@ -141,6 +142,7 @@ private:
     Boolean<true> m_drawTexts;
     Boolean<true> m_smooth;
     Boolean<false> m_drawMinimapColors;
+    Boolean<true> m_follow;
     std::vector<TilePtr> m_cachedVisibleTiles;
     std::vector<CreaturePtr> m_cachedFloorVisibleCreatures;
     EventPtr m_updateTilesCacheEvent;

@@ -1,3 +1,30 @@
+MapControl < Button
+  size: 16 16
+
+  $pressed:
+    image-clip: 0 0 16 16
+
+  $hover !pressed:
+    image-clip: 0 16 16 16
+
+  $!pressed !hover:
+    image-clip: 0 32 16 16
+
+  $disabled:
+    image-color: #ffffff88
+
+FloorUpControl < MapControl
+  image-source: /game_minimap/floor_up.png
+  
+FloorDownControl < MapControl
+  image-source: /game_minimap/floor_down.png
+  
+//ZoomOutControl < MapControl
+  //image-source: /game_minimap/zoom_out.png
+  
+//ZoomInControl < MapControl
+  //image-source: /game_minimap/zoom_in.png
+
 MiniWindow
   id: minimapWindow
   !text: tr('Minimap')
@@ -17,46 +44,74 @@ MiniWindow
     UIButton
       id: compass
       image-source: /game_minimap/compass.png
+      color: #ffffff
       anchors.left: minimap.right
       anchors.top: minimap.top
       size: 60 60
+      margin-top: 3
       margin-left: 5
       @onClick: function(...) Minimap.compassClick(...) end
+      
+    UIButton
+      id: compassReset
+      text: Reset
+      font: verdana-11px-rounded
+      anchors.left: compass.left
+      anchors.top: compass.top
+      margin-top: 25
+      margin-left: 14
+      @onClick: function(...) Minimap.center(...) end
+      $pressed:
+        color: #eb9f4f88
+        margin-top: 26
+        margin-left: 15
+
+      $hover !pressed:
+        color: #eb9f4f
+
+      $!pressed !hover:
+        color: #ffffff
+        margin-top: 25
+        margin-left: 14
+
+      $disabled:
+        image-color: #ffffff88
       
     Button
       id: zoomOut
       text: -
-      size: 20 20
+      font: terminus-14px-bold
+      size: 16 16
       anchors.left: minimap.right
       anchors.top: compass.bottom
-      margin-top: 5
-      margin-left: 15
+      margin-top: 10
+      margin-left: 10
+      enabled: true
       @onClick: Minimap.onButtonClick(self:getId())
       
     Button
       id: zoomIn
       text: +
-      size: 20 20
+      size: 16 16
       anchors.left: zoomOut.left
       anchors.top: zoomOut.bottom
-      margin-top: 2
+      margin-top: 4
+      enabled: true
       @onClick: Minimap.onButtonClick(self:getId())
       
-    Button
+    FloorUpControl
       id: levelUp
-      text: /\
-      size: 20 20
       anchors.left: zoomOut.right
       anchors.top: zoomOut.top
-      margin-left: 2
+      margin-left: 15
+      enabled: true
       @onClick: Minimap.onButtonClick(self:getId())
       
-    Button
+    FloorDownControl
       id: levelDown
-      text: \/
-      size: 20 20
       anchors.left: zoomIn.right
       anchors.top: zoomIn.top
-      margin-left: 2
+      margin-left: 15
+      enabled: true
       @onClick: Minimap.onButtonClick(self:getId())
       

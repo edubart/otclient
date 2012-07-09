@@ -241,6 +241,8 @@ void Game::processCreatureMove(const CreaturePtr& creature, const Position& oldP
 {
     // animate walk
     creature->walk(oldPos, newPos);
+
+    g_lua.callGlobalField("g_game", "onCreatureMove", creature, oldPos, newPos);
 }
 
 void Game::processCreatureTeleport(const CreaturePtr& creature)
@@ -251,6 +253,8 @@ void Game::processCreatureTeleport(const CreaturePtr& creature)
     // locks the walk for a while when teleporting
     if(creature == m_localPlayer)
         m_localPlayer->lockWalk();
+
+    g_lua.callGlobalField("g_game", "onCreatureTeleport", creature);
 }
 
 void Game::processChannelList(const std::vector<std::tuple<int, std::string>>& channelList)
@@ -528,6 +532,8 @@ void Game::forceWalk(Otc::Direction direction)
     default:
         break;
     }
+
+    g_lua.callGlobalField("g_game", "onForceWalk", direction);
 }
 
 void Game::turn(Otc::Direction direction)
@@ -736,8 +742,11 @@ void Game::cancelAttackAndFollow()
 
     m_localPlayer->lockWalk();
 
-    setAttackingCreature(nullptr);
-    setFollowingCreature(nullptr);
+    if(isAttacking())
+        setAttackingCreature(nullptr);
+    if(isFollowing())
+        setFollowingCreature(nullptr);
+
     m_protocolGame->sendCancelAttackAndFollow();
 }
 

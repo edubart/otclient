@@ -30,9 +30,16 @@ function onMinimapMouseWheel(self, mousePos, direction)
   end
 end
 
+--[[
+  Known Issue (TODO): 
+  If you move the minimap compass directions and 
+  you change floor it will not update the minimap.
+]]
 -- public functions
 function Minimap.init()
-  connect(g_game, { onGameStart = Minimap.reset })
+  connect(g_game, { onGameStart = Minimap.reset,
+                    onForceWalk = Minimap.center } )
+                    
   g_keyboard.bindKeyDown('Ctrl+M', Minimap.toggle)
 
   minimapButton = TopMenu.addGameToggleButton('minimapButton', tr('Minimap') .. ' (Ctrl+M)', 'minimap.png', Minimap.toggle)
@@ -70,7 +77,9 @@ function Minimap.init()
 end
 
 function Minimap.terminate()
-  disconnect(g_game, { onGameStart = Minimap.reset })
+  disconnect(g_game, { onGameStart = Minimap.reset,
+                       onForceWalk = Minimap.center } )
+                       
   g_keyboard.unbindKeyDown('Ctrl+M')
 
   minimapButton:destroy()
@@ -102,6 +111,12 @@ function Minimap.reset()
   minimapWidget:setZoom(DEFAULT_ZOOM)
 end
 
+function Minimap.center()
+  local player = g_game.getLocalPlayer()
+  if not player then return end
+  minimapWidget:followCreature(player)
+end
+
 function Minimap.isClickInRange(position, fromPosition, toPosition)
 	return (position.x >= fromPosition.x and position.y >= fromPosition.y and position.x <= toPosition.x and position.y <= toPosition.y)
 end
@@ -111,32 +126,23 @@ compassZones.west = {x = 0, y = 30, posx = -1, posy = 0}
 compassZones.north = {x = 30, y = 0, posx = 0, posy = -1}
 compassZones.south = {x = 30, y = 57, posx = 0, posy = 1}
 compassZones.east = {x = 57, y = 30, posx = 1, posy = 0}
-compassZones.center = {x = 30, y = 30, posx = 0, posy = 0, center = true}
 function Minimap.compassClick(self, mousePos)
   local compassPos = self:getRect()
   local pos = {x = mousePos.x-compassPos.x, y = mousePos.y-compassPos.y}
   local move = {x = 0, y = 0}
-  local center = false
   for i,v in pairs(compassZones) do
     local lowPos = {x = v.x-15, y = v.y-15}
     local highPos = {x = v.x+15, y = v.y+15}
     if Minimap.isClickInRange(pos, lowPos, highPos) then
       move.x = move.x + v.posx * minimapWidget:getZoom()/10
       move.y = move.y + v.posy * minimapWidget:getZoom()/10
-      if v.center then center = true end
       break
     end
   end
 
-  if center then
-    local player = g_game.getLocalPlayer()
-    if not player then return end
-    minimapWidget:followCreature(player)
-  else
-    local cameraPos = minimapWidget:getCameraPosition()
-    local pos = {x = cameraPos.x + move.x, y = cameraPos.y + move.y, z = cameraPos.z}
-    minimapWidget:setCameraPosition(pos)
-  end
+  local cameraPos = minimapWidget:getCameraPosition()
+  local pos = {x = cameraPos.x + move.x, y = cameraPos.y + move.y, z = cameraPos.z}
+  minimapWidget:setCameraPosition(pos)
 end
 
 function Minimap.onButtonClick(id)

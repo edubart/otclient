@@ -27,3 +27,4 @@ CMakeLists.txt.user*
 /modules/myotclientrc.lua
 !.gitignore
 otclient.map
+otclient.layout

@@ -511,6 +511,7 @@ void ProtocolGame::parseCreatureMove(const InputMessagePtr& msg)
     // update map tiles
     if(!g_map.removeThing(thing))
         g_logger.traceError("could not remove thing");
+
     g_map.addThing(thing, newPos);
 }
 

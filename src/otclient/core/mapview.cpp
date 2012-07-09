@@ -127,7 +127,7 @@ void MapView::draw(const Rect& rect)
 
 
     Point drawOffset = ((m_drawDimension - m_visibleDimension - Size(1,1)).toPoint()/2) * m_tileSize;
-    if(m_followingCreature)
+    if(isFollowingCreature())
         drawOffset += m_followingCreature->getWalkOffset() * scaleFactor;
 
     Size srcSize = rect.size();
@@ -210,11 +210,32 @@ void MapView::draw(const Rect& rect)
         }
     } else if(m_viewMode > NEAR_VIEW) {
         // draw a cross in the center instead of our creature
+        /*
+            Known Issue: Changing Z axis causes the cross to go off a little bit.
+        */
         Rect vRect(0, 0, 2, 10);
         Rect hRect(0, 0, 10, 2);
-        vRect.moveCenter(rect.center());
-        hRect.moveCenter(rect.center());
         g_painter->setColor(Color::white);
+
+        if(!m_follow && m_followingCreature)
+        {
+            Position pos = m_followingCreature->getPosition();
+            Point p = transformPositionTo2D(pos, cameraPosition) - drawOffset;
+            p.x = p.x * horizontalStretchFactor;
+            p.y = p.y * verticalStretchFactor;
+            p += rect.topLeft();
+
+            vRect.setX(p.x); vRect.setY(p.y - 4);
+            hRect.setX(p.x - 4); hRect.setY(p.y);
+
+            hRect.setWidth(10); hRect.setHeight(2);
+            vRect.setWidth(2); vRect.setHeight(10);
+        }
+        else {
+            vRect.moveCenter(rect.center());
+            hRect.moveCenter(rect.center());
+        }
+
         g_painter->drawFilledRect(vRect);
         g_painter->drawFilledRect(hRect);
     }
@@ -525,14 +546,15 @@ void MapView::optimizeForSize(const Size& visibleSize)
 
 void MapView::followCreature(const CreaturePtr& creature)
 {
+    m_follow = true;
     m_followingCreature = creature;
     requestVisibleTilesCacheUpdate();
 }
 
 void MapView::setCameraPosition(const Position& pos)
 {
+    m_follow = false;
     m_customCameraPosition = pos;
-    m_followingCreature = nullptr;
     requestVisibleTilesCacheUpdate();
 }
 
@@ -623,8 +645,9 @@ int MapView::calcLastVisibleFloor()
 
 Position MapView::getCameraPosition()
 {
-    if(m_followingCreature)
+    if(isFollowingCreature())
         return m_followingCreature->getPosition();
+
     return m_customCameraPosition;
 }
 
@@ -641,13 +664,12 @@ TilePtr MapView::getTile(const Point& mousePos, const Rect& mapRect)
     float scaleFactor = m_tileSize / (float)Otc::TILE_PIXELS;
 
 
-
     float horizontalStretchFactor = visibleSize.width() / (float)mapRect.width();
     float verticalStretchFactor = visibleSize.height() / (float)mapRect.height();
 
     Point tilePos2D = Point(relativeMousePos.x * horizontalStretchFactor, relativeMousePos.y * verticalStretchFactor);
 
-    if(m_followingCreature)
+    if(isFollowingCreature())
         tilePos2D += m_followingCreature->getWalkOffset() * scaleFactor;
     tilePos2D /= m_tileSize;
 
