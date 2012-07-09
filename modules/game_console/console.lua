@@ -403,7 +403,9 @@ function Console.popupMenu(mousePos, mouseButton, creatureName, text)
     if creatureName then
       if creatureName ~= g_game.getCharacterName() then
         menu:addOption(tr('Message to ' .. creatureName), function () g_game.openPrivateChannel(creatureName) end)
-        menu:addOption(tr('Add to VIP list'), function () g_game.addVip(creatureName) end) --TODO not show if creature already in vip
+        if (not Player:hasVip(creatureName)) then
+          menu:addOption(tr('Add to VIP list'), function () g_game.addVip(creatureName) end)
+        end
         -- TODO ignore creatureName
         menu:addSeparator()
       end

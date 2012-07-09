@@ -263,7 +263,9 @@ function GameInterface.createThingMenu(menuPosition, lookThing, useThing, creatu
             menu:addOption(tr('Invite to private chat'), function() g_game.inviteToOwnChannel(creatureName) end)
             menu:addOption(tr('Exclude from private chat'), function() g_game.excludeFromOwnChannel(creatureName) end) -- [TODO] must be removed after message's popup labels been implemented
           end
-          menu:addOption(tr('Add to VIP list'), function() g_game.addVip(creatureName) end)
+          if (not Player:hasVip(creatureName)) then
+            menu:addOption(tr('Add to VIP list'), function() g_game.addVip(creatureName) end)
+          end
 
           local localPlayerShield = localPlayer:asCreature():getShield()
           local creatureShield = creatureThing:getShield()
