@@ -105,9 +105,7 @@ function HotkeysManager.terminate()
   hotkeysManagerLoaded = false
 
   g_keyboard.unbindKeyDown('Ctrl+K')
-  g_keyboard.unbindKeyPress('Down', function() channelListPanel:focusNextChild(KeyboardFocusReason) end, channelsWindow)
-  g_keyboard.unbindKeyPress('Up', function() channelListPanel:focusPreviousChild(KeyboardFocusReason) end, channelsWindow)
-  
+
   HotkeysManager.save()
 
   currentHotkeysList = nil
