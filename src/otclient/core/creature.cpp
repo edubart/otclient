@@ -21,7 +21,7 @@
  */
 
 #include "creature.h"
-#include "thingtypemanager.h"
+#include "thingstype.h"
 #include "localplayer.h"
 #include "map.h"
 #include "tile.h"
@@ -85,11 +85,28 @@ void Creature::draw(const Point& dest, float scaleFactor, bool animate)
     internalDrawOutfit(dest + animationOffset * scaleFactor, scaleFactor, animate, animate, m_direction);
     m_footStepDrawn = true;
 }
+void Creature::drawLight(const Point& dest, float scaleFactor, bool animate, MapView* mapview)
+{
+    Light lightdata = getLight();
+    uint32_t lightSize = 50*lightdata.intensity;
 
+    Point animationOffset = animate ? m_walkOffset : Point(0,0);
+    glBlendFunc(GL_ONE, GL_ONE);
+    mapview->m_framebuffer->release();
+    mapview->m_lightbuffer->bind();
+
+    Color lightColor = Color::from8bit(lightdata.color);
+
+        g_painter->setColor(lightColor);
+        g_painter->drawTexturedRect(Rect(dest - Point(lightSize/2,lightSize/2) + animationOffset * scaleFactor, Size(lightSize,lightSize)), mapview->m_lightTexture);
+    mapview->m_lightbuffer->release();
+    mapview->m_framebuffer->bind();
+    g_painter->refreshState();
+}
 void Creature::internalDrawOutfit(const Point& dest, float scaleFactor, bool animateWalk, bool animateIdle, Otc::Direction direction)
 {
     // outfit is a real creature
-    if(m_outfit.getCategory() == DatCreatureCategory) {
+    if(m_outfit.getCategory() == ThingsType::Creature) {
         int animationPhase = animateWalk ? m_walkAnimationPhase : 0;
 
         if(isAnimateAlways() && animateIdle) {
@@ -107,26 +124,26 @@ void Creature::internalDrawOutfit(const Point& dest, float scaleFactor, bool ani
             xPattern = direction;
 
         // yPattern => creature addon
-        for(int yPattern = 0; yPattern < getNumPatternY(); yPattern++) {
+        for(int yPattern = 0; yPattern < getNumPatternsY(); yPattern++) {
 
             // continue if we dont have this addon
             if(yPattern > 0 && !(m_outfit.getAddons() & (1 << (yPattern-1))))
                 continue;
 
-            m_datType->draw(dest, scaleFactor, 0, xPattern, yPattern, 0, animationPhase);
+            m_type->draw(dest, scaleFactor, 0, xPattern, yPattern, 0, animationPhase);
 
             if(getLayers() > 1) {
                 Color oldColor = g_painter->getColor();
                 Painter::CompositionMode oldComposition = g_painter->getCompositionMode();
                 g_painter->setCompositionMode(Painter::CompositionMode_Multiply);
                 g_painter->setColor(m_outfit.getHeadColor());
-                m_datType->draw(dest, scaleFactor, DatYellowMask, xPattern, yPattern, 0, animationPhase);
+                m_type->draw(dest, scaleFactor, ThingType::YellowMask, xPattern, yPattern, 0, animationPhase);
                 g_painter->setColor(m_outfit.getBodyColor());
-                m_datType->draw(dest, scaleFactor, DatRedMask, xPattern, yPattern, 0, animationPhase);
+                m_type->draw(dest, scaleFactor, ThingType::RedMask, xPattern, yPattern, 0, animationPhase);
                 g_painter->setColor(m_outfit.getLegsColor());
-                m_datType->draw(dest, scaleFactor, DatGreenMask, xPattern, yPattern, 0, animationPhase);
+                m_type->draw(dest, scaleFactor, ThingType::GreenMask, xPattern, yPattern, 0, animationPhase);
                 g_painter->setColor(m_outfit.getFeetColor());
-                m_datType->draw(dest, scaleFactor, DatBlueMask, xPattern, yPattern, 0, animationPhase);
+                m_type->draw(dest, scaleFactor, ThingType::BlueMask, xPattern, yPattern, 0, animationPhase);
                 g_painter->setColor(oldColor);
                 g_painter->setCompositionMode(oldComposition);
             }
@@ -139,7 +156,7 @@ void Creature::internalDrawOutfit(const Point& dest, float scaleFactor, bool ani
 
         // when creature is an effect we cant render the first and last animation phase,
         // instead we should loop in the phases between
-        if(m_outfit.getCategory() == DatEffectCategory) {
+        if(m_outfit.getCategory() == ThingsType::Effect) {
             animationPhases = std::max(1, animationPhases-2);
             animateTicks = Otc::INVISIBLE_TICKS_PER_FRAME;
         }
@@ -151,10 +168,10 @@ void Creature::internalDrawOutfit(const Point& dest, float scaleFactor, bool ani
                 animationPhase = animationPhases-1;
         }
 
-        if(m_outfit.getCategory() == DatEffectCategory)
+        if(m_outfit.getCategory() == ThingsType::Effect)
             animationPhase = std::min(animationPhase+1, getAnimationPhases());
 
-        m_datType->draw(dest, scaleFactor, 0, 0, 0, 0, animationPhase);
+        m_type->draw(dest, scaleFactor, 0, 0, 0, 0, animationPhase);
     }
 }
 
@@ -301,7 +318,7 @@ void Creature::stopWalk()
 void Creature::updateWalkAnimation(int totalPixelsWalked)
 {
     // update outfit animation
-    if(m_outfit.getCategory() != DatCreatureCategory)
+    if(m_outfit.getCategory() != ThingsType::Creature)
         return;
 
     int footAnimPhases = getAnimationPhases() - 1;
@@ -368,7 +385,7 @@ void Creature::nextWalkUpdate()
     // schedules next update
     if(m_walking) {
         auto self = asCreature();
-        m_walkUpdateEvent = g_dispatcher.scheduleEvent([self] {
+        m_walkUpdateEvent = g_eventDispatcher.scheduleEvent([self] {
             self->m_walkUpdateEvent = nullptr;
             self->nextWalkUpdate();
         }, m_walkAnimationInterval / 32);
@@ -459,7 +476,7 @@ void Creature::setOutfit(const Outfit& outfit)
 {
     m_walkAnimationPhase = 0; // might happen when player is walking and outfit is changed.
     m_outfit = outfit;
-    m_datType = g_things.getDatType(outfit.getId(), outfit.getCategory());
+    m_type = g_thingsType.getThingType(outfit.getId(), outfit.getCategory());
 }
 
 void Creature::setSkull(uint8 skull)
@@ -492,7 +509,7 @@ void Creature::setShieldTexture(const std::string& filename, bool blink)
 
     if(blink && !m_shieldBlink) {
         auto self = asCreature();
-        g_dispatcher.scheduleEvent([self]() {
+        g_eventDispatcher.scheduleEvent([self]() {
             self->updateShield();
         }, SHIELD_BLINK_TICKS);
     }
@@ -512,7 +529,7 @@ void Creature::addTimedSquare(uint8 color)
 
     // schedule removal
     auto self = asCreature();
-    g_dispatcher.scheduleEvent([self]() {
+    g_eventDispatcher.scheduleEvent([self]() {
         self->removeTimedSquare();
     }, VOLATILE_SQUARE_DURATION);
 }
@@ -523,7 +540,7 @@ void Creature::updateShield()
 
     if(m_shield != Otc::ShieldNone && m_shieldBlink) {
         auto self = asCreature();
-        g_dispatcher.scheduleEvent([self]() {
+        g_eventDispatcher.scheduleEvent([self]() {
             self->updateShield();
         }, SHIELD_BLINK_TICKS);
     }
