@@ -22,7 +22,7 @@
 
 #include "tile.h"
 #include "item.h"
-#include "thingtypemanager.h"
+#include "thingstype.h"
 #include "map.h"
 #include "game.h"
 #include "localplayer.h"
@@ -30,15 +30,13 @@
 #include <otclient/net/protocolgame.h>
 #include <framework/graphics/fontmanager.h>
 
-Tile::Tile(const Position& position) :
-    m_position(position),
-    m_drawElevation(0),
-    m_flags(0),
-    m_minimapColorByte(0)
+Tile::Tile(const Position& position)
 {
+    m_drawElevation = 0;
+    m_position = position;
 }
 
-void Tile::draw(const Point& dest, float scaleFactor, int drawFlags)
+void Tile::draw(const Point& dest, float scaleFactor, int drawFlags, MapView* mapview)
 {
     bool animate = drawFlags & Otc::DrawAnimations;
 
@@ -70,10 +68,10 @@ void Tile::draw(const Point& dest, float scaleFactor, int drawFlags)
             if(thing->isOnTop() || thing->isOnBottom() || thing->isGroundBorder() || thing->isGround() || thing->isCreature())
                 break;
             thing->draw(dest - m_drawElevation*scaleFactor, scaleFactor, animate);
-
+            thing->drawLight(dest - m_drawElevation*scaleFactor, scaleFactor, animate,mapview);
             if(thing->isLyingCorpse()) {
-                redrawPreviousTopW = std::max(thing->getWidth(), redrawPreviousTopW);
-                redrawPreviousTopH = std::max(thing->getHeight(), redrawPreviousTopH);
+                redrawPreviousTopW = std::max(thing->getDimensionWidth(), redrawPreviousTopW);
+                redrawPreviousTopH = std::max(thing->getDimensionHeight(), redrawPreviousTopH);
             }
 
             m_drawElevation += thing->getElevation();
@@ -92,7 +90,7 @@ void Tile::draw(const Point& dest, float scaleFactor, int drawFlags)
                         continue;
                     const TilePtr& tile = g_map.getTile(m_position.translated(x,y));
                     if(tile)
-                        tile->draw(dest + Point(x*Otc::TILE_PIXELS, y*Otc::TILE_PIXELS)*scaleFactor, scaleFactor, topRedrawFlags);
+                        tile->draw(dest + Point(x*Otc::TILE_PIXELS, y*Otc::TILE_PIXELS)*scaleFactor, scaleFactor, topRedrawFlags, mapview);
                 }
             }
         }
@@ -106,7 +104,8 @@ void Tile::draw(const Point& dest, float scaleFactor, int drawFlags)
                     continue;
                 creature->draw(Point(dest.x + ((creature->getPosition().x - m_position.x)*Otc::TILE_PIXELS - m_drawElevation)*scaleFactor,
                                      dest.y + ((creature->getPosition().y - m_position.y)*Otc::TILE_PIXELS - m_drawElevation)*scaleFactor), scaleFactor, animate);
-
+                creature->drawLight(Point(dest.x + ((creature->getPosition().x - m_position.x)*Otc::TILE_PIXELS - m_drawElevation)*scaleFactor,
+                                     dest.y + ((creature->getPosition().y - m_position.y)*Otc::TILE_PIXELS - m_drawElevation)*scaleFactor), scaleFactor, animate, mapview);
             }
         }
 
@@ -115,8 +114,10 @@ void Tile::draw(const Point& dest, float scaleFactor, int drawFlags)
             if(!thing->isCreature())
                 continue;
             CreaturePtr creature = thing->asCreature();
-            if(creature && (!creature->isWalking() || !animate))
+            if(creature && (!creature->isWalking() || !animate)){
                 creature->draw(dest - m_drawElevation*scaleFactor, scaleFactor, animate);
+                creature->drawLight(dest - m_drawElevation*scaleFactor, scaleFactor, animate, mapview);
+            }
         }
     }
 
@@ -133,6 +134,10 @@ void Tile::draw(const Point& dest, float scaleFactor, int drawFlags)
                 thing->draw(dest, scaleFactor, animate);
         }
     }
+}
+void Tile::drawLight(const Point& dest, float scaleFactor, int drawFlags, MapView* mapview)
+{
+
 }
 
 void Tile::clean()
@@ -194,7 +199,6 @@ ThingPtr Tile::addThing(const ThingPtr& thing, int stackPos)
     if(m_things.size() > MAX_THINGS)
         removeThing(m_things[MAX_THINGS]);
 
-    update();
     return oldObject;
 }
 
@@ -220,8 +224,10 @@ bool Tile::removeThing(ThingPtr thing)
     }
 
     // reset values managed by this tile
-    if(removed)
-        update();
+    if(removed) {
+        //thing->setDrawOffset(0);
+        //thing->setStackpos(0);
+    }
 
     return removed;
 }
@@ -254,16 +260,6 @@ ThingPtr Tile::getTopThing()
     return m_things[m_things.size() - 1];
 }
 
-std::vector<ItemPtr> Tile::getItems()
-{
-    std::vector<ItemPtr> items;
-    for(const ThingPtr& thing : m_things) {
-        if(ItemPtr item = thing->asItem())
-            items.push_back(item);
-    }
-    return items;
-}
-
 std::vector<CreaturePtr> Tile::getCreatures()
 {
     std::vector<CreaturePtr> creatures;
@@ -290,6 +286,19 @@ int Tile::getGroundSpeed()
     if(ItemPtr ground = getGround())
         groundSpeed = ground->getGroundSpeed();
     return groundSpeed;
+}
+
+Color Tile::getMinimapColor()
+{
+    Color color = Color::black;
+    for(const ThingPtr& thing : m_things) {
+        if(!thing->isGround() && !thing->isGroundBorder() && !thing->isOnBottom() && !thing->isOnTop())
+            break;
+        int c = thing->getMinimapColor();
+        if(c != 0)
+            color = Color::from8bit(c);
+    }
+    return color;
 }
 
 ThingPtr Tile::getTopLookThing()
@@ -423,7 +432,7 @@ bool Tile::isFullyOpaque()
 bool Tile::isLookPossible()
 {
     for(const ThingPtr& thing : m_things) {
-        if(thing->blockProjectile())
+        if(thing->blocksProjectile())
             return false;
     }
     return true;
@@ -491,14 +500,3 @@ bool Tile::canErase()
     return m_walkingCreatures.empty() && m_effects.empty() && m_things.empty();
 }
 
-void Tile::update()
-{
-    m_minimapColorByte = 0;
-    for(const ThingPtr& thing : m_things) {
-        if(!thing->isGround() && !thing->isGroundBorder() && !thing->isOnBottom() && !thing->isOnTop())
-            break;
-        uint8 c = thing->getMinimapColor();
-        if(c != 0)
-            m_minimapColorByte = c;
-    }
-}
