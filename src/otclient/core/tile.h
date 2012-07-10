@@ -24,6 +24,7 @@
 #define TILE_H
 
 #include "declarations.h"
+#include "mapview.h"
 #include <framework/luascript/luaobject.h>
 
 enum tileflags_t
@@ -55,7 +56,8 @@ public:
 
     Tile(const Position& position);
 
-    void draw(const Point& dest, float scaleFactor, int drawFlags);
+    void draw(const Point& dest, float scaleFactor, int drawFlags, MapView* mapview);
+    void drawLight(const Point& dest, float scaleFactor, int drawFlags, MapView* mapview);
 
 public:
     void clean();
@@ -78,12 +80,11 @@ public:
 
     const Position& getPosition() { return m_position; }
     int getDrawElevation() { return m_drawElevation; }
-    std::vector<ItemPtr> getItems();
     std::vector<CreaturePtr> getCreatures();
     const std::vector<ThingPtr>& getThings() { return m_things; }
     ItemPtr getGround();
     int getGroundSpeed();
-    uint8 getMinimapColorByte() { return m_minimapColorByte; }
+    Color getMinimapColor();
     int getThingCount() { return m_things.size() + m_effects.size(); }
     bool isPathable();
     bool isWalkable();
@@ -102,15 +103,12 @@ public:
     void setFlags(tileflags_t flags) { m_flags |= (uint32)flags; }
 
 private:
-    void update();
-
     std::vector<CreaturePtr> m_walkingCreatures;
     std::vector<EffectPtr> m_effects; // leave this outside m_things because it has no stackpos.
     std::vector<ThingPtr> m_things;
     Position m_position;
     uint8 m_drawElevation;
     uint32 m_flags;
-    uint8 m_minimapColorByte;
 };
 
 #endif
