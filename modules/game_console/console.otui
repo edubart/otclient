@@ -75,6 +75,7 @@ Panel
 
   TabButton
     id: clearChannelButton
+    !tooltip: tr('Clear current message window')
     icon: icons/clearchannel.png
     anchors.right: next.left
     anchors.top: parent.top

@@ -35,10 +35,13 @@ local hotkeyColors = {
 -- public functions
 function HotkeysManager.init()
   hotkeysWindow = g_ui.displayUI('hotkeys_manager.otui')
+  local hotkeyListPanel = hotkeysWindow:getChildById('currentHotkeys')
 
   hotkeysWindow:setVisible(false)
   hotkeysButton = TopMenu.addGameButton('hotkeysButton', tr('Hotkeys') .. ' (Ctrl+K)', '/game_hotkeys/icon.png', HotkeysManager.toggle)
   g_keyboard.bindKeyDown('Ctrl+K', HotkeysManager.toggle)
+  g_keyboard.bindKeyPress('Down', function() hotkeyListPanel:focusNextChild(KeyboardFocusReason) end, hotkeysWindow)
+  g_keyboard.bindKeyPress('Up', function() hotkeyListPanel:focusPreviousChild(KeyboardFocusReason) end, hotkeysWindow)
 
   currentHotkeysList = hotkeysWindow:getChildById('currentHotkeys')
   currentItemPreview = hotkeysWindow:getChildById('itemPreview')
@@ -102,6 +105,9 @@ function HotkeysManager.terminate()
   hotkeysManagerLoaded = false
 
   g_keyboard.unbindKeyDown('Ctrl+K')
+  g_keyboard.unbindKeyPress('Down', function() channelListPanel:focusNextChild(KeyboardFocusReason) end, channelsWindow)
+  g_keyboard.unbindKeyPress('Up', function() channelListPanel:focusPreviousChild(KeyboardFocusReason) end, channelsWindow)
+  
   HotkeysManager.save()
 
   currentHotkeysList = nil

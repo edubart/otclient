@@ -1,5 +1,19 @@
 Inventory = {}
 
+-- public variables
+InventorySlotStyles = {
+  [InventorySlotHead] = "HeadSlot",
+  [InventorySlotNeck] = "NeckSlot",
+  [InventorySlotBack] = "BackSlot",
+  [InventorySlotBody] = "BodySlot",
+  [InventorySlotRight] = "RightSlot",
+  [InventorySlotLeft] = "LeftSlot",
+  [InventorySlotLeg] = "LegSlot",
+  [InventorySlotFeet] = "FeetSlot",
+  [InventorySlotFinger] = "FingerSlot",
+  [InventorySlotAmmo] = "AmmoSlot"
+}
+
 -- private variables
 local inventoryWindow
 local inventoryPanel
@@ -39,7 +53,7 @@ end
 
 function Inventory.refresh()
   local player = g_game.getLocalPlayer()
-  for i=1,10 do
+  for i=InventorySlotFirst,InventorySlotLast do
     if player then
       Inventory.onInventoryChange(player, i, player:getInventoryItem(i))
     else
@@ -63,9 +77,15 @@ function Inventory.onMiniWindowClose()
 end
 
 -- hooked events
-function Inventory.onInventoryChange(player, slot, item)
+function Inventory.onInventoryChange(player, slot, item, oldItem)
   local itemWidget = inventoryPanel:getChildById('slot' .. slot)
-  itemWidget:setItem(item)
+  if(item) then
+    itemWidget:setStyle('Item')
+    itemWidget:setItem(item)
+  else
+    itemWidget:setStyle(InventorySlotStyles[slot])
+    itemWidget:setItem(nil)
+  end
 end
 
 function Inventory.onFreeCapacityChange(player, freeCapacity)

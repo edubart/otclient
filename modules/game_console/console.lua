@@ -118,18 +118,13 @@ local function onOpenChannel(channelId, channelName)
 end
 
 local function onOpenPrivateChannel(receiver)
-  local privateTab = Console.getTab(receiver)
-  if privateTab == nil then
-    channels[receiver] = receiver
-    Console.addTab(receiver, true)
-  end
+  Console.addPrivateChannel(receiver)
 end
 
 local function onOpenOwnPrivateChannel(channelId, channelName)
   local privateTab = Console.getTab(channelName)
   if privateTab == nil then
-    --channels[channelId] = channelName (this should be tested)
-    Console.addChannel(channelName, channelId, true)
+    Console.addChannel(channelName, channelId)
   end
   ownPrivateName = channelName
 end
@@ -302,7 +297,12 @@ function Console.openHelp()
 end
 
 function Console.addTab(name, focus)
-  local tab = consoleTabBar:addTab(name)
+  local tab = Console.getTab(name)
+  if(tab) then -- is channel already open
+    if(not focus) then focus = true end
+  else
+    tab = consoleTabBar:addTab(name)
+  end
   if focus then
     consoleTabBar:selectTab(tab)
   elseif name ~= tr('Server Log') then
@@ -346,6 +346,11 @@ function Console.addChannel(name, id)
   local tab = Console.addTab(name, true)
   tab.channelId = id
   return tab
+end
+
+function Console.addPrivateChannel(receiver)
+  channels[receiver] = receiver
+  return Console.addTab(receiver, true)
 end
 
 function Console.addPrivateText(text, speaktype, name, isPrivateCommand, creatureName)
