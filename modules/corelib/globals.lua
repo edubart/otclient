@@ -31,6 +31,25 @@ function cycleEvent(callback, front)
   return event
 end
 
+function periodicalEvent(eventFunc, conditionFunc, delay, autoRepeatDelay)
+  delay = delay or 30
+  autoRepeatDelay = autoRepeatDelay or delay
+
+  local func
+  func = function()
+    if conditionFunc and not conditionFunc() then
+      func = nil
+      return
+    end
+    eventFunc()
+    scheduleEvent(func, delay)
+  end
+
+  scheduleEvent(function()
+    func()
+  end, autoRepeatDelay)
+end
+
 function removeEvent(event)
   if event then
     event:cancel()

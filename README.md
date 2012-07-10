@@ -13,7 +13,7 @@ Beyond of it's flexibility with scripts, otclient comes with tons of other featu
 the creation of new client side stuff in otserv that was not possible before. These include,
 sound system, graphics effects with shaders, particle engines, modules/addons system, animated textures,
 styleable user interface, transparency, multi language, in game lua terminal, an OpenGL 1.1/2.0 ES engine that make possible to
-run on mobile platforms like Androi/iPhon/iPad and much more. Otclient is also flexible enough to
+run on mobile platforms like Android/iPhone/iPad and much more. Otclient is also flexible enough to
 create tibia tools like map editors just using scripts, because it wasn't designed to be just a
 client, instead otclient was designed to be a combination of a framework and tibia APIs.
 

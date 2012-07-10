@@ -62,7 +62,7 @@ void ResourceManager::discoverWorkDir(const std::string& appName, const std::str
     }
 
     if(!found)
-        g_logger.fatal("Unable to find application work directory.");
+        g_logger.fatal(stdext::format("Unable to find %s, the application cannot be initialized.", existentFile));
 }
 
 bool ResourceManager::setupWriteDir(const std::string& appWriteDirName)
