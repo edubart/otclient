@@ -1,3 +1,43 @@
+HeadSlot < Item
+  id: slot1
+  image-source: /game_inventory/slots/head.png
+
+BodySlot < Item
+  id: slot4
+  image-source: /game_inventory/slots/body.png
+
+LegSlot < Item
+  id: slot7
+  image-source: /game_inventory/slots/legs.png
+
+FeetSlot < Item
+  id: slot8
+  image-source: /game_inventory/slots/feet.png
+
+NeckSlot < Item
+  id: slot2
+  image-source: /game_inventory/slots/neck.png
+
+LeftSlot < Item
+  id: slot6
+  image-source: /game_inventory/slots/left-hand.png
+
+FingerSlot < Item
+  id: slot9
+  image-source: /game_inventory/slots/finger.png
+
+BackSlot < Item
+  id: slot3
+  image-source: /game_inventory/slots/back.png
+
+RightSlot < Item
+  id: slot5
+  image-source: /game_inventory/slots/right-hand.png
+
+AmmoSlot < Item
+  id: slot10
+  image-source: /game_inventory/slots/ammo.png
+
 MiniWindow
   id: inventoryWindow
   !text: tr('Inventory')
@@ -6,84 +46,74 @@ MiniWindow
   @onClose: Inventory.onMiniWindowClose()
   &save: true
 
-  MiniWindowContents
-    Item
+  MiniWindowContents    
+    HeadSlot
       // head
-      id: slot1
       anchors.top: parent.top
       anchors.horizontalCenter: parent.horizontalCenter
       margin-top: 4
       &position: {x=65535, y=1, z=0}
 
-    Item
-      // armor
-      id: slot4
+    BodySlot
+      // body
       anchors.top: prev.bottom
       anchors.horizontalCenter: prev.horizontalCenter
       margin-top: 5
       &position: {x=65535, y=4, z=0}
 
-    Item
+    LegSlot
       // legs
-      id: slot7
       anchors.top: prev.bottom
       anchors.horizontalCenter: prev.horizontalCenter
       margin-top: 5
       &position: {x=65535, y=7, z=0}
 
-    Item
+    FeetSlot
       // feet
-      id: slot8
       anchors.top: prev.bottom
       anchors.horizontalCenter: prev.horizontalCenter
       margin-top: 5
       &position: {x=65535, y=8, z=0}
 
-    Item
-      // necklace
-      id: slot2
+    NeckSlot
+      // neck
       anchors.top: parent.top
       anchors.right: slot1.left
       margin-top: 10
       margin-right: 5
       &position: {x=65535, y=2, z=0}
 
-    Item
-      // left
-      id: slot6
+    LeftSlot
+      // left hand
       anchors.top: prev.bottom
       anchors.horizontalCenter: prev.horizontalCenter
       margin-top: 5
       &position: {x=65535, y=6, z=0}
 
-    Item
-      // ring
-      id: slot9
+    FingerSlot
+      // finger
       anchors.top: prev.bottom
       anchors.horizontalCenter: prev.horizontalCenter
       margin-top: 5
       &position: {x=65535, y=9, z=0}
 
-    Item
-      // backpack
-      id: slot3
+    BackSlot
+      // back
       anchors.top: parent.top
       anchors.left: slot1.right
       margin-top: 10
       margin-left: 5
       &position: {x=65535, y=3, z=0}
 
-    Item
-      // right
-      id: slot5
+    RightSlot
+      // right hand
       anchors.top: prev.bottom
       anchors.horizontalCenter: prev.horizontalCenter
       margin-top: 5
       &position: {x=65535, y=5, z=0}
 
-    Item
+    AmmoSlot
       // ammo
-      id: slot10
       anchors.top: prev.bottom
       anchors.horizontalCenter: prev.horizontalCenter
       margin-top: 5
@@ -94,6 +124,15 @@ MiniWindow
       height: 30
       anchors.top: slot10.bottom
       anchors.left: slot10.left
+      margin-top: 5
+      text-align: center
+      text-auto-resize: true
+      
+    GameLabel
+      id: soul
+      height: 30
+      anchors.top: slot9.bottom
+      anchors.left: slot9.left
       margin-top: 5
       text-align: center
       text-auto-resize: true

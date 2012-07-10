@@ -1,5 +1,19 @@
 -- @docclass Player
 
+InventorySlotHead = 1
+InventorySlotNeck = 2
+InventorySlotBack = 3
+InventorySlotBody = 4
+InventorySlotRight = 5
+InventorySlotLeft = 6
+InventorySlotLeg = 7
+InventorySlotFeet = 8
+InventorySlotFinger = 9
+InventorySlotAmmo = 10
+
+InventorySlotFirst = 1
+InventorySlotLast = 10
+
 function Player:isPartyLeader()
   local shield = self:getShield()
   return (shield == ShieldWhiteYellow or
