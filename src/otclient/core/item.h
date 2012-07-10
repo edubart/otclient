@@ -24,8 +24,8 @@
 #define ITEM_H
 
 #include <framework/global.h>
+#include "mapview.h"
 #include "thing.h"
-#include "thingtypeotb.h"
 
 enum AttrTypes_t {
     ATTR_END = 0,
@@ -68,19 +68,17 @@ enum AttrTypes_t {
     ATTR_ATTRIBUTE_MAP = 128
 };
 
-// @bindclass
 class Item : public Thing
 {
 public:
     Item();
 
     static ItemPtr create(int id);
-    static ItemPtr createFromOtb(int id);
 
     void draw(const Point& dest, float scaleFactor, bool animate);
 
+    virtual void drawLight(const Point& dest, float scaleFactor, bool animate, MapView* mapview);
     void setId(uint32 id);
-    void setOtbId(uint16 id);
     void setCountOrSubType(int value) { m_countOrSubType = value; }
     void setCount(int count) { m_countOrSubType = count; }
     void setSubType(int subType) { m_countOrSubType = subType; }
@@ -90,12 +88,13 @@ public:
     void setText(const std::string &text) { m_text = text; }
     void setDescription(const std::string &description) { m_description = description; }
 
+    Color getLightColor(){ return Color::from8bit(m_type->getParameter(ThingType::LightColor));}
+    int getLightLevel(){ return (int)m_type->getParameter(ThingType::LightLevel);}
     int getCountOrSubType() { return m_countOrSubType; }
     int getSubType() { return m_countOrSubType; }
     int getCount() { return m_countOrSubType; }
     uint32 getId() { return m_id; }
     std::string getName() { return m_name; }
-    bool isValid();
 
     ItemPtr asItem() { return std::static_pointer_cast<Item>(shared_from_this()); }
     bool isItem() { return true; }
@@ -105,13 +104,14 @@ public:
     bool unserializeItemNode(FileStreamPtr fin, uint8) { return unserializeAttr(fin); }
     void readAttr(AttrTypes_t attrType, FileStreamPtr fin);
 
+    bool isMovable() { return false; }
+
 private:
     uint16 m_id;
     uint8 m_countOrSubType;
     uint32 m_actionId, m_uniqueId;
     std::string m_name, m_text, m_description;
     PainterShaderProgramPtr m_shaderProgram;
-    ThingTypeOtbPtr m_otbType;
 };
 
 #endif
