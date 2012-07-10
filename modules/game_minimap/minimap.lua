@@ -38,7 +38,7 @@ end
 -- public functions
 function Minimap.init()
   connect(g_game, { onGameStart = Minimap.reset,
-                    onForceWalk = Minimap.center } )
+                    onForceWalk = Minimap.center })
                     
   g_keyboard.bindKeyDown('Ctrl+M', Minimap.toggle)
 
@@ -78,7 +78,7 @@ end
 
 function Minimap.terminate()
   disconnect(g_game, { onGameStart = Minimap.reset,
-                       onForceWalk = Minimap.center } )
+                       onForceWalk = Minimap.center })
                        
   g_keyboard.unbindKeyDown('Ctrl+M')
 
@@ -102,19 +102,6 @@ end
 
 function Minimap.onMiniWindowClose()
   minimapButton:setOn(false)
-end
-
-function Minimap.reset()
-  local player = g_game.getLocalPlayer()
-  if not player then return end
-  minimapWidget:followCreature(player)
-  minimapWidget:setZoom(DEFAULT_ZOOM)
-end
-
-function Minimap.center()
-  local player = g_game.getLocalPlayer()
-  if not player then return end
-  minimapWidget:followCreature(player)
 end
 
 function Minimap.isClickInRange(position, fromPosition, toPosition)
@@ -159,4 +146,18 @@ function Minimap.onButtonClick(id)
     pos.z = pos.z + 1
     minimapWidget:setCameraPosition(pos)
   end
+end
+
+-- hooked events
+function Minimap.reset()
+  local player = g_game.getLocalPlayer()
+  if not player then return end
+  minimapWidget:followCreature(player)
+  minimapWidget:setZoom(DEFAULT_ZOOM)
+end
+
+function Minimap.center()
+  local player = g_game.getLocalPlayer()
+  if not player then return end
+  minimapWidget:followCreature(player)
 end
