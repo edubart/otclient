@@ -21,12 +21,18 @@
  */
 
 #include "missile.h"
-#include "thingtypemanager.h"
+#include "thingstype.h"
 #include "map.h"
 #include "tile.h"
 #include <framework/core/clock.h>
 #include <framework/core/eventdispatcher.h>
 
+#include <framework/graphics/paintershaderprogram.h>
+#include <framework/graphics/painterogl2_shadersources.h>
+#include <framework/graphics/texturemanager.h>
+#include <framework/graphics/framebuffermanager.h>
+#include <framework/graphics/graphics.h>
+#include "spritemanager.h"
 void Missile::draw(const Point& dest, float scaleFactor, bool animate)
 {
     if(m_id == 0 || !animate)
@@ -63,9 +69,26 @@ void Missile::draw(const Point& dest, float scaleFactor, bool animate)
     }
 
     float fraction = m_animationTimer.ticksElapsed() / m_duration;
-    m_datType->draw(dest + m_delta * fraction * scaleFactor, scaleFactor, 0, xPattern, yPattern, 0, 0);
+    m_type->draw(dest + m_delta * fraction * scaleFactor, scaleFactor, 0, xPattern, yPattern, 0, 0);
 }
+void Missile::drawLight(const Point& dest, float scaleFactor, bool animate, MapView* mapview)
+{
 
+    uint32_t lightSize = 25*getLightLevel();
+    float fraction = m_animationTimer.ticksElapsed() / m_duration;
+
+    glBlendFunc(GL_ONE, GL_ONE);
+    mapview->m_framebuffer->release();
+    mapview->m_lightbuffer->bind();
+
+    Color lightColor = getLightColor();
+
+        g_painter->setColor(lightColor);
+        g_painter->drawTexturedRect(Rect(dest - Point(lightSize/2,lightSize/2) + m_delta * fraction * scaleFactor, Size(lightSize,lightSize)), mapview->m_lightTexture);
+    mapview->m_lightbuffer->release();
+    mapview->m_framebuffer->bind();
+    g_painter->refreshState();
+}
 void Missile::setPath(const Position& fromPosition, const Position& toPosition)
 {
     m_direction = fromPosition.getDirectionFromPosition(toPosition);
@@ -78,11 +101,11 @@ void Missile::setPath(const Position& fromPosition, const Position& toPosition)
 
     // schedule removal
     auto self = asMissile();
-    g_dispatcher.scheduleEvent([self]() { g_map.removeThing(self); }, m_duration);
+    g_eventDispatcher.scheduleEvent([self]() { g_map.removeThing(self); }, m_duration);
 }
 
 void Missile::setId(uint32 id)
 {
     m_id = id;
-    m_datType = g_things.getDatType(m_id, DatMissileCategory);
+    m_type = g_thingsType.getThingType(m_id, ThingsType::Missile);
 }
