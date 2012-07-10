@@ -21,41 +21,55 @@
  */
 
 #include "item.h"
-#include "thingtypemanager.h"
+#include "thingstype.h"
 #include "spritemanager.h"
 #include "thing.h"
 #include "tile.h"
 #include "shadermanager.h"
 
+#include "mapview.h"
+
 #include <framework/core/clock.h>
 #include <framework/core/eventdispatcher.h>
 #include <framework/graphics/graphics.h>
+#include <framework/graphics/framebuffer.h>
 #include <framework/core/filestream.h>
 
-Item::Item() :
-    m_id(0),
-    m_countOrSubType(1),
-    m_actionId(0),
-    m_uniqueId(0),
-    m_shaderProgram(g_shaders.getDefaultItemShader()),
-    m_otbType(g_things.getNullOtbType())
+Item::Item() : Thing()
 {
+    m_id = 0;
+    m_countOrSubType = 1;
+    m_shaderProgram = g_shaders.getDefaultItemShader();
 }
 
 ItemPtr Item::create(int id)
 {
     ItemPtr item = ItemPtr(new Item);
-    item->setId(id);
+    if(id < g_thingsType.getFirstItemId() || id > g_thingsType.getMaxItemid())
+        g_logger.traceError(stdext::format("invalid item id %d", id));
+    else {
+        item->setId(id);
+    }
     return item;
 }
-
-ItemPtr Item::createFromOtb(int id)
+void Item::drawLight(const Point& dest, float scaleFactor, bool animate, MapView* mapview)
 {
-    ItemPtr item = ItemPtr(new Item);
-    item->setOtbId(id);
-    return item;
-}
 
+    uint32_t lightSize = 50*getLightLevel();
+
+
+    glBlendFunc(GL_ONE, GL_ONE);
+    mapview->m_framebuffer->release();
+    mapview->m_lightbuffer->bind();
+
+    Color lightColor = getLightColor();
+
+        g_painter->setColor(lightColor);
+        g_painter->drawTexturedRect(Rect(dest - Point(lightSize/2,lightSize/2), Size(lightSize,lightSize)), mapview->m_lightTexture);
+    mapview->m_lightbuffer->release();
+    mapview->m_framebuffer->bind();
+    g_painter->refreshState();
+}
 void Item::draw(const Point& dest, float scaleFactor, bool animate)
 {
     if(m_id == 0)
@@ -72,7 +86,7 @@ void Item::draw(const Point& dest, float scaleFactor, bool animate)
 
     // determine x,y,z patterns
     int xPattern = 0, yPattern = 0, zPattern = 0;
-    if(isStackable() && getNumPatternX() == 4 && getNumPatternY() == 2) {
+    if(isStackable() && getNumPatternsX() == 4 && getNumPatternsY() == 2) {
         if(m_countOrSubType <= 0) {
             xPattern = 0;
             yPattern = 0;
@@ -96,9 +110,9 @@ void Item::draw(const Point& dest, float scaleFactor, bool animate)
         const TilePtr& tile = getTile();
         if(tile) {
             if(tile->mustHookSouth())
-                xPattern = getNumPatternX() >= 2 ? 1 : 0;
+                xPattern = getNumPatternsX() >= 2 ? 1 : 0;
             else if(tile->mustHookEast())
-                xPattern = getNumPatternX() >= 3 ? 2 : 0;
+                xPattern = getNumPatternsX() >= 3 ? 2 : 0;
         }
     } else if(isFluid() || isFluidContainer()) {
         int color = Otc::FluidTransparent;
@@ -162,12 +176,12 @@ void Item::draw(const Point& dest, float scaleFactor, bool animate)
                 break;
         }
 
-        xPattern = (color % 4) % getNumPatternX();
-        yPattern = (color / 4) % getNumPatternY();
+        xPattern = (color % 4) % getNumPatternsX();
+        yPattern = (color / 4) % getNumPatternsY();
     } else if(isGround() || isOnBottom()) {
-        xPattern = m_position.x % getNumPatternX();
-        yPattern = m_position.y % getNumPatternY();
-        zPattern = m_position.z % getNumPatternZ();
+        xPattern = m_position.x % getNumPatternsX();
+        yPattern = m_position.y % getNumPatternsY();
+        zPattern = m_position.z % getNumPatternsZ();
     }
 
     bool useShader = g_painter->hasShaders() && m_shaderProgram;
@@ -178,7 +192,8 @@ void Item::draw(const Point& dest, float scaleFactor, bool animate)
         g_painter->setShaderProgram(m_shaderProgram);
     }
 
-    m_datType->draw(dest, scaleFactor, 0, xPattern, yPattern, zPattern, animationPhase);
+    m_type->draw(dest, scaleFactor, 0, xPattern, yPattern, zPattern, animationPhase);
+
 
     if(useShader)
         g_painter->resetShaderProgram();
@@ -186,22 +201,15 @@ void Item::draw(const Point& dest, float scaleFactor, bool animate)
 
 void Item::setId(uint32 id)
 {
-    m_datType = g_things.getDatType(id, DatItemCategory);
-    m_otbType = g_things.findOtbForClientId(id);
-    m_id = m_datType->getId();
+    if(id < g_thingsType.getFirstItemId() || id > g_thingsType.getMaxItemid()) {
+        g_logger.traceError(stdext::format("invalid item id %d", id));
+        return;
+    }
+    m_id = id;
+    m_type = g_thingsType.getThingType(m_id, ThingsType::Item);
 }
 
-void Item::setOtbId(uint16 id)
-{
-    m_otbType = g_things.getOtbType(id);
-    m_datType = g_things.getDatType(m_otbType->getClientId(), DatItemCategory);
-    m_id = m_datType->getId();
-}
 
-bool Item::isValid()
-{
-    return g_things.isValidDatId(m_id, DatItemCategory);
-}
 
 bool Item::unserializeAttr(FileStreamPtr fin)
 {
