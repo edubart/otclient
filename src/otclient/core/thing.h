@@ -25,6 +25,7 @@
 
 #include "declarations.h"
 #include "thingtypedat.h"
+#include "mapview.h"
 #include <framework/luascript/luaobject.h>
 
 struct Light
@@ -42,7 +43,8 @@ public:
 
     virtual void startAnimation() { }
     virtual void draw(const Point& dest, float scaleFactor, bool animate) { }
-
+    virtual void drawLight(const Point& dest, float scaleFactor, bool animate, MapView* mapview){ };
+    
     virtual void setId(uint32 id) { }
     void setPosition(const Position& position) { m_position = position; }
 
