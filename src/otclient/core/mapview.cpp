@@ -31,6 +31,7 @@
 #include "shadermanager.h"
 
 #include <framework/graphics/graphics.h>
+#include <framework/graphics/texturemanager.h>
 #include <framework/graphics/framebuffermanager.h>
 #include <framework/core/eventdispatcher.h>
 #include <framework/application.h>
@@ -44,9 +45,13 @@ MapView::MapView()
     m_optimizedSize = Size(Otc::AWARE_X_TILES, Otc::AWARE_Y_TILES) * Otc::TILE_PIXELS;
 
     m_framebuffer = g_framebuffers.createFrameBuffer();
+    m_lightbuffer = g_framebuffers.createFrameBuffer();
     setVisibleDimension(Size(15, 11));
 
     m_shader = g_shaders.getDefaultMapShader();
+
+    m_lightTexture =  g_textures.getTexture("test.png");
+    m_backgroundTexture =  g_textures.getTexture("background.png");
 }
 
 MapView::~MapView()
@@ -56,12 +61,30 @@ MapView::~MapView()
 
 void MapView::draw(const Rect& rect)
 {
+    float scaleFactor = m_tileSize/(float)Otc::TILE_PIXELS;
+    Position cameraPosition = getCameraPosition();
+
+    Point drawOffset = ((m_drawDimension - m_visibleDimension - Size(1,1)).toPoint()/2) * m_tileSize;
+    if(m_followingCreature)
+        drawOffset += m_followingCreature->getWalkOffset() * scaleFactor;
+
+    Size srcSize = rect.size();
+    Size srcVisible = m_visibleDimension * m_tileSize;
+    srcSize.scale(srcVisible, Fw::KeepAspectRatio);
+    drawOffset.x += (srcVisible.width() - srcSize.width()) / 2;
+    drawOffset.y += (srcVisible.height() - srcSize.height()) / 2;
+    Rect srcRect = Rect(drawOffset, srcSize);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ZERO);
+    m_lightbuffer->bind();
+        g_painter->drawTexturedRect(srcRect,m_backgroundTexture);
+    m_lightbuffer->release();
+    g_painter->refreshState();
     // update visible tiles cache when needed
     if(m_mustUpdateVisibleTilesCache)
         updateVisibleTilesCache();
 
-    float scaleFactor = m_tileSize/(float)Otc::TILE_PIXELS;
-    Position cameraPosition = getCameraPosition();
 
     int drawFlags = 0;
     if(m_viewMode == NEAR_VIEW)
@@ -98,14 +121,11 @@ void MapView::draw(const Rect& rect)
                 else
                     ++it;
 
-                if(!m_drawMinimapColors)
-                    tile->draw(transformPositionTo2D(tilePos, cameraPosition), scaleFactor, drawFlags);
+                if(!m_drawMinimapColors){
+                    tile->draw(transformPositionTo2D(tilePos, cameraPosition), scaleFactor, drawFlags, this);
+                }
                 else {
-                    uint8 c = tile->getMinimapColorByte();
-                    if(c == 0)
-                        continue;
-
-                    g_painter->setColor(Color::from8bit(c));
+                    g_painter->setColor(tile->getMinimapColor());
                     g_painter->drawFilledRect(Rect(transformPositionTo2D(tilePos, cameraPosition), tileSize));
                 }
             }
@@ -113,6 +133,7 @@ void MapView::draw(const Rect& rect)
             if(drawFlags & Otc::DrawMissiles && !m_drawMinimapColors) {
                 for(const MissilePtr& missile : g_map.getFloorMissiles(z)) {
                     missile->draw(transformPositionTo2D(missile->getPosition(), cameraPosition), scaleFactor, drawFlags & Otc::DrawAnimations);
+                    missile->drawLight(transformPositionTo2D(missile->getPosition(), cameraPosition), scaleFactor, drawFlags & Otc::DrawAnimations, this);
                 }
             }
         }
@@ -126,19 +147,43 @@ void MapView::draw(const Rect& rect)
     }
 
 
-    Point drawOffset = ((m_drawDimension - m_visibleDimension - Size(1,1)).toPoint()/2) * m_tileSize;
-    if(m_followingCreature)
-        drawOffset += m_followingCreature->getWalkOffset() * scaleFactor;
 
-    Size srcSize = rect.size();
-    Size srcVisible = m_visibleDimension * m_tileSize;
-    srcSize.scale(srcVisible, Fw::KeepAspectRatio);
-    drawOffset.x += (srcVisible.width() - srcSize.width()) / 2;
-    drawOffset.y += (srcVisible.height() - srcSize.height()) / 2;
-    Rect srcRect = Rect(drawOffset, srcSize);
 
-    g_painter->setColor(Color::white);
-    glDisable(GL_BLEND);
+
+
+
+   /* Rect test = Rect(Point(0,0), srcSize);
+
+        Color lightColor = Color(67,190,130,10);
+        m_lightbuffer->bind();
+        g_painter->setOpacity(0.9f);
+
+        //glBlendFunc(GL_ONE_MINUS_DST_ALPHA, GL_DST_ALPHA);
+        //g_painter->setColor(Color::black);
+      g_painter->drawTexturedRect(srcRect,m_backgroundTexture);
+        g_painter->setColor(lightColor);
+       //glBlendFunc(GL_DST_COLOR, GL_ONE_MINUS_SRC_ALPHA);
+
+        glBlendFunc(GL_ONE, GL_ONE);
+        g_painter->drawTexturedRect(test,m_lightTexture);
+    Rect test2 = Rect(Point(100,50), srcSize);
+
+        g_painter->setColor(lightColor2);
+        g_painter->drawTexturedRect(test2,m_lightTexture);
+        m_lightbuffer->release();*/
+
+    //g_painter->setColor(Color::white);
+
+
+    m_framebuffer->bind();
+    float oldOpacity = g_painter->getOpacity();
+    g_painter->setOpacity(0.5);
+    glBlendFunc (GL_SRC_ALPHA,GL_SRC_COLOR);
+    m_lightbuffer->draw();
+    m_framebuffer->release();
+    g_painter->setOpacity(oldOpacity);
+glDisable(GL_BLEND);
+
     g_painter->setShaderProgram(m_shader);
 #if 0
     // debug source area
@@ -152,10 +197,15 @@ void MapView::draw(const Rect& rect)
 #else
     m_framebuffer->draw(rect, srcRect);
 #endif
+
+
+
     g_painter->resetShaderProgram();
-    glEnable(GL_BLEND);
 
 
+
+g_painter->refreshState();
+glEnable(GL_BLEND);
     // this could happen if the player position is not known yet
     if(!cameraPosition.isValid())
         return;
@@ -394,7 +444,7 @@ void MapView::updateVisibleTilesCache(int start)
 
     if(stop) {
         // schedule next update continuation to avoid freezes
-        m_updateTilesCacheEvent = g_dispatcher.scheduleEvent(std::bind(&MapView::updateVisibleTilesCache, asMapView(), count), 1);
+        m_updateTilesCacheEvent = g_eventDispatcher.scheduleEvent(std::bind(&MapView::updateVisibleTilesCache, asMapView(), count), 1);
     }
 
     if(start == 0 && m_drawTexts && m_viewMode <= NEAR_VIEW)
@@ -403,28 +453,22 @@ void MapView::updateVisibleTilesCache(int start)
 
 void MapView::updateGeometry(const Size& visibleDimension, const Size& optimizedSize)
 {
+    int possiblesTileSizes[] = {1,2,4,8,16,32};
     int tileSize = 0;
     Size bufferSize;
+    for(int candidateTileSize : possiblesTileSizes) {
+        bufferSize = (visibleDimension + Size(3,3)) * candidateTileSize;
+        if(bufferSize.width() > g_graphics.getMaxTextureSize() || bufferSize.height() > g_graphics.getMaxTextureSize())
+            break;
 
-    if(!m_drawMinimapColors) {
-        int possiblesTileSizes[] = {1,2,4,8,16,32};
-        for(int candidateTileSize : possiblesTileSizes) {
-            bufferSize = (visibleDimension + Size(3,3)) * candidateTileSize;
-            if(bufferSize.width() > g_graphics.getMaxTextureSize() || bufferSize.height() > g_graphics.getMaxTextureSize())
-                break;
+        tileSize = candidateTileSize;
+        if(optimizedSize.width() < bufferSize.width() - 3*candidateTileSize && optimizedSize.height() < bufferSize.height() - 3*candidateTileSize)
+            break;
+    }
 
-            tileSize = candidateTileSize;
-            if(optimizedSize.width() < bufferSize.width() - 3*candidateTileSize && optimizedSize.height() < bufferSize.height() - 3*candidateTileSize)
-                break;
-        }
-
-        if(tileSize == 0) {
-            g_logger.traceError("reached max zoom out");
-            return;
-        }
-    } else {
-        tileSize = 1;
-        bufferSize = visibleDimension + Size(3,3);
+    if(tileSize == 0) {
+        g_logger.traceError("reached max zoom out");
+        return;
     }
 
     Size drawDimension = visibleDimension + Size(3,3);
@@ -460,19 +504,14 @@ void MapView::updateGeometry(const Size& visibleDimension, const Size& optimized
     m_visibleCenterOffset = visibleCenterOffset;
     m_optimizedSize = optimizedSize;
     m_framebuffer->resize(bufferSize);
-
+    m_lightbuffer->resize(bufferSize);
     requestVisibleTilesCacheUpdate();
 }
 
 void MapView::onTileUpdate(const Position& pos)
 {
-    if(!m_drawMinimapColors)
+    //if(m_viewMode <= FAR_VIEW)
         requestVisibleTilesCacheUpdate();
-}
-
-void MapView::onMapCenterChange(const Position& pos)
-{
-    requestVisibleTilesCacheUpdate();
 }
 
 void MapView::lockFirstVisibleFloor(int firstVisibleFloor)
@@ -669,16 +708,5 @@ TilePtr MapView::getTile(const Point& mousePos, const Rect& mapRect)
         return nullptr;
 
     return tile;
-}
-
-void MapView::setDrawMinimapColors(bool enable)
-{
-    if(m_drawMinimapColors == enable)
-        return;
-    m_drawMinimapColors = enable;
-    updateGeometry(m_visibleDimension, m_optimizedSize);
-    requestVisibleTilesCacheUpdate();
-    m_smooth = !enable;
-    m_framebuffer->setSmooth(m_smooth);
 }
 
