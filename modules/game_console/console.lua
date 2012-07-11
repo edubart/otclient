@@ -54,7 +54,6 @@ local channels
 local channelsWindow
 local ownPrivateName
 local messageHistory = {}
-local lastChannels = {}
 local currentMessageIndex = 0
 local ignoreNpcMessages = false
 
@@ -137,6 +136,9 @@ local function onCloseChannel(channelId)
     if tab then
       consoleTabBar:removeTab(tab)
     end
+    for k, v in pairs(channels) do
+      if (k == tab.channelId) then channels[k] = nil end
+    end
   end
 end
 
@@ -187,10 +189,9 @@ local function onGameStart()
   if tab then
     addEvent(function() consoleTabBar:selectTab(tab) end, false)
   end
-  for _, channelid in pairs(lastChannels) do
-    g_game.joinChannel(channelid)
+  for _, channelId in ipairs(g_settings.getList('last-channels')) do
+    g_game.joinChannel(channelId)
   end
-  lastChannels = {}
 end
 
 -- public functions
@@ -270,13 +271,14 @@ function Console.terminate()
 end
 
 function Console.clear()
-  lastChannels = {}
+  local lastChannels = {}
   for channelid, channelname in pairs(channels) do
-    table.insert(lastChannels, tonumber(channelid))
+    table.insert(lastChannels, channelid)
     local tab = consoleTabBar:getTab(channelname)
     consoleTabBar:removeTab(tab)
   end
-
+  
+  g_settings.setList('last-channels', lastChannels)
   channels = {}
 
   consoleTabBar:getTab(tr('Default')).tabPanel:getChildById('consoleBuffer'):destroyChildren()
@@ -332,6 +334,9 @@ function Console.removeCurrentTab()
 
   -- notificate the server that we are leaving the channel
   if tab.channelId then
+    for k, v in pairs(channels) do
+      if (k == tab.channelId) then channels[k] = nil end
+    end
     g_game.leaveChannel(tab.channelId)
   elseif tab:getText() == "NPCs" then
     g_game.closeNpcChannel()
