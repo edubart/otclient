@@ -475,7 +475,7 @@ bool UITextEdit::onKeyPress(uchar keyCode, int keyboardModifiers, int autoRepeat
             appendCharacter('\n');
             return true;
         } else if(keyCode == Fw::KeyUp && !m_shiftNavigation && m_multiline) {
-            
+
         } else if(keyCode == Fw::KeyDown && !m_shiftNavigation && m_multiline) {
 
         }
@@ -485,7 +485,11 @@ bool UITextEdit::onKeyPress(uchar keyCode, int keyboardModifiers, int autoRepeat
             return true;
         }
     } else if(keyboardModifiers == Fw::KeyboardShiftModifier) {
-        if(keyCode == Fw::KeyRight && m_shiftNavigation) { // move cursor right
+        if(keyCode == Fw::KeyTab && !m_shiftNavigation) {
+            if(UIWidgetPtr parent = getParent())
+                parent->focusPreviousChild(Fw::KeyboardFocusReason);
+            return true;
+        } else if(keyCode == Fw::KeyRight && m_shiftNavigation) { // move cursor right
             moveCursor(true);
             return true;
         } else if(keyCode == Fw::KeyLeft && m_shiftNavigation) { // move cursor left
