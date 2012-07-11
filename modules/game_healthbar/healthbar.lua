@@ -27,11 +27,15 @@ local manaBar
 local healthLabel
 local manaLabel
 
+local soulLabel
+local soulPoints
+
 -- public functions
 function HealthBar.init()
   connect(LocalPlayer, { onHealthChange = HealthBar.onHealthChange,
                          onManaChange = HealthBar.onManaChange,
-                         onStatesChange = HealthBar.onStatesChange })
+                         onStatesChange = HealthBar.onStatesChange,
+                         onSoulChange = HealthBar.onSoulChange })
 
   connect(g_game, { onGameEnd = HealthBar.offline })
 
@@ -43,18 +47,22 @@ function HealthBar.init()
   healthLabel = healthBarWindow:recursiveGetChildById('healthLabel')
   manaLabel = healthBarWindow:recursiveGetChildById('manaLabel')
 
+  soulLabel = healthBarWindow:recursiveGetChildById('soulLabel')
+
   if g_game.isOnline() then
     local localPlayer = g_game.getLocalPlayer()
     HealthBar.onHealthChange(localPlayer, localPlayer:getHealth(), localPlayer:getMaxHealth())
     HealthBar.onManaChange(localPlayer, localPlayer:getMana(), localPlayer:getMaxMana())
     HealthBar.onStatesChange(localPlayer, localPlayer:getStates(), 0)
+    HealthBar.onSoulChange(localPlayer, localPlayer:getSoul())
   end
 end
 
 function HealthBar.terminate()
   disconnect(LocalPlayer, { onHealthChange = HealthBar.onHealthChange,
                             onManaChange = HealthBar.onManaChange,
-                            onStatesChange = HealthBar.onStatesChange })
+                            onStatesChange = HealthBar.onStatesChange,
+                            onSoulChange = HealthBar.onSoulChange })
 
   disconnect(g_game, { onGameEnd = HealthBar.offline })
 
@@ -66,6 +74,8 @@ function HealthBar.terminate()
   manaBar = nil
   healthLabel = nil
   manaLabel = nil
+  
+  soulLabel = nil
 
   HealthBar = nil
 end
@@ -118,6 +128,10 @@ function HealthBar.onStatesChange(localPlayer, now, old)
       HealthBar.toggleIcon(bitChanged)
     end
   end
+end
+
+function HealthBar.onSoulChange(localPlayer, soul)
+  soulLabel:setText('Soul: '.. soul)
 end
 
 function HealthBar.toggleIcon(bitChanged)
