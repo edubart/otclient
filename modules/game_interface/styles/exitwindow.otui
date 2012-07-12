@@ -1,0 +1,54 @@
+ExitWindow < MainWindow
+  id: exitWindow
+  !text: tr('Exit')
+  size: 550 135
+  @onEscape: self:destroy()
+
+  Label
+    !text: tr('If you shut down the program, you character might stay in the game.')
+    width: 550
+    anchors.left: parent.left
+    anchors.top: parent.top
+    margin-left: 10
+    margin-top: 2
+    
+  Label
+    !text: tr('Click on "Logout" to ensure that you character leaves the game property.')
+    width: 550
+    anchors.left: parent.left
+    anchors.top: prev.bottom
+    margin-left: 10
+    margin-top: 2
+    
+  Label
+    !text: tr('Click on "Exit" if you want to exit the program without logging out your character.')
+    width: 550
+    anchors.left: parent.left
+    anchors.top: prev.bottom
+    margin-left: 10
+    margin-top: 2
+
+  Button
+    id: buttonExit
+    !text: tr('Exit')
+    width: 64
+    anchors.left: parent.left
+    anchors.bottom: parent.bottom
+    margin-left: 155
+
+  Button
+    id: buttonLogout
+    !text: tr('Logout')
+    width: 64
+    anchors.left: prev.right
+    anchors.bottom: parent.bottom
+    margin-left: 5
+
+  Button
+    id: buttonCancel
+    !text: tr('Cancel')
+    width: 64
+    anchors.left: prev.right
+    anchors.bottom: parent.bottom
+    margin-left: 5
+    @onClick: self:getParent():destroy()

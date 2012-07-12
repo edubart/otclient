@@ -108,7 +108,7 @@ function Containers.clean()
     if container.window then
       container.window:destroy()
       container.window = nil
-      container.itemsPnale = nil
+      container.itemsPanel = nil
     end
   end
 end

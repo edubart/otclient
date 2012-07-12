@@ -189,6 +189,9 @@ void Creature::drawOutfit(const Rect& destRect, bool resize)
 
 void Creature::drawInformation(const Point& point, bool useGray, const Rect& parentRect)
 {
+    if(m_healthPercent < 1) // creature is dead
+        return;
+
     Color fillColor = Color(96, 96, 96);
 
     if(!useGray)

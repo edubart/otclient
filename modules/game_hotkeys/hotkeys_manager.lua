@@ -38,7 +38,7 @@ function HotkeysManager.init()
   local hotkeyListPanel = hotkeysWindow:getChildById('currentHotkeys')
 
   hotkeysWindow:setVisible(false)
-  hotkeysButton = TopMenu.addGameButton('hotkeysButton', tr('Hotkeys') .. ' (Ctrl+K)', '/game_hotkeys/icon.png', HotkeysManager.toggle)
+  hotkeysButton = TopMenu.addLeftGameButton('hotkeysButton', tr('Hotkeys') .. ' (Ctrl+K)', '/game_hotkeys/icon.png', HotkeysManager.toggle)
   g_keyboard.bindKeyDown('Ctrl+K', HotkeysManager.toggle)
   g_keyboard.bindKeyPress('Down', function() hotkeyListPanel:focusNextChild(KeyboardFocusReason) end, hotkeysWindow)
   g_keyboard.bindKeyPress('Up', function() hotkeyListPanel:focusPreviousChild(KeyboardFocusReason) end, hotkeysWindow)

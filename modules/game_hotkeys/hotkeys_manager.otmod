@@ -1,7 +1,7 @@
 Module
   name: game_hotkeys
   description: Manage client hotkeys
-  author: andrefaramir
+  author: andrefaramir, BeniS
   website: www.otclient.info
 
   dependencies:

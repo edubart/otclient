@@ -1,7 +1,7 @@
 Module
   name: client_options
   description: Create the options window
-  author: edubart
+  author: edubart, BeniS
   website: www.otclient.info
 
   dependencies:

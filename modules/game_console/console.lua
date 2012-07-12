@@ -185,12 +185,76 @@ local function onChannelList(channelList)
 end
 
 local function onGameStart()
+  -- open last channels
+  local player = g_game.getLocalPlayer()
+  if(player) then
+    local char = player:getName()
+    
+    local lastChannelsOpen = g_settings.getNode('LastChannelsOpen')
+    
+    if(not table.empty(lastChannelsOpen) and lastChannelsOpen[char]) then
+      for channelName, channelId in ipairs(lastChannelsOpen[char]) do
+        if(not table.find(channels, channelId)) then g_game.joinChannel(channelId) end
+      end
+    end
+  end
+  
   local tab = Console.getTab(tr('Default'))
   if tab then
-    addEvent(function() consoleTabBar:selectTab(tab) end, false)
+    --[[
+      Known Issue: The server is calling to open channels after
+      onGameStart is executed causing it to focus the last tab opened.
+      
+      Fix: Don't save channels to the settings that are opened by the server.
+    ]]
+    addEvent(function() consoleTabBar:selectTab(tab) end, true)
   end
-  for _, channelId in ipairs(g_settings.getList('last-channels')) do
-    g_game.joinChannel(channelId)
+end
+
+function Console.onTabChange(tabBar, tab)
+  if tab:getText() == tr('Default') or tab:getText() == tr('Server Log') then
+    consolePanel:getChildById('closeChannelButton'):disable()
+  else
+    consolePanel:getChildById('closeChannelButton'):enable()
+  end
+end
+
+function Console.clear()
+  local lastChannelsOpen = {}
+  
+  local player = g_game.getLocalPlayer()
+  if(player) then
+    local char = player:getName()
+    lastChannelsOpen[char] = {}
+    
+    for channelId, channelName in pairs(channels) do
+      table.insert(lastChannelsOpen[char], channelId)
+    end
+  end
+  
+  -- save last open channels
+  g_settings.setNode('LastChannelsOpen', lastChannelsOpen)
+  
+  for _, channelName in pairs(channels) do
+    local tab = consoleTabBar:getTab(channelName)
+    consoleTabBar:removeTab(tab)
+  end
+  
+  channels = {}
+  
+  consoleTabBar:getTab(tr('Default')).tabPanel:getChildById('consoleBuffer'):destroyChildren()
+  consoleTabBar:getTab(tr('Server Log')).tabPanel:getChildById('consoleBuffer'):destroyChildren()
+
+  local npcTab = consoleTabBar:getTab('NPCs')
+  if npcTab then
+    consoleTabBar:removeTab(npcTab)
+  end
+
+  consoleTextEdit:clearText()
+
+  if channelsWindow then
+    channelsWindow:destroy()
+    channelsWindow = nil
   end
 end
 
@@ -270,33 +334,6 @@ function Console.terminate()
   Console = nil
 end
 
-function Console.clear()
-  local lastChannels = {}
-  for channelid, channelname in pairs(channels) do
-    table.insert(lastChannels, channelid)
-    local tab = consoleTabBar:getTab(channelname)
-    consoleTabBar:removeTab(tab)
-  end
-  
-  g_settings.setList('last-channels', lastChannels)
-  channels = {}
-
-  consoleTabBar:getTab(tr('Default')).tabPanel:getChildById('consoleBuffer'):destroyChildren()
-  consoleTabBar:getTab(tr('Server Log')).tabPanel:getChildById('consoleBuffer'):destroyChildren()
-
-  local npcTab = consoleTabBar:getTab('NPCs')
-  if npcTab then
-    consoleTabBar:removeTab(npcTab)
-  end
-
-  consoleTextEdit:clearText()
-
-  if channelsWindow then
-    channelsWindow:destroy()
-    channelsWindow = nil
-  end
-end
-
 function Console.setTextEditText(text)
   consoleTextEdit:setText(text)
 end
@@ -318,14 +355,6 @@ function Console.addTab(name, focus)
     consoleTabBar:blinkTab(tab)
   end
   return tab
-end
-
-function Console.onTabChange(tabBar, tab)
-  if tab:getText() == tr('Default') or tab:getText() == tr('Server Log') then
-    consolePanel:getChildById('closeChannelButton'):disable()
-  else
-    consolePanel:getChildById('closeChannelButton'):enable()
-  end
 end
 
 function Console.removeCurrentTab()

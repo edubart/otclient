@@ -58,7 +58,7 @@ function QuestLog.init()
   g_ui.importStyle('questlogwindow.otui')
   g_ui.importStyle('questlinewindow.otui')
 
-  questLogButton = TopMenu.addGameButton('questLogButton', tr('Quest Log'), 'questlog.png', function() g_game.requestQuestLog() end)
+  questLogButton = TopMenu.addLeftGameButton('questLogButton', tr('Quest Log'), 'questlog.png', function() g_game.requestQuestLog() end)
 
   connect(g_game, { onQuestLog = onGameQuestLog })
   connect(g_game, { onQuestLine= onGameQuestLine })

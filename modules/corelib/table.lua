@@ -57,3 +57,10 @@ function table.compare(t, other)
   end
   return true
 end
+
+function table.empty(t)
+  if(t) then
+    return next(t) == nil
+  end
+  return true
+end

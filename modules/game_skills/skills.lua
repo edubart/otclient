@@ -36,7 +36,7 @@ function Skills.init()
   })
 
   skillsWindow = g_ui.loadUI('skills.otui', GameInterface.getRightPanel())
-  skillsButton = TopMenu.addGameToggleButton('skillsButton', tr('Skills') .. ' (Ctrl+S)', 'skills.png', Skills.toggle)
+  skillsButton = TopMenu.addRightGameToggleButton('skillsButton', tr('Skills') .. ' (Ctrl+S)', 'skills.png', Skills.toggle)
   skillsButton:setOn(true)
   g_keyboard.bindKeyDown('Ctrl+S', Skills.toggle)
 

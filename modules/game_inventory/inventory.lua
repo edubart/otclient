@@ -29,7 +29,7 @@ function Inventory.init()
 
   inventoryWindow = g_ui.loadUI('inventory.otui', GameInterface.getRightPanel())
   inventoryPanel = inventoryWindow:getChildById('contentsPanel')
-  inventoryButton = TopMenu.addGameToggleButton('inventoryButton', tr('Inventory') .. ' (Ctrl+I)', 'inventory.png', Inventory.toggle)
+  inventoryButton = TopMenu.addRightGameToggleButton('inventoryButton', tr('Inventory') .. ' (Ctrl+I)', 'inventory.png', Inventory.toggle)
   inventoryButton:setOn(true)
 
   Inventory.refresh()

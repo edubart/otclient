@@ -57,18 +57,12 @@ TopPanel
     anchors.left: parent.left
 
   TopMenuButtonsPanel
-    id: gameButtonsPanel
+    id: leftGameButtonsPanel
     anchors.top: parent.top
     anchors.bottom: parent.bottom
     anchors.left: prev.right
     visible: false
-
-  TopMenuButtonsPanel
-    id: rightButtonsPanel
-    anchors.top: parent.top
-    anchors.bottom: parent.bottom
-    anchors.right: parent.right
-
+    
   UILabel
     id: frameCounter
     text-align: right
@@ -76,7 +70,7 @@ TopPanel
     color: white
     id: frameCounter
     anchors.top: parent.top
-    anchors.right: prev.left
+    anchors.left: prev.right
     margin-top: 8
     margin-right: 5
     @onSetup: |
@@ -88,3 +82,16 @@ TopPanel
           --print(text)
         end
       end, 250)
+
+  TopMenuButtonsPanel
+    id: rightButtonsPanel
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+
+  TopMenuButtonsPanel
+    id: rightGameButtonsPanel
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
+    anchors.right: prev.left
+    visible: false
