@@ -27,7 +27,6 @@
 
 EventDispatcher g_dispatcher;
 
-
 void EventDispatcher::flush()
 {
     while(!m_eventList.empty())

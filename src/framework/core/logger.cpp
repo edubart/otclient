@@ -61,7 +61,9 @@ void Logger::log(Fw::LogLevel level, const std::string& message)
     }
 
     if(level == Fw::LogFatal) {
+#ifdef OTCLIENT
         g_window.displayFatalError(message);
+#endif
         ignoreLogs = true;
         exit(-1);
     }

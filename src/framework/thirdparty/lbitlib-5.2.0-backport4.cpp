@@ -368,8 +368,6 @@ static const luaL_Reg bitlib[] = {
   {NULL, NULL}
 };
 
-
-
 int luaopen_bit32 (lua_State *L) {
   luaL_newlib(L, bitlib);
   return 1;
