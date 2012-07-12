@@ -177,8 +177,8 @@ SET(framework_SOURCES ${framework_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/core/configmanager.cpp
     ${CMAKE_CURRENT_LIST_DIR}/core/configmanager.h
     ${CMAKE_CURRENT_LIST_DIR}/core/declarations.h
-    ${CMAKE_CURRENT_LIST_DIR}/core/event.h
     ${CMAKE_CURRENT_LIST_DIR}/core/event.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/core/event.h
     ${CMAKE_CURRENT_LIST_DIR}/core/eventdispatcher.cpp
     ${CMAKE_CURRENT_LIST_DIR}/core/eventdispatcher.h
     ${CMAKE_CURRENT_LIST_DIR}/core/filestream.cpp
@@ -192,8 +192,8 @@ SET(framework_SOURCES ${framework_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/core/modulemanager.h
     ${CMAKE_CURRENT_LIST_DIR}/core/resourcemanager.cpp
     ${CMAKE_CURRENT_LIST_DIR}/core/resourcemanager.h
-    ${CMAKE_CURRENT_LIST_DIR}/core/scheduledevent.h
     ${CMAKE_CURRENT_LIST_DIR}/core/scheduledevent.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/core/scheduledevent.h
     ${CMAKE_CURRENT_LIST_DIR}/core/timer.cpp
     ${CMAKE_CURRENT_LIST_DIR}/core/timer.h
 

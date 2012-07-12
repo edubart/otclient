@@ -1,6 +1,8 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 PROJECT(otclient)
 
+ADD_DEFINITIONS(-DFW_WINDOW)
+
 INCLUDE(src/framework/CMakeLists.txt)
 INCLUDE(src/otclient/CMakeLists.txt)
 
