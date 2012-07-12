@@ -78,18 +78,18 @@ MiniWindow
         image-color: #ffffff88
         
     FloorUpControl
-      id: levelUp
-      anchors.left:  minimap.right
-      anchors.top:  compass.bottom
+      id: floorUp
+      anchors.left: minimap.right
+      anchors.top: compass.bottom
       margin-top: 10
       margin-left: 15
       enabled: true
       @onClick: Minimap.onButtonClick(self:getId())
       
     FloorDownControl
-      id: levelDown
-      anchors.left: levelUp.left
-      anchors.top: levelUp.bottom
+      id: floorDown
+      anchors.left: floorUp.left
+      anchors.top: floorUp.bottom
       margin-top: 4
       enabled: true
       @onClick: Minimap.onButtonClick(self:getId())
@@ -98,8 +98,8 @@ MiniWindow
       id: zoomIn
       text: +
       size: 16 16
-      anchors.left: levelUp.right
-      anchors.top: levelUp.top
+      anchors.left: floorUp.right
+      anchors.top: floorUp.top
       margin-left: 10
       enabled: true
       @onClick: Minimap.onButtonClick(self:getId())
@@ -109,8 +109,8 @@ MiniWindow
       text: -
       font: terminus-14px-bold
       size: 16 16
-      anchors.left: levelDown.right
-      anchors.top: levelDown.top
+      anchors.left: floorDown.right
+      anchors.top: floorDown.top
       margin-left: 10
       enabled: true
       @onClick: Minimap.onButtonClick(self:getId())

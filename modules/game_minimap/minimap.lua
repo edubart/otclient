@@ -137,11 +137,11 @@ function Minimap.onButtonClick(id)
     minimapWidget:setZoom(math.max(minimapWidget:getMaxZoomIn(), minimapWidget:getZoom()-15))
   elseif id == "zoomOut" then
     minimapWidget:setZoom(math.min(minimapWidget:getMaxZoomOut(), minimapWidget:getZoom()+15))
-  elseif id == "levelUp" then
+  elseif id == "floorUp" then
     local pos = minimapWidget:getCameraPosition()
     pos.z = pos.z - 1
     minimapWidget:setCameraPosition(pos)
-  elseif id == "levelDown" then
+  elseif id == "floorDown" then
     local pos = minimapWidget:getCameraPosition()
     pos.z = pos.z + 1
     minimapWidget:setCameraPosition(pos)
