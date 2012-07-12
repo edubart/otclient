@@ -28,18 +28,21 @@ local soulBar
 local healthLabel
 local manaLabel
 local soulLabel
+local capLabel
 
 -- public functions
 function HealthInfo.init()
   connect(LocalPlayer, { onHealthChange = HealthInfo.onHealthChange,
                          onManaChange = HealthInfo.onManaChange,
                          onStatesChange = HealthInfo.onStatesChange,
-                         onSoulChange = HealthInfo.onSoulChange })
+                         onSoulChange = HealthInfo.onSoulChange,
+                         onFreeCapacityChange = HealthInfo.onFreeCapacityChange })
 
   connect(g_game, { onGameEnd = HealthInfo.offline })
 
   healthInfoWindow = g_ui.loadUI('healthinfo.otui', GameInterface.getRightPanel())
   healthInfoButton = TopMenu.addRightGameToggleButton('healthInfoButton', tr('Health Information'), 'healthinfo.png', HealthInfo.toggle)
+  healthInfoWindow:disableResize()
   healthInfoButton:setOn(true)
   healthBar = healthInfoWindow:recursiveGetChildById('healthBar')
   manaBar = healthInfoWindow:recursiveGetChildById('manaBar')
@@ -47,6 +50,7 @@ function HealthInfo.init()
   manaLabel = healthInfoWindow:recursiveGetChildById('manaLabel')
   soulBar = healthInfoWindow:recursiveGetChildById('soulBar')
   soulLabel = healthInfoWindow:recursiveGetChildById('soulLabel')
+  capLabel = healthInfoWindow:recursiveGetChildById('capLabel')
 
   if g_game.isOnline() then
     local localPlayer = g_game.getLocalPlayer()
@@ -54,6 +58,7 @@ function HealthInfo.init()
     HealthInfo.onManaChange(localPlayer, localPlayer:getMana(), localPlayer:getMaxMana())
     HealthInfo.onStatesChange(localPlayer, localPlayer:getStates(), 0)
     HealthInfo.onSoulChange(localPlayer, localPlayer:getSoul())
+    HealthInfo.onFreeCapacityChange(localPlayer, localPlayer:getFreeCapacity())
   end
 end
 
@@ -61,7 +66,8 @@ function HealthInfo.terminate()
   disconnect(LocalPlayer, { onHealthChange = HealthInfo.onHealthChange,
                             onManaChange = HealthInfo.onManaChange,
                             onStatesChange = HealthInfo.onStatesChange,
-                            onSoulChange = HealthInfo.onSoulChange })
+                            onSoulChange = HealthInfo.onSoulChange,
+                            onFreeCapacityChange = HealthInfo.onFreeCapacityChange })
 
   disconnect(g_game, { onGameEnd = HealthInfo.offline })
 
@@ -69,14 +75,15 @@ function HealthInfo.terminate()
   healthInfoButton:destroy()
   healthInfoWindow = nil
   healthInfoButton = nil
-  
+
   healthBar = nil
   manaBar = nil
   soulBar = nil
-  
+
   healthLabel = nil
   manaLabel = nil
   soulLabel = nil
+  capLabel = nil
 
   HealthInfo = nil
 end
@@ -118,8 +125,13 @@ function HealthInfo.onManaChange(localPlayer, mana, maxMana)
 end
 
 function HealthInfo.onSoulChange(localPlayer, soul)
-  soulLabel:setText('Soul: ' .. soul)
+  soulLabel:setText(tr('Soul') .. ': ' .. soul)
 end
+
+function HealthInfo.onFreeCapacityChange(player, freeCapacity)
+  capLabel:setText(tr('Cap') .. ': ' .. freeCapacity)
+end
+
 
 function HealthInfo.onStatesChange(localPlayer, now, old)
   if now == old then return end

@@ -2,8 +2,11 @@ CombatBox < UICheckBox
   size: 20 20
   image-clip: 0 0 20 20
   anchors.top: parent.top
-  margin-left: 5
-  margin-right: 5
+  margin: 0 4
+  $first:
+    margin: 0 1
+  $last:
+    margin: 0 1
 
   $checked:
     image-clip: 0 20 20 20
@@ -23,27 +26,28 @@ MiniWindow
   id: combatControlsWindow
   !text: tr('Combat Controls')
   icon: combatcontrols.png
-  height: 64
+  height: 48
   @onClose: CombatControls.onMiniWindowClose()
   &save: true
 
   MiniWindowContents
     FightOffensiveBox
       id: fightOffensiveBox
-      anchors.right: next.left
-      anchors.top: next.top
+      anchors.left: parent.left
+      anchors.verticalCenter: parent.verticalCenter
     FightBalancedBox
       id: fightBalancedBox
-      anchors.right: next.left
-      anchors.top: next.top
+      anchors.left: prev.right
+      anchors.verticalCenter: parent.verticalCenter
     FightDefensiveBox
       id: fightDefensiveBox
-      anchors.centerIn: parent
+      anchors.left: prev.right
+      anchors.verticalCenter: parent.verticalCenter
     ChaseModeBox
       id: chaseModeBox
-      anchors.left: prev.right
-      anchors.top: prev.top
+      anchors.right: next.left
+      anchors.verticalCenter: parent.verticalCenter
     SafeFightBox
       id: safeFightBox
-      anchors.left: prev.right
-      anchors.top: prev.top
+      anchors.right: parent.right
+      anchors.verticalCenter: parent.verticalCenter

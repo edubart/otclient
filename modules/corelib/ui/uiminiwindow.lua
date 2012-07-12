@@ -246,3 +246,7 @@ function UIMiniWindow:saveParentIndex(parentId, index)
   selfSettings.index = index
   self:setSettings(selfSettings)
 end
+
+function UIMiniWindow:disableResize()
+  self:getChildById('bottomResizeBorder'):disable()
+end

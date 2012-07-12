@@ -30,43 +30,21 @@ MiniWindow
   @onClose: Minimap.onMiniWindowClose()
   &save: true
 
+  Label
+    text: ?
+    text-align: center
+    phantom: false
+    !tooltip: tr('Hold left mouse button to navigate')
+    anchors.top: minimizeButton.top
+    anchors.right: minimizeButton.left
+    margin-right: 3
+    size: 14 14
+
   MiniWindowContents
-    padding: 3
+    padding: 2
     UIMap
       id: minimap
       anchors.fill: parent
-
-    UIButton
-      id: compass
-      image-source: /game_minimap/compass.png
-      image-smooth: true
-      color: #ffffff
-      anchors.left: parent.left
-      anchors.top: parent.top
-      size: 48 48
-      margin-top: 4
-      margin-left: 4
-      @onClick: function(...) Minimap.compassClick(...) end
-
-    UIButton
-      id: compassReset
-      text: R
-      font: verdana-11px-rounded
-      anchors.centerIn: compass
-      margin-top: 2
-      margin-right: 1
-      @onClick: function(...) Minimap.center(...) end
-      $pressed:
-        color: #eb9f4f88
-
-      $hover !pressed:
-        color: #eb9f4f
-
-      $!pressed !hover:
-        color: #ffffff
-
-      $disabled:
-        image-color: #ffffff88
 
     FloorUpControl
       id: floorUp
@@ -108,4 +86,13 @@ MiniWindow
       margin-bottom: 4
       enabled: true
       @onClick: Minimap.onButtonClick(self:getId())
+
+    Button
+      id: reset
+      !text: tr('Center')
+      width: 44
+      anchors.left: parent.left
+      anchors.top: parent.top
+      margin: 4
+      @onClick: Minimap.center()
 

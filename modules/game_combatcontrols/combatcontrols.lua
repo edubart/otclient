@@ -44,6 +44,7 @@ function CombatControls.init()
   combatControlsButton = TopMenu.addRightGameToggleButton('combatControlsButton', tr('Combat Controls'), 'combatcontrols.png', CombatControls.toggle)
   combatControlsButton:setOn(true)
   combatControlsWindow = g_ui.loadUI('combatcontrols.otui', GameInterface.getRightPanel())
+  combatControlsWindow:disableResize()
 
   fightOffensiveBox = combatControlsWindow:recursiveGetChildById('fightOffensiveBox')
   fightBalancedBox = combatControlsWindow:recursiveGetChildById('fightBalancedBox')
@@ -134,9 +135,9 @@ function CombatControls.online()
   local player = g_game.getLocalPlayer()
   if(player) then
     local char = player:getName()
-    
+
     local lastCombatControls = g_settings.getNode('LastCombatControls')
-    
+
     if(not table.empty(lastCombatControls)) then
       if(lastCombatControls[char]) then
         g_game.setFightMode(lastCombatControls[char].fightMode)
@@ -145,7 +146,7 @@ function CombatControls.online()
       end
     end
   end
-  
+
   combatControlsWindow:setVisible(combatControlsButton:isOn())
   CombatControls.update()
 end
@@ -155,16 +156,16 @@ function CombatControls.offline()
   if(not lastCombatControls) then
     lastCombatControls = {}
   end
-  
+
   local player = g_game.getLocalPlayer()
   if(player) then
-    local char = player:getName()    
+    local char = player:getName()
     lastCombatControls[char] = {
       fightMode = g_game.getFightMode(),
       chaseMode = g_game.getChaseMode(),
       safeFight = g_game.isSafeFight()
     }
-    
+
     -- save last combat control settings
     g_settings.setNode('LastCombatControls', lastCombatControls)
   end

@@ -5,7 +5,6 @@ HealthBar < ProgressBar
   anchors.top: parent.top
   anchors.left: parent.left
   anchors.right: parent.right
-  margin-top: 3
 
 ManaBar < ProgressBar
   id: manaBar
@@ -33,23 +32,33 @@ ManaLabel < GameLabel
   anchors.fill: manaBar
   margin-top: 2
   text: 0 / 0
-  
+
 SoulLabel < GameLabel
   id: soulLabel
+  text-align: right
   color: white
-  text-align: center
   font: verdana-11px-rounded
-  anchors.top: prev.bottom
-  anchors.left: parent.left
+  anchors.bottom: parent.bottom
   anchors.right: parent.right
+  anchors.left: parent.horizontalCenter
   margin-top: 5
   text: Soul:
+
+CapLabel < GameLabel
+  id: capLabel
+  color: white
+  font: verdana-11px-rounded
+  anchors.bottom: parent.bottom
+  anchors.left: parent.left
+  anchors.right: parent.horizontalCenter
+  margin-top: 5
+  text: Cap:
 
 ConditionWidget < UIWidget
   size: 18 18
 
   $!first:
-    margin-left: 5
+    margin-left: 2
 
 MiniWindow
   icon: healthinfo.png
@@ -68,9 +77,14 @@ MiniWindow
       id: conditionPanel
       layout:
         type: horizontalBox
-        fit-children: true
-      height: 18
-      margin-top: 5
+      height: 22
+      margin-top: 4
+      padding: 2
       anchors.top: prev.bottom
-      anchors.horizontalcenter: parent.horizontalcenter
+      anchors.left: parent.left
+      anchors.right: parent.right
+      border-width: 1
+      border-color: #00000077
+      background-color: #ffffff11
     SoulLabel
+    CapLabel

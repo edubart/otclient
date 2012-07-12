@@ -2,6 +2,7 @@ GameSidePanel < UIMiniWindowContainer
   image-source: /images/sidepanel.png
   image-border: 4
   padding: 4
+  width: 198
 
 GameBottomPanel < Panel
   image-source: /images/bottompanel.png
@@ -34,7 +35,6 @@ UIWidget
 
   GameSidePanel
     id: gameLeftPanel
-    width: 190
     layout: verticalBox
     anchors.left: parent.left
     anchors.top: parent.top
@@ -49,7 +49,6 @@ UIWidget
   GameSidePanel
     id: gameRightPanel
     layout: verticalBox
-    width: 190
     anchors.right: parent.right
     anchors.top: parent.top
     anchors.bottom: parent.bottom

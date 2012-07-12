@@ -5,10 +5,15 @@ local minimapWidget
 local minimapButton
 local minimapWindow
 local DEFAULT_ZOOM = 60
+local navigating = false
 minimapFirstLoad = true
 
 -- private functions
 function onMinimapMouseRelease(self, mousePosition, mouseButton)
+  if navigating then
+    navigating = false
+    return
+  end
   local tile = self:getTile(mousePosition)
   if tile and mouseButton == MouseLeftButton and self:isPressed() then
     local dirs = g_map.findPath(g_game.getLocalPlayer():getPosition(), tile:getPosition(), 127)
@@ -47,7 +52,9 @@ function Minimap.init()
 
   minimapWindow = g_ui.loadUI('minimap.otui', GameInterface.getRightPanel())
 
+
   minimapWidget = minimapWindow:recursiveGetChildById('minimap')
+  g_mouse.bindAutoPress(minimapWidget, Minimap.compassClick)
   minimapWidget:setAutoViewMode(false)
   minimapWidget:setViewMode(1) -- mid view
   minimapWidget:setDrawMinimapColors(true)
@@ -109,7 +116,10 @@ function Minimap.isClickInRange(position, fromPosition, toPosition)
 end
 
 -- hooked functions
-function Minimap.compassClick(self, mousePos)
+function Minimap.compassClick(self, mousePos, mouseButton, elapsed)
+  if elapsed < 300 then return end
+
+  navigating = true
   local px = mousePos.x - self:getX()
   local py = mousePos.y - self:getY()
   local dx = px - self:getWidth()/2

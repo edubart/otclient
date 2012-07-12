@@ -30,7 +30,6 @@ ContainerWindow < MiniWindow
     padding-right: 0
     layout:
       type: grid
-      cell-size: 40 40
+      cell-size: 34 34
       flow: true
-      cell-spacing: 0
 

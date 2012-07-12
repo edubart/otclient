@@ -82,8 +82,10 @@ MiniWindowContents < ScrollablePanel
   id: contentsPanel
   anchors.fill: parent
   anchors.right: miniwindowScrollBar.left
-  margin-top: 19
-  padding: 3 5 3 5
+  margin-right: -1
+  margin-top: 21
+  padding: 4
+  padding-top: 2
   vertical-scrollbar: miniwindowScrollBar
 
 BorderlessGameWindow < UIWindow

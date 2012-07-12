@@ -1,129 +1,77 @@
-HeadSlot < Item
+InventoryItem < Item
+  margin: 0 1
+
+HeadSlot < InventoryItem
   id: slot1
   image-source: /game_inventory/slots/head.png
+  &position: {x=65535, y=1, z=0}
 
-BodySlot < Item
+BodySlot < InventoryItem
   id: slot4
   image-source: /game_inventory/slots/body.png
+  &position: {x=65535, y=4, z=0}
 
-LegSlot < Item
+LegSlot < InventoryItem
   id: slot7
   image-source: /game_inventory/slots/legs.png
+  &position: {x=65535, y=7, z=0}
 
-FeetSlot < Item
+FeetSlot < InventoryItem
   id: slot8
   image-source: /game_inventory/slots/feet.png
+  &position: {x=65535, y=8, z=0}
 
-NeckSlot < Item
+NeckSlot < InventoryItem
   id: slot2
   image-source: /game_inventory/slots/neck.png
+  &position: {x=65535, y=2, z=0}
 
-LeftSlot < Item
+LeftSlot < InventoryItem
   id: slot6
   image-source: /game_inventory/slots/left-hand.png
+  &position: {x=65535, y=6, z=0}
 
-FingerSlot < Item
+FingerSlot < InventoryItem
   id: slot9
   image-source: /game_inventory/slots/finger.png
+  &position: {x=65535, y=9, z=0}
 
-BackSlot < Item
+BackSlot < InventoryItem
   id: slot3
   image-source: /game_inventory/slots/back.png
+  &position: {x=65535, y=3, z=0}
 
-RightSlot < Item
+RightSlot < InventoryItem
   id: slot5
   image-source: /game_inventory/slots/right-hand.png
+  &position: {x=65535, y=5, z=0}
 
-AmmoSlot < Item
+AmmoSlot < InventoryItem
   id: slot10
   image-source: /game_inventory/slots/ammo.png
+  &position: {x=65535, y=10, z=0}
 
 MiniWindow
   id: inventoryWindow
   !text: tr('Inventory')
   icon: inventory.png
-  height: 180
+  height: 95
   @onClose: Inventory.onMiniWindowClose()
   &save: true
 
-  MiniWindowContents    
+  MiniWindowContents
+    padding: 4 5
+    layout:
+      type: grid
+      flow: true
+      cell-size: 36 34
     HeadSlot
-      // head
-      anchors.top: parent.top
-      anchors.horizontalCenter: parent.horizontalCenter
-      margin-top: 4
-      &position: {x=65535, y=1, z=0}
-
     BodySlot
-      // body
-      anchors.top: prev.bottom
-      anchors.horizontalCenter: prev.horizontalCenter
-      margin-top: 5
-      &position: {x=65535, y=4, z=0}
-
     LegSlot
-      // legs
-      anchors.top: prev.bottom
-      anchors.horizontalCenter: prev.horizontalCenter
-      margin-top: 5
-      &position: {x=65535, y=7, z=0}
-
     FeetSlot
-      // feet
-      anchors.top: prev.bottom
-      anchors.horizontalCenter: prev.horizontalCenter
-      margin-top: 5
-      &position: {x=65535, y=8, z=0}
-
-    NeckSlot
-      // neck
-      anchors.top: parent.top
-      anchors.right: slot1.left
-      margin-top: 10
-      margin-right: 5
-      &position: {x=65535, y=2, z=0}
-
-    LeftSlot
-      // left hand
-      anchors.top: prev.bottom
-      anchors.horizontalCenter: prev.horizontalCenter
-      margin-top: 5
-      &position: {x=65535, y=6, z=0}
-
-    FingerSlot
-      // finger
-      anchors.top: prev.bottom
-      anchors.horizontalCenter: prev.horizontalCenter
-      margin-top: 5
-      &position: {x=65535, y=9, z=0}
-
-    BackSlot
-      // back
-      anchors.top: parent.top
-      anchors.left: slot1.right
-      margin-top: 10
-      margin-left: 5
-      &position: {x=65535, y=3, z=0}
-
     RightSlot
-      // right hand
-      anchors.top: prev.bottom
-      anchors.horizontalCenter: prev.horizontalCenter
-      margin-top: 5
-      &position: {x=65535, y=5, z=0}
-
+    LeftSlot
+    NeckSlot
+    FingerSlot
+    BackSlot
     AmmoSlot
-      // ammo
-      anchors.top: prev.bottom
-      anchors.horizontalCenter: prev.horizontalCenter
-      margin-top: 5
-      &position: {x=65535, y=10, z=0}
-
-    GameLabel
-      id: capacity
-      height: 30
-      anchors.top: slot10.bottom
-      anchors.left: slot10.left
-      margin-top: 5
-      text-align: center
-      text-auto-resize: true

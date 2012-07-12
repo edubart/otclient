@@ -26,7 +26,7 @@ local function onContainerOpen(container, previousContainer)
 
   -- this disables scrollbar auto hiding
   local scrollbar = containerWindow:getChildById('miniwindowScrollBar')
-  scrollbar:mergeStyle({ ['$disabled'] = { ['width'] = scrollbar:getWidth() } })
+  scrollbar:mergeStyle({ ['$!on'] = { }})
 
   local upButton = containerWindow:getChildById('upButton')
   upButton.onClick = function()
@@ -45,7 +45,7 @@ local function onContainerOpen(container, previousContainer)
     local itemWidget = g_ui.createWidget('Item', containerPanel)
     itemWidget:setId('item' .. slot)
     itemWidget:setItem(container:getItem(slot))
-    itemWidget:setMargin(3)
+    itemWidget:setMargin(0)
     itemWidget.position = container:getSlotPosition(slot)
   end
 

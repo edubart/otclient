@@ -32,14 +32,15 @@ function g_mouse.isPressed(button)
   return g_window.isMouseButtonPressed(button)
 end
 
-function g_mouse.bindAutoPress(widget, callback)
+function g_mouse.bindAutoPress(widget, callback, delay)
   connect(widget, { onMousePress = function(widget, mousePos, mouseButton)
-    callback()
+    local startTime = g_clock.millis()
+    callback(widget, mousePos, mouseButton, 0)
     periodicalEvent(function()
-      callback()
+      callback(widget, g_window.getMousePosition(), mouseButton, g_clock.millis() - startTime)
     end, function()
       return widget:isPressed()
-    end, 30, 300)
+    end, 30, delay)
     return true
   end })
 end

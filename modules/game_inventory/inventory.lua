@@ -21,13 +21,13 @@ local inventoryButton
 
 -- public functions
 function Inventory.init()
-  connect(LocalPlayer, { onInventoryChange = Inventory.onInventoryChange,
-                         onFreeCapacityChange = Inventory.onFreeCapacityChange })
+  connect(LocalPlayer, { onInventoryChange = Inventory.onInventoryChange })
   connect(g_game, { onGameStart = Inventory.refresh })
 
   g_keyboard.bindKeyDown('Ctrl+I', Inventory.toggle)
 
   inventoryWindow = g_ui.loadUI('inventory.otui', GameInterface.getRightPanel())
+  inventoryWindow:disableResize()
   inventoryPanel = inventoryWindow:getChildById('contentsPanel')
   inventoryButton = TopMenu.addRightGameToggleButton('inventoryButton', tr('Inventory') .. ' (Ctrl+I)', 'inventory.png', Inventory.toggle)
   inventoryButton:setOn(true)
@@ -36,8 +36,7 @@ function Inventory.init()
 end
 
 function Inventory.terminate()
-  disconnect(LocalPlayer, { onInventoryChange = Inventory.onInventoryChange,
-                         onFreeCapacityChange = Inventory.onFreeCapacityChange })
+  disconnect(LocalPlayer, { onInventoryChange = Inventory.onInventoryChange })
   disconnect(g_game, { onGameStart = Inventory.refresh })
 
   g_keyboard.unbindKeyDown('Ctrl+I')
@@ -87,9 +86,3 @@ function Inventory.onInventoryChange(player, slot, item, oldItem)
     itemWidget:setItem(nil)
   end
 end
-
-function Inventory.onFreeCapacityChange(player, freeCapacity)
-  local widget = inventoryPanel:getChildById('capacity')
-  widget:setText("Cap:\n" .. freeCapacity)
-end
-
