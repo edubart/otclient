@@ -1,7 +1,7 @@
 Module
   name: game_battle
   description: Manage battle window
-  author: andrefaramir
+  author: andrefaramir, BeniS
   website: www.otclient.info
   icon: battle.png
 

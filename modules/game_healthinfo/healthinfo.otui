@@ -33,7 +33,7 @@ ManaLabel < GameLabel
   anchors.fill: manaBar
   margin-top: 2
   text: 0 / 0
-
+  
 SoulLabel < GameLabel
   id: soulLabel
   color: white
@@ -52,11 +52,11 @@ ConditionWidget < UIWidget
     margin-left: 5
 
 MiniWindow
-  icon: healthbar.png
-  id: healthBarWindow
-  !text: tr('Health Bar')
+  icon: healthinfo.png
+  id: healthInfoWindow
+  !text: tr('Health Info')
   height: 102
-  @onClose: HealthBar.onMiniWindowClose()
+  @onClose: HealthInfo.onMiniWindowClose()
   &save: true
 
   MiniWindowContents

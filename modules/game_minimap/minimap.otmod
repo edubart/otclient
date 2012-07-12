@@ -1,7 +1,7 @@
 Module
   name: game_minimap
   description: Manage minimap
-  author: edubart
+  author: edubart, BeniS
   website: www.otclient.info
 
   dependencies:

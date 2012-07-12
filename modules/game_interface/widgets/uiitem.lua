@@ -23,16 +23,16 @@ function UIItem:onDrop(widget, mousePos)
 
   if not widget or not widget.currentDragThing then return false end
 
-  local item = widget.currentDragThing
+  local thing = widget.currentDragThing
   local toPos = self.position
 
-  local itemPos = item:getPosition()
-  if itemPos.x == self.position.x and itemPos.y == self.position.y and itemPos.z == self.position.z then return false end
+  local thingPos = thing:getPosition()
+  if thingPos.x == toPos.x and thingPos.y == toPos.y and thingPos.z == toPos.z then return false end
 
-  if item:getCount() > 1 then
-    GameInterface.moveStackableItem(item, toPos)
+  if thing:getCount() > 1 then
+    GameInterface.moveStackableItem(thing, toPos)
   else
-    g_game.move(item, toPos, 1)
+    g_game.move(thing, toPos, 1)
   end
 
   self:setBorderWidth(0)

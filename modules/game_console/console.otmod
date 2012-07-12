@@ -1,7 +1,7 @@
 Module
   name: game_console
   description: Manage chat window
-  author: edubart, andrefaramir, baxnie, sn4ake
+  author: edubart, andrefaramir, baxnie, sn4ake, BeniS
   website: www.otclient.info
 
   dependencies:
