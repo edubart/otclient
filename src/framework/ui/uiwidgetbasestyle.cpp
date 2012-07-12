@@ -100,6 +100,8 @@ void UIWidget::parseBaseStyle(const OTMLNodePtr& styleNode)
             setIconSize(node->value<Size>());
         else if(node->tag() == "icon-rect")
             setIconRect(node->value<Rect>());
+        else if(node->tag() == "icon-clip")
+            setIconClip(node->value<Rect>());
         else if(node->tag() == "opacity")
             setOpacity(node->value<float>());
         else if(node->tag() == "enabled")
@@ -369,15 +371,17 @@ void UIWidget::drawIcon(const Rect& screenCoords)
             drawRect.translate(m_iconRect.topLeft());
             drawRect.resize(m_iconRect.size());
         } else {
-            drawRect.resize(m_icon->getSize());
+            drawRect.resize(m_iconClipRect.size());
             drawRect.moveCenter(screenCoords.center());
         }
         g_painter->setColor(m_iconColor);
-        g_painter->drawTexturedRect(drawRect, m_icon);
+        g_painter->drawTexturedRect(drawRect, m_icon, m_iconClipRect);
     }
 }
 
 void UIWidget::setIcon(const std::string& iconFile)
 {
     m_icon = g_textures.getTexture(iconFile);
+    if(!m_iconClipRect.isValid())
+        m_iconClipRect = Rect(0, 0, m_icon->getSize());
 }

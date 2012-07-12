@@ -278,6 +278,7 @@ protected:
     TexturePtr m_icon;
     Color m_iconColor;
     Rect m_iconRect;
+    Rect m_iconClipRect;
     EdgeGroup<Color> m_borderColor;
     EdgeGroup<int> m_borderWidth;
     EdgeGroup<int> m_margin;
@@ -311,6 +312,7 @@ public:
     void setIconHeight(int height) { m_iconRect.setHeight(height); }
     void setIconSize(const Size& size) { m_iconRect.resize(size); }
     void setIconRect(const Rect& rect) { m_iconRect = rect; }
+    void setIconClip(const Rect& rect) { m_iconClipRect = rect; }
     void setBorderWidth(int width) { m_borderWidth.set(width); updateLayout(); }
     void setBorderWidthTop(int width) { m_borderWidth.top = width; }
     void setBorderWidthRight(int width) { m_borderWidth.right = width; }
@@ -361,6 +363,7 @@ public:
     int getIconHeight() { return m_iconRect.height(); }
     Size getIconSize() { return m_iconRect.size(); }
     Rect getIconRect() { return m_iconRect; }
+    Rect getIconClip() { return m_iconClipRect; }
     Color getBorderTopColor() { return m_borderColor.top; }
     Color getBorderRightColor() { return m_borderColor.right; }
     Color getBorderBottomColor() { return m_borderColor.bottom; }

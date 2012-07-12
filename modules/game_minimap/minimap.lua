@@ -4,7 +4,7 @@ Minimap = {}
 local minimapWidget
 local minimapButton
 local minimapWindow
-local DEFAULT_ZOOM = 45
+local DEFAULT_ZOOM = 60
 minimapFirstLoad = true
 
 -- private functions
@@ -31,15 +31,15 @@ function onMinimapMouseWheel(self, mousePos, direction)
 end
 
 --[[
-  Known Issue (TODO): 
-  If you move the minimap compass directions and 
+  Known Issue (TODO):
+  If you move the minimap compass directions and
   you change floor it will not update the minimap.
 ]]
 -- public functions
 function Minimap.init()
   connect(g_game, { onGameStart = Minimap.reset,
                     onForceWalk = Minimap.center })
-                    
+
   g_keyboard.bindKeyDown('Ctrl+M', Minimap.toggle)
 
   minimapButton = TopMenu.addRightGameToggleButton('minimapButton', tr('Minimap') .. ' (Ctrl+M)', 'minimap.png', Minimap.toggle)
@@ -79,7 +79,7 @@ end
 function Minimap.terminate()
   disconnect(g_game, { onGameStart = Minimap.reset,
                        onForceWalk = Minimap.center })
-                       
+
   g_keyboard.unbindKeyDown('Ctrl+M')
 
   minimapButton:destroy()
@@ -105,30 +105,28 @@ function Minimap.onMiniWindowClose()
 end
 
 function Minimap.isClickInRange(position, fromPosition, toPosition)
-	return (position.x >= fromPosition.x and position.y >= fromPosition.y and position.x <= toPosition.x and position.y <= toPosition.y)
+  return (position.x >= fromPosition.x and position.y >= fromPosition.y and position.x <= toPosition.x and position.y <= toPosition.y)
 end
+
 -- hooked functions
-local compassZones = {}
-compassZones.west = {x = 0, y = 30, posx = -1, posy = 0}
-compassZones.north = {x = 30, y = 0, posx = 0, posy = -1}
-compassZones.south = {x = 30, y = 57, posx = 0, posy = 1}
-compassZones.east = {x = 57, y = 30, posx = 1, posy = 0}
 function Minimap.compassClick(self, mousePos)
-  local compassPos = self:getRect()
-  local pos = {x = mousePos.x-compassPos.x, y = mousePos.y-compassPos.y}
-  local move = {x = 0, y = 0}
-  for i,v in pairs(compassZones) do
-    local lowPos = {x = v.x-15, y = v.y-15}
-    local highPos = {x = v.x+15, y = v.y+15}
-    if Minimap.isClickInRange(pos, lowPos, highPos) then
-      move.x = move.x + v.posx * minimapWidget:getZoom()/10
-      move.y = move.y + v.posy * minimapWidget:getZoom()/10
-      break
-    end
-  end
+  local px = mousePos.x - self:getX()
+  local py = mousePos.y - self:getY()
+  local dx = px - self:getWidth()/2
+  local dy = -(py - self:getHeight()/2)
+  local radius = math.sqrt(dx*dx+dy*dy)
+  local movex=0
+  local movey=0
+  dx = dx/radius
+  dy = dy/radius
+
+  if dx > 0.5 then movex = 1 end
+  if dx < -0.5 then movex = -1 end
+  if dy > 0.5 then movey = -1 end
+  if dy < -0.5 then movey = 1 end
 
   local cameraPos = minimapWidget:getCameraPosition()
-  local pos = {x = cameraPos.x + move.x, y = cameraPos.y + move.y, z = cameraPos.z}
+  local pos = {x = cameraPos.x + movex, y = cameraPos.y + movey, z = cameraPos.z}
   minimapWidget:setCameraPosition(pos)
 end
 

@@ -218,6 +218,7 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIWidget>("setIconHeight", &UIWidget::setIconHeight);
     g_lua.bindClassMemberFunction<UIWidget>("setIconSize", &UIWidget::setIconSize);
     g_lua.bindClassMemberFunction<UIWidget>("setIconRect", &UIWidget::setIconRect);
+    g_lua.bindClassMemberFunction<UIWidget>("setIconClip", &UIWidget::setIconClip);
     g_lua.bindClassMemberFunction<UIWidget>("setBorderWidth", &UIWidget::setBorderWidth);
     g_lua.bindClassMemberFunction<UIWidget>("setBorderWidthTop", &UIWidget::setBorderWidthTop);
     g_lua.bindClassMemberFunction<UIWidget>("setBorderWidthRight", &UIWidget::setBorderWidthRight);
@@ -267,6 +268,7 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIWidget>("getIconHeight", &UIWidget::getIconHeight);
     g_lua.bindClassMemberFunction<UIWidget>("getIconSize", &UIWidget::getIconSize);
     g_lua.bindClassMemberFunction<UIWidget>("getIconRect", &UIWidget::getIconRect);
+    g_lua.bindClassMemberFunction<UIWidget>("getIconClip", &UIWidget::getIconClip);
     g_lua.bindClassMemberFunction<UIWidget>("getBorderTopColor", &UIWidget::getBorderTopColor);
     g_lua.bindClassMemberFunction<UIWidget>("getBorderRightColor", &UIWidget::getBorderRightColor);
     g_lua.bindClassMemberFunction<UIWidget>("getBorderBottomColor", &UIWidget::getBorderBottomColor);
