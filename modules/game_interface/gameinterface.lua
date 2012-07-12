@@ -20,6 +20,8 @@ end
 
 function GameInterface.init()
   g_ui.importStyle('styles/countwindow.otui')
+  g_ui.importStyle('styles/logoutwindow.otui')
+  g_ui.importStyle('styles/exitwindow.otui')
 
   connect(g_game, { onGameStart = GameInterface.show }, true)
   connect(g_game, { onGameEnd = GameInterface.hide }, true)
@@ -63,8 +65,8 @@ function GameInterface.init()
   g_keyboard.bindKeyPress('Escape', function() g_game.cancelAttackAndFollow() end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
   g_keyboard.bindKeyPress('Ctrl+=', function() gameMapPanel:zoomIn() end, gameRootPanel, 250)
   g_keyboard.bindKeyPress('Ctrl+-', function() gameMapPanel:zoomOut() end, gameRootPanel, 250)
-  g_keyboard.bindKeyDown('Ctrl+Q', GameInterface.tryLogout, gameRootPanel)
-  g_keyboard.bindKeyDown('Ctrl+L', GameInterface.tryLogout, gameRootPanel)
+  g_keyboard.bindKeyDown('Ctrl+Q', GameInterface.logout, gameRootPanel)
+  g_keyboard.bindKeyDown('Ctrl+L', GameInterface.logout, gameRootPanel)
   g_keyboard.bindKeyDown('Ctrl+W', function() g_map.cleanTexts() TextMessage.clearMessages() end, gameRootPanel)
 
   g_keyboard.bindKeyDown('Ctrl+.', function()
@@ -114,7 +116,7 @@ function GameInterface.hide()
   g_app.onClose = nil
 end
 
-function GameInterface.tryExit()
+function GameInterface.exit()
   if g_game.isOnline() then
     g_game.forceLogout()
     scheduleEvent(exit, 10)
@@ -122,11 +124,45 @@ function GameInterface.tryExit()
   end
 end
 
-function GameInterface.tryLogout()
+function GameInterface.tryExit()
+  local exitWindow = g_ui.createWidget('ExitWindow', rootWidget)
+  local exitButton = exitWindow:getChildById('buttonExit')
+  local logoutButton = exitWindow:getChildById('buttonLogout')
+
+  local exitFunc = function()
+    GameInterface.exit()
+    exitButton:getParent():destroy()
+  end
+
+  local logoutFunc = function()
+    GameInterface.logout()
+    logoutButton:getParent():destroy()
+  end
+
+  exitWindow.onEnter = logoutFunc
+  exitButton.onClick = exitFunc
+  logoutButton.onClick = logoutFunc
+  return true -- signal closing
+end
+
+function GameInterface.logout()
   if g_game.isOnline() then
     g_game.safeLogout()
     return true
   end
+end
+
+function GameInterface.tryLogout()
+  local logoutWindow = g_ui.createWidget('LogoutWindow', rootWidget)
+  local yesButton = logoutWindow:getChildById('buttonYes')
+  
+  local logoutFunc = function()
+    GameInterface.logout()
+    yesButton:getParent():destroy()
+  end
+
+  logoutWindow.onEnter = logoutFunc
+  yesButton.onClick = logoutFunc
 end
 
 function GameInterface.onMouseGrabberRelease(self, mousePosition, mouseButton)

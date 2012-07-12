@@ -16,7 +16,7 @@ Module
     - game_textmessage
     - game_console
     - game_outfit
-    - game_healthbar
+    - game_healthinfo
     - game_skills
     - game_inventory
     - game_combatcontrols

@@ -4,7 +4,8 @@ TopMenu = {}
 local topMenu
 local leftButtonsPanel
 local rightButtonsPanel
-local gameButtonsPanel
+local leftGameButtonsPanel
+local rightGameButtonsPanel
 
 -- private functions
 local function addButton(id, description, icon, callback, panel, toggle)
@@ -32,10 +33,12 @@ function TopMenu.init()
 
   leftButtonsPanel = topMenu:getChildById('leftButtonsPanel')
   rightButtonsPanel = topMenu:getChildById('rightButtonsPanel')
-  gameButtonsPanel = topMenu:getChildById('gameButtonsPanel')
+  leftGameButtonsPanel = topMenu:getChildById('leftGameButtonsPanel')
+  rightGameButtonsPanel = topMenu:getChildById('rightGameButtonsPanel')
 
   if g_game.isOnline() then
-    gameButtonsPanel:show()
+    leftGameButtonsPanel:show()
+    rightGameButtonsPanel:show()
   end
 end
 
@@ -45,7 +48,8 @@ function TopMenu.terminate()
 
   leftButtonsPanel = nil
   rightButtonsPanel = nil
-  gameButtonsPanel = nil
+  leftGameButtonsPanel = nil
+  rightGameButtonsPanel = nil
 
   topMenu:destroy()
   topMenu = nil
@@ -69,20 +73,30 @@ function TopMenu.addRightToggleButton(id, description, icon, callback, right)
   return addButton(id, description, icon, callback, rightButtonsPanel, true)
 end
 
-function TopMenu.addGameButton(id, description, icon, callback)
-  return addButton(id, description, icon, callback, gameButtonsPanel, false)
+function TopMenu.addLeftGameButton(id, description, icon, callback)
+  return addButton(id, description, icon, callback, leftGameButtonsPanel, false)
 end
 
-function TopMenu.addGameToggleButton(id, description, icon, callback, right)
-  return addButton(id, description, icon, callback, gameButtonsPanel, true)
+function TopMenu.addLeftGameToggleButton(id, description, icon, callback, right)
+  return addButton(id, description, icon, callback, leftGameButtonsPanel, true)
+end
+
+function TopMenu.addRightGameButton(id, description, icon, callback)
+  return addButton(id, description, icon, callback, rightGameButtonsPanel, false)
+end
+ 
+function TopMenu.addRightGameToggleButton(id, description, icon, callback, right)
+  return addButton(id, description, icon, callback, rightGameButtonsPanel, true)
 end
 
 function TopMenu.hideGameButtons()
-  gameButtonsPanel:hide()
+  leftGameButtonsPanel:hide()
+  rightGameButtonsPanel:hide()
 end
 
 function TopMenu.showGameButtons()
-  gameButtonsPanel:show()
+  leftGameButtonsPanel:show()
+  rightGameButtonsPanel:show()
 end
 
 function TopMenu.getButton(id)

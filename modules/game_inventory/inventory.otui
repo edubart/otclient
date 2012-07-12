@@ -127,13 +127,3 @@ MiniWindow
       margin-top: 5
       text-align: center
       text-auto-resize: true
-      
-    GameLabel
-      id: soul
-      height: 30
-      anchors.top: slot9.bottom
-      anchors.left: slot9.left
-      margin-top: 5
-      text-align: center
-      text-auto-resize: true
-

@@ -1,0 +1,30 @@
+LogoutWindow < MainWindow
+  id: logoutWindow
+  !text: tr('Logout')
+  size: 300 100
+  @onEscape: self:destroy()
+
+  Label
+    !text: tr('Are you sure you want to logout?')
+    width: 300
+    anchors.left: parent.left
+    anchors.top: parent.top
+    margin-left: 30
+    margin-top: 2
+
+  Button
+    id: buttonYes
+    !text: tr('Yes')
+    width: 64
+    anchors.left: parent.left
+    anchors.bottom: parent.bottom
+    margin-left: 65
+    
+  Button
+    id: buttonNo
+    !text: tr('No')
+    width: 64
+    anchors.left: prev.right
+    anchors.bottom: parent.bottom
+    margin-left: 5
+    @onClick: self:getParent():destroy()
