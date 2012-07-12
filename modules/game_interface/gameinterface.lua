@@ -8,6 +8,7 @@ local gameLeftPanel
 local gameBottomPanel
 local logoutButton
 local mouseGrabberWidget
+local drawTexts = true
 
 local function onLeftPanelVisibilityChange(leftPanel, visible)
   if not visible then
@@ -68,6 +69,7 @@ function GameInterface.init()
   g_keyboard.bindKeyDown('Ctrl+Q', GameInterface.logout, gameRootPanel)
   g_keyboard.bindKeyDown('Ctrl+L', GameInterface.logout, gameRootPanel)
   g_keyboard.bindKeyDown('Ctrl+W', function() g_map.cleanTexts() TextMessage.clearMessages() end, gameRootPanel)
+  g_keyboard.bindKeyDown('Ctrl+N', function() drawTexts = not drawTexts gameMapPanel:setDrawTexts(drawTexts) end, gameRootPanel)
 
   g_keyboard.bindKeyDown('Ctrl+.', function()
     if gameMapPanel:isKeepAspectRatioEnabled() then

@@ -1,7 +1,7 @@
 Module
   name: game_interface
   description: Create the game interface, where the ingame stuff starts
-  author: OTClient team
+  author: OTClient team, sn4ake
   website: www.otclient.info
 
   @onLoad: |
