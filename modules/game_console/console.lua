@@ -189,22 +189,27 @@ local function onGameStart()
   local player = g_game.getLocalPlayer()
   if(player) then
     local char = player:getName()
-    
+
     local lastChannelsOpen = g_settings.getNode('LastChannelsOpen')
-    
+
     if(not table.empty(lastChannelsOpen) and lastChannelsOpen[char]) then
       for channelName, channelId in ipairs(lastChannelsOpen[char]) do
-        if(not table.find(channels, channelId)) then g_game.joinChannel(channelId) end
+        channelId = tonumber(channelId)
+        if channelId ~= 0 then
+          if not table.find(channels, channelId) then
+            g_game.joinChannel(channelId)
+          end
+        end
       end
     end
   end
-  
+
   local tab = Console.getTab(tr('Default'))
   if tab then
     --[[
       Known Issue: The server is calling to open channels after
       onGameStart is executed causing it to focus the last tab opened.
-      
+
       Fix: Don't save channels to the settings that are opened by the server.
     ]]
     addEvent(function() consoleTabBar:selectTab(tab) end, true)
@@ -221,27 +226,27 @@ end
 
 function Console.clear()
   local lastChannelsOpen = {}
-  
+
   local player = g_game.getLocalPlayer()
   if(player) then
     local char = player:getName()
     lastChannelsOpen[char] = {}
-    
+
     for channelId, channelName in pairs(channels) do
       table.insert(lastChannelsOpen[char], channelId)
     end
   end
-  
+
   -- save last open channels
   g_settings.setNode('LastChannelsOpen', lastChannelsOpen)
-  
+
   for _, channelName in pairs(channels) do
     local tab = consoleTabBar:getTab(channelName)
     consoleTabBar:removeTab(tab)
   end
-  
+
   channels = {}
-  
+
   consoleTabBar:getTab(tr('Default')).tabPanel:getChildById('consoleBuffer'):destroyChildren()
   consoleTabBar:getTab(tr('Server Log')).tabPanel:getChildById('consoleBuffer'):destroyChildren()
 
