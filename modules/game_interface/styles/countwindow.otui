@@ -2,7 +2,6 @@ CountWindow < MainWindow
   id: countWindow
   !text: tr('Move Stackable Item')
   size: 196 112
-  @onEscape: self:destroy()
 
   Label
     !text: tr('Amount:')
@@ -38,4 +37,3 @@ CountWindow < MainWindow
     width: 64
     anchors.right: parent.right
     anchors.bottom: parent.bottom
-    @onClick: self:getParent():destroy()

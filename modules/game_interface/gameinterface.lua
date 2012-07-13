@@ -9,6 +9,10 @@ local gameBottomPanel
 local logoutButton
 local mouseGrabberWidget
 
+local countWindow
+local logoutWindow
+local exitWindow
+
 local function onLeftPanelVisibilityChange(leftPanel, visible)
   if not visible then
     local children = leftPanel:getChildren()
@@ -97,6 +101,9 @@ function GameInterface.terminate()
   gameLeftPanel = nil
   gameBottomPanel = nil
   mouseGrabberWidget = nil
+  countWindow = nil
+  logoutWindow = nil
+  exitWindow = nil
   GameInterface = nil
 end
 
@@ -125,23 +132,34 @@ function GameInterface.exit()
 end
 
 function GameInterface.tryExit()
-  local exitWindow = g_ui.createWidget('ExitWindow', rootWidget)
+  if(exitWindow) then
+    return true
+  end
+  exitWindow = g_ui.createWidget('ExitWindow', rootWidget)
   local exitButton = exitWindow:getChildById('buttonExit')
-  local logoutButton = exitWindow:getChildById('buttonLogout')
+  local logButton = exitWindow:getChildById('buttonLogout')
+  local cancelButton = exitWindow:getChildById('buttonCancel')
 
   local exitFunc = function()
     GameInterface.exit()
     exitButton:getParent():destroy()
   end
-
   local logoutFunc = function()
     GameInterface.logout()
-    logoutButton:getParent():destroy()
+    logButton:getParent():destroy()
+    exitWindow = nil
+  end
+  local cancelFunc = function()
+    cancelButton:getParent():destroy()
+    exitWindow = nil
   end
 
+  exitWindow.onEscape = cancelFunc
   exitWindow.onEnter = logoutFunc
+  
   exitButton.onClick = exitFunc
-  logoutButton.onClick = logoutFunc
+  logButton.onClick = logoutFunc
+  cancelButton.onClick = cancelFunc
   return true -- signal closing
 end
 
@@ -153,16 +171,28 @@ function GameInterface.logout()
 end
 
 function GameInterface.tryLogout()
-  local logoutWindow = g_ui.createWidget('LogoutWindow', rootWidget)
+  if(logoutWindow) then
+    return
+  end
+  logoutWindow = g_ui.createWidget('LogoutWindow', rootWidget)
   local yesButton = logoutWindow:getChildById('buttonYes')
-  
+  local noButton = logoutWindow:getChildById('buttonNo')
+
   local logoutFunc = function()
     GameInterface.logout()
     yesButton:getParent():destroy()
+    logoutWindow = nil
+  end
+  local cancelFunc = function()
+    noButton:getParent():destroy()
+    logoutWindow = nil
   end
 
   logoutWindow.onEnter = logoutFunc
+  logoutWindow.onEscape = cancelFunc
+  
   yesButton.onClick = logoutFunc
+  noButton.onClick = cancelFunc
 end
 
 function GameInterface.onMouseGrabberRelease(self, mousePosition, mouseButton)
@@ -375,7 +405,8 @@ function GameInterface.processMouseAction(menuPosition, mouseButton, autoWalkPos
     end
   else
     if multiUseThing and keyboardModifiers == KeyboardNoModifier and mouseButton == MouseRightButton and not g_mouse.isPressed(MouseLeftButton) then
-      if multiUseThing:asCreature() then
+      local player = g_game.getLocalPlayer()
+      if multiUseThing:asCreature() and multiUseThing:asCreature() ~= player then
         g_game.attack(multiUseThing:asCreature())
         return true
       elseif multiUseThing:isContainer() then
@@ -422,6 +453,9 @@ function GameInterface.processMouseAction(menuPosition, mouseButton, autoWalkPos
 end
 
 function GameInterface.moveStackableItem(item, toPos)
+  if(countWindow) then
+    return
+  end
   if g_keyboard.isCtrlPressed() then
     g_game.move(item, toPos, item:getCount())
     return
@@ -431,7 +465,7 @@ function GameInterface.moveStackableItem(item, toPos)
   end
 
   local count = item:getCount()
-  local countWindow = g_ui.createWidget('CountWindow', rootWidget)
+  countWindow = g_ui.createWidget('CountWindow', rootWidget)
   local spinbox = countWindow:getChildById('countSpinBox')
   local scrollbar = countWindow:getChildById('countScrollBar')
   spinbox:setMaximum(count)
@@ -447,10 +481,19 @@ function GameInterface.moveStackableItem(item, toPos)
   local moveFunc = function()
     g_game.move(item, toPos, spinbox:getValue())
     okButton:getParent():destroy()
+    countWindow = nil
+  end
+  local cancelButton = countWindow:getChildById('buttonCancel')
+  local cancelFunc = function()
+    cancelButton:getParent():destroy()
+    countWindow = nil
   end
 
   countWindow.onEnter = moveFunc
+  countWindow.onEscape = cancelFunc
+  
   okButton.onClick = moveFunc
+  cancelButton.onClick = cancelFunc
 end
 
 function GameInterface.getRootPanel()
