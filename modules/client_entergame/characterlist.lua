@@ -22,7 +22,7 @@ local function tryLogin(charInfo, tries)
   if g_game.isOnline() then
     g_game.safeLogout()
     if tries == 1 then
-      loadBox = displayCancelBox(tr('Please wait'), tr('Loggin out...'))
+      loadBox = displayCancelBox(tr('Please wait'), tr('Logging out...'))
     end
     scheduleEvent(function() tryLogin(charInfo, tries+1) end, 250)
     return

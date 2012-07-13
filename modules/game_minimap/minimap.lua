@@ -127,8 +127,8 @@ function Minimap.compassClick(self, mousePos, mouseButton, elapsed)
   local dx = px - self:getWidth()/2
   local dy = -(py - self:getHeight()/2)
   local radius = math.sqrt(dx*dx+dy*dy)
-  local movex=0
-  local movey=0
+  local movex = 0
+  local movey = 0
   dx = dx/radius
   dy = dy/radius
 

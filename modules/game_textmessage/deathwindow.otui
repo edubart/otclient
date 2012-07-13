@@ -1,0 +1,29 @@
+DeathWindow < MainWindow
+  id: deathWindow
+  !text: tr('You are dead')
+  size: 350 155
+
+  Label
+    !text: tr('Alas! Brave adventurer, you have met a sad fate.\nBut do not despair, for the gods will bring you back\ninto this world in exchange for a small sacrifice\n\nSimply click on Ok to resume your journeys!')
+    width: 550
+    height: 140
+    anchors.left: parent.left
+    anchors.top: parent.top
+    margin-left: 10
+    margin-top: 2
+
+  Button
+    id: buttonOk
+    !text: tr('Ok')
+    width: 64
+    anchors.left: parent.left
+    anchors.bottom: parent.bottom
+    margin-left: 160
+
+  Button
+    id: buttonCancel
+    !text: tr('Cancel')
+    width: 64
+    anchors.left: prev.right
+    anchors.bottom: parent.bottom
+    margin-left: 5
