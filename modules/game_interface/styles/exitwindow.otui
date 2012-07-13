@@ -2,7 +2,6 @@ ExitWindow < MainWindow
   id: exitWindow
   !text: tr('Exit')
   size: 550 135
-  @onEscape: self:destroy()
 
   Label
     !text: tr('If you shut down the program, you character might stay in the game.')
@@ -34,7 +33,7 @@ ExitWindow < MainWindow
     width: 64
     anchors.left: parent.left
     anchors.bottom: parent.bottom
-    margin-left: 155
+    margin-left: 160
 
   Button
     id: buttonLogout

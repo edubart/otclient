@@ -5,6 +5,8 @@ local minimapWidget
 local minimapButton
 local minimapWindow
 local DEFAULT_ZOOM = 60
+local MAX_FLOOR_UP = 0
+local MAX_FLOOR_DOWN = 15
 local navigating = false
 minimapFirstLoad = true
 
@@ -54,7 +56,7 @@ function Minimap.init()
 
 
   minimapWidget = minimapWindow:recursiveGetChildById('minimap')
-  g_mouse.bindAutoPress(minimapWidget, Minimap.compassClick)
+  g_mouse.bindAutoPress(minimapWidget, Minimap.compassClick, nil, MouseRightButton)
   minimapWidget:setAutoViewMode(false)
   minimapWidget:setViewMode(1) -- mid view
   minimapWidget:setDrawMinimapColors(true)
@@ -148,11 +150,15 @@ function Minimap.onButtonClick(id)
   elseif id == "floorUp" then
     local pos = minimapWidget:getCameraPosition()
     pos.z = pos.z - 1
-    minimapWidget:setCameraPosition(pos)
+    if(pos.z > MAX_FLOOR_UP) then
+      minimapWidget:setCameraPosition(pos)
+    end
   elseif id == "floorDown" then
     local pos = minimapWidget:getCameraPosition()
     pos.z = pos.z + 1
-    minimapWidget:setCameraPosition(pos)
+    if(pos.z < MAX_FLOOR_DOWN) then
+      minimapWidget:setCameraPosition(pos)
+    end
   end
 end
 
