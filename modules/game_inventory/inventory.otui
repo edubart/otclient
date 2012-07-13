@@ -63,15 +63,15 @@ MiniWindow
     padding: 4 5
     layout:
       type: grid
-      flow: true
+      num-columns: 5
       cell-size: 36 34
     HeadSlot
     BodySlot
     LegSlot
     FeetSlot
-    RightSlot
+    BackSlot
     LeftSlot
+    RightSlot
     NeckSlot
     FingerSlot
-    BackSlot
     AmmoSlot
