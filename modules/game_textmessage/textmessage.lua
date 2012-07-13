@@ -20,6 +20,7 @@ local MessageTypes = {
 local centerTextMessagePanel
 local bottomStatusLabel
 local privateLabel
+local deathWindow
 
 -- private functions
 local function displayMessage(msgtype, msg, time)
@@ -57,6 +58,8 @@ end
 
 -- public functions
 function TextMessage.init()
+  g_ui.importStyle('deathwindow.otui')
+  
   connect(g_game, { onDeath = TextMessage.displayDeadMessage,
                     onTextMessage = TextMessage.display,
                     onGameStart = TextMessage.clearMessages })
@@ -93,6 +96,7 @@ function TextMessage.terminate()
   centerTextMessagePanel = nil
   bottomStatusLabel = nil
   privateLabel = nil
+  deathWindow = nil
   TextMessage = nil
 end
 
@@ -127,4 +131,28 @@ function TextMessage.displayDeadMessage()
   local advanceLabel = GameInterface.getMapPanel():recursiveGetChildById('centerAdvance')
   if advanceLabel:isVisible() then return end
   TextMessage.displayEventAdvance(tr('You are dead.'))
+  
+  if(deathWindow) then
+    return
+  end
+  deathWindow = g_ui.createWidget('DeathWindow', rootWidget)
+  local okButton = deathWindow:getChildById('buttonOk')
+  local cancelButton = deathWindow:getChildById('buttonCancel')
+
+  local okFunc = function()
+    CharacterList.doLogin()
+    okButton:getParent():destroy()
+    deathWindow = nil
+  end
+  local cancelFunc = function()
+    GameInterface.logout()
+    cancelButton:getParent():destroy()
+    deathWindow = nil
+  end
+
+  deathWindow.onEnter = okFunc
+  deathWindow.onEscape = cancelFunc
+  
+  okButton.onClick = okFunc
+  cancelButton.onClick = cancelFunc
 end

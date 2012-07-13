@@ -34,7 +34,7 @@ MiniWindow
     text: ?
     text-align: center
     phantom: false
-    !tooltip: tr('Hold left mouse button to navigate\nScroll mouse middle button to zoom')
+    !tooltip: tr('Hold right mouse button to navigate\nScroll mouse middle button to zoom')
     anchors.top: minimizeButton.top
     anchors.right: minimizeButton.left
     margin-right: 3

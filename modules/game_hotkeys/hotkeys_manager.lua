@@ -334,6 +334,7 @@ function HotkeysManager.checkSelectedHotkey(focused)
 
       if hotkeyLabelSelectedOnList.itemId == nil then
         hotkeyText:enable()
+        hotkeyText:focus()
         hotKeyTextLabel:enable()
         hotkeyText:setText(hotkeyLabelSelectedOnList.value)
 

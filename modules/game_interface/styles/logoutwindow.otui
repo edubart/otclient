@@ -2,7 +2,6 @@ LogoutWindow < MainWindow
   id: logoutWindow
   !text: tr('Logout')
   size: 300 100
-  @onEscape: self:destroy()
 
   Label
     !text: tr('Are you sure you want to logout?')
