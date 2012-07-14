@@ -10,6 +10,7 @@ local skinComboBox
 local function onSkinComboBoxOptionChange(self, optionText, optionData)
   if Skins.setSkin(optionText) then
     g_settings.set('skin', optionText)
+    g_textures.clearTexturesCache()
     g_modules.reloadModules()
   end
 end

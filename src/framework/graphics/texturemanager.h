@@ -31,6 +31,7 @@ public:
     void init();
     void terminate();
 
+    void clearTexturesCache();
     TexturePtr getTexture(const std::string& fileName);
     const TexturePtr& getEmptyTexture() { return m_emptyTexture; }
 

@@ -36,6 +36,7 @@
 #include <framework/util/crypt.h>
 #include <framework/core/resourcemanager.h>
 #include <framework/graphics/particlemanager.h>
+#include <framework/graphics/texturemanager.h>
 
 void Application::registerLuaFunctions()
 {
@@ -224,6 +225,10 @@ void Application::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_graphics", "getVendor", &Graphics::getVendor, &g_graphics);
     g_lua.bindSingletonFunction("g_graphics", "getRenderer", &Graphics::getRenderer, &g_graphics);
     g_lua.bindSingletonFunction("g_graphics", "getVersion", &Graphics::getVersion, &g_graphics);
+
+    // Textures
+    g_lua.registerSingletonClass("g_textures");
+    g_lua.bindSingletonFunction("g_textures", "clearTexturesCache", &TextureManager::clearTexturesCache, &g_textures);
 
     // UI
     g_lua.registerSingletonClass("g_ui");

@@ -50,6 +50,11 @@ void TextureManager::terminate()
     m_emptyTexture = nullptr;
 }
 
+void TextureManager::clearTexturesCache()
+{
+    m_textures.clear();
+}
+
 TexturePtr TextureManager::getTexture(const std::string& fileName)
 {
     TexturePtr texture;
