@@ -27,28 +27,28 @@ Towns g_towns;
 Town::Town(uint32 tid, const std::string& name, const Position& pos)
     : m_id(tid), m_name(name)
 {
-    if (pos.isValid())
+    if(pos.isValid())
         m_pos = pos;
 }
 
 
 void Towns::addTown(const TownPtr &town)
 {
-    if (findTown(town->getId()) == m_towns.end())
+    if(findTown(town->getId()) == m_towns.end())
         m_towns.push_back(town);
 }
 
 void Towns::removeTown(uint32 townId)
 {
     auto it = findTown(townId);
-    if (it != m_towns.end())
+    if(it != m_towns.end())
         m_towns.erase(it);
 }
 
 TownPtr Towns::getTown(uint32 townId)
 {
     auto it = findTown(townId);
-    if (it != m_towns.end())
+    if(it != m_towns.end())
         return *it;
     return nullptr;
 }

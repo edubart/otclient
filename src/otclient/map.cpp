@@ -63,22 +63,22 @@ void Map::notificateTileUpdateToMapViews(const Position& pos)
 void Map::loadOtbm(const std::string& fileName)
 {
     FileStreamPtr fin = g_resources.openFile(fileName);
-    if (!fin)
+    if(!fin)
         stdext::throw_exception(stdext::format("Unable to load map '%s'", fileName));
 
     fin->cache();
-    if (!g_things.isOtbLoaded())
+    if(!g_things.isOtbLoaded())
         stdext::throw_exception("OTB isn't loaded yet to load a map.");
 
-    if (fin->getU32())
+    if(fin->getU32())
         stdext::throw_exception("Unknown file version detected");
 
     BinaryTreePtr root = fin->getBinaryTree();
-    if (root->getU8())
+    if(root->getU8())
         stdext::throw_exception("could not read root property!");
 
     uint32 headerVersion = root->getU32();
-    if (!headerVersion || headerVersion > 3)
+    if(!headerVersion || headerVersion > 3)
         stdext::throw_exception(stdext::format("Unknown OTBM version detected: %u.", headerVersion));
 
     m_width = root->getU16();
@@ -86,25 +86,25 @@ void Map::loadOtbm(const std::string& fileName)
     dump << "Map size: " << m_width << "x" << m_height;
 
     uint32 headerMajorItems = root->getU8();
-    if (headerMajorItems < 3) {
+    if(headerMajorItems < 3) {
         stdext::throw_exception(stdext::format("This map needs to be upgraded. read %d what it's supposed to be: %u",
                                                headerMajorItems, g_things.getOtbMajorVersion()));
     }
 
-    if (headerMajorItems > g_things.getOtbMajorVersion()) {
+    if(headerMajorItems > g_things.getOtbMajorVersion()) {
         stdext::throw_exception(stdext::format("This map was saved with different OTB version. read %d what it's supposed to be: %d",
                                                headerMajorItems, g_things.getOtbMajorVersion()));
     }
 
     root->skip(3);
     uint32 headerMinorItems =  root->getU32();
-    if (headerMinorItems > g_things.getOtbMinorVersion()) {
+    if(headerMinorItems > g_things.getOtbMinorVersion()) {
         g_logger.warning(stdext::format("This map needs an updated OTB. read %d what it's supposed to be: %d",
                                         headerMinorItems, g_things.getOtbMinorVersion()));
     }
 
     BinaryTreePtr node = root->getChildren()[0];
-    if (node->getU8() != OTBM_MAP_DATA)
+    if(node->getU8() != OTBM_MAP_DATA)
         stdext::throw_exception("Could not read root data node");
 
     while (node->canRead()) {
@@ -127,13 +127,13 @@ void Map::loadOtbm(const std::string& fileName)
 
     for (const BinaryTreePtr &nodeMapData : node->getChildren()) {
         uint8 mapDataType = nodeMapData->getU8();
-        if (mapDataType == OTBM_TILE_AREA) {
+        if(mapDataType == OTBM_TILE_AREA) {
             uint16 baseX = nodeMapData->getU16(), baseY = nodeMapData->getU16();
             uint8 pz = nodeMapData->getU8();
 
             for (const BinaryTreePtr &nodeTile : nodeMapData->getChildren()) {
                 uint8 type = nodeTile->getU8();
-                if (type != OTBM_TILE && type != OTBM_HOUSETILE)
+                if(type != OTBM_TILE && type != OTBM_HOUSETILE)
                     stdext::throw_exception(stdext::format("invalid node tile type %d", (int)type));
 
                 TilePtr tile = nullptr;
@@ -144,10 +144,10 @@ void Map::loadOtbm(const std::string& fileName)
                 uint16 px = baseX + nodeTile->getU8(), py = baseY + nodeTile->getU8();
                 Position pos(px, py, pz);
 
-                if (type ==  OTBM_HOUSETILE) {
+                if(type ==  OTBM_HOUSETILE) {
                     uint32 hId = nodeTile->getU32();
                     tile = createTile(pos);
-                    if (!(house = m_houses.getHouse(hId))) {
+                    if(!(house = m_houses.getHouse(hId))) {
                         house = HousePtr(new House(hId));
                         m_houses.addHouse(house);
                     }
@@ -159,26 +159,26 @@ void Map::loadOtbm(const std::string& fileName)
                     switch (tileAttr) {
                         case OTBM_ATTR_TILE_FLAGS: {
                             uint32 _flags = nodeTile->getU32();
-                            if ((_flags & TILESTATE_PROTECTIONZONE) == TILESTATE_PROTECTIONZONE)
+                            if((_flags & TILESTATE_PROTECTIONZONE) == TILESTATE_PROTECTIONZONE)
                                 flags |= TILESTATE_PROTECTIONZONE;
-                            else if ((_flags & TILESTATE_OPTIONALZONE) == TILESTATE_OPTIONALZONE)
+                            else if((_flags & TILESTATE_OPTIONALZONE) == TILESTATE_OPTIONALZONE)
                                 flags |= TILESTATE_OPTIONALZONE;
-                            else if ((_flags & TILESTATE_HARDCOREZONE) == TILESTATE_HARDCOREZONE)
+                            else if((_flags & TILESTATE_HARDCOREZONE) == TILESTATE_HARDCOREZONE)
                                 flags |= TILESTATE_HARDCOREZONE;
 
-                            if ((_flags & TILESTATE_NOLOGOUT) == TILESTATE_NOLOGOUT)
+                            if((_flags & TILESTATE_NOLOGOUT) == TILESTATE_NOLOGOUT)
                                 flags |= TILESTATE_NOLOGOUT;
 
-                            if ((_flags & TILESTATE_REFRESH) == TILESTATE_REFRESH)
+                            if((_flags & TILESTATE_REFRESH) == TILESTATE_REFRESH)
                                 flags |= TILESTATE_REFRESH;
 
                             break;
                         }
                         case OTBM_ATTR_ITEM: {
                             ItemPtr item = Item::createFromOtb(nodeTile->getU16());
-                            if (tile)
+                            if(tile)
                                 addThing(item, pos, 255);
-                            else if (item->isGround())
+                            else if(item->isGround())
                                 ground = item;
                             else
                                 tile = createTileEx(pos, ground, item);
@@ -191,16 +191,16 @@ void Map::loadOtbm(const std::string& fileName)
                 }
 
                 for (const BinaryTreePtr &nodeItem : nodeTile->getChildren()) {
-                    if (nodeItem->getU8() != OTBM_ITEM)
+                    if(nodeItem->getU8() != OTBM_ITEM)
                         stdext::throw_exception("invalid item node");
 
                     ItemPtr item = Item::createFromOtb(nodeItem->getU16());
                     item->unserializeItem(nodeItem);
-                    if (item->isContainer()) {
+                    if(item->isContainer()) {
                         // This is a temporary way for reading container items.
                         MapContainerPtr mapContainer(new MapContainer);
                         for (const BinaryTreePtr &insideItem : nodeItem->getChildren()) {
-                            if (insideItem->getU8() != OTBM_ITEM)
+                            if(insideItem->getU8() != OTBM_ITEM)
                                 stdext::throw_exception("invalid container item node");
 
                             ItemPtr newItem = Item::createFromOtb(insideItem->getU16());
@@ -210,36 +210,36 @@ void Map::loadOtbm(const std::string& fileName)
                         m_containers.push_back(mapContainer);
                     }
 
-                    if (house) {
-                        if (item->isMoveable()) {
+                    if(house) {
+                        if(item->isMoveable()) {
                             g_logger.warning(stdext::format("Movable item found in house: %d at pos %d %d %d - escaping...", item->getId(),
                                                             px, py, pz));
                             item = nullptr;
-                        } else if (item->isDoor())
+                        } else if(item->isDoor())
                             house->addDoor(item->getDoorId(), pos);
-                    } else if (tile)
+                    } else if(tile)
                         addThing(item, pos, 255);
-                    else if (item->isGround())
+                    else if(item->isGround())
                         ground = item;
                     else
                         tile = createTileEx(pos, ground, item);
                 }
 
-                if (!tile)
+                if(!tile)
                     tile = createTileEx(pos, ground);
 
                 tile->setFlags((tileflags_t)flags);
             }
-        } else if (mapDataType == OTBM_TOWNS) {
+        } else if(mapDataType == OTBM_TOWNS) {
             TownPtr town = nullptr;
             for (const BinaryTreePtr &nodeTown : nodeMapData->getChildren()) {
-                if (nodeTown->getU8() != OTBM_TOWN)
+                if(nodeTown->getU8() != OTBM_TOWN)
                     stdext::throw_exception("invalid town node.");
 
                 uint32 townId = nodeTown->getU32();
                 std::string townName = nodeTown->getString();
                 Position townCoords(nodeTown->getU16(), nodeTown->getU16(), nodeTown->getU8());
-                if (!(town = m_towns.getTown(townId))) {
+                if(!(town = m_towns.getTown(townId))) {
                     town = TownPtr(new Town(townId, townName, townCoords));
                     m_towns.addTown(town);
                 } else {
@@ -249,14 +249,14 @@ void Map::loadOtbm(const std::string& fileName)
                     town->setId(townId);
                 }
             }
-        } else if (mapDataType == OTBM_WAYPOINTS && headerVersion > 1) {
+        } else if(mapDataType == OTBM_WAYPOINTS && headerVersion > 1) {
             for (const BinaryTreePtr &nodeWaypoint : nodeMapData->getChildren()) {
-                if (nodeWaypoint->getU8() != OTBM_WAYPOINT)
+                if(nodeWaypoint->getU8() != OTBM_WAYPOINT)
                     stdext::throw_exception("invalid waypoint node.");
 
                 std::string name = nodeWaypoint->getString();
                 Position waypointPos(nodeWaypoint->getU16(), nodeWaypoint->getU16(), nodeWaypoint->getU8());
-                if (waypointPos.isValid() && !name.empty() && m_waypoints.find(waypointPos) == m_waypoints.end())
+                if(waypointPos.isValid() && !name.empty() && m_waypoints.find(waypointPos) == m_waypoints.end())
                     m_waypoints.insert(std::make_pair(waypointPos, name));
             }
         } else
@@ -278,27 +278,27 @@ void Map::saveOtbm(const std::string &fileName)
         stdext::throw_exception(stdext::format("failed to open file '%s'", fileName));
 
     std::string dir;
-    if (fileName.find_last_of('/') <= 0)
+    if(fileName.find_last_of('/') <= 0)
         dir = g_resources.getWorkDir();
     else
         dir = fileName.substr(0, fileName.find_last_of('/'));
 
-    if (m_houseFile.empty())
+    if(m_houseFile.empty())
         m_houseFile = "houses.xml";
-    if (m_spawnFile.empty())
+    if(m_spawnFile.empty())
         m_spawnFile = "spawns.xml";
 
 #if 0
-    if (!m_houses->save(dir + "/" + m_houseFile))
+    if(!m_houses->save(dir + "/" + m_houseFile))
         ;
-    if (!m_spawns->save(dir + "/" + m_spawnFile))
+    if(!m_spawns->save(dir + "/" + m_spawnFile))
         ;
 #endif
 
     uint32 ver;
-    if (g_things.getOtbMajorVersion() < 2)
+    if(g_things.getOtbMajorVersion() < 2)
         ver =0;
-    else if (g_things.getOtbMajorVersion() < 10)
+    else if(g_things.getOtbMajorVersion() < 10)
         ver = 1;
     else
         ver = 2;
@@ -328,7 +328,7 @@ void Map::saveOtbm(const std::string &fileName)
             fin->addString(m_spawnFile);
 
             // house file.
-            if (ver > 1) {
+            if(ver > 1) {
                 fin->addU8(OTBM_ATTR_HOUSE_FILE);
                 fin->addString(m_houseFile);
             }
@@ -341,10 +341,10 @@ void Map::saveOtbm(const std::string &fileName)
                     continue;
 
                 Position tilePos = pair.first;
-                if (tilePos.x < pos.x || tilePos.x >= pos.x + 256 ||
+                if(tilePos.x < pos.x || tilePos.x >= pos.x + 256 ||
                     tilePos.y < pos.y || tilePos.y >= pos.y + 256 ||
                     tilePos.z != pos.z) {
-                    if (!first)
+                    if(!first)
                         fin->endNode();
 
                     pos.x = tilePos.x & 0xFF00;
@@ -362,10 +362,10 @@ void Map::saveOtbm(const std::string &fileName)
 
 #if 0
                 // TODO: hOUSES again.
-                if (is house tile)
+                if(is house tile)
                     add u32 house id...;
 #endif
-                if (tile->flags()) {
+                if(tile->flags()) {
                     fin->addU8(OTBM_ATTR_TILE_FLAGS);
                     fin->addU32(tile->flags());
                 }

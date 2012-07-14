@@ -122,30 +122,30 @@ void ThingTypeManager::loadOtb(const std::string& file)
 void ThingTypeManager::loadXml(const std::string& file)
 {
     TiXmlDocument doc(file.c_str());
-    if (!doc.LoadFile())
+    if(!doc.LoadFile())
         stdext::throw_exception(stdext::format("failed to load xml '%s'", file));
 
     TiXmlElement* root = doc.FirstChildElement();
-    if (!root || root->ValueTStr() != "items")
+    if(!root || root->ValueTStr() != "items")
         stdext::throw_exception("invalid root tag name");
 
     ThingTypeOtbPtr otbType = nullptr;
     for (TiXmlElement *element = root->FirstChildElement(); element; element = element->NextSiblingElement()) {
-        if (element->ValueTStr() != "item")
+        if(element->ValueTStr() != "item")
             continue;
 
         std::string name = element->Attribute("id");
-        if (name.empty())
+        if(name.empty())
             continue;
 
         uint16 id = stdext::unsafe_cast<uint16>(element->Attribute("id"));
-        if (!(otbType = getOtbType(id))) {
+        if(!(otbType = getOtbType(id))) {
             // try reading fromId toId
             uint16 from = stdext::unsafe_cast<uint16>(element->Attribute("fromId"));
             uint16 to = stdext::unsafe_cast<uint16>(element->Attribute("toid"));
 
             for (uint16 __id = from; __id < to; ++__id) {
-                if (!(otbType = getOtbType(__id)))
+                if(!(otbType = getOtbType(__id)))
                     continue;
 
                 otbType->setHasRange();
@@ -155,14 +155,14 @@ void ThingTypeManager::loadXml(const std::string& file)
             }
 
             // perform last check
-            if (!otbType) {
+            if(!otbType) {
                 stdext::throw_exception(stdext::format("failed to find item with server id %d - tried reading fromid to id",
                                                        id));
             }
         }
 
         for (TiXmlElement *attr = element->FirstChildElement(); attr; attr = attr->NextSiblingElement()) {
-            if (attr->ValueTStr() != "attribute")
+            if(attr->ValueTStr() != "attribute")
                 continue;
 
             otbType->unserializeXML(attr);

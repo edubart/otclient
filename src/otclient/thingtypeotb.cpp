@@ -68,8 +68,8 @@ void ThingTypeOtb::unserializeXML(const TiXmlElement* elem)
     std::string key   = elem->Attribute("key");
     std::string value = elem->Attribute("value");
 
-    if (key == "name")
+    if(key == "name")
         setName(value);
-    else if (key == "description")
+    else if(key == "description")
         setDesc(value);
 }

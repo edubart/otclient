@@ -191,7 +191,7 @@ public:
         else
             r2 = r.x2;
 
-        if (l1 > r2 || l2 > r1)
+        if(l1 > r2 || l2 > r1)
             return false;
 
         int t1 = y1;
@@ -203,7 +203,7 @@ public:
 
         int t2 = r.y1;
         int b2 = r.y1;
-        if (r.y2 - r.y1 + 1 < 0)
+        if(r.y2 - r.y1 + 1 < 0)
             t2 = r.y2;
         else
             b2 = r.y2;

@@ -60,7 +60,7 @@ void BinaryTree::seek(uint pos)
 
 uint8 BinaryTree::getU8()
 {
-    if (m_pos+1 > m_buffer.size())
+    if(m_pos+1 > m_buffer.size())
         stdext::throw_exception("BinaryTree: getU8 failed");
     uint8 v = m_buffer[m_pos];
     m_pos += 1;
@@ -69,7 +69,7 @@ uint8 BinaryTree::getU8()
 
 uint16 BinaryTree::getU16()
 {
-    if (m_pos+2 > m_buffer.size())
+    if(m_pos+2 > m_buffer.size())
         stdext::throw_exception("BinaryTree: getU16 failed");
     uint16 v = stdext::readLE16(&m_buffer[m_pos]);
     m_pos += 2;
@@ -78,7 +78,7 @@ uint16 BinaryTree::getU16()
 
 uint32 BinaryTree::getU32()
 {
-    if (m_pos+4 > m_buffer.size())
+    if(m_pos+4 > m_buffer.size())
         stdext::throw_exception("BinaryTree: getU32 failed");
     uint32 v = stdext::readLE32(&m_buffer[m_pos]);
     m_pos += 4;
@@ -87,7 +87,7 @@ uint32 BinaryTree::getU32()
 
 uint64 BinaryTree::getU64()
 {
-    if (m_pos+8 > m_buffer.size())
+    if(m_pos+8 > m_buffer.size())
         stdext::throw_exception("BinaryTree: getU64 failed");
     uint64 v = stdext::readLE64(&m_buffer[m_pos]);
     m_pos += 8;
@@ -97,10 +97,10 @@ uint64 BinaryTree::getU64()
 std::string BinaryTree::getString()
 {
     uint16 len = getU16();
-    if (len == 0 || len > 8192)
+    if(len == 0 || len > 8192)
         stdext::throw_exception("BinaryTree: getString failed: invalid or too large string length");
 
-    if (m_pos+len > m_buffer.size())
+    if(m_pos+len > m_buffer.size())
         stdext::throw_exception("BinaryTree: getString failed: string length exceeded buffer size.");
 
     std::string ret((char *)&m_buffer[m_pos], len);

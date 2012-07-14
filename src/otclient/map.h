@@ -91,7 +91,7 @@ public:
     void add(const ItemPtr& item) { m_items.push_back(item); }
     ItemPtr operator[](uint idx) { return getItem(idx); }
     ItemPtr getItem(int index) {
-        if (index < 0 || index > (int)m_items.size())
+        if(index < 0 || index > (int)m_items.size())
             return nullptr;
 
         return m_items[index];

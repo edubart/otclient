@@ -27,20 +27,20 @@ Houses g_houses;
 House::House(uint32 hId, const std::string &name, const Position &pos)
     : m_id(hId), m_name(name)
 {
-    if (pos.isValid())
+    if(pos.isValid())
         m_doors.insert(std::make_pair(0, pos)); // first door
 }
 
 void House::addDoor(uint16 doorId, const Position& pos)
 {
-    if (m_doors.find(doorId) == m_doors.end())
+    if(m_doors.find(doorId) == m_doors.end())
         m_doors.insert(std::make_pair(doorId, pos));
 }
 
 void House::setTile(const TilePtr& tile)
 {
     tile->setFlags(TILESTATE_HOUSE);
-    if (std::find(m_tiles.begin(), m_tiles.end(), tile) == m_tiles.end())
+    if(std::find(m_tiles.begin(), m_tiles.end(), tile) == m_tiles.end())
         m_tiles.push_back(tile);
 }
 
@@ -49,18 +49,18 @@ void House::setTile(const TilePtr& tile)
 void House::load(const TiXmlElement *elem)
 {
     std::string name = elem->Attribute("name");
-    if (name.empty())
+    if(name.empty())
         name = stdext::format("UnNamed house #%u", getId());
 
     uint32 rent = fugly_get("rent", uint32);
     m_rent = rent;
 
     uint32 townId = fugly_get("townid", uint32);
-    if (!g_map.getTown(townId))
+    if(!g_map.getTown(townId))
         stdext::throw_exception(stdext::format("invalid town id for house %d", townId));
 
     uint32 size = fugly_get("size", uint32);
-    if (size == 0)
+    if(size == 0)
         size = 1;
 
     m_size = size;
@@ -71,21 +71,21 @@ void House::load(const TiXmlElement *elem)
 
 void Houses::addHouse(const HousePtr& house)
 {
-    if (findHouse(house->getId()) == m_houses.end())
+    if(findHouse(house->getId()) == m_houses.end())
         m_houses.push_back(house);
 }
 
 void Houses::removeHouse(uint32 houseId)
 {
     auto it = findHouse(houseId);
-    if (it != m_houses.end())
+    if(it != m_houses.end())
         m_houses.erase(it);
 }
 
 HousePtr Houses::getHouse(uint32 houseId)
 {
     auto it = findHouse(houseId);
-    if (it != m_houses.end())
+    if(it != m_houses.end())
         return *it;
 
     return nullptr;
@@ -94,20 +94,20 @@ HousePtr Houses::getHouse(uint32 houseId)
 void Houses::load(const std::string& fileName)
 {
     TiXmlDocument doc(fileName.c_str());
-    if (!doc.LoadFile())
+    if(!doc.LoadFile())
         stdext::throw_exception(stdext::format("failed to load '%s' (House XML)", fileName));
 
     TiXmlElement *root = doc.FirstChildElement();
-    if (!root || root->ValueTStr() != "houses")
+    if(!root || root->ValueTStr() != "houses")
         stdext::throw_exception("invalid root tag name");
 
     for (TiXmlElement *elem = root->FirstChildElement(); elem; elem = elem->NextSiblingElement()) {
-        if (elem->ValueTStr() != "house")
+        if(elem->ValueTStr() != "house")
             stdext::throw_exception("invalid house tag.");
 
         uint32 houseId = fugly_get("houseid", uint32);
         HousePtr house = getHouse(houseId);
-        if (!house)
+        if(!house)
             house = HousePtr(new House(houseId)), addHouse(house);
 
         house->load(elem);

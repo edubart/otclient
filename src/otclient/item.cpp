@@ -211,7 +211,7 @@ void Item::unserializeItem(const BinaryTreePtr &in)
 {
     while (in->canRead()) {
         uint8 attrType = in->getU8();
-        if (attrType == 0)
+        if(attrType == 0)
             break;
 
         // fugly switch yes?
@@ -286,7 +286,7 @@ void Item::unserializeItem(const BinaryTreePtr &in)
 
 bool Item::isMoveable()
 {
-    if (m_datType)
+    if(m_datType)
         return !m_datType->isNotMoveable();
 
     g_logger.warning(stdext::format(

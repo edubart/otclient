@@ -80,7 +80,7 @@ Color Outfit::getColor(int color)
     if(loc3 == 0)
         return Color(0, 0, 0);
 
-    if (loc2 == 0) {
+    if(loc2 == 0) {
         int loc7 = int(loc3 * 255);
         return Color(loc7, loc7, loc7);
     }
@@ -92,7 +92,7 @@ Color Outfit::getColor(int color)
         blue = loc3 * (1 - loc2);
         green = blue + (loc3 - blue) * 6 * loc1;
     }
-    else if (loc1 < 2.0/6.0) {
+    else if(loc1 < 2.0/6.0) {
         green = loc3;
         blue = loc3 * (1 - loc2);
         red = green - (loc3 - blue) * (6 * loc1 - 1);
@@ -102,12 +102,12 @@ Color Outfit::getColor(int color)
         red = loc3 * (1 - loc2);
         blue = red + (loc3 - red) * (6 * loc1 - 2);
     }
-    else if (loc1 < 4.0/6.0) {
+    else if(loc1 < 4.0/6.0) {
         blue = loc3;
         red = loc3 * (1 - loc2);
         green = blue - (loc3 - red) * (6 * loc1 - 3);
     }
-    else if (loc1 < 5.0/6.0) {
+    else if(loc1 < 5.0/6.0) {
         blue = loc3;
         green = loc3 * (1 - loc2);
         red = green + (loc3 - green) * (6 * loc1 - 4);
