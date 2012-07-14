@@ -26,6 +26,9 @@
 #include "thing.h"
 #include "tile.h"
 #include "shadermanager.h"
+#include "container.h"
+#include "map.h"
+#include "houses.h"
 
 #include <framework/core/clock.h>
 #include <framework/core/eventdispatcher.h>
@@ -206,12 +209,12 @@ bool Item::isValid()
 
 void Item::unserializeItem(const BinaryTreePtr &in)
 {
-    // Yet another TODO.
     while (in->canRead()) {
         uint8 attrType = in->getU8();
         if (attrType == 0)
             break;
 
+        // fugly switch yes?
         switch ((AttrTypes_t)attrType) {
             case ATTR_COUNT:
                 setSubType(in->getU8());
@@ -228,9 +231,31 @@ void Item::unserializeItem(const BinaryTreePtr &in)
             case ATTR_NAME:
                 setName(in->getString());
                 break;
-            case ATTR_ARTICLE: // ?
-            case ATTR_WRITTENBY:
+            case ATTR_TEXT:
+                setText(in->getString());
+                break;
             case ATTR_DESC:
+                m_description = in->getString();
+                break;
+            case ATTR_CONTAINER_ITEMS:
+                m_isContainer = true;
+                in->skip(4);
+                break;
+            case ATTR_HOUSEDOORID:
+                m_isDoor = true;
+                m_doorId = in->getU8();
+                break;
+            case ATTR_DEPOT_ID:
+                m_depotId = in->getU16();
+                break;
+            case ATTR_TELE_DEST: {
+                m_teleportDestination.x = in->getU16();
+                m_teleportDestination.y = in->getU16();
+                m_teleportDestination.z = in->getU8();
+                break;
+            }
+            case ATTR_ARTICLE:
+            case ATTR_WRITTENBY:
                 in->getString();
                 break;
             case ATTR_ATTACK:
@@ -244,28 +269,15 @@ void Item::unserializeItem(const BinaryTreePtr &in)
             case ATTR_WRITTENDATE:
             case ATTR_SLEEPERGUID:
             case ATTR_SLEEPSTART:
-            case ATTR_CONTAINER_ITEMS:
             case ATTR_ATTRIBUTE_MAP:
                 in->skip(4);
                 break;
             case ATTR_SCRIPTPROTECTED:
             case ATTR_DUALWIELD:
             case ATTR_DECAYING_STATE:
-            case ATTR_HOUSEDOORID:
             case ATTR_RUNE_CHARGES:
                 in->skip(1);
                 break;
-            case ATTR_TEXT:
-                setText(in->getString());
-                break;
-            case ATTR_DEPOT_ID:
-                in->skip(2); // trolol
-                break;
-            case ATTR_TELE_DEST:
-            {
-                Position pos(in->getU16(), in->getU16(), in->getU8());
-                break;
-            }
             default:
                 stdext::throw_exception(stdext::format("invalid item attribute %d", (int)attrType));
         }

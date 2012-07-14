@@ -36,8 +36,8 @@ public:
     void terminate();
 
     bool loadDat(const std::string& file);
-    bool loadOtb(const std::string& file);
-    bool loadXml(const std::string& file);
+    void loadOtb(const std::string& file);
+    void loadXml(const std::string& file);
 
     void addOtbType(const ThingTypeOtbPtr& otbType);
     const ThingTypeOtbPtr& findOtbForClientId(uint16 id);

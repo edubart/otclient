@@ -38,6 +38,8 @@
 #include <otclient/core/thingtypemanager.h>
 #include <otclient/core/spritemanager.h>
 #include <otclient/core/shadermanager.h>
+#include <otclient/core/houses.h>
+#include <otclient/core/towns.h>
 #include <otclient/net/protocolgame.h>
 #include <otclient/ui/uiitem.h>
 #include <otclient/ui/uicreature.h>
@@ -52,6 +54,19 @@ void OTClient::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_things", "loadOtb", &ThingTypeManager::loadOtb, &g_things);
     g_lua.bindSingletonFunction("g_things", "loadXml", &ThingTypeManager::loadXml, &g_things);
     g_lua.bindSingletonFunction("g_things", "getDatSignature", &ThingTypeManager::getDatSignature, &g_things);
+
+#if 0
+    g_lua.registerSingletonClass("g_houses");
+    g_lua.bindSingletonFunction("g_houses", "load",        &Houses::load,        &g_houses);
+    g_lua.bindSingletonFunction("g_houses", "getHouse",    &Houses::getHouse,    &g_houses);
+    g_lua.bindSingletonFunction("g_houses", "addHouse",    &Houses::addHouse,    &g_houses);
+    g_lua.bindSingletonFunction("g_houses", "removeHouse", &Houses::removeHouse, &g_houses);
+    
+    g_lua.registerSingletonClass("g_towns");
+    g_lua.bindSingletonFunction("g_towns", "getTown",      &Towns::getTown,      &g_towns);
+    g_lua.bindSingletonFunction("g_towns", "addTown",      &Towns::addTown,      &g_towns);
+    g_lua.bindSingletonFunction("g_towns", "removeTown",   &Towns::removeTown,   &g_towns);
+#endif
 
     g_lua.registerSingletonClass("g_sprites");
     g_lua.bindSingletonFunction("g_sprites", "loadSpr", &SpriteManager::loadSpr, &g_sprites);
@@ -81,6 +96,8 @@ void OTClient::registerLuaFunctions()
     //g_lua.bindSingletonFunction("g_map", "saveOtbm", &Map::saveOtbm, &g_map);
     g_lua.bindSingletonFunction("g_map", "loadOtcm", &Map::loadOtcm, &g_map);
     g_lua.bindSingletonFunction("g_map", "saveOtcm", &Map::saveOtcm, &g_map);
+    g_lua.bindSingletonFunction("g_map", "getTown", &Map::getTown, &g_map);
+    g_lua.bindSingletonFunction("g_map", "getHouse", &Map::getHouse, &g_map);
 
     g_lua.registerSingletonClass("g_game");
     g_lua.bindSingletonFunction("g_game", "loginWorld", &Game::loginWorld, &g_game);
@@ -254,6 +271,26 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Thing>("isTranslucent", &Thing::isTranslucent);
     g_lua.bindClassMemberFunction<Thing>("isFullGround", &Thing::isFullGround);
     g_lua.bindClassMemberFunction<Thing>("getParentContainer", &Thing::getParentContainer);
+
+    g_lua.registerClass<House>();
+    g_lua.bindClassStaticFunction<House>("create", []{ return HousePtr(new House); });
+    g_lua.bindClassMemberFunction<House>("setId", &House::setId);
+    g_lua.bindClassMemberFunction<House>("setName", &House::setName);
+    g_lua.bindClassMemberFunction<House>("addDoor", &House::addDoor);
+    g_lua.bindClassMemberFunction<House>("addDoorPos", &House::addDoor); // alternative method
+    g_lua.bindClassMemberFunction<House>("setTile", &House::setTile);
+    g_lua.bindClassMemberFunction<House>("addTile", &House::addDoor);    // alternative method
+
+    g_lua.registerClass<Town>();
+    g_lua.bindClassStaticFunction<Town>("create", []{ return TownPtr(new Town); });
+    g_lua.bindClassMemberFunction<Town>("setId", &Town::setId);
+    g_lua.bindClassMemberFunction<Town>("setName", &Town::setName);
+    g_lua.bindClassMemberFunction<Town>("setPos", &Town::setPos);
+    g_lua.bindClassMemberFunction<Town>("setTemplePos", &Town::setPos); // alternative method
+    g_lua.bindClassMemberFunction<Town>("getId", &Town::getId);
+    g_lua.bindClassMemberFunction<Town>("getName", &Town::getName);
+    g_lua.bindClassMemberFunction<Town>("getPos", &Town::getPos);
+    g_lua.bindClassMemberFunction<Town>("getTemplePos", &Town::getPos); // alternative method
 
     g_lua.registerClass<Creature, Thing>();
     g_lua.bindClassStaticFunction<Creature>("create", []{ return CreaturePtr(new Creature); });

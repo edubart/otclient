@@ -29,8 +29,8 @@
 #define BUILD_COMPILER "gcc " __VERSION__
 #define BUILD_DATE __DATE__
 
-    #ifndef BUILD_COMMIT
-#define BUILD_COMMIT "custom"
+#ifndef BUILD_COMMIT
+#define BUILD_COMMIT "devel"
 #endif
 
 #ifndef BUILD_REVISION
@@ -39,6 +39,16 @@
 
 #ifndef BUILD_TYPE
 #define BUILD_TYPE "unknown"
+#endif
+
+#ifndef BUILD_ARCH
+#if defined(__amd64) || defined(_M_X64)
+#define BUILD_ARCH "x64"
+#elif defined(__i386) || defined(_M_IX86) || defined(_X86_)
+#define BUILD_ARCH "X86"
+#else
+#define BUILD_ARCH "unknown"
+#endif
 #endif
 
 namespace Fw
@@ -207,7 +217,7 @@ namespace Fw
         AnchorLeft,
         AnchorRight,
         AnchorVerticalCenter,
-        AnchorHorizontalCenter,
+        AnchorHorizontalCenter
     };
 
     enum FocusReason {

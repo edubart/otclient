@@ -1,6 +1,6 @@
 == MODULES
 game_shaders (with shader manager)
-game_map (with save/load/options)
+game_map (with save/load/option)
 game_minimap (with all tibia functionality)
 
 == NOTABLE FEATURES

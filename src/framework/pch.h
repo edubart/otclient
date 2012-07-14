@@ -64,7 +64,7 @@
 #include <boost/algorithm/string.hpp>
 
 // tiny XML
-#define TIXML_USE_STL
+#define TIXML_USE_STL // use std::string's instead
 #include <framework/thirdparty/tinyxml.h>
 
 #endif

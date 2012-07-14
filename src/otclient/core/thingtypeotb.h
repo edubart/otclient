@@ -85,19 +85,30 @@ public:
     ThingTypeOtb();
 
     void unserialize(const BinaryTreePtr& node);
-    void unserializeXML();
+    void unserializeXML(const TiXmlElement* elem);
 
     uint16 getServerId() { return m_serverId; }
     uint16 getClientId() { return m_clientId; }
     OtbCategory getCategory() { return m_category; }
 
     bool isNull() { return m_null; }
+    bool hasRange() { return m_hasRange; }
+
+    void setHasRange() { m_hasRange = true; }
+    void setFromServerId(uint16 from) { m_fromId = from; }
+    void setToServerId(uint16 to)   { m_toId = to; }
+    void setName(const std::string& name) { m_name = name; }
+    void setDesc(const std::string& desc) { m_desc = desc; }
 
 private:
     uint16 m_serverId;
     uint16 m_clientId;
+    uint16 m_fromId, m_toId;
+
+    std::string m_name, m_desc;
     OtbCategory m_category;
     Boolean<true> m_null;
+    Boolean<false> m_hasRange;
 };
 
 #endif

@@ -27,7 +27,8 @@
 #include "thing.h"
 #include "thingtypeotb.h"
 
-enum AttrTypes_t {
+enum AttrTypes_t
+{
     ATTR_END = 0,
     ATTR_TILE_FLAGS = 3,
     ATTR_ACTION_ID = 4,
@@ -82,6 +83,7 @@ public:
     void setSubType(int subType) { m_countOrSubType = subType; }
     void setActionId(int actionId) { m_actionId = actionId; }
     void setUniqueId(int uniqueId) { m_uniqueId = uniqueId; }
+    void setDoorId(int doorId) { m_doorId = doorId; }
     void setName(const std::string &name) { m_name = name; }
     void setText(const std::string &text) { m_text = text; }
     void setDescription(const std::string &description) { m_description = description; }
@@ -91,6 +93,7 @@ public:
     int getCount() { return m_countOrSubType; }
     uint32 getId() { return m_id; }
     std::string getName() { return m_name; }
+    uint8 getDoorId() { return m_doorId; }
     bool isValid();
 
     ItemPtr asItem() { return std::static_pointer_cast<Item>(shared_from_this()); }
@@ -98,14 +101,22 @@ public:
 
     void unserializeItem(const BinaryTreePtr &in);
     bool isMoveable();
+    bool isContainer() { return m_isContainer; }
+    bool isDoor() { return m_isDoor; }
 
 private:
     uint16 m_id;
     uint8 m_countOrSubType;
     uint32 m_actionId, m_uniqueId;
+    uint16 m_depotId;
+    uint8 m_doorId;
+    Boolean<false> m_isContainer;
+    Boolean<false> m_isDoor;
+
     std::string m_name, m_text, m_description;
     PainterShaderProgramPtr m_shaderProgram;
     ThingTypeOtbPtr m_otbType;
+    Position m_teleportDestination;
 };
 
 #endif

@@ -501,6 +501,7 @@ void Application::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_app", "getBuildRevision", &Application::getBuildRevision, &g_app);
     g_lua.bindSingletonFunction("g_app", "getBuildCommit", &Application::getBuildCommit, &g_app);
     g_lua.bindSingletonFunction("g_app", "getBuildType", &Application::getBuildType, &g_app);
+    g_lua.bindSingletonFunction("g_app", "getBuildArch", &Application::getBuildArch, &g_app);
     g_lua.bindSingletonFunction("g_app", "exit", &Application::exit, &g_app);
 
     // ConfigManager

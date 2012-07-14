@@ -100,6 +100,7 @@ public:
 
     TilePtr asTile() { return std::static_pointer_cast<Tile>(shared_from_this()); }
     void setFlags(tileflags_t flags) { m_flags |= (uint32)flags; }
+    uint32 flags() { return m_flags; }
 
 private:
     void update();
