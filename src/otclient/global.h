@@ -27,6 +27,6 @@
 
 // widely used headers
 #include "const.h"
-#include "util/position.h"
+#include "position.h"
 
 #endif

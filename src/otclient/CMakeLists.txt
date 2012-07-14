@@ -1,31 +1,31 @@
 # CMAKE_CURRENT_LIST_DIR cmake 2.6 compatiblity
-IF(${CMAKE_MAJOR_VERSION} EQUAL 2 AND ${CMAKE_MINOR_VERSION} EQUAL 6)
-    GET_FILENAME_COMPONENT(CMAKE_CURRENT_LIST_DIR ${CMAKE_CURRENT_LIST_FILE} PATH)
-ENDIF(${CMAKE_MAJOR_VERSION} EQUAL 2 AND ${CMAKE_MINOR_VERSION} EQUAL 6)
+if(${CMAKE_MAJOR_VERSION} EQUAL 2 AND ${CMAKE_MINOR_VERSION} EQUAL 6)
+    get_filename_component(CMAKE_CURRENT_LIST_DIR ${CMAKE_CURRENT_LIST_FILE} PATH)
+endif(${CMAKE_MAJOR_VERSION} EQUAL 2 AND ${CMAKE_MINOR_VERSION} EQUAL 6)
 
 # otclient options
-ADD_DEFINITIONS(-DOTCLIENT)
-OPTION(BOT_PROTECTION "Enable bot protection" ON)
-SET(PROTOCOL 860 CACHE "Protocol version" STRING)
-OPTION(CIPSOFT_RSA "Use cipsoft RSA to login into original tibia" OFF)
-ADD_DEFINITIONS(-DPROTOCOL=${PROTOCOL})
-MESSAGE(STATUS "Protocol: " ${PROTOCOL})
+add_definitions(-DOTCLIENT)
+option(BOT_PROTECTION "Enable bot protection" ON)
+set(PROTOCOL 860 CACHE "Protocol version" STRING)
+option(CIPSOFT_RSA "Use cipsoft RSA to login into original tibia" OFF)
+add_definitions(-DPROTOCOL=${PROTOCOL})
+message(STATUS "Protocol: " ${PROTOCOL})
 
-IF(CIPSOFT_RSA)
-    ADD_DEFINITIONS(-DCIPSOFT_RSA -DOSTYPE=2)
-    MESSAGE(STATUS "RSA: CipSoft")
-ELSE()
-    MESSAGE(STATUS "RSA: OTServ")
-ENDIF()
+if(CIPSOFT_RSA)
+    add_definitions(-DCIPSOFT_RSA -DOSTYPE=2)
+    message(STATUS "RSA: CipSoft")
+else()
+    message(STATUS "RSA: OTServ")
+endif()
 
-IF(BOT_PROTECTION)
-    ADD_DEFINITIONS(-DBOT_PROTECTION)
-    MESSAGE(STATUS "Bot protection: ON")
-ELSE(BOT_PROTECTION)
-    MESSAGE(STATUS "Bot protection: OFF")
-ENDIF(BOT_PROTECTION)
+if(BOT_PROTECTION)
+    add_definitions(-DBOT_PROTECTION)
+    message(STATUS "Bot protection: ON")
+else(BOT_PROTECTION)
+    message(STATUS "Bot protection: OFF")
+endif(BOT_PROTECTION)
 
-SET(otclient_SOURCES ${otclient_SOURCES}
+set(otclient_SOURCES ${otclient_SOURCES}
     # otclient
     ${CMAKE_CURRENT_LIST_DIR}/const.h
     ${CMAKE_CURRENT_LIST_DIR}/global.h
@@ -34,71 +34,69 @@ SET(otclient_SOURCES ${otclient_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/otclient.h
 
     # core
-    ${CMAKE_CURRENT_LIST_DIR}/core/animatedtext.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/core/animatedtext.h
-    ${CMAKE_CURRENT_LIST_DIR}/core/container.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/core/container.h
-    ${CMAKE_CURRENT_LIST_DIR}/core/creature.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/core/creature.h
-    ${CMAKE_CURRENT_LIST_DIR}/core/declarations.h
-    ${CMAKE_CURRENT_LIST_DIR}/core/effect.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/core/effect.h
-    ${CMAKE_CURRENT_LIST_DIR}/core/game.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/core/game.h
-    ${CMAKE_CURRENT_LIST_DIR}/core/shadermanager.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/core/shadermanager.h
-    ${CMAKE_CURRENT_LIST_DIR}/core/item.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/core/item.h
-    ${CMAKE_CURRENT_LIST_DIR}/core/localplayer.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/core/localplayer.h
-    ${CMAKE_CURRENT_LIST_DIR}/core/map.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/core/map.h
-    ${CMAKE_CURRENT_LIST_DIR}/core/mapview.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/core/mapview.h
-    ${CMAKE_CURRENT_LIST_DIR}/core/missile.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/core/missile.h
-    ${CMAKE_CURRENT_LIST_DIR}/core/outfit.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/core/outfit.h
-    ${CMAKE_CURRENT_LIST_DIR}/core/player.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/core/player.h
-    ${CMAKE_CURRENT_LIST_DIR}/core/spritemanager.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/core/spritemanager.h
-    ${CMAKE_CURRENT_LIST_DIR}/core/statictext.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/core/statictext.h
-    ${CMAKE_CURRENT_LIST_DIR}/core/thing.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/core/thing.h
-    ${CMAKE_CURRENT_LIST_DIR}/core/thingtypemanager.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/core/thingtypemanager.h
-    ${CMAKE_CURRENT_LIST_DIR}/core/thingtypedat.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/core/thingtypedat.h
-    ${CMAKE_CURRENT_LIST_DIR}/core/thingtypeotb.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/core/thingtypeotb.h
-    ${CMAKE_CURRENT_LIST_DIR}/core/tile.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/core/tile.h
+    ${CMAKE_CURRENT_LIST_DIR}/animatedtext.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/animatedtext.h
+    ${CMAKE_CURRENT_LIST_DIR}/container.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/container.h
+    ${CMAKE_CURRENT_LIST_DIR}/creature.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/creature.h
+    ${CMAKE_CURRENT_LIST_DIR}/declarations.h
+    ${CMAKE_CURRENT_LIST_DIR}/effect.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/effect.h
+    ${CMAKE_CURRENT_LIST_DIR}/game.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/game.h
+    ${CMAKE_CURRENT_LIST_DIR}/shadermanager.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/shadermanager.h
+    ${CMAKE_CURRENT_LIST_DIR}/item.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/item.h
+    ${CMAKE_CURRENT_LIST_DIR}/localplayer.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/localplayer.h
+    ${CMAKE_CURRENT_LIST_DIR}/map.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/map.h
+    ${CMAKE_CURRENT_LIST_DIR}/mapview.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/mapview.h
+    ${CMAKE_CURRENT_LIST_DIR}/missile.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/missile.h
+    ${CMAKE_CURRENT_LIST_DIR}/outfit.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/outfit.h
+    ${CMAKE_CURRENT_LIST_DIR}/player.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/player.h
+    ${CMAKE_CURRENT_LIST_DIR}/spritemanager.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/spritemanager.h
+    ${CMAKE_CURRENT_LIST_DIR}/statictext.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/statictext.h
+    ${CMAKE_CURRENT_LIST_DIR}/thing.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/thing.h
+    ${CMAKE_CURRENT_LIST_DIR}/thingtypemanager.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/thingtypemanager.h
+    ${CMAKE_CURRENT_LIST_DIR}/thingtypedat.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/thingtypedat.h
+    ${CMAKE_CURRENT_LIST_DIR}/thingtypeotb.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/thingtypeotb.h
+    ${CMAKE_CURRENT_LIST_DIR}/tile.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/tile.h
 
     # lua
-    ${CMAKE_CURRENT_LIST_DIR}/luascript/luavaluecasts.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/luascript/luavaluecasts.h
+    ${CMAKE_CURRENT_LIST_DIR}/luavaluecasts.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/luavaluecasts.h
 
     # net
-    ${CMAKE_CURRENT_LIST_DIR}/net/declarations.h
-    ${CMAKE_CURRENT_LIST_DIR}/net/protocolcodes.h
-    ${CMAKE_CURRENT_LIST_DIR}/net/protocolgame.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/net/protocolgame.h
-    ${CMAKE_CURRENT_LIST_DIR}/net/protocolgameparse.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/net/protocolgamesend.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/protocolcodes.h
+    ${CMAKE_CURRENT_LIST_DIR}/protocolgame.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/protocolgame.h
+    ${CMAKE_CURRENT_LIST_DIR}/protocolgameparse.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/protocolgamesend.cpp
 
     # ui
-    ${CMAKE_CURRENT_LIST_DIR}/ui/declarations.h
-    ${CMAKE_CURRENT_LIST_DIR}/ui/uicreature.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/ui/uicreature.h
-    ${CMAKE_CURRENT_LIST_DIR}/ui/uiitem.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/ui/uiitem.h
-    ${CMAKE_CURRENT_LIST_DIR}/ui/uimap.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/ui/uimap.h
-    ${CMAKE_CURRENT_LIST_DIR}/ui/uiprogressrect.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/ui/uiprogressrect.h
+    ${CMAKE_CURRENT_LIST_DIR}/uicreature.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/uicreature.h
+    ${CMAKE_CURRENT_LIST_DIR}/uiitem.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/uiitem.h
+    ${CMAKE_CURRENT_LIST_DIR}/uimap.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/uimap.h
+    ${CMAKE_CURRENT_LIST_DIR}/uiprogressrect.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/uiprogressrect.h
 
     # util
-    ${CMAKE_CURRENT_LIST_DIR}/util/position.h
+    ${CMAKE_CURRENT_LIST_DIR}/position.h
 )

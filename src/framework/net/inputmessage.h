@@ -24,7 +24,7 @@
 #define INPUTMESSAGE_H
 
 #include "declarations.h"
-#include <framework/luascript/luaobject.h>
+#include <framework/luaengine/luaobject.h>
 
 // @bindclass
 class InputMessage : public LuaObject

@@ -26,7 +26,7 @@
 #include "image.h"
 
 #include <framework/core/resourcemanager.h>
-#include <framework/thirdparty/apngloader.h>
+#include <framework/graphics/apngloader.h>
 
 TextureManager g_textures;
 

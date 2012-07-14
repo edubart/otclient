@@ -1,173 +1,54 @@
+# framework flags
+# FRAMEWORK_SOUND
+# FRAMEWORK_GRAPHICS
+# FRAMEWORK_NET
+# FRAMEWORK_XML
+
 # CMAKE_CURRENT_LIST_DIR cmake 2.6 compatiblity
-IF(${CMAKE_MAJOR_VERSION} EQUAL 2 AND ${CMAKE_MINOR_VERSION} EQUAL 6)
-    GET_FILENAME_COMPONENT(CMAKE_CURRENT_LIST_DIR ${CMAKE_CURRENT_LIST_FILE} PATH)
-ENDIF(${CMAKE_MAJOR_VERSION} EQUAL 2 AND ${CMAKE_MINOR_VERSION} EQUAL 6)
+if(${CMAKE_MAJOR_VERSION} EQUAL 2 AND ${CMAKE_MINOR_VERSION} EQUAL 6)
+    get_filename_component(CMAKE_CURRENT_LIST_DIR ${CMAKE_CURRENT_LIST_FILE} PATH)
+endif(${CMAKE_MAJOR_VERSION} EQUAL 2 AND ${CMAKE_MINOR_VERSION} EQUAL 6)
 
 # add framework cmake modules
-SET(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake;${CMAKE_MODULE_PATH}")
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake;${CMAKE_MODULE_PATH}")
 
-ADD_DEFINITIONS(-DFRAMEWORK)
-OPTION(CRASH_HANDLER "Generate crash reports" ON)
-OPTION(LUAJIT "Use lua jit" OFF)
-OPTION(USE_STATIC_LIBS "Don't use shared libraries (dlls)" ON)
-
-SET(OPENGLES "OFF" CACHE "Use OpenGL ES 1.0 or 2.0 (for mobiles devices)" STRING)
-SET(BUILD_COMMIT "custom" CACHE "Git commit string (intended for releases)" STRING)
-SET(BUILD_REVISION "0" CACHE "Git revision string (intended for releases)" STRING)
-
-IF(NOT CMAKE_BUILD_TYPE)
-    SET(CMAKE_BUILD_TYPE "RelWithDebInfo")
-ENDIF()
-
-##IF(CMAKE_SIZEOF_VOID_P EQUAL 8)
-##    SET(ARCH_FLAGS "-m64 -march=x86-64 -mtune=generic")
-##ELSE()
-##    SET(ARCH_FLAGS "-m32 -march=i686 -mtune=generic")
-##ENDIF()
-
-SET(WARNS_FLAGS "-Wall -Wextra -Werror -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-unused-variable")
-SET(CMAKE_CXX_FLAGS                   "${CMAKE_CXX_FLAGS} ${WARNS_FLAGS} ${ARCH_FLAGS} -std=gnu++0x -pipe")
-SET(CMAKE_CXX_FLAGS_DEBUG             "-O0 -ggdb")
-SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO    "-O1 -ggdb -fno-omit-frame-pointer")
-SET(CMAKE_CXX_FLAGS_RELEASE           "-O2")
-SET(CMAKE_CXX_FLAGS_PERFORMANCE       "-Ofast -mmxx -msee -msee2")
-SET(CMAKE_CXX_FLAGS_MINSIZEREL        "-Os")
-
-IF(USE_STATIC_LIBS)
-    SET(CMAKE_CXX_LINK_FLAGS "-static-libgcc -static-libstdc++")
-    MESSAGE(STATUS "Link to static libraries: ON")
-ELSE()
-    MESSAGE(STATUS "Link to static libraries: OFF")
-ENDIF()
-
-MESSAGE(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
-ADD_DEFINITIONS(-D"BUILD_TYPE=\\\"${CMAKE_BUILD_TYPE}\\\"")
-
-MESSAGE(STATUS "Build commit: ${BUILD_COMMIT}")
-ADD_DEFINITIONS(-D"BUILD_COMMIT=\\\"${BUILD_COMMIT}\\\"")
-
-MESSAGE(STATUS "Build revision: ${BUILD_REVISION}")
-ADD_DEFINITIONS(-D"BUILD_REVISION=\\\"${BUILD_REVISION}\\\"")
-
-# find needed libraries
-IF(WIN32)
-    SET(Boost_THREADAPI win32)
-ENDIF()
-SET(Boost_USE_MULTITHREADED ON)
-SET(Boost_USE_STATIC_LIBS ON)
-FIND_PACKAGE(Boost COMPONENTS system REQUIRED)
-
-IF(OPENGLES STREQUAL "2.0")
-    FIND_PACKAGE(OpenGLES2 REQUIRED)
-    FIND_PACKAGE(EGL REQUIRED)
-    ADD_DEFINITIONS(-DOPENGL_ES=2)
-    SET(OPENGL_INCLUDE_DIR ${EGL_INCLUDE_DIR} ${OPENGLES2_INCLUDE_DIR})
-    SET(OPENGL_LIBRARIES ${EGL_LIBRARY} ${OPENGLES2_LIBRARY})
-ELSEIF(OPENGLES STREQUAL "1.0")
-    FIND_PACKAGE(OpenGLES1 REQUIRED)
-    FIND_PACKAGE(EGL REQUIRED)
-    ADD_DEFINITIONS(-DOPENGL_ES=1)
-    SET(OPENGL_INCLUDE_DIR ${EGL_INCLUDE_DIR} ${OPENGLES1_INCLUDE_DIR})
-    SET(OPENGL_LIBRARIES ${EGL_LIBRARY} ${OPENGLES1_LIBRARY})
-ELSE()
-    FIND_PACKAGE(OpenGL REQUIRED)
-    FIND_PACKAGE(GLEW REQUIRED)
-    SET(OPENGL_LIBRARIES ${GLEW_LIBRARY} ${OPENGL_LIBRARIES})
-ENDIF()
-MESSAGE(STATUS "OpenGL ES: " ${OPENGLES})
-
-IF(LUAJIT)
-    FIND_PACKAGE(LuaJIT REQUIRED)
-    SET(LUA_INCLUDE_DIR ${LUAJIT_INCLUDE_DIR})
-    SET(LUA_LIBRARY ${LUAJIT_LIBRARY})
-ELSE()
-    FIND_PACKAGE(Lua REQUIRED)
-ENDIF()
-MESSAGE(STATUS "LuaJIT: " ${LUAJIT})
-
-FIND_PACKAGE(PhysFS REQUIRED)
-FIND_PACKAGE(GMP REQUIRED)
-FIND_PACKAGE(ZLIB REQUIRED)
-FIND_PACKAGE(OpenAL REQUIRED)
-FIND_PACKAGE(VorbisFile REQUIRED)
-FIND_PACKAGE(Vorbis REQUIRED)
-FIND_PACKAGE(Ogg REQUIRED)
-
-IF(CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
-    MESSAGE(STATUS "Debug information: ON")
-    ADD_DEFINITIONS(-DDEBUG)
-ELSE()
-    MESSAGE(STATUS "Debug information: OFF")
-
-    # NDEBUG disable asserts
-    ADD_DEFINITIONS(-DNDEBUG)
-
-    # strip all debug information
-    SET(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -Wl,--as-needed -Wl,-s")
-ENDIF()
-
-IF(CRASH_HANDLER)
-    ADD_DEFINITIONS(-DCRASH_HANDLER)
-    MESSAGE(STATUS "Crash handler: ON")
-ELSE()
-    MESSAGE(STATUS "Crash handler: OFF")
-ENDIF()
-
-IF(WIN32)
-    OPTION(WINDOWS_CONSOLE "Enables console window on Windows platform" OFF)
-
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mthreads")
-    ADD_DEFINITIONS(-D_WIN32_WINNT=0x0501)
-    SET(ADDITIONAL_LIBRARIES ws2_32 mswsock imagehlp winmm)
-
-    # fix boost thread linkage
-    ADD_DEFINITIONS(-DBOOST_THREAD_USE_LIB)
-
-    IF(WINDOWS_CONSOLE)
-        MESSAGE(STATUS "Windows console: ON")
-    ELSE()
-        SET(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -mwindows")
-        MESSAGE(STATUS "Windows console: OFF")
-    ENDIF()
-ELSE()
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
-    SET(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -rdynamic")
-    SET(ADDITIONAL_LIBRARIES X11 dl rt)
-ENDIF()
-
-
-INCLUDE_DIRECTORIES(
-    ${Boost_INCLUDE_DIRS}
-    ${OPENGL_INCLUDE_DIR}
-    ${OPENAL_INCLUDE_DIR} ${VORBISFILE_INCLUDE_DIR}
-    ${LUA_INCLUDE_DIR}
-    ${PHYSFS_INCLUDE_DIR}
-    ${GMP_INCLUDE_DIR}
-    ${ZLIB_INCLUDE_DIR}
-    "${CMAKE_CURRENT_LIST_DIR}/.."
-)
-
-SET(framework_LIBRARIES
-    ${Boost_LIBRARIES}
-    ${LUA_LIBRARY}
-    ${PHYSFS_LIBRARY}
-    ${GMP_LIBRARY}
-    ${ZLIB_LIBRARY}
-    ${VORBISFILE_LIBRARY} ${VORBIS_LIBRARY} ${OGG_LIBRARY}
-    ${OPENGL_LIBRARIES}
-    ${OPENAL_LIBRARY}
-    ${ADDITIONAL_LIBRARIES}
-)
-
-SET(framework_SOURCES ${framework_SOURCES}
-    ${CMAKE_CURRENT_LIST_DIR}/application.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/application.h
+set(framework_LIBRARIES "")
+set(framework_DEFINITIONS "")
+set(framework_INCLUDE_DIRS "${CMAKE_CURRENT_LIST_DIR}/..")
+set(framework_SOURCES ${framework_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/const.h
     ${CMAKE_CURRENT_LIST_DIR}/global.h
     ${CMAKE_CURRENT_LIST_DIR}/pch.h
     ${CMAKE_CURRENT_LIST_DIR}/luafunctions.cpp
 
+    ${CMAKE_CURRENT_LIST_DIR}/util/boolean.h
+    ${CMAKE_CURRENT_LIST_DIR}/util/color.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/util/color.h
+    ${CMAKE_CURRENT_LIST_DIR}/util/crypt.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/util/crypt.h
+    ${CMAKE_CURRENT_LIST_DIR}/util/databuffer.h
+    ${CMAKE_CURRENT_LIST_DIR}/util/matrix.h
+    ${CMAKE_CURRENT_LIST_DIR}/util/point.h
+    ${CMAKE_CURRENT_LIST_DIR}/util/rect.h
+    ${CMAKE_CURRENT_LIST_DIR}/util/rsa.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/util/rsa.h
+    ${CMAKE_CURRENT_LIST_DIR}/util/size.h
+
+    # stdext
+    ${CMAKE_CURRENT_LIST_DIR}/stdext/cast.h
+    ${CMAKE_CURRENT_LIST_DIR}/stdext/compiler.h
+    ${CMAKE_CURRENT_LIST_DIR}/stdext/demangle.h
+    ${CMAKE_CURRENT_LIST_DIR}/stdext/dumper.h
+    ${CMAKE_CURRENT_LIST_DIR}/stdext/exception.h
+    ${CMAKE_CURRENT_LIST_DIR}/stdext/math.h
+    ${CMAKE_CURRENT_LIST_DIR}/stdext/stdext.h
+    ${CMAKE_CURRENT_LIST_DIR}/stdext/string.h
+    ${CMAKE_CURRENT_LIST_DIR}/stdext/time.h
+    ${CMAKE_CURRENT_LIST_DIR}/stdext/types.h
+
     # core
+    ${CMAKE_CURRENT_LIST_DIR}/core/application.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/core/application.h
     ${CMAKE_CURRENT_LIST_DIR}/core/adaptativeframecounter.cpp
     ${CMAKE_CURRENT_LIST_DIR}/core/adaptativeframecounter.h
     ${CMAKE_CURRENT_LIST_DIR}/core/binarytree.cpp
@@ -197,84 +78,19 @@ SET(framework_SOURCES ${framework_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/core/timer.cpp
     ${CMAKE_CURRENT_LIST_DIR}/core/timer.h
 
-    # graphics
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/animatedtexture.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/animatedtexture.h
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/cachedtext.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/cachedtext.h
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/coordsbuffer.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/coordsbuffer.h
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/declarations.h
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/bitmapfont.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/bitmapfont.h
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/fontmanager.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/fontmanager.h
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/framebuffer.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/framebuffer.h
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/framebuffermanager.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/framebuffermanager.h
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/glutil.h
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/graphics.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/graphics.h
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/hardwarebuffer.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/hardwarebuffer.h
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/image.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/image.h
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/painter.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/painter.h
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/painterogl1.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/painterogl1.h
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/painterogl2.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/painterogl2.h
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/painterogl2_shadersources.h
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/paintershaderprogram.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/paintershaderprogram.h
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/particleaffector.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/particleaffector.h
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/particle.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/particleemitter.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/particleemitter.h
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/particleeffect.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/particleeffect.h
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/particle.h
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/particlemanager.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/particlemanager.h
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/particlesystem.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/particlesystem.h
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/shader.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/shader.h
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/shaderprogram.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/shaderprogram.h
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/texture.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/texture.h
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/texturemanager.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/texturemanager.h
-    ${CMAKE_CURRENT_LIST_DIR}/graphics/vertexarray.h
-
-    # luascript
-    ${CMAKE_CURRENT_LIST_DIR}/luascript/declarations.h
-    ${CMAKE_CURRENT_LIST_DIR}/luascript/luabinder.h
-    ${CMAKE_CURRENT_LIST_DIR}/luascript/luaexception.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/luascript/luaexception.h
-    ${CMAKE_CURRENT_LIST_DIR}/luascript/luainterface.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/luascript/luainterface.h
-    ${CMAKE_CURRENT_LIST_DIR}/luascript/luaobject.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/luascript/luaobject.h
-    ${CMAKE_CURRENT_LIST_DIR}/luascript/luavaluecasts.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/luascript/luavaluecasts.h
-
-    # net
-    ${CMAKE_CURRENT_LIST_DIR}/net/connection.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/net/connection.h
-    ${CMAKE_CURRENT_LIST_DIR}/net/declarations.h
-    ${CMAKE_CURRENT_LIST_DIR}/net/inputmessage.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/net/inputmessage.h
-    ${CMAKE_CURRENT_LIST_DIR}/net/outputmessage.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/net/outputmessage.h
-    ${CMAKE_CURRENT_LIST_DIR}/net/protocol.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/net/protocol.h
-    ${CMAKE_CURRENT_LIST_DIR}/net/server.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/net/server.h
+    # luaengine
+    ${CMAKE_CURRENT_LIST_DIR}/luaengine/declarations.h
+    ${CMAKE_CURRENT_LIST_DIR}/luaengine/luabinder.h
+    ${CMAKE_CURRENT_LIST_DIR}/luaengine/luaexception.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/luaengine/luaexception.h
+    ${CMAKE_CURRENT_LIST_DIR}/luaengine/luainterface.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/luaengine/luainterface.h
+    ${CMAKE_CURRENT_LIST_DIR}/luaengine/luaobject.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/luaengine/luaobject.h
+    ${CMAKE_CURRENT_LIST_DIR}/luaengine/luavaluecasts.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/luaengine/luavaluecasts.h
+    ${CMAKE_CURRENT_LIST_DIR}/luaengine/lbitlib.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/luaengine/lbitlib.h
 
     # otml
     ${CMAKE_CURRENT_LIST_DIR}/otml/declarations.h
@@ -290,100 +106,322 @@ SET(framework_SOURCES ${framework_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/otml/otmlparser.cpp
     ${CMAKE_CURRENT_LIST_DIR}/otml/otmlparser.h
 
-    # platform
+    # crash handler
     ${CMAKE_CURRENT_LIST_DIR}/platform/crashhandler.h
-    ${CMAKE_CURRENT_LIST_DIR}/platform/platformwindow.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/platform/platformwindow.h
     ${CMAKE_CURRENT_LIST_DIR}/platform/unixcrashhandler.cpp
     ${CMAKE_CURRENT_LIST_DIR}/platform/win32crashhandler.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/platform/win32window.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/platform/win32window.h
-    ${CMAKE_CURRENT_LIST_DIR}/platform/x11window.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/platform/x11window.h
-
-    # sound
-    ${CMAKE_CURRENT_LIST_DIR}/sound/combinedsoundsource.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/sound/combinedsoundsource.h
-    ${CMAKE_CURRENT_LIST_DIR}/sound/declarations.h
-    ${CMAKE_CURRENT_LIST_DIR}/sound/oggsoundfile.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/sound/oggsoundfile.h
-    ${CMAKE_CURRENT_LIST_DIR}/sound/soundbuffer.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/sound/soundbuffer.h
-    ${CMAKE_CURRENT_LIST_DIR}/sound/soundfile.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/sound/soundfile.h
-    ${CMAKE_CURRENT_LIST_DIR}/sound/soundmanager.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/sound/soundmanager.h
-    ${CMAKE_CURRENT_LIST_DIR}/sound/soundsource.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/sound/soundsource.h
-    ${CMAKE_CURRENT_LIST_DIR}/sound/streamsoundsource.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/sound/streamsoundsource.h
-
-    # stdext
-    ${CMAKE_CURRENT_LIST_DIR}/stdext/cast.h
-    ${CMAKE_CURRENT_LIST_DIR}/stdext/compiler.h
-    ${CMAKE_CURRENT_LIST_DIR}/stdext/demangle.h
-    ${CMAKE_CURRENT_LIST_DIR}/stdext/dumper.h
-    ${CMAKE_CURRENT_LIST_DIR}/stdext/exception.h
-    ${CMAKE_CURRENT_LIST_DIR}/stdext/math.h
-    ${CMAKE_CURRENT_LIST_DIR}/stdext/stdext.h
-    ${CMAKE_CURRENT_LIST_DIR}/stdext/string.h
-    ${CMAKE_CURRENT_LIST_DIR}/stdext/time.h
-    ${CMAKE_CURRENT_LIST_DIR}/stdext/types.h
-
-    # third party
-    ${CMAKE_CURRENT_LIST_DIR}/thirdparty/apngloader.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/thirdparty/apngloader.h
-    ${CMAKE_CURRENT_LIST_DIR}/thirdparty/lbitlib-5.2.0-backport4.cpp
-	${CMAKE_CURRENT_LIST_DIR}/thirdparty/lbitlib-5.2.0-backport4.h
-	${CMAKE_CURRENT_LIST_DIR}/thirdparty/tinyxml.cpp
-	${CMAKE_CURRENT_LIST_DIR}/thirdparty/tinyxml.h
-	${CMAKE_CURRENT_LIST_DIR}/thirdparty/tinystr.cpp
-	${CMAKE_CURRENT_LIST_DIR}/thirdparty/tinystr.h
-	${CMAKE_CURRENT_LIST_DIR}/thirdparty/tinyxmlerror.cpp
-	${CMAKE_CURRENT_LIST_DIR}/thirdparty/tinyxmlparser.cpp
-
-    # ui
-    ${CMAKE_CURRENT_LIST_DIR}/ui/declarations.h
-    ${CMAKE_CURRENT_LIST_DIR}/ui/uianchorlayout.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/ui/uianchorlayout.h
-    ${CMAKE_CURRENT_LIST_DIR}/ui/uiboxlayout.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/ui/uiboxlayout.h
-    ${CMAKE_CURRENT_LIST_DIR}/ui/uigridlayout.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/ui/uigridlayout.h
-    ${CMAKE_CURRENT_LIST_DIR}/ui/ui.h
-    ${CMAKE_CURRENT_LIST_DIR}/ui/uihorizontallayout.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/ui/uihorizontallayout.h
-    ${CMAKE_CURRENT_LIST_DIR}/ui/uilayout.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/ui/uilayout.h
-    ${CMAKE_CURRENT_LIST_DIR}/ui/uimanager.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/ui/uimanager.h
-    ${CMAKE_CURRENT_LIST_DIR}/ui/uiparticles.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/ui/uiparticles.h
-    ${CMAKE_CURRENT_LIST_DIR}/ui/uirichtext.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/ui/uirichtext.h
-    ${CMAKE_CURRENT_LIST_DIR}/ui/uitextedit.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/ui/uitextedit.h
-    ${CMAKE_CURRENT_LIST_DIR}/ui/uitranslator.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/ui/uitranslator.h
-    ${CMAKE_CURRENT_LIST_DIR}/ui/uiverticallayout.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/ui/uiverticallayout.h
-    ${CMAKE_CURRENT_LIST_DIR}/ui/uiwidgetbasestyle.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/ui/uiwidget.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/ui/uiwidget.h
-    ${CMAKE_CURRENT_LIST_DIR}/ui/uiwidgetimage.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/ui/uiwidgettext.cpp
-
-    # util
-    ${CMAKE_CURRENT_LIST_DIR}/util/boolean.h
-    ${CMAKE_CURRENT_LIST_DIR}/util/color.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/util/color.h
-    ${CMAKE_CURRENT_LIST_DIR}/util/crypt.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/util/crypt.h
-    ${CMAKE_CURRENT_LIST_DIR}/util/databuffer.h
-    ${CMAKE_CURRENT_LIST_DIR}/util/matrix.h
-    ${CMAKE_CURRENT_LIST_DIR}/util/point.h
-    ${CMAKE_CURRENT_LIST_DIR}/util/rect.h
-    ${CMAKE_CURRENT_LIST_DIR}/util/rsa.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/util/rsa.h
-    ${CMAKE_CURRENT_LIST_DIR}/util/size.h
 )
+
+# some build options
+option(CRASH_HANDLER "Generate crash reports" ON)
+option(LUAJIT "Use lua jit" OFF)
+option(USE_STATIC_LIBS "Don't use shared libraries (dlls)" ON)
+set(BUILD_COMMIT "custom" CACHE "Git commit string (intended for releases)" STRING)
+set(BUILD_REVISION "0" CACHE "Git revision string (intended for releases)" STRING)
+
+# default build type
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE "RelWithDebInfo")
+endif()
+
+# gcc compile flags
+set(WARNS_FLAGS "-Wall -Wextra -Werror -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-unused-variable")
+set(CMAKE_CXX_FLAGS                   "${CMAKE_CXX_FLAGS} ${WARNS_FLAGS} ${ARCH_FLAGS} -std=gnu++0x -pipe")
+set(CMAKE_CXX_FLAGS_DEBUG             "-O0 -ggdb")
+set(CMAKE_CXX_FLAGS_RELWITHDEBINFO    "-O1 -ggdb -fno-omit-frame-pointer")
+set(CMAKE_CXX_FLAGS_RELEASE           "-O2")
+set(CMAKE_CXX_FLAGS_PERFORMANCE       "-Ofast -mmxx -msee -msee2")
+set(CMAKE_CXX_FLAGS_MINSIZEREL        "-Os")
+
+# process options
+if(USE_STATIC_LIBS)
+    set(CMAKE_CXX_LINK_FLAGS "-static-libgcc -static-libstdc++")
+    message(STATUS "Link to static libraries: ON")
+else()
+    message(STATUS "Link to static libraries: OFF")
+endif()
+
+message(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
+add_definitions(-D"BUILD_TYPE=\\\"${CMAKE_BUILD_TYPE}\\\"")
+message(STATUS "Build commit: ${BUILD_COMMIT}")
+add_definitions(-D"BUILD_COMMIT=\\\"${BUILD_COMMIT}\\\"")
+message(STATUS "Build revision: ${BUILD_REVISION}")
+add_definitions(-D"BUILD_REVISION=\\\"${BUILD_REVISION}\\\"")
+
+# find boost
+if(WIN32)
+    set(Boost_THREADAPI win32)
+endif()
+set(Boost_USE_MULTITHREADED ON)
+set(Boost_USE_STATIC_LIBS ON)
+find_package(Boost COMPONENTS system REQUIRED)
+
+#find lua
+if(LUAJIT)
+    find_package(LuaJIT REQUIRED)
+    set(LUA_INCLUDE_DIR ${LUAJIT_INCLUDE_DIR})
+    set(LUA_LIBRARY ${LUAJIT_LIBRARY})
+else()
+    find_package(Lua REQUIRED)
+endif()
+message(STATUS "LuaJIT: " ${LUAJIT})
+
+find_package(PhysFS REQUIRED)
+find_package(GMP REQUIRED)
+find_package(ZLIB REQUIRED)
+
+set(framework_LIBRARIES ${framework_LIBRARIES}
+    ${Boost_LIBRARIES}
+    ${LUA_LIBRARY}
+    ${PHYSFS_LIBRARY}
+    ${GMP_LIBRARY}
+    ${ZLIB_LIBRARY}
+)
+
+set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS}
+    ${Boost_INCLUDE_DIRS}
+    ${OPENGL_INCLUDE_DIR}
+    ${LUA_INCLUDE_DIR}
+    ${PHYSFS_INCLUDE_DIR}
+    ${GMP_INCLUDE_DIR}
+    ${ZLIB_INCLUDE_DIR}
+)
+
+if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
+    message(STATUS "Debug information: ON")
+    add_definitions(-DDEBUG)
+else()
+    message(STATUS "Debug information: OFF")
+    set(framework_DEFINITIONS ${framework_DEFINITIONS} -DNDEBUG) # NDEBUG disable asserts
+    set(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -Wl,--as-needed -Wl,-s") # strip all debug information
+endif()
+
+if(CRASH_HANDLER)
+    set(framework_DEFINITIONS ${framework_DEFINITIONS} -DCRASH_HANDLER)
+    message(STATUS "Crash handler: ON")
+    if(WIN32)
+        set(framework_LIBRARIES ${framework_LIBRARIES} imagehlp)
+    endif()
+else()
+    message(STATUS "Crash handler: OFF")
+endif()
+
+if(WIN32)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mthreads")
+    set(framework_DEFINITIONS ${framework_DEFINITIONS} -D_WIN32_WINNT=0x0501)
+    set(framework_DEFINITIONS ${framework_DEFINITIONS} -DBOOST_THREAD_USE_LIB) # fix boost thread linkage
+else()
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
+    set(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -rdynamic")
+    set(framework_LIBRARIES ${framework_LIBRARIES} dl)
+endif()
+
+if(FRAMEWORK_GRAPHICS)
+    set(OPENGLES "OFF" CACHE "Use OpenGL ES 1.0 or 2.0 (for mobiles devices)" STRING)
+    if(OPENGLES STREQUAL "2.0")
+        find_package(OpenGLES2 REQUIRED)
+        find_package(EGL REQUIRED)
+        set(framework_DEFINITIONS ${framework_DEFINITIONS} -DOPENGL_ES=2)
+        set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS} ${EGL_INCLUDE_DIR} ${OPENGLES2_INCLUDE_DIR})
+        set(framework_LIBRARIES ${framework_LIBRARIES} ${EGL_LIBRARY} ${OPENGLES2_LIBRARY})
+    ELSEif(OPENGLES STREQUAL "1.0")
+        find_package(OpenGLES1 REQUIRED)
+        find_package(EGL REQUIRED)
+        set(framework_DEFINITIONS ${framework_DEFINITIONS} -DOPENGL_ES=1)
+        set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS} ${EGL_INCLUDE_DIR} ${OPENGLES1_INCLUDE_DIR})
+        set(framework_LIBRARIES ${framework_LIBRARIES} ${EGL_LIBRARY} ${OPENGLES1_LIBRARY})
+    else()
+        find_package(OpenGL REQUIRED)
+        find_package(GLEW REQUIRED)
+        set(framework_LIBRARIES ${framework_LIBRARIES} ${GLEW_LIBRARY} ${OPENGL_LIBRARIES})
+    endif()
+    message(STATUS "OpenGL ES: " ${OPENGLES})
+
+    if(WIN32)
+        option(WINDOWS_CONSOLE "Enables console window on Windows platform" OFF)
+        if(WINDOWS_CONSOLE)
+            message(STATUS "Windows console: ON")
+        else()
+            set(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -mwindows")
+            message(STATUS "Windows console: OFF")
+        endif()
+    else()
+        set(framework_LIBRARIES ${framework_LIBRARIES} X11)
+    endif()
+
+    set(framework_SOURCES ${framework_SOURCES}
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/animatedtexture.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/animatedtexture.h
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/cachedtext.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/cachedtext.h
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/coordsbuffer.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/coordsbuffer.h
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/declarations.h
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/bitmapfont.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/bitmapfont.h
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/fontmanager.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/fontmanager.h
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/framebuffer.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/framebuffer.h
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/framebuffermanager.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/framebuffermanager.h
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/glutil.h
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/graphics.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/graphics.h
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/hardwarebuffer.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/hardwarebuffer.h
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/image.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/image.h
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/painter.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/painter.h
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/painterogl1.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/painterogl1.h
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/painterogl2.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/painterogl2.h
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/painterogl2_shadersources.h
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/paintershaderprogram.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/paintershaderprogram.h
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/particleaffector.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/particleaffector.h
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/particle.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/particleemitter.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/particleemitter.h
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/particleeffect.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/particleeffect.h
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/particle.h
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/particlemanager.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/particlemanager.h
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/particlesystem.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/particlesystem.h
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/shader.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/shader.h
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/shaderprogram.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/shaderprogram.h
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/texture.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/texture.h
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/texturemanager.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/texturemanager.h
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/vertexarray.h
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/apngloader.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/apngloader.h
+
+        # ui
+        ${CMAKE_CURRENT_LIST_DIR}/ui/declarations.h
+        ${CMAKE_CURRENT_LIST_DIR}/ui/uianchorlayout.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/ui/uianchorlayout.h
+        ${CMAKE_CURRENT_LIST_DIR}/ui/uiboxlayout.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/ui/uiboxlayout.h
+        ${CMAKE_CURRENT_LIST_DIR}/ui/uigridlayout.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/ui/uigridlayout.h
+        ${CMAKE_CURRENT_LIST_DIR}/ui/ui.h
+        ${CMAKE_CURRENT_LIST_DIR}/ui/uihorizontallayout.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/ui/uihorizontallayout.h
+        ${CMAKE_CURRENT_LIST_DIR}/ui/uilayout.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/ui/uilayout.h
+        ${CMAKE_CURRENT_LIST_DIR}/ui/uimanager.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/ui/uimanager.h
+        ${CMAKE_CURRENT_LIST_DIR}/ui/uiparticles.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/ui/uiparticles.h
+        ${CMAKE_CURRENT_LIST_DIR}/ui/uirichtext.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/ui/uirichtext.h
+        ${CMAKE_CURRENT_LIST_DIR}/ui/uitextedit.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/ui/uitextedit.h
+        ${CMAKE_CURRENT_LIST_DIR}/ui/uitranslator.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/ui/uitranslator.h
+        ${CMAKE_CURRENT_LIST_DIR}/ui/uiverticallayout.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/ui/uiverticallayout.h
+        ${CMAKE_CURRENT_LIST_DIR}/ui/uiwidgetbasestyle.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/ui/uiwidget.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/ui/uiwidget.h
+        ${CMAKE_CURRENT_LIST_DIR}/ui/uiwidgetimage.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/ui/uiwidgettext.cpp
+
+        # platform window
+        ${CMAKE_CURRENT_LIST_DIR}/platform/platformwindow.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/platform/platformwindow.h
+        ${CMAKE_CURRENT_LIST_DIR}/platform/win32window.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/platform/win32window.h
+        ${CMAKE_CURRENT_LIST_DIR}/platform/x11window.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/platform/x11window.h
+
+
+        ${CMAKE_CURRENT_LIST_DIR}/core/graphicalapplication.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/core/graphicalapplication.h
+    )
+    set(framework_DEFINITIONS ${framework_DEFINITIONS} -DFW_GRAPHICS)
+else()
+    set(framework_SOURCES ${framework_SOURCES}
+        ${CMAKE_CURRENT_LIST_DIR}/core/consoleapplication.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/core/consoleapplication.h
+    )
+endif()
+
+if(FRAMEWORK_SOUND)
+    find_package(OpenAL REQUIRED)
+    find_package(VorbisFile REQUIRED)
+    find_package(Vorbis REQUIRED)
+    find_package(Ogg REQUIRED)
+
+    set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS} ${OPENAL_INCLUDE_DIR} ${VORBISFILE_INCLUDE_DIR})
+    set(framework_LIBRARIES ${framework_LIBRARIES} ${OPENAL_LIBRARY} ${VORBISFILE_LIBRARY} ${VORBIS_LIBRARY} ${OGG_LIBRARY})
+
+    if(WIN32)
+        set(framework_LIBRARIES ${framework_LIBRARIES} winmm)
+    else()
+        set(framework_LIBRARIES ${framework_LIBRARIES} rt)
+    endif()
+
+    set(framework_SOURCES ${framework_SOURCES}
+        ${CMAKE_CURRENT_LIST_DIR}/sound/combinedsoundsource.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/sound/combinedsoundsource.h
+        ${CMAKE_CURRENT_LIST_DIR}/sound/declarations.h
+        ${CMAKE_CURRENT_LIST_DIR}/sound/oggsoundfile.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/sound/oggsoundfile.h
+        ${CMAKE_CURRENT_LIST_DIR}/sound/soundbuffer.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/sound/soundbuffer.h
+        ${CMAKE_CURRENT_LIST_DIR}/sound/soundfile.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/sound/soundfile.h
+        ${CMAKE_CURRENT_LIST_DIR}/sound/soundmanager.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/sound/soundmanager.h
+        ${CMAKE_CURRENT_LIST_DIR}/sound/soundsource.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/sound/soundsource.h
+        ${CMAKE_CURRENT_LIST_DIR}/sound/streamsoundsource.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/sound/streamsoundsource.h
+    )
+    set(framework_DEFINITIONS ${framework_DEFINITIONS} -DFW_SOUND)
+endif()
+
+if(FRAMEWORK_NET)
+    if(WIN32)
+        set(framework_LIBRARIES ${framework_LIBRARIES} ws2_32 mswsock)
+    endif()
+    set(framework_SOURCES ${framework_SOURCES}
+        ${CMAKE_CURRENT_LIST_DIR}/net/connection.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/net/connection.h
+        ${CMAKE_CURRENT_LIST_DIR}/net/declarations.h
+        ${CMAKE_CURRENT_LIST_DIR}/net/inputmessage.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/net/inputmessage.h
+        ${CMAKE_CURRENT_LIST_DIR}/net/outputmessage.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/net/outputmessage.h
+        ${CMAKE_CURRENT_LIST_DIR}/net/protocol.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/net/protocol.h
+        ${CMAKE_CURRENT_LIST_DIR}/net/server.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/net/server.h
+    )
+    set(framework_DEFINITIONS ${framework_DEFINITIONS} -DFW_NET)
+endif()
+
+if(FRAMEWORK_XML)
+    set(framework_SOURCES ${framework_SOURCES}
+        ${CMAKE_CURRENT_LIST_DIR}/xml/tinyxml.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/xml/tinyxml.h
+        ${CMAKE_CURRENT_LIST_DIR}/xml/tinystr.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/xml/tinystr.h
+        ${CMAKE_CURRENT_LIST_DIR}/xml/tinyxmlerror.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/xml/tinyxmlparser.cpp
+    )
+    set(framework_DEFINITIONS ${framework_DEFINITIONS} -DFW_XML)
+endif()
+
+include_directories(${framework_INCLUDE_DIRS})
+add_definitions(${framework_DEFINITIONS})

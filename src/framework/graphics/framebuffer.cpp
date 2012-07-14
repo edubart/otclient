@@ -25,7 +25,7 @@
 #include "texture.h"
 
 #include <framework/platform/platformwindow.h>
-#include <framework/application.h>
+#include <framework/core/application.h>
 
 uint FrameBuffer::boundFbo = 0;
 
@@ -47,7 +47,7 @@ void FrameBuffer::internalCreate()
 
 FrameBuffer::~FrameBuffer()
 {
-    assert(!g_app.isTermianted());
+    assert(!g_app.isTerminated());
     if(g_graphics.ok() && m_fbo != 0)
         glDeleteFramebuffers(1, &m_fbo);
 }

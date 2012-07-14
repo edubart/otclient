@@ -24,7 +24,7 @@
 #define UIWIDGET_H
 
 #include "declarations.h"
-#include <framework/luascript/luaobject.h>
+#include <framework/luaengine/luaobject.h>
 #include <framework/graphics/declarations.h>
 #include <framework/otml/otmlnode.h>
 #include <framework/graphics/bitmapfont.h>

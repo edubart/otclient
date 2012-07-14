@@ -59,6 +59,7 @@
 #include <thread>
 #include <mutex>
 #include <atomic>
+#include <thread>
 
 // boost utilities
 #include <boost/algorithm/string.hpp>

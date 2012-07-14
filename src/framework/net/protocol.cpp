@@ -22,7 +22,7 @@
 
 #include "protocol.h"
 #include "connection.h"
-#include <framework/application.h>
+#include <framework/core/application.h>
 
 Protocol::Protocol()
 {
@@ -33,7 +33,7 @@ Protocol::Protocol()
 
 Protocol::~Protocol()
 {
-    assert(!g_app.isTermianted());
+    assert(!g_app.isTerminated());
     disconnect();
 }
 

@@ -22,7 +22,10 @@
 
 #include "logger.h"
 #include "eventdispatcher.h"
+
+#ifdef FW_GRAPHICS
 #include <framework/platform/platformwindow.h>
+#endif
 
 Logger g_logger;
 
@@ -61,7 +64,7 @@ void Logger::log(Fw::LogLevel level, const std::string& message)
     }
 
     if(level == Fw::LogFatal) {
-#ifdef FW_WINDOW
+#ifdef FW_GRAPHICS
         g_window.displayFatalError(message);
 #endif
         ignoreLogs = true;

@@ -24,7 +24,7 @@
 
 #include "crashhandler.h"
 #include <framework/global.h>
-#include <framework/application.h>
+#include <framework/core/application.h>
 
 #include <windows.h>
 #include <process.h>

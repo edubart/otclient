@@ -23,7 +23,7 @@
 #include "hardwarebuffer.h"
 #include "graphics.h"
 
-#include <framework/application.h>
+#include <framework/core/application.h>
 #include <framework/core/logger.h>
 
 HardwareBuffer::HardwareBuffer(Type type)
@@ -37,7 +37,7 @@ HardwareBuffer::HardwareBuffer(Type type)
 
 HardwareBuffer::~HardwareBuffer()
 {
-    assert(!g_app.isTermianted());
+    assert(!g_app.isTerminated());
     if(g_graphics.ok())
         glDeleteBuffers(1, &m_id);
 }

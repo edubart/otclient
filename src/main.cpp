@@ -20,10 +20,10 @@
  * THE SOFTWARE.
  */
 
-#include "framework/application.h"
-#include "framework/luascript/luainterface.h"
-#include "framework/core/resourcemanager.h"
-#include "otclient/otclient.h"
+#include <framework/core/application.h>
+#include <framework/core/resourcemanager.h>
+#include <framework/luaengine/luainterface.h>
+#include <otclient/otclient.h>
 
 int main(int argc, const char* argv[])
 {
@@ -35,7 +35,7 @@ int main(int argc, const char* argv[])
     g_app.setVersion("0.5.0_dev");
 
     // initialize application framework and otclient
-    g_app.init("otclient", args);
+    g_app.init(args);
     g_otclient.init(args);
 
     // find script init.lua and run it

@@ -24,10 +24,10 @@
 #include <framework/core/modulemanager.h>
 #include <framework/core/resourcemanager.h>
 #include <framework/graphics/graphics.h>
-#include <otclient/core/game.h>
-#include <otclient/core/map.h>
-#include <otclient/core/shadermanager.h>
-#include "core/spritemanager.h"
+#include "game.h"
+#include "map.h"
+#include "shadermanager.h"
+#include "spritemanager.h"
 #include <framework/core/configmanager.h>
 
 OTClient g_otclient;

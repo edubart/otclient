@@ -24,7 +24,7 @@
 #define UILAYOUT_H
 
 #include "declarations.h"
-#include <framework/luascript/luaobject.h>
+#include <framework/luaengine/luaobject.h>
 #include <framework/otml/otml.h>
 
 // @bindclass

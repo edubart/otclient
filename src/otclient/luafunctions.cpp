@@ -21,29 +21,29 @@
  */
 
 #include "otclient.h"
-#include <framework/luascript/luainterface.h>
-#include <otclient/luascript/luavaluecasts.h>
-#include <otclient/core/game.h>
-#include <otclient/core/tile.h>
-#include <otclient/core/container.h>
-#include <otclient/core/item.h>
-#include <otclient/core/effect.h>
-#include <otclient/core/missile.h>
-#include <otclient/core/statictext.h>
-#include <otclient/core/animatedtext.h>
-#include <otclient/core/creature.h>
-#include <otclient/core/player.h>
-#include <otclient/core/localplayer.h>
-#include <otclient/core/map.h>
-#include <otclient/core/thingtypemanager.h>
-#include <otclient/core/spritemanager.h>
-#include <otclient/core/shadermanager.h>
-#include <otclient/net/protocolgame.h>
-#include <otclient/ui/uiitem.h>
-#include <otclient/ui/uicreature.h>
-#include <otclient/ui/uimap.h>
-#include <otclient/ui/uiprogressrect.h>
-#include <otclient/core/outfit.h>
+#include <framework/luaengine/luainterface.h>
+#include "luavaluecasts.h"
+#include "game.h"
+#include "tile.h"
+#include "container.h"
+#include "item.h"
+#include "effect.h"
+#include "missile.h"
+#include "statictext.h"
+#include "animatedtext.h"
+#include "creature.h"
+#include "player.h"
+#include "localplayer.h"
+#include "map.h"
+#include "thingtypemanager.h"
+#include "spritemanager.h"
+#include "shadermanager.h"
+#include "protocolgame.h"
+#include "uiitem.h"
+#include "uicreature.h"
+#include "uimap.h"
+#include "uiprogressrect.h"
+#include "outfit.h"
 
 void OTClient::registerLuaFunctions()
 {

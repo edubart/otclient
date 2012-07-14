@@ -25,7 +25,7 @@
 
 #include "declarations.h"
 #include "particlesystem.h"
-#include <framework/luascript/luaobject.h>
+#include <framework/luaengine/luaobject.h>
 #include <framework/otml/otml.h>
 
 class ParticleEffectType : public LuaObject

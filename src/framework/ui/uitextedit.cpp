@@ -26,7 +26,7 @@
 #include <framework/platform/platformwindow.h>
 #include <framework/core/clock.h>
 #include <framework/otml/otmlnode.h>
-#include <framework/application.h>
+#include <framework/core/application.h>
 
 UITextEdit::UITextEdit()
 {

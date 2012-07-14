@@ -25,7 +25,7 @@
 #include <framework/graphics/fontmanager.h>
 #include <framework/graphics/painter.h>
 #include <framework/graphics/framebuffer.h>
-#include <framework/application.h>
+#include <framework/core/application.h>
 
 void UIWidget::initText()
 {

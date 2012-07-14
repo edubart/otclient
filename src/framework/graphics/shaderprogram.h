@@ -24,7 +24,7 @@
 #define SHADERPROGRAM_H
 
 #include "shader.h"
-#include <framework/luascript/luaobject.h>
+#include <framework/luaengine/luaobject.h>
 
 // @bindclass
 class ShaderProgram : public LuaObject

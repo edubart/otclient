@@ -27,7 +27,7 @@
 #include <framework/graphics/graphics.h>
 #include <framework/platform/platformwindow.h>
 #include <framework/core/eventdispatcher.h>
-#include <framework/application.h>
+#include <framework/core/application.h>
 
 UIManager g_ui;
 

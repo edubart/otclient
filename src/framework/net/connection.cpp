@@ -22,7 +22,7 @@
 
 #include "connection.h"
 
-#include <framework/application.h>
+#include <framework/core/application.h>
 #include <framework/core/eventdispatcher.h>
 #include <boost/asio.hpp>
 
@@ -41,7 +41,7 @@ Connection::Connection() :
 
 Connection::~Connection()
 {
-    assert(!g_app.isTermianted());
+    assert(!g_app.isTerminated());
     close();
 }
 

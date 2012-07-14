@@ -24,7 +24,7 @@
 #include "resourcemanager.h"
 
 #include <framework/otml/otml.h>
-#include <framework/application.h>
+#include <framework/core/application.h>
 
 ModuleManager g_modules;
 

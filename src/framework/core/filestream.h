@@ -24,7 +24,7 @@
 #define FILESTREAM_H
 
 #include "declarations.h"
-#include <framework/luascript/luaobject.h>
+#include <framework/luaengine/luaobject.h>
 #include <framework/util/databuffer.h>
 
 struct PHYSFS_File;

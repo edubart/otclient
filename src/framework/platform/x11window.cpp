@@ -24,7 +24,7 @@
 
 #include "x11window.h"
 #include <framework/core/resourcemanager.h>
-#include <framework/thirdparty/apngloader.h>
+#include <framework/graphics/apngloader.h>
 
 #define LSB_BIT_SET(p, n) (p[(n)/8] |= (1 <<((n)%8)))
 

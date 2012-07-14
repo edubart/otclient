@@ -23,8 +23,8 @@
 #include "resourcemanager.h"
 #include "filestream.h"
 
-#include <framework/application.h>
-#include <framework/luascript/luainterface.h>
+#include <framework/core/application.h>
+#include <framework/luaengine/luainterface.h>
 
 #include <physfs.h>
 

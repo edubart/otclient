@@ -1,7 +1,6 @@
 BugReportWindow < MainWindow
   !text: tr('Report Bug')
   size: 280 250
-  &onEnter: BugReport.doReport
   @onEscape: self:hide()
 
   Label

@@ -24,8 +24,8 @@
 
 #include "win32window.h"
 
-#include <framework/application.h>
-#include <framework/thirdparty/apngloader.h>
+#include <framework/core/application.h>
+#include <framework/graphics/apngloader.h>
 #include <framework/core/resourcemanager.h>
 
 #define HSB_BIT_SET(p, n) (p[(n)/8] |= (128 >>((n)%8)))

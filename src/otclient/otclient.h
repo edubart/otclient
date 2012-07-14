@@ -23,7 +23,7 @@
 #ifndef OTCLIENT_H
 #define OTCLIENT_H
 
-#include <otclient/global.h>
+#include "global.h"
 
 class OTClient
 {

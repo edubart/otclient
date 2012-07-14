@@ -30,7 +30,7 @@
 #include <framework/graphics/graphics.h>
 #include <framework/platform/platformwindow.h>
 #include <framework/graphics/texturemanager.h>
-#include <framework/application.h>
+#include <framework/core/application.h>
 
 UIWidget::UIWidget()
 {
@@ -46,7 +46,7 @@ UIWidget::UIWidget()
 
 UIWidget::~UIWidget()
 {
-    assert(!g_app.isTermianted());
+    assert(!g_app.isTerminated());
 #ifdef DEBUG
     if(!m_destroyed)
         g_logger.warning(stdext::format("widget '%s' was not explicitly destroyed", m_id));

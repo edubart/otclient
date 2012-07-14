@@ -23,7 +23,7 @@
 #include "shaderprogram.h"
 #include "graphics.h"
 
-#include <framework/application.h>
+#include <framework/core/application.h>
 
 uint ShaderProgram::m_currentProgram = 0;
 
@@ -38,7 +38,7 @@ ShaderProgram::ShaderProgram()
 
 ShaderProgram::~ShaderProgram()
 {
-    assert(!g_app.isTermianted());
+    assert(!g_app.isTerminated());
     if(g_graphics.ok())
         glDeleteProgram(m_programId);
 }

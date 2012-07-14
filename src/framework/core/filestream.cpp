@@ -22,7 +22,7 @@
 
 #include "filestream.h"
 #include "binarytree.h"
-#include <framework/application.h>
+#include <framework/core/application.h>
 
 #include <physfs.h>
 
@@ -37,7 +37,7 @@ FileStream::FileStream(const std::string& name, PHYSFS_File *fileHandle, bool wr
 
 FileStream::~FileStream()
 {
-    assert(!g_app.isTermianted());
+    assert(!g_app.isTerminated());
     close();
 }
 
