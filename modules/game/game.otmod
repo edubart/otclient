@@ -25,11 +25,12 @@ Module
     - game_battle
     - game_minimap
     - game_npctrade
-    - game_textbooks
+    - game_textwindow
     - game_playertrade
     - game_ruleviolation
     - game_bugreport
     - game_shaders
+    - game_playerdeath
 
   @onLoad: |
     dofile 'const'

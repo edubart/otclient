@@ -60,8 +60,9 @@ function QuestLog.init()
 
   questLogButton = TopMenu.addLeftGameButton('questLogButton', tr('Quest Log'), 'questlog.png', function() g_game.requestQuestLog() end)
 
-  connect(g_game, { onQuestLog = onGameQuestLog })
-  connect(g_game, { onQuestLine= onGameQuestLine })
+  connect(g_game, { onQuestLog = onGameQuestLog,
+                    onQuestLine = onGameQuestLine,
+                    onGameEnd = QuestLog.destroyWindows})
 end
 
 function QuestLog.destroyWindows()
@@ -77,8 +78,9 @@ function QuestLog.destroyWindows()
 end
 
 function QuestLog.terminate()
-  disconnect(g_game, { onQuestLog = onGameQuestLog })
-  disconnect(g_game, { onQuestLine= onGameQuestLine })
+  disconnect(g_game, { onQuestLog = onGameQuestLog,
+                       onQuestLine = onGameQuestLine,
+                       onGameEnd = QuestLog.destroyWindows})
 
   QuestLog.destroyWindows()
 

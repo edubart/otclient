@@ -1,15 +1,15 @@
 Module
-  name: game_textbooks
+  name: game_textwindow
   description: Allow to edit text books and lists
-  author: edubart
+  author: edubart, BeniS
   website: www.otclient.info
 
   dependencies:
     - game_interface
 
   @onLoad: |
-    dofile 'textbooks'
-    TextBooks.init()
+    dofile 'textwindow'
+    TextWindow.init()
 
   @onUnload: |
-    TextBooks.terminate()
+    TextWindow.terminate()

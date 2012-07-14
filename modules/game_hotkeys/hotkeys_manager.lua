@@ -61,6 +61,7 @@ function HotkeysManager.init()
   itemWidget:setVisible(false)
   itemWidget:setFocusable(false)
 
+  connect(g_game, { onGameEnd = HotkeysManager.hide })
   connect(currentHotkeysList, { onChildFocusChange = function (self, focusedChild) HotkeysManager.checkSelectedHotkey(focusedChild) end } )
 
   hotkeysManagerLoaded = true
@@ -104,6 +105,7 @@ end
 function HotkeysManager.terminate()
   hotkeysManagerLoaded = false
 
+  disconnect(g_game, { onGameEnd = HotkeysManager.hide })
   g_keyboard.unbindKeyDown('Ctrl+K')
 
   HotkeysManager.save()

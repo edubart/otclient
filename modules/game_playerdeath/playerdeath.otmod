@@ -1,0 +1,17 @@
+Module
+  name: game_playerdeath
+  description: Manage player deaths
+  author: edubart, BeniS
+  website: www.otclient.info
+
+  dependencies:
+    - game_interface
+    - game_textmessage
+    - client_entergame
+
+  @onLoad: |
+    dofile 'playerdeath'
+    PlayerDeath.init()
+
+  @onUnload: |
+    PlayerDeath.terminate()

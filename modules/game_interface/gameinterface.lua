@@ -27,8 +27,8 @@ function GameInterface.init()
   g_ui.importStyle('styles/logoutwindow.otui')
   g_ui.importStyle('styles/exitwindow.otui')
 
-  connect(g_game, { onGameStart = GameInterface.show }, true)
-  connect(g_game, { onGameEnd = GameInterface.hide }, true)
+  connect(g_game, { onGameStart = GameInterface.show,
+                    onGameEnd = GameInterface.hide }, true)
 
   gameRootPanel = g_ui.displayUI('gameinterface.otui')
   gameRootPanel:hide()
@@ -88,8 +88,8 @@ function GameInterface.init()
 end
 
 function GameInterface.terminate()
-  disconnect(g_game, { onGameStart = GameInterface.show })
-  disconnect(g_game, { onGameEnd = GameInterface.hide })
+  disconnect(g_game, { onGameStart = GameInterface.show,
+                       onGameEnd = GameInterface.hide })
   disconnect(gameLeftPanel, { onVisibilityChange = onLeftPanelVisibilityChange })
 
   logoutButton:destroy()
@@ -117,6 +117,18 @@ function GameInterface.show()
 end
 
 function GameInterface.hide()
+  if(logoutWindow) then
+    logoutWindow:destroy()
+    logoutWindow = nil
+  end
+  if(exitWindow) then
+    exitWindow:destroy()
+    exitWindow = nil
+  end
+  if(countWindow) then 
+    countWindow:destroy()
+    countWindow = nil
+  end
   gameRootPanel:hide()
   logoutButton:hide()
   Background.show()

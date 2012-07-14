@@ -26,4 +26,3 @@ LogoutWindow < MainWindow
     anchors.left: prev.right
     anchors.bottom: parent.bottom
     margin-left: 5
-    @onClick: self:getParent():destroy()
