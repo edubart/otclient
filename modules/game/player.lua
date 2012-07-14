@@ -52,3 +52,4 @@ function Player:hasVip(creatureName)
   end
   return false
 end
+

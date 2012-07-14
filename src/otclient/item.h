@@ -27,10 +27,9 @@
 #include "thing.h"
 #include "thingtypeotb.h"
 
-enum AttrTypes_t {
+enum AttrTypes_t
+{
     ATTR_END = 0,
-    //ATTR_DESCRIPTION = 1,
-    //ATTR_EXT_FILE = 2,
     ATTR_TILE_FLAGS = 3,
     ATTR_ACTION_ID = 4,
     ATTR_UNIQUE_ID = 5,
@@ -39,10 +38,8 @@ enum AttrTypes_t {
     ATTR_TELE_DEST = 8,
     ATTR_ITEM = 9,
     ATTR_DEPOT_ID = 10,
-    //ATTR_EXT_SPAWN_FILE = 11,
     ATTR_RUNE_CHARGES = 12,
-    //ATTR_EXT_HPPOUSE_FILE = 13,
-    ATTR_HPPOUSEDOORID = 14,
+    ATTR_HOUSEDOORID = 14,
     ATTR_COUNT = 15,
     ATTR_DURATION = 16,
     ATTR_DECAYING_STATE = 17,
@@ -60,7 +57,7 @@ enum AttrTypes_t {
     ATTR_EXTRADEFENSE = 36,
     ATTR_ARMOR = 37,
     ATTR_ATTACKSPEED = 38,
-    ATTR_HPPITCHANCE = 39,
+    ATTR_HITCHANCE = 39,
     ATTR_SHOOTRANGE = 40,
     ATTR_ARTICLE = 41,
     ATTR_SCRIPTPROTECTED = 42,
@@ -86,6 +83,7 @@ public:
     void setSubType(int subType) { m_countOrSubType = subType; }
     void setActionId(int actionId) { m_actionId = actionId; }
     void setUniqueId(int uniqueId) { m_uniqueId = uniqueId; }
+    void setDoorId(int doorId) { m_doorId = doorId; }
     void setName(const std::string &name) { m_name = name; }
     void setText(const std::string &text) { m_text = text; }
     void setDescription(const std::string &description) { m_description = description; }
@@ -95,24 +93,30 @@ public:
     int getCount() { return m_countOrSubType; }
     uint32 getId() { return m_id; }
     std::string getName() { return m_name; }
+    uint8 getDoorId() { return m_doorId; }
     bool isValid();
 
     ItemPtr asItem() { return std::static_pointer_cast<Item>(shared_from_this()); }
     bool isItem() { return true; }
 
-    // TODO: These should be abstract and declared in i.e containers, doors, etc.
-    bool unserializeAttr(const BinaryTreePtr &fin);
-    bool unserializeItemNode(const BinaryTreePtr &fin) { return unserializeAttr(fin); }
-    void readAttr(AttrTypes_t attrType, const BinaryTreePtr &fin);
+    void unserializeItem(const BinaryTreePtr &in);
     bool isMoveable();
+    bool isContainer() { return m_isContainer; }
+    bool isDoor() { return m_isDoor; }
 
 private:
     uint16 m_id;
     uint8 m_countOrSubType;
     uint32 m_actionId, m_uniqueId;
+    uint16 m_depotId;
+    uint8 m_doorId;
+    Boolean<false> m_isContainer;
+    Boolean<false> m_isDoor;
+
     std::string m_name, m_text, m_description;
     PainterShaderProgramPtr m_shaderProgram;
     ThingTypeOtbPtr m_otbType;
+    Position m_teleportDestination;
 };
 
 #endif

@@ -33,7 +33,7 @@ enum tileflags_t
     TILESTATE_TRASHED = 1 << 1,
     TILESTATE_OPTIONALZONE = 1 << 2,
     TILESTATE_NOLOGOUT = 1 << 3,
-    TILESTATE_HPPARDCOREZONE = 1 << 4,
+    TILESTATE_HARDCOREZONE = 1 << 4,
     TILESTATE_REFRESH = 1 << 5,
 
     // internal usage
@@ -100,6 +100,7 @@ public:
 
     TilePtr asTile() { return std::static_pointer_cast<Tile>(shared_from_this()); }
     void setFlags(tileflags_t flags) { m_flags |= (uint32)flags; }
+    uint32 flags() { return m_flags; }
 
 private:
     void update();

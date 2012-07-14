@@ -88,149 +88,89 @@ bool ThingTypeManager::loadDat(const std::string& file)
     }
 }
 
-bool ThingTypeManager::loadOtb(const std::string& file)
+void ThingTypeManager::loadOtb(const std::string& file)
 {
-    try {
-        FileStreamPtr fin = g_resources.openFile(file);
+    FileStreamPtr fin = g_resources.openFile(file);
 
-        uint signature = fin->getU32();
-        if(signature != 0)
-            stdext::throw_exception("invalid otb file");
+    uint signature = fin->getU32();
+    if(signature != 0)
+        stdext::throw_exception("invalid otb file");
 
-        BinaryTreePtr root = fin->getBinaryTree();
+    BinaryTreePtr root = fin->getBinaryTree();
 
-        signature = root->getU32();
-        if(signature != 0)
-            stdext::throw_exception("invalid otb file");
+    signature = root->getU32();
+    if(signature != 0)
+        stdext::throw_exception("invalid otb file");
 
-        root->getU32(); // flags
+    root->getU32(); // flags
 
-        m_otbMajorVersion = root->getU32();
-        m_otbMinorVersion = root->getU32();
-        root->getU32(); // build number
-        root->skip(128); // description
+    m_otbMajorVersion = root->getU32();
+    m_otbMinorVersion = root->getU32();
+    root->getU32(); // build number
+    root->skip(128); // description
 
-        for(const BinaryTreePtr& node : root->getChildren()) {
-            ThingTypeOtbPtr otbType(new ThingTypeOtb);
-            otbType->unserialize(node);
-        }
-
-        m_otbLoaded = true;
-        return true;
-    } catch(stdext::exception& e) {
-        g_logger.error(stdext::format("failed to load otb '%s': %s", file, e.what()));
-        return false;
+    m_otbTypes.resize(root->getChildren().size(), m_nullOtbType);
+    for(const BinaryTreePtr& node : root->getChildren()) {
+        ThingTypeOtbPtr otbType(new ThingTypeOtb);
+        otbType->unserialize(node);
+        addOtbType(otbType);
     }
+
+    m_otbLoaded = true;
 }
 
-bool ThingTypeManager::loadXml(const std::string& file)
+void ThingTypeManager::loadXml(const std::string& file)
 {
-    /*
-    try {
-        TiXmlDocument doc(file.c_str());
-        if (!doc.LoadFile()) {
-            g_logger.error(stdext::format("failed to load xml '%s'", file));
-            return false;
-        }
+    TiXmlDocument doc(file.c_str());
+    if (!doc.LoadFile())
+        stdext::throw_exception(stdext::format("failed to load xml '%s'", file));
 
-        TiXmlElement* root = doc.FirstChildElement();
-        if (!root) {
-            g_logger.error("invalid xml root");
-            return false;
-        }
+    TiXmlElement* root = doc.FirstChildElement();
+    if (!root || root->ValueTStr() != "items")
+        stdext::throw_exception("invalid root tag name");
 
-        if (root->ValueTStr() != "items") {
-            g_logger.error("invalid xml tag name, should be 'items'");
-            return false;
-        }
+    ThingTypeOtbPtr otbType = nullptr;
+    for (TiXmlElement *element = root->FirstChildElement(); element; element = element->NextSiblingElement()) {
+        if (element->ValueTStr() != "item")
+            continue;
 
-        for (TiXmlElement *element = root->FirstChildElement(); element; element = element->NextSiblingElement()) {
-            if (element->ValueTStr() != "item")
-                continue;
+        std::string name = element->Attribute("id");
+        if (name.empty())
+            continue;
 
-            std::string name = element->Attribute("id");
-            if (name.empty())
-                continue;
+        uint16 id = stdext::unsafe_cast<uint16>(element->Attribute("id"));
+        if (!(otbType = getOtbType(id))) {
+            // try reading fromId toId
+            uint16 from = stdext::unsafe_cast<uint16>(element->Attribute("fromId"));
+            uint16 to = stdext::unsafe_cast<uint16>(element->Attribute("toid"));
 
-            uint16 id = stdext::unsafe_cast<uint16>(element->Attribute("id"));
-            uint16 idEx = 0;
-            if (!id) {
-                bool found = false;
-                // fallback into reading fromid and toid
-                uint16 fromid = stdext::unsafe_cast<uint16>(element->Attribute("fromid"));
-                uint16 toid = stdext::unsafe_cast<uint16>(element->Attribute("toid"));
-                ThingTypeOtbPtr iType;
-                for (int __id = fromid; __id < toid; ++__id) {
-                    if (!(iType = getType(__id)))
-                        continue;
-
-                    iType->name = name;
-                    idEx = iType->id == fromid ? fromid : toid;
-                    found = true;
-                }
-
-                if (!found)
+            for (uint16 __id = from; __id < to; ++__id) {
+                if (!(otbType = getOtbType(__id)))
                     continue;
+
+                otbType->setHasRange();
+                otbType->setFromServerId(from);
+                otbType->setToServerId(to);
+                break;
             }
 
-            ThingTypeOtbPtr otbType = getType(id);
+            // perform last check
             if (!otbType) {
-                otbType = ThingTypeOtbPtr(new ItemData);
-                otbType->id = idEx ? idEx : id;
-                otbType->name = name;
-                addType(otbType->id, otbType);
-            }
-
-            otbType->name = name;
-
-            for (TiXmlElement *attr = element->FirstChildElement(); attr; attr = attr->NextSiblingElement()) {
-                if (attr->ValueTStr() != "attribute")
-                    continue;
-
-                std::string key = attr->Attribute("key");
-                std::string value = attr->Attribute("value");
-                if (key == "type") {
-                    if (value == "magicfield")
-                        otbType->category = IsMagicField;
-                    else if (value == "key")
-                        otbType->category = IsKey;
-                    else if (value == "depot")
-                        otbType->isDepot = true;
-                    else if (value == "teleport")
-                        otbType->category = IsTeleport;
-                    else if (value == "bed")
-                        otbType->isBed = true;
-                    else if (value == "door")
-                        otbType->category = IsDoor;
-                } else if (key == "name") {
-                    otbType->name = value;
-                } else if (key == "description") {
-                    otbType->description = value;
-                } else if (key == "weight") {
-                    otbType->weight = stdext::unsafe_cast<double>(stdext::unsafe_cast<double>(value) / 100.f);
-                } else if (key == "containerSize") {
-                    int containerSize = stdext::unsafe_cast<int>(value);
-                    if (containerSize)
-                        otbType->containerSize = containerSize;
-                    otbType->category = IsContainer;
-                } else if (key == "writeable") {
-                    if (!value.empty())
-                        otbType->category = IsWritable;
-                } else if (key == "maxTextLen") {
-                    otbType->maxTextLength = stdext::unsafe_cast<int>(value);
-                } else if (key == "charges") {
-                    otbType->charges = stdext::unsafe_cast<int>(value);
-                }
+                stdext::throw_exception(stdext::format("failed to find item with server id %d - tried reading fromid to id",
+                                                       id));
             }
         }
 
-        doc.Clear();
-    } catch(stdext::exception& e) {
+        for (TiXmlElement *attr = element->FirstChildElement(); attr; attr = attr->NextSiblingElement()) {
+            if (attr->ValueTStr() != "attribute")
+                continue;
 
+            otbType->unserializeXML(attr);
+        }
     }
-    return true;
-    */
-    return false;
+
+    doc.Clear();
+    m_xmlLoaded = true;
 }
 
 void ThingTypeManager::addOtbType(const ThingTypeOtbPtr& otbType)

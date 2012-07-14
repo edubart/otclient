@@ -5,7 +5,7 @@
 g_logger.setLogFile(g_resources.getWorkDir() .. g_app.getCompactName() .. ".log")
 
 -- print first terminal message
-g_logger.info(g_app.getName() .. ' ' .. g_app.getVersion() .. ' rev ' .. g_app.getBuildRevision() .. ' (' .. g_app.getBuildCommit() .. ') built on ' .. g_app.getBuildDate())
+g_logger.info(g_app.getName() .. ' ' .. g_app.getVersion() .. ' rev ' .. g_app.getBuildRevision() .. ' (' .. g_app.getBuildCommit() .. ') built on ' .. g_app.getBuildDate() .. ' for arch ' .. g_app.getBuildArch())
 
 --add base folder to search path
 g_resources.addToSearchPath(g_resources.getWorkDir())
@@ -27,15 +27,15 @@ g_configs.load("/config.otml")
 g_modules.discoverModules()
 
 -- core modules 0-99
-g_modules.autoLoadModules(99);
+g_modules.autoLoadModules(99)
 g_modules.ensureModuleLoaded("corelib")
 
 -- client modules 100-499
-g_modules.autoLoadModules(499);
+g_modules.autoLoadModules(499)
 g_modules.ensureModuleLoaded("client")
 
 -- game modules 500-999
-g_modules.autoLoadModules(999);
+g_modules.autoLoadModules(999)
 g_modules.ensureModuleLoaded("game")
 
 -- addons 1000-9999

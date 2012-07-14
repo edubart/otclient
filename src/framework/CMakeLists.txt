@@ -116,7 +116,7 @@ set(framework_SOURCES ${framework_SOURCES}
 option(CRASH_HANDLER "Generate crash reports" ON)
 option(LUAJIT "Use lua jit" OFF)
 option(USE_STATIC_LIBS "Don't use shared libraries (dlls)" ON)
-set(BUILD_COMMIT "custom" CACHE "Git commit string (intended for releases)" STRING)
+set(BUILD_COMMIT "devel" CACHE "Git commit string (intended for releases)" STRING)
 set(BUILD_REVISION "0" CACHE "Git revision string (intended for releases)" STRING)
 
 # default build type

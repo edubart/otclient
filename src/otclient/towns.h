@@ -20,61 +20,50 @@
  * THE SOFTWARE.
  */
 
-#ifndef FILESTREAM_H
-#define FILESTREAM_H
+#ifndef TOWNS_H
+#define TOWNS_H
 
 #include "declarations.h"
 #include <framework/luaengine/luaobject.h>
-#include <framework/util/databuffer.h>
 
-struct PHYSFS_File;
 
-// @bindclass
-class FileStream : public LuaObject
+class Town : public LuaObject
 {
 public:
-    FileStream(const std::string& name, PHYSFS_File *fileHandle, bool writeable);
-    ~FileStream();
+    Town() { }
+    Town(uint32 tid, const std::string& name, const Position& pos=Position());
 
-    void cache();
-    void close();
-    void flush();
-    void write(const void *buffer, uint count);
-    int read(void *buffer, uint size, uint nmemb = 1);
-    void seek(uint pos);
-    void skip(uint len);
-    int size();
-    int tell();
-    std::string name() { return m_name; }
+    void setId(uint32 tid) { m_id = tid; }
+    void setName(const std::string& name) { m_name = name; }
+    void setPos(const Position& pos) { m_pos = pos; }
 
-    uint8 getU8();
-    uint16 getU16();
-    uint32 getU32();
-    uint64 getU64();
-    std::string getString();
-    BinaryTreePtr getBinaryTree();
-
-    void addU8(uint8 v);
-    void addU16(uint16 v);
-    void addU32(uint32 v);
-    void addU64(uint64 v);
-    void addString(const std::string& v);
-    void startNode(uint8 nodeType) { addU8(0xFE); addU8(nodeType); }
-    void endNode() { addU8(0xFF); }
-
-    FileStreamPtr asFileStream() { return std::static_pointer_cast<FileStream>(shared_from_this()); }
+    uint32 getId() { return m_id; }
+    std::string getName() { return m_name; }
+    Position getPos() { return m_pos; }
 
 private:
-    void checkWrite();
-    void throwError(const std::string& message, bool physfsError = false);
-
+    uint32 m_id;
     std::string m_name;
-    PHYSFS_File *m_fileHandle;
-    uint m_pos;
-    bool m_writeable;
-    bool m_caching;
+    Position m_pos; // temple pos
+};
 
-    DataBuffer<uint8_t> m_data;
+class Towns
+{
+public:
+    void addTown(const TownPtr &town);
+    void removeTown(uint32 townId);
+
+    TownPtr getTown(uint32 townId);
+    TownList getTowns() { return m_towns; }
+
+    // Fix to segfault on exit
+    void clear() { m_towns.clear(); }
+
+private:
+    TownList m_towns;
+
+protected:
+    TownList::iterator findTown(uint32 townId);
 };
 
 #endif

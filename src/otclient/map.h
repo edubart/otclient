@@ -24,6 +24,8 @@
 #define MAP_H
 
 #include "creature.h"
+#include "houses.h"
+#include "towns.h"
 #include "animatedtext.h"
 #include <framework/core/clock.h>
 
@@ -42,7 +44,7 @@ enum OTBM_AttrTypes_t
     OTBM_ATTR_SPAWN_FILE = 11,
     OTBM_ATTR_RUNE_CHARGES = 12,
     OTBM_ATTR_HOUSE_FILE = 13,
-    OTBM_ATTR_HPPOUSEDOORID = 14,
+    OTBM_ATTR_HOUSEDOORID = 14,
     OTBM_ATTR_COUNT = 15,
     OTBM_ATTR_DURATION = 16,
     OTBM_ATTR_DECAYING_STATE = 17,
@@ -77,8 +79,25 @@ enum OTBM_NodeTypes_t
 
 enum {
     OTCM_SIGNATURE = 0x4D43544F,
-    OTCM_VERSION = 1,
+    OTCM_VERSION = 1
 };
+
+/// Temporary way for reading container items
+struct MapContainer {
+private:
+    std::vector<ItemPtr> m_items;
+
+public:
+    void add(const ItemPtr& item) { m_items.push_back(item); }
+    ItemPtr operator[](uint idx) { return getItem(idx); }
+    ItemPtr getItem(int index) {
+        if (index < 0 || index > (int)m_items.size())
+            return nullptr;
+
+        return m_items[index];
+    }
+};
+typedef std::shared_ptr<MapContainer> MapContainerPtr;
 
 //@bindsingleton g_map
 class Map
@@ -93,8 +112,8 @@ public:
     bool loadOtcm(const std::string& fileName);
     void saveOtcm(const std::string& fileName);
 
-    bool loadOtbm(const std::string& fileName);
-    //void saveOtbm(const std::string& fileName);
+    void loadOtbm(const std::string& fileName);
+    void saveOtbm(const std::string& fileName);
 
     void clean();
     void cleanDynamicThings();
@@ -106,6 +125,8 @@ public:
     bool removeThingByPos(const Position& pos, int stackPos);
 
     // tile related
+    template <typename... Items>
+    TilePtr createTileEx(const Position& pos, const Items&... items);
     TilePtr createTile(const Position& pos);
     const TilePtr& getTile(const Position& pos);
     TilePtr getOrCreateTile(const Position& pos);
@@ -119,6 +140,10 @@ public:
     std::vector<CreaturePtr> getSpectators(const Position& centerPos, bool multiFloor);
     std::vector<CreaturePtr> getSpectatorsInRange(const Position& centerPos, bool multiFloor, int xRange, int yRange);
     std::vector<CreaturePtr> getSpectatorsInRangeEx(const Position& centerPos, bool multiFloor, int minXRange, int maxXRange, int minYRange, int maxYRange);
+
+    // town/house related
+    TownPtr getTown(uint32 tid) { return m_towns.getTown(tid); }
+    HousePtr getHouse(uint32 hid) { return m_houses.getHouse(hid); }
 
     void setLight(const Light& light) { m_light = light; }
     void setCentralPosition(const Position& centralPosition);
@@ -146,11 +171,18 @@ private:
     std::vector<AnimatedTextPtr> m_animatedTexts;
     std::vector<StaticTextPtr> m_staticTexts;
     std::vector<MapViewPtr> m_mapViews;
+    std::unordered_map<Position, std::string, PositionHasher> m_waypoints;
+    std::vector<MapContainerPtr> m_containers;
 
     Light m_light;
     Position m_centralPosition;
 
     std::string m_description, m_spawnFile, m_houseFile;
+
+    Houses m_houses;
+    Towns m_towns;
+
+    uint16 m_width, m_height;
 };
 
 extern Map g_map;
