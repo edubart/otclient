@@ -117,15 +117,15 @@ function GameInterface.show()
 end
 
 function GameInterface.hide()
-  if(logoutWindow) then
+  if logoutWindow then
     logoutWindow:destroy()
     logoutWindow = nil
   end
-  if(exitWindow) then
+  if exitWindow then
     exitWindow:destroy()
     exitWindow = nil
   end
-  if(countWindow) then 
+  if countWindow then 
     countWindow:destroy()
     countWindow = nil
   end
@@ -144,7 +144,7 @@ function GameInterface.exit()
 end
 
 function GameInterface.tryExit()
-  if(exitWindow) then
+  if exitWindow then
     return true
   end
   exitWindow = g_ui.createWidget('ExitWindow', rootWidget)
@@ -183,7 +183,7 @@ function GameInterface.logout()
 end
 
 function GameInterface.tryLogout()
-  if(logoutWindow) then
+  if logoutWindow then
     return
   end
   logoutWindow = g_ui.createWidget('LogoutWindow', rootWidget)

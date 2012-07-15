@@ -920,7 +920,6 @@ void ProtocolGame::parsePlayerCancelAttack(const InputMessagePtr& msg)
     g_game.processAttackCancel();
 }
 
-
 void ProtocolGame::parseSpellDelay(const InputMessagePtr& msg)
 {
     msg->getU16(); // spell id
@@ -934,7 +933,6 @@ void ProtocolGame::parseSpellGroupDelay(const InputMessagePtr& msg)
     msg->getU16(); // cooldown
     msg->getU8(); // unknown
 }
-
 
 void ProtocolGame::parseMultiUseDelay(const InputMessagePtr& msg)
 {
@@ -991,7 +989,7 @@ void ProtocolGame::parseCreatureSpeak(const InputMessagePtr& msg)
 void ProtocolGame::parseChannelList(const InputMessagePtr& msg)
 {
     int count = msg->getU8();
-    std::vector<std::tuple<int, std::string>> channelList;
+    std::vector<std::tuple<int, std::string> > channelList;
     for(int i = 0; i < count; i++) {
         int id = msg->getU16();
         std::string name = msg->getString();
@@ -1130,7 +1128,8 @@ void ProtocolGame::parseOpenOutfitWindow(const InputMessagePtr& msg)
 {
     Outfit currentOutfit = getOutfit(msg);
 
-    std::vector<std::tuple<int, std::string, int>> outfitList;
+    std::vector<std::tuple<int, std::string, int> > outfitList;
+    std::vector<std::tuple<int, std::string> > mountList;
     int outfitCount = msg->getU8();
     for(int i = 0; i < outfitCount; i++) {
         int outfitId = msg->getU16();
@@ -1142,13 +1141,15 @@ void ProtocolGame::parseOpenOutfitWindow(const InputMessagePtr& msg)
 
     if(g_game.getFeature(Otc::GamePlayerMounts)) {
         int mountCount = msg->getU8();
-        for(int i=0;i<mountCount;++i) {
-            msg->getU16(); // mount type
-            msg->getString(); // mount name
+        for(int i = 0; i < mountCount; ++i) {
+            int mountId = msg->getU16(); // mount type
+            std::string mountName = msg->getString(); // mount name
+            
+            mountList.push_back(std::make_tuple(mountId, mountName));
         }
     }
 
-    g_game.processOpenOutfitWindow(currentOutfit, outfitList);
+    g_game.processOpenOutfitWindow(currentOutfit, outfitList, mountList);
 }
 
 void ProtocolGame::parseVipAdd(const InputMessagePtr& msg)
@@ -1188,7 +1189,7 @@ void ProtocolGame::parseAutomapFlag(const InputMessagePtr& msg)
 
 void ProtocolGame::parseQuestLog(const InputMessagePtr& msg)
 {
-    std::vector<std::tuple<int, std::string, bool>> questList;
+    std::vector<std::tuple<int, std::string, bool> > questList;
     int questsCount = msg->getU16();
     for(int i = 0; i < questsCount; i++) {
         int id = msg->getU16();
@@ -1344,8 +1345,10 @@ Outfit ProtocolGame::getOutfit(const InputMessagePtr& msg)
         }
     }
 
-    if(g_game.getFeature(Otc::GamePlayerMounts))
-        msg->getU16(); // mount
+    if(g_game.getFeature(Otc::GamePlayerMounts)) {
+        int mount = msg->getU16(); // mount
+        outfit.setMount(mount);
+    }
 
     return outfit;
 }

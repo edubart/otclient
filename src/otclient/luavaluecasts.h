@@ -25,6 +25,7 @@
 
 #include "global.h"
 #include <framework/luaengine/declarations.h>
+#include "game.h"
 #include "outfit.h"
 
 // outfit

@@ -1,5 +1,8 @@
 Minimap = {}
 
+-- public variables
+minimapFirstLoad = true
+
 -- private variables
 local minimapWidget
 local minimapButton
@@ -8,7 +11,6 @@ local DEFAULT_ZOOM = 60
 local MAX_FLOOR_UP = 0
 local MAX_FLOOR_DOWN = 15
 local navigating = false
-minimapFirstLoad = true
 
 -- private functions
 function onMinimapMouseRelease(self, mousePosition, mouseButton)
@@ -54,9 +56,9 @@ function Minimap.init()
 
   minimapWindow = g_ui.loadUI('minimap.otui', GameInterface.getRightPanel())
 
-
   minimapWidget = minimapWindow:recursiveGetChildById('minimap')
   g_mouse.bindAutoPress(minimapWidget, Minimap.compassClick, nil, MouseRightButton)
+  g_mouse.bindAutoPress(minimapWidget, Minimap.compassClick, nil, MouseLeftButton)
   minimapWidget:setAutoViewMode(false)
   minimapWidget:setViewMode(1) -- mid view
   minimapWidget:setDrawMinimapColors(true)
@@ -150,13 +152,13 @@ function Minimap.onButtonClick(id)
   elseif id == "floorUp" then
     local pos = minimapWidget:getCameraPosition()
     pos.z = pos.z - 1
-    if(pos.z > MAX_FLOOR_UP) then
+    if pos.z > MAX_FLOOR_UP then
       minimapWidget:setCameraPosition(pos)
     end
   elseif id == "floorDown" then
     local pos = minimapWidget:getCameraPosition()
     pos.z = pos.z + 1
-    if(pos.z < MAX_FLOOR_DOWN) then
+    if pos.z < MAX_FLOOR_DOWN then
       minimapWidget:setCameraPosition(pos)
     end
   end

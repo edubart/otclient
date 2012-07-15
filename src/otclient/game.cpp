@@ -257,7 +257,7 @@ void Game::processCreatureTeleport(const CreaturePtr& creature)
     g_lua.callGlobalField("g_game", "onCreatureTeleport", creature);
 }
 
-void Game::processChannelList(const std::vector<std::tuple<int, std::string>>& channelList)
+void Game::processChannelList(const std::vector<std::tuple<int, std::string> >& channelList)
 {
     g_lua.callGlobalField("g_game", "onChannelList", channelList);
 }
@@ -324,21 +324,31 @@ void Game::processAutomapFlag(const Position& pos, int icon, const std::string& 
     g_lua.callGlobalField("g_game", "onAutomapFlag", pos, icon, message);
 }
 
-void Game::processOpenOutfitWindow(const Outfit& currentOufit, const std::vector<std::tuple<int, std::string, int>>& outfitList)
+void Game::processOpenOutfitWindow(const Outfit& currentOufit, const std::vector<std::tuple<int, std::string, int> >& outfitList,
+                                   const std::vector<std::tuple<int, std::string> >& mountList)
 {
-    CreaturePtr virtualCreature = CreaturePtr(new Creature);
-    virtualCreature->setDirection(Otc::South);
-    virtualCreature->setOutfit(currentOufit);
+    // create virtual creature outfit
+    CreaturePtr virtualOutfitCreature = CreaturePtr(new Creature);
+    virtualOutfitCreature->setDirection(Otc::South);
+    virtualOutfitCreature->setOutfit(currentOufit);
 
-    g_lua.callGlobalField("g_game", "onOpenOutfitWindow", virtualCreature, outfitList);
+    // creature virtual mount outfit
+    CreaturePtr virtualMountCreature = CreaturePtr(new Creature);
+    virtualMountCreature->setDirection(Otc::South);
+
+    Outfit mountOutfit;
+    mountOutfit.setId(currentOufit.getMount());
+    virtualMountCreature->setOutfit(mountOutfit);
+
+    g_lua.callGlobalField("g_game", "onOpenOutfitWindow", virtualOutfitCreature, outfitList, virtualMountCreature, mountList);
 }
 
-void Game::processOpenNpcTrade(const std::vector<std::tuple<ItemPtr, std::string, int, int, int>>& items)
+void Game::processOpenNpcTrade(const std::vector<std::tuple<ItemPtr, std::string, int, int, int> >& items)
 {
     g_lua.callGlobalField("g_game", "onOpenNpcTrade", items);
 }
 
-void Game::processPlayerGoods(int money, const std::vector<std::tuple<ItemPtr, int>>& goods)
+void Game::processPlayerGoods(int money, const std::vector<std::tuple<ItemPtr, int> >& goods)
 {
     g_lua.callGlobalField("g_game", "onPlayerGoods", money, goods);
 }
@@ -373,12 +383,12 @@ void Game::processEditList(uint id, int doorId, const std::string& text)
     g_lua.callGlobalField("g_game", "onEditList", id, doorId, text);
 }
 
-void Game::processQuestLog(const std::vector<std::tuple<int, std::string, bool>>& questList)
+void Game::processQuestLog(const std::vector<std::tuple<int, std::string, bool> >& questList)
 {
     g_lua.callGlobalField("g_game", "onQuestLog", questList);
 }
 
-void Game::processQuestLine(int questId, const std::vector<std::tuple<std::string, std::string>>& questMissions)
+void Game::processQuestLine(int questId, const std::vector<std::tuple<std::string, std::string> >& questMissions)
 {
     g_lua.callGlobalField("g_game", "onQuestLine", questId, questMissions);
 }
@@ -1044,7 +1054,7 @@ void Game::mount(bool mount)
 {
     if(!canPerformGameAction())
         return;
-    m_protocolGame->sendMount(mount);
+    m_protocolGame->sendMounted(mount);
 }
 
 bool Game::checkBotProtection()

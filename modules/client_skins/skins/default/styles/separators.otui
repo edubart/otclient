@@ -6,7 +6,7 @@ HorizontalSeparator < UIWidget
   focusable: false
 
 VerticalSeparator < UIWidget
-  image-source: /images/horizontal_separator.png
+  image-source: /images/vertical_separator.png
   image-border-left: 2
   width: 2
   phantom: true

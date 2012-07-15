@@ -1,5 +1,6 @@
 MapControl < Button
   size: 20 20
+  icon-clip: 0 32 16 16
 
   $pressed:
     icon-clip: 0 0 16 16
@@ -7,19 +8,16 @@ MapControl < Button
   $hover !pressed:
     icon-clip: 0 16 16 16
 
-  $!pressed !hover:
-    icon-clip: 0 32 16 16
-
 FloorUpControl < MapControl
   icon-source: /game_minimap/floor_up.png
 
 FloorDownControl < MapControl
   icon-source: /game_minimap/floor_down.png
 
-//ZoomOutControl < MapControl
+ZoomOutControl < MapControl
   //image-source: /game_minimap/zoom_out.png
 
-//ZoomInControl < MapControl
+ZoomInControl < MapControl
   //image-source: /game_minimap/zoom_in.png
 
 MiniWindow
@@ -64,10 +62,9 @@ MiniWindow
       enabled: true
       @onClick: Minimap.onButtonClick(self:getId())
 
-    Button
+    ZoomInControl
       id: zoomIn
       text: +
-      size: 20 20
       anchors.right: parent.right
       anchors.bottom: parent.bottom
       margin-right: 4
@@ -75,11 +72,10 @@ MiniWindow
       enabled: true
       @onClick: Minimap.onButtonClick(self:getId())
 
-    Button
+    ZoomOutControl
       id: zoomOut
       text: -
       font: terminus-14px-bold
-      size: 20 20
       anchors.right: parent.right
       anchors.bottom: parent.bottom
       margin-right: 4

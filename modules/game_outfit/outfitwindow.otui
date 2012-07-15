@@ -1,0 +1,221 @@
+BrowseButton < Button
+  size: 20 29
+  icon-clip: 0 0 12 21
+
+  $hover !disabled:
+    icon-clip: 0 21 12 21
+
+  $pressed:
+    icon-clip: 0 22 12 21
+
+  $disabled:
+    color: #f0ad4d88
+
+NextOutfitButton < BrowseButton
+  icon-source: /images/arrow_right.png
+
+PrevOutfitButton < BrowseButton
+  icon-source: /images/arrow_left.png
+
+NextMountButton < BrowseButton
+  icon-source: /images/arrow_right.png
+
+PrevMountButton < BrowseButton
+  icon-source: /images/arrow_left.png
+
+Window
+  !text: tr('Select Outfit')
+  size: 338 375
+  padding: 0 0 0 0
+
+  anchors.horizontalCenter: parent.horizontalCenter
+  anchors.verticalCenter: parent.verticalCenter
+
+  @onEnter: Outfit.accept()
+  @onEscape: Outfit.destroy()
+
+  // Creature Boxes
+
+  Creature
+    id: outfitCreatureBox
+    anchors.top: parent.top
+    anchors.left: parent.left
+    margin-top: 48
+    margin-left: 40
+    padding: 4 4 4 4
+    fixed-creature-size: true
+
+  Label
+    id: outfitName
+    !text: tr('No Outfit')
+    width: 100
+    anchors.bottom: prev.top
+    anchors.left: prev.left
+    margin-bottom: 2
+
+  NextOutfitButton
+    id: outfitNextButton
+    anchors.left: outfitCreatureBox.right
+    anchors.verticalCenter: outfitCreatureBox.verticalCenter
+    margin-left: 3
+    enabled: true
+    @onClick: Outfit.nextOutfitType()
+
+  PrevOutfitButton
+    id: outfitPrevButton
+    anchors.right: outfitCreatureBox.left
+    anchors.verticalCenter: outfitCreatureBox.verticalCenter
+    margin-right: 3
+    enabled: true
+    @onClick: Outfit.previousOutfitType()
+
+  Creature
+    id: mountCreatureBox
+    anchors.top: parent.top
+    anchors.right: parent.right
+    margin-top: 48
+    margin-right: 40
+    padding: 4 4 4 4
+    fixed-creature-size: true
+
+  Label
+    id: mountName
+    !text: tr('No Mount')
+    width: 140
+    anchors.bottom: prev.top
+    anchors.left: prev.left
+    margin-bottom: 2
+
+  NextMountButton
+    id: mountNextButton
+    anchors.left: mountCreatureBox.right
+    anchors.verticalCenter: mountCreatureBox.verticalCenter
+    margin-left: 3
+    enabled: true
+    @onClick: Outfit.nextMountType()
+
+  PrevMountButton
+    id: mountPreviousButton
+    anchors.right: mountCreatureBox.left
+    anchors.verticalCenter: mountCreatureBox.verticalCenter
+    margin-right: 3
+    enabled: true
+    @onClick: Outfit.previousMountType()
+
+  // Addon Check Boxes
+
+  CheckBox
+    id: addon1
+    !text: tr('Addon 1')
+    width: 80
+    anchors.top: outfitCreatureBox.bottom
+    anchors.left: parent.left
+    margin-top: 6
+    margin-left: 18
+    enabled: false
+
+  CheckBox
+    id: addon2
+    !text: tr('Addon 2')
+    width: 80
+    anchors.top: prev.top
+    anchors.left: prev.right
+    enabled: false
+
+  CheckBox
+    id: addon3
+    !text: tr('Addon 3')
+    width: 80
+    anchors.top: prev.top
+    anchors.left: prev.right
+    enabled: false
+
+  // Body Selection Buttons
+
+  ButtonBox
+    id: head
+    !text: tr('Head')
+    anchors.top: addon1.bottom
+    anchors.left: addon1.left
+    margin-top: 5
+    checked: true
+    width: 76
+
+  ButtonBox
+    id: primary
+    !text: tr('Primary')
+    anchors.top: prev.top
+    anchors.left: prev.right
+    width: 76
+
+  ButtonBox
+    id: secondary
+    !text: tr('Secondary')
+    anchors.top: prev.top
+    anchors.left: prev.right
+    width: 76
+
+  ButtonBox
+    id: detail
+    !text: tr('Detail')
+    anchors.top: prev.top
+    anchors.left: prev.right
+    width: 76
+
+  // Color Panel
+
+  Panel
+    id: colorBoxPanel
+    anchors.top: head.bottom
+    anchors.left: head.left
+    margin-top: 3
+    margin-right: 20
+    width: 323
+    height: 119
+    layout:
+      type: grid
+      cell-size: 14 14
+      cell-spacing: 2
+      num-columns: 19
+      num-lines: 7
+
+  // Action Button Section
+
+  Button
+    id: randomizeButton
+    !text: tr('Randomize')
+    !tooltip: tr('Randomize characters outfit')
+    width: 75
+    anchors.left: prev.left
+    anchors.top: prev.bottom
+    margin-right: 16
+    @onClick: Outfit.randomize()
+
+  HorizontalSeparator
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: next.top
+    margin-left: 16
+    margin-right: 16
+    margin-bottom: 10
+    margin-top: 5
+
+  Button
+    id: outfitOkButton
+    !text: tr('Okay')
+    width: 64
+    anchors.right: next.left
+    anchors.bottom: parent.bottom
+    margin-bottom: 16
+    margin-right: 16
+    @onClick: Outfit.accept()
+
+  Button
+    id: outfitCancelButton
+    !text: tr('Cancel')
+    width: 64
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    margin-bottom: 16
+    margin-right: 16
+    @onClick: Outfit.destroy()

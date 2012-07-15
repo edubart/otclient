@@ -5,7 +5,7 @@ local textWindow
 
 -- private functions
 local function onGameEditText(id, itemId, maxLength, text, writter, time)
-  if(textWindow) then
+  if textWindow then
     return
   end
   textWindow = g_ui.createWidget('TextWindow', rootWidget)
@@ -61,7 +61,7 @@ local function onGameEditText(id, itemId, maxLength, text, writter, time)
 end
 
 local function onGameEditList(id, doorId, text)
-  if(textWindow) then
+  if textWindow then
     return
   end
   textWindow = g_ui.createWidget('TextWindow', rootWidget)
@@ -105,7 +105,7 @@ function TextWindow.terminate()
 end
 
 function TextWindow.destroy()
-  if(textWindow) then
+  if textWindow then
     textWindow:destroy()
     textWindow = nil
   end

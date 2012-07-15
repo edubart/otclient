@@ -71,7 +71,7 @@ protected:
     void processContainerRemoveItem(int containerId, int slot);
 
     // channel related
-    void processChannelList(const std::vector<std::tuple<int, std::string>>& channelList);
+    void processChannelList(const std::vector<std::tuple<int, std::string> >& channelList);
     void processOpenChannel(int channelId, const std::string& name);
     void processOpenPrivateChannel(const std::string& name);
     void processOpenOwnPrivateChannel(int channelId, const std::string& name);
@@ -92,11 +92,12 @@ protected:
     void processAutomapFlag(const Position& pos, int icon, const std::string& message);
 
     // outfit
-    void processOpenOutfitWindow(const Outfit& currentOufit, const std::vector<std::tuple<int, std::string, int>>& outfitList);
+    void processOpenOutfitWindow(const Outfit& currentOufit, const std::vector<std::tuple<int, std::string, int> >& outfitList,
+                                 const std::vector<std::tuple<int, std::string> >& mountList);
 
     // npc trade
-    void processOpenNpcTrade(const std::vector<std::tuple<ItemPtr, std::string, int, int, int>>& items);
-    void processPlayerGoods(int money, const std::vector<std::tuple<ItemPtr, int>>& goods);
+    void processOpenNpcTrade(const std::vector<std::tuple<ItemPtr, std::string, int, int, int> >& items);
+    void processPlayerGoods(int money, const std::vector<std::tuple<ItemPtr, int> >& goods);
     void processCloseNpcTrade();
 
     // player trade
@@ -109,8 +110,8 @@ protected:
     void processEditList(uint id, int doorId, const std::string& text);
 
     // questlog
-    void processQuestLog(const std::vector<std::tuple<int, std::string, bool>>& questList);
-    void processQuestLine(int questId, const std::vector<std::tuple<std::string, std::string>>& questMissions);
+    void processQuestLog(const std::vector<std::tuple<int, std::string, bool> >& questList);
+    void processQuestLine(int questId, const std::vector<std::tuple<std::string, std::string> >& questMissions);
 
     friend class ProtocolGame;
     friend class Map;
@@ -245,6 +246,7 @@ public:
     bool isDead() { return m_dead; }
     bool isAttacking() { return !!m_attackingCreature; }
     bool isFollowing() { return !!m_followingCreature; }
+    bool isMounted() { return m_mounted; }
 
     ContainerPtr getContainer(int index) { return m_containers[index]; }
     std::map<int, ContainerPtr> getContainers() { return m_containers; }
@@ -276,6 +278,7 @@ private:
 
     bool m_denyBotCall;
     bool m_dead;
+    bool m_mounted;
     int m_serverBeat;
     Otc::FightModes m_fightMode;
     Otc::ChaseModes m_chaseMode;

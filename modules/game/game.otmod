@@ -31,6 +31,7 @@ Module
     - game_bugreport
     - game_shaders
     - game_playerdeath
+    - game_playermount
 
   @onLoad: |
     dofile 'const'

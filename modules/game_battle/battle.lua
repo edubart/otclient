@@ -84,10 +84,10 @@ function Battle.terminate()
   mouseWidget:destroy()
   mouseWidget = nil
 
-  disconnect(Creature, {  onSkullChange = Battle.checkCreatureSkull,
+  disconnect(Creature, { onSkullChange = Battle.checkCreatureSkull,
                           onEmblemChange = Battle.checkCreatureEmblem } )
 
-  disconnect(g_game, {    onAttackingCreatureChange = Battle.onAttack } )
+  disconnect(g_game, { onAttackingCreatureChange = Battle.onAttack } )
 
   Battle = nil
 end
@@ -191,7 +191,7 @@ function Battle.addCreature(creature)
   local creatureId = creature:getId()
 
   if battleButtonsByCreaturesList[creatureId] == nil then
-    local battleButton = g_ui.loadUI('battleButton.otui', battlePanel)
+    local battleButton = g_ui.loadUI('battlebutton.otui', battlePanel)
     local creatureWidget = battleButton:getChildById('creature')
     local labelWidget = battleButton:getChildById('label')
     local lifeBarWidget = battleButton:getChildById('lifeBar')

@@ -44,6 +44,7 @@ public:
     void setLegs(int legs) { m_legs = legs; m_legsColor = getColor(legs); }
     void setFeet(int feet) { m_feet = feet; m_feetColor = getColor(feet); }
     void setAddons(int addons) { m_addons = addons; }
+    void setMount(int mount) { m_mount = mount; }
     void setCategory(DatCategory category) { m_category = category; }
 
     void resetClothes();
@@ -54,6 +55,7 @@ public:
     int getLegs() const { return m_legs; }
     int getFeet() const { return m_feet; }
     int getAddons() const { return m_addons; }
+    int getMount() const { return m_mount; }
     DatCategory getCategory() const { return m_category; }
 
     Color getHeadColor() const { return m_headColor; }
@@ -63,7 +65,7 @@ public:
 
 private:
     DatCategory m_category;
-    int m_id, m_head, m_body, m_legs, m_feet, m_addons;
+    int m_id, m_head, m_body, m_legs, m_feet, m_addons, m_mount;
     Color m_headColor, m_bodyColor, m_legsColor, m_feetColor;
 };
 

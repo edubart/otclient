@@ -23,7 +23,7 @@ end
 
 function PlayerDeath.reset()
   GameInterface.getMapPanel():recursiveGetChildById('centerAdvance'):hide()
-  if(deathWindow) then
+  if deathWindow then
     deathWindow:destroy()
     deathWindow = nil
   end
@@ -44,7 +44,7 @@ function PlayerDeath.displayDeadMessage()
 end
 
 function PlayerDeath.openWindow()
-  if(deathWindow) then
+  if deathWindow then
     return
   end
   deathWindow = g_ui.createWidget('DeathWindow', rootWidget)

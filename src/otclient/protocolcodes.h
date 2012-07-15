@@ -57,7 +57,7 @@ namespace Proto {
         OsFlash = 3,
         OsOtclientLinux = 10,
         OsOtclientWindows = 11,
-        OsOtclientMac = 12,
+        OsOtclientMac = 12
     };
 
 #ifdef OSTYPE
@@ -177,7 +177,7 @@ namespace Proto {
         GameServerMarketEnter               = 246, // 944
         GameServerMarketLeave               = 247, // 944
         GameServerMarketDetail              = 248, // 944
-        GameServerMarketBrowse              = 249, // 944
+        GameServerMarketBrowse              = 249 // 944
     };
 
     enum ClientOpcodes {
@@ -267,7 +267,7 @@ namespace Proto {
         ClientMarketBrowse                  = 245, // 944
         ClientMarketCreate                  = 246, // 944
         ClientMarketCancel                  = 247, // 944
-        ClientMarketAccept                  = 248, // 944
+        ClientMarketAccept                  = 248 // 944
     };
 
     enum ServerSpeakType {

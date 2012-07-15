@@ -35,7 +35,7 @@ end
 function g_mouse.bindAutoPress(widget, callback, delay, button)
   local button = button or MouseLeftButton
   connect(widget, { onMousePress = function(widget, mousePos, mouseButton)
-    if(mouseButton ~= button) then
+    if mouseButton ~= button then
       return false
     end
     local startTime = g_clock.millis()

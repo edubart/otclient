@@ -1,0 +1,15 @@
+Module
+  name: game_playermount
+  description: Manage player mounts
+  author: BeniS
+  website: www.otclient.info
+
+  dependencies:
+    - client_entergame
+
+  @onLoad: |
+    dofile 'playermount'
+    PlayerMount.init()
+
+  @onUnload: |
+    PlayerMount.terminate()

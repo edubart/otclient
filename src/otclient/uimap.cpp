@@ -120,7 +120,7 @@ TilePtr UIMap::getTile(const Point& mousePos)
 {
   /*
    * Known Issue: If you move a container widget into the map rect
-   * if you move an item onto itself it will allow this to execute
+   * and you move an item onto itself it will allow this to execute
    * still dropping the item on the ground.
    */
     if(!m_mapRect.contains(mousePos))

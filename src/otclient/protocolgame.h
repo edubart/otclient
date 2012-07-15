@@ -102,7 +102,7 @@ protected:
     void sendRefreshContainer();
     void sendRequestOutfit();
     void sendChangeOutfit(const Outfit& outfit);
-    void sendMount(bool mount);
+    void sendMountStatus(bool mount);
     void sendAddVip(const std::string& name);
     void sendRemoveVip(uint playerId);
     void sendBugReport(const std::string& comment);

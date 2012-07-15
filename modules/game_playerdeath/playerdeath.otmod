@@ -1,7 +1,7 @@
 Module
   name: game_playerdeath
   description: Manage player deaths
-  author: edubart, BeniS
+  author: BeniS, edubart
   website: www.otclient.info
 
   dependencies:

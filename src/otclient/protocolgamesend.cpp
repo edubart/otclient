@@ -630,15 +630,21 @@ void ProtocolGame::sendChangeOutfit(const Outfit& outfit)
     msg->addU8(outfit.getLegs());
     msg->addU8(outfit.getFeet());
     msg->addU8(outfit.getAddons());
+    if(g_game.getFeature(Otc::GamePlayerMounts))
+        msg->addU16(outfit.getMount());
     send(msg);
 }
 
-void ProtocolGame::sendMount(bool mount)
+void ProtocolGame::sendMountStatus(bool mount)
 {
-    OutputMessagePtr msg(new OutputMessage);
-    msg->addU8(Proto::ClientMount);
-    msg->addU8(mount);
-    send(msg);
+    if(g_game.getFeature(Otc::GamePlayerMounts)) {
+        OutputMessagePtr msg(new OutputMessage);
+        msg->addU8(Proto::ClientMount);
+        msg->addU8(mount);
+        send(msg);
+    } else {
+        g_logger.error("ProtocolGame::sendMountStatus does not support the current protocol.");
+    }
 }
 
 void ProtocolGame::sendAddVip(const std::string& name)
