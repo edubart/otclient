@@ -115,6 +115,13 @@ public:
 
     MapViewPtr asMapView() { return std::static_pointer_cast<MapView>(shared_from_this()); }
 
+    TexturePtr m_lightTexture;
+    TexturePtr m_backgroundTexture;
+
+    FrameBufferPtr m_framebuffer;
+    //Holds light map.
+    FrameBufferPtr m_lightbuffer;
+
 private:
     int calcFirstVisibleFloor();
     int calcLastVisibleFloor();
@@ -147,7 +154,8 @@ private:
     std::vector<CreaturePtr> m_cachedFloorVisibleCreatures;
     EventPtr m_updateTilesCacheEvent;
     CreaturePtr m_followingCreature;
-    FrameBufferPtr m_framebuffer;
+
+
     PainterShaderProgramPtr m_shader;
     ViewMode m_viewMode;
     Otc::DrawFlags m_drawFlags;
