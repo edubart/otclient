@@ -28,6 +28,7 @@
 #include "item.h"
 #include "game.h"
 #include "effect.h"
+#include "mapview.h"
 
 #include <framework/graphics/graphics.h>
 #include <framework/core/eventdispatcher.h>
@@ -37,6 +38,7 @@
 #include <framework/graphics/painterogl2_shadersources.h>
 #include <framework/graphics/texturemanager.h>
 #include <framework/graphics/framebuffermanager.h>
+#include <framework/graphics/framebuffer.h>
 #include "spritemanager.h"
 
 Creature::Creature() : Thing()
@@ -85,7 +87,25 @@ void Creature::draw(const Point& dest, float scaleFactor, bool animate)
     internalDrawOutfit(dest + animationOffset * scaleFactor, scaleFactor, animate, animate, m_direction);
     m_footStepDrawn = true;
 }
+void Creature::drawLight(const Point& dest, float scaleFactor, bool animate, MapView* mapview)
+{
+    //It takes mapview as argument, to switch between light framebuffer, and main framebuffer
+    Light lightdata = getLight();
+    uint32_t lightSize = 50*lightdata.intensity;
 
+    Point animationOffset = animate ? m_walkOffset : Point(0,0);
+    glBlendFunc(GL_ONE, GL_ONE);
+    mapview->m_framebuffer->release();
+    mapview->m_lightbuffer->bind();
+
+    Color lightColor = Color::from8bit(lightdata.color);
+
+        g_painter->setColor(lightColor);
+        g_painter->drawTexturedRect(Rect(dest - Point(lightSize/2,lightSize/2) + animationOffset * scaleFactor, Size(lightSize,lightSize)), mapview->m_lightTexture);
+    mapview->m_lightbuffer->release();
+    mapview->m_framebuffer->bind();
+    g_painter->refreshState();
+}
 void Creature::internalDrawOutfit(const Point& dest, float scaleFactor, bool animateWalk, bool animateIdle, Otc::Direction direction)
 {
     // outfit is a real creature
