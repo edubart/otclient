@@ -24,6 +24,7 @@
 #include "item.h"
 #include "thingtypemanager.h"
 #include "map.h"
+#include "mapview.h"
 #include "game.h"
 #include "localplayer.h"
 #include "effect.h"
@@ -38,7 +39,7 @@ Tile::Tile(const Position& position) :
 {
 }
 
-void Tile::draw(const Point& dest, float scaleFactor, int drawFlags)
+void Tile::draw(const Point& dest, float scaleFactor, int drawFlags, MapView* mapview)
 {
     bool animate = drawFlags & Otc::DrawAnimations;
 
@@ -51,8 +52,10 @@ void Tile::draw(const Point& dest, float scaleFactor, int drawFlags)
 
             if((thing->isGround() && drawFlags & Otc::DrawGround) ||
                (thing->isGroundBorder() && drawFlags & Otc::DrawGroundBorders) ||
-               (thing->isOnBottom() && drawFlags & Otc::DrawOnBottom))
+               (thing->isOnBottom() && drawFlags & Otc::DrawOnBottom)){
                 thing->draw(dest - m_drawElevation*scaleFactor, scaleFactor, animate);
+                thing->drawLight(dest - m_drawElevation*scaleFactor, scaleFactor, animate,mapview);
+               }
 
             m_drawElevation += thing->getElevation();
             if(m_drawElevation > Otc::MAX_ELEVATION)
@@ -70,7 +73,7 @@ void Tile::draw(const Point& dest, float scaleFactor, int drawFlags)
             if(thing->isOnTop() || thing->isOnBottom() || thing->isGroundBorder() || thing->isGround() || thing->isCreature())
                 break;
             thing->draw(dest - m_drawElevation*scaleFactor, scaleFactor, animate);
-
+            thing->drawLight(dest - m_drawElevation*scaleFactor, scaleFactor, animate, mapview);
             if(thing->isLyingCorpse()) {
                 redrawPreviousTopW = std::max(thing->getWidth(), redrawPreviousTopW);
                 redrawPreviousTopH = std::max(thing->getHeight(), redrawPreviousTopH);
@@ -92,7 +95,7 @@ void Tile::draw(const Point& dest, float scaleFactor, int drawFlags)
                         continue;
                     const TilePtr& tile = g_map.getTile(m_position.translated(x,y));
                     if(tile)
-                        tile->draw(dest + Point(x*Otc::TILE_PIXELS, y*Otc::TILE_PIXELS)*scaleFactor, scaleFactor, topRedrawFlags);
+                        tile->draw(dest + Point(x*Otc::TILE_PIXELS, y*Otc::TILE_PIXELS)*scaleFactor, scaleFactor, topRedrawFlags,mapview);
                 }
             }
         }
@@ -106,6 +109,8 @@ void Tile::draw(const Point& dest, float scaleFactor, int drawFlags)
                     continue;
                 creature->draw(Point(dest.x + ((creature->getPosition().x - m_position.x)*Otc::TILE_PIXELS - m_drawElevation)*scaleFactor,
                                      dest.y + ((creature->getPosition().y - m_position.y)*Otc::TILE_PIXELS - m_drawElevation)*scaleFactor), scaleFactor, animate);
+                creature->drawLight(Point(dest.x + ((creature->getPosition().x - m_position.x)*Otc::TILE_PIXELS - m_drawElevation)*scaleFactor,
+                                     dest.y + ((creature->getPosition().y - m_position.y)*Otc::TILE_PIXELS - m_drawElevation)*scaleFactor), scaleFactor, animate,mapview);
 
             }
         }
@@ -115,8 +120,10 @@ void Tile::draw(const Point& dest, float scaleFactor, int drawFlags)
             if(!thing->isCreature())
                 continue;
             CreaturePtr creature = thing->asCreature();
-            if(creature && (!creature->isWalking() || !animate))
+            if(creature && (!creature->isWalking() || !animate)){
                 creature->draw(dest - m_drawElevation*scaleFactor, scaleFactor, animate);
+                creature->drawLight(dest - m_drawElevation*scaleFactor, scaleFactor, animate,mapview);
+            }
         }
     }
 
@@ -129,8 +136,11 @@ void Tile::draw(const Point& dest, float scaleFactor, int drawFlags)
     // top items
     if(drawFlags & Otc::DrawOnTop) {
         for(const ThingPtr& thing : m_things) {
-            if(thing->isOnTop())
+            if(thing->isOnTop()){
                 thing->draw(dest, scaleFactor, animate);
+                thing->drawLight(dest, scaleFactor, animate,mapview);
+            }
+
         }
     }
 }
