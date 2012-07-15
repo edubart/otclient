@@ -721,7 +721,10 @@ void LuaInterface::error()
 
 int LuaInterface::ref()
 {
-    return luaL_ref(L, LUA_REGISTRYINDEX);
+    int ref = luaL_ref(L, LUA_REGISTRYINDEX);
+    assert(ref != LUA_NOREF);
+    assert(ref < 2147483647);
+    return ref;
 }
 
 int LuaInterface::weakRef()

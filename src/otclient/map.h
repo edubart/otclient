@@ -122,6 +122,7 @@ public:
     // thing related
     void addThing(const ThingPtr& thing, const Position& pos, int stackPos = -1);
     ThingPtr getThing(const Position& pos, int stackPos);
+    bool removeThing(const ThingPtr& thing);
     bool removeThingByPos(const Position& pos, int stackPos);
 
     // tile related
@@ -131,7 +132,6 @@ public:
     const TilePtr& getTile(const Position& pos);
     TilePtr getOrCreateTile(const Position& pos);
     void cleanTile(const Position& pos);
-    bool removeThing(const ThingPtr& thing);
 
     // known creature related
     void addCreature(const CreaturePtr& creature);

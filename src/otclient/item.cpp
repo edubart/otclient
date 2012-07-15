@@ -38,11 +38,8 @@
 
 Item::Item() :
     m_id(0),
-    m_countOrSubType(1),
-    m_actionId(0),
-    m_uniqueId(0),
-    m_shaderProgram(g_shaders.getDefaultItemShader()),
-    m_otbType(g_things.getNullOtbType())
+    m_otbId(0),
+    m_countOrSubType(1)
 {
 }
 
@@ -174,32 +171,20 @@ void Item::draw(const Point& dest, float scaleFactor, bool animate)
         zPattern = m_position.z % getNumPatternZ();
     }
 
-    bool useShader = g_painter->hasShaders() && m_shaderProgram;
-    if(useShader) {
-        m_shaderProgram->bind();
-        m_shaderProgram->setUniformValue(ShaderManager::ITEM_ID_UNIFORM, (int)m_id);
-
-        g_painter->setShaderProgram(m_shaderProgram);
-    }
-
-    m_datType->draw(dest, scaleFactor, 0, xPattern, yPattern, zPattern, animationPhase);
-
-    if(useShader)
-        g_painter->resetShaderProgram();
+    rawGetDatType()->draw(dest, scaleFactor, 0, xPattern, yPattern, zPattern, animationPhase);
 }
 
 void Item::setId(uint32 id)
 {
-    m_datType = g_things.getDatType(id, DatItemCategory);
-    m_otbType = g_things.findOtbForClientId(id);
-    m_id = m_datType->getId();
+    m_otbId = g_things.findOtbForClientId(id)->getServerId();
+    m_id = id;
 }
 
 void Item::setOtbId(uint16 id)
 {
-    m_otbType = g_things.getOtbType(id);
-    m_datType = g_things.getDatType(m_otbType->getClientId(), DatItemCategory);
-    m_id = m_datType->getId();
+    auto otbType = g_things.getOtbType(id);
+    m_otbId = id;
+    m_id = otbType->getClientId();
 }
 
 bool Item::isValid()
@@ -229,29 +214,29 @@ void Item::unserializeItem(const BinaryTreePtr &in)
                 setUniqueId(in->getU16());
                 break;
             case ATTR_NAME:
-                setName(in->getString());
+                m_attribs.set(ATTR_NAME, in->getString());
                 break;
             case ATTR_TEXT:
-                setText(in->getString());
+                m_attribs.set(ATTR_TEXT, in->getString());
                 break;
             case ATTR_DESC:
-                m_description = in->getString();
+                m_attribs.set(ATTR_DESC, in->getString());
                 break;
             case ATTR_CONTAINER_ITEMS:
-                m_isContainer = true;
-                in->skip(4);
+                m_attribs.set(ATTR_CONTAINER_ITEMS, in->getU32());
                 break;
             case ATTR_HOUSEDOORID:
-                m_isDoor = true;
-                m_doorId = in->getU8();
+                m_attribs.set(ATTR_HOUSEDOORID, in->getU8());
                 break;
             case ATTR_DEPOT_ID:
-                m_depotId = in->getU16();
+                m_attribs.set(ATTR_DEPOT_ID, in->getU16());
                 break;
             case ATTR_TELE_DEST: {
-                m_teleportDestination.x = in->getU16();
-                m_teleportDestination.y = in->getU16();
-                m_teleportDestination.z = in->getU8();
+                Position teleportDestination;
+                teleportDestination.x = in->getU16();
+                teleportDestination.y = in->getU16();
+                teleportDestination.z = in->getU8();
+                m_attribs.set(ATTR_TELE_DEST, teleportDestination);
                 break;
             }
             case ATTR_ARTICLE:
@@ -286,12 +271,7 @@ void Item::unserializeItem(const BinaryTreePtr &in)
 
 bool Item::isMoveable()
 {
-    if(m_datType)
-        return !m_datType->isNotMoveable();
-
-    g_logger.warning(stdext::format(
-                         "Invalid dat type for item %d", m_id));
-    return false;
+    return !rawGetDatType()->isNotMoveable();
 }
 
 ItemPtr Item::clone()
@@ -299,4 +279,14 @@ ItemPtr Item::clone()
     ItemPtr item = ItemPtr(new Item);
     *(item.get()) = *this;
     return item;
+}
+
+const ThingTypeDatPtr& Item::getDatType()
+{
+    return g_things.getDatType(m_id, DatItemCategory);
+}
+
+ThingTypeDat* Item::rawGetDatType()
+{
+    return g_things.rawGetDatType(m_id, DatItemCategory);
 }

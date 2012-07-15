@@ -113,20 +113,21 @@ void Creature::internalDrawOutfit(const Point& dest, float scaleFactor, bool ani
             if(yPattern > 0 && !(m_outfit.getAddons() & (1 << (yPattern-1))))
                 continue;
 
-            m_datType->draw(dest, scaleFactor, 0, xPattern, yPattern, 0, animationPhase);
+            auto datType = rawGetDatType();
+            datType->draw(dest, scaleFactor, 0, xPattern, yPattern, 0, animationPhase);
 
             if(getLayers() > 1) {
                 Color oldColor = g_painter->getColor();
                 Painter::CompositionMode oldComposition = g_painter->getCompositionMode();
                 g_painter->setCompositionMode(Painter::CompositionMode_Multiply);
                 g_painter->setColor(m_outfit.getHeadColor());
-                m_datType->draw(dest, scaleFactor, DatYellowMask, xPattern, yPattern, 0, animationPhase);
+                datType->draw(dest, scaleFactor, DatYellowMask, xPattern, yPattern, 0, animationPhase);
                 g_painter->setColor(m_outfit.getBodyColor());
-                m_datType->draw(dest, scaleFactor, DatRedMask, xPattern, yPattern, 0, animationPhase);
+                datType->draw(dest, scaleFactor, DatRedMask, xPattern, yPattern, 0, animationPhase);
                 g_painter->setColor(m_outfit.getLegsColor());
-                m_datType->draw(dest, scaleFactor, DatGreenMask, xPattern, yPattern, 0, animationPhase);
+                datType->draw(dest, scaleFactor, DatGreenMask, xPattern, yPattern, 0, animationPhase);
                 g_painter->setColor(m_outfit.getFeetColor());
-                m_datType->draw(dest, scaleFactor, DatBlueMask, xPattern, yPattern, 0, animationPhase);
+                datType->draw(dest, scaleFactor, DatBlueMask, xPattern, yPattern, 0, animationPhase);
                 g_painter->setColor(oldColor);
                 g_painter->setCompositionMode(oldComposition);
             }
@@ -154,7 +155,7 @@ void Creature::internalDrawOutfit(const Point& dest, float scaleFactor, bool ani
         if(m_outfit.getCategory() == DatEffectCategory)
             animationPhase = std::min(animationPhase+1, getAnimationPhases());
 
-        m_datType->draw(dest, scaleFactor, 0, 0, 0, 0, animationPhase);
+        rawGetDatType()->draw(dest, scaleFactor, 0, 0, 0, 0, animationPhase);
     }
 }
 
@@ -462,7 +463,6 @@ void Creature::setOutfit(const Outfit& outfit)
 {
     m_walkAnimationPhase = 0; // might happen when player is walking and outfit is changed.
     m_outfit = outfit;
-    m_datType = g_things.getDatType(outfit.getId(), outfit.getCategory());
 }
 
 void Creature::setSkull(uint8 skull)
@@ -547,4 +547,14 @@ Point Creature::getDrawOffset()
             drawOffset -= Point(1,1) * tile->getDrawElevation();
     }
     return drawOffset;
+}
+
+const ThingTypeDatPtr& Creature::getDatType()
+{
+    return g_things.getDatType(m_outfit.getId(), m_outfit.getCategory());
+}
+
+ThingTypeDat* Creature::rawGetDatType()
+{
+    return g_things.rawGetDatType(m_outfit.getId(), m_outfit.getCategory());
 }

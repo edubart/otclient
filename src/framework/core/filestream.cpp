@@ -143,7 +143,7 @@ void FileStream::skip(uint len)
     seek(tell() + len);
 }
 
-int FileStream::size()
+uint FileStream::size()
 {
     if(!m_caching)
         return PHYSFS_fileLength(m_fileHandle);
@@ -151,7 +151,7 @@ int FileStream::size()
         return m_data.size();
 }
 
-int FileStream::tell()
+uint FileStream::tell()
 {
     if(!m_caching)
         return PHYSFS_tell(m_fileHandle);
@@ -249,13 +249,11 @@ std::string FileStream::getString()
 
 BinaryTreePtr FileStream::getBinaryTree()
 {
-    BinaryTreePtr root = BinaryTreePtr(new BinaryTree);
     uint8 byte = getU8();
-    if(byte == BINARYTREE_NODE_START)
-        root->unserialize(asFileStream());
-    else
+    if(byte != BINARYTREE_NODE_START)
         stdext::throw_exception(stdext::format("failed to read node start (getBinaryTree): %d", byte));
-    return root;
+
+    return BinaryTreePtr(new BinaryTree(asFileStream()));
 }
 
 void FileStream::addU8(uint8 v)

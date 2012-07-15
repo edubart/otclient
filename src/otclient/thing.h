@@ -25,6 +25,7 @@
 
 #include "declarations.h"
 #include "thingtypedat.h"
+#include "thingtypemanager.h"
 #include <framework/luaengine/luaobject.h>
 
 struct Light
@@ -34,6 +35,7 @@ struct Light
 };
 
 // @bindclass
+#pragma pack(push,1) // disable memory alignment
 class Thing : public LuaObject
 {
 public:
@@ -77,65 +79,67 @@ public:
     virtual bool isStaticText() { return false; }
 
     // type shortcuts
-    ThingTypeDatPtr getType() { return m_datType; }
-    Size getSize() { return m_datType->getSize(); }
-    int getWidth() { return m_datType->getWidth(); }
-    int getHeight() { return m_datType->getHeight(); }
-    Point getDisplacement() { return m_datType->getDisplacement(); }
-    int getDisplacementX() { return m_datType->getDisplacementX(); }
-    int getDisplacementY() { return m_datType->getDisplacementY(); }
-    int getExactSize() { return m_datType->getExactSize(); }
-    int getLayers() { return m_datType->getLayers(); }
-    int getNumPatternX() { return m_datType->getNumPatternX(); }
-    int getNumPatternY() { return m_datType->getNumPatternY(); }
-    int getNumPatternZ() { return m_datType->getNumPatternZ(); }
-    int getAnimationPhases() { return m_datType->getAnimationPhases(); }
-    int getGroundSpeed() { return m_datType->getGroundSpeed(); }
-    int getMaxTextLength() { return m_datType->getMaxTextLength(); }
-    int getLightLevel() { return m_datType->getLightLevel(); }
-    int getLightColor() { return m_datType->getLightColor(); }
-    int getMinimapColor() { return m_datType->getMinimapColor(); }
-    int getLensHelp() { return m_datType->getLensHelp(); }
-    int getClothSlot() { return m_datType->getClothSlot(); }
-    int getElevation() { return m_datType->getElevation(); }
-    bool isGround() { return m_datType->isGround(); }
-    bool isGroundBorder() { return m_datType->isGroundBorder(); }
-    bool isOnBottom() { return m_datType->isOnBottom(); }
-    bool isOnTop() { return m_datType->isOnTop(); }
-    bool isContainer() { return m_datType->isContainer(); }
-    bool isStackable() { return m_datType->isStackable(); }
-    bool isForceUse() { return m_datType->isForceUse(); }
-    bool isMultiUse() { return m_datType->isMultiUse(); }
-    bool isWritable() { return m_datType->isWritable(); }
-    bool isWritableOnce() { return m_datType->isWritableOnce(); }
-    bool isFluidContainer() { return m_datType->isFluidContainer(); }
-    bool isFluid() { return m_datType->isFluid(); }
-    bool isNotWalkable() { return m_datType->isNotWalkable(); }
-    bool isNotMoveable() { return m_datType->isNotMoveable(); }
-    bool blockProjectile() { return m_datType->blockProjectile(); }
-    bool isNotPathable() { return m_datType->isNotPathable(); }
-    bool isPickupable() { return m_datType->isPickupable(); }
-    bool isHangable() { return m_datType->isHangable(); }
-    bool isHookSouth() { return m_datType->isHookSouth(); }
-    bool isHookEast() { return m_datType->isHookEast(); }
-    bool isRotateable() { return m_datType->isRotateable(); }
-    bool hasLight() { return m_datType->hasLight(); }
-    bool isDontHide() { return m_datType->isDontHide(); }
-    bool isTranslucent() { return m_datType->isTranslucent(); }
-    bool hasDisplacement() { return m_datType->hasDisplacement(); }
-    bool hasElevation() { return m_datType->hasElevation(); }
-    bool isLyingCorpse() { return m_datType->isLyingCorpse(); }
-    bool isAnimateAlways() { return m_datType->isAnimateAlways(); }
-    bool hasMiniMapColor() { return m_datType->hasMiniMapColor(); }
-    bool hasLensHelp() { return m_datType->hasLensHelp(); }
-    bool isFullGround() { return m_datType->isFullGround(); }
-    bool isIgnoreLook() { return m_datType->isIgnoreLook(); }
-    bool isCloth() { return m_datType->isCloth(); }
+    virtual const ThingTypeDatPtr& getDatType();
+    virtual ThingTypeDat *rawGetDatType();
+    Size getSize() { return rawGetDatType()->getSize(); }
+    int getWidth() { return rawGetDatType()->getWidth(); }
+    int getHeight() { return rawGetDatType()->getHeight(); }
+    Point getDisplacement() { return rawGetDatType()->getDisplacement(); }
+    int getDisplacementX() { return rawGetDatType()->getDisplacementX(); }
+    int getDisplacementY() { return rawGetDatType()->getDisplacementY(); }
+    int getExactSize() { return rawGetDatType()->getExactSize(); }
+    int getLayers() { return rawGetDatType()->getLayers(); }
+    int getNumPatternX() { return rawGetDatType()->getNumPatternX(); }
+    int getNumPatternY() { return rawGetDatType()->getNumPatternY(); }
+    int getNumPatternZ() { return rawGetDatType()->getNumPatternZ(); }
+    int getAnimationPhases() { return rawGetDatType()->getAnimationPhases(); }
+    int getGroundSpeed() { return rawGetDatType()->getGroundSpeed(); }
+    int getMaxTextLength() { return rawGetDatType()->getMaxTextLength(); }
+    int getLightLevel() { return rawGetDatType()->getLightLevel(); }
+    int getLightColor() { return rawGetDatType()->getLightColor(); }
+    int getMinimapColor() { return rawGetDatType()->getMinimapColor(); }
+    int getLensHelp() { return rawGetDatType()->getLensHelp(); }
+    int getClothSlot() { return rawGetDatType()->getClothSlot(); }
+    int getElevation() { return rawGetDatType()->getElevation(); }
+    bool isGround() { return rawGetDatType()->isGround(); }
+    bool isGroundBorder() { return rawGetDatType()->isGroundBorder(); }
+    bool isOnBottom() { return rawGetDatType()->isOnBottom(); }
+    bool isOnTop() { return rawGetDatType()->isOnTop(); }
+    bool isContainer() { return rawGetDatType()->isContainer(); }
+    bool isStackable() { return rawGetDatType()->isStackable(); }
+    bool isForceUse() { return rawGetDatType()->isForceUse(); }
+    bool isMultiUse() { return rawGetDatType()->isMultiUse(); }
+    bool isWritable() { return rawGetDatType()->isWritable(); }
+    bool isWritableOnce() { return rawGetDatType()->isWritableOnce(); }
+    bool isFluidContainer() { return rawGetDatType()->isFluidContainer(); }
+    bool isFluid() { return rawGetDatType()->isFluid(); }
+    bool isNotWalkable() { return rawGetDatType()->isNotWalkable(); }
+    bool isNotMoveable() { return rawGetDatType()->isNotMoveable(); }
+    bool blockProjectile() { return rawGetDatType()->blockProjectile(); }
+    bool isNotPathable() { return rawGetDatType()->isNotPathable(); }
+    bool isPickupable() { return rawGetDatType()->isPickupable(); }
+    bool isHangable() { return rawGetDatType()->isHangable(); }
+    bool isHookSouth() { return rawGetDatType()->isHookSouth(); }
+    bool isHookEast() { return rawGetDatType()->isHookEast(); }
+    bool isRotateable() { return rawGetDatType()->isRotateable(); }
+    bool hasLight() { return rawGetDatType()->hasLight(); }
+    bool isDontHide() { return rawGetDatType()->isDontHide(); }
+    bool isTranslucent() { return rawGetDatType()->isTranslucent(); }
+    bool hasDisplacement() { return rawGetDatType()->hasDisplacement(); }
+    bool hasElevation() { return rawGetDatType()->hasElevation(); }
+    bool isLyingCorpse() { return rawGetDatType()->isLyingCorpse(); }
+    bool isAnimateAlways() { return rawGetDatType()->isAnimateAlways(); }
+    bool hasMiniMapColor() { return rawGetDatType()->hasMiniMapColor(); }
+    bool hasLensHelp() { return rawGetDatType()->hasLensHelp(); }
+    bool isFullGround() { return rawGetDatType()->isFullGround(); }
+    bool isIgnoreLook() { return rawGetDatType()->isIgnoreLook(); }
+    bool isCloth() { return rawGetDatType()->isCloth(); }
 
 protected:
     Position m_position;
-    ThingTypeDatPtr m_datType;
+    uint16 m_datId;
 };
+#pragma pack(pop)
 
 #endif
 

@@ -211,3 +211,4 @@ const ThingTypeOtbPtr& ThingTypeManager::getOtbType(uint16 id)
     }
     return m_otbTypes[id];
 }
+

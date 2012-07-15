@@ -32,18 +32,16 @@ enum {
     BINARYTREE_NODE_END = 0xFF
 };
 
-class BinaryTree : public std::enable_shared_from_this<BinaryTree>
+class BinaryTree
 {
 public:
-    BinaryTree(const BinaryTreePtr& parent = nullptr) : m_pos(0), m_parent(parent) { }
-
-    void unserialize(const FileStreamPtr& fin);
-    void serialize(const FileStreamPtr& fin);
+    BinaryTree(const FileStreamPtr& fin);
+    ~BinaryTree();
 
     void seek(uint pos);
     void skip(uint len) { seek(tell() + len); }
     uint tell() { return m_pos; }
-    uint size() { return m_buffer.size(); }
+    uint size() { unserialize(); return m_buffer.size(); }
 
     uint8 getU8();
     uint16 getU16();
@@ -51,16 +49,17 @@ public:
     uint64 getU64();
     std::string getString();
 
-    BinaryTreeVec getChildren() { return m_children; }
-    BinaryTreePtr getParent() { return m_parent.lock(); }
-    bool canRead() { return m_pos < m_buffer.size(); }
+    BinaryTreeVec getChildren();
+    bool canRead() { unserialize(); return m_pos < m_buffer.size(); }
 
 private:
-    uint m_pos;
+    void unserialize();
+    void skipNodes();
 
-    BinaryTreeVec m_children;
-    BinaryTreeWeakPtr m_parent;
+    FileStreamPtr m_fin;
     DataBuffer<uint8> m_buffer;
+    uint m_pos;
+    uint m_startPos;
 };
 
 #endif

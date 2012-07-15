@@ -24,6 +24,7 @@
 #define ITEM_H
 
 #include <framework/global.h>
+#include <framework/util/attribstorage.h>
 #include "thing.h"
 #include "thingtypeotb.h"
 
@@ -66,10 +67,12 @@ enum AttrTypes_t
 };
 
 // @bindclass
+#pragma pack(push,1) // disable memory alignment
 class Item : public Thing
 {
 public:
     Item();
+    virtual ~Item() { }
 
     static ItemPtr create(int id);
     static ItemPtr createFromOtb(int id);
@@ -81,43 +84,45 @@ public:
     void setCountOrSubType(int value) { m_countOrSubType = value; }
     void setCount(int count) { m_countOrSubType = count; }
     void setSubType(int subType) { m_countOrSubType = subType; }
-    void setActionId(int actionId) { m_actionId = actionId; }
-    void setUniqueId(int uniqueId) { m_uniqueId = uniqueId; }
-    void setDoorId(int doorId) { m_doorId = doorId; }
-    void setName(const std::string &name) { m_name = name; }
-    void setText(const std::string &text) { m_text = text; }
-    void setDescription(const std::string &description) { m_description = description; }
 
     int getCountOrSubType() { return m_countOrSubType; }
     int getSubType() { return m_countOrSubType; }
     int getCount() { return m_countOrSubType; }
     uint32 getId() { return m_id; }
-    std::string getName() { return m_name; }
-    uint8 getDoorId() { return m_doorId; }
     bool isValid();
 
     ItemPtr clone();
-    ItemPtr asItem() { return std::static_pointer_cast<Item>(shared_from_this()); }
-    bool isItem() { return true; }
 
     void unserializeItem(const BinaryTreePtr &in);
     bool isMoveable();
-    bool isContainer() { return m_isContainer; }
-    bool isDoor() { return m_isDoor; }
+
+    void setDepotId(uint16 depotId) { m_attribs.set(ATTR_DEPOT_ID, depotId); }
+    uint16 getDepotId() { return m_attribs.get<uint16>(ATTR_DEPOT_ID); }
+
+    void setDoorId(uint8 doorId) { m_attribs.set(ATTR_HOUSEDOORID, doorId); }
+    uint8 getDoorId() { return m_attribs.get<uint8>(ATTR_HOUSEDOORID); }
+
+    void setActionId(uint16 actionId) { m_attribs.set(ATTR_ACTION_ID, actionId); }
+    void setUniqueId(uint16 uniqueId) { m_attribs.set(ATTR_UNIQUE_ID, uniqueId); }
+
+    bool isDepot() { return m_attribs.has(ATTR_DEPOT_ID); }
+    bool isContainer() { return m_attribs.has(ATTR_CONTAINER_ITEMS); }
+    bool isDoor() { return m_attribs.has(ATTR_HOUSEDOORID); }
+    bool isTeleport() { return m_attribs.has(ATTR_TELE_DEST); }
+
+    ItemPtr asItem() { return std::static_pointer_cast<Item>(shared_from_this()); }
+    bool isItem() { return true; }
+
+    const ThingTypeDatPtr& getDatType();
+    ThingTypeDat *rawGetDatType();
 
 private:
     uint16 m_id;
+    uint16 m_otbId;
     uint8 m_countOrSubType;
-    uint32 m_actionId, m_uniqueId;
-    uint16 m_depotId;
-    uint8 m_doorId;
-    Boolean<false> m_isContainer;
-    Boolean<false> m_isDoor;
-
-    std::string m_name, m_text, m_description;
-    PainterShaderProgramPtr m_shaderProgram;
-    ThingTypeOtbPtr m_otbType;
-    Position m_teleportDestination;
+    AttribStorage m_attribs;
 };
+#pragma pack(pop)
+
 
 #endif

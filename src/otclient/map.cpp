@@ -136,7 +136,6 @@ void Map::loadOtbm(const std::string& fileName)
                 if(type != OTBM_TILE && type != OTBM_HOUSETILE)
                     stdext::throw_exception(stdext::format("invalid node tile type %d", (int)type));
 
-                TilePtr tile = nullptr;
                 ItemPtr ground = nullptr;
                 HousePtr house = nullptr;
                 uint32 flags = TILESTATE_NONE;
@@ -146,7 +145,7 @@ void Map::loadOtbm(const std::string& fileName)
 
                 if(type ==  OTBM_HOUSETILE) {
                     uint32 hId = nodeTile->getU32();
-                    tile = createTile(pos);
+                    TilePtr tile = getOrCreateTile(pos);
                     if(!(house = m_houses.getHouse(hId))) {
                         house = HousePtr(new House(hId));
                         m_houses.addHouse(house);
@@ -175,13 +174,7 @@ void Map::loadOtbm(const std::string& fileName)
                             break;
                         }
                         case OTBM_ATTR_ITEM: {
-                            ItemPtr item = Item::createFromOtb(nodeTile->getU16());
-                            if(tile)
-                                addThing(item, pos, 255);
-                            else if(item->isGround())
-                                ground = item;
-                            else
-                                tile = createTileEx(pos, ground, item);
+                            addThing(Item::createFromOtb(nodeTile->getU16()), pos);
                             break;
                         }
                         default:
@@ -196,6 +189,7 @@ void Map::loadOtbm(const std::string& fileName)
 
                     ItemPtr item = Item::createFromOtb(nodeItem->getU16());
                     item->unserializeItem(nodeItem);
+
                     if(item->isContainer()) {
                         // This is a temporary way for reading container items.
                         MapContainerPtr mapContainer(new MapContainer);
@@ -217,18 +211,13 @@ void Map::loadOtbm(const std::string& fileName)
                             item = nullptr;
                         } else if(item->isDoor())
                             house->addDoor(item->getDoorId(), pos);
-                    } else if(tile)
-                        addThing(item, pos);
-                    else if(item->isGround())
-                        ground = item;
-                    else
-                        tile = createTileEx(pos, ground, item);
+                    }
+
+                    addThing(item, pos);
                 }
 
-                if(!tile)
-                    tile = createTileEx(pos, ground);
-
-                tile->setFlags((tileflags_t)flags);
+                if(const TilePtr& tile = getTile(pos))
+                    tile->setFlags((tileflags_t)flags);
             }
         } else if(mapDataType == OTBM_TOWNS) {
             TownPtr town = nullptr;
@@ -263,6 +252,13 @@ void Map::loadOtbm(const std::string& fileName)
             stdext::throw_exception("Unknown map data node");
     }
 
+
+    int numItems = 0;
+    for(const auto& it : m_tiles)
+        numItems += it.second->getThingCount();
+
+    g_logger.debug(stdext::format("Total items: %d", numItems));
+    g_logger.debug(stdext::format("Total tiles: %d", m_tiles.size()));
     g_logger.debug("OTBM read successfully.");
     fin->close();
     /// TODO read XML Stuff (houses & spawns).

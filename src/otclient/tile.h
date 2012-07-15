@@ -46,6 +46,7 @@ enum tileflags_t
     TILESTATE_DEPOT = 1 << 22
 };
 
+#pragma pack(push,1) // disable memory alignment
 class Tile : public LuaObject
 {
 public:
@@ -99,9 +100,10 @@ public:
     bool limitsFloorsView();
     bool canErase();
 
-    TilePtr asTile() { return std::static_pointer_cast<Tile>(shared_from_this()); }
     void setFlags(tileflags_t flags) { m_flags |= (uint32)flags; }
     uint32 flags() { return m_flags; }
+
+    TilePtr asTile() { return std::static_pointer_cast<Tile>(shared_from_this()); }
 
 private:
     void update();
@@ -114,5 +116,6 @@ private:
     uint32 m_flags;
     uint8 m_minimapColorByte;
 };
+#pragma pack(pop)
 
 #endif

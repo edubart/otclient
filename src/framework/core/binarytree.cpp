@@ -23,21 +23,54 @@
 #include "binarytree.h"
 #include "filestream.h"
 
-void BinaryTree::unserialize(const FileStreamPtr& fin)
+BinaryTree::BinaryTree(const FileStreamPtr& fin) :
+    m_fin(fin), m_pos(0xFFFFFFFF)
+{
+    m_startPos = fin->tell();
+}
+
+BinaryTree::~BinaryTree()
+{
+}
+
+void BinaryTree::skipNodes()
 {
     while(true) {
-        uint8 byte = fin->getU8();
+        uint8 byte = m_fin->getU8();
         switch(byte) {
             case BINARYTREE_NODE_START: {
-                BinaryTreePtr node(new BinaryTree(shared_from_this()));
-                m_children.push_back(node);
-                node->unserialize(fin);
+                skipNodes();
                 break;
             }
             case BINARYTREE_NODE_END:
                 return;
             case BINARYTREE_ESCAPE_CHAR:
-                m_buffer.add(fin->getU8());
+                m_fin->getU8();
+                break;
+            default:
+                break;
+        }
+    }
+}
+
+void BinaryTree::unserialize()
+{
+    if(m_pos != 0xFFFFFFFF)
+        return;
+    m_pos = 0;
+
+    m_fin->seek(m_startPos);
+    while(true) {
+        uint8 byte = m_fin->getU8();
+        switch(byte) {
+            case BINARYTREE_NODE_START: {
+                skipNodes();
+                break;
+            }
+            case BINARYTREE_NODE_END:
+                return;
+            case BINARYTREE_ESCAPE_CHAR:
+                m_buffer.add(m_fin->getU8());
                 break;
             default:
                 m_buffer.add(byte);
@@ -46,13 +79,33 @@ void BinaryTree::unserialize(const FileStreamPtr& fin)
     }
 }
 
-void BinaryTree::serialize(const FileStreamPtr& fin)
+BinaryTreeVec BinaryTree::getChildren()
 {
-
+    BinaryTreeVec children;
+    m_fin->seek(m_startPos);
+    while(true) {
+        uint8 byte = m_fin->getU8();
+        switch(byte) {
+            case BINARYTREE_NODE_START: {
+                BinaryTreePtr node(new BinaryTree(m_fin));
+                children.push_back(node);
+                node->skipNodes();
+                break;
+            }
+            case BINARYTREE_NODE_END:
+                return children;
+            case BINARYTREE_ESCAPE_CHAR:
+                m_fin->getU8();
+                break;
+            default:
+                break;
+        }
+    }
 }
 
 void BinaryTree::seek(uint pos)
 {
+    unserialize();
     if(pos > m_buffer.size())
         stdext::throw_exception("BinaryTree: seek failed");
     m_pos = pos;
@@ -60,6 +113,7 @@ void BinaryTree::seek(uint pos)
 
 uint8 BinaryTree::getU8()
 {
+    unserialize();
     if(m_pos+1 > m_buffer.size())
         stdext::throw_exception("BinaryTree: getU8 failed");
     uint8 v = m_buffer[m_pos];
@@ -69,6 +123,7 @@ uint8 BinaryTree::getU8()
 
 uint16 BinaryTree::getU16()
 {
+    unserialize();
     if(m_pos+2 > m_buffer.size())
         stdext::throw_exception("BinaryTree: getU16 failed");
     uint16 v = stdext::readLE16(&m_buffer[m_pos]);
@@ -78,6 +133,7 @@ uint16 BinaryTree::getU16()
 
 uint32 BinaryTree::getU32()
 {
+    unserialize();
     if(m_pos+4 > m_buffer.size())
         stdext::throw_exception("BinaryTree: getU32 failed");
     uint32 v = stdext::readLE32(&m_buffer[m_pos]);
@@ -87,6 +143,7 @@ uint32 BinaryTree::getU32()
 
 uint64 BinaryTree::getU64()
 {
+    unserialize();
     if(m_pos+8 > m_buffer.size())
         stdext::throw_exception("BinaryTree: getU64 failed");
     uint64 v = stdext::readLE64(&m_buffer[m_pos]);
@@ -96,10 +153,8 @@ uint64 BinaryTree::getU64()
 
 std::string BinaryTree::getString()
 {
+    unserialize();
     uint16 len = getU16();
-    if(len == 0 || len > 8192)
-        stdext::throw_exception("BinaryTree: getString failed: invalid or too large string length");
-
     if(m_pos+len > m_buffer.size())
         stdext::throw_exception("BinaryTree: getString failed: string length exceeded buffer size.");
 

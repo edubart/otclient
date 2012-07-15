@@ -37,8 +37,6 @@ class Missile : public Thing
 public:
     void draw(const Point& dest, float scaleFactor, bool animate);
 
-    void updateAnimation();
-
     void setId(uint32 id);
     void setPath(const Position& fromPosition, const Position& toPosition);
 
@@ -46,6 +44,9 @@ public:
 
     MissilePtr asMissile() { return std::static_pointer_cast<Missile>(shared_from_this()); }
     bool isMissile() { return true; }
+
+    const ThingTypeDatPtr& getDatType();
+    ThingTypeDat *rawGetDatType();
 
 private:
     Timer m_animationTimer;

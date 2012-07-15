@@ -43,8 +43,8 @@ public:
     int read(void *buffer, uint size, uint nmemb = 1);
     void seek(uint pos);
     void skip(uint len);
-    int size();
-    int tell();
+    uint size();
+    uint tell();
     std::string name() { return m_name; }
 
     uint8 getU8();

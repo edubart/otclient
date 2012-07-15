@@ -29,7 +29,7 @@
 #include "game.h"
 
 Thing::Thing() :
-    m_datType(g_things.getNullDatType())
+    m_datId(0)
 {
 }
 
@@ -73,4 +73,14 @@ int Thing::getStackpos()
         g_logger.traceError("got a thing with invalid stackpos");
         return -1;
     }
+}
+
+const ThingTypeDatPtr& Thing::getDatType()
+{
+    return g_things.getNullDatType();
+}
+
+ThingTypeDat* Thing::rawGetDatType()
+{
+    return g_things.getNullDatType().get();
 }

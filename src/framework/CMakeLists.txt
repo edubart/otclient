@@ -33,6 +33,7 @@ set(framework_SOURCES ${framework_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/util/rsa.cpp
     ${CMAKE_CURRENT_LIST_DIR}/util/rsa.h
     ${CMAKE_CURRENT_LIST_DIR}/util/size.h
+    ${CMAKE_CURRENT_LIST_DIR}/util/attribstorage.h
 
     # stdext
     ${CMAKE_CURRENT_LIST_DIR}/stdext/cast.h
