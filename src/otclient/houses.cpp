@@ -22,8 +22,6 @@
 
 #include "map.h"
 
-Houses g_houses;
-
 House::House(uint32 hId, const std::string &name, const Position &pos)
     : m_id(hId), m_name(name)
 {
