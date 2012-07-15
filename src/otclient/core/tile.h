@@ -55,7 +55,7 @@ public:
 
     Tile(const Position& position);
 
-    void draw(const Point& dest, float scaleFactor, int drawFlags);
+    void draw(const Point& dest, float scaleFactor, int drawFlags, MapView* mapview);
 
 public:
     void clean();
