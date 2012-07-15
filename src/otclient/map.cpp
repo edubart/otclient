@@ -218,7 +218,7 @@ void Map::loadOtbm(const std::string& fileName)
                         } else if(item->isDoor())
                             house->addDoor(item->getDoorId(), pos);
                     } else if(tile)
-                        addThing(item, pos, 255);
+                        addThing(item, pos);
                     else if(item->isGround())
                         ground = item;
                     else
@@ -438,7 +438,7 @@ bool Map::loadOtcm(const std::string& fileName)
                     item->setCountOrSubType(countOrSubType);
 
                 if(item->isValid())
-                    addThing(item, pos, 255);
+                    addThing(item, pos);
             }
         }
 
@@ -632,7 +632,7 @@ bool Map::removeThing(const ThingPtr& thing)
             m_staticTexts.erase(it);
             return true;
         }
-    } else if(TilePtr tile = thing->getTile())
+    } else if(const TilePtr& tile = thing->getTile())
         return tile->removeThing(thing);
 
     return false;
@@ -651,7 +651,7 @@ TilePtr Map::createTileEx(const Position& pos, const Items&... items)
     TilePtr tile = getOrCreateTile(pos);
     auto vec = {items...};
     for (auto it : vec)
-        addThing(it, pos, 255);
+        addThing(it, pos);
 
     return tile;
 }

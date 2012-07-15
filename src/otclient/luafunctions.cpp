@@ -315,6 +315,7 @@ void OTClient::registerLuaFunctions()
 
     g_lua.registerClass<Item, Thing>();
     g_lua.bindClassStaticFunction<Item>("create", &Item::create);
+    g_lua.bindClassMemberFunction<Item>("clone", &Item::clone);
     g_lua.bindClassMemberFunction<Item>("setCount", &Item::setCount);
     g_lua.bindClassMemberFunction<Item>("getCount", &Item::getCount);
     g_lua.bindClassMemberFunction<Item>("getId", &Item::getId);

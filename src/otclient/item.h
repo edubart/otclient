@@ -96,6 +96,7 @@ public:
     uint8 getDoorId() { return m_doorId; }
     bool isValid();
 
+    ItemPtr clone();
     ItemPtr asItem() { return std::static_pointer_cast<Item>(shared_from_this()); }
     bool isItem() { return true; }
 

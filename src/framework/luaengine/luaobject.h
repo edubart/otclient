@@ -82,6 +82,8 @@ public:
 
     LuaObjectPtr asLuaObject() { return shared_from_this(); }
 
+    void operator=(const LuaObject& other) { }
+
 private:
     int m_fieldsTableRef;
     int m_metatableRef;
