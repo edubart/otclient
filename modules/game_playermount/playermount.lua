@@ -11,11 +11,7 @@ function PlayerMount.terminate()
 end
 
 function PlayerMount.toggleMount()
-  if g_game.isMounted() then
-    g_game.mount(false)
-  else
-    g_game.mount(true)
-  end
+  g_game.mount(not g_game.isMounted())
 end
 
 function PlayerMount.dismount()

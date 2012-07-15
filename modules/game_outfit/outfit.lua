@@ -242,7 +242,7 @@ function Outfit.randomize()
   
   for k, section in pairs(outfitTemplate) do
     section:setChecked(true)
-    colorBoxes[math.random(1, #colorBoxes)]:setChecked(true)
+    colorBoxes[math.random(0, #colorBoxes)]:setChecked(true)
     section:setChecked(false)
   end
   outfitTemplate[1]:setChecked(true)
