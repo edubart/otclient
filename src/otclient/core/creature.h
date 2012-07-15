@@ -25,6 +25,7 @@
 
 #include "thing.h"
 #include "outfit.h"
+#include "mapview.h"
 #include <framework/core/declarations.h>
 #include <framework/core/timer.h>
 #include <framework/graphics/fontmanager.h>
@@ -46,6 +47,8 @@ public:
     void internalDrawOutfit(const Point& dest, float scaleFactor, bool animateWalk, bool animateIdle, Otc::Direction direction);
     void drawOutfit(const Rect& destRect, bool resize);
     void drawInformation(const Point& point, bool useGray, const Rect& parentRect);
+    virtual void drawLight(const Point& dest, float scaleFactor, bool animate, MapView* mapview);
+
 
     void setId(uint32 id) { m_id = id; }
     void setName(const std::string& name);
