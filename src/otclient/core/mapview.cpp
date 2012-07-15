@@ -32,6 +32,8 @@
 
 #include <framework/graphics/graphics.h>
 #include <framework/graphics/framebuffermanager.h>
+#include <framework/graphics/texturemanager.h>
+#include <framework/graphics/image.h>
 #include <framework/core/eventdispatcher.h>
 #include <framework/application.h>
 
@@ -47,6 +49,9 @@ MapView::MapView()
     setVisibleDimension(Size(15, 11));
 
     m_shader = g_shaders.getDefaultMapShader();
+
+    m_lightTexture =  g_textures.getTexture("light_particle.png");
+    m_backgroundTexture =  nullptr;
 }
 
 MapView::~MapView()
@@ -63,6 +68,38 @@ void MapView::draw(const Rect& rect)
     float scaleFactor = m_tileSize/(float)Otc::TILE_PIXELS;
     Position cameraPosition = getCameraPosition();
 
+    Point drawOffset = ((m_drawDimension - m_visibleDimension - Size(1,1)).toPoint()/2) * m_tileSize;
+    if(isFollowingCreature())
+        drawOffset += m_followingCreature->getWalkOffset() * scaleFactor;
+
+   //Get world light info, if we go underground we get none of this light.
+    uint8 lightIntensity = g_map.getLight().intensity;
+    if (cameraPosition.z > 7){
+        lightIntensity = 0;
+    }
+    uint8 ambientLight[4];
+            ambientLight[0] = ambientLight[1] = ambientLight[2] = lightIntensity;
+            ambientLight[3] = 255;
+
+
+    //Initialize 1 pixel image with ambient light color (later its blended)
+    ImagePtr bg = ImagePtr(new Image(Size(1,1), 4, ambientLight));
+    m_backgroundTexture = TexturePtr(new Texture(bg,false ));
+
+    Size srcSize = rect.size();
+    Size srcVisible = m_visibleDimension * m_tileSize;
+    srcSize.scale(srcVisible, Fw::KeepAspectRatio);
+    drawOffset.x += (srcVisible.width() - srcSize.width()) / 2;
+    drawOffset.y += (srcVisible.height() - srcSize.height()) / 2;
+    Rect srcRect = Rect(drawOffset, srcSize);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ZERO);
+    m_lightbuffer->bind();
+
+        g_painter->drawTexturedRect(srcRect,m_backgroundTexture);
+
+    m_lightbuffer->release();
+    g_painter->refreshState();
     int drawFlags = 0;
     if(m_viewMode == NEAR_VIEW)
         drawFlags = Otc::DrawGround | Otc::DrawGroundBorders | Otc::DrawWalls |
@@ -99,7 +136,7 @@ void MapView::draw(const Rect& rect)
                     ++it;
 
                 if(!m_drawMinimapColors)
-                    tile->draw(transformPositionTo2D(tilePos, cameraPosition), scaleFactor, drawFlags);
+                    tile->draw(transformPositionTo2D(tilePos, cameraPosition), scaleFactor, drawFlags,this);
                 else {
                     uint8 c = tile->getMinimapColorByte();
                     if(c == 0)
@@ -113,6 +150,8 @@ void MapView::draw(const Rect& rect)
             if(drawFlags & Otc::DrawMissiles && !m_drawMinimapColors) {
                 for(const MissilePtr& missile : g_map.getFloorMissiles(z)) {
                     missile->draw(transformPositionTo2D(missile->getPosition(), cameraPosition), scaleFactor, drawFlags & Otc::DrawAnimations);
+                    missile->drawLight(transformPositionTo2D(missile->getPosition(), cameraPosition), scaleFactor, drawFlags & Otc::DrawAnimations, this);
+
                 }
             }
         }
@@ -126,16 +165,12 @@ void MapView::draw(const Rect& rect)
     }
 
 
-    Point drawOffset = ((m_drawDimension - m_visibleDimension - Size(1,1)).toPoint()/2) * m_tileSize;
-    if(isFollowingCreature())
-        drawOffset += m_followingCreature->getWalkOffset() * scaleFactor;
+    //Drawing light map above game rectangle
+    m_framebuffer->bind();
+        glBlendFunc (GL_SRC_ALPHA,GL_SRC_COLOR);
+        m_lightbuffer->draw();
+    m_framebuffer->release();
 
-    Size srcSize = rect.size();
-    Size srcVisible = m_visibleDimension * m_tileSize;
-    srcSize.scale(srcVisible, Fw::KeepAspectRatio);
-    drawOffset.x += (srcVisible.width() - srcSize.width()) / 2;
-    drawOffset.y += (srcVisible.height() - srcSize.height()) / 2;
-    Rect srcRect = Rect(drawOffset, srcSize);
 
     g_painter->setColor(Color::white);
     glDisable(GL_BLEND);
