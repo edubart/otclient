@@ -78,6 +78,7 @@ public:
     static ItemPtr createFromOtb(int id);
 
     void draw(const Point& dest, float scaleFactor, bool animate);
+    void drawLight(const Point& dest, float scaleFactor, bool animate, MapView* mapview);
 
     void setId(uint32 id);
     void setOtbId(uint16 id);
@@ -89,6 +90,9 @@ public:
     void setName(const std::string &name) { m_name = name; }
     void setText(const std::string &text) { m_text = text; }
     void setDescription(const std::string &description) { m_description = description; }
+
+    Color getLightColor(){ return Color::from8bit(m_datType->getLightColor());}
+    int getLightLevel(){ return (int)m_datType->getLightLevel();}
 
     int getCountOrSubType() { return m_countOrSubType; }
     int getSubType() { return m_countOrSubType; }
