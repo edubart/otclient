@@ -26,7 +26,9 @@
 #include "thing.h"
 #include "tile.h"
 #include "shadermanager.h"
+#include "mapview.h"
 
+#include <framework/graphics/framebuffer.h>
 #include <framework/core/clock.h>
 #include <framework/core/eventdispatcher.h>
 #include <framework/graphics/graphics.h>
@@ -184,7 +186,24 @@ void Item::draw(const Point& dest, float scaleFactor, bool animate)
     if(useShader)
         g_painter->resetShaderProgram();
 }
+void Item::drawLight(const Point& dest, float scaleFactor, bool animate, MapView* mapview)
+{
+    //It takes mapview as argument, to switch between light framebuffer, and main framebuffer
+    uint32_t lightSize = 50*getLightLevel();
 
+
+    glBlendFunc(GL_ONE, GL_ONE);
+    mapview->m_framebuffer->release();
+    mapview->m_lightbuffer->bind();
+
+    Color lightColor = getLightColor();
+
+        g_painter->setColor(lightColor);
+        g_painter->drawTexturedRect(Rect(dest - Point(lightSize/2,lightSize/2), Size(lightSize,lightSize)), mapview->m_lightTexture);
+    mapview->m_lightbuffer->release();
+    mapview->m_framebuffer->bind();
+    g_painter->refreshState();
+}
 void Item::setId(uint32 id)
 {
     m_datType = g_things.getDatType(id, DatItemCategory);
