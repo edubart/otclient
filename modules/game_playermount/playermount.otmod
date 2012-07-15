@@ -2,10 +2,7 @@ Module
   name: game_playermount
   description: Manage player mounts
   author: BeniS
-  website: www.otclient.info
-
-  dependencies:
-    - client_entergame
+  website: www.otclient.infox
 
   @onLoad: |
     dofile 'playermount'

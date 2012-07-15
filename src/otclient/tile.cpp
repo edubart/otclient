@@ -171,16 +171,10 @@ ThingPtr Tile::addThing(const ThingPtr& thing, int stackPos)
     // 4 - creatures, from top to bottom
     // 5 - items, from top to bottom
     if(stackPos < 0) {
-        stackPos = 0;
         int priority = thing->getStackPriority();
         bool prepend = (stackPos == -2 || priority <= 3);
         for(stackPos = 0; stackPos < (int)m_things.size(); ++stackPos) {
             int otherPriority = m_things[stackPos]->getStackPriority();
-            if(!g_game.getFeature(Otc::GameReverseCreatureStack)) {
-                // older protocols stores creatures in reverse order
-                if(priority == 4 && otherPriority == 4)
-                    break;
-            }
             if((prepend && otherPriority > priority) || (!prepend && otherPriority >= priority))
                 break;
         }

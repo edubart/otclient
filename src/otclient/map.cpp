@@ -489,9 +489,10 @@ void Map::saveOtcm(const std::string& fileName)
             const auto& list = tile->getThings();
             auto first = std::find_if(list.begin(), list.end(), [](const ThingPtr& thing) { return thing->isItem(); });
             for(auto it = first, end = list.end(); it != end; ++it) {
-                ItemPtr item = (*it)->asItem();
-                fin->addU16(item->getId());
-                fin->addU8(item->getCountOrSubType());
+                if(ItemPtr item = (*it)->asItem()) {
+                    fin->addU16(item->getId());
+                    fin->addU8(item->getCountOrSubType());
+                }
             }
 
             // end of tile

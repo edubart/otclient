@@ -108,7 +108,7 @@ function GameInterface.terminate()
 end
 
 function GameInterface.show()
-  g_app.onClose = GameInterface.tryExit
+  connect(g_app, { onClose = GameInterface.tryExit })
   logoutButton:show()
   Background.hide()
   gameRootPanel:show()
@@ -117,6 +117,7 @@ function GameInterface.show()
 end
 
 function GameInterface.hide()
+  disconnect(g_app, { onClose = GameInterface.tryExit })
   if logoutWindow then
     logoutWindow:destroy()
     logoutWindow = nil
@@ -125,14 +126,13 @@ function GameInterface.hide()
     exitWindow:destroy()
     exitWindow = nil
   end
-  if countWindow then 
+  if countWindow then
     countWindow:destroy()
     countWindow = nil
   end
   gameRootPanel:hide()
   logoutButton:hide()
   Background.show()
-  g_app.onClose = nil
 end
 
 function GameInterface.exit()
@@ -154,7 +154,6 @@ function GameInterface.tryExit()
 
   local exitFunc = function()
     GameInterface.exit()
-    exitButton:getParent():destroy()
   end
   local logoutFunc = function()
     GameInterface.logout()
@@ -168,7 +167,7 @@ function GameInterface.tryExit()
 
   exitWindow.onEscape = cancelFunc
   exitWindow.onEnter = logoutFunc
-  
+
   exitButton.onClick = exitFunc
   logButton.onClick = logoutFunc
   cancelButton.onClick = cancelFunc
@@ -202,7 +201,7 @@ function GameInterface.tryLogout()
 
   logoutWindow.onEnter = logoutFunc
   logoutWindow.onEscape = cancelFunc
-  
+
   yesButton.onClick = logoutFunc
   noButton.onClick = cancelFunc
 end
@@ -503,7 +502,7 @@ function GameInterface.moveStackableItem(item, toPos)
 
   countWindow.onEnter = moveFunc
   countWindow.onEscape = cancelFunc
-  
+
   okButton.onClick = moveFunc
   cancelButton.onClick = cancelFunc
 end

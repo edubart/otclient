@@ -512,7 +512,13 @@ void ProtocolGame::parseCreatureMove(const InputMessagePtr& msg)
     if(!g_map.removeThing(thing))
         g_logger.traceError("could not remove thing");
 
-    g_map.addThing(thing, newPos, -1);
+    int stackPos = -2;
+
+    // older protocols stores creatures in reverse order
+    if(!g_game.getFeature(Otc::GameReverseCreatureStack))
+        stackPos = -1;
+
+    g_map.addThing(thing, newPos, stackPos);
 }
 
 void ProtocolGame::parseOpenContainer(const InputMessagePtr& msg)
@@ -1144,7 +1150,7 @@ void ProtocolGame::parseOpenOutfitWindow(const InputMessagePtr& msg)
         for(int i = 0; i < mountCount; ++i) {
             int mountId = msg->getU16(); // mount type
             std::string mountName = msg->getString(); // mount name
-            
+
             mountList.push_back(std::make_tuple(mountId, mountName));
         }
     }
