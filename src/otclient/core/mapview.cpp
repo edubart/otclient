@@ -517,6 +517,7 @@ void MapView::updateGeometry(const Size& visibleDimension, const Size& optimized
     m_visibleCenterOffset = visibleCenterOffset;
     m_optimizedSize = optimizedSize;
     m_framebuffer->resize(bufferSize);
+    m_lightbuffer->resize(bufferSize);
 
     requestVisibleTilesCacheUpdate();
 }
