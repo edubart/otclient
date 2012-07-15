@@ -1054,7 +1054,7 @@ void Game::mount(bool mount)
 {
     if(!canPerformGameAction())
         return;
-    m_protocolGame->sendMounted(mount);
+    m_protocolGame->sendMountStatus(mount);
 }
 
 bool Game::checkBotProtection()
