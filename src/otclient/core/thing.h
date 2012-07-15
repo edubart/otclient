@@ -24,6 +24,7 @@
 #define THING_H
 
 #include "declarations.h"
+#include "mapview.h"
 #include "thingtypedat.h"
 #include <framework/luascript/luaobject.h>
 
@@ -42,6 +43,7 @@ public:
 
     virtual void startAnimation() { }
     virtual void draw(const Point& dest, float scaleFactor, bool animate) { }
+    virtual void drawLight(const Point& dest, float scaleFactor, bool animate, MapView* mapview) { }
 
     virtual void setId(uint32 id) { }
     void setPosition(const Position& position) { m_position = position; }
