@@ -46,6 +46,7 @@ MapView::MapView()
     m_optimizedSize = Size(Otc::AWARE_X_TILES, Otc::AWARE_Y_TILES) * Otc::TILE_PIXELS;
 
     m_framebuffer = g_framebuffers.createFrameBuffer();
+    m_lightbuffer = g_framebuffers.createFrameBuffer();
     setVisibleDimension(Size(15, 11));
 
     m_shader = g_shaders.getDefaultMapShader();
