@@ -171,9 +171,9 @@ ThingPtr Tile::addThing(const ThingPtr& thing, int stackPos)
     // 4 - creatures, from top to bottom
     // 5 - items, from top to bottom
     if(stackPos < 0) {
-        bool prepend = (stackPos == -2);
         stackPos = 0;
         int priority = thing->getStackPriority();
+        bool prepend = (stackPos == -2 || priority <= 3);
         for(stackPos = 0; stackPos < (int)m_things.size(); ++stackPos) {
             int otherPriority = m_things[stackPos]->getStackPriority();
             if(!g_game.getFeature(Otc::GameReverseCreatureStack)) {
@@ -257,28 +257,12 @@ int Tile::getThingStackpos(const ThingPtr& thing)
 
 ThingPtr Tile:: getTopThing()
 {
+    if(isEmpty())
+        return nullptr;
     for(const ThingPtr& thing : m_things) {
         if(!thing->isGround() && !thing->isGroundBorder() && !thing->isOnBottom() && !thing->isOnTop() && !thing->isCreature())
             return thing;
     }
-    for(const ThingPtr& thing : m_things) {
-        if(!thing->isGround() && !thing->isGroundBorder() && !thing->isOnBottom() && !thing->isOnTop())
-            return thing;
-    }
-    for(const ThingPtr& thing : m_things) {
-        if(!thing->isGround() && !thing->isGroundBorder() && !thing->isOnBottom())
-            return thing;
-    }
-    for(const ThingPtr& thing : m_things) {
-        if(!thing->isGround() && !thing->isGroundBorder())
-            return thing;
-    }
-    for(const ThingPtr& thing : m_things) {
-        if(!thing->isGround())
-            return thing;
-    }
-    if(isEmpty())
-        return nullptr;
     return m_things[m_things.size() - 1];
 }
 
