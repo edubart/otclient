@@ -163,14 +163,15 @@ ThingPtr Tile::addThing(const ThingPtr& thing, int stackPos)
         return nullptr;
     }
 
+    // the items stackpos follows this order:
+    // 0 - ground
+    // 1 - ground borders
+    // 2 - bottom (walls)
+    // 3 - on top (doors)
+    // 4 - creatures, from top to bottom
+    // 5 - items, from top to bottom
     if(stackPos < 0) {
-        // the items stackpos follows this order:
-        // 0 - ground
-        // 1 - ground borders
-        // 2 - bottom (walls)
-        // 3 - on top (doors)
-        // 4 - creatures, from top to bottom
-        // 5 - items, from top to bottom
+        bool prepend = (stackPos == -2);
         stackPos = 0;
         int priority = thing->getStackPriority();
         for(stackPos = 0; stackPos < (int)m_things.size(); ++stackPos) {
@@ -180,7 +181,7 @@ ThingPtr Tile::addThing(const ThingPtr& thing, int stackPos)
                 if(priority == 4 && otherPriority == 4)
                     break;
             }
-            if(otherPriority > priority)
+            if((prepend && otherPriority > priority) || (!prepend && otherPriority >= priority))
                 break;
         }
     } else if(stackPos > (int)m_things.size())
@@ -233,6 +234,14 @@ ThingPtr Tile::getThing(int stackPos)
     return nullptr;
 }
 
+EffectPtr Tile::getEffect(uint16 id)
+{
+    for(const EffectPtr& effect : m_effects)
+        if(effect->getId() == id)
+            return effect;
+    return nullptr;
+}
+
 bool Tile::hasThing(const ThingPtr& thing)
 {
     return std::find(m_things.begin(), m_things.end(), thing) != m_things.end();
@@ -246,11 +255,30 @@ int Tile::getThingStackpos(const ThingPtr& thing)
     return -1;
 }
 
-ThingPtr Tile::getTopThing()
+ThingPtr Tile:: getTopThing()
 {
+    for(const ThingPtr& thing : m_things) {
+        if(!thing->isGround() && !thing->isGroundBorder() && !thing->isOnBottom() && !thing->isOnTop() && !thing->isCreature())
+            return thing;
+    }
+    for(const ThingPtr& thing : m_things) {
+        if(!thing->isGround() && !thing->isGroundBorder() && !thing->isOnBottom() && !thing->isOnTop())
+            return thing;
+    }
+    for(const ThingPtr& thing : m_things) {
+        if(!thing->isGround() && !thing->isGroundBorder() && !thing->isOnBottom())
+            return thing;
+    }
+    for(const ThingPtr& thing : m_things) {
+        if(!thing->isGround() && !thing->isGroundBorder())
+            return thing;
+    }
+    for(const ThingPtr& thing : m_things) {
+        if(!thing->isGround())
+            return thing;
+    }
     if(isEmpty())
         return nullptr;
-
     return m_things[m_things.size() - 1];
 }
 

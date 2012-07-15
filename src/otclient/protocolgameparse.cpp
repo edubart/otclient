@@ -512,7 +512,7 @@ void ProtocolGame::parseCreatureMove(const InputMessagePtr& msg)
     if(!g_map.removeThing(thing))
         g_logger.traceError("could not remove thing");
 
-    g_map.addThing(thing, newPos);
+    g_map.addThing(thing, newPos, -1);
 }
 
 void ProtocolGame::parseOpenContainer(const InputMessagePtr& msg)
@@ -1306,7 +1306,7 @@ void ProtocolGame::setTileDescription(const InputMessagePtr& msg, Position posit
                 g_logger.traceError(stdext::format("too many things, stackpos=%d, pos=%s", stackPos, stdext::to_string(position)));
 
             ThingPtr thing = getThing(msg);
-            g_map.addThing(thing, position, -1);
+            g_map.addThing(thing, position, -2);
         }
         stackPos++;
     }

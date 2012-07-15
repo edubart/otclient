@@ -293,3 +293,10 @@ bool Item::isMoveable()
                          "Invalid dat type for item %d", m_id));
     return false;
 }
+
+ItemPtr Item::clone()
+{
+    ItemPtr item = ItemPtr(new Item);
+    *(item.get()) = *this;
+    return item;
+}

@@ -66,6 +66,7 @@ public:
     ThingPtr addThing(const ThingPtr& thing, int stackPos = -1);
     bool removeThing(ThingPtr thing);
     ThingPtr getThing(int stackPos);
+    EffectPtr getEffect(uint16 id);
     bool hasThing(const ThingPtr& thing);
     int getThingStackpos(const ThingPtr& thing);
     ThingPtr getTopThing();
