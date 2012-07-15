@@ -26,6 +26,7 @@
 #include <framework/global.h>
 #include <framework/core/timer.h>
 #include "thing.h"
+#include "mapview.h"
 
 // @bindclass
 class Missile : public Thing
@@ -36,6 +37,7 @@ class Missile : public Thing
 
 public:
     void draw(const Point& dest, float scaleFactor, bool animate);
+    virtual void drawLight(const Point& dest, float scaleFactor, bool animate, MapView* mapview);
 
     void updateAnimation();
 
@@ -43,6 +45,9 @@ public:
     void setPath(const Position& fromPosition, const Position& toPosition);
 
     uint32 getId() { return m_id; }
+
+    Color getLightColor(){ return Color::from8bit(m_datType->getLightColor());}
+    int getLightLevel(){ return (int)m_datType->getLightLevel();}
 
     MissilePtr asMissile() { return std::static_pointer_cast<Missile>(shared_from_this()); }
     bool isMissile() { return true; }
