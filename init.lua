@@ -15,8 +15,8 @@ if not g_resources.addSearchPath(g_resources.getWorkDir() .. "modules", true) th
   g_logger.fatal("Unable to add modules directory to the search path.")
 end
 
--- try to add addons path too
-g_resources.addSearchPath(g_resources.getWorkDir() .. "addons", true)
+-- try to add mods path too
+g_resources.addSearchPath(g_resources.getWorkDir() .. "mods", true)
 
 -- setup directory for saving configurations
 g_resources.setupUserWriteDir(g_app.getCompactName())
@@ -41,7 +41,7 @@ g_modules.ensureModuleLoaded("client")
 g_modules.autoLoadModules(999)
 g_modules.ensureModuleLoaded("game")
 
--- addons 1000-9999
+-- mods 1000-9999
 g_modules.autoLoadModules(9999)
 
 if g_resources.fileExists("/otclientrc.lua") then

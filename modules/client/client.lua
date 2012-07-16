@@ -36,14 +36,15 @@ function Client.init()
   g_window.setIcon(resolvepath('clienticon.png'))
   g_keyboard.bindKeyDown('Ctrl+Shift+R', Client.reloadScripts)
 
-  addEvent(function()
-    scheduleEvent(function()
-        -- Play startup music (The Silver Tree, by Mattias Westlund)
-        g_sounds.playMusic("/client/startup.ogg", 3)
-        connect(g_game, { onGameStart = function() g_sounds.stopMusic(3) end })
-        connect(g_game, { onGameEnd= function() g_sounds.playMusic("/client/startup.ogg", 3) end })
-    end, 100)
-  end, 0)
+  connect(g_app, { onRun =
+    function()
+      -- Play startup music (The Silver Tree, by Mattias Westlund)
+      g_sounds.playMusic("startup.ogg", 3)
+      connect(g_game, { onGameStart = function() g_sounds.stopMusic(3) end })
+      connect(g_game, { onGameEnd = function() g_sounds.playMusic("startup.ogg", 3) end })
+    end
+  })
+
 end
 
 function Client.terminate()
