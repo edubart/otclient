@@ -122,7 +122,7 @@ local function updateOutfit()
 end
 
 function updateMount()
-  if table.empty(mounts) then
+  if table.empty(mounts) or not mount then
     return
   end
   local nameMountWidget = outfitWindow:getChildById('mountName')
@@ -154,7 +154,9 @@ function Outfit.create(creatureOutfit, outfitList, creatureMount, mountList)
 
   outfitWindow = g_ui.displayUI('outfitwindow.otui')
   outfit = outfitCreature:getOutfit()
-  mount = mountCreature:getOutfit()
+  if mountCreature then 
+    mount = mountCreature:getOutfit()
+  end
   
   addons = {
     [1] = {widget = outfitWindow:getChildById('addon1'), value = 1},
@@ -211,7 +213,7 @@ function Outfit.create(creatureOutfit, outfitList, creatureMount, mountList)
   end
   currentMount = 1
   for i=1,#mountList do
-    if mountList[i][1] == mount.type then
+    if mount and mountList[i][1] == mount.type then
       currentMount = i
       break
     end
@@ -242,19 +244,22 @@ function Outfit.randomize()
   
   for k, section in pairs(outfitTemplate) do
     section:setChecked(true)
-    colorBoxes[math.random(0, #colorBoxes)]:setChecked(true)
+    colorBoxes[math.random(1, #colorBoxes)]:setChecked(true)
     section:setChecked(false)
   end
   outfitTemplate[1]:setChecked(true)
 end
 
 function Outfit.accept()
-  outfit.mount = mount.type
+  if mount then outfit.mount = mount.type end
   g_game.changeOutfit(outfit)
   Outfit.destroy()
 end
 
 function Outfit.nextOutfitType()
+  if not outfits then
+    return
+  end
   currentOutfit = currentOutfit + 1
   if currentOutfit > #outfits then
     currentOutfit = 1
@@ -263,6 +268,9 @@ function Outfit.nextOutfitType()
 end
 
 function Outfit.previousOutfitType()
+  if not outfits then
+    return
+  end
   currentOutfit = currentOutfit - 1
   if currentOutfit <= 0 then
     currentOutfit = #outfits
@@ -271,6 +279,9 @@ function Outfit.previousOutfitType()
 end
 
 function Outfit.nextMountType()
+  if not mounts then
+    return
+  end
   currentMount = currentMount + 1
   if currentMount > #mounts then
     currentMount = 1
@@ -279,6 +290,9 @@ function Outfit.nextMountType()
 end
 
 function Outfit.previousMountType()
+  if not mounts then
+    return
+  end
   currentMount = currentMount - 1
   if currentMount <= 0 then
     currentMount = #mounts
