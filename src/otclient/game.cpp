@@ -45,6 +45,7 @@ void Game::resetGameStates()
 {
     m_denyBotCall = false;
     m_dead = false;
+	m_mounted = false;
     m_serverBeat = 50;
     m_canReportBugs = false;
     m_fightMode = Otc::FightBalanced;
@@ -333,12 +334,18 @@ void Game::processOpenOutfitWindow(const Outfit& currentOufit, const std::vector
     virtualOutfitCreature->setOutfit(currentOufit);
 
     // creature virtual mount outfit
-    CreaturePtr virtualMountCreature = CreaturePtr(new Creature);
-    virtualMountCreature->setDirection(Otc::South);
-
-    Outfit mountOutfit;
-    mountOutfit.setId(currentOufit.getMount());
-    virtualMountCreature->setOutfit(mountOutfit);
+    CreaturePtr virtualMountCreature = nullptr;
+    if(getFeature(Otc::GamePlayerMounts))
+    {
+        virtualMountCreature = CreaturePtr(new Creature);
+        virtualMountCreature->setDirection(Otc::South);
+        if(currentOufit.getMount() > 0)
+        {
+            Outfit mountOutfit;
+            mountOutfit.setId(currentOufit.getMount());
+            virtualMountCreature->setOutfit(mountOutfit);
+        }
+    }
 
     g_lua.callGlobalField("g_game", "onOpenOutfitWindow", virtualOutfitCreature, outfitList, virtualMountCreature, mountList);
 }

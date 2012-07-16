@@ -89,7 +89,7 @@ local function onClotheCheckChange(clotheButtonBox)
 end
 
 local function updateOutfit()
-  if table.empty(outfits) then
+  if table.empty(outfits) or not outfit then
     return
   end
   local nameWidget = outfitWindow:getChildById('outfitName')
@@ -184,8 +184,10 @@ function Outfit.create(creatureOutfit, outfitList, creatureMount, mountList)
   local colorBoxPanel = outfitWindow:getChildById('colorBoxPanel')
   outfitCreatureBox:setCreature(outfitCreature)
 
-  local mountCreatureBox = outfitWindow:getChildById('mountCreatureBox')
-  mountCreatureBox:setCreature(mountCreature)
+  if mountCreature then
+    local mountCreatureBox = outfitWindow:getChildById('mountCreatureBox')
+    mountCreatureBox:setCreature(mountCreature)
+  end
 
   for j=0,6 do
     for i=0,18 do
