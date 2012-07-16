@@ -26,6 +26,7 @@
 #include "creature.h"
 #include "houses.h"
 #include "towns.h"
+#include "monsters.h"
 #include "animatedtext.h"
 #include <framework/core/clock.h>
 
@@ -115,6 +116,12 @@ public:
     void loadOtbm(const std::string& fileName);
     void saveOtbm(const std::string& fileName);
 
+    void loadSpawns(const std::string& fileName);
+    void saveSpawns(const std::string&) { }
+
+    void loadMonsters(const std::string& fileName) { m_monsters.loadMonsters(fileName); }
+    void loadSingleMonster(const std::string& file) { m_monsters.loadSingleMonster(file); }
+
     void clean();
     void cleanDynamicThings();
     void cleanTexts();
@@ -141,9 +148,10 @@ public:
     std::vector<CreaturePtr> getSpectatorsInRange(const Position& centerPos, bool multiFloor, int xRange, int yRange);
     std::vector<CreaturePtr> getSpectatorsInRangeEx(const Position& centerPos, bool multiFloor, int minXRange, int maxXRange, int minYRange, int maxYRange);
 
-    // town/house related
+    // town/house/monster related
     TownPtr getTown(uint32 tid) { return m_towns.getTown(tid); }
     HousePtr getHouse(uint32 hid) { return m_houses.getHouse(hid); }
+    MonsterPtr getMonster(const std::string& name) { return m_monsters.getMonster(name); }
 
     void setLight(const Light& light) { m_light = light; }
     void setCentralPosition(const Position& centralPosition);
@@ -181,6 +189,7 @@ private:
 
     Houses m_houses;
     Towns m_towns;
+    Monsters m_monsters;
 
     uint16 m_width, m_height;
 };

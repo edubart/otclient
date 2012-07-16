@@ -160,6 +160,11 @@ class Monster : public Creature
 public:
     MonsterPtr asMonster() { return std::static_pointer_cast<Monster>(shared_from_this()); }
     bool isMonster() { return true; }
+
+    Position getPos() { return m_pos; }
+    void setPos(const Position& pos) { m_pos = pos; }
+private:
+    Position m_pos;
 };
 
 #endif

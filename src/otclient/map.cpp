@@ -34,6 +34,7 @@
 #include <framework/core/filestream.h>
 #include <framework/core/binarytree.h>
 #include <framework/core/application.h>
+#include <framework/xml/tinyxml.h>
 
 Map g_map;
 
@@ -261,7 +262,9 @@ void Map::loadOtbm(const std::string& fileName)
     g_logger.debug(stdext::format("Total tiles: %d", m_tiles.size()));
     g_logger.debug("OTBM read successfully.");
     fin->close();
-    /// TODO read XML Stuff (houses & spawns).
+
+    loadSpawns(m_spawnFile);
+    m_houses.load(m_houseFile);
 }
 
 void Map::saveOtbm(const std::string &fileName)
@@ -371,6 +374,41 @@ void Map::saveOtbm(const std::string &fileName)
         }
     }
 #endif
+}
+
+void Map::loadSpawns(const std::string &fileName)
+{
+#define cast(NAME, TYPE, NODE) stdext::unsafe_cast<TYPE>(NODE->Attribute((NAME)))
+    if(!m_monsters.isLoaded())
+        stdext::throw_exception("cannot load spawns; monsters aren't loaded.");
+
+    TiXmlDocument doc(fileName);
+    if(!doc.LoadFile())
+        stdext::throw_exception(stdext::format("cannot load spawns xml file '%s", fileName));
+
+    TiXmlElement* root = doc.FirstChildElement();
+    if(!root || root->ValueStr() != "spawns")
+        stdext::throw_exception(stdext::format("malformed spawns file"));
+
+    for(TiXmlElement* node = root->FirstChildElement(); node; node = node->NextSiblingElement()) {
+        if (node->ValueTStr() != "spawn")
+            stdext::throw_exception(stdext::format("invalid spawn node"));
+
+        Position centerPos(cast("x", uint16, node), cast("y", uint16, node), cast("z", uint8, node));
+        for(TiXmlElement* mType = node->FirstChildElement(); mType; mType = mType->NextSiblingElement()) {
+            if (mType->ValueStr() != "monster")
+                stdext::throw_exception("invalid spawn-subnode");
+
+            std::string mName = mType->Attribute("name");
+            MonsterPtr m = m_monsters.getMonster(mName);
+            if (!m)
+                stdext::throw_exception(stdext::format("unkown monster %s", mName));
+
+            Point off(cast("x", int, mType), cast("y", int, mType));
+            Position mPos(centerPos.x + off.x, centerPos.y + off.y, centerPos.z);
+            addThing(m, mPos, -1);
+        }
+    }
 }
 
 bool Map::loadOtcm(const std::string& fileName)
@@ -521,6 +559,7 @@ void Map::clean()
     // This is a fix to a segfault on exit.
     m_towns.clear();
     m_houses.clear();
+    m_monsters.clear();
 }
 
 void Map::cleanDynamicThings()
