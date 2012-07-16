@@ -8,18 +8,21 @@ g_logger.setLogFile(g_resources.getWorkDir() .. g_app.getCompactName() .. ".log"
 g_logger.info(g_app.getName() .. ' ' .. g_app.getVersion() .. ' rev ' .. g_app.getBuildRevision() .. ' (' .. g_app.getBuildCommit() .. ') built on ' .. g_app.getBuildDate() .. ' for arch ' .. g_app.getBuildArch())
 
 --add base folder to search path
-g_resources.addToSearchPath(g_resources.getWorkDir())
+g_resources.addSearchPath(g_resources.getWorkDir())
 
 -- add modules directory to the search path
-if not g_resources.addToSearchPath(g_resources.getWorkDir() .. "modules", true) then
+if not g_resources.addSearchPath(g_resources.getWorkDir() .. "modules", true) then
   g_logger.fatal("Unable to add modules directory to the search path.")
 end
 
 -- try to add addons path too
-g_resources.addToSearchPath(g_resources.getWorkDir() .. "addons", true)
+g_resources.addSearchPath(g_resources.getWorkDir() .. "addons", true)
 
 -- setup directory for saving configurations
-g_resources.setupWriteDir(g_app.getCompactName())
+g_resources.setupUserWriteDir(g_app.getCompactName())
+
+-- search all packages
+g_resources.searchAndAddPackages('/', '.otpkg', true)
 
 -- load configurations
 g_configs.load("/config.otml")

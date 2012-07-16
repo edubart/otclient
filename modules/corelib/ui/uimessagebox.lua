@@ -38,7 +38,7 @@ function UIMessageBox.display(title, message, flags)
     connect(messagebox, { onEscape = function(self) self:cancel() end })
   end
 
-  messagebox:lock()
+  --messagebox:lock()
 
   return messagebox
 end

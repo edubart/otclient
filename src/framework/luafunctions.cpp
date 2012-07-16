@@ -125,12 +125,15 @@ void Application::registerLuaFunctions()
 
     // ResourceManager
     g_lua.registerSingletonClass("g_resources");
-    g_lua.bindSingletonFunction("g_resources", "addToSearchPath", &ResourceManager::addToSearchPath, &g_resources);
-    g_lua.bindSingletonFunction("g_resources", "setupWriteDir", &ResourceManager::setupWriteDir, &g_resources);
-    g_lua.bindSingletonFunction("g_resources", "removeFromSearchPath", &ResourceManager::removeFromSearchPath, &g_resources);
+    g_lua.bindSingletonFunction("g_resources", "addSearchPath", &ResourceManager::addSearchPath, &g_resources);
+    g_lua.bindSingletonFunction("g_resources", "setupUserWriteDir", &ResourceManager::setupUserWriteDir, &g_resources);
+    g_lua.bindSingletonFunction("g_resources", "setWriteDir", &ResourceManager::setWriteDir, &g_resources);
+    g_lua.bindSingletonFunction("g_resources", "searchAndAddPackages", &ResourceManager::searchAndAddPackages, &g_resources);
+    g_lua.bindSingletonFunction("g_resources", "removeSearchPath", &ResourceManager::removeSearchPath, &g_resources);
     g_lua.bindSingletonFunction("g_resources", "fileExists", &ResourceManager::fileExists, &g_resources);
     g_lua.bindSingletonFunction("g_resources", "getRealDir", &ResourceManager::getRealDir, &g_resources);
     g_lua.bindSingletonFunction("g_resources", "getWorkDir", &ResourceManager::getWorkDir, &g_resources);
+    g_lua.bindSingletonFunction("g_resources", "getSearchPaths", &ResourceManager::getSearchPaths, &g_resources);
 
     // Module
     g_lua.registerClass<Module>();

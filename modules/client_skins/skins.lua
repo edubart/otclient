@@ -27,7 +27,7 @@ function Skins.init()
   Skins.installSkins('skins')
 
   if installedSkins[defaultSkinName] then
-    g_resources.addToSearchPath(getSkinPath(defaultSkinName), 0)
+    g_resources.addSearchPath(getSkinPath(defaultSkinName), 0)
   end
 
   local userSkinName = g_settings.get('skin', 'false')
@@ -50,9 +50,9 @@ function Skins.init()
 end
 
 function Skins.terminate()
-  g_resources.removeFromSearchPath(getSkinPath(defaultSkinName))
+  g_resources.removeSearchPath(getSkinPath(defaultSkinName))
   if currentSkin then
-    g_resources.removeFromSearchPath(getSkinPath(currentSkin.name))
+    g_resources.removeSearchPath(getSkinPath(currentSkin.name))
   end
 
   installedSkins = nil
@@ -98,10 +98,12 @@ function Skins.setSkin(name)
     Skins.loadSkin(defaultSkin)
   end
 
-  if currentSkin then
-    g_resources.removeFromSearchPath(getSkinPath(currentSkin.name))
+  if currentSkin and currentSkin.name ~= defaultSkinName then
+    g_resources.removeSearchPath(getSkinPath(currentSkin.name))
   end
-  g_resources.addToSearchPath(getSkinPath(skin.name), true)
+  if skin.name ~= defaultSkinName then
+    g_resources.addSearchPath(getSkinPath(skin.name), true)
+  end
 
   Skins.loadSkin(skin)
   currentSkin = skin

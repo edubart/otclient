@@ -35,11 +35,12 @@ public:
     void terminate();
 
     void discoverWorkDir(const std::string& appName, const std::string& existentFile);
-    bool setupWriteDir(const std::string& appWriteDirName);
+    bool setupUserWriteDir(const std::string& appWriteDirName);
+    bool setWriteDir(const std::string& writeDir, bool create = false);
 
-    bool addToSearchPath(const std::string& path, bool insertInFront = true);
-    bool removeFromSearchPath(const std::string& path);
-    void searchAndAddPackages(const std::string& packagesDir, const std::string& packagesExt, bool append);
+    bool addSearchPath(const std::string& path, bool pushFront = false);
+    bool removeSearchPath(const std::string& path);
+    void searchAndAddPackages(const std::string& packagesDir, const std::string& packagesExt);
 
     bool fileExists(const std::string& fileName);
     bool directoryExists(const std::string& directoryName);
@@ -64,11 +65,15 @@ public:
     std::string resolvePath(const std::string& path);
     std::string getRealDir(const std::string& path);
     std::string getBaseDir();
+    std::string getWriteDir() { return m_writeDir; }
     std::string getWorkDir() { return m_workDir; }
+    std::deque<std::string> getSearchPaths() { return m_searchPaths; }
 
 private:
     std::string m_workDir;
+    std::string m_writeDir;
     Boolean<false> m_hasSearchPath;
+    std::deque<std::string> m_searchPaths;
 };
 
 extern ResourceManager g_resources;

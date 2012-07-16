@@ -65,7 +65,7 @@ void ResourceManager::discoverWorkDir(const std::string& appName, const std::str
         g_logger.fatal(stdext::format("Unable to find %s, the application cannot be initialized.", existentFile));
 }
 
-bool ResourceManager::setupWriteDir(const std::string& appWriteDirName)
+bool ResourceManager::setupUserWriteDir(const std::string& appWriteDirName)
 {
     std::string userDir = PHYSFS_getUserDir();
     std::string dirName;
@@ -75,49 +75,69 @@ bool ResourceManager::setupWriteDir(const std::string& appWriteDirName)
     dirName = appWriteDirName;
 #endif
     std::string writeDir = userDir + dirName;
+    return setWriteDir(writeDir);
+}
+
+bool ResourceManager::setWriteDir(const std::string& writeDir, bool create)
+{
+    if(!PHYSFS_setWriteDir(writeDir.c_str()) && !create) {
+        g_logger.error(stdext::format("Unable to set write directory '%s': %s", writeDir, PHYSFS_getLastError()));
+        return false;
+    }
+
+    if(!PHYSFS_mkdir(writeDir.c_str())) {
+        g_logger.error(stdext::format("Unable to create write directory '%s': %s", writeDir, PHYSFS_getLastError()));
+        return false;
+    }
 
     if(!PHYSFS_setWriteDir(writeDir.c_str())) {
-        if(!PHYSFS_setWriteDir(userDir.c_str())) {
-            g_logger.error("User directory not found.");
-            return false;
-        }
-        if(!PHYSFS_mkdir(dirName.c_str())) {
-            g_logger.error("Cannot create directory for saving configurations.");
-            return false;
-        }
-        if(!PHYSFS_setWriteDir(writeDir.c_str())) {
-            g_logger.error("Unable to set write directory.");
-            return false;
-        }
+        g_logger.error(stdext::format("Unable to set write directory '%s': %s", writeDir, PHYSFS_getLastError()));
+        return false;
     }
-    addToSearchPath(writeDir, true);
-    //g_logger.debug(stdext::format("Setup write dir %s", writeDir));
+
+    if(!m_writeDir.empty())
+        removeSearchPath(m_writeDir);
+
+    m_writeDir = writeDir;
+
+    if(!addSearchPath(writeDir))
+        g_logger.error(stdext::format("Unable to add write directory '%s' to search path"));
+
     return true;
 }
 
-bool ResourceManager::addToSearchPath(const std::string& path, bool insertInFront)
+bool ResourceManager::addSearchPath(const std::string& path, bool pushFront)
 {
-    if(!PHYSFS_addToSearchPath(path.c_str(), insertInFront ? 0 : 1))
+    if(!PHYSFS_addToSearchPath(path.c_str(), pushFront ? 0 : 1))
         return false;
-    //g_logger.debug(stdext::format("Add search path %s", path));
+    if(pushFront)
+        m_searchPaths.push_front(path);
+    else
+        m_searchPaths.push_back(path);
     m_hasSearchPath = true;
     return true;
 }
 
-bool ResourceManager::removeFromSearchPath(const std::string& path)
+bool ResourceManager::removeSearchPath(const std::string& path)
 {
     if(!PHYSFS_removeFromSearchPath(path.c_str()))
         return false;
-    //g_logger.debug(stdext::format("Remove search path %s", path));
+    auto it = std::find(m_searchPaths.begin(), m_searchPaths.end(), path);
+    assert(it != m_searchPaths.end());
+    m_searchPaths.erase(it);
     return true;
 }
 
-void ResourceManager::searchAndAddPackages(const std::string& packagesDir, const std::string& packageExt, bool append)
+void ResourceManager::searchAndAddPackages(const std::string& packagesDir, const std::string& packageExt)
 {
-    auto files = listDirectoryFiles(resolvePath(packagesDir));
-    for(const std::string& file : files) {
-        if(boost::ends_with(file, packageExt))
-            addToSearchPath(packagesDir + "/" + file, !append);
+    auto files = listDirectoryFiles(packagesDir);
+    for(auto it = files.rbegin(); it != files.rend(); ++it) {
+        const std::string& file = *it;
+        if(!boost::ends_with(file, packageExt))
+            continue;
+        std::string package = getRealDir(packagesDir) + "/" + file;
+        if(!addSearchPath(package, true))
+            g_logger.error(stdext::format("Unable to read package '%s': %s", package, PHYSFS_getLastError()));
     }
 }
 
@@ -267,7 +287,7 @@ std::string ResourceManager::resolvePath(const std::string& path)
 std::string ResourceManager::getRealDir(const std::string& path)
 {
     std::string dir;
-    const char *cdir = PHYSFS_getRealDir(path.c_str());
+    const char *cdir = PHYSFS_getRealDir(resolvePath(path).c_str());
     if(cdir)
         dir = cdir;
     return dir;
