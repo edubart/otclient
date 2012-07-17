@@ -29,7 +29,6 @@
 #include <sstream>
 #include <iomanip>
 #include <vector>
-#include <cctype>
 #include <boost/algorithm/string.hpp>
 
 #include "types.h"
@@ -215,16 +214,10 @@ inline std::string utf8StringToLatin1(uchar *utf8) {
 }
 
 // Convert string to lower case
-inline std::string toLowerCaseString(std::string& str) {
-    std::transform(str.begin(), str.end(), str.begin(), tolower);
-    return str;
-}
+inline std::string tolower(std::string& str) { return boost::algorithm::to_lower_copy(str); }
 
 // Convert string to upper case
-inline std::string toUpperCaseString(std::string& str) {
-    std::transform(str.begin(), str.end(), str.begin(), toupper);
-    return str;
-}
+inline std::string toupper(std::string& str) { return boost::algorithm::to_upper_copy(str); }
 
 // utility for printing messages into stdout
 template<class... T>

@@ -93,7 +93,7 @@ bool ResourceManager::setWriteDir(const std::string& writeDir, bool create)
     m_writeDir = writeDir;
 
     if(!addSearchPath(writeDir))
-        g_logger.error(stdext::format("Unable to add write directory '%s' to search path"));
+        g_logger.error(stdext::format("Unable to add write '%s' directory to search path", writeDir));
 
     return true;
 }

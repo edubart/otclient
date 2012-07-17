@@ -388,11 +388,11 @@ void Map::loadSpawns(const std::string &fileName)
 
     TiXmlElement* root = doc.FirstChildElement();
     if(!root || root->ValueStr() != "spawns")
-        stdext::throw_exception(stdext::format("malformed spawns file"));
+        stdext::throw_exception("malformed spawns file");
 
     for(TiXmlElement* node = root->FirstChildElement(); node; node = node->NextSiblingElement()) {
         if (node->ValueTStr() != "spawn")
-            stdext::throw_exception(stdext::format("invalid spawn node"));
+            stdext::throw_exception("invalid spawn node");
 
         Position centerPos(cast("x", uint16, node), cast("y", uint16, node), cast("z", uint8, node));
         for(TiXmlElement* mType = node->FirstChildElement(); mType; mType = mType->NextSiblingElement()) {
@@ -1028,4 +1028,9 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
         delete it.second;
 
     return ret;
+}
+
+MonsterPtr Map::getMonster(const std::string& name)
+{
+    return m_monsters.getMonster(stdext::tolower(name));
 }
