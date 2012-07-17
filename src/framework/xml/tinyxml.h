@@ -40,6 +40,10 @@ distribution.
 #include <string.h>
 #include <assert.h>
 
+#include <framework/global.h>
+#include <otclient/position.h>
+#include <framework/stdext/cast.h>
+
 // Help out windows:
 #if defined( _DEBUG ) && !defined( DEBUG )
 #define DEBUG
@@ -200,6 +204,9 @@ class TiXmlBase
     friend class TiXmlDocument;
 
 public:
+    TiXmlBase( const TiXmlBase& ) = delete;
+    void operator=( const TiXmlBase& base ) = delete;
+
     TiXmlBase()    :    userData(0)        {}
     virtual ~TiXmlBase()            {}
 
@@ -396,9 +403,6 @@ protected:
     static void ConvertUTF32ToUTF8( unsigned long input, char* output, int* length );
 
 private:
-    TiXmlBase( const TiXmlBase& );                // not implemented.
-    void operator=( const TiXmlBase& base );    // not allowed.
-
     struct Entity
     {
         const char*     str;
@@ -428,6 +432,9 @@ class TiXmlNode : public TiXmlBase
     friend class TiXmlElement;
 
 public:
+    TiXmlNode( const TiXmlNode& ) = delete;
+    void operator=( const TiXmlNode& base ) = delete;
+
     #ifdef TIXML_USE_STL
 
         /** An input stream operator, for every class. Tolerant of newlines and
@@ -764,10 +771,6 @@ protected:
 
     TiXmlNode*        prev;
     TiXmlNode*        next;
-
-private:
-    TiXmlNode( const TiXmlNode& );                // not implemented.
-    void operator=( const TiXmlNode& base );    // not allowed.
 };
 
 
@@ -977,6 +980,18 @@ public:
     */
     const char* Attribute( const char* name, double* d ) const;
 
+    template<typename T = std::string>
+    inline T readType(const std::string& str) const { return stdext::unsafe_cast<T>(Attribute(str)); }
+
+    Position readPos(const std::string& base = std::string()) const
+    {
+        return Position(readType<uint16>(base + "x"), readType<uint16>(base + "y"), readType<uint8>(base + "z"));
+    }
+
+    Point readPoint() const
+    {
+        return Point(readType<int>("x"), readType<int>("y"));
+    }
     /** QueryIntAttribute examines the attribute - it is an alternative to the
         Attribute() method with richer error checking.
         If the attribute is an integer, it is stored in 'value' and

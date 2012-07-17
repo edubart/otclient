@@ -48,7 +48,6 @@ void Monsters::loadMonsters(const std::string& file)
 
 void Monsters::loadSingleMonster(const std::string& file, const MonsterPtr& m)
 {
-#define read(str) stdext::unsafe_cast<int>(attrib->Attribute((str)))
     if (!m || std::find(m_monsters.begin(), m_monsters.end(), m) != m_monsters.end())
 		stdext::throw_exception("reloading monsters is not supported yet.");
 
@@ -64,18 +63,18 @@ void Monsters::loadSingleMonster(const std::string& file, const MonsterPtr& m)
 		if(attrib->ValueStr() == "look") {
 			Outfit out;
 
-            int type = read("type");
+            int type = attrib->readType<int>("type");
             if (type <= 0)
-                type = read("typeex");
+                type = attrib->readType<int>("typeex");
             if(type) {
 				out.setId(type);
                 {
-                    out.setHead(read("head"));
-                    out.setBody(read("body"));
-                    out.setLegs(read("legs"));
-                    out.setFeet(read("feet"));
-                    out.setAddons(read("addons"));
-                    out.setMount(read("mount"));
+                    out.setHead(attrib->readType<int>(("head")));
+                    out.setBody(attrib->readType<int>(("body")));
+                    out.setLegs(attrib->readType<int>(("legs")));
+                    out.setFeet(attrib->readType<int>(("feet")));
+                    out.setAddons(attrib->readType<int>(("addons")));
+                    out.setMount(attrib->readType<int>(("mount")));
                 }
 			} else
 				stdext::throw_exception(stdext::format("invalid look type/typeex for monster %s", m->getName()));
@@ -90,14 +89,12 @@ MonsterPtr Monsters::getMonster(const std::string& name)
 {
     auto it = std::find_if(m_monsters.begin(), m_monsters.end(),
                            [=] (const MonsterPtr& m) -> bool { return m->getName() == name; });
-    if (it != m_monsters.end())
-         return *it;
-    return nullptr;
+    return it != m_monsters.end() ? *it : nullptr;
 }
 
 MonsterPtr Monsters::getMonsterByPos(const Position& pos)
 {
     auto it = std::find_if(m_monsters.begin(), m_monsters.end(),
-                           [=] (const MonsterPtr& m) -> bool { return m->getPos() == pos; });
+                           [=] (const MonsterPtr& m) -> bool { return m->getPosition() == pos; });
     return it != m_monsters.end() ? *it : nullptr;
 }

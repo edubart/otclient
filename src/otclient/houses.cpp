@@ -42,29 +42,21 @@ void House::setTile(const TilePtr& tile)
         m_tiles.push_back(tile);
 }
 
-#define fugly_get(attrib, type) stdext::unsafe_cast<type>(elem->Attribute((attrib)))
-
 void House::load(const TiXmlElement *elem)
 {
     std::string name = elem->Attribute("name");
     if(name.empty())
         name = stdext::format("UnNamed house #%u", getId());
 
-    uint32 rent = fugly_get("rent", uint32);
-    m_rent = rent;
+    m_rent = elem->readType<uint32>("rent");
+    m_size = elem->readType<uint32>("size");
 
-    uint32 townId = fugly_get("townid", uint32);
+    uint32 townId = elem->readType<uint32>("townid");
     if(!g_map.getTown(townId))
         stdext::throw_exception(stdext::format("invalid town id for house %d", townId));
 
-    uint32 size = fugly_get("size", uint32);
-    if(size == 0)
-        size = 1;
-
-    m_size = size;
-    m_isGuildHall = fugly_get("guildhall", bool);
-    addDoor(0, Position(fugly_get("entryx", uint16), fugly_get("entryy", uint16),
-                        fugly_get("entryz", uint8)));
+    m_isGuildHall = elem->readType<bool>("rent");
+    addDoor(0, elem->readPos());
 }
 
 void Houses::addHouse(const HousePtr& house)
@@ -103,7 +95,7 @@ void Houses::load(const std::string& fileName)
         if(elem->ValueTStr() != "house")
             stdext::throw_exception("invalid house tag.");
 
-        uint32 houseId = fugly_get("houseid", uint32);
+        uint32 houseId = elem->readType<uint32>("houseid");
         HousePtr house = getHouse(houseId);
         if(!house)
             house = HousePtr(new House(houseId)), addHouse(house);

@@ -378,7 +378,6 @@ void Map::saveOtbm(const std::string &fileName)
 
 void Map::loadSpawns(const std::string &fileName)
 {
-#define cast(NAME, TYPE, NODE) stdext::unsafe_cast<TYPE>(NODE->Attribute((NAME)))
     if(!m_monsters.isLoaded())
         stdext::throw_exception("cannot load spawns; monsters aren't loaded.");
 
@@ -394,7 +393,7 @@ void Map::loadSpawns(const std::string &fileName)
         if (node->ValueTStr() != "spawn")
             stdext::throw_exception("invalid spawn node");
 
-        Position centerPos(cast("x", uint16, node), cast("y", uint16, node), cast("z", uint8, node));
+        Position centerPos = node->readPos("center");
         for(TiXmlElement* mType = node->FirstChildElement(); mType; mType = mType->NextSiblingElement()) {
             if (mType->ValueStr() != "monster")
                 stdext::throw_exception("invalid spawn-subnode");
@@ -404,7 +403,7 @@ void Map::loadSpawns(const std::string &fileName)
             if (!m)
                 stdext::throw_exception(stdext::format("unkown monster %s", mName));
 
-            Point off(cast("x", int, mType), cast("y", int, mType));
+            Point off = mType->readPoint();
             Position mPos(centerPos.x + off.x, centerPos.y + off.y, centerPos.z);
             addThing(m, mPos, -1);
         }

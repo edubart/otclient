@@ -596,16 +596,10 @@ const std::string* TiXmlElement::Attribute( const std::string& name ) const
 
 const char* TiXmlElement::Attribute( const char* name, int* i ) const
 {
-    const TiXmlAttribute* attrib = attributeSet.Find( name );
-    const char* result = 0;
-
-    if ( attrib ) {
-        result = attrib->Value();
-        if ( i ) {
-            attrib->QueryIntValue( i );
-        }
-    }
-    return result;
+    int p = readType<int>(name);
+    if(i)
+        *i = p;
+    return Attribute(name);
 }
 
 
@@ -625,19 +619,12 @@ const std::string* TiXmlElement::Attribute( const std::string& name, int* i ) co
 }
 #endif
 
-
-const char* TiXmlElement::Attribute( const char* name, double* d ) const
+const char* TiXmlElement::Attribute(const char *name, double *d) const
 {
-    const TiXmlAttribute* attrib = attributeSet.Find( name );
-    const char* result = 0;
-
-    if ( attrib ) {
-        result = attrib->Value();
-        if ( d ) {
-            attrib->QueryDoubleValue( d );
-        }
-    }
-    return result;
+    double p = readType<double>(name);
+    if(d)
+        *d = p;
+    return Attribute(name);
 }
 
 

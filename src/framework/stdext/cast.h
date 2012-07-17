@@ -120,7 +120,6 @@ R unsafe_cast(const T& t, R def) {
         return def;
     }
 }
-
 }
 
 #endif

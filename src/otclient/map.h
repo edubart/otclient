@@ -151,7 +151,7 @@ public:
     // town/house/monster related
     TownPtr getTown(uint32 tid) { return m_towns.getTown(tid); }
     HousePtr getHouse(uint32 hid) { return m_houses.getHouse(hid); }
-    MonsterPtr getMonster(const std::string& name);
+    MonsterPtr getMonster(const std::string &name);
 
     void setLight(const Light& light) { m_light = light; }
     void setCentralPosition(const Position& centralPosition);
