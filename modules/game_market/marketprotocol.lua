@@ -4,7 +4,7 @@ local market
 
 -- private functions
 
-function parseOpcode(protocol, opcode, msg)
+local function parseOpcode(protocol, opcode, msg)
   if not g_game.getFeature(GamePlayerMarket) then
     return false
   end
@@ -24,12 +24,12 @@ function parseOpcode(protocol, opcode, msg)
   return true
 end
 
-function send(msg)
+local function send(msg)
   print(msg:getMessageSize())
   g_game.getProtocolGame():safeSend(msg)
 end
 
-function readMarketOffer(msg, action, var)
+local function readMarketOffer(msg, action, var)
   local timestamp = msg:getU32()
   local counter = msg:getU16()
 
@@ -55,7 +55,7 @@ end
 
 -- parsing protocols
 
-function parseMarketEnter(msg)
+local function parseMarketEnter(msg)
   local balance = msg:getU32()
   local offers = msg:getU8()
   local depotItems = {}
@@ -71,11 +71,11 @@ function parseMarketEnter(msg)
   Market.onMarketEnter(depotItems, offers, balance)
 end
 
-function parseMarketLeave(msg)
+local function parseMarketLeave(msg)
   Market.onMarketLeave()
 end
 
-function parseMarketDetail(msg)
+local function parseMarketDetail(msg)
   local itemId = msg:getU16()
 
   local descriptions = {}
@@ -110,7 +110,7 @@ function parseMarketDetail(msg)
   Market.onMarketDetail(itemId, descriptions, purchaseStats, saleStats)
 end
 
-function parseMarketBrowse(msg)
+local function parseMarketBrowse(msg)
   local var = msg:getU16()
   local offers = {}
 

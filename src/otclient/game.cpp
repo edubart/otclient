@@ -38,7 +38,7 @@ Game g_game;
 Game::Game()
 {
     resetGameStates();
-    setClientVersion(954);
+    setClientVersion(860);
 }
 
 void Game::resetGameStates()
