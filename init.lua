@@ -29,17 +29,18 @@ g_configs.load("/config.otml")
 
 g_modules.discoverModules()
 
--- core modules 0-99
-g_modules.autoLoadModules(99)
+-- libraries modules 0-99
+g_modules.autoLoadModules(99);
 g_modules.ensureModuleLoaded("corelib")
+g_modules.ensureModuleLoaded("gamelib")
 
 -- client modules 100-499
 g_modules.autoLoadModules(499)
 g_modules.ensureModuleLoaded("client")
 
 -- game modules 500-999
-g_modules.autoLoadModules(999)
-g_modules.ensureModuleLoaded("game")
+g_modules.autoLoadModules(999);
+g_modules.ensureModuleLoaded("game_interface")
 
 -- mods 1000-9999
 g_modules.autoLoadModules(9999)

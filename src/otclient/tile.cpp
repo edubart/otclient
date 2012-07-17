@@ -367,7 +367,7 @@ ThingPtr Tile::getTopMultiUseThing()
     for(uint i = 0; i < m_things.size(); ++i) {
         ThingPtr thing = m_things[i];
         if(thing->isForceUse() || (!thing->isGround() && !thing->isGroundBorder() && !thing->isOnBottom() && !thing->isOnTop())) {
-            if(i > 0 && thing->isFluid())
+            if(i > 0 && thing->isSplash())
                 return m_things[i-1];
             return thing;
         }

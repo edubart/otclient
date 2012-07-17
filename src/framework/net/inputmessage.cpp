@@ -86,7 +86,7 @@ std::string InputMessage::getString()
     return std::string(v, stringLength);
 }
 
-void InputMessage::decryptRSA(int size, const std::string& p, const std::string& q, const std::string& d)
+void InputMessage::decryptRsa(int size, const std::string& p, const std::string& q, const std::string& d)
 {
     checkRead(size);
     RSA::decrypt((char*)m_buffer + m_readPos, size, p.c_str(), q.c_str(), d.c_str());

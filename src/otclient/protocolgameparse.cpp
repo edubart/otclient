@@ -43,8 +43,11 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
             opcode = msg->getU8();
 
             // try to parse in lua first
+            int readPos = msg->getReadPos();
             if(callLuaField<bool>("onOpcode", opcode, msg))
                 continue;
+            else
+                msg->setReadPos(readPos); // restore read pos
 
             if(!m_gameInitialized && opcode > Proto::GameServerFirstGameOpcode)
                 g_logger.warning("received a game opcode from the server, but the game is not initialized yet, this is a server side bug");
@@ -66,16 +69,12 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
                 parseLoginWait(msg);
                 break;
             case Proto::GameServerPing:
-                if(g_game.getFeature(Otc::GameTrucatedPingOpcode))
-                    parsePingBack(msg);
-                else
-                    parsePing(msg);
-                break;
             case Proto::GameServerPingBack:
-                if(g_game.getFeature(Otc::GameTrucatedPingOpcode))
-                    parsePing(msg);
-                else
+                if((opcode == Proto::GameServerPing && g_game.getProtocolVersion() >= 953) ||
+                   (opcode == Proto::GameServerPingBack && g_game.getProtocolVersion() < 953))
                     parsePingBack(msg);
+                else
+                    parsePing(msg);
                 break;
             case Proto::GameServerChallange:
                 parseChallange(msg);
@@ -334,9 +333,9 @@ void ProtocolGame::parseGMActions(const InputMessagePtr& msg)
 
     int numViolationReasons;
 
-    if(g_game.getClientVersion() >= 860)
+    if(g_game.getProtocolVersion() >= 860)
         numViolationReasons = 20;
-    else if(g_game.getClientVersion() >= 854)
+    else if(g_game.getProtocolVersion() >= 854)
         numViolationReasons = 19;
     else
         numViolationReasons = 32;
@@ -454,7 +453,7 @@ void ProtocolGame::parseTileAddThing(const InputMessagePtr& msg)
     Position pos = getPosition(msg);
     int stackPos = -1;
 
-    if(g_game.getFeature(Otc::GameStackposOnTileAddThing))
+    if(g_game.getProtocolVersion() >= 854)
         stackPos = msg->getU8();
 
     ThingPtr thing = getThing(msg);
@@ -508,7 +507,7 @@ void ProtocolGame::parseCreatureMove(const InputMessagePtr& msg)
     int stackPos = -2;
 
     // older protocols stores creatures in reverse order
-    if(!g_game.getFeature(Otc::GameReverseCreatureStack))
+    if(!g_game.getProtocolVersion() >= 854)
         stackPos = -1;
 
     g_map.addThing(thing, newPos, stackPos);
@@ -884,12 +883,11 @@ void ProtocolGame::parsePlayerStats(const InputMessagePtr& msg)
     m_localPlayer->setStamina(stamina);
     m_localPlayer->setSoul(soul);
 
-    if(g_game.getFeature(Otc::GameAdditionalPlayerStats)) {
-        int speed = msg->getU16();
-        msg->getU16(); // regeneration time
+    if(g_game.getProtocolVersion() >= 910)
+        m_localPlayer->setSpeed(msg->getU16());
 
-        m_localPlayer->setSpeed(speed);
-    }
+    if(g_game.getFeature(Otc::GamePlayerRegenerationTime))
+        msg->getU16(); // regeneration time
 }
 
 void ProtocolGame::parsePlayerSkills(const InputMessagePtr& msg)
@@ -913,7 +911,7 @@ void ProtocolGame::parsePlayerState(const InputMessagePtr& msg)
 
 void ProtocolGame::parsePlayerCancelAttack(const InputMessagePtr& msg)
 {
-    if(g_game.getFeature(Otc::GameIdOnCancelAttack))
+    if(g_game.getProtocolVersion() >= 860)
         msg->getU32(); // unknown
 
     g_game.processAttackCancel();
@@ -1389,7 +1387,7 @@ CreaturePtr ProtocolGame::getCreature(const InputMessagePtr& msg, int type)
             uint id = msg->getU32();
 
             int creatureType;
-            if(g_game.getFeature(Otc::GameCreatureType))
+            if(g_game.getProtocolVersion() >= 910)
                 creatureType = msg->getU8();
             else {
                 if(id >= Proto::PlayerStartId && id < Proto::PlayerEndId)
@@ -1441,12 +1439,11 @@ CreaturePtr ProtocolGame::getCreature(const InputMessagePtr& msg, int type)
         int emblem = -1;
         bool passable = false;
 
-        if(g_game.getFeature(Otc::GameCreatureAdditionalInfo)) {
-            if(!known)
-                emblem = msg->getU8();
+        if(g_game.getFeature(Otc::GameCreatureEmblems) && !known)
+            emblem = msg->getU8();
 
+        if(g_game.getProtocolVersion() >= 854)
             passable = (msg->getU8() == 0);
-        }
 
         if(creature) {
             creature->setHealthPercent(healthPercent);
@@ -1474,7 +1471,7 @@ CreaturePtr ProtocolGame::getCreature(const InputMessagePtr& msg, int type)
         if(creature)
             creature->turn(direction);
 
-        if(g_game.getFeature(Otc::GameCreaturePassableInfo)) {
+        if(g_game.getProtocolVersion() >= 953) {
             bool passable = msg->getU8();
 
             if(creature)
@@ -1497,7 +1494,7 @@ ItemPtr ProtocolGame::getItem(const InputMessagePtr& msg, int id)
     if(item->getId() == 0)
         stdext::throw_exception("unable to create item with invalid id 0");
 
-    if(item->isStackable() || item->isFluidContainer() || item->isFluid())
+    if(item->isStackable() || item->isFluidContainer() || item->isSplash() || item->isChargeable())
         item->setCountOrSubType(msg->getU8());
 
     if(g_game.getFeature(Otc::GameItemAnimationPhase)) {

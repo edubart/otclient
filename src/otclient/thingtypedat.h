@@ -29,6 +29,7 @@
 #include <framework/graphics/coordsbuffer.h>
 #include <framework/luaengine/luaobject.h>
 #include <framework/net/server.h>
+#include <framework/util/attribstorage.h>
 
 enum DatCategory {
     DatItemCategory = 0,
@@ -48,53 +49,59 @@ enum DatSpriteMask {
 };
 
 enum DatAttrib {
-    DatAttribIsGround = 0,
-    DatAttribIsGroundBorder,
-    DatAttribIsOnBottom,
-    DatAttribIsOnTop,
-    DatAttribIsContainer,
-    DatAttribIsStackable,
-    DatAttribIsForceUse,
-    DatAttribIsMultiUse,
-    DatAttribIsWritable,
-    DatAttribIsWritableOnce,
-    DatAttribIsFluidContainer,
-    DatAttribIsFluid,
-    DatAttribIsNotWalkable,
-    DatAttribIsNotMoveable,
+    DatAttribGround = 0,
+    DatAttribGroundBorder,
+    DatAttribOnBottom,
+    DatAttribOnTop,
+    DatAttribContainer,
+    DatAttribStackable,
+    DatAttribForceUse,
+    DatAttribMultiUse,
+    //DatAttribRune
+    DatAttribWritable,
+    DatAttribWritableOnce,
+    DatAttribFluidContainer,
+    DatAttribSplash,
+    DatAttribNotWalkable,
+    DatAttribNotMoveable,
     DatAttribBlockProjectile,
-    DatAttribIsNotPathable,
-    DatAttribIsPickupable,
-    DatAttribIsHangable,
+    DatAttribNotPathable,
+    DatAttribPickupable,
+    DatAttribHangable,
     DatAttribHookSouth,
     DatAttribHookEast,
-    DatAttribIsRotateable,
-    DatAttribHasLight,
+    DatAttribRotateable,
+    DatAttribLight,
     DatAttribDontHide,
-    DatAttribIsTranslucent,
-    DatAttribHasDisplacement,
-    DatAttribHasElevation,
-    DatAttribIsLyingCorpse,
+    DatAttribTranslucent,
+    DatAttribDisplacement,
+    DatAttribElevation,
+    DatAttribLyingCorpse,
     DatAttribAnimateAlways,
     DatAttribMiniMapColor,
     DatAttribLensHelp,
-    DatAttribIsFullGround,
+    DatAttribFullGround,
     DatAttribIgnoreLook,
     DatAttribCloth,
     DatAttribMarket,
-    DatLastAttrib = 255
+    DatLastAttrib = 255,
+
+    // legacy attribs
+    DatAttribChargeable = 254
 };
 
-enum DatDimension {
-    DatWidth = 0,
-    DatHeight,
-    DatExactSize,
-    DatLayers,
-    DatPatternX,
-    DatPatternY,
-    DatPatternZ,
-    DatAnimationPhases,
-    DatLastDimension
+struct MarketData {
+    std::string name;
+    int category;
+    uint16 requiredLevel;
+    uint16 restrictProfession;
+    uint16 showAs;
+    uint16 tradeAs;
+};
+
+struct Light {
+    uint8 intensity;
+    uint8 color;
 };
 
 class ThingTypeDat : public LuaObject
@@ -113,56 +120,58 @@ public:
     Size getSize() { return m_size; }
     int getWidth() { return m_size.width(); }
     int getHeight() { return m_size.height(); }
-    Point getDisplacement() { return m_displacement; }
-    int getDisplacementX() { return m_displacement.x; }
-    int getDisplacementY() { return m_displacement.y; }
     int getExactSize() { return m_exactSize; }
     int getLayers() { return m_layers; }
     int getNumPatternX() { return m_numPatternX; }
     int getNumPatternY() { return m_numPatternY; }
     int getNumPatternZ() { return m_numPatternZ; }
     int getAnimationPhases() { return m_animationPhases; }
-    int getGroundSpeed() { return m_groundSpeed; }
-    int getMaxTextLength() { return m_maxTextLenght; }
-    int getLightLevel() { return m_lightLevel; }
-    int getLightColor() { return m_lightColor; }
-    int getMinimapColor() { return m_miniMapColor; }
-    int getLensHelp() { return m_lensHelp; }
-    int getClothSlot() { return m_clothSlot; }
-    int getElevation() { return m_elevation; }
-    bool isGround() { return m_isGround; }
-    bool isGroundBorder() { return m_isGroundBorder; }
-    bool isOnBottom() { return m_isOnBottom; }
-    bool isOnTop() { return m_isOnTop; }
-    bool isContainer() { return m_isContainer; }
-    bool isStackable() { return m_isStackable; }
-    bool isForceUse() { return m_isForceUse; }
-    bool isMultiUse() { return m_isMultiUse; }
-    bool isWritable() { return m_isWritable; }
-    bool isWritableOnce() { return m_isWritableOnce; }
-    bool isFluidContainer() { return m_isFluidContainer; }
-    bool isFluid() { return m_isFluid; }
-    bool isNotWalkable() { return m_isNotWalkable; }
-    bool isNotMoveable() { return m_isNotMoveable; }
-    bool blockProjectile() { return m_blockProjectile; }
-    bool isNotPathable() { return m_isNotPathable; }
-    bool isPickupable() { return m_isPickupable; }
-    bool isHangable() { return m_isHangable; }
-    bool isHookSouth() { return m_isHookSouth; }
-    bool isHookEast() { return m_isHookEast; }
-    bool isRotateable() { return m_isRotateable; }
-    bool hasLight() { return m_hasLight; }
-    bool isDontHide() { return m_isDontHide; }
-    bool isTranslucent() { return m_isTranslucent; }
-    bool hasDisplacement() { return m_hasDisplacement; }
-    bool hasElevation() { return m_hasElevation; }
-    bool isLyingCorpse() { return m_isLyingCorpse; }
-    bool isAnimateAlways() { return m_isAnimateAlways; }
-    bool hasMiniMapColor() { return m_hasMiniMapColor; }
-    bool hasLensHelp() { return m_hasLensHelp; }
-    bool isFullGround() { return m_isFullGround; }
-    bool isIgnoreLook() { return m_isIgnoreLook; }
-    bool isCloth() { return m_isCloth; }
+    Point getDisplacement() { return m_displacement; }
+    int getDisplacementX() { return getDisplacement().x; }
+    int getDisplacementY() { return getDisplacement().y; }
+
+    int getGroundSpeed() { return m_attribs.get<uint16>(DatAttribGround); }
+    int getMaxTextLength() { return m_attribs.has(DatAttribWritableOnce) ? m_attribs.get<uint16>(DatAttribWritableOnce) : m_attribs.get<uint16>(DatAttribWritable); }
+    Light getLight() { return m_attribs.get<Light>(DatAttribLight); }
+    int getMinimapColor() { return m_attribs.get<uint16>(DatAttribMiniMapColor); }
+    int getLensHelp() { return m_attribs.get<uint16>(DatAttribLensHelp); }
+    int getClothSlot() { return m_attribs.get<uint16>(DatAttribCloth); }
+    int getElevation() { return m_attribs.get<uint16>(DatAttribElevation); }
+    MarketData getMarketData() { return m_attribs.get<MarketData>(DatAttribMarket); }
+    bool isGround() { return m_attribs.has(DatAttribGround); }
+    bool isGroundBorder() { return m_attribs.has(DatAttribGroundBorder); }
+    bool isOnBottom() { return m_attribs.has(DatAttribOnBottom); }
+    bool isOnTop() { return m_attribs.has(DatAttribOnTop); }
+    bool isContainer() { return m_attribs.has(DatAttribContainer); }
+    bool isStackable() { return m_attribs.has(DatAttribStackable); }
+    bool isForceUse() { return m_attribs.has(DatAttribForceUse); }
+    bool isMultiUse() { return m_attribs.has(DatAttribMultiUse); }
+    bool isWritable() { return m_attribs.has(DatAttribWritable); }
+    bool isChargeable() { return m_attribs.has(DatAttribChargeable); }
+    bool isWritableOnce() { return m_attribs.has(DatAttribWritableOnce); }
+    bool isFluidContainer() { return m_attribs.has(DatAttribFluidContainer); }
+    bool isSplash() { return m_attribs.has(DatAttribSplash); }
+    bool isNotWalkable() { return m_attribs.has(DatAttribNotWalkable); }
+    bool isNotMoveable() { return m_attribs.has(DatAttribNotMoveable); }
+    bool blockProjectile() { return m_attribs.has(DatAttribBlockProjectile); }
+    bool isNotPathable() { return m_attribs.has(DatAttribNotPathable); }
+    bool isPickupable() { return m_attribs.has(DatAttribPickupable); }
+    bool isHangable() { return m_attribs.has(DatAttribHangable); }
+    bool isHookSouth() { return m_attribs.has(DatAttribHookSouth); }
+    bool isHookEast() { return m_attribs.has(DatAttribHookEast); }
+    bool isRotateable() { return m_attribs.has(DatAttribRotateable); }
+    bool hasLight() { return m_attribs.has(DatAttribLight); }
+    bool isDontHide() { return m_attribs.has(DatAttribDontHide); }
+    bool isTranslucent() { return m_attribs.has(DatAttribTranslucent); }
+    bool hasDisplacement() { return m_attribs.has(DatAttribDisplacement); }
+    bool hasElevation() { return m_attribs.has(DatAttribElevation); }
+    bool isLyingCorpse() { return m_attribs.has(DatAttribLyingCorpse); }
+    bool isAnimateAlways() { return m_attribs.has(DatAttribAnimateAlways); }
+    bool hasMiniMapColor() { return m_attribs.has(DatAttribMiniMapColor); }
+    bool hasLensHelp() { return m_attribs.has(DatAttribLensHelp); }
+    bool isFullGround() { return m_attribs.has(DatAttribFullGround); }
+    bool isIgnoreLook() { return m_attribs.has(DatAttribIgnoreLook); }
+    bool isCloth() { return m_attribs.has(DatAttribCloth); }
 
 private:
     const TexturePtr& getTexture(int animationPhase);
@@ -172,64 +181,21 @@ private:
 
     DatCategory m_category;
     uint16 m_id;
-    Boolean<true> m_null;
+    bool m_null;
+    AttribStorage m_attribs;
+
+    Size m_size;
+    Point m_displacement;
+    int m_exactSize;
+    int m_numPatternX, m_numPatternY, m_numPatternZ;
+    int m_animationPhases;
+    int m_layers;
 
     std::vector<int> m_spritesIndex;
     std::vector<TexturePtr> m_textures;
     std::vector<std::vector<Rect>> m_texturesFramesRects;
     std::vector<std::vector<Rect>> m_texturesFramesOriginRects;
     std::vector<std::vector<Point>> m_texturesFramesOffsets;
-
-    // dat stuff
-    Size m_size;
-    Point m_displacement;
-    int m_exactSize;
-    int m_layers;
-    int m_numPatternX;
-    int m_numPatternY;
-    int m_numPatternZ;
-    int m_animationPhases;
-    int m_groundSpeed;
-    int m_maxTextLenght;
-    int m_lightLevel;
-    int m_lightColor;
-    int m_miniMapColor;
-    int m_lensHelp;
-    int m_clothSlot;
-    int m_elevation;
-    Boolean<false> m_isGround;
-    Boolean<false> m_isGroundBorder;
-    Boolean<false> m_isOnBottom;
-    Boolean<false> m_isOnTop;
-    Boolean<false> m_isContainer;
-    Boolean<false> m_isStackable;
-    Boolean<false> m_isForceUse;
-    Boolean<false> m_isMultiUse;
-    Boolean<false> m_isWritable;
-    Boolean<false> m_isWritableOnce;
-    Boolean<false> m_isFluidContainer;
-    Boolean<false> m_isFluid;
-    Boolean<false> m_isNotWalkable;
-    Boolean<false> m_isNotMoveable;
-    Boolean<false> m_blockProjectile;
-    Boolean<false> m_isNotPathable;
-    Boolean<false> m_isPickupable;
-    Boolean<false> m_isHangable;
-    Boolean<false> m_isHookSouth;
-    Boolean<false> m_isHookEast;
-    Boolean<false> m_isRotateable;
-    Boolean<false> m_hasLight;
-    Boolean<false> m_isDontHide;
-    Boolean<false> m_isTranslucent;
-    Boolean<false> m_hasDisplacement;
-    Boolean<false> m_hasElevation;
-    Boolean<false> m_isLyingCorpse;
-    Boolean<false> m_isAnimateAlways;
-    Boolean<false> m_hasMiniMapColor;
-    Boolean<false> m_hasLensHelp;
-    Boolean<false> m_isFullGround;
-    Boolean<false> m_isIgnoreLook;
-    Boolean<false> m_isCloth;
 };
 
 #endif

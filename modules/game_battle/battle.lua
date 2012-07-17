@@ -224,7 +224,7 @@ function Battle.checkCreatureSkull(creature, skullId)
       if creature:getSkull() ~= SkullNone then
         skullWidget:setWidth(skullWidget:getHeight())
         local imagePath = getSkullImagePath(creature:getSkull())
-        skullWidget:setImageSource('/game/' .. imagePath)
+        skullWidget:setImageSource(imagePath)
         labelWidget:setMarginLeft(5)
       else
         skullWidget:setWidth(0)
@@ -246,7 +246,7 @@ function Battle.checkCreatureEmblem(creature, emblemId)
       if emblemId ~= EmblemNone then
         emblemWidget:setWidth(emblemWidget:getHeight())
         local imagePath = getEmblemImagePath(emblemId)
-        emblemWidget:setImageSource('/game/' .. imagePath)
+        emblemWidget:setImageSource(imagePath)
         emblemWidget:setMarginLeft(5)
         labelWidget:setMarginLeft(5)
       else

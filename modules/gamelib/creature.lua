@@ -30,73 +30,81 @@ EmblemBlue = 3
 -- @}
 
 function getSkullImagePath(skullId)
+  local path
   if skullId == SkullYellow then
-    return 'icons/skull_yellow.png'
+    path = 'icons/skull_yellow.png'
   elseif skullId == SkullGreen then
-    return 'icons/skull_green.png'
+    path = 'icons/skull_green.png'
   elseif skullId == SkullWhite then
-    return 'icons/skull_white.png'
+    path = 'icons/skull_white.png'
   elseif skullId == SkullRed then
-    return 'icons/skull_red.png'
+    path = 'icons/skull_red.png'
   elseif skullId == SkullBlack then
-    return 'icons/skull_black.png'
+    path = 'icons/skull_black.png'
   elseif skullId == SkullOrange then
-    return 'icons/skull_orange.png'
+    path = 'icons/skull_orange.png'
   end
+  path = resolvepath(path)
+  return path
 end
 
 function getShieldImagePathAndBlink(shieldId)
+  local path
   if shieldId == ShieldWhiteYellow then
-    return 'icons/shield_yellow_white.png', false
+    path = 'icons/shield_yellow_white.png', false
   elseif shieldId == ShieldWhiteBlue then
-    return 'icons/shield_blue_white.png', false
+    path = 'icons/shield_blue_white.png', false
   elseif shieldId == ShieldBlue then
-    return 'icons/shield_blue.png', false
+    path = 'icons/shield_blue.png', false
   elseif shieldId == ShieldYellow then
-    return 'icons/shield_yellow.png', false
+    path = 'icons/shield_yellow.png', false
   elseif shieldId == ShieldBlueSharedExp then
-    return 'icons/shield_blue_shared.png', false
+    path = 'icons/shield_blue_shared.png', false
   elseif shieldId == ShieldYellowSharedExp then
-    return 'icons/shield_yellow_shared.png', false
+    path = 'icons/shield_yellow_shared.png', false
   elseif shieldId == ShieldBlueNoSharedExpBlink then
-    return 'icons/shield_blue_not_shared.png', true
+    path = 'icons/shield_blue_not_shared.png', true
   elseif shieldId == ShieldYellowNoSharedExpBlink then
-    return 'icons/shield_yellow_not_shared.png', true
+    path = 'icons/shield_yellow_not_shared.png', true
   elseif shieldId == ShieldBlueNoSharedExp then
-    return 'icons/shield_blue_not_shared.png', false
+    path = 'icons/shield_blue_not_shared.png', false
   elseif shieldId == ShieldYellowNoSharedExp then
-    return 'icons/shield_yellow_not_shared.png', false
+    path = 'icons/shield_yellow_not_shared.png', false
   end
+  path = resolvepath(path)
+  return path
 end
 
 function getEmblemImagePath(emblemId)
+  local path
   if emblemId == EmblemGreen then
-    return 'icons/emblem_green.png'
+    path = 'icons/emblem_green.png'
   elseif emblemId == EmblemRed then
-    return 'icons/emblem_red.png'
+    path = 'icons/emblem_red.png'
   elseif emblemId == EmblemBlue then
-    return 'icons/emblem_blue.png'
+    path = 'icons/emblem_blue.png'
   end
+  path = resolvepath(path)
+  return path
 end
 
 function Creature:onSkullChange(skullId)
   local imagePath = getSkullImagePath(skullId)
   if imagePath then
-    self:setSkullTexture(resolvepath(imagePath))
+    self:setSkullTexture(imagePath)
   end
 end
 
 function Creature:onShieldChange(shieldId)
   local imagePath, blink = getShieldImagePathAndBlink(shieldId)
   if imagePath then
-    self:setShieldTexture(resolvepath(imagePath), blink)
+    self:setShieldTexture(imagePath, blink)
   end
 end
 
 function Creature:onEmblemChange(emblemId)
   local imagePath = getEmblemImagePath(emblemId)
   if imagePath then
-    self:setEmblemTexture(resolvepath(imagePath))
+    self:setEmblemTexture(imagePath)
   end
 end
-

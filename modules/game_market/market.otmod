@@ -4,9 +4,6 @@ Module
   author: BeniS
   website: www.otclient.info
 
-  dependencies:
-    - game
-
   @onLoad: |
     dofile 'marketoffer'
     dofile 'marketprotocol'

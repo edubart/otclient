@@ -58,6 +58,7 @@ public:
     std::string getBuildCommit() { return BUILD_COMMIT; }
     std::string getBuildType() { return BUILD_TYPE; }
     std::string getBuildArch() { return BUILD_ARCH; }
+    std::string getOs();
     std::string getStartupOptions() { return m_startupOptions; }
 
 protected:

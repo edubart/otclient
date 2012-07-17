@@ -141,3 +141,14 @@ void Application::close()
     if(!g_lua.callGlobalField<bool>("g_app", "onClose"))
         exit();
 }
+
+std::string Application::getOs()
+{
+#if defined(WIN32)
+    return "windows";
+#elif defined(__APPLE__)
+    return "mac";
+#else
+    return "linux";
+#endif
+}

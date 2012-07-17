@@ -4,6 +4,30 @@ Module
   author: OTClient team
   website: www.otclient.info
 
+  load-later:
+    - game_hotkeys
+    - game_questlog
+    - game_textmessage
+    - game_console
+    - game_outfit
+    - game_healthinfo
+    - game_skills
+    - game_inventory
+    - game_combatcontrols
+    - game_containers
+    - game_viplist
+    - game_battle
+    - game_minimap
+    - game_npctrade
+    - game_textwindow
+    - game_playertrade
+    - game_ruleviolation
+    - game_bugreport
+    - game_shaders
+    - game_playerdeath
+    - game_playermount
+    - game_market
+
   @onLoad: |
     dofile 'widgets/uigamemap'
     dofile 'widgets/uiitem'

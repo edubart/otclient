@@ -22,21 +22,24 @@
 
 #include <framework/core/application.h>
 #include <framework/luaengine/luainterface.h>
-#include <framework/graphics/fontmanager.h>
-#include <framework/ui/ui.h>
 #include <framework/net/protocol.h>
 #include <framework/core/eventdispatcher.h>
 #include <framework/core/configmanager.h>
 #include <framework/otml/otml.h>
-#include <framework/graphics/graphics.h>
-#include <framework/platform/platformwindow.h>
 #include <framework/core/modulemanager.h>
 #include <framework/core/module.h>
 #include <framework/sound/soundmanager.h>
 #include <framework/util/crypt.h>
 #include <framework/core/resourcemanager.h>
-#include <framework/graphics/particlemanager.h>
 #include <framework/graphics/texturemanager.h>
+
+#ifdef FW_GRAPHICS
+#include <framework/graphics/graphics.h>
+#include <framework/platform/platformwindow.h>
+#include <framework/graphics/particlemanager.h>
+#include <framework/graphics/fontmanager.h>
+#include <framework/ui/ui.h>
+#endif
 
 void Application::registerLuaFunctions()
 {
@@ -67,6 +70,7 @@ void Application::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_app", "getBuildCommit", &Application::getBuildCommit, static_cast<Application*>(&g_app));
     g_lua.bindSingletonFunction("g_app", "getBuildType", &Application::getBuildType, static_cast<Application*>(&g_app));
     g_lua.bindSingletonFunction("g_app", "getBuildArch", &Application::getBuildArch, static_cast<Application*>(&g_app));
+    g_lua.bindSingletonFunction("g_app", "getOs", &Application::getOs, static_cast<Application*>(&g_app));
     g_lua.bindSingletonFunction("g_app", "exit", &Application::exit, static_cast<Application*>(&g_app));
 
     // Crypt
@@ -644,7 +648,7 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<InputMessage>("peekU16", &InputMessage::peekU16);
     g_lua.bindClassMemberFunction<InputMessage>("peekU32", &InputMessage::peekU32);
     g_lua.bindClassMemberFunction<InputMessage>("peekU64", &InputMessage::peekU64);
-    g_lua.bindClassMemberFunction<InputMessage>("decryptRSA", &InputMessage::decryptRSA);
+    g_lua.bindClassMemberFunction<InputMessage>("decryptRsa", &InputMessage::decryptRsa);
     g_lua.bindClassMemberFunction<InputMessage>("getReadSize", &InputMessage::getReadSize);
     g_lua.bindClassMemberFunction<InputMessage>("getUnreadSize", &InputMessage::getUnreadSize);
     g_lua.bindClassMemberFunction<InputMessage>("getMessageSize", &InputMessage::getMessageSize);
@@ -661,7 +665,7 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<OutputMessage>("addU64", &OutputMessage::addU64);
     g_lua.bindClassMemberFunction<OutputMessage>("addString", &OutputMessage::addString);
     g_lua.bindClassMemberFunction<OutputMessage>("addPaddingBytes", &OutputMessage::addPaddingBytes);
-    g_lua.bindClassMemberFunction<OutputMessage>("encryptRSA", &OutputMessage::encryptRSA);
+    g_lua.bindClassMemberFunction<OutputMessage>("encryptRsa", &OutputMessage::encryptRsa);
     g_lua.bindClassMemberFunction<OutputMessage>("getMessageSize", &OutputMessage::getMessageSize);
 #endif
 

@@ -232,8 +232,8 @@ public:
     void setFeature(Otc::GameFeature feature) { m_features.set(feature, false); }
     bool getFeature(Otc::GameFeature feature) { return m_features.test(feature); }
 
-    void setClientVersion(int clientVersion);
-    int getClientVersion() { return m_clientVersion; }
+    void setProtocolVersion(int version);
+    int getProtocolVersion() { return m_protocolVersion; }
 
     void setRSA(const std::string& rsa);
     std::string getRSA() { return m_rsa; }
@@ -256,7 +256,6 @@ public:
     int getServerBeat() { return m_serverBeat; }
     LocalPlayerPtr getLocalPlayer() { return m_localPlayer; }
     ProtocolGamePtr getProtocolGame() { return m_protocolGame; }
-    int getProtocolVersion() { return PROTOCOL; }
     std::string getCharacterName() { return m_characterName; }
     std::string getWorldName() { return m_worldName; }
     std::vector<uint8> getGMActions() { return m_gmActions; }
@@ -288,7 +287,7 @@ private:
     std::string m_characterName;
     std::string m_worldName;
     std::bitset<Otc::LastGameFeature> m_features;
-    int m_clientVersion;
+    int m_protocolVersion;
     std::string m_rsa;
 };
 

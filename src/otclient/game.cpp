@@ -38,7 +38,7 @@ Game g_game;
 Game::Game()
 {
     resetGameStates();
-    setClientVersion(860);
+    m_protocolVersion = 0;
 }
 
 void Game::resetGameStates()
@@ -416,10 +416,11 @@ void Game::processWalkCancel(Otc::Direction direction)
 
 void Game::loginWorld(const std::string& account, const std::string& password, const std::string& worldName, const std::string& worldHost, int worldPort, const std::string& characterName)
 {
-    if(m_protocolGame || isOnline()) {
-        g_logger.traceError("unable to login into a world while already online or logging");
-        return;
-    }
+    if(m_protocolGame || isOnline())
+        stdext::throw_exception("Unable to login into a world while already online or logging.");
+
+    if(m_protocolVersion == 0)
+        stdext::throw_exception("Must set a valid game protocol version before logging.");
 
     m_protocolGame = ProtocolGamePtr(new ProtocolGame);
     m_protocolGame->login(account, password, worldHost, (uint16)worldPort, characterName);
@@ -1090,61 +1091,48 @@ bool Game::canPerformGameAction()
     return m_localPlayer && !m_dead && m_protocolGame && m_protocolGame->isConnected() && checkBotProtection();
 }
 
-void Game::setClientVersion(int clientVersion)
+void Game::setProtocolVersion(int version)
 {
-    if(isOnline()) {
-        g_logger.error("Unable to change client version while online");
-        return;
-    }
+    if(isOnline())
+        stdext::throw_exception("Unable to change client version while online");
 
-    //TODO: check supported versions
+    if(version < 810 || version > 960)
+        stdext::throw_exception(stdext::format("Protocol version %d not supported", version));
 
     m_features.reset();
 
-    if(clientVersion >= 854) {
+    if(version >= 854) {
         enableFeature(Otc::GameProtocolChecksum);
         enableFeature(Otc::GameAccountNames);
         enableFeature(Otc::GameChallangeOnLogin);
-        enableFeature(Otc::GameStackposOnTileAddThing);
         enableFeature(Otc::GameDoubleFreeCapacity);
-        enableFeature(Otc::GameCreatureAdditionalInfo);
-        enableFeature(Otc::GameReverseCreatureStack);
+        enableFeature(Otc::GameCreatureEmblems);
     }
 
-    if(clientVersion >= 860) {
-        enableFeature(Otc::GameIdOnCancelAttack);
-    }
-
-    if(clientVersion >= 862) {
+    if(version >= 862) {
         enableFeature(Otc::GamePenalityOnDeath);
     }
 
-    if(clientVersion >= 870) {
+    if(version >= 870) {
         enableFeature(Otc::GameDoubleExperience);
         enableFeature(Otc::GamePlayerMounts);
     }
 
-    if(clientVersion >= 910) {
+    if(version >= 910) {
         enableFeature(Otc::GameNameOnNpcTrade);
         enableFeature(Otc::GameTotalCapacity);
         enableFeature(Otc::GameSkillsBase);
-        enableFeature(Otc::GameAdditionalPlayerStats);
+        enableFeature(Otc::GamePlayerRegenerationTime);
         enableFeature(Otc::GameChannelPlayerList);
         enableFeature(Otc::GameEnvironmentEffect);
-        enableFeature(Otc::GameCreatureType);
         enableFeature(Otc::GameItemAnimationPhase);
     }
 
-    if(clientVersion >= 940) {
+    if(version >= 940) {
         enableFeature(Otc::GamePlayerMarket);
     }
 
-    if(clientVersion >= 953) {
-        enableFeature(Otc::GameCreaturePassableInfo);
-        enableFeature(Otc::GameTrucatedPingOpcode);
-    }
-
-    m_clientVersion = clientVersion;
+    m_protocolVersion = version;
 }
 
 void Game::setAttackingCreature(const CreaturePtr& creature)

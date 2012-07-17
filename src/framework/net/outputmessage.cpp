@@ -89,7 +89,7 @@ void OutputMessage::addPaddingBytes(int bytes, uint8 byte)
     m_messageSize += bytes;
 }
 
-void OutputMessage::encryptRSA(int size, const std::string& key)
+void OutputMessage::encryptRsa(int size, const std::string& key)
 {
     if(m_messageSize < size)
         throw stdext::exception("insufficient bytes in buffer to encrypt");

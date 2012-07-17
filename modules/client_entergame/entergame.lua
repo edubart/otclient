@@ -5,6 +5,7 @@ local loadBox
 local enterGame
 local motdButton
 local enterGameButton
+local protocolBox
 
 -- private functions
 local function onError(protocol, message, errorCode)
@@ -66,6 +67,11 @@ function EnterGame.init()
   local host = g_settings.get('host')
   local port = g_settings.get('port')
   local autologin = g_settings.getBoolean('autologin')
+  local protocol = g_settings.getInteger('protocol', 860)
+
+  if not protocol or protocol == 0 then
+    protocol = 860
+  end
 
   if port == nil or port == 0 then port = 7171 end
 
@@ -76,6 +82,12 @@ function EnterGame.init()
   enterGame:getChildById('autoLoginBox'):setChecked(autologin)
   enterGame:getChildById('rememberPasswordBox'):setChecked(#account > 0)
   enterGame:getChildById('accountNameTextEdit'):focus()
+
+  protocolBox = enterGame:getChildById('protocolComboBox')
+  for _i,proto in pairs(g_game.getSupportedProtocols()) do
+    protocolBox:addOption(proto)
+  end
+  protocolBox:setCurrentOption(protocol)
 
   -- only open entergame when app starts
   if not g_app.isRunning() then
@@ -95,6 +107,7 @@ function EnterGame.terminate()
   enterGameButton = nil
   motdButton:destroy()
   motdButton = nil
+  protocolBox = nil
   EnterGame = nil
 end
 
@@ -116,7 +129,6 @@ function EnterGame.openWindow()
   end
 end
 
-
 function EnterGame.clearAccountFields()
   enterGame:getChildById('accountNameTextEdit'):clearText()
   enterGame:getChildById('accountPasswordTextEdit'):clearText()
@@ -130,16 +142,18 @@ function EnterGame.doLogin()
   G.password = enterGame:getChildById('accountPasswordTextEdit'):getText()
   G.host = enterGame:getChildById('serverHostTextEdit'):getText()
   G.port = tonumber(enterGame:getChildById('serverPortTextEdit'):getText())
+  local protocol = tonumber(protocolBox:getText())
   EnterGame.hide()
 
-  if G.host == '' or G.port == nil or G.port == 0 then
-    local errorBox = displayErrorBox(tr('Login Error'), tr('Enter a valid server host and port to login.'))
+  if g_game.isOnline() then
+    local errorBox = displayErrorBox(tr('Login Error'), tr('Cannot login while already in game.'))
     connect(errorBox, { onOk = EnterGame.show })
     return
   end
 
   g_settings.set('host', G.host)
   g_settings.set('port', G.port)
+  g_settings.set('protocol', protocol)
 
   local protocolLogin = ProtocolLogin.create()
   protocolLogin.onError = onError
@@ -153,6 +167,8 @@ function EnterGame.doLogin()
                                   EnterGame.show()
                                 end })
 
+  g_game.chooseRsa(G.host)
+  g_game.setProtocolVersion(protocol)
   protocolLogin:login(G.host, G.port, G.account, G.password)
 end
 

@@ -1,16 +1,25 @@
 -- @docclass
 ProtocolLogin = extends(Protocol)
 
+-- set to the latest Tibia.pic signature to make otclient compatible with official tibia
+local PIC_SIGNATURE = 0
+
+LoginServerError = 10
+LoginServerMotd = 20
+LoginServerUpdateNeeded = 30
+LoginServerCharacterList = 100
+
+
 -- private functions
 local function sendLoginPacket(protocol)
   local msg = OutputMessage.create()
   msg:addU8(ClientOpcodes.ClientEnterAccount)
-  msg:addU16(1) -- todo: ClientOs
-  msg:addU16(g_game.getClientVersion())
+  msg:addU16(g_game.getOsType())
+  msg:addU16(g_game.getProtocolVersion())
 
   msg:addU32(g_things.getDatSignature())
   msg:addU32(g_sprites.getSprSignature())
-  msg:addU32(0) -- todo: pic signature
+  msg:addU32(PIC_SIGNATURE)
 
   local paddingBytes = 128
   msg:addU8(0) -- first RSA byte must be 0
@@ -40,7 +49,7 @@ local function sendLoginPacket(protocol)
   end
 
   msg:addPaddingBytes(paddingBytes, 0)
-  msg:encryptRSA(128, OTSERV_RSA) -- todo: check whether to use cip or ot rsa
+  msg:encryptRsa(128, g_game.getRsa())
 
   protocol:send(msg)
   protocol:enableXteaEncryption()
@@ -60,7 +69,7 @@ function ProtocolLogin:onRecv(msg)
     elseif opcode == LoginServerMotd then
       self:parseMotd(msg)
     elseif opcode == LoginServerUpdateNeeded then
-      signalcall(self.onError, self, "Client needs update.")
+      signalcall(self.onError, self, tr("Client needs update."))
     elseif opcode == LoginServerCharacterList then
       self:parseCharacterList(msg)
     else
@@ -77,7 +86,11 @@ end
 
 function ProtocolLogin:login(host, port, accountName, accountPassword)
   if string.len(accountName) == 0 or string.len(accountPassword) == 0 then
-    signalcall(self.onError, self, "You must enter an account name and password.")
+    signalcall(self.onError, self, tr("You must enter an account name and password."))
+    return
+  end
+  if string.len(host) == 0 or port == nil or port == 0 then
+    signalcall(self.onError, self, tr("You must enter a valid server address and port."))
     return
   end
 

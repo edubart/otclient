@@ -54,7 +54,7 @@ local function updateWait(timeStart, timeEnd)
       progressBar:setPercent(percent)
 
       local label = waitingWindow:getChildById('timeLabel')
-      label:setText('Trying to reconnect in ' .. timeStr .. ' seconds.')
+      label:setText(tr('Trying to reconnect in %s seconds.', timeStr))
 
       updateWaitEvent = scheduleEvent(function() updateWait(timeStart, timeEnd) end, 1000 * progressBar:getPercentPixels() / 100 * (timeEnd - timeStart))
       return true

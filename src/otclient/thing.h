@@ -28,12 +28,6 @@
 #include "thingtypemanager.h"
 #include <framework/luaengine/luaobject.h>
 
-struct Light
-{
-    uint8 intensity;
-    uint8 color;
-};
-
 // @bindclass
 #pragma pack(push,1) // disable memory alignment
 class Thing : public LuaObject
@@ -95,8 +89,7 @@ public:
     int getAnimationPhases() { return rawGetDatType()->getAnimationPhases(); }
     int getGroundSpeed() { return rawGetDatType()->getGroundSpeed(); }
     int getMaxTextLength() { return rawGetDatType()->getMaxTextLength(); }
-    int getLightLevel() { return rawGetDatType()->getLightLevel(); }
-    int getLightColor() { return rawGetDatType()->getLightColor(); }
+    Light getLight() { return rawGetDatType()->getLight(); }
     int getMinimapColor() { return rawGetDatType()->getMinimapColor(); }
     int getLensHelp() { return rawGetDatType()->getLensHelp(); }
     int getClothSlot() { return rawGetDatType()->getClothSlot(); }
@@ -110,9 +103,10 @@ public:
     bool isForceUse() { return rawGetDatType()->isForceUse(); }
     bool isMultiUse() { return rawGetDatType()->isMultiUse(); }
     bool isWritable() { return rawGetDatType()->isWritable(); }
+    bool isChargeable() { return rawGetDatType()->isChargeable(); }
     bool isWritableOnce() { return rawGetDatType()->isWritableOnce(); }
     bool isFluidContainer() { return rawGetDatType()->isFluidContainer(); }
-    bool isFluid() { return rawGetDatType()->isFluid(); }
+    bool isSplash() { return rawGetDatType()->isSplash(); }
     bool isNotWalkable() { return rawGetDatType()->isNotWalkable(); }
     bool isNotMoveable() { return rawGetDatType()->isNotMoveable(); }
     bool blockProjectile() { return rawGetDatType()->blockProjectile(); }
@@ -134,6 +128,7 @@ public:
     bool isFullGround() { return rawGetDatType()->isFullGround(); }
     bool isIgnoreLook() { return rawGetDatType()->isIgnoreLook(); }
     bool isCloth() { return rawGetDatType()->isCloth(); }
+    MarketData getMarketData() { return rawGetDatType()->getMarketData(); }
 
 protected:
     Position m_position;

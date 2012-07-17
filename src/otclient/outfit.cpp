@@ -25,7 +25,7 @@
 Outfit::Outfit()
 {
     m_category = DatCreatureCategory;
-    m_id = 1;
+    m_id = 0;
     resetClothes();
 }
 

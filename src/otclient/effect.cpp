@@ -46,6 +46,8 @@ void Effect::startAnimation()
 
 void Effect::setId(uint32 id)
 {
+    if(!g_things.isValidDatId(id, DatEffectCategory))
+        id = 0;
     m_id = id;
 }
 

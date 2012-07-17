@@ -1,7 +1,7 @@
 MainWindow
   id: enterGame
   !text: tr('Enter Game')
-  size: 236 240
+  size: 236 274
   @onEnter: EnterGame.doLogin()
   @onEscape: EnterGame.hide()
 
@@ -43,26 +43,43 @@ MainWindow
   TextEdit
     id: serverHostTextEdit
     !tooltip: tr('Make sure that your client uses\nthe correct game protocol version')
-    anchors.left: serverLabel.left
+    anchors.left: parent.left
+    anchors.right: parent.right
     anchors.top: serverLabel.bottom
     margin-top: 2
-    width: 140
+
+  Label
+    id: protocolLabel
+    !text: tr('Protocol')
+    anchors.left: parent.left
+    anchors.top: serverHostTextEdit.bottom
+    anchors.right: portLabel.left
+    margin-right: 10
+    margin-top: 8
+
+  ComboBox
+    id: protocolComboBox
+    anchors.left: protocolLabel.left
+    anchors.right: protocolLabel.right
+    anchors.top: protocolLabel.bottom
+    margin-top: 2
+    width: 90
 
   Label
     id: portLabel
     !text: tr('Port')
-    anchors.left: serverHostTextEdit.right
-    anchors.top: serverLabel.top
-    margin-left: 10
-    text-auto-resize: true
+    anchors.right: parent.right
+    anchors.top: serverHostTextEdit.bottom
+    margin-top: 8
+    width: 70
 
   TextEdit
     id: serverPortTextEdit
     text: 7171
+    anchors.right: parent.right
     anchors.left: portLabel.left
     anchors.top: portLabel.bottom
     margin-top: 2
-    width: 55
 
   CheckBox
     id: rememberPasswordBox

@@ -83,6 +83,8 @@ void Missile::setPath(const Position& fromPosition, const Position& toPosition)
 
 void Missile::setId(uint32 id)
 {
+    if(!g_things.isValidDatId(id, DatMissileCategory))
+        id = 0;
     m_id = id;
 }
 

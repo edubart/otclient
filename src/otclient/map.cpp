@@ -467,7 +467,7 @@ bool Map::loadOtcm(const std::string& fileName)
                 uint8 countOrSubType = fin->getU8();
 
                 ItemPtr item = Item::create(id);
-                if(item->isStackable() || item->isFluidContainer() || item->isFluid())
+                if(item->isStackable() || item->isFluidContainer() || item->isSplash() || item->isChargeable())
                     item->setCountOrSubType(countOrSubType);
 
                 if(item->isValid())

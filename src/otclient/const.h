@@ -286,31 +286,27 @@ namespace Otc
     };
 
     enum GameFeature {
-        GameExtendedOpcode = 0,
-        GameProtocolChecksum,
-        GameAccountNames,
-        GameChallangeOnLogin,
-        GameStackposOnTileAddThing,
-        GamePenalityOnDeath,
-        GameNameOnNpcTrade,
-        GameDoubleFreeCapacity,
-        GameDoubleExperience,
-        GameTotalCapacity,
-        GameSkillsBase,
-        GameAdditionalPlayerStats,
-        GameIdOnCancelAttack,
-        GameChannelPlayerList,
-        GamePlayerMounts,
-        GameEnvironmentEffect,
-        GameCreatureType,
-        GameCreatureAdditionalInfo,
-        GameCreaturePassableInfo,
-        GameItemAnimationPhase,
-        GameTrucatedPingOpcode,
-        GameReverseCreatureStack,
-        GameMagicEffectU16,
-        GamePlayerMarket,
-        LastGameFeature
+        // 1-50 defined in c++
+        GameProtocolChecksum = 1,
+        GameAccountNames = 2,
+        GameChallangeOnLogin = 3,
+        GamePenalityOnDeath = 5,
+        GameNameOnNpcTrade = 6,
+        GameDoubleFreeCapacity = 7,
+        GameDoubleExperience = 8,
+        GameTotalCapacity = 9,
+        GameSkillsBase = 10,
+        GamePlayerRegenerationTime = 11,
+        GameChannelPlayerList = 13,
+        GamePlayerMounts = 14,
+        GameEnvironmentEffect = 15,
+        GameCreatureEmblems = 17,
+        GameItemAnimationPhase = 19,
+        GameMagicEffectU16 = 22,
+        GamePlayerMarket = 23,
+        // 23-50 unused yet
+        // 51-100 reserved to be defined in lua
+        LastGameFeature = 101
     };
 
     enum PathFindResult {

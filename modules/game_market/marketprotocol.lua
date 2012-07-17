@@ -3,27 +3,6 @@ MarketProtocol = {}
 local market
 
 -- private functions
-
-local function parseOpcode(protocol, opcode, msg)
-  if not g_game.getFeature(GamePlayerMarket) then
-    return false
-  end
-
-  -- process msg
-  if opcode == GameServerOpcodes.GameServerMarketEnter then
-    parseMarketEnter(msg)
-  elseif opcode == GameServerOpcodes.GameServerMarketLeave then
-    parseMarketLeave(msg)
-  elseif opcode == GameServerOpcodes.GameServerMarketDetail then
-    parseMarketDetail(msg)
-  elseif opcode == GameServerOpcodes.GameServerMarketBrowse then
-    parseMarketBrowse(msg)
-  else
-    return false
-  end
-  return true
-end
-
 local function send(msg)
   print(msg:getMessageSize())
   g_game.getProtocolGame():safeSend(msg)
@@ -49,12 +28,11 @@ local function readMarketOffer(msg, action, var)
   else
     playerName = msg:getString()
   end
-  
+
   return MarketOffer.new({timestamp, counter}, action, itemId, amount, price, playerName, state)
 end
 
 -- parsing protocols
-
 local function parseMarketEnter(msg)
   local balance = msg:getU32()
   local offers = msg:getU8()
@@ -128,14 +106,18 @@ local function parseMarketBrowse(msg)
 end
 
 -- public functions
-
 function MarketProtocol.init()
-  connect(ProtocolGame, { onOpcode = parseOpcode } )
-
+  ProtocolGame.registerOpcode(GameServerOpcodes.GameServerMarketEnter, parseMarketEnter)
+  ProtocolGame.registerOpcode(GameServerOpcodes.GameServerMarketLeave, parseMarketLeave)
+  ProtocolGame.registerOpcode(GameServerOpcodes.GameServerMarketDetail, parseMarketDetail)
+  ProtocolGame.registerOpcode(GameServerOpcodes.GameServerMarketBrowse, parseMarketBrowse)
 end
 
 function MarketProtocol.terminate()
-  disconnect(ProtocolGame, { onOpcode = parseOpcode } )
+  ProtocolGame.unregisterOpcode(GameServerOpcodes.GameServerMarketEnter, parseMarketEnter)
+  ProtocolGame.unregisterOpcode(GameServerOpcodes.GameServerMarketLeave, parseMarketLeave)
+  ProtocolGame.unregisterOpcode(GameServerOpcodes.GameServerMarketDetail, parseMarketDetail)
+  ProtocolGame.unregisterOpcode(GameServerOpcodes.GameServerMarketBrowse, parseMarketBrowse)
 
   market = nil
   MarketProtocol = nil

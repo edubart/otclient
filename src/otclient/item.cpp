@@ -101,7 +101,7 @@ void Item::draw(const Point& dest, float scaleFactor, bool animate)
             else if(tile->mustHookEast())
                 xPattern = getNumPatternX() >= 3 ? 2 : 0;
         }
-    } else if(isFluid() || isFluidContainer()) {
+    } else if(isSplash() || isFluidContainer()) {
         int color = Otc::FluidTransparent;
         switch(m_countOrSubType) {
             case Otc::FluidNone:
@@ -176,15 +176,20 @@ void Item::draw(const Point& dest, float scaleFactor, bool animate)
 
 void Item::setId(uint32 id)
 {
-    m_otbId = g_things.findOtbForClientId(id)->getServerId();
+    if(!g_things.isValidDatId(id, DatItemCategory))
+        id = 0;
+    //m_otbId = g_things.findOtbForClientId(id)->getServerId();
     m_id = id;
+    m_otbId = 0;
 }
 
 void Item::setOtbId(uint16 id)
 {
+    if(!g_things.isValidOtbId(id))
+        id = 0;
     auto otbType = g_things.getOtbType(id);
-    m_otbId = id;
     m_id = otbType->getClientId();
+    m_otbId = id;
 }
 
 bool Item::isValid()

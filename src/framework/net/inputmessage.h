@@ -40,6 +40,7 @@ public:
     void setBuffer(const std::string& buffer);
 
     void skipBytes(uint16 bytes) { m_readPos += bytes; }
+    void setReadPos(uint16 readPos) { m_readPos = readPos; }
     uint8 getU8();
     uint16 getU16();
     uint32 getU32();
@@ -51,9 +52,10 @@ public:
     uint32 peekU32() { uint32 v = getU32(); m_readPos-=4; return v; }
     uint64 peekU64() { uint64 v = getU64(); m_readPos-=8; return v; }
 
-    void decryptRSA(int size, const std::string& p, const std::string& q, const std::string& d);
+    void decryptRsa(int size, const std::string& p, const std::string& q, const std::string& d);
 
     int getReadSize() { return m_readPos - m_headerPos; }
+    int getReadPos() { return m_readPos; }
     int getUnreadSize() { return m_messageSize - (m_readPos - m_headerPos); }
     uint16 getMessageSize() { return m_messageSize; }
 

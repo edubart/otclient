@@ -132,6 +132,7 @@ function getfsrcpath(depth)
 end
 
 function resolvepath(filePath, depth)
+  if not filePath then return nil end
   depth = depth or 1
   if filePath then
     if filePath:sub(0, 1) ~= '/' then

@@ -22,6 +22,7 @@
 
 #include "thingtypedat.h"
 #include "spritemanager.h"
+#include "game.h"
 
 #include <framework/graphics/graphics.h>
 #include <framework/graphics/texture.h>
@@ -33,20 +34,11 @@ ThingTypeDat::ThingTypeDat()
 {
     m_category = DatInvalidCategory;
     m_id = 0;
+    m_null = true;
     m_exactSize = 0;
-    m_layers = 0;
-    m_numPatternX = 0;
-    m_numPatternY = 0;
-    m_numPatternZ = 0;
+    m_numPatternX = m_numPatternY = m_numPatternZ = 0;
     m_animationPhases = 0;
-    m_groundSpeed = 0;
-    m_maxTextLenght = 0;
-    m_lightLevel = 0;
-    m_lightColor = 0;
-    m_miniMapColor = 0;
-    m_lensHelp = 0;
-    m_clothSlot = 0;
-    m_elevation = 0;
+    m_layers = 0;
 }
 
 void ThingTypeDat::unserialize(uint16 clientId, DatCategory category, const FileStreamPtr& fin)
@@ -55,136 +47,68 @@ void ThingTypeDat::unserialize(uint16 clientId, DatCategory category, const File
     m_id = clientId;
     m_category = category;
 
+
+    static int datVersion;
+    if(clientId == 100 && category == DatItemCategory)
+        datVersion = 2;
+
     bool done = false;
     for(int i = 0 ; i < DatLastAttrib;++i) {
-        int property = fin->getU8();
-        if(property == DatLastAttrib) {
+        int attrib = fin->getU8();
+        if(attrib == DatLastAttrib) {
             done = true;
             break;
         }
 
-        switch(property) {
-            case DatAttribIsGround:
-                m_isGround = true;
-                m_groundSpeed = fin->getU16();
-                if(m_groundSpeed == 0)
-                    m_groundSpeed = 100;
+        // hacky way to detect if is older dat version or not
+        if(clientId == 100 && category == DatItemCategory && datVersion != 1 &&
+           (attrib == DatAttribNotPathable || attrib == DatAttribDontHide || attrib == DatAttribIgnoreLook)) {
+            datVersion = 1;
+        }
+        if(datVersion <= 1) {
+            if(attrib == DatAttribWritable) {
+                m_attribs.set(DatAttribChargeable, true);
+                continue;
+            } else if(attrib > DatAttribWritable)
+                attrib -= 1;
+        }
+
+        switch(attrib) {
+            case DatAttribDisplacement: {
+                m_displacement.x = fin->getU16();
+                m_displacement.y = fin->getU16();
+                m_attribs.set(attrib, true);
                 break;
-            case DatAttribIsGroundBorder:
-                m_isGroundBorder = true;
+            }
+            case DatAttribLight: {
+                Light light;
+                light.intensity = fin->getU16();
+                light.color = fin->getU16();
+                m_attribs.set(attrib, light);
                 break;
-            case DatAttribIsOnBottom:
-                m_isOnBottom = true;
+            }
+            case DatAttribMarket: {
+                MarketData market;
+                market.category = fin->getU16();
+                market.showAs = fin->getU16();
+                market.tradeAs = fin->getU16();
+                market.name = fin->getString();
+                market.restrictProfession = fin->getU16();
+                market.requiredLevel = fin->getU16();
+                m_attribs.set(attrib, market);
                 break;
-            case DatAttribIsOnTop:
-                m_isOnTop = true;
-                break;
-            case DatAttribIsContainer:
-                m_isContainer = true;
-                break;
-            case DatAttribIsStackable:
-                m_isStackable = true;
-                break;
-            case DatAttribIsForceUse:
-                m_isForceUse = true;
-                break;
-            case DatAttribIsMultiUse:
-                m_isMultiUse = true;
-                break;
-            case DatAttribIsWritable:
-                m_isWritable = true;
-                m_maxTextLenght = fin->getU16();
-                break;
-            case DatAttribIsWritableOnce:
-                m_isWritableOnce = true;
-                m_maxTextLenght = fin->getU16();
-                break;
-            case DatAttribIsFluidContainer:
-                m_isFluidContainer = true;
-                break;
-            case DatAttribIsFluid:
-                m_isFluid = true;
-                break;
-            case DatAttribIsNotWalkable:
-                m_isNotWalkable = true;
-                break;
-            case DatAttribIsNotMoveable:
-                m_isNotMoveable = true;
-                break;
-            case DatAttribBlockProjectile:
-                m_blockProjectile = true;
-                break;
-            case DatAttribIsNotPathable:
-                m_isNotPathable = true;
-                break;
-            case DatAttribIsPickupable:
-                m_isPickupable = true;
-                break;
-            case DatAttribIsHangable:
-                m_isHangable = true;
-                break;
-            case DatAttribHookSouth:
-                m_isHookSouth = true;
-                break;
-            case DatAttribHookEast:
-                m_isHookEast = true;
-                break;
-            case DatAttribIsRotateable:
-                m_isRotateable = true;
-                break;
-            case DatAttribHasLight:
-                m_hasLight = true;
-                m_lightLevel = fin->getU16();
-                m_lightColor = fin->getU16();
-                break;
-            case DatAttribDontHide:
-                m_isDontHide = true;
-                break;
-            case DatAttribIsTranslucent:
-                m_isTranslucent = true;
-                break;
-            case DatAttribHasDisplacement:
-                m_hasDisplacement = true;
-                m_displacement = Point(fin->getU16(), fin->getU16());
-                break;
-            case DatAttribHasElevation:
-                m_hasElevation = true;
-                m_elevation = fin->getU16();
-                break;
-            case DatAttribIsLyingCorpse:
-                m_isLyingCorpse = true;
-                break;
-            case DatAttribAnimateAlways:
-                m_isAnimateAlways = true;
-                break;
+            }
+            case DatAttribGround:
+            case DatAttribWritable:
+            case DatAttribWritableOnce:
+            case DatAttribElevation:
             case DatAttribMiniMapColor:
-                m_miniMapColor = true;
-                m_miniMapColor = fin->getU16();
-                break;
-            case DatAttribLensHelp:
-                m_lensHelp = true;
-                m_lensHelp = fin->getU16();
-                break;
-            case DatAttribIsFullGround:
-                m_isFullGround = true;
-                break;
-            case DatAttribIgnoreLook:
-                m_isIgnoreLook = true;
-                break;
             case DatAttribCloth:
-                m_isCloth = true;
-                m_clothSlot = fin->getU16();
-                break;
-            case DatAttribMarket:
-                fin->getU16(); // category
-                fin->getU16(); // trade as
-                fin->getU16(); // show as
-                fin->getString(); // name
-                fin->getU16(); // restrict profession
-                fin->getU16(); // level
+            case DatAttribLensHelp:
+                m_attribs.set(attrib, fin->getU16());
                 break;
             default:
-                stdext::throw_exception("corrupt data, invalid type attribute");
+                m_attribs.set(attrib, true);
                 break;
         };
     }
@@ -192,40 +116,18 @@ void ThingTypeDat::unserialize(uint16 clientId, DatCategory category, const File
     if(!done)
         stdext::throw_exception("corrupt data");
 
-    int totalSprites = 1;
-    for(int i = 0; i < DatLastDimension; ++i) {
-        switch(i) {
-            case DatWidth:
-                m_size.setWidth(fin->getU8());
-                break;
-            case DatHeight:
-                m_size.setHeight(fin->getU8());
-                break;
-            case DatExactSize:
-                if(m_size.width() <= 1 && m_size.height() <= 1)
-                    m_exactSize = 32;
-                else
-                    m_exactSize = std::min((int)fin->getU8(), std::max(m_size.width() * 32, m_size.height() * 32));
-                break;
-            case DatLayers:
-                m_layers = fin->getU8();
-                break;
-            case DatPatternX:
-                m_numPatternX = fin->getU8();
-                break;
-            case DatPatternY:
-                m_numPatternY = fin->getU8();
-                break;
-            case DatPatternZ:
-                m_numPatternZ = fin->getU8();
-                break;
-            case DatAnimationPhases:
-                m_animationPhases = fin->getU8();
-                break;
-        }
-    }
+    uint8 width = fin->getU8();
+    uint8 height = fin->getU8();
+    m_size = Size(width, height);
+    m_exactSize = (width > 1 || height > 1) ? std::min((int)fin->getU8(), std::max(width * 32, height * 32)) : 32;
+    m_layers = fin->getU8();
+    m_numPatternX = fin->getU8();
+    m_numPatternY = fin->getU8();
+    m_numPatternZ = fin->getU8();
+    m_animationPhases = fin->getU8();
 
-    totalSprites = m_size.width() * m_size.height() * m_layers * m_numPatternX * m_numPatternY * m_numPatternZ * m_animationPhases;
+    int totalSprites = m_size.area() * m_layers * m_numPatternX * m_numPatternY * m_numPatternZ * m_animationPhases;
+
     if(totalSprites == 0)
         stdext::throw_exception("a thing type has no sprites");
     if(totalSprites > 4096)

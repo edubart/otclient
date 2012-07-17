@@ -32,7 +32,7 @@ MarketOffer.new = function(offerId, action, itemId, amount, price, playerName, s
   offer.player = playerName
 
   state = tonumber(state)
-  if state ~= MarketOfferState.Active and state ~= MarketOfferState.Cancelled 
+  if state ~= MarketOfferState.Active and state ~= MarketOfferState.Cancelled
     and state ~= MarketOfferState.Expired and state ~= MarketOfferState.Accepted then
     g_logger.error('MarketOffer.new - invalid state provided.')
   end
