@@ -27,6 +27,7 @@
 #include <framework/luaengine/luainterface.h>
 
 #include <physfs.h>
+#include <boost/filesystem.hpp>
 
 ResourceManager g_resources;
 
@@ -44,8 +45,7 @@ void ResourceManager::discoverWorkDir(const std::string& appName, const std::str
 {
     // search for modules directory
     std::string sep = PHYSFS_getDirSeparator();
-    std::string possiblePaths[] = { "",
-                                    g_resources.getBaseDir(),
+    std::string possiblePaths[] = { boost::filesystem::current_path().generic_string() + sep,
                                     g_resources.getBaseDir() + ".." + sep,
                                     g_resources.getBaseDir() + ".." + sep + "share" + sep + appName + sep,
                                     g_resources.getBaseDir() + appName + sep };
@@ -80,15 +80,7 @@ bool ResourceManager::setupUserWriteDir(const std::string& appWriteDirName)
 
 bool ResourceManager::setWriteDir(const std::string& writeDir, bool create)
 {
-    if(!PHYSFS_setWriteDir(writeDir.c_str()) && !create) {
-        g_logger.error(stdext::format("Unable to set write directory '%s': %s", writeDir, PHYSFS_getLastError()));
-        return false;
-    }
-
-    if(!PHYSFS_mkdir(writeDir.c_str())) {
-        g_logger.error(stdext::format("Unable to create write directory '%s': %s", writeDir, PHYSFS_getLastError()));
-        return false;
-    }
+    boost::filesystem::create_directory(writeDir);
 
     if(!PHYSFS_setWriteDir(writeDir.c_str())) {
         g_logger.error(stdext::format("Unable to set write directory '%s': %s", writeDir, PHYSFS_getLastError()));
