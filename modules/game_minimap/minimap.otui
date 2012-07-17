@@ -9,16 +9,16 @@ MapControl < Button
     icon-clip: 0 16 16 16
 
 FloorUpControl < MapControl
-  icon-source: /game_minimap/floor_up.png
+  icon-source: /game_minimap/images/floor_up.png
 
 FloorDownControl < MapControl
-  icon-source: /game_minimap/floor_down.png
+  icon-source: /game_minimap/images/floor_down.png
 
 ZoomOutControl < MapControl
-  //image-source: /game_minimap/zoom_out.png
+  //image-source: /game_minimap/images/zoom_out.png
 
 ZoomInControl < MapControl
-  //image-source: /game_minimap/zoom_in.png
+  //image-source: /game_minimap/images/zoom_in.png
 
 MiniWindow
   id: minimapWindow

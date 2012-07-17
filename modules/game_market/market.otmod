@@ -1,0 +1,19 @@
+Module
+  name: game_market
+  description: Manage the Players Market system
+  author: BeniS
+  website: www.otclient.info
+
+  dependencies:
+    - game
+
+  @onLoad: |
+    dofile 'marketoffer'
+    dofile 'marketprotocol'
+    dofile 'market'
+    MarketProtocol.init()
+    Market.init()
+
+  @onUnload: |
+    MarketProtocol.terminate()
+    Market.terminate()

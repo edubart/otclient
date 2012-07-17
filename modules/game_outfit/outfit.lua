@@ -233,6 +233,7 @@ function Outfit.destroy()
     mountCreature = nil
     currentColorBox = nil
     currentClotheButtonBox = nil
+    colorBoxes = {}
   end
 end
 

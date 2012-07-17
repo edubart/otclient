@@ -38,14 +38,14 @@ Game g_game;
 Game::Game()
 {
     resetGameStates();
-    setClientVersion(860);
+    setClientVersion(954);
 }
 
 void Game::resetGameStates()
 {
     m_denyBotCall = false;
     m_dead = false;
-	m_mounted = false;
+    m_mounted = false;
     m_serverBeat = 50;
     m_canReportBugs = false;
     m_fightMode = Otc::FightBalanced;
@@ -1133,6 +1133,10 @@ void Game::setClientVersion(int clientVersion)
         enableFeature(Otc::GameEnvironmentEffect);
         enableFeature(Otc::GameCreatureType);
         enableFeature(Otc::GameItemAnimationPhase);
+    }
+
+    if(clientVersion >= 940) {
+        enableFeature(Otc::GamePlayerMarket);
     }
 
     if(clientVersion >= 953) {

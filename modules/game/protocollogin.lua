@@ -4,7 +4,7 @@ ProtocolLogin = extends(Protocol)
 -- private functions
 local function sendLoginPacket(protocol)
   local msg = OutputMessage.create()
-  msg:addU8(ClientEnterAccount)
+  msg:addU8(ClientOpcodes.ClientEnterAccount)
   msg:addU16(1) -- todo: ClientOs
   msg:addU16(g_game.getClientVersion())
 

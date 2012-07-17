@@ -48,7 +48,7 @@ namespace Otc
         ANIMATED_TEXT_DURATION = 1000,
         STATIC_DURATION_PER_CHARACTER = 60,
         MIN_STATIC_TEXT_DURATION = 3000,
-        MAX_STATIC_TEXT_WIDTH = 200,
+        MAX_STATIC_TEXT_WIDTH = 200
     };
 
     enum DrawFlags {
@@ -309,6 +309,7 @@ namespace Otc
         GameTrucatedPingOpcode,
         GameReverseCreatureStack,
         GameMagicEffectU16,
+        GamePlayerMarket,
         LastGameFeature
     };
 
@@ -317,7 +318,7 @@ namespace Otc
         PATHFIND_SAME_POSITION,
         PATHFIND_IMPOSSIBLE,
         PATHFIND_TOO_FAR,
-        PATHFIND_NO_WAY,
+        PATHFIND_NO_WAY
     };
 }
 

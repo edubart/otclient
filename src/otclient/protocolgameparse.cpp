@@ -301,13 +301,6 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
             case Proto::GameServerPlayerInventory:
                 parsePlayerInventory(msg);
                 break;
-            // PROTOCOL>=944
-            /*
-            case Proto::GameServerMarketEnter:
-            case Proto::GameServerMarketLeave:
-            case Proto::GameServerMarketDetail:
-            case Proto::GameServerMarketBrowse:
-            */
             // otclient ONLY
             case Proto::GameServerExtendedOpcode:
                 parseExtendedOpcode(msg);
@@ -1135,7 +1128,6 @@ void ProtocolGame::parseOpenOutfitWindow(const InputMessagePtr& msg)
     Outfit currentOutfit = getOutfit(msg);
 
     std::vector<std::tuple<int, std::string, int> > outfitList;
-    std::vector<std::tuple<int, std::string> > mountList;
     int outfitCount = msg->getU8();
     for(int i = 0; i < outfitCount; i++) {
         int outfitId = msg->getU16();
@@ -1145,6 +1137,7 @@ void ProtocolGame::parseOpenOutfitWindow(const InputMessagePtr& msg)
         outfitList.push_back(std::make_tuple(outfitId, outfitName, outfitAddons));
     }
 
+    std::vector<std::tuple<int, std::string> > mountList;
     if(g_game.getFeature(Otc::GamePlayerMounts)) {
         int mountCount = msg->getU8();
         for(int i = 0; i < mountCount; ++i) {

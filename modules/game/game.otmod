@@ -32,6 +32,7 @@ Module
     - game_shaders
     - game_playerdeath
     - game_playermount
+    - game_market
 
   @onLoad: |
     dofile 'const'
@@ -40,3 +41,4 @@ Module
 
     dofile 'creature'
     dofile 'player'
+    dofile 'market'
