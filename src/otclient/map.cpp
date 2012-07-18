@@ -100,7 +100,7 @@ void Map::loadOtbm(const std::string& fileName)
     root->skip(3);
     uint32 headerMinorItems =  root->getU32();
     if(headerMinorItems > g_things.getOtbMinorVersion()) {
-        g_logger.warning(stdext::format("This map needs an updated OTB. read %d what it's supposed to be: %d",
+        g_logger.warning(stdext::format("This map needs an updated OTB. read %d what it's supposed to be: %d or less",
                                         headerMinorItems, g_things.getOtbMinorVersion()));
     }
 
@@ -126,18 +126,17 @@ void Map::loadOtbm(const std::string& fileName)
         }
     }
 
-    for (const BinaryTreePtr &nodeMapData : node->getChildren()) {
+    for(const BinaryTreePtr &nodeMapData : node->getChildren()) {
         uint8 mapDataType = nodeMapData->getU8();
         if(mapDataType == OTBM_TILE_AREA) {
             uint16 baseX = nodeMapData->getU16(), baseY = nodeMapData->getU16();
             uint8 pz = nodeMapData->getU8();
 
-            for (const BinaryTreePtr &nodeTile : nodeMapData->getChildren()) {
+            for(const BinaryTreePtr &nodeTile : nodeMapData->getChildren()) {
                 uint8 type = nodeTile->getU8();
                 if(type != OTBM_TILE && type != OTBM_HOUSETILE)
                     stdext::throw_exception(stdext::format("invalid node tile type %d", (int)type));
 
-                ItemPtr ground = nullptr;
                 HousePtr house = nullptr;
                 uint32 flags = TILESTATE_NONE;
 
@@ -154,7 +153,7 @@ void Map::loadOtbm(const std::string& fileName)
                     house->setTile(tile);
                 }
 
-                while (nodeTile->canRead()) {
+                while(nodeTile->canRead()) {
                     uint8 tileAttr = nodeTile->getU8();
                     switch (tileAttr) {
                         case OTBM_ATTR_TILE_FLAGS: {
@@ -178,13 +177,14 @@ void Map::loadOtbm(const std::string& fileName)
                             addThing(Item::createFromOtb(nodeTile->getU16()), pos);
                             break;
                         }
-                        default:
+                        default: {
                             stdext::throw_exception(stdext::format("invalid tile attribute %d at pos %d, %d, %d",
                                                                    (int)tileAttr, px, py, pz));
+                        }
                     }
                 }
 
-                for (const BinaryTreePtr &nodeItem : nodeTile->getChildren()) {
+                for(const BinaryTreePtr &nodeItem : nodeTile->getChildren()) {
                     if(nodeItem->getU8() != OTBM_ITEM)
                         stdext::throw_exception("invalid item node");
 
@@ -194,7 +194,7 @@ void Map::loadOtbm(const std::string& fileName)
                     if(item->isContainer()) {
                         // This is a temporary way for reading container items.
                         MapContainerPtr mapContainer(new MapContainer);
-                        for (const BinaryTreePtr &insideItem : nodeItem->getChildren()) {
+                        for(const BinaryTreePtr &insideItem : nodeItem->getChildren()) {
                             if(insideItem->getU8() != OTBM_ITEM)
                                 stdext::throw_exception("invalid container item node");
 
@@ -209,7 +209,7 @@ void Map::loadOtbm(const std::string& fileName)
                         if(item->isMoveable()) {
                             g_logger.warning(stdext::format("Movable item found in house: %d at pos %d %d %d - escaping...", item->getId(),
                                                             px, py, pz));
-                            item = nullptr;
+                            item.reset();
                         } else if(item->isDoor())
                             house->addDoor(item->getDoorId(), pos);
                     }
@@ -222,7 +222,7 @@ void Map::loadOtbm(const std::string& fileName)
             }
         } else if(mapDataType == OTBM_TOWNS) {
             TownPtr town = nullptr;
-            for (const BinaryTreePtr &nodeTown : nodeMapData->getChildren()) {
+            for(const BinaryTreePtr &nodeTown : nodeMapData->getChildren()) {
                 if(nodeTown->getU8() != OTBM_TOWN)
                     stdext::throw_exception("invalid town node.");
 
@@ -232,15 +232,10 @@ void Map::loadOtbm(const std::string& fileName)
                 if(!(town = m_towns.getTown(townId))) {
                     town = TownPtr(new Town(townId, townName, townCoords));
                     m_towns.addTown(town);
-                } else {
-                    // override data
-                    town->setName(townName);
-                    town->setPos(townCoords);
-                    town->setId(townId);
-                }
+                } // a map editor cannot be that dumb and write duplicate towns
             }
         } else if(mapDataType == OTBM_WAYPOINTS && headerVersion > 1) {
-            for (const BinaryTreePtr &nodeWaypoint : nodeMapData->getChildren()) {
+            for(const BinaryTreePtr &nodeWaypoint : nodeMapData->getChildren()) {
                 if(nodeWaypoint->getU8() != OTBM_WAYPOINT)
                     stdext::throw_exception("invalid waypoint node.");
 
@@ -399,13 +394,13 @@ void Map::loadSpawns(const std::string &fileName)
                 stdext::throw_exception("invalid spawn-subnode");
 
             std::string mName = mType->Attribute("name");
-            MonsterPtr m = m_monsters.getMonster(mName);
+            MonsterTypePtr m = m_monsters.getMonster(mName);
             if (!m)
                 stdext::throw_exception(stdext::format("unkown monster %s", mName));
 
             Point off = mType->readPoint();
             Position mPos(centerPos.x + off.x, centerPos.y + off.y, centerPos.z);
-            addThing(m, mPos, -1);
+            m->setPos(mPos);
         }
     }
 }
@@ -1029,7 +1024,7 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
     return ret;
 }
 
-MonsterPtr Map::getMonster(const std::string& name)
+MonsterTypePtr Map::getMonster(const std::string& name)
 {
-    return m_monsters.getMonster(stdext::tolower(name));
+    return m_monsters.getMonster(stdext::trim(stdext::tolower(name)));
 }

@@ -27,41 +27,39 @@
 
 void Monsters::loadMonsters(const std::string& file)
 {
-	TiXmlDocument doc(file);
-	if(!doc.LoadFile())
-		stdext::throw_exception(stdext::format("cannot open monsters file '%s'", file));
+    TiXmlDocument doc(file);
+    if(!doc.LoadFile())
+        stdext::throw_exception(stdext::format("cannot open monsters file '%s'", file));
 
-	TiXmlElement* root = doc.FirstChildElement();
-	if(!root || root->ValueStr() != "monsters")
-		stdext::throw_exception("malformed monsters xml file");
+    TiXmlElement* root = doc.FirstChildElement();
+    if(!root || root->ValueStr() != "monsters")
+        stdext::throw_exception("malformed monsters xml file");
 
 	for(TiXmlElement* monster = root->FirstChildElement(); root; root = root->NextSiblingElement()) {
-        MonsterPtr newMonster(new Monster);
-		newMonster->setName(monster->Attribute("name"));
-
+        MonsterTypePtr newMonster(new MonsterType(monster->Attribute("name")));
         loadSingleMonster(file.substr(0, file.find_last_of('/')) + '/' + monster->Attribute("file"), newMonster);
-	}
+    }
 
-	doc.Clear();
-	m_loaded = true;
+    doc.Clear();
+    m_loaded = true;
 }
 
-void Monsters::loadSingleMonster(const std::string& file, const MonsterPtr& m)
+void Monsters::loadSingleMonster(const std::string& file, const MonsterTypePtr& m)
 {
     if (!m || std::find(m_monsters.begin(), m_monsters.end(), m) != m_monsters.end())
-		stdext::throw_exception("reloading monsters is not supported yet.");
+        stdext::throw_exception("reloading monsters is not supported yet.");
 
-	TiXmlDocument doc(file);
-	if(!doc.LoadFile())
-		stdext::throw_exception(stdext::format("cannot load single monster file '%s'", file));
+    TiXmlDocument doc(file);
+    if(!doc.LoadFile())
+        stdext::throw_exception(stdext::format("cannot load single monster file '%s'", file));
 
-	TiXmlElement* root = doc.FirstChildElement();
-	if(!root || root->ValueStr() != "monster")
-		stdext::throw_exception(stdext::format("malformed monster xml file: %s", file));
+    TiXmlElement* root = doc.FirstChildElement();
+    if(!root || root->ValueStr() != "monster")
+        stdext::throw_exception(stdext::format("malformed monster xml file: %s", file));
 
 	for(TiXmlElement* attrib = root->FirstChildElement(); attrib; attrib = attrib->NextSiblingElement()) {
-		if(attrib->ValueStr() == "look") {
-			Outfit out;
+        if(attrib->ValueStr() == "look") {
+            Outfit out;
 
             int type = attrib->readType<int>("type");
             if (type <= 0)
@@ -85,16 +83,16 @@ void Monsters::loadSingleMonster(const std::string& file, const MonsterPtr& m)
 	m_monsters.push_back(m);
 }
 
-MonsterPtr Monsters::getMonster(const std::string& name)
+MonsterTypePtr Monsters::getMonster(const std::string& name)
 {
     auto it = std::find_if(m_monsters.begin(), m_monsters.end(),
-                           [=] (const MonsterPtr& m) -> bool { return m->getName() == name; });
+                           [=] (const MonsterTypePtr& m) -> bool { return m->getName() == name; });
     return it != m_monsters.end() ? *it : nullptr;
 }
 
-MonsterPtr Monsters::getMonsterByPos(const Position& pos)
+MonsterTypePtr Monsters::getMonsterByPos(const Position& pos)
 {
     auto it = std::find_if(m_monsters.begin(), m_monsters.end(),
-                           [=] (const MonsterPtr& m) -> bool { return m->getPosition() == pos; });
+                           [=] (const MonsterTypePtr& m) -> bool { return m->getPos() == pos; });
     return it != m_monsters.end() ? *it : nullptr;
 }

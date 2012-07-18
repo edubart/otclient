@@ -40,7 +40,7 @@ distribution.
 #include <string.h>
 #include <assert.h>
 
-#include <framework/global.h>
+#include <framework/const.h>
 #include <otclient/position.h>
 #include <framework/stdext/cast.h>
 
@@ -945,43 +945,21 @@ private:
 class TiXmlElement : public TiXmlNode
 {
 public:
-    /// Construct an element.
-    TiXmlElement (const char * in_value);
-
-    #ifdef TIXML_USE_STL
-    /// std::string constructor.
     TiXmlElement( const std::string& _value );
-    #endif
-
     TiXmlElement( const TiXmlElement& );
-
     TiXmlElement& operator=( const TiXmlElement& base );
 
     virtual ~TiXmlElement();
 
-    /** Given an attribute name, Attribute() returns the value
-        for the attribute of that name, or null if none exists.
-    */
-    const char* Attribute( const char* name ) const;
-
-    /** Given an attribute name, Attribute() returns the value
-        for the attribute of that name, or null if none exists.
-        If the attribute exists and can be converted to an integer,
-        the integer value will be put in the return 'i', if 'i'
-        is non-null.
-    */
-    const char* Attribute( const char* name, int* i ) const;
-
-    /** Given an attribute name, Attribute() returns the value
-        for the attribute of that name, or null if none exists.
-        If the attribute exists and can be converted to an double,
-        the double value will be put in the return 'd', if 'd'
-        is non-null.
-    */
-    const char* Attribute( const char* name, double* d ) const;
-
     template<typename T = std::string>
-    inline T readType(const std::string& str) const { return stdext::unsafe_cast<T>(Attribute(str)); }
+    inline T readType(const std::string& str) const
+    {
+        T ret;
+        int r = QueryValueAttribute(str, &ret);
+        if(r == TIXML_NO_ATTRIBUTE || r == TIXML_WRONG_TYPE)
+            return T();
+        return ret;
+    }
 
     Position readPos(const std::string& base = std::string()) const
     {
@@ -991,43 +969,6 @@ public:
     Point readPoint() const
     {
         return Point(readType<int>("x"), readType<int>("y"));
-    }
-    /** QueryIntAttribute examines the attribute - it is an alternative to the
-        Attribute() method with richer error checking.
-        If the attribute is an integer, it is stored in 'value' and
-        the call returns TIXML_SUCCESS. If it is not
-        an integer, it returns TIXML_WRONG_TYPE. If the attribute
-        does not exist, then TIXML_NO_ATTRIBUTE is returned.
-    */
-    int QueryIntAttribute( const char* name, int* _value ) const;
-    /// QueryUnsignedAttribute examines the attribute - see QueryIntAttribute().
-    int QueryUnsignedAttribute( const char* name, unsigned* _value ) const;
-    /** QueryBoolAttribute examines the attribute - see QueryIntAttribute().
-        Note that '1', 'true', or 'yes' are considered true, while '0', 'false'
-        and 'no' are considered false.
-    */
-    int QueryBoolAttribute( const char* name, bool* _value ) const;
-    /// QueryDoubleAttribute examines the attribute - see QueryIntAttribute().
-    int QueryDoubleAttribute( const char* name, double* _value ) const;
-    /// QueryFloatAttribute examines the attribute - see QueryIntAttribute().
-    int QueryFloatAttribute( const char* name, float* _value ) const {
-        double d;
-        int result = QueryDoubleAttribute( name, &d );
-        if ( result == TIXML_SUCCESS ) {
-            *_value = (float)d;
-        }
-        return result;
-    }
-
-    #ifdef TIXML_USE_STL
-    /// QueryStringAttribute examines the attribute - see QueryIntAttribute().
-    int QueryStringAttribute( const char* name, std::string* _value ) const {
-        const char* cstr = Attribute( name );
-        if ( cstr ) {
-            *_value = std::string( cstr );
-            return TIXML_SUCCESS;
-        }
-        return TIXML_NO_ATTRIBUTE;
     }
 
     /** Template form of the attribute query which will try to read the
@@ -1059,44 +1000,14 @@ public:
         *outValue = node->ValueStr();
         return TIXML_SUCCESS;
     }
-    #endif
 
-    /** Sets an attribute of name to a given value. The attribute
-        will be created if it does not exist, or changed if it does.
-    */
-    void SetAttribute( const char* name, const char * _value );
+    std::string Attribute( const std::string& name ) const;
+    std::string Attribute( const std::string& name, int* i ) const;
+    std::string Attribute( const std::string& name, double* d ) const;
 
-    #ifdef TIXML_USE_STL
-    const std::string* Attribute( const std::string& name ) const;
-    const std::string* Attribute( const std::string& name, int* i ) const;
-    const std::string* Attribute( const std::string& name, double* d ) const;
-    int QueryIntAttribute( const std::string& name, int* _value ) const;
-    int QueryDoubleAttribute( const std::string& name, double* _value ) const;
-
-    /// STL std::string form.
     void SetAttribute( const std::string& name, const std::string& _value );
-    ///< STL std::string form.
-    void SetAttribute( const std::string& name, int _value );
-    ///< STL std::string form.
-    void SetDoubleAttribute( const std::string& name, double value );
-    #endif
 
-    /** Sets an attribute of name to a given value. The attribute
-        will be created if it does not exist, or changed if it does.
-    */
-    void SetAttribute( const char * name, int value );
-
-    /** Sets an attribute of name to a given value. The attribute
-        will be created if it does not exist, or changed if it does.
-    */
-    void SetDoubleAttribute( const char * name, double value );
-
-    /** Deletes an attribute with the given name.
-    */
-    void RemoveAttribute( const char * name );
-    #ifdef TIXML_USE_STL
-    void RemoveAttribute( const std::string& name )    {    RemoveAttribute (name.c_str ());    }    ///< STL std::string form.
-    #endif
+    void RemoveAttribute( const std::string& name );
 
     const TiXmlAttribute* FirstAttribute() const    { return attributeSet.First(); }        ///< Access the first attribute in this element.
     TiXmlAttribute* FirstAttribute()                 { return attributeSet.First(); }

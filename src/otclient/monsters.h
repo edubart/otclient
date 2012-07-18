@@ -24,6 +24,29 @@
 #define MONSTERS_H
 
 #include "declarations.h"
+#include <framework/luaengine/luaobject.h>
+#include "outfit.h"
+
+class MonsterType : public LuaObject
+{
+public:
+    MonsterType() { }
+    MonsterType(const std::string& name)
+        : m_name(name) { }
+
+    void setPos(const Position& pos) { m_pos = pos; }
+    void setName(const std::string& name) { m_name = name; }
+    void setOutfit(const Outfit& o) { m_outfit = o; }
+
+    std::string getName() { return m_name; }
+    Position getPos() { return m_pos; }
+    Outfit getOutfit() { return m_outfit; }
+
+private:
+    Position m_pos;
+    std::string m_name;
+    Outfit m_outfit;
+};
 
 class Monsters
 {
@@ -31,14 +54,14 @@ public:
 	void clear() { m_monsters.clear(); }
 
 	void loadMonsters(const std::string& file);
-    void loadSingleMonster(const std::string& file, const MonsterPtr& m = nullptr);
+    void loadSingleMonster(const std::string& file, const MonsterTypePtr& m = nullptr);
 
-	MonsterPtr getMonster(const std::string& name);
-	MonsterPtr getMonsterByPos(const Position& pos);
+    MonsterTypePtr getMonster(const std::string& name);
+    MonsterTypePtr getMonsterByPos(const Position& pos);
 
 	bool isLoaded() const { return m_loaded; }
 private:
-	std::vector<MonsterPtr> m_monsters;
+    std::vector<MonsterTypePtr> m_monsters;
     bool m_loaded;
 };
 

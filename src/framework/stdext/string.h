@@ -216,17 +216,25 @@ inline std::string utf8StringToLatin1(uchar *utf8) {
 // Convert string to lower case
 inline std::string tolower(const std::string& str)
 {
-    std::string _str = str;
-    boost::algorithm::to_lower(_str);
-    return _str;
+    std::string cpy = str;
+    boost::algorithm::to_lower(cpy);
+    return cpy;
 }
 
 // Convert string to upper case
 inline std::string toupper(const std::string& str)
 {
-    std::string _str = str;
-    boost::algorithm::to_upper(_str);
-    return _str;
+    std::string cpy = str;
+    boost::algorithm::to_upper(cpy);
+    return cpy;
+}
+
+// Trim string
+inline std::string trim(const std::string& str)
+{
+    std::string cpy = str;
+    boost::algorithm::trim(cpy);
+    return cpy;
 }
 
 // utility for printing messages into stdout

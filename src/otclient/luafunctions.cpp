@@ -296,6 +296,15 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Town>("getPos", &Town::getPos);
     g_lua.bindClassMemberFunction<Town>("getTemplePos", &Town::getPos); // alternative method
 
+    g_lua.registerClass<MonsterType>();
+    g_lua.bindClassStaticFunction<MonsterType>("create", []{ return MonsterTypePtr(new MonsterType); });
+    g_lua.bindClassMemberFunction<MonsterType>("setPos", &MonsterType::setPos);
+    g_lua.bindClassMemberFunction<MonsterType>("setName", &MonsterType::setName);
+    g_lua.bindClassMemberFunction<MonsterType>("setOutfit", &MonsterType::setOutfit);
+    g_lua.bindClassMemberFunction<MonsterType>("getPos", &MonsterType::getPos);
+    g_lua.bindClassMemberFunction<MonsterType>("getName", &MonsterType::getName);
+    g_lua.bindClassMemberFunction<MonsterType>("getOutfit", &MonsterType::getOutfit);
+
     g_lua.registerClass<Creature, Thing>();
     g_lua.bindClassStaticFunction<Creature>("create", []{ return CreaturePtr(new Creature); });
     g_lua.bindClassMemberFunction<Creature>("getId", &Creature::getId);
