@@ -47,6 +47,7 @@ private:
     Boolean<false> m_loaded;
     uint32 m_signature;
     int m_spritesCount;
+    int m_spritesOffset;
     FileStreamPtr m_spritesFile;
 };
 

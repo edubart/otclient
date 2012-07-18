@@ -29,6 +29,7 @@
 
 #include <framework/core/clock.h>
 #include <framework/core/eventdispatcher.h>
+#include <framework/core/resourcemanager.h>
 
 SoundManager g_sounds;
 
@@ -163,7 +164,7 @@ void SoundManager::playMusic(const std::string& filename, float fadetime)
 {
     if(m_currentMusic == filename && m_musicSource)
         return;
-    m_currentMusic = filename;
+    m_currentMusic = g_resources.resolvePath(filename);
 
     if(!m_musicEnabled)
         return;

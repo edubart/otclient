@@ -47,11 +47,6 @@ void ThingTypeDat::unserialize(uint16 clientId, DatCategory category, const File
     m_id = clientId;
     m_category = category;
 
-
-    static int datVersion;
-    if(clientId == 100 && category == DatItemCategory)
-        datVersion = 2;
-
     bool done = false;
     for(int i = 0 ; i < DatLastAttrib;++i) {
         int attrib = fin->getU8();
@@ -60,12 +55,7 @@ void ThingTypeDat::unserialize(uint16 clientId, DatCategory category, const File
             break;
         }
 
-        // hacky way to detect if is older dat version or not
-        if(clientId == 100 && category == DatItemCategory && datVersion != 1 &&
-           (attrib == DatAttribNotPathable || attrib == DatAttribDontHide || attrib == DatAttribIgnoreLook)) {
-            datVersion = 1;
-        }
-        if(datVersion <= 1) {
+        if(g_game.getFeature(Otc::GameChargeableItems)) {
             if(attrib == DatAttribWritable) {
                 m_attribs.set(DatAttribChargeable, true);
                 continue;
@@ -135,7 +125,7 @@ void ThingTypeDat::unserialize(uint16 clientId, DatCategory category, const File
 
     m_spritesIndex.resize(totalSprites);
     for(int i = 0; i < totalSprites; i++)
-        m_spritesIndex[i] = fin->getU16();
+        m_spritesIndex[i] = g_game.getFeature(Otc::GameSpritesU32) ? fin->getU32() : fin->getU16();
 
     m_textures.resize(m_animationPhases);
     m_texturesFramesRects.resize(m_animationPhases);
