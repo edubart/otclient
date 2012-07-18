@@ -2,7 +2,7 @@
 ProtocolLogin = extends(Protocol)
 
 -- set to the latest Tibia.pic signature to make otclient compatible with official tibia
-local PIC_SIGNATURE = 0
+local PIC_SIGNATURE = 1337606793
 
 LoginServerError = 10
 LoginServerMotd = 20

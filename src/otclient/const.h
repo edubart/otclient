@@ -108,7 +108,7 @@ namespace Otc
         DatLastOpt = 255
     };
 
-    enum InventorySlots {
+    enum InventorySlot {
         InventorySlotHead = 1,
         InventorySlotNecklace,
         InventorySlotBackpack,
@@ -118,7 +118,9 @@ namespace Otc
         InventorySlotLegs,
         InventorySlotFeet,
         InventorySlotRing,
-        InventorySlotAmmo
+        InventorySlotAmmo,
+        InventorySlotPurse,
+        LastInventorySlot
     };
 
     enum Statistic {
@@ -146,21 +148,6 @@ namespace Otc
         Shielding,
         Fishing,
         LastSkill
-    };
-
-    enum Inventory {
-        NoInventory = 0,
-        Head,
-        Neck,
-        Bag,
-        Armor,
-        RightHand,
-        LeftHand,
-        Legs,
-        Feet,
-        Ring,
-        Ammo,
-        LastInventory
     };
 
     enum Direction {
@@ -304,6 +291,10 @@ namespace Otc
         GameItemAnimationPhase = 19,
         GameMagicEffectU16 = 22,
         GamePlayerMarket = 23,
+        GameSpritesU32 = 24,
+        GameChargeableItems = 25,
+        GameOfflineTrainingTime = 26,
+        GamePurseSlot = 27,
         // 23-50 unused yet
         // 51-100 reserved to be defined in lua
         LastGameFeature = 101

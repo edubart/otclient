@@ -5,7 +5,6 @@ TradeWindow < MiniWindow
   UIItem
     id: tradeItem
     virtual: true
-    item-id: 3253
     size: 16 16
     anchors.top: parent.top
     anchors.left: parent.left

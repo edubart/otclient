@@ -887,7 +887,10 @@ void ProtocolGame::parsePlayerStats(const InputMessagePtr& msg)
         m_localPlayer->setSpeed(msg->getU16());
 
     if(g_game.getFeature(Otc::GamePlayerRegenerationTime))
-        msg->getU16(); // regeneration time
+        msg->getU16();
+
+    if(g_game.getFeature(Otc::GameOfflineTrainingTime))
+        msg->getU16();
 }
 
 void ProtocolGame::parsePlayerSkills(const InputMessagePtr& msg)

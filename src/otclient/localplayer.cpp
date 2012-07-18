@@ -313,9 +313,9 @@ void LocalPlayer::setStamina(double stamina)
     }
 }
 
-void LocalPlayer::setInventoryItem(Otc::Inventory inventory, const ItemPtr& item)
+void LocalPlayer::setInventoryItem(Otc::InventorySlot inventory, const ItemPtr& item)
 {
-    if(inventory >= Otc::LastInventory) {
+    if(inventory >= Otc::LastInventorySlot) {
         g_logger.traceError("invalid slot");
         return;
     }

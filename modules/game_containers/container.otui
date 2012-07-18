@@ -4,7 +4,6 @@ ContainerWindow < MiniWindow
   UIItem
     id: containerItemWidget
     virtual: true
-    item-id: 3253
     size: 16 16
     anchors.top: parent.top
     anchors.left: parent.left

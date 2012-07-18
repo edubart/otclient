@@ -38,6 +38,7 @@ Game g_game;
 Game::Game()
 {
     resetGameStates();
+    //setProtocolVersion(960);
     m_protocolVersion = 0;
 }
 
@@ -235,7 +236,7 @@ void Game::processInventoryChange(int slot, const ItemPtr& item)
     if(item)
         item->setPosition(Position(65535, slot, 0));
 
-    m_localPlayer->setInventoryItem((Otc::Inventory)slot, item);
+    m_localPlayer->setInventoryItem((Otc::InventorySlot)slot, item);
 }
 
 void Game::processCreatureMove(const CreaturePtr& creature, const Position& oldPos, const Position& newPos)
@@ -1101,6 +1102,10 @@ void Game::setProtocolVersion(int version)
 
     m_features.reset();
 
+    if(version <= 810) {
+        enableFeature(Otc::GameChargeableItems);
+    }
+
     if(version >= 854) {
         enableFeature(Otc::GameProtocolChecksum);
         enableFeature(Otc::GameAccountNames);
@@ -1130,6 +1135,15 @@ void Game::setProtocolVersion(int version)
 
     if(version >= 940) {
         enableFeature(Otc::GamePlayerMarket);
+    }
+
+    if(version >= 954) {
+        enableFeature(Otc::GamePurseSlot);
+    }
+
+    if(version >= 960) {
+        enableFeature(Otc::GameSpritesU32);
+        enableFeature(Otc::GameOfflineTrainingTime);
     }
 
     m_protocolVersion = version;

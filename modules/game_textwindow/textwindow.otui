@@ -6,7 +6,6 @@ TextWindow < MainWindow
   UIItem
     id: textItem
     virtual: true
-    item-id: 173
     size: 32 32
     anchors.top: parent.top
     anchors.left: parent.left

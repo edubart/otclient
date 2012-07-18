@@ -21,6 +21,7 @@
  */
 
 #include "spritemanager.h"
+#include "game.h"
 #include <framework/core/resourcemanager.h>
 #include <framework/core/filestream.h>
 #include <framework/graphics/image.h>
@@ -49,7 +50,8 @@ bool SpriteManager::loadSpr(const std::string& file)
         m_spritesFile->cache();
 
         m_signature = m_spritesFile->getU32();
-        m_spritesCount = m_spritesFile->getU16();
+        m_spritesCount = g_game.getFeature(Otc::GameSpritesU32) ? m_spritesFile->getU32() : m_spritesFile->getU16();
+        m_spritesOffset = m_spritesFile->tell();
         m_loaded = true;
         return true;
     } catch(stdext::exception& e) {
@@ -67,48 +69,70 @@ void SpriteManager::unload()
 
 ImagePtr SpriteManager::getSpriteImage(int id)
 {
-    enum {
-        SPRITE_SIZE = 32,
-        SPRITE_DATA_SIZE = SPRITE_SIZE*SPRITE_SIZE*4
-    };
+    try {
+        enum {
+            SPRITE_SIZE = 32,
+            SPRITE_DATA_SIZE = SPRITE_SIZE*SPRITE_SIZE*4
+        };
 
-    if(id == 0)
-        return nullptr;
-
-    m_spritesFile->seek(((id-1) * 4) + 6);
-
-    uint32 spriteAddress = m_spritesFile->getU32();
-
-    // no sprite? return an empty texture
-    if(spriteAddress == 0)
-        return nullptr;
-
-    m_spritesFile->seek(spriteAddress);
-
-    // skip color key
-    m_spritesFile->getU8();
-    m_spritesFile->getU8();
-    m_spritesFile->getU8();
-
-    uint16 pixelDataSize = m_spritesFile->getU16();
-
-    ImagePtr image(new Image(Size(SPRITE_SIZE, SPRITE_SIZE)));
-
-    uint8 *pixels = image->getPixelData();
-    int writePos = 0;
-    int read = 0;
-
-    // decompress pixels
-    while(read < pixelDataSize) {
-        uint16 transparentPixels = m_spritesFile->getU16();
-        uint16 coloredPixels = m_spritesFile->getU16();
-
-        if(writePos + transparentPixels*4 + coloredPixels*3 >= SPRITE_DATA_SIZE) {
-            g_logger.warning(stdext::format("corrupt sprite id %d", id));
+        if(id == 0 || !m_spritesFile)
             return nullptr;
+
+        m_spritesFile->seek(((id-1) * 4) + m_spritesOffset);
+
+        uint32 spriteAddress = m_spritesFile->getU32();
+
+        // no sprite? return an empty texture
+        if(spriteAddress == 0)
+            return nullptr;
+
+        m_spritesFile->seek(spriteAddress);
+
+        // skip color key
+        m_spritesFile->getU8();
+        m_spritesFile->getU8();
+        m_spritesFile->getU8();
+
+        uint16 pixelDataSize = m_spritesFile->getU16();
+
+        ImagePtr image(new Image(Size(SPRITE_SIZE, SPRITE_SIZE)));
+
+        uint8 *pixels = image->getPixelData();
+        int writePos = 0;
+        int read = 0;
+
+        // decompress pixels
+        while(read < pixelDataSize) {
+            uint16 transparentPixels = m_spritesFile->getU16();
+            uint16 coloredPixels = m_spritesFile->getU16();
+
+            if(writePos + transparentPixels*4 + coloredPixels*3 >= SPRITE_DATA_SIZE) {
+                g_logger.warning(stdext::format("corrupt sprite id %d", id));
+                return nullptr;
+            }
+
+            for(int i = 0; i < transparentPixels; i++) {
+                pixels[writePos + 0] = 0x00;
+                pixels[writePos + 1] = 0x00;
+                pixels[writePos + 2] = 0x00;
+                pixels[writePos + 3] = 0x00;
+                writePos += 4;
+            }
+
+            for(int i = 0; i < coloredPixels; i++) {
+                pixels[writePos + 0] = m_spritesFile->getU8();
+                pixels[writePos + 1] = m_spritesFile->getU8();
+                pixels[writePos + 2] = m_spritesFile->getU8();
+                pixels[writePos + 3] = 0xFF;
+
+                writePos += 4;
+            }
+
+            read += 4 + (3 * coloredPixels);
         }
 
-        for(int i = 0; i < transparentPixels; i++) {
+        // fill remaining pixels with alpha
+        while(writePos < SPRITE_DATA_SIZE) {
             pixels[writePos + 0] = 0x00;
             pixels[writePos + 1] = 0x00;
             pixels[writePos + 2] = 0x00;
@@ -116,27 +140,10 @@ ImagePtr SpriteManager::getSpriteImage(int id)
             writePos += 4;
         }
 
-        for(int i = 0; i < coloredPixels; i++) {
-            pixels[writePos + 0] = m_spritesFile->getU8();
-            pixels[writePos + 1] = m_spritesFile->getU8();
-            pixels[writePos + 2] = m_spritesFile->getU8();
-            pixels[writePos + 3] = 0xFF;
-
-            writePos += 4;
-        }
-
-        read += 4 + (3 * coloredPixels);
+        return image;
+    } catch(stdext::exception& e) {
+        g_logger.error(stdext::format("Failed to get sprite id %d: %s", id, e.what()));
+        return nullptr;
     }
-
-    // fill remaining pixels with alpha
-    while(writePos < SPRITE_DATA_SIZE) {
-        pixels[writePos + 0] = 0x00;
-        pixels[writePos + 1] = 0x00;
-        pixels[writePos + 2] = 0x00;
-        pixels[writePos + 3] = 0x00;
-        writePos += 4;
-    }
-
-    return image;
 }
 

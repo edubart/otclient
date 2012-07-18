@@ -56,7 +56,7 @@ local function createTextMessageLabel(id, parent, class)
 end
 
 -- public functions
-function TextMessage.init()  
+function TextMessage.init()
   connect(g_game, { onTextMessage = TextMessage.display,
                     onGameStart = TextMessage.clearMessages })
 
