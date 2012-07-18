@@ -107,8 +107,10 @@ void SoundManager::poll()
     }
 }
 
-void SoundManager::preload(const std::string& filename)
+void SoundManager::preload(std::string filename)
 {
+    filename = g_resources.resolvePath(filename);
+
     auto it = m_buffers.find(filename);
     if(it != m_buffers.end())
         return;
@@ -130,10 +132,12 @@ void SoundManager::enableSound(bool enable)
         return;
 }
 
-void SoundManager::play(const std::string& filename)
+void SoundManager::play(std::string filename)
 {
-    if(!m_soundEnabled)
+    if(!m_soundEnabled || filename.empty())
         return;
+
+    filename = g_resources.resolvePath(filename);
 
     SoundSourcePtr soundSource = createSoundSource(filename);
     if(!soundSource) {
@@ -154,17 +158,21 @@ void SoundManager::enableMusic(bool enable)
 
     m_musicEnabled = enable;
 
-    if(enable)
+    if(enable && !m_currentMusic.empty())
         playMusic(m_currentMusic, 3.0f);
     else
         m_musicSource = nullptr;
 }
 
-void SoundManager::playMusic(const std::string& filename, float fadetime)
+void SoundManager::playMusic(std::string filename, float fadetime)
 {
+    if(filename.empty())
+        return;
+
+    filename = g_resources.resolvePath(filename);
+
     if(m_currentMusic == filename && m_musicSource)
         return;
-    m_currentMusic = g_resources.resolvePath(filename);
 
     if(!m_musicEnabled)
         return;

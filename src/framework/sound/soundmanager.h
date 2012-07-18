@@ -38,12 +38,12 @@ public:
     void terminate();
     void poll();
 
-    void preload(const std::string& filename);
+    void preload(std::string filename);
     void enableSound(bool enable);
-    void play(const std::string& filename);
+    void play(std::string filename);
 
     void enableMusic(bool enable);
-    void playMusic(const std::string& filename, float fadetime);
+    void playMusic(std::string filename, float fadetime);
     void stopMusic(float fadetime = 0);
 
     bool isMusicEnabled() { return m_musicEnabled; }

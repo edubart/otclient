@@ -31,6 +31,8 @@
 enum AttrTypes_t
 {
     ATTR_END = 0,
+    //ATTR_DESCRIPTION = 1,
+    //ATTR_EXT_FILE = 2,
     ATTR_TILE_FLAGS = 3,
     ATTR_ACTION_ID = 4,
     ATTR_UNIQUE_ID = 5,
@@ -39,7 +41,9 @@ enum AttrTypes_t
     ATTR_TELE_DEST = 8,
     ATTR_ITEM = 9,
     ATTR_DEPOT_ID = 10,
+    //ATTR_EXT_SPAWN_FILE = 11,
     ATTR_RUNE_CHARGES = 12,
+    //ATTR_EXT_HOUSE_FILE = 13,
     ATTR_HOUSEDOORID = 14,
     ATTR_COUNT = 15,
     ATTR_DURATION = 16,

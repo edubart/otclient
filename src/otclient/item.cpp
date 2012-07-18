@@ -199,78 +199,67 @@ bool Item::isValid()
 
 void Item::unserializeItem(const BinaryTreePtr &in)
 {
-    while (in->canRead()) {
-        uint8 attrType = in->getU8();
-        if(attrType == 0)
-            break;
+    try {
+        while(in->canRead()) {
+            int attrib = in->getU8();
+            if(attrib == 0)
+                break;
 
-        // fugly switch yes?
-        switch ((AttrTypes_t)attrType) {
-            case ATTR_COUNT:
-                setSubType(in->getU8());
-                break;
-            case ATTR_CHARGES:
-                setSubType(in->getU16());
-                break;
-            case ATTR_ACTION_ID:
-                setActionId(in->getU16());
-                break;
-            case ATTR_UNIQUE_ID:
-                setUniqueId(in->getU16());
-                break;
-            case ATTR_NAME:
-                m_attribs.set(ATTR_NAME, in->getString());
-                break;
-            case ATTR_TEXT:
-                m_attribs.set(ATTR_TEXT, in->getString());
-                break;
-            case ATTR_DESC:
-                m_attribs.set(ATTR_DESC, in->getString());
-                break;
-            case ATTR_CONTAINER_ITEMS:
-                m_attribs.set(ATTR_CONTAINER_ITEMS, in->getU32());
-                break;
-            case ATTR_HOUSEDOORID:
-                m_attribs.set(ATTR_HOUSEDOORID, in->getU8());
-                break;
-            case ATTR_DEPOT_ID:
-                m_attribs.set(ATTR_DEPOT_ID, in->getU16());
-                break;
-            case ATTR_TELE_DEST: {
-                Position teleportDestination;
-                teleportDestination.x = in->getU16();
-                teleportDestination.y = in->getU16();
-                teleportDestination.z = in->getU8();
-                m_attribs.set(ATTR_TELE_DEST, teleportDestination);
-                break;
+            switch(attrib) {
+                case ATTR_COUNT:
+                case ATTR_RUNE_CHARGES:
+                    setCount(in->getU8());
+                    break;
+                case ATTR_CHARGES:
+                    setCount(in->getU16());
+                    break;
+                case ATTR_HOUSEDOORID:
+                case ATTR_SCRIPTPROTECTED:
+                case ATTR_DUALWIELD:
+                case ATTR_DECAYING_STATE:
+                    m_attribs.set(attrib, in->getU8());
+                    break;
+                case ATTR_ACTION_ID:
+                case ATTR_UNIQUE_ID:
+                case ATTR_DEPOT_ID:
+                    m_attribs.set(attrib, in->getU16());
+                    break;
+                case ATTR_CONTAINER_ITEMS:
+                case ATTR_ATTACK:
+                case ATTR_EXTRAATTACK:
+                case ATTR_DEFENSE:
+                case ATTR_EXTRADEFENSE:
+                case ATTR_ARMOR:
+                case ATTR_ATTACKSPEED:
+                case ATTR_HITCHANCE:
+                case ATTR_DURATION:
+                case ATTR_WRITTENDATE:
+                case ATTR_SLEEPERGUID:
+                case ATTR_SLEEPSTART:
+                case ATTR_ATTRIBUTE_MAP:
+                    m_attribs.set(attrib, in->getU32());
+                    break;
+                case ATTR_TELE_DEST: {
+                    Position pos;
+                    pos.x = in->getU16();
+                    pos.y = in->getU16();
+                    pos.z = in->getU8();
+                    m_attribs.set(attrib, pos);
+                    break;
+                }
+                case ATTR_NAME:
+                case ATTR_TEXT:
+                case ATTR_DESC:
+                case ATTR_ARTICLE:
+                case ATTR_WRITTENBY:
+                    m_attribs.set(attrib, in->getString());
+                    break;
+                default:
+                    stdext::throw_exception(stdext::format("invalid item attribute %d", attrib));
             }
-            case ATTR_ARTICLE:
-            case ATTR_WRITTENBY:
-                in->getString();
-                break;
-            case ATTR_ATTACK:
-            case ATTR_EXTRAATTACK:
-            case ATTR_DEFENSE:
-            case ATTR_EXTRADEFENSE:
-            case ATTR_ARMOR:
-            case ATTR_ATTACKSPEED:
-            case ATTR_HITCHANCE:
-            case ATTR_DURATION:
-            case ATTR_WRITTENDATE:
-            case ATTR_SLEEPERGUID:
-            case ATTR_SLEEPSTART:
-            case ATTR_ATTRIBUTE_MAP:
-                in->skip(4);
-                break;
-            case ATTR_SCRIPTPROTECTED:
-            case ATTR_DUALWIELD:
-            case ATTR_DECAYING_STATE:
-            case ATTR_RUNE_CHARGES:
-                in->skip(1);
-                break;
-            default:
-                stdext::throw_exception(stdext::format("invalid item attribute %d", (int)attrType));
         }
+    } catch(stdext::exception& e) {
+        g_logger.error(stdext::format("Failed to unserialize OTBM item: %s", e.what()));
     }
 }
 

@@ -43,6 +43,9 @@ void ThingTypeManager::init()
     m_datLoaded = false;
     m_xmlLoaded = false;
     m_otbLoaded = false;
+    for(int i = 0; i < DatLastCategory; ++i)
+        m_datTypes[i].resize(1, m_nullDatType);
+    m_otbTypes.resize(1, m_nullOtbType);
 }
 
 void ThingTypeManager::terminate()
