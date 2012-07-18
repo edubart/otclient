@@ -29,5 +29,4 @@ config.otml
 !.gitignore
 otclient.map
 otclient.layout
-TODO
 LOCALTODO
