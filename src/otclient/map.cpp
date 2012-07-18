@@ -205,13 +205,10 @@ void Map::loadOtbm(const std::string& fileName)
                         m_containers.push_back(mapContainer);
                     }
 
-                    if(house) {
-                        if(item->isMoveable()) {
-                            g_logger.warning(stdext::format("Movable item found in house: %d at pos %d %d %d - escaping...", item->getId(),
-                                                            px, py, pz));
-                            item.reset();
-                        } else if(item->isDoor())
-                            house->addDoor(item->getDoorId(), pos);
+                    if(house && item->isMoveable()) {
+                        g_logger.warning(stdext::format("Movable item found in house: %d at pos %d %d %d - escaping...", item->getId(),
+                                                        px, py, pz));
+                        item.reset();
                     }
 
                     addThing(item, pos);
@@ -232,7 +229,8 @@ void Map::loadOtbm(const std::string& fileName)
                 if(!(town = m_towns.getTown(townId))) {
                     town = TownPtr(new Town(townId, townName, townCoords));
                     m_towns.addTown(town);
-                } // a map editor cannot be that dumb and write duplicate towns
+                }
+                g_logger.debug(stdext::format("new town %ld %s", townId, townName));
             }
         } else if(mapDataType == OTBM_WAYPOINTS && headerVersion > 1) {
             for(const BinaryTreePtr &nodeWaypoint : nodeMapData->getChildren()) {
@@ -373,8 +371,8 @@ void Map::saveOtbm(const std::string &fileName)
 
 void Map::loadSpawns(const std::string &fileName)
 {
-    if(!m_monsters.isLoaded())
-        stdext::throw_exception("cannot load spawns; monsters aren't loaded.");
+    if(!m_creatures.isLoaded())
+        stdext::throw_exception("cannot load spawns; monsters/nps aren't loaded.");
 
     TiXmlDocument doc;
     doc.Parse(g_resources.loadFile(fileName).c_str());
@@ -394,10 +392,8 @@ void Map::loadSpawns(const std::string &fileName)
             if(mType->ValueStr() != "monster" && mType->ValueStr() != "npc")
                 stdext::throw_exception(stdext::format("invalid spawn-subnode %s", mType->ValueStr()));
 
-            if(mType->ValueStr() == "npc") // escape npc's for now...
-                continue;
             std::string mName = mType->Attribute("name");
-            MonsterTypePtr m = getMonster(mName);
+            CreatureTypePtr m = getCreature(mName);
             if (!m)
                 stdext::throw_exception(stdext::format("unkown monster '%s'", stdext::trim(stdext::tolower(mName))));
 
@@ -560,7 +556,7 @@ void Map::clean()
     // This is a fix to a segfault on exit.
     m_towns.clear();
     m_houses.clear();
-    m_monsters.clear();
+    m_creatures.clear();
 }
 
 void Map::cleanDynamicThings()
@@ -1029,9 +1025,4 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
         delete it.second;
 
     return ret;
-}
-
-MonsterTypePtr Map::getMonster(const std::string& name)
-{
-    return m_monsters.getMonster(name);
 }

@@ -27,32 +27,45 @@
 #include "tile.h"
 
 #include <framework/luaengine/luaobject.h>
+#include <framework/util/attribstorage.h>
+
+enum HouseAttributes
+{
+    HouseAttribId,
+    HouseAttribName,
+    HouseAttribTown,
+    HouseAttribEntry,
+    HouseAttribSize,
+    HouseAttribRent
+};
 
 class House : public LuaObject
 {
 public:
     House() { }
     House(uint32 hId, const std::string& name = "", const Position& pos=Position());
-    ~House() { m_tiles.clear(); m_doors.clear(); }
+    ~House() { m_tiles.clear(); }
 
-    void setId(uint32 hId) { m_id = hId; }
-    void setName(const std::string& name) { m_name = name; }
-    void addDoor(uint16 doorId, const Position& pos);
     void setTile(const TilePtr& tile);
+    void setId(uint32 hId) { m_attribs.set(HouseAttribId, hId); }
+    void setName(const std::string& name) { m_attribs.set(HouseAttribName, name); }
+    void setTownId(uint32 tid) { m_attribs.set(HouseAttribTown, tid); }
+    void setSize(uint32 s) { m_attribs.set(HouseAttribSize, s); }
+    void setRent(uint32 r) { m_attribs.set(HouseAttribRent, r); }
+    void setEntry(const Position& p) { m_attribs.set(HouseAttribEntry, p); }
 
-    uint32 getId() const { return m_id; }
-    std::string getName() const { return m_name; }
+    uint32 getId() { return m_attribs.get<uint32>(HouseAttribId); }
+    std::string getName() { return m_attribs.get<std::string>(HouseAttribName); }
+    uint32 getRent() { return m_attribs.get<uint32>(HouseAttribRent); }
+    uint32 getSize() { return m_attribs.get<uint32>(HouseAttribSize); }
 
 protected:
     void load(const TiXmlElement* elem);
     void save(TiXmlElement &elem) { } // TODO
 
 private:
-    uint32 m_id, m_size, m_rent;
-    std::string m_name;
-
-    std::map<uint16, Position> m_doors;
-    std::vector<TilePtr> m_tiles;
+    AttribStorage m_attribs;
+    TileMap m_tiles;
     Boolean<false> m_isGuildHall;
 
     friend class Houses;

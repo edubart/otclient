@@ -25,40 +25,30 @@
 #include <framework/core/resourcemanager.h>
 
 House::House(uint32 hId, const std::string &name, const Position &pos)
-    : m_id(hId), m_name(name)
 {
+    setId(hId);
+    setName(name);
     if(pos.isValid())
-        m_doors.insert(std::make_pair(0, pos)); // first door
-}
-
-void House::addDoor(uint16 doorId, const Position& pos)
-{
-    if(m_doors.find(doorId) == m_doors.end())
-        m_doors.insert(std::make_pair(doorId, pos));
+        setEntry(pos);
 }
 
 void House::setTile(const TilePtr& tile)
 {
     tile->setFlags(TILESTATE_HOUSE);
-    if(std::find(m_tiles.begin(), m_tiles.end(), tile) == m_tiles.end())
-        m_tiles.push_back(tile);
+    m_tiles.insert(std::make_pair(tile->getPosition(), tile));
 }
 
 void House::load(const TiXmlElement *elem)
 {
     std::string name = elem->Attribute("name");
     if(name.empty())
-        name = stdext::format("UnNamed house #%u", getId());
+        name = stdext::format("Unnamed house #%lu", getId());
 
-    m_rent = elem->readType<uint32>("rent");
-    m_size = elem->readType<uint32>("size");
-
-    uint32 townId = elem->readType<uint32>("townid");
-    if(!g_map.getTown(townId))
-        stdext::throw_exception(stdext::format("invalid town id for house %d", townId));
-
+    setRent(elem->readType<uint32>("rent"));
+    setSize(elem->readType<uint32>("size"));
+    setTownId(elem->readType<uint32>("townid"));
     m_isGuildHall = elem->readType<bool>("rent");
-    addDoor(0, elem->readPos());
+    setEntry(elem->readPos("entry"));
 }
 
 void Houses::addHouse(const HousePtr& house)
@@ -77,10 +67,7 @@ void Houses::removeHouse(uint32 houseId)
 HousePtr Houses::getHouse(uint32 houseId)
 {
     auto it = findHouse(houseId);
-    if(it != m_houses.end())
-        return *it;
-
-    return nullptr;
+    return it != m_houses.end() ? *it : nullptr;
 }
 
 void Houses::load(const std::string& fileName)
@@ -94,7 +81,7 @@ void Houses::load(const std::string& fileName)
     if(!root || root->ValueTStr() != "houses")
         stdext::throw_exception("invalid root tag name");
 
-    for (TiXmlElement *elem = root->FirstChildElement(); elem; elem = elem->NextSiblingElement()) {
+    for(TiXmlElement *elem = root->FirstChildElement(); elem; elem = elem->NextSiblingElement()) {
         if(elem->ValueTStr() != "house")
             stdext::throw_exception("invalid house tag.");
 
@@ -106,7 +93,7 @@ void Houses::load(const std::string& fileName)
         house->load(elem);
     }
 
-    stdext::throw_exception("This has not been fully implemented yet.");
+    g_logger.debug("Loaded houses.xml successfully.");
 }
 
 HouseList::iterator Houses::findHouse(uint32 houseId)

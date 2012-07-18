@@ -97,10 +97,10 @@ void OTClient::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_map", "loadOtcm", &Map::loadOtcm, &g_map);
     g_lua.bindSingletonFunction("g_map", "saveOtcm", &Map::saveOtcm, &g_map);
     g_lua.bindSingletonFunction("g_map", "loadMonsters", &Map::loadMonsters, &g_map);
-    g_lua.bindSingletonFunction("g_map", "loadSingleMonster", &Map::loadSingleMonster, &g_map);
+    g_lua.bindSingletonFunction("g_map", "loadSingleCreature", &Map::loadSingleCreature, &g_map);
     g_lua.bindSingletonFunction("g_map", "getTown", &Map::getTown, &g_map);
     g_lua.bindSingletonFunction("g_map", "getHouse", &Map::getHouse, &g_map);
-    g_lua.bindSingletonFunction("g_map", "getMonster", &Map::getMonster, &g_map);
+    g_lua.bindSingletonFunction("g_map", "getCreature", &Map::getCreature, &g_map);
 
     g_lua.registerSingletonClass("g_game");
     g_lua.bindSingletonFunction("g_game", "loginWorld", &Game::loginWorld, &g_game);
@@ -280,10 +280,9 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassStaticFunction<House>("create", []{ return HousePtr(new House); });
     g_lua.bindClassMemberFunction<House>("setId", &House::setId);
     g_lua.bindClassMemberFunction<House>("setName", &House::setName);
-    g_lua.bindClassMemberFunction<House>("addDoor", &House::addDoor);
-    g_lua.bindClassMemberFunction<House>("addDoorPos", &House::addDoor); // alternative method
     g_lua.bindClassMemberFunction<House>("setTile", &House::setTile);
-    g_lua.bindClassMemberFunction<House>("addTile", &House::addDoor);    // alternative method
+    g_lua.bindClassMemberFunction<House>("addTile", &House::setTile);    // alternative method
+    g_lua.bindClassMemberFunction<House>("setEntry", &House::setEntry);
 
     g_lua.registerClass<Town>();
     g_lua.bindClassStaticFunction<Town>("create", []{ return TownPtr(new Town); });
@@ -296,14 +295,14 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Town>("getPos", &Town::getPos);
     g_lua.bindClassMemberFunction<Town>("getTemplePos", &Town::getPos); // alternative method
 
-    g_lua.registerClass<MonsterType>();
-    g_lua.bindClassStaticFunction<MonsterType>("create", []{ return MonsterTypePtr(new MonsterType); });
-    g_lua.bindClassMemberFunction<MonsterType>("setPos", &MonsterType::setPos);
-    g_lua.bindClassMemberFunction<MonsterType>("setName", &MonsterType::setName);
-    g_lua.bindClassMemberFunction<MonsterType>("setOutfit", &MonsterType::setOutfit);
-    g_lua.bindClassMemberFunction<MonsterType>("getPos", &MonsterType::getPos);
-    g_lua.bindClassMemberFunction<MonsterType>("getName", &MonsterType::getName);
-    g_lua.bindClassMemberFunction<MonsterType>("getOutfit", &MonsterType::getOutfit);
+    g_lua.registerClass<CreatureType>();
+    g_lua.bindClassStaticFunction<CreatureType>("create", []{ return CreatureTypePtr(new CreatureType); });
+    g_lua.bindClassMemberFunction<CreatureType>("setPos", &CreatureType::setPos);
+    g_lua.bindClassMemberFunction<CreatureType>("setName", &CreatureType::setName);
+    g_lua.bindClassMemberFunction<CreatureType>("setOutfit", &CreatureType::setOutfit);
+    g_lua.bindClassMemberFunction<CreatureType>("getPos", &CreatureType::getPos);
+    g_lua.bindClassMemberFunction<CreatureType>("getName", &CreatureType::getName);
+    g_lua.bindClassMemberFunction<CreatureType>("getOutfit", &CreatureType::getOutfit);
 
     g_lua.registerClass<Creature, Thing>();
     g_lua.bindClassStaticFunction<Creature>("create", []{ return CreaturePtr(new Creature); });

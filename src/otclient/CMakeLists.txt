@@ -79,8 +79,8 @@ set(otclient_SOURCES ${otclient_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/houses.h
     ${CMAKE_CURRENT_LIST_DIR}/towns.cpp
     ${CMAKE_CURRENT_LIST_DIR}/towns.h
-    ${CMAKE_CURRENT_LIST_DIR}/monsters.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/monsters.h
+    ${CMAKE_CURRENT_LIST_DIR}/creatures.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/creatures.h
 
     # lua
     ${CMAKE_CURRENT_LIST_DIR}/luavaluecasts.cpp

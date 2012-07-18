@@ -30,8 +30,6 @@
 ThingTypeOtb::ThingTypeOtb()
 {
     m_category = OtbInvalidCateogry;
-    m_serverId = 0;
-    m_clientId = 0;
 }
 
 void ThingTypeOtb::unserialize(const BinaryTreePtr& node)
@@ -51,23 +49,33 @@ void ThingTypeOtb::unserialize(const BinaryTreePtr& node)
         uint16 len = node->getU16();
         switch(attr) {
             case OtbAttribServerId: {
-                m_serverId = node->getU16();
-                if(m_serverId > 20000 && m_serverId < 20100) {
-                    m_serverId -= 20000;
-                } else if(lastId > 99 && lastId != m_serverId - 1) {
+                uint16 serverId = node->getU16();
+                if(serverId > 20000 && serverId < 20100) {
+                    serverId -= 20000;
+                } else if(lastId > 99 && lastId != serverId - 1) {
                     static ThingTypeOtbPtr dummyType(g_things.getNullOtbType());
-                    while(lastId != m_serverId - 1) {
+                    while(lastId != serverId - 1) {
                         dummyType->setServerId(++lastId);
                         g_things.addOtbType(dummyType);
                     }
                 }
                 assert(len == 2);
+                setServerId(serverId);
                 break;
             }
-            case OtbAttribClientId:
-                m_clientId = node->getU16();
+            case OtbAttribClientId: {
+                setClientId(node->getU16());
                 assert(len == 2);
                 break;
+            }
+            case OtbAttribName: {
+                setName(node->getString());
+                break;
+            }
+            case OtbAttribDesc: {
+                setDesc(node->getString());
+                break;
+            }
             default:
                 node->skip(len); // skip attribute
                 break;

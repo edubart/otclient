@@ -27,11 +27,11 @@
 #include <framework/luaengine/luaobject.h>
 #include "outfit.h"
 
-class MonsterType : public LuaObject
+class CreatureType : public LuaObject
 {
 public:
-    MonsterType() { }
-    MonsterType(const std::string& name)
+    CreatureType() { }
+    CreatureType(const std::string& name)
         : m_name(name) { }
 
     void setPos(const Position& pos) { m_pos = pos; }
@@ -50,21 +50,27 @@ private:
     int m_spawnTime;
 };
 
-class Monsters
+class Creatures
 {
 public:
-	void clear() { m_monsters.clear(); }
+    void clear() { m_creatures.clear(); }
 
 	void loadMonsters(const std::string& file);
-    void loadSingleMonster(const std::string& file, const MonsterTypePtr& m = nullptr);
+    void loadSingleCreature(const std::string& file);
+    void loadNpcs(const std::string& folder);
+    void loadCreatureBuffer(const std::string& buffer);
 
-    MonsterTypePtr getMonster(const std::string& name);
-    MonsterTypePtr getMonsterByPos(const Position& pos);
+    CreatureTypePtr getCreature(const std::string& name);
+    CreatureTypePtr getCreature(const Position& pos);
 
 	bool isLoaded() const { return m_loaded; }
+
+protected:
+    bool m_loadCreatureBuffer(TiXmlElement* elem, CreatureTypePtr& m);
+
 private:
-    std::vector<MonsterTypePtr> m_monsters;
-    bool m_loaded;
+    std::vector<CreatureTypePtr> m_creatures;
+    Boolean<false> m_loaded;
 };
 
 #endif

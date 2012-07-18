@@ -48,7 +48,7 @@ class ThingTypeDat;
 class ThingTypeOtb;
 class House;
 class Town;
-class MonsterType;
+class CreatureType;
 
 typedef std::shared_ptr<MapView> MapViewPtr;
 typedef std::shared_ptr<Tile> TilePtr;
@@ -68,13 +68,14 @@ typedef std::shared_ptr<ThingTypeDat> ThingTypeDatPtr;
 typedef std::shared_ptr<ThingTypeOtb> ThingTypeOtbPtr;
 typedef std::shared_ptr<House> HousePtr;
 typedef std::shared_ptr<Town> TownPtr;
-typedef std::shared_ptr<MonsterType> MonsterTypePtr;
+typedef std::shared_ptr<CreatureType> CreatureTypePtr;
 
 typedef std::vector<ThingPtr> ThingList;
 typedef std::vector<ThingTypeDatPtr> ThingTypeDatList;
 typedef std::vector<ThingTypeOtbPtr> ThingTypeOtbList;
 typedef std::vector<HousePtr> HouseList;
 typedef std::vector<TownPtr> TownList;
+typedef std::unordered_map<Position, TilePtr, PositionHasher> TileMap;
 
 // net
 class ProtocolLogin;

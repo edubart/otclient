@@ -124,6 +124,7 @@ void ThingTypeManager::loadOtb(const std::string& file)
 
 void ThingTypeManager::loadXml(const std::string& file)
 {
+    /// Read XML
     TiXmlDocument doc;
     doc.Parse(g_resources.loadFile(file).c_str());
     if(doc.Error())

@@ -27,6 +27,7 @@
 #include <framework/core/declarations.h>
 #include <framework/luaengine/luaobject.h>
 #include <framework/xml/tinyxml.h>
+#include <framework/util/attribstorage.h>
 
 
 enum OtbCategory {
@@ -88,23 +89,24 @@ public:
 
     void unserialize(const BinaryTreePtr& node);
 
-    uint16 getServerId() { return m_serverId; }
-    uint16 getClientId() { return m_clientId; }
+    uint16 getServerId() { return m_attribs.get<uint16>(OtbAttribServerId); }
+    uint16 getClientId() { return m_attribs.get<uint16>(OtbAttribClientId); }
     OtbCategory getCategory() { return m_category; }
+    std::string getName() { return m_attribs.get<std::string>(OtbAttribName); }
+    std::string getDesc() { return m_attribs.get<std::string>(OtbAttribDesc); }
 
     bool isNull() { return m_null; }
 
-    void setServerId(uint16 serverId) { m_serverId = serverId; }
-    void setName(const std::string& name) { m_name = name; }
-    void setDesc(const std::string& desc) { m_desc = desc; }
+    void setClientId(uint16 clientId) { m_attribs.set(OtbAttribClientId, clientId); }
+    void setServerId(uint16 serverId) { m_attribs.set(OtbAttribServerId, serverId); }
+    void setName(const std::string& name) { m_attribs.set(OtbAttribName, name); }
+    void setDesc(const std::string& desc) { m_attribs.set(OtbAttribDesc, desc); }
 
 private:
-    uint16 m_serverId;
-    uint16 m_clientId;
-
-    std::string m_name, m_desc;
     OtbCategory m_category;
     Boolean<true> m_null;
+
+    AttribStorage m_attribs;
 };
 
 #endif

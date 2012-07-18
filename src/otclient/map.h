@@ -26,7 +26,7 @@
 #include "creature.h"
 #include "houses.h"
 #include "towns.h"
-#include "monsters.h"
+#include "creatures.h"
 #include "animatedtext.h"
 #include <framework/core/clock.h>
 
@@ -119,8 +119,9 @@ public:
     void loadSpawns(const std::string& fileName);
     void saveSpawns(const std::string&) { }
 
-    void loadMonsters(const std::string& fileName) { m_monsters.loadMonsters(fileName); }
-    void loadSingleMonster(const std::string& file) { m_monsters.loadSingleMonster(file); }
+    void loadMonsters(const std::string& fileName) { m_creatures.loadMonsters(fileName); }
+    void loadSingleCreature(const std::string& file) { m_creatures.loadSingleCreature(file); }
+    void loadNpcs(const std::string& folder) { m_creatures.loadNpcs(folder); }
 
     void clean();
     void cleanDynamicThings();
@@ -151,7 +152,7 @@ public:
     // town/house/monster related
     TownPtr getTown(uint32 tid) { return m_towns.getTown(tid); }
     HousePtr getHouse(uint32 hid) { return m_houses.getHouse(hid); }
-    MonsterTypePtr getMonster(const std::string &name);
+    CreatureTypePtr getCreature(const std::string &name) { return m_creatures.getCreature(name); }
 
     void setLight(const Light& light) { m_light = light; }
     void setCentralPosition(const Position& centralPosition);
@@ -173,7 +174,7 @@ public:
     std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> findPath(const Position& start, const Position& goal, int maxSteps);
 
 private:
-    std::unordered_map<Position, TilePtr, PositionHasher> m_tiles;
+    TileMap m_tiles;
     std::map<uint32, CreaturePtr> m_knownCreatures;
     std::array<std::vector<MissilePtr>, Otc::MAX_Z+1> m_floorMissiles;
     std::vector<AnimatedTextPtr> m_animatedTexts;
@@ -189,7 +190,7 @@ private:
 
     Houses m_houses;
     Towns m_towns;
-    Monsters m_monsters;
+    Creatures m_creatures;
 
     uint16 m_width, m_height;
 };
