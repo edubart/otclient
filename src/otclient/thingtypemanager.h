@@ -38,6 +38,7 @@ public:
     bool loadDat(const std::string& file);
     void loadOtb(const std::string& file);
     void loadXml(const std::string& file);
+    void parseItemType(uint16 id, TiXmlElement *elem);
 
     void addOtbType(const ThingTypeOtbPtr& otbType);
     const ThingTypeOtbPtr& findOtbForClientId(uint16 id);

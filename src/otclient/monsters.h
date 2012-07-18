@@ -37,6 +37,7 @@ public:
     void setPos(const Position& pos) { m_pos = pos; }
     void setName(const std::string& name) { m_name = name; }
     void setOutfit(const Outfit& o) { m_outfit = o; }
+    void setSpawnTime(int spawnTime) { m_spawnTime = spawnTime; }
 
     std::string getName() { return m_name; }
     Position getPos() { return m_pos; }
@@ -46,6 +47,7 @@ private:
     Position m_pos;
     std::string m_name;
     Outfit m_outfit;
+    int m_spawnTime;
 };
 
 class Monsters

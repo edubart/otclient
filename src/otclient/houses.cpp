@@ -22,6 +22,8 @@
 
 #include "map.h"
 
+#include <framework/core/resourcemanager.h>
+
 House::House(uint32 hId, const std::string &name, const Position &pos)
     : m_id(hId), m_name(name)
 {
@@ -83,9 +85,10 @@ HousePtr Houses::getHouse(uint32 houseId)
 
 void Houses::load(const std::string& fileName)
 {
-    TiXmlDocument doc(fileName.c_str());
-    if(!doc.LoadFile())
-        stdext::throw_exception(stdext::format("failed to load '%s' (House XML)", fileName));
+    TiXmlDocument doc;
+    doc.Parse(g_resources.loadFile(fileName).c_str());
+    if(doc.Error())
+        stdext::throw_exception(stdext::format("failed to load '%s': %s (House XML)", fileName, doc.ErrorDesc()));
 
     TiXmlElement *root = doc.FirstChildElement();
     if(!root || root->ValueTStr() != "houses")

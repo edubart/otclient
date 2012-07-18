@@ -21,6 +21,7 @@
  */
 
 
+#include "thingtypemanager.h"
 #include "thingtypeotb.h"
 
 #include <framework/core/filestream.h>
@@ -41,6 +42,7 @@ void ThingTypeOtb::unserialize(const BinaryTreePtr& node)
 
     node->getU32(); // flags
 
+    static uint16 lastId = 99;
     while(node->canRead()) {
         uint8 attr = node->getU8();
         if(attr == 0 || attr == 0xFF)
@@ -48,10 +50,20 @@ void ThingTypeOtb::unserialize(const BinaryTreePtr& node)
 
         uint16 len = node->getU16();
         switch(attr) {
-            case OtbAttribServerId:
+            case OtbAttribServerId: {
                 m_serverId = node->getU16();
+                if(m_serverId > 20000 && m_serverId < 20100) {
+                    m_serverId -= 20000;
+                } else if(lastId > 99 && lastId != m_serverId - 1) {
+                    static ThingTypeOtbPtr dummyType(g_things.getNullOtbType());
+                    while(lastId != m_serverId - 1) {
+                        dummyType->setServerId(++lastId);
+                        g_things.addOtbType(dummyType);
+                    }
+                }
                 assert(len == 2);
                 break;
+            }
             case OtbAttribClientId:
                 m_clientId = node->getU16();
                 assert(len == 2);
@@ -61,15 +73,4 @@ void ThingTypeOtb::unserialize(const BinaryTreePtr& node)
                 break;
         }
     }
-}
-
-void ThingTypeOtb::unserializeXML(const TiXmlElement* elem)
-{
-    std::string key   = elem->Attribute("key");
-    std::string value = elem->Attribute("value");
-
-    if(key == "name")
-        setName(value);
-    else if(key == "description")
-        setDesc(value);
 }

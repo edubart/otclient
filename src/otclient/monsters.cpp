@@ -24,20 +24,27 @@
 #include "creature.h"
 
 #include <framework/xml/tinyxml.h>
+#include <framework/core/resourcemanager.h>
 
 void Monsters::loadMonsters(const std::string& file)
 {
-    TiXmlDocument doc(file);
-    if(!doc.LoadFile())
-        stdext::throw_exception(stdext::format("cannot open monsters file '%s'", file));
+    TiXmlDocument doc;
+    doc.Parse(g_resources.loadFile(file).c_str());
+    if(doc.Error())
+        stdext::throw_exception(stdext::format("cannot open monsters file '%s': '%s'", file, doc.ErrorDesc()));
 
     TiXmlElement* root = doc.FirstChildElement();
     if(!root || root->ValueStr() != "monsters")
         stdext::throw_exception("malformed monsters xml file");
 
-	for(TiXmlElement* monster = root->FirstChildElement(); root; root = root->NextSiblingElement()) {
-        MonsterTypePtr newMonster(new MonsterType(monster->Attribute("name")));
-        loadSingleMonster(file.substr(0, file.find_last_of('/')) + '/' + monster->Attribute("file"), newMonster);
+    for(TiXmlElement* monster = root->FirstChildElement(); monster; monster = monster->NextSiblingElement()) {
+        MonsterTypePtr newMonster(new MonsterType(stdext::trim(stdext::tolower(monster->Attribute("name")))));
+        std::string fname = file.substr(0, file.find_last_of('/')) + '/' + monster->Attribute("file");
+
+        if(fname.substr(fname.length() - 4) != ".xml")
+            fname += ".xml";
+
+        loadSingleMonster(fname, newMonster);
     }
 
     doc.Clear();
@@ -49,9 +56,10 @@ void Monsters::loadSingleMonster(const std::string& file, const MonsterTypePtr& 
     if (!m || std::find(m_monsters.begin(), m_monsters.end(), m) != m_monsters.end())
         stdext::throw_exception("reloading monsters is not supported yet.");
 
-    TiXmlDocument doc(file);
-    if(!doc.LoadFile())
-        stdext::throw_exception(stdext::format("cannot load single monster file '%s'", file));
+    TiXmlDocument doc;
+    doc.Parse(g_resources.loadFile(file).c_str());
+    if(doc.Error())
+        stdext::throw_exception(stdext::format("cannot load single monster file '%s': '%s'", file, doc.ErrorDesc()));
 
     TiXmlElement* root = doc.FirstChildElement();
     if(!root || root->ValueStr() != "monster")
@@ -61,21 +69,20 @@ void Monsters::loadSingleMonster(const std::string& file, const MonsterTypePtr& 
         if(attrib->ValueStr() == "look") {
             Outfit out;
 
-            int type = attrib->readType<int>("type");
-            if (type <= 0)
+            int type = 0;
+            if(!attrib->Attribute("type").empty())
+                type = attrib->readType<int>("type");
+            else
                 type = attrib->readType<int>("typeex");
-            if(type) {
-				out.setId(type);
-                {
-                    out.setHead(attrib->readType<int>(("head")));
-                    out.setBody(attrib->readType<int>(("body")));
-                    out.setLegs(attrib->readType<int>(("legs")));
-                    out.setFeet(attrib->readType<int>(("feet")));
-                    out.setAddons(attrib->readType<int>(("addons")));
-                    out.setMount(attrib->readType<int>(("mount")));
-                }
-			} else
-				stdext::throw_exception(stdext::format("invalid look type/typeex for monster %s", m->getName()));
+            out.setId(type);
+            {
+                out.setHead(attrib->readType<int>(("head")));
+                out.setBody(attrib->readType<int>(("body")));
+                out.setLegs(attrib->readType<int>(("legs")));
+                out.setFeet(attrib->readType<int>(("feet")));
+                out.setAddons(attrib->readType<int>(("addons")));
+                out.setMount(attrib->readType<int>(("mount")));
+            }
             m->setOutfit(out);
 		}
 	}
@@ -86,7 +93,7 @@ void Monsters::loadSingleMonster(const std::string& file, const MonsterTypePtr& 
 MonsterTypePtr Monsters::getMonster(const std::string& name)
 {
     auto it = std::find_if(m_monsters.begin(), m_monsters.end(),
-                           [=] (const MonsterTypePtr& m) -> bool { return m->getName() == name; });
+                           [=] (const MonsterTypePtr& m) -> bool { return m->getName() == stdext::trim(stdext::tolower(name)); });
     return it != m_monsters.end() ? *it : nullptr;
 }
 

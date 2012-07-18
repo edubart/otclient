@@ -376,33 +376,40 @@ void Map::loadSpawns(const std::string &fileName)
     if(!m_monsters.isLoaded())
         stdext::throw_exception("cannot load spawns; monsters aren't loaded.");
 
-    TiXmlDocument doc(fileName);
-    if(!doc.LoadFile())
-        stdext::throw_exception(stdext::format("cannot load spawns xml file '%s", fileName));
+    TiXmlDocument doc;
+    doc.Parse(g_resources.loadFile(fileName).c_str());
+    if(doc.Error())
+        stdext::throw_exception(stdext::format("cannot load spawns xml file '%s: '%s'", fileName, doc.ErrorDesc()));
 
     TiXmlElement* root = doc.FirstChildElement();
     if(!root || root->ValueStr() != "spawns")
         stdext::throw_exception("malformed spawns file");
 
     for(TiXmlElement* node = root->FirstChildElement(); node; node = node->NextSiblingElement()) {
-        if (node->ValueTStr() != "spawn")
+        if(node->ValueTStr() != "spawn")
             stdext::throw_exception("invalid spawn node");
 
         Position centerPos = node->readPos("center");
         for(TiXmlElement* mType = node->FirstChildElement(); mType; mType = mType->NextSiblingElement()) {
-            if (mType->ValueStr() != "monster")
-                stdext::throw_exception("invalid spawn-subnode");
+            if(mType->ValueStr() != "monster" && mType->ValueStr() != "npc")
+                stdext::throw_exception(stdext::format("invalid spawn-subnode %s", mType->ValueStr()));
 
+            if(mType->ValueStr() == "npc") // escape npc's for now...
+                continue;
             std::string mName = mType->Attribute("name");
-            MonsterTypePtr m = m_monsters.getMonster(mName);
+            MonsterTypePtr m = getMonster(mName);
             if (!m)
-                stdext::throw_exception(stdext::format("unkown monster %s", mName));
+                stdext::throw_exception(stdext::format("unkown monster '%s'", stdext::trim(stdext::tolower(mName))));
 
             Point off = mType->readPoint();
             Position mPos(centerPos.x + off.x, centerPos.y + off.y, centerPos.z);
             m->setPos(mPos);
+            m->setSpawnTime(mType->readType<int>("spawntime"));
         }
     }
+
+    doc.Clear();
+    g_logger.debug("Loaded spawns");
 }
 
 bool Map::loadOtcm(const std::string& fileName)
@@ -1026,5 +1033,5 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
 
 MonsterTypePtr Map::getMonster(const std::string& name)
 {
-    return m_monsters.getMonster(stdext::trim(stdext::tolower(name)));
+    return m_monsters.getMonster(name);
 }

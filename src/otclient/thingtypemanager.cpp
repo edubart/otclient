@@ -124,56 +124,63 @@ void ThingTypeManager::loadOtb(const std::string& file)
 
 void ThingTypeManager::loadXml(const std::string& file)
 {
-    TiXmlDocument doc(file.c_str());
-    if(!doc.LoadFile())
-        stdext::throw_exception(stdext::format("failed to load xml '%s'", file));
+    TiXmlDocument doc;
+    doc.Parse(g_resources.loadFile(file).c_str());
+    if(doc.Error())
+        stdext::throw_exception(stdext::format("failed to parse '%s': '%s'", file, doc.ErrorDesc()));
 
     TiXmlElement* root = doc.FirstChildElement();
     if(!root || root->ValueTStr() != "items")
         stdext::throw_exception("invalid root tag name");
 
-    ThingTypeOtbPtr otbType = nullptr;
     for (TiXmlElement *element = root->FirstChildElement(); element; element = element->NextSiblingElement()) {
         if(element->ValueTStr() != "item")
             continue;
 
-        std::string name = element->Attribute("id");
-        if(name.empty())
-            continue;
-
-        uint16 id = stdext::unsafe_cast<uint16>(element->Attribute("id"));
-        if(!(otbType = getOtbType(id))) {
-            // try reading fromId toId
-            uint16 from = stdext::unsafe_cast<uint16>(element->Attribute("fromId"));
-            uint16 to = stdext::unsafe_cast<uint16>(element->Attribute("toid"));
-
-            for (uint16 __id = from; __id < to; ++__id) {
-                if(!(otbType = getOtbType(__id)))
-                    continue;
-
-                otbType->setHasRange();
-                otbType->setFromServerId(from);
-                otbType->setToServerId(to);
-                break;
-            }
-
-            // perform last check
-            if(!otbType) {
-                stdext::throw_exception(stdext::format("failed to find item with server id %d - tried reading fromid to id",
-                                                       id));
-            }
+        uint16 id = element->readType<uint16>("id");
+        if(id > 20000 && id < 20100) {
+            id -= 20000;
+            ThingTypeOtbPtr newType(new ThingTypeOtb);
+            newType->setServerId(id);
+            addOtbType(newType);
         }
 
-        for (TiXmlElement *attr = element->FirstChildElement(); attr; attr = attr->NextSiblingElement()) {
-            if(attr->ValueTStr() != "attribute")
-                continue;
-
-            otbType->unserializeXML(attr);
+        if(id != 0)
+            parseItemType(id, element);
+        else {
+            uint16 fromId = element->readType<uint16>("fromid"), toId = element->readType<uint16>("toid");
+            for(uint16 i = fromId; i < toId; ++i)
+                parseItemType(i, element);
         }
     }
 
     doc.Clear();
     m_xmlLoaded = true;
+    g_logger.debug("items.xml read successfully.");
+}
+
+void ThingTypeManager::parseItemType(uint16 id, TiXmlElement* elem)
+{
+    uint16 serverId = id;
+    if(serverId > 20000 && id < 20100) {
+        serverId -= 20000;
+
+        ThingTypeOtbPtr newType(new ThingTypeOtb);
+        newType->setServerId(serverId);
+        addOtbType(newType);
+    }
+
+    ThingTypeOtbPtr otbType = getOtbType(serverId);
+    otbType->setName(elem->Attribute("name"));
+    for(TiXmlElement* attrib = elem->FirstChildElement(); attrib; attrib = attrib->NextSiblingElement()) {
+        if(attrib->ValueStr() != "attribute")
+            break;
+
+        if(attrib->Attribute("key") == "description") {
+            otbType->setDesc(attrib->Attribute("value"));
+            break;
+        }
+    }
 }
 
 void ThingTypeManager::addOtbType(const ThingTypeOtbPtr& otbType)
