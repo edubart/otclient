@@ -183,7 +183,7 @@ inline std::string ip_to_string(uint32 ip) {
 
 inline std::string pos_to_string(const Position& p)
 {
-    return format("{x = %h, y = %h, z = %hh}", p.x, p.y, p.z);
+    return format("{x = %hd, y = %hd, z = %hd}", p.x, p.y, p.z);
 }
 
 /// Convert utf8 characters to latin1

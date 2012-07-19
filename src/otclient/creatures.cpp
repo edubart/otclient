@@ -106,7 +106,7 @@ bool Creatures::m_loadCreatureBuffer(TiXmlElement* attrib, CreatureTypePtr& m)
         type = attrib->readType<int32>("type");
     else {
         type = attrib->readType<int32>("typeex");
-	isTypeEx = true;
+        isTypeEx = true;
     }
 
     out.setId(type);
