@@ -97,3 +97,41 @@ bool luavalue_cast(int index, Position& pos)
     }
     return false;
 }
+
+int push_luavalue(const MarketData& data)
+{
+    g_lua.newTable();
+    g_lua.pushInteger(data.category);
+    g_lua.setField("category");
+    g_lua.pushString(data.name);
+    g_lua.setField("name");
+    g_lua.pushInteger(data.requiredLevel);
+    g_lua.setField("requiredLevel");
+    g_lua.pushInteger(data.restrictProfession);
+    g_lua.setField("restrictProfession");
+    g_lua.pushInteger(data.showAs);
+    g_lua.setField("showAs");
+    g_lua.pushInteger(data.tradeAs);
+    g_lua.setField("tradeAs");
+    return 1;
+}
+
+bool luavalue_cast(int index, MarketData& data)
+{
+    if(g_lua.isTable(index)) {
+        g_lua.getField("category", index);
+        data.category = g_lua.popInteger();
+        g_lua.getField("name", index);
+        data.name = g_lua.popString();
+        g_lua.getField("requiredLevel", index);
+        data.requiredLevel = g_lua.popInteger();
+        g_lua.getField("restrictProfession", index);
+        data.restrictProfession = g_lua.popInteger();
+        g_lua.getField("showAs", index);
+        data.showAs = g_lua.popInteger();
+        g_lua.getField("tradeAs", index);
+        data.tradeAs = g_lua.popInteger();
+        return true;
+    }
+    return false;
+}

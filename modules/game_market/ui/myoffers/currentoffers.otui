@@ -1,0 +1,9 @@
+Panel
+  background-color: #22283399
+  margin: 1
+
+  Label
+    !text: tr('Current Offers')
+    anchors.top: parent.top
+    anchors.left: parent.left
+    margin-left: 10

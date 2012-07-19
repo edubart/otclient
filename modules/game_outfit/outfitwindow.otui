@@ -48,7 +48,7 @@ Window
   Label
     id: outfitName
     !text: tr('No Outfit')
-    width: 100
+    width: 115
     anchors.bottom: prev.top
     anchors.left: prev.left
     margin-bottom: 2
@@ -81,7 +81,7 @@ Window
   Label
     id: mountName
     !text: tr('No Mount')
-    width: 140
+    width: 115
     anchors.bottom: prev.top
     anchors.left: prev.left
     margin-bottom: 2
@@ -95,7 +95,7 @@ Window
     @onClick: Outfit.nextMountType()
 
   PrevMountButton
-    id: mountPreviousButton
+    id: mountPrevButton
     anchors.right: mountCreatureBox.left
     anchors.verticalCenter: mountCreatureBox.verticalCenter
     margin-right: 3
@@ -170,7 +170,7 @@ Window
     anchors.left: head.left
     margin-top: 3
     margin-right: 20
-    width: 323
+    width: 302
     height: 119
     layout:
       type: grid

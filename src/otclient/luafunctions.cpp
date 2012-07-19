@@ -274,7 +274,9 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Thing>("isHookSouth", &Thing::isHookSouth);
     g_lua.bindClassMemberFunction<Thing>("isTranslucent", &Thing::isTranslucent);
     g_lua.bindClassMemberFunction<Thing>("isFullGround", &Thing::isFullGround);
+    g_lua.bindClassMemberFunction<Thing>("isMarketable", &Thing::isMarketable);
     g_lua.bindClassMemberFunction<Thing>("getParentContainer", &Thing::getParentContainer);
+    g_lua.bindClassMemberFunction<Thing>("getMarketData", &Thing::getMarketData);
 
     g_lua.registerClass<House>();
     g_lua.bindClassStaticFunction<House>("create", []{ return HousePtr(new House); });
@@ -334,6 +336,8 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Item>("getCount", &Item::getCount);
     g_lua.bindClassMemberFunction<Item>("getId", &Item::getId);
     g_lua.bindClassMemberFunction<Item>("isStackable", &Item::isStackable);
+    g_lua.bindClassMemberFunction<Item>("isMarketable", &Item::isMarketable);
+    g_lua.bindClassMemberFunction<Item>("getMarketData", &Item::isMarketable);
 
     g_lua.registerClass<Effect, Thing>();
     g_lua.registerClass<Missile, Thing>();

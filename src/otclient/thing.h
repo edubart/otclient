@@ -128,7 +128,9 @@ public:
     bool isFullGround() { return rawGetDatType()->isFullGround(); }
     bool isIgnoreLook() { return rawGetDatType()->isIgnoreLook(); }
     bool isCloth() { return rawGetDatType()->isCloth(); }
+    bool isMarketable() { return rawGetDatType()->isMarketable(); }
     MarketData getMarketData() { return rawGetDatType()->getMarketData(); }
+
 
 protected:
     Position m_position;

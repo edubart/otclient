@@ -48,8 +48,8 @@ public:
 
     const ThingTypeDatPtr& getDatType(uint16 id, DatCategory category);
     const ThingTypeOtbPtr& getOtbType(uint16 id);
-    ThingTypeDat *rawGetDatType(uint16 id, DatCategory category) { return m_datTypes[category][id].get(); }
-    ThingTypeOtb *rawGetOtbType(uint16 id) { return m_otbTypes[id].get(); }
+    ThingTypeDat* rawGetDatType(uint16 id, DatCategory category) { return m_datTypes[category][id].get(); }
+    ThingTypeOtb* rawGetOtbType(uint16 id) { return m_otbTypes[id].get(); }
 
     uint32 getDatSignature() { return m_datSignature; }
     uint32 getOtbMajorVersion() { return m_otbMajorVersion; }

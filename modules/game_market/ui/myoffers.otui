@@ -1,0 +1,16 @@
+Panel
+
+  MarketTabBar
+    id: offersTabBar
+    width: 187
+    height:25
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+
+  Panel
+    id: offersTabContent
+    anchors.top: prev.bottom
+    anchors.left: prev.left
+    anchors.right: prev.right
+    anchors.bottom: parent.bottom

@@ -172,6 +172,7 @@ public:
     bool isFullGround() { return m_attribs.has(DatAttribFullGround); }
     bool isIgnoreLook() { return m_attribs.has(DatAttribIgnoreLook); }
     bool isCloth() { return m_attribs.has(DatAttribCloth); }
+    bool isMarketable() { return m_attribs.has(DatAttribMarket); }
 
 private:
     const TexturePtr& getTexture(int animationPhase);

@@ -1,0 +1,20 @@
+MarketButtonBox < UICheckBox
+  font: verdana-11px-antialised
+  color: #ffffffff
+  size: 106 22
+  text-offset: 0 0
+  text-align: center
+  image-source: /images/tabbutton.png
+  image-clip: 0 0 20 20
+  image-border: 2
+
+  $hover !disabled:
+    image-clip: 0 20 20 20
+
+  $checked:
+    image-clip: 0 40 20 20
+    color: white
+
+  $disabled:
+    color: #666666ff
+    image-color: #ffffff88

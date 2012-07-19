@@ -5,8 +5,8 @@ ExitWindow < MainWindow
 
   Label
     !text: tr('If you shut down the program, you character might stay in the game.\nClick on "Logout" to ensure that you character leaves the game property.\nClick on "Exit" if you want to exit the program without logging out your character.')
-    width: 550
-    height: 110
+    width: 500
+    height: 45
     anchors.left: parent.left
     anchors.top: parent.top
     margin-left: 10

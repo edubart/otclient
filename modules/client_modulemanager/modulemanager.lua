@@ -146,7 +146,7 @@ function ModuleManager.unloadCurrentModule()
 end
 
 function ModuleManager.reloadAllModules()
-  g_modules.g_modules.reloadModules()
+  g_modules.reloadModules()
   ModuleManager.refreshLoadedModules()
   ModuleManager.show()
 end

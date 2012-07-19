@@ -15,3 +15,7 @@ ScrollableFlatPanel < ScrollablePanel
 ParticlesFlatPanel < Panel
   image-source: /images/panel_flat.png
   image-border: 1
+
+LightFlatPanel < Panel
+  image-source: /images/panel_lightflat.png
+  image-border: 1

@@ -41,6 +41,18 @@ function table.find(t, value)
   end
 end
 
+function table.findKey(t, key)
+  if t and type(t) == 'table' then
+    for k,v in pairs(t) do
+      if k == key then return k end
+    end
+  end
+end
+
+function table.hasKey(t, key)
+  return table.findKey(t, key) ~= nil
+end
+
 function table.removevalue(t, value)
   for k,v in pairs(t) do
     if v == value then
@@ -59,7 +71,7 @@ function table.compare(t, other)
 end
 
 function table.empty(t)
-  if(t) then
+  if t and type(t) == 'table' then
     return next(t) == nil
   end
   return true

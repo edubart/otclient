@@ -4,7 +4,7 @@ MarketOffer.__index = MarketOffer
 local OFFER_TIMESTAMP = 1
 local OFFER_COUNTER = 2
 
-MarketOffer.new = function(offerId, action, itemId, amount, price, playerName, state)
+MarketOffer.new = function(offerId, action, item, amount, price, playerName, state)
   local offer = {
     id = {},
     action = nil,
@@ -26,7 +26,11 @@ MarketOffer.new = function(offerId, action, itemId, amount, price, playerName, s
   end
   offer.action = action
 
-  offer.item = itemId
+  if not item then
+    g_logger.error('MarketOffer.new - invalid item provided.')
+  end
+  offer.item = item
+
   offer.amount = amount
   offer.price = price
   offer.player = playerName
@@ -67,8 +71,19 @@ function MarketOffer:getId()
   return self.id
 end
 
+function MarketOffer:setAction(action)
+  if not action or type(action) ~= 'number'  then
+    g_logger.error('MarketOffer.setItem - invalid action id provided.')
+  end
+  self.action = action
+end
+
+function MarketOffer:getAction()
+  return self.action
+end
+
 function MarketOffer:setItem(item)
-  if not item or type(item) ~= 'number'  then
+  if not item or type(item) ~= 'userdata'  then
     g_logger.error('MarketOffer.setItem - invalid item id provided.')
   end
   self.item = item

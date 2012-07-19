@@ -31,8 +31,7 @@ MarketItemDescription = {
   Ability = 12,
   Charges = 13,
   WeaponName = 14,
-  Weight = 15,
-
-  First = Armor,
-  Last = Weight
+  Weight = 15
 }
+MarketItemDescription.First = MarketItemDescription.Armor
+MarketItemDescription.Last = MarketItemDescription.Weight

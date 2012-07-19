@@ -1,11 +1,15 @@
 PlayerMount = {}
 
 function PlayerMount.init()
-  g_keyboard.bindKeyDown('Ctrl+R', PlayerMount.toggleMount, gameRootPanel)
+  if g_game.getFeature(GamePlayerMount) then
+    g_keyboard.bindKeyDown('Ctrl+R', PlayerMount.toggleMount, gameRootPanel)
+  end
 end
 
 function PlayerMount.terminate()
-  g_keyboard.unbindKeyDown('Ctrl+R', gameRootPanel)
+  if g_game.getFeature(GamePlayerMount) then
+    g_keyboard.unbindKeyDown('Ctrl+R', gameRootPanel)
+  end
 
   PlayerMount = nil
 end

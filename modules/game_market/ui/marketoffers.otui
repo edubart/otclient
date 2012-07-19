@@ -1,0 +1,49 @@
+Panel
+
+  MarketTabBar
+    id: leftTabBar
+    width: 107
+    height:25
+    anchors.top: parent.top
+    anchors.left: parent.left
+
+  Panel
+    id: leftTabContent
+    width: 180
+    anchors.top: prev.bottom
+    anchors.left: prev.left
+    anchors.bottom: parent.bottom
+    border-width: 1
+    border-color: #000000
+
+  MarketTabBar
+    id: rightTabBar
+    width: 157
+    height:25
+    anchors.top: parent.top
+    anchors.right: parent.right
+
+  Panel
+    id: rightTabContent
+    anchors.top: prev.bottom
+    anchors.left: leftTabContent.right
+    anchors.right: prev.right
+    anchors.bottom: parent.bottom
+    margin-left:3
+    border-width: 1
+    border-color: #000000
+
+  Item
+    id: selectedItem
+    phantom: true
+    anchors.top: rightTabBar.bottom
+    anchors.left: rightTabContent.left
+    margin-top: 3
+    margin-left: 3
+
+  Label
+    id: nameLabel
+    !text: tr('No item selected.')
+    anchors.top: prev.top
+    anchors.left: prev.right
+    margin-left: 5

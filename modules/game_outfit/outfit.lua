@@ -150,14 +150,35 @@ function Outfit.create(creatureOutfit, outfitList, creatureMount, mountList)
   mountCreature = creatureMount
   outfits = outfitList
   mounts = mountList
-  Outfit.destroy() 
+  Outfit.destroy()
 
   outfitWindow = g_ui.displayUI('outfitwindow.otui')
-  outfit = outfitCreature:getOutfit()
-  if mountCreature then 
+  local colorBoxPanel = outfitWindow:getChildById('colorBoxPanel')
+
+  -- setup outfit/mount display boxs
+  local outfitCreatureBox = outfitWindow:getChildById('outfitCreatureBox')
+  if outfitCreature then
+    outfit = outfitCreature:getOutfit()
+    outfitCreatureBox:setCreature(outfitCreature)
+  else
+    outfitCreatureBox:hide()
+    outfitWindow:getChildById('outfitName'):hide()
+    outfitWindow:getChildById('outfitNextButton'):hide()
+    outfitWindow:getChildById('outfitPrevButton'):hide()
+  end
+
+  local mountCreatureBox = outfitWindow:getChildById('mountCreatureBox')
+  if mountCreature then
     mount = mountCreature:getOutfit()
+    mountCreatureBox:setCreature(mountCreature)
+  else
+    mountCreatureBox:hide()
+    outfitWindow:getChildById('mountName'):hide()
+    outfitWindow:getChildById('mountNextButton'):hide()
+    outfitWindow:getChildById('mountPrevButton'):hide()
   end
   
+  -- set addons
   addons = {
     [1] = {widget = outfitWindow:getChildById('addon1'), value = 1},
     [2] = {widget = outfitWindow:getChildById('addon2'), value = 2},
@@ -174,21 +195,14 @@ function Outfit.create(creatureOutfit, outfitList, creatureMount, mountList)
     end
   end
   
+  -- hook outfit sections
   currentClotheButtonBox = outfitWindow:getChildById('head')
   outfitWindow:getChildById('head').onCheckChange = onClotheCheckChange
   outfitWindow:getChildById('primary').onCheckChange = onClotheCheckChange
   outfitWindow:getChildById('secondary').onCheckChange = onClotheCheckChange
   outfitWindow:getChildById('detail').onCheckChange = onClotheCheckChange
 
-  local outfitCreatureBox = outfitWindow:getChildById('outfitCreatureBox')
-  local colorBoxPanel = outfitWindow:getChildById('colorBoxPanel')
-  outfitCreatureBox:setCreature(outfitCreature)
-
-  if mountCreature then
-    local mountCreatureBox = outfitWindow:getChildById('mountCreatureBox')
-    mountCreatureBox:setCreature(mountCreature)
-  end
-
+  -- populate color panel
   for j=0,6 do
     for i=0,18 do
       local colorBox = g_ui.createWidget('ColorBox', colorBoxPanel)
@@ -206,9 +220,10 @@ function Outfit.create(creatureOutfit, outfitList, creatureMount, mountList)
     end
   end
 
+  -- set current outfit/mount
   currentOutfit = 1
   for i=1,#outfitList do
-    if outfitList[i][1] == outfit.type then
+    if outfit and outfitList[i][1] == outfit.type then
       currentOutfit = i
       break
     end

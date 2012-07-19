@@ -1,0 +1,125 @@
+MarketItemBox < UICheckBox
+  border-width: 1
+  border-color: #000000
+  color: #aaaaaa
+  text-align: center
+  text-offset: 0 20
+  @onCheckChange: Market.onItemBoxChecked(self)
+
+  Item
+    id: item
+    phantom: true
+    anchors.top: parent.top
+    anchors.horizontalCenter: parent.horizontalCenter
+    margin-top: 5
+
+  $checked:
+    border-color: #ffffff
+
+  $hover !checked:
+    border-color: #aaaaaa
+
+  $disabled:
+    image-color: #ffffff88
+    color: #aaaaaa88
+
+Panel
+  background-color: #22283399
+  margin: 1
+
+  ComboBox
+    id: filterComboBox
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    margin-top: 3
+    margin-right: 3
+    margin-left: 3
+
+  ComboBox
+    id: weaponComboBox
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    margin-top: 3
+    margin-right: 3
+    margin-left: 3
+
+  MarketButtonBox
+    id: filterMatchLevel
+    checked: false
+    !text: tr('Level')
+    !tooltip: tr('Filter list to match your level')
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    margin-top: 3
+    margin-right: 3
+    margin-left: 3
+    width: 40
+    height: 20
+    //@onClick: Market.filterMatchLevel()
+
+  MarketButtonBox
+    id: filterMatchVocation
+    checked: false
+    !text: tr('Vocation')
+    !tooltip: tr('Filter list to match your vocation')
+    anchors.top: prev.top
+    anchors.left: prev.right
+    margin-right: 3
+    margin-left: 3
+    width: 60
+    height: 20
+    //@onClick: Market.filterMatchVocation()
+
+  ComboBox
+    id: typeComboBox
+    anchors.top: prev.top
+    anchors.left: prev.right
+    anchors.right: parent.right
+    margin-right: 3
+    margin-left: 3
+
+  MarketButtonBox
+    id: showDepotOnly
+    checked: false
+    !text: tr('Show Depot Only')
+    !tooltip: tr('Show your depot items only')
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    margin-top: 3
+    margin-right: 3
+    margin-left: 3
+    //@onClick: Market.setDisplayDepot()
+
+  Panel
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    margin-top: 10
+    margin-left: 3
+    margin-bottom: 10
+    margin-right: 3
+
+    VerticalScrollBar
+      id: itemsPanelListScrollBar
+      anchors.top: parent.top
+      anchors.bottom: parent.bottom
+      anchors.right: parent.right
+      step: 16
+      pixels-scroll: true
+
+    ScrollablePanel
+      id: itemsPanel
+      anchors.left: parent.left
+      anchors.right: prev.left
+      anchors.top: parent.top
+      anchors.bottom: parent.bottom
+      vertical-scrollbar: itemsPanelListScrollBar
+      layout:
+        type: grid
+        cell-size: 34 34
+        flow: true
+        auto-spacing: true

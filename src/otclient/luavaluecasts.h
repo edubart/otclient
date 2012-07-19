@@ -36,4 +36,8 @@ bool luavalue_cast(int index, Outfit& outfit);
 int push_luavalue(const Position& pos);
 bool luavalue_cast(int index, Position& pos);
 
+// market
+int push_luavalue(const MarketData& data);
+bool luavalue_cast(int index, MarketData& data);
+
 #endif

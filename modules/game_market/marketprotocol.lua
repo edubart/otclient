@@ -1,11 +1,15 @@
 MarketProtocol = {}
 
-local market
-
 -- private functions
+
+local protocol
+
 local function send(msg)
-  print(msg:getMessageSize())
-  g_game.getProtocolGame():safeSend(msg)
+  if protocol then
+    print(msg:getMessageSize())
+    --protocol:safeSend(msg)
+    protocol:send(msg)
+  end
 end
 
 local function readMarketOffer(msg, action, var)
@@ -29,12 +33,15 @@ local function readMarketOffer(msg, action, var)
     playerName = msg:getString()
   end
 
-  return MarketOffer.new({timestamp, counter}, action, itemId, amount, price, playerName, state)
+  return MarketOffer.new({timestamp, counter}, action, Item.create(itemId), amount, price, playerName, state)
 end
 
 -- parsing protocols
 local function parseMarketEnter(msg)
   local balance = msg:getU32()
+  if g_game.getProtocolVersion() < 950 then
+    msg:getU8() -- get vocation id
+  end
   local offers = msg:getU8()
   local depotItems = {}
 
@@ -47,10 +54,12 @@ local function parseMarketEnter(msg)
   end
 
   Market.onMarketEnter(depotItems, offers, balance)
+  return true
 end
 
 local function parseMarketLeave(msg)
   Market.onMarketLeave()
+  return true
 end
 
 local function parseMarketDetail(msg)
@@ -59,7 +68,7 @@ local function parseMarketDetail(msg)
   local descriptions = {}
   for i = MarketItemDescription.First, MarketItemDescription.Last do
     if msg:peekU16() ~= 0x00 then
-      table.insert(descriptions, {i, msg:getString()})
+      table.insert(descriptions, {i, msg:getString()}) -- item descriptions
     else
       msg:getU16()
     end
@@ -86,6 +95,7 @@ local function parseMarketDetail(msg)
   end
 
   Market.onMarketDetail(itemId, descriptions, purchaseStats, saleStats)
+  return true
 end
 
 local function parseMarketBrowse(msg)
@@ -103,24 +113,53 @@ local function parseMarketBrowse(msg)
   end
 
   Market.onMarketBrowse(offers)
+  return true
 end
 
 -- public functions
 function MarketProtocol.init()
-  ProtocolGame.registerOpcode(GameServerOpcodes.GameServerMarketEnter, parseMarketEnter)
-  ProtocolGame.registerOpcode(GameServerOpcodes.GameServerMarketLeave, parseMarketLeave)
-  ProtocolGame.registerOpcode(GameServerOpcodes.GameServerMarketDetail, parseMarketDetail)
-  ProtocolGame.registerOpcode(GameServerOpcodes.GameServerMarketBrowse, parseMarketBrowse)
+  connect(g_game, { onGameStart = MarketProtocol.registerProtocol,
+                    onGameEnd = MarketProtocol.unregisterProtocol })
+
+  -- reloading module
+  if g_game.isOnline() then
+    MarketProtocol.updateProtocol(g_game.getProtocolGame())
+  end
 end
 
 function MarketProtocol.terminate()
-  ProtocolGame.unregisterOpcode(GameServerOpcodes.GameServerMarketEnter, parseMarketEnter)
-  ProtocolGame.unregisterOpcode(GameServerOpcodes.GameServerMarketLeave, parseMarketLeave)
-  ProtocolGame.unregisterOpcode(GameServerOpcodes.GameServerMarketDetail, parseMarketDetail)
-  ProtocolGame.unregisterOpcode(GameServerOpcodes.GameServerMarketBrowse, parseMarketBrowse)
+  disconnect(g_game, { onGameStart = MarketProtocol.registerProtocol,
+                       onGameEnd = MarketProtocol.unregisterProtocol })
 
-  market = nil
+  -- reloading module
+  if not g_game.isOnline() then
+    MarketProtocol.updateProtocol(nil)
+  end
   MarketProtocol = nil
+end
+
+function MarketProtocol.updateProtocol(_protocol)
+  protocol = _protocol
+end
+
+function MarketProtocol.registerProtocol()
+  if g_game.getFeature(GamePlayerMarket) then
+    ProtocolGame.registerOpcode(GameServerOpcodes.GameServerMarketEnter, parseMarketEnter)
+    ProtocolGame.registerOpcode(GameServerOpcodes.GameServerMarketLeave, parseMarketLeave)
+    ProtocolGame.registerOpcode(GameServerOpcodes.GameServerMarketDetail, parseMarketDetail)
+    ProtocolGame.registerOpcode(GameServerOpcodes.GameServerMarketBrowse, parseMarketBrowse)
+  end
+  MarketProtocol.updateProtocol(g_game.getProtocolGame())
+end
+
+function MarketProtocol.unregisterProtocol()
+  if g_game.getFeature(GamePlayerMarket) then
+    ProtocolGame.unregisterOpcode(GameServerOpcodes.GameServerMarketEnter, parseMarketEnter)
+    ProtocolGame.unregisterOpcode(GameServerOpcodes.GameServerMarketLeave, parseMarketLeave)
+    ProtocolGame.unregisterOpcode(GameServerOpcodes.GameServerMarketDetail, parseMarketDetail)
+    ProtocolGame.unregisterOpcode(GameServerOpcodes.GameServerMarketBrowse, parseMarketBrowse)
+  end
+  MarketProtocol.updateProtocol(nil)
 end
 
 -- sending protocols

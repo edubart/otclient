@@ -1,29 +1,26 @@
 MarketWindow < MainWindow
   id: marketWindow
   !text: tr('Market')
-  size: 350 155
+  size: 680 460
 
-  Label
-    !text: tr('Alas! Brave adventurer, you have met a sad fate.\nBut do not despair, for the gods will bring you back\ninto this world in exchange for a small sacrifice\n\nSimply click on Ok to resume your journeys!')
-    width: 550
-    height: 140
-    anchors.left: parent.left
+  @onEnter: self:hide()
+  @onEscape: self:hide()
+
+  // Main Panel Window
+
+  MarketTabBar
+    id: mainTabBar
+    width: 164
+    height: 25
     anchors.top: parent.top
-    margin-left: 10
-    margin-top: 2
-
-  Button
-    id: buttonOk
-    !text: tr('Ok')
-    width: 64
     anchors.left: parent.left
-    anchors.bottom: parent.bottom
-    margin-left: 160
 
-  Button
-    id: buttonCancel
-    !text: tr('Cancel')
-    width: 64
-    anchors.left: prev.right
+  Panel
+    id: mainTabContent
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
     anchors.bottom: parent.bottom
-    margin-left: 5
+    padding: 3
+    border-width: 1
+    border-color: #000000
