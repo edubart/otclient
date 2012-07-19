@@ -22,6 +22,7 @@
 
 #include "module.h"
 #include "modulemanager.h"
+#include "resourcemanager.h"
 
 #include <framework/otml/otml.h>
 #include <framework/luaengine/luainterface.h>
@@ -29,6 +30,8 @@
 Module::Module(const std::string& name)
 {
     m_name = name;
+    g_lua.newEnvironment();
+    m_sandboxEnv = g_lua.ref();
 }
 
 bool Module::load()
@@ -36,24 +39,43 @@ bool Module::load()
     if(m_loaded)
         return true;
 
-    for(const std::string& depName : m_dependencies) {
-        ModulePtr dep = g_modules.getModule(depName);
-        if(!dep) {
-            g_logger.error(stdext::format("Unable to load module '%s' because dependency '%s' was not found", m_name, depName));
-            return false;
+    try {
+        for(const std::string& depName : m_dependencies) {
+            ModulePtr dep = g_modules.getModule(depName);
+            if(!dep)
+                stdext::throw_exception(stdext::format("dependency '%s' was not found", m_name, depName));
+
+            if(!dep->isLoaded() && !dep->load())
+                stdext::throw_exception(stdext::format("dependency '%s' has failed to load", m_name, depName));
         }
 
-        if(!dep->isLoaded() && !dep->load()) {
-            g_logger.error(stdext::format("Unable to load module '%s' because dependency '%s' has failed to load", m_name, depName));
-            return false;
+        for(const std::string& script : m_scripts) {
+            g_lua.loadScript(script);
+            if(m_sandboxed) {
+                g_lua.getRef(m_sandboxEnv);
+                g_lua.setEnv();
+            }
+            g_lua.safeCall(0, 0);
         }
+
+        const std::string& onLoadBuffer = std::get<0>(m_onLoadFunc);
+        const std::string& onLoadSource = std::get<1>(m_onLoadFunc);
+        if(!onLoadBuffer.empty()) {
+            g_lua.loadBuffer(onLoadBuffer, onLoadSource);
+            if(m_sandboxed) {
+                g_lua.getRef(m_sandboxEnv);
+                g_lua.setEnv();
+            }
+            g_lua.safeCall(0, 0);
+        }
+
+        g_logger.debug(stdext::format("Loaded module '%s'", m_name));
+    } catch(stdext::exception& e) {
+        g_logger.error(stdext::format("Unable to load module '%s': %s", m_name, e.what()));
+        return false;
     }
 
-    if(m_loadCallback)
-        m_loadCallback();
-
     m_loaded = true;
-    g_logger.debug(stdext::format("Loaded module '%s'", m_name));
     g_modules.updateModuleLoadOrder(asModule());
 
     for(const std::string& modName : m_loadLaterModules) {
@@ -70,8 +92,21 @@ bool Module::load()
 void Module::unload()
 {
     if(m_loaded) {
-        if(m_unloadCallback)
-            m_unloadCallback();
+        try {
+            const std::string& onUnloadBuffer = std::get<0>(m_onUnloadFunc);
+            const std::string& onUnloadSource = std::get<1>(m_onUnloadFunc);
+            if(!onUnloadBuffer.empty()) {
+                g_lua.loadBuffer(onUnloadBuffer, onUnloadSource);
+                if(m_sandboxed) {
+                    g_lua.getRef(m_sandboxEnv);
+                    g_lua.setEnv();
+                }
+                g_lua.safeCall(0, 0);
+            }
+        } catch(stdext::exception& e) {
+            g_logger.error(stdext::format("Unable to unload module '%s': %s", m_name, e.what()));
+        }
+
         m_loaded = false;
         //g_logger.info(stdext::format("Unloaded module '%s'", m_name));
         g_modules.updateModuleLoadOrder(asModule());
@@ -109,6 +144,7 @@ void Module::discover(const OTMLNodePtr& moduleNode)
     m_version = moduleNode->valueAt("version", none);
     m_autoLoad = moduleNode->valueAt<bool>("autoload", false);
     m_reloadable = moduleNode->valueAt<bool>("reloadable", true);
+    m_sandboxed = moduleNode->valueAt<bool>("sandboxed", false);
     m_autoLoadPriority = moduleNode->valueAt<int>("autoload-priority", 9999);
 
     if(OTMLNodePtr node = moduleNode->get("dependencies")) {
@@ -116,22 +152,19 @@ void Module::discover(const OTMLNodePtr& moduleNode)
             m_dependencies.push_back(tmp->value());
     }
 
-    // set onLoad callback
-    if(OTMLNodePtr node = moduleNode->get("@onLoad")) {
-        g_lua.loadFunction(node->value(), "@" + node->source() + "[" + node->tag() + "]");
-        g_lua.useValue();
-        m_loadCallback = g_lua.polymorphicPop<std::function<void()>>();
-    }
-
-    // set onUnload callback
-    if(OTMLNodePtr node = moduleNode->get("@onUnload")) {
-        g_lua.loadFunction(node->value(), "@" + node->source() + "[" + node->tag() + "]");
-        g_lua.useValue();
-        m_unloadCallback = g_lua.polymorphicPop<std::function<void()>>();
+    if(OTMLNodePtr node = moduleNode->get("scripts")) {
+        for(const OTMLNodePtr& tmp : node->children())
+            m_scripts.push_back(stdext::resolve_path(tmp->value(), node->source()));
     }
 
     if(OTMLNodePtr node = moduleNode->get("load-later")) {
         for(const OTMLNodePtr& tmp : node->children())
             m_loadLaterModules.push_back(tmp->value());
     }
+
+    if(OTMLNodePtr node = moduleNode->get("@onLoad"))
+        m_onLoadFunc = std::make_tuple(node->value(), "@" + node->source() + "[" + node->tag() + "]");
+
+    if(OTMLNodePtr node = moduleNode->get("@onUnload"))
+        m_onUnloadFunc = std::make_tuple(node->value(), "@" + node->source() + "[" + node->tag() + "]");
 }

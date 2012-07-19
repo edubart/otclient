@@ -60,7 +60,7 @@ protected:
     void processWalkCancel(Otc::Direction direction);
 
     // message related
-    void processTextMessage(const std::string& type, const std::string& message);
+    void processTextMessage(const std::string& type, const std::string& message); // deprecated
     void processCreatureSpeak(const std::string& name, int level, Otc::SpeakType type, const std::string& message, int channelId, const Position& creaturePos);
 
     // container related

@@ -64,7 +64,11 @@ private:
     Boolean<false> m_loaded;
     Boolean<false> m_autoLoad;
     Boolean<false> m_reloadable;
+    Boolean<false> m_sandboxed;
     int m_autoLoadPriority;
+    int m_sandboxEnv;
+    std::tuple<std::string, std::string> m_onLoadFunc;
+    std::tuple<std::string, std::string> m_onUnloadFunc;
     std::string m_name;
     std::string m_description;
     std::string m_author;
@@ -73,6 +77,7 @@ private:
     std::function<void()> m_loadCallback;
     std::function<void()> m_unloadCallback;
     std::list<std::string> m_dependencies;
+    std::list<std::string> m_scripts;
     std::list<std::string> m_loadLaterModules;
 };
 

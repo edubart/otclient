@@ -3,13 +3,14 @@ Module
   description: Manage game text messages
   author: edubart
   website: www.otclient.info
+  sandboxed: true
 
   dependencies:
     - game_interface
 
-  @onLoad: |
-    dofile 'textmessage'
-    TextMessage.init()
+  scripts:
+    - protocol.lua
+    - textmessage.lua
 
-  @onUnload: |
-    TextMessage.terminate()
+  @onLoad: init()
+  @onUnload: terminate()

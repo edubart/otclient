@@ -329,77 +329,6 @@ namespace Proto {
 #endif
     };
 
-    enum MessageTypes {
-#if PROTOCOL>=910
-        // 1-3
-        MessageConsoleBlue = 4,         // old
-        // 5-11
-        MessageConsoleRed = 12,         // old
-        // 13-15
-        MessageStatusDefault = 16,      // old
-        MessageWarning,                 // old
-        MessageEventAdvance,            // old
-        MessageStatusSmall,             // old
-        MessageInfoDescription,         // old
-        MessageDamageDealt,             // new
-        MessageDamageReceived,          // new
-        MessageHealed,                  // new
-        MessageExperience,              // new
-        MessageDamageOthers,            // new
-        MessageHealedOthers,            // new
-        MessageExperienceOthers,        // new
-        MessageEventDefault,            // old
-        MessageLoot,                    // new
-        MessageTradeNpc,                // unused
-        MessageChannelGuild,            // new
-        MessagePartyManagment,          // unused
-        MessageParty,                   // unused
-        MessageEventOrange,             // old
-        MessageConsoleOrange,           // old
-        MessageReport,                  // unused
-        MessageHotkeyUse,               // unused
-        MessageTutorialHint,            // unused
-
-        // unsupported
-        MessageConsoleOrange2 = 255
-#elif PROTOCOL>=861
-        MessageConsoleOrange = 13,
-        MessageConsoleOrange2,
-        MessageWarning,
-        MessageEventAdvance,
-        MessageEventDefault,
-        MessageStatusDefault,
-        MessageInfoDescription,
-        MessageStatusSmall,
-        MessageConsoleBlue,
-        MessageConsoleRed
-#elif PROTOCOL>=854
-        MessageConsoleRed = 18,
-        MessageConsoleOrange,
-        MessageConsoleOrange2,
-        MessageWarning,
-        MessageEventAdvance,
-        MessageEventDefault,
-        MessageStatusDefault,
-        MessageInfoDescription,
-        MessageStatusSmall,
-        MessageConsoleBlue
-#elif PROTOCOL>=810
-        MessageWarning = 18,
-        MessageEventAdvance,
-        MessageEventDefault,
-        MessageStatusDefault,
-        MessageInfoDescription,
-        MessageStatusSmall,
-        MessageConsoleBlue,
-        MessageConsoleRed,
-
-        // unsupported
-        MessageConsoleOrange = 255,
-        MessageConsoleOrange2,
-#endif
-    };
-
     enum CreatureType {
         CreatureTypePlayer = 0,
         CreatureTypeMonster,
@@ -457,24 +386,6 @@ namespace Proto {
             default:
                 g_logger.error(stdext::format("unknown protocol speak type desc %d", type));
                 return Proto::ServerSpeakSay;
-        }
-    }
-
-    inline std::string translateTextMessageType(int type) {
-        switch(type) {
-            case Proto::MessageConsoleOrange: return "consoleOrange";
-            case Proto::MessageConsoleOrange2: return "consoleOrange";
-            case Proto::MessageWarning: return "warning";
-            case Proto::MessageEventAdvance: return "eventAdvance";
-            case Proto::MessageEventDefault: return "eventDefault";
-            case Proto::MessageStatusDefault: return "statusDefault";
-            case Proto::MessageInfoDescription: return "infoDescription";
-            case Proto::MessageStatusSmall: return "statusSmall";
-            case Proto::MessageConsoleBlue: return "consoleBlue";
-            case Proto::MessageConsoleRed: return "consoleRed";
-            default:
-                g_logger.error(stdext::format("unknown protocol text message type %d", type));
-                return "unknown";
         }
     }
 }

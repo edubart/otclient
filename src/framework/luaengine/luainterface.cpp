@@ -306,13 +306,13 @@ bool LuaInterface::safeRunScript(const std::string& fileName)
 void LuaInterface::runScript(const std::string& fileName)
 {
     loadScript(fileName);
-    safeCall();
+    safeCall(0, 0);
 }
 
 void LuaInterface::runBuffer(const std::string& buffer, const std::string& source)
 {
     loadBuffer(buffer, source);
-    safeCall();
+    safeCall(0, 0);
 }
 
 void LuaInterface::loadScript(const std::string& fileName)
@@ -425,7 +425,7 @@ std::string LuaInterface::getCurrentSourcePath(int level)
     return path;
 }
 
-int LuaInterface::safeCall(int numArgs)
+int LuaInterface::safeCall(int numArgs, int numRets)
 {
     assert(hasIndex(-numArgs-1));
 
@@ -446,22 +446,33 @@ int LuaInterface::safeCall(int numArgs)
     if(ret != 0)
         throw LuaException(popString());
 
+    int rets = (stackSize() + numArgs + 1) - previousStackSize;
+    while(numRets != -1 && rets != numRets) {
+        if(rets < numRets) {
+            pushNil();
+            rets++;
+        } else {
+            pop();
+            rets--;
+        }
+    }
+
     // returns the number of results
-    return (stackSize() + numArgs + 1) - previousStackSize;
+    return rets;
 }
 
-int LuaInterface::signalCall(int numArgs, int requestedResults)
+int LuaInterface::signalCall(int numArgs, int numRets)
 {
-    int numRets = 0;
+    int rets = 0;
     int funcIndex = -numArgs-1;
 
     try {
         // must be a function
         if(isFunction(funcIndex)) {
-            numRets = safeCall(numArgs);
+            rets = safeCall(numArgs);
 
-            if(requestedResults != -1) {
-                if(numRets != requestedResults)
+            if(numRets != -1) {
+                if(rets != numRets)
                     throw LuaException("function call didn't return the expected number of results", 0);
             }
         }
@@ -491,8 +502,8 @@ int LuaInterface::signalCall(int numArgs, int requestedResults)
             }
             pop(numArgs + 1); // pops the table of function and arguments
 
-            if(requestedResults == 1) {
-                numRets = 1;
+            if(numRets == 1) {
+                rets = 1;
                 pushBoolean(done);
             }
         }
@@ -509,13 +520,13 @@ int LuaInterface::signalCall(int numArgs, int requestedResults)
     }
 
     // pushes nil values if needed
-    while(requestedResults != -1 && numRets < requestedResults) {
+    while(numRets != -1 && rets < numRets) {
         pushNil();
-        numRets++;
+        rets++;
     }
 
     // returns the number of results on the stack
-    return numRets;
+    return rets;
 }
 
 void LuaInterface::newEnvironment()

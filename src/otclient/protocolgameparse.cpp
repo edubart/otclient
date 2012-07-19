@@ -1067,12 +1067,9 @@ void ProtocolGame::parseRuleViolationLock(const InputMessagePtr& msg)
 
 void ProtocolGame::parseTextMessage(const InputMessagePtr& msg)
 {
-    int type = msg->getU8();
-
-    std::string typeDesc = Proto::translateTextMessageType(type);
-    std::string message = msg->getString();
-
-    g_game.processTextMessage(typeDesc, message);
+    msg->getU8(); // type
+    msg->getString(); // message
+    // this is now handled by game_textmessage module
 }
 
 void ProtocolGame::parseCancelWalk(const InputMessagePtr& msg)

@@ -51,11 +51,13 @@ function g_settings.getString(key, default)
 end
 
 function g_settings.getInteger(key, default)
-  return tonumber(g_settings.get(key, default))
+  local v = tonumber(g_settings.get(key, default)) or 1
+  return v
 end
 
 function g_settings.getNumber(key, default)
-  return tonumber(g_settings.get(key, default))
+  local v = tonumber(g_settings.get(key, default)) or 1
+  return v
 end
 
 function g_settings.getBoolean(key, default)

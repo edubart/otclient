@@ -556,7 +556,6 @@ void Map::clean()
     m_towns.clear();
     m_houses.clear();
     m_creatures.clear();
-    m_monsters.clear();
     m_tilesRect = Rect(65534, 65534, 0, 0);
 }
 

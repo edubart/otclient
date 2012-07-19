@@ -110,9 +110,34 @@ function extends(base)
   return derived
 end
 
+function export(what, key)
+  if key ~= nil then
+    _G[key] = what
+  else
+    for k,v in pairs(what) do
+      _G[k] = v
+    end
+  end
+end
+
+function unexport(key)
+  if type(key) == 'table' then
+    for _k,v in pairs(key) do
+      _G[v] = nil
+    end
+  else
+    _G[key] = nil
+  end
+end
+
+function sandbox(what)
+  what = what or 2
+  setfenv(what, newenv())
+end
+
 function newenv()
   local env = { }
-  setmetatable(env, { __index = _G} )
+  setmetatable(env, { __index = getfenv() } )
   return env
 end
 
@@ -155,13 +180,6 @@ function toboolean(str)
     return true
   end
   return false
-end
-
-local oldtonumber = tonumber
-
-function tonumber(v)
-  if v == nil then return 0 end
-  return oldtonumber(v)
 end
 
 function signalcall(param, ...)

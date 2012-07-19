@@ -16,6 +16,5 @@ Module
     dofile 'settings'
     dofile 'keyboard'
     dofile 'mouse'
-    dofile 'protocol'
 
     dofiles 'ui'

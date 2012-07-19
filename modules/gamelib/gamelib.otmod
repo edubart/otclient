@@ -10,7 +10,7 @@ Module
 
   @onLoad: |
     dofile 'const'
-
+    dofile 'protocol'
     dofile 'protocollogin'
     dofile 'protocolgame'
     dofile 'game'

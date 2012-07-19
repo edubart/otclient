@@ -174,13 +174,13 @@ public:
     /// results are pushed onto the stack.
     /// @exception LuaException is thrown on any lua error
     /// @return number of results
-    int safeCall(int numArgs = 0);
+    int safeCall(int numArgs = 0, int numRets = -1);
 
     /// Same as safeCall but catches exceptions and can also calls a table of functions,
     /// if any error occurs it will be reported to stdout and returns 0 results
     /// @param requestedResults is the number of results requested to pushes onto the stack,
     /// if supplied, the call will always pushes that number of results, even if it fails
-    int signalCall(int numArgs = 0, int requestedResults = -1);
+    int signalCall(int numArgs = 0, int numRets = -1);
 
     /// @brief Creates a new environment table
     /// The new environment table is redirected to the global environment (aka _G),

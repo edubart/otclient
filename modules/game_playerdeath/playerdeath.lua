@@ -8,7 +8,7 @@ local deathWindow
 -- public functions
 function PlayerDeath.init()
   g_ui.importStyle('deathwindow.otui')
-  
+
   connect(g_game, { onDeath = PlayerDeath.display,
                     onGameEnd = PlayerDeath.reset })
 end
@@ -22,7 +22,6 @@ function PlayerDeath.terminate()
 end
 
 function PlayerDeath.reset()
-  GameInterface.getMapPanel():recursiveGetChildById('centerAdvance'):hide()
   if deathWindow then
     deathWindow:destroy()
     deathWindow = nil
@@ -37,9 +36,9 @@ end
 function PlayerDeath.displayDeadMessage()
   local advanceLabel = GameInterface.getMapPanel():recursiveGetChildById('centerAdvance')
   if advanceLabel:isVisible() then
-    return 
+    return
   end
-  
+
   TextMessage.displayEventAdvance(tr('You are dead.'))
 end
 
@@ -64,7 +63,7 @@ function PlayerDeath.openWindow()
 
   deathWindow.onEnter = okFunc
   deathWindow.onEscape = cancelFunc
-  
+
   okButton.onClick = okFunc
   cancelButton.onClick = cancelFunc
 end
