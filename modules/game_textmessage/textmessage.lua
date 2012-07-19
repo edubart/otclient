@@ -1,4 +1,4 @@
-MessageTypesConf = {
+MessageTypes = {
   ConsoleRed      = { color = '#F55E5E', consoleTab = tr('Default') },
   ConsoleOrange   = { color = '#FE6500', consoleTab = tr('Default') },
   ConsoleBlue     = { color = '#9F9DFD', consoleTab = tr('Default') },
@@ -43,9 +43,9 @@ function init()
 
   export({
     clearMessages = clearMessages,
-    displayStatus = function() displayMessage(MessageTypes.StatusSmall, msg) end,
-    displayEventAdvance = function() displayMessage(MessageTypes.EventAdvance, msg, time) end,
-    displayPrivate = function() displayPrivate(msg, time) end
+    displayStatus = function(msg, time) displayMessage('StatusSmall', msg) end,
+    displayEventAdvance = function(msg, time) displayMessage('EventAdvance', msg, time) end,
+    displayPrivate = function(msg, time) displayMessage('Private', time) end
   }, 'TextMessage')
 end
 
@@ -86,19 +86,19 @@ end
 
 function displayMessage(msgtype, msg, time)
   if not g_game.isOnline() then return end
-  msgtypeconf = MessageTypesConf[msgtype]
+  msgtype = MessageTypes[msgtype]
 
-  if msgtypeconf.consoleTab ~= nil then
-    if msgtypeconf.consoleOption == nil or Options.getOption(msgtypeconf.consoleOption) then
-      Console.addText(msg, msgtypeconf, msgtypeconf.consoleTab)
+  if msgtype.consoleTab ~= nil then
+    if msgtype.consoleOption == nil or Options.getOption(msgtype.consoleOption) then
+      Console.addText(msg, msgtype, msgtype.consoleTab)
     end
   end
 
-  if msgtypeconf.labelId then
-    local label = GameInterface.getMapPanel():recursiveGetChildById(msgtypeconf.labelId)
+  if msgtype.labelId then
+    local label = GameInterface.getMapPanel():recursiveGetChildById(msgtype.labelId)
 
     label:setText(msg)
-    label:setColor(msgtypeconf.color)
+    label:setColor(msgtype.color)
 
     if not time then
       time = math.max(#msg * 100, 4000)
