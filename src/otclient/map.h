@@ -28,7 +28,9 @@
 #include "towns.h"
 #include "creatures.h"
 #include "animatedtext.h"
+
 #include <framework/core/clock.h>
+#include <framework/util/attribstorage.h>
 
 enum OTBM_AttrTypes_t
 {
@@ -187,6 +189,7 @@ private:
     Position m_centralPosition;
     Rect m_tilesRect;
 
+    AttribStorage m_attribs;
     std::string m_description, m_spawnFile, m_houseFile;
 
     Houses m_houses;

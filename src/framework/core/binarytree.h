@@ -25,6 +25,7 @@
 
 #include "declarations.h"
 #include <framework/util/databuffer.h>
+#include <otclient/position.h>
 
 enum {
     BINARYTREE_ESCAPE_CHAR = 0xFD,
@@ -48,6 +49,8 @@ public:
     uint32 getU32();
     uint64 getU64();
     std::string getString();
+    Position getPosition() { return Position(getU16(), getU16(), getU8()); }
+    Point getPoint() { return Point(getU8(), getU8()); }
 
     BinaryTreeVec getChildren();
     bool canRead() { unserialize(); return m_pos < m_buffer.size(); }

@@ -129,8 +129,7 @@ void Map::loadOtbm(const std::string& fileName)
     for(const BinaryTreePtr &nodeMapData : node->getChildren()) {
         uint8 mapDataType = nodeMapData->getU8();
         if(mapDataType == OTBM_TILE_AREA) {
-            uint16 baseX = nodeMapData->getU16(), baseY = nodeMapData->getU16();
-            uint8 pz = nodeMapData->getU8();
+            Position basePos = nodeMapData->getPosition();
 
             for(const BinaryTreePtr &nodeTile : nodeMapData->getChildren()) {
                 uint8 type = nodeTile->getU8();
@@ -139,9 +138,7 @@ void Map::loadOtbm(const std::string& fileName)
 
                 HousePtr house = nullptr;
                 uint32 flags = TILESTATE_NONE;
-
-                uint16 px = baseX + nodeTile->getU8(), py = baseY + nodeTile->getU8();
-                Position pos(px, py, pz);
+                Position pos = basePos + nodeTile->getPoint();
 
                 if(type ==  OTBM_HOUSETILE) {
                     uint32 hId = nodeTile->getU32();
@@ -178,8 +175,8 @@ void Map::loadOtbm(const std::string& fileName)
                             break;
                         }
                         default: {
-                            stdext::throw_exception(stdext::format("invalid tile attribute %d at pos %d, %d, %d",
-                                                                   (int)tileAttr, px, py, pz));
+                            stdext::throw_exception(stdext::format("invalid tile attribute %d at pos %s",
+                                                                   (int)tileAttr, stdext::pos_to_string(pos)));
                         }
                     }
                 }
@@ -206,8 +203,8 @@ void Map::loadOtbm(const std::string& fileName)
                     }
 
                     if(house && item->isMoveable()) {
-                        g_logger.warning(stdext::format("Movable item found in house: %d at pos %d %d %d - escaping...", item->getId(),
-                                                        px, py, pz));
+                        g_logger.warning(stdext::format("Movable item found in house: %d at pos %s - escaping...", item->getId(),
+                                                        stdext::pos_to_string(pos)));
                         item.reset();
                     }
 
@@ -225,12 +222,11 @@ void Map::loadOtbm(const std::string& fileName)
 
                 uint32 townId = nodeTown->getU32();
                 std::string townName = nodeTown->getString();
-                Position townCoords(nodeTown->getU16(), nodeTown->getU16(), nodeTown->getU8());
+                Position townCoords = nodeTown->getPosition();
                 if(!(town = m_towns.getTown(townId))) {
                     town = TownPtr(new Town(townId, townName, townCoords));
                     m_towns.addTown(town);
                 }
-                g_logger.debug(stdext::format("new town %ld %s", townId, townName));
             }
         } else if(mapDataType == OTBM_WAYPOINTS && headerVersion > 1) {
             for(const BinaryTreePtr &nodeWaypoint : nodeMapData->getChildren()) {
@@ -238,14 +234,13 @@ void Map::loadOtbm(const std::string& fileName)
                     stdext::throw_exception("invalid waypoint node.");
 
                 std::string name = nodeWaypoint->getString();
-                Position waypointPos(nodeWaypoint->getU16(), nodeWaypoint->getU16(), nodeWaypoint->getU8());
+                Position waypointPos = nodeWaypoint->getPosition();
                 if(waypointPos.isValid() && !name.empty() && m_waypoints.find(waypointPos) == m_waypoints.end())
                     m_waypoints.insert(std::make_pair(waypointPos, name));
             }
         } else
-            stdext::throw_exception("Unknown map data node");
+            stdext::throw_exception(stdext::format("Unknown map data node %d", (int)mapDataType));
     }
-
 
     int numItems = 0;
     for(const auto& it : m_tiles)
@@ -327,7 +322,7 @@ void Map::saveOtbm(const std::string &fileName)
 
             Position pos(-1, -1, -1);
             Boolean<true> first;
-            for (auto& pair : m_tiles) {
+            for (const auto& pair : m_tiles) {
                 TilePtr tile = pair.second;
                 if(!tile || tile->isEmpty())
                     continue;
@@ -397,15 +392,12 @@ void Map::loadSpawns(const std::string &fileName)
             if (!m)
                 stdext::throw_exception(stdext::format("unkown monster '%s'", stdext::trim(stdext::tolower(mName))));
 
-            Point off = mType->readPoint();
-            Position mPos(centerPos.x + off.x, centerPos.y + off.y, centerPos.z);
-            m->setPos(mPos);
+            m->setPos(centerPos + mType->readPoint());
             m->setSpawnTime(mType->readType<int>("spawntime"));
         }
     }
 
     doc.Clear();
-    g_logger.debug("Loaded spawns");
 }
 
 bool Map::loadOtcm(const std::string& fileName)
@@ -439,7 +431,6 @@ bool Map::loadOtcm(const std::string& fileName)
             }
             default:
                 stdext::throw_exception("otcm version not supported");
-                break;
         }
 
         fin->seek(start);

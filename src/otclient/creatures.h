@@ -20,34 +20,40 @@
  * THE SOFTWARE.
  */
 
-#ifndef MONSTERS_H
-#define MONSTERS_H
+#ifndef CREATURES_H
+#define CREATURES_H
 
 #include "declarations.h"
 #include <framework/luaengine/luaobject.h>
+#include <framework/util/attribstorage.h>
 #include "outfit.h"
+
+enum CreatureAttributes : unsigned char
+{
+    CreatureAttribPos,
+    CreatureAttribName,
+    CreatureAttribOutfit,
+    CreatureAttribSpawnTime
+};
 
 class CreatureType : public LuaObject
 {
 public:
     CreatureType() { }
-    CreatureType(const std::string& name)
-        : m_name(name) { }
+    CreatureType(const std::string& name) { setName(name); }
 
-    void setPos(const Position& pos) { m_pos = pos; }
-    void setName(const std::string& name) { m_name = name; }
-    void setOutfit(const Outfit& o) { m_outfit = o; }
-    void setSpawnTime(int spawnTime) { m_spawnTime = spawnTime; }
+    void setPos(const Position& pos) { m_attribs.set(CreatureAttribPos, pos); }
+    void setName(const std::string& name) { m_attribs.set(CreatureAttribName, name); }
+    void setOutfit(const Outfit& o) { m_attribs.set(CreatureAttribOutfit, o); }
+    void setSpawnTime(int spawnTime) { m_attribs.set(CreatureAttribSpawnTime, spawnTime); }
 
-    std::string getName() { return m_name; }
-    Position getPos() { return m_pos; }
-    Outfit getOutfit() { return m_outfit; }
+    std::string getName() { return m_attribs.get<std::string>(CreatureAttribName); }
+    Position getPos() { return m_attribs.get<Position>(CreatureAttribPos); }
+    Outfit getOutfit() { return m_attribs.get<Outfit>(CreatureAttribOutfit); }
+    int getSpawnTime() { return m_attribs.get<int>(CreatureAttribSpawnTime); }
 
 private:
-    Position m_pos;
-    std::string m_name;
-    Outfit m_outfit;
-    int m_spawnTime;
+    AttribStorage m_attribs;
 };
 
 class Creatures
@@ -55,7 +61,7 @@ class Creatures
 public:
     void clear() { m_creatures.clear(); }
 
-	void loadMonsters(const std::string& file);
+    void loadMonsters(const std::string& file);
     void loadSingleCreature(const std::string& file);
     void loadNpcs(const std::string& folder);
     void loadCreatureBuffer(const std::string& buffer);
@@ -63,7 +69,7 @@ public:
     CreatureTypePtr getCreature(const std::string& name);
     CreatureTypePtr getCreature(const Position& pos);
 
-	bool isLoaded() const { return m_loaded; }
+    bool isLoaded() const { return m_loaded; }
 
 protected:
     bool m_loadCreatureBuffer(TiXmlElement* elem, CreatureTypePtr& m);

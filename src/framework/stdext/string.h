@@ -30,6 +30,7 @@
 #include <iomanip>
 #include <vector>
 #include <boost/algorithm/string.hpp>
+#include <otclient/position.h>
 
 #include "types.h"
 #include "cast.h"
@@ -178,6 +179,11 @@ inline std::string ip_to_string(uint32 ip) {
     char host[16];
     sprintf(host, "%d.%d.%d.%d", (uint8)ip, (uint8)(ip >> 8), (uint8)(ip >> 16), (uint8)(ip >> 24));
     return std::string(host);
+}
+
+inline std::string pos_to_string(const Position& p)
+{
+    return format("{x = %h, y = %h, z = %hh}", p.x, p.y, p.z);
 }
 
 /// Convert utf8 characters to latin1

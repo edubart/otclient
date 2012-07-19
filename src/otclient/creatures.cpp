@@ -62,7 +62,7 @@ void Creatures::loadNpcs(const std::string &folder)
 
     for(boost::filesystem::directory_iterator it(npcPath), end; it != end; ++it) {
         std::string f = it->path().string();
-        if(boost::filesystem::is_directory(it->status()) && ((f.size() > 4 ? f.substr(f.size() - 4) : "") != ".xml"))
+        if(boost::filesystem::is_directory(it->status()) || ((f.size() > 4 ? f.substr(f.size() - 4) : "") != ".xml"))
             continue;
 
         loadCreatureBuffer(g_resources.loadFile(f));
@@ -78,15 +78,18 @@ void Creatures::loadCreatureBuffer(const std::string &buffer)
 
     TiXmlElement* root = doc.FirstChildElement();
     if(!root || root->ValueStr() != "npc")
-        stdext::throw_exception(("invalid root tag name"));
+        stdext::throw_exception("invalid root tag name");
 
     for(TiXmlElement* attrib = root->FirstChildElement(); attrib; attrib = attrib->NextSiblingElement()) {
         if(attrib->ValueStr() != "npc" && attrib->ValueStr() != "monster")
             stdext::throw_exception(stdext::format("invalid attribute '%s'", attrib->ValueStr()));
 
         CreatureTypePtr newType(nullptr);
-        m_loadCreatureBuffer(attrib, newType);
+        if(m_loadCreatureBuffer(attrib, newType))
+            break;
     }
+
+    doc.Clear();
 }
 
 bool Creatures::m_loadCreatureBuffer(TiXmlElement* attrib, CreatureTypePtr& m)
@@ -98,13 +101,17 @@ bool Creatures::m_loadCreatureBuffer(TiXmlElement* attrib, CreatureTypePtr& m)
     Outfit out;
 
     int32 type;
+    bool isTypeEx=false;
     if(!attrib->Attribute("type").empty())
         type = attrib->readType<int32>("type");
-    else
+    else {
         type = attrib->readType<int32>("typeex");
+	isTypeEx = true;
+    }
 
     out.setId(type);
-    {
+
+    if(!isTypeEx) {
         out.setHead(attrib->readType<int>(("head")));
         out.setBody(attrib->readType<int>(("body")));
         out.setLegs(attrib->readType<int>(("legs")));

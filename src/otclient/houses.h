@@ -29,7 +29,7 @@
 #include <framework/luaengine/luaobject.h>
 #include <framework/util/attribstorage.h>
 
-enum HouseAttributes
+enum HouseAttributes : unsigned char
 {
     HouseAttribId,
     HouseAttribName,
@@ -73,15 +73,13 @@ private:
 
 class Houses {
 public:
+    void clear() { m_houses.clear(); }
     void addHouse(const HousePtr& house);
     void removeHouse(uint32 houseId);
     void load(const std::string& fileName);
 
     HouseList houseList() const { return m_houses; }
     HousePtr getHouse(uint32 houseId);
-
-    // Fix to segfault on exit.
-    void clear() { m_houses.clear(); }
 
 private:
     HouseList m_houses;
