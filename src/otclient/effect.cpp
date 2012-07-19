@@ -32,7 +32,7 @@ void Effect::draw(const Point& dest, float scaleFactor, bool animate)
     int animationPhase = 0;
     if(animate)
         animationPhase = std::min((int)(m_animationTimer.ticksElapsed() / Otc::EFFECT_TICKS_PER_FRAME), getAnimationPhases() - 1);
-    rawGetDatType()->draw(dest, scaleFactor, 0, 0, 0, 0, animationPhase);
+    rawGetThingType()->draw(dest, scaleFactor, 0, 0, 0, 0, animationPhase);
 }
 
 void Effect::startAnimation()
@@ -51,12 +51,12 @@ void Effect::setId(uint32 id)
     m_id = id;
 }
 
-const ThingTypeDatPtr& Effect::getDatType()
+const ThingTypePtr& Effect::getThingType()
 {
-    return g_things.getDatType(m_id, DatEffectCategory);
+    return g_things.getThingType(m_id, DatEffectCategory);
 }
 
-ThingTypeDat *Effect::rawGetDatType()
+ThingType *Effect::rawGetThingType()
 {
-    return g_things.rawGetDatType(m_id, DatEffectCategory);
+    return g_things.rawGetThingType(m_id, DatEffectCategory);
 }

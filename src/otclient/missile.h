@@ -45,8 +45,8 @@ public:
     MissilePtr asMissile() { return std::static_pointer_cast<Missile>(shared_from_this()); }
     bool isMissile() { return true; }
 
-    const ThingTypeDatPtr& getDatType();
-    ThingTypeDat *rawGetDatType();
+    const ThingTypePtr& getThingType();
+    ThingType *rawGetThingType();
 
 private:
     Timer m_animationTimer;

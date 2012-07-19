@@ -113,7 +113,7 @@ void Creature::internalDrawOutfit(const Point& dest, float scaleFactor, bool ani
             if(yPattern > 0 && !(m_outfit.getAddons() & (1 << (yPattern-1))))
                 continue;
 
-            auto datType = rawGetDatType();
+            auto datType = rawGetThingType();
             datType->draw(dest, scaleFactor, 0, xPattern, yPattern, 0, animationPhase);
 
             if(getLayers() > 1) {
@@ -155,7 +155,7 @@ void Creature::internalDrawOutfit(const Point& dest, float scaleFactor, bool ani
         if(m_outfit.getCategory() == DatEffectCategory)
             animationPhase = std::min(animationPhase+1, getAnimationPhases());
 
-        rawGetDatType()->draw(dest, scaleFactor, 0, 0, 0, 0, animationPhase);
+        rawGetThingType()->draw(dest, scaleFactor, 0, 0, 0, 0, animationPhase);
     }
 }
 
@@ -551,12 +551,12 @@ Point Creature::getDrawOffset()
     return drawOffset;
 }
 
-const ThingTypeDatPtr& Creature::getDatType()
+const ThingTypePtr& Creature::getThingType()
 {
-    return g_things.getDatType(m_outfit.getId(), m_outfit.getCategory());
+    return g_things.getThingType(m_outfit.getId(), m_outfit.getCategory());
 }
 
-ThingTypeDat* Creature::rawGetDatType()
+ThingType* Creature::rawGetThingType()
 {
-    return g_things.rawGetDatType(m_outfit.getId(), m_outfit.getCategory());
+    return g_things.rawGetThingType(m_outfit.getId(), m_outfit.getCategory());
 }

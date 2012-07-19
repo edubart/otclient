@@ -26,7 +26,7 @@
 #include <framework/global.h>
 #include <framework/util/attribstorage.h>
 #include "thing.h"
-#include "thingtypeotb.h"
+#include "itemtype.h"
 
 enum AttrTypes_t
 {
@@ -117,8 +117,8 @@ public:
     ItemPtr asItem() { return std::static_pointer_cast<Item>(shared_from_this()); }
     bool isItem() { return true; }
 
-    const ThingTypeDatPtr& getDatType();
-    ThingTypeDat *rawGetDatType();
+    const ThingTypePtr& getThingType();
+    ThingType *rawGetThingType();
 
 private:
     uint16 m_id;

@@ -21,8 +21,8 @@
  */
 
 
-#ifndef THINGTYPEOTB_H
-#define THINGTYPEOTB_H
+#ifndef ITEMTYPE_H
+#define ITEMTYPE_H
 
 #include <framework/core/declarations.h>
 #include <framework/luaengine/luaobject.h>
@@ -82,10 +82,10 @@ enum OtbAttrib {
     OtbLastAttrib
 };
 
-class ThingTypeOtb : public LuaObject
+class ItemType : public LuaObject
 {
 public:
-    ThingTypeOtb();
+    ItemType();
 
     void unserialize(const BinaryTreePtr& node);
 

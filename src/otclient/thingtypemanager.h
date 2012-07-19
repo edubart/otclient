@@ -26,8 +26,8 @@
 #include <framework/global.h>
 #include <framework/core/declarations.h>
 
-#include "thingtypedat.h"
-#include "thingtypeotb.h"
+#include "thingtype.h"
+#include "itemtype.h"
 
 class ThingTypeManager
 {
@@ -40,16 +40,16 @@ public:
     void loadXml(const std::string& file);
     void parseItemType(uint16 id, TiXmlElement *elem);
 
-    void addOtbType(const ThingTypeOtbPtr& otbType);
-    const ThingTypeOtbPtr& findOtbForClientId(uint16 id);
+    void addItemType(const ItemTypePtr& otbType);
+    const ItemTypePtr& findOtbForClientId(uint16 id);
 
-    const ThingTypeDatPtr& getNullDatType() { return m_nullDatType; }
-    const ThingTypeOtbPtr& getNullOtbType() { return m_nullOtbType; }
+    const ThingTypePtr& getNullThingType() { return m_nullThingType; }
+    const ItemTypePtr& getNullItemType() { return m_nullItemType; }
 
-    const ThingTypeDatPtr& getDatType(uint16 id, DatCategory category);
-    const ThingTypeOtbPtr& getOtbType(uint16 id);
-    ThingTypeDat* rawGetDatType(uint16 id, DatCategory category) { return m_datTypes[category][id].get(); }
-    ThingTypeOtb* rawGetOtbType(uint16 id) { return m_otbTypes[id].get(); }
+    const ThingTypePtr& getThingType(uint16 id, DatCategory category);
+    const ItemTypePtr& getItemType(uint16 id);
+    ThingType* rawGetThingType(uint16 id, DatCategory category) { return m_datTypes[category][id].get(); }
+    ItemType* rawGetItemType(uint16 id) { return m_otbTypes[id].get(); }
 
     uint32 getDatSignature() { return m_datSignature; }
     uint32 getOtbMajorVersion() { return m_otbMajorVersion; }
@@ -63,11 +63,11 @@ public:
     bool isValidOtbId(uint16 id) { return id >= 1 && id < m_otbTypes.size(); }
 
 private:
-    ThingTypeDatList m_datTypes[DatLastCategory];
-    ThingTypeOtbList m_otbTypes;
+    ThingTypeList m_datTypes[DatLastCategory];
+    ItemTypeList m_otbTypes;
 
-    ThingTypeDatPtr m_nullDatType;
-    ThingTypeOtbPtr m_nullOtbType;
+    ThingTypePtr m_nullThingType;
+    ItemTypePtr m_nullItemType;
 
     bool m_datLoaded;
     bool m_xmlLoaded;

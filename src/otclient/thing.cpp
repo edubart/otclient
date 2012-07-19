@@ -75,12 +75,12 @@ int Thing::getStackpos()
     }
 }
 
-const ThingTypeDatPtr& Thing::getDatType()
+const ThingTypePtr& Thing::getThingType()
 {
-    return g_things.getNullDatType();
+    return g_things.getNullThingType();
 }
 
-ThingTypeDat* Thing::rawGetDatType()
+ThingType* Thing::rawGetThingType()
 {
-    return g_things.getNullDatType().get();
+    return g_things.getNullThingType().get();
 }

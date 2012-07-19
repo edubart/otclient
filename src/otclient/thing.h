@@ -24,7 +24,7 @@
 #define THING_H
 
 #include "declarations.h"
-#include "thingtypedat.h"
+#include "thingtype.h"
 #include "thingtypemanager.h"
 #include <framework/luaengine/luaobject.h>
 
@@ -73,63 +73,63 @@ public:
     virtual bool isStaticText() { return false; }
 
     // type shortcuts
-    virtual const ThingTypeDatPtr& getDatType();
-    virtual ThingTypeDat *rawGetDatType();
-    Size getSize() { return rawGetDatType()->getSize(); }
-    int getWidth() { return rawGetDatType()->getWidth(); }
-    int getHeight() { return rawGetDatType()->getHeight(); }
-    Point getDisplacement() { return rawGetDatType()->getDisplacement(); }
-    int getDisplacementX() { return rawGetDatType()->getDisplacementX(); }
-    int getDisplacementY() { return rawGetDatType()->getDisplacementY(); }
-    int getExactSize() { return rawGetDatType()->getExactSize(); }
-    int getLayers() { return rawGetDatType()->getLayers(); }
-    int getNumPatternX() { return rawGetDatType()->getNumPatternX(); }
-    int getNumPatternY() { return rawGetDatType()->getNumPatternY(); }
-    int getNumPatternZ() { return rawGetDatType()->getNumPatternZ(); }
-    int getAnimationPhases() { return rawGetDatType()->getAnimationPhases(); }
-    int getGroundSpeed() { return rawGetDatType()->getGroundSpeed(); }
-    int getMaxTextLength() { return rawGetDatType()->getMaxTextLength(); }
-    Light getLight() { return rawGetDatType()->getLight(); }
-    int getMinimapColor() { return rawGetDatType()->getMinimapColor(); }
-    int getLensHelp() { return rawGetDatType()->getLensHelp(); }
-    int getClothSlot() { return rawGetDatType()->getClothSlot(); }
-    int getElevation() { return rawGetDatType()->getElevation(); }
-    bool isGround() { return rawGetDatType()->isGround(); }
-    bool isGroundBorder() { return rawGetDatType()->isGroundBorder(); }
-    bool isOnBottom() { return rawGetDatType()->isOnBottom(); }
-    bool isOnTop() { return rawGetDatType()->isOnTop(); }
-    bool isContainer() { return rawGetDatType()->isContainer(); }
-    bool isStackable() { return rawGetDatType()->isStackable(); }
-    bool isForceUse() { return rawGetDatType()->isForceUse(); }
-    bool isMultiUse() { return rawGetDatType()->isMultiUse(); }
-    bool isWritable() { return rawGetDatType()->isWritable(); }
-    bool isChargeable() { return rawGetDatType()->isChargeable(); }
-    bool isWritableOnce() { return rawGetDatType()->isWritableOnce(); }
-    bool isFluidContainer() { return rawGetDatType()->isFluidContainer(); }
-    bool isSplash() { return rawGetDatType()->isSplash(); }
-    bool isNotWalkable() { return rawGetDatType()->isNotWalkable(); }
-    bool isNotMoveable() { return rawGetDatType()->isNotMoveable(); }
-    bool blockProjectile() { return rawGetDatType()->blockProjectile(); }
-    bool isNotPathable() { return rawGetDatType()->isNotPathable(); }
-    bool isPickupable() { return rawGetDatType()->isPickupable(); }
-    bool isHangable() { return rawGetDatType()->isHangable(); }
-    bool isHookSouth() { return rawGetDatType()->isHookSouth(); }
-    bool isHookEast() { return rawGetDatType()->isHookEast(); }
-    bool isRotateable() { return rawGetDatType()->isRotateable(); }
-    bool hasLight() { return rawGetDatType()->hasLight(); }
-    bool isDontHide() { return rawGetDatType()->isDontHide(); }
-    bool isTranslucent() { return rawGetDatType()->isTranslucent(); }
-    bool hasDisplacement() { return rawGetDatType()->hasDisplacement(); }
-    bool hasElevation() { return rawGetDatType()->hasElevation(); }
-    bool isLyingCorpse() { return rawGetDatType()->isLyingCorpse(); }
-    bool isAnimateAlways() { return rawGetDatType()->isAnimateAlways(); }
-    bool hasMiniMapColor() { return rawGetDatType()->hasMiniMapColor(); }
-    bool hasLensHelp() { return rawGetDatType()->hasLensHelp(); }
-    bool isFullGround() { return rawGetDatType()->isFullGround(); }
-    bool isIgnoreLook() { return rawGetDatType()->isIgnoreLook(); }
-    bool isCloth() { return rawGetDatType()->isCloth(); }
-    bool isMarketable() { return rawGetDatType()->isMarketable(); }
-    MarketData getMarketData() { return rawGetDatType()->getMarketData(); }
+    virtual const ThingTypePtr& getThingType();
+    virtual ThingType *rawGetThingType();
+    Size getSize() { return rawGetThingType()->getSize(); }
+    int getWidth() { return rawGetThingType()->getWidth(); }
+    int getHeight() { return rawGetThingType()->getHeight(); }
+    Point getDisplacement() { return rawGetThingType()->getDisplacement(); }
+    int getDisplacementX() { return rawGetThingType()->getDisplacementX(); }
+    int getDisplacementY() { return rawGetThingType()->getDisplacementY(); }
+    int getExactSize() { return rawGetThingType()->getExactSize(); }
+    int getLayers() { return rawGetThingType()->getLayers(); }
+    int getNumPatternX() { return rawGetThingType()->getNumPatternX(); }
+    int getNumPatternY() { return rawGetThingType()->getNumPatternY(); }
+    int getNumPatternZ() { return rawGetThingType()->getNumPatternZ(); }
+    int getAnimationPhases() { return rawGetThingType()->getAnimationPhases(); }
+    int getGroundSpeed() { return rawGetThingType()->getGroundSpeed(); }
+    int getMaxTextLength() { return rawGetThingType()->getMaxTextLength(); }
+    Light getLight() { return rawGetThingType()->getLight(); }
+    int getMinimapColor() { return rawGetThingType()->getMinimapColor(); }
+    int getLensHelp() { return rawGetThingType()->getLensHelp(); }
+    int getClothSlot() { return rawGetThingType()->getClothSlot(); }
+    int getElevation() { return rawGetThingType()->getElevation(); }
+    bool isGround() { return rawGetThingType()->isGround(); }
+    bool isGroundBorder() { return rawGetThingType()->isGroundBorder(); }
+    bool isOnBottom() { return rawGetThingType()->isOnBottom(); }
+    bool isOnTop() { return rawGetThingType()->isOnTop(); }
+    bool isContainer() { return rawGetThingType()->isContainer(); }
+    bool isStackable() { return rawGetThingType()->isStackable(); }
+    bool isForceUse() { return rawGetThingType()->isForceUse(); }
+    bool isMultiUse() { return rawGetThingType()->isMultiUse(); }
+    bool isWritable() { return rawGetThingType()->isWritable(); }
+    bool isChargeable() { return rawGetThingType()->isChargeable(); }
+    bool isWritableOnce() { return rawGetThingType()->isWritableOnce(); }
+    bool isFluidContainer() { return rawGetThingType()->isFluidContainer(); }
+    bool isSplash() { return rawGetThingType()->isSplash(); }
+    bool isNotWalkable() { return rawGetThingType()->isNotWalkable(); }
+    bool isNotMoveable() { return rawGetThingType()->isNotMoveable(); }
+    bool blockProjectile() { return rawGetThingType()->blockProjectile(); }
+    bool isNotPathable() { return rawGetThingType()->isNotPathable(); }
+    bool isPickupable() { return rawGetThingType()->isPickupable(); }
+    bool isHangable() { return rawGetThingType()->isHangable(); }
+    bool isHookSouth() { return rawGetThingType()->isHookSouth(); }
+    bool isHookEast() { return rawGetThingType()->isHookEast(); }
+    bool isRotateable() { return rawGetThingType()->isRotateable(); }
+    bool hasLight() { return rawGetThingType()->hasLight(); }
+    bool isDontHide() { return rawGetThingType()->isDontHide(); }
+    bool isTranslucent() { return rawGetThingType()->isTranslucent(); }
+    bool hasDisplacement() { return rawGetThingType()->hasDisplacement(); }
+    bool hasElevation() { return rawGetThingType()->hasElevation(); }
+    bool isLyingCorpse() { return rawGetThingType()->isLyingCorpse(); }
+    bool isAnimateAlways() { return rawGetThingType()->isAnimateAlways(); }
+    bool hasMiniMapColor() { return rawGetThingType()->hasMiniMapColor(); }
+    bool hasLensHelp() { return rawGetThingType()->hasLensHelp(); }
+    bool isFullGround() { return rawGetThingType()->isFullGround(); }
+    bool isIgnoreLook() { return rawGetThingType()->isIgnoreLook(); }
+    bool isCloth() { return rawGetThingType()->isCloth(); }
+    bool isMarketable() { return rawGetThingType()->isMarketable(); }
+    MarketData getMarketData() { return rawGetThingType()->getMarketData(); }
 
 
 protected:

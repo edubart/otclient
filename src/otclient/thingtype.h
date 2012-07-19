@@ -104,10 +104,10 @@ struct Light {
     uint8 color;
 };
 
-class ThingTypeDat : public LuaObject
+class ThingType : public LuaObject
 {
 public:
-    ThingTypeDat();
+    ThingType();
 
     void unserialize(uint16 clientId, DatCategory category, const FileStreamPtr& fin);
 

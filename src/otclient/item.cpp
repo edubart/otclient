@@ -171,7 +171,7 @@ void Item::draw(const Point& dest, float scaleFactor, bool animate)
         zPattern = m_position.z % getNumPatternZ();
     }
 
-    rawGetDatType()->draw(dest, scaleFactor, 0, xPattern, yPattern, zPattern, animationPhase);
+    rawGetThingType()->draw(dest, scaleFactor, 0, xPattern, yPattern, zPattern, animationPhase);
 }
 
 void Item::setId(uint32 id)
@@ -187,7 +187,7 @@ void Item::setOtbId(uint16 id)
 {
     if(!g_things.isValidOtbId(id))
         id = 0;
-    auto otbType = g_things.getOtbType(id);
+    auto otbType = g_things.getItemType(id);
     m_id = otbType->getClientId();
     m_otbId = id;
 }
@@ -265,7 +265,7 @@ void Item::unserializeItem(const BinaryTreePtr &in)
 
 bool Item::isMoveable()
 {
-    return !rawGetDatType()->isNotMoveable();
+    return !rawGetThingType()->isNotMoveable();
 }
 
 ItemPtr Item::clone()
@@ -275,12 +275,12 @@ ItemPtr Item::clone()
     return item;
 }
 
-const ThingTypeDatPtr& Item::getDatType()
+const ThingTypePtr& Item::getThingType()
 {
-    return g_things.getDatType(m_id, DatItemCategory);
+    return g_things.getThingType(m_id, DatItemCategory);
 }
 
-ThingTypeDat* Item::rawGetDatType()
+ThingType* Item::rawGetThingType()
 {
-    return g_things.rawGetDatType(m_id, DatItemCategory);
+    return g_things.rawGetThingType(m_id, DatItemCategory);
 }

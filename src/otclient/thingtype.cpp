@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  */
 
-#include "thingtypedat.h"
+#include "thingtype.h"
 #include "spritemanager.h"
 #include "game.h"
 
@@ -30,7 +30,7 @@
 #include <framework/graphics/texturemanager.h>
 #include <framework/core/filestream.h>
 
-ThingTypeDat::ThingTypeDat()
+ThingType::ThingType()
 {
     m_category = DatInvalidCategory;
     m_id = 0;
@@ -41,7 +41,7 @@ ThingTypeDat::ThingTypeDat()
     m_layers = 0;
 }
 
-void ThingTypeDat::unserialize(uint16 clientId, DatCategory category, const FileStreamPtr& fin)
+void ThingType::unserialize(uint16 clientId, DatCategory category, const FileStreamPtr& fin)
 {
     m_null = false;
     m_id = clientId;
@@ -133,7 +133,7 @@ void ThingTypeDat::unserialize(uint16 clientId, DatCategory category, const File
     m_texturesFramesOffsets.resize(m_animationPhases);
 }
 
-void ThingTypeDat::draw(const Point& dest, float scaleFactor, int layer, int xPattern, int yPattern, int zPattern, int animationPhase)
+void ThingType::draw(const Point& dest, float scaleFactor, int layer, int xPattern, int yPattern, int zPattern, int animationPhase)
 {
     if(m_null)
         return;
@@ -157,7 +157,7 @@ void ThingTypeDat::draw(const Point& dest, float scaleFactor, int layer, int xPa
     g_painter->drawTexturedRect(screenRect, texture, textureRect);
 }
 
-const TexturePtr& ThingTypeDat::getTexture(int animationPhase)
+const TexturePtr& ThingType::getTexture(int animationPhase)
 {
     TexturePtr& animationPhaseTexture = m_textures[animationPhase];
     if(!animationPhaseTexture) {
@@ -230,7 +230,7 @@ const TexturePtr& ThingTypeDat::getTexture(int animationPhase)
     return animationPhaseTexture;
 }
 
-Size ThingTypeDat::getBestTextureDimension(int w, int h, int count)
+Size ThingType::getBestTextureDimension(int w, int h, int count)
 {
     const int MAX = 32;
 
@@ -264,7 +264,7 @@ Size ThingTypeDat::getBestTextureDimension(int w, int h, int count)
     return bestDimension;
 }
 
-uint ThingTypeDat::getSpriteIndex(int w, int h, int l, int x, int y, int z, int a) {
+uint ThingType::getSpriteIndex(int w, int h, int l, int x, int y, int z, int a) {
     uint index =
         ((((((a % m_animationPhases)
         * m_numPatternZ + z)
@@ -277,7 +277,7 @@ uint ThingTypeDat::getSpriteIndex(int w, int h, int l, int x, int y, int z, int 
     return index;
 }
 
-uint ThingTypeDat::getTextureIndex(int l, int x, int y, int z) {
+uint ThingType::getTextureIndex(int l, int x, int y, int z) {
     return ((l * m_numPatternZ + z)
                * m_numPatternY + y)
                * m_numPatternX + x;

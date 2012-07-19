@@ -41,8 +41,8 @@ public:
     EffectPtr asEffect() { return std::static_pointer_cast<Effect>(shared_from_this()); }
     bool isEffect() { return true; }
 
-    const ThingTypeDatPtr& getDatType();
-    ThingTypeDat *rawGetDatType();
+    const ThingTypePtr& getThingType();
+    ThingType *rawGetThingType();
 
 private:
     Timer m_animationTimer;

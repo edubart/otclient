@@ -96,8 +96,8 @@ public:
     CreaturePtr asCreature() { return std::static_pointer_cast<Creature>(shared_from_this()); }
     bool isCreature() { return true; }
 
-    const ThingTypeDatPtr& getDatType();
-    ThingTypeDat *rawGetDatType();
+    const ThingTypePtr& getThingType();
+    ThingType *rawGetThingType();
 
 protected:
     virtual void updateWalkAnimation(int totalPixelsWalked);

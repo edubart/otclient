@@ -69,10 +69,10 @@ set(otclient_SOURCES ${otclient_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/thing.h
     ${CMAKE_CURRENT_LIST_DIR}/thingtypemanager.cpp
     ${CMAKE_CURRENT_LIST_DIR}/thingtypemanager.h
-    ${CMAKE_CURRENT_LIST_DIR}/thingtypedat.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/thingtypedat.h
-    ${CMAKE_CURRENT_LIST_DIR}/thingtypeotb.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/thingtypeotb.h
+    ${CMAKE_CURRENT_LIST_DIR}/thingtype.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/thingtype.h
+    ${CMAKE_CURRENT_LIST_DIR}/itemtype.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/itemtype.h
     ${CMAKE_CURRENT_LIST_DIR}/tile.cpp
     ${CMAKE_CURRENT_LIST_DIR}/tile.h
     ${CMAKE_CURRENT_LIST_DIR}/houses.cpp

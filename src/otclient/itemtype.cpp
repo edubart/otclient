@@ -22,17 +22,17 @@
 
 
 #include "thingtypemanager.h"
-#include "thingtypeotb.h"
+#include "thingtype.h"
 
 #include <framework/core/filestream.h>
 #include <framework/core/binarytree.h>
 
-ThingTypeOtb::ThingTypeOtb()
+ItemType::ItemType()
 {
     m_category = OtbInvalidCateogry;
 }
 
-void ThingTypeOtb::unserialize(const BinaryTreePtr& node)
+void ItemType::unserialize(const BinaryTreePtr& node)
 {
     m_null = false;
 
@@ -53,10 +53,10 @@ void ThingTypeOtb::unserialize(const BinaryTreePtr& node)
                 if(serverId > 20000 && serverId < 20100) {
                     serverId -= 20000;
                 } else if(lastId > 99 && lastId != serverId - 1) {
-                    static ThingTypeOtbPtr dummyType(g_things.getNullOtbType());
+                    static ItemTypePtr dummyType(g_things.getNullItemType());
                     while(lastId != serverId - 1) {
                         dummyType->setServerId(++lastId);
-                        g_things.addOtbType(dummyType);
+                        g_things.addItemType(dummyType);
                     }
                 }
                 assert(len == 2);
