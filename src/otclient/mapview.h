@@ -39,7 +39,7 @@ class MapView : public LuaObject
         NEAR_VIEW_AREA = 32*32,
         MID_VIEW_AREA = 64*64,
         FAR_VIEW_AREA = 128*128,
-        MAX_TILE_UPDATES = NEAR_VIEW_AREA*7
+        MAX_TILE_DRAWS = NEAR_VIEW_AREA*7
     };
 
 public:
@@ -127,6 +127,7 @@ private:
     int m_cachedFirstVisibleFloor;
     int m_cachedLastVisibleFloor;
     int m_tileSize;
+    int m_updateTilesPos;
     Size m_drawDimension;
     Size m_visibleDimension;
     Size m_optimizedSize;
@@ -145,12 +146,12 @@ private:
     Boolean<true> m_follow;
     std::vector<TilePtr> m_cachedVisibleTiles;
     std::vector<CreaturePtr> m_cachedFloorVisibleCreatures;
-    EventPtr m_updateTilesCacheEvent;
     CreaturePtr m_followingCreature;
     FrameBufferPtr m_framebuffer;
     PainterShaderProgramPtr m_shader;
     ViewMode m_viewMode;
     Otc::DrawFlags m_drawFlags;
+    std::vector<Point> m_spiral;
 };
 
 #endif

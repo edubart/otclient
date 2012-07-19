@@ -185,6 +185,7 @@ private:
 
     Light m_light;
     Position m_centralPosition;
+    Rect m_tilesRect;
 
     std::string m_description, m_spawnFile, m_houseFile;
 

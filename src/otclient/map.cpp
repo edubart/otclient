@@ -553,10 +553,11 @@ void Map::clean()
     m_tiles.clear();
     m_waypoints.clear();
 
-    // This is a fix to a segfault on exit.
     m_towns.clear();
     m_houses.clear();
     m_creatures.clear();
+    m_monsters.clear();
+    m_tilesRect = Rect(65534, 65534, 0, 0);
 }
 
 void Map::cleanDynamicThings()
@@ -693,15 +694,26 @@ TilePtr Map::createTile(const Position& pos)
 {
     TilePtr tile = TilePtr(new Tile(pos));
     m_tiles[pos] = tile;
+    if(pos.x < m_tilesRect.left())
+        m_tilesRect.setLeft(pos.x);
+    if(pos.y < m_tilesRect.top())
+        m_tilesRect.setTop(pos.y);
+    if(pos.x > m_tilesRect.right())
+        m_tilesRect.setRight(pos.x);
+    if(pos.y > m_tilesRect.bottom())
+        m_tilesRect.setBottom(pos.y);
     return tile;
 }
 
 const TilePtr& Map::getTile(const Position& pos)
 {
+    static TilePtr nulltile;
+    if(!m_tilesRect.contains(Point(pos.x, pos.y)))
+        return nulltile;
+
     auto it = m_tiles.find(pos);
     if(it != m_tiles.end())
         return it->second;
-    static TilePtr nulltile;
     return nulltile;
 }
 

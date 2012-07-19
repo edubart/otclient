@@ -41,6 +41,7 @@ MapView::MapView()
     m_lockedFirstVisibleFloor = -1;
     m_cachedFirstVisibleFloor = 7;
     m_cachedLastVisibleFloor = 7;
+    m_updateTilesPos = 0;
     m_optimizedSize = Size(Otc::AWARE_X_TILES, Otc::AWARE_Y_TILES) * Otc::TILE_PIXELS;
 
     m_framebuffer = g_framebuffers.createFrameBuffer();
@@ -57,8 +58,8 @@ MapView::~MapView()
 void MapView::draw(const Rect& rect)
 {
     // update visible tiles cache when needed
-    if(m_mustUpdateVisibleTilesCache)
-        updateVisibleTilesCache();
+    if(m_mustUpdateVisibleTilesCache || m_updateTilesPos > 0)
+        updateVisibleTilesCache(m_mustUpdateVisibleTilesCache ? 0 : m_updateTilesPos);
 
     float scaleFactor = m_tileSize/(float)Otc::TILE_PIXELS;
     Position cameraPosition = getCameraPosition();
@@ -67,14 +68,8 @@ void MapView::draw(const Rect& rect)
     if(m_viewMode == NEAR_VIEW)
         drawFlags = Otc::DrawGround | Otc::DrawGroundBorders | Otc::DrawWalls |
                     Otc::DrawItems | Otc::DrawCreatures | Otc::DrawEffects | Otc::DrawMissiles | Otc::DrawAnimations;
-    else if(m_viewMode == MID_VIEW)
+    else
         drawFlags = Otc::DrawGround | Otc::DrawGroundBorders | Otc::DrawWalls | Otc::DrawItems;
-    else if(m_viewMode == FAR_VIEW)
-        drawFlags = Otc::DrawGround | Otc::DrawGroundBorders | Otc::DrawWalls;
-    else if(m_tileSize >= 4) // HUGE_VIEW 1
-        drawFlags = Otc::DrawGround | Otc::DrawGroundBorders;
-    else // HUGE_VIEW 2
-        drawFlags = Otc::DrawGround;
 
     Size tileSize = Size(1,1) * m_tileSize;
     if(m_mustDrawVisibleTilesCache || (drawFlags & Otc::DrawAnimations)) {
@@ -244,11 +239,6 @@ void MapView::draw(const Rect& rect)
 void MapView::updateVisibleTilesCache(int start)
 {
     if(start == 0) {
-        if(m_updateTilesCacheEvent) {
-            m_updateTilesCacheEvent->cancel();
-            m_updateTilesCacheEvent = nullptr;
-        }
-
         m_cachedFirstVisibleFloor = calcFirstVisibleFloor();
         m_cachedLastVisibleFloor = calcLastVisibleFloor();
         assert(m_cachedFirstVisibleFloor >= 0 && m_cachedLastVisibleFloor >= 0 &&
@@ -263,6 +253,7 @@ void MapView::updateVisibleTilesCache(int start)
         m_mustCleanFramebuffer = true;
         m_mustDrawVisibleTilesCache = true;
         m_mustUpdateVisibleTilesCache = false;
+        m_updateTilesPos = 0;
     } else
         m_mustCleanFramebuffer = false;
 
@@ -271,12 +262,12 @@ void MapView::updateVisibleTilesCache(int start)
     if(!cameraPosition.isValid())
         return;
 
-    int count = 0;
     bool stop = false;
 
     // clear current visible tiles cache
     m_cachedVisibleTiles.clear();
     m_mustDrawVisibleTilesCache = true;
+    m_updateTilesPos = 0;
 
     // cache visible tiles in draw order
     // draw from last floor (the lower) to first floor (the higher)
@@ -289,13 +280,13 @@ void MapView::updateVisibleTilesCache(int start)
                 int advance = std::max(diagonal - m_drawDimension.height(), 0);
                 for(int iy = diagonal - advance, ix = advance; iy >= 0 && ix < m_drawDimension.width() && !stop; --iy, ++ix) {
                     // only start really looking tiles in the desired start
-                    if(count < start) {
-                        count++;
+                    if(m_updateTilesPos < start) {
+                        m_updateTilesPos++;
                         continue;
                     }
 
-                    // avoid rendering too much tiles at once on far views
-                    if(count - start + 1 > MAX_TILE_UPDATES && m_viewMode >= HUGE_VIEW) {
+                    // avoid rendering too much tiles at once
+                    if((int)m_cachedVisibleTiles.size() > MAX_TILE_DRAWS && m_viewMode >= HUGE_VIEW) {
                         stop = true;
                         break;
                     }
@@ -314,108 +305,63 @@ void MapView::updateVisibleTilesCache(int start)
                             continue;
                         m_cachedVisibleTiles.push_back(tile);
                     }
-                    count++;
+                    m_updateTilesPos++;
                 }
             }
         } else {
-            static std::vector<Point> points;
-            points.clear();
-            //assert(m_drawDimension.width() % 2 == 0 && m_drawDimension.height() % 2 == 0);
-            Point quadTopLeft(m_drawDimension.width()/2 - 1, m_drawDimension.height()/2 - 1);
-            for(int step = 1; !(quadTopLeft.x < 0 && quadTopLeft.y < 0) && !stop; ++step) {
-                int quadWidth = std::min(2*step, m_drawDimension.width());
-                int quadHeight = std::min(2*step, m_drawDimension.height());
-                int fillWidth = (quadTopLeft.x >= 0) ? quadWidth-1 : quadWidth;
-                int fillHeight = (quadTopLeft.x >= 0) ? quadHeight-1 : quadHeight;
-                if(quadTopLeft.y >= 0) {
-                    for(int qx=0;qx<fillWidth;++qx) {
-                        //TODO: remvoe this repeated code
-                        // only start really looking tiles in the desired start
-                        if(count < start) {
-                            count++;
-                            continue;
-                        }
+            // cache tiles in spiral mode
+            static std::vector<Point> m_spiral;
+            if(start == 0) {
+                m_spiral.resize(m_drawDimension.area());
+                int width = m_drawDimension.width();
+                int height = m_drawDimension.height();
+                int tpx = width/2 - 2;
+                int tpy = height/2 - 2;
+                int count = 0;
+                Rect area(0, 0, m_drawDimension);
+                m_spiral[count++] = Point(tpx+1,tpy+1);
+                for(int step = 1; tpx >= 0 || tpy >= 0; ++step, --tpx, --tpy) {
+                    int qs = 2*step;
+                    Rect lines[4] = {
+                        Rect(tpx,       tpy,       qs,  1),
+                        Rect(tpx + qs,  tpy,       1,   qs),
+                        Rect(tpx +  1,  tpy + qs,  qs,  1),
+                        Rect(tpx,       tpy + 1,   1,   qs),
+                    };
 
-                        // avoid rendering too much tiles at once on far views
-                        if(count - start + 1 > MAX_TILE_UPDATES) {
-                            stop = true;
-                            break;
-                        }
-                        points.push_back(Point(std::max(quadTopLeft.x, 0) + qx, quadTopLeft.y));
-                        count++;
+                    for(int i=0;i<4;++i) {
+                        int sx = std::max(lines[i].left(), area.left());
+                        int ex = std::min(lines[i].right(), area.right());
+                        int sy = std::max(lines[i].top(), area.top());
+                        int ey = std::min(lines[i].bottom(), area.bottom());
+                        for(int qx=sx;qx<=ex;++qx)
+                            for(int qy=sy;qy<=ey;++qy)
+                                m_spiral[count++] = Point(qx, qy);
                     }
                 }
-                if(quadTopLeft.x >= 0) {
-                    for(int qy=0;qy<fillHeight;++qy) {
-                        // only start really looking tiles in the desired start
-                        if(count < start) {
-                            count++;
-                            continue;
-                        }
-
-                        // avoid rendering too much tiles at once on far views
-                        if(count - start + 1 > MAX_TILE_UPDATES) {
-                            stop = true;
-                            break;
-                        }
-                        points.push_back(Point(quadTopLeft.x + quadWidth-1, std::max(quadTopLeft.y, 0) + qy));
-                        count++;
-                    }
-                }
-                if(quadTopLeft.y >= 0) {
-                    for(int qx=0;qx<fillWidth;++qx) {
-                        // only start really looking tiles in the desired start
-                        if(count < start) {
-                            count++;
-                            continue;
-                        }
-
-                        // avoid rendering too much tiles at once on far views
-                        if(count - start + 1 > MAX_TILE_UPDATES) {
-                            stop = true;
-                            break;
-                        }
-                        points.push_back(Point(std::max(quadTopLeft.x, 0) + quadWidth-qx-1, quadTopLeft.y + quadHeight-1));
-                        count++;
-                    }
-                }
-                if(quadTopLeft.x >= 0) {
-                    for(int qy=0;qy<fillHeight;++qy) {
-                        // only start really looking tiles in the desired start
-                        if(count < start) {
-                            count++;
-                            continue;
-                        }
-
-                        // avoid rendering too much tiles at once on far views
-                        if(count - start + 1 > MAX_TILE_UPDATES) {
-                            stop = true;
-                            break;
-                        }
-                        points.push_back(Point(quadTopLeft.x, std::max(quadTopLeft.y, 0) + quadHeight-qy-1));
-                        count++;
-                    }
-                }
-                quadTopLeft -= Point(1,1);
             }
 
-            for(const Point& point : points) {
-                Position tilePos = cameraPosition.translated(point.x - m_virtualCenterOffset.x, point.y - m_virtualCenterOffset.y);
-                // adjust tilePos to the wanted floor
+            for(m_updateTilesPos = start; m_updateTilesPos < (int)m_spiral.size(); ++m_updateTilesPos) {
+                // avoid rendering too much tiles at once
+                if((int)m_cachedVisibleTiles.size() > MAX_TILE_DRAWS) {
+                    stop = true;
+                    break;
+                }
+
+                const Point& p = m_spiral[m_updateTilesPos];
+                Position tilePos = cameraPosition.translated(p.x - m_virtualCenterOffset.x, p.y - m_virtualCenterOffset.y);
                 tilePos.coveredUp(cameraPosition.z - iz);
                 if(const TilePtr& tile = g_map.getTile(tilePos)) {
-                    // skip tiles that have nothing
-                    if(tile->isEmpty())
-                        continue;
-                    m_cachedVisibleTiles.push_back(tile);
+                    if(!tile->isEmpty())
+                        m_cachedVisibleTiles.push_back(tile);
                 }
             }
         }
     }
 
-    if(stop) {
-        // schedule next update continuation to avoid freezes
-        m_updateTilesCacheEvent = g_dispatcher.scheduleEvent(std::bind(&MapView::updateVisibleTilesCache, asMapView(), count), 1);
+    if(!stop) {
+        m_updateTilesPos = 0;
+        m_spiral.clear();
     }
 
     if(start == 0 && m_drawTexts && m_viewMode <= NEAR_VIEW)
@@ -462,6 +408,11 @@ void MapView::updateGeometry(const Size& visibleDimension, const Size& optimized
             viewMode = FAR_VIEW;
         else
             viewMode = HUGE_VIEW;
+
+        if(viewMode >= FAR_VIEW)
+            m_multifloor = false;
+        else
+            m_multifloor = true;
     }
 
     // draw actually more than what is needed to avoid massive recalculations on huge views
@@ -472,6 +423,7 @@ void MapView::updateGeometry(const Size& visibleDimension, const Size& optimized
         virtualCenterOffset += (drawDimension - oldDimension).toPoint() / 2;
     }
     */
+
 
     m_viewMode = viewMode;
     m_visibleDimension = visibleDimension;
@@ -570,7 +522,7 @@ int MapView::calcFirstVisibleFloor()
         // this could happens if the player is not known yet
         if(cameraPosition.isValid()) {
             // avoid rendering multifloors in far views
-            if(m_viewMode >= FAR_VIEW || !m_multifloor) {
+            if(!m_multifloor) {
                 z = cameraPosition.z;
             } else {
                 // if nothing is limiting the view, the first visible floor is 0
@@ -620,7 +572,7 @@ int MapView::calcFirstVisibleFloor()
 
 int MapView::calcLastVisibleFloor()
 {
-    if(!m_multifloor || m_viewMode >= FAR_VIEW)
+    if(!m_multifloor)
         return calcFirstVisibleFloor();
 
     int z = 7;

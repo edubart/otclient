@@ -38,8 +38,8 @@ Game g_game;
 Game::Game()
 {
     resetGameStates();
-    //setProtocolVersion(960);
     m_protocolVersion = 0;
+    setProtocolVersion(PROTOCOL);
 }
 
 void Game::resetGameStates()
