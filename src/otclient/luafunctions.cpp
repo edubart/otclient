@@ -98,7 +98,7 @@ void OTClient::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_map", "getSpectators", &Map::getSpectators, &g_map);
     g_lua.bindSingletonFunction("g_map", "findPath", &Map::findPath, &g_map);
     g_lua.bindSingletonFunction("g_map", "loadOtbm", &Map::loadOtbm, &g_map);
-    //g_lua.bindSingletonFunction("g_map", "saveOtbm", &Map::saveOtbm, &g_map);
+    g_lua.bindSingletonFunction("g_map", "saveOtbm", &Map::saveOtbm, &g_map);
     g_lua.bindSingletonFunction("g_map", "loadOtcm", &Map::loadOtcm, &g_map);
     g_lua.bindSingletonFunction("g_map", "saveOtcm", &Map::saveOtcm, &g_map);
     g_lua.bindSingletonFunction("g_map", "loadMonsters", &Map::loadMonsters, &g_map);

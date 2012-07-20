@@ -57,7 +57,10 @@ enum OTBM_ItemAttr
     OTBM_ATTR_SLEEPSTART = 21,
     OTBM_ATTR_CHARGES = 22,
     OTBM_ATTR_CONTAINER_ITEMS = 23,
-    OTBM_ATTR_ATTRIBUTE_MAP = 128
+    OTBM_ATTR_ATTRIBUTE_MAP = 128,
+    /// just random numbers, they're not actually used by the binary reader...
+    OTBM_ATTR_WIDTH = 129,
+    OTBM_ATTR_HEIGHT = 130
 };
 
 enum OTBM_NodeTypes_t
@@ -120,6 +123,18 @@ public:
 
     void loadSpawns(const std::string& fileName);
     void saveSpawns(const std::string&) { }
+
+    // otbm attributes (description, size, etc.)
+    void setHouseFile(const std::string& file) { m_attribs.set(OTBM_ATTR_HOUSE_FILE, file); }
+    void setSpawnFile(const std::string& file) { m_attribs.set(OTBM_ATTR_SPAWN_FILE, file); }
+    void setDescription(const std::string& desc) { m_attribs.set(OTBM_ATTR_DESCRIPTION, desc); }
+    void setWidth(uint16 w) { m_attribs.set(OTBM_ATTR_WIDTH, w); }
+    void setHeight(uint16 h) { m_attribs.set(OTBM_ATTR_HEIGHT, h); }
+
+    std::string getHouseFile() { return m_attribs.get<std::string>(OTBM_ATTR_HOUSE_FILE); }
+    std::string getSpawnFile() { return m_attribs.get<std::string>(OTBM_ATTR_SPAWN_FILE); }
+    Size getSize() { return Size(m_attribs.get<uint16>(OTBM_ATTR_WIDTH), m_attribs.get<uint16>(OTBM_ATTR_HEIGHT)); }
+    std::vector<std::string> getDescriptions() { return stdext::split(m_attribs.get<std::string>(), "\n"; }
 
     void loadMonsters(const std::string& fileName) { m_creatures.loadMonsters(fileName); }
     void loadSingleCreature(const std::string& file) { m_creatures.loadSingleCreature(file); }
@@ -190,13 +205,9 @@ private:
     Rect m_tilesRect;
 
     AttribStorage m_attribs;
-    std::string m_description, m_spawnFile, m_houseFile;
-
     Houses m_houses;
     Towns m_towns;
     Creatures m_creatures;
-
-    uint16 m_width, m_height;
 };
 
 extern Map g_map;

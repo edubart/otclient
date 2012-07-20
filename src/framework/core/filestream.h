@@ -59,8 +59,7 @@ public:
     void addU32(uint32 v);
     void addU64(uint64 v);
     void addString(const std::string& v);
-    void startNode(uint8 nodeType) { addU8(0xFE); addU8(nodeType); }
-    void endNode() { addU8(0xFF); }
+    BinaryTreePtr makeTree();
 
     FileStreamPtr asFileStream() { return std::static_pointer_cast<FileStream>(shared_from_this()); }
 

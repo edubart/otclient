@@ -101,7 +101,10 @@ public:
     bool canErase();
 
     void setFlags(tileflags_t flags) { m_flags |= (uint32)flags; }
-    uint32 flags() { return m_flags; }
+    uint32 getFlags() { return m_flags; }
+
+    void setHouseId(uint32 hid) { if(m_flags & TILESTATE_HOUSE) m_houseId = hid; }
+    uint32 getHouseId() { return m_houseId; }
 
     TilePtr asTile() { return std::static_pointer_cast<Tile>(shared_from_this()); }
 
@@ -113,7 +116,7 @@ private:
     std::vector<ThingPtr> m_things;
     Position m_position;
     uint8 m_drawElevation;
-    uint32 m_flags;
+    uint32 m_flags, m_houseId;
     uint8 m_minimapColorByte;
 };
 #pragma pack(pop)

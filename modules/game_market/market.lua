@@ -62,7 +62,8 @@ local function initMarketItems()
   -- populate all market items
   marketItems = {}
   local types = g_things.findThingTypeByAttr(ThingAttrMarket)
-  for k,t in pairs(types) do
+  for idx = 1, #types do
+    local t = types[idx]
     local newItem = Item.create(t:getId())
     if newItem then
       local item = {

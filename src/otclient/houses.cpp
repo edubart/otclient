@@ -92,8 +92,6 @@ void Houses::load(const std::string& fileName)
 
         house->load(elem);
     }
-
-    g_logger.debug("Loaded houses.xml successfully.");
 }
 
 HouseList::iterator Houses::findHouse(uint32 houseId)

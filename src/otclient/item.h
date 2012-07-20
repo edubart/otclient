@@ -97,8 +97,8 @@ public:
 
     ItemPtr clone();
 
-    void unserializeItem(const BinaryTreePtr &in);
-    bool isMoveable();
+    void unserializeItem(const BinaryTreePtr& in);
+    void serializeItem(const BinaryTreePtr& out);
 
     void setDepotId(uint16 depotId) { m_attribs.set(ATTR_DEPOT_ID, depotId); }
     uint16 getDepotId() { return m_attribs.get<uint16>(ATTR_DEPOT_ID); }
@@ -113,6 +113,7 @@ public:
     bool isContainer() { return m_attribs.has(ATTR_CONTAINER_ITEMS); }
     bool isDoor() { return m_attribs.has(ATTR_HOUSEDOORID); }
     bool isTeleport() { return m_attribs.has(ATTR_TELE_DEST); }
+    bool isMoveable();
 
     ItemPtr asItem() { return std::static_pointer_cast<Item>(shared_from_this()); }
     bool isItem() { return true; }

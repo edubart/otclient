@@ -52,6 +52,16 @@ public:
     Position getPosition() { return Position(getU16(), getU16(), getU8()); }
     Point getPoint() { return Point(getU8(), getU8()); }
 
+    void setType(uint8 type);
+    void writeU8(uint8 u8);
+    void writeU16(uint16 u16);
+    void writeU32(uint32 u32);
+    void writeString(const std::string& s);
+    void writePos(const Position& p);
+    void writePoint(const Point& p);
+    BinaryTreePtr makeChild(uint8 type);
+    void writeToFile();
+
     BinaryTreeVec getChildren();
     bool canRead() { unserialize(); return m_pos < m_buffer.size(); }
 
