@@ -175,8 +175,7 @@ void Map::loadOtbm(const std::string& fileName)
                             break;
                         }
                         default: {
-                            stdext::throw_exception(stdext::format("invalid tile attribute %d at pos %s",
-                                                                   (int)tileAttr, stdext::pos_to_string(pos)));
+                            stdext::throw_exception(stdext::format("invalid tile attribute %d at pos %s", (int)tileAttr, stdext::to_string(pos)));
                         }
                     }
                 }
@@ -203,8 +202,7 @@ void Map::loadOtbm(const std::string& fileName)
                     }
 
                     if(house && item->isMoveable()) {
-                        g_logger.warning(stdext::format("Movable item found in house: %d at pos %s - escaping...", item->getId(),
-                                                        stdext::pos_to_string(pos)));
+                        g_logger.warning(stdext::format("Movable item found in house: %d at pos %s - escaping...", item->getId(), stdext::to_string(pos)));
                         item.reset();
                     }
 

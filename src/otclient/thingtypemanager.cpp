@@ -43,16 +43,16 @@ void ThingTypeManager::init()
     m_datLoaded = false;
     m_xmlLoaded = false;
     m_otbLoaded = false;
-    for(int i = 0; i < DatLastCategory; ++i)
-        m_datTypes[i].resize(1, m_nullThingType);
-    m_otbTypes.resize(1, m_nullItemType);
+    for(int i = 0; i < ThingLastCategory; ++i)
+        m_thingTypes[i].resize(1, m_nullThingType);
+    m_itemTypes.resize(1, m_nullItemType);
 }
 
 void ThingTypeManager::terminate()
 {
-    for(int i = 0; i < DatLastCategory; ++i)
-        m_datTypes[i].clear();
-    m_otbTypes.clear();
+    for(int i = 0; i < ThingLastCategory; ++i)
+        m_thingTypes[i].clear();
+    m_itemTypes.clear();
     m_nullThingType = nullptr;
     m_nullItemType = nullptr;
 }
@@ -66,20 +66,20 @@ bool ThingTypeManager::loadDat(const std::string& file)
 
         m_datSignature = fin->getU32();
 
-        int numThings[DatLastCategory];
-        for(int category = 0; category < DatLastCategory; ++category) {
+        int numThings[ThingLastCategory];
+        for(int category = 0; category < ThingLastCategory; ++category) {
             int count = fin->getU16() + 1;
-            m_datTypes[category].resize(count, m_nullThingType);
+            m_thingTypes[category].resize(count, m_nullThingType);
         }
 
-        for(int category = 0; category < DatLastCategory; ++category) {
+        for(int category = 0; category < ThingLastCategory; ++category) {
             uint16 firstId = 1;
-            if(category == DatItemCategory)
+            if(category == ThingCategoryItem)
                 firstId = 100;
-            for(uint16 id = firstId; id < m_datTypes[category].size(); ++id) {
+            for(uint16 id = firstId; id < m_thingTypes[category].size(); ++id) {
                 ThingTypePtr type(new ThingType);
-                type->unserialize(id, (DatCategory)category, fin);
-                m_datTypes[category][id] = type;
+                type->unserialize(id, (ThingCategory)category, fin);
+                m_thingTypes[category][id] = type;
             }
         }
 
@@ -112,7 +112,7 @@ void ThingTypeManager::loadOtb(const std::string& file)
     root->getU32(); // build number
     root->skip(128); // description
 
-    m_otbTypes.resize(root->getChildren().size(), m_nullItemType);
+    m_itemTypes.resize(root->getChildren().size(), m_nullItemType);
     for(const BinaryTreePtr& node : root->getChildren()) {
         ItemTypePtr otbType(new ItemType);
         otbType->unserialize(node);
@@ -187,17 +187,17 @@ void ThingTypeManager::parseItemType(uint16 id, TiXmlElement* elem)
 void ThingTypeManager::addItemType(const ItemTypePtr& otbType)
 {
     uint16 id = otbType->getServerId();
-    if(m_otbTypes.size() <= id)
-        m_otbTypes.resize(id+1, m_nullItemType);
-    m_otbTypes[id] = otbType;
+    if(m_itemTypes.size() <= id)
+        m_itemTypes.resize(id+1, m_nullItemType);
+    m_itemTypes[id] = otbType;
 }
 
 const ItemTypePtr& ThingTypeManager::findOtbForClientId(uint16 id)
 {
-    if(m_otbTypes.empty())
+    if(m_itemTypes.empty())
         return m_nullItemType;
 
-    for(const ItemTypePtr& otbType : m_otbTypes) {
+    for(const ItemTypePtr& otbType : m_itemTypes) {
         if(otbType->getClientId() == id)
             return otbType;
     }
@@ -205,21 +205,46 @@ const ItemTypePtr& ThingTypeManager::findOtbForClientId(uint16 id)
     return m_nullItemType;
 }
 
-const ThingTypePtr& ThingTypeManager::getThingType(uint16 id, DatCategory category)
+const ThingTypePtr& ThingTypeManager::getThingType(uint16 id, ThingCategory category)
 {
-    if(category >= DatLastCategory || id >= m_datTypes[category].size()) {
+    if(category >= ThingLastCategory || id >= m_thingTypes[category].size()) {
         g_logger.error(stdext::format("invalid thing type client id %d in category %d", id, category));
         return m_nullThingType;
     }
-    return m_datTypes[category][id];
+    return m_thingTypes[category][id];
 }
 
 const ItemTypePtr& ThingTypeManager::getItemType(uint16 id)
 {
-    if(id >= m_otbTypes.size()) {
+    if(id >= m_itemTypes.size()) {
         g_logger.error(stdext::format("invalid thing type server id %d", id));
         return m_nullItemType;
     }
-    return m_otbTypes[id];
+    return m_itemTypes[id];
 }
 
+ThingTypeList ThingTypeManager::findThingTypeByAttr(ThingAttr attr, ThingCategory category)
+{
+    ThingTypeList ret;
+    for(const ThingTypePtr& type : m_thingTypes[category])
+        if(type->hasAttr(attr))
+            ret.push_back(type);
+    return ret;
+}
+
+ItemTypeList ThingTypeManager::findItemTypeByCategory(ItemCategory category)
+{
+    ItemTypeList ret;
+    for(const ItemTypePtr& type : m_itemTypes)
+        if(type->getCategory() == category)
+            ret.push_back(type);
+    return ret;
+}
+
+const ThingTypeList& ThingTypeManager::getThingTypes(ThingCategory category)
+{
+    ThingTypeList ret;
+    if(category >= ThingLastCategory)
+        stdext::throw_exception(stdext::format("invalid thing type category %d", category));
+    return m_thingTypes[category];
+}

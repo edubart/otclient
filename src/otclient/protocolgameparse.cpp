@@ -1316,7 +1316,7 @@ Outfit ProtocolGame::getOutfit(const InputMessagePtr& msg)
 
     int lookType = msg->getU16();
     if(lookType != 0) {
-        outfit.setCategory(DatCreatureCategory);
+        outfit.setCategory(ThingCategoryCreature);
         int head = msg->getU8();
         int body = msg->getU8();
         int legs = msg->getU8();
@@ -1333,11 +1333,11 @@ Outfit ProtocolGame::getOutfit(const InputMessagePtr& msg)
     else {
         int lookTypeEx = msg->getU16();
         if(lookTypeEx == 0) {
-            outfit.setCategory(DatEffectCategory);
+            outfit.setCategory(ThingCategoryEffect);
             outfit.setId(13);
         }
         else {
-            outfit.setCategory(DatItemCategory);
+            outfit.setCategory(ThingCategoryItem);
             outfit.setId(lookTypeEx);
         }
     }

@@ -29,57 +29,55 @@
 #include <framework/xml/tinyxml.h>
 #include <framework/util/attribstorage.h>
 
-
-enum OtbCategory {
-    OtbInvalidCateogry = 0,
-    OtbGround,
-    OtbContainer,
-    OtbWeapon,
-    OtbAmmunition,
-    OtbArmor,
-    OtbCharges,
-    OtbTeleport,
-    OtbMagicField,
-    OtbWritable,
-    OtbKey,
-    OtbSplash,
-    OtbFluid,
-    OtbDoor,
-    OtbLastCategory
+enum ItemCategory {
+    ItemCategoryInvalid      = 0,
+    ItemCategoryGround       = 1,
+    ItemCategoryContainer    = 2,
+    ItemCategoryWeapon       = 3,
+    ItemCategoryAmmunition   = 4,
+    ItemCategoryArmor        = 5,
+    ItemCategoryCharges      = 6,
+    ItemCategoryTeleport     = 7,
+    ItemCategoryMagicField   = 8,
+    ItemCategoryWritable     = 9,
+    ItemCategoryKey          = 10,
+    ItemCategorySplash       = 11,
+    ItemCategoryFluid        = 12,
+    ItemCategoryDoor         = 13,
+    ItemCategoryLast         = 14
 };
 
-enum OtbAttrib {
-    OtbAttribFirst = 0x10,
-    OtbAttribServerId = OtbAttribFirst,
-    OtbAttribClientId,
-    OtbAttribName,               // deprecated
-    OtbAttribDesc,               // deprecated
-    OtbAttribSpeed,
-    OtbAttribSlot,               // deprecated
-    OtbAttribMaxItems,           // deprecated
-    OtbAttribWeight,             // deprecated
-    OtbAttribWeapon,             // deprecated
-    OtbAttribAmu,                // deprecated
-    OtbAttribArmor,              // deprecated
-    OtbAttribMagLevel,           // deprecated
-    OtbAttribMagicField,         // deprecated
-    OtbAttribWritable,           // deprecated
-    OtbAttribRotateTo,           // deprecated
-    OtbAttribDecay,              // deprecated
-    OtbAttribSpriteHash,
-    OtbAttribMinimapColor,
-    OtbAttrib07,
-    OtbAttrib08,
-    OtbAttribLight,
-    OtbAttribDecay2,             // deprecated
-    OtbAttribWeapon2,            // deprecated
-    OtbAttribAmu2,               // deprecated
-    OtbAttribArmor2,             // deprecated
-    OtbAttribWritable2,          // deprecated
-    OtbAttribLight2,
-    OtbAttribTopOrder,
-    OtbAttribWrtiable3,          // deprecated
-    OtbLastAttrib
+enum ItemTypeAttr : uint8 {
+    ItemTypeAttrServerId         = 16,
+    ItemTypeAttrClientId         = 17,
+    ItemTypeAttrName             = 18,   // deprecated
+    ItemTypeAttrDesc             = 19,   // deprecated
+    ItemTypeAttrSpeed            = 20,
+    ItemTypeAttrSlot             = 21,   // deprecated
+    ItemTypeAttrMaxItems         = 22,   // deprecated
+    ItemTypeAttrWeight           = 23,   // deprecated
+    ItemTypeAttrWeapon           = 24,   // deprecated
+    ItemTypeAttrAmmunition       = 25,   // deprecated
+    ItemTypeAttrArmor            = 26,   // deprecated
+    ItemTypeAttrMagicLevel       = 27,   // deprecated
+    ItemTypeAttrMagicField       = 28,   // deprecated
+    ItemTypeAttrWritable         = 29,   // deprecated
+    ItemTypeAttrRotateTo         = 30,   // deprecated
+    ItemTypeAttrDecay            = 31,   // deprecated
+    ItemTypeAttrSpriteHash       = 32,
+    ItemTypeAttrMinimapColor     = 33,
+    ItemTypeAttr07               = 34,
+    ItemTypeAttr08               = 35,
+    ItemTypeAttrLight            = 36,
+    ItemTypeAttrDecay2           = 37,   // deprecated
+    ItemTypeAttrWeapon2          = 38,   // deprecated
+    ItemTypeAttrAmmunition2      = 39,   // deprecated
+    ItemTypeAttrArmor2           = 40,   // deprecated
+    ItemTypeAttrWritable2        = 41,   // deprecated
+    ItemTypeAttrLight2           = 42,
+    ItemTypeAttrTopOrder         = 43,
+    ItemTypeAttrWrtiable3        = 44,   // deprecated
+    ItemTypeAttrLast             = 45
 };
 
 class ItemType : public LuaObject
@@ -89,21 +87,21 @@ public:
 
     void unserialize(const BinaryTreePtr& node);
 
-    uint16 getServerId() { return m_attribs.get<uint16>(OtbAttribServerId); }
-    uint16 getClientId() { return m_attribs.get<uint16>(OtbAttribClientId); }
-    OtbCategory getCategory() { return m_category; }
-    std::string getName() { return m_attribs.get<std::string>(OtbAttribName); }
-    std::string getDesc() { return m_attribs.get<std::string>(OtbAttribDesc); }
+    uint16 getServerId() { return m_attribs.get<uint16>(ItemTypeAttrServerId); }
+    uint16 getClientId() { return m_attribs.get<uint16>(ItemTypeAttrClientId); }
+    ItemCategory getCategory() { return m_category; }
+    std::string getName() { return m_attribs.get<std::string>(ItemTypeAttrName); }
+    std::string getDesc() { return m_attribs.get<std::string>(ItemTypeAttrDesc); }
 
     bool isNull() { return m_null; }
 
-    void setClientId(uint16 clientId) { m_attribs.set(OtbAttribClientId, clientId); }
-    void setServerId(uint16 serverId) { m_attribs.set(OtbAttribServerId, serverId); }
-    void setName(const std::string& name) { m_attribs.set(OtbAttribName, name); }
-    void setDesc(const std::string& desc) { m_attribs.set(OtbAttribDesc, desc); }
+    void setClientId(uint16 clientId) { m_attribs.set(ItemTypeAttrClientId, clientId); }
+    void setServerId(uint16 serverId) { m_attribs.set(ItemTypeAttrServerId, serverId); }
+    void setName(const std::string& name) { m_attribs.set(ItemTypeAttrName, name); }
+    void setDesc(const std::string& desc) { m_attribs.set(ItemTypeAttrDesc, desc); }
 
 private:
-    OtbCategory m_category;
+    ItemCategory m_category;
     Boolean<true> m_null;
 
     AttribStorage m_attribs;

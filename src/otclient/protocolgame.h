@@ -32,17 +32,9 @@ class ProtocolGame : public Protocol
 {
 public:
     void login(const std::string& accountName, const std::string& accountPassword, const std::string& host, uint16 port, const std::string& characterName);
-    void safeSend(const OutputMessagePtr& outputMessage);
+    void send(const OutputMessagePtr& outputMessage);
+
     void sendExtendedOpcode(uint8 opcode, const std::string& buffer);
-
-protected:
-    void onConnect();
-    void onRecv(const InputMessagePtr& inputMessage);
-    void onError(const boost::system::error_code& error);
-
-    friend class Game;
-
-protected:
     void sendLoginPacket(uint challangeTimestamp, uint8 challangeRandom);
     void sendLogout();
     void sendPing();
@@ -112,6 +104,13 @@ protected:
     void sendRequestQuestLine(int questId);
     void sendNewNewRuleViolation(int reason, int action, const std::string& characterName, const std::string& comment, const std::string& translation);
     void sendRequestItemInfo(int itemId, int index);
+
+protected:
+    void onConnect();
+    void onRecv(const InputMessagePtr& inputMessage);
+    void onError(const boost::system::error_code& error);
+
+    friend class Game;
 
 public:
     void addPosition(const OutputMessagePtr& msg, const Position& position);

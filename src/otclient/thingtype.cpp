@@ -32,7 +32,7 @@
 
 ThingType::ThingType()
 {
-    m_category = DatInvalidCategory;
+    m_category = ThingInvalidCategory;
     m_id = 0;
     m_null = true;
     m_exactSize = 0;
@@ -41,43 +41,43 @@ ThingType::ThingType()
     m_layers = 0;
 }
 
-void ThingType::unserialize(uint16 clientId, DatCategory category, const FileStreamPtr& fin)
+void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileStreamPtr& fin)
 {
     m_null = false;
     m_id = clientId;
     m_category = category;
 
     bool done = false;
-    for(int i = 0 ; i < DatLastAttrib;++i) {
-        int attrib = fin->getU8();
-        if(attrib == DatLastAttrib) {
+    for(int i = 0 ; i < ThingLastAttr;++i) {
+        int attr = fin->getU8();
+        if(attr == ThingLastAttr) {
             done = true;
             break;
         }
 
         if(g_game.getFeature(Otc::GameChargeableItems)) {
-            if(attrib == DatAttribWritable) {
-                m_attribs.set(DatAttribChargeable, true);
+            if(attr == ThingAttrWritable) {
+                m_attribs.set(ThingAttrChargeable, true);
                 continue;
-            } else if(attrib > DatAttribWritable)
-                attrib -= 1;
+            } else if(attr > ThingAttrWritable)
+                attr -= 1;
         }
 
-        switch(attrib) {
-            case DatAttribDisplacement: {
+        switch(attr) {
+            case ThingAttrDisplacement: {
                 m_displacement.x = fin->getU16();
                 m_displacement.y = fin->getU16();
-                m_attribs.set(attrib, true);
+                m_attribs.set(attr, true);
                 break;
             }
-            case DatAttribLight: {
+            case ThingAttrLight: {
                 Light light;
                 light.intensity = fin->getU16();
                 light.color = fin->getU16();
-                m_attribs.set(attrib, light);
+                m_attribs.set(attr, light);
                 break;
             }
-            case DatAttribMarket: {
+            case ThingAttrMarket: {
                 MarketData market;
                 market.category = fin->getU16();
                 market.showAs = fin->getU16();
@@ -85,20 +85,20 @@ void ThingType::unserialize(uint16 clientId, DatCategory category, const FileStr
                 market.name = fin->getString();
                 market.restrictProfession = fin->getU16();
                 market.requiredLevel = fin->getU16();
-                m_attribs.set(attrib, market);
+                m_attribs.set(attr, market);
                 break;
             }
-            case DatAttribGround:
-            case DatAttribWritable:
-            case DatAttribWritableOnce:
-            case DatAttribElevation:
-            case DatAttribMiniMapColor:
-            case DatAttribCloth:
-            case DatAttribLensHelp:
-                m_attribs.set(attrib, fin->getU16());
+            case ThingAttrGround:
+            case ThingAttrWritable:
+            case ThingAttrWritableOnce:
+            case ThingAttrElevation:
+            case ThingAttrMinimapColor:
+            case ThingAttrCloth:
+            case ThingAttrLensHelp:
+                m_attribs.set(attr, fin->getU16());
                 break;
             default:
-                m_attribs.set(attrib, true);
+                m_attribs.set(attr, true);
                 break;
         };
     }
@@ -164,7 +164,7 @@ const TexturePtr& ThingType::getTexture(int animationPhase)
         // we don't need layers in common items, they will be pre-drawn
         int textureLayers = 1;
         int numLayers = m_layers;
-        if(m_category == DatCreatureCategory && numLayers >= 2) {
+        if(m_category == ThingCategoryCreature && numLayers >= 2) {
              // 5 layers: outfit base, red mask, green mask, blue mask, yellow mask
             textureLayers = 5;
             numLayers = 5;
@@ -182,7 +182,7 @@ const TexturePtr& ThingType::getTexture(int animationPhase)
             for(int y = 0; y < m_numPatternY; ++y) {
                 for(int x = 0; x < m_numPatternX; ++x) {
                     for(int l = 0; l < numLayers; ++l) {
-                        bool spriteMask = (m_category == DatCreatureCategory && l > 0);
+                        bool spriteMask = (m_category == ThingCategoryCreature && l > 0);
                         int frameIndex = getTextureIndex(l % textureLayers, x, y, z);
                         Point framePos = Point(frameIndex % (textureSize.width() / m_size.width()) * m_size.width(),
                                                frameIndex / (textureSize.width() / m_size.width()) * m_size.height()) * Otc::TILE_PIXELS;

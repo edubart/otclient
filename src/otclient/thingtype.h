@@ -20,8 +20,8 @@
  * THE SOFTWARE.
  */
 
-#ifndef THINGTYPEDAT_H
-#define THINGTYPEDAT_H
+#ifndef THINGTYPE_H
+#define THINGTYPE_H
 
 #include "declarations.h"
 #include <framework/core/declarations.h>
@@ -31,63 +31,59 @@
 #include <framework/net/server.h>
 #include <framework/util/attribstorage.h>
 
-enum DatCategory {
-    DatItemCategory = 0,
-    DatCreatureCategory,
-    DatEffectCategory,
-    DatMissileCategory,
-    DatLastCategory,
-    DatInvalidCategory = DatLastCategory
+enum ThingCategory : uint8 {
+    ThingCategoryItem = 0,
+    ThingCategoryCreature,
+    ThingCategoryEffect,
+    ThingCategoryMissile,
+    ThingInvalidCategory,
+    ThingLastCategory = ThingInvalidCategory
 };
 
-enum DatSpriteMask {
-    DatRedMask = 1,
-    DatGreenMask,
-    DatBlueMask,
-    DatYellowMask,
-    DatLastMask
+enum ThingAttr : uint8 {
+    ThingAttrGround           = 0,
+    ThingAttrGroundBorder     = 1,
+    ThingAttrOnBottom         = 2,
+    ThingAttrOnTop            = 3,
+    ThingAttrContainer        = 4,
+    ThingAttrStackable        = 5,
+    ThingAttrForceUse         = 6,
+    ThingAttrMultiUse         = 7,
+    ThingAttrWritable         = 8,
+    ThingAttrWritableOnce     = 9,
+    ThingAttrFluidContainer   = 10,
+    ThingAttrSplash           = 11,
+    ThingAttrNotWalkable      = 12,
+    ThingAttrNotMoveable      = 13,
+    ThingAttrBlockProjectile  = 14,
+    ThingAttrNotPathable      = 15,
+    ThingAttrPickupable       = 16,
+    ThingAttrHangable         = 17,
+    ThingAttrHookSouth        = 18,
+    ThingAttrHookEast         = 19,
+    ThingAttrRotateable       = 20,
+    ThingAttrLight            = 21,
+    ThingAttrDontHide         = 22,
+    ThingAttrTranslucent      = 23,
+    ThingAttrDisplacement     = 24,
+    ThingAttrElevation        = 25,
+    ThingAttrLyingCorpse      = 26,
+    ThingAttrAnimateAlways    = 27,
+    ThingAttrMinimapColor     = 28,
+    ThingAttrLensHelp         = 29,
+    ThingAttrFullGround       = 30,
+    ThingAttrLook             = 31,
+    ThingAttrCloth            = 32,
+    ThingAttrMarket           = 33,
+    ThingAttrChargeable       = 254, // deprecated
+    ThingLastAttr             = 255,
 };
 
-enum DatAttrib {
-    DatAttribGround = 0,
-    DatAttribGroundBorder,
-    DatAttribOnBottom,
-    DatAttribOnTop,
-    DatAttribContainer,
-    DatAttribStackable,
-    DatAttribForceUse,
-    DatAttribMultiUse,
-    //DatAttribRune
-    DatAttribWritable,
-    DatAttribWritableOnce,
-    DatAttribFluidContainer,
-    DatAttribSplash,
-    DatAttribNotWalkable,
-    DatAttribNotMoveable,
-    DatAttribBlockProjectile,
-    DatAttribNotPathable,
-    DatAttribPickupable,
-    DatAttribHangable,
-    DatAttribHookSouth,
-    DatAttribHookEast,
-    DatAttribRotateable,
-    DatAttribLight,
-    DatAttribDontHide,
-    DatAttribTranslucent,
-    DatAttribDisplacement,
-    DatAttribElevation,
-    DatAttribLyingCorpse,
-    DatAttribAnimateAlways,
-    DatAttribMiniMapColor,
-    DatAttribLensHelp,
-    DatAttribFullGround,
-    DatAttribIgnoreLook,
-    DatAttribCloth,
-    DatAttribMarket,
-    DatLastAttrib = 255,
-
-    // legacy attribs
-    DatAttribChargeable = 254
+enum SpriteMask {
+    SpriteMaskRed = 1,
+    SpriteMaskGreen,
+    SpriteMaskBlue,
+    SpriteMaskYellow
 };
 
 struct MarketData {
@@ -109,13 +105,14 @@ class ThingType : public LuaObject
 public:
     ThingType();
 
-    void unserialize(uint16 clientId, DatCategory category, const FileStreamPtr& fin);
+    void unserialize(uint16 clientId, ThingCategory category, const FileStreamPtr& fin);
 
     void draw(const Point& dest, float scaleFactor, int layer, int xPattern, int yPattern, int zPattern, int animationPhase);
 
     uint16 getId() { return m_id; }
-    DatCategory getCategory() { return m_category; }
+    ThingCategory getCategory() { return m_category; }
     bool isNull() { return m_null; }
+    bool hasAttr(ThingAttr attr) { return m_attribs.has(attr); }
 
     Size getSize() { return m_size; }
     int getWidth() { return m_size.width(); }
@@ -130,49 +127,49 @@ public:
     int getDisplacementX() { return getDisplacement().x; }
     int getDisplacementY() { return getDisplacement().y; }
 
-    int getGroundSpeed() { return m_attribs.get<uint16>(DatAttribGround); }
-    int getMaxTextLength() { return m_attribs.has(DatAttribWritableOnce) ? m_attribs.get<uint16>(DatAttribWritableOnce) : m_attribs.get<uint16>(DatAttribWritable); }
-    Light getLight() { return m_attribs.get<Light>(DatAttribLight); }
-    int getMinimapColor() { return m_attribs.get<uint16>(DatAttribMiniMapColor); }
-    int getLensHelp() { return m_attribs.get<uint16>(DatAttribLensHelp); }
-    int getClothSlot() { return m_attribs.get<uint16>(DatAttribCloth); }
-    int getElevation() { return m_attribs.get<uint16>(DatAttribElevation); }
-    MarketData getMarketData() { return m_attribs.get<MarketData>(DatAttribMarket); }
-    bool isGround() { return m_attribs.has(DatAttribGround); }
-    bool isGroundBorder() { return m_attribs.has(DatAttribGroundBorder); }
-    bool isOnBottom() { return m_attribs.has(DatAttribOnBottom); }
-    bool isOnTop() { return m_attribs.has(DatAttribOnTop); }
-    bool isContainer() { return m_attribs.has(DatAttribContainer); }
-    bool isStackable() { return m_attribs.has(DatAttribStackable); }
-    bool isForceUse() { return m_attribs.has(DatAttribForceUse); }
-    bool isMultiUse() { return m_attribs.has(DatAttribMultiUse); }
-    bool isWritable() { return m_attribs.has(DatAttribWritable); }
-    bool isChargeable() { return m_attribs.has(DatAttribChargeable); }
-    bool isWritableOnce() { return m_attribs.has(DatAttribWritableOnce); }
-    bool isFluidContainer() { return m_attribs.has(DatAttribFluidContainer); }
-    bool isSplash() { return m_attribs.has(DatAttribSplash); }
-    bool isNotWalkable() { return m_attribs.has(DatAttribNotWalkable); }
-    bool isNotMoveable() { return m_attribs.has(DatAttribNotMoveable); }
-    bool blockProjectile() { return m_attribs.has(DatAttribBlockProjectile); }
-    bool isNotPathable() { return m_attribs.has(DatAttribNotPathable); }
-    bool isPickupable() { return m_attribs.has(DatAttribPickupable); }
-    bool isHangable() { return m_attribs.has(DatAttribHangable); }
-    bool isHookSouth() { return m_attribs.has(DatAttribHookSouth); }
-    bool isHookEast() { return m_attribs.has(DatAttribHookEast); }
-    bool isRotateable() { return m_attribs.has(DatAttribRotateable); }
-    bool hasLight() { return m_attribs.has(DatAttribLight); }
-    bool isDontHide() { return m_attribs.has(DatAttribDontHide); }
-    bool isTranslucent() { return m_attribs.has(DatAttribTranslucent); }
-    bool hasDisplacement() { return m_attribs.has(DatAttribDisplacement); }
-    bool hasElevation() { return m_attribs.has(DatAttribElevation); }
-    bool isLyingCorpse() { return m_attribs.has(DatAttribLyingCorpse); }
-    bool isAnimateAlways() { return m_attribs.has(DatAttribAnimateAlways); }
-    bool hasMiniMapColor() { return m_attribs.has(DatAttribMiniMapColor); }
-    bool hasLensHelp() { return m_attribs.has(DatAttribLensHelp); }
-    bool isFullGround() { return m_attribs.has(DatAttribFullGround); }
-    bool isIgnoreLook() { return m_attribs.has(DatAttribIgnoreLook); }
-    bool isCloth() { return m_attribs.has(DatAttribCloth); }
-    bool isMarketable() { return m_attribs.has(DatAttribMarket); }
+    int getGroundSpeed() { return m_attribs.get<uint16>(ThingAttrGround); }
+    int getMaxTextLength() { return m_attribs.has(ThingAttrWritableOnce) ? m_attribs.get<uint16>(ThingAttrWritableOnce) : m_attribs.get<uint16>(ThingAttrWritable); }
+    Light getLight() { return m_attribs.get<Light>(ThingAttrLight); }
+    int getMinimapColor() { return m_attribs.get<uint16>(ThingAttrMinimapColor); }
+    int getLensHelp() { return m_attribs.get<uint16>(ThingAttrLensHelp); }
+    int getClothSlot() { return m_attribs.get<uint16>(ThingAttrCloth); }
+    int getElevation() { return m_attribs.get<uint16>(ThingAttrElevation); }
+    MarketData getMarketData() { return m_attribs.get<MarketData>(ThingAttrMarket); }
+    bool isGround() { return m_attribs.has(ThingAttrGround); }
+    bool isGroundBorder() { return m_attribs.has(ThingAttrGroundBorder); }
+    bool isOnBottom() { return m_attribs.has(ThingAttrOnBottom); }
+    bool isOnTop() { return m_attribs.has(ThingAttrOnTop); }
+    bool isContainer() { return m_attribs.has(ThingAttrContainer); }
+    bool isStackable() { return m_attribs.has(ThingAttrStackable); }
+    bool isForceUse() { return m_attribs.has(ThingAttrForceUse); }
+    bool isMultiUse() { return m_attribs.has(ThingAttrMultiUse); }
+    bool isWritable() { return m_attribs.has(ThingAttrWritable); }
+    bool isChargeable() { return m_attribs.has(ThingAttrChargeable); }
+    bool isWritableOnce() { return m_attribs.has(ThingAttrWritableOnce); }
+    bool isFluidContainer() { return m_attribs.has(ThingAttrFluidContainer); }
+    bool isSplash() { return m_attribs.has(ThingAttrSplash); }
+    bool isNotWalkable() { return m_attribs.has(ThingAttrNotWalkable); }
+    bool isNotMoveable() { return m_attribs.has(ThingAttrNotMoveable); }
+    bool blockProjectile() { return m_attribs.has(ThingAttrBlockProjectile); }
+    bool isNotPathable() { return m_attribs.has(ThingAttrNotPathable); }
+    bool isPickupable() { return m_attribs.has(ThingAttrPickupable); }
+    bool isHangable() { return m_attribs.has(ThingAttrHangable); }
+    bool isHookSouth() { return m_attribs.has(ThingAttrHookSouth); }
+    bool isHookEast() { return m_attribs.has(ThingAttrHookEast); }
+    bool isRotateable() { return m_attribs.has(ThingAttrRotateable); }
+    bool hasLight() { return m_attribs.has(ThingAttrLight); }
+    bool isDontHide() { return m_attribs.has(ThingAttrDontHide); }
+    bool isTranslucent() { return m_attribs.has(ThingAttrTranslucent); }
+    bool hasDisplacement() { return m_attribs.has(ThingAttrDisplacement); }
+    bool hasElevation() { return m_attribs.has(ThingAttrElevation); }
+    bool isLyingCorpse() { return m_attribs.has(ThingAttrLyingCorpse); }
+    bool isAnimateAlways() { return m_attribs.has(ThingAttrAnimateAlways); }
+    bool hasMiniMapColor() { return m_attribs.has(ThingAttrMinimapColor); }
+    bool hasLensHelp() { return m_attribs.has(ThingAttrLensHelp); }
+    bool isFullGround() { return m_attribs.has(ThingAttrFullGround); }
+    bool isIgnoreLook() { return m_attribs.has(ThingAttrLook); }
+    bool isCloth() { return m_attribs.has(ThingAttrCloth); }
+    bool isMarketable() { return m_attribs.has(ThingAttrMarket); }
 
 private:
     const TexturePtr& getTexture(int animationPhase);
@@ -180,7 +177,7 @@ private:
     uint getSpriteIndex(int w, int h, int l, int x, int y, int z, int a);
     uint getTextureIndex(int l, int x, int y, int z);
 
-    DatCategory m_category;
+    ThingCategory m_category;
     uint16 m_id;
     bool m_null;
     AttribStorage m_attribs;

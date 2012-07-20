@@ -59,8 +59,7 @@ void ModuleManager::autoLoadModules(int maxPriority)
         if(priority > maxPriority)
             break;
         ModulePtr module = pair.second;
-        if(!module->isLoaded() && !module->load())
-            g_logger.fatal("A required module has failed to load, cannot continue to run.");
+        module->load();
     }
 }
 

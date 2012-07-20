@@ -28,12 +28,12 @@
 #include <framework/util/attribstorage.h>
 #include "outfit.h"
 
-enum CreatureAttributes : unsigned char
+enum CreatureAttr : uint8
 {
-    CreatureAttribPos,
-    CreatureAttribName,
-    CreatureAttribOutfit,
-    CreatureAttribSpawnTime
+    CreatureAttrPosition  = 0,
+    CreatureAttrName      = 1,
+    CreatureAttrOutfit    = 2,
+    CreatureAttrSpawnTime = 3
 };
 
 class CreatureType : public LuaObject
@@ -42,15 +42,15 @@ public:
     CreatureType() { }
     CreatureType(const std::string& name) { setName(name); }
 
-    void setPos(const Position& pos) { m_attribs.set(CreatureAttribPos, pos); }
-    void setName(const std::string& name) { m_attribs.set(CreatureAttribName, name); }
-    void setOutfit(const Outfit& o) { m_attribs.set(CreatureAttribOutfit, o); }
-    void setSpawnTime(int spawnTime) { m_attribs.set(CreatureAttribSpawnTime, spawnTime); }
+    void setPos(const Position& pos) { m_attribs.set(CreatureAttrPosition, pos); }
+    void setName(const std::string& name) { m_attribs.set(CreatureAttrName, name); }
+    void setOutfit(const Outfit& o) { m_attribs.set(CreatureAttrOutfit, o); }
+    void setSpawnTime(int spawnTime) { m_attribs.set(CreatureAttrSpawnTime, spawnTime); }
 
-    std::string getName() { return m_attribs.get<std::string>(CreatureAttribName); }
-    Position getPos() { return m_attribs.get<Position>(CreatureAttribPos); }
-    Outfit getOutfit() { return m_attribs.get<Outfit>(CreatureAttribOutfit); }
-    int getSpawnTime() { return m_attribs.get<int>(CreatureAttribSpawnTime); }
+    std::string getName() { return m_attribs.get<std::string>(CreatureAttrName); }
+    Position getPos() { return m_attribs.get<Position>(CreatureAttrPosition); }
+    Outfit getOutfit() { return m_attribs.get<Outfit>(CreatureAttrOutfit); }
+    int getSpawnTime() { return m_attribs.get<int>(CreatureAttrSpawnTime); }
 
 private:
     AttribStorage m_attribs;

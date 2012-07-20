@@ -29,14 +29,14 @@
 
 ItemType::ItemType()
 {
-    m_category = OtbInvalidCateogry;
+    m_category = ItemCategoryInvalid;
 }
 
 void ItemType::unserialize(const BinaryTreePtr& node)
 {
     m_null = false;
 
-    m_category = (OtbCategory)node->getU8();
+    m_category = (ItemCategory)node->getU8();
 
     node->getU32(); // flags
 
@@ -48,31 +48,26 @@ void ItemType::unserialize(const BinaryTreePtr& node)
 
         uint16 len = node->getU16();
         switch(attr) {
-            case OtbAttribServerId: {
+            case ItemTypeAttrServerId: {
                 uint16 serverId = node->getU16();
                 if(serverId > 20000 && serverId < 20100) {
                     serverId -= 20000;
                 } else if(lastId > 99 && lastId != serverId - 1) {
-                    static ItemTypePtr dummyType(g_things.getNullItemType());
-                    while(lastId != serverId - 1) {
-                        dummyType->setServerId(++lastId);
-                        g_things.addItemType(dummyType);
-                    }
+                    while(lastId != serverId - 1)
+                        ++lastId;
                 }
-                assert(len == 2);
                 setServerId(serverId);
                 break;
             }
-            case OtbAttribClientId: {
+            case ItemTypeAttrClientId: {
                 setClientId(node->getU16());
-                assert(len == 2);
                 break;
             }
-            case OtbAttribName: {
+            case ItemTypeAttrName: {
                 setName(node->getString());
                 break;
             }
-            case OtbAttribDesc: {
+            case ItemTypeAttrDesc: {
                 setDesc(node->getString());
                 break;
             }

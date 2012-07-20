@@ -23,7 +23,7 @@
 #include "protocolgame.h"
 #include "game.h"
 
-void ProtocolGame::safeSend(const OutputMessagePtr& outputMessage)
+void ProtocolGame::send(const OutputMessagePtr& outputMessage)
 {
     // avoid usage of automated sends (bot modules)
     if(!g_game.checkBotProtection())
@@ -38,7 +38,7 @@ void ProtocolGame::sendExtendedOpcode(uint8 opcode, const std::string& buffer)
         msg->addU8(Proto::ClientExtendedOpcode);
         msg->addU8(opcode);
         msg->addString(buffer);
-        safeSend(msg);
+        send(msg);
     } else {
         g_logger.error(stdext::format("Unable to send extended opcode %d, extended opcodes are not enabled", opcode));
     }
@@ -109,7 +109,7 @@ void ProtocolGame::sendPing()
 {
     OutputMessagePtr msg(new OutputMessage);
     msg->addU8(Proto::ClientPing);
-    send(msg);
+    Protocol::send(msg);
 }
 
 void ProtocolGame::sendPingBack()

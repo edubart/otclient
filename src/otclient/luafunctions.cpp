@@ -54,6 +54,11 @@ void OTClient::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_things", "loadOtb", &ThingTypeManager::loadOtb, &g_things);
     g_lua.bindSingletonFunction("g_things", "loadXml", &ThingTypeManager::loadXml, &g_things);
     g_lua.bindSingletonFunction("g_things", "getDatSignature", &ThingTypeManager::getDatSignature, &g_things);
+    g_lua.bindSingletonFunction("g_things", "getDatSignature", &ThingTypeManager::getDatSignature, &g_things);
+    g_lua.bindSingletonFunction("g_things", "getThingType", &ThingTypeManager::getThingType, &g_things);
+    g_lua.bindSingletonFunction("g_things", "getItemType", &ThingTypeManager::getItemType, &g_things);
+    g_lua.bindSingletonFunction("g_things", "findThingTypeByAttr", &ThingTypeManager::findThingTypeByAttr, &g_things);
+    g_lua.bindSingletonFunction("g_things", "findItemTypeByCategory", &ThingTypeManager::findItemTypeByCategory, &g_things);
 
 #if 0
     g_lua.registerSingletonClass("g_houses");
@@ -211,7 +216,6 @@ void OTClient::registerLuaFunctions()
     g_lua.registerClass<ProtocolGame, Protocol>();
     g_lua.bindClassStaticFunction<ProtocolGame>("create", []{ return ProtocolGamePtr(new ProtocolGame); });
     g_lua.bindClassMemberFunction<ProtocolGame>("login", &ProtocolGame::login);
-    g_lua.bindClassMemberFunction<ProtocolGame>("safeSend", &ProtocolGame::safeSend);
     g_lua.bindClassMemberFunction<ProtocolGame>("sendExtendedOpcode", &ProtocolGame::sendExtendedOpcode);
     g_lua.bindClassMemberFunction<ProtocolGame>("addPosition", &ProtocolGame::addPosition);
     g_lua.bindClassMemberFunction<ProtocolGame>("setMapDescription", &ProtocolGame::setMapDescription);
@@ -328,6 +332,13 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Creature>("isWalking", &Creature::isWalking);
     g_lua.bindClassMemberFunction<Creature>("asMonster", &Creature::asMonster);
     g_lua.bindClassMemberFunction<Creature>("asNpc", &Creature::asNpc);
+
+    g_lua.registerClass<ItemType>();
+    g_lua.bindClassMemberFunction<ItemType>("getServerId", &ItemType::getServerId);
+    g_lua.bindClassMemberFunction<ItemType>("getClientId", &ItemType::getClientId);
+
+    g_lua.registerClass<ThingType>();
+    g_lua.bindClassMemberFunction<ThingType>("getMarketData", &ThingType::getMarketData);
 
     g_lua.registerClass<Item, Thing>();
     g_lua.bindClassStaticFunction<Item>("create", &Item::create);

@@ -628,7 +628,7 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Protocol>("disconnect", &Protocol::disconnect);
     g_lua.bindClassMemberFunction<Protocol>("isConnected", &Protocol::isConnected);
     g_lua.bindClassMemberFunction<Protocol>("isConnecting", &Protocol::isConnecting);
-    g_lua.bindClassMemberFunction<Protocol>("send", &Protocol::send); // must change to safeSend
+    g_lua.bindClassMemberFunction<Protocol>("send", &Protocol::send);
     g_lua.bindClassMemberFunction<Protocol>("recv", &Protocol::recv);
     g_lua.bindClassMemberFunction<Protocol>("getXteaKey", &Protocol::getXteaKey);
     g_lua.bindClassMemberFunction<Protocol>("generateXteaKey", &Protocol::generateXteaKey);

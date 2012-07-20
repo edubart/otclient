@@ -28,7 +28,7 @@
 #include "thing.h"
 #include "itemtype.h"
 
-enum AttrTypes_t
+enum ItemAttr : uint8
 {
     ATTR_END = 0,
     //ATTR_DESCRIPTION = 1,

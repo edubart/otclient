@@ -83,17 +83,17 @@ void Missile::setPath(const Position& fromPosition, const Position& toPosition)
 
 void Missile::setId(uint32 id)
 {
-    if(!g_things.isValidDatId(id, DatMissileCategory))
+    if(!g_things.isValidDatId(id, ThingCategoryMissile))
         id = 0;
     m_id = id;
 }
 
 const ThingTypePtr& Missile::getThingType()
 {
-    return g_things.getThingType(m_id, DatMissileCategory);
+    return g_things.getThingType(m_id, ThingCategoryMissile);
 }
 
 ThingType* Missile::rawGetThingType()
 {
-    return g_things.rawGetThingType(m_id, DatMissileCategory);
+    return g_things.rawGetThingType(m_id, ThingCategoryMissile);
 }

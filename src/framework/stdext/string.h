@@ -30,7 +30,6 @@
 #include <iomanip>
 #include <vector>
 #include <boost/algorithm/string.hpp>
-#include <otclient/position.h>
 
 #include "types.h"
 #include "cast.h"
@@ -53,7 +52,7 @@ typename std::enable_if<std::is_integral<T>::value ||
                         std::is_floating_point<T>::value ||
                         std::is_enum<T>::value, T>::type sprintf_cast(const T& t) { return t; }
 
-/// Cast any class or struct convertible to std::string
+/// Cast std::string
 inline const char *sprintf_cast(const std::string& s) { return s.c_str(); }
 
 template<int N>
@@ -179,11 +178,6 @@ inline std::string ip_to_string(uint32 ip) {
     char host[16];
     sprintf(host, "%d.%d.%d.%d", (uint8)ip, (uint8)(ip >> 8), (uint8)(ip >> 16), (uint8)(ip >> 24));
     return std::string(host);
-}
-
-inline std::string pos_to_string(const Position& p)
-{
-    return format("{x = %hd, y = %hd, z = %hd}", p.x, p.y, p.z);
 }
 
 /// Convert utf8 characters to latin1

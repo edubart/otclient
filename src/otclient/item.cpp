@@ -176,7 +176,7 @@ void Item::draw(const Point& dest, float scaleFactor, bool animate)
 
 void Item::setId(uint32 id)
 {
-    if(!g_things.isValidDatId(id, DatItemCategory))
+    if(!g_things.isValidDatId(id, ThingCategoryItem))
         id = 0;
     //m_otbId = g_things.findOtbForClientId(id)->getServerId();
     m_id = id;
@@ -194,7 +194,7 @@ void Item::setOtbId(uint16 id)
 
 bool Item::isValid()
 {
-    return g_things.isValidDatId(m_id, DatItemCategory);
+    return g_things.isValidDatId(m_id, ThingCategoryItem);
 }
 
 void Item::unserializeItem(const BinaryTreePtr &in)
@@ -277,10 +277,10 @@ ItemPtr Item::clone()
 
 const ThingTypePtr& Item::getThingType()
 {
-    return g_things.getThingType(m_id, DatItemCategory);
+    return g_things.getThingType(m_id, ThingCategoryItem);
 }
 
 ThingType* Item::rawGetThingType()
 {
-    return g_things.rawGetThingType(m_id, DatItemCategory);
+    return g_things.rawGetThingType(m_id, ThingCategoryItem);
 }

@@ -32,7 +32,7 @@
 #include <framework/core/clock.h>
 #include <framework/util/attribstorage.h>
 
-enum OTBM_AttrTypes_t
+enum OTBM_ItemAttr
 {
     OTBM_ATTR_DESCRIPTION = 1,
     OTBM_ATTR_EXT_FILE = 2,

@@ -46,10 +46,16 @@ public:
     const ThingTypePtr& getNullThingType() { return m_nullThingType; }
     const ItemTypePtr& getNullItemType() { return m_nullItemType; }
 
-    const ThingTypePtr& getThingType(uint16 id, DatCategory category);
+    const ThingTypePtr& getThingType(uint16 id, ThingCategory category);
     const ItemTypePtr& getItemType(uint16 id);
-    ThingType* rawGetThingType(uint16 id, DatCategory category) { return m_datTypes[category][id].get(); }
-    ItemType* rawGetItemType(uint16 id) { return m_otbTypes[id].get(); }
+    ThingType* rawGetThingType(uint16 id, ThingCategory category) { return m_thingTypes[category][id].get(); }
+    ItemType* rawGetItemType(uint16 id) { return m_itemTypes[id].get(); }
+
+    ThingTypeList findThingTypeByAttr(ThingAttr attr, ThingCategory category);
+    ItemTypeList findItemTypeByCategory(ItemCategory category);
+
+    const ThingTypeList& getThingTypes(ThingCategory category);
+    const ItemTypeList& getItemTypes() { return m_itemTypes; }
 
     uint32 getDatSignature() { return m_datSignature; }
     uint32 getOtbMajorVersion() { return m_otbMajorVersion; }
@@ -59,12 +65,12 @@ public:
     bool isXmlLoaded() { return m_xmlLoaded; }
     bool isOtbLoaded() { return m_otbLoaded; }
 
-    bool isValidDatId(uint16 id, DatCategory category) { return id >= 1 && id < m_datTypes[category].size(); }
-    bool isValidOtbId(uint16 id) { return id >= 1 && id < m_otbTypes.size(); }
+    bool isValidDatId(uint16 id, ThingCategory category) { return id >= 1 && id < m_thingTypes[category].size(); }
+    bool isValidOtbId(uint16 id) { return id >= 1 && id < m_itemTypes.size(); }
 
 private:
-    ThingTypeList m_datTypes[DatLastCategory];
-    ItemTypeList m_otbTypes;
+    ThingTypeList m_thingTypes[ThingLastCategory];
+    ItemTypeList m_itemTypes;
 
     ThingTypePtr m_nullThingType;
     ItemTypePtr m_nullItemType;

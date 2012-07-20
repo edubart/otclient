@@ -46,17 +46,17 @@ void Effect::startAnimation()
 
 void Effect::setId(uint32 id)
 {
-    if(!g_things.isValidDatId(id, DatEffectCategory))
+    if(!g_things.isValidDatId(id, ThingCategoryEffect))
         id = 0;
     m_id = id;
 }
 
 const ThingTypePtr& Effect::getThingType()
 {
-    return g_things.getThingType(m_id, DatEffectCategory);
+    return g_things.getThingType(m_id, ThingCategoryEffect);
 }
 
 ThingType *Effect::rawGetThingType()
 {
-    return g_things.rawGetThingType(m_id, DatEffectCategory);
+    return g_things.rawGetThingType(m_id, ThingCategoryEffect);
 }
