@@ -80,8 +80,8 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
             case ThingAttrMarket: {
                 MarketData market;
                 market.category = fin->getU16();
-                market.showAs = fin->getU16();
                 market.tradeAs = fin->getU16();
+                market.showAs = fin->getU16();
                 market.name = fin->getString();
                 market.restrictProfession = fin->getU16();
                 market.requiredLevel = fin->getU16();
