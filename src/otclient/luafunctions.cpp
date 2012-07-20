@@ -338,6 +338,7 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassMemberFunction<ItemType>("getClientId", &ItemType::getClientId);
 
     g_lua.registerClass<ThingType>();
+    g_lua.bindClassMemberFunction<ThingType>("getId", &ThingType::getId);
     g_lua.bindClassMemberFunction<ThingType>("getMarketData", &ThingType::getMarketData);
 
     g_lua.registerClass<Item, Thing>();

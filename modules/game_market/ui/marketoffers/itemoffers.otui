@@ -1,10 +1,87 @@
+OfferListLabel < Label
+  font: verdana-11px-monochrome
+  background-color: alpha
+  text-offset: 2 0
+  focusable: true
+  color: #cccccc
+
+  $focus:
+    background-color: #294f6d
+    color: #ffffff
+
 Panel
   background-color: #22283399
   margin: 1
 
+  Button
+    !text: tr('Buy Now')
+    anchors.right: parent.right
+    anchors.bottom: next.bottom
+    margin-right: 6
+    width: 80
+    //@onClick: g_game.closeNpcTrade()
+
   Label
-    !text: tr('Item Offers')
+    !text: tr('Sell Offers')
     anchors.top: parent.top
     anchors.left: parent.left
-    margin-top: 45
-    margin-left: 3
+    margin-top: 44
+    margin-left: 6
+
+  TextList
+    id: sellingList
+    anchors.top: prev.bottom
+    anchors.left: prev.left
+    anchors.right: parent.right
+    height: 120
+    margin-top: 5
+    margin-bottom: 5
+    margin-right: 6
+    padding: 1
+    focusable: false
+    vertical-scrollbar: sellingListScrollBar
+
+  VerticalScrollBar
+    id: sellingListScrollBar
+    anchors.top: prev.top
+    anchors.bottom: prev.bottom
+    anchors.right: prev.right
+    step: 28
+    pixels-scroll: true
+
+  Button
+    !text: tr('Sell Now')
+    anchors.right: parent.right
+    anchors.top: prev.bottom
+    margin-top: 5
+    margin-right: 6
+    width: 80
+    //@onClick: g_game.closeNpcTrade()
+
+  Label
+    !text: tr('Buy Offers')
+    anchors.top: prev.top
+    anchors.left: parent.left
+    margin-top: 9
+    margin-left: 6
+
+  TextList
+    id: buyingList
+    anchors.top: prev.bottom
+    anchors.left: prev.left
+    anchors.right: parent.right
+    margin-top: 5
+    margin-bottom: 5
+    margin-right: 6
+    height: 120
+    padding: 1
+    focusable: false
+    vertical-scrollbar: buyingListScrollBar
+
+  VerticalScrollBar
+    id: buyingListScrollBar
+    anchors.top: prev.top
+    anchors.bottom: prev.bottom
+    anchors.right: prev.right
+    step: 28
+    pixels-scroll: true

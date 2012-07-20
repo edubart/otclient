@@ -84,7 +84,7 @@ function EnterGame.init()
   enterGame:getChildById('accountNameTextEdit'):focus()
 
   protocolBox = enterGame:getChildById('protocolComboBox')
-  for _i,proto in pairs(g_game.getSupportedProtocols()) do
+  for _i, proto in pairs(g_game.getSupportedProtocols()) do
     protocolBox:addOption(proto)
   end
   protocolBox:setCurrentOption(protocol)

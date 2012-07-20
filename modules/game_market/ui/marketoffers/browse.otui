@@ -11,7 +11,7 @@ MarketItemBox < UICheckBox
     phantom: true
     anchors.top: parent.top
     anchors.horizontalCenter: parent.horizontalCenter
-    margin-top: 5
+    margin: 1
 
   $checked:
     border-color: #ffffff
@@ -27,7 +27,7 @@ Panel
   background-color: #22283399
   margin: 1
 
-  ComboBox
+  MarketComboBox
     id: filterComboBox
     anchors.top: parent.top
     anchors.left: parent.left
@@ -36,7 +36,7 @@ Panel
     margin-right: 3
     margin-left: 3
 
-  ComboBox
+  MarketComboBox
     id: weaponComboBox
     anchors.top: prev.bottom
     anchors.left: parent.left
@@ -72,7 +72,7 @@ Panel
     height: 20
     //@onClick: Market.filterMatchVocation()
 
-  ComboBox
+  MarketComboBox
     id: typeComboBox
     anchors.top: prev.top
     anchors.left: prev.right
@@ -88,7 +88,7 @@ Panel
     anchors.top: prev.bottom
     anchors.left: parent.left
     anchors.right: parent.right
-    margin-top: 3
+    margin-top: 6
     margin-right: 3
     margin-left: 3
     //@onClick: Market.setDisplayDepot()
@@ -100,7 +100,7 @@ Panel
     anchors.bottom: parent.bottom
     margin-top: 10
     margin-left: 3
-    margin-bottom: 10
+    margin-bottom: 5
     margin-right: 3
 
     VerticalScrollBar
@@ -108,7 +108,7 @@ Panel
       anchors.top: parent.top
       anchors.bottom: parent.bottom
       anchors.right: parent.right
-      step: 16
+      step: 28
       pixels-scroll: true
 
     ScrollablePanel
@@ -120,6 +120,6 @@ Panel
       vertical-scrollbar: itemsPanelListScrollBar
       layout:
         type: grid
-        cell-size: 34 34
+        cell-size: 36 36
         flow: true
         auto-spacing: true

@@ -41,6 +41,10 @@ function table.find(t, value)
   end
 end
 
+function table.contains(t, value)
+  return table.find(t, value) ~= nil
+end
+
 function table.findKey(t, key)
   if t and type(t) == 'table' then
     for k,v in pairs(t) do

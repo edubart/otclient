@@ -1,10 +1,10 @@
 MarketWindow < MainWindow
   id: marketWindow
   !text: tr('Market')
-  size: 680 460
+  size: 700 510
 
-  @onEnter: self:hide()
-  @onEscape: self:hide()
+  @onEnter: self:hide() self:unlock()
+  @onEscape: self:hide() self:unlock()
 
   // Main Panel Window
 

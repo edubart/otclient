@@ -1,10 +1,10 @@
 MarketButtonBox < UICheckBox
   font: verdana-11px-antialised
-  color: #ffffffff
+  color: #f55e5ecc
   size: 106 22
   text-offset: 0 0
   text-align: center
-  image-source: /images/tabbutton.png
+  image-source: /images/tabbutton_rounded.png
   image-clip: 0 0 20 20
   image-border: 2
 

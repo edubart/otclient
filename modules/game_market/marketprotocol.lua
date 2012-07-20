@@ -7,7 +7,6 @@ local protocol
 local function send(msg)
   if protocol then
     print(msg:getMessageSize())
-    --protocol:safeSend(msg)
     protocol:send(msg)
   end
 end
@@ -53,7 +52,7 @@ local function parseMarketEnter(msg)
     table.insert(depotItems, {itemId, itemCount})
   end
 
-  Market.onMarketEnter(depotItems, offers, balance)
+  signalcall(Market.onMarketEnter, depotItems, offers, balance)
   return true
 end
 
@@ -81,7 +80,7 @@ local function parseMarketDetail(msg)
     local highestPrice = msg:getU32() -- highest price
     local lowestPrice = msg: getU32() -- lowest price
 
-    table.insert(purchaseStats, {transaction, totalPrice, highestPrice, lowestPrice})
+    table.insert(purchaseStats, {transactions, totalPrice, highestPrice, lowestPrice})
   end
 
   local saleStats = {}
@@ -91,10 +90,10 @@ local function parseMarketDetail(msg)
     local highestPrice = msg:getU32() -- highest price
     local lowestPrice = msg: getU32() -- lowest price
 
-    table.insert(saleStats, {transaction, totalPrice, highestPrice, lowestPrice})
+    table.insert(saleStats, {transactions, totalPrice, highestPrice, lowestPrice})
   end
 
-  Market.onMarketDetail(itemId, descriptions, purchaseStats, saleStats)
+  signalcall(Market.onMarketDetail, itemId, descriptions, purchaseStats, saleStats)
   return true
 end
 
@@ -112,7 +111,7 @@ local function parseMarketBrowse(msg)
     table.insert(offers, readMarketOffer(msg, MarketAction.Sell, var))
   end
 
-  Market.onMarketBrowse(offers)
+  signalcall(Market.onMarketBrowse, offers)
   return true
 end
 

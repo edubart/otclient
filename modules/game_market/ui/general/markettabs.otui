@@ -3,7 +3,7 @@ MarketTabBar < UITabBar
 MarketTabBarPanel < Panel
 MarketTabBarButton < UIButton
   size: 20 25
-  image-source: /images/tabbutton.png
+  image-source: /images/tabbutton_square.png
   image-clip: 0 0 20 20
   image-border: 2
   icon-color: white

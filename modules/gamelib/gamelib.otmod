@@ -18,3 +18,4 @@ Module
     dofile 'creature'
     dofile 'player'
     dofile 'market'
+    dofile 'thing'

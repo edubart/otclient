@@ -3,6 +3,7 @@ Market = {}
 g_ui.importStyle('market.otui')
 g_ui.importStyle('ui/general/markettabs.otui')
 g_ui.importStyle('ui/general/marketbuttons.otui')
+g_ui.importStyle('ui/general/marketcombobox.otui')
 
 local marketWindow
 local mainTabBar
@@ -23,25 +24,62 @@ local currentOffersPanel
 local offerHistoryPanel
 
 local marketOffers = {}
+local marketItems = {}
 local depot = {}
 local information ={}
 local selectedItem
 local nameLabel
 
+local currentItems = {}
 local itemsPanel
-local radioItems
+local radioItemSet
+local filterBox
 
-local function clearSelectedItem()
-  if selectedItem then
-    nameLabel:clearText()
-    radioItems:selectWidget(nil)
-    selectedItem.setItem(nil)
+local function getMarketCategoryName(category)
+  if table.hasKey(MarketCategoryStrings, category) then
+    return MarketCategoryStrings[category]
   end
 end
 
-local function loadMarketItems()
-  itemsPanel = marketWindow:recursiveGetChildById('itemsPanel')
+local function getMarketCategoryId(name)
+  local id = table.find(MarketCategoryStrings, name)
+  if id then
+    return id
+  end
+end
 
+local function clearSelectedItem()
+  if selectedItem and selectedItem.item.ptr then
+    Market.updateOffers({})
+    radioItemSet:selectWidget(nil)
+    nameLabel:clearText()
+    selectedItem:setItem(nil)
+    selectedItem.item = {}
+  end
+end
+
+local function initMarketItems()
+  -- populate all market items
+  marketItems = {}
+  local types = g_things.findThingTypeByAttr(ThingAttrMarket)
+  for k,t in pairs(types) do
+    local newItem = Item.create(t:getId())
+    if newItem then
+      local item = {
+        ptr = newItem,
+        marketData = t:getMarketData()
+      }
+      table.insert(marketItems, item)
+    end
+  end
+end
+
+local function updateItemsWidget()
+  if table.empty(currentItems) then
+    return
+  end
+
+  itemsPanel = marketWindow:recursiveGetChildById('itemsPanel')
   local layout = itemsPanel:getLayout()
   layout:disableUpdates()
 
@@ -53,8 +91,15 @@ local function loadMarketItems()
   end
   radioItemSet = UIRadioGroup.create()
 
-  -- TODO: populate with dat items
-  
+  for _, item in pairs(currentItems) do
+    local itemBox = g_ui.createWidget('MarketItemBox', itemsPanel)
+    local itemWidget = itemBox:getChildById('item')
+
+    itemBox.item = item
+    itemWidget:setItem(item.ptr)
+
+    radioItemSet:addWidget(itemBox)
+  end
 
   layout:enableUpdates()
   layout:update()
@@ -84,7 +129,7 @@ function Market.init()
   marketWindow = g_ui.createWidget('MarketWindow', rootWidget)
   marketWindow:hide()
 
-  nameLabel = marketWindow:recursiveGetChildById('nameLabel')
+  initMarketItems()
 
   -- TODO: clean this up into functions
   -- setup main tabs
@@ -128,6 +173,20 @@ function Market.init()
 
       offerHistoryPanel = g_ui.loadUI('ui/myoffers/offerhistory.otui')
       offersTabBar:addTab(tr('Offer History'), offerHistoryPanel)
+
+  nameLabel = marketWindow:recursiveGetChildById('nameLabel')
+  selectedItem = marketWindow:recursiveGetChildById('selectedItem')
+  selectedItem.item = {}
+
+  filterBox = browsePanel:getChildById('filterComboBox')
+  for i = MarketCategory.First, MarketCategory.Last do
+    filterBox:addOption(getMarketCategoryName(i))
+  end
+  filterBox:setCurrentOption(getMarketCategoryName(MarketCategory.First))
+
+  filterBox.onOptionChange = function(combobox, option)
+    Market.loadMarketItems(getMarketCategoryId(option))
+  end
 end
 
 function Market.terminate()
@@ -150,66 +209,101 @@ function Market.terminate()
   currentOffersPanel = nil
   offerHistoryPanel = nil
   marketOffers = {}
+  marketItems = {}
   depotItems = {}
   information = {}
+  currentItems = {}
   itemsPanel = nil
   nameLabel = nil
-  radioItems = nil
+  radioItemSet = nil
   selectedItem = nil
+  filterBox = nil
 
   Market = nil
 end
 
+function Market.loadMarketItems(_category)
+  if table.empty(marketItems) then
+    initMarketItems()
+  end
+
+  currentItems = {}
+  for _, item in pairs(marketItems) do
+    -- filter items here
+    local category = item.marketData.category
+    if category == _category or _category == MarketCategory[0] then
+      table.insert(currentItems, item)
+    end
+  end
+
+  updateItemsWidget()
+end
+
 function Market.updateOffers(offers)
+  marketOffers[MarketAction.Buy] = {}
+  marketOffers[MarketAction.Sell] = {}
+
+  local buyOfferList = marketWindow:recursiveGetChildById('buyingList')
+  buyOfferList:destroyChildren()
+
+  local sellOfferList = marketWindow:recursiveGetChildById('sellingList')
+  sellOfferList:destroyChildren()
+
   for k, offer in pairs(offers) do
     if offer and offer:getAction() == MarketAction.Buy then
+      local label = g_ui.createWidget('OfferListLabel', buyOfferList)
+      label:setText(offer:getPlayer()..'                  '..offer:getAmount()..'                  '..(offer:getPrice()*offer:getAmount())..'                  '..offer:getPrice()..'                  '..offer:getTimeStamp())
       table.insert(marketOffers[MarketAction.Buy], offer)
     else
+      local label = g_ui.createWidget('OfferListLabel', sellOfferList)
+      label:setText(offer:getPlayer()..'                  '..offer:getAmount()..'                  '..(offer:getPrice()*offer:getAmount())..'                  '..offer:getPrice()..'                  '..offer:getTimeStamp())
       table.insert(marketOffers[MarketAction.Sell], offer)
     end
   end
-
-  for _, offers in pairs(marketOffers) do
-    for _, offer in pairs(offers) do
-      print('  counter: '..offer:getCounter()..' | timestamp: '..offer:getTimeStamp()..' | item: '..offer:getItem():getId()..' | action: '..offer:getAction()..' | amount: '..offer:getAmount()..' | price: '..offer:getPrice()..' | player: '..offer:getPlayer()..' | state: '..offer:getState())
-    end
-  end
-  -- TODO: refresh all widget windows
 end
 
 function Market.updateDetails(itemId, descriptions, purchaseStats, saleStats)
-  -- TODO: refresh all widget windows
+  if not selectedItem then
+    return
+  end
+  selectedItem.item.details = {
+    serverItemId = itemId,
+    descriptions = descriptions,
+    purchaseStats = purchaseStats,
+    saleStats = saleStats
+  }
 
+  -- TODO: refresh all widget windows
 end
 
 function Market.updateSelectedItem(newItem)
-  local itemDisplay = marketWindow:recursiveGetChildById('selectedItem')
-  local itemName = marketWindow:recursiveGetChildById('nameLabel')
-  selectedItem = newItem
-  if not table.empty(selectedItem) then
-    if selectedItem.ptr then
-      itemDisplay:setItem(selectedItem.ptr)
-      itemName:setText(tr(selectedItem.name))
-      MarketProtocol.sendMarketBrowse(selectedItem.ptr:getId()) -- send sprite id browsed
+  selectedItem.item = newItem
+  if selectedItem and not table.empty(selectedItem.item) then
+    if selectedItem.item.ptr then
+      selectedItem:setItem(selectedItem.item.ptr)
+      nameLabel:setText(selectedItem.item.marketData.name)
+      MarketProtocol.sendMarketBrowse(selectedItem.item.ptr:getId()) -- send sprite id browsed
     end
   else
-    itemDisplay:setItem(nil)
-    itemName:setText(tr('No item selected.'))
+    selectedItem:setItem(nil)
+    nameLabel:setText(tr('No item selected.'))
   end
 end
 
 function Market.onMarketEnter(depotItems, offers, balance)
-  -- TODO: populate market?
   if marketWindow:isVisible() then
     return
   end
+  marketWindow:lock()
   marketOffers[MarketAction.Buy] = {}
   marketOffers[MarketAction.Sell] = {}
 
   information.balance = balance
   information.totalOffers = offers
 
-  loadMarketItems()
+  if table.empty(currentItems) then
+    Market.loadMarketItems(MarketCategory.First)
+  end
   loadDepotItems(depotItems)
 
   -- TODO: if you are already viewing an item on market enter it must recheck the current item
@@ -217,7 +311,6 @@ function Market.onMarketEnter(depotItems, offers, balance)
     selectedItem:setChecked(false)
     selectedItem:setChecked(true)
   end
-  --MarketProtocol.sendMarketBrowse(645)
   marketWindow:show()
 end
 
