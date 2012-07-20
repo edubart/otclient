@@ -88,23 +88,6 @@ enum {
     OTCM_VERSION = 1
 };
 
-/// Temporary way for reading container items
-struct MapContainer {
-private:
-    std::vector<ItemPtr> m_items;
-
-public:
-    void add(const ItemPtr& item) { m_items.push_back(item); }
-    ItemPtr operator[](uint idx) { return getItem(idx); }
-    ItemPtr getItem(int index) {
-        if(index < 0 || index > (int)m_items.size())
-            return nullptr;
-
-        return m_items[index];
-    }
-};
-typedef std::shared_ptr<MapContainer> MapContainerPtr;
-
 //@bindsingleton g_map
 class Map
 {
@@ -134,7 +117,7 @@ public:
     std::string getHouseFile() { return m_attribs.get<std::string>(OTBM_ATTR_HOUSE_FILE); }
     std::string getSpawnFile() { return m_attribs.get<std::string>(OTBM_ATTR_SPAWN_FILE); }
     Size getSize() { return Size(m_attribs.get<uint16>(OTBM_ATTR_WIDTH), m_attribs.get<uint16>(OTBM_ATTR_HEIGHT)); }
-    std::vector<std::string> getDescriptions() { return stdext::split(m_attribs.get<std::string>(), "\n"; }
+    std::vector<std::string> getDescriptions() { return stdext::split(m_attribs.get<std::string>(OTBM_ATTR_DESCRIPTION), "\n"); }
 
     void loadMonsters(const std::string& fileName) { m_creatures.loadMonsters(fileName); }
     void loadSingleCreature(const std::string& file) { m_creatures.loadSingleCreature(file); }
@@ -198,7 +181,6 @@ private:
     std::vector<StaticTextPtr> m_staticTexts;
     std::vector<MapViewPtr> m_mapViews;
     std::unordered_map<Position, std::string, PositionHasher> m_waypoints;
-    std::vector<MapContainerPtr> m_containers;
 
     Light m_light;
     Position m_centralPosition;

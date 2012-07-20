@@ -167,7 +167,7 @@ BinaryTreePtr BinaryTree::makeChild(uint8 type)
 {
     BinaryTreePtr child(new BinaryTree(m_fin));
     child->setType(type);
-    children.append(child);
+    //children.append(child);
     return child;
 }
 
@@ -227,8 +227,9 @@ void BinaryTree::writeToFile()
 
     /// first write self data
     m_fin->write(&m_buffer[0], m_buffer.size());
-
+#if 0
     /// write children data
     for(const BinaryTreePtr& child : m_children)
         child->writeToFile();
+#endif
 }

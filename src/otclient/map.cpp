@@ -85,8 +85,8 @@ void Map::loadOtbm(const std::string& fileName)
     if(!headerVersion || headerVersion > 3)
         stdext::throw_exception(stdext::format("Unknown OTBM version detected: %u.", headerVersion));
 
-    setSize(root->getU16(), root->getU16());
-    dump << "Map size: " << m_width << "x" << m_height;
+    setWidth(root->getU16());
+    setHeight(root->getU16());
 
     uint32 headerMajorItems = root->getU8();
     if(headerMajorItems < 3) {
@@ -115,13 +115,13 @@ void Map::loadOtbm(const std::string& fileName)
         std::string tmp = node->getString();
         switch (attribute) {
         case OTBM_ATTR_DESCRIPTION:
-            m_description += tmp + "\n";
+            setDescription(tmp);
             break;
         case OTBM_ATTR_SPAWN_FILE:
-            m_spawnFile = fileName.substr(0, fileName.rfind('/') + 1) + tmp;
+            setSpawnFile(fileName.substr(0, fileName.rfind('/') + 1) + tmp);
             break;
         case OTBM_ATTR_HOUSE_FILE:
-            m_houseFile = fileName.substr(0, fileName.rfind('/') + 1) + tmp;
+            setHouseFile(fileName.substr(0, fileName.rfind('/') + 1) + tmp);
             break;
         default:
             stdext::throw_exception(stdext::format("Invalid attribute '%c'", attribute));
@@ -196,7 +196,7 @@ void Map::loadOtbm(const std::string& fileName)
 
                             ItemPtr cItem = Item::createFromOtb(containerItem->getU16());
                             cItem->unserializeItem(containerItem);
-                            item->addContainerItem(cItem);
+                            //item->addContainerItem(cItem);
                         }
                     }
 
@@ -248,8 +248,8 @@ void Map::loadOtbm(const std::string& fileName)
     g_logger.debug("OTBM read successfully.");
     fin->close();
 
-    loadSpawns(m_spawnFile);
-    m_houses.load(m_houseFile);
+    loadSpawns(getSpawnFile());
+    m_houses.load(getHouseFile());
 }
 
 void Map::saveOtbm(const std::string &fileName)
@@ -275,7 +275,7 @@ void Map::saveOtbm(const std::string &fileName)
 
     /// Usually when a map has empty house/spawn file it means the map is new.
     /// TODO: Ask the user for a map name instead of those ugly uses of substr
-    std::string houseFile = getHousefile(), spawnFile = getSpawnFile();
+    std::string houseFile = getHouseFile(), spawnFile = getSpawnFile();
     if(houseFile.empty() && version > 1)
         houseFile = fileName.substr(fileName.find_last_of('/')) + "-houses.xml";
     if(spawnFile.empty())
@@ -314,13 +314,13 @@ void Map::saveOtbm(const std::string &fileName)
             mapData->writeString(stdext::format("Saved with %s v%d", g_app.getName(), stdext::unsafe_cast<int>(g_app.getVersion())));
 
             // spawn file.
-            mapData->addU8(OTBM_ATTR_SPAWN_FILE);
-            mapData->addString(spawnFile);
+            mapData->writeU8(OTBM_ATTR_SPAWN_FILE);
+            mapData->writeString(spawnFile);
 
             // house file.
-            if(ver > 1) {
-                mapData->addU8(OTBM_ATTR_HOUSE_FILE);
-                mapData->addString(houseFile);
+            if(version > 1) {
+                mapData->writeU8(OTBM_ATTR_HOUSE_FILE);
+                mapData->writeString(houseFile);
             }
 
             /// write tiles first
@@ -337,15 +337,15 @@ void Map::saveOtbm(const std::string &fileName)
                 }
 
                 BinaryTreePtr tileNode(nullptr);
-                tileflags_t flags = tile->getFlags();
+                uint32 flags = tile->getFlags();
                 if((flags & TILESTATE_HOUSE) == TILESTATE_HOUSE)
                     tileNode = tileArea->makeChild(OTBM_HOUSETILE);
                 else
                     tileNode = tileArea->makeChild(OTBM_TILE);
 
                 tileNode->writePoint(Point(pos.x, pos.y));
-                if(tileNode->getType() == OTBM_HOUSETILE)
-                    tileNode->writeU32(tile->getHouseId());
+//                if(tileNode->getType() == OTBM_HOUSETILE)
+//                    tileNode->writeU32(tile->getHouseId());
 
                 /// Tile flags
                 if(flags != 0) {
@@ -386,7 +386,7 @@ void Map::saveOtbm(const std::string &fileName)
     }
 
     root->writeToFile();
-    g_logger.debug(stdext::format("OTBM saving took %ld", time(0) - start);
+    g_logger.debug(stdext::format("OTBM saving took %ld", time(0) - start));
 }
 
 void Map::loadSpawns(const std::string &fileName)
