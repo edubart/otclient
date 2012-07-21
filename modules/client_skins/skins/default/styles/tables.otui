@@ -1,9 +1,13 @@
 Table < UITable
   layout: verticalBox
+  column-style: TableColumn
+  row-style: TableRow
 
-TableRow < UIScrollArea
+TableRow < Label
+  id: defaultRow
   layout: horizontalBox
   height: 10
 
-TableColumn < UIScrollArea
+TableColumn < Label
+  id: defaultColumn
   width: 30

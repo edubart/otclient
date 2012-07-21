@@ -256,23 +256,23 @@ function Market.updateOffers(offers)
   for k, offer in pairs(offers) do
     if offer and offer:getAction() == MarketAction.Buy then
       local data = {
-        offer:getPlayer(),
-        offer:getAmount(),
-        offer:getPrice()*offer:getAmount(),
-        offer:getPrice(),
-        offer:getTimeStamp()
+        {offer:getPlayer(), 80},
+        {offer:getAmount(), 50},
+        {offer:getPrice()*offer:getAmount(), 80},
+        {offer:getPrice(), 60},
+        {offer:getTimeStamp(), 80}
       }
-      local row = buyOfferTable:addRow(data, 'OfferTableRow', 'OfferTableColumn')
+      local row = buyOfferTable:addRow(data)
       table.insert(marketOffers[MarketAction.Buy], offer)
     else
       local data = {
-        offer:getPlayer(),
-        offer:getAmount(),
-        offer:getPrice()*offer:getAmount(),
-        offer:getPrice(),
-        offer:getTimeStamp()
+        {offer:getPlayer(), 80},
+        {offer:getAmount(), 50},
+        {offer:getPrice()*offer:getAmount(), 80},
+        {offer:getPrice(), 60},
+        {offer:getTimeStamp(), 80}
       }
-      local row = sellOfferTable:addRow(data, 'OfferTableRow', 'OfferTableColumn')
+      local row = sellOfferTable:addRow(data)
       table.insert(marketOffers[MarketAction.Sell], offer)
     end
   end
@@ -323,7 +323,10 @@ function Market.onMarketEnter(depotItems, offers, balance)
   loadDepotItems(depotItems)
 
   -- TODO: if you are already viewing an item on market enter it must recheck the current item
-  if selectedItem and selectedItem:isChecked() then
+  print(selectedItem)
+  print(selectedItem:isChecked())
+  if selectedItem then
+    print('in')
     selectedItem:setChecked(false)
     selectedItem:setChecked(true)
   end

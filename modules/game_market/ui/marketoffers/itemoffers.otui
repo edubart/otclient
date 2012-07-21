@@ -4,7 +4,7 @@ OfferTableRow < TableRow
   text-offset: 2 0
   focusable: true
   color: #cccccc
-  height: 25
+  height: 15
 
   $focus:
     background-color: #294f6d
@@ -51,6 +51,8 @@ Panel
     border-width: 1
     border-color: #191f27
     vertical-scrollbar: sellingTableScrollBar
+    row-style: OfferTableRow
+    column-style: OfferTableColumn
 
   VerticalScrollBar
     id: sellingTableScrollBar
@@ -91,6 +93,8 @@ Panel
     border-width: 1
     border-color: #191f27
     vertical-scrollbar: buyingTableScrollBar
+    row-style: OfferTableRow
+    column-style: OfferTableColumn
 
   VerticalScrollBar
     id: buyingTableScrollBar

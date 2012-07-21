@@ -5,8 +5,9 @@ function UITable.create()
   local table = UITable.internalCreate()
   table.rows = {}
   table.rows.columns = {}
-  table.rowStyle = {}
-  table.columStyle = {}
+  table.rowBaseStyle = nil
+  table.columBaseStyle = nil
+  table.selectedRow = nil
   return table
 end
 
@@ -22,23 +23,37 @@ function UITable:onStyleApply(styleName, styleNode)
   for name, value in pairs(styleNode) do
     if name == 'column-style' then
       addEvent(function()
-        self:setRowStyle(self:getParent():getChildById(value))
+        self:setColumnStyle(value)
       end)
     elseif name == 'row-style' then
       addEvent(function()
-        self:setRowStyle(self:getParent():getChildById(value))
+        self:setRowStyle(value)
       end)
     end
   end
 end
 
-function UITable:addRow(columns, rowStyle, columStyle)
-  local row = g_ui.createWidget(rowStyle, self)
+function UITable:addRow(columns)
+  if not columns or type(columns) ~= 'table' then
+    g_logger.error('UITable:addRow - table columns must be provided in a table')
+  end
+
+  -- TODO: table header rows as buttons.
+  --[[if #self.rows < 1 then
+    g_ui.createWidget(self.rowBaseStyle, self)
+  end]]
+
+  local row = g_ui.createWidget(self.rowBaseStyle, self)
   row.columns = {}
 
-  for k, data in pairs(columns) do
-    local col = g_ui.createWidget(columStyle, row)
-    col:setText(data)
+  for _, column in pairs(columns) do
+    local col = g_ui.createWidget(self.columBaseStyle, row)
+    if column[1] then
+      col:setText(column[1])
+    end
+    if #column > 1 then
+      col:setWidth(column[2])
+    end
     table.insert(row.columns, col)
   end
   row.onClick = function(row) self:selectRow(row) end
@@ -72,15 +87,15 @@ function UITable:selectRow(selectedRow)
 end
 
 function UITable:setRowStyle(style)
-  self.rowStyle = style
-  for k, row in pairs(self.rows) do
+  self.rowBaseStyle = style
+  --[[for k, row in pairs(self.rows) do
     row:setStyle(style)
-  end
+  end]]
 end
 
 function UITable:setColumnStyle(style)
-  self.columStyle = style
-  for k, col in pairs(self.rows.columns) do
+  self.columBaseStyle = style
+  --[[for k, col in pairs(self.rows.columns) do
     col:setStyle(style)
-  end
+  end]]
 end
