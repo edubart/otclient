@@ -62,15 +62,15 @@ local function initMarketItems()
   -- populate all market items
   marketItems = {}
   local types = g_things.findThingTypeByAttr(ThingAttrMarket)
-  for idx = 1, #types do
-    local t = types[idx]
+  for i = 1, #types do
+    local t = types[i]
     local newItem = Item.create(t:getId())
     if newItem then
       local item = {
         ptr = newItem,
         marketData = t:getMarketData()
       }
-      table.insert(marketItems, item)
+      marketItems[#marketItems+1] = item
     end
   end
 end
@@ -92,7 +92,8 @@ local function updateItemsWidget()
   end
   radioItemSet = UIRadioGroup.create()
 
-  for _, item in pairs(currentItems) do
+  for i = 1, #currentItems do
+    local item = currentItems[i]
     local itemBox = g_ui.createWidget('MarketItemBox', itemsPanel)
     local itemWidget = itemBox:getChildById('item')
 
@@ -108,7 +109,8 @@ end
 
 local function loadDepotItems(depotItems)
   information.depotItems = {}
-  for _, data in pairs(depotItems) do
+  for i = 1, #depotItems do
+    local data = depotItems[i]
     local item = Item.create(data[1])
     if not item then
       break
@@ -229,8 +231,9 @@ function Market.loadMarketItems(_category)
   end
 
   currentItems = {}
-  for _, item in pairs(marketItems) do
+  for i = 1, #marketItems do
     -- filter items here
+    local item = marketItems[i]
     local category = item.marketData.category
     if category == _category or _category == MarketCategory[0] then
       table.insert(currentItems, item)
@@ -244,20 +247,32 @@ function Market.updateOffers(offers)
   marketOffers[MarketAction.Buy] = {}
   marketOffers[MarketAction.Sell] = {}
 
-  local buyOfferList = marketWindow:recursiveGetChildById('buyingList')
-  buyOfferList:destroyChildren()
+  local buyOfferTable = marketWindow:recursiveGetChildById('buyingTable')
+  buyOfferTable:destroyChildren()
 
-  local sellOfferList = marketWindow:recursiveGetChildById('sellingList')
-  sellOfferList:destroyChildren()
+  local sellOfferTable = marketWindow:recursiveGetChildById('sellingTable')
+  sellOfferTable:destroyChildren()
 
   for k, offer in pairs(offers) do
     if offer and offer:getAction() == MarketAction.Buy then
-      local label = g_ui.createWidget('OfferListLabel', buyOfferList)
-      label:setText(offer:getPlayer()..'                  '..offer:getAmount()..'                  '..(offer:getPrice()*offer:getAmount())..'                  '..offer:getPrice()..'                  '..offer:getTimeStamp())
+      local data = {
+        offer:getPlayer(),
+        offer:getAmount(),
+        offer:getPrice()*offer:getAmount(),
+        offer:getPrice(),
+        offer:getTimeStamp()
+      }
+      local row = buyOfferTable:addRow(data, 'OfferTableRow', 'OfferTableColumn')
       table.insert(marketOffers[MarketAction.Buy], offer)
     else
-      local label = g_ui.createWidget('OfferListLabel', sellOfferList)
-      label:setText(offer:getPlayer()..'                  '..offer:getAmount()..'                  '..(offer:getPrice()*offer:getAmount())..'                  '..offer:getPrice()..'                  '..offer:getTimeStamp())
+      local data = {
+        offer:getPlayer(),
+        offer:getAmount(),
+        offer:getPrice()*offer:getAmount(),
+        offer:getPrice(),
+        offer:getTimeStamp()
+      }
+      local row = sellOfferTable:addRow(data, 'OfferTableRow', 'OfferTableColumn')
       table.insert(marketOffers[MarketAction.Sell], offer)
     end
   end

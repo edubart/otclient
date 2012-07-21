@@ -1,13 +1,21 @@
-OfferListLabel < Label
+OfferTableRow < TableRow
   font: verdana-11px-monochrome
   background-color: alpha
   text-offset: 2 0
   focusable: true
   color: #cccccc
+  height: 25
 
   $focus:
     background-color: #294f6d
     color: #ffffff
+
+OfferTableColumn < TableColumn
+  font: verdana-11px-monochrome
+  background-color: alpha
+  text-offset: 2 0
+  color: #cccccc
+  width: 80
 
 Panel
   background-color: #22283399
@@ -28,8 +36,8 @@ Panel
     margin-top: 44
     margin-left: 6
 
-  TextList
-    id: sellingList
+  Table
+    id: sellingTable
     anchors.top: prev.bottom
     anchors.left: prev.left
     anchors.right: parent.right
@@ -39,10 +47,13 @@ Panel
     margin-right: 6
     padding: 1
     focusable: false
-    vertical-scrollbar: sellingListScrollBar
+    background-color: #222833
+    border-width: 1
+    border-color: #191f27
+    vertical-scrollbar: sellingTableScrollBar
 
   VerticalScrollBar
-    id: sellingListScrollBar
+    id: sellingTableScrollBar
     anchors.top: prev.top
     anchors.bottom: prev.bottom
     anchors.right: prev.right
@@ -65,8 +76,8 @@ Panel
     margin-top: 9
     margin-left: 6
 
-  TextList
-    id: buyingList
+  Table
+    id: buyingTable
     anchors.top: prev.bottom
     anchors.left: prev.left
     anchors.right: parent.right
@@ -76,10 +87,13 @@ Panel
     height: 120
     padding: 1
     focusable: false
-    vertical-scrollbar: buyingListScrollBar
+    background-color: #222833
+    border-width: 1
+    border-color: #191f27
+    vertical-scrollbar: buyingTableScrollBar
 
   VerticalScrollBar
-    id: buyingListScrollBar
+    id: buyingTableScrollBar
     anchors.top: prev.top
     anchors.bottom: prev.bottom
     anchors.right: prev.right

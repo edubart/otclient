@@ -28,7 +28,8 @@ local skin = {
     'splitters.otui',
     'miniwindow.otui',
     'items.otui',
-    'creatures.otui'
+    'creatures.otui',
+    'tables.otui'
   },
 
   particles = {

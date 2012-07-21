@@ -111,9 +111,10 @@ local function updateOutfit()
   end
 
   outfit.addons = 0
-  for k, addon in pairs(prevAddons) do
-    if addon and addons[k].widget:isEnabled() then
-      addons[k].widget:setChecked(true)
+  for i = 1, #prevAddons do
+    local addon = prevAddons[i]
+    if addon and addons[i].widget:isEnabled() then
+      addons[i].widget:setChecked(true)
     end
   end
 
@@ -185,7 +186,7 @@ function Outfit.create(creatureOutfit, outfitList, creatureMount, mountList)
     [3] = {widget = outfitWindow:getChildById('addon3'), value = 4}
   }
   
-  for k, addon in pairs(addons) do
+  for _, addon in pairs(addons) do
     addon.widget.onCheckChange = function(self) onAddonCheckChange(self, addon.value) end
   end
   
@@ -216,7 +217,7 @@ function Outfit.create(creatureOutfit, outfitList, creatureMount, mountList)
         colorBox:setChecked(true)
       end
       colorBox.onCheckChange = onColorCheckChange
-      table.insert(colorBoxes, colorBox)
+      colorBoxes[#colorBoxes+1] = colorBox
     end
   end
 
@@ -260,10 +261,10 @@ function Outfit.randomize()
     outfitWindow:getChildById('detail')
   }
   
-  for k, section in pairs(outfitTemplate) do
-    section:setChecked(true)
+  for i = 1, #outfitTemplate do
+    outfitTemplate[i]:setChecked(true)
     colorBoxes[math.random(1, #colorBoxes)]:setChecked(true)
-    section:setChecked(false)
+    outfitTemplate[i]:setChecked(false)
   end
   outfitTemplate[1]:setChecked(true)
 end

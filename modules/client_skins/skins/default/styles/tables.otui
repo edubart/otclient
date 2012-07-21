@@ -1,0 +1,9 @@
+Table < UITable
+  layout: verticalBox
+
+TableRow < UIScrollArea
+  layout: horizontalBox
+  height: 10
+
+TableColumn < UIScrollArea
+  width: 30
