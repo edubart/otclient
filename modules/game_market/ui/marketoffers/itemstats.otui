@@ -1,10 +1,100 @@
+StatsTableRow < TableRow
+  font: verdana-11px-monochrome
+  background-color: alpha
+  focusable: true
+  color: #cccccc
+  height: 20
+  focusable: false
+
+StatsTableColumn < TableColumn
+  font: verdana-11px-monochrome
+  background-color: alpha
+  text-offset: 5 0
+  color: #cccccc
+  width: 80
+  focusable: false
+
 Panel
   background-color: #22283399
   margin: 1
 
   Label
-    !text: tr('Item Stats')
+    !text: tr('Buy Offers')
     anchors.top: parent.top
     anchors.left: parent.left
-    margin-top: 45
-    margin-left: 3
+    anchors.right: parent.right
+    margin-top: 44
+    margin-left: 6
+
+  Table
+    id: buyStatsTable
+    anchors.top: prev.bottom
+    anchors.left: prev.left
+    anchors.right: prev.right
+    margin-top: 6
+    margin-bottom: 5
+    margin-right: 6
+    height: 121
+    padding: 1
+    focusable: false
+    background-color: #222833
+    border-width: 1
+    border-color: #191f27
+    table-data: buyStatsTableData
+    row-style: StatsTableRow
+    column-style: StatsTableColumn
+
+  TableData
+    id: buyStatsTableData
+    anchors.top: buyStatsTable.top
+    anchors.bottom: buyStatsTable.bottom
+    anchors.left: buyStatsTable.left
+    anchors.right: buyStatsTable.right
+    vertical-scrollbar: buyStatsTableScrollBar
+
+  VerticalScrollBar
+    id: buyStatsTableScrollBar
+    anchors.top: buyStatsTable.top
+    anchors.bottom: buyStatsTable.bottom
+    anchors.right: buyStatsTable.right
+    step: 28
+    pixels-scroll: true
+
+  Label
+    !text: tr('Sell Offers')
+    anchors.top: buyStatsTable.bottom
+    anchors.left: parent.left
+    margin-top: 9
+    margin-left: 6
+
+  Table
+    id: sellStatsTable
+    anchors.top: prev.bottom
+    anchors.left: buyStatsTable.left
+    anchors.right: buyStatsTable.right
+    margin-top: 6
+    height: 122
+    padding: 1
+    focusable: false
+    background-color: #222833
+    border-width: 1
+    border-color: #191f27
+    table-data: sellStatsTableData
+    row-style: StatsTableRow
+    column-style: StatsTableColumn
+
+  TableData
+    id: sellStatsTableData
+    anchors.top: sellStatsTable.top
+    anchors.bottom: sellStatsTable.bottom
+    anchors.left: sellStatsTable.left
+    anchors.right: sellStatsTable.right
+    vertical-scrollbar: sellStatsTableScrollBar
+
+  VerticalScrollBar
+    id: sellStatsTableScrollBar
+    anchors.top: sellStatsTable.top
+    anchors.bottom: sellStatsTable.bottom
+    anchors.right: sellStatsTable.right
+    step: 28
+    pixels-scroll: true

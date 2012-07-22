@@ -1,10 +1,55 @@
+DetailsTableRow < TableRow
+  font: verdana-11px-monochrome
+  background-color: alpha
+  focusable: true
+  color: #cccccc
+  height: 45
+  focusable: false
+  padding: 2
+
+DetailsTableColumn < TableColumn
+  font: verdana-11px-monochrome
+  background-color: alpha
+  text-offset: 5 2
+  color: #cccccc
+  width: 80
+  focusable: false
+
 Panel
   background-color: #22283399
   margin: 1
 
-  Label
-    !text: tr('Item Details')
+  Table
+    id: detailsTable
     anchors.top: parent.top
+    anchors.bottom: parent.bottom
     anchors.left: parent.left
-    margin-top: 45
-    margin-left: 3
+    anchors.right: parent.right
+    margin-top: 55
+    margin-left: 6
+    margin-bottom: 45
+    margin-right: 6
+    padding: 1
+    focusable: false
+    background-color: #222833
+    border-width: 1
+    border-color: #191f27
+    table-data: detailsTableData
+    row-style: DetailsTableRow
+    column-style: DetailsTableColumn
+
+  TableData
+    id: detailsTableData
+    anchors.top: detailsTable.top
+    anchors.bottom: detailsTable.bottom
+    anchors.left: detailsTable.left
+    anchors.right: detailsTable.right
+    vertical-scrollbar: detailsTableScrollBar
+
+  VerticalScrollBar
+    id: detailsTableScrollBar
+    anchors.top: detailsTable.top
+    anchors.bottom: detailsTable.bottom
+    anchors.right: detailsTable.right
+    step: 28
+    pixels-scroll: true

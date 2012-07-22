@@ -29,15 +29,28 @@ local depot = {}
 local information ={}
 local selectedItem
 local nameLabel
+local buyOfferTable
+local sellOfferTable
+local detailsTable
+local buyStatsTable
+local sellStatsTable
 
 local currentItems = {}
 local itemsPanel
 local radioItemSet
 local filterBox
 
-local function getMarketCategoryName(category)
-  if table.hasKey(MarketCategoryStrings, category) then
-    return MarketCategoryStrings[category]
+local offerTableHeader = {
+    {['text'] = 'Player Name', ['width'] = 100},
+    {['text'] = 'Amount', ['width'] = 60},
+    {['text'] = 'Total Price', ['width'] = 90},
+    {['text'] = 'Peice Price', ['width'] = 80},
+    {['text'] = 'Ends at', ['width'] = 120}
+  }
+
+local function getMarketCategoryName(id)
+  if table.hasKey(MarketCategoryStrings, id) then
+    return MarketCategoryStrings[id]
   end
 end
 
@@ -48,13 +61,31 @@ local function getMarketCategoryId(name)
   end
 end
 
+local function getMarketDescriptionName(id)
+  if table.hasKey(MarketItemDescriptionStrings, id) then
+    return MarketItemDescriptionStrings[id]
+  end
+end
+
+local function getMarketDescriptionId(name)
+  local id = table.find(MarketItemDescriptionStrings, name)
+  if id then
+    return id
+  end
+end
+
 local function clearSelectedItem()
   if selectedItem and selectedItem.item.ptr then
     Market.updateOffers({})
     radioItemSet:selectWidget(nil)
-    nameLabel:clearText()
+    nameLabel:setText('No item selected.')
+
     selectedItem:setItem(nil)
     selectedItem.item = {}
+
+    detailsTable:clearData()
+    buyStatsTable:clearData()
+    sellStatsTable:clearData()
   end
 end
 
@@ -80,7 +111,7 @@ local function updateItemsWidget()
     return
   end
 
-  itemsPanel = marketWindow:recursiveGetChildById('itemsPanel')
+  itemsPanel = browsePanel:recursiveGetChildById('itemsPanel')
   local layout = itemsPanel:getLayout()
   layout:disableUpdates()
 
@@ -128,13 +159,8 @@ local function loadDepotItems(depotItems)
   end
 end
 
-function Market.init()
-  marketWindow = g_ui.createWidget('MarketWindow', rootWidget)
-  marketWindow:hide()
-
-  initMarketItems()
-
-  -- TODO: clean this up into functions
+local function initInterface()
+  -- TODO: clean this up
   -- setup main tabs
   mainTabBar = marketWindow:getChildById('mainTabBar')
   mainTabBar:setContentWidget(marketWindow:getChildById('mainTabContent'))
@@ -143,44 +169,46 @@ function Market.init()
   marketOffersPanel = g_ui.loadUI('ui/marketoffers.otui')
   mainTabBar:addTab(tr('Market Offers'), marketOffersPanel)
 
-    selectionTabBar = marketOffersPanel:getChildById('leftTabBar')
-    selectionTabBar:setContentWidget(marketOffersPanel:getChildById('leftTabContent'))
+  selectionTabBar = marketOffersPanel:getChildById('leftTabBar')
+  selectionTabBar:setContentWidget(marketOffersPanel:getChildById('leftTabContent'))
 
-      browsePanel = g_ui.loadUI('ui/marketoffers/browse.otui')
-      selectionTabBar:addTab(tr('Browse'), browsePanel)
+  browsePanel = g_ui.loadUI('ui/marketoffers/browse.otui')
+  selectionTabBar:addTab(tr('Browse'), browsePanel)
 
-      searchPanel = g_ui.loadUI('ui/marketoffers/search.otui')
-      selectionTabBar:addTab(tr('Search'), searchPanel)
+  searchPanel = g_ui.loadUI('ui/marketoffers/search.otui')
+  selectionTabBar:addTab(tr('Search'), searchPanel)
 
-    displaysTabBar = marketOffersPanel:getChildById('rightTabBar')
-    displaysTabBar:setContentWidget(marketOffersPanel:getChildById('rightTabContent'))
+  displaysTabBar = marketOffersPanel:getChildById('rightTabBar')
+  displaysTabBar:setContentWidget(marketOffersPanel:getChildById('rightTabContent'))
 
-      itemOffersPanel = g_ui.loadUI('ui/marketoffers/itemoffers.otui')
-      displaysTabBar:addTab(tr('Offers'), itemOffersPanel)
+  itemOffersPanel = g_ui.loadUI('ui/marketoffers/itemoffers.otui')
+  displaysTabBar:addTab(tr('Offers'), itemOffersPanel)
 
-      itemDetailsPanel = g_ui.loadUI('ui/marketoffers/itemdetails.otui')
-      displaysTabBar:addTab(tr('Details'), itemDetailsPanel)
+  itemDetailsPanel = g_ui.loadUI('ui/marketoffers/itemdetails.otui')
+  displaysTabBar:addTab(tr('Details'), itemDetailsPanel)
 
-      itemStatsPanel = g_ui.loadUI('ui/marketoffers/itemstats.otui')
-      displaysTabBar:addTab(tr('Statistics'), itemStatsPanel)
+  itemStatsPanel = g_ui.loadUI('ui/marketoffers/itemstats.otui')
+  displaysTabBar:addTab(tr('Statistics'), itemStatsPanel)
 
   -- setup 'My Offer' section tabs
   myOffersPanel = g_ui.loadUI('ui/myoffers.otui')
   mainTabBar:addTab(tr('My Offers'), myOffersPanel)
     
-    offersTabBar = myOffersPanel:getChildById('offersTabBar')
-    offersTabBar:setContentWidget(myOffersPanel:getChildById('offersTabContent'))
+  offersTabBar = myOffersPanel:getChildById('offersTabBar')
+  offersTabBar:setContentWidget(myOffersPanel:getChildById('offersTabContent'))
 
-      currentOffersPanel = g_ui.loadUI('ui/myoffers/currentoffers.otui')
-      offersTabBar:addTab(tr('Current Offers'), currentOffersPanel)
+  currentOffersPanel = g_ui.loadUI('ui/myoffers/currentoffers.otui')
+  offersTabBar:addTab(tr('Current Offers'), currentOffersPanel)
 
-      offerHistoryPanel = g_ui.loadUI('ui/myoffers/offerhistory.otui')
-      offersTabBar:addTab(tr('Offer History'), offerHistoryPanel)
+  offerHistoryPanel = g_ui.loadUI('ui/myoffers/offerhistory.otui')
+  offersTabBar:addTab(tr('Offer History'), offerHistoryPanel)
 
-  nameLabel = marketWindow:recursiveGetChildById('nameLabel')
-  selectedItem = marketWindow:recursiveGetChildById('selectedItem')
+  -- setup selected item
+  nameLabel = marketOffersPanel:recursiveGetChildById('nameLabel')
+  selectedItem = marketOffersPanel:recursiveGetChildById('selectedItem')
   selectedItem.item = {}
 
+  -- populate filter combo box
   filterBox = browsePanel:getChildById('filterComboBox')
   for i = MarketCategory.First, MarketCategory.Last do
     filterBox:addOption(getMarketCategoryName(i))
@@ -190,6 +218,21 @@ function Market.init()
   filterBox.onOptionChange = function(combobox, option)
     Market.loadMarketItems(getMarketCategoryId(option))
   end
+
+  -- get tables
+  buyOfferTable = itemOffersPanel:recursiveGetChildById('buyingTable')
+  sellOfferTable = itemOffersPanel:recursiveGetChildById('sellingTable')
+  detailsTable = itemDetailsPanel:recursiveGetChildById('detailsTable')
+  buyStatsTable = itemStatsPanel:recursiveGetChildById('buyStatsTable')
+  sellStatsTable = itemStatsPanel:recursiveGetChildById('sellStatsTable')
+end
+
+function Market.init()
+  marketWindow = g_ui.createWidget('MarketWindow', rootWidget)
+  marketWindow:hide()
+
+  initInterface() -- build interface
+  initMarketItems()
 end
 
 function Market.terminate()
@@ -218,6 +261,11 @@ function Market.terminate()
   currentItems = {}
   itemsPanel = nil
   nameLabel = nil
+  buyOfferTable = nil
+  sellOfferTable = nil
+  detailsTable = nil
+  buyStatsTable = nil
+  sellStatsTable = nil
   radioItemSet = nil
   selectedItem = nil
   filterBox = nil
@@ -246,33 +294,32 @@ end
 function Market.updateOffers(offers)
   marketOffers[MarketAction.Buy] = {}
   marketOffers[MarketAction.Sell] = {}
-
-  local buyOfferTable = marketWindow:recursiveGetChildById('buyingTable')
-  buyOfferTable:destroyChildren()
-
-  local sellOfferTable = marketWindow:recursiveGetChildById('sellingTable')
-  sellOfferTable:destroyChildren()
+  if not buyOfferTable or not sellOfferTable then
+    return
+  end
+  buyOfferTable:clearData()
+  sellOfferTable:clearData()
 
   for k, offer in pairs(offers) do
     if offer and offer:getAction() == MarketAction.Buy then
       local data = {
-        {offer:getPlayer(), 80},
-        {offer:getAmount(), 50},
-        {offer:getPrice()*offer:getAmount(), 80},
-        {offer:getPrice(), 60},
-        {offer:getTimeStamp(), 80}
+        {['text'] = offer:getPlayer(), ['width'] = 100},
+        {['text'] = offer:getAmount(), ['width'] = 60},
+        {['text'] = offer:getPrice()*offer:getAmount(), ['width'] = 90},
+        {['text'] = offer:getPrice(), ['width'] = 80},
+        {['text'] = offer:getTimeStamp(), ['width'] = 120}
       }
-      local row = buyOfferTable:addRow(data)
+      buyOfferTable:addRow(data)
       table.insert(marketOffers[MarketAction.Buy], offer)
     else
       local data = {
-        {offer:getPlayer(), 80},
-        {offer:getAmount(), 50},
-        {offer:getPrice()*offer:getAmount(), 80},
-        {offer:getPrice(), 60},
-        {offer:getTimeStamp(), 80}
+        {['text'] = offer:getPlayer(), ['width'] = 100},
+        {['text'] = offer:getAmount(), ['width'] = 60},
+        {['text'] = offer:getPrice()*offer:getAmount(), ['width'] = 90},
+        {['text'] = offer:getPrice(), ['width'] = 80},
+        {['text'] = offer:getTimeStamp(), ['width'] = 120}
       }
-      local row = sellOfferTable:addRow(data)
+      sellOfferTable:addRow(data)
       table.insert(marketOffers[MarketAction.Sell], offer)
     end
   end
@@ -289,7 +336,61 @@ function Market.updateDetails(itemId, descriptions, purchaseStats, saleStats)
     saleStats = saleStats
   }
 
-  -- TODO: refresh all widget windows
+  -- update item details
+  detailsTable:clearData()
+  for k, desc in pairs(descriptions) do
+    local columns = {
+      {['text'] = getMarketDescriptionName(desc[1])..':', ['width'] = 100},
+      {['text'] = desc[2], ['width'] = 330}
+    }
+    detailsTable:addRow(columns)
+  end
+
+  -- update sale item statistics
+  sellStatsTable:clearData()
+  if table.empty(saleStats) then
+    sellStatsTable:addRow({{['text'] = 'No information', ['width'] = 110}})
+  else
+    for k, stat in pairs(saleStats) do
+      if not table.empty(stat) then
+        sellStatsTable:addRow({{['text'] = 'Total Transations:', ['width'] = 110}, 
+          {['text'] = stat[1], ['width'] = 270}})
+
+        sellStatsTable:addRow({{['text'] = 'Highest Price:', ['width'] = 110}, 
+          {['text'] = stat[3], ['width'] = 270}})
+
+        print(stat[2] .. '/' ..stat[1])
+        sellStatsTable:addRow({{['text'] = 'Average Price:', ['width'] = 110}, 
+          {['text'] = math.floor(stat[2]/stat[1]), ['width'] = 270}})
+
+        sellStatsTable:addRow({{['text'] = 'Lowest Price:', ['width'] = 110}, 
+          {['text'] = stat[4], ['width'] = 270}})
+      end
+    end
+  end
+
+  -- update buy item statistics
+  buyStatsTable:clearData()
+  if table.empty(purchaseStats) then
+    buyStatsTable:addRow({{['text'] = 'No information', ['width'] = 110}})
+  else
+    for k, stat in pairs(purchaseStats) do
+      if not table.empty(stat) then
+        buyStatsTable:addRow({{['text'] = 'Total Transations:', ['width'] = 110}, 
+          {['text'] = stat[1], ['width'] = 270}})
+
+        buyStatsTable:addRow({{['text'] = 'Highest Price:', ['width'] = 110}, 
+          {['text'] = stat[3], ['width'] = 270}})
+
+        print(stat[2] .. '/' ..stat[1])
+        buyStatsTable:addRow({{['text'] = 'Average Price:', ['width'] = 110}, 
+          {['text'] = math.floor(stat[2]/stat[1]), ['width'] = 270}})
+
+        buyStatsTable:addRow({{['text'] = 'Lowest Price:', ['width'] = 110}, 
+          {['text'] = stat[4], ['width'] = 270}})
+      end
+    end
+  end
 end
 
 function Market.updateSelectedItem(newItem)
@@ -322,13 +423,18 @@ function Market.onMarketEnter(depotItems, offers, balance)
   end
   loadDepotItems(depotItems)
 
-  -- TODO: if you are already viewing an item on market enter it must recheck the current item
-  print(selectedItem)
-  print(selectedItem:isChecked())
-  if selectedItem then
-    print('in')
-    selectedItem:setChecked(false)
-    selectedItem:setChecked(true)
+  -- build offer table header
+  if buyOfferTable and not buyOfferTable:hasHeader() then
+    buyOfferTable:addHeaderRow(offerTableHeader)
+  end
+  if sellOfferTable and not sellOfferTable:hasHeader() then
+    sellOfferTable:addHeaderRow(offerTableHeader)
+  end
+
+  local currentItem = radioItemSet:getSelectedWidget()
+  if currentItem then
+     -- Uncheck selected item, cannot make protocol calls to resend marketBrowsing
+    clearSelectedItem()
   end
   marketWindow:show()
 end
@@ -339,28 +445,6 @@ end
 
 function Market.onMarketDetail(itemId, descriptions, purchaseStats, saleStats)
   Market.updateDetails(itemId, descriptions, purchaseStats, saleStats)
-
-  print('')
-  print('[onMarketDetail]')
-  print('itemId: '..itemId)
-  print('descriptions:')
-  for k, desc in pairs(descriptions) do
-    print('  type: '..desc[1]..' | description: '..desc[2])
-  end
-  print('purchaseStats:')
-  for k, stat in pairs(purchaseStats) do
-    print('  transactions: '..stat[1])
-    print('  total price: '..stat[2])
-    print('  highest price: '..stat[3])
-    print('  lowest price: '..stat[4])
-  end
-  print('saleStats:')
-  for k, stat in pairs(saleStats) do
-    print('  transactions: '..stat[1])
-    print('  total price: '..stat[2])
-    print('  highest price: '..stat[3])
-    print('  lowest price: '..stat[4])
-  end
 end
 
 function Market.onMarketBrowse(offers)

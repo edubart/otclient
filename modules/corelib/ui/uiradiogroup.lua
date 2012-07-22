@@ -4,6 +4,7 @@ UIRadioGroup = newclass()
 function UIRadioGroup.create()
   local radiogroup = UIRadioGroup.internalCreate()
   radiogroup.widgets = {}
+  radiogroup.selectedWidget = nil
   return radiogroup
 end
 
@@ -42,4 +43,8 @@ function UIRadioGroup:selectWidget(selectedWidget)
   end
 
   signalcall(self.onSelectionChange, self, selectedWidget, previousSelectedWidget)
+end
+
+function UIRadioGroup:getSelectedWidget()
+  return self.selectedWidget
 end

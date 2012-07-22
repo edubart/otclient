@@ -6,7 +6,6 @@ local protocol
 
 local function send(msg)
   if protocol then
-    print(msg:getMessageSize())
     protocol:send(msg)
   end
 end

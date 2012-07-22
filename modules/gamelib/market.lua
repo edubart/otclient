@@ -92,3 +92,21 @@ MarketItemDescription = {
 }
 MarketItemDescription.First = MarketItemDescription.Armor
 MarketItemDescription.Last = MarketItemDescription.Weight
+
+MarketItemDescriptionStrings = {
+  [1] = 'Armor',
+  [2] = 'Attack',
+  [3] = 'Container',
+  [4] = 'Defense',
+  [5] = 'Description',
+  [6] = 'Use Time',
+  [7] = 'Combat',
+  [8] = 'Min Level',
+  [9] = 'Min Magic Level',
+  [10] = 'Vocation',
+  [11] = 'Rune',
+  [12] = 'Ability',
+  [13] = 'Charges',
+  [14] = 'Weapon Type',
+  [15] = 'Weight'
+}

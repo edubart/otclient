@@ -1,27 +1,51 @@
 -- @docclass
-UITable = extends(UIScrollArea)
+--[[
+  TODO:
+    * Make table headers more robust.
+    * Get dynamic row heights working with text wrapping.
+    * Every second row different background color applied.
+]]
+UITable = extends(UIWidget)
+
+local HEADER_ID = 'row0'
 
 function UITable.create()
   local table = UITable.internalCreate()
+
+  table.headerRow = nil
+  table.dataSpace = nil
+
   table.rows = {}
-  table.rows.columns = {}
   table.rowBaseStyle = nil
+
+  table.columns = {}
   table.columBaseStyle = nil
+
+  table.headerRowBaseStyle = nil
+  table.headerColumnBaseStyle = nil
+
   table.selectedRow = nil
   return table
 end
 
-function UITable:destroy()
+function UITable:onDestroy()
   for k,row in pairs(self.rows) do
     row.onClick = nil
   end
   self.rows = {}
+  self.columns = {}
+  self.headerRow = {}
+  self.selectedRow = nil
+  self.dataSpace = nil
 end
 
 function UITable:onStyleApply(styleName, styleNode)
-  UIScrollArea.onStyleApply(self, styleName, styleNode)
   for name, value in pairs(styleNode) do
-    if name == 'column-style' then
+    if name == 'table-data' then
+      addEvent(function()
+        self:setTableData(self:getParent():getChildById(value))
+      end)
+    elseif name == 'column-style' then
       addEvent(function()
         self:setColumnStyle(value)
       end)
@@ -29,32 +53,101 @@ function UITable:onStyleApply(styleName, styleNode)
       addEvent(function()
         self:setRowStyle(value)
       end)
+    elseif name == 'header-column-style' then
+      addEvent(function()
+        self:setHeaderColumnStyle(value)
+      end)
+    elseif name == 'header-row-style' then
+      addEvent(function()
+        self:setHeaderRowStyle(value)
+      end)
     end
   end
 end
 
-function UITable:addRow(columns)
-  if not columns or type(columns) ~= 'table' then
-    g_logger.error('UITable:addRow - table columns must be provided in a table')
+function UITable:hasHeader()
+  return self.headerRow ~= nil
+end
+
+function UITable:clearData()
+  if not self.dataSpace then
+    return
+  end
+  self.dataSpace:destroyChildren()
+end
+
+function UITable:addHeaderRow(data)
+  if not data or type(data) ~= 'table' then
+    g_logger.error('UITable:addHeaderRow - table columns must be provided in a table')
+    return
   end
 
-  -- TODO: table header rows as buttons.
-  --[[if #self.rows < 1 then
-    g_ui.createWidget(self.rowBaseStyle, self)
-  end]]
+  -- build header columns
+  local columns = {}
+  for _, column in pairs(data) do
+    local col = g_ui.createWidget(self.headerColumnBaseStyle)
+    for type, value in pairs(column) do
+      if type == 'width' then
+        col:setWidth(value)
+      elseif type == 'height' then
+        col:setHeight(value)
+      elseif type == 'text' then
+        col:setText(value)
+      end
+    end
+    table.insert(columns, col)
+  end
 
-  local row = g_ui.createWidget(self.rowBaseStyle, self)
-  row.columns = {}
+  -- create a new header
+  local headerRow = g_ui.createWidget(self.headerRowBaseStyle, self)
+  local newHeight = (self.dataSpace:getHeight()-headerRow:getHeight())-self.dataSpace:getMarginTop()
+  self.dataSpace:applyStyle({ height = newHeight })
 
+  headerRow:setId(HEADER_ID)
   for _, column in pairs(columns) do
+    headerRow:addChild(column)
+    self.columns[HEADER_ID] = column
+  end
+
+  headerRow.onClick = function(headerRow) self:selectRow(headerRow) end
+  self.headerRow = headerRow
+  return headerRow
+end
+
+function UITable:removeHeaderRow()
+  self.headerRow:destroy()
+  self.headerRow = nil
+end
+
+function UITable:addRow(data, height)
+  if not self.dataSpace then
+    g_logger.error('UITable:addRow - table data space has not been set, cannot add rows.')
+    return
+  end
+  if not data or type(data) ~= 'table' then
+    g_logger.error('UITable:addRow - table columns must be provided in a table.')
+    return
+  end
+
+  local row = g_ui.createWidget(self.rowBaseStyle, self.dataSpace)
+  if height then row:setHeight(height) end
+  local rowId = #self.rows
+  if rowId < 1 then rowId = 1 end
+  rowId = 'row'..rowId
+  row:setId(rowId)
+
+  for _, column in pairs(data) do
     local col = g_ui.createWidget(self.columBaseStyle, row)
-    if column[1] then
-      col:setText(column[1])
+    for type, value in pairs(column) do
+      if type == 'width' then
+        col:setWidth(value)
+      elseif type == 'height' then
+        col:setHeight(value)
+      elseif type == 'text' then
+        col:setText(value)
+      end
     end
-    if #column > 1 then
-      col:setWidth(column[2])
-    end
-    table.insert(row.columns, col)
+    self.columns[rowId] = col
   end
   row.onClick = function(row) self:selectRow(row) end
   table.insert(self.rows, row)
@@ -86,16 +179,35 @@ function UITable:selectRow(selectedRow)
   signalcall(self.onSelectionChange, self, selectedRow, previousSelectedRow)
 end
 
+function UITable:setTableData(tableData)
+  self.dataSpace = tableData
+  self.dataSpace:applyStyle({ height = self:getHeight() })
+end
+
 function UITable:setRowStyle(style)
   self.rowBaseStyle = style
-  --[[for k, row in pairs(self.rows) do
+  for _, row in pairs(self.rows) do
     row:setStyle(style)
-  end]]
+  end
 end
 
 function UITable:setColumnStyle(style)
   self.columBaseStyle = style
-  --[[for k, col in pairs(self.rows.columns) do
+  for _, col in pairs(self.columns) do
     col:setStyle(style)
-  end]]
+  end
+end
+
+function UITable:setHeaderRowStyle(style)
+  self.headerRowBaseStyle = style
+  if self.headerRow then
+    self.headerRow:setStyle(style)
+  end
+end
+
+function UITable:setHeaderColumnStyle(style)
+  self.headerColumnBaseStyle = style
+  if table.hasKey(HEADER_ID) then
+    self.columns[HEADER_ID]:setStyle(style)
+  end
 end

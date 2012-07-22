@@ -1,13 +1,26 @@
 Table < UITable
   layout: verticalBox
+  header-column-style: HeaderTableColumn
+  header-row-style: HeaderTableRow
   column-style: TableColumn
   row-style: TableRow
+  
+TableData < UIScrollArea
+  layout: verticalBox
 
 TableRow < Label
-  id: defaultRow
   layout: horizontalBox
   height: 10
+  text-wrap: true
 
 TableColumn < Label
-  id: defaultColumn
+  width: 30
+  text-wrap: true
+
+TableHeaderRow < Label
+  layout: horizontalBox
+  height: 10
+  text-wrap: true
+
+TableHeaderColumn < Button
   width: 30

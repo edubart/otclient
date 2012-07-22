@@ -1,7 +1,6 @@
 OfferTableRow < TableRow
   font: verdana-11px-monochrome
   background-color: alpha
-  text-offset: 2 0
   focusable: true
   color: #cccccc
   height: 15
@@ -13,9 +12,28 @@ OfferTableRow < TableRow
 OfferTableColumn < TableColumn
   font: verdana-11px-monochrome
   background-color: alpha
+  text-offset: 5 0
+  color: #cccccc
+  width: 80
+  focusable: false
+
+OfferTableHeaderRow < TableHeaderRow
+  font: verdana-11px-monochrome
+  focusable: false
+  color: #cccccc
+  height: 20
+
+OfferTableHeaderColumn < TableHeaderColumn
+  font: verdana-11px-monochrome
+  background-color: alpha
   text-offset: 2 0
   color: #cccccc
   width: 80
+  focusable: true
+
+  $focus:
+    background-color: #294f6d
+    color: #ffffff
 
 Panel
   background-color: #22283399
@@ -50,15 +68,25 @@ Panel
     background-color: #222833
     border-width: 1
     border-color: #191f27
-    vertical-scrollbar: sellingTableScrollBar
+    table-data: sellingTableData
     row-style: OfferTableRow
     column-style: OfferTableColumn
+    header-row-style: OfferTableHeaderRow
+    header-column-style: OfferTableHeaderColumn
+
+  TableData
+    id: sellingTableData
+    anchors.bottom: sellingTable.bottom
+    anchors.left: sellingTable.left
+    anchors.right: sellingTable.right
+    margin-top: 2
+    vertical-scrollbar: sellingTableScrollBar
 
   VerticalScrollBar
     id: sellingTableScrollBar
-    anchors.top: prev.top
-    anchors.bottom: prev.bottom
-    anchors.right: prev.right
+    anchors.top: sellingTable.top
+    anchors.bottom: sellingTable.bottom
+    anchors.right: sellingTable.right
     step: 28
     pixels-scroll: true
 
@@ -92,14 +120,23 @@ Panel
     background-color: #222833
     border-width: 1
     border-color: #191f27
-    vertical-scrollbar: buyingTableScrollBar
+    table-data: buyingTableData
     row-style: OfferTableRow
     column-style: OfferTableColumn
+    header-row-style: OfferTableHeaderRow
+    header-column-style: OfferTableHeaderColumn
+
+  TableData
+    id: buyingTableData
+    anchors.bottom: buyingTable.bottom
+    anchors.left: buyingTable.left
+    anchors.right: buyingTable.right
+    vertical-scrollbar: buyingTableScrollBar
 
   VerticalScrollBar
     id: buyingTableScrollBar
-    anchors.top: prev.top
-    anchors.bottom: prev.bottom
-    anchors.right: prev.right
+    anchors.top: buyingTable.top
+    anchors.bottom: buyingTable.bottom
+    anchors.right: buyingTable.right
     step: 28
     pixels-scroll: true
