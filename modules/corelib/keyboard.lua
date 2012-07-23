@@ -100,6 +100,9 @@ function g_keyboard.bindKeyDown(keyComboDesc, callback, widget)
   widget = widget or rootWidget
   connectKeyDownEvent(widget)
   local keyComboDesc = retranslateKeyComboDesc(keyComboDesc)
+  if widget.boundKeyDownCombos[keyComboDesc] then
+    pwarning('KeyDown event \'' .. keyComboDesc .. '\' redefined on widget ' .. widget:getId())
+  end
   widget.boundKeyDownCombos[keyComboDesc] = callback
 end
 
@@ -108,6 +111,9 @@ function g_keyboard.bindKeyPress(keyComboDesc, callback, widget, autoRepeatDelay
   widget = widget or rootWidget
   connectKeyPressEvent(widget)
   local keyComboDesc = retranslateKeyComboDesc(keyComboDesc)
+  if widget.boundKeyPressCombos[keyComboDesc] then
+    pwarning('KeyPress event \'' .. keyComboDesc .. '\' redefined on widget ' .. widget:getId())
+  end
   widget.boundKeyPressCombos[keyComboDesc] = { callback = callback, autoRepeatDelay = autoRepeatDelay }
   widget:setAutoRepeatDelay(math.min(autoRepeatDelay, widget:getAutoRepeatDelay()))
 end
