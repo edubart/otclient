@@ -23,6 +23,7 @@
 #include "otmlparser.h"
 #include "otmldocument.h"
 #include "otmlexception.h"
+#include <boost/tokenizer.hpp>
 
 OTMLParser::OTMLParser(OTMLDocumentPtr doc, std::istream& in) :
     currentDepth(0), currentLine(0),
@@ -186,8 +187,17 @@ void OTMLParser::parseNode(const std::string& data)
     // ~ is considered the null value
     if(value == "~")
         node->setNull(true);
-    else
-        node->setValue(value);
+    else {
+        if(boost::starts_with(value, "[") && boost::ends_with(value, "]")) {
+            std::string tmp = value.substr(1, value.length()-2);
+            boost::tokenizer<boost::escaped_list_separator<char>> tokens(tmp);
+            for(std::string v : tokens) {
+                stdext::trim(v);
+                node->writeIn(v);
+            }
+        } else
+            node->setValue(value);
+    }
 
     currentParent->addChild(node);
     previousNode = node;
