@@ -62,20 +62,71 @@ inline bool cast(const std::string& in, std::string& out) {
 // special cast from string to boolean
 template<>
 inline bool cast(const std::string& in, bool& b) {
-    static std::string validNames[2][4] = {{"true","yes","on","1"}, {"false","no","off","0"}};
-    bool ret = false;
-    for(int i=0;i<4;++i) {
-        if(in == validNames[0][i]) {
-            b = true;
-            ret = true;
-            break;
-        } else if(in == validNames[1][i]) {
-            b = false;
-            ret = true;
-            break;
-        }
+    if(in == "true")
+        b = true;
+    else if(in == "false")
+        b = false;
+    else
+        return false;
+    return true;
+}
+
+// special cast from string to char
+template<>
+inline bool cast(const std::string& in, char& c) {
+    if(in.length() != 1)
+        return false;
+    c = in[0];
+    return true;
+}
+
+// special cast from string to long
+template<>
+inline bool cast(const std::string& in, long& l) {
+    if(in.find_first_not_of("-0123456789") != std::string::npos)
+        return false;
+    std::size_t t = in.find_last_of('-');
+    if(t != std::string::npos && t != 0)
+        return false;
+    l = atol(in.c_str());
+    return true;
+}
+
+// special cast from string to int
+template<>
+inline bool cast(const std::string& in, int& i) {
+    long l;
+    if(cast(in, l)) {
+        i=l;
+        return true;
     }
-    return ret;
+    return false;
+}
+
+// special cast from string to double
+template<>
+inline bool cast(const std::string& in, double& d) {
+    if(in.find_first_not_of("-0123456789.") != std::string::npos)
+        return false;
+    std::size_t t = in.find_last_of('-');
+    if(t != std::string::npos &&  t != 0)
+        return false;
+    t = in.find_first_of('.');
+    if(t != std::string::npos && (t == 0 || t == in.length()-1 || in.find_first_of('.', t+1) != std::string::npos))
+        return false;
+    d = atof(in.c_str());
+    return true;
+}
+
+// special cast from string to float
+template<>
+inline bool cast(const std::string& in, float& f) {
+    double d;
+    if(cast(in, d)) {
+        f=d;
+        return true;
+    }
+    return false;
 }
 
 // special cast from boolean to string

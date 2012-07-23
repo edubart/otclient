@@ -150,7 +150,7 @@ bool OTMLNode::replaceChild(const OTMLNodePtr& oldChild, const OTMLNodePtr& newC
 void OTMLNode::copy(const OTMLNodePtr& node)
 {
     setTag(node->tag());
-    setValue(node->value());
+    setValue(node->rawValue());
     setUnique(node->isUnique());
     setNull(node->isNull());
     setSource(node->source());

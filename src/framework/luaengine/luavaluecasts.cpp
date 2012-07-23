@@ -112,13 +112,13 @@ bool luavalue_cast(int index, Color& color)
 {
     if(g_lua.isTable(index)) {
         g_lua.getField("r", index);
-        color.setRed(g_lua.popInteger());
+        color.setRed((int)g_lua.popInteger());
         g_lua.getField("g", index);
-        color.setGreen(g_lua.popInteger());
+        color.setGreen((int)g_lua.popInteger());
         g_lua.getField("b", index);
-        color.setBlue(g_lua.popInteger());
+        color.setBlue((int)g_lua.popInteger());
         g_lua.getField("a", index);
-        color.setAlpha(g_lua.popInteger());
+        color.setAlpha((int)g_lua.popInteger());
         return true;
     } else if(g_lua.isString()) {
         return stdext::cast(g_lua.toString(index), color);
@@ -225,11 +225,20 @@ bool luavalue_cast(int index, Size& size)
 void push_otml_subnode_luavalue(const OTMLNodePtr& node)
 {
     if(node->hasValue()) {
-        // convert boolean types
-        if(node->value() == "true" || node->value() == "false")
-            g_lua.pushBoolean(node->value<bool>());
+        union {
+            bool b;
+            double d;
+            long l;
+        };
+        std::string value = node->rawValue();
+        if(stdext::cast(value, b))
+            g_lua.pushBoolean(b);
+        else if(stdext::cast(value, l))
+            g_lua.pushInteger(l);
+        else if(stdext::cast(value, d))
+            g_lua.pushNumber(d);
         else
-            g_lua.pushString(node->value());
+            g_lua.pushString(value);
     } else if(node->hasChildren()) {
         g_lua.newTable();
         bool pushedChild = false;

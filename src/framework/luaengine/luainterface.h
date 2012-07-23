@@ -270,7 +270,7 @@ public:
     void* newUserdata(int size);
 
     void pop(int n = 1);
-    int popInteger();
+    long popInteger();
     double popNumber();
     bool popBoolean();
     std::string popString();
@@ -279,7 +279,7 @@ public:
     LuaObjectPtr popObject();
 
     void pushNil();
-    void pushInteger(int v);
+    void pushInteger(long v);
     void pushNumber(double v);
     void pushBoolean(bool v);
     void pushCString(const char* v);

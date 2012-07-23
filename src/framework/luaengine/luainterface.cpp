@@ -962,10 +962,10 @@ void LuaInterface::pop(int n)
     }
 }
 
-int LuaInterface::popInteger()
+long LuaInterface::popInteger()
 {
     assert(hasIndex(-1));
-    int v = toInteger(-1);
+    long v = toInteger(-1);
     pop();
     return v;
 }
@@ -1021,7 +1021,7 @@ void LuaInterface::pushNil()
     checkStack();
 }
 
-void LuaInterface::pushInteger(int v)
+void LuaInterface::pushInteger(long v)
 {
     lua_pushinteger(L, v);
     checkStack();

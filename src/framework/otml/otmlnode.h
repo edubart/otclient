@@ -37,6 +37,7 @@ public:
     int size() { return m_children.size(); }
     OTMLNodePtr parent() { return m_parent.lock(); }
     std::string source() { return m_source; }
+    std::string rawValue() { return m_value; }
 
     bool isUnique() { return m_unique; }
     bool isNull() { return m_null; }
@@ -104,11 +105,25 @@ protected:
 
 #include "otmlexception.h"
 
+template<>
+inline std::string OTMLNode::value<std::string>() {
+    std::string value = m_value;
+    if(boost::starts_with(value, "\"") && boost::ends_with(value, "\"")) {
+        value = value.substr(1, value.length()-2);
+        boost::replace_all(value, "\\\\", "\\");
+        boost::replace_all(value, "\\\"", "\"");
+        boost::replace_all(value, "\\t",  "\t");
+        boost::replace_all(value, "\\n",  "\n");
+        boost::replace_all(value, "\\'",  "\'");
+    }
+    return value;
+}
+
 template<typename T>
 T OTMLNode::value() {
     T ret;
     if(!stdext::cast(m_value, ret))
-        throw OTMLException(shared_from_this(), stdext::mkstr("failed to cast node value to type '%s'", stdext::demangle_type<T>()));
+        throw OTMLException(shared_from_this(), stdext::format("failed to cast node value '%s' to type '%s'", m_value, stdext::demangle_type<T>()));
     return ret;
 }
 
