@@ -14,17 +14,17 @@ Panel
     anchors.top: parent.top
 
   ButtonBox
+    id: opengl1
     anchors.left: prev.right
     anchors.verticalCenter: prev.verticalCenter
-    id: opengl1
     text: OpenGL 1
     size: 80 20
     margin-left: 6
 
   ButtonBox
+    id: opengl2
     anchors.left: prev.right
     anchors.verticalCenter: prev.verticalCenter
-    id: opengl2
     text: OpenGL 2
     size: 80 20
     margin-left: 4

@@ -8,6 +8,12 @@ function UIComboBox.create()
   return combobox
 end
 
+function UIComboBox:clearOptions()
+  self.options = {}
+  self.currentIndex = -1
+  self:clearText()
+end
+
 function UIComboBox:setCurrentOption(text)
   if not self.options then return end
   for i,v in ipairs(self.options) do
@@ -26,6 +32,12 @@ function UIComboBox:setCurrentIndex(index)
     self.currentIndex = index
     self:setText(v.text)
     self:onOptionChange(v.text, v.data)
+  end
+end
+
+function UIComboBox:getCurrentOption()
+  if table.hasKey(self.options, self.currentIndex) then
+    return self.options[self.currentIndex]
   end
 end
 

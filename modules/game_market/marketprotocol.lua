@@ -37,8 +37,9 @@ end
 -- parsing protocols
 local function parseMarketEnter(msg)
   local balance = msg:getU32()
+  local vocation = -1
   if g_game.getProtocolVersion() < 950 then
-    msg:getU8() -- get vocation id
+    vocation = msg:getU8() -- get vocation id
   end
   local offers = msg:getU8()
   local depotItems = {}
@@ -51,7 +52,7 @@ local function parseMarketEnter(msg)
     table.insert(depotItems, {itemId, itemCount})
   end
 
-  signalcall(Market.onMarketEnter, depotItems, offers, balance)
+  signalcall(Market.onMarketEnter, depotItems, offers, balance, vocation)
   return true
 end
 

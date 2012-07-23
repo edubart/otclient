@@ -76,7 +76,7 @@ enum ThingAttr : uint8 {
     ThingAttrCloth            = 32,
     ThingAttrMarket           = 33,
     ThingAttrChargeable       = 254, // deprecated
-    ThingLastAttr             = 255,
+    ThingLastAttr             = 255
 };
 
 enum SpriteMask {
@@ -90,7 +90,7 @@ struct MarketData {
     std::string name;
     int category;
     uint16 requiredLevel;
-    uint16 restrictProfession;
+    uint16 restrictVocation;
     uint16 showAs;
     uint16 tradeAs;
 };

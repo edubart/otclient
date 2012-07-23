@@ -52,10 +52,13 @@ public:
     void setStamina(double stamina);
     void setKnown(bool known) { m_known = known; }
     void setInventoryItem(Otc::InventorySlot inventory, const ItemPtr& item);
+    void setVocation(int vocation);
+    void setPremium(bool premium);
 
     int getStates() { return m_states; }
     int getSkillLevel(Otc::Skill skill) { return m_skillsLevel[skill]; }
     int getSkillLevelPercent(Otc::Skill skill) { return m_skillsLevelPercent[skill]; }
+    int getVocation() { return m_vocation; }
     double getHealth() { return m_health; }
     double getMaxHealth() { return m_maxHealth; }
     double getFreeCapacity() { return m_freeCapacity; }
@@ -73,6 +76,7 @@ public:
     bool isKnown() { return m_known; }
     bool isPreWalking() { return m_preWalking; }
     bool isAutoWalking() { return m_autoWalking; }
+    bool isPremium() { return m_premium; }
 
     LocalPlayerPtr asLocalPlayer() { return std::static_pointer_cast<LocalPlayer>(shared_from_this()); }
     bool isLocalPlayer() { return true; }
@@ -96,6 +100,7 @@ private:
     bool m_lastPrewalkDone;
     bool m_walkLocked;
     bool m_autoWalking;
+    bool m_premium;
     Position m_lastPrewalkDestionation;
     Timer m_walkLockTimer;
     ItemPtr m_inventoryItems[Otc::LastInventorySlot];
@@ -106,6 +111,7 @@ private:
 
     bool m_known;
     int m_states;
+    int m_vocation;
 
     double m_health;
     double m_maxHealth;

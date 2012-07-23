@@ -11,7 +11,7 @@ StatsTableColumn < TableColumn
   background-color: alpha
   text-offset: 5 0
   color: #cccccc
-  width: 80
+  width: 110
   focusable: false
 
 Panel

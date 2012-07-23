@@ -9,6 +9,7 @@ Module
     dofile 'math'
     dofile 'string'
     dofile 'table'
+    dofile 'bitwise'
 
     dofile 'const'
     dofile 'util'

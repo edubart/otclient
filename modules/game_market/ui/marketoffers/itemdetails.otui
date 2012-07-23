@@ -12,7 +12,7 @@ DetailsTableColumn < TableColumn
   background-color: alpha
   text-offset: 5 2
   color: #cccccc
-  width: 80
+  width: 100
   focusable: false
 
 Panel
@@ -27,7 +27,7 @@ Panel
     anchors.right: parent.right
     margin-top: 55
     margin-left: 6
-    margin-bottom: 45
+    margin-bottom: 75
     margin-right: 6
     padding: 1
     focusable: false

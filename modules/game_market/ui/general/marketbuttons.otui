@@ -1,6 +1,6 @@
 MarketButtonBox < UICheckBox
   font: verdana-11px-antialised
-  color: #f55e5ecc
+  color: #f55e5ebb
   size: 106 22
   text-offset: 0 0
   text-align: center

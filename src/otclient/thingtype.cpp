@@ -83,7 +83,7 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
                 market.tradeAs = fin->getU16();
                 market.showAs = fin->getU16();
                 market.name = fin->getString();
-                market.restrictProfession = fin->getU16();
+                market.restrictVocation = fin->getU16();
                 market.requiredLevel = fin->getU16();
                 m_attribs.set(attr, market);
                 break;

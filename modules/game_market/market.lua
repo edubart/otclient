@@ -10,35 +10,38 @@ local mainTabBar
 
 local marketOffersPanel
 local selectionTabBar
+local displaysTabBar
+local offersTabBar
+
+local itemsPanel
 local browsePanel
 local searchPanel
-
-local displaysTabBar
 local itemOffersPanel
 local itemDetailsPanel
 local itemStatsPanel
-
 local myOffersPanel
-local offersTabBar
 local currentOffersPanel
 local offerHistoryPanel
 
-local marketOffers = {}
-local marketItems = {}
-local depot = {}
-local information ={}
 local selectedItem
 local nameLabel
+local radioItemSet
+local categoryList
+local subCategoryList
+local slotFilterList
+local filterButtons = {}
+
 local buyOfferTable
 local sellOfferTable
 local detailsTable
 local buyStatsTable
 local sellStatsTable
 
+local marketOffers = {}
+local marketItems = {}
+local depot = {}
+local information = {}
 local currentItems = {}
-local itemsPanel
-local radioItemSet
-local filterBox
 
 local offerTableHeader = {
     {['text'] = 'Player Name', ['width'] = 100},
@@ -74,6 +77,56 @@ local function getMarketDescriptionId(name)
   end
 end
 
+local function getMarketSlotFilterId(name)
+  local id = table.find(MarketSlotFilters, name)
+  if id then
+    return id
+  end
+end
+
+local function getMarketSlotFilterName(id)
+  if table.hasKey(MarketSlotFilters, id) then
+    return MarketSlotFilters[id]
+  end
+end
+
+local function isValidItem(item, category)
+  if item.marketData.category ~= category and category ~= MarketCategory[0] then
+    return false
+  end
+
+  -- filter item
+  local slotFilter = false
+  if slotFilterList:isEnabled() then
+    slotFilter = getMarketSlotFilterId(slotFilterList:getCurrentOption().text)
+  end
+  local marketData = item.marketData
+
+  local filterVocation = filterButtons[MarketFilters.Vocation]:isChecked()
+  local filterLevel = filterButtons[MarketFilters.Level]:isChecked()
+  local filterDepot = filterButtons[MarketFilters.Depot]:isChecked()
+
+  if slotFilter then
+    if slotFilter ~= 255 and item.ptr:getClothSlot() ~= slotFilter then
+      return false
+    end
+  end
+  local player = g_game.getLocalPlayer()
+  if filterLevel and marketData.requiredLevel and player:getLevel() < marketData.requiredLevel then
+    return false
+  end
+  if filterVocation and marketData.restrictVocation > 0 then
+    local voc = Bit.bit(information.vocation)
+    if not Bit.hasBit(marketData.restrictVocation, voc) then
+      return false
+    end
+  end
+  if filterDepot and not Market.depotContains(item.ptr:getId()) then
+    return false
+  end
+  return true
+end
+
 local function clearSelectedItem()
   if selectedItem and selectedItem.item.ptr then
     Market.updateOffers({})
@@ -97,20 +150,19 @@ local function initMarketItems()
     local t = types[i]
     local newItem = Item.create(t:getId())
     if newItem then
-      local item = {
-        ptr = newItem,
-        marketData = t:getMarketData()
-      }
-      marketItems[#marketItems+1] = item
+      local marketData = t:getMarketData()
+      if not table.empty(marketData) then
+        local item = {
+          ptr = newItem,
+          marketData = marketData
+        }
+        marketItems[#marketItems+1] = item
+      end
     end
   end
 end
 
 local function updateItemsWidget()
-  if table.empty(currentItems) then
-    return
-  end
-
   itemsPanel = browsePanel:recursiveGetChildById('itemsPanel')
   local layout = itemsPanel:getLayout()
   layout:disableUpdates()
@@ -138,25 +190,38 @@ local function updateItemsWidget()
   layout:update()
 end
 
-local function loadDepotItems(depotItems)
-  information.depotItems = {}
-  for i = 1, #depotItems do
-    local data = depotItems[i]
-    local item = Item.create(data[1])
-    if not item then
-      break
-    end
-    item:setCount(data[2])
-    local marketData = item:getMarketData()
+local function onUpdateCategory(combobox, option)
+  local id = getMarketCategoryId(option)
+  if id == MarketCategory.MetaWeapons then
+    -- enable and load weapons filter/items
+    subCategoryList:setEnabled(true)
+    slotFilterList:setEnabled(true)
+    local subId = getMarketCategoryId(subCategoryList:getCurrentOption().text)
+    Market.loadMarketItems(subId)
+  else
+    subCategoryList:setEnabled(false)
+    slotFilterList:setEnabled(false)
+    Market.loadMarketItems(id) -- load standard filter
+  end
+end
 
-    if not table.empty(marketData) then
-      local newItem = {
-        ptr = item,
-        marketData = marketData
-      }
-      table.insert(information.depotItems, newItem)
+local function onUpdateSubCategory(combobox, option)
+  local id = getMarketCategoryId(option)
+  Market.loadMarketItems(id)
+  -- setup slot filter
+  slotFilterList:clearOptions()
+  local subId = getMarketCategoryId(subCategoryList:getCurrentOption().text)
+  local slots = MarketCategoryWeapons[subId].slots
+  for _, slot in pairs(slots) do
+    if table.hasKey(MarketSlotFilters, slot) then
+      slotFilterList:addOption(MarketSlotFilters[slot])
     end
   end
+  slotFilterList:setEnabled(true)
+end
+
+local function onUpdateSlotFilter(combobox, option)
+  Market.updateCurrentItems()
 end
 
 local function initInterface()
@@ -208,16 +273,33 @@ local function initInterface()
   selectedItem = marketOffersPanel:recursiveGetChildById('selectedItem')
   selectedItem.item = {}
 
-  -- populate filter combo box
-  filterBox = browsePanel:getChildById('filterComboBox')
-  for i = MarketCategory.First, MarketCategory.Last do
-    filterBox:addOption(getMarketCategoryName(i))
-  end
-  filterBox:setCurrentOption(getMarketCategoryName(MarketCategory.First))
+  -- setup filters
+  filterButtons[MarketFilters.Vocation] = browsePanel:getChildById('filterVocation')
+  filterButtons[MarketFilters.Level] = browsePanel:getChildById('filterLevel')
+  filterButtons[MarketFilters.Depot] = browsePanel:getChildById('filterDepot')
 
-  filterBox.onOptionChange = function(combobox, option)
-    Market.loadMarketItems(getMarketCategoryId(option))
+  categoryList = browsePanel:getChildById('categoryComboBox')
+  subCategoryList = browsePanel:getChildById('subCategoryComboBox')
+  slotFilterList = browsePanel:getChildById('typeComboBox')
+
+  slotFilterList:addOption(MarketSlotFilters[255])
+  slotFilterList:setEnabled(false)
+
+  for i = MarketCategory.First, MarketCategory.Last do
+    if i >= MarketCategory.Ammunition and i <= MarketCategory.WandsRods then
+      subCategoryList:addOption(getMarketCategoryName(i))
+    else
+      categoryList:addOption(getMarketCategoryName(i))
+    end
   end
+  categoryList:addOption(getMarketCategoryName(255)) -- meta weapons
+  categoryList:setCurrentOption(getMarketCategoryName(MarketCategory.First))
+  subCategoryList:setEnabled(false)
+  
+  -- hook item filters
+  categoryList.onOptionChange = onUpdateCategory
+  subCategoryList.onOptionChange = onUpdateSubCategory
+  slotFilterList.onOptionChange = onUpdateSlotFilter
 
   -- get tables
   buyOfferTable = itemOffersPanel:recursiveGetChildById('buyingTable')
@@ -242,53 +324,97 @@ function Market.terminate()
   end
 
   mainTabBar = nil
-  marketOffersPanel = nil
+  displaysTabBar = nil
+  offersTabBar = nil
   selectionTabBar = nil
+
+  marketOffersPanel = nil
   browsePanel = nil
   searchPanel = nil
-  displaysTabBar = nil
   itemOffersPanel = nil
   itemDetailsPanel = nil
   itemStatsPanel = nil
   myOffersPanel = nil
-  offersTabBar = nil
   currentOffersPanel = nil
   offerHistoryPanel = nil
-  marketOffers = {}
-  marketItems = {}
-  depotItems = {}
-  information = {}
-  currentItems = {}
   itemsPanel = nil
+
   nameLabel = nil
+  radioItemSet = nil
+  selectedItem = nil
+  categoryList = nil
+  subCategoryList = nil
+  slotFilterList = nil
+  filterButtons = {}
+
   buyOfferTable = nil
   sellOfferTable = nil
   detailsTable = nil
   buyStatsTable = nil
   sellStatsTable = nil
-  radioItemSet = nil
-  selectedItem = nil
-  filterBox = nil
 
+  marketOffers = {}
+  marketItems = {}
+  information = {}
+  currentItems = {}
+  
   Market = nil
 end
 
-function Market.loadMarketItems(_category)
+function Market.depotContains(itemId)
+  for i = 1, #information.depotItems do
+    local item = information.depotItems[i]
+    if item.ptr:getId() == itemId then
+      return true
+    end
+  end
+  return false
+end
+
+function Market.loadMarketItems(category)
   if table.empty(marketItems) then
     initMarketItems()
   end
 
   currentItems = {}
   for i = 1, #marketItems do
-    -- filter items here
     local item = marketItems[i]
-    local category = item.marketData.category
-    if category == _category or _category == MarketCategory[0] then
+    if isValidItem(item, category) then
       table.insert(currentItems, item)
     end
   end
 
   updateItemsWidget()
+end
+
+function Market.loadDepotItems(depotItems)
+  information.depotItems = {}
+  for i = 1, #depotItems do
+    local data = depotItems[i]
+    local newItem = Item.create(data[1])
+    if not newItem then
+      break
+    end
+    newItem:setCount(data[2])
+    local marketData = newItem:getMarketData()
+
+    if not table.empty(marketData) then
+      local item = {
+        ptr = newItem,
+        marketData = marketData
+      }
+      table.insert(information.depotItems, item)
+    end
+  end
+end
+
+function Market.updateCurrentItems()
+  -- get market category
+  local id = getMarketCategoryId(categoryList:getCurrentOption().text)
+  if id == MarketCategory.MetaWeapons then
+    id = getMarketCategoryId(subCategoryList:getCurrentOption().text)
+  end
+  Market.loadMarketItems(id)
 end
 
 function Market.updateOffers(offers)
@@ -330,7 +456,6 @@ function Market.updateDetails(itemId, descriptions, purchaseStats, saleStats)
     return
   end
   selectedItem.item.details = {
-    serverItemId = itemId,
     descriptions = descriptions,
     purchaseStats = purchaseStats,
     saleStats = saleStats
@@ -340,7 +465,7 @@ function Market.updateDetails(itemId, descriptions, purchaseStats, saleStats)
   detailsTable:clearData()
   for k, desc in pairs(descriptions) do
     local columns = {
-      {['text'] = getMarketDescriptionName(desc[1])..':', ['width'] = 100},
+      {['text'] = getMarketDescriptionName(desc[1])..':'},
       {['text'] = desc[2], ['width'] = 330}
     }
     detailsTable:addRow(columns)
@@ -349,21 +474,20 @@ function Market.updateDetails(itemId, descriptions, purchaseStats, saleStats)
   -- update sale item statistics
   sellStatsTable:clearData()
   if table.empty(saleStats) then
-    sellStatsTable:addRow({{['text'] = 'No information', ['width'] = 110}})
+    sellStatsTable:addRow({{['text'] = 'No information'}})
   else
     for k, stat in pairs(saleStats) do
       if not table.empty(stat) then
-        sellStatsTable:addRow({{['text'] = 'Total Transations:', ['width'] = 110}, 
+        sellStatsTable:addRow({{['text'] = 'Total Transations:'}, 
           {['text'] = stat[1], ['width'] = 270}})
 
-        sellStatsTable:addRow({{['text'] = 'Highest Price:', ['width'] = 110}, 
+        sellStatsTable:addRow({{['text'] = 'Highest Price:'}, 
           {['text'] = stat[3], ['width'] = 270}})
 
-        print(stat[2] .. '/' ..stat[1])
-        sellStatsTable:addRow({{['text'] = 'Average Price:', ['width'] = 110}, 
-          {['text'] = math.floor(stat[2]/stat[1]), ['width'] = 270}})
+        sellStatsTable:addRow({{['text'] = 'Average Price:'}, 
+          {['text'] = math.floor(stat[2]/stat[1])}})
 
-        sellStatsTable:addRow({{['text'] = 'Lowest Price:', ['width'] = 110}, 
+        sellStatsTable:addRow({{['text'] = 'Lowest Price:'}, 
           {['text'] = stat[4], ['width'] = 270}})
       end
     end
@@ -372,21 +496,20 @@ function Market.updateDetails(itemId, descriptions, purchaseStats, saleStats)
   -- update buy item statistics
   buyStatsTable:clearData()
   if table.empty(purchaseStats) then
-    buyStatsTable:addRow({{['text'] = 'No information', ['width'] = 110}})
+    buyStatsTable:addRow({{['text'] = 'No information'}})
   else
     for k, stat in pairs(purchaseStats) do
       if not table.empty(stat) then
-        buyStatsTable:addRow({{['text'] = 'Total Transations:', ['width'] = 110}, 
+        buyStatsTable:addRow({{['text'] = 'Total Transations:'}, 
           {['text'] = stat[1], ['width'] = 270}})
 
-        buyStatsTable:addRow({{['text'] = 'Highest Price:', ['width'] = 110}, 
+        buyStatsTable:addRow({{['text'] = 'Highest Price:'}, 
           {['text'] = stat[3], ['width'] = 270}})
 
-        print(stat[2] .. '/' ..stat[1])
-        buyStatsTable:addRow({{['text'] = 'Average Price:', ['width'] = 110}, 
+        buyStatsTable:addRow({{['text'] = 'Average Price:'}, 
           {['text'] = math.floor(stat[2]/stat[1]), ['width'] = 270}})
 
-        buyStatsTable:addRow({{['text'] = 'Lowest Price:', ['width'] = 110}, 
+        buyStatsTable:addRow({{['text'] = 'Lowest Price:'}, 
           {['text'] = stat[4], ['width'] = 270}})
       end
     end
@@ -399,7 +522,7 @@ function Market.updateSelectedItem(newItem)
     if selectedItem.item.ptr then
       selectedItem:setItem(selectedItem.item.ptr)
       nameLabel:setText(selectedItem.item.marketData.name)
-      MarketProtocol.sendMarketBrowse(selectedItem.item.ptr:getId()) -- send sprite id browsed
+      MarketProtocol.sendMarketBrowse(selectedItem.item.ptr:getId()) -- send browsed msg
     end
   else
     selectedItem:setItem(nil)
@@ -407,21 +530,32 @@ function Market.updateSelectedItem(newItem)
   end
 end
 
-function Market.onMarketEnter(depotItems, offers, balance)
+function Market.onMarketEnter(depotItems, offers, balance, vocation)
   if marketWindow:isVisible() then
     return
   end
-  marketWindow:lock()
   marketOffers[MarketAction.Buy] = {}
   marketOffers[MarketAction.Sell] = {}
 
+  --[[
+    TODO: 
+      * clear filters on enter
+      * add market reset function
+  ]]
   information.balance = balance
   information.totalOffers = offers
+  if vocation < 0 then
+    local player = g_game.getLocalPlayer()
+    if player then information.vocation = player:getVocation() end
+  else
+    -- vocation must be compatible with < 950
+    information.vocation = vocation
+  end
 
   if table.empty(currentItems) then
     Market.loadMarketItems(MarketCategory.First)
   end
-  loadDepotItems(depotItems)
+  Market.loadDepotItems(depotItems)
 
   -- build offer table header
   if buyOfferTable and not buyOfferTable:hasHeader() then
@@ -436,6 +570,8 @@ function Market.onMarketEnter(depotItems, offers, balance)
      -- Uncheck selected item, cannot make protocol calls to resend marketBrowsing
     clearSelectedItem()
   end
+
+  marketWindow:lock()
   marketWindow:show()
 end
 

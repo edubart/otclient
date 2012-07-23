@@ -288,9 +288,6 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
                 parseMultiUseDelay(msg);
                 break;
             // PROTOCOL>=910
-            case Proto::GameServerPlayerDataBasic:
-                parsePlayerInfo(msg);
-                break;
             case Proto::GameServerChannelEvent:
                 parseChannelEvent(msg);
                 break;
@@ -299,6 +296,10 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
                 break;
             case Proto::GameServerPlayerInventory:
                 parsePlayerInventory(msg);
+                break;
+            // PROTOCOL>=950
+            case Proto::GameServerPlayerDataBasic:
+                parsePlayerInfo(msg);
                 break;
             // otclient ONLY
             case Proto::GameServerExtendedOpcode:
@@ -832,12 +833,15 @@ void ProtocolGame::parseEditList(const InputMessagePtr& msg)
 
 void ProtocolGame::parsePlayerInfo(const InputMessagePtr& msg)
 {
-    msg->getU8(); // is premium?
-    msg->getU8(); // profession
-    int numSpells = msg->getU16();
-    for(int i=0;i<numSpells;++i) {
-        msg->getU16(); // spell id
+    bool premium = msg->getU8(); // premium
+    int vocation = msg->getU8(); // vocation
+    int spellCount = msg->getU16();
+    for(int i=0;i<spellCount;++i) {
+        int spellId = msg->getU16(); // spell id - TODO: add to local player
     }
+
+    m_localPlayer->setPremium(premium);
+    m_localPlayer->setVocation(vocation);
 }
 
 void ProtocolGame::parsePlayerStats(const InputMessagePtr& msg)
@@ -1221,7 +1225,13 @@ void ProtocolGame::parseChannelEvent(const InputMessagePtr& msg)
 
 void ProtocolGame::parseItemInfo(const InputMessagePtr& msg)
 {
-    //TODO
+    /*int count = msg.getU16() - 1;
+    for(int i = 0; i < count; i++)
+    {
+        int unknown1 = msg->getU8();
+        int unknown2 = msg->getU16();
+        std::string unknown3 = msg->getString();
+    }*/
 }
 
 void ProtocolGame::parsePlayerInventory(const InputMessagePtr& msg)

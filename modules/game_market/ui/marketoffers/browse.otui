@@ -28,7 +28,7 @@ Panel
   margin: 1
 
   MarketComboBox
-    id: filterComboBox
+    id: categoryComboBox
     anchors.top: parent.top
     anchors.left: parent.left
     anchors.right: parent.right
@@ -37,7 +37,7 @@ Panel
     margin-left: 3
 
   MarketComboBox
-    id: weaponComboBox
+    id: subCategoryComboBox
     anchors.top: prev.bottom
     anchors.left: parent.left
     anchors.right: parent.right
@@ -45,8 +45,11 @@ Panel
     margin-right: 3
     margin-left: 3
 
+    $disabled:
+      color: #aaaaaa44
+
   MarketButtonBox
-    id: filterMatchLevel
+    id: filterLevel
     checked: false
     !text: tr('Level')
     !tooltip: tr('Filter list to match your level')
@@ -57,20 +60,20 @@ Panel
     margin-left: 3
     width: 40
     height: 20
-    //@onClick: Market.filterMatchLevel()
+    @onCheckChange: Market.updateCurrentItems()
 
   MarketButtonBox
-    id: filterMatchVocation
+    id: filterVocation
     checked: false
-    !text: tr('Vocation')
+    !text: tr('Voc.')
     !tooltip: tr('Filter list to match your vocation')
     anchors.top: prev.top
     anchors.left: prev.right
     margin-right: 3
     margin-left: 3
-    width: 60
+    width: 34
     height: 20
-    //@onClick: Market.filterMatchVocation()
+    @onCheckChange: Market.updateCurrentItems()
 
   MarketComboBox
     id: typeComboBox
@@ -80,8 +83,11 @@ Panel
     margin-right: 3
     margin-left: 3
 
+    $disabled:
+      color: #aaaaaa44
+
   MarketButtonBox
-    id: showDepotOnly
+    id: filterDepot
     checked: false
     !text: tr('Show Depot Only')
     !tooltip: tr('Show your depot items only')
@@ -91,7 +97,7 @@ Panel
     margin-top: 6
     margin-right: 3
     margin-left: 3
-    //@onClick: Market.setDisplayDepot()
+    @onCheckChange: Market.updateCurrentItems()
 
   Panel
     anchors.top: prev.bottom

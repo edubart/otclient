@@ -33,7 +33,10 @@ LocalPlayer::LocalPlayer()
     m_lastPrewalkDone = true;
     m_autoWalking = false;
     m_known = false;
+    m_premium = false;
+
     m_states = 0;
+    m_vocation = 0;
 
     m_skillsLevel.fill(-1);
     m_skillsLevelPercent.fill(-1);
@@ -325,5 +328,24 @@ void LocalPlayer::setInventoryItem(Otc::InventorySlot inventory, const ItemPtr& 
         m_inventoryItems[inventory] = item;
 
         callLuaField("onInventoryChange", inventory, item, oldItem);
+    }
+}
+
+void LocalPlayer::setVocation(int vocation)
+{
+    if(m_vocation != vocation) {
+        int oldVocation = m_vocation;
+        m_vocation = vocation;
+
+        callLuaField("onVocationChange", vocation, oldVocation);
+    }
+}
+
+void LocalPlayer::setPremium(bool premium)
+{
+    if(m_premium != premium) {
+        m_premium = premium;
+
+        callLuaField("onPremiumChange", premium);
     }
 }

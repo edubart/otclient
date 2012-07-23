@@ -34,7 +34,20 @@ function debugContainersItems()
   function UIItem:onHoverChange(hovered)
     if hovered then
       local item = self:getItem()
-      if item then g_tooltip.display(item:getId()) end
+      if item then
+        local texts = {
+          'id: '..item:getId(),
+          '\nstackable: '..tostring(item:isStackable()),
+          '\nmarketable: '..tostring(item:isMarketable()),
+          '\nvocation: '..(item:getMarketData() and item:getMarketData().restrictVocation or 'none'),
+          '\ncloth slot: '..item:getClothSlot()
+        }
+        local text = ''
+        for _, str in pairs(texts) do
+          text = text..str
+        end
+        g_tooltip.display(text) 
+      end
     else
       g_tooltip.hide()
     end

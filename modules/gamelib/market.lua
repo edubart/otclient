@@ -28,6 +28,15 @@ MarketCategory = {
 MarketCategory.First = MarketCategory.Armors
 MarketCategory.Last = MarketCategory.PremiumScrolls
 
+MarketCategoryWeapons = {
+  [MarketCategory.Ammunition] = { slots = {255} },
+  [MarketCategory.Axes] = { slots = {255, InventorySlotOther, InventorySlotLeft} },
+  [MarketCategory.Clubs] = { slots = {255, InventorySlotOther, InventorySlotLeft} },
+  [MarketCategory.DistanceWeapons] = { slots = {255, InventorySlotOther, InventorySlotLeft} },
+  [MarketCategory.Swords] = { slots = {255, InventorySlotOther, InventorySlotLeft} },
+  [MarketCategory.WandsRods] = { slots = {255, InventorySlotOther, InventorySlotLeft} }
+}
+
 MarketCategoryStrings = {
   [0] = 'All',
   [1] = 'Armors',
@@ -52,7 +61,7 @@ MarketCategoryStrings = {
   [20] = 'Swords',
   [21] = 'Wands and Rods',
   [22] = 'Premium Scrolls',
-  [255] = 'Meta Weapons'
+  [255] = 'Weapons'
 }
 
 MarketAction = {
@@ -90,6 +99,7 @@ MarketItemDescription = {
   WeaponName = 14,
   Weight = 15
 }
+
 MarketItemDescription.First = MarketItemDescription.Armor
 MarketItemDescription.Last = MarketItemDescription.Weight
 
@@ -110,3 +120,18 @@ MarketItemDescriptionStrings = {
   [14] = 'Weapon Type',
   [15] = 'Weight'
 }
+
+MarketSlotFilters = {
+  [InventorySlotOther] = "Two-Handed",
+  [InventorySlotLeft] = "One-Handed",
+  [255] = "Any"
+}
+
+MarketFilters = {
+  Vocation = 1,
+  Level = 2,
+  Depot = 3
+}
+
+MarketFilters.First = MarketFilters.vocation
+MarketFilters.Last = MarketFilters.depot

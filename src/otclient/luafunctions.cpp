@@ -350,7 +350,8 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Item>("getId", &Item::getId);
     g_lua.bindClassMemberFunction<Item>("isStackable", &Item::isStackable);
     g_lua.bindClassMemberFunction<Item>("isMarketable", &Item::isMarketable);
-    g_lua.bindClassMemberFunction<Item>("getMarketData", &Item::isMarketable);
+    g_lua.bindClassMemberFunction<Item>("getMarketData", &Item::getMarketData);
+    g_lua.bindClassMemberFunction<Item>("getClothSlot", &Item::getClothSlot);
 
     g_lua.registerClass<Effect, Thing>();
     g_lua.registerClass<Missile, Thing>();
@@ -393,6 +394,8 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassMemberFunction<LocalPlayer>("getSoul", &LocalPlayer::getSoul);
     g_lua.bindClassMemberFunction<LocalPlayer>("getStamina", &LocalPlayer::getStamina);
     g_lua.bindClassMemberFunction<LocalPlayer>("getInventoryItem", &LocalPlayer::getInventoryItem);
+    g_lua.bindClassMemberFunction<LocalPlayer>("getVocation", &LocalPlayer::getVocation);
+    g_lua.bindClassMemberFunction<LocalPlayer>("isPremium", &LocalPlayer::isPremium);
     g_lua.bindClassMemberFunction<LocalPlayer>("isKnown", &LocalPlayer::isKnown);
     g_lua.bindClassMemberFunction<LocalPlayer>("isPreWalking", &LocalPlayer::isPreWalking);
     g_lua.bindClassMemberFunction<LocalPlayer>("asLocalPlayer", &LocalPlayer::asLocalPlayer);

@@ -1,5 +1,6 @@
 -- @docclass Player
 
+InventorySlotOther = 0
 InventorySlotHead = 1
 InventorySlotNeck = 2
 InventorySlotBack = 3
