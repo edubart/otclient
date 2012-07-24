@@ -478,15 +478,15 @@ function onCreatureSpeak(name, level, speaktype, message, channelId, creaturePos
   end
 end
 
-local function onOpenChannel(channelId, channelName)
+function onOpenChannel(channelId, channelName)
   addChannel(channelName, channelId)
 end
 
-local function onOpenPrivateChannel(receiver)
+function onOpenPrivateChannel(receiver)
   addPrivateChannel(receiver)
 end
 
-local function onOpenOwnPrivateChannel(channelId, channelName)
+function onOpenOwnPrivateChannel(channelId, channelName)
   local privateTab = getTab(channelName)
   if privateTab == nil then
     addChannel(channelName, channelId)
@@ -494,7 +494,7 @@ local function onOpenOwnPrivateChannel(channelId, channelName)
   ownPrivateName = channelName
 end
 
-local function onCloseChannel(channelId)
+function onCloseChannel(channelId)
   local channel = channels[channelId]
   if channel then
     local tab = getTab(channel)
@@ -507,7 +507,7 @@ local function onCloseChannel(channelId)
   end
 end
 
-local function doChannelListSubmit()
+function doChannelListSubmit()
   local channelListPanel = channelsWindow:getChildById('channelList')
   local openPrivateChannelWith = channelsWindow:getChildById('openPrivateChannelWith'):getText()
   if openPrivateChannelWith ~= '' then
@@ -525,7 +525,7 @@ local function doChannelListSubmit()
   channelsWindow:destroy()
 end
 
-local function onChannelList(channelList)
+function onChannelList(channelList)
   if channelsWindow then channelsWindow:destroy() end
   channelsWindow = g_ui.displayUI('channelswindow.otui')
   local channelListPanel = channelsWindow:getChildById('channelList')
@@ -549,7 +549,7 @@ local function onChannelList(channelList)
   end
 end
 
-local function onGameStart()
+function onGameStart()
   -- open last channels
   local player = g_game.getLocalPlayer()
   if(player) then

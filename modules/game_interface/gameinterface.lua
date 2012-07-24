@@ -505,7 +505,7 @@ function getBottomPanel()
   return gameBottomPanel
 end
 
-local function onLeftPanelVisibilityChange(leftPanel, visible)
+function onLeftPanelVisibilityChange(leftPanel, visible)
   if not visible then
     local children = leftPanel:getChildren()
     for i=1,#children do

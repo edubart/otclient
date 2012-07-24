@@ -90,22 +90,22 @@ local function onContainerOpen(container, previousContainer)
   container.itemsPanel = containerPanel
 end
 
-local function onContainerClose(container)
+function onContainerClose(container)
   if container.window then container.window:destroy() end
 end
 
-local function onContainerAddItem(container, slot, item)
+function onContainerAddItem(container, slot, item)
   if not container.window then return end
   refreshContainerItems(container)
 end
 
-local function onContainerUpdateItem(container, slot, item, oldItem)
+function onContainerUpdateItem(container, slot, item, oldItem)
   if not container.window then return end
   local itemWidget = container.itemsPanel:getChildById('item' .. slot)
   itemWidget:setItem(item)
 end
 
-local function onContainerRemoveItem(container, slot, item)
+function onContainerRemoveItem(container, slot, item)
   if not container.window then return end
   refreshContainerItems(container)
 end
