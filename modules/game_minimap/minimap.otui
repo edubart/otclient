@@ -25,7 +25,7 @@ MiniWindow
   !text: tr('Minimap')
   height: 150
   icon: minimap.png
-  @onClose: Minimap.onMiniWindowClose()
+  @onClose: onMiniWindowClose()
   &save: true
 
   Label
@@ -51,7 +51,7 @@ MiniWindow
       margin-right: 28
       margin-bottom: 28
       enabled: true
-      @onClick: Minimap.onButtonClick(self:getId())
+      @onClick: onButtonClick(self:getId())
 
     FloorDownControl
       id: floorDown
@@ -60,7 +60,7 @@ MiniWindow
       margin-right: 28
       margin-bottom: 4
       enabled: true
-      @onClick: Minimap.onButtonClick(self:getId())
+      @onClick: onButtonClick(self:getId())
 
     ZoomInControl
       id: zoomIn
@@ -70,7 +70,7 @@ MiniWindow
       margin-right: 4
       margin-bottom: 28
       enabled: true
-      @onClick: Minimap.onButtonClick(self:getId())
+      @onClick: onButtonClick(self:getId())
 
     ZoomOutControl
       id: zoomOut
@@ -81,7 +81,7 @@ MiniWindow
       margin-right: 4
       margin-bottom: 4
       enabled: true
-      @onClick: Minimap.onButtonClick(self:getId())
+      @onClick: onButtonClick(self:getId())
 
     Button
       id: reset
@@ -90,5 +90,5 @@ MiniWindow
       anchors.left: parent.left
       anchors.top: parent.top
       margin: 4
-      @onClick: Minimap.center()
+      @onClick: center()
 

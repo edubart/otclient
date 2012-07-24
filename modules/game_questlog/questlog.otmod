@@ -3,13 +3,7 @@ Module
   description: View game quests status
   author: edubart
   website: www.otclient.info
-
-  dependencies:
-    - game_interface
-
-  @onLoad: |
-    dofile 'questlog'
-    QuestLog.init()
-
-  @onUnload: |
-    QuestLog.terminate()
+  sandboxed: true
+  scripts: [ questlog.lua ]
+  @onLoad: init()
+  @onUnload: terminate()

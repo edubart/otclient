@@ -1,7 +1,4 @@
-HealthInfo = {}
-
--- constants
-local Icons = {}
+Icons = {}
 Icons[1] = { tooltip = tr('You are poisoned'), path = '/game_healthinfo/icons/poisoned.png', id = 'condition_poisoned' }
 Icons[2] = { tooltip = tr('You are burning'), path = '/game_healthinfo/icons/burning.png', id = 'condition_burning' }
 Icons[4] = { tooltip = tr('You are electrified'), path = '/game_healthinfo/icons/electrified.png', id = 'condition_electrified' }
@@ -20,28 +17,26 @@ Icons[16384] = { tooltip = tr('You are within a protection zone'), path = '/game
 Icons[32768] = { tooltip = tr('You are bleeding'), path = '/game_healthinfo/icons/bleeding.png', id = 'condition_bleeding' }
 Icons[65536] = { tooltip = tr('You are hungry'), path = '/game_healthinfo/icons/hungry.png', id = 'condition_hungry' }
 
--- private variables
-local healthInfoWindow
-local healthBar
-local manaBar
-local soulBar
-local healthLabel
-local manaLabel
-local soulLabel
-local capLabel
+healthInfoWindow = nil
+healthBar = nil
+manaBar = nil
+soulBar = nil
+healthLabel = nil
+manaLabel = nil
+soulLabel = nil
+capLabel = nil
 
--- public functions
-function HealthInfo.init()
-  connect(LocalPlayer, { onHealthChange = HealthInfo.onHealthChange,
-                         onManaChange = HealthInfo.onManaChange,
-                         onStatesChange = HealthInfo.onStatesChange,
-                         onSoulChange = HealthInfo.onSoulChange,
-                         onFreeCapacityChange = HealthInfo.onFreeCapacityChange })
+function init()
+  connect(LocalPlayer, { onHealthChange = onHealthChange,
+                         onManaChange = onManaChange,
+                         onStatesChange = onStatesChange,
+                         onSoulChange = onSoulChange,
+                         onFreeCapacityChange = onFreeCapacityChange })
 
-  connect(g_game, { onGameEnd = HealthInfo.offline })
+  connect(g_game, { onGameEnd = offline })
 
-  healthInfoWindow = g_ui.loadUI('healthinfo.otui', GameInterface.getRightPanel())
-  healthInfoButton = TopMenu.addRightGameToggleButton('healthInfoButton', tr('Health Information'), 'healthinfo.png', HealthInfo.toggle)
+  healthInfoWindow = g_ui.loadUI('healthinfo.otui', modules.game_interface.getRightPanel())
+  healthInfoButton = TopMenu.addRightGameToggleButton('healthInfoButton', tr('Health Information'), 'healthinfo.png', toggle)
   healthInfoWindow:disableResize()
   healthInfoButton:setOn(true)
   healthBar = healthInfoWindow:recursiveGetChildById('healthBar')
@@ -54,22 +49,22 @@ function HealthInfo.init()
 
   if g_game.isOnline() then
     local localPlayer = g_game.getLocalPlayer()
-    HealthInfo.onHealthChange(localPlayer, localPlayer:getHealth(), localPlayer:getMaxHealth())
-    HealthInfo.onManaChange(localPlayer, localPlayer:getMana(), localPlayer:getMaxMana())
-    HealthInfo.onStatesChange(localPlayer, localPlayer:getStates(), 0)
-    HealthInfo.onSoulChange(localPlayer, localPlayer:getSoul())
-    HealthInfo.onFreeCapacityChange(localPlayer, localPlayer:getFreeCapacity())
+    onHealthChange(localPlayer, localPlayer:getHealth(), localPlayer:getMaxHealth())
+    onManaChange(localPlayer, localPlayer:getMana(), localPlayer:getMaxMana())
+    onStatesChange(localPlayer, localPlayer:getStates(), 0)
+    onSoulChange(localPlayer, localPlayer:getSoul())
+    onFreeCapacityChange(localPlayer, localPlayer:getFreeCapacity())
   end
 end
 
-function HealthInfo.terminate()
-  disconnect(LocalPlayer, { onHealthChange = HealthInfo.onHealthChange,
-                            onManaChange = HealthInfo.onManaChange,
-                            onStatesChange = HealthInfo.onStatesChange,
-                            onSoulChange = HealthInfo.onSoulChange,
-                            onFreeCapacityChange = HealthInfo.onFreeCapacityChange })
+function terminate()
+  disconnect(LocalPlayer, { onHealthChange = onHealthChange,
+                            onManaChange = onManaChange,
+                            onStatesChange = onStatesChange,
+                            onSoulChange = onSoulChange,
+                            onFreeCapacityChange = onFreeCapacityChange })
 
-  disconnect(g_game, { onGameEnd = HealthInfo.offline })
+  disconnect(g_game, { onGameEnd = offline })
 
   healthInfoWindow:destroy()
   healthInfoButton:destroy()
@@ -88,7 +83,7 @@ function HealthInfo.terminate()
   HealthInfo = nil
 end
 
-function HealthInfo.toggle()
+function toggle()
   if healthInfoButton:isOn() then
     healthInfoWindow:close()
     healthInfoButton:setOn(false)
@@ -98,21 +93,21 @@ function HealthInfo.toggle()
   end
 end
 
-function HealthInfo.onMiniWindowClose()
+function onMiniWindowClose()
   healthInfoButton:setOn(false)
 end
 
-function HealthInfo.offline()
+function offline()
   healthInfoWindow:recursiveGetChildById('conditionPanel'):destroyChildren()
 end
 
 -- hooked events
-function HealthInfo.onHealthChange(localPlayer, health, maxHealth)
+function onHealthChange(localPlayer, health, maxHealth)
   healthLabel:setText(health .. ' / ' .. maxHealth)
   healthBar:setPercent(health / maxHealth * 100)
 end
 
-function HealthInfo.onManaChange(localPlayer, mana, maxMana)
+function onManaChange(localPlayer, mana, maxMana)
   manaLabel:setText(mana .. ' / ' .. maxMana)
 
   local percent
@@ -124,16 +119,16 @@ function HealthInfo.onManaChange(localPlayer, mana, maxMana)
   manaBar:setPercent(percent)
 end
 
-function HealthInfo.onSoulChange(localPlayer, soul)
+function onSoulChange(localPlayer, soul)
   soulLabel:setText(tr('Soul') .. ': ' .. soul)
 end
 
-function HealthInfo.onFreeCapacityChange(player, freeCapacity)
+function onFreeCapacityChange(player, freeCapacity)
   capLabel:setText(tr('Cap') .. ': ' .. freeCapacity)
 end
 
 
-function HealthInfo.onStatesChange(localPlayer, now, old)
+function onStatesChange(localPlayer, now, old)
   if now == old then return end
 
   local bitsChanged = bit32.bxor(now, old)
@@ -142,12 +137,12 @@ function HealthInfo.onStatesChange(localPlayer, now, old)
     if pow > bitsChanged then break end
     local bitChanged = bit32.band(bitsChanged, pow)
     if bitChanged ~= 0 then
-      HealthInfo.toggleIcon(bitChanged)
+      toggleIcon(bitChanged)
     end
   end
 end
 
-function HealthInfo.toggleIcon(bitChanged)
+function toggleIcon(bitChanged)
   local content = healthInfoWindow:recursiveGetChildById('conditionPanel')
 
   local icon = content:getChildById(Icons[bitChanged].id)

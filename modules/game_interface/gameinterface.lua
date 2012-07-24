@@ -1,41 +1,30 @@
-GameInterface = {}
+WALK_AUTO_REPEAT_DELAY = 90
 
-local WALK_AUTO_REPEAT_DELAY = 90
-local gameRootPanel
-local gameMapPanel
-local gameRightPanel
-local gameLeftPanel
-local gameBottomPanel
-local logoutButton
-local mouseGrabberWidget
+gameRootPanel = nil
+gameMapPanel = nil
+gameRightPanel = nil
+gameLeftPanel = nil
+gameBottomPanel = nil
+logoutButton = nil
+mouseGrabberWidget = nil
+countWindow = nil
+logoutWindow = nil
+exitWindow = nil
 
-local countWindow
-local logoutWindow
-local exitWindow
-
-local function onLeftPanelVisibilityChange(leftPanel, visible)
-  if not visible then
-    local children = leftPanel:getChildren()
-    for i=1,#children do
-      children[i]:setParent(gameRightPanel)
-    end
-  end
-end
-
-function GameInterface.init()
+function init()
   g_ui.importStyle('styles/countwindow.otui')
   g_ui.importStyle('styles/logoutwindow.otui')
   g_ui.importStyle('styles/exitwindow.otui')
 
-  connect(g_game, { onGameStart = GameInterface.show,
-                    onGameEnd = GameInterface.hide }, true)
+  connect(g_game, { onGameStart = show,
+                    onGameEnd = hide }, true)
 
   gameRootPanel = g_ui.displayUI('gameinterface.otui')
   gameRootPanel:hide()
   gameRootPanel:lower()
 
   mouseGrabberWidget = gameRootPanel:getChildById('mouseGrabber')
-  mouseGrabberWidget.onMouseRelease = GameInterface.onMouseGrabberRelease
+  mouseGrabberWidget.onMouseRelease = onMouseGrabberRelease
 
   gameMapPanel = gameRootPanel:getChildById('gameMapPanel')
   gameRightPanel = gameRootPanel:getChildById('gameRightPanel')
@@ -43,7 +32,7 @@ function GameInterface.init()
   gameBottomPanel = gameRootPanel:getChildById('gameBottomPanel')
   connect(gameLeftPanel, { onVisibilityChange = onLeftPanelVisibilityChange })
 
-  logoutButton = TopMenu.addRightButton('logoutButton', 'Logout', '/images/logout.png', GameInterface.tryLogout)
+  logoutButton = TopMenu.addRightButton('logoutButton', 'Logout', '/images/logout.png', tryLogout)
   logoutButton:hide()
 
   g_keyboard.bindKeyPress('Up', function() g_game.walk(North) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
@@ -69,9 +58,9 @@ function GameInterface.init()
   g_keyboard.bindKeyPress('Escape', function() g_game.cancelAttackAndFollow() end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
   g_keyboard.bindKeyPress('Ctrl+=', function() gameMapPanel:zoomIn() end, gameRootPanel, 250)
   g_keyboard.bindKeyPress('Ctrl+-', function() gameMapPanel:zoomOut() end, gameRootPanel, 250)
-  g_keyboard.bindKeyDown('Ctrl+Q', GameInterface.logout, gameRootPanel)
-  g_keyboard.bindKeyDown('Ctrl+L', GameInterface.logout, gameRootPanel)
-  g_keyboard.bindKeyDown('Ctrl+W', function() g_map.cleanTexts() TextMessage.clearMessages() end, gameRootPanel)
+  g_keyboard.bindKeyDown('Ctrl+Q', logout, gameRootPanel)
+  g_keyboard.bindKeyDown('Ctrl+L', logout, gameRootPanel)
+  g_keyboard.bindKeyDown('Ctrl+W', function() g_map.cleanTexts() modules.game_textmessage.clearMessages() end, gameRootPanel)
 
   g_keyboard.bindKeyDown('Ctrl+.', function()
     if gameMapPanel:isKeepAspectRatioEnabled() then
@@ -80,35 +69,24 @@ function GameInterface.init()
       gameMapPanel:setKeepAspectRatio(true)
       gameMapPanel:setVisibleDimension({ width = 15, height = 11 })
     end
-  end)
+  end, gameRootPanel)
 
   if g_game.isOnline() then
-    GameInterface.show()
+    show()
   end
 end
 
-function GameInterface.terminate()
-  disconnect(g_game, { onGameStart = GameInterface.show,
-                       onGameEnd = GameInterface.hide })
+function terminate()
+  disconnect(g_game, { onGameStart = show,
+                       onGameEnd = hide })
   disconnect(gameLeftPanel, { onVisibilityChange = onLeftPanelVisibilityChange })
 
   logoutButton:destroy()
-  logoutButton = nil
   gameRootPanel:destroy()
-  gameRootPanel = nil
-  gameMapPanel = nil
-  gameRightPanel = nil
-  gameLeftPanel = nil
-  gameBottomPanel = nil
-  mouseGrabberWidget = nil
-  countWindow = nil
-  logoutWindow = nil
-  exitWindow = nil
-  GameInterface = nil
 end
 
-function GameInterface.show()
-  connect(g_app, { onClose = GameInterface.tryExit })
+function show()
+  connect(g_app, { onClose = tryExit })
   logoutButton:show()
   Background.hide()
   gameRootPanel:show()
@@ -116,8 +94,8 @@ function GameInterface.show()
   gameMapPanel:followCreature(g_game.getLocalPlayer())
 end
 
-function GameInterface.hide()
-  disconnect(g_app, { onClose = GameInterface.tryExit })
+function hide()
+  disconnect(g_app, { onClose = tryExit })
   if logoutWindow then
     logoutWindow:destroy()
     logoutWindow = nil
@@ -135,7 +113,7 @@ function GameInterface.hide()
   Background.show()
 end
 
-function GameInterface.exit()
+function exit()
   if g_game.isOnline() then
     g_game.forceLogout()
     scheduleEvent(exit, 10)
@@ -143,7 +121,7 @@ function GameInterface.exit()
   end
 end
 
-function GameInterface.tryExit()
+function tryExit()
   if exitWindow then
     return true
   end
@@ -153,10 +131,10 @@ function GameInterface.tryExit()
   local cancelButton = exitWindow:getChildById('buttonCancel')
 
   local exitFunc = function()
-    GameInterface.exit()
+    exit()
   end
   local logoutFunc = function()
-    GameInterface.logout()
+    logout()
     logButton:getParent():destroy()
     exitWindow = nil
   end
@@ -174,14 +152,14 @@ function GameInterface.tryExit()
   return true -- signal closing
 end
 
-function GameInterface.logout()
+function logout()
   if g_game.isOnline() then
     g_game.safeLogout()
     return true
   end
 end
 
-function GameInterface.tryLogout()
+function tryLogout()
   if logoutWindow then
     return
   end
@@ -190,7 +168,7 @@ function GameInterface.tryLogout()
   local noButton = logoutWindow:getChildById('buttonNo')
 
   local logoutFunc = function()
-    GameInterface.logout()
+    logout()
     yesButton:getParent():destroy()
     logoutWindow = nil
   end
@@ -206,60 +184,60 @@ function GameInterface.tryLogout()
   noButton.onClick = cancelFunc
 end
 
-function GameInterface.onMouseGrabberRelease(self, mousePosition, mouseButton)
-  if GameInterface.selectedThing == nil then return false end
+function onMouseGrabberRelease(self, mousePosition, mouseButton)
+  if selectedThing == nil then return false end
   if mouseButton == MouseLeftButton then
     local clickedWidget = gameRootPanel:recursiveGetChildByPos(mousePosition, false)
     if clickedWidget then
-      if GameInterface.selectedType == 'use' then
-        GameInterface.onUseWith(clickedWidget, mousePosition)
-      elseif GameInterface.selectedType == 'trade' then
-        GameInterface.onTradeWith(clickedWidget, mousePosition)
+      if selectedType == 'use' then
+        onUseWith(clickedWidget, mousePosition)
+      elseif selectedType == 'trade' then
+        onTradeWith(clickedWidget, mousePosition)
       end
     end
   end
 
-  GameInterface.selectedThing = nil
+  selectedThing = nil
   g_mouse.restoreCursor()
   self:ungrabMouse()
   return true
 end
 
-function GameInterface.onUseWith(clickedWidget, mousePosition)
+function onUseWith(clickedWidget, mousePosition)
   if clickedWidget:getClassName() == 'UIMap' then
     local tile = clickedWidget:getTile(mousePosition)
     if tile then
-      g_game.useWith(GameInterface.selectedThing, tile:getTopMultiUseThing())
+      g_game.useWith(selectedThing, tile:getTopMultiUseThing())
     elseif clickedWidget:getClassName() == 'UIItem' and not clickedWidget:isVirtual() then
-      g_game.useWith(GameInterface.selectedThing, clickedWidget:getItem())
+      g_game.useWith(selectedThing, clickedWidget:getItem())
     end
   end
 end
 
-function GameInterface.onTradeWith(clickedWidget, mousePosition)
+function onTradeWith(clickedWidget, mousePosition)
   if clickedWidget:getClassName() == 'UIMap' then
     local tile = clickedWidget:getTile(mousePosition)
     if tile then
-      g_game.requestTrade(GameInterface.selectedThing, tile:getTopCreature())
+      g_game.requestTrade(selectedThing, tile:getTopCreature())
     end
   end
 end
 
-function GameInterface.startUseWith(thing)
-  GameInterface.selectedType = 'use'
-  GameInterface.selectedThing = thing
+function startUseWith(thing)
+  selectedType = 'use'
+  selectedThing = thing
   mouseGrabberWidget:grabMouse()
   g_mouse.setTargetCursor()
 end
 
-function GameInterface.startTradeWith(thing)
-  GameInterface.selectedType = 'trade'
-  GameInterface.selectedThing = thing
+function startTradeWith(thing)
+  selectedType = 'trade'
+  selectedThing = thing
   mouseGrabberWidget:grabMouse()
   g_mouse.setTargetCursor()
 end
 
-function GameInterface.createThingMenu(menuPosition, lookThing, useThing, creatureThing)
+function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
   local menu = g_ui.createWidget('PopupMenu')
 
   if lookThing then
@@ -276,7 +254,7 @@ function GameInterface.createThingMenu(menuPosition, lookThing, useThing, creatu
       end
     else
       if useThing:isMultiUse() then
-        menu:addOption(tr('Use with ...'), function() GameInterface.startUseWith(useThing) end)
+        menu:addOption(tr('Use with ...'), function() startUseWith(useThing) end)
       else
         menu:addOption(tr('Use'), function() g_game.use(useThing) end)
       end
@@ -290,7 +268,7 @@ function GameInterface.createThingMenu(menuPosition, lookThing, useThing, creatu
 
   if lookThing and not lookThing:asCreature() and not lookThing:isNotMoveable() and lookThing:isPickupable() then
     menu:addSeparator()
-    menu:addOption(tr('Trade with ...'), function() GameInterface.startTradeWith(lookThing) end)
+    menu:addOption(tr('Trade with ...'), function() startTradeWith(lookThing) end)
   end
 
   if lookThing then
@@ -336,7 +314,7 @@ function GameInterface.createThingMenu(menuPosition, lookThing, useThing, creatu
           menu:addSeparator()
           local creatureName = creatureThing:getName()
           menu:addOption(tr('Message to %s', creatureName), function() g_game.openPrivateChannel(creatureName) end)
-          if Console.getOwnPrivateTab() then
+          if modules.game_console.getOwnPrivateTab() then
             menu:addOption(tr('Invite to private chat'), function() g_game.inviteToOwnChannel(creatureName) end)
             menu:addOption(tr('Exclude from private chat'), function() g_game.excludeFromOwnChannel(creatureName) end) -- [TODO] must be removed after message's popup labels been implemented
           end
@@ -383,12 +361,12 @@ function GameInterface.createThingMenu(menuPosition, lookThing, useThing, creatu
   menu:display(menuPosition)
 end
 
-function GameInterface.processMouseAction(menuPosition, mouseButton, autoWalkPos, lookThing, useThing, creatureThing, multiUseThing)
+function processMouseAction(menuPosition, mouseButton, autoWalkPos, lookThing, useThing, creatureThing, multiUseThing)
   local keyboardModifiers = g_keyboard.getModifiers()
 
   if not Options.getOption('classicControl') then
     if keyboardModifiers == KeyboardNoModifier and mouseButton == MouseRightButton then
-      GameInterface.createThingMenu(menuPosition, lookThing, useThing, creatureThing)
+      createThingMenu(menuPosition, lookThing, useThing, creatureThing)
       return true
     elseif lookThing and keyboardModifiers == KeyboardShiftModifier and (mouseButton == MouseLeftButton or mouseButton == MouseRightButton) then
       g_game.look(lookThing)
@@ -403,7 +381,7 @@ function GameInterface.processMouseAction(menuPosition, mouseButton, autoWalkPos
         return true
         end
       elseif useThing:isMultiUse() then
-        GameInterface.startUseWith(useThing)
+        startUseWith(useThing)
         return true
       else
         g_game.use(useThing)
@@ -429,7 +407,7 @@ function GameInterface.processMouseAction(menuPosition, mouseButton, autoWalkPos
           return true
         end
       elseif multiUseThing:isMultiUse() then
-        GameInterface.startUseWith(useThing)
+        startUseWith(useThing)
         return true
       else
         g_game.use(multiUseThing)
@@ -442,7 +420,7 @@ function GameInterface.processMouseAction(menuPosition, mouseButton, autoWalkPos
        g_game.look(lookThing)
       return true
     elseif useThing and keyboardModifiers == KeyboardCtrlModifier and (mouseButton == MouseLeftButton or mouseButton == MouseRightButton) then
-      GameInterface.createThingMenu(menuPosition, lookThing, useThing, creatureThing)
+      createThingMenu(menuPosition, lookThing, useThing, creatureThing)
       return true
     elseif creatureThing and keyboardModifiers == KeyboardAltModifier and (mouseButton == MouseLeftButton or mouseButton == MouseRightButton) then
       g_game.attack(creatureThing)
@@ -453,7 +431,7 @@ function GameInterface.processMouseAction(menuPosition, mouseButton, autoWalkPos
   if autoWalkPos and keyboardModifiers == KeyboardNoModifier and mouseButton == MouseLeftButton then
     local dirs = g_map.findPath(g_game.getLocalPlayer():getPosition(), autoWalkPos, 127)
     if #dirs == 0 then
-      TextMessage.displayStatus(tr('There is no way.'))
+      modules.game_textmessage.displayStatus(tr('There is no way.'))
       return true
     end
     g_game.autoWalk(dirs)
@@ -463,7 +441,7 @@ function GameInterface.processMouseAction(menuPosition, mouseButton, autoWalkPos
   return false
 end
 
-function GameInterface.moveStackableItem(item, toPos)
+function moveStackableItem(item, toPos)
   if(countWindow) then
     return
   end
@@ -507,22 +485,32 @@ function GameInterface.moveStackableItem(item, toPos)
   cancelButton.onClick = cancelFunc
 end
 
-function GameInterface.getRootPanel()
+function getRootPanel()
   return gameRootPanel
 end
 
-function GameInterface.getMapPanel()
+function getMapPanel()
   return gameMapPanel
 end
 
-function GameInterface.getRightPanel()
+function getRightPanel()
   return gameRightPanel
 end
 
-function GameInterface.getLeftPanel()
+function getLeftPanel()
   return gameLeftPanel
 end
 
-function GameInterface.getBottomPanel()
+function getBottomPanel()
   return gameBottomPanel
 end
+
+local function onLeftPanelVisibilityChange(leftPanel, visible)
+  if not visible then
+    local children = leftPanel:getChildren()
+    for i=1,#children do
+      children[i]:setParent(gameRightPanel)
+    end
+  end
+end
+

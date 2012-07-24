@@ -3,13 +3,7 @@ Module
   description: Allow to trade items with players
   author: edubart
   website: www.otclient.info
-
-  dependencies:
-    - game_interface
-
-  @onLoad: |
-    dofile 'playertrade'
-    PlayerTrade.init()
-
-  @onUnload: |
-    PlayerTrade.terminate()
+  sandboxed: true
+  scripts: [ playertrade.lua ]
+  @onLoad: init()
+  @onUnload: terminate()

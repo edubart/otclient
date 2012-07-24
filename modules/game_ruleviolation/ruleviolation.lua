@@ -1,7 +1,4 @@
-RuleViolation = {}
-
--- private variables
-local rvreasons = {}
+rvreasons = {}
 rvreasons[1] = tr("1a) Offensive Name")
 rvreasons[2] = tr("1b) Invalid Name Format")
 rvreasons[3] = tr("1c) Unsuitable Name")
@@ -24,7 +21,7 @@ rvreasons[19] = tr("4c) False Report to Gamemaster")
 rvreasons[20] = tr("Destructive Behaviour")
 rvreasons[21] = tr("Excessive Unjustified Player Killing")
 
-local rvactions = {}
+rvactions = {}
 rvactions[0] = tr("Notation")
 rvactions[1] = tr("Name Report")
 rvactions[2] = tr("Banishment")
@@ -33,16 +30,38 @@ rvactions[4] = tr("Banishment + Final Warning")
 rvactions[5] = tr("Name Report + Banishment + Final Warning")
 rvactions[6] = tr("Statement Report")
 
-local ruleViolationWindow
-local reasonsTextList
-local actionsTextList
+ruleViolationWindow = nil
+reasonsTextList = nil
+actionsTextList = nil
 
--- public functions
-function RuleViolation.hasWindowAccess()
+function init()
+  connect(g_game, { onGMActions = loadReasons })
+
+  ruleViolationWindow = g_ui.displayUI('ruleviolation.otui')
+  ruleViolationWindow:setVisible(false)
+
+  reasonsTextList = ruleViolationWindow:getChildById('reasonList')
+  actionsTextList = ruleViolationWindow:getChildById('actionList')
+
+  g_keyboard.bindKeyDown('Ctrl+Y', show)
+
+  if g_game.isOnline() then
+    loadReasons()
+  end
+end
+
+function terminate()
+  disconnect(g_game, { onGMActions = loadReasons })
+  g_keyboard.unbindKeyDown('Ctrl+Y')
+
+  ruleViolationWindow:destroy()
+end
+
+function hasWindowAccess()
   return reasonsTextList:getChildCount() > 0
 end
 
-function RuleViolation.loadReasons()
+function loadReasons()
   reasonsTextList:destroyChildren()
 
   local actions = g_game.getGMActions()
@@ -53,37 +72,11 @@ function RuleViolation.loadReasons()
     label.actionFlags = actionFlags
   end
 
-  if not RuleViolation.hasWindowAccess() and ruleViolationWindow:isVisible() then RuleViolation.hide() end
+  if not hasWindowAccess() and ruleViolationWindow:isVisible() then hide() end
 end
 
-function RuleViolation.init()
-  connect(g_game, { onGMActions = RuleViolation.loadReasons })
-
-  ruleViolationWindow = g_ui.displayUI('ruleviolation.otui')
-  ruleViolationWindow:setVisible(false)
-
-  reasonsTextList = ruleViolationWindow:getChildById('reasonList')
-  actionsTextList = ruleViolationWindow:getChildById('actionList')
-
-  g_keyboard.bindKeyDown('Ctrl+Y', RuleViolation.show)
-
-  if g_game.isOnline() then
-    RuleViolation.loadReasons()
-  end
-end
-
-function RuleViolation.terminate()
-  disconnect(g_game, { onGMActions = RuleViolation.loadReasons })
-
-  ruleViolationWindow:destroy()
-  ruleViolationWindow = nil
-
-  reasonsTextList = nil
-  actionsTextList = nil
-end
-
-function RuleViolation.show(target, statement)
-  if g_game.isOnline() and RuleViolation.hasWindowAccess() then
+function show(target, statement)
+  if g_game.isOnline() and hasWindowAccess() then
     if target then
       ruleViolationWindow:getChildById('nameText'):setText(target)
     end
@@ -97,12 +90,12 @@ function RuleViolation.show(target, statement)
   end
 end
 
-function RuleViolation.hide()
+function hide()
   ruleViolationWindow:hide()
-  RuleViolation.clearForm()
+  clearForm()
 end
 
-function RuleViolation.onSelectReason(reasonLabel, focused)
+function onSelectReason(reasonLabel, focused)
   if reasonLabel.actionFlags and focused then
     actionsTextList:destroyChildren()
     for actionBaseFlag = 0, #rvactions do
@@ -116,7 +109,7 @@ function RuleViolation.onSelectReason(reasonLabel, focused)
   end
 end
 
-function RuleViolation.report()
+function report()
   local target = ruleViolationWindow:getChildById('nameText'):getText()
   local reason = reasonsTextList:getFocusedChild().reasonId
   local action = actionsTextList:getFocusedChild().actionId
@@ -130,11 +123,11 @@ function RuleViolation.report()
     displayErrorBox(tr("Error"), tr("You must enter a comment."))
   else
     g_game.reportRuleVilation(target, reason, action, comment, statement, statementId, ipBanishment)
-    RuleViolation.hide()
+    hide()
   end
 end
 
-function RuleViolation.clearForm()
+function clearForm()
   ruleViolationWindow:getChildById('nameText'):clearText()
   ruleViolationWindow:getChildById('commentText'):clearText()
   ruleViolationWindow:getChildById('statementText'):clearText()

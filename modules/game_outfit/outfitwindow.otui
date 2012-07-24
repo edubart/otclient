@@ -31,8 +31,8 @@ Window
   anchors.horizontalCenter: parent.horizontalCenter
   anchors.verticalCenter: parent.verticalCenter
 
-  @onEnter: Outfit.accept()
-  @onEscape: Outfit.destroy()
+  @onEnter: accept()
+  @onEscape: destroy()
 
   // Creature Boxes
 
@@ -59,7 +59,7 @@ Window
     anchors.verticalCenter: outfitCreatureBox.verticalCenter
     margin-left: 3
     enabled: true
-    @onClick: Outfit.nextOutfitType()
+    @onClick: nextOutfitType()
 
   PrevOutfitButton
     id: outfitPrevButton
@@ -67,7 +67,7 @@ Window
     anchors.verticalCenter: outfitCreatureBox.verticalCenter
     margin-right: 3
     enabled: true
-    @onClick: Outfit.previousOutfitType()
+    @onClick: previousOutfitType()
 
   Creature
     id: mountCreatureBox
@@ -92,7 +92,7 @@ Window
     anchors.verticalCenter: mountCreatureBox.verticalCenter
     margin-left: 3
     enabled: true
-    @onClick: Outfit.nextMountType()
+    @onClick: nextMountType()
 
   PrevMountButton
     id: mountPrevButton
@@ -100,7 +100,7 @@ Window
     anchors.verticalCenter: mountCreatureBox.verticalCenter
     margin-right: 3
     enabled: true
-    @onClick: Outfit.previousMountType()
+    @onClick: previousMountType()
 
   // Addon Check Boxes
 
@@ -189,7 +189,7 @@ Window
     anchors.left: prev.left
     anchors.top: prev.bottom
     margin-right: 16
-    @onClick: Outfit.randomize()
+    @onClick: randomize()
 
   HorizontalSeparator
     anchors.left: parent.left
@@ -208,7 +208,7 @@ Window
     anchors.bottom: parent.bottom
     margin-bottom: 16
     margin-right: 16
-    @onClick: Outfit.accept()
+    @onClick: accept()
 
   Button
     id: outfitCancelButton
@@ -218,4 +218,4 @@ Window
     anchors.bottom: parent.bottom
     margin-bottom: 16
     margin-right: 16
-    @onClick: Outfit.destroy()
+    @onClick: destroy()

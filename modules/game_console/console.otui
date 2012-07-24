@@ -71,7 +71,7 @@ Panel
     enabled: false
     margin-right: 5
     margin-top: 6
-    @onClick: Console.removeCurrentTab()
+    @onClick: removeCurrentTab()
 
   TabButton
     id: clearChannelButton
@@ -118,7 +118,7 @@ Panel
     anchors.bottom: parent.bottom
     margin-left: 6
     margin-bottom: 6
-    @onClick: Console.sayModeChange()
+    @onClick: sayModeChange()
 
   TextEdit
     id: consoleTextEdit

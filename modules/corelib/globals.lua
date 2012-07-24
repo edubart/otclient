@@ -2,6 +2,7 @@
 
 -- root widget
 rootWidget = g_ui.getRootWidget()
+modules = package.loaded
 
 -- G is used as a global table to save variables in memory between reloads
 G = G or {}

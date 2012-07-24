@@ -1,6 +1,4 @@
-TibiaFiles = {}
-
-function TibiaFiles.init()
+function init()
   if not g_things.loadDat('/game_tibiafiles/Tibia.dat') then
     fatal(tr("Unable to load dat file, please place a valid Tibia dat in modules/game_tibiafiles/Tibia.dat"))
   end
@@ -9,5 +7,5 @@ function TibiaFiles.init()
   end
 end
 
-function TibiaFiles.terminate()
+function terminate()
 end

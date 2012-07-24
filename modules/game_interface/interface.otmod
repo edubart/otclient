@@ -3,7 +3,8 @@ Module
   description: Create the game interface, where the ingame stuff starts
   author: OTClient team
   website: www.otclient.info
-
+  sandboxed: true
+  scripts: [ widgets/uigamemap.lua, widgets/uiitem.lua, gameinterface.lua ]
   load-later:
     - game_hotkeys
     - game_questlog
@@ -27,14 +28,5 @@ Module
     - game_playerdeath
     - game_playermount
     - game_market
-
-  @onLoad: |
-    dofile 'widgets/uigamemap'
-    dofile 'widgets/uiitem'
-
-    dofile 'gameinterface'
-
-    GameInterface.init()
-
-  @onUnload: |
-    GameInterface.terminate()
+  @onLoad: init()
+  @onUnload: terminate()

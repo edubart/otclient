@@ -3,13 +3,7 @@ Module
   description: Manage minimap
   author: edubart, BeniS
   website: www.otclient.info
-
-  dependencies:
-    - game_interface
-
-  @onLoad: |
-    dofile 'minimap'
-    Minimap.init()
-
-  @onUnload: |
-    Minimap.terminate()
+  sandboxed: true
+  scripts: [minimap.lua]
+  @onLoad: init()
+  @onUnload: terminate()

@@ -26,7 +26,7 @@ function init()
   registerProtocol()
 
   g_ui.importStyle('textmessage.otui')
-  centerTextMessagePanel = g_ui.createWidget('Panel', GameInterface.getMapPanel())
+  centerTextMessagePanel = g_ui.createWidget('Panel', modules.game_interface.getMapPanel())
   centerTextMessagePanel:setId('centerTextMessagePanel')
 
   local layout = UIVerticalLayout.create(centerTextMessagePanel)
@@ -38,15 +38,8 @@ function init()
   warningLabel = createTextMessageLabel('warningLabel', centerTextMessagePanel, 'CenterLabel')
   advanceLabel = createTextMessageLabel('advanceLabel', centerTextMessagePanel, 'CenterLabel')
   infoLabel = createTextMessageLabel('infoLabel', centerTextMessagePanel, 'CenterLabel')
-  privateLabel = createTextMessageLabel('privateLabel', GameInterface.getMapPanel(), 'TopCenterLabel')
-  statusLabel = createTextMessageLabel('statusLabel', GameInterface.getMapPanel(), 'BottomLabel')
-
-  export({
-    clearMessages = clearMessages,
-    displayStatus = function(msg, time) displayMessage('StatusSmall', msg) end,
-    displayEventAdvance = function(msg, time) displayMessage('EventAdvance', msg, time) end,
-    displayPrivate = function(msg, time) displayMessage('Private', time) end
-  }, 'TextMessage')
+  privateLabel = createTextMessageLabel('privateLabel', modules.game_interface.getMapPanel(), 'TopCenterLabel')
+  statusLabel = createTextMessageLabel('statusLabel', modules.game_interface.getMapPanel(), 'BottomLabel')
 end
 
 function terminate()
@@ -65,8 +58,6 @@ function terminate()
   centerTextMessagePanel:destroy()
   statusLabel:destroy()
   privateLabel:destroy()
-
-  unexport('TextMessage')
 end
 
 function clearMessages()
@@ -90,12 +81,12 @@ function displayMessage(msgtype, msg, time)
 
   if msgtype.consoleTab ~= nil then
     if msgtype.consoleOption == nil or Options.getOption(msgtype.consoleOption) then
-      Console.addText(msg, msgtype, msgtype.consoleTab)
+      modules.game_console.addText(msg, msgtype, msgtype.consoleTab)
     end
   end
 
   if msgtype.labelId then
-    local label = GameInterface.getMapPanel():recursiveGetChildById(msgtype.labelId)
+    local label = modules.game_interface.getMapPanel():recursiveGetChildById(msgtype.labelId)
 
     label:setText(msg)
     label:setColor(msgtype.color)
@@ -109,4 +100,16 @@ function displayMessage(msgtype, msg, time)
     addEvent(function() label:setVisible(true) end)
     label.hideEvent = scheduleEvent(function() label:setVisible(false) end, time)
   end
+end
+
+function displayStatus(msg, time)
+  displayMessage('StatusSmall', msg)
+end
+
+function displayEventAdvance(msg, time)
+  displayMessage('EventAdvance', msg, time)
+end
+
+function displayPrivate(msg, time)
+  displayMessage('Private', time)
 end

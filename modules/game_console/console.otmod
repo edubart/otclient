@@ -3,13 +3,7 @@ Module
   description: Manage chat window
   author: edubart, andrefaramir, baxnie, sn4ake, BeniS
   website: www.otclient.info
-
-  dependencies:
-    - game_interface
-
-  @onLoad: |
-    dofile 'console'
-    Console.init()
-
-  @onUnload: |
-    Console.terminate()
+  sandboxed: true
+  scripts: [ console.lua ]
+  @onLoad: init()
+  @onUnload: terminate()

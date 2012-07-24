@@ -3,13 +3,7 @@ Module
   description: NPC trade interface
   author: andrefaramir, baxnie
   website: www.otclient.info
-
-  dependencies:
-    - game_interface
-
-  @onLoad: |
-    dofile 'npctrade'
-    NPCTrade.init()
-
-  @onUnload: |
-    NPCTrade.terminate()
+  sandboxed: true
+  scripts: [ npctrade.lua ]
+  @onLoad: init()
+  @onUnload: terminate()

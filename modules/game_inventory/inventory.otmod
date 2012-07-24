@@ -3,14 +3,7 @@ Module
   description: View local player equipments window
   author: baxnie, edubart, BeniS
   website: www.otclient.info
-
-  dependencies:
-    - game_interface
-
-  @onLoad: |
-    dofile 'inventory'
-    Inventory.init()
-
-  @onUnload: |
-    Inventory.terminate()
-
+  sandboxed: true
+  scripts: [ inventory.lua ]
+  @onLoad: init()
+  @onUnload: terminate()

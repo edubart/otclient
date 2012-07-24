@@ -1,45 +1,41 @@
-Battle = {}
-
 --TODO
 --onCreatureAppears onCreatureHealthChange onCreatureDisappears
 --reloadable/disconnects
 
--- private variables
-local battleWindow
-local battleButton
-local battlePanel
-local lastBattleButtonSwitched
-local checkCreaturesEvent
-local battleButtonsByCreaturesList = {}
+battleWindow = nil
+battleButton = nil
+battlePanel = nil
+lastBattleButtonSwitched = nil
+checkCreaturesEvent = nil
+battleButtonsByCreaturesList = {}
 
-local mouseWidget
+mouseWidget = nil
 
-local hidePlayersButton
-local hideNPCsButton
-local hideMonstersButton
-local hideSkullsButton
-local hidePartyButton
+hidePlayersButton = nil
+hideNPCsButton = nil
+hideMonstersButton = nil
+hideSkullsButton = nil
+hidePartyButton = nil
 
-local battleButtonColors = {
+BattleButtonColors = {
   onIdle = {notHovered = '#888888', hovered = '#FFFFFF' },
   onTargeted = {notHovered = '#FF0000', hovered = '#FF8888' },
   onFollowed = {notHovered = '#00FF00', hovered = '#88FF88' }
 }
 
-local lifeBarColors = {} --Must be sorted by percentAbose
-table.insert(lifeBarColors, {percentAbove = 92, color = '#00BC00' } )
-table.insert(lifeBarColors, {percentAbove = 60, color = '#50A150' } )
-table.insert(lifeBarColors, {percentAbove = 30, color = '#A1A100' } )
-table.insert(lifeBarColors, {percentAbove = 8, color = '#3C2727' } )
-table.insert(lifeBarColors, {percentAbove = 3, color = '#3C0000' } )
-table.insert(lifeBarColors, {percentAbove = -1, color = '#4F0000' } )
+LifeBarColors = {} --Must be sorted by percentAbose
+table.insert(LifeBarColors, {percentAbove = 92, color = '#00BC00' } )
+table.insert(LifeBarColors, {percentAbove = 60, color = '#50A150' } )
+table.insert(LifeBarColors, {percentAbove = 30, color = '#A1A100' } )
+table.insert(LifeBarColors, {percentAbove = 8, color = '#3C2727' } )
+table.insert(LifeBarColors, {percentAbove = 3, color = '#3C0000' } )
+table.insert(LifeBarColors, {percentAbove = -1, color = '#4F0000' } )
 
--- public functions
-function Battle.init()
-  battleWindow = g_ui.loadUI('battle.otui', GameInterface.getRightPanel())
-  battleButton = TopMenu.addRightGameToggleButton('battleButton', tr('Battle') .. ' (Ctrl+B)', 'battle.png', Battle.toggle)
+function init()
+  battleWindow = g_ui.loadUI('battle.otui', modules.game_interface.getRightPanel())
+  battleButton = TopMenu.addRightGameToggleButton('battleButton', tr('Battle') .. ' (Ctrl+B)', 'battle.png', toggle)
   battleButton:setOn(true)
-  g_keyboard.bindKeyDown('Ctrl+B', Battle.toggle)
+  g_keyboard.bindKeyDown('Ctrl+B', toggle)
 
   battlePanel = battleWindow:recursiveGetChildById('battlePanel')
 
@@ -53,46 +49,32 @@ function Battle.init()
   mouseWidget:setVisible(false)
   mouseWidget:setFocusable(false)
 
-  connect(Creature, { onSkullChange = Battle.checkCreatureSkull,
-                      onEmblemChange = Battle.checkCreatureEmblem } )
+  connect(Creature, { onSkullChange = checkCreatureSkull,
+                      onEmblemChange = checkCreatureEmblem } )
 
-  connect(g_game, { onAttackingCreatureChange = Battle.onAttack,
-                    onFollowingCreatureChange = Battle.onFollow,
-                    onGameEnd = Battle.removeAllCreatures } )
+  connect(g_game, { onAttackingCreatureChange = onAttack,
+                    onFollowingCreatureChange = onFollow,
+                    onGameEnd = removeAllCreatures } )
 
-  addEvent(Battle.addAllCreatures)
-  checkCreaturesEvent = scheduleEvent(Battle.checkCreatures, 200)
+  addEvent(addAllCreatures)
+  checkCreaturesEvent = scheduleEvent(checkCreatures, 200)
 end
 
-function Battle.terminate()
+function terminate()
   g_keyboard.unbindKeyDown('Ctrl+B')
-  battlePanel = nil
-  lastBattleButtonTargeted = nil
-  lastBattleButtonFollowed = nil
   battleButtonsByCreaturesList = {}
   removeEvent(checkCreaturesEvent)
-  hidePlayersButton = nil
-  hideNPCsButton = nil
-  hideMonstersButton = nil
-  hideSkullsButton = nil
-  hidePartyButton = nil
-  checkCreaturesEvent = nil
   battleButton:destroy()
-  battleButton = nil
   battleWindow:destroy()
-  battleWindow = nil
   mouseWidget:destroy()
-  mouseWidget = nil
 
-  disconnect(Creature, { onSkullChange = Battle.checkCreatureSkull,
-                          onEmblemChange = Battle.checkCreatureEmblem } )
+  disconnect(Creature, { onSkullChange = checkCreatureSkull,
+                          onEmblemChange = checkCreatureEmblem } )
 
-  disconnect(g_game, { onAttackingCreatureChange = Battle.onAttack } )
-
-  Battle = nil
+  disconnect(g_game, { onAttackingCreatureChange = onAttack } )
 end
 
-function Battle.toggle()
+function toggle()
   if battleButton:isOn() then
     battleWindow:close()
     battleButton:setOn(false)
@@ -102,28 +84,28 @@ function Battle.toggle()
   end
 end
 
-function Battle.onMiniWindowClose()
+function onMiniWindowClose()
   battleButton:setOn(false)
 end
 
-function Battle.addAllCreatures()
+function addAllCreatures()
   local spectators = {}
     local player = g_game.getLocalPlayer()
     if player then
         creatures = g_map.getSpectators(player:getPosition(), false)
         for i, creature in ipairs(creatures) do
-            if creature ~= player and Battle.doCreatureFitFilters(creature) then
+            if creature ~= player and doCreatureFitFilters(creature) then
               table.insert(spectators, creature)
             end
         end
     end
 
   for i, v in pairs(spectators) do
-    Battle.addCreature(v)
+    addCreature(v)
   end
 end
 
-function Battle.doCreatureFitFilters(creature)
+function doCreatureFitFilters(creature)
   local hidePlayers = hidePlayersButton:isChecked()
   local hideNPCs = hideNPCsButton:isChecked()
   local hideMonsters = hideMonstersButton:isChecked()
@@ -145,7 +127,7 @@ function Battle.doCreatureFitFilters(creature)
   return true
 end
 
-function Battle.checkCreatures(forceRecheck)
+function checkCreatures(forceRecheck)
   local player = g_game.getLocalPlayer()
   if player then
     local spectators = {}
@@ -154,20 +136,20 @@ function Battle.checkCreatures(forceRecheck)
     local creaturesAppeared = {}
     creatures = g_map.getSpectators(player:getPosition(), false)
     for i, creature in ipairs(creatures) do
-      if creature ~= player and Battle.doCreatureFitFilters(creature) then
+      if creature ~= player and doCreatureFitFilters(creature) then
         -- searching for creatures that appeared on battle list
         local battleButton = battleButtonsByCreaturesList[creature:getId()]
         if battleButton == nil then
           table.insert(creaturesAppeared, creature)
         else
-          Battle.setLifeBarPercent(battleButton, creature:getHealthPercent())
+          setLifeBarPercent(battleButton, creature:getHealthPercent())
         end
         spectators[creature:getId()] = creature
       end
     end
 
     for i, v in pairs(creaturesAppeared) do
-      Battle.addCreature(v)
+      addCreature(v)
     end
 
     -- searching for creatures that disappeared from battle list
@@ -179,15 +161,15 @@ function Battle.checkCreatures(forceRecheck)
     end
 
     for i, v in pairs(creaturesDisappeared) do
-      Battle.removeCreature(v)
+      removeCreature(v)
     end
   end
   if not forceRecheck then
-    checkCreaturesEvent = scheduleEvent(Battle.checkCreatures, 500)
+    checkCreaturesEvent = scheduleEvent(checkCreatures, 500)
   end
 end
 
-function Battle.addCreature(creature)
+function addCreature(creature)
   local creatureId = creature:getId()
 
   if battleButtonsByCreaturesList[creatureId] == nil then
@@ -205,16 +187,16 @@ function Battle.addCreature(creature)
 
     labelWidget:setText(creature:getName())
     creatureWidget:setCreature(creature)
-    Battle.setLifeBarPercent(battleButton, creature:getHealthPercent())
+    setLifeBarPercent(battleButton, creature:getHealthPercent())
 
     battleButtonsByCreaturesList[creatureId] = battleButton
 
-    Battle.checkCreatureSkull(battleButton.creature)
-    Battle.checkCreatureEmblem(battleButton.creature)
+    checkCreatureSkull(battleButton.creature)
+    checkCreatureEmblem(battleButton.creature)
   end
 end
 
-function Battle.checkCreatureSkull(creature, skullId)
+function checkCreatureSkull(creature, skullId)
     local battleButton = battleButtonsByCreaturesList[creature:getId()]
     if battleButton then
       local skullWidget = battleButton:getChildById('skull')
@@ -235,7 +217,7 @@ function Battle.checkCreatureSkull(creature, skullId)
     end
 end
 
-function Battle.checkCreatureEmblem(creature, emblemId)
+function checkCreatureEmblem(creature, emblemId)
     local battleButton = battleButtonsByCreaturesList[creature:getId()]
     if battleButton then
       local emblemId = emblemId or creature:getEmblem()
@@ -259,9 +241,9 @@ function Battle.checkCreatureEmblem(creature, emblemId)
     end
 end
 
-function Battle.onMouseRelease(self, mousePosition, mouseButton)
+function onMouseRelease(self, mousePosition, mouseButton)
   if mouseButton == MouseRightButton then
-    GameInterface.createThingMenu(mousePosition, nil, nil, self.creature)
+    modules.game_interface.createThingMenu(mousePosition, nil, nil, self.creature)
     return true
   elseif mouseButton == MouseLeftButton then
     if g_keyboard.isShiftPressed() then
@@ -277,13 +259,13 @@ function Battle.onMouseRelease(self, mousePosition, mouseButton)
   end
 end
 
-function Battle.removeAllCreatures()
+function removeAllCreatures()
   for i, v in pairs(battleButtonsByCreaturesList) do
-    Battle.removeCreature(v.creature)
+    removeCreature(v.creature)
   end
 end
 
-function Battle.removeCreature(creature)
+function removeCreature(creature)
   local creatureId = creature:getId()
 
   if battleButtonsByCreaturesList[creatureId] ~= nil then
@@ -297,12 +279,12 @@ function Battle.removeCreature(creature)
   end
 end
 
-function Battle.setLifeBarPercent(battleButton, percent)
+function setLifeBarPercent(battleButton, percent)
   local lifeBarWidget = battleButton:getChildById('lifeBar')
   lifeBarWidget:setPercent(percent)
 
   local color
-  for i, v in pairs(lifeBarColors) do
+  for i, v in pairs(LifeBarColors) do
     if percent > v.percentAbove then
       color = v.color
       break
@@ -312,37 +294,37 @@ function Battle.setLifeBarPercent(battleButton, percent)
   lifeBarWidget:setBackgroundColor(color)
 end
 
-function Battle.onbattleButtonHoverChange(widget, hovered)
+function onbattleButtonHoverChange(widget, hovered)
   if widget.isBattleButton then
     widget.isHovered = hovered
-    Battle.checkBattleButton(widget)
+    checkBattleButton(widget)
   end
 end
 
-function Battle.onAttack(creature)
-  Battle.checkCreatures(true) --Force recheck
+function onAttack(creature)
+  checkCreatures(true) --Force recheck
   local battleButton = creature and battleButtonsByCreaturesList[creature:getId()] or lastBattleButtonSwitched
   if battleButton then
     battleButton.isTarget = creature and true or false
-    Battle.checkBattleButton(battleButton)
+    checkBattleButton(battleButton)
   end
 end
 
-function Battle.onFollow(creature)
-  Battle.checkCreatures(true) --Force recheck
+function onFollow(creature)
+  checkCreatures(true) --Force recheck
   local battleButton = creature and battleButtonsByCreaturesList[creature:getId()] or lastBattleButtonSwitched
   if battleButton then
     battleButton.isFollowed = creature and true or false
-    Battle.checkBattleButton(battleButton)
+    checkBattleButton(battleButton)
   end
 end
 
-function Battle.checkBattleButton(battleButton)
-  local color = battleButtonColors.onIdle
+function checkBattleButton(battleButton)
+  local color = BattleButtonColors.onIdle
   if battleButton.isTarget then
-    color = battleButtonColors.onTargeted
+    color = BattleButtonColors.onTargeted
   elseif battleButton.isFollowed then
-    color = battleButtonColors.onFollowed
+    color = BattleButtonColors.onFollowed
   end
 
   color = battleButton.isHovered and color.hovered or color.notHovered
@@ -363,7 +345,7 @@ function Battle.checkBattleButton(battleButton)
     if lastBattleButtonSwitched and lastBattleButtonSwitched ~= battleButton then
       lastBattleButtonSwitched.isTarget = false
       lastBattleButtonSwitched.isFollowed = false
-      Battle.checkBattleButton(lastBattleButtonSwitched)
+      checkBattleButton(lastBattleButtonSwitched)
     end
     lastBattleButtonSwitched = battleButton
   end

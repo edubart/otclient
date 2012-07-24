@@ -3,15 +3,7 @@ Module
   description: Manage player deaths
   author: BeniS, edubart
   website: www.otclient.info
-
-  dependencies:
-    - game_interface
-    - game_textmessage
-    - client_entergame
-
-  @onLoad: |
-    dofile 'playerdeath'
-    PlayerDeath.init()
-
-  @onUnload: |
-    PlayerDeath.terminate()
+  sandboxed: true
+  scripts: [ playerdeath.lua ]
+  @onLoad: init()
+  @onUnload: terminate()

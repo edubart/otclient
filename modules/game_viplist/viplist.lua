@@ -1,53 +1,45 @@
-VipList = {}
+vipWindow = nil
+vipButton = nil
+addVipWindow = nil
 
--- private variables
-local vipWindow
-local vipButton
-local addVipWindow
-
--- public functions
-function VipList.init()
-  connect(g_game, { onGameEnd = VipList.clear,
-                    onAddVip = VipList.onAddVip,
-                    onVipStateChange = VipList.onVipStateChange })
+function init()
+  connect(g_game, { onGameEnd = clear,
+                    onAddVip = onAddVip,
+                    onVipStateChange = onVipStateChange })
 
 
-  g_keyboard.bindKeyDown('Ctrl+P', VipList.toggle)
+  g_keyboard.bindKeyDown('Ctrl+P', toggle)
 
-  vipWindow = g_ui.loadUI('viplist.otui', GameInterface.getRightPanel())
-  vipButton = TopMenu.addRightGameToggleButton('vipListButton', tr('VIP list') .. ' (Ctrl+P)', 'viplist.png', VipList.toggle)
+  vipWindow = g_ui.loadUI('viplist.otui', modules.game_interface.getRightPanel())
+  vipButton = TopMenu.addRightGameToggleButton('vipListButton', tr('VIP list') .. ' (Ctrl+P)', 'viplist.png', toggle)
   vipButton:setOn(true)
 
-  VipList.refresh()
+  refresh()
 end
 
-function VipList.terminate()
+function terminate()
   g_keyboard.unbindKeyDown('Ctrl+P')
-  disconnect(g_game, { onGameEnd = VipList.clear,
-                       onAddVip = VipList.onAddVip,
-                       onVipStateChange = VipList.onVipStateChange })
+  disconnect(g_game, { onGameEnd = clear,
+                       onAddVip = onAddVip,
+                       onVipStateChange = onVipStateChange })
 
   vipWindow:destroy()
-  vipWindow = nil
   vipButton:destroy()
-  vipButton = nil
-
-  VipList = nil
 end
 
-function VipList.refresh()
-  VipList.clear()
+function refresh()
+  clear()
   for id,vip in pairs(g_game.getVips()) do
-    VipList.onAddVip(id, unpack(vip))
+    onAddVip(id, unpack(vip))
   end
 end
 
-function VipList.clear()
+function clear()
   local vipList = vipWindow:getChildById('contentsPanel')
   vipList:destroyChildren()
 end
 
-function VipList.toggle()
+function toggle()
   if vipButton:isOn() then
     vipWindow:close()
     vipButton:setOn(false)
@@ -57,26 +49,25 @@ function VipList.toggle()
   end
 end
 
-function VipList.onMiniWindowClose()
+function onMiniWindowClose()
   vipButton:setOn(false)
 end
 
-function VipList.createAddWindow()
+function createAddWindow()
   addVipWindow = g_ui.displayUI('addvip.otui')
 end
 
-function VipList.destroyAddWindow()
+function destroyAddWindow()
   addVipWindow:destroy()
   addVipWindow = nil
 end
 
-function VipList.addVip()
+function addVip()
   g_game.addVip(addVipWindow:getChildById('name'):getText())
-  VipList.destroyAddWindow()
+  destroyAddWindow()
 end
 
--- hooked events
-function VipList.onAddVip(id, name, online)
+function onAddVip(id, name, online)
   local vipList = vipWindow:getChildById('contentsPanel')
 
   local label = g_ui.createWidget('VipListLabel')
@@ -122,34 +113,34 @@ function VipList.onAddVip(id, name, online)
   vipList:insertChild(childrenCount+1, label)
 end
 
-function VipList.onVipStateChange(id, online)
+function onVipStateChange(id, online)
   local vipList = vipWindow:getChildById('contentsPanel')
   local label = vipList:getChildById('vip' .. id)
   local text = label:getText()
   label:destroy()
 
-  VipList.onAddVip(id, text, online)
+  onAddVip(id, text, online)
 end
 
-function VipList.onVipListMousePress(widget, mousePos, mouseButton)
+function onVipListMousePress(widget, mousePos, mouseButton)
   if mouseButton ~= MouseRightButton then return end
 
   local vipList = vipWindow:getChildById('contentsPanel')
 
   local menu = g_ui.createWidget('PopupMenu')
-  menu:addOption(tr('Add new VIP'), function() VipList.createAddWindow() end)
+  menu:addOption(tr('Add new VIP'), function() createAddWindow() end)
   menu:display(mousePos)
 
   return true
 end
 
-function VipList.onVipListLabelMousePress(widget, mousePos, mouseButton)
+function onVipListLabelMousePress(widget, mousePos, mouseButton)
   if mouseButton ~= MouseRightButton then return end
 
   local vipList = vipWindow:getChildById('contentsPanel')
 
   local menu = g_ui.createWidget('PopupMenu')
-  menu:addOption(tr('Add new VIP'), function() VipList.createAddWindow() end)
+  menu:addOption(tr('Add new VIP'), function() createAddWindow() end)
   menu:addOption(tr('Remove %s', widget:getText()), function() if widget then g_game.removeVip(widget:getId():sub(4)) vipList:removeChild(widget) end end)
   menu:addSeparator()
   menu:addOption(tr('Copy Name'), function() g_window.setClipboardText(widget:getText()) end)

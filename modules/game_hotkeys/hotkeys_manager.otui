@@ -13,8 +13,8 @@ MainWindow
   !text: tr('Hotkeys')
   size: 340 460
 
-  @onEnter: HotkeysManager.hide()
-  @onEscape: HotkeysManager.hide()
+  @onEnter: hide()
+  @onEscape: hide()
 
   Label
     id: currentHotkeysLabel
@@ -33,7 +33,7 @@ MainWindow
 
   TextList
     id: currentHotkeys
-    vertical-scrollbar: currentHotkeysScrollBar    
+    vertical-scrollbar: currentHotkeysScrollBar
     anchors.left: parent.left
     anchors.right: prev.left
     anchors.top: prev.top
@@ -56,7 +56,7 @@ MainWindow
     anchors.left: parent.left
     anchors.top: prev.bottom
     margin-top: 2
-    @onClick: HotkeysManager.addHotkey()
+    @onClick: addHotkey()
 
   Button
     id: removeHotkey
@@ -66,7 +66,7 @@ MainWindow
     anchors.left: prev.right
     anchors.top: prev.top
     margin-left: 10
-    @onClick: HotkeysManager.removeHotkey()
+    @onClick: removeHotkey()
 
   Label
     id: hotKeyTextLabel
@@ -84,7 +84,7 @@ MainWindow
     anchors.right: parent.right
     anchors.top: prev.bottom
     margin-bottom: 2
-    @onTextChange: HotkeysManager.onHotkeyTextChange(self:getId(), self:getText())
+    @onTextChange: onHotkeyTextChange(self:getId(), self:getText())
 
   CheckBox
     id: sendAutomatically
@@ -94,7 +94,7 @@ MainWindow
     anchors.top: prev.bottom
     enabled:false
     margin-top: 10
-    @onCheckChange: HotkeysManager.sendAutomatically(self:isChecked())
+    @onCheckChange: setSendAutomatically(self:isChecked())
 
   Item
     id: itemPreview
@@ -111,7 +111,7 @@ MainWindow
     anchors.left: prev.right
     anchors.top: prev.top
     margin-left: 10
-    @onClick: HotkeysManager.startChooseItem()
+    @onClick: startChooseItem()
 
   Button
     id: clearObjectButton
@@ -122,7 +122,7 @@ MainWindow
     anchors.right: prev.right
     anchors.top: prev.bottom
     margin-top: 2
-    @onClick: HotkeysManager.clearObject()
+    @onClick: clearObject()
 
   ButtonBox
     id: useOnSelf
@@ -134,7 +134,7 @@ MainWindow
     anchors.top: selectObjectButton.top
     checked: false
     margin-left: 10
-    @onCheckChange: HotkeysManager.changeUseType(HOTKEY_MANAGER_USEONSELF, self:isChecked())
+    @onCheckChange: changeUseType(HOTKEY_MANAGER_USEONSELF, self:isChecked())
 
   ButtonBox
     id: useOnTarget
@@ -146,7 +146,7 @@ MainWindow
     anchors.top: prev.bottom
     checked: false
     margin-top: 2
-    @onCheckChange: HotkeysManager.changeUseType(HOTKEY_MANAGER_USEONTARGET, self:isChecked())
+    @onCheckChange: changeUseType(HOTKEY_MANAGER_USEONTARGET, self:isChecked())
 
   ButtonBox
     id: useWith
@@ -158,11 +158,11 @@ MainWindow
     anchors.top: prev.bottom
     checked: false
     margin-top: 2
-    @onCheckChange: HotkeysManager.changeUseType(HOTKEY_MANAGER_USEWITH, self:isChecked())
+    @onCheckChange: changeUseType(HOTKEY_MANAGER_USEWITH, self:isChecked())
 
   Button
     !text: tr('Close')
     width: 64
     anchors.right: parent.right
     anchors.bottom: parent.bottom
-    @onClick: HotkeysManager.hide()
+    @onClick: hide()

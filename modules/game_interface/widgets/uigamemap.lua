@@ -39,7 +39,7 @@ function UIGameMap:onDrop(widget, mousePos)
   if thingPos.x == toPos.x and thingPos.y == toPos.y and thingPos.z == toPos.z then return false end
 
   if thing:asItem() and thing:getCount() > 1 then
-    GameInterface.moveStackableItem(thing, toPos)
+    modules.game_interface.moveStackableItem(thing, toPos)
   else
     g_game.move(thing, toPos, 1)
   end
@@ -74,7 +74,7 @@ function UIGameMap:onMouseRelease(mousePosition, mouseButton)
   local creatureThing = tile:getTopCreature()
   local multiUseThing = tile:getTopMultiUseThing()
 
-  local ret = GameInterface.processMouseAction(mousePosition, mouseButton, autoWalkPos, lookThing, useThing, creatureThing, multiUseThing)
+  local ret = modules.game_interface.processMouseAction(mousePosition, mouseButton, autoWalkPos, lookThing, useThing, creatureThing, multiUseThing)
   if ret then
     self.cancelNextRelease = true
   end

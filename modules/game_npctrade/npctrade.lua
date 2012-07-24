@@ -1,44 +1,193 @@
-NPCTrade = {}
+BUY = 1
+SELL = 2
+CURRENCY = 'gold'
+WEIGHT_UNIT = 'oz'
+LAST_INVENTORY = 10
 
--- private variables
-local BUY = 1
-local SELL = 2
-local CURRENCY = 'gold'
-local WEIGHT_UNIT = 'oz'
-local LAST_INVENTORY = 10
+npcWindow = nil
+itemsPanel = nil
+radioTabs = nil
+radioItems = nil
+searchText = nil
+setupPanel = nil
+quantity = nil
+quantityScroll = nil
+nameLabel = nil
+priceLabel = nil
+moneyLabel = nil
+weightLabel = nil
+capacityLabel = nil
+tradeButton = nil
+buyTab = nil
+sellTab = nil
 
-local npcWindow
-local itemsPanel
-local radioTabs
-local radioItems
-local searchText
-local setupPanel
-local quantity
-local quantityScroll
-local nameLabel
-local priceLabel
-local moneyLabel
-local weightLabel
-local capacityLabel
-local tradeButton
-local buyTab
-local sellTab
+showCapacity = true
+buyWithBackpack = nil
+ignoreCapacity = nil
+ignoreEquipped = nil
+showAllItems = nil
 
-local showCapacity = true
-local buyWithBackpack
-local ignoreCapacity
-local ignoreEquipped
-local showAllItems
+playerFreeCapacity = nil
+playerMoney = nil
+tradeItems = {}
+playerItems = nil
+selectedItem = nil
 
-local playerFreeCapacity
-local playerMoney
-local tradeItems = {}
-local playerItems
+function init()
+  npcWindow = g_ui.displayUI('npctrade.otui')
+  npcWindow:setVisible(false)
 
-local selectedItem
+  itemsPanel = npcWindow:recursiveGetChildById('itemsPanel')
+  searchText = npcWindow:recursiveGetChildById('searchText')
 
--- private functions
-local function clearSelectedItem()
+  setupPanel = npcWindow:recursiveGetChildById('setupPanel')
+  quantityLabel = setupPanel:getChildById('quantity')
+  quantityScroll = setupPanel:getChildById('quantityScroll')
+  nameLabel = setupPanel:getChildById('name')
+  priceLabel = setupPanel:getChildById('price')
+  moneyLabel = setupPanel:getChildById('money')
+  weightLabel = setupPanel:getChildById('weight')
+  capacityLabel = setupPanel:getChildById('capacity')
+  tradeButton = npcWindow:recursiveGetChildById('tradeButton')
+
+  buyWithBackpack = npcWindow:recursiveGetChildById('buyWithBackpack')
+  ignoreCapacity = npcWindow:recursiveGetChildById('ignoreCapacity')
+  ignoreEquipped = npcWindow:recursiveGetChildById('ignoreEquipped')
+  showAllItems = npcWindow:recursiveGetChildById('showAllItems')
+
+  buyTab = npcWindow:getChildById('buyTab')
+  sellTab = npcWindow:getChildById('sellTab')
+
+  radioTabs = UIRadioGroup.create()
+  radioTabs:addWidget(buyTab)
+  radioTabs:addWidget(sellTab)
+  radioTabs:selectWidget(buyTab)
+  radioTabs.onSelectionChange = onTradeTypeChange
+
+  if g_game.isOnline() then
+    playerFreeCapacity = g_game.getLocalPlayer():getFreeCapacity()
+  end
+
+  connect(g_game, { onGameEnd = hide,
+                    onOpenNpcTrade = onOpenNpcTrade,
+                    onCloseNpcTrade = onCloseNpcTrade,
+                    onPlayerGoods = onPlayerGoods } )
+
+  connect(LocalPlayer, { onFreeCapacityChange = onFreeCapacityChange,
+                         onInventoryChange = onInventoryChange } )
+end
+
+function terminate()
+  npcWindow:destroy()
+
+  disconnect(g_game, {  onGameEnd = hide,
+                        onOpenNpcTrade = onOpenNpcTrade,
+                        onCloseNpcTrade = onCloseNpcTrade,
+                        onPlayerGoods = onPlayerGoods } )
+
+  disconnect(LocalPlayer, { onFreeCapacityChange = onFreeCapacityChange,
+                            onInventoryChange = onInventoryChange } )
+end
+
+function show()
+  if g_game.isOnline() then
+    if #tradeItems[BUY] > 0 then
+      radioTabs:selectWidget(buyTab)
+    else
+      radioTabs:selectWidget(sellTab)
+    end
+
+    npcWindow:show()
+    npcWindow:raise()
+    npcWindow:focus()
+  end
+end
+
+function hide()
+  npcWindow:hide()
+end
+
+function onItemBoxChecked(widget)
+  if widget:isChecked() then
+    local item = widget.item
+    selectedItem = item
+    refreshItem(item)
+    tradeButton:enable()
+  end
+end
+
+function onQuantityValueChange(quantity)
+  if quantityLabel and selectedItem then
+    quantityLabel:setText(quantity)
+    weightLabel:setText(string.format('%.2f', selectedItem.weight*quantity) .. ' ' .. WEIGHT_UNIT)
+    priceLabel:setText(getItemPrice(selectedItem) .. ' ' .. CURRENCY)
+  end
+end
+
+function onTradeTypeChange(radioTabs, selected, deselected)
+  tradeButton:setText(selected:getText())
+  selected:setOn(true)
+  deselected:setOn(false)
+
+  local currentTradeType = getCurrentTradeType()
+  buyWithBackpack:setVisible(currentTradeType == BUY)
+  ignoreCapacity:setVisible(currentTradeType == BUY)
+  ignoreEquipped:setVisible(currentTradeType == SELL)
+  showAllItems:setVisible(currentTradeType == SELL)
+
+  refreshTradeItems()
+  refreshPlayerGoods()
+end
+
+function onTradeClick()
+  if getCurrentTradeType() == BUY then
+    g_game.buyItem(selectedItem.ptr, quantityScroll:getValue(), ignoreCapacity:isChecked(), buyWithBackpack:isChecked())
+  else
+    g_game.sellItem(selectedItem.ptr, quantityScroll:getValue(), ignoreEquipped:isChecked())
+  end
+end
+
+function onSearchTextChange()
+  refreshPlayerGoods()
+end
+
+function itemPopup(self, mousePosition, mouseButton)
+  if mouseButton == MouseRightButton then
+    local menu = g_ui.createWidget('PopupMenu')
+    menu:addOption(tr('Look'), function() return g_game.inspectNpcTrade(self:getItem()) end)
+    menu:display(mousePosition)
+    return true
+  end
+  return false
+end
+
+function onBuyWithBackpackChange()
+  if selectedItem then
+    refreshItem(selectedItem)
+  end
+end
+
+function onIgnoreCapacityChange()
+  refreshPlayerGoods()
+end
+
+function onIgnoreEquippedChange()
+  refreshPlayerGoods()
+end
+
+function onShowAllItemsChange()
+  refreshPlayerGoods()
+end
+
+function setCurrency(currency)
+  CURRENCY = currency
+end
+
+function showCapacity(state)
+  showCapacity = state
+end
+
+function clearSelectedItem()
   nameLabel:clearText()
   weightLabel:clearText()
   priceLabel:clearText()
@@ -51,7 +200,7 @@ local function clearSelectedItem()
   end
 end
 
-local function getCurrentTradeType()
+function getCurrentTradeType()
   if tradeButton:getText() == tr('Buy') then
     return BUY
   else
@@ -59,7 +208,7 @@ local function getCurrentTradeType()
   end
 end
 
-local function getItemPrice(item)
+function getItemPrice(item)
   if getCurrentTradeType() == BUY then
     if buyWithBackpack:isChecked() then
       if item.ptr:isStackable() then
@@ -72,7 +221,7 @@ local function getItemPrice(item)
   return item.price*quantityScroll:getValue()
 end
 
-local function getSellQuantity(item)
+function getSellQuantity(item)
   if not playerItems[item.ptr:getId()] then
     return 0
   end
@@ -90,7 +239,7 @@ local function getSellQuantity(item)
   return playerItems[item.ptr:getId()] - removeAmount
 end
 
-local function canTradeItem(item)
+function canTradeItem(item)
   if getCurrentTradeType() == BUY then
     return (ignoreCapacity:isChecked() or (not ignoreCapacity:isChecked() and playerFreeCapacity >= item.weight)) and playerMoney >= getItemPrice(item)
   else
@@ -98,7 +247,7 @@ local function canTradeItem(item)
   end
 end
 
-local function refreshItem(item)
+function refreshItem(item)
   nameLabel:setText(item.name)
   weightLabel:setText(string.format('%.2f', item.weight) .. ' ' .. WEIGHT_UNIT)
   priceLabel:setText(getItemPrice(item) .. ' ' .. CURRENCY)
@@ -130,7 +279,7 @@ local function refreshItem(item)
   setupPanel:enable()
 end
 
-local function refreshTradeItems()
+function refreshTradeItems()
   local layout = itemsPanel:getLayout()
   layout:disableUpdates()
 
@@ -163,7 +312,7 @@ local function refreshTradeItems()
 
     local itemWidget = itemBox:getChildById('item')
     itemWidget:setItem(item.ptr)
-    itemWidget.onMouseRelease = NPCTrade.itemPopup
+    itemWidget.onMouseRelease = itemPopup
 
     radioItems:addWidget(itemBox)
   end
@@ -172,7 +321,7 @@ local function refreshTradeItems()
   layout:update()
 end
 
-local function refreshPlayerGoods()
+function refreshPlayerGoods()
   moneyLabel:setText(playerMoney .. ' ' .. CURRENCY)
   capacityLabel:setText(string.format('%.2f', playerFreeCapacity) .. ' ' .. WEIGHT_UNIT)
 
@@ -206,8 +355,7 @@ local function refreshPlayerGoods()
   end
 end
 
--- hooked functions
-local function onOpenNpcTrade(items)
+function onOpenNpcTrade(items)
   tradeItems[BUY] = {}
   tradeItems[SELL] = {}
 
@@ -229,14 +377,14 @@ local function onOpenNpcTrade(items)
   end
 
   refreshTradeItems()
-  addEvent(NPCTrade.show) -- player goods has not been parsed yet
+  addEvent(show) -- player goods has not been parsed yet
 end
 
-local function onCloseNpcTrade()
-  NPCTrade.hide()
+function onCloseNpcTrade()
+  hide()
 end
 
-local function onPlayerGoods(money, items)
+function onPlayerGoods(money, items)
   playerMoney = money
 
   playerItems = {}
@@ -252,7 +400,7 @@ local function onPlayerGoods(money, items)
   refreshPlayerGoods()
 end
 
-local function onFreeCapacityChange(localPlayer, freeCapacity, oldFreeCapacity)
+function onFreeCapacityChange(localPlayer, freeCapacity, oldFreeCapacity)
   playerFreeCapacity = freeCapacity
 
   if npcWindow:isVisible() then
@@ -260,186 +408,9 @@ local function onFreeCapacityChange(localPlayer, freeCapacity, oldFreeCapacity)
   end
 end
 
-local function onInventoryChange(inventory, item, oldeItem)
+function onInventoryChange(inventory, item, oldeItem)
   if selectedItem then
     refreshItem(selectedItem)
   end
 end
 
-
--- public functions
-function NPCTrade.init()
-  npcWindow = g_ui.displayUI('npctrade.otui')
-  npcWindow:setVisible(false)
-
-  itemsPanel = npcWindow:recursiveGetChildById('itemsPanel')
-  searchText = npcWindow:recursiveGetChildById('searchText')
-
-  setupPanel = npcWindow:recursiveGetChildById('setupPanel')
-  quantityLabel = setupPanel:getChildById('quantity')
-  quantityScroll = setupPanel:getChildById('quantityScroll')
-  nameLabel = setupPanel:getChildById('name')
-  priceLabel = setupPanel:getChildById('price')
-  moneyLabel = setupPanel:getChildById('money')
-  weightLabel = setupPanel:getChildById('weight')
-  capacityLabel = setupPanel:getChildById('capacity')
-  tradeButton = npcWindow:recursiveGetChildById('tradeButton')
-
-  buyWithBackpack = npcWindow:recursiveGetChildById('buyWithBackpack')
-  ignoreCapacity = npcWindow:recursiveGetChildById('ignoreCapacity')
-  ignoreEquipped = npcWindow:recursiveGetChildById('ignoreEquipped')
-  showAllItems = npcWindow:recursiveGetChildById('showAllItems')
-
-  buyTab = npcWindow:getChildById('buyTab')
-  sellTab = npcWindow:getChildById('sellTab')
-
-  radioTabs = UIRadioGroup.create()
-  radioTabs:addWidget(buyTab)
-  radioTabs:addWidget(sellTab)
-  radioTabs:selectWidget(buyTab)
-  radioTabs.onSelectionChange = NPCTrade.onTradeTypeChange
-
-  if g_game.isOnline() then -- event wont be sent again when reloading modules
-    playerFreeCapacity = g_game.getLocalPlayer():getFreeCapacity()
-  end
-
-  connect(g_game, { onGameEnd = NPCTrade.hide,
-                    onOpenNpcTrade = onOpenNpcTrade,
-                    onCloseNpcTrade = onCloseNpcTrade,
-                    onPlayerGoods = onPlayerGoods } )
-
-  connect(LocalPlayer, { onFreeCapacityChange = onFreeCapacityChange,
-                         onInventoryChange = onInventoryChange } )
-end
-
-function NPCTrade.terminate()
-  --radioTabs:destroy()
-  radioTabs = nil
-  npcWindow:destroy()
-  npcWindow = nil
-  itemsPanel = nil
-  buyButton = nil
-  sellButton = nil
-  searchText = nil
-  buyTab = nil
-  sellTab = nil
-
-  setupPanel = nil
-  quantityLabel = nil
-  quantityScroll = nil
-  nameLabel = nil
-  priceLabel = nil
-  moneyLabel = nil
-  weightLabel = nil
-  capacityLabel = nil
-  offerSelected = nil
-  tradeButton = nil
-
-  disconnect(g_game, {  onGameEnd = NPCTrade.hide,
-                        onOpenNpcTrade = onOpenNpcTrade,
-                        onCloseNpcTrade = onCloseNpcTrade,
-                        onPlayerGoods = onPlayerGoods } )
-
-  disconnect(LocalPlayer, { onFreeCapacityChange = onFreeCapacityChange,
-                            onInventoryChange = onInventoryChange } )
-
-  NPCTrade = nil
-end
-
-function NPCTrade.show()
-  if g_game.isOnline() then
-    if #tradeItems[BUY] > 0 then
-      radioTabs:selectWidget(buyTab)
-    else
-      radioTabs:selectWidget(sellTab)
-    end
-
-    npcWindow:show()
-    npcWindow:raise()
-    npcWindow:focus()
-  end
-end
-
-function NPCTrade.hide()
-  npcWindow:hide()
-end
-
-function NPCTrade.onItemBoxChecked(widget)
-  if widget:isChecked() then
-    local item = widget.item
-    selectedItem = item
-    refreshItem(item)
-    tradeButton:enable()
-  end
-end
-
-function NPCTrade.onQuantityValueChange(quantity)
-  if quantityLabel and selectedItem then
-    quantityLabel:setText(quantity)
-    weightLabel:setText(string.format('%.2f', selectedItem.weight*quantity) .. ' ' .. WEIGHT_UNIT)
-    priceLabel:setText(getItemPrice(selectedItem) .. ' ' .. CURRENCY)
-  end
-end
-
-function NPCTrade.onTradeTypeChange(radioTabs, selected, deselected)
-  tradeButton:setText(selected:getText())
-  selected:setOn(true)
-  deselected:setOn(false)
-
-  local currentTradeType = getCurrentTradeType()
-  buyWithBackpack:setVisible(currentTradeType == BUY)
-  ignoreCapacity:setVisible(currentTradeType == BUY)
-  ignoreEquipped:setVisible(currentTradeType == SELL)
-  showAllItems:setVisible(currentTradeType == SELL)
-
-  refreshTradeItems()
-  refreshPlayerGoods()
-end
-
-function NPCTrade.onTradeClick()
-  if getCurrentTradeType() == BUY then
-    g_game.buyItem(selectedItem.ptr, quantityScroll:getValue(), ignoreCapacity:isChecked(), buyWithBackpack:isChecked())
-  else
-    g_game.sellItem(selectedItem.ptr, quantityScroll:getValue(), ignoreEquipped:isChecked())
-  end
-end
-
-function NPCTrade.onSearchTextChange()
-  refreshPlayerGoods()
-end
-
-function NPCTrade.itemPopup(self, mousePosition, mouseButton)
-  if mouseButton == MouseRightButton then
-    local menu = g_ui.createWidget('PopupMenu')
-    menu:addOption(tr('Look'), function() return g_game.inspectNpcTrade(self:getItem()) end)
-    menu:display(mousePosition)
-    return true
-  end
-  return false
-end
-
-function NPCTrade.onBuyWithBackpackChange()
-  if selectedItem then
-    refreshItem(selectedItem)
-  end
-end
-
-function NPCTrade.onIgnoreCapacityChange()
-  refreshPlayerGoods()
-end
-
-function NPCTrade.onIgnoreEquippedChange()
-  refreshPlayerGoods()
-end
-
-function NPCTrade.onShowAllItemsChange()
-  refreshPlayerGoods()
-end
-
-function NPCTrade.setCurrency(currency)
-  CURRENCY = currency
-end
-
-function NPCTrade.showCapacity(state)
-  showCapacity = state
-end

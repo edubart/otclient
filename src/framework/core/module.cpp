@@ -70,6 +70,13 @@ bool Module::load()
         if(m_sandboxed)
             g_lua.resetGlobalEnvironment();
 
+        // add to package.loaded
+        g_lua.getGlobalField("package", "loaded");
+        g_lua.getRef(m_sandboxEnv);
+        g_lua.setField(m_name);
+        g_lua.pop();
+
+        m_loaded = true;
         g_logger.debug(stdext::format("Loaded module '%s'", m_name));
     } catch(stdext::exception& e) {
         if(m_sandboxed)
@@ -78,7 +85,6 @@ bool Module::load()
         return false;
     }
 
-    m_loaded = true;
     g_modules.updateModuleLoadOrder(asModule());
 
     for(const std::string& modName : m_loadLaterModules) {
@@ -117,6 +123,12 @@ void Module::unload()
         // clear all env references
         g_lua.getRef(m_sandboxEnv);
         g_lua.clearTable();
+        g_lua.pop();
+
+        // remove from package.loaded
+        g_lua.getGlobalField("package", "loaded");
+        g_lua.pushNil();
+        g_lua.setField(m_name);
         g_lua.pop();
 
         m_loaded = false;

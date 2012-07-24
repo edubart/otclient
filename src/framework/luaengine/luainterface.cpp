@@ -930,18 +930,21 @@ void LuaInterface::setTable(int index)
 void LuaInterface::clearTable(int index)
 {
     assert(hasIndex(index) && isTable(index));
-    pushNil();
+    pushNil(); // table, nil
     bool stop = false;
-    while(!stop && next(index-1)) {
-        pop();
-        pushValue();
-        if(next(index-2))
-            pop();
-        else
-            stop = true;
-        insert(-2);
-        pushNil();
-        rawSet(index-3);
+    while(next(index-1)) { // table, key, value
+        pop(); // table, key
+        pushValue(); // table, key, key
+        if(next(index-2)) { // table, key, nextkey, value
+            pop(); // table, key, nextkey
+            insert(-2); // table, nextkey, key
+            pushNil(); // table, nextkey, key, nil
+            rawSet(index-3); // table, nextkey
+        } else { // table, key
+            pushNil(); // table, key, nil
+            rawSet(index-2); // table
+            break;
+        }
     }
 }
 

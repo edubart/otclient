@@ -4,8 +4,8 @@ BattleButton
   height: 20
   margin-top: 5
   fixed-size: true
-  &onHoverChange: Battle.onbattleButtonHoverChange
-  &onMouseRelease: Battle.onMouseRelease
+  &onHoverChange: onbattleButtonHoverChange
+  &onMouseRelease: onMouseRelease
   &isBattleButton: true
 
   UICreature

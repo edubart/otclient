@@ -1,7 +1,5 @@
-Shaders = {}
-
-local HOTKEY = 'Ctrl+X'
-local MAP_SHADERS = {
+HOTKEY = 'Ctrl+X'
+MAP_SHADERS = {
   { name = 'Default', frag = 'shaders/default.frag' },
   { name = 'Bloom', frag = 'shaders/bloom.frag'},
   { name = 'Sepia', frag ='shaders/sepia.frag' },
@@ -16,23 +14,23 @@ local MAP_SHADERS = {
   { name = 'Noise', frag ='shaders/noise.frag' },
 }
 
-local ITEM_SHADERS = {
+ITEM_SHADERS = {
   { name = 'Fake 3D', vert = 'shaders/fake3d.vert' }
 }
 
-local shadersPanel
+shadersPanel = nil
 
-function Shaders.init()
+function init()
   g_ui.importStyle('shaders.otui')
 
-  g_keyboard.bindKeyDown(HOTKEY, Shaders.toggle)
+  g_keyboard.bindKeyDown(HOTKEY, toggle)
 
-  shadersPanel = g_ui.createWidget('ShadersPanel', GameInterface.getMapPanel())
+  shadersPanel = g_ui.createWidget('ShadersPanel', modules.game_interface.getMapPanel())
   shadersPanel:hide()
 
   local mapComboBox = shadersPanel:getChildById('mapComboBox')
   mapComboBox.onOptionChange = function(combobox, option)
-    local map = GameInterface.getMapPanel()
+    local map = modules.game_interface.getMapPanel()
     map:setMapShader(g_shaders.getShader(option))
   end
 
@@ -51,16 +49,15 @@ function Shaders.init()
     mapComboBox:addOption(opts.name)
   end
 
-  local map = GameInterface.getMapPanel()
+  local map = modules.game_interface.getMapPanel()
   map:setMapShader(g_shaders.getShader('Default'))
 end
 
-function Shaders.terminate()
+function terminate()
   g_keyboard.unbindKeyDown(HOTKEY)
   shadersPanel:destroy()
-  shadersPanel = nil
 end
 
-function Shaders.toggle()
+function toggle()
   shadersPanel:setVisible(not shadersPanel:isVisible())
 end

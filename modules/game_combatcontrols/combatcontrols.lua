@@ -1,49 +1,16 @@
-CombatControls = {}
+combatControlsButton = nil
+combatControlsWindow = nil
+fightOffensiveBox = nil
+fightBalancedBox = nil
+fightDefensiveBox = nil
+chaseModeButton = nil
+safeFightButton = nil
+fightModeRadioGroup = nil
 
--- private variables
-local combatControlsButton
-local combatControlsWindow
-local fightOffensiveBox
-local fightBalancedBox
-local fightDefensiveBox
-local chaseModeButton
-local safeFightButton
-local fightModeRadioGroup
-
--- private functions
-local function onSetFightMode(self, selectedFightButton)
-  if selectedFightButton == nil then return end
-  local buttonId = selectedFightButton:getId()
-  local fightMode
-  if buttonId == 'fightOffensiveBox' then
-    fightMode = FightOffensive
-  elseif buttonId == 'fightBalancedBox' then
-    fightMode = FightBalanced
-  else
-    fightMode = FightDefensive
-  end
-  g_game.setFightMode(fightMode)
-end
-
-local function onSetChaseMode(self, checked)
-  local chaseMode
-  if checked then
-    chaseMode = ChaseOpponent
-  else
-    chaseMode = DontChase
-  end
-  g_game.setChaseMode(chaseMode)
-end
-
-local function onSetSafeFight(self, checked)
-  g_game.setSafeFight(not checked)
-end
-
--- public functions
-function CombatControls.init()
-  combatControlsButton = TopMenu.addRightGameToggleButton('combatControlsButton', tr('Combat Controls'), 'combatcontrols.png', CombatControls.toggle)
+function init()
+  combatControlsButton = TopMenu.addRightGameToggleButton('combatControlsButton', tr('Combat Controls'), 'combatcontrols.png', toggle)
   combatControlsButton:setOn(true)
-  combatControlsWindow = g_ui.loadUI('combatcontrols.otui', GameInterface.getRightPanel())
+  combatControlsWindow = g_ui.loadUI('combatcontrols.otui', modules.game_interface.getRightPanel())
   combatControlsWindow:disableResize()
 
   fightOffensiveBox = combatControlsWindow:recursiveGetChildById('fightOffensiveBox')
@@ -61,52 +28,39 @@ function CombatControls.init()
   connect(chaseModeButton, { onCheckChange = onSetChaseMode })
   connect(safeFightButton, { onCheckChange = onSetSafeFight })
   connect(g_game, {
-    onGameStart = CombatControls.online,
-    onGameEnd = CombatControls.offline,
-    onFightModeChange = CombatControls.update,
-    onChaseModeChange = CombatControls.update,
-    onSafeFightChange = CombatControls.update,
-    onWalk = CombatControls.check
+    onGameStart = online,
+    onGameEnd = offline,
+    onFightModeChange = update,
+    onChaseModeChange = update,
+    onSafeFightChange = update,
+    onWalk = check
   })
 
   if g_game.isOnline() then
-    CombatControls.online()
+    online()
   end
 end
 
-function CombatControls.terminate()
+function terminate()
   if g_game.isOnline() then
-    CombatControls.offline()
+    offline()
   end
 
   fightModeRadioGroup:destroy()
-  fightModeRadioGroup = nil
-
-  fightOffensiveBox = nil
-  fightBalancedBox = nil
-  fightDefensiveBox = nil
-  chaseModeButton = nil
-  safeFightButton = nil
-
   combatControlsButton:destroy()
-  combatControlsButton = nil
-
   combatControlsWindow:destroy()
-  combatControlsWindow = nil
 
   disconnect(g_game, {
-    onGameStart = CombatControls.online,
-    onGameEnd = CombatControls.offline,
-    onFightModeChange = CombatControls.update,
-    onChaseModeChange = CombatControls.update,
-    onSafeFightChange = CombatControls.update,
-    onWalk = CombatControls.check
+    onGameStart = online,
+    onGameEnd = offline,
+    onFightModeChange = update,
+    onChaseModeChange = update,
+    onSafeFightChange = update,
+    onWalk = check
   })
-
-  CombatControls = nil
 end
 
-function CombatControls.update()
+function update()
   local fightMode = g_game.getFightMode()
   if fightMode == FightOffensive then
     fightModeRadioGroup:selectWidget(fightOffensiveBox)
@@ -123,7 +77,7 @@ function CombatControls.update()
   safeFightButton:setChecked(not safeFight)
 end
 
-function CombatControls.check()
+function check()
   if(Options.getOption('autoChaseOverride')) then
     if(g_game.isAttacking() and g_game.getChaseMode() == ChaseOpponent) then
       g_game.setChaseMode(DontChase)
@@ -131,7 +85,7 @@ function CombatControls.check()
   end
 end
 
-function CombatControls.online()
+function online()
   local player = g_game.getLocalPlayer()
   if(player) then
     local char = player:getName()
@@ -148,10 +102,10 @@ function CombatControls.online()
   end
 
   combatControlsWindow:setVisible(combatControlsButton:isOn())
-  CombatControls.update()
+  update()
 end
 
-function CombatControls.offline()
+function offline()
   local lastCombatControls = g_settings.getNode('LastCombatControls')
   if(not lastCombatControls) then
     lastCombatControls = {}
@@ -171,7 +125,7 @@ function CombatControls.offline()
   end
 end
 
-function CombatControls.toggle()
+function toggle()
   if combatControlsButton:isOn() then
     combatControlsWindow:close()
     combatControlsButton:setOn(false)
@@ -181,6 +135,34 @@ function CombatControls.toggle()
   end
 end
 
-function CombatControls.onMiniWindowClose()
+function onMiniWindowClose()
   combatControlsButton:setOn(false)
+end
+
+function onSetFightMode(self, selectedFightButton)
+  if selectedFightButton == nil then return end
+  local buttonId = selectedFightButton:getId()
+  local fightMode
+  if buttonId == 'fightOffensiveBox' then
+    fightMode = FightOffensive
+  elseif buttonId == 'fightBalancedBox' then
+    fightMode = FightBalanced
+  else
+    fightMode = FightDefensive
+  end
+  g_game.setFightMode(fightMode)
+end
+
+function onSetChaseMode(self, checked)
+  local chaseMode
+  if checked then
+    chaseMode = ChaseOpponent
+  else
+    chaseMode = DontChase
+  end
+  g_game.setChaseMode(chaseMode)
+end
+
+function onSetSafeFight(self, checked)
+  g_game.setSafeFight(not checked)
 end

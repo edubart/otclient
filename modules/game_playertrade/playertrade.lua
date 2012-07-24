@@ -1,16 +1,34 @@
-PlayerTrade = {}
+tradeWindow = nil
 
-local tradeWindow
+function init()
+  g_ui.importStyle('tradewindow.otui')
 
-local function createTrade()
-  tradeWindow = g_ui.createWidget('TradeWindow', GameInterface.getRightPanel())
+  connect(g_game, { onOwnTrade = onGameOwnTrade,
+                    onCounterTrade = onGameCounterTrade,
+                    onCloseTrade = onGameCloseTrade,
+                    onGameEnd = onGameCloseTrade })
+end
+
+function terminate()
+  disconnect(g_game, { onOwnTrade = onGameOwnTrade,
+                       onCounterTrade = onGameCounterTrade,
+                       onCloseTrade = onGameCloseTrade,
+                       onGameEnd = onGameCloseTrade })
+
+  if tradeWindow then
+    tradeWindow:destroy()
+  end
+end
+
+function createTrade()
+  tradeWindow = g_ui.createWidget('TradeWindow', modules.game_interface.getRightPanel())
   tradeWindow.onClose = function()
     g_game.rejectTrade()
     tradeWindow:hide()
   end
 end
 
-local function fillTrade(name, items, counter)
+function fillTrade(name, items, counter)
   if not tradeWindow then
     createTrade()
   end
@@ -42,37 +60,16 @@ local function fillTrade(name, items, counter)
   end
 end
 
-local function onGameOwnTrade(name, items)
+function onGameOwnTrade(name, items)
   fillTrade(name, items, false)
 end
 
-local function onGameCounterTrade(name, items)
+function onGameCounterTrade(name, items)
   fillTrade(name, items, true)
 end
 
-local function onGameCloseTrade()
+function onGameCloseTrade()
   if not tradeWindow then return end
   tradeWindow:destroy()
   tradeWindow = nil
-end
-
-function PlayerTrade.init()
-  g_ui.importStyle('tradewindow.otui')
-
-  connect(g_game, { onOwnTrade = onGameOwnTrade,
-                    onCounterTrade = onGameCounterTrade,
-                    onCloseTrade = onGameCloseTrade,
-                    onGameEnd = onGameCloseTrade })
-end
-
-function PlayerTrade.terminate()
-  disconnect(g_game, { onOwnTrade = onGameOwnTrade,
-                       onCounterTrade = onGameCounterTrade,
-                       onCloseTrade = onGameCloseTrade,
-                       onGameEnd = onGameCloseTrade })
-
-  if tradeWindow then
-    tradeWindow:destroy()
-    tradeWindow = nil
-  end
 end

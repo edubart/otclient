@@ -1,11 +1,39 @@
-QuestLog = {}
+questLogButton = nil
+questLineWindow = nil
 
-local questLogButton
-local questLogWindow
-local questLineWindow
+function init()
+  g_ui.importStyle('questlogwindow.otui')
+  g_ui.importStyle('questlinewindow.otui')
 
-local function onGameQuestLog(quests)
-  QuestLog.destroyWindows()
+  questLogButton = TopMenu.addLeftGameButton('questLogButton', tr('Quest Log'), 'questlog.png', function() g_game.requestQuestLog() end)
+
+  connect(g_game, { onQuestLog = onGameQuestLog,
+                    onQuestLine = onGameQuestLine,
+                    onGameEnd = destroyWindows})
+end
+
+function terminate()
+  disconnect(g_game, { onQuestLog = onGameQuestLog,
+                       onQuestLine = onGameQuestLine,
+                       onGameEnd = destroyWindows})
+
+  destroyWindows()
+end
+
+function destroyWindows()
+  if questLogWindow then
+    questLogWindow:destroy()
+    questLogWindow = nil
+  end
+
+  if questLineWindow then
+    questLineWindow:destroy()
+    questLineWindow = nil
+  end
+end
+
+function onGameQuestLog(quests)
+  destroyWindows()
 
   questLogWindow = g_ui.createWidget('QuestLogWindow', rootWidget)
   local questList = questLogWindow:getChildById('questList')
@@ -27,7 +55,7 @@ local function onGameQuestLog(quests)
   end
 end
 
-local function onGameQuestLine(questId, questMissions)
+function onGameQuestLine(questId, questMissions)
   if questLogWindow then questLogWindow:hide() end
   if questLineWindow then questLineWindow:destroy() end
 
@@ -52,38 +80,4 @@ local function onGameQuestLine(questId, questMissions)
     if questLogWindow then questLogWindow:show() end
     questLineWindow = nil
   end
-end
-
-function QuestLog.init()
-  g_ui.importStyle('questlogwindow.otui')
-  g_ui.importStyle('questlinewindow.otui')
-
-  questLogButton = TopMenu.addLeftGameButton('questLogButton', tr('Quest Log'), 'questlog.png', function() g_game.requestQuestLog() end)
-
-  connect(g_game, { onQuestLog = onGameQuestLog,
-                    onQuestLine = onGameQuestLine,
-                    onGameEnd = QuestLog.destroyWindows})
-end
-
-function QuestLog.destroyWindows()
-  if questLogWindow then
-    questLogWindow:destroy()
-    questLogWindow = nil
-  end
-
-  if questLineWindow then
-    questLineWindow:destroy()
-    questLineWindow = nil
-  end
-end
-
-function QuestLog.terminate()
-  disconnect(g_game, { onQuestLog = onGameQuestLog,
-                       onQuestLine = onGameQuestLine,
-                       onGameEnd = QuestLog.destroyWindows})
-
-  QuestLog.destroyWindows()
-
-  questLogButton:destroy()
-  questLogButton = nil
 end

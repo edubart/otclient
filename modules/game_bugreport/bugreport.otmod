@@ -3,13 +3,7 @@ Module
   description: Bug report interface (Ctrl+Z)
   author: edubart
   website: www.otclient.info
-
-  dependencies:
-    - game_interface
-
-  @onLoad: |
-    dofile 'bugreport'
-    BugReport.init()
-
-  @onUnload: |
-    BugReport.terminate()
+  scripts: [ bugreport.lua ]
+  sandboxed: true
+  @onLoad: init()
+  @onUnload: terminate()

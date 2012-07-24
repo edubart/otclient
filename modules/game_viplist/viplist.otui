@@ -1,17 +1,17 @@
 VipListLabel < GameLabel
   font: verdana-11px-monochrome
   phantom: false
-  &onMousePress: VipList.onVipListLabelMousePress
+  &onMousePress: onVipListLabelMousePress
 
 MiniWindow
   id: vipWindow
   !text: tr('VIP List')
   height: 100
   icon: viplist.png
-  @onClose: VipList.onMiniWindowClose()
+  @onClose: onMiniWindowClose()
   &save: true
 
   MiniWindowContents
     layout: verticalBox
     anchors.fill: parent
-    &onMousePress: VipList.onVipListMousePress
+    &onMousePress: onVipListMousePress

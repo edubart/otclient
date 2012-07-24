@@ -36,7 +36,17 @@ function quit()
   g_app.quit()
 end
 
-function connect(object, signalsAndSlots, pushFront)
+function connect(object, arg1, arg2, arg3)
+  local signalsAndSlots
+  local pushFront
+  if type(arg1) == 'string' then
+    signalsAndSlots = { [arg1] = arg2 }
+    pushFront = arg3
+  else
+    signalsAndSlots = arg1
+    pushFront = arg2
+  end
+
   for signal,slot in pairs(signalsAndSlots) do
     if not object[signal] then
       local mt = getmetatable(object)
@@ -149,6 +159,14 @@ local function module_loader(modname)
   end
 end
 table.insert(package.loaders, 1, module_loader)
+
+function import(table)
+  assert(type(table) == 'table')
+  local env = getfenv(2)
+  for k,v in pairs(table) do
+    env[k] = v
+  end
+end
 
 function export(what, key)
   if key ~= nil then

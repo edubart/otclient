@@ -3,13 +3,7 @@ Module
   description: Displays health, mana points, soul points, and conditions
   author: edubart, BeniS
   website: www.otclient.info
-
-  dependencies:
-    - game_interface
-
-  @onLoad: |
-    dofile 'healthinfo'
-    HealthInfo.init()
-
-  @onUnload: |
-    HealthInfo.terminate()
+  sandboxed: true
+  scripts: [ healthinfo.lua ]
+  @onLoad: init()
+  @onUnload: terminate()

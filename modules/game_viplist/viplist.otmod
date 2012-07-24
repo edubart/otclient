@@ -3,10 +3,7 @@ Module
   description: Manage vip list window
   author: baxnie, edubart
   website: www.otclient.info
-
-  @onLoad: |
-    dofile 'viplist'
-    VipList.init()
-
-  @onUnload: |
-    VipList.terminate()
+  sandboxed: true
+  scripts: [ viplist.lua ]
+  @onLoad: init()
+  @onUnload: terminate()

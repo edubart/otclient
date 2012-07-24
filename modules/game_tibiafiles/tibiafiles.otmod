@@ -2,10 +2,7 @@ Module
   name: game_tibiafiles
   description: Contains tibia spr and dat
   reloadable: false
-
-  @onLoad: |
-    dofile 'tibiafiles'
-    TibiaFiles.init()
-
-  @onUnload: |
-    TibiaFiles.terminate()
+  sandboxed: true
+  scripts: [tibiafiles.lua]
+  @onLoad: init()
+  @onUnload: terminate()

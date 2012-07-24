@@ -191,10 +191,8 @@ void OTMLParser::parseNode(const std::string& data)
         if(boost::starts_with(value, "[") && boost::ends_with(value, "]")) {
             std::string tmp = value.substr(1, value.length()-2);
             boost::tokenizer<boost::escaped_list_separator<char>> tokens(tmp);
-            for(std::string v : tokens) {
-                stdext::trim(v);
-                node->writeIn(v);
-            }
+            for(std::string v : tokens)
+                node->writeIn(stdext::trim(v));
         } else
             node->setValue(value);
     }

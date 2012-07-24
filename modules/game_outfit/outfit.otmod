@@ -3,13 +3,7 @@ Module
   description: Change local player outfit
   author: baxnie, edubart
   website: www.otclient.info
-
-  dependencies:
-    - game_interface
-
-  @onLoad: |
-    dofile 'outfit'
-    Outfit.init()
-
-  @onUnload: |
-    Outfit.terminate()
+  sandboxed: true
+  scripts: [ outfit.lua ]
+  @onLoad: init()
+  @onUnload: terminate()

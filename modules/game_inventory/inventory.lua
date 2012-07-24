@@ -1,6 +1,3 @@
-Inventory = {}
-
--- public variables
 InventorySlotStyles = {
   [InventorySlotHead] = "HeadSlot",
   [InventorySlotNeck] = "NeckSlot",
@@ -14,54 +11,47 @@ InventorySlotStyles = {
   [InventorySlotAmmo] = "AmmoSlot"
 }
 
--- private variables
-local inventoryWindow
-local inventoryPanel
-local inventoryButton
+inventoryWindow = nil
+inventoryPanel = nil
+inventoryButton = nil
 
--- public functions
-function Inventory.init()
-  connect(LocalPlayer, { onInventoryChange = Inventory.onInventoryChange })
-  connect(g_game, { onGameStart = Inventory.refresh })
+function init()
+  connect(LocalPlayer, { onInventoryChange = onInventoryChange })
+  connect(g_game, { onGameStart = refresh })
 
-  g_keyboard.bindKeyDown('Ctrl+I', Inventory.toggle)
+  g_keyboard.bindKeyDown('Ctrl+I', toggle)
 
-  inventoryWindow = g_ui.loadUI('inventory.otui', GameInterface.getRightPanel())
+  inventoryWindow = g_ui.loadUI('inventory.otui', modules.game_interface.getRightPanel())
   inventoryWindow:disableResize()
   inventoryPanel = inventoryWindow:getChildById('contentsPanel')
-  inventoryButton = TopMenu.addRightGameToggleButton('inventoryButton', tr('Inventory') .. ' (Ctrl+I)', 'inventory.png', Inventory.toggle)
+  inventoryButton = TopMenu.addRightGameToggleButton('inventoryButton', tr('Inventory') .. ' (Ctrl+I)', 'inventory.png', toggle)
   inventoryButton:setOn(true)
 
-  Inventory.refresh()
+  refresh()
 end
 
-function Inventory.terminate()
-  disconnect(LocalPlayer, { onInventoryChange = Inventory.onInventoryChange })
-  disconnect(g_game, { onGameStart = Inventory.refresh })
+function terminate()
+  disconnect(LocalPlayer, { onInventoryChange = onInventoryChange })
+  disconnect(g_game, { onGameStart = refresh })
 
   g_keyboard.unbindKeyDown('Ctrl+I')
 
   inventoryWindow:destroy()
   inventoryButton:destroy()
-  inventoryWindow = nil
-  inventoryButton = nil
-  inventoryPanel = nil
-
-  Inventory = nil
 end
 
-function Inventory.refresh()
+function refresh()
   local player = g_game.getLocalPlayer()
   for i=InventorySlotFirst,InventorySlotLast do
     if player then
-      Inventory.onInventoryChange(player, i, player:getInventoryItem(i))
+      onInventoryChange(player, i, player:getInventoryItem(i))
     else
-      Inventory.onInventoryChange(player, i, nil)
+      onInventoryChange(player, i, nil)
     end
   end
 end
 
-function Inventory.toggle()
+function toggle()
   if inventoryButton:isOn() then
     inventoryWindow:close()
     inventoryButton:setOn(false)
@@ -71,12 +61,12 @@ function Inventory.toggle()
   end
 end
 
-function Inventory.onMiniWindowClose()
+function onMiniWindowClose()
   inventoryButton:setOn(false)
 end
 
 -- hooked events
-function Inventory.onInventoryChange(player, slot, item, oldItem)
+function onInventoryChange(player, slot, item, oldItem)
   local itemWidget = inventoryPanel:getChildById('slot' .. slot)
   if(item) then
     itemWidget:setStyle('Item')

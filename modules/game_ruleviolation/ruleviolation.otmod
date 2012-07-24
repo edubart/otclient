@@ -3,13 +3,7 @@ Module
   description: Rule violation interface (Ctrl+Y)
   author: andrefaramir
   website: www.otclient.info
-
-  dependencies:
-    - game_interface
-
-  @onLoad: |
-    dofile 'ruleviolation'
-    RuleViolation.init()
-
-  @onUnload: |
-    RuleViolation.terminate()
+  sandboxed: true
+  scripts: [ ruleviolation.lua ]
+  @onLoad: init()
+  @onUnload: terminate()

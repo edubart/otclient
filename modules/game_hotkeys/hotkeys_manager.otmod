@@ -3,13 +3,7 @@ Module
   description: Manage client hotkeys
   author: andrefaramir, BeniS
   website: www.otclient.info
-
-  dependencies:
-    - game_interface
-
-  @onLoad: |
-    dofile 'hotkeys_manager'
-    HotkeysManager.init()
-
-  @onUnload: |
-    HotkeysManager.terminate()
+  sandboxed: true
+  scripts: [ hotkeys_manager.lua ]
+  @onLoad: init()
+  @onUnload: terminate()

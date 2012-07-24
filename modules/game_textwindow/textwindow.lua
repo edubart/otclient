@@ -1,13 +1,28 @@
-TextWindow = {}
+function init()
+  g_ui.importStyle('textwindow.otui')
 
--- private variables
-local textWindow
+  connect(g_game, { onEditText = onGameEditText,
+                    onEditList = onGameEditList,
+                    onGameEnd = destroy })
+end
 
--- private functions
-local function onGameEditText(id, itemId, maxLength, text, writter, time)
+function terminate()
+  disconnect(g_game, { onEditText = onGameEditText,
+                       onEditList = onGameEditList,
+                       onGameEnd = destroy })
+
+  destroy()
+end
+
+function destroy()
   if textWindow then
-    return
+    textWindow:destroy()
+    textWindow = nil
   end
+end
+
+function onGameEditText(id, itemId, maxLength, text, writter, time)
+  if textWindow then return end
   textWindow = g_ui.createWidget('TextWindow', rootWidget)
 
   local writeable = (maxLength ~= #text) and maxLength > 0
@@ -52,18 +67,16 @@ local function onGameEditText(id, itemId, maxLength, text, writter, time)
     if writeable then
       g_game.editText(id, textEdit:getText())
     end
-    TextWindow.destroy()
+    destroy()
   end
-  
+
   okButton.onClick = doneFunc
   textWindow.onEnter = doneFunc
-  textWindow.onEscape = TextWindow.destroy
+  textWindow.onEscape = destroy
 end
 
-local function onGameEditList(id, doorId, text)
-  if textWindow then
-    return
-  end
+function onGameEditList(id, doorId, text)
+  if textWindow then return end
   textWindow = g_ui.createWidget('TextWindow', rootWidget)
 
   local textEdit = textWindow:getChildById('text')
@@ -79,34 +92,10 @@ local function onGameEditList(id, doorId, text)
 
   doneFunc = function()
     g_game.editList(id, doorId, textEdit:getText())
-    TextWindow.destroy()
+    destroy()
   end
-  
+
   okButton.onClick = doneFunc
   textWindow.onEnter = doneFunc
-  textWindow.onEscape = TextWindow.destroy
-end
-
--- public functions
-function TextWindow.init()
-  g_ui.importStyle('textwindow.otui')
-
-  connect(g_game, { onEditText = onGameEditText,
-                    onEditList = onGameEditList,
-                    onGameEnd = TextWindow.destroy })
-end
-
-function TextWindow.terminate()
-  disconnect(g_game, { onEditText = onGameEditText,
-                       onEditList = onGameEditList,
-                       onGameEnd = TextWindow.destroy })
-      
-  TextWindow.destroy()
-end
-
-function TextWindow.destroy()
-  if textWindow then
-    textWindow:destroy()
-    textWindow = nil
-  end
+  textWindow.onEscape = destroy
 end

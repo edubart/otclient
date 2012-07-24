@@ -3,13 +3,8 @@ Module
   description: Allow to edit text books and lists
   author: edubart, BeniS
   website: www.otclient.info
-
-  dependencies:
-    - game_interface
-
-  @onLoad: |
-    dofile 'textwindow'
-    TextWindow.init()
-
-  @onUnload: |
-    TextWindow.terminate()
+  sandboxed: true
+  dependencies: [ game_interface ]
+  scripts: [ textwindow.lua ]
+  @onLoad: init()
+  @onUnload: terminate()

@@ -3,13 +3,7 @@ Module
   description: Manage containers
   author: edubart, baxnie
   website: www.otclient.info
-
-  dependencies:
-    - game_interface
-
-  @onLoad: |
-    dofile 'containers'
-    Containers.init()
-
-  @onUnload: |
-    Containers.terminate()
+  sandboxed: true
+  scripts: [containers.lua]
+  @onLoad: init()
+  @onUnload: terminate()

@@ -1,51 +1,42 @@
-PlayerDeath = {}
+deathWindow = nil
 
--- private variables
-local deathWindow
-
--- private functions
-
--- public functions
-function PlayerDeath.init()
+function init()
   g_ui.importStyle('deathwindow.otui')
 
-  connect(g_game, { onDeath = PlayerDeath.display,
-                    onGameEnd = PlayerDeath.reset })
+  connect(g_game, { onDeath = display,
+                    onGameEnd = reset })
 end
 
-function PlayerDeath.terminate()
-  disconnect(g_game, { onDeath = PlayerDeath.display,
-                       onGameEnd = PlayerDeath.reset })
+function terminate()
+  disconnect(g_game, { onDeath = display,
+                       onGameEnd = reset })
 
-  PlayerDeath.reset()
-  PlayerDeath = nil
+  reset()
 end
 
-function PlayerDeath.reset()
+function reset()
   if deathWindow then
     deathWindow:destroy()
     deathWindow = nil
   end
 end
 
-function PlayerDeath.display()
-  PlayerDeath.displayDeadMessage()
-  PlayerDeath.openWindow()
+function display()
+  displayDeadMessage()
+  openWindow()
 end
 
-function PlayerDeath.displayDeadMessage()
-  local advanceLabel = GameInterface.getMapPanel():recursiveGetChildById('centerAdvance')
+function displayDeadMessage()
+  local advanceLabel = modules.game_interface.getMapPanel():recursiveGetChildById('centerAdvance')
   if advanceLabel:isVisible() then
     return
   end
 
-  TextMessage.displayEventAdvance(tr('You are dead.'))
+  modules.game_textmessage.displayEventAdvance(tr('You are dead.'))
 end
 
-function PlayerDeath.openWindow()
-  if deathWindow then
-    return
-  end
+function openWindow()
+  if deathWindow then return end
   deathWindow = g_ui.createWidget('DeathWindow', rootWidget)
   local okButton = deathWindow:getChildById('buttonOk')
   local cancelButton = deathWindow:getChildById('buttonCancel')
@@ -56,7 +47,7 @@ function PlayerDeath.openWindow()
     deathWindow = nil
   end
   local cancelFunc = function()
-    GameInterface.logout()
+    modules.game_interface.logout()
     cancelButton:getParent():destroy()
     deathWindow = nil
   end

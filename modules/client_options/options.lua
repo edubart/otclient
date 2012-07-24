@@ -137,7 +137,7 @@ function Options.setOption(key, value)
     g_sounds.enableMusic(value)
   elseif key == 'showLeftPanel' then
     addEvent(function()
-      GameInterface.getLeftPanel():setOn(value)
+      modules.game_interface.getLeftPanel():setOn(value)
     end)
   elseif key == 'backgroundFrameRate' then
     local text = value

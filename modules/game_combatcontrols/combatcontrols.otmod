@@ -3,13 +3,7 @@ Module
   description: Combat controls window
   author: edubart, BeniS
   website: www.otclient.info
-
-  dependencies:
-    - game_interface
-
-  @onLoad: |
-    dofile 'combatcontrols'
-    CombatControls.init()
-
-  @onUnload: |
-    CombatControls.terminate()
+  sandboxed: true
+  scripts: [ combatcontrols.lua ]
+  @onLoad: init()
+  @onUnload: terminate()

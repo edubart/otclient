@@ -3,10 +3,7 @@ Module
   description: Manage player mounts
   author: BeniS
   website: www.otclient.info
-
-  @onLoad: |
-    dofile 'playermount'
-    PlayerMount.init()
-
-  @onUnload: |
-    PlayerMount.terminate()
+  sandboxed: true
+  scripts: [playermount.lua]
+  @onLoad: init()
+  @onUnload: terminate()

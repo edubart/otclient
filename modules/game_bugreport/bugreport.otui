@@ -28,7 +28,7 @@ BugReportWindow < MainWindow
     anchors.right: cancelButton.left
     margin-right: 10
     width: 80
-    &onClick: BugReport.doReport
+    &onClick: doReport
 
   Button
     id: cancelButton

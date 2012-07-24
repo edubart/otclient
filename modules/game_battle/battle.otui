@@ -41,7 +41,7 @@ MiniWindow
   !text: tr('Battle')
   height: 166
   icon: battle.png
-  @onClose: Battle.onMiniWindowClose()
+  @onClose: onMiniWindowClose()
   &save: true
 
   MiniWindowContents

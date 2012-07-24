@@ -1,10 +1,9 @@
-BugReport = {}
+HOTKEY = 'Ctrl+Z'
 
-local bugReportWindow
-local bugTextEdit
-local HOTKEY = 'Ctrl+Z'
+bugReportWindow = nil
+bugTextEdit = nil
 
-function BugReport.init()
+function init()
   g_ui.importStyle('bugreport.otui')
 
   bugReportWindow = g_ui.createWidget('BugReportWindow', rootWidget)
@@ -12,23 +11,21 @@ function BugReport.init()
 
   bugTextEdit = bugReportWindow:getChildById('bugTextEdit')
 
-  g_keyboard.bindKeyDown(HOTKEY, BugReport.show)
+  g_keyboard.bindKeyDown(HOTKEY, show)
 end
 
-function BugReport.terminate()
+function terminate()
   g_keyboard.unbindKeyDown(HOTKEY)
   bugReportWindow:destroy()
-  bugReportWindow = nil
-  bugTextEdit = nil
 end
 
-function BugReport.doReport()
+function doReport()
   g_game.reportBug(bugTextEdit:getText())
   bugReportWindow:hide()
-  TextMessage.displayEventAdvance(tr('Bug report sent.'))
+  modules.game_textmessage.displayEventAdvance(tr('Bug report sent.'))
 end
 
-function BugReport.show()
+function show()
   bugTextEdit:setText('')
   bugReportWindow:show()
   bugReportWindow:raise()

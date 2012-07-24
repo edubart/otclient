@@ -30,7 +30,7 @@ function UIItem:onDrop(widget, mousePos)
   if itemPos.x == toPos.x and itemPos.y == toPos.y and itemPos.z == toPos.z then return false end
 
   if item:getCount() > 1 then
-    GameInterface.moveStackableItem(item, toPos)
+    modules.game_interface.moveStackableItem(item, toPos)
   else
     g_game.move(item, toPos, 1)
   end
@@ -73,7 +73,7 @@ function UIItem:onMouseRelease(mousePosition, mouseButton)
     g_game.look(item)
     self.cancelNextRelease = true
     return true
-  elseif GameInterface.processMouseAction(mousePosition, mouseButton, nil, item, item, nil, item) then
+  elseif modules.game_interface.processMouseAction(mousePosition, mouseButton, nil, item, item, nil, item) then
     return true
   end
   return false

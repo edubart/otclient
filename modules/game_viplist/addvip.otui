@@ -1,8 +1,8 @@
 MainWindow
   size: 256 128
   !text: tr('Add to VIP list')
-  @onEnter: VipList.addVip()
-  @onEscape: VipList.destroyAddWindow()
+  @onEnter: addVip()
+  @onEscape: destroyAddWindow()
 
   Label
     !text: tr('Please enter a character name:')
@@ -29,11 +29,11 @@ MainWindow
     anchors.right: next.left
     anchors.bottom: parent.bottom
     margin-right: 10
-    @onClick: VipList.addVip()
+    @onClick: addVip()
 
   Button
     !text: tr('Cancel')
     width: 64
     anchors.right: parent.right
     anchors.bottom: parent.bottom
-    @onClick: VipList.destroyAddWindow()
+    @onClick: destroyAddWindow()

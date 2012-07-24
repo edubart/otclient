@@ -1,64 +1,33 @@
-Minimap = {}
+DEFAULT_ZOOM = 60
+MAX_FLOOR_UP = 0
+MAX_FLOOR_DOWN = 15
 
--- public variables
-minimapFirstLoad = true
+G.minimapFirstLoad = true
 
--- private variables
-local minimapWidget
-local minimapButton
-local minimapWindow
-local DEFAULT_ZOOM = 60
-local MAX_FLOOR_UP = 0
-local MAX_FLOOR_DOWN = 15
-local navigating = false
-
--- private functions
-function onMinimapMouseRelease(self, mousePosition, mouseButton)
-  if navigating then
-    navigating = false
-    return
-  end
-  local tile = self:getTile(mousePosition)
-  if tile and mouseButton == MouseLeftButton and self:isPressed() then
-    local dirs = g_map.findPath(g_game.getLocalPlayer():getPosition(), tile:getPosition(), 127)
-    if #dirs == 0 then
-      TextMessage.displayStatus(tr('There is no way.'))
-      return true
-    end
-    g_game.autoWalk(dirs)
-    return true
-  end
-  return false
-end
-
-function onMinimapMouseWheel(self, mousePos, direction)
-  if direction == MouseWheelUp then
-    self:zoomIn()
-  else
-    self:zoomOut()
-  end
-end
+navigating = false
+minimapWidget = nil
+minimapButton = nil
+minimapWindow = nil
 
 --[[
   Known Issue (TODO):
   If you move the minimap compass directions and
   you change floor it will not update the minimap.
 ]]
--- public functions
-function Minimap.init()
-  connect(g_game, { onGameStart = Minimap.reset,
-                    onForceWalk = Minimap.center })
+function init()
+  connect(g_game, { onGameStart = reset,
+                    onForceWalk = center })
 
-  g_keyboard.bindKeyDown('Ctrl+M', Minimap.toggle)
+  g_keyboard.bindKeyDown('Ctrl+M', toggle)
 
-  minimapButton = TopMenu.addRightGameToggleButton('minimapButton', tr('Minimap') .. ' (Ctrl+M)', 'minimap.png', Minimap.toggle)
+  minimapButton = TopMenu.addRightGameToggleButton('minimapButton', tr('Minimap') .. ' (Ctrl+M)', 'minimap.png', toggle)
   minimapButton:setOn(true)
 
-  minimapWindow = g_ui.loadUI('minimap.otui', GameInterface.getRightPanel())
+  minimapWindow = g_ui.loadUI('minimap.otui', modules.game_interface.getRightPanel())
 
   minimapWidget = minimapWindow:recursiveGetChildById('minimap')
-  g_mouse.bindAutoPress(minimapWidget, Minimap.compassClick, nil, MouseRightButton)
-  g_mouse.bindAutoPress(minimapWidget, Minimap.compassClick, nil, MouseLeftButton)
+  g_mouse.bindAutoPress(minimapWidget, compassClick, nil, MouseRightButton)
+  g_mouse.bindAutoPress(minimapWidget, compassClick, nil, MouseLeftButton)
   minimapWidget:setAutoViewMode(false)
   minimapWidget:setViewMode(1) -- mid view
   minimapWidget:setDrawMinimapColors(true)
@@ -67,11 +36,11 @@ function Minimap.init()
   minimapWidget.onMouseRelease = onMinimapMouseRelease
   minimapWidget.onMouseWheel = onMinimapMouseWheel
 
-  Minimap.reset()
+  reset()
 
   -- load only the first time (avoid load/save between reloads)
-  if minimapFirstLoad then
-    minimapFirstLoad = false
+  if G.minimapFirstLoad then
+    G.minimapFirstLoad = false
     if g_resources.fileExists('/minimap.otcm') then
       if g_game.isOnline() then
         perror('cannot load minimap while online')
@@ -87,21 +56,17 @@ function Minimap.init()
   end
 end
 
-function Minimap.terminate()
-  disconnect(g_game, { onGameStart = Minimap.reset,
-                       onForceWalk = Minimap.center })
+function terminate()
+  disconnect(g_game, { onGameStart = reset,
+                       onForceWalk = center })
 
   g_keyboard.unbindKeyDown('Ctrl+M')
 
   minimapButton:destroy()
   minimapWindow:destroy()
-  minimapWindow = nil
-  minimapWidget = nil
-  minimapButton = nil
-  Minimap = nil
 end
 
-function Minimap.toggle()
+function toggle()
   if minimapButton:isOn() then
     minimapWindow:close()
     minimapButton:setOn(false)
@@ -111,16 +76,24 @@ function Minimap.toggle()
   end
 end
 
-function Minimap.onMiniWindowClose()
-  minimapButton:setOn(false)
-end
-
-function Minimap.isClickInRange(position, fromPosition, toPosition)
+function isClickInRange(position, fromPosition, toPosition)
   return (position.x >= fromPosition.x and position.y >= fromPosition.y and position.x <= toPosition.x and position.y <= toPosition.y)
 end
 
--- hooked functions
-function Minimap.compassClick(self, mousePos, mouseButton, elapsed)
+function reset()
+  local player = g_game.getLocalPlayer()
+  if not player then return end
+  minimapWidget:followCreature(player)
+  minimapWidget:setZoom(DEFAULT_ZOOM)
+end
+
+function center()
+  local player = g_game.getLocalPlayer()
+  if not player then return end
+  minimapWidget:followCreature(player)
+end
+
+function compassClick(self, mousePos, mouseButton, elapsed)
   if elapsed < 300 then return end
 
   navigating = true
@@ -144,7 +117,7 @@ function Minimap.compassClick(self, mousePos, mouseButton, elapsed)
   minimapWidget:setCameraPosition(pos)
 end
 
-function Minimap.onButtonClick(id)
+function onButtonClick(id)
   if id == "zoomIn" then
     minimapWidget:setZoom(math.max(minimapWidget:getMaxZoomIn(), minimapWidget:getZoom()-15))
   elseif id == "zoomOut" then
@@ -164,16 +137,32 @@ function Minimap.onButtonClick(id)
   end
 end
 
--- hooked events
-function Minimap.reset()
-  local player = g_game.getLocalPlayer()
-  if not player then return end
-  minimapWidget:followCreature(player)
-  minimapWidget:setZoom(DEFAULT_ZOOM)
+function onMinimapMouseRelease(self, mousePosition, mouseButton)
+  if navigating then
+    navigating = false
+    return
+  end
+  local tile = self:getTile(mousePosition)
+  if tile and mouseButton == MouseLeftButton and self:isPressed() then
+    local dirs = g_map.findPath(g_game.getLocalPlayer():getPosition(), tile:getPosition(), 127)
+    if #dirs == 0 then
+      modules.game_textmessage.displayStatus(tr('There is no way.'))
+      return true
+    end
+    g_game.autoWalk(dirs)
+    return true
+  end
+  return false
 end
 
-function Minimap.center()
-  local player = g_game.getLocalPlayer()
-  if not player then return end
-  minimapWidget:followCreature(player)
+function onMinimapMouseWheel(self, mousePos, direction)
+  if direction == MouseWheelUp then
+    self:zoomIn()
+  else
+    self:zoomOut()
+  end
+end
+
+function onMiniWindowClose()
+  minimapButton:setOn(false)
 end

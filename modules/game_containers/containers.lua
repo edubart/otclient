@@ -1,4 +1,41 @@
-Containers = {}
+function init()
+  g_ui.importStyle('container.otui')
+
+  connect(Container, { onOpen = onContainerOpen,
+                       onClose = onContainerClose,
+                       onAddItem = onContainerAddItem,
+                       onUpdateItem = onContainerUpdateItem,
+                       onRemoveItem = onContainerRemoveItem })
+  connect(Game, { onGameEnd = clean() })
+
+  reloadContainers()
+end
+
+function terminate()
+  disconnect(Container, { onOpen = onContainerOpen,
+                          onClose = onContainerClose,
+                          onAddItem = onContainerAddItem,
+                          onUpdateItem = onContainerUpdateItem,
+                          onRemoveItem = onContainerRemoveItem })
+  disconnect(Game, { onGameEnd = clean() })
+end
+
+function reloadContainers()
+  clean()
+  for containerid,container in pairs(g_game.getContainers()) do
+    onContainerOpen(container)
+  end
+end
+
+function clean()
+  for containerid,container in pairs(g_game.getContainers()) do
+    if container.window then
+      container.window:destroy()
+      container.window = nil
+      container.itemsPanel = nil
+    end
+  end
+end
 
 local function refreshContainerItems(container)
   for slot=0,container:getCapacity()-1 do
@@ -14,7 +51,7 @@ local function onContainerOpen(container, previousContainer)
     previousContainer.window = nil
     previousContainer.itemsPanel = nil
   else
-    containerWindow = g_ui.createWidget('ContainerWindow', GameInterface.getRightPanel())
+    containerWindow = g_ui.createWidget('ContainerWindow', modules.game_interface.getRightPanel())
   end
   containerWindow:setId('container' .. container:getId())
   local containerPanel = containerWindow:getChildById('contentsPanel')
@@ -71,44 +108,4 @@ end
 local function onContainerRemoveItem(container, slot, item)
   if not container.window then return end
   refreshContainerItems(container)
-end
-
-function Containers.init()
-  g_ui.importStyle('container.otui')
-
-  connect(Container, { onOpen = onContainerOpen,
-                       onClose = onContainerClose,
-                       onAddItem = onContainerAddItem,
-                       onUpdateItem = onContainerUpdateItem,
-                       onRemoveItem = onContainerRemoveItem })
-  connect(Game, { onGameEnd = Containers.clean() })
-
-  Containers.reloadContainers()
-end
-
-function Containers.terminate()
-  disconnect(Container, { onOpen = onContainerOpen,
-                          onClose = onContainerClose,
-                          onAddItem = onContainerAddItem,
-                          onUpdateItem = onContainerUpdateItem,
-                          onRemoveItem = onContainerRemoveItem })
-  disconnect(Game, { onGameEnd = Containers.clean() })
-  Containers = nil
-end
-
-function Containers.reloadContainers()
-  Containers.clean()
-  for containerid,container in pairs(g_game.getContainers()) do
-    onContainerOpen(container)
-  end
-end
-
-function Containers.clean()
-  for containerid,container in pairs(g_game.getContainers()) do
-    if container.window then
-      container.window:destroy()
-      container.window = nil
-      container.itemsPanel = nil
-    end
-  end
 end

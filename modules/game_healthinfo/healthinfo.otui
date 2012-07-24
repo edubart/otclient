@@ -65,7 +65,7 @@ MiniWindow
   id: healthInfoWindow
   !text: tr('Health Info')
   height: 102
-  @onClose: HealthInfo.onMiniWindowClose()
+  @onClose: onMiniWindowClose()
   &save: true
 
   MiniWindowContents
