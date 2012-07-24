@@ -43,7 +43,9 @@ public:
     bool isLoaded() { return m_loaded; }
     bool isReloadable() { return m_reloadable; }
     bool isDependent();
+    bool isSandboxed() { return m_sandboxed; }
     bool hasDependency(const std::string& name);
+    int getSandbox(LuaInterface *lua);
 
     std::string getDescription() { return m_description; }
     std::string getName() { return m_name; }

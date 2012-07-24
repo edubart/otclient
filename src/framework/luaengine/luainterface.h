@@ -186,7 +186,7 @@ public:
     /// The new environment table is redirected to the global environment (aka _G),
     /// this allows to access global variables from _G in the new environment and
     /// prevents new variables in this new environment to be set on the global environment
-    void newEnvironment();
+    int newSandboxEnv();
 
     template<typename... T>
     int callGlobalField(const std::string& global, const std::string& field, const T&... args);
@@ -200,9 +200,11 @@ private:
     /// Load scripts requested by lua 'require'
     static int luaScriptLoader(lua_State* L);
     /// Run scripts requested by lua 'dofile'
-    static int luaScriptRunner(lua_State* L);
+    static int lua_dofile(lua_State* L);
     /// Run scripts requested by lua 'dofiles'
-    static int luaScriptsRunner(lua_State* L);
+    static int lua_dofiles(lua_State* L);
+    /// Run scripts requested by lua 'dofiles'
+    static int lua_loadfile(lua_State* L);
     /// Handle lua errors from safeCall
     static int luaErrorHandler(lua_State* L);
     /// Handle bound cpp functions callbacks
@@ -240,8 +242,9 @@ public:
     void getRef(int ref);
     void getWeakRef(int weakRef);
 
-    void getGlobalEnvironment();
-    void setGlobalEnvironment();
+    int getGlobalEnvironment() { return m_globalEnv; }
+    void setGlobalEnvironment(int env);
+    void resetGlobalEnvironment() { setGlobalEnvironment(m_globalEnv); }
 
     void setMetatable(int index = -2);
     void getMetatable(int index = -1);
@@ -253,6 +256,7 @@ public:
 
     void getTable(int index = -2);
     void setTable(int index = -3);
+    void clearTable(int index = -1);
 
     void getEnv(int index = -1);
     void setEnv(int index = -2);
@@ -334,6 +338,7 @@ private:
     int m_cppCallbackDepth;
     int m_totalObjRefs;
     int m_totalFuncRefs;
+    int m_globalEnv;
 };
 
 extern LuaInterface g_lua;

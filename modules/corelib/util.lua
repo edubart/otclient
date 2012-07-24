@@ -110,6 +110,46 @@ function extends(base)
   return derived
 end
 
+function runinsandbox(func, ...)
+  if type(func) == 'string' then
+    func, err = loadfile(resolvepath(func, 2))
+    if not func then
+      error(err)
+    end
+  end
+  local env = { }
+  local oldenv = getfenv(0)
+  setmetatable(env, { __index = oldenv } )
+  setfenv(0, env)
+  func(...)
+  setfenv(0, oldenv)
+  return env
+end
+
+function loadasmodule(name, file)
+  file = file or resolvepath(name, 2)
+  if package.loaded[name] then
+    return package.loaded[name]
+  end
+  local env = runinsandbox(file)
+  package.loaded[name] = env
+  return env
+end
+
+local function module_loader(modname)
+  local module = g_modules.getModule(modname)
+  if not module then
+    return '\n\tno module \'' .. modname .. '\''
+  end
+  return function()
+    if not module:load() then
+      error('unable to load required module ' .. modname)
+    end
+    return module:getSandbox()
+  end
+end
+table.insert(package.loaders, 1, module_loader)
+
 function export(what, key)
   if key ~= nil then
     _G[key] = what
@@ -128,17 +168,6 @@ function unexport(key)
   else
     _G[key] = nil
   end
-end
-
-function sandbox(what)
-  what = what or 2
-  setfenv(what, newenv())
-end
-
-function newenv()
-  local env = { }
-  setmetatable(env, { __index = getfenv() } )
-  return env
 end
 
 function getfsrcpath(depth)

@@ -30,8 +30,7 @@
 Module::Module(const std::string& name)
 {
     m_name = name;
-    g_lua.newEnvironment();
-    m_sandboxEnv = g_lua.ref();
+    m_sandboxEnv = g_lua.newSandboxEnv();
 }
 
 bool Module::load()
@@ -49,12 +48,11 @@ bool Module::load()
                 stdext::throw_exception(stdext::format("dependency '%s' has failed to load", m_name, depName));
         }
 
+        if(m_sandboxed)
+            g_lua.setGlobalEnvironment(m_sandboxEnv);
+
         for(const std::string& script : m_scripts) {
             g_lua.loadScript(script);
-            if(m_sandboxed) {
-                g_lua.getRef(m_sandboxEnv);
-                g_lua.setEnv();
-            }
             g_lua.safeCall(0, 0);
         }
 
@@ -69,8 +67,13 @@ bool Module::load()
             g_lua.safeCall(0, 0);
         }
 
+        if(m_sandboxed)
+            g_lua.resetGlobalEnvironment();
+
         g_logger.debug(stdext::format("Loaded module '%s'", m_name));
     } catch(stdext::exception& e) {
+        if(m_sandboxed)
+            g_lua.resetGlobalEnvironment();
         g_logger.error(stdext::format("Unable to load module '%s': %s", m_name, e.what()));
         return false;
     }
@@ -93,19 +96,28 @@ void Module::unload()
 {
     if(m_loaded) {
         try {
+            if(m_sandboxed)
+                g_lua.setGlobalEnvironment(m_sandboxEnv);
+
             const std::string& onUnloadBuffer = std::get<0>(m_onUnloadFunc);
             const std::string& onUnloadSource = std::get<1>(m_onUnloadFunc);
             if(!onUnloadBuffer.empty()) {
                 g_lua.loadBuffer(onUnloadBuffer, onUnloadSource);
-                if(m_sandboxed) {
-                    g_lua.getRef(m_sandboxEnv);
-                    g_lua.setEnv();
-                }
                 g_lua.safeCall(0, 0);
             }
+
+            if(m_sandboxed)
+                g_lua.resetGlobalEnvironment();
         } catch(stdext::exception& e) {
+            if(m_sandboxed)
+                g_lua.resetGlobalEnvironment();
             g_logger.error(stdext::format("Unable to unload module '%s': %s", m_name, e.what()));
         }
+
+        // clear all env references
+        g_lua.getRef(m_sandboxEnv);
+        g_lua.clearTable();
+        g_lua.pop();
 
         m_loaded = false;
         //g_logger.info(stdext::format("Unloaded module '%s'", m_name));
@@ -133,6 +145,12 @@ bool Module::hasDependency(const std::string& name)
     if(std::find(m_dependencies.begin(), m_dependencies.end(), name) != m_dependencies.end())
         return true;
     return false;
+}
+
+int Module::getSandbox(LuaInterface* lua)
+{
+    lua->getRef(m_sandboxEnv);
+    return 1;
 }
 
 void Module::discover(const OTMLNodePtr& moduleNode)

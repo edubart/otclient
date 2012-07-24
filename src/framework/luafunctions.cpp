@@ -148,11 +148,13 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Module>("canUnload", &Module::canUnload);
     g_lua.bindClassMemberFunction<Module>("isLoaded", &Module::isLoaded);
     g_lua.bindClassMemberFunction<Module>("isReloadble", &Module::isReloadable);
+    g_lua.bindClassMemberFunction<Module>("isSandboxed", &Module::isSandboxed);
     g_lua.bindClassMemberFunction<Module>("getDescription", &Module::getDescription);
     g_lua.bindClassMemberFunction<Module>("getName", &Module::getName);
     g_lua.bindClassMemberFunction<Module>("getAuthor", &Module::getAuthor);
     g_lua.bindClassMemberFunction<Module>("getWebsite", &Module::getWebsite);
     g_lua.bindClassMemberFunction<Module>("getVersion", &Module::getVersion);
+    g_lua.bindClassMemberFunction<Module>("getSandbox", &Module::getSandbox);
     g_lua.bindClassMemberFunction<Module>("isAutoLoad", &Module::isAutoLoad);
     g_lua.bindClassMemberFunction<Module>("getAutoLoadPriority", &Module::getAutoLoadPriority);
 

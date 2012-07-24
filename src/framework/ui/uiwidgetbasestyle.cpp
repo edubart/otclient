@@ -312,6 +312,7 @@ void UIWidget::parseBaseStyle(const OTMLNodePtr& styleNode)
         } else if(boost::starts_with(node->tag(), "&")) {
             std::string fieldName = node->tag().substr(1);
             std::string fieldOrigin = "@" + node->source() + "[" + node->tag() + "]";
+
             g_lua.evaluateExpression(node->value(), fieldOrigin);
             luaSetField(fieldName);
         }

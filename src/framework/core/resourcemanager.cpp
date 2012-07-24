@@ -151,7 +151,7 @@ void ResourceManager::loadFile(const std::string& fileName, std::iostream& out)
         PHYSFS_file* file = PHYSFS_openRead(fullPath.c_str());
         if(!file) {
             out.clear(std::ios::failbit);
-            stdext::throw_exception(stdext::format("failed to load file '%s': %s", fullPath.c_str(), PHYSFS_getLastError()));
+            stdext::throw_exception(stdext::format("unable to load file '%s': %s", fullPath.c_str(), PHYSFS_getLastError()));
         } else {
             int fileSize = PHYSFS_fileLength(file);
             if(fileSize > 0) {
@@ -167,7 +167,7 @@ void ResourceManager::loadFile(const std::string& fileName, std::iostream& out)
         std::ifstream fin(fileName);
         if(!fin) {
             out.clear(std::ios::failbit);
-            stdext::throw_exception(stdext::format("failed to load file '%s': %s", fileName.c_str(), PHYSFS_getLastError()));
+            stdext::throw_exception(stdext::format("unable to file '%s': %s", fileName.c_str(), PHYSFS_getLastError()));
         } else {
             out << fin.rdbuf();
         }

@@ -3,13 +3,12 @@ Module
   description: Manage skills window
   author: baxnie, edubart
   website: www.otclient.info
+  sandboxed: true
+  scripts:
+    - skills.lua
 
   dependencies:
     - game_interface
 
-  @onLoad: |
-    dofile 'skills'
-    Skills.init()
-
-  @onUnload: |
-    Skills.terminate()
+  @onLoad: init()
+  @onUnload: terminate()

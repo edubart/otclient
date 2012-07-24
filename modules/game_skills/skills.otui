@@ -3,7 +3,7 @@ SkillFirstWidget < UIWidget
 SkillButton < UIButton
   height: 21
   margin-bottom: 2
-  &onClick: Skills.onSkillButtonClick
+  &onClick: onSkillButtonClick
 
 SkillNameLabel < GameLabel
   font: verdana-11px-monochrome
@@ -35,7 +35,7 @@ MiniWindow
   !text: tr('Skills')
   height: 150
   icon: skills.png
-  @onClose: Skills.onMiniWindowClose()
+  @onClose: onMiniWindowClose()
   &save: true
 
   MiniWindowContents

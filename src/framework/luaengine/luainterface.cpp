@@ -47,6 +47,12 @@ void LuaInterface::init()
 {
     createLuaState();
 
+    // store global environment reference
+    pushThread();
+    getEnv();
+    m_globalEnv = ref();
+    pop();
+
     // check if demangle_type is working as expected
     assert(stdext::demangle_type<LuaObject>() == "LuaObject");
 
@@ -297,7 +303,7 @@ bool LuaInterface::safeRunScript(const std::string& fileName)
     try {
         runScript(fileName);
         return true;
-    } catch(LuaException& e) {
+    } catch(stdext::exception& e) {
         g_logger.error(stdext::format("Failed to load script '%s': %s", fileName, e.what()));
         return false;
     }
@@ -322,13 +328,9 @@ void LuaInterface::loadScript(const std::string& fileName)
     if(!boost::starts_with(fileName, "/"))
         filePath = getCurrentSourcePath() + "/" + filePath;
 
-    try {
-        std::string buffer = g_resources.loadFile(fileName);
-        std::string source = "@" + filePath;
-        loadBuffer(buffer, source);
-    } catch(stdext::exception& e) {
-        throw LuaException(e.what());
-    }
+    std::string buffer = g_resources.loadFile(fileName);
+    std::string source = "@" + filePath;
+    loadBuffer(buffer, source);
 }
 
 void LuaInterface::loadFunction(const std::string& buffer, const std::string& source)
@@ -515,7 +517,7 @@ int LuaInterface::signalCall(int numArgs, int numRets)
         else {
             throw LuaException("attempt to call a non function value", 0);
         }
-    } catch(LuaException &e) {
+    } catch(stdext::exception& e) {
         g_logger.error(stdext::format("protected lua call failed: %s", e.what()));
     }
 
@@ -529,15 +531,15 @@ int LuaInterface::signalCall(int numArgs, int numRets)
     return rets;
 }
 
-void LuaInterface::newEnvironment()
+int LuaInterface::newSandboxEnv()
 {
     newTable(); // pushes the new environment table
     newTable(); // pushes the new environment metatable
-    getGlobalEnvironment();  // pushes the global environment
+    getRef(getGlobalEnvironment());  // pushes the global environment
     setField("__index"); // sets metatable __index to the global environment
     setMetatable(); // assigns environment metatable
+    return ref(); // return a reference to the environment table
 }
-
 
 ///////////////////////////////////////////////////////////////////////////////
 // lua C functions
@@ -550,13 +552,13 @@ int LuaInterface::luaScriptLoader(lua_State* L)
     try {
         g_lua.loadScript(fileName);
         return 1;
-    } catch(LuaException& e) {
-        g_logger.error(stdext::format("failed to load script file '%s': %s", fileName, e.what()));
-        return 0;
+    } catch(stdext::exception& e) {
+        g_lua.pushString(stdext::mkstr("\n\t", e.what()));
+        return 1;
     }
 }
 
-int LuaInterface::luaScriptRunner(lua_State* L)
+int LuaInterface::lua_dofile(lua_State* L)
 {
     std::string fileName = g_lua.popString();
     if(!boost::ends_with(fileName, ".lua"))
@@ -566,13 +568,14 @@ int LuaInterface::luaScriptRunner(lua_State* L)
         g_lua.loadScript(fileName);
         g_lua.call(0, LUA_MULTRET);
         return g_lua.stackSize();
-    } catch(LuaException& e) {
-        g_logger.error(stdext::format("failed to load script file '%s': %s", fileName, e.what()));
+    } catch(stdext::exception& e) {
+        g_lua.pushString(e.what());
+        g_lua.error();
         return 0;
     }
 }
 
-int LuaInterface::luaScriptsRunner(lua_State* L)
+int LuaInterface::lua_dofiles(lua_State* L)
 {
     std::string directory = g_lua.popString();
 
@@ -583,11 +586,29 @@ int LuaInterface::luaScriptsRunner(lua_State* L)
         try {
             g_lua.loadScript(directory + "/" + fileName);
             g_lua.call(0, 0);
-        } catch(LuaException& e) {
-            g_logger.error(stdext::format("failed to load script file '%s': %s", fileName, e.what()));
+        } catch(stdext::exception& e) {
+            g_lua.pushString(e.what());
+            g_lua.error();
         }
     }
     return 0;
+}
+
+int LuaInterface::lua_loadfile(lua_State* L)
+{
+    std::string fileName = g_lua.popString();
+    if(!boost::ends_with(fileName, ".lua"))
+        fileName += ".lua";
+
+    try {
+        g_lua.loadScript(fileName);
+        return 1;
+    } catch(stdext::exception& e) {
+        g_lua.pushNil();
+        g_lua.pushString(e.what());
+        g_lua.error();
+        return 2;
+    }
 }
 
 int LuaInterface::luaErrorHandler(lua_State* L)
@@ -618,12 +639,13 @@ int LuaInterface::luaCppFunctionCallback(lua_State* L)
         numRets = (*(funcPtr->get()))(&g_lua);
         g_lua.m_cppCallbackDepth--;
         assert(numRets == g_lua.stackSize());
-    } catch(stdext::exception &e) {
+    } catch(stdext::exception& e) {
         // cleanup stack
         while(g_lua.stackSize() > 0)
             g_lua.pop();
         numRets = 0;
-        g_logger.error(stdext::format("C++ call failed: %s", g_lua.traceback(e.what())));
+        g_lua.pushString(stdext::format("C++ call failed: %s", g_lua.traceback(e.what())));
+        g_lua.error();
     }
 
     return numRets;
@@ -670,13 +692,24 @@ void LuaInterface::createLuaState()
     rawSeti(5);
     pop(2);
 
+    // replace loadfile
+    getGlobal("package");
+    getField("loaders");
+    pushCFunction(&LuaInterface::luaScriptLoader);
+    rawSeti(5);
+    pop(2);
+
     // replace dofile
-    pushCFunction(&LuaInterface::luaScriptRunner);
+    pushCFunction(&LuaInterface::lua_dofile);
     setGlobal("dofile");
 
     // dofiles
-    pushCFunction(&LuaInterface::luaScriptsRunner);
+    pushCFunction(&LuaInterface::lua_dofiles);
     setGlobal("dofiles");
+
+    // replace loadfile
+    pushCFunction(&LuaInterface::lua_loadfile);
+    setGlobal("loadfile");
 }
 
 void LuaInterface::closeLuaState()
@@ -833,18 +866,13 @@ void LuaInterface::getWeakRef(int weakRef)
     remove(-2);
 }
 
-void LuaInterface::getGlobalEnvironment()
+void LuaInterface::setGlobalEnvironment(int env)
 {
     pushThread();
-    getEnv();
-    remove(-2);
-}
-
-void LuaInterface::setGlobalEnvironment()
-{
-    pushThread();
-    insert(-2);
+    getRef(env);
+    assert(isTable());
     setEnv();
+    pop();
 }
 
 void LuaInterface::setMetatable(int index)
@@ -897,6 +925,24 @@ void LuaInterface::setTable(int index)
 {
     assert(hasIndex(index));
     lua_settable(L, index);
+}
+
+void LuaInterface::clearTable(int index)
+{
+    assert(hasIndex(index) && isTable(index));
+    pushNil();
+    bool stop = false;
+    while(!stop && next(index-1)) {
+        pop();
+        pushValue();
+        if(next(index-2))
+            pop();
+        else
+            stop = true;
+        insert(-2);
+        pushNil();
+        rawSet(index-3);
+    }
 }
 
 void LuaInterface::getGlobal(const std::string& key)
