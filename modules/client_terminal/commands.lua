@@ -40,7 +40,7 @@ function debugContainersItems()
           stackable:]] ..tostring(item:isStackable()) .. [[,
           marketable:]] ..tostring(item:isMarketable()) .. [[,
           nvocation:]]..(item:getMarketData() and item:getMarketData().restrictVocation or 'none') ..[[,
-          ncloth slot:]] ..item:getClothSlot()
+          ncloth slot:]] ..item:getClothSlot() .. [[
         ]]
         g_tooltip.display(text)
       end
