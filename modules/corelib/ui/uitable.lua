@@ -132,7 +132,7 @@ function UITable:addRow(data, height)
   local row = g_ui.createWidget(self.rowBaseStyle, self.dataSpace)
   if height then row:setHeight(height) end
   local rowId = #self.rows
-  if rowId < 1 then rowId = 1 end
+  while rowId < 1 do rowId = rowId + 1 end
   rowId = 'row'..rowId
   row:setId(rowId)
 
