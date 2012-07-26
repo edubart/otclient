@@ -113,7 +113,7 @@ function hide()
   Background.show()
 end
 
-function exit()
+function forceExit()
   if g_game.isOnline() then
     g_game.forceLogout()
     scheduleEvent(exit, 10)
@@ -131,7 +131,7 @@ function tryExit()
   local cancelButton = exitWindow:getChildById('buttonCancel')
 
   local exitFunc = function()
-    exit()
+    forceExit()
   end
   local logoutFunc = function()
     logout()

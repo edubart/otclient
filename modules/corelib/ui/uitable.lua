@@ -11,19 +11,14 @@ local HEADER_ID = 'row0'
 
 function UITable.create()
   local table = UITable.internalCreate()
-
   table.headerRow = nil
   table.dataSpace = nil
-
   table.rows = {}
   table.rowBaseStyle = nil
-
   table.columns = {}
   table.columBaseStyle = nil
-
   table.headerRowBaseStyle = nil
   table.headerColumnBaseStyle = nil
-
   table.selectedRow = nil
   return table
 end
@@ -119,7 +114,7 @@ function UITable:removeHeaderRow()
   self.headerRow = nil
 end
 
-function UITable:addRow(data, height)
+function UITable:addRow(data, ref, height)
   if not self.dataSpace then
     g_logger.error('UITable:addRow - table data space has not been set, cannot add rows.')
     return
@@ -130,11 +125,11 @@ function UITable:addRow(data, height)
   end
 
   local row = g_ui.createWidget(self.rowBaseStyle, self.dataSpace)
+  if ref then row.ref = ref end
   if height then row:setHeight(height) end
+
   local rowId = #self.rows
-  while rowId < 1 do rowId = rowId + 1 end
-  rowId = 'row'..rowId
-  row:setId(rowId)
+  row:setId('row'..(rowId < 1 and 1 or rowId))
 
   for _, column in pairs(data) do
     local col = g_ui.createWidget(self.columBaseStyle, row)
@@ -149,7 +144,10 @@ function UITable:addRow(data, height)
     end
     self.columns[rowId] = col
   end
-  row.onClick = function(row) self:selectRow(row) end
+
+  row.onFocusChange = function(row, focused)
+    if focused then self:selectRow(row) end
+  end
   table.insert(self.rows, row)
   return row
 end

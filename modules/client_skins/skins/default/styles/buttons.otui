@@ -39,3 +39,23 @@ TabButton < UIButton
   $on:
     image-clip: 0 40 20 20
     color: #80c7f8
+
+BrowseButton < Button
+  size: 20 29
+  icon-clip: 0 0 12 21
+
+  $hover !disabled:
+    icon-clip: 0 21 12 21
+
+  $pressed:
+    icon-clip: 0 22 12 21
+
+  $disabled:
+    image-color: #ffffff55
+    icon-color: #ffffff55
+
+NextButton < BrowseButton
+  icon-source: /images/arrow_right.png
+
+PreviousButton < BrowseButton
+  icon-source: /images/arrow_left.png

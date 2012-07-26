@@ -1,26 +1,13 @@
-BrowseButton < Button
-  size: 20 29
-  icon-clip: 0 0 12 21
-
-  $hover !disabled:
-    icon-clip: 0 21 12 21
-
-  $pressed:
-    icon-clip: 0 22 12 21
-
-  $disabled:
-    color: #f0ad4d88
-
-NextOutfitButton < BrowseButton
+NextOutfitButton < NextButton
   icon-source: /images/arrow_right.png
 
-PrevOutfitButton < BrowseButton
+PrevOutfitButton < PreviousButton
   icon-source: /images/arrow_left.png
 
-NextMountButton < BrowseButton
+NextMountButton < NextButton
   icon-source: /images/arrow_right.png
 
-PrevMountButton < BrowseButton
+PrevMountButton < PreviousButton
   icon-source: /images/arrow_left.png
 
 Window

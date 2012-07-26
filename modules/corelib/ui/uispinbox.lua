@@ -27,9 +27,17 @@ function UISpinBox:onTextChange(text, oldText)
   end
 
   local number = tonumber(text)
-  if not number or number > self.maximum or number < self.minimum then
-    self:setText(oldText)
+  if not number then
+    self:setText(number)
     return
+  else
+    if number < self.minimum then
+      self:setText(self.minimum)
+      return
+    elseif number > self.maximum then
+      self:setText(self.maximum)
+      return
+    end
   end
 
   self:setValue(number)
@@ -42,9 +50,11 @@ end
 function UISpinBox:onStyleApply(styleName, styleNode)
   for name, value in pairs(styleNode) do
     if name == 'maximum' then
-      self:setMaximum(value)
+      addEvent(function() self:setMaximum(value)
+        end)
     elseif name == 'minimum' then
-      self:setMinimum(value)
+      addEvent(function() self:setMinimum(value)
+        end)
     end
   end
 end
@@ -61,6 +71,9 @@ end
 
 function UISpinBox:setMinimum(minimum)
   self.minimum = minimum
+  if self.minimum > self.maximum then
+    self.maximum = self.minimum
+  end
   if self.value < minimum then
     self:setValue(minimum)
   end
@@ -73,4 +86,6 @@ function UISpinBox:setMaximum(maximum)
   end
 end
 
-function UISpinBox:getValue() return self.value end
+function UISpinBox:getValue()
+  return self.value
+end
