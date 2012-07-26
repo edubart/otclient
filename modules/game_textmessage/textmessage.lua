@@ -12,8 +12,8 @@ MessageSettings = {
 }
 
 MessageTypes = {
-  [MessageModes.MonsterSay] = MessageSettings.orange,
-  [MessageModes.MonsterYell] = MessageSettings.orange,
+  [MessageModes.MonsterSay] = MessageSettings.consoleOrange,
+  [MessageModes.MonsterYell] = MessageSettings.consoleOrange,
   [MessageModes.Failure] = MessageSettings.statusSmall,
   [MessageModes.Login] = MessageSettings.bottomWhite,
   [MessageModes.Game] = MessageSettings.centerWhite,
@@ -31,7 +31,6 @@ messagesPanel = nil
 
 function init()
   connect(g_game, 'onTextMessage', displayMessage)
-  connect(g_game, 'onPrivateTalk', onPrivateTalk)
   connect(g_game, 'onGameEnd', clearMessages)
   messagesPanel = g_ui.loadUI('textmessage.otui', modules.game_interface.getRootPanel())
 end

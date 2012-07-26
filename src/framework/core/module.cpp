@@ -39,6 +39,12 @@ bool Module::load()
         return true;
 
     try {
+        // add to package.loaded
+        g_lua.getGlobalField("package", "loaded");
+        g_lua.getRef(m_sandboxEnv);
+        g_lua.setField(m_name);
+        g_lua.pop();
+
         for(const std::string& depName : m_dependencies) {
             ModulePtr dep = g_modules.getModule(depName);
             if(!dep)
@@ -70,15 +76,15 @@ bool Module::load()
         if(m_sandboxed)
             g_lua.resetGlobalEnvironment();
 
-        // add to package.loaded
-        g_lua.getGlobalField("package", "loaded");
-        g_lua.getRef(m_sandboxEnv);
-        g_lua.setField(m_name);
-        g_lua.pop();
-
         m_loaded = true;
         g_logger.debug(stdext::format("Loaded module '%s'", m_name));
     } catch(stdext::exception& e) {
+        // remove from package.loaded
+        g_lua.getGlobalField("package", "loaded");
+        g_lua.pushNil();
+        g_lua.setField(m_name);
+        g_lua.pop();
+
         if(m_sandboxed)
             g_lua.resetGlobalEnvironment();
         g_logger.error(stdext::format("Unable to load module '%s': %s", m_name, e.what()));

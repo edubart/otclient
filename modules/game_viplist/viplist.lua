@@ -11,6 +11,7 @@ function init()
   g_keyboard.bindKeyDown('Ctrl+P', toggle)
 
   vipWindow = g_ui.loadUI('viplist.otui', modules.game_interface.getRightPanel())
+  vipWindow.onClose = onMiniWindowClose
   vipButton = TopMenu.addRightGameToggleButton('vipListButton', tr('VIP list') .. ' (Ctrl+P)', 'viplist.png', toggle)
   vipButton:setOn(true)
 
@@ -71,6 +72,7 @@ function onAddVip(id, name, online)
   local vipList = vipWindow:getChildById('contentsPanel')
 
   local label = g_ui.createWidget('VipListLabel')
+  label.onMousePress = onVipListLabelMousePress
   label:setId('vip' .. id)
   label:setText(name)
 

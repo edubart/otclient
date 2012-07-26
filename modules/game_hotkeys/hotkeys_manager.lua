@@ -18,8 +18,8 @@ currentHotkeysList = nil
 hotkeyLabelSelectedOnList = nil
 currentItemPreview = nil
 itemWidget = nil
-addHotkey = nil
-removeHotkey = nil
+addHotkeyButton = nil
+removeHotkeyButton = nil
 hotkeyText = nil
 hotKeyTextLabel = nil
 sendAutomatically = nil
@@ -43,8 +43,8 @@ function init()
 
   currentHotkeysList = hotkeysWindow:getChildById('currentHotkeys')
   currentItemPreview = hotkeysWindow:getChildById('itemPreview')
-  addHotkey = hotkeysWindow:getChildById('addHotkey')
-  removeHotkey = hotkeysWindow:getChildById('removeHotkey')
+  addHotkeyButton = hotkeysWindow:getChildById('addHotkeyButton')
+  removeHotkeyButton = hotkeysWindow:getChildById('removeHotkeyButton')
   hotkeyText = hotkeysWindow:getChildById('hotkeyText')
   hotKeyTextLabel = hotkeysWindow:getChildById('hotKeyTextLabel')
   sendAutomatically = hotkeysWindow:getChildById('sendAutomatically')
@@ -164,7 +164,7 @@ function onChooseItemMouseRelease(self, mousePosition, mouseButton)
     hotkeyLabelSelectedOnList.itemId = item:getId()
     changeUseType(HOTKEY_MANAGER_USEONSELF)
     checkSelectedHotkey(hotkeyLabelSelectedOnList)
-    HotkeysManager:show()
+    show()
   end
 
   g_mouse.restoreCursor()
@@ -182,7 +182,7 @@ function startChooseItem()
   mouseGrabberWidget:grabMouse()
   g_mouse.setTargetCursor()
 
-  HotkeysManager:hide()
+  hide()
 end
 
 function clearObject()
@@ -314,7 +314,7 @@ function checkSelectedHotkey(focused)
     hotkeyLabelSelectedOnList = focused
 
     if hotkeyLabelSelectedOnList ~= nil then
-      removeHotkey:enable()
+      removeHotkeyButton:enable()
 
       if hotkeyLabelSelectedOnList.itemId == nil then
         hotkeyText:enable()
@@ -347,7 +347,7 @@ function checkSelectedHotkey(focused)
       changeUseType(hotkeyLabelSelectedOnList.useType)
     else
       hotkeyText:clearText()
-      removeHotkey:disable()
+      removeHotkeyButton:disable()
       hotkeyText:disable()
       sendAutomatically:disable()
       sendAutomatically:setChecked(false)
