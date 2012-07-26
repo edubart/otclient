@@ -32,7 +32,7 @@ function displayDeadMessage()
     return
   end
 
-  modules.game_textmessage.displayEventAdvance(tr('You are dead.'))
+  modules.game_textmessage.displayGameMessage(tr('You are dead.'))
 end
 
 function openWindow()

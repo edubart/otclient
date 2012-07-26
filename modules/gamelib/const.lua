@@ -34,6 +34,13 @@ SouthEast = 5
 SouthWest = 6
 NorthWest = 7
 
+FightOffensive = 1
+FightBalanced = 2
+FightDefensive = 3
+
+DontChase = 0
+ChaseOpponent = 1
+
 GameExtendedOpcode = 0
 GameProtocolChecksum = 1
 GameAccountNames = 2
@@ -58,6 +65,72 @@ GameTrucatedPingOpcode = 20
 GameReverseCreatureStack = 21
 GameMagicEffectU16 = 22
 GamePlayerMarket = 23
+
+TextColors = {
+  red       = '#f55e5e', --'#c83200'
+  orange    = '#f36500', --'#c87832'
+  yellow    = '#ffff00', --'#e6c832'
+  green     = '#00EB00', --'#3fbe32'
+  lightblue = '#5ff7f7',
+  --blue1     = '#6e50dc',
+  --blue2     = '#3264c8',
+  --blue3     = '#0096c8',
+  white     = '#ffffff' --'#bebebe'
+}
+
+MessageModes = {
+  None                    = 0,
+  Say                     = 1,
+  Whisper                 = 2,
+  Yell                    = 3,
+  PrivateFrom             = 4,
+  PrivateTo               = 5,
+  ChannelManagement       = 6,
+  Channel                 = 7,
+  ChannelHighlight        = 8,
+  Spell                   = 9,
+  NpcFrom                 = 10,
+  NpcTo                   = 11,
+  GamemasterBroadcast     = 12,
+  GamemasterChannel       = 13,
+  GamemasterPrivateFrom   = 14,
+  GamemasterPrivateTo     = 15,
+  Login                   = 16,
+  Warning                 = 17,
+  Game                    = 18,
+  Failure                 = 19,
+  Look                    = 20,
+  DamageDealed            = 21,
+  DamageReceived          = 22,
+  Heal                    = 23,
+  Exp                     = 24,
+  DamageOthers            = 25,
+  HealOthers              = 26,
+  ExpOthers               = 27,
+  Status                  = 28,
+  Loot                    = 29,
+  TradeNpc                = 30,
+  Guild                   = 31,
+  PartyManagement         = 32,
+  Party                   = 33,
+  BarkLow                 = 34,
+  BarkLoud                = 35,
+  Report                  = 36,
+  HotkeyUse               = 37,
+  TutorialHint            = 38,
+  Thankyou                = 39,
+  Market                  = 40,
+  BeyondLast              = 41,
+  MonsterYell             = 42,
+  MonsterSay              = 43,
+  Red                     = 44,
+  Blue                    = 45,
+  RVRChannel              = 46,
+  RVRAnswer               = 47,
+  RVRContinue             = 48,
+  Last                    = 49,
+  Invalid                 = 255
+}
 
 OTSERV_RSA  = "1091201329673994292788609605089955415282375029027981291234687579" ..
               "3726629149257644633073969600111060390723088861007265581882535850" ..

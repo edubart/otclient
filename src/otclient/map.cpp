@@ -618,7 +618,7 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
             StaticTextPtr cStaticText = *it;
             if(cStaticText->getPosition() == pos) {
                 // try to combine messages
-                if(cStaticText->addMessage(staticText->getName(), staticText->getMessageType(), staticText->getFirstMessage())) {
+                if(cStaticText->addMessage(staticText->getName(), staticText->getMessageMode(), staticText->getFirstMessage())) {
                     mustAdd = false;
                     break;
                 } else {

@@ -5,7 +5,7 @@ function Client.reloadScripts()
   dofile '/otclientrc'
   local message = tr('All modules and scripts were reloaded.')
 
-  modules.game_textmessage.displayEventAdvance(message)
+  modules.game_textmessage.displayGameMessage(message)
   print(message)
 end
 

@@ -87,6 +87,7 @@ set(otclient_SOURCES ${otclient_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/luavaluecasts.h
 
     # net
+    ${CMAKE_CURRENT_LIST_DIR}/protocolcodes.cpp
     ${CMAKE_CURRENT_LIST_DIR}/protocolcodes.h
     ${CMAKE_CURRENT_LIST_DIR}/protocolgame.cpp
     ${CMAKE_CURRENT_LIST_DIR}/protocolgame.h

@@ -32,6 +32,7 @@
 #include <framework/core/application.h>
 #include "luavaluecasts.h"
 #include "protocolgame.h"
+#include "protocolcodes.h"
 
 Game g_game;
 
@@ -151,22 +152,22 @@ void Game::processPing()
     g_lua.callGlobalField("g_game", "onPing");
 }
 
-void Game::processTextMessage(const std::string& type, const std::string& message)
+void Game::processTextMessage(Otc::MessageMode mode, const std::string& text)
 {
-    g_lua.callGlobalField("g_game","onTextMessage", type, message);
+    g_lua.callGlobalField("g_game", "onTextMessage", mode, text);
 }
 
-void Game::processCreatureSpeak(const std::string& name, int level, Otc::SpeakType type, const std::string& message, int channelId, const Position& creaturePos)
+void Game::processTalk(const std::string& name, int level, Otc::MessageMode mode, const std::string& text, int channelId, const Position& pos)
 {
-    if(creaturePos.isValid() && (type == Otc::SpeakSay || type == Otc::SpeakWhisper || type == Otc::SpeakYell
-        || type == Otc::SpeakMonsterSay || type == Otc::SpeakMonsterYell || type == Otc::SpeakPrivateNpcToPlayer))
+    if(pos.isValid() && (mode == Otc::MessageSay || mode == Otc::MessageWhisper || mode == Otc::MessageYell  ||
+                         mode == Otc::MessageMonsterSay || mode == Otc::MessageMonsterYell || mode == Otc::MessageNpcFrom))
     {
         StaticTextPtr staticText = StaticTextPtr(new StaticText);
-        staticText->addMessage(name, type, message);
-        g_map.addThing(staticText, creaturePos);
+        staticText->addMessage(name, mode, text);
+        g_map.addThing(staticText, pos);
     }
 
-    g_lua.callGlobalField("g_game", "onCreatureSpeak", name, level, type, message, channelId, creaturePos);
+    g_lua.callGlobalField("g_game", "onTalk", name, level, mode, text, channelId, pos);
 }
 
 void Game::processOpenContainer(int containerId, const ItemPtr& containerItem, const std::string& name, int capacity, bool hasParent, const std::vector<ItemPtr>& items)
@@ -769,21 +770,21 @@ void Game::talk(const std::string& message)
 {
     if(!canPerformGameAction() || message.empty())
         return;
-    talkChannel(Otc::SpeakSay, 0, message);
+    talkChannel(Otc::MessageSay, 0, message);
 }
 
-void Game::talkChannel(Otc::SpeakType speakType, int channelId, const std::string& message)
+void Game::talkChannel(Otc::MessageMode mode, int channelId, const std::string& message)
 {
     if(!canPerformGameAction() || message.empty())
         return;
-    m_protocolGame->sendTalk(speakType, channelId, "", message);
+    m_protocolGame->sendTalk(mode, channelId, "", message);
 }
 
-void Game::talkPrivate(Otc::SpeakType speakType, const std::string& receiver, const std::string& message)
+void Game::talkPrivate(Otc::MessageMode mode, const std::string& receiver, const std::string& message)
 {
     if(!canPerformGameAction() || receiver.empty() || message.empty())
         return;
-    m_protocolGame->sendTalk(speakType, 0, receiver, message);
+    m_protocolGame->sendTalk(mode, 0, receiver, message);
 }
 
 void Game::openPrivateChannel(const std::string& receiver)
@@ -1144,6 +1145,8 @@ void Game::setClientVersion(int version)
     }
 
     m_protocolVersion = version;
+
+    Proto::buildMessageModesMap(version);
 
     g_lua.callGlobalField("g_game", "onClientVersionChange", version);
 }

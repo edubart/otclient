@@ -39,7 +39,8 @@ namespace Proto {
         Creature = 99
     };
 
-    enum GameServerOpcodes {
+    enum GameServerOpcodes : uint8
+    {
         GameServerInitGame                  = 10,
         GameServerGMActions                 = 11,
         GameServerLoginError                = 20,
@@ -139,7 +140,8 @@ namespace Proto {
         GameServerShowModalDialog           = 250  // 960
     };
 
-    enum ClientOpcodes {
+    enum ClientOpcodes : uint8
+    {
         ClientEnterAccount                  = 1,
         ClientEnterGame                     = 10,
         ClientLeaveGame                     = 20,
@@ -230,107 +232,6 @@ namespace Proto {
         ClientAnswerModalDialog             = 249  // 960
     };
 
-    enum ServerSpeakType {
-#if PROTOCOL>=910
-        ServerSpeakSay = 1,
-        ServerSpeakWhisper,
-        ServerSpeakYell,
-        ServerSpeakPrivateFrom,         // new
-        ServerSpeakPrivateTo,           // new
-        ServerSpeakChannelManagement,   // new
-        ServerSpeakChannelYellow,
-        ServerSpeakChannelOrange,
-        ServerSpeakSpell,               // new
-        ServerSpeakPrivatePlayerToNpc,
-        ServerSpeakPrivateNpcToPlayer,
-        ServerSpeakBroadcast,
-        ServerSpeakChannelRed,
-        ServerSpeakPrivateRedFrom,      // new
-        ServerSpeakPrivateRedTo,        // new
-        // 16 - 33
-        ServerSpeakMonsterSay = 34,
-        ServerSpeakMonsterYell,
-
-        // unsupported
-        ServerSpeakRVRChannel = 255,
-        ServerSpeakRVRAnswer,
-        ServerSpeakRVRContinue,
-        ServerSpeakChannelRed2,
-        ServerSpeakChannelWhite
-#elif PROTOCOL>=861
-        ServerSpeakSay = 1,
-        ServerSpeakWhisper,
-        ServerSpeakYell,
-        ServerSpeakPrivatePlayerToNpc,
-        ServerSpeakPrivateNpcToPlayer,
-        ServerSpeakPrivateTo,
-        ServerSpeakPrivateFrom = ServerSpeakPrivateTo,
-        ServerSpeakChannelYellow,
-        ServerSpeakChannelWhite,
-        ServerSpeakBroadcast,
-        ServerSpeakChannelRed,
-        ServerSpeakPrivateRedTo,
-        ServerSpeakPrivateRedFrom = ServerSpeakPrivateRedTo,
-        ServerSpeakChannelOrange,
-        ServerSpeakMonsterSay,
-        ServerSpeakMonsterYell,
-
-        // unsupported
-        ServerSpeakRVRChannel = 255,
-        ServerSpeakRVRAnswer,
-        ServerSpeakRVRContinue,
-        ServerSpeakChannelRed2
-#elif PROTOCOL>=854
-        ServerSpeakSay = 1,
-        ServerSpeakWhisper,
-        ServerSpeakYell,
-        ServerSpeakPrivatePlayerToNpc,
-        ServerSpeakPrivateNpcToPlayer,
-        ServerSpeakPrivateTo,
-        ServerSpeakPrivateFrom = ServerSpeakPrivateTo,
-        ServerSpeakChannelYellow,
-        ServerSpeakChannelWhite,
-        ServerSpeakRVRChannel,
-        ServerSpeakRVRAnswer,
-        ServerSpeakRVRContinue,
-        ServerSpeakBroadcast,
-        ServerSpeakChannelRed,
-        ServerSpeakPrivateRedTo,
-        ServerSpeakPrivateRedFrom = ServerSpeakPrivateRedTo,
-        ServerSpeakChannelOrange,
-        // 16
-        ServerSpeakChannelRed2 = 17,
-        // 18
-        ServerSpeakMonsterSay = 19,
-        ServerSpeakMonsterYell
-#elif PROTOCOL>=810
-        ServerSpeakSay = 1,
-        ServerSpeakWhisper,
-        ServerSpeakYell,
-        ServerSpeakPrivateTo,
-        ServerSpeakPrivateFrom = ServerSpeakPrivateTo,
-        ServerSpeakChannelYellow,
-        ServerSpeakRVRChannel,
-        ServerSpeakRVRAnswer,
-        ServerSpeakRVRContinue,
-        ServerSpeakBroadcast,
-        ServerSpeakChannelRed,
-        ServerSpeakPrivateRedTo,
-        ServerSpeakPrivateRedFrom = ServerSpeakPrivateRedTo,
-        ServerSpeakChannelOrange,
-        // 13
-        ServerSpeakChannelRed2 = 14,
-        // 15
-        ServerSpeakMonsterSay = 16,
-        ServerSpeakMonsterYell,
-
-        // unsupported
-        ServerSpeakPrivatePlayerToNpc = 255,
-        ServerSpeakPrivateNpcToPlayer,
-        ServerSpeakChannelWhite
-#endif
-    };
-
     enum CreatureType {
         CreatureTypePlayer = 0,
         CreatureTypeMonster,
@@ -346,50 +247,9 @@ namespace Proto {
         NpcEndId = 0xffffffff
     };
 
-    inline Otc::SpeakType translateSpeakTypeFromServer(int type) {
-        switch(type) {
-            case Proto::ServerSpeakSay: return Otc::SpeakSay;
-            case Proto::ServerSpeakWhisper: return Otc::SpeakWhisper;
-            case Proto::ServerSpeakYell: return Otc::SpeakYell;
-            case Proto::ServerSpeakMonsterSay: return Otc::SpeakMonsterSay;
-            case Proto::ServerSpeakMonsterYell: return Otc::SpeakMonsterYell;
-            case Proto::ServerSpeakPrivateNpcToPlayer: return Otc::SpeakPrivateNpcToPlayer;
-            case Proto::ServerSpeakChannelYellow: return Otc::SpeakChannelYellow;
-            case Proto::ServerSpeakChannelWhite: return Otc::SpeakChannelWhite;
-            case Proto::ServerSpeakChannelRed: return Otc::SpeakChannelRed;
-            case Proto::ServerSpeakChannelRed2: return Otc::SpeakChannelRed;
-            case Proto::ServerSpeakChannelOrange: return Otc::SpeakChannelOrange;
-            case Proto::ServerSpeakPrivateTo: return Otc::SpeakPrivate;
-            case Proto::ServerSpeakPrivatePlayerToNpc: return Otc::SpeakPrivate;
-            case Proto::ServerSpeakBroadcast: return Otc::SpeakBroadcast;
-            case Proto::ServerSpeakPrivateRedTo: return Otc::SpeakPrivateRed;
-            default:
-                g_logger.error(stdext::format("unknown protocol speak type %d", type));
-                return Otc::SpeakSay;
-        }
-    }
-
-    inline Proto::ServerSpeakType translateSpeakTypeToServer(int type) {
-        switch(type) {
-            case Otc::SpeakSay: return Proto::ServerSpeakSay;
-            case Otc::SpeakWhisper: return Proto::ServerSpeakWhisper;
-            case Otc::SpeakYell: return Proto::ServerSpeakYell;
-            case Otc::SpeakBroadcast: return Proto::ServerSpeakBroadcast;
-            case Otc::SpeakPrivate: return Proto::ServerSpeakPrivateFrom;
-            case Otc::SpeakPrivateRed: return Proto::ServerSpeakPrivateRedFrom;
-            case Otc::SpeakPrivatePlayerToNpc: return Proto::ServerSpeakPrivatePlayerToNpc;
-            case Otc::SpeakPrivateNpcToPlayer: return Proto::ServerSpeakPrivateNpcToPlayer;
-            case Otc::SpeakChannelYellow: return Proto::ServerSpeakChannelYellow;
-            case Otc::SpeakChannelWhite: return Proto::ServerSpeakChannelWhite;
-            case Otc::SpeakChannelRed: return Proto::ServerSpeakChannelRed;
-            case Otc::SpeakChannelOrange: return Proto::ServerSpeakChannelOrange;
-            case Otc::SpeakMonsterSay: return Proto::ServerSpeakMonsterSay;
-            case Otc::SpeakMonsterYell: return Proto::ServerSpeakMonsterYell;
-            default:
-                g_logger.error(stdext::format("unknown protocol speak type desc %d", type));
-                return Proto::ServerSpeakSay;
-        }
-    }
+    void buildMessageModesMap(int version);
+    Otc::MessageMode translateMessageModeFromServer(uint8 mode);
+    uint8 translateMessageModeToServer(Otc::MessageMode mode);
 }
 
 #endif

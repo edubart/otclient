@@ -192,6 +192,17 @@ ThingPtr Tile::addThing(const ThingPtr& thing, int stackPos)
     if(m_things.size() > MAX_THINGS)
         removeThing(m_things[MAX_THINGS]);
 
+    /*
+    // check stack priorities
+    // this code exists to find stackpos bugs faster
+    int lastPriority = 0;
+    for(const ThingPtr& thing : m_things) {
+        int priority = thing->getStackPriority();
+        assert(lastPriority <= priority);
+        lastPriority = priority;
+    }
+    */
+
     update();
     return oldObject;
 }
@@ -509,14 +520,5 @@ void Tile::update()
         uint8 c = thing->getMinimapColor();
         if(c != 0)
             m_minimapColorByte = c;
-    }
-
-    // check stack priorities
-    // this code exists to find stackpos bugs faster
-    int lastPriority = 0;
-    for(const ThingPtr& thing : m_things) {
-        int priority = thing->getStackPriority();
-        assert(lastPriority <= priority);
-        lastPriority = priority;
     }
 }

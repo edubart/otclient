@@ -32,6 +32,7 @@ table.insert(LifeBarColors, {percentAbove = 3, color = '#3C0000' } )
 table.insert(LifeBarColors, {percentAbove = -1, color = '#4F0000' } )
 
 function init()
+  g_ui.importStyle('battlebutton.otui')
   battleWindow = g_ui.loadUI('battle.otui', modules.game_interface.getRightPanel())
   battleButton = TopMenu.addRightGameToggleButton('battleButton', tr('Battle') .. ' (Ctrl+B)', 'battle.png', toggle)
   battleButton:setOn(true)
@@ -173,10 +174,12 @@ function addCreature(creature)
   local creatureId = creature:getId()
 
   if battleButtonsByCreaturesList[creatureId] == nil then
-    local battleButton = g_ui.loadUI('battlebutton.otui', battlePanel)
+    local battleButton = g_ui.createWidget('BattleButton', battlePanel)
     local creatureWidget = battleButton:getChildById('creature')
     local labelWidget = battleButton:getChildById('label')
     local lifeBarWidget = battleButton:getChildById('lifeBar')
+    battleButton.onHoverChange = onbattleButtonHoverChange
+    battleButton.onMouseRelease = onMouseRelease
 
     battleButton:setId('BattleButton_' .. creature:getName():gsub('%s','_'))
     battleButton.creatureId = creatureId

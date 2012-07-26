@@ -36,12 +36,12 @@ public:
     void drawText(const Point& dest, const Rect& parentRect);
 
     std::string getName() { return m_name; }
-    Otc::SpeakType getMessageType() { return m_messageType; }
+    Otc::MessageMode getMessageMode() { return m_mode; }
     std::string getFirstMessage() { return m_messages[0]; }
 
-    bool isYell() { return m_messageType == Otc::SpeakYell || m_messageType == Otc::SpeakMonsterYell; }
+    bool isYell() { return m_mode == Otc::MessageYell || m_mode == Otc::MessageMonsterYell; }
 
-    bool addMessage(const std::string& name, Otc::SpeakType type, const std::string& message);
+    bool addMessage(const std::string& name, Otc::MessageMode mode, const std::string& text);
 
     StaticTextPtr asStaticText() { return std::static_pointer_cast<StaticText>(shared_from_this()); }
     bool isStaticText() { return true; }
@@ -54,7 +54,7 @@ private:
     Boolean<false> m_yell;
     std::deque<std::string> m_messages;
     std::string m_name;
-    Otc::SpeakType m_messageType;
+    Otc::MessageMode m_mode;
     Color m_color;
     CachedText m_cachedText;
     ScheduledEventPtr m_updateEvent;

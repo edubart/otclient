@@ -57,15 +57,6 @@ Creature::Creature() : Thing()
     m_footStep = 0;
 }
 
-/*
-PainterShaderProgramPtr outfitProgram;
-int HEAD_COLOR_UNIFORM = 10;
-int BODY_COLOR_UNIFORM = 11;
-int LEGS_COLOR_UNIFORM = 12;
-int FEET_COLOR_UNIFORM = 13;
-int MASK_TEXTURE_UNIFORM = 14;
-*/
-
 void Creature::draw(const Point& dest, float scaleFactor, bool animate)
 {
     Point animationOffset = animate ? m_walkOffset : Point(0,0);

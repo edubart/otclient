@@ -171,28 +171,6 @@ KeyNumpad7 = 148
 KeyNumpad8 = 149
 KeyNumpad9 = 150
 
-SpeakSay = 1
-SpeakWhisper = 2
-SpeakYell = 3
-SpeakBroadcast = 4
-SpeakPrivate = 5
-SpeakPrivateRed = 6
-SpeakPrivatePlayerToNpc = 7
-SpeakPrivateNpcToPlayer = 8
-SpeakChannelYellow = 9
-SpeakChannelWhite = 10
-SpeakChannelRed = 11
-SpeakChannelOrange = 12
-SpeakMonsterSay = 13
-SpeakMonsterYell = 14
-
-FightOffensive = 1
-FightBalanced = 2
-FightDefensive = 3
-
-DontChase = 0
-ChaseOpponent = 1
-
 ExtendedActivate = 0
 ExtendedLocales = 1
 ExtendedParticles = 2

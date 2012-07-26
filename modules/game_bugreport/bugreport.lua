@@ -22,7 +22,7 @@ end
 function doReport()
   g_game.reportBug(bugTextEdit:getText())
   bugReportWindow:hide()
-  modules.game_textmessage.displayEventAdvance(tr('Bug report sent.'))
+  modules.game_textmessage.displayGameMessage(tr('Bug report sent.'))
 end
 
 function show()

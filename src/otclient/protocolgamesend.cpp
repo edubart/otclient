@@ -435,25 +435,32 @@ void ProtocolGame::sendLook(const Position& position, int thingId, int stackpos)
     send(msg);
 }
 
-void ProtocolGame::sendTalk(Otc::SpeakType speakType, int channelId, const std::string& receiver, const std::string& message)
+void ProtocolGame::sendTalk(Otc::MessageMode mode, int channelId, const std::string& receiver, const std::string& message)
 {
-    if(message.length() > 255 || message.length() <= 0)
+    if(message.empty())
         return;
 
-    int serverSpeakType = Proto::translateSpeakTypeToServer(speakType);
+    if(message.length() > 255) {
+        g_logger.traceError("message too large");
+        return;
+    }
 
     OutputMessagePtr msg(new OutputMessage);
     msg->addU8(Proto::ClientTalk);
-    msg->addU8(serverSpeakType);
+    msg->addU8(Proto::translateMessageModeToServer(mode));
 
-    switch(serverSpeakType) {
-    case Proto::ServerSpeakPrivateFrom:
-    case Proto::ServerSpeakPrivateRedFrom:
+    switch(mode) {
+    case Otc::MessagePrivateTo:
+    case Otc::MessageGamemasterPrivateTo:
         msg->addString(receiver);
         break;
-    case Proto::ServerSpeakChannelYellow:
-    case Proto::ServerSpeakChannelRed:
+    case Otc::MessageChannel:
+    case Otc::MessageChannelHighlight:
+    case Otc::MessageChannelManagement:
+    case Otc::MessageGamemasterChannel:
         msg->addU16(channelId);
+        break;
+    default:
         break;
     }
 

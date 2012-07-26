@@ -347,9 +347,9 @@ function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
       end
     end
 
-    if RuleViolation.hasWindowAccess() then
+    if modules.game_ruleviolation.hasWindowAccess() then
       menu:addSeparator()
-      menu:addOption(tr('Rule Violation'), function() RuleViolation.show(creatureThing:getName()) end)
+      menu:addOption(tr('Rule Violation'), function() modules.game_ruleviolation.show(creatureThing:getName()) end)
     end
 
     menu:addSeparator()
@@ -430,7 +430,7 @@ function processMouseAction(menuPosition, mouseButton, autoWalkPos, lookThing, u
   if autoWalkPos and keyboardModifiers == KeyboardNoModifier and mouseButton == MouseLeftButton then
     local dirs = g_map.findPath(g_game.getLocalPlayer():getPosition(), autoWalkPos, 127)
     if #dirs == 0 then
-      modules.game_textmessage.displayStatus(tr('There is no way.'))
+      modules.game_textmessage.displayStatusMessage(tr('There is no way.'))
       return true
     end
     g_game.autoWalk(dirs)

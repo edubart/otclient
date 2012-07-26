@@ -1,115 +1,96 @@
-MessageTypes = {
-  ConsoleRed      = { color = '#F55E5E', consoleTab = tr('Default') },
-  ConsoleOrange   = { color = '#FE6500', consoleTab = tr('Default') },
-  ConsoleBlue     = { color = '#9F9DFD', consoleTab = tr('Default') },
-  Warning         = { color = '#F55E5E', consoleTab = tr('Server Log'), labelId = 'warningLabel' },
-  Info            = { color = '#00EB00', consoleTab = tr('Server Log'), labelId = 'infoLabel', consoleOption = 'showInfoMessagesInConsole' },
-  EventAdvance    = { color = '#FFFFFF', consoleTab = tr('Server Log'), labelId = 'advanceLabel', consoleOption = 'showEventMessagesInConsole' },
-  EventDefault    = { color = '#FFFFFF', consoleTab = tr('Server Log'), labelId = 'statusLabel', consoleOption = 'showEventMessagesInConsole' },
-  StatusDefault   = { color = '#FFFFFF', consoleTab = tr('Server Log'), labelId = 'statusLabel', consoleOption = 'showStatusMessagesInConsole' },
-  StatusSmall     = { color = '#FFFFFF', labelId = 'statusLabel' },
-  Private         = { color = '#5FF7F7', labelId = 'privateLabel' }
+MessageSettings = {
+  consoleRed      = { color = TextColors.red,    consoleTab='Default' },
+  consoleOrange   = { color = TextColors.orange, consoleTab='Default' },
+  consoleBlue     = { color = TextColors.blue,   consoleTab='Default' },
+  centerRed       = { color = TextColors.red,    consoleTab='Server Log', screenTarget='lowCenterLabel' },
+  centerGreen     = { color = TextColors.green,  consoleTab='Server Log', screenTarget='highCenterLabel',   consoleOption='showInfoMessagesInConsole' },
+  centerWhite     = { color = TextColors.white,  consoleTab='Server Log', screenTarget='middleCenterLabel', consoleOption='showEventMessagesInConsole' },
+  bottomWhite     = { color = TextColors.white,  consoleTab='Server Log', screenTarget='statusLabel',       consoleOption='showEventMessagesInConsole' },
+  status          = { color = TextColors.white,  consoleTab='Server Log', screenTarget='statusLabel',       consoleOption='showStatusMessagesInConsole' },
+  statusSmall     = { color = TextColors.white,                           screenTarget='statusLabel' },
+  private         = { color = TextColors.lightblue,                       screenTarget='privateLabel' }
 }
 
-centerTextMessagePanel = nil
-statusLabel = nil
-privateLabel = nil
-warningLabel = nil
-advanceLabel = nil
-infoLabel = nil
+MessageTypes = {
+  [MessageModes.MonsterSay] = MessageSettings.orange,
+  [MessageModes.MonsterYell] = MessageSettings.orange,
+  [MessageModes.Failure] = MessageSettings.statusSmall,
+  [MessageModes.Login] = MessageSettings.bottomWhite,
+  [MessageModes.Game] = MessageSettings.centerWhite,
+  [MessageModes.Status] = MessageSettings.status,
+  [MessageModes.Warning] = MessageSettings.centerRed,
+  [MessageModes.Look] = MessageSettings.centerGreen,
+  [MessageModes.Loot] = MessageSettings.centerGreen,
+  [MessageModes.Red] = MessageSettings.consoleRed,
+  [MessageModes.Blue] = MessageSettings.consoleBlue,
+  [MessageModes.PrivateFrom] = MessageSettings.private
+}
+
+messagesPanel = nil
 
 function init()
-  connect(g_game, {
-    onTextMessage = displayMessage,
-    onGameStart = clearMessages
-  })
-  registerProtocol()
-
-  g_ui.importStyle('textmessage.otui')
-  centerTextMessagePanel = g_ui.createWidget('Panel', modules.game_interface.getMapPanel())
-  centerTextMessagePanel:setId('centerTextMessagePanel')
-
-  local layout = UIVerticalLayout.create(centerTextMessagePanel)
-  layout:setFitChildren(true)
-  centerTextMessagePanel:setLayout(layout)
-  centerTextMessagePanel:setWidth(360)
-  centerTextMessagePanel:centerIn('parent')
-
-  warningLabel = createTextMessageLabel('warningLabel', centerTextMessagePanel, 'CenterLabel')
-  advanceLabel = createTextMessageLabel('advanceLabel', centerTextMessagePanel, 'CenterLabel')
-  infoLabel = createTextMessageLabel('infoLabel', centerTextMessagePanel, 'CenterLabel')
-  privateLabel = createTextMessageLabel('privateLabel', modules.game_interface.getMapPanel(), 'TopCenterLabel')
-  statusLabel = createTextMessageLabel('statusLabel', modules.game_interface.getMapPanel(), 'BottomLabel')
+  connect(g_game, 'onTextMessage', displayMessage)
+  connect(g_game, 'onPrivateTalk', onPrivateTalk)
+  connect(g_game, 'onGameEnd', clearMessages)
+  messagesPanel = g_ui.loadUI('textmessage.otui', modules.game_interface.getRootPanel())
 end
 
 function terminate()
-  disconnect(g_game, {
-    onTextMessage = display,
-    onGameStart = clearMessages
-  })
-  unregisterProtocol()
+  disconnect(g_game, 'onTextMessage', displayMessage)
+  disconnect(g_game, 'onPrivateTalk', onPrivateTalk)
+  disconnect(g_game, 'onGameEnd',clearMessages)
+  clearMessages()
+  messagesPanel:destroy()
+end
 
-  removeEvent(warningLabel.hideEvent)
-  removeEvent(advanceLabel.hideEvent)
-  removeEvent(infoLabel.hideEvent)
-  removeEvent(privateLabel.hideEvent)
-  removeEvent(statusLabel.hideEvent)
+function calculateVisibleTime(text)
+  return math.max(#text * 100, 4000)
+end
 
-  centerTextMessagePanel:destroy()
-  statusLabel:destroy()
-  privateLabel:destroy()
+function displayMessage(mode, text)
+  if not g_game.isOnline() then return end
+
+  local msgtype = MessageTypes[mode]
+
+  if not msgtype then
+    perror('unhandled message mode ' .. mode)
+    return
+  end
+
+  if msgtype.consoleTab ~= nil and (msgtype.consoleOption == nil or Options.getOption(msgtype.consoleOption)) then
+    modules.game_console.addText(text, msgtype, tr(msgtype.consoleTab))
+    --TODO move to game_console
+  end
+
+  if msgtype.screenTarget then
+    local label = messagesPanel:recursiveGetChildById(msgtype.screenTarget)
+    label:setText(text)
+    label:setColor(msgtype.color)
+    label:setVisible(true)
+    removeEvent(label.hideEvent)
+    label.hideEvent = scheduleEvent(function() label:setVisible(false) end, calculateVisibleTime(text))
+  end
+end
+
+function displayStatusMessage(text)
+  displayMessage(MessageModes.Status, text)
+end
+
+function displayGameMessage(text)
+  displayMessage(MessageModes.Game, text)
 end
 
 function clearMessages()
-  warningLabel:hide()
-  advanceLabel:hide()
-  infoLabel:hide()
-  privateLabel:hide()
-  statusLabel:hide()
-end
-
-function createTextMessageLabel(id, parent, class)
-  local label = g_ui.createWidget(class, parent)
-  label:setFont('verdana-11px-rounded')
-  label:setId(id)
-  return label
-end
-
-function displayMessage(msgtype, msg, time)
-  if not g_game.isOnline() then return end
-  msgtype = MessageTypes[msgtype]
-
-  if msgtype.consoleTab ~= nil then
-    if msgtype.consoleOption == nil or Options.getOption(msgtype.consoleOption) then
-      modules.game_console.addText(msg, msgtype, msgtype.consoleTab)
+  for _i,child in pairs(messagesPanel:recursiveGetChildren()) do
+    if child:getId():match('Label') then
+      child:hide()
+      removeEvent(child.hideEvent)
     end
   end
+end
 
-  if msgtype.labelId then
-    local label = modules.game_interface.getMapPanel():recursiveGetChildById(msgtype.labelId)
-
-    label:setText(msg)
-    label:setColor(msgtype.color)
-
-    if not time then
-      time = math.max(#msg * 100, 4000)
-    else
-      time = time * 1000
-    end
-    removeEvent(label.hideEvent)
-    addEvent(function() label:setVisible(true) end)
-    label.hideEvent = scheduleEvent(function() label:setVisible(false) end, time)
+function onPrivateTalk(code, text, speaker, speakerlevel, statmentid)
+  if Options.getOption('showPrivateMessagesOnScreen') then
+    displayMessage(code, speaker .. ':\n' .. text)
   end
-end
-
-function displayStatus(msg, time)
-  displayMessage('StatusSmall', msg)
-end
-
-function displayEventAdvance(msg, time)
-  displayMessage('EventAdvance', msg, time)
-end
-
-function displayPrivate(msg, time)
-  displayMessage('Private', time)
 end

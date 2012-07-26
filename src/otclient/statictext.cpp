@@ -47,16 +47,16 @@ void StaticText::drawText(const Point& dest, const Rect& parentRect)
     //}
 }
 
-bool StaticText::addMessage(const std::string& name, Otc::SpeakType type, const std::string& message)
+bool StaticText::addMessage(const std::string& name, Otc::MessageMode mode, const std::string& text)
 {
     //TODO: this could be moved to lua
     // first message
     if(m_messages.size() == 0) {
         m_name = name;
-        m_messageType = type;
+        m_mode = mode;
     }
     // check if we can really own the message
-    else if(m_name != name || m_messageType != type) {
+    else if(m_name != name || m_mode != mode) {
         return false;
     }
     // too many messages
@@ -66,7 +66,7 @@ bool StaticText::addMessage(const std::string& name, Otc::SpeakType type, const 
         m_updateEvent = nullptr;
     }
 
-    m_messages.push_back(message);
+    m_messages.push_back(text);
     compose();
 
     if(!m_updateEvent)
@@ -105,26 +105,26 @@ void StaticText::compose()
     //TODO: this could be moved to lua
     std::string text;
 
-    if(m_messageType == Otc::SpeakSay) {
+    if(m_mode == Otc::MessageSay) {
         text += m_name;
         text += " says:\n";
         m_color = Color(239, 239, 0);
-    } else if(m_messageType == Otc::SpeakWhisper) {
+    } else if(m_mode == Otc::MessageWhisper) {
         text += m_name;
         text += " whispers:\n";
         m_color = Color(239, 239, 0);
-    } else if(m_messageType == Otc::SpeakYell) {
+    } else if(m_mode == Otc::MessageYell) {
         text += m_name;
         text += " yells:\n";
         m_color = Color(239, 239, 0);
-    } else if(m_messageType == Otc::SpeakMonsterSay || m_messageType == Otc::SpeakMonsterYell) {
+    } else if(m_mode == Otc::MessageMonsterSay || m_mode == Otc::MessageMonsterYell) {
         m_color = Color(254, 101, 0);
-    } else if(m_messageType == Otc::SpeakPrivateNpcToPlayer) {
+    } else if(m_mode == Otc::MessageNpcFrom) {
         text += m_name;
         text += " says:\n";
         m_color = Color(95, 247, 247);
     } else {
-        g_logger.warning(stdext::format("Unknown speak type: %d", m_messageType));
+        g_logger.warning(stdext::format("Unknown speak type: %d", m_mode));
     }
 
     for(uint i = 0; i < m_messages.size(); ++i) {

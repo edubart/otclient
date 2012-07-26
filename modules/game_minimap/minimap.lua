@@ -146,7 +146,7 @@ function onMinimapMouseRelease(self, mousePosition, mouseButton)
   if tile and mouseButton == MouseLeftButton and self:isPressed() then
     local dirs = g_map.findPath(g_game.getLocalPlayer():getPosition(), tile:getPosition(), 127)
     if #dirs == 0 then
-      modules.game_textmessage.displayStatus(tr('There is no way.'))
+      modules.game_textmessage.displayStatusMessage(tr('There is no way.'))
       return true
     end
     g_game.autoWalk(dirs)

@@ -1,4 +1,4 @@
-CenterLabel < UILabel
+TextMessageLabel < UILabel
   font: verdana-11px-rounded
   text-align: center
   text-wrap: true
@@ -6,17 +6,35 @@ CenterLabel < UILabel
   margin-bottom: 2
   visible: false
 
-TopCenterLabel < UILabel
-  font: verdana-11px-rounded
-  text-align: center
-  text-wrap: true
-  visible: false
-  anchors.top: parent.top
-  anchors.bottom: centerTextMessagePanel.top
-  anchors.horizontalCenter: parent.horizontalCenter
-  width: 275
+Panel
+  anchors.fill: gameMapPanel
+  focusable: false
 
-BottomLabel < CenterLabel
-  anchors.bottom: parent.bottom
-  anchors.left: parent.left
-  anchors.right: parent.right
+  Panel
+    id: centerTextMessagePanel
+    layout:
+      type: verticalBox
+      fit-children: true
+    width: 360
+    anchors.centerIn: parent
+
+    TextMessageLabel
+      id: highCenterLabel
+    TextMessageLabel
+      id: middleCenterLabel
+    TextMessageLabel
+      id: lowCenterLabel
+
+  TextMessageLabel
+    id: privateLabel
+    anchors.top: parent.top
+    anchors.bottom: centerTextMessagePanel.top
+    anchors.horizontalCenter: parent.horizontalCenter
+    text-auto-resize: false
+    width: 275
+
+  TextMessageLabel
+    id: statusLabel
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right

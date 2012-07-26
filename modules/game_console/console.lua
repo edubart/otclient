@@ -1,36 +1,36 @@
 SpeakTypesSettings = {
-  say = { speakType = SpeakSay, color = '#FFFF00' },
-  whisper = { speakType = SpeakWhisper, color = '#FFFF00' },
-  yell = { speakType = SpeakYell, color = '#FFFF00' },
-  broadcast = { speakType = SpeakBroadcast, color = '#F55E5E' },
-  private = { speakType = SpeakPrivate, color = '#5FF7F7', private = true },
-  privateRed = { speakType = SpeakPrivateRed, color = '#F55E5E', private = true },
-  privatePlayerToPlayer = { speakType = SpeakPrivate, color = '#9F9DFD', private = true },
-  privatePlayerToNpc = { speakType = SpeakPrivatePlayerToNpc, color = '#9F9DFD', private = true, npcChat = true },
-  privateNpcToPlayer = { speakType = SpeakPrivateNpcToPlayer, color = '#5FF7F7', private = true, npcChat = true },
-  channelYellow = { speakType = SpeakChannelYellow, color = '#FFFF00' },
-  channelWhite = { speakType = SpeakChannelWhite, color = '#FFFFFF' },
-  channelRed = { speakType = SpeakChannelRed, color = '#F55E5E' },
-  channelOrange = { speakType = SpeakChannelOrange, color = '#FE6500' },
-  monsterSay = { speakType = SpeakMonsterSay, color = '#FE6500', hideInConsole = true},
-  monsterYell = { speakType = SpeakMonsterYell, color = '#FE6500', hideInConsole = true},
+  say = { speakType = MessageModes.Say, color = '#FFFF00' },
+  whisper = { speakType = MessageModes.Whisper, color = '#FFFF00' },
+  yell = { speakType = MessageModes.Yell, color = '#FFFF00' },
+  broadcast = { speakType = MessageModes.GamemasterPrivateFrom, color = '#F55E5E' },
+  private = { speakType = MessageModes.PrivateTo, color = '#5FF7F7', private = true },
+  privateRed = { speakType = MessageModes.GamemasterTo, color = '#F55E5E', private = true },
+  privatePlayerToPlayer = { speakType = MessageModes.PrivateTo, color = '#9F9DFD', private = true },
+  privatePlayerToNpc = { speakType = MessageModes.NpcTo, color = '#9F9DFD', private = true, npcChat = true },
+  privateNpcToPlayer = { speakType = MessageModes.NpcFrom, color = '#5FF7F7', private = true, npcChat = true },
+  channelYellow = { speakType = MessageModes.Channel, color = '#FFFF00' },
+  channelWhite = { speakType = MessageModes.ChannelManagement, color = '#FFFFFF' },
+  channelRed = { speakType = MessageModes.GamemasterChannel, color = '#F55E5E' },
+  channelOrange = { speakType = MessageModes.ChannelHighlight, color = '#FE6500' },
+  monsterSay = { speakType = MessageModes.MonsterSay, color = '#FE6500', hideInConsole = true},
+  monsterYell = { speakType = MessageModes.MonsterYell, color = '#FE6500', hideInConsole = true},
 }
 
 SpeakTypes = {
-  [SpeakSay] = SpeakTypesSettings.say,
-  [SpeakWhisper] = SpeakTypesSettings.whisper,
-  [SpeakYell] = SpeakTypesSettings.yell,
-  [SpeakBroadcast] = SpeakTypesSettings.broadcast,
-  [SpeakPrivate] = SpeakTypesSettings.private,
-  [SpeakPrivateRed] = SpeakTypesSettings.privateRed,
-  [SpeakPrivatePlayerToNpc] = SpeakTypesSettings.privatePlayerToNpc,
-  [SpeakPrivateNpcToPlayer] = SpeakTypesSettings.privateNpcToPlayer,
-  [SpeakChannelYellow] = SpeakTypesSettings.channelYellow,
-  [SpeakChannelWhite] = SpeakTypesSettings.channelWhite,
-  [SpeakChannelRed] = SpeakTypesSettings.channelRed,
-  [SpeakChannelOrange] = SpeakTypesSettings.channelOrange,
-  [SpeakMonsterSay] = SpeakTypesSettings.monsterSay,
-  [SpeakMonsterYell] = SpeakTypesSettings.monsterYell,
+  [MessageModes.Say] = SpeakTypesSettings.say,
+  [MessageModes.Whisper] = SpeakTypesSettings.whisper,
+  [MessageModes.Yell] = SpeakTypesSettings.yell,
+  [MessageModes.GamemasterPrivateFrom] = SpeakTypesSettings.broadcast,
+  [MessageModes.PrivateFrom] = SpeakTypesSettings.private,
+  [MessageModes.GamemasterPrivateFrom] = SpeakTypesSettings.privateRed,
+  [MessageModes.NpcTo] = SpeakTypesSettings.privatePlayerToNpc,
+  [MessageModes.NpcFrom] = SpeakTypesSettings.privateNpcToPlayer,
+  [MessageModes.Channel] = SpeakTypesSettings.channelYellow,
+  [MessageModes.ChannelManagement] = SpeakTypesSettings.channelWhite,
+  [MessageModes.GamemasterChannel] = SpeakTypesSettings.channelRed,
+  [MessageModes.ChannelHighlight] = SpeakTypesSettings.channelOrange,
+  [MessageModes.MonsterSay] = SpeakTypesSettings.monsterSay,
+  [MessageModes.MonsterYell] = SpeakTypesSettings.monsterYell,
 }
 
 SayModes = {
@@ -56,7 +56,7 @@ ignoreNpcMessages = false
 
 
 function init()
-  connect(g_game, { onCreatureSpeak = onCreatureSpeak,
+  connect(g_game, { onTalk = onTalk,
                     onChannelList = onChannelList,
                     onOpenChannel = onOpenChannel,
                     onOpenPrivateChannel = onOpenPrivateChannel,
@@ -94,7 +94,7 @@ function init()
 end
 
 function terminate()
-  disconnect(g_game, { onCreatureSpeak = onCreatureSpeak,
+  disconnect(g_game, { onTalk = onTalk,
                        onChannelList = onChannelList,
                        onOpenChannel = onOpenChannel,
                        onOpenPrivateChannel = onOpenPrivateChannel,
@@ -239,7 +239,7 @@ end
 
 function addPrivateText(text, speaktype, name, isPrivateCommand, creatureName)
   local focus = false
-  if speaktype.speakType == SpeakPrivateNpcToPlayer then
+  if speaktype.speakType == SpeakNpcFrom then
     name = 'NPCs'
     focus = true
   end
@@ -301,9 +301,9 @@ function popupMenu(mousePos, mouseButton, creatureName, text)
       --TODO select all
       menu:addOption(tr('Copy message'), function () g_window.setClipboardText(text) end)
 
-      if RuleViolation.hasWindowAccess() then
+      if modules.game_ruleviolation.hasWindowAccess() then
         menu:addSeparator()
-        menu:addOption(tr('Rule Violation'), function() RuleViolation.show(creatureName, text:match('.+%:%s(.+)')) end)
+        menu:addOption(tr('Rule Violation'), function() modules.game_ruleviolation.show(creatureName, text:match('.+%:%s(.+)')) end)
       end
 
       menu:addSeparator()
@@ -448,8 +448,8 @@ function applyMessagePrefixies(name, level, message)
   return message
 end
 
-function onCreatureSpeak(name, level, speaktype, message, channelId, creaturePos)
-  if ignoreNpcMessages and speaktype == SpeakPrivateNpcToPlayer then return end
+function onTalk(name, level, speaktype, message, channelId, creaturePos)
+  if ignoreNpcMessages and speaktype == SpeakNpcFrom then return end
   local defaultMessage = speaktype < 3 and true or false
   speaktype = SpeakTypes[speaktype]
   if speaktype.hideInConsole then return end
@@ -458,11 +458,6 @@ function onCreatureSpeak(name, level, speaktype, message, channelId, creaturePos
 
   if speaktype.private then
     addPrivateText(composedMessage, speaktype, name, false, name)
-    if Options.getOption('showPrivateMessagesOnScreen') then
-      if(speaktype.speakType ~= SpeakPrivateNpcToPlayer) then
-        TextMessage.displayPrivate(name .. ':\n' .. message)
-      end
-    end
   else
     local channel = tr('Default')
     if not defaultMessage then

@@ -60,8 +60,8 @@ protected:
     void processWalkCancel(Otc::Direction direction);
 
     // message related
-    void processTextMessage(const std::string& type, const std::string& message); // deprecated
-    void processCreatureSpeak(const std::string& name, int level, Otc::SpeakType type, const std::string& message, int channelId, const Position& creaturePos);
+    void processTextMessage(Otc::MessageMode mode, const std::string& text);
+    void processTalk(const std::string& name, int level, Otc::MessageMode mode, const std::string& text, int channelId, const Position& pos);
 
     // container related
     void processOpenContainer(int containerId, const ItemPtr& containerItem, const std::string& name, int capacity, bool hasParent, const std::vector<ItemPtr>& items);
@@ -155,8 +155,8 @@ public:
 
     // talk related
     void talk(const std::string& message);
-    void talkChannel(Otc::SpeakType speakType, int channelId, const std::string& message);
-    void talkPrivate(Otc::SpeakType speakType, const std::string& receiver, const std::string& message);
+    void talkChannel(Otc::MessageMode mode, int channelId, const std::string& message);
+    void talkPrivate(Otc::MessageMode mode, const std::string& receiver, const std::string& message);
 
     // channel related
     void openPrivateChannel(const std::string& receiver);

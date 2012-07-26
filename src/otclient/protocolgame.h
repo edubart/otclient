@@ -72,7 +72,7 @@ public:
     void sendEditText(uint id, const std::string& text);
     void sendEditList(uint id, int doorId, const std::string& text);
     void sendLook(const Position& position, int thingId, int stackpos);
-    void sendTalk(Otc::SpeakType speakType, int channelId, const std::string& receiver, const std::string& message);
+    void sendTalk(Otc::MessageMode mode, int channelId, const std::string& receiver, const std::string& message);
     void sendRequestChannels();
     void sendJoinChannel(int channelId);
     void sendLeaveChannel(int channelId);
@@ -169,7 +169,7 @@ private:
     void parseSpellCooldown(const InputMessagePtr& msg);
     void parseSpellGroupCooldown(const InputMessagePtr& msg);
     void parseMultiUseCooldown(const InputMessagePtr& msg);
-    void parseCreatureSpeak(const InputMessagePtr& msg);
+    void parseTalk(const InputMessagePtr& msg);
     void parseChannelList(const InputMessagePtr& msg);
     void parseOpenChannel(const InputMessagePtr& msg);
     void parseOpenPrivateChannel(const InputMessagePtr& msg);
