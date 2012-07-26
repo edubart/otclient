@@ -442,13 +442,7 @@ void ProtocolGame::parseMapMoveWest(const InputMessagePtr& msg)
 void ProtocolGame::parseUpdateTile(const InputMessagePtr& msg)
 {
     Position tilePos = getPosition(msg);
-    int thingId = msg->peekU16();
-    if(thingId == 0xFF01) {
-        msg->getU16();
-    } else {
-        setTileDescription(msg, tilePos);
-        msg->getU16();
-    }
+    setTileDescription(msg, tilePos);
 }
 
 void ProtocolGame::parseTileAddThing(const InputMessagePtr& msg)

@@ -163,6 +163,9 @@ ThingPtr Tile::addThing(const ThingPtr& thing, int stackPos)
         return nullptr;
     }
 
+    if(stackPos == 255)
+        stackPos = -1;
+
     // the items stackpos follows this order:
     // 0 - ground
     // 1 - ground borders

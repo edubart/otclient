@@ -41,7 +41,7 @@
 
 Creature::Creature() : Thing()
 {
-    m_id = 1;
+    m_id = 0;
     m_healthPercent = 100;
     m_speed = 200;
     m_direction = Otc::South;
