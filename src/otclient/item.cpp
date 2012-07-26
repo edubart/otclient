@@ -187,8 +187,8 @@ void Item::setOtbId(uint16 id)
 {
     if(!g_things.isValidOtbId(id))
         id = 0;
-    auto otbType = g_things.getItemType(id);
-    m_id = otbType->getClientId();
+    auto itemType = g_things.getItemType(id);
+    m_id = itemType->getClientId();
     m_otbId = id;
 }
 

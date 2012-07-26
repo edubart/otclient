@@ -40,7 +40,7 @@ public:
     void loadXml(const std::string& file);
     void parseItemType(uint16 id, TiXmlElement *elem);
 
-    void addItemType(const ItemTypePtr& otbType);
+    void addItemType(const ItemTypePtr& itemType);
     const ItemTypePtr& findOtbForClientId(uint16 id);
 
     const ThingTypePtr& getNullThingType() { return m_nullThingType; }

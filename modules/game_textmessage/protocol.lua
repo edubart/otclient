@@ -47,7 +47,7 @@ end
 function parseTextMessage(msg)
   local msgtype = msg:getU8()
   local text = msg:getString()
-  msgtype = getMessageTypes(g_game.getProtocolVersion())[msgtype]
+  msgtype = getMessageTypes(g_game.getClientVersion())[msgtype]
   signalcall(g_game.onTextMessage, msgtype, text)
 end
 

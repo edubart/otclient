@@ -44,8 +44,7 @@ void ProtocolGame::onConnect()
 {
     Protocol::onConnect();
 
-    // must create local player before parsing anything
-    m_localPlayer = LocalPlayerPtr(new LocalPlayer);
+    m_localPlayer = g_game.getLocalPlayer();
 
     if(g_game.getFeature(Otc::GameProtocolChecksum))
         enableChecksum();

@@ -59,16 +59,17 @@ void ThingTypeManager::terminate()
 
 bool ThingTypeManager::loadDat(const std::string& file)
 {
+    m_datLoaded = false;
+    m_datSignature = 0;
     try {
         FileStreamPtr fin = g_resources.openFile(file);
-        if(!fin)
-            stdext::throw_exception("unable to open file");
 
         m_datSignature = fin->getU32();
 
         int numThings[ThingLastCategory];
         for(int category = 0; category < ThingLastCategory; ++category) {
             int count = fin->getU16() + 1;
+            m_thingTypes[category].clear();
             m_thingTypes[category].resize(count, m_nullThingType);
         }
 
@@ -114,9 +115,9 @@ void ThingTypeManager::loadOtb(const std::string& file)
 
     m_itemTypes.resize(root->getChildren().size(), m_nullItemType);
     for(const BinaryTreePtr& node : root->getChildren()) {
-        ItemTypePtr otbType(new ItemType);
-        otbType->unserialize(node);
-        addItemType(otbType);
+        ItemTypePtr itemType(new ItemType);
+        itemType->unserialize(node);
+        addItemType(itemType);
     }
 
     m_otbLoaded = true;
@@ -171,25 +172,25 @@ void ThingTypeManager::parseItemType(uint16 id, TiXmlElement* elem)
         addItemType(newType);
     }
 
-    ItemTypePtr otbType = getItemType(serverId);
-    otbType->setName(elem->Attribute("name"));
+    ItemTypePtr itemType = getItemType(serverId);
+    itemType->setName(elem->Attribute("name"));
     for(TiXmlElement* attrib = elem->FirstChildElement(); attrib; attrib = attrib->NextSiblingElement()) {
         if(attrib->ValueStr() != "attribute")
             break;
 
         if(attrib->Attribute("key") == "description") {
-            otbType->setDesc(attrib->Attribute("value"));
+            itemType->setDesc(attrib->Attribute("value"));
             break;
         }
     }
 }
 
-void ThingTypeManager::addItemType(const ItemTypePtr& otbType)
+void ThingTypeManager::addItemType(const ItemTypePtr& itemType)
 {
-    uint16 id = otbType->getServerId();
+    uint16 id = itemType->getServerId();
     if(m_itemTypes.size() <= id)
         m_itemTypes.resize(id+1, m_nullItemType);
-    m_itemTypes[id] = otbType;
+    m_itemTypes[id] = itemType;
 }
 
 const ItemTypePtr& ThingTypeManager::findOtbForClientId(uint16 id)
@@ -197,9 +198,9 @@ const ItemTypePtr& ThingTypeManager::findOtbForClientId(uint16 id)
     if(m_itemTypes.empty())
         return m_nullItemType;
 
-    for(const ItemTypePtr& otbType : m_itemTypes) {
-        if(otbType->getClientId() == id)
-            return otbType;
+    for(const ItemTypePtr& itemType : m_itemTypes) {
+        if(itemType->getClientId() == id)
+            return itemType;
     }
 
     return m_nullItemType;

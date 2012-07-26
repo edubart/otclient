@@ -56,7 +56,7 @@ private:
     SoundSourcePtr createSoundSource(const std::string& filename);
     uint loadFileIntoBuffer(const SoundFilePtr& soundFile);
 
-    std::map<std::string, SoundBufferPtr> m_buffers;
+    std::unordered_map<std::string, SoundBufferPtr> m_buffers;
     std::vector<SoundSourcePtr> m_sources;
     SoundSourcePtr m_musicSource;
     ALCdevice *m_device;

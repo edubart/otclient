@@ -81,7 +81,7 @@ protected:
 
 private:
     bool updateWidget(const UIWidgetPtr& widget, UIAnchorGroup& anchorGroup, UIWidgetPtr first = nullptr);
-    std::map<UIWidgetPtr, UIAnchorGroup> m_anchorsGroups;
+    std::unordered_map<UIWidgetPtr, UIAnchorGroup> m_anchorsGroups;
 };
 
 #endif

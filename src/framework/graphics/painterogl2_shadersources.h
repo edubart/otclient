@@ -37,14 +37,14 @@ static const std::string glslMainWithTexCoordsVertexShader = "\n\
     void main()\n\
     {\n\
         gl_Position = calculatePosition();\n\
-        v_TexCoord = (u_TextureMatrix * vec3(a_TexCoord,1)).xy;\n\
+        v_TexCoord = (u_TextureMatrix * vec3(a_TexCoord,1.0)).xy;\n\
     }\n";
 
 static std::string glslPositionOnlyVertexShader = "\n\
     attribute highp vec2 a_Vertex;\n\
     uniform highp mat3 u_ProjectionMatrix;\n\
     highp vec4 calculatePosition() {\n\
-        return vec4(u_ProjectionMatrix * vec3(a_Vertex.xy, 1), 1);\n\
+        return vec4(u_ProjectionMatrix * vec3(a_Vertex.xy, 1.0), 1.0);\n\
     }\n";
 
 static const std::string glslMainFragmentShader = "\n\

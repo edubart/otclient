@@ -37,14 +37,14 @@ function clean()
   end
 end
 
-local function refreshContainerItems(container)
+function refreshContainerItems(container)
   for slot=0,container:getCapacity()-1 do
     local itemWidget = container.itemsPanel:getChildById('item' .. slot)
     itemWidget:setItem(container:getItem(slot))
   end
 end
 
-local function onContainerOpen(container, previousContainer)
+function onContainerOpen(container, previousContainer)
   local containerWindow
   if previousContainer then
     containerWindow = previousContainer.window

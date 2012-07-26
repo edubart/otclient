@@ -1,88 +1,10 @@
 -- @docclass
 ProtocolLogin = extends(Protocol)
 
--- set to the latest Tibia.pic signature to make otclient compatible with official tibia
-local PIC_SIGNATURE = 1337606793
-
 LoginServerError = 10
 LoginServerMotd = 20
 LoginServerUpdateNeeded = 30
 LoginServerCharacterList = 100
-
-
--- private functions
-local function sendLoginPacket(protocol)
-  local msg = OutputMessage.create()
-  msg:addU8(ClientOpcodes.ClientEnterAccount)
-  msg:addU16(g_game.getOsType())
-  msg:addU16(g_game.getProtocolVersion())
-
-  msg:addU32(g_things.getDatSignature())
-  msg:addU32(g_sprites.getSprSignature())
-  msg:addU32(PIC_SIGNATURE)
-
-  local paddingBytes = 128
-  msg:addU8(0) -- first RSA byte must be 0
-  paddingBytes = paddingBytes - 1
-
-  -- xtea key
-  protocol:generateXteaKey()
-  local xteaKey = protocol:getXteaKey()
-  msg:addU32(xteaKey[1])
-  msg:addU32(xteaKey[2])
-  msg:addU32(xteaKey[3])
-  msg:addU32(xteaKey[4])
-  paddingBytes = paddingBytes - 16
-
-  if g_game.getFeature(GameProtocolChecksum) then
-    protocol:enableChecksum()
-  end
-
-  if g_game.getFeature(GameAccountNames) then
-    msg:addString(protocol.accountName)
-    msg:addString(protocol.accountPassword)
-    paddingBytes = paddingBytes - (4 + string.len(protocol.accountName) + string.len(protocol.accountPassword))
-  else
-    msg:addU32(tonumber(protocol.accountName))
-    msg:addString(protocol.accountPassword)
-    paddingBytes = paddingBytes - (6 + string.len(protocol.accountPassword))
-  end
-
-  msg:addPaddingBytes(paddingBytes, 0)
-  msg:encryptRsa(128, g_game.getRsa())
-
-  protocol:send(msg)
-  protocol:enableXteaEncryption()
-  protocol:recv()
-end
-
--- events
-function ProtocolLogin:onConnect()
-  self:connectCallback(self)
-end
-
-function ProtocolLogin:onRecv(msg)
-  while not msg:eof() do
-    local opcode = msg:getU8()
-    if opcode == LoginServerError then
-      self:parseError(msg)
-    elseif opcode == LoginServerMotd then
-      self:parseMotd(msg)
-    elseif opcode == LoginServerUpdateNeeded then
-      signalcall(self.onError, self, tr("Client needs update."))
-    elseif opcode == LoginServerCharacterList then
-      self:parseCharacterList(msg)
-    else
-      self:parseOpcode(opcode, msg)
-    end
-  end
-  self:disconnect()
-end
-
--- public functions
-function ProtocolLogin.create()
-  return ProtocolLogin.internalCreate()
-end
 
 function ProtocolLogin:login(host, port, accountName, accountPassword)
   if string.len(accountName) == 0 or string.len(accountPassword) == 0 then
@@ -102,6 +24,73 @@ function ProtocolLogin:login(host, port, accountName, accountPassword)
 end
 
 function ProtocolLogin:cancelLogin()
+  self:disconnect()
+end
+
+function ProtocolLogin:sendLoginPacket()
+  local msg = OutputMessage.create()
+  msg:addU8(ClientOpcodes.ClientEnterAccount)
+  msg:addU16(g_game.getOsType())
+  msg:addU16(g_game.getClientVersion())
+
+  msg:addU32(g_things.getDatSignature())
+  msg:addU32(g_sprites.getSprSignature())
+  msg:addU32(PIC_SIGNATURE)
+
+  local paddingBytes = 128
+  msg:addU8(0) -- first RSA byte must be 0
+  paddingBytes = paddingBytes - 1
+
+  -- xtea key
+  self:generateXteaKey()
+  local xteaKey = self:getXteaKey()
+  msg:addU32(xteaKey[1])
+  msg:addU32(xteaKey[2])
+  msg:addU32(xteaKey[3])
+  msg:addU32(xteaKey[4])
+  paddingBytes = paddingBytes - 16
+
+  if g_game.getFeature(GameProtocolChecksum) then
+    self:enableChecksum()
+  end
+
+  if g_game.getFeature(GameAccountNames) then
+    msg:addString(self.accountName)
+    msg:addString(self.accountPassword)
+    paddingBytes = paddingBytes - (4 + string.len(self.accountName) + string.len(self.accountPassword))
+  else
+    msg:addU32(tonumber(self.accountName))
+    msg:addString(self.accountPassword)
+    paddingBytes = paddingBytes - (6 + string.len(self.accountPassword))
+  end
+
+  msg:addPaddingBytes(paddingBytes, 0)
+  msg:encryptRsa(128, g_game.getRsa())
+
+  self:send(msg)
+  self:enableXteaEncryption()
+  self:recv()
+end
+
+function ProtocolLogin:onConnect()
+  self:sendLoginPacket()
+end
+
+function ProtocolLogin:onRecv(msg)
+  while not msg:eof() do
+    local opcode = msg:getU8()
+    if opcode == LoginServerError then
+      self:parseError(msg)
+    elseif opcode == LoginServerMotd then
+      self:parseMotd(msg)
+    elseif opcode == LoginServerUpdateNeeded then
+      signalcall(self.onError, self, tr("Client needs update."))
+    elseif opcode == LoginServerCharacterList then
+      self:parseCharacterList(msg)
+    else
+      self:parseOpcode(opcode, msg)
+    end
+  end
   self:disconnect()
 end
 

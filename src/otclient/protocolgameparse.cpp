@@ -35,12 +35,17 @@
 
 void ProtocolGame::parseMessage(const InputMessagePtr& msg)
 {
-    int opcode = 0;
-    int prevOpcode = 0;
+    int opcode = -1;
+    int prevOpcode = -1;
 
     try {
         while(!msg->eof()) {
             opcode = msg->getU8();
+
+            if(!m_gameInitialized && opcode >= Proto::GameServerFirstGameOpcode) {
+                g_game.processGameStart();
+                m_gameInitialized = true;
+            }
 
             // try to parse in lua first
             int readPos = msg->getReadPos();
@@ -48,9 +53,6 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
                 continue;
             else
                 msg->setReadPos(readPos); // restore read pos
-
-            if(!m_gameInitialized && opcode > Proto::GameServerFirstGameOpcode)
-                g_logger.warning("received a game opcode from the server, but the game is not initialized yet, this is a server side bug");
 
             switch(opcode) {
             case Proto::GameServerInitGame:
@@ -70,8 +72,8 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
                 break;
             case Proto::GameServerPing:
             case Proto::GameServerPingBack:
-                if((opcode == Proto::GameServerPing && g_game.getProtocolVersion() >= 953) ||
-                   (opcode == Proto::GameServerPingBack && g_game.getProtocolVersion() < 953))
+                if((opcode == Proto::GameServerPing && g_game.getClientVersion() >= 953) ||
+                   (opcode == Proto::GameServerPingBack && g_game.getClientVersion() < 953))
                     parsePingBack(msg);
                 else
                     parsePing(msg);
@@ -279,13 +281,13 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
                 break;
             // PROTOCOL>=870
             case Proto::GameServerSpellDelay:
-                parseSpellDelay(msg);
+                parseSpellCooldown(msg);
                 break;
             case Proto::GameServerSpellGroupDelay:
-                parseSpellGroupDelay(msg);
+                parseSpellGroupCooldown(msg);
                 break;
             case Proto::GameServerMultiUseDelay:
-                parseMultiUseDelay(msg);
+                parseMultiUseCooldown(msg);
                 break;
             // PROTOCOL>=910
             case Proto::GameServerChannelEvent:
@@ -306,7 +308,7 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
                 parseExtendedOpcode(msg);
                 break;
             default:
-                stdext::throw_exception("unknown opcode");
+                stdext::throw_exception(stdext::format("unhandled opcode %d", (int)opcode));
                 break;
             }
             prevOpcode = opcode;
@@ -319,13 +321,13 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
 
 void ProtocolGame::parseInitGame(const InputMessagePtr& msg)
 {
-    m_gameInitialized = true;
     uint playerId = msg->getU32();
     int serverBeat = msg->getU16();
     bool canReportBugs = msg->getU8();
 
     m_localPlayer->setId(playerId);
-    g_game.processGameStart(m_localPlayer, serverBeat, canReportBugs);
+    g_game.setServerBeat(serverBeat);
+    g_game.setCanReportBugs(canReportBugs);
 }
 
 void ProtocolGame::parseGMActions(const InputMessagePtr& msg)
@@ -334,9 +336,9 @@ void ProtocolGame::parseGMActions(const InputMessagePtr& msg)
 
     int numViolationReasons;
 
-    if(g_game.getProtocolVersion() >= 860)
+    if(g_game.getClientVersion() >= 860)
         numViolationReasons = 20;
-    else if(g_game.getProtocolVersion() >= 854)
+    else if(g_game.getClientVersion() >= 854)
         numViolationReasons = 19;
     else
         numViolationReasons = 32;
@@ -454,7 +456,7 @@ void ProtocolGame::parseTileAddThing(const InputMessagePtr& msg)
     Position pos = getPosition(msg);
     int stackPos = -1;
 
-    if(g_game.getProtocolVersion() >= 854)
+    if(g_game.getClientVersion() >= 854)
         stackPos = msg->getU8();
 
     ThingPtr thing = getThing(msg);
@@ -463,54 +465,54 @@ void ProtocolGame::parseTileAddThing(const InputMessagePtr& msg)
 
 void ProtocolGame::parseTileTransformThing(const InputMessagePtr& msg)
 {
-    Position pos = getPosition(msg);
-    int stackPos = msg->getU8();
+    ThingPtr thing = getMappedThing(msg);
+    ThingPtr newThing = getThing(msg);
 
-    ThingPtr thing = getThing(msg);
-    if(thing) {
-        if(!g_map.removeThingByPos(pos, stackPos))
-            g_logger.traceError("could not remove thing");
-        g_map.addThing(thing, pos, stackPos);
+    if(!thing) {
+        g_logger.traceError("no thing");
+        return;
     }
+
+    Position pos = thing->getPosition();
+    int stackpos = thing->getStackpos();
+    assert(thing->getStackPriority() == newThing->getStackPriority());
+
+    if(!g_map.removeThing(thing)) {
+        g_logger.traceError("unable to remove thing");
+        return;
+    }
+
+    g_map.addThing(newThing, pos, stackpos);
 }
 
 void ProtocolGame::parseTileRemoveThing(const InputMessagePtr& msg)
 {
-    Position pos = getPosition(msg);
-    int stackPos = msg->getU8();
+    ThingPtr thing = getMappedThing(msg);
+    if(!thing) {
+        g_logger.traceError("no thing");
+        return;
+    }
 
-    if(!g_map.removeThingByPos(pos, stackPos))
-        g_logger.traceError("could not remove thing");
+    g_map.removeThing(thing);
 }
 
 void ProtocolGame::parseCreatureMove(const InputMessagePtr& msg)
 {
-    Position oldPos = getPosition(msg);
-    int oldStackpos = msg->getU8();
+    ThingPtr thing = getMappedThing(msg);
     Position newPos = getPosition(msg);
 
-    ThingPtr thing = g_map.getThing(oldPos, oldStackpos);
-    if(!thing) {
-        g_logger.traceError("could not get thing");
+    if(!thing || !thing->isCreature()) {
+        g_logger.traceError("no creature found to move");
         return;
     }
 
-    CreaturePtr creature = thing->asCreature();
-    if(!creature) {
-        g_logger.traceError("thing is not a creature");
-        return;
-    }
-
-    // update map tiles
-    if(!g_map.removeThing(thing))
-        g_logger.traceError("could not remove thing");
 
     int stackPos = -2;
-
-    // older protocols stores creatures in reverse order
-    if(!g_game.getProtocolVersion() >= 854)
+    // newer protocols stores creatures in reverse order
+    if(!g_game.getClientVersion()  >= 854)
         stackPos = -1;
 
+    g_map.removeThing(thing);
     g_map.addThing(thing, newPos, stackPos);
 }
 
@@ -887,7 +889,7 @@ void ProtocolGame::parsePlayerStats(const InputMessagePtr& msg)
     m_localPlayer->setStamina(stamina);
     m_localPlayer->setSoul(soul);
 
-    if(g_game.getProtocolVersion() >= 910)
+    if(g_game.getClientVersion() >= 910)
         m_localPlayer->setSpeed(msg->getU16());
 
     if(g_game.getFeature(Otc::GamePlayerRegenerationTime))
@@ -918,29 +920,28 @@ void ProtocolGame::parsePlayerState(const InputMessagePtr& msg)
 
 void ProtocolGame::parsePlayerCancelAttack(const InputMessagePtr& msg)
 {
-    if(g_game.getProtocolVersion() >= 860)
-        msg->getU32(); // unknown
+    uint seq = 0;
+    if(g_game.getClientVersion() >= 860)
+        seq = msg->getU32();
 
-    g_game.processAttackCancel();
+    g_game.processAttackCancel(seq);
 }
 
-void ProtocolGame::parseSpellDelay(const InputMessagePtr& msg)
+void ProtocolGame::parseSpellCooldown(const InputMessagePtr& msg)
 {
     msg->getU16(); // spell id
-    msg->getU16(); // cooldown
-    msg->getU8(); // unknown
+    msg->getU32(); // cooldown
 }
 
-void ProtocolGame::parseSpellGroupDelay(const InputMessagePtr& msg)
+void ProtocolGame::parseSpellGroupCooldown(const InputMessagePtr& msg)
 {
-    msg->getU16(); // spell id
-    msg->getU16(); // cooldown
-    msg->getU8(); // unknown
+    msg->getU8(); // group id
+    msg->getU32(); // cooldown
 }
 
-void ProtocolGame::parseMultiUseDelay(const InputMessagePtr& msg)
+void ProtocolGame::parseMultiUseCooldown(const InputMessagePtr& msg)
 {
-    //TODO
+    msg->getU32(); // cooldown
 }
 
 void ProtocolGame::parseCreatureSpeak(const InputMessagePtr& msg)
@@ -1225,18 +1226,36 @@ void ProtocolGame::parseChannelEvent(const InputMessagePtr& msg)
 
 void ProtocolGame::parseItemInfo(const InputMessagePtr& msg)
 {
-    /*int count = msg.getU16() - 1;
-    for(int i = 0; i < count; i++)
-    {
-        int unknown1 = msg->getU8();
-        int unknown2 = msg->getU16();
-        std::string unknown3 = msg->getString();
-    }*/
+    int size = msg->getU8();
+    for(int i=0;i<size;++i) {
+        msg->getU16(); // id
+        msg->getU8(); // subtype
+        msg->getString(); // description
+    }
 }
 
 void ProtocolGame::parsePlayerInventory(const InputMessagePtr& msg)
 {
-    //TODO
+    int size = msg->getU16();
+    for(int i=0;i<size;++i) {
+        msg->getU16(); // id
+        msg->getU8(); // subtype
+        msg->getU16(); // count
+    }
+}
+
+void ProtocolGame::parseShowModalDialog(const InputMessagePtr& msg)
+{
+    msg->getU32(); // id
+    msg->getString(); // title
+    msg->getString(); // message
+    int size = msg->getU8();
+    for(int i=0;i<size;++i) {
+        msg->getString(); // button name
+        msg->getU8(); // button value
+    }
+    msg->getU8(); // default escape button
+    msg->getU8(); // default enter button
 }
 
 void ProtocolGame::parseExtendedOpcode(const InputMessagePtr& msg)
@@ -1275,51 +1294,41 @@ int ProtocolGame::setFloorDescription(const InputMessagePtr& msg, int x, int y, 
     for(int nx = 0; nx < width; nx++) {
         for(int ny = 0; ny < height; ny++) {
             Position tilePos(x + nx + offset, y + ny + offset, z);
-
-            // clean pre stored tiles
-            g_map.cleanTile(tilePos);
-
-            if(skip == 0) {
-                int tileOpt = msg->peekU16();
-                if(tileOpt >= 0xFF00)
-                    skip = (msg->getU16() & 0xFF);
-                else {
-                    setTileDescription(msg, tilePos);
-                    skip = (msg->getU16() & 0xFF);
-                }
-            }
-            else
+            if(skip == 0)
+                skip = setTileDescription(msg, tilePos);
+            else {
+                g_map.cleanTile(tilePos);
                 skip--;
+            }
         }
     }
     return skip;
 }
 
-void ProtocolGame::setTileDescription(const InputMessagePtr& msg, Position position)
+int ProtocolGame::setTileDescription(const InputMessagePtr& msg, Position position)
 {
-    if(g_game.getFeature(Otc::GameEnvironmentEffect))
-        msg->getU16(); // environment effect
-
-
     g_map.cleanTile(position);
 
-    int stackPos = 0;
-    while(true) {
-        int inspectItemId = msg->peekU16();
-        if(inspectItemId >= 0xFF00) {
-            return;
-        }
-        else {
-            if(stackPos >= 10)
-                g_logger.traceError(stdext::format("too many things, stackpos=%d, pos=%s", stackPos, stdext::to_string(position)));
+    bool gotEffect = 0;
+    for(int stackPos=0;stackPos<256;stackPos++) {
+        if(msg->peekU16()  >= 0xff00)
+            return msg->getU16() & 0xff;
 
-            ThingPtr thing = getThing(msg);
-            g_map.addThing(thing, position, -2);
+        if(g_game.getFeature(Otc::GameEnvironmentEffect) && !gotEffect) {
+            msg->getU16(); // environment effect
+            gotEffect = true;
+            continue;
         }
-        stackPos++;
+
+        if(stackPos > 10)
+            g_logger.traceError(stdext::format("too many things, pos=%s, stackpos=%d", stdext::to_string(position), stackPos));
+
+        ThingPtr thing = getThing(msg);
+        g_map.addThing(thing, position, -2);
     }
-}
 
+    return 0;
+}
 Outfit ProtocolGame::getOutfit(const InputMessagePtr& msg)
 {
     Outfit outfit;
@@ -1376,6 +1385,31 @@ ThingPtr ProtocolGame::getThing(const InputMessagePtr& msg)
     return thing;
 }
 
+ThingPtr ProtocolGame::getMappedThing(const InputMessagePtr& msg)
+{
+    ThingPtr thing;
+    uint16 x = msg->getU16();
+
+    if(x != 0xffff) {
+        Position pos;
+        pos.x = x;
+        pos.y = msg->getU16();
+        pos.z = msg->getU8();
+        uint8 stackpos = msg->getU8();
+        assert(stackpos != 255);
+        thing = g_map.getThing(pos, stackpos);
+        if(!thing)
+            g_logger.traceError(stdext::format("no thing at pos:%s, stackpos:%d", stdext::to_string(pos), stackpos));
+    } else {
+        uint32 id = msg->getU32();
+        thing = g_map.getCreatureById(id);
+        if(!thing)
+            g_logger.traceError(stdext::format("no creature with id %u", id));
+    }
+
+    return thing;
+}
+
 CreaturePtr ProtocolGame::getCreature(const InputMessagePtr& msg, int type)
 {
     if(type == 0)
@@ -1397,7 +1431,7 @@ CreaturePtr ProtocolGame::getCreature(const InputMessagePtr& msg, int type)
             uint id = msg->getU32();
 
             int creatureType;
-            if(g_game.getProtocolVersion() >= 910)
+            if(g_game.getClientVersion() >= 910)
                 creatureType = msg->getU8();
             else {
                 if(id >= Proto::PlayerStartId && id < Proto::PlayerEndId)
@@ -1416,8 +1450,13 @@ CreaturePtr ProtocolGame::getCreature(const InputMessagePtr& msg, int type)
 
             if(id == m_localPlayer->getId())
                 creature = m_localPlayer;
-            else if(creatureType == Proto::CreatureTypePlayer)
-                creature = PlayerPtr(new Player);
+            else if(creatureType == Proto::CreatureTypePlayer) {
+                // fixes a bug server side bug where GameInit is not sent and local player id is unknown
+                if(m_localPlayer->getId() == 0 && name == m_localPlayer->getName())
+                    creature = m_localPlayer;
+                else
+                    creature = PlayerPtr(new Player);
+            }
             else if(creatureType == Proto::CreatureTypeMonster)
                 creature = MonsterPtr(new Monster);
             else if(creatureType == Proto::CreatureTypeNpc)
@@ -1447,13 +1486,13 @@ CreaturePtr ProtocolGame::getCreature(const InputMessagePtr& msg, int type)
 
         // emblem is sent only when the creature is not known
         int emblem = -1;
-        bool passable = false;
+        bool unpass = true;
 
         if(g_game.getFeature(Otc::GameCreatureEmblems) && !known)
             emblem = msg->getU8();
 
-        if(g_game.getProtocolVersion() >= 854)
-            passable = (msg->getU8() == 0);
+        if(g_game.getClientVersion() >= 854)
+            unpass = msg->getU8();
 
         if(creature) {
             creature->setHealthPercent(healthPercent);
@@ -1465,7 +1504,7 @@ CreaturePtr ProtocolGame::getCreature(const InputMessagePtr& msg, int type)
             creature->setShield(shield);
             if(emblem != -1)
                 creature->setEmblem(emblem);
-            creature->setPassable(passable);
+            creature->setPassable(!unpass);
 
             if(creature == m_localPlayer && !m_localPlayer->isKnown())
                 m_localPlayer->setKnown(true);
@@ -1481,11 +1520,11 @@ CreaturePtr ProtocolGame::getCreature(const InputMessagePtr& msg, int type)
         if(creature)
             creature->turn(direction);
 
-        if(g_game.getProtocolVersion() >= 953) {
-            bool passable = msg->getU8();
+        if(g_game.getClientVersion() >= 953) {
+            bool unpass = msg->getU8();
 
             if(creature)
-                creature->setPassable(passable);
+                creature->setPassable(!unpass);
         }
 
     } else {
@@ -1502,7 +1541,7 @@ ItemPtr ProtocolGame::getItem(const InputMessagePtr& msg, int id)
 
     ItemPtr item = Item::create(id);
     if(item->getId() == 0)
-        stdext::throw_exception("unable to create item with invalid id 0");
+        stdext::throw_exception(stdext::format("unable to create item with invalid id %d", id));
 
     if(item->isStackable() || item->isFluidContainer() || item->isSplash() || item->isChargeable())
         item->setCountOrSubType(msg->getU8());
@@ -1511,7 +1550,7 @@ ItemPtr ProtocolGame::getItem(const InputMessagePtr& msg, int id)
         if(item->getAnimationPhases() > 1) {
             // 0xfe => random phase
             // 0xff => async?
-            msg->getU8();
+            msg->getU8(); // phase
         }
     }
 

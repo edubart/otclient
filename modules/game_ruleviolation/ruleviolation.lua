@@ -67,6 +67,7 @@ function loadReasons()
   local actions = g_game.getGMActions()
   for reason, actionFlags in pairs(actions) do
     local label = g_ui.createWidget('RVListLabel', reasonsTextList)
+    label.onFocusChange = onSelectReason
     label:setText(rvreasons[reason])
     label.reasonId = reason
     label.actionFlags = actionFlags

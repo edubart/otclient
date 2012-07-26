@@ -238,6 +238,7 @@ function startTradeWith(thing)
 end
 
 function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
+  if not g_game.isOnline() then return end
   local menu = g_ui.createWidget('PopupMenu')
 
   if lookThing then
@@ -297,52 +298,50 @@ function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
 
     else
       local localPlayer = g_game.getLocalPlayer()
-      if localPlayer then
-        if g_game.getAttackingCreature() ~= creatureThing then
-          menu:addOption(tr('Attack'), function() g_game.attack(creatureThing) end)
-        else
-          menu:addOption(tr('Stop Attack'), function() g_game.cancelAttack() end)
+      if g_game.getAttackingCreature() ~= creatureThing then
+        menu:addOption(tr('Attack'), function() g_game.attack(creatureThing) end)
+      else
+        menu:addOption(tr('Stop Attack'), function() g_game.cancelAttack() end)
+      end
+
+      if g_game.getFollowingCreature() ~= creatureThing then
+        menu:addOption(tr('Follow'), function() g_game.follow(creatureThing) end)
+      else
+        menu:addOption(tr('Stop Follow'), function() g_game.cancelFollow() end)
+      end
+
+      if creatureThing:asPlayer() then
+        menu:addSeparator()
+        local creatureName = creatureThing:getName()
+        menu:addOption(tr('Message to %s', creatureName), function() g_game.openPrivateChannel(creatureName) end)
+        if modules.game_console.getOwnPrivateTab() then
+          menu:addOption(tr('Invite to private chat'), function() g_game.inviteToOwnChannel(creatureName) end)
+          menu:addOption(tr('Exclude from private chat'), function() g_game.excludeFromOwnChannel(creatureName) end) -- [TODO] must be removed after message's popup labels been implemented
+        end
+        if (not Player:hasVip(creatureName)) then
+          menu:addOption(tr('Add to VIP list'), function() g_game.addVip(creatureName) end)
         end
 
-        if g_game.getFollowingCreature() ~= creatureThing then
-          menu:addOption(tr('Follow'), function() g_game.follow(creatureThing) end)
-        else
-          menu:addOption(tr('Stop Follow'), function() g_game.cancelFollow() end)
-        end
+        local localPlayerShield = localPlayer:asCreature():getShield()
+        local creatureShield = creatureThing:getShield()
 
-        if creatureThing:asPlayer() then
-          menu:addSeparator()
-          local creatureName = creatureThing:getName()
-          menu:addOption(tr('Message to %s', creatureName), function() g_game.openPrivateChannel(creatureName) end)
-          if modules.game_console.getOwnPrivateTab() then
-            menu:addOption(tr('Invite to private chat'), function() g_game.inviteToOwnChannel(creatureName) end)
-            menu:addOption(tr('Exclude from private chat'), function() g_game.excludeFromOwnChannel(creatureName) end) -- [TODO] must be removed after message's popup labels been implemented
+        if localPlayerShield == ShieldNone or localPlayerShield == ShieldWhiteBlue then
+          if creatureShield == ShieldWhiteYellow then
+            menu:addOption(tr('Join %s\'s Party', creatureThing:getName()), function() g_game.partyJoin(creatureThing:getId()) end)
+          else
+            menu:addOption(tr('Invite to Party'), function() g_game.partyInvite(creatureThing:getId()) end)
           end
-          if (not Player:hasVip(creatureName)) then
-            menu:addOption(tr('Add to VIP list'), function() g_game.addVip(creatureName) end)
+        elseif localPlayerShield == ShieldWhiteYellow then
+          if creatureShield == ShieldWhiteBlue then
+            menu:addOption(tr('Revoke %s\'s Invitation', creatureThing:getName()), function() g_game.partyRevokeInvitation(creatureThing:getId()) end)
           end
-
-          local localPlayerShield = localPlayer:asCreature():getShield()
-          local creatureShield = creatureThing:getShield()
-
-          if localPlayerShield == ShieldNone or localPlayerShield == ShieldWhiteBlue then
-            if creatureShield == ShieldWhiteYellow then
-              menu:addOption(tr('Join %s\'s Party', creatureThing:getName()), function() g_game.partyJoin(creatureThing:getId()) end)
-            else
-              menu:addOption(tr('Invite to Party'), function() g_game.partyInvite(creatureThing:getId()) end)
-            end
-          elseif localPlayerShield == ShieldWhiteYellow then
-            if creatureShield == ShieldWhiteBlue then
-              menu:addOption(tr('Revoke %s\'s Invitation', creatureThing:getName()), function() g_game.partyRevokeInvitation(creatureThing:getId()) end)
-            end
-          elseif localPlayerShield == ShieldYellow or localPlayerShield == ShieldYellowSharedExp or localPlayerShield == ShieldYellowNoSharedExpBlink or localPlayerShield == ShieldYellowNoSharedExp then
-            if creatureShield == ShieldWhiteBlue then
-              menu:addOption(tr('Revoke %s\'s Invitation', creatureThing:getName()), function() g_game.partyRevokeInvitation(creatureThing:getId()) end)
-            elseif creatureShield == ShieldBlue or creatureShield == ShieldBlueSharedExp or creatureShield == ShieldBlueNoSharedExpBlink or creatureShield == ShieldBlueNoSharedExp then
-              menu:addOption(tr('Pass Leadership to %s', creatureThing:getName()), function() g_game.partyPassLeadership(creatureThing:getId()) end)
-            else
-              menu:addOption(tr('Invite to Party'), function() g_game.partyInvite(creatureThing:getId()) end)
-            end
+        elseif localPlayerShield == ShieldYellow or localPlayerShield == ShieldYellowSharedExp or localPlayerShield == ShieldYellowNoSharedExpBlink or localPlayerShield == ShieldYellowNoSharedExp then
+          if creatureShield == ShieldWhiteBlue then
+            menu:addOption(tr('Revoke %s\'s Invitation', creatureThing:getName()), function() g_game.partyRevokeInvitation(creatureThing:getId()) end)
+          elseif creatureShield == ShieldBlue or creatureShield == ShieldBlueSharedExp or creatureShield == ShieldBlueNoSharedExpBlink or creatureShield == ShieldBlueNoSharedExp then
+            menu:addOption(tr('Pass Leadership to %s', creatureThing:getName()), function() g_game.partyPassLeadership(creatureThing:getId()) end)
+          else
+            menu:addOption(tr('Invite to Party'), function() g_game.partyInvite(creatureThing:getId()) end)
           end
         end
       end

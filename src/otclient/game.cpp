@@ -39,15 +39,16 @@ Game::Game()
 {
     resetGameStates();
     m_protocolVersion = 0;
-    setProtocolVersion(PROTOCOL);
 }
 
 void Game::resetGameStates()
 {
+    m_online = false;
     m_denyBotCall = false;
     m_dead = false;
     m_mounted = false;
     m_serverBeat = 50;
+    m_seq = 0;
     m_canReportBugs = false;
     m_fightMode = Otc::FightBalanced;
     m_chaseMode = Otc::DontChase;
@@ -104,15 +105,9 @@ void Game::processLoginWait(const std::string& message, int time)
     g_lua.callGlobalField("g_game", "onLoginWait", message, time);
 }
 
-void Game::processGameStart(const LocalPlayerPtr& localPlayer, int serverBeat, bool canReportBugs)
+void Game::processGameStart()
 {
-    // reset the new game state
-    resetGameStates();
-
-    m_localPlayer = localPlayer;
-    m_localPlayer->setName(m_characterName);
-    m_serverBeat = serverBeat;
-    m_canReportBugs = canReportBugs;
+    m_online = true;
 
     // synchronize fight modes with the server
     m_protocolGame->sendChangeFightModes(m_fightMode, m_chaseMode, m_safeFight);
@@ -401,9 +396,9 @@ void Game::processQuestLine(int questId, const std::vector<std::tuple<std::strin
     g_lua.callGlobalField("g_game", "onQuestLine", questId, questMissions);
 }
 
-void Game::processAttackCancel()
+void Game::processAttackCancel(uint seq)
 {
-    if(isAttacking())
+    if(isAttacking() && (seq == 0 || m_seq == seq))
         setAttackingCreature(nullptr);
 }
 
@@ -422,6 +417,12 @@ void Game::loginWorld(const std::string& account, const std::string& password, c
 
     if(m_protocolVersion == 0)
         stdext::throw_exception("Must set a valid game protocol version before logging.");
+
+    // reset the new game state
+    resetGameStates();
+
+    m_localPlayer = LocalPlayerPtr(new LocalPlayer);
+    m_localPlayer->setName(m_characterName);
 
     m_protocolGame = ProtocolGamePtr(new ProtocolGame);
     m_protocolGame->login(account, password, worldHost, (uint16)worldPort, characterName);
@@ -505,15 +506,10 @@ void Game::autoWalk(const std::vector<Otc::Direction>& dirs)
 
     Otc::Direction direction = dirs.front();
     TilePtr toTile = g_map.getTile(m_localPlayer->getPosition().translatedToDirection(direction));
-    if(toTile && toTile->isWalkable())
+    if(toTile && toTile->isWalkable() && !m_localPlayer->isAutoWalking())
         m_localPlayer->preWalk(direction);
 
-    forceWalk(direction);
-
-    std::vector<Otc::Direction> nextDirs = dirs;
-    nextDirs.erase(nextDirs.begin());
-    if(nextDirs.size() > 0)
-        m_protocolGame->sendAutoWalk(nextDirs);
+    m_protocolGame->sendAutoWalk(dirs);
 
     g_lua.callGlobalField("g_game", "onAutoWalk", direction);
 }
@@ -737,7 +733,7 @@ void Game::attack(const CreaturePtr& creature)
         cancelFollow();
 
     setAttackingCreature(creature);
-    m_protocolGame->sendAttack(creature ? creature->getId() : 0);
+    m_protocolGame->sendAttack(creature ? creature->getId() : 0, ++m_seq);
 }
 
 void Game::follow(const CreaturePtr& creature)
@@ -751,7 +747,7 @@ void Game::follow(const CreaturePtr& creature)
         cancelAttack();
 
     setFollowingCreature(creature);
-    m_protocolGame->sendFollow(creature ? creature->getId() : 0);
+    m_protocolGame->sendFollow(creature ? creature->getId() : 0, ++m_seq);
 }
 
 void Game::cancelAttackAndFollow()
@@ -885,7 +881,7 @@ void Game::partyShareExperience(bool active)
 {
     if(!canPerformGameAction())
         return;
-    m_protocolGame->sendShareExperience(active, 0);
+    m_protocolGame->sendShareExperience(active);
 }
 
 void Game::requestOutfit()
@@ -1084,15 +1080,16 @@ bool Game::checkBotProtection()
 bool Game::canPerformGameAction()
 {
     // we can only perform game actions if we meet these conditions:
+    // - the game is online
     // - the local player exists
     // - the local player is not dead
     // - we have a game protocol
     // - the game protocol is connected
     // - its not a bot action
-    return m_localPlayer && !m_dead && m_protocolGame && m_protocolGame->isConnected() && checkBotProtection();
+    return m_online && m_localPlayer && !m_dead && m_protocolGame && m_protocolGame->isConnected() && checkBotProtection();
 }
 
-void Game::setProtocolVersion(int version)
+void Game::setClientVersion(int version)
 {
     if(isOnline())
         stdext::throw_exception("Unable to change client version while online");
@@ -1147,6 +1144,8 @@ void Game::setProtocolVersion(int version)
     }
 
     m_protocolVersion = version;
+
+    g_lua.callGlobalField("g_game", "onClientVersionChange", version);
 }
 
 void Game::setAttackingCreature(const CreaturePtr& creature)

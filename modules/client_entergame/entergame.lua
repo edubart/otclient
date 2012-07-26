@@ -168,7 +168,8 @@ function EnterGame.doLogin()
                                 end })
 
   g_game.chooseRsa(G.host)
-  g_game.setProtocolVersion(protocol)
+  g_game.setClientVersion(protocol)
+  modules.game_tibiafiles.load()
   protocolLogin:login(G.host, G.port, G.account, G.password)
 end
 

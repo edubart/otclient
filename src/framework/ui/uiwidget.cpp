@@ -1130,6 +1130,18 @@ UIWidgetPtr UIWidget::recursiveGetChildByPos(const Point& childPos, bool wantsPh
     return nullptr;
 }
 
+UIWidgetList UIWidget::recursiveGetChildren()
+{
+    UIWidgetList children;
+    for(const UIWidgetPtr& child : m_children) {
+        UIWidgetList subChildren = child->recursiveGetChildren();
+        if(!subChildren.empty())
+            children.insert(children.end(), subChildren.begin(), subChildren.end());
+        children.push_back(child);
+    }
+    return children;
+}
+
 UIWidgetList UIWidget::recursiveGetChildrenByPos(const Point& childPos)
 {
     UIWidgetList children;

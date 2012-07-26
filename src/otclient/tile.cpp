@@ -392,7 +392,7 @@ bool Tile::isWalkable()
             return false;
 
         if(CreaturePtr creature = thing->asCreature()) {
-            if(!creature->getPassable())
+            if(!creature->isPassable())
                 return false;
         }
     }
@@ -405,7 +405,7 @@ bool Tile::isPathable()
         return false;
 
     for(const ThingPtr& thing : m_things) {
-        if(thing->isNotPathable())
+        if(thing->isNotPathable() || thing->isCreature())
             return false;
     }
 
@@ -506,5 +506,14 @@ void Tile::update()
         uint8 c = thing->getMinimapColor();
         if(c != 0)
             m_minimapColorByte = c;
+    }
+
+    // check stack priorities
+    // this code exists to find stackpos bugs faster
+    int lastPriority = 0;
+    for(const ThingPtr& thing : m_things) {
+        int priority = thing->getStackPriority();
+        assert(lastPriority <= priority);
+        lastPriority = priority;
     }
 }

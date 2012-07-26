@@ -79,7 +79,7 @@ public:
     uint8 getSkull() { return m_skull; }
     uint8 getShield() { return m_shield; }
     uint8 getEmblem() { return m_emblem; }
-    bool getPassable() { return m_passable; }
+    bool isPassable() { return m_passable; }
     Point getDrawOffset();
     Point getWalkOffset() { return m_walkOffset; }
 

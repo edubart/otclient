@@ -72,7 +72,14 @@ function connect(object, arg1, arg2, arg3)
   end
 end
 
-function disconnect(object, signalsAndSlots)
+function disconnect(object, arg1, arg2)
+  local signalsAndSlots
+  if type(arg1) == 'string' then
+    signalsAndSlots = { [arg1] = arg2 }
+  else
+    signalsAndSlots = arg1
+  end
+
   for signal,slot in pairs(signalsAndSlots) do
     if not object[signal] then
     elseif type(object[signal]) == 'function' then
@@ -231,11 +238,19 @@ end
 
 function signalcall(param, ...)
   if type(param) == 'function' then
-    return param(...)
+    local status, ret = pcall(param, ...)
+    if status then
+      return ret
+    else
+      perror(ret)
+    end
   elseif type(param) == 'table' then
     for k,v in pairs(param) do
-      if v(...) then
-        return true
+      local status, ret = pcall(v, ...)
+      if status then
+        if ret then return true end
+      else
+        perror(ret)
       end
     end
   elseif func ~= nil then

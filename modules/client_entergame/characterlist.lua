@@ -92,7 +92,7 @@ end
 local function onLoginWait(message, time)
   CharacterList.destroyLoadBox()
 
-  waitingWindow = g_ui.loadUI('waitinglist.otui')
+  waitingWindow = g_ui.displayUI('waitinglist.otui')
 
   local label = waitingWindow:getChildById('infoLabel')
   label:setText(message)

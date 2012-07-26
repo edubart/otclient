@@ -27,7 +27,6 @@ MiniWindow
   !text: tr('Combat Controls')
   icon: combatcontrols.png
   height: 48
-  @onClose: CombatControls.onMiniWindowClose()
   &save: true
 
   MiniWindowContents

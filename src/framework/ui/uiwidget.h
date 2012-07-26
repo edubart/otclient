@@ -147,6 +147,7 @@ public:
     UIWidgetPtr getChildByIndex(int index);
     UIWidgetPtr recursiveGetChildById(const std::string& id);
     UIWidgetPtr recursiveGetChildByPos(const Point& childPos, bool wantsPhantom);
+    UIWidgetList recursiveGetChildren();
     UIWidgetList recursiveGetChildrenByPos(const Point& childPos);
     UIWidgetList recursiveGetChildrenByMarginPos(const Point& childPos);
     UIWidgetPtr backwardsGetWidgetById(const std::string& id);

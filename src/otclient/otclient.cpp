@@ -81,6 +81,6 @@ void OTClient::terminate()
 {
     g_map.terminate();
     g_things.terminate();
-    g_sprites.termiante();
+    g_sprites.terminate();
     g_shaders.terminate();
 }

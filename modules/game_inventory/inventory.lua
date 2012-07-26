@@ -43,7 +43,7 @@ end
 function refresh()
   local player = g_game.getLocalPlayer()
   for i=InventorySlotFirst,InventorySlotLast do
-    if player then
+    if g_game.isOnline() then
       onInventoryChange(player, i, player:getInventoryItem(i))
     else
       onInventoryChange(player, i, nil)
@@ -67,8 +67,9 @@ end
 
 -- hooked events
 function onInventoryChange(player, slot, item, oldItem)
+  if slot >= InventorySlotPurse then return end
   local itemWidget = inventoryPanel:getChildById('slot' .. slot)
-  if(item) then
+  if item then
     itemWidget:setStyle('Item')
     itemWidget:setItem(item)
   else

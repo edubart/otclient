@@ -48,7 +48,7 @@ protected:
     void processLoginAdvice(const std::string& message);
     void processLoginWait(const std::string& message, int time);
 
-    void processGameStart(const LocalPlayerPtr& localPlayer, int serverBeat, bool canReportBugs);
+    void processGameStart();
     void processGameEnd();
     void processDeath(int penality);
 
@@ -56,7 +56,7 @@ protected:
     void processInventoryChange(int slot, const ItemPtr& item);
     void processCreatureMove(const CreaturePtr& creature, const Position& oldPos, const Position& newPos);
     void processCreatureTeleport(const CreaturePtr& creature);
-    void processAttackCancel();
+    void processAttackCancel(uint seq);
     void processWalkCancel(Otc::Direction direction);
 
     // message related
@@ -232,17 +232,16 @@ public:
     void setFeature(Otc::GameFeature feature) { m_features.set(feature, false); }
     bool getFeature(Otc::GameFeature feature) { return m_features.test(feature); }
 
-    void setProtocolVersion(int version);
-    int getProtocolVersion() { return m_protocolVersion; }
+    void setClientVersion(int version);
+    int getClientVersion() { return m_protocolVersion; }
 
     void setRSA(const std::string& rsa);
     std::string getRSA() { return m_rsa; }
 
     bool canPerformGameAction();
-    bool canReportBugs() { return m_canReportBugs; }
     bool checkBotProtection();
 
-    bool isOnline() { return !!m_localPlayer; }
+    bool isOnline() { return m_online; }
     bool isDead() { return m_dead; }
     bool isAttacking() { return !!m_attackingCreature; }
     bool isFollowing() { return !!m_followingCreature; }
@@ -253,7 +252,10 @@ public:
     std::map<int, Vip> getVips() { return m_vips; }
     CreaturePtr getAttackingCreature() { return m_attackingCreature; }
     CreaturePtr getFollowingCreature() { return m_followingCreature; }
+    void setServerBeat(int beat) { m_serverBeat = beat; }
     int getServerBeat() { return m_serverBeat; }
+    void setCanReportBugs(bool enable) { m_canReportBugs = enable; }
+    bool canReportBugs() { return m_canReportBugs; }
     LocalPlayerPtr getLocalPlayer() { return m_localPlayer; }
     ProtocolGamePtr getProtocolGame() { return m_protocolGame; }
     std::string getCharacterName() { return m_characterName; }
@@ -275,10 +277,12 @@ private:
     std::map<int, ContainerPtr> m_containers;
     std::map<int, Vip> m_vips;
 
+    bool m_online;
     bool m_denyBotCall;
     bool m_dead;
     bool m_mounted;
     int m_serverBeat;
+    uint m_seq;
     Otc::FightModes m_fightMode;
     Otc::ChaseModes m_chaseMode;
     bool m_safeFight;

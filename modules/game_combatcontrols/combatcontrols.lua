@@ -135,10 +135,6 @@ function toggle()
   end
 end
 
-function onMiniWindowClose()
-  combatControlsButton:setOn(false)
-end
-
 function onSetFightMode(self, selectedFightButton)
   if selectedFightButton == nil then return end
   local buttonId = selectedFightButton:getId()

@@ -79,14 +79,14 @@ public:
     void sendOpenPrivateChannel(const std::string& receiver);
     void sendCloseNpcChannel();
     void sendChangeFightModes(Otc::FightModes fightMode, Otc::ChaseModes chaseMode, bool safeFight);
-    void sendAttack(uint creatureId);
-    void sendFollow(uint creatureId);
+    void sendAttack(uint creatureId, uint seq);
+    void sendFollow(uint creatureId, uint seq);
     void sendInviteToParty(uint creatureId);
     void sendJoinParty(uint creatureId);
     void sendRevokeInvitation(uint creatureId);
     void sendPassLeadership(uint creatureId);
     void sendLeaveParty();
-    void sendShareExperience(bool active, int unknown);
+    void sendShareExperience(bool active);
     void sendOpenOwnChannel();
     void sendInviteToOwnChannel(const std::string& name);
     void sendExcludeFromOwnChannel(const std::string& name);
@@ -166,9 +166,9 @@ private:
     void parsePlayerSkills(const InputMessagePtr& msg);
     void parsePlayerState(const InputMessagePtr& msg);
     void parsePlayerCancelAttack(const InputMessagePtr& msg);
-    void parseSpellDelay(const InputMessagePtr& msg);
-    void parseSpellGroupDelay(const InputMessagePtr& msg);
-    void parseMultiUseDelay(const InputMessagePtr& msg);
+    void parseSpellCooldown(const InputMessagePtr& msg);
+    void parseSpellGroupCooldown(const InputMessagePtr& msg);
+    void parseMultiUseCooldown(const InputMessagePtr& msg);
     void parseCreatureSpeak(const InputMessagePtr& msg);
     void parseChannelList(const InputMessagePtr& msg);
     void parseOpenChannel(const InputMessagePtr& msg);
@@ -198,15 +198,17 @@ private:
     void parseChannelEvent(const InputMessagePtr& msg);
     void parseItemInfo(const InputMessagePtr& msg);
     void parsePlayerInventory(const InputMessagePtr& msg);
+    void parseShowModalDialog(const InputMessagePtr& msg);
     void parseExtendedOpcode(const InputMessagePtr& msg);
 
 public:
     void setMapDescription(const InputMessagePtr& msg, int x, int y, int z, int width, int height);
     int setFloorDescription(const InputMessagePtr& msg, int x, int y, int z, int width, int height, int offset, int skip);
-    void setTileDescription(const InputMessagePtr& msg, Position position);
+    int setTileDescription(const InputMessagePtr& msg, Position position);
 
     Outfit getOutfit(const InputMessagePtr& msg);
     ThingPtr getThing(const InputMessagePtr& msg);
+    ThingPtr getMappedThing(const InputMessagePtr& msg);
     CreaturePtr getCreature(const InputMessagePtr& msg, int type = 0);
     ItemPtr getItem(const InputMessagePtr& msg, int id = 0);
     Position getPosition(const InputMessagePtr& msg);

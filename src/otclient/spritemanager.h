@@ -32,7 +32,7 @@ class SpriteManager
 public:
     SpriteManager();
 
-    void termiante();
+    void terminate();
 
     bool loadSpr(const std::string& file);
     void unload();

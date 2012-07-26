@@ -66,7 +66,7 @@ ContainerPtr Thing::getParentContainer()
 int Thing::getStackpos()
 {
     if(m_position.x == 65535 && asItem()) // is inside a container
-        return 0;
+        return m_position.z;
     else if(const TilePtr& tile = getTile())
         return tile->getThingStackpos(asThing());
     else {

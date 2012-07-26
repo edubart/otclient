@@ -2,7 +2,6 @@ RVListLabel < Label
   background-color: alpha
   text-offset: 2 0
   focusable: true
-  @onFocusChange: function (self, focused) RuleViolation.onSelectReason(self, focused) end
 
   $focus:
     background-color: #ffffff22
@@ -109,7 +108,7 @@ MainWindow
     width: 64
     anchors.right: parent.right
     anchors.bottom: parent.bottom
-    @onClick: RuleViolation.hide()
+    @onClick: hide()
 
   Button
     !text: tr('Ok')
@@ -117,4 +116,4 @@ MainWindow
     margin-right: 5
     anchors.right: prev.left
     anchors.bottom: parent.bottom
-    @onClick: RuleViolation.report()
+    @onClick: report()

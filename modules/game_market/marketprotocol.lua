@@ -38,7 +38,7 @@ end
 local function parseMarketEnter(msg)
   local balance = msg:getU32()
   local vocation = -1
-  if g_game.getProtocolVersion() < 950 then
+  if g_game.getClientVersion() < 950 then
     vocation = msg:getU8() -- get vocation id
   end
   local offers = msg:getU8()
@@ -74,7 +74,8 @@ local function parseMarketDetail(msg)
   end
 
   local purchaseStats = {}
-  if msg:getU8() == 0x01 then
+  local count = msg:getU8()
+  for i=1,count do
     local transactions = msg:getU32() -- transaction count
     local totalPrice = msg:getU32() -- total price
     local highestPrice = msg:getU32() -- highest price
@@ -84,7 +85,8 @@ local function parseMarketDetail(msg)
   end
 
   local saleStats = {}
-  if msg:getU8() == 0x01 then
+  count = msg:getU8()
+  for i=1,count do
     local transactions = msg:getU32() -- transaction count
     local totalPrice = msg:getU32() -- total price
     local highestPrice = msg:getU32() -- highest price

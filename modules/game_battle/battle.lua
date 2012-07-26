@@ -91,7 +91,7 @@ end
 function addAllCreatures()
   local spectators = {}
     local player = g_game.getLocalPlayer()
-    if player then
+    if g_game.isOnline() then
         creatures = g_map.getSpectators(player:getPosition(), false)
         for i, creature in ipairs(creatures) do
             if creature ~= player and doCreatureFitFilters(creature) then
@@ -129,7 +129,7 @@ end
 
 function checkCreatures(forceRecheck)
   local player = g_game.getLocalPlayer()
-  if player then
+  if g_game.isOnline() then
     local spectators = {}
 
     -- reloading list of spectators

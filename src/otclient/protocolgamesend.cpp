@@ -51,7 +51,7 @@ void ProtocolGame::sendLoginPacket(uint challangeTimestamp, uint8 challangeRando
     msg->addU8(Proto::ClientEnterGame);
 
     msg->addU16(g_lua.callGlobalField<int>("g_game", "getOs"));
-    msg->addU16(g_game.getProtocolVersion());
+    msg->addU16(g_game.getClientVersion());
 
     int paddingBytes = 128;
     msg->addU8(0); // first RSA byte must be 0
@@ -509,21 +509,21 @@ void ProtocolGame::sendChangeFightModes(Otc::FightModes fightMode, Otc::ChaseMod
     send(msg);
 }
 
-void ProtocolGame::sendAttack(uint creatureId)
+void ProtocolGame::sendAttack(uint creatureId, uint seq)
 {
     OutputMessagePtr msg(new OutputMessage);
     msg->addU8(Proto::ClientAttack);
     msg->addU32(creatureId);
-    msg->addU32(0);
-    msg->addU32(0);
+    msg->addU32(seq);
     send(msg);
 }
 
-void ProtocolGame::sendFollow(uint creatureId)
+void ProtocolGame::sendFollow(uint creatureId, uint seq)
 {
     OutputMessagePtr msg(new OutputMessage);
     msg->addU8(Proto::ClientFollow);
     msg->addU32(creatureId);
+    msg->addU32(seq);
     send(msg);
 }
 
@@ -566,14 +566,14 @@ void ProtocolGame::sendLeaveParty()
     send(msg);
 }
 
-void ProtocolGame::sendShareExperience(bool active, int unknown)
+void ProtocolGame::sendShareExperience(bool active)
 {
     OutputMessagePtr msg(new OutputMessage);
     msg->addU8(Proto::ClientShareExperience);
     msg->addU8(active ? 0x01 : 0x00);
 
-    if(g_game.getProtocolVersion() < 910)
-        msg->addU8(unknown);
+    if(g_game.getClientVersion() < 910)
+        msg->addU8(0);
 
     send(msg);
 }
