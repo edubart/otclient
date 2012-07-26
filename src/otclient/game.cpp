@@ -328,7 +328,10 @@ void Game::processOpenOutfitWindow(const Outfit& currentOufit, const std::vector
     // create virtual creature outfit
     CreaturePtr virtualOutfitCreature = CreaturePtr(new Creature);
     virtualOutfitCreature->setDirection(Otc::South);
-    virtualOutfitCreature->setOutfit(currentOufit);
+
+    Outfit outfit = currentOufit;
+    outfit.setMount(0);
+    virtualOutfitCreature->setOutfit(outfit);
 
     // creature virtual mount outfit
     CreaturePtr virtualMountCreature = nullptr;
@@ -336,8 +339,7 @@ void Game::processOpenOutfitWindow(const Outfit& currentOufit, const std::vector
     {
         virtualMountCreature = CreaturePtr(new Creature);
         virtualMountCreature->setDirection(Otc::South);
-        if(currentOufit.getMount() > 0)
-        {
+        if(currentOufit.getMount() > 0) {
             Outfit mountOutfit;
             mountOutfit.setId(currentOufit.getMount());
             virtualMountCreature->setOutfit(mountOutfit);

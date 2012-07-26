@@ -832,7 +832,7 @@ void ProtocolGame::parsePlayerInfo(const InputMessagePtr& msg)
     int vocation = msg->getU8(); // vocation
     int spellCount = msg->getU16();
     for(int i=0;i<spellCount;++i) {
-        int spellId = msg->getU16(); // spell id - TODO: add to local player
+        int spellId = msg->getU8(); // spell id - TODO: add to local player
     }
 
     m_localPlayer->setPremium(premium);
@@ -1034,7 +1034,6 @@ void ProtocolGame::parseCloseChannel(const InputMessagePtr& msg)
     g_game.processCloseChannel(channelId);
 }
 
-
 void ProtocolGame::parseRuleViolationChannel(const InputMessagePtr& msg)
 {
     int channelId = msg->getU16();
@@ -1096,8 +1095,6 @@ void ProtocolGame::parseTextMessage(const InputMessagePtr& msg)
             Position pos = getPosition(msg);
             uint value = msg->getU32();
             int color =  msg->getU8();
-            msg->getU32(); // ??
-            msg->getU8(); // ??
             text = msg->getString();
 
             AnimatedTextPtr animatedText = AnimatedTextPtr(new AnimatedText);

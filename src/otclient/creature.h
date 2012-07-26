@@ -43,7 +43,7 @@ public:
 
     virtual void draw(const Point& dest, float scaleFactor, bool animate);
 
-    void internalDrawOutfit(const Point& dest, float scaleFactor, bool animateWalk, bool animateIdle, Otc::Direction direction);
+    void internalDrawOutfit(Point dest, float scaleFactor, bool animateWalk, bool animateIdle, Otc::Direction direction);
     void drawOutfit(const Rect& destRect, bool resize);
     void drawInformation(const Point& point, bool useGray, const Rect& parentRect);
 

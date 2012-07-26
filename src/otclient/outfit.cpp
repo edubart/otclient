@@ -126,4 +126,5 @@ void Outfit::resetClothes()
     setBody(0);
     setLegs(0);
     setFeet(0);
+    setMount(0);
 }

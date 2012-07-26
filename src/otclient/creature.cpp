@@ -77,7 +77,7 @@ void Creature::draw(const Point& dest, float scaleFactor, bool animate)
     m_footStepDrawn = true;
 }
 
-void Creature::internalDrawOutfit(const Point& dest, float scaleFactor, bool animateWalk, bool animateIdle, Otc::Direction direction)
+void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWalk, bool animateIdle, Otc::Direction direction)
 {
     // outfit is a real creature
     if(m_outfit.getCategory() == ThingCategoryCreature) {
@@ -97,6 +97,15 @@ void Creature::internalDrawOutfit(const Point& dest, float scaleFactor, bool ani
         else
             xPattern = direction;
 
+        int zPattern = 0;
+        if(m_outfit.getMount() != 0) {
+            auto datType = g_things.rawGetThingType(m_outfit.getMount(), ThingCategoryCreature);
+            dest -= datType->getDisplacement() * scaleFactor;
+            datType->draw(dest, scaleFactor, 0, xPattern, 0, 0, animationPhase);
+            dest += getDisplacement() * scaleFactor;
+            zPattern = 1;
+        }
+
         // yPattern => creature addon
         for(int yPattern = 0; yPattern < getNumPatternY(); yPattern++) {
 
@@ -105,20 +114,20 @@ void Creature::internalDrawOutfit(const Point& dest, float scaleFactor, bool ani
                 continue;
 
             auto datType = rawGetThingType();
-            datType->draw(dest, scaleFactor, 0, xPattern, yPattern, 0, animationPhase);
+            datType->draw(dest, scaleFactor, 0, xPattern, yPattern, zPattern, animationPhase);
 
             if(getLayers() > 1) {
                 Color oldColor = g_painter->getColor();
                 Painter::CompositionMode oldComposition = g_painter->getCompositionMode();
                 g_painter->setCompositionMode(Painter::CompositionMode_Multiply);
                 g_painter->setColor(m_outfit.getHeadColor());
-                datType->draw(dest, scaleFactor, SpriteMaskYellow, xPattern, yPattern, 0, animationPhase);
+                datType->draw(dest, scaleFactor, SpriteMaskYellow, xPattern, yPattern, zPattern, animationPhase);
                 g_painter->setColor(m_outfit.getBodyColor());
-                datType->draw(dest, scaleFactor, SpriteMaskRed, xPattern, yPattern, 0, animationPhase);
+                datType->draw(dest, scaleFactor, SpriteMaskRed, xPattern, yPattern, zPattern, animationPhase);
                 g_painter->setColor(m_outfit.getLegsColor());
-                datType->draw(dest, scaleFactor, SpriteMaskGreen, xPattern, yPattern, 0, animationPhase);
+                datType->draw(dest, scaleFactor, SpriteMaskGreen, xPattern, yPattern, zPattern, animationPhase);
                 g_painter->setColor(m_outfit.getFeetColor());
-                datType->draw(dest, scaleFactor, SpriteMaskBlue, xPattern, yPattern, 0, animationPhase);
+                datType->draw(dest, scaleFactor, SpriteMaskBlue, xPattern, yPattern, zPattern, animationPhase);
                 g_painter->setColor(oldColor);
                 g_painter->setCompositionMode(oldComposition);
             }
