@@ -20,7 +20,7 @@ SpeakTypes = {
   [MessageModes.Say] = SpeakTypesSettings.say,
   [MessageModes.Whisper] = SpeakTypesSettings.whisper,
   [MessageModes.Yell] = SpeakTypesSettings.yell,
-  [MessageModes.GamemasterPrivateFrom] = SpeakTypesSettings.broadcast,
+  [MessageModes.GamemasterBroadcast] = SpeakTypesSettings.broadcast,
   [MessageModes.PrivateFrom] = SpeakTypesSettings.private,
   [MessageModes.GamemasterPrivateFrom] = SpeakTypesSettings.privateRed,
   [MessageModes.NpcTo] = SpeakTypesSettings.privatePlayerToNpc,
@@ -448,10 +448,16 @@ function applyMessagePrefixies(name, level, message)
   return message
 end
 
-function onTalk(name, level, speaktype, message, channelId, creaturePos)
-  if ignoreNpcMessages and speaktype == SpeakNpcFrom then return end
-  local defaultMessage = speaktype < 3 and true or false
-  speaktype = SpeakTypes[speaktype]
+function onTalk(name, level, mode, message, channelId, creaturePos)
+  if ignoreNpcMessages and mode == MessageModes.NpcFrom then return end
+  local defaultMessage = mode < 3 and true or false
+  speaktype = SpeakTypes[mode]
+
+  if not speaktype then
+    perror('unhandled onTalk message mode ' .. mode)
+    return
+  end
+
   if speaktype.hideInConsole then return end
 
   local composedMessage = applyMessagePrefixies(name, level, message)

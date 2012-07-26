@@ -53,7 +53,7 @@ function displayMessage(mode, text)
   local msgtype = MessageTypes[mode]
 
   if not msgtype then
-    perror('unhandled message mode ' .. mode)
+    perror('unhandled onTextMessage message mode ' .. mode)
     return
   end
 
