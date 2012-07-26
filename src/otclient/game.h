@@ -229,7 +229,7 @@ public:
     // dynamic support for game features
     void enableFeature(Otc::GameFeature feature) { m_features.set(feature, true); }
     void disableFeature(Otc::GameFeature feature) { m_features.set(feature, false); }
-    void setFeature(Otc::GameFeature feature) { m_features.set(feature, false); }
+    void setFeature(Otc::GameFeature feature, bool enabled) { m_features.set(feature, enabled); }
     bool getFeature(Otc::GameFeature feature) { return m_features.test(feature); }
 
     void setClientVersion(int version);

@@ -200,6 +200,8 @@ void OTClient::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_game", "getWorldName", &Game::getWorldName, &g_game);
     g_lua.bindSingletonFunction("g_game", "getGMActions", &Game::getGMActions, &g_game);
     g_lua.bindSingletonFunction("g_game", "getFeature", &Game::getFeature, &g_game);
+    g_lua.bindSingletonFunction("g_game", "setFeature", &Game::setFeature, &g_game);
+    g_lua.bindSingletonFunction("g_game", "enableFeature", &Game::enableFeature, &g_game);
 
     g_lua.registerSingletonClass("g_shaders");
     g_lua.bindSingletonFunction("g_shaders", "createShader", &ShaderManager::createShader, &g_shaders);

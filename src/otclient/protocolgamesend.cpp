@@ -50,7 +50,7 @@ void ProtocolGame::sendLoginPacket(uint challangeTimestamp, uint8 challangeRando
 
     msg->addU8(Proto::ClientEnterGame);
 
-    msg->addU16(g_lua.callGlobalField<int>("g_game", "getOs"));
+    msg->addU16(g_lua.callGlobalField<int>("g_game", "getOsType"));
     msg->addU16(g_game.getClientVersion());
 
     int paddingBytes = 128;
