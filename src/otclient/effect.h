@@ -30,6 +30,9 @@
 // @bindclass
 class Effect : public Thing
 {
+    enum {
+        EFFECT_TICKS_PER_FRAME = 75
+    };
 public:
     void draw(const Point& dest, float scaleFactor, bool animate);
 
@@ -46,6 +49,7 @@ public:
 
 private:
     Timer m_animationTimer;
+    uint m_phaseDuration;
     uint16 m_id;
 };
 

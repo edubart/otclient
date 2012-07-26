@@ -23,7 +23,8 @@ MessageTypes = {
   [MessageModes.Loot] = MessageSettings.centerGreen,
   [MessageModes.Red] = MessageSettings.consoleRed,
   [MessageModes.Blue] = MessageSettings.consoleBlue,
-  [MessageModes.PrivateFrom] = MessageSettings.private
+  [MessageModes.PrivateFrom] = MessageSettings.consoleBlue,
+  [254] = MessageSettings.private
 }
 
 messagesPanel = nil
@@ -91,6 +92,6 @@ end
 
 function onPrivateTalk(code, text, speaker, speakerlevel, statmentid)
   if Options.getOption('showPrivateMessagesOnScreen') then
-    displayMessage(code, speaker .. ':\n' .. text)
+    displayMessage(254, speaker .. ':\n' .. text)
   end
 end

@@ -31,17 +31,22 @@ void Effect::draw(const Point& dest, float scaleFactor, bool animate)
 
     int animationPhase = 0;
     if(animate)
-        animationPhase = std::min((int)(m_animationTimer.ticksElapsed() / Otc::EFFECT_TICKS_PER_FRAME), getAnimationPhases() - 1);
+        animationPhase = std::min((int)(m_animationTimer.ticksElapsed() / m_phaseDuration), getAnimationPhases() - 1);
     rawGetThingType()->draw(dest, scaleFactor, 0, 0, 0, 0, animationPhase);
 }
 
 void Effect::startAnimation()
 {
     m_animationTimer.restart();
+    m_phaseDuration = EFFECT_TICKS_PER_FRAME;
+
+    // hack to fix some animation phases duration, currently there is no better solution
+    if(m_id == 33)
+        m_phaseDuration *= 4;
 
     // schedule removal
     auto self = asEffect();
-    g_dispatcher.scheduleEvent([self]() { g_map.removeThing(self); }, Otc::EFFECT_TICKS_PER_FRAME * getAnimationPhases());
+    g_dispatcher.scheduleEvent([self]() { g_map.removeThing(self); }, m_phaseDuration * getAnimationPhases());
 }
 
 void Effect::setId(uint32 id)
