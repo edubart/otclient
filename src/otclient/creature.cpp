@@ -461,7 +461,7 @@ void Creature::setDirection(Otc::Direction direction)
 
 void Creature::setOutfit(const Outfit& outfit)
 {
-    if(!g_things.isValidDatId(outfit.getId(), ThingCategoryCreature))
+    if(!g_things.isValidDatId(outfit.getId(), outfit.getCategory()))
         return;
     m_walkAnimationPhase = 0; // might happen when player is walking and outfit is changed.
     m_outfit = outfit;
