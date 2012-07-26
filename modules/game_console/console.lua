@@ -239,7 +239,7 @@ end
 
 function addPrivateText(text, speaktype, name, isPrivateCommand, creatureName)
   local focus = false
-  if speaktype.speakType == SpeakNpcFrom then
+  if speaktype.npcChat then
     name = 'NPCs'
     focus = true
   end

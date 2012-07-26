@@ -10,7 +10,7 @@ NPCItemBox < UICheckBox
   color: #aaaaaa
   text-align: center
   text-offset: 0 20
-  @onCheckChange: NPCTrade.onItemBoxChecked(self)
+  @onCheckChange: modules.game_npctrade.onItemBoxChecked(self)
 
   Item
     id: item
@@ -176,7 +176,7 @@ MainWindow
       minimum: 1
       maximum: 100
       step: 1
-      @onValueChange: NPCTrade.onQuantityValueChange(self:getValue())
+      @onValueChange: modules.game_npctrade.onQuantityValueChange(self:getValue())
 
   FlatPanel
     id: buyOptions
@@ -204,7 +204,7 @@ MainWindow
       margin-top: -2
       margin-left: 5
       margin-right: 5
-      @onTextChange: NPCTrade.onSearchTextChange()
+      @onTextChange: modules.game_npctrade.onSearchTextChange()
 
     CheckBox
       id: buyWithBackpack
@@ -214,7 +214,7 @@ MainWindow
       anchors.right: parent.right
       margin-left: 5
       margin-top: 5
-      @onCheckChange: NPCTrade.onBuyWithBackpackChange()
+      @onCheckChange: modules.game_npctrade.onBuyWithBackpackChange()
 
     CheckBox
       id: ignoreCapacity
@@ -224,7 +224,7 @@ MainWindow
       anchors.right: parent.right
       margin-left: 5
       margin-top: 5
-      @onCheckChange: NPCTrade.onIgnoreCapacityChange()
+      @onCheckChange: modules.game_npctrade.onIgnoreCapacityChange()
 
     CheckBox
       id: ignoreEquipped
@@ -236,7 +236,7 @@ MainWindow
       margin-top: 5
       visible: false
       checked: true
-      @onCheckChange: NPCTrade.onIgnoreEquippedChange()
+      @onCheckChange: modules.game_npctrade.onIgnoreEquippedChange()
 
     CheckBox
       id: showAllItems
@@ -248,7 +248,7 @@ MainWindow
       margin-top: 5
       visible: false
       checked: true
-      @onCheckChange: NPCTrade.onShowAllItemsChange()
+      @onCheckChange: modules.game_npctrade.onShowAllItemsChange()
 
   Button
     id: tradeButton
@@ -257,7 +257,7 @@ MainWindow
     anchors.right: next.left
     anchors.bottom: parent.bottom
     margin-right: 10
-    @onClick: NPCTrade.onTradeClick()
+    @onClick: modules.game_npctrade.onTradeClick()
 
   Button
     !text: tr('Close')

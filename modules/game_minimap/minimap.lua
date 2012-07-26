@@ -39,6 +39,7 @@ function init()
   reset()
 
   -- load only the first time (avoid load/save between reloads)
+  --[[
   if G.minimapFirstLoad then
     G.minimapFirstLoad = false
     if g_resources.fileExists('/minimap.otcm') then
@@ -53,7 +54,7 @@ function init()
     connect(g_app, { onTerminate = function()
       g_map.saveOtcm('/minimap.otcm')
     end})
-  end
+  end]]--
 end
 
 function terminate()

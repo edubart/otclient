@@ -574,7 +574,13 @@ void ProtocolGame::parseOpenNpcTrade(const InputMessagePtr& msg)
     if(g_game.getFeature(Otc::GameNameOnNpcTrade))
         npcName = msg->getString();
 
-    int listCount = msg->getU8();
+    int listCount;
+
+    if(g_game.getClientVersion() >= 960)
+        listCount = msg->getU16();
+    else
+        listCount = msg->getU8();
+
     for(int i = 0; i < listCount; ++i) {
         uint16 itemId = msg->getU16();
         uint8 count = msg->getU8();
@@ -953,6 +959,7 @@ void ProtocolGame::parseTalk(const InputMessagePtr& msg)
         case Otc::MessageYell:
         case Otc::MessageMonsterSay:
         case Otc::MessageMonsterYell:
+        case Otc::MessageNpcTo:
         case Otc::MessageNpcFrom:
         case Otc::MessageBarkLow:
         case Otc::MessageBarkLoud:
