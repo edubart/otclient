@@ -37,7 +37,7 @@ public:
 
     std::string getName() { return m_name; }
     Otc::MessageMode getMessageMode() { return m_mode; }
-    std::string getFirstMessage() { return m_messages[0]; }
+    std::string getFirstMessage() { return m_messages[0].first; }
 
     bool isYell() { return m_mode == Otc::MessageYell || m_mode == Otc::MessageMonsterYell; }
 
@@ -52,7 +52,7 @@ private:
     void compose();
 
     Boolean<false> m_yell;
-    std::deque<std::string> m_messages;
+    std::deque<std::pair<std::string, ticks_t>> m_messages;
     std::string m_name;
     Otc::MessageMode m_mode;
     Color m_color;

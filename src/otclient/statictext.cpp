@@ -66,7 +66,11 @@ bool StaticText::addMessage(const std::string& name, Otc::MessageMode mode, cons
         m_updateEvent = nullptr;
     }
 
-    m_messages.push_back(text);
+    int delay = std::max<int>(Otc::STATIC_DURATION_PER_CHARACTER * text.length(), Otc::MIN_STATIC_TEXT_DURATION);
+    if(isYell())
+        delay *= 2;
+
+    m_messages.push_back(std::make_pair(text, g_clock.millis() + delay));
     compose();
 
     if(!m_updateEvent)
@@ -90,8 +94,7 @@ void StaticText::update()
 
 void StaticText::scheduleUpdate()
 {
-    int len = m_messages.front().length();
-    int delay = std::max(Otc::STATIC_DURATION_PER_CHARACTER * len, (int)Otc::MIN_STATIC_TEXT_DURATION);
+    int delay = std::max<int>(m_messages.front().second - g_clock.millis(), 0);
 
     auto self = asStaticText();
     m_updateEvent = g_dispatcher.scheduleEvent([self]() {
@@ -117,7 +120,7 @@ void StaticText::compose()
         text += m_name;
         text += " yells:\n";
         m_color = Color(239, 239, 0);
-    } else if(m_mode == Otc::MessageMonsterSay || m_mode == Otc::MessageMonsterYell) {
+    } else if(m_mode == Otc::MessageMonsterSay || m_mode == Otc::MessageMonsterYell || m_mode == Otc::MessageSpell) {
         m_color = Color(254, 101, 0);
     } else if(m_mode == Otc::MessageNpcFrom) {
         text += m_name;
@@ -128,7 +131,7 @@ void StaticText::compose()
     }
 
     for(uint i = 0; i < m_messages.size(); ++i) {
-        text += m_messages[i];
+        text += m_messages[i].first;
 
         if(i < m_messages.size() - 1)
             text += "\n";
