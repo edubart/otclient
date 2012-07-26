@@ -419,7 +419,7 @@ function getOwnPrivateTab()
   return getTab(ownPrivateName)
 end
 
-function ignoreNpcMessages(ignore)
+function setIgnoreNpcMessages(ignore)
   ignoreNpcMessages = ignore
 end
 
