@@ -31,7 +31,7 @@ class InputMessage : public LuaObject
 {
 public:
     enum {
-        BUFFER_MAXSIZE = 16384,
+        BUFFER_MAXSIZE = 65536,
         MAX_HEADER_SIZE = 8
     };
 
