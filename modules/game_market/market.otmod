@@ -1,16 +1,9 @@
 Module
   name: game_market
-  description: Manage the Players Market system
+  description: Global item market system
   author: BeniS
   website: www.otclient.info
-
-  @onLoad: |
-    dofile 'marketoffer'
-    dofile 'marketprotocol'
-    dofile 'market'
-    MarketProtocol.init()
-    Market.init()
-
-  @onUnload: |
-    MarketProtocol.terminate()
-    Market.terminate()
+  sandboxed: true
+  scripts: [marketoffer.lua, marketprotocol.lua, market.lua]
+  @onLoad: init()
+  @onUnload: terminate()

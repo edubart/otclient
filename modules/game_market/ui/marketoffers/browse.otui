@@ -1,14 +1,15 @@
 MarketItemBox < UICheckBox
+  id: itemBox
   border-width: 1
   border-color: #000000
   color: #aaaaaa
   text-align: center
-  text-offset: 0 20
-  @onCheckChange: Market.onItemBoxChecked(self)
 
   Item
     id: item
     phantom: true
+    text-offset: 0 13
+    text-align: right
     anchors.top: parent.top
     anchors.horizontalCenter: parent.horizontalCenter
     margin: 1

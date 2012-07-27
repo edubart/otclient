@@ -46,15 +46,15 @@ MarketOffer.new = function(offerId, action, item, amount, price, playerName, sta
   return offer
 end
 
-function MarketOffer:isEqual(offer)
-  return self.offer[OFFER_TIMESTAMP] == offer[OFFER_TIMESTAMP] and self.offer[OFFER_COUNTER] == offer[OFFER_COUNTER]
+function MarketOffer:isEqual(id)
+  return self.id[OFFER_TIMESTAMP] == id[OFFER_TIMESTAMP] and self.id[OFFER_COUNTER] == id[OFFER_COUNTER]
 end
 
-function MarketOffer:isLessThan(offer)
-  return self.offer[OFFER_TIMESTAMP] <= offer[OFFER_TIMESTAMP] and self.offer[OFFER_COUNTER] < offer[OFFER_COUNTER]
+function MarketOffer:isLessThan(id)
+  return self.id[OFFER_TIMESTAMP] <= id[OFFER_TIMESTAMP] and self.id[OFFER_COUNTER] < id[OFFER_COUNTER]
 end
 
-function MarketOffer:isNull(offer)
+function MarketOffer:isNull()
   return table.empty(self.id)
 end
 

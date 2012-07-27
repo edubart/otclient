@@ -25,9 +25,9 @@ Panel
     anchors.bottom: parent.bottom
     anchors.left: parent.left
     anchors.right: parent.right
-    margin-top: 55
+    margin-top: 63
     margin-left: 6
-    margin-bottom: 75
+    margin-bottom: 85
     margin-right: 6
     padding: 1
     focusable: false

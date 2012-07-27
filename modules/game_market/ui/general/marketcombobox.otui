@@ -1,8 +1,8 @@
 MarketComboBoxPopupMenuButton < UIButton
   height: 18
-  font: verdana-11px-antialised
+  font: verdana-11px-rounded
   text-align: left
-  text-offset: 2 0
+  text-offset: 2 2
   color: #aaaaaa
   background-color: alpha
 
@@ -28,10 +28,10 @@ MarketComboBoxPopupMenu < UIPopupMenu
   padding: 1
 
 MarketComboBox < UIComboBox
-  font: verdana-11px-antialised
+  font: verdana-11px-rounded
   color: #aaaaaa
   size: 86 20
-  text-offset: 3 0
+  text-offset: 3 2
   text-align: left
   image-source: /images/combobox_rounded.png
   image-border: 1

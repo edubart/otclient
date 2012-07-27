@@ -18,7 +18,7 @@ Panel
 
   MarketTabBar
     id: rightTabBar
-    width: 157
+    width: 166
     height:25
     anchors.top: parent.top
     anchors.right: parent.right
@@ -48,7 +48,142 @@ Panel
   Label
     id: nameLabel
     !text: tr('No item selected.')
+    font: verdana-11px-rounded
+    text-offset: 0 2
     anchors.top: prev.top
     anchors.left: prev.right
     anchors.right: parent.right
     margin-left: 5
+
+  Label
+    id: createLabel
+    !text: tr('Create New Offer')
+    font: verdana-11px-rounded
+    text-offset: 0 2
+    anchors.top: rightTabBar.top
+    anchors.left: rightTabContent.left
+    margin-top: 355
+    margin-left: 6
+
+  Label
+    id: offerTypeLabel
+    !text: tr('Offer Type:')
+    font: verdana-11px-rounded
+    text-offset: 0 2
+    anchors.top: prev.bottom
+    anchors.left: prev.left
+    margin-top: 7
+
+  MarketComboBox
+    id: offerTypeComboBox
+    !text: tr('Please Select')
+    anchors.top: prev.bottom
+    anchors.left: createLabel.left
+    margin-top: 3
+    width: 105
+
+    $disabled:
+      color: #aaaaaa44
+
+  Label
+    id: totalPriceLabel
+    !text: tr('Total Price:')
+    font: verdana-11px-rounded
+    text-offset: 0 2
+    anchors.top: offerTypeLabel.top
+    anchors.left: prev.right
+    margin-left: 7
+
+  SpinBox
+    id: totalPriceEdit
+    anchors.top: prev.bottom
+    anchors.left: prev.left
+    margin-top: 3
+    width: 75
+    minimum: 1
+    maximum: 99999999
+
+    $disabled:
+      color: #aaaaaa44
+
+  Label
+    id: piecePriceLabel
+    !text: tr('Piece Price:')
+    font: verdana-11px-rounded
+    text-offset: 0 2
+    anchors.top: offerTypeLabel.top
+    anchors.left: prev.right
+    margin-left: 7
+
+  SpinBox
+    id: piecePriceEdit
+    anchors.top: prev.bottom
+    anchors.left: prev.left
+    margin-top: 3
+    width: 75
+    minimum: 1
+    maximum: 99999999
+
+    $disabled:
+      color: #aaaaaa44
+
+  Label
+    id: amountLabel
+    !text: tr('Amount:')
+    font: verdana-11px-rounded
+    text-offset: 0 2
+    anchors.top: offerTypeLabel.top
+    anchors.left: prev.right
+    margin-left: 32
+
+  PreviousButton
+    id: prevAmountButton
+    anchors.verticalCenter: piecePriceEdit.verticalCenter
+    anchors.left: piecePriceEdit.right
+    margin-left: 7
+    @onClick: Market.decrementAmount()
+
+  SpinBox
+    id: amountEdit
+    anchors.verticalCenter: prev.verticalCenter
+    anchors.left: prev.right
+    margin-left: 3
+    width: 55
+    minimum: 1
+    maximum: 999999
+
+  NextButton
+    id: nextAmountButton
+    anchors.verticalCenter: piecePriceEdit.verticalCenter
+    anchors.left: prev.right
+    margin-left: 3
+    @onClick: Market.incrementAmount()
+
+  Button
+    id: createOfferButton
+    !text: tr('Create Offer')
+    anchors.verticalCenter: prev.verticalCenter
+    anchors.left: prev.right
+    margin-left: 7
+    width: 90
+    //@onClick: g_game.closeNpcTrade()
+
+  CheckBox
+    id: anonymousCheckBox
+    !text: tr('Anonymous')
+    anchors.left: prev.left
+    anchors.bottom: prev.top
+    margin-bottom: 6
+    @onSetup: self:setChecked(false)
+    height: 16
+    width: 70
+
+  Label
+    id: feeLabel
+    !text: tr('')
+    font: verdana-11px-rounded
+    text-offset: 0 2
+    anchors.top: createOfferButton.bottom
+    anchors.right: parent.right
+    margin-right: 8
+    margin-top: 3

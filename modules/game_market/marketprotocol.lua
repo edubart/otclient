@@ -44,8 +44,8 @@ local function parseMarketEnter(msg)
   local offers = msg:getU8()
   local depotItems = {}
 
-  local depotCount = (msg:getU16() - 1)
-  for i = 0, depotCount do
+  local depotCount = msg:getU16()
+  for i = 1, depotCount do
     local itemId = msg:getU16() -- item id
     local itemCount = msg:getU16() -- item count
 
@@ -103,13 +103,13 @@ local function parseMarketBrowse(msg)
   local var = msg:getU16()
   local offers = {}
 
-  local buyOfferCount = (msg:getU32() - 1)
-  for i = 0, buyOfferCount do
+  local buyOfferCount = msg:getU32()
+  for i = 1, buyOfferCount do
     table.insert(offers, readMarketOffer(msg, MarketAction.Buy, var))
   end
 
-  local sellOfferCount = (msg:getU32() - 1)
-  for i = 0, sellOfferCount do
+  local sellOfferCount = msg:getU32()
+  for i = 1, sellOfferCount do
     table.insert(offers, readMarketOffer(msg, MarketAction.Sell, var))
   end
 
@@ -118,7 +118,7 @@ local function parseMarketBrowse(msg)
 end
 
 -- public functions
-function MarketProtocol.init()
+function initProtocol()
   connect(g_game, { onGameStart = MarketProtocol.registerProtocol,
                     onGameEnd = MarketProtocol.unregisterProtocol })
 
@@ -128,7 +128,7 @@ function MarketProtocol.init()
   end
 end
 
-function MarketProtocol.terminate()
+function terminateProtocol()
   disconnect(g_game, { onGameStart = MarketProtocol.registerProtocol,
                        onGameEnd = MarketProtocol.unregisterProtocol })
 

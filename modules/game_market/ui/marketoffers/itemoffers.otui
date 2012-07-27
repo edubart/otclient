@@ -49,6 +49,8 @@ Panel
 
   Label
     !text: tr('Sell Offers')
+    font: verdana-11px-rounded
+    text-offset: 0 2
     anchors.top: parent.top
     anchors.left: parent.left
     margin-top: 44
@@ -59,7 +61,7 @@ Panel
     anchors.top: prev.bottom
     anchors.left: prev.left
     anchors.right: parent.right
-    height: 120
+    height: 115
     margin-top: 5
     margin-bottom: 5
     margin-right: 6
@@ -101,6 +103,8 @@ Panel
 
   Label
     !text: tr('Buy Offers')
+    font: verdana-11px-rounded
+    text-offset: 0 2
     anchors.top: prev.top
     anchors.left: parent.left
     margin-top: 9
@@ -114,7 +118,7 @@ Panel
     margin-top: 5
     margin-bottom: 5
     margin-right: 6
-    height: 120
+    height: 115
     padding: 1
     focusable: false
     background-color: #222833

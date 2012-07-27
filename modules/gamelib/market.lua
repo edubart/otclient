@@ -1,3 +1,21 @@
+MarketAction = {
+  Buy = 0,
+  Sell = 1
+}
+
+MarketRequest = {
+  MyOffers = 0xFFFE,
+  MyHistory = 0xFFFF
+}
+
+MarketOfferState = {
+  Active = 0,
+  Cancelled = 1,
+  Expired = 2,
+  Accepted = 3,
+  AcceptedEx = 255
+}
+
 MarketCategory = {
   All = 0,
   Armors = 1,
@@ -64,23 +82,18 @@ MarketCategoryStrings = {
   [255] = 'Weapons'
 }
 
-MarketAction = {
-  Buy = 0,
-  Sell = 1
-}
+function getMarketCategoryName(id)
+  if table.hasKey(MarketCategoryStrings, id) then
+    return MarketCategoryStrings[id]
+  end
+end
 
-MarketRequest = {
-  MyOffers = 0xFFFE,
-  MyHistory = 0xFFFF
-}
-
-MarketOfferState = {
-  Active = 0,
-  Cancelled = 1,
-  Expired = 2,
-  Accepted = 3,
-  AcceptedEx = 255
-}
+function getMarketCategoryId(name)
+  local id = table.find(MarketCategoryStrings, name)
+  if id then
+    return id
+  end
+end
 
 MarketItemDescription = {
   Armor = 1,
@@ -121,6 +134,19 @@ MarketItemDescriptionStrings = {
   [15] = 'Weight'
 }
 
+function getMarketDescriptionName(id)
+  if table.hasKey(MarketItemDescriptionStrings, id) then
+    return MarketItemDescriptionStrings[id]
+  end
+end
+
+function getMarketDescriptionId(name)
+  local id = table.find(MarketItemDescriptionStrings, name)
+  if id then
+    return id
+  end
+end
+
 MarketSlotFilters = {
   [InventorySlotOther] = "Two-Handed",
   [InventorySlotLeft] = "One-Handed",
@@ -135,3 +161,16 @@ MarketFilters = {
 
 MarketFilters.First = MarketFilters.vocation
 MarketFilters.Last = MarketFilters.depot
+
+function getMarketSlotFilterId(name)
+  local id = table.find(MarketSlotFilters, name)
+  if id then
+    return id
+  end
+end
+
+function getMarketSlotFilterName(id)
+  if table.hasKey(MarketSlotFilters, id) then
+    return MarketSlotFilters[id]
+  end
+end
