@@ -4,6 +4,6 @@ Module
   author: BeniS
   website: www.otclient.info
   sandboxed: true
-  scripts: [marketoffer.lua, marketprotocol.lua, market.lua]
+  scripts: [offerstatistic.lua, marketoffer.lua, marketprotocol.lua, market.lua]
   @onLoad: init()
   @onUnload: terminate()

@@ -31,6 +31,7 @@ function UITable:onDestroy()
   self.columns = {}
   self.headerRow = {}
   self.selectedRow = nil
+  self.dataSpace:destroyChildren()
   self.dataSpace = nil
 end
 
@@ -69,6 +70,9 @@ function UITable:clearData()
     return
   end
   self.dataSpace:destroyChildren()
+  self.selectedRow = nil
+  self.columns = {}
+  self.rows = {}
 end
 
 function UITable:addHeaderRow(data)

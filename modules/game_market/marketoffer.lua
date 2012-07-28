@@ -4,10 +4,10 @@ MarketOffer.__index = MarketOffer
 local OFFER_TIMESTAMP = 1
 local OFFER_COUNTER = 2
 
-MarketOffer.new = function(offerId, action, item, amount, price, playerName, state)
+MarketOffer.new = function(offerId, t, item, amount, price, playerName, state)
   local offer = {
     id = {},
-    action = nil,
+    type = nil,
     item = 0,
     amount = 0,
     price = 0,
@@ -20,11 +20,11 @@ MarketOffer.new = function(offerId, action, item, amount, price, playerName, sta
   end
   offer.id = offerId
 
-  action = tonumber(action)
-  if action ~= MarketAction.Buy and action ~= MarketAction.Sell then
-    g_logger.error('MarketOffer.new - invalid action provided.')
+  t = tonumber(t)
+  if t ~= MarketAction.Buy and t ~= MarketAction.Sell then
+    g_logger.error('MarketOffer.new - invalid type provided.')
   end
-  offer.action = action
+  offer.type = t
 
   if not item then
     g_logger.error('MarketOffer.new - invalid item provided.')
@@ -71,15 +71,15 @@ function MarketOffer:getId()
   return self.id
 end
 
-function MarketOffer:setAction(action)
-  if not action or type(action) ~= 'number'  then
-    g_logger.error('MarketOffer.setItem - invalid action id provided.')
+function MarketOffer:setType(t)
+  if not t or type(t) ~= 'number'  then
+    g_logger.error('MarketOffer.setItem - invalid type provided.')
   end
-  self.action = action
+  self.type = type
 end
 
-function MarketOffer:getAction()
-  return self.action
+function MarketOffer:getType()
+  return self.type
 end
 
 function MarketOffer:setItem(item)
@@ -113,6 +113,10 @@ end
 
 function MarketOffer:getPrice()
   return self.price
+end
+
+function MarketOffer:getTotalPrice()
+  return self.price * self.amount
 end
 
 function MarketOffer:setPlayer(player)

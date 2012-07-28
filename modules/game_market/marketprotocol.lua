@@ -3,6 +3,7 @@ MarketProtocol = {}
 -- private functions
 
 local protocol
+local statistics = runinsandbox('offerstatistic.lua')
 
 local function send(msg)
   if protocol then
@@ -72,27 +73,30 @@ local function parseMarketDetail(msg)
       msg:getU16()
     end
   end
+  local time = (os.time() / 1000) * statistics.SECONDS_PER_DAY;
 
   local purchaseStats = {}
   local count = msg:getU8()
-  for i=1,count do
+  for i=1, count do
     local transactions = msg:getU32() -- transaction count
     local totalPrice = msg:getU32() -- total price
     local highestPrice = msg:getU32() -- highest price
-    local lowestPrice = msg: getU32() -- lowest price
+    local lowestPrice = msg:getU32() -- lowest price
 
-    table.insert(purchaseStats, {transactions, totalPrice, highestPrice, lowestPrice})
+    local tmp = time - statistics.SECONDS_PER_DAY
+    table.insert(purchaseStats, OfferStatistic.new(tmp, MarketAction.Buy, transactions, totalPrice, highestPrice, lowestPrice))
   end
 
   local saleStats = {}
   count = msg:getU8()
-  for i=1,count do
+  for i=1, count do
     local transactions = msg:getU32() -- transaction count
     local totalPrice = msg:getU32() -- total price
     local highestPrice = msg:getU32() -- highest price
-    local lowestPrice = msg: getU32() -- lowest price
+    local lowestPrice = msg:getU32() -- lowest price
 
-    table.insert(saleStats, {transactions, totalPrice, highestPrice, lowestPrice})
+    local tmp = time - statistics.SECONDS_PER_DAY
+    table.insert(saleStats, OfferStatistic.new(tmp, MarketAction.Sell, transactions, totalPrice, highestPrice, lowestPrice))
   end
 
   signalcall(Market.onMarketDetail, itemId, descriptions, purchaseStats, saleStats)
