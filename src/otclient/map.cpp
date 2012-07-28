@@ -472,21 +472,23 @@ bool Map::loadOtcm(const std::string& fileName)
             if(!pos.isValid())
                 break;
 
+            TilePtr tile = g_map.createTile(pos);
+
+            int stackPos = 0;
             while(true) {
-                uint16 id = fin->getU16();
+                int id = fin->getU16();
 
                 // end of tile
                 if(id == 0xFFFF)
                     break;
 
-                uint8 countOrSubType = fin->getU8();
+                int countOrSubType = fin->getU8();
 
                 ItemPtr item = Item::create(id);
-                if(item->isStackable() || item->isFluidContainer() || item->isSplash() || item->isChargeable())
-                    item->setCountOrSubType(countOrSubType);
+                item->setCountOrSubType(countOrSubType);
 
                 if(item->isValid())
-                    addThing(item, pos);
+                    tile->addThing(item, stackPos++);
             }
         }
 

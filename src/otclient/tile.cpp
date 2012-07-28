@@ -33,8 +33,7 @@
 Tile::Tile(const Position& position) :
     m_position(position),
     m_drawElevation(0),
-    m_flags(0),
-    m_minimapColorByte(0)
+    m_flags(0)
 {
 }
 
@@ -153,18 +152,20 @@ void Tile::removeWalkingCreature(const CreaturePtr& creature)
         m_walkingCreatures.erase(it);
 }
 
-ThingPtr Tile::addThing(const ThingPtr& thing, int stackPos)
+void Tile::appendThing(const ThingPtr& thing)
+{
+
+}
+
+void Tile::addThing(const ThingPtr& thing, int stackPos)
 {
     if(!thing)
-        return nullptr;
+        return;
 
-    if(EffectPtr effect = thing->asEffect()) {
-        m_effects.push_back(effect);
-        return nullptr;
+    if(thing->isEffect()) {
+        m_effects.push_back(thing->asEffect());
+        return;
     }
-
-    if(stackPos == 255)
-        stackPos = -1;
 
     // the items stackpos follows this order:
     // 0 - ground
@@ -173,7 +174,7 @@ ThingPtr Tile::addThing(const ThingPtr& thing, int stackPos)
     // 3 - on top (doors)
     // 4 - creatures, from top to bottom
     // 5 - items, from top to bottom
-    if(stackPos < 0) {
+    if(stackPos < 0 || stackPos == 255) {
         int priority = thing->getStackPriority();
         bool prepend = (stackPos == -2 || priority <= 3);
         for(stackPos = 0; stackPos < (int)m_things.size(); ++stackPos) {
@@ -184,9 +185,6 @@ ThingPtr Tile::addThing(const ThingPtr& thing, int stackPos)
     } else if(stackPos > (int)m_things.size())
         stackPos = m_things.size();
 
-    ThingPtr oldObject;
-    if(stackPos < (int)m_things.size())
-        oldObject = m_things[stackPos];
     m_things.insert(m_things.begin() + stackPos, thing);
 
     if(m_things.size() > MAX_THINGS)
@@ -202,9 +200,6 @@ ThingPtr Tile::addThing(const ThingPtr& thing, int stackPos)
         lastPriority = priority;
     }
     */
-
-    update();
-    return oldObject;
 }
 
 bool Tile::removeThing(ThingPtr thing)
@@ -227,10 +222,6 @@ bool Tile::removeThing(ThingPtr thing)
             removed = true;
         }
     }
-
-    // reset values managed by this tile
-    if(removed)
-        update();
 
     return removed;
 }
@@ -310,6 +301,19 @@ int Tile::getGroundSpeed()
     if(ItemPtr ground = getGround())
         groundSpeed = ground->getGroundSpeed();
     return groundSpeed;
+}
+
+uint8 Tile::getMinimapColorByte()
+{
+    uint8 color = 0;
+    for(const ThingPtr& thing : m_things) {
+        if(!thing->isGround() && !thing->isGroundBorder() && !thing->isOnBottom() && !thing->isOnTop())
+            break;
+        uint8 c = thing->getMinimapColor();
+        if(c != 0)
+            color = c;
+    }
+    return color;
 }
 
 ThingPtr Tile::getTopLookThing()
@@ -509,16 +513,4 @@ bool Tile::limitsFloorsView()
 bool Tile::canErase()
 {
     return m_walkingCreatures.empty() && m_effects.empty() && m_things.empty();
-}
-
-void Tile::update()
-{
-    m_minimapColorByte = 0;
-    for(const ThingPtr& thing : m_things) {
-        if(!thing->isGround() && !thing->isGroundBorder() && !thing->isOnBottom() && !thing->isOnTop())
-            break;
-        uint8 c = thing->getMinimapColor();
-        if(c != 0)
-            m_minimapColorByte = c;
-    }
 }

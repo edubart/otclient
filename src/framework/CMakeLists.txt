@@ -128,8 +128,8 @@ endif()
 # gcc compile flags
 set(WARNS_FLAGS "-Wall -Wextra -Werror -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-unused-variable")
 set(CMAKE_CXX_FLAGS                   "${CMAKE_CXX_FLAGS} ${WARNS_FLAGS} ${ARCH_FLAGS} -std=gnu++0x -pipe")
-set(CMAKE_CXX_FLAGS_DEBUG             "-O0 -ggdb")
-set(CMAKE_CXX_FLAGS_RELWITHDEBINFO    "-O1 -ggdb -fno-omit-frame-pointer")
+set(CMAKE_CXX_FLAGS_DEBUG             "-O0 -g")
+set(CMAKE_CXX_FLAGS_RELWITHDEBINFO    "-O1 -g -fno-omit-frame-pointer")
 set(CMAKE_CXX_FLAGS_RELEASE           "-O2")
 set(CMAKE_CXX_FLAGS_PERFORMANCE       "-Ofast -mmxx -msee -msee2")
 set(CMAKE_CXX_FLAGS_MINSIZEREL        "-Os")
@@ -190,7 +190,6 @@ set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS}
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
     message(STATUS "Debug information: ON")
-    add_definitions(-DDEBUG)
 else()
     message(STATUS "Debug information: OFF")
     set(framework_DEFINITIONS ${framework_DEFINITIONS} -DNDEBUG) # NDEBUG disable asserts
@@ -214,7 +213,9 @@ if(WIN32)
     set(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -Wl,--large-address-aware") # strip all debug information
 else()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
-    set(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -rdynamic")
+    if(NOT APPLE)
+        set(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -rdynamic") # rdynamic is needed by backtrace.h used in crash handler
+    endif()
     set(framework_LIBRARIES ${framework_LIBRARIES} dl)
 endif()
 

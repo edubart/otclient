@@ -64,7 +64,8 @@ public:
     void addWalkingCreature(const CreaturePtr& creature);
     void removeWalkingCreature(const CreaturePtr& creature);
 
-    ThingPtr addThing(const ThingPtr& thing, int stackPos);
+    void appendThing(const ThingPtr& thing);
+    void addThing(const ThingPtr& thing, int stackPos);
     bool removeThing(ThingPtr thing);
     ThingPtr getThing(int stackPos);
     EffectPtr getEffect(uint16 id);
@@ -85,7 +86,7 @@ public:
     const std::vector<ThingPtr>& getThings() { return m_things; }
     ItemPtr getGround();
     int getGroundSpeed();
-    uint8 getMinimapColorByte() { return m_minimapColorByte; }
+    uint8 getMinimapColorByte();
     int getThingCount() { return m_things.size() + m_effects.size(); }
     bool isPathable();
     bool isWalkable();
@@ -109,15 +110,12 @@ public:
     TilePtr asTile() { return std::static_pointer_cast<Tile>(shared_from_this()); }
 
 private:
-    void update();
-
     std::vector<CreaturePtr> m_walkingCreatures;
     std::vector<EffectPtr> m_effects; // leave this outside m_things because it has no stackpos.
     std::vector<ThingPtr> m_things;
     Position m_position;
     uint8 m_drawElevation;
     uint32 m_flags, m_houseId;
-    uint8 m_minimapColorByte;
 };
 #pragma pack(pop)
 
