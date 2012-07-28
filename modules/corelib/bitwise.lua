@@ -5,7 +5,7 @@ function Bit.bit(p)
 end
 
 function Bit.hasBit(x, p)
-  return x % (p + p) >= p       
+  return x % (p + p) >= p
 end
 
 function Bit.setbit(x, p)

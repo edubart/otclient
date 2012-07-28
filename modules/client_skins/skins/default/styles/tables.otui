@@ -4,7 +4,7 @@ Table < UITable
   header-row-style: HeaderTableRow
   column-style: TableColumn
   row-style: TableRow
-  
+
 TableData < UIScrollArea
   layout: verticalBox
 

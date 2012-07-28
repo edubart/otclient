@@ -183,16 +183,16 @@ local function updateDetails(itemId, descriptions, purchaseStats, saleStats)
   else
     for k, stat in pairs(saleStats) do
       if not table.empty(stat) then
-        sellStatsTable:addRow({{['text'] = 'Total Transations:'}, 
+        sellStatsTable:addRow({{['text'] = 'Total Transations:'},
           {['text'] = stat[1], ['width'] = 270}})
 
-        sellStatsTable:addRow({{['text'] = 'Highest Price:'}, 
+        sellStatsTable:addRow({{['text'] = 'Highest Price:'},
           {['text'] = stat[3], ['width'] = 270}})
 
-        sellStatsTable:addRow({{['text'] = 'Average Price:'}, 
+        sellStatsTable:addRow({{['text'] = 'Average Price:'},
           {['text'] = math.floor(stat[2]/stat[1])}})
 
-        sellStatsTable:addRow({{['text'] = 'Lowest Price:'}, 
+        sellStatsTable:addRow({{['text'] = 'Lowest Price:'},
           {['text'] = stat[4], ['width'] = 270}})
       end
     end
@@ -205,16 +205,16 @@ local function updateDetails(itemId, descriptions, purchaseStats, saleStats)
   else
     for k, stat in pairs(purchaseStats) do
       if not table.empty(stat) then
-        buyStatsTable:addRow({{['text'] = 'Total Transations:'}, 
+        buyStatsTable:addRow({{['text'] = 'Total Transations:'},
           {['text'] = stat[1], ['width'] = 270}})
 
-        buyStatsTable:addRow({{['text'] = 'Highest Price:'}, 
+        buyStatsTable:addRow({{['text'] = 'Highest Price:'},
           {['text'] = stat[3], ['width'] = 270}})
 
-        buyStatsTable:addRow({{['text'] = 'Average Price:'}, 
+        buyStatsTable:addRow({{['text'] = 'Average Price:'},
           {['text'] = math.floor(stat[2]/stat[1]), ['width'] = 270}})
 
-        buyStatsTable:addRow({{['text'] = 'Lowest Price:'}, 
+        buyStatsTable:addRow({{['text'] = 'Lowest Price:'},
           {['text'] = stat[4], ['width'] = 270}})
       end
     end
@@ -230,7 +230,7 @@ local function updateSelectedItem(newItem)
     nameLabel:setText(selectedItem.item.marketData.name)
     -- update offer types
     Market.enableCreateOffer(true)
-    
+
     MarketProtocol.sendMarketBrowse(selectedItem.item.ptr:getId()) -- send browsed msg
   else
     Market.Market.clearSelectedItem()
@@ -429,7 +429,7 @@ local function initInterface()
   -- setup 'My Offer' section tabs
   myOffersPanel = g_ui.loadUI('ui/myoffers.otui')
   mainTabBar:addTab(tr('My Offers'), myOffersPanel)
-    
+
   offersTabBar = myOffersPanel:getChildById('offersTabBar')
   offersTabBar:setContentWidget(myOffersPanel:getChildById('offersTabContent'))
 
@@ -483,7 +483,7 @@ local function initInterface()
   categoryList:addOption(getMarketCategoryName(255)) -- meta weapons
   categoryList:setCurrentOption(getMarketCategoryName(MarketCategory.First))
   subCategoryList:setEnabled(false)
-  
+
   -- hook item filters
   categoryList.onOptionChange = onChangeCategory
   subCategoryList.onOptionChange = onChangeSubCategory
@@ -521,7 +521,7 @@ function terminate()
   if marketWindow then
     marketWindow:destroy()
   end
-  
+
   Market = nil
 end
 
@@ -693,7 +693,7 @@ function Market.loadDepotItems(depotItems)
       table.insert(items, newItem)
     end
   end
-  
+
   for _, newItem in pairs(items) do
     local marketData = newItem:getMarketData()
 

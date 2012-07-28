@@ -74,7 +74,7 @@ function Options.init()
   optionsWindow = g_ui.displayUI('options.otui')
   optionsWindow:hide()
   optionsButton = TopMenu.addLeftButton('optionsButton', tr('Options') .. ' (Ctrl+D)', 'options.png', Options.toggle)
-  
+
   optionsTabBar = optionsWindow:getChildById('optionsTabBar')
   optionsTabBar:setContentWidget(optionsWindow:getChildById('optionsTabContent'))
 
@@ -146,7 +146,7 @@ function Options.setOption(key, value)
       value = 0
     end
 
-    if graphicsPanel then 
+    if graphicsPanel then
 	  graphicsPanel:getChildById('backgroundFrameRateLabel'):setText(tr('Game framerate limit: %s', text))
 	end
     g_app.setBackgroundPaneMaxFps(value)

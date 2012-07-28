@@ -84,7 +84,7 @@ end
 function TopMenu.addRightGameButton(id, description, icon, callback)
   return addButton(id, description, icon, callback, rightGameButtonsPanel, false)
 end
- 
+
 function TopMenu.addRightGameToggleButton(id, description, icon, callback, right)
   return addButton(id, description, icon, callback, rightGameButtonsPanel, true)
 end

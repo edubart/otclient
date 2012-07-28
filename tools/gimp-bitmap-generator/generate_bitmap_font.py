@@ -21,7 +21,7 @@ def generate_bitmap_font(timg, tdrawable, font, font_size, first_char, glyph_wid
 
 	glyphs_layer = gimp.Layer(image, "Glyphs", width, height, RGBA_IMAGE, 100, NORMAL_MODE)
 	image.add_layer(glyphs_layer, 0)
-	
+
 	disp = gimp.Display(image)
 
 	for i in range(char_begin, char_end):

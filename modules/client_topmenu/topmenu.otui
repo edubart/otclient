@@ -62,7 +62,7 @@ TopPanel
     anchors.bottom: parent.bottom
     anchors.left: prev.right
     visible: false
-    
+
   UILabel
     id: frameCounter
     text-align: right
