@@ -64,7 +64,6 @@ public:
     void addWalkingCreature(const CreaturePtr& creature);
     void removeWalkingCreature(const CreaturePtr& creature);
 
-    void appendThing(const ThingPtr& thing);
     void addThing(const ThingPtr& thing, int stackPos);
     bool removeThing(ThingPtr thing);
     ThingPtr getThing(int stackPos);

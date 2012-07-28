@@ -152,11 +152,6 @@ void Tile::removeWalkingCreature(const CreaturePtr& creature)
         m_walkingCreatures.erase(it);
 }
 
-void Tile::appendThing(const ThingPtr& thing)
-{
-
-}
-
 void Tile::addThing(const ThingPtr& thing, int stackPos)
 {
     if(!thing)
