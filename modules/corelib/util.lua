@@ -259,8 +259,8 @@ function signalcall(param, ...)
   return false
 end
 
-function tr(s)
-  return s
+function tr(s, ...)
+  return string.format(s, ...)
 end
 
 -- @}
