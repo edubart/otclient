@@ -305,11 +305,9 @@ void OTClient::registerLuaFunctions()
 
     g_lua.registerClass<CreatureType>();
     g_lua.bindClassStaticFunction<CreatureType>("create", []{ return CreatureTypePtr(new CreatureType); });
-    g_lua.bindClassMemberFunction<CreatureType>("setPos", &CreatureType::setPos);
     g_lua.bindClassMemberFunction<CreatureType>("setName", &CreatureType::setName);
     g_lua.bindClassMemberFunction<CreatureType>("setOutfit", &CreatureType::setOutfit);
     g_lua.bindClassMemberFunction<CreatureType>("setSpawnTime", &CreatureType::setSpawnTime);
-    g_lua.bindClassMemberFunction<CreatureType>("getPos", &CreatureType::getPos);
     g_lua.bindClassMemberFunction<CreatureType>("getName", &CreatureType::getName);
     g_lua.bindClassMemberFunction<CreatureType>("getOutfit", &CreatureType::getOutfit);
     g_lua.bindClassMemberFunction<CreatureType>("getSpawnTime", &CreatureType::getSpawnTime);

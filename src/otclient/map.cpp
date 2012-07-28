@@ -403,22 +403,26 @@ void Map::loadSpawns(const std::string &fileName)
     if(!root || root->ValueStr() != "spawns")
         stdext::throw_exception("malformed spawns file");
 
+    CreatureTypePtr cType(nullptr);
     for(TiXmlElement* node = root->FirstChildElement(); node; node = node->NextSiblingElement()) {
         if(node->ValueTStr() != "spawn")
             stdext::throw_exception("invalid spawn node");
 
         Position centerPos = node->readPos("center");
-        for(TiXmlElement* mType = node->FirstChildElement(); mType; mType = mType->NextSiblingElement()) {
-            if(mType->ValueStr() != "monster" && mType->ValueStr() != "npc")
-                stdext::throw_exception(stdext::format("invalid spawn-subnode %s", mType->ValueStr()));
+        for(TiXmlElement* cNode = node->FirstChildElement(); cNode; cNode = cNode->NextSiblingElement()) {
+            if(cNode->ValueStr() != "monster" && cNode->ValueStr() != "npc")
+                stdext::throw_exception(stdext::format("invalid spawn-subnode %s", cNode->ValueStr()));
 
-            std::string mName = mType->Attribute("name");
-            CreatureTypePtr m = getCreature(mName);
-            if (!m)
-                stdext::throw_exception(stdext::format("unkown monster '%s'", stdext::trim(stdext::tolower(mName))));
+            std::string cName = stdext::trim(stdext::tolower(cNode->Attribute("name")));
+            if (!(cType = m_creatures.getCreature(cName)))
+                continue;
 
-            m->setPos(centerPos + mType->readPoint());
-            m->setSpawnTime(mType->readType<int>("spawntime"));
+            cType->setSpawnTime(cNode->readType<int>("spawntime"));
+            CreaturePtr creature(new Creature);
+            creature->setOutfit(cType->getOutfit());
+            creature->setName(cType->getName());
+
+            addThing(creature, centerPos + cNode->readPoint());
         }
     }
 

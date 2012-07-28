@@ -51,10 +51,10 @@ void Creatures::loadMonsters(const std::string& file)
 
 void Creatures::loadSingleCreature(const std::string& file)
 {
-    return loadCreatureBuffer(g_resources.loadFile(file));
+    loadCreatureBuffer(g_resources.loadFile(file));
 }
 
-void Creatures::loadNpcs(const std::string &folder)
+void Creatures::loadNpcs(const std::string& folder)
 {
     boost::filesystem::path npcPath(folder);
     if(!boost::filesystem::exists(npcPath))
@@ -77,14 +77,14 @@ void Creatures::loadCreatureBuffer(const std::string &buffer)
         stdext::throw_exception(stdext::format("cannot load creature buffer: %s", doc.ErrorDesc()));
 
     TiXmlElement* root = doc.FirstChildElement();
-    if(!root || root->ValueStr() != "npc")
+    if(!root || (root->ValueStr() != "monster" && root->ValueStr() != "npc"))
         stdext::throw_exception("invalid root tag name");
 
+    CreatureTypePtr newType(new CreatureType(stdext::trim(stdext::tolower(root->Attribute("name")))));
     for(TiXmlElement* attrib = root->FirstChildElement(); attrib; attrib = attrib->NextSiblingElement()) {
-        if(attrib->ValueStr() != "npc" && attrib->ValueStr() != "monster")
-            stdext::throw_exception(stdext::format("invalid attribute '%s'", attrib->ValueStr()));
+        if(attrib->ValueStr() != "look")
+            continue;
 
-        CreatureTypePtr newType(nullptr);
         if(m_loadCreatureBuffer(attrib, newType))
             break;
     }
@@ -92,26 +92,20 @@ void Creatures::loadCreatureBuffer(const std::string &buffer)
     doc.Clear();
 }
 
-bool Creatures::m_loadCreatureBuffer(TiXmlElement* attrib, CreatureTypePtr& m)
+bool Creatures::m_loadCreatureBuffer(TiXmlElement* attrib, const CreatureTypePtr& m)
 {
-    if(m || std::find(m_creatures.begin(), m_creatures.end(), m) != m_creatures.end())
+    if(std::find(m_creatures.begin(), m_creatures.end(), m) != m_creatures.end())
         return true;
 
-    m = CreatureTypePtr(new CreatureType(stdext::trim(stdext::tolower(attrib->Attribute("name")))));
     Outfit out;
-
     int32 type;
-    bool isTypeEx=false;
     if(!attrib->Attribute("type").empty())
         type = attrib->readType<int32>("type");
-    else {
+    else
         type = attrib->readType<int32>("typeex");
-        isTypeEx = true;
-    }
 
     out.setId(type);
-
-    if(!isTypeEx) {
+    {
         out.setHead(attrib->readType<int>(("head")));
         out.setBody(attrib->readType<int>(("body")));
         out.setLegs(attrib->readType<int>(("legs")));
@@ -119,9 +113,9 @@ bool Creatures::m_loadCreatureBuffer(TiXmlElement* attrib, CreatureTypePtr& m)
         out.setAddons(attrib->readType<int>(("addons")));
         out.setMount(attrib->readType<int>(("mount")));
     }
+
     m->setOutfit(out);
     m_creatures.push_back(m);
-
     return type >= 0;
 }
 
@@ -129,12 +123,5 @@ CreatureTypePtr Creatures::getCreature(const std::string& name)
 {
     auto it = std::find_if(m_creatures.begin(), m_creatures.end(),
                            [=] (const CreatureTypePtr& m) -> bool { return m->getName() == stdext::trim(stdext::tolower(name)); });
-    return it != m_creatures.end() ? *it : nullptr;
-}
-
-CreatureTypePtr Creatures::getCreature(const Position& pos)
-{
-    auto it = std::find_if(m_creatures.begin(), m_creatures.end(),
-                           [=] (const CreatureTypePtr& m) -> bool { return m->getPos() == pos; });
     return it != m_creatures.end() ? *it : nullptr;
 }

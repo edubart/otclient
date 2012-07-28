@@ -42,13 +42,11 @@ public:
     CreatureType() { }
     CreatureType(const std::string& name) { setName(name); }
 
-    void setPos(const Position& pos) { m_attribs.set(CreatureAttrPosition, pos); }
     void setName(const std::string& name) { m_attribs.set(CreatureAttrName, name); }
     void setOutfit(const Outfit& o) { m_attribs.set(CreatureAttrOutfit, o); }
     void setSpawnTime(int spawnTime) { m_attribs.set(CreatureAttrSpawnTime, spawnTime); }
 
     std::string getName() { return m_attribs.get<std::string>(CreatureAttrName); }
-    Position getPos() { return m_attribs.get<Position>(CreatureAttrPosition); }
     Outfit getOutfit() { return m_attribs.get<Outfit>(CreatureAttrOutfit); }
     int getSpawnTime() { return m_attribs.get<int>(CreatureAttrSpawnTime); }
 
@@ -67,12 +65,10 @@ public:
     void loadCreatureBuffer(const std::string& buffer);
 
     CreatureTypePtr getCreature(const std::string& name);
-    CreatureTypePtr getCreature(const Position& pos);
-
     bool isLoaded() const { return m_loaded; }
 
 protected:
-    bool m_loadCreatureBuffer(TiXmlElement* elem, CreatureTypePtr& m);
+    bool m_loadCreatureBuffer(TiXmlElement* elem, const CreatureTypePtr& m);
 
 private:
     std::vector<CreatureTypePtr> m_creatures;
