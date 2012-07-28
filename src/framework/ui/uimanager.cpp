@@ -269,7 +269,7 @@ void UIManager::onWidgetDestroy(const UIWidgetPtr& widget)
     if(m_draggingWidget == widget)
         updateDraggingWidget(nullptr);
 
-#ifndef DEBUG
+#ifndef NDEBUG
     if(widget == m_rootWidget || !m_rootWidget)
         return;
 
