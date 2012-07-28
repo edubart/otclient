@@ -49,8 +49,8 @@ public:
     uint32 getU32();
     uint64 getU64();
     std::string getString();
-    Position getPosition() { return Position(getU16(), getU16(), getU8()); }
-    Point getPoint() { return Point(getU8(), getU8()); }
+    Position getPosition();
+    Point getPoint();
 
     void setType(uint8 type);
     void writeU8(uint8 u8);

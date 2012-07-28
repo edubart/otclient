@@ -36,9 +36,6 @@
 #include <framework/core/application.h>
 #include <framework/xml/tinyxml.h>
 
-/// TODO: Move it to Position class if needed
-static inline Position operator&(const Position& pos, int a) { return Position(pos.x & a, pos.y & a, pos.z); }
-
 Map g_map;
 
 void Map::terminate()

@@ -963,12 +963,19 @@ public:
 
     Position readPos(const std::string& base = std::string()) const
     {
-        return Position(readType<uint16>(base + "x"), readType<uint16>(base + "y"), readType<uint8>(base + "z"));
+        Position ret;
+        ret.x = readType<uint16>(base + "x");
+        ret.y = readType<uint16>(base + "y");
+        ret.z = readType<uint8>(base + "z");
+        return ret;
     }
 
     Point readPoint() const
     {
-        return Point(readType<int>("x"), readType<int>("y"));
+        Point ret;
+        ret.x = readType<int>("x");
+        ret.y = readType<int>("y");
+        return ret;
     }
 
     /** Template form of the attribute query which will try to read the

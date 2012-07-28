@@ -163,6 +163,23 @@ std::string BinaryTree::getString()
     return ret;
 }
 
+Position BinaryTree::getPosition()
+{
+    Position ret;
+    ret.x = getU16();
+    ret.y = getU16();
+    ret.z = getU8();
+    return ret;
+}
+
+Point BinaryTree::getPoint()
+{
+    Point ret;
+    ret.x = getU8();
+    ret.y = getU8();
+    return ret;
+}
+
 BinaryTreePtr BinaryTree::makeChild(uint8 type)
 {
     BinaryTreePtr child(new BinaryTree(m_fin));

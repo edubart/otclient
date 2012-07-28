@@ -164,12 +164,12 @@ public:
     Position& operator-=(const Position& other) { x-=other.x; y-=other.y; z-=other.z; return *this; }
     // Point conversion(s)
     Position operator+(const Point& other) const { return Position(x + other.x, y + other.y, z); }
+    Position operator&(int a) const { return Position(x & a, y & a, z); }
     Position& operator+=(const Point& other) { x += other.x; y += other.y; return *this; }
 
     Position& operator=(const Position& other) { x = other.x; y = other.y; z = other.z; return *this; }
     bool operator==(const Position& other) const { return other.x == x && other.y == y && other.z == z; }
     bool operator!=(const Position& other) const { return other.x!=x || other.y!=y || other.z!=z; }
-
     bool isInRange(const Position& pos, int xRange, int yRange) const { return std::abs(x-pos.x) <= xRange && std::abs(y-pos.y) <= yRange && z == pos.z; }
     bool isInRange(const Position& pos, int minXRange, int maxXRange, int minYRange, int maxYRange) const {
         return (pos.x >= x-minXRange && pos.x <= x+maxXRange && pos.y >= y-minYRange && pos.y <= y+maxYRange && pos.z == z);
