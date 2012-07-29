@@ -1,0 +1,39 @@
+AmountWindow < MainWindow
+  id: amountWindow
+  !text: tr('Amount')
+  size: 196 112
+
+  Label
+    !text: tr('Amount:')
+    width: 64
+    anchors.left: parent.left
+    anchors.top: parent.top
+    margin-top: 2
+
+  SpinBox
+    id: amountSpinBox
+    anchors.left: prev.right
+    anchors.right: parent.right
+    anchors.top: parent.top
+
+  HorizontalScrollBar
+    id: amountScrollBar
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: prev.bottom
+    margin-top: 8
+
+  Button
+    id: buttonOk
+    !text: tr('Ok')
+    width: 64
+    anchors.right: next.left
+    anchors.bottom: parent.bottom
+    margin-right: 5
+
+  Button
+    id: buttonCancel
+    !text: tr('Cancel')
+    width: 64
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom

@@ -22,6 +22,7 @@ selectedOffer = {}
 
 nameLabel = nil
 feeLabel = nil
+balanceLabel = nil
 totalPriceEdit = nil
 piecePriceEdit = nil
 amountEdit = nil
@@ -32,6 +33,8 @@ categoryList = nil
 subCategoryList = nil
 slotFilterList = nil
 createOfferButton = nil
+buyButton = nil
+sellButton = nil
 anonymous = nil
 filterButtons = {}
 
@@ -97,6 +100,13 @@ local function clearItems()
   Market.refreshItemsWidget()
 end
 
+local function clearOffers()
+  marketOffers[MarketAction.Buy] = {}
+  marketOffers[MarketAction.Sell] = {}
+  buyOfferTable:clearData()
+  sellOfferTable:clearData()
+end
+
 local function clearFilters()
   for _, filter in pairs(filterButtons) do
     if filter and filter:isChecked() then
@@ -121,41 +131,97 @@ local function refreshFee()
   fee = 0
 end
 
-local function updateOffers(offers)
-  selectedOffer[MarketAction.Buy] = {}
-  selectedOffer[MarketAction.Sell] = {}
+local function addOffer(offer, type)
+  if not offer then
+    return false
+  end
+  local id = offer:getId()
+  local player = offer:getPlayer()
+  local amount = offer:getAmount()
+  local price = offer:getPrice()
+  local timestamp = offer:getTimeStamp()
 
-  marketOffers[MarketAction.Buy] = {}
-  marketOffers[MarketAction.Sell] = {}
+  if amount < 1 then return false end
+  if type == MarketAction.Buy then
+    local data = {
+      {['text'] = player, ['width'] = 100},
+      {['text'] = amount, ['width'] = 60},
+      {['text'] = price*amount, ['width'] = 90},
+      {['text'] = price, ['width'] = 80},
+      {['text'] = string.gsub(os.date('%c', timestamp), " ", "  "), ['width'] = 120}
+    }
+    buyOfferTable:addRow(data, id)
+  else
+    local data = {
+      {['text'] = player, ['width'] = 100},
+      {['text'] = amount, ['width'] = 60},
+      {['text'] = price*amount, ['width'] = 90},
+      {['text'] = price, ['width'] = 80},
+      {['text'] = string.gsub(os.date('%c', timestamp), " ", "  "), ['width'] = 120}
+    }
+    sellOfferTable:addRow(data, id)
+  end
+  return true
+end
+
+local function mergeOffer(offer)
+  if not offer then
+    return false
+  end
+  local id = offer:getId()
+  local type = offer:getType()
+  local amount = offer:getAmount()
+  local replaced = false
+
+  if type == MarketAction.Buy then
+    for i = 1, #marketOffers[MarketAction.Buy] do
+      local o = marketOffers[MarketAction.Buy][i]
+      -- replace existing offer
+      if o:isEqual(id) then
+        marketOffers[MarketAction.Buy][i] = offer
+        replaced = true
+      end
+    end
+    if not replaced then
+      table.insert(marketOffers[MarketAction.Buy], offer)
+    end
+  else
+    for i = 1, #marketOffers[MarketAction.Sell] do
+      local o = marketOffers[MarketAction.Sell][i]
+      -- replace existing offer
+      if o:isEqual(id) then
+        marketOffers[MarketAction.Sell][i] = offer
+        replaced = true
+      end
+    end
+    if not replaced then
+      table.insert(marketOffers[MarketAction.Sell], offer)
+    end
+  end
+  return true
+end
+
+local function updateOffers(offers)
+  -- TODO: optimize offer updates later
+  selectedOffer[MarketAction.Buy] = nil
+  selectedOffer[MarketAction.Sell] = nil
 
   if not buyOfferTable or not sellOfferTable then
     return
   end
+  balanceLabel:setColor('#bbbbbb')
   buyOfferTable:clearData()
   sellOfferTable:clearData()
-  balanceLabel:setColor('#bbbbbb')
+  
+  sellButton:setEnabled(false)
+  buyButton:setEnabled(false)
 
   for k, offer in pairs(offers) do
-    if offer and offer:getType() == MarketAction.Buy then
-      local data = {
-        {['text'] = offer:getPlayer(), ['width'] = 100},
-        {['text'] = offer:getAmount(), ['width'] = 60},
-        {['text'] = offer:getPrice()*offer:getAmount(), ['width'] = 90},
-        {['text'] = offer:getPrice(), ['width'] = 80},
-        {['text'] = string.gsub(os.date('%c', offer:getTimeStamp()), " ", "  "), ['width'] = 120}
-      }
-      buyOfferTable:addRow(data, offer:getId())
-      table.insert(marketOffers[MarketAction.Buy], offer)
-    else
-      local data = {
-        {['text'] = offer:getPlayer(), ['width'] = 100},
-        {['text'] = offer:getAmount(), ['width'] = 60},
-        {['text'] = offer:getPrice()*offer:getAmount(), ['width'] = 90},
-        {['text'] = offer:getPrice(), ['width'] = 80},
-        {['text'] = string.gsub(os.date('%c', offer:getTimeStamp()), " ", "  "), ['width'] = 120}
-      }
-      sellOfferTable:addRow(data, offer:getId())
-      table.insert(marketOffers[MarketAction.Sell], offer)
+    mergeOffer(offer)
+  end
+  for type, offers in pairs(marketOffers) do
+    for i = 1, #offers do
+      addOffer(offers[i], type)
     end
   end
 end
@@ -190,8 +256,8 @@ local function updateDetails(itemId, descriptions, purchaseStats, saleStats)
           highestPrice = newHigh
         end
         local newLow = stat:getLowestPrice()
-        -- ?? getting '4294967295' result from lowest price in 9.60 cipsoft
-        if (lowestPrice == 0 or newLow < lowestPrice) and newLow ~= 4294967295 then
+        -- ?? getting '0xffffffff' result from lowest price in 9.60 cipsoft
+        if (lowestPrice == 0 or newLow < lowestPrice) and newLow ~= 0xffffffff then
           lowestPrice = newLow
         end
       end
@@ -229,8 +295,8 @@ local function updateDetails(itemId, descriptions, purchaseStats, saleStats)
           highestPrice = newHigh
         end
         local newLow = stat:getLowestPrice()
-        -- ?? getting '4294967295' result from lowest price in 9.60 cipsoft
-        if (lowestPrice == 0 or newLow < lowestPrice) and newLow ~= 4294967295 then
+        -- ?? getting '0xffffffff' result from lowest price in 9.60 cipsoft
+        if (lowestPrice == 0 or newLow < lowestPrice) and newLow ~= 0xffffffff then
           lowestPrice = newLow
         end
       end
@@ -261,6 +327,7 @@ local function updateSelectedItem(newItem)
   if Market.isItemSelected() then
     selectedItem:setItem(selectedItem.item.ptr)
     nameLabel:setText(selectedItem.item.marketData.name)
+    clearOffers()
 
     Market.enableCreateOffer(true)-- update offer types
     MarketProtocol.sendMarketBrowse(selectedItem.item.ptr:getId()) -- send browsed msg
@@ -330,23 +397,68 @@ local function updateFee(price, amount)
   feeLabel:resizeToText()
 end
 
+local function openAmountWindow(callback, type, actionText)
+  local actionText = actionText or ''
+  if not Market.isOfferSelected(type) then
+    return
+  end
+  amountWindow = g_ui.createWidget('AmountWindow', rootWidget)
+  amountWindow:lock()
+
+  local spinbox = amountWindow:getChildById('amountSpinBox')
+  local scrollbar = amountWindow:getChildById('amountScrollBar')
+  spinbox:setMaximum(selectedOffer[type]:getAmount())
+  spinbox:setMinimum(1)
+  spinbox:setValue(1)
+  scrollbar:setMaximum(selectedOffer[type]:getAmount())
+  scrollbar:setMinimum(1)
+  scrollbar:setValue(1)
+  scrollbar.onValueChange = function(self, value) spinbox:setValue(value) end
+  spinbox.onValueChange = function(self, value) scrollbar:setValue(value) end
+  
+  local okButton = amountWindow:getChildById('buttonOk')
+  if actionText ~= '' then okButton:setText(actionText) end
+
+  local okFunc = function()
+    local counter = selectedOffer[type]:getCounter()
+    local timestamp = selectedOffer[type]:getTimeStamp()
+    callback(spinbox:getValue(), timestamp, counter)
+    okButton:getParent():destroy()
+    amountWindow = nil
+  end
+
+  local cancelButton = amountWindow:getChildById('buttonCancel')
+  local cancelFunc = function()
+    cancelButton:getParent():destroy()
+    amountWindow = nil
+  end
+
+  amountWindow.onEnter = okFunc
+  amountWindow.onEscape = cancelFunc
+
+  okButton.onClick = okFunc
+  cancelButton.onClick = cancelFunc
+end
+
 local function onSelectSellOffer(table, selectedRow, previousSelectedRow)
   updateBalance()
   for _, offer in pairs(marketOffers[MarketAction.Sell]) do
     if offer:isEqual(selectedRow.ref) then
-      selectedOffer[MarketAction.Sell] = offer
+      selectedOffer[MarketAction.Buy] = offer
+      buyButton:setEnabled(true)
     end
   end
 
-  local offer = selectedOffer[MarketAction.Sell]
+  local offer = selectedOffer[MarketAction.Buy]
   if offer then
-    if offer:getTotalPrice() > information.balance then
+    local price = offer:getPrice()
+    if price > information.balance then
       balanceLabel:setColor('#b22222')
     else
       local slice = (information.balance / 2)
-      if (offer:getTotalPrice()/slice) * 100 <= 40 then
+      if (price/slice) * 100 <= 40 then
         color = '#008b00' -- green
-      elseif (offer:getTotalPrice()/slice) * 100 <= 70 then
+      elseif (price/slice) * 100 <= 70 then
         color = '#eec900' -- yellow
       else
         color = '#ee9a00' -- orange
@@ -360,7 +472,8 @@ local function onSelectBuyOffer(table, selectedRow, previousSelectedRow)
   updateBalance()
   for _, offer in pairs(marketOffers[MarketAction.Buy]) do
     if offer:isEqual(selectedRow.ref) then
-      selectedOffer[MarketAction.Buy] = offer
+      selectedOffer[MarketAction.Sell] = offer
+      sellButton:setEnabled(true)
     end
   end
 end
@@ -506,6 +619,13 @@ local function initInterface()
   offerHistoryPanel = g_ui.loadUI('ui/myoffers/offerhistory.otui')
   offersTabBar:addTab(tr('Offer History'), offerHistoryPanel)
 
+  -- setup offers
+  buyButton = itemOffersPanel:getChildById('buyButton')
+  buyButton.onClick = function() openAmountWindow(Market.buyMarketOffer, MarketAction.Buy, 'Buy') end
+
+  sellButton = itemOffersPanel:getChildById('sellButton')
+  sellButton.onClick = function() openAmountWindow(Market.sellMarketOffer, MarketAction.Sell, 'Sell') end
+
   -- setup selected item
   nameLabel = marketOffersPanel:getChildById('nameLabel')
   selectedItem = marketOffersPanel:getChildById('selectedItem')
@@ -571,6 +691,7 @@ function init()
   g_ui.importStyle('ui/general/markettabs.otui')
   g_ui.importStyle('ui/general/marketbuttons.otui')
   g_ui.importStyle('ui/general/marketcombobox.otui')
+  g_ui.importStyle('ui/general/amountwindow.otui')
 
   protocol.initProtocol()
   connect(g_game, { onGameEnd = Market.reset })
@@ -593,6 +714,7 @@ function terminate()
 end
 
 function Market.reset()
+  balanceLabel:setColor('#bbbbbb')
   categoryList:setCurrentOption(getMarketCategoryName(MarketCategory.First))
   Market.clearSelectedItem()
   clearFilters()
@@ -600,18 +722,17 @@ function Market.reset()
 end
 
 function Market.clearSelectedItem()
-  if selectedItem and selectedItem.item.ptr then
+  if Market.isItemSelected() then
     Market.resetCreateOffer()
     offerTypeList:clearOptions()
     offerTypeList:setText('Please Select')
     offerTypeList:setEnabled(false)
 
-    updateOffers({})
+    clearOffers()
     radioItemSet:selectWidget(nil)
     nameLabel:setText('No item selected.')
 
     selectedItem:setItem(nil)
-    selectedItem = {}
 
     detailsTable:clearData()
     buyStatsTable:clearData()
@@ -623,6 +744,10 @@ end
 
 function Market.isItemSelected()
   return selectedItem and not table.empty(selectedItem.item) and selectedItem.item.ptr
+end
+
+function Market.isOfferSelected(type)
+  return selectedOffer[type] and not selectedOffer[type]:isNull()
 end
 
 function Market.depotContains(itemId)
@@ -651,12 +776,10 @@ end
 
 function Market.incrementAmount()
   amountEdit:setValue(amountEdit:getValue() + 1)
-  -- change total price/piece price according
 end
 
 function Market.decrementAmount()
   amountEdit:setValue(amountEdit:getValue() - 1)
-  -- change total price/piece price according
 end
 
 function Market.updateCurrentItems()
@@ -821,6 +944,18 @@ function Market.createNewOffer()
   Market.resetCreateOffer()
 end
 
+function Market.buyMarketOffer(amount, timestamp, counter)
+  if timestamp > 0 and counter > 0 and amount > 0 then
+    MarketProtocol.sendMarketAcceptOffer(timestamp, counter, amount)
+  end
+end
+
+function Market.sellMarketOffer(amount, timestamp, counter)
+  if timestamp > 0 and counter > 0 and amount > 0 then
+    MarketProtocol.sendMarketAcceptOffer(timestamp, counter, amount)
+  end
+end
+
 function Market.onItemBoxChecked(widget)
   if widget:isChecked() then
     updateSelectedItem(widget.item)
@@ -828,9 +963,6 @@ function Market.onItemBoxChecked(widget)
 end
 
 function Market.onMarketEnter(depotItems, offers, balance, vocation)
-  marketOffers[MarketAction.Buy] = {}
-  marketOffers[MarketAction.Sell] = {}
-
   updateBalance(balance)
   information.totalOffers = offers
   if vocation < 0 then

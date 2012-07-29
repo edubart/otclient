@@ -40,12 +40,13 @@ Panel
   margin: 1
 
   Button
+    id: buyButton
     !text: tr('Buy Now')
     anchors.right: parent.right
     anchors.bottom: next.bottom
     margin-right: 6
     width: 80
-    //@onClick: g_game.closeNpcTrade()
+    enabled: false
 
   Label
     !text: tr('Sell Offers')
@@ -93,13 +94,14 @@ Panel
     pixels-scroll: true
 
   Button
+    id: sellButton
     !text: tr('Sell Now')
     anchors.right: parent.right
     anchors.top: prev.bottom
     margin-top: 5
     margin-right: 6
     width: 80
-    //@onClick: g_game.closeNpcTrade()
+    enabled: false
 
   Label
     !text: tr('Buy Offers')

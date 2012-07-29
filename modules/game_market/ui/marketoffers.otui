@@ -101,7 +101,7 @@ Panel
     margin-top: 3
     width: 75
     minimum: 1
-    maximum: 99999999
+    maximum: 999999999
 
     $disabled:
       color: #aaaaaa44
@@ -122,7 +122,7 @@ Panel
     margin-top: 3
     width: 75
     minimum: 1
-    maximum: 99999999
+    maximum: 999999999
 
     $disabled:
       color: #aaaaaa44
@@ -150,7 +150,7 @@ Panel
     margin-left: 3
     width: 55
     minimum: 1
-    maximum: 999999
+    maximum: 64000
 
   NextButton
     id: nextAmountButton
@@ -166,7 +166,6 @@ Panel
     anchors.left: prev.right
     margin-left: 7
     width: 90
-    //@onClick: g_game.closeNpcTrade()
 
   CheckBox
     id: anonymousCheckBox

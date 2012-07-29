@@ -217,12 +217,14 @@ function MarketProtocol.sendMarketCancelOffer(counter)
   end
 end
 
-function MarketProtocol.sendMarketAcceptOffer(counter)
+function MarketProtocol.sendMarketAcceptOffer(timestamp, counter, amount)
   if g_game.getFeature(GamePlayerMarket) then
     local msg = OutputMessage.create()
     msg:addU8(ClientOpcodes.ClientMarketAccept)
-    msg:addU32(os.time())
+    msg:addU32(timestamp)
     msg:addU16(counter)
+    msg:addU16(amount)
+    print('sent')
     send(msg)
   else
     g_logger.error('MarketProtocol.sendMarketAcceptOffer does not support the current protocol.')
