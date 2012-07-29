@@ -29,6 +29,7 @@
 #include "creatures.h"
 #include "animatedtext.h"
 #include "statictext.h"
+#include "tile.h"
 
 #include <framework/core/clock.h>
 

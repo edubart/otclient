@@ -24,6 +24,9 @@
 #define TILE_H
 
 #include "declarations.h"
+#include "effect.h"
+#include "creature.h"
+#include "item.h"
 #include <framework/luaengine/luaobject.h>
 
 enum tileflags_t

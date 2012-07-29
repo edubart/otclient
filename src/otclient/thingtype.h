@@ -24,8 +24,9 @@
 #define THINGTYPE_H
 
 #include "declarations.h"
+
 #include <framework/core/declarations.h>
-#include <framework/graphics/declarations.h>
+#include <framework/graphics/texture.h>
 #include <framework/graphics/coordsbuffer.h>
 #include <framework/luaengine/luaobject.h>
 #include <framework/net/server.h>

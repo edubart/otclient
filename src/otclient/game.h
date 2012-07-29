@@ -25,6 +25,8 @@
 
 #include "declarations.h"
 #include "item.h"
+#include "animatedtext.h"
+#include "effect.h"
 #include "creature.h"
 #include "container.h"
 #include "protocolgame.h"

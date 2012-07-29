@@ -24,6 +24,7 @@
 #define PARTICLESYSTEM_H
 
 #include "declarations.h"
+#include "particle.h"
 #include "particleemitter.h"
 #include "particleaffector.h"
 

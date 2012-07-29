@@ -196,21 +196,21 @@ local function updateDetails(itemId, descriptions, purchaseStats, saleStats)
         end
       end
     end
-    sellStatsTable:addRow({{['text'] = 'Total Transations:'}, 
+    sellStatsTable:addRow({{['text'] = 'Total Transations:'},
       {['text'] = transactions, ['width'] = 270}})
 
-    sellStatsTable:addRow({{['text'] = 'Highest Price:'}, 
+    sellStatsTable:addRow({{['text'] = 'Highest Price:'},
       {['text'] = highestPrice, ['width'] = 270}})
 
     if totalPrice > 0 and transactions > 0 then
-      sellStatsTable:addRow({{['text'] = 'Average Price:'}, 
+      sellStatsTable:addRow({{['text'] = 'Average Price:'},
         {['text'] = math.floor(totalPrice/transactions), ['width'] = 270}})
     else
-      sellStatsTable:addRow({{['text'] = 'Average Price:'}, 
+      sellStatsTable:addRow({{['text'] = 'Average Price:'},
         {['text'] = 0, ['width'] = 270}})
     end
 
-    sellStatsTable:addRow({{['text'] = 'Lowest Price:'}, 
+    sellStatsTable:addRow({{['text'] = 'Lowest Price:'},
       {['text'] = lowestPrice, ['width'] = 270}})
   end
 
@@ -235,21 +235,21 @@ local function updateDetails(itemId, descriptions, purchaseStats, saleStats)
         end
       end
     end
-    buyStatsTable:addRow({{['text'] = 'Total Transations:'}, 
+    buyStatsTable:addRow({{['text'] = 'Total Transations:'},
       {['text'] = transactions, ['width'] = 270}})
 
-    buyStatsTable:addRow({{['text'] = 'Highest Price:'}, 
+    buyStatsTable:addRow({{['text'] = 'Highest Price:'},
       {['text'] = highestPrice, ['width'] = 270}})
 
     if totalPrice > 0 and transactions > 0 then
-      buyStatsTable:addRow({{['text'] = 'Average Price:'}, 
+      buyStatsTable:addRow({{['text'] = 'Average Price:'},
         {['text'] = math.floor(totalPrice/transactions), ['width'] = 270}})
     else
-      buyStatsTable:addRow({{['text'] = 'Average Price:'}, 
+      buyStatsTable:addRow({{['text'] = 'Average Price:'},
         {['text'] = 0, ['width'] = 270}})
     end
 
-    buyStatsTable:addRow({{['text'] = 'Lowest Price:'}, 
+    buyStatsTable:addRow({{['text'] = 'Lowest Price:'},
       {['text'] = lowestPrice, ['width'] = 270}})
   end
 end
@@ -445,7 +445,7 @@ end
 local function initMarketItems()
   -- populate all market items
   marketItems = {}
-  local types = g_things.findThingTypeByAttr(ThingAttrMarket)
+  local types = g_things.findThingTypeByAttr(ThingAttrMarket, 0)
   for i = 1, #types do
     local t = types[i]
     local newItem = Item.create(t:getId())
@@ -571,7 +571,7 @@ function init()
   g_ui.importStyle('ui/general/markettabs.otui')
   g_ui.importStyle('ui/general/marketbuttons.otui')
   g_ui.importStyle('ui/general/marketcombobox.otui')
-  
+
   protocol.initProtocol()
   connect(g_game, { onGameEnd = Market.reset })
   marketWindow = g_ui.createWidget('MarketWindow', rootWidget)
