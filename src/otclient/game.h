@@ -25,6 +25,10 @@
 
 #include "declarations.h"
 #include "item.h"
+#include "creature.h"
+#include "container.h"
+#include "protocolgame.h"
+#include "localplayer.h"
 #include "outfit.h"
 #include <framework/core/timer.h>
 

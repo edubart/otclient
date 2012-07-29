@@ -115,7 +115,7 @@ public:
     bool isTeleport() { return m_attribs.has(ATTR_TELE_DEST); }
     bool isMoveable();
 
-    ItemPtr asItem() { return std::static_pointer_cast<Item>(shared_from_this()); }
+    ItemPtr asItem() { return self_cast<Item>(); }
     bool isItem() { return true; }
 
     const ThingTypePtr& getThingType();

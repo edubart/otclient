@@ -43,7 +43,7 @@ public:
 
     bool addMessage(const std::string& name, Otc::MessageMode mode, const std::string& text);
 
-    StaticTextPtr asStaticText() { return std::static_pointer_cast<StaticText>(shared_from_this()); }
+    StaticTextPtr asStaticText() { return self_cast<StaticText>(); }
     bool isStaticText() { return true; }
 
 private:

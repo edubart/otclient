@@ -46,7 +46,7 @@ void ModuleManager::discoverModules()
             if(boost::ends_with(moduleFile, ".otmod")) {
                 ModulePtr module = discoverModule("/" + moduleDir + "/" + moduleFile);
                 if(module && module->isAutoLoad())
-                    m_autoLoadModules.insert(make_pair(module->getAutoLoadPriority(), module));
+                    m_autoLoadModules.insert(std::make_pair(module->getAutoLoadPriority(), module));
             }
         }
     }

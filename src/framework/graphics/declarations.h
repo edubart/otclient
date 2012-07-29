@@ -44,24 +44,21 @@ class ParticleSystem;
 class ParticleEffect;
 class ParticleEffectType;
 
-typedef std::weak_ptr<Texture> TextureWeakPtr;
-typedef std::weak_ptr<ParticleSystem> ParticleSystemWeakPtr;
-
-typedef std::shared_ptr<Image> ImagePtr;
-typedef std::shared_ptr<Texture> TexturePtr;
-typedef std::shared_ptr<AnimatedTexture> AnimatedTexturePtr;
-typedef std::shared_ptr<BitmapFont> BitmapFontPtr;
-typedef std::shared_ptr<CachedText> CachedTextPtr;
-typedef std::shared_ptr<FrameBuffer> FrameBufferPtr;
-typedef std::shared_ptr<Shader> ShaderPtr;
-typedef std::shared_ptr<ShaderProgram> ShaderProgramPtr;
-typedef std::shared_ptr<PainterShaderProgram> PainterShaderProgramPtr;
-typedef std::shared_ptr<Particle> ParticlePtr;
-typedef std::shared_ptr<ParticleEmitter> ParticleEmitterPtr;
-typedef std::shared_ptr<ParticleAffector> ParticleAffectorPtr;
-typedef std::shared_ptr<ParticleSystem> ParticleSystemPtr;
-typedef std::shared_ptr<ParticleEffect> ParticleEffectPtr;
-typedef std::shared_ptr<ParticleEffectType> ParticleEffectTypePtr;
+typedef stdext::shared_object_ptr<Image> ImagePtr;
+typedef stdext::shared_object_ptr<Texture> TexturePtr;
+typedef stdext::shared_object_ptr<AnimatedTexture> AnimatedTexturePtr;
+typedef stdext::shared_object_ptr<BitmapFont> BitmapFontPtr;
+typedef stdext::shared_object_ptr<CachedText> CachedTextPtr;
+typedef stdext::shared_object_ptr<FrameBuffer> FrameBufferPtr;
+typedef stdext::shared_object_ptr<Shader> ShaderPtr;
+typedef stdext::shared_object_ptr<ShaderProgram> ShaderProgramPtr;
+typedef stdext::shared_object_ptr<PainterShaderProgram> PainterShaderProgramPtr;
+typedef stdext::shared_object_ptr<Particle> ParticlePtr;
+typedef stdext::shared_object_ptr<ParticleEmitter> ParticleEmitterPtr;
+typedef stdext::shared_object_ptr<ParticleAffector> ParticleAffectorPtr;
+typedef stdext::shared_object_ptr<ParticleSystem> ParticleSystemPtr;
+typedef stdext::shared_object_ptr<ParticleEffect> ParticleEffectPtr;
+typedef stdext::shared_object_ptr<ParticleEffectType> ParticleEffectTypePtr;
 typedef std::vector<ShaderPtr> ShaderList;
 
 #endif

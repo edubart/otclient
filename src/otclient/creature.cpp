@@ -353,9 +353,9 @@ void Creature::updateWalkingTile()
 
     if(newWalkingTile != m_walkingTile) {
         if(m_walkingTile)
-            m_walkingTile->removeWalkingCreature(asCreature());
+            m_walkingTile->removeWalkingCreature(self_cast<Creature>());
         if(newWalkingTile)
-            newWalkingTile->addWalkingCreature(asCreature());
+            newWalkingTile->addWalkingCreature(self_cast<Creature>());
         m_walkingTile = newWalkingTile;
     }
 }
@@ -371,7 +371,7 @@ void Creature::nextWalkUpdate()
 
     // schedules next update
     if(m_walking) {
-        auto self = asCreature();
+        auto self = self_cast<Creature>();
         m_walkUpdateEvent = g_dispatcher.scheduleEvent([self] {
             self->m_walkUpdateEvent = nullptr;
             self->nextWalkUpdate();
@@ -409,7 +409,7 @@ void Creature::terminateWalk()
     }
 
     if(m_walkingTile) {
-        m_walkingTile->removeWalkingCreature(asCreature());
+        m_walkingTile->removeWalkingCreature(self_cast<Creature>());
         m_walkingTile = nullptr;
     }
 
@@ -496,7 +496,7 @@ void Creature::setShieldTexture(const std::string& filename, bool blink)
     m_showShieldTexture = true;
 
     if(blink && !m_shieldBlink) {
-        auto self = asCreature();
+        auto self = self_cast<Creature>();
         g_dispatcher.scheduleEvent([self]() {
             self->updateShield();
         }, SHIELD_BLINK_TICKS);
@@ -516,7 +516,7 @@ void Creature::addTimedSquare(uint8 color)
     m_timedSquareColor = Color::from8bit(color);
 
     // schedule removal
-    auto self = asCreature();
+    auto self = self_cast<Creature>();
     g_dispatcher.scheduleEvent([self]() {
         self->removeTimedSquare();
     }, VOLATILE_SQUARE_DURATION);
@@ -527,7 +527,7 @@ void Creature::updateShield()
     m_showShieldTexture = !m_showShieldTexture;
 
     if(m_shield != Otc::ShieldNone && m_shieldBlink) {
-        auto self = asCreature();
+        auto self = self_cast<Creature>();
         g_dispatcher.scheduleEvent([self]() {
             self->updateShield();
         }, SHIELD_BLINK_TICKS);

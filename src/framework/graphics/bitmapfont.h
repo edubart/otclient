@@ -24,11 +24,12 @@
 #define BITMAPFONT_H
 
 #include "declarations.h"
+#include "texture.h"
 
 #include <framework/otml/declarations.h>
 #include <framework/graphics/coordsbuffer.h>
 
-class BitmapFont
+class BitmapFont : public stdext::shared_object
 {
 public:
     BitmapFont(const std::string& name) : m_name(name) { }

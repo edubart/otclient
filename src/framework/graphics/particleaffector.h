@@ -26,7 +26,8 @@
 #include "declarations.h"
 #include <framework/otml/otml.h>
 
-class ParticleAffector {
+class ParticleAffector : public stdext::shared_object
+{
 public:
     ParticleAffector();
 

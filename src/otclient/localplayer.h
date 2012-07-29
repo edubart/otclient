@@ -78,7 +78,7 @@ public:
     bool isAutoWalking() { return m_autoWalking; }
     bool isPremium() { return m_premium; }
 
-    LocalPlayerPtr asLocalPlayer() { return std::static_pointer_cast<LocalPlayer>(shared_from_this()); }
+    LocalPlayerPtr asLocalPlayer() { return self_cast<LocalPlayer>(); }
     bool isLocalPlayer() { return true; }
 
 protected:

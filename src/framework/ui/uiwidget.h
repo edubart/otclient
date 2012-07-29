@@ -24,6 +24,8 @@
 #define UIWIDGET_H
 
 #include "declarations.h"
+#include "uilayout.h"
+
 #include <framework/luaengine/luaobject.h>
 #include <framework/graphics/declarations.h>
 #include <framework/otml/otmlnode.h>
@@ -68,7 +70,7 @@ protected:
     Boolean<false> m_destroyed;
     Boolean<false> m_clipping;
     UILayoutPtr m_layout;
-    UIWidgetWeakPtr m_parent;
+    UIWidgetPtr m_parent;
     UIWidgetList m_children;
     UIWidgetList m_lockedChildren;
     UIWidgetPtr m_focusedChild;
@@ -151,8 +153,6 @@ public:
     UIWidgetList recursiveGetChildrenByPos(const Point& childPos);
     UIWidgetList recursiveGetChildrenByMarginPos(const Point& childPos);
     UIWidgetPtr backwardsGetWidgetById(const std::string& id);
-
-    UIWidgetPtr asUIWidget() { return std::static_pointer_cast<UIWidget>(shared_from_this()); }
 
 private:
     Boolean<false> m_updateEventScheduled;
@@ -248,7 +248,7 @@ public:
     bool containsPoint(const Point& point) { return m_rect.contains(point); }
 
     std::string getId() { return m_id; }
-    UIWidgetPtr getParent() { return m_parent.lock(); }
+    UIWidgetPtr getParent() { return m_parent; }
     UIWidgetPtr getFocusedChild() { return m_focusedChild; }
     UIWidgetList getChildren() { return m_children; }
     UIWidgetPtr getFirstChild() { return getChildByIndex(1); }

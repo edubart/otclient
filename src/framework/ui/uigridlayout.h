@@ -23,7 +23,7 @@
 #ifndef UIGRIDLAYOUT_H
 #define UIGRIDLAYOUT_H
 
-#include <framework/ui/uilayout.h>
+#include "uilayout.h"
 
 // @bindclass
 class UIGridLayout : public UILayout
@@ -45,7 +45,7 @@ public:
     void setFitChildren(bool enable) { m_fitChildren = enable; update(); }
     void setFlow(bool enable) { m_flow = enable; update(); }
 
-    virtual UIGridLayoutPtr asUIGridLayout() { return nullptr; }
+    virtual bool isUIGridLayout() { return true; }
 
 protected:
     bool internalUpdate();

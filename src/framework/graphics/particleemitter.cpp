@@ -26,10 +26,8 @@
 #include <framework/core/clock.h>
 #include <framework/graphics/texturemanager.h>
 
-ParticleEmitter::ParticleEmitter(const ParticleSystemPtr& parent)
+ParticleEmitter::ParticleEmitter()
 {
-    m_parent = parent;
-
     m_position = Point(0, 0);
     m_duration = -1;
     m_delay = 0;
@@ -179,7 +177,7 @@ bool ParticleEmitter::load(const OTMLNodePtr& node)
     return true;
 }
 
-void ParticleEmitter::update(float elapsedTime)
+void ParticleEmitter::update(float elapsedTime, const ParticleSystemPtr& system)
 {
     // check if finished
     if(m_duration >= 0 && m_elapsedTime >= m_duration + m_delay) {
@@ -214,8 +212,7 @@ void ParticleEmitter::update(float elapsedTime)
                 float pAccelerationAngle = stdext::random_range(m_pMinAccelerationAngle, m_pMaxAccelerationAngle);
                 PointF pAcceleration(pAccelerationAbs * cos(pAccelerationAngle), pAccelerationAbs * sin(pAccelerationAngle));
 
-                ParticleSystemPtr particleSystem = m_parent.lock();
-                particleSystem->addParticle(ParticlePtr(new Particle(pPosition, m_pStartSize, m_pFinalSize, pVelocity, pAcceleration, pDuration, m_pIgnorePhysicsAfter, m_pColors, m_pColorsStops, m_pCompositionMode, m_pTexture)));
+                system->addParticle(ParticlePtr(new Particle(pPosition, m_pStartSize, m_pFinalSize, pVelocity, pAcceleration, pDuration, m_pIgnorePhysicsAfter, m_pColors, m_pColorsStops, m_pCompositionMode, m_pTexture)));
             }
         }
 

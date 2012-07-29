@@ -543,7 +543,9 @@ void Map::saveOtcm(const std::string& fileName)
             const auto& list = tile->getThings();
             auto first = std::find_if(list.begin(), list.end(), [](const ThingPtr& thing) { return thing->isItem(); });
             for(auto it = first, end = list.end(); it != end; ++it) {
-                if(ItemPtr item = (*it)->asItem()) {
+                const ThingPtr& thing = *it;
+                if(thing->isItem()) {
+                    ItemPtr item = thing->self_cast<Item>();
                     fin->addU16(item->getId());
                     fin->addU8(item->getCountOrSubType());
                 }
@@ -611,11 +613,11 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
     if(thing->isItem() || thing->isCreature() || thing->isEffect()) {
         tile->addThing(thing, stackPos);
     } else if(thing->isMissile()) {
-        m_floorMissiles[pos.z].push_back(thing->asMissile());
+        m_floorMissiles[pos.z].push_back(thing->self_cast<Missile>());
     } else if(thing->isAnimatedText()) {
-        m_animatedTexts.push_back(thing->asAnimatedText());
+        m_animatedTexts.push_back(thing->self_cast<AnimatedText>());
     } else if(thing->isStaticText()) {
-        StaticTextPtr staticText = thing->asStaticText();
+        StaticTextPtr staticText = thing->self_cast<StaticText>();
         bool mustAdd = true;
         for(auto it = m_staticTexts.begin(), end = m_staticTexts.end(); it != end; ++it) {
             StaticTextPtr cStaticText = *it;
@@ -639,7 +641,7 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
     thing->setPosition(pos);
 
     if(thing->isCreature()) {
-        CreaturePtr creature = thing->asCreature();
+        CreaturePtr creature = thing->self_cast<Creature>();
         if(oldPos != pos) {
             if(oldPos.isInRange(pos,1,1))
                 g_game.processCreatureMove(creature, oldPos, pos);
@@ -665,20 +667,23 @@ bool Map::removeThing(const ThingPtr& thing)
 
     notificateTileUpdateToMapViews(thing->getPosition());
 
-    if(MissilePtr missile = thing->asMissile()) {
+    if(thing->isMissile()) {
+        MissilePtr missile = thing->self_cast<Missile>();
         int z = missile->getPosition().z;
         auto it = std::find(m_floorMissiles[z].begin(), m_floorMissiles[z].end(), missile);
         if(it != m_floorMissiles[z].end()) {
             m_floorMissiles[z].erase(it);
             return true;
         }
-    } else if(AnimatedTextPtr animatedText = thing->asAnimatedText()) {
+    } else if(thing->isAnimatedText()) {
+        AnimatedTextPtr animatedText = thing->self_cast<AnimatedText>();
         auto it = std::find(m_animatedTexts.begin(), m_animatedTexts.end(), animatedText);
         if(it != m_animatedTexts.end()) {
             m_animatedTexts.erase(it);
             return true;
         }
-    } else if(StaticTextPtr staticText = thing->asStaticText()) {
+    } else if(thing->isStaticText()) {
+        StaticTextPtr staticText = thing->self_cast<StaticText>();
         auto it = std::find(m_staticTexts.begin(), m_staticTexts.end(), staticText);
         if(it != m_staticTexts.end()) {
             m_staticTexts.erase(it);

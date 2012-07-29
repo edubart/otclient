@@ -243,13 +243,13 @@ void UIWidget::parseBaseStyle(const OTMLNodePtr& styleNode)
             if(!layoutType.empty()) {
                 UILayoutPtr layout;
                 if(layoutType == "horizontalBox")
-                    layout = UIHorizontalLayoutPtr(new UIHorizontalLayout(asUIWidget()));
+                    layout = UIHorizontalLayoutPtr(new UIHorizontalLayout(self_cast<UIWidget>()));
                 else if(layoutType == "verticalBox")
-                    layout = UIVerticalLayoutPtr(new UIVerticalLayout(asUIWidget()));
+                    layout = UIVerticalLayoutPtr(new UIVerticalLayout(self_cast<UIWidget>()));
                 else if(layoutType == "grid")
-                    layout = UIGridLayoutPtr(new UIGridLayout(asUIWidget()));
+                    layout = UIGridLayoutPtr(new UIGridLayout(self_cast<UIWidget>()));
                 else if(layoutType == "anchor")
-                    layout = UIAnchorLayoutPtr(new UIAnchorLayout(asUIWidget()));
+                    layout = UIAnchorLayoutPtr(new UIAnchorLayout(self_cast<UIWidget>()));
                 else
                     throw OTMLException(node, "cannot determine layout type");
                 setLayout(layout);
@@ -268,7 +268,11 @@ void UIWidget::parseBaseStyle(const OTMLNodePtr& styleNode)
                     continue;
             }
 
-            UIAnchorLayoutPtr anchorLayout = parent->getLayout()->asUIAnchorLayout();
+            UILayoutPtr layout = parent->getLayout();
+            UIAnchorLayoutPtr anchorLayout;
+            if(layout->isUIAnchorLayout())
+                anchorLayout = layout->self_cast<UIAnchorLayout>();
+
             if(!anchorLayout)
                 throw OTMLException(node, "cannot create anchor, the parent widget doesn't use anchor layout!");
 

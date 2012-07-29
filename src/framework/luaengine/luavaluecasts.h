@@ -111,7 +111,7 @@ bool luavalue_cast(int index, LuaObjectPtr& obj);
 
 template<class T>
 typename std::enable_if<std::is_base_of<LuaObject, T>::value, bool>::type
-luavalue_cast(int index, std::shared_ptr<T>& ptr);
+luavalue_cast(int index, stdext::shared_object_ptr<T>& ptr);
 
 // std::function
 template<typename Ret, typename... Args>
@@ -156,7 +156,7 @@ int push_internal_luavalue(const std::tuple<Args...>& tuple);
 
 #include "luaexception.h"
 #include "luainterface.h"
-
+#include "luaobject.h"
 
 template<typename T>
 int push_internal_luavalue(T v) {
@@ -181,11 +181,14 @@ push_luavalue(const T& obj) {
 
 template<class T>
 typename std::enable_if<std::is_base_of<LuaObject, T>::value, bool>::type
-luavalue_cast(int index, std::shared_ptr<T>& ptr) {
+luavalue_cast(int index, stdext::shared_object_ptr<T>& ptr) {
     LuaObjectPtr obj;
     if(!luavalue_cast(index, obj))
         return false;
-    ptr = std::dynamic_pointer_cast<T>(obj);
+    if(obj)
+        ptr = obj->dynamic_self_cast<T>();
+    else
+        ptr = nullptr;
     return true;
 }
 

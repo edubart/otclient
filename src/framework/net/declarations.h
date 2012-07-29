@@ -34,11 +34,10 @@ class Connection;
 class Protocol;
 class Server;
 
-typedef std::shared_ptr<InputMessage> InputMessagePtr;
-typedef std::shared_ptr<OutputMessage> OutputMessagePtr;
-typedef std::shared_ptr<Connection> ConnectionPtr;
-typedef std::weak_ptr<Connection> ConnectionWeakPtr;
-typedef std::shared_ptr<Protocol> ProtocolPtr;
-typedef std::shared_ptr<Server> ServerPtr;
+typedef stdext::shared_object_ptr<InputMessage> InputMessagePtr;
+typedef stdext::shared_object_ptr<OutputMessage> OutputMessagePtr;
+typedef stdext::shared_object_ptr<Connection> ConnectionPtr;
+typedef stdext::shared_object_ptr<Protocol> ProtocolPtr;
+typedef stdext::shared_object_ptr<Server> ServerPtr;
 
 #endif

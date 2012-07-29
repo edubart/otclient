@@ -28,8 +28,7 @@
 void UILayout::update()
 {
     //logTraceCounter();
-    UIWidgetPtr parentWidget = getParentWidget();
-    if(!parentWidget || parentWidget->isDestroyed())
+    if(!m_parentWidget)
         return;
 
     /*
@@ -52,7 +51,7 @@ void UILayout::update()
 
     m_updating = true;
     internalUpdate();
-    parentWidget->onLayoutUpdate();
+    m_parentWidget->onLayoutUpdate();
     m_updating = false;
 }
 
@@ -64,7 +63,7 @@ void UILayout::updateLater()
     if(!getParentWidget())
         return;
 
-    auto self = asUILayout();
+    auto self = self_cast<UILayout>();
     g_dispatcher.addEvent([self] {
         self->m_updateScheduled = false;
         self->update();

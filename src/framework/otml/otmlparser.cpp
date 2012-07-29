@@ -96,7 +96,7 @@ void OTMLParser::parseLine(std::string line)
     // a depth below, change parent to previous parent
     } else if(depth < currentDepth) {
         for(int i=0;i<currentDepth-depth;++i)
-            currentParent = currentParent->parent();
+            currentParent = parentMap[currentParent];
     // if it isn't the current depth, it's a syntax error
     } else if(depth != currentDepth)
         throw OTMLException(doc, "invalid indentation depth, are you indenting correctly?", currentLine);
@@ -198,5 +198,6 @@ void OTMLParser::parseNode(const std::string& data)
     }
 
     currentParent->addChild(node);
+    parentMap[node] = currentParent;
     previousNode = node;
 }

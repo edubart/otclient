@@ -24,6 +24,7 @@
 #define UIMANAGER_H
 
 #include "declarations.h"
+#include "uiwidget.h"
 #include <framework/core/inputevent.h>
 #include <framework/otml/declarations.h>
 

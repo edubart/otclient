@@ -25,6 +25,8 @@
 
 #include "thing.h"
 #include "outfit.h"
+#include "tile.h"
+#include <framework/core/scheduledevent.h>
 #include <framework/core/declarations.h>
 #include <framework/core/timer.h>
 #include <framework/graphics/fontmanager.h>
@@ -93,7 +95,6 @@ public:
     bool isWalking() { return m_walking; }
     bool isRemoved() { return m_removed; }
 
-    CreaturePtr asCreature() { return std::static_pointer_cast<Creature>(shared_from_this()); }
     bool isCreature() { return true; }
 
     const ThingTypePtr& getThingType();
@@ -150,7 +151,6 @@ protected:
 class Npc : public Creature
 {
 public:
-    NpcPtr asNpc() { return std::static_pointer_cast<Npc>(shared_from_this()); }
     bool isNpc() { return true; }
 };
 
@@ -158,7 +158,6 @@ public:
 class Monster : public Creature
 {
 public:
-    MonsterPtr asMonster() { return std::static_pointer_cast<Monster>(shared_from_this()); }
     bool isMonster() { return true; }
 };
 

@@ -26,7 +26,7 @@
 #include "declarations.h"
 #include <framework/core/filestream.h>
 
-class SoundFile
+class SoundFile : public stdext::shared_object
 {
 public:
     SoundFile(const FileStreamPtr& fileStream);

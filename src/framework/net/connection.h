@@ -28,7 +28,7 @@
 #include <framework/core/timer.h>
 #include <framework/core/declarations.h>
 
-class Connection : public std::enable_shared_from_this<Connection>, boost::noncopyable
+class Connection : public stdext::shared_object
 {
     typedef std::function<void(const boost::system::error_code&)> ErrorCallback;
     typedef std::function<void(uint8*, uint16)> RecvCallback;
@@ -61,6 +61,7 @@ public:
     bool isConnecting() { return m_connecting; }
     bool isConnected() { return m_connected; }
 
+    ConnectionPtr asConnection() { return self_cast<Connection>(); }
 protected:
     void onConnect(const boost::system::error_code& error);
     void onWrite(const boost::system::error_code& error, size_t);

@@ -27,8 +27,7 @@
 
 /// LuaObject, all script-able classes have it as base
 // @bindclass
-#pragma pack(push,1) // disable memory alignment
-class LuaObject : public std::enable_shared_from_this<LuaObject>
+class LuaObject : public stdext::shared_object
 {
 public:
     LuaObject();
@@ -81,7 +80,7 @@ public:
         return stdext::demangle_name(typeid(*this).name());
     }
 
-    LuaObjectPtr asLuaObject() { return shared_from_this(); }
+    LuaObjectPtr asLuaObject() { return self_cast<LuaObject>(); }
 
     void operator=(const LuaObject& other) { }
 
@@ -89,7 +88,6 @@ private:
     int m_fieldsTableRef;
     int m_metatableRef;
 };
-#pragma pack(pop)
 
 #include "luainterface.h"
 

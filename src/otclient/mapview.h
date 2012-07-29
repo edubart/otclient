@@ -24,6 +24,7 @@
 #define MAPVIEW_H
 
 #include "declarations.h"
+#include <framework/graphics/paintershaderprogram.h>
 #include <framework/graphics/declarations.h>
 #include <framework/luaengine/luaobject.h>
 #include <framework/core/declarations.h>
@@ -113,7 +114,7 @@ public:
     // get tile
     TilePtr getTile(const Point& mousePos, const Rect& mapRect);
 
-    MapViewPtr asMapView() { return std::static_pointer_cast<MapView>(shared_from_this()); }
+    MapViewPtr asMapView() { return self_cast<MapView>(); }
 
 private:
     int calcFirstVisibleFloor();

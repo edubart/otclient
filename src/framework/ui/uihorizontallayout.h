@@ -34,7 +34,7 @@ public:
 
     void setAlignRight(bool aliginRight) { m_alignRight = aliginRight; update(); }
 
-    UIHorizontalLayoutPtr asUIHorizontalLayout() { return std::static_pointer_cast<UIHorizontalLayout>(shared_from_this()); }
+    bool isUIHorizontalLayout() { return true; }
 
 protected:
     bool internalUpdate();

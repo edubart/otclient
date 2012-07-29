@@ -33,7 +33,7 @@ enum {
     BINARYTREE_NODE_END = 0xFF
 };
 
-class BinaryTree
+class BinaryTree : public stdext::shared_object
 {
 public:
     BinaryTree(const FileStreamPtr& fin);

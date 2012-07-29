@@ -38,11 +38,11 @@ class StreamSoundSource;
 class CombinedSoundSource;
 class OggSoundFile;
 
-typedef std::shared_ptr<SoundSource> SoundSourcePtr;
-typedef std::shared_ptr<SoundFile> SoundFilePtr;
-typedef std::shared_ptr<SoundBuffer> SoundBufferPtr;
-typedef std::shared_ptr<StreamSoundSource> StreamSoundSourcePtr;
-typedef std::shared_ptr<CombinedSoundSource> CombinedSoundSourcePtr;
-typedef std::shared_ptr<OggSoundFile> OggSoundFilePtr;
+typedef stdext::shared_object_ptr<SoundSource> SoundSourcePtr;
+typedef stdext::shared_object_ptr<SoundFile> SoundFilePtr;
+typedef stdext::shared_object_ptr<SoundBuffer> SoundBufferPtr;
+typedef stdext::shared_object_ptr<StreamSoundSource> StreamSoundSourcePtr;
+typedef stdext::shared_object_ptr<CombinedSoundSource> CombinedSoundSourcePtr;
+typedef stdext::shared_object_ptr<OggSoundFile> OggSoundFilePtr;
 
 #endif

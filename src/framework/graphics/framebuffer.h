@@ -26,7 +26,7 @@
 #include "declarations.h"
 #include "texture.h"
 
-class FrameBuffer
+class FrameBuffer : public stdext::shared_object
 {
 protected:
     FrameBuffer();

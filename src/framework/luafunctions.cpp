@@ -340,7 +340,6 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIWidget>("recursiveGetChildrenByPos", &UIWidget::recursiveGetChildrenByPos);
     g_lua.bindClassMemberFunction<UIWidget>("recursiveGetChildrenByMarginPos", &UIWidget::recursiveGetChildrenByMarginPos);
     g_lua.bindClassMemberFunction<UIWidget>("backwardsGetWidgetById", &UIWidget::backwardsGetWidgetById);
-    g_lua.bindClassMemberFunction<UIWidget>("asUIWidget", &UIWidget::asUIWidget);
     g_lua.bindClassMemberFunction<UIWidget>("resize", &UIWidget::resize);
     g_lua.bindClassMemberFunction<UIWidget>("move", &UIWidget::move);
     g_lua.bindClassMemberFunction<UIWidget>("hide", &UIWidget::hide);
@@ -541,12 +540,11 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UILayout>("getParentWidget", &UILayout::getParentWidget);
     g_lua.bindClassMemberFunction<UILayout>("isUpdateDisabled", &UILayout::isUpdateDisabled);
     g_lua.bindClassMemberFunction<UILayout>("isUpdating", &UILayout::isUpdating);
-    g_lua.bindClassMemberFunction<UILayout>("asUILayout", &UILayout::asUILayout);
-    g_lua.bindClassMemberFunction<UILayout>("asUIAnchorLayout", &UILayout::asUIAnchorLayout);
-    g_lua.bindClassMemberFunction<UILayout>("asUIBoxLayout", &UILayout::asUIBoxLayout);
-    g_lua.bindClassMemberFunction<UILayout>("asUIHorizontalLayout", &UILayout::asUIHorizontalLayout);
-    g_lua.bindClassMemberFunction<UILayout>("asUIVerticalLayout", &UILayout::asUIVerticalLayout);
-    g_lua.bindClassMemberFunction<UILayout>("asUIGridLayout", &UILayout::asUIGridLayout);
+    g_lua.bindClassMemberFunction<UILayout>("isUIAnchorLayout", &UILayout::isUIAnchorLayout);
+    g_lua.bindClassMemberFunction<UILayout>("isUIBoxLayout", &UILayout::isUIBoxLayout);
+    g_lua.bindClassMemberFunction<UILayout>("isUIHorizontalLayout", &UILayout::isUIHorizontalLayout);
+    g_lua.bindClassMemberFunction<UILayout>("isUIVerticalLayout", &UILayout::isUIVerticalLayout);
+    g_lua.bindClassMemberFunction<UILayout>("isUIGridLayout", &UILayout::isUIGridLayout);
 
     // UIBoxLayout
     g_lua.registerClass<UIBoxLayout, UILayout>();
@@ -573,7 +571,7 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIGridLayout>("setFlow", &UIGridLayout::setFlow);
     g_lua.bindClassMemberFunction<UIGridLayout>("setNumColumns", &UIGridLayout::setNumColumns);
     g_lua.bindClassMemberFunction<UIGridLayout>("setNumLines", &UIGridLayout::setNumLines);
-    g_lua.bindClassMemberFunction<UIGridLayout>("asUIGridLayout", &UIGridLayout::asUIGridLayout);
+    g_lua.bindClassMemberFunction<UIGridLayout>("isUIGridLayout", &UIGridLayout::isUIGridLayout);
 
     // UIAnchorLayout
     g_lua.registerClass<UIAnchorLayout, UILayout>();

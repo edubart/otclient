@@ -267,7 +267,7 @@ function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
 
   end
 
-  if lookThing and not lookThing:asCreature() and not lookThing:isNotMoveable() and lookThing:isPickupable() then
+  if lookThing and not lookThing:isCreature() and not lookThing:isNotMoveable() and lookThing:isPickupable() then
     menu:addSeparator()
     menu:addOption(tr('Trade with ...'), function() startTradeWith(lookThing) end)
   end
@@ -282,7 +282,7 @@ function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
   if creatureThing then
     menu:addSeparator()
 
-    if creatureThing:asLocalPlayer() then
+    if creatureThing:isLocalPlayer() then
       menu:addOption(tr('Set Outfit'), function() g_game.requestOutfit() end)
 
       if creatureThing:isPartyMember() --[[and not fighting]] then
@@ -310,7 +310,7 @@ function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
         menu:addOption(tr('Stop Follow'), function() g_game.cancelFollow() end)
       end
 
-      if creatureThing:asPlayer() then
+      if creatureThing:isPlayer() then
         menu:addSeparator()
         local creatureName = creatureThing:getName()
         menu:addOption(tr('Message to %s', creatureName), function() g_game.openPrivateChannel(creatureName) end)
@@ -322,7 +322,7 @@ function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
           menu:addOption(tr('Add to VIP list'), function() g_game.addVip(creatureName) end)
         end
 
-        local localPlayerShield = localPlayer:asCreature():getShield()
+        local localPlayerShield = localPlayer:isCreature():getShield()
         local creatureShield = creatureThing:getShield()
 
         if localPlayerShield == ShieldNone or localPlayerShield == ShieldWhiteBlue then
@@ -394,8 +394,8 @@ function processMouseAction(menuPosition, mouseButton, autoWalkPos, lookThing, u
   else
     if multiUseThing and keyboardModifiers == KeyboardNoModifier and mouseButton == MouseRightButton and not g_mouse.isPressed(MouseLeftButton) then
       local player = g_game.getLocalPlayer()
-      if multiUseThing:asCreature() and multiUseThing:asCreature() ~= player then
-        g_game.attack(multiUseThing:asCreature())
+      if multiUseThing:isCreature() and multiUseThing:isCreature() ~= player then
+        g_game.attack(multiUseThing:isCreature())
         return true
       elseif multiUseThing:isContainer() then
         if multiUseThing:getParentContainer() then

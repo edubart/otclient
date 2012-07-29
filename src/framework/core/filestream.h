@@ -61,7 +61,7 @@ public:
     void addString(const std::string& v);
     BinaryTreePtr makeTree();
 
-    FileStreamPtr asFileStream() { return std::static_pointer_cast<FileStream>(shared_from_this()); }
+    FileStreamPtr asFileStream() { return self_cast<FileStream>(); }
 
 private:
     void checkWrite();

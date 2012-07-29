@@ -42,7 +42,7 @@ public:
 
     uint32 getId() { return m_id; }
 
-    MissilePtr asMissile() { return std::static_pointer_cast<Missile>(shared_from_this()); }
+    MissilePtr asMissile() { return self_cast<Missile>(); }
     bool isMissile() { return true; }
 
     const ThingTypePtr& getThingType();

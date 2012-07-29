@@ -150,7 +150,7 @@ function onChooseItemMouseRelease(self, mousePosition, mouseButton)
         if tile then
           local thing = tile:getTopMoveThing()
           if thing then
-            item = thing:asItem()
+            item = thing:isItem()
           end
         end
       elseif clickedWidget:getClassName() == 'UIItem' and not clickedWidget:isVirtual() then

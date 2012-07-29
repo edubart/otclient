@@ -38,7 +38,7 @@ function UIGameMap:onDrop(widget, mousePos)
   local thingPos = thing:getPosition()
   if thingPos.x == toPos.x and thingPos.y == toPos.y and thingPos.z == toPos.z then return false end
 
-  if thing:asItem() and thing:getCount() > 1 then
+  if thing:isItem() and thing:getCount() > 1 then
     modules.game_interface.moveStackableItem(thing, toPos)
   else
     g_game.move(thing, toPos, 1)

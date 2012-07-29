@@ -43,7 +43,7 @@ int Thing::getStackPriority()
         return 2;
     else if(isOnTop())
         return 3;
-    else if(asCreature())
+    else if(isCreature())
         return 4;
     else // common items
         return 5;
@@ -65,10 +65,10 @@ ContainerPtr Thing::getParentContainer()
 
 int Thing::getStackpos()
 {
-    if(m_position.x == 65535 && asItem()) // is inside a container
+    if(m_position.x == 65535 && isItem()) // is inside a container
         return m_position.z;
     else if(const TilePtr& tile = getTile())
-        return tile->getThingStackpos(asThing());
+        return tile->getThingStackpos(self_cast<Thing>());
     else {
         g_logger.traceError("got a thing with invalid stackpos");
         return -1;

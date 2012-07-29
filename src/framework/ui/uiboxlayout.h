@@ -38,7 +38,7 @@ public:
     void setSpacing(int spacing) { m_spacing = spacing; update(); }
     void setFitChildren(bool fitParent) { m_fitChildren = fitParent; update(); }
 
-    UIBoxLayoutPtr asUIBoxLayout() { return std::static_pointer_cast<UIBoxLayout>(shared_from_this()); }
+    bool isUIBoxLayout() { return true; }
 
 protected:
     Boolean<false> m_fitChildren;

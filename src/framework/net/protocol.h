@@ -51,7 +51,7 @@ public:
     virtual void send(const OutputMessagePtr& outputMessage);
     void recv();
 
-    ProtocolPtr asProtocol() { return std::static_pointer_cast<Protocol>(shared_from_this()); }
+    ProtocolPtr asProtocol() { return self_cast<Protocol>(); }
 
 protected:
     virtual void onConnect();

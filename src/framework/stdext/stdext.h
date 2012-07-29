@@ -32,5 +32,6 @@
 #include "string.h"
 #include "dumper.h"
 #include "time.h"
+#include "shared_object.h"
 
 #endif

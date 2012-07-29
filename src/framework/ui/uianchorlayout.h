@@ -74,7 +74,7 @@ public:
     void addWidget(const UIWidgetPtr& widget);
     void removeWidget(const UIWidgetPtr& widget);
 
-    UIAnchorLayoutPtr asUIAnchorLayout() { return std::static_pointer_cast<UIAnchorLayout>(shared_from_this()); }
+    bool isUIAnchorLayout() { return true; }
 
 protected:
     bool internalUpdate();

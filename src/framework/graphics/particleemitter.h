@@ -29,20 +29,18 @@
 #include <framework/graphics/texture.h>
 #include <framework/otml/otml.h>
 
-class ParticleEmitter {
+class ParticleEmitter : public stdext::shared_object
+{
 public:
-
-    ParticleEmitter(const ParticleSystemPtr& parent);
+    ParticleEmitter();
 
     bool load(const OTMLNodePtr& node);
 
-    void update(float elapsedTime);
+    void update(float elapsedTime, const ParticleSystemPtr& system);
 
     bool hasFinished() { return m_finished; }
 
 private:
-    ParticleSystemWeakPtr m_parent;
-
     // self related
     Point m_position;
     float m_duration, m_delay;

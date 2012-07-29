@@ -113,13 +113,13 @@ function doCreatureFitFilters(creature)
   local hideSkulls = hideSkullsButton:isChecked()
   local hideParty = hidePartyButton:isChecked()
 
-  if hidePlayers and creature:asPlayer() then
+  if hidePlayers and creature:isPlayer() then
     return false
-  elseif hideNPCs and creature:asNpc() then
+  elseif hideNPCs and creature:isNpc() then
     return false
-  elseif hideMonsters and creature:asMonster() then
+  elseif hideMonsters and creature:isMonster() then
     return false
-  elseif hideSkulls and creature:asPlayer() and creature:getSkull() == SkullNone then
+  elseif hideSkulls and creature:isPlayer() and creature:getSkull() == SkullNone then
     return false
   elseif hideParty and creature:getShield() > ShieldWhiteBlue then
     return false

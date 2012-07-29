@@ -106,7 +106,7 @@ public:
     void setHouseId(uint32 hid) { if(m_flags & TILESTATE_HOUSE) m_houseId = hid; }
     uint32 getHouseId() { return m_houseId; }
 
-    TilePtr asTile() { return std::static_pointer_cast<Tile>(shared_from_this()); }
+    TilePtr asTile() { return self_cast<Tile>(); }
 
 private:
     std::vector<CreaturePtr> m_walkingCreatures;

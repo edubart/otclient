@@ -36,17 +36,15 @@ class UIGridLayout;
 class UIAnchorLayout;
 class UIParticles;
 
-typedef std::shared_ptr<UIWidget> UIWidgetPtr;
-typedef std::weak_ptr<UIWidget> UIWidgetWeakPtr;
-
-typedef std::shared_ptr<UIParticles> UIParticlesPtr;
-typedef std::shared_ptr<UITextEdit> UITextEditPtr;
-typedef std::shared_ptr<UILayout> UILayoutPtr;
-typedef std::shared_ptr<UIBoxLayout> UIBoxLayoutPtr;
-typedef std::shared_ptr<UIHorizontalLayout> UIHorizontalLayoutPtr;
-typedef std::shared_ptr<UIVerticalLayout> UIVerticalLayoutPtr;
-typedef std::shared_ptr<UIGridLayout> UIGridLayoutPtr;
-typedef std::shared_ptr<UIAnchorLayout> UIAnchorLayoutPtr;
+typedef stdext::shared_object_ptr<UIWidget> UIWidgetPtr;
+typedef stdext::shared_object_ptr<UIParticles> UIParticlesPtr;
+typedef stdext::shared_object_ptr<UITextEdit> UITextEditPtr;
+typedef stdext::shared_object_ptr<UILayout> UILayoutPtr;
+typedef stdext::shared_object_ptr<UIBoxLayout> UIBoxLayoutPtr;
+typedef stdext::shared_object_ptr<UIHorizontalLayout> UIHorizontalLayoutPtr;
+typedef stdext::shared_object_ptr<UIVerticalLayout> UIVerticalLayoutPtr;
+typedef stdext::shared_object_ptr<UIGridLayout> UIGridLayoutPtr;
+typedef stdext::shared_object_ptr<UIAnchorLayout> UIAnchorLayoutPtr;
 
 typedef std::deque<UIWidgetPtr> UIWidgetList;
 

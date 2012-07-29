@@ -248,15 +248,6 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Thing>("getPosition", &Thing::getPosition);
     g_lua.bindClassMemberFunction<Thing>("getStackPriority", &Thing::getStackPriority);
     g_lua.bindClassMemberFunction<Thing>("getAnimationPhases", &Thing::getAnimationPhases);
-    g_lua.bindClassMemberFunction<Thing>("asThing", &Thing::asThing);
-    g_lua.bindClassMemberFunction<Thing>("asItem", &Thing::asItem);
-    g_lua.bindClassMemberFunction<Thing>("asCreature", &Thing::asCreature);
-    g_lua.bindClassMemberFunction<Thing>("asEffect", &Thing::asEffect);
-    g_lua.bindClassMemberFunction<Thing>("asMissile", &Thing::asMissile);
-    g_lua.bindClassMemberFunction<Thing>("asPlayer", &Thing::asPlayer);
-    g_lua.bindClassMemberFunction<Thing>("asLocalPlayer", &Thing::asLocalPlayer);
-    g_lua.bindClassMemberFunction<Thing>("asAnimatedText", &Thing::asAnimatedText);
-    g_lua.bindClassMemberFunction<Thing>("asStaticText", &Thing::asStaticText);
     g_lua.bindClassMemberFunction<Thing>("isItem", &Thing::isItem);
     g_lua.bindClassMemberFunction<Thing>("isCreature", &Thing::isCreature);
     g_lua.bindClassMemberFunction<Thing>("isEffect", &Thing::isEffect);
@@ -331,8 +322,6 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Creature>("showStaticSquare", &Creature::showStaticSquare);
     g_lua.bindClassMemberFunction<Creature>("hideStaticSquare", &Creature::hideStaticSquare);
     g_lua.bindClassMemberFunction<Creature>("isWalking", &Creature::isWalking);
-    g_lua.bindClassMemberFunction<Creature>("asMonster", &Creature::asMonster);
-    g_lua.bindClassMemberFunction<Creature>("asNpc", &Creature::asNpc);
 
     g_lua.registerClass<ItemType>();
     g_lua.bindClassMemberFunction<ItemType>("getServerId", &ItemType::getServerId);
@@ -398,7 +387,6 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassMemberFunction<LocalPlayer>("isPremium", &LocalPlayer::isPremium);
     g_lua.bindClassMemberFunction<LocalPlayer>("isKnown", &LocalPlayer::isKnown);
     g_lua.bindClassMemberFunction<LocalPlayer>("isPreWalking", &LocalPlayer::isPreWalking);
-    g_lua.bindClassMemberFunction<LocalPlayer>("asLocalPlayer", &LocalPlayer::asLocalPlayer);
 
     g_lua.registerClass<Tile>();
     g_lua.bindClassMemberFunction<Tile>("clean", &Tile::clean);

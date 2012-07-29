@@ -659,8 +659,8 @@ void Game::useWith(const ItemPtr& item, const ThingPtr& toThing)
 
     m_localPlayer->lockWalk();
 
-    if(CreaturePtr creature = toThing->asCreature())
-        m_protocolGame->sendUseOnCreature(pos, item->getId(), item->getStackpos(), creature->getId());
+    if(toThing->isCreature())
+        m_protocolGame->sendUseOnCreature(pos, item->getId(), item->getStackpos(), toThing->getId());
     else
         m_protocolGame->sendUseItemWith(pos, item->getId(), item->getStackpos(), toThing->getPosition(), toThing->getId(), toThing->getStackpos());
 }
@@ -674,8 +674,8 @@ void Game::useInventoryItemWith(int itemId, const ThingPtr& toThing)
 
     Position pos = Position(0xFFFF, 0, 0); // means that is a item in inventory
 
-    if(CreaturePtr creature = toThing->asCreature())
-        m_protocolGame->sendUseOnCreature(pos, itemId, 0, creature->getId());
+    if(toThing->isCreature())
+        m_protocolGame->sendUseOnCreature(pos, itemId, 0, toThing->getId());
     else
         m_protocolGame->sendUseItemWith(pos, itemId, 0, toThing->getPosition(), toThing->getId(), toThing->getStackpos());
 }

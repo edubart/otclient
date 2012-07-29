@@ -49,18 +49,6 @@ public:
     ContainerPtr getParentContainer();
     int getStackpos();
 
-    ThingPtr asThing() { return std::static_pointer_cast<Thing>(shared_from_this()); }
-    virtual ItemPtr asItem() { return nullptr; }
-    virtual EffectPtr asEffect() { return nullptr; }
-    virtual MissilePtr asMissile() { return nullptr; }
-    virtual CreaturePtr asCreature() { return nullptr; }
-    virtual NpcPtr asNpc() { return nullptr; }
-    virtual MonsterPtr asMonster() { return nullptr; }
-    virtual PlayerPtr asPlayer() { return nullptr; }
-    virtual LocalPlayerPtr asLocalPlayer() { return nullptr; }
-    virtual AnimatedTextPtr asAnimatedText() { return nullptr; }
-    virtual StaticTextPtr asStaticText() { return nullptr; }
-
     virtual bool isItem() { return false; }
     virtual bool isEffect() { return false; }
     virtual bool isMissile() { return false; }

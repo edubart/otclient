@@ -26,7 +26,7 @@
 #include "declarations.h"
 #include <framework/util/databuffer.h>
 
-class Image
+class Image : public stdext::shared_object
 {
 public:
     Image(const Size& size, int bpp = 4, uint8 *pixels = nullptr);

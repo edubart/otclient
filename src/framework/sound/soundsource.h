@@ -24,8 +24,9 @@
 #define SOUNDSOURCE_H
 
 #include "declarations.h"
+#include "soundbuffer.h"
 
-class SoundSource
+class SoundSource : public stdext::shared_object
 {
 protected:
     SoundSource(uint sourceId) : m_sourceId(sourceId) { }

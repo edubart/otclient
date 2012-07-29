@@ -56,7 +56,7 @@ public:
     int getAutoLoadPriority() { return m_autoLoadPriority; }
 
     // @dontbind
-    ModulePtr asModule() { return std::static_pointer_cast<Module>(shared_from_this()); }
+    ModulePtr asModule() { return self_cast<Module>(); }
 
 protected:
     void discover(const OTMLNodePtr& moduleNode);

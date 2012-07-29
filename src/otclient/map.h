@@ -28,6 +28,7 @@
 #include "towns.h"
 #include "creatures.h"
 #include "animatedtext.h"
+#include "statictext.h"
 
 #include <framework/core/clock.h>
 #include <framework/util/attribstorage.h>

@@ -41,7 +41,7 @@ void TextureManager::terminate()
     // check for leaks
     int refs = 0;
     for(const auto& it : m_textures)
-        if(it.second.use_count() > 1)
+        if(it.second->ref_count() > 1)
             refs++;
     if(refs > 0)
         g_logger.debug(stdext::format("%d textures references left", refs));
@@ -65,10 +65,7 @@ TexturePtr TextureManager::getTexture(const std::string& fileName)
     // check if the texture is already loaded
     auto it = m_textures.find(filePath);
     if(it != m_textures.end()) {
-        if(it->second.expired())
-            m_textures.erase(it);
-        else
-            texture = it->second.lock();
+        texture = it->second;
     }
 
     // texture not found, load it

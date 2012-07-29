@@ -48,6 +48,7 @@ private:
     int currentLine;
     OTMLDocumentPtr doc;
     OTMLNodePtr currentParent;
+    std::unordered_map<OTMLNodePtr, OTMLNodePtr> parentMap;
     OTMLNodePtr previousNode;
     std::istream& in;
 };

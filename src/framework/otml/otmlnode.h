@@ -25,7 +25,7 @@
 
 #include "declarations.h"
 
-class OTMLNode : public std::enable_shared_from_this<OTMLNode>
+class OTMLNode : public stdext::shared_object
 {
 public:
     virtual ~OTMLNode() { }
@@ -35,7 +35,6 @@ public:
 
     std::string tag() { return m_tag; }
     int size() { return m_children.size(); }
-    OTMLNodePtr parent() { return m_parent.lock(); }
     std::string source() { return m_source; }
     std::string rawValue() { return m_value; }
 
@@ -52,7 +51,6 @@ public:
     void setValue(const std::string& value) { m_value = value; }
     void setNull(bool null) { m_null = null; }
     void setUnique(bool unique) { m_unique = unique; }
-    void setParent(const OTMLNodePtr& parent) { m_parent = parent; }
     void setSource(const std::string& source) { m_source = source; }
 
     OTMLNodePtr get(const std::string& childTag);
@@ -91,11 +89,12 @@ public:
 
     virtual std::string emit();
 
+    OTMLNodePtr asOTMLNode() { return self_cast<OTMLNode>(); }
+
 protected:
     OTMLNode() : m_unique(false), m_null(false) { }
 
     OTMLNodeList m_children;
-    OTMLNodeWeakPtr m_parent;
     std::string m_tag;
     std::string m_value;
     std::string m_source;
@@ -123,7 +122,7 @@ template<typename T>
 T OTMLNode::value() {
     T ret;
     if(!stdext::cast(m_value, ret))
-        throw OTMLException(shared_from_this(), stdext::format("failed to cast node value '%s' to type '%s'", m_value, stdext::demangle_type<T>()));
+        throw OTMLException(asOTMLNode(), stdext::format("failed to cast node value '%s' to type '%s'", m_value, stdext::demangle_type<T>()));
     return ret;
 }
 

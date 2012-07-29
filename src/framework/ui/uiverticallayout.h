@@ -35,7 +35,7 @@ public:
 
     void setAlignBottom(bool aliginBottom) { m_alignBottom = aliginBottom; update(); }
 
-    UIVerticalLayoutPtr asUIVerticalLayout() { return std::static_pointer_cast<UIVerticalLayout>(shared_from_this()); }
+    bool isUIVerticalLayout() { return true; }
 
 protected:
     bool internalUpdate();

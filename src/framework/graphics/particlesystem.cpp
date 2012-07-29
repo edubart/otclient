@@ -34,7 +34,7 @@ bool ParticleSystem::load(const OTMLNodePtr& node)
 {
     for(const OTMLNodePtr& childNode : node->children()) {
         if(childNode->tag() == "Emitter") {
-            ParticleEmitterPtr emitter = ParticleEmitterPtr(new ParticleEmitter(shared_from_this()));
+            ParticleEmitterPtr emitter = ParticleEmitterPtr(new ParticleEmitter());
             if(!emitter->load(childNode))
                 return false;
             m_emitters.push_back(emitter);
@@ -84,6 +84,7 @@ void ParticleSystem::update()
         return;
     m_lastUpdateTime = g_clock.seconds() - std::fmod(elapsedTime, delay);
 
+    auto self = self_cast<ParticleSystem>();
     for(int i = 0; i < elapsedTime / delay; ++i) {
 
         // update emitters
@@ -93,7 +94,7 @@ void ParticleSystem::update()
                 it = m_emitters.erase(it);
                 continue;
             }
-            emitter->update(delay);
+            emitter->update(delay, self);
             ++it;
         }
 

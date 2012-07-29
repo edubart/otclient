@@ -77,14 +77,14 @@ OTMLNodePtr OTMLNode::at(const std::string& childTag)
         }
     }
     if(!res)
-        throw OTMLException(shared_from_this(), stdext::format("child node with tag '%s' not found", childTag));
+        throw OTMLException(asOTMLNode(), stdext::format("child node with tag '%s' not found", childTag));
     return res;
 }
 
 OTMLNodePtr OTMLNode::atIndex(int childIndex)
 {
     if(childIndex >= size() || childIndex < 0)
-        throw OTMLException(shared_from_this(), stdext::mkstr("child node with index '%d' not found", childIndex));
+        throw OTMLException(asOTMLNode(), stdext::mkstr("child node with index '%d' not found", childIndex));
     return m_children[childIndex];
 }
 
@@ -109,7 +109,6 @@ void OTMLNode::addChild(const OTMLNodePtr& newChild)
                 while(it != m_children.end()) {
                     OTMLNodePtr node = (*it);
                     if(node != newChild && node->tag() == newChild->tag()) {
-                        node->setParent(nullptr);
                         it = m_children.erase(it);
                     } else
                         ++it;
@@ -120,7 +119,6 @@ void OTMLNode::addChild(const OTMLNodePtr& newChild)
     }
 
     m_children.push_back(newChild);
-    newChild->setParent(shared_from_this());
 }
 
 bool OTMLNode::removeChild(const OTMLNodePtr& oldChild)
@@ -128,7 +126,6 @@ bool OTMLNode::removeChild(const OTMLNodePtr& oldChild)
     auto it = std::find(m_children.begin(), m_children.end(), oldChild);
     if(it != m_children.end()) {
         m_children.erase(it);
-        oldChild->setParent(nullptr);
         return true;
     }
     return false;
@@ -138,8 +135,6 @@ bool OTMLNode::replaceChild(const OTMLNodePtr& oldChild, const OTMLNodePtr& newC
 {
     auto it = std::find(m_children.begin(), m_children.end(), oldChild);
     if(it != m_children.end()) {
-        oldChild->setParent(nullptr);
-        newChild->setParent(shared_from_this());
         it = m_children.erase(it);
         m_children.insert(it, newChild);
         return true;
@@ -169,8 +164,6 @@ void OTMLNode::merge(const OTMLNodePtr& node)
 
 void OTMLNode::clear()
 {
-    for(const OTMLNodePtr& child : m_children)
-        child->setParent(nullptr);
     m_children.clear();
 }
 
@@ -198,6 +191,6 @@ OTMLNodePtr OTMLNode::clone()
 
 std::string OTMLNode::emit()
 {
-    return OTMLEmitter::emitNode(shared_from_this(), 0);
+    return OTMLEmitter::emitNode(asOTMLNode(), 0);
 }
 

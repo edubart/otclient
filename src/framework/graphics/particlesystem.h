@@ -27,7 +27,7 @@
 #include "particleemitter.h"
 #include "particleaffector.h"
 
-class ParticleSystem : public std::enable_shared_from_this<ParticleSystem> {
+class ParticleSystem : public stdext::shared_object {
 public:
     ParticleSystem();
 

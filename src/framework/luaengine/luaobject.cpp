@@ -108,5 +108,5 @@ void LuaObject::luaGetFieldsTable()
 
 int LuaObject::getUseCount()
 {
-    return shared_from_this().use_count() - 1;
+    return ref_count();
 }

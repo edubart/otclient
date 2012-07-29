@@ -43,17 +43,16 @@ public:
     void enableUpdates() { m_updateDisabled = std::max(m_updateDisabled-1,0); }
 
     void setParent(UIWidgetPtr parentWidget) { m_parentWidget = parentWidget; }
-    UIWidgetPtr getParentWidget() { return m_parentWidget.lock(); }
+    UIWidgetPtr getParentWidget() { return m_parentWidget; }
 
     bool isUpdateDisabled() { return m_updateDisabled > 0; }
     bool isUpdating() { return m_updating; }
 
-    UILayoutPtr asUILayout() { return std::static_pointer_cast<UILayout>(shared_from_this()); }
-    virtual UIAnchorLayoutPtr asUIAnchorLayout() { return nullptr; }
-    virtual UIBoxLayoutPtr asUIBoxLayout() { return nullptr; }
-    virtual UIHorizontalLayoutPtr asUIHorizontalLayout() { return nullptr; }
-    virtual UIVerticalLayoutPtr asUIVerticalLayout() { return nullptr; }
-    virtual UIGridLayoutPtr asUIGridLayout() { return nullptr; }
+    virtual bool isUIAnchorLayout() { return false; }
+    virtual bool isUIBoxLayout() { return false; }
+    virtual bool isUIHorizontalLayout() { return false; }
+    virtual bool isUIVerticalLayout() { return false; }
+    virtual bool isUIGridLayout() { return false; }
 
 protected:
     virtual bool internalUpdate() = 0;
@@ -61,7 +60,7 @@ protected:
     int m_updateDisabled;
     Boolean<false> m_updating;
     Boolean<false> m_updateScheduled;
-    UIWidgetWeakPtr m_parentWidget;
+    UIWidgetPtr m_parentWidget;
 };
 
 #endif

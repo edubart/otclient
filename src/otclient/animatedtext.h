@@ -40,7 +40,7 @@ public:
     void setColor(int color);
     void setText(const std::string& text);
 
-    AnimatedTextPtr asAnimatedText() { return std::static_pointer_cast<AnimatedText>(shared_from_this()); }
+    AnimatedTextPtr asAnimatedText() { return self_cast<AnimatedText>(); }
     bool isAnimatedText() { return true; }
 
 private:

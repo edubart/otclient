@@ -285,7 +285,7 @@ void UIManager::onWidgetDestroy(const UIWidgetPtr& widget)
         g_dispatcher.scheduleEvent([backupList] {
             g_lua.collectGarbage();
             for(const UIWidgetPtr& widget : backupList) {
-                if(widget->getUseCount() != 1)
+                if(widget->ref_count() != 1)
                     g_logger.warning(stdext::format("widget '%s' destroyed but still have %d reference(s) left", widget->getId(), widget->getUseCount()-1));
             }
         }, 1);

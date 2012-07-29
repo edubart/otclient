@@ -30,9 +30,8 @@ class OTMLDocument;
 class OTMLParser;
 class OTMLEmitter;
 
-typedef std::shared_ptr<OTMLNode> OTMLNodePtr;
-typedef std::shared_ptr<OTMLDocument> OTMLDocumentPtr;
-typedef std::weak_ptr<OTMLNode> OTMLNodeWeakPtr;
+typedef stdext::shared_object_ptr<OTMLNode> OTMLNodePtr;
+typedef stdext::shared_object_ptr<OTMLDocument> OTMLDocumentPtr;
 typedef std::vector<OTMLNodePtr> OTMLNodeList;
 
 #endif
