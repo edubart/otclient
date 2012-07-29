@@ -430,6 +430,7 @@ bool Map::loadOtcm(const std::string& fileName)
         if(!fin)
             stdext::throw_exception("unable to open file");
 
+        stdext::timer loadTimer;
         fin->cache();
 
         uint32 signature = fin->getU32();
@@ -491,6 +492,7 @@ bool Map::loadOtcm(const std::string& fileName)
 
         fin->close();
 
+        g_logger.debug(stdext::format("Otcm load time: %.2f seconds", loadTimer.elapsed_seconds()));
         return true;
     } catch(stdext::exception& e) {
         g_logger.error(stdext::format("failed to load OTCM map: %s", e.what()));

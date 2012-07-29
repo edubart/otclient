@@ -32,17 +32,6 @@
 // @bindclass
 class MapView : public LuaObject
 {
-    enum {
-        // 3840x2160 => 1080p optimized
-        // 2560x1440 => 720p optimized
-        // 1728x972 => 480p optimized
-
-        NEAR_VIEW_AREA = 32*32,
-        MID_VIEW_AREA = 64*64,
-        FAR_VIEW_AREA = 128*128,
-        MAX_TILE_DRAWS = NEAR_VIEW_AREA*7
-    };
-
 public:
     enum ViewMode {
         NEAR_VIEW,
@@ -135,16 +124,16 @@ private:
     Point m_virtualCenterOffset;
     Point m_visibleCenterOffset;
     Position m_customCameraPosition;
-    Boolean<true> m_mustUpdateVisibleTilesCache;
-    Boolean<true> m_mustDrawVisibleTilesCache;
-    Boolean<true> m_mustCleanFramebuffer;
-    Boolean<true> m_multifloor;
-    Boolean<true> m_animated;
-    Boolean<true> m_autoViewMode;
-    Boolean<true> m_drawTexts;
-    Boolean<true> m_smooth;
-    Boolean<false> m_drawMinimapColors;
-    Boolean<true> m_follow;
+    stdext::boolean<true> m_mustUpdateVisibleTilesCache;
+    stdext::boolean<true> m_mustDrawVisibleTilesCache;
+    stdext::boolean<true> m_mustCleanFramebuffer;
+    stdext::boolean<true> m_multifloor;
+    stdext::boolean<true> m_animated;
+    stdext::boolean<true> m_autoViewMode;
+    stdext::boolean<true> m_drawTexts;
+    stdext::boolean<true> m_smooth;
+    stdext::boolean<false> m_drawMinimapColors;
+    stdext::boolean<true> m_follow;
     std::vector<TilePtr> m_cachedVisibleTiles;
     std::vector<CreaturePtr> m_cachedFloorVisibleCreatures;
     CreaturePtr m_followingCreature;

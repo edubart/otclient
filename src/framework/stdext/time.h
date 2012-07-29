@@ -35,6 +35,17 @@ inline ticks_t micros() { return std::chrono::duration_cast<std::chrono::microse
 inline void millisleep(uint32 ms) { usleep(ms * 1000); };
 inline void microsleep(uint32 us) { usleep(us); };
 
+struct timer {
+public:
+    timer() { restart(); }
+    float elapsed_seconds() { return (stdext::micros() - m_start)/1000000.0; }
+    ticks_t elapsed_millis() { return (stdext::micros() - m_start)/1000; }
+    ticks_t elapsed_micros() { return stdext::micros() - m_start; }
+    void restart() { m_start = stdext::micros(); }
+private:
+    ticks_t m_start;
+};
+
 }
 
 #endif

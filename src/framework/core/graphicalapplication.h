@@ -60,8 +60,8 @@ protected:
     void inputEvent(const InputEvent& event);
 
 private:
-    Boolean<false> m_onInputEvent;
-    Boolean<false> m_mustRepaint;
+    bool m_onInputEvent = false;
+    bool m_mustRepaint = false;
     AdaptativeFrameCounter m_backgroundFrameCounter;
     AdaptativeFrameCounter m_foregroundFrameCounter;
     TexturePtr m_foreground;

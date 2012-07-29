@@ -31,7 +31,6 @@
 #include "statictext.h"
 
 #include <framework/core/clock.h>
-#include <framework/util/attribstorage.h>
 
 enum OTBM_ItemAttr
 {
@@ -268,7 +267,7 @@ private:
     Position m_centralPosition;
     Rect m_tilesRect;
 
-    AttribStorage m_attribs;
+    stdext::attrib_storage m_attribs;
     Houses m_houses;
     Towns m_towns;
     Creatures m_creatures;

@@ -82,8 +82,8 @@ private:
     UIWidgetPtr m_draggingWidget;
     UIWidgetPtr m_hoveredWidget;
     UIWidgetPtr m_pressedWidget;
-    Boolean<false> m_hoverUpdateScheduled;
-    Boolean<false> m_drawDebugBoxes;
+    bool m_hoverUpdateScheduled = false;
+    bool m_drawDebugBoxes = false;
     std::unordered_map<std::string, OTMLNodePtr> m_styles;
     UIWidgetList m_destroyedWidgets;
     ScheduledEventPtr m_checkEvent;

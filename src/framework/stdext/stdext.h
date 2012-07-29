@@ -33,5 +33,7 @@
 #include "dumper.h"
 #include "time.h"
 #include "shared_object.h"
+#include "attrib_storage.h"
+#include "boolean.h"
 
 #endif

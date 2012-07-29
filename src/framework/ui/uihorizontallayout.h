@@ -39,7 +39,7 @@ public:
 protected:
     bool internalUpdate();
 
-    Boolean<false> m_alignRight;
+    bool m_alignRight = false;
 };
 
 #endif

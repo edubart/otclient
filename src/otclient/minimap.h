@@ -36,7 +36,7 @@ struct MinimapArea
     ImagePtr img;
     TexturePtr tex;
     uint8 colors[MINIMAP_AREA_SIZE][MINIMAP_AREA_SIZE];
-    Boolean<true> mustUpdate;
+    stdext::boolean<true> mustUpdate;
 };
 
 class Minimap

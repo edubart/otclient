@@ -20,21 +20,21 @@
  * THE SOFTWARE.
  */
 
-#ifndef ATTRIBSTORAGE_H
-#define ATTRIBSTORAGE_H
+#ifndef STDEXT_ATTRIBSTORAGE_H
+#define STDEXT_ATTRIBSTORAGE_H
 
-#include "../stdext/types.h"
+#include "types.h"
 #include <tuple>
 #include <boost/any.hpp>
 
-
-#pragma pack(push,1) // disable memory alignment
+// disable memory alignment
+#pragma pack(push,1)
 
 // this class was designed to use less memory as possible
-class AttribStorage {
+namespace stdext {
+class attrib_storage {
 public:
-    AttribStorage() : m_attribs(nullptr), m_size(0) { }
-    ~AttribStorage() { if(m_attribs) delete[] m_attribs; }
+    ~attrib_storage() { if(m_attribs) delete[] m_attribs; }
 
     template<typename T>
     void set(uint8 id, T value) {
@@ -72,10 +72,15 @@ public:
                 return true;
         return false;
     }
+
 private:
-    std::tuple<uint8, boost::any>* m_attribs;
-    uint8 m_size;
+    std::tuple<uint8, boost::any>* m_attribs = nullptr;
+    uint8 m_size = 0;
 };
+
+// restore memory alignment
 #pragma pack(pop)
+
+}
 
 #endif

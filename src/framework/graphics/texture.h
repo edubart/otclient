@@ -63,10 +63,10 @@ protected:
     Size m_size;
     Size m_glSize;
     Matrix3 m_transformMatrix;
-    Boolean<false> m_hasMipmaps;
-    Boolean<false> m_smooth;
-    Boolean<false> m_upsideDown;
-    Boolean<false> m_repeat;
+    bool m_hasMipmaps = false;
+    bool m_smooth = false;
+    bool m_upsideDown = false;
+    bool m_repeat = false;
 };
 
 #endif

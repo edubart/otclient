@@ -99,7 +99,7 @@ protected:
     void fireKeysPress();
 
     std::map<int, Fw::Key> m_keyMap;
-    std::map<Fw::Key, Boolean<false>> m_keysState;
+    std::map<Fw::Key, stdext::boolean<false>> m_keysState;
     std::map<Fw::Key, ticks_t> m_firstKeysPress;
     std::map<Fw::Key, ticks_t> m_lastKeysPress;
     Timer m_keyPressTimer;
@@ -109,13 +109,13 @@ protected:
     Size m_unmaximizedSize;
     Point m_unmaximizedPos;
     InputEvent m_inputEvent;
-    Boolean<false> m_mouseButtonStates[4];
+    stdext::boolean<false> m_mouseButtonStates[4];
 
-    Boolean<false> m_created;
-    Boolean<false> m_visible;
-    Boolean<false> m_focused;
-    Boolean<false> m_fullscreen;
-    Boolean<false> m_maximized;
+    bool m_created = false;
+    bool m_visible = false;
+    bool m_focused = false;
+    bool m_fullscreen = false;
+    bool m_maximized = false;
 
     std::function<void()> m_onClose;
     OnResizeCallback m_onResize;

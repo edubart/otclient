@@ -24,7 +24,6 @@
 #define ITEM_H
 
 #include <framework/global.h>
-#include <framework/util/attribstorage.h>
 #include "thing.h"
 #include "itemtype.h"
 
@@ -125,7 +124,7 @@ private:
     uint16 m_id;
     uint16 m_otbId;
     uint8 m_countOrSubType;
-    AttribStorage m_attribs;
+    stdext::attrib_storage m_attribs;
 };
 #pragma pack(pop)
 

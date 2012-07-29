@@ -35,6 +35,18 @@
 #include <framework/core/eventdispatcher.h>
 #include <framework/core/application.h>
 
+
+enum {
+    // 3840x2160 => 1080p optimized
+    // 2560x1440 => 720p optimized
+    // 1728x972 => 480p optimized
+
+    NEAR_VIEW_AREA = 32*32,
+    MID_VIEW_AREA = 64*64,
+    FAR_VIEW_AREA = 128*128,
+    MAX_TILE_DRAWS = NEAR_VIEW_AREA*7
+};
+
 MapView::MapView()
 {
     m_viewMode = NEAR_VIEW;

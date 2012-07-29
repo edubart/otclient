@@ -41,7 +41,7 @@ public:
     bool isUIBoxLayout() { return true; }
 
 protected:
-    Boolean<false> m_fitChildren;
+    bool m_fitChildren = false;
     int m_spacing;
 };
 

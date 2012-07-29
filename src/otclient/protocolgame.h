@@ -214,8 +214,8 @@ public:
     Position getPosition(const InputMessagePtr& msg);
 
 private:
-    Boolean<false> m_enableSendExtendedOpcode;
-    Boolean<false> m_gameInitialized;
+    stdext::boolean<false> m_enableSendExtendedOpcode;
+    stdext::boolean<false> m_gameInitialized;
     std::string m_accountName;
     std::string m_accountPassword;
     std::string m_characterName;

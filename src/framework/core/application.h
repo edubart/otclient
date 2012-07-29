@@ -68,9 +68,9 @@ protected:
     std::string m_appCompactName;
     std::string m_appVersion;
     std::string m_startupOptions;
-    Boolean<false> m_running;
-    Boolean<false> m_stopping;
-    Boolean<false> m_terminated;
+    bool m_running = false;
+    bool m_stopping = false;
+    stdext::boolean<false> m_terminated;
 };
 
 #ifdef FW_GRAPHICS

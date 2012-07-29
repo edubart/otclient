@@ -55,9 +55,9 @@ private:
     int m_cellSpacing;
     int m_numColumns;
     int m_numLines;
-    Boolean<false> m_autoSpacing;
-    Boolean<false> m_fitChildren;
-    Boolean<false> m_flow;
+    bool m_autoSpacing = false;
+    bool m_fitChildren = false;
+    bool m_flow = false;
 };
 
 #endif

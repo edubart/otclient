@@ -44,7 +44,7 @@ public:
     bool isLoaded() { return m_loaded; }
 
 private:
-    Boolean<false> m_loaded;
+    stdext::boolean<false> m_loaded;
     uint32 m_signature;
     int m_spritesCount;
     int m_spritesOffset;

@@ -77,16 +77,16 @@ private:
 
     int m_maxTextureSize;
     int m_alphaBits;
-    Boolean<false> m_ok;
-    Boolean<true> m_useDrawArrays;
-    Boolean<true> m_useFBO;
-    Boolean<false> m_useHardwareBuffers;
-    Boolean<true> m_useBilinearFiltering;
-    Boolean<true> m_useNonPowerOfTwoTextures;
-    Boolean<true> m_useMipmaps;
-    Boolean<true> m_useHardwareMipmaps;
-    Boolean<true> m_useClampToEdge;
-    Boolean<true> m_cacheBackbuffer;
+    bool m_ok = false;
+    bool m_useDrawArrays = true;
+    bool m_useFBO = true;
+    bool m_useHardwareBuffers = false;
+    bool m_useBilinearFiltering = true;
+    bool m_useNonPowerOfTwoTextures = true;
+    bool m_useMipmaps = true;
+    bool m_useHardwareMipmaps = true;
+    bool m_useClampToEdge = true;
+    bool m_cacheBackbuffer = true;
     PainterEngine m_prefferedPainterEngine;
     PainterEngine m_selectedPainterEngine;
 };

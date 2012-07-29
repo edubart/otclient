@@ -27,7 +27,6 @@
 #include <framework/core/declarations.h>
 #include <framework/luaengine/luaobject.h>
 #include <framework/xml/tinyxml.h>
-#include <framework/util/attribstorage.h>
 
 enum ItemCategory {
     ItemCategoryInvalid      = 0,
@@ -102,9 +101,9 @@ public:
 
 private:
     ItemCategory m_category;
-    Boolean<true> m_null;
+    stdext::boolean<true> m_null;
 
-    AttribStorage m_attribs;
+    stdext::attrib_storage m_attribs;
 };
 
 #endif

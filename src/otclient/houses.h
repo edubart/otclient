@@ -27,7 +27,6 @@
 #include "tile.h"
 
 #include <framework/luaengine/luaobject.h>
-#include <framework/util/attribstorage.h>
 
 enum HouseAttr : uint8
 {
@@ -64,9 +63,9 @@ protected:
     void save(TiXmlElement &elem) { } // TODO
 
 private:
-    AttribStorage m_attribs;
+    stdext::attrib_storage m_attribs;
     TileMap m_tiles;
-    Boolean<false> m_isGuildHall;
+    stdext::boolean<false> m_isGuildHall;
 
     friend class Houses;
 };

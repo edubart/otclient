@@ -25,7 +25,6 @@
 
 #include "declarations.h"
 #include <framework/luaengine/luaobject.h>
-#include <framework/util/attribstorage.h>
 #include "outfit.h"
 
 enum CreatureAttr : uint8
@@ -51,7 +50,7 @@ public:
     int getSpawnTime() { return m_attribs.get<int>(CreatureAttrSpawnTime); }
 
 private:
-    AttribStorage m_attribs;
+    stdext::attrib_storage m_attribs;
 };
 
 class Creatures
@@ -72,7 +71,7 @@ protected:
 
 private:
     std::vector<CreatureTypePtr> m_creatures;
-    Boolean<false> m_loaded;
+    stdext::boolean<false> m_loaded;
 };
 
 #endif

@@ -50,7 +50,7 @@ protected:
     void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode);
 
     ItemPtr m_item;
-    Boolean<false> m_virtual;
+    stdext::boolean<false> m_virtual;
 };
 
 #endif

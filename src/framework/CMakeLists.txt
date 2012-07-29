@@ -21,7 +21,6 @@ set(framework_SOURCES ${framework_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/pch.h
     ${CMAKE_CURRENT_LIST_DIR}/luafunctions.cpp
 
-    ${CMAKE_CURRENT_LIST_DIR}/util/boolean.h
     ${CMAKE_CURRENT_LIST_DIR}/util/color.cpp
     ${CMAKE_CURRENT_LIST_DIR}/util/color.h
     ${CMAKE_CURRENT_LIST_DIR}/util/crypt.cpp
@@ -33,7 +32,6 @@ set(framework_SOURCES ${framework_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/util/rsa.cpp
     ${CMAKE_CURRENT_LIST_DIR}/util/rsa.h
     ${CMAKE_CURRENT_LIST_DIR}/util/size.h
-    ${CMAKE_CURRENT_LIST_DIR}/util/attribstorage.h
 
     # stdext
     ${CMAKE_CURRENT_LIST_DIR}/stdext/cast.h
@@ -46,6 +44,8 @@ set(framework_SOURCES ${framework_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/stdext/string.h
     ${CMAKE_CURRENT_LIST_DIR}/stdext/time.h
     ${CMAKE_CURRENT_LIST_DIR}/stdext/types.h
+    ${CMAKE_CURRENT_LIST_DIR}/stdext/attrib_storage.h
+    ${CMAKE_CURRENT_LIST_DIR}/stdext/shared_object.h
 
     # core
     ${CMAKE_CURRENT_LIST_DIR}/core/application.cpp
@@ -127,11 +127,11 @@ endif()
 
 # gcc compile flags
 set(WARNS_FLAGS "-Wall -Wextra -Werror -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-unused-variable")
-set(CMAKE_CXX_FLAGS                   "${CMAKE_CXX_FLAGS} ${WARNS_FLAGS} ${ARCH_FLAGS} -std=gnu++0x -pipe")
+set(CMAKE_CXX_FLAGS                   "${CMAKE_CXX_FLAGS} ${WARNS_FLAGS} ${ARCH_FLAGS} -std=c++11 -pipe")
 set(CMAKE_CXX_FLAGS_DEBUG             "-O0 -g")
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO    "-O1 -g -fno-omit-frame-pointer")
 set(CMAKE_CXX_FLAGS_RELEASE           "-O2")
-set(CMAKE_CXX_FLAGS_PERFORMANCE       "-Ofast -mmxx -msee -msee2")
+set(CMAKE_CXX_FLAGS_PERFORMANCE       "-Ofast -mmmx -msse -msse2")
 set(CMAKE_CXX_FLAGS_MINSIZEREL        "-Os")
 
 # process options

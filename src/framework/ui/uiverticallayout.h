@@ -40,7 +40,7 @@ public:
 protected:
     bool internalUpdate();
 
-    Boolean<false> m_alignBottom;
+    stdext::boolean<false> m_alignBottom;
 };
 
 #endif

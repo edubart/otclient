@@ -29,7 +29,6 @@
 #include <framework/graphics/coordsbuffer.h>
 #include <framework/luaengine/luaobject.h>
 #include <framework/net/server.h>
-#include <framework/util/attribstorage.h>
 
 enum ThingCategory : uint8 {
     ThingCategoryItem = 0,
@@ -180,7 +179,7 @@ private:
     ThingCategory m_category;
     uint16 m_id;
     bool m_null;
-    AttribStorage m_attribs;
+    stdext::attrib_storage m_attribs;
 
     Size m_size;
     Point m_displacement;

@@ -63,10 +63,10 @@ protected:
     friend class ModuleManager;
 
 private:
-    Boolean<false> m_loaded;
-    Boolean<false> m_autoLoad;
-    Boolean<false> m_reloadable;
-    Boolean<false> m_sandboxed;
+    bool m_loaded = false;
+    bool m_autoLoad = false;
+    bool m_reloadable = false;
+    bool m_sandboxed = false;
     int m_autoLoadPriority;
     int m_sandboxEnv;
     std::tuple<std::string, std::string> m_onLoadFunc;

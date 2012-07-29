@@ -41,7 +41,7 @@ public:
 
 private:
     ticks_t m_startTicks;
-    Boolean<false> m_stopped;
+    bool m_stopped = false;
 };
 
 #endif
