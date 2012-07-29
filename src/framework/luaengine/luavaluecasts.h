@@ -166,7 +166,12 @@ int push_internal_luavalue(T v) {
 template<class T>
 typename std::enable_if<std::is_enum<T>::value, bool>::type
 luavalue_cast(int index, T& myenum) {
-    return luavalue_cast(index, (int&)myenum);
+    int i;
+    if(luavalue_cast(index, i)) {
+        myenum = (T)i;
+        return true;
+    }
+    return false;
 }
 
 template<class T>
