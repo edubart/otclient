@@ -135,6 +135,39 @@ enum {
     OTCM_VERSION = 1
 };
 
+
+
+enum {
+    BLOCK_SIZE = 32
+};
+
+class TileBlock {
+public:
+    TileBlock() { m_tiles.fill(nullptr); }
+
+    const TilePtr& create(const Position& pos) {
+        TilePtr& tile = m_tiles[getTileIndex(pos)];
+        tile = TilePtr(new Tile(pos));
+        return tile;
+    }
+
+    const TilePtr& getOrCreate(const Position& pos) {
+        TilePtr& tile = m_tiles[getTileIndex(pos)];
+        if(!tile)
+            tile = TilePtr(new Tile(pos));
+        return tile;
+    }
+
+    const TilePtr& get(const Position& pos) { return m_tiles[getTileIndex(pos)]; }
+
+    void remove(const Position& pos) { m_tiles[getTileIndex(pos)] = nullptr; }
+
+    uint getTileIndex(const Position& pos) { return ((pos.y % BLOCK_SIZE) * BLOCK_SIZE) + (pos.x % BLOCK_SIZE); }
+
+private:
+    std::array<TilePtr, BLOCK_SIZE*BLOCK_SIZE> m_tiles;
+};
+
 //@bindsingleton g_map
 class Map
 {
@@ -181,11 +214,11 @@ public:
     bool removeThingByPos(const Position& pos, int stackPos);
 
     // tile related
+    const TilePtr& createTile(const Position& pos);
     template <typename... Items>
-    TilePtr createTileEx(const Position& pos, const Items&... items);
-    TilePtr createTile(const Position& pos);
+    const TilePtr& createTileEx(const Position& pos, const Items&... items);
+    const TilePtr& getOrCreateTile(const Position& pos);
     const TilePtr& getTile(const Position& pos);
-    TilePtr getOrCreateTile(const Position& pos);
     void cleanTile(const Position& pos);
 
     // known creature related
@@ -221,7 +254,9 @@ public:
     std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> findPath(const Position& start, const Position& goal, int maxSteps);
 
 private:
-    TileMap m_tiles;
+    uint getBlockIndex(const Position& pos) { return ((pos.y / BLOCK_SIZE) * (65536 / BLOCK_SIZE)) + (pos.x / BLOCK_SIZE); }
+
+    std::unordered_map<uint, TileBlock> m_tileBlocks[Otc::MAX_Z+1];
     std::unordered_map<uint32, CreaturePtr> m_knownCreatures;
     std::array<std::vector<MissilePtr>, Otc::MAX_Z+1> m_floorMissiles;
     std::vector<AnimatedTextPtr> m_animatedTexts;
@@ -237,6 +272,7 @@ private:
     Houses m_houses;
     Towns m_towns;
     Creatures m_creatures;
+    static TilePtr m_nulltile;
 };
 
 extern Map g_map;

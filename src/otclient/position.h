@@ -218,7 +218,7 @@ public:
 
 struct PositionHasher : std::unary_function<Position, std::size_t> {
     std::size_t operator()(const Position& pos) const {
-        return (((((pos.x * 8192) + pos.y) * 16) + pos.z) % (8192*8192)) % 100000000;
+        return (((pos.x * 8192) + pos.y) * 16) + pos.z;
     }
 };
 

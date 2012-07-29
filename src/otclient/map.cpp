@@ -37,6 +37,7 @@
 #include <framework/xml/tinyxml.h>
 
 Map g_map;
+TilePtr Map::m_nulltile;
 
 void Map::terminate()
 {
@@ -236,12 +237,6 @@ void Map::loadOtbm(const std::string& fileName)
             stdext::throw_exception(stdext::format("Unknown map data node %d", (int)mapDataType));
     }
 
-    int numItems = 0;
-    for(const auto& it : m_tiles)
-        numItems += it.second->getThingCount();
-
-    g_logger.debug(stdext::format("Total items: %d", numItems));
-    g_logger.debug(stdext::format("Total tiles: %d", m_tiles.size()));
     g_logger.debug("OTBM read successfully.");
     fin->close();
 
@@ -251,6 +246,7 @@ void Map::loadOtbm(const std::string& fileName)
 
 void Map::saveOtbm(const std::string &fileName)
 {
+#if 0
     /// FIXME: Untested code
     FileStreamPtr fin = g_resources.appendFile(fileName);
     if(!fin)
@@ -384,6 +380,7 @@ void Map::saveOtbm(const std::string &fileName)
 
     root->writeToFile();
     g_logger.debug(stdext::format("OTBM saving took %ld", time(0) - start));
+#endif
 }
 
 void Map::loadSpawns(const std::string &fileName)
@@ -472,7 +469,7 @@ bool Map::loadOtcm(const std::string& fileName)
             if(!pos.isValid())
                 break;
 
-            TilePtr tile = g_map.createTile(pos);
+            const TilePtr& tile = g_map.createTile(pos);
 
             int stackPos = 0;
             while(true) {
@@ -503,6 +500,7 @@ bool Map::loadOtcm(const std::string& fileName)
 
 void Map::saveOtcm(const std::string& fileName)
 {
+#if 0
     try {
         g_clock.update();
 
@@ -566,12 +564,16 @@ void Map::saveOtcm(const std::string& fileName)
     } catch(stdext::exception& e) {
         g_logger.error(stdext::format("failed to save OTCM map: %s", e.what()));
     }
+#endif
 }
 
 void Map::clean()
 {
     cleanDynamicThings();
-    m_tiles.clear();
+
+    for(int i=0;i<=Otc::MAX_Z;++i)
+        m_tileBlocks[i].clear();
+
     m_waypoints.clear();
 
     m_towns.clear();
@@ -702,21 +704,10 @@ bool Map::removeThingByPos(const Position& pos, int stackPos)
     return false;
 }
 
-template <typename... Items>
-TilePtr Map::createTileEx(const Position& pos, const Items&... items)
+const TilePtr& Map::createTile(const Position& pos)
 {
-    TilePtr tile = getOrCreateTile(pos);
-    auto vec = {items...};
-    for (auto it : vec)
-        addThing(it, pos);
-
-    return tile;
-}
-
-TilePtr Map::createTile(const Position& pos)
-{
-    TilePtr tile = TilePtr(new Tile(pos));
-    m_tiles[pos] = tile;
+    if(!pos.isValid())
+        return m_nulltile;
     if(pos.x < m_tilesRect.left())
         m_tilesRect.setLeft(pos.x);
     if(pos.y < m_tilesRect.top())
@@ -725,38 +716,63 @@ TilePtr Map::createTile(const Position& pos)
         m_tilesRect.setRight(pos.x);
     if(pos.y > m_tilesRect.bottom())
         m_tilesRect.setBottom(pos.y);
+    TileBlock& block = m_tileBlocks[pos.z][getBlockIndex(pos)];
+    return block.create(pos);
+}
+
+template <typename... Items>
+const TilePtr& Map::createTileEx(const Position& pos, const Items&... items)
+{
+    if(!pos.isValid())
+        return m_nulltile;
+    const TilePtr& tile = getOrCreateTile(pos);
+    auto vec = {items...};
+    for(auto it : vec)
+        addThing(it, pos);
+
     return tile;
+}
+
+const TilePtr& Map::getOrCreateTile(const Position& pos)
+{
+    if(!pos.isValid())
+        return m_nulltile;
+    if(pos.x < m_tilesRect.left())
+        m_tilesRect.setLeft(pos.x);
+    if(pos.y < m_tilesRect.top())
+        m_tilesRect.setTop(pos.y);
+    if(pos.x > m_tilesRect.right())
+        m_tilesRect.setRight(pos.x);
+    if(pos.y > m_tilesRect.bottom())
+        m_tilesRect.setBottom(pos.y);
+    TileBlock& block = m_tileBlocks[pos.z][getBlockIndex(pos)];
+    return block.getOrCreate(pos);
 }
 
 const TilePtr& Map::getTile(const Position& pos)
 {
-    static TilePtr nulltile;
-    if(!m_tilesRect.contains(Point(pos.x, pos.y)))
-        return nulltile;
-
-    auto it = m_tiles.find(pos);
-    if(it != m_tiles.end())
-        return it->second;
-    return nulltile;
-}
-
-TilePtr Map::getOrCreateTile(const Position& pos)
-{
-    const TilePtr& tile = getTile(pos);
-    if(tile)
-        return tile;
-    else
-        return createTile(pos);
+    if(!pos.isValid())
+        return m_nulltile;
+    auto it = m_tileBlocks[pos.z].find(getBlockIndex(pos));
+    if(it != m_tileBlocks[pos.z].end())
+        return it->second.get(pos);
+    return m_nulltile;
 }
 
 void Map::cleanTile(const Position& pos)
 {
-    if(TilePtr tile = getTile(pos)) {
-        tile->clean();
-        if(tile->canErase())
-            m_tiles.erase(m_tiles.find(pos));
+    if(!pos.isValid())
+        return;
+    auto it = m_tileBlocks[pos.z].find(getBlockIndex(pos));
+    if(it != m_tileBlocks[pos.z].end()) {
+        TileBlock& block = it->second;
+        if(const TilePtr& tile = block.get(pos)) {
+            tile->clean();
+            if(tile->canErase())
+                block.remove(pos);
 
-        notificateTileUpdateToMapViews(pos);
+            notificateTileUpdateToMapViews(pos);
+        }
     }
 }
 
