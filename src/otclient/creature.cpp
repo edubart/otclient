@@ -266,9 +266,9 @@ void Creature::walk(const Position& oldPos, const Position& newPos)
 
     // calculates walk interval
     int groundSpeed = 0;
-    TilePtr oldTile = g_map.getTile(oldPos);
-    if(oldTile)
-        groundSpeed = oldTile->getGroundSpeed();
+    TilePtr tile = g_map.getTile(newPos);
+    if(tile)
+        groundSpeed = tile->getGroundSpeed();
 
     float interval = 1000;
     if(groundSpeed > 0 && m_speed > 0)
