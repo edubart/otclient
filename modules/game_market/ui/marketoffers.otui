@@ -179,7 +179,6 @@ Panel
 
   Label
     id: feeLabel
-    !text: tr('')
     font: verdana-11px-rounded
     text-offset: 0 2
     anchors.top: createOfferButton.bottom

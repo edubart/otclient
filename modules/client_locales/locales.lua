@@ -1,7 +1,6 @@
--- TIP: to find all possible translations in the modules directory use the following command
--- find \( -name "*.lua" -o -name "*.otui" \) -exec grep -oE "tr\\('(\\\\'|[^'])*'" {} \; -exec grep -oE "tr\\(\"(\\\\\"|[^\"])*" {} \; | sort | uniq | sed "s/^tr(.\(.*\).$/[\"\1\"] = nil,/"
-
 Locales = { }
+
+dofile 'neededtranslations.lua'
 
 -- private variables
 local defaultLocaleName = 'en'
@@ -75,9 +74,37 @@ function Locales.terminate()
   disconnect(g_game, { onGameStart = onGameStart })
 end
 
+function generateNewTranslationTable(localename)
+  local locale = installedLocales[localename]
+  for _i,k in pairs(Locales.neededTranslations) do
+    local trans = locale.translation[k]
+    k = k:gsub('\n','\\n')
+    k = k:gsub('\t','\\t')
+    k = k:gsub('\"','\\\"')
+    if trans then
+      trans = trans:gsub('\n','\\n')
+      trans = trans:gsub('\t','\\t')
+      trans = trans:gsub('\"','\\\"')
+    end
+    if not trans then
+      print('    ["' .. k .. '"]' .. ' = false,')
+    else
+      print('    ["' .. k .. '"]' .. ' = "' .. trans .. '",')
+    end
+  end
+end
+
 function Locales.installLocale(locale)
   if not locale or not locale.name then
     error('Unable to install locale.')
+  end
+
+  if locale.name ~= defaultLocaleName then
+    for _i,k in pairs(Locales.neededTranslations) do
+      if locale.translation[k] == nil then
+        pwarning('Translation for locale \'' .. locale.name .. '\' not found: \"' .. k.. '\"')
+      end
+    end
   end
 
   local installedLocale = installedLocales[locale.name]
