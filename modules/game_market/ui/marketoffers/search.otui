@@ -2,8 +2,11 @@ Panel
   background-color: #22283399
   margin: 1
 
-  Label
-    !text: tr('Search')
+  TextEdit
+    id: searchEdit
     anchors.top: parent.top
     anchors.left: parent.left
-    margin-left: 10
+    anchors.right: parent.right
+    margin-top: 10
+    margin-left: 6
+    margin-right: 6

@@ -345,7 +345,6 @@ local function updateBalance(balance)
   if balance < 0 then balance = 0 end
   information.balance = balance
 
-  balanceLabel = marketWindow:recursiveGetChildById('balanceLabel')
   balanceLabel:setText('Balance: '..balance..'gp')
   balanceLabel:resizeToText()
 end
@@ -406,13 +405,15 @@ local function openAmountWindow(callback, type, actionText)
   amountWindow:lock()
 
   local spinbox = amountWindow:getChildById('amountSpinBox')
-  local scrollbar = amountWindow:getChildById('amountScrollBar')
   spinbox:setMaximum(selectedOffer[type]:getAmount())
   spinbox:setMinimum(1)
   spinbox:setValue(1)
+
+  local scrollbar = amountWindow:getChildById('amountScrollBar')
   scrollbar:setMaximum(selectedOffer[type]:getAmount())
   scrollbar:setMinimum(1)
   scrollbar:setValue(1)
+
   scrollbar.onValueChange = function(self, value) spinbox:setValue(value) end
   spinbox.onValueChange = function(self, value) scrollbar:setValue(value) end
   
@@ -473,7 +474,11 @@ local function onSelectBuyOffer(table, selectedRow, previousSelectedRow)
   for _, offer in pairs(marketOffers[MarketAction.Buy]) do
     if offer:isEqual(selectedRow.ref) then
       selectedOffer[MarketAction.Sell] = offer
-      sellButton:setEnabled(true)
+      if Market.depotContains(offer:getItem():getId()) >= offer:getAmount() then
+        sellButton:setEnabled(true)
+      else
+        sellButton:setEnabled(false)
+      end
     end
   end
 end
@@ -619,6 +624,8 @@ local function initInterface()
   offerHistoryPanel = g_ui.loadUI('ui/myoffers/offerhistory.otui')
   offersTabBar:addTab(tr('Offer History'), offerHistoryPanel)
 
+  balanceLabel = marketWindow:getChildById('balanceLabel')
+
   -- setup offers
   buyButton = itemOffersPanel:getChildById('buyButton')
   buyButton.onClick = function() openAmountWindow(Market.buyMarketOffer, MarketAction.Buy, 'Buy') end
@@ -715,6 +722,8 @@ end
 
 function Market.reset()
   balanceLabel:setColor('#bbbbbb')
+  marketWindow:unlock()
+  marketWindow:hide()
   categoryList:setCurrentOption(getMarketCategoryName(MarketCategory.First))
   Market.clearSelectedItem()
   clearFilters()
@@ -938,20 +947,24 @@ function Market.createNewOffer()
 
   MarketProtocol.sendMarketCreateOffer(type, spriteId, amount, piecePrice, anonymous)
   if type == MarketAction.Sell then
-    updateDepotItemCount(spriteId, amount) -- remove count from depot tmp
+    --[[
+      This is require due to bot protected protocol (cannot update browse item without user input)
+      normal way is to use the new retrieved depot items in onMarketEnter and refresh the items widget.   
+    ]]
+    updateDepotItemCount(spriteId, amount)
     Market.refreshItemsWidget(spriteId)
   end
   Market.resetCreateOffer()
 end
 
 function Market.buyMarketOffer(amount, timestamp, counter)
-  if timestamp > 0 and counter > 0 and amount > 0 then
+  if timestamp > 0 and amount > 0 then
     MarketProtocol.sendMarketAcceptOffer(timestamp, counter, amount)
   end
 end
 
 function Market.sellMarketOffer(amount, timestamp, counter)
-  if timestamp > 0 and counter > 0 and amount > 0 then
+  if timestamp > 0 and amount > 0 then
     MarketProtocol.sendMarketAcceptOffer(timestamp, counter, amount)
   end
 end
@@ -976,12 +989,6 @@ function Market.onMarketEnter(depotItems, offers, balance, vocation)
   Market.loadDepotItems(depotItems)
   if table.empty(currentItems) then
     Market.loadMarketItems(MarketCategory.First)
-  --[[else
-    -- TODO: Create function to handle this on showing market (seperate from parsing!)
-    if Market.isItemSelected() then
-      local spriteId = selectedItem.item.ptr:getId()
-      Market.refreshItemsWidget(spriteId)
-    end]]
   end
 
   -- build offer table header
@@ -999,6 +1006,7 @@ function Market.onMarketEnter(depotItems, offers, balance, vocation)
 end
 
 function Market.onMarketLeave()
+  marketWindow:unlock()
   marketWindow:hide()
 end
 
