@@ -42,6 +42,8 @@ class Game
 public:
     Game();
 
+    void terminate();
+
 private:
     void resetGameStates();
 
@@ -241,9 +243,6 @@ public:
     void setClientVersion(int version);
     int getClientVersion() { return m_protocolVersion; }
 
-    void setRSA(const std::string& rsa);
-    std::string getRSA() { return m_rsa; }
-
     bool canPerformGameAction();
     bool checkBotProtection();
 
@@ -298,7 +297,6 @@ private:
     std::string m_worldName;
     std::bitset<Otc::LastGameFeature> m_features;
     int m_protocolVersion;
-    std::string m_rsa;
 };
 
 extern Game g_game;

@@ -79,7 +79,6 @@ Texture::Texture(const ImagePtr& image, bool buildMipmaps)
 
 Texture::~Texture()
 {
-    assert(!g_app.isTerminated());
     // free texture from gl memory
     if(g_graphics.ok() && m_id != 0)
         glDeleteTextures(1, &m_id);

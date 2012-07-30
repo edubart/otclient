@@ -40,9 +40,12 @@ void TextureManager::terminate()
 #ifndef NDEBUG
     // check for leaks
     int refs = 0;
-    for(const auto& it : m_textures)
-        if(it.second->ref_count() > 1)
+    for(const auto& it : m_textures) {
+        if(it.second->ref_count() > 1) {
             refs++;
+            g_logger.debug(stdext::format("texture reference released: %s", it.first));
+        }
+    }
     if(refs > 0)
         g_logger.debug(stdext::format("%d textures references left", refs));
 #endif

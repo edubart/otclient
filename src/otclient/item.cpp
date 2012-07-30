@@ -298,6 +298,20 @@ void Item::serializeItem(const BinaryTreePtr& out)
     }
 }
 
+int Item::getSubType()
+{
+    if(isSplash() || isFluidContainer())
+        return m_countOrSubType;
+    return 1;
+}
+
+int Item::getCount()
+{
+    if(isStackable())
+        return m_countOrSubType;
+    return 1;
+}
+
 bool Item::isMoveable()
 {
     return !rawGetThingType()->isNotMoveable();

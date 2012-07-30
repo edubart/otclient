@@ -24,12 +24,15 @@ function UIItem:onDrop(widget, mousePos)
   if not widget or not widget.currentDragThing then return false end
 
   local item = widget.currentDragThing
+  if not item:isItem() then return false end
+
   local toPos = self.position
 
   local itemPos = item:getPosition()
   if itemPos.x == toPos.x and itemPos.y == toPos.y and itemPos.z == toPos.z then return false end
 
   if item:getCount() > 1 then
+	g_game.look(item)
     modules.game_interface.moveStackableItem(item, toPos)
   else
     g_game.move(item, toPos, 1)

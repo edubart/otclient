@@ -90,8 +90,8 @@ public:
     void setSubType(int subType) { m_countOrSubType = subType; }
 
     int getCountOrSubType() { return m_countOrSubType; }
-    int getSubType() { return m_countOrSubType; }
-    int getCount() { return m_countOrSubType; }
+    int getSubType();
+    int getCount();
     uint32 getId() { return m_id; }
     bool isValid();
 

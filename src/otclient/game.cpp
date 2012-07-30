@@ -42,6 +42,12 @@ Game::Game()
     m_protocolVersion = 0;
 }
 
+void Game::terminate()
+{
+    resetGameStates();
+    m_protocolGame = nullptr;
+}
+
 void Game::resetGameStates()
 {
     m_online = false;
