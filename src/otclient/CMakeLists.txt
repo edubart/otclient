@@ -6,15 +6,6 @@ endif(${CMAKE_MAJOR_VERSION} EQUAL 2 AND ${CMAKE_MINOR_VERSION} EQUAL 6)
 # otclient options
 add_definitions(-DOTCLIENT)
 option(BOT_PROTECTION "Enable bot protection" ON)
-option(CIPSOFT_RSA "Use cipsoft RSA to login into original tibia" OFF)
-
-if(CIPSOFT_RSA)
-    add_definitions(-DCIPSOFT_RSA -DOSTYPE=2)
-    message(STATUS "RSA: CipSoft")
-else()
-    message(STATUS "RSA: OTServ")
-endif()
-
 if(BOT_PROTECTION)
     add_definitions(-DBOT_PROTECTION)
     message(STATUS "Bot protection: ON")
