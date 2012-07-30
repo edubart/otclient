@@ -164,6 +164,7 @@ void OTClient::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_game", "inspectNpcTrade", &Game::inspectNpcTrade, &g_game);
     g_lua.bindSingletonFunction("g_game", "buyItem", &Game::buyItem, &g_game);
     g_lua.bindSingletonFunction("g_game", "sellItem", &Game::sellItem, &g_game);
+    g_lua.bindSingletonFunction("g_game", "ping", &Game::ping, &g_game);
     g_lua.bindSingletonFunction("g_game", "closeNpcTrade", &Game::closeNpcTrade, &g_game);
     g_lua.bindSingletonFunction("g_game", "requestTrade", &Game::requestTrade, &g_game);
     g_lua.bindSingletonFunction("g_game", "inspectTrade", &Game::inspectTrade, &g_game);
@@ -249,6 +250,8 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Thing>("getStackPriority", &Thing::getStackPriority);
     g_lua.bindClassMemberFunction<Thing>("getAnimationPhases", &Thing::getAnimationPhases);
     g_lua.bindClassMemberFunction<Thing>("isItem", &Thing::isItem);
+    g_lua.bindClassMemberFunction<Thing>("isMonster", &Thing::isMonster);
+    g_lua.bindClassMemberFunction<Thing>("isNpc", &Thing::isNpc);
     g_lua.bindClassMemberFunction<Thing>("isCreature", &Thing::isCreature);
     g_lua.bindClassMemberFunction<Thing>("isEffect", &Thing::isEffect);
     g_lua.bindClassMemberFunction<Thing>("isMissile", &Thing::isMissile);

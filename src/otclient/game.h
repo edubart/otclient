@@ -51,6 +51,7 @@ protected:
     void processConnectionError(const boost::system::error_code& error);
     void processDisconnect();
     void processPing();
+    void processPingBack(int elapsed);
 
     void processLoginError(const std::string& error);
     void processLoginAdvice(const std::string& message);
@@ -232,7 +233,7 @@ public:
     // 910 only
     //void requestItemInfo();
     //void reportRuleViolation2();
-    // TODO: market related
+    void ping();
 
     // dynamic support for game features
     void enableFeature(Otc::GameFeature feature) { m_features.set(feature, true); }

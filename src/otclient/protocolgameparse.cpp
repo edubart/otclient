@@ -378,7 +378,7 @@ void ProtocolGame::parsePing(const InputMessagePtr& msg)
 
 void ProtocolGame::parsePingBack(const InputMessagePtr& msg)
 {
-    // nothing to do
+    g_game.processPingBack(m_pingTimer.ticksElapsed());
 }
 
 void ProtocolGame::parseChallange(const InputMessagePtr& msg)
@@ -928,7 +928,7 @@ void ProtocolGame::parsePlayerCancelAttack(const InputMessagePtr& msg)
 
 void ProtocolGame::parseSpellCooldown(const InputMessagePtr& msg)
 {
-    msg->getU16(); // spell id
+    msg->getU8(); // spell id
     msg->getU32(); // cooldown
 }
 
@@ -1083,16 +1083,26 @@ void ProtocolGame::parseTextMessage(const InputMessagePtr& msg)
         case Otc::MessageDamageReceived:
         case Otc::MessageDamageOthers: {
             Position pos = getPosition(msg);
-            uint value = msg->getU32();
-            int color =  msg->getU8();
-            msg->getU32(); // ??
-            msg->getU8(); // ??
+            uint value[2];
+            int color[2];
+
+            // physical damage
+            value[0] = msg->getU32();
+            color[0] =  msg->getU8();
+
+            // magic damage
+            value[1] = msg->getU32();
+            color[1] = msg->getU8();
             text = msg->getString();
 
-            AnimatedTextPtr animatedText = AnimatedTextPtr(new AnimatedText);
-            animatedText->setColor(color);
-            animatedText->setText(stdext::to_string(value));
-            g_map.addThing(animatedText, pos);
+            for(int i=0;i<2;++i) {
+                if(value[i] == 0)
+                    continue;
+                AnimatedTextPtr animatedText = AnimatedTextPtr(new AnimatedText);
+                animatedText->setColor(color[i]);
+                animatedText->setText(stdext::to_string(value[i]));
+                g_map.addThing(animatedText, pos);
+            }
             break;
         }
         case Otc::MessageHeal:
@@ -1130,8 +1140,8 @@ void ProtocolGame::parseCancelWalk(const InputMessagePtr& msg)
 
 void ProtocolGame::parseWalkWait(const InputMessagePtr& msg)
 {
-    //TODO: implement walk wait time
-    msg->getU16(); // time
+    int millis = msg->getU16();
+    m_localPlayer->lockWalk(millis);
 }
 
 void ProtocolGame::parseFloorChangeUp(const InputMessagePtr& msg)

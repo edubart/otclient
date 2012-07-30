@@ -158,6 +158,11 @@ void Game::processPing()
     g_lua.callGlobalField("g_game", "onPing");
 }
 
+void Game::processPingBack(int elapsed)
+{
+    g_lua.callGlobalField("g_game", "onPingBack", elapsed);
+}
+
 void Game::processTextMessage(Otc::MessageMode mode, const std::string& text)
 {
     g_lua.callGlobalField("g_game", "onTextMessage", mode, text);
@@ -1071,6 +1076,16 @@ void Game::mount(bool mount)
 
     m_protocolGame->sendMountStatus(mount);
     m_mounted = mount;
+}
+
+void Game::ping()
+{
+    if(!m_protocolGame || !m_protocolGame->isConnected())
+        return;
+
+    m_denyBotCall = false;
+    m_protocolGame->sendPing();
+    m_denyBotCall = true;
 }
 
 bool Game::checkBotProtection()

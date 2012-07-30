@@ -150,6 +150,7 @@ function destroy()
     currentColorBox = nil
     currentClotheButtonBox = nil
     colorBoxes = {}
+    addons = nil
   end
 end
 

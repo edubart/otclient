@@ -380,6 +380,11 @@ function onOpenNpcTrade(items)
   addEvent(show) -- player goods has not been parsed yet
 end
 
+function closeNpcTrade()
+  g_game.closeNpcTrade()
+  hide()
+end
+
 function onCloseNpcTrade()
   hide()
 end

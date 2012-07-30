@@ -12,4 +12,4 @@ MiniWindow
   MiniWindowContents
     layout: verticalBox
     anchors.fill: parent
-    @onMousePress: onVipListMousePress()
+    &onMousePress: modules.game_viplist.onVipListMousePress

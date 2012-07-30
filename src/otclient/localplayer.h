@@ -29,7 +29,6 @@
 class LocalPlayer : public Player
 {
     enum {
-        WALK_LOCK_INTERVAL = 250,
         PREWALK_TIMEOUT = 1000
     };
 
@@ -37,7 +36,7 @@ public:
     LocalPlayer();
 
     void unlockWalk() { m_walkLocked = false; }
-    void lockWalk();
+    void lockWalk(int millis = 250);
     bool canWalk(Otc::Direction direction);
 
     void setStates(int states);
@@ -112,6 +111,7 @@ private:
     bool m_known;
     int m_states;
     int m_vocation;
+    int m_walkLockInterval;
 
     double m_health;
     double m_maxHealth;

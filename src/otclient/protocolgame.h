@@ -219,6 +219,7 @@ private:
     std::string m_accountName;
     std::string m_accountPassword;
     std::string m_characterName;
+    Timer m_pingTimer;
     LocalPlayerPtr m_localPlayer;
 };
 

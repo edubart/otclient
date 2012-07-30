@@ -33,7 +33,7 @@ MainWindow
   id: npcWindow
   !text: tr('NPC Trade')
   size: 550 515
-  @onEscape: g_game.closeNpcTrade()
+  @onEscape: modules.game_npctrade.closeNpcTrade()
 
   TabButton
     id: buyTab
@@ -264,4 +264,4 @@ MainWindow
     width: 64
     anchors.right: parent.right
     anchors.bottom: parent.bottom
-    @onClick: g_game.closeNpcTrade()
+    @onClick: modules.game_npctrade.closeNpcTrade()

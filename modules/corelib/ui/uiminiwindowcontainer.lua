@@ -11,21 +11,21 @@ end
 
 function UIMiniWindowContainer:onDrop(widget, mousePos)
   if widget:getClassName() == 'UIMiniWindow' then
-  	local oldParent = widget:getParent()
-  	if oldParent == self then
-  		return true
-  	end
-
-    if oldParent then
-  	  oldParent:removeChild(widget)
+    local oldParent = widget:getParent()
+    if oldParent == self then
+        return true
     end
 
-  	if widget.movedWidget then
-  		local index = self:getChildIndex(widget.movedWidget)
-  		self:insertChild(index + widget.movedIndex, widget)
-  	else
-  		self:addChild(widget)
-  	end
+    if oldParent then
+      oldParent:removeChild(widget)
+    end
+
+    if widget.movedWidget then
+        local index = self:getChildIndex(widget.movedWidget)
+        self:insertChild(index + widget.movedIndex, widget)
+    else
+        self:addChild(widget)
+    end
 
     return true
   end
@@ -47,7 +47,7 @@ end
 function UIMiniWindowContainer:scheduleInsert(widget, index)
   if index - 1 > self:getChildCount() then
     if self.scheduledWidgets[index] then
-      warning('replacing scheduled widget id ' .. widget:getId())
+      pwarning('replacing scheduled widget id ' .. widget:getId())
     end
     self.scheduledWidgets[index] = widget
   else

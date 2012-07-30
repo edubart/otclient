@@ -37,6 +37,7 @@ LocalPlayer::LocalPlayer()
 
     m_states = 0;
     m_vocation = 0;
+    m_walkLockInterval = 0;
 
     m_skillsLevel.fill(-1);
     m_skillsLevelPercent.fill(-1);
@@ -55,7 +56,7 @@ LocalPlayer::LocalPlayer()
     m_stamina = -1;
 }
 
-void LocalPlayer::lockWalk()
+void LocalPlayer::lockWalk(int millis)
 {
     // prevents double locks
     if(m_walkLocked)
@@ -63,6 +64,7 @@ void LocalPlayer::lockWalk()
 
     m_walkLocked = true;
     m_walkLockTimer.restart();
+    m_walkLockInterval = millis;
 }
 
 bool LocalPlayer::canWalk(Otc::Direction direction)
@@ -79,7 +81,7 @@ bool LocalPlayer::canWalk(Otc::Direction direction)
         return false;
 
     // cannot walk while locked
-    if(m_walkLocked && m_walkLockTimer.ticksElapsed() <= WALK_LOCK_INTERVAL)
+    if(m_walkLocked && m_walkLockTimer.ticksElapsed() <= m_walkLockInterval)
         return false;
     else
         m_walkLocked = false;
