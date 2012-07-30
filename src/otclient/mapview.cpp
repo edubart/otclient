@@ -64,7 +64,10 @@ MapView::MapView()
 
 MapView::~MapView()
 {
-    assert(!g_app.isTerminated());
+#ifndef NDEBUG
+    if(g_app.isTerminated())
+        g_logger.warning("MapView reference not released");
+#endif
 }
 
 void MapView::draw(const Rect& rect)

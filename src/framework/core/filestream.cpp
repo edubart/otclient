@@ -37,7 +37,11 @@ FileStream::FileStream(const std::string& name, PHYSFS_File *fileHandle, bool wr
 
 FileStream::~FileStream()
 {
-    assert(!g_app.isTerminated());
+#ifndef NDEBUG
+    if(g_app.isTerminated())
+        g_logger.warning("FileStream reference not released");
+#endif
+    if(!g_app.isTerminated())
     close();
 }
 
@@ -63,7 +67,7 @@ void FileStream::cache()
 
 void FileStream::close()
 {
-    if(m_fileHandle) {
+    if(m_fileHandle && PHYSFS_isInit()) {
         if(!PHYSFS_close(m_fileHandle))
             throwError("close failed", true);
         m_fileHandle = nullptr;

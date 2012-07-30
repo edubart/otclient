@@ -44,7 +44,10 @@ Shader::Shader(Shader::ShaderType shaderType)
 
 Shader::~Shader()
 {
-    assert(!g_app.isTerminated());
+#ifndef NDEBUG
+    if(g_app.isTerminated())
+        g_logger.warning("Shader reference not released");
+#endif
     if(g_graphics.ok())
         glDeleteShader(m_shaderId);
 }

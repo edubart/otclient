@@ -1,4 +1,5 @@
 SpeakTypesSettings = {
+  none = {},
   say = { speakType = MessageModes.Say, color = '#FFFF00' },
   whisper = { speakType = MessageModes.Whisper, color = '#FFFF00' },
   yell = { speakType = MessageModes.Yell, color = '#FFFF00' },
@@ -31,6 +32,11 @@ SpeakTypes = {
   [MessageModes.ChannelHighlight] = SpeakTypesSettings.channelOrange,
   [MessageModes.MonsterSay] = SpeakTypesSettings.monsterSay,
   [MessageModes.MonsterYell] = SpeakTypesSettings.monsterYell,
+
+  -- ignored types
+  [MessageModes.Spell] = SpeakTypesSettings.none,
+  [MessageModes.BarkLow] = SpeakTypesSettings.none,
+  [MessageModes.BarkLoud] = SpeakTypesSettings.none,
 }
 
 SayModes = {
@@ -454,9 +460,11 @@ function onTalk(name, level, mode, message, channelId, creaturePos)
   speaktype = SpeakTypes[mode]
 
   if not speaktype then
-    perror('unhandled onTalk message mode ' .. mode)
+    perror('unhandled onTalk message mode ' .. mode .. ': ' .. message)
     return
   end
+
+  if speaktype == SpeakTypesSettings.none then return end
 
   if speaktype.hideInConsole then return end
 
@@ -464,6 +472,9 @@ function onTalk(name, level, mode, message, channelId, creaturePos)
 
   if speaktype.private then
     addPrivateText(composedMessage, speaktype, name, false, name)
+    if Options.getOption('showPrivateMessagesOnScreen') and speaktype.speakType ~= SpeakPrivateNpcToPlayer then
+      modules.game_textmessage.displayPrivateMessage(name .. ':\n' .. message)
+    end
   else
     local channel = tr('Default')
     if not defaultMessage then

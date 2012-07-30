@@ -79,6 +79,10 @@ Texture::Texture(const ImagePtr& image, bool buildMipmaps)
 
 Texture::~Texture()
 {
+#ifndef NDEBUG
+    if(g_app.isTerminated())
+        g_logger.warning("a texture reference was not released");
+#endif
     // free texture from gl memory
     if(g_graphics.ok() && m_id != 0)
         glDeleteTextures(1, &m_id);

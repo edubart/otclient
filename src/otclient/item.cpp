@@ -302,7 +302,7 @@ int Item::getSubType()
 {
     if(isSplash() || isFluidContainer())
         return m_countOrSubType;
-    return 1;
+    return 0;
 }
 
 int Item::getCount()

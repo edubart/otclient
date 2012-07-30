@@ -97,6 +97,9 @@ void Application::deinit()
 
     // poll remaining events
     poll();
+
+    // disable dispatcher events
+    g_dispatcher.shutdown();
 }
 
 void Application::terminate()
@@ -114,9 +117,6 @@ void Application::terminate()
 
     // terminate script environment
     g_lua.terminate();
-
-    // flush remaining dispatcher events
-    g_dispatcher.flush();
 
     m_terminated = true;
 }

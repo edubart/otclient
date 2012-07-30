@@ -39,7 +39,7 @@ public:
     Otc::MessageMode getMessageMode() { return m_mode; }
     std::string getFirstMessage() { return m_messages[0].first; }
 
-    bool isYell() { return m_mode == Otc::MessageYell || m_mode == Otc::MessageMonsterYell; }
+    bool isYell() { return m_mode == Otc::MessageYell || m_mode == Otc::MessageMonsterYell || m_mode == Otc::MessageBarkLoud; }
 
     bool addMessage(const std::string& name, Otc::MessageMode mode, const std::string& text);
 

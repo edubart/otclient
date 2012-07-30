@@ -87,6 +87,7 @@ private:
     std::unordered_map<std::string, OTMLNodePtr> m_styles;
     UIWidgetList m_destroyedWidgets;
     ScheduledEventPtr m_checkEvent;
+
 };
 
 extern UIManager g_ui;

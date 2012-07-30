@@ -1,4 +1,5 @@
 MessageSettings = {
+  none            = {},
   consoleRed      = { color = TextColors.red,    consoleTab='Default' },
   consoleOrange   = { color = TextColors.orange, consoleTab='Default' },
   consoleBlue     = { color = TextColors.blue,   consoleTab='Default' },
@@ -24,6 +25,25 @@ MessageTypes = {
   [MessageModes.Red] = MessageSettings.consoleRed,
   [MessageModes.Blue] = MessageSettings.consoleBlue,
   [MessageModes.PrivateFrom] = MessageSettings.consoleBlue,
+
+  [MessageModes.DamageDealed] = MessageSettings.status,
+  [MessageModes.DamageReceived] = MessageSettings.status,
+  [MessageModes.Heal] = MessageSettings.status,
+  [MessageModes.Exp] = MessageSettings.status,
+
+  [MessageModes.DamageOthers] = MessageSettings.none,
+  [MessageModes.HealOthers] = MessageSettings.none,
+  [MessageModes.ExpOthers] = MessageSettings.none,
+
+  [MessageModes.TradeNpc] = MessageSettings.centerWhite,
+  [MessageModes.Guild] = MessageSettings.centerWhite,
+  [MessageModes.PartyManagement] = MessageSettings.centerWhite,
+  [MessageModes.TutorialHint] = MessageSettings.centerWhite,
+  [MessageModes.Market] = MessageSettings.centerWhite,
+  [MessageModes.BeyondLast] = MessageSettings.centerWhite,
+  [MessageModes.Report] = MessageSettings.consoleRed,
+  [MessageModes.HotkeyUse] = MessageSettings.centerGreen,
+
   [254] = MessageSettings.private
 }
 
@@ -37,7 +57,6 @@ end
 
 function terminate()
   disconnect(g_game, 'onTextMessage', displayMessage)
-  disconnect(g_game, 'onPrivateTalk', onPrivateTalk)
   disconnect(g_game, 'onGameEnd',clearMessages)
   clearMessages()
   messagesPanel:destroy()
@@ -53,9 +72,11 @@ function displayMessage(mode, text)
   local msgtype = MessageTypes[mode]
 
   if not msgtype then
-    perror('unhandled onTextMessage message mode ' .. mode)
+    perror('unhandled onTextMessage message mode ' .. mode .. ': ' .. text)
     return
   end
+
+  if msgtype == MessageSettings.none then return end
 
   if msgtype.consoleTab ~= nil and (msgtype.consoleOption == nil or Options.getOption(msgtype.consoleOption)) then
     modules.game_console.addText(text, msgtype, tr(msgtype.consoleTab))
@@ -72,6 +93,10 @@ function displayMessage(mode, text)
   end
 end
 
+function displayPrivateMessage(text)
+    displayMessage(254, text)
+end
+
 function displayStatusMessage(text)
   displayMessage(MessageModes.Status, text)
 end
@@ -86,11 +111,5 @@ function clearMessages()
       child:hide()
       removeEvent(child.hideEvent)
     end
-  end
-end
-
-function onPrivateTalk(code, text, speaker, speakerlevel, statmentid)
-  if Options.getOption('showPrivateMessagesOnScreen') then
-    displayMessage(254, speaker .. ':\n' .. text)
   end
 end

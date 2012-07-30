@@ -30,7 +30,7 @@
 class EventDispatcher
 {
 public:
-    void flush();
+    void shutdown();
     void poll();
 
     EventPtr addEvent(const std::function<void()>& callback, bool pushFront = false);

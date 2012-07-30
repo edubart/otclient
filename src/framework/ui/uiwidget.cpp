@@ -46,8 +46,9 @@ UIWidget::UIWidget()
 
 UIWidget::~UIWidget()
 {
-    assert(!g_app.isTerminated());
 #ifndef NDEBUG
+    if(g_app.isTerminated())
+        g_logger.warning(stdext::format("UIWidget '%s' reference not released", m_id));
     if(!m_destroyed)
         g_logger.warning(stdext::format("widget '%s' was not explicitly destroyed", m_id));
 #endif

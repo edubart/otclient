@@ -47,7 +47,10 @@ void FrameBuffer::internalCreate()
 
 FrameBuffer::~FrameBuffer()
 {
-    assert(!g_app.isTerminated());
+#ifndef NDEBUG
+    if(g_app.isTerminated())
+        g_logger.warning("FrameBuffer reference not released");
+#endif
     if(g_graphics.ok() && m_fbo != 0)
         glDeleteFramebuffers(1, &m_fbo);
 }

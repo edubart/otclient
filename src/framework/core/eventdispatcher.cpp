@@ -27,7 +27,7 @@
 
 EventDispatcher g_dispatcher;
 
-void EventDispatcher::flush()
+void EventDispatcher::shutdown()
 {
     while(!m_eventList.empty())
         poll();

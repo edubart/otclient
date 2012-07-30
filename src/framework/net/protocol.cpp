@@ -33,7 +33,10 @@ Protocol::Protocol()
 
 Protocol::~Protocol()
 {
-    assert(!g_app.isTerminated());
+#ifndef NDEBUG
+    if(g_app.isTerminated())
+        g_logger.warning("Protocol reference not released");
+#endif
     disconnect();
 }
 
