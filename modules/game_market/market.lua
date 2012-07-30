@@ -740,7 +740,6 @@ function Market.clearSelectedItem()
     clearOffers()
     radioItemSet:selectWidget(nil)
     nameLabel:setText('No item selected.')
-
     selectedItem:setItem(nil)
 
     detailsTable:clearData()

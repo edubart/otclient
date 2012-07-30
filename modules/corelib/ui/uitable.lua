@@ -128,7 +128,7 @@ function UITable:addRow(data, ref, height)
     return
   end
 
-  local row = g_ui.createWidget(self.rowBaseStyle, self.dataSpace)
+  local row = g_ui.createWidget(self.rowBaseStyle)
   if ref then row.ref = ref end
   if height then row:setHeight(height) end
 
@@ -152,6 +152,8 @@ function UITable:addRow(data, ref, height)
   row.onFocusChange = function(row, focused)
     if focused then self:selectRow(row) end
   end
+  self.dataSpace:addChild(row)
+
   table.insert(self.rows, row)
   return row
 end
