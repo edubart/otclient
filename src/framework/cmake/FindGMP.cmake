@@ -1,4 +1,4 @@
-# Try to find the GMP librairy
+# Try to find the GMP library
 #  GMP_FOUND - system has GMP
 #  GMP_INCLUDE_DIR - the GMP include directory
 #  GMP_LIBRARY - the GMP library

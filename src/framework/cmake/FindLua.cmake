@@ -1,4 +1,4 @@
-# Try to find the lua librairy
+# Try to find the lua library
 #  LUA_FOUND - system has lua
 #  LUA_INCLUDE_DIR - the lua include directory
 #  LUA_LIBRARY - the lua library

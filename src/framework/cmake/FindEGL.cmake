@@ -1,4 +1,4 @@
-# Try to find the EGL librairy
+# Try to find the EGL library
 #  EGL_FOUND - system has EGL
 #  EGL_INCLUDE_DIR - the EGL include directory
 #  EGL_LIBRARY - the EGL library

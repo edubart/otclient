@@ -1,4 +1,4 @@
-# Try to find the GLEW librairy
+# Try to find the GLEW library
 #  GLEW_FOUND - system has GLEW
 #  GLEW_INCLUDE_DIR - the GLEW include directory
 #  GLEW_LIBRARY - the GLEW library
