@@ -631,6 +631,9 @@ void Application::registerLuaFunctions()
     g_lua.bindClassStaticFunction<Server>("create", &Server::create);
     g_lua.bindClassMemberFunction<Server>("acceptNext", &Server::acceptNext);
 
+    // Connection
+    g_lua.registerClass<Connection>();
+
     // Protocol
     g_lua.registerClass<Protocol>();
     g_lua.bindClassStaticFunction<Protocol>("create", []{ return ProtocolPtr(new Protocol); });
