@@ -41,6 +41,10 @@
 #include <framework/ui/ui.h>
 #endif
 
+#ifdef FW_NET
+#include <framework/net/server.h>
+#endif
+
 void Application::registerLuaFunctions()
 {
     // conversion globals
@@ -622,6 +626,11 @@ void Application::registerLuaFunctions()
 #endif
 
 #ifdef FW_NET
+    // Server
+    g_lua.registerClass<Server>();
+    g_lua.bindClassStaticFunction<Server>("create", &Server::create);
+    g_lua.bindClassMemberFunction<Server>("acceptNext", &Server::acceptNext);
+
     // Protocol
     g_lua.registerClass<Protocol>();
     g_lua.bindClassStaticFunction<Protocol>("create", []{ return ProtocolPtr(new Protocol); });
@@ -629,6 +638,8 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Protocol>("disconnect", &Protocol::disconnect);
     g_lua.bindClassMemberFunction<Protocol>("isConnected", &Protocol::isConnected);
     g_lua.bindClassMemberFunction<Protocol>("isConnecting", &Protocol::isConnecting);
+    g_lua.bindClassMemberFunction<Protocol>("getConnection", &Protocol::getConnection);
+    g_lua.bindClassMemberFunction<Protocol>("setConnection", &Protocol::setConnection);
     g_lua.bindClassMemberFunction<Protocol>("send", &Protocol::send);
     g_lua.bindClassMemberFunction<Protocol>("recv", &Protocol::recv);
     g_lua.bindClassMemberFunction<Protocol>("getXteaKey", &Protocol::getXteaKey);

@@ -26,6 +26,7 @@
 #include "declarations.h"
 #include "inputmessage.h"
 #include "outputmessage.h"
+#include "connection.h"
 
 #include <framework/luaengine/luaobject.h>
 
@@ -41,6 +42,8 @@ public:
 
     bool isConnected();
     bool isConnecting();
+    ConnectionPtr getConnection() { return m_connection; }
+    void setConnection(const ConnectionPtr& connection) { m_connection = connection; }
 
     void generateXteaKey();
     std::vector<int> getXteaKey();

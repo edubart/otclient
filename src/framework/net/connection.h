@@ -25,10 +25,11 @@
 
 #include "declarations.h"
 #include <boost/asio.hpp>
+#include <framework/luaengine/luaobject.h>
 #include <framework/core/timer.h>
 #include <framework/core/declarations.h>
 
-class Connection : public stdext::shared_object
+class Connection : public LuaObject
 {
     typedef std::function<void(const boost::system::error_code&)> ErrorCallback;
     typedef std::function<void(uint8*, uint16)> RecvCallback;

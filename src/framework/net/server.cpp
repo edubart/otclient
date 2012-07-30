@@ -25,12 +25,17 @@
 
 extern asio::io_service g_ioService;
 
-Server::Server(uint16 port)
+Server::Server(int port)
     : m_acceptor(g_ioService, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port))
 {
 }
 
-void Server::acceptNext(const AcceptCallback& acceptCallback)
+ServerPtr Server::create(int port)
+{
+    return ServerPtr(new Server(port));
+}
+
+void Server::acceptNext()
 {
     ConnectionPtr connection = ConnectionPtr(new Connection);
     connection->m_connecting = true;
@@ -39,6 +44,6 @@ void Server::acceptNext(const AcceptCallback& acceptCallback)
             connection->m_connected = true;
             connection->m_connecting = false;
         }
-        acceptCallback(connection, error);
+        callLuaField("onAccept", connection, error.message(), error.value());
     });
 }

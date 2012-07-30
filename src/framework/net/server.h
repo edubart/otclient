@@ -24,15 +24,17 @@
 #define SERVER_H
 
 #include "declarations.h"
+#include <framework/luaengine/luaobject.h>
 
-class Server
+class Server : public LuaObject
 {
     typedef std::function<void(ConnectionPtr, const boost::system::error_code&)> AcceptCallback;
 
 public:
-    Server(uint16 port);
+    Server(int port);
+    static ServerPtr create(int port);
 
-    void acceptNext(const AcceptCallback& acceptCallback);
+    void acceptNext();
 
 private:
     asio::ip::tcp::acceptor m_acceptor;
