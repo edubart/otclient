@@ -231,7 +231,7 @@ public:
     void mount(bool mount);
 
     // 910 only
-    //void requestItemInfo();
+    void requestItemInfo(const ItemPtr& item, int index);
     //void reportRuleViolation2();
     void ping();
 

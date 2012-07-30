@@ -178,7 +178,7 @@ void Item::setId(uint32 id)
 {
     if(!g_things.isValidDatId(id, ThingCategoryItem))
         id = 0;
-    //m_otbId = g_things.findOtbForClientId(id)->getServerId();
+    //m_otbId = g_things.findItemTypeByClientId(id)->getServerId();
     m_id = id;
     m_otbId = 0;
 }

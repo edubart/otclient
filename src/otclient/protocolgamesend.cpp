@@ -733,11 +733,11 @@ void ProtocolGame::sendNewNewRuleViolation(int reason, int action, const std::st
     send(msg);
 }
 
-void ProtocolGame::sendRequestItemInfo(int itemId, int index)
+void ProtocolGame::sendRequestItemInfo(int itemId, int subType, int index)
 {
     OutputMessagePtr msg(new OutputMessage);
     msg->addU8(Proto::ClientRequestItemInfo);
-    msg->addU8(1); // count, 1 for just one item
+    msg->addU8(subType);
     msg->addU16(itemId);
     msg->addU8(index);
     send(msg);

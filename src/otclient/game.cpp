@@ -1079,6 +1079,13 @@ void Game::mount(bool mount)
     m_mounted = mount;
 }
 
+void Game::requestItemInfo(const ItemPtr& item, int index)
+{
+    if(!canPerformGameAction())
+        return;
+    m_protocolGame->sendRequestItemInfo(item->getId(), item->getSubType(), index);
+}
+
 void Game::ping()
 {
     if(!m_protocolGame || !m_protocolGame->isConnected())

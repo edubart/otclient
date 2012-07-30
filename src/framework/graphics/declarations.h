@@ -44,21 +44,21 @@ class ParticleSystem;
 class ParticleEffect;
 class ParticleEffectType;
 
-typedef stdext::shared_object_ptr<Image> ImagePtr;
-typedef stdext::shared_object_ptr<Texture> TexturePtr;
-typedef stdext::shared_object_ptr<AnimatedTexture> AnimatedTexturePtr;
-typedef stdext::shared_object_ptr<BitmapFont> BitmapFontPtr;
-typedef stdext::shared_object_ptr<CachedText> CachedTextPtr;
-typedef stdext::shared_object_ptr<FrameBuffer> FrameBufferPtr;
-typedef stdext::shared_object_ptr<Shader> ShaderPtr;
-typedef stdext::shared_object_ptr<ShaderProgram> ShaderProgramPtr;
-typedef stdext::shared_object_ptr<PainterShaderProgram> PainterShaderProgramPtr;
-typedef stdext::shared_object_ptr<Particle> ParticlePtr;
-typedef stdext::shared_object_ptr<ParticleEmitter> ParticleEmitterPtr;
-typedef stdext::shared_object_ptr<ParticleAffector> ParticleAffectorPtr;
-typedef stdext::shared_object_ptr<ParticleSystem> ParticleSystemPtr;
-typedef stdext::shared_object_ptr<ParticleEffect> ParticleEffectPtr;
-typedef stdext::shared_object_ptr<ParticleEffectType> ParticleEffectTypePtr;
+typedef boost::intrusive_ptr<Image> ImagePtr;
+typedef boost::intrusive_ptr<Texture> TexturePtr;
+typedef boost::intrusive_ptr<AnimatedTexture> AnimatedTexturePtr;
+typedef boost::intrusive_ptr<BitmapFont> BitmapFontPtr;
+typedef boost::intrusive_ptr<CachedText> CachedTextPtr;
+typedef boost::intrusive_ptr<FrameBuffer> FrameBufferPtr;
+typedef boost::intrusive_ptr<Shader> ShaderPtr;
+typedef boost::intrusive_ptr<ShaderProgram> ShaderProgramPtr;
+typedef boost::intrusive_ptr<PainterShaderProgram> PainterShaderProgramPtr;
+typedef boost::intrusive_ptr<Particle> ParticlePtr;
+typedef boost::intrusive_ptr<ParticleEmitter> ParticleEmitterPtr;
+typedef boost::intrusive_ptr<ParticleAffector> ParticleAffectorPtr;
+typedef boost::intrusive_ptr<ParticleSystem> ParticleSystemPtr;
+typedef boost::intrusive_ptr<ParticleEffect> ParticleEffectPtr;
+typedef boost::intrusive_ptr<ParticleEffectType> ParticleEffectTypePtr;
 typedef std::vector<ShaderPtr> ShaderList;
 
 #endif

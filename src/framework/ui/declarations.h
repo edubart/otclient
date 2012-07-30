@@ -36,15 +36,15 @@ class UIGridLayout;
 class UIAnchorLayout;
 class UIParticles;
 
-typedef stdext::shared_object_ptr<UIWidget> UIWidgetPtr;
-typedef stdext::shared_object_ptr<UIParticles> UIParticlesPtr;
-typedef stdext::shared_object_ptr<UITextEdit> UITextEditPtr;
-typedef stdext::shared_object_ptr<UILayout> UILayoutPtr;
-typedef stdext::shared_object_ptr<UIBoxLayout> UIBoxLayoutPtr;
-typedef stdext::shared_object_ptr<UIHorizontalLayout> UIHorizontalLayoutPtr;
-typedef stdext::shared_object_ptr<UIVerticalLayout> UIVerticalLayoutPtr;
-typedef stdext::shared_object_ptr<UIGridLayout> UIGridLayoutPtr;
-typedef stdext::shared_object_ptr<UIAnchorLayout> UIAnchorLayoutPtr;
+typedef boost::intrusive_ptr<UIWidget> UIWidgetPtr;
+typedef boost::intrusive_ptr<UIParticles> UIParticlesPtr;
+typedef boost::intrusive_ptr<UITextEdit> UITextEditPtr;
+typedef boost::intrusive_ptr<UILayout> UILayoutPtr;
+typedef boost::intrusive_ptr<UIBoxLayout> UIBoxLayoutPtr;
+typedef boost::intrusive_ptr<UIHorizontalLayout> UIHorizontalLayoutPtr;
+typedef boost::intrusive_ptr<UIVerticalLayout> UIVerticalLayoutPtr;
+typedef boost::intrusive_ptr<UIGridLayout> UIGridLayoutPtr;
+typedef boost::intrusive_ptr<UIAnchorLayout> UIAnchorLayoutPtr;
 
 typedef std::deque<UIWidgetPtr> UIWidgetList;
 

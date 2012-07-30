@@ -28,9 +28,6 @@
 
 namespace stdext {
 
-template<typename T>
-using shared_object_ptr = boost::intrusive_ptr<T>;
-
 class shared_object
 {
 public:
@@ -44,16 +41,16 @@ public:
     bool is_unique_ref() { return m_refs == 1; }
     unsigned long ref_count() { return m_refs; }
     template<typename T>
-    shared_object_ptr<T> self_cast() { return shared_object_ptr<T>(static_cast<T*>(this)); }
+    boost::intrusive_ptr<T> self_cast() { return boost::intrusive_ptr<T>(static_cast<T*>(this)); }
     template<typename T>
-    shared_object_ptr<T> dynamic_self_cast() { return shared_object_ptr<T>(dynamic_cast<T*>(this)); }
+    boost::intrusive_ptr<T> dynamic_self_cast() { return boost::intrusive_ptr<T>(dynamic_cast<T*>(this)); }
 
 private:
     unsigned int m_refs;
 };
 
 template<class T, typename... Args>
-shared_object_ptr<T> make_shared_object(Args... args) { return shared_object_ptr<T>(new T(args...)); }
+boost::intrusive_ptr<T> make_shared_object(Args... args) { return boost::intrusive_ptr<T>(new T(args...)); }
 
 }
 

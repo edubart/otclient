@@ -1280,12 +1280,18 @@ void ProtocolGame::parseChannelEvent(const InputMessagePtr& msg)
 
 void ProtocolGame::parseItemInfo(const InputMessagePtr& msg)
 {
+    std::vector<std::tuple<ItemPtr, std::string>> list;
     int size = msg->getU8();
     for(int i=0;i<size;++i) {
-        msg->getU16(); // id
-        msg->getU8(); // subtype
-        msg->getString(); // description
+        ItemPtr item(new Item);
+        item->setId(msg->getU16());
+        item->setCountOrSubType(msg->getU8());
+
+        std::string desc = msg->getString();
+        list.push_back(std::make_tuple(item, desc));
     }
+
+    g_lua.callGlobalField("g_game", "onItemInfo", list);
 }
 
 void ProtocolGame::parsePlayerInventory(const InputMessagePtr& msg)

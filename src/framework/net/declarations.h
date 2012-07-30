@@ -34,10 +34,10 @@ class Connection;
 class Protocol;
 class Server;
 
-typedef stdext::shared_object_ptr<InputMessage> InputMessagePtr;
-typedef stdext::shared_object_ptr<OutputMessage> OutputMessagePtr;
-typedef stdext::shared_object_ptr<Connection> ConnectionPtr;
-typedef stdext::shared_object_ptr<Protocol> ProtocolPtr;
-typedef stdext::shared_object_ptr<Server> ServerPtr;
+typedef boost::intrusive_ptr<InputMessage> InputMessagePtr;
+typedef boost::intrusive_ptr<OutputMessage> OutputMessagePtr;
+typedef boost::intrusive_ptr<Connection> ConnectionPtr;
+typedef boost::intrusive_ptr<Protocol> ProtocolPtr;
+typedef boost::intrusive_ptr<Server> ServerPtr;
 
 #endif

@@ -41,7 +41,7 @@ public:
     void parseItemType(uint16 id, TiXmlElement *elem);
 
     void addItemType(const ItemTypePtr& itemType);
-    const ItemTypePtr& findOtbForClientId(uint16 id);
+    const ItemTypePtr& findItemTypeByClientId(uint16 id);
 
     const ThingTypePtr& getNullThingType() { return m_nullThingType; }
     const ItemTypePtr& getNullItemType() { return m_nullItemType; }

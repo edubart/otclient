@@ -193,7 +193,7 @@ void ThingTypeManager::addItemType(const ItemTypePtr& itemType)
     m_itemTypes[id] = itemType;
 }
 
-const ItemTypePtr& ThingTypeManager::findOtbForClientId(uint16 id)
+const ItemTypePtr& ThingTypeManager::findItemTypeByClientId(uint16 id)
 {
     if(m_itemTypes.empty())
         return m_nullItemType;

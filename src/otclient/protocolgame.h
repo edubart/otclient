@@ -103,7 +103,7 @@ public:
     void sendRequestQuestLog();
     void sendRequestQuestLine(int questId);
     void sendNewNewRuleViolation(int reason, int action, const std::string& characterName, const std::string& comment, const std::string& translation);
-    void sendRequestItemInfo(int itemId, int index);
+    void sendRequestItemInfo(int itemId, int subType, int index);
 
 protected:
     void onConnect();

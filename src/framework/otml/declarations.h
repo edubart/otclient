@@ -30,8 +30,8 @@ class OTMLDocument;
 class OTMLParser;
 class OTMLEmitter;
 
-typedef stdext::shared_object_ptr<OTMLNode> OTMLNodePtr;
-typedef stdext::shared_object_ptr<OTMLDocument> OTMLDocumentPtr;
+typedef boost::intrusive_ptr<OTMLNode> OTMLNodePtr;
+typedef boost::intrusive_ptr<OTMLDocument> OTMLDocumentPtr;
 typedef std::vector<OTMLNodePtr> OTMLNodeList;
 
 #endif
