@@ -64,7 +64,7 @@ void ItemType::unserialize(const BinaryTreePtr& node)
                 break;
             }
             case ItemTypeAttrName: {
-                setName(node->getString());
+                setName(node->getString(len));
                 break;
             }
             case ItemTypeAttrDesc: {

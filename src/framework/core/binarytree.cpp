@@ -163,6 +163,17 @@ std::string BinaryTree::getString()
     return ret;
 }
 
+std::string BinaryTree::getString(uint16 len)
+{
+    unserialize();
+    if(m_pos+len > m_buffer.size())
+        stdext::throw_exception("BinaryTree: getString failed: string length exceeded buffer size.");
+
+    std::string ret((char *)&m_buffer[m_pos], len);
+    m_pos += len;
+    return ret;
+}
+
 Position BinaryTree::getPosition()
 {
     Position ret;

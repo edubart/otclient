@@ -49,6 +49,7 @@ public:
     uint32 getU32();
     uint64 getU64();
     std::string getString();
+    std::string getString(uint16 len);
     Position getPosition();
     Point getPoint();
 
