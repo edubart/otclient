@@ -138,6 +138,12 @@ void Protocol::internalRecvData(uint8* buffer, uint16 size)
             g_logger.traceError("failed to decrypt message");
             return;
         }
+    } else {
+        int size = m_inputMessage->getU16();
+        if(size != m_inputMessage->getUnreadSize()) {
+            g_logger.traceError("invalid message size");
+            return;
+        }
     }
 
     onRecv(m_inputMessage);
