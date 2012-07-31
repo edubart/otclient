@@ -34,8 +34,7 @@ Protocol::Protocol()
 Protocol::~Protocol()
 {
 #ifndef NDEBUG
-    if(g_app.isTerminated())
-        g_logger.warning("Protocol reference not released");
+    assert(!g_app.isTerminated());
 #endif
     disconnect();
 }

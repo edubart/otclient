@@ -39,8 +39,7 @@ ShaderProgram::ShaderProgram()
 ShaderProgram::~ShaderProgram()
 {
 #ifndef NDEBUG
-    if(g_app.isTerminated())
-        g_logger.warning("ShaderProgram reference not released");
+    assert(!g_app.isTerminated());
 #endif
     if(g_graphics.ok())
         glDeleteProgram(m_programId);

@@ -65,8 +65,7 @@ MapView::MapView()
 MapView::~MapView()
 {
 #ifndef NDEBUG
-    if(g_app.isTerminated())
-        g_logger.warning("MapView reference not released");
+    assert(!g_app.isTerminated());
 #endif
 }
 

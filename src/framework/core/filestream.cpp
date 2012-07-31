@@ -38,11 +38,10 @@ FileStream::FileStream(const std::string& name, PHYSFS_File *fileHandle, bool wr
 FileStream::~FileStream()
 {
 #ifndef NDEBUG
-    if(g_app.isTerminated())
-        g_logger.warning("FileStream reference not released");
+    assert(!g_app.isTerminated());
 #endif
     if(!g_app.isTerminated())
-    close();
+        close();
 }
 
 void FileStream::cache()

@@ -42,8 +42,7 @@ Connection::Connection() :
 Connection::~Connection()
 {
 #ifndef NDEBUG
-    if(g_app.isTerminated())
-        g_logger.warning("Connection reference not released");
+    assert(!g_app.isTerminated());
 #endif
     close();
 }

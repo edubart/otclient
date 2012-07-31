@@ -128,6 +128,7 @@ function initProtocol()
 
   -- reloading module
   if g_game.isOnline() then
+    MarketProtocol.registerProtocol()
     MarketProtocol.updateProtocol(g_game.getProtocolGame())
   end
 end
@@ -139,6 +140,7 @@ function terminateProtocol()
   -- reloading module
   if not g_game.isOnline() then
     MarketProtocol.updateProtocol(nil)
+    MarketProtocol.unregisterProtocol()
   end
   MarketProtocol = nil
 end

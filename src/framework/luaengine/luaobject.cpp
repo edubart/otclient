@@ -34,8 +34,7 @@ LuaObject::LuaObject() :
 LuaObject::~LuaObject()
 {
 #ifndef NDEBUG
-    if(g_app.isTerminated())
-        g_logger.warning("LuaObject reference not released");
+    assert(!g_app.isTerminated());
 #endif
     releaseLuaFieldsTable();
 

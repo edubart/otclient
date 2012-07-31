@@ -38,8 +38,7 @@ HardwareBuffer::HardwareBuffer(Type type)
 HardwareBuffer::~HardwareBuffer()
 {
 #ifndef NDEBUG
-    if(g_app.isTerminated())
-        g_logger.warning("HardwareBuffer reference not released");
+    assert(!g_app.isTerminated());
 #endif
     if(g_graphics.ok())
         glDeleteBuffers(1, &m_id);
