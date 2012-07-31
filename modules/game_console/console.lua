@@ -472,7 +472,7 @@ function onTalk(name, level, mode, message, channelId, creaturePos)
 
   if speaktype.private then
     addPrivateText(composedMessage, speaktype, name, false, name)
-    if Options.getOption('showPrivateMessagesOnScreen') and speaktype.speakType ~= SpeakPrivateNpcToPlayer then
+    if Options.getOption('showPrivateMessagesOnScreen') and speaktype ~= SpeakTypesSettings.privateNpcToPlayer then
       modules.game_textmessage.displayPrivateMessage(name .. ':\n' .. message)
     end
   else
