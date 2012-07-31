@@ -1120,7 +1120,8 @@ void LuaInterface::pushObject(const LuaObjectPtr& obj)
     m_totalObjRefs++;
 
     obj->luaGetMetatable();
-    assert(!isNil());
+    if(isNil())
+        g_logger.fatal(stdext::format("metatable for class '%s' not found, did you bind the C++ class?", obj->getClassName()));
     setMetatable();
 }
 
