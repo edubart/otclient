@@ -153,14 +153,8 @@ uint64 BinaryTree::getU64()
 
 std::string BinaryTree::getString()
 {
-    unserialize();
     uint16 len = getU16();
-    if(m_pos+len > m_buffer.size())
-        stdext::throw_exception("BinaryTree: getString failed: string length exceeded buffer size.");
-
-    std::string ret((char *)&m_buffer[m_pos], len);
-    m_pos += len;
-    return ret;
+    return getString(len);
 }
 
 std::string BinaryTree::getString(uint16 len)
