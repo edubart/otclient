@@ -109,12 +109,7 @@ function terminate()
                        onGameStart = onGameStart,
                        onGameEnd = clear })
 
-  for channelid, channelname in pairs(channels) do
-    if tonumber(channelid) and tonumber(channelid) ~= 0 then
-      g_game.leaveChannel(channelid)
-    end
-  end
-  channels = {}
+  if g_game.isOnline() then clear() end
 
   g_keyboard.unbindKeyDown('Ctrl+O')
   g_keyboard.unbindKeyDown('Ctrl+E')
@@ -145,26 +140,29 @@ function onTabChange(tabBar, tab)
 end
 
 function clear()
-  local lastChannelsOpen = {}
-
-  local player = g_game.getLocalPlayer()
-  if(player) then
-    local char = player:getName()
-    lastChannelsOpen[char] = {}
-
-    for channelId, channelName in pairs(channels) do
-      table.insert(lastChannelsOpen[char], channelId)
+  -- save last open channels
+  local lastChannelsOpen = g_settings.getNode('lastChannelsOpen') or {}
+  local char = g_game.getLocalPlayer():getName()
+  local savedChannels = {}
+  local set = false
+  for channelId, channelName in pairs(channels) do
+    if type(channelId) == 'number' then
+      savedChannels[channelName] = channelId
+      set = true
     end
   end
+  if set then
+    lastChannelsOpen[char] = savedChannels
+  else
+    lastChannelsOpen[char] = nil
+  end
+  g_settings.setNode('lastChannelsOpen', lastChannelsOpen)
 
-  -- save last open channels
-  g_settings.setNode('LastChannelsOpen', lastChannelsOpen)
-
+  -- close channels
   for _, channelName in pairs(channels) do
     local tab = consoleTabBar:getTab(channelName)
     consoleTabBar:removeTab(tab)
   end
-
   channels = {}
 
   consoleTabBar:getTab(tr('Default')).tabPanel:getChildById('consoleBuffer'):destroyChildren()
@@ -563,19 +561,14 @@ end
 
 function onGameStart()
   -- open last channels
-  local player = g_game.getLocalPlayer()
-  if(player) then
-    local char = player:getName()
-
-    local lastChannelsOpen = g_settings.getNode('LastChannelsOpen')
-
-    if(not table.empty(lastChannelsOpen) and lastChannelsOpen[char]) then
-      for channelName, channelId in ipairs(lastChannelsOpen[char]) do
-        channelId = tonumber(channelId)
-        if channelId ~= 0 then
-          if not table.find(channels, channelId) then
-            g_game.joinChannel(channelId)
-          end
+  local lastChannelsOpen = g_settings.getNode('lastChannelsOpen')
+  local savedChannels = lastChannelsOpen[g_game.getLocalPlayer():getName()]
+  if savedChannels then
+    for channelName, channelId in pairs(savedChannels) do
+      channelId = tonumber(channelId)
+      if channelId ~= 0 then
+        if not table.find(channels, channelId) then
+          g_game.joinChannel(channelId)
         end
       end
     end
