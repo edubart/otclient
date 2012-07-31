@@ -358,31 +358,39 @@ local function updateDepotItemCount(itemId, amount)
     if depotItem and itemId == depotItem.ptr:getId() then
       local depotItemCount = depotItem.ptr:getCount()
 
-      if depotItemCount <= 100 and depotItemCount >= amount then
-        if (depotItemCount - amount) <= 0 then
-          table.remove(information.depotItems, i)
-        else
-          depotItem.ptr:setCount(depotItemCount - amount)
-          information.depotItems[i] = depotItem
-        end
-        return true
-      else
-        local removeCount = math.floor(amount/100)
-        local remainder = amount % depotItemCount
-        if remainder > 0 then
-          removeCount = removeCount + 1
-        end
-        for i = 1, removeCount do
-          if i == removeCount and remainder > 0 then
-            updateDepotItemCount(itemId, remainder)
+      if depotItem.ptr:isStackable() then
+        if depotItemCount <= 100 and depotItemCount >= amount then
+          if (depotItemCount - amount) <= 0 then
+            table.remove(information.depotItems, i)
           else
-            updateDepotItemCount(itemId, 100)
+            depotItem.ptr:setCount(depotItemCount - amount)
+            information.depotItems[i] = depotItem
           end
+          return true
+        else
+          local removeCount = math.floor(amount/100)
+          local remainder = amount % depotItemCount
+          if remainder > 0 then
+            removeCount = removeCount + 1
+          end
+          for j = 1, removeCount do
+            if j == removeCount and remainder > 0 then
+              updateDepotItemCount(itemId, remainder)
+            else
+              updateDepotItemCount(itemId, 100)
+            end
+          end
+          return true
         end
-        return true
+      else
+        if amount > 0 then
+          table.remove(information.depotItems, i)
+          amount = amount - 1
+        end
       end
     end
   end
+  return false
 end
 
 local function updateFee(price, amount)
@@ -873,25 +881,32 @@ function Market.loadDepotItems(depotItems)
     local data = depotItems[i]
     local id, count = data[1], data[2]
 
-    if count > 100 then
-      local createCount = math.floor(count/100)
-      local remainder = count % 100
-      if remainder > 0 then
-        createCount = createCount + 1
-      end
-      for i = 1, createCount do
-        local newItem = Item.create(id)
-        if i == createCount and remainder > 0 then
-          newItem:setCount(remainder)
-        else
-          newItem:setCount(100)
+    local tmpItem = Item.create(id)
+    if tmpItem:isStackable() then
+      if count > 100 then
+        local createCount = math.floor(count/100)
+        local remainder = count % 100
+        if remainder > 0 then
+          createCount = createCount + 1
         end
+        for i = 1, createCount do
+          local newItem = Item.create(id)
+          if i == createCount and remainder > 0 then
+            newItem:setCount(remainder)
+          else
+            newItem:setCount(100)
+          end
+          table.insert(items, newItem)
+        end
+      else
+        local newItem = Item.create(id)
+        newItem:setCount(count)
         table.insert(items, newItem)
       end
     else
-      local newItem = Item.create(id)
-      newItem:setCount(count)
-      table.insert(items, newItem)
+      for i = 1, count do
+        table.insert(items, Item.create(id))
+      end
     end
   end
 
