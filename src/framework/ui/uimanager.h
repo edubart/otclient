@@ -41,7 +41,7 @@ public:
 
     void updatePressedWidget(const UIWidgetPtr& newPressedWidget, const Point& clickedPos = Point());
     bool updateDraggingWidget(const UIWidgetPtr& draggingWidget, const Point& clickedPos = Point());
-    void updateHoveredWidget();
+    void updateHoveredWidget(bool now = false);
 
     void clearStyles();
     bool importStyle(const std::string& file);

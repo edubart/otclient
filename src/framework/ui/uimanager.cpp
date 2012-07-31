@@ -133,7 +133,7 @@ void UIManager::inputEvent(const InputEvent& event)
             }
 
             // mouse move can change hovered widgets
-            updateHoveredWidget();
+            updateHoveredWidget(true);
 
             // first fire dragging move
             if(m_draggingWidget) {
@@ -209,12 +209,12 @@ bool UIManager::updateDraggingWidget(const UIWidgetPtr& draggingWidget, const Po
     return accepted;
 }
 
-void UIManager::updateHoveredWidget()
+void UIManager::updateHoveredWidget(bool now)
 {
-    if(m_hoverUpdateScheduled)
+    if(m_hoverUpdateScheduled && !now)
         return;
 
-    g_dispatcher.addEvent([this] {
+    auto func = [this] {
         if(!m_rootWidget)
             return;
 
@@ -235,8 +235,14 @@ void UIManager::updateHoveredWidget()
                 hoveredWidget->onHoverChange(true);
             }
         }
-    });
-    m_hoverUpdateScheduled = true;
+    };
+
+    if(now)
+        func();
+    else {
+        m_hoverUpdateScheduled = true;
+        g_dispatcher.addEvent(func);
+    }
 }
 
 void UIManager::onWidgetAppear(const UIWidgetPtr& widget)

@@ -42,10 +42,7 @@ protected:
 };
 
 /// Throws a generic exception
-template<typename... T>
-void throw_exception(const std::string& what) {
-    throw exception(what);
-}
+inline void throw_exception(const std::string& what) { throw exception(what); }
 
 }
 
