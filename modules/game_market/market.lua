@@ -361,7 +361,7 @@ local function updateDepotItemCount(itemId, amount)
       if depotItem.ptr:isStackable() then
         if depotItemCount <= 100 and depotItemCount >= amount then
           if (depotItemCount - amount) <= 0 then
-            table.remove(information.depotItems, i)
+            table.remove(information.depotItems, i) -- warning: this re-indexes
           else
             depotItem.ptr:setCount(depotItemCount - amount)
             information.depotItems[i] = depotItem
@@ -384,13 +384,13 @@ local function updateDepotItemCount(itemId, amount)
         end
       else
         if amount > 0 then
-          table.remove(information.depotItems, i)
+          information.depotItems[i] = nil
           amount = amount - 1
         end
       end
     end
   end
-  return false
+  return true
 end
 
 local function updateFee(price, amount)
