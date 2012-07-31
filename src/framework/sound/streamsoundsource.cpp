@@ -45,6 +45,13 @@ void StreamSoundSource::setSoundFile(const SoundFilePtr& soundFile)
 
 void StreamSoundSource::play()
 {
+    m_playing = true;
+
+    if(m_eof) {
+        m_soundFile->reset();
+        m_eof = false;
+    }
+
     if(!m_soundFile) {
         g_logger.error("there is not sound file to play the stream");
         return;
@@ -59,6 +66,7 @@ void StreamSoundSource::stop()
 {
     SoundSource::stop();
     unqueueBuffers();
+    m_playing = false;
 }
 
 void StreamSoundSource::queueBuffers()
@@ -96,12 +104,15 @@ void StreamSoundSource::update()
             break;
     }
 
-    if(!isPlaying()) {
-        if(processed == 0 || !m_looping)
-            return;
-
-        g_logger.traceError("restarting audio source because of buffer underrun");
-        play();
+    if(!isBuffering() && m_playing) {
+        if(!m_looping && m_eof) {
+            stop();
+        } else if(processed == 0) {
+            g_logger.traceError("audio buffer underrun");
+            play();
+        } else if(m_looping) {
+            play();
+        }
     }
 }
 
@@ -123,8 +134,10 @@ bool StreamSoundSource::fillBufferAndQueue(uint buffer)
         if(bytesRead < maxRead) {
             if(m_looping)
                 m_soundFile->reset();
-            else
+            else {
+                m_eof = true;
                 break;
+            }
         }
     } while(bytesRead < maxRead);
 
@@ -152,7 +165,7 @@ bool StreamSoundSource::fillBufferAndQueue(uint buffer)
     }
 
     // return false if there aren't more buffers to fill
-    return bytesRead >= STREAM_FRAGMENT_SIZE;
+    return (bytesRead >= STREAM_FRAGMENT_SIZE && !m_eof);
 }
 
 void StreamSoundSource::downMix(StreamSoundSource::DownMix downMix)

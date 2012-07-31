@@ -35,6 +35,7 @@ public:
 
     virtual int read(void *buffer, int bufferSize) = 0;
     virtual void reset() = 0;
+    bool eof() { return m_file->eof(); }
 
     ALenum getSampleFormat();
 

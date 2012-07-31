@@ -163,6 +163,14 @@ uint FileStream::tell()
         return m_pos;
 }
 
+bool FileStream::eof()
+{
+    if(!m_caching)
+        return PHYSFS_eof(m_fileHandle);
+    else
+        return m_pos >= m_data.size();
+}
+
 uint8 FileStream::getU8()
 {
     uint8 v = 0;

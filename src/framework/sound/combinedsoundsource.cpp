@@ -43,6 +43,15 @@ void CombinedSoundSource::stop()
         source->stop();
 }
 
+bool CombinedSoundSource::isBuffering()
+{
+    for(const SoundSourcePtr& source : m_sources) {
+        if(source->isBuffering())
+            return true;
+    }
+    return false;
+}
+
 bool CombinedSoundSource::isPlaying()
 {
     for(const SoundSourcePtr& source : m_sources) {

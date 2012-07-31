@@ -35,6 +35,8 @@ public:
 
     void play();
     void stop();
+
+    bool isBuffering();
     bool isPlaying();
 
     void setLooping(bool looping);

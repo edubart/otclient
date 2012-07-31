@@ -28,7 +28,7 @@
 class StreamSoundSource : public SoundSource
 {
     enum {
-        STREAM_BUFFER_SIZE = 1024 * 100,
+        STREAM_BUFFER_SIZE = 1024 * 200,
         STREAM_FRAGMENTS = 5,
         STREAM_FRAGMENT_SIZE = STREAM_BUFFER_SIZE / STREAM_FRAGMENTS
     };
@@ -41,6 +41,8 @@ public:
 
     void play();
     void stop();
+
+    bool isPlaying() { return m_playing; }
 
     void setSoundFile(const SoundFilePtr& soundFile);
 
@@ -57,6 +59,8 @@ private:
     std::array<SoundBufferPtr,STREAM_FRAGMENTS> m_buffers;
     DownMix m_downMix;
     stdext::boolean<false> m_looping;
+    stdext::boolean<false> m_playing;
+    stdext::boolean<false> m_eof;
 };
 
 #endif

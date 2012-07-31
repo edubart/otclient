@@ -45,6 +45,7 @@ public:
     void skip(uint len);
     uint size();
     uint tell();
+    bool eof();
     std::string name() { return m_name; }
 
     uint8 getU8();

@@ -63,7 +63,7 @@ void SoundSource::stop()
     }
 }
 
-bool SoundSource::isPlaying()
+bool SoundSource::isBuffering()
 {
     int state = AL_PLAYING;
     alGetSourcei(m_sourceId, AL_SOURCE_STATE, &state);

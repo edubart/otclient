@@ -39,7 +39,9 @@ public:
 
     virtual void play();
     virtual void stop();
-    virtual bool isPlaying();
+
+    virtual bool isBuffering();
+    virtual bool isPlaying() { return isBuffering(); }
 
     virtual void setLooping(bool looping);
     virtual void setRelative(bool relative);
