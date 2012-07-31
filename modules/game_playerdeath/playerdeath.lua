@@ -27,10 +27,8 @@ function display()
 end
 
 function displayDeadMessage()
-  local advanceLabel = modules.game_interface.getMapPanel():recursiveGetChildById('centerAdvance')
-  if advanceLabel:isVisible() then
-    return
-  end
+  local advanceLabel = modules.game_interface.getRootPanel():recursiveGetChildById('middleCenterLabel')
+  if advanceLabel:isVisible() then return end
 
   modules.game_textmessage.displayGameMessage(tr('You are dead.'))
 end
