@@ -42,6 +42,7 @@ void ProtocolGame::login(const std::string& accountName, const std::string& acco
 
 void ProtocolGame::onConnect()
 {
+    m_firstRecv = true;
     Protocol::onConnect();
 
     m_localPlayer = g_game.getLocalPlayer();
@@ -57,7 +58,14 @@ void ProtocolGame::onConnect()
 
 void ProtocolGame::onRecv(const InputMessagePtr& inputMessage)
 {
-    //Protocol::onConnect(inputMessage);
+    if(m_firstRecv) {
+        m_firstRecv = false;
+        int size = inputMessage->getU16();
+        if(size != inputMessage->getUnreadSize()) {
+            g_logger.traceError("invalid message size");
+            return;
+        }
+    }
 
     parseMessage(inputMessage);
     recv();
@@ -69,4 +77,3 @@ void ProtocolGame::onError(const boost::system::error_code& error)
 
     g_game.processConnectionError(error);
 }
-

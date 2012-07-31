@@ -216,6 +216,7 @@ public:
 private:
     stdext::boolean<false> m_enableSendExtendedOpcode;
     stdext::boolean<false> m_gameInitialized;
+    stdext::boolean<true> m_firstRecv;
     std::string m_accountName;
     std::string m_accountPassword;
     std::string m_characterName;
