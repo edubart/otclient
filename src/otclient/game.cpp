@@ -39,7 +39,7 @@ Game g_game;
 Game::Game()
 {
     resetGameStates();
-    m_protocolVersion = 0;
+    m_clientVersion = 0;
 }
 
 void Game::terminate()
@@ -430,7 +430,7 @@ void Game::loginWorld(const std::string& account, const std::string& password, c
     if(m_protocolGame || isOnline())
         stdext::throw_exception("Unable to login into a world while already online or logging.");
 
-    if(m_protocolVersion == 0)
+    if(m_clientVersion == 0)
         stdext::throw_exception("Must set a valid game protocol version before logging.");
 
     // reset the new game state
@@ -1123,6 +1123,9 @@ bool Game::canPerformGameAction()
 
 void Game::setClientVersion(int version)
 {
+    if(m_clientVersion == version)
+        return;
+
     if(isOnline())
         stdext::throw_exception("Unable to change client version while online");
 
@@ -1175,7 +1178,7 @@ void Game::setClientVersion(int version)
         enableFeature(Otc::GameOfflineTrainingTime);
     }
 
-    m_protocolVersion = version;
+    m_clientVersion = version;
 
     Proto::buildMessageModesMap(version);
 

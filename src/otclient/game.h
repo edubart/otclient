@@ -242,7 +242,7 @@ public:
     bool getFeature(Otc::GameFeature feature) { return m_features.test(feature); }
 
     void setClientVersion(int version);
-    int getClientVersion() { return m_protocolVersion; }
+    int getClientVersion() { return m_clientVersion; }
 
     bool canPerformGameAction();
     bool checkBotProtection();
@@ -297,7 +297,7 @@ private:
     std::string m_characterName;
     std::string m_worldName;
     std::bitset<Otc::LastGameFeature> m_features;
-    int m_protocolVersion;
+    int m_clientVersion;
 };
 
 extern Game g_game;

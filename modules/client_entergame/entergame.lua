@@ -67,11 +67,9 @@ function EnterGame.init()
   local host = g_settings.get('host')
   local port = g_settings.get('port')
   local autologin = g_settings.getBoolean('autologin')
-  local protocol = g_settings.getInteger('protocol', 860)
+  local clientVersion = g_game.getClientVersion()
 
-  if not protocol or protocol == 0 then
-    protocol = 860
-  end
+  if not clientVersion or clientVersion == 0 then clientVersion = 960 end
 
   if port == nil or port == 0 then port = 7171 end
 
@@ -87,7 +85,7 @@ function EnterGame.init()
   for _i, proto in pairs(g_game.getSupportedProtocols()) do
     protocolBox:addOption(proto)
   end
-  protocolBox:setCurrentOption(protocol)
+  protocolBox:setCurrentOption(clientVersion)
 
   -- only open entergame when app starts
   if not g_app.isRunning() then
@@ -142,7 +140,7 @@ function EnterGame.doLogin()
   G.password = enterGame:getChildById('accountPasswordTextEdit'):getText()
   G.host = enterGame:getChildById('serverHostTextEdit'):getText()
   G.port = tonumber(enterGame:getChildById('serverPortTextEdit'):getText())
-  local protocol = tonumber(protocolBox:getText())
+  local clientVersion = tonumber(protocolBox:getText())
   EnterGame.hide()
 
   if g_game.isOnline() then
@@ -153,7 +151,6 @@ function EnterGame.doLogin()
 
   g_settings.set('host', G.host)
   g_settings.set('port', G.port)
-  g_settings.set('protocol', protocol)
 
   local protocolLogin = ProtocolLogin.create()
   protocolLogin.onError = onError
@@ -168,8 +165,7 @@ function EnterGame.doLogin()
                                 end })
 
   g_game.chooseRsa(G.host)
-  g_game.setClientVersion(protocol)
-  modules.game_tibiafiles.load()
+  g_game.setClientVersion(clientVersion)
   protocolLogin:login(G.host, G.port, G.account, G.password)
 end
 

@@ -5,3 +5,4 @@ Module
   sandboxed: true
   scripts: [tibiafiles.lua]
   @onLoad: init()
+  @onUnload: terminate()

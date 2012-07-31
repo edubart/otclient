@@ -1,7 +1,9 @@
 function init()
-  if g_game.getClientVersion() ~= 0 then
-    load()
-  end
+  connect(g_game, { onClientVersionChange = load })
+end
+
+function terminate()
+  disconnect(g_game, { onClientVersionChange = load })
 end
 
 function load()
