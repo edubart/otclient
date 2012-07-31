@@ -273,7 +273,7 @@ void Creature::walk(const Position& oldPos, const Position& newPos)
     float interval = 1000;
     if(groundSpeed > 0 && m_speed > 0)
         interval = (1000.0f * groundSpeed) / m_speed;
-    interval = std::ceil(interval / g_game.getServerBeat()) * g_game.getServerBeat();
+    interval = std::floor(interval / g_game.getServerBeat()) * g_game.getServerBeat();
 
     m_walkAnimationInterval = interval;
     m_walkInterval = interval;

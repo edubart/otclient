@@ -898,8 +898,8 @@ void ProtocolGame::parsePlayerStats(const InputMessagePtr& msg)
     m_localPlayer->setStamina(stamina);
     m_localPlayer->setSoul(soul);
 
-    if(g_game.getClientVersion() >= 910)
-        m_localPlayer->setSpeed(msg->getU16());
+    if(g_game.getFeature(Otc::GameSkillsBase))
+        msg->getU16(); // base speed
 
     if(g_game.getFeature(Otc::GamePlayerRegenerationTime))
         msg->getU16();
