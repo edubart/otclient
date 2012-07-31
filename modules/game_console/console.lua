@@ -562,13 +562,15 @@ end
 function onGameStart()
   -- open last channels
   local lastChannelsOpen = g_settings.getNode('lastChannelsOpen')
-  local savedChannels = lastChannelsOpen[g_game.getLocalPlayer():getName()]
-  if savedChannels then
-    for channelName, channelId in pairs(savedChannels) do
-      channelId = tonumber(channelId)
-      if channelId ~= 0 then
-        if not table.find(channels, channelId) then
-          g_game.joinChannel(channelId)
+  if lastChannelsOpen then
+    local savedChannels = lastChannelsOpen[g_game.getLocalPlayer():getName()]
+    if savedChannels then
+      for channelName, channelId in pairs(savedChannels) do
+        channelId = tonumber(channelId)
+        if channelId ~= 0 then
+          if not table.find(channels, channelId) then
+            g_game.joinChannel(channelId)
+          end
         end
       end
     end
