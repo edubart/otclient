@@ -732,8 +732,13 @@ void ProtocolGame::parseCreatureHealth(const InputMessagePtr& msg)
     CreaturePtr creature = g_map.getCreatureById(id);
     if(creature)
         creature->setHealthPercent(healthPercent);
+
+    // some servers has a bug in get spectators and sends unknown creatures updates
+    // so this code is disabled
+    /*
     else
         g_logger.traceError("could not get creature");
+    */
 }
 
 void ProtocolGame::parseCreatureLight(const InputMessagePtr& msg)
@@ -771,8 +776,13 @@ void ProtocolGame::parseCreatureSpeed(const InputMessagePtr& msg)
     CreaturePtr creature = g_map.getCreatureById(id);
     if(creature)
         creature->setSpeed(speed);
+
+    // some servers has a bug in get spectators and sends unknown creatures updates
+    // so this code is disabled
+    /*
     else
         g_logger.traceError("could not get creature");
+    */
 }
 
 void ProtocolGame::parseCreatureSkulls(const InputMessagePtr& msg)
