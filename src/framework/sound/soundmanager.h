@@ -61,8 +61,8 @@ private:
     SoundSourcePtr m_musicSource;
     ALCdevice *m_device;
     ALCcontext *m_context;
-    bool m_musicEnabled = false;
-    bool m_soundEnabled = false;
+    stdext::boolean<false> m_musicEnabled;
+    stdext::boolean<false> m_soundEnabled;
     std::string m_currentMusic;
 };
 

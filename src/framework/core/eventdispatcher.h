@@ -40,7 +40,7 @@ public:
 private:
     std::list<EventPtr> m_eventList;
     int m_pollEventsSize;
-    bool m_disabled = false;
+    stdext::boolean<false> m_disabled;
     std::priority_queue<ScheduledEventPtr, std::vector<ScheduledEventPtr>, lessScheduledEvent> m_scheduledEventList;
 };
 

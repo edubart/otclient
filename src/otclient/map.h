@@ -129,7 +129,6 @@ enum clientVersion_t
     CLIENT_VERSION_960 = 40
 };
 
-
 enum {
     OTCM_SIGNATURE = 0x4D43544F,
     OTCM_VERSION = 1

@@ -68,8 +68,8 @@ protected:
     std::string m_appCompactName;
     std::string m_appVersion;
     std::string m_startupOptions;
-    bool m_running = false;
-    bool m_stopping = false;
+    stdext::boolean<false> m_running;
+    stdext::boolean<false> m_stopping;
     stdext::boolean<false> m_terminated;
 };
 

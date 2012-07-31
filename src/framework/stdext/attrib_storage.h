@@ -34,6 +34,7 @@
 namespace stdext {
 class attrib_storage {
 public:
+    attrib_storage() : m_attribs(nullptr), m_size(0) { }
     ~attrib_storage() { if(m_attribs) delete[] m_attribs; }
 
     template<typename T>
@@ -74,8 +75,8 @@ public:
     }
 
 private:
-    std::tuple<uint8, boost::any>* m_attribs = nullptr;
-    uint8 m_size = 0;
+    std::tuple<uint8, boost::any>* m_attribs;
+    uint8 m_size;
 };
 
 // restore memory alignment

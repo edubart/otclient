@@ -72,7 +72,7 @@ public:
 private:
     std::string m_workDir;
     std::string m_writeDir;
-    bool m_hasSearchPath = false;
+    stdext::boolean<false> m_hasSearchPath;
     std::deque<std::string> m_searchPaths;
 };
 

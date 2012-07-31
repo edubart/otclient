@@ -48,7 +48,7 @@ private:
 
     std::string m_text;
     Size m_textSize;
-    bool m_textMustRecache = true;
+    stdext::boolean<true> m_textMustRecache;
     CoordsBuffer m_textCoordsBuffer;
     Rect m_textCachedScreenCoords;
     BitmapFontPtr m_font;

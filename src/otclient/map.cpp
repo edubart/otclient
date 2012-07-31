@@ -122,7 +122,7 @@ void Map::loadOtbm(const std::string& fileName)
             setHouseFile(fileName.substr(0, fileName.rfind('/') + 1) + tmp);
             break;
         default:
-            stdext::throw_exception(stdext::format("Invalid attribute '%c'", attribute));
+            stdext::throw_exception(stdext::format("Invalid attribute '%d'", (int)attribute));
         }
     }
 

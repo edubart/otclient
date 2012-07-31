@@ -72,7 +72,7 @@ private:
     void updateGlTextureState();
 
     GLenum m_matrixMode;
-    bool m_textureEnabled = false;
+    stdext::boolean<false> m_textureEnabled;
 };
 
 extern PainterOGL1 *g_painterOGL1;

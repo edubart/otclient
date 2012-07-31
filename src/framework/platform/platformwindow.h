@@ -111,11 +111,11 @@ protected:
     InputEvent m_inputEvent;
     stdext::boolean<false> m_mouseButtonStates[4];
 
-    bool m_created = false;
-    bool m_visible = false;
-    bool m_focused = false;
-    bool m_fullscreen = false;
-    bool m_maximized = false;
+    stdext::boolean<false> m_created;
+    stdext::boolean<false> m_visible;
+    stdext::boolean<false> m_focused;
+    stdext::boolean<false> m_fullscreen;
+    stdext::boolean<false> m_maximized;
 
     std::function<void()> m_onClose;
     OnResizeCallback m_onResize;

@@ -98,6 +98,7 @@ bool Creatures::m_loadCreatureBuffer(TiXmlElement* attrib, const CreatureTypePtr
         return true;
 
     Outfit out;
+    out.setCategory(ThingCategoryCreature);
     int32 type;
     if(!attrib->Attribute("type").empty())
         type = attrib->readType<int32>("type");

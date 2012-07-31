@@ -61,8 +61,8 @@ private:
     Size m_oldViewportSize;
     uint m_fbo;
     uint m_prevBoundFbo;
-    bool m_backuping = true;
-    bool m_smooth = true;
+    stdext::boolean<true> m_backuping;
+    stdext::boolean<true> m_smooth;
 
     static uint boundFbo;
 };

@@ -39,7 +39,7 @@ public:
 protected:
     bool internalUpdate();
 
-    bool m_alignRight = false;
+    stdext::boolean<false> m_alignRight;
 };
 
 #endif
