@@ -45,7 +45,7 @@ Locales.neededTranslations = {
   "Auto login",
   "Auto login selected character on next charlist load",
   "Axe Fighting",
-  "Balance: 10000",
+  "Balance:",
   "Banishment",
   "Banishment + Final Warning",
   "Battle",
