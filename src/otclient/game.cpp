@@ -494,7 +494,7 @@ void Game::walk(Otc::Direction direction)
     if(toTile && toTile->isWalkable())
         m_localPlayer->preWalk(direction);
     else
-        m_localPlayer->lockWalk();
+        m_localPlayer->lockWalk(100);
 
     forceWalk(direction);
 
