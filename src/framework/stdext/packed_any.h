@@ -89,18 +89,22 @@ public:
 };
 
 template<typename T>
-T packed_any_cast(const packed_any& operand) {
-    if(operand.scalar) {
-        union {
-            T v;
-            packed_any::placeholder* content;
-        };
-        content = operand.content;
-        return v;
-    } else {
-        assert(operand.type() == typeid(T));
-        return static_cast<packed_any::holder<T>*>(operand.content)->held;
-    }
+typename std::enable_if<can_pack_in_any<T>::value, T>::type
+packed_any_cast(const packed_any& operand) {
+    assert(operand.scalar);
+    union {
+        T v;
+        packed_any::placeholder* content;
+    };
+    content = operand.content;
+    return v;
+}
+
+template<typename T>
+typename std::enable_if<!can_pack_in_any<T>::value, T>::type
+packed_any_cast(const packed_any& operand) {
+    assert(operand.type() == typeid(T));
+    return static_cast<packed_any::holder<T>*>(operand.content)->held;
 }
 
 template<typename T> T packed_any::cast() const { return packed_any_cast<T>(*this); }

@@ -42,7 +42,7 @@ public:
 
     packed_vector() : m_size(0), m_data(nullptr) { }
     packed_vector(size_type size) : m_size(size), m_data(new T[size]) { }
-    packed_vector(size_type size, const T& value) : m_size(size), m_data(new T[size](value)) { }
+    packed_vector(size_type size, const T& value) : m_size(size), m_data(new T[size]) { std::fill(begin(), end(), value); }
     template <class InputIterator>
     packed_vector(InputIterator first, InputIterator last) : m_size(last - first), m_data(new T[m_size]) { std::copy(first, last, m_data); }
     packed_vector(const packed_vector<T>& other) : m_size(other.m_size), m_data(new T[other.m_size]) { std::copy(other.begin(), other.end(), m_data); }
