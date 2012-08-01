@@ -33,6 +33,13 @@ Thing::Thing() :
 {
 }
 
+void Thing::setPosition(const Position& position)
+{
+    Position oldPos = m_position;
+    m_position = position;
+    onPositionChange(position, oldPos);
+}
+
 int Thing::getStackPriority()
 {
     if(isGround())
@@ -68,7 +75,7 @@ int Thing::getStackpos()
     if(m_position.x == 65535 && isItem()) // is inside a container
         return m_position.z;
     else if(const TilePtr& tile = getTile())
-        return tile->getThingStackpos(self_cast<Thing>());
+        return tile->getThingStackpos(static_self_cast<Thing>());
     else {
         g_logger.traceError("got a thing with invalid stackpos");
         return -1;

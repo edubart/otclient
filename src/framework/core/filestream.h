@@ -62,7 +62,7 @@ public:
     void addString(const std::string& v);
     BinaryTreePtr makeTree();
 
-    FileStreamPtr asFileStream() { return self_cast<FileStream>(); }
+    FileStreamPtr asFileStream() { return static_self_cast<FileStream>(); }
 
 private:
     void checkWrite();

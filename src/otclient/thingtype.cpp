@@ -39,6 +39,7 @@ ThingType::ThingType()
     m_numPatternX = m_numPatternY = m_numPatternZ = 0;
     m_animationPhases = 0;
     m_layers = 0;
+    m_elevation = 0;
 }
 
 void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileStreamPtr& fin)
@@ -88,10 +89,14 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
                 m_attribs.set(attr, market);
                 break;
             }
+            case ThingAttrElevation: {
+                m_elevation = fin->getU16();
+                m_attribs.set(attr, m_elevation);
+                break;
+            }
             case ThingAttrGround:
             case ThingAttrWritable:
             case ThingAttrWritableOnce:
-            case ThingAttrElevation:
             case ThingAttrMinimapColor:
             case ThingAttrCloth:
             case ThingAttrLensHelp:

@@ -20,44 +20,41 @@
  * THE SOFTWARE.
  */
 
-#ifndef STATICTEXT_H
-#define STATICTEXT_H
+#include "math.h"
+#include <random>
 
-#include "thing.h"
-#include <framework/graphics/cachedtext.h>
-#include <framework/core/timer.h>
+namespace stdext {
 
-// @bindclass
-class StaticText : public Thing
+uint32_t adler32(const uint8_t *buffer, size_t size) {
+    register size_t a = 1, b = 0, tlen;
+    while(size > 0) {
+        tlen = size > 5552 ? 5552 : size;
+        size -= tlen;
+        do {
+            a += *buffer++;
+            b += a;
+        } while (--tlen);
+
+        a %= 65521;
+        b %= 65521;
+    }
+    return (b << 16) | a;
+}
+
+long random_range(long min, long max)
 {
-public:
-    StaticText();
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+    static std::uniform_int_distribution<long> dis(0, 2147483647);
+    return min + (dis(gen) % (max - min + 1));
+}
 
-    void drawText(const Point& dest, const Rect& parentRect);
+float random_range(float min, float max)
+{
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+    static std::uniform_real_distribution<float> dis(0.0, 1.0);
+    return min + (max - min)*dis(gen);
+}
 
-    std::string getName() { return m_name; }
-    Otc::MessageMode getMessageMode() { return m_mode; }
-    std::string getFirstMessage() { return m_messages[0].first; }
-
-    bool isYell() { return m_mode == Otc::MessageYell || m_mode == Otc::MessageMonsterYell || m_mode == Otc::MessageBarkLoud; }
-
-    bool addMessage(const std::string& name, Otc::MessageMode mode, const std::string& text);
-
-    StaticTextPtr asStaticText() { return static_self_cast<StaticText>(); }
-    bool isStaticText() { return true; }
-
-private:
-    void update();
-    void scheduleUpdate();
-    void compose();
-
-    stdext::boolean<false> m_yell;
-    std::deque<std::pair<std::string, ticks_t>> m_messages;
-    std::string m_name;
-    Otc::MessageMode m_mode;
-    Color m_color;
-    CachedText m_cachedText;
-    ScheduledEventPtr m_updateEvent;
-};
-
-#endif
+}

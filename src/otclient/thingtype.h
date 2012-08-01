@@ -126,6 +126,7 @@ public:
     Point getDisplacement() { return m_displacement; }
     int getDisplacementX() { return getDisplacement().x; }
     int getDisplacementY() { return getDisplacement().y; }
+    int getElevation() { return m_elevation; }
 
     int getGroundSpeed() { return m_attribs.get<uint16>(ThingAttrGround); }
     int getMaxTextLength() { return m_attribs.has(ThingAttrWritableOnce) ? m_attribs.get<uint16>(ThingAttrWritableOnce) : m_attribs.get<uint16>(ThingAttrWritable); }
@@ -133,7 +134,6 @@ public:
     int getMinimapColor() { return m_attribs.get<uint16>(ThingAttrMinimapColor); }
     int getLensHelp() { return m_attribs.get<uint16>(ThingAttrLensHelp); }
     int getClothSlot() { return m_attribs.get<uint16>(ThingAttrCloth); }
-    int getElevation() { return m_attribs.get<uint16>(ThingAttrElevation); }
     MarketData getMarketData() { return m_attribs.get<MarketData>(ThingAttrMarket); }
     bool isGround() { return m_attribs.has(ThingAttrGround); }
     bool isGroundBorder() { return m_attribs.has(ThingAttrGroundBorder); }
@@ -180,7 +180,7 @@ private:
     ThingCategory m_category;
     uint16 m_id;
     bool m_null;
-    stdext::attrib_storage m_attribs;
+    stdext::dynamic_storage<uint8> m_attribs;
 
     Size m_size;
     Point m_displacement;
@@ -188,6 +188,7 @@ private:
     int m_numPatternX, m_numPatternY, m_numPatternZ;
     int m_animationPhases;
     int m_layers;
+    int m_elevation;
 
     std::vector<int> m_spritesIndex;
     std::vector<TexturePtr> m_textures;

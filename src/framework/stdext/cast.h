@@ -23,14 +23,12 @@
 #ifndef STDEXT_CAST_H
 #define STDEXT_CAST_H
 
-namespace stdext {
-template<typename R, typename T> R safe_cast(const T& t);
-template<typename R, typename T> R unsafe_cast(const T& t, R def = R());
-}
-
-#include "string.h"
 #include "exception.h"
 #include "demangle.h"
+
+#include <sstream>
+#include <iostream>
+#include <cstdlib>
 
 namespace stdext {
 
@@ -142,7 +140,9 @@ public:
     virtual ~cast_exception() throw() { }
     template<class T, class R>
     void update_what() {
-        m_what = format("failed to cast value of type '%s' to type '%s'", demangle_type<T>(), demangle_type<R>());
+        std::stringstream ss;
+        ss << "failed to cast value of type '" << demangle_type<T>() << "' to type '" << demangle_type<R>() << "'";
+        m_what = ss.str();
     }
     virtual const char* what() const throw() { return m_what.c_str(); }
 private:
@@ -163,14 +163,15 @@ R safe_cast(const T& t) {
 
 // cast a type to another type, cast errors are ignored
 template<typename R, typename T>
-R unsafe_cast(const T& t, R def) {
+R unsafe_cast(const T& t, R def = R()) {
     try {
         return safe_cast<R,T>(t);
     } catch(cast_exception& e) {
-        std::cout << "CAST ERROR: " << e.what() << std::endl;
+        std::cerr << "CAST ERROR: " << e.what() << std::endl;
         return def;
     }
 }
+
 }
 
 #endif

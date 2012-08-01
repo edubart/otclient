@@ -34,18 +34,29 @@ set(framework_SOURCES ${framework_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/util/size.h
 
     # stdext
+    ${CMAKE_CURRENT_LIST_DIR}/stdext/any.h
+    ${CMAKE_CURRENT_LIST_DIR}/stdext/boolean.h
     ${CMAKE_CURRENT_LIST_DIR}/stdext/cast.h
     ${CMAKE_CURRENT_LIST_DIR}/stdext/compiler.h
+    ${CMAKE_CURRENT_LIST_DIR}/stdext/demangle.cpp
     ${CMAKE_CURRENT_LIST_DIR}/stdext/demangle.h
     ${CMAKE_CURRENT_LIST_DIR}/stdext/dumper.h
+    ${CMAKE_CURRENT_LIST_DIR}/stdext/dynamic_storage.h
     ${CMAKE_CURRENT_LIST_DIR}/stdext/exception.h
+    ${CMAKE_CURRENT_LIST_DIR}/stdext/format.h
+    ${CMAKE_CURRENT_LIST_DIR}/stdext/math.cpp
     ${CMAKE_CURRENT_LIST_DIR}/stdext/math.h
-    ${CMAKE_CURRENT_LIST_DIR}/stdext/stdext.h
-    ${CMAKE_CURRENT_LIST_DIR}/stdext/string.h
-    ${CMAKE_CURRENT_LIST_DIR}/stdext/time.h
-    ${CMAKE_CURRENT_LIST_DIR}/stdext/types.h
-    ${CMAKE_CURRENT_LIST_DIR}/stdext/attrib_storage.h
+    ${CMAKE_CURRENT_LIST_DIR}/stdext/packed_any.h
+    ${CMAKE_CURRENT_LIST_DIR}/stdext/packed_storage.h
+    ${CMAKE_CURRENT_LIST_DIR}/stdext/packed_vector.h
     ${CMAKE_CURRENT_LIST_DIR}/stdext/shared_object.h
+    ${CMAKE_CURRENT_LIST_DIR}/stdext/stdext.h
+    ${CMAKE_CURRENT_LIST_DIR}/stdext/string.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/stdext/string.h
+    ${CMAKE_CURRENT_LIST_DIR}/stdext/time.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/stdext/time.h
+    ${CMAKE_CURRENT_LIST_DIR}/stdext/traits.h
+    ${CMAKE_CURRENT_LIST_DIR}/stdext/types.h
 
     # core
     ${CMAKE_CURRENT_LIST_DIR}/core/application.cpp

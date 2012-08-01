@@ -24,6 +24,7 @@
 #define LUAOBJECT_H
 
 #include "declarations.h"
+#include <typeinfo>
 
 /// LuaObject, all script-able classes have it as base
 // @bindclass
@@ -80,7 +81,7 @@ public:
         return stdext::demangle_name(typeid(*this).name());
     }
 
-    LuaObjectPtr asLuaObject() { return self_cast<LuaObject>(); }
+    LuaObjectPtr asLuaObject() { return static_self_cast<LuaObject>(); }
 
     void operator=(const LuaObject& other) { }
 

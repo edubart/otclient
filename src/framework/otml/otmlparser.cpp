@@ -80,14 +80,14 @@ void OTMLParser::parseLine(std::string line)
         return;
 
     // remove line sides spaces
-    boost::trim(line);
+    stdext::trim(line);
 
     // skip empty lines
     if(line.empty())
         return;
 
     // skip comments
-    if(boost::starts_with(line, "//"))
+    if(stdext::starts_with(line, "//"))
         return;
 
     // a depth above, change current parent to the previous added node
@@ -119,7 +119,7 @@ void OTMLParser::parseNode(const std::string& data)
     // node that has no tag and may have a value
     if(!data.empty() && data[0] == '-') {
         value = data.substr(1);
-        boost::trim(value);
+        stdext::trim(value);
     // node that has tag and possible a value
     } else if(dotsPos != std::string::npos) {
         tag = data.substr(0, dotsPos);
@@ -130,8 +130,8 @@ void OTMLParser::parseNode(const std::string& data)
         tag = data;
     }
 
-    boost::trim(tag);
-    boost::trim(value);
+    stdext::trim(tag);
+    stdext::trim(value);
 
     // process multitine values
     if(value == "|" || value == "|-" || value == "|+") {
@@ -148,7 +148,7 @@ void OTMLParser::parseNode(const std::string& data)
             // it has contents below the current depth
             } else {
                 // if not empty, its a node
-                boost::trim(line);
+                stdext::trim(line);
                 if(!line.empty()) {
                     // rewind and break
                     in.seekg(lastPos, std::ios::beg);
@@ -188,11 +188,13 @@ void OTMLParser::parseNode(const std::string& data)
     if(value == "~")
         node->setNull(true);
     else {
-        if(boost::starts_with(value, "[") && boost::ends_with(value, "]")) {
+        if(stdext::starts_with(value, "[") && stdext::ends_with(value, "]")) {
             std::string tmp = value.substr(1, value.length()-2);
             boost::tokenizer<boost::escaped_list_separator<char>> tokens(tmp);
-            for(std::string v : tokens)
-                node->writeIn(stdext::trim(v));
+            for(std::string v : tokens) {
+                stdext::trim(v);
+                node->writeIn(v);
+            }
         } else
             node->setValue(value);
     }

@@ -151,6 +151,7 @@ public:
         return Otc::InvalidDirection;
     }
 
+    bool isMapPosition() const { return (x < 65535 && y < 65535 && z <= Otc::MAX_Z); }
     bool isValid() const { return !(x == 65535 && y == 65535 && z == 255); }
     float distance(const Position& pos) const { return sqrt(pow((pos.x - x), 2) + pow((pos.y - y), 2)); }
     int manhattanDistance(const Position& pos) const { return std::abs(pos.x - x) + std::abs(pos.y - y); }

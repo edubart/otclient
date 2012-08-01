@@ -89,7 +89,7 @@ public:
 
     virtual std::string emit();
 
-    OTMLNodePtr asOTMLNode() { return self_cast<OTMLNode>(); }
+    OTMLNodePtr asOTMLNode() { return static_self_cast<OTMLNode>(); }
 
 protected:
     OTMLNode() : m_unique(false), m_null(false) { }
@@ -107,13 +107,13 @@ protected:
 template<>
 inline std::string OTMLNode::value<std::string>() {
     std::string value = m_value;
-    if(boost::starts_with(value, "\"") && boost::ends_with(value, "\"")) {
+    if(stdext::starts_with(value, "\"") && stdext::ends_with(value, "\"")) {
         value = value.substr(1, value.length()-2);
-        boost::replace_all(value, "\\\\", "\\");
-        boost::replace_all(value, "\\\"", "\"");
-        boost::replace_all(value, "\\t",  "\t");
-        boost::replace_all(value, "\\n",  "\n");
-        boost::replace_all(value, "\\'",  "\'");
+        stdext::replace_all(value, "\\\\", "\\");
+        stdext::replace_all(value, "\\\"", "\"");
+        stdext::replace_all(value, "\\t",  "\t");
+        stdext::replace_all(value, "\\n",  "\n");
+        stdext::replace_all(value, "\\'",  "\'");
     }
     return value;
 }

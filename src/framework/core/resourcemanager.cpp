@@ -125,7 +125,7 @@ void ResourceManager::searchAndAddPackages(const std::string& packagesDir, const
     auto files = listDirectoryFiles(packagesDir);
     for(auto it = files.rbegin(); it != files.rend(); ++it) {
         const std::string& file = *it;
-        if(!boost::ends_with(file, packageExt))
+        if(!stdext::ends_with(file, packageExt))
             continue;
         std::string package = getRealDir(packagesDir) + "/" + file;
         if(!addSearchPath(package, true))
@@ -262,7 +262,7 @@ std::list<std::string> ResourceManager::listDirectoryFiles(const std::string& di
 std::string ResourceManager::resolvePath(const std::string& path)
 {
     std::string fullPath;
-    if(boost::starts_with(path, "/"))
+    if(stdext::starts_with(path, "/"))
         fullPath = path;
     else {
         std::string scriptPath = "/" + g_lua.getCurrentSourcePath();
@@ -270,9 +270,9 @@ std::string ResourceManager::resolvePath(const std::string& path)
             fullPath += scriptPath + "/";
         fullPath += path;
     }
-    if(!(boost::starts_with(fullPath, "/")))
+    if(!(stdext::starts_with(fullPath, "/")))
         g_logger.traceWarning(stdext::format("the following file path is not fully resolved: %s", path));
-    boost::replace_all(fullPath, "//", "/");
+    stdext::replace_all(fullPath, "//", "/");
     return fullPath;
 }
 

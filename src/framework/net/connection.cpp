@@ -69,7 +69,7 @@ void Connection::connect(const std::string& host, uint16 port, const std::functi
 
     auto self = asConnection();
     m_resolver.async_resolve(query, [=](const boost::system::error_code& error, asio::ip::tcp::resolver::iterator endpointIterator) {
-        if(self->is_unique_ref())
+        if(self.is_unique())
             return;
         m_readTimer.cancel();
 
@@ -130,7 +130,7 @@ void Connection::write(uint8* buffer, uint16 size)
 
         // wait 1 ms to do the real send
         m_sendEvent = g_dispatcher.scheduleEvent([=] {
-            if(self->is_unique_ref())
+            if(self.is_unique())
                 return;
             //m_writeTimer.cancel();
 

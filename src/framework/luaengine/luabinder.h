@@ -27,6 +27,9 @@
 #include "luainterface.h"
 #include "luaexception.h"
 
+#include <framework/stdext/traits.h>
+#include <tuple>
+
 /// This namespace contains some dirty metaprogamming that uses a lot of C++0x features
 /// The purpose here is to create templates that can bind any function from C++
 /// and expose in lua environment. This is done combining variadic templates,
@@ -36,12 +39,6 @@
 /// pushes the result to lua.
 namespace luabinder
 {
-    /// Removes const references, transforming 'const T&' into 'T'
-    template<typename T>
-    struct remove_const_ref {
-        typedef typename std::remove_const<typename std::remove_reference<T>::type>::type type;
-    };
-
     /// Pack arguments from lua stack into a tuple recursively
     template<int N>
     struct pack_values_into_tuple {
@@ -117,8 +114,8 @@ namespace luabinder
     /// Bind a std::function
     template<typename Ret, typename... Args>
     LuaCppFunction bind_fun(const std::function<Ret(Args...)>& f) {
-        typedef typename std::tuple<typename remove_const_ref<Args>::type...> Tuple;
-        return bind_fun_specializer<typename remove_const_ref<Ret>::type,
+        typedef typename std::tuple<typename stdext::remove_const_ref<Args>::type...> Tuple;
+        return bind_fun_specializer<typename stdext::remove_const_ref<Ret>::type,
                                     decltype(f),
                                     Tuple>(f);
     }
@@ -130,8 +127,8 @@ namespace luabinder
     template<typename Lambda, typename Ret, typename... Args>
     struct bind_lambda_fun<Ret(Lambda::*)(Args...) const> {
         static LuaCppFunction call(const Lambda& f) {
-            typedef typename std::tuple<typename remove_const_ref<Args>::type...> Tuple;
-            return bind_fun_specializer<typename remove_const_ref<Ret>::type,
+            typedef typename std::tuple<typename stdext::remove_const_ref<Args>::type...> Tuple;
+            return bind_fun_specializer<typename stdext::remove_const_ref<Ret>::type,
                                         decltype(f),
                                         Tuple>(f);
 
@@ -152,18 +149,18 @@ namespace luabinder
 
     /// Create member function lambdas
     template<typename Ret, typename C, typename... Args>
-    std::function<Ret(const boost::intrusive_ptr<C>&, const Args&...)> make_mem_func(Ret (C::* f)(Args...)) {
+    std::function<Ret(const stdext::shared_object_ptr<C>&, const Args&...)> make_mem_func(Ret (C::* f)(Args...)) {
         auto mf = std::mem_fn(f);
-        return [=](const boost::intrusive_ptr<C>& obj, const Args&... args) mutable -> Ret {
+        return [=](const stdext::shared_object_ptr<C>& obj, const Args&... args) mutable -> Ret {
             if(!obj)
                 throw LuaException("failed to call a member function because the passed object is nil");
             return mf(obj.get(), args...);
         };
     }
     template<typename C, typename... Args>
-    std::function<void(const boost::intrusive_ptr<C>&, const Args&...)> make_mem_func(void (C::* f)(Args...)) {
+    std::function<void(const stdext::shared_object_ptr<C>&, const Args&...)> make_mem_func(void (C::* f)(Args...)) {
         auto mf = std::mem_fn(f);
-        return [=](const boost::intrusive_ptr<C>& obj, const Args&... args) mutable -> void {
+        return [=](const stdext::shared_object_ptr<C>& obj, const Args&... args) mutable -> void {
             if(!obj)
                 throw LuaException("failed to call a member function because the passed object is nil");
             mf(obj.get(), args...);
@@ -186,9 +183,9 @@ namespace luabinder
     /// Bind member functions
     template<typename C, typename Ret, class FC, typename... Args>
     LuaCppFunction bind_mem_fun(Ret (FC::* f)(Args...)) {
-        typedef typename std::tuple<boost::intrusive_ptr<FC>, typename remove_const_ref<Args>::type...> Tuple;
+        typedef typename std::tuple<stdext::shared_object_ptr<FC>, typename stdext::remove_const_ref<Args>::type...> Tuple;
         auto lambda = make_mem_func<Ret,FC>(f);
-        return bind_fun_specializer<typename remove_const_ref<Ret>::type,
+        return bind_fun_specializer<typename stdext::remove_const_ref<Ret>::type,
                                     decltype(lambda),
                                     Tuple>(lambda);
     }
@@ -196,10 +193,10 @@ namespace luabinder
     /// Bind singleton member functions
     template<typename C, typename Ret, class FC, typename... Args>
     LuaCppFunction bind_singleton_mem_fun(Ret (FC::*f)(Args...), C *instance) {
-        typedef typename std::tuple<typename remove_const_ref<Args>::type...> Tuple;
+        typedef typename std::tuple<typename stdext::remove_const_ref<Args>::type...> Tuple;
         assert(instance);
         auto lambda = make_mem_func_singleton<Ret,FC>(f, static_cast<FC*>(instance));
-        return bind_fun_specializer<typename remove_const_ref<Ret>::type,
+        return bind_fun_specializer<typename stdext::remove_const_ref<Ret>::type,
                                     decltype(lambda),
                                     Tuple>(lambda);
     }
@@ -209,7 +206,7 @@ namespace luabinder
     LuaCppFunction bind_mem_fun(int (C::*f)(LuaInterface*)) {
         auto mf = std::mem_fn(f);
         return [=](LuaInterface* lua) -> int {
-            auto obj = lua->castValue<boost::intrusive_ptr<C>>(1);
+            auto obj = lua->castValue<stdext::shared_object_ptr<C>>(1);
             lua->remove(1);
             return mf(obj, lua);
         };

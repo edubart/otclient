@@ -84,7 +84,7 @@ OTMLNodePtr OTMLNode::at(const std::string& childTag)
 OTMLNodePtr OTMLNode::atIndex(int childIndex)
 {
     if(childIndex >= size() || childIndex < 0)
-        throw OTMLException(asOTMLNode(), stdext::mkstr("child node with index '%d' not found", childIndex));
+        throw OTMLException(asOTMLNode(), stdext::format("child node with index '%d' not found", childIndex));
     return m_children[childIndex];
 }
 

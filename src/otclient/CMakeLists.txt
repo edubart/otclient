@@ -41,6 +41,7 @@ set(otclient_SOURCES ${otclient_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/localplayer.h
     ${CMAKE_CURRENT_LIST_DIR}/map.cpp
     ${CMAKE_CURRENT_LIST_DIR}/map.h
+    ${CMAKE_CURRENT_LIST_DIR}/mapio.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mapview.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mapview.h
     ${CMAKE_CURRENT_LIST_DIR}/missile.cpp

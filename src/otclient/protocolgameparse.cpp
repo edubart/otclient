@@ -499,7 +499,6 @@ void ProtocolGame::parseCreatureMove(const InputMessagePtr& msg)
         return;
     }
 
-
     int stackPos = -2;
     // newer protocols stores creatures in reverse order
     if(!g_game.getClientVersion()  >= 854)
@@ -507,6 +506,10 @@ void ProtocolGame::parseCreatureMove(const InputMessagePtr& msg)
 
     g_map.removeThing(thing);
     g_map.addThing(thing, newPos, stackPos);
+
+    //CreaturePtr creature = thing->static_self_cast<Creature>();
+    //Position oldPos = thing->getPosition();
+    //creature->onMove(newPos, oldPos);
 }
 
 void ProtocolGame::parseOpenContainer(const InputMessagePtr& msg)

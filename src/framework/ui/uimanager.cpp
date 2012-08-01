@@ -321,8 +321,7 @@ bool UIManager::importStyle(const std::string& file)
 void UIManager::importStyleFromOTML(const OTMLNodePtr& styleNode)
 {
     std::string tag = styleNode->tag();
-    std::vector<std::string> split;
-    boost::split(split, tag, boost::is_any_of(std::string("<")));
+    std::vector<std::string> split = stdext::split(tag, "<");
     if(split.size() != 2)
         throw OTMLException(styleNode, "not a valid style declaration");
 
@@ -330,8 +329,8 @@ void UIManager::importStyleFromOTML(const OTMLNodePtr& styleNode)
     std::string base = split[1];
     bool unique = false;
 
-    boost::trim(name);
-    boost::trim(base);
+    stdext::trim(name);
+    stdext::trim(base);
 
     if(name[0] == '#') {
         name = name.substr(1);
@@ -367,7 +366,7 @@ OTMLNodePtr UIManager::getStyle(const std::string& styleName)
         return m_styles[styleName];
 
     // styles starting with UI are automatically defined
-    if(boost::starts_with(styleName, "UI")) {
+    if(stdext::starts_with(styleName, "UI")) {
         OTMLNodePtr node = OTMLNode::create(styleName);
         node->writeAt("__class", styleName);
         m_styles[styleName] = node;

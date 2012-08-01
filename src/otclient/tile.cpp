@@ -113,7 +113,7 @@ void Tile::draw(const Point& dest, float scaleFactor, int drawFlags)
             const ThingPtr& thing = *it;
             if(!thing->isCreature())
                 continue;
-            CreaturePtr creature = thing->self_cast<Creature>();
+            CreaturePtr creature = thing->static_self_cast<Creature>();
             if(creature && (!creature->isWalking() || !animate))
                 creature->draw(dest - m_drawElevation*scaleFactor, scaleFactor, animate);
         }
@@ -158,7 +158,7 @@ void Tile::addThing(const ThingPtr& thing, int stackPos)
         return;
 
     if(thing->isEffect()) {
-        m_effects.push_back(thing->self_cast<Effect>());
+        m_effects.push_back(thing->static_self_cast<Effect>());
         return;
     }
 
@@ -205,7 +205,7 @@ bool Tile::removeThing(ThingPtr thing)
     bool removed = false;
 
     if(thing->isEffect()) {
-        EffectPtr effect = thing->self_cast<Effect>();
+        EffectPtr effect = thing->static_self_cast<Effect>();
         auto it = std::find(m_effects.begin(), m_effects.end(), effect);
         if(it != m_effects.end()) {
             m_effects.erase(it);
@@ -267,7 +267,7 @@ std::vector<ItemPtr> Tile::getItems()
     for(const ThingPtr& thing : m_things) {
         if(!thing->isItem())
             continue;
-        ItemPtr item = thing->self_cast<Item>();
+        ItemPtr item = thing->static_self_cast<Item>();
         items.push_back(item);
     }
     return items;
@@ -278,7 +278,7 @@ std::vector<CreaturePtr> Tile::getCreatures()
     std::vector<CreaturePtr> creatures;
     for(const ThingPtr& thing : m_things) {
         if(thing->isCreature())
-            creatures.push_back(thing->self_cast<Creature>());
+            creatures.push_back(thing->static_self_cast<Creature>());
     }
     return creatures;
 }
@@ -289,7 +289,7 @@ ItemPtr Tile::getGround()
     if(!firstObject)
         return nullptr;
     if(firstObject->isGround() && firstObject->isItem())
-        return firstObject->self_cast<Item>();
+        return firstObject->static_self_cast<Item>();
     return nullptr;
 }
 
@@ -348,9 +348,9 @@ CreaturePtr Tile::getTopCreature()
     for(uint i = 0; i < m_things.size(); ++i) {
         ThingPtr thing = m_things[i];
         if(thing->isLocalPlayer()) // return local player if there is no other creature
-            creature = thing->self_cast<Creature>();
+            creature = thing->static_self_cast<Creature>();
         else if(thing->isCreature() && !thing->isLocalPlayer())
-            return thing->self_cast<Creature>();
+            return thing->static_self_cast<Creature>();
     }
     if(!creature && !m_walkingCreatures.empty())
         creature = m_walkingCreatures.back();
@@ -408,7 +408,7 @@ bool Tile::isWalkable()
             return false;
 
         if(thing->isCreature()) {
-            CreaturePtr creature = thing->self_cast<Creature>();
+            CreaturePtr creature = thing->static_self_cast<Creature>();
             if(!creature->isPassable())
                 return false;
         }

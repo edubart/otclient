@@ -36,11 +36,10 @@ public:
     Thing();
     virtual ~Thing() { }
 
-    virtual void startAnimation() { }
     virtual void draw(const Point& dest, float scaleFactor, bool animate) { }
 
     virtual void setId(uint32 id) { }
-    void setPosition(const Position& position) { m_position = position; }
+    void setPosition(const Position& position);
 
     virtual uint32 getId() { return 0; }
     Position getPosition() { return m_position; }
@@ -119,8 +118,13 @@ public:
     bool isMarketable() { return rawGetThingType()->isMarketable(); }
     MarketData getMarketData() { return rawGetThingType()->getMarketData(); }
 
-
 protected:
+    virtual void onPositionChange(const Position& newPos, const Position& oldPos) { }
+    virtual void onAppear() { }
+    virtual void onDisappear() { }
+
+    friend class Map;
+
     Position m_position;
     uint16 m_datId;
 };

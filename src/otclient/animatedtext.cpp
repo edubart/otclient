@@ -47,7 +47,7 @@ void AnimatedText::drawText(const Point& dest, const Rect& visibleRect)
     }
 }
 
-void AnimatedText::startAnimation()
+void AnimatedText::onAppear()
 {
     m_animationTimer.restart();
 

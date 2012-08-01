@@ -25,7 +25,6 @@
 
 #ifdef __clang__
     // clang is supported
-    #undef _GLIBCXX_USE_FLOAT128
 #elif defined(__GNUC__)
     #if !(__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6))
     #error "Sorry, you need gcc 4.6 or greater to compile."

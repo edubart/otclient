@@ -20,44 +20,18 @@
  * THE SOFTWARE.
  */
 
-#ifndef STATICTEXT_H
-#define STATICTEXT_H
+#ifndef STDEXT_TRAITS_H
+#define STDEXT_TRAITS_H
 
-#include "thing.h"
-#include <framework/graphics/cachedtext.h>
-#include <framework/core/timer.h>
+#include <type_traits>
 
-// @bindclass
-class StaticText : public Thing
-{
-public:
-    StaticText();
+namespace stdext {
 
-    void drawText(const Point& dest, const Rect& parentRect);
+template<class T> struct replace_extent { typedef T type; };
+template<class T> struct replace_extent<T[]> { typedef const T* type; };
+template<class T, unsigned long N> struct replace_extent<T[N]> { typedef const T* type;};
+template<typename T> struct remove_const_ref { typedef typename std::remove_const<typename std::remove_reference<T>::type>::type type; };
 
-    std::string getName() { return m_name; }
-    Otc::MessageMode getMessageMode() { return m_mode; }
-    std::string getFirstMessage() { return m_messages[0].first; }
-
-    bool isYell() { return m_mode == Otc::MessageYell || m_mode == Otc::MessageMonsterYell || m_mode == Otc::MessageBarkLoud; }
-
-    bool addMessage(const std::string& name, Otc::MessageMode mode, const std::string& text);
-
-    StaticTextPtr asStaticText() { return static_self_cast<StaticText>(); }
-    bool isStaticText() { return true; }
-
-private:
-    void update();
-    void scheduleUpdate();
-    void compose();
-
-    stdext::boolean<false> m_yell;
-    std::deque<std::pair<std::string, ticks_t>> m_messages;
-    std::string m_name;
-    Otc::MessageMode m_mode;
-    Color m_color;
-    CachedText m_cachedText;
-    ScheduledEventPtr m_updateEvent;
 };
 
 #endif

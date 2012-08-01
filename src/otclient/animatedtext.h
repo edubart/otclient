@@ -35,13 +35,15 @@ public:
     AnimatedText();
 
     void drawText(const Point& dest, const Rect& visibleRect);
-    void startAnimation();
 
     void setColor(int color);
     void setText(const std::string& text);
 
-    AnimatedTextPtr asAnimatedText() { return self_cast<AnimatedText>(); }
+    AnimatedTextPtr asAnimatedText() { return static_self_cast<AnimatedText>(); }
     bool isAnimatedText() { return true; }
+
+protected:
+    virtual void onAppear();
 
 private:
     Color m_color;

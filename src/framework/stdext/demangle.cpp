@@ -20,44 +20,25 @@
  * THE SOFTWARE.
  */
 
-#ifndef STATICTEXT_H
-#define STATICTEXT_H
+#include "demangle.h"
 
-#include "thing.h"
-#include <framework/graphics/cachedtext.h>
-#include <framework/core/timer.h>
+#include <cxxabi.h>
+#include <cstring>
+#include <cstdlib>
 
-// @bindclass
-class StaticText : public Thing
+namespace stdext {
+
+const char* demangle_name(const char* name)
 {
-public:
-    StaticText();
+    size_t len;
+    int status;
+    static char buffer[1024];
+    char* demangled = abi::__cxa_demangle(name, 0, &len, &status);
+    if(demangled) {
+        strcpy(buffer, demangled);
+        free(demangled);
+    }
+    return buffer;
+}
 
-    void drawText(const Point& dest, const Rect& parentRect);
-
-    std::string getName() { return m_name; }
-    Otc::MessageMode getMessageMode() { return m_mode; }
-    std::string getFirstMessage() { return m_messages[0].first; }
-
-    bool isYell() { return m_mode == Otc::MessageYell || m_mode == Otc::MessageMonsterYell || m_mode == Otc::MessageBarkLoud; }
-
-    bool addMessage(const std::string& name, Otc::MessageMode mode, const std::string& text);
-
-    StaticTextPtr asStaticText() { return static_self_cast<StaticText>(); }
-    bool isStaticText() { return true; }
-
-private:
-    void update();
-    void scheduleUpdate();
-    void compose();
-
-    stdext::boolean<false> m_yell;
-    std::deque<std::pair<std::string, ticks_t>> m_messages;
-    std::string m_name;
-    Otc::MessageMode m_mode;
-    Color m_color;
-    CachedText m_cachedText;
-    ScheduledEventPtr m_updateEvent;
-};
-
-#endif
+}

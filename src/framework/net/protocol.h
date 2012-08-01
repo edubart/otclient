@@ -54,7 +54,7 @@ public:
     virtual void send(const OutputMessagePtr& outputMessage);
     void recv();
 
-    ProtocolPtr asProtocol() { return self_cast<Protocol>(); }
+    ProtocolPtr asProtocol() { return static_self_cast<Protocol>(); }
 
 protected:
     virtual void onConnect();

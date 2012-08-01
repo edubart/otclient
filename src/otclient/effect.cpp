@@ -35,7 +35,7 @@ void Effect::draw(const Point& dest, float scaleFactor, bool animate)
     rawGetThingType()->draw(dest, scaleFactor, 0, 0, 0, 0, animationPhase);
 }
 
-void Effect::startAnimation()
+void Effect::onAppear()
 {
     m_animationTimer.restart();
     m_phaseDuration = EFFECT_TICKS_PER_FRAME;

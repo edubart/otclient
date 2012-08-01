@@ -34,6 +34,8 @@
 #include "outfit.h"
 #include <framework/core/timer.h>
 
+#include <bitset>
+
 typedef std::tuple<std::string, bool> Vip;
 
 //@bindsingleton g_game

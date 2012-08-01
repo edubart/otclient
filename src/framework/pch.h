@@ -28,40 +28,19 @@
 #include <cstdlib>
 #include <cstring>
 #include <cassert>
-#include <ctime>
 #include <cmath>
-#include <csignal>
 
 // common STL headers
 #include <iostream>
 #include <sstream>
-#include <fstream>
 #include <string>
 #include <vector>
 #include <list>
-#include <bitset>
-#include <queue>
 #include <deque>
-#include <stack>
 #include <map>
 #include <algorithm>
-#include <exception>
-#include <memory>
-#include <type_traits>
-#include <tuple>
 #include <functional>
-#include <typeinfo>
 #include <array>
-#include <iomanip>
 #include <unordered_map>
-#include <random>
-#include <chrono>
-#include <thread>
-#include <mutex>
-#include <atomic>
-#include <thread>
-
-// boost utilities
-#include <boost/algorithm/string.hpp>
 
 #endif

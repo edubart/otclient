@@ -24,16 +24,13 @@
 #define STDEXT_TIME_H
 
 #include "types.h"
-#include <chrono>
-#include <unistd.h>
 
 namespace stdext {
 
-const static auto startup_time = std::chrono::high_resolution_clock::now();
-inline ticks_t millis() { return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - startup_time).count(); }
-inline ticks_t micros() { return std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - startup_time).count(); }
-inline void millisleep(uint32 ms) { usleep(ms * 1000); };
-inline void microsleep(uint32 us) { usleep(us); };
+ticks_t millis();
+ticks_t micros();
+void millisleep(size_t ms);
+void microsleep(size_t us);
 
 struct timer {
 public:

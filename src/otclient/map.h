@@ -267,7 +267,7 @@ private:
     Position m_centralPosition;
     Rect m_tilesRect;
 
-    stdext::attrib_storage m_attribs;
+    stdext::packed_storage<uint8> m_attribs;
     Houses m_houses;
     Towns m_towns;
     Creatures m_creatures;

@@ -101,6 +101,9 @@ public:
     ThingType *rawGetThingType();
 
 protected:
+    virtual void onMove(const Position& newPos, const Position& oldPos);
+
+protected:
     virtual void updateWalkAnimation(int totalPixelsWalked);
     virtual void updateWalkOffset(int totalPixelsWalked);
     void updateWalkingTile();

@@ -23,13 +23,13 @@
 #ifndef STDEXT_TYPES_H
 #define STDEXT_TYPES_H
 
-#include <stdint.h>
+#include <cstdint>
 
-// easy handwriting types
 typedef unsigned char uchar;
 typedef unsigned short ushort;
 typedef unsigned int uint;
 typedef unsigned long ulong;
+
 typedef uint64_t uint64;
 typedef uint32_t uint32;
 typedef uint16_t uint16;
@@ -39,19 +39,9 @@ typedef int32_t int32;
 typedef int16_t int16;
 typedef int8_t int8;
 
-typedef unsigned char fast_uchar;
-typedef unsigned long fast_ushort;
-typedef unsigned long fast_uint;
-typedef unsigned long fast_ulong;
-typedef uint_fast64_t fast_uint64;
-typedef uint_fast32_t fast_uint32;
-typedef uint_fast16_t fast_uint16;
-typedef uint_fast8_t fast_uint8;
-typedef int_fast64_t fast_int64;
-typedef int_fast32_t fast_int32;
-typedef int_fast16_t fast_int16;
-typedef int_fast8_t fast_int8;
+typedef int64 ticks_t;
 
-typedef int64_t ticks_t;
+using std::size_t;
+using std::ptrdiff_t;
 
 #endif

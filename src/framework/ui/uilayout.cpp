@@ -63,7 +63,7 @@ void UILayout::updateLater()
     if(!getParentWidget())
         return;
 
-    auto self = self_cast<UILayout>();
+    auto self = static_self_cast<UILayout>();
     g_dispatcher.addEvent([self] {
         self->m_updateScheduled = false;
         self->update();

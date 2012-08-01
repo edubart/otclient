@@ -320,7 +320,7 @@ public:
 
     /// Pushes any type onto the stack
     template<typename T, typename... Args>
-    int polymorphicPush(T v, Args... args);
+    int polymorphicPush(const T& v, const Args&... args);
     int polymorphicPush() { return 0; }
 
     /// Casts a value from stack to any type
@@ -349,7 +349,7 @@ extern LuaInterface g_lua;
 #include "luavaluecasts.h"
 
 template<typename T, typename... Args>
-int LuaInterface::polymorphicPush(T v, Args... args) {
+int LuaInterface::polymorphicPush(const T& v, const Args&... args) {
     int r = push_luavalue(v);
     return r + polymorphicPush(args...);
 }

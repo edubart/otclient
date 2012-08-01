@@ -84,7 +84,7 @@ void ParticleSystem::update()
         return;
     m_lastUpdateTime = g_clock.seconds() - std::fmod(elapsedTime, delay);
 
-    auto self = self_cast<ParticleSystem>();
+    auto self = static_self_cast<ParticleSystem>();
     for(int i = 0; i < elapsedTime / delay; ++i) {
 
         // update emitters

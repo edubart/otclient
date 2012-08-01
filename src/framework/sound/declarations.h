@@ -38,11 +38,11 @@ class StreamSoundSource;
 class CombinedSoundSource;
 class OggSoundFile;
 
-typedef boost::intrusive_ptr<SoundSource> SoundSourcePtr;
-typedef boost::intrusive_ptr<SoundFile> SoundFilePtr;
-typedef boost::intrusive_ptr<SoundBuffer> SoundBufferPtr;
-typedef boost::intrusive_ptr<StreamSoundSource> StreamSoundSourcePtr;
-typedef boost::intrusive_ptr<CombinedSoundSource> CombinedSoundSourcePtr;
-typedef boost::intrusive_ptr<OggSoundFile> OggSoundFilePtr;
+typedef stdext::shared_object_ptr<SoundSource> SoundSourcePtr;
+typedef stdext::shared_object_ptr<SoundFile> SoundFilePtr;
+typedef stdext::shared_object_ptr<SoundBuffer> SoundBufferPtr;
+typedef stdext::shared_object_ptr<StreamSoundSource> StreamSoundSourcePtr;
+typedef stdext::shared_object_ptr<CombinedSoundSource> CombinedSoundSourcePtr;
+typedef stdext::shared_object_ptr<OggSoundFile> OggSoundFilePtr;
 
 #endif

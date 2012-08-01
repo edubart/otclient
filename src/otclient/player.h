@@ -32,7 +32,7 @@ public:
     Player() { }
     virtual ~Player() { }
 
-    PlayerPtr asPlayer() { return self_cast<Player>(); }
+    PlayerPtr asPlayer() { return static_self_cast<Player>(); }
     bool isPlayer() { return true; }
 };
 

@@ -85,7 +85,7 @@ public:
     int getDrawElevation() { return m_drawElevation; }
     std::vector<ItemPtr> getItems();
     std::vector<CreaturePtr> getCreatures();
-    const std::vector<ThingPtr>& getThings() { return m_things; }
+    std::vector<ThingPtr> getThings() { return m_things; }
     ItemPtr getGround();
     int getGroundSpeed();
     uint8 getMinimapColorByte();
@@ -109,12 +109,12 @@ public:
     void setHouseId(uint32 hid) { if(m_flags & TILESTATE_HOUSE) m_houseId = hid; }
     uint32 getHouseId() { return m_houseId; }
 
-    TilePtr asTile() { return self_cast<Tile>(); }
+    TilePtr asTile() { return static_self_cast<Tile>(); }
 
 private:
-    std::vector<CreaturePtr> m_walkingCreatures;
-    std::vector<EffectPtr> m_effects; // leave this outside m_things because it has no stackpos.
-    std::vector<ThingPtr> m_things;
+    stdext::packed_vector<CreaturePtr> m_walkingCreatures;
+    stdext::packed_vector<EffectPtr> m_effects; // leave this outside m_things because it has no stackpos.
+    stdext::packed_vector<ThingPtr> m_things;
     Position m_position;
     uint8 m_drawElevation;
     uint32 m_flags, m_houseId;

@@ -50,25 +50,25 @@ class House;
 class Town;
 class CreatureType;
 
-typedef boost::intrusive_ptr<MapView> MapViewPtr;
-typedef boost::intrusive_ptr<Tile> TilePtr;
-typedef boost::intrusive_ptr<Thing> ThingPtr;
-typedef boost::intrusive_ptr<Item> ItemPtr;
-typedef boost::intrusive_ptr<Container> ContainerPtr;
-typedef boost::intrusive_ptr<Creature> CreaturePtr;
-typedef boost::intrusive_ptr<Monster> MonsterPtr;
-typedef boost::intrusive_ptr<Npc> NpcPtr;
-typedef boost::intrusive_ptr<Player> PlayerPtr;
-typedef boost::intrusive_ptr<LocalPlayer> LocalPlayerPtr;
-typedef boost::intrusive_ptr<Effect> EffectPtr;
-typedef boost::intrusive_ptr<Missile> MissilePtr;
-typedef boost::intrusive_ptr<AnimatedText> AnimatedTextPtr;
-typedef boost::intrusive_ptr<StaticText> StaticTextPtr;
-typedef boost::intrusive_ptr<ThingType> ThingTypePtr;
-typedef boost::intrusive_ptr<ItemType> ItemTypePtr;
-typedef boost::intrusive_ptr<House> HousePtr;
-typedef boost::intrusive_ptr<Town> TownPtr;
-typedef boost::intrusive_ptr<CreatureType> CreatureTypePtr;
+typedef stdext::shared_object_ptr<MapView> MapViewPtr;
+typedef stdext::shared_object_ptr<Tile> TilePtr;
+typedef stdext::shared_object_ptr<Thing> ThingPtr;
+typedef stdext::shared_object_ptr<Item> ItemPtr;
+typedef stdext::shared_object_ptr<Container> ContainerPtr;
+typedef stdext::shared_object_ptr<Creature> CreaturePtr;
+typedef stdext::shared_object_ptr<Monster> MonsterPtr;
+typedef stdext::shared_object_ptr<Npc> NpcPtr;
+typedef stdext::shared_object_ptr<Player> PlayerPtr;
+typedef stdext::shared_object_ptr<LocalPlayer> LocalPlayerPtr;
+typedef stdext::shared_object_ptr<Effect> EffectPtr;
+typedef stdext::shared_object_ptr<Missile> MissilePtr;
+typedef stdext::shared_object_ptr<AnimatedText> AnimatedTextPtr;
+typedef stdext::shared_object_ptr<StaticText> StaticTextPtr;
+typedef stdext::shared_object_ptr<ThingType> ThingTypePtr;
+typedef stdext::shared_object_ptr<ItemType> ItemTypePtr;
+typedef stdext::shared_object_ptr<House> HousePtr;
+typedef stdext::shared_object_ptr<Town> TownPtr;
+typedef stdext::shared_object_ptr<CreatureType> CreatureTypePtr;
 
 typedef std::vector<ThingPtr> ThingList;
 typedef std::vector<ThingTypePtr> ThingTypeList;
@@ -81,8 +81,8 @@ typedef std::unordered_map<Position, TilePtr, PositionHasher> TileMap;
 class ProtocolLogin;
 class ProtocolGame;
 
-typedef boost::intrusive_ptr<ProtocolGame> ProtocolGamePtr;
-typedef boost::intrusive_ptr<ProtocolLogin> ProtocolLoginPtr;
+typedef stdext::shared_object_ptr<ProtocolGame> ProtocolGamePtr;
+typedef stdext::shared_object_ptr<ProtocolLogin> ProtocolLoginPtr;
 
 // ui
 class UIItem;
@@ -90,9 +90,9 @@ class UICreature;
 class UIMap;
 class UIProgressRect;
 
-typedef boost::intrusive_ptr<UIItem> UIItemPtr;
-typedef boost::intrusive_ptr<UICreature> UICreaturePtr;
-typedef boost::intrusive_ptr<UIMap> UIMapPtr;
-typedef boost::intrusive_ptr<UIProgressRect> UIProgressRectPtr;
+typedef stdext::shared_object_ptr<UIItem> UIItemPtr;
+typedef stdext::shared_object_ptr<UICreature> UICreaturePtr;
+typedef stdext::shared_object_ptr<UIMap> UIMapPtr;
+typedef stdext::shared_object_ptr<UIProgressRect> UIProgressRectPtr;
 
 #endif

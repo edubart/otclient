@@ -26,6 +26,8 @@
 #include "clock.h"
 #include "scheduledevent.h"
 
+#include <queue>
+
 // @bindsingleton g_dispatcher
 class EventDispatcher
 {

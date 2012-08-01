@@ -62,7 +62,7 @@ public:
     bool isConnecting() { return m_connecting; }
     bool isConnected() { return m_connected; }
 
-    ConnectionPtr asConnection() { return self_cast<Connection>(); }
+    ConnectionPtr asConnection() { return static_self_cast<Connection>(); }
 protected:
     void onConnect(const boost::system::error_code& error);
     void onWrite(const boost::system::error_code& error, size_t);

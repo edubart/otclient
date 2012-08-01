@@ -50,7 +50,7 @@ public:
     int getSpawnTime() { return m_attribs.get<int>(CreatureAttrSpawnTime); }
 
 private:
-    stdext::attrib_storage m_attribs;
+    stdext::dynamic_storage<uint8> m_attribs;
 };
 
 class Creatures
@@ -63,7 +63,7 @@ public:
     void loadNpcs(const std::string& folder);
     void loadCreatureBuffer(const std::string& buffer);
 
-    CreatureTypePtr getCreature(const std::string& name);
+    CreatureTypePtr getCreature(std::string name);
     bool isLoaded() const { return m_loaded; }
 
 protected:

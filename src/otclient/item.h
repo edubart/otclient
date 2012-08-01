@@ -115,7 +115,7 @@ public:
     bool isTeleport() { return m_attribs.has(ATTR_TELE_DEST); }
     bool isMoveable();
 
-    ItemPtr asItem() { return self_cast<Item>(); }
+    ItemPtr asItem() { return static_self_cast<Item>(); }
     bool isItem() { return true; }
 
     const ThingTypePtr& getThingType();
@@ -125,7 +125,7 @@ private:
     uint16 m_id;
     uint16 m_otbId;
     uint8 m_countOrSubType;
-    stdext::attrib_storage m_attribs;
+    stdext::packed_storage<uint8> m_attribs;
 };
 #pragma pack(pop)
 

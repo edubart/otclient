@@ -278,8 +278,8 @@ void UITextEdit::appendText(std::string text)
     if(m_cursorPos >= 0) {
         // replace characters that are now allowed
         if(!m_multiline)
-            boost::replace_all(text, "\n", "");
-        boost::replace_all(text, "\r", "    ");
+            stdext::replace_all(text, "\n", "");
+        stdext::replace_all(text, "\r", "    ");
 
         if(text.length() > 0) {
             // only add text if textedit can add it

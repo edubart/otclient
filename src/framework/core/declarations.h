@@ -33,11 +33,11 @@ class ScheduledEvent;
 class FileStream;
 class BinaryTree;
 
-typedef boost::intrusive_ptr<Module> ModulePtr;
-typedef boost::intrusive_ptr<Event> EventPtr;
-typedef boost::intrusive_ptr<ScheduledEvent> ScheduledEventPtr;
-typedef boost::intrusive_ptr<FileStream> FileStreamPtr;
-typedef boost::intrusive_ptr<BinaryTree> BinaryTreePtr;
+typedef stdext::shared_object_ptr<Module> ModulePtr;
+typedef stdext::shared_object_ptr<Event> EventPtr;
+typedef stdext::shared_object_ptr<ScheduledEvent> ScheduledEventPtr;
+typedef stdext::shared_object_ptr<FileStream> FileStreamPtr;
+typedef stdext::shared_object_ptr<BinaryTree> BinaryTreePtr;
 
 typedef std::vector<BinaryTreePtr> BinaryTreeVec;
 

@@ -103,7 +103,7 @@ public:
     // get tile
     TilePtr getTile(const Point& mousePos, const Rect& mapRect);
 
-    MapViewPtr asMapView() { return self_cast<MapView>(); }
+    MapViewPtr asMapView() { return static_self_cast<MapView>(); }
 
 private:
     int calcFirstVisibleFloor();

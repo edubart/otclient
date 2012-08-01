@@ -20,44 +20,30 @@
  * THE SOFTWARE.
  */
 
-#ifndef STATICTEXT_H
-#define STATICTEXT_H
+#include "time.h"
+#include <chrono>
+#include <unistd.h>
 
-#include "thing.h"
-#include <framework/graphics/cachedtext.h>
-#include <framework/core/timer.h>
+namespace stdext {
 
-// @bindclass
-class StaticText : public Thing
+const static auto startup_time = std::chrono::high_resolution_clock::now();
+
+ticks_t millis()
 {
-public:
-    StaticText();
+    return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - startup_time).count();
+}
+ticks_t micros() {
+    return std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - startup_time).count();
+}
 
-    void drawText(const Point& dest, const Rect& parentRect);
-
-    std::string getName() { return m_name; }
-    Otc::MessageMode getMessageMode() { return m_mode; }
-    std::string getFirstMessage() { return m_messages[0].first; }
-
-    bool isYell() { return m_mode == Otc::MessageYell || m_mode == Otc::MessageMonsterYell || m_mode == Otc::MessageBarkLoud; }
-
-    bool addMessage(const std::string& name, Otc::MessageMode mode, const std::string& text);
-
-    StaticTextPtr asStaticText() { return static_self_cast<StaticText>(); }
-    bool isStaticText() { return true; }
-
-private:
-    void update();
-    void scheduleUpdate();
-    void compose();
-
-    stdext::boolean<false> m_yell;
-    std::deque<std::pair<std::string, ticks_t>> m_messages;
-    std::string m_name;
-    Otc::MessageMode m_mode;
-    Color m_color;
-    CachedText m_cachedText;
-    ScheduledEventPtr m_updateEvent;
+void millisleep(size_t ms)
+{
+    usleep(ms * 1000);
 };
 
-#endif
+void microsleep(size_t us)
+{
+    usleep(us);
+};
+
+}

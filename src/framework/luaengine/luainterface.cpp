@@ -325,7 +325,7 @@ void LuaInterface::loadScript(const std::string& fileName)
 {
     // resolve file full path
     std::string filePath = fileName;
-    if(!boost::starts_with(fileName, "/"))
+    if(!stdext::starts_with(fileName, "/"))
         filePath = getCurrentSourcePath() + "/" + filePath;
 
     std::string buffer = g_resources.loadFile(fileName);
@@ -341,7 +341,7 @@ void LuaInterface::loadFunction(const std::string& buffer, const std::string& so
     }
 
     std::string buf;
-    if(boost::starts_with(buffer, "function"))
+    if(stdext::starts_with(buffer, "function"))
         buf = stdext::format("__func = %s", buffer);
     else
         buf = stdext::format("__func = function(self)\n%s\nend", buffer);
@@ -553,7 +553,7 @@ int LuaInterface::luaScriptLoader(lua_State* L)
         g_lua.loadScript(fileName);
         return 1;
     } catch(stdext::exception& e) {
-        g_lua.pushString(stdext::mkstr("\n\t", e.what()));
+        g_lua.pushString(std::string("\n\t") + e.what());
         return 1;
     }
 }
@@ -561,7 +561,7 @@ int LuaInterface::luaScriptLoader(lua_State* L)
 int LuaInterface::lua_dofile(lua_State* L)
 {
     std::string fileName = g_lua.popString();
-    if(!boost::ends_with(fileName, ".lua"))
+    if(!stdext::ends_with(fileName, ".lua"))
         fileName += ".lua";
 
     try {
@@ -580,7 +580,7 @@ int LuaInterface::lua_dofiles(lua_State* L)
     std::string directory = g_lua.popString();
 
     for(const std::string& fileName : g_resources.listDirectoryFiles(directory)) {
-        if(!boost::ends_with(fileName, ".lua"))
+        if(!stdext::ends_with(fileName, ".lua"))
             continue;
 
         try {
@@ -597,7 +597,7 @@ int LuaInterface::lua_dofiles(lua_State* L)
 int LuaInterface::lua_loadfile(lua_State* L)
 {
     std::string fileName = g_lua.popString();
-    if(!boost::ends_with(fileName, ".lua"))
+    if(!stdext::ends_with(fileName, ".lua"))
         fileName += ".lua";
 
     try {

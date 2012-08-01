@@ -34,7 +34,7 @@ public:
     void enableBilinearFilter();
     void processAnimation();
 
-    AnimatedTexturePtr asAnimatedTexture() { return self_cast<AnimatedTexture>(); }
+    AnimatedTexturePtr asAnimatedTexture() { return static_self_cast<AnimatedTexture>(); }
 
 private:
     std::vector<uint> m_framesTextureId;

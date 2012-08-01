@@ -1037,7 +1037,7 @@ std::string X11Window::getClipboardText()
 
         // hack to wait SelectioNotify event, otherwise we will get wrong clipboard pastes
         // TODO: fix this in a correct way
-        usleep(100 * 1000);
+        stdext::millisleep(100);
 
         // check for data
         Atom type;
@@ -1052,7 +1052,7 @@ std::string X11Window::getClipboardText()
                             &bytesLeft,
                             &data);
         if(len > 0) {
-            clipboardText = stdext::utf8StringToLatin1(data);
+            clipboardText = stdext::utf8_to_latin1(data);
         }
     }
 

@@ -25,7 +25,9 @@
 
 #include "../stdext/types.h"
 #include "../stdext/cast.h"
+#include "../stdext/string.h"
 #include "../const.h"
+#include <iomanip>
 
 class Color
 {

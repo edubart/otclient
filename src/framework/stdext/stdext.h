@@ -24,16 +24,21 @@
 #define STDEXT_H
 
 #include "compiler.h"
+#include "dumper.h"
 #include "types.h"
 #include "exception.h"
 #include "demangle.h"
 #include "cast.h"
 #include "math.h"
 #include "string.h"
-#include "dumper.h"
 #include "time.h"
-#include "shared_object.h"
-#include "attrib_storage.h"
 #include "boolean.h"
+#include "shared_object.h"
+#include "any.h"
+#include "packed_any.h"
+#include "dynamic_storage.h"
+#include "packed_storage.h"
+#include "format.h"
+#include "packed_vector.h"
 
 #endif

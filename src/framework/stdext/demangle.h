@@ -23,29 +23,16 @@
 #ifndef STDEXT_DEMANGLE_H
 #define STDEXT_DEMANGLE_H
 
-#include <cxxabi.h>
+#include <typeinfo>
 #include <string>
 
 namespace stdext {
 
 /// Demangle names for GNU g++ compiler
-inline std::string demangle_name(const char* name) {
-    size_t len;
-    int status;
-    std::string ret;
-    char* demangled = abi::__cxa_demangle(name, 0, &len, &status);
-    if(demangled) {
-        ret = demangled;
-        free(demangled);
-    }
-    return ret;
-}
+const char* demangle_name(const char* name);
 
 /// Returns the name of a type
-template<typename T>
-std::string demangle_type() {
-    return demangle_name(typeid(T).name());
-}
+template<typename T> std::string demangle_type() { return demangle_name(typeid(T).name()); }
 
 }
 

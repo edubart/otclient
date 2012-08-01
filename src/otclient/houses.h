@@ -63,7 +63,7 @@ protected:
     void save(TiXmlElement &elem) { } // TODO
 
 private:
-    stdext::attrib_storage m_attribs;
+    stdext::packed_storage<uint8> m_attribs;
     TileMap m_tiles;
     stdext::boolean<false> m_isGuildHall;
 

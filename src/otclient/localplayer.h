@@ -77,7 +77,7 @@ public:
     bool isAutoWalking() { return m_autoWalking; }
     bool isPremium() { return m_premium; }
 
-    LocalPlayerPtr asLocalPlayer() { return self_cast<LocalPlayer>(); }
+    LocalPlayerPtr asLocalPlayer() { return static_self_cast<LocalPlayer>(); }
     bool isLocalPlayer() { return true; }
 
 protected:

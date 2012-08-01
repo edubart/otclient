@@ -33,19 +33,21 @@ class Effect : public Thing
     enum {
         EFFECT_TICKS_PER_FRAME = 75
     };
+
 public:
     void draw(const Point& dest, float scaleFactor, bool animate);
 
     void setId(uint32 id);
-    void startAnimation();
-
     uint32 getId() { return m_id; }
 
-    EffectPtr asEffect() { return self_cast<Effect>(); }
+    EffectPtr asEffect() { return static_self_cast<Effect>(); }
     bool isEffect() { return true; }
 
     const ThingTypePtr& getThingType();
     ThingType *rawGetThingType();
+
+protected:
+    void onAppear();
 
 private:
     Timer m_animationTimer;

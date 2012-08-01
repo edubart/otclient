@@ -24,65 +24,24 @@
 #define STDEXT_MATH_H
 
 #include "types.h"
-#include <random>
 
 namespace stdext {
 
-inline uint32 adler32(const uint8 *buffer, uint16 size) {
-    register uint32 a = 1, b = 0, tlen;
-    while(size > 0) {
-        tlen = size > 5552 ? 5552 : size;
-        size -= tlen;
-        do {
-            a += *buffer++;
-            b += a;
-        } while (--tlen);
+inline bool is_power_of_two(size_t v) { return ((v != 0) && !(v & (v - 1))); }
+inline size_t to_power_of_two(size_t v) { if(v == 0) return 0; size_t r = 1; while(r < v && r != 0xffffffff) r <<= 1; return r; }
 
-        a %= 65521;
-        b %= 65521;
-    }
-    return (b << 16) | a;
-}
+inline uint16_t readLE16(const uchar *addr) { return (uint16_t)addr[1] << 8 | addr[0]; }
+inline uint32_t readLE32(const uchar *addr) { return (uint32_t)readLE16(addr + 2) << 16 | readLE16(addr); }
+inline uint64_t readLE64(const uchar *addr) { return (uint64_t)readLE32(addr + 4) << 32 | readLE32(addr); }
 
-inline bool is_power_of_two(uint32 v) {
-    return ((v != 0) && !(v & (v - 1)));
-}
+inline void writeLE16(uchar *addr, uint16_t value) { addr[1] = value >> 8; addr[0] = (uint8_t)value; }
+inline void writeLE32(uchar *addr, uint32_t value) { writeLE16(addr + 2, value >> 16); writeLE16(addr, (uint16_t)value); }
+inline void writeLE64(uchar *addr, uint64_t value) { writeLE32(addr + 4, value >> 32); writeLE32(addr, (uint32_t)value); }
 
-inline uint32 to_power_of_two(uint32 v) {
-    if(v == 0)
-        return 0;
-    uint32 r = 1;
-    while(r < v && r != 0xffffffff)
-        r <<= 1;
-    return r;
-}
+uint32_t adler32(const uint8_t *buffer, size_t size);
 
-inline uint16 readLE16(const uchar *addr) { return (uint16)addr[1] << 8 | addr[0]; }
-inline uint32 readLE32(const uchar *addr) { return (uint32)readLE16(addr + 2) << 16 | readLE16(addr); }
-inline uint64 readLE64(const uchar *addr) { return (uint64)readLE32(addr + 4) << 32 | readLE32(addr); }
-
-inline void writeLE16(uchar *addr, uint16 value) { addr[1] = value >> 8; addr[0] = (uint8)value; }
-inline void writeLE32(uchar *addr, uint32 value) { writeLE16(addr + 2, value >> 16); writeLE16(addr, (uint16)value); }
-inline void writeLE64(uchar *addr, uint64 value) { writeLE32(addr + 4, value >> 32); writeLE32(addr, (uint32)value); }
-
-template<typename T>
-T random_range(T min, T max);
-
-template<>
-inline int random_range<int>(int min, int max) {
-    static std::random_device rd;
-    static std::mt19937 gen(rd());
-    static std::uniform_int_distribution<int> dis(0, 2147483647);
-    return min + (dis(gen) % (max - min + 1));
-}
-
-template<>
-inline float random_range<float>(float min, float max) {
-    static std::random_device rd;
-    static std::mt19937 gen(rd());
-    static std::uniform_real_distribution<float> dis(0.0, 1.0);
-    return min + (max - min)*dis(gen);
-}
+long random_range(long min, long max);
+float random_range(float min, float max);
 
 }
 

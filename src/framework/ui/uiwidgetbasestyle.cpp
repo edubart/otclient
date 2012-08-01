@@ -162,8 +162,7 @@ void UIWidget::parseBaseStyle(const OTMLNodePtr& styleNode)
             setMarginLeft(node->value<int>());
         else if(node->tag() == "margin") {
             std::string marginDesc = node->value();
-            std::vector<std::string> split;
-            boost::split(split, marginDesc, boost::is_any_of(std::string(" ")));
+            std::vector<std::string> split = stdext::split(marginDesc, " ");
             if(split.size() == 4) {
                 setMarginTop(stdext::safe_cast<int>(split[0]));
                 setMarginRight(stdext::safe_cast<int>(split[1]));
@@ -202,8 +201,7 @@ void UIWidget::parseBaseStyle(const OTMLNodePtr& styleNode)
             setPaddingLeft(node->value<int>());
         else if(node->tag() == "padding") {
             std::string paddingDesc = node->value();
-            std::vector<std::string> split;
-            boost::split(split, paddingDesc, boost::is_any_of(std::string(" ")));
+            std::vector<std::string> split = stdext::split(paddingDesc, " ");
             if(split.size() == 4) {
                 setPaddingTop(stdext::safe_cast<int>(split[0]));
                 setPaddingRight(stdext::safe_cast<int>(split[1]));
@@ -243,13 +241,13 @@ void UIWidget::parseBaseStyle(const OTMLNodePtr& styleNode)
             if(!layoutType.empty()) {
                 UILayoutPtr layout;
                 if(layoutType == "horizontalBox")
-                    layout = UIHorizontalLayoutPtr(new UIHorizontalLayout(self_cast<UIWidget>()));
+                    layout = UIHorizontalLayoutPtr(new UIHorizontalLayout(static_self_cast<UIWidget>()));
                 else if(layoutType == "verticalBox")
-                    layout = UIVerticalLayoutPtr(new UIVerticalLayout(self_cast<UIWidget>()));
+                    layout = UIVerticalLayoutPtr(new UIVerticalLayout(static_self_cast<UIWidget>()));
                 else if(layoutType == "grid")
-                    layout = UIGridLayoutPtr(new UIGridLayout(self_cast<UIWidget>()));
+                    layout = UIGridLayoutPtr(new UIGridLayout(static_self_cast<UIWidget>()));
                 else if(layoutType == "anchor")
-                    layout = UIAnchorLayoutPtr(new UIAnchorLayout(self_cast<UIWidget>()));
+                    layout = UIAnchorLayoutPtr(new UIAnchorLayout(static_self_cast<UIWidget>()));
                 else
                     throw OTMLException(node, "cannot determine layout type");
                 setLayout(layout);
@@ -259,7 +257,7 @@ void UIWidget::parseBaseStyle(const OTMLNodePtr& styleNode)
                 m_layout->applyStyle(node);
         }
         // anchors
-        else if(boost::starts_with(node->tag(), "anchors.")) {
+        else if(stdext::starts_with(node->tag(), "anchors.")) {
             UIWidgetPtr parent = getParent();
             if(!parent) {
                 if(m_firstOnStyle)
@@ -271,7 +269,7 @@ void UIWidget::parseBaseStyle(const OTMLNodePtr& styleNode)
             UILayoutPtr layout = parent->getLayout();
             UIAnchorLayoutPtr anchorLayout;
             if(layout->isUIAnchorLayout())
-                anchorLayout = layout->self_cast<UIAnchorLayout>();
+                anchorLayout = layout->static_self_cast<UIAnchorLayout>();
 
             if(!anchorLayout)
                 throw OTMLException(node, "cannot create anchor, the parent widget doesn't use anchor layout!");
@@ -304,7 +302,7 @@ void UIWidget::parseBaseStyle(const OTMLNodePtr& styleNode)
                 }
             }
         // lua functions
-        } else if(boost::starts_with(node->tag(), "@")) {
+        } else if(stdext::starts_with(node->tag(), "@")) {
             // load once
             if(m_firstOnStyle) {
                 std::string funcName = node->tag().substr(1);
@@ -313,7 +311,7 @@ void UIWidget::parseBaseStyle(const OTMLNodePtr& styleNode)
                 luaSetField(funcName);
             }
         // lua fields value
-        } else if(boost::starts_with(node->tag(), "&")) {
+        } else if(stdext::starts_with(node->tag(), "&")) {
             std::string fieldName = node->tag().substr(1);
             std::string fieldOrigin = "@" + node->source() + "[" + node->tag() + "]";
 

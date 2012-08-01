@@ -20,44 +20,34 @@
  * THE SOFTWARE.
  */
 
-#ifndef STATICTEXT_H
-#define STATICTEXT_H
+#ifndef STDEXT_DYNAMICSTORAGE_H
+#define STDEXT_DYNAMICSTORAGE_H
 
-#include "thing.h"
-#include <framework/graphics/cachedtext.h>
-#include <framework/core/timer.h>
+#include "types.h"
+#include "any.h"
+#include <unordered_map>
 
-// @bindclass
-class StaticText : public Thing
-{
+namespace stdext {
+
+template<typename Key>
+class dynamic_storage {
 public:
-    StaticText();
+    template<typename T> void set(const Key& k, const T& value) { m_map[k] = value; }
+    template<typename T> T get(const Key& k) const {
+        auto it = m_map.find(k);
+        if(it != m_map.end())
+            return any_cast<T>(it->second);
+        return T();
+    }
+    bool has(const Key& k) const { return m_map.find(k) != m_map.end(); }
 
-    void drawText(const Point& dest, const Rect& parentRect);
-
-    std::string getName() { return m_name; }
-    Otc::MessageMode getMessageMode() { return m_mode; }
-    std::string getFirstMessage() { return m_messages[0].first; }
-
-    bool isYell() { return m_mode == Otc::MessageYell || m_mode == Otc::MessageMonsterYell || m_mode == Otc::MessageBarkLoud; }
-
-    bool addMessage(const std::string& name, Otc::MessageMode mode, const std::string& text);
-
-    StaticTextPtr asStaticText() { return static_self_cast<StaticText>(); }
-    bool isStaticText() { return true; }
+    std::size_t size() const { return m_map.size(); }
+    void clear() { m_map.clear(); }
 
 private:
-    void update();
-    void scheduleUpdate();
-    void compose();
-
-    stdext::boolean<false> m_yell;
-    std::deque<std::pair<std::string, ticks_t>> m_messages;
-    std::string m_name;
-    Otc::MessageMode m_mode;
-    Color m_color;
-    CachedText m_cachedText;
-    ScheduledEventPtr m_updateEvent;
+    std::unordered_map<Key, any> m_map;
 };
+
+}
 
 #endif

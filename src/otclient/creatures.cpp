@@ -80,7 +80,11 @@ void Creatures::loadCreatureBuffer(const std::string &buffer)
     if(!root || (root->ValueStr() != "monster" && root->ValueStr() != "npc"))
         stdext::throw_exception("invalid root tag name");
 
-    CreatureTypePtr newType(new CreatureType(stdext::trim(stdext::tolower(root->Attribute("name")))));
+    std::string cName = root->Attribute("name");
+    stdext::tolower(cName);
+    stdext::trim(cName);
+
+    CreatureTypePtr newType(new CreatureType(cName));
     for(TiXmlElement* attrib = root->FirstChildElement(); attrib; attrib = attrib->NextSiblingElement()) {
         if(attrib->ValueStr() != "look")
             continue;
@@ -120,9 +124,11 @@ bool Creatures::m_loadCreatureBuffer(TiXmlElement* attrib, const CreatureTypePtr
     return type >= 0;
 }
 
-CreatureTypePtr Creatures::getCreature(const std::string& name)
+CreatureTypePtr Creatures::getCreature(std::string name)
 {
+    stdext::tolower(name);
+    stdext::trim(name);
     auto it = std::find_if(m_creatures.begin(), m_creatures.end(),
-                           [=] (const CreatureTypePtr& m) -> bool { return m->getName() == stdext::trim(stdext::tolower(name)); });
+                           [=] (const CreatureTypePtr& m) -> bool { return m->getName() == name; });
     return it != m_creatures.end() ? *it : nullptr;
 }

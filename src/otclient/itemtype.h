@@ -103,7 +103,7 @@ private:
     ItemCategory m_category;
     stdext::boolean<true> m_null;
 
-    stdext::attrib_storage m_attribs;
+    stdext::dynamic_storage<uint8> m_attribs;
 };
 
 #endif

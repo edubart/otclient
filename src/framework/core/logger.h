@@ -25,6 +25,8 @@
 
 #include "../global.h"
 
+#include <fstream>
+
 struct LogMessage {
     LogMessage(Fw::LogLevel level, const std::string& message, std::size_t when) : level(level), message(message), when(when) { }
     Fw::LogLevel level;

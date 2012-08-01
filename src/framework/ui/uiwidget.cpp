@@ -141,11 +141,11 @@ void UIWidget::addChild(const UIWidgetPtr& child)
     UIWidgetPtr oldLastChild = getLastChild();
 
     m_children.push_back(child);
-    child->setParent(self_cast<UIWidget>());
+    child->setParent(static_self_cast<UIWidget>());
 
     // create default layout
     if(!m_layout)
-        m_layout = UIAnchorLayoutPtr(new UIAnchorLayout(self_cast<UIWidget>()));
+        m_layout = UIAnchorLayoutPtr(new UIAnchorLayout(static_self_cast<UIWidget>()));
 
     // add to layout and updates it
     m_layout->addWidget(child);
@@ -184,11 +184,11 @@ void UIWidget::insertChild(int index, const UIWidgetPtr& child)
     // retrieve child by index
     auto it = m_children.begin() + index;
     m_children.insert(it, child);
-    child->setParent(self_cast<UIWidget>());
+    child->setParent(static_self_cast<UIWidget>());
 
     // create default layout if needed
     if(!m_layout)
-        m_layout = UIAnchorLayoutPtr(new UIAnchorLayout(self_cast<UIWidget>()));
+        m_layout = UIAnchorLayoutPtr(new UIAnchorLayout(static_self_cast<UIWidget>()));
 
     // add to layout and updates it
     m_layout->addWidget(child);
@@ -218,7 +218,7 @@ void UIWidget::removeChild(UIWidgetPtr child)
         m_children.erase(it);
 
         // reset child parent
-        assert(child->getParent() == self_cast<UIWidget>());
+        assert(child->getParent() == static_self_cast<UIWidget>());
         child->setParent(nullptr);
 
         m_layout->removeWidget(child);
@@ -504,7 +504,7 @@ void UIWidget::applyStyle(const OTMLNodePtr& styleNode)
         callLuaField("onStyleApply", styleNode->tag(), styleNode);
 
         if(m_firstOnStyle) {
-            auto self = self_cast<UIWidget>();
+            auto self = static_self_cast<UIWidget>();
             g_dispatcher.addEvent([self] {
                 self->callLuaField("onSetup");
             });
@@ -525,7 +525,7 @@ void UIWidget::addAnchor(Fw::AnchorEdge anchoredEdge, const std::string& hookedW
         return;
 
     if(UIAnchorLayoutPtr anchorLayout = getAnchoredLayout())
-        anchorLayout->addAnchor(self_cast<UIWidget>(), anchoredEdge, hookedWidgetId, hookedEdge);
+        anchorLayout->addAnchor(static_self_cast<UIWidget>(), anchoredEdge, hookedWidgetId, hookedEdge);
     else
         g_logger.error(stdext::format("cannot add anchors to widget '%s': the parent doesn't use anchors layout", m_id));
 }
@@ -541,8 +541,8 @@ void UIWidget::centerIn(const std::string& hookedWidgetId)
         return;
 
     if(UIAnchorLayoutPtr anchorLayout = getAnchoredLayout()) {
-        anchorLayout->addAnchor(self_cast<UIWidget>(), Fw::AnchorHorizontalCenter, hookedWidgetId, Fw::AnchorHorizontalCenter);
-        anchorLayout->addAnchor(self_cast<UIWidget>(), Fw::AnchorVerticalCenter, hookedWidgetId, Fw::AnchorVerticalCenter);
+        anchorLayout->addAnchor(static_self_cast<UIWidget>(), Fw::AnchorHorizontalCenter, hookedWidgetId, Fw::AnchorHorizontalCenter);
+        anchorLayout->addAnchor(static_self_cast<UIWidget>(), Fw::AnchorVerticalCenter, hookedWidgetId, Fw::AnchorVerticalCenter);
     } else
         g_logger.error(stdext::format("cannot add anchors to widget '%s': the parent doesn't use anchors layout", m_id));
 }
@@ -553,10 +553,10 @@ void UIWidget::fill(const std::string& hookedWidgetId)
         return;
 
     if(UIAnchorLayoutPtr anchorLayout = getAnchoredLayout()) {
-        anchorLayout->addAnchor(self_cast<UIWidget>(), Fw::AnchorLeft, hookedWidgetId, Fw::AnchorLeft);
-        anchorLayout->addAnchor(self_cast<UIWidget>(), Fw::AnchorRight, hookedWidgetId, Fw::AnchorRight);
-        anchorLayout->addAnchor(self_cast<UIWidget>(), Fw::AnchorTop, hookedWidgetId, Fw::AnchorTop);
-        anchorLayout->addAnchor(self_cast<UIWidget>(), Fw::AnchorBottom, hookedWidgetId, Fw::AnchorBottom);
+        anchorLayout->addAnchor(static_self_cast<UIWidget>(), Fw::AnchorLeft, hookedWidgetId, Fw::AnchorLeft);
+        anchorLayout->addAnchor(static_self_cast<UIWidget>(), Fw::AnchorRight, hookedWidgetId, Fw::AnchorRight);
+        anchorLayout->addAnchor(static_self_cast<UIWidget>(), Fw::AnchorTop, hookedWidgetId, Fw::AnchorTop);
+        anchorLayout->addAnchor(static_self_cast<UIWidget>(), Fw::AnchorBottom, hookedWidgetId, Fw::AnchorBottom);
     } else
         g_logger.error(stdext::format("cannot add anchors to widget '%s': the parent doesn't use anchors layout", m_id));
 }
@@ -567,7 +567,7 @@ void UIWidget::breakAnchors()
         return;
 
     if(UIAnchorLayoutPtr anchorLayout = getAnchoredLayout())
-        anchorLayout->removeAnchors(self_cast<UIWidget>());
+        anchorLayout->removeAnchors(static_self_cast<UIWidget>());
 }
 
 void UIWidget::updateParentLayout()
@@ -601,7 +601,7 @@ void UIWidget::lock()
         return;
 
     if(UIWidgetPtr parent = getParent())
-        parent->lockChild(self_cast<UIWidget>());
+        parent->lockChild(static_self_cast<UIWidget>());
 }
 
 void UIWidget::unlock()
@@ -610,7 +610,7 @@ void UIWidget::unlock()
         return;
 
     if(UIWidgetPtr parent = getParent())
-        parent->unlockChild(self_cast<UIWidget>());
+        parent->unlockChild(static_self_cast<UIWidget>());
 }
 
 void UIWidget::focus()
@@ -622,7 +622,7 @@ void UIWidget::focus()
         return;
 
     if(UIWidgetPtr parent = getParent())
-        parent->focusChild(self_cast<UIWidget>(), Fw::ActiveFocusReason);
+        parent->focusChild(static_self_cast<UIWidget>(), Fw::ActiveFocusReason);
 }
 
 void UIWidget::recursiveFocus(Fw::FocusReason reason)
@@ -632,7 +632,7 @@ void UIWidget::recursiveFocus(Fw::FocusReason reason)
 
     if(UIWidgetPtr parent = getParent()) {
         if(m_focusable)
-            parent->focusChild(self_cast<UIWidget>(), reason);
+            parent->focusChild(static_self_cast<UIWidget>(), reason);
         parent->recursiveFocus(reason);
     }
 }
@@ -644,7 +644,7 @@ void UIWidget::lower()
 
     UIWidgetPtr parent = getParent();
     if(parent)
-        parent->lowerChild(self_cast<UIWidget>());
+        parent->lowerChild(static_self_cast<UIWidget>());
 }
 
 void UIWidget::raise()
@@ -654,7 +654,7 @@ void UIWidget::raise()
 
     UIWidgetPtr parent = getParent();
     if(parent)
-        parent->raiseChild(self_cast<UIWidget>());
+        parent->raiseChild(static_self_cast<UIWidget>());
 }
 
 void UIWidget::grabMouse()
@@ -662,12 +662,12 @@ void UIWidget::grabMouse()
     if(m_destroyed)
         return;
 
-    g_ui.setMouseReceiver(self_cast<UIWidget>());
+    g_ui.setMouseReceiver(static_self_cast<UIWidget>());
 }
 
 void UIWidget::ungrabMouse()
 {
-    if(g_ui.getMouseReceiver() == self_cast<UIWidget>())
+    if(g_ui.getMouseReceiver() == static_self_cast<UIWidget>())
         g_ui.resetMouseReceiver();
 }
 
@@ -676,12 +676,12 @@ void UIWidget::grabKeyboard()
     if(m_destroyed)
         return;
 
-    g_ui.setKeyboardReceiver(self_cast<UIWidget>());
+    g_ui.setKeyboardReceiver(static_self_cast<UIWidget>());
 }
 
 void UIWidget::ungrabKeyboard()
 {
-    if(g_ui.getKeyboardReceiver() == self_cast<UIWidget>())
+    if(g_ui.getKeyboardReceiver() == static_self_cast<UIWidget>())
         g_ui.resetKeyboardReceiver();
 }
 
@@ -721,7 +721,7 @@ void UIWidget::internalDestroy()
 
     releaseLuaFieldsTable();
 
-    g_ui.onWidgetDestroy(self_cast<UIWidget>());
+    g_ui.onWidgetDestroy(static_self_cast<UIWidget>());
 }
 
 void UIWidget::destroy()
@@ -730,7 +730,7 @@ void UIWidget::destroy()
         g_logger.warning(stdext::format("attempt to destroy widget '%s' two times", m_id));
 
     // hold itself reference
-    UIWidgetPtr self = self_cast<UIWidget>();
+    UIWidgetPtr self = static_self_cast<UIWidget>();
     m_destroyed = true;
 
     // remove itself from parent
@@ -775,7 +775,7 @@ void UIWidget::setParent(const UIWidgetPtr& parent)
     if(oldParent == parent)
         return;
 
-    UIWidgetPtr self = self_cast<UIWidget>();
+    UIWidgetPtr self = static_self_cast<UIWidget>();
     if(oldParent && oldParent->hasChild(self))
         oldParent->removeChild(self);
 
@@ -797,7 +797,7 @@ void UIWidget::setLayout(const UILayoutPtr& layout)
     if(m_layout)
         m_layout->disableUpdates();
 
-    layout->setParent(self_cast<UIWidget>());
+    layout->setParent(static_self_cast<UIWidget>());
     layout->disableUpdates();
 
     for(const UIWidgetPtr& child : m_children) {
@@ -836,7 +836,7 @@ bool UIWidget::setRect(const Rect& rect)
 
     // avoid massive update events
     if(!m_updateEventScheduled) {
-        UIWidgetPtr self = self_cast<UIWidget>();
+        UIWidgetPtr self = static_self_cast<UIWidget>();
         g_dispatcher.addEvent([self, oldRect]() {
             self->m_updateEventScheduled = false;
             if(oldRect != self->getRect())
@@ -896,9 +896,9 @@ void UIWidget::setVisible(bool visible)
 
         // visibility can change the current hovered widget
         if(visible)
-            g_ui.onWidgetAppear(self_cast<UIWidget>());
+            g_ui.onWidgetAppear(static_self_cast<UIWidget>());
         else
-            g_ui.onWidgetDisappear(self_cast<UIWidget>());
+            g_ui.onWidgetDisappear(static_self_cast<UIWidget>());
 
         callLuaField("onVisibilityChange", visible);
     }
@@ -963,14 +963,14 @@ bool UIWidget::isVisible()
     else if(UIWidgetPtr parent = getParent())
         return parent->isVisible();
     else
-        return self_cast<UIWidget>() == g_ui.getRootWidget();
+        return static_self_cast<UIWidget>() == g_ui.getRootWidget();
 }
 
 bool UIWidget::isAnchored()
 {
     if(UIWidgetPtr parent = getParent())
         if(UIAnchorLayoutPtr anchorLayout = parent->getAnchoredLayout())
-            return anchorLayout->hasAnchors(self_cast<UIWidget>());
+            return anchorLayout->hasAnchors(static_self_cast<UIWidget>());
     return false;
 }
 
@@ -1046,7 +1046,7 @@ UIAnchorLayoutPtr UIWidget::getAnchoredLayout()
 
     UILayoutPtr layout = parent->getLayout();
     if(layout->isUIAnchorLayout())
-        return layout->self_cast<UIAnchorLayout>();
+        return layout->static_self_cast<UIAnchorLayout>();
     return nullptr;
 }
 
@@ -1055,7 +1055,7 @@ UIWidgetPtr UIWidget::getRootParent()
     if(UIWidgetPtr parent = getParent())
         return parent->getRootParent();
     else
-        return self_cast<UIWidget>();
+        return static_self_cast<UIWidget>();
 }
 
 UIWidgetPtr UIWidget::getChildAfter(const UIWidgetPtr& relativeChild)
@@ -1231,7 +1231,7 @@ void UIWidget::updateState(Fw::WidgetState state)
 
     switch(state) {
         case Fw::ActiveState: {
-            UIWidgetPtr widget = self_cast<UIWidget>();
+            UIWidgetPtr widget = static_self_cast<UIWidget>();
             UIWidgetPtr parent;
             do {
                 parent = widget->getParent();
@@ -1246,24 +1246,24 @@ void UIWidget::updateState(Fw::WidgetState state)
             break;
         }
         case Fw::FocusState: {
-            newStatus = (getParent() && getParent()->getFocusedChild() == self_cast<UIWidget>());
+            newStatus = (getParent() && getParent()->getFocusedChild() == static_self_cast<UIWidget>());
             break;
         }
         case Fw::HoverState: {
-            newStatus = (g_ui.getHoveredWidget() == self_cast<UIWidget>() && isEnabled());
+            newStatus = (g_ui.getHoveredWidget() == static_self_cast<UIWidget>() && isEnabled());
             break;
         }
         case Fw::PressedState: {
-            newStatus = (g_ui.getPressedWidget() == self_cast<UIWidget>());
+            newStatus = (g_ui.getPressedWidget() == static_self_cast<UIWidget>());
             break;
         }
         case Fw::DraggingState: {
-            newStatus = (g_ui.getDraggingWidget() == self_cast<UIWidget>());
+            newStatus = (g_ui.getDraggingWidget() == static_self_cast<UIWidget>());
             break;
         }
         case Fw::DisabledState: {
             bool enabled = true;
-            UIWidgetPtr widget = self_cast<UIWidget>();
+            UIWidgetPtr widget = static_self_cast<UIWidget>();
             do {
                 if(!widget->isExplicitlyEnabled()) {
                     enabled = false;
@@ -1275,19 +1275,19 @@ void UIWidget::updateState(Fw::WidgetState state)
             break;
         }
         case Fw::FirstState: {
-            newStatus = (getParent() && getParent()->getFirstChild() == self_cast<UIWidget>());
+            newStatus = (getParent() && getParent()->getFirstChild() == static_self_cast<UIWidget>());
             break;
         }
         case Fw::MiddleState: {
-            newStatus = (getParent() && getParent()->getFirstChild() != self_cast<UIWidget>() && getParent()->getLastChild() != self_cast<UIWidget>());
+            newStatus = (getParent() && getParent()->getFirstChild() != static_self_cast<UIWidget>() && getParent()->getLastChild() != static_self_cast<UIWidget>());
             break;
         }
         case Fw::LastState: {
-            newStatus = (getParent() && getParent()->getLastChild() == self_cast<UIWidget>());
+            newStatus = (getParent() && getParent()->getLastChild() == static_self_cast<UIWidget>());
             break;
         }
         case Fw::AlternateState: {
-            newStatus = (getParent() && (getParent()->getChildIndex(self_cast<UIWidget>()) % 2) == 1);
+            newStatus = (getParent() && (getParent()->getChildIndex(static_self_cast<UIWidget>()) % 2) == 1);
             break;
         }
         default:
@@ -1337,7 +1337,7 @@ void UIWidget::updateStyle()
         return;
 
     if(m_loadingStyle && !m_updateStyleScheduled) {
-        UIWidgetPtr self = self_cast<UIWidget>();
+        UIWidgetPtr self = static_self_cast<UIWidget>();
         g_dispatcher.addEvent([self] {
             self->m_updateStyleScheduled = false;
             self->updateStyle();
@@ -1361,10 +1361,9 @@ void UIWidget::updateStyle()
 
     // checks for states combination
     for(const OTMLNodePtr& style : m_style->children()) {
-        if(boost::starts_with(style->tag(), "$")) {
+        if(stdext::starts_with(style->tag(), "$")) {
             std::string statesStr = style->tag().substr(1);
-            std::vector<std::string> statesSplit;
-            boost::split(statesSplit, statesStr, boost::is_any_of(std::string(" ")));
+            std::vector<std::string> statesSplit = stdext::split(statesStr, " ");
 
             bool match = true;
             for(std::string stateStr : statesSplit) {
@@ -1642,7 +1641,7 @@ bool UIWidget::propagateOnMouseEvent(const Point& mousePos, UIWidgetList& widget
         }
     }
 
-    widgetList.push_back(self_cast<UIWidget>());
+    widgetList.push_back(static_self_cast<UIWidget>());
 
     if(!isPhantom())
         ret = true;
@@ -1657,6 +1656,6 @@ bool UIWidget::propagateOnMouseMove(const Point& mousePos, const Point& mouseMov
             child->propagateOnMouseMove(mousePos, mouseMoved, widgetList);
     }
 
-    widgetList.push_back(self_cast<UIWidget>());
+    widgetList.push_back(static_self_cast<UIWidget>());
     return true;
 }

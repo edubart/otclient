@@ -20,63 +20,73 @@
  * THE SOFTWARE.
  */
 
-#ifndef STDEXT_ATTRIBSTORAGE_H
-#define STDEXT_ATTRIBSTORAGE_H
+#ifndef STDEXT_PACKEDSTORAGE_H
+#define STDEXT_PACKEDSTORAGE_H
 
 #include "types.h"
-#include <tuple>
-#include <boost/any.hpp>
+#include "packed_any.h"
+
+namespace stdext {
 
 // disable memory alignment
 #pragma pack(push,1)
 
 // this class was designed to use less memory as possible
-namespace stdext {
-class attrib_storage {
+template<typename Key, typename SizeType = uint8>
+class packed_storage {
+    struct value_pair {
+        Key id;
+        packed_any value;
+    };
+
 public:
-    attrib_storage() : m_attribs(nullptr), m_size(0) { }
-    ~attrib_storage() { if(m_attribs) delete[] m_attribs; }
+    packed_storage() : m_values(nullptr), m_size(0) { }
+    ~packed_storage() { if(m_values) delete[] m_values; }
 
     template<typename T>
-    void set(uint8 id, T value) {
-        bool done = false;
-        for(int i=0;i<m_size;++i) {
-            if(std::get<0>(m_attribs[i]) == id) {
-                std::get<1>(m_attribs[i]) = value;
-                done = true;
-                break;
+    void set(Key id, T value) {
+        for(SizeType i=0;i<m_size;++i) {
+            if(m_values[i].id == id) {
+                m_values[i].value = value;
+                return;
             }
         }
-        if(!done) {
-            auto attribs = new std::tuple<uint8, boost::any>[m_size+1];
-            if(m_size > 0) {
-                for(int i=0;i<m_size;++i)
-                    attribs[i] = m_attribs[i];
-                delete[] m_attribs;
-            }
-            m_attribs = attribs;
-            m_attribs[m_size++] = std::make_tuple(id, value);
+        auto tmp = new value_pair[m_size+1];
+        if(m_size > 0) {
+            std::copy(m_values, m_values + m_size, tmp);
+            delete[] m_values;
         }
+        m_values = tmp;
+        m_values[m_size++] = { id, packed_any(value) };
     }
 
     template<typename T>
-    T get(uint8 id) const {
-        for(int i=0;i<m_size;++i)
-            if(std::get<0>(m_attribs[i]) == id)
-                return boost::any_cast<T>(std::get<1>(m_attribs[i]));
+    T get(Key id) const {
+        for(SizeType i=0;i<m_size;++i)
+            if(m_values[i].id == id)
+                return packed_any_cast<T>(m_values[i].value);
         return T();
     }
 
-    bool has(uint8 id) const {
-        for(int i=0;i<m_size;++i)
-            if(std::get<0>(m_attribs[i]) == id)
+    bool has(Key id) const {
+        for(SizeType i=0;i<m_size;++i)
+            if(m_values[i].id == id)
                 return true;
         return false;
     }
 
+    void clear() {
+        if(m_values)
+            delete [] m_values;
+        m_values = nullptr;
+        m_size = 0;
+    }
+
+    std::size_t size() { return m_size; }
+
 private:
-    std::tuple<uint8, boost::any>* m_attribs;
-    uint8 m_size;
+    value_pair *m_values;
+    SizeType m_size;
 };
 
 // restore memory alignment

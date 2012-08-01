@@ -40,7 +40,7 @@ ImagePtr Image::load(const std::string& file)
     ImagePtr image;
     try {
         // currently only png images are supported
-        if(!boost::ends_with(file, ".png"))
+        if(!stdext::ends_with(file, ".png"))
             stdext::throw_exception("image file format no supported");
 
         // load image file data
