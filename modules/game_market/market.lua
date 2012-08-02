@@ -320,8 +320,9 @@ local function updateDetails(itemId, descriptions, purchaseStats, saleStats)
   end
 end
 
-local function updateSelectedItem(newItem)
-  selectedItem.item = newItem
+local function updateSelectedItem(widget)
+  selectedItem.item = widget.item
+  selectedItem.ref = widget
 
   Market.resetCreateOffer()
   if Market.isItemSelected() then
@@ -332,7 +333,7 @@ local function updateSelectedItem(newItem)
     Market.enableCreateOffer(true)-- update offer types
     MarketProtocol.sendMarketBrowse(selectedItem.item.ptr:getId()) -- send browsed msg
   else
-    Market.Market.clearSelectedItem()
+    Market.clearSelectedItem()
   end
 end
 
@@ -411,14 +412,21 @@ local function openAmountWindow(callback, type, actionText)
   end
   amountWindow = g_ui.createWidget('AmountWindow', rootWidget)
   amountWindow:lock()
+  local max = selectedOffer[type]:getAmount()
+  if type == MarketAction.Sell then
+    local depot = Market.depotContains(selectedOffer[type]:getItem():getId())
+    if max > depot then
+      max = depot
+    end
+  end
 
   local spinbox = amountWindow:getChildById('amountSpinBox')
-  spinbox:setMaximum(selectedOffer[type]:getAmount())
+  spinbox:setMaximum(max)
   spinbox:setMinimum(1)
   spinbox:setValue(1)
 
   local scrollbar = amountWindow:getChildById('amountScrollBar')
-  scrollbar:setMaximum(selectedOffer[type]:getAmount())
+  scrollbar:setMaximum(max)
   scrollbar:setMinimum(1)
   scrollbar:setValue(1)
 
@@ -482,7 +490,7 @@ local function onSelectBuyOffer(table, selectedRow, previousSelectedRow)
   for _, offer in pairs(marketOffers[MarketAction.Buy]) do
     if offer:isEqual(selectedRow.ref) then
       selectedOffer[MarketAction.Sell] = offer
-      if Market.depotContains(offer:getItem():getId()) >= offer:getAmount() then
+      if Market.depotContains(offer:getItem():getId()) > 0 then
         sellButton:setEnabled(true)
       else
         sellButton:setEnabled(false)
@@ -729,11 +737,9 @@ function terminate()
 end
 
 function Market.reset()
+  Market.close()
   balanceLabel:setColor('#bbbbbb')
-  marketWindow:unlock()
-  marketWindow:hide()
   categoryList:setCurrentOption(getMarketCategoryName(MarketCategory.First))
-  Market.clearSelectedItem()
   clearFilters()
   clearItems()
 end
@@ -749,6 +755,9 @@ function Market.clearSelectedItem()
     radioItemSet:selectWidget(nil)
     nameLabel:setText('No item selected.')
     selectedItem:setItem(nil)
+    selectedItem.item = nil
+    selectedItem.ref:setChecked(false)
+    selectedItem.ref = nil
 
     detailsTable:clearData()
     buyStatsTable:clearData()
@@ -788,6 +797,16 @@ function Market.enableCreateOffer(enable)
   local nextAmountButton = marketOffersPanel:recursiveGetChildById('nextAmountButton')
   prevAmountButton:setEnabled(enable)
   nextAmountButton:setEnabled(enable)
+end
+
+function Market.close(message)
+  local message = message or false
+  marketWindow:hide()
+  marketWindow:unlock()
+  Market.clearSelectedItem()
+  if message then
+    MarketProtocol.sendMarketLeave()
+  end
 end
 
 function Market.incrementAmount()
@@ -850,6 +869,8 @@ function Market.refreshItemsWidget(selectItem)
     radioItemSet:addWidget(itemBox)
   end
   if select then
+    selectedItem.item = select.item
+    selectedItem.ref = select
     select:setChecked(true)
   end
 
@@ -962,7 +983,7 @@ function Market.createNewOffer()
   MarketProtocol.sendMarketCreateOffer(type, spriteId, amount, piecePrice, anonymous)
   if type == MarketAction.Sell then
     --[[
-      This is require due to bot protected protocol (cannot update browse item without user input)
+      This is required due to bot protected protocol (cannot update browse item without user input)
       normal way is to use the new retrieved depot items in onMarketEnter and refresh the items widget.   
     ]]
     updateDepotItemCount(spriteId, amount)
@@ -980,12 +1001,16 @@ end
 function Market.sellMarketOffer(amount, timestamp, counter)
   if timestamp > 0 and amount > 0 then
     MarketProtocol.sendMarketAcceptOffer(timestamp, counter, amount)
+
+    local spriteId = selectedItem.item.ptr:getId()
+    updateDepotItemCount(spriteId, amount)
+    Market.refreshItemsWidget(spriteId)
   end
 end
 
 function Market.onItemBoxChecked(widget)
   if widget:isChecked() then
-    updateSelectedItem(widget.item)
+    updateSelectedItem(widget)
   end
 end
 
@@ -1020,8 +1045,7 @@ function Market.onMarketEnter(depotItems, offers, balance, vocation)
 end
 
 function Market.onMarketLeave()
-  marketWindow:unlock()
-  marketWindow:hide()
+  Market.close(false)
 end
 
 function Market.onMarketDetail(itemId, descriptions, purchaseStats, saleStats)

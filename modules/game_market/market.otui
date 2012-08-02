@@ -3,8 +3,7 @@ MarketWindow < MainWindow
   !text: tr('Market')
   size: 700 510
 
-  @onEnter: self:hide() self:unlock() Market.clearSelectedItem() MarketProtocol.sendMarketLeave()
-  @onEscape: self:hide() self:unlock() Market.clearSelectedItem() MarketProtocol.sendMarketLeave()
+  @onEscape: Market.close()
 
   // Main Panel Window
 
