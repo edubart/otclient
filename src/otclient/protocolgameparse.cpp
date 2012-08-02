@@ -506,10 +506,6 @@ void ProtocolGame::parseCreatureMove(const InputMessagePtr& msg)
 
     g_map.removeThing(thing);
     g_map.addThing(thing, newPos, stackPos);
-
-    //CreaturePtr creature = thing->static_self_cast<Creature>();
-    //Position oldPos = thing->getPosition();
-    //creature->onMove(newPos, oldPos);
 }
 
 void ProtocolGame::parseOpenContainer(const InputMessagePtr& msg)

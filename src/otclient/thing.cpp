@@ -35,6 +35,9 @@ Thing::Thing() :
 
 void Thing::setPosition(const Position& position)
 {
+    if(m_position == position)
+        return;
+
     Position oldPos = m_position;
     m_position = position;
     onPositionChange(position, oldPos);

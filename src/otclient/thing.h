@@ -118,13 +118,11 @@ public:
     bool isMarketable() { return rawGetThingType()->isMarketable(); }
     MarketData getMarketData() { return rawGetThingType()->getMarketData(); }
 
-protected:
     virtual void onPositionChange(const Position& newPos, const Position& oldPos) { }
     virtual void onAppear() { }
     virtual void onDisappear() { }
 
-    friend class Map;
-
+protected:
     Position m_position;
     uint16 m_datId;
 };

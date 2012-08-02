@@ -28,6 +28,7 @@
 #include "item.h"
 #include "game.h"
 #include "effect.h"
+#include "luavaluecasts.h"
 
 #include <framework/graphics/graphics.h>
 #include <framework/core/eventdispatcher.h>
@@ -46,12 +47,12 @@ Creature::Creature() : Thing()
     m_speed = 200;
     m_direction = Otc::South;
     m_walkAnimationPhase = 0;
-    m_walkInterval = 0;
-    m_walkAnimationInterval = 0;
+    m_walkedPixels = 0;
     m_walkTurnDirection = Otc::InvalidDirection;
     m_skull = Otc::SkullNone;
     m_shield = Otc::ShieldNone;
     m_emblem = Otc::EmblemNone;
+    m_lastStepDirection = Otc::InvalidDirection;
     m_nameCache.setFont(g_fonts.getFont("verdana-11px-rounded"));
     m_nameCache.setAlign(Fw::AlignTopCenter);
     m_footStep = 0;
@@ -255,34 +256,17 @@ void Creature::walk(const Position& oldPos, const Position& newPos)
         return;
 
     // get walk direction
-    Otc::Direction direction = oldPos.getDirectionFromPosition(newPos);
+    m_lastStepDirection = oldPos.getDirectionFromPosition(newPos);
 
     // set current walking direction
-    setDirection(direction);
+    setDirection(m_lastStepDirection);
 
     // starts counting walk
     m_walking = true;
     m_walkTimer.restart();
+    m_walkedPixels = 0;
 
-    // calculates walk interval
-    int groundSpeed = 0;
-    TilePtr tile = g_map.getTile(newPos);
-    if(tile)
-        groundSpeed = tile->getGroundSpeed();
-
-    float interval = 1000;
-    if(groundSpeed > 0 && m_speed > 0)
-        interval = (1000.0f * groundSpeed) / m_speed;
-    interval = std::floor(interval / g_game.getServerBeat()) * g_game.getServerBeat();
-
-    m_walkAnimationInterval = interval;
-    m_walkInterval = interval;
-
-    // diagonal walking lasts 3 times more.
-    if(direction == Otc::NorthWest || direction == Otc::NorthEast || direction == Otc::SouthWest || direction == Otc::SouthEast)
-        m_walkInterval *= 3;
-
-    // no direction needs to be changed when the walk ends
+    // no direction need to be changed when the walk ends
     m_walkTurnDirection = Otc::InvalidDirection;
 
     // starts updating walk
@@ -302,9 +286,50 @@ void Creature::stopWalk()
     terminateWalk();
 }
 
-void Creature::onMove(const Position& newPos, const Position& oldPos)
+void Creature::onAppear()
 {
-    walk(oldPos, newPos);
+    // cancel any disappear event
+    if(m_disappearEvent) {
+        m_disappearEvent->cancel();
+        m_disappearEvent = nullptr;
+    }
+
+    // creature appeared the first time or wasn't seen for a long time
+    if(m_removed) {
+        m_removed = false;
+        callLuaField("onAppear");
+    // walk
+    } else if(m_oldPosition != m_position && m_oldPosition.isInRange(m_position,1,1)) {
+        walk(m_oldPosition, m_position);
+        callLuaField("onWalk", m_oldPosition, m_position);
+    // teleport
+    } else if(m_oldPosition != m_position) {
+        callLuaField("onDisappear");
+        callLuaField("onAppear");
+    } // else turn
+}
+
+void Creature::onDisappear()
+{
+    if(m_disappearEvent)
+        m_disappearEvent->cancel();
+
+    m_oldPosition = m_position;
+
+    // a pair onDisappear and onAppear events are fired even when creatures walks or turns,
+    // so we must filter
+    auto self = static_self_cast<Creature>();
+    m_disappearEvent = g_dispatcher.addEvent([self] {
+        self->m_removed = true;
+        self->stopWalk();
+
+        self->callLuaField("onDisappear");
+
+        // invalidate this creature position
+        self->m_position = Position();
+        self->m_oldPosition = Position();
+        self->m_disappearEvent = nullptr;
+    });
 }
 
 void Creature::updateWalkAnimation(int totalPixelsWalked)
@@ -316,7 +341,7 @@ void Creature::updateWalkAnimation(int totalPixelsWalked)
     int footAnimPhases = getAnimationPhases() - 1;
     if(totalPixelsWalked == 32 || footAnimPhases == 0)
         m_walkAnimationPhase = 0;
-    else if(m_footStepDrawn && m_footTimer.ticksElapsed() >= m_walkAnimationInterval / 4 ) {
+    else if(m_footStepDrawn && m_footTimer.ticksElapsed() >= getStepDuration() / 4 ) {
         m_footStep++;
         m_walkAnimationPhase = 1 + (m_footStep % footAnimPhases);
         m_footStepDrawn = false;
@@ -380,22 +405,26 @@ void Creature::nextWalkUpdate()
         m_walkUpdateEvent = g_dispatcher.scheduleEvent([self] {
             self->m_walkUpdateEvent = nullptr;
             self->nextWalkUpdate();
-        }, m_walkAnimationInterval / 32);
+        }, getStepDuration() / 32);
     }
 }
 
 void Creature::updateWalk()
 {
-    float walkTicksPerPixel = m_walkAnimationInterval / 32;
+    int stepDuration = getStepDuration();
+    float walkTicksPerPixel = stepDuration / 32;
     int totalPixelsWalked = std::min(m_walkTimer.ticksElapsed() / walkTicksPerPixel, 32.0f);
+
+    // needed for paralyze effect
+    m_walkedPixels = std::max(m_walkedPixels, totalPixelsWalked);
 
     // update walk animation and offsets
     updateWalkAnimation(totalPixelsWalked);
-    updateWalkOffset(totalPixelsWalked);
+    updateWalkOffset(m_walkedPixels);
     updateWalkingTile();
 
     // terminate walk
-    if(m_walking && m_walkTimer.ticksElapsed() >= m_walkInterval)
+    if(m_walking && m_walkTimer.ticksElapsed() >= stepDuration)
         terminateWalk();
 }
 
@@ -419,6 +448,7 @@ void Creature::terminateWalk()
     }
 
     m_walking = false;
+    m_walkedPixels = 0;
 }
 
 void Creature::setName(const std::string& name)
@@ -470,6 +500,15 @@ void Creature::setOutfit(const Outfit& outfit)
         return;
     m_walkAnimationPhase = 0; // might happen when player is walking and outfit is changed.
     m_outfit = outfit;
+}
+
+void Creature::setSpeed(uint16 speed)
+{
+    m_speed = speed;
+
+    // speed can change while walking (utani hur, paralyze, etc..)
+    if(m_walking)
+        nextWalkUpdate();
 }
 
 void Creature::setSkull(uint8 skull)
@@ -554,6 +593,27 @@ Point Creature::getDrawOffset()
             drawOffset -= Point(1,1) * tile->getDrawElevation();
     }
     return drawOffset;
+}
+
+int Creature::getStepDuration()
+{
+    int groundSpeed = 0;
+    const TilePtr& tile = getTile();
+    if(tile)
+        groundSpeed = tile->getGroundSpeed();
+
+    int interval = 1000;
+    if(groundSpeed > 0 && m_speed > 0)
+        interval = (1000 * groundSpeed) / m_speed;
+
+    if(g_game.getClientVersion() >= 900)
+        interval = (interval / g_game.getServerBeat()) * g_game.getServerBeat();
+
+    if(m_lastStepDirection == Otc::NorthWest || m_lastStepDirection == Otc::NorthEast ||
+       m_lastStepDirection == Otc::SouthWest || m_lastStepDirection == Otc::SouthEast)
+        interval *= 3;
+
+    return interval;
 }
 
 const ThingTypePtr& Creature::getThingType()

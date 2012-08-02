@@ -101,8 +101,6 @@ void Tile::draw(const Point& dest, float scaleFactor, int drawFlags)
     if(drawFlags & Otc::DrawCreatures) {
         if(animate) {
             for(const CreaturePtr& creature : m_walkingCreatures) {
-                if(creature->isRemoved())
-                    continue;
                 creature->draw(Point(dest.x + ((creature->getPosition().x - m_position.x)*Otc::TILE_PIXELS - m_drawElevation)*scaleFactor,
                                      dest.y + ((creature->getPosition().y - m_position.y)*Otc::TILE_PIXELS - m_drawElevation)*scaleFactor), scaleFactor, animate);
 
@@ -159,42 +157,44 @@ void Tile::addThing(const ThingPtr& thing, int stackPos)
 
     if(thing->isEffect()) {
         m_effects.push_back(thing->static_self_cast<Effect>());
-        return;
-    }
+    } else {
+        // the items stackpos follows this order:
+        // 0 - ground
+        // 1 - ground borders
+        // 2 - bottom (walls)
+        // 3 - on top (doors)
+        // 4 - creatures, from top to bottom
+        // 5 - items, from top to bottom
+        if(stackPos < 0 || stackPos == 255) {
+            int priority = thing->getStackPriority();
+            bool prepend = (stackPos == -2 || priority <= 3);
+            for(stackPos = 0; stackPos < (int)m_things.size(); ++stackPos) {
+                int otherPriority = m_things[stackPos]->getStackPriority();
+                if((prepend && otherPriority > priority) || (!prepend && otherPriority >= priority))
+                    break;
+            }
+        } else if(stackPos > (int)m_things.size())
+            stackPos = m_things.size();
 
-    // the items stackpos follows this order:
-    // 0 - ground
-    // 1 - ground borders
-    // 2 - bottom (walls)
-    // 3 - on top (doors)
-    // 4 - creatures, from top to bottom
-    // 5 - items, from top to bottom
-    if(stackPos < 0 || stackPos == 255) {
-        int priority = thing->getStackPriority();
-        bool prepend = (stackPos == -2 || priority <= 3);
-        for(stackPos = 0; stackPos < (int)m_things.size(); ++stackPos) {
-            int otherPriority = m_things[stackPos]->getStackPriority();
-            if((prepend && otherPriority > priority) || (!prepend && otherPriority >= priority))
-                break;
+        m_things.insert(m_things.begin() + stackPos, thing);
+
+        if(m_things.size() > MAX_THINGS)
+            removeThing(m_things[MAX_THINGS]);
+
+        /*
+        // check stack priorities
+        // this code exists to find stackpos bugs faster
+        int lastPriority = 0;
+        for(const ThingPtr& thing : m_things) {
+            int priority = thing->getStackPriority();
+            assert(lastPriority <= priority);
+            lastPriority = priority;
         }
-    } else if(stackPos > (int)m_things.size())
-        stackPos = m_things.size();
-
-    m_things.insert(m_things.begin() + stackPos, thing);
-
-    if(m_things.size() > MAX_THINGS)
-        removeThing(m_things[MAX_THINGS]);
-
-    /*
-    // check stack priorities
-    // this code exists to find stackpos bugs faster
-    int lastPriority = 0;
-    for(const ThingPtr& thing : m_things) {
-        int priority = thing->getStackPriority();
-        assert(lastPriority <= priority);
-        lastPriority = priority;
+        */
     }
-    */
+
+    thing->setPosition(m_position);
+    thing->onAppear();
 }
 
 bool Tile::removeThing(ThingPtr thing)
@@ -218,6 +218,8 @@ bool Tile::removeThing(ThingPtr thing)
             removed = true;
         }
     }
+
+    thing->onDisappear();
 
     return removed;
 }

@@ -55,7 +55,7 @@ public:
     void setDirection(Otc::Direction direction);
     void setOutfit(const Outfit& outfit);
     void setLight(const Light& light) { m_light = light; }
-    void setSpeed(uint16 speed) { m_speed = speed; }
+    void setSpeed(uint16 speed);
     void setSkull(uint8 skull);
     void setShield(uint8 shield);
     void setEmblem(uint8 emblem);
@@ -63,7 +63,6 @@ public:
     void setShieldTexture(const std::string& filename, bool blink);
     void setEmblemTexture(const std::string& filename);
     void setPassable(bool passable) { m_passable = passable; }
-    void setRemoved(bool removed) { m_removed = removed; }
 
     void addTimedSquare(uint8 color);
     void removeTimedSquare() { m_showTimedSquare = false; }
@@ -83,6 +82,7 @@ public:
     uint8 getEmblem() { return m_emblem; }
     bool isPassable() { return m_passable; }
     Point getDrawOffset();
+    int getStepDuration();
     Point getWalkOffset() { return m_walkOffset; }
 
     void updateShield();
@@ -100,8 +100,8 @@ public:
     const ThingTypePtr& getThingType();
     ThingType *rawGetThingType();
 
-protected:
-    virtual void onMove(const Position& newPos, const Position& oldPos);
+    virtual void onAppear();
+    virtual void onDisappear();
 
 protected:
     virtual void updateWalkAnimation(int totalPixelsWalked);
@@ -131,23 +131,25 @@ protected:
     Color m_staticSquareColor;
     stdext::boolean<false> m_showTimedSquare;
     stdext::boolean<false> m_showStaticSquare;
-    stdext::boolean<false> m_removed;
+    stdext::boolean<true> m_removed;
     CachedText m_nameCache;
     Color m_informationColor;
 
     // walk related
     int m_walkAnimationPhase;
+    int m_walkedPixels;
     uint m_footStep;
     Timer m_walkTimer;
     Timer m_footTimer;
     TilePtr m_walkingTile;
-    int m_walkInterval;
-    int m_walkAnimationInterval;
     stdext::boolean<false> m_walking;
     stdext::boolean<false> m_footStepDrawn;
     ScheduledEventPtr m_walkUpdateEvent;
+    EventPtr m_disappearEvent;
     Point m_walkOffset;
     Otc::Direction m_walkTurnDirection;
+    Otc::Direction m_lastStepDirection;
+    Position m_oldPosition;
 };
 
 // @bindclass

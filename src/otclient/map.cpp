@@ -78,7 +78,6 @@ void Map::cleanDynamicThings()
     for(const auto& pair : m_knownCreatures) {
         const CreaturePtr& creature = pair.second;
         removeThing(creature);
-        creature->setRemoved(true);
     }
     m_knownCreatures.clear();
 
@@ -99,50 +98,35 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
     if(!thing)
         return;
 
-    TilePtr tile = getOrCreateTile(pos);
-
-    Position oldPos = thing->getPosition();
-
     if(thing->isItem() || thing->isCreature() || thing->isEffect()) {
+        const TilePtr& tile = getOrCreateTile(pos);
         tile->addThing(thing, stackPos);
-    } else if(thing->isMissile()) {
-        m_floorMissiles[pos.z].push_back(thing->static_self_cast<Missile>());
-    } else if(thing->isAnimatedText()) {
-        m_animatedTexts.push_back(thing->static_self_cast<AnimatedText>());
-    } else if(thing->isStaticText()) {
-        StaticTextPtr staticText = thing->static_self_cast<StaticText>();
-        bool mustAdd = true;
-        for(auto it = m_staticTexts.begin(), end = m_staticTexts.end(); it != end; ++it) {
-            StaticTextPtr cStaticText = *it;
-            if(cStaticText->getPosition() == pos) {
+    } else {
+        if(thing->isMissile()) {
+            m_floorMissiles[pos.z].push_back(thing->static_self_cast<Missile>());
+            thing->onAppear();
+        } else if(thing->isAnimatedText()) {
+            AnimatedTextPtr animatedText = thing->static_self_cast<AnimatedText>();
+            m_animatedTexts.push_back(animatedText);
+        } else if(thing->isStaticText()) {
+            StaticTextPtr staticText = thing->static_self_cast<StaticText>();
+            bool mustAdd = true;
+            for(auto other : m_staticTexts) {
                 // try to combine messages
-                if(cStaticText->addMessage(staticText->getName(), staticText->getMessageMode(), staticText->getFirstMessage())) {
+                if(other->getPosition() == pos && other->addMessage(staticText->getName(), staticText->getMessageMode(), staticText->getFirstMessage())) {
                     mustAdd = false;
                     break;
-                } else {
-                    // must add another message and rearrenge current
                 }
             }
 
+            if(mustAdd) {
+                m_staticTexts.push_back(staticText);
+                staticText->onAppear();
+            }
         }
 
-        if(mustAdd)
-            m_staticTexts.push_back(staticText);
-    }
-
-    if(!thing->isCreature())
+        thing->setPosition(pos);
         thing->onAppear();
-
-    thing->setPosition(pos);
-
-    if(thing->isCreature()) {
-        CreaturePtr creature = thing->static_self_cast<Creature>();
-        if(oldPos != pos) {
-            if(oldPos.isInRange(pos,1,1))
-                g_game.processCreatureMove(creature, oldPos, pos);
-            else
-                g_game.processCreatureTeleport(creature);
-        }
     }
 
     notificateTileUpdateToMapViews(pos);
@@ -289,9 +273,7 @@ void Map::removeCreatureById(uint32 id)
 
     auto it = m_knownCreatures.find(id);
     if(it != m_knownCreatures.end())
-        it->second->setRemoved(true);
-
-    m_knownCreatures.erase(it);
+        m_knownCreatures.erase(it);
 }
 
 void Map::setCentralPosition(const Position& centralPosition)
@@ -318,12 +300,10 @@ void Map::setCentralPosition(const Position& centralPosition)
 
         Position oldPos = localPlayer->getPosition();
         Position pos = m_centralPosition;
-        localPlayer->setPosition(pos);
         if(oldPos != pos) {
-            if(oldPos.isInRange(pos,1,1))
-                g_game.processCreatureMove(localPlayer, oldPos, pos);
-            else
-                g_game.processCreatureTeleport(localPlayer);
+            localPlayer->onDisappear();
+            localPlayer->setPosition(pos);
+            localPlayer->onAppear();
         }
     });
 

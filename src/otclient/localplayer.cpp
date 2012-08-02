@@ -29,7 +29,6 @@
 LocalPlayer::LocalPlayer()
 {
     m_preWalking = false;
-    m_walkLocked = false;
     m_lastPrewalkDone = true;
     m_autoWalking = false;
     m_known = false;
@@ -37,7 +36,7 @@ LocalPlayer::LocalPlayer()
 
     m_states = 0;
     m_vocation = 0;
-    m_walkLockInterval = 0;
+    m_walkLockExpiration = 0;
 
     m_skillsLevel.fill(-1);
     m_skillsLevelPercent.fill(-1);
@@ -58,33 +57,29 @@ LocalPlayer::LocalPlayer()
 
 void LocalPlayer::lockWalk(int millis)
 {
-    // prevents double locks
-    if(m_walkLocked)
-        return;
-
-    m_walkLocked = true;
-    m_walkLockTimer.restart();
-    m_walkLockInterval = millis;
+    m_walkLockExpiration = std::max(m_walkLockExpiration, (ticks_t) g_clock.millis() + millis);
 }
 
 bool LocalPlayer::canWalk(Otc::Direction direction)
 {
-    // prewalk has a timeout, because for some reason that I don't know yet the server sometimes doesn't answer the prewalk
-    bool prewalkTimeouted = m_walking && m_preWalking && m_walkTimer.ticksElapsed() >= m_walkInterval + PREWALK_TIMEOUT;
-
-    // cannot walk while already walking
-    if(m_walking && !prewalkTimeouted)
+    // cannot walk while locked
+    if(m_walkLockExpiration != 0 && g_clock.millis() < m_walkLockExpiration)
         return false;
+
+    // last walk is not done yet
+    if(m_walkTimer.ticksElapsed() < getStepDuration())
+        return false;
+
+    // prewalk has a timeout, because for some reason that I don't know yet the server sometimes doesn't answer the prewalk
+    bool prewalkTimeouted = m_walking && m_preWalking && m_walkTimer.ticksElapsed() >= getStepDuration() + PREWALK_TIMEOUT;
 
     // avoid doing more walks than wanted when receiving a lot of walks from server
     if(!m_lastPrewalkDone && m_preWalking && !prewalkTimeouted)
         return false;
 
-    // cannot walk while locked
-    if(m_walkLocked && m_walkLockTimer.ticksElapsed() <= m_walkLockInterval)
+    // cannot walk while already walking
+    if(m_walking && !prewalkTimeouted)
         return false;
-    else
-        m_walkLocked = false;
 
     return true;
 }
@@ -93,6 +88,16 @@ void LocalPlayer::walk(const Position& oldPos, const Position& newPos)
 {
     // a prewalk was going on
     if(m_preWalking) {
+        if(m_waitingWalkPong) {
+            if(newPos == m_lastPrewalkDestionation) {
+                m_lastWalkPings.push_back(m_walkPingTimer.ticksElapsed());
+                if(m_lastWalkPings.size() > 10)
+                    m_lastWalkPings.pop_front();
+            }
+
+            m_waitingWalkPong = false;
+        }
+
         // switch to normal walking
         m_preWalking = false;
         m_lastPrewalkDone = true;
@@ -115,13 +120,18 @@ void LocalPlayer::walk(const Position& oldPos, const Position& newPos)
 
 void LocalPlayer::preWalk(Otc::Direction direction)
 {
-    // start walking to direction
     Position newPos = m_position.translatedToDirection(direction);
+
+    // avoid reanimating prewalks
+    if(m_preWalking && m_lastPrewalkDestionation == newPos)
+        return;
+
     m_preWalking = true;
 
     if(m_autoWalkEndEvent)
         m_autoWalkEndEvent->cancel();
 
+    // start walking to direction
     m_lastPrewalkDone = false;
     m_lastPrewalkDestionation = newPos;
     Creature::walk(m_position, newPos);
@@ -134,6 +144,7 @@ void LocalPlayer::cancelWalk(Otc::Direction direction)
         stopWalk();
 
     m_lastPrewalkDone = true;
+    m_waitingWalkPong = false;
 
     // turn to the cancel direction
     if(direction != Otc::InvalidDirection)
@@ -167,7 +178,8 @@ void LocalPlayer::updateWalkOffset(int totalPixelsWalked)
 
 void LocalPlayer::updateWalk()
 {
-    float walkTicksPerPixel = m_walkAnimationInterval / 32.0f;
+    int stepDuration = getStepDuration();
+    float walkTicksPerPixel = stepDuration / 32.0f;
     int totalPixelsWalked = std::min(m_walkTimer.ticksElapsed() / walkTicksPerPixel, 32.0f);
 
     // update walk animation and offsets
@@ -176,7 +188,7 @@ void LocalPlayer::updateWalk()
     updateWalkingTile();
 
     // terminate walk only when client and server side walk are complated
-    if(m_walking && !m_preWalking && m_walkTimer.ticksElapsed() >= m_walkInterval)
+    if(m_walking && !m_preWalking && m_walkTimer.ticksElapsed() >= stepDuration)
         terminateWalk();
 }
 
@@ -194,6 +206,15 @@ void LocalPlayer::terminateWalk()
             self->m_autoWalking = false;
         }, 100);
     }
+}
+
+void LocalPlayer::onAppear()
+{
+    Creature::onAppear();
+
+    // on teleports lock the walk
+    if(!m_oldPosition.isInRange(m_position,1,1))
+        lockWalk();
 }
 
 void LocalPlayer::setStates(int states)
@@ -350,4 +371,15 @@ void LocalPlayer::setPremium(bool premium)
 
         callLuaField("onPremiumChange", premium);
     }
+}
+
+double LocalPlayer::getWalkPing()
+{
+    if(m_lastWalkPings.empty())
+        return 9999;
+
+    double sum = 0;
+    for(int p : m_lastWalkPings)
+        sum += p;
+    return sum / (double)m_lastWalkPings.size();
 }

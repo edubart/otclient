@@ -35,7 +35,7 @@ class LocalPlayer : public Player
 public:
     LocalPlayer();
 
-    void unlockWalk() { m_walkLocked = false; }
+    void unlockWalk() { m_walkLockExpiration = 0; }
     void lockWalk(int millis = 250);
     bool canWalk(Otc::Direction direction);
 
@@ -58,6 +58,7 @@ public:
     int getSkillLevel(Otc::Skill skill) { return m_skillsLevel[skill]; }
     int getSkillLevelPercent(Otc::Skill skill) { return m_skillsLevelPercent[skill]; }
     int getVocation() { return m_vocation; }
+    double getWalkPing();
     double getHealth() { return m_health; }
     double getMaxHealth() { return m_maxHealth; }
     double getFreeCapacity() { return m_freeCapacity; }
@@ -80,6 +81,8 @@ public:
     LocalPlayerPtr asLocalPlayer() { return static_self_cast<LocalPlayer>(); }
     bool isLocalPlayer() { return true; }
 
+    virtual void onAppear();
+
 protected:
     void walk(const Position& oldPos, const Position& newPos);
     void preWalk(Otc::Direction direction);
@@ -97,13 +100,14 @@ private:
     // walk related
     bool m_preWalking;
     bool m_lastPrewalkDone;
-    bool m_walkLocked;
     bool m_autoWalking;
     bool m_premium;
     Position m_lastPrewalkDestionation;
-    Timer m_walkLockTimer;
     ItemPtr m_inventoryItems[Otc::LastInventorySlot];
     ScheduledEventPtr m_autoWalkEndEvent;
+    stdext::boolean<false> m_waitingWalkPong;
+    Timer m_walkPingTimer;
+    std::deque<int> m_lastWalkPings;
 
     std::array<int, Otc::LastSkill> m_skillsLevel;
     std::array<int, Otc::LastSkill> m_skillsLevelPercent;
@@ -111,7 +115,7 @@ private:
     bool m_known;
     int m_states;
     int m_vocation;
-    int m_walkLockInterval;
+    ticks_t m_walkLockExpiration;
 
     double m_health;
     double m_maxHealth;

@@ -247,26 +247,6 @@ void Game::processInventoryChange(int slot, const ItemPtr& item)
     m_localPlayer->setInventoryItem((Otc::InventorySlot)slot, item);
 }
 
-void Game::processCreatureMove(const CreaturePtr& creature, const Position& oldPos, const Position& newPos)
-{
-    // animate walk
-    creature->walk(oldPos, newPos);
-
-    g_lua.callGlobalField("g_game", "onCreatureMove", creature, oldPos, newPos);
-}
-
-void Game::processCreatureTeleport(const CreaturePtr& creature)
-{
-    // stop walking on creature teleports
-    creature->stopWalk();
-
-    // locks the walk for a while when teleporting
-    if(creature == m_localPlayer)
-        m_localPlayer->lockWalk();
-
-    g_lua.callGlobalField("g_game", "onCreatureTeleport", creature);
-}
-
 void Game::processChannelList(const std::vector<std::tuple<int, std::string> >& channelList)
 {
     g_lua.callGlobalField("g_game", "onChannelList", channelList);
@@ -552,9 +532,11 @@ void Game::autoWalk(const std::vector<Otc::Direction>& dirs)
         cancelFollow();
 
     Otc::Direction direction = dirs.front();
-    TilePtr toTile = g_map.getTile(m_localPlayer->getPosition().translatedToDirection(direction));
-    if(toTile && toTile->isWalkable() && !m_localPlayer->isAutoWalking())
-        m_localPlayer->preWalk(direction);
+    if(m_localPlayer->canWalk(direction)) {
+        TilePtr toTile = g_map.getTile(m_localPlayer->getPosition().translatedToDirection(direction));
+        if(toTile && toTile->isWalkable() && !m_localPlayer->isAutoWalking())
+            m_localPlayer->preWalk(direction);
+    }
 
     m_protocolGame->sendAutoWalk(dirs);
 

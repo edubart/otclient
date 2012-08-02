@@ -65,8 +65,6 @@ protected:
 
     void processGMActions(const std::vector<uint8>& actions);
     void processInventoryChange(int slot, const ItemPtr& item);
-    void processCreatureMove(const CreaturePtr& creature, const Position& oldPos, const Position& newPos);
-    void processCreatureTeleport(const CreaturePtr& creature);
     void processAttackCancel(uint seq);
     void processWalkCancel(Otc::Direction direction);
 
