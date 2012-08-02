@@ -394,8 +394,8 @@ function processMouseAction(menuPosition, mouseButton, autoWalkPos, lookThing, u
   else
     if multiUseThing and keyboardModifiers == KeyboardNoModifier and mouseButton == MouseRightButton and not g_mouse.isPressed(MouseLeftButton) then
       local player = g_game.getLocalPlayer()
-      if multiUseThing:isCreature() and multiUseThing:isCreature() ~= player then
-        g_game.attack(multiUseThing)
+      if creatureThing ~= player then
+        g_game.attack(creatureThing)
         return true
       elseif multiUseThing:isContainer() then
         if multiUseThing:getParentContainer() then
