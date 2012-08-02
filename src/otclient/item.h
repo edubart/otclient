@@ -127,7 +127,7 @@ private:
     uint8 m_countOrSubType;
     stdext::packed_storage<uint8> m_attribs;
 };
-#pragma pack(pop)
 
+#pragma pack(pop)
 
 #endif

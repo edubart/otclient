@@ -25,6 +25,9 @@
 #include <framework/luaengine/luainterface.h>
 #include <otclient/otclient.h>
 
+#include "otclient/item.h"
+#include "otclient/tile.h"
+
 int main(int argc, const char* argv[])
 {
     std::vector<std::string> args(argv, argv + argc);

@@ -23,11 +23,11 @@
 #include "luaobject.h"
 #include "luainterface.h"
 
+#include <typeinfo>
 #include <framework/core/application.h>
 
 LuaObject::LuaObject() :
-    m_fieldsTableRef(-1),
-    m_metatableRef(-1)
+    m_fieldsTableRef(-1)
 {
 }
 
@@ -37,11 +37,6 @@ LuaObject::~LuaObject()
     assert(!g_app.isTerminated());
 #endif
     releaseLuaFieldsTable();
-
-    if(m_metatableRef != -1) {
-        g_lua.unref(m_metatableRef);
-        m_metatableRef = -1;
-    }
 }
 
 bool LuaObject::hasLuaField(const std::string& field)
@@ -91,13 +86,19 @@ void LuaObject::luaGetField(const std::string& key)
 
 void LuaObject::luaGetMetatable()
 {
-    if(m_metatableRef == -1) {
-        // set the userdata metatable
-        g_lua.getGlobal(stdext::format("%s_mt", getClassName()));
-        m_metatableRef = g_lua.ref();
-    }
+    static std::unordered_map<const std::type_info*, int> metatableMap;
+    const std::type_info& tinfo = typeid(*this);
+    auto it = metatableMap.find(&tinfo);
 
-    g_lua.getRef(m_metatableRef);
+    int metatableRef;
+    if(it == metatableMap.end()) {
+        g_lua.getGlobal(getClassName() + "_mt");
+        metatableRef = g_lua.ref();
+        metatableMap[&tinfo] = metatableRef;
+    } else
+        metatableRef = it->second;
+
+    g_lua.getRef(metatableRef);
 }
 
 void LuaObject::luaGetFieldsTable()
@@ -111,4 +112,10 @@ void LuaObject::luaGetFieldsTable()
 int LuaObject::getUseCount()
 {
     return ref_count();
+}
+
+std::string LuaObject::getClassName()
+{
+    // TODO: this could be cached for more performance
+    return stdext::demangle_name(typeid(*this).name());
 }

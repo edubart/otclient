@@ -24,7 +24,6 @@
 #define LUAOBJECT_H
 
 #include "declarations.h"
-#include <typeinfo>
 
 /// LuaObject, all script-able classes have it as base
 // @bindclass
@@ -76,10 +75,7 @@ public:
     int getUseCount();
 
     /// Returns the derived class name, its the same name used in Lua
-    std::string getClassName() {
-        // TODO: this could be cached for more performance
-        return stdext::demangle_name(typeid(*this).name());
-    }
+    std::string getClassName();
 
     LuaObjectPtr asLuaObject() { return static_self_cast<LuaObject>(); }
 
@@ -87,7 +83,6 @@ public:
 
 private:
     int m_fieldsTableRef;
-    int m_metatableRef;
 };
 
 #include "luainterface.h"
