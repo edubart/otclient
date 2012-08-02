@@ -45,6 +45,10 @@
 #include <framework/net/server.h>
 #endif
 
+#ifdef FW_SQL
+#include <framework/sql/mysql.h>
+#endif
+
 void Application::registerLuaFunctions()
 {
     // conversion globals
@@ -699,5 +703,15 @@ void Application::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_sounds", "isSoundEnabled", &SoundManager::isSoundEnabled, &g_sounds);
     g_lua.bindSingletonFunction("g_sounds", "isAudioEnabled", &SoundManager::isAudioEnabled, &g_sounds);
     g_lua.bindSingletonFunction("g_sounds", "getCurrentMusic", &SoundManager::getCurrentMusic, &g_sounds);
+#endif
+
+#ifdef FW_SQL
+    // Database
+    g_lua.registerClass<Database>();
+
+    // Mysql
+    g_lua.registerClass<DatabaseMySQL>();
+    g_lua.bindClassStaticFunction<DatabaseMySQL>("create", []{ return DatabaseMySQLPtr(new DatabaseMySQL); });
+    g_lua.bindClassMemberFunction<DatabaseMySQL>("connect", &DatabaseMySQL::connect);
 #endif
 }

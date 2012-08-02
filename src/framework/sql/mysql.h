@@ -1,6 +1,7 @@
-#ifndef DATABASE_H
-#define DATABASE_H
+#ifndef DATABASEMYSQL_H
+#define DATABASEMYSQL_H
 
+#include "database.h"
 #include <framework/global.h>
 #ifdef WIN32
 #include <winsock2.h>
@@ -9,7 +10,7 @@
 
 class DBResult;
 
-class DatabaseMySQL
+class DatabaseMySQL : public Database
 {
 public:
     DatabaseMySQL();

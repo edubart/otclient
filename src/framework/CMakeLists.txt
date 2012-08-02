@@ -450,6 +450,9 @@ if(FRAMEWORK_SQL)
     set(framework_LIBRARIES ${framework_LIBRARIES} ${MYSQL_LIBRARY})
 
     set(framework_SOURCES ${framework_SOURCES}
+        ${CMAKE_CURRENT_LIST_DIR}/sql/declarations.h
+        ${CMAKE_CURRENT_LIST_DIR}/sql/database.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/sql/database.h
         ${CMAKE_CURRENT_LIST_DIR}/sql/mysql.cpp
         ${CMAKE_CURRENT_LIST_DIR}/sql/mysql.h
     )
