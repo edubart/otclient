@@ -106,6 +106,10 @@ public:
     }
 
     void pop_back() {
+        if(m_size == 1) {
+            clear();
+            return;
+        }
         T *tmp = new T[m_size-1];
         std::copy(m_data, m_data + m_size - 1, tmp);
         delete[] m_data;
