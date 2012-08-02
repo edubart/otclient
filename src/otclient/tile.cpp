@@ -158,25 +158,31 @@ void Tile::addThing(const ThingPtr& thing, int stackPos)
     if(thing->isEffect()) {
         m_effects.push_back(thing->static_self_cast<Effect>());
     } else {
-        // the items stackpos follows this order:
-        // 0 - ground
-        // 1 - ground borders
-        // 2 - bottom (walls)
-        // 3 - on top (doors)
-        // 4 - creatures, from top to bottom
-        // 5 - items, from top to bottom
+        // priority                                    854
+        // 0 - ground,                        -->      -->
+        // 1 - ground borders                 -->      -->
+        // 2 - bottom (walls),                -->      -->
+        // 3 - on top (doors)                 -->      -->
+        // 4 - creatures, from top to bottom  <--      -->
+        // 5 - items, from top to bottom      <--      <--
         if(stackPos < 0 || stackPos == 255) {
             int priority = thing->getStackPriority();
 
-            bool prepend = (stackPos == -2 || priority <= 3);
+            // -1 or 255 => auto detect position
+            // -2        => append
+
+            bool append = (stackPos == -2 || priority <= 3);
 
             // newer protocols does not store creatures in reverse order
             if(g_game.getClientVersion() >= 854 && priority == 4)
-                prepend = !prepend;
+                append = !append;
+
+            if(g_game.getClientVersion() < 900 && priority == 4 && stackPos == -2)
+                append = !append;
 
             for(stackPos = 0; stackPos < (int)m_things.size(); ++stackPos) {
                 int otherPriority = m_things[stackPos]->getStackPriority();
-                if((prepend && otherPriority > priority) || (!prepend && otherPriority >= priority))
+                if((append && otherPriority > priority) || (!append && otherPriority >= priority))
                     break;
             }
         } else if(stackPos > (int)m_things.size())
