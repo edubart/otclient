@@ -46,6 +46,7 @@ public:
     void setConnection(const ConnectionPtr& connection) { m_connection = connection; }
 
     void generateXteaKey();
+    void setXteaKey(uint32 a, uint32 b, uint32 c, uint32 d);
     std::vector<int> getXteaKey();
     void enableXteaEncryption() { m_xteaEncryptionEnabled = true; }
 

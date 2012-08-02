@@ -151,6 +151,14 @@ void Protocol::generateXteaKey()
     m_xteaKey[3] = unif(eng);
 }
 
+void Protocol::setXteaKey(uint32 a, uint32 b, uint32 c, uint32 d)
+{
+    m_xteaKey[0] = a;
+    m_xteaKey[1] = b;
+    m_xteaKey[2] = c;
+    m_xteaKey[3] = d;
+}
+
 std::vector<int> Protocol::getXteaKey()
 {
     std::vector<int> xteaKey;
