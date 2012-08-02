@@ -207,8 +207,10 @@ void Map::loadOtbm(const std::string& fileName)
     g_logger.debug("OTBM read successfully.");
     fin->close();
 
+    /*
     loadSpawns(getSpawnFile());
     m_houses.load(getHouseFile());
+    */
 }
 
 void Map::saveOtbm(const std::string &fileName)

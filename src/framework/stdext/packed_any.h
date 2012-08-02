@@ -81,7 +81,7 @@ public:
     bool empty() const { return !scalar && !content; }
     template<typename T> T cast() const;
     const std::type_info& type() const {
-        if(scalar)
+        if(!scalar)
             return content ? content->type() : typeid(void);
         else
             return typeid(std::size_t);

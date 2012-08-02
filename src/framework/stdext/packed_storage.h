@@ -44,7 +44,7 @@ public:
     ~packed_storage() { if(m_values) delete[] m_values; }
 
     template<typename T>
-    void set(Key id, T value) {
+    void set(Key id, const T& value) {
         for(SizeType i=0;i<m_size;++i) {
             if(m_values[i].id == id) {
                 m_values[i].value = value;
