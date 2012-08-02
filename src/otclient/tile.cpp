@@ -423,6 +423,15 @@ bool Tile::isWalkable()
     return true;
 }
 
+bool Tile::changesFloor()
+{
+    for(const ThingPtr& thing : m_things) {
+        if(thing->isTranslucent() || (thing->isOnBottom() && thing->hasElevation()))
+            return true;
+    }
+    return false;
+}
+
 bool Tile::isPathable()
 {
     if(!isWalkable())

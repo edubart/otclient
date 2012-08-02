@@ -92,6 +92,7 @@ public:
     int getThingCount() { return m_things.size() + m_effects.size(); }
     bool isPathable();
     bool isWalkable();
+    bool changesFloor();
     bool isFullGround();
     bool isFullyOpaque();
     bool isLookPossible();

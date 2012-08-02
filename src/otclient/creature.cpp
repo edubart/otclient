@@ -296,6 +296,7 @@ void Creature::onAppear()
 
     // creature appeared the first time or wasn't seen for a long time
     if(m_removed) {
+        stopWalk();
         m_removed = false;
         callLuaField("onAppear");
     // walk
@@ -304,6 +305,7 @@ void Creature::onAppear()
         callLuaField("onWalk", m_oldPosition, m_position);
     // teleport
     } else if(m_oldPosition != m_position) {
+        stopWalk();
         callLuaField("onDisappear");
         callLuaField("onAppear");
     } // else turn
