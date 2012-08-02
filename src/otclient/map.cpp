@@ -183,7 +183,7 @@ bool Map::removeThingByPos(const Position& pos, int stackPos)
 
 const TilePtr& Map::createTile(const Position& pos)
 {
-    if(!pos.isValid())
+    if(!pos.isMapPosition())
         return m_nulltile;
     if(pos.x < m_tilesRect.left())
         m_tilesRect.setLeft(pos.x);
@@ -212,7 +212,7 @@ const TilePtr& Map::createTileEx(const Position& pos, const Items&... items)
 
 const TilePtr& Map::getOrCreateTile(const Position& pos)
 {
-    if(!pos.isValid())
+    if(!pos.isMapPosition())
         return m_nulltile;
     if(pos.x < m_tilesRect.left())
         m_tilesRect.setLeft(pos.x);
@@ -228,7 +228,7 @@ const TilePtr& Map::getOrCreateTile(const Position& pos)
 
 const TilePtr& Map::getTile(const Position& pos)
 {
-    if(!pos.isValid())
+    if(!pos.isMapPosition())
         return m_nulltile;
     auto it = m_tileBlocks[pos.z].find(getBlockIndex(pos));
     if(it != m_tileBlocks[pos.z].end())
@@ -238,7 +238,7 @@ const TilePtr& Map::getTile(const Position& pos)
 
 void Map::cleanTile(const Position& pos)
 {
-    if(!pos.isValid())
+    if(!pos.isMapPosition())
         return;
     auto it = m_tileBlocks[pos.z].find(getBlockIndex(pos));
     if(it != m_tileBlocks[pos.z].end()) {

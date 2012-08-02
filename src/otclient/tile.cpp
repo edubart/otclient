@@ -167,7 +167,13 @@ void Tile::addThing(const ThingPtr& thing, int stackPos)
         // 5 - items, from top to bottom
         if(stackPos < 0 || stackPos == 255) {
             int priority = thing->getStackPriority();
+
             bool prepend = (stackPos == -2 || priority <= 3);
+
+            // newer protocols does not store creatures in reverse order
+            if(g_game.getClientVersion() >= 854 && priority == 4)
+                prepend = !prepend;
+
             for(stackPos = 0; stackPos < (int)m_things.size(); ++stackPos) {
                 int otherPriority = m_things[stackPos]->getStackPriority();
                 if((prepend && otherPriority > priority) || (!prepend && otherPriority >= priority))
