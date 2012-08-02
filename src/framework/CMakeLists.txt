@@ -443,5 +443,18 @@ if(FRAMEWORK_XML)
     set(framework_DEFINITIONS ${framework_DEFINITIONS} -DFW_XML)
 endif()
 
+if(FRAMEWORK_SQL)
+    find_package(Mysql REQUIRED)
+
+    set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS} ${MYSQL_INCLUDE_DIR})
+    set(framework_LIBRARIES ${framework_LIBRARIES} ${MYSQL_LIBRARY})
+
+    set(framework_SOURCES ${framework_SOURCES}
+        ${CMAKE_CURRENT_LIST_DIR}/sql/mysql.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/sql/mysql.h
+    )
+    set(framework_DEFINITIONS ${framework_DEFINITIONS} -DFW_SQL)
+endif()
+
 include_directories(${framework_INCLUDE_DIRS})
 add_definitions(${framework_DEFINITIONS})
