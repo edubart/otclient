@@ -322,7 +322,7 @@ function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
           menu:addOption(tr('Add to VIP list'), function() g_game.addVip(creatureName) end)
         end
 
-        local localPlayerShield = localPlayer:isCreature():getShield()
+        local localPlayerShield = localPlayer:getShield()
         local creatureShield = creatureThing:getShield()
 
         if localPlayerShield == ShieldNone or localPlayerShield == ShieldWhiteBlue then
