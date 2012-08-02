@@ -102,6 +102,7 @@ public:
     bool hasCreature();
     bool limitsFloorsView();
     bool canErase();
+    bool hasElevation(int elevation = 1);
 
     void setFlags(tileflags_t flags) { m_flags |= (uint32)flags; }
     uint32 getFlags() { return m_flags; }

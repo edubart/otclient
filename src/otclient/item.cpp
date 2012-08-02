@@ -29,6 +29,7 @@
 #include "container.h"
 #include "map.h"
 #include "houses.h"
+#include "game.h"
 
 #include <framework/core/clock.h>
 #include <framework/core/eventdispatcher.h>
@@ -302,7 +303,9 @@ int Item::getSubType()
 {
     if(isSplash() || isFluidContainer())
         return m_countOrSubType;
-    return 0;
+    if(g_game.getClientVersion() >= 900)
+        return 0;
+    return 1;
 }
 
 int Item::getCount()

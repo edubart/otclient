@@ -513,3 +513,12 @@ bool Tile::canErase()
 {
     return m_walkingCreatures.empty() && m_effects.empty() && m_things.empty();
 }
+
+bool Tile::hasElevation(int elevation)
+{
+    int count = 0;
+    for(const ThingPtr& thing : m_things)
+        if(thing->getElevation() > 0)
+            count++;
+    return count >= elevation;
+}

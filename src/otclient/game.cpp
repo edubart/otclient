@@ -489,12 +489,44 @@ void Game::walk(Otc::Direction direction)
     if(!m_localPlayer->canWalk(direction))
         return;
 
+    Position toPos = m_localPlayer->getPosition().translatedToDirection(direction);
+    TilePtr toTile = g_map.getTile(toPos);
     // only do prewalks to walkable tiles (like grounds and not walls)
-    TilePtr toTile = g_map.getTile(m_localPlayer->getPosition().translatedToDirection(direction));
     if(toTile && toTile->isWalkable())
         m_localPlayer->preWalk(direction);
-    else
-        m_localPlayer->lockWalk(100);
+    // check walk to another floor (e.g: when above 3 parcels)
+    else {
+        // check if can walk to a lower floor
+        auto canChangeFloorDown = [&] {
+            Position pos = toPos;
+            if(!pos.down())
+                return false;
+            toTile = g_map.getTile(pos);
+            if(toTile && toTile->hasElevation(3)) {
+                return true;
+            }
+            return false;
+        };
+
+        // check if can walk to a higher floor
+        auto canChangeFloorUp = [&] {
+            TilePtr fromTile = m_localPlayer->getTile();
+            if(!fromTile || !fromTile->hasElevation(3))
+                return false;
+            Position pos = toPos;
+            if(!pos.up())
+                return false;
+            toTile = g_map.getTile(pos);
+            if(!toTile || !toTile->isWalkable())
+                return false;
+            return true;
+        };
+
+        if(canChangeFloorDown() || canChangeFloorUp()) {
+            m_localPlayer->lockWalk();
+        } else
+            return;
+    }
 
     forceWalk(direction);
 
