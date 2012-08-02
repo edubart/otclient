@@ -50,6 +50,36 @@ function debugContainersItems()
   end
 end
 
+function debugPosition(enable)
+  if enable == nil then enable = true end
+  local label = rootWidget:getChildById('debugPositionLabel')
+  if not label then
+    label = g_ui.createWidget('GameLabel', rootWidget)
+    label:setColor('pink')
+    label:setFont('terminus-14px-bold')
+    label:setId('debugPositionLabel')
+    label:setPosition({x= 10, y = 40 })
+    label:setPhantom(true)
+    label:setTextAutoResize(true)
+  end
+  if enable then
+    label.event = cycleEvent(function()
+      local player = g_game.getLocalPlayer()
+      if player then
+        local pos = g_game.getLocalPlayer():getPosition()
+        label:show()
+        label:setText('x: ' .. pos.x .. '\ny: ' .. pos.y .. '\nz: ' .. pos.z)
+      else
+        label:hide()
+      end
+    end, 100)
+  else
+    removeEvent(label.event)
+    label.event = nil
+    label:hide()
+  end
+end
+
 function autoReloadModule(name)
   local function reloadEvent()
     reloadModule(name)
