@@ -624,12 +624,21 @@ void Game::look(const ThingPtr& thing)
 
 void Game::move(const ThingPtr& thing, const Position& toPos, int count)
 {
-    if(!canPerformGameAction() || !thing || thing->getPosition() == toPos || count <= 0)
+    if(count <= 0)
+        count = 1;
+
+    if(!canPerformGameAction() || !thing || thing->getPosition() == toPos)
         return;
 
     m_localPlayer->lockWalk();
 
-    m_protocolGame->sendMove(thing->getPosition(), thing->getId(), thing->getStackpos(), toPos, count);
+    uint id = thing->getId();
+    if(thing->isCreature()) {
+        CreaturePtr creature = thing->static_self_cast<Creature>();
+        id = Proto::Creature;
+    }
+
+    m_protocolGame->sendMove(thing->getPosition(), id, thing->getStackpos(), toPos, count);
 }
 
 void Game::moveToParentContainer(const ThingPtr& thing, int count)

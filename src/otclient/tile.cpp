@@ -373,6 +373,11 @@ ThingPtr Tile::getTopMoveThing()
         }
     }
 
+    for(const ThingPtr& thing : m_things) {
+        if(thing->isCreature())
+            return thing;
+    }
+
     return m_things[0];
 }
 
