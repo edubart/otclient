@@ -73,6 +73,7 @@ public:
     double getStamina() { return m_stamina; }
     ItemPtr getInventoryItem(Otc::InventorySlot inventory) { return m_inventoryItems[inventory]; }
 
+    bool hasSight(const Position& pos);
     bool isKnown() { return m_known; }
     bool isPreWalking() { return m_preWalking; }
     bool isAutoWalking() { return m_autoWalking; }

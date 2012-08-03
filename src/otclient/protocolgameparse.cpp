@@ -399,8 +399,19 @@ void ProtocolGame::parseDeath(const InputMessagePtr& msg)
 void ProtocolGame::parseMapDescription(const InputMessagePtr& msg)
 {
     Position pos = getPosition(msg);
+
+    if(!m_mapKnown)
+        m_localPlayer->setPosition(pos);
+
     g_map.setCentralPosition(pos);
     setMapDescription(msg, pos.x - Otc::AWARE_X_LEFT_TILES, pos.y - Otc::AWARE_Y_TOP_TILES, pos.z, Otc::AWARE_X_TILES, Otc::AWARE_Y_TILES);
+
+    if(!m_mapKnown) {
+        g_dispatcher.addEvent([] { g_lua.callGlobalField("g_game", "onMapKnown"); });
+        m_mapKnown = true;
+    }
+
+    g_dispatcher.addEvent([] { g_lua.callGlobalField("g_game", "onMapDescription"); });
 }
 
 void ProtocolGame::parseMapMoveNorth(const InputMessagePtr& msg)

@@ -6,7 +6,6 @@ battleWindow = nil
 battleButton = nil
 battlePanel = nil
 lastBattleButtonSwitched = nil
-checkCreaturesEvent = nil
 battleButtonsByCreaturesList = {}
 
 mouseWidget = nil
@@ -51,28 +50,32 @@ function init()
   mouseWidget:setFocusable(false)
 
   connect(Creature, { onSkullChange = checkCreatureSkull,
-                      onEmblemChange = checkCreatureEmblem } )
+                      onEmblemChange = checkCreatureEmblem,
+                      onPositionChange = onCreaturePositionChange
+                      } )
 
   connect(g_game, { onAttackingCreatureChange = onAttack,
                     onFollowingCreatureChange = onFollow,
+                    onMapDescription = checkCreatures,
                     onGameEnd = removeAllCreatures } )
 
-  addEvent(addAllCreatures)
-  checkCreaturesEvent = scheduleEvent(checkCreatures, 200)
 end
 
 function terminate()
   g_keyboard.unbindKeyDown('Ctrl+B')
   battleButtonsByCreaturesList = {}
-  removeEvent(checkCreaturesEvent)
   battleButton:destroy()
   battleWindow:destroy()
   mouseWidget:destroy()
 
-  disconnect(Creature, { onSkullChange = checkCreatureSkull,
-                          onEmblemChange = checkCreatureEmblem } )
+  disconnect(Creature, {  onSkullChange = checkCreatureSkull,
+                          onEmblemChange = checkCreatureEmblem,
+                          onPositionChange = onCreaturePositionChange } )
 
-  disconnect(g_game, { onAttackingCreatureChange = onAttack } )
+  disconnect(g_game, { onAttackingCreatureChange = onAttack,
+                    onFollowingCreatureChange = onFollow,
+                    onMapDescription = checkCreatures,
+                    onGameEnd = removeAllCreatures } )
 end
 
 function toggle()
@@ -89,17 +92,19 @@ function onMiniWindowClose()
   battleButton:setOn(false)
 end
 
-function addAllCreatures()
+function checkCreatures()
+  removeAllCreatures()
+
   local spectators = {}
-    local player = g_game.getLocalPlayer()
-    if g_game.isOnline() then
-        creatures = g_map.getSpectators(player:getPosition(), false)
-        for i, creature in ipairs(creatures) do
-            if creature ~= player and doCreatureFitFilters(creature) then
-              table.insert(spectators, creature)
-            end
-        end
+  local player = g_game.getLocalPlayer()
+  if g_game.isOnline() then
+    creatures = g_map.getSpectators(player:getPosition(), false)
+    for i, creature in ipairs(creatures) do
+      if creature ~= player and doCreatureFitFilters(creature) then
+        table.insert(spectators, creature)
+      end
     end
+  end
 
   for i, v in pairs(spectators) do
     addCreature(v)
@@ -107,6 +112,18 @@ function addAllCreatures()
 end
 
 function doCreatureFitFilters(creature)
+  local localPlayer = g_game.getLocalPlayer()
+  if creature == localPlayer then
+    return false
+  end
+
+  local pos = creature:getPosition()
+  if not pos then return false end
+
+  if pos.z ~= localPlayer:getPosition().z or not localPlayer:hasSight(pos) then
+    return false
+  end
+
   local hidePlayers = hidePlayersButton:isChecked()
   local hideNPCs = hideNPCsButton:isChecked()
   local hideMonsters = hideMonstersButton:isChecked()
@@ -128,53 +145,30 @@ function doCreatureFitFilters(creature)
   return true
 end
 
-function checkCreatures(forceRecheck)
-  local player = g_game.getLocalPlayer()
-  if g_game.isOnline() then
-    local spectators = {}
-
-    -- reloading list of spectators
-    local creaturesAppeared = {}
-    creatures = g_map.getSpectators(player:getPosition(), false)
-    for i, creature in ipairs(creatures) do
-      if creature ~= player and doCreatureFitFilters(creature) then
-        -- searching for creatures that appeared on battle list
-        local battleButton = battleButtonsByCreaturesList[creature:getId()]
-        if battleButton == nil then
-          table.insert(creaturesAppeared, creature)
-        else
-          setLifeBarPercent(battleButton, creature:getHealthPercent())
-        end
-        spectators[creature:getId()] = creature
-      end
-    end
-
-    for i, v in pairs(creaturesAppeared) do
-      addCreature(v)
-    end
-
-    -- searching for creatures that disappeared from battle list
-    local creaturesDisappeared = {}
-    for i, creature in pairs(battleButtonsByCreaturesList) do
-      if spectators[creature.creatureId] == nil then
-        table.insert(creaturesDisappeared, creature.creature)
-      end
-    end
-
-    for i, v in pairs(creaturesDisappeared) do
-      removeCreature(v)
+function onCreaturePositionChange(creature, newPos, oldPos)
+  if creature:isLocalPlayer() then
+    checkCreatures()
+  else
+    local has = hasCreature(creature)
+    local fit = doCreatureFitFilters(creature)
+    if has and not fit then
+      removeCreature(creature)
+    elseif not has and fit then
+      addCreature(creature)
     end
   end
-  if not forceRecheck then
-    checkCreaturesEvent = scheduleEvent(checkCreatures, 500)
-  end
+end
+
+function hasCreature(creature)
+  return battleButtonsByCreaturesList[creature:getId()] ~= nil
 end
 
 function addCreature(creature)
   local creatureId = creature:getId()
 
-  if battleButtonsByCreaturesList[creatureId] == nil then
-    local battleButton = g_ui.createWidget('BattleButton', battlePanel)
+  local battleButton = battleButtonsByCreaturesList[creature:getId()]
+  if not battleButton then
+    battleButton = g_ui.createWidget('BattleButton', battlePanel)
     local creatureWidget = battleButton:getChildById('creature')
     local labelWidget = battleButton:getChildById('label')
     local lifeBarWidget = battleButton:getChildById('lifeBar')
@@ -185,8 +179,8 @@ function addCreature(creature)
     battleButton.creatureId = creatureId
     battleButton.creature = creature
     battleButton.isHovered = false
-    battleButton.isTarget = false
-    battleButton.isFollowed = false
+    battleButton.isTarget = (g_game.getAttackingCreature() == creature)
+    battleButton.isFollowed = (g_game.getFollowingCreature() == creature)
 
     labelWidget:setText(creature:getName())
     creatureWidget:setCreature(creature)
@@ -196,6 +190,8 @@ function addCreature(creature)
 
     checkCreatureSkull(battleButton.creature)
     checkCreatureEmblem(battleButton.creature)
+  else
+    setLifeBarPercent(battleButton, creature:getHealthPercent())
   end
 end
 

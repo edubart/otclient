@@ -100,6 +100,7 @@ public:
     const ThingTypePtr& getThingType();
     ThingType *rawGetThingType();
 
+    virtual void onPositionChange(const Position& newPos, const Position& oldPos);
     virtual void onAppear();
     virtual void onDisappear();
 

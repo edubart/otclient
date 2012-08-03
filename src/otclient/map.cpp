@@ -301,7 +301,8 @@ void Map::setCentralPosition(const Position& centralPosition)
         Position oldPos = localPlayer->getPosition();
         Position pos = m_centralPosition;
         if(oldPos != pos) {
-            localPlayer->onDisappear();
+            if(!localPlayer->isRemoved())
+                localPlayer->onDisappear();
             localPlayer->setPosition(pos);
             localPlayer->onAppear();
         }

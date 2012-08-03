@@ -383,3 +383,8 @@ double LocalPlayer::getWalkPing()
         sum += p;
     return sum / (double)m_lastWalkPings.size();
 }
+
+bool LocalPlayer::hasSight(const Position& pos)
+{
+    return m_position.isInRange(pos, (Otc::VISIBLE_X_TILES - 1)/2, (Otc::VISIBLE_Y_TILES - 1)/2);
+}

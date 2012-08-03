@@ -286,6 +286,11 @@ void Creature::stopWalk()
     terminateWalk();
 }
 
+void Creature::onPositionChange(const Position& newPos, const Position& oldPos)
+{
+    callLuaField("onPositionChange", newPos, oldPos);
+}
+
 void Creature::onAppear()
 {
     // cancel any disappear event
@@ -328,7 +333,8 @@ void Creature::onDisappear()
         self->callLuaField("onDisappear");
 
         // invalidate this creature position
-        self->m_position = Position();
+        if(!self->isLocalPlayer())
+            self->setPosition(Position());
         self->m_oldPosition = Position();
         self->m_disappearEvent = nullptr;
     });
