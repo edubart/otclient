@@ -630,8 +630,6 @@ void Game::move(const ThingPtr& thing, const Position& toPos, int count)
     if(!canPerformGameAction() || !thing || thing->getPosition() == toPos)
         return;
 
-    m_localPlayer->lockWalk();
-
     uint id = thing->getId();
     if(thing->isCreature()) {
         CreaturePtr creature = thing->static_self_cast<Creature>();
@@ -667,8 +665,6 @@ void Game::use(const ThingPtr& thing)
     if(!pos.isValid()) // virtual item
         pos = Position(0xFFFF, 0, 0); // means that is a item in inventory
 
-    m_localPlayer->lockWalk();
-
     m_protocolGame->sendUseItem(pos, thing->getId(), thing->getStackpos(), 0);
 }
 
@@ -678,7 +674,6 @@ void Game::useInventoryItem(int itemId)
         return;
 
     Position pos = Position(0xFFFF, 0, 0); // means that is a item in inventory
-    m_localPlayer->lockWalk();
 
     m_protocolGame->sendUseItem(pos, itemId, 0, 0);
 }
@@ -692,8 +687,6 @@ void Game::useWith(const ItemPtr& item, const ThingPtr& toThing)
     if(!pos.isValid()) // virtual item
         pos = Position(0xFFFF, 0, 0); // means that is a item in inventory
 
-    m_localPlayer->lockWalk();
-
     if(toThing->isCreature())
         m_protocolGame->sendUseOnCreature(pos, item->getId(), item->getStackpos(), toThing->getId());
     else
@@ -704,8 +697,6 @@ void Game::useInventoryItemWith(int itemId, const ThingPtr& toThing)
 {
     if(!canPerformGameAction() || !toThing)
         return;
-
-    m_localPlayer->lockWalk();
 
     Position pos = Position(0xFFFF, 0, 0); // means that is a item in inventory
 
@@ -765,8 +756,6 @@ void Game::attack(const CreaturePtr& creature)
         return;
     }
 
-    m_localPlayer->lockWalk();
-
     if(creature && isFollowing())
         cancelFollow();
 
@@ -790,8 +779,6 @@ void Game::cancelAttackAndFollow()
 {
     if(!canPerformGameAction())
         return;
-
-    m_localPlayer->lockWalk();
 
     if(isAttacking())
         setAttackingCreature(nullptr);
