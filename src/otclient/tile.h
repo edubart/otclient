@@ -98,6 +98,7 @@ public:
     bool isLookPossible();
     bool isClickable();
     bool isEmpty();
+    bool isDrawable();
     bool mustHookSouth();
     bool mustHookEast();
     bool hasCreature();

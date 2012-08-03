@@ -60,10 +60,13 @@ void ProtocolGame::onRecv(const InputMessagePtr& inputMessage)
 {
     if(m_firstRecv) {
         m_firstRecv = false;
-        int size = inputMessage->getU16();
-        if(size != inputMessage->getUnreadSize()) {
-            g_logger.traceError("invalid message size");
-            return;
+
+        if(g_game.getClientVersion() > 810) {
+            int size = inputMessage->getU16();
+            if(size != inputMessage->getUnreadSize()) {
+                g_logger.traceError("invalid message size");
+                return;
+            }
         }
     }
 

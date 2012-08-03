@@ -312,7 +312,7 @@ void MapView::updateVisibleTilesCache(int start)
                     tilePos.coveredUp(cameraPosition.z - iz);
                     if(const TilePtr& tile = g_map.getTile(tilePos)) {
                         // skip tiles that have nothing
-                        if(tile->isEmpty())
+                        if(!tile->isDrawable())
                             continue;
                         // skip tiles that are completely behind another tile
                         if(g_map.isCompletelyCovered(tilePos, m_cachedFirstVisibleFloor))
@@ -366,7 +366,7 @@ void MapView::updateVisibleTilesCache(int start)
                 Position tilePos = cameraPosition.translated(p.x - m_virtualCenterOffset.x, p.y - m_virtualCenterOffset.y);
                 tilePos.coveredUp(cameraPosition.z - iz);
                 if(const TilePtr& tile = g_map.getTile(tilePos)) {
-                    if(!tile->isEmpty())
+                    if(tile->isDrawable())
                         m_cachedVisibleTiles.push_back(tile);
                 }
             }

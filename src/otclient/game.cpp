@@ -481,10 +481,9 @@ void Game::walk(Otc::Direction direction)
             Position pos = toPos;
             if(!pos.down())
                 return false;
-            toTile = g_map.getTile(pos);
-            if(toTile && toTile->hasElevation(3)) {
+            TilePtr toTile = g_map.getTile(pos);
+            if(toTile && toTile->hasElevation(3))
                 return true;
-            }
             return false;
         };
 
@@ -496,13 +495,14 @@ void Game::walk(Otc::Direction direction)
             Position pos = toPos;
             if(!pos.up())
                 return false;
-            toTile = g_map.getTile(pos);
+            TilePtr toTile = g_map.getTile(pos);
             if(!toTile || !toTile->isWalkable())
                 return false;
             return true;
         };
 
-        if(canChangeFloorDown() || canChangeFloorUp()) {
+        if(canChangeFloorDown() || canChangeFloorUp() ||
+            (!toTile || toTile->isEmpty())) {
             m_localPlayer->lockWalk();
         } else
             return;

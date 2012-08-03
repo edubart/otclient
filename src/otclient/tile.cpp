@@ -504,6 +504,11 @@ bool Tile::isEmpty()
     return m_things.size() == 0;
 }
 
+bool Tile::isDrawable()
+{
+    return !m_things.empty() || !m_walkingCreatures.empty() || !m_effects.empty();
+}
+
 bool Tile::mustHookEast()
 {
     for(const ThingPtr& thing : m_things)
