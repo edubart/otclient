@@ -21,104 +21,62 @@
  */
 
 #include "rsa.h"
-#include <gmp.h>
+#include <openssl/bn.h>
+#include <openssl/err.h>
 
-void RSA::encrypt(char *msg, int size, const char* key)
+Rsa g_rsa;
+
+Rsa::Rsa()
 {
-    assert(size <= 128);
-
-    mpz_t plain, c;
-    mpz_init2(plain, 1024);
-    mpz_init2(c, 1024);
-
-    mpz_t e;
-    mpz_init(e);
-    mpz_set_ui(e,65537);
-
-    mpz_t mod;
-    mpz_init2(mod, 1024);
-    mpz_set_str(mod, key, 10);
-
-    mpz_import(plain, size, 1, 1, 0, 0, msg);
-    mpz_powm(c, plain, e, mod);
-
-    size_t count = (mpz_sizeinbase(c, 2) + 7)/8;
-    memset(msg, 0, size - count);
-    mpz_export(&msg[size - count], NULL, 1, 1, 0, 0, c);
-
-    mpz_clear(c);
-    mpz_clear(plain);
-    mpz_clear(e);
-    mpz_clear(mod);
+    m_rsa = RSA_new();
 }
 
-void RSA::decrypt(char *msg, int size, const char *p, const char *q, const char *d)
+Rsa::~Rsa()
+{
+    RSA_free(m_rsa);
+}
+
+void Rsa::setPublic(const char *n, const char *e)
+{
+    BN_dec2bn(&m_rsa->n, n);
+    BN_dec2bn(&m_rsa->e, e);
+}
+
+void Rsa::setPrivate(const char *p, const char *q, const char *d)
+{
+    BN_dec2bn(&m_rsa->p, p);
+    BN_dec2bn(&m_rsa->q, q);
+    BN_dec2bn(&m_rsa->d, d);
+}
+
+bool Rsa::check() // only used by server, that sets both public and private
+{
+    if(RSA_check_key(m_rsa)) {
+        BN_CTX *ctx = BN_CTX_new();
+        BN_CTX_start(ctx);
+
+        BIGNUM *r1 = BN_CTX_get(ctx), *r2 = BN_CTX_get(ctx);
+        BN_mod(m_rsa->dmp1, m_rsa->d, r1, ctx);
+        BN_mod(m_rsa->dmq1, m_rsa->d, r2, ctx);
+
+        BN_mod_inverse(m_rsa->iqmp, m_rsa->q, m_rsa->p, ctx);
+        return true;
+    }
+    else {
+        ERR_load_crypto_strings();
+        g_logger.error(stdext::format("RSA check failed - %s", ERR_error_string(ERR_get_error(), NULL)));
+        return false;
+    }
+}
+
+bool Rsa::encrypt(unsigned char *msg, int size)
 {
     assert(size <= 128);
+    return RSA_public_encrypt(size, msg, msg, m_rsa, RSA_NO_PADDING) != -1;
+}
 
-    mpz_t mp, mq, md, u, dp, dq, mod, c, v1, v2, u2, tmp;
-    mpz_init2(mp, 1024);
-    mpz_init2(mq, 1024);
-    mpz_init2(md, 1024);
-    mpz_init2(u, 1024);
-    mpz_init2(dp, 1024);
-    mpz_init2(dq, 1024);
-    mpz_init2(mod, 1024);
-    mpz_init2(c, 1024);
-    mpz_init2(v1, 1024);
-    mpz_init2(v2, 1024);
-    mpz_init2(u2, 1024);
-    mpz_init2(tmp, 1024);
-
-    mpz_set_str(mp, p, 10);
-    mpz_set_str(mq, q, 10);
-    mpz_set_str(md, d, 10);
-
-    mpz_t pm1,qm1;
-    mpz_init2(pm1, 520);
-    mpz_init2(qm1, 520);
-
-    mpz_sub_ui(pm1, mp, 1);
-    mpz_sub_ui(qm1, mq, 1);
-    mpz_invert(u, mp, mq);
-    mpz_mod(dp, md, pm1);
-    mpz_mod(dq, md, qm1);
-
-    mpz_mul(mod, mp, mq);
-
-    mpz_import(c, size, 1, 1, 0, 0, msg);
-
-    mpz_mod(tmp, c, mp);
-    mpz_powm(v1, tmp, dp, mp);
-    mpz_mod(tmp, c, mq);
-    mpz_powm(v2, tmp, dq, mq);
-    mpz_sub(u2, v2, v1);
-    mpz_mul(tmp, u2, u);
-    mpz_mod(u2, tmp, mq);
-    if(mpz_cmp_si(u2, 0) < 0) {
-        mpz_add(tmp, u2, mq);
-        mpz_set(u2, tmp);
-    }
-    mpz_mul(tmp, u2, mp);
-    mpz_set_ui(c, 0);
-    mpz_add(c, v1, tmp);
-
-    size_t count = (mpz_sizeinbase(c, 2) + 7)/8;
-    memset(msg, 0, size - count);
-    mpz_export(&msg[size - count], NULL, 1, 1, 0, 0, c);
-
-    mpz_clear(c);
-    mpz_clear(v1);
-    mpz_clear(v2);
-    mpz_clear(u2);
-    mpz_clear(tmp);
-    mpz_clear(pm1);
-    mpz_clear(qm1);
-    mpz_clear(mp);
-    mpz_clear(mq);
-    mpz_clear(md);
-    mpz_clear(u);
-    mpz_clear(dp);
-    mpz_clear(dq);
-    mpz_clear(mod);
+bool Rsa::decrypt(unsigned char *msg, int size)
+{
+    assert(size <= 128);
+    return RSA_private_decrypt(size, msg, msg, m_rsa, RSA_NO_PADDING) != -1;
 }

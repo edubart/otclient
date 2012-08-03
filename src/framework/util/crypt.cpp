@@ -26,6 +26,9 @@
 #include <boost/uuid/uuid.hpp>
 #include <boost/functional/hash.hpp>
 
+#include <openssl/sha.h>
+#include <openssl/md5.h>
+
 static const std::string base64_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 static inline bool is_base64(unsigned char c) { return (isalnum(c) || (c == '+') || (c == '/')); }
 
@@ -158,4 +161,46 @@ std::string Crypt::decrypt(const std::string& encrypted_string)
             return decrypted_string;
     }
     return std::string();
+}
+
+std::string Crypt::md5Encode(std::string decoded_string, bool upperCase)
+{
+    MD5_CTX c;
+    MD5_Init(&c);
+    MD5_Update(&c, decoded_string.c_str(), decoded_string.length());
+
+    uint8_t md[MD5_DIGEST_LENGTH];
+    MD5_Final(md, &c);
+
+    char output[(MD5_DIGEST_LENGTH << 1) + 1];
+    for(int32_t i = 0; i < (int32_t)sizeof(md); ++i)
+        sprintf(output + (i << 1), "%.2X", md[i]);
+
+    std::string result = output;
+    if(upperCase)
+        return result;
+
+    std::transform(result.begin(), result.end(), result.begin(), tolower);
+    return result;
+}
+
+std::string Crypt::sha1Encode(std::string decoded_string, bool upperCase)
+{
+    SHA_CTX c;
+    SHA1_Init(&c);
+    SHA1_Update(&c, decoded_string.c_str(), decoded_string.length());
+
+    uint8_t md[SHA_DIGEST_LENGTH];
+    SHA1_Final(md, &c);
+
+    char output[(SHA_DIGEST_LENGTH << 1) + 1];
+    for(int32_t i = 0; i < (int32_t)sizeof(md); ++i)
+        sprintf(output + (i << 1), "%.2X", md[i]);
+
+    std::string result = output;
+    if(upperCase)
+        return result;
+
+    std::transform(result.begin(), result.end(), result.begin(), tolower);
+    return result;
 }

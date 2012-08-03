@@ -24,11 +24,25 @@
 #define RSA_H
 
 #include <framework/global.h>
+#include <openssl/rsa.h>
 
-namespace RSA
+class Rsa
 {
-    void encrypt(char *msg, int size, const char *key);
-    void decrypt(char *msg, int size, const char *p, const char *q, const char *d);
+public:
+    Rsa();
+    ~Rsa();
+
+    void setPublic(const char *n, const char *e);
+    void setPrivate(const char *p, const char *q, const char *d);
+    bool check();
+
+    bool encrypt(unsigned char *msg, int size);
+    bool decrypt(unsigned char *msg, int size);
+
+private:
+    RSA *m_rsa;
 };
+
+extern Rsa g_rsa;
 
 #endif

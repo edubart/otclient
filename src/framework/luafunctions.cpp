@@ -85,6 +85,8 @@ void Application::registerLuaFunctions()
     g_lua.registerSingletonClass("g_crypt");
     g_lua.bindClassStaticFunction("g_crypt", "encrypt", Crypt::encrypt);
     g_lua.bindClassStaticFunction("g_crypt", "decrypt", Crypt::decrypt);
+    g_lua.bindClassStaticFunction("g_crypt", "sha1Encode", Crypt::sha1Encode);
+    g_lua.bindClassStaticFunction("g_crypt", "md5Encode", Crypt::md5Encode);
 
     // Clock
     g_lua.registerSingletonClass("g_clock");

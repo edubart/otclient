@@ -33,6 +33,8 @@ namespace Crypt {
     std::string genUUIDKey();
     std::string encrypt(const std::string& decrypted_string);
     std::string decrypt(const std::string& encrypted_string);
+    std::string md5Encode(std::string decoded_string, bool upperCase);
+    std::string sha1Encode(std::string decoded_string, bool upperCase);
 }
 
 #endif

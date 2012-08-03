@@ -94,7 +94,8 @@ void OutputMessage::encryptRsa(int size, const std::string& key)
     if(m_messageSize < size)
         throw stdext::exception("insufficient bytes in buffer to encrypt");
 
-    RSA::encrypt((char*)m_buffer + m_writePos - size, size, key.c_str());
+    g_rsa.setPublic(key.c_str(), "65537");
+    g_rsa.encrypt((unsigned char*)m_buffer + m_writePos - size, size);
 }
 
 void OutputMessage::writeChecksum()

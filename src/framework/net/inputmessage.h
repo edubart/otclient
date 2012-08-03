@@ -52,7 +52,7 @@ public:
     uint32 peekU32() { uint32 v = getU32(); m_readPos-=4; return v; }
     uint64 peekU64() { uint64 v = getU64(); m_readPos-=8; return v; }
 
-    bool decryptRsa(int size, const std::string& p, const std::string& q, const std::string& d);
+    bool decryptRsa(int size, const std::string& key, const std::string& p, const std::string& q, const std::string& d);
 
     int getReadSize() { return m_readPos - m_headerPos; }
     int getReadPos() { return m_readPos; }

@@ -187,14 +187,14 @@ endif()
 message(STATUS "LuaJIT: " ${LUAJIT})
 
 find_package(PhysFS REQUIRED)
-find_package(GMP REQUIRED)
+find_package(OpenSSL REQUIRED)
 find_package(ZLIB REQUIRED)
 
 set(framework_LIBRARIES ${framework_LIBRARIES}
     ${Boost_LIBRARIES}
     ${LUA_LIBRARY}
     ${PHYSFS_LIBRARY}
-    ${GMP_LIBRARY}
+    ${OPENSSL_LIBRARIES}
     ${ZLIB_LIBRARY}
 )
 
@@ -203,7 +203,7 @@ set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS}
     ${OPENGL_INCLUDE_DIR}
     ${LUA_INCLUDE_DIR}
     ${PHYSFS_INCLUDE_DIR}
-    ${GMP_INCLUDE_DIR}
+    ${OpenSSL_INCLUDE_DIR}
     ${ZLIB_INCLUDE_DIR}
 )
 
