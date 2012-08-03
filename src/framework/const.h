@@ -45,7 +45,7 @@
 #if defined(__amd64) || defined(_M_X64)
 #define BUILD_ARCH "x64"
 #elif defined(__i386) || defined(_M_IX86) || defined(_X86_)
-#define BUILD_ARCH "X86"
+#define BUILD_ARCH "x86"
 #else
 #define BUILD_ARCH "unknown"
 #endif

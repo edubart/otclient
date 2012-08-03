@@ -55,7 +55,7 @@ public:
     virtual bool isUIGridLayout() { return false; }
 
 protected:
-    virtual bool internalUpdate() { }
+    virtual bool internalUpdate() { return false; }
 
     int m_updateDisabled;
     stdext::boolean<false> m_updating;
