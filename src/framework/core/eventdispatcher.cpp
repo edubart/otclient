@@ -42,7 +42,8 @@ void EventDispatcher::shutdown()
 
 void EventDispatcher::poll()
 {
-    while(!m_scheduledEventList.empty()) {
+    int loops = 0;
+    for(int count = 0, max = m_scheduledEventList.size(); count < max && !m_scheduledEventList.empty(); ++count) {
         ScheduledEventPtr scheduledEvent = m_scheduledEventList.top();
         if(scheduledEvent->reamaningTicks() > 0)
             break;
@@ -53,16 +54,14 @@ void EventDispatcher::poll()
             m_scheduledEventList.push(scheduledEvent);
     }
 
-    // execute events list up to 10 times, this is needed because some events can schedule new events that would
+    // execute events list until all events are out, this is needed because some events can schedule new events that would
     // change the UIWidgets layout, in this case we must execute these new events before we continue rendering,
-    // we can't loop until the event list is empty, because this could lead to infinite loops
-    // if someone write a module with bad code
     m_pollEventsSize = m_eventList.size();
-    int count = 0;
+    loops = 0;
     while(m_pollEventsSize > 0) {
-        if(count > 50) {
+        if(loops > 50) {
             static Timer reportTimer;
-            if(reportTimer.running() && reportTimer.ticksElapsed() > 250) {
+            if(reportTimer.running() && reportTimer.ticksElapsed() > 100) {
                 g_logger.error("ATTENTION the event list is not getting empty, this could be caused by some bad code");
                 reportTimer.restart();
             }
@@ -75,7 +74,6 @@ void EventDispatcher::poll()
             event->execute();
         }
         m_pollEventsSize = m_eventList.size();
-        count++;
     }
 }
 
