@@ -845,6 +845,10 @@ bool UIWidget::setRect(const Rect& rect)
         m_updateEventScheduled = true;
     }
 
+    // update hovered widget when moved behind mouse area
+    if(containsPoint(g_window.getMousePosition()))
+        g_ui.updateHoveredWidget();
+
     return true;
 }
 

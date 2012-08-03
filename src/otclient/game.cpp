@@ -779,8 +779,6 @@ void Game::follow(const CreaturePtr& creature)
     if(!canPerformGameAction() || creature == m_localPlayer || creature == m_followingCreature)
         return;
 
-    m_localPlayer->lockWalk();
-
     if(creature && isAttacking())
         cancelAttack();
 
