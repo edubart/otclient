@@ -117,7 +117,7 @@ bool DatabaseMySQL::executeQuery(const std::string &query)
     return false;
 }
 
-DBResult* DatabaseMySQL::storeQuery(const std::string &query)
+DBResultPtr DatabaseMySQL::storeQuery(const std::string &query)
 {
     //LOG_ONDELAY(500);
 
@@ -125,11 +125,11 @@ DBResult* DatabaseMySQL::storeQuery(const std::string &query)
         MYSQL_RES *m_res = mysql_store_result(&m_mysqlHandle);
 
         if(m_res) {
-            DBResult* res = new DBResult(m_res);
+            DBResultPtr res = DBResultPtr(new DBResult(m_res));
             if(res->next()) {
                 return res;
             } else {
-                delete res;
+                //delete res;
                 break;
             }
         } else if(mysql_errno(&m_mysqlHandle) != 0) {

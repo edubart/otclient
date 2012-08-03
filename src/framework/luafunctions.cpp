@@ -709,9 +709,20 @@ void Application::registerLuaFunctions()
     // Database
     g_lua.registerClass<Database>();
 
+    // DBResult
+    g_lua.registerClass<DBResult>();
+    g_lua.bindClassMemberFunction<DBResult>("getDataInt", &DBResult::getDataInt);
+    g_lua.bindClassMemberFunction<DBResult>("getDataLong", &DBResult::getDataLong);
+    g_lua.bindClassMemberFunction<DBResult>("getDataString", &DBResult::getDataString);
+    //g_lua.bindClassMemberFunction<DBResult>("getDataStream", &DBResult::getDataStream);
+    g_lua.bindClassMemberFunction<DBResult>("next", &DBResult::next);
+
     // Mysql
     g_lua.registerClass<DatabaseMySQL>();
     g_lua.bindClassStaticFunction<DatabaseMySQL>("create", []{ return DatabaseMySQLPtr(new DatabaseMySQL); });
     g_lua.bindClassMemberFunction<DatabaseMySQL>("connect", &DatabaseMySQL::connect);
+    g_lua.bindClassMemberFunction<DatabaseMySQL>("executeQuery", &DatabaseMySQL::executeQuery);
+    g_lua.bindClassMemberFunction<DatabaseMySQL>("storeQuery", &DatabaseMySQL::storeQuery);
+    g_lua.bindClassMemberFunction<DatabaseMySQL>("escapeString", &DatabaseMySQL::escapeString);
 #endif
 }

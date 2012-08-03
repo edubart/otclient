@@ -24,7 +24,7 @@ public:
     bool commit();
 
     bool executeQuery(const std::string &query);
-    DBResult* storeQuery(const std::string &query);
+    DBResultPtr storeQuery(const std::string &query);
 
     uint64_t getLastInsertedRowID();
 
@@ -41,15 +41,14 @@ protected:
     MYSQL m_mysqlHandle;
 };
 
-class DBResult
+class DBResult : public LuaObject
 {
-protected:
+public:
     DBResult(MYSQL_RES* res);
      ~DBResult();
 
     friend class DatabaseMySQL;
 
-public:
     int32_t getDataInt(const std::string &s);
     int64_t getDataLong(const std::string &s);
     std::string getDataString(const std::string &s);
