@@ -152,10 +152,10 @@ private:
 // restore memory alignment
 #pragma pack(pop)
 
-namespace std {
-template<class T, class U> void swap(stdext::packed_vector<T,U>& lhs, stdext::packed_vector<T,U>& rhs) { lhs.swap(rhs); }
 }
 
+namespace std {
+template<class T, class U> void swap(stdext::packed_vector<T,U>& lhs, stdext::packed_vector<T,U>& rhs) { lhs.swap(rhs); }
 }
 
 #endif

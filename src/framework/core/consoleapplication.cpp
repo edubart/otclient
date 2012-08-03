@@ -45,11 +45,6 @@ void ConsoleApplication::run()
 
     while(!m_stopping) {
         poll();
-
-#ifdef FW_NET
-        Connection::poll();
-#endif
-
         stdext::millisleep(1);
         g_clock.update();
         m_frameCounter.update();
