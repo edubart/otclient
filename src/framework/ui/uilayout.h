@@ -37,8 +37,8 @@ public:
     void updateLater();
 
     virtual void applyStyle(const OTMLNodePtr& styleNode) { }
-    virtual void addWidget(const UIWidgetPtr& widget) = 0;
-    virtual void removeWidget(const UIWidgetPtr& widget) = 0;
+    virtual void addWidget(const UIWidgetPtr& widget) { }
+    virtual void removeWidget(const UIWidgetPtr& widget) { }
     void disableUpdates() { m_updateDisabled++; }
     void enableUpdates() { m_updateDisabled = std::max(m_updateDisabled-1,0); }
 
@@ -55,7 +55,7 @@ public:
     virtual bool isUIGridLayout() { return false; }
 
 protected:
-    virtual bool internalUpdate() = 0;
+    virtual bool internalUpdate() { }
 
     int m_updateDisabled;
     stdext::boolean<false> m_updating;
