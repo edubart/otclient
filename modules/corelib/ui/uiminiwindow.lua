@@ -245,6 +245,7 @@ function UIMiniWindow:saveParentIndex(parentId, index)
   selfSettings.parentId = parentId
   selfSettings.index = index
   self:setSettings(selfSettings)
+  self.miniIndex = index
 end
 
 function UIMiniWindow:disableResize()

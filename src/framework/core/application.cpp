@@ -21,6 +21,7 @@
  */
 
 #include "application.h"
+#include <csignal>
 #include <framework/core/clock.h>
 #include <framework/core/resourcemanager.h>
 #include <framework/core/modulemanager.h>
