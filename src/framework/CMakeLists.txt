@@ -153,7 +153,9 @@ set(CMAKE_CXX_FLAGS_MINSIZEREL        "-Os")
 
 # process options
 if(USE_STATIC_LIBS)
-    set(CMAKE_CXX_LINK_FLAGS "-static-libgcc -static-libstdc++")
+    if(NOT APPLE)
+        set(CMAKE_CXX_LINK_FLAGS "-static-libgcc -static-libstdc++")
+    endif()
     message(STATUS "Link to static libraries: ON")
 else()
     message(STATUS "Link to static libraries: OFF")
@@ -228,11 +230,11 @@ if(WIN32)
     set(framework_DEFINITIONS ${framework_DEFINITIONS} -D_WIN32_WINNT=0x0501)
     set(framework_DEFINITIONS ${framework_DEFINITIONS} -DBOOST_THREAD_USE_LIB) # fix boost thread linkage
     set(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -Wl,--large-address-aware") # strip all debug information
+elseif(APPLE)
+    set(framework_DEFINITIONS ${framework_DEFINITIONS} -D_REENTRANT) # enable thread safe code
 else()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
-    if(NOT APPLE)
-        set(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -rdynamic") # rdynamic is needed by backtrace.h used in crash handler
-    endif()
+    set(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -rdynamic") # rdynamic is needed by backtrace.h used in crash handler
     set(framework_LIBRARIES ${framework_LIBRARIES} dl)
 endif()
 
