@@ -179,8 +179,8 @@ function addCreature(creature)
     battleButton.creatureId = creatureId
     battleButton.creature = creature
     battleButton.isHovered = false
-    battleButton.isTarget = (g_game.getAttackingCreature() == creature)
-    battleButton.isFollowed = (g_game.getFollowingCreature() == creature)
+    battleButton.isTarget = false
+    battleButton.isFollowed = false
 
     labelWidget:setText(creature:getName())
     creatureWidget:setCreature(creature)
@@ -190,6 +190,14 @@ function addCreature(creature)
 
     checkCreatureSkull(battleButton.creature)
     checkCreatureEmblem(battleButton.creature)
+
+    if creature == g_game.getAttackingCreature() then
+      onAttack(creature)
+    end
+
+    if creature == g_game.getFollowingCreature() then
+      onFollow(creature)
+    end
   else
     setLifeBarPercent(battleButton, creature:getHealthPercent())
   end
@@ -301,7 +309,6 @@ function onbattleButtonHoverChange(widget, hovered)
 end
 
 function onAttack(creature)
-  checkCreatures(true) --Force recheck
   local battleButton = creature and battleButtonsByCreaturesList[creature:getId()] or lastBattleButtonSwitched
   if battleButton then
     battleButton.isTarget = creature and true or false
@@ -310,7 +317,6 @@ function onAttack(creature)
 end
 
 function onFollow(creature)
-  checkCreatures(true) --Force recheck
   local battleButton = creature and battleButtonsByCreaturesList[creature:getId()] or lastBattleButtonSwitched
   if battleButton then
     battleButton.isFollowed = creature and true or false

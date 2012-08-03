@@ -477,7 +477,7 @@ void Game::walk(Otc::Direction direction)
     // check walk to another floor (e.g: when above 3 parcels)
     else {
         // check if can walk to a lower floor
-        auto canChangeFloorDown = [&] {
+        auto canChangeFloorDown = [&]() -> bool {
             Position pos = toPos;
             if(!pos.down())
                 return false;
@@ -488,7 +488,7 @@ void Game::walk(Otc::Direction direction)
         };
 
         // check if can walk to a higher floor
-        auto canChangeFloorUp = [&] {
+        auto canChangeFloorUp = [&]() -> bool {
             TilePtr fromTile = m_localPlayer->getTile();
             if(!fromTile || !fromTile->hasElevation(3))
                 return false;
