@@ -27,6 +27,7 @@
 #include <boost/uuid/uuid.hpp>
 #include <boost/functional/hash.hpp>
 
+#include <openssl/rsa.h>
 #include <openssl/sha.h>
 #include <openssl/md5.h>
 #include <openssl/bn.h>

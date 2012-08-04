@@ -37,29 +37,4 @@
 #error "Sorry, you must enable C++0x to compile."
 #endif
 
-// hack to enable std::thread on mingw32 4.6
-/*
-#if !defined(_GLIBCXX_HAS_GTHREADS) && defined(__GNUG__)
-#include <boost/thread/thread.hpp>
-#include <boost/thread/mutex.hpp>
-#include <boost/thread/recursive_mutex.hpp>
-#include <boost/thread/locks.hpp>
-#include <boost/thread/condition_variable.hpp>
-namespace std {
-  using boost::thread;
-
-  using boost::mutex;
-  using boost::timed_mutex;
-  using boost::recursive_mutex;
-  using boost::recursive_timed_mutex;
-
-  using boost::lock_guard;
-  using boost::unique_lock;
-
-  using boost::condition_variable;
-  using boost::condition_variable_any;
-}
-#endif
-*/
-
 #endif

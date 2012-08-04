@@ -172,7 +172,7 @@ if(WIN32)
 endif()
 set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_LIBS ON)
-find_package(Boost COMPONENTS system filesystem REQUIRED)
+find_package(Boost COMPONENTS system filesystem thread chrono REQUIRED)
 
 #find lua
 if(LUAJIT)
@@ -444,7 +444,7 @@ if(FRAMEWORK_XML)
 endif()
 
 if(FRAMEWORK_SQL)
-    find_package(Mysql REQUIRED)
+    find_package(MySQL REQUIRED)
 
     set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS} ${MYSQL_INCLUDE_DIR})
     set(framework_LIBRARIES ${framework_LIBRARIES} ${MYSQL_LIBRARY})

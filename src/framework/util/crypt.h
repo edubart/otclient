@@ -26,7 +26,7 @@
 #include "../stdext/types.h"
 #include <string>
 
-#include <openssl/rsa.h>
+typedef struct rsa_st RSA;
 
 class Crypt
 {

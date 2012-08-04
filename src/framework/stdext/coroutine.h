@@ -23,15 +23,12 @@
 #ifndef COROUTINE_H
 #define COROUTINE_H
 
-#include <thread>
-#include <mutex>
+#include "thread.h"
 #include <functional>
-#include <condition_variable>
 #include <cassert>
 
 namespace stdext {
 
-//
 class coroutine
 {
     struct codata : public stdext::shared_object {
