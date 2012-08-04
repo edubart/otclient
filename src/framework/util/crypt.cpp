@@ -178,7 +178,7 @@ std::string Crypt::decrypt(const std::string& encrypted_string)
     return std::string();
 }
 
-std::string Crypt::md5Encode(std::string decoded_string, bool upperCase)
+std::string Crypt::md5Encode(const std::string& decoded_string, bool upperCase)
 {
     MD5_CTX c;
     MD5_Init(&c);
@@ -199,7 +199,7 @@ std::string Crypt::md5Encode(std::string decoded_string, bool upperCase)
     return result;
 }
 
-std::string Crypt::sha1Encode(std::string decoded_string, bool upperCase)
+std::string Crypt::sha1Encode(const std::string& decoded_string, bool upperCase)
 {
     SHA_CTX c;
     SHA1_Init(&c);
@@ -209,6 +209,48 @@ std::string Crypt::sha1Encode(std::string decoded_string, bool upperCase)
     SHA1_Final(md, &c);
 
     char output[(SHA_DIGEST_LENGTH << 1) + 1];
+    for(int32_t i = 0; i < (int32_t)sizeof(md); ++i)
+        sprintf(output + (i << 1), "%.2X", md[i]);
+
+    std::string result = output;
+    if(upperCase)
+        return result;
+
+    std::transform(result.begin(), result.end(), result.begin(), tolower);
+    return result;
+}
+
+std::string Crypt::sha256Encode(const std::string& decoded_string, bool upperCase)
+{
+    SHA256_CTX c;
+    SHA256_Init(&c);
+    SHA256_Update(&c, decoded_string.c_str(), decoded_string.length());
+
+    uint8_t md[SHA256_DIGEST_LENGTH];
+    SHA256_Final(md, &c);
+
+    char output[(SHA256_DIGEST_LENGTH << 1) + 1];
+    for(int32_t i = 0; i < (int32_t)sizeof(md); ++i)
+        sprintf(output + (i << 1), "%.2X", md[i]);
+
+    std::string result = output;
+    if(upperCase)
+        return result;
+
+    std::transform(result.begin(), result.end(), result.begin(), tolower);
+    return result;
+}
+
+std::string Crypt::sha512Encode(const std::string& decoded_string, bool upperCase)
+{
+    SHA512_CTX c;
+    SHA512_Init(&c);
+    SHA512_Update(&c, decoded_string.c_str(), decoded_string.length());
+
+    uint8_t md[SHA512_DIGEST_LENGTH];
+    SHA512_Final(md, &c);
+
+    char output[(SHA512_DIGEST_LENGTH << 1) + 1];
     for(int32_t i = 0; i < (int32_t)sizeof(md); ++i)
         sprintf(output + (i << 1), "%.2X", md[i]);
 

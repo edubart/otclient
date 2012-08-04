@@ -40,8 +40,10 @@ public:
     std::string genUUIDKey();
     std::string encrypt(const std::string& decrypted_string);
     std::string decrypt(const std::string& encrypted_string);
-    std::string md5Encode(std::string decoded_string, bool upperCase);
-    std::string sha1Encode(std::string decoded_string, bool upperCase);
+    std::string md5Encode(const std::string& decoded_string, bool upperCase);
+    std::string sha1Encode(const std::string& decoded_string, bool upperCase);
+    std::string sha256Encode(const std::string& decoded_string, bool upperCase);
+    std::string sha512Encode(const std::string& decoded_string, bool upperCase);
 
     void rsaSetPublicKey(const std::string& n, const std::string& e);
     void rsaSetPrivateKey(const std::string &p, const std::string &q, const std::string &d);
