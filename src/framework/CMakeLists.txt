@@ -167,12 +167,15 @@ message(STATUS "Build revision: ${BUILD_REVISION}")
 add_definitions(-D"BUILD_REVISION=\\\"${BUILD_REVISION}\\\"")
 
 # find boost
+set(REQUIRED_BOOST_COMPONENTS system filesystem)
 if(WIN32)
     set(Boost_THREADAPI win32)
+    set(framework_DEFINITIONS ${framework_DEFINITIONS} -DBOOST_THREAD_USE_LIB) # fix boost thread linkage
+    set(REQUIRED_BOOST_COMPONENTS ${REQUIRED_BOOST_COMPONENTS} thread chrono) # mingw32 does not have std::thread
 endif()
 set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_LIBS ON)
-find_package(Boost COMPONENTS system filesystem thread chrono REQUIRED)
+find_package(Boost COMPONENTS ${REQUIRED_BOOST_COMPONENTS} REQUIRED)
 
 #find lua
 if(LUAJIT)
@@ -226,7 +229,6 @@ endif()
 if(WIN32)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mthreads")
     set(framework_DEFINITIONS ${framework_DEFINITIONS} -D_WIN32_WINNT=0x0501)
-    set(framework_DEFINITIONS ${framework_DEFINITIONS} -DBOOST_THREAD_USE_LIB) # fix boost thread linkage
     set(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -Wl,--large-address-aware") # strip all debug information
 elseif(APPLE)
     set(framework_DEFINITIONS ${framework_DEFINITIONS} -D_REENTRANT) # enable thread safe code
