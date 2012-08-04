@@ -22,15 +22,30 @@
 
 #include "crypt.h"
 #include <framework/stdext/math.h>
+#include <framework/core/logger.h>
 
 #include <boost/uuid/uuid.hpp>
 #include <boost/functional/hash.hpp>
 
 #include <openssl/sha.h>
 #include <openssl/md5.h>
+#include <openssl/bn.h>
+#include <openssl/err.h>
 
 static const std::string base64_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 static inline bool is_base64(unsigned char c) { return (isalnum(c) || (c == '+') || (c == '/')); }
+
+Crypt g_crypt;
+
+Crypt::Crypt()
+{
+    m_rsa = RSA_new();
+}
+
+Crypt::~Crypt()
+{
+    RSA_free(m_rsa);
+}
 
 std::string Crypt::base64Encode(const std::string& decoded_string)
 {
@@ -203,4 +218,50 @@ std::string Crypt::sha1Encode(std::string decoded_string, bool upperCase)
 
     std::transform(result.begin(), result.end(), result.begin(), tolower);
     return result;
+}
+
+void Crypt::rsaSetPublicKey(const std::string& n, const std::string& e)
+{
+    BN_dec2bn(&m_rsa->n, n.c_str());
+    BN_dec2bn(&m_rsa->e, e.c_str());
+}
+
+void Crypt::rsaSetPrivateKey(const std::string& p, const std::string& q, const std::string& d)
+{
+    BN_dec2bn(&m_rsa->p, p.c_str());
+    BN_dec2bn(&m_rsa->q, q.c_str());
+    BN_dec2bn(&m_rsa->d, d.c_str());
+}
+
+bool Crypt::rsaCheckKey()
+{
+    // only used by server, that sets both public and private
+    if(RSA_check_key(m_rsa)) {
+        BN_CTX *ctx = BN_CTX_new();
+        BN_CTX_start(ctx);
+
+        BIGNUM *r1 = BN_CTX_get(ctx), *r2 = BN_CTX_get(ctx);
+        BN_mod(m_rsa->dmp1, m_rsa->d, r1, ctx);
+        BN_mod(m_rsa->dmq1, m_rsa->d, r2, ctx);
+
+        BN_mod_inverse(m_rsa->iqmp, m_rsa->q, m_rsa->p, ctx);
+        return true;
+    }
+    else {
+        ERR_load_crypto_strings();
+        g_logger.error(stdext::format("RSA check failed - %s", ERR_error_string(ERR_get_error(), NULL)));
+        return false;
+    }
+}
+
+bool Crypt::rsaEncrypt(unsigned char *msg, int size)
+{
+    assert(size <= 128);
+    return RSA_public_encrypt(size, msg, msg, m_rsa, RSA_NO_PADDING) != -1;
+}
+
+bool Crypt::rsaDecrypt(unsigned char *msg, int size)
+{
+    assert(size <= 128);
+    return RSA_private_decrypt(size, msg, msg, m_rsa, RSA_NO_PADDING) != -1;
 }

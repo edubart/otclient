@@ -21,7 +21,7 @@
  */
 
 #include "inputmessage.h"
-#include <framework/util/rsa.h>
+#include <framework/util/crypt.h>
 
 InputMessage::InputMessage()
 {
@@ -86,13 +86,10 @@ std::string InputMessage::getString()
     return std::string(v, stringLength);
 }
 
-bool InputMessage::decryptRsa(int size, const std::string& key, const std::string& p, const std::string& q, const std::string& d)
+bool InputMessage::decryptRsa(int size)
 {
     checkRead(size);
-    g_rsa.setPublic(key.c_str(), "65537");
-    g_rsa.setPrivate(p.c_str(), q.c_str(), d.c_str());
-    g_rsa.check();
-    g_rsa.decrypt((unsigned char*)m_buffer + m_readPos, size);
+    g_crypt.rsaDecrypt((unsigned char*)m_buffer + m_readPos, size);
     return (getU8() == 0x00);
 }
 

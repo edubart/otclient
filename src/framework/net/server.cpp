@@ -35,15 +35,23 @@ ServerPtr Server::create(int port)
     return ServerPtr(new Server(port));
 }
 
+void Server::close()
+{
+    m_isOpen = false;
+    m_acceptor.cancel();
+    m_acceptor.close();
+}
+
 void Server::acceptNext()
 {
     ConnectionPtr connection = ConnectionPtr(new Connection);
     connection->m_connecting = true;
+    auto self = static_self_cast<Server>();
     m_acceptor.async_accept(connection->m_socket, [=](const boost::system::error_code& error) {
         if(!error) {
             connection->m_connected = true;
             connection->m_connecting = false;
         }
-        callLuaField("onAccept", connection, error.message(), error.value());
+        self->callLuaField("onAccept", connection, error.message(), error.value());
     });
 }

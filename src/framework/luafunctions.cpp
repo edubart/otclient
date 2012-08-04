@@ -83,10 +83,13 @@ void Application::registerLuaFunctions()
 
     // Crypt
     g_lua.registerSingletonClass("g_crypt");
-    g_lua.bindClassStaticFunction("g_crypt", "encrypt", Crypt::encrypt);
-    g_lua.bindClassStaticFunction("g_crypt", "decrypt", Crypt::decrypt);
-    g_lua.bindClassStaticFunction("g_crypt", "sha1Encode", Crypt::sha1Encode);
-    g_lua.bindClassStaticFunction("g_crypt", "md5Encode", Crypt::md5Encode);
+    g_lua.bindSingletonFunction("g_crypt", "encrypt", &Crypt::encrypt, &g_crypt);
+    g_lua.bindSingletonFunction("g_crypt", "decrypt", &Crypt::decrypt, &g_crypt);
+    g_lua.bindSingletonFunction("g_crypt", "sha1Encode", &Crypt::sha1Encode, &g_crypt);
+    g_lua.bindSingletonFunction("g_crypt", "md5Encode", &Crypt::md5Encode, &g_crypt);
+    g_lua.bindSingletonFunction("g_crypt", "rsaSetPublicKey", &Crypt::rsaSetPublicKey, &g_crypt);
+    g_lua.bindSingletonFunction("g_crypt", "rsaSetPrivateKey", &Crypt::rsaSetPrivateKey, &g_crypt);
+    g_lua.bindSingletonFunction("g_crypt", "rsaCheckKey", &Crypt::rsaCheckKey, &g_crypt);
 
     // Clock
     g_lua.registerSingletonClass("g_clock");
@@ -635,6 +638,8 @@ void Application::registerLuaFunctions()
     // Server
     g_lua.registerClass<Server>();
     g_lua.bindClassStaticFunction<Server>("create", &Server::create);
+    g_lua.bindClassMemberFunction<Server>("close", &Server::close);
+    g_lua.bindClassMemberFunction<Server>("isOpen", &Server::isOpen);
     g_lua.bindClassMemberFunction<Server>("acceptNext", &Server::acceptNext);
 
     // Connection

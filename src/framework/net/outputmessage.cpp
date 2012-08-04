@@ -21,7 +21,7 @@
  */
 
 #include <framework/net/outputmessage.h>
-#include <framework/util/rsa.h>
+#include <framework/util/crypt.h>
 
 OutputMessage::OutputMessage()
 {
@@ -89,13 +89,12 @@ void OutputMessage::addPaddingBytes(int bytes, uint8 byte)
     m_messageSize += bytes;
 }
 
-void OutputMessage::encryptRsa(int size, const std::string& key)
+void OutputMessage::encryptRsa(int size)
 {
     if(m_messageSize < size)
         throw stdext::exception("insufficient bytes in buffer to encrypt");
 
-    g_rsa.setPublic(key.c_str(), "65537");
-    g_rsa.encrypt((unsigned char*)m_buffer + m_writePos - size, size);
+    g_crypt.rsaEncrypt((unsigned char*)m_buffer + m_writePos - size, size);
 }
 
 void OutputMessage::writeChecksum()

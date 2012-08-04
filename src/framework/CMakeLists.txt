@@ -29,8 +29,6 @@ set(framework_SOURCES ${framework_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/util/matrix.h
     ${CMAKE_CURRENT_LIST_DIR}/util/point.h
     ${CMAKE_CURRENT_LIST_DIR}/util/rect.h
-    ${CMAKE_CURRENT_LIST_DIR}/util/rsa.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/util/rsa.h
     ${CMAKE_CURRENT_LIST_DIR}/util/size.h
 
     # stdext

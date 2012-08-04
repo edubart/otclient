@@ -91,7 +91,7 @@ void ProtocolGame::sendLoginPacket(uint challangeTimestamp, uint8 challangeRando
     msg->addPaddingBytes(paddingBytes);
 
     // encrypt with RSA
-    msg->encryptRsa(128, g_lua.callGlobalField<std::string>("g_game", "getRsa"));
+    msg->encryptRsa(128);
 
     send(msg);
 

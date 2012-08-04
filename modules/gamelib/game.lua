@@ -1,4 +1,4 @@
-local currentRsa = OTSERV_RSA
+local currentRsa
 
 function g_game.getRsa()
   return currentRsa
@@ -6,14 +6,17 @@ end
 
 function g_game.chooseRsa(host)
   if host:match('.*\.tibia\.com') or host:match('.*\.cipsoft\.com') then
-    currentRsa = CIPSOFT_RSA
+    g_game.setRsa(CIPSOFT_RSA)
   else
-    currentRsa = OTSERV_RSA
+    g_game.setRsa(OTSERV_RSA)
   end
 end
 
 function g_game.setRsa(rsa)
-  currentRsa = rsa
+  if currentRsa ~= rsa then
+    currentRsa = rsa
+    g_crypt.rsaSetPublicKey(currentRsa, '65537')
+  end
 end
 
 function g_game.isOfficialTibia()
@@ -45,3 +48,4 @@ function g_game.getSupportedProtocols()
   }
 end
 
+g_game.setRsa(OTSERV_RSA)

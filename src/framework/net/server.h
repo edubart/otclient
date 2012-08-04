@@ -28,15 +28,16 @@
 
 class Server : public LuaObject
 {
-    typedef std::function<void(ConnectionPtr, const boost::system::error_code&)> AcceptCallback;
-
 public:
     Server(int port);
     static ServerPtr create(int port);
+    bool isOpen() { return m_isOpen; }
+    void close();
 
     void acceptNext();
 
 private:
+    stdext::boolean<true> m_isOpen;
     asio::ip::tcp::acceptor m_acceptor;
 };
 

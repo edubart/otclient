@@ -26,7 +26,14 @@
 #include "../stdext/types.h"
 #include <string>
 
-namespace Crypt {
+#include <openssl/rsa.h>
+
+class Crypt
+{
+public:
+    Crypt();
+    ~Crypt();
+
     std::string base64Encode(const std::string& decoded_string);
     std::string base64Decode(const std::string& encoded_string);
     std::string xorCrypt(const std::string& buffer, const std::string& key);
@@ -35,6 +42,17 @@ namespace Crypt {
     std::string decrypt(const std::string& encrypted_string);
     std::string md5Encode(std::string decoded_string, bool upperCase);
     std::string sha1Encode(std::string decoded_string, bool upperCase);
-}
+
+    void rsaSetPublicKey(const std::string& n, const std::string& e);
+    void rsaSetPrivateKey(const std::string &p, const std::string &q, const std::string &d);
+    bool rsaCheckKey();
+    bool rsaEncrypt(unsigned char *msg, int size);
+    bool rsaDecrypt(unsigned char *msg, int size);
+
+private:
+    RSA *m_rsa;
+};
+
+extern Crypt g_crypt;
 
 #endif

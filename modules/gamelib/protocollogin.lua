@@ -65,7 +65,7 @@ function ProtocolLogin:sendLoginPacket()
   end
 
   msg:addPaddingBytes(paddingBytes, 0)
-  msg:encryptRsa(128, g_game.getRsa())
+  msg:encryptRsa(128)
 
   self:send(msg)
   self:enableXteaEncryption()

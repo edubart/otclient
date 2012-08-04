@@ -49,7 +49,7 @@ public:
     void addString(const std::string& buffer);
     void addPaddingBytes(int bytes, uint8 byte = 0);
 
-    void encryptRsa(int size, const std::string& key);
+    void encryptRsa(int size);
 
     uint16 getMessageSize() { return m_messageSize; }
 
