@@ -117,11 +117,11 @@ function Skins.loadSkin(skin)
   if skin.fonts then
     for i=1,#skin.fonts do
       g_fonts.importFont('skins/' .. lowerName .. '/fonts/' .. skin.fonts[i])
-
-      if i == 1 then
-        g_fonts.setDefaultFont(skin.fonts[i])
-      end
     end
+  end
+
+  if skin.defaultFont then
+    g_fonts.setDefaultFont(skin.defaultFont)
   end
 
   if skin.styles then

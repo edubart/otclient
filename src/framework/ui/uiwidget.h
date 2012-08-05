@@ -413,7 +413,7 @@ public:
     void setImageSource(const std::string& source);
     void setImageClip(const Rect& clipRect) { m_imageClipRect = clipRect; updateImageCache(); }
     void setImageOffsetX(int x) { m_imageRect.setX(x); updateImageCache(); }
-    void setImageOffsetY(int y) { m_imageRect.setX(y); updateImageCache(); }
+    void setImageOffsetY(int y) { m_imageRect.setY(y); updateImageCache(); }
     void setImageOffset(const Point& pos) { m_imageRect.move(pos); updateImageCache(); }
     void setImageWidth(int width) { m_imageRect.setWidth(width); updateImageCache(); }
     void setImageHeight(int height) { m_imageRect.setHeight(height); updateImageCache(); }

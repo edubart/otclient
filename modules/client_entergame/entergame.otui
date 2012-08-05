@@ -53,33 +53,34 @@ MainWindow
     !text: tr('Protocol')
     anchors.left: parent.left
     anchors.top: serverHostTextEdit.bottom
-    anchors.right: portLabel.left
+    text-auto-resize: true
     margin-right: 10
     margin-top: 8
 
   ComboBox
     id: protocolComboBox
     anchors.left: protocolLabel.left
-    anchors.right: protocolLabel.right
+    anchors.right: parent.horizontalCenter
     anchors.top: protocolLabel.bottom
     margin-top: 2
+    margin-right: 3
     width: 90
 
   MenuLabel
     id: portLabel
     !text: tr('Port')
-    anchors.right: parent.right
+    anchors.left: serverPortTextEdit.left
     anchors.top: serverHostTextEdit.bottom
     margin-top: 8
-    width: 70
+    text-auto-resize: true
 
   TextEdit
     id: serverPortTextEdit
     text: 7171
     anchors.right: parent.right
-    anchors.left: portLabel.left
-    anchors.top: portLabel.bottom
-    margin-top: 2
+    anchors.left: parent.horizontalCenter
+    anchors.top: protocolComboBox.top
+    margin-left: 3
 
   CheckBox
     id: rememberPasswordBox

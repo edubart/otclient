@@ -8,6 +8,7 @@ local skin = {
     'verdana-11px-rounded',
     'terminus-14px-bold'
   },
+  defaultFont = 'verdana-11px-antialised',
 
   styles = {
     'buttons.otui',
