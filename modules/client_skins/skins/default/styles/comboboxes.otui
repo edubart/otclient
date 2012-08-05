@@ -1,8 +1,8 @@
 ComboBoxPopupMenuButton < UIButton
-  height: 18
+  height: 20
   font: verdana-11px-antialised
   text-align: left
-  text-offset: 2 0
+  text-offset: 4 0
   color: #aaaaaa
   background-color: alpha
 
@@ -23,14 +23,13 @@ ComboBoxPopupMenuSeparator < UIWidget
 ComboBoxPopupMenu < UIPopupMenu
   image-source: /images/combobox_square.png
   image-clip: 0 60 89 20
-  image-border: 1
-  image-border-top: 0
-  padding: 1
+  image-border-left: 1
+  image-border-right: 1
 
 ComboBox < UIComboBox
   font: verdana-11px-antialised
   color: #aaaaaa
-  size: 86 20
+  size: 89 20
   text-offset: 3 0
   text-align: left
   image-source: /images/combobox_square.png

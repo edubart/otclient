@@ -55,6 +55,7 @@ function Locales.init()
 
   addEvent( function()
               localeComboBox = g_ui.createWidget('ComboBox', rootWidget:recursiveGetChildById('rightButtonsPanel'))
+              localeComboBox:setFixedSize(true)
               for key,value in pairs(installedLocales) do
                 localeComboBox:addOption(value.languageName, value.name)
               end
