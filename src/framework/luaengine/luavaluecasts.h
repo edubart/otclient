@@ -124,6 +124,13 @@ template<typename Ret, typename... Args>
 typename std::enable_if<!std::is_void<Ret>::value, bool>::type
 luavalue_cast(int index, std::function<Ret(Args...)>& func);
 
+// list
+template<typename T>
+int push_luavalue(const std::list<T>& list);
+
+template<typename T>
+bool luavalue_cast(int index, std::list<T>& list);
+
 // vector
 template<typename T>
 int push_luavalue(const std::vector<T>& vec);
@@ -274,6 +281,33 @@ luavalue_cast(int index, std::function<Ret(Args...)>& func) {
     return false;
 }
 
+template<typename T>
+int push_luavalue(const std::list<T>& list) {
+    g_lua.newTable();
+    int i = 1;
+    for(const T& v : list) {
+        push_internal_luavalue(v);
+        g_lua.rawSeti(i);
+        i++;
+    }
+    return 1;
+}
+
+template<typename T>
+bool luavalue_cast(int index, std::list<T>& list)
+{
+    if(g_lua.isTable(index)) {
+        g_lua.pushNil();
+        while(g_lua.next(index < 0 ? index-1 : index)) {
+            T value;
+            if(luavalue_cast(-1, value))
+                list.push_back(value);
+            g_lua.pop();
+        }
+        return true;
+    }
+    return false;
+}
 
 template<typename T>
 int push_luavalue(const std::vector<T>& vec) {
