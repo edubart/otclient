@@ -5,7 +5,7 @@ MainWindow
   @onEnter: EnterGame.doLogin()
   @onEscape: EnterGame.hide()
 
-  Label
+  MenuLabel
     !text: tr('Account name')
     anchors.left: parent.left
     anchors.top: parent.top
@@ -18,7 +18,7 @@ MainWindow
     anchors.top: prev.bottom
     margin-top: 2
 
-  Label
+  MenuLabel
     !text: tr('Password')
     anchors.left: prev.left
     anchors.top: prev.bottom
@@ -32,7 +32,7 @@ MainWindow
     anchors.top: prev.bottom
     margin-top: 2
 
-  Label
+  MenuLabel
     id: serverLabel
     !text: tr('Server')
     anchors.left: prev.left
@@ -48,7 +48,7 @@ MainWindow
     anchors.top: serverLabel.bottom
     margin-top: 2
 
-  Label
+  MenuLabel
     id: protocolLabel
     !text: tr('Protocol')
     anchors.left: parent.left
@@ -65,7 +65,7 @@ MainWindow
     margin-top: 2
     width: 90
 
-  Label
+  MenuLabel
     id: portLabel
     !text: tr('Port')
     anchors.right: parent.right

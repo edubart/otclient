@@ -69,6 +69,8 @@ void UIWidget::parseTextStyle(const OTMLNodePtr& styleNode)
             setTextWrap(node->value<bool>());
         else if(node->tag() == "text-auto-resize")
             setTextAutoResize(node->value<bool>());
+        else if(node->tag() == "text-only-upper-case")
+            setTextOnlyUpperCase(node->value<bool>());
         else if(node->tag() == "font")
             setFont(node->value());
     }
@@ -103,8 +105,11 @@ void UIWidget::onFontChange(const std::string& font)
     callLuaField("onFontChange", font);
 }
 
-void UIWidget::setText(const std::string& text)
+void UIWidget::setText(std::string text)
 {
+    if(m_textOnlyUpperCase)
+        std::transform(text.begin(), text.end(), text.begin(), toupper);
+
     if(m_text == text)
         return;
 

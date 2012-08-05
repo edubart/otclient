@@ -43,7 +43,6 @@ TopPanel < Panel
   image-repeated: true
   focusable: false
 
-
 TopPanel
   id: topMenu
   anchors.top: parent.top

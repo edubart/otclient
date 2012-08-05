@@ -17,6 +17,8 @@ FlatLabel < UILabel
   $disabled:
     color: #aaaaaa88
 
+MenuLabel < Label
+
 GameLabel < UILabel
   font: verdana-11px-antialised
   color: #bbbbbb

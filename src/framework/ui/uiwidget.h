@@ -467,17 +467,19 @@ protected:
     Point m_textOffset;
     stdext::boolean<false> m_textWrap;
     stdext::boolean<false> m_textAutoResize;
+    stdext::boolean<false> m_textOnlyUpperCase;
     BitmapFontPtr m_font;
 
 public:
     void resizeToText() { setSize(getTextSize()); }
     void clearText() { setText(""); }
 
-    void setText(const std::string& text);
+    void setText(std::string text);
     void setTextAlign(Fw::AlignmentFlag align) { m_textAlign = align; updateText(); }
     void setTextOffset(const Point& offset) { m_textOffset = offset; updateText(); }
     void setTextWrap(bool textWrap) { m_textWrap = textWrap; updateText(); }
     void setTextAutoResize(bool textAutoResize) { m_textAutoResize = textAutoResize; updateText(); }
+    void setTextOnlyUpperCase(bool textOnlyUpperCase) { m_textOnlyUpperCase = textOnlyUpperCase; setText(m_text); }
     void setFont(const std::string& fontName);
 
     std::string getText() { return m_text; }
