@@ -151,15 +151,12 @@ uint64 BinaryTree::getU64()
     return v;
 }
 
-std::string BinaryTree::getString()
-{
-    uint16 len = getU16();
-    return getString(len);
-}
-
 std::string BinaryTree::getString(uint16 len)
 {
     unserialize();
+    if(len == 0)
+        len = getU16();
+
     if(m_pos+len > m_buffer.size())
         stdext::throw_exception("BinaryTree: getString failed: string length exceeded buffer size.");
 
@@ -185,73 +182,31 @@ Point BinaryTree::getPoint()
     return ret;
 }
 
-BinaryTreePtr BinaryTree::makeChild(uint8 type)
+/// BinaryWriteTree
+BinaryWriteTree::BinaryWriteTree(const FileStreamPtr& fin) :
+    m_fin(fin)
 {
-    BinaryTreePtr child(new BinaryTree(m_fin));
-    child->setType(type);
-    //children.append(child);
-    return child;
 }
 
-void BinaryTree::setType(uint8 type)
+BinaryWriteTree::~BinaryWriteTree()
 {
-    writeU8(0xFE);
+    m_fin->close();
+    m_fin = nullptr;
+}
+
+void BinaryWriteTree::startNode(uint8 type)
+{
+    writeU8(BINARYTREE_NODE_START);
     writeU8(type);
 }
 
-void BinaryTree::writeU8(uint8 u8)
+void BinaryWriteTree::endNode()
 {
-    m_buffer.add(u8);
+    writeU8(BINARYTREE_NODE_END);
 }
 
-void BinaryTree::writeU16(uint16 u16)
-{
-    stdext::writeLE16(m_buffer.data(), u16);
-}
+void BinaryWriteTree::writeU8(uint8 u8) { m_fin->addU8(u8); }
+void BinaryWriteTree::writeU16(uint16 u16) { m_fin->addU16(u16); }
+void BinaryWriteTree::writeU32(uint32 u32) { m_fin->addU32(u32); }
+void BinaryWriteTree::writeString(const std::string& str) { m_fin->addString(str); }
 
-void BinaryTree::writeU32(uint32 u32)
-{
-    stdext::writeLE32(m_buffer.data(), u32);
-}
-
-void BinaryTree::writeString(const std::string& s)
-{
-    size_t len = s.length();
-    writeU16(len);
-    m_buffer.grow(m_pos + len);
-    memcpy(&m_buffer[m_pos], s.c_str(), len);
-    m_pos += len;
-}
-
-void BinaryTree::writePos(const Position& p)
-{
-    if(!p.isValid())
-      stdext::throw_exception("invalid position passed  to BinaryTree::writePos");
-
-    writeU16(p.x);
-    writeU16(p.y);
-    writeU8(p.z);
-}
-
-void BinaryTree::writePoint(const Point& p)
-{
-    if(p.isNull())
-      stdext::throw_exception("invalid point passed to BinaryTree::writePoint");
-
-    writeU8(p.x);
-    writeU8(p.y);
-}
-
-void BinaryTree::writeToFile()
-{
-    if(!m_fin)
-        stdext::throw_exception("attempt to write binary node to closed file");
-
-    /// first write self data
-    m_fin->write(&m_buffer[0], m_buffer.size());
-#if 0
-    /// write children data
-    for(const BinaryTreePtr& child : m_children)
-        child->writeToFile();
-#endif
-}

@@ -98,7 +98,7 @@ public:
     ItemPtr clone();
 
     void unserializeItem(const BinaryTreePtr& in);
-    void serializeItem(const BinaryTreePtr& out);
+    void serializeItem(const BinaryWriteTreePtr& out);
 
     void setDepotId(uint16 depotId) { m_attribs.set(ATTR_DEPOT_ID, depotId); }
     uint16 getDepotId() { return m_attribs.get<uint16>(ATTR_DEPOT_ID); }

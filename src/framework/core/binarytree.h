@@ -26,6 +26,7 @@
 #include "declarations.h"
 #include <framework/util/databuffer.h>
 #include <otclient/position.h>
+#include <boost/concept_check.hpp>
 
 enum {
     BINARYTREE_ESCAPE_CHAR = 0xFD,
@@ -48,20 +49,9 @@ public:
     uint16 getU16();
     uint32 getU32();
     uint64 getU64();
-    std::string getString();
-    std::string getString(uint16 len);
+    std::string getString(uint16 len = 0);
     Position getPosition();
     Point getPoint();
-
-    void setType(uint8 type);
-    void writeU8(uint8 u8);
-    void writeU16(uint16 u16);
-    void writeU32(uint32 u32);
-    void writeString(const std::string& s);
-    void writePos(const Position& p);
-    void writePoint(const Point& p);
-    BinaryTreePtr makeChild(uint8 type);
-    void writeToFile();
 
     BinaryTreeVec getChildren();
     bool canRead() { unserialize(); return m_pos < m_buffer.size(); }
@@ -74,6 +64,27 @@ private:
     DataBuffer<uint8> m_buffer;
     uint m_pos;
     uint m_startPos;
+};
+
+class BinaryWriteTree : public stdext::shared_object
+{
+public:
+    BinaryWriteTree(const FileStreamPtr& fin);
+    ~BinaryWriteTree();
+
+    void startNode(uint8 type);
+    void endNode();
+
+    void writeU8(uint8 u8);
+    void writeU16(uint16 u16);
+    void writeU32(uint32 u32);
+    void writeString(const std::string& str);
+
+    void writePoint(const Point& p) { writeU8(p.x); writeU8(p.y); }
+    void writePos(const Position& p) { writeU16(p.x); writeU16(p.y); writeU8(p.z); }
+
+private:
+    FileStreamPtr m_fin;
 };
 
 #endif

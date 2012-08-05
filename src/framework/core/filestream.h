@@ -60,7 +60,6 @@ public:
     void addU32(uint32 v);
     void addU64(uint64 v);
     void addString(const std::string& v);
-    BinaryTreePtr makeTree();
 
     FileStreamPtr asFileStream() { return static_self_cast<FileStream>(); }
 

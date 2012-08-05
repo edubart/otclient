@@ -268,7 +268,7 @@ void Item::unserializeItem(const BinaryTreePtr &in)
     }
 }
 
-void Item::serializeItem(const BinaryTreePtr& out)
+void Item::serializeItem(const BinaryWriteTreePtr& out)
 {
     out->writeU8(ATTR_COUNT);
     out->writeU8(getCount());
@@ -287,7 +287,8 @@ void Item::serializeItem(const BinaryTreePtr& out)
         out->writeU16(getDepotId());
     }
 
-    uint16 aid = m_attribs.get<uint16>(ATTR_ACTION_ID), uid = m_attribs.get<uint16>(ATTR_UNIQUE_ID);
+    uint16 aid = m_attribs.get<uint16>(ATTR_ACTION_ID);
+    uint16 uid = m_attribs.get<uint16>(ATTR_UNIQUE_ID);
     if(aid) {
         out->writeU8(ATTR_ACTION_ID);
         out->writeU16(aid);

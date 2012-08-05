@@ -23,6 +23,8 @@
 #include "map.h"
 #include "tile.h"
 
+
+#include <framework/core/application.h>
 #include <framework/core/eventdispatcher.h>
 #include <framework/core/resourcemanager.h>
 #include <framework/core/filestream.h>
@@ -215,8 +217,6 @@ void Map::loadOtbm(const std::string& fileName)
 
 void Map::saveOtbm(const std::string &fileName)
 {
-#if 0
-    /// FIXME: Untested code
     FileStreamPtr fin = g_resources.appendFile(fileName);
     if(!fin)
         stdext::throw_exception(stdext::format("failed to open file '%s' for write", fileName));
@@ -237,7 +237,8 @@ void Map::saveOtbm(const std::string &fileName)
 
     /// Usually when a map has empty house/spawn file it means the map is new.
     /// TODO: Ask the user for a map name instead of those ugly uses of substr
-    std::string houseFile = getHouseFile(), spawnFile = getSpawnFile();
+    std::string houseFile = getHouseFile();
+    std::string spawnFile = getSpawnFile();
     if(houseFile.empty() && version > 1)
         houseFile = fileName.substr(fileName.find_last_of('/')) + "-houses.xml";
     if(spawnFile.empty())
@@ -250,9 +251,8 @@ void Map::saveOtbm(const std::string &fileName)
     saveSpawns(dir + "/" + spawnFile);
 #endif
 
-    time_t start = time(0);
     fin->addU32(0); // file version
-    BinaryTreePtr root = fin->makeTree();
+    BinaryWriteTreePtr root(new BinaryWriteTree(fin));
     {
         root->writeU32(version);
 
@@ -263,93 +263,88 @@ void Map::saveOtbm(const std::string &fileName)
         root->writeU32(g_things.getOtbMajorVersion());
         root->writeU32(g_things.getOtbMinorVersion());
 
-        BinaryTreePtr mapData = root->makeChild(OTBM_MAP_DATA);
+        root->startNode(OTBM_MAP_DATA);
         {
             // own description.
             for(const auto& desc : getDescriptions()) {
-                mapData->writeU8(OTBM_ATTR_DESCRIPTION);
-                mapData->writeString(desc);
+                root->writeU8(OTBM_ATTR_DESCRIPTION);
+                root->writeString(desc);
             }
 
             // special one
-            mapData->writeU8(OTBM_ATTR_DESCRIPTION);
-            mapData->writeString(stdext::format("Saved with %s v%d", g_app.getName(), stdext::unsafe_cast<int>(g_app.getVersion())));
+            root->writeU8(OTBM_ATTR_DESCRIPTION);
+            root->writeString(stdext::format("Saved with %s v%d", g_app.getName(), stdext::unsafe_cast<int>(g_app.getVersion())));
 
             // spawn file.
-            mapData->writeU8(OTBM_ATTR_SPAWN_FILE);
-            mapData->writeString(spawnFile);
+            root->writeU8(OTBM_ATTR_SPAWN_FILE);
+            root->writeString(spawnFile);
 
             // house file.
             if(version > 1) {
-                mapData->writeU8(OTBM_ATTR_HOUSE_FILE);
-                mapData->writeString(houseFile);
+                root->writeU8(OTBM_ATTR_HOUSE_FILE);
+                root->writeString(houseFile);
             }
 
             /// write tiles first
-            BinaryTreePtr tileArea = mapData->makeChild(OTBM_TILE_AREA);
+            root->startNode(OTBM_TILE_AREA);
             Position base(-1, -1, -1);
-            for(const auto& pair : m_tiles) {
-                Position pos = pair.first;
-                TilePtr tile = pair.second;
 
-                /// base position
-                if(pos.x < base.x || pos.x >= base.x + 256 || pos.y < base.y|| pos.y >= base.y + 256 ||
-                        pos.z != base.z) {
-                    tileArea->writePos(base = pos & 0xFF00);
-                }
+            for(uint8_t z = 0; z < Otc::MAX_Z + 1; ++z) {
+                for(const auto& it : m_tileBlocks[z]) {
+                    const TileBlock& block = it.second;
+                    for(const TilePtr& tile : block.getTiles()) {
+                        const Position& pos = tile->getPosition();
+                        if(!pos.isValid())
+                            continue;
 
-                BinaryTreePtr tileNode(nullptr);
-                uint32 flags = tile->getFlags();
-                if((flags & TILESTATE_HOUSE) == TILESTATE_HOUSE)
-                    tileNode = tileArea->makeChild(OTBM_HOUSETILE);
-                else
-                    tileNode = tileArea->makeChild(OTBM_TILE);
+                        /// base position
+                        if(pos.x < base.x || pos.x >= base.x + 256 || pos.y < base.y|| pos.y >= base.y + 256 ||
+                                pos.z != base.z)
+                            root->writePos(base = pos & 0xFF00);
 
-                tileNode->writePoint(Point(pos.x, pos.y));
-//                if(tileNode->getType() == OTBM_HOUSETILE)
-//                    tileNode->writeU32(tile->getHouseId());
+                        uint32 flags = tile->getFlags();
+                        if((flags & TILESTATE_HOUSE) == TILESTATE_HOUSE)
+                            root->startNode(OTBM_HOUSETILE);
+                        else
+                            root->startNode(OTBM_TILE);
 
-                /// Tile flags
-                if(flags != 0) {
-                    tileNode->writeU8(OTBM_ATTR_TILE_FLAGS);
-                    tileNode->writeU32(flags);
-                }
+                        root->writePoint(Point(pos.x, pos.y));
+//                      if(tileNode->getType() == OTBM_HOUSETILE)
+//                          tileNode->writeU32(tile->getHouseId());
 
-                /// start writing tile items
-                for(const ItemPtr& item : tile->getItems()) {
-                    BinaryTreePtr itemNode = tileNode->makeChild(OTBM_ATTR_ITEM);
-                    item->serializeItem(itemNode);
+                        /// Tile flags
+                        if(flags) {
+                            root->writeU8(OTBM_ATTR_TILE_FLAGS);
+                            root->writeU32(flags);
+                        }
+
+                        /// start writing tile items
+                        for(const ItemPtr& item : tile->getItems()) {
+                            root->startNode(OTBM_ATTR_ITEM);
+                            item->serializeItem(root);
+                        }
+                    }
                 }
             }
 
             /// write towns
-            BinaryTreePtr townNode = mapData->makeChild(OTBM_TOWNS);
+            root->startNode(OTBM_TOWNS);
             for(const TownPtr& town : m_towns.getTowns()) {
-                BinaryTreePtr newTown = townNode->makeChild(OTBM_TOWN);
-                {
-                    newTown->writeU32(town->getId());
-                    newTown->writeString(town->getName());
-                    newTown->writePos(town->getPos());
-                }
+                root->writeU32(town->getId());
+                root->writeString(town->getName());
+                root->writePos(town->getPos());
             }
 
             /// write waypoints
             if(version > 1) {
-                BinaryTreePtr waypointNode = mapData->makeChild(OTBM_WAYPOINTS);
+                root->startNode(OTBM_WAYPOINTS);
                 for(const auto& it : m_waypoints) {
-                    BinaryTreePtr newWaypoint = waypointNode->makeChild(OTBM_WAYPOINT);
-                    {
-                        newWaypoint->writeString(it.second);
-                        newWaypoint->writePos(it.first);
-                    }
+                    root->writeString(it.second);
+                    root->writePos(it.first);
                 }
             }
         }
     }
-
-    root->writeToFile();
-    g_logger.debug(stdext::format("OTBM saving took %ld", time(0) - start));
-#endif
 }
 
 void Map::loadSpawns(const std::string &fileName)
@@ -391,8 +386,6 @@ void Map::loadSpawns(const std::string &fileName)
             addThing(creature, centerPos + cNode->readPoint());
         }
     }
-
-    doc.Clear();
 }
 
 bool Map::loadOtcm(const std::string& fileName)

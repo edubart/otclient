@@ -163,6 +163,8 @@ public:
 
     uint getTileIndex(const Position& pos) { return ((pos.y % BLOCK_SIZE) * BLOCK_SIZE) + (pos.x % BLOCK_SIZE); }
 
+    const std::array<TilePtr, BLOCK_SIZE*BLOCK_SIZE> getTiles() const { return m_tiles; }
+
 private:
     std::array<TilePtr, BLOCK_SIZE*BLOCK_SIZE> m_tiles;
 };
