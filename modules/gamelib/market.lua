@@ -156,7 +156,8 @@ MarketSlotFilters = {
 MarketFilters = {
   Vocation = 1,
   Level = 2,
-  Depot = 3
+  Depot = 3,
+  SearchAll = 4
 }
 
 MarketFilters.First = MarketFilters.vocation

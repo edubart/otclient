@@ -1,3 +1,34 @@
+--[[
+    Finalizing Market:
+      Note: Feel free to work on any area and submit 
+            it as a pull request from your git fork.
+
+      BeniS's Skype: benjiz69
+
+      List:
+      * Add constraints for creating/buying offers:
+        - Add max market offers or a new method for updating depot items
+        - Add a check for buying offers (if you do not have enough balance)
+
+      * Add offer management:
+        - Current Offers
+        - Offer History
+
+      * Optimize Offer Updates:
+        - Cache and avoid dead loop runs
+
+      * Clean up the interface building
+        - Add a new market interface file to handle building?
+
+      * Optimize loading market items:
+        - Cache items to their categories
+
+      * Add offer table column ordering.
+        - Player Name, Amount, Total Price, Peice Price and Ends At
+
+      * Add simple close button.
+  ]]
+
 Market = {}
 
 local protocol = runinsandbox('marketprotocol.lua')
@@ -10,7 +41,7 @@ selectionTabBar = nil
 
 marketOffersPanel = nil
 browsePanel = nil
-searchPanel = nil
+overviewPanel = nil
 itemOffersPanel = nil
 itemDetailsPanel = nil
 itemStatsPanel = nil
@@ -26,6 +57,7 @@ balanceLabel = nil
 totalPriceEdit = nil
 piecePriceEdit = nil
 amountEdit = nil
+searchEdit = nil
 radioItemSet = nil
 selectedItem = nil
 offerTypeList = nil
@@ -59,7 +91,17 @@ local offerTableHeader = {
 }
 
 local function isItemValid(item, category)
-  if item.marketData.category ~= category and category ~= MarketCategory[0] then
+  local searchFilter = searchEdit:getText():lower()
+  local useSearchFilter = false
+  if searchFilter and searchFilter:len() > 2 then
+    useSearchFilter = true
+  end
+  local filterSearchAll = filterButtons[MarketFilters.SearchAll]:isChecked()
+  if filterSearchAll and useSearchFilter then
+    category = MarketCategory.All
+  end
+
+  if item.marketData.category ~= category and category ~= MarketCategory.All then
     return false
   end
 
@@ -91,6 +133,12 @@ local function isItemValid(item, category)
   end
   if filterDepot and Market.depotContains(item.ptr:getId()) <= 0 then
     return false
+  end
+  if useSearchFilter then
+    local checkString = marketData.name:lower()
+    if not checkString:find(searchFilter) then
+      return false
+    end
   end
   return true
 end
@@ -202,7 +250,7 @@ local function mergeOffer(offer)
 end
 
 local function updateOffers(offers)
-  -- TODO: optimize offer updates later
+  -- TODO: optimize offer updates
   selectedOffer[MarketAction.Buy] = nil
   selectedOffer[MarketAction.Sell] = nil
 
@@ -612,8 +660,8 @@ local function initInterface()
   browsePanel = g_ui.loadUI('ui/marketoffers/browse.otui')
   selectionTabBar:addTab(tr('Browse'), browsePanel)
 
-  searchPanel = g_ui.loadUI('ui/marketoffers/search.otui')
-  selectionTabBar:addTab(tr('Search'), searchPanel)
+  overviewPanel = g_ui.loadUI('ui/marketoffers/overview.otui')
+  selectionTabBar:addTab(tr('Overview'), overviewPanel)
 
   displaysTabBar = marketOffersPanel:getChildById('rightTabBar')
   displaysTabBar:setContentWidget(marketOffersPanel:getChildById('rightTabContent'))
@@ -675,10 +723,12 @@ local function initInterface()
   filterButtons[MarketFilters.Vocation] = browsePanel:getChildById('filterVocation')
   filterButtons[MarketFilters.Level] = browsePanel:getChildById('filterLevel')
   filterButtons[MarketFilters.Depot] = browsePanel:getChildById('filterDepot')
+  filterButtons[MarketFilters.SearchAll] = browsePanel:getChildById('filterSearchAll')
 
+  searchEdit = browsePanel:getChildById('searchEdit')
   categoryList = browsePanel:getChildById('categoryComboBox')
   subCategoryList = browsePanel:getChildById('subCategoryComboBox')
-  slotFilterList = browsePanel:getChildById('typeComboBox')
+  slotFilterList = browsePanel:getChildById('slotComboBox')
 
   slotFilterList:addOption(MarketSlotFilters[255])
   slotFilterList:setEnabled(false)
@@ -699,7 +749,7 @@ local function initInterface()
   subCategoryList.onOptionChange = onChangeSubCategory
   slotFilterList.onOptionChange = onChangeSlotFilter
 
-  -- get tables
+  -- setup tables
   buyOfferTable = itemOffersPanel:recursiveGetChildById('buyingTable')
   sellOfferTable = itemOffersPanel:recursiveGetChildById('sellingTable')
   detailsTable = itemDetailsPanel:recursiveGetChildById('detailsTable')
@@ -799,12 +849,12 @@ function Market.enableCreateOffer(enable)
   nextAmountButton:setEnabled(enable)
 end
 
-function Market.close(message)
-  local message = message or false
+function Market.close(notify)
+  local notify = notify or true
   marketWindow:hide()
   marketWindow:unlock()
   Market.clearSelectedItem()
-  if message then
+  if notify then
     MarketProtocol.sendMarketLeave()
   end
 end
@@ -835,7 +885,7 @@ end
 
 function Market.refreshItemsWidget(selectItem)
   local selectItem = selectItem or 0
-  itemsPanel = browsePanel:recursiveGetChildById('itemsPanel')
+  itemsPanel = marketOffersPanel:recursiveGetChildById('itemsPanel')
   local layout = itemsPanel:getLayout()
   layout:disableUpdates()
 
@@ -878,6 +928,10 @@ function Market.refreshItemsWidget(selectItem)
   layout:update()
 end
 
+--[[
+  TODO: Optimize loading market items
+    * Preload items to their categories
+  ]]
 function Market.loadMarketItems(category)
   if table.empty(marketItems) then
     initMarketItems()
@@ -1014,12 +1068,19 @@ function Market.onItemBoxChecked(widget)
   end
 end
 
+-- protocol callback functions
+
 function Market.onMarketEnter(depotItems, offers, balance, vocation)
   updateBalance(balance)
   information.totalOffers = offers
+  local player = g_game.getLocalPlayer()
+  if player then
+    information.player = player
+  end
   if vocation < 0 then
-    local player = g_game.getLocalPlayer()
-    if player then information.vocation = player:getVocation() end
+    if player then
+      information.vocation = player:getVocation()
+    end
   else
     -- vocation must be compatible with < 950
     information.vocation = vocation
