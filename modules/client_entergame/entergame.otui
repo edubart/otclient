@@ -1,4 +1,6 @@
-MainWindow
+EnterGameWindow < MainWindow
+
+EnterGameWindow
   id: enterGame
   !text: tr('Enter Game')
   margin-top: 100
