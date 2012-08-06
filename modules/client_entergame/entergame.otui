@@ -3,7 +3,6 @@ EnterGameWindow < MainWindow
 EnterGameWindow
   id: enterGame
   !text: tr('Enter Game')
-  margin-top: 100
   size: 236 274
   @onEnter: EnterGame.doLogin()
   @onEscape: EnterGame.hide()
