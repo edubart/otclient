@@ -22,7 +22,7 @@ BattleButtonColors = {
   onFollowed = {notHovered = '#00FF00', hovered = '#88FF88' }
 }
 
-LifeBarColors = {} --Must be sorted by percentAbose
+LifeBarColors = {} --Must be sorted by percentAbove
 table.insert(LifeBarColors, {percentAbove = 92, color = '#00BC00' } )
 table.insert(LifeBarColors, {percentAbove = 60, color = '#50A150' } )
 table.insert(LifeBarColors, {percentAbove = 30, color = '#A1A100' } )

@@ -4,7 +4,7 @@ ExitWindow < MainWindow
   size: 550 135
 
   Label
-    !text: tr("If you shut down the program, you character might stay in the game.\nClick on 'Logout' to ensure that you character leaves the game property.\nClick on 'Exit' if you want to exit the program without logging out your character.")
+    !text: tr("If you shut down the program, your character might stay in the game.\nClick on 'Logout' to ensure that you character leaves the game properly.\nClick on 'Exit' if you want to exit the program without logging out your character.")
     width: 500
     height: 45
     anchors.left: parent.left
@@ -14,24 +14,24 @@ ExitWindow < MainWindow
 
   Button
     id: buttonExit
-    !text: tr('Exit')
-    width: 64
-    anchors.left: parent.left
+    !text: tr('Force Exit')
+    width: 80
+    anchors.right: next.left
     anchors.bottom: parent.bottom
-    margin-left: 160
+    margin-right: 5
 
   Button
     id: buttonLogout
     !text: tr('Logout')
-    width: 64
-    anchors.left: prev.right
+    width: 80
+    anchors.horizontalCenter: parent.horizontalCenter
     anchors.bottom: parent.bottom
     margin-left: 5
 
   Button
     id: buttonCancel
     !text: tr('Cancel')
-    width: 64
+    width: 80
     anchors.left: prev.right
     anchors.bottom: parent.bottom
     margin-left: 5

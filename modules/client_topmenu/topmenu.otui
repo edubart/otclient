@@ -21,7 +21,7 @@ TopToggleButton < UIButton
   size: 26 26
   image-source: images/top_game_button.png
   image-clip: 26 0 26 26
-  image-color: #ffffff22
+  image-color: #ffffffff
   image-border: 3
   icon-color: #ffffffff
 

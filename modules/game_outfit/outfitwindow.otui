@@ -189,7 +189,7 @@ Window
 
   Button
     id: outfitOkButton
-    !text: tr('Okay')
+    !text: tr('Ok')
     width: 64
     anchors.right: next.left
     anchors.bottom: parent.bottom

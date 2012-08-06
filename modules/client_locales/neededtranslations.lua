@@ -124,7 +124,7 @@ Locales.neededTranslations = {
   "Hit Points",
   "Hold right mouse button to navigate\nScroll mouse middle button to zoom",
   "Hotkeys",
-  "If you shut down the program, you character might stay in the game.\nClick on 'Logout' to ensure that you character leaves the game property.\nClick on 'Exit' if you want to exit the program without logging out your character.",
+  "If you shut down the program, your character might stay in the game.\nClick on 'Logout' to ensure that you character leaves the game properly.\nClick on 'Exit' if you want to exit the program without logging out your character.",
   "Ignore capacity",
   "Ignore equipped",
   "Interface framerate limit: %s",

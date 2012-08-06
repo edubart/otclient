@@ -63,8 +63,8 @@ MiniWindow
       @onClick: onButtonClick(self:getId())
 
     ZoomOutControl
-      id: zoomOut
-      text: -
+      id: zoomIn
+      text: +
       font: terminus-14px-bold
       anchors.right: parent.right
       anchors.bottom: parent.bottom
@@ -74,8 +74,8 @@ MiniWindow
       @onClick: onButtonClick(self:getId())
 
     ZoomInControl
-      id: zoomIn
-      text: +
+      id: zoomOut
+      text: -
       anchors.right: parent.right
       anchors.bottom: parent.bottom
       margin-right: 4
