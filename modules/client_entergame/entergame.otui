@@ -59,7 +59,7 @@ MainWindow
 
   ComboBox
     id: protocolComboBox
-    anchors.left: protocolLabel.left
+    anchors.left: parent.left
     anchors.right: parent.horizontalCenter
     anchors.top: protocolLabel.bottom
     margin-top: 2

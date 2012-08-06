@@ -40,7 +40,7 @@ function Skins.init()
   end
 
   addEvent( function()
-              skinComboBox = g_ui.createWidget('ComboBox', rootWidget:recursiveGetChildById('rightButtonsPanel'))
+              skinComboBox = g_ui.createWidget('ComboBoxRounded', rootWidget:recursiveGetChildById('rightButtonsPanel'))
               skinComboBox:setFixedSize(true)
               for key,value in pairs(installedSkins) do
                 skinComboBox:addOption(value.name)

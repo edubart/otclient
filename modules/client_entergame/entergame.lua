@@ -172,3 +172,34 @@ end
 function EnterGame.displayMotd()
   displayInfoBox(tr('Message of the day'), G.motdMessage)
 end
+
+function EnterGame.setUniqueServer(host, port, protocol, windowHeight)
+  local hostTextEdit = enterGame:getChildById('serverHostTextEdit')
+  hostTextEdit:setText(host)
+  hostTextEdit:setVisible(false)
+  hostTextEdit:setHeight(0)
+  local portTextEdit = enterGame:getChildById('serverPortTextEdit')
+  portTextEdit:setText(port)
+  portTextEdit:setVisible(false)
+  portTextEdit:setHeight(0)
+
+  protocolBox:setCurrentOption(protocol)
+  protocolBox:setVisible(false)
+  protocolBox:setHeight(0)
+
+  local serverLabel = enterGame:getChildById('serverLabel')
+  serverLabel:setVisible(false)
+  serverLabel:setHeight(0)
+  local portLabel = enterGame:getChildById('portLabel')
+  portLabel:setVisible(false)
+  portLabel:setHeight(0)
+  local protocolLabel = enterGame:getChildById('protocolLabel')
+  protocolLabel:setVisible(false)
+  protocolLabel:setHeight(0)
+
+  local rememberPasswordBox = enterGame:getChildById('rememberPasswordBox')
+  rememberPasswordBox:setMarginTop(-5)
+
+  if not windowHeight then windowHeight = 200 end
+  enterGame:setHeight(windowHeight)
+end

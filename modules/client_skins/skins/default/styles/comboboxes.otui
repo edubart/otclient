@@ -42,3 +42,7 @@ ComboBox < UIComboBox
 
   $on:
     image-clip: 0 40 89 20
+
+ComboBoxRounded < ComboBox
+  image-source: /images/combobox_rounded.png
+  image-border: 2
