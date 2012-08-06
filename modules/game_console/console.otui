@@ -6,8 +6,8 @@ ConsoleLabel < UILabel
   text-wrap: true
   text-auto-resize: true
 
-ConsoleTabBar < TabBar
-ConsoleTabBarPanel < TabBarPanel
+ConsoleTabBar < TabBarRounded
+ConsoleTabBarPanel < TabBarRoundedPanel
   id: consoleTab
 
   ScrollablePanel
@@ -32,7 +32,7 @@ ConsoleTabBarPanel < TabBarPanel
     step: 14
     pixels-scroll: true
 
-ConsoleTabBarButton < TabBarButton
+ConsoleTabBarButton < TabBarRoundedButton
 
 Panel
   id: consolePanel

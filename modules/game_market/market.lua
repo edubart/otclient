@@ -8,6 +8,7 @@
       List:
       * Add constraints for creating/buying offers:
         - Add max market offers or a new method for updating depot items
+        - Add timer before you can create another offer (1 minute?)
         - Add a check for buying offers (if you do not have enough balance)
 
       * Add offer management:
@@ -394,7 +395,7 @@ local function updateBalance(balance)
   if balance < 0 then balance = 0 end
   information.balance = balance
 
-  balanceLabel:setText('Balance: '..balance..'gp')
+  balanceLabel:setText('Balance: '..balance..' gold')
   balanceLabel:resizeToText()
 end
 
@@ -885,7 +886,7 @@ end
 
 function Market.refreshItemsWidget(selectItem)
   local selectItem = selectItem or 0
-  itemsPanel = marketOffersPanel:recursiveGetChildById('itemsPanel')
+  itemsPanel = browsePanel:recursiveGetChildById('itemsPanel')
   local layout = itemsPanel:getLayout()
   layout:disableUpdates()
 

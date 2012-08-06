@@ -60,3 +60,7 @@ ButtonBox < UICheckBox
   $disabled:
     color: #666666ff
     image-color: #ffffff88
+
+ButtonBoxRounded < ButtonBox
+  image-source: /images/tabbutton_rounded.png
+  image-border: 2

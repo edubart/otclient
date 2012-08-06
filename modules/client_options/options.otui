@@ -22,7 +22,7 @@ MainWindow
   @onEnter: Options.hide()
   @onEscape: Options.hide()
 
-  TabBar
+  TabBarRounded
     id: optionsTabBar
     anchors.top: parent.top
     anchors.left: parent.left

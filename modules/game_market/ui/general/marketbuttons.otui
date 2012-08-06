@@ -1,10 +1,9 @@
-MarketButtonBox < UICheckBox
+MarketButtonBox < ButtonBoxRounded
   font: verdana-11px-rounded
   color: #f55e5ebb
   size: 106 22
   text-offset: 0 2
   text-align: center
-  image-source: /images/tabbutton_rounded.png
   image-clip: 0 0 20 20
   image-border: 2
 

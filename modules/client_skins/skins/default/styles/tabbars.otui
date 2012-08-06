@@ -3,7 +3,7 @@ TabBar < UITabBar
 TabBarPanel < Panel
 TabBarButton < UIButton
   size: 20 20
-  image-source: /images/tabbutton_rounded.png
+  image-source: /images/tabbutton_square.png
   image-color: white
   image-clip: 0 0 20 20
   image-border: 2
@@ -33,3 +33,8 @@ TabBarButton < UIButton
 
   $on !checked:
     color: #F55E5E
+
+TabBarRounded < TabBar
+TabBarRoundedPanel < TabBarPanel
+TabBarRoundedButton < TabBarButton
+  image-source: /images/tabbutton_rounded.png
