@@ -32,20 +32,19 @@ namespace stdext {
 template<typename Key>
 class dynamic_storage {
 public:
-    template<typename T> void set(const Key& k, const T& value) { m_map[k] = value; }
-    template<typename T> T get(const Key& k) const {
-        auto it = m_map.find(k);
-        if(it != m_map.end())
-            return any_cast<T>(it->second);
-        return T();
+    template<typename T> void set(const Key& k, const T& value) {
+        if(m_data.size() <= k)
+            m_data.resize(k+1);
+        m_data[k] = value;
     }
-    bool has(const Key& k) const { return m_map.find(k) != m_map.end(); }
+    template<typename T> T get(const Key& k) const { return has(k) ? any_cast<T>(m_data[k]) : T(); }
+    bool has(const Key& k) const { return k < m_data.size() && !m_data[k].empty(); }
 
-    std::size_t size() const { return m_map.size(); }
-    void clear() { m_map.clear(); }
+    std::size_t size() const { return m_data.size(); }
+    void clear() { m_data.clear(); }
 
 private:
-    std::unordered_map<Key, any> m_map;
+    std::vector<any> m_data;
 };
 
 }
