@@ -13,13 +13,6 @@ ComboBoxPopupMenuButton < UIButton
   $disabled:
     color: #555555
 
-ComboBoxPopupMenuSeparator < UIWidget
-  image-source: /images/combobox_square.png
-  image-repeated: true
-  image-clip: 1 59 89 1
-  height: 1
-  phantom: true
-
 ComboBoxPopupMenu < UIPopupMenu
   image-source: /images/combobox_square.png
   image-clip: 0 60 89 20
@@ -42,6 +35,27 @@ ComboBox < UIComboBox
 
   $on:
     image-clip: 0 40 89 20
+
+ComboBoxRoundedPopupMenuButton < UIButton
+  height: 20
+  font: verdana-11px-antialised
+  text-align: left
+  text-offset: 4 0
+  color: #aaaaaa
+  background-color: alpha
+
+  $hover !disabled:
+    color: #ffffff
+    background-color: #ffffff44
+
+  $disabled:
+    color: #555555
+
+ComboBoxRoundedPopupMenu < UIPopupMenu
+  image-source: /images/combobox_rounded.png
+  image-clip: 0 60 89 20
+  image-border-left: 1
+  image-border-right: 1
 
 ComboBoxRounded < ComboBox
   image-source: /images/combobox_rounded.png
