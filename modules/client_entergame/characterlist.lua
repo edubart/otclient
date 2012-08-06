@@ -229,7 +229,7 @@ function CharacterList.destroy()
 end
 
 function CharacterList.show()
-  if not loadBox and not errorBox then
+  if not loadBox and not errorBox and charactersWindow then
     charactersWindow:show()
     charactersWindow:raise()
     charactersWindow:focus()

@@ -13,15 +13,12 @@ function UIMessageBox.display(title, message, flags)
   local messagebox = UIMessageBox.internalCreate()
   rootWidget:addChild(messagebox)
 
-  messagebox:setStyle('MessageBoxWindow')
+  messagebox:setStyle('MainWindow')
   messagebox:setText(title)
 
   local messageLabel = g_ui.createWidget('MessageBoxLabel', messagebox)
   messageLabel:setText(message)
   messageLabel:resizeToText()
-
-  messagebox:setWidth(math.max(messageLabel:getWidth() + 48, messagebox:getTextSize().width + 20))
-  messagebox:setHeight(math.max(messageLabel:getHeight() + 64, messagebox:getHeight()))
 
   -- setup messagebox first button
   local buttonRight = g_ui.createWidget('MessageBoxRightButton', messagebox)
@@ -37,6 +34,9 @@ function UIMessageBox.display(title, message, flags)
     connect(messagebox, { onEnter = function(self) self:cancel() end })
     connect(messagebox, { onEscape = function(self) self:cancel() end })
   end
+
+  messagebox:setWidth(messageLabel:getWidth() + messagebox:getPaddingLeft() + messagebox:getPaddingRight())
+  messagebox:setHeight(messageLabel:getHeight() + messagebox:getPaddingTop() + messagebox:getPaddingBottom() + buttonRight:getHeight() + 10)
 
   --messagebox:lock()
 

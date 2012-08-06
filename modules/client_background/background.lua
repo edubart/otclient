@@ -39,3 +39,7 @@ end
 function Background.show()
   background:show()
 end
+
+function Background.hideVersionLabel()
+  background:getChildById('clientVersionLabel'):hide()
+end

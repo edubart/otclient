@@ -93,7 +93,9 @@ function EnterGame.init()
       addEvent(EnterGame.doLogin)
     end
   else
-    enterGame:hide()
+    if g_game.isOnline() then
+      enterGame:hide()
+    end
   end
 end
 

@@ -89,24 +89,22 @@ function Skins.setSkin(name)
   g_fonts.clearFonts()
   g_ui.clearStyles()
 
-  if name ~= defaultSkinName then
-    local defaultSkin = installedSkins[defaultSkinName]
-    if not defaultSkin then
-      error("Default skin is not installed.")
-      return false
-    end
-
-    Skins.loadSkin(defaultSkin)
-  end
-
   if currentSkin and currentSkin.name ~= defaultSkinName then
     g_resources.removeSearchPath(getSkinPath(currentSkin.name))
   end
+
   if skin.name ~= defaultSkinName then
     g_resources.addSearchPath(getSkinPath(skin.name), true)
+    Skins.loadSkin(skin)
   end
 
-  Skins.loadSkin(skin)
+  local defaultSkin = installedSkins[defaultSkinName]
+  if not defaultSkin then
+    error("Default skin is not installed.")
+    return false
+  end
+  Skins.loadSkin(defaultSkin)
+
   currentSkin = skin
   return true
 end
@@ -134,5 +132,14 @@ function Skins.loadSkin(skin)
     for i=1,#skin.particles do
       g_particles.importParticle('skins/' .. lowerName .. '/particles/' .. skin.particles[i])
     end
+  end
+end
+
+function Skins.hideComboBox()
+  if not skinComboBox then
+    addEvent(Skins.hideComboBox)
+  else
+    skinComboBox:hide()
+    skinComboBox:setWidth(0)
   end
 end

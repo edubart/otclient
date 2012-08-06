@@ -1,11 +1,3 @@
-MessageBoxWindow < MainWindow
-  id: messageBoxWindow
-  anchors.centerIn: parent
-  height: 60
-  width: 80
-  padding-bottom: 10
-  padding-right: 10
-
 MessageBoxLabel < Label
   id: messageBoxLabel
   anchors.horizontalCenter: parent.horizontalCenter
