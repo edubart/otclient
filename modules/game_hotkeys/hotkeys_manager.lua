@@ -204,7 +204,7 @@ function addHotkey()
   messageBox:setText(tr('Button Assign'))
   messageBox:setWidth(420)
   messageBox:setHeight(140)
-  messageBox:setDragable(false)
+  messageBox:setDraggable(false)
 
   widget = g_ui.createWidget('Label', messageBox)
   widget:setText(tr('Please, press the key you wish to add onto your hotkeys manager'))

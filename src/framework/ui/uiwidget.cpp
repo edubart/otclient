@@ -937,9 +937,9 @@ void UIWidget::setPhantom(bool phantom)
     m_phantom = phantom;
 }
 
-void UIWidget::setDragable(bool dragable)
+void UIWidget::setDraggable(bool draggable)
 {
-    m_dragable = dragable;
+    m_draggable = draggable;
 }
 
 void UIWidget::setFixedSize(bool fixed)

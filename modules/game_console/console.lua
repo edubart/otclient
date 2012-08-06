@@ -59,7 +59,8 @@ ownPrivateName = nil
 messageHistory = {}
 currentMessageIndex = 0
 ignoreNpcMessages = false
-
+defaultTab = nil
+serverTab = nil
 
 function init()
   connect(g_game, { onTalk = onTalk,
@@ -78,8 +79,8 @@ function init()
   consoleTabBar:setContentWidget(consoleContentPanel)
   channels = {}
 
-  addTab(tr('Default'), true)
-  addTab(tr('Server Log'), false)
+  defaultTab = addTab(tr('Default'), true)
+  serverTab = addTab(tr('Server Log'), false)
 
   g_keyboard.bindKeyPress('Shift+Up', function() navigateMessageHistory(1) end, consolePanel)
   g_keyboard.bindKeyPress('Shift+Down', function() navigateMessageHistory(-1) end, consolePanel)
@@ -132,7 +133,7 @@ function terminate()
 end
 
 function onTabChange(tabBar, tab)
-  if tab:getText() == tr('Default') or tab:getText() == tr('Server Log') then
+  if tab == defaultTab or tab == serverTab then
     consolePanel:getChildById('closeChannelButton'):disable()
   else
     consolePanel:getChildById('closeChannelButton'):enable()
@@ -165,8 +166,8 @@ function clear()
   end
   channels = {}
 
-  consoleTabBar:getTab(tr('Default')).tabPanel:getChildById('consoleBuffer'):destroyChildren()
-  consoleTabBar:getTab(tr('Server Log')).tabPanel:getChildById('consoleBuffer'):destroyChildren()
+  defaultTab.tabPanel:getChildById('consoleBuffer'):destroyChildren()
+  serverTab.tabPanel:getChildById('consoleBuffer'):destroyChildren()
 
   local npcTab = consoleTabBar:getTab('NPCs')
   if npcTab then
@@ -198,7 +199,7 @@ function addTab(name, focus)
   end
   if focus then
     consoleTabBar:selectTab(tab)
-  elseif name ~= tr('Server Log') then
+  elseif not serverTab or name ~= serverTab:getText() then
     consoleTabBar:blinkTab(tab)
   end
   return tab
@@ -206,7 +207,7 @@ end
 
 function removeCurrentTab()
   local tab = consoleTabBar:getCurrentTab()
-  if tab:getText() == tr('Default') or tab:getText() == tr('Server Log') then return end
+  if tab == defaultTab or tab == serverTab then return end
 
   -- notificate the server that we are leaving the channel
   if tab.channelId then
@@ -251,7 +252,7 @@ function addPrivateText(text, speaktype, name, isPrivateCommand, creatureName)
   local privateTab = getTab(name)
   if privateTab == nil then
     if (Options.getOption('showPrivateMessagesInConsole') and not focus) or (isPrivateCommand and not privateTab) then
-      privateTab = getTab(tr('Default'))
+      privateTab = defaultTab
     else
       privateTab = addTab(name, focus)
       channels[name] = name
@@ -368,14 +369,14 @@ function sendCurrentMessage()
 
   -- when talking on server log, the message goes to default channel
   local name = tab:getText()
-  if name == tr('Server Log') then
-    tab = getTab(tr('Default'))
-    name = tr('Default')
+  if tab == serverTab then
+    tab = defaultTab
+    name = defaultTab:getText()
   end
 
   local speaktypedesc
-  if (tab.channelId or name == tr('Default')) and not chatCommandPrivateReady then
-    if name == tr('Default') then
+  if (tab.channelId or tab == defaultTab) and not chatCommandPrivateReady then
+    if tab == defaultTab then
       speaktypedesc = chatCommandSayMode or SayModes[consolePanel:getChildById('sayModeButton').sayMode].speakTypeDesc
       if speaktypedesc ~= 'say' then sayModeChange(2) end -- head back to say mode
     else
@@ -576,7 +577,7 @@ function onGameStart()
     end
   end
 
-  local tab = getTab(tr('Default'))
+  local tab = defaultTab
   if tab then
     --[[
       Known Issue: The server is calling to open channels after

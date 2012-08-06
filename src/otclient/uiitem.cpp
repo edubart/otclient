@@ -27,7 +27,7 @@
 
 UIItem::UIItem()
 {
-    m_dragable = true;
+    m_draggable = true;
 }
 
 void UIItem::drawSelf(Fw::DrawPane drawPane)

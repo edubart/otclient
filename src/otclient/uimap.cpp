@@ -30,7 +30,7 @@
 
 UIMap::UIMap()
 {
-    m_dragable = true;
+    m_draggable = true;
     m_mapView = MapViewPtr(new MapView);
     m_zoom = m_mapView->getVisibleDimension().height();
     m_aspectRatio = 0.0f;

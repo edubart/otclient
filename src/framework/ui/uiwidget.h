@@ -66,7 +66,7 @@ protected:
     stdext::boolean<true> m_focusable;
     stdext::boolean<false> m_fixedSize;
     stdext::boolean<false> m_phantom;
-    stdext::boolean<false> m_dragable;
+    stdext::boolean<false> m_draggable;
     stdext::boolean<false> m_destroyed;
     stdext::boolean<false> m_clipping;
     UILayoutPtr m_layout;
@@ -125,7 +125,7 @@ public:
     void setChecked(bool checked);
     void setFocusable(bool focusable);
     void setPhantom(bool phantom);
-    void setDragable(bool dragable);
+    void setDraggable(bool draggable);
     void setFixedSize(bool fixed);
     void setClipping(bool clipping) { m_clipping = clipping; }
     void setLastFocusReason(Fw::FocusReason reason);
@@ -237,7 +237,7 @@ public:
     bool isExplicitlyVisible() { return m_visible; }
     bool isFocusable() { return m_focusable; }
     bool isPhantom() { return m_phantom; }
-    bool isDragable() { return m_dragable; }
+    bool isDraggable() { return m_draggable; }
     bool isFixedSize() { return m_fixedSize; }
     bool isClipping() { return m_clipping; }
     bool isDestroyed() { return m_destroyed; }

@@ -4,7 +4,7 @@ UIWindow = extends(UIWidget)
 function UIWindow.create()
   local window = UIWindow.internalCreate()
   window:setTextAlign(AlignTopCenter)
-  window:setDragable(true)
+  window:setDraggable(true)
   return window
 end
 
