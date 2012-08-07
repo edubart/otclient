@@ -351,7 +351,11 @@ void OTClient::registerLuaFunctions()
 
     g_lua.registerClass<Effect, Thing>();
     g_lua.registerClass<Missile, Thing>();
+
     g_lua.registerClass<StaticText, Thing>();
+    g_lua.bindClassStaticFunction<StaticText>("create", []{ return StaticTextPtr(new StaticText); });
+    g_lua.bindClassMemberFunction<StaticText>("addMessage", &StaticText::addMessage);
+
     g_lua.registerClass<AnimatedText, Thing>();
 
     g_lua.registerClass<Player, Creature>();

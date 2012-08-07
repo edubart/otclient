@@ -94,7 +94,7 @@ function displayMessage(mode, text)
 end
 
 function displayPrivateMessage(text)
-    displayMessage(254, text)
+  displayMessage(254, text)
 end
 
 function displayStatusMessage(text)

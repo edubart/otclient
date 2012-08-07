@@ -170,15 +170,6 @@ void Game::processTextMessage(Otc::MessageMode mode, const std::string& text)
 
 void Game::processTalk(const std::string& name, int level, Otc::MessageMode mode, const std::string& text, int channelId, const Position& pos)
 {
-    if(pos.isValid() && (mode == Otc::MessageSay || mode == Otc::MessageWhisper || mode == Otc::MessageYell  || mode == Otc::MessageSpell ||
-                         mode == Otc::MessageMonsterSay || mode == Otc::MessageMonsterYell || mode == Otc::MessageNpcFrom ||
-                         mode == Otc::MessageBarkLow || mode == Otc::MessageBarkLoud))
-    {
-        StaticTextPtr staticText = StaticTextPtr(new StaticText);
-        staticText->addMessage(name, mode, text);
-        g_map.addThing(staticText, pos);
-    }
-
     g_lua.callGlobalField("g_game", "onTalk", name, level, mode, text, channelId, pos);
 }
 

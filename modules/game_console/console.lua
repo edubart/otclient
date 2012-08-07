@@ -428,7 +428,6 @@ function setIgnoreNpcMessages(ignore)
   ignoreNpcMessages = ignore
 end
 
-
 function navigateMessageHistory(step)
   local numCommands = #messageHistory
   if numCommands > 0 then
@@ -455,6 +454,16 @@ end
 
 function onTalk(name, level, mode, message, channelId, creaturePos)
   if ignoreNpcMessages and mode == MessageModes.NpcFrom then return end
+
+  if (mode == MessageModes.Say or mode == MessageModes.Whisper or mode == MessageModes.Yell or
+      mode == MessageModes.Spell or mode == MessageModes.MonsterSay or mode == MessageModes.MonsterYell or
+      mode == MessageModes.NpcFrom or mode == MessageModes.BarkLow or mode == MessageModes.BarkLoud) and
+     creaturePos then
+    local staticText = StaticText.create()
+    staticText:addMessage(name, mode, message)
+    g_map.addThing(staticText, creaturePos, -1)
+  end
+
   local defaultMessage = mode < 3 and true or false
   speaktype = SpeakTypes[mode]
 
