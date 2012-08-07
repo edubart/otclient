@@ -66,13 +66,6 @@ uint64_t hex_to_dec(const std::string& str)
     return num;
 }
 
-std::string ip_to_string(uint32_t ip)
-{
-    char host[16];
-    sprintf(host, "%d.%d.%d.%d", (uint8_t)ip, (uint8_t)(ip >> 8), (uint8_t)(ip >> 16), (uint8_t)(ip >> 24));
-    return std::string(host);
-}
-
 std::string utf8_to_latin1(uchar *utf8)
 {
     auto utf8CharToLatin1 = [](uchar *utf8, int *read) -> char {

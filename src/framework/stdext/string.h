@@ -42,7 +42,6 @@ std::string date_time_string();
 
 std::string dec_to_hex(uint64_t num);
 uint64_t hex_to_dec(const std::string& str);
-std::string ip_to_string(uint32_t ip);
 std::string utf8_to_latin1(uchar *utf8);
 void tolower(std::string& str);
 void toupper(std::string& str);

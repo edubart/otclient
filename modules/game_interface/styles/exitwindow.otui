@@ -1,15 +1,13 @@
 ExitWindow < MainWindow
   id: exitWindow
   !text: tr('Exit')
-  size: 550 135
+  size: 570 135
 
   Label
     !text: tr("If you shut down the program, your character might stay in the game.\nClick on 'Logout' to ensure that you character leaves the game properly.\nClick on 'Exit' if you want to exit the program without logging out your character.")
-    width: 500
-    height: 45
-    anchors.left: parent.left
+    text-auto-resize: true
+    anchors.horizontalCenter: parent.horizontalCenter
     anchors.top: parent.top
-    margin-left: 10
     margin-top: 2
 
   Button

@@ -32,6 +32,7 @@
 #include <framework/util/crypt.h>
 #include <framework/core/resourcemanager.h>
 #include <framework/graphics/texturemanager.h>
+#include <framework/stdext/net.h>
 
 #ifdef FW_GRAPHICS
 #include <framework/graphics/graphics.h>

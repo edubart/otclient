@@ -10,25 +10,20 @@ NextMountButton < NextButton
 PrevMountButton < PreviousButton
   icon-source: /images/arrow_left.png
 
-Window
+MainWindow
   !text: tr('Select Outfit')
   size: 338 375
-  padding: 0 0 0 0
-
-  anchors.horizontalCenter: parent.horizontalCenter
-  anchors.verticalCenter: parent.verticalCenter
 
   @onEnter: modules.game_outfit.accept()
   @onEscape: modules.game_outfit.destroy()
 
   // Creature Boxes
-
   Creature
     id: outfitCreatureBox
     anchors.top: parent.top
     anchors.left: parent.left
-    margin-top: 48
-    margin-left: 40
+    margin-top: 15
+    margin-left: 22
     padding: 4 4 4 4
     fixed-creature-size: true
 
@@ -60,8 +55,8 @@ Window
     id: mountCreatureBox
     anchors.top: parent.top
     anchors.right: parent.right
-    margin-top: 48
-    margin-right: 40
+    margin-top: 15
+    margin-right: 22
     padding: 4 4 4 4
     fixed-creature-size: true
 
@@ -98,7 +93,7 @@ Window
     anchors.top: outfitCreatureBox.bottom
     anchors.left: parent.left
     margin-top: 6
-    margin-left: 18
+    margin-left: 2
     enabled: false
 
   CheckBox
@@ -182,8 +177,6 @@ Window
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.bottom: next.top
-    margin-left: 16
-    margin-right: 16
     margin-bottom: 10
     margin-top: 5
 
@@ -193,7 +186,6 @@ Window
     width: 64
     anchors.right: next.left
     anchors.bottom: parent.bottom
-    margin-bottom: 16
     margin-right: 16
     @onClick: modules.game_outfit.accept()
 
@@ -203,6 +195,4 @@ Window
     width: 64
     anchors.right: parent.right
     anchors.bottom: parent.bottom
-    margin-bottom: 16
-    margin-right: 16
     @onClick: modules.game_outfit.destroy()
