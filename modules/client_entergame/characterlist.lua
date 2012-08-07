@@ -191,17 +191,17 @@ function CharacterList.create(characters, premDays)
 
   local focusLabel
   for i,characterInfo in ipairs(characters) do
-    local characterName = characterInfo[1]
-    local worldName = characterInfo[2]
-    local worldHost = characterInfo[3]
-    local worldIp = characterInfo[4]
+    local characterName = characterInfo.name
+    local worldName = characterInfo.worldName
+    local worldHost = characterInfo.worldIp
+    local worldPort = characterInfo.worldPort
 
     local label = g_ui.createWidget('CharacterListLabel', characterList)
     label:setText(characterName .. '  (' .. worldName .. ')')
     label:setPhantom(false)
     label.characterName = characterName
     label.worldHost = worldHost
-    label.worldPort = worldIp
+    label.worldPort = worldPort
 
     connect(label, { onDoubleClick = function () CharacterList.doLogin() return true end } )
 
@@ -214,6 +214,8 @@ function CharacterList.create(characters, premDays)
 
   if premDays > 0 then
     accountStatusLabel:setText(tr("Account Status:\nPremium Account (%s) days left", premDays))
+  else
+    accountStatusLabel:setText(tr('Account Status:\nFree Account'))
   end
 end
 

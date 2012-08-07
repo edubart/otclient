@@ -109,10 +109,10 @@ function ProtocolLogin:parseCharacterList(msg)
   local charactersCount = msg:getU8()
   for i=1,charactersCount do
     local character = {}
-    character[1] = msg:getString()
-    character[2] = msg:getString()
-    character[3] = iptostring(msg:getU32())
-    character[4] = msg:getU16()
+    character.name = msg:getString()
+    character.worldName = msg:getString()
+    character.worldIp = iptostring(msg:getU32())
+    character.worldPort = msg:getU16()
     characters[i] = character
   end
   local premDays = msg:getU16()
