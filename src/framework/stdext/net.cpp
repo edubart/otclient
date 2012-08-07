@@ -41,11 +41,12 @@ uint32 string_to_ip(const std::string& string)
     return ip;
 }
 
-void listSubnetAddresses(std::string subnet, std::vector<uint32>& list)
+std::vector<uint32> listSubnetAddresses(const std::string& subnet)
 {
+    std::vector<uint32> list;
     std::vector<std::string> strVec;
     boost::split(strVec, subnet, boost::is_any_of("/"));
-    uint32 address = inet_addr(strVec[0].c_str());
+    uint32 address = string_to_ip(strVec[0]);
     if(address != INADDR_NONE && strVec.size() == 2) {
         uint32 mask = boost::lexical_cast<uint32>(strVec[1]);
         if(mask <= 32) {
@@ -57,8 +58,7 @@ void listSubnetAddresses(std::string subnet, std::vector<uint32>& list)
             }
         }
     }
+    return list;
 }
-
-
 
 }
