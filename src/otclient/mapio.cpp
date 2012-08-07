@@ -209,10 +209,8 @@ void Map::loadOtbm(const std::string& fileName)
     g_logger.debug("OTBM read successfully.");
     fin->close();
 
-    /*
     loadSpawns(getSpawnFile());
-    m_houses.load(getHouseFile());
-    */
+//  m_houses.load(getHouseFile());
 }
 
 void Map::saveOtbm(const std::string &fileName)
@@ -381,9 +379,15 @@ void Map::loadSpawns(const std::string &fileName)
             cType->setSpawnTime(cNode->readType<int>("spawntime"));
             CreaturePtr creature(new Creature);
             creature->setOutfit(cType->getOutfit());
-            creature->setName(cType->getName());
 
-            addThing(creature, centerPos + cNode->readPoint());
+            stdext::ucwords(cName);
+            creature->setName(cName);
+
+            centerPos.x += cNode->readType<int>("x");
+            centerPos.y += cNode->readType<int>("y");
+            centerPos.z  = cNode->readType<int>("z");
+
+            addThing(creature, centerPos, 4);
         }
     }
 }

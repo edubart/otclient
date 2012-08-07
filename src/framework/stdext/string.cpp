@@ -23,6 +23,7 @@
 #include "string.h"
 #include "format.h"
 #include <boost/algorithm/string.hpp>
+#include <ctype.h>
 
 namespace stdext {
 
@@ -111,6 +112,31 @@ void toupper(std::string& str)
 void trim(std::string& str)
 {
     boost::trim(str);
+}
+
+char upchar(char c)
+{
+#if defined(__GNUC__) && __GNUC__ >= 3
+    return ::toupper(c); // use the one from global scope "ctype.h"
+#else
+    if((c >= 97 && c <= 122) || (c <= -1 && c >= -32))
+        c -= 32;
+
+    return c;
+#endif
+}
+
+void ucwords(std::string& str)
+{
+    uint32 strLen = str.length();
+    if(strLen == 0)
+        return;
+
+    str[0] = upchar(str[0]);
+    for(uint32 i = 1; i < strLen; ++i) {
+        if(str[i - 1] == ' ')
+            str[i] = upchar(str[i]);
+    }
 }
 
 bool ends_with(const std::string& str, const std::string& test)

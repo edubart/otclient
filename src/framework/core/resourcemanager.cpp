@@ -167,7 +167,7 @@ void ResourceManager::loadFile(const std::string& fileName, std::iostream& out)
         std::ifstream fin(fileName);
         if(!fin) {
             out.clear(std::ios::failbit);
-            stdext::throw_exception(stdext::format("unable to file '%s': %s", fileName.c_str(), PHYSFS_getLastError()));
+            stdext::throw_exception(stdext::format("unable to load file '%s': %s", fileName.c_str(), PHYSFS_getLastError()));
         } else {
             out << fin.rdbuf();
         }

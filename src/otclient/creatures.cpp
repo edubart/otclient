@@ -56,16 +56,19 @@ void Creatures::loadSingleCreature(const std::string& file)
 
 void Creatures::loadNpcs(const std::string& folder)
 {
-    boost::filesystem::path npcPath(folder);
+    boost::filesystem::path npcPath(boost::filesystem::current_path().generic_string() + folder);
     if(!boost::filesystem::exists(npcPath))
         stdext::throw_exception(stdext::format("NPCs folder '%s' was not found.", folder));
 
     for(boost::filesystem::directory_iterator it(npcPath), end; it != end; ++it) {
-        std::string f = it->path().string();
-        if(boost::filesystem::is_directory(it->status()) || ((f.size() > 4 ? f.substr(f.size() - 4) : "") != ".xml"))
+        std::string f = it->path().filename().string();
+        if(boost::filesystem::is_directory(it->status()))
             continue;
 
-        loadCreatureBuffer(g_resources.loadFile(f));
+        std::string tmp = folder;
+        if(!stdext::ends_with(tmp, "/"))
+            tmp += "/";
+        loadCreatureBuffer(g_resources.loadFile(tmp + f));
     }
 }
 

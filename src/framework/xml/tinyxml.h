@@ -970,14 +970,6 @@ public:
         return ret;
     }
 
-    Point readPoint() const
-    {
-        Point ret;
-        ret.x = readType<int>("x");
-        ret.y = readType<int>("y");
-        return ret;
-    }
-
     /** Template form of the attribute query which will try to read the
         attribute into the specified type. Very easy, very powerful, but
         be careful to make sure to call this with the correct type.

@@ -103,6 +103,7 @@ void OTClient::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_map", "loadOtcm", &Map::loadOtcm, &g_map);
     g_lua.bindSingletonFunction("g_map", "saveOtcm", &Map::saveOtcm, &g_map);
     g_lua.bindSingletonFunction("g_map", "loadMonsters", &Map::loadMonsters, &g_map);
+    g_lua.bindSingletonFunction("g_map", "loadNpcs", &Map::loadNpcs, &g_map);
     g_lua.bindSingletonFunction("g_map", "loadSingleCreature", &Map::loadSingleCreature, &g_map);
     g_lua.bindSingletonFunction("g_map", "getTown", &Map::getTown, &g_map);
     g_lua.bindSingletonFunction("g_map", "getHouse", &Map::getHouse, &g_map);
