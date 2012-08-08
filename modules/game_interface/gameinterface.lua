@@ -131,6 +131,7 @@ function tryExit()
   local cancelButton = exitWindow:getChildById('buttonCancel')
 
   local exitFunc = function()
+    logout() -- try logout anyway
     forceExit()
   end
   local logoutFunc = function()

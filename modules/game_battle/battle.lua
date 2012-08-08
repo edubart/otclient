@@ -170,7 +170,7 @@ end
 
 function onCreatureAppear(creature)
   local player = g_game.getLocalPlayer()
-  if creature ~= player and creature:getPosition().z == player:getPosition().z then
+  if creature ~= player and creature:getPosition().z == player:getPosition().z and doCreatureFitFilters(creature) then
     addCreature(creature)
   end
 end
