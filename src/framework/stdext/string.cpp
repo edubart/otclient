@@ -101,12 +101,12 @@ std::string utf8_to_latin1(uchar *utf8)
 
 void tolower(std::string& str)
 {
-    boost::to_lower(str);
+    std::transform(str.begin(), str.end(), str.begin(), lochar);
 }
 
 void toupper(std::string& str)
 {
-    boost::to_upper(str);
+    std::transform(str.begin(), str.end(), str.begin(), upchar);
 }
 
 void trim(std::string& str)
@@ -116,14 +116,16 @@ void trim(std::string& str)
 
 char upchar(char c)
 {
-#if defined(__GNUC__) && __GNUC__ >= 3
-    return ::toupper(c); // use the one from global scope "ctype.h"
-#else
-    if((c >= 97 && c <= 122) || (c <= -1 && c >= -32))
+    if((c >= 97 && c <= 122) || (uchar)c >= 224)
         c -= 32;
-
     return c;
-#endif
+}
+
+char lochar(char c)
+{
+    if((c >= 65 && c <= 90) || ((uchar)c >= 192 && (uchar)c <= 223))
+        c += 32;
+    return c;
 }
 
 void ucwords(std::string& str)

@@ -108,7 +108,7 @@ void UIWidget::onFontChange(const std::string& font)
 void UIWidget::setText(std::string text)
 {
     if(m_textOnlyUpperCase)
-        std::transform(text.begin(), text.end(), text.begin(), toupper);
+        stdext::toupper(text);
 
     if(m_text == text)
         return;
