@@ -1,0 +1,11 @@
+language: cpp
+compiler:
+  - gcc
+before_script:
+  - sudo apt-get install libboost-all-dev libphysfs-dev libssl-dev liblua5.1-dev libglew1.6-dev libvorbis-dev libopenal-dev libz-dev
+script: |
+  cmake . -DCMAKE_BUILD_TYPE=Release
+  make
+notifications:
+  irc:
+    - "irc.freenode.org#otclient"
