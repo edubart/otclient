@@ -8,4 +8,7 @@ script: |
   make
 notifications:
   irc:
-    - "irc.freenode.org#otclient"
+    channels:
+      - "irc.freenode.org#otclient"
+    on_success: change
+    skip_join: true
