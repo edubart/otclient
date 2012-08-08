@@ -35,7 +35,7 @@ function UIMessageBox.display(title, message, flags)
     connect(messagebox, { onEscape = function(self) self:cancel() end })
   end
 
-  messagebox:setWidth(messageLabel:getWidth() + messagebox:getPaddingLeft() + messagebox:getPaddingRight())
+  messagebox:setWidth(math.max(messageLabel:getWidth(), messagebox:getTextSize().width) + messagebox:getPaddingLeft() + messagebox:getPaddingRight())
   messagebox:setHeight(messageLabel:getHeight() + messagebox:getPaddingTop() + messagebox:getPaddingBottom() + buttonRight:getHeight() + 10)
 
   --messagebox:lock()
