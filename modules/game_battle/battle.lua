@@ -1,7 +1,3 @@
---TODO
---onCreatureAppears onCreatureHealthChange onCreatureDisappears
---reloadable/disconnects
-
 battleWindow = nil
 battleButton = nil
 battlePanel = nil
@@ -51,14 +47,17 @@ function init()
 
   connect(Creature, { onSkullChange = checkCreatureSkull,
                       onEmblemChange = checkCreatureEmblem,
-                      onPositionChange = onCreaturePositionChange
+                      onHealthPercentChange = onCreatureHealthPercentChange,
+                      onPositionChange = onCreaturePositionChange,
+                      onAppear = onCreatureAppear,
+                      onDisappear = onCreatureDisappear
                       } )
 
   connect(g_game, { onAttackingCreatureChange = onAttack,
                     onFollowingCreatureChange = onFollow,
-                    onMapDescription = checkCreatures,
                     onGameEnd = removeAllCreatures } )
 
+  checkCreatures()
 end
 
 function terminate()
@@ -70,11 +69,14 @@ function terminate()
 
   disconnect(Creature, {  onSkullChange = checkCreatureSkull,
                           onEmblemChange = checkCreatureEmblem,
-                          onPositionChange = onCreaturePositionChange } )
+                          onHealthPercentChange = onCreatureHealthPercentChange,
+                          onPositionChange = onCreaturePositionChange,
+                          onAppear = onCreatureAppear,
+                          onDisappear = onCreatureDisappear
+                          } )
 
   disconnect(g_game, { onAttackingCreatureChange = onAttack,
                     onFollowingCreatureChange = onFollow,
-                    onMapDescription = checkCreatures,
                     onGameEnd = removeAllCreatures } )
 end
 
@@ -145,6 +147,13 @@ function doCreatureFitFilters(creature)
   return true
 end
 
+function onCreatureHealthPercentChange(creature, health)
+  local battleButton = battleButtonsByCreaturesList[creature:getId()]
+  if battleButton then
+    setLifeBarPercent(battleButton, creature:getHealthPercent())
+  end
+end
+
 function onCreaturePositionChange(creature, newPos, oldPos)
   if creature:isLocalPlayer() then
     checkCreatures()
@@ -157,6 +166,17 @@ function onCreaturePositionChange(creature, newPos, oldPos)
       addCreature(creature)
     end
   end
+end
+
+function onCreatureAppear(creature)
+  local player = g_game.getLocalPlayer()
+  if creature ~= player and creature:getPosition().z == player:getPosition().z then
+    addCreature(creature)
+  end
+end
+
+function onCreatureDisappear(creature)
+  removeCreature(creature)
 end
 
 function hasCreature(creature)
@@ -204,48 +224,48 @@ function addCreature(creature)
 end
 
 function checkCreatureSkull(creature, skullId)
-    local battleButton = battleButtonsByCreaturesList[creature:getId()]
-    if battleButton then
-      local skullWidget = battleButton:getChildById('skull')
-      local labelWidget = battleButton:getChildById('label')
-      local creature = battleButton.creature
+  local battleButton = battleButtonsByCreaturesList[creature:getId()]
+  if battleButton then
+    local skullWidget = battleButton:getChildById('skull')
+    local labelWidget = battleButton:getChildById('label')
+    local creature = battleButton.creature
 
-      if creature:getSkull() ~= SkullNone then
-        skullWidget:setWidth(skullWidget:getHeight())
-        local imagePath = getSkullImagePath(creature:getSkull())
-        skullWidget:setImageSource(imagePath)
-        labelWidget:setMarginLeft(5)
-      else
-        skullWidget:setWidth(0)
-        if creature:getEmblem() == EmblemNone then
-          labelWidget:setMarginLeft(2)
-        end
+    if creature:getSkull() ~= SkullNone then
+      skullWidget:setWidth(skullWidget:getHeight())
+      local imagePath = getSkullImagePath(creature:getSkull())
+      skullWidget:setImageSource(imagePath)
+      labelWidget:setMarginLeft(5)
+    else
+      skullWidget:setWidth(0)
+      if creature:getEmblem() == EmblemNone then
+        labelWidget:setMarginLeft(2)
       end
     end
+  end
 end
 
 function checkCreatureEmblem(creature, emblemId)
-    local battleButton = battleButtonsByCreaturesList[creature:getId()]
-    if battleButton then
-      local emblemId = emblemId or creature:getEmblem()
-      local emblemWidget = battleButton:getChildById('emblem')
-      local labelWidget = battleButton:getChildById('label')
-      local creature = battleButton.creature
+  local battleButton = battleButtonsByCreaturesList[creature:getId()]
+  if battleButton then
+    local emblemId = emblemId or creature:getEmblem()
+    local emblemWidget = battleButton:getChildById('emblem')
+    local labelWidget = battleButton:getChildById('label')
+    local creature = battleButton.creature
 
-      if emblemId ~= EmblemNone then
-        emblemWidget:setWidth(emblemWidget:getHeight())
-        local imagePath = getEmblemImagePath(emblemId)
-        emblemWidget:setImageSource(imagePath)
-        emblemWidget:setMarginLeft(5)
-        labelWidget:setMarginLeft(5)
-      else
-        emblemWidget:setWidth(0)
-        emblemWidget:setMarginLeft(0)
-        if creature:getSkull() == SkullNone then
-          labelWidget:setMarginLeft(2)
-        end
+    if emblemId ~= EmblemNone then
+      emblemWidget:setWidth(emblemWidget:getHeight())
+      local imagePath = getEmblemImagePath(emblemId)
+      emblemWidget:setImageSource(imagePath)
+      emblemWidget:setMarginLeft(5)
+      labelWidget:setMarginLeft(5)
+    else
+      emblemWidget:setWidth(0)
+      emblemWidget:setMarginLeft(0)
+      if creature:getSkull() == SkullNone then
+        labelWidget:setMarginLeft(2)
       end
     end
+  end
 end
 
 function onMouseRelease(self, mousePosition, mouseButton)

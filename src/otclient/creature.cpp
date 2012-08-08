@@ -494,6 +494,7 @@ void Creature::setHealthPercent(uint8 healthPercent)
     }
 
     m_healthPercent = healthPercent;
+    callLuaField("onHealthPercentChange", healthPercent);
 }
 
 void Creature::setDirection(Otc::Direction direction)
