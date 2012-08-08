@@ -15,6 +15,7 @@ function UIItem:onDragLeave(droppedWidget, mousePos)
   self.currentDragThing = nil
   g_mouse.restoreCursor()
   self:setBorderWidth(0)
+  self.hoveredWho = nil
   return true
 end
 
@@ -41,6 +42,13 @@ function UIItem:onDrop(widget, mousePos)
   return true
 end
 
+function UIItem:onDestroy()
+  if self == g_ui.getDraggingWidget() and self.hoveredWho then
+    self.hoveredWho:setBorderWidth(0)
+    self.hoveredWho = nil
+  end
+end
+
 function UIItem:onHoverChange(hovered)
   UIWidget.onHoverChange(self, hovered)
 
@@ -52,8 +60,10 @@ function UIItem:onHoverChange(hovered)
     local gotItem = draggingWidget:getClassName() == 'UIItem' and not draggingWidget:isVirtual()
     if hovered and (gotItem or gotMap) then
       self:setBorderWidth(1)
+      draggingWidget.hoveredWho = self
     else
       self:setBorderWidth(0)
+      draggingWidget.hoveredWho = nil
     end
   end
 end
