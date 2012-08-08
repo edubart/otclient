@@ -114,6 +114,7 @@ public:
     bool isDoor() { return m_attribs.has(ATTR_HOUSEDOORID); }
     bool isTeleport() { return m_attribs.has(ATTR_TELE_DEST); }
     bool isMoveable();
+    bool isGround();
 
     ItemPtr asItem() { return static_self_cast<Item>(); }
     bool isItem() { return true; }

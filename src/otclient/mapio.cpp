@@ -215,7 +215,7 @@ void Map::loadOtbm(const std::string& fileName)
 
 void Map::saveOtbm(const std::string &fileName)
 {
-    FileStreamPtr fin = g_resources.appendFile(fileName);
+    FileStreamPtr fin = g_resources.createFile(fileName);
     if(!fin)
         stdext::throw_exception(stdext::format("failed to open file '%s' for write", fileName));
 
@@ -235,13 +235,26 @@ void Map::saveOtbm(const std::string &fileName)
 
     /// Usually when a map has empty house/spawn file it means the map is new.
     /// TODO: Ask the user for a map name instead of those ugly uses of substr
+    std::string::size_type sep_pos;
     std::string houseFile = getHouseFile();
     std::string spawnFile = getSpawnFile();
-    if(houseFile.empty() && version > 1)
-        houseFile = fileName.substr(fileName.find_last_of('/')) + "-houses.xml";
-    if(spawnFile.empty())
-        spawnFile = fileName.substr(fileName.find_last_of('/')) + "-spawns.xml";
+    std::string cpyf;
 
+    if((sep_pos = fileName.rfind('.')) != std::string::npos && stdext::ends_with(fileName, ".otbm"))
+        cpyf = fileName.substr(0, sep_pos);
+
+    if(houseFile.empty())
+        houseFile = cpyf + "-houses.xml";
+
+    if(spawnFile.empty())
+        spawnFile = cpyf + "-spawns.xml";
+
+    /// we only need the filename to save to, the directory should be resolved by the OTBM loader not here
+    if((sep_pos = spawnFile.rfind('/')) != std::string::npos)
+        spawnFile = spawnFile.substr(sep_pos + 1);
+
+    if((sep_pos = houseFile.rfind('/')) != std::string::npos)
+        houseFile = houseFile.substr(sep_pos + 1);
 #if 0
     if(version > 1)
         m_houses->save(dir + "/" + houseFile);
@@ -251,6 +264,7 @@ void Map::saveOtbm(const std::string &fileName)
 
     fin->addU32(0); // file version
     BinaryWriteTreePtr root(new BinaryWriteTree(fin));
+    root->startNode(0);
     {
         root->writeU32(version);
 
@@ -271,7 +285,7 @@ void Map::saveOtbm(const std::string &fileName)
 
             // special one
             root->writeU8(OTBM_ATTR_DESCRIPTION);
-            root->writeString(stdext::format("Saved with %s v%d", g_app.getName(), stdext::unsafe_cast<int>(g_app.getVersion())));
+            root->writeString(stdext::format("Saved with %s v%s", g_app.getName(), g_app.getVersion()));
 
             // spawn file.
             root->writeU8(OTBM_ATTR_SPAWN_FILE);
@@ -283,66 +297,80 @@ void Map::saveOtbm(const std::string &fileName)
                 root->writeString(houseFile);
             }
 
-            /// write tiles first
-            root->startNode(OTBM_TILE_AREA);
             Position base(-1, -1, -1);
+            bool firstNode = true;
 
             for(uint8_t z = 0; z < Otc::MAX_Z + 1; ++z) {
                 for(const auto& it : m_tileBlocks[z]) {
                     const TileBlock& block = it.second;
                     for(const TilePtr& tile : block.getTiles()) {
+                        if(!tile)
+                            continue;
+
                         const Position& pos = tile->getPosition();
                         if(!pos.isValid())
                             continue;
 
-                        /// base position
                         if(pos.x < base.x || pos.x >= base.x + 256 || pos.y < base.y|| pos.y >= base.y + 256 ||
-                                pos.z != base.z)
+                                pos.z != base.z) {
+                            if(!firstNode)
+                                root->endNode(); /// OTBM_TILE_AREA
+
+                            root->startNode(OTBM_TILE_AREA);
+                            firstNode = false;
                             root->writePos(base = pos & 0xFF00);
+                        }
 
                         uint32 flags = tile->getFlags();
-                        if((flags & TILESTATE_HOUSE) == TILESTATE_HOUSE)
-                            root->startNode(OTBM_HOUSETILE);
-                        else
-                            root->startNode(OTBM_TILE);
 
-                        root->writePoint(Point(pos.x, pos.y));
+                        root->startNode((flags & TILESTATE_HOUSE) == TILESTATE_HOUSE ? OTBM_HOUSETILE : OTBM_TILE);
+                        root->writePoint(Point(pos.x, pos.y) & 0xFF);
 //                      if(tileNode->getType() == OTBM_HOUSETILE)
 //                          tileNode->writeU32(tile->getHouseId());
 
-                        /// Tile flags
                         if(flags) {
                             root->writeU8(OTBM_ATTR_TILE_FLAGS);
                             root->writeU32(flags);
                         }
 
-                        /// start writing tile items
                         for(const ItemPtr& item : tile->getItems()) {
-                            root->startNode(OTBM_ATTR_ITEM);
-                            item->serializeItem(root);
+                            if(item->isGround()) {
+                                root->writeU8(OTBM_ATTR_ITEM);
+                                root->writeU16(item->getId());
+                                continue;
+                            }
+
+                            item->serializeItem(root); 
                         }
+
+                        root->endNode(); // OTBM_TILE
                     }
                 }
             }
 
-            /// write towns
+            if(!firstNode)
+                root->endNode();  // OTBM_TILE_AREA
+
             root->startNode(OTBM_TOWNS);
             for(const TownPtr& town : m_towns.getTowns()) {
                 root->writeU32(town->getId());
                 root->writeString(town->getName());
                 root->writePos(town->getPos());
             }
+            root->endNode();
 
-            /// write waypoints
             if(version > 1) {
                 root->startNode(OTBM_WAYPOINTS);
                 for(const auto& it : m_waypoints) {
                     root->writeString(it.second);
                     root->writePos(it.first);
                 }
+                root->endNode();
             }
         }
+        root->endNode(); // OTBM_MAP_DATA
     }
+    root->endNode(); // 0 (root)
 }
 
 void Map::loadSpawns(const std::string &fileName)

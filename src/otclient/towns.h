@@ -56,8 +56,7 @@ public:
     TownPtr getTown(uint32 townId);
     TownList getTowns() { return m_towns; }
 
-    // Fix to segfault on exit
-    void clear() { m_towns.clear(); }
+    void clear() { m_towns.clear(); }   
 
 private:
     TownList m_towns;

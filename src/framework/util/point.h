@@ -61,6 +61,9 @@ public:
     TPoint<T> operator/(float v) const { return TPoint<T>(x/v, y/v); }
     TPoint<T>& operator/=(float v) { x/=v; y/=v; return *this; }
 
+    TPoint<T> operator&(int a) { return TPoint<T>(x & a, y & a); }
+    TPoint<T>& operator&=(int a) { x &= a; y &= a; return *this; }
+
     bool operator<=(const TPoint<T>&other) const { return x<=other.x && y<=other.y; }
     bool operator>=(const TPoint<T>&other) const { return x>=other.x && y>=other.y; }
     bool operator<(const TPoint<T>&other) const { return x<other.x && y<other.y; }

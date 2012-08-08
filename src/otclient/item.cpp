@@ -270,10 +270,13 @@ void Item::unserializeItem(const BinaryTreePtr &in)
 
 void Item::serializeItem(const BinaryWriteTreePtr& out)
 {
+    out->startNode(OTBM_ITEM);
+    out->writeU16(getId());
+
     out->writeU8(ATTR_COUNT);
     out->writeU8(getCount());
 
-    out->writeU8(ATTR_CHARGES);
+    out->writeU8(ATTR_CHARGES);;
     out->writeU16(getCountOrSubType());
 
     Position dest = m_attribs.get<Position>(ATTR_TELE_DEST);
@@ -298,6 +301,8 @@ void Item::serializeItem(const BinaryWriteTreePtr& out)
         out->writeU8(ATTR_UNIQUE_ID);
         out->writeU16(uid);
     }
+
+    out->endNode();
 }
 
 int Item::getSubType()
@@ -319,6 +324,11 @@ int Item::getCount()
 bool Item::isMoveable()
 {
     return !rawGetThingType()->isNotMoveable();
+}
+
+bool Item::isGround()
+{
+    return rawGetThingType()->isGround();
 }
 
 ItemPtr Item::clone()
