@@ -110,11 +110,13 @@ function UIMiniWindow:onSetup()
 
   self.miniLoaded = true
 
-  if oldParent and oldParent:getClassName() == 'UIMiniWindowContainer' then
-    oldParent:order()
-  end
-  if newParent and newParent:getClassName() == 'UIMiniWindowContainer' and newParent ~= oldParent then
-    newParent:order()
+  if self.save then
+    if oldParent and oldParent:getClassName() == 'UIMiniWindowContainer' then
+      oldParent:order()
+    end
+    if newParent and newParent:getClassName() == 'UIMiniWindowContainer' and newParent ~= oldParent then
+      newParent:order()
+    end
   end
 end
 

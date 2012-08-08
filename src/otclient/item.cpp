@@ -276,7 +276,7 @@ void Item::serializeItem(const BinaryWriteTreePtr& out)
     out->writeU8(ATTR_COUNT);
     out->writeU8(getCount());
 
-    out->writeU8(ATTR_CHARGES);;
+    out->writeU8(ATTR_CHARGES);
     out->writeU16(getCountOrSubType());
 
     Position dest = m_attribs.get<Position>(ATTR_TELE_DEST);
