@@ -114,11 +114,8 @@ function hide()
 end
 
 function forceExit()
-  if g_game.isOnline() then
-    g_game.forceLogout()
-    scheduleEvent(exit, 10)
-    return true
-  end
+  scheduleEvent(exit, 10)
+  return true
 end
 
 function tryExit()
